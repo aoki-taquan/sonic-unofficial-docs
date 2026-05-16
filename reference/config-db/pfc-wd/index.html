@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23376,6 +23388,45 @@
     <span class="md-ellipsis">
       
         Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
       
     </span>
   </a>
@@ -26455,6 +26506,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -27099,6 +27178,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27247,6 +27382,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27442,7 +27605,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27527,6 +27690,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29739,6 +29930,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35496,6 +35715,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36024,6 +36282,60 @@
 <p><strong>スキャン証跡</strong>: <code>pfcwdorch.cpp:64-278</code> を全行読了、7 件分岐抽出。PFC-WD の platform 条件付き登録 (MLNX/BFN/BRCM/MRVL等) を実ソースで確認 — 誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-ordering.md -->
+
+<h3 id="_18">検出された順序依存<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>PORT</code> 初期化完了 → <code>PFC_WD</code> エントリ処理</td>
+<td><strong>先行必須</strong>（未完了時は保留・自動再試行）</td>
+<td><code>doTask()</code> が <code>allPortsReady()</code> で自動再試行</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>PORT_QOS_MAP</code> の PFC 有効化 → <code>PFC_WD</code> per-port エントリ</td>
+<td><strong>推奨先行</strong>（未設定時 lossless TC なしで WD 無効）</td>
+<td><code>task_need_retry</code> で再試行、ただし WD は実質無効</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>PFC_WD\|GLOBAL</code> の <code>POLL_INTERVAL</code> → per-port エントリ</td>
+<td><strong>推奨先行</strong>（未設定時は 100 ms デフォルト使用）</td>
+<td>後から設定しても次ポーリングサイクルから適用</td>
+</tr>
+<tr>
+<td>4</td>
+<td>BRCM: 最初の per-port エントリの <code>action</code> → 後続エントリ</td>
+<td><strong>同一 action 必須</strong>（不一致で <code>task_invalid_entry</code>）</td>
+<td>全ポート同一 <code>action</code> を一括設定</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>PFC_WD</code> per-port DEL</td>
+<td>即時・順序依存なし</td>
+<td><code>m_pfcwd_ports</code> の自動クリーンアップ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">主要な制約詳細<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p><strong>PORT 先行必須 (依存 #1)</strong>: <code>doTask()</code> 冒頭 (<code>pfcwdorch.cpp:68-71</code>) で <code>gPortsOrch-&gt;allPortsReady()</code> が <code>false</code> の場合は即リターン（タスク保留）。<code>PORT</code> の SAI 初期化完了後に Consumer イベントが来た時点で自動的に処理再開される。</p>
+<p><strong>PORT_QOS_MAP PFC 有効化 (依存 #2)</strong>: <code>registerInWdDb()</code> (<code>pfcwdorch.cpp:533-555</code>) で <code>getPortPfcWatchdogStatus()</code> を呼び lossless TC bitmask を取得。<code>pfcMask == 0</code> の場合は <code>startWdOnPort()</code> が <code>task_need_retry</code> を返すが、PFC WD は実質無効のままとなる。<code>PORT_QOS_MAP</code> の PFC 有効化を先に行ってから <code>PFC_WD</code> エントリを書くことで中間不整合を防ぐ。</p>
+<p><strong>GLOBAL POLL_INTERVAL 推奨先行 (依存 #3)</strong>: orchestrator 起動時のデフォルトは <code>PFC_WD_POLL_MSECS = 100</code> ms (<code>orchdaemon.cpp:24</code>)。<code>PFC_WD|GLOBAL</code> の <code>POLL_INTERVAL</code> を per-port エントリより先に書けば、初期ポーリングから一貫した間隔が保証される。後から変更しても <code>updateGroupPollingInterval()</code> が適用されるため実害は軽微。</p>
+<p><strong>Broadcom DLR 同一 action 強制 (依存 #4)</strong>: <code>checkPfcDlrInitEnable()</code> が true の Broadcom 環境では、最初の <code>PFC_WD</code> per-port エントリの <code>action</code> が <code>SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION</code> としてスイッチレベルに設定される。後続エントリで異なる <code>action</code> を指定すると <code>"Invalid PFC Watchdog action %s as switch level action %s is set"</code> エラーで reject されるため、全ポートを同一 <code>action</code> で一括設定すること (<code>pfcwdorch.cpp:237-266</code>)。</p>
+<!-- /ordering -->
 
 <div class="footnote">
 <hr />

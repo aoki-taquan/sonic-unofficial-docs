@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25108,6 +25120,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-systemd-ssh_server-serial_console-wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. systemd 初期化完了待ち — SSH_SERVER / SERIAL_CONSOLE は wait 後に適用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pamlimitscfg-device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PamLimitsCfg の DEVICE_METADATA 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-ssh_handler-ssh_server-pamlimitscfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ssh_handler() — SSH_SERVER 変更後 PamLimitsCfg が自動連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-serialconsolecfgload-serial-configservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SerialConsoleCfg.load() はキャッシュ格納のみ — serial-config.service 再起動なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-ssh_serverpolicies-del-sshd_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SSH_SERVER|POLICIES DEL は sshd_config に即時反映されない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-sshd-sshd_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. sshd 設定検証フォールバック — 設定不正時は既存 sshd_config を保持
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -26272,6 +26378,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26916,6 +27050,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27064,6 +27254,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27259,7 +27477,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27344,6 +27562,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29556,6 +29802,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35130,6 +35404,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-systemd-ssh_server-serial_console-wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. systemd 初期化完了待ち — SSH_SERVER / SERIAL_CONSOLE は wait 後に適用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pamlimitscfg-device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PamLimitsCfg の DEVICE_METADATA 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-ssh_handler-ssh_server-pamlimitscfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ssh_handler() — SSH_SERVER 変更後 PamLimitsCfg が自動連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-serialconsolecfgload-serial-configservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SerialConsoleCfg.load() はキャッシュ格納のみ — serial-config.service 再起動なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-ssh_serverpolicies-del-sshd_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SSH_SERVER|POLICIES DEL は sshd_config に即時反映されない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-sshd-sshd_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. sshd 設定検証フォールバック — 設定不正時は既存 sshd_config を保持
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35666,6 +36034,124 @@
 </tbody>
 </table>
 <!-- /handler-branching -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="1-systemd-ssh_server-serial_console-wait">1. systemd 初期化完了待ち — SSH_SERVER / SERIAL_CONSOLE は wait 後に適用<a class="headerlink" href="#1-systemd-ssh_server-serial_console-wait" title="Permanent link">&para;</a></h3>
+<p><code>hostcfgd.load()</code> は <code>load_independent_config()</code> で AAA 系を先行適用し、<code>wait_till_system_init_done()</code> 完了後に <code>sshscfg.load()</code> / <code>serialconscfg.load()</code> を呼ぶ。<!-- evidence: hostcfgd:2233,2237,2265,2273 --></p>
+<table>
+<thead>
+<tr>
+<th>依存</th>
+<th>方向</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>systemd 初期化 完了 → SSH_SERVER / SERIAL_CONSOLE 適用</td>
+<td>強制先行</td>
+<td>sshd / serial-config.service 起動前は <code>sshd -T</code> 失敗リスク</td>
+</tr>
+<tr>
+<td>AAA / TACPLUS / RADIUS / LDAP → SSH_SERVER / SERIAL_CONSOLE</td>
+<td>AAA が先</td>
+<td>load_independent_config() は systemctl 待ち前に実行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-pamlimitscfg-device_metadata">2. PamLimitsCfg の DEVICE_METADATA 先行必須<a class="headerlink" href="#2-pamlimitscfg-device_metadata" title="Permanent link">&para;</a></h3>
+<p><code>PamLimitsCfg.update_config_file()</code> (hostcfgd:1421-1435) は <code>DEVICE_METADATA|localhost</code> が CONFIG_DB に存在しない場合に early return する。<code>SSH_SERVER.max_sessions</code> が設定されていても <code>DEVICE_METADATA</code> 不在では PAM limits が適用されない。<!-- evidence: hostcfgd:1430 --></p>
+<table>
+<thead>
+<tr>
+<th>依存</th>
+<th>方向</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code> → <code>SSH_SERVER.max_sessions</code> (PAM limits)</td>
+<td>先行必須</td>
+<td>不在時 early return、max_sessions 未反映</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-ssh_handler-ssh_server-pamlimitscfg">3. ssh_handler() — SSH_SERVER 変更後 PamLimitsCfg が自動連動<a class="headerlink" href="#3-ssh_handler-ssh_server-pamlimitscfg" title="Permanent link">&para;</a></h3>
+<p>runtime の <code>SSH_SERVER</code> 変化では <code>ssh_handler()</code> が <code>policies_update()</code> 呼び出し後に必ず <code>pamLimitsCfg.update_config_file()</code> を呼ぶ。<code>pamLimitsCfg</code> は CONFIG_DB を再読みするため <code>policies_update()</code> の適用内容が確実に反映される。順序依存は <code>ssh_handler()</code> 内部で自動的に保証される。<!-- evidence: hostcfgd:2296-2299 --></p>
+<h3 id="4-serialconsolecfgload-serial-configservice">4. SerialConsoleCfg.load() はキャッシュ格納のみ — serial-config.service 再起動なし<a class="headerlink" href="#4-serialconsolecfgload-serial-configservice" title="Permanent link">&para;</a></h3>
+<p>load フェーズでは <code>serial-config.service</code> の再起動は行わず、キャッシュを初期化するだけ。runtime の差分変更時のみ <code>serial_console_config_handler()</code> が再起動を実行する。<!-- evidence: hostcfgd:2018-2021, 2023-2043 --></p>
+<table>
+<thead>
+<tr>
+<th>依存</th>
+<th>方向</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>load 後の runtime 変更 → <code>serial-config.service</code> 再起動</td>
+<td>差分検出で自動</td>
+<td>進行中のシリアルコンソール接続が切断される可能性あり</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-ssh_serverpolicies-del-sshd_config">5. SSH_SERVER|POLICIES DEL は sshd_config に即時反映されない<a class="headerlink" href="#5-ssh_serverpolicies-del-sshd_config" title="Permanent link">&para;</a></h3>
+<p><code>ssh_handler()</code> が DEL（<code>data == {}</code>）を受けると <code>policies_update()</code> は <code>self.policies</code> を更新しない（<code>if data:</code> で skip）。直前の <code>self.policies</code> が <code>modify_conf_file()</code> で再適用されるため、sshd_config は変更されない。hostcfgd 再起動後に初期化される。<!-- evidence: hostcfgd:1068-1077, 1059-1063 --></p>
+<h3 id="6-sshd-sshd_config">6. sshd 設定検証フォールバック — 設定不正時は既存 sshd_config を保持<a class="headerlink" href="#6-sshd-sshd_config" title="Permanent link">&para;</a></h3>
+<p><code>set_policies()</code> は一時ファイルに書き込み、<code>sshd -T -f</code> 検証成功時のみ <code>os.rename()</code> で適用する。検証失敗時は一時ファイルを削除し、既存 <code>/etc/ssh/sshd_config</code> が維持される（無効設定による sshd 停止を防ぐ安全フォールバック）。<!-- evidence: hostcfgd:1155-1170 --></p>
+<h3 id="_17">順序依存サマリ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>systemd init 完了 → SSH_SERVER / SERIAL_CONSOLE 適用</td>
+<td>強制先行</td>
+<td>AAA のみ systemctl 待ち前に先行</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DEVICE_METADATA\|localhost</code> 存在 → PAM limits 有効</td>
+<td>先行必須</td>
+<td>不在時 early return (max_sessions 未反映)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>sshscfg.policies_update()</code> → <code>pamLimitsCfg.update_config_file()</code></td>
+<td>ssh_handler 内で自動連動</td>
+<td>DB 再読みで順序問題なし</td>
+</tr>
+<tr>
+<td>4</td>
+<td>load 後の差分変更 → serial-config.service 再起動</td>
+<td>差分検出で自動</td>
+<td>一括変更でセッション切断回数を最小化</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SSH_SERVER DEL → sshd_config クリア</td>
+<td>hostcfgd 再起動で初期化</td>
+<td>DEL 後 hostcfgd を再起動すると反映</td>
+</tr>
+<tr>
+<td>6</td>
+<td>設定不正 → 既存 sshd_config 保持</td>
+<td>sshd -T 検証フォールバック</td>
+<td>無効設定は自動破棄される</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
 

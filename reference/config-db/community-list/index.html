@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -24971,6 +24983,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-replace-community-set-community-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. replace コマンド: 新 community SET → 旧 community DEL（逆順禁止）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-type-direct-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. TYPE は大文字で書き込む（direct DB 書込み時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-community-set-snmpd-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 複数 community を一括 SET してから snmpd を 1 回再起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-snmp_yml_to_configdbpy-ro-ro-rw-rw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. snmp_yml_to_configdb.py の注入順序（RO 単数 → RO 複数 → RW 単数 → RW 複数）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-yang-unique-name-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. YANG unique 制約なし: 同一 name への重複 SET は上書き
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -26272,6 +26356,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26916,6 +27028,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27064,6 +27232,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27259,7 +27455,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27344,6 +27540,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29556,6 +29780,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34937,6 +35189,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-replace-community-set-community-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. replace コマンド: 新 community SET → 旧 community DEL（逆順禁止）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-type-direct-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. TYPE は大文字で書き込む（direct DB 書込み時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-community-set-snmpd-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 複数 community を一括 SET してから snmpd を 1 回再起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-snmp_yml_to_configdbpy-ro-ro-rw-rw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. snmp_yml_to_configdb.py の注入順序（RO 単数 → RO 複数 → RW 単数 → RW 複数）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-yang-unique-name-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. YANG unique 制約なし: 同一 name への重複 SET は上書き
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35312,6 +35636,57 @@
 <li><strong>IPv4 と IPv6 は分離不可</strong>: <code>TYPE: RO</code> 時は <code>rocommunity</code> と <code>rocommunity6</code> が同一コミュニティ名で生成される。IPv4 のみ / IPv6 のみに限定する仕組みは本テーブルにない。ネットワーク分離が必要な場合は snmpd.conf を直接編集する必要があるが、それは CONFIG_DB 管理外となる。<!-- evidence: snmpd.conf.j2 L51-52 --></li>
 </ul>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="1-replace-community-set-community-del">1. replace コマンド: 新 community SET → 旧 community DEL（逆順禁止）<a class="headerlink" href="#1-replace-community-set-community-del" title="Permanent link">&para;</a></h3>
+<p><code>config snmp community replace &lt;current&gt; &lt;new&gt;</code> は新 community を先に SET してから旧 community を DEL する順序で動作する（<code>config/main.py:4449-4454</code>）。</p>
+<p>逆順（旧 DEL → 新 SET）にした場合、DEL 直後に snmpd 再起動が走ると新 community がまだ DB に存在しない瞬間が生じ、全 SNMPv1/v2c アクセスが一時的に拒否される。CLI は新旧両方が DB に存在する時間帯を作ることでこのリスクを回避している。</p>
+<h3 id="2-type-direct-db">2. TYPE は大文字で書き込む（direct DB 書込み時）<a class="headerlink" href="#2-type-direct-db" title="Permanent link">&para;</a></h3>
+<p><code>snmpd.conf.j2</code> は <code>SNMP_COMMUNITY[community]['TYPE'] == 'RO'</code> / <code>== 'RW'</code> と大文字で比較する（<code>snmpd.conf.j2:50,59</code>）。CLI は <code>string_type.upper()</code> で自動大文字化するが（<code>config/main.py:4376</code>）、<code>sonic-db-cli</code> などで直接書き込む場合は <code>TYPE: ro</code>（小文字）では比較に失敗し、snmpd.conf の community 行が生成されない（サイレントスキップ）。</p>
+<h3 id="3-community-set-snmpd-1">3. 複数 community を一括 SET してから snmpd を 1 回再起動<a class="headerlink" href="#3-community-set-snmpd-1" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB への SET/DEL は即時反映されず、<code>docker-snmp</code> コンテナ再起動（<code>systemctl restart snmp.service</code>）後にテンプレートが再生成される。CLI を使うと SET ごとに自動再起動が走るため非効率。direct DB 書込みで複数 community を一括投入する場合はすべての SET を完了してから 1 回の再起動を行うことで snmpd.conf が最終状態を一括生成できる（<code>config/main.py:4395-4401</code>）。</p>
+<h3 id="4-snmp_yml_to_configdbpy-ro-ro-rw-rw">4. snmp_yml_to_configdb.py の注入順序（RO 単数 → RO 複数 → RW 単数 → RW 複数）<a class="headerlink" href="#4-snmp_yml_to_configdbpy-ro-ro-rw-rw" title="Permanent link">&para;</a></h3>
+<p>ブート時注入スクリプトは <code>full_snmp_comm_list = ['snmp_rocommunity', 'snmp_rocommunities', 'snmp_rwcommunity', 'snmp_rwcommunities']</code> の固定順でループする（<code>snmp_yml_to_configdb.py:31</code>）。既存 DB エントリと重複する community は冪等スキップするため、注入順序を変えても上書きは発生しない。</p>
+<h3 id="5-yang-unique-name-set">5. YANG unique 制約なし: 同一 name への重複 SET は上書き<a class="headerlink" href="#5-yang-unique-name-set" title="Permanent link">&para;</a></h3>
+<p><code>SNMP_COMMUNITY_LIST</code> に <code>unique</code> ステートメントなし（<code>sonic-snmp.yang:52-65</code>）。同一 <code>name</code> key で TYPE を変更したい場合は DEL 不要で上書き SET が可能。<code>SNMP_AGENT_ADDRESS_CONFIG</code> の <code>unique "agent_ip port"</code> とは異なる。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>replace: 新 community SET → 旧 community DEL</td>
+<td><strong>CLI 固定順</strong></td>
+<td>逆順時: snmpd 再起動タイミングで全 v1/v2c アクセス一時拒否リスク</td>
+</tr>
+<tr>
+<td>2</td>
+<td>TYPE 書込み: 大文字必須（RO / RW）</td>
+<td><strong>書込み前提</strong></td>
+<td>小文字（ro/rw）→ テンプレート比較失敗 → snmpd 行不生成（サイレント）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>一括 SET 後に snmpd を 1 回再起動</td>
+<td><strong>推奨順序</strong></td>
+<td>SET ごとの再起動でも機能するが非効率</td>
+</tr>
+<tr>
+<td>4</td>
+<td>snmp_yml_to_configdb.py 注入順序は固定（RO 単→複, RW 単→複）</td>
+<td><strong>実装固定</strong></td>
+<td>重複 community は冪等スキップ（順序変更で上書き不可）</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
 
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>

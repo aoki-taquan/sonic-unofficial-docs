@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28913,6 +29065,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-oid-switch_hash-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 初期化 → OID キャッシュ → SWITCH_HASH SET（先行必須）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-gswitchorch-m_orchlist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm-reboot — gSwitchOrch は m_orchList 先頭で最初のイテレーションで再適用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash-ecmp_hash_algorithm-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash と ecmp_hash_algorithm を別 SET で送る場合の中間状態
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI SET 失敗時のキャッシュ未更新と再試行不可
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29041,7 +29265,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -29052,7 +29276,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -29595,6 +29819,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35054,6 +35306,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-oid-switch_hash-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 初期化 → OID キャッシュ → SWITCH_HASH SET（先行必須）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-gswitchorch-m_orchlist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm-reboot — gSwitchOrch は m_orchList 先頭で最初のイテレーションで再適用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash-ecmp_hash_algorithm-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash と ecmp_hash_algorithm を別 SET で送る場合の中間状態
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI SET 失敗時のキャッシュ未更新と再試行不可
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35182,7 +35506,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -35193,7 +35517,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -35462,6 +35786,57 @@
 </blockquote>
 <!-- /handler-branching -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順序依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/switch-hash-ordering.md -->
+
+<h3 id="sai-oid-switch_hash-set">SAI 初期化 → OID キャッシュ → SWITCH_HASH SET（先行必須）<a class="headerlink" href="#sai-oid-switch_hash-set" title="Permanent link">&para;</a></h3>
+<p><code>SwitchOrch</code> コンストラクタ (<code>switchorch.cpp:169</code>) は起動直後に <code>querySwitchHashDefaults()</code> (<code>switchorch.cpp:2030-2043</code>) を呼び、<code>SAI_SWITCH_ATTR_ECMP_HASH</code> / <code>SAI_SWITCH_ATTR_LAG_HASH</code> の OID を <code>m_switchHashDefaults</code> にキャッシュする。<code>setSwitchHashFieldListSai()</code> (<code>switchorch.cpp:750-769</code>) はこの OID を使って <code>sai_hash_api-&gt;set_hash_attribute()</code> を呼ぶため、OID キャッシュが取得できていない状態で CONFIG_DB に <code>SWITCH_HASH|GLOBAL</code> を書き込むと SAI の field-list SET が失敗する。OID 取得失敗時は <code>LOG_WARN</code> のみで起動継続するため、エラーが静かに握りつぶされる点に注意。</p>
+<h3 id="warm-reboot-gswitchorch-m_orchlist">Warm-reboot — <code>gSwitchOrch</code> は <code>m_orchList</code> 先頭で最初のイテレーションで再適用<a class="headerlink" href="#warm-reboot-gswitchorch-m_orchlist" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:500</code> で <code>m_orchList = { gSwitchOrch, gCrmOrch, gPortsOrch, ... }</code> が構築されており、<code>gSwitchOrch</code> は常に先頭に位置する。<code>warmRestoreAndSyncUp()</code> (<code>orchdaemon.cpp:1095-1172</code>) は 3 イテレーションで <code>m_orchList</code> 順に <code>doTask()</code> を実行する（コメント: 「First iteration: switchorch, Port init/hostif create part of portorch, buffers configuration」）。<code>SwitchOrch</code> には port 依存がないため <code>gPortsOrch-&gt;allPortsReady()</code> 待ちなしで即時処理される。<code>onWarmBootEnd()</code> のオーバーライドはなく、warm-reboot リストアは cold-reboot と同一経路 (<code>doCfgSwitchHashTableTask()</code> → <code>setSwitchHash()</code>) で行われる。</p>
+<h3 id="ecmp_hash-ecmp_hash_algorithm-set"><code>ecmp_hash</code> と <code>ecmp_hash_algorithm</code> を別 SET で送る場合の中間状態<a class="headerlink" href="#ecmp_hash-ecmp_hash_algorithm-set" title="Permanent link">&para;</a></h3>
+<p><code>parseSwHash()</code> (<code>switch_helper.cpp:150-194</code>) は <code>hash.fieldValueMap</code> のフィールドを独立して解析するため、CONFIG_DB 内の届き順は無関係。ただし <code>ecmp_hash</code> と <code>ecmp_hash_algorithm</code> を <strong>2 回の別 SET</strong> として書き込む場合、1 回目の SET では <code>ecmp_hash_algorithm.is_set = false</code> のまま <code>setSwitchHash()</code> が呼ばれ、アルゴリズムは SAI デフォルト (<code>SAI_HASH_ALGORITHM_CRC</code>) のままになる。2 回目の SET でアルゴリズムが適用される。中間期にトラフィックの ECMP 分散は継続するが、意図したアルゴリズムが適用されない期間が生じる。<strong>同一 SET にフィールドをまとめて書き込む</strong>ことで中間状態を回避できる。</p>
+<h3 id="sai-set">SAI SET 失敗時のキャッシュ未更新と再試行不可<a class="headerlink" href="#sai-set" title="Permanent link">&para;</a></h3>
+<p><code>setSwitchHash()</code> は SAI SET 成功時のみ <code>swHlpr.setSwHash(hash)</code> を呼んで内部キャッシュを更新する。SAI SET 失敗時はキャッシュが更新されないが、<code>doCfgSwitchHashTableTask()</code> は Consumer の <code>m_toSync</code> エントリを <code>map.erase(it)</code> で消費するため (<code>switchorch.cpp:996</code>)、Consumer レベルの自動再試行は行われない。CLI / <code>sonic-db-cli</code> で同値を再書き込みすることで再試行できる。</p>
+<h3 id="_15">順序依存サマリ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SAI 初期化 → <code>querySwitchHashDefaults()</code> OID キャッシュ → SWITCH_HASH SET</td>
+<td>先行必須</td>
+<td>OID 取得失敗時は LOG_WARN のみ、SAI SET は失敗</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Warm-reboot: <code>gSwitchOrch</code> が <code>m_orchList</code> 先頭 → 第 1 イテレーションで再適用</td>
+<td>orchdaemon 設計による強制先行</td>
+<td><code>onWarmBootEnd</code> オーバーライドなし、cold と同一経路</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>ecmp_hash</code> / <code>ecmp_hash_algorithm</code> を別 SET で送る</td>
+<td>推奨: 1 回の SET にまとめる</td>
+<td>2 回目 SET でアルゴリズム適用、中間期は SAI デフォルト</td>
+</tr>
+<tr>
+<td>4</td>
+<td>SAI SET 失敗 → キャッシュ未更新 → Consumer エントリ消費済み</td>
+<td>再試行不可</td>
+<td>CLI / sonic-db-cli で再書き込み</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
@@ -35498,9 +35873,9 @@
 <p>db_migrator.py での SWITCH_HASH マイグレーションなし</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_15">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_16">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_16">死活・デッドコード<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_17">死活・デッドコード<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
 

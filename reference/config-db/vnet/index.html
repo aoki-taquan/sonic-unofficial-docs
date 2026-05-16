@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29504,6 +29656,139 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-vrf-ready-vxlanmgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB VRF ready 待ち（VxlanMgr 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルータ MAC アドレスが取得済みであること
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet-set-vnet_route-vnet_route_tunnel-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET 本体 SET → VNET_ROUTE / VNET_ROUTE_TUNNEL SET
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル間参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="テーブル間参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 内 leafref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 投影テーブル（書き込み先）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 参照（読み取り）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB テーブル（ランタイム参照）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オーケストレータ連鎖図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29556,6 +29841,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35130,6 +35443,139 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-vrf-ready-vxlanmgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB VRF ready 待ち（VxlanMgr 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ルータ MAC アドレスが取得済みであること
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet-set-vnet_route-vnet_route_tunnel-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET 本体 SET → VNET_ROUTE / VNET_ROUTE_TUNNEL SET
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル間参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="テーブル間参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 内 leafref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 投影テーブル（書き込み先）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 参照（読み取り）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 CONFIG_DB テーブル（ランタイム参照）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オーケストレータ連鎖図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35609,6 +36055,218 @@
 <li><strong><code>vni</code> (VNET_ROUTE_TUNNEL) = 0</strong>: VNI リストが空または 0 の場合、<a href="../../glossary/#term-vxlan">VXLAN</a> orch 側でベース tunnel の VNI が encapsulation に使われる（<code>createNextHopTunnel()</code> に <code>vni=0</code> を渡す）。</li>
 </ul>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="vxlan_tunnel">VXLAN_TUNNEL が先行必須<a class="headerlink" href="#vxlan_tunnel" title="Permanent link">&para;</a></h3>
+<p><code>VxlanMgr::doVxlanCreateTask()</code> (<code>vxlanmgr.cpp:319-324</code>) は <code>m_vxlanTunnelCache.find(tunnel)</code> が end() を返すと <code>return false</code> で処理を保留し次ループで再試行する。orchagent 側 <code>VNetOrch::addOperation()</code> (<code>vnetorch.cpp:498-503</code>) も <code>vxlan_orch-&gt;isTunnelExists(tunnel)</code> が false なら <code>return false</code>。参照先 <code>VXLAN_TUNNEL|&lt;name&gt;</code> が存在しない限り VNET の SAI 登録は進まない。</p>
+<h3 id="state_db-vrf-ready-vxlanmgr">STATE_DB VRF ready 待ち（VxlanMgr 経路）<a class="headerlink" href="#state_db-vrf-ready-vxlanmgr" title="Permanent link">&para;</a></h3>
+<p><code>doVxlanCreateTask()</code> L327-333: <code>isVrfStateOk(vnet_name)</code> (<code>vxlanmgr.cpp:738</code>) が <code>STATE_VRF_TABLE</code> に当該 VRF 名を見つけられない間は <code>return false</code> で保留。VNetOrch が <a href="../../glossary/#term-sai">SAI</a> 上で VRF を作成し STATE_DB に書き込んだ後でなければカーネル VXLAN デバイス作成に進まない。orchdaemon の初期化順序（VNetOrch L276 → VRFOrch L283）により通常は自動解消されるが、起動直後の早期書き込みでは注意。</p>
+<h3 id="mac">ルータ MAC アドレスが取得済みであること<a class="headerlink" href="#mac" title="Permanent link">&para;</a></h3>
+<p><code>doVxlanCreateTask()</code> L335-342: <code>getVxlanRouterMacAddress()</code> が false を返すと <code>return false</code> で保留。<code>DEVICE_METADATA|localhost:mac</code> が設定済みでなければ VXLAN デバイスは作成されない。通常は <code>sonic-cfggen</code> が起動時に書き込むため問題にならないが、テスト環境では注意が必要。</p>
+<h3 id="vnet-set-vnet_route-vnet_route_tunnel-set">VNET 本体 SET → VNET_ROUTE / VNET_ROUTE_TUNNEL SET<a class="headerlink" href="#vnet-set-vnet_route-vnet_route_tunnel-set" title="Permanent link">&para;</a></h3>
+<p><code>VNetCfgRouteOrch::doVnetRouteTask()</code> / <code>doVnetTunnelRouteTask()</code> は受け取り次第即 APPL_DB に転記するため VNET 存在チェックなし。ただし orchagent 側 <code>VNetRouteOrch</code> が APPL_DB を消費する際に VNET の存在を前提とする。VNET_ROUTE を先に書いても失われないが、SAI 反映は VNET 作成完了後になる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a># 推奨書込み順 (SET)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>SET VXLAN_TUNNEL|&lt;tunnel_name&gt;  src_ip=&lt;vtep_ip&gt;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>SET VNET|&lt;vnet_name&gt;            vxlan_tunnel=&lt;tunnel_name&gt; vni=&lt;l3_vni&gt;
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>SET VNET_ROUTE|&lt;vnet_name&gt;|&lt;prefix&gt;          nexthop=&lt;nh_ip&gt; ifname=&lt;ifname&gt;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>SET VNET_ROUTE_TUNNEL|&lt;vnet_name&gt;|&lt;prefix&gt;   endpoint=&lt;vtep_ip&gt;
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a># 推奨削除順 (DEL)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>DEL VNET_ROUTE|&lt;vnet_name&gt;|&lt;prefix&gt;
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>DEL VNET_ROUTE_TUNNEL|&lt;vnet_name&gt;|&lt;prefix&gt;
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>DEL VNET|&lt;vnet_name&gt;
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>DEL VXLAN_TUNNEL|&lt;tunnel_name&gt;   # 他 VNET が残らない場合のみ
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VXLAN_TUNNEL</code> SET → <code>VNET</code> SET</td>
+<td>強制先行</td>
+<td><code>return false</code> で自動保留・再試行</td>
+</tr>
+<tr>
+<td>STATE_DB VRF ready → <code>VNET</code> 処理</td>
+<td>強制先行</td>
+<td><code>return false</code> で自動保留・再試行</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA</code> mac 設定 → <code>VNET</code> 処理</td>
+<td>強制先行</td>
+<td><code>return false</code> で自動保留・再試行</td>
+</tr>
+<tr>
+<td><code>VNET</code> SET → <code>VNET_ROUTE</code> SAI 反映</td>
+<td>論理的先行</td>
+<td>APPL_DB への転記は即時、SAI 反映は遅延</td>
+</tr>
+<tr>
+<td><code>VNET_ROUTE</code> DEL → <code>VNET</code> DEL</td>
+<td>推奨</td>
+<td>orchagent が内部で自動削除するが明示削除が安全</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>vxlanmgr.cpp:doVxlanCreateTask()</code> L287-376、<code>vnetorch.cpp:addOperation()</code> L434-558、<code>vnetorch.cpp:VNetCfgRouteOrch::doTask()</code> L3577-3611、<code>orchdaemon.cpp</code> L265-293, L350-354, L590-593 精読。</p>
+</blockquote>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">テーブル間参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<h3 id="config_db-leafref">CONFIG_DB 内 leafref<a class="headerlink" href="#config_db-leafref" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>フィールド / key 部位</th>
+<th>参照先</th>
+<th>YANG leafref パス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VNET</code></td>
+<td><code>vxlan_tunnel</code></td>
+<td><code>VXLAN_TUNNEL.name</code></td>
+<td><code>sonic-vxlan/VXLAN_TUNNEL/VXLAN_TUNNEL_LIST/name</code></td>
+</tr>
+<tr>
+<td><code>VNET_ROUTE</code></td>
+<td><code>vnet_name</code>（key 第 1 部）</td>
+<td><code>VNET.name</code></td>
+<td><code>sonic-vnet/VNET/VNET_LIST/name</code></td>
+</tr>
+<tr>
+<td><code>VNET_ROUTE_TUNNEL</code></td>
+<td><code>vnet_name</code>（key 第 1 部）</td>
+<td><code>VNET.name</code></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>出典: <code>sonic-vnet.yang</code> L57-58, L120-121, L156-157</p>
+</blockquote>
+<h3 id="appl_db">APPL_DB 投影テーブル（書き込み先）<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>APPL_DB テーブル</th>
+<th>書き込み元</th>
+<th>消費者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_VNET_TABLE</code></td>
+<td><code>vxlanmgrd</code>（前段処理後）</td>
+<td><code>VNetOrch</code></td>
+</tr>
+<tr>
+<td><code>APP_VNET_RT_TABLE_NAME</code></td>
+<td><code>VNetCfgRouteOrch</code></td>
+<td><code>VNetRouteOrch</code></td>
+</tr>
+<tr>
+<td><code>APP_VNET_RT_TUNNEL_TABLE_NAME</code></td>
+<td><code>VNetCfgRouteOrch</code></td>
+<td><code>VNetRouteOrch</code></td>
+</tr>
+<tr>
+<td><code>APP_VNET_MONITOR_TABLE_NAME</code></td>
+<td><code>VNetRouteOrch</code>（monitor 更新時）</td>
+<td><code>MonitorOrch</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>出典: <code>orchdaemon.cpp</code> L265-285、<code>vnetorch.cpp</code> L738-748</p>
+</blockquote>
+<h3 id="state_db">STATE_DB 参照（読み取り）<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>STATE_DB テーブル</th>
+<th>参照元</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_VRF_TABLE</code></td>
+<td><code>vxlanmgrd:isVrfStateOk()</code></td>
+<td>VRF 作成完了待ち</td>
+</tr>
+<tr>
+<td><code>STATE_VNET_RT_TUNNEL_TABLE_NAME</code></td>
+<td><code>VNetRouteOrch</code></td>
+<td>endpoint monitor 結果の取得</td>
+</tr>
+<tr>
+<td><code>STATE_VNET_MONITOR_TABLE_NAME</code></td>
+<td><code>MonitorOrch</code></td>
+<td>BFD/ping monitor 状態の購読</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>出典: <code>vxlanmgr.cpp</code> L738-752、<code>vnetorch.cpp</code> L742-748</p>
+</blockquote>
+<h3 id="config_db">関連 CONFIG_DB テーブル（ランタイム参照）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>参照元</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code></td>
+<td><code>mac</code></td>
+<td><code>vxlanmgrd:getVxlanRouterMacAddress()</code></td>
+<td>VXLAN デバイス作成時のルータ MAC 取得</td>
+</tr>
+<tr>
+<td><code>INTERFACE</code> / <code>VLAN_INTERFACE</code></td>
+<td>—</td>
+<td><code>VNetOrch:setIntf()/delIntf()</code></td>
+<td>VNET スコープのインタフェース登録</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>出典: <code>vxlanmgr.cpp</code> L784-806、<code>vnetorch.cpp</code> L392-428</p>
+</blockquote>
+<h3 id="_18">オーケストレータ連鎖図<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONFIG_DB: VNET_ROUTE / VNET_ROUTE_TUNNEL
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─→ VNetCfgRouteOrch
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        └─→ APPL_DB: APP_VNET_RT_TABLE / APP_VNET_RT_TUNNEL_TABLE
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>              └─→ VNetRouteOrch → SAI: route / nexthop / tunnel NHG
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>CONFIG_DB: VNET
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  └─→ vxlanmgrd (VxlanMgr)
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        ├─ 参照: STATE_VRF_TABLE, DEVICE_METADATA.mac
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        └─→ APPL_DB: APP_VNET_TABLE
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>              └─→ VNetOrch
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                    ├─ 参照: VxlanTunnelOrch.isTunnelExists()
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>                    ├─→ SAI: sai_virtual_router_api-&gt;create_virtual_router()
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>                    └─→ IntfsOrch (VNET スコープ IF 管理)
+</span></code></pre></div>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>vnetorch.cpp</code> L40, L392-428, L497-503, L738-748、<code>vxlanmgr.cpp</code> L183-213, L738-806、<code>orchdaemon.cpp</code> L265-285, L350-358、<code>sonic-vnet.yang</code> L57-58, L120-157</p>
+</blockquote>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: f94986e6b96c -->
 

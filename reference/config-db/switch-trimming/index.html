@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29078,6 +29230,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29578,6 +29769,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35174,6 +35393,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35576,6 +35834,64 @@
 <h3 id="_15">死活・デッドコード<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/switch-trimming-ordering.md -->
+
+<p><code>SwitchOrch::doCfgSwitchTrimmingTableTask()</code> (<code>sonic-swss/orchagent/switchorch.cpp</code>) と
+<code>SwitchTrimmingCapabilities</code> (<code>orchagent/switch/trimming/capabilities.cpp</code>) の実装から導出した順序制約。</p>
+<h3 id="_16">検出された順序依存<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SAI スイッチオブジェクト初期化 (<code>gSwitchId</code> 確立) → <code>SWITCH_TRIMMING\|GLOBAL</code> SET</td>
+<td><strong>先行必須</strong> (SwitchOrch コンストラクタで capability クエリが即実行される)</td>
+<td>orchagent が SAI 初期化を完了してから CONFIG_DB に書き込む; 起動前書き込みはリプレイで問題なし</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>dscp_value=from-tc</code> + <code>tc_value</code> の同時設定</td>
+<td><strong>推奨同時</strong> (中間状態では TC が前回 SAI 値を保持)</td>
+<td>同一 <code>hset</code> / <code>sonic-db-cli</code> コールで両フィールドを渡す</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>dscp_value=from-tc</code> と <code>queue_index=dynamic</code> の併用回避</td>
+<td><strong>設計上の注意</strong> (導出元が循環し得るため非推奨)</td>
+<td>どちらか一方のみを動的モードにする</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>SWITCH_TRIMMING\|GLOBAL</code> DEL は不可</td>
+<td><strong>禁止</strong> (<code>operation is not supported</code> を返し <code>return false</code>)</td>
+<td>削除が必要な場合は orchagent 再起動後に再設定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">主要な制約詳細<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><strong>SAI 初期化先行必須 (依存 #1)</strong>:
+<code>SwitchOrch</code> コンストラクタ (<code>orchdaemon.cpp L213</code>) が実行される時点で
+<code>SwitchTrimmingCapabilities</code> メンバー変数のコンストラクタ (<code>capabilities.cpp L142–146</code>) が
+<code>queryCapabilities()</code> を呼び出し、<code>sai_switch_api-&gt;query_attribute_capability(gSwitchId, ...)</code> で
+各属性の SAI サポート有無を確認する。結果が <code>trimCap</code> に格納され以降の全 SET 処理のフィルタとして機能する。
+orchagent 起動前に CONFIG_DB に書き込んでも、orchagent 起動後に capability クエリ完了 → CONFIG_DB
+リプレイという順序で処理されるため問題なし。</p>
+<p><strong><code>dscp_value</code> + <code>tc_value</code> の同時設定 (依存 #2)</strong>:
+SET ハンドラが受け取ったフィールド群を <code>parseTrimConfig()</code> で一括評価するため、
+<code>from-tc</code> モードで <code>tc_value</code> が欠落した状態で SET が届くと SAI の TC 属性が前回値を保持したままになる。
+中間状態の影響を避けるため 2 フィールドを同一トランザクションで書くことを推奨する
+(<code>switchorch.cpp L1168–1207</code> で <code>tc.is_set</code> チェック)。</p>
+<!-- /ordering -->
 
 <!-- glossary-links-injected: ff319d2bdac9 -->
 

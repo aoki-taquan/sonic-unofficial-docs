@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28525,6 +28677,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29529,6 +29692,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35076,6 +35267,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35572,6 +35774,55 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1091-1108 (handle_ports_set) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1150-1160 (sshd -T verification gate) -->
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照マップ (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>参照方向</th>
+<th>このテーブル</th>
+<th>相手テーブル / ページ</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSH_SERVER →</td>
+<td><code>max_sessions</code>（PamLimitsCfg）</td>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a></td>
+<td><code>update_config_file()</code> が <code>DEVICE_METADATA\|localhost</code> キーの存在を確認。不在時は early return し PAM limits を更新しない</td>
+</tr>
+<tr>
+<td>SSH_SERVER ←</td>
+<td><code>PasswordAuthentication</code>（sshd_config）</td>
+<td><a href="../aaa/"><code>AAA</code></a></td>
+<td><code>AaaCfg.modify_conf_file()</code> が <code>/etc/pam.d/sshd</code> を書き換え、TACACS+/RADIUS/LDAP 有効時に <code>common-auth-sonic</code> に切り替える。SSH のパスワード認証と PAM 認証スタックが実質的に連動する</td>
+</tr>
+<tr>
+<td>SSH_SERVER ← (間接)</td>
+<td>SSH 認証経路</td>
+<td><a href="../mgmt-interface/"><code>MGMT_INTERFACE</code></a></td>
+<td>TACACS+/RADIUS の <code>src_intf = eth0</code> 設定時、<code>AaaCfg.get_interface_ip()</code> が <code>MGMT_INTERFACE</code> テーブルの IP を解決。SSH 認証バックエンドとして TACACS+/RADIUS を使用する場合に影響</td>
+</tr>
+<tr>
+<td>CLI</td>
+<td><code>config ssh-server</code> / <code>show ssh-server</code></td>
+<td><a href="../cli/config-ssh-server.md"><code>config ssh-server</code></a></td>
+<td>SSH_SERVER テーブルの読み書き CLI</td>
+</tr>
+<tr>
+<td>YANG</td>
+<td><code>SSH_SERVER\|POLICIES</code></td>
+<td><a href="../../yang/sonic-ssh-server/"><code>sonic-ssh-server</code></a></td>
+<td>全フィールドのスキーマ定義</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd</code> L1422-1430 (PamLimitsCfg → DEVICE_METADATA); L744-751 (AaaCfg → /etc/pam.d/sshd); L596-606 (get_interface_ip → MGMT_INTERFACE); 詳細分析 <code>meta/_intermediate/cdb-flow/ssh-server-cross-refs.md</code></p>
+</blockquote>
+<!-- /cross-refs -->
 
 <div class="footnote">
 <hr />

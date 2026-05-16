@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29128,6 +29280,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数（Phase E）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数（Phase E）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vlan-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN tag 範囲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-sub_port_attrsai_router_interface_type_sub_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI sub_port_attr（SAI_ROUTER_INTERFACE_TYPE_SUB_PORT）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29544,6 +29735,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#port-portchannel-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT / PORTCHANNEL — STATE イベント再トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF — バインド変更制限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isintfstateok-prefix-port-portchannel-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        isIntfStateOk の PREFIX 分岐（PORT / PORTCHANNEL / VRF 補完）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#vlan" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29559,6 +29783,362 @@
     <span class="md-ellipsis">
       
         kernel sub-interface 連携
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動（Phase D）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動（Phase D）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vlan-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. VLAN tag 不正による設定スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-kernel-netlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. kernel netlink 操作失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-sub-port-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SAI sub-port RIF 生成失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターン要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-system_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ Chassis / system_port
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch DPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-spectrum-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox (Spectrum ASIC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#broadcom-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Broadcom (ASIC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込（Phase F）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込（Phase F）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-appl_db-intf_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. APPL_DB — INTF_TABLE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. APPL_DB — INTF_TABLE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込タイミングと内容
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-state_db-state_interface_table-state_port_table-state_lag_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STATE_DB — STATE_INTERFACE_TABLE / STATE_PORT_TABLE / STATE_LAG_TABLE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. STATE_DB — STATE_INTERFACE_TABLE / STATE_PORT_TABLE / STATE_LAG_TABLE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_interface_tablestate_interface_table_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_INTERFACE_TABLE（STATE_INTERFACE_TABLE_NAME）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_port_table-state_lag_tablesub-if" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_PORT_TABLE / STATE_LAG_TABLE（sub-IF 状態）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-sai_router_interface_type_sub_port-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SAI — SAI_ROUTER_INTERFACE_TYPE_SUB_PORT RIF 作成
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. SAI — SAI_ROUTER_INTERFACE_TYPE_SUB_PORT RIF 作成">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sub-port-rif-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sub-port RIF の SAI 属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込フロー全体
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        証跡サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Producer/Consumer ペア">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-intfmgrd-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → intfmgrd (SubscriberStateTable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-appl_db-producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd → APPL_DB (ProducerStateTable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-orchagentintfsorch-consumerstatetable-sai-sub_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → orchagent/IntfsOrch (ConsumerStateTable → SAI sub_port)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループと retry
       
     </span>
   </a>
@@ -29678,6 +30258,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34932,6 +35540,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数（Phase E）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数（Phase E）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vlan-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN tag 範囲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-sub_port_attrsai_router_interface_type_sub_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI sub_port_attr（SAI_ROUTER_INTERFACE_TYPE_SUB_PORT）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35348,6 +35995,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#port-portchannel-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT / PORTCHANNEL — STATE イベント再トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF — バインド変更制限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isintfstateok-prefix-port-portchannel-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        isIntfStateOk の PREFIX 分岐（PORT / PORTCHANNEL / VRF 補完）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#vlan" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35363,6 +36043,362 @@
     <span class="md-ellipsis">
       
         kernel sub-interface 連携
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動（Phase D）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動（Phase D）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vlan-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. VLAN tag 不正による設定スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-kernel-netlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. kernel netlink 操作失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-sub-port-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SAI sub-port RIF 生成失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターン要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-system_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ Chassis / system_port
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch DPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-spectrum-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox (Spectrum ASIC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#broadcom-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Broadcom (ASIC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込（Phase F）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込（Phase F）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-appl_db-intf_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. APPL_DB — INTF_TABLE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. APPL_DB — INTF_TABLE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込タイミングと内容
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-state_db-state_interface_table-state_port_table-state_lag_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STATE_DB — STATE_INTERFACE_TABLE / STATE_PORT_TABLE / STATE_LAG_TABLE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. STATE_DB — STATE_INTERFACE_TABLE / STATE_PORT_TABLE / STATE_LAG_TABLE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_interface_tablestate_interface_table_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_INTERFACE_TABLE（STATE_INTERFACE_TABLE_NAME）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_port_table-state_lag_tablesub-if" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_PORT_TABLE / STATE_LAG_TABLE（sub-IF 状態）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-sai_router_interface_type_sub_port-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SAI — SAI_ROUTER_INTERFACE_TYPE_SUB_PORT RIF 作成
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. SAI — SAI_ROUTER_INTERFACE_TYPE_SUB_PORT RIF 作成">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sub-port-rif-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sub-port RIF の SAI 属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込フロー全体
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        証跡サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Producer/Consumer ペア">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-intfmgrd-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → intfmgrd (SubscriberStateTable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-appl_db-producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd → APPL_DB (ProducerStateTable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-orchagentintfsorch-consumerstatetable-sai-sub_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → orchagent/IntfsOrch (ConsumerStateTable → SAI sub_port)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループと retry
       
     </span>
   </a>
@@ -35496,9 +36532,122 @@
 <p>詳細な調査メモは <code>meta/_intermediate/cdb-flow/vlan-sub-interface-defaults.md</code> 参照。</p>
 <!-- /defaults -->
 
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数（Phase E）<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>intfmgr.cpp</code> および <code>intfsorch.cpp</code> に直接埋め込まれた定数・SAI 属性をまとめる。</p>
+<h3 id="vlan-tag">VLAN tag 範囲<a class="headerlink" href="#vlan-tag" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VLAN ID 下限</td>
+<td><code>1</code></td>
+<td>YANG: <code>sonic-vlan-sub-interface.yang</code> <code>range "1..4094"</code> / intfmgr.cpp:936 で <code>"0"</code> はリトライ待ち</td>
+</tr>
+<tr>
+<td>VLAN ID 上限</td>
+<td><code>4094</code></td>
+<td>YANG: <code>sonic-vlan-sub-interface.yang</code> <code>range "1..4094"</code></td>
+</tr>
+<tr>
+<td><code>VLAN_SUB_INTERFACE_SEPARATOR</code></td>
+<td><code>"."</code></td>
+<td><code>sonic-swss/tests/test_sub_port_intf.py:54</code>; intfmgr.cpp:750 で <code>alias.find(VLAN_SUB_INTERFACE_SEPARATOR)</code></td>
+</tr>
+</tbody>
+</table>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:936-940 (抜粋)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vlanId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">vlanId</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;Vlan ID not configured for %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">alias</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1">// 有効範囲 1..4094 は YANG で強制。カーネル側は &quot;ip link add ... type vlan id &lt;vlanId&gt;&quot;</span>
+</span></code></pre></div>
+<h3 id="sai-sub_port_attrsai_router_interface_type_sub_port">SAI sub_port_attr（<code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code>）<a class="headerlink" href="#sai-sub_port_attrsai_router_interface_type_sub_port" title="Permanent link">&para;</a></h3>
+<p>sub-port RIF 作成時に <code>intfsorch.cpp:1224</code> で <code>Port::SUBPORT</code> ブランチが実行し、以下の SAI 属性を順番に push する。</p>
+<table>
+<thead>
+<tr>
+<th>SAI 属性</th>
+<th>値の型</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID</code></td>
+<td><code>sai_object_id_t</code></td>
+<td>VRF OID（全 RIF タイプ共通、先頭に push）</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_TYPE</code></td>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code></td>
+<td>RIF タイプを sub-port に指定</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_PORT_ID</code></td>
+<td><code>sai_object_id_t</code></td>
+<td>親ポート OID（<code>port.m_parent_port_id</code>）</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID</code></td>
+<td><code>uint16_t</code></td>
+<td>encapsulation VLAN ID（<code>port.m_vlan_info.vlan_id</code>）</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE</code></td>
+<td><code>bool</code></td>
+<td>IPv4 転送の有効/無効</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_ADMIN_V6_STATE</code></td>
+<td><code>bool</code></td>
+<td>IPv6 転送の有効/無効</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code></td>
+<td>MAC</td>
+<td>システム MAC（全 RIF タイプ共通）</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_MTU</code></td>
+<td><code>uint32_t</code></td>
+<td>MTU 値（全 RIF タイプ共通）</td>
+</tr>
+</tbody>
+</table>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// sonic-swss/orchagent/intfsorch.cpp:1251-1265 (抜粋)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">case</span><span class="w"> </span><span class="no">Port</span><span class="o">::</span><span class="no">SUBPORT</span><span class="p">:</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_PORT_ID</span><span class="p">;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_parent_port_id</span><span class="p">;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID</span><span class="p">;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">u16</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_vlan_info</span><span class="p">.</span><span class="n">vlan_id</span><span class="p">;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE</span><span class="p">;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_admin_state_up</span><span class="p">;</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_ADMIN_V6_STATE</span><span class="p">;</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_admin_state_up</span><span class="p">;</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+</span></code></pre></div>
+<p><strong>出典</strong>: <code>sonic-swss/orchagent/intfsorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp</a></p>
+<!-- /constants -->
+
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>VLAN_SUB_INTERFACE|&lt;name&gt;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>VLAN_SUB_INTERFACE|&lt;name&gt;|&lt;ip-prefix&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>VLAN_SUB_INTERFACE|&lt;name&gt;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>VLAN_SUB_INTERFACE|&lt;name&gt;|&lt;ip-prefix&gt;
 </span></code></pre></div>
 <p><code>&lt;name&gt;</code> は <code>ParentInterface.VlanID</code> 形式。IP prefix 行は同じテーブル名で <code>&lt;name&gt;</code> と <code>&lt;ip-prefix&gt;</code> を複合キーにする。</p>
 <h2 id="_5">主要フィールド<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -35676,8 +36825,8 @@
 <li>親 IF を <code>switchport</code> 設定にしたまま sub-interface を生やすと L3 が立ち上がらない。</li>
 </ul>
 <h3 id="_15">確認コマンド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_SUB_INTERFACE|*&#39;</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>subinterface<span class="w"> </span>status
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_SUB_INTERFACE|*&#39;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>subinterface<span class="w"> </span>status
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -35780,17 +36929,68 @@
 <h2 id="kernel">暗黙参照（テーブル間依存・kernel 連携）<a class="headerlink" href="#kernel" title="Permanent link">&para;</a></h2>
 <h3 id="port-portchannel">PORT / PORTCHANNEL への暗黙依存<a class="headerlink" href="#port-portchannel" title="Permanent link">&para;</a></h3>
 <p><code>intfmgr.cpp:833</code> — <code>isIntfStateOk(parentAlias)</code> で STATE_DB の <code>STATE_PORT_TABLE</code> または <code>STATE_LAG_TABLE</code> を参照し、親 IF が Ready でない場合は <code>return false</code> でリトライ待ち。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:833</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isIntfStateOk</span><span class="p">(</span><span class="n">parentAlias</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">parentAlias</span><span class="p">))</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">{</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="n">SWSS_LOG_DEBUG</span><span class="p">(</span><span class="s">&quot;Interface is not ready, skipping %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">alias</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:833</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isIntfStateOk</span><span class="p">(</span><span class="n">parentAlias</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">parentAlias</span><span class="p">))</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">SWSS_LOG_DEBUG</span><span class="p">(</span><span class="s">&quot;Interface is not ready, skipping %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">alias</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>orchagent 側 (<code>intfsorch.cpp:905-914</code>) でも <code>gPortsOrch-&gt;getPort(alias, port)</code> が失敗した場合に <code>gPortsOrch-&gt;addSubPort(port, alias, vlan, adminUp, mtu)</code> を呼び、これが PORT / PORTCHANNEL オブジェクトの存在を前提とする。</p>
 <h3 id="vrf">VRF への暗黙依存<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h3>
 <p><code>intfmgr.cpp:839</code> — <code>vrf_name</code> が設定されている場合、STATE_DB の <code>STATE_VRF_TABLE</code> を <code>isIntfStateOk(vrf_name)</code> で確認。VRF が Ready でない場合はリトライ待ち。</p>
 <p><code>intfsorch.cpp:826</code> — <code>m_vrfOrch-&gt;isVRFexists(vrf_name)</code> で VRF オブジェクトの存在を確認し、存在しない場合は <code>task_need_retry</code>。VRF バインドには <code>m_vrfOrch-&gt;getVRFid()</code> で SAI VRF OID を取得し、<code>SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID</code> に設定する。</p>
+<h3 id="port-portchannel-state">PORT / PORTCHANNEL — STATE イベント再トリガー<a class="headerlink" href="#port-portchannel-state" title="Permanent link">&para;</a></h3>
+<p><code>intfmgr.cpp:1183</code> — <code>doTask()</code> の consumer ループで <code>table_name == STATE_PORT_TABLE_NAME</code> または <code>STATE_LAG_TABLE_NAME</code> の場合は <code>doPortTableTask()</code> を呼ぶ。これにより親ポートの状態変化（リンクアップ / リンクダウン / 削除）が発生した時点でリトライ待ちの sub-interface 設定が再評価される。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:1183-1188</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_PORT_TABLE_NAME</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_LAG_TABLE_NAME</span><span class="p">))</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">doPortTableTask</span><span class="p">(</span><span class="n">kfvKey</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="w"> </span><span class="n">kfvFieldsValues</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="w"> </span><span class="n">kfvOp</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="vrf_1">VRF — バインド変更制限<a class="headerlink" href="#vrf_1" title="Permanent link">&para;</a></h3>
+<p><code>intfmgr.cpp:846-850</code> — <code>isIntfChangeVrf(alias, vrf_name)</code> が <code>true</code>（既に別 VRF にバインド済み）の場合、<code>SWSS_LOG_ERROR("%s can not change to %s directly, skipping")</code> を記録して <strong>リトライなし (<code>return true</code>)</strong> でスキップする。VRF バインドを変更するには interface を一度削除して再投入する必要がある。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:846-850</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isIntfChangeVrf</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_name</span><span class="p">))</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;%s can not change to %s directly, skipping&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">alias</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">vrf_name</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="isintfstateok-prefix-port-portchannel-vrf"><code>isIntfStateOk</code> の PREFIX 分岐（PORT / PORTCHANNEL / VRF 補完）<a class="headerlink" href="#isintfstateok-prefix-port-portchannel-vrf" title="Permanent link">&para;</a></h3>
+<p><code>intfmgr.cpp:649-686</code> の <code>isIntfStateOk()</code> は alias プレフィックスを見て参照する STATE_DB テーブルを切り替える:</p>
+<table>
+<thead>
+<tr>
+<th>プレフィックス</th>
+<th>参照テーブル</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Vlan</code></td>
+<td><code>STATE_VLAN_TABLE</code></td>
+<td>bridge VLAN インタフェース</td>
+</tr>
+<tr>
+<td><code>PortChannel</code></td>
+<td><code>STATE_LAG_TABLE</code></td>
+<td>LAG/LACP バンドル</td>
+</tr>
+<tr>
+<td><code>Vnet</code> / <code>Vrf</code> / <code>mgmt</code></td>
+<td><code>STATE_VRF_TABLE</code></td>
+<td>VRF・VNET・管理 VRF</td>
+</tr>
+<tr>
+<td>その他 (Ethernet 等)</td>
+<td><code>STATE_PORT_TABLE</code></td>
+<td>物理ポート (<code>state</code> フィールドで可否判定)</td>
+</tr>
+</tbody>
+</table>
+<p>sub-interface (<code>Ethernet0.100</code>) の <code>parentAlias</code> (<code>Ethernet0</code>) は物理ポートとして <code>STATE_PORT_TABLE</code> で判定される。<code>PortChannel10.100</code> の場合は <code>parentAlias</code> (<code>PortChannel10</code>) が <code>STATE_LAG_TABLE</code> で判定される。</p>
 <h3 id="vlan">VLAN との関係（独立経路）<a class="headerlink" href="#vlan" title="Permanent link">&para;</a></h3>
 <p>VLAN_SUB_INTERFACE は <code>ip link add &lt;alias&gt; link &lt;parent&gt; type vlan id &lt;vid&gt;</code> で kernel sub-IF を作成する経路（<code>intfmgr.cpp:944-948</code>）を通り、VLAN テーブルの bridge VLAN とは独立。ただし <code>isIntfStateOk()</code> (intfmgr.cpp:649-686) は <code>Vlan</code> プレフィックスを持つ alias に対して <code>m_stateVlanTable</code> を参照するため、名前衝突に注意が必要。</p>
 <h3 id="kernel-sub-interface">kernel sub-interface 連携<a class="headerlink" href="#kernel-sub-interface" title="Permanent link">&para;</a></h3>
@@ -35805,6 +37005,634 @@
 - <code>sonic-swss/cfgmgr/intfmgr.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp</a>
 - <code>sonic-swss/orchagent/intfsorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp</a></p>
 <!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動（Phase D）<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>intfmgrd</code>（<code>intfmgr.cpp</code>）が sub-interface を設定する際に発生しうる 3 種類の失敗パターンを整理する。</p>
+<h3 id="1-vlan-tag">1. VLAN tag 不正による設定スキップ<a class="headerlink" href="#1-vlan-tag" title="Permanent link">&para;</a></h3>
+<p>short-name 形式（<code>Po1.10</code> / <code>Eth0.100</code>）で CONFIG_DB の <code>vlan</code> フィールドが <code>"0"</code> または空のとき、<code>intfmgr.cpp:936-939</code> で以下の分岐が実行される。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:936-939</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vlanId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">vlanId</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="p">{</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;Vlan ID not configured for sub interface %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">alias</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>return false</code> はリトライ待ち（<code>task_need_retry</code> 相当）を意味し、<code>SWSS_LOG_INFO</code> レベルで記録される。<code>ip link add ... type vlan id</code> コマンドは実行されない。long-name 形式（<code>Ethernet0.100</code>）では <code>subIntfIdx()</code> がドット後 ID を自動採用するため、この分岐には到達しない。</p>
+<h3 id="2-kernel-netlink">2. kernel netlink 操作失敗<a class="headerlink" href="#2-kernel-netlink" title="Permanent link">&para;</a></h3>
+<p><code>addHostSubIntf</code>（ip link add）、<code>setHostSubIntfMtu</code>（ip link set mtu）、<code>setHostSubIntfAdminStatus</code>（ip link set up/down）のいずれかで <code>swss::exec()</code> が非ゼロを返した場合、各関数は <code>runtime_error</code> を <code>throw</code> する。呼び出し元の <code>doTask()</code> がこれを <code>catch</code> して <code>SWSS_LOG_NOTICE</code> を記録し、<code>return false</code> でリトライ待ちになる。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th><code>SWSS_LOG_NOTICE</code> メッセージ</th>
+<th>コード位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip link add</code> 失敗</td>
+<td><code>"Sub interface ip link add failure. Runtime error: %s"</code></td>
+<td>intfmgr.cpp:947</td>
+</tr>
+<tr>
+<td><code>ip link set mtu</code> 失敗</td>
+<td><code>"Sub interface ip link set mtu failure. Runtime error: %s"</code></td>
+<td>intfmgr.cpp:968</td>
+</tr>
+<tr>
+<td><code>ip link set admin_status</code> 失敗</td>
+<td><code>"Sub interface ip link set admin status %s failure. Runtime error: %s"</code></td>
+<td>intfmgr.cpp:998</td>
+</tr>
+</tbody>
+</table>
+<p>なお <code>setHostSubIntfMtu</code> 内で <code>isIntfStateOk(alias)</code> が <code>false</code>（netdev が既に削除済み）のときは <code>SWSS_LOG_WARN</code> を記録して <code>runtime_error</code> を throw しない（intfmgr.cpp:451-455）。これは portmgrd による親 IF 削除との競合で起こるケース。</p>
+<h3 id="3-sai-sub-port-rif">3. SAI sub-port RIF 生成失敗<a class="headerlink" href="#3-sai-sub-port-rif" title="Permanent link">&para;</a></h3>
+<p><code>intfsorch.cpp:1296-1304</code> で <code>sai_router_intfs_api-&gt;create_router_interface()</code> が <code>SAI_STATUS_SUCCESS</code> 以外を返した場合、<code>SWSS_LOG_ERROR</code> を記録し <code>handleSaiCreateStatus</code> でリトライ可否を判定する。リトライ不可の場合は <code>runtime_error("Failed to create router interface.")</code> を throw し、上位の <code>doTask()</code> が <code>task_need_retry</code> または例外として扱う。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// sonic-swss/orchagent/intfsorch.cpp:1296-1304</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_router_intfs_api</span><span class="o">-&gt;</span><span class="n">create_router_interface</span><span class="p">(</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="o">&amp;</span><span class="n">port</span><span class="p">.</span><span class="n">m_rif_id</span><span class="p">,</span><span class="w"> </span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">attrs</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="n">attrs</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="p">{</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to create router interface %s, rv:%d&quot;</span><span class="p">,</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">            </span><span class="n">port</span><span class="p">.</span><span class="n">m_alias</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">handleSaiCreateStatus</span><span class="p">(</span><span class="n">SAI_API_ROUTER_INTERFACE</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">task_success</span><span class="p">)</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;Failed to create router interface.&quot;</span><span class="p">);</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>SAI sub-port の属性として <code>SAI_ROUTER_INTERFACE_ATTR_PORT_ID</code>（親ポート OID）と <code>SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID</code>（VLAN tag）が必須。どちらかが欠如した状態では <code>addSubPort</code> 内の前段チェックにより <code>create_router_interface</code> 呼び出し自体に到達しない（intfsorch.cpp:1223-1260）。また <code>ref_count &gt; 0</code>（IP アドレスや VRF binding が残存）の状態で削除しようとすると <code>removeRouterIntfs</code> が <code>return false</code> を返し RIF 削除はスキップされる（intfsorch.cpp:1327-1331）。</p>
+<h3 id="_20">失敗パターン要約<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗種別</th>
+<th>トリガー</th>
+<th>ログレベル</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VLAN tag 不正（<code>vlan == "0"</code> または空）</td>
+<td>short-name 形式で <code>vlan</code> 未設定</td>
+<td><code>SWSS_LOG_INFO</code></td>
+<td>リトライ待ち（kernel 操作なし）</td>
+</tr>
+<tr>
+<td>kernel netlink 失敗（ip link add / mtu / admin）</td>
+<td><code>swss::exec()</code> 非ゼロ返却</td>
+<td><code>SWSS_LOG_NOTICE</code></td>
+<td>リトライ待ち（<code>return false</code>）</td>
+</tr>
+<tr>
+<td>SAI sub-port RIF 生成失敗</td>
+<td><code>create_router_interface()</code> 非 SUCCESS</td>
+<td><code>SWSS_LOG_ERROR</code></td>
+<td><code>handleSaiCreateStatus</code> 判定→ <code>task_need_retry</code> or <code>throw</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
+
+<!-- platform-diff -->
+<h2 id="phase-h">プラットフォーム差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p>VLAN_SUB_INTERFACE の実挙動はプラットフォームタイプによって以下の点で異なる。</p>
+<h3 id="voq-chassis-system_port">VOQ Chassis / system_port<a class="headerlink" href="#voq-chassis-system_port" title="Permanent link">&para;</a></h3>
+<p>VOQ (Virtual Output Queue) chassis 構成では <code>DEVICE_METADATA|localhost</code> の <code>switch_type</code> フィールドが <code>"voq"</code> に設定される。この場合 <code>intfmgrd</code> は IPv6 アドレス付与コマンドに <code>metric 256</code> を追加する<sup id="fnref:ph1"><a class="footnote-ref" href="#fn:ph1">5</a></sup>。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:103-106</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">if</span><span class="p">(</span><span class="n">mySwitchType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;voq&quot;</span><span class="p">)</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="p">{</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">   </span><span class="n">metric</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot; metric 256&quot;</span><span class="p">;</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>理由</strong>: VOQ system では eBGP/iBGP 経由で学習されるルートと直接接続ルートの metric を同一にすることで ECMP グループを正しく形成する必要がある。IPv4 は connected/static どちらも metric 0 のため変更不要。IPv6 の connected route は kernel がデフォルト 256 を付与するため明示的に揃える。</p>
+<p><code>orchagent</code> 側では、VOQ system_port は <code>Port::SYSTEM</code> タイプとして扱われ、RIF タイプは通常の物理ポートと同じ <code>SAI_ROUTER_INTERFACE_TYPE_PORT</code> が選択される<sup id="fnref:ph2"><a class="footnote-ref" href="#fn:ph2">6</a></sup>。VLAN_SUB_INTERFACE（<code>Port::SUBPORT</code>）を VOQ system_port 上に直接重ねることはサポートされない。</p>
+<p>VOQ inband interface (<code>CFG_VOQ_INBAND_INTERFACE_TABLE_NAME</code>) は <code>intfmgrd</code> の通常処理をスキップし、APP_DB へ直接リレーされる<sup id="fnref2:ph1"><a class="footnote-ref" href="#fn:ph1">5</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:1195-1200</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">if</span><span class="p">((</span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CFG_VOQ_INBAND_INTERFACE_TABLE_NAME</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">        </span><span class="p">(</span><span class="n">op</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SET_COMMAND</span><span class="p">))</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="p">{</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="c1">//No further processing needed. Just relay to orchagent</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="n">m_appIntfTableProducer</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span><span class="n">m_stateIntfTable</span><span class="p">.</span><span class="n">hset</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="s">&quot;vrf&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
+</span></code></pre></div>
+<p>voqSyncAddIntf / voqSyncDelIntf (<code>intfsorch.cpp:1672-1748</code>) は <code>CHASSIS_APP_DB</code> 上の <code>SYSTEM_INTERFACE_TABLE</code> にローカル IF の状態を同期する。リモート system_port（<code>SAI_SYSTEM_PORT_TYPE_REMOTE</code>）はスキップされ、ローカル側のみ同期対象となる<sup id="fnref2:ph2"><a class="footnote-ref" href="#fn:ph2">6</a></sup>。</p>
+<h3 id="smartswitch-dpu">SmartSwitch DPU<a class="headerlink" href="#smartswitch-dpu" title="Permanent link">&para;</a></h3>
+<p>SmartSwitch アーキテクチャでは NPU 側と DPU 側でそれぞれ独立した <code>orchagent</code> インスタンスが動作する。VLAN_SUB_INTERFACE は NPU 側の物理ポートまたは PortChannel に対して定義し、DPU 側には直接適用しない。DPU 側は独自のインタフェース管理を持ち、<code>intfmgr.cpp</code> に DPU 固有分岐は存在しない。DPU 対向の <code>switch_type</code> は <code>"dpu"</code> となり、VOQ 分岐（<code>mySwitchType == "voq"</code>）には入らないため、IPv6 metric 補正も適用されない。</p>
+<h3 id="mellanox-spectrum-asic">Mellanox (Spectrum ASIC)<a class="headerlink" href="#mellanox-spectrum-asic" title="Permanent link">&para;</a></h3>
+<p>Mellanox/Spectrum は SAI の <code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code> をネイティブサポートする。<code>intfsorch.cpp</code> の SUBPORT 分岐（<code>port.m_parent_port_id</code> + <code>SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID</code>）はそのまま動作する<sup id="fnref3:ph2"><a class="footnote-ref" href="#fn:ph2">6</a></sup>。<code>intfmgr.cpp</code> 側に Mellanox 固有の条件分岐はなく、MTU 継承・admin_status 合成・kernel netdev 操作は共通コードで処理される。</p>
+<h3 id="broadcom-asic">Broadcom (ASIC)<a class="headerlink" href="#broadcom-asic" title="Permanent link">&para;</a></h3>
+<p>Broadcom SAI も <code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code> をサポートする。動作は Mellanox と同様で <code>intfmgr.cpp</code> に Broadcom 固有分岐はない。ただし Broadcom プラットフォームでは SAI 実装（<code>libsai.so</code>）が VLAN tag の内部処理を担うため、kernel の vlan netdev が持つ VLAN ID と SAI の <code>SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID</code> が一致している必要がある。<code>intfsorch.cpp:1255-1256</code> でこの一致が保証される。</p>
+<h3 id="_21">プラットフォーム差異要約<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>標準 (非VOQ)</th>
+<th>VOQ Chassis</th>
+<th>SmartSwitch DPU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IPv6 metric 付与</td>
+<td>なし</td>
+<td><code>metric 256</code> 追加</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>system_port 上の VLAN_SUB_INTERFACE</td>
+<td>サポート (物理/LAG)</td>
+<td>非サポート (SYSTEM タイプは SUB_PORT 不可)</td>
+<td>N/A (DPU 側は別管理)</td>
+</tr>
+<tr>
+<td>CHASSIS_APP_DB 同期</td>
+<td>なし</td>
+<td>voqSyncAddIntf で同期</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>inband interface 処理</td>
+<td>通常 doIntfGeneralTask</td>
+<td>APP_DB 直リレー (スキップ)</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>SAI RIF タイプ</td>
+<td>SUB_PORT</td>
+<td>PORT (system_port)</td>
+<td>SUB_PORT</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform-diff -->
+<!-- secondary-db-writes -->
+<h2 id="db-phase-f">副次 DB 書込（Phase F）<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>intfmgrd</code> が VLAN_SUB_INTERFACE エントリを処理する際、CONFIG_DB 以外の複数の DB に書込む。以下はそれぞれの書込経路と証跡。</p>
+<h3 id="1-appl_db-intf_table">1. APPL_DB — <code>INTF_TABLE</code><a class="headerlink" href="#1-appl_db-intf_table" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> (<code>IntfMgr</code>) は <code>m_appIntfTableProducer</code>（<code>APP_INTF_TABLE_NAME</code> = <code>INTF_TABLE</code>）を介して APPL_DB へ書き込む。</p>
+<h4 id="_22">書込タイミングと内容<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>APPL_DB キー</th>
+<th>書込フィールド</th>
+<th>ソース行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sub-IF SET (新規/更新)</td>
+<td><code>&lt;alias&gt;</code></td>
+<td><code>mtu</code>, <code>admin_status</code>, <code>mac_addr</code></td>
+<td><code>intfmgr.cpp:1053</code></td>
+</tr>
+<tr>
+<td>親 MTU 変更による伝播</td>
+<td><code>&lt;sub-alias&gt;</code></td>
+<td><code>mtu</code> (子 sub-IF への伝播)</td>
+<td><code>intfmgr.cpp:426</code></td>
+</tr>
+<tr>
+<td>親 admin_status 変更による伝播</td>
+<td><code>&lt;sub-alias&gt;</code></td>
+<td><code>admin_status</code> (子 sub-IF への伝播)</td>
+<td><code>intfmgr.cpp:484</code></td>
+</tr>
+<tr>
+<td>IP prefix SET</td>
+<td><code>&lt;alias&gt;:&lt;ip-prefix&gt;</code></td>
+<td><code>family</code>, <code>scope</code></td>
+<td><code>intfmgr.cpp:1137</code></td>
+</tr>
+<tr>
+<td>sub-IF DEL</td>
+<td><code>&lt;alias&gt;</code></td>
+<td>— (del)</td>
+<td><code>intfmgr.cpp:1088</code></td>
+</tr>
+<tr>
+<td>IP prefix DEL</td>
+<td><code>&lt;alias&gt;:&lt;ip-prefix&gt;</code></td>
+<td>— (del)</td>
+<td><code>intfmgr.cpp:1161</code></td>
+</tr>
+<tr>
+<td>VRF バインド解除時 (warm replay)</td>
+<td><code>&lt;alias&gt;</code></td>
+<td>空フィールド</td>
+<td><code>intfmgr.cpp:1199</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意</strong>: IPv4 link-local アドレス (<code>169.254.x.x</code>) は APPL_DB へ送らない（intfmgr.cpp:1132 の条件分岐）。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:1053-1054</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">m_appIntfTableProducer</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">m_stateIntfTable</span><span class="p">.</span><span class="n">hset</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;vrf&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_name</span><span class="p">);</span>
+</span></code></pre></div>
+<h3 id="2-state_db-state_interface_table-state_port_table-state_lag_table">2. STATE_DB — <code>STATE_INTERFACE_TABLE</code> / <code>STATE_PORT_TABLE</code> / <code>STATE_LAG_TABLE</code><a class="headerlink" href="#2-state_db-state_interface_table-state_port_table-state_lag_table" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> は sub-IF の設定完了後に複数の STATE_DB テーブルへ書き込む。</p>
+<h4 id="state_interface_tablestate_interface_table_name">STATE_INTERFACE_TABLE（<code>STATE_INTERFACE_TABLE_NAME</code>）<a class="headerlink" href="#state_interface_tablestate_interface_table_name" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>キー</th>
+<th>フィールド</th>
+<th>ソース行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sub-IF SET 完了時</td>
+<td><code>&lt;alias&gt;</code></td>
+<td><code>vrf = &lt;vrf_name&gt;</code></td>
+<td><code>intfmgr.cpp:1054</code></td>
+</tr>
+<tr>
+<td>IP prefix SET 完了時</td>
+<td><code>&lt;alias&gt;\|&lt;ip-prefix&gt;</code></td>
+<td><code>state = ok</code></td>
+<td><code>intfmgr.cpp:1138</code></td>
+</tr>
+<tr>
+<td>sub-IF DEL 時</td>
+<td><code>&lt;alias&gt;</code></td>
+<td>— (del)</td>
+<td><code>intfmgr.cpp:1089</code></td>
+</tr>
+<tr>
+<td>IP prefix DEL 時</td>
+<td><code>&lt;alias&gt;\|&lt;ip-prefix&gt;</code></td>
+<td>— (del)</td>
+<td><code>intfmgr.cpp:1162</code></td>
+</tr>
+<tr>
+<td>VRF バインド解除時 (warm replay)</td>
+<td><code>&lt;alias&gt;</code></td>
+<td><code>vrf = ""</code></td>
+<td><code>intfmgr.cpp:1200</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="state_port_table-state_lag_tablesub-if">STATE_PORT_TABLE / STATE_LAG_TABLE（sub-IF 状態）<a class="headerlink" href="#state_port_table-state_lag_tablesub-if" title="Permanent link">&para;</a></h4>
+<p><code>setSubIntfStateOk()</code> が sub-IF 作成完了後に呼ばれ、sub-IF の種別に応じてテーブルを分岐する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgr.cpp:542-554</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">IntfMgr::setSubIntfStateOk</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">alias</span><span class="p">)</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="p">{</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FieldValueTuple</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fvTuples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="s">&quot;state&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ok&quot;</span><span class="p">}};</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">alias</span><span class="p">.</span><span class="n">compare</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">SUBINTF_LAG_PREFIX</span><span class="p">),</span><span class="w"> </span><span class="n">SUBINTF_LAG_PREFIX</span><span class="p">))</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">        </span><span class="n">m_stateLagTable</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span><span class="w"> </span><span class="n">fvTuples</span><span class="p">);</span><span class="w">   </span><span class="c1">// PortChannel sub-IF</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">        </span><span class="n">m_statePortTable</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span><span class="w"> </span><span class="n">fvTuples</span><span class="p">);</span><span class="w">  </span><span class="c1">// Ethernet sub-IF</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>sub-IF 種別</th>
+<th>書込先 STATE_DB テーブル</th>
+<th>フィールド</th>
+<th>ソース行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PortChannel&lt;n&gt;.&lt;vid&gt;</code> (LAG 系)</td>
+<td><code>STATE_LAG_TABLE</code></td>
+<td><code>state = ok</code></td>
+<td><code>intfmgr.cpp:548</code></td>
+</tr>
+<tr>
+<td><code>Ethernet&lt;n&gt;.&lt;vid&gt;</code> (PHY 系)</td>
+<td><code>STATE_PORT_TABLE</code></td>
+<td><code>state = ok</code></td>
+<td><code>intfmgr.cpp:553</code></td>
+</tr>
+<tr>
+<td>DEL 時 (LAG 系)</td>
+<td><code>STATE_LAG_TABLE</code></td>
+<td>— (del)</td>
+<td><code>intfmgr.cpp:561</code></td>
+</tr>
+<tr>
+<td>DEL 時 (PHY 系)</td>
+<td><code>STATE_PORT_TABLE</code></td>
+<td>— (del)</td>
+<td><code>intfmgr.cpp:566</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-sai-sai_router_interface_type_sub_port-rif">3. SAI — <code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code> RIF 作成<a class="headerlink" href="#3-sai-sai_router_interface_type_sub_port-rif" title="Permanent link">&para;</a></h3>
+<p><code>orchagent</code> の <code>IntfsOrch</code> が APPL_DB <code>INTF_TABLE</code> を消費し、syncd 経由で ASIC_DB へ SAI RIF オブジェクトを書き込む。</p>
+<h4 id="sub-port-rif-sai">sub-port RIF の SAI 属性<a class="headerlink" href="#sub-port-rif-sai" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>SAI 属性</th>
+<th>値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID</code></td>
+<td>VRF OID</td>
+<td>全 RIF タイプ共通・先頭に push (intfsorch.cpp:1183)</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_TYPE</code></td>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code></td>
+<td>sub-port 専用タイプ (intfsorch.cpp:1224)</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_PORT_ID</code></td>
+<td>親ポート OID (<code>m_parent_port_id</code>)</td>
+<td>PHY/LAG 親ポートの OID (intfsorch.cpp:1251-1252)</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID</code></td>
+<td>VLAN ID (uint16)</td>
+<td>encapsulation VLAN ID (intfsorch.cpp:1255-1256)</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE</code></td>
+<td><code>m_admin_state_up</code></td>
+<td>IPv4 admin 状態 (intfsorch.cpp:1259-1261)</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_ADMIN_V6_STATE</code></td>
+<td><code>m_admin_state_up</code></td>
+<td>IPv6 admin 状態 (intfsorch.cpp:1263-1264)</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code></td>
+<td>ポート MAC または gMacAddress</td>
+<td>(intfsorch.cpp:1198-1208)</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_MTU</code></td>
+<td><code>m_mtu</code></td>
+<td>(intfsorch.cpp:1272-1274)</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code></td>
+<td><code>drop</code> / <code>forward</code></td>
+<td><code>loopback_action</code> 設定時のみ (intfsorch.cpp:1187-1195)</td>
+</tr>
+</tbody>
+</table>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// sonic-swss/orchagent/intfsorch.cpp:1250-1265 (SUBPORT case)</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">case</span><span class="w"> </span><span class="no">Port</span><span class="o">::</span><span class="no">SUBPORT</span><span class="p">:</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_PORT_ID</span><span class="p">;</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_parent_port_id</span><span class="p">;</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID</span><span class="p">;</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">u16</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_vlan_info</span><span class="p">.</span><span class="n">vlan_id</span><span class="p">;</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE</span><span class="p">;</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_admin_state_up</span><span class="p">;</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_ADMIN_V6_STATE</span><span class="p">;</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_admin_state_up</span><span class="p">;</span>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+</span></code></pre></div>
+<p><code>sai_router_intfs_api-&gt;create_router_interface()</code> でハードウェアへ反映 (intfsorch.cpp:1296)。</p>
+<h3 id="_23">書込フロー全体<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>VLAN_SUB_INTERFACE SET (CONFIG_DB)
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>  └─ intfmgrd (IntfMgr::doIntfGeneralTask)
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>       ├─ addHostSubIntf()           — kernel: ip link add &lt;alias&gt; link &lt;parent&gt; type vlan id &lt;vid&gt;
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>       ├─ setHostSubIntfMtu()        — kernel: ip link set &lt;alias&gt; mtu &lt;val&gt;
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>       ├─ setHostSubIntfAdminStatus()— kernel: ip link set &lt;alias&gt; up/down
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>       ├─ setSubIntfStateOk()        — STATE_DB: STATE_PORT_TABLE / STATE_LAG_TABLE[&lt;alias&gt;].state=ok
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>       ├─ m_appIntfTableProducer.set(alias, data)
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>       │     — APPL_DB: INTF_TABLE[&lt;alias&gt;] {mtu, admin_status, mac_addr, ...}
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>       └─ m_stateIntfTable.hset(alias, &quot;vrf&quot;, vrf_name)
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>             — STATE_DB: STATE_INTERFACE_TABLE[&lt;alias&gt;].vrf = &lt;vrf_name&gt;
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>VLAN_SUB_INTERFACE|&lt;alias&gt;|&lt;ip-prefix&gt; SET (CONFIG_DB)
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>  └─ intfmgrd (IntfMgr::doIntfAddrTask)
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>       ├─ setIntfIp()                — kernel: ip addr add &lt;prefix&gt; dev &lt;alias&gt;
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>       ├─ m_appIntfTableProducer.set(appKey, fvVector)
+</span><span id="__span-16-16"><a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>       │     — APPL_DB: INTF_TABLE[&lt;alias&gt;:&lt;ip-prefix&gt;] {family, scope}
+</span><span id="__span-16-17"><a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>       └─ m_stateIntfTable.hset(..., &quot;state&quot;, &quot;ok&quot;)
+</span><span id="__span-16-18"><a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>             — STATE_DB: STATE_INTERFACE_TABLE[&lt;alias&gt;|&lt;ip-prefix&gt;].state = ok
+</span><span id="__span-16-19"><a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>
+</span><span id="__span-16-20"><a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>APPL_DB INTF_TABLE[&lt;alias&gt;] 消費
+</span><span id="__span-16-21"><a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>  └─ orchagent (IntfsOrch::addRouterIntfs)
+</span><span id="__span-16-22"><a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>       └─ sai_router_intfs_api-&gt;create_router_interface(SAI_ROUTER_INTERFACE_TYPE_SUB_PORT)
+</span><span id="__span-16-23"><a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a>             — ASIC_DB (syncd 経由)
+</span></code></pre></div>
+<h3 id="_24">証跡サマリ<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>書込先 DB</th>
+<th>テーブル</th>
+<th>操作</th>
+<th>コンポーネント</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td><code>INTF_TABLE[&lt;alias&gt;]</code></td>
+<td>SET</td>
+<td>intfmgrd</td>
+<td><code>intfmgr.cpp:1053</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td><code>INTF_TABLE[&lt;alias&gt;:&lt;prefix&gt;]</code></td>
+<td>SET</td>
+<td>intfmgrd</td>
+<td><code>intfmgr.cpp:1137</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td><code>INTF_TABLE[&lt;alias&gt;]</code></td>
+<td>DEL</td>
+<td>intfmgrd</td>
+<td><code>intfmgr.cpp:1088</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td><code>INTF_TABLE[&lt;sub-alias&gt;]</code></td>
+<td>SET (MTU伝播)</td>
+<td>intfmgrd</td>
+<td><code>intfmgr.cpp:426</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td><code>INTF_TABLE[&lt;sub-alias&gt;]</code></td>
+<td>SET (admin伝播)</td>
+<td>intfmgrd</td>
+<td><code>intfmgr.cpp:484</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>STATE_INTERFACE_TABLE[&lt;alias&gt;]</code></td>
+<td>HSET vrf</td>
+<td>intfmgrd</td>
+<td><code>intfmgr.cpp:1054</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>STATE_INTERFACE_TABLE[&lt;alias&gt;\|&lt;prefix&gt;]</code></td>
+<td>HSET state=ok</td>
+<td>intfmgrd</td>
+<td><code>intfmgr.cpp:1138</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>STATE_PORT_TABLE[&lt;Eth-sub-alias&gt;]</code></td>
+<td>SET state=ok</td>
+<td>intfmgrd</td>
+<td><code>intfmgr.cpp:553</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>STATE_LAG_TABLE[&lt;Po-sub-alias&gt;]</code></td>
+<td>SET state=ok</td>
+<td>intfmgrd</td>
+<td><code>intfmgr.cpp:548</code></td>
+</tr>
+<tr>
+<td>ASIC_DB (SAI)</td>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code></td>
+<td>CREATE</td>
+<td>orchagent/IntfsOrch</td>
+<td><code>intfsorch.cpp:1224, 1296</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /secondary-db-writes -->
+
+<!-- comm-mechanism -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB から SAI までの全通信は Redis の <strong>keyspace notification</strong> と <strong>ProducerStateTable/ConsumerStateTable</strong> パターンで構成される。</p>
+<h4 id="config_db-intfmgrd-subscriberstatetable">CONFIG_DB → intfmgrd (SubscriberStateTable)<a class="headerlink" href="#config_db-intfmgrd-subscriberstatetable" title="Permanent link">&para;</a></h4>
+<p><code>intfmgrd</code> は <code>intfmgrd.cpp:28-35</code> で <code>cfg_intf_tables</code> ベクタに <code>CFG_VLAN_SUB_INTF_TABLE_NAME</code> を含め、<code>Orch(cfgDb, tableNames)</code> コンストラクタが各テーブルに対して <code>SubscriberStateTable</code> を生成する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">// sonic-swss/cfgmgr/intfmgrd.cpp:28-35</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cfg_intf_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">    </span><span class="n">CFG_INTF_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="n">CFG_LAG_INTF_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">    </span><span class="n">CFG_VLAN_INTF_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">    </span><span class="n">CFG_LOOPBACK_INTERFACE_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">    </span><span class="n">CFG_VLAN_SUB_INTF_TABLE_NAME</span><span class="p">,</span><span class="w">      </span><span class="c1">// ← VLAN_SUB_INTERFACE テーブル</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">    </span><span class="n">CFG_VOQ_INBAND_INTERFACE_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="p">};</span>
+</span></code></pre></div>
+<p><code>SubscriberStateTable</code> は Redis の keyspace notification を用いる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>PSUBSCRIBE __keyspace@4__:VLAN_SUB_INTERFACE|*
+</span></code></pre></div>
+<p><code>hset</code> / <code>hdel</code> / <code>del</code> イベント受信 → <code>readData()</code> がバッファに蓄積 → <code>pops()</code> でキーを取り出し <code>TABLE.get(key)</code> で現在値取得 → <code>Consumer::doTask()</code> → <code>IntfMgr::doTask()</code> 呼び出し。</p>
+<p>また、親ポートの状態変化を検知するために STATE_DB の <code>STATE_PORT_TABLE</code> と <code>STATE_LAG_TABLE</code> も別途 <code>SubscriberStateTable</code> で購読する (<code>intfmgr.cpp:45-53</code>)。親の admin_status・MTU 変化を sub-interface に伝播するために必要。</p>
+<h4 id="intfmgrd-appl_db-producerstatetable">intfmgrd → APPL_DB (ProducerStateTable)<a class="headerlink" href="#intfmgrd-appl_db-producerstatetable" title="Permanent link">&para;</a></h4>
+<p><code>doIntfGeneralTask</code> がサブインタフェース属性を確定した後、<code>m_appIntfTableProducer</code>（<code>ProducerStateTable(appDb, APP_INTF_TABLE_NAME)</code>）で <code>APP_INTF_TABLE</code> に書き込む (<code>intfmgr.cpp:1053</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Publish チャンネル</td>
+<td><code>APP_INTF_TABLE_CHANNEL@0</code></td>
+</tr>
+<tr>
+<td>Key SET</td>
+<td><code>APP_INTF_TABLE_KEY_SET</code></td>
+</tr>
+<tr>
+<td>Del SET</td>
+<td><code>APP_INTF_TABLE_DEL_SET</code></td>
+</tr>
+<tr>
+<td>一時 hash</td>
+<td><code>_APP_INTF_TABLE:&lt;alias&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Lua スクリプト (<code>EVALSHA</code>) が <code>SADD KEY_SET</code> + <code>HSET _APP_INTF_TABLE:&lt;alias&gt;</code> + <code>PUBLISH APP_INTF_TABLE_CHANNEL@0 G</code> をアトミックに実行する。IP prefix 行 (<code>doIntfAddrTask</code>) も同じ Producer を使い <code>APP_INTF_TABLE|&lt;alias&gt;|&lt;prefix&gt;</code> キーで書き込む (<code>intfmgr.cpp:1137</code>)。</p>
+<h4 id="appl_db-orchagentintfsorch-consumerstatetable-sai-sub_port">APPL_DB → orchagent/IntfsOrch (ConsumerStateTable → SAI sub_port)<a class="headerlink" href="#appl_db-orchagentintfsorch-consumerstatetable-sai-sub_port" title="Permanent link">&para;</a></h4>
+<p><code>orchdaemon</code> が <code>IntfsOrch</code> を生成し、<code>ConsumerStateTable</code> が <code>APP_INTF_TABLE_CHANNEL@0</code> を購読する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>WATCH APP_INTF_TABLE_KEY_SET
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>SUBSCRIBE APP_INTF_TABLE_CHANNEL@0
+</span></code></pre></div>
+<p>チャンネル通知で <code>Select::select()</code> が wake-up → <code>consumer_state_table_pops.lua</code> (<code>SPOP KEY_SET</code> + <code>HGETALL _APP_INTF_TABLE:&lt;alias&gt;</code>) で一括取得 → <code>IntfsOrch::doTask()</code> → サブインタフェース処理へ進む (<code>intfsorch.cpp:905-914</code>)。</p>
+<p><strong>SAI sub_port RIF 作成経路</strong>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">// sonic-swss/orchagent/intfsorch.cpp:1223-1265</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="k">case</span><span class="w"> </span><span class="no">Port</span><span class="o">::</span><span class="no">SUBPORT</span><span class="p">:</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">s32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</span><span class="p">;</span><span class="w">   </span><span class="c1">// RIF タイプ</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_PORT_ID</span><span class="p">;</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_parent_port_id</span><span class="p">;</span><span class="w">                </span><span class="c1">// 親ポート OID</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID</span><span class="p">;</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">u16</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_vlan_info</span><span class="p">.</span><span class="n">vlan_id</span><span class="p">;</span><span class="w">             </span><span class="c1">// VLAN tag</span>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE</span><span class="p">;</span>
+</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_admin_state_up</span><span class="p">;</span>
+</span><span id="__span-20-16"><a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-20-17"><a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_ROUTER_INTERFACE_ATTR_ADMIN_V6_STATE</span><span class="p">;</span>
+</span><span id="__span-20-18"><a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">booldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_admin_state_up</span><span class="p">;</span>
+</span><span id="__span-20-19"><a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a><span class="w">    </span><span class="n">attrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">attr</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>sai_router_intf_api-&gt;create_router_interface()</code> に <code>attrs</code> を渡して ASIC に sub_port RIF を生成する。<code>SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID</code>（VRF OID）は全 RIF タイプで先頭に push される固定順序 (<code>intfsorch.cpp:1183</code>)。</p>
+<h3 id="state_db">STATE_DB への書き込み<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> はサブインタフェース処理完了時に STATE_DB (<code>STATE_INTERFACE_TABLE</code>) に書き込む。TTL は使用しない。</p>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sub-IF 属性設定完了</td>
+<td><code>m_stateIntfTable.hset(alias, "vrf", vrf_name)</code></td>
+</tr>
+<tr>
+<td>IP アドレス追加完了</td>
+<td><code>m_stateIntfTable.hset("&lt;alias&gt;\|&lt;prefix&gt;", "state", "ok")</code></td>
+</tr>
+<tr>
+<td>IP アドレス削除</td>
+<td><code>m_stateIntfTable.del("&lt;alias&gt;\|&lt;prefix&gt;")</code></td>
+</tr>
+<tr>
+<td>sub-IF 削除</td>
+<td><code>m_stateIntfTable.del(alias)</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>setSubIntfStateOk(alias)</code> / <code>removeSubIntfState(alias)</code> (<code>intfmgr.cpp:542-567</code>) が STATE_DB 操作を担当する。<code>isIntfCreated(alias)</code> は <code>m_stateIntfTable.get(alias, ...)</code> で STATE_DB エントリの有無を確認し、IP アドレス設定の前提条件チェックに用いる。</p>
+<h3 id="select-retry">select() ループと retry<a class="headerlink" href="#select-retry" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> の main ループはタイムアウト 1000 ms で <code>Select::select()</code> を呼ぶ (<code>intfmgrd.cpp:17,59</code>)。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>SELECT_TIMEOUT = 1000 ms
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>if (TIMEOUT) { intfmgr.doTask(); }  // 未処理タスクを全 consumer で再試行
+</span></code></pre></div>
+<p><code>doIntfGeneralTask</code> / <code>doIntfAddrTask</code> が <code>false</code> を返した場合（親 IF / VRF が not ready）、エントリは <code>m_toSync</code> に残留し次のループで再試行される。</p>
+<p><strong>出典</strong>:
+- <code>sonic-swss/cfgmgr/intfmgrd.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgrd.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgrd.cpp</a>
+- <code>sonic-swss/cfgmgr/intfmgr.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp</a>
+- <code>sonic-swss/orchagent/intfsorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp</a></p>
+<!-- /comm-mechanism -->
 
 <!-- glossary-links-injected: 8acafc795b83 -->
 
@@ -35822,6 +37650,12 @@
 </li>
 <li id="fn:2">
 <p>テーブル名定数: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ph1">
+<p><code>sonic-swss/cfgmgr/intfmgr.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:ph1" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:ph1" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ph2">
+<p><code>sonic-swss/orchagent/intfsorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:ph2" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:ph2" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:ph2" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

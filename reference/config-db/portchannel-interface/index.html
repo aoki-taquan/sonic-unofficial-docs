@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -22374,6 +22386,439 @@
     <span class="md-ellipsis">
       
         Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portchannel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORTCHANNEL への暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF への暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 直接変更の禁止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照グラフ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・エラーハンドリング (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・エラーハンドリング (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-intfmgr-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd (IntfMgr) の失敗・retry パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="intfmgrd (IntfMgr) の失敗・retry パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 直接変更の特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 順序制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-intfsorch-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent (IntfsOrch) の失敗・retry パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="orchagent (IntfsOrch) の失敗・retry パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent クラッシュを引き起こす失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-switch_type-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ chassis (switch_type == "voq")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-dpu-switch_type-smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch / DPU (switch_type == "smartswitch")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kernel-netlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        属性適用順序 (kernel netlink)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 後 DEL 順依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notification 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot 影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teammgr-state_lag_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teammgr が STATE_LAG_TABLE に書くまでの経路（補完）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pubsub-keyspace-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PUBSUB / Keyspace 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PUBSUB / Keyspace 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知チャネル一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-intfmgrd-subscriberstatetable-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → intfmgrd: SubscriberStateTable (PSUBSCRIBE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-appl_db-producerstatetable-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd → APPL_DB: ProducerStateTable (PUBLISH)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-intfsorch-consumerstatetable-subscribe-evalsha" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → IntfsOrch: ConsumerStateTable (SUBSCRIBE + EVALSHA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI RIF 生成経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書き戻し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        エンドツーエンド通信シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-appl_db-state_db-intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        属性ロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip-set-appl_db-state_db-intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IP プレフィクスロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-sai-rif-orchagent-intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        属性ロウ SET — SAI RIF 生成 (orchagent / IntfsOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-flex_counter_db-intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / FLEX_COUNTER_DB 書込み (IntfsOrch)
       
     </span>
   </a>
@@ -26405,6 +26850,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -27049,6 +27522,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27197,6 +27726,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27392,7 +27949,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27477,6 +28034,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29689,6 +30274,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35396,6 +36009,439 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portchannel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORTCHANNEL への暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF への暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 直接変更の禁止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照グラフ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・エラーハンドリング (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・エラーハンドリング (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-intfmgr-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd (IntfMgr) の失敗・retry パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="intfmgrd (IntfMgr) の失敗・retry パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 直接変更の特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 順序制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-intfsorch-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent (IntfsOrch) の失敗・retry パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="orchagent (IntfsOrch) の失敗・retry パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent クラッシュを引き起こす失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-switch_type-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ chassis (switch_type == "voq")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-dpu-switch_type-smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch / DPU (switch_type == "smartswitch")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kernel-netlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        属性適用順序 (kernel netlink)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 後 DEL 順依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notification 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot 影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teammgr-state_lag_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teammgr が STATE_LAG_TABLE に書くまでの経路（補完）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pubsub-keyspace-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PUBSUB / Keyspace 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PUBSUB / Keyspace 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知チャネル一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-intfmgrd-subscriberstatetable-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → intfmgrd: SubscriberStateTable (PSUBSCRIBE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-appl_db-producerstatetable-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd → APPL_DB: ProducerStateTable (PUBLISH)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-intfsorch-consumerstatetable-subscribe-evalsha" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → IntfsOrch: ConsumerStateTable (SUBSCRIBE + EVALSHA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI RIF 生成経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書き戻し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        エンドツーエンド通信シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-appl_db-state_db-intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        属性ロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip-set-appl_db-state_db-intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IP プレフィクスロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-sai-rif-orchagent-intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        属性ロウ SET — SAI RIF 生成 (orchagent / IntfsOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-flex_counter_db-intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / FLEX_COUNTER_DB 書込み (IntfsOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35916,6 +36962,818 @@
 <p><strong>スキャン証跡</strong>: <code>minigraph.py:2546-2561</code> + <code>intfmgr.cpp</code> を確認、5 件分岐抽出 — 誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- implicit-ref -->
+<h2 id="phase-c">暗黙参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
+
+<p><code>IntfMgr</code> は <code>PORTCHANNEL_INTERFACE</code> エントリを処理する前に、以下の暗黙的な依存テーブルが STATE_DB に存在することを確認する。存在しない場合はタスクをスキップ（<code>return false</code>）し、後で再試行する。</p>
+<h3 id="portchannel">PORTCHANNEL への暗黙参照<a class="headerlink" href="#portchannel" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>確認テーブル</th>
+<th>確認関数</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORTCHANNEL.name</code> (key の LAG 名)</td>
+<td><code>STATE_DB::LAG_TABLE</code></td>
+<td><code>IntfMgr::isIntfStateOk()</code></td>
+<td><code>intfmgr.cpp:661-668</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>isIntfStateOk(alias)</code> はエイリアスが <code>"PortChannel"</code> プレフィクスで始まる場合、<code>m_stateLagTable.get(alias, temp)</code> で STATE_DB の LAG エントリ存在を確認する。LAG が teamd によって作成され STATE_DB に登録されるまで、<code>PORTCHANNEL_INTERFACE</code> の SET 処理は保留される（<code>intfmgr.cpp:833-836</code>）。</p>
+<p><strong>影響</strong>: <code>PORTCHANNEL</code> テーブルにエントリがあっても LAG が STATE_DB に登録される前に <code>PORTCHANNEL_INTERFACE</code> を書いても、intfmgrd は silent retry するため IP アドレス付与が遅延する。</p>
+<h3 id="vrf">VRF への暗黙参照<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>確認テーブル</th>
+<th>確認関数</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF.name</code> (<code>vrf_name</code> フィールド値)</td>
+<td><code>STATE_DB::VRF_TABLE</code></td>
+<td><code>IntfMgr::isIntfStateOk()</code></td>
+<td><code>intfmgr.cpp:677-684, 839-842</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>vrf_name</code> が空でない場合、<code>isIntfStateOk(vrf_name)</code> を呼び出して <code>m_stateVrfTable.get(vrf_name, temp)</code> で VRF の STATE_DB 登録を確認する。VRF が未作成・未登録の場合は <code>"VRF is not ready, skipping %s"</code> をログ出力してスキップ（<code>intfmgr.cpp:839-842</code>）。</p>
+<p><strong>影響</strong>: <code>VRF</code> テーブルへの書き込みと <code>PORTCHANNEL_INTERFACE</code> への <code>vrf_name</code> 設定は順序依存。vrfmgrd が VRF を STATE_DB に反映するまで intfmgrd は VRF binding を保留する。</p>
+<h3 id="vrf_1">VRF 直接変更の禁止<a class="headerlink" href="#vrf_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>動作</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>既存 VRF binding を別 VRF へ直接変更</td>
+<td><code>SWSS_LOG_ERROR</code> + skip (return true)</td>
+<td><code>intfmgr.cpp:846-849</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>isIntfChangeVrf(alias, vrf_name)</code> が true の場合（現在の VRF と異なる VRF への変更）、<code>"%s can not change to %s directly, skipping"</code> エラーを出力して処理を中断する。VRF 変更は一度 <code>vrf_name</code> を削除してから再設定する必要がある。</p>
+<h3 id="_16">参照グラフ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>PORTCHANNEL_INTERFACE (intfmgr SET処理)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ├─ 暗黙参照 → STATE_DB::LAG_TABLE[&lt;name&gt;]       (intfmgr.cpp:661-668, 833)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  │              ↑ teamd / lagmgrd が書き込む
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  └─ 暗黙参照 → STATE_DB::VRF_TABLE[&lt;vrf_name&gt;]   (intfmgr.cpp:677-684, 839)
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>                 ↑ vrfmgrd が書き込む
+</span></code></pre></div>
+<!-- /implicit-ref -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動・エラーハンドリング (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>
+調査日: 2026-05-16
+詳細調査ノート: <code>meta/_intermediate/cdb-flow/portchannel-interface-failure.md</code></p>
+</blockquote>
+<h3 id="intfmgrd-intfmgr-retry">intfmgrd (IntfMgr) の失敗・retry パターン<a class="headerlink" href="#intfmgrd-intfmgr-retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗シナリオ</th>
+<th>コード根拠</th>
+<th>戻り値 / 動作</th>
+<th>ログ</th>
+<th>リカバリ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_LAG_TABLE</code> 未登録 (LAG 未起動)</td>
+<td><code>intfmgr.cpp:833-836</code></td>
+<td><code>false</code> → retry</td>
+<td><code>SWSS_LOG_DEBUG "Interface is not ready"</code></td>
+<td>lagmgrd が STATE_LAG_TABLE を書き込み後に自動再試行</td>
+</tr>
+<tr>
+<td><code>STATE_VRF_TABLE</code> 未登録 (<code>vrf_name</code> 未生成)</td>
+<td><code>intfmgr.cpp:839-842</code></td>
+<td><code>false</code> → retry</td>
+<td><code>SWSS_LOG_DEBUG "VRF is not ready"</code></td>
+<td>vrfmgrd が STATE_VRF_TABLE を書き込み後に自動再試行</td>
+</tr>
+<tr>
+<td>VRF 直接変更 (既存 binding → 別 VRF)</td>
+<td><code>intfmgr.cpp:846-849</code></td>
+<td><code>true</code> → エントリ破棄</td>
+<td><code>SWSS_LOG_ERROR "can not change to %s directly"</code></td>
+<td>手動: DEL → SET の順序で再設定</td>
+</tr>
+<tr>
+<td>MPLS <code>sysctl</code> 設定失敗</td>
+<td><code>intfmgr.cpp:901-904</code></td>
+<td><code>false</code> → retry</td>
+<td><code>SWSS_LOG_ERROR "Failed to set MPLS"</code></td>
+<td>mpls カーネルモジュールのロード後に自動再試行</td>
+</tr>
+<tr>
+<td>IP prefix: 属性ロウ未登録 (<code>isIntfCreated</code> false)</td>
+<td><code>intfmgr.cpp:1115</code></td>
+<td><code>false</code> → retry</td>
+<td><code>SWSS_LOG_DEBUG "Interface is not ready"</code></td>
+<td>属性ロウ処理完了後に自動再試行</td>
+</tr>
+<tr>
+<td>DEL 時 IP アドレス残存</td>
+<td><code>intfmgr.cpp:1060-1063</code></td>
+<td><code>false</code> → retry</td>
+<td>なし (silent)</td>
+<td>IP prefix ロウをすべて DEL 後に自動再試行</td>
+</tr>
+</tbody>
+</table>
+<h4 id="vrf_2">VRF 直接変更の特殊挙動<a class="headerlink" href="#vrf_2" title="Permanent link">&para;</a></h4>
+<p><code>isIntfChangeVrf(alias, vrf_name)</code> が true（現在の VRF binding と異なる VRF への直接 SET）の場合、intfmgrd はエントリを破棄 (<code>return true</code> → <code>m_toSync.erase</code>) する。リトライは発生せず、<strong>自動リカバリなし</strong>。VRF を変更する場合は次の手順が必要:</p>
+<ol>
+<li><code>PORTCHANNEL_INTERFACE|&lt;name&gt;</code> の <code>vrf_name</code> を空にして DEL or 空 SET</li>
+<li><code>PORTCHANNEL_INTERFACE|&lt;name&gt;</code> に新しい <code>vrf_name</code> を SET</li>
+</ol>
+<h4 id="del">DEL 順序制約<a class="headerlink" href="#del" title="Permanent link">&para;</a></h4>
+<p>属性ロウ (<code>PORTCHANNEL_INTERFACE|&lt;name&gt;</code>) の DEL は、すべての IP プレフィクスロウ (<code>PORTCHANNEL_INTERFACE|&lt;name&gt;|&lt;ip_prefix&gt;</code>) が先に削除されていないと <code>getIntfIpCount(alias) &gt; 0</code> によりブロックされる (<code>intfmgr.cpp:1060-1063</code>)。IP アドレスが残存している間は silent retry が継続される。</p>
+<h3 id="orchagent-intfsorch-retry">orchagent (IntfsOrch) の失敗・retry パターン<a class="headerlink" href="#orchagent-intfsorch-retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗シナリオ</th>
+<th>コード根拠</th>
+<th>動作</th>
+<th>ログ</th>
+<th>リカバリ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LAG オブジェクト未生成 (<code>gPortsOrch-&gt;getPort</code> 失敗)</td>
+<td><code>intfsorch.cpp:905-924</code></td>
+<td><code>it++</code> → retry</td>
+<td>なし (silent)</td>
+<td>PortsOrch が LAG オブジェクト生成後に自動再試行</td>
+</tr>
+<tr>
+<td>SAI RIF 作成失敗 (<code>create_router_interface</code> 失敗)</td>
+<td><code>intfsorch.cpp:1297-1304</code></td>
+<td><code>runtime_error</code> をスロー → orchagent クラッシュ</td>
+<td><code>SWSS_LOG_ERROR "Failed to create router interface"</code></td>
+<td>supervisord による orchagent 再起動</td>
+</tr>
+<tr>
+<td>SAI RIF 削除失敗 (<code>remove_router_interface</code> 失敗)</td>
+<td><code>intfsorch.cpp:1352-1355</code></td>
+<td><code>runtime_error</code> をスロー → orchagent クラッシュ</td>
+<td><code>SWSS_LOG_ERROR "Failed to remove router interface"</code></td>
+<td>supervisord による orchagent 再起動</td>
+</tr>
+<tr>
+<td><code>mac_addr</code> SAI SET 失敗</td>
+<td><code>intfsorch.cpp:1017-1025</code></td>
+<td><code>task_need_retry</code> → retry、それ以外は継続</td>
+<td><code>SWSS_LOG_ERROR "Failed to set router interface mac"</code></td>
+<td>SAI 状態回復後に自動再試行</td>
+</tr>
+<tr>
+<td><code>loopback_action</code> SAI SET 失敗</td>
+<td><code>intfsorch.cpp:444-454</code></td>
+<td><code>parseHandleSaiStatusFailure()</code> の結果による</td>
+<td><code>SWSS_LOG_ERROR "Loopback action set failed"</code></td>
+<td>SAI 状態に依存</td>
+</tr>
+<tr>
+<td>IP2me ルート作成失敗 (<code>create_route_entry</code> 失敗)</td>
+<td><code>intfsorch.cpp:1400-1403</code></td>
+<td><code>runtime_error</code> をスロー → orchagent クラッシュ</td>
+<td><code>SWSS_LOG_ERROR "Failed to create IP2me route"</code></td>
+<td>supervisord による orchagent 再起動</td>
+</tr>
+</tbody>
+</table>
+<h4 id="orchagent">orchagent クラッシュを引き起こす失敗<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h4>
+<p>SAI 操作の失敗のうち、<code>create_router_interface</code>・<code>remove_router_interface</code>・<code>create_route_entry</code> (IP2me) の失敗は <code>runtime_error</code> をスローして orchagent をクラッシュさせる。これらはハードウェア不整合・SAI 実装バグ・リソース枯渇が主因であり、supervisord が orchagent を再起動する。再起動後も同一 SAI エラーが継続する場合はハードウェア/SAI 実装の調査が必要。</p>
+<!-- /failure -->
+
+<!-- platform-diff -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査対象</strong>: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>
+<strong>調査日</strong>: 2026-05-16</p>
+</blockquote>
+<h3 id="voq-chassis-switch_type-voq">VOQ chassis (<code>switch_type == "voq"</code>)<a class="headerlink" href="#voq-chassis-switch_type-voq" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>差異点</th>
+<th>通常動作</th>
+<th>VOQ chassis 動作</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IPv6 アドレス付与コマンド</td>
+<td><code>ip -6 address add &lt;prefix&gt; dev &lt;lag&gt;</code></td>
+<td><code>metric 256</code> を自動付加</td>
+<td><code>intfmgr.cpp:103-106</code></td>
+</tr>
+<tr>
+<td>LAG RIF 作成後の CHASSIS_APP_DB 同期</td>
+<td>なし</td>
+<td><code>isChassisDbInUse()</code> が true のとき <code>voqSyncAddIntf(alias)</code> を呼び出し、<code>CHASSIS_APP_DB.SYSTEM_INTERFACE_TABLE</code> に <code>oper_status</code> を書く</td>
+<td><code>intfsorch.cpp:1314-1317</code></td>
+</tr>
+<tr>
+<td>LAG RIF 削除後の CHASSIS_APP_DB 同期</td>
+<td>なし</td>
+<td><code>voqSyncDelIntf(alias)</code> で同テーブルから削除</td>
+<td><code>intfsorch.cpp:1367-1370</code></td>
+</tr>
+<tr>
+<td>リモート System LAG のスキップ</td>
+<td>—</td>
+<td><code>port.m_system_lag_info.switch_id != gVoqMySwitchId</code> のとき <code>voqSyncAddIntf</code> / <code>voqSyncDelIntf</code> は何もしない（リモートリーフ由来 LAG は sync 対象外）</td>
+<td><code>intfsorch.cpp:1681-1683, 1726-1728</code></td>
+</tr>
+<tr>
+<td>VOQ inband interface 特殊処理</td>
+<td>通常 <code>doIntfGeneralTask()</code> を経由</td>
+<td><code>CFG_VOQ_INBAND_INTERFACE_TABLE_NAME</code> の SET は <code>doIntfGeneralTask</code> をスキップし、即座に <code>APP_INTF_TABLE</code> に relay して <code>STATE_INTERFACE_TABLE</code> に <code>vrf=""</code> をセット</td>
+<td><code>intfmgr.cpp:1195-1203</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>IPv6 metric 256 の理由</strong>: VOQ chassis では eBGP / iBGP 経由で学習した経路と connected route の metric を揃えることで、ECMP グループが正しく構成される。IPv4 は connected route のデフォルト metric が 0 なので不要。</p>
+<p><strong>PORTCHANNEL_INTERFACE への実質影響</strong>: <code>PORTCHANNEL_INTERFACE</code> に IPv6 プレフィクスを設定したとき、intfmgrd が発行する <code>ip -6 address add</code> コマンドに <code>metric 256</code> が自動付加される。ユーザ側で metric を意識する必要はないが、Linux カーネルの <code>ip addr show</code> でメトリックが <code>256</code> と表示される。</p>
+<h3 id="smartswitch-dpu-switch_type-smartswitch">SmartSwitch / DPU (<code>switch_type == "smartswitch"</code>)<a class="headerlink" href="#smartswitch-dpu-switch_type-smartswitch" title="Permanent link">&para;</a></h3>
+<p><code>intfmgr.cpp</code> および <code>intfsorch.cpp</code> に SmartSwitch / DPU に関する <code>PORTCHANNEL_INTERFACE</code> 固有の分岐コードは存在しない（2026-05-16 時点の master 調査結果）。SmartSwitch における Portchannel L3 IF の扱いは通常の <code>IntfMgr</code> フローと同一であり、midplane / DPU 側への追加同期処理はなし。</p>
+<!-- /platform-diff -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>以下の定数は <code>sonic-swss/cfgmgr/intfmgr.cpp</code> および <code>orchagent/intfsorch.cpp</code> から検出したマジックナンバー・閾値。PORTCHANNEL_INTERFACE に直接影響する定数を優先して記載する。</p>
+<table>
+<thead>
+<tr>
+<th>定数 / マクロ名</th>
+<th>値</th>
+<th>定義ファイル</th>
+<th>意味・影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_MTU_STR</code></td>
+<td><code>9100</code></td>
+<td><code>intfmgr.cpp:29</code></td>
+<td>サブインタフェース (<code>PortChannel0001.10</code> 形式) の親 MTU 取得失敗時のフォールバック MTU (bytes)。PORTCHANNEL_INTERFACE 属性ロウ自体の MTU は <code>PORTCHANNEL</code> テーブルで管理し、本値は直接適用されない (<code>intfmgr.cpp:400-402</code>, <code>intfmgr.cpp:419-420</code>)</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_DEFAULT_MTU_STR</code></td>
+<td><code>65536</code></td>
+<td><code>intfmgr.cpp:28</code></td>
+<td>ループバック IF 作成時のみ <code>ip link add &lt;alias&gt; mtu 65536 type dummy</code> で固定使用。PORTCHANNEL_INTERFACE には適用されない (<code>intfmgr.cpp:201</code>)</td>
+</tr>
+<tr>
+<td><code>MTU_INHERITANCE</code></td>
+<td><code>"0"</code></td>
+<td><code>intfmgr.cpp:24</code></td>
+<td>サブインタフェースが親ポートの MTU を継承することを示す内部マーカー。APP_DB に <code>mtu=0</code> として書き込まれる。PORTCHANNEL 親 IF の MTU 継承にも使用 (<code>intfmgr.cpp:975-977</code>)</td>
+</tr>
+<tr>
+<td>SAI RIF タイプ (LAG)</td>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_PORT</code></td>
+<td><code>intfsorch.cpp:1216</code></td>
+<td><code>Port::LAG</code> 型は <code>Port::PHY</code> / <code>Port::SYSTEM</code> と同じ <code>SAI_ROUTER_INTERFACE_TYPE_PORT</code> として SAI RIF 作成される。PORTCHANNEL_INTERFACE が L3 RIF になる際の SAI 属性</td>
+</tr>
+<tr>
+<td>SAI RIF MTU 設定</td>
+<td><code>port.m_mtu</code> (動的)</td>
+<td><code>intfsorch.cpp:1272-1274</code></td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_MTU</code> に <code>port.m_mtu</code> を設定。値は <code>PORTCHANNEL</code> テーブルの <code>mtu</code> フィールドから取得される</td>
+</tr>
+<tr>
+<td><code>nat_zone</code> 有効範囲</td>
+<td><code>0..3</code> (uint8)</td>
+<td><code>sonic-portchannel.yang</code></td>
+<td>YANG <code>range</code> 制約。4 ゾーンのみ許容。デフォルト <code>0</code></td>
+</tr>
+<tr>
+<td>STATE_LAG Consumer 優先度</td>
+<td><code>200</code></td>
+<td><code>intfmgr.cpp:51</code></td>
+<td><code>SubscriberStateTable</code> の pri 引数。STATE_LAG_TABLE 変化通知のキュー優先度</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">SAI RIF タイプと MTU の補足</p>
+<p>PORTCHANNEL_INTERFACE が L3 有効化されると、orchagent (<code>IntfsOrch</code>) は <code>SAI_ROUTER_INTERFACE_TYPE_PORT</code> で SAI RIF を作成する (<code>intfsorch.cpp:1214-1217</code>)。MTU は <code>PORTCHANNEL</code> テーブルの値がそのまま <code>SAI_ROUTER_INTERFACE_ATTR_MTU</code> に渡され (<code>intfsorch.cpp:1272-1274</code>)、<code>intfmgr.cpp</code> の <code>DEFAULT_MTU_STR=9100</code> は PORTCHANNEL_INTERFACE 自体には適用されない。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">デフォルト MTU の注意点</p>
+<p><code>DEFAULT_MTU_STR = 9100</code> は PORTCHANNEL のサブインタフェース (<code>PortChannel0001.10</code> 等) の MTU フォールバック専用。PORTCHANNEL_INTERFACE (L3 RIF) の MTU を変更したい場合は <code>PORTCHANNEL</code> テーブルの <code>mtu</code> フィールドを設定すること。</p>
+</div>
+<!-- /constants -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>
+調査日: 2026-05-16</p>
+</blockquote>
+<h3 id="_17">他テーブル先行必須<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><code>PORTCHANNEL_INTERFACE</code> は <code>intfmgrd</code> が <code>doIntfGeneralTask()</code> 内で処理する。<code>isIntfStateOk()</code> はエイリアスの先頭を <code>PortChannel</code> と照合し <code>STATE_LAG_TABLE</code> のエントリ存在を確認する（<code>intfmgr.cpp:661-667</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>先行テーブル / 条件</th>
+<th>確認先 STATE_DB</th>
+<th>依存の内容</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORTCHANNEL</code> + lagmgrd が <code>STATE_LAG_TABLE</code> に書く</td>
+<td><code>STATE_LAG_TABLE</code></td>
+<td><code>isIntfStateOk(alias)</code> が false → SET をスキップ・retry</td>
+<td><code>intfmgr.cpp:661-667</code></td>
+</tr>
+<tr>
+<td><code>VRF</code> + vrfmgrd が <code>STATE_VRF_TABLE</code> に書く</td>
+<td><code>STATE_VRF_TABLE</code></td>
+<td><code>vrf_name</code> 指定時。未 ready → retry</td>
+<td><code>intfmgr.cpp:839-842</code></td>
+</tr>
+<tr>
+<td>orchagent 側: <code>gPortsOrch-&gt;getPort()</code> で LAG オブジェクト存在確認</td>
+<td>—</td>
+<td>false → <code>m_toSync</code> 残留・retry（APP_DB 側でも二段階依存）</td>
+<td><code>intfsorch.cpp:905-924</code></td>
+</tr>
+<tr>
+<td>orchagent 側: <code>m_vrfOrch-&gt;isVRFexists(vrf_name)</code></td>
+<td>—</td>
+<td>false → retry（orchagent 内 VRF 未生成）</td>
+<td><code>intfsorch.cpp:826-830</code></td>
+</tr>
+<tr>
+<td><code>PORTCHANNEL_INTERFACE|&lt;name&gt;</code> 属性ロウが STATE_INTERFACE_TABLE に存在</td>
+<td><code>STATE_INTERFACE_TABLE</code></td>
+<td><code>isIntfCreated()</code> が false → IP プレフィクスロウをスキップ</td>
+<td><code>intfmgr.cpp:1115</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="kernel-netlink">属性適用順序 (kernel netlink)<a class="headerlink" href="#kernel-netlink" title="Permanent link">&para;</a></h3>
+<p><code>doIntfGeneralTask()</code> SET パス（<code>intfmgr.cpp</code> L831–1054）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>1. isIntfStateOk(&quot;PortChannel*&quot;) ガード          (STATE_LAG_TABLE 確認)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>2. isIntfStateOk(vrf_name) ガード                (vrf_name 指定時のみ)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>3. isIntfChangeVrf() 確認                        (直接 VRF 変更をブロック)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>4. ip link set &lt;alias&gt; master &lt;vrf&gt;             (vrf_name 指定時)
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>   または ip link set &lt;alias&gt; nomaster          (VRF 除去時)
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>5. ip link set &lt;alias&gt; address &lt;mac&gt;            (mac_addr 指定時)
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>6. sysctl net.mpls.conf.&lt;alias&gt;.input=1/0       (mpls=enable/disable 時)
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>7. m_appIntfTableProducer.set(alias, data)      (APP_DB INTF_TABLE SET)
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>8. m_stateIntfTable.hset(alias, &quot;vrf&quot;, …)       (STATE_DB 書込み)
+</span></code></pre></div>
+<h3 id="set-del">SET 後 DEL 順依存<a class="headerlink" href="#set-del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>必須順序</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>属性ロウ (<code>PORTCHANNEL_INTERFACE|&lt;name&gt;</code>) の DEL</td>
+<td>すべての IP プレフィクスロウを先に DEL してから</td>
+<td><code>intfmgr.cpp:1058-1063</code></td>
+</tr>
+<tr>
+<td>VRF 変更</td>
+<td><code>vrf_name=""</code> で unbind → 新 VRF で rebind の 2 ステップ</td>
+<td><code>intfmgr.cpp:846-849</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="notification">Notification 順序<a class="headerlink" href="#notification" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> は起動時に <code>SubscriberStateTable(stateDb, STATE_LAG_TABLE_NAME)</code> を購読する（pri=200）。lagmgrd が PORTCHANNEL の <code>state=ok</code> を STATE_DB に書いた瞬間、<code>doPortTableTask</code> がトリガされ、ペンディング中の <code>PORTCHANNEL_INTERFACE</code> エントリが再処理される。</p>
+<h3 id="warm-reboot">warm-reboot 影響<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
+<p><code>buildIntfReplayList()</code> で CONFIG_DB の <code>PORTCHANNEL_INTERFACE</code> キーが <code>m_pendingReplayIntfList</code> に収集され（<code>intfmgr.cpp:276</code>）、warm-start 時に replay される。replay 完了後 <code>RECONCILED</code> に遷移。</p>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/portchannel-interface-ordering.md</code> 参照。</p>
+<h3 id="teammgr-state_lag_table">teammgr が STATE_LAG_TABLE に書くまでの経路（補完）<a class="headerlink" href="#teammgr-state_lag_table" title="Permanent link">&para;</a></h3>
+<p>上記テーブルの "lagmgrd" は実装上は <code>TeamMgr</code> (<code>sonic-swss/cfgmgr/teammgr.cpp</code>) が担う。具体的な経路:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>PORTCHANNEL (CONFIG_DB)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  → TeamMgr::doLagTask()                       [teammgr.cpp:234]
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    → TeamMgr::addLag()                        [teammgr.cpp:564]
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>      → teamd プロセス起動成功 (task_success)  [teammgr.cpp:647-649]
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        → m_stateLagTable.set(alias, ...)      [intfmgr.cpp:548 / teammgr 側は STATE_DB 直書き]
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>          → IntfMgr::isIntfStateOk() が true
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>            → PORTCHANNEL_INTERFACE 処理続行
+</span></code></pre></div>
+<p><code>TeamMgr::addLag()</code> が teamd 起動に失敗すると <code>task_need_retry</code> を返し (teammgr.cpp:644)、LAG を <code>removeLag()</code> でクリーンアップしてリトライする (teammgr.cpp:304-308)。この間 <code>STATE_LAG_TABLE</code> は未書込みのままなので、<code>IntfMgr</code> 側も IP プレフィクス処理をスキップし続ける。</p>
+<table>
+<thead>
+<tr>
+<th>teammgr.cpp 行</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>301-311</td>
+<td><code>m_lagList</code> にない alias は <code>addLag()</code> を呼んで teamd 起動</td>
+</tr>
+<tr>
+<td>564-649</td>
+<td><code>addLag()</code>: teamd コマンド組立・実行、失敗時 <code>task_need_retry</code></td>
+</tr>
+<tr>
+<td>640-644</td>
+<td><code>exec()</code> 失敗 → <code>task_need_retry</code> 返却</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<!-- pubsub -->
+<h2 id="pubsub-keyspace-phase-g">PUBSUB / Keyspace 通知メカニズム (Phase G)<a class="headerlink" href="#pubsub-keyspace-phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/interface-pubsub.md</code>
+ソース: <code>sonic-swss/cfgmgr/intfmgrd.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>, <code>sonic-swss/orchagent/orchdaemon.cpp</code>, <code>sonic-swss-common/common/subscriberstatetable.cpp</code>, <code>sonic-swss-common/common/producerstatetable.cpp</code>, <code>sonic-swss-common/common/consumerstatetable.cpp</code></p>
+</blockquote>
+<h3 id="_18">通知チャネル一覧<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>Redis チャネル / パターン</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB (db=4)</td>
+<td><code>__keyspace@4__:PORTCHANNEL_INTERFACE\|*</code></td>
+<td><code>intfmgrd</code> が <code>PSUBSCRIBE</code> — SET/DEL 検知</td>
+</tr>
+<tr>
+<td>APPL_DB (db=0)</td>
+<td><code>INTF_TABLE_CHANNEL@0</code></td>
+<td><code>IntfsOrch</code> の <code>ConsumerStateTable</code> が <code>SUBSCRIBE</code> — INTF_TABLE SET/DEL 受信</td>
+</tr>
+<tr>
+<td>STATE_DB (db=6)</td>
+<td><code>__keyspace@6__:LAG_TABLE\|*</code></td>
+<td><code>intfmgrd</code> が <code>SubscriberStateTable</code> で LAG 状態 (<code>state=ok</code>) を監視</td>
+</tr>
+<tr>
+<td>STATE_DB (db=6)</td>
+<td><code>__keyspace@6__:PORT_TABLE\|*</code></td>
+<td><code>intfmgrd</code> が <code>doPortUpdateTask()</code> でポート再作成イベントを検知</td>
+</tr>
+</tbody>
+</table>
+<h3 id="config_db-intfmgrd-subscriberstatetable-psubscribe">CONFIG_DB → intfmgrd: SubscriberStateTable (PSUBSCRIBE)<a class="headerlink" href="#config_db-intfmgrd-subscriberstatetable-psubscribe" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd.cpp:29-35</code> で <code>CFG_LAG_INTF_TABLE_NAME</code>（= <code>"PORTCHANNEL_INTERFACE"</code>）を含む複数テーブルを <code>SubscriberStateTable</code> で一括登録する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// intfmgrd.cpp:25-44</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cfg_intf_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">CFG_INTF_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">CFG_LAG_INTF_TABLE_NAME</span><span class="p">,</span><span class="w">        </span><span class="c1">// &quot;PORTCHANNEL_INTERFACE&quot;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="n">CFG_VLAN_INTF_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="n">CFG_LOOPBACK_INTERFACE_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="n">CFG_VLAN_SUB_INTF_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">};</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="n">IntfMgr</span><span class="w"> </span><span class="nf">intfmgr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfgDb</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">appDb</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stateDb</span><span class="p">,</span><span class="w"> </span><span class="n">cfg_intf_tables</span><span class="p">);</span>
+</span></code></pre></div>
+<p>各テーブルについて <code>SubscriberStateTable</code> が以下を実行する（<code>subscriberstatetable.cpp:20-22</code>）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>m_keyspace = &quot;__keyspace@4__:PORTCHANNEL_INTERFACE|*&quot;
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>PSUBSCRIBE(m_keyspace)   // Redis keyspace notification 購読
+</span></code></pre></div>
+<ul>
+<li>CONFIG_DB の <code>PORTCHANNEL_INTERFACE|&lt;name&gt;</code> または <code>PORTCHANNEL_INTERFACE|&lt;name&gt;|&lt;prefix&gt;</code> キーへの HSET / DEL が発生すると、Redis が当該 keyspace チャネルに <code>set</code> / <code>del</code> を PUBLISH する</li>
+<li><code>readData()</code> (<code>subscriberstatetable.cpp:45-83</code>) が <code>redisGetReply()</code> で非ブロッキング受信し <code>m_keyspace_event_buffer</code> に蓄積</li>
+<li><code>pops()</code> (<code>subscriberstatetable.cpp:95-165</code>) がバッファを消費し <code>KeyOpFieldsValuesTuple</code> に変換:</li>
+<li><code>del</code> イベント → DEL コマンド（テーブル実データ読取りなし）</li>
+<li>その他 → <code>m_table.get()</code> で実データを取得して SET コマンドに変換</li>
+<li>起動時に既存キーを全件バッファに積み込み、初期同期を行う</li>
+</ul>
+<h3 id="intfmgrd-appl_db-producerstatetable-publish">intfmgrd → APPL_DB: ProducerStateTable (PUBLISH)<a class="headerlink" href="#intfmgrd-appl_db-producerstatetable-publish" title="Permanent link">&para;</a></h3>
+<p><code>intfmgr.cpp:42</code> で <code>m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)</code> が初期化される。<code>APP_INTF_TABLE_NAME = "INTF_TABLE"</code> (<code>schema.h:45</code>)。</p>
+<p><code>ProducerStateTable::set()</code> は Redis Lua スクリプト (EVALSHA) を実行し、以下を <strong>1 トランザクション</strong> で行う（<code>producerstatetable.cpp:106-113</code>）:</p>
+<ol>
+<li>Key を key-set (<code>INTF_TABLE_KEY_SET</code>) に <code>SADD</code></li>
+<li>フィールドを Hash に <code>HSET</code> (<code>_INTF_TABLE:&lt;alias&gt;</code> の一時 hash)</li>
+<li><code>redis.call('PUBLISH', KEYS[1], ARGV[1])</code> でチャネル <code>INTF_TABLE_CHANNEL@0</code> に通知を PUBLISH</li>
+</ol>
+<p>PORTCHANNEL_INTERFACE エントリ処理での書き込みタイミング:</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>AppDB 書き込み箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>属性ロウ SET (VRF/MAC/MPLS/NAT 等)</td>
+<td><code>m_appIntfTableProducer.set(alias, data)</code> — <code>intfmgr.cpp:1053</code></td>
+</tr>
+<tr>
+<td>属性ロウ DEL</td>
+<td><code>m_appIntfTableProducer.del(alias)</code> — <code>intfmgr.cpp:1088</code></td>
+</tr>
+<tr>
+<td>IP プレフィクスロウ SET</td>
+<td><code>m_appIntfTableProducer.set(appKey, fvVector)</code> — <code>intfmgr.cpp:1137</code></td>
+</tr>
+<tr>
+<td>IP プレフィクスロウ DEL</td>
+<td><code>m_appIntfTableProducer.del(appKey)</code> — <code>intfmgr.cpp:1161</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="appl_db-intfsorch-consumerstatetable-subscribe-evalsha">APPL_DB → IntfsOrch: ConsumerStateTable (SUBSCRIBE + EVALSHA)<a class="headerlink" href="#appl_db-intfsorch-consumerstatetable-subscribe-evalsha" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:296</code> で <code>IntfsOrch</code> が <code>APP_INTF_TABLE_NAME</code> (<code>"INTF_TABLE"</code>) を購読対象として初期化される:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">gIntfsOrch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IntfsOrch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">APP_INTF_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_orch</span><span class="p">,</span><span class="w"> </span><span class="n">m_chassisAppDb</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>Orch</code> 基底クラスが <code>ConsumerStateTable</code> を生成し <code>INTF_TABLE_CHANNEL@0</code> を <code>SUBSCRIBE</code> で購読する（<code>consumerstatetable.cpp:27</code>）。PUBLISH を受信すると <code>pops()</code> が key-set から key を取り出し <code>IntfsOrch::doTask(Consumer&amp;)</code> を起動する（<code>intfsorch.cpp:661</code>）。</p>
+<p><code>IntfsOrch::doTask()</code> がエントリを <code>setIntf()</code> / <code>removeIntf()</code> に振り分け、LAG 向けには <code>gPortsOrch-&gt;getPort(alias, port)</code> でポートオブジェクトを取得し <code>sai_router_intfs_api-&gt;create_router_interface()</code> を呼ぶ（<code>intfsorch.cpp:1296</code>）。</p>
+<h3 id="sai-rif">SAI RIF 生成経路<a class="headerlink" href="#sai-rif" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>APPL_DB INTF_TABLE|PortChannelN  HSET
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  │  ConsumerStateTable SUBSCRIBE pops()
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  ▼
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>IntfsOrch::doTask()
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>  │  gPortsOrch-&gt;getPort(&quot;PortChannelN&quot;, port) — LAG オブジェクト存在確認
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  ▼
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>IntfsOrch::setIntf() → addRouterIntfs()
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>  │  port.m_type == Port::LAG → SAI_ROUTER_INTERFACE_ATTR_PORT_ID に LAG SAI OID
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>  ▼
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>sai_router_intfs_api-&gt;create_router_interface()   // intfsorch.cpp:1296
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>  │  SAI RIF オブジェクト生成 (sai_object_id_t → port.m_rif_id)
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>  ▼
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>IP プレフィクスがある場合: sai_route_api-&gt;create_route_entry()
+</span></code></pre></div>
+<h3 id="state_db">STATE_DB 書き戻し<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>書込み内容</th>
+<th>コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>属性ロウ SET 完了</td>
+<td><code>m_stateIntfTable.hset(alias, "vrf", vrf_name)</code></td>
+<td><code>intfmgr.cpp:1054</code></td>
+</tr>
+<tr>
+<td>IP プレフィクス SET 完了</td>
+<td><code>m_stateIntfTable.hset(alias+"|"+prefix, "state", "ok")</code></td>
+<td><code>intfmgr.cpp:1138</code></td>
+</tr>
+<tr>
+<td>IP プレフィクス DEL</td>
+<td><code>m_stateIntfTable.del(...)</code></td>
+<td><code>intfmgr.cpp:1162</code></td>
+</tr>
+<tr>
+<td>属性ロウ DEL</td>
+<td><code>m_stateIntfTable.del(alias)</code></td>
+<td><code>intfmgr.cpp:1089</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">エンドツーエンド通信シーケンス<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>CONFIG_DB PORTCHANNEL_INTERFACE|PortChannelN  HSET
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  │  Redis keyspace notify
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  ▼
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>SubscriberStateTable.pops() → KeyOpFieldsValuesTuple(SET)
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  │
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>IntfMgr::doIntfGeneralTask()
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>  │  isIntfStateOk(&quot;PortChannelN&quot;) → STATE_DB LAG_TABLE 確認
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>  │  ip link set PortChannelN master &lt;vrf&gt; / address &lt;mac&gt; / mpls=on …
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>  │  ProducerStateTable.set() → PUBLISH &quot;INTF_TABLE_CHANNEL@0&quot;
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>  ▼
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>APPL_DB INTF_TABLE|PortChannelN
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>  │  ConsumerStateTable SUBSCRIBE → IntfsOrch::doTask()
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>  ▼
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>sai_router_intfs_api-&gt;create_router_interface()   // SAI RIF 生成
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>  │  IP prefix がある場合: sai_route_api-&gt;create_route_entry()
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>  ▼
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>STATE_DB INTERFACE_TABLE|PortChannelN  vrf=&lt;vrf_name&gt;
+</span></code></pre></div>
+<!-- /pubsub -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>詳細証跡: <code>sonic-swss/cfgmgr/intfmgr.cpp</code> / <code>sonic-swss/orchagent/intfsorch.cpp</code></p>
+</blockquote>
+<p><code>PORTCHANNEL_INTERFACE</code> エントリの SET/DEL が引き起こす CONFIG_DB 以外への書込みと SAI 呼び出しを示す。</p>
+<h3 id="set-appl_db-state_db-intfmgrd">属性ロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)<a class="headerlink" href="#set-appl_db-state_db-intfmgrd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>対象 DB / テーブル</th>
+<th>キー</th>
+<th>フィールド / 値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET</td>
+<td>APPL_DB / <code>INTF_TABLE</code></td>
+<td><code>PortChannel&lt;N&gt;</code></td>
+<td>各フィールド (vrf_name, mac_addr, mpls, nat_zone, ipv6_use_link_local_only 等)</td>
+<td><code>intfmgr.cpp:1053</code></td>
+</tr>
+<tr>
+<td>SET</td>
+<td>STATE_DB / <code>INTERFACE_TABLE</code></td>
+<td><code>PortChannel&lt;N&gt;</code></td>
+<td><code>vrf</code> = vrf_name (空なら <code>""</code>)</td>
+<td><code>intfmgr.cpp:1054</code></td>
+</tr>
+<tr>
+<td>DEL</td>
+<td>APPL_DB / <code>INTF_TABLE</code></td>
+<td><code>PortChannel&lt;N&gt;</code></td>
+<td>DEL (全フィールド削除)</td>
+<td><code>intfmgr.cpp:1088</code></td>
+</tr>
+<tr>
+<td>DEL</td>
+<td>STATE_DB / <code>INTERFACE_TABLE</code></td>
+<td><code>PortChannel&lt;N&gt;</code></td>
+<td>DEL</td>
+<td><code>intfmgr.cpp:1089</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="ip-set-appl_db-state_db-intfmgrd">IP プレフィクスロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)<a class="headerlink" href="#ip-set-appl_db-state_db-intfmgrd" title="Permanent link">&para;</a></h3>
+<p>IPv4 link-local (<code>169.254.x.x/x</code>) は APPL_DB / STATE_DB への書込みをスキップする (<code>intfmgr.cpp:1132</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>対象 DB / テーブル</th>
+<th>キー</th>
+<th>フィールド / 値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET (非 v4-link-local)</td>
+<td>APPL_DB / <code>INTF_TABLE</code></td>
+<td><code>PortChannel&lt;N&gt;:&lt;ip/prefix&gt;</code></td>
+<td><code>scope=global</code>, <code>family=IPv4\|IPv6</code></td>
+<td><code>intfmgr.cpp:1134-1137</code></td>
+</tr>
+<tr>
+<td>SET (非 v4-link-local)</td>
+<td>STATE_DB / <code>INTERFACE_TABLE</code></td>
+<td><code>PortChannel&lt;N&gt;|&lt;ip/prefix&gt;</code></td>
+<td><code>state=ok</code></td>
+<td><code>intfmgr.cpp:1138</code></td>
+</tr>
+<tr>
+<td>DEL (非 v4-link-local)</td>
+<td>APPL_DB / <code>INTF_TABLE</code></td>
+<td><code>PortChannel&lt;N&gt;:&lt;ip/prefix&gt;</code></td>
+<td>DEL</td>
+<td><code>intfmgr.cpp:1161</code></td>
+</tr>
+<tr>
+<td>DEL (非 v4-link-local)</td>
+<td>STATE_DB / <code>INTERFACE_TABLE</code></td>
+<td><code>PortChannel&lt;N&gt;|&lt;ip/prefix&gt;</code></td>
+<td>DEL</td>
+<td><code>intfmgr.cpp:1162</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="set-sai-rif-orchagent-intfsorch">属性ロウ SET — SAI RIF 生成 (orchagent / IntfsOrch)<a class="headerlink" href="#set-sai-rif-orchagent-intfsorch" title="Permanent link">&para;</a></h3>
+<p>orchagent の <code>IntfsOrch</code> が APPL_DB <code>INTF_TABLE</code> を購読し、SAI Router Interface を生成する。LAG (<code>Port::LAG</code>) の場合は <code>SAI_ROUTER_INTERFACE_TYPE_PORT</code> / <code>SAI_ROUTER_INTERFACE_ATTR_PORT_ID = m_lag_id</code> が使われる (<code>intfsorch.cpp:1214-1217, 1241-1243</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>SAI API</th>
+<th>SAI 属性</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET</td>
+<td><code>sai_router_intfs_api-&gt;create_router_interface()</code></td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_TYPE</code></td>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_PORT</code> (LAG)</td>
+<td><code>intfsorch.cpp:1216, 1296</code></td>
+</tr>
+<tr>
+<td>SET</td>
+<td>同上</td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_PORT_ID</code></td>
+<td>LAG OID (<code>m_lag_id</code>)</td>
+<td><code>intfsorch.cpp:1241-1243</code></td>
+</tr>
+<tr>
+<td>SET</td>
+<td>同上</td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID</code></td>
+<td>VRF OID</td>
+<td><code>intfsorch.cpp:1183-1185</code></td>
+</tr>
+<tr>
+<td>SET</td>
+<td>同上</td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code></td>
+<td><code>mac_addr</code> or システム MAC</td>
+<td><code>intfsorch.cpp:1198-1208</code></td>
+</tr>
+<tr>
+<td>SET</td>
+<td>同上</td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code></td>
+<td>loopback_action 変換値 (設定時のみ)</td>
+<td><code>intfsorch.cpp:1187-1195</code></td>
+</tr>
+<tr>
+<td>SET</td>
+<td>同上</td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID</code></td>
+<td>nat_zone 値 (設定時のみ)</td>
+<td><code>intfsorch.cpp:1285-1293</code></td>
+</tr>
+<tr>
+<td>DEL</td>
+<td><code>sai_router_intfs_api-&gt;remove_router_interface()</code></td>
+<td>—</td>
+<td>—</td>
+<td><code>intfsorch.cpp:1349</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="counters_db-flex_counter_db-intfsorch">COUNTERS_DB / FLEX_COUNTER_DB 書込み (IntfsOrch)<a class="headerlink" href="#counters_db-flex_counter_db-intfsorch" title="Permanent link">&para;</a></h3>
+<p>RIF 作成時に <code>addRifToFlexCounter()</code> が以下を書き込む:</p>
+<table>
+<thead>
+<tr>
+<th>対象 DB / テーブル</th>
+<th>キー / フィールド</th>
+<th>書込内容</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB / <code>COUNTERS_RIF_NAME_MAP</code></td>
+<td><code>""</code> field=<code>PortChannel&lt;N&gt;</code></td>
+<td>RIF SAI OID</td>
+<td><code>intfsorch.cpp:1537</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB / <code>COUNTERS_RIF_TYPE_MAP</code></td>
+<td><code>""</code> field=<code>&lt;rif_oid&gt;</code></td>
+<td>RIF タイプ文字列</td>
+<td><code>intfsorch.cpp:1538</code></td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB / <code>RIF_STAT_COUNTER:&lt;rif_oid&gt;</code></td>
+<td><code>RIF_COUNTER_ID_LIST</code></td>
+<td>IN/OUT PACKETS/OCTETS/ERROR 系カウンタ ID リスト</td>
+<td><code>intfsorch.cpp:1544-1551</code></td>
+</tr>
+</tbody>
+</table>
+<p>RIF 削除時は上記エントリを <code>hdel</code> / <code>stopFlexCounterPolling</code> でクリーンアップする (<code>intfsorch.cpp:1560-1566</code>)。</p>
+<!-- /side-effects -->
 
 <div class="footnote">
 <hr />

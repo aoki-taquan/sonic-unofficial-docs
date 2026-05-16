@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -24891,6 +24903,145 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・エラー処理 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・エラー処理 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dynamic-buffermgrdyn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dynamic モード (buffermgrdyn) の失敗パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dynamic モード (buffermgrdyn) の失敗パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#speed-headroom-no-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        speed 未設定 → headroom 計算スキップ（no retry）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#accumulative-headroom-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        accumulative headroom 超過 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_pool-task_need_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_POOL 未準備 → task_need_retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lua-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lua プラグイン実行失敗 → WARN のみ、プロファイル値は空
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#headroom-lua-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        headroom チェック Lua 失敗 → WARN のみ、制約スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-buffermgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        static モード (buffermgr) の失敗パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="static モード (buffermgr) の失敗パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pg_profile_lookupini-task_invalid_entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pg_profile_lookup.ini に該当エントリなし → task_invalid_entry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port_qos_map-task_need_retry-static" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT_QOS_MAP 未着 → task_need_retry (static)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -24931,7 +25082,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         定数表
@@ -24942,7 +25093,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         注記
@@ -24970,7 +25121,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#static-buffermgr" class="md-nav__link">
+  <a href="#static-buffermgr_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         static モード (buffermgr)
@@ -24981,7 +25132,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dynamic-buffermgrdyn" class="md-nav__link">
+  <a href="#dynamic-buffermgrdyn_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         dynamic モード (buffermgrdyn)
@@ -25053,7 +25204,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙参照マトリクス
@@ -25103,7 +25254,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         プロファイル名生成パターンまとめ
@@ -26478,6 +26629,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -27122,6 +27301,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27270,6 +27505,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27465,7 +27728,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27550,6 +27813,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29762,6 +30053,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35315,6 +35634,145 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・エラー処理 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・エラー処理 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dynamic-buffermgrdyn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dynamic モード (buffermgrdyn) の失敗パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dynamic モード (buffermgrdyn) の失敗パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#speed-headroom-no-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        speed 未設定 → headroom 計算スキップ（no retry）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#accumulative-headroom-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        accumulative headroom 超過 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_pool-task_need_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_POOL 未準備 → task_need_retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lua-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lua プラグイン実行失敗 → WARN のみ、プロファイル値は空
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#headroom-lua-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        headroom チェック Lua 失敗 → WARN のみ、制約スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-buffermgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        static モード (buffermgr) の失敗パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="static モード (buffermgr) の失敗パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pg_profile_lookupini-task_invalid_entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pg_profile_lookup.ini に該当エントリなし → task_invalid_entry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port_qos_map-task_need_retry-static" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT_QOS_MAP 未着 → task_need_retry (static)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35355,7 +35813,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         定数表
@@ -35366,7 +35824,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         注記
@@ -35394,7 +35852,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#static-buffermgr" class="md-nav__link">
+  <a href="#static-buffermgr_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         static モード (buffermgr)
@@ -35405,7 +35863,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dynamic-buffermgrdyn" class="md-nav__link">
+  <a href="#dynamic-buffermgrdyn_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         dynamic モード (buffermgrdyn)
@@ -35477,7 +35935,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙参照マトリクス
@@ -35527,7 +35985,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         プロファイル名生成パターンまとめ
@@ -35886,6 +36344,157 @@ admin down ポートへの <code>CABLE_LENGTH</code> 更新は headroom に反�
 順序は sonic-cfggen が暗黙に担保する。</p>
 <!-- /ordering -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動・エラー処理 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/cable-length-failure.md</code></p>
+</blockquote>
+<!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp:978,1106,1117,1541-1548,2155-2159,2189-2219, cfgmgr/buffermgr.cpp:154-155,168-170,240-243,257-258 -->
+
+<h3 id="dynamic-buffermgrdyn">dynamic モード (buffermgrdyn) の失敗パターン<a class="headerlink" href="#dynamic-buffermgrdyn" title="Permanent link">&para;</a></h3>
+<h4 id="speed-headroom-no-retry">speed 未設定 → headroom 計算スキップ（no retry）<a class="headerlink" href="#speed-headroom-no-retry" title="Permanent link">&para;</a></h4>
+<p><code>handleCableLenTable()</code> 処理中に <code>effectiveSpeed.empty()</code> の場合、headroom 計算はスキップされる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>WARN: &quot;Speed for %s hasn&#39;t been configured yet, unable to calculate headroom&quot;
+</span></code></pre></div>
+<ul>
+<li>リトライキューへは積まれず、<code>continue</code> で次ポートの処理へ移行する（<code>buffermgrdyn.cpp:2155-2159</code>）。</li>
+<li>speed が後から設定された時点で <code>handlePortTable()</code> が <code>refreshPgsForPort()</code> を呼び出す設計のため、明示的な retry は不要とされている。</li>
+<li><strong>注意</strong>: speed が永久に設定されない場合、lossless PG は設定されないままになる。</li>
+</ul>
+<h4 id="accumulative-headroom-task_failed">accumulative headroom 超過 → task_failed<a class="headerlink" href="#accumulative-headroom-task_failed" title="Permanent link">&para;</a></h4>
+<p><code>refreshPgsForPort()</code> → <code>isHeadroomResourceValid()</code> でポートの累積 headroom がプラットフォーム上限を超えた場合:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ERROR: &quot;Update speed (%s) and cable length (%s) for port %s failed,
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>        accumulative headroom size exceeds the limit&quot;
+</span></code></pre></div>
+<ul>
+<li><code>releaseProfile(newProfile)</code> で新プロファイルを即時解放（<code>buffermgrdyn.cpp:1541-1548</code>）。</li>
+<li><code>handleCableLenTable()</code> は当該ポートをエラーカウントに加算し、<strong>全ポートの処理を完了してから</strong> <code>task_failed</code> を返す（<code>buffermgrdyn.cpp:2200-2208</code>）。途中で中断しないため、後続ポートへの影響はない。</li>
+<li>Orch フレームワークは <code>task_failed</code> エントリを破棄する（再 retry なし）。</li>
+</ul>
+<h4 id="buffer_pool-task_need_retry">BUFFER_POOL 未準備 → task_need_retry<a class="headerlink" href="#buffer_pool-task_need_retry" title="Permanent link">&para;</a></h4>
+<p><code>allocateProfile()</code> で <code>ingress_lossless_pool</code> が未確立（<code>getPgPoolMode()</code> が空文字列を返す）の場合:</p>
+<ul>
+<li><code>task_process_status::task_need_retry</code> を返却（<code>buffermgrdyn.cpp:978-979</code>）。</li>
+<li>Orch フレームワークが <code>BUFFERMGR_TIMER_PERIOD=10</code> 秒後に自動再試行。BUFFER_POOL 確立後に自動解消される。</li>
+</ul>
+<h4 id="lua-warn">Lua プラグイン実行失敗 → WARN のみ、プロファイル値は空<a class="headerlink" href="#lua-warn" title="Permanent link">&para;</a></h4>
+<p><code>calculateHeadroomSize()</code> 内の EVALSHA 呼び出しが失敗した場合、xon/xoff/size フィールドは空文字列のまま処理が続行される（<code>buffermgrdyn.cpp:621-648</code>）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>WARN: &quot;Failed to calculate headroom for %s&quot;          # ret.empty() の場合
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>WARN: &quot;Lua scripts for headroom calculation were not executed successfully&quot;  # 例外の場合
+</span></code></pre></div>
+<ul>
+<li>関数は <code>return</code> で抜けるだけで例外は伝播しない。</li>
+<li>空フィールドで APPL_DB に書き込まれると <code>bufferorch</code> 側でエラーが発生する可能性がある。</li>
+<li>根本原因: Lua スクリプトの Redis ロード失敗（通常は起動時に検出されるが、APPL_DB 再起動等で再発する場合あり）。</li>
+</ul>
+<h4 id="headroom-lua-warn">headroom チェック Lua 失敗 → WARN のみ、制約スキップ<a class="headerlink" href="#headroom-lua-warn" title="Permanent link">&para;</a></h4>
+<p><code>isHeadroomResourceValid()</code> でチェック用 Lua が失敗した場合は <strong>true を返却</strong>（<code>buffermgrdyn.cpp:1106</code>）。headroom 超過チェックが事実上スキップされ、プラットフォームのバッファ容量を超えた設定が通ってしまう可能性がある。</p>
+<h3 id="static-buffermgr">static モード (buffermgr) の失敗パターン<a class="headerlink" href="#static-buffermgr" title="Permanent link">&para;</a></h3>
+<h4 id="pg_profile_lookupini-task_invalid_entry">pg_profile_lookup.ini に該当エントリなし → task_invalid_entry<a class="headerlink" href="#pg_profile_lookupini-task_invalid_entry" title="Permanent link">&para;</a></h4>
+<p><code>m_pgProfileLookup</code> に対象 speed/cable の組み合わせが存在しない場合（<code>buffermgr.cpp:240-243</code>）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ERROR: &quot;Unable to create/update PG profile for port %s.
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>        No PG profile configured for speed %s and cable length %s&quot;
+</span></code></pre></div>
+<ul>
+<li><code>task_process_status::task_invalid_entry</code> を返却。エントリは<strong>破棄</strong>され retry されない。</li>
+<li><strong>static モード固有の罠</strong>: INI ファイルに存在しない speed/cable の組み合わせを設定すると、恒久的に lossless PG が設定されない。CLI/config エラーにはならず、ログ監視が必要。</li>
+</ul>
+<h4 id="port_qos_map-task_need_retry-static">PORT_QOS_MAP 未着 → task_need_retry (static)<a class="headerlink" href="#port_qos_map-task_need_retry-static" title="Permanent link">&para;</a></h4>
+<p><code>pfc_enable</code> が未取得（<code>m_portStatusLookup.count(port) == 0</code>）の場合（<code>buffermgr.cpp:168-170</code>）:</p>
+<ul>
+<li><code>task_process_status::task_need_retry</code> を返却。</li>
+<li>PORT_QOS_MAP が着信した時点で自動再処理される。</li>
+</ul>
+<h3 id="_15">失敗挙動まとめ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>モード</th>
+<th>ステータス</th>
+<th>retry</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>speed 未設定</td>
+<td>dynamic</td>
+<td>ポートスキップ</td>
+<td>no（speed 設定時に再処理）</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>speed/cable 未設定</td>
+<td>static</td>
+<td>task_need_retry</td>
+<td>yes（10 秒周期）</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>accumulative headroom 超過</td>
+<td>dynamic</td>
+<td>task_failed</td>
+<td>no（エントリ破棄）</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>BUFFER_POOL 未準備</td>
+<td>dynamic</td>
+<td>task_need_retry</td>
+<td>yes（10 秒周期）</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>BUFFER_POOL 未準備</td>
+<td>static</td>
+<td>task_need_retry</td>
+<td>yes</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>Lua 実行失敗</td>
+<td>dynamic</td>
+<td>(関数継続、空値)</td>
+<td>no</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td>INI エントリなし</td>
+<td>static</td>
+<td>task_invalid_entry</td>
+<td>no（エントリ破棄）</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>PORT_QOS_MAP 未着</td>
+<td>static</td>
+<td>task_need_retry</td>
+<td>yes（PORT_QOS_MAP 着信時）</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>PORT_ADMIN_DOWN</td>
+<td>dynamic</td>
+<td>task_success</td>
+<td>—（admin up 時に再処理）</td>
+<td>INFO</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">INI エントリなしは silent failure</p>
+<p>static buffer モードでは <code>pg_profile_lookup.ini</code> に存在しない speed/cable の組み合わせを設定しても
+CLI はエラーを返さず、lossless PG が永続的に欠落する。<code>show buffer configuration</code> で意図したプロファイルが
+設定されているか確認すること。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">accumulative headroom 超過は non-recoverable</p>
+<p><code>task_failed</code> として処理が破棄されるため、ケーブル長を元に戻す（または短くする）操作が必要。
+<code>show buffer information</code> で各ポートの headroom 使用量を確認してから変更すること。</p>
+</div>
+<!-- /failure -->
+
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <p>YANG default と別に、コード側で「フィールド不在時の fallback」が実装されている field を全列挙する。</p>
@@ -35994,7 +36603,7 @@ admin down ポートへの <code>CABLE_LENGTH</code> 更新は headroom に反�
 <!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.h:15, buffermgrdyn.cpp:485,2174,2378, buffermgr.cpp:159,183-184, buffer_headroom_mellanox.lua:42-51,119-120,160, buffer_headroom_barefoot.lua:13, buffer_pool_barefoot.lua:13 -->
 
 <p>バッファ計算処理に埋め込まれたハードコード定数。設定変更の影響範囲を把握するために重要。</p>
-<h3 id="_15">定数表<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_16">定数表<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36127,7 +36736,7 @@ admin down ポートへの <code>CABLE_LENGTH</code> 更新は headroom に反�
 </tr>
 </tbody>
 </table>
-<h3 id="_16">注記<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_17">注記<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong><code>DEFAULT_MTU_STR</code></strong>: <code>buffermgrdyn.cpp:2174</code> および <code>2378</code> の 2 箇所で使用。cable_length が来た時点で mtu が空なら <code>"9100"</code> で仮計算し、後から mtu が設定されると <code>refreshPgsForPort</code> が再実行される。</li>
 <li><strong><code>speed_of_light</code></strong>: 光ファイバー内の実効速度 (真空中の約 2/3)。銅線の伝播速度は若干異なるが、Mellanox headroom lua ではこの値で統一。</li>
@@ -36141,7 +36750,7 @@ admin down ポートへの <code>CABLE_LENGTH</code> 更新は headroom に反�
 <!-- evidence: sonic-swss/cfgmgr/buffermgr.cpp, buffermgrdyn.cpp -->
 
 <p>CABLE_LENGTH 更新が引き起こす <strong>他テーブルへの書込み</strong>を示す。書込み先はモードによって異なる。</p>
-<h3 id="static-buffermgr">static モード (buffermgr)<a class="headerlink" href="#static-buffermgr" title="Permanent link">&para;</a></h3>
+<h3 id="static-buffermgr_1">static モード (buffermgr)<a class="headerlink" href="#static-buffermgr_1" title="Permanent link">&para;</a></h3>
 <p><code>doCableTask()</code> → <code>doSpeedUpdateTask()</code> の呼び出しチェーンで CONFIG_DB へ直接書き込む。</p>
 <table>
 <thead>
@@ -36177,7 +36786,7 @@ admin down ポートへの <code>CABLE_LENGTH</code> 更新は headroom に反�
 <li><code>length = "0m"</code> → early return、書込みなし (<code>buffermgr.cpp:159</code>)。</li>
 <li><code>length = "None"</code> → スキップ、書込みなし (<code>buffermgr.cpp:104</code>)。</li>
 </ul>
-<h3 id="dynamic-buffermgrdyn">dynamic モード (buffermgrdyn)<a class="headerlink" href="#dynamic-buffermgrdyn" title="Permanent link">&para;</a></h3>
+<h3 id="dynamic-buffermgrdyn_1">dynamic モード (buffermgrdyn)<a class="headerlink" href="#dynamic-buffermgrdyn_1" title="Permanent link">&para;</a></h3>
 <p><code>handleCableLenTable()</code> → <code>refreshPgsForPort()</code> → <code>allocateProfile()</code> の呼び出しチェーンで APPL_DB / STATE_DB へ書き込む。</p>
 <table>
 <thead>
@@ -36275,7 +36884,7 @@ admin down ポートへの <code>CABLE_LENGTH</code> 更新は headroom に反�
 <li><strong>参照フィールド</strong>: <code>pool</code>, <code>xon</code>, <code>xoff</code>, <code>size</code>, <code>dynamic_th</code></li>
 <li><strong>依存性質</strong>: 読み書き双方向。CABLE_LENGTH 更新のたびに <code>pg_lossless_&lt;speed&gt;_&lt;cable&gt;_profile</code> 形式の BUFFER_PROFILE を自動生成・更新・削除する。ユーザ定義の headroom override プロファイルが CONFIG_DB.BUFFER_PROFILE に存在する場合はそちらを優先し、dynamic 自動生成と区別して管理する (<code>buffermgrdyn.cpp:2671</code>)。</li>
 </ul>
-<h3 id="_17">暗黙参照マトリクス<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_18">暗黙参照マトリクス<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36371,12 +36980,12 @@ admin down ポートへの <code>CABLE_LENGTH</code> 更新は headroom に反�
 </ul>
 </li>
 </ul>
-<h3 id="_18">プロファイル名生成パターンまとめ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>static:  pg_lossless_&lt;speed&gt;_&lt;cable&gt;_profile
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>         (INI テーブルから数値引き; ベンダー依存 INI ファイル)
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>dynamic: pg_lossless_&lt;speed&gt;_&lt;cable&gt;[_mtu&lt;N&gt;][_th&lt;T&gt;][_&lt;gearbox&gt;][_8lane]_profile
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>         (_8lane は Mellanox 8 レーンポートのみ付加)
+<h3 id="_19">プロファイル名生成パターンまとめ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>static:  pg_lossless_&lt;speed&gt;_&lt;cable&gt;_profile
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>         (INI テーブルから数値引き; ベンダー依存 INI ファイル)
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>dynamic: pg_lossless_&lt;speed&gt;_&lt;cable&gt;[_mtu&lt;N&gt;][_th&lt;T&gt;][_&lt;gearbox&gt;][_8lane]_profile
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>         (_8lane は Mellanox 8 レーンポートのみ付加)
 </span></code></pre></div>
 <!-- /platform -->
 

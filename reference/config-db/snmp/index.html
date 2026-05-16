@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28401,6 +28553,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・エラー処理 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・エラー処理 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#snmpyml-snmp_location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        snmp.yml 未存在 / snmp_location キー不在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snmp_community_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SNMP_COMMUNITY 未定義によるサイレント全拒否
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snmpcontact-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SNMP|CONTACT key 構造不一致によるサイレントフォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monit-snmp-subagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        メモリ超過時の monit による snmp-subagent 再起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定変更の反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-b" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28413,7 +28637,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         コンテナ起動時シーケンス
@@ -28446,7 +28670,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         テーブル間の書込み順依存
@@ -28485,7 +28709,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         システム情報ハードコード
@@ -28507,7 +28731,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         ディスク・ロードアベレージ監視閾値 (固定)
@@ -28557,7 +28781,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#snmp_community_1" class="md-nav__link">
+  <a href="#snmp_community_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         SNMP_COMMUNITY — コミュニティ文字列の前提
@@ -28640,7 +28864,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読メカニズム一覧
@@ -28651,7 +28875,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         詳細フロー
@@ -28727,6 +28951,117 @@
     <span class="md-ellipsis">
       
         差異 4: ベンダー固有 MIB — 全デプロイ共通登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-mgmt_vrf-agentaddress-trapsink-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 5: MGMT_VRF 環境 — agentAddress / trapsink の VRF バインド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="差異 5: MGMT_VRF 環境 — agentAddress / trapsink の VRF バインド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agentaddress-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        agentAddress の VRF バインド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラップ送信先の VRF バインド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-smartswitch-dpu-switch_type-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 6: SmartSwitch DPU — switch_type == 'dpu' の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイル副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd 制御
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB への条件付き副次書込 (コンテナ起動時のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗時挙動
       
     </span>
   </a>
@@ -29994,6 +30329,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35669,6 +36032,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・エラー処理 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・エラー処理 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#snmpyml-snmp_location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        snmp.yml 未存在 / snmp_location キー不在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snmp_community_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SNMP_COMMUNITY 未定義によるサイレント全拒否
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snmpcontact-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SNMP|CONTACT key 構造不一致によるサイレントフォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monit-snmp-subagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        メモリ超過時の monit による snmp-subagent 再起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定変更の反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-b" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35681,7 +36116,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         コンテナ起動時シーケンス
@@ -35714,7 +36149,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         テーブル間の書込み順依存
@@ -35753,7 +36188,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         システム情報ハードコード
@@ -35775,7 +36210,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         ディスク・ロードアベレージ監視閾値 (固定)
@@ -35825,7 +36260,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#snmp_community_1" class="md-nav__link">
+  <a href="#snmp_community_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         SNMP_COMMUNITY — コミュニティ文字列の前提
@@ -35908,7 +36343,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読メカニズム一覧
@@ -35919,7 +36354,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         詳細フロー
@@ -35995,6 +36430,117 @@
     <span class="md-ellipsis">
       
         差異 4: ベンダー固有 MIB — 全デプロイ共通登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-mgmt_vrf-agentaddress-trapsink-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 5: MGMT_VRF 環境 — agentAddress / trapsink の VRF バインド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="差異 5: MGMT_VRF 環境 — agentAddress / trapsink の VRF バインド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agentaddress-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        agentAddress の VRF バインド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラップ送信先の VRF バインド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-smartswitch-dpu-switch_type-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 6: SmartSwitch DPU — switch_type == 'dpu' の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイル副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd 制御
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB への条件付き副次書込 (コンテナ起動時のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗時挙動
       
     </span>
   </a>
@@ -36194,10 +36740,10 @@
 <!-- cdb-exceptions -->
 <h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>sysContact / sysLocation 未定義時</strong>: テンプレートの <code>is defined</code> チェックで未定義の場合は該当行を出力しない。snmpd は空の sysContact / sysLocation を使用する。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>SNMP_COMMUNITY が未定義の場合は全アクセス拒否</strong>: snmpd.conf テンプレートは <code>{% if SNMP_COMMUNITY is defined %}</code> で SNMP_COMMUNITY の有無を確認し、存在しない場合はコミュニティ設定行を出力しない。community なしでは全 SNMP アクセスが拒否される。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>設定変更の反映はコンテナ再起動時のみ</strong>: テーブル変更は <code>docker-snmp</code> コンテナの再起動 / snmpd リロードまで反映されない。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>key の大文字/小文字</strong>: <code>SNMP|LOCATION</code> / <code>SNMP|CONTACT</code> の key 名の大文字/小文字が YANG 定義と実装の間で一致しない場合、テンプレートがその値を参照できずサイレントスキップが発生する可能性がある。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>sysContact / sysLocation 未定義時</strong>: テンプレートの <code>is defined</code> チェックで未定義の場合は該当行を出力しない。snmpd は空の sysContact / sysLocation を使用する。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>SNMP_COMMUNITY が未定義の場合は全アクセス拒否</strong>: snmpd.conf テンプレートは <code>{% if SNMP_COMMUNITY is defined %}</code> で SNMP_COMMUNITY の有無を確認し、存在しない場合はコミュニティ設定行を出力しない。community なしでは全 SNMP アクセスが拒否される。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>設定変更の反映はコンテナ再起動時のみ</strong>: テーブル変更は <code>docker-snmp</code> コンテナの再起動 / snmpd リロードまで反映されない。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>key の大文字/小文字</strong>: <code>SNMP|LOCATION</code> / <code>SNMP|CONTACT</code> の key 名の大文字/小文字が YANG 定義と実装の間で一致しない場合、テンプレートがその値を参照できずサイレントスキップが発生する可能性がある。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
@@ -36357,9 +36903,62 @@
 <p><code>snmp_yml_to_configdb.py</code> は起動時に <code>/etc/sonic/snmp.yml</code> から <code>SNMP|LOCATION</code> を注入するが、<code>snmp_location</code> キーが存在しない場合は <code>sys.exit(1)</code> で終了し LOCATION は未設定のまま。<code>SNMP|CONTACT</code> はこのスクリプトでは設定されず CLI のみが書き込み元。</p>
 <!-- /defaults -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動・エラー処理 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<h3 id="snmpyml-snmp_location"><code>snmp.yml</code> 未存在 / <code>snmp_location</code> キー不在<a class="headerlink" href="#snmpyml-snmp_location" title="Permanent link">&para;</a></h3>
+<p><code>snmp_yml_to_configdb.py</code> はコンテナ起動時に <code>/etc/sonic/snmp.yml</code> の存在チェックを行い、
+ファイルが存在しない場合は <code>sys.exit(1)</code> で終了する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。
+<code>start.sh</code> は終了コードをチェックしないため <code>sonic-cfggen</code> へ処理が進み、
+<code>SNMP_COMMUNITY</code> なしの <code>snmpd.conf</code> が生成される。
+<code>snmp.yml</code> に <code>snmp_location</code> キーが存在しない場合も同様に <code>sys.exit(1)</code> で終了し、
+<code>SNMP|LOCATION</code> は CONFIG_DB に登録されず <code>sysLocation public</code> (ハードコード) が出力される<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>障害</th>
+<th>結果</th>
+<th>検出方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/etc/sonic/snmp.yml</code> 不在</td>
+<td>community 未設定で全 SNMP アクセス拒否</td>
+<td>syslog: <code>snmp_location does not exist in snmp.yml file</code></td>
+</tr>
+<tr>
+<td><code>snmp_location</code> キー不在</td>
+<td><code>sysLocation public</code> ハードコード出力</td>
+<td><code>show snmp location</code> で確認</td>
+</tr>
+<tr>
+<td><code>SNMP_COMMUNITY</code> 未定義</td>
+<td>全クライアントの GET/SET を snmpd が拒否 (エラーログなし)</td>
+<td><code>sonic-db-cli CONFIG_DB keys 'SNMP_COMMUNITY*'</code> で空を確認</td>
+</tr>
+</tbody>
+</table>
+<h3 id="snmp_community_1"><code>SNMP_COMMUNITY</code> 未定義によるサイレント全拒否<a class="headerlink" href="#snmp_community_1" title="Permanent link">&para;</a></h3>
+<p><code>snmpd.conf.j2</code> は <code>{% if SNMP_COMMUNITY is defined %}</code> チェックで community 行出力を制御する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。
+<code>SNMP_COMMUNITY</code> テーブルが空の場合、community 設定行は一切出力されず、
+snmpd は community なし設定で起動する。全クライアントからの SNMP GET/SET/TRAP が拒否されるが、
+snmpd 自体はエラーを出力しないためサイレント障害となる。</p>
+<h3 id="snmpcontact-key"><code>SNMP|CONTACT</code> key 構造不一致によるサイレントフォールバック<a class="headerlink" href="#snmpcontact-key" title="Permanent link">&para;</a></h3>
+<p>CLI (<code>config/main.py</code>) は <code>{contact_name: contact_email}</code> という任意 key の dict を書き込む。
+YANG は <code>leaf Contact</code> を定義するが、テンプレートは <code>.keys()|first</code> / <code>.values()|first</code> でアクセスする。
+key 名の大文字/小文字が一致しない場合、テンプレートが値を参照できず
+<code>sysContact Azure Cloud Switch vteam &lt;linuxnetdev@microsoft.com&gt;</code> (Microsoft ハードコード) が出力される<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<h3 id="monit-snmp-subagent">メモリ超過時の monit による snmp-subagent 再起動<a class="headerlink" href="#monit-snmp-subagent" title="Permanent link">&para;</a></h3>
+<p>snmp コンテナが 4 GiB を超過し続けると monit が <code>snmp-subagent</code> のみ再起動する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。
+snmpd 本体は継続動作するが、subagent 再起動中は MIB ツリーの一部 (FRR 等の AgentX サブエージェント経由情報) が一時的に応答不能となる。</p>
+<h3 id="_17">設定変更の反映タイミング<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><code>start.sh</code> が <code>sonic-cfggen</code> で <code>snmpd.conf</code> を生成するのはコンテナ起動時のみ。
+CONFIG_DB 変更後は <code>sudo systemctl restart snmp</code> (または <code>docker restart snmp</code>) が必要。ランタイム中のホットリロード機構は存在しない<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<!-- /failure -->
+
 <!-- ordering -->
 <h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
-<h3 id="_17">コンテナ起動時シーケンス<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_18">コンテナ起動時シーケンス<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <p>docker-snmp コンテナは supervisord が以下の依存順序でプログラムを制御する:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>1. rsyslogd 起動
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>2. start.sh 実行 (rsyslogd:running 待機)
@@ -36395,7 +36994,7 @@
 </table>
 <h3 id="cli_1">CLI 書込みとサービス再起動<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <p>CLI (<code>config snmp contact/location add/modify/del</code>) は書き込み後に常に <code>systemctl restart snmp.service</code> を実行する（<code>config/main.py</code> L4488, L4607 等）。これにより docker-snmp コンテナが再起動し、<code>start.sh</code> シーケンスが再実行される。変更反映まで数秒〜十数秒の SNMP 断が発生する。</p>
-<h3 id="_18">テーブル間の書込み順依存<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_19">テーブル間の書込み順依存<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36469,7 +37068,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_19">システム情報ハードコード<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<h3 id="_20">システム情報ハードコード<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36534,7 +37133,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_20">ディスク・ロードアベレージ監視閾値 (固定)<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<h3 id="_21">ディスク・ロードアベレージ監視閾値 (固定)<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36697,7 +37296,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="snmp_community_1">SNMP_COMMUNITY — コミュニティ文字列の前提<a class="headerlink" href="#snmp_community_1" title="Permanent link">&para;</a></h3>
+<h3 id="snmp_community_2">SNMP_COMMUNITY — コミュニティ文字列の前提<a class="headerlink" href="#snmp_community_2" title="Permanent link">&para;</a></h3>
 <p>snmpd.conf.j2 は <code>{% if SNMP_COMMUNITY is defined %}</code> で SNMP_COMMUNITY の有無を確認し、存在する場合のみ <code>rocommunity</code> / <code>rwcommunity</code> 行を出力する (<code>snmpd.conf.j2</code> L48–64)。<strong>SNMP_COMMUNITY が未定義の場合、SNMPv1/v2c での全アクセスが拒否される</strong>。<code>snmp_yml_to_configdb.py</code> が起動時に <code>/etc/sonic/snmp.yml</code> からエントリを注入するが、snmp.yml が存在しない場合は注入されない。</p>
 <h3 id="snmp_user-snmpv3">SNMP_USER — SNMPv3 ユーザ設定<a class="headerlink" href="#snmp_user-snmpv3" title="Permanent link">&para;</a></h3>
 <p>v3 アクセスが必要な場合は <code>SNMP_USER</code> テーブルにユーザを登録する必要がある。テンプレートが <code>rouser</code> / <code>rwuser</code> + <code>CreateUser</code> 行を生成する (<code>snmpd.conf.j2</code> L66–77)。YANG leafref なし。</p>
@@ -36718,7 +37317,7 @@
 詳細証跡: <code>meta/_intermediate/cdb-flow/snmp-pubsub.md</code></p>
 </blockquote>
 <p><code>SNMP</code> テーブル群は <strong>「ランタイム購読なし・コンテナ再起動トリガー型」</strong> で設計されている。<code>SubscriberStateTable</code> / <code>ConfigDBConnector.subscribe()</code> によるリアルタイム購読は実装されておらず、<strong>起動時一括読み込み + CLI トリガーによる <code>docker-snmp</code> 再起動</strong> で設定を反映する。</p>
-<h3 id="_21">購読メカニズム一覧<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<h3 id="_22">購読メカニズム一覧<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36755,7 +37354,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_22">詳細フロー<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<h3 id="_23">詳細フロー<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
 <p><strong>コンテナ起動時シーケンス</strong>:</p>
 <ol>
 <li><code>snmp_yml_to_configdb.py</code> が <code>/etc/sonic/snmp.yml</code> を読み、未設定のエントリのみ <code>set_entry()</code> で CONFIG_DB に書き込む (<code>SNMP_COMMUNITY</code>, <code>SNMP|LOCATION</code>)</li>
@@ -36866,7 +37465,192 @@
 </tbody>
 </table>
 <p>Cisco / Dell 以外のハードウェアでも AgentX で OID が応答可能な状態になる点に注意。<code>SNMP</code> CONFIG_DB テーブルとは直接連携しない。</p>
+<h3 id="5-mgmt_vrf-agentaddress-trapsink-vrf">差異 5: MGMT_VRF 環境 — agentAddress / trapsink の VRF バインド<a class="headerlink" href="#5-mgmt_vrf-agentaddress-trapsink-vrf" title="Permanent link">&para;</a></h3>
+<p><code>snmpd.conf.j2</code> L28–29, L148–170</p>
+<h4 id="agentaddress-vrf">agentAddress の VRF バインド<a class="headerlink" href="#agentaddress-vrf" title="Permanent link">&para;</a></h4>
+<p><code>SNMP_AGENT_ADDRESS_CONFIG</code> の <code>vrf</code> フィールドが空でない場合、snmpd は指定 VRF のネットワーク名前空間にバインドされる。</p>
+<table>
+<thead>
+<tr>
+<th><code>SNMP_AGENT_ADDRESS_CONFIG.vrf</code></th>
+<th>agentAddress 生成結果</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空 (<code>""</code> / 未設定)</td>
+<td><code>agentAddress udp:[&lt;ip&gt;]:&lt;port&gt;</code></td>
+<td>グローバルルーティングテーブルでバインド</td>
+</tr>
+<tr>
+<td><code>"mgmt"</code> など MGMT_VRF 名</td>
+<td><code>agentAddress udp:[&lt;ip&gt;]@mgmt:&lt;port&gt;</code></td>
+<td>MGMT_VRF の netns でバインド。管理 IF (<code>eth0</code>) 経由のみアクセス可能</td>
+</tr>
+</tbody>
+</table>
+<p>MGMT_VRF が有効化されている環境 (<code>MGMT_VRF_CONFIG.mgmtVrfEnabled = "true"</code>) での推奨構成。SNMP アクセスをデータプレーンから完全に分離できる。</p>
+<h4 id="vrf">トラップ送信先の VRF バインド<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h4>
+<p><code>SNMP_TRAP_CONFIG.&lt;version&gt;TrapDest.vrf</code> が <code>"None"</code> (文字列) 以外の場合、<code>trapsink</code> / <code>trap2sink</code> に <code>%&lt;vrf&gt;</code> サフィックスが付加される。</p>
+<table>
+<thead>
+<tr>
+<th><code>SNMP_TRAP_CONFIG.&lt;version&gt;TrapDest.vrf</code></th>
+<th>trapsink 生成結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"None"</code> (文字列)</td>
+<td><code>trapsink &lt;ip&gt;:&lt;port&gt; &lt;community&gt;</code> (VRF なし)</td>
+</tr>
+<tr>
+<td><code>"mgmt"</code> など VRF 名</td>
+<td><code>trapsink &lt;ip&gt;:&lt;port&gt;%mgmt &lt;community&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-smartswitch-dpu-switch_type-dpu">差異 6: SmartSwitch DPU — switch_type == 'dpu' の挙動<a class="headerlink" href="#6-smartswitch-dpu-switch_type-dpu" title="Permanent link">&para;</a></h3>
+<p><code>supervisord.conf.j2</code> L53–57</p>
+<p>SmartSwitch の DPU ノード (<code>switch_type = 'dpu'</code>) は <code>chassis-packet</code> 分岐に該当しないため、snmp-subagent は <code>--enable_dynamic_frequency</code> <strong>なし</strong>の固定頻度モードで起動する。</p>
+<table>
+<thead>
+<tr>
+<th><code>switch_type</code></th>
+<th>snmp-subagent 動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dpu</code></td>
+<td>固定頻度 (<code>DEFAULT_UPDATE_FREQUENCY</code>)</td>
+</tr>
+<tr>
+<td><code>chassis-packet</code></td>
+<td>動的頻度 (<code>--enable_dynamic_frequency</code>)</td>
+</tr>
+<tr>
+<td><code>npu</code> / <code>voq</code> / <code>fabric</code></td>
+<td>固定頻度</td>
+</tr>
+</tbody>
+</table>
+<p>DPU ノードでも <code>DEVICE_METADATA.localhost</code> の存在が必須 (欠如時は KeyError でコンテナ起動失敗)。</p>
 <!-- /platform -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>SNMP</code> テーブルへの書き込みが連鎖して発生するファイル書込・systemd 制御・DB 副次書込の一覧。</p>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>dockers/docker-snmp/start.sh</code> L14,20–24、<code>snmpd.conf.j2</code>、<code>config/main.py</code> L4189,4399–4400,4488–4489、<code>snmp_yml_to_configdb.py</code> L36–53 全行精読 (2026-05-16)
+詳細証跡: <code>meta/_intermediate/cdb-flow/snmp-side-effects.md</code></p>
+</blockquote>
+<h3 id="_24">ファイル副次書込<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次書込先</th>
+<th>操作</th>
+<th>主要フィールド</th>
+<th>タイミング</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/etc/snmp/snmpd.conf</code></td>
+<td>上書き生成 (<code>sonic-cfggen -d -t snmpd.conf.j2</code>)</td>
+<td>SNMP 全テーブルを展開</td>
+<td>コンテナ起動時 / <code>snmp.service</code> 再起動時</td>
+<td><code>start.sh:22–24</code></td>
+</tr>
+<tr>
+<td><code>/etc/ssw/sysDescription</code></td>
+<td>上書き生成 (<code>sonic-cfggen -d -t sysDescription.j2</code>)</td>
+<td><code>DEVICE_METADATA.localhost.hwsku</code> / <code>platform</code></td>
+<td>コンテナ起動時 / <code>snmp.service</code> 再起動時</td>
+<td><code>start.sh:20–21</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>/etc/snmp/snmpd.conf</code> は Jinja2 テンプレート <code>snmpd.conf.j2</code> から <code>SNMP</code>・<code>SNMP_COMMUNITY</code>・<code>SNMP_USER</code>・<code>SNMP_AGENT_ADDRESS_CONFIG</code>・<code>SNMP_TRAP_CONFIG</code>・<code>DEVICE_METADATA.localhost</code> を参照して生成される。
+CONFIG_DB に書き込まれた値はこのファイル生成を経て初めて <code>snmpd</code> デーモンに反映される。</p>
+<h3 id="systemd">systemd 制御<a class="headerlink" href="#systemd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>systemd ユニット</th>
+<th>実行タイミング</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>systemctl reset-failed snmp.service</code></td>
+<td><code>snmp.service</code> (docker-snmp コンテナ)</td>
+<td>CLI <code>config snmp *</code> 全コマンド書き込み直後</td>
+<td><code>config/main.py:4399,4488</code></td>
+</tr>
+<tr>
+<td><code>systemctl restart snmp.service</code></td>
+<td><code>snmp.service</code> (docker-snmp コンテナ)</td>
+<td>CLI <code>config snmp *</code> 全コマンド書き込み直後</td>
+<td><code>config/main.py:4400,4489</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>systemctl restart snmp.service</code> により <code>docker-snmp</code> コンテナが再起動し、<code>start.sh</code> → <code>snmpd.conf.j2</code> テンプレート展開 → <code>snmpd</code> 起動のシーケンスが再実行される。変更反映まで数秒〜十数秒の SNMP 断が発生する。</p>
+<h3 id="config_db">CONFIG_DB への条件付き副次書込 (コンテナ起動時のみ)<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次書込先</th>
+<th>テーブル</th>
+<th>操作</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB</td>
+<td><code>SNMP_COMMUNITY</code></td>
+<td>set</td>
+<td><code>/etc/sonic/snmp.yml</code> に community 定義がありかつ CONFIG_DB に未登録の場合</td>
+<td><code>snmp_yml_to_configdb.py:36–49</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB</td>
+<td><code>SNMP\|LOCATION</code></td>
+<td>set</td>
+<td><code>/etc/sonic/snmp.yml</code> に <code>snmp_location</code> がありかつ CONFIG_DB に <code>SNMP\|LOCATION</code> が未登録の場合</td>
+<td><code>snmp_yml_to_configdb.py:51–53</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td>—</td>
+<td>SNMP テーブルは APPL_DB を経由しない</td>
+<td>—</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td>—</td>
+<td>SNMP テーブルは STATE_DB を更新しない</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_25">失敗時挙動<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>snmp_yml_to_configdb.py</code> が <code>snmp_location</code> キー欠如で <code>sys.exit(1)</code> → <code>start.sh</code> 失敗 → <code>snmpd</code> 未起動</li>
+<li><code>systemctl restart snmp.service</code> 失敗時は CLI が <code>SystemExit</code> をキャッチして <code>click.Abort()</code> を送出。CONFIG_DB 書き込みは完了しているが snmpd への反映は未完</li>
+<li><code>/etc/snmp/snmpd.conf</code> 生成失敗時は前回の設定ファイルが残存し、CONFIG_DB との乖離が発生する可能性がある</li>
+</ul>
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
 
@@ -36877,7 +37661,13 @@
 <p><code>src/sonic-yang-models/yang-models/sonic-snmp.yang</code> (container <code>SNMP</code> / <code>CONTACT</code> / <code>LOCATION</code>). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>snmpd.conf テンプレート: <code>sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>snmpd.conf テンプレート: <code>sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-buildimage/dockers/docker-snmp/snmp_yml_to_configdb.py</code> / <code>start.sh</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmp_yml_to_configdb.py">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmp_yml_to_configdb.py</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>sonic-buildimage/dockers/docker-snmp/base_image_files/monit_snmp</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/base_image_files/monit_snmp">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/base_image_files/monit_snmp</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

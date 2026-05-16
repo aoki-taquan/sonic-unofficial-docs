@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25751,7 +25763,35 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -25981,6 +26021,34 @@
     
   
     FABRIC_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
   
 
     
@@ -26645,6 +26713,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26793,6 +26917,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26988,7 +27140,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27073,6 +27225,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29285,6 +29465,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34578,7 +34786,35 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34924,7 +35160,71 @@
 <p><strong>CHASSIS_APP_DB との非連携 (依存 #5)</strong>: SmartSwitch DPU テーブルは CONFIG_DB にのみ存在する。CHASSIS_APP_DB (<code>redis_chassis.server:6380</code>) は VOQ 構成のラインカード間 <code>SYSTEM_NEIGH</code> / <code>SYSTEM_LAG</code> 共有に使用されるが、SmartSwitch の <code>SmartSwitchModuleUpdater</code> はこれを使用しない（evidence: <code>chassisd:688-862</code>）。</p>
 <!-- /ordering -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>DPU</code> テーブルは SmartSwitch 固有の CONFIG_DB テーブルとして他の複数テーブルと暗黙依存関係を持つ。
+YANG <code>leafref</code> による明示的な参照は持たないが、orchagent / chassisd / monit の実行時コードが
+以下のテーブルを連携して参照する。</p>
+<table>
+<thead>
+<tr>
+<th>依存方向</th>
+<th>参照元フィールド / 参照元</th>
+<th>参照先テーブル</th>
+<th>参照先キー形式</th>
+<th>依存内容</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>制御依存（被制御）</td>
+<td><code>CHASSIS_MODULE.admin_status</code></td>
+<td><code>CHASSIS_MODULE</code>（被参照）</td>
+<td><code>CHASSIS_MODULE\|DPU&lt;n&gt;</code></td>
+<td><code>chassisd</code> の <code>SmartSwitchConfigManagerTask</code> が <code>CHASSIS_MODULE</code> テーブルを購読。<code>admin_status=down</code> 書き込みで DPU のシャットダウン処理を起動する。YANG の key pattern <code>DPU[0-9]+</code> により <code>DPU0</code>〜<code>DPU7</code> が合法。<code>DPU.state</code> フィールドとは独立して動作する</td>
+<td><code>chassisd:1196-1228,235-256</code>, <code>sonic-chassis-module.yang:23</code></td>
+</tr>
+<tr>
+<td>条件依存（起動ゲート）</td>
+<td><code>DEVICE_METADATA.localhost.subtype</code></td>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>DEVICE_METADATA\|localhost</code></td>
+<td><code>orchagent/main.cpp:269</code> が <code>subtype</code> フィールドを読み取り <code>gMySwitchSubType</code> に格納。<code>gMySwitchSubType == "SmartSwitch"</code> のときのみ <code>DashEniFwdOrch</code>（<code>DPU</code> テーブル購読者）が初期化される。この条件が満たされない環境では <code>DPU</code> テーブルへの書き込みが ENI ルール生成に繋がらない</td>
+<td><code>orchagent/main.cpp:269</code>, <code>orchdaemon.cpp:613-618</code>, <code>sonic-device_metadata.yang:191</code></td>
+</tr>
+<tr>
+<td>分業参照（姉妹テーブル）</td>
+<td><code>container_checker</code> / <code>sonic-dpu-mgmt-traffic.sh</code></td>
+<td><code>DPUS</code></td>
+<td><code>DPUS\|&lt;dpu_name&gt;</code></td>
+<td>コンテナ監視（<code>container_checker</code>）は <code>DPUS</code> テーブルから DPU 名を取得して <code>databasedpu&lt;n&gt;</code> コンテナの必須起動判定を行う。<code>DPU</code> テーブルとは役割分担があり、<code>DPUS</code> は物理インタフェース（<code>midplane_interface</code>）情報を保持する</td>
+<td><code>container_checker:117-121</code>, <code>sonic-dpu-mgmt-traffic.sh:111,145</code>, <code>sonic-smart-switch.yang:81-106</code></td>
+</tr>
+<tr>
+<td>連携参照（ENI 解決チェーン）</td>
+<td><code>DashEniFwdOrch</code> 初期化時の一括取得</td>
+<td><code>REMOTE_DPU</code>, <code>VDPU</code></td>
+<td><code>REMOTE_DPU\|&lt;name&gt;</code>, <code>VDPU\|&lt;name&gt;</code></td>
+<td><code>dashenifwdorch.cpp:215-344</code> が <code>DPU</code>・<code>REMOTE_DPU</code>・<code>VDPU</code> を HA 準備完了時に一括取得。<code>VDPU.main_dpu_ids</code> フィールドが DPU 識別子リストを持ち、ENI→VDPU→DPU の名前解決チェーンを形成する。<code>VDPU</code> の <code>main_dpu_ids</code> に不正な DPU 名があると <code>WARN</code> ログが出力される</td>
+<td><code>dashenifwdorch.cpp:215-344</code>, <code>dashenifwdorch.h:63-65,80</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">依存解決タイミング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>CHASSIS_MODULE → DPU 制御</strong>: <code>chassisd</code> の <code>SmartSwitchConfigManagerTask</code> がリアルタイムに
+  <code>CHASSIS_MODULE</code> の変化を購読。<code>admin_status</code> 変化のたびに DPU の admin state が更新される。</li>
+<li><strong>DEVICE_METADATA.subtype → DashEniFwdOrch 起動</strong>: <code>orchagent</code> 起動時（<code>main.cpp:269</code>）に一度だけ読み取る。
+  実行時の変化は反映されない（orchagent 再起動が必要）。</li>
+<li><strong>DPUS 参照</strong>: <code>container_checker</code> は monit が定期実行するたびに <code>DPUS</code> テーブルを参照する。
+  <code>DPU</code> テーブルと <code>DPUS</code> テーブルは別々に書き込まれるが、SmartSwitch では両方の整合が必要。</li>
+<li><strong>REMOTE_DPU / VDPU の一括読み込み</strong>: HA セッション確立前に一括読み込みが行われる。
+  <code>DPU</code>・<code>REMOTE_DPU</code>・<code>VDPU</code> が揃っていない状態での HA 初期化は <code>WARN</code> ログを伴う不完全な状態になる。</li>
+</ul>
+<!-- /cross-refs -->
+
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

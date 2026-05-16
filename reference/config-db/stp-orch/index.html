@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピングを詳解。Phase A 分析。">
+        <meta name="description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存を詳解。Phase A+B 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピングを詳解。Phase A 分析。" />
+<meta property="og:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存を詳解。Phase A+B 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-orch.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-orch/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピングを詳解。Phase A 分析。" />
+<meta property="twitter:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存を詳解。Phase A+B 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-orch.png" />
 </head>
   
@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28495,6 +28647,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 全テーブル共通: PortsOrch readiness ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stp_vlan_instance_table-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STP_VLAN_INSTANCE_TABLE — VLAN 先行ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stp_port_state_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STP_PORT_STATE_TABLE — ポート先行ガード (コンシューマ全体ブロック)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-stp_port_state_table-bridge-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. STP_PORT_STATE_TABLE — Bridge Port 自動作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-stp_fastageing_flush_table-vlan-fail-silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. STP_FASTAGEING_FLUSH_TABLE — VLAN 未登録は fail-silent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-stp_inst_port_flush_table-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. STP_INST_PORT_FLUSH_TABLE — VLAN→インスタンス割当が前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理依存のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28506,7 +28752,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28517,7 +28763,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29251,6 +29497,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34488,6 +34762,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 全テーブル共通: PortsOrch readiness ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stp_vlan_instance_table-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STP_VLAN_INSTANCE_TABLE — VLAN 先行ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stp_port_state_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STP_PORT_STATE_TABLE — ポート先行ガード (コンシューマ全体ブロック)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-stp_port_state_table-bridge-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. STP_PORT_STATE_TABLE — Bridge Port 自動作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-stp_fastageing_flush_table-vlan-fail-silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. STP_FASTAGEING_FLUSH_TABLE — VLAN 未登録は fail-silent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-stp_inst_port_flush_table-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. STP_INST_PORT_FLUSH_TABLE — VLAN→インスタンス割当が前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理依存のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34499,7 +34867,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34510,7 +34878,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34819,6 +35187,138 @@ DISABLED・LISTENING はいずれも <code>SAI_STP_PORT_STATE_BLOCKING</code> �
 <p>証跡: <code>stporch.cpp:17-43, 603-616</code></p>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>StpOrch::doTask()</code> は APPL_DB の 4 テーブルを購読するが、各テーブルの処理には明確な前提条件がある。前提未成立時の挙動はテーブルごとに異なる (残置 <code>it++</code> / コンシューマ全体ブロック <code>return</code> / fail-silent) ため、運用上のトラブルシューティングで重要になる。</p>
+<h3 id="1-portsorch-readiness">1. 全テーブル共通: PortsOrch readiness ガード<a class="headerlink" href="#1-portsorch-readiness" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// stporch.cpp:578-581</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">StpOrch::doTask</span><span class="p">(</span><span class="n">Consumer</span><span class="w"> </span><span class="o">&amp;</span><span class="n">consumer</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">allPortsReady</span><span class="p">())</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">        </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="c1">// ...</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>allPortsReady()</code> が false の間、<strong>すべてのテーブル処理を無音スキップ</strong>する。PortsOrch が <code>PORT_INIT_DONE</code> を受信するまで <code>m_toSync</code> のエントリは保留され、エラーログも出力されない。</p>
+<p>→ 順序依存: PortsOrch の初期化完了が StpOrch 全体の前提。</p>
+<h3 id="2-stp_vlan_instance_table-vlan">2. STP_VLAN_INSTANCE_TABLE — VLAN 先行ガード<a class="headerlink" href="#2-stp_vlan_instance_table-vlan" title="Permanent link">&para;</a></h3>
+<p><code>addVlanToStpInstance()</code> (<code>stporch.cpp:123-126</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">getPort</span><span class="p">(</span><span class="n">vlan_alias</span><span class="p">,</span><span class="w"> </span><span class="n">vlan</span><span class="p">))</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>VLAN が PortsOrch に未登録の場合は false を返す。呼び出し元 <code>doStpTask()</code> (<code>stporch.cpp:410-414</code>) は:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">addVlanToStpInstance</span><span class="p">(</span><span class="n">vlan_alias</span><span class="p">,</span><span class="w"> </span><span class="n">instance</span><span class="p">))</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="p">{</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="n">it</span><span class="o">++</span><span class="p">;</span><span class="w">   </span><span class="c1">// erase せず次エントリへ</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>it++</code> で残置し、後続エントリは処理を継続する。DEL 時の <code>removeVlanFromStpInstance()</code> も同様に <code>getPort()</code> を内部で呼ぶため同じ条件でブロックされる。</p>
+<p>→ 順序依存: VLAN の PortsOrch 登録 (<code>VLAN_MEMBER</code> / PortsOrch 経由) が <code>STP_VLAN_INSTANCE_TABLE</code> の SET より先行必須。</p>
+<h3 id="3-stp_port_state_table">3. STP_PORT_STATE_TABLE — ポート先行ガード (コンシューマ全体ブロック)<a class="headerlink" href="#3-stp_port_state_table" title="Permanent link">&para;</a></h3>
+<p><code>doStpPortStateTask()</code> (<code>stporch.cpp:449-453</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">getPort</span><span class="p">(</span><span class="n">port_alias</span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="p">))</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="p">{</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span><span class="w">   </span><span class="c1">// it++ でなく return</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>ポートが PortsOrch に未登録の場合、<code>it++</code> ではなく <strong><code>return</code></strong> で抜ける。これにより同一コンシューマの後続エントリもすべてブロックされる点が <code>STP_VLAN_INSTANCE_TABLE</code> と異なる。</p>
+<p>不正キー (<code>&lt;port&gt;:&lt;instance&gt;</code> 形式でない) も同様に <code>return</code> でブロック:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">// stporch.cpp:439-443</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">found</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">string</span><span class="o">::</span><span class="n">npos</span><span class="p">)</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="p">{</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>→ 順序依存: 物理ポート / LAG の PortsOrch 登録が <code>STP_PORT_STATE_TABLE</code> の SET より先行必須。</p>
+<h3 id="4-stp_port_state_table-bridge-port">4. STP_PORT_STATE_TABLE — Bridge Port 自動作成<a class="headerlink" href="#4-stp_port_state_table-bridge-port" title="Permanent link">&para;</a></h3>
+<p><code>addStpPort()</code> (<code>stporch.cpp:218-227</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">if</span><span class="p">(</span><span class="n">port</span><span class="p">.</span><span class="n">m_bridge_port_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_NULL_OBJECT_ID</span><span class="p">)</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="p">{</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">addBridgePort</span><span class="p">(</span><span class="n">port</span><span class="p">);</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">port</span><span class="p">.</span><span class="n">m_bridge_port_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_NULL_OBJECT_ID</span><span class="p">)</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">        </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to add STP port %s invalid bridge port id ...&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">SAI_NULL_OBJECT_ID</span><span class="p">;</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Bridge port が未作成の場合は <code>addBridgePort()</code> で自動作成を試みる。失敗すると <code>SAI_NULL_OBJECT_ID</code> → <code>updateStpPortState()</code> が false → <code>it++</code> 残置。</p>
+<p>→ タイミング依存: bridge port 作成は自動試行されるが SAI 失敗時は残置。</p>
+<h3 id="5-stp_fastageing_flush_table-vlan-fail-silent">5. STP_FASTAGEING_FLUSH_TABLE — VLAN 未登録は fail-silent<a class="headerlink" href="#5-stp_fastageing_flush_table-vlan-fail-silent" title="Permanent link">&para;</a></h3>
+<p><code>stpVlanFdbFlush()</code> (<code>stporch.cpp:369-372</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">getPort</span><span class="p">(</span><span class="n">vlan_alias</span><span class="p">,</span><span class="w"> </span><span class="n">vlan</span><span class="p">))</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="p">{</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>VLAN 未登録時は false を返すが、<code>doStpFastageTask()</code> は戻り値を<strong>チェックしない</strong>。エントリは常に <code>erase()</code> される (fail-silent)。フラッシュが実行されなくてもエラーログは出ない。</p>
+<p>→ タイミング依存: VLAN が PortsOrch に未登録の状態でフラッシュ指示が届いても無音で消える。</p>
+<h3 id="6-stp_inst_port_flush_table-vlan">6. STP_INST_PORT_FLUSH_TABLE — VLAN→インスタンス割当が前提<a class="headerlink" href="#6-stp_inst_port_flush_table-vlan" title="Permanent link">&para;</a></h3>
+<p><code>doMstInstPortFlushTask()</code> (<code>stporch.cpp:553-561</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">it_map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_vlanAliasToStpInstanceMap</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">instance</span><span class="p">);</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">it_map</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">m_vlanAliasToStpInstanceMap</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="p">{</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vlan_alias</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">it_map</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">.</span><span class="n">stp_inst_vlan_list</span><span class="p">)</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">        </span><span class="n">stpVlanFdbFlush</span><span class="p">(</span><span class="n">vlan_alias</span><span class="p">);</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>m_vlanAliasToStpInstanceMap</code> は <code>addVlanToStpInstance()</code> が <code>STP_VLAN_INSTANCE_TABLE</code> を処理した際に更新される。インスタンスが未登録の場合はフラッシュ対象 VLAN リストが空で no-op になる (エラーログなし)。</p>
+<p>→ 順序依存: <code>STP_INST_PORT_FLUSH_TABLE</code> の SET は <code>STP_VLAN_INSTANCE_TABLE</code> の SET (VLAN→インスタンス割当) より後に到達すること。</p>
+<h3 id="_3">処理依存のまとめ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>必須先行条件</th>
+<th>不成立時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全テーブル</td>
+<td><code>allPortsReady()</code> (PortsOrch 初期化)</td>
+<td>無音 <code>return</code> (保留)</td>
+</tr>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code> SET</td>
+<td>VLAN が PortsOrch に登録済み</td>
+<td><code>it++</code> 残置 (後続は継続)</td>
+</tr>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code> DEL</td>
+<td>VLAN が PortsOrch に登録済み</td>
+<td><code>it++</code> 残置</td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code> SET/DEL</td>
+<td>ポートが PortsOrch に登録済み</td>
+<td><code>return</code> (コンシューマ全体ブロック)</td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code> SET</td>
+<td>Bridge port 作成成功</td>
+<td><code>it++</code> 残置</td>
+</tr>
+<tr>
+<td><code>STP_FASTAGEING_FLUSH_TABLE</code> SET</td>
+<td>VLAN が PortsOrch に登録済み</td>
+<td>fail-silent (消去)</td>
+</tr>
+<tr>
+<td><code>STP_INST_PORT_FLUSH_TABLE</code> SET</td>
+<td>STP_VLAN_INSTANCE_TABLE で割当済み</td>
+<td>no-op (消去)</td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/stp-orch-ordering.md</code> を参照。</p>
+<!-- /ordering -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -34880,8 +35380,8 @@ DISABLED・LISTENING はいずれも <code>SAI_STP_PORT_STATE_BLOCKING</code> �
 </tr>
 </tbody>
 </table>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP / STP_VLAN / STP_PORT テーブル</a></li>
 <li><a href="../stp-mst/">CONFIG_DB: STP_MST テーブル</a></li>

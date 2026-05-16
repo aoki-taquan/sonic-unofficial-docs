@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動を網羅した調査ページ。">
+        <meta name="description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、/etc/chrony への副次ファイル書込と systemd 経路、CONFIG_DB Subscribe 通信メカニズム、および SmartSwitch / MGMT_VRF / multi-asic プラットフォーム差を網羅した調査ページ。">
       
       
       
@@ -27,7 +27,7 @@
     
     
       
-        <title>NTP テーブル群 (Phase A defaults + Phase D failure) - SONiC 非公式ドキュメント</title>
+        <title>NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform) - SONiC 非公式ドキュメント</title>
       
     
     
@@ -63,16 +63,16 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="NTP テーブル群 (Phase A defaults + Phase D failure) - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動を網羅した調査ページ。" />
+<meta property="og:title" content="NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform) - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、/etc/chrony への副次ファイル書込と systemd 経路、CONFIG_DB Subscribe 通信メカニズム、および SmartSwitch / MGMT_VRF / multi-asic プラットフォーム差を網羅した調査ページ。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/ntp.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/ntp/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="NTP テーブル群 (Phase A defaults + Phase D failure) - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動を網羅した調査ページ。" />
+<meta property="twitter:title" content="NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform) - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、/etc/chrony への副次ファイル書込と systemd 経路、CONFIG_DB Subscribe 通信メカニズム、および SmartSwitch / MGMT_VRF / multi-asic プラットフォーム差を網羅した調査ページ。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/ntp.png" />
 </head>
   
@@ -93,7 +93,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ntp-phase-a-phase-d" class="md-skip">
+        <a href="#ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -127,7 +127,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              NTP テーブル群 (Phase A defaults + Phase D failure)
+              NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
             
           </span>
         </div>
@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26789,7 +26913,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26807,7 +26931,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27172,7 +27296,323 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ntpcfg-config_db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — NtpCfg / テンプレートが読み出す関連 CONFIG_DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — NtpCfg / テンプレートが読み出す関連 CONFIG_DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_vrf_config-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_VRF_CONFIG — VRF 選択ランタイム読み出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_interface-src_intfeth0-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_INTERFACE — src_intf=eth0 時の IP アドレス解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device_metadata-smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA — SmartSwitch 条件分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntpcfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外（隣接テーブルだが NtpCfg 参照経路に含まれないもの）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ntp-udp-caclmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP UDP ポート定数 (caclmgrd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp_keytype-sonic-ntpyang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY.type デフォルト定数 (sonic-ntp.yang)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minpoll-maxpoll-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        minpoll / maxpoll — CONFIG_DB 非存在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyfile-chronyconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyfile パス定数 (chrony.conf.j2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込・ファイル書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込・ファイル書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB / STATE_DB への副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcchronychronyconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイル書込: /etc/chrony/chrony.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcchronychronykeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイル書込: /etc/chrony/chrony.keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd 経路まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g-config_db-subscribe-chrony-sighup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G) — CONFIG_DB Subscribe / chrony 制御 / SIGHUP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G) — CONFIG_DB Subscribe / chrony 制御 / SIGHUP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB Subscribe 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribe-src_intf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        間接 Subscribe — src_intf 連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chrony" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chrony 制御方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sighup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIGHUP の扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pub/sub ループ起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-ntp-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch — NTP server 機能の自動有効化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_vrf-chronyd-startersh-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_VRF — chronyd-starter.sh によるランタイム VRF 選択
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis-ntp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis での NTP 適用範囲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -27183,7 +27623,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27273,6 +27713,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29485,6 +29953,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34967,7 +35463,323 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ntpcfg-config_db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — NtpCfg / テンプレートが読み出す関連 CONFIG_DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — NtpCfg / テンプレートが読み出す関連 CONFIG_DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_vrf_config-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_VRF_CONFIG — VRF 選択ランタイム読み出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_interface-src_intfeth0-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_INTERFACE — src_intf=eth0 時の IP アドレス解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device_metadata-smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA — SmartSwitch 条件分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntpcfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外（隣接テーブルだが NtpCfg 参照経路に含まれないもの）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ntp-udp-caclmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP UDP ポート定数 (caclmgrd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp_keytype-sonic-ntpyang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY.type デフォルト定数 (sonic-ntp.yang)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minpoll-maxpoll-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        minpoll / maxpoll — CONFIG_DB 非存在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyfile-chronyconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyfile パス定数 (chrony.conf.j2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込・ファイル書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込・ファイル書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB / STATE_DB への副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcchronychronyconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイル書込: /etc/chrony/chrony.conf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcchronychronykeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイル書込: /etc/chrony/chrony.keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd 経路まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g-config_db-subscribe-chrony-sighup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G) — CONFIG_DB Subscribe / chrony 制御 / SIGHUP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G) — CONFIG_DB Subscribe / chrony 制御 / SIGHUP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB Subscribe 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribe-src_intf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        間接 Subscribe — src_intf 連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chrony" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chrony 制御方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sighup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SIGHUP の扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pub/sub ループ起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-ntp-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch — NTP server 機能の自動有効化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_vrf-chronyd-startersh-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_VRF — chronyd-starter.sh によるランタイム VRF 選択
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis-ntp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis での NTP 適用範囲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34978,7 +35790,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35013,7 +35825,7 @@
   
 
 
-<h1 id="ntp-phase-a-phase-d">NTP テーブル群 — コード由来デフォルト (Phase A) + 失敗挙動 (Phase D)<a class="headerlink" href="#ntp-phase-a-phase-d" title="Permanent link">&para;</a></h1>
+<h1 id="ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h">NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)<a class="headerlink" href="#ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h" title="Permanent link">&para;</a></h1>
 <blockquote>
 <p>このページは <code>NTP</code> / <code>NTP_SERVER</code> / <code>NTP_KEY</code> 3 テーブルを横断して、YANG 定義・<code>init_cfg.json.j2</code>・<code>chrony.conf.j2</code> テンプレート・<code>hostcfgd</code> ハンドラの全行精読から得た<strong>暗黙デフォルト</strong>・<strong>乖離</strong>・<strong>dead field</strong>・<strong>silent drop</strong> を記録する。各テーブルの詳細は <a href="../ntp-global/"><code>NTP (global)</code></a>・<a href="../ntp-server/"><code>NTP_SERVER</code></a>・<a href="../ntp-key/"><code>NTP_KEY</code></a> を参照。</p>
 </blockquote>
@@ -35530,7 +36342,555 @@
 </blockquote>
 <!-- /ordering -->
 
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- cross-refs -->
+<h2 id="ntpcfg-config_db-phase-c">暗黙参照 — <code>NtpCfg</code> / テンプレートが読み出す関連 CONFIG_DB テーブル (Phase C)<a class="headerlink" href="#ntpcfg-config_db-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>hostcfgd</code> の <code>NtpCfg</code> ハンドラおよびテンプレート (<code>chrony.conf.j2</code>・<code>chronyd-starter.sh</code>) は、<code>NTP</code> / <code>NTP_SERVER</code> / <code>NTP_KEY</code> 以外の以下のテーブルを暗黙的に参照する。</p>
+<h3 id="mgmt_vrf_config-vrf">MGMT_VRF_CONFIG — VRF 選択ランタイム読み出し<a class="headerlink" href="#mgmt_vrf_config-vrf" title="Permanent link">&para;</a></h3>
+<p><code>chronyd-starter.sh</code> はサービス起動時に <code>sonic-db-cli</code> 経由で CONFIG_DB を直接読み出す。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>参照フィールド</th>
+<th>参照タイミング</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MGMT_VRF_CONFIG</code></td>
+<td><code>vrf_global.mgmtVrfEnabled</code></td>
+<td>chrony サービス起動時 (ExecStartPre)</td>
+<td><code>"true"</code> ならば <code>NTP\|global.vrf</code> に応じて VRF を選択。<code>"false"</code> なら常に default VRF で起動</td>
+<td><code>chronyd-starter.sh:3-16</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>hostcfgd</code> は <code>MGMT_VRF_CONFIG</code> 変更を <code>mgmt_vrf_handler</code> で購読し、<code>MgmtIfaceCfg.update_mgmt_vrf()</code> が <code>systemctl stop chrony</code> → <code>systemctl start chrony</code> を発火する (hostcfgd:2352,2496,1655-1669)。NTP 設定変更がなくても管理 VRF 切替で chrony が再起動されるため、<strong><code>MGMT_VRF_CONFIG</code> は NTP に対して間接的な制御テーブルとして機能する</strong>。</p>
+<blockquote>
+<p>依存方向の注意: <code>NTP.vrf=mgmt</code> は <code>MGMT_VRF_CONFIG.mgmtVrfEnabled=true</code> が先行している状態でのみ YANG <code>must</code> を通過できる (sonic-ntp.yang:127-129)。逆に <code>mgmtVrfEnabled</code> を <code>false</code> に戻す前に <code>NTP.vrf</code> を <code>default</code> に戻さないと、<code>chronyd-starter.sh</code> が mgmt VRF で起動を試みてサービス障害になる（書込み順依存は Phase B <code>&lt;!-- ordering --&gt;</code> 参照）。</p>
+</blockquote>
+<h3 id="mgmt_interface-src_intfeth0-ip">MGMT_INTERFACE — src_intf=eth0 時の IP アドレス解決<a class="headerlink" href="#mgmt_interface-src_intfeth0-ip" title="Permanent link">&para;</a></h3>
+<p><code>chrony.conf.j2</code> は <code>NTP.src_intf</code> が <code>eth0</code> のとき、<code>MGMT_INTERFACE</code> テーブルから IPv4/IPv6 アドレスを解決して <code>bindacqaddress</code> ディレクティブを生成する (chrony.conf.j2:91-92)。</p>
+<p><code>init_cfg.json.j2</code> はデフォルトで <code>NTP.src_intf = "eth0"</code> を注入するため、<strong>標準構成では常に <code>MGMT_INTERFACE</code> が参照される</strong>。<code>eth0</code> 以外のインタフェース (<code>Ethernet*</code> / <code>Loopback*</code> / <code>PortChannel*</code> / <code>Vlan*</code>) が <code>src_intf</code> に設定された場合は対応するインタフェーステーブルが参照される（詳細は <code>NTP.src_intf</code> — YANG 任意、init_cfg が <code>"eth0"</code> を注入 参照）。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>参照タイミング</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../mgmt-interface/"><code>MGMT_INTERFACE</code></a></td>
+<td><code>chrony.conf.j2</code> テンプレート生成時</td>
+<td><code>src_intf=eth0</code> 時の IPv4/IPv6 アドレスを <code>bindacqaddress</code> に変換</td>
+<td><code>chrony.conf.j2:91-92</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>hostcfgd</code> の <code>mgmt_intf_handler</code> (hostcfgd:2345-2351) は <code>MGMT_INTERFACE</code> 変更を購読するが、コールバック先は <code>AaaCfg</code> の RADIUS IP 更新と <code>MgmtIfaceCfg.update_mgmt_iface()</code> のみで、<code>NtpCfg</code> への直接コールバックはない。<code>eth0</code> の IP が変化した場合、次回 NTP 関連の変更で chrony が再起動されるまで <code>bindacqaddress</code> の IP は古い値のまま残る。</p>
+<h3 id="device_metadata-smartswitch">DEVICE_METADATA — SmartSwitch 条件分岐<a class="headerlink" href="#device_metadata-smartswitch" title="Permanent link">&para;</a></h3>
+<p><code>chrony.conf.j2</code> は先頭 (L15-16) で <code>DEVICE_METADATA.localhost</code> を読み込み、<code>subtype</code> / <code>type</code> フィールドを SmartSwitch 判定に使用する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>{% set device_metadata = (DEVICE_METADATA | d({})).get(&#39;localhost&#39;, {}) -%}
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>...
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>{% if device_metadata.subtype == &#39;SmartSwitch&#39; and device_metadata.type != &#39;SmartSwitchDPU&#39; -%}
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>{% if global.server_role == &#39;enabled&#39; or global.dhcp == &#39;enabled&#39; -%}
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>allow
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>binddevice bridge-midplane
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>{% endif -%}
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>{% endif -%}
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>参照フィールド</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a></td>
+<td><code>localhost.subtype</code> / <code>localhost.type</code></td>
+<td>SmartSwitch 判定。<code>subtype=SmartSwitch</code> かつ <code>type!=SmartSwitchDPU</code> のときのみ <code>NTP.server_role</code> / <code>NTP.dhcp</code> を参照して <code>allow</code> + <code>binddevice bridge-midplane</code> を生成</td>
+<td><code>chrony.conf.j2:15-16,57-63</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>非 SmartSwitch では <code>DEVICE_METADATA</code> の内容に関わらず NTP 動作に影響しない</strong>（条件分岐を通過しないため）。また <code>hostcfgd</code> の <code>device_metadata_handler</code> (hostcfgd:2404-2408) は hostname / timezone / rsyslog のみ更新し、<code>NtpCfg</code> へのコールバックはない。<code>DEVICE_METADATA.subtype</code> が変化しても次回 chrony 再起動まで <code>chrony.conf</code> は更新されない。</p>
+<h3 id="ntpcfg">範囲外（隣接テーブルだが NtpCfg 参照経路に含まれないもの）<a class="headerlink" href="#ntpcfg" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>LOOPBACK_INTERFACE</code>: <code>lpbk_handler</code> (hostcfgd:2357-2365) が <code>NtpCfg.handle_ntp_source_intf_chg()</code> を呼び出す。これは <code>src_intf</code> に一致する Loopback が変化した場合のみ chrony 再起動をトリガーする。<code>NtpCfg</code> が <code>LOOPBACK_INTERFACE</code> の内容を読み取る経路はなく、トリガー専用。</li>
+<li><code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code>: <code>src_intf</code> にこれらが設定された場合は <code>chrony.conf.j2</code> の <code>get_ip_on_interface</code> が参照するが、<code>hostcfgd</code> の NTP ハンドラからのコールバックはない。</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/ntp-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence:
+  caclmgrd:95-100
+  sonic-ntp.yang:66-73,268
+  chrony.conf.j2:127
+-->
+
+<h3 id="ntp-udp-caclmgrd">NTP UDP ポート定数 (caclmgrd)<a class="headerlink" href="#ntp-udp-caclmgrd" title="Permanent link">&para;</a></h3>
+<p><code>caclmgrd:95-100</code> の <code>ACL_SERVICES</code> 辞書:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">ACL_SERVICES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="s2">&quot;NTP&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>        <span class="s2">&quot;ip_protocols&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;udp&quot;</span><span class="p">],</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        <span class="s2">&quot;dst_ports&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;123&quot;</span><span class="p">],</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        <span class="s2">&quot;multi_asic_ns_to_host_fwd&quot;</span><span class="p">:</span> <span class="kc">False</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="p">},</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NTP サービスポート (UDP)</td>
+<td><strong><code>123</code></strong></td>
+<td><code>caclmgrd:98</code></td>
+</tr>
+<tr>
+<td>プロトコル</td>
+<td><strong><code>udp</code></strong></td>
+<td><code>caclmgrd:97</code></td>
+</tr>
+<tr>
+<td>multi_asic_ns_to_host_fwd</td>
+<td><strong><code>False</code></strong></td>
+<td><code>caclmgrd:99</code></td>
+</tr>
+</tbody>
+</table>
+<p>ポート 123 は CONFIG_DB 非依存のリテラル定数。iptables フィルタルール生成のみに使用され、<code>NTP</code> テーブルに対応フィールドは存在しない。</p>
+<h3 id="ntp_keytype-sonic-ntpyang">NTP_KEY.type デフォルト定数 (sonic-ntp.yang)<a class="headerlink" href="#ntp_keytype-sonic-ntpyang" title="Permanent link">&para;</a></h3>
+<p><code>sonic-ntp.yang:66-73</code> の <code>key-type</code> typedef と L268 の <code>default</code> 宣言:</p>
+<div class="language-yang highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">key-type</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">enumeration</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">        </span><span class="k">enum</span><span class="w"> </span><span class="nv">md5</span><span class="p">;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">        </span><span class="k">enum</span><span class="w"> </span><span class="nv">sha1</span><span class="p">;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="k">enum</span><span class="w"> </span><span class="nv">sha256</span><span class="p">;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">        </span><span class="k">enum</span><span class="w"> </span><span class="nv">sha384</span><span class="p">;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">        </span><span class="k">enum</span><span class="w"> </span><span class="nv">sha512</span><span class="p">;</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="p">}</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="o">...</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="k">leaf</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nv">key-type</span><span class="p">;</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="nv">md5</span><span class="p">;</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NTP_KEY.type</code> YANG default</td>
+<td><strong><code>md5</code></strong></td>
+<td><code>sonic-ntp.yang:268</code></td>
+</tr>
+<tr>
+<td>key-type 許容値</td>
+<td><code>md5 / sha1 / sha256 / sha384 / sha512</code></td>
+<td><code>sonic-ntp.yang:66-73</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>chrony.keys.j2:17</code> は <code>NTP_KEY[keyid].type | upper</code> でキーファイルに出力する（<code>MD5</code>、<code>SHA1</code>、<code>SHA256</code> 等）。<strong><code>md5</code> は RFC 8573 で非推奨</strong>。SHA-256 以上への移行が推奨される。</p>
+<h3 id="minpoll-maxpoll-config_db">minpoll / maxpoll — CONFIG_DB 非存在<a class="headerlink" href="#minpoll-maxpoll-config_db" title="Permanent link">&para;</a></h3>
+<p>chrony のポーリング間隔 (<code>minpoll</code> / <code>maxpoll</code>) に対応する CONFIG_DB フィールドは <code>NTP</code> テーブルにも YANG にも存在しない。chrony 内部デフォルト（minpoll 6 = <strong>64 秒</strong>、maxpoll 10 = <strong>1024 秒</strong>）がそのまま適用される。</p>
+<h3 id="keyfile-chronyconfj2">keyfile パス定数 (chrony.conf.j2)<a class="headerlink" href="#keyfile-chronyconfj2" title="Permanent link">&para;</a></h3>
+<p><code>chrony.conf.j2:127</code> でハードコード:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>keyfile /etc/chrony/chrony.keys
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>chrony keyfile パス</td>
+<td><strong><code>/etc/chrony/chrony.keys</code></strong></td>
+<td><code>chrony.conf.j2:127</code></td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB の NTP テーブルにキーファイルパスを変更するフィールドはない。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/ntp-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込・ファイル書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/ntp-side-effects.md</code></p>
+</blockquote>
+<h3 id="appl_db-state_db">APPL_DB / STATE_DB への副次書込<a class="headerlink" href="#appl_db-state_db" title="Permanent link">&para;</a></h3>
+<p><strong>0 件。</strong> NTP 処理系は APPL_DB / STATE_DB への書込を一切行わない。NTP 同期ステータスは STATE_DB に記録されず、<code>chronyc tracking</code> / <code>chronyc sources</code> コマンドによる直接観測のみ。</p>
+<h3 id="etcchronychronyconf">ファイル書込: <code>/etc/chrony/chrony.conf</code><a class="headerlink" href="#etcchronychronyconf" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の NTP テーブル変更は <code>hostcfgd</code> の <code>NtpCfg</code> ハンドラが検出し <code>systemctl restart chrony</code> を発行する。chrony サービスの <code>ExecStartPre</code> に登録された <code>chrony-config.sh</code> が <code>sonic-cfggen -d -t chrony.conf.j2</code> を実行し、CONFIG_DB の内容をもとに <code>/etc/chrony/chrony.conf</code> を上書き生成する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>CONFIG_DB 変更 (NTP / NTP_SERVER / NTP_KEY)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  → hostcfgd NtpCfg.handler()
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    → ntp_global_update() / ntp_srv_key_update()
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>      → systemctl restart chrony    # hostcfgd:1280,1325,1357,1398
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>        → ExecStartPre: chrony-config.sh
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>          → sonic-cfggen -d -t chrony.conf.j2 &gt; /etc/chrony/chrony.conf
+</span></code></pre></div>
+<p>CONFIG_DB フィールドと生成内容の対応:</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB フィールド</th>
+<th>chrony.conf への影響</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NTP_SERVER.&lt;addr&gt;.admin_state == 'disabled'</code></td>
+<td>そのサーバ行を除外</td>
+<td><code>chrony.conf.j2:20</code></td>
+</tr>
+<tr>
+<td><code>NTP_SERVER.&lt;addr&gt;.association_type</code></td>
+<td><code>server</code> / <code>pool</code> ディレクティブ切替</td>
+<td><code>chrony.conf.j2:26,49,53</code></td>
+</tr>
+<tr>
+<td><code>NTP_SERVER.&lt;addr&gt;.iburst</code></td>
+<td><code>iburst</code> オプション付加（truthy 判定バグあり）</td>
+<td><code>chrony.conf.j2:37</code></td>
+</tr>
+<tr>
+<td><code>NTP_SERVER.&lt;addr&gt;.version</code></td>
+<td><code>version N</code> オプション付加</td>
+<td><code>chrony.conf.j2:43</code></td>
+</tr>
+<tr>
+<td><code>NTP_SERVER.&lt;addr&gt;.key</code></td>
+<td><code>key N</code> オプション付加 (authentication=enabled 時のみ)</td>
+<td><code>chrony.conf.j2:30-34</code></td>
+</tr>
+<tr>
+<td><code>NTP.global.authentication == 'enabled'</code></td>
+<td><code>keyfile /etc/chrony/chrony.keys</code> 行を追加</td>
+<td><code>chrony.conf.j2:124-128</code></td>
+</tr>
+<tr>
+<td><code>NTP.global.src_intf</code></td>
+<td><code>bindacqaddress &lt;ip&gt;</code> 行を追加 (vrf!=mgmt 時)</td>
+<td><code>chrony.conf.j2:87-116</code></td>
+</tr>
+<tr>
+<td><code>NTP.global.server_role</code> / <code>dhcp</code></td>
+<td>SmartSwitch のみ <code>allow</code> + <code>binddevice bridge-midplane</code></td>
+<td><code>chrony.conf.j2:58-64</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="etcchronychronykeys">ファイル書込: <code>/etc/chrony/chrony.keys</code><a class="headerlink" href="#etcchronychronykeys" title="Permanent link">&para;</a></h3>
+<p>同じ <code>chrony-config.sh</code> が <code>sonic-cfggen -d -t chrony.keys.j2 &gt; /etc/chrony/chrony.keys</code> を実行し、<code>NTP_KEY</code> テーブルの内容を書込む。書込後に <code>chmod o-r /etc/chrony/chrony.keys</code> でパーミッション制限を適用する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。<code>NTP_KEY.trusted</code> フィールドは <code>chrony.keys.j2</code> に未参照（dead field）。</p>
+<h3 id="systemd">systemd 経路まとめ<a class="headerlink" href="#systemd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>起動シナリオ</th>
+<th>発行コマンド</th>
+<th>発行元</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NTP_GLOBAL 変更</td>
+<td><code>systemctl restart chrony</code></td>
+<td><code>ntp_global_update()</code></td>
+<td><code>hostcfgd:1357</code></td>
+</tr>
+<tr>
+<td>NTP_SERVER / NTP_KEY 変更</td>
+<td><code>systemctl restart chrony</code></td>
+<td><code>ntp_srv_key_update()</code></td>
+<td><code>hostcfgd:1398</code></td>
+</tr>
+<tr>
+<td>src_intf の参照インタフェース IP 変更</td>
+<td><code>systemctl restart chrony</code></td>
+<td><code>handle_ntp_source_intf_chg()</code></td>
+<td><code>hostcfgd:1325</code></td>
+</tr>
+<tr>
+<td>MGMT_VRF_CONFIG 変更</td>
+<td><code>systemctl stop chrony</code> + <code>systemctl start chrony</code></td>
+<td>mgmt_vrf ハンドラ</td>
+<td><code>hostcfgd:1660-1662</code></td>
+</tr>
+<tr>
+<td>ブート時</td>
+<td><code>ExecStartPre: chrony-config.sh</code> のみ（chrony restart なし）</td>
+<td><code>config-setup.service</code> → <code>chrony.service</code></td>
+<td><code>override.conf:9-11</code></td>
+</tr>
+</tbody>
+</table>
+<p>chrony の実際の起動 VRF は <code>ExecStart</code> に登録された <code>chronyd-starter.sh</code> が <code>MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled</code> と <code>NTP|global.vrf</code> を動的に読み取り決定する。</p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g-config_db-subscribe-chrony-sighup">通信メカニズム (Phase G) — CONFIG_DB Subscribe / chrony 制御 / SIGHUP<a class="headerlink" href="#phase-g-config_db-subscribe-chrony-sighup" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>詳細証跡は <code>meta/_intermediate/cdb-flow/ntp-pubsub.md</code> を参照。</p>
+</blockquote>
+<h3 id="config_db-subscribe">CONFIG_DB Subscribe 登録<a class="headerlink" href="#config_db-subscribe" title="Permanent link">&para;</a></h3>
+<p>hostcfgd は <code>config_db.subscribe()</code> で 3 テーブルを監視する。<!-- evidence: hostcfgd:2511-2517 --></p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>swsscommon 定数</th>
+<th>コールバック</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NTP</code></td>
+<td><code>CFG_NTP_GLOBAL_TABLE_NAME</code></td>
+<td><code>ntp_global_handler</code> → <code>NtpCfg.ntp_global_update()</code></td>
+</tr>
+<tr>
+<td><code>NTP_SERVER</code></td>
+<td><code>CFG_NTP_SERVER_TABLE_NAME</code></td>
+<td><code>ntp_srv_key_handler</code> → <code>NtpCfg.ntp_srv_key_update()</code></td>
+</tr>
+<tr>
+<td><code>NTP_KEY</code></td>
+<td><code>CFG_NTP_KEY_TABLE_NAME</code></td>
+<td><code>ntp_srv_key_handler</code> → <code>NtpCfg.ntp_srv_key_update()</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>NTP_SERVER</code> と <code>NTP_KEY</code> は<strong>共通ハンドラ</strong> (<code>ntp_srv_key_handler</code>) に集約されており、
+いずれかの変更でその時点の両テーブル全件を再取得して chrony を再起動する。<!-- evidence: hostcfgd:2387-2391 --></p>
+<h3 id="subscribe-src_intf">間接 Subscribe — src_intf 連動<a class="headerlink" href="#subscribe-src_intf" title="Permanent link">&para;</a></h3>
+<p><code>LOOPBACK_INTERFACE</code> テーブルも監視しており (<code>hostcfgd:2483</code>)、変更時に
+<code>NtpCfg.handle_ntp_source_intf_chg(lpbk_name)</code> を呼び出す。<!-- evidence: hostcfgd:2355-2364 --></p>
+<p>条件: <code>NTP_SERVER</code> 未設定なら即 return。<code>src_intf</code> に含まれるインタフェース名が変化した場合のみ chrony 再起動。
+他インタフェース種別 (<code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code>) には NTP 連動コールなし。<!-- evidence: hostcfgd:2367-2381 --></p>
+<h3 id="chrony">chrony 制御方式<a class="headerlink" href="#chrony" title="Permanent link">&para;</a></h3>
+<p>すべての NTP イベントは <code>systemctl restart chrony</code> によるフルリスタートで対応する。<!-- evidence: hostcfgd:1280,1324-1329,1355-1361,1396-1402 --></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">CHRONY_RESTART</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;systemctl&#39;</span><span class="p">,</span> <span class="s1">&#39;restart&#39;</span><span class="p">,</span> <span class="s1">&#39;chrony&#39;</span><span class="p">]</span>  <span class="c1"># hostcfgd:1280</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>ハンドラ</th>
+<th>トリガー</th>
+<th>キャッシュ差分チェック</th>
+<th>キャッシュ更新タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ntp_global_update</code></td>
+<td><code>NTP</code> 変更</td>
+<td><code>cache['global'] == data</code> → no-op</td>
+<td><code>systemctl restart</code> 成功後</td>
+</tr>
+<tr>
+<td><code>ntp_srv_key_update</code></td>
+<td><code>NTP_SERVER</code> / <code>NTP_KEY</code> 変更</td>
+<td><code>cache['servers'] == ntp_servers and cache['keys'] == ntp_keys</code> → no-op</td>
+<td><code>systemctl restart</code> 成功後</td>
+</tr>
+<tr>
+<td><code>handle_ntp_source_intf_chg</code></td>
+<td><code>LOOPBACK_INTERFACE</code> 変更</td>
+<td>インタフェース名照合のみ（差分チェックなし）</td>
+<td>キャッシュ更新なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sighup">SIGHUP の扱い<a class="headerlink" href="#sighup" title="Permanent link">&para;</a></h3>
+<p>hostcfgd 自体は <code>signal.SIGHUP</code> を登録するが<strong>何もしない</strong>（無視）。<!-- evidence: hostcfgd:111-112 --></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">signal_handler</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="k">if</span> <span class="n">sig</span> <span class="o">==</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGHUP</span><span class="p">:</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>        <span class="n">syslog</span><span class="o">.</span><span class="n">syslog</span><span class="p">(</span><span class="n">syslog</span><span class="o">.</span><span class="n">LOG_INFO</span><span class="p">,</span> <span class="s2">&quot;HostCfgd: signal &#39;SIGHUP&#39; is caught and ignoring..&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>chrony へ SIGHUP を送る経路は存在しない。NTP 設定変更は必ずフルリスタートであり、
+設定のホットリロード (SIGHUP) は採用されていない。
+（比較: TACACS+ の <code>audisp-tacplus</code> へは SIGHUP を送信している — <code>hostcfgd:489-491</code>）</p>
+<h3 id="pubsub">pub/sub ループ起動<a class="headerlink" href="#pubsub" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">config_db</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">init_data_handler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">)</span>  <span class="c1"># hostcfgd:2527-2528</span>
+</span></code></pre></div>
+<p><code>config_db.listen()</code> は swsscommon の SubscriberStateTable を介した Redis Keyspace 通知ポーリングループ。
+<code>init_data_handler=self.load</code> によりループ開始前に <code>NtpCfg.load()</code> でスナップショット一括取得し
+ブート時のキャッシュを初期化する。<!-- evidence: hostcfgd:1285-1310,2255-2272 --></p>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence:
+  chrony.conf.j2:57-64 (SmartSwitch NPU server_role / dhcp)
+  chrony.conf.j2:86-116 (src_intf bindacqaddress, vrf=mgmt 分岐)
+  chrony.conf.j2:109 (vrf==mgmt で bindacqaddress 抑制)
+  chronyd-starter.sh:1-16 (MGMT_VRF ランタイム選択)
+  hostcfgd:1645-1693 (MgmtIfaceCfg.update_mgmt_vrf chrony stop/start)
+-->
+
+<blockquote>
+<p>詳細証跡は <code>meta/_intermediate/cdb-flow/ntp-platform.md</code> を参照。</p>
+</blockquote>
+<h3 id="smartswitch-ntp-server">SmartSwitch — NTP server 機能の自動有効化<a class="headerlink" href="#smartswitch-ntp-server" title="Permanent link">&para;</a></h3>
+<p><code>chrony.conf.j2</code> L57-64 は <code>DEVICE_METADATA.localhost.subtype == 'SmartSwitch'</code> かつ <code>type != 'SmartSwitchDPU'</code> のときのみ <code>allow</code> + <code>binddevice bridge-midplane</code> を生成し、chrony を NTP server として動作させる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>{% if device_metadata.subtype == &#39;SmartSwitch&#39; and device_metadata.type != &#39;SmartSwitchDPU&#39; -%}
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>{% if global.server_role == &#39;enabled&#39; or global.dhcp == &#39;enabled&#39; -%}
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>allow
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>binddevice bridge-midplane
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>{% endif -%}
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>{% endif -%}
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th><code>allow</code>+<code>binddevice bridge-midplane</code> 追加条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通常スイッチ (T0/T1 等)</td>
+<td><strong>追加されない</strong>（dead block）</td>
+</tr>
+<tr>
+<td>SmartSwitch NPU</td>
+<td><code>server_role=enabled</code> <strong>または</strong> <code>dhcp=enabled</code> のとき</td>
+</tr>
+<tr>
+<td>SmartSwitch DPU</td>
+<td><strong>追加されない</strong>（<code>type == 'SmartSwitchDPU'</code> で除外）</td>
+</tr>
+</tbody>
+</table>
+<p><code>dhcp</code> デフォルトが <code>enabled</code> であるため（<code>init_cfg.json.j2</code> L212）、SmartSwitch NPU では <strong><code>server_role</code> 値に関わらず</strong> NTP server として動作する。非 SmartSwitch では <code>NTP.server_role</code> は完全な dead field。</p>
+<p><code>binddevice bridge-midplane</code> は NPU-DPU 間ブリッジインタフェース。DPU は NPU をアップストリーム NTP サーバとして参照する構成が前提。DPU 側では <code>NTP_SERVER</code> に NPU の bridge-midplane IP を手動で追加する必要がある。</p>
+<h3 id="mgmt_vrf-chronyd-startersh-vrf">MGMT_VRF — chronyd-starter.sh によるランタイム VRF 選択<a class="headerlink" href="#mgmt_vrf-chronyd-startersh-vrf" title="Permanent link">&para;</a></h3>
+<p><code>chronyd-starter.sh</code> はサービス起動時に <code>MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled</code> を CONFIG_DB から読み取り、chrony の実行 VRF を決定する。</p>
+<table>
+<thead>
+<tr>
+<th><code>MGMT_VRF_CONFIG.mgmtVrfEnabled</code></th>
+<th><code>NTP|global.vrf</code></th>
+<th>chronyd 起動方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>false</code> または読み取り失敗</td>
+<td>任意</td>
+<td>デフォルト VRF（<code>exec /usr/sbin/chronyd</code>）</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td><code>"default"</code></td>
+<td>デフォルト VRF</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td>それ以外（例: <code>"mgmt"</code>）</td>
+<td>mgmt VRF（<code>ip vrf exec mgmt chronyd</code>）</td>
+</tr>
+</tbody>
+</table>
+<p>さらに <code>MgmtIfaceCfg.update_mgmt_vrf()</code> (<code>hostcfgd</code> L1659-1666) は <code>MGMT_VRF_CONFIG</code> 変更時に <code>systemctl stop chrony</code> → <code>systemctl restart interfaces-config</code> → <code>systemctl start chrony</code> の順で chrony を再起動し、<code>chronyd-starter.sh</code> を再評価させる。</p>
+<p><code>vrf == 'mgmt'</code> のとき <code>chrony.conf.j2</code> L109 の条件 <code>{% if not ((NTP) and NTP['global']['vrf'] == 'mgmt') %}</code> により <code>bindacqaddress</code> ディレクティブが生成されない。mgmt VRF 上では chrony が <code>eth0</code> を暗黙的に使用するため <code>src_intf</code> 設定は無視される。</p>
+<h3 id="multi-asic-voq-chassis-ntp">multi-asic / VOQ chassis での NTP 適用範囲<a class="headerlink" href="#multi-asic-voq-chassis-ntp" title="Permanent link">&para;</a></h3>
+<p><code>NtpCfg</code> は host CONFIG_DB のみを参照し、<code>asicN</code> namespace への接続を行わない。NTP はホスト管理プレーンで完結するため ASIC 数に依存しない。</p>
+<p>ただし <code>src_intf</code> の有効性は構成に依存する:</p>
+<table>
+<thead>
+<tr>
+<th><code>src_intf</code> 値</th>
+<th>multi-asic での注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eth0</code></td>
+<td>host に 1 つ。multi-asic でも同じ動作</td>
+</tr>
+<tr>
+<td><code>LoopbackX</code></td>
+<td>host CONFIG_DB の <code>LOOPBACK_INTERFACE</code> に IP が設定されているかを確認</td>
+</tr>
+<tr>
+<td><code>EthernetX</code> / <code>PortChannelX</code></td>
+<td>multi-asic 環境ではデータプレーン側インタフェースが ASIC namespace に存在し、host CONFIG_DB の <code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> にアドレスが設定されない場合がある。その場合 <code>bindacqaddress</code> が空となり、ソース IP 制限が実質的に無効化される（エラーなしのサイレント動作）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">プラットフォーム差サマリ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>分類</th>
+<th>影響フィールド</th>
+<th>挙動</th>
+<th>発生条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SmartSwitch NPU のみ</strong></td>
+<td><code>NTP.server_role</code>、<code>NTP.dhcp</code></td>
+<td><code>allow</code>+<code>binddevice bridge-midplane</code> 生成 → NTP server 有効化</td>
+<td><code>subtype=SmartSwitch</code> かつ <code>type!=SmartSwitchDPU</code></td>
+</tr>
+<tr>
+<td><strong>SmartSwitch DPU / 通常スイッチ</strong></td>
+<td><code>NTP.server_role</code></td>
+<td>dead field</td>
+<td>それ以外全プラットフォーム</td>
+</tr>
+<tr>
+<td><strong>MGMT_VRF 有効時</strong></td>
+<td><code>NTP.vrf</code>、<code>MGMT_VRF_CONFIG</code></td>
+<td>chrony を mgmt VRF で起動、<code>bindacqaddress</code> 抑制</td>
+<td><code>mgmtVrfEnabled=true</code> かつ <code>vrf!=default</code></td>
+</tr>
+<tr>
+<td><strong>multi-asic</strong></td>
+<td><code>NTP.src_intf</code> (EthernetX/PortChannelX)</td>
+<td>host CONFIG_DB に IP なし → <code>bindacqaddress</code> 空 → ソース IP 制限無効化（サイレント）</td>
+<td><code>src_intf</code> にデータプレーンインタフェース設定時</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../ntp-global/">CONFIG_DB: NTP (global)</a></li>
 <li><a href="../ntp-server/">CONFIG_DB: NTP_SERVER</a></li>
@@ -35538,7 +36898,7 @@
 <li><a href="../../yang/sonic-ntp/">YANG: sonic-ntp</a></li>
 <li><a href="../../cli/config-ntp/">CLI: config ntp</a></li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
@@ -35550,6 +36910,12 @@
 </li>
 <li id="fn:3">
 <p><code>chrony.conf.j2</code> L37: <code>{% if config.iburst %}</code> — Jinja2 で文字列 <code>'off'</code> は truthy。<code>iburst = 'off'</code> のサーバも <code>iburst</code> オプションが生成される潜在的挙動。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony.conf.j2#L37">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony.conf.j2#L37</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p><code>chrony-config.sh:9-10</code>: <code>sonic-cfggen -d -t /usr/share/sonic/templates/chrony.conf.j2 &gt;/etc/chrony/chrony.conf</code> および <code>sonic-cfggen -d -t /usr/share/sonic/templates/chrony.keys.j2 &gt;/etc/chrony/chrony.keys</code>。<code>override.conf:9</code> の <code>ExecStartPre=!/usr/bin/chrony-config.sh</code> で chrony サービス起動前に実行される。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony-config.sh">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony-config.sh</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>chrony-config.sh:11</code>: <code>chmod o-r /etc/chrony/chrony.keys</code> — 鍵ファイルへの world-read アクセスを禁止。<code>chrony.keys.j2:7-18</code> が <code>NTP_KEY</code> テーブルから鍵 ID・タイプ・Base64 デコード済み値を書き込む。<a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony.keys.j2">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony.keys.j2</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

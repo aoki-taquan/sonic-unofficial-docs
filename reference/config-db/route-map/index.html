@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23206,22 +23218,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db-phase-g_1" class="md-nav__link">
+  <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB 購読メカニズム (Phase G)
+        暗黙テーブル参照 (Phase C)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="CONFIG_DB 購読メカニズム (Phase G)">
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#frrcfgd-sonic-frr-mgmt-framework_1" class="md-nav__link">
+  <a href="#route_map-leafref" class="md-nav__link">
     <span class="md-ellipsis">
       
-        frrcfgd (sonic-frr-mgmt-framework)
+        ROUTE_MAP → 他テーブル (順方向 leafref)
       
     </span>
   </a>
@@ -23229,10 +23241,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#bgpcfgd-sonic-bgpcfgd-sdn_1" class="md-nav__link">
+  <a href="#route_map_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bgpcfgd (sonic-bgpcfgd) — SDN 専用経路
+        他テーブル → ROUTE_MAP (逆方向参照)
       
     </span>
   </a>
@@ -23243,7 +23255,129 @@
   <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読フロー要約
+        依存テーブル削除時の影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd の失敗パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="frrcfgd の失敗パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vtysh-log_err-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. vtysh コマンド失敗 → LOG_ERR + silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-route_operation-match_-set_-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. route_operation 欠落 → match_* / set_* が全 silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-del-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DEL 時キャッシュ未登録 → FRR ゴーストエントリ残存リスク
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-set_metric_action-set_metric-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. set_metric_action + set_metric 未設定 → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-set_asn-set_repeat_asn-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. set_asn 未設定で set_repeat_asn のみ → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-frr-100-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. FRR デーモン接続失敗 → 起動時 100 回 retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターンサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE
       
     </span>
   </a>
@@ -26743,6 +26877,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -27387,6 +27549,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27535,6 +27753,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27730,7 +27976,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27815,6 +28061,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -30027,6 +30301,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -36023,22 +36325,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db-phase-g_1" class="md-nav__link">
+  <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB 購読メカニズム (Phase G)
+        暗黙テーブル参照 (Phase C)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="CONFIG_DB 購読メカニズム (Phase G)">
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#frrcfgd-sonic-frr-mgmt-framework_1" class="md-nav__link">
+  <a href="#route_map-leafref" class="md-nav__link">
     <span class="md-ellipsis">
       
-        frrcfgd (sonic-frr-mgmt-framework)
+        ROUTE_MAP → 他テーブル (順方向 leafref)
       
     </span>
   </a>
@@ -36046,10 +36348,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#bgpcfgd-sonic-bgpcfgd-sdn_1" class="md-nav__link">
+  <a href="#route_map_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bgpcfgd (sonic-bgpcfgd) — SDN 専用経路
+        他テーブル → ROUTE_MAP (逆方向参照)
       
     </span>
   </a>
@@ -36060,7 +36362,129 @@
   <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読フロー要約
+        依存テーブル削除時の影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd の失敗パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="frrcfgd の失敗パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vtysh-log_err-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. vtysh コマンド失敗 → LOG_ERR + silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-route_operation-match_-set_-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. route_operation 欠落 → match_* / set_* が全 silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-del-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DEL 時キャッシュ未登録 → FRR ゴーストエントリ残存リスク
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-set_metric_action-set_metric-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. set_metric_action + set_metric 未設定 → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-set_asn-set_repeat_asn-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. set_asn 未設定で set_repeat_asn のみ → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-frr-100-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. FRR デーモン接続失敗 → 起動時 100 回 retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターンサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE
       
     </span>
   </a>
@@ -37016,54 +37440,301 @@
 </blockquote>
 <!-- /ordering -->
 
-<!-- pubsub -->
-<h2 id="config_db-phase-g_1">CONFIG_DB 購読メカニズム (Phase G)<a class="headerlink" href="#config_db-phase-g_1" title="Permanent link">&para;</a></h2>
-<p>ROUTE_MAP テーブルは 2 つの独立したデーモンが購読する。</p>
-<h3 id="frrcfgd-sonic-frr-mgmt-framework_1">frrcfgd (sonic-frr-mgmt-framework)<a class="headerlink" href="#frrcfgd-sonic-frr-mgmt-framework_1" title="Permanent link">&para;</a></h3>
-<p><code>frrcfgd.py</code> は <code>ExtConfigDBConnector</code>（<code>ConfigDBConnector</code> サブクラス）を使用し、Redis keyspace イベント (<code>__keyspace@&lt;dbid&gt;__:*</code>) を <code>psubscribe</code> で監視する。<code>subscribe_all()</code> が <code>table_handler_list</code> 内の <code>('ROUTE_MAP', self.bgp_table_handler_common)</code> を登録し、変更通知を受け取る。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># frrcfgd.py L2302, 2359-2361</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="p">(</span><span class="s1">&#39;ROUTE_MAP&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bgp_table_handler_common</span><span class="p">),</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="o">...</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">subscribe_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">hdlr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_handler_list</span><span class="p">:</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">config_db</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">hdlr</span><span class="p">)</span>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙テーブル参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>ROUTE_MAP テーブルが直接・間接に参照する他テーブル、および ROUTE_MAP を参照する逆方向テーブルの一覧。<code>sonic-route-map.yang</code> leafref 全行スキャンと <code>frrcfgd.py</code> のランタイム参照から抽出。<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
+<h3 id="route_map-leafref">ROUTE_MAP → 他テーブル (順方向 leafref)<a class="headerlink" href="#route_map-leafref" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>参照先テーブル</th>
+<th>参照方式</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>match_interface</code></td>
+<td><code>PORT</code></td>
+<td>YANG leafref</td>
+<td>union 1: ポート名</td>
+</tr>
+<tr>
+<td><code>match_interface</code></td>
+<td><code>PORTCHANNEL</code></td>
+<td>YANG leafref</td>
+<td>union 2: LAG 名</td>
+</tr>
+<tr>
+<td><code>match_interface</code></td>
+<td><code>LOOPBACK_INTERFACE</code></td>
+<td>YANG leafref</td>
+<td>union 3: Loopback 名</td>
+</tr>
+<tr>
+<td><code>match_prefix_set</code></td>
+<td><code>PREFIX_SET</code></td>
+<td>YANG leafref + frrcfgd ランタイム参照</td>
+<td>frrcfgd が <code>PREFIX_SET.mode</code> を参照して IPv4/IPv6 AF を決定</td>
+</tr>
+<tr>
+<td><code>match_ipv6_prefix_set</code></td>
+<td><code>PREFIX_SET</code></td>
+<td>YANG leafref のみ</td>
+<td>frrcfgd 未処理 (dead field)</td>
+</tr>
+<tr>
+<td><code>match_next_hop_set</code></td>
+<td><code>PREFIX_SET</code></td>
+<td>YANG leafref + frrcfgd ランタイム参照</td>
+<td>IPv6 next-hop は IPv4 コマンドにフォールバック</td>
+</tr>
+<tr>
+<td><code>match_src_vrf</code></td>
+<td><code>VRF</code></td>
+<td>YANG leafref</td>
+<td>union 内; <code>default</code> 文字列は leafref 外</td>
+</tr>
+<tr>
+<td><code>match_neighbor</code></td>
+<td><code>PORT</code></td>
+<td>YANG leafref</td>
+<td>union; max-elements 1</td>
+</tr>
+<tr>
+<td><code>match_neighbor</code></td>
+<td><code>PORTCHANNEL</code></td>
+<td>YANG leafref</td>
+<td>union</td>
+</tr>
+<tr>
+<td><code>match_community</code></td>
+<td><code>COMMUNITY_SET</code></td>
+<td>YANG leafref + frrcfgd <code>get_table()</code></td>
+<td>set 未作成時 silent drop</td>
+</tr>
+<tr>
+<td><code>match_ext_community</code></td>
+<td><code>EXTENDED_COMMUNITY_SET</code></td>
+<td>YANG leafref + frrcfgd <code>get_table()</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>match_as_path</code></td>
+<td><code>AS_PATH_SET</code></td>
+<td>YANG leafref + frrcfgd <code>get_table()</code></td>
+<td>未作成時 FRR 無効参照</td>
+</tr>
+<tr>
+<td><code>call_route_map</code></td>
+<td><code>ROUTE_MAP_SET</code></td>
+<td>YANG leafref (同モジュール内)</td>
+<td>参照先未作成時 FRR 素通り</td>
+</tr>
+<tr>
+<td><code>set_community_ref</code></td>
+<td><code>COMMUNITY_SET</code></td>
+<td>YANG leafref + frrcfgd <code>get_table()</code></td>
+<td>未作成時 silent drop</td>
+</tr>
+<tr>
+<td><code>set_ext_community_ref</code></td>
+<td><code>EXTENDED_COMMUNITY_SET</code></td>
+<td>YANG leafref + frrcfgd <code>get_table()</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>VLAN (<code>match_interface</code> / <code>match_neighbor</code>) は YANG 上でコメントアウト済みのため実際には参照不可。</p>
+<h3 id="route_map_1">他テーブル → ROUTE_MAP (逆方向参照)<a class="headerlink" href="#route_map_1" title="Permanent link">&para;</a></h3>
+<p>frrcfgd および YANG の逆方向 leafref スキャン結果:</p>
+<table>
+<thead>
+<tr>
+<th>参照元テーブル</th>
+<th>フィールド</th>
+<th>leafref 先</th>
+<th>参照コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_NEIGHBOR_AF</code></td>
+<td><code>route_map_in</code></td>
+<td><code>ROUTE_MAP_SET.name</code></td>
+<td><code>frrcfgd.py</code> L1903, <code>sonic-bgp-common.yang</code> L385</td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR_AF</code></td>
+<td><code>route_map_out</code></td>
+<td><code>ROUTE_MAP_SET.name</code></td>
+<td><code>frrcfgd.py</code> L1904, <code>sonic-bgp-common.yang</code> L394</td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR_AF</code></td>
+<td><code>default_rmap</code></td>
+<td><code>ROUTE_MAP_SET.name</code></td>
+<td><code>frrcfgd.py</code> L1900, <code>sonic-bgp-common.yang</code> L354</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_GROUP_AF</code></td>
+<td><code>route_map_in</code></td>
+<td><code>ROUTE_MAP_SET.name</code></td>
+<td><code>frrcfgd.py</code> L1903, <code>sonic-bgp-common.yang</code> L385</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_GROUP_AF</code></td>
+<td><code>route_map_out</code></td>
+<td><code>ROUTE_MAP_SET.name</code></td>
+<td><code>frrcfgd.py</code> L1904, <code>sonic-bgp-common.yang</code> L394</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_GROUP_AF</code></td>
+<td><code>default_rmap</code></td>
+<td><code>ROUTE_MAP_SET.name</code></td>
+<td><code>frrcfgd.py</code> L1900</td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS_AF</code></td>
+<td><code>import_vrf_route_map</code></td>
+<td><code>ROUTE_MAP_SET.name</code></td>
+<td><code>frrcfgd.py</code> L1863, <code>sonic-bgp-global.yang</code> L371</td>
+</tr>
+<tr>
+<td><code>ROUTE_REDISTRIBUTE</code></td>
+<td><code>route_map</code></td>
+<td><code>ROUTE_MAP_SET.name</code></td>
+<td><code>frrcfgd.py</code> L1979, <code>sonic-route-common.yang</code> L60</td>
+</tr>
+</tbody>
+</table>
+<p>ROUTE_MAP 名は <code>ROUTE_MAP_SET</code> テーブルで管理される。<code>BGP_NEIGHBOR_AF</code> 等の <code>route_map_in</code> / <code>route_map_out</code> は <code>ROUTE_MAP_SET.name</code> を leafref で参照し、frrcfgd が <code>neighbor &lt;X&gt; route-map &lt;name&gt; in/out</code> コマンドを生成する。</p>
+<h3 id="_20">依存テーブル削除時の影響<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>削除テーブル</th>
+<th>ROUTE_MAP への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PREFIX_SET</code></td>
+<td>frrcfgd 内部 AF キャッシュからエントリ消去 → 以降の <code>match_prefix_set</code> / <code>match_next_hop_set</code> 更新が silent drop</td>
+</tr>
+<tr>
+<td><code>COMMUNITY_SET</code></td>
+<td><code>match_community</code> / <code>set_community_ref</code> の FRR コマンド未発行</td>
+</tr>
+<tr>
+<td><code>AS_PATH_SET</code></td>
+<td><code>match_as_path</code> の FRR bgpd 側で無効参照エラー</td>
+</tr>
+<tr>
+<td><code>ROUTE_MAP_SET</code></td>
+<td><code>call_route_map</code> 参照先消滅 → FRR 素通り</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>sonic-route-map.yang</code> leafref 全行、<code>frrcfgd.py</code> L82-99, L1863, L1899-1904, L1942, L1979, L2214-2249, L2298-2315。詳細は <code>meta/_intermediate/cdb-flow/route-map-cross-refs.md</code>。</p>
+</blockquote>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>frrcfgd の ROUTE_MAP 処理における失敗パターンを全行スキャンして確認した。詳細は <code>meta/_intermediate/cdb-flow/route-map-failure.md</code> を参照。</p>
+<h3 id="frrcfgd">frrcfgd の失敗パターン<a class="headerlink" href="#frrcfgd" title="Permanent link">&para;</a></h3>
+<h4 id="1-vtysh-log_err-silent-drop">1. vtysh コマンド失敗 → LOG_ERR + silent drop<a class="headerlink" href="#1-vtysh-log_err-silent-drop" title="Permanent link">&para;</a></h4>
+<p><code>frrcfgd.py</code> L3120-3122: vtysh コマンド送信失敗時に <code>syslog.LOG_ERR</code> を出力して <code>continue</code>。内部キャッシュ (<code>self.route_map</code>) は更新されない。retry なし、rollback なし。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__run_command</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">syslog</span><span class="o">.</span><span class="n">syslog</span><span class="p">(</span><span class="n">syslog</span><span class="o">.</span><span class="n">LOG_ERR</span><span class="p">,</span> <span class="s1">&#39;failed to configure route-map </span><span class="si">{}</span><span class="s1"> seq </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">seq_no</span><span class="p">))</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="k">continue</span>
 </span></code></pre></div>
-<p>変更検知後、<code>bgp_table_handler_common</code> が Jinja2 テンプレート (<code>bgpd.conf.db.route_map.j2</code>) を展開して FRR vtysh コマンドを生成・実行する。</p>
-<p><strong>Jinja2 テンプレート経路</strong> (<code>bgpd.conf.db.route_map.j2</code>):</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>{% if ROUTE_MAP is defined and ROUTE_MAP|length &gt; 0 %}
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>{% for rm_key, rm_val in ROUTE_MAP.items() %}
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>{% if &#39;route_operation&#39; in rm_val %}
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>route-map {{rm_key[0]}} {{rm_val[&#39;route_operation&#39;]}} {{rm_key[1]}}
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>{% if &#39;match_as_path&#39; in rm_val %}
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a> match as-path {{rm_val[&#39;match_as_path&#39;]}}
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>{% endif %}
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>...
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>{% endif %}
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>{% endfor %}
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>{% endif %}
+<h4 id="2-route_operation-match_-set_-silent-drop">2. <code>route_operation</code> 欠落 → <code>match_*</code> / <code>set_*</code> が全 silent drop<a class="headerlink" href="#2-route_operation-match_-set_-silent-drop" title="Permanent link">&para;</a></h4>
+<p><code>frrcfgd.py</code> L3131-3133: <code>route_operation</code> が内部キャッシュに未登録の場合、後続フィールドを全て <code>continue</code> でスキップ。FRR への反映ゼロ。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">if</span> <span class="n">map_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">route_map</span> <span class="ow">or</span> <span class="n">seq_no</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">route_map</span><span class="p">[</span><span class="n">map_name</span><span class="p">]:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">syslog</span><span class="o">.</span><span class="n">syslog</span><span class="p">(</span><span class="n">syslog</span><span class="o">.</span><span class="n">LOG_ERR</span><span class="p">,</span> <span class="s1">&#39;route-map </span><span class="si">{}</span><span class="s1"> seq </span><span class="si">{}</span><span class="s1"> not found for update&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">seq_no</span><span class="p">))</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="k">continue</span>
 </span></code></pre></div>
-<p>テンプレートは <code>ROUTE_MAP</code> 全エントリを走査し、<code>route_operation</code> (permit/deny)、各 <code>match_*</code> / <code>set_*</code> フィールドを条件付きで FRR コマンドに変換する。適用対象デーモンは <code>['zebra', 'bgpd', 'ospfd']</code>。</p>
-<h3 id="bgpcfgd-sonic-bgpcfgd-sdn_1">bgpcfgd (sonic-bgpcfgd) — SDN 専用経路<a class="headerlink" href="#bgpcfgd-sonic-bgpcfgd-sdn_1" title="Permanent link">&para;</a></h3>
-<p><code>RouteMapMgr</code> は <code>APPL_DB</code> の <code>BGP_PROFILE_TABLE</code> を購読し、SDN 専用の 2 キー (<code>FROM_SDN_SLB_ROUTES</code>, <code>FROM_SDN_APPLIANCE_ROUTES</code>) のみを処理する。汎用 ROUTE_MAP の CONFIG_DB 購読は frrcfgd が担当し、bgpcfgd テンプレートエンジンが CONFIG_DB の ROUTE_MAP を読み込んで FRR 設定を生成する。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># managers_rm.py L5-6, 27-31</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">ROUTE_MAPS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FROM_SDN_SLB_ROUTES&quot;</span><span class="p">,</span> <span class="s2">&quot;FROM_SDN_APPLIANCE_ROUTES&quot;</span><span class="p">]</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">set_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_handler_validate</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">__update_rm</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<h4 id="3-del-frr">3. DEL 時キャッシュ未登録 → FRR ゴーストエントリ残存リスク<a class="headerlink" href="#3-del-frr" title="Permanent link">&para;</a></h4>
+<p><code>frrcfgd.py</code> L3140-3142: DEL イベント時にキャッシュ未登録の場合、FRR への <code>no route-map</code> 発行をスキップ。CONFIG_DB では DEL 済み、FRR 上には設定が残存するリスクがある。</p>
+<h4 id="4-set_metric_action-set_metric-silent-drop">4. <code>set_metric_action</code> + <code>set_metric</code> 未設定 → silent drop<a class="headerlink" href="#4-set_metric_action-set_metric-silent-drop" title="Permanent link">&para;</a></h4>
+<p><code>frrcfgd.py</code> L502-504: <code>METRIC_SET_VALUE</code> / <code>METRIC_ADD_VALUE</code> / <code>METRIC_SUBTRACT_VALUE</code> 指定時に <code>set_metric</code> が空の場合、handler が <code>None</code> を返しコマンド未生成。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">if</span> <span class="n">metric_param</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">syslog</span><span class="o">.</span><span class="n">syslog</span><span class="p">(</span><span class="n">syslog</span><span class="o">.</span><span class="n">LOG_ERR</span><span class="p">,</span> <span class="s1">&#39;handle_rmap_set_metric not set for </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="k">return</span> <span class="kc">None</span>
 </span></code></pre></div>
-<p><code>__update_rm</code> は <code>cfg_mgr.push_list(cmds)</code> で FRR vtysh に直接コマンドを送信する。</p>
-<h3 id="_20">購読フロー要約<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>CONFIG_DB ROUTE_MAP
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  ├─ frrcfgd (ExtConfigDBConnector psubscribe)
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  │    └─ bgp_table_handler_common
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  │         └─ Jinja2 (bgpd.conf.db.route_map.j2)
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  │              └─ vtysh configure terminal / route-map &lt;name&gt; &lt;action&gt; &lt;seq&gt;
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>  └─ bgpcfgd RouteMapMgr (SDN 専用; APPL_DB BGP_PROFILE 経由)
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>       └─ cfg_mgr.push_list → vtysh route-map FROM_SDN_*_RM
+<h4 id="5-set_asn-set_repeat_asn-silent-drop">5. <code>set_asn</code> 未設定で <code>set_repeat_asn</code> のみ → silent drop<a class="headerlink" href="#5-set_asn-set_repeat_asn-silent-drop" title="Permanent link">&para;</a></h4>
+<p><code>hdl_set_asn</code> が <code>None</code> を返しコマンド未生成。LOG_ERR なし（完全 silent）。</p>
+<h4 id="6-frr-100-retry">6. FRR デーモン接続失敗 → 起動時 100 回 retry<a class="headerlink" href="#6-frr-100-retry" title="Permanent link">&para;</a></h4>
+<p>frrcfgd 起動時、FRR Unix socket (<code>/run/frr/&lt;daemon&gt;.vty</code>) への接続を <strong>2 秒間隔・最大 100 回（約 200 秒）</strong> リトライ。超過時は <code>RuntimeError('connect to FRR daemon failed')</code> でプロセス終了。実行中のコネクション断は retry なし（個別コマンド失敗として処理）。</p>
+<h3 id="_21">失敗パターンサマリ<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>LOG_ERR</th>
+<th>FRR 反映</th>
+<th>retry</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vtysh コマンド失敗</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>continue でイベント破棄</td>
+</tr>
+<tr>
+<td><code>route_operation</code> 欠落</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>内部キャッシュ未登録</td>
+</tr>
+<tr>
+<td>DEL 時キャッシュ未登録</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>FRR ゴーストエントリ残存</td>
+</tr>
+<tr>
+<td><code>set_metric</code> 未設定</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>handler が <code>None</code> 返却</td>
+</tr>
+<tr>
+<td><code>set_asn</code> 未設定</td>
+<td>なし</td>
+<td>なし</td>
+<td>なし</td>
+<td>完全 silent drop</td>
+</tr>
+<tr>
+<td>起動時デーモン接続失敗</td>
+<td>あり</td>
+<td>なし</td>
+<td>最大 100 回</td>
+<td>超過で RuntimeError</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-error_table">STATE_DB / ERROR_TABLE<a class="headerlink" href="#state_db-error_table" title="Permanent link">&para;</a></h3>
+<p>frrcfgd は ROUTE_MAP の失敗を STATE_DB や ERROR_TABLE に<strong>記録しない</strong>。障害検知は syslog のみ。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>frr-mgmt-framework<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;route-map&#39;</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show route-map&#39;</span>
 </span></code></pre></div>
-<!-- /pubsub -->
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>frrcfgd.py</code> L47-63 (<code>g_run_command</code>), L181-218 (接続 retry), L502-504 (<code>handle_rmap_set_metric</code>), L3109-3148 (ROUTE_MAP handler), L1532-1534 (例外吸収)。詳細は <code>meta/_intermediate/cdb-flow/route-map-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
 
 <!-- glossary-links-injected: 24dbb72211e3 -->
 
@@ -37081,6 +37752,9 @@
 </li>
 <li id="fn:4">
 <p>frrcfgd ROUTE_MAP handler 実装: <code>sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>YANG leafref 定義: <code>sonic-route-map.yang</code>, <code>sonic-bgp-common.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-route-map.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-route-map.yang</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

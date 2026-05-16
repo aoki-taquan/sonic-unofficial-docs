@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23147,7 +23159,246 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        作成順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-hw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI HW 作成の内部順序（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除順序（逆順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗・リトライ挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗・リトライ挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#addoperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        addOperation() 失敗分類
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="addOperation() 失敗分類">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#return-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        永続破棄（return true）― リトライなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リトライ待ち（return false）― 依存オブジェクト未解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-runtime_error-catch-return-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 呼び出し失敗（runtime_error catch → return false）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deloperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        delOperation() 失敗分類
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="delOperation() 失敗分類">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#return-true_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        永続破棄（return true）― 警告のみ・処理継続
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-runtime_error-catch-return-false_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 呼び出し失敗（runtime_error catch → return false）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_tnl_hw_pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        del_tnl_hw_pending による連鎖ブロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 失敗後の状態不整合（既知リスク）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlanorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vxlanorch.h — 数値マクロ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlanorchh_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vxlanorch.h — 文字列マクロ（ポート名プレフィクス）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#map_t-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MAP_T 列挙 → SAI マッピングテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_map_use_t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnel_map_use_t — マッパー共有モード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -23158,7 +23409,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23169,7 +23420,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23180,7 +23431,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23191,7 +23442,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23203,7 +23454,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23214,7 +23465,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23225,7 +23476,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23369,7 +23620,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -23380,10 +23631,82 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c-vxlanorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C / vxlanorch.cpp)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C / vxlanorch.cpp)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel-vxlantunnelorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL (VxlanTunnelOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN (PortsOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-vrforch-l3vni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF (VRFOrch) — L3VNI 判定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch — トンネルポート / ブリッジポート管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存解決順序
       
     </span>
   </a>
@@ -26211,6 +26534,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26855,6 +27206,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27003,6 +27410,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27198,7 +27633,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27283,6 +27718,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29495,6 +29958,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34760,7 +35251,246 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        作成順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-hw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI HW 作成の内部順序（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除順序（逆順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗・リトライ挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗・リトライ挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#addoperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        addOperation() 失敗分類
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="addOperation() 失敗分類">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#return-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        永続破棄（return true）― リトライなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リトライ待ち（return false）― 依存オブジェクト未解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-runtime_error-catch-return-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 呼び出し失敗（runtime_error catch → return false）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deloperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        delOperation() 失敗分類
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="delOperation() 失敗分類">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#return-true_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        永続破棄（return true）― 警告のみ・処理継続
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-runtime_error-catch-return-false_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 呼び出し失敗（runtime_error catch → return false）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_tnl_hw_pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        del_tnl_hw_pending による連鎖ブロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 失敗後の状態不整合（既知リスク）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlanorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vxlanorch.h — 数値マクロ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlanorchh_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vxlanorch.h — 文字列マクロ（ポート名プレフィクス）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#map_t-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MAP_T 列挙 → SAI マッピングテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_map_use_t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnel_map_use_t — マッパー共有モード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34771,7 +35501,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34782,7 +35512,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34793,7 +35523,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34804,7 +35534,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34816,7 +35546,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -34827,7 +35557,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -34838,7 +35568,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34982,7 +35712,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -34993,10 +35723,82 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c-vxlanorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C / vxlanorch.cpp)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C / vxlanorch.cpp)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel-vxlantunnelorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL (VxlanTunnelOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN (PortsOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-vrforch-l3vni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF (VRFOrch) — L3VNI 判定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch — トンネルポート / ブリッジポート管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存解決順序
       
     </span>
   </a>
@@ -35213,7 +36015,391 @@
 </ul>
 <!-- /defaults -->
 
-<h2 id="_7">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-ordering.md; sonic-swss/orchagent/vxlanorch.cpp -->
+
+<h3 id="_7">作成順序<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>テーブル</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>VLAN\|&lt;id&gt;</code></td>
+<td><code>VxlanTunnelMapOrch::addOperation()</code> が <code>gPortsOrch-&gt;getVlanByVlanId()</code> で VLAN の存在を確認。未作成なら <code>return false</code>（リトライ待ち）(vxlanorch.cpp:2030)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>VXLAN_TUNNEL\|&lt;tunnel-name&gt;</code></td>
+<td><code>isTunnelExists()</code> チェック。TUNNEL 未登録なら <code>return false</code>（リトライ待ち）(vxlanorch.cpp:2047)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>VXLAN_TUNNEL_MAP\|&lt;tunnel&gt;\|&lt;map&gt;</code></td>
+<td>初回エントリ受信時に <code>createTunnelHw()</code> が呼ばれ SAI トンネルオブジェクト（mapper → tunnel → tunnel-term）が一括生成される (vxlanorch.cpp:2063)。VXLAN_TUNNEL 単体では SAI HW は作成されない点に注意</td>
+</tr>
+</tbody>
+</table>
+<p>複数の MAP エントリは VLAN・TUNNEL が揃っていれば順不同で書込み可能。</p>
+<h3 id="sai-hw">SAI HW 作成の内部順序（参考）<a class="headerlink" href="#sai-hw" title="Permanent link">&para;</a></h3>
+<p><code>createTunnelHw()</code> 内部では以下の順で SAI オブジェクトを生成する:</p>
+<ol>
+<li><code>createMapperHw()</code> — <code>sai_tunnel_api-&gt;create_tunnel_map()</code>（encap/decap マッパー）</li>
+<li><code>create_tunnel()</code> — <code>sai_tunnel_api-&gt;create_tunnel()</code>（マッパー OID リストを参照）</li>
+<li><code>create_tunnel_termination()</code> — <code>sai_tunnel_api-&gt;create_tunnel_term_table_entry()</code></li>
+</ol>
+<h3 id="_8">削除順序（逆順）<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除 → VXLAN_TUNNEL 削除 → VLAN 削除
+</span></code></pre></div>
+<p><code>del_tnl_hw_pending</code> フラグが true の間は MAP 追加もブロックされる (vxlanorch.cpp:2057)。削除途中での再追加は避けること。</p>
+<!-- /ordering -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗・リトライ挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-failure.md; sonic-swss/orchagent/vxlanorch.cpp -->
+
+<h3 id="addoperation">addOperation() 失敗分類<a class="headerlink" href="#addoperation" title="Permanent link">&para;</a></h3>
+<h4 id="return-true">永続破棄（return true）― リトライなし<a class="headerlink" href="#return-true" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログメッセージ</th>
+<th>コードロケーション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>マップキーが既にキャッシュに存在</td>
+<td><code>"Vxlan tunnel map '%s' already exist"</code> (SWSS_LOG_ERROR)</td>
+<td><code>vxlanorch.cpp:2025-2027</code></td>
+</tr>
+<tr>
+<td><code>vni</code> &gt;= 16777215 (<code>MAX_VNI_ID</code>)</td>
+<td><code>"Vxlan tunnel map vni id is too big: %d"</code> (SWSS_LOG_ERROR)</td>
+<td><code>vxlanorch.cpp:2037-2040</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="return-false">リトライ待ち（return false）― 依存オブジェクト未解決<a class="headerlink" href="#return-false" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログメッセージ</th>
+<th>コードロケーション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VLAN が PortsOrch に未登録</td>
+<td><code>"Vxlan tunnel map vlan id doesn't exist: %d"</code> (SWSS_LOG_WARN)</td>
+<td><code>vxlanorch.cpp:2030-2033</code></td>
+</tr>
+<tr>
+<td>親 VXLAN_TUNNEL が未存在</td>
+<td><code>"Vxlan tunnel '%s' doesn't exist"</code> (SWSS_LOG_WARN)</td>
+<td><code>vxlanorch.cpp:2047-2050</code></td>
+</tr>
+<tr>
+<td><code>del_tnl_hw_pending</code> フラグが立っている</td>
+<td><code>"Tunnel Mapper deletion is pending"</code> (SWSS_LOG_WARN)</td>
+<td><code>vxlanorch.cpp:2057-2060</code></td>
+</tr>
+<tr>
+<td><code>createTunnelHw()</code> が失敗（SAI 内部エラー）</td>
+<td>—</td>
+<td><code>vxlanorch.cpp:2069-2074</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="sai-runtime_error-catch-return-false">SAI 呼び出し失敗（runtime_error catch → return false）<a class="headerlink" href="#sai-runtime_error-catch-return-false" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>SAI API</th>
+<th>ログメッセージ</th>
+<th>コードロケーション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>トンネルマップオブジェクト作成失敗</td>
+<td><code>create_tunnel_map()</code></td>
+<td><code>"Can't create tunnel map object"</code> (SWSS_LOG_ERROR)、<code>SAI_NULL_OBJECT_ID</code> 返却</td>
+<td><code>vxlanorch.cpp:147-154</code></td>
+</tr>
+<tr>
+<td>トンネルマップエントリ作成失敗</td>
+<td><code>create_tunnel_map_entry()</code></td>
+<td><code>"Can't create a tunnel map entry object"</code> (SWSS_LOG_ERROR)、<code>SAI_NULL_OBJECT_ID</code> 返却</td>
+<td><code>vxlanorch.cpp:215-221</code></td>
+</tr>
+<tr>
+<td>エントリ作成で例外送出</td>
+<td>—</td>
+<td><code>"Error adding tunnel map entry. Tunnel: %s. Entry: %s. Error: %s"</code> (SWSS_LOG_WARN)、<code>return false</code></td>
+<td><code>vxlanorch.cpp:2113-2117</code></td>
+</tr>
+<tr>
+<td>SAI トンネルオブジェクト作成失敗</td>
+<td><code>create_tunnel()</code></td>
+<td><code>"Can't create a tunnel object"</code> (SWSS_LOG_ERROR)、<code>return false</code></td>
+<td><code>vxlanorch.cpp:403-409</code></td>
+</tr>
+<tr>
+<td>SAI tunnel-term 作成失敗</td>
+<td><code>create_tunnel_term_table_entry()</code></td>
+<td><code>"Can't create a tunnel term table object"</code> (SWSS_LOG_ERROR)、<code>return false</code></td>
+<td><code>vxlanorch.cpp:488-494</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="deloperation">delOperation() 失敗分類<a class="headerlink" href="#deloperation" title="Permanent link">&para;</a></h3>
+<h4 id="return-true_1">永続破棄（return true）― 警告のみ・処理継続<a class="headerlink" href="#return-true_1" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログメッセージ</th>
+<th>コードロケーション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>削除対象マップキーが存在しない</td>
+<td><code>"Vxlan tunnel map '%s' doesn't exist"</code> (SWSS_LOG_WARN)</td>
+<td><code>vxlanorch.cpp:2138-2141</code></td>
+</tr>
+<tr>
+<td>削除時に VLAN が消えていた</td>
+<td><code>"Delete VLAN-VNI map.vlan id doesn't exist: %d"</code> (SWSS_LOG_ERROR)</td>
+<td><code>vxlanorch.cpp:2145-2148</code></td>
+</tr>
+<tr>
+<td>ブリッジポート取得失敗（マップ数ゼロ時）</td>
+<td><code>"Get port failed for source vtep %s"</code> (SWSS_LOG_ERROR)</td>
+<td><code>vxlanorch.cpp:2196-2197</code></td>
+</tr>
+<tr>
+<td>ブリッジポート削除失敗</td>
+<td><code>"Remove Bridge port failed for source vtep = %s fdbcount = %d"</code> (SWSS_LOG_ERROR)</td>
+<td><code>vxlanorch.cpp:2202-2204</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="sai-runtime_error-catch-return-false_1">SAI 呼び出し失敗（runtime_error catch → return false）<a class="headerlink" href="#sai-runtime_error-catch-return-false_1" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>SAI API</th>
+<th>ログメッセージ</th>
+<th>コードロケーション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI マップエントリ削除失敗</td>
+<td><code>remove_tunnel_map_entry()</code></td>
+<td><code>"Can't delete a tunnel map entry object"</code> (SWSS_LOG_ERROR)</td>
+<td><code>vxlanorch.cpp:237-242</code></td>
+</tr>
+<tr>
+<td>削除で例外送出</td>
+<td>—</td>
+<td><code>"Error removing tunnel map %s: %s"</code> (SWSS_LOG_ERROR)、<code>return false</code></td>
+<td><code>vxlanorch.cpp:2158-2161</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del_tnl_hw_pending">del_tnl_hw_pending による連鎖ブロック<a class="headerlink" href="#del_tnl_hw_pending" title="Permanent link">&para;</a></h3>
+<p>最後の MAP エントリ削除時（<code>vlan_vrf_vni_count == 0</code>）に DIP トンネルが残存している場合、
+<code>del_tnl_hw_pending = true</code> が設定され（<code>vxlanorch.cpp:2215</code>）、以降の MAP 追加は
+<code>"Tunnel Mapper deletion is pending"</code> で return false となる。
+DIP トンネルが解放されて <code>del_tnl_hw_pending</code> が <code>false</code> に戻るまで MAP 追加は全てブロックされる。</p>
+<h3 id="sai">SAI 失敗後の状態不整合（既知リスク）<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<p><code>create_tunnel_map_entry()</code> が <code>SAI_NULL_OBJECT_ID</code> を返した場合、<code>vxlan_tunnel_map_table_</code> には
+<code>map_entry_id = SAI_NULL_OBJECT_ID</code> のままエントリが記録される（<code>vxlanorch.cpp:2108</code>）。
+これは L3VNI の意図的 no-op と同じコードパスであるため、ログ上は正常に見えるが
+HW にマッピング実体が存在しない状態となる。後続の <code>delOperation()</code> では
+<code>remove_tunnel_map_entry(SAI_NULL_OBJECT_ID)</code> 呼び出し時に
+<code>if (obj_id != SAI_NULL_OBJECT_ID)</code> ガードでスキップされるため SAI エラーにはならない
+（<code>vxlanorch.cpp:232-235</code>）。ただしパケット転送には影響する。</p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-constants.md; sonic-swss/orchagent/vxlanorch.h; sonic-swss/orchagent/vxlanorch.cpp -->
+
+<h3 id="vxlanorchh">vxlanorch.h — 数値マクロ<a class="headerlink" href="#vxlanorchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>コードロケーション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAX_VNI_ID</code></td>
+<td><code>16777215</code> (= 2^24 − 1)</td>
+<td>VNI 上限チェック。<code>vni_id &gt;= MAX_VNI_ID</code> の場合 <code>SWSS_LOG_ERROR</code> + 永続破棄 (return true)。注: <code>&gt;=</code> なので VNI=16777215 も reject。実質有効範囲は 1–16777214</td>
+<td><code>vxlanorch.h:48</code>, <code>vxlanorch.cpp:2037</code></td>
+</tr>
+<tr>
+<td><code>MIN_VLAN_ID</code></td>
+<td><code>1</code></td>
+<td><code>vlan</code> 文字列の数字部分を <code>to_uint&lt;sai_vlan_id_t&gt;()</code> で変換する際の下限クランプ</td>
+<td><code>vxlanorch.h:45</code></td>
+</tr>
+<tr>
+<td><code>MAX_VLAN_ID</code></td>
+<td><code>4095</code></td>
+<td>同上、上限クランプ。範囲外は例外 → SWSS_LOG_WARN + return false</td>
+<td><code>vxlanorch.h:46</code></td>
+</tr>
+<tr>
+<td><code>DEFAULT_TUNNEL_ENCAP_TTL</code></td>
+<td><code>255</code></td>
+<td><code>create_tunnel()</code> の <code>encap_ttl</code> 引数省略時に適用される TTL 初期値</td>
+<td><code>vxlanorch.h:49</code></td>
+</tr>
+<tr>
+<td><code>TUNNEL_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>10000</code> ms</td>
+<td>トンネル統計 flex counter ポーリング間隔 (10 秒)</td>
+<td><code>vxlanorch.h:40</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vxlanorchh_1">vxlanorch.h — 文字列マクロ（ポート名プレフィクス）<a class="headerlink" href="#vxlanorchh_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>コードロケーション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TUNNEL_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"TUNNEL_STAT_COUNTER"</code></td>
+<td>flex_counter_manager へ渡すグループ名</td>
+<td><code>vxlanorch.h:39</code></td>
+</tr>
+<tr>
+<td><code>LOCAL_TUNNEL_PORT_PREFIX</code></td>
+<td><code>"Port_SRC_VTEP_"</code></td>
+<td>自ノード VTEP 発トンネルポート名のプレフィクス</td>
+<td><code>vxlanorch.h:41</code></td>
+</tr>
+<tr>
+<td><code>EVPN_TUNNEL_PORT_PREFIX</code></td>
+<td><code>"Port_EVPN_"</code></td>
+<td>EVPN remote VTEP トンネルポート名のプレフィクス</td>
+<td><code>vxlanorch.h:42</code></td>
+</tr>
+<tr>
+<td><code>EVPN_TUNNEL_NAME_PREFIX</code></td>
+<td><code>"EVPN_"</code></td>
+<td>EVPN 動的 DIP トンネル名のプレフィクス</td>
+<td><code>vxlanorch.h:43</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="map_t-sai">MAP_T 列挙 → SAI マッピングテーブル<a class="headerlink" href="#map_t-sai" title="Permanent link">&para;</a></h3>
+<p><code>vxlanTunnelMap</code> / <code>vxlanTunnelMapKeyVal</code> テーブル (<code>vxlanorch.cpp:37-70</code>) より全 6 エントリを抽出。<code>VXLAN_TUNNEL_MAP</code> SET 時は <code>VNI_TO_VLAN_ID</code> と <code>VLAN_ID_TO_VNI</code> のペアが常に生成される。</p>
+<table>
+<thead>
+<tr>
+<th>MAP_T 値</th>
+<th>SAI マップ種別</th>
+<th>SAI エントリ key attr</th>
+<th>SAI エントリ value attr</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VNI_TO_VLAN_ID</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_KEY</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VLAN_ID_VALUE</code></td>
+</tr>
+<tr>
+<td><code>VLAN_ID_TO_VNI</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VLAN_ID_KEY</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_VALUE</code></td>
+</tr>
+<tr>
+<td><code>VRID_TO_VNI</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VIRTUAL_ROUTER_ID_TO_VNI</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VIRTUAL_ROUTER_ID_KEY</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_VALUE</code></td>
+</tr>
+<tr>
+<td><code>VNI_TO_VRID</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_KEY</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VIRTUAL_ROUTER_ID_VALUE</code></td>
+</tr>
+<tr>
+<td><code>BRIDGE_TO_VNI</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_BRIDGE_IF_TO_VNI</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_BRIDGE_ID_KEY</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_VALUE</code></td>
+</tr>
+<tr>
+<td><code>VNI_TO_BRIDGE</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_BRIDGE_IF</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_KEY</code></td>
+<td><code>SAI_TUNNEL_MAP_ENTRY_ATTR_BRIDGE_ID_VALUE</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunnel_map_use_t">tunnel_map_use_t — マッパー共有モード<a class="headerlink" href="#tunnel_map_use_t" title="Permanent link">&para;</a></h3>
+<p><code>VXLAN_TUNNEL_MAP</code> の初回 SET 時に <code>createTunnelHw()</code> へ渡されるモードは常に <code>TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP</code>。このモードでは encap 用 (<code>VLAN_ID_TO_VNI</code>) と decap 用 (<code>VNI_TO_VLAN_ID</code>) のマッパーが独立した SAI オブジェクトとして生成される。</p>
+<table>
+<thead>
+<tr>
+<th>列挙値</th>
+<th>使用箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP</code></td>
+<td>CLI / NVO VTEP 用（<strong>VXLAN_TUNNEL_MAP 追加時</strong>） (<code>vxlanorch.cpp:2070</code>)</td>
+</tr>
+<tr>
+<td><code>TUNNEL_MAP_USE_COMMON_ENCAP_DECAP</code></td>
+<td>EVPN remote DIP トンネル生成時 (<code>vxlanorch.cpp:1169</code>)</td>
+</tr>
+<tr>
+<td><code>TUNNEL_MAP_USE_COMMON_DECAP_DEDICATED_ENCAP</code></td>
+<td>混在モード（内部利用）</td>
+</tr>
+<tr>
+<td><code>TUNNEL_MAP_USE_DECAP_ONLY</code></td>
+<td>decap 専用（内部利用）</td>
+</tr>
+</tbody>
+</table>
+<!-- /constants -->
+
+<h2 id="_9">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
 
 <ul>
@@ -35227,15 +36413,15 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vxlan/"><code>sonic-vxlan</code></a></li>
 <li>CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../overlay/vxlan-sonic/">HLD: VXLAN / VNet 全体設計</a></li>
 <li><a href="../../cli/config-vxlan/">CLI: config vxlan</a></li>
@@ -35243,20 +36429,20 @@
 <li><a href="../../yang/sonic-vxlan/">YANG: sonic-vxlan</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<h3 id="_12">典型値<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h2 id="_13">運用ヒント<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="_14">典型値<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VXLAN_TUNNEL_MAP|&lt;tunnel&gt;|&lt;map-name&gt;</code> (例 <code>tunnel1|map_1000_Vlan100</code>)。</li>
 <li><code>vni</code>: L2 VNI (例 1000)。</li>
 <li><code>vlan</code>: <code>Vlan100</code>。</li>
 </ul>
-<h3 id="_13">よくある誤設定<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<h3 id="_15">よくある誤設定<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <ul>
 <li>VLAN 未作成のまま VNI map を入れると <a href="../../glossary/#term-orchagent">orchagent</a> が pending、トンネルが半開状態。</li>
 </ul>
-<h3 id="_14">確認コマンド<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VXLAN_TUNNEL_MAP|*&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>vlanvnimap
+<h3 id="_16">確認コマンド<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VXLAN_TUNNEL_MAP|*&#39;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>vlanvnimap
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -35295,11 +36481,52 @@
 <p><strong>db_migrator.py</strong> が VXLAN_TUNNEL_MAP のマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_15">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_17">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_16">死活・デッドコード<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_18">死活・デッドコード<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
+
+<!-- cross-refs -->
+<h2 id="phase-c-vxlanorchcpp">暗黙参照 (Phase C / vxlanorch.cpp)<a class="headerlink" href="#phase-c-vxlanorchcpp" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
+
+<p>以下の参照は <code>VXLAN_TUNNEL_MAP</code> テーブルが間接的に依存するが、CONFIG_DB スキーマや YANG には明示されていない。</p>
+<h3 id="vxlan_tunnel-vxlantunnelorch">VXLAN_TUNNEL (VxlanTunnelOrch)<a class="headerlink" href="#vxlan_tunnel-vxlantunnelorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照箇所</strong>: <code>vxlanorch.cpp:2047-2058</code></li>
+<li><code>VxlanTunnelMapOrch::addOperation()</code> が <code>tunnel_orch-&gt;isTunnelExists(tunnel_name)</code> で親トンネルを確認し、<code>tunnel_orch-&gt;getVxlanTunnel(tunnel_name)</code> でポインタを取得する。</li>
+<li>未登録時は <code>SWSS_LOG_WARN("Vxlan tunnel '%s' doesn't exist")</code> を記録して <code>return false</code> (リトライ待ち)。</li>
+<li><code>del_tnl_hw_pending</code> フラグが立っている場合も <code>SWSS_LOG_WARN("Tunnel Mapper deletion is pending")</code> を記録して <code>return false</code> でブロック (<code>vxlanorch.cpp:2053-2058</code>)。</li>
+<li><strong>MAP エントリ数がゼロになると TUNNEL HW 削除がトリガされる</strong>: <code>vlan_vrf_vni_count == 0</code> になった時点で <code>deleteTunnelHw()</code> が呼ばれ、DIP トンネルが残存している場合は <code>del_tnl_hw_pending = true</code> が設定される (<code>vxlanorch.cpp:2193-2226</code>)。</li>
+</ul>
+<h3 id="vlan-portsorch">VLAN (PortsOrch)<a class="headerlink" href="#vlan-portsorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照箇所</strong>: <code>vxlanorch.cpp:2030-2034, 2145-2148</code></li>
+<li><code>gPortsOrch-&gt;getVlanByVlanId(vlan_id, tempPort)</code> で VLAN オブジェクトを取得する。</li>
+<li>VLAN が <code>PortsOrch</code> に未登録の場合 <code>SWSS_LOG_WARN("Vxlan tunnel map vlan id doesn't exist: %d", vlan_id)</code> を記録して <code>return false</code> (リトライ待ち)。</li>
+<li>削除時に VLAN が消えていた場合は <code>SWSS_LOG_ERROR("Delete VLAN-VNI map.vlan id doesn't exist: %d")</code> を記録して <code>return true</code> (永続破棄、警告のみ)。</li>
+</ul>
+<h3 id="vrf-vrforch-l3vni">VRF (VRFOrch) — L3VNI 判定<a class="headerlink" href="#vrf-vrforch-l3vni" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照箇所</strong>: <code>vxlanorch.cpp:2095-2113</code></li>
+<li><code>VRFOrch* vrf_orch = gDirectory.get&lt;VRFOrch*&gt;()</code> → <code>vrf_orch-&gt;isL3VniVlan(vni_id)</code> でこの VNI が L3VNI として登録済みかを確認する。</li>
+<li><code>isL3VniVlan()</code> が <code>true</code> の場合、SAI <code>create_tunnel_map_entry()</code> を呼ばず <code>SAI_NULL_OBJECT_ID</code> を記録する (暗黙 no-op)。</li>
+<li>CONFIG_DB に L3VNI を明示するフィールドはなく VRFOrch 内部状態に依存する <strong>silent 挙動差</strong>。同じ <code>vni</code> 値でも VRF 登録状態により SAI エントリが生成されるかどうかが変わる。</li>
+</ul>
+<h3 id="portsorch">PortsOrch — トンネルポート / ブリッジポート管理<a class="headerlink" href="#portsorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照箇所</strong>: <code>vxlanorch.cpp:2082-2084</code></li>
+<li><code>VXLAN_TUNNEL_MAP</code> の最初のエントリ追加がトンネルポートの HW 作成トリガになる（トンネルが非 active かつ DIP トンネル不使用の場合に <code>gPortsOrch-&gt;addTunnel()</code> / <code>addBridgePort()</code> を呼ぶ）。</li>
+<li>逆に最後のエントリ削除時 (<code>vlan_vrf_vni_count == 0</code>) にトンネルポートの HW 削除が走る。</li>
+</ul>
+<h3 id="_19">依存解決順序<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>VLAN (PortsOrch) ──┐
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>VRF  (VRFOrch)  ───┼──→ VXLAN_TUNNEL ──→ VXLAN_TUNNEL_MAP
+</span></code></pre></div>
+<p>削除は逆順: <code>VXLAN_EVPN_NVO</code> → <code>VXLAN_TUNNEL_MAP</code> → <code>VXLAN_TUNNEL</code><br />
+(<code>VLAN</code> は <code>VXLAN_TUNNEL_MAP</code> 全削除後に削除可)</p>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 7111763d84c2 -->
 

@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -27689,6 +27841,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須制約（違反すると silent drop）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自動リカバー挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr-redistribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨制約（違反すると FRR 側に redistribute 設定残留）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_protocol-address_family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src_protocol / address_family の組み合わせ注意
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-g" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27728,7 +27952,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -27739,7 +27963,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27922,7 +28146,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -27934,7 +28158,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型設定例
@@ -27945,7 +28169,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29468,6 +29692,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34683,6 +34935,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須制約（違反すると silent drop）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自動リカバー挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr-redistribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨制約（違反すると FRR 側に redistribute 設定残留）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_protocol-address_family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src_protocol / address_family の組み合わせ注意
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-g" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34722,7 +35046,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34733,7 +35057,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34916,7 +35240,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34928,7 +35252,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型設定例
@@ -34939,7 +35263,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35063,6 +35387,106 @@
 <li>関連 CLI: <code>config bgp</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-global</code></li>
 </ul>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>ROUTE_REDISTRIBUTE</code> テーブルへの書き込みには以下の順序制約がある。<code>frrcfgd</code> の実装（<code>frrcfgd.py</code>）を全行精読して確認した。詳細スキャン結果は <code>meta/_intermediate/cdb-flow/route-redistribute-ordering.md</code>。</p>
+<h3 id="silent-drop">必須制約（違反すると silent drop）<a class="headerlink" href="#silent-drop" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong><code>BGP_GLOBALS.&lt;vrf&gt;.local_asn</code> を先に設定する</strong> — <code>ROUTE_REDISTRIBUTE</code> は <code>vrf_tables</code> に属するため、イベント処理の冒頭で <code>__get_vrf_asn(vrf)</code> を呼び出す。対象 VRF の <code>BGP_GLOBALS.local_asn</code> が未設定の場合（<code>local_asn is None</code>）、当該イベントは <code>LOG_DEBUG</code> のみ出力して <strong>silent drop</strong> される（FRR への <code>redistribute</code> コマンド未送出）。<code>ROUTE_REDISTRIBUTE|&lt;vrf&gt;|…</code> を書き込む前に必ず <code>BGP_GLOBALS|&lt;vrf&gt;</code> の <code>local_asn</code> を設定すること。</p>
+</li>
+<li>
+<p><code>__get_vrf_asn()</code> は <code>self.bgp_asn[vrf]</code>（<code>BGP_GLOBALS</code> イベント経由）または <code>self.metadata_asn</code>（<code>DEVICE_METADATA.bgp_asn</code>、default VRF のみ有効）を参照する。</p>
+</li>
+<li>
+<p>evidence: <code>frrcfgd.py:2658-2661</code>, <code>frrcfgd.py:2442-2447</code></p>
+</li>
+<li>
+<p><strong><code>dst_protocol</code> は <code>'bgp'</code> のみ</strong> — <code>frrcfgd</code> は <code>dst_proto != 'bgp'</code> の場合に <code>LOG_ERR</code> を出力して <code>continue</code>（drop）する。<code>dst_protocol</code> フィールドが <code>'bgp'</code> 以外の CONFIG_DB エントリは FRR に一切反映されない（ランタイム制約）。</p>
+</li>
+<li>
+<p>evidence: <code>frrcfgd.py:3156-3158</code></p>
+</li>
+</ol>
+<h3 id="_5">自動リカバー挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong><code>BGP_GLOBALS.local_asn</code> SET 後に ROUTE_REDISTRIBUTE が自動再適用される</strong> — <code>BGP_GLOBALS.local_asn</code> の SET が frrcfgd で成功した直後、<code>__apply_dep_vrf_table(vrf, 'ROUTE_REDISTRIBUTE')</code> が呼ばれ、CONFIG_DB に存在する当該 VRF の全 ROUTE_REDISTRIBUTE エントリが <code>bgp_message</code> キューへ再送され再適用される。すなわち順序が逆（BGP_GLOBALS 設定前に ROUTE_REDISTRIBUTE を書き込み）でも、その後 <code>BGP_GLOBALS.local_asn</code> を設定すれば最終的には FRR に反映される。ただし本番環境では正順（BGP_GLOBALS → ROUTE_REDISTRIBUTE）を守ることを推奨する。</p>
+</li>
+<li>
+<p>evidence: <code>frrcfgd.py:2703-2704</code>, <code>frrcfgd.py:2530-2545</code></p>
+</li>
+</ol>
+<h3 id="frr-redistribute">推奨制約（違反すると FRR 側に redistribute 設定残留）<a class="headerlink" href="#frr-redistribute" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>削除順序: <code>ROUTE_REDISTRIBUTE</code> DEL → <code>BGP_GLOBALS.local_asn</code> DEL</strong> — <code>BGP_GLOBALS.local_asn</code> を削除すると <code>bgp_asn[vrf]</code> が消去される。その後に <code>ROUTE_REDISTRIBUTE</code> を削除しようとしても <code>local_asn is None</code> で silent drop となり、FRR bgpd に <code>no redistribute &lt;src&gt;</code> が送出されない。結果として <strong>FRR は <code>redistribute</code> 設定を保持したまま</strong>になる。</p>
+</li>
+<li>
+<p>推奨削除順序: <code>ROUTE_REDISTRIBUTE</code> 全エントリを DEL → <code>BGP_GLOBALS.local_asn</code> を DEL。</p>
+</li>
+<li>evidence: <code>frrcfgd.py:2658-2661</code>, <code>frrcfgd.py:2449-2465</code></li>
+</ol>
+<h3 id="src_protocol-address_family">src_protocol / address_family の組み合わせ注意<a class="headerlink" href="#src_protocol-address_family" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong><code>ospf3</code> + <code>ipv6</code> は FRR では <code>ospf6</code> に変換される</strong> — CONFIG_DB キーに <code>ospf3</code> と書いた場合、<code>af=ipv6</code> のときのみ FRR コマンド生成前に <code>ospf6</code> へ書き換えられる（<code>frrcfgd.py</code> L3151-3152）。<code>af=ipv4</code> + <code>src_protocol=ospf3</code> の組み合わせはそのまま <code>redistribute ospf3</code> として送出され、FRR bgpd が認識しないため設定エラーになる。書込み順の問題ではないが、src_protocol + address_family の組み合わせを CONFIG_DB 書き込み時点で正しく指定すること。</li>
+</ol>
+<h3 id="_6">書込み順依存サマリ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>影響</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>BGP_GLOBALS.local_asn</code> 設定 → <code>ROUTE_REDISTRIBUTE</code> 書き込み</td>
+<td>ハード先行必須</td>
+<td>silent drop</td>
+<td>BGP_GLOBALS を先に設定</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>dst_protocol='bgp'</code> 以外の書き込み</td>
+<td>ランタイム制約</td>
+<td>LOG_ERR + drop</td>
+<td><code>bgp</code> 固定で書くこと</td>
+</tr>
+<tr>
+<td>3</td>
+<td>BGP_GLOBALS.local_asn SET 後の自動再適用</td>
+<td>自動リカバー</td>
+<td>逆順でも最終的に反映</td>
+<td>本番では正順を推奨</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>ROUTE_REDISTRIBUTE</code> DEL → <code>BGP_GLOBALS</code> DEL</td>
+<td>推奨削除順序</td>
+<td>FRR に redistribute 残存</td>
+<td>ROUTE_REDISTRIBUTE を先に全削除</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>ospf3</code> + <code>ipv4</code> 組み合わせ禁止</td>
+<td>書込み制約</td>
+<td>FRR 設定エラー</td>
+<td>af=ipv6 のみ ospf3 を使用</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658-2661L (local_asn ゲート) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2703-2704L (BGP_GLOBALS 後の自動再適用) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3156-3158L (dst_protocol バリデーション) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2530-2545L (__apply_dep_vrf_table) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2449-2465L (__delete_vrf_asn) -->
+<!-- /ordering -->
+
 <!-- pubsub -->
 <h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
 <p><code>ROUTE_REDISTRIBUTE</code> テーブルの変更は <strong>2 つの異なるデーモン</strong> が異なる API で受信する。</p>
@@ -35189,7 +35613,7 @@
 
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../bgp-globals-af/">BGP_GLOBALS_AF</a></li>
 <li><a href="../static-route/">STATIC_ROUTE</a></li>
@@ -35197,7 +35621,7 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
 <p><code>frrcfgd</code> (<code>frrcfgd.py</code>) および <code>bgpcfgd</code> (<code>managers_static_rt.py</code>) から抽出した ROUTE_REDISTRIBUTE 経路に関わるハードコード定数。詳細スキャン結果は <code>meta/_intermediate/cdb-flow/route-redistribute-constants.md</code>。</p>
@@ -35452,15 +35876,15 @@ YANG バリデーションにより参照先の存在が保証される。</p>
 <!-- /platform -->
 
 <!-- ops-hint -->
-<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">典型設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型設定例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># connected 経路を BGP IPv4 unicast へ再配布</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;ROUTE_REDISTRIBUTE|default|connected|bgp|ipv4&#39;</span><span class="w"> </span>protocol<span class="w"> </span>connected
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># static 経路を BGP IPv6 unicast へ再配布（route-map 付き）</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;ROUTE_REDISTRIBUTE|default|static|bgp|ipv6&#39;</span><span class="w"> </span>route_map<span class="w"> </span>STATIC_FILTER
 </span></code></pre></div>
-<h3 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># CONFIG_DB のエントリ確認</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_REDISTRIBUTE|*&#39;</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>

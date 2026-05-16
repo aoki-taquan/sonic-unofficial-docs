@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -27211,6 +27363,89 @@
     <span class="md-ellipsis">
       
         consumer (pbhorch) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#match-fieldpbhrulecppvalidateaddmatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正 match field（pbhrule.cpp:validateAddMatch）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#match-field-action-pbhrulecppvalidate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        match field ゼロ / action 数異常（pbhrule.cpp:validate）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-create-update-pbhorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI create / update 失敗（pbhorch.cpp）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-pbhcapcppvalidatepbhrulecap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI capability 超過（pbhcap.cpp:validatePbhRuleCap）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbhmgrcppvalidatedependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係未解決（pbhmgr.cpp:validateDependencies）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parse-pbhmgrcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parse 失敗（pbhmgr.cpp）
       
     </span>
   </a>
@@ -27615,6 +27850,400 @@
     <span class="md-ellipsis">
       
         Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ディスパッチ詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → SAI 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pbh_rulepriority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_RULE.priority — 有効範囲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_ruleether_type-inner_ether_type-enum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_RULE.ether_type / inner_ether_type — enum 代表値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_ruleip_protocol-enum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_RULE.ip_protocol — enum 代表値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-acl_entry_attr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI acl_entry_attr マッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbhschemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pbhschema.h 文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flow_counterdisabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        flow_counter=DISABLED（デフォルト）時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オブジェクト生成順序・依存関係 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="オブジェクト生成順序・依存関係 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 書き込み順序の要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 呼び出し順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除時の参照カウント保護
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンストラクタレベル依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC ベンダー検出と capability ロード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別 capability 対照表
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド別 capability 対照表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pbh_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_rule_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_RULE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_hash_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_HASH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_hash_field_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_HASH_FIELD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-wa-pbh_rule-update-action-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox W/A: PBH_RULE update 時の action disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ / chassis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capability-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        capability の STATE_DB 書き込み
       
     </span>
   </a>
@@ -29778,6 +30407,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35171,6 +35828,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#match-fieldpbhrulecppvalidateaddmatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正 match field（pbhrule.cpp:validateAddMatch）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#match-field-action-pbhrulecppvalidate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        match field ゼロ / action 数異常（pbhrule.cpp:validate）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-create-update-pbhorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI create / update 失敗（pbhorch.cpp）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-pbhcapcppvalidatepbhrulecap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI capability 超過（pbhcap.cpp:validatePbhRuleCap）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbhmgrcppvalidatedependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係未解決（pbhmgr.cpp:validateDependencies）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parse-pbhmgrcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parse 失敗（pbhmgr.cpp）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35574,6 +36314,400 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ディスパッチ詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → SAI 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pbh_rulepriority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_RULE.priority — 有効範囲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_ruleether_type-inner_ether_type-enum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_RULE.ether_type / inner_ether_type — enum 代表値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_ruleip_protocol-enum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_RULE.ip_protocol — enum 代表値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-acl_entry_attr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI acl_entry_attr マッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbhschemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pbhschema.h 文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flow_counterdisabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        flow_counter=DISABLED（デフォルト）時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オブジェクト生成順序・依存関係 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="オブジェクト生成順序・依存関係 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 書き込み順序の要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 呼び出し順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除時の参照カウント保護
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンストラクタレベル依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC ベンダー検出と capability ロード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別 capability 対照表
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド別 capability 対照表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pbh_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_rule_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_RULE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_hash_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_HASH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pbh_hash_field_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBH_HASH_FIELD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-wa-pbh_rule-update-action-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox W/A: PBH_RULE update 時の action disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ / chassis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capability-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        capability の STATE_DB 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35916,6 +37050,117 @@
 </ul>
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-phaseD-failure.md -->
+
+<h3 id="match-fieldpbhrulecppvalidateaddmatch">不正 match field（<code>pbhrule.cpp:validateAddMatch</code>）<a class="headerlink" href="#match-fieldpbhrulecppvalidateaddmatch" title="Permanent link">&para;</a></h3>
+<p><code>AclRulePbh::validateAddMatch()</code> は受け付ける SAI attribute を 6 種のみに制限する（<code>GRE_KEY</code> / <code>ETHER_TYPE</code> / <code>IP_PROTOCOL</code> / <code>IPV6_NEXT_HEADER</code> / <code>L4_DST_PORT</code> / <code>INNER_ETHER_TYPE</code>）。それ以外の attribute が渡されると:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>SWSS_LOG_ERROR(&quot;Failed to validate match field: invalid attribute %s&quot;, attrName.c_str())
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>→ return false
+</span></code></pre></div>
+<p>YANG はこれら match field を optional と定義しており YANG 検証は通過するが、実装ホワイトリストで拒否される（YANG-実装 discrepancy）。</p>
+<h3 id="match-field-action-pbhrulecppvalidate">match field ゼロ / action 数異常（<code>pbhrule.cpp:validate</code>）<a class="headerlink" href="#match-field-action-pbhrulecppvalidate" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_matches</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">m_actions</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to validate rule: invalid parameters&quot;</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="err">→</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span>
+</span></code></pre></div>
+<p>match field が 1 つも指定されない PBH_RULE、または action が 1 個でない場合は SAI バリデーション段で reject される。YANG は全 match field を optional として定義するため YANG 検証を通過してしまう。</p>
+<h3 id="sai-create-update-pbhorchcpp">SAI create / update 失敗（<code>pbhorch.cpp</code>）<a class="headerlink" href="#sai-create-update-pbhorchcpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>条件</th>
+<th>ログメッセージ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CREATE</td>
+<td>重複 key</td>
+<td><code>Failed to create PBH rule(%s) in SAI: object already exists</code></td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td>priority 設定失敗</td>
+<td><code>Failed to configure PBH rule(%s) priority</code></td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td>match 設定失敗</td>
+<td><code>Failed to configure PBH rule(%s) match: &lt;FIELD&gt;</code></td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td>action 設定失敗</td>
+<td><code>Failed to configure PBH rule(%s) action</code></td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td>validate() 失敗</td>
+<td><code>Failed to validate PBH rule(%s)</code></td>
+</tr>
+<tr>
+<td>CREATE</td>
+<td>SAI <code>create_acl_entry</code> 失敗</td>
+<td><code>Failed to create PBH rule(%s) in SAI</code></td>
+</tr>
+<tr>
+<td>UPDATE</td>
+<td>key 不在</td>
+<td><code>Failed to update PBH rule(%s) in SAI: object doesn't exist</code></td>
+</tr>
+<tr>
+<td>UPDATE</td>
+<td>Mellanox action disable 失敗</td>
+<td><code>Failed to disable PBH rule(%s) action</code></td>
+</tr>
+<tr>
+<td>UPDATE</td>
+<td>SAI set_acl_entry 失敗</td>
+<td><code>Failed to update PBH rule(%s) in SAI</code></td>
+</tr>
+</tbody>
+</table>
+<p>全ケースで <code>return false</code>。エントリは CONFIG_DB に残るが SAI には反映されない。</p>
+<h3 id="sai-capability-pbhcapcppvalidatepbhrulecap">SAI capability 超過（<code>pbhcap.cpp:validatePbhRuleCap</code>）<a class="headerlink" href="#sai-capability-pbhcapcppvalidatepbhrulecap" title="Permanent link">&para;</a></h3>
+<p>プラットフォームが特定フィールドの ADD / UPDATE / REMOVE をサポートしない場合:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>SWSS_LOG_ERROR(&quot;Failed to validate field(%s): capability(%s) is not supported&quot;, ...)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>→ return false
+</span></code></pre></div>
+<p>対象フィールド: <code>priority</code>, <code>gre_key</code>, <code>ether_type</code>, <code>ip_protocol</code>, <code>ipv6_next_header</code>, <code>l4_dst_port</code>, <code>inner_ether_type</code>, <code>hash</code>, <code>packet_action</code>, <code>flow_counter</code>。ASIC_VENDOR 未設定時は GENERIC へ fallback（<code>pbhcap.cpp:297-318</code>）。</p>
+<h3 id="pbhmgrcppvalidatedependencies">依存関係未解決（<code>pbhmgr.cpp:validateDependencies</code>）<a class="headerlink" href="#pbhmgrcppvalidatedependencies" title="Permanent link">&para;</a></h3>
+<p>参照先の <code>PBH_TABLE</code> または <code>PBH_HASH</code> が CONFIG_DB に存在しない場合、<code>validateDependencies()</code> が <code>false</code> を返し、RULE は <code>pendingSetupMap</code> に留まって retry loop に入る（サイレント待機、エラーログなし）。依存が解決されるまで SAI への反映はされない。</p>
+<h3 id="parse-pbhmgrcpp">parse 失敗（<code>pbhmgr.cpp</code>）<a class="headerlink" href="#parse-pbhmgrcpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログメッセージ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空文字列</td>
+<td><code>Failed to parse field(%s): empty value is prohibited</code></td>
+</tr>
+<tr>
+<td>不正 hex 文字列</td>
+<td><code>Failed to parse field(%s): invalid value(%s)</code></td>
+</tr>
+<tr>
+<td>数値変換例外</td>
+<td><code>Failed to parse field(%s): &lt;exception message&gt;</code></td>
+</tr>
+<tr>
+<td><code>gre_key</code> フォーマット不正</td>
+<td><code>invalid_argument</code> 例外（<code>0x.../0x...</code> 形式必須）</td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -35941,10 +37186,10 @@
 <li><code>interface_list</code> に未登録の <code>PORTCHANNEL</code> を入れる。</li>
 </ul>
 <h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PBH_*&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>pbh<span class="w"> </span>table
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>pbh<span class="w"> </span>rule
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>show<span class="w"> </span>pbh<span class="w"> </span>statistics
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PBH_*&#39;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>pbh<span class="w"> </span>table
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>pbh<span class="w"> </span>rule
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>show<span class="w"> </span>pbh<span class="w"> </span>statistics
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -36270,6 +37515,619 @@
 <p><strong>スキャン証跡</strong>: <code>orchdaemon.cpp:553-565</code> および <code>pbhorch.cpp</code> を確認、5 件分岐抽出。PBH は minigraph 非依存を確認 — 誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p><code>PbhOrch</code> は <code>Orch</code> 基底クラス経由で <code>PBH_TABLE</code> / <code>PBH_RULE</code> / <code>PBH_HASH</code> / <code>PBH_HASH_FIELD</code> の 4 テーブルを購読する。すべて CONFIG_DB 起源のため <code>Orch::addConsumer()</code> の DB 種別分岐で <strong><code>SubscriberStateTable</code></strong> が選ばれ、Redis の <strong>keyspace 通知</strong> (<code>__keyspace@&lt;dbId&gt;__:&lt;TABLE&gt;:*</code> の PSUBSCRIBE) を購読する。channel ベースの <code>PUBLISH</code> は使用しない。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>購読クラス</td>
+<td><code>SubscriberStateTable</code> (CONFIG_DB 分岐)</td>
+</tr>
+<tr>
+<td>keyspace パターン</td>
+<td><code>__keyspace@4__:PBH_TABLE:*</code>、<code>__keyspace@4__:PBH_RULE:*</code>、<code>__keyspace@4__:PBH_HASH:*</code>、<code>__keyspace@4__:PBH_HASH_FIELD:*</code> (CONFIG_DB dbId=4)</td>
+</tr>
+<tr>
+<td>key 区切り</td>
+<td><code>PBH_TABLE\|&lt;name&gt;</code> / <code>PBH_RULE\|&lt;table&gt;\|&lt;rule&gt;</code> 等 (TableNameSeparator 既定 <code>\|</code>)</td>
+</tr>
+<tr>
+<td>POP_BATCH_SIZE</td>
+<td><code>TableConsumable::DEFAULT_POP_BATCH_SIZE</code> = <strong>128</strong> (<code>sonic-swss-common/common/table.h:164</code>)</td>
+</tr>
+<tr>
+<td>優先度 (<code>pri</code>)</td>
+<td>0 (<code>TableConnector</code> 既定)</td>
+</tr>
+<tr>
+<td>起動時スナップショット</td>
+<td><code>SubscriberStateTable</code> が既存エントリを SET イベントとして再配信</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>未設定 (CONFIG_DB は永続前提)</td>
+</tr>
+<tr>
+<td>ディスパッチ</td>
+<td><code>Consumer::execute()</code> → <code>PbhOrch::doTask(Consumer&amp;)</code> → <code>consumer.getTableName()</code> 分岐 → 各 <code>doPbhXxxTask(consumer)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">ディスパッチ詳細<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><code>PbhOrch::doTask()</code> は <code>consumer.getTableName()</code> により 4 テーブルを分岐し、処理後に <code>deployPbhTasks()</code> を呼んで依存関係解消ループを回す:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>PbhOrch::doTask(Consumer &amp;consumer)          // pbhorch.cpp:1804
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  → tableName == CFG_PBH_TABLE_TABLE_NAME    → doPbhTableTask(consumer)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  → tableName == CFG_PBH_RULE_TABLE_NAME     → doPbhRuleTask(consumer)
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  → tableName == CFG_PBH_HASH_TABLE_NAME     → doPbhHashTask(consumer)
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  → tableName == CFG_PBH_HASH_FIELD_TABLE_NAME → doPbhHashFieldTask(consumer)
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  → [unknown]                                SWSS_LOG_ERROR
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>  → deployPbhTasks()                         依存関係解消ループ
+</span></code></pre></div>
+<h3 id="config_db-sai">CONFIG_DB → SAI 経路<a class="headerlink" href="#config_db-sai" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB への書き込みは <code>sonic-utilities</code> の <code>config pbh</code> CLI (<code>config/plugins/pbh.py</code>) が <code>set_entry()</code> を呼ぶのみ。<code>orchagent</code> は APP_DB を経由せず、<code>PbhOrch</code> が CONFIG_DB から直接 SAI へ反映する:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>config pbh → HSET CONFIG_DB PBH_RULE|&lt;table&gt;|&lt;rule&gt; ...
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  → Redis keyspace 通知
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  → SubscriberStateTable.pops() (batch=128)
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  → PbhOrch::doTask() → doPbhRuleTask()
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  → AclRulePbh::validate() + sai_acl_api-&gt;create_acl_entry()
+</span></code></pre></div>
+<ul>
+<li>APP_DB への書き込みなし (orchagent 直接 SAI)。</li>
+<li><code>allPortsReady()</code> が false の場合、<code>PbhOrch::doTask()</code> は即 return して処理をスキップする。</li>
+</ul>
+<!-- evidence: sonic-net/sonic-swss/orchagent/pbhorch.cpp:88-97 (PbhOrch::PbhOrch — Orch(connectorList)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/pbhorch.cpp:1804-1838 (PbhOrch::doTask — getTableName 分岐 + deployPbhTasks) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:553-565 (TableConnector 構築 + gPbhOrch 生成) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp (Orch::addConsumer — CONFIG_DB → SubscriberStateTable 分岐) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164 (DEFAULT_POP_BATCH_SIZE = 128) -->
+<!-- /pubsub -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-swss/orchagent/pbh/pbhschema.h</code>、<code>pbhmgr.cpp</code>、<code>pbhrule.cpp</code></p>
+<h3 id="pbh_rulepriority">PBH_RULE.priority — 有効範囲<a class="headerlink" href="#pbh_rulepriority" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>型</td>
+<td><code>sai_uint32_t</code></td>
+<td><code>pbhmgr.cpp:506</code> <code>to_uint&lt;sai_uint32_t&gt;(value)</code></td>
+</tr>
+<tr>
+<td>有効範囲</td>
+<td><code>0</code> – <code>4294967295</code> (uint32 全域)</td>
+<td>YANG <code>type uint32</code>、実装側に上限チェックなし</td>
+</tr>
+<tr>
+<td>YANG 定義</td>
+<td><code>type uint32; mandatory true</code></td>
+<td><code>sonic-pbh.yang:153-156</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>YANG / 実装ともに上限は uint32 最大値。実際の SAI 実装が受け入れる上限はプラットフォーム依存だが、ソースコード上の制限は uint32 範囲のみ。</p>
+</blockquote>
+<h3 id="pbh_ruleether_type-inner_ether_type-enum">PBH_RULE.ether_type / inner_ether_type — enum 代表値<a class="headerlink" href="#pbh_ruleether_type-inner_ether_type-enum" title="Permanent link">&para;</a></h3>
+<p><code>ether_type</code> / <code>inner_ether_type</code> は <code>0x...</code> 形式の uint16 hex 文字列。ハードコード mask は <code>0xFFFF</code> (exact match)。実装上の代表的な値:</p>
+<table>
+<thead>
+<tr>
+<th>値 (hex)</th>
+<th>プロトコル</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0x0800</code></td>
+<td>IPv4</td>
+<td>RFC 791</td>
+</tr>
+<tr>
+<td><code>0x86DD</code></td>
+<td>IPv6</td>
+<td>RFC 2460</td>
+</tr>
+<tr>
+<td><code>0x8847</code></td>
+<td>MPLS unicast</td>
+<td>RFC 3032</td>
+</tr>
+<tr>
+<td><code>0x0806</code></td>
+<td>ARP</td>
+<td>RFC 826</td>
+</tr>
+</tbody>
+</table>
+<p><code>ether_type</code> mask は <code>pbhmgr.cpp:558</code> で <code>0xFFFF</code> に固定注入 (YANG 非記述)。</p>
+<h3 id="pbh_ruleip_protocol-enum">PBH_RULE.ip_protocol — enum 代表値<a class="headerlink" href="#pbh_ruleip_protocol-enum" title="Permanent link">&para;</a></h3>
+<p><code>ip_protocol</code> は <code>0x...</code> 形式の uint8 hex 文字列。ハードコード mask は <code>0xFF</code> (exact match)。</p>
+<table>
+<thead>
+<tr>
+<th>値 (hex)</th>
+<th>プロトコル番号 (dec)</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0x04</code></td>
+<td>4</td>
+<td>IPv4-in-IPv4</td>
+</tr>
+<tr>
+<td><code>0x11</code></td>
+<td>17</td>
+<td>UDP</td>
+</tr>
+<tr>
+<td><code>0x06</code></td>
+<td>6</td>
+<td>TCP</td>
+</tr>
+<tr>
+<td><code>0x2F</code></td>
+<td>47</td>
+<td>GRE</td>
+</tr>
+<tr>
+<td><code>0x3B</code></td>
+<td>59</td>
+<td>IPv6 No Next Header</td>
+</tr>
+</tbody>
+</table>
+<p><code>ip_protocol</code> mask は <code>pbhmgr.cpp:583</code> で <code>0xFF</code> に固定注入 (YANG 非記述)。</p>
+<h3 id="sai-acl_entry_attr">SAI acl_entry_attr マッピング<a class="headerlink" href="#sai-acl_entry_attr" title="Permanent link">&para;</a></h3>
+<p><code>pbhrule.cpp</code> の <code>validateAddMatch</code> / <code>validateAddAction</code> で使用する SAI 属性:</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB フィールド</th>
+<th>SAI acl_entry_attr</th>
+<th>方向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gre_key</code></td>
+<td><code>SAI_ACL_ENTRY_ATTR_FIELD_GRE_KEY</code></td>
+<td>match</td>
+</tr>
+<tr>
+<td><code>ether_type</code></td>
+<td><code>SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE</code></td>
+<td>match</td>
+</tr>
+<tr>
+<td><code>ip_protocol</code></td>
+<td><code>SAI_ACL_ENTRY_ATTR_FIELD_IP_PROTOCOL</code></td>
+<td>match</td>
+</tr>
+<tr>
+<td><code>ipv6_next_header</code></td>
+<td><code>SAI_ACL_ENTRY_ATTR_FIELD_IPV6_NEXT_HEADER</code></td>
+<td>match</td>
+</tr>
+<tr>
+<td><code>l4_dst_port</code></td>
+<td><code>SAI_ACL_ENTRY_ATTR_FIELD_L4_DST_PORT</code></td>
+<td>match</td>
+</tr>
+<tr>
+<td><code>inner_ether_type</code></td>
+<td><code>SAI_ACL_ENTRY_ATTR_FIELD_INNER_ETHER_TYPE</code></td>
+<td>match</td>
+</tr>
+<tr>
+<td><code>packet_action=SET_ECMP_HASH</code></td>
+<td><code>SAI_ACL_ENTRY_ATTR_ACTION_SET_ECMP_HASH_ID</code></td>
+<td>action</td>
+</tr>
+<tr>
+<td><code>packet_action=SET_LAG_HASH</code></td>
+<td><code>SAI_ACL_ENTRY_ATTR_ACTION_SET_LAG_HASH_ID</code></td>
+<td>action</td>
+</tr>
+</tbody>
+</table>
+<p>match field が 0 件、または action が 1 件以外の場合は <code>AclRulePbh::validate()</code> で reject (<code>pbhrule.cpp:84-90</code>)。</p>
+<h3 id="pbhschemah">pbhschema.h 文字列定数<a class="headerlink" href="#pbhschemah" title="Permanent link">&para;</a></h3>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// packet_action 値</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="cp">#define PBH_RULE_PACKET_ACTION_SET_ECMP_HASH &quot;SET_ECMP_HASH&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="cp">#define PBH_RULE_PACKET_ACTION_SET_LAG_HASH  &quot;SET_LAG_HASH&quot;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1">// flow_counter 値</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="cp">#define PBH_RULE_FLOW_COUNTER_ENABLED  &quot;ENABLED&quot;</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="cp">#define PBH_RULE_FLOW_COUNTER_DISABLED &quot;DISABLED&quot;</span>
+</span></code></pre></div>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-side-effects.md -->
+
+<h3 id="asic_db">ASIC_DB への書込<a class="headerlink" href="#asic_db" title="Permanent link">&para;</a></h3>
+<p>PbhOrch → AclOrch → SAI API 経路で syncd が ASIC_DB にオブジェクトを書き込む。直接の ASIC_DB アクセスは syncd 経由。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>SAI API</th>
+<th>ASIC_DB オブジェクト型</th>
+<th>契機</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PBH_TABLE ADD</td>
+<td><code>aclOrch-&gt;addAclTable()</code> → <code>sai_acl_api-&gt;create_acl_table()</code></td>
+<td><code>SAI_OBJECT_TYPE_ACL_TABLE</code></td>
+<td><code>PBH_TABLE</code> SET イベント</td>
+</tr>
+<tr>
+<td>PBH_RULE ADD</td>
+<td><code>aclOrch-&gt;addAclRule()</code> → <code>sai_acl_api-&gt;create_acl_entry()</code></td>
+<td><code>SAI_OBJECT_TYPE_ACL_ENTRY</code></td>
+<td><code>PBH_RULE</code> SET イベント (依存オブジェクト揃い次第)</td>
+</tr>
+<tr>
+<td>PBH_HASH ADD</td>
+<td><code>sai_hash_api-&gt;create_hash()</code></td>
+<td><code>SAI_OBJECT_TYPE_HASH</code></td>
+<td><code>PBH_HASH</code> SET イベント</td>
+</tr>
+<tr>
+<td>PBH_HASH_FIELD ADD</td>
+<td><code>sai_hash_api-&gt;create_fine_grained_hash_field()</code></td>
+<td><code>SAI_OBJECT_TYPE_FINE_GRAINED_HASH_FIELD</code></td>
+<td><code>PBH_HASH_FIELD</code> SET イベント</td>
+</tr>
+<tr>
+<td>flow_counter=ENABLED</td>
+<td><code>sai_acl_api-&gt;create_acl_counter()</code></td>
+<td><code>SAI_OBJECT_TYPE_ACL_COUNTER</code></td>
+<td>PBH_RULE で <code>flow_counter=ENABLED</code> 時のみ</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>pbhorch.cpp:286</code>（addAclTable）、<code>pbhorch.cpp:633</code>（addAclRule）、<code>pbhorch.cpp:1054</code>（create_hash）、<code>aclorch.cpp:1937</code>（create_acl_counter）</p>
+<h3 id="counters_db">COUNTERS_DB への書込<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
+<p><code>flow_counter=ENABLED</code> の PBH_RULE のみ、<code>AclOrch::registerFlexCounter()</code> を通じて COUNTERS_DB に書き込む。</p>
+<table>
+<thead>
+<tr>
+<th>COUNTERS_DB キー</th>
+<th>内容</th>
+<th>書込タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ACL_COUNTER_RULE_MAP</code></td>
+<td><code>"&lt;table_name&gt;|&lt;rule_name&gt;"</code> → <code>&lt;acl_counter_oid&gt;</code></td>
+<td><code>flow_counter=ENABLED</code> の PBH_RULE が addAclRule → createCounter 成功後</td>
+</tr>
+<tr>
+<td>FlexCounter 登録</td>
+<td><code>CounterType::ACL_COUNTER</code> として packet / byte カウンタ属性を登録</td>
+<td>同上 (<code>show pbh statistics</code> に表示)</td>
+</tr>
+</tbody>
+</table>
+<p>DEL 時: <code>aclOrch-&gt;deregisterFlexCounter()</code> が <code>ACL_COUNTER_RULE_MAP</code> からエントリ削除 + FlexCounter 解除。</p>
+<p>証跡: <code>aclorch.cpp:6041</code>（hset ACL_COUNTER_RULE_MAP）、<code>aclorch.cpp:6047</code>（hdel DEL 時）、<code>aclorch.cpp:6040</code>（flex_counter_manager 登録）</p>
+<h3 id="flow_counterdisabled">flow_counter=DISABLED（デフォルト）時<a class="headerlink" href="#flow_counterdisabled" title="Permanent link">&para;</a></h3>
+<p><code>AclRulePbh</code> は <code>createCounter=false</code> で構築 (<code>pbhorch.cpp:499</code>)。ACL_COUNTER SAI オブジェクトは作成されず、COUNTERS_DB への書込は発生しない。</p>
+<h3 id="_18">副次書込サマリ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>PBH_RULE (flow_counter=ENABLED)
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  └─► ASIC_DB: SAI_OBJECT_TYPE_ACL_ENTRY  (via sai_acl_api-&gt;create_acl_entry)
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  └─► ASIC_DB: SAI_OBJECT_TYPE_ACL_COUNTER (via sai_acl_api-&gt;create_acl_counter)
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>  └─► COUNTERS_DB: ACL_COUNTER_RULE_MAP[&quot;&lt;table&gt;|&lt;rule&gt;&quot;] = &lt;counter_oid&gt;
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>  └─► FlexCounter: CounterType::ACL_COUNTER 登録 (show pbh statistics に表示)
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>PBH_RULE (flow_counter=DISABLED / デフォルト)
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>  └─► ASIC_DB: SAI_OBJECT_TYPE_ACL_ENTRY のみ
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>  └─► COUNTERS_DB: 書込なし
+</span></code></pre></div>
+<!-- /side-effects -->
+
+<!-- ordering -->
+<h2 id="phase-b">オブジェクト生成順序・依存関係 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">CONFIG_DB 書き込み順序の要件<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>PbhOrch::deployPbhTasks()</code> (<code>sonic-swss/orchagent/pbhorch.cpp:1539-1550</code>) は毎回以下の順序で pending タスクを処理する。</p>
+<p><strong>Setup (作成) 順序</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>PBH_HASH_FIELD → PBH_HASH → PBH_TABLE → PBH_RULE
+</span></code></pre></div>
+<p><strong>Remove (削除) 順序</strong> (Setup と逆順):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
+</span></code></pre></div>
+<h3 id="_19">依存関係の詳細<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>オブジェクト</th>
+<th>依存先</th>
+<th>依存チェック関数</th>
+<th>未解決時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PBH_RULE</code></td>
+<td><code>PBH_TABLE</code> (table_name leafref) + <code>PBH_HASH</code> (hash leafref)</td>
+<td><code>validateDependencies(PbhRule)</code> (<code>pbhmgr.cpp:81-98</code>)</td>
+<td><code>pendingSetupMap</code> に留まり retry ループ (<code>pbhorch.cpp:943</code>)</td>
+</tr>
+<tr>
+<td><code>PBH_HASH</code></td>
+<td><code>PBH_HASH_FIELD</code> (hash_field_list の各エントリ)</td>
+<td><code>validateDependencies(PbhHash)</code> (<code>pbhmgr.cpp:99-113</code>)</td>
+<td><code>pendingSetupMap</code> に留まり retry ループ (<code>pbhorch.cpp:1241</code>)</td>
+</tr>
+<tr>
+<td><code>PBH_TABLE</code></td>
+<td>なし (PORT / PORTCHANNEL は leafref だが portsOrch 経由で確認)</td>
+<td>—</td>
+<td><code>allPortsReady()</code> が false の間は <code>doTask()</code> 自体が early return</td>
+</tr>
+<tr>
+<td><code>PBH_HASH_FIELD</code></td>
+<td>なし</td>
+<td>—</td>
+<td>即時 SAI 作成</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai">SAI 呼び出し順序<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>sai_hash_api-&gt;create_fine_grained_hash_field()</code> — <code>PBH_HASH_FIELD</code> ごと (<code>pbhorch.cpp:1369</code>)</li>
+<li><code>sai_hash_api-&gt;create_hash()</code> — <code>PBH_HASH</code> ごと、hash_field OID リストを付与 (<code>pbhorch.cpp:1054</code>)</li>
+<li>ACL table 作成 (AclOrch 経由) — <code>PBH_TABLE</code> ごと</li>
+<li><code>sai_acl_api-&gt;create_acl_entry()</code> — <code>PBH_RULE</code> ごと、SAI ACL match + <code>ACTION_SET_ECMP_HASH_ID</code> / <code>ACTION_SET_LAG_HASH_ID</code> を設定 (<code>pbhorch.cpp:515-595</code>)</li>
+</ol>
+<h3 id="_20">削除時の参照カウント保護<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>PBH_TABLE</code> / <code>PBH_HASH</code> / <code>PBH_HASH_FIELD</code> は <code>refCount &gt; 0</code> の間削除不可 (<code>hasDependencies()</code> が true → retry)。</li>
+<li><code>PBH_RULE</code> 削除時に <code>decRefCount(rule)</code> が <code>PBH_TABLE</code> と <code>PBH_HASH</code> の参照カウントを減算 (<code>pbhmgr.cpp:163-185</code>)。</li>
+<li><code>PBH_HASH</code> 削除時に <code>decRefCount(hash)</code> が各 <code>PBH_HASH_FIELD</code> の参照カウントを減算 (<code>pbhmgr.cpp:187-210</code>)。</li>
+</ul>
+<blockquote>
+<p><strong>証跡</strong>: <code>pbhorch.cpp:1539-1550</code> (deployPbhTasks), <code>pbhmgr.cpp:81-113</code> (validateDependencies), <code>pbhorch.cpp:943, 1241</code> (retry log)</p>
+</blockquote>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-cross-refs.md -->
+
+<p><code>PBH_TABLE.interface_list</code> に記載されたインターフェース名は CONFIG_DB 上では文字列だが、
+<code>PbhOrch</code> が <code>AclTable::validateAddPorts()</code> → <code>gPortsOrch-&gt;getPort()</code> を通じて以下のテーブルの
+エントリを<strong>暗黙的に参照</strong>する。YANG の leafref チェックとは独立したコードレベルの依存。</p>
+<table>
+<thead>
+<tr>
+<th>参照元フィールド</th>
+<th>参照先テーブル</th>
+<th>参照先キー形式</th>
+<th>SAI バインド種別</th>
+<th>参照箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PBH_TABLE.interface_list</code></td>
+<td><code>PORT</code></td>
+<td><code>PORT\|EthernetN</code></td>
+<td><code>SAI_ACL_BIND_POINT_TYPE_PORT</code></td>
+<td><code>pbhorch.cpp:266-268</code>, <code>aclorch.cpp:2698</code></td>
+</tr>
+<tr>
+<td><code>PBH_TABLE.interface_list</code></td>
+<td><code>PORTCHANNEL</code></td>
+<td><code>PORTCHANNEL\|PortChannelN</code></td>
+<td><code>SAI_ACL_BIND_POINT_TYPE_LAG</code></td>
+<td><code>pbhorch.cpp:266-268</code>, <code>aclorch.cpp:106</code></td>
+</tr>
+<tr>
+<td><code>PBH_RULE.table_name</code></td>
+<td><code>PBH_TABLE</code></td>
+<td><code>PBH_TABLE\|&lt;table_name&gt;</code></td>
+<td>N/A (依存エントリ存在チェック)</td>
+<td><code>pbhmgr.cpp</code> <code>deployPbhTasks()</code></td>
+</tr>
+<tr>
+<td><code>PBH_RULE.hash</code></td>
+<td><code>PBH_HASH</code></td>
+<td><code>PBH_HASH\|&lt;hash_name&gt;</code></td>
+<td>N/A (依存エントリ存在チェック)</td>
+<td><code>pbhmgr.cpp</code> <code>validateDependencies()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_21">解決タイミング<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>interface_list</code> に指定したポートが PortsOrch 未登録の場合、<code>pendingPortSet</code> に保留され
+  PortsOrch の <code>SUBJECT_TYPE_PORT_CHANGE</code> 通知で再バインドを試みる (<code>aclorch.cpp:2698-2703</code>)。</li>
+<li><code>PBH_RULE.table_name</code> が指す <code>PBH_TABLE</code> エントリが未作成の場合、RULE は <code>pendingSetupMap</code> に
+  留まり retry loop に入る (<code>deployPbhTasks()</code> — <code>HASH_FIELD → HASH → TABLE → RULE</code> 順序依存)。</li>
+<li><code>PBH_RULE.hash</code> が指す <code>PBH_HASH</code> エントリが未作成の場合も同様に retry。</li>
+</ul>
+<h3 id="_22">コンストラクタレベル依存<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<p><code>PbhOrch</code> は <code>AclOrch *</code> と <code>PortsOrch *</code> をコンストラクタ引数に受け取り (<code>pbhorch.cpp:90-91</code>)、
+これらのオーケストレータが先に初期化されていることを前提とする。
+<code>orchdaemon.cpp:553-565</code> で AclOrch / PortsOrch 作成後に PbhOrch を生成する順序が保証されている。</p>
+<!-- /cross-refs -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-phaseH-platform.md -->
+
+<h3 id="asic-capability">ASIC ベンダー検出と capability ロード<a class="headerlink" href="#asic-capability" title="Permanent link">&para;</a></h3>
+<p><code>PbhCapabilities</code> は起動時に環境変数 <code>ASIC_VENDOR</code> を読み取り、対応する <code>PbhVendorFieldCapabilities</code> サブクラスをロードする (<code>pbhcap.cpp:310-335</code>)。<code>ASIC_VENDOR</code> 未設定または不明値の場合は <code>generic</code> へ fallback し、<code>SWSS_LOG_WARN</code> を出力する。</p>
+<p>現在サポートするベンダー:</p>
+<table>
+<thead>
+<tr>
+<th><code>ASIC_VENDOR</code> 値</th>
+<th>ロードされるクラス</th>
+<th>STATE_DB <code>PBH_CAPABILITIES_TABLE</code> へ書込</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>generic</code> (またはその他 / 未設定)</td>
+<td><code>PbhGenericFieldCapabilities</code></td>
+<td>あり (各フィールドの ADD/UPDATE/REMOVE 組み合わせ)</td>
+</tr>
+<tr>
+<td><code>mellanox</code></td>
+<td><code>PbhMellanoxFieldCapabilities</code></td>
+<td>あり (同上)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="capability">フィールド別 capability 対照表<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h3>
+<p>以下の通り <code>ASIC_VENDOR</code> によって ADD / UPDATE / REMOVE の可否が変わる。空欄は "いずれも不可"。</p>
+<h4 id="pbh_table_2">PBH_TABLE<a class="headerlink" href="#pbh_table_2" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>Generic</th>
+<th>Mellanox</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>interface_list</code></td>
+<td>UPDATE</td>
+<td>UPDATE</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>UPDATE</td>
+<td>UPDATE</td>
+</tr>
+</tbody>
+</table>
+<h4 id="pbh_rule_2">PBH_RULE<a class="headerlink" href="#pbh_rule_2" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>Generic</th>
+<th>Mellanox</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>priority</code></td>
+<td>UPDATE</td>
+<td>UPDATE</td>
+</tr>
+<tr>
+<td><code>gre_key</code></td>
+<td>ADD, UPDATE, REMOVE</td>
+<td>ADD, UPDATE, REMOVE</td>
+</tr>
+<tr>
+<td><code>ether_type</code></td>
+<td>ADD, UPDATE, REMOVE</td>
+<td>ADD, UPDATE, REMOVE</td>
+</tr>
+<tr>
+<td><code>ip_protocol</code></td>
+<td>ADD, UPDATE, REMOVE</td>
+<td>ADD, UPDATE, REMOVE</td>
+</tr>
+<tr>
+<td><code>ipv6_next_header</code></td>
+<td>ADD, UPDATE, REMOVE</td>
+<td>ADD, UPDATE, REMOVE</td>
+</tr>
+<tr>
+<td><code>l4_dst_port</code></td>
+<td>ADD, UPDATE, REMOVE</td>
+<td>ADD, UPDATE, REMOVE</td>
+</tr>
+<tr>
+<td><code>inner_ether_type</code></td>
+<td>ADD, UPDATE, REMOVE</td>
+<td>ADD, UPDATE, REMOVE</td>
+</tr>
+<tr>
+<td><code>hash</code></td>
+<td>UPDATE</td>
+<td>UPDATE</td>
+</tr>
+<tr>
+<td><code>packet_action</code></td>
+<td>ADD, UPDATE, REMOVE</td>
+<td>ADD, UPDATE, REMOVE</td>
+</tr>
+<tr>
+<td><code>flow_counter</code></td>
+<td>ADD, UPDATE, REMOVE</td>
+<td>ADD, UPDATE, REMOVE</td>
+</tr>
+</tbody>
+</table>
+<h4 id="pbh_hash_2">PBH_HASH<a class="headerlink" href="#pbh_hash_2" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>Generic</th>
+<th>Mellanox</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hash_field_list</code></td>
+<td>UPDATE</td>
+<td><strong>(空: 不可)</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Mellanox 固有制約</strong>: <code>PBH_HASH.hash_field_list</code> の ADD / UPDATE / REMOVE がすべて無効。<code>hash_field_list</code> の変更は capability チェックで拒否され <code>SWSS_LOG_ERROR("Failed to validate field(hash_field_list): capability(UPDATE/ADD/REMOVE) is not supported")</code> が記録される。</p>
+</blockquote>
+<h4 id="pbh_hash_field_2">PBH_HASH_FIELD<a class="headerlink" href="#pbh_hash_field_2" title="Permanent link">&para;</a></h4>
+<p><code>PbhHashFieldCapabilities</code> のフィールド (<code>hash_field</code>, <code>ip_mask</code>, <code>sequence_id</code>) はいずれのベンダーも明示的な capability 登録なし (<code>PbhVendorFieldCapabilities::hashField</code> が未初期化のまま) → 事実上 ADD のみ許可 (<code>updatePbhHashField()</code> は常に <code>return false</code> により UPDATE 禁止)。</p>
+<h3 id="mellanox-wa-pbh_rule-update-action-disable">Mellanox W/A: PBH_RULE update 時の action disable<a class="headerlink" href="#mellanox-wa-pbh_rule-update-action-disable" title="Permanent link">&para;</a></h3>
+<p><code>ASIC_VENDOR=mellanox</code> かつ <code>updatePbhRule</code> の変更フィールドに <code>hash</code> または <code>packet_action</code> が含まれる場合、<code>pbhorch.cpp:839-863</code> にてワークアラウンドを実施:</p>
+<ol>
+<li><code>AclRulePbh::disableAction()</code> で既存 ACL entry の action attr を先に無効化</li>
+<li>その後 <code>aclOrch-&gt;updateAclRule()</code> を呼び出す</li>
+</ol>
+<p>GENERIC platform ではこの処理は行われず、直接 <code>updateAclRule()</code> を呼ぶ。</p>
+<h3 id="voq-chassis">VOQ / chassis<a class="headerlink" href="#voq-chassis" title="Permanent link">&para;</a></h3>
+<p><code>sonic-swss/orchagent/pbh/</code> ディレクトリに VOQ chassis 固有コードは存在しない。<code>PbhOrch</code> は <code>orchdaemon.cpp</code> で unconditionally 生成されており、VOQ / non-VOQ の分岐なし。</p>
+<h3 id="capability-state_db">capability の STATE_DB 書き込み<a class="headerlink" href="#capability-state_db" title="Permanent link">&para;</a></h3>
+<p><code>PbhCapabilities::writePbhVendorCapabilitiesToDb()</code> が起動時に <code>STATE_DB:PBH_CAPABILITIES_TABLE</code> へ各フィールドの capability 文字列 (<code>ADD</code>, <code>UPDATE</code>, <code>REMOVE</code> のカンマ区切り) を書き込む。確認コマンド:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES_TABLE|rule&#39;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES_TABLE|hash&#39;</span>
+</span></code></pre></div>
+<!-- /platform -->
 
 <div class="footnote">
 <hr />

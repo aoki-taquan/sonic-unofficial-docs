@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -27280,6 +27432,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#storm_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        storm_type 文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policer モード固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policer_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policer 命名規則
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27463,6 +27665,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27607,6 +27820,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscriberStateTable の動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-dotask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループと doTask 実行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry メカニズム
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27674,7 +27959,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -27685,7 +27970,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -27735,7 +28020,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -27758,6 +28043,200 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-orchagent-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI capability チェックなし — orchagent は直接 push
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bum_storm_capability-cli-orchagent_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUM_STORM_CAPABILITY — CLI のみがガード、orchagent はスルー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム依存挙動のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存性 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="順序依存性 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT 先行制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storm-policer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        storm policer 命名順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT 未解決 → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ethernet-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        非 Ethernet インタフェース → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storm_type-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        storm_type 不正 → task_failed (エントリ消去)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-policer-create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI policer create 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-set_port_attribute-policer-rollback-task_need_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI set_port_attribute 失敗 → policer rollback + task_need_retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-set_policer_attribute-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI set_policer_attribute 失敗 (update パス)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-remove-storm-control-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI remove storm-control 失敗 (update 中間ステップ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -29689,6 +30168,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34915,6 +35422,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#storm_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        storm_type 文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policer モード固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policer_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policer 命名規則
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35098,6 +35655,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35242,6 +35810,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscriberStateTable の動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-dotask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループと doTask 実行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry メカニズム
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35309,7 +35949,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -35320,7 +35960,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -35370,7 +36010,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -35393,6 +36033,200 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-orchagent-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI capability チェックなし — orchagent は直接 push
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bum_storm_capability-cli-orchagent_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUM_STORM_CAPABILITY — CLI のみがガード、orchagent はスルー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム依存挙動のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存性 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="順序依存性 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT 先行制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storm-policer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        storm policer 命名順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT 未解決 → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ethernet-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        非 Ethernet インタフェース → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storm_type-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        storm_type 不正 → task_failed (エントリ消去)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-policer-create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI policer create 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-set_port_attribute-policer-rollback-task_need_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI set_port_attribute 失敗 → policer rollback + task_need_retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-set_policer_attribute-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI set_policer_attribute 失敗 (update パス)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-remove-storm-control-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI remove storm-control 失敗 (update 中間ステップ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -35479,6 +36313,73 @@
 <li>関連 CLI: <code>config interface storm-control &lt;type&gt; &lt;ifname&gt; &lt;kbps&gt;</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-storm-control</code></li>
 </ul>
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-constants.md -->
+
+<h3 id="storm_type">storm_type 文字列定数<a class="headerlink" href="#storm_type" title="Permanent link">&para;</a></h3>
+<p>キーの第 2 トークンとして受け付ける有効値と SAI 属性のマッピング (<code>policerorch.cpp:31-33</code>):</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB 値</th>
+<th>C++ 変数</th>
+<th>SAI 属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>broadcast</code></td>
+<td><code>storm_broadcast</code></td>
+<td><code>SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID</code></td>
+</tr>
+<tr>
+<td><code>unknown-unicast</code></td>
+<td><code>storm_unknown_unicast</code></td>
+<td><code>SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID</code></td>
+</tr>
+<tr>
+<td><code>unknown-multicast</code></td>
+<td><code>storm_unknown_mcast</code></td>
+<td><code>SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID</code></td>
+</tr>
+</tbody>
+</table>
+<p>上記以外の値は <code>SWSS_LOG_ERROR("Unknown storm_type %s")</code> → <code>task_failed</code>。</p>
+<h3 id="policer">policer モード固定値<a class="headerlink" href="#policer" title="Permanent link">&para;</a></h3>
+<p>storm control 用 SAI policer 作成時に常にハードコードされる属性 (<code>policerorch.cpp:156-169</code>):</p>
+<table>
+<thead>
+<tr>
+<th>SAI 属性</th>
+<th>固定値</th>
+<th>ソースコメント</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_POLICER_ATTR_METER_TYPE</code></td>
+<td><code>SAI_METER_TYPE_BYTES</code></td>
+<td><code>/*Meter type hardcoded to BYTES*/</code></td>
+</tr>
+<tr>
+<td><code>SAI_POLICER_ATTR_MODE</code></td>
+<td><code>SAI_POLICER_MODE_STORM_CONTROL</code></td>
+<td><code>/*Policer mode hardcoded to STORM_CONTROL*/</code></td>
+</tr>
+<tr>
+<td><code>SAI_POLICER_ATTR_RED_PACKET_ACTION</code></td>
+<td><code>SAI_PACKET_ACTION_DROP</code></td>
+<td><code>/*Red Packet Action hardcoded to DROP*/</code></td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB / YANG / CLI からの変更手段はない。</p>
+<h3 id="policer_1">policer 命名規則<a class="headerlink" href="#policer_1" title="Permanent link">&para;</a></h3>
+<p>内部 policer 名は <code>"_" + &lt;ifname&gt; + "_" + &lt;storm_type&gt;</code> (<code>policerorch.cpp:146</code>)。</p>
+<p>例: キー <code>Ethernet0|broadcast</code> → 内部名 <code>_Ethernet0_broadcast</code>。先頭 <code>_</code> が通常 POLICER テーブルエントリと衝突しないためのプレフィックス。</p>
+<!-- /constants -->
+
 <!-- defaults -->
 <h2 id="_6">暗黙デフォルトとハードコード挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-defaults.md -->
@@ -35663,6 +36564,38 @@ kbps は通常大きな値のため実用上の影響は限定的だが、低レ
 </ul>
 <!-- /cdb-exceptions -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>PORT_STORM_CONTROL</code> テーブルは以下の CONFIG_DB テーブルへ暗黙的に依存する。<code>policerorch.cpp</code> は CONFIG_DB の <code>PORT</code> テーブルを直接 lookup せず、<code>PortsOrch</code> のメモリ内キャッシュを介して PORT エントリの SAI object id を取得する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル</th>
+<th>参照元</th>
+<th>参照の性質</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT</code></td>
+<td><code>PolicerOrch::handlePortStormControlTable()</code> — <code>gPortsOrch-&gt;getPort(interface_name, port)</code> (<code>policerorch.cpp:138</code>)</td>
+<td>key の <code>&lt;ifname&gt;</code> を <code>PortsOrch::getPort()</code> で照合。PORT 未登録の場合は <code>SWSS_LOG_ERROR</code> を出力し <code>task_success</code> で silent drop (リトライなし)</td>
+</tr>
+<tr>
+<td><code>PORT</code> (初期化状態)</td>
+<td><code>PolicerOrch::doTask()</code> — <code>gPortsOrch-&gt;allPortsReady()</code> (<code>policerorch.cpp:379</code>)</td>
+<td>全 PORT エントリ初期化完了まで <code>doTask()</code> を早期リターン。起動時に CONFIG_DB へ先書きされたエントリは silent defer される</td>
+</tr>
+<tr>
+<td><code>PORT</code> (SAI oid)</td>
+<td><code>sai_port_api-&gt;set_port_attribute(port.m_port_id, ...)</code> (<code>policerorch.cpp:278, 291</code>)</td>
+<td><code>getPort()</code> で得た <code>port.m_port_id</code> (PORT 由来 SAI oid) を直接 SAI 呼び出しに渡す。CONFIG_DB には SAI oid は格納されない</td>
+</tr>
+</tbody>
+</table>
+<p>詳細証跡: <code>meta/_intermediate/cdb-flow/port-storm-control-cross-refs.md</code></p>
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
@@ -35716,6 +36649,70 @@ kbps は通常大きな値のため実用上の影響は限定的だが、低レ
 <li>副作用: レートを低く設定しすぎると正常な broadcast (ARP 等) も制限される。</li>
 </ul>
 <!-- /runtime-trace -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<p>PORT_STORM_CONTROL テーブルは CONFIG_DB → SAI の <strong>直接経路</strong>をとる。APPL_DB への中継は行わない。</p>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>方式</th>
+<th>チャンネル/パターン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB → PolicerOrch</td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>__keyspace@{config_db_id}__:PORT_STORM_CONTROL\|*</code></td>
+</tr>
+<tr>
+<td>PolicerOrch → SAI</td>
+<td>SAI API 直接呼び出し</td>
+<td><code>sai_policer_api</code> + <code>sai_port_api</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="subscriberstatetable">SubscriberStateTable の動作<a class="headerlink" href="#subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:396-402</code> で <code>PolicerOrch</code> は <code>CFG_POLICER_TABLE_NAME</code> と <code>CFG_PORT_STORM_CONTROL_TABLE_NAME</code> の 2 テーブルを <code>TableConnector</code> としてまとめ、<code>Orch(tableNames)</code> 基底クラスの <code>addConsumer()</code> を通じて <code>SubscriberStateTable</code> を生成する。CONFIG_DB の keyspace notification (<code>PSUBSCRIBE __keyspace@db__:PORT_STORM_CONTROL|*</code>) でエントリ変化を検出し、<code>pops()</code> で現在値を読み出す。初回起動時は <code>getKeys()</code> で既存エントリを先読みし、起動前の設定を取りこぼさない。</p>
+<h3 id="select-dotask">select() ループと doTask 実行順序<a class="headerlink" href="#select-dotask" title="Permanent link">&para;</a></h3>
+<p>orchdaemon は <code>Select::select()</code> を 1000 ms タイムアウトで実行する。イベント受信時は <code>Consumer::drain()</code> → <code>PolicerOrch::doTask(Consumer&amp;)</code> が呼ばれる (<code>policerorch.cpp:374</code>)。</p>
+<p><code>PolicerOrch::doTask()</code> の先頭 (<code>policerorch.cpp:379-382</code>) では <code>gPortsOrch-&gt;allPortsReady()</code> チェックがあり、全ポート初期化完了まで処理を保留する。その後 <code>consumer.getTableName() == CFG_PORT_STORM_CONTROL_TABLE_NAME</code> を判定し (<code>policerorch.cpp:394</code>)、<code>handlePortStormControlTable(tuple)</code> にディスパッチする（通常 POLICER テーブルとは別経路）。</p>
+<h3 id="retry">retry メカニズム<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>task_success</code> または <code>task_failed</code> → <code>m_toSync.erase(it)</code> (エントリ削除、リトライなし)</li>
+<li><code>task_need_retry</code> → <code>it++</code> (エントリ保留、次サイクルで再試行)</li>
+</ul>
+<p>SAI policer create/set 失敗は <code>task_failed</code> で silent drop。ポート未発見 (<code>getPort()</code> が false) は <code>task_success</code> で erase（設計上リトライなし）。</p>
+<h3 id="_16">データフロー図<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONFIG_DB[PORT_STORM_CONTROL|&lt;ifname&gt;|&lt;storm_type&gt;]
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ↓ SubscriberStateTable (keyspace notification)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  ↓ PSUBSCRIBE __keyspace@config_db_id__:PORT_STORM_CONTROL|*
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  ↓ Consumer::drain() → PolicerOrch::doTask()
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  ↓   [allPortsReady() チェック — false なら即 return]
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  ↓   [table_name == CFG_PORT_STORM_CONTROL_TABLE_NAME でディスパッチ]
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  ↓ handlePortStormControlTable()
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    ↓ sai_policer_api-&gt;create_policer()
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    |   SAI_POLICER_ATTR_METER_TYPE=BYTES / MODE=STORM_CONTROL / RED_ACTION=DROP
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    |   SAI_POLICER_ATTR_CIR = kbps * 1000 / 8
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    ↓ sai_port_api-&gt;set_port_attribute()
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>        SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID   (broadcast)
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>        SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID       (unknown-unicast)
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID   (unknown-multicast)
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>ASIC (sairedis → ASIC_DB 経由)
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>APPL_DB 書き込み: なし
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>STATE_DB 書き込み: なし
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>NotificationConsumer: なし
+</span></code></pre></div>
+<blockquote>
+<p><strong>証跡</strong>: <code>sonic-swss/orchagent/orchdaemon.cpp:396-402</code> (TableConnector 登録)、<code>sonic-swss/orchagent/policerorch.cpp:374-407</code> (doTask / ディスパッチ / retry 制御)、<code>sonic-swss/orchagent/policerorch.cpp:120-300</code> (handlePortStormControlTable / SAI 呼び出し); 詳細分析 <code>meta/_intermediate/cdb-flow/port-storm-control-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
 <!-- entry-points -->
 <h2 id="direction-a">書き込み入り口 (Direction A)<a class="headerlink" href="#direction-a" title="Permanent link">&para;</a></h2>
 <p>PORT_STORM_CONTROL テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。</p>
@@ -35731,9 +36728,9 @@ kbps は通常大きな値のため実用上の影響は限定的だが、低レ
 <p>db_migrator.py での PORT_STORM_CONTROL マイグレーションなし</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_16">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_17">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_17">死活・デッドコード<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_18">死活・デッドコード<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
 
@@ -35765,7 +36762,7 @@ kbps は通常大きな値のため実用上の影響は限定的だが、低レ
 </tr>
 </tbody>
 </table>
-<h3 id="_18">グレップカバレッジ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_19">グレップカバレッジ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -35839,6 +36836,238 @@ kbps は通常大きな値のため実用上の影響は限定的だが、低レ
 <p><strong>スキャン証跡</strong>: <code>policerorch.cpp:374-407</code> を確認、5 件分岐抽出。PORT_STORM_CONTROL が PolicerOrch の <code>doTask()</code> 内で最優先にディスパッチされることを確認 — 誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-platform.md -->
+
+<h3 id="sai-capability-orchagent-push">SAI capability チェックなし — orchagent は直接 push<a class="headerlink" href="#sai-capability-orchagent-push" title="Permanent link">&para;</a></h3>
+<p><code>PolicerOrch::handlePortStormControlTable()</code> は <code>sai_query_attribute_capability()</code> を呼ばない。storm control policer は ASIC capability の事前確認なしに SAI へ push される。</p>
+<p>ASIC が storm control をサポートしない場合、<code>sai_policer_api-&gt;create_policer()</code> または <code>sai_port_api-&gt;set_port_attribute()</code> が <code>SAI_STATUS_NOT_SUPPORTED</code> 等を返し、orchagent が <code>SWSS_LOG_ERROR</code> を記録して <code>task_need_retry</code> または <code>task_failed</code> を返す (SAI エラー任せ)。</p>
+<p>証跡: <code>policerorch.cpp:226-313</code></p>
+<h3 id="bum_storm_capability-cli-orchagent_1">BUM_STORM_CAPABILITY — CLI のみがガード、orchagent はスルー<a class="headerlink" href="#bum_storm_capability-cli-orchagent_1" title="Permanent link">&para;</a></h3>
+<p><code>STATE_DB:BUM_STORM_CAPABILITY|&lt;storm_type&gt;</code> の <code>supported</code> フィールドは CLI 側でのみ参照される。</p>
+<table>
+<thead>
+<tr>
+<th>レイヤ</th>
+<th>BUM_STORM_CAPABILITY の扱い</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLI (<code>config storm-control add</code>)</td>
+<td><code>is_storm_control_supported()</code> が <code>STATE_DB</code> を参照し、<code>supported == 0</code> なら CONFIG_DB 書き込みをスキップ</td>
+<td><code>sonic-utilities/config/main.py:806-824</code></td>
+</tr>
+<tr>
+<td>orchagent (PolicerOrch)</td>
+<td><code>BUM_STORM_CAPABILITY</code> を <code>TableConnector</code> で定義しているが、<code>handlePortStormControlTable()</code> 内でその値を参照する分岐は存在しない</td>
+<td><code>orchdaemon.cpp:401</code>, <code>policerorch.cpp</code></td>
+</tr>
+</tbody>
+</table>
+<p>つまり、直接 CONFIG_DB に書き込んだ場合は capability 非対応 ASIC でも orchagent が処理を試み、SAI エラーで失敗する可能性がある。</p>
+<h3 id="_20">プラットフォーム依存挙動のまとめ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kbps=0</code></td>
+<td>YANG 上は許容値。SAI / ASIC が 0 を無制限として扱うかはプラットフォーム依存</td>
+</tr>
+<tr>
+<td><code>SAI_POLICER_ATTR_CBS</code></td>
+<td>未設定。SAI / HW デフォルト依存 (プラットフォームにより異なる)</td>
+</tr>
+<tr>
+<td><code>SAI_POLICER_ATTR_GREEN_PACKET_ACTION</code></td>
+<td>未設定。SAI / HW デフォルト依存</td>
+</tr>
+<tr>
+<td><code>SAI_POLICER_ATTR_YELLOW_PACKET_ACTION</code></td>
+<td>未設定。SAI / HW デフォルト依存</td>
+</tr>
+<tr>
+<td>ASIC 非サポート時</td>
+<td>SAI create/set エラー → <code>SWSS_LOG_ERROR</code> + <code>task_need_retry</code> / <code>task_failed</code></td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>policerorch.cpp:156-169</code>, <code>orchdaemon.cpp:395-407</code>, <code>sonic-utilities/config/main.py:806-824</code></p>
+<!-- /platform -->
+
+<!-- ordering -->
+<h2 id="phase-b">順序依存性 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="port">PORT 先行制約<a class="headerlink" href="#port" title="Permanent link">&para;</a></h3>
+<p><code>handlePortStormControlTable()</code> は処理冒頭で <code>gPortsOrch-&gt;getPort(interface_name, port)</code> を呼ぶ。PORT テーブルが未初期化 (PortsOrch が当該ポートを登録していない) 場合、<code>task_success</code> を返してエントリを <strong>erase</strong> する (サイレント破棄、リトライなし)。</p>
+<p>さらに <code>doTask()</code> 冒頭で <code>gPortsOrch-&gt;allPortsReady()</code> が false なら即座 <code>return</code> するため、PortsOrch の全ポート初期化完了が PORT_STORM_CONTROL 処理の大域ガードになっている。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>PORT (PortsOrch 初期化完了)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓  allPortsReady() == true になるまで doTask() は処理しない
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>PORT_STORM_CONTROL エントリ処理
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ↓  gPortsOrch-&gt;getPort() でポート存在確認
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>storm policer 作成 → SAI attach
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>順序制約</th>
+<th>根拠</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PORT → PORT_STORM_CONTROL</td>
+<td><code>allPortsReady()</code> ガード + <code>getPort()</code> 存在確認</td>
+<td><code>policerorch.cpp:379-382</code>, <code>policerorch.cpp:138-143</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="storm-policer">storm policer 命名順序<a class="headerlink" href="#storm-policer" title="Permanent link">&para;</a></h3>
+<p>policer 名は <code>_&lt;interface_name&gt;_&lt;storm_type&gt;</code> 形式で自動生成される。同一ポートの 3 種類 (broadcast / unknown-unicast / unknown-multicast) は独立した policer として個別に作成・attach され、相互依存はない。削除時も storm_type 単位で独立して処理される。</p>
+<table>
+<thead>
+<tr>
+<th>storm_type</th>
+<th>SAI 属性</th>
+<th>相互依存</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>broadcast</code></td>
+<td><code>SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>unknown-unicast</code></td>
+<td><code>SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>unknown-multicast</code></td>
+<td><code>SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID</code></td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>policerorch.cpp:145-146</code> (policer 命名), <code>policerorch.cpp:204-218</code> (storm_type 分岐)</p>
+<!-- /ordering -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-failure.md -->
+<!-- source: sonic-swss/orchagent/policerorch.cpp — handlePortStormControlTable() -->
+
+<h3 id="port-silent-drop">PORT 未解決 → silent drop<a class="headerlink" href="#port-silent-drop" title="Permanent link">&para;</a></h3>
+<p><code>gPortsOrch-&gt;getPort(interface_name, port)</code> が false を返した場合、orchagent は <code>SWSS_LOG_ERROR "Failed to apply storm-control %s to port %s. Port not found"</code> を出力したうえで <strong><code>task_success</code> を返す</strong>。<br />
+<code>task_success</code> はエントリを erase するため、エントリは<strong>リトライなしで永久に消える</strong>（silent drop）。起動直後のレース等で PORT オブジェクトが未初期化の場合に発生しうる。</p>
+<p>証跡: <code>policerorch.cpp:139-143</code></p>
+<h3 id="ethernet-silent-drop">非 Ethernet インタフェース → silent drop<a class="headerlink" href="#ethernet-silent-drop" title="Permanent link">&para;</a></h3>
+<p>インタフェース名が <code>"Ethernet"</code> プレフィックスを持たない場合（LAG / VLAN / PortChannel 等）、<code>SWSS_LOG_ERROR "%s: Unsupported / Invalid interface %s"</code> を出力して <strong><code>task_success</code> を返す</strong>。<br />
+同様に erase → silent drop（リトライなし）。YANG leafref は物理ポートのみ許可するが、直接 DB 書き込み時は到達しうる。</p>
+<p>証跡: <code>policerorch.cpp:131-137</code></p>
+<h3 id="storm_type-task_failed">storm_type 不正 → task_failed (エントリ消去)<a class="headerlink" href="#storm_type-task_failed" title="Permanent link">&para;</a></h3>
+<p>キーの第 2 トークンが <code>broadcast</code> / <code>unknown-unicast</code> / <code>unknown-multicast</code> 以外の場合、SET / DEL 両パスで <code>SWSS_LOG_ERROR "Unknown storm_type %s"</code> を出力して <strong><code>task_failed</code> を返す</strong>。<br />
+<code>task_failed</code> もエントリを erase するため、リトライなし。通常の CLI 経由では YANG が事前拒否するが、直接 DB 書き込みでは発生する。</p>
+<p>証跡: <code>policerorch.cpp:218-219</code> (SET), <code>policerorch.cpp:338-339</code> (DEL)</p>
+<h3 id="sai-policer-create">SAI policer create 失敗<a class="headerlink" href="#sai-policer-create" title="Permanent link">&para;</a></h3>
+<p><code>sai_policer_api-&gt;create_policer()</code> が <code>SAI_STATUS_SUCCESS</code> 以外を返した場合、<code>SWSS_LOG_ERROR "Failed to create policer %s, rv:%d"</code> を出力。<code>handleSaiCreateStatus</code> の判定が <code>task_need_retry</code> なら <strong>リトライ</strong>、それ以外はエラーログのみでフォールスルーし port への attach を試みる。</p>
+<p>証跡: <code>policerorch.cpp:228-235</code></p>
+<h3 id="sai-set_port_attribute-policer-rollback-task_need_retry">SAI set_port_attribute 失敗 → policer rollback + task_need_retry<a class="headerlink" href="#sai-set_port_attribute-policer-rollback-task_need_retry" title="Permanent link">&para;</a></h3>
+<p><code>sai_port_api-&gt;set_port_attribute()</code> (policer attach) が失敗した場合、直前に作成した policer を <code>remove_policer()</code> でロールバックしてから <strong><code>task_need_retry</code> を返す</strong>。<br />
+rollback の <code>remove_policer</code> 自体が失敗した場合もログのみ（<code>SWSS_LOG_ERROR "Failed to remove policer %s, rv:%d"</code>）で続行する（エラー抑制）。<br />
+<code>m_syncdPolicers</code> および <code>m_policerRefCounts</code> から該当エントリを erase してリトライ待ち状態に入る。</p>
+<p>証跡: <code>policerorch.cpp:292-312</code></p>
+<h3 id="sai-set_policer_attribute-update">SAI set_policer_attribute 失敗 (update パス)<a class="headerlink" href="#sai-set_policer_attribute-update" title="Permanent link">&para;</a></h3>
+<p>既存 policer の CIR 更新（<code>set_policer_attribute</code>）が失敗した場合、<code>SWSS_LOG_ERROR "Failed to update policer %s attribute, rv:%d"</code> を出力。<code>handleSaiSetStatus</code> が <code>task_need_retry</code> を返せばリトライ。</p>
+<p>証跡: <code>policerorch.cpp:259-266</code></p>
+<h3 id="sai-remove-storm-control-update">SAI remove storm-control 失敗 (update 中間ステップ)<a class="headerlink" href="#sai-remove-storm-control-update" title="Permanent link">&para;</a></h3>
+<p>update 時の remove-then-reapply フローで、一時解除の <code>set_port_attribute(SAI_NULL_OBJECT_ID)</code> が失敗した場合、<code>SWSS_LOG_ERROR "Failed to remove storm-control %s from port %s, rv:%d"</code> を出力。<code>handleSaiSetStatus</code> が <code>task_need_retry</code> ならリトライ。</p>
+<p>証跡: <code>policerorch.cpp:279-286</code></p>
+<!-- /failure -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB <code>PORT_STORM_CONTROL</code> への変更が連鎖して書き込まれる副次テーブル一覧。</p>
+<blockquote>
+<p>詳細証跡: <code>meta/_intermediate/cdb-flow/port-storm-control-phaseF-side-effects.md</code></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>オブジェクト / テーブル</th>
+<th>操作</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC_DB (syncd 経由)</td>
+<td>SAI policer (<code>SAI_OBJECT_TYPE_POLICER</code>)</td>
+<td>create</td>
+<td>SET かつ新規 (未登録)</td>
+<td><code>policerorch.cpp:226</code></td>
+</tr>
+<tr>
+<td>ASIC_DB (syncd 経由)</td>
+<td>SAI policer — CIR 属性</td>
+<td>set_attribute</td>
+<td>SET かつ既存 (更新)</td>
+<td><code>policerorch.cpp:257</code></td>
+</tr>
+<tr>
+<td>ASIC_DB (syncd 経由)</td>
+<td>SAI PORT 属性 <code>SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID</code></td>
+<td>set_port_attribute</td>
+<td>storm_type=broadcast</td>
+<td><code>policerorch.cpp:278, 291</code></td>
+</tr>
+<tr>
+<td>ASIC_DB (syncd 経由)</td>
+<td>SAI PORT 属性 <code>SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID</code></td>
+<td>set_port_attribute</td>
+<td>storm_type=unknown-unicast</td>
+<td><code>policerorch.cpp:278, 291</code></td>
+</tr>
+<tr>
+<td>ASIC_DB (syncd 経由)</td>
+<td>SAI PORT 属性 <code>SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID</code></td>
+<td>set_port_attribute</td>
+<td>storm_type=unknown-multicast</td>
+<td><code>policerorch.cpp:278, 291</code></td>
+</tr>
+<tr>
+<td>ASIC_DB (syncd 経由)</td>
+<td>SAI policer</td>
+<td>remove</td>
+<td>DEL</td>
+<td><code>policerorch.cpp:355</code></td>
+</tr>
+<tr>
+<td>ASIC_DB (syncd 経由)</td>
+<td>SAI PORT 属性 (<code>SAI_NULL_OBJECT_ID</code> でクリア)</td>
+<td>set_port_attribute</td>
+<td>DEL / update の一時解除</td>
+<td><code>policerorch.cpp:278, 344</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>フロー概要</strong>:
+1. <code>PolicerOrch::handlePortStormControlTable()</code> が <code>sai_policer_api-&gt;create_policer()</code> で SAI policer を作成 (syncd が ASIC_DB へ反映)
+2. 作成した policer OID を <code>sai_port_api-&gt;set_port_attribute(SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID)</code> でポートに attach
+3. update 時は先に <code>SAI_NULL_OBJECT_ID</code> で一時解除 → CIR 更新 → 再 attach の 3 ステップ
+4. APPL_DB / STATE_DB / COUNTERS_DB への書込は <strong>なし</strong>。CRM カウンタ更新も <strong>なし</strong></p>
+<!-- /side-effects -->
 
 <div class="footnote">
 <hr />

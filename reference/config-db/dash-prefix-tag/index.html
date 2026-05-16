@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25191,6 +25203,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -26023,6 +26046,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26667,6 +26718,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26815,6 +26922,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27010,7 +27145,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27095,6 +27230,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29307,6 +29470,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34544,6 +34735,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34770,6 +34972,43 @@
 </tbody>
 </table>
 <!-- /cdb-exceptions -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>YANG 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。<code>DASH_PREFIX_TAG_TABLE</code> 自体は他テーブルを参照しないが、ACL 系テーブルから参照される側として双方向依存がある。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DASH_ACL_RULE_TABLE</code> の <code>src_tag</code> / <code>dst_tag</code> フィールド (参照される側)</td>
+<td>存在確認 + prefix 展開</td>
+<td>ACL rule 作成時に <code>src_tag</code> / <code>dst_tag</code> にタグ名が指定されたとき。タグ不在なら rule が <code>task_need_retry</code> で待機; タグ存在時は <code>getPrefixes()</code> で SAI ACL エントリに展開</td>
+<td><code>dashaclgroupmgr.cpp</code> L393–409 (存在確認), L316–327 (<code>getPrefixes()</code> 呼び出し)</td>
+</tr>
+<tr>
+<td><code>DASH_ACL_GROUP_TABLE</code> (group_id ベースの refcount 追跡)</td>
+<td>逆参照 (参照される側)</td>
+<td>ACL rule が group にバインドされるとき <code>attachTags()</code> → <code>DashTagMgr::attach(tag_id, group_id)</code> で <code>m_groups</code> に group_id を追加。rule 削除時は <code>detachTags()</code> → <code>detach()</code> で削除</td>
+<td><code>dashaclgroupmgr.cpp</code> L558–575, <code>dashtagmgr.cpp</code> L112–137</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">削除ガードの仕組み</p>
+<p>タグが <code>m_groups</code> に 1 件以上の group_id を保持している間（= ACL rule から参照中）、<code>DashTagMgr::remove()</code> は <code>task_need_retry</code> を返す。参照先の全 ACL rule が削除されて <code>m_groups</code> が空になると DEL が成功する（<code>dashtagmgr.cpp</code> L84–88）。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">タグ先行作成が必要なケース</p>
+<p>ACL rule が <code>src_tag</code> / <code>dst_tag</code> を指定して先に届いた場合でも、対応タグが <code>m_tag_table</code> に存在しなければ rule は <code>task_need_retry</code> で保留される。タグを先に作成するか、コントローラが順序を保証する必要がある（<code>dashaclgroupmgr.cpp</code> L393–409）。</p>
+</div>
+<!-- /cross-refs -->
 
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>

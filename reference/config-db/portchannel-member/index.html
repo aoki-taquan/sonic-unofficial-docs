@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -22409,6 +22421,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-config_db-teammgr-subscriberstatetable-keyspace-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. CONFIG_DB → TeamMgr: SubscriberStateTable (keyspace PSUBSCRIBE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-teammgr-teamd-unix-teamdctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. TeamMgr → teamd: UNIX ソケット (teamdctl)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-teammgr-app_db-producerstatetable-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TeamMgr → APP_DB: ProducerStateTable (PUBLISH)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-app_db-portsorch-consumerstatetable-subscribe-evalsha-sai-lag_member" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. APP_DB → PortsOrch: ConsumerStateTable (SUBSCRIBE + EVALSHA) → SAI lag_member
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22447,6 +22520,167 @@
     <span class="md-ellipsis">
       
         VLAN_MEMBER との相互排他 (詳細)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-lag_member_attr-create_lag_member" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI lag_member_attr — create_lag_member() 時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-lag_member_attr-set_lag_member_attribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI lag_member_attr — set_lag_member_attribute() 時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forwarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        forwarding 制御の文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-chassis_app_lag_member_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ Chassis — CHASSIS_APP_LAG_MEMBER_TABLE 経由処理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-distribution-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox プラットフォーム — distribution-only モード非サポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-lag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-ASIC — バックエンド LAG 判定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-portchannel_memberlagmember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET (PORTCHANNEL_MEMBER|&lt;lag&gt;|&lt;member&gt;) の副次書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-portchannel_memberlagmember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL (PORTCHANNEL_MEMBER|&lt;lag&gt;|&lt;member&gt;) の副次書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lacp-asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LACP ネゴシエーションと ASIC_DB 更新タイミング
       
     </span>
   </a>
@@ -26450,6 +26684,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -27094,6 +27356,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27242,6 +27560,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27437,7 +27783,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27522,6 +27868,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29734,6 +30108,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35437,6 +35839,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-config_db-teammgr-subscriberstatetable-keyspace-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. CONFIG_DB → TeamMgr: SubscriberStateTable (keyspace PSUBSCRIBE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-teammgr-teamd-unix-teamdctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. TeamMgr → teamd: UNIX ソケット (teamdctl)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-teammgr-app_db-producerstatetable-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TeamMgr → APP_DB: ProducerStateTable (PUBLISH)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-app_db-portsorch-consumerstatetable-subscribe-evalsha-sai-lag_member" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. APP_DB → PortsOrch: ConsumerStateTable (SUBSCRIBE + EVALSHA) → SAI lag_member
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35475,6 +35938,167 @@
     <span class="md-ellipsis">
       
         VLAN_MEMBER との相互排他 (詳細)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-lag_member_attr-create_lag_member" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI lag_member_attr — create_lag_member() 時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-lag_member_attr-set_lag_member_attribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI lag_member_attr — set_lag_member_attribute() 時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forwarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        forwarding 制御の文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-chassis_app_lag_member_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ Chassis — CHASSIS_APP_LAG_MEMBER_TABLE 経由処理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-distribution-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox プラットフォーム — distribution-only モード非サポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-lag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-ASIC — バックエンド LAG 判定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-portchannel_memberlagmember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET (PORTCHANNEL_MEMBER|&lt;lag&gt;|&lt;member&gt;) の副次書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-portchannel_memberlagmember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL (PORTCHANNEL_MEMBER|&lt;lag&gt;|&lt;member&gt;) の副次書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lacp-asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LACP ネゴシエーションと ASIC_DB 更新タイミング
       
     </span>
   </a>
@@ -36000,6 +36624,100 @@
 </blockquote>
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p><code>PORTCHANNEL_MEMBER</code> の CONFIG_DB Consumer 経路は <strong>CONFIG_DB → TeamMgr → teamd (UNIX ソケット) → APP_DB → PortsOrch → SAI</strong> の 3 段構成である。</p>
+<h3 id="1-config_db-teammgr-subscriberstatetable-keyspace-psubscribe">1. CONFIG_DB → TeamMgr: SubscriberStateTable (keyspace PSUBSCRIBE)<a class="headerlink" href="#1-config_db-teammgr-subscriberstatetable-keyspace-psubscribe" title="Permanent link">&para;</a></h3>
+<p><code>teammgrd.cpp:55-65</code> で <code>CFG_LAG_MEMBER_TABLE_NAME</code> (<code>"PORTCHANNEL_MEMBER"</code>) を <code>TableConnector</code> として登録。
+<code>Orch(tables)</code> 内部で <code>SubscriberStateTable</code> が生成され、Redis CONFIG_DB (db_id=4) に対して
+<code>__keyspace@4__:PORTCHANNEL_MEMBER|*</code> を PSUBSCRIBE する。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>購読クラス</td>
+<td><code>SubscriberStateTable</code> (CONFIG_DB / keyspace 通知)</td>
+</tr>
+<tr>
+<td>keyspace パターン</td>
+<td><code>__keyspace@4__:PORTCHANNEL_MEMBER\|*</code></td>
+</tr>
+<tr>
+<td>key 区切り</td>
+<td><code>PORTCHANNEL_MEMBER\|&lt;lag&gt;\|&lt;member&gt;</code></td>
+</tr>
+<tr>
+<td>POP_BATCH_SIZE</td>
+<td><code>TableConsumable::DEFAULT_POP_BATCH_SIZE</code> = 128</td>
+</tr>
+<tr>
+<td>優先度 (<code>pri</code>)</td>
+<td>0 (TableConnector 既定)</td>
+</tr>
+<tr>
+<td>起動時スナップショット</td>
+<td>既存エントリを SET イベントとして再配信</td>
+</tr>
+<tr>
+<td>ディスパッチ</td>
+<td><code>Consumer::execute()</code> → <code>TeamMgr::doTask()</code> → <code>table == CFG_LAG_MEMBER_TABLE_NAME</code> → <code>doLagMemberTask()</code> (<code>teammgr.cpp:161-163</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-teammgr-teamd-unix-teamdctl">2. TeamMgr → teamd: UNIX ソケット (teamdctl)<a class="headerlink" href="#2-teammgr-teamd-unix-teamdctl" title="Permanent link">&para;</a></h3>
+<p><code>doLagMemberTask()</code> は APP_DB を経由せず <code>teamdctl</code> コマンド (UNIX ソケット <code>/var/run/teamd/&lt;lag&gt;.ctl</code>) で
+teamd プロセスに直接ポートの追加/削除を指示する。この経路は Redis PUBLISH を使用しない。</p>
+<ul>
+<li><strong>SET</strong>: <code>teamdctl &lt;lag&gt; port add &lt;member&gt;</code> — LACP ネゴシエーション開始</li>
+<li><strong>DEL</strong>: <code>teamdctl &lt;lag&gt; port remove &lt;member&gt;</code> — LACP 切断</li>
+</ul>
+<h3 id="3-teammgr-app_db-producerstatetable-publish">3. TeamMgr → APP_DB: ProducerStateTable (PUBLISH)<a class="headerlink" href="#3-teammgr-app_db-producerstatetable-publish" title="Permanent link">&para;</a></h3>
+<p>teamd 操作完了後、TeamMgr が APP_DB <code>LAG_MEMBER_TABLE</code> (= <code>APP_LAG_MEMBER_TABLE_NAME</code>) に
+<code>ProducerStateTable::set()</code> / <code>del()</code> で書き込む。Lua スクリプト (EVALSHA) が key-set に SADD し、
+チャネル <code>LAG_MEMBER_TABLE_CHANNEL@0</code> に PUBLISH する。</p>
+<h3 id="4-app_db-portsorch-consumerstatetable-subscribe-evalsha-sai-lag_member">4. APP_DB → PortsOrch: ConsumerStateTable (SUBSCRIBE + EVALSHA) → SAI lag_member<a class="headerlink" href="#4-app_db-portsorch-consumerstatetable-subscribe-evalsha-sai-lag_member" title="Permanent link">&para;</a></h3>
+<p><code>portsorch.cpp:4388</code> で起動時スナップショット (<code>addExistingData(APP_LAG_MEMBER_TABLE_NAME)</code>)、
+<code>portsorch.cpp:6531</code> で <code>doLagMemberTask(consumer)</code> にディスパッチ。
+<code>sai_lag_api-&gt;create_lag_member()</code> / <code>remove_lag_member()</code> (<code>portsorch.cpp:8172, 8221</code>) を呼び出す。</p>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>Redis チャネル / パターン</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB (db=4)</td>
+<td><code>__keyspace@4__:PORTCHANNEL_MEMBER\|*</code></td>
+<td>TeamMgr が PSUBSCRIBE</td>
+</tr>
+<tr>
+<td>teamd (UNIX ソケット)</td>
+<td><code>/var/run/teamd/&lt;lag&gt;.ctl</code></td>
+<td>teamdctl port add/remove</td>
+</tr>
+<tr>
+<td>APPL_DB (db=0)</td>
+<td><code>LAG_MEMBER_TABLE_CHANNEL@0</code></td>
+<td>PortsOrch の ConsumerStateTable が SUBSCRIBE</td>
+</tr>
+<tr>
+<td>STATE_DB (db=6)</td>
+<td><code>__keyspace@6__:LAG_TABLE\|*</code></td>
+<td>TeamMgr が isLagStateOk() で LAG 状態監視</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-pubsub.md -->
+<!-- /pubsub -->
+
 <!-- cross-refs -->
 <h2 id="phase-c">暗黙参照マップ (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
 <blockquote>
@@ -36104,6 +36822,317 @@
 </ol>
 <p>LAG を VLAN に trunk させる場合は PORTCHANNEL_MEMBER として物理ポートを追加した後、LAG インタフェース名 (<code>PortChannel0001</code>) を <code>VLAN_MEMBER</code> に追加する。物理ポートを直接 VLAN_MEMBER に追加するのではない点に注意。</p>
 <!-- /cross-refs -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-constants.md -->
+
+<h3 id="sai-lag_member_attr-create_lag_member">SAI lag_member_attr — create_lag_member() 時<a class="headerlink" href="#sai-lag_member_attr-create_lag_member" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_LAG_MEMBER_ATTR_LAG_ID</code></td>
+<td>SAI enum</td>
+<td><code>portsorch.cpp:8152</code></td>
+<td>LAG OID を渡す必須属性</td>
+</tr>
+<tr>
+<td><code>SAI_LAG_MEMBER_ATTR_PORT_ID</code></td>
+<td>SAI enum</td>
+<td><code>portsorch.cpp:8156</code></td>
+<td>物理ポート OID を渡す必須属性</td>
+</tr>
+<tr>
+<td><code>SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE</code></td>
+<td><code>true</code> (初期値ハードコード)</td>
+<td><code>portsorch.cpp:8162</code></td>
+<td><code>status != "enabled"</code> かつ SYSTEM 型以外の場合、egress 無効状態で追加</td>
+</tr>
+<tr>
+<td><code>SAI_LAG_MEMBER_ATTR_INGRESS_DISABLE</code></td>
+<td><code>true</code> (初期値ハードコード)</td>
+<td><code>portsorch.cpp:8166</code></td>
+<td>同上、ingress も無効状態で追加</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-lag_member_attr-set_lag_member_attribute">SAI lag_member_attr — set_lag_member_attribute() 時<a class="headerlink" href="#sai-lag_member_attr-set_lag_member_attribute" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_LAG_MEMBER_ATTR_INGRESS_DISABLE</code></td>
+<td><code>portsorch.cpp:8304</code></td>
+<td><code>setCollectionOnLagMember()</code> 経由で ingress 許可/禁止を動的制御</td>
+</tr>
+<tr>
+<td><code>SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE</code></td>
+<td><code>portsorch.cpp:8335</code></td>
+<td><code>setDistributionOnLagMember()</code> 経由で egress 許可/禁止を動的制御</td>
+</tr>
+</tbody>
+</table>
+<h3 id="forwarding">forwarding 制御の文字列定数<a class="headerlink" href="#forwarding" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>文字列</th>
+<th>判定式</th>
+<th>定義箇所</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"enabled"</code></td>
+<td><code>member_status == "enabled"</code></td>
+<td><code>portsorch.cpp:8141</code></td>
+<td>EGRESS/INGRESS_DISABLE を追加せず forwarding 有効でメンバ作成</td>
+</tr>
+<tr>
+<td><code>"enabled"</code> 以外</td>
+<td><code>member_status != "enabled"</code></td>
+<td><code>portsorch.cpp:8160</code></td>
+<td>EGRESS_DISABLE=true + INGRESS_DISABLE=true を付与してメンバを無効状態で作成</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: <code>status</code> フィールドは APP_DB <code>LAG_MEMBER_TABLE</code> が保持する値。CONFIG_DB の <code>PORTCHANNEL_MEMBER</code> は key-only テーブルのため CONFIG_DB レベルのハードコード数値定数は存在しない。<code>min_links</code> 等の LAG 全体定数は <a href="../portchannel/"><code>PORTCHANNEL</code> テーブル</a> を参照。</p>
+</blockquote>
+<!-- /constants -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-platform.md -->
+
+<h3 id="voq-chassis-chassis_app_lag_member_table">VOQ Chassis — CHASSIS_APP_LAG_MEMBER_TABLE 経由処理<a class="headerlink" href="#voq-chassis-chassis_app_lag_member_table" title="Permanent link">&para;</a></h3>
+<p><code>gMySwitchType == "voq"</code> 環境では <a href="../../glossary/#term-orchagent">orchagent</a> が <code>CHASSIS_APP_LAG_MEMBER_TABLE</code> を追加で購読し、ローカル <a href="../../glossary/#term-lag">LAG</a> メンバ追加後に <code>voqSyncAddLagMember()</code> が <code>CHASSIS_APP_DB</code> にも同期する。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>非 VOQ (通常)</td>
+<td>CONFIG_DB → APP_DB <code>APP_LAG_MEMBER_TABLE</code> のみ処理</td>
+</tr>
+<tr>
+<td>VOQ chassis — 自 switch の LAG</td>
+<td>CHASSIS_APP_DB <code>CHASSIS_APP_LAG_MEMBER_TABLE</code> へも <code>status</code> フィールド付きで同期 (<code>portsorch.cpp:L11179-11195</code>)</td>
+</tr>
+<tr>
+<td>VOQ chassis — switch_id が自 switch と一致</td>
+<td>CHASSIS_APP_DB 由来の自 switch LAG メンバ追加はスキップ（二重処理防止）</td>
+</tr>
+<tr>
+<td>VOQ chassis — <code>port_switch_id != lag_switch_id</code></td>
+<td><code>SWSS_LOG_ERROR: "System lag switch id mismatch..."</code> → エントリ消去 (<code>portsorch.cpp:L6309-6315</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>VOQ chassis 環境での LAG system alias は <code>&lt;hostname&gt;|&lt;asic_name&gt;|PortChannel0001</code> 形式になる（CHASSIS_APP_DB キー用）。CONFIG_DB 側の <code>PORTCHANNEL_MEMBER</code> key 形式は変わらない。</p>
+<h3 id="mellanox-distribution-only">Mellanox プラットフォーム — distribution-only モード非サポート<a class="headerlink" href="#mellanox-distribution-only" title="Permanent link">&para;</a></h3>
+<p>LAG メンバの有効化・無効化シーケンスは Mellanox の SAI 制約により固定されている (<code>portsorch.cpp:L6361-6382</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>処理順序</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>メンバ有効化 (<code>status=enabled</code>)</td>
+<td>collection 有効化 → distribution 有効化</td>
+<td>distribution-only モードが Mellanox で非サポート</td>
+</tr>
+<tr>
+<td>メンバ無効化 (<code>status=disabled</code>)</td>
+<td>distribution 無効化 → collection 無効化</td>
+<td>同上（逆順で distribution-only 状態を回避）</td>
+</tr>
+</tbody>
+</table>
+<p>このシーケンスは orchagent の共通コードパスとして実装されており、Broadcom / その他プラットフォームにも同じ順序が適用される。</p>
+<h3 id="multi-asic-lag">Multi-ASIC — バックエンド LAG 判定<a class="headerlink" href="#multi-asic-lag" title="Permanent link">&para;</a></h3>
+<p>マルチ ASIC 環境では <code>sonic_py_common.multi_asic.is_port_channel_internal()</code> が PORTCHANNEL_MEMBER を参照して LAG の内部 (backend) / 外部 (frontend) を判定する (<code>multi_asic.py:L401-415</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>シングル ASIC</td>
+<td>常に <code>False</code>（判定スキップ）</td>
+</tr>
+<tr>
+<td>LAG メンバポートが internal role</td>
+<td>LAG は backend (internal) LAG と判定</td>
+</tr>
+<tr>
+<td>LAG メンバポートが external role</td>
+<td>LAG は frontend (external) LAG</td>
+</tr>
+<tr>
+<td>LAG にメンバなし</td>
+<td><code>False</code>（判定不能）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>混在禁止</strong>: backend ポートと frontend ポートを同一 LAG に混在させることは誤設定であり、<code>get_back_end_interface_set()</code> の実装でも想定外扱い (<code>multi_asic.py:L439-441</code>)。</p>
+<!-- /platform -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-side-effects.md -->
+
+<p>PORTCHANNEL_MEMBER の SET/DEL は CONFIG_DB への書き込みに留まらず、複数の DB とカーネルに副次的な書き込みを生じさせる。</p>
+<h3 id="set-portchannel_memberlagmember">SET (PORTCHANNEL_MEMBER|&lt;lag&gt;|&lt;member&gt;) の副次書き込み<a class="headerlink" href="#set-portchannel_memberlagmember" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次書き込み先</th>
+<th>テーブル / リソース</th>
+<th>フィールド / 値</th>
+<th>担当</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td><code>PORT_TABLE</code></td>
+<td><code>&lt;member&gt;</code> field=<code>mtu</code> (LAG の MTU を継承)</td>
+<td><code>teammgrd</code></td>
+<td><code>teammgr.cpp:830</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td><code>LAG_MEMBER_TABLE</code></td>
+<td><code>&lt;lag&gt;:&lt;member&gt;</code> field=<code>status</code> (<code>disabled</code> → LACP 後 <code>enabled</code>)</td>
+<td><code>teamsyncd</code></td>
+<td><code>teamsync.cpp:420</code></td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td><code>SAI_OBJECT_TYPE_LAG_MEMBER</code></td>
+<td><code>create_lag_member</code> — lag_member OID 生成</td>
+<td><code>portsorch</code> (syncd 経由)</td>
+<td><code>portsorch.cpp:8172</code></td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td>LAG_MEMBER 属性</td>
+<td><code>SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE=true</code> / <code>INGRESS_DISABLE=true</code> (LACP 未完時)</td>
+<td><code>portsorch</code></td>
+<td><code>portsorch.cpp:8162-8167</code></td>
+</tr>
+<tr>
+<td>CHASSIS_APP_DB</td>
+<td><code>SYSTEM_LAG_MEMBER_TABLE</code></td>
+<td><code>&lt;system_lag&gt;:&lt;system_port&gt;</code> field=<code>status</code></td>
+<td><code>portsorch</code></td>
+<td><code>portsorch.cpp:8213</code> (VoQ Local LAG のみ)</td>
+</tr>
+<tr>
+<td>カーネル netdev</td>
+<td><code>ip link</code></td>
+<td>メンバを admin-down → enslave → admin_status 復元</td>
+<td><code>teammgrd</code></td>
+<td><code>teammgr.cpp:761-828</code></td>
+</tr>
+<tr>
+<td>teamd (UNIX ソケット)</td>
+<td><code>teamdctl port config update</code> + <code>port add</code></td>
+<td>lacp_key / link_watch 設定後に enslave</td>
+<td><code>teammgrd</code></td>
+<td><code>teammgr.cpp:762-769</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del-portchannel_memberlagmember">DEL (PORTCHANNEL_MEMBER|&lt;lag&gt;|&lt;member&gt;) の副次書き込み<a class="headerlink" href="#del-portchannel_memberlagmember" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次書き込み先</th>
+<th>テーブル / リソース</th>
+<th>フィールド / 値</th>
+<th>担当</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td><code>PORT_TABLE</code></td>
+<td><code>&lt;member&gt;</code> field=<code>mtu</code> (元の MTU に復元)</td>
+<td><code>teammgrd</code></td>
+<td><code>teammgr.cpp:862</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td><code>LAG_MEMBER_TABLE</code></td>
+<td><code>&lt;lag&gt;:&lt;member&gt;</code> DEL</td>
+<td><code>teamsyncd</code></td>
+<td><code>teamsync.cpp:432</code></td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td><code>SAI_OBJECT_TYPE_LAG_MEMBER</code></td>
+<td><code>remove_lag_member</code> — lag_member OID 削除</td>
+<td><code>portsorch</code> (syncd 経由)</td>
+<td><code>portsorch.cpp:8221</code></td>
+</tr>
+<tr>
+<td>CHASSIS_APP_DB</td>
+<td><code>SYSTEM_LAG_MEMBER_TABLE</code></td>
+<td><code>&lt;system_lag&gt;:&lt;system_port&gt;</code> DEL</td>
+<td><code>portsorch</code></td>
+<td><code>portsorch.cpp:8261</code> (VoQ Local LAG のみ)</td>
+</tr>
+<tr>
+<td>カーネル netdev</td>
+<td><code>ip link</code></td>
+<td>MTU / admin_status を元値に復元</td>
+<td><code>teammgrd</code></td>
+<td><code>teammgr.cpp:858-860</code></td>
+</tr>
+<tr>
+<td>teamd (UNIX ソケット)</td>
+<td><code>teamdctl port remove</code></td>
+<td>メンバを LAG から削除</td>
+<td><code>teammgrd</code></td>
+<td><code>teammgr.cpp:836</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db">STATE_DB への書き込み<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p>STATE_DB に <code>LAG_MEMBER_TABLE</code> は書き込まれない。LAG メンバの状態は APPL_DB <code>LAG_MEMBER_TABLE.status</code> フィールドで管理される。teamsyncd は STATE_DB には LAG 本体 (<code>LAG_TABLE</code>) のみ書き込む。</p>
+<h3 id="lacp-asic_db">LACP ネゴシエーションと ASIC_DB 更新タイミング<a class="headerlink" href="#lacp-asic_db" title="Permanent link">&para;</a></h3>
+<p>メンバ追加直後は <code>LAG_MEMBER_TABLE.status = disabled</code> であり、ASIC_DB の lag_member に <code>EGRESS_DISABLE=true</code> / <code>INGRESS_DISABLE=true</code> が設定される。LACP ネゴシエーション完了後、teamd が <code>TEAM_PORT_CHANGE</code> で <code>status=enabled</code> を通知 → teamsyncd が <code>LAG_MEMBER_TABLE</code> を更新 → portsorch が SAI attribute を解除する (<code>portsorch.cpp:8295-8340</code>)。</p>
+<!-- /side-effects -->
 
 <div class="footnote">
 <hr />

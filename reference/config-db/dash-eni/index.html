@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25244,6 +25256,133 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        書込み順依存・タイミング依存
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dash_appliance_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. DASH_APPLIANCE_TABLE が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dash_vnet_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. DASH_VNET_TABLE が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dash_meter_policy_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DASH_METER_POLICY_TABLE が先行必須（メータポリシー使用時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-eni-sai-eni-ether-address-map-entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ENI SAI オブジェクト → ENI ether address map entry（作成順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-eni-trusted-vni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. ENI 本体 → trusted VNI エントリ（作成順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-dash_eni_table-dash_eni_route_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. DASH_ENI_TABLE → DASH_ENI_ROUTE_TABLE の順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-dash_route_group_table-dash_eni_route_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. DASH_ROUTE_GROUP_TABLE → DASH_ENI_ROUTE_TABLE の順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-eni-ether-address-map-entry-eni-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. ENI 削除順: ether address map entry → ENI SAI オブジェクト（逆順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Warm-reboot 時の再適用順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -26023,6 +26162,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26667,6 +26834,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26815,6 +27038,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27010,7 +27261,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27095,6 +27346,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29307,6 +29586,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34625,6 +34932,133 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        書込み順依存・タイミング依存
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dash_appliance_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. DASH_APPLIANCE_TABLE が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dash_vnet_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. DASH_VNET_TABLE が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dash_meter_policy_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DASH_METER_POLICY_TABLE が先行必須（メータポリシー使用時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-eni-sai-eni-ether-address-map-entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ENI SAI オブジェクト → ENI ether address map entry（作成順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-eni-trusted-vni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. ENI 本体 → trusted VNI エントリ（作成順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-dash_eni_table-dash_eni_route_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. DASH_ENI_TABLE → DASH_ENI_ROUTE_TABLE の順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-dash_route_group_table-dash_eni_route_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. DASH_ROUTE_GROUP_TABLE → DASH_ENI_ROUTE_TABLE の順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-eni-ether-address-map-entry-eni-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. ENI 削除順: ether address map entry → ENI SAI オブジェクト（逆順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Warm-reboot 時の再適用順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -34789,7 +35223,7 @@
 <li><code>underlay_ip</code> は有効な IpAddress protobuf オブジェクトでなければ <code>addEniObject</code> が <code>false</code> を返してリトライ</li>
 <li>Appliance エントリ (<code>DASH_APPLIANCE_TABLE</code>) が存在しない場合も ENI 作成がリトライされる</li>
 <li><code>v4_meter_policy_id</code> / <code>v6_meter_policy_id</code> が指定されているが対応する <code>DASH_METER_POLICY_TABLE</code> エントリが未登録の場合はリトライ</li>
-<li>ENI の <code>mode</code> は作成時のみ指定可能 (後から変更不可)<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>ENI の <code>mode</code> は作成時のみ指定可能 (後から変更不可)<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -34911,7 +35345,7 @@
 </table>
 <h3 id="_7">補足<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>admin_state</code> は proto3 のデフォルト値 (enum 0) が <code>STATE_DISABLED</code> になるため、フィールドを省略した場合でも disabled として扱われる。HLD は「すべての設定適用後にコントローラが <code>enabled</code> に設定する」というワークフローを前提とする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>admin_state</code> は proto3 のデフォルト値 (enum 0) が <code>STATE_DISABLED</code> になるため、フィールドを省略した場合でも disabled として扱われる。HLD は「すべての設定適用後にコントローラが <code>enabled</code> に設定する」というワークフローを前提とする<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>mode</code> フィールドは <code>has_eni_mode()</code> が false の場合 (未設定) に SAI 属性を push しない設計のため、実際のデフォルトは SAI 実装依存になる。HLD の "Default is 'vm_mode'" はコントローラ側の推奨値であり、orchagent は省略時に SAI に何も渡さない。</li>
 <li><code>disable_fast_path_icmp_flow_redirection</code> は HLD スキーマ (dash-sonic-hld.md:389) に OPTIONAL フィールドとして記載されているが、現行の <code>dashorch.cpp</code> に対応する SAI 属性設定コードが見当たらない。HLD と実装の乖離 (discrepancy) として記録する。</li>
 </ul>
@@ -34935,14 +35369,124 @@
 </ul>
 <!-- /entry-points -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="_8">書込み順依存・タイミング依存<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="1-dash_appliance_table">1. DASH_APPLIANCE_TABLE が先行必須<a class="headerlink" href="#1-dash_appliance_table" title="Permanent link">&para;</a></h3>
+<p><code>addEniObject()</code> は <code>appliance_entries_</code> が空の場合に <code>false</code> を返してリトライキューに戻す。<code>DASH_ENI_TABLE</code> を書く前に <code>DASH_APPLIANCE_TABLE</code> のエントリが登録済みでなければならない<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>コード根拠: <code>dashorch.cpp:578–582</code></p>
+</blockquote>
+<h3 id="2-dash_vnet_table">2. DASH_VNET_TABLE が先行必須<a class="headerlink" href="#2-dash_vnet_table" title="Permanent link">&para;</a></h3>
+<p><code>vnet</code> フィールドに指定した VNET 名が <code>gVnetNameToId</code> に存在しない場合、<code>addEniObject()</code> は即座に <code>false</code> を返す。<code>DASH_VNET_TABLE</code> への登録が先行していること<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>コード根拠: <code>dashorch.cpp:570–576</code></p>
+</blockquote>
+<h3 id="3-dash_meter_policy_table">3. DASH_METER_POLICY_TABLE が先行必須（メータポリシー使用時）<a class="headerlink" href="#3-dash_meter_policy_table" title="Permanent link">&para;</a></h3>
+<p><code>v4_meter_policy_id</code> / <code>v6_meter_policy_id</code> が指定されている場合、<code>DashMeterOrch::getMeterPolicyOid()</code> が <code>SAI_NULL_OBJECT_ID</code> を返すとリトライ。対応する <code>DASH_METER_POLICY_TABLE</code> エントリを ENI より先に書くこと<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>コード根拠: <code>dashorch.cpp:584–607</code></p>
+</blockquote>
+<h3 id="4-eni-sai-eni-ether-address-map-entry">4. ENI SAI オブジェクト → ENI ether address map entry（作成順）<a class="headerlink" href="#4-eni-sai-eni-ether-address-map-entry" title="Permanent link">&para;</a></h3>
+<p><code>addEni()</code> は ① <code>addEniObject()</code>（<code>sai_dash_eni_api-&gt;create_eni()</code>）→ ② <code>addEniAddrMapEntry()</code>（<code>create_eni_ether_address_map_entry()</code>）の順で実行する。ether address map entry は ENI OID を参照するため、この順序は不変<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>コード根拠: <code>dashorch.cpp:861</code></p>
+</blockquote>
+<h3 id="5-eni-trusted-vni">5. ENI 本体 → trusted VNI エントリ（作成順）<a class="headerlink" href="#5-eni-trusted-vni" title="Permanent link">&para;</a></h3>
+<p><code>addEni()</code> は ENI オブジェクトと ether address map entry が両方成功した後にのみ <code>addEniTrustedVnis()</code> を呼び出す。途中失敗時は <code>removeEni()</code> でロールバック<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>コード根拠: <code>dashorch.cpp:866–878</code></p>
+</blockquote>
+<h3 id="6-dash_eni_table-dash_eni_route_table">6. DASH_ENI_TABLE → DASH_ENI_ROUTE_TABLE の順<a class="headerlink" href="#6-dash_eni_table-dash_eni_route_table" title="Permanent link">&para;</a></h3>
+<p><code>setEniRoute()</code> は <code>eni_entries_</code> に ENI が存在しない場合に <code>false</code> を返してリトライ。ENI Route を書く前に ENI 本体が <code>DASH_ENI_TABLE</code> 経由で登録済みでなければならない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>コード根拠: <code>dashorch.cpp:1186–1189</code></p>
+</blockquote>
+<h3 id="7-dash_route_group_table-dash_eni_route_table">7. DASH_ROUTE_GROUP_TABLE → DASH_ENI_ROUTE_TABLE の順<a class="headerlink" href="#7-dash_route_group_table-dash_eni_route_table" title="Permanent link">&para;</a></h3>
+<p><code>setEniRoute()</code> は <code>DashRouteOrch::getRouteGroupOid()</code> が <code>SAI_NULL_OBJECT_ID</code> を返した場合にもリトライ。ルートグループが先行して作成されている必要がある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>コード根拠: <code>dashorch.cpp:1192–1198</code></p>
+</blockquote>
+<h3 id="8-eni-ether-address-map-entry-eni-sai">8. ENI 削除順: ether address map entry → ENI SAI オブジェクト（逆順）<a class="headerlink" href="#8-eni-ether-address-map-entry-eni-sai" title="Permanent link">&para;</a></h3>
+<p><code>removeEni()</code> は ① <code>removeEniAddrMapEntry()</code> → ② <code>removeEniObject()</code> の順で削除する（作成の逆順）。ENI SAI オブジェクトが <code>SAI_STATUS_OBJECT_IN_USE</code> を返した場合は削除をリトライし、参照元 (ACL / Route 等) の解放を待つ<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>コード根拠: <code>dashorch.cpp:1015–1043</code></p>
+</blockquote>
+<h3 id="9-warm-reboot">9. Warm-reboot 時の再適用順序<a class="headerlink" href="#9-warm-reboot" title="Permanent link">&para;</a></h3>
+<p>Warm start 時 <code>warmRestoreAndSyncUp()</code> は全 Orch の <code>bake()</code> で APP_DB の既存エントリを toSync キューに積み直した後、3 イテレーション <code>doTask()</code> を実行する。DASH 系は ZMQ Consumer のため、厳密には orchagent 再起動後のコントローラ再送で依存解決される設計。orchdaemon の <code>addOrchList</code> 登録順は <code>DashAclOrch → DashVnetOrch → DashRouteOrch → DashOrch → ...</code> であり、依存テーブルが先行処理されることを前提とした順序になっている<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<blockquote>
+<p>コード根拠: <code>orchdaemon.cpp:1095–1170</code>, <code>orchdaemon.cpp:1408–1421</code></p>
+</blockquote>
+<h3 id="_9">順序依存サマリ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>先行テーブル / 操作</th>
+<th>後続テーブル / 操作</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>DASH_APPLIANCE_TABLE</code> 登録</td>
+<td><code>DASH_ENI_TABLE</code> 書込</td>
+<td><code>appliance_entries_</code> が空 → リトライ</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DASH_VNET_TABLE</code> 登録</td>
+<td><code>DASH_ENI_TABLE</code> 書込</td>
+<td><code>gVnetNameToId</code> miss → リトライ</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>DASH_METER_POLICY_TABLE</code> 登録</td>
+<td><code>DASH_ENI_TABLE</code> 書込（meter 使用時）</td>
+<td><code>getMeterPolicyOid</code> SAI_NULL → リトライ</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>create_eni()</code> 成功</td>
+<td><code>create_eni_ether_address_map_entry()</code></td>
+<td>SAI 構造上保証（同一 <code>addEni()</code> 内）</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ENI + address map 成功</td>
+<td>trusted VNI エントリ追加</td>
+<td>失敗時 <code>removeEni()</code> でロールバック</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>DASH_ENI_TABLE</code> 登録</td>
+<td><code>DASH_ENI_ROUTE_TABLE</code> 書込</td>
+<td>ENI 未存在 → リトライ</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>DASH_ROUTE_GROUP_TABLE</code> 登録</td>
+<td><code>DASH_ENI_ROUTE_TABLE</code> 書込</td>
+<td>RouteGroup OID null → リトライ</td>
+</tr>
+<tr>
+<td>8</td>
+<td>address map entry 削除</td>
+<td>ENI SAI オブジェクト削除</td>
+<td><code>OBJECT_IN_USE</code> → リトライ</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: dash-eni-2026-0514 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>SONiC/doc/dash/dash-sonic-hld.md</code> §3.2.3 ENI (DASH_ENI_TABLE スキーマ定義・ENI モード・admin-state ワークフロー). <a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md">https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>SONiC/doc/dash/dash-sonic-hld.md</code> §3.2.3 ENI (DASH_ENI_TABLE スキーマ定義・ENI モード・admin-state ワークフロー). <a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md">https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

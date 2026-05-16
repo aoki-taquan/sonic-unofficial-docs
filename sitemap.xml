@@ -1797,6 +1797,10 @@
          <lastmod>2026-05-16</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/fdb-aging/</loc>
+         <lastmod>2026-05-16</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/fdb/</loc>
          <lastmod>2026-05-16</lastmod>
     </url>
@@ -1921,6 +1925,14 @@
          <lastmod>2026-05-16</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/mclag-interface/</loc>
+         <lastmod>2026-05-16</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/mclag-unique-ip/</loc>
+         <lastmod>2026-05-16</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/mgmt-interface/</loc>
          <lastmod>2026-05-16</lastmod>
     </url>
@@ -1962,6 +1974,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/nat-counters/</loc>
+         <lastmod>2026-05-16</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/nat-pool/</loc>
          <lastmod>2026-05-16</lastmod>
     </url>
     <url>
@@ -2022,6 +2038,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/passw-hardening/</loc>
+         <lastmod>2026-05-16</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/pbh-rule/</loc>
          <lastmod>2026-05-16</lastmod>
     </url>
     <url>
@@ -2446,6 +2466,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/vrf/</loc>
+         <lastmod>2026-05-16</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/vrrp/</loc>
          <lastmod>2026-05-16</lastmod>
     </url>
     <url>

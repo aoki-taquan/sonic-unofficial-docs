@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -27733,7 +27885,129 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#flowcounterrouteorch-phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理順序 — FlowCounterRouteOrch の初期化・タスク処理の順序制約 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="処理順序 — FlowCounterRouteOrch の初期化・タスク処理の順序制約 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent 起動時の初期化順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 変更のキー処理順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#routepattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RoutePattern 内部ソート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バインド処理の遅延キューと再試行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dotask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        doTask の前提ガード（処理を打ち切る条件）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flowcounterrouteorch-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — FlowCounterRouteOrch が依存する関連テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — FlowCounterRouteOrch が依存する関連テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要テーブル / Orch 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期化ガード順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -27744,7 +28018,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27755,7 +28029,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -27767,7 +28041,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -27778,7 +28052,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -27789,7 +28063,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -29340,6 +29614,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34627,7 +34929,129 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#flowcounterrouteorch-phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理順序 — FlowCounterRouteOrch の初期化・タスク処理の順序制約 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="処理順序 — FlowCounterRouteOrch の初期化・タスク処理の順序制約 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent 起動時の初期化順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 変更のキー処理順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#routepattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RoutePattern 内部ソート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バインド処理の遅延キューと再試行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dotask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        doTask の前提ガード（処理を打ち切る条件）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flowcounterrouteorch-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — FlowCounterRouteOrch が依存する関連テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — FlowCounterRouteOrch が依存する関連テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要テーブル / Orch 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期化ガード順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34638,7 +35062,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34649,7 +35073,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34661,7 +35085,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34672,7 +35096,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -34683,7 +35107,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -34763,8 +35187,8 @@
 <li><code>&lt;prefix&gt;</code> は IPv4 / IPv6 プレフィックス（例: <code>10.0.0.0/8</code>、<code>2001:db8::/32</code>）。</li>
 <li><code>&lt;vrf_name&gt;</code> は VRF 名（例: <code>Vrf-RED</code>）または VNET 名。セパレータは <code>|</code>。</li>
 <li>デフォルト VRF の場合は <code>&lt;vrf_name&gt;</code> を省略し <code>&lt;prefix&gt;</code> のみ記述する。</li>
-<li><code>&lt;prefix&gt;</code> がデフォルトルート（<code>0.0.0.0/0</code> / <code>::/0</code>）の場合は <strong>完全一致</strong> パターンとして扱われる<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
-<li>重複・包含関係にあるパターンは登録時にエラーとなる（<code>validateRoutePattern()</code>）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><code>&lt;prefix&gt;</code> がデフォルトルート（<code>0.0.0.0/0</code> / <code>::/0</code>）の場合は <strong>完全一致</strong> パターンとして扱われる<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
+<li>重複・包含関係にあるパターンは登録時にエラーとなる（<code>validateRoutePattern()</code>）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_3">主要フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
@@ -34870,7 +35294,7 @@
 <h2 id="_8">購読者 / 生成者<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>生成者</strong>: <code>sonic-utilities</code> の <code>config flow_counters route add/del</code> コマンド<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
-<li><strong>購読者</strong>: <code>orchagent</code> の <code>FlowCounterRouteOrch</code>（<code>doTask(Consumer &amp;consumer)</code>）<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>購読者</strong>: <code>orchagent</code> の <code>FlowCounterRouteOrch</code>（<code>doTask(Consumer &amp;consumer)</code>）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -34879,41 +35303,174 @@
 <li>関連 CLI: <code>config flow_counters route</code>、<code>show flow_counters route</code></li>
 <li>関連 YANG: 未定義（スキーマの正本は <code>flowcounterrouteorch.cpp</code> / <code>flow_counter_util/route.py</code>）</li>
 </ul>
+<!-- ordering -->
+<h2 id="flowcounterrouteorch-phase-b">処理順序 — <code>FlowCounterRouteOrch</code> の初期化・タスク処理の順序制約 (Phase B)<a class="headerlink" href="#flowcounterrouteorch-phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="orchagent">orchagent 起動時の初期化順序<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp</code> の <code>OrchDaemon::init()</code> において、<code>FlowCounterRouteOrch</code> は <code>RouteOrch</code> より<strong>先に</strong>生成される<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>orchdaemon.cpp:253  gFlowCounterRouteOrch = new FlowCounterRouteOrch(...)
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>orchdaemon.cpp:337  gRouteOrch = new RouteOrch(...)   ← 後から生成
+</span></code></pre></div>
+<p>一方、<code>m_orchList</code>（Select ループで処理される順序リスト）では <code>gFlowCounterRouteOrch</code> が <code>gRouteOrch</code> より前に配置される<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>m_orchList = { gSwitchOrch, gCrmOrch, gPortsOrch, gBufferOrch,
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>               gFlowCounterRouteOrch, gIntfsOrch, ..., gRouteOrch, ... }
+</span></code></pre></div>
+<p>コンストラクタ内では <code>initRouteFlowCounterCapability()</code> を即時呼び出し、プラットフォームサポート確認と STATE_DB 書き込みを完了させる。サポートあり場合のみ <code>FLEX_COUNTER_UPD_TIMER</code>（1 秒周期）を登録する。</p>
+<h3 id="config_db">CONFIG_DB 変更のキー処理順序<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>doTask(Consumer &amp;consumer)</code> は <code>m_toSync</code>（<code>std::map&lt;string, ...&gt;</code>）を <strong><code>begin()</code> から <code>end()</code> まで順番に</strong>イテレートする<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>std::map</code> は辞書順ソート済みであるため、同一 flush バッチ内の複数パターン変更は <strong>キー文字列の辞書順</strong> で処理される。</p>
+<p>orchdaemon.cpp のコメント（行 494–498）は複数テーブルを持つ Orch に言及しているが、<code>FlowCounterRouteOrch</code> が購読するテーブルは <code>FLOW_COUNTER_ROUTE_PATTERN</code> の 1 テーブルのみであるため、テーブル間ソートの影響は受けない<sup id="fnref3:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<h3 id="routepattern">RoutePattern 内部ソート<a class="headerlink" href="#routepattern" title="Permanent link">&para;</a></h3>
+<p><code>mRoutePatternSet</code>（<code>std::set&lt;RoutePattern&gt;</code>）は <code>RoutePattern::operator&lt;</code> によりソート済みを維持する<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>比較キー: (vrf_name 辞書順, ip_prefix 順)
+</span></code></pre></div>
+<p>デフォルト VRF は <code>vrf_name = ""</code> となるため、辞書順で最小（先頭）に配置される。</p>
+<h3 id="_9">バインド処理の遅延キューと再試行順序<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p><code>bindFlowCounter()</code> 呼び出し時に ASIC_DB <code>VIDTORID</code> への VID 登録が未完了だった場合、エントリは <code>mPendingAddToFlexCntr</code>（<code>RouterFlowCounterCache</code> 型、<code>std::map</code>）へキューイングされる。<code>doTask(SelectableTimer &amp;timer)</code> が 1 秒ごとに全 pending エントリをスキャンし、VID 解決済みのものから順次 FlexDB へ登録する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>pending キューが空になると <code>mFlexCounterUpdTimer-&gt;stop()</code> でタイマーを停止する。</p>
+<h3 id="dotask">doTask の前提ガード（処理を打ち切る条件）<a class="headerlink" href="#dotask" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>打ち切り範囲</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gRouteOrch == nullptr</code></td>
+<td>doTask 全体を即時 return</td>
+</tr>
+<tr>
+<td><code>mRouteFlowCounterSupported == false</code></td>
+<td>doTask 全体を即時 return</td>
+</tr>
+<tr>
+<td><code>isRouteFlowCounterEnabled() == false</code></td>
+<td>counter バインドのみスキップ（パターン登録は保持）</td>
+</tr>
+<tr>
+<td><code>ASIC_DB:VIDTORID</code> に VID 未登録</td>
+<td>バインド保留 → pending キューへ</td>
+</tr>
+</tbody>
+</table>
+<p>詳細スキャン手順と行番号一覧は <code>meta/_intermediate/cdb-flow/route-orch-ordering.md</code> を参照。</p>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="flowcounterrouteorch-phase-c">暗黙参照 — <code>FlowCounterRouteOrch</code> が依存する関連テーブル (Phase C)<a class="headerlink" href="#flowcounterrouteorch-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>FLOW_COUNTER_ROUTE_PATTERN</code> は YANG 定義を持たない（YANG 未カバー）ため leafref による明示参照はゼロ件。
+代わりに <code>flowcounterrouteorch.cpp</code> の全 997 行から抽出した <strong>8 系統の暗黙依存</strong> が実装レベルの cross-table 参照となる。</p>
+<h3 id="orch">主要テーブル / Orch 参照<a class="headerlink" href="#orch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先 (テーブル / Orch)</th>
+<th>フィールド / 条件</th>
+<th>参照方向</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RouteOrch</code> / <code>ROUTE_TABLE</code> (APPL_DB)</td>
+<td>常時（パターンマッチング走査）</td>
+<td>読み取り（シンク済みルート一覧）</td>
+<td><code>flowcounterrouteorch.cpp:634</code> <code>gRouteOrch-&gt;getSyncdRoutes()</code></td>
+</tr>
+<tr>
+<td><code>VRFOrch</code> / <code>VRF</code> (CONFIG_DB)</td>
+<td>key の <code>&lt;vrf_name&gt;</code> が非デフォルト VRF のとき</td>
+<td>OID → 名前変換</td>
+<td><code>flowcounterrouteorch.cpp:410-411</code> <code>getVRFname(vrf_id)</code></td>
+</tr>
+<tr>
+<td><code>VNetOrch</code> / VNET ルートキャッシュ</td>
+<td>key の <code>&lt;vrf_name&gt;</code> が VNET 名のとき</td>
+<td>読み取り（VNET ルートマップ走査）</td>
+<td><code>flowcounterrouteorch.cpp:696-743</code> <code>getRouteMap()</code></td>
+</tr>
+<tr>
+<td><code>FlexCounterOrch</code> / <code>FLEX_COUNTER_TABLE</code> (CONFIG_DB)</td>
+<td>常時（カウンター有効化フラグ確認）</td>
+<td>状態読み取り</td>
+<td><code>flowcounterrouteorch.cpp:947-948</code> <code>getRouteFlowCountersState()</code></td>
+</tr>
+<tr>
+<td><code>ASIC_DB:VIDTORID</code></td>
+<td>バインド試行時（VID 存在確認）</td>
+<td>読み取り（RID 解決）</td>
+<td><code>flowcounterrouteorch.cpp:116</code> <code>mVidToRidTable-&gt;hget()</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB:COUNTERS_ROUTE_NAME_MAP</code></td>
+<td>バインド成功後</td>
+<td>書き込み（prefix → counter OID）</td>
+<td><code>flowcounterrouteorch.cpp:33, 126, 152, 921</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB:COUNTERS_ROUTE_TO_PATTERN_MAP</code></td>
+<td>バインド成功後</td>
+<td>書き込み（prefix → パターン逆引き）</td>
+<td><code>flowcounterrouteorch.cpp:34, 129, 155, 920</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB:FLOW_COUNTER_CAPABILITY_TABLE\|route</code></td>
+<td>orchagent 起動時（一度のみ）</td>
+<td>書き込み（<code>support = true/false</code>）</td>
+<td><code>flowcounterrouteorch.cpp:174-178</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">初期化ガード順序<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>gRouteOrch</code> が null → CONFIG_DB パターン処理全体が即時 return（<code>flowcounterrouteorch.cpp:57-60</code>）。</li>
+<li><code>mRouteFlowCounterSupported = false</code>（プラットフォーム非対応）→ 同様に全処理スキップ。</li>
+<li><code>isRouteFlowCounterEnabled() = false</code>（<code>FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE</code> が無効）→ counter バインド処理のみスキップ（パターン登録は保持）。</li>
+<li><code>ASIC_DB:VIDTORID</code> に VID が未登録 → <code>mPendingAddToFlexCntr</code> にキューイング、<code>FLEX_COUNTER_UPD_TIMER</code>（1 秒周期）で再試行。</li>
+</ol>
+<h3 id="_11">範囲外<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ROUTE_TABLE (STATE_DB)</code> — デフォルトルート到達性の side-effect 書き込み先であり、FlowCounterRouteOrch は参照しない。</li>
+<li><code>NEIGH_TABLE</code> / <code>INTF_TABLE</code> — RouteOrch が参照するが FlowCounterRouteOrch は直接参照しない。</li>
+</ul>
+<p>詳細スキャン手順と行番号一覧は <code>meta/_intermediate/cdb-flow/route-orch-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>APPL_DB: <a href="../route/"><code>ROUTE_TABLE</code></a></li>
 <li>CONFIG_DB: <a href="../static-route/"><code>STATIC_ROUTE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 設定済みパターン一覧</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FLOW_COUNTER_ROUTE_PATTERN:*&#39;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># 特定パターンの詳細</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLOW_COUNTER_ROUTE_PATTERN:10.0.0.0/8&#39;</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># フローカウンター有効化状態の確認</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLOW_COUNTER_CAPABILITY_TABLE|route&#39;</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># カウンター値の確認</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>show<span class="w"> </span>flow_counters<span class="w"> </span>route
+<h2 id="_14">運用ヒント<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h3 id="_15">確認コマンド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 設定済みパターン一覧</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FLOW_COUNTER_ROUTE_PATTERN:*&#39;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># 特定パターンの詳細</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLOW_COUNTER_ROUTE_PATTERN:10.0.0.0/8&#39;</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># フローカウンター有効化状態の確認</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLOW_COUNTER_CAPABILITY_TABLE|route&#39;</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="c1"># カウンター値の確認</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>show<span class="w"> </span>flow_counters<span class="w"> </span>route
 </span></code></pre></div>
-<h3 id="_13">典型エントリ例<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a># デフォルト VRF の /24 以上の経路に対してカウンター付与（最大 30 経路）
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>FLOW_COUNTER_ROUTE_PATTERN:10.0.0.0/8
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  max_match_count: 30
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a># VRF-RED の IPv6 /64 以上の経路（最大 10 経路）
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>FLOW_COUNTER_ROUTE_PATTERN:Vrf-RED|2001:db8::/32
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>  max_match_count: 10
+<h3 id="_16">典型エントリ例<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a># デフォルト VRF の /24 以上の経路に対してカウンター付与（最大 30 経路）
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>FLOW_COUNTER_ROUTE_PATTERN:10.0.0.0/8
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  max_match_count: 30
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a># VRF-RED の IPv6 /64 以上の経路（最大 10 経路）
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>FLOW_COUNTER_ROUTE_PATTERN:Vrf-RED|2001:db8::/32
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>  max_match_count: 10
 </span></code></pre></div>
-<h3 id="_14">よくある問題<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_17">よくある問題<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>
 <li>カウンターが付与されない → <code>show flow_counters route</code> の前に <code>STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route</code> の <code>support</code> が <code>"true"</code> であることを確認する。</li>
 <li>パターン登録でエラー → 既存パターンと IP 範囲が重複または包含関係にないか確認する（<code>validateRoutePattern()</code> チェック）。</li>
@@ -34925,13 +35482,16 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p>FlowCounterRouteOrch 実装: <code>orchagent/flex_counter/flowcounterrouteorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>FlowCounterRouteOrch 実装: <code>orchagent/flex_counter/flowcounterrouteorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>RoutePattern 構造体・is_match ロジック: <code>orchagent/flex_counter/flowcounterrouteorch.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>RoutePattern 構造体・is_match ロジック: <code>orchagent/flex_counter/flowcounterrouteorch.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
 <p>テーブル名・デフォルト値定数: <code>flow_counter_util/route.py</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/master/flow_counter_util/route.py">https://github.com/sonic-net/sonic-utilities/blob/master/flow_counter_util/route.py</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>orchagent 初期化順序・m_orchList: <code>orchagent/orchdaemon.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

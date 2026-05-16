@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/vxlan-evpn-nvo/">
       
       
-        <link rel="prev" href="../vrf-orch/">
+        <link rel="prev" href="../vrrp/">
       
       
         <link rel="next" href="../vxlan-evpn-tunnel/">
@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29094,6 +29246,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -29218,7 +29398,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        作成順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除順序（逆順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -29229,7 +29448,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -29251,7 +29470,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -29262,7 +29481,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -29273,7 +29492,57 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#evpn-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (EVPN 対応 ASIC)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (EVPN 対応 ASIC)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#p2p-dip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P2P モード詳細 (DIP トンネルサポートあり)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#p2mp-dip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P2MP モード詳細 (DIP トンネルサポートなし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch / DPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29284,7 +29553,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29295,7 +29564,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29306,7 +29575,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29318,7 +29587,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29329,7 +29598,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29340,7 +29609,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29405,6 +29674,56 @@
     <span class="md-ellipsis">
       
         段階 4: タイミング + 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-tunnel_map_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI tunnel_map_api との関係
       
     </span>
   </a>
@@ -29484,7 +29803,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -29495,10 +29814,232 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source_vtep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        source_vtep フィールドキー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-tunnel_map_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI tunnel_map_type ハードコードマッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evpnnvoorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EvpnNvoOrch ログ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込（Phase F）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込（Phase F）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-create_tunnel_mapsai_tunnel_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI: create_tunnel_map（sai_tunnel_api）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-create_tunnelsai_tunnel_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI: create_tunnel（sai_tunnel_api）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-create_tunnel_map_entrysai_tunnel_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI: create_tunnel_map_entry（sai_tunnel_api）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-vxlan_tunnel_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB: VXLAN_TUNNEL_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c-vxlanorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C / vxlanorch.cpp)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C / vxlanorch.cpp)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel-evpnnvoorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL → EvpnNvoOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_map-evpn-vni-addtunneluser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_MAP / EVPN リモート VNI → addTunnelUser
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN (PortsOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存解決順序
       
     </span>
   </a>
@@ -34682,7 +35223,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        作成順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除順序（逆順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -34693,7 +35273,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34715,7 +35295,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -34726,7 +35306,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34737,7 +35317,57 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#evpn-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (EVPN 対応 ASIC)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (EVPN 対応 ASIC)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#p2p-dip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P2P モード詳細 (DIP トンネルサポートあり)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#p2mp-dip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P2MP モード詳細 (DIP トンネルサポートなし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch / DPU
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34748,7 +35378,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34759,7 +35389,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34770,7 +35400,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34782,7 +35412,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -34793,7 +35423,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -34804,7 +35434,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34869,6 +35499,56 @@
     <span class="md-ellipsis">
       
         段階 4: タイミング + 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-tunnel_map_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI tunnel_map_api との関係
       
     </span>
   </a>
@@ -34948,7 +35628,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -34959,10 +35639,232 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source_vtep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        source_vtep フィールドキー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-tunnel_map_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI tunnel_map_type ハードコードマッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evpnnvoorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EvpnNvoOrch ログ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込（Phase F）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込（Phase F）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-create_tunnel_mapsai_tunnel_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI: create_tunnel_map（sai_tunnel_api）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-create_tunnelsai_tunnel_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI: create_tunnel（sai_tunnel_api）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-create_tunnel_map_entrysai_tunnel_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI: create_tunnel_map_entry（sai_tunnel_api）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-vxlan_tunnel_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB: VXLAN_TUNNEL_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c-vxlanorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C / vxlanorch.cpp)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C / vxlanorch.cpp)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel-evpnnvoorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL → EvpnNvoOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_map-evpn-vni-addtunneluser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_MAP / EVPN リモート VNI → addTunnelUser
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN (PortsOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存解決順序
       
     </span>
   </a>
@@ -35085,12 +35987,49 @@
 </blockquote>
 <!-- /defaults -->
 
-<h2 id="_5">制約<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-evpn-nvo-ordering.md; sonic-swss/orchagent/vxlanorch.cpp -->
+
+<h3 id="_5">作成順序<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>テーブル</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>VXLAN_TUNNEL\|&lt;name&gt;</code></td>
+<td><code>EvpnNvoOrch::addOperation()</code> が <code>source_vtep</code> を <code>getVxlanTunnel()</code> でルックアップする。TUNNEL 未登録なら null ポインタになり後続 EVPN 処理が <code>return false</code> でリトライ待ち (vxlanorch.cpp:2784)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>VXLAN_TUNNEL_MAP\|&lt;name&gt;\|&lt;map&gt;</code></td>
+<td>初回 MAP エントリで <code>createTunnelHw()</code> がトリガーされ VTEP が <code>isActive() = true</code> になる (vxlanorch.cpp:2063)。VTEP active 前は EVPN remote VTEP 追加が <code>return false</code> でリトライ待ち (vxlanorch.cpp:1694)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>VXLAN_EVPN_NVO\|&lt;nvo-name&gt;</code></td>
+<td>source_vtep 参照先 TUNNEL が存在し、かつ VTEP active 後に設定するのが推奨</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">削除順序（逆順）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>EVPN remote VTEP 削除 → VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除 → VXLAN_TUNNEL 削除
+</span></code></pre></div>
+<p><code>EvpnNvoOrch::delOperation()</code> は <code>del_tnl_hw_pending == true</code> のとき <code>return false</code> でリトライ待ちになる (vxlanorch.cpp:2803)。TUNNEL_MAP を先に全削除し DIP トンネルカウントを 0 にしてから NVO・TUNNEL を削除すること。</p>
+<!-- /ordering -->
+
+<h2 id="_7">制約<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>source_vtep</code> は <code>VXLAN_TUNNEL</code> への leafref（先にトンネル作成が必要）</li>
 <li>インスタンスはシステム全体で 1 件のみ</li>
 </ul>
-<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">購読者<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>vxlanorch</code> (<a href="../../glossary/#term-sonic-swss">sonic-swss</a>)</li>
 <li><code>bgpcfgd</code> / <code>bgpd</code> — EVPN address-family の起動条件</li>
@@ -35102,7 +36041,7 @@
 <li>関連 CLI: <code>config vxlan evpn_nvo</code></li>
 </ul>
 <!-- value-behavior -->
-<h2 id="_7">値依存挙動マトリクス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">値依存挙動マトリクス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>本テーブルは enum フィールドを持たない。フィールドは <code>source_vtep</code>（leafref）と <code>name</code>（string）のみ。</p>
 <table>
 <thead>
@@ -35137,7 +36076,7 @@
 </table>
 <!-- /value-behavior -->
 
-<h2 id="_8">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
 
 <ul>
@@ -35147,35 +36086,94 @@
 <li><strong>NVO 削除時エントリ不在</strong>: <code>SWSS_LOG_ERROR("NVO deletion NVO: %s not found exception: %s")</code> を記録<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>MAC learning 無効化</strong>: NVO 作成成功時にすべての <a href="../../glossary/#term-vxlan">VXLAN</a> netdev の MAC learning が <code>disableLearningForAllVxlanNetdevices()</code> で無効化される（EVPN 前提の動作）<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 </ul>
+<!-- platform -->
+<h2 id="evpn-asic">プラットフォーム差異 (EVPN 対応 ASIC)<a class="headerlink" href="#evpn-asic" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp:1256-1274, 1701-1724, 1807-1822, 903, 356-370 -->
+
+<p><code>VXLAN_EVPN_NVO</code> が参照する source VTEP（<code>VXLAN_TUNNEL</code>）の実際の ASIC 動作は、<code>VxlanTunnelOrch</code> 初期化時に <code>sai_query_attribute_enum_values_capability</code> で <code>SAI_TUNNEL_ATTR_PEER_MODE</code> を問い合わせた結果で決まる。</p>
+<table>
+<thead>
+<tr>
+<th>差異ポイント</th>
+<th>P2P モード (DIP サポートあり)</th>
+<th>P2MP モード (DIP サポートなし)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI ケーパビリティクエリ失敗時</td>
+<td><code>is_dip_tunnel_supported = true</code> へ自動 fallback</td>
+<td>—</td>
+</tr>
+<tr>
+<td>リモート VTEP ごとのトンネル</td>
+<td>動的 DIP トンネルを個別生成</td>
+<td>生成しない (IP 参照カウントのみ)</td>
+</tr>
+<tr>
+<td>SIP トンネル削除タイミング</td>
+<td>DIP カウントが 0 になるまで延期</td>
+<td>参照カウント 0 で即時可能</td>
+</tr>
+<tr>
+<td>ブリッジポート</td>
+<td>VTEP ごとに個別作成</td>
+<td>SIP 単一ブリッジポートを共有</td>
+</tr>
+<tr>
+<td>FDB/flooding</td>
+<td>DIP トンネルポート経由</td>
+<td>P2MP + L2MC グループ (IMET ルート) 経由</td>
+</tr>
+<tr>
+<td>EVPN DIP トンネル SAI mode</td>
+<td><code>SAI_TUNNEL_PEER_MODE_P2P</code></td>
+<td>使用しない</td>
+</tr>
+<tr>
+<td>CLI 静的トンネル SAI mode</td>
+<td><code>SAI_TUNNEL_PEER_MODE_P2MP</code></td>
+<td>同左</td>
+</tr>
+</tbody>
+</table>
+<h3 id="p2p-dip">P2P モード詳細 (DIP トンネルサポートあり)<a class="headerlink" href="#p2p-dip" title="Permanent link">&para;</a></h3>
+<p>EVPN ルート受信時に <code>addTunnelUser()</code> (vxlanorch.cpp:1701) が <code>createDynamicDIPTunnel(remote_vtep, usr)</code> を呼び出し、SAI <code>create_tunnel()</code> を <code>SAI_TUNNEL_PEER_MODE_P2P</code> + <code>SAI_TUNNEL_ATTR_ENCAP_DST_IP</code> で実行する。EVPN 動的 DIP トンネル生成時 (<code>TNL_CREATION_SRC_EVPN</code>) は <code>p2p = true</code> が明示される (vxlanorch.cpp:903)。</p>
+<h3 id="p2mp-dip">P2MP モード詳細 (DIP トンネルサポートなし)<a class="headerlink" href="#p2mp-dip" title="Permanent link">&para;</a></h3>
+<p><code>addTunnelUser()</code> は DIP トンネルを生成せず、リモート VTEP の IP 参照カウントを更新するのみ。FDB フラッディングは P2MP SIP トンネルブリッジポートと IMET ルートの L2MC グループメンバーで実現する (vxlanorch.cpp コメント: <code>"P2MP scenario where P2MP tunnel port is used for FDB learning"</code>)。</p>
+<h3 id="smartswitch-dpu">SmartSwitch / DPU<a class="headerlink" href="#smartswitch-dpu" title="Permanent link">&para;</a></h3>
+<p><code>vxlanorch.cpp</code> に SmartSwitch DPU 固有の分岐コードは存在しない。EVPN NVO テーブルは NPU 通常モード向けのみであり、DPU 側のオーバーレイスタックとの連携は orchagent 実装外となる。</p>
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vxlan/"><code>sonic-vxlan</code></a></li>
 <li>CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">関連ページ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vxlan-tunnel/">CONFIG_DB: VXLAN_TUNNEL</a></li>
 <li><a href="../vxlan-tunnel-map/">CONFIG_DB: VXLAN_TUNNEL_MAP</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_12">運用ヒント<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<h3 id="_13">典型値<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<h2 id="_14">運用ヒント<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h3 id="_15">典型値<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VXLAN_EVPN_NVO|&lt;nvo-name&gt;</code> (例 <code>nvo1</code>)。</li>
 <li><code>source_vtep</code>: <code>VXLAN_TUNNEL</code> 名を指す。</li>
 </ul>
-<h3 id="_14">よくある誤設定<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_16">よくある誤設定<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>source_vtep</code> が複数 NVO で重複指定されると最初の 1 つしか有効にならない。</li>
 </ul>
-<h3 id="_15">確認コマンド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VXLAN_EVPN_NVO|nvo1&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>tunnel
+<h3 id="_17">確認コマンド<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VXLAN_EVPN_NVO|nvo1&#39;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>tunnel
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -35200,6 +36198,65 @@
 <li>副作用: EVPN NVO 削除時は全 VNI・MAC エントリが一斉削除されトラフィックが断。</li>
 </ul>
 <!-- /runtime-trace -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p><code>VXLAN_EVPN_NVO</code> テーブルへの変更は <strong>2 段階</strong> で伝播する。</p>
+<ol>
+<li><strong>vxlanmgrd</strong> (<code>docker-swss</code> 内 cfgmgr プロセス) が <strong>CONFIG_DB</strong> を <code>ConsumerStateTable</code> (<code>swss::Orch</code> 継承) で購読する。<code>vxlanmgrd.cpp:46-53</code> で <code>CFG_VXLAN_EVPN_NVO_TABLE_NAME</code> を含むテーブルリストを <code>VxlanMgr</code> に渡し、<code>swss::Select</code> ループ (<code>SELECT_TIMEOUT=1000ms</code>) でイベントを待機する。</li>
+<li><strong>orchagent</strong> (<code>EvpnNvoOrch</code>) が <strong>APPL_DB</strong> の <code>APP_VXLAN_EVPN_NVO_TABLE</code> を <code>ConsumerStateTable</code> (<code>swss::Orch2</code> 継承) で購読する (<code>orchdaemon.cpp:358</code>)。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読 DB</th>
+<th>購読テーブル</th>
+<th>API 種別</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vxlanmgrd</code> (VxlanMgr)</td>
+<td>CONFIG_DB</td>
+<td><code>VXLAN_EVPN_NVO</code></td>
+<td><code>ConsumerStateTable</code> (Orch 継承)</td>
+<td><code>doVxlanEvpnNvoCreateTask</code> / <code>doVxlanEvpnNvoDeleteTask</code></td>
+</tr>
+<tr>
+<td>orchagent (EvpnNvoOrch)</td>
+<td>APPL_DB</td>
+<td><code>APP_VXLAN_EVPN_NVO_TABLE</code></td>
+<td><code>ConsumerStateTable</code> (Orch2 継承)</td>
+<td><code>EvpnNvoOrch::addOperation</code> / <code>delOperation</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="keyspace">keyspace 通知 → ハンドラ呼び出しの流れ<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONFIG_DB HSET &quot;VXLAN_EVPN_NVO|nvo1&quot; source_vtep vtep1
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ↓ Redis keyspace → vxlanmgrd ConsumerStateTable バッファ
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>swss::Select::select(1000ms) 検出
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  ↓ VxlanMgr::doTask() → doVxlanEvpnNvoCreateTask()
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  ↓ isTunnelActive(vtep) チェック（失敗時 return false → リトライ待ち）
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  ↓ disableLearningForAllVxlanNetdevices()
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  ↓ m_appEvpnNvoTable.set() → APPL_DB &quot;APP_VXLAN_EVPN_NVO_TABLE|nvo1&quot; 書込
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>APPL_DB 書込 → orchagent EvpnNvoOrch ConsumerStateTable 検出
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  ↓ EvpnNvoOrch::addOperation()
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  ↓ VxlanTunnelOrch からVTEP ポインタ取得・キャッシュ（SAI 直接呼び出しなし）
+</span></code></pre></div>
+<ul>
+<li><code>op == SET_COMMAND</code> → <code>addOperation()</code>、<code>op == DEL_COMMAND</code> → <code>delOperation()</code> に分岐。</li>
+<li><code>EvpnNvoOrch</code> 自体は SAI <code>tunnel_map_api</code> を直接呼ばない。VTEP SAI オブジェクトは <code>VxlanTunnelOrch</code> が先行して <code>sai_tunnel_api-&gt;create_tunnel_map()</code> で作成済み。</li>
+</ul>
+<h3 id="sai-tunnel_map_api">SAI tunnel_map_api との関係<a class="headerlink" href="#sai-tunnel_map_api" title="Permanent link">&para;</a></h3>
+<p><code>vxlanorch.cpp:28</code> で <code>extern sai_tunnel_api_t *sai_tunnel_api</code> を宣言。EVPN NVO フロー自体では tunnel_map_api を直接使用しないが、VXLAN_TUNNEL_MAP テーブル処理 (<code>VxlanTunnelMapOrch</code>) が同じ <code>sai_tunnel_api</code> を利用して MAP_T → SAI_TUNNEL_MAP_TYPE_* のマッピングオブジェクトを作成する。EVPN NVO は作成済み VTEP ポインタを参照するだけで SAI 呼び出しは行わない。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/vxlanmgrd.cpp:26-123</code>、<code>sonic-swss/cfgmgr/vxlanmgr.cpp:213-285,672-735</code>、<code>sonic-swss/orchagent/orchdaemon.cpp:358</code>、<code>sonic-swss/orchagent/vxlanorch.h:541-557</code>、<code>sonic-swss/orchagent/vxlanorch.cpp:28,124-165,2773-2814</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/vxlan-evpn-nvo-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
 <!-- entry-points -->
 <h2 id="direction-a">書き込み入り口 (Direction A)<a class="headerlink" href="#direction-a" title="Permanent link">&para;</a></h2>
 <p>VXLAN_EVPN_NVO テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。</p>
@@ -35215,11 +36272,307 @@
 <p>db_migrator.py での VXLAN_EVPN_NVO マイグレーションなし</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_16">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_18">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_17">死活・デッドコード<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_19">死活・デッドコード<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-net/sonic-swss/orchagent/vxlanorch.cpp</code></p>
+<h3 id="set">SET 処理における失敗経路<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source_vtep</code> が参照する VXLAN_TUNNEL が未登録（<code>getVxlanTunnel()</code> → nullptr）</td>
+<td><code>source_vtep_ptr = nullptr</code> のまま <code>true</code> 返却。後続 EVPN 処理が <code>getEVPNVtep()</code> null チェックで silent-drop</td>
+<td>ログなし（INFO のみ）</td>
+<td><code>vxlanorch.cpp:2779-2791</code></td>
+</tr>
+<tr>
+<td>EVPN VTEP が未 active 状態で Remote VNI 追加到着</td>
+<td><code>return false</code> — タスクキューでリトライ</td>
+<td>SWSS_LOG_WARN <code>"VTEP not yet active.user=%d remote_vtep=%s"</code></td>
+<td><code>vxlanorch.cpp:1696</code></td>
+</tr>
+<tr>
+<td><code>getEVPNVtep()</code> が nullptr（NVO 未登録）で Remote VNI 追加</td>
+<td><code>return false</code> — タスクキューでリトライ</td>
+<td>SWSS_LOG_WARN <code>"Unable to find EVPN VTEP. user=%d remote_vtep=%s"</code></td>
+<td><code>vxlanorch.cpp:1689</code></td>
+</tr>
+<tr>
+<td>VXLAN_TUNNEL 名が既存エントリと重複した状態で SET</td>
+<td><code>return true</code>（再試行なし）— 上書き不可</td>
+<td>SWSS_LOG_ERROR <code>"Vxlan tunnel '%s' is already exists"</code></td>
+<td><code>vxlanorch.cpp:1638</code></td>
+</tr>
+<tr>
+<td><code>sai_tunnel_api-&gt;create_tunnel()</code> 失敗</td>
+<td><code>throw std::runtime_error</code> → catch で SWSS_LOG_ERROR</td>
+<td><code>"Can't create a tunnel object"</code> / <code>"Error creating tunnel %s: %s"</code></td>
+<td><code>vxlanorch.cpp:403-411, 846-848</code></td>
+</tr>
+<tr>
+<td><code>sai_tunnel_api-&gt;create_tunnel_map()</code> 失敗</td>
+<td><code>throw std::runtime_error</code> — トンネルマップ未作成</td>
+<td>SWSS_LOG_ERROR <code>"Can't create tunnel map object"</code></td>
+<td><code>vxlanorch.cpp:147-155</code></td>
+</tr>
+<tr>
+<td><code>sai_next_hop_api-&gt;create_next_hop()</code> 失敗</td>
+<td><code>handleSaiCreateStatus()</code> → task_success 以外の場合 <code>return SAI_NULL_OBJECT_ID</code></td>
+<td>SWSS_LOG_ERROR <code>"NH vxlan tunnel create failed for %s, ip %s, mac %s, vni %d"</code></td>
+<td><code>vxlanorch.cpp:1430-1436</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 処理における失敗経路<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NVO DEL 到着時に <code>source_vtep_ptr</code> が NULL</td>
+<td><code>return true</code>（スキップ・再試行なし）</td>
+<td>SWSS_LOG_WARN <code>"NVO Delete failed as VTEP Ptr is NULL"</code></td>
+<td><code>vxlanorch.cpp:2799</code></td>
+</tr>
+<tr>
+<td>VTEP の HW 削除未完了 (<code>del_tnl_hw_pending == true</code>) で NVO DEL</td>
+<td><code>return false</code> — タスクキューでリトライ</td>
+<td>SWSS_LOG_WARN <code>"NVO not deleted as hw delete is pending"</code></td>
+<td><code>vxlanorch.cpp:2803-2806</code></td>
+</tr>
+<tr>
+<td>VXLAN_TUNNEL DEL 到着時にエントリ未存在</td>
+<td><code>return true</code>（スキップ・再試行なし）</td>
+<td>SWSS_LOG_ERROR <code>"Vxlan tunnel '%s' doesn't exist"</code></td>
+<td><code>vxlanorch.cpp:1656</code></td>
+</tr>
+<tr>
+<td>VTEP に <code>del_tnl_hw_pending</code> フラグが立っている状態でトンネル DEL</td>
+<td><code>return false</code> — DIP 参照カウントが 0 になるまでリトライ</td>
+<td>SWSS_LOG_WARN <code>"VTEP %s not deleted as hw delete is pending"</code></td>
+<td><code>vxlanorch.cpp:1663</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="retry">retry 挙動まとめ<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>シナリオ</th>
+<th>retry 挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>del_tnl_hw_pending</code> による NVO / VTEP DEL ブロック</td>
+<td><code>return false</code> → 上限なしリトライ。FDB 参照解消後に自動解除</td>
+</tr>
+<tr>
+<td>EVPN VTEP 未登録・非 active での Remote VNI 追加</td>
+<td><code>return false</code> → VTEP active 化後に解消</td>
+</tr>
+<tr>
+<td>SAI API 失敗 / VXLAN_TUNNEL 名重複</td>
+<td><code>return true</code> — <strong>再試行なし</strong>。同一フィールドの再書き込みで再トリガー必要</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>EvpnNvoOrch::addOperation()</code> は <code>source_vtep_ptr</code> 解決失敗でも <code>true</code> を返す。後続の Remote VNI 処理が <code>getEVPNVtep()</code> null チェックで <code>return false</code> し続けることが実質的なリトライ機構となる。</p>
+</blockquote>
+<p>詳細解析: <code>meta/_intermediate/cdb-flow/vxlan-evpn-nvo-failure.md</code></p>
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp:147-155,403-411,846-848,1430-1436,1638,1656,1663,1689,1696,2779-2811 -->
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>実装コードに直接定義されている文字列定数・enum 値を一覧化する。</p>
+<h3 id="source_vtep">source_vtep フィールドキー<a class="headerlink" href="#source_vtep" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>取得方法</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source_vtep</code></td>
+<td><code>request.getAttrString("source_vtep")</code></td>
+<td><code>vxlanorch.cpp:2780</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>EvpnNvoOrch::addOperation()</code> が <code>"source_vtep"</code> キーで属性を読み取り、<code>VxlanTunnelOrch::getVxlanTunnel(vtep_name)</code> に渡す (<code>vxlanorch.cpp:2784</code>)</li>
+</ul>
+<h3 id="sai-tunnel_map_type">SAI tunnel_map_type ハードコードマッピング<a class="headerlink" href="#sai-tunnel_map_type" title="Permanent link">&para;</a></h3>
+<p>EVPN NVO が source_vtep 経由で間接参照する tunnel_map_type の定数マップ (<code>vxlanorch.cpp:38-46</code>):</p>
+<table>
+<thead>
+<tr>
+<th>MAP_T enum</th>
+<th>SAI_TUNNEL_MAP_TYPE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VNI_TO_VLAN_ID</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID</code></td>
+</tr>
+<tr>
+<td><code>VLAN_ID_TO_VNI</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI</code></td>
+</tr>
+<tr>
+<td><code>VRID_TO_VNI</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VIRTUAL_ROUTER_ID_TO_VNI</code></td>
+</tr>
+<tr>
+<td><code>VNI_TO_VRID</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID</code></td>
+</tr>
+<tr>
+<td><code>BRIDGE_TO_VNI</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_BRIDGE_IF_TO_VNI</code></td>
+</tr>
+<tr>
+<td><code>VNI_TO_BRIDGE</code></td>
+<td><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_BRIDGE_IF</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>EVPN NVO 確立時、このマップに基づき encap/decap mapper が SAI に設定される</li>
+<li><code>VXLAN_EVPN_NVO</code> テーブル自体に数値定数はなく、SAI 定数は source_vtep (VXLAN_TUNNEL) 側で設定される</li>
+</ul>
+<h3 id="evpnnvoorch">EvpnNvoOrch ログ定数<a class="headerlink" href="#evpnnvoorch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>ログメッセージ</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>add 成功</td>
+<td><code>"evpnnvo: %s vtep : %s"</code> (INFO)</td>
+<td><code>vxlanorch.cpp:2786</code></td>
+</tr>
+<tr>
+<td>del 時 VTEP NULL</td>
+<td><code>"NVO Delete failed as VTEP Ptr is NULL"</code> (WARN)</td>
+<td><code>vxlanorch.cpp:2799</code></td>
+</tr>
+<tr>
+<td>del 時 hw pending</td>
+<td><code>"NVO not deleted as hw delete is pending"</code> (WARN)</td>
+<td><code>vxlanorch.cpp:2805</code></td>
+</tr>
+<tr>
+<td>del 成功</td>
+<td><code>"NVO: %s"</code> (INFO)</td>
+<td><code>vxlanorch.cpp:2811</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込（Phase F）<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>EvpnNvoOrch::addOperation()</code> 自体は <code>source_vtep_ptr</code> の格納のみで DB・SAI への直接書込を行わない。副次書込は後続の EVPN ルート処理で VTEP トンネルが生成される際に連鎖的に発生する。</p>
+<h3 id="sai-create_tunnel_mapsai_tunnel_api">SAI: <code>create_tunnel_map</code>（<code>sai_tunnel_api</code>）<a class="headerlink" href="#sai-create_tunnel_mapsai_tunnel_api" title="Permanent link">&para;</a></h3>
+<p>VTEP トンネル初回作成時（<code>VxlanTunnel::createMapperHw()</code>）に SAI tunnel_map オブジェクトを作成する。</p>
+<ul>
+<li><strong>SAI API</strong>: <code>sai_tunnel_api-&gt;create_tunnel_map()</code> (vxlanorch.cpp:141)</li>
+<li><strong>作成されるマップ型</strong>:</li>
+<li><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID</code> / <code>VLAN_ID_TO_VNI</code></li>
+<li><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID</code> / <code>VIRTUAL_ROUTER_ID_TO_VNI</code></li>
+<li><code>SAI_TUNNEL_MAP_TYPE_VNI_TO_BRIDGE_IF</code> / <code>BRIDGE_IF_TO_VNI</code></li>
+<li><strong>トリガー</strong>: VNI ↔ VLAN/VRF/Bridge マッピング登録時（<code>VXLAN_TUNNEL_MAP</code> テーブル処理）</li>
+</ul>
+<h3 id="sai-create_tunnelsai_tunnel_api">SAI: <code>create_tunnel</code>（<code>sai_tunnel_api</code>）<a class="headerlink" href="#sai-create_tunnelsai_tunnel_api" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>SAI API</strong>: <code>sai_tunnel_api-&gt;create_tunnel()</code> (vxlanorch.cpp:399)</li>
+<li><strong>主要属性</strong>: <code>SAI_TUNNEL_ATTR_TYPE=SAI_TUNNEL_TYPE_VXLAN</code>、<code>DECAP_MAPPERS</code>/<code>ENCAP_MAPPERS</code>（上記 map OID 一覧）、<code>ENCAP_SRC_IP</code>（VTEP IP）、<code>PEER_MODE</code>（P2MP: VTEP、P2P: EVPN 動的トンネル）</li>
+<li><strong>トリガー</strong>: <code>VxlanTunnel::createTunnelHw()</code> (vxlanorch.cpp:885)</li>
+</ul>
+<h3 id="sai-create_tunnel_map_entrysai_tunnel_api">SAI: <code>create_tunnel_map_entry</code>（<code>sai_tunnel_api</code>）<a class="headerlink" href="#sai-create_tunnel_map_entrysai_tunnel_api" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>SAI API</strong>: <code>sai_tunnel_api-&gt;create_tunnel_map_entry()</code> (vxlanorch.cpp:211)</li>
+<li>VNI ↔ VLAN/VRF/Bridge ペアごとに 1 呼び出し</li>
+<li><strong>トリガー</strong>: <code>addEncapMapperEntry()</code> / <code>addDecapMapperEntry()</code> 経由 (vxlanorch.cpp:551-560)</li>
+</ul>
+<h3 id="state_db-vxlan_tunnel_table">STATE_DB: <code>VXLAN_TUNNEL_TABLE</code><a class="headerlink" href="#state_db-vxlan_tunnel_table" title="Permanent link">&para;</a></h3>
+<p>EVPN 動的トンネル（<code>TNL_CREATION_SRC_EVPN</code>）が作成されると STATE_DB に書き込まれる。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// sonic-swss/orchagent/vxlanorch.cpp:1935-1944</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">fvVector</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="s">&quot;src_ip&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">sip</span><span class="p">.</span><span class="n">to_string</span><span class="p">()).</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">fvVector</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="s">&quot;dst_ip&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">dip</span><span class="p">.</span><span class="n">to_string</span><span class="p">()).</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">fvVector</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="s">&quot;tnl_src&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;EVPN&quot;</span><span class="p">);</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">fvVector</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="s">&quot;operstatus&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;down&quot;</span><span class="p">);</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">m_stateVxlanTable</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">tunnel_name</span><span class="p">,</span><span class="w"> </span><span class="n">fvVector</span><span class="p">);</span>
+</span></code></pre></div>
+<ul>
+<li><strong>テーブル名</strong>: <code>"VXLAN_TUNNEL_TABLE"</code> (<code>STATE_VXLAN_TUNNEL_TABLE_NAME</code>, schema.h:435)</li>
+<li><strong>キー形式</strong>: <code>&lt;tunnel_name&gt;</code>（EVPN 動的トンネル名）</li>
+<li><strong>書込フィールド</strong>: <code>src_ip</code>、<code>dst_ip</code>、<code>tnl_src="EVPN"</code>、<code>operstatus="down"</code></li>
+<li><strong>削除</strong>: トンネル削除時に <code>m_stateVxlanTable.del(tunnel_name)</code> (vxlanorch.cpp:1953)</li>
+<li><strong>コード</strong>: <code>VxlanTunnelOrch::addRemoveStateTableEntry()</code> (vxlanorch.cpp:1913)</li>
+</ul>
+<!-- /side-effects -->
+
+<!-- cross-refs -->
+<h2 id="phase-c-vxlanorchcpp">暗黙参照 (Phase C / vxlanorch.cpp)<a class="headerlink" href="#phase-c-vxlanorchcpp" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
+
+<p>以下の参照は <code>VXLAN_EVPN_NVO</code> テーブルが間接的に依存するが、CONFIG_DB スキーマや YANG には明示されていない。</p>
+<h3 id="vxlan_tunnel-evpnnvoorch">VXLAN_TUNNEL → EvpnNvoOrch<a class="headerlink" href="#vxlan_tunnel-evpnnvoorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照箇所</strong>: <code>vxlanorch.cpp:2782-2786</code></li>
+<li><code>EvpnNvoOrch::addOperation()</code> は <code>tunnel_orch-&gt;getVxlanTunnel(source_vtep)</code> で VXLAN_TUNNEL オブジェクトを取得し <code>source_vtep_ptr</code> に格納する。</li>
+<li>VXLAN_TUNNEL が未登録の場合 <code>source_vtep_ptr = NULL</code> となり、後続の DIP トンネル作成 (<code>addTunnelUser</code>) で NULL 参照が生じる可能性がある。</li>
+<li>削除時: <code>EvpnNvoOrch::delOperation()</code> が <code>source_vtep_ptr-&gt;del_tnl_hw_pending</code> を確認し、HW 削除保留中は <code>return false</code> でリトライ待ちになる。<strong>NVO は VXLAN_TUNNEL より先に削除する必要がある。</strong></li>
+</ul>
+<h3 id="vxlan_tunnel_map-evpn-vni-addtunneluser">VXLAN_TUNNEL_MAP / EVPN リモート VNI → addTunnelUser<a class="headerlink" href="#vxlan_tunnel_map-evpn-vni-addtunneluser" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照箇所</strong>: <code>vxlanorch.cpp:1678,1733</code></li>
+<li><code>VxlanTunnelOrch::addTunnelUser()</code> / <code>delTunnelUser()</code> 内で <code>gDirectory.get&lt;EvpnNvoOrch*&gt;()</code> で NVO オブジェクトを参照し、EVPN 状態 (<code>source_vtep_ptr</code>) を確認する。</li>
+<li>NVO が設定されていない状態でリモート VNI 追加処理が走ると <code>source_vtep_ptr</code> が NULL のため DIP トンネルが不完全になる。</li>
+</ul>
+<h3 id="vlan-portsorch">VLAN (PortsOrch)<a class="headerlink" href="#vlan-portsorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照箇所</strong>: <code>vxlanorch.cpp:1719-1721,1750-1761</code></li>
+<li>EVPN NVO 有効状態で DIP トンネル作成時に <code>gPortsOrch-&gt;addTunnel()</code> / <code>addBridgePort()</code> でリモートトンネルポートを VLAN ブリッジドメインに登録する。</li>
+<li>対応 VLAN が未作成の場合、ブリッジポート登録が失敗してリモート MAC/IP ルートが HW に反映されない。</li>
+</ul>
+<h3 id="_20">依存解決順序<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>VLAN (PortsOrch) ──┐
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>VRF  (VRFOrch)  ───┼──→ VXLAN_TUNNEL ──→ VXLAN_TUNNEL_MAP ──→ VXLAN_EVPN_NVO
+</span></code></pre></div>
+<p>削除は逆順: <code>VXLAN_EVPN_NVO</code> → <code>VXLAN_TUNNEL_MAP</code> → <code>VXLAN_TUNNEL</code></p>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 7e2e79cf3524 -->
 

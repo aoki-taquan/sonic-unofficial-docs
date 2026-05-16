@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -22083,6 +22095,477 @@
     <span class="md-ellipsis">
       
         mac_addr — 暗黙ゼロ MAC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback-kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loopback 生成順序 (kernel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 後 DEL 順依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要ポイント
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — VRF テーブルへの依存
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — VRF テーブルへの依存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf-isintfstateok" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 生成待ちによるブロック（isIntfStateOk）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-isintfchangevrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 変更禁止（isIntfChangeVrf）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-setintfvrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF バインド実装（setIntfVrf）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除時の IP 残留ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ — 暗黙参照の連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        障害シナリオ一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポイント
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-mtu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd — ループバック識別・MTU ハードコード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent IntfsOrch — タスク優先度・更新インターバル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-intfsorch-loopback_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent IntfsOrch — loopback_action マッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-sonic-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI バリデーション定数 (sonic-utilities)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込み (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次書込み (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-app_intf_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB — APP_INTF_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-state_interface_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — STATE_INTERFACE_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-counters_rif_name_map-counters_rif_type_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB — COUNTERS_RIF_NAME_MAP / COUNTERS_RIF_TYPE_MAP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis_app_db-system_interface_tablevoq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_APP_DB — SYSTEM_INTERFACE_TABLE（VOQ 環境のみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時スナップショット
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select_timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELECT_TIMEOUT ポーリング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / 環境差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / 環境差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-voq-ipv6-metric-256" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type = "voq" — IPv6 metric 256 付与
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-loopback4096-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ 環境 — Loopback4096 必須依存 (bgpcfgd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis_app_db-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ シャーシ — CHASSIS_APP_DB 連携 (orchagent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nat-sai-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT サポート有無 — SAI RIF 属性の差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cold-restart-warm-restart-loopback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cold restart / Warm restart — Loopback 保持ポリシー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voqinband-interface-dointfgeneraltask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoqInband Interface — doIntfGeneralTask バイパス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ
       
     </span>
   </a>
@@ -26338,6 +26821,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26982,6 +27493,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27130,6 +27697,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27325,7 +27920,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27410,6 +28005,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29622,6 +30245,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35262,6 +35913,477 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback-kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loopback 生成順序 (kernel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 後 DEL 順依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要ポイント
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — VRF テーブルへの依存
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — VRF テーブルへの依存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf-isintfstateok" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 生成待ちによるブロック（isIntfStateOk）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-isintfchangevrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 変更禁止（isIntfChangeVrf）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-setintfvrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF バインド実装（setIntfVrf）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除時の IP 残留ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ — 暗黙参照の連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        障害シナリオ一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポイント
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd-mtu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd — ループバック識別・MTU ハードコード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent IntfsOrch — タスク優先度・更新インターバル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-intfsorch-loopback_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent IntfsOrch — loopback_action マッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-sonic-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI バリデーション定数 (sonic-utilities)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込み (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次書込み (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-app_intf_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB — APP_INTF_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-state_interface_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — STATE_INTERFACE_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-counters_rif_name_map-counters_rif_type_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB — COUNTERS_RIF_NAME_MAP / COUNTERS_RIF_TYPE_MAP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis_app_db-system_interface_tablevoq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_APP_DB — SYSTEM_INTERFACE_TABLE（VOQ 環境のみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時スナップショット
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select_timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELECT_TIMEOUT ポーリング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / 環境差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / 環境差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-voq-ipv6-metric-256" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type = "voq" — IPv6 metric 256 付与
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-loopback4096-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ 環境 — Loopback4096 必須依存 (bgpcfgd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis_app_db-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ シャーシ — CHASSIS_APP_DB 連携 (orchagent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nat-sai-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT サポート有無 — SAI RIF 属性の差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cold-restart-warm-restart-loopback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cold restart / Warm restart — Loopback 保持ポリシー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voqinband-interface-dointfgeneraltask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoqInband Interface — doIntfGeneralTask バイパス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35670,6 +36792,723 @@ SAI ルータ IF の更新は発生しない。</p>
 を APP_DB に送信する（<code>intfmgr.cpp:1018-1020</code>）。Loopback では通常無視されるが、
 APP_INTF_TABLE に記録される。</p>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>
+調査日: 2026-05-16</p>
+</blockquote>
+<h3 id="_17">他テーブル先行必須<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><code>LOOPBACK_INTERFACE</code> は <code>intfmgrd</code> が処理する。<code>isIntfStateOk()</code> 内で <code>Loopback</code> プレフィクスを検知すると <strong>即 <code>true</code> を返す</strong>（<code>intfmgr.cpp:696-699</code>）。PORT / PORTCHANNEL / VLAN など他テーブルへの依存は存在しない。</p>
+<table>
+<thead>
+<tr>
+<th>先行テーブル / 条件</th>
+<th>確認先 STATE_DB</th>
+<th>依存の内容</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>依存なし</td>
+<td>—</td>
+<td><code>isIntfStateOk("Loopback*")</code> は常に <code>true</code></td>
+<td><code>intfmgr.cpp:696-699</code></td>
+</tr>
+<tr>
+<td><code>VRF</code> + vrfmgrd が STATE_VRF_TABLE に書く</td>
+<td><code>STATE_VRF_TABLE</code></td>
+<td><code>vrf_name</code> 指定時のみ。未 ready → retry</td>
+<td><code>intfmgr.cpp:839-842</code></td>
+</tr>
+<tr>
+<td>Loopback 属性ロウが STATE_INTERFACE_TABLE に存在</td>
+<td><code>STATE_INTERFACE_TABLE</code></td>
+<td><code>isIntfCreated(alias)</code> が false → IP プレフィクスロウをスキップ</td>
+<td><code>intfmgr.cpp:1115</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="loopback-kernel">Loopback 生成順序 (kernel)<a class="headerlink" href="#loopback-kernel" title="Permanent link">&para;</a></h3>
+<p><code>doIntfGeneralTask()</code> SET パス（Loopback 向け、<code>intfmgr.cpp</code> L772–1054）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>1. is_lo = true 確認                              (alias が &quot;Loopback&quot; で始まる)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>2. ip link add &lt;name&gt; mtu 65536 type dummy       (新規作成時のみ。m_loopbackIntfList 未登録の場合)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>                                                  MTU はハードコード 65536
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>3. adminStatus 正規化 → ip link set &lt;name&gt; up/down
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>                                                  (空値・不正値は &quot;up&quot; にフォールバック。
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>                                                   intfmgr.cpp:861-868, 870-880)
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>   ※ ステップ 2–3 は is_lo ブロック内（L856-880）
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>4. setIntfVrf(alias, vrf_name)                   (vrf_name 指定時。ip link set master/nomaster)
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>   ※ is_lo ブロック外の共通パス（L1007-1010）
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>5. setIntfMac(alias, mac) / mac_addr = &quot;00:00:00:00:00:00&quot; デフォルト付与
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>                                                  (intfmgr.cpp:1012-1020)
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>6. m_appIntfTableProducer.set(alias, data)       (APP_DB INTF_TABLE SET)
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>7. m_stateIntfTable.hset(alias, &quot;vrf&quot;, …)        (STATE_DB 書込み)
+</span></code></pre></div>
+<blockquote>
+<p><strong>注意</strong>: 旧版ドキュメントではステップ 3（VRF）と 4（MAC）を admin_status 設定の前に記載していたが、
+コード上は VRF・MAC の設定（<code>setIntfVrf</code> / <code>setIntfMac</code>）は <code>is_lo</code> ブロックの外の共通パスに位置し、
+<code>ip link set up/down</code> の後に実行される（<code>intfmgr.cpp:1007-1020</code>）。</p>
+</blockquote>
+<p>IP プレフィクスロウ（<code>doIntfAddrTask()</code> SET パス）は属性ロウの STATE_DB 書込み後に実行される。</p>
+<h3 id="set-del">SET 後 DEL 順依存<a class="headerlink" href="#set-del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>必須順序</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Loopback 属性ロウ (<code>LOOPBACK_INTERFACE|Loopback&lt;N&gt;</code>) の DEL</td>
+<td>すべての IP プレフィクスロウを先に DEL してから</td>
+<td><code>intfmgr.cpp:1058-1063</code></td>
+</tr>
+<tr>
+<td>VRF 変更</td>
+<td><code>vrf_name=""</code> で unbind → 新 VRF で rebind の 2 ステップ</td>
+<td><code>intfmgr.cpp:846-849</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_18">主要ポイント<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Loopback は他 IF と異なり STATE_DB の ready 待ちが<strong>一切ない</strong>（<code>isIntfStateOk</code> 常 true）</li>
+<li><code>cold restart</code> 時は <code>flushLoopbackIntfs()</code> でカーネルから全 Loopback を削除後に再作成する（<code>intfmgr.cpp:57</code>）</li>
+<li><code>warm-start</code> 時は <code>buildIntfReplayList()</code> が CONFIG_DB から Loopback キーを収集し replay する</li>
+</ul>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/loopback-interface-ordering.md</code> 参照。</p>
+<!-- /ordering -->
+
+<!-- implicit-refs -->
+<h2 id="vrf">暗黙参照 — VRF テーブルへの依存<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>sonic-swss/cfgmgr/intfmgr.cpp</code></p>
+</blockquote>
+<p><code>LOOPBACK_INTERFACE</code> テーブルの <code>vrf_name</code> フィールドは <code>VRF</code> テーブルへの leafref だが、
+<code>intfmgrd</code> はそれを単純な文字列参照に留めず、<strong>STATE_DB の <code>STATE_VRF_TABLE</code></strong> を使って
+VRF の生成完了を確認する暗黙の依存関係を持つ。</p>
+<h3 id="vrf-isintfstateok">VRF 生成待ちによるブロック（<code>isIntfStateOk</code>）<a class="headerlink" href="#vrf-isintfstateok" title="Permanent link">&para;</a></h3>
+<p><code>vrf_name</code> が非空のとき、<code>intfmgrd</code> は処理前に <code>STATE_VRF_TABLE.get(vrf_name)</code> を
+呼び出す（<code>intfmgr.cpp:839-843</code>）。STATE_DB にエントリがなければ</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>SWSS_LOG_DEBUG(&quot;VRF is not ready, skipping %s&quot;, vrf_name.c_str())
+</span></code></pre></div>
+<p>を出力して <code>false</code> を返し、イベントをキューに保留する。<strong>CONFIG_DB に VRF エントリが
+存在していても、vrfmgrd が STATE_DB に書き込むまで Loopback は VRF にバインドされない。</strong></p>
+<h3 id="vrf-isintfchangevrf">VRF 変更禁止（<code>isIntfChangeVrf</code>）<a class="headerlink" href="#vrf-isintfchangevrf" title="Permanent link">&para;</a></h3>
+<p>既に STATE_DB の <code>STATE_INTF_TABLE.&lt;alias&gt;.vrf</code> に VRF 名が記録されている場合、
+別の <code>vrf_name</code> への直接変更は拒否される（<code>intfmgr.cpp:846-849</code>）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>SWSS_LOG_ERROR(&quot;%s can not change to %s directly, skipping&quot;, alias.c_str(), vrf_name.c_str())
+</span></code></pre></div>
+<p>VRF を切り替えるには、先に <code>vrf_name</code> を空にして Loopback を解除し、再設定する必要がある。</p>
+<h3 id="vrf-setintfvrf">VRF バインド実装（<code>setIntfVrf</code>）<a class="headerlink" href="#vrf-setintfvrf" title="Permanent link">&para;</a></h3>
+<p><code>vrf_name</code> が確定すると <code>intfmgr.cpp:149-163</code> の <code>setIntfVrf</code> が呼ばれ:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ip<span class="w"> </span>link<span class="w"> </span><span class="nb">set</span><span class="w"> </span>&lt;alias&gt;<span class="w"> </span>master<span class="w"> </span>&lt;vrfName&gt;<span class="w">   </span><span class="c1"># バインド</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ip<span class="w"> </span>link<span class="w"> </span><span class="nb">set</span><span class="w"> </span>&lt;alias&gt;<span class="w"> </span>nomaster<span class="w">            </span><span class="c1"># 解除（vrf_name 空のとき）</span>
+</span></code></pre></div>
+<p>バインドは Linux netlink 経由で即時反映される。失敗時は <code>SWSS_LOG_ERROR</code> が出るが
+処理は継続される。</p>
+<h3 id="ip_1">削除時の IP 残留ガード<a class="headerlink" href="#ip_1" title="Permanent link">&para;</a></h3>
+<p>DEL_COMMAND では、先に全 IP アドレスが削除されていることを <code>getIntfIpCount</code> で確認する。
+IP が残っている場合は DEL を保留し、<code>vrf_name</code> の解除（<code>setIntfVrf(alias, "")</code>）は
+IP 削除後まで実行されない（<code>intfmgr.cpp:1059-1065</code> コメント）。これにより、
+VRF 解除後のアドレス競合（グローバル VRF への暗黙フォールバック）を防ぐ。</p>
+<h3 id="_19">まとめ — 暗黙参照の連鎖<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照元フィールド</th>
+<th>参照先テーブル</th>
+<th>確認手段</th>
+<th>未解決時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vrf_name</code></td>
+<td><code>VRF</code>（CONFIG_DB）</td>
+<td>STATE_VRF_TABLE（STATE_DB）</td>
+<td>Loopback 設定をキューで保留</td>
+</tr>
+<tr>
+<td><code>vrf_name</code> (変更)</td>
+<td>STATE_INTF_TABLE（STATE_DB）</td>
+<td><code>isIntfChangeVrf</code></td>
+<td>変更を ERROR ログで拒否</td>
+</tr>
+<tr>
+<td>IP 削除 → VRF 解除</td>
+<td>自テーブル IP カウント</td>
+<td><code>getIntfIpCount</code></td>
+<td>DEL を保留し順序を強制</td>
+</tr>
+</tbody>
+</table>
+<!-- /implicit-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code></p>
+</blockquote>
+<h3 id="_20">障害シナリオ一覧<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>障害シナリオ</th>
+<th>処理コンポーネント</th>
+<th>ログレベル</th>
+<th>自動リトライ</th>
+<th>主な副作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip link add &lt;Lo&gt; type dummy</code> 失敗</td>
+<td>intfmgrd</td>
+<td>ERROR</td>
+<td><strong>なし</strong></td>
+<td>OS に dummy デバイスが作成されないが <code>m_loopbackIntfList</code> には登録済みとなり、以後の SET で再作成が試みられない</td>
+</tr>
+<tr>
+<td><code>ip link del &lt;Lo&gt;</code> 失敗</td>
+<td>intfmgrd</td>
+<td>ERROR</td>
+<td><strong>なし</strong></td>
+<td>OS の dummy デバイスが残存したまま CONFIG_DB エントリは消去される（不整合状態。次回再起動の <code>flushLoopbackIntfs</code> で回収）</td>
+</tr>
+<tr>
+<td><code>admin_status</code> に <code>"up"</code> / <code>"down"</code> 以外の値</td>
+<td>intfmgrd</td>
+<td>WARN</td>
+<td>—</td>
+<td><code>"up"</code> へサイレントフォールバック（<code>intfmgr.cpp:865-868</code>）</td>
+</tr>
+<tr>
+<td><code>ip link set &lt;Lo&gt; up/down</code> が runtime_error</td>
+<td>intfmgrd</td>
+<td>WARN</td>
+<td><strong>なし</strong></td>
+<td>OS の admin 状態と CONFIG_DB が乖離（<code>intfmgr.cpp:879-882</code>）</td>
+</tr>
+<tr>
+<td>VRF 変更（既バインド VRF から別 VRF への直接変更）</td>
+<td>intfmgrd</td>
+<td>ERROR</td>
+<td><strong>なし</strong></td>
+<td>変更イベントを消費して拒否。CONFIG_DB の値は書き換わるが実態は旧 VRF のまま（<code>intfmgr.cpp:846-849</code>）</td>
+</tr>
+<tr>
+<td><code>vrf_name</code> 指定時に STATE_VRF_TABLE に VRF 未登録</td>
+<td>intfmgrd</td>
+<td>DEBUG</td>
+<td>あり（VRF ready 後）</td>
+<td>設定がキューで保留。VRF 完了後に自動リトライ（<code>intfmgr.cpp:839-842</code>）</td>
+</tr>
+<tr>
+<td>SAI <code>create_router_interface</code> が非 SUCCESS</td>
+<td>orchagent IntfsOrch</td>
+<td>ERROR</td>
+<td>あり（<code>task_success</code> 非時）</td>
+<td><code>handleSaiCreateStatus</code> 判定後 <code>runtime_error</code> → フレームワークがタスクをリトライキューに戻す（<code>intfsorch.cpp:1296-1304</code>）</td>
+</tr>
+<tr>
+<td><code>loopback_action</code> に <code>"drop"</code> / <code>"forward"</code> 以外の値</td>
+<td>orchagent IntfsOrch</td>
+<td>WARN</td>
+<td><strong>なし</strong></td>
+<td>SAI 属性未設定。SAI 実装依存のデフォルト action が維持される（<code>intfsorch.cpp:1162</code>）</td>
+</tr>
+<tr>
+<td>RIF 削除時に参照カウント非 0（ネクストホップ等が参照中）</td>
+<td>orchagent IntfsOrch</td>
+<td>NOTICE</td>
+<td>あり（自動）</td>
+<td>参照が解放されるまで RIF 削除を保留してリトライ（<code>intfsorch.cpp:1327-1330</code>）</td>
+</tr>
+<tr>
+<td>属性ロウ DEL 時に IP プレフィクスロウが残存</td>
+<td>orchagent IntfsOrch</td>
+<td>なし</td>
+<td>あり（自動）</td>
+<td>IP 削除まで属性ロウ DEL を保留（サイレントリトライ、<code>intfsorch.cpp:1053-1064</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_21">ポイント<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>ip link add</code> / <code>ip link del</code> の失敗は自動リカバリなし</strong>。<code>intfmgrd</code> は ERROR を記録するだけでイベントを消費する。手動介入か再起動が必要。</li>
+<li><strong>VRF 直接変更は拒否されるがイベントが消費される</strong>（リトライされない）。<code>vrf_name=""</code> で VRF 解除 → 再設定する 2 ステップが唯一の回避策（<code>intfmgr.cpp:846-849</code>）。</li>
+<li><strong>SAI 側の失敗はフレームワーク再試行あり</strong>。orchagent は <code>handleSaiCreateStatus</code> / <code>handleSaiSetStatus</code> で retry / success / failure を判定し、リトライ可能なものはキューに戻す。</li>
+<li><strong>DEL の保留はログなし</strong>。IP プレフィクスロウ残存による DEL 保留はサイレントなため、<code>sonic-db-cli CONFIG_DB hgetall 'LOOPBACK_INTERFACE|Loopback&lt;N&gt;'</code> で手動確認が必要。</li>
+</ul>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/loopback-interface-failure.md</code> 参照。</p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-swss/cfgmgr/intfmgr.cpp</code> L22-29, L201 / <code>sonic-swss/orchagent/intfsorch.cpp</code> L43-47, L1148-1165, L1210-1228 / <code>sonic-utilities/config/main.py</code> L104-108 精読 (2026-05-16)</p>
+</blockquote>
+<h3 id="intfmgrd-mtu">intfmgrd — ループバック識別・MTU ハードコード<a class="headerlink" href="#intfmgrd-mtu" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義場所</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LOOPBACK_PREFIX</code></td>
+<td><code>"Loopback"</code></td>
+<td><code>intfmgr.cpp</code> L22</td>
+<td>ループバック名のプレフィクス。<code>alias.compare(0, strlen(LOOPBACK_PREFIX), LOOPBACK_PREFIX)</code> で <code>is_lo = true</code> を判定する</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_DEFAULT_MTU_STR</code></td>
+<td><code>"65536"</code></td>
+<td><code>intfmgr.cpp</code> L28</td>
+<td>Linux dummy デバイス作成時の固定 MTU。<code>ip link add &lt;name&gt; mtu 65536 type dummy</code> にハードコードされており、CONFIG_DB から変更する手段はない（<code>LOOPBACK_INTERFACE</code> テーブルに <code>mtu</code> フィールドなし）</td>
+</tr>
+<tr>
+<td><code>DEFAULT_MTU_STR</code></td>
+<td><code>9100</code></td>
+<td><code>intfmgr.cpp</code> L29</td>
+<td>一般インターフェース（Ethernet/LAG/VLAN）のデフォルト MTU。Loopback には使用されない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="orchagent-intfsorch">orchagent IntfsOrch — タスク優先度・更新インターバル<a class="headerlink" href="#orchagent-intfsorch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義場所</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>intfsorch_pri</code></td>
+<td><code>35</code></td>
+<td><code>intfsorch.cpp</code> L43</td>
+<td><code>IntfsOrch</code> のタスク優先度。orchagent 内の複数 Orch が同時イベントを持つ場合の処理順序を決定</td>
+</tr>
+<tr>
+<td><code>UPDATE_MAPS_SEC</code></td>
+<td><code>1</code> 秒</td>
+<td><code>intfsorch.cpp</code> L45</td>
+<td>RIF 統計マップの更新インターバル。Loopback IF の統計もこの周期で収集される</td>
+</tr>
+</tbody>
+</table>
+<h3 id="orchagent-intfsorch-loopback_action">orchagent IntfsOrch — loopback_action マッピング<a class="headerlink" href="#orchagent-intfsorch-loopback_action" title="Permanent link">&para;</a></h3>
+<p><code>getSaiLoopbackAction()</code> 内の固定マップ（<code>intfsorch.cpp</code> L1148-1165）:</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB 値</th>
+<th>SAI 列挙値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"drop"</code></td>
+<td><code>SAI_PACKET_ACTION_DROP</code></td>
+<td>ループバックパケットをドロップ</td>
+</tr>
+<tr>
+<td><code>"forward"</code></td>
+<td><code>SAI_PACKET_ACTION_FORWARD</code></td>
+<td>ループバックパケットを転送</td>
+</tr>
+<tr>
+<td>その他の値</td>
+<td>—</td>
+<td><code>SWSS_LOG_WARN("Unsupported loopback action [%s]")</code> → SAI 属性未設定</td>
+</tr>
+</tbody>
+</table>
+<p>SAI 属性: <code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code></p>
+<h3 id="cli-sonic-utilities">CLI バリデーション定数 (sonic-utilities)<a class="headerlink" href="#cli-sonic-utilities" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CFG_LOOPBACK_PREFIX</code></td>
+<td><code>"Loopback"</code></td>
+<td>CLI バリデーション用プレフィクス</td>
+</tr>
+<tr>
+<td><code>CFG_LOOPBACK_NAME_TOTAL_LEN_MAX</code></td>
+<td><code>11</code></td>
+<td><code>Loopback&lt;N&gt;</code> の最大文字列長（<code>Loopback999</code> = 11 文字）</td>
+</tr>
+<tr>
+<td><code>CFG_LOOPBACK_ID_MAX_VAL</code></td>
+<td><code>999</code></td>
+<td>インターフェース番号 <code>&lt;N&gt;</code> の最大値</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_22">補足<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>SAI_ROUTER_INTERFACE_TYPE_LOOPBACK</code> は使用されない</strong>: <code>intfsorch.cpp</code> の <code>addRouterIntfs()</code> における <code>SAI_ROUTER_INTERFACE_ATTR_TYPE</code> の設定に Loopback 専用タイプは存在しない（<code>intfsorch.cpp</code> L1210-1228）。ループバック動作制御は <code>loopback_action</code> フィールドと <code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code> 属性で行う。</li>
+<li><strong><code>loopback_action</code> 未設定時のデフォルト</strong>: CONFIG_DB に <code>loopback_action</code> がなければ SAI 属性は設定されず、SAI 実装依存のデフォルト（通常 <code>forward</code>）が維持される。</li>
+<li><strong>MTU 変更不可</strong>: <code>LOOPBACK_DEFAULT_MTU_STR = "65536"</code> はカーネル dummy デバイス作成コマンドにハードコードされており、CONFIG_DB 経由での変更手段は存在しない。</li>
+</ul>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/loopback-interface-constants.md</code> 参照。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">副次書込み (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code><br />
+調査日: 2026-05-16</p>
+</blockquote>
+<p><code>LOOPBACK_INTERFACE</code> テーブルへの書込みは CONFIG_DB にとどまらず、以下の DB に副次書込みを発生させる。</p>
+<h3 id="appl_db-app_intf_table">APPL_DB — APP_INTF_TABLE<a class="headerlink" href="#appl_db-app_intf_table" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> は <code>doIntfGeneralTask()</code> / <code>doIntfAddrTask()</code> で <code>m_appIntfTableProducer</code>（Producer Channel）を使い APPL_DB に書く。</p>
+<table>
+<thead>
+<tr>
+<th>キー</th>
+<th>書込みフィールド</th>
+<th>タイミング</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_INTF_TABLE\|&lt;alias&gt;</code></td>
+<td><code>vrf_name</code>, <code>mac_addr</code>（未設定時 <code>"00:00:00:00:00:00"</code>）, <code>loopback_action</code>（指定時のみ）</td>
+<td>属性ロウ SET</td>
+<td><code>intfmgr.cpp:1053</code></td>
+</tr>
+<tr>
+<td><code>APP_INTF_TABLE\|&lt;alias&gt;:&lt;ip-prefix&gt;</code></td>
+<td><code>scope="global"</code>（ハードコード）, <code>family</code></td>
+<td>IP プレフィクスロウ SET（IPv6 link-local を除く）</td>
+<td><code>intfmgr.cpp:1137</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>IPv6 link-local アドレス（<code>fe80::/10</code>）は APPL_DB に書かれない</strong>。カーネルには付与されるが、APP_INTF_TABLE への <code>set</code> はスキップされる（<code>intfmgr.cpp:1123-1139</code>）。</p>
+<h3 id="state_db-state_interface_table">STATE_DB — STATE_INTERFACE_TABLE<a class="headerlink" href="#state_db-state_interface_table" title="Permanent link">&para;</a></h3>
+<p><code>m_stateIntfTable</code> を通じて STATE_DB に書く。</p>
+<table>
+<thead>
+<tr>
+<th>キー</th>
+<th>書込みフィールド</th>
+<th>タイミング</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_INTERFACE_TABLE\|&lt;alias&gt;</code></td>
+<td><code>vrf</code>（VRF 名。デフォルト VRF は空文字列）</td>
+<td>属性ロウ SET</td>
+<td><code>intfmgr.cpp:1054</code></td>
+</tr>
+<tr>
+<td><code>STATE_INTERFACE_TABLE\|&lt;alias&gt;\|&lt;ip-prefix&gt;</code></td>
+<td><code>state="ok"</code></td>
+<td>IP プレフィクスロウ SET（link-local 除く）</td>
+<td><code>intfmgr.cpp:1138</code></td>
+</tr>
+</tbody>
+</table>
+<p>この <code>STATE_INTERFACE_TABLE</code> エントリが <code>isIntfCreated(alias)</code> チェックに使われるため、<strong>IP プレフィクスロウの処理は属性ロウの STATE_DB 書込み後</strong>でないと実行されない。</p>
+<h3 id="counters_db-counters_rif_name_map-counters_rif_type_map">COUNTERS_DB — COUNTERS_RIF_NAME_MAP / COUNTERS_RIF_TYPE_MAP<a class="headerlink" href="#counters_db-counters_rif_name_map-counters_rif_type_map" title="Permanent link">&para;</a></h3>
+<p><code>orchagent</code> <code>IntfsOrch</code> は SAI RIF 作成後に <code>m_rifsToAdd</code> リストへ追加し、<code>UPDATE_MAPS_SEC = 1</code> 秒インターバルのタイマー（<code>generateInterfaceMap()</code>）で COUNTERS_DB に書く（<code>intfsorch.cpp:1530-1538</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>ハッシュキー</th>
+<th>フィールド</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_RIF_NAME_MAP</code></td>
+<td><code>""</code></td>
+<td><code>&lt;alias&gt;</code> = <code>&lt;sai_object_id&gt;</code></td>
+<td><code>intfsorch.cpp:1537</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_RIF_TYPE_MAP</code></td>
+<td><code>""</code></td>
+<td><code>&lt;sai_object_id&gt;</code> = <code>&lt;rif_type&gt;</code></td>
+<td><code>intfsorch.cpp:1538</code></td>
+</tr>
+</tbody>
+</table>
+<p>削除時は <code>removeRifFromFlexCounter()</code> が <code>hdel</code> で両テーブルから削除し、FLEX_COUNTER_DB のポーリングを停止する（<code>intfsorch.cpp:1559-1566</code>）。</p>
+<h3 id="chassis_app_db-system_interface_tablevoq">CHASSIS_APP_DB — SYSTEM_INTERFACE_TABLE（VOQ 環境のみ）<a class="headerlink" href="#chassis_app_db-system_interface_tablevoq" title="Permanent link">&para;</a></h3>
+<p><code>isChassisDbInUse()</code> が true（VOQ シャーシ構成）の場合のみ <code>voqSyncAddIntf()</code> が呼ばれ、<code>SYSTEM_INTERFACE_TABLE|&lt;system_alias&gt;</code> に <code>oper_status</code> を書く（<code>intfsorch.cpp:1316-1317</code>）。通常の非 VOQ 環境では書込みは発生しない。</p>
+<h3 id="_23">まとめ表<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>テーブル</th>
+<th>タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td><code>APP_INTF_TABLE</code></td>
+<td>属性/IP ロウ SET 即時</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>STATE_INTERFACE_TABLE</code></td>
+<td>属性/IP ロウ SET 即時</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_RIF_NAME_MAP</code>, <code>COUNTERS_RIF_TYPE_MAP</code></td>
+<td>SAI RIF 確定後 ≤1 秒</td>
+</tr>
+<tr>
+<td>CHASSIS_APP_DB</td>
+<td><code>SYSTEM_INTERFACE_TABLE</code></td>
+<td>SAI RIF 作成時（VOQ のみ）</td>
+</tr>
+</tbody>
+</table>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/loopback-interface-side-effects.md</code> 参照。</p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p><code>LOOPBACK_INTERFACE</code> テーブルへの変更通知は、<code>intfmgrd</code> が <strong><code>SubscriberStateTable</code></strong> を通じた <strong>Redis keyspace 通知</strong> (<code>PSUBSCRIBE __keyspace@4__:LOOPBACK_INTERFACE|*</code>) によって受信する。CONFIG_DB の書き手（<code>config loopback</code> CLI / <code>sonic-cfggen</code> / <code>swssconfig</code>）は <code>HSET LOOPBACK_INTERFACE|&lt;key&gt; ...</code> を直接実行するだけで <code>PUBLISH</code> は行わない。Redis サーバの <code>notify-keyspace-events</code> 機能がキー変更時に通知を自動配信する。</p>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読 API</th>
+<th>対象 DB</th>
+<th>購読テーブル / チャンネル</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>intfmgrd</code></td>
+<td><code>SubscriberStateTable</code> (keyspace PSUBSCRIBE)</td>
+<td>CONFIG_DB</td>
+<td><code>LOOPBACK_INTERFACE</code></td>
+<td><code>doIntfGeneralTask()</code> / <code>doIntfAddrTask()</code></td>
+</tr>
+<tr>
+<td><code>orchagent</code> <code>IntfsOrch</code></td>
+<td><code>ConsumerStateTable</code> (channel SUBSCRIBE)</td>
+<td>APPL_DB</td>
+<td><code>INTF_TABLE_CHANNEL</code></td>
+<td><code>doTask()</code> → <code>doIntfTask()</code></td>
+</tr>
+<tr>
+<td><code>orchagent</code> <code>IntfsOrch</code> (VOQ のみ)</td>
+<td><code>SubscriberStateTable</code> (keyspace PSUBSCRIBE)</td>
+<td>CHASSIS_APP_DB</td>
+<td><code>SYSTEM_INTERFACE_TABLE</code></td>
+<td><code>doTask()</code> → VOQ パス</td>
+</tr>
+</tbody>
+</table>
+<h3 id="keyspace">keyspace 通知 → ハンドラ呼び出しの流れ<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>config interface ip add Loopback0 192.0.2.1/32
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  ↓ HSET &quot;LOOPBACK_INTERFACE|Loopback0|192.0.2.1/32&quot; ...
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Redis keyspace: PUBLISH &quot;__keyspace@4__:LOOPBACK_INTERFACE|Loopback0|192.0.2.1/32&quot;  &quot;hset&quot;
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  ↓ SubscriberStateTable::psubscribe パターンマッチ
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  ↓ Consumer::execute() → IntfMgr::doTask(Consumer&amp;)
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>  ↓ doIntfAddrTask():  ip address add 192.0.2.1/32 dev Loopback0
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>  ↓ m_appIntfTableProducer.set(&quot;Loopback0:192.0.2.1/32&quot;, {scope=&quot;global&quot;, family=&quot;IPv4&quot;})
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>     SADD INTF_TABLE_KEY_SET &quot;Loopback0:192.0.2.1/32&quot;
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>     HSET _INTF_TABLE|Loopback0:192.0.2.1/32 scope global family IPv4
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>     PUBLISH INTF_TABLE_CHANNEL@0 G          ← orchagent への通知
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>  ↓ m_stateIntfTable.hset(&quot;Loopback0|192.0.2.1/32&quot;, &quot;state&quot;, &quot;ok&quot;)
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>  ↓ ConsumerStateTable (orchagent IntfsOrch) が受信
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>  ↓ sai_router_intf_api-&gt;create_router_interface(...)
+</span></code></pre></div>
+<ul>
+<li>keyspace 通知のペイロードは操作名（<code>hset</code>/<code>del</code> 等）のみ。フィールド値は <code>HGETALL</code> で再取得する。</li>
+<li><code>ProducerStateTable</code> は Lua スクリプトで SADD→HSET→PUBLISH をアトミックに実行する（<code>producerstatetable.cpp:72-120</code>）。</li>
+<li>チャンネル名は <code>Table::getChannelName(dbId)</code> = <code>INTF_TABLE_CHANNEL@&lt;dbId&gt;</code> (<code>table.h:94</code>)。</li>
+<li><code>SubscriberStateTable</code> の <code>DEFAULT_POP_BATCH_SIZE = 128</code>（<code>table.h:164</code>）—— 1 回の <code>pops()</code> で最大 128 件を一括取得。</li>
+</ul>
+<h3 id="_24">起動時スナップショット<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<p><code>SubscriberStateTable</code> コンストラクタは購読開始前に既存キーを <code>HGETALL</code> 相当でスキャンして <code>m_buffer</code> に流し込む (<code>subscriberstatetable.cpp:26-42</code>)。これにより <code>intfmgrd</code> 起動時に CONFIG_DB に既存する <code>LOOPBACK_INTERFACE|*</code> エントリがすべて <code>SET</code> として再適用される。Cold restart 時は <code>flushLoopbackIntfs()</code> でカーネルから全 Loopback を削除後に再作成し (<code>intfmgr.cpp:57</code>)、Warm start 時は <code>buildIntfReplayList()</code> がリプレイする。</p>
+<h3 id="select_timeout">SELECT_TIMEOUT ポーリング<a class="headerlink" href="#select_timeout" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> の Select ループは <code>SELECT_TIMEOUT = 1000</code> ミリ秒でタイムアウトし、<code>intfmgr.doTask()</code> をフォールバック呼び出しする (<code>intfmgrd.cpp:17,65-68</code>)。keyspace 通知が届いていない場合でもペンディングキューを定期的に再処理する。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/intfmgrd.cpp:19-80</code>、<code>sonic-swss/cfgmgr/intfmgr.cpp:31-76,1053,1137</code>、<code>sonic-swss/orchagent/orchdaemon.cpp:296</code>、<code>sonic-swss/orchagent/intfsorch.cpp:61-108</code>、<code>sonic-swss-common/common/subscriberstatetable.cpp:17-43</code>、<code>sonic-swss-common/common/producerstatetable.cpp:72-120</code>、<code>sonic-swss-common/common/table.h:85-96,164</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/loopback-interface-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム / 環境差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>,
+<code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</code>,
+<code>sonic-utilities/scripts/ipintutil</code><br />
+調査日: 2026-05-16</p>
+</blockquote>
+<h3 id="switch_type-voq-ipv6-metric-256">switch_type = "voq" — IPv6 metric 256 付与<a class="headerlink" href="#switch_type-voq-ipv6-metric-256" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> は起動時に <code>DEVICE_METADATA.localhost.switch_type</code> を読み込み <code>mySwitchType</code> に保持する（<code>intfmgr.cpp:70-75</code>）。
+<code>mySwitchType == "voq"</code> の場合、Loopback インターフェースへの <strong>IPv6 アドレス付与コマンドに <code>metric 256</code> を追加</strong>する（<code>intfmgr.cpp:103-106</code>）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a># 非 VOQ
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>ip -6 address add 2001:db8::1/128 dev Loopback0
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a># VOQ
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>ip -6 address add 2001:db8::1/128 dev Loopback0 metric 256
+</span></code></pre></div>
+<p>これは連結経路と static 経路を同一 metric にして eBGP / iBGP の ECMP グループを統一するためである。IPv4 アドレスへの影響はない（<code>intfmgr.cpp:87-91</code>）。</p>
+<h3 id="voq-loopback4096-bgpcfgd">VOQ 環境 — Loopback4096 必須依存 (bgpcfgd)<a class="headerlink" href="#voq-loopback4096-bgpcfgd" title="Permanent link">&para;</a></h3>
+<p><code>bgpcfgd</code> は <code>peer_type == 'internal'</code> の BGP peer を処理する際、
+<code>LOOPBACK_INTERFACE|Loopback4096</code> を依存として要求する（<code>managers_bgp.py:145-146</code>）。
+<code>Loopback4096</code> が CONFIG_DB に存在しない限り <strong>internal BGP peer の設定がブロック</strong>される。</p>
+<p><code>Loopback4096</code> は Voq Inband Interface として機能し、通常の管理ツール（<code>show ip interfaces</code> 等）からは非表示にされる（<code>ipintutil:68-69</code>）。</p>
+<h3 id="voq-chassis_app_db-orchagent">VOQ シャーシ — CHASSIS_APP_DB 連携 (orchagent)<a class="headerlink" href="#voq-chassis_app_db-orchagent" title="Permanent link">&para;</a></h3>
+<p><code>isChassisDbInUse()</code> が true（VOQ シャーシ構成）の場合、SAI RIF 作成後に <code>voqSyncAddIntf(alias)</code> が呼ばれ <code>CHASSIS_APP_DB.SYSTEM_INTERFACE_TABLE|&lt;system_alias&gt;</code> に <code>oper_status</code> を書く（<code>intfsorch.cpp:1314-1317</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>CHASSIS_APP_DB 書込み</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>非 VOQ</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>VOQ ローカル port/LAG</td>
+<td><code>SYSTEM_INTERFACE_TABLE|&lt;system_alias&gt;.oper_status</code></td>
+</tr>
+<tr>
+<td>VOQ リモート port</td>
+<td>なし（<code>SAI_SYSTEM_PORT_TYPE_REMOTE</code> チェックでスキップ）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nat-sai-rif">NAT サポート有無 — SAI RIF 属性の差異<a class="headerlink" href="#nat-sai-rif" title="Permanent link">&para;</a></h3>
+<p><code>gIsNatSupported</code> フラグにより SAI RIF 作成時の属性が変わる（<code>intfsorch.cpp:1287-1294</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>SAI 属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NAT 非サポート（<code>gIsNatSupported == false</code>）</td>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID</code> 未設定 — SAI 実装デフォルト（通常 0）</td>
+</tr>
+<tr>
+<td>NAT サポート（<code>gIsNatSupported == true</code>）</td>
+<td><code>NAT_ZONE_ID = port.m_nat_zone_id</code>（CONFIG_DB の <code>nat_zone</code> 値）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Loopback での <code>nat_zone</code> は <code>natmgrd</code> が mangle ルールを生成しないため実効 NAT 効果はゼロ。ただし NAT サポート環境では SAI RIF 属性として設定される。</p>
+</blockquote>
+<h3 id="cold-restart-warm-restart-loopback">Cold restart / Warm restart — Loopback 保持ポリシー<a class="headerlink" href="#cold-restart-warm-restart-loopback" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>起動モード</th>
+<th>Loopback の扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cold restart</td>
+<td><code>flushLoopbackIntfs()</code> でカーネルから全 dummy デバイス（<code>Loopback&lt;N&gt;</code>）を削除後、CONFIG_DB から再作成（<code>intfmgr.cpp:55-57, 222-242</code>）</td>
+</tr>
+<tr>
+<td>Warm restart</td>
+<td><code>buildIntfReplayList()</code> で CONFIG_DB から既存 Loopback キーを収集してリプレイ。カーネルの dummy デバイスは保持（<code>intfmgr.cpp:61-67</code>）</td>
+</tr>
+</tbody>
+</table>
+<p><code>flushLoopbackIntfs()</code> は <code>ip link show type dummy | grep -o 'Loopback[^:]*'</code> で全 dummy デバイスを列挙し <code>delLoopbackIntf()</code> を呼ぶ。</p>
+<h3 id="voqinband-interface-dointfgeneraltask">VoqInband Interface — doIntfGeneralTask バイパス<a class="headerlink" href="#voqinband-interface-dointfgeneraltask" title="Permanent link">&para;</a></h3>
+<p><code>CFG_VOQ_INBAND_INTERFACE_TABLE_NAME</code>（<code>Loopback4096</code> など inband 専用インターフェース）への SET は <code>doIntfGeneralTask</code> をバイパスして APPL_DB に直接リレーする（<code>intfmgr.cpp:1195-1204</code>）。通常の L3 有効化フロー（dummy デバイス作成 / admin_status 設定）は実行されない。</p>
+<h3 id="_25">まとめ<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>差異要因</th>
+<th>非デフォルト挙動</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switch_type == "voq"</code></td>
+<td>Loopback への IPv6 アドレスに <code>metric 256</code> を付与</td>
+<td><code>intfmgr.cpp:103-106</code></td>
+</tr>
+<tr>
+<td>VOQ + internal BGP peer</td>
+<td><code>Loopback4096</code> が CONFIG_DB に必須</td>
+<td><code>managers_bgp.py:146</code></td>
+</tr>
+<tr>
+<td>VOQ シャーシ (<code>isChassisDbInUse</code>)</td>
+<td>SAI RIF 作成後に CHASSIS_APP_DB に <code>oper_status</code> を同期</td>
+<td><code>intfsorch.cpp:1314-1317</code></td>
+</tr>
+<tr>
+<td><code>gIsNatSupported == true</code></td>
+<td>SAI RIF に <code>NAT_ZONE_ID</code> 属性を設定</td>
+<td><code>intfsorch.cpp:1287-1294</code></td>
+</tr>
+<tr>
+<td>Cold restart</td>
+<td><code>flushLoopbackIntfs()</code> でカーネルの全 Loopback を削除後再作成</td>
+<td><code>intfmgr.cpp:55-57</code></td>
+</tr>
+<tr>
+<td>Warm restart</td>
+<td><code>buildIntfReplayList()</code> でリプレイ、dummy デバイス保持</td>
+<td><code>intfmgr.cpp:61-67</code></td>
+</tr>
+<tr>
+<td>VoqInband (Loopback4096 等)</td>
+<td><code>doIntfGeneralTask</code> バイパス → APPL_DB 直接リレー</td>
+<td><code>intfmgr.cpp:1195-1204</code></td>
+</tr>
+</tbody>
+</table>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/loopback-interface-platform.md</code> 参照。</p>
+<!-- /platform -->
 
 <!-- glossary-links-injected: b5270404647a -->
 

@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28148,7 +28300,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        先行必須テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sshd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sshd 検証ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#max_sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        max_sessions の書込み先分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -28159,7 +28372,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29229,6 +29442,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34455,7 +34696,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        先行必須テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sshd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sshd 検証ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#max_sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        max_sessions の書込み先分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34466,7 +34768,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34619,16 +34921,79 @@
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang L20-135 -->
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/ssh-config-base-ordering.md</code></p>
+</blockquote>
+<h3 id="_2">先行必須テーブル<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p><code>SSH_SERVER|POLICIES</code> は他 CONFIG_DB テーブルへの leafref を持たないため、書き込み前に先行必須テーブルは存在しない。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>要否</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code></td>
+<td>任意（実質必須）</td>
+<td><code>PamLimitsCfg.update_config_file()</code> は <code>SSH_SERVER</code> と <code>DEVICE_METADATA</code> の両方が不在の場合に早期 return（<code>hostcfgd</code> L1430）。通常の SONiC デプロイでは常に存在</td>
+</tr>
+<tr>
+<td>その他 CONFIG_DB テーブル</td>
+<td>なし</td>
+<td><code>SshServer.set_policies()</code> は外部 OID 参照なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">起動時シーケンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>hostcfgd 起動
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  │
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  ├─ PamLimitsCfg.__init__() + update_config_file()   # L2191-2192
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  │   └─ SSH_SERVER が存在しなくても KeyError を catch してスキップ
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  ├─ SshServer.__init__()                              # L2201
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  │   └─ policies = {} のみ。sshd_config は変更しない
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  │
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  ├─ wait_till_system_init_done()  # systemd target 待機
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  │
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  ├─ sshscfg.load(ssh_server)   # L2265
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>  │   └─ modify_conf_file() → set_policies()
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>  │       ├─ copy2(sshd_config → sshd_config.tmp)
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>  │       ├─ フィールドごとに modify_single_file_inplace で行内置換/追記
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>  │       ├─ sshd -T -f sshd_config.tmp  (検証)
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>  │       │   ├─ OK  → rename tmp→本番, systemctl restart ssh
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>  │       │   └─ NG  → remove tmp (ロールバック), ERR ログのみ
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>  │       └─ ※ max_sessions は continue でスキップ（PAM 管理）
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>  │
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>  ├─ pamLimitsCfg.update_config_file()   # L2277 (2 回目、確定値で上書き)
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>  │
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>  └─ subscribe(&#39;SSH_SERVER&#39;, ssh_handler)   # L2478
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>      └─ ssh_handler → policies_update() + update_config_file()
+</span></code></pre></div>
+<h3 id="sshd">sshd 検証ゲート<a class="headerlink" href="#sshd" title="Permanent link">&para;</a></h3>
+<p><code>set_policies()</code> の末尾で <code>sshd -T -f &lt;tmp&gt;</code> を実行し、非ゼロの場合は tmp を削除してロールバック（<code>systemctl restart ssh</code> もスキップ）。フィールド単位のロールバックは行われない（全フィールド適用 or 全棄却）。</p>
+<h3 id="max_sessions">max_sessions の書込み先分離<a class="headerlink" href="#max_sessions" title="Permanent link">&para;</a></h3>
+<p><code>max_sessions</code> は <code>SSH_CONFIG_NAMES</code> に含まれず <code>set_policies()</code> 内で <code>continue</code>（スキップ）される。代わりに後続の <code>PamLimitsCfg.update_config_file()</code> が <code>/etc/security/limits.d/</code> に <code>maxlogins</code> として書き込む。このため <code>ssh_handler</code> では sshd_config 更新 → PAM limits 更新の順序が固定されている。</p>
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1161 (SshServer クラス) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2191-2277 (HostConfigDaemon.__init__ / load) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2299 (ssh_handler) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2478 (subscribe SSH_SERVER) -->
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_2">関連リファレンス<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-ssh-server/"><code>sonic-ssh-server</code></a></li>
 <li><a href="../ssh-server/">CONFIG_DB リファレンス: SSH_SERVER</a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

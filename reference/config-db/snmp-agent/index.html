@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28052,7 +28204,101 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存（Phase B）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存（Phase B）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-yang-unique-ip-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. YANG unique 制約による同一 (ip, port) 重複禁止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mgmt_vrf_config-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. MGMT_VRF_CONFIG との順序依存（CLI 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-nic-ip-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. NIC への IP 付与確認（CLI 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. VRF 作成の先行（推奨）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-docker-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. docker-snmp コンテナ再起動の必要性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-minigraph-mgmt_interface-loopback_interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. minigraph 経路: MGMT_INTERFACE / LOOPBACK_INTERFACE 先行書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -28063,7 +28309,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29357,6 +29603,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34711,7 +34985,101 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存（Phase B）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存（Phase B）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-yang-unique-ip-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. YANG unique 制約による同一 (ip, port) 重複禁止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mgmt_vrf_config-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. MGMT_VRF_CONFIG との順序依存（CLI 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-nic-ip-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. NIC への IP 付与確認（CLI 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. VRF 作成の先行（推奨）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-docker-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. docker-snmp コンテナ再起動の必要性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-minigraph-mgmt_interface-loopback_interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. minigraph 経路: MGMT_INTERFACE / LOOPBACK_INTERFACE 先行書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34722,7 +35090,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35054,31 +35422,120 @@
 </tbody>
 </table>
 <hr />
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順序依存（Phase B）<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>SNMP_AGENT_ADDRESS_CONFIG</code> および <code>SNMP_USER</code> テーブルへの書込みには、以下の順序依存が存在する。</p>
+<h3 id="1-yang-unique-ip-port">1. YANG unique 制約による同一 (ip, port) 重複禁止<a class="headerlink" href="#1-yang-unique-ip-port" title="Permanent link">&para;</a></h3>
+<p><code>sonic-snmp.yang</code> の <code>SNMP_AGENT_ADDRESS_CONFIG_LIST</code> には <code>unique "agent_ip port"</code> 制約があり、同一 <code>(agent_ip, port)</code> の組み合わせを異なる <code>vrf_name</code> で重複登録することは YANG バリデーション層でリジェクトされる。<sup id="fnref9:2"><a class="footnote-ref" href="#fn:2">2</a></sup></p>
+<div class="language-yang highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">list</span><span class="w"> </span><span class="nv">SNMP_AGENT_ADDRESS_CONFIG_LIST</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="k">key</span><span class="w"> </span><span class="s2">&quot;agent_ip port vrf_name&quot;</span><span class="p">;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="k">unique</span><span class="w"> </span><span class="s2">&quot;agent_ip port&quot;</span><span class="p">;</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="o">...</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>CLI (<code>config snmp agentaddress add</code>) は <code>get_keys</code> で重複チェックを事前実施し YANG レベル到達前に防ぐ（<code>config/main.py:4177-4182</code>）。<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<p><strong>正しい順序</strong>: 既存の <code>SNMP_AGENT_ADDRESS_CONFIG|&lt;ip&gt;|&lt;port&gt;|&lt;vrf_old&gt;</code> を DEL → 新エントリ <code>|&lt;ip&gt;|&lt;port&gt;|&lt;vrf_new&gt;</code> を SET。</p>
+<h3 id="2-mgmt_vrf_config-cli">2. MGMT_VRF_CONFIG との順序依存（CLI 経路）<a class="headerlink" href="#2-mgmt_vrf_config-cli" title="Permanent link">&para;</a></h3>
+<p><code>-v</code>（VRF）指定なしで <code>config snmp agentaddress add &lt;ip&gt;</code> を実行した場合、CLI は <code>MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled</code> を参照する。Management VRF が有効 (<code>mgmtVrfEnabled = 'true'</code>) にもかかわらず VRF 指定を省略するとエラーで CLI がブロックし、CONFIG_DB への書込みは発生しない。<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># config/main.py:4153-4157</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">if</span> <span class="ow">not</span> <span class="n">vrf</span><span class="p">:</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="n">entry</span> <span class="o">=</span> <span class="n">config_db</span><span class="o">.</span><span class="n">get_entry</span><span class="p">(</span><span class="s1">&#39;MGMT_VRF_CONFIG&#39;</span><span class="p">,</span> <span class="s2">&quot;vrf_global&quot;</span><span class="p">)</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="k">if</span> <span class="n">entry</span> <span class="ow">and</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;mgmtVrfEnabled&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">:</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;ManagementVRF is Enabled. Provide vrf.&quot;</span><span class="p">)</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        <span class="k">return</span> <span class="kc">False</span>
+</span></code></pre></div>
+<p><strong>正しい順序</strong>: Management VRF を有効化する場合は <code>-v mgmt</code> を明示して追加する。</p>
+<h3 id="3-nic-ip-cli">3. NIC への IP 付与確認（CLI 経路）<a class="headerlink" href="#3-nic-ip-cli" title="Permanent link">&para;</a></h3>
+<p>CLI は <code>netifaces.interfaces()</code> で NIC を走査し、指定した IP が実際にアサインされていることを確認する（<code>config/main.py:4160-4171</code>）。IP が付与されていない場合は "IP address is not available" で拒否される。<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<p><strong>正しい順序</strong>: NIC への IP 付与 → <code>config snmp agentaddress add &lt;ip&gt;</code>。</p>
+<h3 id="4-vrf">4. VRF 作成の先行（推奨）<a class="headerlink" href="#4-vrf" title="Permanent link">&para;</a></h3>
+<p><code>vrf_name</code> に <code>mgmt</code> や <code>Vrf&lt;name&gt;</code> を指定しても、VRF がカーネル上に実在しない場合は CONFIG_DB への書込みは成功するが snmpd の agentAddress バインドが失敗する。YANG バリデーションは VRF の実在チェックを行わない。</p>
+<p><strong>推奨順序</strong>:
+- Management VRF: <code>config vrf add mgmt</code> → <code>config snmp agentaddress add &lt;ip&gt; -v mgmt</code>
+- データ VRF: <code>config vrf add Vrf&lt;name&gt;</code> → <code>config snmp agentaddress add &lt;ip&gt; -v Vrf&lt;name&gt;</code></p>
+<h3 id="5-docker-snmp">5. docker-snmp コンテナ再起動の必要性<a class="headerlink" href="#5-docker-snmp" title="Permanent link">&para;</a></h3>
+<p><code>snmpd.conf</code> は <code>docker-snmp</code> コンテナ起動時に <code>sonic-cfggen</code> が CONFIG_DB を読み込んでテンプレートレンダリングする。CONFIG_DB への変更は <code>systemctl restart snmp</code> によるコンテナ再起動なしには反映されない。<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>CLI の <code>add_snmp_agent_address()</code> と <code>del_snmp_agent_address()</code> は最後に <code>os.system("systemctl restart snmp")</code> を自動実行する（<code>config/main.py:4188-4190, 4208</code>）。<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<h3 id="6-minigraph-mgmt_interface-loopback_interface">6. minigraph 経路: MGMT_INTERFACE / LOOPBACK_INTERFACE 先行書込み<a class="headerlink" href="#6-minigraph-mgmt_interface-loopback_interface" title="Permanent link">&para;</a></h3>
+<p>minigraph.py は <code>MGMT_VRF_CONFIG</code> を先行して格納後、<code>mgmt_intf</code>（MGMT_INTERFACE）と <code>lo_intfs</code>（LOOPBACK_INTERFACE）のアドレスを列挙して <code>SNMP_AGENT_ADDRESS_CONFIG</code> エントリを生成する。multi-asic 環境または <code>asic_name</code> 指定時は常に空辞書になる（L2312-2324）。<sup id="fnref3:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
+<p><strong>순序</strong>: <code>sonic-cfggen</code> が minigraph 一括処理する場合は自動的に順序保証される（手動介入不要）。</p>
+<h3 id="_5">書込み順序依存サマリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>強制区分</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>旧エントリ DEL → 同 <code>(ip, port)</code> 新エントリ SET</td>
+<td>YANG / CLI 強制</td>
+<td>SET 失敗（unique 制約違反）/ CLI 早期リターン</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>MGMT_VRF_CONFIG.mgmtVrfEnabled=true</code> 時は <code>-v mgmt</code> 必須</td>
+<td>CLI 強制</td>
+<td>vrf 指定なしは CLI がブロック</td>
+</tr>
+<tr>
+<td>3</td>
+<td>NIC への IP 付与 先行</td>
+<td>CLI 強制</td>
+<td>"IP address is not available" で拒否</td>
+</tr>
+<tr>
+<td>4</td>
+<td>VRF 作成 先行 → <code>agentaddress add &lt;ip&gt; -v &lt;vrf&gt;</code></td>
+<td>推奨</td>
+<td>DB 書込み成功、snmpd bind 失敗</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CONFIG_DB 変更 → <code>systemctl restart snmp</code></td>
+<td>必須後続</td>
+<td>snmpd.conf 未更新（旧設定継続）</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>MGMT_INTERFACE</code>/<code>LOOPBACK_INTERFACE</code> 先行</td>
+<td>minigraph 内部保証</td>
+<td>multi-asic では常時空辞書</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<hr />
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../snmp-agent-address-config/">CONFIG_DB: SNMP_AGENT_ADDRESS_CONFIG</a></li>
 <li><a href="../snmp/">CONFIG_DB: SNMP</a></li>
 <li><a href="../../yang/sonic-snmp/">YANG: sonic-snmp</a></li>
 <li>CLI: <a href="../../cli/config-snmp/"><code>config snmp agentaddress</code></a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2</code> — agentAddress テンプレートフォールバック (行 27-34) / SNMP_USER CreateUser テンプレート (行 66-77). <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2</code> — agentAddress テンプレートフォールバック (行 27-34) / SNMP_USER CreateUser テンプレート (行 66-77). <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>src/sonic-yang-models/yang-models/sonic-snmp.yang</code> — SNMP_USER / SNMP_AGENT_ADDRESS_CONFIG YANG 定義. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>src/sonic-yang-models/yang-models/sonic-snmp.yang</code> — SNMP_USER / SNMP_AGENT_ADDRESS_CONFIG YANG 定義. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p><code>sonic-utilities/config/main.py:4137-4186</code> — <code>add_snmp_agent_address()</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py">https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p><code>sonic-utilities/config/main.py:4137-4186</code> — <code>add_snmp_agent_address()</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py">https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
 <p><code>sonic-utilities/config/main.py:4708-4784</code> — <code>add_user()</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py">https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
-<p><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2310-2324</code> — SNMP_AGENT_ADDRESS_CONFIG 自動生成. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2310-2324</code> — SNMP_AGENT_ADDRESS_CONFIG 自動生成. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

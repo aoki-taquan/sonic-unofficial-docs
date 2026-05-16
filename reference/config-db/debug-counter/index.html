@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23035,6 +23047,161 @@
     <span class="md-ellipsis">
       
         restart / warm-reboot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry パターン概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別 failure 詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド別 failure 詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type 不正 / 未サポート → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 非対応環境での全カウンタ失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drop_reason-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        drop_reason 無効 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drop_reason-task_ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        最後の drop_reason 削除 → task_ignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter-del-task_ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        counter 未存在 DEL → task_ignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter-set-task_success" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既存 counter への重複 SET → task_success（冪等スキップ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-runtime_error-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI runtime_error（作成 / 削除失敗）→ task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug_drop_monitor-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEBUG_DROP_MONITOR 不正値 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        部分適用の注意
       
     </span>
   </a>
@@ -26366,6 +26533,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -27010,6 +27205,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27158,6 +27409,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27353,7 +27632,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27438,6 +27717,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29650,6 +29957,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35318,6 +35653,161 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry パターン概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別 failure 詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド別 failure 詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type 不正 / 未サポート → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 非対応環境での全カウンタ失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drop_reason-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        drop_reason 無効 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drop_reason-task_ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        最後の drop_reason 削除 → task_ignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter-del-task_ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        counter 未存在 DEL → task_ignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter-set-task_success" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既存 counter への重複 SET → task_success（冪等スキップ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-runtime_error-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI runtime_error（作成 / 削除失敗）→ task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug_drop_monitor-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEBUG_DROP_MONITOR 不正値 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        部分適用の注意
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35782,6 +36272,125 @@
 <h3 id="restart-warm-reboot">restart / warm-reboot<a class="headerlink" href="#restart-warm-reboot" title="Permanent link">&para;</a></h3>
 <p><code>debug_counters</code> / <code>free_drop_counters</code> / <code>free_drop_reasons</code> はインメモリのみで永続化しない。orchagent 再起動後は Consumer が CONFIG_DB の全エントリを replay し <code>reconcileFreeDropCounters()</code> で自動復元する。warm-reboot も同様。再起動中の集計値は失われるが設定は自動復元される。<!-- evidence: debugcounterorch.cpp L579-594 --></p>
 <!-- /ordering -->
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>DEBUG_COUNTER</code> / <code>DEBUG_COUNTER_DROP_REASON</code> は <strong>YANG leafref を PORT / FLEX_COUNTER_DB / STATE_DB / COUNTERS_DB に対して持たない</strong>。以下はすべて実装レベルの暗黙参照。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT</code> (CONFIG_DB / PortsOrch)</td>
+<td>読み取り（ポート一覧取得 + 変更イベント購読）</td>
+<td><code>PORT_INGRESS_DROPS</code> / <code>PORT_EGRESS_DROPS</code> 型カウンタ作成時。<code>gPortsOrch-&gt;getAllPorts()</code> で <code>Port::Type::PHY</code> のみ FlexCounter 登録対象に選択。ポート追加/削除で <code>installDebugFlexCounters()</code> / <code>uninstallDebugFlexCounters()</code> が自動呼び出し。</td>
+<td><code>debugcounterorch.cpp:16,39,71,92,106,629,682</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE</code> (<code>DEBUG_COUNTER</code> グループ)</td>
+<td>書き込み（orchagent → syncd 経路）</td>
+<td><code>DebugCounterOrch</code> コンストラクタで初期化。カウンタ作成/削除時に <code>flex_counter_manager.addFlexCounterStat()</code> / <code>removeFlexCounterStat()</code> で stat を登録・解除。</td>
+<td><code>debugcounterorch.cpp:25-29,625,644; debugcounterorch.h:19</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE</code> (<code>DEBUG_MONITOR_COUNTER</code> グループ)</td>
+<td>書き込み（drop monitor Lua 用）</td>
+<td>コンストラクタで <code>setFlexCounterGroupParameter(DEBUG_DROP_MONITOR_FLEX_COUNTER_GROUP, ...)</code> を呼び、drop_monitor.lua を Lua プラグインとして登録。<code>drop_monitor_status=enabled</code> 時に <code>startFlexCounterPolling()</code> でポーリング開始。</td>
+<td><code>debugcounterorch.cpp:55-59,241,651,710; debugcounterorch.h:20-21</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB DEBUG_COUNTER_CAPABILITIES</code></td>
+<td>書き込み（自身が情報源）</td>
+<td>起動時 1 回 <code>publishDropCounterCapabilities()</code> が SAI に <code>sai_query_attribute_enum_values_capability</code> を投げ、サポートされているカウンタ種別・drop reason 一覧を書き込む。</td>
+<td><code>debugcounterorch.cpp:31,314-361</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB COUNTERS_DEBUG_NAME_PORT_STAT_MAP</code></td>
+<td>書き込み（counter_name → port stat OID マップ）</td>
+<td>PORT_DEBUG 型カウンタ作成時に <code>m_counterNameToPortStatMap-&gt;set()</code> で書き込む。<code>drop_monitor.lua</code> がポーリング時にこのマップを参照する。</td>
+<td><code>debugcounterorch.cpp:33; drop_monitor.lua:18-19</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP</code></td>
+<td>書き込み（counter_name → switch stat OID マップ）</td>
+<td>SWITCH_DEBUG 型カウンタ作成時。<code>show dropcounters</code> が参照する逆引きマップ。</td>
+<td><code>debugcounterorch.cpp:34</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">PORT leafref が存在しない理由</p>
+<p><code>sonic-debug-counter.yang</code> は PORT テーブルへの leafref を定義しない。<code>PORT_INGRESS_DROPS</code> 型カウンタはポート単位に SAI オブジェクトを作るが、CONFIG_DB エントリには port 名を含まない。ポートとの紐付けは orchagent が <code>gPortsOrch-&gt;getAllPorts()</code> で動的に解決する。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">FLEX_COUNTER_DB への書き込みは間接的</p>
+<p><code>DebugCounterOrch</code> は直接 FLEX_COUNTER_DB に書かず、<code>FlexCounterManager</code> / <code>flex_counter_manager</code> 経由で書き込む。<code>FlexCounterManager</code> が <code>FLEX_COUNTER_GROUP_TABLE</code> / <code>FLEX_COUNTER_TABLE</code> を管理する。</p>
+</div>
+<p>詳細な参照経路・行番号は <code>meta/_intermediate/cdb-flow/debug-counter-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="retry-recovery-phase-d">失敗挙動・retry / recovery (Phase D)<a class="headerlink" href="#retry-recovery-phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/debug-counter-failure.md -->
+
+<h3 id="retry">retry パターン概要<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<p><code>DebugCounterOrch::doTask()</code> は <code>task_need_retry</code> を<strong>一切返さない</strong>。依存解決の失敗はすべて <code>task_success</code>（pending）か <code>task_failed</code> で処理される。orchagent 再起動時は CONFIG_DB の全エントリを replay し <code>reconcileFreeDropCounters()</code> で自動復元する。</p>
+<table>
+<thead>
+<tr>
+<th>パターン</th>
+<th>代表的なトリガー</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>task_failed</code></strong></td>
+<td>未サポート/不正な <code>type</code>、未サポート/不正な <code>drop_reason</code>、SAI runtime_error、不正な <code>DEBUG_DROP_MONITOR status</code></td>
+<td>エントリ削除。retry なし</td>
+</tr>
+<tr>
+<td><strong><code>task_ignore</code></strong></td>
+<td>存在しない counter の DEL、<code>free_drop_counters</code> 状態の counter DEL、最後の drop_reason の削除</td>
+<td>エントリ削除。SWSS_LOG_WARN 出力。retry なし</td>
+</tr>
+<tr>
+<td><strong><code>task_success</code>（pending）</strong></td>
+<td>drop_reason が揃う前の counter 作成、counter 未存在時の drop_reason 追加、既存 counter への重複 SET</td>
+<td>エントリ削除。SAI オブジェクト未作成のまま <code>free_drop_counters</code> / <code>free_drop_reasons</code> に保留</td>
+</tr>
+</tbody>
+</table>
+<h3 id="failure">フィールド別 failure 詳細<a class="headerlink" href="#failure" title="Permanent link">&para;</a></h3>
+<h4 id="type-task_failed"><code>type</code> 不正 / 未サポート → <code>task_failed</code><a class="headerlink" href="#type-task_failed" title="Permanent link">&para;</a></h4>
+<p><code>type</code> が <code>getDebugCounterTypeLookup()</code> に存在しない場合: <code>SWSS_LOG_ERROR("Debug counter type '%s' does not exist")</code> + <code>throw runtime_error</code> → <code>task_failed</code>。<code>type</code> フィールド自体が省略された場合は <code>counter_type</code> が空文字 → <code>supported_counter_types</code> 未ヒット → <code>SWSS_LOG_ERROR("Specified counter type '%s' is not supported.")</code> → <code>task_failed</code>。(<code>debugcounterorch.cpp:385-391, 748-758</code>)</p>
+<h4 id="sai">SAI 非対応環境での全カウンタ失敗<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h4>
+<p>起動時 <code>DropCounter::getSupportedCounterTypes()</code> が <code>sai_query_attribute_enum_values_capability</code> 失敗により <code>supported_counter_types</code> を空で返した場合、以降の全 DEBUG_COUNTER 作成が永続的に <code>task_failed</code> となる。(<code>drop_counter.cpp:380-384</code>)</p>
+<h4 id="drop_reason-task_failed"><code>drop_reason</code> 無効 → <code>task_failed</code><a class="headerlink" href="#drop_reason-task_failed" title="Permanent link">&para;</a></h4>
+<p><code>isDropReasonValid(drop_reason)</code> が false（SAI enum 未定義の値）: <code>SWSS_LOG_ERROR("Specified drop reason '%s' is invalid.")</code> → <code>task_failed</code>。<code>supported_ingress_drop_reasons</code> / <code>supported_egress_drop_reasons</code> 両方に未ヒット: <code>SWSS_LOG_ERROR("Specified drop reason '%s' is not supported.")</code> → <code>task_failed</code>。(<code>debugcounterorch.cpp:443-454</code>)</p>
+<h4 id="drop_reason-task_ignore">最後の drop_reason 削除 → <code>task_ignore</code><a class="headerlink" href="#drop_reason-task_ignore" title="Permanent link">&para;</a></h4>
+<p><code>drop_reasons.size() &lt;= 1</code> の状態で <code>removeDropReason()</code> を呼んだ場合: <code>SWSS_LOG_WARN("Attempted to remove all drop reasons from counter '%s'")</code> → <code>task_ignore</code>。drop counter には SAI 仕様上最低 1 つの理由が必要。(<code>debugcounterorch.cpp:497-501</code>)</p>
+<h4 id="counter-del-task_ignore">counter 未存在 DEL → <code>task_ignore</code><a class="headerlink" href="#counter-del-task_ignore" title="Permanent link">&para;</a></h4>
+<p><code>debug_counters</code> にも <code>free_drop_counters</code> にも存在しない counter を DEL した場合: <code>SWSS_LOG_ERROR("Debug counter %s does not exist")</code> → <code>task_ignore</code>。<code>free_drop_counters</code> 状態の counter DEL は <code>deleteFreeCounter()</code> 後 <code>task_ignore</code>。(<code>debugcounterorch.cpp:404-417</code>)</p>
+<h4 id="counter-set-task_success">既存 counter への重複 SET → <code>task_success</code>（冪等スキップ）<a class="headerlink" href="#counter-set-task_success" title="Permanent link">&para;</a></h4>
+<p><code>installDebugCounter()</code> で <code>debug_counters</code> に同名エントリが存在する場合: <code>SWSS_LOG_DEBUG("Debug counter '%s' already exists")</code> → <code>task_success</code>（更新なし）。<code>type</code> / drop_reason の変更には DEL + 再 SET が必要。(<code>debugcounterorch.cpp:374-377</code>)</p>
+<h4 id="sai-runtime_error-task_failed">SAI runtime_error（作成 / 削除失敗）→ <code>task_failed</code><a class="headerlink" href="#sai-runtime_error-task_failed" title="Permanent link">&para;</a></h4>
+<p><code>createDropCounter()</code> / <code>uninstallDebugFlexCounters()</code> が <code>std::runtime_error</code> を throw した場合、<code>doTask()</code> の catch ブロックが <code>SWSS_LOG_ERROR("Failed to create/delete debug counter '%s'")</code> → <code>task_failed</code>。システム状態（<code>debug_counters</code> / SAI）は変更されない。(<code>debugcounterorch.cpp:155-163, 167-175</code>)</p>
+<h4 id="debug_drop_monitor-task_failed"><code>DEBUG_DROP_MONITOR</code> 不正値 → <code>task_failed</code><a class="headerlink" href="#debug_drop_monitor-task_failed" title="Permanent link">&para;</a></h4>
+<p><code>status</code> フィールドが <code>"enabled"</code> / <code>"disabled"</code> 以外: <code>SWSS_LOG_ERROR("The status of drop counter monitor was not recognized: %s.")</code> → <code>task_failed</code>。<code>status</code> 以外のキー名: <code>SWSS_LOG_ERROR("Config for drop counter monitor was not recognized: %s.")</code> → <code>task_failed</code>。(<code>debugcounterorch.cpp:256-265</code>)</p>
+<h3 id="_18">部分適用の注意<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>task_failed</code> は<strong>システム状態を変更しない</strong>（公式コメント: <code>debugcounterorch.cpp:128-130</code>）。</li>
+<li><code>task_success</code>（pending）の場合、<code>free_drop_counters</code> / <code>free_drop_reasons</code> に保留される。<code>show dropcounters</code> / COUNTERS_DB への反映は <code>reconcileFreeDropCounters()</code> が正常完了するまで行われない。</li>
+<li>STATE_DB / ERROR_TABLE への失敗記録は行わない。失敗の確認は <code>journalctl -u swss</code> または orchagent ログを参照。</li>
+</ul>
+<!-- /failure -->
+
 <!-- glossary-links-injected: d2c490dcfe8c -->
 
 <div class="footnote">

@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23555,6 +23567,34 @@
     <span class="md-ellipsis">
       
         create-only 属性の変更試行
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overlay-rif-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overlay RIF の固定 SAI 属性
       
     </span>
   </a>
@@ -26438,6 +26478,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -27082,6 +27150,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27230,6 +27354,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27425,7 +27577,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27510,6 +27662,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29722,6 +29902,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35462,6 +35670,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overlay-rif-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overlay RIF の固定 SAI 属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36220,6 +36456,156 @@ TUNNEL_DECAP_TABLE DEL 後に muxorch が OID を参照するとエラーにな�
 </tbody>
 </table>
 <!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>TUNNEL_DECAP_TABLE</code> の処理で CONFIG_DB フィールドから読み込まれず、コードに直書きされている定数。<code>config_db.json</code> での設定変更は効果なく、変更にはコードのリコンパイルが必要。</p>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OVERLAY_RIF_DEFAULT_MTU</code></td>
+<td><code>9100</code></td>
+<td><code>tunneldecaporch.cpp</code> L14</td>
+<td>Overlay loopback ルータインターフェースの MTU。<code>SAI_ROUTER_INTERFACE_ATTR_MTU</code> として SAI に渡す。フィールドで上書き不可</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_TYPE_IPINIP</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L768</td>
+<td><code>tunnel_type == "IPINIP"</code> のとき <code>SAI_TUNNEL_ATTR_TYPE</code> に設定される固定値</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_LOOPBACK</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L746</td>
+<td>Overlay <a href="../../glossary/#term-rif">RIF</a> は常に LOOPBACK タイプ。変更不可</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_TTL_MODE_UNIFORM_MODEL</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L811</td>
+<td><code>ttl_mode == "uniform"</code> のとき <code>SAI_TUNNEL_ATTR_DECAP_TTL_MODE</code> に設定</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_TTL_MODE_PIPE_MODEL</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L815</td>
+<td><code>ttl_mode == "pipe"</code> のとき同属性に設定</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_DSCP_MODE_UNIFORM_MODEL</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L823</td>
+<td><code>dscp_mode == "uniform"</code> のとき <code>SAI_TUNNEL_ATTR_DECAP_DSCP_MODE</code> に設定</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_DSCP_MODE_PIPE_MODEL</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L827</td>
+<td><code>dscp_mode == "pipe"</code> のとき同属性に設定</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_DECAP_ECN_MODE_COPY_FROM_OUTER</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L789</td>
+<td><code>ecn_mode == "copy_from_outer"</code> のとき <code>SAI_TUNNEL_ATTR_DECAP_ECN_MODE</code> に設定</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_DECAP_ECN_MODE_STANDARD</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L793</td>
+<td><code>ecn_mode == "standard"</code> のとき同属性に設定</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_ENCAP_ECN_MODE_STANDARD</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L802</td>
+<td><code>encap_ecn_mode == "standard"</code> のとき <code>SAI_TUNNEL_ATTR_ENCAP_ECN_MODE</code> に設定</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2P</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L928</td>
+<td><code>term_type == P2P</code> のとき <code>SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_TYPE</code> に設定</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L932</td>
+<td><code>term_type == P2MP</code> のとき同属性に設定（省略時のデフォルト）</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP</code></td>
+<td>SAI enum</td>
+<td><code>tunneldecaporch.cpp</code> L936</td>
+<td><code>term_type == MP2MP</code> のとき同属性に設定（subnet decap 必須）</td>
+</tr>
+<tr>
+<td><code>MUX_TUNNEL</code></td>
+<td><code>"MuxTunnel0"</code></td>
+<td><code>tunneldecaporch.h</code> L21</td>
+<td><a href="../../glossary/#term-muxorch">MuxOrch</a> が固定参照する Dual-ToR トンネル名。キーが異なると MuxOrch はトンネルを見つけられずエラー</td>
+</tr>
+<tr>
+<td><code>SubnetDecapConfig.tunnel</code></td>
+<td><code>"IPINIP_SUBNET"</code></td>
+<td><code>tunneldecaporch.h</code> L101</td>
+<td>サブネット decap 用 IPv4 トンネル内部識別子</td>
+</tr>
+<tr>
+<td><code>SubnetDecapConfig.tunnel_v6</code></td>
+<td><code>"IPINIP_SUBNET_V6"</code></td>
+<td><code>tunneldecaporch.h</code> L102</td>
+<td>サブネット decap 用 IPv6 トンネル内部識別子</td>
+</tr>
+</tbody>
+</table>
+<h3 id="overlay-rif-sai">Overlay RIF の固定 SAI 属性<a class="headerlink" href="#overlay-rif-sai" title="Permanent link">&para;</a></h3>
+<p>Overlay ループバック RIF は以下の SAI 属性を常時ハードコードで設定する。</p>
+<table>
+<thead>
+<tr>
+<th>SAI 属性</th>
+<th>固定値</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID</code></td>
+<td><code>gVirtualRouterId</code>（デフォルト VRF）</td>
+<td>VRF 分離不可。VRF フィールドは存在しない</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_TYPE</code></td>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_LOOPBACK</code></td>
+<td>固定 LOOPBACK タイプ</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_MTU</code></td>
+<td><code>9100</code>（<code>OVERLAY_RIF_DEFAULT_MTU</code>）</td>
+<td>Jumbo frame 対応デフォルト</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">MuxTunnel0 固定名の制約</p>
+<p><a href="../../glossary/#term-yang">YANG</a> パターン <code>"MuxTunnel[0-9]+"</code> で複数エントリを許容しているが、
+<code>MuxOrch</code> は <code>MuxTunnel0</code> をハードコードで参照する。
+トンネル名を <code>MuxTunnel1</code> 等にすると MuxOrch が対象を見つけられず Dual-ToR が機能しない。</p>
+</div>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-decap-table-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
 
 <!-- glossary-links-injected: 415c3a53ecc2 -->
 

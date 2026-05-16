@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A 分析。">
+        <meta name="description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A+B 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP_VLAN / STP_VLAN_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A 分析。" />
+<meta property="og:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A+B 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-vlan.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-vlan/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP_VLAN / STP_VLAN_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A 分析。" />
+<meta property="twitter:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A+B 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-vlan.png" />
 </head>
   
@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28606,6 +28758,106 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理順序・依存関係 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="処理順序・依存関係 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stpglobaltask-stpporttask-stp_vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. stpGlobalTask + stpPortTask — STP_VLAN ガード条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-l2protoenabled-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. l2ProtoEnabled ガード — STP モード確定が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-isvlanstateok-state_vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. isVlanStateOk — STATE_VLAN 存在確認が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-stpglobaltask-stpvlantask-stpporttask-stp_vlan_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. stpGlobalTask + stpVlanTask + stpPortTask — STP_VLAN_PORT ガード条件
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. stpGlobalTask + stpVlanTask + stpPortTask — STP_VLAN_PORT ガード条件">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pvst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PVST 推奨書き込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-m_vlaninstmap-stp_vlan_port-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. m_vlanInstMap — STP_VLAN_PORT は VLAN→インスタンスマップが必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28617,7 +28869,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28628,7 +28880,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29306,6 +29558,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34598,6 +34878,106 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理順序・依存関係 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="処理順序・依存関係 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stpglobaltask-stpporttask-stp_vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. stpGlobalTask + stpPortTask — STP_VLAN ガード条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-l2protoenabled-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. l2ProtoEnabled ガード — STP モード確定が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-isvlanstateok-state_vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. isVlanStateOk — STATE_VLAN 存在確認が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-stpglobaltask-stpvlantask-stpporttask-stp_vlan_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. stpGlobalTask + stpVlanTask + stpPortTask — STP_VLAN_PORT ガード条件
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. stpGlobalTask + stpVlanTask + stpPortTask — STP_VLAN_PORT ガード条件">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pvst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PVST 推奨書き込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-m_vlaninstmap-stp_vlan_port-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. m_vlanInstMap — STP_VLAN_PORT は VLAN→インスタンスマップが必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34609,7 +34989,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34620,7 +35000,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34861,6 +35241,120 @@ PVST 有効化・VLAN 有効化のいずれの処理でも <code>STP_VLAN_PORT</
 <p>証跡: <code>config/stp.py:857-861</code></p>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">処理順序・依存関係 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-ordering.md -->
+
+<p><code>stpmgrd</code> (<code>sonic-swss/cfgmgr/stpmgr.cpp</code>) は <code>STP_VLAN</code> / <code>STP_VLAN_PORT</code> テーブルの処理に対して複数段のガード条件を実装しており、前提テーブルが受信済みでなければ SET を <strong>silent defer</strong> または <strong>silent skip</strong> する。</p>
+<h3 id="1-stpglobaltask-stpporttask-stp_vlan">1. stpGlobalTask + stpPortTask — STP_VLAN ガード条件<a class="headerlink" href="#1-stpglobaltask-stpporttask-stp_vlan" title="Permanent link">&para;</a></h3>
+<p><code>doStpVlanTask()</code> (<code>stpmgr.cpp:183-185</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">stpPortTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isStpPortEmpty</span><span class="p">()))</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span></code></pre></div>
+<p><code>stpGlobalTask</code> は <code>STP|GLOBAL</code> の最初の SET 受信時、<code>stpPortTask</code> は <code>STP_PORT</code> の最初の SET 受信時に <code>true</code> になる。
+ポートが存在しない場合 (<code>isStpPortEmpty()</code> = true) は <code>stpPortTask</code> 待ちをスキップする。</p>
+<div class="admonition warning">
+<p class="admonition-title">STP_VLAN より先に STP|GLOBAL / STP_PORT を書き込むこと</p>
+<p><code>stpGlobalTask</code> または <code>stpPortTask</code> が立っていない状態で <code>STP_VLAN</code> SET が到達しても、
+<code>doStpVlanTask()</code> は即 <code>return</code> する（消費キューに残りエラーログなし）。
+次の SELECT ループで再試行されるが、前提フラグが立つまで何度でも defer が続く。</p>
+</div>
+<p>証跡: <code>stpmgr.cpp:179-188, 85-86, 637-638</code></p>
+<hr />
+<h3 id="2-l2protoenabled-stp">2. l2ProtoEnabled ガード — STP モード確定が先行必須<a class="headerlink" href="#2-l2protoenabled-stp" title="Permanent link">&para;</a></h3>
+<p>SET ハンドラ内 (<code>stpmgr.cpp:210</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">l2ProtoEnabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">L2_NONE</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">isVlanStateOk</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="p">{</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="n">it</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>l2ProtoEnabled</code> は <code>STP|GLOBAL</code> の <code>mode</code> フィールド (<code>pvst</code> / <code>mst</code>) を受け取った時点で <code>L2_PVSTP</code> / <code>L2_MSTP</code> に設定される。
+<code>L2_NONE</code> のまま <code>STP_VLAN</code> SET が届いた場合はイテレータを進めて次ループへ持ち越す（silent skip）。</p>
+<p>証跡: <code>stpmgr.cpp:119, 127, 207-214</code></p>
+<hr />
+<h3 id="3-isvlanstateok-state_vlan">3. isVlanStateOk — STATE_VLAN 存在確認が先行必須<a class="headerlink" href="#3-isvlanstateok-state_vlan" title="Permanent link">&para;</a></h3>
+<p><code>isVlanStateOk(key)</code> は <code>STATE_DB:STATE_VLAN_TABLE</code> に対象 VLAN のエントリが存在するか確認する (<code>stpmgr.cpp:1276-1290</code>)。
+<code>vlanmgrd</code> が VLAN を ASIC に適用してから <code>STATE_VLAN_TABLE|Vlan&lt;vid&gt;</code> を書き込む。</p>
+<div class="admonition warning">
+<p class="admonition-title">VLAN が STATE_VLAN_TABLE に登録される前に STP_VLAN を書くと設定が適用されない</p>
+<p><code>config spanning-tree enable pvst</code> を実行した直後など、<code>vlanmgrd</code> が STATE_VLAN を未書込の
+タイミングでは <code>doStpVlanTask()</code> が全件スキップする（エラーなし）。
+<code>vlanmgrd</code> が STATE_VLAN を書き込んだ後、次 SELECT ループで自動的に処理される。</p>
+</div>
+<p>証跡: <code>stpmgr.cpp:210, 1276-1290</code></p>
+<hr />
+<h3 id="4-stpglobaltask-stpvlantask-stpporttask-stp_vlan_port">4. stpGlobalTask + stpVlanTask + stpPortTask — STP_VLAN_PORT ガード条件<a class="headerlink" href="#4-stpglobaltask-stpvlantask-stpporttask-stp_vlan_port" title="Permanent link">&para;</a></h3>
+<p><code>doStpVlanPortTask()</code> (<code>stpmgr.cpp:448</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">stpVlanTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">stpPortTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span></code></pre></div>
+<p><code>stpVlanTask</code> は <code>STP_VLAN</code> の最初の SET を受け取った時点で <code>true</code> になる。
+<code>STP_VLAN_PORT</code> は 3 フラグ全て立つまで処理されない。</p>
+<h4 id="pvst">PVST 推奨書き込み順序<a class="headerlink" href="#pvst" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>1. STP|GLOBAL       → stpGlobalTask フラグ + l2ProtoEnabled 設定
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>2. STP_PORT         → stpPortTask フラグ
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>3. STP_VLAN         → stpVlanTask フラグ + m_vlanInstMap 設定
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>4. STP_VLAN_PORT    → 全フラグが揃った後
+</span></code></pre></div>
+<p>証跡: <code>stpmgr.cpp:444-450</code></p>
+<hr />
+<h3 id="5-m_vlaninstmap-stp_vlan_port-vlan">5. m_vlanInstMap — STP_VLAN_PORT は VLAN→インスタンスマップが必須<a class="headerlink" href="#5-m_vlaninstmap-stp_vlan_port-vlan" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">l2ProtoEnabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">L2_NONE</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_vlanInstMap</span><span class="p">[</span><span class="n">vlan_id</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">INVALID_INSTANCE</span><span class="p">))</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="p">{</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="n">it</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>m_vlanInstMap[vlan_id]</code> は <code>doStpVlanTask()</code> 内で stpd からの IPC 応答 (<code>allocateStpVlanInstance()</code>) によって設定される。
+<code>STP_VLAN</code> エントリの処理が完了するまで同 VLAN の <code>STP_VLAN_PORT</code> は <code>INVALID_INSTANCE</code> チェックにより silent skip される。</p>
+<p>証跡: <code>stpmgr.cpp:483-503</code></p>
+<hr />
+<h3 id="_3">順序依存サマリ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>STP\|GLOBAL</code> + <code>STP_PORT</code> → <code>STP_VLAN</code> 受信</td>
+<td>先行必須（欠如時 silent defer）</td>
+<td>全フラグ揃い次第 SELECT ループで自動処理</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>STP\|GLOBAL.mode</code> 受信 → <code>l2ProtoEnabled</code> 確定 → <code>STP_VLAN</code> SET</td>
+<td>先行必須（欠如時 silent skip）</td>
+<td><code>mode</code> フィールド受信後に自動復旧</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>STATE_VLAN_TABLE\|Vlan&lt;vid&gt;</code> 書込み → <code>STP_VLAN\|Vlan&lt;vid&gt;</code> 処理</td>
+<td>先行必須（欠如時 silent skip）</td>
+<td><code>vlanmgrd</code> の STATE_VLAN 書込み後に自動復旧</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>STP\|GLOBAL</code> + <code>STP_PORT</code> + <code>STP_VLAN</code> → <code>STP_VLAN_PORT</code> 受信</td>
+<td>先行必須（欠如時 silent defer）</td>
+<td>PVST: GLOBAL→PORT→VLAN→VLAN_PORT 順で書き込む</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>STP_VLAN</code> 処理完了（stpd インスタンス割当） → <code>STP_VLAN_PORT</code> 処理</td>
+<td>先行必須（欠如時 silent skip）</td>
+<td>stpd IPC 応答後に <code>m_vlanInstMap</code> が設定される</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -34940,8 +35434,8 @@ PVST 有効化・VLAN 有効化のいずれの処理でも <code>STP_VLAN_PORT</
 </tr>
 </tbody>
 </table>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP</a></li>
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>

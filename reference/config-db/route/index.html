@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28039,7 +28191,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・エラーハンドリング (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・エラーハンドリング (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド検証エラー（即時破棄・再試行なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存オブジェクト未解決による後回し（自動回復あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-bulk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI Bulk 操作失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd — APPL_DB 書き込み前の破棄
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        診断コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -28050,7 +28274,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -28128,7 +28352,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         通信フロー全体図
@@ -28211,7 +28435,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         副作用サマリ
@@ -28321,7 +28545,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -28332,7 +28556,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28343,7 +28567,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -28355,7 +28579,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -28366,7 +28590,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -28377,7 +28601,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -29816,6 +30040,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35297,7 +35549,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・エラーハンドリング (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・エラーハンドリング (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド検証エラー（即時破棄・再試行なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存オブジェクト未解決による後回し（自動回復あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-bulk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI Bulk 操作失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd — APPL_DB 書き込み前の破棄
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        診断コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -35308,7 +35632,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -35386,7 +35710,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         通信フロー全体図
@@ -35469,7 +35793,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         副作用サマリ
@@ -35579,7 +35903,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35590,7 +35914,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35601,7 +35925,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35613,7 +35937,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35624,7 +35948,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -35635,7 +35959,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -35677,7 +36001,7 @@
 
 <h1 id="route_table-appl_db">ROUTE_TABLE (APPL_DB)<a class="headerlink" href="#route_table-appl_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>ROUTE_TABLE</code> は <a href="../../glossary/#term-frr">FRR</a> (zebra) から <a href="../../glossary/#term-fpm">FPM</a> プロトコル経由で受け取った経路情報を <a href="../../glossary/#term-appl_db">APPL_DB</a> に保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">5</a></sup>。<code>fpmsyncd</code> が netlink メッセージを受信して書き込み、<code>orchagent</code> の <code>RouteOrch</code> が読み取って <a href="../../glossary/#term-sai">SAI</a> route エントリとして実装する。</p>
+<p><code>ROUTE_TABLE</code> は <a href="../../glossary/#term-frr">FRR</a> (zebra) から <a href="../../glossary/#term-fpm">FPM</a> プロトコル経由で受け取った経路情報を <a href="../../glossary/#term-appl_db">APPL_DB</a> に保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">7</a></sup>。<code>fpmsyncd</code> が netlink メッセージを受信して書き込み、<code>orchagent</code> の <code>RouteOrch</code> が読み取って <a href="../../glossary/#term-sai">SAI</a> route エントリとして実装する。</p>
 <div class="admonition warning">
 <p class="admonition-title">APPL_DB テーブル</p>
 <p><code>ROUTE_TABLE</code> は <strong>APPL_DB</strong> テーブルであり、<strong>CONFIG_DB には存在しない</strong>。静的経路は <code>CONFIG_DB</code> の <code>STATIC_ROUTE</code> テーブルで管理し、<code>bgpcfgd</code> / <code>staticd</code> を経由して最終的にこのテーブルに反映される。</p>
@@ -35709,7 +36033,7 @@
 <ul>
 <li><code>&lt;prefix&gt;</code> は IPv4 / IPv6 プレフィックス（例: <code>192.168.1.0/24</code>、<code>2001:db8::/32</code>）。</li>
 <li><code>&lt;vrf_name&gt;</code> は <code>Vrf</code> プレフィックスで始まる VRF デバイス名（例: <code>Vrf-RED</code>）。</li>
-<li>管理 VRF (<code>mgmt</code>) 向け経路は fpmsyncd がスキップするため、このテーブルには存在しない<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">6</a></sup>。</li>
+<li>管理 VRF (<code>mgmt</code>) 向け経路は fpmsyncd がスキップするため、このテーブルには存在しない<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">8</a></sup>。</li>
 </ul>
 <h2 id="_3">主要フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>
@@ -35793,22 +36117,22 @@
 <!-- defaults -->
 <h2 id="_4">コード由来デフォルト詳細<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="blackhole-false"><code>blackhole</code> — 宣言デフォルト <code>"false"</code><a class="headerlink" href="#blackhole-false" title="Permanent link">&para;</a></h3>
-<p><code>RouteTableFieldValueTupleWrapper</code> の C++ メンバー宣言<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">5</a></sup>:</p>
+<p><code>RouteTableFieldValueTupleWrapper</code> の C++ メンバー宣言<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">7</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">string</span><span class="w"> </span><span class="n">blackhole</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">(</span><span class="s">&quot;false&quot;</span><span class="p">);</span>
 </span></code></pre></div>
-<p><strong>non-ZMQ path</strong> では <code>blackhole != "false"</code> の場合のみ APPL_DB に書き込む。つまり通常経路（<code>RTN_UNICAST</code>）ではフィールド自体が存在しない。<code>RTN_BLACKHOLE</code> type の netlink メッセージを受け取った場合のみ <code>"true"</code> が書き込まれる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">5</a></sup>:</p>
+<p><strong>non-ZMQ path</strong> では <code>blackhole != "false"</code> の場合のみ APPL_DB に書き込む。つまり通常経路（<code>RTN_UNICAST</code>）ではフィールド自体が存在しない。<code>RTN_BLACKHOLE</code> type の netlink メッセージを受け取った場合のみ <code>"true"</code> が書き込まれる<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">7</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">case</span><span class="w"> </span><span class="no">RTN_BLACKHOLE</span><span class="p">:</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">fvw</span><span class="p">.</span><span class="n">blackhole</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="p">;</span>
 </span></code></pre></div>
-<p>orchagent 側では <code>blackhole = fvValue(i) == "true"</code> と評価し、フィールド不在は <code>false</code> として処理する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">7</a></sup>。</p>
+<p>orchagent 側では <code>blackhole = fvValue(i) == "true"</code> と評価し、フィールド不在は <code>false</code> として処理する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">9</a></sup>。</p>
 <h3 id="protocol-iproute2"><code>protocol</code> — iproute2 ライブラリ解決<a class="headerlink" href="#protocol-iproute2" title="Permanent link">&para;</a></h3>
-<p><code>rtnl_route_get_protocol()</code> で取得した rtm_protocol 番号を <code>rtnl_route_proto2str()</code> で文字列変換<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">5</a></sup>:</p>
+<p><code>rtnl_route_get_protocol()</code> で取得した rtm_protocol 番号を <code>rtnl_route_proto2str()</code> で文字列変換<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">7</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">proto_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rtnl_route_get_protocol</span><span class="p">(</span><span class="n">route_obj</span><span class="p">);</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">proto_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getProtocolString</span><span class="p">(</span><span class="n">proto_num</span><span class="p">);</span>
 </span></code></pre></div>
 <p>解決に失敗した場合は数値文字列（例: <code>"186"</code>）を返す。<code>/etc/iproute2/rt_protos</code> が存在する場合はオーバーライド可能。</p>
 <h3 id="weight-netlink-weight0-1"><code>weight</code> — netlink weight=0 → 1 フォールバック<a class="headerlink" href="#weight-netlink-weight0-1" title="Permanent link">&para;</a></h3>
-<p><code>getNextHopWt()</code> 内でハードコード<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">5</a></sup>:</p>
+<p><code>getNextHopWt()</code> 内でハードコード<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">7</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="n">weight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rtnl_route_nh_get_weight</span><span class="p">(</span><span class="n">nexthop</span><span class="p">);</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">weight</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">{</span>
@@ -35817,7 +36141,7 @@
 </span></code></pre></div>
 <p>FRR が weight を指定しない場合（weight=0）は <strong>1</strong> として APPL_DB に書き込まれる。ECMP の各 nexthop に最低 <code>"1"</code> が保証される。</p>
 <h3 id="nexthop_group-nexthopifname"><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> の相互排他<a class="headerlink" href="#nexthop_group-nexthopifname" title="Permanent link">&para;</a></h3>
-<p>kernel の nexthop group ID が存在する場合は <code>nexthop_group</code> フィールドのみ設定し、<code>nexthop</code> / <code>ifname</code> は設定しない。orchagent は両方が存在する場合はエラーとして経路を棄却する<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">7</a></sup>:</p>
+<p>kernel の nexthop group ID が存在する場合は <code>nexthop_group</code> フィールドのみ設定し、<code>nexthop</code> / <code>ifname</code> は設定しない。orchagent は両方が存在する場合はエラーとして経路を棄却する<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">9</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">nhg_index</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ips</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">aliases</span><span class="p">.</span><span class="n">empty</span><span class="p">()))</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="p">{</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Route %s has both nexthop_group and ips/aliases&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
@@ -35833,7 +36157,7 @@
 <!-- evidence: meta/_intermediate/cdb-flow/route-platform.md -->
 
 <h3 id="asic-ecmp">ASIC 別 ECMP グループ数上限<a class="headerlink" href="#asic-ecmp" title="Permanent link">&para;</a></h3>
-<p>RouteOrch コンストラクタ起動時に <code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> を問い合わせ ECMP グループ上限 (<code>m_maxNextHopGroupCount</code>) を決定する<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">7</a></sup>:</p>
+<p>RouteOrch コンストラクタ起動時に <code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> を問い合わせ ECMP グループ上限 (<code>m_maxNextHopGroupCount</code>) を決定する<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">9</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// routeorch.cpp:61-91 (抜粋)</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</span><span class="p">;</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_switch_api</span><span class="o">-&gt;</span><span class="n">get_switch_attribute</span><span class="p">(</span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attr</span><span class="p">);</span>
@@ -35875,7 +36199,7 @@
 </table>
 <p>この上限は <code>SwitchOrch::set_switch_capability()</code> で <code>MAX_NEXTHOP_GROUP_COUNT</code> として STATE_DB に公開される。</p>
 <h3 id="voq-chassis-ecmp">VOQ chassis — ECMP メンバー数上限キャップ<a class="headerlink" href="#voq-chassis-ecmp" title="Permanent link">&para;</a></h3>
-<p><code>gMySwitchType == "voq"</code> のとき orchagent が ECMP メンバー数を最大 128 に固定して SAI に書き戻す<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">7</a></sup>:</p>
+<p><code>gMySwitchType == "voq"</code> のとき orchagent が ECMP メンバー数を最大 128 に固定して SAI に書き戻す<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">9</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// routeorch.cpp:109-117 (抜粋)</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gMySwitchType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;voq&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">maxEcmpGroupSize</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">128</span><span class="p">)</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">{</span>
@@ -35905,7 +36229,7 @@
 </tbody>
 </table>
 <h3 id="sai-bulk-api">SAI Bulk API 対応差<a class="headerlink" href="#sai-bulk-api" title="Permanent link">&para;</a></h3>
-<p>RouteOrch は 3 種の Bulker を使用し、デフォルト <code>gMaxBulkSize = 1000</code> エントリ単位でまとめて SAI に渡す<sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">7</a></sup>:</p>
+<p>RouteOrch は 3 種の Bulker を使用し、デフォルト <code>gMaxBulkSize = 1000</code> エントリ単位でまとめて SAI に渡す<sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">9</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -35936,19 +36260,19 @@
 <!-- evidence: meta/_intermediate/cdb-flow/route-ordering.md -->
 
 <h3 id="add-vrf-vrf">ADD 時: VRF 経路は VRF エントリが先行必須<a class="headerlink" href="#add-vrf-vrf" title="Permanent link">&para;</a></h3>
-<p><code>Vrf</code> プレフィックスで始まる key（例: <code>Vrf-RED:192.168.1.0/24</code>）を持つ経路を書き込む前に、対応する VRF エントリが VRFOrch に登録されていなければならない。<code>m_vrfOrch-&gt;isVRFexists(vrf_name)</code> が false の場合、orchagent は経路を後回し（<code>it++; continue</code>）にして SAI プログラミングを行わない<sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">7</a></sup>。</p>
+<p><code>Vrf</code> プレフィックスで始まる key（例: <code>Vrf-RED:192.168.1.0/24</code>）を持つ経路を書き込む前に、対応する VRF エントリが VRFOrch に登録されていなければならない。<code>m_vrfOrch-&gt;isVRFexists(vrf_name)</code> が false の場合、orchagent は経路を後回し（<code>it++; continue</code>）にして SAI プログラミングを行わない<sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">9</a></sup>。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>CONFIG_DB|VRF|&lt;name&gt;  →  VRFOrch が SAI に VRF 登録  →  APPL_DB|ROUTE_TABLE|&lt;vrf_name&gt;:&lt;prefix&gt;
 </span></code></pre></div>
 <h3 id="add-nexthop_group-nhgorch">ADD 時: <code>nexthop_group</code> 指定経路は NhgOrch 登録が先行必須<a class="headerlink" href="#add-nexthop_group-nhgorch" title="Permanent link">&para;</a></h3>
-<p><code>nexthop_group</code> フィールドに NhgOrch 管理の NHG インデックスを指定する場合、<code>gNhgOrch-&gt;hasNhg()</code> / <code>gCbfNhgOrch-&gt;hasNhg()</code> がいずれも false なら <code>addRoutePre</code> が <code>return false</code> して後回しになる<sup id="fnref7:3"><a class="footnote-ref" href="#fn:3">7</a></sup>。</p>
+<p><code>nexthop_group</code> フィールドに NhgOrch 管理の NHG インデックスを指定する場合、<code>gNhgOrch-&gt;hasNhg()</code> / <code>gCbfNhgOrch-&gt;hasNhg()</code> がいずれも false なら <code>addRoutePre</code> が <code>return false</code> して後回しになる<sup id="fnref7:3"><a class="footnote-ref" href="#fn:3">9</a></sup>。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>NEXTHOP_GROUP_TABLE エントリ登録  →  ROUTE_TABLE|&lt;prefix&gt; (nexthop_group: &lt;index&gt;)
 </span></code></pre></div>
 <h3 id="add-ip-nexthop-neighorch">ADD 時: 通常 IP nexthop は NeighOrch 登録が先行必須<a class="headerlink" href="#add-ip-nexthop-neighorch" title="Permanent link">&para;</a></h3>
-<p>nexthop が IP アドレスでインタフェース直結でない場合（非 <code>isIntfNextHop()</code>）、<code>m_neighOrch-&gt;hasNextHop()</code> が false なら <code>return false</code> で後回し。fpmsyncd 経由の通常フローでは zebra がネイバー解決後に ROUTE_TABLE に書くため問題は生じないが、APPL_DB を直接操作する場合は ARP/NDP 解決を先に確認すること<sup id="fnref8:3"><a class="footnote-ref" href="#fn:3">7</a></sup>。</p>
+<p>nexthop が IP アドレスでインタフェース直結でない場合（非 <code>isIntfNextHop()</code>）、<code>m_neighOrch-&gt;hasNextHop()</code> が false なら <code>return false</code> で後回し。fpmsyncd 経由の通常フローでは zebra がネイバー解決後に ROUTE_TABLE に書くため問題は生じないが、APPL_DB を直接操作する場合は ARP/NDP 解決を先に確認すること<sup id="fnref8:3"><a class="footnote-ref" href="#fn:3">9</a></sup>。</p>
 <h3 id="add-evpn-overlay-l3-vni">ADD 時: EVPN overlay 経路は L3 VNI 登録が先行必須<a class="headerlink" href="#add-evpn-overlay-l3-vni" title="Permanent link">&para;</a></h3>
-<p><code>vni_label</code> フィールドを持つ経路では、各 VNI に対して <code>m_vrfOrch-&gt;isL3VniVlan(vni)</code> を検査し、L3 VNI として登録されていなければ <code>it++; continue</code> で後回し<sup id="fnref9:3"><a class="footnote-ref" href="#fn:3">7</a></sup>。VXLAN_TUNNEL_MAP / VRF の L3 VNI 設定を先に完了してから EVPN Type-5 経路を書き込む。</p>
+<p><code>vni_label</code> フィールドを持つ経路では、各 VNI に対して <code>m_vrfOrch-&gt;isL3VniVlan(vni)</code> を検査し、L3 VNI として登録されていなければ <code>it++; continue</code> で後回し<sup id="fnref9:3"><a class="footnote-ref" href="#fn:3">9</a></sup>。VXLAN_TUNNEL_MAP / VRF の L3 VNI 設定を先に完了してから EVPN Type-5 経路を書き込む。</p>
 <h3 id="add-rif">ADD 時: インタフェース直結経路は RIF 登録が先行必須<a class="headerlink" href="#add-rif" title="Permanent link">&para;</a></h3>
-<p>nexthop が <code>isIntfNextHop()</code> の場合、<code>m_intfsOrch-&gt;getRouterIntfsId(alias)</code> が <code>SAI_NULL_OBJECT_ID</code> ならば <code>return false</code> で後回し。<code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> テーブルへの IP アドレス設定 → IntfsOrch が RIF を SAI 登録 → ROUTE_TABLE 書き込み、の順を守る<sup id="fnref10:3"><a class="footnote-ref" href="#fn:3">7</a></sup>。</p>
+<p>nexthop が <code>isIntfNextHop()</code> の場合、<code>m_intfsOrch-&gt;getRouterIntfsId(alias)</code> が <code>SAI_NULL_OBJECT_ID</code> ならば <code>return false</code> で後回し。<code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> テーブルへの IP アドレス設定 → IntfsOrch が RIF を SAI 登録 → ROUTE_TABLE 書き込み、の順を守る<sup id="fnref10:3"><a class="footnote-ref" href="#fn:3">9</a></sup>。</p>
 <h3 id="del-del-del">DEL 時: 経路 DEL → 参照先オブジェクト DEL の順が必須<a class="headerlink" href="#del-del-del" title="Permanent link">&para;</a></h3>
 <p>NHG・VRF を先に DEL しようとするとリファレンスカウントが詰まり DEL が遅延する。推奨順序:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ROUTE_TABLE|&lt;prefix&gt; DEL
@@ -35956,7 +36280,7 @@
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>  → VRF DEL
 </span></code></pre></div>
 <h3 id="sai-bulk-batch-groutebulker-sai">SAI bulk batch — <code>gRouteBulker</code> による一括 SAI 発行<a class="headerlink" href="#sai-bulk-batch-groutebulker-sai" title="Permanent link">&para;</a></h3>
-<p><code>RouteOrch</code> は SAI route API 呼び出しを 1 エントリごとに発行せず、<code>EntityBulker&lt;sai_route_api_t&gt; gRouteBulker(sai_route_api, gMaxBulkSize)</code> にキューイングしてバッチで SAI へ送る<sup id="fnref11:3"><a class="footnote-ref" href="#fn:3">7</a></sup>。</p>
+<p><code>RouteOrch</code> は SAI route API 呼び出しを 1 エントリごとに発行せず、<code>EntityBulker&lt;sai_route_api_t&gt; gRouteBulker(sai_route_api, gMaxBulkSize)</code> にキューイングしてバッチで SAI へ送る<sup id="fnref11:3"><a class="footnote-ref" href="#fn:3">9</a></sup>。</p>
 <p><strong>処理シーケンス（<code>doTask</code> 1 回の中）</strong>:</p>
 <ol>
 <li><code>m_toSync</code> の全エントリをループし、<code>addRoute(ctx)</code> / <code>removeRoute(ctx)</code> がそれぞれ <code>gRouteBulker.create_entry()</code> / <code>gRouteBulker.remove_entry()</code> / <code>gRouteBulker.set_entry_attribute()</code> を呼ぶ（この時点では SAI 未発行）。</li>
@@ -35969,7 +36293,7 @@
 </span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>           → addRoutePost / removeRoutePost でステータス確認
 </span></code></pre></div>
 <p><strong>NHG 枯渇時の中間 flush</strong>: nexthop group 数が上限 (<code>m_maxNextHopGroupCount</code>) に達し、かつ bulker に削除待ちエントリが存在する場合、ループを抜けて中間 <code>flush()</code> を行い、解放された NHG を回収してから処理を継続する（<code>routeorch.cpp:1094-1100</code>）。</p>
-<p><strong>MPLS ラベル経路は別 bulker</strong>: <code>gLabelRouteBulker(sai_mpls_api, gMaxBulkSize)</code> が独立して存在し、MPLS フォワーディングエントリは別バッチで SAI に発行される<sup id="fnref12:3"><a class="footnote-ref" href="#fn:3">7</a></sup>。</p>
+<p><strong>MPLS ラベル経路は別 bulker</strong>: <code>gLabelRouteBulker(sai_mpls_api, gMaxBulkSize)</code> が独立して存在し、MPLS フォワーディングエントリは別バッチで SAI に発行される<sup id="fnref12:3"><a class="footnote-ref" href="#fn:3">9</a></sup>。</p>
 <!-- /ordering -->
 
 <!-- cross-refs -->
@@ -36054,14 +36378,142 @@
 </table>
 <!-- /cross-refs -->
 
-<h2 id="_6">制約<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- failure -->
+<h2 id="phase-d">失敗挙動・エラーハンドリング (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-failure.md -->
+
+<p><code>ROUTE_TABLE</code> 処理の失敗は <strong>フィールド検証エラー（即時破棄）</strong> と <strong>依存オブジェクト未解決による後回し</strong> と <strong>SAI Bulk 操作失敗</strong> の 3 種類に分類される。</p>
+<h3 id="_6">フィールド検証エラー（即時破棄・再試行なし）<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>以下の場合はエントリを <code>m_toSync</code> から erase し、SAI 操作を行わず再試行もしない<sup id="fnref:fa1"><a class="footnote-ref" href="#fn:fa1">2</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> を同時指定</td>
+<td><code>SWSS_LOG_ERROR("Route %s has both nexthop_group and ips/aliases")</code></td>
+</tr>
+<tr>
+<td>EVPN <code>router_mac</code> / <code>vni_label</code> フィールド不正フォーマット</td>
+<td><code>SWSS_LOG_ERROR("Skip route %s, it has an invalid router mac field %s")</code></td>
+</tr>
+<tr>
+<td>SRv6 エンドポイント数と VPN SID 数が不一致</td>
+<td><code>SWSS_LOG_ERROR("inconsistent number of endpoints and srv6 vpn sids.")</code></td>
+</tr>
+<tr>
+<td>SRv6 <code>segment</code> 数と <code>seg_src</code> 数が不一致</td>
+<td><code>SWSS_LOG_ERROR("inconsistent number of srv6_segv and srv6_srcs.")</code></td>
+</tr>
+</tbody>
+</table>
+<p>これらのエラーは <code>publishRouteState</code> が呼ばれないため APPL_STATE_DB への失敗通知も行われない。</p>
+<h3 id="_7">依存オブジェクト未解決による後回し（自動回復あり）<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>依存するオブジェクトが未登録の場合は <code>it++</code> または <code>return false</code> で後回しにし、次の doTask() 呼び出しで再試行する<sup id="fnref2:fa1"><a class="footnote-ref" href="#fn:fa1">2</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>コード箇所</th>
+<th>自動回復タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VRF 名 (<code>Vrf-*</code>) が VRFOrch に未登録</td>
+<td><code>doTask()</code> <code>isVRFexists()</code> 確認 (L711)</td>
+<td>VRF エントリ登録後</td>
+</tr>
+<tr>
+<td><code>nexthop_group</code> が NhgOrch / CbfNhgOrch に未登録</td>
+<td><code>addRoutePre()</code> <code>hasNhg()</code> 確認 (L2411)</td>
+<td>NEXTHOP_GROUP_TABLE エントリ登録後</td>
+</tr>
+<tr>
+<td>nexthop IP の ARP/NDP が未解決</td>
+<td><code>addNextHopGroup()</code> <code>isNeighborResolved()</code> 確認 (L1963)</td>
+<td>neighbor 解決後</td>
+</tr>
+<tr>
+<td>インタフェース直結 nexthop の RIF が未登録</td>
+<td><code>addRoute()</code> <code>getRouterIntfsId()</code> 確認 (L2083)</td>
+<td>INTERFACE IP 設定後</td>
+</tr>
+<tr>
+<td>EVPN <code>vni_label</code> の L3 VNI が VRFOrch に未登録</td>
+<td><code>doTask()</code> <code>isL3VniVlan()</code> 確認 (L872)</td>
+<td>VNI / VRF 設定後</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-bulk">SAI Bulk 操作失敗<a class="headerlink" href="#sai-bulk" title="Permanent link">&para;</a></h3>
+<p><code>gRouteBulker</code> / <code>gLabelRouteBulker</code> の bulk flush 後に <code>addRoutePost()</code> / <code>removeRoutePost()</code> が SAI ステータスを確認する。失敗時は <code>handleSaiCreateStatus</code> / <code>handleSaiSetStatus</code> / <code>handleSaiRemoveStatus</code> → <code>parseHandleSaiStatusFailure</code> で振り分け<sup id="fnref3:fa1"><a class="footnote-ref" href="#fn:fa1">2</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>SAI ステータス</th>
+<th><code>handleSai*Status</code> 結果</th>
+<th>最終動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_STATUS_TABLE_FULL</code> 等</td>
+<td><code>task_need_retry</code></td>
+<td>後回し（自動回復待ち）</td>
+</tr>
+<tr>
+<td><code>SAI_STATUS_SUCCESS</code></td>
+<td><code>task_success</code></td>
+<td>正常完了</td>
+</tr>
+<tr>
+<td>その他致命的エラー</td>
+<td><code>task_failed</code></td>
+<td>エントリ erase</td>
+</tr>
+</tbody>
+</table>
+<p><strong>特例: <code>SAI_STATUS_ITEM_NOT_FOUND</code>（set 操作）</strong>: Dual-ToR でトンネル経路と学習経路が競合した際に発生する。内部キャッシュ (<code>m_syncdRoutes</code>) から当該エントリを削除して次回 doTask() で create として再試行する<sup id="fnref4:fa1"><a class="footnote-ref" href="#fn:fa1">2</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_STATUS_ITEM_NOT_FOUND</span><span class="p">)</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="p">{</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="n">m_syncdRoutes</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">vrf_id</span><span class="p">).</span><span class="n">erase</span><span class="p">(</span><span class="n">ipPrefix</span><span class="p">);</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>publishRouteState()</code> は <code>addRoute</code> / <code>removeRoute</code> の完了後に必ず呼ばれ、成否を APPL_STATE_DB の <code>ROUTE_TABLE</code> に書き込む (<code>protocol</code> フィールドのみ SET、DEL はエントリ削除)。</p>
+<h3 id="fpmsyncd-appl_db">fpmsyncd — APPL_DB 書き込み前の破棄<a class="headerlink" href="#fpmsyncd-appl_db" title="Permanent link">&para;</a></h3>
+<p>netlink メッセージ処理時に VRF ifindex からデバイス名を解決できない場合、fpmsyncd は当該 RTM_NEWROUTE を破棄し APPL_DB への書き込みを行わない。再試行なし<sup id="fnref:fa2"><a class="footnote-ref" href="#fn:fa2">3</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">getIfName</span><span class="p">(</span><span class="n">vrf_index</span><span class="p">,</span><span class="w"> </span><span class="n">destipprefix</span><span class="p">,</span><span class="w"> </span><span class="n">IFNAMSIZ</span><span class="p">))</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="p">{</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Fail to get the VRF name (ifindex %u)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_index</span><span class="p">);</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_8">診断コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># orchagent エラーログ（SAI 失敗・フィールド検証エラー）</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>swss<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;has both nexthop_group|invalid router mac|invalid vni label|Failed to create route|Failed to set route|Failed to remove route&quot;</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># fpmsyncd 経路破棄ログ</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>swss<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Fail to get the VRF name|Invalid VRF name&quot;</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># APPL_STATE_DB で処理ステータス確認</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:10.0.0.0/24&#39;</span>
+</span></code></pre></div>
+<!-- /failure -->
+
+<h2 id="_9">制約<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> は同時に存在できない（orchagent がエラー棄却）。</li>
 <li>管理 VRF (<code>mgmt</code>) 向け経路は fpmsyncd がスキップ → テーブルに存在しない。</li>
 <li>eth0 / docker0 / eth1-midplane 向け経路は fpmsyncd が DEL 送信に変換（静的フィルタ）。</li>
 <li>EVPN Multipath SRv6 経路は未対応でサイレントスキップ。</li>
 </ul>
-<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_10">購読者<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>orchagent</code> (<code>RouteOrch</code>): APPL_DB の <code>ROUTE_TABLE</code> を購読し、SAI <code>sai_route_entry_t</code> を作成・削除・更新する。</li>
 </ul>
@@ -36072,8 +36524,8 @@
 <p><code>ROUTE_TABLE</code> は <strong>APPL_DB</strong> テーブルであり、CONFIG_DB からの keyspace notification は使用しない。FRR (zebra) が FPM (Forwarding Plane Manager) プロトコル経由で送る netlink メッセージを <code>fpmsyncd</code> が受信し、直接 APPL_DB に書き込む構成。</p>
 <h3 id="fpmsyncd-appl_db-producerstatetable-zmqproducerstatetable">fpmsyncd → APPL_DB (ProducerStateTable / ZmqProducerStateTable)<a class="headerlink" href="#fpmsyncd-appl_db-producerstatetable-zmqproducerstatetable" title="Permanent link">&para;</a></h3>
 <p><code>RouteSync</code> コンストラクタ (<code>routesync.cpp:154-158</code>) で <code>m_routeTable</code> を初期化する:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">m_zmqClient</span><span class="p">(</span><span class="n">create_local_zmq_client</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">)),</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">m_routeTable</span><span class="p">(</span><span class="n">createProducerStateTable</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span><span class="w"> </span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">m_zmqClient</span><span class="p">)),</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">m_zmqClient</span><span class="p">(</span><span class="n">create_local_zmq_client</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">)),</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">m_routeTable</span><span class="p">(</span><span class="n">createProducerStateTable</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span><span class="w"> </span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">m_zmqClient</span><span class="p">)),</span>
 </span></code></pre></div>
 <p><code>ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</code> (<code>DEVICE_METADATA|localhost</code> の <code>orch_northbond_route_zmq_enabled</code> フィールド) の値で 2 パスが切り替わる:</p>
 <table>
@@ -36102,14 +36554,14 @@
 </table>
 <h3 id="appl_db-orchagent-routeorch-consumerstatetable-zmqconsumerstatetable">APPL_DB → orchagent RouteOrch (ConsumerStateTable / ZmqConsumerStateTable)<a class="headerlink" href="#appl_db-orchagent-routeorch-consumerstatetable-zmqconsumerstatetable" title="Permanent link">&para;</a></h3>
 <p><code>RouteOrch</code> は <code>ZmqOrch</code> を継承する。orchagent 初期化 (<code>orchdaemon.cpp:334-337</code>) で ZMQ フラグを確認し、対応する Consumer を登録する:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">enable_route_zmq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_feature_status</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">route_zmq_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enable_route_zmq</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">m_zmqServer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span>
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">gRouteOrch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RouteOrch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">route_tables</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">route_zmq_server</span><span class="p">);</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">enable_route_zmq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_feature_status</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">route_zmq_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enable_route_zmq</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">m_zmqServer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="n">gRouteOrch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RouteOrch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">route_tables</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">route_zmq_server</span><span class="p">);</span>
 </span></code></pre></div>
 <p><code>ZmqOrch::addConsumer()</code> (<code>zmqorch.cpp:59-68</code>) が ZMQ 有無で Consumer を選択:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>[ZMQ 無効] ConsumerStateTable → SUBSCRIBE ROUTE_TABLE_CHANNEL@0 → pops.lua
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>[ZMQ 有効] ZmqConsumerStateTable → ZMQ PULL ← tcp://localhost:8100
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>→ RouteOrch::doTask(ConsumerBase&amp;)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>[ZMQ 無効] ConsumerStateTable → SUBSCRIBE ROUTE_TABLE_CHANNEL@0 → pops.lua
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>[ZMQ 有効] ZmqConsumerStateTable → ZMQ PULL ← tcp://localhost:8100
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>→ RouteOrch::doTask(ConsumerBase&amp;)
 </span></code></pre></div>
 <h3 id="zmq">ZMQ フィールド送信の差異<a class="headerlink" href="#zmq" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36141,17 +36593,17 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_8">通信フロー全体図<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>FRR (zebra) --[FPM/netlink]--&gt; fpmsyncd (RouteSync)
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>  ↓ [通常] ProducerStateTable (EVALSHA: SADD KEY_SET + HSET + PUBLISH CHANNEL@0)
-</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>  ↓ [ZMQ]  ZmqProducerStateTable (ZMQ PUSH tcp://localhost:8100 + APPL_DB 永続化)
-</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>APPL_DB[ROUTE_TABLE|&lt;prefix&gt;]
-</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>  ↓ [通常] ConsumerStateTable (SUBSCRIBE ROUTE_TABLE_CHANNEL@0 → pops.lua)
-</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>  ↓ [ZMQ]  ZmqConsumerStateTable (ZMQ PULL tcp://localhost:8100)
-</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>RouteOrch::doTask(ConsumerBase&amp;) → SAI sai_route_api → ASIC
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>
-</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>STATE_DB[ROUTE_TABLE|&lt;default-route&gt;]
-</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>  ← RouteOrch::set() (デフォルト経路の有無のみ、TTL なし)
+<h3 id="_11">通信フロー全体図<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>FRR (zebra) --[FPM/netlink]--&gt; fpmsyncd (RouteSync)
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>  ↓ [通常] ProducerStateTable (EVALSHA: SADD KEY_SET + HSET + PUBLISH CHANNEL@0)
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>  ↓ [ZMQ]  ZmqProducerStateTable (ZMQ PUSH tcp://localhost:8100 + APPL_DB 永続化)
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>APPL_DB[ROUTE_TABLE|&lt;prefix&gt;]
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>  ↓ [通常] ConsumerStateTable (SUBSCRIBE ROUTE_TABLE_CHANNEL@0 → pops.lua)
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>  ↓ [ZMQ]  ZmqConsumerStateTable (ZMQ PULL tcp://localhost:8100)
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>RouteOrch::doTask(ConsumerBase&amp;) → SAI sai_route_api → ASIC
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>
+</span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>STATE_DB[ROUTE_TABLE|&lt;default-route&gt;]
+</span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>  ← RouteOrch::set() (デフォルト経路の有無のみ、TTL なし)
 </span></code></pre></div>
 <!-- /pubsub -->
 
@@ -36162,9 +36614,9 @@
 
 <p><code>ROUTE_TABLE</code> エントリの SET / DEL が引き起こす他 DB への書込み一覧。<code>ROUTE_TABLE</code> は APPL_DB テーブルであるため、CONFIG_DB 直接の副作用はなく、すべて <code>orchagent (RouteOrch)</code> 経由で発生する。</p>
 <h3 id="state_db-route_table-routeorchcpp287-294">STATE_DB <code>ROUTE_TABLE</code> — デフォルト経路の有無 (routeorch.cpp:287-294)<a class="headerlink" href="#state_db-route_table-routeorchcpp287-294" title="Permanent link">&para;</a></h3>
-<p><code>RouteOrch::updateDefRouteState()</code> がデフォルト経路 (<code>0.0.0.0/0</code> / <code>::/0</code>) の追加・削除時のみ書き込む<sup id="fnref:se1"><a class="footnote-ref" href="#fn:se1">2</a></sup>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">string</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;ok&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;na&quot;</span><span class="p">;</span>
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="n">m_stateDefaultRouteTb</span><span class="o">-&gt;</span><span class="n">set</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="p">{{</span><span class="s">&quot;state&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">}});</span>
+<p><code>RouteOrch::updateDefRouteState()</code> がデフォルト経路 (<code>0.0.0.0/0</code> / <code>::/0</code>) の追加・削除時のみ書き込む<sup id="fnref:se1"><a class="footnote-ref" href="#fn:se1">4</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">string</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;ok&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;na&quot;</span><span class="p">;</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="n">m_stateDefaultRouteTb</span><span class="o">-&gt;</span><span class="n">set</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="p">{{</span><span class="s">&quot;state&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">}});</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -36195,12 +36647,12 @@
 </table>
 <p>個別経路エントリのステータスは STATE_DB に書き込まれない。</p>
 <h3 id="appl_state_db-route_table-routeorchcpp3185-3201">APPL_STATE_DB <code>ROUTE_TABLE</code> — 経路処理ステータス (routeorch.cpp:3185-3201)<a class="headerlink" href="#appl_state_db-route_table-routeorchcpp3185-3201" title="Permanent link">&para;</a></h3>
-<p><code>RouteOrch::publishRouteState()</code> が SAI 操作の成否に関わらず全経路に対して書き込む<sup id="fnref2:se1"><a class="footnote-ref" href="#fn:se1">2</a></sup>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1">// ResponsePublisher m_publisher{&quot;APPL_STATE_DB&quot;};  (orch.h:382)</span>
-</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">is_set</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">    </span><span class="n">fvs</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="s">&quot;protocol&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">protocol</span><span class="p">);</span>
-</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="p">}</span>
-</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="n">m_publisher</span><span class="p">.</span><span class="n">publish</span><span class="p">(</span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">fvs</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="p">);</span>
+<p><code>RouteOrch::publishRouteState()</code> が SAI 操作の成否に関わらず全経路に対して書き込む<sup id="fnref2:se1"><a class="footnote-ref" href="#fn:se1">4</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1">// ResponsePublisher m_publisher{&quot;APPL_STATE_DB&quot;};  (orch.h:382)</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">is_set</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="w">    </span><span class="n">fvs</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="s">&quot;protocol&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">protocol</span><span class="p">);</span>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="p">}</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="n">m_publisher</span><span class="p">.</span><span class="n">publish</span><span class="p">(</span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">fvs</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="p">);</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -36218,19 +36670,19 @@
 <td>APPL_STATE_DB / <code>ROUTE_TABLE</code></td>
 <td><code>&lt;prefix&gt;</code> / <code>&lt;vrf&gt;:&lt;prefix&gt;</code></td>
 <td><code>protocol=&lt;proto&gt;</code></td>
-<td>SAI 操作後 常時<sup id="fnref3:se1"><a class="footnote-ref" href="#fn:se1">2</a></sup></td>
+<td>SAI 操作後 常時<sup id="fnref3:se1"><a class="footnote-ref" href="#fn:se1">4</a></sup></td>
 </tr>
 <tr>
 <td>DEL</td>
 <td>APPL_STATE_DB / <code>ROUTE_TABLE</code></td>
 <td><code>&lt;prefix&gt;</code> / <code>&lt;vrf&gt;:&lt;prefix&gt;</code></td>
 <td>(エントリ削除)</td>
-<td>SAI 操作後 常時<sup id="fnref4:se1"><a class="footnote-ref" href="#fn:se1">2</a></sup></td>
+<td>SAI 操作後 常時<sup id="fnref4:se1"><a class="footnote-ref" href="#fn:se1">4</a></sup></td>
 </tr>
 </tbody>
 </table>
 <h3 id="counters_db-crm-crmorchcpp">COUNTERS_DB — CRM リソースカウンタ (crmorch.cpp)<a class="headerlink" href="#counters_db-crm-crmorchcpp" title="Permanent link">&para;</a></h3>
-<p><code>CrmOrch</code> の定期タイマー (<code>CRM_COUNTERS_POLL</code>) が <code>updateCrmCountersTable()</code> を呼び出し、経路 SET/DEL 毎に <code>incCrmResUsedCounter</code> / <code>decCrmResUsedCounter</code> で更新されたメモリ内カウンタを COUNTERS_DB に反映する<sup id="fnref:se2"><a class="footnote-ref" href="#fn:se2">3</a></sup>:</p>
+<p><code>CrmOrch</code> の定期タイマー (<code>CRM_COUNTERS_POLL</code>) が <code>updateCrmCountersTable()</code> を呼び出し、経路 SET/DEL 毎に <code>incCrmResUsedCounter</code> / <code>decCrmResUsedCounter</code> で更新されたメモリ内カウンタを COUNTERS_DB に反映する<sup id="fnref:se2"><a class="footnote-ref" href="#fn:se2">5</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -36269,7 +36721,7 @@
 </table>
 <p><code>crm_stats_ipv{4,6}_route_available</code> は SAI ポーリング (<code>sai_object_type_get_availability</code>) で別途更新される。</p>
 <h3 id="counters_db-flow-counter-flowcounterrouteorchcpp">COUNTERS_DB — Flow Counter マッピング (flowcounterrouteorch.cpp)<a class="headerlink" href="#counters_db-flow-counter-flowcounterrouteorchcpp" title="Permanent link">&para;</a></h3>
-<p>ルートフロウカウンタが有効 (<code>FLEX_COUNTER_TABLE</code> でパターン設定済み) の場合のみ書き込む<sup id="fnref:se3"><a class="footnote-ref" href="#fn:se3">4</a></sup>:</p>
+<p>ルートフロウカウンタが有効 (<code>FLEX_COUNTER_TABLE</code> でパターン設定済み) の場合のみ書き込む<sup id="fnref:se3"><a class="footnote-ref" href="#fn:se3">6</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -36323,11 +36775,11 @@
 <td>STATE_DB / <code>FLOW_COUNTER_CAPABILITY_TABLE</code></td>
 <td><code>route</code></td>
 <td><code>support=true/false</code></td>
-<td>orchagent 起動時 1 回のみ<sup id="fnref2:se3"><a class="footnote-ref" href="#fn:se3">4</a></sup></td>
+<td>orchagent 起動時 1 回のみ<sup id="fnref2:se3"><a class="footnote-ref" href="#fn:se3">6</a></sup></td>
 </tr>
 </tbody>
 </table>
-<h3 id="_9">副作用サマリ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_12">副作用サマリ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36429,7 +36881,7 @@
 </table>
 <p>orchagent 起動時に <code>0.0.0.0/0</code> と <code>::/0</code> のデフォルト経路を <code>SAI_PACKET_ACTION_DROP</code> でプログラムし (<code>routeorch.cpp:138-139</code>)、FRR から有効な nexthop を受信したタイミングで <code>SAI_PACKET_ACTION_FORWARD</code> に切り替える (<code>routeorch.cpp:2315</code>)。blackhole 経路は常に <code>SAI_PACKET_ACTION_DROP</code> を維持する (<code>routeorch.cpp:2282</code>)。</p>
 <h3 id="vrf-oid-gvirtualrouterid">デフォルト VRF OID (<code>gVirtualRouterId</code>)<a class="headerlink" href="#vrf-oid-gvirtualrouterid" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">extern</span><span class="w"> </span><span class="n">sai_object_id_t</span><span class="w"> </span><span class="n">gVirtualRouterId</span><span class="p">;</span><span class="w">  </span><span class="c1">// routeorch.cpp:17</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">extern</span><span class="w"> </span><span class="n">sai_object_id_t</span><span class="w"> </span><span class="n">gVirtualRouterId</span><span class="p">;</span><span class="w">  </span><span class="c1">// routeorch.cpp:17</span>
 </span></code></pre></div>
 <ul>
 <li>orchagent 初期化時に SAI から取得・設定されるグローバル VRF OID。</li>
@@ -36437,13 +36889,13 @@
 <li><code>0.0.0.0/0</code> / <code>::/0</code> のデフォルト経路も <code>gVirtualRouterId</code> に紐付く (<code>routeorch.cpp:133, 151, 171</code>)。</li>
 </ul>
 <h3 id="bulk-batch-size-default_max_bulk_size">Bulk batch size (<code>DEFAULT_MAX_BULK_SIZE</code>)<a class="headerlink" href="#bulk-batch-size-default_max_bulk_size" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="cp">#define DEFAULT_MAX_BULK_SIZE 1000   </span><span class="c1">// orchdaemon.cpp:81</span>
-</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="kt">size_t</span><span class="w"> </span><span class="n">gMaxBulkSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DEFAULT_MAX_BULK_SIZE</span><span class="p">;</span><span class="w">  </span><span class="c1">// orchdaemon.cpp:82</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="cp">#define DEFAULT_MAX_BULK_SIZE 1000   </span><span class="c1">// orchdaemon.cpp:81</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="kt">size_t</span><span class="w"> </span><span class="n">gMaxBulkSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DEFAULT_MAX_BULK_SIZE</span><span class="p">;</span><span class="w">  </span><span class="c1">// orchdaemon.cpp:82</span>
 </span></code></pre></div>
 <p><code>gRouteBulker</code>、<code>gLabelRouteBulker</code>、<code>gNextHopGroupMemberBulker</code> はすべて <code>gMaxBulkSize</code> を上限として構築される (<code>routeorch.cpp:41-43</code>)。orchagent 起動オプション <code>--bulk-size</code> で上書き可能。デフォルトは <strong>1000 エントリ/フラッシュ</strong>。</p>
 <h3 id="ecmp">ECMP グループ数デフォルト<a class="headerlink" href="#ecmp" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="cp">#define DEFAULT_NUMBER_OF_ECMP_GROUPS   128  </span><span class="c1">// routeorch.cpp:37</span>
-</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="cp">#define DEFAULT_MAX_ECMP_GROUP_SIZE     32   </span><span class="c1">// routeorch.cpp:38</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="cp">#define DEFAULT_NUMBER_OF_ECMP_GROUPS   128  </span><span class="c1">// routeorch.cpp:37</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="cp">#define DEFAULT_MAX_ECMP_GROUP_SIZE     32   </span><span class="c1">// routeorch.cpp:38</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -36467,11 +36919,11 @@
 </tbody>
 </table>
 <h3 id="vrf-prefix-vrf_prefix">VRF prefix 文字列 (<code>VRF_PREFIX</code>)<a class="headerlink" href="#vrf-prefix-vrf_prefix" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="cp">#define VRF_PREFIX &quot;Vrf&quot;  </span><span class="c1">// orchagent/nexthopkey.h:20</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="cp">#define VRF_PREFIX &quot;Vrf&quot;  </span><span class="c1">// orchagent/nexthopkey.h:20</span>
 </span></code></pre></div>
 <p>VRF 名の必須プレフィックス。<code>Vrf</code> で始まるキー (<code>routeorch.cpp:706</code>) は VRF ルックアップを実施して対応する VRF OID を取得する。一致しないキーはデフォルト VRF (<code>gVirtualRouterId</code>) として扱われる。</p>
 <h3 id="link-local-prefix">link-local prefix 定数<a class="headerlink" href="#link-local-prefix" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">IpPrefix</span><span class="w"> </span><span class="n">default_link_local_prefix</span><span class="p">(</span><span class="s">&quot;fe80::/10&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// routeorch.cpp:187</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">IpPrefix</span><span class="w"> </span><span class="n">default_link_local_prefix</span><span class="p">(</span><span class="s">&quot;fe80::/10&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// routeorch.cpp:187</span>
 </span></code></pre></div>
 <p>orchagent 起動時に <code>gVirtualRouterId</code> 配下に <code>SAI_PACKET_ACTION_FORWARD</code> + CPU ポート nexthop でプログラムされる。全 link-local パケットを CPU に転送するためのサブネット route。</p>
 <!-- /constants -->
@@ -36484,48 +36936,48 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_13">関連リファレンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../static-route/"><code>STATIC_ROUTE</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_12">運用ヒント<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1"># APPL_DB の ROUTE_TABLE エントリを確認</span>
-</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
-</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
-</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="c1"># 特定プレフィックスのエントリ詳細</span>
-</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:10.0.0.0/24&#39;</span>
-</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>
-</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="c1"># FRR の経路テーブルとの比較</span>
-</span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip route&#39;</span>
-</span><span id="__span-27-9"><a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a>show<span class="w"> </span>ip<span class="w"> </span>route
+<h2 id="_15">運用ヒント<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="_16">確認コマンド<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># APPL_DB の ROUTE_TABLE エントリを確認</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="c1"># 特定プレフィックスのエントリ詳細</span>
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:10.0.0.0/24&#39;</span>
+</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>
+</span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="c1"># FRR の経路テーブルとの比較</span>
+</span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip route&#39;</span>
+</span><span id="__span-30-9"><a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>show<span class="w"> </span>ip<span class="w"> </span>route
 </span></code></pre></div>
-<h3 id="_14">典型エントリ例<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a># BGP 学習経路（ECMP あり）
-</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>ROUTE_TABLE:10.1.0.0/24
-</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>  protocol: bgp
-</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>  nexthop: 192.168.0.1,192.168.0.2
-</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>  ifname: Ethernet0,Ethernet4
-</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>  weight: 1,1
-</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>
-</span><span id="__span-28-8"><a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a># blackhole 経路
-</span><span id="__span-28-9"><a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a>ROUTE_TABLE:192.0.2.0/24
-</span><span id="__span-28-10"><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a>  protocol: bgp
-</span><span id="__span-28-11"><a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a>  blackhole: true
-</span><span id="__span-28-12"><a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>
-</span><span id="__span-28-13"><a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a># EVPN Type-5 経路
-</span><span id="__span-28-14"><a id="__codelineno-28-14" name="__codelineno-28-14" href="#__codelineno-28-14"></a>ROUTE_TABLE:10.2.0.0/24
-</span><span id="__span-28-15"><a id="__codelineno-28-15" name="__codelineno-28-15" href="#__codelineno-28-15"></a>  protocol: bgp
-</span><span id="__span-28-16"><a id="__codelineno-28-16" name="__codelineno-28-16" href="#__codelineno-28-16"></a>  nexthop: 172.16.0.1
-</span><span id="__span-28-17"><a id="__codelineno-28-17" name="__codelineno-28-17" href="#__codelineno-28-17"></a>  vni_label: 10000
-</span><span id="__span-28-18"><a id="__codelineno-28-18" name="__codelineno-28-18" href="#__codelineno-28-18"></a>  router_mac: aa:bb:cc:dd:ee:ff
-</span><span id="__span-28-19"><a id="__codelineno-28-19" name="__codelineno-28-19" href="#__codelineno-28-19"></a>  ifname: Brvxlan1000
+<h3 id="_17">典型エントリ例<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a># BGP 学習経路（ECMP あり）
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>ROUTE_TABLE:10.1.0.0/24
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>  protocol: bgp
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>  nexthop: 192.168.0.1,192.168.0.2
+</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>  ifname: Ethernet0,Ethernet4
+</span><span id="__span-31-6"><a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>  weight: 1,1
+</span><span id="__span-31-7"><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>
+</span><span id="__span-31-8"><a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a># blackhole 経路
+</span><span id="__span-31-9"><a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a>ROUTE_TABLE:192.0.2.0/24
+</span><span id="__span-31-10"><a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a>  protocol: bgp
+</span><span id="__span-31-11"><a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a>  blackhole: true
+</span><span id="__span-31-12"><a id="__codelineno-31-12" name="__codelineno-31-12" href="#__codelineno-31-12"></a>
+</span><span id="__span-31-13"><a id="__codelineno-31-13" name="__codelineno-31-13" href="#__codelineno-31-13"></a># EVPN Type-5 経路
+</span><span id="__span-31-14"><a id="__codelineno-31-14" name="__codelineno-31-14" href="#__codelineno-31-14"></a>ROUTE_TABLE:10.2.0.0/24
+</span><span id="__span-31-15"><a id="__codelineno-31-15" name="__codelineno-31-15" href="#__codelineno-31-15"></a>  protocol: bgp
+</span><span id="__span-31-16"><a id="__codelineno-31-16" name="__codelineno-31-16" href="#__codelineno-31-16"></a>  nexthop: 172.16.0.1
+</span><span id="__span-31-17"><a id="__codelineno-31-17" name="__codelineno-31-17" href="#__codelineno-31-17"></a>  vni_label: 10000
+</span><span id="__span-31-18"><a id="__codelineno-31-18" name="__codelineno-31-18" href="#__codelineno-31-18"></a>  router_mac: aa:bb:cc:dd:ee:ff
+</span><span id="__span-31-19"><a id="__codelineno-31-19" name="__codelineno-31-19" href="#__codelineno-31-19"></a>  ifname: Brvxlan1000
 </span></code></pre></div>
-<h3 id="_15">よくある問題<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_18">よくある問題<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>show ip route</code> に表示されるが ASIC に反映されない → <code>sonic-db-cli APPL_DB hgetall 'ROUTE_TABLE:&lt;prefix&gt;'</code> でフィールドを確認。<code>nexthop_group</code> と <code>nexthop</code> が両方存在すると orchagent がエラー棄却する。</li>
 <li>デフォルト経路が eth0 に向いてしまう → fpmsyncd の eth0/docker0 フィルタが機能しているか確認（FRR の <code>show ip route 0.0.0.0/0</code>）。</li>
@@ -36538,23 +36990,29 @@
 <li id="fn:cr1">
 <p><code>orchagent/routeorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:cr1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:cr1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:cr1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:cr1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:cr1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
+<li id="fn:fa1">
+<p><code>orchagent/routeorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:fa1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:fa1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:fa1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:fa1" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:fa2">
+<p><code>fpmsyncd/routesync.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp</a>&#160;<a class="footnote-backref" href="#fnref:fa2" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
 <li id="fn:se1">
-<p><code>orchagent/routeorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:se1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:se1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:se1" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:se1" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>orchagent/routeorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:se1" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:se1" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:se1" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:se1" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:se2">
-<p><code>orchagent/crmorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:se2" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p><code>orchagent/crmorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:se2" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:se3">
-<p><code>orchagent/flex_counter/flowcounterrouteorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:se3" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:se3" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p><code>orchagent/flex_counter/flowcounterrouteorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:se3" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:se3" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 <li id="fn:1">
-<p>RouteTableFieldValueTupleWrapper 宣言・実装: <code>fpmsyncd/routesync.h</code> / <code>routesync.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.h</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p>RouteTableFieldValueTupleWrapper 宣言・実装: <code>fpmsyncd/routesync.h</code> / <code>routesync.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.h</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 7 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>管理 VRF スキップ・テーブル名定数: <code>fpmsyncd/routesync.cpp</code>, <code>common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+<p>管理 VRF スキップ・テーブル名定数: <code>fpmsyncd/routesync.cpp</code>, <code>common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 8 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>orchagent フィールド消費: <code>orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:3" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:3" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+<p>orchagent フィールド消費: <code>orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:3" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:3" title="Jump back to footnote 9 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

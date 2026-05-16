@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/pbh-state/">
       
       
-        <link rel="prev" href="../passw-hardening/">
+        <link rel="prev" href="../pbh-rule/">
       
       
         <link rel="next" href="../pbh/">
@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -27133,6 +27285,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オブジェクト生成順序・依存関係 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="オブジェクト生成順序・依存関係 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pbhcapabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PbhCapabilities の初期化位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchdaemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchdaemon 内での生成順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 側との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        消費者 (sonic-utilities) の前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27144,7 +27368,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29334,6 +29558,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34665,6 +34917,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オブジェクト生成順序・依存関係 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="オブジェクト生成順序・依存関係 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pbhcapabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PbhCapabilities の初期化位置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchdaemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchdaemon 内での生成順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 側との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        消費者 (sonic-utilities) の前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34676,7 +35000,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35087,18 +35411,77 @@ Generic platform での期待値:</p>
 </span></code></pre></div>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">オブジェクト生成順序・依存関係 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-ordering.md -->
+
+<h3 id="pbhcapabilities">PbhCapabilities の初期化位置<a class="headerlink" href="#pbhcapabilities" title="Permanent link">&para;</a></h3>
+<p><code>PBH_CAPABILITIES</code> を STATE_DB へ書き込む <code>PbhCapabilities</code> クラスは <code>PbhOrch</code> の非 static メンバとして宣言されている (<code>pbhorch.h:88</code>)。<code>PbhOrch</code> が <code>new PbhOrch(...)</code> でインスタンス化される瞬間に <code>PbhCapabilities()</code> コンストラクタが呼ばれ、STATE_DB への書き込みが一度だけ実行される。</p>
+<h3 id="orchdaemon">orchdaemon 内での生成順序<a class="headerlink" href="#orchdaemon" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>orchdaemon.cpp:232  gPortsOrch = new PortsOrch(...)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>orchdaemon.cpp:533  gAclOrch   = new AclOrch(...)   ← PbhOrch の引数として必要
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>                                  └─ PbhCapabilities() コンストラクタが即座に実行
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>                                       1. parsePbhAsicVendor()         — ASIC_VENDOR env var 読み取り
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>                                       2. initPbhVendorCapabilities()  — ベンダー別能力オブジェクトを構築
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>                                       3. writePbhVendorCapabilitiesToDb() — STATE_DB に 4 キー一括書き込み
+</span></code></pre></div>
+<h3 id="_6">依存関係まとめ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>依存対象</th>
+<th>種別</th>
+<th>必須か</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_DB</code></td>
+<td>Redis 接続 (static member)</td>
+<td>必須</td>
+<td><code>PbhCapabilities::stateDb</code> — <code>pbhcap.cpp:288</code></td>
+</tr>
+<tr>
+<td><code>ASIC_VENDOR</code> 環境変数</td>
+<td>OS 環境変数</td>
+<td>任意</td>
+<td>未設定時 Generic へ fallback (<code>pbhcap.cpp:297</code>)</td>
+</tr>
+<tr>
+<td><code>gAclOrch</code> / <code>gPortsOrch</code></td>
+<td>PbhOrch コンストラクタ引数</td>
+<td>PbhOrch の動作に必要</td>
+<td><code>PbhCapabilities</code> 自体はこれらを参照しない</td>
+</tr>
+<tr>
+<td>CONFIG_DB PBH エントリ</td>
+<td>CONFIG_DB</td>
+<td>不要</td>
+<td>capabilities 書き込みは CONFIG_DB 読み取りに依存しない</td>
+</tr>
+</tbody>
+</table>
+<p><code>PbhCapabilities</code> の静的メンバは orchdaemon プロセス起動の最初期に初期化されるため、他の Orch オブジェクトが生成される前から STATE_DB 接続が確立されている。</p>
+<h3 id="config_db">CONFIG_DB 側との関係<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>PBH_CAPABILITIES</code> は起動時 one-shot write であり、CONFIG_DB の PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD エントリの追加・変更に対して再書き込みは行われない。</p>
+<h3 id="sonic-utilities">消費者 (sonic-utilities) の前提条件<a class="headerlink" href="#sonic-utilities" title="Permanent link">&para;</a></h3>
+<p><code>config pbh</code> コマンドが <code>pbh_capabilities_query()</code> を呼ぶ時点で orchestrator が起動済みで STATE_DB に <code>PBH_CAPABILITIES</code> が存在しなければ validation が失敗する。orchagent の起動完了を待つ明示的な仕組みは CLI 側にない。</p>
+<!-- /ordering -->
+
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>設定元: <a href="../pbh/"><code>PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD</code></a> (CONFIG_DB)</li>
 <li>確認コマンド:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|*&#39;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|table&#39;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|rule&#39;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|hash&#39;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|hash-field&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|*&#39;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|table&#39;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|rule&#39;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|hash&#39;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|hash-field&#39;</span>
 </span></code></pre></div>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

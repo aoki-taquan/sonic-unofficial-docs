@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28656,6 +28808,106 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理順序・依存関係・warm-reboot 挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="処理順序・依存関係・warm-reboot 挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-port_init_done" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 起動前提条件 — PORT_INIT_DONE 待機
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. CONFIG_DB 購読テーブルと処理依存グラフ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. CONFIG_DB 購読テーブルと処理依存グラフ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pvst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PVST 推奨書き込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MST 推奨書き込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-vlan-state_vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. VLAN 依存 — STATE_VLAN 存在確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-lag-portchannel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. LAG (PortChannel) 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. warm-reboot 挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29306,6 +29558,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34620,6 +34900,106 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理順序・依存関係・warm-reboot 挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="処理順序・依存関係・warm-reboot 挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-port_init_done" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 起動前提条件 — PORT_INIT_DONE 待機
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. CONFIG_DB 購読テーブルと処理依存グラフ
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. CONFIG_DB 購読テーブルと処理依存グラフ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pvst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PVST 推奨書き込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MST 推奨書き込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-vlan-state_vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. VLAN 依存 — STATE_VLAN 存在確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-lag-portchannel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. LAG (PortChannel) 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. warm-reboot 挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35136,6 +35516,116 @@ stpmgrd 側の <code>STP_DEFAULT_MAX_INSTANCES = 255</code> (<code>stpmgr.h:38</
 </tbody>
 </table>
 <h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="warm-reboot">処理順序・依存関係・warm-reboot 挙動<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-ordering.md -->
+
+<h3 id="1-port_init_done">1. 起動前提条件 — PORT_INIT_DONE 待機<a class="headerlink" href="#1-port_init_done" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd</code> は起動直後に <code>isPortInitDone()</code> (<code>stpmgr.cpp:1257-1273</code>) を呼び出し、
+APPL_DB の <code>APP_PORT_TABLE</code> に <code>PortInitDone</code> キーが出現するまで <strong>1 秒ポーリングでブロッキング待機</strong> する。
+<code>portsyncd</code> / <code>orchagent</code> が PORT テーブルを初期化しない限り、stpmgrd は STP 処理を開始できない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>APPL_DB:APP_PORT_TABLE|PortInitDone が存在する → 処理開始
+</span></code></pre></div>
+<p>証跡: <code>stpmgr.cpp:1257-1273</code>, <code>stpmgrd.cpp:72</code></p>
+<hr />
+<h3 id="2-config_db">2. CONFIG_DB 購読テーブルと処理依存グラフ<a class="headerlink" href="#2-config_db" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd.cpp:43-64</code> が以下の TableConnector を生成し、<code>doTask()</code> でディスパッチする:</p>
+<ul>
+<li><code>STP|GLOBAL</code> (<code>CFG_STP_GLOBAL_TABLE_NAME</code>)</li>
+<li><code>STP_VLAN</code> (<code>CFG_STP_VLAN_TABLE_NAME</code>)</li>
+<li><code>STP_VLAN_PORT</code> (<code>CFG_STP_VLAN_PORT_TABLE_NAME</code>)</li>
+<li><code>STP_PORT</code> (<code>CFG_STP_PORT_TABLE_NAME</code>)</li>
+<li><code>STP_MST</code> / <code>STP_MST_INST</code> / <code>STP_MST_PORT</code></li>
+<li><code>PORTCHANNEL_MEMBER</code> (LAG メンバー更新)</li>
+<li><code>STATE_VLAN_MEMBER</code> (State DB)</li>
+</ul>
+<p>各タスク関数には <strong>bool フラグによるガード</strong> が実装されており、
+前提タスクのフラグが立つ前の消費は <code>return</code> (silent defer) となる:</p>
+<table>
+<thead>
+<tr>
+<th>タスク関数</th>
+<th>guard 条件 (stpmgr.cpp)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>doStpGlobalTask()</code></td>
+<td>なし (最初の受信でフラグ立て)</td>
+</tr>
+<tr>
+<td><code>doStpPortTask()</code></td>
+<td><code>stpGlobalTask == true</code></td>
+</tr>
+<tr>
+<td><code>doStpMstGlobalTask()</code></td>
+<td><code>stpGlobalTask == true</code></td>
+</tr>
+<tr>
+<td><code>doStpVlanTask()</code></td>
+<td><code>stpGlobalTask &amp;&amp; (stpPortTask || isStpPortEmpty())</code></td>
+</tr>
+<tr>
+<td><code>doStpMstInstTask()</code></td>
+<td><code>stpGlobalTask &amp;&amp; (stpPortTask || isStpPortEmpty())</code></td>
+</tr>
+<tr>
+<td><code>doStpMstInstPortTask()</code></td>
+<td><code>stpGlobalTask &amp;&amp; stpMstInstTask &amp;&amp; stpPortTask</code></td>
+</tr>
+<tr>
+<td><code>doStpVlanPortTask()</code></td>
+<td><code>stpGlobalTask &amp;&amp; stpVlanTask &amp;&amp; stpPortTask</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="pvst">PVST 推奨書き込み順序<a class="headerlink" href="#pvst" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>1. STP|GLOBAL       ← stpGlobalTask フラグを立てる
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>2. STP_PORT         ← stpPortTask フラグを立てる
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>3. STP_VLAN         ← STATE_VLAN 存在確認後に処理
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>4. STP_VLAN_PORT    ← 全フラグが揃った後
+</span></code></pre></div>
+<h4 id="mst">MST 推奨書き込み順序<a class="headerlink" href="#mst" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>1. STP|GLOBAL       ← stpGlobalTask フラグを立てる
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>2. STP_PORT         ← stpPortTask フラグを立てる
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>3. STP_MST          ← stpGlobalTask 依存のみ
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>4. STP_MST_INST     ← stpMstInstTask フラグを立てる
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>5. STP_MST_PORT     ← 全フラグが揃った後
+</span></code></pre></div>
+<p>証跡: <code>stpmgr.cpp:51-86, 179-188, 340-346, 444-450, 630-638, 1023-1031, 1155-1160</code></p>
+<hr />
+<h3 id="3-vlan-state_vlan">3. VLAN 依存 — STATE_VLAN 存在確認<a class="headerlink" href="#3-vlan-state_vlan" title="Permanent link">&para;</a></h3>
+<p><code>doStpVlanTask()</code> は SET 操作ごとに <code>isVlanStateOk(key)</code> (<code>stpmgr.cpp:1276-1290</code>) を呼び出す。
+<code>STATE_VLAN_TABLE</code> に対象 VLAN のエントリが存在しない場合、その SET を <strong>スキップ (<code>it++</code>) して次ループへ持ち越す</strong>。</p>
+<div class="admonition warning">
+<p class="admonition-title">VLAN が State DB に登録される前に STP_VLAN を書き込むと設定が適用されない</p>
+<p><code>vlanmgrd</code> が STATE_VLAN を書き込む前に <code>config spanning-tree enable pvst</code> を実行した場合、
+<code>doStpVlanTask()</code> が無限に defer し、エラーログも出力されない (silent skip)。</p>
+</div>
+<p>証跡: <code>stpmgr.cpp:210, 1276-1290</code></p>
+<hr />
+<h3 id="4-lag-portchannel">4. LAG (PortChannel) 依存<a class="headerlink" href="#4-lag-portchannel" title="Permanent link">&para;</a></h3>
+<p><code>doStpPortTask()</code> はキーが <code>PortChannel</code> を含む場合に <code>isLagEmpty(key)</code> を確認する。
+LAG にメンバーが存在しない場合、SET をスキップする (<code>stpmgr.cpp:648-653</code>)。
+この場合の再試行は <code>doLagMemUpdateTask()</code> による <code>m_lagMap</code> 更新後、次回 SELECT ループに依存する。</p>
+<p>証跡: <code>stpmgr.cpp:648-653, doLagMemUpdateTask()</code></p>
+<hr />
+<h3 id="5-warm-reboot">5. warm-reboot 挙動<a class="headerlink" href="#5-warm-reboot" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd.cpp:39-40</code> で <code>WarmStart::initialize("stpmgrd", "stpd")</code> と <code>WarmStart::checkWarmStart()</code> を呼び出すが、
+<code>stpmgr.cpp</code> 内に <strong>reconciliation ロジックや <code>setWarmStartState()</code> 呼び出しは実装されていない</strong>。</p>
+<p>warm reboot 時も cold reboot と同一フロー（PORT_INIT_DONE 待機 → CONFIG_DB 全件再処理）で動作する。
+STP トポロジ情報の保持・復旧は <code>stpd</code>（STP デーモン）側に委ねられている設計であり、
+stpmgrd 自身の warm-reboot reconcile フェーズは <strong>事実上スタブ</strong> となっている。</p>
+<div class="admonition note">
+<p class="admonition-title">warm reboot 時のトポロジ収束</p>
+<p>stpmgrd が warm reboot 宣言のみで reconcile を実装していないため、
+warm reboot 後の BPDU 送受信再開タイミングは stpd の実装に依存する。
+CONFIG_DB → stpmgrd → stpd IPC が完了するまでの間、
+STP ポート状態は stpd の内部状態に基づき継続される。</p>
+</div>
+<p>証跡: <code>stpmgrd.cpp:39-40</code>, <code>stpmgr.cpp</code>（setWarmStartState 呼び出しなし）</p>
+<!-- /ordering -->
+
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>

@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23842,6 +23854,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動順序・順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="起動順序・順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提: FEATURE テーブル有効化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd-telemetryservicej2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd 依存順 (telemetry.service.j2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisord-supervisordconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord 内部起動順 (supervisord.conf)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時一括読み込み — runtime 変更は再起動まで無効
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS 証明書ファイルは起動前に配置必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cert-gnmi_client_cert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cert 認証時: GNMI_CLIENT_CERT テーブルを先に書く
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -26322,6 +26428,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26966,6 +27100,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -27114,6 +27304,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27309,7 +27527,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27394,6 +27612,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29606,6 +29852,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35230,6 +35504,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動順序・順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="起動順序・順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提: FEATURE テーブル有効化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd-telemetryservicej2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd 依存順 (telemetry.service.j2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisord-supervisordconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord 内部起動順 (supervisord.conf)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時一括読み込み — runtime 変更は再起動まで無効
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS 証明書ファイルは起動前に配置必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cert-gnmi_client_cert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cert 認証時: GNMI_CLIENT_CERT テーブルを先に書く
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35674,6 +36042,134 @@
 <p>YANG (<code>sonic-telemetry.yang</code>) には <code>default</code> 文が一切定義されていない。すべてのデフォルトはランタイム側（<code>telemetry.sh</code> / <code>minigraph.py</code>）で実装される。</p>
 </blockquote>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">起動順序・順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="feature">前提: FEATURE テーブル有効化<a class="headerlink" href="#feature" title="Permanent link">&para;</a></h3>
+<p><code>docker-telemetry-entry.sh</code> はコンテナ起動直後に <code>FEATURE|telemetry.state</code> を 10 秒ごとにポーリングし、<code>enabled</code> になるまで supervisord を起動しない。<code>TELEMETRY</code> テーブルを設定する前に <code>FEATURE|telemetry.state = "enabled"</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> に存在していること（minigraph.py による自動生成フローでは保証済み）。</p>
+<blockquote>
+<p>evidence: <code>dockers/docker-sonic-telemetry/docker-telemetry-entry.sh:39-48</code></p>
+</blockquote>
+<h3 id="systemd-telemetryservicej2">systemd 依存順 (telemetry.service.j2)<a class="headerlink" href="#systemd-telemetryservicej2" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>database.service ──┐
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>swss.service ──────┤ After= / Requires=  →  telemetry.service 起動
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>syncd.service ──────┘
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sonic.target ──────────────────────────────→  After=sonic.target
+</span></code></pre></div>
+<p><code>database.service</code> (Redis / <a href="../../glossary/#term-config_db">CONFIG_DB</a>) が Ready になった後に telemetry が起動するため、CONFIG_DB が未起動の状態で <code>TELEMETRY</code> テーブルを読もうとすることはない。</p>
+<blockquote>
+<p>evidence: <code>files/build_templates/telemetry.service.j2:3-4</code></p>
+</blockquote>
+<h3 id="supervisord-supervisordconf">supervisord 内部起動順 (supervisord.conf)<a class="headerlink" href="#supervisord-supervisordconf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>優先度</th>
+<th>プロセス</th>
+<th>待機条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>rsyslogd</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>start</code> (<code>start.sh</code>)</td>
+<td><code>rsyslogd:running</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>telemetry</code> (<code>telemetry.sh</code>)</td>
+<td><code>start:exited</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>dialout</code> (<code>dialout.sh</code>)</td>
+<td><code>telemetry:running</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>telemetry.sh</code> は <code>start.sh</code> の正常終了後に起動する。<code>dialout</code> (gRPC dial-out ストリーミング) はgNMI サーバが listen 状態になってから起動するため、<code>TELEMETRY</code> 設定不整合でサーバが起動失敗した場合 <code>dialout</code> も起動しない。</p>
+<blockquote>
+<p>evidence: <code>dockers/docker-sonic-telemetry/supervisord.conf:31-68</code></p>
+</blockquote>
+<h3 id="runtime">起動時一括読み込み — runtime 変更は再起動まで無効<a class="headerlink" href="#runtime" title="Permanent link">&para;</a></h3>
+<p><code>telemetry.sh</code> は起動時に <code>sonic-cfggen -d -t telemetry_vars.j2</code> で <code>TELEMETRY|certs</code> / <code>TELEMETRY|gnmi</code> / <code>DEVICE_METADATA|x509</code> を<strong>一括読み込み</strong>し、起動引数として gnmi_server バイナリに渡す。起動後に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を変更しても gnmi_server プロセスには反映されない。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 設定変更を反映させる場合</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
+</span></code></pre></div>
+<blockquote>
+<p>evidence: <code>dockers/docker-sonic-telemetry/telemetry.sh:40-43</code></p>
+</blockquote>
+<h3 id="tls">TLS 証明書ファイルは起動前に配置必須<a class="headerlink" href="#tls" title="Permanent link">&para;</a></h3>
+<p><code>gnmi_server/server.go</code> の <code>SrvAdvConfig()</code> は <code>os.Stat()</code> で <code>server_crt</code> / <code>server_key</code> / <code>ca_crt</code> の存在を確認し、ファイル不在ならサーバが起動しない。<code>TELEMETRY|certs</code> を設定する際は証明書ファイルの実ファイル配置も同時に行うこと。</p>
+<blockquote>
+<p>evidence: <code>gnmi_server/server.go:398-418</code> (<code>SrvAdvConfig</code>)</p>
+</blockquote>
+<h3 id="cert-gnmi_client_cert">cert 認証時: GNMI_CLIENT_CERT テーブルを先に書く<a class="headerlink" href="#cert-gnmi_client_cert" title="Permanent link">&para;</a></h3>
+<p><code>user_auth=cert</code> を設定すると telemetry サーバは <code>GNMI_CLIENT_CERT</code> テーブルを参照してクライアント証明書の fingerprint チェックを行う。<code>GNMI_CLIENT_CERT</code> エントリが存在しない状態で <code>user_auth=cert</code> に切り替えると、サーバ起動後にすべての接続が認証失敗となる。設定変更の順序は <code>GNMI_CLIENT_CERT</code> → <code>TELEMETRY|gnmi.user_auth=cert</code> → サーバ再起動。</p>
+<blockquote>
+<p>evidence: <code>dockers/docker-sonic-telemetry/telemetry.sh:146-149</code></p>
+</blockquote>
+<h3 id="_15">順序依存サマリ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>FEATURE\|telemetry.state=enabled</code> → telemetry コンテナ起動</td>
+<td>先行必須（未設定は 10s ポーリング）</td>
+<td>minigraph フローでは自動保証</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>database.service</code> ready → telemetry.service 起動</td>
+<td>systemd <code>After=</code> 強制</td>
+<td>Redis 未起動での起動は不可</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>start.sh</code> 終了 → <code>telemetry.sh</code> 実行</td>
+<td>supervisord <code>dependent_startup</code> 強制</td>
+<td>FEATURE チェック完了が保証される</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>TELEMETRY</code> 全設定書き込み → <code>telemetry.sh</code> 実行（一括読み込み）</td>
+<td>起動時一括読み込みのため先行必須</td>
+<td>runtime 変更は <code>systemctl restart telemetry</code> で反映</td>
+</tr>
+<tr>
+<td>5</td>
+<td>TLS 証明書ファイル配置 → <code>server_crt</code>/<code>server_key</code>/<code>ca_crt</code> 設定</td>
+<td>ファイル存在確認が先行必須</td>
+<td>空の場合は <code>--insecure</code> フォールバック</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>GNMI_CLIENT_CERT</code> エントリ → <code>user_auth=cert</code> 設定</td>
+<td>推奨先行（欠如時は接続認証失敗）</td>
+<td>サーバ再起動必須</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>DEVICE_METADATA\|x509</code> → <code>TELEMETRY\|certs</code> 未設定時 legacy フォールバック</td>
+<td>どちらも未設定なら <code>--noTLS</code> 起動</td>
+<td>設計上の縮退動作</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
 
 <!-- glossary-links-injected: 896d391185a9 -->
 

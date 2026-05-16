@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29016,6 +29168,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理順序・依存関係・Warm-reboot 挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="処理順序・依存関係・Warm-reboot 挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#p4orch-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P4Orch 内の ADD 優先順位
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET の依存前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL の依存チェック（参照カウント）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm-reboot 復元挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk SAI 呼び出しモード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29257,6 +29481,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34511,6 +34763,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        処理順序・依存関係・Warm-reboot 挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="処理順序・依存関係・Warm-reboot 挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#p4orch-add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P4Orch 内の ADD 優先順位
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET の依存前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL の依存チェック（参照カウント）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm-reboot 復元挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk SAI 呼び出しモード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34717,6 +35041,79 @@
 <li>関連 YANG: なし</li>
 <li>関連 CLI: なし（P4RT controller が直接 APPL_DB に書き込む）</li>
 </ul>
+<!-- ordering -->
+<h2 id="warm-reboot">処理順序・依存関係・Warm-reboot 挙動<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h2>
+<h3 id="p4orch-add">P4Orch 内の ADD 優先順位<a class="headerlink" href="#p4orch-add" title="Permanent link">&para;</a></h3>
+<p><code>p4orch.cpp</code> の <code>m_p4ManagerAddPrecedence</code> リスト（<code>p4orch.cpp:88-102</code>）により、<code>FIXED_TUNNEL_TABLE</code> は <strong>4 番目</strong> に処理される<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>優先順位</th>
+<th>マネージャ</th>
+<th>テーブル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>TablesDefnManager</td>
+<td>TABLE_DEFINITION</td>
+</tr>
+<tr>
+<td>2</td>
+<td>RouterInterfaceManager</td>
+<td>ROUTER_INTERFACE</td>
+</tr>
+<tr>
+<td>3</td>
+<td>NeighborManager</td>
+<td>NEIGHBOR</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td><strong>GreTunnelManager</strong></td>
+<td><strong>FIXED_TUNNEL_TABLE</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>NextHopManager</td>
+<td>NEXTHOP</td>
+</tr>
+<tr>
+<td>6</td>
+<td>WcmpManager</td>
+<td>WCMP_GROUP</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+</tbody>
+</table>
+<h3 id="set">SET の依存前提条件<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<p><code>validateGreTunnelAppDbEntry()</code> が SET 操作時に以下を強制チェックする（<code>gre_tunnel_manager.cpp:106-177</code>）:</p>
+<ol>
+<li><code>router_interface_id</code> に対応する <code>SAI_OBJECT_TYPE_ROUTER_INTERFACE</code> が P4OidMapper に存在すること</li>
+<li><code>(router_interface_id, encap_dst_ip)</code> の neighbor エントリ (<code>SAI_OBJECT_TYPE_NEIGHBOR_ENTRY</code>) が存在すること</li>
+</ol>
+<p>いずれかが欠けると <code>SWSS_RC_NOT_FOUND</code> エラーとなりエントリは作成されない。</p>
+<h3 id="del">DEL の依存チェック（参照カウント）<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<p>DEL 操作では <code>m_p4OidMapper-&gt;getRefCount(SAI_OBJECT_TYPE_TUNNEL, ...)</code> で参照カウントを確認し、<code>ref_count &gt; 0</code> の場合は <code>SWSS_RC_INVALID_PARAM</code> エラーを返す（<code>gre_tunnel_manager.cpp:161-173</code>）。GRE tunnel を参照するオブジェクト（NextHop 等）を先に削除しないと消せない。</p>
+<p>推奨削除順: (NextHop など上流) → <strong>GRE Tunnel</strong> → Neighbor / RIF</p>
+<h3 id="warm-reboot_1">Warm-reboot 復元挙動<a class="headerlink" href="#warm-reboot_1" title="Permanent link">&para;</a></h3>
+<p><code>P4Orch::doTask()</code> は <code>consumer.m_toSync</code> が空でない場合を warm-boot 復元フェーズとみなす（<code>p4orch.cpp:142-152</code>）:</p>
+<ol>
+<li><code>m_publisher.setEnableDbWriteAndNotify(false)</code> — DB への書き戻しを無効化</li>
+<li>残留エントリを全件 enqueue</li>
+<li><code>P4Orch::drain()</code> を呼び出し — <code>m_p4ManagerAddPrecedence</code> 順に各マネージャの <code>drain()</code> を実行</li>
+<li>完了後 <code>setEnableDbWriteAndNotify(true)</code> に復帰</li>
+</ol>
+<p>GRE tunnel は warm-reboot 後に P4RT controller が APPL_DB に再書き込みを行い、orchagent が SAI 状態を再作成する。重複 SET (既存エントリへの再設定) は <code>SWSS_RC_UNIMPLEMENTED</code> を返すため、controller は DEL → SET で再構築する必要がある（<code>gre_tunnel_manager.cpp:278-281</code>）。</p>
+<h3 id="bulk-sai">Bulk SAI 呼び出しモード<a class="headerlink" href="#bulk-sai" title="Permanent link">&para;</a></h3>
+<p><code>createGreTunnels()</code> は <code>SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR</code> で <code>sai_tunnel_api-&gt;create_tunnels()</code> を呼び出す（<code>gre_tunnel_manager.cpp:429</code>）。バッチ内で 1 件でも失敗すると後続エントリはすべてキャンセルされ <code>SWSS_RC_NOT_EXECUTED</code> が返る。</p>
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -34740,6 +35137,9 @@
 </li>
 <li id="fn:4">
 <p><code>createGreTunnels()</code> overlay_if / neighbor_id: <code>gre_tunnel_manager.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>P4Orch マネージャ ADD 優先順位 (<code>m_p4ManagerAddPrecedence</code>): <code>p4orch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/p4orch.cpp#L88-L102">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/p4orch.cpp#L88-L102</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

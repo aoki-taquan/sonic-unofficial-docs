@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -22766,7 +22778,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-false-sai-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. false 先書き → SAI 問い合わせ → true 更新（自己完結型）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-portsorch-debugcounterorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. portsorch → debugcounterorch の書き込み順保証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-warm-reboot-flexcounterorch-60-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. warm-reboot 時の flexcounterorch 60 秒遅延は STATE_DB に無影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-generateportcountermap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. generatePortCounterMap() との順序関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -26068,6 +26152,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26712,6 +26824,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26860,6 +27028,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -27055,7 +27251,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -27140,6 +27336,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -29352,6 +29576,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -34712,7 +34964,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-false-sai-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. false 先書き → SAI 問い合わせ → true 更新（自己完結型）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-portsorch-debugcounterorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. portsorch → debugcounterorch の書き込み順保証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-warm-reboot-flexcounterorch-60-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. warm-reboot 時の flexcounterorch 60 秒遅延は STATE_DB に無影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-generateportcountermap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. generatePortCounterMap() との順序関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34994,9 +35318,135 @@
 <!-- /defaults -->
 
 <hr />
+<!-- ordering -->
+<h2 id="phase-b">書込み順・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/debugcounterorch.cpp,
+     sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/orchdaemon.cpp -->
+
+<h3 id="1-false-sai-true">1. false 先書き → SAI 問い合わせ → true 更新（自己完結型）<a class="headerlink" href="#1-false-sai-true" title="Permanent link">&para;</a></h3>
+<p><code>PortsOrch::initCounterCapabilities()</code> は <strong>単一コンストラクタ呼び出し内</strong> で 2 フェーズに分けて STATE_DB を更新する<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup>。</p>
+<ol>
+<li>全 WRED フィールドを <code>isSupported="false"</code> で先書き (portsorch.cpp:1872-1879)</li>
+<li><code>sai_query_stats_capability()</code> 成功後、サポートされる enum ごとに <code>isSupported="true"</code> に上書き (portsorch.cpp:1892-1968)</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>PORT_COUNTER_CAPABILITIES</th>
+<th>QUEUE_COUNTER_CAPABILITIES</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>コンストラクタ開始直後</td>
+<td>全フィールド <code>"false"</code></td>
+<td>全フィールド <code>"false"</code></td>
+</tr>
+<tr>
+<td>SAI 問い合わせ成功後</td>
+<td>サポート済みフィールドのみ <code>"true"</code></td>
+<td>サポート済みフィールドのみ <code>"true"</code></td>
+</tr>
+<tr>
+<td>SAI 問い合わせ失敗時</td>
+<td>全フィールド <code>"false"</code> のまま</td>
+<td>全フィールド <code>"false"</code> のまま</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">一時的な false 観測</p>
+<p>portsorch 初期化完了前に portstat 等が STATE_DB を参照すると全フィールドが <code>"false"</code> の中間状態を観測することがある。portstat はカウンタをポーリング対象から除外するだけでエラーを出さない。</p>
+</div>
+<h3 id="2-portsorch-debugcounterorch">2. portsorch → debugcounterorch の書き込み順保証<a class="headerlink" href="#2-portsorch-debugcounterorch" title="Permanent link">&para;</a></h3>
+<p>orchdaemon が STATE_DB への書き込み順序を確定的に決定する<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>orchdaemon.cpp:232  gPortsOrch = new PortsOrch(...)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>                      └─ portsorch.cpp:1107 initCounterCapabilities()
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>                           → PORT_COUNTER_CAPABILITIES / QUEUE_COUNTER_CAPABILITIES 書き込み
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>orchdaemon.cpp:452  gDebugCounterOrch = new DebugCounterOrch(...)
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                      └─ debugcounterorch.cpp:37 publishDropCounterCapabilities()
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>                           → DEBUG_COUNTER_CAPABILITIES 書き込み
+</span></code></pre></div>
+<p><code>DebugCounterOrch</code> コンストラクタ内で <code>gPortsOrch-&gt;attach(this)</code> が呼ばれるのは <code>publishDropCounterCapabilities()</code> の<strong>後</strong>であり、DEBUG_COUNTER_CAPABILITIES 書き込みは PORT_COUNTER_CAPABILITIES 完了後に来ることが orchdaemon 構造上保証される。</p>
+<h3 id="3-warm-reboot-flexcounterorch-60-state_db">3. warm-reboot 時の flexcounterorch 60 秒遅延は STATE_DB に無影響<a class="headerlink" href="#3-warm-reboot-flexcounterorch-60-state_db" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>FlexCounterOrch</code> は warm-reboot 時に <code>FLEX_COUNTER_DELAY_SEC = 60</code> 秒のタイマーを起動し、<code>doTask()</code> を遅延させる (flexcounterorch.cpp:44, 127-137)。</li>
+<li>この遅延は <strong>FLEX_COUNTER_DB へのカウンタポーリング登録</strong>を遅らせるためのものであり、<code>STATE_DB / *_COUNTER_CAPABILITIES</code> の書き込みには影響しない。</li>
+<li><code>FlexCounterOrch::bake()</code> は warm-reboot reconcile フェーズで意図的に何もしない（コメント: "FCs are not data plane configuration required during reconciling process"）(flexcounterorch.cpp:525-535)。</li>
+<li>結果として STATE_DB 能力テーブルは常に orchagent 起動直後（warm-reboot 開始直後）に書き込まれ、60 秒遅延の影響外となる。</li>
+</ul>
+<h3 id="4-generateportcountermap">4. generatePortCounterMap() との順序関係<a class="headerlink" href="#4-generateportcountermap" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>発生タイミング</th>
+<th>STATE_DB への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>initCounterCapabilities()</code></td>
+<td>portsorch コンストラクタ（orchagent 起動直後）</td>
+<td><code>PORT_COUNTER_CAPABILITIES</code> / <code>QUEUE_COUNTER_CAPABILITIES</code> 書き込み</td>
+</tr>
+<tr>
+<td><code>generatePortCounterMap()</code></td>
+<td>flexcounterorch が PORT カウンタ enable を受信したとき</td>
+<td><code>FLEX_COUNTER_DB</code> への登録のみ（STATE_DB 非関与）</td>
+</tr>
+<tr>
+<td>portstat が <code>PORT_COUNTER_CAPABILITIES</code> を参照</td>
+<td>カウンタポーリング実行時</td>
+<td><code>isSupported</code> に基づきポーリング対象を決定</td>
+</tr>
+</tbody>
+</table>
+<p><code>generatePortCounterMap()</code> は <code>PORT_COUNTER_CAPABILITIES</code> テーブルを<strong>参照しない</strong>。portstat.py が STATE_DB を参照する時点では常に <code>initCounterCapabilities()</code> 完了後であるため、能力情報が未書き込みの状態で参照されることはない<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup>。</p>
+<h3 id="_7">順序依存サマリ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>"false"</code> 先書き → SAI query → <code>"true"</code> 更新</td>
+<td>自己完結（コンストラクタ内）</td>
+<td>起動直後の transient <code>"false"</code> は portstat の N/A 表示のみ</td>
+</tr>
+<tr>
+<td>2</td>
+<td>portsorch 初期化 → debugcounterorch 初期化</td>
+<td>orchdaemon が強制保証</td>
+<td>変更不要</td>
+</tr>
+<tr>
+<td>3</td>
+<td>warm-reboot 60 秒遅延</td>
+<td>STATE_DB には無影響</td>
+<td>能力テーブルはコンストラクタで同期書き込み済み</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>initCounterCapabilities</code> &lt; <code>generatePortCounterMap</code></td>
+<td>常に保証</td>
+<td>portstat 参照時点では能力テーブル書き込み済み</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<hr />
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../flex-counter-table/">CONFIG_DB FLEX_COUNTER_TABLE</a> — ポーリング有効化・間隔設定</li>
 <li><a href="../counters-port/">COUNTERS_DB PORT カウンタ</a> — ポート統計の実体</li>
@@ -35026,6 +35476,15 @@
 </li>
 <li id="fn:6">
 <p>portstat.py:314-329。<code>is_wred_stats_reqd</code> が False または <code>isSupported != "true"</code> の場合に除外&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p>portsorch.cpp:1850-1968。<code>initCounterCapabilities()</code> は portsorch コンストラクタ末尾 (portsorch.cpp:1107) で呼ばれる&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p>orchdaemon.cpp:232 (PortsOrch), orchdaemon.cpp:452 (DebugCounterOrch)。debugcounterorch.cpp:37 で <code>publishDropCounterCapabilities()</code> が <code>gPortsOrch-&gt;attach(this)</code> より前に実行される&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9">
+<p>portsorch.cpp:9102-9129 (<code>generatePortCounterMap</code>)。FLEX_COUNTER_DB への登録のみで STATE_DB への読み書きなし&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

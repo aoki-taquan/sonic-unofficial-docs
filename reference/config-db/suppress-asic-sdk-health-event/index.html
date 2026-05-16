@@ -21305,6 +21305,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -25793,6 +25805,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../fdb-aging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FDB Aging Time (SWITCH_TABLE.fdb_aging_time)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fdb/" class="md-nav__link">
         
   
@@ -26437,6 +26477,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../mclag-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mclag-unique-ip/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCLAG_UNIQUE_IP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-cable-port/" class="md-nav__link">
         
   
@@ -26585,6 +26681,34 @@
     
   
     COUNTERS_DB NAT カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NAT_POOL テーブル
   
 
     
@@ -26780,7 +26904,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase D failure)
+    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
   
 
     
@@ -26865,6 +26989,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-rule/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_RULE テーブル
   
 
     
@@ -28835,6 +28987,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. orchagent 起動時の初期化順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-isinitializingtrue-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 起動時 (isInitializing=true) と実行中 (false) の挙動差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-setdel-docfgsuppressasicsdkhealtheventtabletask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SET/DEL 処理の内部順序 (doCfgSuppressAsicSdkHealthEventTableTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. warm reboot との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 起動順依存まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29595,6 +29819,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP テーブル
   
 
     
@@ -35004,6 +35256,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. orchagent 起動時の初期化順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-isinitializingtrue-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 起動時 (isInitializing=true) と実行中 (false) の挙動差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-setdel-docfgsuppressasicsdkhealtheventtabletask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SET/DEL 処理の内部順序 (doCfgSuppressAsicSdkHealthEventTableTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. warm reboot との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 起動順依存まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35463,6 +35787,91 @@
 <li><strong>categories フィールド未指定でデフォルト全カテゴリ</strong>: <code>categories</code> フィールドが存在しない場合は <code>registerAsicSdkHealthEventCategories(saiSeverity, key)</code> が引数なしで呼ばれ、全カテゴリが抑制対象として登録される。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>DEL 操作は全カテゴリ抑制解除</strong>: DEL_COMMAND 受信時も <code>registerAsicSdkHealthEventCategories(saiSeverity, key)</code> 引数なしが呼ばれ全カテゴリの抑制を解除する。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-ordering.md</code></p>
+</blockquote>
+<h3 id="1-orchagent">1. orchagent 起動時の初期化順序<a class="headerlink" href="#1-orchagent" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:212</code> で <code>SwitchOrch</code> が生成されると、コンストラクタ内で即座に <code>initAsicSdkHealthEventNotification()</code> が呼ばれる。この関数が <strong>CONFIG_DB を起動時スナップショット</strong> として読み取り、SAI に初期登録する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>orchdaemon
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  └─ gSwitchOrch = new SwitchOrch(...)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>       └─ initAsicSdkHealthEventNotification()
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>            1. querySwitchCapability(SAI_SWITCH_ATTR_SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY)
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>               └─ 非対応 → CAPABILITY=false を記録し return（以降の全登録スキップ）
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>            2. set_switch_attribute(NOTIFY コールバック登録)
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>            3. severity ごとに querySwitchCapability(REG_FATAL/WARNING/NOTICE_CATEGORY)
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>            4. 対応 severity → cfgSuppressASHETable.hget(severity, &quot;categories&quot;)
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>            5. registerAsicSdkHealthEventCategories(attr, severity, categories, isInitializing=true)
+</span></code></pre></div>
+<p>→ <strong>orchagent 起動前</strong> に CONFIG_DB へ書き込んでおくと起動時スナップショットに取り込まれる。<strong>起動後</strong> に初めて書き込んだ場合は次の Consumer イベントで適用される。</p>
+<h3 id="2-isinitializingtrue-false">2. 起動時 (isInitializing=true) と実行中 (false) の挙動差異<a class="headerlink" href="#2-isinitializingtrue-false" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th><code>isInitializing</code></th>
+<th>全カテゴリ抑制時 (<code>categories</code> に全 4 種指定)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>起動時スナップショット</td>
+<td><code>true</code></td>
+<td><code>interested_categories_set.empty()</code> → <strong>SAI 登録自体をスキップ</strong> — health event 通知ハンドラが有効にならない (<code>switchorch.cpp:1390-1394</code>)</td>
+</tr>
+<tr>
+<td>実行中 SET_COMMAND</td>
+<td><code>false</code></td>
+<td>SAI 登録は試行される（エラーになっても orch は継続）</td>
+</tr>
+</tbody>
+</table>
+<p>起動時に全カテゴリを抑制すると、その severity の health event がプラットフォームから届かない初期状態になる点が、実行中に全カテゴリ抑制を設定する場合と異なる。</p>
+<h3 id="3-setdel-docfgsuppressasicsdkhealtheventtabletask">3. SET/DEL 処理の内部順序 (<code>doCfgSuppressAsicSdkHealthEventTableTask</code>)<a class="headerlink" href="#3-setdel-docfgsuppressasicsdkhealtheventtabletask" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Consumer (SubscriberStateTable: CONFIG_DB SUPPRESS_ASIC_SDK_HEALTH_EVENT)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  └─ doTask() → doCfgSuppressAsicSdkHealthEventTableTask()
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>       1. key 空文字チェック → 空なら erase してスキップ         (switchorch.cpp:1427)
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>       2. severity → SAI 属性マッピング (map.at(key))             (:1435)
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>       3. m_supportedAsicSdkHealthEventAttributes 確認            (:1455)
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>          └─ 非対応 severity → syslog NOTICE のみで erase
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>       4. SET_COMMAND:
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>          a. categories フィールドあり → registerAsicSdkHealthEventCategories(attr, key, categories)
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>          b. categories フィールドなし → registerAsicSdkHealthEventCategories(attr, key)  [全購読]
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>       5. DEL_COMMAND → registerAsicSdkHealthEventCategories(attr, key)  [全購読 = 抑制解除]
+</span></code></pre></div>
+<p>SET / DEL ともに <code>registerAsicSdkHealthEventCategories</code> が唯一の SAI 書込み点であり、アトミックに <code>set_switch_attribute</code> を呼ぶ。APPL_DB 中継はなく CONFIG_DB → SAI の直接経路。</p>
+<h3 id="4-warm-reboot">4. warm reboot との関係<a class="headerlink" href="#4-warm-reboot" title="Permanent link">&para;</a></h3>
+<p>orchagent が warm reboot で再起動すると <code>initAsicSdkHealthEventNotification()</code> が再度実行され、CONFIG_DB の最新値を読み取って SAI に再登録する。<code>RESTARTCHECK</code> 通知ハンドラ (<code>switchorch.cpp:1543-1564</code>) は SUPPRESS テーブルとは無関係で、suppression 状態の凍結・回復ロジックは存在しない。</p>
+<h3 id="5">5. 起動順依存まとめ<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>前提条件</th>
+<th>不成立時の影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI が health event notify をサポート (<code>querySwitchCapability</code> true)</td>
+<td>CAPABILITY=false を記録し全 severity の初期登録をスキップ</td>
+</tr>
+<tr>
+<td>各 severity が SAI でサポート (<code>m_supportedAsicSdkHealthEventAttributes</code>)</td>
+<td>非対応 severity への SET は silent skip (syslog NOTICE)</td>
+</tr>
+<tr>
+<td>orchagent 起動前に CONFIG_DB にエントリあり</td>
+<td>起動時スナップショットに取り込まれ初期 SAI 登録に反映</td>
+</tr>
+<tr>
+<td>orchagent 起動後に初めて CONFIG_DB に書き込む</td>
+<td>Consumer イベント経由で反映。起動時点は抑制なし（全カテゴリ購読）のまま</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
