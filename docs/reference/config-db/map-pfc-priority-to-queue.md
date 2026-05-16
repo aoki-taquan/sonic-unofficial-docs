@@ -290,3 +290,52 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 > **スキャン証跡**: `QosOrch::PfcToQueueHandler` を全行読了、4 件分岐抽出。Phase 6/7 derivation ブロックの evidence 再確認: qos_config.j2 からの platform 別マップ書き込みは実ソースと整合 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.h:15 / qosorch.cpp:1001-1004,1020-1021,1029 / sonic-swss-common/common/schema.h:363 -->
+
+### テーブル名定数
+
+| 定数名 | 値 |
+|---|---|
+| `CFG_PFC_PRIORITY_TO_QUEUE_MAP_TABLE_NAME` | `"MAP_PFC_PRIORITY_TO_QUEUE"` |
+
+ソース: `sonic-swss-common/common/schema.h:363`
+
+### フィールド名定数
+
+| 定数名 | 値 | 用途 |
+|---|---|---|
+| `pfc_to_queue_map_name` | `"pfc_to_queue_map"` | `PORT_QOS_MAP` テーブル内で MAP_PFC_PRIORITY_TO_QUEUE 名を指す field 名 |
+
+ソース: `sonic-swss/orchagent/qosorch.h:15`
+
+### SAI qos_map_type 定数
+
+| 定数名 | 用途 |
+|---|---|
+| `SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE` | `addQosItem()` で `SAI_QOS_MAP_ATTR_TYPE` に設定される SAI map type（`qosorch.cpp:1021`） |
+| `SAI_QOS_MAP_ATTR_TYPE` | SAI attribute ID — map type を指定（`qosorch.cpp:1020`） |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | SAI attribute ID — pfc→queue ペアのリストを渡す（`qosorch.cpp:1004,1024`） |
+| `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` | PORT_QOS_MAP バインド時の SAI port attribute（`qosorch.cpp:69`） |
+
+### 値域ハードコード
+
+| フィールド | 範囲 | 型変換コード |
+|---|---|---|
+| `pfc_priority` (key) | 0..7（YANG `pattern "[0-7]?"` が保証） | `(uint8_t)stoi(fvField(*i))`（`qosorch.cpp:1001`） |
+| `qindex` (value) | 0..7（YANG `pattern "[0-7]?"` が保証） | `(uint8_t)stoi(fvValue(*i))`（`qosorch.cpp:1002`） |
+
+YANG バリデーションをバイパスして 8 以上を書き込んだ場合は `(uint8_t)` キャストで 0..255 に切り捨てのみ（SAI 側でエラーになる可能性あり）。
+
+### SAI API
+
+| 関数 | 用途 |
+|---|---|
+| `sai_qos_map_api->create_qos_map()` | MAP 新規作成（`qosorch.cpp:1029`） |
+| `sai_qos_map_api->set_qos_map_attribute()` | 既存 MAP 更新（`qosorch.cpp:207`） |
+| `sai_qos_map_api->remove_qos_map()` | MAP 削除（`qosorch.cpp:220`） |
+
+<!-- /constants -->
