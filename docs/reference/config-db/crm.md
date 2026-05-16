@@ -237,4 +237,32 @@ crm show resources all
 
 > **スキャン証跡**: `CrmOrch::doTask` L440-477 + `handleSetCommand` L478-537 全行読了。6 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- cross-refs -->
+## 暗黙参照（Phase C）
+
+`CrmOrch` が `CRM` テーブルを処理する際、以下の外部テーブル・DB を明示的な設定フィールドとしてではなく、**実行時の判定条件または書き込み先**として暗黙的に参照する。
+
+| 参照先 | 参照種別 | 具体的な利用箇所 | evidence |
+|--------|----------|-----------------|----------|
+| `DEVICE_METADATA.localhost.switch_type` | 読み取り（実行時条件） | `gMySwitchType` グローバル変数経由。`"dpu"` のとき DASH 系 ACL グループリソースの可用性チェック (`getDashAclGroupResAvailability`) を実行し、それ以外は `CRM_RES_NOT_SUPPORTED` を返す。 | `sonic-swss/orchagent/crmorch.cpp:839`, `main.cpp:658` |
+| `COUNTERS_DB` (`CRM` テーブル) | 書き込み | `updateCrmCountersTable()` 内で `m_countersCrmTable->set()` により全リソースの `used` / `available` カウンタを定期書き込み。`crm show resources` が参照する統計値の実体。 | `sonic-swss/orchagent/crmorch.cpp:400-401,1067-1109` |
+| SAI `sai_switch_api` (`SAI_SWITCH_ATTR_AVAILABLE_*`) | SAI 読み取り | `getSwitchResAvailability()` で `sai_switch_api->get_switch_attribute()` を呼び出し、各リソースの空き数を取得。`SWITCH` オブジェクト属性を介した間接参照。 | `sonic-swss/orchagent/crmorch.cpp:76-92,975` |
+
+### 依存関係サマリ
+
+```
+DEVICE_METADATA.localhost.switch_type
+  → gMySwitchType == "dpu" のとき DASH CRM リソースが有効化
+
+CRM|Config (CONFIG_DB)
+  → CrmOrch が polling_interval / threshold を読み取り
+
+SAI sai_switch_api (SWITCH 属性)
+  → 各リソースの available カウンタ取得
+
+COUNTERS_DB CRM テーブル
+  ← CrmOrch が used / available カウンタを書き込み
+```
+<!-- /cross-refs -->
 <!-- glossary-links-injected: c6e41e02b036 -->
