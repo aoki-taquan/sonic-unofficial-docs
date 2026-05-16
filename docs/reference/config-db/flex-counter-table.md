@@ -108,6 +108,40 @@ FLEX_COUNTER_TABLE|<group>
 - 関連 CLI: `counterpoll <group> enable/disable`、`counterpoll <group> interval <ms>`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-flex_counter`
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/saihelper.cpp, sonic-swss/orchagent/portsorch.cpp -->
+
+`FLEX_COUNTER_TABLE` への書込は CONFIG_DB から直接 `FlexCounterOrch` が購読し、以下の副次書込が発生する。
+
+### FLEX_COUNTER_DB — グループ設定書込
+
+| 書込先 DB | テーブル | キー形式 | フィールド | トリガ |
+|----------|---------|---------|----------|-------|
+| `FLEX_COUNTER_DB` | `FLEX_COUNTER_GROUP_TABLE` | `<group>` (例: `PORT`, `QUEUE`) | `POLL_INTERVAL` | `POLL_INTERVAL` フィールド変化時 (`setFlexCounterGroupPollInterval()`) |
+| `FLEX_COUNTER_DB` | `FLEX_COUNTER_GROUP_TABLE` | `<group>` | `FLEX_COUNTER_STATUS` (`enable`/`disable`) | `FLEX_COUNTER_STATUS` フィールド変化時 (`setFlexCounterGroupOperation()`) |
+| `FLEX_COUNTER_DB` | `FLEX_COUNTER_GROUP_TABLE` | `<group>` | `BULK_CHUNK_SIZE`, `BULK_CHUNK_SIZE_PER_PREFIX` | `BULK_CHUNK_SIZE*` フィールド変化時。未設定の場合は `"NULL"` で書込 |
+| `FLEX_COUNTER_DB` | `FLEX_COUNTER_TABLE` | `PORT:<OID>` 等 | `COUNTER_ID_LIST` | `FLEX_COUNTER_STATUS=enable` 時 (`generate*CounterMap()` / `add*FlexCounters()`) |
+
+`gTraditionalFlexCounter=false`（デフォルト）の場合は Redis ProducerTable 書込ではなく SAI Redis 属性 (`SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP`) 経由に切り替わる (`saihelper.cpp:894`)。
+
+**PORT_PHY_ATTR の自動連動**: `PORT_PHY_ATTR` の `FLEX_COUNTER_STATUS` を変更すると `PORT_PHY_SERDES_ATTR` グループにも自動で同一の operation が書き込まれる (`flexcounterorch.cpp:386-392`)。
+
+### COUNTERS_DB — 名前マップ書込
+
+`FLEX_COUNTER_STATUS=enable` 時、`generate*Map()` が各ポート/キュー/PG の名前→OID マップを `COUNTERS_DB` に書き込む（一度生成後はフラグで再生成をスキップ）。
+
+| 書込先 DB | テーブル | キー / フィールド | トリガ |
+|----------|---------|----------------|-------|
+| `COUNTERS_DB` | `COUNTERS_PORT_NAME_MAP` | `<port_alias>` → OID | `PORT` グループ enable 時 (`portsorch.cpp:4118`) |
+| `COUNTERS_DB` | `COUNTERS_QUEUE_NAME_MAP` | `<port_alias>:<queue_index>` → OID | `QUEUE` / `QUEUE_WATERMARK` / `WRED_ECN_QUEUE` enable 時 (`portsorch.cpp:8524`) |
+| `COUNTERS_DB` | `COUNTERS_PG_NAME_MAP` | `<port_alias>:<pg_index>` → OID | `PG_DROP` / `PG_WATERMARK` enable 時 (`portsorch.cpp:8882`) |
+
+ポート削除時・キュー削除時は対応エントリを `delCounterNameMap()` で削除。
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
