@@ -116,6 +116,39 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-ordering.md; sonic-swss/orchagent/vxlanorch.cpp -->
+
+### 作成順序
+
+| 順序 | テーブル | 理由 |
+|------|---------|------|
+| 1 | `VLAN\|<id>` | `VxlanTunnelMapOrch::addOperation()` が `gPortsOrch->getVlanByVlanId()` で VLAN の存在を確認。未作成なら `return false`（リトライ待ち）(vxlanorch.cpp:2030) |
+| 2 | `VXLAN_TUNNEL\|<tunnel-name>` | `isTunnelExists()` チェック。TUNNEL 未登録なら `return false`（リトライ待ち）(vxlanorch.cpp:2047) |
+| 3 | `VXLAN_TUNNEL_MAP\|<tunnel>\|<map>` | 初回エントリ受信時に `createTunnelHw()` が呼ばれ SAI トンネルオブジェクト（mapper → tunnel → tunnel-term）が一括生成される (vxlanorch.cpp:2063)。VXLAN_TUNNEL 単体では SAI HW は作成されない点に注意 |
+
+複数の MAP エントリは VLAN・TUNNEL が揃っていれば順不同で書込み可能。
+
+### SAI HW 作成の内部順序（参考）
+
+`createTunnelHw()` 内部では以下の順で SAI オブジェクトを生成する:
+
+1. `createMapperHw()` — `sai_tunnel_api->create_tunnel_map()`（encap/decap マッパー）
+2. `create_tunnel()` — `sai_tunnel_api->create_tunnel()`（マッパー OID リストを参照）
+3. `create_tunnel_termination()` — `sai_tunnel_api->create_tunnel_term_table_entry()`
+
+### 削除順序（逆順）
+
+```
+VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除 → VXLAN_TUNNEL 削除 → VLAN 削除
+```
+
+`del_tnl_hw_pending` フラグが true の間は MAP 追加もブロックされる (vxlanorch.cpp:2057)。削除途中での再追加は避けること。
+
+<!-- /ordering -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->

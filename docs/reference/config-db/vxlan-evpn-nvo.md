@@ -74,6 +74,29 @@ VXLAN_EVPN_NVO|<name>
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-evpn-nvo-ordering.md; sonic-swss/orchagent/vxlanorch.cpp -->
+
+### 作成順序
+
+| 順序 | テーブル | 理由 |
+|------|---------|------|
+| 1 | `VXLAN_TUNNEL\|<name>` | `EvpnNvoOrch::addOperation()` が `source_vtep` を `getVxlanTunnel()` でルックアップする。TUNNEL 未登録なら null ポインタになり後続 EVPN 処理が `return false` でリトライ待ち (vxlanorch.cpp:2784) |
+| 2 | `VXLAN_TUNNEL_MAP\|<name>\|<map>` | 初回 MAP エントリで `createTunnelHw()` がトリガーされ VTEP が `isActive() = true` になる (vxlanorch.cpp:2063)。VTEP active 前は EVPN remote VTEP 追加が `return false` でリトライ待ち (vxlanorch.cpp:1694) |
+| 3 | `VXLAN_EVPN_NVO\|<nvo-name>` | source_vtep 参照先 TUNNEL が存在し、かつ VTEP active 後に設定するのが推奨 |
+
+### 削除順序（逆順）
+
+```
+EVPN remote VTEP 削除 → VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除 → VXLAN_TUNNEL 削除
+```
+
+`EvpnNvoOrch::delOperation()` は `del_tnl_hw_pending == true` のとき `return false` でリトライ待ちになる (vxlanorch.cpp:2803)。TUNNEL_MAP を先に全削除し DIP トンネルカウントを 0 にしてから NVO・TUNNEL を削除すること。
+
+<!-- /ordering -->
+
 ## 制約
 
 - `source_vtep` は `VXLAN_TUNNEL` への leafref（先にトンネル作成が必要）
