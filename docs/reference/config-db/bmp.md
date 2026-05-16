@@ -503,4 +503,50 @@ FRR テンプレートおよびデーモンコードに埋め込まれた定数�
 multi-asic 構成でも `bmpcfgd` は host CONFIG_DB の `BMP` テーブルのみを購読し、`asicN` namespace への接続は実装されていない。
 <!-- /platform -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+`BMP` テーブルは `bmpcfgd` が直接参照するテーブル以外にも、openbmpd・FRR テンプレートを通じて以下のテーブルを暗黙的に参照する。
+
+### BMP_STATE_DB への間接書込（openbmpd 経由）
+
+| 参照先 DB.テーブル | 条件 | 操作 | ソース |
+|------------------|------|------|--------|
+| `BMP_STATE_DB.BGP_NEIGHBOR*` | `bgp_neighbor_table=true` 時に openbmpd が populate、変更時に `bmpcfgd` が削除 | delete（`delete_all_by_pattern`） | `bmpcfgd.py` L63 |
+| `BMP_STATE_DB.BGP_RIB_IN_TABLE*` | `bgp_rib_in_table=true` 時に openbmpd が populate、変更時に削除 | delete | `bmpcfgd.py` L64 |
+| `BMP_STATE_DB.BGP_RIB_OUT_TABLE*` | `bgp_rib_out_table=true` 時に openbmpd が populate、変更時に削除 | delete | `bmpcfgd.py` L65 |
+
+`bmpcfgd` 自身は BMP_STATE_DB に値を書き込まない。`reset_bmp_table()` で既存エントリを削除後、openbmpd を再起動し openbmpd が非同期に再 populate する設計。
+
+### CONFIG_DB.BGP_NEIGHBOR（間接参照）
+
+`bmpcfgd.py` は `BGP_NEIGHBOR` テーブルを直接購読しないが、`bgp_neighbor_table=true` の場合 openbmpd が `BGP_NEIGHBOR` の peer リストを BMP ダンプ対象として利用する。peer の追加・削除は `BGP_NEIGHBOR` テーブルの変更によって FRR bgpd → openbmpd に反映される。
+
+- ソース: `sonic-bgpcfgd/main.py` L87（`CFG_BGP_NEIGHBOR_TABLE_NAME` を bgpcfgd が処理）
+
+### CONFIG_DB.DEVICE_METADATA.bgp_asn（FRR テンプレート経由）
+
+`bgpd.main.conf.j2` L94 の条件式により、`DEVICE_METADATA['localhost']['bgp_asn']` が未設定・`"none"` または `"null"` の場合、`router bgp` ブロックが生成されず `bmp targets sonic-bmp` も FRR に注入されない。`BMP|table` をどのように設定しても BMP セッションが成立しない。
+
+- evidence: `dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:94-136`
+
+### CONFIG_DB.FEATURE（間接参照）
+
+`bgpd.main.conf.j2` L127-128 により、`FEATURE['frr_bmp']['state']` または `FEATURE['bmp']['state']` が `"enabled"` でない場合、FRR に `bmp targets` ブロックが注入されない。`BMP|table` の設定は `FEATURE` が有効化されていることを前提とする。
+
+- evidence: `dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:125-128`
+
+### 暗黙参照マトリクス（サマリ）
+
+| 参照先 | 種別 | 方向 | 直接/間接 | ソース |
+|--------|------|------|-----------|--------|
+| `BMP_STATE_DB.BGP_NEIGHBOR*` | State テーブル | BMP → BMP_STATE_DB | 間接（openbmpd） | `bmpcfgd.py` L63 |
+| `BMP_STATE_DB.BGP_RIB_IN_TABLE*` | State テーブル | BMP → BMP_STATE_DB | 間接（openbmpd） | `bmpcfgd.py` L64 |
+| `BMP_STATE_DB.BGP_RIB_OUT_TABLE*` | State テーブル | BMP → BMP_STATE_DB | 間接（openbmpd） | `bmpcfgd.py` L65 |
+| `CONFIG_DB.BGP_NEIGHBOR` | CONFIG テーブル | BGP_NEIGHBOR → BMP dump 対象 | 間接（openbmpd peer リスト） | `bgpcfgd/main.py` L87 |
+| `CONFIG_DB.DEVICE_METADATA.bgp_asn` | CONFIG テーブル | DEVICE_METADATA → FRR `bmp targets` 注入の前提 | 間接（FRR j2 テンプレート） | `bgpd.main.conf.j2:94-136` |
+| `CONFIG_DB.FEATURE[bmp\|frr_bmp].state` | CONFIG テーブル | FEATURE → FRR `bmp targets` 有効化の前提 | 間接（FRR j2 テンプレート） | `bgpd.main.conf.j2:125-128` |
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 9e5a57a09d49 -->
