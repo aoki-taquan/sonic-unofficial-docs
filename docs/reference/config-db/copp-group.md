@@ -294,6 +294,34 @@ show copp config
 
 > **スキャン証跡**: `processCoppTrapGroup` L737-872 全行読了。デフォルトグループ削除拒否が最重要分岐。4 件抽出。
 <!-- /handler-branching -->
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+### SAI hostif trap group capability クエリ
+
+`CoppOrch` 起動時に `sai_query_attribute_enum_values_capability()` で `SAI_OBJECT_TYPE_HOSTIF_TRAP` / `SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE` をクエリし、ベンダー SAI がサポートするトラップ種別を取得する。結果は `STATE_DB.COPP_TRAP_CAPABILITY_TABLE|traps` の `trap_ids` フィールドに書き込まれる。<!-- evidence: copporch.cpp L240-299 publishTrapIdsCapability -->
+
+- **対応ベンダー SAI**: 実際にサポートするトラップ種別のみが返り、`supported_trap_ids` にセットされる。
+- **未対応ベンダー SAI**: クエリ失敗時はハードコード済みの `default_supported_trap_ids`（44 種、静的・更新なし）にフォールバック。
+
+`supported_trap_ids` に含まれないトラップ ID は `processCoppTrapGroup()` 内でスキップされ、SAI への登録が行われない（サイレントスキップ）。<!-- evidence: copporch.cpp L411 -->
+
+### `trap_priority` のプラットフォーム除外
+
+`getenv("platform")` 環境変数で実行プラットフォームを判定し、以下の条件で `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` のセットを **スキップ** する:
+
+| プラットフォーム | `platform` 環境変数値 | trap_priority 設定 |
+|---|---|---|
+| Mellanox (NVIDIA) | `"mellanox"` を含む | **スキップ**（SAI 非対応） |
+| Marvell Prestera | `"marvell-prestera"` を含む | **スキップ**（SAI 非対応） |
+| その他（Broadcom / VS 等） | 上記以外または未設定 | 設定する |
+
+デフォルトトラップ初期化時（`initDefaultTrapIds()`）とユーザー設定反映時（`parseTrapGroupAttribute()`）の両方で同じチェックが行われる。Mellanox / Marvell では CONFIG_DB に `trap_priority` を設定しても **無視される**（エラーログなし）。<!-- evidence: copporch.cpp L347-359, L1184-1194; orch.h L41-42 -->
+
+### VOQ / Chassis 差
+
+`copporch.cpp` に VOQ chassis 固有のコードパスは存在しない。CoPP は CPU 宛トラフィックに適用されるため、VOQ スイッチファブリックの転送パスとは独立しており、linecard / system port による追加分岐はない。
+<!-- /platform -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
