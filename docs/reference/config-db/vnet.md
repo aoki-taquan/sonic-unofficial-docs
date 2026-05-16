@@ -277,4 +277,48 @@ db_migrator.py での VNET マイグレーションなし
 - **`vni` (VNET_ROUTE_TUNNEL) = 0**: VNI リストが空または 0 の場合、[VXLAN](../../reference/glossary.md#term-vxlan) orch 側でベース tunnel の VNI が encapsulation に使われる（`createNextHopTunnel()` に `vni=0` を渡す）。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### VXLAN_TUNNEL が先行必須
+
+`VxlanMgr::doVxlanCreateTask()` (`vxlanmgr.cpp:319-324`) は `m_vxlanTunnelCache.find(tunnel)` が end() を返すと `return false` で処理を保留し次ループで再試行する。orchagent 側 `VNetOrch::addOperation()` (`vnetorch.cpp:498-503`) も `vxlan_orch->isTunnelExists(tunnel)` が false なら `return false`。参照先 `VXLAN_TUNNEL|<name>` が存在しない限り VNET の SAI 登録は進まない。
+
+### STATE_DB VRF ready 待ち（VxlanMgr 経路）
+
+`doVxlanCreateTask()` L327-333: `isVrfStateOk(vnet_name)` (`vxlanmgr.cpp:738`) が `STATE_VRF_TABLE` に当該 VRF 名を見つけられない間は `return false` で保留。VNetOrch が [SAI](../../reference/glossary.md#term-sai) 上で VRF を作成し STATE_DB に書き込んだ後でなければカーネル VXLAN デバイス作成に進まない。orchdaemon の初期化順序（VNetOrch L276 → VRFOrch L283）により通常は自動解消されるが、起動直後の早期書き込みでは注意。
+
+### ルータ MAC アドレスが取得済みであること
+
+`doVxlanCreateTask()` L335-342: `getVxlanRouterMacAddress()` が false を返すと `return false` で保留。`DEVICE_METADATA|localhost:mac` が設定済みでなければ VXLAN デバイスは作成されない。通常は `sonic-cfggen` が起動時に書き込むため問題にならないが、テスト環境では注意が必要。
+
+### VNET 本体 SET → VNET_ROUTE / VNET_ROUTE_TUNNEL SET
+
+`VNetCfgRouteOrch::doVnetRouteTask()` / `doVnetTunnelRouteTask()` は受け取り次第即 APPL_DB に転記するため VNET 存在チェックなし。ただし orchagent 側 `VNetRouteOrch` が APPL_DB を消費する際に VNET の存在を前提とする。VNET_ROUTE を先に書いても失われないが、SAI 反映は VNET 作成完了後になる。
+
+```
+# 推奨書込み順 (SET)
+SET VXLAN_TUNNEL|<tunnel_name>  src_ip=<vtep_ip>
+SET VNET|<vnet_name>            vxlan_tunnel=<tunnel_name> vni=<l3_vni>
+SET VNET_ROUTE|<vnet_name>|<prefix>          nexthop=<nh_ip> ifname=<ifname>
+SET VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>   endpoint=<vtep_ip>
+
+# 推奨削除順 (DEL)
+DEL VNET_ROUTE|<vnet_name>|<prefix>
+DEL VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
+DEL VNET|<vnet_name>
+DEL VXLAN_TUNNEL|<tunnel_name>   # 他 VNET が残らない場合のみ
+```
+
+| 依存関係 | 方向 | 緩和策 |
+|----------|------|--------|
+| `VXLAN_TUNNEL` SET → `VNET` SET | 強制先行 | `return false` で自動保留・再試行 |
+| STATE_DB VRF ready → `VNET` 処理 | 強制先行 | `return false` で自動保留・再試行 |
+| `DEVICE_METADATA` mac 設定 → `VNET` 処理 | 強制先行 | `return false` で自動保留・再試行 |
+| `VNET` SET → `VNET_ROUTE` SAI 反映 | 論理的先行 | APPL_DB への転記は即時、SAI 反映は遅延 |
+| `VNET_ROUTE` DEL → `VNET` DEL | 推奨 | orchagent が内部で自動削除するが明示削除が安全 |
+
+> **スキャン証跡**: `vxlanmgr.cpp:doVxlanCreateTask()` L287-376、`vnetorch.cpp:addOperation()` L434-558、`vnetorch.cpp:VNetCfgRouteOrch::doTask()` L3577-3611、`orchdaemon.cpp` L265-293, L350-354, L590-593 精読。
+<!-- /ordering -->
+
 <!-- glossary-links-injected: f94986e6b96c -->
