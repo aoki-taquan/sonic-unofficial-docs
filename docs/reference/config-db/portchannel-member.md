@@ -344,6 +344,57 @@ DEL PORTCHANNEL|PortChannel0001
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`PORTCHANNEL_MEMBER` の CONFIG_DB Consumer 経路は **CONFIG_DB → TeamMgr → teamd (UNIX ソケット) → APP_DB → PortsOrch → SAI** の 3 段構成である。
+
+### 1. CONFIG_DB → TeamMgr: SubscriberStateTable (keyspace PSUBSCRIBE)
+
+`teammgrd.cpp:55-65` で `CFG_LAG_MEMBER_TABLE_NAME` (`"PORTCHANNEL_MEMBER"`) を `TableConnector` として登録。
+`Orch(tables)` 内部で `SubscriberStateTable` が生成され、Redis CONFIG_DB (db_id=4) に対して
+`__keyspace@4__:PORTCHANNEL_MEMBER|*` を PSUBSCRIBE する。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB / keyspace 通知) |
+| keyspace パターン | `__keyspace@4__:PORTCHANNEL_MEMBER\|*` |
+| key 区切り | `PORTCHANNEL_MEMBER\|<lag>\|<member>` |
+| POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = 128 |
+| 優先度 (`pri`) | 0 (TableConnector 既定) |
+| 起動時スナップショット | 既存エントリを SET イベントとして再配信 |
+| ディスパッチ | `Consumer::execute()` → `TeamMgr::doTask()` → `table == CFG_LAG_MEMBER_TABLE_NAME` → `doLagMemberTask()` (`teammgr.cpp:161-163`) |
+
+### 2. TeamMgr → teamd: UNIX ソケット (teamdctl)
+
+`doLagMemberTask()` は APP_DB を経由せず `teamdctl` コマンド (UNIX ソケット `/var/run/teamd/<lag>.ctl`) で
+teamd プロセスに直接ポートの追加/削除を指示する。この経路は Redis PUBLISH を使用しない。
+
+- **SET**: `teamdctl <lag> port add <member>` — LACP ネゴシエーション開始
+- **DEL**: `teamdctl <lag> port remove <member>` — LACP 切断
+
+### 3. TeamMgr → APP_DB: ProducerStateTable (PUBLISH)
+
+teamd 操作完了後、TeamMgr が APP_DB `LAG_MEMBER_TABLE` (= `APP_LAG_MEMBER_TABLE_NAME`) に
+`ProducerStateTable::set()` / `del()` で書き込む。Lua スクリプト (EVALSHA) が key-set に SADD し、
+チャネル `LAG_MEMBER_TABLE_CHANNEL@0` に PUBLISH する。
+
+### 4. APP_DB → PortsOrch: ConsumerStateTable (SUBSCRIBE + EVALSHA) → SAI lag_member
+
+`portsorch.cpp:4388` で起動時スナップショット (`addExistingData(APP_LAG_MEMBER_TABLE_NAME)`)、
+`portsorch.cpp:6531` で `doLagMemberTask(consumer)` にディスパッチ。
+`sai_lag_api->create_lag_member()` / `remove_lag_member()` (`portsorch.cpp:8172, 8221`) を呼び出す。
+
+| DB | Redis チャネル / パターン | 用途 |
+|---|---|---|
+| CONFIG_DB (db=4) | `__keyspace@4__:PORTCHANNEL_MEMBER\|*` | TeamMgr が PSUBSCRIBE |
+| teamd (UNIX ソケット) | `/var/run/teamd/<lag>.ctl` | teamdctl port add/remove |
+| APPL_DB (db=0) | `LAG_MEMBER_TABLE_CHANNEL@0` | PortsOrch の ConsumerStateTable が SUBSCRIBE |
+| STATE_DB (db=6) | `__keyspace@6__:LAG_TABLE\|*` | TeamMgr が isLagStateOk() で LAG 状態監視 |
+
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-pubsub.md -->
+<!-- /pubsub -->
+
 <!-- cross-refs -->
 ## 暗黙参照マップ (Phase C)
 
@@ -384,3 +435,43 @@ DEL PORTCHANNEL|PortChannel0001
 LAG を VLAN に trunk させる場合は PORTCHANNEL_MEMBER として物理ポートを追加した後、LAG インタフェース名 (`PortChannel0001`) を `VLAN_MEMBER` に追加する。物理ポートを直接 VLAN_MEMBER に追加するのではない点に注意。
 
 <!-- /cross-refs -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-side-effects.md -->
+
+PORTCHANNEL_MEMBER の SET/DEL は CONFIG_DB への書き込みに留まらず、複数の DB とカーネルに副次的な書き込みを生じさせる。
+
+### SET (PORTCHANNEL_MEMBER|&lt;lag&gt;|&lt;member&gt;) の副次書き込み
+
+| 副次書き込み先 | テーブル / リソース | フィールド / 値 | 担当 | ソース |
+|---|---|---|---|---|
+| APPL_DB | `PORT_TABLE` | `<member>` field=`mtu` (LAG の MTU を継承) | `teammgrd` | `teammgr.cpp:830` |
+| APPL_DB | `LAG_MEMBER_TABLE` | `<lag>:<member>` field=`status` (`disabled` → LACP 後 `enabled`) | `teamsyncd` | `teamsync.cpp:420` |
+| ASIC_DB | `SAI_OBJECT_TYPE_LAG_MEMBER` | `create_lag_member` — lag_member OID 生成 | `portsorch` (syncd 経由) | `portsorch.cpp:8172` |
+| ASIC_DB | LAG_MEMBER 属性 | `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE=true` / `INGRESS_DISABLE=true` (LACP 未完時) | `portsorch` | `portsorch.cpp:8162-8167` |
+| CHASSIS_APP_DB | `SYSTEM_LAG_MEMBER_TABLE` | `<system_lag>:<system_port>` field=`status` | `portsorch` | `portsorch.cpp:8213` (VoQ Local LAG のみ) |
+| カーネル netdev | `ip link` | メンバを admin-down → enslave → admin_status 復元 | `teammgrd` | `teammgr.cpp:761-828` |
+| teamd (UNIX ソケット) | `teamdctl port config update` + `port add` | lacp_key / link_watch 設定後に enslave | `teammgrd` | `teammgr.cpp:762-769` |
+
+### DEL (PORTCHANNEL_MEMBER|&lt;lag&gt;|&lt;member&gt;) の副次書き込み
+
+| 副次書き込み先 | テーブル / リソース | フィールド / 値 | 担当 | ソース |
+|---|---|---|---|---|
+| APPL_DB | `PORT_TABLE` | `<member>` field=`mtu` (元の MTU に復元) | `teammgrd` | `teammgr.cpp:862` |
+| APPL_DB | `LAG_MEMBER_TABLE` | `<lag>:<member>` DEL | `teamsyncd` | `teamsync.cpp:432` |
+| ASIC_DB | `SAI_OBJECT_TYPE_LAG_MEMBER` | `remove_lag_member` — lag_member OID 削除 | `portsorch` (syncd 経由) | `portsorch.cpp:8221` |
+| CHASSIS_APP_DB | `SYSTEM_LAG_MEMBER_TABLE` | `<system_lag>:<system_port>` DEL | `portsorch` | `portsorch.cpp:8261` (VoQ Local LAG のみ) |
+| カーネル netdev | `ip link` | MTU / admin_status を元値に復元 | `teammgrd` | `teammgr.cpp:858-860` |
+| teamd (UNIX ソケット) | `teamdctl port remove` | メンバを LAG から削除 | `teammgrd` | `teammgr.cpp:836` |
+
+### STATE_DB への書き込み
+
+STATE_DB に `LAG_MEMBER_TABLE` は書き込まれない。LAG メンバの状態は APPL_DB `LAG_MEMBER_TABLE.status` フィールドで管理される。teamsyncd は STATE_DB には LAG 本体 (`LAG_TABLE`) のみ書き込む。
+
+### LACP ネゴシエーションと ASIC_DB 更新タイミング
+
+メンバ追加直後は `LAG_MEMBER_TABLE.status = disabled` であり、ASIC_DB の lag_member に `EGRESS_DISABLE=true` / `INGRESS_DISABLE=true` が設定される。LACP ネゴシエーション完了後、teamd が `TEAM_PORT_CHANGE` で `status=enabled` を通知 → teamsyncd が `LAG_MEMBER_TABLE` を更新 → portsorch が SAI attribute を解除する (`portsorch.cpp:8295-8340`)。
+
+<!-- /side-effects -->
