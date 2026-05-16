@@ -240,6 +240,30 @@ vtysh -c 'show bgp listen range'
 > **スキャン証跡**: peer_type="dynamic" 固有の ip_range 更新分岐と del_handler の `no listen range` テンプレート使用を確認。3 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> **調査根拠**: `bgpcfgd/managers_bgp.py` および `dynamic/policies.conf.j2`、`dynamic/instance.conf.j2` を精読 (2026-05-16)。詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-platform.md`
+
+`BGP_PEER_RANGE` の処理経路（`BGPPeerMgrBase` / dynamic テンプレート群）には `switch_type`、`sub_role`、`DEVICE_METADATA.localhost.type` を**条件分岐として使用する箇所は存在しない**。
+
+### 根拠
+
+| 検索対象 | 結果 |
+|---------|------|
+| `switch_type` in `managers_bgp.py` | ヒットなし |
+| `sub_role` in `managers_bgp.py` | ヒットなし |
+| `localhost/type` の分岐利用 | deps 登録のみ（存在チェック）、値による動作切り替えなし |
+| `dynamic/policies.conf.j2` の platform 分岐 | なし（`FROM_BGP_SPEAKER` / `TO_BGP_SPEAKER` route-map のみ） |
+| `dynamic/instance.conf.j2` の platform 分岐 | なし（`peer_asn` / `src_address` の有無分岐のみ） |
+
+`localhost/type` は swsscommon deps ガードの「キー存在チェック」として登録されているが、値を読んで動作を切り替えるコードは存在しない。`dynamic/instance.conf.j2` の分岐は CONFIG_DB フィールド（`peer_asn`、`src_address`）の有無であり、プラットフォーム種別とは無関係。
+
+### 結論
+
+`BGP_PEER_RANGE` は peer_type="dynamic" の固定ロールであり、FRR 経路（bgpcfgd + dynamic テンプレート）は全 SONiC プラットフォームで同一動作をする。switch_type / sub_role による挙動変化はない。
+<!-- /platform -->
+
 <!-- ordering -->
 ## 書込み順序依存 (Phase B)
 
