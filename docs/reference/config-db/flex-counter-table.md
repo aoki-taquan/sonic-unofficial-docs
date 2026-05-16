@@ -324,4 +324,28 @@ YANG に `default` なし。counterpoll CLI の表示上のソフトデフォル
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp -->
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `key` が未定義グループ名 | `doTask()` L183-188 | エントリをスキップ（設定未適用） | `SWSS_LOG_NOTICE("Invalid flex counter group input, %s")` |
+| `FLEX_COUNTER_STATUS` に `enable`/`disable` 以外の値 | `doTask()` L235-393 | 各 orch ブロックすべてが silent skip。`setFlexCounterGroupOperation()` には不正値が渡る | なし（ログ未出力） |
+| `POLL_INTERVAL` に非数値・YANG 範囲外の値を直接書き込み | `setFlexCounterGroupPollInterval()` | orchagent 側バリデーションなし。値をそのまま syncd に渡す。拒否はプラットフォーム依存 | なし |
+| `gPortsOrch == nullptr` で PORT / QUEUE / PG / WRED 系を `enable` | `doTask()` L235 | `gPortsOrch` null チェックで全ブロックをスキップ → SAI カウンタ設定ゼロ | なし（silent drop） |
+| `gCoppOrch == nullptr` で `FLOW_CNT_TRAP` を `enable` | `doTask()` L311 | `generateHostIfTrapCounterIdList()` 呼び出しスキップ → trap flow counter 未設定 | なし（silent drop） |
+| `gFlowCounterRouteOrch` null または `getRouteFlowCounterSupported() == false` で `FLOW_CNT_ROUTE` を `enable` | `doTask()` L324 | ルートフローカウンタ設定ゼロ・`m_route_flow_counter_enabled` 更新なし | なし（silent drop） |
+| `allPortsReady() == false` の間に SET | `doTask()` 早期 return | エントリが `m_toSync` に蓄積。全ポート ready 後に一括処理 | なし |
+| warm-reboot 中（delay timer 60s 未満）に SET | delay guard | `m_delayTimerExpired == false` の間は全 SET が無視される | なし |
+| `create_only_config_db_buffers` 読み取りで `std::system_error` | コンストラクタ L122-124 | `m_createOnlyConfigDbBuffers` がデフォルト (`false`) のまま → バッファカウンタ設定が変わる可能性 | `SWSS_LOG_ERROR("System error reading create_only_config_db_buffers: %s")` |
+| `BUFFER_QUEUE` key がトークン数 ≠ 2 | `getQueueConfigurations()` L559-562 | エントリスキップ（カウンタ未適用） | `SWSS_LOG_ERROR("Invalid BUFFER_QUEUE key: [%s]")` |
+| queue / PG インデックスが非整数または範囲外 | `getQueueConfigurations()` L599-601 / `getPgConfigurations()` L661-663 | `std::invalid_argument` キャッチ → そのポートのカウンタ設定をスキップ | `SWSS_LOG_ERROR("Invalid queue/pg index ...")` |
+| `BUFFER_PG` key がトークン数 ≠ 2 | `getPgConfigurations()` L628-631 | エントリスキップ | `SWSS_LOG_ERROR("Invalid BUFFER_PG key: [%s]")` |
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 6ca28e02d7fb -->
