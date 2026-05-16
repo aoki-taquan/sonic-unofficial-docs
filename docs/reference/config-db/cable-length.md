@@ -213,6 +213,44 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数一覧 (Phase E)
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.h:15, buffermgrdyn.cpp:485,2174,2378, buffermgr.cpp:159,183-184, buffer_headroom_mellanox.lua:42-51,119-120,160, buffer_headroom_barefoot.lua:13, buffer_pool_barefoot.lua:13 -->
+
+バッファ計算処理に埋め込まれたハードコード定数。設定変更の影響範囲を把握するために重要。
+
+### 定数表
+
+| 定数名 / 値 | 型 | 定義場所 | 用途 | 備考 |
+|---|---|---|---|---|
+| `DEFAULT_MTU_STR = "9100"` | `string` (bytes) | `buffermgrdyn.h:15` | MTU 未設定ポートの headroom 仮計算に使用 | mtu 設定後に再計算される |
+| `INGRESS_LOSSLESS_PG_POOL_NAME = "ingress_lossless_pool"` | `string` | `buffermgrdyn.h:14` | lossless PG プロファイルが割り当てられるプール名 | ハードコード固定 |
+| `BUFFERMGR_TIMER_PERIOD = 10` | `int` (秒) | `buffermgrdyn.h:17` | バッファマネージャのポーリング間隔 | 10 秒周期でリトライキュー処理 |
+| `speed_of_light = 198000000` | `int` (m/s) | `buffer_headroom_mellanox.lua:119` | ケーブル内伝播遅延計算に使用 (光速の約 66%) | `bytes_on_cable = 2 * cable_length * port_speed * 1e9 / speed_of_light / 8000` |
+| `minimal_packet_size = 64` | `int` (bytes) | `buffer_headroom_mellanox.lua:120` | worst-case cell 占有率計算の最小パケット長 | cell_size > 128 → `cell/64`, それ以外 → `2*cell/(1+cell)` |
+| `pause_quanta_per_speed[1G] = 2` | `int` | `buffer_headroom_mellanox.lua:50` | 速度別 PFC pause quanta (1 Gbps) | 512-bit 単位 |
+| `pause_quanta_per_speed[10G] = 67` | `int` | `buffer_headroom_mellanox.lua:49` | 速度別 PFC pause quanta (10 Gbps) | 同上 |
+| `pause_quanta_per_speed[25G] = 80` | `int` | `buffer_headroom_mellanox.lua:48` | 速度別 PFC pause quanta (25 Gbps) | 同上 |
+| `pause_quanta_per_speed[40G] = 118` | `int` | `buffer_headroom_mellanox.lua:47` | 速度別 PFC pause quanta (40 Gbps) | 同上 |
+| `pause_quanta_per_speed[50G] = 147` | `int` | `buffer_headroom_mellanox.lua:46` | 速度別 PFC pause quanta (50 Gbps) | 同上 |
+| `pause_quanta_per_speed[100G] = 394` | `int` | `buffer_headroom_mellanox.lua:45` | 速度別 PFC pause quanta (100 Gbps) | 同上 |
+| `pause_quanta_per_speed[200G] = 453` | `int` | `buffer_headroom_mellanox.lua:44` | 速度別 PFC pause quanta (200 Gbps) | 同上 |
+| `pause_quanta_per_speed[400G] = 905` | `int` | `buffer_headroom_mellanox.lua:43` | 速度別 PFC pause quanta (400 Gbps) | 同上 |
+| `pause_quanta_per_speed[800G] = 905` | `int` | `buffer_headroom_mellanox.lua:42` | 速度別 PFC pause quanta (800 Gbps) | 400G と同値 |
+| `ppg_headroom = 400 * cell_size` | `int` (bytes) | `buffer_pool_barefoot.lua:13` | Barefoot (Tofino) ASIC の per-PG headroom 固定計算式 | cell_size は ASIC テーブルから取得 |
+| `gearbox_delay = 0` | `int` | `buffer_headroom_mellanox.lua:57` | gearbox 遅延未設定時のフォールバック値 | ARGV[4] が nil のとき 0 バイトと扱う |
+| プロファイル名テンプレート `"pg_lossless_<speed>_<cable>_profile"` | `string` | `buffermgr.cpp:183-184`, `buffermgrdyn.cpp:487,491` | PG プロファイルのキー命名規則 | MTU = 9100 のとき mtu サフィックス省略; `pg_lossless_<speed>_<cable>_mtu<mtu>_profile` に変化 |
+
+### 注記
+
+- **`DEFAULT_MTU_STR`**: `buffermgrdyn.cpp:2174` および `2378` の 2 箇所で使用。cable_length が来た時点で mtu が空なら `"9100"` で仮計算し、後から mtu が設定されると `refreshPgsForPort` が再実行される。
+- **`speed_of_light`**: 光ファイバー内の実効速度 (真空中の約 2/3)。銅線の伝播速度は若干異なるが、Mellanox headroom lua ではこの値で統一。
+- **`minimal_packet_size`**: 64 bytes は Ethernet 最小フレーム長 (payload 46 bytes + ヘッダ 18 bytes)。cell_size との比較で worst-case factor を決定する分岐に使用。
+- **`BUFFERMGR_TIMER_PERIOD`**: 設定変更が失敗した際の再試行は 10 秒ごと。cable_length 設定変更後に headroom 計算が即座に反映されない場合の待機目安。
+
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込み (Phase F)
 
