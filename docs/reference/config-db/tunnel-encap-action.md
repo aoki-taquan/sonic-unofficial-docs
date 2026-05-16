@@ -90,6 +90,37 @@ APPL_DB:   P4RT_TABLE:FIXED_NEXTHOP_TABLE:<json_key>
 
 - `NextHopManager` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) `SAI_OBJECT_TYPE_NEXT_HOP` (TUNNEL_ENCAP タイプ) 作成/削除
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`NextHopManager` (`validateAppDbEntry()`) は SET コマンド受信時に参照先オブジェクトの存在を即時チェックするため、書き込み順序が直結する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `FIXED_TUNNEL_TABLE` (GRE トンネル本体) → `FIXED_NEXTHOP_TABLE` `set_p2p_tunnel_encap_nexthop` | **先行必須**（欠如時 `SWSS_RC_NOT_FOUND`） | P4RT controller がトンネル作成後に nexthop を書く順守 |
+| 2 | GRE トンネル配下の RIF・neighbor → `FIXED_NEXTHOP_TABLE` | **先行必須**（BRCM SAI 要件: `next_hop_manager.cpp:144-158`） | RIF / neighbor は P4Orch 内で GRE より先順位に処理される |
+| 3 | `FIXED_NEXTHOP_TABLE` エントリ → WCMP / Route 下流 | 先行必須（下流が nexthop OID を参照） | WCMP / Route は P4Orch 内で nexthop より後順位 |
+| 4 | DEL 時: WCMP / Route → `FIXED_NEXTHOP_TABLE` | **先行必須**（`ref_count > 0` は `SWSS_RC_INVALID_PARAM`） | 上流の参照を先に削除してから nexthop DEL |
+| 5 | GRE Tunnel ID 変更 UPDATE | **禁止**（`INVALID_PARAM` エラー） | 変更は DEL → SET の順で実施 |
+
+### P4Orch 処理優先順 (ADD)
+
+P4Orch 内部の `m_p4ManagerAddPrecedence` が以下の順でマネージャを drain する。これにより同一バッチ内の依存解決が自動化される。
+
+```
+RIF (2位) → Neighbor (3位) → GRE Tunnel (4位) → NextHop (5位) → WCMP (6位) → Route
+```
+
+P4RT controller が単一 WriteRequest でこれらを混在させた場合でも P4Orch がこの順に処理する。ただし `FIXED_TUNNEL_TABLE` 自体の依存（RIF / neighbor）が未作成の場合は GRE Tunnel SET が失敗し、後続の NextHop SET もキャンセルされる。
+
+### Bulk SAI のキャンセル伝搬
+
+`createNextHops()` は `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` で動作する。バッチ内の 1 件が SAI レベルで失敗すると後続エントリがすべてキャンセルされる（`next_hop_manager.cpp:527`）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来デフォルト・暗黙挙動
 
