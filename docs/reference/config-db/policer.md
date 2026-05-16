@@ -298,3 +298,41 @@ minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はな�
 > **スキャン証跡**: `policerorch.cpp:374-520` を全行読了、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 根拠: `policerorch.cpp` 全行精読、`crmorch.cpp` / `p4orch/acl_rule_manager.cpp` 確認。evidence: `meta/_intermediate/cdb-flow/policer-side-effects.md`
+
+### ASIC_DB
+
+| 操作 | SAI API | ASIC_DB エントリ | 発生条件 |
+|------|---------|-----------------|---------|
+| policer 作成 | `sai_policer_api->create_policer()` | `ASIC_STATE:SAI_OBJECT_TYPE_POLICER:<oid>` | POLICER SET (新規) / PORT_STORM_CONTROL SET (新規) |
+| policer 属性更新 | `sai_policer_api->set_policer_attribute()` | 同上 | POLICER SET (update) — CIR/CBS/PIR/PBS のみ |
+| policer 削除 | `sai_policer_api->remove_policer()` | 同上 (DEL) | POLICER DEL / PORT_STORM_CONTROL DEL |
+| port storm-control attach | `sai_port_api->set_port_attribute()` | `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<port_oid>` | PORT_STORM_CONTROL SET/DEL で policer OID をポートへ紐付け・解除 |
+
+storm-control 経由の SAI port 属性:
+
+| storm_type | SAI_PORT 属性 |
+|-----------|--------------|
+| `broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` |
+| `unknown-unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` |
+| `unknown-multicast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` |
+
+evidence: `policerorch.cpp:204-215`, `policerorch.cpp:322-340`
+
+### COUNTERS_DB
+
+`policerorch.cpp` は COUNTERS_DB に書き込まない。
+
+policer 統計 (`SAI_POLICER_STAT_GREEN/YELLOW/RED_PACKETS/BYTES`) は **P4 ACL ルールに紐付いた policer のみ** P4 ACL rule manager が収集し COUNTERS_DB へ書き込む。標準 `POLICER` テーブル由来の policer には COUNTERS_DB 統計書込なし。
+
+evidence: `p4orch/acl_rule_manager.cpp:762-804`
+
+### CRM カウンタ
+
+`crmorch.cpp` に `SAI_OBJECT_TYPE_POLICER` への参照はゼロ件。PolicerOrch は CRM カウンタを更新しない。policer オブジェクトは CRM リソース管理の対象外。
+
+<!-- /side-effects -->
