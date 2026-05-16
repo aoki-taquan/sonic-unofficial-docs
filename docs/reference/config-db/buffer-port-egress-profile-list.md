@@ -307,4 +307,50 @@ Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一�
 | BUFFER_PROFILE 未登録 (orchagent) | `task_need_retry` | あり |
 | PORT 未登録 (orchagent) | `task_invalid_entry` | **なし**（エントリ破棄） |
 <!-- /ordering -->
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+### Dynamic vs Static バッファモデル
+
+`DEVICE_METADATA.buffer_model` の値によって動作するマネージャが切り替わり、このテーブルの検証レベルが大きく変わる。
+
+| 観点 | Static model (`buffermgr.cpp`) | Dynamic model (`buffermgrdyn.cpp`) |
+|------|-------------------------------|-------------------------------------|
+| 有効条件 | `buffer_model` が `"dynamic"` でない場合 | `buffer_model == "dynamic"` |
+| direction 検証 | なし（orchagent 段のみ） | あり: ingress profile を egress list に指定 → `task_failed` |
+| profile 存在検証 | なし（orchagent 段で retry） | あり: `m_bufferProfileLookup` 未登録 → `task_need_retry` |
+| admin-down port 置換 | なし（CONFIG_DB 値をそのまま APPL_DB へ） | あり: ゼロプロファイルリストへ自動差し替え |
+| buffer pool guard | なし | あり: pool 未準備時は pending |
+| DEL 操作 | APPL_DB から削除 | 削除処理は動作するが `// Not supported on Mellanox platform for now.` 注記付き |
+
+Static model は `dynamic_buffer_model == true` 時に即 `return` する（`buffermgr.cpp:476-480`）。
+
+### ASIC Vendor 差分（Mellanox 固有）
+
+`buffermgrdyn.cpp` は `ASIC_VENDOR` 環境変数でプラットフォームを判別する（`buffermgrdyn.cpp:68-80`）。
+
+| 挙動 | 適用範囲 | evidence |
+|------|---------|---------|
+| Mellanox SN シリーズモデル番号を取得して処理を分岐 | Mellanox のみ | `buffermgrdyn.cpp:84-102` |
+| 8 レーンポートで xon 値を倍増（profile 名に `_8lane` を付与） | Mellanox 4xxx (400G 以外) / 5xxx (800G 以外) | `buffermgrdyn.cpp:504-522` |
+| DEL パスに `// Not supported on Mellanox platform for now.` 注記 | Mellanox での留意事項 | `buffermgrdyn.cpp:3443` |
+
+`_8lane` ロジックは PG バッファプロファイル名の生成に関するものであり、BUFFER_PORT_EGRESS_PROFILE_LIST のキー・フィールド処理そのものには直接影響しない。ただし、このテーブルが参照する `BUFFER_PROFILE` の名前がプラットフォームによって異なる場合がある。
+
+Broadcom・その他ベンダーでは vendor 固有の条件分岐なし。テーブル処理コードは同一パスを通る（Lua ヘッドルームプラグイン名のみ異なる）。
+
+### VOQ Chassis
+
+`bufferorch.cpp` の `processEgressBufferProfileList` / `processEgressBufferProfileListBulk` 内に `gMySwitchType == "voq"` 分岐は **存在しない**。VOQ 固有のキー拡張（4 トークン形式）は BUFFER_QUEUE ハンドラにのみ適用される。
+
+| 項目 | 標準スイッチ | VOQ Chassis |
+|------|------------|------------|
+| `processEgressBufferProfileList` 実行 | 通常通り | 同一コードパス（分岐なし） |
+| 処理開始条件 | `isConfigDone()` | `isInitDone()`（より早い段階） |
+| SAI 属性 | `SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST` | 同じ属性 |
+| `buffermgrdyn.cpp` での処理 | voq 分岐なし | voq 分岐なし |
+
+**結論**: VOQ Chassis において BUFFER_PORT_EGRESS_PROFILE_LIST の挙動は標準スイッチと同一。`doTask(Consumer &)` 内の `isInitDone()` 使用による処理開始タイミングの早期化のみが間接的に関係する（`bufferorch.cpp:2079-2094`）。
+<!-- /platform -->
+
 <!-- glossary-links-injected: 5ad0ecc20ddb -->
