@@ -448,6 +448,490 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 
 <!-- /handler-branching -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+DEVICE_METADATA フィールド値に基づいて分岐する処理の中で用いられる、起動タイマー・retry カウント・threshold の固定数値。
+
+### orchagent バッチ/bulk サイズ (`switch_type` 依存)
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `-b` batch_size | `128` | `switch_type == 'chassis-packet'` | orchagent pop バッチサイズ。リンク通知の高速処理 | `docker-orchagent/orchagent.sh:24-26` |
+| `-b` batch_size | `65536` | `switch_type == 'dpu'` | DPU 高ボリューム処理向け大容量バッチ | `docker-orchagent/orchagent.sh:29` |
+| `-b` batch_size | `1024` | その他 (デフォルト) | 通常スイッチ標準バッチ | `docker-orchagent/orchagent.sh:32` |
+| `-k` bulk_size (ZMQ) | `65536` | `switch_type == 'dpu'` | ZMQ synchronous mode の最大 bulk limit | `docker-orchagent/orchagent.sh:39` |
+
+### SAI create_switch タイムアウト (`switch_type` 依存)
+
+基準値: `SAI_REDIS_DEFAULT_SYNC_OPERATION_RESPONSE_TIMEOUT = 60,000 ms`（`sonic-sairedis/lib/sairedis.h:46`）
+
+| 条件 | タイムアウト | 計算根拠 | evidence |
+|------|------------|---------|---------|
+| `switch_type IN ['voq','chassis-packet','dpu']` | `300,000 ms` | `5 × 60,000 ms` | `sonic-swss/orchagent/main.cpp:822` |
+| `switch_type == 'fabric'` | `600,000 ms` | `10 × 60,000 ms` | `sonic-swss/orchagent/main.cpp:825` |
+| その他 / デフォルト | `60,000 ms` | `1 × 基準値` | `sonic-swss/orchagent/main.cpp:829` |
+
+### BGP タイマー (`type` / `subtype` / `constants.yml` 依存)
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `graceful_restart.restart_time` | `240` 秒 | `type == 'ToRRouter'` かつ `constants.bgp.graceful_restart.enabled == true` | FRR BGP graceful-restart タイマー | `constants.yml:24; bgpd.main.conf.j2:119` |
+| `graceful_restart.select_defer_time` | `45` 秒 (Jinja `default(45)`) | 同上、constants.yml に未定義のため fallback | BGP best-path 選択遅延タイマー | `bgpd.main.conf.j2:122` |
+| `coalesce-time` | `10,000` ms | `subtype == 'DualToR'` | BGP ルート集約タイマー (mux 切替時の収束遅延緩和) | `bgpd.main.conf.j2:111` |
+
+### BMP 接続タイマー (`FEATURE.frr_bmp/bmp.state == 'enabled'` 時)
+
+| 定数 | 値 | 用途 | evidence |
+|------|-----|------|---------|
+| `bmp stats interval` | `1,000` ms | BMP 統計送信間隔 | `bgpd.main.conf.j2:133` |
+| `bmp connect port` | `5000` | ローカル BMP コレクター接続先ポート | `bgpd.main.conf.j2:136` |
+| `bmp connect min-retry` | `10,000` ms | BMP 接続リトライ最小間隔 | `bgpd.main.conf.j2:136` |
+| `bmp connect max-retry` | `15,000` ms | BMP 接続リトライ最大間隔 | `bgpd.main.conf.j2:136` |
+| `bmp mirror buffer-limit` | `4,294,967,214` bytes | BMP ミラーバッファ上限 (≒ 4 GiB) | `bgpd.main.conf.j2:130` |
+
+### teamd retry count / sleep (`default_bgp_status` 依存)
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `DEFAULT_RETRY_COUNT` | `3` | 通常 / リセットパケット時 | LACPDU actor/partner retry_count フィールド値 | `teamd_increase_retry_count.py:31` |
+| `EXTENDED_RETRY_COUNT` | `5` | `default_bgp_status == 'up'` かつ 新バージョン対向時 | BGP up 状態で retry を延ばし PortChannel 安定化を待つ | `teamd_increase_retry_count.py:32,215` |
+| LACPDU 送信 sleep | `15` 秒 | retry count 変更パケット送信ループ | LACPDU ブロードキャスト間隔 | `teamd_increase_retry_count.py:225,327` |
+| peer 処理待ち sleep | `2` 秒 | リセットパケット送信前 | 対向デバイスの処理完了待機 | `teamd_increase_retry_count.py:297` |
+| LACP sniff timeout | `30` 秒 | sniffer 起動時 | LACPDU キャプチャ待機タイムアウト | `teamd_increase_retry_count.py:99` |
+
+### fpmsyncd warm-restart / flush タイマー (`suppress-fib-pending` 依存)
+
+| 定数 | 値 | 用途 | evidence |
+|------|-----|------|---------|
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` 秒 | FRR routing stack warm-restart 完了待機 | `sonic-swss/fpmsyncd/fpmsyncd.cpp:46` |
+| `DEFAULT_EOIU_HOLD_INTERVAL` | `3` 秒 | EOIU フラグ検出後 reconciliation 開始前 hold タイマー | `sonic-swss/fpmsyncd/fpmsyncd.cpp:51` |
+| `FLUSH_TIMEOUT` | `500` ms | route flush 間隔の上限 | `sonic-swss/fpmsyncd/fpmsyncd.cpp:25` |
+| `SMALL_TRAFFIC` | `500` ルート | `remaining < 500` のとき即時 flush するトラフィック量閾値 | `sonic-swss/fpmsyncd/fpmsyncd.cpp:28` |
+| `FPM_MAX_MSG_LEN` | `16,384` bytes | FPM メッセージバッファ最大長 | `sonic-swss/fpmsyncd/fpm/fpm.h:95` |
+
+### bgpcfgd / bfdmon 起動定数
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `wait_for_daemons seconds` | `20` 秒 | bgpcfgd 起動時 | FRR daemons が vtysh に接続するまでの最大待機 | `bgpcfgd/main.py:47` |
+| `MAX_RETRY_ATTEMPTS` (bfdmon) | `3` | `switch_type != 'dpu'` | vtysh コマンド失敗時の BFD 情報取得リトライ上限 | `bfdmon/bfdmon.py:21` |
+| `SLEEP_TIME` (bfdmon) | `2` 秒 | 同上 | BFD ポーリングループ待機間隔 | `bfdmon/bfdmon.py:151` |
+| `HEART_BEAT_INTERVAL_MSECS_DEFAULT` | `10,000` ms | orchagent デフォルト | orchagent heartbeat 送信間隔 (`-I` で上書き可) | `sonic-swss/orchagent/main.cpp:75` |
+
+### ECMP hash_seed (`type` 別固定値)
+
+multi-ASIC 環境では `hash_seed + namespace_id` が実際の設定値になる。
+
+| `type` | `hash_seed` | `ecmp_hash_offset` | `lag_hash_offset` | `ordered_ecmp` | evidence |
+|--------|------------|------------------|-----------------|---------------|---------|
+| `ToRRouter` | `0` | `0` | `0` | `false` | `switch.json.j2:9` |
+| `LeafRouter` | `10` | `10` | `10` | `true` | `switch.json.j2:11-13` |
+| `SpineRouter` | `25` | `0` | `0` | `false` | `switch.json.j2:15` |
+| `FabricSpineRouter` | `40` | `0` | `0` | `false` | `switch.json.j2:16-17` |
+| `UpperSpineRouter` | `50` | `0` | `0` | `false` | `switch.json.j2:18-19` |
+| `LowerRegionalHub` | `60` | `0` | `0` | `false` | `switch.json.j2:20-21` |
+| `FabricRegionalHub` | `70` | `0` | `0` | `false` | `switch.json.j2:22-23` |
+| `UpperRegionalHub` | `80` | `0` | `0` | `false` | `switch.json.j2:24-25` |
+
+### constants.yml 参照値 (DEVICE_METADATA consumer が利用)
+
+| key | 値 | 用途 |
+|-----|-----|------|
+| `bgp.maximum_paths.ipv4` | `514` | IPv4 ECMP 最大パス数 |
+| `bgp.maximum_paths.ipv6` | `514` | IPv6 ECMP 最大パス数 |
+| `bgp.route_do_not_send_appdb_tag` | `202` | SpineRouter+UpstreamLC BGP route-map タグ |
+| `bgp.route_eligible_for_fallback_to_default_tag` | `203` | VoQ chassis BGP route-map タグ |
+| `bgp.internal_fallback_community` | `22222:22222` | SpineRouter+UpstreamLC route-map community |
+| `bgp.hide_internal_community` | `55555:55555` | FabricSpineRouter/LowerSpineRouter 等 HIDE_INTERNAL route-map |
+| `bgp.traffic_shift_community` | `12345:12345` | TSA/TSB isolation route-map community |
+| `bgp.internal_community` | `11111:11111` | internal BGP community |
+
+### SwitchOrch ポーリング定数 (`sonic-swss/orchagent/switchorch.cpp`)
+
+`switchorch.cpp` / `switchorch.h` に定義された固定数値。`DEVICE_METADATA.switch_type` や `DEVICE_METADATA.type` の値に依存しないが、SwitchOrch が `DEVICE_METADATA` consumer として動作する際のポーリング周期・重複排除タイマー。
+
+| 定数名 | 値 | 用途 | evidence |
+|--------|-----|------|---------|
+| `SWITCH_STAT_COUNTER_POLLING_INTERVAL_MS` | `60,000` ms | `SwitchOrch` が `FlexCounterManager` を介して SWITCH_STAT カウンタ (dropped_trim / tx_trim パケット) を取得するポーリング間隔 | `sonic-swss/orchagent/switchorch.cpp:32,157` |
+| `DEFAULT_ASIC_SENSORS_POLLER_INTERVAL` | `60` 秒 | `m_sensorsPollerTimer` の初期値。ASIC 温度センサーのポーリング間隔。`ASIC_SENSORS_POLLER_INTERVAL` フィールドで上書き可能 | `sonic-swss/orchagent/switchorch.h:12; switchorch.cpp:154` |
+| `ASIC_SDK_HEALTH_EVENT_ELIMINATE_INTERVAL` | `3,600` 秒 (1 時間) | ASIC SDK health event の重複排除ウィンドウ。同一 severity × category の event を 1 時間以内に重複送信しない | `sonic-swss/orchagent/switchorch.h:29` |
+
+### `switch_type` フィールドの有効 enum 値と既定値
+
+`orchagent/main.cpp:260` は `switch_type` を読み込み、次の 5 値以外は無効として `"switch"` にフォールバックする。
+
+| 値 | SAI_SWITCH_TYPE | 既定 | evidence |
+|----|----------------|------|---------|
+| `switch` | `SAI_SWITCH_TYPE_NPU`（既定） | ◎ 未設定時のフォールバック値 | `sonic-swss/orchagent/main.cpp:251,264` |
+| `voq` | `SAI_SWITCH_TYPE_VOQ` | — | `sonic-swss/orchagent/main.cpp:698` |
+| `fabric` | `SAI_SWITCH_TYPE_FABRIC` | — | `sonic-swss/orchagent/main.cpp:742` |
+| `chassis-packet` | `SAI_SWITCH_TYPE_NPU`（multi-ASIC chassis） | — | `sonic-swss/orchagent/main.cpp:260` |
+| `dpu` | `SAI_SWITCH_TYPE_NPU`（DPU、ZMQ 強制） | — | `sonic-swss/orchagent/main.cpp:260` |
+
+> **注**: `npu` および `dummy-sup` は YANG に定義されているが `main.cpp:260` の有効値リストに含まれない。`npu` は YANG 上の alias として存在するが orchagent は `"switch"` を npu 相当の内部値として使用する。
+
+### `hostname` フィールドの既定値
+
+`DEVICE_METADATA|localhost` に `hostname` が存在しない場合、`config_samples.py` のサンプル設定生成関数が `"sonic"` を書き込む。orchagent は `hostname` 不在時にエラーログを出力して起動を継続する（VoQ モードでは致命的エラー）。
+
+| コンテキスト | 既定値 | evidence |
+|------------|--------|---------|
+| `generate_sample_config()` | `"sonic"` | `sonic-buildimage/src/sonic-config-engine/config_samples.py:50,154` |
+| `migrate_config_db_to_new_schema()` | `"sonic"`（`hostname` キー不在時のみ挿入） | `sonic-buildimage/src/sonic-config-engine/config_samples.py:219-220` |
+| orchagent VoQ モード（`switch_type=voq`） | エラー終了（必須フィールド扱い） | `sonic-swss/orchagent/main.cpp:337-347` |
+
+### `buffer_model` フィールドの enum 値と既定挙動
+
+`cfgmgr/buffermgr.cpp:390-406` が `DEVICE_METADATA|localhost` の `buffer_model` を読み取る。
+
+| 値 | `dynamic_buffer_model` フラグ | 挙動 | evidence |
+|----|-------------------------------|------|---------|
+| `dynamic` | `true` | `buffermgr.cpp:476` の `if (dynamic_buffer_model)` 節に入り、BUFFER_POOL / BUFFER_PROFILE の APPL_DB 転写を **スキップ**（Mellanox/BRCM の dynamic buffer manager が直接 SAI を更新） | `sonic-swss/cfgmgr/buffermgr.cpp:392-394` |
+| `traditional`（またはその他 / 未設定） | `false` | else 節でフラグを `false` に設定し BUFFER_POOL / BUFFER_PROFILE を APPL_DB へ転写 | `sonic-swss/cfgmgr/buffermgr.cpp:397-406` |
+
+> **スキャン証跡**: 対象ファイル `orchagent.sh`, `main.cpp` (sonic-swss), `bgpd.main.conf.j2`, `teamd_increase_retry_count.py`, `fpmsyncd.cpp`, `bgpcfgd/main.py`, `bfdmon.py`, `switch.json.j2`, `constants.yml`, `switchorch.cpp`, `switchorch.h`, `config_samples.py`, `buffermgr.cpp`。確認した定数総数: 約 63 個。
+
+<!-- /constants -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G — subscribe 経路)
+
+`DEVICE_METADATA` への subscribe は 4 種類の低レベルメカニズムで実装されている。
+
+### メカニズム分類
+
+| # | メカニズム | 使用箇所 |
+|---|-----------|---------|
+| 1 | `SubscriberStateTable` (C++ 直接) | fpmsyncd |
+| 2 | `Orch` フレームワーク (`ConsumerStateTable`) | BufferMgr (buffermgrd)、FlexCounterOrch (orchagent) |
+| 3 | `ConfigDBConnector.subscribe()` (Python) | hostcfgd |
+| 4 | bgpcfgd `Runner` → `Directory.subscribe()` | BGPDataBaseMgr → BgpPeerMgr / DeviceGlobalCfgMgr / AsPathMgr / AdvertiseRouteMgr |
+
+### Consumer ごとの subscribe 詳細
+
+#### fpmsyncd — `SubscriberStateTable` (直接)
+
+- **API**: `SubscriberStateTable deviceMetadataTableSubscriber(&cfgDb, CFG_DEVICE_METADATA_TABLE_NAME)`
+- **Select 登録**: `s.addSelectable(&deviceMetadataTableSubscriber)` (FPM 接続確立後に動的登録)
+- **監視フィールド**: `suppress-fib-pending`。key = `localhost`、op = `SET_COMMAND` のみ処理
+- **効果**: `enabled` → `NotificationConsumer`（APPL_STATE_DB ルート応答チャネル）を新規作成して `addSelectable()`; `disabled` → `sync.markRoutesOffloaded(db)` 後に `removeSelectable()` して reset
+- **evidence**: `sonic-swss/fpmsyncd/fpmsyncd.cpp:82-83,145,252-315`
+
+#### BufferMgr (buffermgrd) — `Orch` フレームワーク
+
+- **API**: `new BufferMgr(&cfgDb, &applDb, pg_lookup_file, cfg_buffer_tables)` — `cfg_buffer_tables` に `CFG_DEVICE_METADATA_TABLE_NAME` を含む; `s.addSelectables(o->getSelectables())` で一括登録
+- **コールバック**: `BufferMgr::doTask(Consumer &)` → `doBufferMetaTask()`
+- **監視フィールド**: `buffer_model`
+- **効果**: `dynamic` → `dynamic_buffer_model = true` フラグを立て APPL_DB 書き込みをスキップ; それ以外 → BUFFER_POOL / BUFFER_PROFILE を APPL_DB に転写
+- **evidence**: `sonic-swss/cfgmgr/buffermgrd.cpp:200,216; cfgmgr/buffermgr.cpp:464-499`
+
+#### FlexCounterOrch (orchagent) — `Orch` フレームワーク
+
+- **API**: `new FlexCounterOrch(m_configDb, flex_counter_tables)` — `flex_counter_tables` に `CFG_DEVICE_METADATA_TABLE_NAME` を含む
+- **コールバック**: `FlexCounterOrch::doTask(Consumer &)` → `handleDeviceMetadataTable()`
+- **監視フィールド**: `create_only_config_db_buffers`
+- **効果**: `m_createOnlyConfigDbBuffers` フラグ更新 → `getQueueConfigurations()` のカウンタ設定分岐を制御
+- **evidence**: `sonic-swss/orchagent/orchdaemon.cpp:620-627; orchagent/flexcounterorch.cpp:106,149-152,488-521`
+
+#### hostcfgd — `ConfigDBConnector.subscribe()` (Python)
+
+- **API**: `self.config_db.subscribe(swsscommon.CFG_DEVICE_METADATA_TABLE_NAME, make_callback(self.device_metadata_handler))` — 内部で `SubscriberStateTable` を生成
+- **コールバック**: `device_metadata_handler()` → `hostname_update()` / `apply_timezone_if_needed()` / `rsyslog_config()` に委譲
+- **監視フィールド**: `hostname`、`timezone`、`syslog_with_osversion`、`syslog_counter`
+- **効果**: hostname 変更 → `service hostname-config restart` + `monit reload`; timezone 変更 → `timedatectl set-timezone` + `systemctl restart rsyslog`; syslog 変更 → `rsyslog-config.sh` 再実行
+- **evidence**: `sonic-host-services/scripts/hostcfgd:2492-2494,1485-1600`
+
+#### BGPDataBaseMgr (bgpcfgd) — `Runner` → `Directory.subscribe()`
+
+- **API**: `BGPDataBaseMgr(common_objs, "CONFIG_DB", swsscommon.CFG_DEVICE_METADATA_TABLE_NAME)` を `Runner.add_manager()` で登録 → `Runner` が `swsscommon.SubscriberStateTable` を生成し `swsscommon.Select.addSelectable()` で登録
+- **コールバック**: `BGPDataBaseMgr.set_handler()` → `Directory.put()` → 依存 Manager のコールバックを発火:
+    - `BgpPeerMgr`: `bgp_asn` / `type` / `bgp_router_id` / `frr_mgmt_framework_config` 等を受け取り FRR にピア設定を push
+    - `DeviceGlobalCfgMgr`: `type` (localhost/type) を受け取り `switch_role` を更新、TSA / IDF isolation 判定に使用
+    - `AsPathMgr`: `t2_group_asns` を受け取り FRR AS-path set を更新
+    - `AdvertiseRouteMgr`: `bgp_asn` 変更時に BGP route 広告設定を再構成
+- **監視フィールド**: `bgp_asn`、`type`、`t2_group_asns`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`bgp_router_id`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
+- **evidence**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:75; runner.py:29,49-55; managers_db.py:4-24; managers_bgp.py:119-143; managers_device_global.py:33; managers_as_path.py; managers_advertise_rt.py:26`
+
+### フィールド × consumer マトリクス
+
+| フィールド | fpmsyncd | BufferMgr | FlexCounterOrch | hostcfgd | bgpcfgd |
+|---|:---:|:---:|:---:|:---:|:---:|
+| `suppress-fib-pending` | ✓ | | | | ✓ |
+| `buffer_model` | | ✓ | | | |
+| `create_only_config_db_buffers` | | | ✓ | | |
+| `hostname` | | | | ✓ | |
+| `timezone` | | | | ✓ | |
+| `syslog_with_osversion` / `syslog_counter` | | | | ✓ | |
+| `bgp_asn` | | | | | ✓ |
+| `type` | | | | | ✓ |
+| `t2_group_asns` | | | | | ✓ |
+| `bgp_router_id` | | | | | ✓ |
+| `frr_mgmt_framework_config` | | | | | ✓ |
+| `bgp_adv_lo_prefix_as_128` | | | | | ✓ |
+
+### orchagent 起動時一括読み込み → ASIC_DB SAI switch 操作
+
+`SwitchOrch` / `orchagent` は `DEVICE_METADATA` を subscribe しない。代わりに **起動時に一括 `hget`** で値を取得し、SAI API 経由で ASIC_DB に反映する（runtime 変更は反映されない）。
+
+#### 起動時読み込みフィールドと SAI 変換
+
+| 読み込みフィールド | 読み込み関数 | SAI 属性 | evidence |
+|---|---|---|---|
+| `switch_type` | `getCfgSwitchType()` | `SAI_SWITCH_ATTR_TYPE` (voq→`SAI_SWITCH_TYPE_VOQ`, fabric→`SAI_SWITCH_TYPE_FABRIC`) | `main.cpp:242-276` |
+| `subtype` | `getCfgSwitchType()` | `gMySwitchSubType` グローバル変数（SmartSwitch 判定に使用） | `main.cpp:269` |
+| `switch_id` (VOQ) | `getSystemPortConfigList()` | `SAI_SWITCH_ATTR_SWITCH_ID` | `main.cpp:305-313` |
+| `max_cores` (VOQ) | `getSystemPortConfigList()` | `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES` | `main.cpp:321-335` |
+| `hostname` (VOQ) | `getSystemPortConfigList()` | `gMyHostName` グローバル変数 (VoQ システムポート識別) | `main.cpp:337-349` |
+| `asic_name` (VOQ) | `getSystemPortConfigList()` | `gMyAsicName` グローバル変数 | `main.cpp:351-363` |
+| `switch_id` (fabric) | 直接 `hget` | `SAI_SWITCH_ATTR_SWITCH_ID` | `main.cpp:746-769` |
+
+**SAI create_switch 呼び出しフロー**:
+```
+DEVICE_METADATA|localhost.switch_type (hget)
+  → getCfgSwitchType() → gMySwitchType / gMySwitchSubType
+  → attrs[] に SAI_SWITCH_ATTR_TYPE / SAI_SWITCH_ATTR_SWITCH_ID / SAI_SWITCH_ATTR_MAX_SYSTEM_CORES 等を追加
+  → sai_switch_api->create_switch(gSwitchId, attrs) (main.cpp:~800)
+  → sairedis → ASIC_DB (ASIC_STATE:SAI_OBJECT_TYPE_SWITCH)
+```
+
+#### orchagent 内コンポーネント間共有経路 (`gDirectory`)
+
+orchagent 内の orchコンポーネントは `gDirectory` グローバルオブジェクト経由で `gSwitchOrch` ポインタを共有する。`DEVICE_METADATA` 由来の情報は以下の経路でコンポーネント間を伝播する:
+
+| 共有経路 | 方向 | 内容 |
+|---|---|---|
+| `gDirectory.set(gSwitchOrch)` → 他 Orch が `gDirectory.get<SwitchOrch*>()` | SwitchOrch → 依存 Orch | PFC DLR init 状態、restart ready フラグ |
+| `gDirectory.set(flexCounterOrch)` | FlexCounterOrch → 依存 Orch | `create_only_config_db_buffers` フラグ（DEVICE_METADATA 由来） |
+| `gSwitchOrch->checkPfcDlrInitEnable()` | OrchDaemon → SwitchOrch | バッファ設定タイミング制御 |
+| `gSwitchOrch->checkRestartReady()` | OrchDaemon ループ → SwitchOrch | warmboot/fastboot 再起動チェック |
+
+> **注**: `SwitchOrch` 自体は `APP_SWITCH_TABLE`・`CFG_ASIC_SENSORS`・`CFG_SWITCH_HASH` 等を subscribe するが、`DEVICE_METADATA` を直接 subscribe しない。runtime の `DEVICE_METADATA` 変更を ASIC_DB に反映するには orchagent 再起動が必要。  
+> evidence: `sonic-swss/orchagent/main.cpp:242,292,658,746`; `orchdaemon.cpp:213,500,766`; `switchorch.cpp:148-175,1493-1527`
+
+詳細トレース: `meta/_intermediate/cdb-flow/device-metadata-pubsub.md`
+<!-- /pubsub -->
+
+<!-- platform -->
+## Phase H: プラットフォーム差分 (ASIC_VENDOR / switch_type / subtype / sub_role)
+
+> **用語**: `ASIC_VENDOR` はビルド時定数 (`sonic_asic_platform`: `mellanox`/`broadcom`/`barefoot`/`cisco-8000` 等)。`DEVICE_METADATA` フィールドではないが、`switch_type`/`subtype`/`sub_role` と組み合わせて J2 テンプレートおよび orchdaemon でベンダ固有分岐を形成する。
+
+### ASIC_VENDOR 伝搬経路
+
+```
+ビルド時 sonic_asic_platform
+  → docker_image_ctl.j2:792 : -e ASIC_VENDOR={{ sonic_asic_platform }}  (swss コンテナのみ)
+  → docker-init.j2:13       : sonic-cfggen -a '{"ASIC_VENDOR":"${ASIC_VENDOR:-unknown}"}'
+  → ipinip.json.j2 / switch.json.j2 などの J2 テンプレートで参照
+
+orchagent.sh 側は swss_vars.j2:2 が出力する "asic_type" を
+jq で読み取り export platform=<value> として利用。
+```
+
+### ASIC_VENDOR 分岐: IPinIP トンネルの DSCP モード
+
+| 条件 | `dscp_mode` | evidence |
+|------|-------------|---------|
+| `ASIC_VENDOR` に `"broadcom"` を含む かつ `type == LeafRouter` (is_broadcom_t1) | `"pipe"` | sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2:11-13,98-100 |
+| `ASIC_VENDOR` に `"broadcom"` を含む かつ LeafRouter 以外 | `"uniform"` | ipinip.json.j2:97-102 |
+| `ASIC_VENDOR` が broadcom 以外 (Mellanox 等) | `"pipe"` + `decap_dscp_to_tc_map: "AZURE"` (AZURE QoS map 存在時) | ipinip.json.j2:103-108 |
+
+### platform 分岐: PFC Watchdog Handler
+
+`orchdaemon.cpp:190` で `getenv("platform")` を読む。
+
+| platform 値 | PfcWd Handler | portStatIds 差異 | evidence |
+|-------------|--------------|-----------------|---------|
+| `mellanox` / `vs` | `PfcWdZeroBufferHandler` + `PfcWdLossyHandler` | `SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US` (microsecond) | sonic-swss/orchagent/orchdaemon.cpp:635-672 |
+| `marvell-*` / `centec` / `barefoot` / `nephos` | `PfcWdZeroBufferHandler` or `PfcWdAclHandler` + `PfcWdLossyHandler` | `SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION` (無単位) | orchdaemon.cpp:674-731 |
+| `broadcom` | `PfcWdDlrHandler`/`PfcWdAclHandler` + `PfcWdLossyHandler` (pfcDlrInit 条件) | `SAI_PORT_STAT_PFC_*_ON2OFF_RX_PKTS` を追加 | orchdaemon.cpp:733-803 |
+| `cisco-8000` | `PfcWdSwOrch` with Cisco stat IDs | `SAI_PORT_STAT_PFC_*_RX_PKTS` のみ | orchdaemon.cpp:804-860 |
+| それ以外 / 未設定 | PfcWd なし | — | — |
+
+### platform 分岐: DTel (Dataplane Telemetry) 初期化
+
+| platform 値 | DTelOrch 初期化 | evidence |
+|-------------|----------------|---------|
+| `barefoot` / `vs` | `DTelOrch` を `m_orchList` に追加 | sonic-swss/orchagent/orchdaemon.cpp:503-524 |
+| それ以外 | DTelOrch 不使用 | orchdaemon.cpp:503 |
+
+### subtype 分岐: SmartSwitch DashEniFwdOrch
+
+| `subtype` 値 | 追加 Orch | evidence |
+|-------------|----------|---------|
+| `SmartSwitch` | `DashEniFwdOrch` を m_orchList に追加 | sonic-swss/orchagent/orchdaemon.cpp:613-618 |
+| それ以外 | 追加なし | — |
+
+### switch_type 分岐: OrchDaemon クラス選択
+
+| `switch_type` 値 | 起動クラス | evidence |
+|----------------|-----------|---------|
+| `fabric` | `FabricOrchDaemon` — 通常 OrchDaemon とは別クラス; portsyncd/neighsyncd 等の非 fabric プロセスを critical_processes から除外 | sonic-swss/orchagent/main.cpp:1009; sonic-buildimage/dockers/docker-orchagent/critical_processes.j2:2-4 |
+| それ以外 | 通常 `OrchDaemon` | main.cpp:1002-1009 |
+
+### switch_type 分岐: orchagent pop batch size (-b フラグ)
+
+| `LOCALHOST_SWITCHTYPE` 値 | `-b` 値 | evidence |
+|--------------------------|--------|---------|
+| `chassis-packet` | `128` (高速リンク通知用) | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:23-25 |
+| `dpu` | `65536` (大量オブジェクト対応) | orchagent.sh:26-28 |
+| それ以外 | `1024` (デフォルト) | orchagent.sh:29-31 |
+
+### sub_role 分岐: startup_tsa_tsb.py — TSA 設定対象 ASIC
+
+| `sub_role` 値 | 挙動 | evidence |
+|-------------|------|---------|
+| `FrontEnd` | multi-ASIC 構成で TSA 有効かチェックして TSA コマンドを実行 | sonic-buildimage/files/scripts/startup_tsa_tsb.py:53-56 |
+| `BackEnd` / `Fabric` / その他 | multi-ASIC 時は TSA 設定をスキップ (FrontEnd のみが TSA 対象) | startup_tsa_tsb.py:53-57 |
+
+### sub_role 分岐: ipinip.json.j2 — loopback interface 集合
+
+| `sub_role` 値 | loopback interface リスト | evidence |
+|-------------|--------------------------|---------|
+| `FrontEnd` または `BackEnd` | `['Loopback0', 'Loopback4096']` — chassis 内部通信用 Loopback4096 を含む | sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2:22-26 |
+| それ以外 (npu 通常モード等) | `['Loopback0', 'Loopback2', 'Loopback3']` — 通常ルーティング loopback | ipinip.json.j2:25-26 |
+
+### switch_type 分岐: switch.json.j2 — SWITCH_TABLE 生成
+
+| 条件 | SWITCH_TABLE パラメータ | evidence |
+|------|-----------------------|---------|
+| `switch_type != "dpu"` | `ecmp_hash_seed`, `lag_hash_seed`, `fdb_aging_time: 600` を生成 | sonic-buildimage/dockers/docker-orchagent/switch.json.j2:35-38 |
+| `switch_type == "dpu"` | 上記 3 フィールドを生成しない | switch.json.j2:35 |
+| `switch_type != "chassis-packet"` かつ `!= "dpu"` | `ecmp_hash_offset`, `lag_hash_offset` を生成 | switch.json.j2:39-41 |
+
+### switch_type 分岐: arp_update 起動条件
+
+| 条件 | 挙動 | evidence |
+|------|------|---------|
+| VLAN テーブル存在 OR `switch_type == "chassis-packet"` | arp_update.conf を supervisor に追加 → arp_update 起動 | sonic-buildimage/dockers/docker-orchagent/docker-init.j2:38-40 |
+| それ以外 | arp_update 不起動 | docker-init.j2:38-40 |
+
+### asic_id 動的更新 (SmartSwitch Chassis)
+
+`docker-init.j2:53-67` で `/etc/sonic/chassisdb.conf` が存在する場合、`CHASSIS_STATE_DB.CHASSIS_FABRIC_ASIC_TABLE|asic{N}` から PCI アドレスを取得し CONFIG_DB の `DEVICE_METADATA|localhost.asic_id` を runtime に書き込む。orchagent / hostcfgd 以外が DEVICE_METADATA を書き換える唯一の既知ケース。
+
+evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
+
+### switch_type 分岐: SAI スイッチ起動属性 (orchagent/main.cpp)
+
+`getCfgSwitchType()` (main.cpp:242) が `DEVICE_METADATA|localhost.switch_type` を読み出し、グローバル変数 `gMySwitchType` に設定する。未設定または不明な値は `"switch"` として扱う。
+
+| `switch_type` 値 | SAI 起動属性 | 必須フィールド | evidence |
+|----------------|------------|-------------|---------|
+| `voq` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ`; `SAI_SWITCH_ATTR_SWITCH_ID = switch_id`; `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES = max_cores`; `SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST = <sysport list>` | `switch_id`, `max_cores`, `asic_name`, `hostname` が未設定なら起動失敗 (exit) | sonic-swss/orchagent/main.cpp:694-721 |
+| `fabric` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_FABRIC`; `SAI_SWITCH_ATTR_SWITCH_ID = switch_id` | `switch_id` が未設定なら起動失敗 (exit); MAC アドレス設定をスキップ (`gMySwitchType != "fabric"` 条件 main.cpp:675) | sonic-swss/orchagent/main.cpp:738-770 |
+| `dpu` | `DpuOrchDaemon` を生成; `DPU_APPL_DB` + `DPU_APPL_STATE_DB` に専用 DBConnector を接続; ZMQ sync 強制 (`-z zmq_sync -k 65536`) | — | sonic-swss/orchagent/main.cpp:990-994 |
+| `npu` / `switch` / 未設定 | 通常 `OrchDaemon`; `SAI_SWITCH_ATTR_TYPE` を明示設定しない (SAI デフォルト = NPU) | — | main.cpp:997-999 |
+| `chassis-packet` | 通常 `OrchDaemon`; VoQ と同様に `CHASSIS_APP_DB` に接続するが `SAI_SWITCH_TYPE` は NPU | — | main.cpp:997-999 |
+
+### switch_type 分岐: SAI sync タイムアウト (orchagent/main.cpp)
+
+`SAI_REDIS_SWITCH_ATTR_SYNC_OPERATION_RESPONSE_TIMEOUT` を switch_type に応じて拡張し、SWITCH 作成完了後にデフォルト値へ戻す。
+
+| `switch_type` 値 | タイムアウト倍率 | evidence |
+|----------------|--------------|---------|
+| `voq` / `chassis-packet` / `dpu` | デフォルト × 5 | sonic-swss/orchagent/main.cpp:822-824 |
+| `fabric` | デフォルト × 10 | main.cpp:826-828 |
+| `npu` / それ以外 | デフォルト × 1 (変更なし) | main.cpp:830-833 |
+
+> `ASAN_OPTIONS` 環境変数が設定されている場合は各倍率がさらに × 2 される (ASAN デバッグビルド向け)。
+
+### switch_type 分岐: voq モードの必須フィールド検証 (orchagent/main.cpp)
+
+`switch_type = "voq"` のとき `getSystemPortConfigList()` (main.cpp:290) が以下フィールドを順に検証する。いずれかが未設定・不正な場合は orchagent が exit する。
+
+| フィールド | 必須条件 | エラー時の挙動 |
+|-----------|---------|-------------|
+| `switch_id` | 0 以上の整数として存在 | `return false` → SAI voq 作成スキップ |
+| `max_cores` | 1 以上の整数として存在 | `return false` → SAI voq 作成スキップ |
+| `hostname` | 空でない文字列 | `return false` |
+| `asic_name` | 空でない文字列 | `return false` |
+
+evidence: sonic-swss/orchagent/main.cpp:305-363
+
+### buffer_model 分岐: BUFFER_POOL.mode SAI 属性マッピング (orchagent/bufferorch.cpp)
+
+`buffer_model` フィールドは `buffermgrd` の起動モードを決めるだけでなく、`BUFFER_POOL` テーブルの `mode` フィールド値 (= `"dynamic"` / `"static"`) が bufferorch.cpp 経由で SAI 属性に変換される。
+
+| `BUFFER_POOL.mode` 値 | SAI 属性 | evidence |
+|----------------------|---------|---------|
+| `"dynamic"` | `SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE = SAI_BUFFER_POOL_THRESHOLD_MODE_DYNAMIC` | sonic-swss/orchagent/bufferorch.cpp:474-476; orchagent/bufferorch.h:22 |
+| `"static"` | `SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE = SAI_BUFFER_POOL_THRESHOLD_MODE_STATIC` | sonic-swss/orchagent/bufferorch.cpp:478-480; orchagent/bufferorch.h:23 |
+| それ以外 | `task_invalid_entry` エラー → エントリを reject | bufferorch.cpp:484 |
+
+> BUFFER_POOL の `mode` は **create-only** 属性のため、プール作成後に変更しても `bufferorch.cpp:469-471` でスキップされる。`buffer_model = "dynamic"` の環境では `buffermgrd -a /etc/sonic/asic_table.json` (dynamic モード) が BUFFER_POOL エントリを生成し、`mode = "dynamic"` を設定する。`buffer_model = "traditional"` では `buffermgrd -l pg_profile_lookup.ini` が生成し `mode = "static"` を設定する。
+
+### platform 分岐: saihelper — init 時の SAI sync タイムアウト (orchagent/saihelper.cpp)
+
+`sai_initialize_switch()` 内で `getenv("platform")` を読み、INIT_VIEW 送信前後のタイムアウトをベンダ毎に調整する。
+
+| platform 値 | INIT_VIEW 前タイムアウト | INIT_VIEW 後タイムアウト | evidence |
+|-------------|----------------------|----------------------|---------|
+| `mellanox` / `xsight` / `marvell-prestera` | `SAI_REDIS_SYNC_OPERATION_RESPONSE_TIMEOUT` (拡張値) | — (戻さない) | sonic-swss/orchagent/saihelper.cpp:423-440 |
+| `mellanox` / `xsight` | 上記に加え INIT_VIEW 後にデフォルト値へ復元 | デフォルト値に戻す | saihelper.cpp:453-467 |
+| それ以外 | 変更なし | 変更なし | — |
+<!-- /platform -->
+
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+### bgpcfgd retry メカニズム
+
+`manager.py` 基底クラスが `set_queue` ベースの retry を実装。`set_handler()` が `False` を返すと `set_queue` に追記し、deps 変化（Loopback0 IP 付与・bgp_asn 登録等）で `on_deps_change()` が全件 replay する。retry 間隔: 依存変化ドリブン、上限: なし、backoff: なし。
+
+### 失敗パス一覧
+
+| consumer | 条件 | ログ | 効果 | evidence |
+|---|---|---|---|---|
+| bgpcfgd | `bgp_asn` 未設定 | なし（deps 未充足で silent） | BGP ピア追加処理が開始されない。bgp_asn 設定後に自動 replay | `managers_bgp.py:119`（dep 登録） |
+| bgpcfgd | `bgp_router_id` 未設定 + Loopback0 IPv4 未設定 | `LOG_WARN "Loopback0 ipv4 address is not presented yet and bgp_router_id not configured"` | `return False` → `set_queue` 追記。Loopback0 IP 付与後に replay | `managers_bgp.py:186-189` |
+| orchagent.sh | `sonic-cfggen` が DEVICE_METADATA から SWSS_VARS 生成失敗 | sonic-cfggen のエラーログ | `exit 1` → orchagent プロセス起動中断。supervisord が再起動 | `orchagent.sh:8` |
+| orchagent.sh | `mac` フィールド不在または `"None"` | syslog `"Mac address not found in Device Metadata, Falling back to eth0"` | eth0 MAC にフォールバック（起動続行） | `orchagent.sh:13-16` |
+| linkmgrd | `mac` フォーマット不正 | `MUX_ERROR(ConfigNotFound, "Invalid ToR MAC address ...")` | linkmgrd 起動失敗（DualToR 構成で mux 機能停止） | `DbInterface.cpp:575-577` |
+| linkmgrd | `mac` フィールド自体が CONFIG_DB に存在しない | `MUX_ERROR(ConfigNotFound, "ToR MAC address is not found")` | 同上 | `DbInterface.cpp:596-598` |
+| hostcfgd | `hostname` が空文字 | `LOG_ERR "Hostname was not updated: Empty not allowed"` | hostname-config restart スキップ。ホスト名変更なし | `hostcfgd:1516-1518` |
+| hostcfgd | `hostname` 変更時 service restart 失敗 | `LOG_ERR "DeviceMetaCfg: Failed to set new hostname: ..."` | hostname は内部キャッシュに反映されない（早期 return） | `hostcfgd:1528-1531` |
+| hostcfgd | `timezone` に対応する tzdata ファイル不在 | `LOG_ERR "DeviceMetaCfg: Invalid timezone files for ... : ..."` | timedatectl 実行されず、rsyslog 再起動されない | `hostcfgd:1563-1564` |
+| hostcfgd | `timedatectl set-timezone` コマンド失敗 | `LOG_ERR "DeviceMetaCfg: Failed to set-timezone ... and restart rsyslog: ..."` | タイムゾーン変更されず | `hostcfgd:1565-1566` |
+| YANG バリデーション | `suppress-fib-pending=enabled` かつ `synchronous_mode!=enable` | sonic-yang バリデーションエラー | config load / CLI で reject（CONFIG_DB への書き込み自体が行われない） | `sonic-device_metadata.yang:250` |
+| ValidatedConfigDB | `yang_config_validation=enable` 時に YANG 制約違反の変更 | GCU: `log_notice "Unable to remove entry ..."` または例外ログ | GCU が rollback して変更拒否。CLI から見ると成功に見えるが CONFIG_DB は変更されない | `validated_config_db_connector.py:108-110` |
+| bgpcfgd `DeviceGlobalCfgMgr` | `set_handler` 呼び出し時 data が None | `LOG_ERR "DeviceGlobalCfgMgr:: data is None"` | `return False` → `set_queue` 追記 | `managers_device_global.py:62-63` |
+| bgpcfgd `DeviceGlobalCfgMgr` | W-ECMP ステータスが `"true"/"false"` 以外 | `LOG_ERR "W-ECMP: invalid value(X) is provided"` | `return False` → `set_queue` 追記。deps 変化がなければ永続キュー化 | `managers_device_global.py:147-148` |
+| bgpcfgd `DeviceGlobalCfgMgr` | W-ECMP Jinja2 テンプレートレンダリング失敗 | `LOG_ERR "W-ECMP: error in template rendering: ..."` | `return False` → `set_queue` 追記 | `managers_device_global.py:159-162` |
+| bgpcfgd `DeviceGlobalCfgMgr` | TSA ステータスが `"true"/"false"` 以外 | `LOG_ERR "TSA: invalid value(X) is provided"` | `return False` → TSA/TSB route-map 適用されない | `managers_device_global.py:187-188` |
+| bgpcfgd `DeviceGlobalCfgMgr` | IDF ステータスが有効値以外 | `LOG_ERR "IDF: invalid value(X) is provided"` | `return False` → IDF isolation 設定が適用されない | `managers_device_global.py:257-258` |
+| bgpcfgd `DeviceGlobalCfgMgr` | CHASSIS_APP_DB 接続失敗 | `LOG_ERR "Got an exception ..."` | chassis_tsa_status が None → chassis TSA 判定が行われない。ローカル tsa_status のみで判断 | `managers_device_global.py:248-249` |
+| fpmsyncd | `suppress-fib-pending` 値が `"enabled"` 以外 | なし | suppress-fib-pending 無効のまま（if 分岐に入らない）。runtime 変更は動的に反映 | `fpmsyncd.cpp:113-118` |
+| orchagent `main.cpp` | `mac` フィールド不在かつ SAI `SAI_SWITCH_ATTR_SRC_MAC_ADDRESS` 取得失敗 | `SWSS_LOG_ERROR("Failed to get MAC address from switch, rv:%d")` | `handleSaiFailure(SAI_API_SWITCH, "get", status, true)` 呼び出し → orchagent プロセス終了（fatal=true） | `sonic-swss/orchagent/main.cpp:877-884` |
+| orchagent `main.cpp` | `switch_type` が `voq`/`fabric`/`chassis-packet`/`switch`/`dpu` 以外の不正値 | `SWSS_LOG_ERROR("Invalid switch type %s configured", switch_type.c_str())` | `switch_type = "switch"` にフォールバックして続行。設定意図と乖離したまま npu モードで SAI 初期化 | `sonic-swss/orchagent/main.cpp:260-264` |
+| buffermgrd (dynamic) | `ASIC_VENDOR` 環境変数未設定（platform 未定義） | `SWSS_LOG_ERROR("Platform environment variable is not defined, buffermgrd won't start")` | 即 `return` → `BufferMgrDynamic` 初期化中断。Lua ヘッドルーム計算スクリプトが読み込まれず、dynamic buffer 機能が完全に停止 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:71` |
+| buffermgrd (static) | `buffer_model` が `"dynamic"` 以外（不正値・空値含む） | なし（サイレント） | `dynamic_buffer_model = false` → static モード（`pg_profile_lookup.ini` ベース）で動作。DEL 操作でも同様に false。不正値でも警告なし | `sonic-swss/cfgmgr/buffermgr.cpp:390-406` |
+
+### switchorch.cpp MAC / switch_type 失敗詳細
+
+`orchagent` 起動時 (`main.cpp`) の MAC 取得フロー:
+
+1. `orchagent.sh:12-16` — `sonic-cfggen` で `DEVICE_METADATA.mac` を取得。不在 / `"None"` → eth0 MAC にフォールバック（起動続行）
+2. `main.cpp:675-679` — `gMySwitchType != "fabric"` かつ `gMacAddress` が設定済みなら SAI `create_switch` に `SAI_SWITCH_ATTR_SRC_MAC_ADDRESS` として渡す
+3. `main.cpp:877-884` — `gMacAddress` が未設定（フォールバックも失敗）の場合のみ SAI `get_switch_attribute` を試みる。SAI が失敗すると `handleSaiFailure(fatal=true)` → プロセス終了
+
+`switch_type` 不正値フロー (`main.cpp:260-264`):
+
+- `getCfgSwitchType()` が既知 5 値 (`voq`/`fabric`/`chassis-packet`/`switch`/`dpu`) 以外を検出 → `SWSS_LOG_ERROR` + `switch_type = "switch"` 強制上書き
+- `system_error` 例外時も同様に `"switch"` にフォールバック (`main.cpp:256`)
+- フィールド不在時は `"switch"` に設定（エラーなし、`main.cpp:251`）
+
+### STATE_DB / ERROR_TABLE 記録方針
+
+- bgpcfgd は成功時のみ `BGP_PEER_CONFIGURED_TABLE` (STATE_DB) に書き込む。`return False` 時は未書き込み
+- bgpcfgd は `ERROR_TABLE` を使用しない（orchagent の `task_failed` 機構とは別系統）
+- hostcfgd は CONFIG_DB への書き戻しなし（読み取り専用）
+- fpmsyncd の `suppress-fib-pending` runtime 変更: 既存ルートを offloaded マークして遷移（`fpmsyncd.cpp:291-300`）
+
+> **調査証跡**: `managers_bgp.py` 600+ 行・失敗パス 10 箇所精読、`managers_device_global.py` 287 行・失敗パス 6 箇所精読、`hostcfgd` `DeviceMetaCfg` クラス全メソッド精読、`orchagent.sh` 146 行全読、`DbInterface.cpp:565-599` 精読、`sonic-swss/orchagent/main.cpp:242-284,877-884` 精読（switch_type バリデーション・MAC SAI 取得失敗パス）、`sonic-swss/cfgmgr/buffermgrdyn.cpp:60-130` 精読（platform 未設定失敗パス）、`sonic-swss/cfgmgr/buffermgr.cpp:390-406` 精読（buffer_model 不整合サイレント挙動）。詳細: `meta/_intermediate/cdb-flow/device-metadata-failure.md`
+
+<!-- /failure -->
 ## 購読者
 
 - `bgpcfgd` / `sonic-frr-mgmt-framework`: `bgp_asn`、`bgp_router_id`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`default_bgp_status`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
@@ -467,6 +951,78 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_DEVICE_GLOBAL`（`bgp_asn` と独立した装置全体 BGP スイッチ）、`MGMT_PORT`（管理ポート設定）、`FEATURE`（docker on/off）
 - 関連 CLI: [`config bgp`](../cli/config-bgp.md)、`config hostname`
 - 関連 YANG: `sonic-device_metadata`（`hostname`、`hwsku`、`mode-status` などの typedef を当該モジュール内で定義）
+
+<!-- cross-refs -->
+## 暗黙参照 — daemon 起動時の DEVICE_METADATA 読み出し (Phase C)
+
+各 daemon は起動時（あるいは subscribe 経由でランタイムに）`DEVICE_METADATA|localhost` を参照する。
+以下は実コードから確認した参照一覧。フィールドが欠如した場合の挙動は「例外条件」セクションも参照。
+
+### 起動時のみ読み出し (create-only / static)
+
+| daemon / スクリプト | 参照フィールド | 用途 | evidence |
+|---|---|---|---|
+| `orchagent` (main.cpp:248) | `switch_type` | SAI `create_switch()` の `SAI_SWITCH_ATTR_TYPE` 引数。未設定は `"switch"` (npu) 扱い | sonic-swss/orchagent/main.cpp:244-252 |
+| `orchagent` (main.cpp:269) | `subtype` | switch subtype を取得。DualToR / SmartSwitch 等の SAI 初期化分岐 | sonic-swss/orchagent/main.cpp:269 |
+| `orchagent` (main.cpp:305,321,337,351) | `switch_id`, `max_cores`, `hostname`, `asic_name` | VoQ モード (`switch_type=voq`) 時のみ必須。未設定時は `SWSS_LOG_ERROR` | sonic-swss/orchagent/main.cpp:292-355 |
+| `orchagent` (main.cpp:748) | `switch_id` | `gVoqMySwitchId` 初期値として再取得 | sonic-swss/orchagent/main.cpp:748 |
+| `orchagent.sh` (L22) | `switch_type` | `LOCALHOST_SWITCHTYPE` に格納。`dpu` なら `-z zmq_sync -k 65536` を強制 | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:22 |
+| `orchagent.sh` (L44-55) | `asic_id` | `-i <asic_id>` オプションとして orchagent プロセスに渡す | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:44-55 |
+| `orchagent.sh` (L66-68) | `async_swss_rec` | `enabled` → `-A` フラグ (swss.rec 非同期書き込み) | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66-68 |
+| `orchagent.sh` (L106) | `subtype` | `DualToR` のとき `tunnel_packet_handler` を追加起動 | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:106 |
+| `orchagent.sh` (L121-123) | `ring_thread_enabled` | `true` → `-R` フラグ (OrchDaemon ring thread) | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:121-123 |
+| `swss_vars.j2` (起動時 Jinja 展開) | `synchronous_mode` | 非 `disable` → orchagent に `-s` フラグ (SAI 同期呼び出し) | sonic-buildimage/dockers/docker-orchagent/swss_vars.j2:9; orchagent.sh:37-40 |
+| `buffermgrd.sh` (L5-13) | `buffer_model` | `dynamic` → `buffermgrd -a asic_table.json`。それ以外 → `buffermgrd -l pg_profile_lookup.ini` | sonic-buildimage/dockers/docker-orchagent/buffermgrd.sh:5-13 |
+| `vlanmgrd` (L56-61) | `mac` | VLAN インタフェースのシステム MAC として設定。未設定は `runtime_error` で起動失敗 | sonic-swss/cfgmgr/vlanmgrd.cpp:56-61 |
+| `teammgrd` (L54-57) | `mac` | PortChannel の switch MAC として使用。未設定は起動失敗 | sonic-swss/cfgmgr/teammgr.cpp:54-57 |
+| `stpmgrd` (L81-88) | `mac` | STP Bridge ID に使用するシステム MAC として設定。未設定は起動失敗 | sonic-swss/cfgmgr/stpmgrd.cpp:81-88 |
+| `vxlanmgrd` (L65-72) | `mac` | VXLAN トンネルの内部 switch MAC として設定。未設定は起動失敗 | sonic-swss/cfgmgr/vxlanmgrd.cpp:65-72 |
+| `buffermgrdyn` (L87) | `platform` | Mellanox プラットフォームのみ: モデル番号 (SN 番号) を抽出して XON 値など ASIC 固有パラメータを決定 | sonic-swss/cfgmgr/buffermgrdyn.cpp:85,87-95 |
+| `nbrmgrd` (L73-78) | `switch_type` | `voq` のとき SYSTEM_NEIGH を購読し VoQ リモートネイバー用 static route をカーネルに設定 | sonic-swss/cfgmgr/nbrmgr.cpp:73-78 |
+| `intfmgrd` (L71-74) | `switch_type` | `mySwitchType` に格納。インタフェース設定の switch_type 分岐に使用 | sonic-swss/cfgmgr/intfmgr.cpp:71-74 |
+| `bgpcfgd` (main.py:122-130) | `type`, `subtype` | `SpineRouter+UpstreamLC` または `UpperSpineRouter` のとき `AsPathMgr` を起動時に登録 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:122-130 |
+
+> **起動失敗トリガー**: `mac` フィールド欠如は vlanmgrd / teammgrd / stpmgrd / vxlanmgrd を即時 crash させる。`switch_type=voq` 時の `switch_id` / `max_cores` / `hostname` / `asic_name` 欠如は orchagent の VoQ 初期化失敗 (`SWSS_LOG_ERROR`) を引き起こす。
+
+### ランタイム購読 (subscribe / ConsumerStateTable)
+
+| daemon / Manager | 参照フィールド | 用途 | evidence |
+|---|---|---|---|
+| `buffermgr` (BufferMgr) | `buffer_model` | `dynamic` → APPL_DB 書き込みを抑制し platform SAI に委譲。`traditional` → APPL_DB に転写 | sonic-swss/cfgmgr/buffermgr.cpp:464-499 |
+| `FlexCounterOrch` | `create_only_config_db_buffers` | ConsumerStateTable で動的更新。`true` → `getQueueConfigurations()` カウンタ設定分岐 | sonic-swss/orchagent/flexcounterorch.cpp:488-521 |
+| `fpmsyncd` | `suppress-fib-pending` | SubscriberStateTable で購読。`enabled` → FIB インストール応答待機モード。動的切り替え時に保留ルートを offloaded にマーク | sonic-swss/fpmsyncd/fpmsyncd.cpp:82-83,113-114,265-300 |
+| `hostcfgd` (DeviceMetaCfg) | `hostname` | 変更時に `service hostname-config restart` + `monit reload` を即時実行 | sonic-host-services/scripts/hostcfgd:1485-1535,2492 |
+| `hostcfgd` (DeviceMetaCfg) | `timezone` | 変更時に `timedatectl set-timezone <tz>` + `systemctl restart rsyslog` を実行 | sonic-host-services/scripts/hostcfgd:1546-1561 |
+| `hostcfgd` (DeviceMetaCfg) | `syslog_with_osversion` | 変更時に `rsyslog-config.sh` 経由で rsyslog を再設定 | sonic-host-services/scripts/hostcfgd:1590-1598 |
+| `bgpcfgd BgpPeerMgr` | `bgp_asn`, `type` | 必須依存フィールド。`bgp_asn` 欠如でピア追加を延期・待機 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:119-192 |
+| `bgpcfgd BgpPeerMgr` | `deployment_id` | deployment_id チェック有効時のみ依存追加 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:143 |
+| `bgpcfgd DeviceGlobalCfgMgr` | `type` | subscribe → `switch_role` 更新。IDF isolation / WCMP 設定の分岐に使用 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:33-54 |
+| `bgpcfgd StaticRouteMgr` | `bgp_asn` | subscribe → static route の BGP ASN 解決 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py:25,67,144 |
+| `bgpcfgd BbrMgr` | `bgp_asn` | subscribe → BBR (Best-path-based Route) の ASN 解決 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bbr.py:25,156 |
+| `bgpcfgd AdvertiseRouteMgr` | `bgp_asn` | subscribe → 広告ルートの ASN 解決 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_advertise_rt.py:26,59-81 |
+| `bgpcfgd PrefixListMgr` | `type`, `bgp_asn` | subscribe → prefix-list 生成の AS 番号と role 判定 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py:42-67 |
+| `frrcfgd` | `bgp_asn`, `docker_routing_config_mode` | 起動時に `DEVICE_METADATA` を読み設定モード初期化。変更時は metadata_handler で FRR 設定再生成 | sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2162,2295 |
+| `dhcprelayd` | `has_sonic_dhcpv4_relay` | `"True"` のとき旧来 `dhcrelay` プロセスを起動せず、新 dhcpv4-relay サービスに委譲 | sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:64,111-113 |
+
+### 起動時設定ファイル生成 (Jinja2 テンプレート展開)
+
+docker コンテナ起動時に `sonic-cfggen` が DEVICE_METADATA を読んで以下のファイルを生成する。
+生成後は再起動まで変更不可 (create-only)。
+
+| テンプレート | 参照フィールド | 生成ファイル / 効果 |
+|---|---|---|
+| `switch.json.j2` | `type`, `namespace_id`, `switch_type` | `/etc/sonic/switch.json` — SAI ecmp_hash_seed / lag_hash_seed / ordered_ecmp を type 別に設定 |
+| `swss_vars.j2` | `synchronous_mode` | orchagent 起動引数 (`-s` フラグ) |
+| `orch_zmq_tables.conf.j2` | `orch_northbond_dash_zmq_enabled`, `orch_northbond_route_zmq_enabled` | ZMQ テーブル有効/無効設定 |
+| `critical_processes.j2` | `switch_type` | `fabric` のとき portsyncd 等を critical_processes から除外 |
+| `supervisord.conf.j2` | `switch_type` | `fabric` のとき orchagent の dependent_startup_wait_for を変更 |
+| `docker_init.sh` (docker-fpm-frr) | `docker_routing_config_mode`, `frr_mgmt_framework_config` | FRR 設定ファイル群 (`frr.conf` / 個別 `*.conf`) を生成 |
+| `zebra.conf.j2` | `nexthop_group`, `zebra_nexthop` | `/etc/frr/zebra.conf` — FPM next-hop group / カーネル nexthop 設定 |
+| `bgpd.main.conf.j2` | `type`, `subtype`, `switch_type`, `bgp_router_id`, `bgp_adv_lo_prefix_as_128` | BGP main 設定 |
+
+evidence: `sonic-buildimage/dockers/docker-orchagent/switch.json.j2; orch_zmq_tables.conf.j2; critical_processes.j2; supervisord.conf.j2; dockers/docker-fpm-frr/docker_init.sh; frr/zebra/zebra.conf.j2`
+
+<!-- /cross-refs -->
 
 <!-- ref-triangle:start -->
 
@@ -712,5 +1268,190 @@ orchagent・cfgmgr・hostcfgd はいずれも DEVICE_METADATA を **読み取り
 | `switch_type = dpu` (synchronous_mode 上書き) | `switch_type = dpu` のとき `orchestagent.sh:38-39` で `-z zmq_sync -k 65536` を強制。`synchronous_mode` フィールドの値は無視される | orchagent.sh:38-39 |
 
 <!-- /runtime-trace -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 起動時一括読み取りフィールド（create-only）
+
+`orchagent.sh` は swss コンテナ起動時に `DEVICE_METADATA|localhost` から以下のフィールドを順次読み取り、
+orchagent プロセスの起動引数を組み立てる。**全フィールドは orchagent コンテナ起動前に CONFIG_DB へ存在していること**が必須。
+
+| 読み取り順 | フィールド | 利用方法 | evidence |
+|-----------|-----------|---------|---------|
+| 1 | `mac` | `sonic-cfggen` の `swss_vars.j2` 展開 → `-m` フラグ | orchagent.sh:8-16 |
+| 2 | `switch_type` | `sonic-db-cli hget` → `-b` バッチサイズ決定 | orchagent.sh:22 |
+| 3 | `synchronous_mode` | `swss_vars.j2` 経由 → `-s` フラグ | orchagent.sh:37-41 |
+| 4 | `asic_id` | `swss_vars.j2` 経由 → `-i` フラグ | orchagent.sh:54-57 |
+| 5 | `async_swss_rec` | `sonic-db-cli hget` → `-A` フラグ | orchagent.sh:66-68 |
+| 6 | `subtype` | `sonic-db-cli hget` → ZMQ エンドポイント決定 | orchagent.sh:106 |
+| 7 | `ring_thread_enabled` | `sonic-db-cli hget` → `-R` フラグ | orchagent.sh:121 |
+
+boot 時は `config-setup` service が swss より先に起動し `config_db.json` を redis にロードする。
+`switch_type`/`synchronous_mode`/`mac` はコンテナ再起動でのみ切り替えられる（runtime 変更不可）。
+
+orchagent `main.cpp` 内では起動時に `getCfgSwitchType()` → `getCfgVoqMyInfo()` の順で hget し、
+`sai_switch_api->create_switch()` の引数として使用する（`switch_type` / `switch_id` / `max_cores`）。
+
+### ランタイム動的購読フィールド（mutable）
+
+| フィールド | consumer | 順序制約 | 副作用 |
+|-----------|---------|---------|-------|
+| `suppress-fib-pending` | fpmsyncd | 起動時 hget + SubscriberStateTable 購読。`enabled → disabled` ランタイム遷移時に既存保留ルートを `offloaded` にマーク | blackhole リスク軽減のため `synchronous_mode = enable` との同時設定が YANG `must` 制約 |
+| `buffer_model` | buffermgrd (BufferMgr) | BUFFER_POOL/BUFFER_PG より先に SET 推奨。逆順でも最終収束するが過渡的に APPL_DB へ転写が発生する | buffermgrd 起動引数（`-a` vs `-l`）の切り替えは swss 再起動が必要 |
+| `create_only_config_db_buffers` | FlexCounterOrch | コンストラクタ起動時に hget、以降は ConsumerStateTable で動的更新。warm-reboot 後も自動 reconcile | — |
+| `hostname` / `timezone` / `syslog_with_osversion` | hostcfgd | ConsumerStateTable 購読。ランタイム即時反映。boot 順序依存なし | `hostname` 変更は `service hostname-config restart` + `monit reload` を即時実行 |
+
+### bgpcfgd の依存待機（BGP_NEIGHBOR 処理の先行条件）
+
+`BGPPeerMgrBase` は `Directory` 機構を使い、以下が揃うまで `BGP_NEIGHBOR` SET 処理を保留する:
+
+```
+DEVICE_METADATA|localhost/bgp_asn     ← 必須（欠如時は return False で再試行）
+DEVICE_METADATA|localhost/type        ← 必須
+LOOPBACK_INTERFACE|Loopback0          ← 必須（IPv4 アドレス付き）
+BGP_DEVICE_GLOBAL/tsa_enabled         ← 必須
+BGP_DEVICE_GLOBAL/idf_isolation_state ← 必須
+DEVICE_METADATA|localhost/deployment_id ← use_deployment_id=true 環境のみ必須
+```
+
+推奨書込み順序:
+
+```
+1. DEVICE_METADATA|localhost  (bgp_asn, type, …)
+2. BGP_DEVICE_GLOBAL          (tsa_enabled, idf_isolation_state)
+3. LOOPBACK_INTERFACE|Loopback0|<ipv4_prefix>
+4. BGP_NEIGHBOR               (上記が揃うと処理開始)
+```
+
+evidence: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-143, 186-192`
+
+### warm-reboot / restart 影響
+
+| フィールド | warm-reboot 影響 | 順序制約 |
+|-----------|-----------------|---------|
+| `switch_type` | **変更不可** — SAI `create_switch()` は一度のみ | 変更には swss 完全再起動が必要 |
+| `synchronous_mode` | **変更不可** — orchagent 起動引数に依存 | 変更時は swss コンテナ再起動が必要 |
+| `mac` | **変更不可** — orchagent 起動引数 (`-m` フラグ) | 変更時は swss コンテナ再起動が必要 |
+| `buffer_model` フラグ | **mutable** — BufferMgr ConsumerStateTable で再適用 | buffermgrd 起動引数（`-a`/`-l`）は再起動しないと切り替わらない |
+| `create_only_config_db_buffers` | **mutable** — FlexCounterOrch ConsumerStateTable で再処理 | warm-reboot 後に自動 reconcile |
+| `suppress-fib-pending` | **mutable** — fpmsyncd が再購読 | warm-reboot 中の `enabled → disabled` 遷移でルートが一時的に offloaded にマーク |
+| `hostname` | **mutable** — hostcfgd が再処理 | boot 順序依存なし |
+
+詳細 trace: `meta/_intermediate/cdb-flow/device-metadata-ordering.md`
+<!-- /ordering -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DEVICE_METADATA|localhost` への SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと Linux システム呼び出しを示す。
+
+### SET — `buffer_model`
+
+| 操作 | 対象 DB / テーブル | 条件 |
+|------|------------------|------|
+| 内部フラグ `dynamic_buffer_model = true` に更新（後続の BUFFER_POOL / BUFFER_PG / BUFFER_QUEUE / BUFFER_PROFILE 変化を APPL_DB に転写しない） | なし (フラグのみ) | `buffer_model = dynamic` |
+| 内部フラグ `dynamic_buffer_model = false` に更新（後続のバッファテーブルを APPL_DB に転写する） | なし (フラグのみ) | `buffer_model = traditional` またはその他 |
+
+> `BufferMgr::doBufferMetaTask()` は DB 書込を行わない。ただしフラグ変更後の BUFFER_* SET/DEL が APPL_DB `BUFFER_POOL_TABLE` / `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` / `BUFFER_PROFILE_TABLE` への転写の有無を決定する。
+
+evidence: `sonic-swss/cfgmgr/buffermgr.cpp:373-410,476-479`
+
+### SET — `create_only_config_db_buffers`
+
+| 操作 | 対象 DB / テーブル | 条件 |
+|------|------------------|------|
+| 内部フラグ `m_createOnlyConfigDbBuffers` 更新 → カウンタ設定分岐に影響 | なし (フラグのみ) | 値変化時 (`FlexCounterOrch`) |
+
+evidence: `sonic-swss/orchagent/flexcounterorch.cpp:488-523`
+
+### SET — `suppress-fib-pending`
+
+| 変化 | 操作 | 対象 DB / テーブル |
+|------|------|-----------------|
+| `disabled → enabled` | fpmsyncd が APPL_STATE_DB `ROUTE_TABLE` 受信チャネルを登録し抑制モードを有効化 | APPL_STATE_DB / `ROUTE_TABLE` (チャネル登録) |
+| `enabled → disabled` | `RouteSync::markRoutesOffloaded(db)` — APPL_DB の `APP_ROUTE_TABLE` 全エントリを走査し "offloaded" 応答を FRR に送信 | APPL_DB / `APP_ROUTE_TABLE` |
+
+> 無効化時のルート全スキャン・応答送信はルートが suppressed 状態に残るのを防ぐための遷移処理。
+
+evidence: `sonic-swss/fpmsyncd/fpmsyncd.cpp:260-304`; `sonic-swss/fpmsyncd/routesync.cpp:3291-3296`
+
+### SET — `hostname` / `timezone` / `syslog_with_osversion`
+
+これら 3 フィールドは `hostcfgd DeviceMetaCfg` が処理し、他 DB への書込ではなく Linux システム呼び出しに終始する:
+
+| フィールド | 副次操作 (Linux) | 条件 | evidence |
+|-----------|----------------|------|---------|
+| `hostname` | `sudo service hostname-config restart` → `/etc/hostname` 更新; `sudo monit reload` | 値変化かつ空でない | hostcfgd:1527-1532 |
+| `timezone` | `timedatectl set-timezone <tz>` → `/etc/localtime` symlink 更新 | 値変化かつ `None` でない | hostcfgd:1556 |
+| `syslog_with_osversion` | `systemctl restart rsyslog-config` → rsyslog.conf 再生成 | 値変化かつ `None` でない | hostcfgd:1600 |
+
+### DEL 操作
+
+| consumer | 挙動 |
+|---------|------|
+| BufferMgr | `dynamic_buffer_model = false` にリセット。DB 書込なし。 |
+| FlexCounterOrch | `op == SET_COMMAND` 条件不成立のためスキップ。DB 書込なし。 |
+| fpmsyncd | `op != SET_COMMAND` のため continue。suppress-fib-pending 遷移も起きない。 |
+| hostcfgd | DEL ハンドラなし。hostname / timezone / rsyslog 処理は SET 専用。 |
+
+### 副次書込サマリ
+
+**直接的な他 DB 書込が発生するケースは `suppress-fib-pending` 切替時のみ。** 他フィールドはすべて内部フラグ更新または Linux システム呼び出しに留まる。
+
+| フィールド | 直接書込先 |
+|-----------|---------|
+| `buffer_model` | なし（後続テーブルへの転写制御フラグ） |
+| `create_only_config_db_buffers` | なし（フラグのみ） |
+| `suppress-fib-pending` enabled→disabled | APPL_DB `APP_ROUTE_TABLE`（全ルート offloaded マーク） |
+| `hostname` / `timezone` / `syslog_with_osversion` | Linux ファイルシステム・systemd のみ |
+| その他全フィールド | なし（起動時読み取り専用; コンテナ再起動が必要） |
+
+### SwitchOrch 起動時副次書込 (`switch_type` / `switch_id` / `subtype` 読み出し経由)
+
+`switch_type`・`switch_id`・`subtype` はランタイム consumer イベントとして届くのではなく、orchagent 起動時に一括読み出しされる。その結果 `SwitchOrch` コンストラクタが以下の STATE_DB 書込を行う。
+
+#### STATE_DB / `SWITCH_CAPABILITY`
+
+`set_switch_capability()` (switchorch.cpp:1864–1867) が `STATE_DB:SWITCH_CAPABILITY` テーブルに複数のケーパビリティフラグを書き込む:
+
+| 書込フィールド | 値の候補 | evidence |
+|--------------|---------|---------|
+| `PFC_DLR_INIT_CAPABLE` | "true" / "false" | switchorch.cpp:137,143 |
+| `ASIC_SDK_HEALTH_EVENT` | "true" / "false" | switchorch.cpp:231,246 |
+| `REG_FATAL/WARNING/NOTICE_ASIC_SDK_HEALTH_CATEGORY` | "true" / "false" | switchorch.cpp:266,271 |
+| `ORDERED_ECMP_CAPABLE` | "true" / "false" | switchorch.cpp:491,501 |
+| `PORT_EGRESS_SAMPLE_CAPABLE` | "true" / "false" | switchorch.cpp:1886,1892 |
+| `PORT_INGRESS_MIRROR_CAPABLE` / `PORT_EGRESS_MIRROR_CAPABLE` | "true" / "false" | switchorch.cpp:1915,1939 |
+| `PORT_TPID_CAPABLE` / `LAG_TPID_CAPABLE` | "true" / "false" | switchorch.cpp:1975,1995 |
+| `ICMP_OFFLOAD_CAPABLE` | "true" / "false" | switchorch.cpp:2056,2061 |
+| `FAST_LINKUP_CAPABLE` | "true" / "false" | switchorch.cpp:2107,2145 |
+
+`switch_type = fabric` のとき orchagent は `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_FABRIC` で SAI create_switch し、一部ケーパビリティが無効となる (main.cpp:740–770)。
+
+#### STATE_DB / `ASIC_TEMPERATURE_INFO` (タイマー駆動)
+
+SwitchOrch は `ASIC_SENSORS_POLL_TIMER` で `m_asicSensorsTable->set("", values)` を定期呼び出しする。`m_asicSensorsTable` は `STATE_DB:ASIC_TEMPERATURE_INFO` (schema.h:138, switchorch.cpp:1728,1746,1770,1841,1853,1860)。
+
+#### STATE_DB / `ASIC_SDK_HEALTH_EVENT_TABLE` (SAI イベント駆動)
+
+SAI から ASIC SDK health event が通知されたとき `onSwitchAsicSdkHealthEvent()` が `m_asicSdkHealthEventTable->set(timestamp, values)` を呼び出す (switchorch.cpp:1661)。テーブル名は `ASIC_SDK_HEALTH_EVENT_TABLE` (schema.h:507)。
+
+#### ASIC_DB / SAI switch attributes (APPL_DB `SWITCH_TABLE` 経由)
+
+SwitchOrch は APPL_DB `SWITCH_TABLE` を consumer とし、`sai_switch_api->set_switch_attribute(gSwitchId, &attr)` で ASIC_DB に書き込む (switchorch.cpp:722)。`switch_type = voq` 時は起動スクリプトが `SWITCH_TABLE` に `ecmp_hash_seed`/`lag_hash_seed` を書き込み、それが SAI 書込につながる:
+
+| APPL_DB `SWITCH_TABLE` フィールド | SAI 属性 |
+|----------------------------------|---------|
+| `ecmp_hash_seed` | `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_SEED` |
+| `lag_hash_seed` | `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_SEED` |
+| `fdb_aging_time` | `SAI_SWITCH_ATTR_FDB_AGING_TIME` |
+| `vxlan_port` | `SAI_SWITCH_ATTR_VXLAN_DEFAULT_PORT` |
+| `vxlan_router_mac` | `SAI_SWITCH_ATTR_VXLAN_DEFAULT_ROUTER_MAC` |
+
+evidence: `sonic-swss/orchagent/switchorch.cpp:44-54,722,1661,1728,1866`; `sonic-swss/orchagent/orchdaemon.cpp:196`
+
+<!-- 証跡: sonic-swss/cfgmgr/buffermgr.cpp, sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/fpmsyncd/fpmsyncd.cpp, sonic-swss/fpmsyncd/routesync.cpp, sonic-host-services/scripts/hostcfgd, sonic-swss/orchagent/switchorch.cpp -->
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: e22e287b939b -->

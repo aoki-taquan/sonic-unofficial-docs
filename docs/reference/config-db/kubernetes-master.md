@@ -24,6 +24,19 @@ related:
 
 SONiC ホストを Kubernetes worker としてマスターに参加させるための接続情報を保持するテーブル。SONiC の K8s 統合 (Smart Switch でも参照される [DPU](../../reference/glossary.md#term-dpu) 管理経路の一部) でコンテナ化された feature を K8s から起動するために使われる[^1]。
 
+<!-- defaults -->
+## フィールドデフォルト
+
+| フィールド | デフォルト値 | ソース |
+|-----------|------------|--------|
+| `ip` | (なし — 空文字) | ctrmgrd.py L73; `ip` は YANG に `default` 宣言なし |
+| `port` | `6443` | sonic-kubernetes_master.yang L40–41; ctrmgrd.py L74 |
+| `disable` | `"false"` | sonic-kubernetes_master.yang L47; ctrmgrd.py L75 |
+| `insecure` | `"true"` | sonic-kubernetes_master.yang L53; ctrmgrd.py L76 |
+
+> **注**: CLI レイヤー (`config/kube.py L27–32`) は `"True"/"False"` (先頭大文字) で書き込む場合がある。ConfigDB 比較ロジックは大文字小文字を区別しない。
+<!-- /defaults -->
+
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 

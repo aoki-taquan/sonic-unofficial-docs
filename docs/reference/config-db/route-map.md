@@ -279,5 +279,209 @@ ROUTE_MAP テーブルは **2 つの独立したデーモン** が異なる経�
 
 SmartSwitch / DPU 固有の分岐なし。通常の BGP コンテナと同一処理経路。
 <!-- /platform -->
+<!-- defaults -->
+## 暗黙デフォルト・コード由来の落とし穴
+
+### `route_operation` 欠落 → 全フィールド処理スキップ
+
+frrcfgd は起動時に `route_operation` を内部キャッシュに登録する。フィールドが CONFIG_DB エントリに存在しない場合、後続の `match_*` / `set_*` フィールドが全て `route-map {name} seq {seq} not found for update` エラーでスキップされる（silent drop）。YANG に mandatory / default 宣言なし。
+
+### `match_ipv6_prefix_set` — dead field (frrcfgd 未処理)
+
+YANG に定義はあるが `frrcfgd` の `route_map_key_map` に対応エントリなし。CONFIG_DB に書き込んでも FRR に反映されない。IPv6 prefix-list match は `match_prefix_set` で代替し、参照先 `PREFIX_SET.mode=IPv6` で AF を決定させること。
+
+### `set_tag` — dead field (frrcfgd 未処理)
+
+YANG に `set_tag` (uint32) が定義されているが `route_map_key_map` に対応エントリなし。frrcfgd は無視する。
+
+### `match_prefix_set` / `match_next_hop_set` — 書き込み順依存
+
+frrcfgd は参照先 `PREFIX_SET.mode` を動的に参照して IPv4/IPv6 を判定する。PREFIX_SET が先に作成されていない場合、AF が特定できず FRR へのコマンド発行がスキップされる。**PREFIX_SET を先に作成してから ROUTE_MAP を設定すること。**
+
+### `set_metric_action` + `set_metric` の組み合わせ依存
+
+- `METRIC_SET_VALUE` / `METRIC_ADD_VALUE` / `METRIC_SUBTRACT_VALUE` は `set_metric` が必須。未設定時 `handle_rmap_set_metric` が `LOG_ERR` を出力し `None` を返却 → FRR コマンド未発行（silent drop）。
+- RTT 系 (`METRIC_SET_RTT` / `METRIC_ADD_RTT` / `METRIC_SUBTRACT_RTT`) は `set_metric` 不要。
+- `set_metric_action` なしで `set_med` のみを設定した場合、`set_med` の値がそのまま `set metric` コマンドに使われる（フォールバック）。
+
+### `set_repeat_asn` 単独設定 — silent drop
+
+`set_asn` が未設定で `set_repeat_asn` のみ設定しても `hdl_set_asn` が `return None` → FRR コマンド未発行。`set_repeat_asn` は `set_asn` とセットで設定すること。`set_repeat_asn` 省略時は繰り返し 1 回（デフォルト）。
+
+### `set_asn_list` — カンマ区切り → スペース区切り変換
+
+CONFIG_DB では `"1111,2222,3333"` 形式で格納するが、FRR コマンドでは `"1111 2222 3333"` に自動変換される。
+
+### `match_protocol` — zebra daemon のみ有効
+
+`[zebra]` タグが付いており bgpd インスタンスでは無視される。また `ospf3` は frrcfgd が `ospf6` に変換して発行する。
+
+### `match_neighbor` — max-elements 1 だが複数書込み時は先頭のみ
+
+YANG は `max-elements 1` の leaf-list。frrcfgd の format `:peer-ip` は list の場合先頭要素のみ使用。2 番目以降は silent drop。
+
+### BGPRouteMapMgr のハードコード (SDN ユースケース専用)
+
+`FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` の 2 キーに限り `managers_rm.py` が以下をハードコード:
+- シーケンス番号: **`permit 100`** (固定)
+- `set origin incomplete` (固定)
+- `set as-path prepend <bgp_asn> <bgp_asn>` (ASN を **2 回** prepend)
+
+BGP ASN は `constants['deployment_id_asn_map']['2']` から取得。未設定時は既存 route-map を残したまま更新スキップ。
+
+### `set_community_ref` — 参照先未作成時 silent drop
+
+参照先 `COMMUNITY_SET` が CONFIG_DB に存在しないか `is_configurable()` が False の場合、FRR コマンドが生成されない。COMMUNITY_SET を先に作成すること。
+
+<!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）を全行精読して確認した。
+
+### 必須制約（違反すると silent drop）
+
+1. **`route_operation` を最初に書き込む** — 同一キー `ROUTE_MAP|<name>|<seq>` の処理で `route_operation` が内部キャッシュ（`self.route_map`）に登録されていない場合、後続の `match_*` / `set_*` フィールドは全て `route-map {} seq {} not found for update` エラーでスキップされる（FRR への反映なし）。
+
+2. **`match_prefix_set` / `match_next_hop_set` を書く前に `PREFIX_SET` を先に作成する** — frrcfgd は `PREFIX_SET.mode` (IPv4/IPv6) を参照して FRR コマンドの `match ip address prefix-list` / `match ipv6 address prefix-list` を選択する。`PREFIX_SET` が未登録の場合は AF が特定できず FRR コマンド未発行（silent drop）。
+
+3. **`route_operation` を permit → deny（またはその逆）に変更する場合は DEL → SET** — FRR では `route-map <name> permit <seq>` と `route-map <name> deny <seq>` は**別エントリ**として扱われる。SET 上書きでは古いエントリが残るため、`no route-map` で旧エントリを削除してから新規作成すること。
+
+### 推奨制約（違反すると FRR 側でエラーまたは運用影響）
+
+4. **`set_community_ref` を書く前に `COMMUNITY_SET` を先に作成する** — 参照先が未作成の場合 FRR `set community` コマンドが発行されない（silent drop）。
+
+5. **`match_as_path` を書く前に `AS_PATH_SET` を先に作成する** — 未作成の場合 FRR bgpd 側で無効参照エラーが発生し BGP ポリシーが機能しない。
+
+6. **`call_route_map` 参照先 route-map を先に作成する** — 参照先が未定義の場合 FRR は黙って素通り（ポリシー未適用）。
+
+7. **ROUTE_MAP を DEL する前に `BGP_NEIGHBOR_AF` / `BGP_PEER_GROUP_AF` の参照（`route_map_in` / `route_map_out`）を先に解除する** — 参照中の route-map を先に削除すると BGP フィルタが消えた状態でセッションが継続しトラフィックに影響する可能性がある。
+
+8. **`match_prefix_set` を参照している ROUTE_MAP エントリを更新する前に参照先 `PREFIX_SET` を削除しない** — PREFIX_SET DEL 後は frrcfgd の内部 AF キャッシュからエントリが消え、以降の ROUTE_MAP 更新で AF が特定できず silent drop になる。
+
+### 書込み順依存サマリ
+
+| # | 依存関係 | 方向 | 影響 |
+|---|----------|------|------|
+| 1 | `route_operation` → `match_*` / `set_*` | 同一エントリ内で先行必須 | silent drop |
+| 2 | `PREFIX_SET` → `match_prefix_set` / `match_next_hop_set` | PREFIX_SET 先行必須 | silent drop |
+| 3 | `route_operation` 変更: DEL → SET | DEL 後に SET | FRR に旧エントリ残留 |
+| 4 | `COMMUNITY_SET` → `set_community_ref` | 先行推奨 | silent drop |
+| 5 | `AS_PATH_SET` → `match_as_path` | 先行推奨 | FRR 無効参照 |
+| 6 | 参照先 route-map → `call_route_map` | 先行推奨 | FRR 素通り |
+| 7 | BGP_NEIGHBOR_AF 参照解除 → ROUTE_MAP DEL | 先行推奨 | BGP フィルタ消滅 |
+| 8 | ROUTE_MAP 参照除去 → PREFIX_SET DEL | 先行推奨 | subsequent update silent drop |
+
+> **スキャン証跡**: `frrcfgd.py` L2669-2676 (PREFIX_SET AF 解決), L3113-3133 (route_operation ガード), L3139-3148 (DEL 処理), L2875-2882 (COMMUNITY_SET), L2907-2908 (PREFIX_SET DEL)。詳細は `meta/_intermediate/cdb-flow/route-map-ordering.md` を参照。
+
+<!-- /ordering -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### frrcfgd の失敗パターン
+
+frrcfgd は ROUTE_MAP の変換失敗をすべて **syslog LOG_ERR + `continue`** で処理する。retry・rollback・STATE_DB 記録はない。
+
+#### 1. vtysh コマンド失敗 → silent drop
+
+FRR vtysh への `route-map <name> permit|deny <seq>` 発行が失敗した場合（`__run_command()` が false を返す）:
+
+```
+LOG_ERR: 'failed to configure route-map <name> seq <seq>'
+```
+
+内部キャッシュ (`self.route_map`) は更新されず、以降の `match_*` / `set_*` フィールドも全スキップ。**CONFIG_DB のエントリは残るが FRR には未反映。retry なし。**
+
+#### 2. `route_operation` 欠落 → `match_*` / `set_*` silent drop
+
+`route_operation` が CONFIG_DB エントリに存在しない場合、内部キャッシュに当該シーケンスが登録されない。後続フィールドが届いても以下でスキップ:
+
+```
+LOG_ERR: 'route-map <name> seq <seq> not found for update'
+```
+
+**FRR への反映ゼロ。retry なし。`route_operation` を先に書き込んで再 SET が必要。**
+
+#### 3. DEL 時キャッシュ未登録 → FRR ゴーストエントリ残存リスク
+
+DEL イベント受信時に内部キャッシュが空の場合（frrcfgd 再起動後等）:
+
+```
+LOG_ERR: 'route-map <name> seq <seq> not found for delete'
+```
+
+FRR への `no route-map` コマンドが発行されず、FRR 上にエントリが残存する。**`vtysh -c 'no route-map <name>'` で手動削除が必要。**
+
+#### 4. `set_metric_action` + `set_metric` 未設定 → silent drop
+
+`METRIC_SET_VALUE` / `METRIC_ADD_VALUE` / `METRIC_SUBTRACT_VALUE` 指定時に `set_metric` が未設定の場合:
+
+```
+LOG_ERR: 'handle_rmap_set_metric not set for <args>'
+```
+
+handler が `None` を返し FRR `set metric` コマンド未発行。**RTT 系 (`METRIC_SET_RTT` 等) は `set_metric` 不要のためこの問題は発生しない。**
+
+#### 5. `set_asn` 未設定で `set_repeat_asn` のみ → silent drop
+
+`set_asn` が未設定の場合 handler が `None` を返し、FRR AS-path prepend コマンド未発行。LOG_ERR なし（完全 silent）。
+
+#### 6. FRR デーモン接続失敗 → 起動時 100 回 retry
+
+frrcfgd 起動時、FRR Unix socket (`/run/frr/<daemon>.vty`) への接続を **2 秒間隔・最大 100 回（約 200 秒）** リトライ。超過時は `RuntimeError('connect to FRR daemon failed')` でプロセス終了。実行中のコネクション断は retry なし（個別コマンド失敗として処理）。
+
+### 失敗パターンサマリ
+
+| ケース | LOG_ERR | FRR 反映 | retry | 備考 |
+|--------|---------|---------|-------|------|
+| vtysh コマンド失敗 | あり | なし | なし | continue でイベント破棄 |
+| `route_operation` 欠落 | あり | なし | なし | 内部キャッシュ未登録 |
+| DEL 時キャッシュ未登録 | あり | なし | なし | FRR ゴーストエントリ残存 |
+| `set_metric` 未設定 | あり | なし | なし | handler が `None` 返却 |
+| `set_asn` 未設定 | なし | なし | なし | 完全 silent drop |
+| 起動時デーモン接続失敗 | あり | なし | 最大 100 回 | 超過で RuntimeError |
+
+### STATE_DB / ERROR_TABLE
+
+frrcfgd は ROUTE_MAP の失敗を STATE_DB や ERROR_TABLE に**記録しない**。障害検知は syslog のみ。
+
+```bash
+journalctl -u frr-mgmt-framework | grep 'route-map'
+vtysh -c 'show route-map'
+```
+
+> **スキャン証跡**: `frrcfgd.py` L47-63 (`g_run_command`), L181-218 (接続 retry), L502-504 (`handle_rmap_set_metric`), L3109-3148 (ROUTE_MAP handler), L1532-1534 (例外吸収)。詳細は `meta/_intermediate/cdb-flow/route-map-failure.md` を参照。
+
+<!-- /failure -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref および frrcfgd 実装スキャンにより確認した参照先テーブル一覧。詳細抽出は `meta/_intermediate/cdb-flow/route-map-cross-refs.md` を参照。
+
+| 参照先テーブル / リソース | 参照方向 | 参照フィールド | 条件・備考 |
+|--------------------------|---------|--------------|-----------|
+| [`PREFIX_SET`](prefix-set.md) | leafref (必須) | `match_prefix_set`, `match_next_hop_set` | frrcfgd が `PREFIX_SET.mode` を動的参照して IPv4/IPv6 AF を決定。PREFIX_SET 未作成時は FRR コマンド未発行 (silent drop) |
+| [`PREFIX_SET`](prefix-set.md) | leafref (YANG のみ) | `match_ipv6_prefix_set` | YANG leafref あり、frrcfgd `route_map_key_map` 未実装 → dead field |
+| [`COMMUNITY_SET`](community-set.md) | leafref (推奨事前作成) | `match_community`, `set_community_ref` | frrcfgd が `get_table('COMMUNITY_SET')` で全件参照。未作成時は FRR コマンド未発行 |
+| `EXTENDED_COMMUNITY_SET` | leafref (推奨事前作成) | `match_ext_community`, `set_ext_community_ref` | frrcfgd が `get_table('EXTENDED_COMMUNITY_SET')` で全件参照 |
+| [`AS_PATH_SET`](as-path-set.md) | leafref (推奨事前作成) | `match_as_path` | frrcfgd が `get_table('AS_PATH_SET')` で全件参照。未作成時 FRR 側で無効参照エラー |
+| [`ROUTE_MAP_SET`](route-map-set.md) | leafref (推奨事前作成) | `call_route_map` | 参照先 route-map 未定義時は FRR が素通り（ポリシー未適用） |
+| [`PORT`](port.md) | leafref | `match_interface` (union), `match_neighbor` (union) | 物理ポート名で interface match / neighbor match |
+| [`PORTCHANNEL`](portchannel.md) | leafref | `match_interface` (union), `match_neighbor` (union) | LAG 名で interface match / neighbor match |
+| [`LOOPBACK_INTERFACE`](loopback-interface.md) | leafref | `match_interface` (union) | loopback 名で interface match。`match_neighbor` には非対応 |
+| [`VRF`](vrf.md) | leafref | `match_src_vrf` | union (`default` 固定文字列 または VRF leafref)。VRF 未作成時は FRR コマンド対象外 |
+| [`BGP_NEIGHBOR_AF`](bgp-neighbor-af.md) | 逆参照（被参照） | `route_map_in`, `route_map_out` | BGP_NEIGHBOR_AF が ROUTE_MAP_SET.name を leafref で参照。frrcfgd が `neighbor {} route-map {} in/out` に変換 |
+| [`BGP_PEER_GROUP_AF`](bgp-peer-group-af.md) | 逆参照（被参照） | `route_map_in`, `route_map_out` | BGP_PEER_GROUP_AF が ROUTE_MAP_SET.name を leafref で参照。BGP_NEIGHBOR_AF と同一 handler |
+
+!!! note "VLAN は YANG でコメントアウト"
+    `match_interface` / `match_neighbor` の VLAN union は `sonic-route-map.yang` 内でコメントアウト済み (`//type leafref vlan...`)。VLAN 名を指定してもコンパイルエラーまたは無視される。
+
+!!! note "EXTENDED_COMMUNITY_SET ページ"
+    `EXTENDED_COMMUNITY_SET` のスタンドアロン参照ページは未作成。frrcfgd は `COMMUNITY_SET` と `EXTENDED_COMMUNITY_SET` を同一 handler (`comm_set_handler`) で処理する。
+
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 24dbb72211e3 -->
