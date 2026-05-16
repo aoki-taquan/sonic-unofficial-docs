@@ -668,3 +668,81 @@ PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
 `orchdaemon.cpp:553-565` で AclOrch / PortsOrch 作成後に PbhOrch を生成する順序が保証されている。
 
 <!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-phaseH-platform.md -->
+
+### ASIC ベンダー検出と capability ロード
+
+`PbhCapabilities` は起動時に環境変数 `ASIC_VENDOR` を読み取り、対応する `PbhVendorFieldCapabilities` サブクラスをロードする (`pbhcap.cpp:310-335`)。`ASIC_VENDOR` 未設定または不明値の場合は `generic` へ fallback し、`SWSS_LOG_WARN` を出力する。
+
+現在サポートするベンダー:
+
+| `ASIC_VENDOR` 値 | ロードされるクラス | STATE_DB `PBH_CAPABILITIES_TABLE` へ書込 |
+|---|---|---|
+| `generic` (またはその他 / 未設定) | `PbhGenericFieldCapabilities` | あり (各フィールドの ADD/UPDATE/REMOVE 組み合わせ) |
+| `mellanox` | `PbhMellanoxFieldCapabilities` | あり (同上) |
+
+### フィールド別 capability 対照表
+
+以下の通り `ASIC_VENDOR` によって ADD / UPDATE / REMOVE の可否が変わる。空欄は "いずれも不可"。
+
+#### PBH_TABLE
+
+| フィールド | Generic | Mellanox |
+|---|---|---|
+| `interface_list` | UPDATE | UPDATE |
+| `description` | UPDATE | UPDATE |
+
+#### PBH_RULE
+
+| フィールド | Generic | Mellanox |
+|---|---|---|
+| `priority` | UPDATE | UPDATE |
+| `gre_key` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `ether_type` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `ip_protocol` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `ipv6_next_header` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `l4_dst_port` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `inner_ether_type` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `hash` | UPDATE | UPDATE |
+| `packet_action` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `flow_counter` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+
+#### PBH_HASH
+
+| フィールド | Generic | Mellanox |
+|---|---|---|
+| `hash_field_list` | UPDATE | **(空: 不可)** |
+
+> **Mellanox 固有制約**: `PBH_HASH.hash_field_list` の ADD / UPDATE / REMOVE がすべて無効。`hash_field_list` の変更は capability チェックで拒否され `SWSS_LOG_ERROR("Failed to validate field(hash_field_list): capability(UPDATE/ADD/REMOVE) is not supported")` が記録される。
+
+#### PBH_HASH_FIELD
+
+`PbhHashFieldCapabilities` のフィールド (`hash_field`, `ip_mask`, `sequence_id`) はいずれのベンダーも明示的な capability 登録なし (`PbhVendorFieldCapabilities::hashField` が未初期化のまま) → 事実上 ADD のみ許可 (`updatePbhHashField()` は常に `return false` により UPDATE 禁止)。
+
+### Mellanox W/A: PBH_RULE update 時の action disable
+
+`ASIC_VENDOR=mellanox` かつ `updatePbhRule` の変更フィールドに `hash` または `packet_action` が含まれる場合、`pbhorch.cpp:839-863` にてワークアラウンドを実施:
+
+1. `AclRulePbh::disableAction()` で既存 ACL entry の action attr を先に無効化
+2. その後 `aclOrch->updateAclRule()` を呼び出す
+
+GENERIC platform ではこの処理は行われず、直接 `updateAclRule()` を呼ぶ。
+
+### VOQ / chassis
+
+`sonic-swss/orchagent/pbh/` ディレクトリに VOQ chassis 固有コードは存在しない。`PbhOrch` は `orchdaemon.cpp` で unconditionally 生成されており、VOQ / non-VOQ の分岐なし。
+
+### capability の STATE_DB 書き込み
+
+`PbhCapabilities::writePbhVendorCapabilitiesToDb()` が起動時に `STATE_DB:PBH_CAPABILITIES_TABLE` へ各フィールドの capability 文字列 (`ADD`, `UPDATE`, `REMOVE` のカンマ区切り) を書き込む。確認コマンド:
+
+```bash
+sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES_TABLE|rule'
+sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES_TABLE|hash'
+```
+
+<!-- /platform -->
