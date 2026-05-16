@@ -433,6 +433,67 @@ orchagent 起動時に `gVirtualRouterId` 配下に `SAI_PACKET_ACTION_FORWARD` 
 
 <!-- /constants -->
 
+<!-- failure -->
+## 失敗挙動・retry 分岐 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-failure.md -->
+
+`orchagent/routeorch.cpp` が APPL_DB の `ROUTE_TABLE` エントリを処理する際の失敗パターンを 3 類に整理する。
+
+### 1. NEXTHOP 未解決 → retry
+
+| 条件 | 検出箇所 | syslog | 振る舞い |
+|------|---------|--------|---------|
+| RIF 未作成 (intf nexthop) | L2086 | INFO `Failed to get next hop ...` | `return false` → doTask が `it++` で **retry** |
+| NHFLAGS_IFDOWN (リンクダウン中) | L2108 | INFO `Interface down for NH ...` | `return false` → **retry** |
+| IP neighbor 未解決 | L2151 / L2219 | INFO `resolving neighbor` | ARP/NDP probe をキック → **retry** |
+| VRF が m_syncdRoutes 未登録 | L2398 | INFO `doesn't exist in syncd routes ... will retry later` | **retry** |
+| NHG ref 不在 (nhg_index) | L2052 | INFO `Next hop group key ... does not exist` | **retry** |
+| Context ID 未作成 (SRv6) | L2057 | INFO `Context ID ... move task entry to RetryCache` | RetryCache 保留 |
+
+ECMP 経路で NHG リソースが枯渇した場合は `addNextHopGroup` が false を返し、`addTempRoute` が解決済み 1-NH の仮経路を SAI に投入したうえで元経路を `return false` (retry)。
+
+```cpp
+// routeorch.cpp L2183-L2240
+/* retry to add route */
+addTempRoute(ctx, nextHops);
+return false;
+```
+
+### 2. SAI bulk 失敗
+
+| 条件 | 検出箇所 | syslog | 振る舞い |
+|------|---------|--------|---------|
+| `create_entry()` 即時 `ITEM_ALREADY_EXISTS` | L2302 | ERROR `already exists in bulker` | `return false` (bulker 二重投入ガード) |
+| bulk flush 後の個別 status 失敗 | L2514 | ERROR `Failed to create route ...` | `handleSaiCreateStatus` → retry or erase |
+| SAI `ITEM_NOT_FOUND` (dualtor キャッシュ不整合) | L2575 | ERROR `Failed to set route ...` | `m_syncdRoutes` から削除し自己修復 retry |
+| pre フェーズ早期 return (object_statuses 空) | L2388 / L2817 | (なし) | post フェーズで検出 → silent retry |
+
+SAI bulk flush (`gRouteBulker.flush()`) は複数エントリを一括で syncd へ送る。個別エントリの `sai_status_t` は `object_statuses` ベクタに書き戻され、`addRoutePost` / `removeRoutePost` がエントリごとに評価する。
+
+```cpp
+// routeorch.cpp L2388-L2392
+if (object_statuses.empty())
+{
+    // Something went wrong before router bulker, will retry
+    return false;
+}
+```
+
+### 3. unsupported prefix → drop (erase) または skip
+
+| 条件 | 検出箇所 | syslog | 振る舞い |
+|------|---------|--------|---------|
+| `nexthop_group` + `nexthop`/`ifname` 同時指定 | L807 | ERROR `has both nexthop_group and ips/aliases` | **ハード失敗 (erase)** |
+| ifname 空 (unicast・非 blackhole・非 SRv6) | L858 | WARN `empty ifname field` | **ハード失敗 (erase)** |
+| EVPN router_mac / vni_label 数不整合 | L980/988 | ERROR `invalid router mac/vni label field` | **ハード失敗 (erase)** |
+| EVPN 経路が非 L3 VNI | L873 | WARN `received on non L3 VNI` | L3 VNI 登録後に成功するため **retry** |
+| inband port 向けホストルート | L2074 | (なし) | SAI 自動追加に委ねて **意図的スキップ (成功)** |
+
+ハード失敗 (erase) となったエントリは `m_toSync` から削除され再投入されない。APPL_STATE_DB への `publishRouteState` は呼ばれないため、当該エントリは APPL_STATE_DB に存在しない「未確定」状態のまま。
+
+<!-- /failure -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `STATIC_ROUTE`（静的経路の設定元）、`VRF`
