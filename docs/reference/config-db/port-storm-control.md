@@ -308,6 +308,65 @@ show storm-control all
 - 副作用: レートを低く設定しすぎると正常な broadcast (ARP 等) も制限される。
 
 <!-- /runtime-trace -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+PORT_STORM_CONTROL テーブルは CONFIG_DB → SAI の **直接経路**をとる。APPL_DB への中継は行わない。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|--------------------|
+| CONFIG_DB → PolicerOrch | `SubscriberStateTable` | `__keyspace@{config_db_id}__:PORT_STORM_CONTROL\|*` |
+| PolicerOrch → SAI | SAI API 直接呼び出し | `sai_policer_api` + `sai_port_api` |
+
+### SubscriberStateTable の動作
+
+`orchdaemon.cpp:396-402` で `PolicerOrch` は `CFG_POLICER_TABLE_NAME` と `CFG_PORT_STORM_CONTROL_TABLE_NAME` の 2 テーブルを `TableConnector` としてまとめ、`Orch(tableNames)` 基底クラスの `addConsumer()` を通じて `SubscriberStateTable` を生成する。CONFIG_DB の keyspace notification (`PSUBSCRIBE __keyspace@db__:PORT_STORM_CONTROL|*`) でエントリ変化を検出し、`pops()` で現在値を読み出す。初回起動時は `getKeys()` で既存エントリを先読みし、起動前の設定を取りこぼさない。
+
+### select() ループと doTask 実行順序
+
+orchdaemon は `Select::select()` を 1000 ms タイムアウトで実行する。イベント受信時は `Consumer::drain()` → `PolicerOrch::doTask(Consumer&)` が呼ばれる (`policerorch.cpp:374`)。
+
+`PolicerOrch::doTask()` の先頭 (`policerorch.cpp:379-382`) では `gPortsOrch->allPortsReady()` チェックがあり、全ポート初期化完了まで処理を保留する。その後 `consumer.getTableName() == CFG_PORT_STORM_CONTROL_TABLE_NAME` を判定し (`policerorch.cpp:394`)、`handlePortStormControlTable(tuple)` にディスパッチする（通常 POLICER テーブルとは別経路）。
+
+### retry メカニズム
+
+- `task_success` または `task_failed` → `m_toSync.erase(it)` (エントリ削除、リトライなし)
+- `task_need_retry` → `it++` (エントリ保留、次サイクルで再試行)
+
+SAI policer create/set 失敗は `task_failed` で silent drop。ポート未発見 (`getPort()` が false) は `task_success` で erase（設計上リトライなし）。
+
+### データフロー図
+
+```
+CONFIG_DB[PORT_STORM_CONTROL|<ifname>|<storm_type>]
+  ↓ SubscriberStateTable (keyspace notification)
+  ↓ PSUBSCRIBE __keyspace@config_db_id__:PORT_STORM_CONTROL|*
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → PolicerOrch::doTask()
+  ↓   [allPortsReady() チェック — false なら即 return]
+  ↓   [table_name == CFG_PORT_STORM_CONTROL_TABLE_NAME でディスパッチ]
+  ↓ handlePortStormControlTable()
+    ↓ sai_policer_api->create_policer()
+    |   SAI_POLICER_ATTR_METER_TYPE=BYTES / MODE=STORM_CONTROL / RED_ACTION=DROP
+    |   SAI_POLICER_ATTR_CIR = kbps * 1000 / 8
+    ↓ sai_port_api->set_port_attribute()
+        SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID   (broadcast)
+        SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID       (unknown-unicast)
+        SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID   (unknown-multicast)
+ASIC (sairedis → ASIC_DB 経由)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationConsumer: なし
+```
+
+> **証跡**: `sonic-swss/orchagent/orchdaemon.cpp:396-402` (TableConnector 登録)、`sonic-swss/orchagent/policerorch.cpp:374-407` (doTask / ディスパッチ / retry 制御)、`sonic-swss/orchagent/policerorch.cpp:120-300` (handlePortStormControlTable / SAI 呼び出し); 詳細分析 `meta/_intermediate/cdb-flow/port-storm-control-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
@@ -382,6 +441,44 @@ minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派
 > **スキャン証跡**: `policerorch.cpp:374-407` を確認、5 件分岐抽出。PORT_STORM_CONTROL が PolicerOrch の `doTask()` 内で最優先にディスパッチされることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-platform.md -->
+
+### SAI capability チェックなし — orchagent は直接 push
+
+`PolicerOrch::handlePortStormControlTable()` は `sai_query_attribute_capability()` を呼ばない。storm control policer は ASIC capability の事前確認なしに SAI へ push される。
+
+ASIC が storm control をサポートしない場合、`sai_policer_api->create_policer()` または `sai_port_api->set_port_attribute()` が `SAI_STATUS_NOT_SUPPORTED` 等を返し、orchagent が `SWSS_LOG_ERROR` を記録して `task_need_retry` または `task_failed` を返す (SAI エラー任せ)。
+
+証跡: `policerorch.cpp:226-313`
+
+### BUM_STORM_CAPABILITY — CLI のみがガード、orchagent はスルー
+
+`STATE_DB:BUM_STORM_CAPABILITY|<storm_type>` の `supported` フィールドは CLI 側でのみ参照される。
+
+| レイヤ | BUM_STORM_CAPABILITY の扱い | ソース |
+|---|---|---|
+| CLI (`config storm-control add`) | `is_storm_control_supported()` が `STATE_DB` を参照し、`supported == 0` なら CONFIG_DB 書き込みをスキップ | `sonic-utilities/config/main.py:806-824` |
+| orchagent (PolicerOrch) | `BUM_STORM_CAPABILITY` を `TableConnector` で定義しているが、`handlePortStormControlTable()` 内でその値を参照する分岐は存在しない | `orchdaemon.cpp:401`, `policerorch.cpp` |
+
+つまり、直接 CONFIG_DB に書き込んだ場合は capability 非対応 ASIC でも orchagent が処理を試み、SAI エラーで失敗する可能性がある。
+
+### プラットフォーム依存挙動のまとめ
+
+| 項目 | 内容 |
+|---|---|
+| `kbps=0` | YANG 上は許容値。SAI / ASIC が 0 を無制限として扱うかはプラットフォーム依存 |
+| `SAI_POLICER_ATTR_CBS` | 未設定。SAI / HW デフォルト依存 (プラットフォームにより異なる) |
+| `SAI_POLICER_ATTR_GREEN_PACKET_ACTION` | 未設定。SAI / HW デフォルト依存 |
+| `SAI_POLICER_ATTR_YELLOW_PACKET_ACTION` | 未設定。SAI / HW デフォルト依存 |
+| ASIC 非サポート時 | SAI create/set エラー → `SWSS_LOG_ERROR` + `task_need_retry` / `task_failed` |
+
+証跡: `policerorch.cpp:156-169`, `orchdaemon.cpp:395-407`, `sonic-utilities/config/main.py:806-824`
+
+<!-- /platform -->
 
 <!-- ordering -->
 ## 順序依存性 (Phase B)
@@ -472,3 +569,27 @@ update 時の remove-then-reapply フローで、一時解除の `set_port_attri
 証跡: `policerorch.cpp:279-286`
 
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `PORT_STORM_CONTROL` への変更が連鎖して書き込まれる副次テーブル一覧。
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/port-storm-control-phaseF-side-effects.md`
+
+| 副次 DB | オブジェクト / テーブル | 操作 | 条件 | evidence |
+|---|---|---|---|---|
+| ASIC_DB (syncd 経由) | SAI policer (`SAI_OBJECT_TYPE_POLICER`) | create | SET かつ新規 (未登録) | `policerorch.cpp:226` |
+| ASIC_DB (syncd 経由) | SAI policer — CIR 属性 | set_attribute | SET かつ既存 (更新) | `policerorch.cpp:257` |
+| ASIC_DB (syncd 経由) | SAI PORT 属性 `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=broadcast | `policerorch.cpp:278, 291` |
+| ASIC_DB (syncd 経由) | SAI PORT 属性 `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=unknown-unicast | `policerorch.cpp:278, 291` |
+| ASIC_DB (syncd 経由) | SAI PORT 属性 `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=unknown-multicast | `policerorch.cpp:278, 291` |
+| ASIC_DB (syncd 経由) | SAI policer | remove | DEL | `policerorch.cpp:355` |
+| ASIC_DB (syncd 経由) | SAI PORT 属性 (`SAI_NULL_OBJECT_ID` でクリア) | set_port_attribute | DEL / update の一時解除 | `policerorch.cpp:278, 344` |
+
+**フロー概要**:
+1. `PolicerOrch::handlePortStormControlTable()` が `sai_policer_api->create_policer()` で SAI policer を作成 (syncd が ASIC_DB へ反映)
+2. 作成した policer OID を `sai_port_api->set_port_attribute(SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID)` でポートに attach
+3. update 時は先に `SAI_NULL_OBJECT_ID` で一時解除 → CIR 更新 → 再 attach の 3 ステップ
+4. APPL_DB / STATE_DB / COUNTERS_DB への書込は **なし**。CRM カウンタ更新も **なし**
+<!-- /side-effects -->
