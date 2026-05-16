@@ -121,6 +121,71 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### APPL\_DB 購読 — `ConsumerStateTable` ベース
+
+`NhgOrch` は `orchdaemon.cpp` で `APPL_DB::NEXTHOP_GROUP_TABLE` を購読するよう生成・登録される:
+
+```cpp
+// orchdaemon.cpp L338
+gNhgOrch = new NhgOrch(m_applDb, APP_NEXTHOP_GROUP_TABLE_NAME);
+```
+
+基底クラス `NhgOrchCommon → Orch` が **`ConsumerStateTable`** として購読し、orchagent のメインループ (`Select::select()`) に組み込まれる。Redis の `ConsumerStateTable` プロトコル（`PUBLISH` チャネル + keyspace 通知）により変更イベントが `doTask()` に配信される。
+
+> **注意**: `NEXTHOP_GROUP_TABLE` は APPL\_DB テーブルのため CONFIG\_DB Subscribe は使用しない。書き込み元は `fpmsyncd` (`routesync.cpp`) であり、CLI・minigraph は関与しない。
+
+### doTask() ディスパッチ
+
+```
+ConsumerStateTable 通知受信 (fpmsyncd → APPL_DB)
+    └─ NhgOrch::doTask(Consumer& consumer)      ← nhgorch.cpp L37
+            ├─ gPortsOrch->allPortsReady() チェック
+            ├─ SET_COMMAND
+            │       ├─ フィールド解析 (nexthop / ifname / weight / mpls_nh / seg_src / nexthop_group)
+            │       ├─ NHG 数上限チェック → 超過時 createTempNhg()
+            │       ├─ 新規 → NextHopGroup::sync() → SAI create_next_hop_group
+            │       └─ 更新 → NextHopGroup::update() → SAI set/add/remove member
+            └─ DEL_COMMAND
+                    ├─ getRefCount() > 0 → skip (参照カウント非ゼロ)
+                    └─ NextHopGroup::remove() → SAI remove_next_hop_group
+```
+
+### SAI next\_hop\_group\_api 呼び出し
+
+| SAI 関数 | タイミング | コードロケーション |
+|----------|-----------|------------------|
+| `create_next_hop_group()` | 新規 NHG (ECMP タイプ) 作成 | `nhgorch.cpp` L775 |
+| `create_next_hop_group_member()` | `syncMembers()` — `ObjectBulker` 経由でバッチ送信 | `nhgorch.cpp` L913 |
+| `set_next_hop_group_member_attribute()` | メンバー weight 更新 | `nhgorch.cpp` L614 |
+| `remove_next_hop_group_member()` | メンバー削除 (`NhgCommon::remove()` 経由) | `NhgCommon` |
+| `remove_next_hop_group()` | NHG 全体削除 | `NhgCommon::remove()` |
+
+メンバー追加・削除は `ObjectBulker<sai_next_hop_group_api_t>` でバッチ化され、`flush()` 時に一括 SAI 呼び出しが実行される (`nhgorch.cpp` L913)。
+
+### Observer パターン — `NeighOrch` → `NhgOrch`
+
+`NhgOrch` は **Observer (被観察者)** としても機能する。`NeighOrch` が ARP/NDP 状態変化を検知すると次を呼び出す:
+
+| メソッド | トリガー | 動作 |
+|---------|---------|------|
+| `NhgOrch::validateNextHop(nh_key)` | nexthop が解決済みになった | 該当 NH を含む全 NHG を走査 → `syncMembers()` → SAI member create |
+| `NhgOrch::invalidateNextHop(nh_key)` | nexthop が失効した (IF DOWN 等) | 該当 NH を含む全 NHG を走査 → SAI member remove (NHG 自体は保持) |
+
+これによりインタフェース UP/DOWN や ARP 解決に連動して NHG メンバーが動的に追加・削除される。
+
+### CRM (Critical Resource Monitor) 連携
+
+NHG 作成時に `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼び出し、ハードウェアリソース使用量を追跡する (`nhgorch.cpp` L795)。
+
+### 起動時スナップショット
+
+orchagent 起動時、`Select::select()` ループ開始前に `ConsumerStateTable` の既存エントリが drain され `doTask()` が一括処理される。再起動後も APPL\_DB の既存 NHG エントリが SAI に再設定される。
+
+<!-- /pubsub -->
+
 <!-- failure -->
 ## 失敗挙動・retry / recovery (Phase D)
 
