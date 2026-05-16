@@ -54,6 +54,91 @@ SONiC master における `DHCP_SERVER_IPV6` テーブルの YANG モデル、Py
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D 調査)
+
+`DHCP_SERVER_IPV6` テーブルは未実装のため直接の失敗パスは存在しないが、DHCPv6 リレー機能（`DHCP_RELAY` テーブル / `dhcp6relay` プロセス）に以下の失敗挙動が確認されている。将来 `DHCP_SERVER_IPV6` が実装された場合も同等の前提条件・失敗パスが継承される見込み。
+
+### 1. 不正 server_ip（`dhcpv6_servers`）→ LOG_WARNING + 不正アドレスのまま送信継続
+
+`dhcp6relay/src/relay.cpp:476-486` — `prepare_relay_config()`:
+
+```cpp
+if(inet_pton(AF_INET6, server.c_str(), &tmp.sin6_addr) != 1)
+{
+    syslog(LOG_WARNING, "inet_pton: Failed to convert IPv6 address\n");
+}
+// ★ 変換失敗しても servers_sock.push_back(tmp) は実行される
+interface_config.servers_sock.push_back(tmp);
+```
+
+`inet_pton()` が 1 を返さなかった場合（不正 IPv6 文字列）でも `servers_sock` にゼロ初期化の `sockaddr_in6` がプッシュされる。**エラー時に `continue` / `return` がなく、不正アドレスへの送信を試みる**。送信失敗は `sendto()` で `LOG_ERR` が出るが retry なし。
+
+また `config_interface.cpp:176-179` で `dhcpv6_servers` が空の場合:
+
+```cpp
+if (intf.servers.empty()) {
+    syslog(LOG_WARNING, "No servers found for VLAN %s, skipping configuration.", vlan.c_str());
+    continue;
+}
+```
+
+servers が空 VLAN はスキップ（CONFIG_DB にエントリが残存しても dhcp6relay は無視する）。
+
+### 2. VLAN 未解決 → LOG_WARNING + VLAN スキップ（サービス不提供）
+
+`config_interface.cpp:130-148` — `processRelayNotification()`:
+
+```cpp
+const std::string match_pattern = "VLAN_INTERFACE|" + vlan + "|*";
+auto keys = config_db->keys(match_pattern);
+...
+if (!has_ipv6_address) {
+    syslog(LOG_WARNING, "%s doesn't have IPv6 address configured, skip it", vlan.c_str());
+    continue;
+}
+```
+
+- `VLAN_INTERFACE` テーブルにキーが存在しない場合: `LOG_WARNING "%s doesn't exist in VLAN_INTERFACE table, skip it"`
+- IPv6 アドレス（`:` を含む文字列）が 1 件もない場合: `LOG_WARNING "%s doesn't have IPv6 address configured, skip it"`
+- いずれも `continue` でスキップ。**該当 VLAN への DHCPv6 リレーは提供されない**。rollback なし・DB 状態変更なし。
+
+### 3. dhcrelay 起動失敗 → exit(EXIT_FAILURE) または retry 後 exit
+
+`relay.cpp:588-658` — `prepare_vlan_sockets()`:
+
+- VLAN ソケット（GUA/LLA）生成失敗: `LOG_ERR "socket: Failed to create gua/lla socket on interface %s\n"` → return -1
+- GUA/LLA アドレス取得失敗: `LOG_WARNING "Retry #%d to bind to sockets on interface %s\n"` → 5 秒 sleep × 最大 6 回リトライ
+- 6 回全リトライ失敗後:
+
+```
+LOG_ERR "bind: Failed to bind socket to global ipv6 address on interface %s after %d retries with %s"
+```
+
+→ return -1 → 呼び出し元で `exit(EXIT_FAILURE)`
+
+`relay.cpp:412-434` — `sock_open()`:
+
+- L2 raw ソケット生成失敗: `LOG_ERR "socket: Failed to create socket\n"` → return -1
+- bind 失敗: `LOG_ERR "bind: Failed to bind to specified interface\n"` → close + return -1
+- BPF filter attach 失敗: `LOG_ERR "setsockopt: Failed to attach filter\n"` → close + return -1
+
+**supervisord / systemd による自動再起動に委ねる。`ERROR_TABLE` への書き込みはなし**（dhcp6relay は ERROR_TABLE を使用しない）。
+
+### 4. runtime 設定変更は再起動まで反映されない（hot-reload 不可）
+
+`config_interface.cpp:76-78`:
+
+```cpp
+syslog(LOG_WARNING, "relay config changed, need restart container to take effect");
+```
+
+CONFIG_DB の `dhcpv6_servers` を変更しても dhcp6relay は無視する。**DB 状態と実動作が乖離したまま継続**。再起動するまで新設定は反映されない。
+
+> Evidence: `sonic-net/sonic-dhcp-relay@dhcp6relay/src/relay.cpp:476-486`、`dhcp6relay/src/config_interface.cpp:130-148,176-179`
+
+<!-- /failure -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G 調査)
 
