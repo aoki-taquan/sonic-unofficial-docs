@@ -372,6 +372,42 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 
 <!-- /side-effects -->
 
+<!-- failure -->
+## Phase D: 失敗挙動マトリクス
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `priority` に非数値文字列が直接 DB 書き込みされた場合 | `modify_conf_file()` `int(t['priority'])` | `ValueError` が伝播し PAM 設定ファイル未更新。以降のサーバ設定も生成されない | スタックトレース (未捕捉) | `hostcfgd:703` |
+| `priority` に YANG 範囲外の整数 (0 または 65+) が直接 DB 書き込みされた場合 | `modify_conf_file()` L703 | `int()` 変換は成功。priority=0 は降順ソートで最低優先度として動作 (YANG バリデーションをバイパス) | なし | `hostcfgd:703, 375` |
+| `auth_type` に `pap`/`chap`/`mschapv2` 以外の値が設定された場合 | pam_radius_auth.conf.j2 テンプレートレンダリング時 | 不正値をそのまま展開。PAM ライブラリが認証時に拒否し認証不能。hostcfgd 側での検証なし | なし | `hostcfgd:96 (DEFAULT 定数のみ定義)` |
+| `skip_msg_auth` に `'True'`/`'False'` 以外の文字列が設定された場合 | `radius_server_update()` `is_true()` | `is_true()` が `False` 扱い。`syslog LOG_ERR` "Failed to get bool value" 出力。`skip_msg_auth=False` として処理継続 | LOG_ERR ("Failed to get bool value, instead val={}") | `hostcfgd:160-162, 541-542` |
+| pam_radius_auth.conf.j2 テンプレートレンダリング中に例外が発生した場合 | `modify_conf_file()` L832 | 例外が伝播 (catch なし)。以降のサーバ設定ファイルが未生成のまま中断 | スタックトレース (未捕捉) | `hostcfgd:829-837` |
+| `/etc/pam_radius_auth.d/<ip>_<port>.conf` の open/chmod/書き込みが `OSError` の場合 | `modify_conf_file()` L834-837 | 例外が伝播し処理中断。残りのサーバ設定ファイルも未生成 | スタックトレース (未捕捉) | `hostcfgd:834-837` |
+| `src_intf` に対応する IP アドレスが解決できない場合 | `modify_conf_file()` `get_interface_ip()` | `server['src_ip']` を削除して継続。pam_radius_auth.conf に source_ip 行なし。RADIUS サーバ側 NAS-IP チェックが厳格な場合は認証失敗の可能性 | LOG_INFO ("RADIUS_SERVER\|{}: src_intf has no usable IP addr.") | `hostcfgd:697-700` |
+| `src_intf` と `src_ip` が同時に設定されている場合 | `modify_conf_file()` L689-691 | `src_intf` 優先。`src_ip` は無視される | LOG_INFO ("RADIUS_SERVER\|{}: src_intf found. Ignoring src_ip") | `hostcfgd:689-691` |
+| `aaastatsd` サービスの start/stop が `CalledProcessError` の場合 | `modify_conf_file()` L848-851 | LOG_ERR のみ。処理継続。統計収集が機能しないが認証は継続される | LOG_ERR ("{cmd} - failed: return code - {}, output:\n{}") | `hostcfgd:848-851` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `RADIUS_SERVER` DEL 対象 key が `self.radius_servers` に存在しない場合 | `radius_server_update()` L537 | サイレントスキップ。`modify_conf_file()` は呼ばれ設定ファイルは変化しない | なし | `hostcfgd:536-545` |
+| `auth_port` 変更後に旧ポートの pam_radius_auth.conf が残留する場合 | `modify_conf_file()` | 旧ファイル (`<ip>_<old_port>.conf`) は自動削除されない。pam_radius_auth モジュールが旧設定ファイルを参照し続ける可能性あり | なし | `hostcfgd:829` |
+
+### PAM 認証失敗につながる特殊挙動
+
+| 状態 | 経路 | 影響 | evidence |
+|---|---|---|---|
+| `passkey` 未設定 (`RADIUS_SERVER_PASSKEY_DEFAULT = ""`) | `radius_global_default` → pam_radius_auth.conf | 空の shared secret で PAM 設定が生成される。RADIUS サーバが空 passkey を拒否すると認証失敗。設定ファイル自体は生成される (silent drop なし) | `hostcfgd:93, 377` |
+| `AAA.authentication.login` に `radius` が含まれない場合 | `modify_conf_file()` L722 | common-auth-sonic.j2 の分岐で RADIUS PAM スタックが組まれない。pam_radius_auth.conf が存在しても認証に使用されない (silent) | `hostcfgd:722-723` |
+| `radsrvs_conf` が空 (RADIUS_SERVER エントリなし) の場合 | `modify_conf_file()` L681 | pam_radius_auth.conf 生成をスキップ。PAM スタックに RADIUS が含まれていても接続先なしで認証失敗 | `hostcfgd:681` |
+
+<!-- /failure -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -428,6 +464,58 @@ db_migrator.py での RADIUS_SERVER マイグレーションなし
 
 - `skip_msg_auth`: YANG 未定義・CLI 未実装だが hostcfgd が参照。直接 DB 書き込みのみで設定可能なフィールド
 <!-- /entry-points -->
+
+<!-- pubsub -->
+## Phase G: CONFIG_DB Subscribe 経路と PAM 再生成
+
+### Subscribe 登録
+
+| 購読テーブル | コールバック | 登録箇所 | evidence |
+|---|---|---|---|
+| `RADIUS_SERVER` | `radius_server_handler` | `hostcfgd` L2474: `self.config_db.subscribe('RADIUS_SERVER', make_callback(self.radius_server_handler))` | `hostcfgd:2474` |
+| `RADIUS` | `radius_global_handler` | `hostcfgd` L2473: `self.config_db.subscribe('RADIUS', make_callback(self.radius_global_handler))` | `hostcfgd:2473` |
+| `LOOPBACK_INTERFACE` | `lpbk_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2483 — `src_intf` が Loopback の場合にトリガー | `hostcfgd:2483,500-509` |
+| `MGMT_INTERFACE` | `mgmt_intf_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2485 — `src_intf` が eth0/mgmt の場合にトリガー | `hostcfgd:2485,500-509` |
+| `VLAN_INTERFACE` | `vlan_intf_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2486 — `src_intf` が VLAN インタフェースの場合にトリガー | `hostcfgd:2486,500-509` |
+| `DEVICE_METADATA` | `hostname_update` 経由 | `hostcfgd` L2492 — ホスト名変更時に NAS-Identifier を更新して `modify_conf_file()` 再実行 | `hostcfgd:566-574` |
+
+### PAM 再生成経路
+
+```
+CONFIG_DB RADIUS_SERVER キー変更
+  └─ config_db.subscribe コールバック
+       └─ HostConfigDaemon.radius_server_handler()        [hostcfgd:2317-2322]
+            └─ AaaCfgMgr.radius_server_update(key, data)  [hostcfgd:535-545]
+                 ├─ data == {} → radius_servers から削除
+                 ├─ data != {} → radius_servers[key] = data (skip_msg_auth を bool 変換)
+                 └─ modify_conf_file()                     [hostcfgd:681-851]
+                      ├─ RADIUS_SERVER × RADIUS|global をマージ
+                      ├─ src_intf あり → get_interface_ip() で src_ip 解決
+                      ├─ jinja2 テンプレート展開
+                      │    → /etc/pam_radius_auth.d/<ip>_<auth_port>.conf
+                      ├─ /etc/sonic/radius_nss.conf 更新
+                      ├─ common-auth-sonic PAM スタック更新
+                      └─ aaastatsd を start/stop (サーバリスト空否で分岐)
+```
+
+### インタフェース IP 変更トリガー
+
+`src_intf` フィールドが設定されている RADIUS_SERVER エントリは、インタフェース設定変更によっても PAM 再生成がトリガーされる。
+
+```
+CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INTERFACE 変更
+  └─ handle_radius_source_intf_ip_chg(key)               [hostcfgd:500-525]
+       └─ radius_servers 内で src_intf == key[0] のエントリを検索
+            └─ 一致あり → modify_conf_file() で PAM 再生成
+```
+
+### 非同期性・タイミング
+
+- 購読は `ConfigDBConnector` の poll ループで処理される。設定変更から PAM ファイル反映まで数十ミリ秒〜数秒のラグが生じる場合がある。
+- PAM ファイルが書き換わった直後から新規 SSH セッションに反映される。既存セッションは影響を受けない。
+- `auth_port` 変更時は新ポートのファイルが生成されるが旧ファイルは削除されない (残留)。
+
+<!-- /pubsub -->
 
 <!-- cross-refs -->
 ## 暗黙参照 — `radius_server_update` が間接読み出す関連 CONFIG_DB テーブル (Phase C)
