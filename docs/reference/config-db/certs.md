@@ -111,6 +111,34 @@ CREDENTIALS|CERT|<profileID>
 - **bootstrap の `Final: true`**: `bootstrapDefaultProfile()` が生成する全エンティティは `Final: true` で初期化されるため、Rotate が失敗しても bootstrap 値へのロールバックは発生しない
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`CREDENTIALS|CERT` は **STATE_DB** テーブルであり、`gnsi_certz.go` が gNSI Certz RPC の処理結果として書き込む。CONFIG_DB の書き込み順ではなく、**gRPC Rotate RPC の呼び出し順序・フラグ設定・systemd 起動順序**が STATE_DB の整合性に影響する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `database.service` → `gnmi.service` 起動 | **強制先行**（systemd `After=database.service`） | STATE_DB 未起動時は書き込みエラー; 再起動で回復 |
+| 2 | `entities[]` 配列先頭から順に STATE_DB 書き込み (cert → trust_bundle 等) | 配列順次 | 中間状態は短期; `revertProfile()` / `finalizeProfile()` で最終状態は一貫 |
+| 3 | 配列後半エンティティのバリデーション失敗 → 前半は STATE_DB 書き込み済み | `revertProfile()` で回復 | `revertProfile()` が `writeEntityFreshness()` で STATE_DB を前回値に上書き |
+| 4 | `finalizeProfile()` 内 Cert → TrustBundle → CrlBundle → AuthPolicy の固定順確定 | 固定順序 | `saveCertzMetadata()` 失敗時は再起動で旧 version が STATE_DB に反映 |
+| 5 | `certzMu` により並行 Rotate は直列化 | 先着排他 | `TryLock` 失敗は即時 `codes.Aborted`; `defer Unlock` で必ず解放 |
+| 6 | 物理ファイル更新 → STATE_DB 書き込み（`activateEntity()` 内の順序） | ファイル先・DB 後 | 再起動直後は `loadCertzMetadata` 由来の値が STATE_DB に反映 |
+| 7 | `--cert_crl_dir` フラグ設定 → CRL Rotate 可能 | **起動時前提条件** | 未設定時は全 CRL Rotate が `codes.Aborted`; CONFIG_DB での動的変更不可 |
+
+### 主要な制約詳細
+
+**起動時 STATE_DB 書き込み (依存 #1)**: `NewGNSICertzServer()` (gnsi_certz.go:114) は起動直後に `loadCertzMetadata()` または `bootstrapDefaultProfile()` でプロファイルを初期化し、すべてのプロファイルの全 4 エンティティ (Cert / TrustBundle / CrlBundle / AuthPolicy) に対して `writeEntityFreshness()` を呼び出し STATE_DB へ書き込む (gnsi_certz.go:134-139)。`database.service` が先に起動していなければ書き込みは失敗する。systemd `gnmi.service` の `After=database.service` がこれを保証する (evidence: `gnsi_certz.go:114-159`, `files/build_templates/gnmi.service.j2:3-4`)。
+
+**entities[] 配列順と中間状態 (依存 #2)**: `doUpload()` は `req.GetEntities()` を配列順にイテレートし、各エンティティに対して `saveEntities()` → `activateEntity()` → `writeEntityFreshness()` を順次実行する (gnsi_certz.go:388-428)。同一 Rotate ストリームで cert と trust_bundle を同時更新する場合、cert 更新済み・CA 未更新の期間が生じる。この期間中に gRPC クライアントが接続した場合は TLS ハンドシェイクが一時的に失敗する可能性がある (evidence: `gnsi_certz.go:381-429`)。
+
+**revert による STATE_DB 復元 (依存 #3)**: 後半エンティティのバリデーション失敗や UploadRequest 処理エラー後、`Rotate()` は `revertProfile()` を実行する (gnsi_certz.go:274-276)。`revertProfile()` は `LastEntities` (Finalize 済みの前回値) を各エンティティの `writeEntityFreshness()` で STATE_DB に書き戻す (gnsi_certz.go:611, 620, 633, 641)。ただし revert 処理完了までの短期間は STATE_DB の値が中途半端な状態になる (evidence: `gnsi_certz.go:595-644`)。
+
+**CRL の前提条件 (依存 #7)**: telemetry バイナリの起動引数 `--cert_crl_dir` が未設定 (`""`) の場合、CRL エンティティを含む Rotate RPC は `codes.Aborted: "CRL not configured"` で即時拒否される (gnsi_certz.go:405-407)。デフォルト値は `/mtls/crl` であり、ディレクトリが存在しない場合は起動時に `os.MkdirAll()` で自動作成される (gnsi_certz.go:143-149)。CONFIG_DB を介した動的変更はできず、再起動が必要 (evidence: `gnsi_certz.go:404-408`, `gnsi_certz.go:143-149`, `telemetry/telemetry.go:202`)。
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
