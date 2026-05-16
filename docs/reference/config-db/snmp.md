@@ -507,4 +507,48 @@ Cisco / Dell 以外のハードウェアでも AgentX で OID が応答可能な
 
 <!-- /platform -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`SNMP` テーブルへの書き込みが連鎖して発生するファイル書込・systemd 制御・DB 副次書込の一覧。
+
+> **調査根拠**: `dockers/docker-snmp/start.sh` L14,20–24、`snmpd.conf.j2`、`config/main.py` L4189,4399–4400,4488–4489、`snmp_yml_to_configdb.py` L36–53 全行精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-side-effects.md`
+
+### ファイル副次書込
+
+| 副次書込先 | 操作 | 主要フィールド | タイミング | evidence |
+|---|---|---|---|---|
+| `/etc/snmp/snmpd.conf` | 上書き生成 (`sonic-cfggen -d -t snmpd.conf.j2`) | SNMP 全テーブルを展開 | コンテナ起動時 / `snmp.service` 再起動時 | `start.sh:22–24` |
+| `/etc/ssw/sysDescription` | 上書き生成 (`sonic-cfggen -d -t sysDescription.j2`) | `DEVICE_METADATA.localhost.hwsku` / `platform` | コンテナ起動時 / `snmp.service` 再起動時 | `start.sh:20–21` |
+
+`/etc/snmp/snmpd.conf` は Jinja2 テンプレート `snmpd.conf.j2` から `SNMP`・`SNMP_COMMUNITY`・`SNMP_USER`・`SNMP_AGENT_ADDRESS_CONFIG`・`SNMP_TRAP_CONFIG`・`DEVICE_METADATA.localhost` を参照して生成される。
+CONFIG_DB に書き込まれた値はこのファイル生成を経て初めて `snmpd` デーモンに反映される。
+
+### systemd 制御
+
+| 操作 | systemd ユニット | 実行タイミング | evidence |
+|---|---|---|---|
+| `systemctl reset-failed snmp.service` | `snmp.service` (docker-snmp コンテナ) | CLI `config snmp *` 全コマンド書き込み直後 | `config/main.py:4399,4488` |
+| `systemctl restart snmp.service` | `snmp.service` (docker-snmp コンテナ) | CLI `config snmp *` 全コマンド書き込み直後 | `config/main.py:4400,4489` |
+
+`systemctl restart snmp.service` により `docker-snmp` コンテナが再起動し、`start.sh` → `snmpd.conf.j2` テンプレート展開 → `snmpd` 起動のシーケンスが再実行される。変更反映まで数秒〜十数秒の SNMP 断が発生する。
+
+### CONFIG_DB への条件付き副次書込 (コンテナ起動時のみ)
+
+| 副次書込先 | テーブル | 操作 | 条件 | evidence |
+|---|---|---|---|---|
+| CONFIG_DB | `SNMP_COMMUNITY` | set | `/etc/sonic/snmp.yml` に community 定義がありかつ CONFIG_DB に未登録の場合 | `snmp_yml_to_configdb.py:36–49` |
+| CONFIG_DB | `SNMP\|LOCATION` | set | `/etc/sonic/snmp.yml` に `snmp_location` がありかつ CONFIG_DB に `SNMP\|LOCATION` が未登録の場合 | `snmp_yml_to_configdb.py:51–53` |
+| APPL_DB | なし | — | SNMP テーブルは APPL_DB を経由しない | — |
+| STATE_DB | なし | — | SNMP テーブルは STATE_DB を更新しない | — |
+
+### 失敗時挙動
+
+- `snmp_yml_to_configdb.py` が `snmp_location` キー欠如で `sys.exit(1)` → `start.sh` 失敗 → `snmpd` 未起動
+- `systemctl restart snmp.service` 失敗時は CLI が `SystemExit` をキャッチして `click.Abort()` を送出。CONFIG_DB 書き込みは完了しているが snmpd への反映は未完
+- `/etc/snmp/snmpd.conf` 生成失敗時は前回の設定ファイルが残存し、CONFIG_DB との乖離が発生する可能性がある
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
