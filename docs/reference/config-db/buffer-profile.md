@@ -357,4 +357,64 @@ VOQ chassis での主な差分は `BUFFER_QUEUE` 処理（system port ベース�
 | trim ASIC 非対応 | `packet_discard_action=trim` → `task_ignore` | `bufferorch.cpp` L760-776 |
 | VOQ chassis | BUFFER_PROFILE 処理変化なし | `bufferorch.cpp` L2079 |
 <!-- /platform -->
+<!-- constants -->
+## ハードコード定数 (Task F Phase E)
+
+### threshold_mode フィールド名定数
+
+| 定数名 | ハードコード値 | 定義箇所 |
+|--------|--------------|---------|
+| `buffer_dynamic_th_field_name` | `"dynamic_th"` | `orchagent/bufferorch.h:28` |
+| `buffer_static_th_field_name` | `"static_th"` | `orchagent/bufferorch.h:29` |
+
+`dynamic_th` フィールド存在 → `threshold_mode="dynamic_th"`、SAI 側で `SAI_BUFFER_PROFILE_THRESHOLD_MODE_DYNAMIC` にマップ。  
+`static_th` フィールド存在 → `threshold_mode="static_th"`、SAI 側で `SAI_BUFFER_PROFILE_THRESHOLD_MODE_STATIC` にマップ。  
+どちらも未指定の場合: pool の `mode` 値に `"_th"` を付加した文字列が `threshold_mode` として採用される (`buffermgrdyn.cpp:901`, `bufferorch.cpp` L699/L717)。
+
+### packet_discard_action 値定数
+
+| 定数名 | ハードコード値 | 定義箇所 |
+|--------|--------------|---------|
+| `BUFFER_PROFILE_PACKET_DISCARD_ACTION` | `"packet_discard_action"` | `orchagent/buffer/bufferschema.h:8` |
+| `BUFFER_PROFILE_PACKET_DISCARD_ACTION_DROP` | `"drop"` | `orchagent/buffer/bufferschema.h:5` |
+| `BUFFER_PROFILE_PACKET_DISCARD_ACTION_TRIM` | `"trim"` | `orchagent/buffer/bufferschema.h:6` |
+
+`"drop"` → `SAI_BUFFER_PROFILE_PACKET_ADMISSION_FAIL_ACTION_DROP`。  
+`"trim"` → `SAI_BUFFER_PROFILE_PACKET_ADMISSION_FAIL_ACTION_DROP_AND_TRIM`。  
+それ以外の値は `task_failed` (`bufferorch.cpp:738-744`)。未設定時は SAI に送出されず、ASIC vendor の platform default が適用される。
+
+### SAI 識別子マッピング
+
+| CONFIG_DB フィールド | SAI 属性 ID | evidence |
+|---------------------|------------|---------|
+| `pool` | `SAI_BUFFER_PROFILE_ATTR_POOL_ID` | `bufferorch.cpp:661` |
+| `xon` | `SAI_BUFFER_PROFILE_ATTR_XON_TH` | `bufferorch.cpp:668` |
+| `xon_offset` | `SAI_BUFFER_PROFILE_ATTR_XON_OFFSET_TH` | `bufferorch.cpp:674` |
+| `xoff` | `SAI_BUFFER_PROFILE_ATTR_XOFF_TH` | `bufferorch.cpp:680` |
+| `size` | `SAI_BUFFER_PROFILE_ATTR_BUFFER_SIZE` | `bufferorch.cpp:686` |
+| `dynamic_th` | `SAI_BUFFER_PROFILE_ATTR_SHARED_DYNAMIC_TH` (sai_int8_t) | `bufferorch.cpp:704` |
+| `static_th` | `SAI_BUFFER_PROFILE_ATTR_SHARED_STATIC_TH` (uint64) | `bufferorch.cpp:722` |
+| `packet_discard_action` | `SAI_BUFFER_PROFILE_ATTR_PACKET_ADMISSION_FAIL_ACTION` | `bufferorch.cpp:728` |
+
+### headroom override 関連定数
+
+| 定数名 | ハードコード値 | 定義箇所 | 用途 |
+|--------|--------------|---------|------|
+| `INGRESS_LOSSLESS_PG_POOL_NAME` | `"ingress_lossless_pool"` | `cfgmgr/buffermgrdyn.h:14` | `headroom_type=dynamic` 時にデフォルト pool として自動補完 |
+| `DEFAULT_MTU_STR` | `"9100"` | `cfgmgr/buffermgrdyn.h:15` | port MTU 未設定時のデフォルト MTU（bytes） |
+| `BUFFERMGR_TIMER_PERIOD` | `10` (秒) | `cfgmgr/buffermgrdyn.h:17` | `buffermgrd` ポーリング周期 |
+
+`headroom_type=dynamic` かつ `pool` 未設定時: `INGRESS_LOSSLESS_PG_POOL_NAME` が強制補完され、`lossless=true` + `direction=BUFFER_INGRESS` が自動セットされる (`buffermgrdyn.cpp:987,2788-2795`)。  
+port MTU 取得失敗時は `DEFAULT_MTU_STR="9100"` を使用して headroom を計算 (`buffermgrdyn.cpp:2174,2378`)。
+
+### pool mode 文字列定数（pool との整合性チェックで使用）
+
+| 定数名 | 値 | 定義箇所 |
+|--------|-----|---------|
+| `buffer_pool_mode_dynamic_value` | `"dynamic"` | `orchagent/bufferorch.h:22` |
+| `buffer_pool_mode_static_value` | `"static"` | `orchagent/bufferorch.h:23` |
+
+pool mode と profile の `threshold_mode` の不一致（例: dynamic pool に `static_th` を指定）は `task_failed` でリジェクト (`buffermgrdyn.cpp:2726-2735`)。
+
+<!-- /constants -->
 <!-- glossary-links-injected: 22dbf67b9d97 -->
