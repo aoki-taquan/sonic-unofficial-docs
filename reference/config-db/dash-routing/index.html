@@ -21317,6 +21317,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -25432,6 +25436,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -25488,7 +25542,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -25504,7 +25558,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -25576,7 +25630,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27506,6 +27560,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../pbh-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../pbh/" class="md-nav__link">
         
   
@@ -28242,6 +28324,34 @@
     
   
     ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAG テーブル
   
 
     
@@ -35080,6 +35190,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35136,7 +35296,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -35152,7 +35312,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35224,7 +35384,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35575,6 +35735,89 @@
 <li><code>vnet</code> が指定されているが <code>gVnetNameToId</code> に未登録の場合は return false (リトライ)</li>
 </ul>
 <hr />
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>DashRouteOrch</code> (<code>dashrouteorch.cpp</code>) / <code>DashOrch</code> (<code>dashorch.cpp</code>) は各テーブル間に複数の先行必須依存を持つ。ZMQ / gNMI でテーブルを投入する際は以下の順序を守ること。</p>
+<h3 id="_11">検出された順序依存<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>DASH_ROUTE_GROUP_TABLE</code> → <code>DASH_ROUTE_TABLE</code></td>
+<td>先行必須</td>
+<td>グループ未登録時は <code>getRouteGroupOid()</code> が <code>SAI_NULL_OBJECT_ID</code> → return false (リトライ)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DASH_ENI_TABLE</code> → <code>DASH_ROUTE_RULE_TABLE</code></td>
+<td>先行必須</td>
+<td>ENI 未登録時は <code>getEni()</code> が null → return false (リトライ)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>DASH_VNET_TABLE</code> → <code>DASH_ROUTE_TABLE</code></td>
+<td>条件付き先行必須</td>
+<td><code>routing_type=vnet</code>/<code>vnet_direct</code> かつ <code>vnet</code> 指定時のみ。<code>routing_type=direct</code>/<code>drop</code> は VNET 不要</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>DASH_VNET_TABLE</code> → <code>DASH_ROUTE_RULE_TABLE</code></td>
+<td>条件付き先行必須</td>
+<td><code>vnet</code> フィールド指定時のみ。<code>gVnetNameToId</code> に未登録なら return false (リトライ)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>DASH_ROUTE_TABLE</code> 全 DEL → <code>DASH_ENI_ROUTE_TABLE</code> DEL → <code>DASH_ROUTE_GROUP_TABLE</code> DEL</td>
+<td>削除時の順序</td>
+<td>ENI バインド中はルート追加・削除・グループ削除が拒否される (<code>isRouteGroupBound()=true</code>)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>DASH_ROUTE_GROUP_TABLE</code> → <code>DASH_ENI_ROUTE_TABLE</code></td>
+<td>先行必須</td>
+<td><code>setEniRoute()</code> がグループ OID 未取得なら即 return false (リトライ)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_12">主要制約詳細<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p><strong>ルートグループ先行 (依存 #1)</strong>: <code>addOutboundRouting()</code> は冒頭で <code>this-&gt;getRouteGroupOid(ctxt.route_group)</code> を呼ぶ。ルートグループが <code>DASH_ROUTE_GROUP_TABLE</code> 経由で SAI に登録される前に <code>DASH_ROUTE_TABLE</code> の SET メッセージが届いた場合、そのメッセージはリトライキューに残留し続ける（evidence: <code>dashrouteorch.cpp:70-74</code>）。</p>
+<p><strong>ENI 先行 (依存 #2)</strong>: <code>addInboundRouting()</code> は <code>dash_orch_-&gt;getEni(ctxt.eni)</code> で ENI の存在を確認する。<code>DASH_ENI_TABLE</code> が登録される前の <code>DASH_ROUTE_RULE_TABLE</code> は全てリトライされる（evidence: <code>dashrouteorch.cpp:425-428</code>）。</p>
+<p><strong>バインド中の操作禁止 (依存 #5)</strong>: <code>DASH_ENI_ROUTE_TABLE</code> で ENI とルートグループをバインドすると <code>bindRouteGroup()</code> が呼ばれ、<code>route_group_bind_count_</code> が 1 以上になる。この状態では:</p>
+<ul>
+<li><code>addOutboundRouting()</code>: SWSS_LOG_WARN + <code>return true</code>（メッセージ消費のみ、SAI 書き込みなし）— <code>dashrouteorch.cpp:65-68</code></li>
+<li><code>removeOutboundRouting()</code>: SWSS_LOG_WARN + <code>return false</code>（メッセージ保留）— <code>dashrouteorch.cpp:231-234</code></li>
+<li><code>removeRouteGroup()</code>: SWSS_LOG_WARN + <code>return false</code>（保留）— <code>dashrouteorch.cpp:755-758</code></li>
+</ul>
+<p>バインド解除には <code>DASH_ENI_ROUTE_TABLE</code> の DEL を先行させ、<code>unbindRouteGroup()</code> を経由させること。</p>
+<h3 id="_13">推奨書込み順序<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<p><strong>追加時</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>1. DASH_ROUTING_TYPE_TABLE   (ルーティングタイプ定義)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>2. DASH_VNET_TABLE           (VNET — vnet/vnet_direct ルート使用時)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>3. DASH_ENI_TABLE            (ENI エントリ)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>4. DASH_ROUTE_GROUP_TABLE    (ルートグループ作成)
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>5. DASH_ROUTE_TABLE          (Outbound LPM ルート)
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>6. DASH_ROUTE_RULE_TABLE     (Inbound ルートルール)
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>7. DASH_ENI_ROUTE_TABLE      (ENI ↔ ルートグループ バインド — 最後)
+</span></code></pre></div>
+<p><strong>削除時</strong> (追加の逆順):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>1. DASH_ENI_ROUTE_TABLE DEL  (バインド解除を最初に)
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>2. DASH_ROUTE_TABLE DEL
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>3. DASH_ROUTE_RULE_TABLE DEL
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>4. DASH_ROUTE_GROUP_TABLE DEL
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>5. DASH_ENI_TABLE DEL
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>6. DASH_VNET_TABLE DEL
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>7. DASH_ROUTING_TYPE_TABLE DEL
+</span></code></pre></div>
+<!-- /ordering -->
+
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <p>YANG / proto3 デフォルト以外の実装由来 fallback。<code>DashOrch::doTaskRoutingTypeTable()</code> (dashorch.cpp:473-537) および <code>DashRouteOrch::addOutboundRouting()</code> / <code>addInboundRouting()</code> / <code>addRouteGroup()</code> (dashrouteorch.cpp:61-748) から導出。</p>
@@ -35716,7 +35959,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_11">補足<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_14">補足<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>routing_type</code> の deprecated → 新形式コピー処理: proto3 で旧クライアントが <code>action_type</code> のみ送る場合の backward-compat。新実装では <code>routing_type</code> フィールドを使用する。</li>
 <li><code>underlay_sip</code> の IPv6 非対応: <code>has_underlay_sip() &amp;&amp; underlay_sip().has_ipv4()</code> の条件で IPv6 の underlay SIP は現状処理されない (dashrouteorch.cpp:149)。HLD には IPv6 support の記述なし。</li>
@@ -35725,7 +35968,7 @@
 <!-- /defaults -->
 
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_15">例外条件・特殊挙動<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35799,7 +36042,7 @@
 <li><a href="../dash-vnet/"><code>DASH_VNET_TABLE</code></a>: VNET エントリ。<code>vnet</code> フィールドの参照先</li>
 <li><a href="../dash-acl/"><code>DASH_VNET_MAPPING_TABLE</code></a>: CA-PA マッピング。<code>DASH_ROUTING_TYPE_TABLE</code> の <code>action_type</code> が <code>maprouting</code> / <code>staticencap</code> のとき参照</li>
 </ul>
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_16">引用元<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

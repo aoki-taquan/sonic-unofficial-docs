@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A 分析。">
+        <meta name="description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP_MST_INST / STP_MST_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A 分析。" />
+<meta property="og:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-mst.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-mst/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP_MST_INST / STP_MST_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A 分析。" />
+<meta property="twitter:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-mst.png" />
 </head>
   
@@ -21317,6 +21317,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -27065,6 +27069,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../pbh-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../pbh/" class="md-nav__link">
         
   
@@ -27801,6 +27833,34 @@
     
   
     ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAG テーブル
   
 
     
@@ -28608,6 +28668,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル購読登録順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST (GLOBAL) の起動ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_inst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_INST の起動ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_PORT の起動ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係グラフ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28619,7 +28751,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28630,7 +28762,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34646,6 +34778,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル購読登録順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST (GLOBAL) の起動ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_inst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_INST の起動ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_PORT の起動ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係グラフ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34657,7 +34861,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34668,7 +34872,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34917,6 +35121,128 @@ MST 有効化後にポートが VLAN_MEMBER に追加された場合も自動書
 <p>証跡: <code>config/stp.py:441-470</code></p>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-ordering.md -->
+
+<p><code>stpmgrd</code> は CONFIG_DB イベントを以下の順序で処理する。各テーブルには起動ガードが設けられており、前提テーブルが受信済みになるまでイベントを保留する。</p>
+<h3 id="_3">テーブル購読登録順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>テーブル</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>STP</code></td>
+<td><code>doStpGlobalTask()</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>STP_VLAN</code></td>
+<td><code>doStpVlanTask()</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>STP_VLAN_PORT</code></td>
+<td><code>doStpVlanPortTask()</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>STP_PORT</code></td>
+<td><code>doStpPortTask()</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>LAG_MEMBER</code></td>
+<td><code>doLagMemUpdateTask()</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>STATE_VLAN_MEMBER</code></td>
+<td><code>doVlanMemUpdateTask()</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>STP_MST</code></td>
+<td><code>doStpMstGlobalTask()</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>STP_MST_INST</code></td>
+<td><code>doStpMstInstTask()</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>STP_MST_PORT</code></td>
+<td><code>doStpMstInstPortTask()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="stp_mst-global">STP_MST (GLOBAL) の起動ガード<a class="headerlink" href="#stp_mst-global" title="Permanent link">&para;</a></h3>
+<p><code>doStpMstGlobalTask()</code> (<code>stpmgr.cpp:344</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span></code></pre></div>
+<p><code>STP|GLOBAL</code> 受信完了 (<code>stpGlobalTask = true</code>) が先行必須。<code>STP_MST|GLOBAL</code> に書き込む前に <code>config spanning-tree enable mst</code> が実行されている必要がある。</p>
+<h3 id="stp_mst_inst">STP_MST_INST の起動ガード<a class="headerlink" href="#stp_mst_inst" title="Permanent link">&para;</a></h3>
+<p><code>doStpMstInstTask()</code> (<code>stpmgr.cpp:1027-1031</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">stpPortTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isStpPortEmpty</span><span class="p">()))</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpMstInstTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="n">stpMstInstTask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stpGlobalTask == true</code></td>
+<td><code>STP\|GLOBAL</code> 受信完了</td>
+</tr>
+<tr>
+<td><code>stpPortTask == true</code> または <code>isStpPortEmpty()</code></td>
+<td><code>STP_PORT</code> 受信済み、または CONFIG_DB の <code>STP_PORT</code> テーブルが空</td>
+</tr>
+</tbody>
+</table>
+<p>両条件を満たした最初のイベント処理時に <code>stpMstInstTask = true</code> がセットされる。</p>
+<div class="admonition note">
+<p class="admonition-title">キー解析の注意</p>
+<p><code>doStpMstInstTask()</code> は <code>key.substr(13)</code> で <code>"MST_INSTANCE|"</code> プレフィックス（13文字）を除去してインスタンス ID を取得する。
+MST 有効化時に書き込まれるキー <code>MST_INSTANCE:INSTANCE0</code>（コロン区切り）と、stpmgrd が期待するキー <code>MST_INSTANCE|0</code>（パイプ区切り）の形式が異なる点は <a href="#発見された-discrepancy--暗黙デフォルト-サマリー">discrepancy #5</a> に記録済み。</p>
+</div>
+<h3 id="stp_mst_port">STP_MST_PORT の起動ガード<a class="headerlink" href="#stp_mst_port" title="Permanent link">&para;</a></h3>
+<p><code>doStpMstInstPortTask()</code> (<code>stpmgr.cpp:1160</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">stpMstInstTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">stpPortTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span></code></pre></div>
+<p>3条件すべてが満たされるまでイベントは保留される:</p>
+<ol>
+<li><code>STP|GLOBAL</code> 受信済み</li>
+<li><code>STP_MST_INST</code> の最初のイベント処理完了 (<code>stpMstInstTask = true</code>)</li>
+<li><code>STP_PORT</code> 受信済み (<code>stpPortTask = true</code>)</li>
+</ol>
+<h3 id="_4">依存関係グラフ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>STP|GLOBAL (stpGlobalTask=true)
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    ├─ STP_MST 受信可能
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    ├─ STP_PORT (stpPortTask=true)
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    │       └─ STP_MST_INST (stpMstInstTask=true)
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    │                 └─ STP_MST_PORT
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    └─ ※ STP_PORT テーブルが空の場合は STP_MST_INST も直接処理可能
+</span></code></pre></div>
+<p>PVST 系との差異: <code>STP_MST_INST</code> は <code>stpVlanTask</code> を必要としない。MST はインスタンスベースであり VLAN 単位のシーケンスに依存しない。</p>
+<!-- /ordering -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -34966,8 +35292,8 @@ MST 有効化後にポートが VLAN_MEMBER に追加された場合も自動書
 </tr>
 </tbody>
 </table>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP</a></li>
 <li><a href="../stp-vlan/">CONFIG_DB: STP_VLAN / STP_VLAN_PORT</a></li>

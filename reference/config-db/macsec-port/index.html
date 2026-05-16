@@ -21317,6 +21317,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -26867,6 +26871,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-port_table-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — PORT_TABLE（ポート ready ゲート）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-macsec_profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB — MACSEC_PROFILE（プロファイルキャッシュ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-macsec-macsecmgrd-macsecorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB — MACSEC テーブル群（macsecmgrd → MACsecOrch パス）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-macsec-macsecorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — MACSEC 状態テーブル（MACsecOrch 書き戻し）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-macsec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB — MACsec カウンタマップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -27535,6 +27611,34 @@
     
   
     STATE_DB PBH_CAPABILITIES テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_TABLE テーブル
   
 
     
@@ -28291,6 +28395,34 @@
     
   
     ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAG テーブル
   
 
     
@@ -35332,6 +35464,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-port_table-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — PORT_TABLE（ポート ready ゲート）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-macsec_profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB — MACSEC_PROFILE（プロファイルキャッシュ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-macsec-macsecmgrd-macsecorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB — MACSEC テーブル群（macsecmgrd → MACsecOrch パス）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-macsec-macsecorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — MACSEC 状態テーブル（MACsecOrch 書き戻し）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-macsec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB — MACsec カウンタマップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35669,6 +35873,130 @@
 <p>削除は逆順 (SA → SC → Port → Switch) で行われる。</p>
 <p>詳細分析: <a href="../../../../meta/_intermediate/cdb-flow/macsec-port-ordering.md"><code>meta/_intermediate/cdb-flow/macsec-port-ordering.md</code></a></p>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>PORT|&lt;ifname&gt;</code> の <code>macsec</code> フィールドを処理する際、<code>macsecmgrd</code> および <code>MACsecOrch</code> が Direction A 入力以外に暗黙的に参照するテーブル・DB を列挙する。スキャン詳細は <a href="../../../../meta/_intermediate/cdb-flow/macsec-port-cross-refs.md"><code>meta/_intermediate/cdb-flow/macsec-port-cross-refs.md</code></a> を参照。</p>
+<h3 id="state_db-port_table-ready">STATE_DB — PORT_TABLE（ポート ready ゲート）<a class="headerlink" href="#state_db-port_table-ready" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB <code>PORT_TABLE</code> (<code>state</code>, <code>netdev_oper_status</code>)</td>
+<td>読み出し (ゲート) — 必須</td>
+<td><code>isPortStateOk()</code> が <code>state == "ok"</code> かつ <code>netdev_oper_status == "up"</code> を確認。未達なら <code>task_need_retry</code></td>
+<td><code>macsecmgr.cpp:614-631</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="config_db-macsec_profile">CONFIG_DB — MACSEC_PROFILE（プロファイルキャッシュ）<a class="headerlink" href="#config_db-macsec_profile" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB <code>MACSEC_PROFILE</code> (<code>m_profiles</code> キャッシュ経由)</td>
+<td>読み出し (インメモリ) — 必須</td>
+<td><code>m_profiles.find(profile_name)</code> が失敗するとプロファイル未ロードとして <code>task_need_retry</code></td>
+<td><code>macsecmgr.cpp:488-495</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="appl_db-macsec-macsecmgrd-macsecorch">APPL_DB — MACSEC テーブル群（macsecmgrd → MACsecOrch パス）<a class="headerlink" href="#appl_db-macsec-macsecmgrd-macsecorch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB <code>MACSEC_PORT_TABLE</code></td>
+<td>macsecmgrd が書き込み → MACsecOrch が読み出し</td>
+<td><code>enableMACsec()</code> 成功後</td>
+<td><code>macsecorch.cpp:872-874</code></td>
+</tr>
+<tr>
+<td>APPL_DB <code>MACSEC_EGRESS_SC_TABLE</code> / <code>MACSEC_INGRESS_SC_TABLE</code></td>
+<td>MACsecOrch 読み出し</td>
+<td>SC 作成時</td>
+<td><code>macsecorch.cpp:876-882</code></td>
+</tr>
+<tr>
+<td>APPL_DB <code>MACSEC_EGRESS_SA_TABLE</code> / <code>MACSEC_INGRESS_SA_TABLE</code></td>
+<td>MACsecOrch 読み出し</td>
+<td>SA 作成時</td>
+<td><code>macsecorch.cpp:884-890</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-macsec-macsecorch">STATE_DB — MACSEC 状態テーブル（MACsecOrch 書き戻し）<a class="headerlink" href="#state_db-macsec-macsecorch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB <code>STATE_MACSEC_PORT_TABLE_NAME</code></td>
+<td>書き戻し (MACsecOrch)</td>
+<td>SAI MACsec Port 作成後</td>
+<td><code>macsecorch.cpp:633</code></td>
+</tr>
+<tr>
+<td>STATE_DB <code>STATE_MACSEC_{EGRESS,INGRESS}_SC_TABLE_NAME</code></td>
+<td>書き戻し</td>
+<td>SC 作成後</td>
+<td><code>macsecorch.cpp:634-635</code></td>
+</tr>
+<tr>
+<td>STATE_DB <code>STATE_MACSEC_{EGRESS,INGRESS}_SA_TABLE_NAME</code></td>
+<td>書き戻し</td>
+<td>SA 作成後</td>
+<td><code>macsecorch.cpp:636-637</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="counters_db-macsec">COUNTERS_DB — MACsec カウンタマップ<a class="headerlink" href="#counters_db-macsec" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_DB</code> <code>COUNTERS_MACSEC_NAME_MAP</code> / <code>COUNTERS_MACSEC_SA_GROUP</code> 等</td>
+<td>書き込み (MACsecOrch)</td>
+<td>MACsec SA 有効化後にフレックスカウンタを登録</td>
+<td><code>macsecorch.cpp:639-667</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /cross-refs -->
 
 <div class="footnote">
 <hr />

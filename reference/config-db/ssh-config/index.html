@@ -21317,6 +21317,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -27065,6 +27069,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../pbh-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PBH_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../pbh/" class="md-nav__link">
         
   
@@ -27801,6 +27833,34 @@
     
   
     ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAG テーブル
   
 
     
@@ -28682,6 +28742,34 @@
     <span class="md-ellipsis">
       
         注意事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙テーブル参照 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
       
     </span>
   </a>
@@ -35344,6 +35432,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙テーブル参照 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35898,6 +36014,45 @@
 <li><strong><code>DEVICE_METADATA|localhost</code> 連動</strong>: <code>PamLimitsCfg.update_config_file()</code> は <code>SSH_SERVER|POLICIES</code> と <code>DEVICE_METADATA|localhost</code> の両エントリ不在時に早期 return（L1430）。通常の SONiC デプロイでは影響なし。</li>
 </ul>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-d">暗黙テーブル参照 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>SSH_SERVER</code> テーブルが直接・間接的に参照するテーブルと参照方向の一覧。</p>
+<table>
+<thead>
+<tr>
+<th>参照方向</th>
+<th>起点フィールド</th>
+<th>相手テーブル</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSH_SERVER →</td>
+<td><code>max_sessions</code> (PamLimitsCfg)</td>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>update_config_file()</code> が <code>DEVICE_METADATA\|localhost</code> キー存在確認。不在かつ <code>SSH_SERVER\|POLICIES</code> も不在なら early return (hostcfgd:L1430)</td>
+</tr>
+<tr>
+<td>← SSH_SERVER (間接)</td>
+<td><code>PasswordAuthentication</code> (sshd_config)</td>
+<td><code>AAA</code></td>
+<td><code>AaaCfg.modify_conf_file()</code> が <code>/etc/pam.d/sshd</code> を書き換える。パスワード認証と PAM 認証スタックが実質連動 (hostcfgd:L748-751)</td>
+</tr>
+<tr>
+<td>← SSH_SERVER (間接)</td>
+<td>SSH 認証経路</td>
+<td><code>MGMT_INTERFACE</code></td>
+<td>TACACS+/RADIUS の <code>src_intf=eth0</code> 時に <code>AaaCfg.get_interface_ip()</code> が <code>MGMT_INTERFACE</code> の IP を解決 (hostcfgd:L596-606)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">詳細<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p><strong><code>DEVICE_METADATA|localhost</code> (暗黙先行必須)</strong>: <code>PamLimitsCfg.update_config_file()</code> は <code>get_table('DEVICE_METADATA')</code> で <code>localhost</code> キーの存在確認を行い、<code>localhost["hwsku"]</code> / <code>localhost["type"]</code> を PAM limits テンプレートに渡す（hostcfgd:L1422-1430）。<code>SSH_SERVER|POLICIES.max_sessions</code> の PAM への反映は <code>DEVICE_METADATA|localhost</code> の存在が前提。通常の SONiC デプロイでは常に存在するため実害なし。</p>
+<p><strong><code>AAA</code> テーブル (/etc/pam.d/sshd 共有)</strong>: <code>AaaCfg.modify_conf_file()</code> が <code>/etc/pam.d/sshd</code> を直接書き換える（hostcfgd:L748-751）。SSH_SERVER の <code>password_authentication</code> フィールドと PAM の認証スタックは独立した設定ファイル管理だが、sshd が両方を参照するため実質的に連動する。<code>PasswordAuthentication yes</code> + PAM <code>common-auth-sonic</code>（TACACS+）の組み合わせで TACACS+ パスワード認証が有効になる。</p>
+<p><strong><code>MGMT_INTERFACE</code> (間接参照)</strong>: SSH_SERVER テーブルは <code>MGMT_INTERFACE</code> を直接参照しないが、SSH 認証バックエンドとして TACACS+/RADIUS を使用する場合、AAA の <code>src_intf</code> → <code>MGMT_INTERFACE</code> の IP 解決が SSH 認証経路に影響する（hostcfgd:L596-606）。</p>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
 
