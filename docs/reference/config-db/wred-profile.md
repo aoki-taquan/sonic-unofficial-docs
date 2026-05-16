@@ -251,6 +251,59 @@ WRED_PROFILE は `WredMapHandler::convertFieldValuesToAttributes()` がフィー
 
 <!-- /handler-branching -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+WRED_PROFILE の処理において、プラットフォーム識別文字列（`broadcom` / `mellanox` / `cisco-8000` 等）による静的分岐は存在しない。SAI capability の動的照会（`querySwitchCapability` / `sai_query_attribute_capability`）も WRED 属性に対しては実施されない。確認されるプラットフォーム差は以下の通り。
+
+### 差異 1: VoQ chassis — WRED プロファイルの bind 対象が VoQ に変わる
+
+`gMySwitchType == "voq"` の場合、`applyWredProfileToQueue()` (`qosorch.cpp:1715-1730`) は物理キュー ID（`port.m_queue_ids[queue_ind]`）の代わりに **VoQ ID**（`gPortsOrch->getPortVoQIds(port)[queue_ind]`）を使用し、SAI 属性 `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を VoQ に設定する。
+
+| 条件 | bind 対象 |
+|------|----------|
+| `gMySwitchType == "voq"` | `getPortVoQIds()` で取得した VoQ ID |
+| それ以外（通常スイッチ / multi-asic / DPU 等） | `port.m_queue_ids[queue_ind]`（物理キュー） |
+
+VoQ chassis ではローカル ASIC のポートか否かも判定される。非ローカルポートへの WRED bind は暗黙的にスキップされる（`qosorch.cpp:1790-1800`）。
+
+### 差異 2: VoQ chassis — QUEUE キーフォーマットが 4 トークンに変わる
+
+`handleQueueTable()` (`qosorch.cpp:1772-1810`) における QUEUE キー解析:
+
+| 条件 | キーフォーマット | 不正時の挙動 |
+|------|----------------|------------|
+| `gMySwitchType == "voq"` | `{hostname}\|{asic}\|{port}\|{index}` (4 トークン必須) | 4 トークン未満 → `task_invalid_entry` |
+| それ以外 | `{port}\|{index}` (2 トークン必須) | 2 トークン以外 → `task_invalid_entry` |
+
+VoQ 環境で `QUEUE` テーブルを書く場合は `hostname|asicN|EthernetX|queue_index` 形式を使用する必要がある。
+
+### 差異 3: 一部ベンダー SAI の min/max threshold 順序制約（対策済み）
+
+コメント (`qosorch.cpp:596-629`) に「一部ベンダー SAI では 1 回の SET ごとに min/max の整合性を検証するため、閾値の過渡的な逆転（旧 max < 新 min）がエラーになる」と記されている。対象ベンダーは明示されていない。
+
+この問題は **2 フェーズ属性適用**（`convertFieldValuesToAttributes()` の `deferred_attributes` 機構, L636-694）で吸収されており、ユーザー操作・CONFIG_DB 書き込み順序には依存しない。全プラットフォームでこの機構が有効。
+
+### 差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明
+
+WRED の各 SAI 属性（`SAI_WRED_ATTR_ECN_MARK_MODE`、`SAI_WRED_ATTR_*_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}`、`SAI_WRED_ATTR_WEIGHT`）は能力照会なしで直接 `sai_wred_api->create_wred()` / `set_wred_attribute()` に渡される。ASIC が非対応の場合 SAI がエラーを返し、orchagent はエントリを破棄する（ログ: `"Failed to create wred profile: %d"`）。対応可否は各ベンダーの `libsai` 実装に依存。
+
+### 差異 5: プラットフォーム別 WRED テンプレート（build-time）
+
+`qos_config.j2:486-506` のマクロ分岐:
+
+| 条件 | 生成される WRED_PROFILE |
+|------|----------------------|
+| hwsku テンプレートが `generate_wred_profiles` マクロを定義している | プラットフォーム固有の WRED プロファイル（カスタム閾値・ECN 設定） |
+| マクロ未定義（デフォルト） | `AZURE_LOSSLESS`（min=1 MiB / max=2 MiB / prob=5% / ecn=ecn_all） |
+
+runtime の orchagent 側にはプラットフォーム別の分岐なし。差異はすべて build-time の j2 テンプレートで吸収される。
+
+!!! note "VoQ スイッチ運用上の注意"
+    VoQ chassis 環境では QUEUE テーブルのキーを `hostname|asic|port|queue_index` の 4 トークン形式で書く必要がある。2 トークン形式（通常スイッチ用）を使うと `task_invalid_entry` で即破棄される。
+
+<!-- /platform -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
@@ -395,6 +448,41 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 `orchagent` の `QosOrch` は WRED_PROFILE を購読するのみ（書き込みなし）。
 
 <!-- /entry-points -->
+
+<!-- cross-refs -->
+## 暗黙参照 (Phase C: このテーブルを参照するテーブル)
+
+`WRED_PROFILE` テーブルは他テーブルから名前で参照される被参照テーブル。参照元と解決フローを以下に示す。
+
+### QUEUE テーブル (直接名前参照)
+
+`QUEUE` テーブルの `wred_profile` フィールドが `WRED_PROFILE` のエントリ名を文字列で保持し、`QosOrch::handleQueueTable()` 内で `resolveFieldRefValue()` により実オブジェクトに解決される。
+
+| 参照元テーブル | 参照フィールド | 解決タイミング | 未解決時の挙動 | evidence |
+|---|---|---|---|---|
+| `QUEUE` | `wred_profile` | `handleQueueTable()` SET パス | `task_need_retry` — WRED_PROFILE 先行作成を待つ | `qosorch.cpp:1856-1867` |
+| `QUEUE` | `wred_profile` (DEL) | `handleQueueTable()` DEL パス | `sai_wred_profile = SAI_NULL_OBJECT_ID` で unbind | `qosorch.cpp:1889-1893` |
+
+**解決フロー**:
+
+1. `resolveFieldRefValue(m_qos_maps, wred_profile_field_name, qos_to_ref_table_map.at(wred_profile_field_name), tuple, sai_wred_profile, wred_profile_name)` (qosorch.cpp:1857-1859)
+2. 未解決 (`ref_resolve_status::not_resolved`) → `SWSS_LOG_INFO("Missing or invalid wred profile reference")` + `task_need_retry` (L1864-1867)
+3. 解決成功 → `setObjectReference(m_qos_maps, CFG_QUEUE_TABLE_NAME, key, wred_profile_field_name, wred_profile_name)` (L1886)
+4. `applyWredProfileToQueue(port, queue_ind, sai_wred_profile)` (L1936) → SAI `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を設定
+
+!!! note "VoQ スイッチ"
+    `gMySwitchType == "voq"` の場合、`applyWredProfileToQueue()` (qosorch.cpp:1708-1730) が物理キューではなく VoQ ID に対して WRED を適用する。
+
+### PORT_QOS_MAP / SCHEDULER (参照なし)
+
+- **`PORT_QOS_MAP`**: `wred_profile` フィールドを持たない。`handlePortQosMapTable()` のフィールドループに `wred_profile_field_name` は含まれない (`qosorch.cpp:2021,2124`)。ただし `PORT_QOS_MAP → QUEUE → wred_profile` の間接チェーンは存在する。
+- **`SCHEDULER`**: WRED 属性を扱わない。`SchedulerHandler` は `WRED_PROFILE` を参照しない (`qosorch.cpp:1333-`)。
+
+### build-time 静的参照 (qos_config.j2)
+
+`qos_config.j2:514-660` の QUEUE セクションで RoCE キュー (queue 3, 4 等) に `"wred_profile": "AZURE_LOSSLESS"` を静的設定する。runtime の `resolveFieldRefValue()` 経由ではなく、firstboot / `config qos reload` 時のテンプレート展開で CONFIG_DB に書き込まれる。
+
+<!-- /cross-refs -->
 
 <!-- runtime-trace -->
 ## 起動経路 (Direction B: CFG → APPL → SAI)
