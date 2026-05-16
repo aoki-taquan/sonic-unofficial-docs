@@ -292,6 +292,104 @@ else
 
 [^1]: `sonic-swss/orchagent/bfdorch.cpp` (L15-20 マクロ定義、L305-574 `create_bfd_session()`、L111-217 `doTask()`). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`bfdorch` は 2 系統の購読を持つ:
+
+1. **APPL_DB `BFD_SESSION_TABLE`** の SET/DEL を `swss::ConsumerStateTable` (channel PUBLISH/SUBSCRIBE) で購読
+2. **ASIC_DB `NOTIFICATIONS`** channel を `swss::NotificationConsumer` で購読し、SAI `bfd_session_state_change` 通知を受信して STATE_DB を更新
+
+`BfdOrch` は `Orch(db, tableName)` を継承し、`m_applDb` + `APP_BFD_SESSION_TABLE_NAME` で初期化される (`orchdaemon.cpp:237-244`)。`Orch` 基底クラスの `addConsumer()` が DB ID で分岐し、APPL_DB (= CONFIG_DB / STATE_DB / CHASSIS_APP_DB 以外) には `ConsumerStateTable` を割り当てる (`orch.cpp:1186-1196`)。よって **keyspace 通知 (`__keyspace@<dbId>__:...`) は使わない**。
+
+```cpp
+// sonic-swss/orchagent/orchdaemon.cpp:237-244
+TableConnector stateDbBfdSessionTable(m_stateDb, STATE_BFD_SESSION_TABLE_NAME);
+gBfdOrch = new BfdOrch(m_applDb, APP_BFD_SESSION_TABLE_NAME, stateDbBfdSessionTable);
+```
+
+| 購読者 | 購読 API | 購読 DB / チャンネル | 優先度 | バッチ |
+|--------|---------|---------------------|--------|--------|
+| `orchagent` (`BfdOrch`) APPL_DB consumer | `swss::ConsumerStateTable` | `APPL_DB` / `BFD_SESSION_TABLE_CHANNEL@0` | `default_orch_pri` | `gBatchSize` (default 128) |
+| `orchagent` (`BfdOrch`) SAI 状態通知 | `swss::NotificationConsumer` (`Notifier` executor `BFD_STATE_NOTIFICATIONS`) | `ASIC_DB` / `NOTIFICATIONS` channel | - | - |
+
+書き込み側 (`bgpcfgd` `StaticRouteBfd` / `BfdMgr` 等) は `swsscommon.ProducerStateTable` で書き込み、内部で `_BFD_SESSION_TABLE:<key>` の HSET + `BFD_SESSION_TABLE_CHANNEL@0` への `PUBLISH "G"` を発行する。CONFIG_DB `BFD_SESSION` は直接購読せず、`bgpcfgd` 系 manager が CONFIG_DB → APPL_DB のミラーを担う。
+
+### doTask(Consumer&) フロー
+
+```
+bgpcfgd StaticRouteBfd / BfdMgr (producer)
+  ↓ ProducerStateTable::set("<vrf>:<intf>:<peer>", fvs)
+APPL_DB: HSET "_BFD_SESSION_TABLE:<vrf>:<intf>:<peer>" local_addr=... type=...
+  ↓ Redis PUBLISH "BFD_SESSION_TABLE_CHANNEL@0" "G"
+OrchDaemon main loop: m_select->select(&s, SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::execute() → ConsumerStateTable::pops()
+BfdOrch::doTask(Consumer&)  (bfdorch.cpp:111-217)
+  ↓ BgpGlobalStateOrch から tsa_enabled / use_software_bfd を取得
+  ↓ SET:
+  ↓   use_software_bfd=true → STATE_DB SOFTWARE_BFD_SESSION_TABLE 転記のみ
+  ↓   shutdown_bfd_during_tsa=true → tsa_enabled 分岐で create or notify Down
+  ↓   通常 → create_bfd_session()
+  ↓ DEL: remove_bfd_session()
+SAI: sai_bfd_api->create_bfd_session / remove_bfd_session
+ASIC (sairedis → ASIC_DB 経由)
+```
+
+- `doTask(Consumer&)` 冒頭に `allPortsReady()` チェックは **無い** (`fdborch` 等とは異なり、ポート初期化待ちをしない)。
+- `create_bfd_session()` が `false` を返した場合のみエントリは `m_toSync` に残留 (`it++; continue;`)。成功時 / software 経路転記時 / TSA shutdown 時はいずれも `erase` される。
+
+### ASIC_DB NOTIFICATIONS 側 (SAI 状態変化)
+
+セッション状態変化は SAI コールバック `on_bfd_session_state_change` が ASIC_DB `NOTIFICATIONS` チャネルに `bfd_session_state_change` op で publish し、`BfdOrch::m_bfdStateNotificationConsumer` が受信する。
+
+```cpp
+// sonic-swss/orchagent/bfdorch.cpp:63-87 (ctor 抜粋)
+DBConnector *notificationsDb = new DBConnector("ASIC_DB", 0);
+m_bfdStateNotificationConsumer = new swss::NotificationConsumer(notificationsDb, "NOTIFICATIONS");
+auto bfdStateNotificatier = new Notifier(m_bfdStateNotificationConsumer, this, "BFD_STATE_NOTIFICATIONS");
+Orch::addExecutor(bfdStateNotificatier);
+```
+
+`BfdOrch::doTask(NotificationConsumer&)` (`bfdorch.cpp:220-268`) のハンドラ動作:
+
+1. `consumer.pop(op, data, values)` で 1 件取得
+2. `&consumer != m_bfdStateNotificationConsumer` ガード (他 op 混入除け)
+3. `op == "bfd_session_state_change"` で `sai_deserialize_bfd_session_state_ntf()` 展開
+4. **状態差分があるときのみ** STATE_DB `BFD_SESSION_TABLE|<vrf>|<intf>|<peer>` の `state` フィールドを `hset` する (毎回上書きしない)
+5. 同時に `Subject::notify(SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE, &update)` でプロセス内 observer (例: `MuxOrch` 等の dynamic next-hop tracking) にも伝搬
+
+### コールバック登録タイミング
+
+`BfdOrch::register_bfd_state_change_notification()` (`bfdorch.cpp:270-303`) は **初回 `create_bfd_session()` 内** (`bfdorch.cpp:307-314`) で 1 回だけ呼ばれる。`register_state_change_notif` フラグで以後抑止される。
+
+`sai_query_attribute_capability(SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY)` で `set_implemented == true` を確認した上で `sai_switch_api->set_switch_attribute()` でコールバック `on_bfd_session_state_change` を登録する。capability が false の場合は **セッション作成自体を reject** する (詳細は Phase H プラットフォーム差を参照)。
+
+### STATE_DB Table (購読しない / 書き込みのみ)
+
+| Table | 用途 |
+|-------|------|
+| `m_stateBfdSessionTable` = `BFD_SESSION_TABLE` (STATE_DB) | hardware BFD 経路のランタイム状態 (`state` フィールド) |
+| `m_stateSoftBfdSessionTable` = `SOFTWARE_BFD_SESSION_TABLE` (STATE_DB) | software BFD 経路で APPL_DB エントリを転記するスナップショット |
+
+両 Table とも ctor で `getKeys()` + `del()` により起動時に空にされる (`bfdorch.cpp:74-85`)。STATE_DB を読み戻すロジックは無い。
+
+### 通信パターン要約
+
+| 区間 | 方式 | チャンネル / API |
+|------|------|-----------------|
+| bgpcfgd → APPL_DB | `ProducerStateTable::set()` | `BFD_SESSION_TABLE_CHANNEL@0` (PUBLISH "G") |
+| APPL_DB → BfdOrch | `swss::ConsumerStateTable` (Orch base) | 同上 channel |
+| BfdOrch → SAI | SAI BFD API 直接呼び出し | `sai_bfd_api->create_bfd_session` / `remove_bfd_session` |
+| ASIC → BfdOrch | SAI コールバック → ASIC_DB NOTIFICATIONS | `op="bfd_session_state_change"` |
+| ASIC_DB NOTIFICATIONS → BfdOrch | `swss::NotificationConsumer` + `Notifier` | channel `NOTIFICATIONS` |
+| BfdOrch → STATE_DB | `swss::Table::hset()` | `BFD_SESSION_TABLE\|<vrf>\|<intf>\|<peer>` |
+| BfdOrch → in-process observers | `Subject::notify()` | `SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE` |
+
+CONFIG_DB は購読しない。keyspace 通知も使わない。詳細解析は `meta/_intermediate/cdb-flow/bfd-orch-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
