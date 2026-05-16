@@ -175,6 +175,24 @@ YANG の `default` 節には値がないが、`bgpcfgd` (`managers_allow_list.py
 - NEIGHBOR_TYPE キーを含む variant は `neighbor_type` 単位で個別ポリシーを生成し、同一 deployment_id のグローバルポリシーと AND 結合 (`managers_allow_list.py:__update_policy`)
 <!-- /value-behavior -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**ASIC・ベンダー依存はないが、`switch_type` と `type/subtype` で FRR route-map 生成テンプレートが分岐する**。テーブル処理ロジック自体 (`managers_allow_list.py`) はプラットフォーム非依存だが、ALLOW_LIST がぶら下がる `FROM_BGP_PEER_V4/V6` ポリシーの末尾処理が VOQ chassis (chassis-packet) で差し替わり、追加の DEFAULT prefix-list ブロックは UpstreamLC な SpineRouter でのみ生成される。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | BGP_ALLOWED_PREFIXES → FRR prefix-list / route-map → BGP UPDATE フィルタは [FRR](../../reference/glossary.md#term-frr) ユーザ空間で完結、[SAI](../../reference/glossary.md#term-sai) 非経由 |
+| HwSku | 影響なし | `managers_allow_list.py` および `policies.conf.j2` を `hwsku` で grep して 0 ヒット |
+| multi-asic (`is_multi_npu` true) | 実質影響なし | 各 `asicN` namespace の `bgpcfgd` プロセスが同一バイナリで独立に処理。テーブル処理に差は出ない |
+| `switch_type == 'chassis-packet'` | **分岐あり** | `policies.conf.j2:48,71` で `route-map FROM_BGP_PEER_V4/V6 permit 13` の `set tag` が `route_do_not_send_appdb_tag` → `route_eligible_for_fallback_to_default_tag` に切り替わる (chassis-packet LC では fallback default 用にマーク) |
+| `type=='SpineRouter' and subtype=='UpstreamLC'` | **分岐あり** | route-map permit 12/13 (DEFAULT_IPV4/V6 マッチ + tag/community 付与) は UpstreamLC な SpineRouter でのみ生成 (`policies.conf.j2:41,64`)。それ以外のロールでは ALLOW_LIST 不一致経路は `permit 11 → permit 100` で素通り |
+| constants.yml (`bgp.allow_list`) | プラットフォーム非依存 | `files/image_config/constants/constants.yml` 1 ファイルで image 全体共通。`files/device/<platform>/` 配下の上書き機構なし |
+| テーブル値検証 (`default_action`, `prefixes_v4/v6`) | 影響なし | `managers_allow_list.py` は IP family 構文のみを見て分岐。`platform / asic / chassis / namespace / switch_type` を参照する箇所が 0 ヒット |
+
+詳細根拠は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-platform.md` を参照。
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
