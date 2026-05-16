@@ -62,6 +62,8 @@ DHCP_RELAY|<name>
 
 `rfc6939_support` / `interface_id` は [YANG](../../reference/glossary.md#term-yang) 上 `pattern "false|true"` の string 型（boolean ではない）。[CONFIG_DB](../../reference/glossary.md#term-config_db) の慣習で文字列リテラル。
 
+> **注意 (YANG-実装 discrepancy)**: `dhcp6relay` daemon は YANG が定義する flat field キー名（`rfc6939_support` / `interface_id`）ではなく、`dhcpv6_option|rfc6939_support` / `dhcpv6_option|interface_id`（フィールド名にパイプ `|` を含む形式）を読む。YANG バリデーションを通過した設定が daemon に届かない silent drop が発生する可能性がある（`config_interface.cpp:169,172` / `mock_config.py` 参照）。
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
@@ -146,9 +148,12 @@ show dhcprelay_helper ipv4
 | dhcp6relay | 登録 VLAN が VLAN_INTERFACE テーブルに存在しない | `LOG_WARNING: "%s doesn't exist in VLAN_INTERFACE table, skip it"` を出力してスキップ（config_interface.cpp:135） |
 | dhcp6relay | VLAN に IPv6 アドレス未設定 | `LOG_WARNING: "%s doesn't have IPv6 address configured, skip it"` を出力してスキップ（config_interface.cpp:146） |
 | dhcp6relay | VLAN にサーバアドレスが 0 件 | `LOG_WARNING: "No servers found for VLAN %s, skipping configuration."` を出力（config_interface.cpp:177） |
-| dhcp6relay | `dhcpv6_option\|interface_id` フィールド未設定 | 非 Dual-ToR 環境では `false`、Dual-ToR 環境では `true` をデフォルト使用（config_interface.cpp:117-121） |
+| dhcp6relay | `dhcpv6_option\|interface_id` 未設定 | 非 Dual-ToR 環境: `false`、Dual-ToR 環境: `true` をデフォルト使用（config_interface.cpp:117-121） |
+| dhcp6relay | `dhcpv6_option\|rfc6939_support` 未設定 | `true`（Option 79 付与）をハードコードデフォルト使用（config_interface.cpp:117） |
+| dhcp6relay | DHCP_RELAY 設定変更（起動後） | 動的変更は無視。"need restart container" ログのみ出力（config_interface.cpp:76-78） |
+| dhcp6relay | YANG 経由の `rfc6939_support`/`interface_id` 書込み | daemon は `dhcpv6_option\|` prefix 付きキーを読むため YANG flat key 設定は silent drop |
 
-> **Evidence**: sonic-dhcp-relay `dhcp6relay/src/config_interface.cpp:117-177`
+> **Evidence**: sonic-dhcp-relay `dhcp6relay/src/config_interface.cpp:76-182`、`sonic-buildimage/dockers/docker-dhcp-relay/cli-plugin-tests/mock_config.py`
 <!-- /cdb-exceptions -->
 
 
@@ -176,6 +181,90 @@ show dhcprelay_helper ipv4
 **副作用**: DHCP server アドレスの変更は relay 転送先を変更。サービス再起動中 DHCP relay が一時停止する。
 <!-- /runtime-trace -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読 (2026-05-14)
+
+### `rfc6939_support` — ハードコードデフォルト `true` + YANG-実装 discrepancy
+
+| 状態 | 実行時挙動 |
+|---|---|
+| フィールド未設定 | RFC 6939 Option 79 を**有効**（ハードコード `option_79_default = true`、cpp:117） |
+| フィールド = `"false"` | Option 79 無効（cpp:169 で明示 override） |
+| フィールド = `"true"` | Option 79 有効（デフォルトと同じ） |
+
+**YANG-実装 discrepancy**: YANG モデルは `rfc6939_support` を `DHCP_RELAY|<vlan>` の flat field として定義するが、C++ daemon は `dhcpv6_option|rfc6939_support`（フィールド名にパイプを含む Redis hash key）を読む（cpp:169）。YANG 経由で `rfc6939_support = "false"` を書き込んでも daemon は読まず **silent drop** — 常にハードコードデフォルト `true` で動作する。CLI テスト mock は `dhcpv6_option|rfc6939_support` 形式を使用（`mock_config.py` 参照）。
+
+### `interface_id` — プラットフォーム依存デフォルト + YANG-実装 discrepancy
+
+| 環境 | フィールド未設定時の挙動 |
+|---|---|
+| 非 DualToR | Interface-ID オプション**無効**（ハードコード `interface_id_default = false`、cpp:118） |
+| DualToR (`dual_tor_sock` 存在) | Interface-ID オプション**有効**（cpp:121 で `true` に変更） |
+
+**DualToR 判定**: `dhcpv6-relay.agents.j2:16` で `DEVICE_METADATA.localhost.subtype == "DualToR"` の場合に `-u Loopback0` オプションが付き `dual_tor_sock` が生成される。`interface_id` のデフォルトは **DEVICE_METADATA.subtype に間接依存**。
+
+**YANG-実装 discrepancy**: `rfc6939_support` と同様、YANG の flat field `interface_id` ではなく `dhcpv6_option|interface_id` を daemon が読む（cpp:172）。YANG 経由の設定は **silent drop**。
+
+### `dhcpv6_servers` — 空リスト時の silent skip
+
+`dhcpv6_servers` が空または未設定の VLAN は vlans マップに登録されない（cpp:176-179）。ログ出力のみで relay は無効（エラーなし）。
+
+### 動的変更の dead consumer
+
+`dhcp6relay` 起動後に `DHCP_RELAY` を変更しても設定は反映されない（cpp:76-78: "need restart container to take effect"）。**コンテナ再起動が必要**。ライブ変更は complete dead consumer。
+
+### minigraph / CLI による書込みフィールドの制限
+
+`sonic-cfggen` (minigraph.py:1071-1078) および CLI plugin (`dhcp_relay.py`) は `dhcpv6_servers` のみ `DHCP_RELAY` に書き込み、`rfc6939_support` / `interface_id` は**書き込まない**。これらは daemon のハードコードデフォルト（`true` / 環境依存）が適用される。
+<!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/relay.h`, `config_interface.cpp`, `relay.cpp`, `wait_for_intf.sh.j2` 全行精読 (2026-05-15)
+
+### プロトコル定数 (relay.h)
+
+| 定数 | 値 | 証拠 | 意味 |
+|-----|-----|------|------|
+| `RELAY_PORT` | `547` | relay.h:22 | DHCPv6 サーバ・リレー間 UDP ポート (RFC 3315) |
+| `CLIENT_PORT` | `546` | relay.h:23 | DHCPv6 クライアント向け UDP ポート |
+| `HOP_LIMIT` | `8` | relay.h:24 | relay-forward の最大 hop count。RFC 8415 準拠で旧値 32 から変更。超過パケットは silent drop |
+| `DHCPv6_OPTION_LIMIT` | `147` | relay.h:25 | 処理対象オプションコードの上限値 |
+| `RAWSOCKET_RECV_SIZE` | `1048576` (1 MiB) | relay.h:27 | クライアント側 raw socket 受信バッファサイズ |
+| `CLIENT_IF_PREFIX` | `"Ethernet"` | relay.h:28 | クライアント I/F 判定プレフィックス |
+| `BUFFER_SIZE` | `9200` バイト | relay.h:29 | DHCPv6 メッセージシリアライズ用バッファ。ジャンボフレーム (MTU 9000) 対応マジックナンバー |
+| `BATCH_SIZE` | `64` | relay.h:37 | `SubscriberStateTable.pops()` の一回あたり最大エントリ数 |
+| `OPTION_RELAY_MSG` | `9` | relay.h:33 | DHCPv6 OPTION_RELAY_MSG コード (RFC 3315 §22.10) |
+| `OPTION_INTERFACE_ID` | `18` | relay.h:34 | DHCPv6 OPTION_INTERFACE_ID コード (RFC 3315 §22.18) |
+| `OPTION_CLIENT_LINKLAYER_ADDR` | `79` | relay.h:35 | DHCPv6 Option 79 コード (RFC 6939) |
+
+### 動作定数 (config_interface.cpp / relay.cpp)
+
+| 定数 | 値 | 証拠 | 意味 |
+|-----|-----|------|------|
+| `DEFAULT_TIMEOUT_MSEC` | `1000` ms | config_interface.cpp:6 | `swssSelect.select()` タイムアウト。`constexpr auto` で変更不可 |
+| `option_79_default` | `true` | config_interface.cpp:117 | `rfc6939_support` 未設定時のデフォルト（Option 79 有効） |
+| `interface_id_default` (非 DualToR) | `false` | config_interface.cpp:118 | `interface_id` 未設定・非 DualToR 時のデフォルト |
+| `interface_id_default` (DualToR) | `true` | config_interface.cpp:121 | `dual_tor_sock` 存在時に上書き |
+| VLAN ソケット bind retry 回数 | `6` | relay.cpp:641 | `prepare_vlan_sockets()` の最大リトライ回数 |
+| VLAN ソケット bind retry 間隔 | `5` 秒 | relay.cpp:640 | リトライ間 `sleep(5)` |
+| LLA チェックタイマー周期 | `60` 秒 | relay.cpp:1305 | LLA 未準備 VLAN の定期再チェック間隔 (`EV_PERSIST`) |
+
+### 起動待機定数 (wait_for_intf.sh.j2)
+
+| 定数 | 値 | 証拠 | 意味 |
+|-----|-----|------|------|
+| STATE_DB ポーリング間隔 | `1` 秒 | wait_for_intf.sh.j2:18 | `INTERFACE_TABLE\|<intf>\|state == ok` ポーリング間隔 |
+| インタフェース ready 後の追加待機 | `10` 秒 | wait_for_intf.sh.j2:51 | STATE_DB ok 確認後の固定 `sleep 10` |
+
+### 定数の外部変更可否
+
+すべての定数はコンパイル時または起動スクリプト内で固定されており、CONFIG_DB・環境変数・設定ファイルから**変更不可**。`HOP_LIMIT` と `BUFFER_SIZE` のみソースコード変更＋再ビルドで変更可能。
+<!-- /constants -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
@@ -186,7 +275,7 @@ show dhcprelay_helper ipv4
   - ソース: `sonic-utilities/config/vlan.py`
 
 ### minigraph / sonic-cfggen
-- あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
+- あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる。`dhcpv6_servers` のみ書き込まれ、`rfc6939_support` / `interface_id` は省略される（minigraph.py:1071-1078）
 
 ### REST / gNMI (sonic-mgmt-common)
 - なし (対応 OpenConfig/SONiC YANG transformer なし)
@@ -198,10 +287,266 @@ show dhcprelay_helper ipv4
 - なし
 
 ### ハードコードデフォルト
-- なし
+- `rfc6939_support` 未設定 → daemon 内部で `true`（Option 79 有効）
+- `interface_id` 未設定 → 非 DualToR: `false`、DualToR: `true`
 
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / keyspace notification)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読、`sonic-swss-common/common/subscriberstatetable.cpp` 参照 (2026-05-14)
+
+### 購読方式
+
+`dhcp6relay` は `swss::SubscriberStateTable` を通じて CONFIG_DB の `DHCP_RELAY` テーブルを購読する。内部実装は Redis の **keyspace notification (PSUBSCRIBE)** であり、ConsumerStateTable / NotificationConsumer は使用しない。TTL/keyspace expire 通知も使用しない。
+
+### 通信シーケンス
+
+```
+dhcp6relay 起動
+  └─ initialize_swss()                               (config_interface.cpp:18)
+       ├─ DBConnector("CONFIG_DB", 0)                ← Redis DB #4
+       ├─ SubscriberStateTable(db, "DHCP_RELAY")
+       │    ├─ PSUBSCRIBE __keyspace@4__:DHCP_RELAY|*  ← keyspace 購読
+       │    ├─ KEYS "DHCP_RELAY|*"                    ← 起動時スナップショット取得
+       │    └─ 全エントリを m_buffer に SET_COMMAND として積む
+       └─ swssSelect.addSelectable(&ipHelpersTable)
+            └─ get_dhcp(vlans, table, dynamic=false, config_db)
+                 └─ swssSelect.select(timeout_ms=1000)
+                      └─ handleRelayNotification()
+                           ├─ ipHelpersTable.pops(entries)
+                           └─ processRelayNotification(entries, vlans, config_db)
+```
+
+### keyspace notification 詳細
+
+| 項目 | 値 |
+|------|-----|
+| PSUBSCRIBE パターン | `__keyspace@4__:DHCP_RELAY\|*` |
+| notify-keyspace-events | `KEA` (K=keyspace, E=keyevent, A=all commands) |
+| Select timeout | 1000 ms |
+| 起動時スナップショット | `Table::getKeys()` + `Table::get()` で全エントリ即時読み込み |
+| 実行時変更検知 | keyspace event を受信するが `dynamic=true` フラグにより **無視** |
+
+### pops() 処理フロー
+
+```
+ipHelpersTable.pops(entries)
+  ├─ m_buffer (起動時スナップショット) があれば flush して return
+  └─ m_keyspace_event_buffer を処理:
+       pmessage.channel = "__keyspace@4__:DHCP_RELAY|<vlan>"
+       pmessage.data    = "set" | "hset" | "del" | ...
+       → "del"  → kfvOp = DEL_COMMAND
+       → その他 → Table::get(key) で最新値を再取得 → kfvOp = SET_COMMAND
+```
+
+### 動的変更の dead consumer
+
+起動後に `DHCP_RELAY` エントリを変更しても、`get_dhcp()` が `dynamic=true` フラグ付きで呼ばれるため、keyspace event を受信しても設定には反映されず `LOG_WARNING "relay config changed, need restart container to take effect"` のみ出力する (config_interface.cpp:76-78)。**コンテナ再起動が必須**。
+
+<!-- /pubsub -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 概要
+
+`DHCP_RELAY` テーブルの consumer (`dhcp6relay`) は **起動時に一度だけ** CONFIG_DB を読み込む設計であり、ランタイム中の変更は無視される。そのため SET/DEL の順序と、先行テーブルの存在有無が動作に直接影響する。
+
+### 順序依存マトリクス
+
+| フィールド / 操作 | 依存テーブル / 条件 | 順序制約 | 違反時の挙動 |
+|-----------------|-------------------|---------|------------|
+| key (`<vlan>`) SET | `VLAN_INTERFACE\|<vlan>\|*` (IPv6 アドレス付き) が CONFIG_DB に存在すること | `VLAN` → `VLAN_INTERFACE`（IPv6 prefix 付き）→ `DHCP_RELAY` の順 | `LOG_WARNING: "%s doesn't exist in VLAN_INTERFACE table, skip it"` でスキップ。エントリは書き込まれるが dhcp6relay に反映されない |
+| key (`<vlan>`) SET | VLAN インタフェースに IPv6 アドレスが設定済みであること | `VLAN_INTERFACE` の IPv6 prefix 設定 → `DHCP_RELAY` SET | `LOG_WARNING: "%s doesn't have IPv6 address configured, skip it"` でスキップ |
+| `dhcpv6_servers` SET/DEL | dhcp_relay サービス再起動 | SET/DEL 後に `systemctl stop/reset-failed/start dhcp_relay` | 設定変更後に再起動しないと `LOG_WARNING: "relay config changed, need restart container to take effect"` が出力され反映されない |
+| `dhcpv6_servers` 追加順 | — | CLI `add` は末尾 append (`dhcp_servers.append`) | 追加順が dhcp6relay の upstream スキャン順（`ordered-by user`）に直結。後から追加したサーバは優先度が低い |
+| `dhcpv6_servers` 全削除 DEL | dhcp_relay サービス再起動 | DEL 後に再起動しないと vlans マップがメモリ上に残留 | dhcp6relay プロセスはリレーを継続する（DEL は未反映）。再起動でのみリセット |
+| `rfc6939_support` / `interface_id` | 起動時の `DEVICE_METADATA.subtype` / `-u` 引数 | サービス起動前に確定（boot 時）。変更は再起動が必要 | DualToR 環境では `-u Loopback0` 引数で `dual_tor_sock=true` → `interface_id` デフォルト `true`。非 DualToR はデフォルト `false` |
+| 全フィールド（boot 時） | STATE_DB `INTERFACE_TABLE\|<vlan>\|<prefix>\|state == ok` | `wait_for_intf.sh` が STATE_DB をポーリングし、インタフェース up 確認後さらに 10 秒待機してから dhcp6relay を起動 | VLAN インタフェースが STATE_DB に `ok` 状態で現れる前に dhcp_relay コンテナを起動しても dhcp6relay は起動しない |
+
+### Evidence
+
+- `config_interface.cpp:63-79` — `get_dhcp` が `dynamic=true` 時に変更を無視して警告ログを出すコードパス
+- `config_interface.cpp:117-121` — `dual_tor_sock` による `interface_id_default` 切り替え
+- `config_interface.cpp:130-143` — `VLAN_INTERFACE|<vlan>|*` キー存在チェック + IPv6 アドレス確認
+- `config_interface.cpp:145-148` — `has_ipv6_address == false` 時のスキップ
+- `config_interface.cpp:160-165` — `dhcpv6_servers` の順序付き push_back（`ordered-by user` 反映）
+- `config_interface.cpp:176-179` — `servers.empty()` 時のスキップ
+- `dhcp_relay.py:51-61` — `restart_dhcp_relay_service`: add/del 後に `systemctl stop/reset-failed/start dhcp_relay` を自動実行
+- `dhcp_relay.py:155-162` — `del_dhcp_relay`: servers が空になると `set_entry(None)` でエントリ全削除 (DEL 伝播)
+- `wait_for_intf.sh.j2:12-19` — STATE_DB `INTERFACE_TABLE|<intf>|<prefix>|state` ポーリング
+- `wait_for_intf.sh.j2:49-52` — `sleep 10` (インタフェース ready 後の追加待機)
+- `docker-dhcp-relay.supervisord.conf.j2:33-44` — `start` (priority=2) → `dhcp6relay` (priority=3, `dependent_startup_wait_for=start:exited`)
+- `dhcpv6-relay.agents.j2:2-10` — `DHCP_RELAY[vlan_name]['dhcpv6_servers']|length > 0` で dhcp6relay プログラムエントリ生成を制御
+
+### LSP トレース証跡
+
+```
+main.cpp:37          initialize_swss(vlans)
+  └── config_interface.cpp:22      SubscriberStateTable("DHCP_RELAY")  ← 購読登録
+  └── config_interface.cpp:24      get_dhcp(vlans, &ipHelpersTable, false, configDbPtr)
+        └── config_interface.cpp:66       swssSelect.select()
+        └── config_interface.cpp:72-79    selectable == ipHelpersTable && !dynamic
+              └── handleRelayNotification(...)
+                    └── processRelayNotification(entries, vlans, config_db)
+                          ├── config_interface.cpp:130-143  VLAN_INTERFACE IPv6 チェック
+                          ├── config_interface.cpp:160-165  dhcpv6_servers push_back (順序保持)
+                          ├── config_interface.cpp:169      rfc6939_support="false" → is_option_79=false
+                          ├── config_interface.cpp:172-173  interface_id="true" → is_interface_id=true
+                          └── config_interface.cpp:176-183  servers.empty() → skip; else vlans[vlan]=intf
+
+main.cpp:38          loop_relay(vlans)  ← 取り込んだ vlans でリレーループ開始（以降変更不可）
+```
+<!-- /ordering -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 概要
+
+`dhcp6relay` は orchagent/SAI を経由せず Linux カーネルの UDP relay (L4) として動作するため、SAI error / task_need_retry / task_failed の概念は存在しない。失敗は大きく「起動時致命エラー (exit)」「パケット単位の silent drop」「設定変更の無視」の 3 類型に分類される。
+
+### 起動時致命エラー (exit)
+
+| 発生箇所 | 条件 | 挙動 |
+|---------|------|------|
+| `relay.cpp:168` `RelayMsg::MarshalBinary()` | `new uint8_t[BUFFER_SIZE]` 失敗 | `LOG_ERR "Failed to init relay msg buffer"` → `exit(1)` |
+| `relay.cpp:1241` `loop_relay()` | `event_base_new()` NULL | `LOG_ERR "libevent: Failed to create event base"` → `exit(EXIT_FAILURE)` |
+| `relay.cpp:1253` `loop_relay()` | `sock_open()` (raw socket/bind/BPF) 失敗 | `LOG_ERR "Failed to create client listen socket"` → `exit(EXIT_FAILURE)` |
+| `relay.cpp:1271` `loop_relay()` | DualToR: `prepare_lo_socket()` 失敗 | `LOG_ERR "Failed to create dualtor loopback listen socket"` → `exit(EXIT_FAILURE)` |
+| `relay.cpp:1420` `lla_check_callback()` | `prepare_vlan_sockets()` 失敗 (6 回 retry 後) | `LOG_ERR` → `exit(EXIT_FAILURE)` |
+| `relay.cpp:489` `prepare_relay_config()` | `getifaddrs()` 失敗 | `LOG_WARNING "getifaddrs: Unable to get network interfaces"` → `exit(1)` |
+| `main.cpp:40` | 未捕捉 `std::exception` | `LOG_ERR "An exception occurred."` → `return 1` (プロセス終了) |
+
+プロセス終了後は systemd / supervisord による自動 restart に委ねる。CONFIG_DB/STATE_DB の状態はそのまま残る。
+
+### VLAN ソケット bind retry (起動時)
+
+`prepare_vlan_sockets()` (`relay.cpp:604-658`) では VLAN インタフェースの GUA/LLA アドレス未割り当て時に 5 秒 sleep × 最大 6 回リトライする。
+
+```
+LOG_WARNING "Retry #%d to bind to sockets on interface %s"
+```
+
+6 回全失敗後は `exit(EXIT_FAILURE)`。**retry 回数: 6、retry 間隔: 5 秒**。
+
+### LLA 未準備 VLAN の定期チェック (60 s タイマー)
+
+`lla_check_callback()` (`relay.cpp:1361`) が 60 秒周期で起動時に LLA 未準備だった VLAN を再チェックする。起動直後にも即時実行される。
+
+- LLA 未準備の VLAN はスキップされ、その間にサーバから届いた reply パケットは:
+  - `LOG_WARNING "Link local address for %s is not ready, packet will be dropped"` → drop
+- 全 VLAN の LLA が準備完了すると `event_del(timer_event)` でタイマー解除。
+
+### 設定変更の無視 (hot-reload 不可)
+
+`config_interface.cpp:76-78` — ランタイム中に CONFIG_DB の `DHCP_RELAY` エントリが変更されると:
+
+```
+LOG_WARNING "relay config changed, need restart container to take effect"
+```
+
+**変更は適用されない。** CONFIG_DB への書き込みは正常完了するが dhcp6relay は無視する。ロールバックもなく、**DB 状態と実動作が乖離したまま**になる。反映にはコンテナ再起動が必要。
+
+### SELECT エラー → return (継続)
+
+`config_interface.cpp:67-70` — 初期化時の `swssSelect.select()` が `Select::ERROR` を返した場合:
+
+```
+LOG_WARNING "Select: returned ERROR"
+```
+
+return して継続。retry はなく、次の呼び出しタイミングまで待つ。
+
+### パケット単位の silent drop
+
+| 発生箇所 | 条件 | ログ / カウンタ |
+|---------|------|----------------|
+| `relay.cpp:679` `relay_client()` | DHCPv6 オプション不正 (malformed) | `LOG_WARNING "DHCPv6 option is invalid..."` + `Malformed` カウンタ +1 → drop |
+| `relay.cpp:807` `relay_relay_reply()` | relay-reply オプション不正 | `LOG_WARNING "Relay-reply option is invalid..."` + `Malformed` カウンタ +1 → drop |
+| `relay.cpp:814` `relay_relay_reply()` | OPTION_RELAY_MSG なし | `LOG_WARNING "Option relay-msg not found"` + `Unknown` カウンタ +1 → drop |
+| `relay.cpp:747` `relay_relay_forw()` | hop_count >= HOP_LIMIT (32) | `LOG_INFO "Dropping relay-forward message..."` → drop (カウンタ加算なし) |
+| `relay.cpp:969` `client_packet_handler()` | 不明 msg_type | `LOG_WARNING "Unknown DHCPv6 message type..."` + `Unknown` カウンタ +1 → drop |
+| `relay.cpp:893` `client_callback()` | if_indextoname 失敗 | `LOG_WARNING "Invalid input interface index..."` → continue |
+| `relay.cpp:908` `client_callback()` | vlan_map に該当インタフェースなし | silent continue (CLIENT_IF_PREFIX 以外) または `LOG_WARNING` |
+| `relay.cpp:1038` `get_relay_int_from_relay_msg()` | link_address から VLAN 特定不可 | `LOG_WARNING "can't find vlan info from link address..."` → NULL → drop |
+
+### パケット送信失敗 → retry なし
+
+`sender.cpp:21-27` — `sendto()` 失敗:
+
+```
+LOG_ERR "sendto: Failed to send to target address: %s, error: %s"
+```
+
+return false → 呼び出し元で `increase_counter()` が呼ばれない（**カウンタ未加算**）。retry なし。
+
+### libevent イベント生成失敗の非対称性
+
+| イベント種別 | 失敗時の挙動 |
+|------------|------------|
+| client listen event (全体共用) | `exit(EXIT_FAILURE)` |
+| server listen event (VLAN ごと) | `LOG_ERR "libevent: Failed to create server listen libevent"` → exit なし (サーバ応答受信不可のまま継続) |
+
+VLAN 単位の server listen event 生成失敗は **プロセスを停止させない部分失敗**。その VLAN のクライアントへ reply が届かなくなるが、他の VLAN の relay は継続する。
+
+### STATE_DB への障害記録
+
+`STATE_DB` の `DHCPv6_COUNTER_TABLE|<ifname>` にメッセージ種別ごとのカウンタを記録する:
+
+- カウンタ種別: `Unknown`, `Solicit`, `Advertise`, `Request`, `Confirm`, `Renew`, `Rebind`, `Reply`, `Release`, `Decline`, `Reconfigure`, `Information-Request`, `Relay-Forward`, `Relay-Reply`, `Malformed`
+- 送信失敗 (`sendto` エラー) 時はカウンタが加算されない
+- `STATE_DB` の `ERROR_TABLE` への書き込みはなし (dhcp6relay は ERROR_TABLE を使用しない)
+
+### 部分成功シナリオ
+
+複数 VLAN が設定されている場合、一部の VLAN が LLA 未準備で `is_lla_ready=false` のまま残っていても他 VLAN の relay は正常動作する。その VLAN に関連する CONFIG_DB エントリは残骸として存在するが削除はされない。
+
+> **Evidence**: `sonic-dhcp-relay` `dhcp6relay/src/relay.cpp`, `dhcp6relay/src/config_interface.cpp`, `dhcp6relay/src/sender.cpp`, `dhcp6relay/src/main.cpp`
+<!-- /failure -->
+
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp`, `relay.cpp`, `main.cpp`, `dhcpv6-relay.agents.j2`, `minigraph.py` 全行精読 (2026-05-14)
+
+`DHCP_RELAY` テーブルは YANG leafref を持たないが、実行時に以下のテーブルを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | 条件 | 証拠 |
+|---|---|---|---|---|
+| `VLAN_INTERFACE\|<vlan>\|*` | CONFIG_DB | 読み取り (IPv6 アドレス有無チェック) | 常時 | config_interface.cpp:130 |
+| `VLAN_MEMBER\|<vlan>\|*` | CONFIG_DB | 読み取り (port→vlan 逆引きマップ構築) | 常時 | relay.cpp:856 |
+| `DEVICE_METADATA.localhost.subtype` | CONFIG_DB | 読み取り (DualToR 判定・起動時) | 起動時 j2 テンプレート | dhcpv6-relay.agents.j2:16 |
+| `HW_MUX_CABLE_TABLE\|<port>` | STATE_DB | 読み取り (mux active/standby) | DualToR 環境のみ | relay.cpp:1250, 915 |
+| `DHCPv6_COUNTER_TABLE\|<vlan>` | STATE_DB | 書き込み (メッセージカウンタ) | 常時 | relay.cpp:18, 273-304 |
+
+### VLAN_INTERFACE — 実質的な必須前提条件
+
+`processRelayNotification()` は `DHCP_RELAY|<vlan>` エントリを処理するとき、`VLAN_INTERFACE|<vlan>|*` パターンで CONFIG_DB をスキャンし IPv6 アドレスを確認する (config_interface.cpp:130)。IPv6 アドレスが存在しない場合は LOG_WARNING を出力してスキップ — **VLAN_INTERFACE への leafref は YANG 上存在しないが、実装上は必須の暗黙前提条件**。
+
+### VLAN_MEMBER — client packet 受付の前提
+
+`update_vlan_mapping()` が `VLAN_MEMBER|<vlan>|*` からメンバーポート一覧を取得し、受信パケットの interface→vlan 逆引きマップを構築する (relay.cpp:856-863)。メンバーが存在しない VLAN はクライアントパケットを受け付けられない。
+
+### DEVICE_METADATA.subtype — interface_id デフォルト値を決定
+
+`dhcpv6-relay.agents.j2:16` が `DEVICE_METADATA['localhost']['subtype'] == 'DualToR'` を評価し、真の場合 `-u Loopback0` を `dhcp6relay` 起動引数に追加する。これにより `dual_tor_sock = true` → `interface_id` のハードコードデフォルトが `false` から `true` に変わる (config_interface.cpp:120-122)。
+
+### HW_MUX_CABLE_TABLE — DualToR の active/standby 制御
+
+DualToR 環境でのみ、クライアントパケット受信時に `STATE_DB::HW_MUX_CABLE_TABLE|<port>` の `state` フィールドを読む (relay.cpp:915)。`state == "standby"` のポートからのパケットはリレーしない。CONFIG_DB の `MUX_CABLE` テーブルに対応する STATE_DB 側テーブル。
+
+### DHCPv6_COUNTER_TABLE — STATE_DB への書き込み副作用
+
+`DHCP_RELAY` に登録された VLAN ごとに `STATE_DB::DHCPv6_COUNTER_TABLE|<vlan>` を初期化・更新する (relay.cpp:273-304)。`show dhcprelay counters` コマンドの参照先。DHCP_RELAY にエントリがない VLAN はカウンタ対象外。
+
+### SAI 参照
+
+なし。`dhcp6relay` は Linux カーネルの L4 UDP relay であり SAI/ASIC に一切触れない。
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 11715e560dc6 -->

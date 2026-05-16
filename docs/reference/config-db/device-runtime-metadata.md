@@ -73,6 +73,47 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 
 (`init_cfg.json.j2` の `FEATURE` テーブル展開で使用)[^2]。
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+<!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py / sonic-buildimage/files/build_templates/init_cfg.json.j2 / sonic-host-services/scripts/featured -->
+
+`DEVICE_RUNTIME_METADATA` は **CONFIG_DB に永続化されない仮想テーブル** で、`sonic_py_common.device_info.get_device_runtime_metadata()` が起動時にプラットフォーム検出結果から自動生成する (`device_info.py:735-747`)。ユーザー設定経路 (CLI / minigraph / db_migrator / YANG transformer) は存在しないため、全フィールドが **コード由来デフォルト** となる。
+
+### サブキー存在条件のデフォルト
+
+| サブキー | 既定の存在条件 | 判定 |
+|---------|--------------|------|
+| `CHASSIS_METADATA` | **chassis 環境でのみ存在**。非 chassis (典型 ToR / leaf) ではキー自体なし | `is_chassis()` = `(is_voq_chassis() and not is_disaggregated_chassis()) or is_packet_chassis() or is_virtual_chassis()` (`device_info.py:667-668`) |
+| `ETHERNET_PORTS_PRESENT` | **常に存在** | `port_config.ini` 探索結果を `True`/`False` で必ずセット |
+| `MACSEC_SUPPORTED` | **常に存在** | `platform_env.conf` 未配置でも `False` を必ずセット |
+
+### フィールド既定値
+
+| サブキー / フィールド | コード由来デフォルト | 検出ロジック | 出典 |
+|----------------------|---------------------|-------------|------|
+| `CHASSIS_METADATA.module_type` | `'linecard'` (`supervisor=1` が `platform_env.conf` に無い場合) / `'supervisor'` (ある場合) | `'supervisor' if is_supervisor() else 'linecard'` | `device_info.py:738`, `is_supervisor()` L699-712 |
+| `CHASSIS_METADATA.chassis_type` | `'packet'` (`switch_type` が `voq`/`fabric` 以外、または `chassisdb.conf` 不在) / `'voq'` (両条件成立) | `'voq' if is_voq_chassis() else 'packet'` | `device_info.py:739`, `is_voq_chassis()` L630-634 |
+| `ETHERNET_PORTS_PRESENT` | `False` (`get_path_to_port_config_file()` が None を返す = supervisor / fabric card 等) / `True` (port_config.ini 検出時) | `bool(get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None))` | `device_info.py:741` |
+| `MACSEC_SUPPORTED` | `False` (`platform_env.conf` 未配置 / `macsec_enabled` 行なし / `macsec_enabled=0`) / `True` (`macsec_enabled=1`) | `bool(is_macsec_supported())` | `device_info.py:742`, `is_macsec_supported()` L714-732 |
+
+### platform 自動検出のフォールバック挙動
+
+- **`platform_env.conf` が存在しないプラットフォーム** → `is_supervisor()=False`, `is_macsec_supported()=0`。結果として `MACSEC_SUPPORTED=False`、(chassis 環境の場合) `module_type='linecard'` がデフォルトになる (`device_info.py:700-702, 720-721`)。
+- **`switch_type` 未設定** (`get_platform_info().get('switch_type')` が空) → `is_voq_chassis()=False`, `is_packet_chassis()=False` → 仮想 chassis でなければ `is_chassis()=False` → `CHASSIS_METADATA` キー自体が生成されない。
+- **multi-NPU プラットフォーム** → `get_path_to_port_config_file()` 呼び出し時に `asic="0"` を指定して ASIC#0 名前空間の port_config.ini を確認する (`device_info.py:741`)。
+
+### init_cfg.json.j2 が参照するデフォルト経路
+
+`featured` (sonic-host-services) も含め、デフォルト値は最終的に `init_cfg.json.j2` の FEATURE エントリ生成へ反映される (具体的な分岐は本ページ「例外条件・特殊挙動」表を参照):
+
+- `ETHERNET_PORTS_PRESENT=False` または `module_type=supervisor` の組み合わせで `bgp` / `teamd` / `has_per_asic_scope` が `disabled` / `False` に倒れる。
+- `MACSEC_SUPPORTED=False` で `macsec` feature が `disabled`。
+- `CHASSIS_METADATA` キーなしの環境では `has_global_scope=True` がデフォルト。
+
+> **書き込み不能**: ユーザーが `config_db.json` でこのテーブルを上書きしても、`get_device_runtime_metadata()` が `sonic-cfggen` 実行時に再生成するため反映されない。
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
