@@ -252,6 +252,66 @@ SmartSwitch では `set_admin_state_gracefully(admin_state)` が別スレッド�
 **副作用**: `admin_status: down` はモジュールの物理的な電源制御（platform ベンダー実装依存）を引き起こす場合がある。FABRIC-CARD の場合は追加で `swss@<asic>.service` の停止が伴う。
 <!-- /runtime-trace -->
 
+<!-- ordering -->
+## 書込み順依存・起動順序
+
+### chassisd 起動シーケンス (標準チャシス vs SmartSwitch)
+
+`ChassisModuleDaemon.run()` の起動順序は `is_smartswitch()` で分岐する:
+
+**標準チャシス**:
+1. `ModuleUpdater` 生成 → `chassis.init_midplane_switch()` → `get_my_slot()` / `get_supervisor_slot()`
+2. いずれかのスロット取得が `INVALID_SLOT` → `sys.exit(CHASSIS_NOT_SUPPORTED)` で終了
+3. `modules_num_update()` — STATE_DB に `CHASSIS_TABLE|CHASSIS 1` の `module_num` を書き込む
+4. Supervisor のみ: `ConfigManagerTask` を起動して `CHASSIS_MODULE` の `SubscriberStateTable` を開始
+5. メインループ (`module_db_update()` → `check_midplane_reachability()` → `module_down_chassis_db_cleanup()` を 10 秒周期)
+
+**SmartSwitch**:
+1. `SmartSwitchModuleUpdater` 生成 → `chassis.init_midplane_switch()`
+2. `modules_num_update()`
+3. **`set_initial_dpu_admin_state()` を先に実行** — 全 DPU の現在の admin state を CONFIG_DB から読み、`MODULE_STATUS_EMPTY`（未設定）の DPU に `MODULE_ADMIN_DOWN` を送信
+4. `SmartSwitchConfigManagerTask` を起動して Subscribe 開始
+5. メインループ
+
+!!! warning "SmartSwitch 起動時の暗黙 DOWN"
+    `set_initial_dpu_admin_state()` はSubscribe 開始前に実行される。CONFIG_DB に `CHASSIS_MODULE|DPU0` エントリが**ない** DPU は `MODULE_STATUS_EMPTY` と判断され、`MODULE_ADMIN_DOWN` が platform API に送信される (chassisd:1382-1383)。SmartSwitch は admin_status 未設定 = down 扱いの設計。
+
+### カード初期化順序 — midplane_initialized が前提
+
+`init_midplane_switch()` が `False` を返した場合:
+- chassisd はエラーログを出力して継続するが、`check_midplane_reachability()` は即 `return` (chassisd:1075)
+- 標準チャシスの `module_db_update()` でのミッドプレーン IP 取得ループがスキップ (chassisd:542)
+
+ミッドプレーンの初期化完了がカード間通信の前提となる。
+
+### CHASSIS_APP_DB 連携 — モジュール down 後の遅延クリーンアップ
+
+CHASSIS_APP_DB クリーンアップは**標準チャシスの Supervisor のみ**が実行する:
+
+1. `module_db_update()` でモジュールが `Online` → それ以外に遷移 → `down_modules` dict に登録 + `down_time` 記録
+2. `module_down_chassis_db_cleanup()` (10 秒ごと) が `down_time` から **30 分** (`CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD`) 経過後に `_cleanup_chassis_app_db()` を実行
+3. Lua スクリプト経由 (`redis-cli -h redis_chassis.server -p 6380 -n 12 EVALSHA ...`) で以下を削除:
+   - `SYSTEM_NEIGH*` / `SYSTEM_INTERFACE*` / `SYSTEM_LAG_MEMBER_TABLE*` / `SYSTEM_LAG_TABLE*` (ホスト・ASIC 単位)
+   - `SYSTEM_LAG_ID_TABLE` / `SYSTEM_LAG_ID_SET` の整合性修正
+
+!!! note "hostname 先行登録が前提"
+    ラインカードが `module_db_update()` を一度も実行せず `CHASSIS_STATE_DB CHASSIS_MODULE_TABLE` に hostname が書き込まれていない場合、そのカードの CHASSIS_APP_DB クリーンアップは永続的にスキップされる (chassisd:641-643)。
+
+### SET/DEL 操作の意味論的逆転
+
+| 操作 | 標準チャシス | SmartSwitch |
+|------|------------|-------------|
+| `SET admin_status: down` | `MODULE_ADMIN_DOWN` (chassisd:1165-1166) | `MODULE_ADMIN_DOWN` (chassisd:1220-1222) |
+| `SET admin_status: up` | `MODULE_ADMIN_DOWN` (**同値** — SET は無条件 DOWN) | `MODULE_ADMIN_UP` (chassisd:1219) |
+| `DEL` (エントリ削除) | `MODULE_ADMIN_UP` (chassisd:1167-1168) | `MODULE_ADMIN_DOWN` (chassisd:1223-1224) |
+
+標準チャシスでは `startup` コマンドがエントリを削除 (`DEL`) することで `up` を表現する。SmartSwitch では `SET admin_status: up` を明示的に書き込む。DB を直接操作する場合はこの差異に注意。
+
+### admin_status による ASIC テーブル更新ガード
+
+`module_db_update()` (chassisd:444) は `module_cfg_status != 'down'` の場合のみ ASIC テーブルを更新する。`CHASSIS_MODULE` に `admin_status: down` が設定されると、モジュールが物理的に `Online` でも `CHASSIS_ASIC_TABLE` / `CHASSIS_FABRIC_ASIC_TABLE` への書き込みがスキップされる。CONFIG_DB の最新値を毎ループ読み直すため、設定変更は次の poll (最大 10 秒) で反映される。
+<!-- /ordering -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
