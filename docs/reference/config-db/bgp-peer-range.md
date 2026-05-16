@@ -284,4 +284,37 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 > **ソース**: `dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/instance.conf.j2`, `bgpcfgd/managers_bgp.py` L358-386, `files/image_config/constants/constants.yml`, `sonic-gnmi/pkg/bypass/bypass.go` L29
 
 <!-- /defaults -->
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `bgpcfgd/managers_bgp.py`, `frrcfgd/frrcfgd.py`, `dynamic/policies.conf.j2` 精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-cross-refs.md`
+
+`BGP_PEER_RANGE` テーブルは YANG leafref を最小限しか持たないが、実行時に以下のテーブルを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `DEVICE_METADATA\|localhost` (`bgp_asn`) | CONFIG_DB | 読み取り | なし | 必須 | managers_bgp.py:119,192,501 |
+| `DEVICE_METADATA\|localhost` (`deployment_id`) | CONFIG_DB | 読み取り | なし | 条件付き必須 | managers_bgp.py:135-143 |
+| `BGP_PEER_GROUP\|<vrf>\|<name>` | CONFIG_DB | 事前定義前提 | なし | 実質必須 | managers_bgp.py:156,227 |
+| `ROUTE_MAP` (FROM_BGP_SPEAKER / TO_BGP_SPEAKER) | — (FRR 内部) | ハードコード適用 | なし | 固定 | dynamic/policies.conf.j2:4,6 |
+| `BGP_GLOBALS` | CONFIG_DB | router bgp 確立前提 | なし | 実質必須 | frrcfgd.py:81 |
+
+### DEVICE_METADATA — bgp_asn・deployment_id の強制依存
+
+`BGPPeerMgrBase` は初期化時に `DEVICE_METADATA|localhost/bgp_asn` と `localhost/type` を依存リストに登録する (managers_bgp.py:119-120)。`add_peer()` および `del_handler()` は `bgp_asn` を `router bgp <asn>` コマンド生成に使用する。`bgp_asn` 未設定の場合は `KeyError` → `log_err` + drop。`constants.bgp.use_deployment_id=true` の場合は `localhost/deployment_id` も依存に追加され、AS 番号の自動決定に使用される (managers_bgp.py:135-143)。
+
+### BGP_PEER_GROUP — dynamic peer-group の事前定義依存
+
+`BGPPeerGroupMgr.update_pg()` が peer-group を FRR に定義してから `bgp listen range <prefix> peer-group <name>` を発行する (managers_bgp.py:156,227)。FRR 上に peer-group が存在しない状態で listen range を設定しようとすると FRR がエラーを返す。CONFIG_DB 上の `BGP_PEER_GROUP` テーブルへの YANG leafref は存在しないが、実装上は peer-group 事前定義が必須の暗黙前提条件となる。
+
+### ROUTE_MAP — FROM_BGP_SPEAKER / TO_BGP_SPEAKER ハードコード適用
+
+`dynamic/policies.conf.j2` が bgpcfgd テンプレートエンジン起動時に FRR へ適用され、dynamic peer-group に `FROM_BGP_SPEAKER permit 10` (inbound) と `TO_BGP_SPEAKER deny 1` (outbound) の route-map をハードコードで設定する。CONFIG_DB の `ROUTE_MAP` テーブルへの依存はないが、これらの route-map 名は変更不可であり、動作を上書きする手段はない。
+
+### BGP_GLOBALS — router bgp インスタンスの前提
+
+`frrcfgd.py:81` が `BGP_GLOBALS` を bgpd 管理テーブルとして登録しており、`BGP_PEER_RANGE` が有効になる前提として `BGP_GLOBALS` で BGP router インスタンスが確立済みである必要がある。また `BGP_GLOBALS_LISTEN_PREFIX` テーブル (frrcfgd.py:92) が `bgp listen range` を frrcfgd 経由でも管理できる別パスを提供しており、bgpcfgd と二重管理の構造になっている。
+
+<!-- /cross-refs -->
 <!-- glossary-links-injected: 9543a3643673 -->
