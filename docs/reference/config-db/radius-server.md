@@ -306,4 +306,41 @@ db_migrator.py での RADIUS_SERVER マイグレーションなし
 - `skip_msg_auth`: YANG 未定義・CLI 未実装だが hostcfgd が参照。直接 DB 書き込みのみで設定可能なフィールド
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `radius_server_update` が間接読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`hostcfgd` の `radius_server_update()` は `RADIUS_SERVER` テーブルをメモリに反映した後、`modify_conf_file()` を呼ぶ。この関数は `RADIUS_SERVER` 単体ではなく、以下の関連テーブルを結合してから PAM / NSS テンプレを再生成する。
+
+### `modify_conf_file()` 内で結合される共依存テーブル
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| [`AAA`](aaa.md) (`authentication`) | `modify_conf_file()` 冒頭 | `authentication['login']` に `radius` が含まれるか確認。含まれない場合は RADIUS PAM スタックが組まれず `RADIUS_SERVER` エントリが存在しても認証に使われない | hostcfgd:639,722,763,840 |
+| [`TACPLUS_SERVER`](tacplus-server.md) | `modify_conf_file()` — `servers_conf` 構築 | TACACS+ サーバリストを並列構築。`tacacs+` が `login` に含まれる場合は TACACS が優先され RADIUS が PAM chain に現れない | hostcfgd:648-666 |
+| [`RADIUS`](radius.md) (`radius_global`) | `modify_conf_file()` — `radius_global` 構築 | `nas_ip` / `nas_id` / `src_intf` / `statistics` を各 `RADIUS_SERVER` エントリにマージ | hostcfgd:667-686 |
+
+### 動的 IP / hostname 解決 (`get_interface_ip` / `get_hostname` 経由)
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `get_interface_ip("eth0")` | `RADIUS|global` に `nas_ip` 未設定の場合、eth0 管理 IP を `nas_ip` として自動補完 | hostcfgd:600,671-674 |
+| `INTERFACE` | `get_interface_ip("Eth...")` | `RADIUS_SERVER.src_intf` が物理ポートのとき src_ip を解決 | hostcfgd:586,694 |
+| `VLAN_INTERFACE` | `get_interface_ip("Vlan...")` | `src_intf` が VLAN のとき | hostcfgd:593 |
+| `VLAN_SUB_INTERFACE` | `get_interface_ip` 分岐 | `src_intf` が VLAN sub-interface のとき | hostcfgd:588 |
+| `PORTCHANNEL_INTERFACE` | `get_interface_ip("Po...")` | `src_intf` が PortChannel のとき | hostcfgd:591 |
+| `LOOPBACK_INTERFACE` | `get_interface_ip("Loopback...")` | `src_intf` が Loopback のとき | hostcfgd:595 |
+| [`DEVICE_METADATA`](device-metadata.md) (`localhost.hostname`) | `get_hostname()` | `RADIUS|global` に `nas_id` 未設定の場合、ホスト名を `nas_id` として自動補完 | hostcfgd:566-577,675-678 |
+
+### ランタイム subscribe — RADIUS_SERVER に間接影響するテーブル変化
+
+| テーブル | handler | 影響 | evidence |
+|---|---|---|---|
+| [`AAA`](aaa.md) | `aaa_handler` → `aaacfg.aaa_update()` | `authentication['login']` が変化すると RADIUS PAM スタックの有効/無効が即座に切り替わる | hostcfgd:2289-2291,2470 |
+| [`TACPLUS_SERVER`](tacplus-server.md) | `tacacs_server_handler` → `aaacfg.tacacs_server_update()` | TACACS+ サーバ追加/削除で PAM chain の優先順に影響し RADIUS が有効でも適用されなくなる場合がある | hostcfgd:2304,2472 |
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `mgmt_intf_handler` → `handle_radius_nas_ip_chg()` | eth0 IP 変化時に RADIUS `nas_ip` を再計算し pam_radius_auth.conf を再生成 | hostcfgd:2348-2349,2485 |
+| `MGMT_VRF_CONFIG` | `mgmt_vrf_handler` | 管理 VRF 切替時に eth0 の到達性が変わり `nas_ip` 自動補完結果に影響。`vrf: mgmt` を持つ RADIUS_SERVER エントリの接続経路も切り替わる | hostcfgd:2352-2353,2496 |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/radius-server-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: radius-server-2026-05-14 -->
