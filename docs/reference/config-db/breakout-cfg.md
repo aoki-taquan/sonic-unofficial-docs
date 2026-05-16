@@ -148,6 +148,53 @@ show interfaces breakout
 | `show interfaces breakout` で対象ポートが未登録 | 対象ポートを skip (エラーなし) | `show/interfaces/__init__.py` L228 |
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-utilities/config/main.py`, `sonic-utilities/config/config_mgmt.py`
+
+### CLI 前処理フェーズの失敗経路
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `platform.json` 不在 / 拡張子が `.json` でない | `[ERROR] Breakout feature is not available without platform.json file` → `Abort` | `config/main.py:5469-5471` |
+| `BREAKOUT_CFG` テーブルが CONFIG_DB に存在しない | `[ERROR] BREAKOUT_CFG table is NOT present in CONFIG DB` → `Abort` | `config/main.py:5481-5483` |
+| 対象ポートが `BREAKOUT_CFG` に未登録 | `[ERROR] {interface_name} interface is NOT present in BREAKOUT_CFG table of CONFIG DB` → `Abort` | `config/main.py:5485-5487` |
+| `target_brkout_mode` が `platform.json` の `breakout_modes` に未定義 | `_validate_interface_mode()` 失敗 → `Abort` | `config/main.py:5491` |
+| `del_intf_dict` が空（削除対象子ポートなし） | `[ERROR] del_intf_dict is None!` → `Abort` | `config/main.py:5504-5506` |
+| 削除予定ポート名が CONFIG_DB に未登録 | `[ERROR] Interface name {intf} is invalid` → `Abort` | `config/main.py:5519-5521` |
+
+### DPB 実行フェーズ: port 削除失敗
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| 依存テーブル (VLAN_MEMBER 等) が存在し `force=False` | `"Dependencies Exist. No further action will be taken"` → `sys.exit(1)` | `config_mgmt.py:501-503; config/main.py:267-270` |
+| YANG バリデーション (`validateConfigData()`) 失敗 (削除後) | `ret=False` → `"[ERROR] Port breakout Failed!!! Opting Out"` → `Abort` | `config_mgmt.py:516` |
+| ノード削除中に予期しない例外 | `LOG_ERR "Port Deletion Failed"` → `ret=False` → `Abort` | `config_mgmt.py:525-528` |
+
+### DPB 実行フェーズ: ASIC DB ポーリングタイムアウト
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `MAX_WAIT=60` 秒以内に削除ポートが ASIC DB から消えない | `LOG_CRIT "!!! Critical Failure, Ports are not Deleted from ASIC DB, Bail Out !!!"` → `Exception` 伝播 → `breakOutPort()` が `None, False` を返す | `config_mgmt.py:403-406` |
+| ASIC DB ポーリング例外 | CONFIG_DB は PORT 削除済みで新ポート未追加のまま停止。`BREAKOUT_CFG` は**旧値のまま**残る | `config_mgmt.py:462-464` |
+
+### DPB 実行フェーズ: port 再作成失敗
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `/etc/sonic/port_breakout_config_db.json` が欠落 (`loadDefConfig=True` 時) | `LOG_ERR "getDefaultConfig Failed, Error: {}"` → 例外伝播 → `ret=False` → `Abort` | `config_mgmt.py:748-751` |
+| YANG バリデーション失敗 (追加後) | `ret=False` → `"[ERROR] Port breakout Failed!!! Opting Out"` → `Abort` | `config_mgmt.py:572` |
+| ポート追加中に予期しない例外 | `LOG_ERR "Port Addition Failed"` → `ret=False` | `config_mgmt.py:583-586` |
+
+### retry・ロールバック挙動
+
+- **retry なし**: DPB はいずれの失敗ステップでも自動 retry を行わない。全フェーズ単発実行。
+- **部分適用リスク**: `writeConfigDB(delConfigToLoad)` 後に `_verifyAsicDB()` タイムアウトが発生した場合、PORT テーブルは削除済みだが新ポートは未追加の状態となり `BREAKOUT_CFG` は旧値のまま残る。手動 `config reload` が必要。
+- **BREAKOUT_CFG 保護**: `breakOutPort()` 失敗時は `BREAKOUT_CFG.brkout_mode` を書き込まない設計（`config/main.py:5548` 以降）。ASIC 状態との乖離を防ぐ意図的なガード。
+- **Yang モデルなしテーブル**: `breakout_warnUser_extraTables()` が失敗すると `raise Exception("Failed in breakout_warnUser_extraTables. Error: {}")` を送出し `sys.exit(1)` で終了。
+
+<!-- /failure -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
@@ -346,6 +393,94 @@ breakout 処理コアに埋め込まれた定数。CONFIG_DB フィールドに�
 
 > **設計上の注意**: `PORT_STR = "Ethernet"` および FEC しきい値 `50000` Mbps はコードにハードコードされており、変更する場合は `portconfig.py` の修正が必要。FEC しきい値は 50 G/lane 以上のすべての速度（100 G/2lane、400 G/4lane 等）に適用される。
 <!-- /constants -->
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BREAKOUT_CFG` への書込（`config interface breakout`）は CONFIG_DB 内の主テーブル更新にとどまらず、PORT テーブル再構成・STATE_DB ポート状態初期化・COUNTERS_DB キューマップ更新という 3 系統の副次書込を引き起こす。
+
+### CONFIG_DB|PORT テーブル — ポート再構成（直接・同期）
+
+`breakout_Ports()` が `ConfigMgmt.breakOutPort()` を呼び、旧子ポート（現行モード由来）を `PORT` から削除し、新子ポート（目標モード由来）を `PORT` に生成する。これは `BREAKOUT_CFG` への `set_entry` より **前**に実行される。
+
+| トリガ | 操作 | キー | フィールド | evidence |
+|--------|------|------|-----------|----------|
+| `config interface breakout <port> <mode>` 実行 | del（旧子ポート）+ set（新子ポート） | `PORT\|Ethernet*`（子ポート） | `speed`, `lanes`, `alias`, `subport`, `fec` 等 | `sonic-utilities/config/main.py:5496-5545` |
+
+### STATE_DB|PORT_TABLE — ポート状態エントリの再初期化
+
+DPB 後に orchagent が SAI レイヤでポートを再生成すると `initPort()` が STATE_DB にポートエントリを書き込み、`deInitPort()` が旧ポートのバッファ最大値エントリを削除する。
+
+| トリガ | 操作 | DB / テーブル | フィールド | evidence |
+|--------|------|--------------|-----------|----------|
+| SAI ポート再生成 → `initPort()` | `set` | `STATE_DB\|PORT_TABLE\|<alias>` | `supported_speeds`, `supported_fecs` 等 | `sonic-swss/orchagent/portsorch.cpp:L3172, L3320` |
+| SAI ポート削除 → `deInitPort()` | `del` | `STATE_DB\|BUFFER_MAX_PARAM_TABLE\|<alias>` | （エントリ全体）| `sonic-swss/orchagent/portsorch.cpp:L4331` |
+
+### COUNTERS_DB — キューマップ・ポート名マップ更新
+
+flex counter が有効な環境では、新子ポートのキュー OID マッピング（`COUNTERS_QUEUE_PORT_MAP` / `COUNTERS_QUEUE_INDEX_MAP` / `COUNTERS_QUEUE_TYPE_MAP`）が生成される。旧子ポートのマッピングは削除される。ポート名マップ（`COUNTERS_PORT_NAME_MAP`）も同様に旧エントリ削除・新エントリ追加が行われる。
+
+| トリガ | 操作 | DB / テーブル | evidence |
+|--------|------|--------------|----------|
+| `initPort()` → `generateQueueMapPerPort()`（queue flex counter 有効時） | `set` | `COUNTERS_DB\|COUNTERS_QUEUE_PORT_MAP`, `COUNTERS_QUEUE_INDEX_MAP`, `COUNTERS_QUEUE_TYPE_MAP` | `sonic-swss/orchagent/portsorch.cpp:L8527-8529` |
+| `deInitPort()` → `removePortBufferQueueCounters()` | `hdel` | 上記 3 テーブル（旧子ポートの OID エントリ） | `sonic-swss/orchagent/portsorch.cpp:L8790-8797` |
+| `deInitPort()` → `delCounterNameMap()` | `del` | `COUNTERS_DB\|COUNTERS_PORT_NAME_MAP` | `sonic-swss/orchagent/portsorch.cpp:L4316` |
+
+!!! note "flex counter 条件付き"
+    COUNTERS_DB へのキューマップ書込は queue flex counter（`FLEX_COUNTER_DB|QUEUE_STAT_COUNTER`）が有効な場合のみ発生する。無効環境では `generateQueueMapPerPort()` は呼ばれない。
+
+詳細分析: `meta/_intermediate/cdb-flow/breakout-cfg-side.md`
+<!-- /side-effects -->
+<!-- cross-refs -->
+## 暗黙参照 — DPB が読み出す関連 CONFIG_DB テーブル (Phase C)
+
+Dynamic Port Breakout (DPB) は `BREAKOUT_CFG` 単体ではなく、`CONFIG_DB` 内の関連テーブルを YANG leafref 解析で検出し、削除対象ポートに依存するエントリを **cascade 削除**（`--force-remove-dependencies` 時）またはユーザー警告対象として扱う。依存解決は `ConfigMgmtDPB._deletePorts()` 内の `SonicYang.find_data_dependencies()` が担う (`config_mgmt.py` L488-495)。
+
+### cascade 削除対象テーブル (YANG モデルあり、leafref 由来)
+
+`force=False` 時は依存一覧を表示して中断。`force=True` (`--force-remove-dependencies`) 時に cascade 削除される。
+
+| テーブル | YANG ファイル | 参照フィールド | 削除契機 |
+|---|---|---|---|
+| `BUFFER_PG` | `sonic-buffer-pg.yang` L43 | `port` leafref → `PORT.name` | 対象ポートの BUFFER_PG エントリが削除 |
+| `BUFFER_QUEUE` | `sonic-buffer-queue.yang` L51 | `port` leafref → `PORT.name` | 対象ポートの BUFFER_QUEUE エントリが削除 |
+| `INTERFACE` | `sonic-interface.yang` L58, L128 | `name` leafref → `PORT.name` | INTERFACE / INTERFACE_IPPREFIX エントリが削除 |
+| `VLAN_MEMBER` | `sonic-vlan.yang` L292 | `port` leafref → `PORT.name` | VLAN_MEMBER_LIST エントリが削除 |
+| `PORT_QOS_MAP` | `sonic-port-qos-map.yang` L78 | `name` leafref → `PORT.name` | QoS マッピングエントリが削除 |
+| `BUFFER_PORT_INGRESS_PROFILE_LIST` | `sonic-buffer-port-ingress-profile-list.yang` L41 | `port` leafref → `PORT.name` | バッファイングレスプロファイルが削除 |
+| `BUFFER_PORT_EGRESS_PROFILE_LIST` | `sonic-buffer-port-egress-profile-list.yang` L41 | `port` leafref → `PORT.name` | バッファイグレスプロファイルが削除 |
+| `PFC_WD` | `sonic-pfcwd.yang` L38 | `ifname` leafref → `PORT.name` | PFC Watchdog エントリが削除 |
+| `QUEUE` | `sonic-queue.yang` L67 | `port` leafref → `PORT.name` | QUEUE エントリが削除 |
+| `CABLE_LENGTH` | `sonic-cable-length.yang` L47 | `port` leafref → `PORT.name` | ケーブル長エントリが削除 |
+| `STORM_CONTROL` | `sonic-storm-control.yang` L41 | `ifname` leafref → `PORT.name` | ストームコントロールエントリが削除 |
+| `LLDP_PORT_TABLE` | `sonic-lldp.yang` L109 | `name` leafref → `PORT.name` | LLDP ポート設定が削除 |
+| `DEVICE_NEIGHBOR` | `sonic-device_neighbor.yang` L55 | `name` leafref → `PORT.name` | 隣接デバイス情報が削除 |
+| `SFLOW` (port sampler) | `sonic-sflow.yang` L110 | `port` leafref → `PORT.name` | sFlow ポートサンプラーが削除 |
+| `BGP_NEIGHBOR` | `sonic-bgp-neighbor.yang` L85 | `local_addr` leafref → `PORT.name` | BGP neighbor (port 指定) が削除 |
+| `MIRROR_SESSION` | `sonic-mirror-session.yang` L149 | `dst_port` leafref → `PORT.name` | ミラーセッションの宛先が対象ポートの場合に削除 |
+
+> 依存の検出は `SonicYang.find_data_dependencies(xPathPort)` が YANG データツリーを走査して行う。leafref でない参照（`ACL_TABLE.ports` 等）はここでは検出されない。
+
+### ユーザー警告対象テーブル (YANG モデルなし — 自動削除不可)
+
+YANG モデルが存在しないテーブルは `tablesWithOutYang` に収集され、該当ポートのエントリを持つ場合に `breakout_warnUser_extraTables()` がユーザーへの確認プロンプトを表示する (`config/main.py` L239, L5539)。**自動削除はされない**ため、手動での事前整理が必要。
+
+| テーブル | DPB での挙動 | 手動対応例 |
+|---|---|---|
+| `ACL_TABLE` (`.ports` フィールドに対象ポートあり) | 警告表示 + 確認要求。削除はユーザー任せ | `config acl remove table <table>` |
+| `ACL_RULE` | `ACL_TABLE` 依存エントリが警告対象に含まれることがある | `config acl remove rule` |
+| `MUX_CABLE` | 対象ポートにエントリがある場合に警告 | 手動削除 |
+
+> `tablesWithOutYang` の実際のリストはランタイムの CONFIG_DB 内容に依存する。ACL_TABLE が最も頻出する。
+
+### PORT 再作成フェーズ (breakout 後)
+
+削除フェーズ完了後、新子ポートが `PORT` テーブルに追加される。`loadDefConfig=True` の場合は以下がデフォルト設定で暗黙的に再作成される:
+
+| テーブル | 再作成契機 | evidence |
+|---|---|---|
+| `PORT` | 新子ポートエントリを `platform.json` + `portconfig.py` から生成 | `config_mgmt.py` L439, `portconfig.py` L350-390 |
+| `BUFFER_PG` / `BUFFER_QUEUE` | `loadDefConfig=True` 時にデフォルトバッファ設定を注入 | `portconfig.py` (デフォルト設定 JSON) |
+<!-- /cross-refs -->
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
