@@ -349,11 +349,15 @@ show copp config
 | `trap_group` | [`COPP_GROUP`](./copp-group.md) | `COPP_GROUP\|<name>` | グループ未登録の場合 `coppmgr` は APPL_DB 書き込みを保留。`CoppOrch` は `task_need_retry` を返して再試行 | `coppmgr.cpp:62-79`, `copporch.cpp:584` |
 | `trap_ids` (各 trap_id) | [`FEATURE`](./feature.md) | `FEATURE\|<feature-name>` | feature の `state=disabled` の場合、対応 trap_id を APPL_DB から除外（`always_enabled=false` のみ対象） | `coppmgr.cpp:173-191` |
 | `always_enabled` | [`FEATURE`](./feature.md) | `FEATURE\|<feature-name>` | `true` の場合は feature state に関わらず常時インストール。未設定は `false` 扱い | `coppmgr.cpp:90` |
+| `trap_group` (間接、queue4_group3 指定時) | [`DEVICE_METADATA`](./device-metadata.md) | `DEVICE_METADATA\|localhost` | `copp_cfg.j2` が `DEVICE_METADATA.localhost.type` に `'Mgmt'` を含む場合、COPP_GROUP `queue4_group3` の policer cir/cbs を 300 pps に設定（通常は 100 pps）。ビルド時 sonic-cfggen 展開時のみ評価 | `copp_cfg.j2:37-43` |
+| `trap_ids` (SAI 適用時) | SAI HOSTIF オブジェクト | SAI OID（非 CONFIG_DB） | `CoppOrch` が `sai_hostif_api->create_hostif_trap()` / `create_hostif_trap_group()` で SAI HOSTIF_TRAP・HOSTIF_TRAP_GROUP を生成。Genetlink 型の `trap_group` では `create_hostif()` で netdev ソケットも作成しトラップ受信チャネルに紐付ける | `copporch.cpp:661-678`, `copporch.cpp:780-792` |
 
 ### 解決タイミング
 
 - **COPP_GROUP**: SET 処理時に即座に参照確認。未解決は保留キューで管理され、GROUP 登録後に `doTask` 再実行で解消する。
 - **FEATURE**: `doFeatureTask()` が FEATURE テーブルの変化を購読し、state 変更のたびに影響する COPP_TRAP を再評価・再書き込みする。
+- **DEVICE_METADATA**: `copp_cfg.j2` 展開時（ビルド時または初回起動時）にのみ評価。ランタイムでの再評価はない。
+- **SAI HOSTIF**: `CoppOrch::processCoppTrap()` 内でポート初期化完了後に即時生成。SAI オブジェクト ID は `m_trap_group_hostif_map` / `m_trapid_hostif_table_map` にキャッシュされる。
 
 ### init_cfg 由来の暗黙初期化
 
@@ -478,5 +482,98 @@ CoppOrch::doTask(Consumer&) → processCoppRule() → SAI sai_hostif_api
 ```
 
 <!-- /pubsub -->
+
+<!-- side-effects -->
+## 副次 DB 書き込み (Phase F)
+
+> 証跡: `meta/_intermediate/cdb-flow/copp-trap-side.md`
+
+`COPP_TRAP` の SET/DEL 処理は CONFIG_DB 以外の以下 DB・テーブルへも書き込みを行う。
+
+### APPL_DB — COPP_TABLE
+
+| テーブル | キー形式 | 主要フィールド | 書き込み元 | タイミング |
+|---|---|---|---|---|
+| `COPP_TABLE` | `COPP_TABLE\|<group>` | `trap_ids`, `trap_action`, `trap_priority`, `queue`, `cir`, `cbs` 等 | `CoppMgr::doCoppTrapTask()` (coppmgr.cpp:511, 526) | COPP_TRAP SET 処理完了後 |
+
+**集約変換**: CONFIG_DB は 1 trap/key (`COPP_TRAP|<name>`) だが、APPL_DB は 1 group/key (`COPP_TABLE|<group>`) に再集計される。同一 `trap_group` に属する複数の COPP_TRAP が束ねられて 1 エントリになる。
+
+当該グループに属する全 trap が削除された場合は `m_appCoppTable.del(trap_group)` でエントリ自体が削除される（coppmgr.cpp:126）。
+
+### STATE_DB — COPP_TRAP_TABLE (state フィールド)
+
+| テーブル | キー形式 | フィールド | 値 | 書き込み元 | タイミング |
+|---|---|---|---|---|---|
+| `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<name>` | `state` | `ok` | `CoppMgr::setCoppTrapStateOk()` (coppmgr.cpp:589, 740, 803) | APPL_DB 書き込み成功後 |
+| `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<name>` | `state` | (削除) | `CoppMgr::delCoppTrapStateOk()` (coppmgr.cpp:660, 700, 767) | COPP_TRAP DEL 処理後 |
+
+### STATE_DB — COPP_TRAP_TABLE (hw_status フィールド)
+
+| テーブル | キー形式 | フィールド | 値 | 書き込み元 | タイミング |
+|---|---|---|---|---|---|
+| `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<trap_name>` | `hw_status` | `installed` | `CoppOrch::updateTrapOperStatus()` (copporch.cpp:526) | SAI `sai_create_hostif_trap` 成功後 |
+| `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<trap_name>` | `hw_status` | `not-installed` | `CoppOrch::updateTrapOperStatus()` (copporch.cpp:1413) | SAI `sai_remove_hostif_trap` 後 |
+
+`state` フィールド（coppmgr 書き込み）と `hw_status` フィールド（CoppOrch 書き込み）は同一キーの別フィールドであり上書き競合はない。
+
+### STATE_DB — COPP_GROUP_TABLE (state フィールド)
+
+`COPP_TRAP` の処理中に影響する `trap_group` の状態も連動して更新される。
+
+| テーブル | キー形式 | フィールド | 値 | 書き込み元 | タイミング |
+|---|---|---|---|---|---|
+| `COPP_GROUP_TABLE` | `COPP_GROUP_TABLE\|<group>` | `state` | `ok` | `CoppMgr::setCoppGroupStateOk()` (coppmgr.cpp:512, 527, 734) | COPP_TRAP 処理で当該 group の APPL_DB 書き込み成功後 |
+| `COPP_GROUP_TABLE` | `COPP_GROUP_TABLE\|<group>` | `state` | (削除) | `CoppMgr::delCoppGroupStateOk()` (coppmgr.cpp:127) | 当該 group が空になった場合 |
+
+### STATE_DB — COPP_TRAP_CAPABILITY_TABLE (起動時 1 回)
+
+`CoppOrch` 起動時に SAI capability クエリ結果をプラットフォームサポート済み trap_id 一覧として書き込む。`COPP_TRAP` の変更契機ではなく起動時のみ実行される。
+
+| テーブル | キー | フィールド | 値 | 書き込み元 |
+|---|---|---|---|---|
+| `COPP_TRAP_CAPABILITY_TABLE` | `traps` | `trap_ids` | カンマ区切りサポート trap_id リスト | `CoppOrch::publishTrapIdsCapability()` (copporch.cpp:299) |
+
+```bash
+# 確認コマンド
+sonic-db-cli STATE_DB keys 'COPP_TRAP_TABLE|*'
+sonic-db-cli STATE_DB hgetall 'COPP_TRAP_TABLE|bgp'
+sonic-db-cli APPL_DB hgetall 'COPP_TABLE|queue4_group1'
+sonic-db-cli STATE_DB hgetall 'COPP_TRAP_CAPABILITY_TABLE|traps'
+```
+<!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差 (SAI capability / vendor)
+
+### SAI capability クエリと fallback
+
+`CoppOrch` 起動時に `sai_query_attribute_enum_values_capability()` で `SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE` の対応 enum 一覧を取得し、`supported_trap_ids` セットに格納して STATE_DB `COPP_TRAP_CAPABILITY_TABLE|traps` に publish する。<!-- evidence: copporch.cpp:240-299 -->
+
+クエリが失敗した場合（`SAI_STATUS != SUCCESS`）、ソースコード内に static 定義された `default_supported_trap_ids` リストへフォールバックする。このリストは変更凍結（コメント参照）されており、新しい trap_id は追加されない。<!-- evidence: copporch.cpp:106-151 -->
+
+!!! note "neighbor_miss の制約"
+    `copp_cfg.j2` は `neighbor_miss` エントリを定義するが、`default_supported_trap_ids` には含まれない。SAI capability クエリが失敗するベンダー環境では `neighbor_miss` は非サポート扱いとなり NOTICE ログでスキップされる。
+
+### NAT 非対応プラットフォーム
+
+`SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が 0 を返す（または取得失敗）スイッチでは `gIsNatSupported = false` のまま。この場合 `src_nat_miss` / `dest_nat_miss` の trap_id は適用されない。<!-- evidence: main.cpp:935-948, copporch.cpp:401-405 -->
+
+### Mellanox / Marvell-Prestera — trap_priority 非対応
+
+`getenv("platform")` で `"mellanox"` または `"marvell-prestera"` を含む場合、`SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` の SET を skip する（サイレント — NOTICE ログなし）。これはデフォルト trap 初期化時と `processCoppTrap()` でのフィールド処理の両方に適用される。<!-- evidence: copporch.cpp:354, 1186-1194 -->
+
+Broadcom 等その他プラットフォームでは priority=1 をデフォルトとして設定し、`COPP_GROUP.trap_priority` のカスタム値も有効になる。
+
+### プラットフォーム差サマリー
+
+| プラットフォーム条件 | 影響 | 挙動 |
+|---|---|---|
+| SAI capability クエリ非対応 | `trap_ids` の一部 | `default_supported_trap_ids` フォールバック。`neighbor_miss` 等が無効 |
+| `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY == 0` | `src_nat_miss`, `dest_nat_miss` | スキップ (NOTICE ログ) |
+| `platform` 環境変数に `"mellanox"` | `trap_priority` | SAI 属性 SET なし (サイレント skip) |
+| `platform` 環境変数に `"marvell-prestera"` | `trap_priority` | 同上 |
+| Broadcom 等その他 | `trap_priority` | priority 有効。SET コマンドが SAI に反映される |
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: 7a3847939b09 -->

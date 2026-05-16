@@ -225,6 +225,76 @@ show dhcp_server ipv4 info
 - なし
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / keyspace notification)
+
+> **調査根拠**: `dhcp_utilities/common/dhcp_db_monitor.py` + `dhcp_utilities/dhcpservd/dhcpservd.py` 全行精読、`sonic-swss-common/common/subscriberstatetable.cpp` 参照 (2026-05-15)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-pubsub.md`
+
+### 購読方式
+
+`dhcpservd` は `swss::SubscriberStateTable` を通じて CONFIG_DB の複数テーブルを購読する。`dhcp_db_monitor.py` が各テーブルに対応する `ConfigDbEventChecker` サブクラスを定義し、`DhcpServdDbMonitor` が `swsscommon.Select`（5000 ms タイムアウト）で束ねる。ConsumerStateTable / NotificationConsumer / ProducerStateTable は使用しない。APPL_DB 中継もなく、kea-dhcp4.conf ファイル経由で設定を反映する。
+
+### 購読テーブルと発火条件
+
+| チェッカークラス | 購読テーブル | 発火条件 |
+|---|---|---|
+| `DhcpServerTableCfgChangeEventChecker` | `DHCP_SERVER_IPV4` | enabled IF への変更、または `state=enabled` への遷移 |
+| `DhcpPortTableEventChecker` | `DHCP_SERVER_IPV4_PORT` | vlan 部分が enabled_dhcp_interfaces に含まれる |
+| `DhcpOptionTableEventChecker` | `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS` | option 名が used_options に含まれる |
+| `DhcpRangeTableEventChecker` | `DHCP_SERVER_IPV4_RANGE` | range 名が used_range に含まれる |
+| `VlanTableEventChecker` | `VLAN` | key が enabled_dhcp_interfaces に含まれる |
+| `VlanIntfTableEventChecker` | `VLAN_INTERFACE` | vlan 部分が enabled かつ IPv4 変更 |
+| `VlanMemberTableEventChecker` | `VLAN_MEMBER` | vlan 部分が enabled_dhcp_interfaces に含まれる |
+| `MidPlaneTableEventChecker` | `MID_PLANE_BRIDGE` | DEL、または bridge フィールドが enabled IF |
+| `DpusTableEventChecker` | `DPUS` | 常に発火（SmartSwitch DPU 変更） |
+
+チェッカーは `dump_dhcp4_config()` が返す `enable_checker` set に応じて動的に enable/disable される。使われていない range/option を無駄に購読しない設計。
+
+### 通信シーケンス
+
+```
+dhcpservd 起動
+  └─ DhcpDbConnector(redis_sock="/var/run/redis/redis.sock")
+       ├─ config_db = DBConnector("CONFIG_DB", 0)   ← Redis DB #4
+       └─ state_db  = DBConnector("STATE_DB", 0)    ← SERVER_IP 書き込み用
+  └─ sel = swsscommon.Select()
+  └─ DhcpServdDbMonitor(sel, checkers, select_timeout=5000)
+  └─ DhcpServd.start()
+       └─ dump_dhcp4_config()            ← 起動時全量生成
+            └─ dhcp_cfg_generator.generate()
+                 → enabled_dhcp_interfaces, used_ranges, used_options, enable_checker
+            └─ monitor.enable_checkers(enable_checker)
+                 └─ SubscriberStateTable(config_db, table_name)
+                      └─ PSUBSCRIBE __keyspace@4__:<table_name>|*
+            └─ write /etc/kea/kea-dhcp4.conf
+            └─ _notify_kea_dhcp4_proc() → SIGHUP → kea-dhcp4 設定再読込
+       └─ _update_dhcp_server_ip()      ← STATE_DB DHCP_SERVER_IPV4_SERVER_IP|eth0 更新
+       └─ _signal_readiness()           ← /tmp/dhcpservd_ready に PID 書き込み
+  └─ DhcpServd.wait()                  ← メインループ
+       └─ sel.select(5000 ms)
+            ├─ TIMEOUT → ループ継続
+            └─ OBJECT  → check_update_event(db_snapshot)
+                 → need_refresh=True → dump_dhcp4_config() (全量再生成 + SIGHUP)
+```
+
+### keyspace notification 詳細
+
+| 項目 | 値 |
+|------|-----|
+| PSUBSCRIBE パターン (例) | `__keyspace@4__:DHCP_SERVER_IPV4\|*` |
+| notify-keyspace-events | `KEA` (K=keyspace, E=keyevent, A=all commands) |
+| Select timeout | 5000 ms |
+| 起動時スナップショット | なし — `generate()` で CONFIG_DB を live 読み取り |
+| 実行時変更反映 | need_refresh=True → `dump_dhcp4_config()` 全量再生成 + SIGHUP |
+| STATE_DB 書き込み | `DHCP_SERVER_IPV4_SERVER_IP\|eth0` に eth0 IPv4 (起動時 1 回) |
+
+### 反映タイミング
+
+CONFIG_DB 書込み → `SubscriberStateTable` が keyspace event 受信 → `check_update_event()` が need_refresh 判定 → `dump_dhcp4_config()` 全量再生成 → `/etc/kea/kea-dhcp4.conf` 上書き → SIGHUP → kea-dhcp4 設定再読込。Select timeout (5000 ms) 以内に反映される。1 変更につき 1 回の SIGHUP が発生する。
+
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・Fallback
 
@@ -412,5 +482,64 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 
 > **Evidence**: sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:128-150,199-215,332-340,418-434,452-454`; `dhcpservd.py:70-112,127-133`; `dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54`
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `dhcp_lease.py`, `dhcpservd.py`, `dhcp_cfggen.py` 全行精読 (2026-05-16)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-side-effects.md`
+
+CONFIG_DB の `DHCP_SERVER_IPV4` を書き込むと、`dhcpservd` が以下の副次書き込みを行う。
+
+### STATE_DB: DHCP_SERVER_IPV4_LEASE
+
+kea-dhcp4 がリースイベント（割当・更新・解放）を `lease_update.sh` 経由で dhcpservd に SIGUSR1 通知する。`KeaDhcp4LeaseHandler._update_lease()` が `/var/lib/kea/kea-lease.csv` を読み取り、STATE_DB を更新する。
+
+**key 形式**:
+
+```
+DHCP_SERVER_IPV4_LEASE|Vlan<subnet_id>|<mac_address>       # 通常 VLAN
+DHCP_SERVER_IPV4_LEASE|<midplane_bridge_name>|<mac_address> # SmartSwitch
+```
+
+**フィールド**:
+
+| フィールド | 説明 |
+|---|---|
+| `ip` | クライアントに割り当てた IPv4 アドレス |
+| `lease_start` | リース開始 UNIX タイムスタンプ（`lease_end - valid_lifetime` で算出） |
+| `lease_end` | リース終了 UNIX タイムスタンプ（kea-lease.csv の expire カラム） |
+
+**書き込み条件**: `lease_start != lease_end` かつ `now < lease_end`（有効リース）の場合のみ `hset`。期限切れリースは DEL。`lease_update_interval=2` 秒のレートリミットあり。
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_lease.py:79-93,102-112,140-144`
+
+### STATE_DB: DHCP_SERVER_IPV4_SERVER_IP
+
+dhcpservd 起動時（`start()` 内）に 1 回のみ実行。dhcp_server コンテナの `eth0` IPv4 アドレスを STATE_DB に書き込む。
+
+**key 形式**:
+
+```
+DHCP_SERVER_IPV4_SERVER_IP|eth0
+```
+
+**フィールド**: `ip` — eth0 の IPv4 アドレス文字列  
+eth0 アドレス取得失敗時は 5 秒間隔で最大 10 回リトライ。10 回失敗で `sys.exit(1)`。
+
+> **Evidence**: `dhcpservd.py:22,70-87`
+
+### ファイル: /etc/kea/kea-dhcp4.conf
+
+CONFIG_DB 変更を検知するたびに `dump_dhcp4_config()` が `/etc/kea/kea-dhcp4.conf` を上書きし、kea-dhcp4 に SIGHUP を送信して設定を再読込させる。Jinja2 テンプレート（`kea-dhcp4.conf.j2`）を使用して生成。テンプレートは `hooks-libraries`（SIGUSR1 lease 通知用）、`lease-database`（`/var/lib/kea/kea-lease.csv`、lfc-interval=3600）、`subnet4`（enabled VLAN ごとのサブネット＋プール）、`client-classes`（PORT モード）を含む。
+
+> **Evidence**: `dhcpservd.py:51-68`; `dhcp_cfggen.py:155-162,264`; `tests/test_data/kea-dhcp4.conf.j2`
+
+### ポート購読 (VLAN_MEMBER)
+
+`dhcpservd` は `VlanMemberTableEventChecker` で `VLAN_MEMBER` テーブルを購読し、`generate()` 内で全量読み取りする。`_parse_port()` がポートの VLAN メンバー登録を確認し、未登録ポートは LOG_WARNING でスキップ。
+
+> **Evidence**: `dhcpservd.py:142`; `dhcp_cfggen.py:70-71,165-168`
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 75921d013977 -->
