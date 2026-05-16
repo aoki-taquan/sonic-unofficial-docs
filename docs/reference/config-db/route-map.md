@@ -252,6 +252,73 @@ db_migrator.py での ROUTE_MAP マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+ROUTE_MAP テーブルは 2 つの独立したデーモンが購読する。
+
+### frrcfgd (sonic-frr-mgmt-framework)
+
+`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、Redis keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `('ROUTE_MAP', self.bgp_table_handler_common)` を登録し、変更通知を受け取る。
+
+```python
+# frrcfgd.py L2302, 2359-2361
+('ROUTE_MAP', self.bgp_table_handler_common),
+...
+def subscribe_all(self):
+    for table, hdlr in self.table_handler_list:
+        self.config_db.subscribe(table, hdlr)
+```
+
+変更検知後、`bgp_table_handler_common` が Jinja2 テンプレート (`bgpd.conf.db.route_map.j2`) を展開して FRR vtysh コマンドを生成・実行する。
+
+**Jinja2 テンプレート経路** (`bgpd.conf.db.route_map.j2`):
+
+```jinja2
+{% if ROUTE_MAP is defined and ROUTE_MAP|length > 0 %}
+{% for rm_key, rm_val in ROUTE_MAP.items() %}
+{% if 'route_operation' in rm_val %}
+route-map {{rm_key[0]}} {{rm_val['route_operation']}} {{rm_key[1]}}
+{% if 'match_as_path' in rm_val %}
+ match as-path {{rm_val['match_as_path']}}
+{% endif %}
+...
+{% endif %}
+{% endfor %}
+{% endif %}
+```
+
+テンプレートは `ROUTE_MAP` 全エントリを走査し、`route_operation` (permit/deny)、各 `match_*` / `set_*` フィールドを条件付きで FRR コマンドに変換する。適用対象デーモンは `['zebra', 'bgpd', 'ospfd']`。
+
+### bgpcfgd (sonic-bgpcfgd) — SDN 専用経路
+
+`RouteMapMgr` は `APPL_DB` の `BGP_PROFILE_TABLE` を `SubscriberStateTable` 相当で購読し、SDN 専用の 2 キー (`FROM_SDN_SLB_ROUTES`, `FROM_SDN_APPLIANCE_ROUTES`) のみを処理する。ROUTE_MAP テーブルを直接購読するのではなく、bgpcfgd テンプレートエンジンが CONFIG_DB の ROUTE_MAP を読み込んで FRR 設定を生成する。
+
+```python
+# managers_rm.py L47-52
+ROUTE_MAPS = ["FROM_SDN_SLB_ROUTES", "FROM_SDN_APPLIANCE_ROUTES"]
+
+def set_handler(self, key, data):
+    if not self.__set_handler_validate(key, data):
+        return True
+    self.__update_rm(key, data)
+```
+
+`__update_rm` は `cfg_mgr.push_list(cmds)` で FRR vtysh に直接コマンドを送信する。
+
+### 購読フロー要約
+
+```
+CONFIG_DB ROUTE_MAP
+  ├─ frrcfgd (ExtConfigDBConnector psubscribe)
+  │    └─ bgp_table_handler_common
+  │         └─ Jinja2 (bgpd.conf.db.route_map.j2)
+  │              └─ vtysh configure terminal / route-map <name> <action> <seq>
+  └─ bgpcfgd RouteMapMgr (SDN 専用; APPL_DB BGP_PROFILE 経由)
+       └─ cfg_mgr.push_list → vtysh route-map FROM_SDN_*_RM
+```
+
+<!-- /pubsub -->
 <!-- side-effects -->
 ## 副次 DB 書込・外部副作用 (Phase F)
 

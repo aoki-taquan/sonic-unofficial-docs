@@ -63,6 +63,20 @@ NTP_SERVER|<server_address>
 | `trusted` | `yes-no` | - | `no` | 認証時にこのサーバのみで時刻同期する |
 | `version` | uint8 (3..4) | - | `4` | NTP プロトコルバージョン |
 
+<!-- defaults -->
+**コード由来のデフォルト** (YANG `default` 句とは別経路で、`chrony.conf.j2` テンプレート/`minigraph.py`/`hostcfgd` 側が決定する暫定値):
+
+- `association_type`: テンプレート `{% set association_type = config.association_type | d('server') -%}` により DB キー不在時は `server` ディレクティブとして書き込まれる (`sonic-buildimage/files/image_config/chrony/chrony.conf.j2:26`)。YANG `default server` と同値だが Jinja2 側でも独立してフォールバックを担保。
+- `resolve_as`: テンプレート `{% set resolve_as = config.resolve_as | d(server) -%}` で DB キー不在時はループ変数 `server` (= NTP_SERVER テーブル key = ユーザが入力したサーバアドレス) をそのまま採用 (`chrony.conf.j2:27`)。さらに `association_type == 'pool'` の場合は `resolve_as` の値に関わらず `resolve_as = server` で上書きされ、pool は常に FQDN のまま使われる (`chrony.conf.j2:49-51`)。
+- `iburst`: テンプレートは `{% if config.iburst %}` で **truthy 判定のみ**を行い `| d(...)` を持たない (`chrony.conf.j2:37-39`)。DB キー不在なら `iburst` オプション付与なし。一方 `'on'` でも `'off'` でも文字列非空であれば `iburst` が付与されるテンプレート上の癖がある。実運用では minigraph.py が起動時に `iburst: 'on'` を一斉投入し (`sonic-buildimage/src/sonic-config-engine/minigraph.py:2646`)、YANG `default on` も合わさるため、実害は出にくい。
+- `minpoll` / `maxpoll`: **CONFIG_DB モデル未実装**。`chrony.conf.j2` にも `sonic-ntp.yang` `NTP_SERVER_LIST` にも該当 leaf が存在せず、chrony 側のデフォルト (`minpoll 6 / maxpoll 10` ≒ 64〜1024 秒) がそのまま使われる。SONiC からは制御不可。
+- `version`: テンプレートは `{% if config.version %}` で truthy 判定のみ。DB キー不在なら `version` オプション付与なし → chrony 側のデフォルト (NTPv4)。YANG `default 4` で DB 投入時には 4 が埋まる前提。
+- `admin_state`: テンプレートは `for server in NTP_SERVER if NTP_SERVER[server].admin_state != 'disabled'` (`chrony.conf.j2:20`)。DB キー不在なら `!= 'disabled'` が真と評価され、エントリは chrony.conf に含まれる (= 有効扱い)。YANG `default enabled` と同等の運用効果。
+- `key`: テンプレートは `global.authentication == 'enabled'` かつ `config.key` が truthy の場合のみ `key <id>` を付与 (`chrony.conf.j2:30-34`)。DB に `key` があっても NTP 認証が disabled なら chrony.conf には書かれない。
+
+派生メモ全体は [`meta/_intermediate/cdb-flow/ntp-server-defaults.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ntp-server-defaults.md) を参照。
+<!-- /defaults -->
+
 ## 関連サブテーブル
 
 - `NTP|global` (container, single-instance):
