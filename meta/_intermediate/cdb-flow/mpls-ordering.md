@@ -175,7 +175,7 @@ OID を引いて `SAI_INSEG_ENTRY_ATTR_NEXT_HOP_ID` に渡す。
 
 ## 5. 参照元
 
-- `sonic-net/sonic-swss` `orchagent/mplsrouteorch.cpp` (L34-961、特に L420-590、L589-665、L667-754)
-- `sonic-net/sonic-swss` `orchagent/nhgorch.cpp` (L41-44、L544-590、L677-682、L782-786)
-- `sonic-net/sonic-swss` `orchagent/routeorch.cpp` (L192、L313-316)
+- `sonic-net/sonic-swss` `orchagent/mplsrouteorch.cpp` (L34-961, 特に L420-590, L589-665, L667-754)
+- `sonic-net/sonic-swss` `orchagent/nhgorch.cpp` (L41-44, L544-590, L677-682, L782-786)
+- `sonic-net/sonic-swss` `orchagent/routeorch.cpp` (L192, L313-316)
 - 詳細証跡は `meta/_intermediate/cdb-flow/appl-mpls-route-ordering.md` を参照
