@@ -11,6 +11,68 @@ intermediate for `docs/reference/config-db/port.md` Phase D block.
 
 ## 失敗パス一覧
 
+### 0a. lanes 不一致 → `return false` (ポート作成失敗)
+
+`portsorch.cpp:4025-4031` (`initPort()`):
+
+```cpp
+if (m_portListLaneMap.find(lane_set) == m_portListLaneMap.end())
+{
+    SWSS_LOG_ERROR("Failed to locate port lane combination alias:%s", alias.c_str());
+    return false;
+}
+```
+
+CONFIG_DB の `lanes` フィールドが HW の lane map に存在しない場合、`initPort()` は即 `false` を返してポートを作成しない。
+**retry なし。CONFIG_DB の値は残る。`lanes` を正しい値に修正して再設定が必要。**
+
+---
+
+### 0b. SAI `create_ports()` 一括失敗 → `SWSS_LOG_THROW` (orchagent abort)
+
+`portsorch.cpp:1450-1479` (`addPortBulk()`):
+
+```cpp
+// バッチ全体失敗
+SWSS_LOG_ERROR("Failed to create ports with bulk operation, rv:%d", status);
+if (handle_status != task_process_status::task_success)
+{
+    SWSS_LOG_THROW("PortsOrch bulk create failure");
+}
+
+// 個別ポート失敗
+SWSS_LOG_ERROR("Failed to create port %s with bulk operation, rv:%d",
+    portList.at(i).key.c_str(), statusList.at(i));
+if (handle_status != task_process_status::task_success)
+{
+    SWSS_LOG_THROW("PortsOrch bulk create failure");
+}
+```
+
+SAI `sai_port_api->create_ports()` が `SAI_STATUS_SUCCESS` 以外を返した場合、またはバッチ内の個別ポートが失敗した場合、`handleSaiCreateStatus` 判定後に `SWSS_LOG_THROW` でプロセス abort。
+**retry なし。orchagent は supervisor により再起動される。**
+
+---
+
+### 0c. 非サポート speed → タスク削除 (erase, no retry)
+
+`portsorch.cpp:5024-5033`:
+
+```cpp
+if (!isSpeedSupported(p.m_alias, p.m_port_id, pCfg.speed.value))
+{
+    SWSS_LOG_ERROR("Unsupported port %s speed %u", p.m_alias.c_str(), pCfg.speed.value);
+    // Speed not supported, dont retry
+    it = taskMap.erase(it);
+    continue;
+}
+```
+
+`isSpeedSupported()` が SAI の速度能力リスト (`SAI_PORT_ATTR_SUPPORTED_SPEED`) を取得できないプラットフォームでは `SWSS_LOG_WARN "Unable to validate speed ..."` を出して検証をスキップし、任意値を SAI に渡す (`portsorch.cpp:3144-3148`)。
+**retry なし (erase)。portmgrd 経由で APP_DB は更新されても SAI への speed 設定は行われない。**
+
+---
+
 ### 1. `m_pendingPortSet` — Buffer Not Ready → 保留 (暗黙 retry)
 
 `portsorch.cpp:4779-4784`:

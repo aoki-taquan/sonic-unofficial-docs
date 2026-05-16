@@ -252,66 +252,52 @@ REST/gNMI 書き込み経路なし
 TUNNEL テーブルはレガシー汎用トンネルテーブル; 現行は VXLAN_TUNNEL / NVGRE_TUNNEL が使用される
 <!-- /entry-points -->
 
-<!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
-
-以下は YANG に default 節がなく、コード実装から導出した暗黙の挙動。
-
-| フィールド | 省略/未設定時の挙動 | ソース証跡 |
-|-----------|-------------------|-----------|
-| `tunnel_type` | `tunInfo.type=""` で IPINIP 判定不通過 → SET 無視 | `tunnelmgr.cpp` L250 |
-| `src_ip` | `term_type=P2MP` (ワイルドカード) decap term 作成 — 全 IPinIP を受け入れ | `tunnelmgr.cpp` L280-289 |
-| `dst_ip` | APPL_DB `TUNNEL_DECAP_TABLE` エントリには**書かれない** (copy_if でフィルタ除外)。decap term キー (`tunnel_name\|dst_ip`) のみに使用 | `tunnelmgr.cpp` L271-289 |
-| `dscp_mode` | `SAI_TUNNEL_ATTR_DECAP_DSCP_MODE` の `attr.value.s32` が**未初期化**のまま SAI push → SAI 実装依存の挙動 | `tunneldecaporch.cpp` L820-829 |
-| `ttl_mode` | `dscp_mode` と同様に未初期化整数が SAI push | `tunneldecaporch.cpp` L808-817 |
-| `ecn_mode` | SAI attr 未設定 (値が一致しない場合は `valid=false`)。**create-only**: 既存トンネルへの変更 SET で `valid=false` → SET 全体失敗 | `tunneldecaporch.cpp` L168-183 |
-| `encap_ecn_mode` | 省略時は SAI attr 未送信 (`if (!encap_ecn.empty())` ガード)。**create-only**: 既存トンネルへの変更で SET 全体失敗 | `tunneldecaporch.cpp` L797-805 |
-| `decap_dscp_to_tc_map` | SAI attr 未設定 (`SAI_NULL_OBJECT_ID` 時は push しない) | `tunneldecaporch.cpp` L831-837 |
-| `decap_tc_to_pg_map` | SAI attr 未設定 | `tunneldecaporch.cpp` L839-845 |
-| `encap_tc_to_dscp_map` | `tunnelTable` 内に記録のみ、SAI には push しない (muxorch が `getQosMapId()` で取得) | `tunneldecaporch.cpp` L255-258 |
-| `encap_tc_to_queue_map` | `encap_tc_to_dscp_map` と同様、record only | `tunneldecaporch.cpp` L271-274 |
-
-### ハードコード値（CONFIG_DB 非連動）
-
-| 定数 | 値 | 説明 |
-|------|----|------|
-| `TUNIF` | `"tun0"` | Linux kernel IPinIP トンネル IF 名 (固定、変更不可) |
-| `LOOPBACK_SRC` | `"Loopback3"` | kernel トンネルの src アドレスを取得する Loopback IF (固定) |
-| `OVERLAY_RIF_DEFAULT_MTU` | `9100` | Overlay loopback router interface の MTU (固定) |
-
-### YANG-実装 discrepancy
-
-`dst_ip` は YANG `TUNNEL_LIST` のフィールドとして定義されているが、`tunnelmgrd` は APPL_DB `TUNNEL_DECAP_TABLE` へコピーする際に **明示的に除外** する (`copy_if` フィルタ)。YANG を見て APPL_DB スキーマを推測すると `dst_ip` が tunnel エントリにあると誤解する。実際は decap term のキー部分 (`MuxTunnel0|<dst_ip>`) にのみ使われる。
-
-### 書込み順依存
-
-- `PEER_SWITCH.address_ipv4` が設定される前に `TUNNEL` SET が来ると、`m_peerIp` が空 → Linux kernel tunnel 未作成 (`configIpTunnel()` スキップ)。PEER_SWITCH 設定後の再処理は起きない（再SET が必要）。
-- `LOOPBACK_INTERFACE|Loopback3` の prefix SET が `TUNNEL` SET より後に来ると kernel tunnel IF へのアドレス付与が遅延するが、後から届けばキャッシュ経由で付与される。
-- `decap_dscp_to_tc_map` / `decap_tc_to_pg_map` に指定した QoS map が未作成の場合、`task_need_retry` で当該 tunnel の処理がスタックし続ける。
-
-<!-- /defaults -->
-
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
 ### SET 操作の推奨順序
 
-| 順序 | テーブル / 操作 | 理由 |
-|------|----------------|------|
-| 1 | `LOOPBACK_INTERFACE\|Loopback3\|<ip>` SET | `tun0` ローカル IP ソース (ハードコード `Loopback3`) |
-| 2 | `PEER_SWITCH\|<name>` SET (`address_ipv4`) | `m_peerIp` 未設定時は Linux tunnel 未作成、**自動再処理なし** |
-| 3 | QoS map テーブル SET（`DSCP_TO_TC_MAP` 等） | 未作成 map を参照すると `task_need_retry` 無限ループ |
-| 4 | `TUNNEL\|MuxTunnel0` SET | 1-3 が揃ってから。`tunnel_type=IPINIP` 必須 |
+`tunneldecaporch.cpp` の `addDecapTunnel()` は以下のSAI呼び出し順序で実行される。
+各ステップの前提リソースが未作成の場合は `task_need_retry` またはエラーで処理が中断する。
+
+| 順序 | テーブル / 操作 | 理由 | evidence |
+|------|----------------|------|---------|
+| 1 | `LOOPBACK_INTERFACE\|Loopback3\|<ip>` SET | `tun0` ローカル IP ソース (ハードコード `LOOPBACK_SRC="Loopback3"`)。後着でも `m_tunnelCache` 経由で遅延付与 | `tunnelmgr.cpp` L19, L339 |
+| 2 | `PEER_SWITCH\|<name>` SET (`address_ipv4`) | `m_peerIp` 未設定時は Linux tunnel 未作成。**PEER_SWITCH 設定後の自動再処理なし** — TUNNEL 再 SET が必要 | `tunnelmgr.cpp` L258-261 |
+| 3 | `DSCP_TO_TC_MAP\|<name>` SET (使用時) | `tunneldecaporch` が `gQosOrch->resolveTunnelQosMap()` で OID 解決。未作成 map は `task_need_retry` 無限待機 | `tunneldecaporch.cpp` L215-221 |
+| 4 | `TC_TO_PRIORITY_GROUP_MAP\|<name>` SET (使用時) | `decap_tc_to_pg_map` フィールド使用時に同様の OID 解決が必要 | `tunneldecaporch.cpp` L230-236 |
+| 5 | `TUNNEL\|MuxTunnel0` SET | 1-4 が揃ってから。内部で SAI 呼び出し順序 (下記) に従う | `tunneldecaporch.cpp` L717-849 |
+
+### SAI 内部呼び出し順序 (`addDecapTunnel`)
+
+`TUNNEL` SET を受けた `tunneldecaporch` は以下の順序で SAI オブジェクトを作成する。
+
+| SAI ステップ | SAI API 呼び出し | 依存リソース |
+|------------|----------------|------------|
+| 1. Overlay RIF 作成 | `sai_router_intfs_api->create_router_interface()` | `gVirtualRouterId` (デフォルト VRF) が orchagent 起動時に設定済み必須 |
+| 2. トンネル属性設定 | tunnel_attrs に `TYPE`, `OVERLAY_INTERFACE`, `UNDERLAY_INTERFACE`, `DECAP_ECN_MODE`, `DECAP_TTL_MODE`, `DECAP_DSCP_MODE` を push | ステップ 1 の overlay RIF OID が必要 |
+| 3. DSCP_TO_TC_MAP 付与 (任意) | `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` を push | `dscp_to_tc_map_id != SAI_NULL_OBJECT_ID` の場合のみ。ステップ 3/4 で OID が解決済みであること |
+| 4. TC_TO_PG_MAP 付与 (任意) | `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` を push | `tc_to_pg_map_id != SAI_NULL_OBJECT_ID` の場合のみ |
+| 5. トンネル作成 | `sai_tunnel_api->create_tunnel()` | ステップ 1-4 が完了後に一括送信 |
+| 6. Decap Term Entry 作成 | `sai_tunnel_api->create_tunnel_term_table_entry()` | ステップ 5 で取得した `tunnel_id` と `gVirtualRouterId` が必要。VR_ID は `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID` として設定 |
+
+!!! warning "VRF (gVirtualRouterId) の暗黙依存"
+    `addDecapTunnel()` と `addDecapTunnelTermEntry()` の両方が `gVirtualRouterId` を参照する。
+    これは orchagent 起動時に `intfsOrch` が初期化するデフォルト VRF の OID であり、
+    CONFIG_DB の `VRF` テーブルとは無関係にハードコードで使われる。
+    orchagent が正常起動していることが前提条件。
 
 ### 変更不可フィールド（DEL → SET が必要）
 
-- `ecn_mode` / `encap_ecn_mode`: SAI `create-only` 属性。既存トンネルへの変更 SET で `valid=false` となり、**SET 全体が無効化**される（他フィールドを含む）。変更には `TUNNEL` DEL 後に再 SET が必要。
+- `ecn_mode` / `encap_ecn_mode`: SAI `create-only` 属性。既存トンネルへの変更 SET で `valid=false` となり、**SET 全体（他フィールドを含む）が無効化**される。変更には `TUNNEL` DEL 後に再 SET が必要。
+  - evidence: `tunneldecaporch.cpp` L168-183, L193-198
 
 ### DEL 操作の安全順序
 
 ```
 DEL MUX_CABLE|*        # TUNNEL を参照する MUX_CABLE エントリを先に削除
 DEL TUNNEL|MuxTunnel0  # tunnelmgrd → APPL_DB DEL → tunneldecaporch → SAI DEL
+                        # SAI DEL 順: tunnel_term_table_entry → tunnel → overlay RIF
 DEL PEER_SWITCH|*      # TUNNEL DEL の後
 ```
 
@@ -434,5 +420,105 @@ CONFIG_DB の TUNNEL テーブルから読み込まれず、コードに直書�
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-constants.md`
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`tunneldecaporch` が CONFIG_DB → APPL_DB → SAI の経路を処理する際に、以下の副次的な DB 書き込みが発生する。
+
+### ASIC_DB — SAI オブジェクト群
+
+| SAI API | 生成オブジェクト | トリガ条件 |
+|---------|--------------|----------|
+| `sai_router_intfs_api->create_router_interface()` | `SAI_OBJECT_TYPE_ROUTER_INTERFACE` (overlay loopback, MTU=9100) | `addDecapTunnel()` 実行時・常時 |
+| `sai_tunnel_api->create_tunnel()` | `SAI_OBJECT_TYPE_TUNNEL` (IPINIP) | `addDecapTunnel()` 成功時 |
+| `sai_tunnel_api->create_tunnel_term_table_entry()` | `SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` | `addDecapTunnelTermEntry()` 成功時 |
+
+SAI tunnel に付与される主要属性: `SAI_TUNNEL_ATTR_TYPE=IPINIP`, `SAI_TUNNEL_ATTR_DECAP_ECN_MODE`, `SAI_TUNNEL_ATTR_DECAP_TTL_MODE`, `SAI_TUNNEL_ATTR_DECAP_DSCP_MODE`。  
+`decap_dscp_to_tc_map` が設定済みなら `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` も付与。  
+`decap_tc_to_pg_map` が設定済みなら `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` も付与。
+
+### STATE_DB — STATE_TUNNEL_DECAP_TABLE / STATE_TUNNEL_DECAP_TERM_TABLE
+
+| テーブル | 操作 | トリガ | 書込フィールド |
+|---------|------|-------|--------------|
+| `STATE_TUNNEL_DECAP_TABLE` | SET | SAI create_tunnel 成功後 (`setDecapTunnelStatus()`) | `tunnel_type`, `dscp_mode`, `ecn_mode`, `encap_ecn_mode`, `ttl_mode` |
+| `STATE_TUNNEL_DECAP_TABLE` | DEL | トンネル削除時 | — |
+| `STATE_TUNNEL_DECAP_TERM_TABLE` | SET | SAI create_tunnel_term_table_entry 成功後 | `term_type`, `src_ip`(P2P/MP2MP のみ), `subnet_type`(サブネット decap 時のみ) |
+| `STATE_TUNNEL_DECAP_TERM_TABLE` | DEL | decap term 削除時 | — |
+
+### MuxOrch への間接 QoS 副次反映
+
+`encap_tc_to_dscp_map` / `encap_tc_to_queue_map` は SAI に直接 push **されない**。tunneldecaporch は OID を内部キャッシュ (`tunnelTable`) に保持し、MuxOrch が `MUX_CABLE` 処理時に `TunnelDecapOrch::getQosMapId()` 経由で取得して自身の SAI 書き込みに利用する。
+
+!!! note "詳細スキャンノート"
+    `meta/_intermediate/cdb-flow/tunnel-side-effects.md`
+
+<!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Consumer 登録経路
+
+`TunnelDecapOrch` は `orchdaemon` から APPL_DB テーブルリストを受け取り `Orch` 基底クラス経由で `ConsumerStateTable` を登録する。加えてコンストラクタ内で CONFIG_DB の `SUBNET_DECAP_TABLE` を `SubscriberStateTable` として個別登録する（`addExecutor(new Consumer(...))`）。
+
+```cpp
+// orchdaemon.cpp L343-347
+vector<string> tunnel_tables = {
+    APP_TUNNEL_DECAP_TABLE_NAME,       // "TUNNEL_DECAP_TABLE"
+    APP_TUNNEL_DECAP_TERM_TABLE_NAME   // "TUNNEL_DECAP_TERM_TABLE"
+};
+gTunneldecapOrch = new TunnelDecapOrch(m_applDb, m_stateDb, m_configDb, tunnel_tables);
+
+// tunneldecaporch.cpp L39-48
+auto cfgSubnetDecapSubTable = new SubscriberStateTable(
+    configDb, CFG_SUBNET_DECAP_TABLE_NAME,
+    TableConsumable::DEFAULT_POP_BATCH_SIZE, 0);
+Orch::addExecutor(new Consumer(cfgSubnetDecapSubTable, this, CFG_SUBNET_DECAP_TABLE_NAME));
+```
+
+### 購読テーブルと API 種別
+
+| テーブル | DB | 購読 API | Handler |
+|---------|----|---------|----|
+| `TUNNEL_DECAP_TABLE` | APPL_DB | `ConsumerStateTable` (Orch 基底) | `doDecapTunnelTask()` |
+| `TUNNEL_DECAP_TERM_TABLE` | APPL_DB | `ConsumerStateTable` (Orch 基底) | `doDecapTunnelTermTask()` |
+| `SUBNET_DECAP_TABLE` | CONFIG_DB | `SubscriberStateTable` + `addExecutor` | `doSubnetDecapTask()` |
+
+CONFIG_DB の `TUNNEL` テーブルは **orchagent が直接購読しない**。`tunnelmgrd` が CONFIG_DB→APPL_DB へ変換し、orchagent は APPL_DB 側を ConsumerStateTable で受け取る二段構成。
+
+### Observer パターン — PortsOrch ゲート
+
+```cpp
+// tunneldecaporch.cpp L55-58
+void TunnelDecapOrch::doTask(Consumer &consumer)
+{
+    if (!gPortsOrch->allPortsReady()) return; // 全ポート ready まで処理停止
+    ...
+}
+```
+
+`gPortsOrch->allPortsReady()` が `false` の間は全トンネルタスクをスキップ。PortsOrch が ready 通知を出すと orchagent の select ループが再度 `doTask()` を呼び出す（Observer パターンの受動的待機）。
+
+### SAI tunnel_api 呼び出し
+
+```cpp
+// tunneldecaporch.cpp L853 / L19
+extern sai_tunnel_api_t* sai_tunnel_api;
+sai_status_t status = sai_tunnel_api->create_tunnel(
+    &tunnel_id, gSwitchId, tunnel_attrs.size(), tunnel_attrs.data());
+task_process_status handle_status = handleSaiCreateStatus(SAI_API_TUNNEL, status);
+```
+
+`handleSaiCreateStatus()` が SAI エラーを `task_need_retry` / `task_success` / `task_failed` に変換。`task_need_retry` はキューに残留して次サイクルでリトライ（QoS map 未作成時）。
+
+### STATE_DB 書き戻し (Observer 逆方向)
+
+SAI `create_tunnel()` 成功後、`stateTunnelDecapTable` (STATE_DB `STATE_TUNNEL_DECAP_TABLE`) と `stateTunnelDecapTermTable` へエントリを書き戻す（`tunneldecaporch.cpp` L287 付近）。これが orchagent → STATE_DB 方向の出力パス。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-pubsub.md`
+
+<!-- /pubsub -->
 
 <!-- glossary-links-injected: ae9e20070353 -->

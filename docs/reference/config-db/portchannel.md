@@ -606,6 +606,27 @@ TeamMgr::isLagStateOk() = true → addLagMember() 可能
 | `/var/run/teamd/<alias>.pid` 不在 | `SWSS_LOG_NOTICE "Failed to remove non-existent port channel %s pid..."` | 非存在 LAG の DEL は無害。false 返却 |
 | `kill(pid, SIGTERM)` 失敗 | `SWSS_LOG_ERROR "Failed to send SIGTERM to port channel %s pid %d: %s"` | teamd が異常終了済みの場合。手動でプロセス確認が必要 |
 
+### 不正 MAC / DEVICE_METADATA 取得失敗
+
+`TeamMgr` コンストラクタ (`teammgr.cpp:52-64`) は起動時に `DEVICE_METADATA|localhost` から `mac` フィールドを読み込む。
+
+| 失敗箇所 | 条件 | 挙動 | ログ / 例外 | リカバリ |
+|---|---|---|---|---|
+| `TeamMgr::TeamMgr()` — MAC アドレス取得失敗 | `DEVICE_METADATA|localhost` に `mac` フィールドが存在しない | `throw runtime_error("Failed to get MAC address from configuration database")` でプロセスクラッシュ | プロセス例外ログ（syslog / journald） | `teamd` 起動不能。`DEVICE_METADATA` を正しく設定して `teammgrd` を再起動 |
+
+> **注意**: この失敗はエントリ単位のリトライではなくデーモン起動時の致命的エラー。`teamd` プロセスが一切起動しないため、全 PORTCHANNEL が operational down になる。
+
+### SAI LAG 作成失敗 (orchagent / LagOrch)
+
+`LagOrch` が APP_DB `LAG_TABLE` を受信し `sai_lag_api->create_lag()` を呼び出す際の失敗パス (`portsorch.cpp`)。
+
+| 失敗箇所 | 条件 | ログ | リカバリ |
+|---|---|---|---|
+| LAG ID 払い出し失敗 | VoQ 環境で `LagIdAllocator` がユニーク ID を払い出せない | `SWSS_LOG_ERROR "Failed to allocate unique LAG id for local lag %s rv:%d"` | LAG ID 枯渇。VoQ シャーシ構成を見直し |
+| SAI `create_lag()` 失敗 | ASIC/SAI が LAG オブジェクト作成を拒否 | `SWSS_LOG_ERROR "Failed to create LAG %s lid:"` | ASIC リソース枯渇またはファームウェア不整合。ASIC リセットまたはシステム再起動が必要 |
+
+> **注意**: SAI LAG 作成失敗時はエントリが `m_syncdApplNotifications` に残り `orchagent` が再処理を試みない。手動で `config portchannel del` → `config portchannel add` による再投入が必要。
+
 ### リトライ上限
 
 `teammgrd` の select ループには `task_need_retry` のリトライ上限カウンタは存在しない。依存状態（teamd 起動環境、ポート STATE_DB 状態）が解消されると自然に成功する設計。無限リトライとなるため、恒久的な環境障害（teamd バイナリ不在、ネットワーク名前空間問題等）は外部から手動介入が必要。

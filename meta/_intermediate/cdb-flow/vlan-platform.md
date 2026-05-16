@@ -147,12 +147,45 @@ sai_status_t SwitchStateBase::queryVlanfloodTypeCapability(
 
 ---
 
+### 6. VOQ chassis / DPU — `gMySwitchType` 分岐による VLAN 初期化スキップ
+
+**検出箇所**: `portsorch.cpp:987-1066`
+
+- `gMySwitchType == "dpu"` の場合: SAI デフォルト 1Q Bridge/VLAN OID 取得・`removeDefaultVlanMembers()`・`removeDefaultBridgePorts()`・FDB event notify 設定をすべてスキップ
+- DPU は SmartSwitch アーキテクチャの Data Processing Unit。転送はカーネル bridge を不通過のため管理面専用
+- vlanmgr.cpp 側は `gMySwitchType` を一切参照しない。DPU でも通常通り Linux kernel bridge を作成する
+- VOQ chassis (`gMySwitchType == "voq"`) は LAG/SystemPort 系分岐は存在するが、`addVlan()` / `removeVlan()` を含む VLAN SAI フローに直接影響する分岐はない
+
+### 7. SmartSwitch DPU — `host_ifname` による SAI HOSTIF バインド
+
+**検出箇所**: `portsorch.cpp:5774-5828`, `portsorch.cpp:3802-3848`, `vlanmgr.cpp:416-418, 434`
+
+- `host_ifname` フィールドは YANG 外・CONFIG_DB `VLAN` テーブル未定義。vlanmgrd は受け取ったら APP_DB に透過転送するだけ
+- APP_DB `VLAN_TABLE` の `host_ifname` が空でない場合に `createVlanHostIntf()` を呼び、SAI `SAI_HOSTIF_TYPE_NETDEV` で VLAN OID にホスト IF をバインド
+- SmartSwitch NPU が DPU 側 VLAN を監視するためのホスト IF 作成ユースケース
+- `removeVlan()` 時に `host_intf_id` が設定されていれば `removeVlanHostIntf()` を先に呼ぶ (portsorch.cpp:7457)
+
+### 8. カーネル Linux bridge vs SAI VLAN — 二重平面の非対称動作
+
+**検出箇所**: `vlanmgr.cpp:76-116` (bridge 初期化), `portsorch.cpp:7392` (SAI VLAN 作成)
+
+非対称挙動:
+- **DPU でもカーネル bridge は作成される**: vlanmgrd は `gMySwitchType` を参照せず常に bridge を作成
+- **MTU 非対称**: vlanmgrd は `DEFAULT_MTU_STR=9100` を APP_DB に書くが netdev MTU は TODO 状態 (vlanmgr.cpp:401-406)
+- **SAI flooding ベンダー依存**: `create_vlan()` は `SAI_VLAN_ATTR_VLAN_ID` のみ渡す。flooding control 初期値がベンダー SAI デフォルト依存
+- **warm-restart 非対称**: vlanmgrd は `ip link show Bridge` で bridge 存在確認してスキップ、orchagent は STATE_DB reconcile で再確認
+
+---
+
 ## 結論
 
-| 差の性質 | 対象 ASIC | 影響 |
+| 差の性質 | 対象 ASIC / 構成 | 影響 |
 |---------|---------|------|
 | `COMBINED` flood control 非対応 | VS SAI / 一部 ASIC | EVPN flood group (`end_point_ip`) 設定不可 |
 | `create_vlan()` の属性最小化 | 全 ASIC | 初期 flooding 挙動がベンダー SAI デフォルト依存 |
 | `SAI_HOSTIF_VLAN_TAG_ORIGINAL` 未対応 | 旧世代 ASIC / 未実装ベンダー | CPU ポートの VLAN タグ有無がベンダー実装依存 |
 | `platform` 環境変数分岐 | 識別済み 11 プラットフォーム | VLAN 周辺動作でベンダー特殊処理の潜在的差異 |
 | VS flood capability 制限 | VS (Virtual Switch) | EVPN 関連 VLAN メンバ操作が実機と異なる |
+| `gMySwitchType == "dpu"` 初期化スキップ | SmartSwitch DPU | SAI 1Q Bridge 初期化・FDB event notify・デフォルトメンバ削除を省略 |
+| `host_ifname` SAI HOSTIF バインド | SmartSwitch NPU/DPU | kernel bridge 経由ではなく SAI HOSTIF_TYPE_NETDEV で VLAN にホスト IF をバインド |
+| カーネル bridge vs SAI 二重平面 | 全構成 | MTU・flooding・warm-restart で両平面の挙動が非対称になり得る |

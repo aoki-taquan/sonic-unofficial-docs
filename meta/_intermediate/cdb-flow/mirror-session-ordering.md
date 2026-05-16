@@ -105,7 +105,44 @@ if (session.refCount)
 
 ---
 
-## 3. Notification（通知）順序
+## 3. ERSPAN NEIGHBOR / INTERFACE / ROUTE 先行依存チェーン
+
+ERSPAN セッションの ACTIVE 化は以下の解決チェーン完了を必要とする:
+
+1. **ROUTE 先行**: `m_routeOrch->attach(this, entry.dstIp)` (L517) で RouteOrch アタッチ。Route callback が来るまで待機。
+2. **NEIGHBOR 先行**: `NeighOrch::getNeighborEntry(dstIp, neighbor, mac)` (L656-660) で ARP/NDP エントリ確認。未解決なら `SUBJECT_TYPE_NEIGH_CHANGE` で再評価。
+3. **INTERFACE / PORT 先行**: `m_portsOrch->getPort(neighbor.alias, port)` (L669) でネイバーのポート OID 取得。ポートが未初期化なら SAI へ monitor port を渡せない。
+4. **FDB 先行 (VLAN SVI 経由)**: `FdbOrch::getPort(mac, vlan_id, member)` (L732-743) で FDB 照会。FDB 未学習なら `SUBJECT_TYPE_FDB_CHANGE` で再評価。
+
+MirrorOrch コンストラクタ (L93-95) で `PortsOrch` / `NeighOrch` / `FdbOrch` の Observer として登録されているため、これらの変化時に自動的に `updateSession()` / `updateSessionDstPort()` が呼ばれる。
+
+---
+
+## 4. SAI `create_mirror_session` 属性設定順序
+
+`activateSession()` が構築する属性リストの順序:
+
+| 順序 | SAI 属性 | 条件 | evidence |
+|------|---------|------|---------|
+| 1 | `SAI_MIRROR_SESSION_ATTR_TC` | queue != 0 のみ | `mirrororch.cpp:931-937` |
+| 2 | `SAI_MIRROR_SESSION_ATTR_MONITOR_PORT` | SPAN: dst_port OID / ERSPAN: neighborInfo.portId | `mirrororch.cpp:949-975` |
+| 3 | `SAI_MIRROR_SESSION_ATTR_TYPE` | SPAN: LOCAL / ERSPAN: ENHANCED_REMOTE | `mirrororch.cpp:953-978` |
+| 4 | VLAN 属性群 (TPID/ID/PRI/CFI) | ERSPAN + VLAN nexthop のみ | `mirrororch.cpp:982-1001` |
+| 5-13 | ERSPAN_ENCAPSULATION_TYPE → GRE_PROTOCOL_TYPE | ERSPAN のみ | `mirrororch.cpp:1005-1049` |
+| 14 | `SAI_MIRROR_SESSION_ATTR_POLICER` | policer 指定時のみ | `mirrororch.cpp:1055-1065` |
+
+create はアトミック 1 呼び出し (L1067)。部分更新なし。
+
+---
+
+## 5. ACL bind 順序
+
+- **SET**: MIRROR_SESSION 作成 → ACL_TABLE 作成 → ACL_RULE 作成。ACL_RULE 作成時に `AclOrch::increaseRefCount()` (aclorch.cpp:2376) 呼び出し。セッション未存在なら ACL_RULE 作成失敗。
+- **DEL**: ACL_RULE DEL (`decreaseRefCount`) → MIRROR_SESSION DEL。`refCount > 0` 中は `task_need_retry` (L539-543)。
+
+---
+
+## 6. Notification（通知）順序
 
 `MirrorOrch` は `PortsOrch` / `NeighOrch` / `FdbOrch` の Observer として登録されている。
 
@@ -117,7 +154,7 @@ ERSPAN は RouteOrch の callback (via Observer) で非同期に ACTIVE 化す�
 
 ---
 
-## 4. warm-reboot 影響
+## 7. warm-reboot 影響
 
 warm-reboot 前にアクティブだったセッションは `m_recoverySessionMap` に保持される（mirrororch.cpp:130-160）。  
 `doTask()` の最後で `m_recoverySessionMap.clear()` を呼び、recovery 状態をクリアする（mirrororch.cpp:1610）。
@@ -126,7 +163,7 @@ warm-reboot 後も CONFIG_DB の MIRROR_SESSION エントリが残っていれ�
 
 ---
 
-## 5. まとめ（書込み順依存一覧）
+## 8. まとめ（書込み順依存一覧）
 
 | 依存カテゴリ | 必須順序 | コード根拠 |
 |------------|---------|-----------|
@@ -134,5 +171,6 @@ warm-reboot 後も CONFIG_DB の MIRROR_SESSION エントリが残っていれ�
 | POLICER → MIRROR_SESSION | `policer` フィールド指定時は POLICER エントリが先 | `mirrororch.cpp:434-438` |
 | PORT → MIRROR_SESSION (SPAN dst_port) | dst_port に指定するポートが PORT テーブルに存在すること | `mirrororch.cpp:942-945` |
 | PORT/PORTCHANNEL → MIRROR_SESSION (src_port) | src_port の各ポートが PORT/PORTCHANNEL テーブルに存在すること | `mirrororch.cpp:446-450` |
-| ERSPAN dst_ip ルート解決 | CONFIG_DB 書込み直後は INACTIVE。ルート/ネイバー解決後に非同期 ACTIVE 化 | `mirrororch.cpp:517` |
+| ROUTE/NEIGHBOR/INTERFACE → ERSPAN ACTIVE | CONFIG_DB 書込み直後は INACTIVE。ROUTE → NEIGHBOR → PORT OID → (FDB) 解決後に非同期 ACTIVE 化 | `mirrororch.cpp:517,656,669,732` |
+| MIRROR_SESSION → ACL_RULE (bind) | ACL_RULE は MIRROR_SESSION が先に存在すること。セッション未存在なら increaseRefCount 失敗 | `aclorch.cpp:2376` |
 | ACL_RULE DEL → MIRROR_SESSION DEL | refCount > 0 の間は DEL が task_need_retry | `mirrororch.cpp:539-543` |

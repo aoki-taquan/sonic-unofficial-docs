@@ -191,9 +191,74 @@ elif not port.get('fec') and port.get('speed') == '100000':
 
 ---
 
+---
+
+## 8. Gearbox (外付け PHY) 差異
+
+Gearbox 搭載プラットフォームでは、通常の ASIC ポートに加えて system-side / line-side の 2 ポートが作成される。
+
+```cpp
+// portsorch.cpp:10372 — initGearbox()
+m_gearboxEnabled = gearbox.isGearboxEnabled(tmpGearboxTable);
+if (m_gearboxEnabled) {
+    m_gearboxPhyMap = gearbox.loadPhyMap(tmpGearboxTable);
+    m_gearboxInterfaceMap = gearbox.loadInterfaceMap(tmpGearboxTable);
+    m_gb_counter_db = shared_ptr<DBConnector>(new DBConnector("GB_COUNTERS_DB", 0));
+}
+// portsorch.cpp:10650-10656 — GB_COUNTERS_DB に <alias>_system / <alias>_line を登録
+```
+
+- Gearbox 無効環境では `initGearboxPort()` は no-op。`GB_COUNTERS_DB` も作成されない。
+
+---
+
+## 9. VOQ Chassis (system_port) 差異
+
+`gMySwitchType == "voq"` のみ有効。PORT テーブルに加え `APP_SYSTEM_PORT_TABLE` を SAI に登録する。
+
+```cpp
+// portsorch.cpp:4620 — PortInitDone 受信時に addSystemPorts() を呼ぶ
+// portsorch.cpp:10864-10940 — switch_id / core_index / core_port_index / system_port_id を
+//   APP_SYSTEM_PORT_TABLE から取得し SAI_SYSTEM_PORT_ATTR_CONFIG_INFO で SAI 登録
+
+// portsorch.cpp:1496-1499 — VOQ ポート作成後の追加クリーンアップ
+if (gMySwitchType == "voq") {
+    removeDefaultVlanMembers();
+    removeDefaultBridgePorts();
+}
+```
+
+- VOQ 専用フィールド: `core_id`, `core_port_index`, `num_voq`。非 VOQ 環境では無視される。
+- YANG `lanes` は `switch_type=voq`/`chassis-packet`/`fabric` 時に mandatory 除外 (when 条件)。
+- LAG メンバー: `CHASSIS_APP_LAG_MEMBER_TABLE_NAME` でスイッチ ID 整合性チェック (`portsorch.cpp:6308-6315`)。
+
+---
+
+## 10. SAI port_serdes 差異
+
+SerDes チューニングは ASIC / Gearbox system-side / Gearbox line-side の 3 対象に分岐。
+
+```cpp
+// portsorch.cpp:4504-4525 — 対象判定
+if (port_id == port.m_port_id)        serdes_type_name = "ASIC";
+if (port_id == port.m_line_side_id)   serdes_type_name = "gearbox line-side";
+if (port_id == port.m_system_side_id) serdes_type_name = "gearbox system-side";
+
+// portsorch.cpp:10123 — setPortSerdesAttribute(): 既存 serdes を remove 後に create_port_serdes
+// 適用前に admin DOWN 必須 (portsorch.cpp:4527-4538)
+```
+
+| 対象 | SAI スイッチ OID | 設定タイミング |
+|------|----------------|-------------|
+| ASIC ポート (`m_port_id`) | `gSwitchId` | `doPortTask` 処理中 |
+| Gearbox system-side (`m_system_side_id`) | PHY OID | `initGearboxPort()` |
+| Gearbox line-side (`m_line_side_id`) | PHY OID | `initGearboxPort()` |
+
+---
+
 ## 証跡
 
-- `sonic-swss/orchagent/portsorch.cpp` lines 689-700 (isMlnxPlatform), 858-864 (trim stat), 947-1006 (capability queries), 3102-3320 (supported speeds/FEC/autoneg), 3540 (fast_linkup), 5319-5336 (FEC auto), 6362,6379 (LAG distribution-only)
+- `sonic-swss/orchagent/portsorch.cpp` lines 689-700 (isMlnxPlatform), 858-864 (trim stat), 947-1006 (capability queries), 1496-1499 (VOQ vlan cleanup), 3102-3320 (supported speeds/FEC/autoneg), 3540 (fast_linkup), 4504-4553 (serdes type判定), 5319-5336 (FEC auto), 6266-6315 (VOQ LAG), 6362,6379 (LAG distribution-only), 10123 (setPortSerdesAttribute), 10372-10395 (initGearbox), 10402-10700 (initGearboxPort), 10864-10940 (addSystemPorts)
 - `sonic-swss/orchagent/orch.h` lines 40-49 (platform string defines)
 - `sonic-buildimage/src/sonic-config-engine/minigraph.py` lines 2428-2433 (FEC default)
 - `sonic-buildimage/device/mellanox/x86_64-mlnx_msn2700-r0/ACS-MSN2700/port_config.ini`

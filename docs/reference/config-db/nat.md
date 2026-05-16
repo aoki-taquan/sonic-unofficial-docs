@@ -367,8 +367,12 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 | `STATE_INTERFACE_TABLE` | STATE_DB | READ | NAT エントリ追加前 | L3 インタフェース readiness ガード (`natmgr.cpp:139`) |
 | `APP_PORT_TABLE` (`PortInitDone`) | APPL_DB | READ | natmgrd 起動時 | ポート初期化完了まで全 NAT 処理をブロッキング待機 (`natmgr.cpp:76-92`) |
 | `NAT_POOL` (YANG leafref) | CONFIG_DB | READ | YANG バリデーション | `NAT_BINDINGS.nat_pool` → `NAT_POOL.name` の参照整合性 |
+| RouteOrch (next-hop observer) | — | READ | DNAT エントリ追加/削除時 | `NatOrch` が `m_routeOrch->attach(this, translatedIp)` で DNAT translated IP のルート変化を subscribe。**BRCM 専用** (`gNhTrackingSupported=true` 時のみ) (`natorch.cpp:414,458,504,591`) |
+| NeighOrch (neighbor observer) | — | READ | `enableNatFeature` / `disableNatFeature` 時 | `NatOrch` が `m_neighOrch->attach(this)` で全 neighbor 解決/喪失を subscribe。neighbor 変化時に DNAT エントリを追加/削除。**BRCM 専用** (`natorch.cpp:2573,2610`) |
 
 > **注意**: `nat_zone` フィールドは INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE / LOOPBACK_INTERFACE の全インタフェース種別で定義され (`uint8`, range `0..3`)、NAT ゾーン番号はそのまま iptables の mark 値として設定されるが、`natmgr` 内部では `nat_zone_value + 1` が使用される（`natmgr.cpp:7513`）。
+
+> **注意 (natorch.cpp 固有)**: RouteOrch / NeighOrch observer は BRCM プラットフォーム (`gNhTrackingSupported == true`) でのみ有効。非 BRCM 環境では DNAT translated IP の next-hop/neighbor 変化追跡が行われず、経路変更時に DNAT エントリが stale になるリスクがある (`natorch.cpp:144-148,2565-2578`)。
 
 <!-- /cross-refs -->
 
@@ -393,7 +397,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() L46-135 / updateNatCounters L4050-4060 / updateNaptCounters L4077-4089 / updateTwiceNatCounters L4108-4119 / updateTwiceNaptCounters L4122-4134 / updateStaticNatCounters L4481-4489 / updateSnatCounters L4569-4577 / sonic-swss/cfgmgr/natmgr.cpp enableNatFeature L5667-5733 / disableNatFeature L5736-5767 / doNatGlobalTask L7300-7374 / addStaticNatEntry L2052-2053 / addDnatPoolEntry L1517-1521 -->
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() L46-135 / addHwDnatPoolEntry L1783-1820 / addHwSnatEntry L1274-1340 / enableNatFeature L2534-2581 / disableNatFeature L2583-2625 / updateNatCounters L4050-4060 / updateNaptCounters L4077-4089 / updateTwiceNatCounters L4108-4119 / updateTwiceNaptCounters L4122-4134 / updateStaticNatCounters L4481-4489 / updateSnatCounters L4569-4577 / sonic-swss/cfgmgr/natmgr.cpp enableNatFeature L5667-5733 / disableNatFeature L5736-5767 / doNatGlobalTask L7300-7374 / addStaticNatEntry L2052-2053 / addDnatPoolEntry L1517-1521 / addConntrackStaticSingleNatEntry L456-490 / addConntrackStaticTwiceNatEntry L491-514 / addConntrackStaticSingleNaptEntry L516-565 -->
 
 ### APPL_DB への副次書込
 
@@ -410,6 +414,35 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 ### STATE_DB への書込
 
 `NatMgr` / `NatOrch` はいずれも STATE_DB への**書込は行わない**。STATE_DB は `STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` / `STATE_INTERFACE_TABLE` の readiness ガードとして**読み取り専用**で参照される (`natmgr.cpp:100-139`)。
+
+### ASIC_DB (SAI nat_entry) への副次書込
+
+`NatOrch` (`orchagent` コンテナ) が `sai_nat_api` 経由で ASIC_DB に SAI NAT エントリを書込む。syncd が Redis ASIC_DB に記録し、ASIC へ転送する。
+
+| SAI オブジェクト種別 | SAI nat_type | 書込条件 | ソース |
+|---|---|---|---|
+| `sai_nat_entry_t` (SNAT) | `SAI_NAT_TYPE_SOURCE_NAT` | `admin_mode=enabled` かつ SNAT エントリ追加時 (`addHwSnatEntry`) | `natorch.cpp:1274-1340` |
+| `sai_nat_entry_t` (DNAT) | `SAI_NAT_TYPE_DESTINATION_NAT` | `admin_mode=enabled` かつ DNAT エントリ追加時 (`addHwDnatEntry`) | `natorch.cpp:741-815` |
+| `sai_nat_entry_t` (DNAT Pool) | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | DNAT Pool エントリ追加時 (`addHwDnatPoolEntry`) | `natorch.cpp:1783-1820` |
+| `sai_nat_entry_t` (Twice NAT) | `SAI_NAT_TYPE_DOUBLE_NAT` | Twice NAT エントリ追加時 | `natorch.cpp:980-1020` |
+| `SAI_SWITCH_ATTR_NAT_ENABLE` | switch 属性 | `admin_mode` が `disabled→enabled` / `enabled→disabled` の遷移時 | `natorch.cpp:2555-2560`, `natorch.cpp:2590-2594` |
+
+> ASIC_DB への直接書込は syncd → ASIC ドライバ経由で行われる。NAT エントリは `sai_nat_api->create_nat_entry()` / `remove_nat_entry()` で管理され、`gSwitchId` / `gVirtualRouterId` をキーに含む。
+
+### kernel conntrack への副次書込
+
+`NatMgr` (`natmgrd` コンテナ) が `conntrack` CLI コマンド (`CONNTRACK_CMD`) を `swss::exec()` で実行して Linux kernel netfilter conntrack テーブルへ書込む。APPL_DB / SAI とは独立した直接 kernel 操作であり、DB には記録されない。
+
+| 操作 | 対象 | 書込条件 | ソース |
+|---|---|---|---|
+| conntrack エントリ追加 (`-I`) | Static Single NAT (DNAT/SNAT) — dummy UDP エントリ | `admin_mode=enabled` かつ STATIC_NAT エントリ追加時。timeout = `NAT_TIMEOUT_MAX` (432000秒) | `natmgr.cpp:456-490` |
+| conntrack エントリ追加 (`-I`) | Static Twice NAT — dummy UDP エントリ | STATIC_NAT twice-NAT エントリ追加時 | `natmgr.cpp:491-514` |
+| conntrack エントリ追加 (`-I`) | Static Single NAPT — dummy UDP/TCP エントリ (port 予約目的) | `admin_mode=enabled` かつ STATIC_NAPT エントリ追加時 | `natmgr.cpp:516-565` |
+| conntrack エントリ更新 (`-U`) | Dynamic Single NAT — active セッションの timeout 更新 | NatOrch からの `SETTIMEOUTNAT` 通知受信時 (1日周期) | `natmgr.cpp:372-392` |
+| conntrack エントリ更新 (`-U`) | Dynamic NAPT — active セッションの timeout 更新 | NatOrch からの `SETTIMEOUTNAT` 通知受信時 (1日周期) | `natmgr.cpp:393-416` |
+| conntrack フラッシュ | 全 dynamic NAT エントリ | `FLUSHNATENTRIES` 通知受信時 | `natmgr.cpp:` flush ハンドラ |
+
+> **重要**: kernel conntrack エントリは DB に反映されない。`show nat translations` の表示は conntrack テーブルから直接読み取る。Static エントリ用の dummy conntrack は port 番号を予約するために追加される (同 port が dynamic エントリに割り当てられるのを防ぐ)。
 
 ### COUNTERS_DB への副次書込
 
@@ -597,3 +630,61 @@ YANG default と独立してコンストラクタ内でハードコードされ�
 > **注意**: `NAT_CONNTRACK_TIMEOUT_PERIOD = 86400` は `nat_tcp_timeout` のデフォルト値と同値だが意味が異なる。前者は conntrack タイマー起動間隔、後者は NAT セッション age-out 秒数。
 
 <!-- /constants -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / enableNatFeature L2534-2581 / addAllDnatPoolEntries L1854-1863 / addAllNatEntries L3178-3258 / doDnatPoolTableTask L2968-3031 / doNatGlobalTableTask L2904-2966 -->
+
+### NAT_GLOBAL (admin_mode=enabled) が最初
+
+`NatOrch::doNatGlobalTableTask()` が `admin_mode` を `"enabled"` に切り替えると `enableNatFeature()` を呼ぶ (`natorch.cpp:2942-2943`)。`enableNatFeature()` は次の順でハードウェアに書き込む:
+
+```
+1. SAI_SWITCH_ATTR_NAT_ENABLE=true  (natorch.cpp:2554-2562)
+2. addAllDnatPoolEntries()           (natorch.cpp:2577)   ← NAT_DNAT_POOL_TABLE エントリを HW に投入
+3. addAllNatEntries()                (natorch.cpp:2580)   ← SNAT/DNAT/NAPT エントリを HW に投入
+```
+
+`admin_mode=disabled` の間は `addNatEntry()` (`natorch.cpp:1907-1913`) がエントリをキャッシュ (`m_natEntries`) に積むだけで SAI 操作をスキップする。`NAT_POOL` / `NAT_BINDINGS` / `STATIC_NAT` をどのタイミングで書いても構わないが、**SAI への実反映は `admin_mode=enabled` の後になる**。
+
+### NAT_POOL は NAT_BINDINGS より先行
+
+`natmgr.cpp:addDynamicNatRule()` は `NAT_BINDINGS` エントリを処理する際に pool キャッシュ (`m_natPoolInfo[pool_name]`) を参照する。pool が未登録の場合は `"Pool is not yet enabled, skipping dynamic nat rules addition"` をログしてルール設定を**スキップ**する (natmgr.cpp:4632-4636)。pool が後から登録されると `doNatPoolTask()` の末尾で既存 binding を再トリガーする仕組みになっている。
+
+推奨順序:
+
+```
+SET NAT_POOL|<name>      nat_ip=...  nat_port=...   # pool を先に定義
+SET NAT_BINDINGS|<name>  nat_pool=<name>             # pool 登録後に binding を追加
+```
+
+### SAI NAT エントリの投入順序 (orchagent 内)
+
+`NatOrch` が APPL_DB からエントリを受け取り SAI に投入する順序は `doTask()` のディスパッチ順序に依存する (`natorch.cpp:3041-3075`):
+
+| 優先度 | テーブル | SAI 操作 | SAI 型 |
+|--------|---------|---------|--------|
+| 1 | `APP_NAT_TABLE` | `addHwSnatEntry()` / `addHwDnatEntry()` | `SAI_NAT_TYPE_SOURCE_NAT` / `SAI_NAT_TYPE_DESTINATION_NAT` |
+| 2 | `APP_NAPT_TABLE` | `addHwSnaptEntry()` / `addHwDnaptEntry()` | `SAI_NAT_TYPE_SOURCE_NAT` / `SAI_NAT_TYPE_DESTINATION_NAT` |
+| 3 | `APP_NAT_TWICE_TABLE` | `addHwTwiceNatEntry()` | `SAI_NAT_TYPE_DOUBLE_NAT` |
+| 4 | `APP_NAPT_TWICE_TABLE` | `addHwTwiceNaptEntry()` | `SAI_NAT_TYPE_DOUBLE_NAT` |
+| 5 | `APP_NAT_GLOBAL_TABLE` | `enableNatFeature()` / `disableNatFeature()` | `SAI_SWITCH_ATTR_NAT_ENABLE` |
+| 6 | `APP_NAT_DNAT_POOL_TABLE` | `addHwDnatPoolEntry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` |
+
+`enableNatFeature()` は `admin_mode=enabled` を受け取ると **先に** `addAllDnatPoolEntries()` を呼び DNAT pool エントリを ASIC に投入し、その後 `addAllNatEntries()` で SNAT/DNAT エントリを投入する。DNAT pool entry が先行する設計。
+
+### BRCM プラットフォーム — nexthop 解決待ち (DNAT)
+
+`natorch.cpp:144-148`: `getenv("platform")` が `"broadcom"` を含む場合 `gNhTrackingSupported = true`。DNAT エントリは nexthop (L3 隣接) が解決されるまで SAI に投入されない (`addDnatToNhCache()` でキャッシュ待機)。非 BRCM 環境では即時 `addHwDnatEntry()` が呼ばれる。
+
+### 安全な DEL 順序
+
+```
+DEL NAT_BINDINGS|<name>    # binding を先に削除
+DEL NAT_POOL|<name>        # pool を後に削除
+```
+
+`natmgr.cpp:removeNatPool()` は pool 削除時に参照している binding を自動的に無効化するが、CONFIG_DB 上の `NAT_BINDINGS` エントリは残る。CLI 経由では先に `config nat remove binding` を実行する。
+
+<!-- /ordering -->

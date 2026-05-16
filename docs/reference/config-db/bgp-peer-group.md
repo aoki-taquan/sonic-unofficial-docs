@@ -263,6 +263,56 @@ FRR `neighbor <pg> route-map <name> in/out` コマンドの `<name>` として�
 指定した route-map が FRR に未定義でも frrcfgd はエラーを返さない（FRR 側 no-op）。
 <!-- /cross-refs -->
 
+<!-- platform -->
+## プラットフォーム / SAI 差分
+
+`BGP_PEER_GROUP` は FRR (`bgpd`) 止まりで SAI に直接到達しないが、`DEVICE_METADATA` の `type`・`sub_role`・`switch_type`・`subtype` に基づいて Jinja2 テンプレートが切り替わり、FRR へ発行されるコマンドが大きく異なる。frrcfgd 動的更新経路 (`frr_mgmt_framework_config=true`) は Jinja2 を経由しないため platform 差なし。
+
+### general peer-group (`peer_type=external` / ToR・Spine など)
+
+ソース: `bgpd/templates/general/peer-group.conf.j2`
+
+| `DEVICE_METADATA.type` | FRR コマンド差 |
+|------------------------|---------------|
+| `ToRRouter` | `neighbor PEER_V4/V6 allowas-in 1` (IPv4 + IPv6 AF) |
+| `LeafRouter` かつ `BGP_BBR.status=enabled` | `neighbor PEER_V4/V6 allowas-in 1` |
+| `SpineRouter && subtype=UpstreamLC` または `UpperSpineRouter` | `table-map SELECTIVE_ROUTE_DOWNLOAD_V4/V6`；anchor-route community-list + `TO_BGP_PEER permit 50/60` |
+| その他 | `allowas-in` なし、`table-map` なし |
+
+### internal peer-group (`peer_type=internal` / iBGP・multi-ASIC)
+
+ソース: `bgpd/templates/internal/peer-group.conf.j2`
+
+| `DEVICE_METADATA` 条件 | FRR コマンド差 |
+|------------------------|---------------|
+| `switch_type=chassis-packet` | `neighbor INTERNAL_PEER_V4/V6 update-source Loopback4096` + `ttl-security hops 1` |
+| `sub_role=BackEnd` | AF 内に `neighbor INTERNAL_PEER_V4/V6 route-reflector-client`；route-map に `set originator-id <Loopback4096>` |
+| `switch_type=chassis-packet && subtype != DownstreamLC` | FALLBACK_COMMUNITY を `set tag route_eligible_for_fallback_to_default_tag` |
+| その他 (single-ASIC) | `route-reflector-client` なし、`update-source` なし |
+
+### VoQ シャーシ peer-group (`peer_type=voq_chassis`)
+
+ソース: `bgpd/templates/voq_chassis/peer-group.conf.j2`
+
+| `DEVICE_METADATA` 条件 | FRR コマンド差 |
+|------------------------|---------------|
+| `bgp_asn` フィールドあり | `neighbor VOQ_CHASSIS_V4/V6_PEER remote-as <bgp_asn>` |
+| `type=ToRRouter` | `neighbor VOQ_CHASSIS_V4/V6_PEER allowas-in 1` |
+| 全ケース共通 | `addpath-tx-all-paths`、`send-community` が常に付与 |
+
+### BGP モニタ peer-group (`peer_type=monitors`)
+
+ソース: `bgpd/templates/monitors/peer-group.conf.j2`
+
+| `DEVICE_METADATA` 条件 | FRR コマンド差 |
+|------------------------|---------------|
+| `switch_type=voq` (chassisdb.conf 存在) または `switch_type=chassis-packet` | `neighbor BGPMON update-source Loopback4096`；IPv6 AF ブロック有効化 |
+| 非 VoQ・非 chassis-packet | `neighbor BGPMON update-source <Loopback0 IPv4>` |
+| その他 | `update-source` なし、IPv6 AF なし |
+
+> **根拠**: `bgpd/templates/general/peer-group.conf.j2`、`internal/peer-group.conf.j2`、`voq_chassis/peer-group.conf.j2`、`monitors/peer-group.conf.j2`、`general/policies.conf.j2`、`internal/policies.conf.j2` を精読。frrcfgd.py は `BGP_PEER_GROUP` ハンドラ内に `switch_type` / `sub_role` 参照なし（動的更新経路は platform 非依存）。詳細: `meta/_intermediate/cdb-flow/bgp-peer-group-platform.md`
+<!-- /platform -->
+
 <!-- defaults -->
 ## 暗黙デフォルトとコード由来 fallback (Phase A)
 
@@ -406,5 +456,182 @@ BGP_PEER_GROUP (asn 変更)
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/bgp-peer-group-side.md`
 <!-- /side-effects -->
+
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`BGP_PEER_GROUP` テーブルへの変更通知は **2 つの独立したデーモン** が受信する。方式は下表の通り異なる。
+
+| 購読者 | 購読 API | 通信方式 | ハンドラ |
+|--------|---------|---------|---------|
+| `frrcfgd` (sonic-frr-mgmt-framework) | `ExtConfigDBConnector.subscribe()` + `listen()` | Redis keyspace `PSUBSCRIBE __keyspace@<dbId>__:*` | `bgp_neighbor_handler` → `bgp_table_handler_common` → `__update_bgp` |
+| `bgpcfgd` (sonic-bgpcfgd) の `BGPPeerMgrBase` | `swsscommon.SubscriberStateTable` + `swsscommon.Select` | Redis PUBLISH/SUBSCRIBE チャネルベース | `Runner.run()` → `BGPPeerMgrBase.handler()` → `set_handler()` / `del_handler()` |
+
+`orchagent` / `syncd` 等の APPL_DB / ASIC_DB レイヤは本テーブルを購読しない（FRR `bgpd` のソフトウェア処理で完結、SAI 非経由）。
+
+### frrcfgd 経路: keyspace 通知 → ハンドラ呼び出し
+
+`frrcfgd` は `ConfigDBConnector` を継承した `ExtConfigDBConnector` を使用する。`subscribe_all()` で `BGP_PEER_GROUP` に `bgp_neighbor_handler` を登録し (`frrcfgd.py` L2303, L2359-2361)、`listen()` でバックグラウンドスレッドを起動して Redis keyspace を監視する (`frrcfgd.py` L1547-1552)。
+
+```
+sonic-db-cli CONFIG_DB hset 'BGP_PEER_GROUP|default|PEER_GROUP_1' local_asn 65001
+  ↓ HSET 後に Redis 側で keyspace 通知発火
+Redis keyspace PUBLISH "__keyspace@4__:BGP_PEER_GROUP|default|PEER_GROUP_1" "hset"
+  ↓ ExtConfigDBConnector.listen_thread() がパターンマッチ (frrcfgd.py:1536-1543)
+sub_msg_handler() → client.hgetall(key)  ← 通知後に値を再取得 (frrcfgd.py:1527-1528)
+raw_to_typed() で型変換・list ソート
+  ↓ _ConfigDBConnector__fire("BGP_PEER_GROUP", "default|PEER_GROUP_1", data)
+bgp_neighbor_handler(table, key, data)
+  → bgp_table_handler_common(table, key, data, [{'keepalive', 'holdtime'}]) (frrcfgd.py:3942-3943)
+  → bgp_message キューへ enqueue → __update_bgp() で処理 (frrcfgd.py:2790-2863)
+  → peer-group 未存在なら vtysh "neighbor PEER_GROUP_1 peer-group" を先行実行 (frrcfgd.py:2793-2802)
+  → 属性コマンド群 key_map.run_command() → vtysh 送出
+```
+
+- keyspace 通知のペイロードは操作名 (`hset` / `del`) のみ。フィールド値は `client.hgetall(key)` で再取得する (`frrcfgd.py` L1527-1528)。
+- `data is None → DEL、それ以外 → SET` の 2 値判定 (`ConfigDBConnector` 標準動作)。
+- `bgp_neighbor_handler` は `comb_attr_list=[{'keepalive', 'holdtime'}]` を渡す。keepalive / holdtime は両方揃わないと FRR タイマーコマンドが生成されない (`frrcfgd.py` L3942-3943)。
+- `listen_thread` は専用スレッドで動作し、`bgp_message` キュー経由で `__update_bgp` に直列化される (`frrcfgd.py` L1551, L3928-3930)。
+- 起動時は `subscribe_all()` 前に `config_db.get_table_data([...])` で全テーブルの一括スナップショットを取得し (`frrcfgd.py` L2340)、`config_mode == "unified"` 時は config replay を実行する (`frrcfgd.py` L2344-2357)。また、起動時に `pg_table = self.config_db.get_table('BGP_PEER_GROUP')` で既存 peer-group を `self.bgp_peer_group` キャッシュに読み込む (`frrcfgd.py` L2187-2191)。
+
+### bgpcfgd 経路: SubscriberStateTable + Runner
+
+`bgpcfgd` は `swsscommon.SubscriberStateTable` を使ったチャネルベース購読を採用する。`Runner.add_manager()` が `BGPPeerMgrBase` を登録すると、対応する CONFIG_DB テーブル (`CFG_BGP_NEIGHBOR_TABLE_NAME` 等) の `SubscriberStateTable` を生成して `swsscommon.Select` に追加する (`runner.py` L49-51)。**bgpcfgd は `BGP_PEER_GROUP` テーブルを直接購読しない**。`BGPPeerGroupMgr` (`managers_bgp.py` L15-84) は `BGPPeerMgrBase.add_peer()` から呼ばれる内部ヘルパーであり、peer-group の Jinja2 テンプレートをレンダリングして `cfg_mgr.push()` 経由で FRR に送出する。
+
+```
+CONFIG_DB BGP_NEIGHBOR / BGP_PEER_RANGE などの変更
+  ↓ SubscriberStateTable が PUBLISH 通知を受信
+Runner.run() → selector.select() → subscriber.pop() → key, op, fvs
+  ↓ callback = BGPPeerMgrBase.handler()
+set_handler() / del_handler()
+  → add_peer() 内で BGPPeerGroupMgr.update() を呼出 (managers_bgp.py:227)
+    → update_policy() / update_pg() → cfg_mgr.push(cmd) → FRR へ vtysh コマンド発行
+```
+
+CONFIG_DB は永続前提のため TTL は設定されない。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `BGP_PEER_GROUP` 変更 (frrcfgd 経路) | FRR `bgpd` への vtysh コマンド送出のみ。`bgpd` プロセス restart なし | `frrcfgd.py` L2790-2863, L3942 |
+| `BGP_PEER_GROUP` 変更 (bgpcfgd 経路) | bgpcfgd は BGP_PEER_GROUP を直接購読せず。BGP_NEIGHBOR 変更時に `BGPPeerGroupMgr.update()` 経由で peer-group テンプレが更新される | `managers_bgp.py` L156, L227 |
+| `local_asn` 未設定 VRF | frrcfgd が silent drop (LOG_DEBUG のみ)。bgpcfgd は `DEVICE_METADATA.bgp_asn` deps 充足まで保留 | `frrcfgd.py` L2658-2662, `managers_bgp.py` L119 |
+
+> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1506-1555, 1536-1543, 2187-2191, 2303, 2340, 2344-2357, 2359-2361, 2790-2863, 3942-3943` (keyspace listen / subscribe / peer-group ハンドラ / 起動スナップショット); `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:31-73` (SubscriberStateTable + Select ループ); `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:15-84, 156-157, 227` (BGPPeerGroupMgr / add_peer); 詳細分析 `meta/_intermediate/cdb-flow/bgp-peer-group-pubsub.md`
+<!-- /pubsub -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+BGP_PEER_GROUP の設定は frrcfgd の `cmn_key_map` (フィールド→FRR コマンドマッピング) 経由で FRR に投入されるが、bgpcfgd が使う Jinja2 テンプレート群（`peer-group.conf.j2` / `policies.conf.j2`）にはいくつかのハードコード定数が存在する。
+
+### peer-group 名定数
+
+各テンプレートディレクトリがハードコードする peer-group 名。CONFIG_DB のキーとして使われる `<peer_group_name>` がこの値に固定される。
+
+| テンプレートパス | peer-group 名 | evidence |
+|--------------|-------------|---------|
+| `bgpd/templates/general/peer-group.conf.j2` | `PEER_V4`（IPv4）、`PEER_V6`（IPv6） | `general/peer-group.conf.j2:4,5` |
+| `bgpd/templates/internal/peer-group.conf.j2` | `INTERNAL_PEER_V4`（IPv4）、`INTERNAL_PEER_V6`（IPv6） | `internal/peer-group.conf.j2:4,5` |
+| `bgpd/templates/BGPMON/peer-group.conf.j2` | `BGPMON` | `monitors/peer-group.conf.j2:8` |
+| `bgpd/templates/voq_chassis/peer-group.conf.j2` | `VOQ_CHASSIS_V4_PEER`（IPv4）、`VOQ_CHASSIS_V6_PEER`（IPv6） | `voq_chassis/peer-group.conf.j2:4,8` |
+
+### peer-group 固定設定（CONFIG_DB 値非依存）
+
+bgpcfgd テンプレート経路でのみ適用される固定設定。frrcfgd 経路（frr_mgmt_framework_config=true 時）は CONFIG_DB フィールド値をそのまま使うため、下記はハードコードされない。
+
+#### general テンプレート（`PEER_V4` / `PEER_V6`）
+
+| 設定 | ハードコード値 | 適用条件 | evidence |
+|-----|-------------|---------|---------|
+| `allowas-in` | `1` | `type == 'ToRRouter'`、または `type == 'LeafRouter'` かつ `BGP_BBR.status == 'enabled'` | `general/peer-group.conf.j2:8,11,23,26` |
+| `soft-reconfiguration inbound` | — | 常時 | `general/peer-group.conf.j2:14,29` |
+| route-map 名（IPv4 inbound） | `FROM_BGP_PEER_V4` | 常時 | `general/peer-group.conf.j2:15` |
+| route-map 名（IPv4 outbound） | `TO_BGP_PEER_V4` | 常時 | `general/peer-group.conf.j2:16` |
+| route-map 名（IPv6 inbound） | `FROM_BGP_PEER_V6` | 常時 | `general/peer-group.conf.j2:30` |
+| route-map 名（IPv6 outbound） | `TO_BGP_PEER_V6` | 常時 | `general/peer-group.conf.j2:31` |
+| `table-map` 名（IPv4） | `SELECTIVE_ROUTE_DOWNLOAD_V4` | `type == 'SpineRouter' && subtype == 'UpstreamLC'`、または `type == 'UpperSpineRouter'` | `general/peer-group.conf.j2:18` |
+| `table-map` 名（IPv6） | `SELECTIVE_ROUTE_DOWNLOAD_V6` | 同上 | `general/peer-group.conf.j2:33` |
+
+#### internal テンプレート（`INTERNAL_PEER_V4` / `INTERNAL_PEER_V6`）
+
+| 設定 | ハードコード値 | 適用条件 | evidence |
+|-----|-------------|---------|---------|
+| `allowas-in` | `1` | 常時（IPv4/IPv6 両 AF） | `internal/peer-group.conf.j2:15,29` |
+| `soft-reconfiguration inbound` | — | 常時 | `internal/peer-group.conf.j2:14,28` |
+| `send-community` | — | 常時 | `internal/peer-group.conf.j2:18,32` |
+| `route-reflector-client` | — | `sub_role == 'BackEnd'` | `internal/peer-group.conf.j2:12,26` |
+| `update-source` | `Loopback4096` | `switch_type == 'chassis-packet'` | `internal/peer-group.conf.j2:7,21` |
+| `ttl-security hops` | `1` | `switch_type == 'chassis-packet'` | `internal/peer-group.conf.j2:8,22` |
+| route-map 名（IPv4 inbound） | `FROM_BGP_INTERNAL_PEER_V4` | 常時 | `internal/peer-group.conf.j2:16` |
+| route-map 名（IPv4 outbound） | `TO_BGP_INTERNAL_PEER_V4` | 常時 | `internal/peer-group.conf.j2:17` |
+| route-map 名（IPv6 inbound） | `FROM_BGP_INTERNAL_PEER_V6` | 常時 | `internal/peer-group.conf.j2:30` |
+| route-map 名（IPv6 outbound） | `TO_BGP_INTERNAL_PEER_V6` | 常時 | `internal/peer-group.conf.j2:31` |
+
+#### BGPMON テンプレート（`BGPMON`）
+
+| 設定 | ハードコード値 | 適用条件 | evidence |
+|-----|-------------|---------|---------|
+| `maximum-prefix` | `1` | 常時（IPv4/IPv6 両 AF） | `monitors/peer-group.conf.j2:20,29` |
+| `send-community` | — | 常時 | `monitors/peer-group.conf.j2:19,28` |
+| `update-source` | `Loopback4096` | `switch_type == 'voq'` または `chassis-packet` | `monitors/peer-group.conf.j2:10` |
+| route-map 名（inbound） | `FROM_BGPMON` | 常時 | `monitors/peer-group.conf.j2:17,26` |
+| route-map 名（outbound） | `TO_BGPMON` | 常時 | `monitors/peer-group.conf.j2:18,27` |
+
+#### voq_chassis テンプレート（`VOQ_CHASSIS_V4_PEER` / `VOQ_CHASSIS_V6_PEER`）
+
+| 設定 | ハードコード値 | 適用条件 | evidence |
+|-----|-------------|---------|---------|
+| `allowas-in` | `1` | `type == 'ToRRouter'` | `voq_chassis/peer-group.conf.j2:15,26` |
+| `addpath-tx-all-paths` | — | 常時 | `voq_chassis/peer-group.conf.j2:18,29` |
+| `soft-reconfiguration inbound` | — | 常時 | `voq_chassis/peer-group.conf.j2:19,30` |
+| `send-community` | — | 常時 | `voq_chassis/peer-group.conf.j2:22,33` |
+| route-map 名（IPv4 inbound） | `FROM_VOQ_CHASSIS_V4_PEER` | 常時 | `voq_chassis/peer-group.conf.j2:20` |
+| route-map 名（IPv4 outbound） | `TO_VOQ_CHASSIS_V4_PEER` | 常時 | `voq_chassis/peer-group.conf.j2:21` |
+| route-map 名（IPv6 inbound） | `FROM_VOQ_CHASSIS_V6_PEER` | 常時 | `voq_chassis/peer-group.conf.j2:31` |
+| route-map 名（IPv6 outbound） | `TO_VOQ_CHASSIS_V6_PEER` | 常時 | `voq_chassis/peer-group.conf.j2:32` |
+
+### タイマーデフォルト（frrcfgd 経路）
+
+frrcfgd は `keepalive` と `holdtime` の **両方** が CONFIG_DB に存在する場合のみ `neighbor <pg> timers <ka> <ht>` を生成する（`comb_attr_list` 制約）。いずれか一方が欠けると FRR デフォルト値が使われる。
+
+| 値 | FRR デフォルト | ソース |
+|----|--------------|--------|
+| keepalive | `60` 秒 | FRR BGP デフォルト（CONFIG_DB 省略時） |
+| holdtime | `180` 秒 | FRR BGP デフォルト（CONFIG_DB 省略時） |
+
+`frrcfgd.py` L1874: `(['keepalive', 'holdtime'], '{no:no-prefix}neighbor {} timers {} {}')` — 両フィールド揃い時のみコマンド生成。
+
+### policies.conf.j2 の定数注入（`constants.bgp.*`）
+
+bgpcfgd テンプレートが参照する runtime 定数。値はデプロイ時の `constants.json` で注入される。テスト参照値を示す。
+
+#### general テンプレート（allow_list 有効時）
+
+| 定数キー | テスト参照値 | 用途 | evidence |
+|---------|------------|------|---------|
+| `constants.bgp.allow_list.drop_community` | `12345:12345` | `ALLOW_LIST_DEPLOYMENT_ID_0_V4/V6 permit 65535` での `set community` | `general/policies.conf.j2:25,28,32` |
+| `constants.bgp.route_eligible_for_fallback_to_default_tag` | `203` | SpineRouter UpstreamLC で `FROM_BGP_PEER_V4/V6 permit 13` の `set tag` | `general/policies.conf.j2:50,75` |
+| `constants.bgp.route_do_not_send_appdb_tag` | `202` | 非 chassis-packet の UpstreamLC SpineRouter の `set tag` | `general/policies.conf.j2:49,72` |
+| `constants.bgp.internal_fallback_community` | `1111:2222` | UpstreamLC SpineRouter の `set community ... additive` | `general/policies.conf.j2:53,76` |
+| `constants.bgp.local_anchor_route_community` | `12345:555` | UpperSpineRouter/UpstreamLC の `LOCAL_ANCHOR_ROUTE_COMMUNITY` | `general/policies.conf.j2:107,121,138` |
+| `constants.bgp.anchor_route_community` | `12345:666` | UpperSpineRouter の `ANCHOR_ROUTE_COMMUNITY` | `general/policies.conf.j2:106,121` |
+| `constants.bgp.anchor_contributing_route_community` | `12345:777` | UpperSpineRouter の `TO_BGP_PEER` で `set community ... additive` | `general/policies.conf.j2:108,125,134` |
+
+#### voq_chassis テンプレート
+
+| 定数キー | テスト参照値 | 用途 | evidence |
+|---------|------------|------|---------|
+| `constants.bgp.internal_community` | `12345:556` | `DEVICE_INTERNAL_COMMUNITY` community-list、`TO_VOQ_CHASSIS` で `set community` | `voq_chassis/policies.conf.j2:5,33,68` |
+| `constants.bgp.internal_fallback_community` | `1111:2222` | `DEVICE_INTERNAL_FALLBACK_COMMUNITY` community-list | `voq_chassis/policies.conf.j2:6` |
+| `constants.bgp.local_anchor_route_community` | `12345:555` | `LOCAL_ANCHOR_ROUTE_COMMUNITY`、`TO_VOQ_CHASSIS deny 15` | `voq_chassis/policies.conf.j2:4,36,71` |
+| `constants.bgp.internal_community_match_tag` | `101` | `FROM_VOQ_CHASSIS permit 1/2` の `set tag` | `voq_chassis/policies.conf.j2:12,47` |
+| `constants.bgp.route_eligible_for_fallback_to_default_tag` | `203` | 非 UpstreamLC で `FROM_VOQ_CHASSIS permit 3/4` の `set tag` | `voq_chassis/policies.conf.j2:26,61` |
+| local-preference (NO_EXPORT 一致時) | `80` | `FROM_VOQ_CHASSIS V4 permit 2` / `V6 permit 3` の `set local-preference` | `voq_chassis/policies.conf.j2:16,50` |
+<!-- /constants -->
 
 <!-- glossary-links-injected: d4d0b1f9b453 -->

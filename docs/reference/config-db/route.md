@@ -148,6 +148,74 @@ if (!nhg_index.empty() && (!ips.empty() || !aliases.empty()))
 `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` が有効な場合、全フィールド（空文字列のものを含む）を常に送信する。フィールド不在が発生しないため orchagent 側の「フィールド不在=デフォルト」ロジックは使われない。
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-platform.md -->
+
+### ASIC 別 ECMP グループ数上限
+
+RouteOrch コンストラクタ起動時に `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を問い合わせ ECMP グループ上限 (`m_maxNextHopGroupCount`) を決定する[^3]:
+
+```cpp
+// routeorch.cpp:61-91 (抜粋)
+attr.id = SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS;
+status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status != SAI_STATUS_SUCCESS)
+    m_maxNextHopGroupCount = DEFAULT_NUMBER_OF_ECMP_GROUPS;  // 128
+else
+{
+    m_maxNextHopGroupCount = attr.value.s32;
+    char *platform = getenv("platform");
+    if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))  // "mellanox"
+        m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;  // ÷ 32
+}
+```
+
+| プラットフォーム | SAI 返値の解釈 | 有効上限 |
+|-----------------|---------------|---------|
+| Mellanox (`"mellanox"`) | ECMP size=1 前提の最大数を返すため ÷32 補正 | `SAI 返値 / 32` |
+| その他 ASIC | SAI 返値をそのまま使用 | `SAI 返値` |
+| SAI 問い合わせ失敗 | フォールバック | 128 |
+
+この上限は `SwitchOrch::set_switch_capability()` で `MAX_NEXTHOP_GROUP_COUNT` として STATE_DB に公開される。
+
+### VOQ chassis — ECMP メンバー数上限キャップ
+
+`gMySwitchType == "voq"` のとき orchagent が ECMP メンバー数を最大 128 に固定して SAI に書き戻す[^3]:
+
+```cpp
+// routeorch.cpp:109-117 (抜粋)
+if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
+{
+    maxEcmpGroupSize = 128;
+    attr.id = SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT;
+    attr.value.s32 = maxEcmpGroupSize;
+    sai_switch_api->set_switch_attribute(gSwitchId, &attr);
+}
+```
+
+VOQ chassis では複数 line card 間でフォワーディングテーブルを同期するため ECMP メンバー数を抑えて同期負荷を制限する。通常の box スイッチや fabric スイッチでは ASIC 能力値をそのまま使う。
+
+| `gMySwitchType` | ECMP メンバー上限の扱い |
+|-----------------|----------------------|
+| `"voq"` | min(ASIC 能力, 128) を SAI に設定 |
+| `"switch"` / `"fabric"` 等 | ASIC 能力値のまま（orchagent から変更しない） |
+
+### SAI Bulk API 対応差
+
+RouteOrch は 3 種の Bulker を使用し、デフォルト `gMaxBulkSize = 1000` エントリ単位でまとめて SAI に渡す[^3]:
+
+| Bulker | 対象 SAI API |
+|--------|-------------|
+| `gRouteBulker` | `sai_route_api` (sai_route_entry_t) |
+| `gLabelRouteBulker` | `sai_mpls_api` (label route entry) |
+| `gNextHopGroupMemberBulker` | `sai_next_hop_group_api` (NHG member) |
+
+SAI 実装がバルク操作 (`sai_bulk_create_route_entry` 等) を実装していない場合、Bulker 内部でシングルエントリ呼び出しにフォールバックする。ECMP グループ数が上限に達した状態で pending DEL がある場合、通常の flush タイミング（doTask ループ末尾）より早期に `gRouteBulker.flush()` が呼ばれる (routeorch.cpp:1094-1097)。
+
+<!-- /platform -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
@@ -191,7 +259,101 @@ ROUTE_TABLE|<prefix> DEL
   → VRF DEL
 ```
 
+### SAI bulk batch — `gRouteBulker` による一括 SAI 発行
+
+`RouteOrch` は SAI route API 呼び出しを 1 エントリごとに発行せず、`EntityBulker<sai_route_api_t> gRouteBulker(sai_route_api, gMaxBulkSize)` にキューイングしてバッチで SAI へ送る[^3]。
+
+**処理シーケンス（`doTask` 1 回の中）**:
+
+1. `m_toSync` の全エントリをループし、`addRoute(ctx)` / `removeRoute(ctx)` がそれぞれ `gRouteBulker.create_entry()` / `gRouteBulker.remove_entry()` / `gRouteBulker.set_entry_attribute()` を呼ぶ（この時点では SAI 未発行）。
+2. ループ終了後に `gRouteBulker.flush()` を呼び、バッチで SAI に発行する（`routeorch.cpp:1117`）。
+3. `flush()` 後に `addRoutePost()` / `removeRoutePost()` が SAI の返却ステータスを確認し、成功したエントリは `m_syncdRoutes` に反映、失敗は `m_toSync` に残す。
+
+```
+[ループ] addRoute/removeRoute → gRouteBulker.create_entry / remove_entry / set_entry_attribute
+         （SAI は未発行）
+[ループ後] gRouteBulker.flush() → sai_route_bulk_create / sai_route_bulk_remove 一括発行
+           → addRoutePost / removeRoutePost でステータス確認
+```
+
+**NHG 枯渇時の中間 flush**: nexthop group 数が上限 (`m_maxNextHopGroupCount`) に達し、かつ bulker に削除待ちエントリが存在する場合、ループを抜けて中間 `flush()` を行い、解放された NHG を回収してから処理を継続する（`routeorch.cpp:1094-1100`）。
+
+**MPLS ラベル経路は別 bulker**: `gLabelRouteBulker(sai_mpls_api, gMaxBulkSize)` が独立して存在し、MPLS フォワーディングエントリは別バッチで SAI に発行される[^3]。
+
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-cross-refs.md -->
+
+`RouteOrch` (`orchagent/routeorch.cpp`) が ROUTE_TABLE エントリを処理する際に参照・更新する他テーブル/Orch の一覧。フィールドに明示されていない暗黙依存関係を示す。
+
+### NEIGHBOR (APPL_DB) — NeighOrch 経由
+
+nexthop IP アドレスが存在する場合、RouteOrch は `m_neighOrch->hasNextHop()` で隣接解決済みかを確認し、`getNextHopId()` で SAI nexthop OID を取得する[^cr1]。
+
+```cpp
+if (m_neighOrch->hasNextHop(it))
+    next_hop_id = m_neighOrch->getNextHopId(it);
+else
+{
+    m_neighOrch->addNextHop(ctx);
+    next_hop_id = m_neighOrch->getNextHopId(it);
+}
+```
+
+`isNeighborResolved()` も確認し、未解決の場合は `return false` で経路プログラミングを後回しにする[^cr1]。参照カウント (`increaseNextHopRefCount` / `decreaseNextHopRefCount`) により NEIGH_TABLE エントリの生存期間が RouteOrch によって保護される。
+
+### NEXTHOP_GROUP (APPL_DB) — NhgOrch / CbfNhgOrch 経由
+
+`nexthop_group` フィールドに NHG インデックスが設定されている場合、`gNhgOrch->hasNhg()` / `gCbfNhgOrch->hasNhg()` でいずれかが所有していなければ `return false` となり後回しになる[^cr1]。
+
+```cpp
+if (!gNhgOrch->hasNhg(ctx.nhg_index) && !gCbfNhgOrch->hasNhg(ctx.nhg_index))
+{
+    SWSS_LOG_INFO("Failed to get next hop group with index %s", ctx.nhg_index.c_str());
+    return false;
+}
+```
+
+`getNhg(nhg_index)` が `out_of_range` 例外を投げた場合も `++it; continue` で後回し。**NEXTHOP_GROUP_TABLE エントリが NhgOrch に登録される前に `nexthop_group` フィールドを持つ経路を書いても SAI プログラミングは行われない**。
+
+### VRF (CONFIG_DB) — VRFOrch 経由
+
+`Vrf` プレフィックスを持つキー（例: `Vrf-RED:10.0.0.0/24`）の経路は `m_vrfOrch->isVRFexists(vrf_name)` を確認し、false であれば `it++; continue` で後回し[^cr1]。SAI 経路登録後は `m_vrfOrch->increaseVrfRefCount(vrf_id)` で参照カウントを保護する。
+
+EVPN L3 VNI を持つ経路では `m_vrfOrch->isL3VniVlan(vni)` も確認する。未登録の場合はやはり後回し。
+
+### MUX_CABLE (CONFIG_DB) — MuxOrch 経由
+
+Dual-ToR 環境では RouteOrch が `gDirectory.get<MuxOrch*>()` で MuxOrch を取得し、mux tunnel nexthop を NHG から除外するロジックを適用する[^cr1]。
+
+```cpp
+MuxOrch* mux_orch = gDirectory.get<MuxOrch*>();
+sai_object_id_t mux_tunnel_nh_id = mux_orch->getTunnelNextHopId();
+```
+
+複数 nexthop で mux nexthop が含まれる場合は SAI への書き込みを省略し、`mux_orch->updateRoute(ipPrefix)` に委譲する:
+
+```cpp
+if (mux_orch->isMuxNexthops(nextHops))
+    mux_orch->updateRoute(ipPrefix);
+```
+
+MuxOrch が初期化されていない場合 (`gDirectory.get<MuxOrch*>()` が失敗) は orchagent が異常終了する可能性がある。
+
+### 暗黙参照サマリ
+
+| 参照先 | DB | テーブル / Orch | 参照方法 | 方向 |
+|--------|-----|----------------|---------|------|
+| NEIGHBOR | APPL_DB | `NEIGH_TABLE` / NeighOrch | `hasNextHop()` / `getNextHopId()` | READ (依存・後回し) |
+| NEXTHOP_GROUP | APPL_DB | `NEXTHOP_GROUP_TABLE` / NhgOrch | `gNhgOrch->hasNhg()` / `gCbfNhgOrch->hasNhg()` | READ (依存・後回し) |
+| VRF | CONFIG_DB | `VRF` / VRFOrch | `isVRFexists()` / `getVRFid()` | READ (依存・後回し) |
+| MUX_CABLE | CONFIG_DB | `MUX_CABLE` / MuxOrch | `isMuxNexthops()` / `updateRoute()` | WRITE (通知・委譲) |
+
+[^cr1]: `orchagent/routeorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
+<!-- /cross-refs -->
 
 ## 制約
 
@@ -282,7 +444,8 @@ STATE_DB[ROUTE_TABLE|<default-route>]
 <!-- side-effects -->
 ## SET/DEL 副次 DB 書込み
 
-<!-- evidence: meta/_intermediate/cdb-flow/route-side.md -->
+<!-- evidence: meta/_intermediate/cdb-flow/route-side-effects.md -->
+<!-- evidence-alt: meta/_intermediate/cdb-flow/route-side.md -->
 
 `ROUTE_TABLE` エントリの SET / DEL が引き起こす他 DB への書込み一覧。`ROUTE_TABLE` は APPL_DB テーブルであるため、CONFIG_DB 直接の副作用はなく、すべて `orchagent (RouteOrch)` 経由で発生する。
 
@@ -364,6 +527,74 @@ m_publisher.publish(APP_ROUTE_TABLE_NAME, ctx.key, fvs, status, replace);
 [^se2]: `orchagent/crmorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp>
 [^se3]: `orchagent/flex_counter/flowcounterrouteorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp>
 <!-- /side-effects -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-constants.md -->
+
+### SAI route_entry 属性定数
+
+`RouteOrch` が SAI `sai_route_entry_t` をプログラムする際に使用する属性 ID と packet action 値。
+
+| 定数名 | 種別 | 用途 |
+|--------|------|------|
+| `SAI_ROUTE_ENTRY_ATTR_PACKET_ACTION` | SAI 属性 ID | packet action（DROP / FORWARD）を指定 |
+| `SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID` | SAI 属性 ID | nexthop OID を指定 |
+| `SAI_ROUTE_ENTRY_ATTR_PREFIX_AGG_ID` | SAI 属性 ID | prefix aggregation ID を指定 |
+| `SAI_PACKET_ACTION_DROP` | SAI enum | blackhole 経路・初期デフォルト経路の packet action |
+| `SAI_PACKET_ACTION_FORWARD` | SAI enum | 通常 unicast 経路の packet action |
+
+orchagent 起動時に `0.0.0.0/0` と `::/0` のデフォルト経路を `SAI_PACKET_ACTION_DROP` でプログラムし (`routeorch.cpp:138-139`)、FRR から有効な nexthop を受信したタイミングで `SAI_PACKET_ACTION_FORWARD` に切り替える (`routeorch.cpp:2315`)。blackhole 経路は常に `SAI_PACKET_ACTION_DROP` を維持する (`routeorch.cpp:2282`)。
+
+### デフォルト VRF OID (`gVirtualRouterId`)
+
+```cpp
+extern sai_object_id_t gVirtualRouterId;  // routeorch.cpp:17
+```
+
+- orchagent 初期化時に SAI から取得・設定されるグローバル VRF OID。
+- `ROUTE_TABLE:<prefix>`（VRF prefix なし）のキーは自動的に `gVirtualRouterId` に対してプログラムされる (`routeorch.cpp:721`)。
+- `0.0.0.0/0` / `::/0` のデフォルト経路も `gVirtualRouterId` に紐付く (`routeorch.cpp:133, 151, 171`)。
+
+### Bulk batch size (`DEFAULT_MAX_BULK_SIZE`)
+
+```cpp
+#define DEFAULT_MAX_BULK_SIZE 1000   // orchdaemon.cpp:81
+size_t gMaxBulkSize = DEFAULT_MAX_BULK_SIZE;  // orchdaemon.cpp:82
+```
+
+`gRouteBulker`、`gLabelRouteBulker`、`gNextHopGroupMemberBulker` はすべて `gMaxBulkSize` を上限として構築される (`routeorch.cpp:41-43`)。orchagent 起動オプション `--bulk-size` で上書き可能。デフォルトは **1000 エントリ/フラッシュ**。
+
+### ECMP グループ数デフォルト
+
+```cpp
+#define DEFAULT_NUMBER_OF_ECMP_GROUPS   128  // routeorch.cpp:37
+#define DEFAULT_MAX_ECMP_GROUP_SIZE     32   // routeorch.cpp:38
+```
+
+| 定数名 | 値 | 適用条件 |
+|--------|----|---------|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | SAI クエリ失敗時のフォールバック ECMP グループ上限 |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | Mellanox プラットフォームの補正係数（`m_maxNextHopGroupCount /= 32`） |
+
+### VRF prefix 文字列 (`VRF_PREFIX`)
+
+```cpp
+#define VRF_PREFIX "Vrf"  // orchagent/nexthopkey.h:20
+```
+
+VRF 名の必須プレフィックス。`Vrf` で始まるキー (`routeorch.cpp:706`) は VRF ルックアップを実施して対応する VRF OID を取得する。一致しないキーはデフォルト VRF (`gVirtualRouterId`) として扱われる。
+
+### link-local prefix 定数
+
+```cpp
+IpPrefix default_link_local_prefix("fe80::/10");  // routeorch.cpp:187
+```
+
+orchagent 起動時に `gVirtualRouterId` 配下に `SAI_PACKET_ACTION_FORWARD` + CPU ポート nexthop でプログラムされる。全 link-local パケットを CPU に転送するためのサブネット route。
+
+<!-- /constants -->
 
 ## 関連 CONFIG_DB / YANG / CLI
 

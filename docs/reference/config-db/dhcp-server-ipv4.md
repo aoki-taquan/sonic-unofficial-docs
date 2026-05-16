@@ -483,4 +483,157 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 > **Evidence**: sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:128-150,199-215,332-340,418-434,452-454`; `dhcpservd.py:70-112,127-133`; `dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54`
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `dhcp_lease.py`, `dhcpservd.py`, `dhcp_cfggen.py` 全行精読 (2026-05-16)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-side-effects.md`
+
+CONFIG_DB の `DHCP_SERVER_IPV4` を書き込むと、`dhcpservd` が以下の副次書き込みを行う。
+
+### STATE_DB: DHCP_SERVER_IPV4_LEASE
+
+kea-dhcp4 がリースイベント（割当・更新・解放）を `lease_update.sh` 経由で dhcpservd に SIGUSR1 通知する。`KeaDhcp4LeaseHandler._update_lease()` が `/var/lib/kea/kea-lease.csv` を読み取り、STATE_DB を更新する。
+
+**key 形式**:
+
+```
+DHCP_SERVER_IPV4_LEASE|Vlan<subnet_id>|<mac_address>       # 通常 VLAN
+DHCP_SERVER_IPV4_LEASE|<midplane_bridge_name>|<mac_address> # SmartSwitch
+```
+
+**フィールド**:
+
+| フィールド | 説明 |
+|---|---|
+| `ip` | クライアントに割り当てた IPv4 アドレス |
+| `lease_start` | リース開始 UNIX タイムスタンプ（`lease_end - valid_lifetime` で算出） |
+| `lease_end` | リース終了 UNIX タイムスタンプ（kea-lease.csv の expire カラム） |
+
+**書き込み条件**: `lease_start != lease_end` かつ `now < lease_end`（有効リース）の場合のみ `hset`。期限切れリースは DEL。`lease_update_interval=2` 秒のレートリミットあり。
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_lease.py:79-93,102-112,140-144`
+
+### STATE_DB: DHCP_SERVER_IPV4_SERVER_IP
+
+dhcpservd 起動時（`start()` 内）に 1 回のみ実行。dhcp_server コンテナの `eth0` IPv4 アドレスを STATE_DB に書き込む。
+
+**key 形式**:
+
+```
+DHCP_SERVER_IPV4_SERVER_IP|eth0
+```
+
+**フィールド**: `ip` — eth0 の IPv4 アドレス文字列  
+eth0 アドレス取得失敗時は 5 秒間隔で最大 10 回リトライ。10 回失敗で `sys.exit(1)`。
+
+> **Evidence**: `dhcpservd.py:22,70-87`
+
+### ファイル: /etc/kea/kea-dhcp4.conf
+
+CONFIG_DB 変更を検知するたびに `dump_dhcp4_config()` が `/etc/kea/kea-dhcp4.conf` を上書きし、kea-dhcp4 に SIGHUP を送信して設定を再読込させる。Jinja2 テンプレート（`kea-dhcp4.conf.j2`）を使用して生成。テンプレートは `hooks-libraries`（SIGUSR1 lease 通知用）、`lease-database`（`/var/lib/kea/kea-lease.csv`、lfc-interval=3600）、`subnet4`（enabled VLAN ごとのサブネット＋プール）、`client-classes`（PORT モード）を含む。
+
+> **Evidence**: `dhcpservd.py:51-68`; `dhcp_cfggen.py:155-162,264`; `tests/test_data/kea-dhcp4.conf.j2`
+
+### ポート購読 (VLAN_MEMBER)
+
+`dhcpservd` は `VlanMemberTableEventChecker` で `VLAN_MEMBER` テーブルを購読し、`generate()` 内で全量読み取りする。`_parse_port()` がポートの VLAN メンバー登録を確認し、未登録ポートは LOG_WARNING でスキップ。
+
+> **Evidence**: `dhcpservd.py:142`; `dhcp_cfggen.py:70-71,165-168`
+<!-- /side-effects -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`, `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py`, `dockers/docker-dhcp-server/kea-dhcp4.conf.j2`, `src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang` (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-constants.md`
+
+### `state` フィールド — `admin_mode` enum 値
+
+| 定数値 | 定義箇所 | 意味 |
+|--------|---------|------|
+| `"enabled"` | YANG `stypes:admin_mode`; `dhcp_cfggen.py:199`; `dhcp_server.py:175` | DHCPv4 サーバを有効化。`dhcp_cfggen` がそのインタフェースを kea-dhcp4 設定に組み込む |
+| `"disabled"` | `dhcp_server.py:105` (add コマンドの初期値) | DHCPv4 サーバを無効化。`dhcp_cfggen` がそのインタフェースを silent skip する (`dhcp_cfggen.py:199`) |
+
+`add` コマンドは常に `"disabled"` を書き込む。有効化には明示的に `enable` サブコマンドが必要。
+
+### `lease_time` — デフォルト値
+
+| 定数名 | 値 | 定義箇所 |
+|--------|-----|---------|
+| `DEFAULT_LEASE_TIME` | `900` 秒 | `dhcp_cfggen.py:25` |
+| CLI `--lease_time` デフォルト | `"900"` | `dhcp_server.py:70` |
+| Jinja2 テンプレート `default_lease_time` | `900` | `kea-dhcp4.conf.j2:1` |
+
+CLI 省略時・DB に `lease_time` が存在しない場合ともに `900` 秒 (15 分) を使用する。YANG は `mandatory true` を宣言しているが、実装はフォールバックで動作継続する（YANG-実装 discrepancy）。
+
+### kea-dhcp4 デフォルト受信ポート
+
+kea-dhcp4 はデフォルトで UDP **ポート 67** (BOOTP/DHCP サーバ標準ポート) を使用する。`kea-dhcp4.conf.j2` および `kea-dhcp4-init.conf` にポート番号の明示的なオーバーライドはなく、kea-dhcp4 のビルトインデフォルト (67) がそのまま適用される。`interfaces-config.interfaces` で `"eth0"` のみを指定。
+
+### `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS.type` — オプション型 enum
+
+YANG (`sonic-dhcp-server-ipv4.yang:141-148`) で定義された型 enum。実装側のサポート対象は `SUPPORT_DHCP_OPTION_TYPE` (`dhcp_cfggen.py:30`) と対応する。
+
+| 値 | YANG定義 | `SUPPORT_DHCP_OPTION_TYPE`対応 |
+|----|---------|-------------------------------|
+| `string` | ✅ | ✅ |
+| `ipv4-address` | ✅ | ✅ |
+| `uint8` | ✅ | ✅ |
+| `uint16` | ✅ | ✅ |
+| `uint32` | ✅ | ✅ |
+| `binary` | ❌ (YANG未定義) | ✅ (実装のみ) |
+| `boolean` | ❌ (YANG未定義) | ✅ (実装のみ) |
+
+YANG 未定義の `binary` / `boolean` は直接 DB 書込みによる拡張型として実装でのみサポートされる。
+
+### その他ハードコード定数
+
+| 定数名 | 値 | 定義箇所 | 意味 |
+|--------|-----|---------|------|
+| `MID_PLANE_BRIDGE_SUBNET_ID` | `10000` | `dhcp_cfggen.py:19` | SmartSwitch 環境での kea-dhcp4 subnet ID 固定値 |
+| `OPTION_DHCP_SERVER_ID` | `"54"` | `dhcp_cfggen.py:31` | DHCP option 54 (dhcp-server-identifier) の自動注入に使用 |
+| `DEFAULT_LEASE_PATH` | `"/var/lib/kea/kea-lease.csv"` | `dhcp_cfggen.py:26` | kea-dhcp4 リースファイルパス |
+| `lfc-interval` | `3600` 秒 | `kea-dhcp4.conf.j2:37` | kea リースファイル整理間隔 |
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:19,25,26,30,31,199`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:70,105,175`; `dockers/docker-dhcp-server/kea-dhcp4.conf.j2:1,37`; `dockers/docker-dhcp-server/kea-dhcp4-init.conf`; `src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang:105,141-148`
+<!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> **調査根拠**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`、`common/utils.py` 全行精読 (2026-05-16)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-platform.md`
+
+### kea-dhcp4 vs dnsmasq
+
+`sonic-dhcp-server` は **kea-dhcp4 のみ**を DHCP バックエンドとして使用する。dnsmasq は一切使用されない（コード内に参照なし）。`dhcpservd` が Jinja2 テンプレート (`kea-dhcp4.conf.j2`) で `/etc/kea/kea-dhcp4.conf` を生成し、SIGHUP で kea-dhcp4 に再読込させる構造。プラットフォームによるバックエンド切替は存在しない。
+
+### SmartSwitch DPU 差異
+
+`DEVICE_METADATA.localhost.subtype == "SmartSwitch"` を `is_smart_switch()` で判定し、以下が分岐する。
+
+| 項目 | 通常 SONiC | SmartSwitch |
+|---|---|---|
+| DHCP 対象インタフェース | `VLAN` / `VLAN_INTERFACE` ベース | 上記 + `MID_PLANE_BRIDGE.GLOBAL.bridge` (mid-plane bridge) |
+| DPU ポート扱い | なし | `DPUS.*.midplane_interface` を仮想ポートとして追加 |
+| kea-dhcp4 subnet ID | VLAN 番号を整数変換 (例: `Vlan100` → `100`) | `MID_PLANE_BRIDGE_SUBNET_ID = 10000` 固定 |
+| 追加購読テーブル | なし | `DPUS`、`MID_PLANE_BRIDGE` (`SMART_SWITCH_CHECKER`) |
+| `DHCP_SERVER_IPV4` key 形式 | `DHCP_SERVER_IPV4\|Vlan<id>` | `DHCP_SERVER_IPV4\|<bridge名>` |
+
+SmartSwitch でも `MID_PLANE_BRIDGE.GLOBAL.bridge` / `ip_prefix` が未設定の場合、DPU 向け DHCP は無効化される（dhcpservd 自体は継続し、通常 VLAN の DHCP は機能する）。
+
+> **Evidence**: `dhcp_cfggen.py:19,23,67,76,84-98,251`; `common/utils.py:153-163`
+
+### FEATURE 有効化差異
+
+| 制御ポイント | 挙動 (全プラットフォーム共通) |
+|---|---|
+| `FEATURE\|dhcp_server.state` | CLI 入口で確認。`enabled` でなければ全サブコマンドが `ctx.fail()` で即時失敗 (`dhcp_server.py:54`) |
+| `DEVICE_METADATA.localhost.dhcp_server` | `enabled` でなければ dhcpservd 自体が起動しない |
+
+SmartSwitch 固有の追加前提: `MID_PLANE_BRIDGE.GLOBAL.{bridge,ip_prefix}` と `DPUS` テーブルが存在しないと DPU 向け DHCP 配布が無効化される（FEATURE 有効化とは独立した実装上の前提条件）。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 75921d013977 -->

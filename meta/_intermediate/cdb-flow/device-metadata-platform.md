@@ -144,8 +144,54 @@ swss_vars.j2 は CONFIG_DB の `DEVICE_METADATA.localhost` から以下を抽出
 
 evidence: sonic-buildimage/files/build_templates/swss_vars.j2
 
+## 12. switch_type 分岐: SAI スイッチ起動属性 (sonic-swss/orchagent/main.cpp)
+
+`getCfgSwitchType()` (main.cpp:242) が `DEVICE_METADATA|localhost.switch_type` を読み出し `gMySwitchType` に設定する。未設定/不明な値は `"switch"` として扱う。
+
+| `switch_type` | SAI 起動属性セット | 必須フィールド | evidence |
+|--------------|-----------------|-------------|---------|
+| `voq` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ` + `SWITCH_ID` + `MAX_SYSTEM_CORES` + `SYSTEM_PORT_CONFIG_LIST` | `switch_id`, `max_cores`, `hostname`, `asic_name` | sonic-swss/orchagent/main.cpp:694-721 |
+| `fabric` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_FABRIC` + `SWITCH_ID`; MAC 設定スキップ | `switch_id` (未設定なら exit) | main.cpp:738-770 |
+| `dpu` | `DpuOrchDaemon` + `DPU_APPL_DB` + `DPU_APPL_STATE_DB` 接続 | — | main.cpp:990-994 |
+| `npu`/`switch`/未設定 | 通常 `OrchDaemon`; `SAI_SWITCH_ATTR_TYPE` 未設定 (SAI デフォルト = NPU) | — | main.cpp:997-999 |
+
+### voq 起動時の必須フィールド検証 (main.cpp:305-363)
+
+`getSystemPortConfigList()` が以下を順次検証; いずれかが不正なら voq SAI 作成をスキップ (orchagent 終了):
+`switch_id` (≥0 整数) → `max_cores` (≥1) → `hostname` (非空) → `asic_name` (非空)
+
+## 13. switch_type 分岐: SAI sync タイムアウト (main.cpp:809-848)
+
+| `switch_type` | タイムアウト倍率 |
+|--------------|--------------|
+| `voq` / `chassis-packet` / `dpu` | × 5 |
+| `fabric` | × 10 |
+| `npu` / その他 | × 1 |
+
+SWITCH 作成完了後にデフォルト値へ戻す。ASAN 有効時はさらに × 2。
+
+## 14. buffer_model → BUFFER_POOL.mode → SAI 属性 (bufferorch.cpp:474-487)
+
+| `BUFFER_POOL.mode` | SAI 属性値 | evidence |
+|-------------------|-----------|---------|
+| `"dynamic"` | `SAI_BUFFER_POOL_THRESHOLD_MODE_DYNAMIC` | bufferorch.cpp:474-476; bufferorch.h:22 |
+| `"static"` | `SAI_BUFFER_POOL_THRESHOLD_MODE_STATIC` | bufferorch.cpp:478-480; bufferorch.h:23 |
+| それ以外 | `task_invalid_entry` エラー | bufferorch.cpp:484 |
+
+`mode` は create-only 属性のためプール作成後は変更不可 (bufferorch.cpp:469-471 でスキップ)。
+
+## 15. platform 分岐: saihelper — INIT_VIEW 前後タイムアウト (saihelper.cpp:423-467)
+
+| platform | INIT_VIEW 前 | INIT_VIEW 後 |
+|----------|------------|------------|
+| `mellanox` / `xsight` / `marvell-prestera` | 拡張値 (`SAI_REDIS_SYNC_OPERATION_RESPONSE_TIMEOUT`) | — |
+| `mellanox` / `xsight` のみ | 上記 | デフォルト値に復元 |
+| それ以外 | 変更なし | 変更なし |
+
 ## 注記
 
 - `ASIC_VENDOR` は **ビルド時定数** で、CONFIG_DB フィールドではない。`DEVICE_METADATA` に `asic_vendor` フィールドは存在しない。ただし orchestration レイヤ（J2 テンプレート）で `DEVICE_METADATA.localhost` と組み合わせて分岐するため、実質的に `type`/`sub_role`/`switch_type` の補助変数として機能する。
 - `platform` (asic_type) も同様にビルド時決定値であり、orchdaemon.cpp が `getenv("platform")` で参照する。
 - `sub_role` は minigraph.py で `chassis_type` / `voq switch_type` / `card_type` から導出され (Phase 6 derivation 表参照)、CONFIG_DB に永続化された後、startup_tsa_tsb.py や ipinip.json.j2 で参照される。
+- `switch_type = "voq"` 時は `switch_id`/`max_cores`/`hostname`/`asic_name` の 4 フィールドが実質必須 (未設定で orchagent 起動失敗)。
+- `switch_type = "fabric"` 時は `switch_id` が必須 (main.cpp:763 で exit)。MAC アドレス設定は fabric では不要 (main.cpp:675)。

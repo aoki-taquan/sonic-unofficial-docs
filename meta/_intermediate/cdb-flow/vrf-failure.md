@@ -121,7 +121,36 @@ if (handle_status != task_success)
 | `SAI_STATUS_ITEM_NOT_FOUND` / `SAI_STATUS_ADDR_NOT_FOUND` | `task_success` | 成功扱い（冪等） |
 | その他 | `task_failed` | エントリ破棄 |
 
-### 2-4. ref_count ガード (DEL のブロック)
+### 2-4. 不明属性フィールドのサイレントスキップ (vrforch.cpp:80-83)
+
+`VRFOrch::addOperation` のフィールドループで認識されないフィールド名が来た場合:
+
+```cpp
+// vrforch.cpp:80-83
+SWSS_LOG_ERROR("Logic error: Unknown attribute: %s", name.c_str());
+continue;   // attrs に push せず次フィールドへ
+```
+
+- エントリ全体は破棄されず、不明フィールドをスキップして処理継続
+- `fallback` フィールドがこのパスに落ちる（Phase A defaults 調査で確認済み）
+- `mgmtVrfEnabled` / `in_band_mgmt_enabled` は `SWSS_LOG_INFO` でスキップ（エラーではない）
+
+### 2-5. DEL で存在しない VRF (vrforch.cpp:163-167)
+
+```cpp
+// vrforch.cpp:163-167
+if (vrf_table_.find(vrf_name) == std::end(vrf_table_))
+{
+    SWSS_LOG_ERROR("VRF '%s' doesn't exist", vrf_name.c_str());
+    return true;  // ← 成功扱い (no-op)
+}
+```
+
+- エラーログを出力するが **`true` (成功) を返す**
+- リトライなし、エントリ破棄なし（そもそもエントリが存在しないため冪等）
+- 重複 DEL や順序逆転時も安全に処理される
+
+### 2-6. ref_count ガード (DEL のブロック)
 
 orchagent の DEL 操作で最も重要な失敗防止機構。
 
@@ -147,6 +176,8 @@ if (vrf_table_[vrf_name].ref_count)
 | VNI 重複 | vrfmgrd | なし (即破棄) | 重複 VNI を解除してから再設定 |
 | VNI 上書き禁止 | vrfmgrd | なし (即破棄) | `vni=0` にリセット後に新 VNI を設定 |
 | VRF 削除待ち (orchagent SAI 削除完了前) | vrfmgrd | passive retry (無制限) | orchagent の ref_count がゼロになるのを待つ |
+| 不明属性フィールド | orchagent | なし (フィールドスキップ、エントリ継続) | 有効フィールドのみで SAI create が進む |
+| DEL 対象 VRF 不在 | orchagent | なし (no-op、success 扱い) | 冪等操作のため何もしなくてよい |
 | SAI create リソース不足 | orchagent | task_need_retry (自動再試行) | リソース解放後に自動回復 |
 | SAI remove OBJECT_IN_USE | orchagent | task_need_retry (自動再試行) | 参照オブジェクト削除後に自動回復 |
 | ref_count > 0 で VRF DEL | orchagent | passive retry (無制限) | インタフェース・ルートを先に削除 |

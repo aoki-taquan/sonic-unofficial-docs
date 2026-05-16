@@ -99,6 +99,83 @@ POLICER|<name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): 直接の [YANG](../../reference/glossary.md#term-yang) モジュールは無し（参照側 [YANG](../../reference/glossary.md#term-yang) が個別フィールドを持つ）
 - 関連 CLI: なし（`config_db.json` で投入）
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 根拠: `policerorch.cpp` 全行精読。evidence: `meta/_intermediate/cdb-flow/policer-constants.md`
+
+### enum マップ — CONFIG_DB 値 → SAI 属性
+
+#### MODE (`policer_mode_map`, `policerorch.cpp:39-43`)
+
+| CONFIG_DB 値 | SAI 属性値 |
+|-------------|-----------|
+| `SR_TCM` | `SAI_POLICER_MODE_SR_TCM` |
+| `TR_TCM` | `SAI_POLICER_MODE_TR_TCM` |
+| `STORM_CONTROL` | `SAI_POLICER_MODE_STORM_CONTROL` |
+
+#### COLOR_SOURCE (`policer_color_source_map`, `policerorch.cpp:45-48`)
+
+| CONFIG_DB 値 | SAI 属性値 |
+|-------------|-----------|
+| `AWARE` | `SAI_POLICER_COLOR_SOURCE_AWARE` |
+| `BLIND` | `SAI_POLICER_COLOR_SOURCE_BLIND` |
+
+#### \*_PACKET_ACTION (`packet_action_map`, `policerorch.cpp:50-59`)
+
+| CONFIG_DB 値 | SAI 属性値 |
+|-------------|-----------|
+| `FORWARD` | `SAI_PACKET_ACTION_FORWARD` |
+| `DROP` | `SAI_PACKET_ACTION_DROP` |
+| `COPY` | `SAI_PACKET_ACTION_COPY` |
+| `COPY_CANCEL` | `SAI_PACKET_ACTION_COPY_CANCEL` |
+| `TRAP` | `SAI_PACKET_ACTION_TRAP` |
+| `LOG` | `SAI_PACKET_ACTION_LOG` |
+| `DENY` | `SAI_PACKET_ACTION_DENY` |
+| `TRANSIT` | `SAI_PACKET_ACTION_TRANSIT` |
+
+ドキュメント外の値 (`COPY` / `COPY_CANCEL` / `TRAP` / `LOG` / `DENY` / `TRANSIT`) も実装では受理されるが、SAI 対応状況は ASIC 依存。
+
+### storm-control ハードコード固定値 (`policerorch.cpp:156-169`)
+
+PORT_STORM_CONTROL テーブル経由で policer を作成する際、以下の SAI 属性はコードでハードコードされ CONFIG_DB フィールドを無視する:
+
+| SAI 属性 | ハードコード値 | コード根拠 |
+|---------|-------------|----------|
+| `SAI_POLICER_ATTR_METER_TYPE` | `SAI_METER_TYPE_BYTES` | `policerorch.cpp:157-159` — `/*Meter type hardcoded to BYTES*/` |
+| `SAI_POLICER_ATTR_MODE` | `SAI_POLICER_MODE_STORM_CONTROL` | `policerorch.cpp:161-164` — `/*Policer mode hardcoded to STORM_CONTROL*/` |
+| `SAI_POLICER_ATTR_RED_PACKET_ACTION` | `SAI_PACKET_ACTION_DROP` | `policerorch.cpp:166-169` — `/*Red Packet Action hardcoded to DROP*/` |
+
+### KBPS → CIR 変換式 (`policerorch.cpp:181-184`)
+
+```
+SAI CIR (bytes/sec) = stoul(KBPS) × 1000 / 8
+```
+
+整数演算のため端数切り捨てが発生する。例: `KBPS=1` → CIR = 125 bytes/sec。
+
+### storm_type → SAI ポート属性マッピング (`policerorch.cpp:204-219`)
+
+| PORT_STORM_CONTROL `storm_type` | SAI ポート属性 |
+|--------------------------------|--------------|
+| `broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` |
+| `unknown-unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` |
+| `unknown-multicast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` |
+| その他 | `SWSS_LOG_ERROR("Unknown storm_type %s")` + `task_failed` |
+
+### 内部 policer 命名規則 (`policerorch.cpp:146`)
+
+storm-control 由来の SAI policer は `POLICER` テーブルとは独立した内部名で管理される:
+
+```
+"_" + interface_name + "_" + storm_type
+# 例: "_Ethernet0_broadcast"
+```
+
+`m_syncdPolicers` マップのキーとして使用されるが、CONFIG_DB には公開されない。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
@@ -337,6 +414,66 @@ minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はな�
 
 <!-- /handler-branching -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 根拠: `policerorch.cpp` 全行精読、`orchdaemon.cpp:1292-1312`。evidence: `meta/_intermediate/cdb-flow/policer-platform.md`
+
+### SAI Capability クエリ
+
+`policerorch.cpp` 内に `sai_query_attribute_capability()` / `sai_query_enum_capabilities()` の呼び出しは**存在しない**。実行時の ASIC 対応可否は SAI ライブラリ層に委ねられ、orchagent 自体は能力クエリを行わない。
+
+### ベンダー別 MODE / packet_action サポート差
+
+orchagent は `SR_TCM` / `TR_TCM` / `STORM_CONTROL` の 3 モードをすべて定義しているが、SAI レイヤの対応は ASIC ベンダー依存:
+
+| モード | SAI 定数 | ASIC 側サポート |
+|--------|----------|----------------|
+| `SR_TCM` | `SAI_POLICER_MODE_SR_TCM` | ASIC 依存 |
+| `TR_TCM` | `SAI_POLICER_MODE_TR_TCM` | ASIC 依存 |
+| `STORM_CONTROL` | `SAI_POLICER_MODE_STORM_CONTROL` | ASIC 依存 |
+
+SAI が未対応モードを拒否した場合、`create_policer()` が `SAI_STATUS_NOT_SUPPORTED` 等を返し、`handleSaiCreateStatus` の返値次第で `task_need_retry` またはエントリ消失となる。
+
+`packet_action_map` に定義された `COPY` / `COPY_CANCEL` / `TRAP` / `LOG` / `DENY` / `TRANSIT` も ASIC 対応は不定 (`policerorch.cpp:50-59`)。
+
+### PORT_STORM_CONTROL の対応差
+
+#### インターフェース種別制限 (orch レベル)
+
+`handlePortStormControlTable()` は `"Ethernet"` プレフィックスのインターフェースのみ対応する (`policerorch.cpp:131-137`)。PortChannel / Vlan 等は `task_success` で無視される:
+
+| インターフェース種別 | 結果 |
+|---------------------|------|
+| `Ethernet*` | 対応 |
+| `PortChannel*` / `Vlan*` 等 | SWSS_LOG_ERROR 出力 + 無視 (task_success) |
+
+#### ASIC 側 SAI 属性
+
+| storm_type | SAI ポート属性 | ASIC 依存 |
+|-----------|---------------|-----------|
+| `broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` | あり |
+| `unknown-unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` | あり |
+| `unknown-multicast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` | あり |
+
+`set_port_attribute()` が失敗した場合は SAI policer をロールバックして `task_need_retry` を返す (`policerorch.cpp:291-313`)。
+
+#### CBS 更新制限
+
+storm-control UPDATE パスでは `CIR` のみ SAI に渡し、`CBS` は更新されない (`policerorch.cpp:252-253`)。
+
+### VOQ / Chassis 差異
+
+| デプロイ形態 | PolicerOrch 登録 | 備考 |
+|-------------|-----------------|------|
+| 通常ノード (`OrchDaemon`) | 登録あり | POLICER + PORT_STORM_CONTROL 両テーブルを購読 |
+| Fabric カード (`FabricOrchDaemon`) | **登録なし** | `FabricOrchDaemon::init()` には policer 登録コードが存在しない (`orchdaemon.cpp:1292-1312`) |
+| SmartSwitch DPU (`DpuOrchDaemon`) | 登録あり | `OrchDaemon::init()` を継承するため policer は機能する |
+
+VOQ Chassis の Fabric カード上では policer および storm-control は**動作しない**。
+
+<!-- /platform -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
@@ -461,3 +598,132 @@ sai_status_t status = sai_policer_api->create_policer(...);
     削除順序: MIRROR_SESSION (DEL) → POLICER (DEL) の順が必須。
 
 <!-- /cross-refs -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> evidence: `meta/_intermediate/cdb-flow/policer-pubsub.md`
+
+### 購読 API — `SubscriberStateTable` (keyspace 通知ベース)
+
+`orchdaemon.cpp:396-402` で `POLICER` テーブルと `PORT_STORM_CONTROL` テーブルの 2 本が `TableConnector(m_configDb, ...)` として生成され、`PolicerOrch` コンストラクタの `tableNames` 引数に渡される。
+
+```cpp
+// orchdaemon.cpp:396-402
+vector<TableConnector> policer_tables = {
+    TableConnector(m_configDb, CFG_POLICER_TABLE_NAME),
+    TableConnector(m_configDb, CFG_PORT_STORM_CONTROL_TABLE_NAME)
+};
+gPolicerOrch = new PolicerOrch(policer_tables, gPortsOrch);
+```
+
+`PolicerOrch(tableNames, portOrch)` は基底クラス `Orch(tableNames)` を呼び出す (`policerorch.cpp:116`)。`Orch` コンストラクタは各 `TableConnector` に対して `addConsumer()` を呼び (`orch.cpp:1186-1196`)、CONFIG_DB の場合は **`SubscriberStateTable`** を選択する:
+
+```cpp
+// orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || ...)
+        addExecutor(new Consumer(
+            new SubscriberStateTable(db, tableName,
+                TableConsumable::DEFAULT_POP_BATCH_SIZE, pri),
+            this, tableName));
+    else
+        addExecutor(new Consumer(
+            new ConsumerStateTable(db, tableName, gBatchSize, pri),
+            this, tableName));
+}
+```
+
+`SubscriberStateTable` は Redis **keyspace 通知** (`__keyspace@<dbId>__:POLICER|*` への `PSUBSCRIBE`) を購読し、通知受信後に `HGETALL` で値を再取得してから `pops()` で `(key, op, fvs)` タプル列を返す。バッチサイズは `DEFAULT_POP_BATCH_SIZE = 128`。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / API |
+|------|------|----------------|
+| CLI / sonic-cfggen → CONFIG_DB `POLICER` | `HSET` (素の Redis write) | PUBLISH 発行なし; Redis keyspace 通知が自動発火 |
+| CONFIG_DB `POLICER` → `PolicerOrch` | `SubscriberStateTable` (`PSUBSCRIBE __keyspace@...`) | `__keyspace@<configDbId>__:POLICER|*` |
+| CONFIG_DB `PORT_STORM_CONTROL` → `PolicerOrch` | `SubscriberStateTable` | `__keyspace@<configDbId>__:PORT_STORM_CONTROL|*` |
+| `PolicerOrch` → SAI | `sai_policer_api->create/set/remove_policer()` | 直接 C API 呼び出し; DB 書込みなし |
+| `PolicerOrch` (OID) → `MirrorOrch` | `increaseRefCount()` / `decreaseRefCount()` | プロセス内メソッド呼び出し; DB 非経由 |
+
+### SAI Policer API 呼び出し経路
+
+```
+CONFIG_DB POLICER|<name>  HSET
+        ↓  (keyspace 通知)
+  SubscriberStateTable.pops()
+        ↓
+  Consumer.execute() → PolicerOrch::doTask(Consumer&)
+        ↓
+  [table_name == CFG_PORT_STORM_CONTROL_TABLE_NAME?]
+    Yes → handlePortStormControlTable()
+           ↓
+           sai_policer_api->create_policer()  (METER_TYPE=BYTES, MODE=STORM_CONTROL 固定)
+           sai_port_api->set_port_attribute()
+    No  → SET: create_policer() / set_policer_attribute()
+           DEL: remove_policer()
+```
+
+APP_DB への書き込みは行われない。`PolicerOrch` は生成した SAI OID を `m_syncdPolicers` (map<string, sai_object_id_t>) に保持し、`MirrorOrch` 等から `getPolicerOid()` で取得される。
+
+### Observer パターン (参照カウント)
+
+`PolicerOrch` は GoF Observer ではなく **参照カウント方式** で OID ライフサイクルを管理する。
+
+| メソッド | 呼び出し元 | 説明 |
+|---------|-----------|------|
+| `increaseRefCount(name)` | `MirrorOrch` (MIRROR_SESSION SET 時) | `m_policerRefCounts[name]++` |
+| `decreaseRefCount(name)` | `MirrorOrch` (MIRROR_SESSION DEL 時) | `m_policerRefCounts[name]--` |
+| `policerExists(name)` | `MirrorOrch`, `AclOrch` (P4) | `m_syncdPolicers.find(name) != end` |
+| `getPolicerOid(name, oid)` | `MirrorOrch`, `AclOrch` (P4) | SAI OID を out-param で返す |
+
+`m_policerRefCounts[key] > 0` の間、DEL は `it++` で永続保留される。明示的な pub/sub イベントは発生せず、MirrorOrch → PolicerOrch 間はプロセス内の直接呼び出しで完結する。
+
+### select() ループとの関係
+
+`OrchDaemon` のメインループ (`orchdaemon.cpp:959`) が `m_select->select(&s, SELECT_TIMEOUT=1000ms)` で待機し、`SubscriberStateTable` からの fd 通知で wake する。`Consumer::execute()` がポップして `PolicerOrch::doTask()` を呼ぶ。`allPortsReady()` が false の間は `doTask()` 冒頭で即 return（キュー保持）。
+
+### Retry 機構
+
+`task_need_retry` が返った場合は `it++` でエントリをキューに残し、次の select wake 時に再処理する。`task_success` / `task_failed` の場合は `erase(it)` でキューから除去する。
+
+<!-- /pubsub -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 根拠: `policerorch.cpp` 全行精読、`crmorch.cpp` / `p4orch/acl_rule_manager.cpp` 確認。evidence: `meta/_intermediate/cdb-flow/policer-side-effects.md`
+
+### ASIC_DB
+
+| 操作 | SAI API | ASIC_DB エントリ | 発生条件 |
+|------|---------|-----------------|---------|
+| policer 作成 | `sai_policer_api->create_policer()` | `ASIC_STATE:SAI_OBJECT_TYPE_POLICER:<oid>` | POLICER SET (新規) / PORT_STORM_CONTROL SET (新規) |
+| policer 属性更新 | `sai_policer_api->set_policer_attribute()` | 同上 | POLICER SET (update) — CIR/CBS/PIR/PBS のみ |
+| policer 削除 | `sai_policer_api->remove_policer()` | 同上 (DEL) | POLICER DEL / PORT_STORM_CONTROL DEL |
+| port storm-control attach | `sai_port_api->set_port_attribute()` | `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<port_oid>` | PORT_STORM_CONTROL SET/DEL で policer OID をポートへ紐付け・解除 |
+
+storm-control 経由の SAI port 属性:
+
+| storm_type | SAI_PORT 属性 |
+|-----------|--------------|
+| `broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` |
+| `unknown-unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` |
+| `unknown-multicast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` |
+
+evidence: `policerorch.cpp:204-215`, `policerorch.cpp:322-340`
+
+### COUNTERS_DB
+
+`policerorch.cpp` は COUNTERS_DB に書き込まない。
+
+policer 統計 (`SAI_POLICER_STAT_GREEN/YELLOW/RED_PACKETS/BYTES`) は **P4 ACL ルールに紐付いた policer のみ** P4 ACL rule manager が収集し COUNTERS_DB へ書き込む。標準 `POLICER` テーブル由来の policer には COUNTERS_DB 統計書込なし。
+
+evidence: `p4orch/acl_rule_manager.cpp:762-804`
+
+### CRM カウンタ
+
+`crmorch.cpp` に `SAI_OBJECT_TYPE_POLICER` への参照はゼロ件。PolicerOrch は CRM カウンタを更新しない。policer オブジェクトは CRM リソース管理の対象外。
+
+<!-- /side-effects -->

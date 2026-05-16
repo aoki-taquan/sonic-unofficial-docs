@@ -240,6 +240,30 @@ vtysh -c 'show bgp listen range'
 > **スキャン証跡**: peer_type="dynamic" 固有の ip_range 更新分岐と del_handler の `no listen range` テンプレート使用を確認。3 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> **調査根拠**: `bgpcfgd/managers_bgp.py` および `dynamic/policies.conf.j2`、`dynamic/instance.conf.j2` を精読 (2026-05-16)。詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-platform.md`
+
+`BGP_PEER_RANGE` の処理経路（`BGPPeerMgrBase` / dynamic テンプレート群）には `switch_type`、`sub_role`、`DEVICE_METADATA.localhost.type` を**条件分岐として使用する箇所は存在しない**。
+
+### 根拠
+
+| 検索対象 | 結果 |
+|---------|------|
+| `switch_type` in `managers_bgp.py` | ヒットなし |
+| `sub_role` in `managers_bgp.py` | ヒットなし |
+| `localhost/type` の分岐利用 | deps 登録のみ（存在チェック）、値による動作切り替えなし |
+| `dynamic/policies.conf.j2` の platform 分岐 | なし（`FROM_BGP_SPEAKER` / `TO_BGP_SPEAKER` route-map のみ） |
+| `dynamic/instance.conf.j2` の platform 分岐 | なし（`peer_asn` / `src_address` の有無分岐のみ） |
+
+`localhost/type` は swsscommon deps ガードの「キー存在チェック」として登録されているが、値を読んで動作を切り替えるコードは存在しない。`dynamic/instance.conf.j2` の分岐は CONFIG_DB フィールド（`peer_asn`、`src_address`）の有無であり、プラットフォーム種別とは無関係。
+
+### 結論
+
+`BGP_PEER_RANGE` は peer_type="dynamic" の固定ロールであり、FRR 経路（bgpcfgd + dynamic テンプレート）は全 SONiC プラットフォームで同一動作をする。switch_type / sub_role による挙動変化はない。
+<!-- /platform -->
+
 <!-- ordering -->
 ## 書込み順序依存 (Phase B)
 
@@ -265,6 +289,39 @@ FRR 10.1 以降は peer-group に listen range が紐付いている場合、pee
 
 > **ソース**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:119,192,456-472,2658-2662`、`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658-2662,2847`。詳細は `meta/_intermediate/cdb-flow/bgp-peer-range-ordering.md` を参照。
 <!-- /ordering -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `bgpcfgd/managers_bgp.py` L271–304, L239, L353, L443, L487 精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-side.md`
+
+### STATE_DB — BGP_PEER_CONFIGURED_TABLE
+
+`BGPPeerMgrBase.update_state_db()` が FRR へのコマンド適用成功時に `STATE_DB` の `BGP_PEER_CONFIGURED_TABLE` へ副次書込を行う。
+
+| トリガー | op | key 形式 | 書込内容 |
+|---|---|---|---|
+| `add_peer()` 成功時 (L239) | SET | `<name>` (default VRF) / `<vrf>\|<name>` (非 default) | CONFIG_DB フィールド (ip_range, peer_asn 等) |
+| `apply_admin_status()` 成功時 (L353) | SET | 同上 | 更新後の data |
+| `change_ip_range()` 成功時 (L443) | SET | 同上 | ip_range 更新後の data |
+| `del_handler()` FRR 削除成功時 (L487) | DEL | 同上 | 空 (`{}`) |
+
+`STATE_BGP_PEER_CONFIGURED_TABLE_NAME` は `"BGP_PEER_CONFIGURED_TABLE"` に解決される（tests/test_bgp.py L201 より）。
+
+### COUNTERS_DB / APPL_DB 書込
+
+**なし**。`bgpcfgd` は FRR vtysh 経由の直接制御アーキテクチャのため `APPL_DB` を介在させない。`COUNTERS_DB` への参照も存在しない。`frrcfgd.py`（`BGP_GLOBALS_LISTEN_PREFIX` 経路）も同様に STATE_DB / COUNTERS_DB / APPL_DB への書込は行わない。
+
+```
+BGP_PEER_RANGE SET/DEL
+  └→ bgpcfgd BGPPeerMgrBase
+       ├→ apply_op() → FRR vtysh  [主経路]
+       └→ update_state_db()
+            └→ STATE_DB: BGP_PEER_CONFIGURED_TABLE SET/DEL  [副次書込]
+```
+
+<!-- /side-effects -->
 
 <!-- defaults -->
 ## フィールド暗黙デフォルトと fallback
@@ -311,6 +368,42 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 > **ソース**: `dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/instance.conf.j2`, `bgpcfgd/managers_bgp.py` L358-386, `files/image_config/constants/constants.yml`, `sonic-gnmi/pkg/bypass/bypass.go` L29
 
 <!-- /defaults -->
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `DEVICE_METADATA.localhost.bgp_asn` が未設定（起動時依存未充足） | `set_handler()` deps チェック | `return False`（swsscommon リトライ待ち） | なし | `managers_bgp.py:118-120` |
+| `DEVICE_METADATA.localhost.deployment_id` 未設定かつ `peer_asn` も未設定 | `instance.conf.j2` Jinja2 レンダリング | `jinja2.TemplateError` → `log_err` + `return True`（drop・リトライなし） | LOG_ERR ("Peer (vrf\|nbr). Error in rendering the template for 'SET' command ...") | `managers_bgp.py:231-234` |
+| Loopback0 IPv4 未設定かつ `bgp_router_id` も未設定 | `set_handler()` L184-189 | `log_warn` + `return False`（リトライ待ち） | LOG_WARN ("LoopbackX ipv4 address is not presented yet...") | `managers_bgp.py:188-189` |
+| `local_addr` 設定済みだがインタフェース情報未登録 | `get_local_interface()` L199-202 | `return False`（リトライ待ち） | LOG_DEBUG ("Peer '...' wait for the corresponding interface to be set") | `managers_bgp.py:200-202` |
+| `DEVICE_NEIGHBOR_METADATA` に peer の `name` が未登録 | `set_handler()` L219-223 | `return False`（リトライ待ち） | LOG_INFO ("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...") | `managers_bgp.py:222-223` |
+| peer-group テンプレートレンダリング失敗 | `BGPPeerGroupMgr.update_pg()` L60-66 | `log_err` + `return False`。peer-group 未適用のまま peer 追加 | LOG_ERR ("Can't render peer-group template: '...'") | `managers_bgp.py:64-66` |
+| vtysh への `apply_op` が内部キュー投入後に失敗 | `apply_op()` → `cfg_mgr.push()`（非同期・戻り値チェックなし） | FRR 側エラーログのみ。`set_handler` は `True` 返却（成功扱い）。BGP listen range が未設定のまま | FRR vtysh エラーログ | `managers_bgp.py:507-508` |
+
+### ip_range 更新における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `vtysh -c "show bgp peer-group <name> json"` が非 0 終了 | `get_existing_ip_ranges()` L412-414 | `log_err` + 空リスト返却 → 既存 range を 0 件扱いで全 range を新規追加として処理 | LOG_ERR ("Can't read ip range of peer 'vrf\|nbr': ...") | `managers_bgp.py:412-414` |
+| `vtysh` 出力の JSON パース失敗 | `get_existing_ip_ranges()` L415-417 | `log_err` + 空リスト返却（上記と同様） | LOG_ERR ("Error in parsing ip range: ...") | `managers_bgp.py:415-417` |
+| `update.conf.j2` レンダリング失敗 | `apply_range_changes()` L436-440 | `log_err` + `return True`（drop）。ip_range 更新未適用 | LOG_ERR ("Peer (vrf\|nbr). Error in rendering the template for 'SET' command ...") | `managers_bgp.py:437-440` |
+| `ip_range` が空文字列 / 空リスト | `change_ip_range()` の `if data['ip_range']:` ガード | silent skip。`bgp listen range` コマンド未発行 | なし | `managers_bgp.py:358` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `del_handler` 時に peer が `self.peers` 未登録 | `del_handler()` L453-455 | `log_warn` + 即 `return`。DEL 処理全体スキップ | LOG_WARN ("Peer '(vrf\|nbr)' has not been found") | `managers_bgp.py:454-455` |
+| `no bgp listen range` 送出後 vtysh 失敗（FRR 10.1+） | `del_handler()` L468-472 | `log_err` のみ。peer-group 削除処理は継続（FRR 側でも削除失敗の可能性） | LOG_ERR ("Listen range '...' for peer '(vrf\|nbr)' hasn't been disabled") | `managers_bgp.py:472` |
+| `delete.conf.j2` レンダリング失敗 | `del_handler()` L482-483 | `log_err` のみ。不正 cmd で `apply_op` が実行される | LOG_ERR ("Peer (vrf\|nbr). Error in rendering the template for 'DEL' command ...") | `managers_bgp.py:483` |
+| peer-group 削除の `apply_op` 失敗 | `del_handler()` L490-491 | `log_err` のみ。`self.peers` と `self.directory` は削除済み → FRR 内部状態と乖離 | LOG_ERR ("Peer '(vrf\|nbr)' hasn't been removed") | `managers_bgp.py:490-492` |
+
+<!-- /failure -->
 <!-- cross-refs -->
 ## 暗黙参照 — Phase C (cross-table refs)
 
@@ -344,4 +437,93 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 `frrcfgd.py:81` が `BGP_GLOBALS` を bgpd 管理テーブルとして登録しており、`BGP_PEER_RANGE` が有効になる前提として `BGP_GLOBALS` で BGP router インスタンスが確立済みである必要がある。また `BGP_GLOBALS_LISTEN_PREFIX` テーブル (frrcfgd.py:92) が `bgp listen range` を frrcfgd 経由でも管理できる別パスを提供しており、bgpcfgd と二重管理の構造になっている。
 
 <!-- /cross-refs -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `bgpcfgd/managers_bgp.py`、`frrcfgd/frrcfgd.py`、`dynamic/policies.conf.j2`、`dynamic/instance.conf.j2` 精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-constants.md`
+
+### FRR コマンド literal
+
+| コマンド | 固定度 | 証拠 |
+|---------|--------|------|
+| `bgp listen range <prefix> peer-group <name>` | 構造固定（prefix・name のみ可変） | `dynamic/instance.conf.j2` L13-14 |
+| `no bgp listen range <prefix> peer-group <name>` | 構造固定 | `managers_bgp.py:109`、`del_handler()` L467 |
+| `bgp listen limit <N>` | N は `max_dynamic_neighbors` フィールドで制御可（frrcfgd 経由） | `frrcfgd.py:1802` |
+| `bgp suppress-fib-pending` | 常時固定・無効化手段なし | `managers_bgp.py:502` |
+
+`bgp listen limit` は bgpcfgd パスでは直接操作せず、`frrcfgd` の `BGP_GLOBALS.max_dynamic_neighbors` フィールド経由でのみ設定可能（FRR デフォルト 100）。
+
+### 固定 route-map 名
+
+`dynamic/policies.conf.j2` と `dynamic/instance.conf.j2` が以下の route-map 名をリテラルにハードコードする。CONFIG_DB フィールドでの上書き手段はない。
+
+| route-map 名 | 方向 | FRR アクション | ソース |
+|-------------|------|--------------|--------|
+| `FROM_BGP_SPEAKER` | inbound (`in`) | `permit 10`（全経路許可） | `policies.conf.j2` L4、`instance.conf.j2` L9 |
+| `TO_BGP_SPEAKER` | outbound (`out`) | `deny 1`（全経路拒否） | `policies.conf.j2` L6、`instance.conf.j2` L10 |
+
+### 固定 neighbor 属性（dynamic peer-group 全エントリ共通）
+
+以下は `dynamic/instance.conf.j2` にハードコードされ、`BGP_PEER_RANGE` の全エントリに無条件で適用される。
+
+| FRR コマンド | 固定値 |
+|------------|--------|
+| `neighbor <name> passive` | 常時有効 |
+| `neighbor <name> ebgp-multihop 255` | TTL 255 固定 |
+| `neighbor <name> soft-reconfiguration inbound` | 常時有効 |
+| `neighbor <name> route-map FROM_BGP_SPEAKER in` | route-map 名固定 |
+| `neighbor <name> route-map TO_BGP_SPEAKER out` | route-map 名固定 |
+| `address-family ipv4/ipv6` + `neighbor <name> activate` | 両 AF 常時有効化 |
+
+### デフォルト peer-group 名・interface 名
+
+- **`Loopback1`**: `src_address` フィールド未設定時の update-source fallback。`instance.conf.j2` にリテラルでハードコード。`Loopback0` や別名への変更不可。
+- **`dynamic/peer-group.conf.j2`**: dynamic タイプの peer-group テンプレートは実質空（コメントのみ）。peer-group 属性はすべて `instance.conf.j2` 側で定義済み。
+<!-- /constants -->
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `bgpcfgd/runner.py`, `bgpcfgd/main.py`, `frrcfgd/frrcfgd.py` 精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-pubsub.md`
+
+### bgpcfgd 経路: SubscriberStateTable + Runner (同期 Select ループ)
+
+`bgpcfgd` は `swsscommon.SubscriberStateTable` を利用した Redis keyspace 通知モデルを採用する。
+
+| ステップ | コードポイント | 内容 |
+|---|---|---|
+| 1. Manager 生成 | `main.py:90` | `BGPPeerMgrBase(..., "BGP_PEER_RANGE", "dynamic", False)` を Runner へ登録 |
+| 2. SubscriberStateTable 生成 | `runner.py:49` | `swsscommon.SubscriberStateTable(conn, "BGP_PEER_RANGE")` |
+| 3. Select 登録 | `runner.py:51` | `selector.addSelectable(subscriber)` |
+| 4. メインループ待機 | `runner.py:57` | `selector.select(1000ms)` ブロッキング |
+| 5. イベント取得 | `runner.py:65` | `subscriber.pop()` → `(key, op, fvs)` |
+| 6. ハンドラ呼び出し | `runner.py:69–70` | `BGPPeerMgrBase.handler(key, op, fvs)` → `set_handler()` / `del_handler()` |
+
+```
+CONFIG_DB: BGP_PEER_RANGE (Redis keyspace イベント)
+  └→ SubscriberStateTable("BGP_PEER_RANGE")
+       └→ Select.select(1000ms) ブロッキング
+            └→ Runner.run() ループ
+                 └→ BGPPeerMgrBase.handler()
+                      ├→ set_handler()  [op=SET]
+                      └→ del_handler()  [op=DEL]
+```
+
+### frrcfgd 経路: ExtConfigDBConnector + Redis psubscribe 別スレッド (非同期)
+
+`frrcfgd` は `BGP_PEER_RANGE` を直接購読せず、機能的に同等な `BGP_GLOBALS_LISTEN_PREFIX` テーブルを独自の `ExtConfigDBConnector` で購読する。
+
+| ステップ | コードポイント | 内容 |
+|---|---|---|
+| 1. テーブル登録 | `frrcfgd.py:92` | `BGP_GLOBALS_LISTEN_PREFIX` を bgpd 管理テーブルとして登録 |
+| 2. subscribe_all | `frrcfgd.py:2359` | `config_db.subscribe(table, hdlr)` で全テーブルにハンドラ登録 |
+| 3. listen 起動 | `frrcfgd.py:3955` | `start()` → `subscribe_all()` + `config_db.listen()` |
+| 4. pubsub スレッド | `frrcfgd.py:1539` | `pubsub.psubscribe("__keyspace@<dbid>__:*")` で全 keyspace 購読 |
+| 5. メッセージ処理 | `frrcfgd.py:1529` | `sub_msg_handler()` → `__fire(table, row, data)` |
+| 6. ハンドラ分岐 | `frrcfgd.py:2783` | `bgp_table_handler_common()` が `BGP_GLOBALS_LISTEN_PREFIX` を処理 |
+
+**二重管理構造**: `bgpcfgd` の `BGP_PEER_RANGE` 経路と `frrcfgd` の `BGP_GLOBALS_LISTEN_PREFIX` 経路は別テーブルを購読するが、FRR への `bgp listen range` コマンド生成という同等機能を持つ。実運用では `bgpcfgd` が主経路として機能する。
+<!-- /pubsub -->
 <!-- glossary-links-injected: 9543a3643673 -->

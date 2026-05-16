@@ -82,6 +82,8 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
+### memory_threshold_check.py 経由
+
 | 条件 | 挙動 |
 |------|------|
 | `GLOBAL` エントリが存在しない | デフォルト値で動作 (`available_mem_threshold`=10%, `min_available_mem`=200MB) |
@@ -92,6 +94,23 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 | `rate_limit_interval` / `max_techsupport_limit` | memory_threshold_check では読まれない（coredump 監視デーモンが別途使用） |
 
 <!-- evidence: sonic-net/sonic-utilities/scripts/memory_threshold_check.py:153L -->
+
+<!-- failure -->
+### coredump_gen_handler.py 経由の失敗挙動
+
+| consumer | 条件 | 挙動 | ソース |
+|---|---|---|---|
+| `coredump_gen_handler` | core ファイルが生成後 20 秒以内に存在しない (`verify_recent_file_creation` 失敗) | `"Spurious Invocation"` を syslog INFO に記録して即返却。techsupport / cleanup いずれも実行しない | `coredump_gen_handler.py:73-75` |
+| `coredump_gen_handler` | `AUTO_TECHSUPPORT\|GLOBAL` の `state` が `"enabled"` 以外 | `"auto_invoke_ts is disabled"` を syslog NOTICE に記録し techsupport 起動をスキップ | `coredump_gen_handler.py:47-49` |
+| `coredump_gen_handler` | `AUTO_TECHSUPPORT_FEATURE\|<container>` の `state` が `"enabled"` 以外 | `"auto-techsupport feature for <container> is not enabled"` を syslog NOTICE に記録し techsupport 起動をスキップ | `coredump_gen_handler.py:55-57` |
+| `handle_coredump_cleanup` | `AUTO_TECHSUPPORT\|GLOBAL` の `state` が `"enabled"` 以外 | `"coredump_cleanup is disabled"` を syslog NOTICE に記録して cleanup をスキップ | `coredump_gen_handler.py:17-19` |
+| `handle_coredump_cleanup` | `max_core_limit` が `float()` 変換不可または `0` | cleanup をスキップ（`core_usage = 0.0` にフォールバック、`if not core_usage` 節で早期 return） | `coredump_gen_handler.py:22-31` |
+| `invoke_ts_cmd` | `show techsupport` が `EXT_LOCKFAIL` (rc=2) で終了 | `"Another instance of techsupport running"` を syslog NOTICE に記録し、今回の起動を中断 | `auto_techsupport_helper.py:240` |
+| `invoke_ts_cmd` | `show techsupport` が `EXT_RETRY` (rc=4) で終了かつ再試行上限 (`MAX_RETRY_LIMIT=2`) 超過 | `"MAX_RETRY_LIMIT for show techsupport invocation exceeded"` を syslog ERR に記録 | `auto_techsupport_helper.py:243-245` |
+| `invoke_ts_cmd` | `show techsupport` が成功 (rc=0) だが stdout に dump 名が見つからない | `"no techsupport dump is found"` を syslog ERR に記録。STATE_DB への書き込みは行わない | `auto_techsupport_helper.py:249-251` |
+
+> **Evidence**: `sonic-net/sonic-utilities/scripts/coredump_gen_handler.py:14-78`, `utilities_common/auto_techsupport_helper.py:232-254`
+<!-- /failure -->
 <!-- /cdb-exceptions -->
 
 <!-- value-behavior -->
@@ -298,6 +317,47 @@ global テーブル (single key `GLOBAL`) と feature テーブルを同一ハ�
 - なし
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数 (coredump_gen_handler / auto_techsupport_helper)
+
+`coredump_gen_handler.py` および `utilities_common/auto_techsupport_helper.py` にハードコードされた定数。CONFIG_DB フィールドで上書きできない固定値。
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `CORE_DUMP_DIR` | `"/var/core"` | コアダンプ保存ディレクトリ |
+| `CORE_DUMP_PTRN` | `"*.core.gz"` | コアダンプファイルのグロブパターン |
+| `TS_DIR` | `"/var/dump"` | techsupport ダンプ保存ディレクトリ |
+| `TS_PTRN` | `"sonic_dump_.*tar.*"` | techsupport ダンプ名の正規表現パターン |
+| `AUTO_TS` | `"AUTO_TECHSUPPORT\|GLOBAL"` | CONFIG_DB キー名 |
+| `CFG_STATE` | `"state"` | state フィールド名 (値: `"enabled"` / `"disabled"`) |
+| `TIME_BUF` | `20` (秒) | coredump ファイル生成後の有効期間。`verify_recent_file_creation` が使用し、20秒以上前のファイルは偽陽性として無視 |
+| `SINCE_DEFAULT` | `"2 days ago"` | `since` フィールド未設定時のデフォルト収集期間 |
+| `EXT_SUCCESS` | `0` | `show techsupport` の正常終了コード |
+| `EXT_LOCKFAIL` | `2` | 別インスタンスが実行中の場合の終了コード |
+| `EXT_RETRY` | `4` | リトライ要求の終了コード |
+| `MAX_RETRY_LIMIT` | `2` | `show techsupport` の最大リトライ回数 |
+| `TS_GLOBAL_TIMEOUT` | `"60"` (秒) | `show techsupport --global-timeout` に渡すタイムアウト値 |
+
+### `state` フィールドの有効 enum 値
+
+`AUTO_TECHSUPPORT|GLOBAL` および `AUTO_TECHSUPPORT_FEATURE|<feature>` の `state` フィールドで受け付ける値:
+
+| 値 | 意味 |
+|----|------|
+| `"enabled"` | coredump 駆動 techsupport 収集を有効化 |
+| `"disabled"` | coredump 駆動 techsupport 収集を無効化 (デフォルト動作は無効) |
+
+`coredump_gen_handler.py:17` で `!= "enabled"` チェックをしており、それ以外の文字列はすべて `disabled` と同等に扱われる。
+
+### systemd-coredump 統合
+
+`coredump-compress` スクリプト (`sonic-utilities/scripts/coredump-compress`) が kernel の `core_pattern` ハンドラとして動作し、コア生成後に `/var/core/${PREFIX}core.gz` へ gzip 圧縮保存する。その後 `coredump_gen_handler.py` を非同期起動 (`setsid ... &`)。ログは `/tmp/coredump_gen_handler.log` に出力される。
+
+<!-- evidence: sonic-net/sonic-utilities/utilities_common/auto_techsupport_helper.py:33-84 -->
+<!-- evidence: sonic-net/sonic-utilities/scripts/coredump_gen_handler.py:14-78 -->
+<!-- evidence: sonic-net/sonic-utilities/scripts/coredump-compress:19-31 -->
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -328,7 +388,7 @@ CONFIG_DB `AUTO_TECHSUPPORT` テーブルの変更を直接の入力とする ho
 - `coredump_gen_handler.py` 経由: critical process の core dump 検出 → `invoke_ts_command_rate_limited()` → `invoke_ts_cmd()` 成功時に `write_to_state_db()` が呼ばれ STATE_DB に新規エントリ追加。
 - `techsupport_cleanup.py` 経由: `max_techsupport_limit` 超過時に `cleanup_process()` が物理ファイル削除を返却し、`clean_state_db_entries()` が対応する STATE_DB エントリを `db.delete` で除去。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-side.md` を参照。
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
@@ -542,6 +602,7 @@ Phase F (`side-effects`) で書込先として扱っているのと同テーブ�
 > **Evidence**: sonic-utilities `scripts/coredump_gen_handler.py:17,22-30,47-48,55-57,73-74`; `scripts/techsupport_cleanup.py:23,27-30,33-43`; `utilities_common/auto_techsupport_helper.py:71,74-78,81-84,87-94,115-125,171-197,232-254,282-299,313-337`; 補助: `scripts/memory_threshold_check.py:11-12,36-37,104-108,154-156,177,232-235`
 <!-- /failure -->
 
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
@@ -601,3 +662,67 @@ kernel.core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
+
+<!-- ordering -->
+## コア生成から techsupport 起動までの順序依存関係
+
+### 1. カーネル coredump パイプ起動
+
+カーネルが `kernel.core_pattern` に従いプロセスクラッシュを検知し、`coredump-compress` スクリプトへ標準入力でコアデータをパイプする。
+
+```
+kernel.core_pattern = |/usr/local/bin/coredump-compress %e %t %p %P
+kernel.core_pipe_limit = 16
+```
+
+ソース: `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45,55`
+
+### 2. coredump-compress による圧縮・保存
+
+`coredump-compress` が `/var/core/<prefix>.core.gz` に gzip 圧縮して保存する。コアダンプが Docker コンテナプロセス由来の場合 (`/proc/<PID>/cgroup` から `CONTAINER_ID` を判定) のみ次フェーズへ進む。
+
+ソース: `sonic-utilities/scripts/coredump-compress:12,19-31`
+
+### 3. coredump_gen_handler.py 非同期呼び出し
+
+`coredump-compress` がコンテナ名確定後に `setsid python3 coredump_gen_handler.py <core.gz> <container_name>` を **バックグラウンド (`&`)** で起動する。この非同期化により `coredump-compress` はカーネルのパイプタイムアウトに依存せずに返却できる。
+
+### 4. CONFIG_DB 順序チェック (coredump_gen_handler.py)
+
+`coredump_gen_handler.py` は以下の順序で CONFIG_DB を参照し、いずれかで条件不成立であれば後続をスキップする。
+
+| ステップ | 参照キー | 条件 | 不成立時 |
+|---------|---------|------|---------|
+| 4-1 | `AUTO_TECHSUPPORT\|GLOBAL` `state` | `"enabled"` | syslog NOTICE 出力後 `auto_invoke_ts` スキップ |
+| 4-2 | `AUTO_TECHSUPPORT_FEATURE\|<container>` `state` | `"enabled"` | techsupport 起動スキップ |
+| 4-3 | rate-limit チェック | 前回起動から `rate_limit_interval` 秒経過 | 起動抑制 |
+| 4-4 | メモリ閾値チェック | 空きメモリ ≥ `min_available_mem` かつ `available_mem_threshold` | 起動抑制 |
+
+ソース: `sonic-utilities/scripts/coredump_gen_handler.py:17,47,55-60`
+
+### 5. coredump_cleanup の実行順序
+
+`coredump_gen_handler.py` の `main()` は techsupport 呼び出し後に `handle_coredump_cleanup()` を **同期で** 呼び出す。cleanup は `AUTO_TECHSUPPORT|GLOBAL` `state` が `"enabled"` かつ `max_core_limit` が 0 より大きい場合のみ実施。
+
+ソース: `sonic-utilities/scripts/coredump_gen_handler.py:76-78`
+
+### 6. systemd-coredump との関係
+
+SONiC は **systemd-coredump を使用しない**。`kernel.core_pattern` をパイプ (`|`) で独自スクリプト (`coredump-compress`) に向けることで systemd-coredump の介在を排除している。`/etc/systemd/coredump.conf` は参照されない。
+
+### 7. AUTO_TECHSUPPORT 連携まとめ
+
+```
+クラッシュ発生
+  └─ kernel → coredump-compress (同期パイプ)
+       └─ /var/core/<name>.core.gz 保存
+            └─ coredump_gen_handler.py (非同期 setsid &)
+                 ├─ CONFIG_DB: AUTO_TECHSUPPORT|GLOBAL.state == "enabled" ?
+                 ├─ CONFIG_DB: AUTO_TECHSUPPORT_FEATURE|<c>.state == "enabled" ?
+                 ├─ rate_limit_interval チェック
+                 ├─ メモリ閾値チェック
+                 ├─ show techsupport 起動 → /var/dump/sonic_dump_*.tar.gz
+                 └─ handle_coredump_cleanup (max_core_limit に基づき /var/core 整理)
+```
+<!-- /ordering -->
+

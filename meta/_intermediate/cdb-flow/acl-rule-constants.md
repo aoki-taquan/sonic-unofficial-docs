@@ -9,6 +9,63 @@
 
 ---
 
+## match フィールド → SAI_ACL_ENTRY_ATTR マッピング
+
+`aclMatchLookup` テーブル (`aclorch.cpp:59-95`) より全 35 エントリを抽出。
+
+| CONFIG_DB フィールド名 | SAI ACL entry 属性 | ソース |
+|---|---|---|
+| `IN_PORTS` | `SAI_ACL_ENTRY_ATTR_FIELD_IN_PORTS` | `aclorch.cpp:60` |
+| `OUT_PORT` | `SAI_ACL_ENTRY_ATTR_FIELD_OUT_PORT` | `aclorch.cpp:61` |
+| `OUT_PORTS` | `SAI_ACL_ENTRY_ATTR_FIELD_OUT_PORTS` | `aclorch.cpp:62` |
+| `SRC_IP` | `SAI_ACL_ENTRY_ATTR_FIELD_SRC_IP` | `aclorch.cpp:63` |
+| `DST_IP` | `SAI_ACL_ENTRY_ATTR_FIELD_DST_IP` | `aclorch.cpp:64` |
+| `SRC_IPV6` | `SAI_ACL_ENTRY_ATTR_FIELD_SRC_IPV6` | `aclorch.cpp:65` |
+| `DST_IPV6` | `SAI_ACL_ENTRY_ATTR_FIELD_DST_IPV6` | `aclorch.cpp:66` |
+| `L4_SRC_PORT` | `SAI_ACL_ENTRY_ATTR_FIELD_L4_SRC_PORT` | `aclorch.cpp:67` |
+| `L4_DST_PORT` | `SAI_ACL_ENTRY_ATTR_FIELD_L4_DST_PORT` | `aclorch.cpp:68` |
+| `ETHER_TYPE` | `SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE` | `aclorch.cpp:69` |
+| `VLAN_ID` | `SAI_ACL_ENTRY_ATTR_FIELD_OUTER_VLAN_ID` | `aclorch.cpp:70` |
+| `IP_PROTOCOL` | `SAI_ACL_ENTRY_ATTR_FIELD_IP_PROTOCOL` | `aclorch.cpp:71` |
+| `NEXT_HEADER` | `SAI_ACL_ENTRY_ATTR_FIELD_IPV6_NEXT_HEADER` | `aclorch.cpp:72` |
+| `TCP_FLAGS` | `SAI_ACL_ENTRY_ATTR_FIELD_TCP_FLAGS` | `aclorch.cpp:73` |
+| `IP_TYPE` | `SAI_ACL_ENTRY_ATTR_FIELD_ACL_IP_TYPE` | `aclorch.cpp:74` |
+| `DSCP` | `SAI_ACL_ENTRY_ATTR_FIELD_DSCP` | `aclorch.cpp:75` |
+| `TC` | `SAI_ACL_ENTRY_ATTR_FIELD_TC` | `aclorch.cpp:76` |
+| `ICMP_TYPE` | `SAI_ACL_ENTRY_ATTR_FIELD_ICMP_TYPE` | `aclorch.cpp:77` |
+| `ICMP_CODE` | `SAI_ACL_ENTRY_ATTR_FIELD_ICMP_CODE` | `aclorch.cpp:78` |
+| `ICMPV6_TYPE` | `SAI_ACL_ENTRY_ATTR_FIELD_ICMPV6_TYPE` | `aclorch.cpp:79` |
+| `ICMPV6_CODE` | `SAI_ACL_ENTRY_ATTR_FIELD_ICMPV6_CODE` | `aclorch.cpp:80` |
+| `L4_SRC_PORT_RANGE` | `SAI_ACL_ENTRY_ATTR_FIELD_ACL_RANGE_TYPE` | `aclorch.cpp:81` |
+| `L4_DST_PORT_RANGE` | `SAI_ACL_ENTRY_ATTR_FIELD_ACL_RANGE_TYPE` | `aclorch.cpp:82` |
+| `TUNNEL_VNI` | `SAI_ACL_ENTRY_ATTR_FIELD_TUNNEL_VNI` | `aclorch.cpp:83` |
+| `INNER_ETHER_TYPE` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_ETHER_TYPE` | `aclorch.cpp:84` |
+| `INNER_IP_PROTOCOL` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_IP_PROTOCOL` | `aclorch.cpp:85` |
+| `INNER_SRC_MAC` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_SRC_MAC` | `aclorch.cpp:86` |
+| `INNER_DST_MAC` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_DST_MAC` | `aclorch.cpp:87` |
+| `INNER_SRC_IP` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_SRC_IP` | `aclorch.cpp:88` |
+| `INNER_L4_SRC_PORT` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_L4_SRC_PORT` | `aclorch.cpp:89` |
+| `INNER_L4_DST_PORT` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_L4_DST_PORT` | `aclorch.cpp:90` |
+| `BTH_OPCODE` | `SAI_ACL_ENTRY_ATTR_FIELD_BTH_OPCODE` | `aclorch.cpp:91` |
+| `AETH_SYNDROME` | `SAI_ACL_ENTRY_ATTR_FIELD_AETH_SYNDROME` | `aclorch.cpp:92` |
+| `TUNNEL_TERM` | `SAI_ACL_ENTRY_ATTR_FIELD_TUNNEL_TERMINATED` | `aclorch.cpp:93` |
+| `META_DATA` | `SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META` | `aclorch.cpp:94` |
+
+## PACKET_ACTION enum → SAI マッピング
+
+`aclPacketActionLookup` テーブル (`aclorch.cpp:143-148`)。マクロ定数: `aclorch.h:83-88`。
+
+| CONFIG_DB 値 | マクロ定数 | SAI 値 | ソース |
+|---|---|---|---|
+| `"FORWARD"` | `PACKET_ACTION_FORWARD` | `SAI_PACKET_ACTION_FORWARD` | `aclorch.h:83`, `aclorch.cpp:145` |
+| `"DROP"` | `PACKET_ACTION_DROP` | `SAI_PACKET_ACTION_DROP` | `aclorch.h:84`, `aclorch.cpp:146` |
+| `"COPY"` | `PACKET_ACTION_COPY` | `SAI_PACKET_ACTION_COPY` | `aclorch.h:85`, `aclorch.cpp:147` |
+| `"REDIRECT:<target>"` | `PACKET_ACTION_REDIRECT` | OID 解決後 redirect | `aclorch.h:86`, `aclorch.cpp:2013` |
+| `"DO_NOT_NAT"` | `PACKET_ACTION_DO_NOT_NAT` | NAT バイパス | `aclorch.h:87`, `aclorch.cpp:2042` |
+| `"DISABLE_TRIM"` | `PACKET_ACTION_DISABLE_TRIM` | trim 無効化 | `aclorch.h:88`, `aclorch.cpp:2048` |
+
+---
+
 ## 発見された定数一覧
 
 ### aclorch.h — match / action 文字列マクロ
@@ -84,7 +141,7 @@
 
 ## 出典
 
-- `sonic-swss/orchagent/aclorch.h` lines 109-116
-- `sonic-swss/orchagent/aclorch.cpp` lines 47-56, 957, 1046, 1053-1061, 1067, 1072, 1082-1093, 1099, 1151, 1157, 1162, 1168, 1173, 1208, 3610-3621, 4209-4212
+- `sonic-swss/orchagent/aclorch.h` lines 83-88, 109-116
+- `sonic-swss/orchagent/aclorch.cpp` lines 47-56, 59-95, 143-148, 957, 1046, 1053-1061, 1067, 1072, 1082-1093, 1099, 1151, 1157, 1162, 1168, 1173, 1208, 2013-2048, 3610-3621, 4209-4212
 - `sonic-utilities/acl_loader/main.py` lines 93, 772
 - `sonic-mgmt-common/translib/acl_app.go` lines 56, 1153

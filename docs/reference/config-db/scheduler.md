@@ -150,6 +150,40 @@ show queue counters
 [^2]: qosorch 実装: `sonic-swss/orchagent/qosorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
 
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `type` が `DWRR`/`WRR`/`STRICT` 以外の不正値 | `handleSchedulerTable()` L1394 | `task_invalid_entry`。エントリ全体を破棄、[SAI](../../reference/glossary.md#term-sai) 非反映 | `SWSS_LOG_ERROR("Unknown scheduler type value:%s")` |
+| `meter_type` が `packets`/`bytes` 以外の不正値 | `handleSchedulerTable()` L1407 | `scheduler_meter_map.at()` が `std::out_of_range` 例外をスロー → **orchagent クラッシュ** | uncaught exception |
+| 未知フィールド（例: `priority`）を含む SET | `handleSchedulerTable()` L1434 | `task_invalid_entry`。`type`/`weight`/`meter_type` 等を含む全フィールドが SAI 未反映 | `SWSS_LOG_ERROR("Unknown field:%s")` |
+| `weight` に YANG `range "1..100"` 違反の値 | `handleSchedulerTable()` L1401–1404 | `(uint8_t)stoi()` で暗黙キャスト・切り捨て。バリデーションなし、異常値が SAI に渡る | なし |
+| SAI `create_scheduler()` 失敗（新規作成時） | `handleSchedulerTable()` L1460–1467 | `handleSaiCreateStatus()` 返り値に従う。`task_success` 以外なら失敗ステータスを返す | `SWSS_LOG_ERROR("Failed to create scheduler profile [%s:%s], rv:%d")` |
+| SAI `set_scheduler_attribute()` 失敗（既存更新時） | `handleSchedulerTable()` L1446–1454 | `handleSaiSetStatus()` 返り値に従う | `SWSS_LOG_ERROR("fail to set scheduler attribute, id:%d")` |
+| エントリ既存で SAI オブジェクト ID が `SAI_NULL_OBJECT_ID`（内部不整合） | `handleSchedulerTable()` L1362–1366 | `task_invalid_entry` | `SWSS_LOG_ERROR("Error sai_object must exist for key %s")` |
+| `m_pendingRemove=true` 状態のエントリへの SET | `handleSchedulerTable()` L1368–1372 | `task_need_retry`。DEL 完了まで SET は保留 | `SWSS_LOG_NOTICE("Entry %s %s is pending remove, need retry")` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| 存在しないオブジェクトの DEL | `handleSchedulerTable()` L1478–1482 | `task_invalid_entry` | `SWSS_LOG_ERROR("Object with name:%s not found.")` |
+| QUEUE 参照中の SCHEDULER を DEL | `handleSchedulerTable()` L1484–1490 | `m_pendingRemove=true` をセット → `task_need_retry`。QUEUE 参照が解除されるまでリトライ | `SWSS_LOG_NOTICE("Can't remove object %s due to being referenced (%s)")` |
+| SAI `remove_scheduler()` 失敗 | `handleSchedulerTable()` L1490–1497 | `handleSaiRemoveStatus()` 返り値に従う。[CONFIG_DB](../../reference/glossary.md#term-config_db) からは削除されても ASIC に古いプロファイルが残留する可能性あり | `SWSS_LOG_ERROR("Failed to remove scheduler profile. db name:%s sai object:...")` |
+
+### 補足
+
+- **`priority` フィールドの全破棄**: YANG に `leaf priority` が定義されているが qosorch に対応分岐なし。`priority` を含む SET は **全フィールドが** SAI 未反映になる（partial 適用なし）。
+- **`meter_type` クラッシュリスク**: `scheduler_meter_map.at()` は `"packets"`/`"bytes"` 以外で `std::out_of_range` をスロー。orchagent プロセスごとクラッシュするため、直接 `sonic-db-cli` 書き込み時は要注意。
+- **`m_pendingRemove` による SET/DEL シリアライズ**: QUEUE 参照がある SCHEDULER に DEL → SET を発行しても DEL がリトライし続け SET も保留される。QUEUE 参照を解除 → DEL 完了 → SET の順を守ること。
+
+<!-- /failure -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -290,5 +324,121 @@ QUEUE|<port>|<idx> の scheduler 参照を解除  →  SCHEDULER|<name> を DEL
 [^3]: QosOrch 実装: `sonic-swss/orchagent/qosorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
 
 <!-- /ordering -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss/orchagent/qosorch.h` L44-53 + `qosorch.cpp` L75-78, L1378-1494 精読 (2026-05-16)
+
+### type enum 文字列 → SAI 変換
+
+| CONFIG_DB 値 | C++ 定数名 | SAI 属性値 |
+|-------------|-----------|-----------|
+| `"DWRR"` | `scheduler_algo_DWRR` | `SAI_SCHEDULING_TYPE_DWRR` |
+| `"WRR"` | `scheduler_algo_WRR` | `SAI_SCHEDULING_TYPE_WRR` |
+| `"STRICT"` | `scheduler_algo_STRICT` | `SAI_SCHEDULING_TYPE_STRICT` |
+
+未知値: `SWSS_LOG_ERROR("Unknown scheduler type value:%s")` → `task_invalid_entry`（エントリ全破棄）。
+
+### weight フィールド
+
+- フィールド名定数: `scheduler_weight_field_name = "weight"`
+- SAI 属性: `SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT`
+- `stoi()` + `(uint8_t)` キャスト。YANG `range "1..100"` はコード未検証。範囲外は暗黙切り捨て。
+
+### meter_type enum 文字列 → SAI 変換
+
+| CONFIG_DB 値 | SAI 属性値 |
+|-------------|-----------|
+| `"packets"` | `SAI_METER_TYPE_PACKETS` |
+| `"bytes"` | `SAI_METER_TYPE_BYTES` |
+
+`scheduler_meter_map.at()` で変換（`std::out_of_range` 未キャッチ）。未知値で orchagent クラッシュ。
+
+### bandwidth rate/burst フィールド名 → SAI 属性
+
+| CONFIG_DB フィールド | SAI 属性 | 説明 |
+|--------------------|---------|------|
+| `cir` | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE` | Committed Information Rate |
+| `cbs` | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_BURST_RATE` | Committed Burst Size |
+| `pir` | `SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_RATE` | Peak Information Rate |
+| `pbs` | `SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_BURST_RATE` | Peak Burst Size |
+
+各フィールドは存在するときのみ SAI 属性を設定。省略時は SAI ベンダーデフォルト（0 相当）。
+
+<!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`SCHEDULER` プロファイルは CONFIG_DB 上では独立したエントリだが、`QosOrch` の
+`resolveFieldRefValue` 機構を通じて以下のテーブルから**暗黙的に leafref 参照**される。
+YANG leafref として明示されていない参照もコードレベルで強制される。
+
+### SCHEDULER を参照するテーブル (被参照)
+
+| 参照元テーブル | 参照元フィールド | 参照先キー形式 | SAI 効果 | 参照箇所 |
+|---|---|---|---|---|
+| `QUEUE` | `scheduler` | `SCHEDULER\|<name>` | `SAI_QUEUE_ATTR_SCHEDULER_PROFILE_ID` バインド | `qosorch.cpp:1822-1853` |
+| `PORT_QOS_MAP` | `scheduler` | `SCHEDULER\|<name>` | `SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID` バインド | `qosorch.cpp:2124-2133` |
+
+### 解決タイミングと retry 挙動
+
+- `QUEUE.scheduler` または `PORT_QOS_MAP.scheduler` が SET された時点で `SCHEDULER|<name>` が
+  未存在の場合、`task_need_retry` が返され参照が解決されるまで SAI バインドは保留される。
+- 参照が解決された後、`setObjectReference()` で参照カウントが増加し、被参照中の SCHEDULER は
+  DEL ハンドラで削除保留 (`m_pendingRemove = true`) となる。
+
+### WRED_PROFILE との連携
+
+- `QUEUE` は `scheduler` と `wred_profile` フィールドを並列に解決する (`qosorch.cpp:1857-1886`)。
+  SCHEDULER (帯域制御) と WRED_PROFILE (ドロップ確率制御) は互いに独立だが、同一 QUEUE に
+  同時適用することで帯域制御と輻輳回避を組み合わせることができる。
+- SCHEDULER と WRED_PROFILE の間に直接の参照関係はない。
+
+### 削除順序制約
+
+```
+QUEUE の scheduler / PORT_QOS_MAP の scheduler 参照を解除
+  ↓
+SCHEDULER|<name> を DEL
+```
+
+参照が残っている間は SAI レベルで EBUSY となり `Failed to remove scheduler profile` エラーが発生する。
+<!-- /cross-refs -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` / `applySchedulerToQueueSchedulerGroup()` / `handleQueueTable()` 精読 (2026-05-16)
+
+APPL_DB / STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書き込みは **一切なし**。
+副次 DB 書き込みは SAI API 経由の ASIC_DB のみ。
+
+### ASIC_DB 書き込み
+
+| ASIC_DB テーブル | 属性 | トリガ | evidence |
+|----------------|------|--------|---------|
+| `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` | スケジューラ全属性 (type / weight / meter_type / cir / cbs / pir / pbs) | `handleSchedulerTable` SET で `sai_scheduler_api->create_scheduler()` または `set_scheduler_attribute()` | `qosorch.cpp:L1460, L1446` |
+| `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` | — (削除) | `handleSchedulerTable` DEL で `sai_scheduler_api->remove_scheduler()` | `qosorch.cpp:L1490` |
+| `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER_GROUP:<group_oid>` | `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` | QUEUE が当該 SCHEDULER を `scheduler` フィールドで参照するとき `applySchedulerToQueueSchedulerGroup()` が呼ばれ scheduler_group 属性を更新 | `qosorch.cpp:L1690` |
+
+### SCHEDULER → QUEUE 副次バインド経路
+
+```
+SCHEDULER SET
+  └─ sai_scheduler_api->create_scheduler()  → ASIC_DB: SCHEDULER OID 生成
+       ↓ (QUEUE.scheduler フィールドが参照)
+  QUEUE handleQueueTable()
+    └─ applySchedulerToQueueSchedulerGroup(port, queue_ind, scheduler_profile_id)
+         └─ getSchedulerGroup(port, queue_id)  ← SAI_PORT_ATTR_QOS_SCHEDULER_GROUP_LIST 探索
+              └─ sai_scheduler_group_api->set_scheduler_group_attribute()
+                   → ASIC_DB: SCHEDULER_GROUP の SCHEDULER_PROFILE_ID 更新
+```
+
+- **voq モード例外**: `gMySwitchType == "voq"` かつ `SAI_SYSTEM_PORT_TYPE_REMOTE` の場合は `applySchedulerToQueueSchedulerGroup` が早期 return し ASIC 書き込みをスキップする。
+- **DEL 時**: QUEUE 参照が解除されてから `remove_scheduler()` が呼ばれる（`isObjectBeingReferenced` で保護）。QUEUE DEL 時は `scheduler_profile_id = SAI_NULL_OBJECT_ID` を渡してバインドを解除。
+
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 96667c52d98d -->

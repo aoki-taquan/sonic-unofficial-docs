@@ -568,6 +568,43 @@ ACL_RULE の処理は `AclOrch::init()` が起動時に環境変数 `platform` /
     `FLOW_OP` / `INT_SESSION` / `DROP_REPORT_ENABLE` / `TAIL_DROP_REPORT_ENABLE` 等の DTel 系 action は
     barefoot / vs 以外では `DTelOrch` が起動しないため、設定しても SAI に反映されない (`orchdaemon.cpp:502-530`)。
 
+### SAI ASIC capability — action list 動的照会
+
+`AclOrch::queryAclActionCapability()` (`aclorch.cpp:3975-4058`) は init 時に SAI を問い合わせて Ingress/Egress ごとにサポートされる action type 一覧を取得する。ASIC によって返す action set が異なる。
+
+```
+SAI_SWITCH_ATTR_MAX_ACL_ACTION_COUNT → action_list バッファサイズ取得
+SAI_SWITCH_ATTR_ACL_STAGE_INGRESS / SAI_SWITCH_ATTR_ACL_STAGE_EGRESS → stage ごとの action_list + is_action_list_mandatory 取得
+```
+
+| 項目 | 詳細 |
+|------|------|
+| **デフォルト (SAI 非対応時)** | SAI が `SAI_STATUS_SUCCESS` を返さない場合は `initDefaultAclActionCapabilities()` を呼ぶ。Ingress デフォルト = `PACKET_ACTION, MIRROR_INGRESS, NO_NAT`。Egress デフォルト = `PACKET_ACTION` のみ (`aclorch.cpp:170-196`) |
+| **is_action_list_mandatory** | ASIC が `sai_acl_capability_t.is_action_list_mandatory = true` を返した場合、ACL_TABLE 作成時に action リストを必ず指定する必要がある。Mellanox Spectrum は通常 `false`。Broadcom XGS/DNX は `false`。テーブル作成コード (`aclorch.cpp:4760-4764`) は `addMandatoryActions()` で不足 action を自動補完する |
+| **PACKET_ACTION 有効値** | `aclPacketActionLookup` に定義された `FORWARD` / `DROP` / `COPY` の 3 値のみ有効 (`aclorch.h:83-85, aclorch.cpp:143-148`)。`TRAP` / `LOG` / `DENY` 等は CONFIG_DB から設定不可。`sai_query_attribute_enum_values_capability` でベンダー実装値を照会するが、libsairedis 未対応のため現行実装では全値サポートと仮定する (`aclorch.cpp:4042-4051`) |
+
+!!! note "PACKET_ACTION 差異 (Mellanox / Broadcom)"
+    SONiC レイヤでは FORWARD / DROP / COPY の 3 値のみ受け付ける。ASIC レベルでの `SAI_PACKET_ACTION_TRAP` / `SAI_PACKET_ACTION_LOG` 等は `aclPacketActionLookup` に未登録のため `PACKET_ACTION` フィールドからは指定できない。Mellanox Spectrum と Broadcom XGS はいずれもこの 3 値を SAI でサポートするが、Mellanox は Egress で `PACKET_ACTION` のみをデフォルト capability として宣言し、Broadcom は通常 `PACKET_ACTION + REDIRECT` を宣言する。実際のサポート値は `STATE_DB:ACL_ACTION|PACKET_ACTION` を参照のこと (`aclorch.cpp:4051-4090`)。
+
+### SAI ACL エントリ優先度範囲 (ASIC 上限)
+
+`AclOrch::init()` (`aclorch.cpp:3689-3710`) は DPU スイッチタイプ (`gMySwitchType == "dpu"`) を除いて SAI から優先度範囲を照会し `AclRule::setRulePriorities()` で設定する。
+
+```
+SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY  → 最小優先度
+SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY  → 最大優先度
+```
+
+| プラットフォーム | 優先度範囲 (典型値) | 備考 |
+|----------------|--------------------|------|
+| Mellanox Spectrum | 1 〜 16383 | SAI 照会値。PRIORITY フィールド最大値はこの上限に制約 |
+| Broadcom XGS | 1 〜 65535 | SAI 照会値。実際値は ASIC 世代に依存 |
+| Broadcom DNX | 1 〜 65535 | 同上 |
+| DPU (`gMySwitchType="dpu"`) | 照会しない | `queryAclActionCapability()` 自体をスキップ (`aclorch.cpp:3687-3708`) |
+
+- CONFIG_DB の `PRIORITY` 値がこの上限を超えると `sai_acl_api->create_acl_entry()` が `SAI_STATUS_INVALID_ATTR_VALUE` を返し rule INACTIVE になる。
+- 照会失敗時は `handleSaiGetStatus()` が `AclOrch` 初期化例外をスローする (`aclorch.cpp:3701-3706`)。
+
 <!-- /platform -->
 
 <!-- cross-refs -->
@@ -678,6 +715,44 @@ ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装か
 | 非 MIRROR ルールの変更 | `SET` のみで差分適用可 | `set_acl_entry_attribute()` — match / action は runtime mutable | `aclorch.cpp:1466` |
 | ACL_TABLE を DEL する前に ACL_RULE を DEL | **推奨**（必須ではない） | `removeAclTable()` が暗黙に全ルールを SAI から削除するが CONFIG_DB の ACL_RULE エントリは残存するため、再起動時に再投入される | `aclorch.cpp:4849-4857` |
 | SAI リソース枯渇時: 既存ルール DEL → retry 自動発火 | 自動 | ルール DEL 成功時に `notifyRetry()` が同テーブルの待機キャッシュを再処理 | `aclorch.cpp:5716-5720` |
+
+### PRIORITY 値の比較順序
+
+SAI はルールを PRIORITY 値の**数値降順**で評価する（高い値 = 高い優先度）。
+
+- `AclOrch` 初期化時に `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` / `SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY` を SAI に問い合わせて有効範囲を取得する (`aclorch.cpp:3689-3696`)。
+- `setPriority()` (`aclorch.cpp:1654-1662`) は範囲外の値を拒否（`SWSS_LOG_ERROR` + `return false`）し、rule は INACTIVE になる。
+- `acl_loader` は `PRIORITY = max_priority - sequence_id`（`max_priority=10000`）で降順割り当て; `acl_app.go` は `MAX_PRIORITY=65536` を基準とするため、同 sequence_id でも経路によって格納値が異なる点に注意。
+- `AclRule::update()` は `m_priority != updatedRule.m_priority` のとき `SAI_ACL_ENTRY_ATTR_PRIORITY` を `set_acl_entry_attribute()` で runtime 更新できる (`aclorch.cpp:1534-1547`)。更新は原子的に行われ、同テーブル内の他ルールの評価順序に影響する。
+
+### stage 別 action 適用順序
+
+ACL_TABLE の `stage` フィールド（`INGRESS` / `EGRESS`）が ACL_RULE で使用できる action を決定する。
+
+| stage | 使用可能 MIRROR action | 備考 |
+|---|---|---|
+| `INGRESS` | `MIRROR_INGRESS_ACTION`, `MIRROR_ACTION`（後方互換で INGRESS 扱い） | `MIRROR_ACTION` 旧フィールドは INGRESS 固定 |
+| `EGRESS` | `MIRROR_EGRESS_ACTION` | `MIRROR_ACTION` を使うと意図せず INGRESS mirror が設定される |
+
+- `MIRROR_ACTION`（旧フィールド）は後方互換のため `SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_INGRESS` にマッピングされる (`aclorch.cpp:2268-2271`)。EGRESS テーブルに対してこの旧フィールドを使うと意図しない INGRESS mirror になる。
+- `isActionSupported(stage, ...)` (`aclorch.cpp:1407-1409`) が stage × action の組み合わせを SAI capability に照らして検証するため、platform が対応していない stage-action 組み合わせは `validateAddAction()` で拒否される。
+- INGRESS テーブルに `MATCH_IN_PORTS`、EGRESS テーブルに `MATCH_OUT_PORT/OUT_PORTS` が利用可能（`stageMandatoryMatchFields` `aclorch.cpp:427-494`）。stage を誤ると match フィールドが SAI に反映されない。
+
+### SAI `acl_entry` 属性の設定順序
+
+`AclRule::create()` (`aclorch.cpp:1280-1344`) が `sai_acl_api->create_acl_entry()` に渡す属性リストの構築順序は以下のとおり固定されている。
+
+```
+1. SAI_ACL_ENTRY_ATTR_TABLE_ID   (所属テーブル OID)   ← 必須・先頭固定
+2. SAI_ACL_ENTRY_ATTR_PRIORITY   (PRIORITY 値)
+3. SAI_ACL_ENTRY_ATTR_ADMIN_STATE (= true 固定)
+4. SAI_ACL_ENTRY_ATTR_ACTION_COUNTER (カウンタ OID、存在時のみ)
+5. SAI_ACL_ENTRY_ATTR_FIELD_ACL_RANGE_TYPE (range object list、存在時のみ)
+6. m_matches の各 match フィールド (map イテレーション順)
+7. m_actions の各 action フィールド (map イテレーション順)
+```
+
+この順序は SAI API 仕様上は問わないが、`TABLE_ID` は SAI 実装によって先頭が必須とされるケースがある。アプリケーション側からは構築順序を意識する必要はなく、`AclOrch` が一括で渡す。
 
 ### warm-restart / cold-restart 影響
 

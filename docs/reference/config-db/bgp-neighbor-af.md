@@ -434,6 +434,46 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 
 <!-- /side-effects -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-constants.md`
+
+`frrcfgd.py` の `nbr_af_key_map`（L1895-1925）および `BGP_NEIGHBOR_AF` ハンドラ（L2865-2871）に存在する、YANG / CONFIG_DB で管理されないハードコード定数・リテラル一覧。
+
+### FRR コマンドキーワード（`nbr_af_key_map` 由来）
+
+| FRR コマンド断片 | 対応 DB フィールド | ソース行 |
+|---|---|---|
+| `neighbor <X> route-map <name> in` | `route_map_in` | `frrcfgd.py:1903` |
+| `neighbor <X> route-map <name> out` | `route_map_out` | `frrcfgd.py:1904` |
+| `neighbor <X> prefix-list <name> in` | `prefix_list_in` | `frrcfgd.py:1918` |
+| `neighbor <X> prefix-list <name> out` | `prefix_list_out` | `frrcfgd.py:1919` |
+| `neighbor <X> maximum-prefix <limit> [<threshold>] [{:restart}]` | `max_prefix_limit` + 複合 | `frrcfgd.py:1901-1902` |
+| `neighbor <X> weight <value>` | `weight` | `frrcfgd.py:1908` |
+| `neighbor <X> soft-reconfiguration inbound` | `soft_reconfiguration_in` | `frrcfgd.py:1905` |
+| `neighbor <X> unsuppress-map <name>` | `unsuppress_map_name` | `frrcfgd.py:1906` |
+| `neighbor <X> default-originate route-map <name>` | `default_rmap` | `frrcfgd.py:1900` |
+| `neighbor <X> capability orf prefix-list <send\|receive\|both>` | `cap_orf` | `frrcfgd.py:1923` |
+
+### address-family 文字列（ハンドラ分岐由来）
+
+`frrcfgd.py:2867-2871` — `af_type.lower().split('_')` で `(af, ip_type)` に変換し、`'address-family {} {}'.format(af, ip_type)` でリテラル合成して vtysh へ渡す。以下の変換はコードにハードコードされた規則であり、YANG 定義に依存しない。
+
+| CONFIG_DB key 末尾 | FRR `address-family` 文字列 |
+|---|---|
+| `ipv4_unicast` | `address-family ipv4 unicast` |
+| `ipv6_unicast` | `address-family ipv6 unicast` |
+| `l2vpn_evpn` | `address-family l2vpn evpn` |
+
+### 補足
+
+- `inbound` キーワード（`soft-reconfiguration`）: `soft_reconfiguration_in=true` のとき `inbound` が固定付与される（DB 値ではなくコードが決定）。
+- `in` / `out` 方向指定: `route-map` / `prefix-list` の方向は DB フィールド名から類推されるが、実際にはコマンドテンプレート文字列にリテラルとして埋め込まれる。
+- `route-map` / `prefix-list` / `unsuppress-map` の名前は FRR 側名前空間で解決され、CONFIG_DB / YANG では参照先存在を強制しない（暗黙参照）。
+
+<!-- /constants -->
+
 <!-- failure -->
 ## 失敗挙動・リトライ分岐 (Phase D)
 
@@ -467,4 +507,47 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 未定義の route-map 名を参照する場合、vtysh 自体は `0` を返すが bgpd がピアへポリシーを適用する際に参照解決が失敗する。frrcfgd 側には **エラーが伝播しない**（`STAT_SUCC` 扱い）。対処: 事前に `ROUTE_MAP` テーブルへ route-map を書き込み、frrcfgd の `ROUTE_MAP` ハンドラ経由で FRR に定義済みの状態にしてから `BGP_NEIGHBOR_AF` を書き込む。
 
 <!-- /failure -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`BGP_NEIGHBOR_AF` テーブルの変更通知は **`ExtConfigDBConnector`** (frrcfgd 専用サブクラス) が Redis keyspace notification を **`PSUBSCRIBE`** することで実装される。`swss-common` の `SubscriberStateTable` は使わず、hiredis 直結の Python `redis` ライブラリを利用する点が `orchagent` 系との大きな違いである。
+
+```python
+# frrcfgd.py:1538-1539
+sub_key_space = "__keyspace@{}__:*".format(self.get_dbid(self.db_name))
+self.pubsub.psubscribe(sub_key_space)
+```
+
+CONFIG_DB 全キー (`__keyspace@4__:*`) を一括 PSUBSCRIBE するため、`BGP_NEIGHBOR_AF|<vrf>|<neighbor>|<afi_safi>` への `HSET` / `DEL` はいずれも同チャンネルで捕捉される。
+
+### keyspace → ハンドラ呼び出しの流れ
+
+```
+config / sonic-cfggen / gNMI / REST
+  ↓ Table::set("BGP_NEIGHBOR_AF|<vrf>|<neighbor>|<af>", fvs)
+CONFIG_DB: HSET "BGP_NEIGHBOR_AF|<vrf>|<neighbor>|<af>" <fields>
+  ↓ Redis keyspace event "__keyspace@4__:BGP_NEIGHBOR_AF|..." "hset"
+ExtConfigDBConnector.listen_thread (別スレッド, get_message timeout=10s)
+  ↓ sub_msg_handler(): チャンネル文字列からテーブル・行を分割
+    → HGETALL で最新値を再取得 (frrcfgd.py:1527)
+    → __fire("BGP_NEIGHBOR_AF", row, data)
+bgp_table_handler_common(table, key, data)  (frrcfgd.py:3895)
+  ↓ afi_safi キーから "ipv4"/"ipv6" を抽出 → admin_status マッピング (L2665-2668)
+  ↓ bgp_message.put((key, del_table, table, data))  (L3928)
+  ↓ __update_bgp() → nbr_af_key_map で vtysh コマンド生成
+['vtysh', '-c', 'configure terminal', '-c', 'router bgp <asn> vrf <vrf>',
+ '-c', 'address-family <afi> <safi>', '-c', 'neighbor <addr> activate', ...]
+```
+
+### 購読者サマリ
+
+| 購読者 | 購読 API | 購読パターン | タイムアウト |
+|--------|---------|--------------|-------------|
+| `frrcfgd` (`BgpCfgd`) | `ExtConfigDBConnector` + `redis.pubsub().psubscribe()` | `__keyspace@4__:*` (CONFIG_DB 全キー) | `get_message(10s)` ポーリング |
+
+書き込み側 (CLI / `sonic-cfggen` / gNMI) は `swss::Table::set()` 経由で `HSET` のみ行い、明示的な `PUBLISH` は発行しない。CONFIG_DB のため TTL は使用されない。起動時は `config_mode == "unified"` の場合に `get_table('BGP_NEIGHBOR_AF')` で既存エントリを全件再生する（再起動耐性）。
+<!-- /pubsub -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->

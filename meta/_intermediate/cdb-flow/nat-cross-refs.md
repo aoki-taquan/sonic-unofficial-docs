@@ -82,9 +82,23 @@
 - **方向**: `NAT_BINDINGS.nat_pool` が `NAT_POOL.name` を leafref (READ)
 - **内容**: YANG レベルでの強制参照整合性。`NAT_BINDINGS` を追加する際、`nat_pool` に指定した名前が `NAT_POOL` に存在しなければ YANG バリデーションで拒否される。実装レベルでも `natmgr.cpp:isPoolMappedtoBinding()` で逆参照を追跡する。
 
+### 12. RouteOrch observer — natorch.cpp 固有 (BRCM 専用)
+
+- **場所**: `sonic-swss/orchagent/natorch.cpp:414,458,504,591` `m_routeOrch->attach(this, translatedIp)` / `NatOrch::updateNextHop()` L200-257
+- **方向**: `NatOrch` → `RouteOrch` を Subject-Observer パターンで attach し、DNAT translated IP の next-hop 変化を READ
+- **内容**: `NatOrch` が DNAT エントリを追加するたびに `m_routeOrch->attach(this, translatedIp)` を呼び、translated IP を destination とするルートの next-hop 変化を subscribe する。`SubjectType::SUBJECT_TYPE_NEXTHOP_CHANGE` イベント受信時に `updateNextHop()` を実行し、next-hop が解決/消滅するたびに `addNhCacheDnatEntries()` で SAI DNAT エントリを差し替える。DNAT エントリ削除時は `m_routeOrch->detach(this, translatedIp)` で購読解除 (`natorch.cpp:558,646,688,732`)。
+- **BRCM 専用**: `natorch.cpp:144-148` で `getenv("platform")` が `"broadcom"` を含む場合のみ `gNhTrackingSupported = true`。非 BRCM 環境では DNAT エントリ追加時も routeOrch に attach しないため、経路変更時に DNAT エントリが stale になるリスクあり。
+
+### 13. NeighOrch observer — natorch.cpp 固有 (BRCM 専用)
+
+- **場所**: `sonic-swss/orchagent/natorch.cpp:171-172,259-302,2573,2610` `m_neighOrch->attach/detach(this)` / `NatOrch::updateNeighbor()` L259-303
+- **方向**: `NatOrch` → `NeighOrch` を Subject-Observer パターンで attach し、DNAT translated IP の ARP/neighbor 解決状態を READ
+- **内容**: `enableNatFeature()` (`natorch.cpp:2573`) で `m_neighOrch->attach(this)` を呼び、`SubjectType::SUBJECT_TYPE_NEIGH_CHANGE` を全 neighbor に対して subscribe する。neighbor が解決/喪失するたびに `updateNeighbor()` が呼ばれ、`m_nhResolvCache` にキャッシュされた DNAT translated IP と一致する場合は `addNhCacheDnatEntries(ip, 1/0)` で SAI DNAT エントリを追加/削除する。RouteOrch observer との 2 段階ガード: neighbor が解決済みかつ next-hop が有効な場合のみ DNAT エントリを SAI に登録する。`disableNatFeature()` (`natorch.cpp:2610`) で `m_neighOrch->detach(this)` を呼んで購読解除。
+- **BRCM 専用**: `gNhTrackingSupported == true` のときのみ有効。非 BRCM では `enableNatFeature()` が attach しない。
+
 ---
 
-## 参照タイプ別サマリ
+## 参照タイプ別サマリ (更新: natorch.cpp 固有を追加)
 
 | 参照先テーブル | DB | 方向 | 契機 | 備考 |
 |--------------|-----|------|------|------|
@@ -102,3 +116,5 @@
 | `STATE_INTERFACE_TABLE` | STATE_DB | READ | NAT エントリ追加前 | L3 インタフェース readiness ガード |
 | `APP_PORT_TABLE` (`PortInitDone`) | APPL_DB | READ | natmgrd 起動時 | ポート初期化完了待ちブロック |
 | `NAT_POOL` (leafref) | CONFIG_DB | READ | YANG バリデーション | `NAT_BINDINGS.nat_pool` 参照整合性 |
+| RouteOrch observer | — | READ | DNAT エントリ追加/削除時 | **BRCM 専用** `natorch.cpp:414,558,2565` |
+| NeighOrch observer | — | READ | `enableNatFeature`/`disableNatFeature` 時 | **BRCM 専用** `natorch.cpp:2573,2610` |
