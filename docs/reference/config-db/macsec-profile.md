@@ -470,6 +470,35 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 - なし
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照（Phase C）
+
+`MACsecMgr` / `MACsecOrch` が `MACSEC_PROFILE` テーブルを処理する際、以下の外部テーブル・DB を明示的な設定フィールドとしてではなく、**実行時のトリガー条件・ゲート・書き込み先**として暗黙的に参照する。
+
+| 参照先 | 参照種別 | 具体的な利用箇所 | evidence |
+|--------|----------|-----------------|----------|
+| `PORT.<ifname>.macsec` (CONFIG_DB) | 読み取り（トリガー） | `enableMACsec()` が `CFG_PORT_TABLE` SET イベントを受け `get_value(port_attr, "macsec", profile_name)` でプロファイル名を取得。空または未設定なら `disableMACsec()` へフォールバック。 | `sonic-swss/cfgmgr/macsecmgr.cpp:298,480-484` |
+| `PORT_TABLE.<ifname>` (STATE_DB) | 読み取り（起動ゲート） | `isPortStateOk()` が STATE_DB `PORT_TABLE` から `state == "ok"` かつ `netdev_oper_status == "up"` を確認。満たされない間は `task_need_retry` が続く。 | `sonic-swss/cfgmgr/macsecmgr.cpp:614-631` |
+| `MACSEC_EGRESS_SC` / `MACSEC_INGRESS_SC` (APPL_DB) | 受信（非同期） | `MACsecOrch::doTask()` が `APP_MACSEC_EGRESS_SC_TABLE_NAME` / `APP_MACSEC_INGRESS_SC_TABLE_NAME` を購読。キー形式 `<port>:<sci>`。SC エントリ到達時に SAI `sai_macsec_api` でセキュリティチャネルを確立する。 | `sonic-swss/orchagent/macsecorch.cpp:872-882` |
+| `PORT_TABLE.<ifname>.pfc_encryption_mode` (APPL_DB) | 読み取り（PFC ACL） | `createMACsecACLTable()` が `m_applPortTable.get(port_name, values)` で APPL_DB PORT エントリの `pfc_encryption_mode` を読み取り PFC ACL エントリを生成。フィールド不在時はデフォルト値使用。 | `sonic-swss/orchagent/macsecorch.cpp:2709-2715` |
+
+### 依存関係サマリ
+
+```
+PORT|<ifname>.macsec = "<profile-name>" (CONFIG_DB)
+  → MACsecMgr が MACSEC_PROFILE を参照し wpa_supplicant 起動
+
+STATE_DB PORT_TABLE.<ifname>.state == "ok" && netdev_oper_status == "up"
+  → 両条件が満たされるまで enableMACsec() は task_need_retry
+
+wpa_supplicant (MKA) が APPL_DB へ書き込み
+  → APP_MACSEC_EGRESS_SC / APP_MACSEC_INGRESS_SC
+
+MACsecOrch が SAI sai_macsec_api でセキュリティチャネル確立
+  → APPL_DB PORT_TABLE.pfc_encryption_mode も暗黙参照（PFC ACL 生成時）
+```
+<!-- /cross-refs -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
