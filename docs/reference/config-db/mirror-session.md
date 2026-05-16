@@ -420,3 +420,83 @@ ERSPAN セッション作成時は `m_routeOrch->attach(this, entry.dstIp)` で 
     `policer` 未存在は `task_need_retry`（後から追加可能なため）。`src_port` のポート名解決失敗は `task_invalid_entry`（retry なし）。同じ「存在しないリソース」でも依存の性質で異なるステータスが返る点に注意。
 
 <!-- /failure -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorEntry::MirrorEntry() L57-77 / activateSession() L921-1067 / setUnsetPortMirror() L811-826 / isHwResourcesAvailable() L357-379 -->
+
+### プラットフォーム識別方法
+
+`MirrorOrch` は 2 種のプラットフォーム識別を行う。
+
+- **環境変数 `$platform`** (`getenv("platform")`, L395): コンテナ起動時に `sonic-cfggen` が `DEVICE_METADATA|localhost|platform` から注入する one-shot 値。`MirrorEntry` コンストラクタが GRE type 分岐に使用。
+- **グローバル `gMySwitchType`** (`DEVICE_METADATA|localhost|switch_type` 由来): VoQ スイッチ向け特殊処理の条件分岐に使用。
+
+### 差異 1: GRE protocol type — Mellanox vs それ以外
+
+`mirrororch.cpp:65-72` (`MLNX_PLATFORM_SUBSTRING` 判定):
+
+| プラットフォーム | `gre_type` 省略時 | SAI 属性値 |
+|---|---|---|
+| **Mellanox (Spectrum)** | **`0x8949`** | `SAI_MIRROR_SESSION_ATTR_GRE_PROTOCOL_TYPE = 0x8949` |
+| Broadcom / Barefoot / Cisco-8000 / Marvell / 他 | `0x88be` | `SAI_MIRROR_SESSION_ATTR_GRE_PROTOCOL_TYPE = 0x88be` |
+
+YANG は `default 0x88be` を定義するため、**Mellanox では YANG default と実装デフォルトが乖離する**。CLI で `gre_type` を明示指定すれば上書き可能。
+
+### 差異 2: SAI_MIRROR_SESSION_ATTR_TC のスキップ (TC 非対応 ASIC 対応)
+
+`mirrororch.cpp:931-938` コメント: "Some platforms don't support SAI_MIRROR_SESSION_ATTR_TC":
+
+- `queue = 0` (デフォルト) のとき `SAI_MIRROR_SESSION_ATTR_TC` を SAI に **送らない**。TC 属性非対応 ASIC との後方互換を保つ。
+- `queue != 0` を指定した場合のみ TC 属性を push。実際の TC 分離効果は ASIC 実装に依存する。
+- `m_maxNumTC` は起動時 `SAI_SWITCH_ATTR_QOS_MAX_NUMBER_OF_TRAFFIC_CLASSES` で取得。SAI 取得失敗時は `255` にフォールバックし、バリデーションが実質無効化される。
+
+### 差異 3: ASIC ingress / egress mirror capability チェック
+
+`mirrororch.cpp:816-826` (`SwitchOrch::isPortIngressMirrorSupported()` / `isPortEgressMirrorSupported()`):
+
+`src_port` をポートに bind する前に ASIC capability を照会して fail-fast する。
+
+| ASIC | ingress (RX) | egress (TX) | `direction=BOTH` |
+|---|---|---|---|
+| 一般的な ASIC (Broadcom / Mellanox / Barefoot / Cisco-8000) | サポート | サポート | サポート |
+| ingress のみの ASIC | サポート | **bind 拒否** (ERROR ログ) | TX 方向が拒否される |
+| egress のみの ASIC | **bind 拒否** (ERROR ログ) | サポート | RX 方向が拒否される |
+
+SAI mirror_session オブジェクト自体は capability と関わらず作成される。bind 段階のみで拒否される。
+
+### 差異 4: SPAN vs ERSPAN の SAI mirror_session attr 差
+
+| SAI 属性 | SPAN | ERSPAN |
+|---|---|---|
+| `SAI_MIRROR_SESSION_ATTR_TYPE` | `SAI_MIRROR_SESSION_TYPE_LOCAL` | `SAI_MIRROR_SESSION_TYPE_ENHANCED_REMOTE` |
+| `SAI_MIRROR_SESSION_ATTR_ERSPAN_ENCAPSULATION_TYPE` | (なし) | `SAI_ERSPAN_ENCAPSULATION_TYPE_MIRROR_L3_GRE_TUNNEL` |
+| `SAI_MIRROR_SESSION_ATTR_IPHDR_VERSION` | (なし) | `4` / `6` (IPv4/IPv6) |
+| `SAI_MIRROR_SESSION_ATTR_TOS` | (なし) | `dscp << 2` (デフォルト `8 << 2 = 32`) |
+| `SAI_MIRROR_SESSION_ATTR_TTL` | (なし) | `ttl` (デフォルト `255`) |
+| `SAI_MIRROR_SESSION_ATTR_GRE_PROTOCOL_TYPE` | (なし) | `greType` (Mellanox: `0x8949` / 他: `0x88be`) |
+| `SAI_MIRROR_SESSION_ATTR_SRC/DST_IP_ADDRESS` | (なし) | `src_ip` / `dst_ip` |
+| `SAI_MIRROR_SESSION_ATTR_VLAN_HEADER_VALID` | (なし) | VLAN nexthop 時のみ `true` (PRI/CFI は `0/0` 固定) |
+
+### 差異 5: VoQ スイッチ向け ERSPAN 特殊処理
+
+`mirrororch.cpp:961-973, 1037-1044` (`gMySwitchType == "voq"` かつ ERSPAN のみ):
+
+| SAI 属性 | 非 VoQ | VoQ (Cisco 8000 等) |
+|---|---|---|
+| `SAI_MIRROR_SESSION_ATTR_MONITOR_PORT` | nexthop 解決済みポート | **recirc port** に強制差し替え |
+| `SAI_MIRROR_SESSION_ATTR_DST_MAC_ADDRESS` | `neighborInfo.mac` (ARP/NDP 解決済み) | **`gMacAddress`** (router MAC) に強制差し替え |
+
+SPAN セッションには VoQ 分岐なし。recirc port 取得失敗時は `activateSession()` が `false` を返し INACTIVE 維持。
+
+### 差異 6: SAI mirror_session リソース上限チェック (isHwResourcesAvailable)
+
+`mirrororch.cpp:357-379` (`sai_object_type_get_availability(SAI_OBJECT_TYPE_MIRROR_SESSION)`):
+
+| ASIC 挙動 | 結果 |
+|---|---|
+| 残余数を正確に返す ASIC | `availCount == 0` で `task_failed` (ADD 前 fail-fast) |
+| `SAI_STATUS_NOT_SUPPORTED` / `NOT_IMPLEMENTED` を返す ASIC | warn ログ後 ADD 続行 (CRM チェック実質無効) |
+
+<!-- /platform -->
