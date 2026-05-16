@@ -602,6 +602,7 @@ Phase F (`side-effects`) で書込先として扱っているのと同テーブ�
 > **Evidence**: sonic-utilities `scripts/coredump_gen_handler.py:17,22-30,47-48,55-57,73-74`; `scripts/techsupport_cleanup.py:23,27-30,33-43`; `utilities_common/auto_techsupport_helper.py:71,74-78,81-84,87-94,115-125,171-197,232-254,282-299,313-337`; 補助: `scripts/memory_threshold_check.py:11-12,36-37,104-108,154-156,177,232-235`
 <!-- /failure -->
 
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
