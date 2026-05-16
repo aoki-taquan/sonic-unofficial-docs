@@ -184,6 +184,97 @@ VoQ 対応時は `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が追加される�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-flex-ordering.md`
+
+### doTask 処理ガード順序
+
+`FlexCounterOrch::doTask()` は以下の条件を **順番に** チェックし、いずれかが成立すると即リターンする (`flexcounterorch.cpp`):
+
+| 優先順 | ガード条件 | 挙動 |
+|--------|-----------|------|
+| 1 | テーブル名が `CFG_DEVICE_METADATA_TABLE_NAME` | `handleDeviceMetadataTable()` に委譲して即リターン |
+| 2 | `!m_delayTimerExpired`（Warm-reboot 遅延期間） | 全エントリ処理を保留（キュー保持）。60 秒後に自動解除 |
+| 3 | `gPortsOrch && !gPortsOrch->allPortsReady()` | 全エントリを保留。PortInitDone 発行後に再処理 |
+| 4 | `gFabricPortsOrch && !gFabricPortsOrch->allPortsReady()` | Fabric ポート初期化待ち |
+| 5 | `flexCounterGroupMap` に存在しないキー | `task_invalid_entry`（破棄、リトライなし） |
+
+!!! warning "PortInitDone 前投入は恒久保留"
+    `portsyncd` が PortInitDone を発行するまで、FLEX_COUNTER_TABLE へのすべての SET/DEL は
+    `doTask` でキューに残り続ける。ただし Warm-reboot 遅延（60 秒）とは別カウントなため、
+    冷起動時でも PORT 初期化が終わるまで有効にならない。
+
+### enable 時の先行必須条件（グループ別）
+
+`FLEX_COUNTER_STATUS = enable` を受信した際に orchagent が呼び出す generate 関数と、
+それが必要とする先行テーブル:
+
+| グループキー | generate 関数 | 先行必須テーブル / 条件 |
+|---|---|---|
+| `PORT` | `gPortsOrch->generatePortCounterMap()` | allPortsReady。一度きり（`m_port_counter_enabled` フラグ） |
+| `PORT_BUFFER_DROP` | `gPortsOrch->generatePortBufferDropCounterMap()` | allPortsReady。一度きり |
+| `QUEUE` | `generateQueueMap()` + `addQueueFlexCounters()` | allPortsReady。`create_only_config_db_buffers=true` 時は `BUFFER_QUEUE` (APP_DB) で non-zero profile 設定済みであること |
+| `QUEUE_WATERMARK` | `generateQueueMap()` + `addQueueWatermarkFlexCounters()` | 同上 |
+| `PG_DROP` | `generatePriorityGroupMap()` + `addPriorityGroupFlexCounters()` | allPortsReady。`create_only_config_db_buffers=true` 時は `BUFFER_PG` (APP_DB) で non-zero profile 設定済みであること |
+| `PG_WATERMARK` | `generatePriorityGroupMap()` + `addPriorityGroupWatermarkFlexCounters()` | 同上 |
+| `WRED_ECN_PORT` | `gPortsOrch->generateWredPortCounterMap()` | allPortsReady |
+| `WRED_ECN_QUEUE` | `generateQueueMap()` + `addWredQueueFlexCounters()` | allPortsReady |
+| `RIF` | `gIntfsOrch->generateInterfaceMap()` | `gIntfsOrch` 初期化済み |
+| `BUFFER_POOL_WATERMARK` | `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` | `gBufferOrch` 初期化済み |
+| `TUNNEL` | `vxlan_tunnel_orch->generateTunnelCounterMap()` | VxlanTunnelOrch が gDirectory 登録済み |
+| `FLOW_CNT_TRAP` | `gCoppOrch->generateHostIfTrapCounterIdList()` | `gCoppOrch` 初期化済み |
+| `FLOW_CNT_ROUTE` | `gFlowCounterRouteOrch->generateRouteFlowStats()` | `gFlowCounterRouteOrch` 初期化済み かつ `getRouteFlowCounterSupported()` = true |
+| `SRV6` | `gSrv6Orch->setCountersState(true)` | `gSrv6Orch` 初期化済み |
+| `PORT_PHY_ATTR` | `generatePortPhyAttrCounterMap()` + `generatePortPhySerdesAttrCounterMap()` | allPortsReady。`PORT_PHY_SERDES_ATTR` は `PORT_PHY_ATTR` の enable/disable と連動 |
+| `SWITCH` | `gSwitchOrch->generateSwitchCounterIdList()` | `gSwitchOrch` 初期化済み |
+| `ENI` / `DASH_METER` / `HA_SET` | DashOrch / DashHaOrch ハンドラ | 対応 Orch が gDirectory 登録済み |
+
+### disable 時の挙動
+
+disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除するグループ** と
+**削除しないグループ** が存在する:
+
+| 挙動 | グループ |
+|------|---------|
+| ID リストを明示削除 | `FLOW_CNT_TRAP`（`clearHostIfTrapCounterIdList()`）、`FLOW_CNT_ROUTE`（`clearRouteFlowStats()`）、`PORT_PHY_ATTR`（`clearPortPhyAttrCounterMap()` + `clearPortPhySerdesAttrCounterMap()`） |
+| per-OID エントリを残したまま polling 停止のみ | `PORT`、`QUEUE`、`RIF`、`TUNNEL`、`BUFFER_POOL_WATERMARK` 等その他すべて |
+
+!!! note "disable 後の再 enable"
+    PORT / QUEUE 等は disable → enable しても `m_xxx_enabled` フラグが立ったままのため
+    `generateXxxMap()` が再呼び出しされない（per-OID エントリは FLEX_COUNTER_DB に残存）。
+    ID リストを明示削除するグループ（FLOW_CNT_TRAP 等）は再 enable で再生成される。
+
+### Warm-reboot 遅延メカニズム
+
+| 場面 | 挙動 |
+|------|------|
+| cold-start | コンストラクタで `m_delayTimerExpired = true`。タイマー不使用で即処理 |
+| warm-reboot | コンストラクタでタイマー（60 秒）を開始。`m_delayTimerExpired = false` のまま全 doTask が保留 |
+| タイムアウト | `doTask(SelectableTimer&)` が呼ばれ `m_delayTimerExpired = true` に変更。以降は通常処理 |
+| `bake()` | 意図的 no-op（`return true`）。FC は reconciling 対象外のため warm-reboot 中にリプレイしない |
+
+### フィールド処理内部順序
+
+同一 SET エントリ内に複数フィールドを含む場合、ループで順次処理される:
+
+1. `POLL_INTERVAL_FIELD` → `setFlexCounterGroupPollInterval()` （先に適用）
+2. `BULK_CHUNK_SIZE_FIELD` / `BULK_CHUNK_SIZE_PER_PREFIX_FIELD` → 変数に保存
+3. `FLEX_COUNTER_STATUS_FIELD` → generate アクション + `setFlexCounterGroupOperation()`
+4. 上記以外 → `SWSS_LOG_NOTICE("Unsupported field")` で無視・破棄
+
+`POLL_INTERVAL` と `FLEX_COUNTER_STATUS` を同一トランザクションで書いた場合、
+`POLL_INTERVAL` が先に syncd へ伝達されてから enable が実行される。
+
+### gearbox 環境での追加書き込み
+
+`gPortsOrch->isGearboxEnabled()` が true の場合、`PORT` と `MACSEC` 系グループは
+`setFlexCounterGroupPollInterval()` と `setFlexCounterGroupOperation()` を
+通常 flexcounter 用と gearbox 用に **2 回** 呼び出す。
+他グループへの影響はない。
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/portsorch.cpp` `port_stat_ids[]` (line 242), `queue_stat_ids[]` (line 389), `wred_port_stat_ids[]` (line 421), `wred_queue_stat_ids[]` (line 429). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
