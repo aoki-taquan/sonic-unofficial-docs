@@ -344,6 +344,57 @@ DEL PORTCHANNEL|PortChannel0001
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`PORTCHANNEL_MEMBER` の CONFIG_DB Consumer 経路は **CONFIG_DB → TeamMgr → teamd (UNIX ソケット) → APP_DB → PortsOrch → SAI** の 3 段構成である。
+
+### 1. CONFIG_DB → TeamMgr: SubscriberStateTable (keyspace PSUBSCRIBE)
+
+`teammgrd.cpp:55-65` で `CFG_LAG_MEMBER_TABLE_NAME` (`"PORTCHANNEL_MEMBER"`) を `TableConnector` として登録。
+`Orch(tables)` 内部で `SubscriberStateTable` が生成され、Redis CONFIG_DB (db_id=4) に対して
+`__keyspace@4__:PORTCHANNEL_MEMBER|*` を PSUBSCRIBE する。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB / keyspace 通知) |
+| keyspace パターン | `__keyspace@4__:PORTCHANNEL_MEMBER\|*` |
+| key 区切り | `PORTCHANNEL_MEMBER\|<lag>\|<member>` |
+| POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = 128 |
+| 優先度 (`pri`) | 0 (TableConnector 既定) |
+| 起動時スナップショット | 既存エントリを SET イベントとして再配信 |
+| ディスパッチ | `Consumer::execute()` → `TeamMgr::doTask()` → `table == CFG_LAG_MEMBER_TABLE_NAME` → `doLagMemberTask()` (`teammgr.cpp:161-163`) |
+
+### 2. TeamMgr → teamd: UNIX ソケット (teamdctl)
+
+`doLagMemberTask()` は APP_DB を経由せず `teamdctl` コマンド (UNIX ソケット `/var/run/teamd/<lag>.ctl`) で
+teamd プロセスに直接ポートの追加/削除を指示する。この経路は Redis PUBLISH を使用しない。
+
+- **SET**: `teamdctl <lag> port add <member>` — LACP ネゴシエーション開始
+- **DEL**: `teamdctl <lag> port remove <member>` — LACP 切断
+
+### 3. TeamMgr → APP_DB: ProducerStateTable (PUBLISH)
+
+teamd 操作完了後、TeamMgr が APP_DB `LAG_MEMBER_TABLE` (= `APP_LAG_MEMBER_TABLE_NAME`) に
+`ProducerStateTable::set()` / `del()` で書き込む。Lua スクリプト (EVALSHA) が key-set に SADD し、
+チャネル `LAG_MEMBER_TABLE_CHANNEL@0` に PUBLISH する。
+
+### 4. APP_DB → PortsOrch: ConsumerStateTable (SUBSCRIBE + EVALSHA) → SAI lag_member
+
+`portsorch.cpp:4388` で起動時スナップショット (`addExistingData(APP_LAG_MEMBER_TABLE_NAME)`)、
+`portsorch.cpp:6531` で `doLagMemberTask(consumer)` にディスパッチ。
+`sai_lag_api->create_lag_member()` / `remove_lag_member()` (`portsorch.cpp:8172, 8221`) を呼び出す。
+
+| DB | Redis チャネル / パターン | 用途 |
+|---|---|---|
+| CONFIG_DB (db=4) | `__keyspace@4__:PORTCHANNEL_MEMBER\|*` | TeamMgr が PSUBSCRIBE |
+| teamd (UNIX ソケット) | `/var/run/teamd/<lag>.ctl` | teamdctl port add/remove |
+| APPL_DB (db=0) | `LAG_MEMBER_TABLE_CHANNEL@0` | PortsOrch の ConsumerStateTable が SUBSCRIBE |
+| STATE_DB (db=6) | `__keyspace@6__:LAG_TABLE\|*` | TeamMgr が isLagStateOk() で LAG 状態監視 |
+
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-pubsub.md -->
+<!-- /pubsub -->
+
 <!-- cross-refs -->
 ## 暗黙参照マップ (Phase C)
 
