@@ -517,7 +517,7 @@ VRF が未登録のままだと `m_toSync` に積まれ VRF 登録後にリト�
 
 ### VOQ Chassis — システムインタフェース同期差
 
-`DEVICE_METADATA|localhost.switch_type=voq` のシャーシ構成では、`VLAN_INTERFACE` テーブルへの SET/DEL に伴う RIF 作成・削除が追加の CHASSIS_APP_DB 同期を引き起こす。
+`DEVICE_METADATA|localhost.switch_type=voq` のシャーシ構成では、`VLAN_INTERFACE` テーブルへの SET/DEL に伴う RIF 作成・削除が追加の CHASSIS_APP_DB 同期を引き起こす[^ph1][^ph2]。
 
 ```cpp
 // intfsorch.cpp:1314-1317
@@ -553,5 +553,84 @@ VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 add
 [^ph2]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 
 <!-- /platform -->
+
+<!-- secondary-db-writes -->
+## 副次 DB 書込み (Phase F)
+
+> intfmgr が CONFIG_DB エントリを処理した結果として書き込む APPL_DB・STATE_DB のキー・フィールドを網羅的に記録する。  
+> 調査根拠: `sonic-swss/cfgmgr/intfmgr.cpp` 全行精読 (2026-05-16)
+
+### APPL_DB — `INTF_TABLE`
+
+`intfmgrd` は `ProducerStateTable m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)` を使用して書き込む。
+
+#### 属性ロウ (`INTF_TABLE|Vlan<N>`)
+
+| フィールド | 値の由来 | 条件 |
+|-----------|---------|------|
+| `vrf_name` | CONFIG_DB 値そのまま | 常時 |
+| `mac_addr` | CONFIG_DB 値 または省略時 `"00:00:00:00:00:00"` | 常時 |
+| `admin_status` | CONFIG_DB 値 または省略時 `"up"` にフォールバック | 常時 |
+| `proxy_arp` | CONFIG_DB 値 (`"enabled"` / `"disabled"`) | VLAN_PREFIX 一致時かつ `proxy_arp` 非空 |
+| `grat_arp` | CONFIG_DB 値 (`"enabled"` / `"disabled"`) | VLAN_PREFIX 一致時かつ `grat_arp` 非空 |
+| `mtu` | `DEFAULT_MTU_STR = 9100`（subintf 伝搬時） | サブインタフェース継承時のみ |
+
+書き込みタイミング: `doIntfGeneralTask()` が SET コマンドを処理した末尾で `m_appIntfTableProducer.set(alias, data)` を 1 回呼ぶ（`intfmgr.cpp:1053`）。
+
+DEL 時: `m_appIntfTableProducer.del(alias)` を呼ぶ。IP プレフィクスが残っている場合は `return false`（retry）。
+
+#### IP プレフィクスロウ (`INTF_TABLE|Vlan<N>|<ip_prefix>`)
+
+| フィールド | 固定値 | 備考 |
+|-----------|-------|------|
+| `scope` | `"global"` | CONFIG_DB 値を無視して常時固定 (`intfmgr.cpp:1134`) |
+| `family` | `"IPv4"` / `"IPv6"` | `ip_prefix.isV4()` から自動判定。CONFIG_DB 値を無視 (`intfmgr.cpp:1129`) |
+
+制約: IPv4 リンクローカルアドレスは APPL_DB に送信しない（`intfmgr.cpp:1131`）。
+
+書き込みタイミング: `doIntfAddrTask()` → SET 末尾で `m_appIntfTableProducer.set(appKey, fvVector)` を呼ぶ（`intfmgr.cpp:1137`）。
+
+DEL 時: `m_appIntfTableProducer.del(appKey)` を呼ぶ（IPv4 リンクローカルを除く）。
+
+### STATE_DB — `STATE_INTERFACE_TABLE`
+
+`intfmgrd` は `Table m_stateIntfTable(stateDb, STATE_INTERFACE_TABLE_NAME)` を使用して書き込む。
+
+#### 属性ロウ (`STATE_INTERFACE_TABLE|Vlan<N>`)
+
+| フィールド | 値 | タイミング |
+|-----------|-----|----------|
+| `vrf` | `vrf_name`（空文字列を含む） | SET 処理完了後 (`intfmgr.cpp:1054`) |
+
+DEL 時: `m_stateIntfTable.del(alias)` で行ごと削除 (`intfmgr.cpp:1089`)。  
+VRF unbind 時: `m_stateIntfTable.hset(alias, "vrf", "")` で空文字列に更新 (`intfmgr.cpp:1200`)。
+
+#### IP プレフィクスロウ (`STATE_INTERFACE_TABLE|Vlan<N>|<ip_prefix>`)
+
+| フィールド | 値 | タイミング |
+|-----------|-----|----------|
+| `state` | `"ok"` | IP 追加処理完了後 (`intfmgr.cpp:1138`) |
+
+DEL 時: `m_stateIntfTable.del(keys[0] + "|" + keys[1])` で行ごと削除 (`intfmgr.cpp:1162`)。
+
+**TTL なし** — STATE_DB エントリは明示的な DEL まで残存する。
+
+### 書込みフロー全体図
+
+```
+CONFIG_DB: VLAN_INTERFACE|Vlan100
+    └─ intfmgrd.doIntfGeneralTask() (SET)
+           ├─ APPL_DB:  INTF_TABLE|Vlan100  {vrf_name, mac_addr, admin_status, proxy_arp, grat_arp}
+           └─ STATE_DB: STATE_INTERFACE_TABLE|Vlan100  {vrf: <vrf_name>}
+
+CONFIG_DB: VLAN_INTERFACE|Vlan100|10.0.0.1/24
+    └─ intfmgrd.doIntfAddrTask() (SET)
+           ├─ APPL_DB:  INTF_TABLE|Vlan100|10.0.0.1/24  {scope: "global", family: "IPv4"}
+           └─ STATE_DB: STATE_INTERFACE_TABLE|Vlan100|10.0.0.1/24  {state: "ok"}
+```
+
+[^fdb1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+
+<!-- /secondary-db-writes -->
 
 <!-- glossary-links-injected: b8bde3f9637a -->
