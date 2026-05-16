@@ -285,6 +285,63 @@ runtime 更新時は `set_wred_attribute()` が属性ループを途中で中断
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp WredMapHandler::convertFieldValuesToAttributes() L585-762, addQosItem() L784-860, removeQosItem() L864-874 -->
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### ECN enum — `ecn_map` (qosorch.cpp:37-44 / qosorch.h:56-63)
+
+CONFIG_DB `ecn` フィールド文字列を SAI `SAI_WRED_ATTR_ECN_MARK_MODE` にマッピングするルックアップテーブル。不正値は `std::out_of_range` → エントリ破棄。
+
+| フィールド値 | SAI 属性値 | ソース |
+|---|---|---|
+| `ecn_none` (**既定**) | `SAI_ECN_MARK_MODE_NONE` | qosorch.cpp:37, qosorch.h:56 |
+| `ecn_green` | `SAI_ECN_MARK_MODE_GREEN` | qosorch.cpp:38, qosorch.h:60 |
+| `ecn_yellow` | `SAI_ECN_MARK_MODE_YELLOW` | qosorch.cpp:39, qosorch.h:58 |
+| `ecn_red` | `SAI_ECN_MARK_MODE_RED` | qosorch.cpp:40, qosorch.h:57 |
+| `ecn_green_yellow` | `SAI_ECN_MARK_MODE_GREEN_YELLOW` | qosorch.cpp:41, qosorch.h:62 |
+| `ecn_green_red` | `SAI_ECN_MARK_MODE_GREEN_RED` | qosorch.cpp:42, qosorch.h:61 |
+| `ecn_yellow_red` | `SAI_ECN_MARK_MODE_YELLOW_RED` | qosorch.cpp:43, qosorch.h:59 |
+| `ecn_all` | `SAI_ECN_MARK_MODE_ALL` | qosorch.cpp:44, qosorch.h:63 |
+
+### SAI wred_attr マッピング (qosorch.cpp:636-746)
+
+`WredMapHandler::convertFieldValuesToAttributes()` が各 CONFIG_DB フィールドを SAI 属性 ID に変換する。
+
+| CONFIG_DB フィールド | SAI 属性 ID |
+|---|---|
+| `green_min_threshold` | `SAI_WRED_ATTR_GREEN_MIN_THRESHOLD` |
+| `green_max_threshold` | `SAI_WRED_ATTR_GREEN_MAX_THRESHOLD` |
+| `yellow_min_threshold` | `SAI_WRED_ATTR_YELLOW_MIN_THRESHOLD` |
+| `yellow_max_threshold` | `SAI_WRED_ATTR_YELLOW_MAX_THRESHOLD` |
+| `red_min_threshold` | `SAI_WRED_ATTR_RED_MIN_THRESHOLD` |
+| `red_max_threshold` | `SAI_WRED_ATTR_RED_MAX_THRESHOLD` |
+| `green_drop_probability` | `SAI_WRED_ATTR_GREEN_DROP_PROBABILITY` |
+| `yellow_drop_probability` | `SAI_WRED_ATTR_YELLOW_DROP_PROBABILITY` |
+| `red_drop_probability` | `SAI_WRED_ATTR_RED_DROP_PROBABILITY` |
+| `wred_green_enable` | `SAI_WRED_ATTR_GREEN_ENABLE` |
+| `wred_yellow_enable` | `SAI_WRED_ATTR_YELLOW_ENABLE` |
+| `wred_red_enable` | `SAI_WRED_ATTR_RED_ENABLE` |
+| `ecn` | `SAI_WRED_ATTR_ECN_MARK_MODE` |
+
+### デフォルト threshold / probability ハードコード値
+
+**drop probability の C++ fallback** (qosorch.cpp:836-850): `wred_*_enable=true` かつ対応 `*_drop_probability` フィールド省略時、`addQosItem()` が SAI 属性リストに自動補完する固定値。
+
+| 対象色 | SAI 属性 | ハードコード値 |
+|---|---|---|
+| Green | `SAI_WRED_ATTR_GREEN_DROP_PROBABILITY` | `100` (%) |
+| Yellow | `SAI_WRED_ATTR_YELLOW_DROP_PROBABILITY` | `100` (%) |
+| Red | `SAI_WRED_ATTR_RED_DROP_PROBABILITY` | `100` (%) |
+
+**threshold**: YANG・orchagent ともにデフォルト値なし。フィールド省略時は SAI ベンダー依存。`AZURE_LOSSLESS` テンプレートが min=1,048,576 bytes / max=2,097,152 bytes を設定。
+
+### weight デフォルト (qosorch.cpp:794-796)
+
+CONFIG_DB に `weight` フィールドは存在しない。`addQosItem()` は WRED オブジェクト作成時に常に `SAI_WRED_ATTR_WEIGHT = 0` を属性リスト先頭へ無条件挿入する（SAI WRED 必須属性を満たすための固定値、ユーザー設定不可）。
+
+<!-- /constants -->
+
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
