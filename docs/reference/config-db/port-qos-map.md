@@ -323,3 +323,61 @@ REST/gNMI 書き込み経路なし
 > **スキャン証跡**: `qosorch.cpp` PortQosMapHandler + `db_migrator.py:576,711-714` + `qos_config.j2:414-423` を確認、4 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-pubsub.md -->
+
+### Consumer 登録
+
+`QosOrch` は `orchdaemon.cpp:367-384` で全 QoS テーブルをまとめて `CONFIG_DB` に登録する。`CFG_PORT_QOS_MAP_TABLE_NAME` は `vector<string> qos_tables` に含まれ、`new QosOrch(m_configDb, qos_tables)` の呼び出しにより **SubscriberStateTable** ベースの Consumer が生成される。ハンドラは `initTableHandlers()` (qosorch.cpp:1335) で `CFG_PORT_QOS_MAP_TABLE_NAME → &QosOrch::handlePortQosMapTable` として登録。
+
+### イベント伝搬フロー
+
+```
+CONFIG_DB  PORT_QOS_MAP|<port>  (SET / DEL)
+  │
+  │  SubscriberStateTable (swss::Consumer)
+  ▼
+QosOrch::doTask()                     orchdaemon.cpp で select() → drain()
+  │  port_qos_map_cfg_exec は他の QoS テーブル drain 後に処理 (参照先 map 先行作成保証)
+  ▼
+QosOrch::doTask(Consumer&)            qosorch.cpp:2254
+  │  consumer.getTableName() == CFG_PORT_QOS_MAP_TABLE_NAME
+  ▼
+QosOrch::handlePortQosMapTable()      qosorch.cpp:2046
+  ├─ key == "global"  → handleGlobalQosMap()
+  ├─ op == DEL
+  │    ├─ gPortsOrch->getPort()
+  │    ├─ sai_port_api->set_port_attribute(SAI_NULL_OBJECT_ID)  全 map を unset
+  │    └─ gPortsOrch->setPortPfc(port_id, 0)
+  └─ op == SET
+       ├─ resolveFieldRefValue()  map OID 解決 → 未解決なら task_need_retry
+       ├─ pfc_enable / pfcwd_sw_enable ビットマスク計算
+       ├─ sai_port_api->set_port_attribute(port_id, &attr)  各 SAI port 属性
+       ├─ gPortsOrch->setPortPfc(port_id, pfc_enable)          [pfc_enable || old_pfc_enable 時]
+       └─ gPortsOrch->setPortPfcWatchdogStatus(port_id, pfcwd_sw_enable)  [無条件]
+```
+
+### SAI 呼び出し一覧
+
+| CONFIG_DB フィールド | SAI API | SAI 属性 |
+|---------------------|---------|----------|
+| `dscp_to_tc_map` (ポート) | `sai_port_api->set_port_attribute` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` |
+| `dscp_to_tc_map` (global) | `sai_switch_api->set_switch_attribute` | `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` |
+| `tc_to_queue_map` | `sai_port_api->set_port_attribute` | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` |
+| `tc_to_pg_map` | `sai_port_api->set_port_attribute` | `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` |
+| `pfc_to_pg_map` | `sai_port_api->set_port_attribute` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` |
+| `pfc_to_queue_map` | `sai_port_api->set_port_attribute` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` |
+| `scheduler` | `sai_port_api->set_port_attribute` | `SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID` |
+| `pfc_enable` | `gPortsOrch->setPortPfc` | PFC 有効ビットマップ |
+| `pfcwd_sw_enable` | `gPortsOrch->setPortPfcWatchdogStatus` | PFC watchdog ビットマップ |
+
+### 特記事項
+
+- **APPL_DB 経由なし** — CONFIG_DB → orchagent → SAI の直結経路。`qosmgrd` は master に存在しない。
+- **drain 順序** — `port_qos_map_cfg_exec->drain()` は `QosOrch::doTask()` 内で他 QoS テーブルより後に実行される (qosorch.cpp:2250)。参照 QoS map を先行作成してからポートバインドを行う設計。
+- **task_need_retry** — 参照先 QoS map が未作成の場合はキューに残留し、map 作成後の次サイクルで自動再処理される (qosorch.cpp:2129)。
+
+<!-- /pubsub -->
