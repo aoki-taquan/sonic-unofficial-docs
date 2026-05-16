@@ -226,6 +226,85 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/cfgmgr/vrfmgrd.cpp / sonic-swss/cfgmgr/vrfmgr.cpp / sonic-host-services/scripts/hostcfgd -->
+
+### 購読者と API 種別
+
+`MGMT_VRF_CONFIG` を購読するコンポーネントは **2 つ**。
+
+| コンポーネント | API 種別 | 実装 |
+|---|---|---|
+| `vrfmgrd` (swss コンテナ) | `Orch` + `ConsumerStateTable` / Select ループ (C++, SELECT_TIMEOUT=1000ms) | `vrfmgrd.cpp:43` で `VrfMgr` に `CFG_MGMT_VRF_CONFIG_TABLE_NAME` を渡す |
+| `hostcfgd` (host-services) | `ConfigDBConnector.subscribe()` → Redis keyspace 通知 PSUBSCRIBE (Python) | `hostcfgd:2496` で `mgmt_vrf_handler` を登録 |
+
+### vrfmgrd — `Orch` フレームワーク
+
+```cpp
+// sonic-swss/cfgmgr/vrfmgrd.cpp:29-34
+vector<string> cfg_vrf_tables = {
+    CFG_VRF_TABLE_NAME,
+    CFG_VNET_TABLE_NAME,
+    CFG_VXLAN_EVPN_NVO_TABLE_NAME,
+    CFG_MGMT_VRF_CONFIG_TABLE_NAME   // MGMT_VRF_CONFIG
+};
+VrfMgr vrfmgr(&cfgDb, &appDb, &stateDb, cfg_vrf_tables);
+```
+
+`Orch` コンストラクタが各テーブルに対して `SubscriberStateTable` を生成し `Select` セレクタに登録。タイムアウト（1秒）ごとに `vrfmgr.doTask()` を呼び pending タスクを消化する。
+
+### hostcfgd — `ConfigDBConnector.subscribe()`
+
+```python
+# sonic-host-services/scripts/hostcfgd:2495-2497
+self.config_db.subscribe(swsscommon.CFG_MGMT_VRF_CONFIG_TABLE_NAME,
+                         make_callback(self.mgmt_vrf_handler))
+self.config_db.listen(init_data_handler=self.load)
+```
+
+- `ConfigDBConnector.listen()` が内部で Redis keyspace 通知 (`PSUBSCRIBE __keyspace@<dbId>__:MGMT_VRF_CONFIG|*`) を購読。
+- 変化時に `mgmt_vrf_handler(key, op, data)` → `mgmtifacecfg.update_mgmt_vrf(data)` を呼び出す。
+- `op` は `data is None` のとき `"DEL"`、それ以外 `"SET"`（HGETALL 結果有無で判定）。
+
+### kernel netns 制御と ifupdown
+
+`vrfmgrd` の `setLink("mgmt")` / `delLink("mgmt")` は `ip link add/del` を実行しない特殊処理。実際のカーネル VRF 作成・eth0 enslave は **ifupdown2** (`interfaces-config` サービス) が担う。
+
+```python
+# hostcfgd:1659-1662  update_mgmt_vrf() 内
+run_cmd(['systemctl', 'stop', 'chrony'], True, True)
+run_cmd(['systemctl', 'restart', 'interfaces-config'], True, True)  # ifupdown2 が eth0 を mgmt VRF (table 6000) へ enslave
+run_cmd(['systemctl', 'start', 'chrony'], True, True)
+```
+
+```cpp
+// vrfmgr.cpp:176-183  setLink("mgmt") — ip link add は実行しない
+if (vrfName == MGMT_VRF) {
+    uint32_t table_id = MGMT_VRF_TABLE_ID;  // ハードコード 6000
+    m_vrfTableMap.emplace(vrfName, table_id);
+    return true;  // 実際の netdev 作成は hostcfgd/interfaces-config が担う
+}
+```
+
+### CONFIG_DB Subscribe → APPL_DB 書き込み
+
+SET が実効する（`mgmtVrfEnabled=true` かつ `in_band_mgmt_enabled=true`）と `vrfmgr.cpp` が `APP_VRF_TABLE_NAME` に書き込む。DEL 実効時（STATE_VRF_OBJECT_TABLE から mgmt が消えた後）は `m_appVrfTableProducer.del("mgmt")` を呼ぶ。
+
+### 起動時スナップショット
+
+`hostcfgd` は `listen()` 前に `load()` で `MGMT_VRF_CONFIG` 現在値を取得・キャッシュする（`interfaces-config` 再起動は行わない）。
+
+```python
+# hostcfgd:2249, 2268
+mgmt_vrf = init_data.get(swsscommon.CFG_MGMT_VRF_CONFIG_TABLE_NAME, {})
+self.mgmtifacecfg.load(mgmt_ifc, mgmt_vrf)
+# → self.mgmt_vrf_enabled = mgmt_vrf.get('mgmtVrfEnabled', '')
+```
+
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
 
