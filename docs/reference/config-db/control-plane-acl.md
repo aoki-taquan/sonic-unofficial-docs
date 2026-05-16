@@ -224,6 +224,102 @@ CTRLPLANE ACL は `AclOrch::doAclTableTask()` と `doAclRuleTask()` の両方で
 
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+CTRLPLANE ACL の実体は `caclmgrd` が管理する iptables ルール群である。`AclOrch` (orchagent) は `m_ctrlAclTables` に記録するのみで SAI に投入しない。そのため「書込み順依存」は orchagent 側ではなく **caclmgrd の iptables プログラム順序**に集約される。
+
+### 1. caclmgrd が生成する iptables ルールの固定順序
+
+`get_acl_rules_and_translate_to_iptables_commands()` (caclmgrd L625-902) は以下の固定順序でコマンドリストを構築する。
+
+| 順位 | ルール種別 | 方向 | 備考 |
+|------|-----------|------|------|
+| 1 | デフォルトポリシー ACCEPT (INPUT/FORWARD/OUTPUT) | 設定 | フラッシュ中の接続断を防ぐ |
+| 2 | 既存チェーン flush・delete | 削除 | DualToR 時 DHCP チェーンは保持 |
+| 3 | loopback 127.0.0.1/::1 ACCEPT | INPUT | 常時 |
+| 4 | BFD UDP 3784,4784 ACCEPT | INPUT -I 2 | BFD セッションが STATE_DB に存在する場合のみ |
+| 5 | VxLAN UDP 4789 ACCEPT | INPUT -I 2 | VXLAN_TUNNEL に src_ip がある場合のみ |
+| 6 | DASH-HA swbus_port ACCEPT | INPUT -I 2 | dash-ha feature が存在する場合のみ |
+| 7 | 内部 Docker IP ACCEPT | INPUT | multi-ASIC 時のみ実質追加 |
+| 8 | Chassis midplane ACCEPT | INPUT | chassis / SmartSwitch 時のみ |
+| 9 | ESTABLISHED/RELATED ACCEPT | INPUT | conntrack |
+| 10 | ICMPv4 (echo/reply/unreachable/time-exceeded) ACCEPT | INPUT | 常時 |
+| 11 | ICMPv6 (同上 + NDP NS/NA/RS/RA) ACCEPT | INPUT | 常時 |
+| 12 | DualToR: UDP 67 → DHCP チェーン | INPUT | DualToR 時のみ |
+| 13 | DHCP UDP 67:68 / 546:547 ACCEPT | INPUT | 常時 |
+| 14 | BGP TCP 179 ACCEPT (`! -i eth0`) | INPUT | 常時 |
+| 15 | ICMPv6 conntrack 無効化 | raw PREROUTING/OUTPUT | 常時 |
+| 16 | **CONFIG_DB ACL_RULE → iptables -A INPUT** | INPUT | PRIORITY 降順ソート後に追加 |
+| 17 | ip2me DROP (各インターフェース IP) | INPUT | LOOPBACK/VLAN/PORTCHANNEL/INTERFACE |
+| 18 | TTL < 2 ICMP/UDP/TCP ACCEPT (traceroute) | INPUT | 常時 |
+| 19 | デフォルト DROP (num_ctrl_plane_acl_rules > 0 の場合のみ) | INPUT | ルール 0 件なら追加しない |
+
+> **証跡**: `caclmgrd L625-901` 全行読了。`caclmgrd.service` systemd 依存確認。
+
+### 2. ACL_RULE の PRIORITY 処理順序
+
+```python
+# caclmgrd L774, L825
+acl_rules[rule_props["PRIORITY"]] = rule_props
+...
+for priority in sorted(iter(acl_rules.keys()), reverse=True):
+    rule_cmd += ["-A", "INPUT", ...]
+```
+
+CONFIG_DB の `ACL_RULE` を読み込み、同一テーブル内のルールを `PRIORITY` 値で dict に格納後、**降順ソート** (`reverse=True`) で `iptables -A INPUT` する。高 PRIORITY 値のルールが先に `-A` されるため、iptables チェーンの上位に配置される。
+
+→ **PRIORITY の重複**: 同じ PRIORITY 値が複数ルールに設定された場合、後勝ち (dict への上書き) となり、重複 PRIORITY を持つルールの一方が消失する。caclmgrd にはこの重複チェックはない。
+
+### 3. Config DB 更新時のデバウンス
+
+Config DB の `ACL_TABLE` / `ACL_RULE` 変更通知受信後、caclmgrd は `UPDATE_DELAY_SECS = 0.5` 秒のデバウンス (`check_and_update_control_plane_acls()`) を経てから全ルールを再インストールする。
+
+連続した ACL 更新（複数ルール一括投入など）はデバウンス期間内にまとめられ、最後の変更から 0.5 秒後に 1 回の `update_control_plane_acls()` が呼ばれる。
+
+```python
+# caclmgrd L123
+UPDATE_DELAY_SECS = 0.5
+
+# caclmgrd L960-980
+while True:
+    time.sleep(self.UPDATE_DELAY_SECS)
+    with self.lock[namespace]:
+        if self.num_changes[namespace] > num_changes:
+            num_changes = self.num_changes[namespace]   # もう一度 sleep
+        else:
+            self.update_control_plane_acls(...)         # 安定したら適用
+            self.num_changes[namespace] = 0
+            return
+```
+
+### 4. warm-reboot 挙動
+
+caclmgrd スクリプトには warm-reboot / reconcile ロジックが存在しない。systemd サービスの設定も `Restart=always` のみ。
+
+```ini
+# caclmgrd.service
+Requires=config-setup.service
+After=config-setup.service
+```
+
+warm-reboot 時は caclmgrd が systemd によって再起動され、起動直後に `update_control_plane_acls()` が全 namespace に対してフルリプログラムを実施する。
+
+**影響**: iptables チェーンのフラッシュとルール再投入の間、デフォルトポリシーが `ACCEPT` に設定される (順位 1)。このため再起動中に CPU 宛パケット（SSH/SNMP/BGP 等）が一時的に全通過する状態になる。ACL による制限は全ルール再投入完了（順位 19 の DROP 追加）後に復元される。
+
+### 5. orchagent (AclOrch) 側の順序依存
+
+`AclOrch::doAclRuleTask()` は `m_ctrlAclTables` にキーが存在するルールを即 erase（スキップ）する。CTRLPLANE テーブルは SAI OID が割り当てられないため、ACL_TABLE → ACL_RULE の書き込み順序に関わらず orchagent 側でのデッドロックは発生しない。
+
+| 書込みパターン | orchagent の挙動 |
+|---|---|
+| ACL_TABLE(CTRLPLANE) → ACL_RULE | TABLE 登録後 RULE を erase。順序通り |
+| ACL_RULE → ACL_TABLE(CTRLPLANE) | RULE 到着時 `table_oid == SAI_NULL_OBJECT_ID` かつ `m_ctrlAclTables` 未登録 → `it++` で再試行待機。TABLE 登録後に RULE が再処理され erase |
+
+> **証跡**: `aclorch.cpp:5548-5566` (`doAclRuleTask()` CTRLPLANE erase ロジック確認)
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
