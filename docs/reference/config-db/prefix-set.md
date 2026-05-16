@@ -173,6 +173,33 @@ frrcfgd は常時起動し `PrefixSetMgr` を無条件登録する。sonic-mgmt-
 
 <!-- /handler-branching -->
 
+<!-- defaults -->
+## フィールドの暗黙デフォルト (Phase A)
+
+frrcfgd (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`) のコード精読により判明したコード由来のデフォルトと、YANG 宣言との乖離点[^fdef]。
+
+### `mode` — YANG-実装乖離（軽度）
+
+| 状態 | YANG デフォルト | frrcfgd 実装挙動 |
+|------|------------|------|
+| フィールド不在 | `"IPv4"` | エラーログを出して当該 PREFIX_SET エントリを**完全スキップ**（`if 'mode' not in data: continue`、L2901-2903） |
+| `"IPv4"` / `"ipv4"` / `"IPV4"` | — | `.lower()` で正規化し `MatchPrefixList('ipv4')` → `AF_INET` |
+| `"IPv6"` 等それ以外 | — | `MatchPrefixList(<value>)` で `af_mode == 'ipv4'` 一致以外は **すべて `AF_INET6` にフォールバック**（L1665）。typo (`"ipv5"` 等) も IPv6 として扱われる |
+
+YANG モードで投入する経路（sonic-yang-mgmt / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) YANG 検証 / GNMI）では YANG default `"IPv4"` が補完される。`redis-cli` / `sonic-db-cli hset` で直接 [CONFIG_DB](../../reference/glossary.md#term-config_db) に書く場合は `mode` 欠落で frrcfgd が無反応になる点に注意。
+
+### family 既定 — `PREFIX_SET` には実装側フォールバックなし
+
+`MatchPrefixList.__init__` は `af_mode=None` で生成すると `self.af = None` となり、その後 `add_prefix()` の最初の呼び出しで `__get_ip_af()` が prefix 文字列から family を自動推定する（L1660-1690）。ただしこの「最初の prefix の family を採用」する経路は **`NEIGHBOR_SET` / `NEXTHOP_SET` ハンドラ専用**で、`PREFIX_SET` ハンドラからは常に `mode` 引数付きで `MatchPrefixList(set_mode)` を呼ぶため到達しない。よって `PREFIX_SET` の family 既定は YANG レイヤ (`default "IPv4"`) のみが提供する。
+
+### `action` 既定（参考 — PREFIX メンバ側）
+
+`MatchPrefix.__init__` および `MatchPrefixList.add_prefix` の Python デフォルト引数は `action='permit'`（L1622, L1682）。`PREFIX_SET` テーブル自身に `action` フィールドはなく、メンバ `PREFIX_LIST` / `PREFIX_NOSEQ_LIST` 側で持つため、ここでの既定はあくまで Python メソッド側のフォールバック。YANG default も `permit` で一致。
+
+[^fdef]: frrcfgd 実装: `sonic-net/sonic-buildimage`, `src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L1605-1700, L2894-2910. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py>
+
+<!-- /defaults -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
