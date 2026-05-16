@@ -280,6 +280,62 @@ CONFIG_DB から変更不可。
 詳細根拠は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-platform.md` を参照。
 <!-- /platform -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+`BGP_ALLOWED_PREFIXES` テーブル本体のフィールドには現れないが、`bgpcfgd` の `BGPAllowListMgr` と FRR Jinja テンプレ `policies.conf.j2` (general/) が**間接的に**読み出すエンティティ群。詳細根拠は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-cross-refs.md` を参照。
+
+### 値変換で生成される FRR community-list
+
+`default_action` (`permit` / `deny`) は CONFIG_DB に文字列で保存されるが、適用時に **community 値** に変換され FRR の community-list `allow_list_default_community` にマッチさせる:
+
+| `default_action` | 出力 community | 効果 |
+|---|---|---|
+| `permit` | `constants.bgp.allow_list.drop_community` (例: `5060:12345`) | 不一致 prefix に drop community を付与 |
+| `deny` | `no-export` | 不一致 prefix を AS 外へ広告しない |
+
+community-list `allow_list_default_community` は CONFIG_DB の `BGP_COMMUNITY_LIST` 経由ではなく **`policies.conf.j2:31-32` がテンプレ生成時に必ず定義** する点に注意。
+
+> evidence: `managers_allow_list.py:773-785`, `policies.conf.j2:31-32`
+
+### `DEVICE_METADATA` (CONFIG_DB)
+
+`policies.conf.j2` が `CONFIG_DB__DEVICE_METADATA['localhost']` の以下フィールドで route-map 生成を分岐:
+
+| フィールド | 役割 | evidence |
+|---|---|---|
+| `type` | `SpineRouter` / `UpperSpineRouter` のとき DEFAULT prefix 経路 (permit 12/13) を生成 | `policies.conf.j2:41,64,104-105` |
+| `subtype` | `UpstreamLC` で上記分岐をさらに絞る | `policies.conf.j2:41,64,104` |
+| `switch_type` | `chassis-packet` で `set tag` を切替 (`route_do_not_send_appdb_tag` ↔ `route_eligible_for_fallback_to_default_tag`) | `policies.conf.j2:48,71` |
+| `deployment_id` | **直接参照なし**。論理的に `BGP_ALLOWED_PREFIXES` のキー `<id>` と一致したとき自局向けポリシーになる (運用上の対応関係。minigraph 経由で両者が揃えられる) | `managers_allow_list.py:63-69` |
+
+> `DEVICE_METADATA.localhost.bgp_asn` は ALLOW_LIST 経路では参照されない (community/tag ベースで AS 番号非依存)。`policies.conf.j2` (general/) を `bgp_asn` で grep して 0 ヒット。
+
+### peer-group / neighbor — FRR running-config 経由の間接利用
+
+ALLOW_LIST 更新後に soft-clear すべき peer-group は、`__find_peer_group()` が **CONFIG_DB ではなく FRR の生 running-config テキスト** (`cfg_mgr.get_text()`) を正規表現で解析して抽出する (`managers_allow_list.py:686-697`)。命名規約 `ALLOW_LIST_DEPLOYMENT_ID_%d_(NEIGHBOR_%s_)?V<af>` で route-map call を逆引きする。
+
+| エンティティ | 関係 | evidence |
+|---|---|---|
+| `BGP_PEER_GROUP` | **直接参照なし**。FRR running-config 経由で間接利用 | `managers_allow_list.py:601-607,686-697` |
+| `BGP_NEIGHBOR` | 同上 (peer-group が neighbor に紐付くため間接) | 同上 |
+
+### `BGP_GLOBALS` (隣接テーブル・直接参照なし)
+
+`managers_allow_list.py` および ALLOW_LIST 経路の `policies.conf.j2` 両方を `BGP_GLOBALS` で grep して **0 ヒット**。ALLOW_LIST は peer-group / route-map レイヤで完結するため `BGP_GLOBALS` への依存はない。隣接リファレンスとして関連付けるに留める。
+
+### `constants.yml` (CONFIG_DB 外部依存)
+
+| キー | 用途 | evidence |
+|---|---|---|
+| `bgp.allow_list.enabled` | 機能 ON/OFF (false で全 skip) | `managers_allow_list.py:699-707` |
+| `bgp.allow_list.default_action` | `default_action` 省略時の fallback | `managers_allow_list.py:773-785` |
+| `bgp.allow_list.drop_community` | `permit` の community 変換先 | `managers_allow_list.py:780`, `policies.conf.j2:25,28,32` |
+| `bgp.allow_list.default_pl_rules.{v4,v6}` | prefix-list 先頭 prepend | `managers_allow_list.py:265,709-723` |
+| `bgp.allow_list.prefix_match_tag` | route-map `set tag` 行生成 | `managers_allow_list.py:652-664` |
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
