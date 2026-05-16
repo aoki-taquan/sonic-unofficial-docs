@@ -250,6 +250,45 @@ VRF が `"default"` の場合は key = `nbr`、それ以外は `vrf + "|" + nbr`
 | `"show bgp summary json"` | vtysh 経由で BGP ネイバー状態を取得するコマンド | `bgpmon.py:80` |
 <!-- /constants -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D — BGPPeerMgrBase)
+
+`bgpcfgd` の `BGPPeerMgrBase` が `BGP_PEER_CONFIGURED_TABLE` を書き込む際の失敗・retry 分岐を示す[^6]。
+
+### FRR push 結果は非同期 — `apply_op` は常に `True` を返す
+
+`BGPPeerMgrBase.apply_op()` (L494–508) は `cfg_mgr.push(cmd)` でコマンドをキューに入れるだけで、FRR 側の実行結果を確認しない。返値は**常に `True`**。FRR がコマンドを拒否してもハンドラは成功扱いとなり、`BGP_PEER_CONFIGURED_TABLE` への書き込みが行われる。エラーは FRR ログにのみ現れ、**retry なし**。
+
+### `add_peer` — テンプレートレンダリング失敗 → STATE_DB 未書き込み
+
+`add_peer()` でのレンダリング例外 (L229–234) は早期 `return True` を起こし、`apply_op`・`self.peers.add(key)`・`update_state_db` のすべてがスキップされる。**`BGP_PEER_CONFIGURED_TABLE` への書き込みなし**。subscriber が entry を erase するため **retry なし**。テンプレートが `None` を返す場合も同様のスキップが発生する (L235)。
+
+### `add_peer` — `update_state_db` 例外 → FRR 投入済みだが STATE_DB 未書き込み
+
+`add_peer()` は `self.peers.add(key)` の後に `update_state_db()` を呼ぶが、その戻り値を確認しない。STATE_DB への接続・書き込みが例外を投げた場合 (L302–304)、FRR には設定が投入済みで `self.peers` にも登録済みなのに **`BGP_PEER_CONFIGURED_TABLE` への書き込みなし**。コントローラは設定完了を検知できない。**retry なし**（次回 SET は `update_peer` ルートに入る）。
+
+### `del_handler` — peer 未登録時は STATE_DB エントリを削除しない
+
+`del_handler()` は `self.peers` に key が存在しない場合に早期 return する (L453–455)。過去に `update_state_db("SET")` が成功していた場合でも **`BGP_PEER_CONFIGURED_TABLE` のエントリが残存**し、CONFIG_DB から DELETE 済みなのにコントローラが「設定済み」と誤認し続けるリスクがある。**retry なし**。
+
+### DEL 処理の順序乖離 — `update_state_db` 例外時に peers 残存
+
+`del_handler()` の成功パスでは `apply_op` → `update_state_db("DEL")` → `peers.remove()` の順で処理される。`update_state_db` が例外を投げた場合 `peers.remove()` に到達せず peer が `self.peers` に残存し、次の DEL イベントで同じ `no neighbor` コマンドが再び FRR に送られる（二重削除コマンドリスク）。STATE_DB 側には DEL 時に存在チェックがあり (L292–297)、エントリ不在の場合は警告ログのみでスキップする。
+
+### 失敗パスまとめ
+
+| トリガー | FRR 投入 | `BGP_PEER_CONFIGURED_TABLE` | retry |
+|---------|---------|----------------------------|-------|
+| FRR push 非同期失敗 | 不明（非同期） | 書き込みあり（乖離） | なし |
+| テンプレートレンダリング例外 (add) | なし | 書き込みなし | なし |
+| テンプレート戻り値 None (add) | なし | 書き込みなし | なし |
+| STATE_DB 書き込み例外 (add) | あり | 書き込みなし | なし |
+| del 時 peers 未登録 | なし | 削除されず残存 | なし |
+| del 時 `update_state_db` 例外 | 投入済み | 削除されず（二重削除リスク） | なし |
+
+デーモン再起動時に `load_peers()` が FRR 現状を読み直すことが唯一の reconciliation 手段。
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
@@ -372,6 +411,8 @@ STATE_DB `BGP_PEER_CONFIGURED_TABLE` への書き込みは `BGPPeerMgrBase.updat
 [^4]: `sonic-net/SONiC/doc/BGP/Bgpcfgd-dyn-peer-modification-support.md` (BGP_PEER_CONFIGURED_TABLE スキーマ定義, §2.2). <https://github.com/sonic-net/SONiC/blob/master/doc/BGP/Bgpcfgd-dyn-peer-modification-support.md>
 
 [^5]: `sonic-swss-common/common/schema.h` (L437 STATE_BGP_TABLE_NAME, L511 STATE_BGP_PEER_CONFIGURED_TABLE_NAME). <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
+
+[^6]: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` (L229–243 add_peer テンプレート失敗分岐, L271–304 update_state_db 例外処理, L446–492 del_handler 失敗・順序乖離, L494–508 apply_op 常時 True). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py>
 
 ## 確認コマンド
 
