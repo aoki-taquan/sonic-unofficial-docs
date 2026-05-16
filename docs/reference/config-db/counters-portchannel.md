@@ -144,6 +144,91 @@ COUNTERS_DB にスキーマを定義する YANG は存在しない（orchagent �
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-ordering.md`
+
+### COUNTERS_LAG_NAME_MAP の書込み順序
+
+`portsorch` が `APP_LAG_TABLE_NAME`（`teamd` → `intfmgrd` → `orchagent`）からの SET イベントを受けて `doLagTask()` → `addLag()` を呼び出す。
+
+```
+[前提] allPortsReady() == true（全物理ポート初期化完了）   # portsorch.cpp:6513-6514
+  ↓
+doLagTask() → addLag(alias, lag_id, switch_id)             # portsorch.cpp:6529, 7941
+  ↓
+sai_lag_api->create_lag()                                  # portsorch.cpp:7994
+  ↓
+m_counterLagTable->set("", fields)                         # portsorch.cpp:8022
+  → COUNTERS_DB COUNTERS_LAG_NAME_MAP に <alias> → <lag_oid> を書き込み
+```
+
+**全物理ポートの初期化完了（PortInitDone）が LAG カウンタ登録より前に必要**。
+`allPortsReady()` = `m_initDone && m_pendingPortSet.empty()` (`portsorch.cpp:1685-1688`)。
+LAG 設定が PortInitDone 前に届いた場合、`doLagTask()` はスキップされ PortInitDone 受信後に自動処理される。<!-- evidence: portsorch.cpp L6513-6517 -->
+
+削除時: `removeLag()` が SAI DEL 後に `m_counterLagTable->hdel("")` で即時削除する (`portsorch.cpp:8045+`)。
+
+### COUNTERS_RIF_NAME_MAP の書込み順序
+
+RIF カウンタ登録は 2 段階の遅延登録（`m_rifsToAdd` キュー＋タイマー）で行われる。
+
+```
+[step 1] intfsorch::doTask(Consumer)              # intfsorch.cpp:661
+  前提: allPortsReady() == true                   # intfsorch.cpp:665
+  前提: gPortsOrch->getPort(alias, port) が成功
+        （portsorch が PORTCHANNEL を先に処理し m_portList に登録済み）
+                                                  # intfsorch.cpp:905, 922-924
+  ↓
+  setIntf() → create_router_interface()           # intfsorch.cpp:1296
+  ↓
+  m_rifsToAdd.push_back(port)                     # intfsorch.cpp:1310
+  （RIF 作成済みだが FlexCounter 登録はまだ）
+
+[step 2] intfsorch::doTask(SelectableTimer)       # intfsorch.cpp:1598
+  ループで m_rifsToAdd を走査
+  ↓
+  m_vidToRidTable->hget("", id, value) が成功
+  （ASIC_DB の VID→RID マッピング確定まで 1 s 周期で再試行）
+  ↓
+  addRifToFlexCounter(id, alias, type)            # intfsorch.cpp:1630
+  → m_rifNameTable->set()
+     = COUNTERS_DB COUNTERS_RIF_NAME_MAP に <alias> → <rif_oid> を書き込み
+```
+
+### 依存グラフ
+
+```
+CONFIG_DB PORTCHANNEL
+  ↓ teamd → intfmgrd → APP_DB APP_LAG_TABLE_NAME
+portsorch::doLagTask()            [前提: allPortsReady()]
+  → sai_lag_api::create_lag()
+  → COUNTERS_DB COUNTERS_LAG_NAME_MAP  ← LAG OID 登録
+
+CONFIG_DB PORTCHANNEL_INTERFACE
+  ↓ intfmgrd → APP_DB INTF_TABLE_NAME
+intfsorch::doTask(Consumer)       [前提: allPortsReady() + LAG が m_portList に存在]
+  → create_router_interface()
+  → m_rifsToAdd.push_back()
+  ↓ (タイマー、ASIC_DB VID→RID 確定後)
+intfsorch::doTask(SelectableTimer)
+  → addRifToFlexCounter()
+  → COUNTERS_DB COUNTERS_RIF_NAME_MAP  ← RIF OID 登録
+  ↓
+FlexCounter (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP)  → COUNTERS:<rif_oid>
+```
+
+### 書込み順序違反時の挙動
+
+| 違反パターン | 結果 |
+|---|---|
+| `PORTCHANNEL_INTERFACE` が `PORTCHANNEL` より先に設定された場合 | `intfsorch` が `getPort()` 失敗 → `it++` で retry。`PORTCHANNEL` 処理完了後の次サイクルで自動回復 |
+| PortInitDone 前に LAG 設定が届いた場合 | `allPortsReady()` = false → `doLagTask()` スキップ。PortInitDone 受信後に自動処理 |
+| ASIC_DB VID→RID 未確定時 | `m_rifsToAdd` にキューイング、タイマー周期（約 1 s）ごとに再試行 |
+
+<!-- /ordering -->
+
 ## 運用ヒント
 
 ```bash
