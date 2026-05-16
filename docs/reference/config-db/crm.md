@@ -196,11 +196,99 @@ crm show resources all
 - `init_cfg.json.j2` にデフォルト CRM 閾値が定義されている (`CRM.Config.*`)
 
 ### ハードコードデフォルト
-- なし
+
+`orchagent/crmorch.cpp` のプリプロセッサ定数として以下がハードコードされている:
+
+| 定数名 | 値 | 意味 |
+|-------|----|------|
+| `CRM_POLLING_INTERVAL_DEFAULT` | `300` (= 5 * 60) | デフォルト polling 間隔 [秒] |
+| `CRM_THRESHOLD_TYPE_DEFAULT` | `CRM_PERCENTAGE` | デフォルト閾値タイプ (percentage) |
+| `CRM_THRESHOLD_LOW_DEFAULT` | `70` | デフォルト低閾値 [%] |
+| `CRM_THRESHOLD_HIGH_DEFAULT` | `85` | デフォルト高閾値 [%] |
+| `CRM_EXCEEDED_MSG_MAX` | `10` | 閾値超過メッセージ送出の上限回数 |
+| `CRM_ACL_RESOURCE_COUNT` | `256` | ACL リソース初期確保数 |
+
+これらの値は `CrmOrch` コンストラクタ (`crmorch.cpp:398-410`) で各リソースの初期 `CrmResourceEntry` に適用される。CONFIG_DB に対応フィールドが存在しない限り変更不可。
 
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/crmorch.cpp`
+
+### プリプロセッサ定数
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `CRM_POLLING_INTERVAL_DEFAULT` | `300` (5×60 秒) | `CrmOrch` 起動時のデフォルト polling 間隔。CONFIG_DB に `polling_interval` が書かれていない限りこの値が使われる。`evidence: crmorch.cpp:12,402,406` |
+| `CRM_THRESHOLD_TYPE_DEFAULT` | `CrmThresholdType::CRM_PERCENTAGE` | 全リソースの初期閾値タイプ。CONFIG_DB 未設定時は percentage モードで動作。`evidence: crmorch.cpp:13,410` |
+| `CRM_THRESHOLD_LOW_DEFAULT` | `70` | 全リソースの初期 low threshold [%]。`evidence: crmorch.cpp:14,410` |
+| `CRM_THRESHOLD_HIGH_DEFAULT` | `85` | 全リソースの初期 high threshold [%]。`evidence: crmorch.cpp:15,410` |
+| `CRM_EXCEEDED_MSG_MAX` | `10` | 閾値超過通知の最大送出回数（連続アラート抑制）。`evidence: crmorch.cpp:16` |
+| `CRM_ACL_RESOURCE_COUNT` | `256` | ACL リソースマップの初期確保エントリ数。`evidence: crmorch.cpp:17` |
+
+### resource タイプ enum (CrmResourceType)
+
+`crmResTypeNameMap` (crmorch.cpp:28-72) で定義される全リソース識別子:
+
+| CrmResourceType 値 | CONFIG_DB キー prefix |
+|--------------------|-----------------------|
+| `CRM_IPV4_ROUTE` | `ipv4_route` |
+| `CRM_IPV6_ROUTE` | `ipv6_route` |
+| `CRM_IPV4_NEXTHOP` | `ipv4_nexthop` |
+| `CRM_IPV6_NEXTHOP` | `ipv6_nexthop` |
+| `CRM_IPV4_NEIGHBOR` | `ipv4_neighbor` |
+| `CRM_IPV6_NEIGHBOR` | `ipv6_neighbor` |
+| `CRM_NEXTHOP_GROUP_MEMBER` | `nexthop_group_member` |
+| `CRM_NEXTHOP_GROUP` | `nexthop_group` |
+| `CRM_ACL_TABLE` | `acl_table` |
+| `CRM_ACL_GROUP` | `acl_group` |
+| `CRM_ACL_ENTRY` | `acl_entry` |
+| `CRM_ACL_COUNTER` | `acl_counter` |
+| `CRM_FDB_ENTRY` | `fdb_entry` |
+| `CRM_IPMC_ENTRY` | `ipmc_entry` |
+| `CRM_SNAT_ENTRY` | `snat_entry` |
+| `CRM_DNAT_ENTRY` | `dnat_entry` |
+| `CRM_MPLS_INSEG` | `mpls_inseg` |
+| `CRM_MPLS_NEXTHOP` | `mpls_nexthop` |
+| `CRM_SRV6_MY_SID_ENTRY` | `srv6_my_sid_entry` |
+| `CRM_SRV6_NEXTHOP` | `srv6_nexthop` |
+| `CRM_NEXTHOP_GROUP_MAP` | `nexthop_group_map` |
+| `CRM_EXT_TABLE` | `extension_table` |
+| `CRM_DASH_VNET` | `dash_vnet` |
+| `CRM_DASH_ENI` | `dash_eni` |
+| `CRM_DASH_ENI_ETHER_ADDRESS_MAP` | `dash_eni_ether_address_map` |
+| `CRM_DASH_IPV4_INBOUND_ROUTING` | `dash_ipv4_inbound_routing` |
+| `CRM_DASH_IPV6_INBOUND_ROUTING` | `dash_ipv6_inbound_routing` |
+| `CRM_DASH_IPV4_OUTBOUND_ROUTING` | `dash_ipv4_outbound_routing` |
+| `CRM_DASH_IPV6_OUTBOUND_ROUTING` | `dash_ipv6_outbound_routing` |
+| `CRM_DASH_IPV4_PA_VALIDATION` | `dash_ipv4_pa_validation` |
+| `CRM_DASH_IPV6_PA_VALIDATION` | `dash_ipv6_pa_validation` |
+| `CRM_DASH_IPV4_OUTBOUND_CA_TO_PA` | `dash_ipv4_outbound_ca_to_pa` |
+| `CRM_DASH_IPV6_OUTBOUND_CA_TO_PA` | `dash_ipv6_outbound_ca_to_pa` |
+| `CRM_DASH_IPV4_ACL_GROUP` | `dash_ipv4_acl_group` |
+| `CRM_DASH_IPV6_ACL_GROUP` | `dash_ipv6_acl_group` |
+| `CRM_DASH_IPV4_ACL_RULE` | `dash_ipv4_acl_rule` |
+| `CRM_DASH_IPV6_ACL_RULE` | `dash_ipv6_acl_rule` |
+| `CRM_DASH_IPV4_METER_POLICY` | `dash_ipv4_meter_policy` |
+| `CRM_DASH_IPV4_METER_RULE` | `dash_ipv4_meter_rule` |
+| `CRM_DASH_IPV6_METER_POLICY` | `dash_ipv6_meter_policy` |
+| `CRM_DASH_IPV6_METER_RULE` | `dash_ipv6_meter_rule` |
+| `CRM_TWAMP_ENTRY` | `twamp_entry` |
+
+### CrmThresholdType enum
+
+| 値 | CONFIG_DB 文字列 | 説明 |
+|----|-----------------|------|
+| `CRM_PERCENTAGE` | `"percentage"` | 使用率 % で閾値判定（デフォルト） |
+| `CRM_USED` | `"used"` | 使用エントリ数の絶対値で判定 |
+| `CRM_FREE` | `"free"` | 空きエントリ数の絶対値で判定 |
+
+`evidence: crmorch.cpp:299-303`
+<!-- /constants -->
 
 
 <!-- derivation -->

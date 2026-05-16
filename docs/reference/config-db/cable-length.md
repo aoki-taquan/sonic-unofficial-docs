@@ -267,6 +267,59 @@ SAI buffer API → チップ PG headroom 設定
 
 <!-- /pubsub -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/cable-length-ordering.md`
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | ソース |
+|---|---|---|
+| `PORT` (`speed` フィールド) | `buffermgrdyn.handleCableLenTable()` が `effectiveSpeed.empty()` を確認し、空の場合は WARN ログを出しリトライなしで中断する。`buffermgr.doCableTask()` も `doSpeedUpdateTask()` 内で `m_speedLookup[port]` を参照するため speed 未着では不正キーになる | `buffermgrdyn.cpp:2155-2159`, `buffermgr.cpp:101-109` |
+| `PORT_QOS_MAP` (`pfc_enable`) | `buffermgr.doSpeedUpdateTask()` が `m_portStatusLookup.count(port) == 0` で `task_need_retry` を返す。PORT_QOS_MAP が未着だと CABLE_LENGTH 通知がクリアされ、PORT_QOS_MAP 着信時に自動再処理される（static モードのみ） | `buffermgr.cpp:165-178` |
+| `BUFFER_POOL` (`ingress_lossless_pool`) | `buffermgrdyn.allocateProfile()` が `m_bufferPoolReady == false` の場合に `task_need_retry` を返す。BUFFER_POOL 確立後にリトライキューから自動再処理（dynamic モードのみ） | `buffermgrdyn.cpp:978` |
+| `PortInitDone` (STATE_DB / APPL_DB) | `m_portInitDone = false` の間はポートが PORT_INITIALIZING 状態に留まり、`refreshPgsForPort()` で PORT_READY チェックが通らず headroom 計算がスキップされる（dynamic モードのみ） | `buffermgrdyn.cpp:826-856`, `buffermgrdyn.cpp:1485-1487` |
+
+!!! warning "speed 未設定はリトライなし（dynamic モード）"
+    `buffermgrdyn` では speed が未設定の状態で `CABLE_LENGTH` を書いても headroom 計算はスキップされ、
+    **リトライキューに残らない**。speed が後着した際に `handlePortTable()` から再処理されるが、
+    speed 未着のまま `CABLE_LENGTH` だけ先に書いても lossless PG は設定されない。
+
+### テーブル出力方向
+
+`CABLE_LENGTH` は **上流テーブル** であり、`BUFFER_PG` / `BUFFER_PROFILE` は下流（自動生成）テーブルである。
+`buffermgrdyn` は speed・cable_length・mtu が揃った時点で `refreshPgsForPort()` → `allocateProfile()` を呼び、
+`APPL_DB.BUFFER_PG` と `APPL_DB.BUFFER_PROFILE` を自動生成・上書きする。
+dynamic モードでは `BUFFER_PG` を手動書き込みすることは非推奨。
+
+### PORT admin down 時の挙動
+
+PORT が admin down 状態では `refreshPgsForPort()` を呼ばない (`buffermgrdyn.cpp:1454-1456`)。
+admin down ポートへの `CABLE_LENGTH` 更新は headroom に反映されない（admin up になった時点で再処理）。
+
+### 起動時シーケンス (dynamic モード)
+
+```
+BUFFER_POOL (ingress_lossless_pool) 設定
+  ↓
+PORT テーブル (speed, mtu) 設定 → portsyncd が PortInitDone を APPL_DB に書き込む
+  ↓
+m_portInitDone = true → buffermgrdyn がバッファプールサイズ更新開始
+  ↓
+CABLE_LENGTH エントリを書き込む
+  ↓
+handleCableLenTable() → refreshPgsForPort() → allocateProfile()
+  ↓
+APPL_DB.BUFFER_PROFILE / BUFFER_PG 生成 → bufferorch → SAI buffer API
+```
+
+実運用では `config qos reload` と `config load_minigraph` が Jinja テンプレート
+(`buffers_config.j2`) から PORT / CABLE_LENGTH / BUFFER_POOL を一括生成するため、
+順序は sonic-cfggen が暗黙に担保する。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
@@ -290,3 +343,134 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 - `length` の YANG パターン (`[0-9]+m`) 違反値 → YANG バリデーションで拒否される (コード側 fallback なし)
 
 <!-- /defaults -->
+
+<!-- side-effects -->
+## 副次 DB 書込み (Phase F)
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgr.cpp, buffermgrdyn.cpp -->
+
+CABLE_LENGTH 更新が引き起こす **他テーブルへの書込み**を示す。書込み先はモードによって異なる。
+
+### static モード (buffermgr)
+
+`doCableTask()` → `doSpeedUpdateTask()` の呼び出しチェーンで CONFIG_DB へ直接書き込む。
+
+| 書込み先 DB | テーブル | 操作 | 条件 |
+|-----------|---------|------|------|
+| CONFIG_DB | `BUFFER_PROFILE` | `set(pg_lossless_<speed>_<cable>_profile)` | プロファイル未存在時のみ新規作成 (`buffermgr.cpp:274`) |
+| CONFIG_DB | `BUFFER_PG` | `set(<port>\|<pg>, {profile: ...})` | lossless PG が未設定の場合 (`buffermgr.cpp:305`) |
+| CONFIG_DB | `BUFFER_PG` | `del(<port>\|<pg>)` | admin-down (Mellanox/Barefoot) かつ default profile 一致時 (`buffermgr.cpp:224`) |
+
+- `length = "0m"` → early return、書込みなし (`buffermgr.cpp:159`)。
+- `length = "None"` → スキップ、書込みなし (`buffermgr.cpp:104`)。
+
+### dynamic モード (buffermgrdyn)
+
+`handleCableLenTable()` → `refreshPgsForPort()` → `allocateProfile()` の呼び出しチェーンで APPL_DB / STATE_DB へ書き込む。
+
+| 書込み先 DB | テーブル | 操作 | 条件 |
+|-----------|---------|------|------|
+| APPL_DB | `BUFFER_PROFILE_TABLE` | `set(pg_lossless_<speed>_<cable>_<mtu>_profile, xon/xoff/size/pool/threshold)` | 新規プロファイル計算時 (`buffermgrdyn.cpp:919`) |
+| STATE_DB | `BUFFER_PROFILE_TABLE` | `set(同名プロファイル, 同フィールド)` | APPL_DB 書込みと同時 (`buffermgrdyn.cpp:920`) |
+| APPL_DB | `BUFFER_PG_TABLE` | `set(<port>\|<pg>, {profile: <name>})` | headroom 計算成功後 (`buffermgrdyn.cpp:1568`) |
+| APPL_DB | `BUFFER_PG_TABLE` | `del(<port>\|<pg>)` | `cable_length == "0m"` かつ lossless PG 存在時 (`buffermgrdyn.cpp:1505`) |
+| APPL_DB | `BUFFER_PROFILE_TABLE` | `del(old_profile)` | 旧プロファイルの参照ポート数がゼロになった時 (`buffermgrdyn.cpp:1047`) |
+| STATE_DB | `BUFFER_PROFILE_TABLE` | `del(old_profile)` | 同上 (`buffermgrdyn.cpp:1049`) |
+| STATE_DB | `BUFFER_POOL_TABLE` | `set(ingress_lossless_pool, size/xoff)` | headroom 更新後に SHP サイズ再計算が発生した場合 (`buffermgrdyn.cpp:887`) |
+
+!!! note "二重書込み"
+    `updateBufferProfileToDb()` は APPL_DB と STATE_DB の `BUFFER_PROFILE_TABLE` に同一内容を同時書込みする (`buffermgrdyn.cpp:919-920`)。`updateBufferPoolToDb()` も同様に `BUFFER_POOL_TABLE` を二重書込みする (`buffermgrdyn.cpp:885-887`)。
+
+!!! note "admin-down / mtu 未設定の例外"
+    - `PORT_ADMIN_DOWN` 状態では `refreshPgsForPort()` が early return → 書込みなし (`buffermgrdyn.cpp:1454-1458`)。
+    - mtu 未設定時は `DEFAULT_MTU_STR="9100"` で仮計算して書き込み、mtu 設定後に再計算・上書き (`buffermgrdyn.cpp:2174`)。
+
+<!-- /side-effects -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+CABLE_LENGTH テーブルの処理中に `buffermgr` / `buffermgrdyn` が暗黙的に参照する CONFIG_DB テーブルを示す。これらは CABLE_LENGTH テーブルの直接フィールドには現れないが、headroom 計算・処理経路・プロファイル生成に必須の依存関係を持つ。
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgr.cpp, buffermgrdyn.cpp -->
+
+### PORT テーブル (CONFIG_DB)
+
+- **参照箇所**: `buffermgr.cpp:23,544` / `buffermgrdyn.cpp:449,2266-2359`
+- **参照フィールド**: `speed`, `mtu`, `admin_status`, `lanes`, `autoneg`, `adv_speeds`
+- **依存性質**: 必須前提条件。CABLE_LENGTH 単体では headroom 計算を開始できず、PORT テーブルの `speed` が揃って初めて `refreshPgsForPort()` / `doSpeedUpdateTask()` が実行される。`admin_status=down` のポートは CABLE_LENGTH 更新を受けても計算をスキップ (`buffermgrdyn.cpp:2191-2194`)。
+
+### DEVICE_METADATA テーブル (CONFIG_DB)
+
+- **参照箇所**: `buffermgr.cpp:470` / `buffermgrdyn.cpp:41,87`
+- **参照フィールド**: `buffer_model`, `platform`
+- **依存性質**: 処理経路分岐。`buffer_model=dynamic` の場合 `buffermgr` は CABLE_LENGTH イベントを全スキップし `buffermgrdyn` が担当する。Mellanox プラットフォームでは `platform` フィールドで headroom 計算 Lua スクリプトを選択する (`buffermgrdyn.cpp:87-94`)。
+
+### BUFFER_POOL テーブル (CONFIG_DB)
+
+- **参照箇所**: `buffermgr.cpp:27,115,481` / `buffermgrdyn.cpp:443,2509`
+- **参照フィールド**: `mode`, `size`
+- **依存性質**: 制約チェック。CABLE_LENGTH 由来の headroom 計算後、`ingress_lossless_pool` の `mode` を `getPgPoolMode()` で参照し `BUFFER_PROFILE` の `dynamic_th` を設定する。dynamic モードでは SHP (Shared Headroom Pool) サイズとの整合性チェックにも使用される。
+
+### BUFFER_PROFILE テーブル (CONFIG_DB)
+
+- **参照箇所**: `buffermgr.cpp:25,248,487` / `buffermgrdyn.cpp:444,964-1001,2671`
+- **参照フィールド**: `pool`, `xon`, `xoff`, `size`, `dynamic_th`
+- **依存性質**: 読み書き双方向。CABLE_LENGTH 更新のたびに `pg_lossless_<speed>_<cable>_profile` 形式の BUFFER_PROFILE を自動生成・更新・削除する。ユーザ定義の headroom override プロファイルが CONFIG_DB.BUFFER_PROFILE に存在する場合はそちらを優先し、dynamic 自動生成と区別して管理する (`buffermgrdyn.cpp:2671`)。
+
+### 暗黙参照マトリクス
+
+| テーブル | 参照ファイル | 参照フィールド | 種別 |
+|---|---|---|---|
+| `PORT` | buffermgr.cpp, buffermgrdyn.cpp | `speed`, `mtu`, `admin_status`, `lanes` | 必須前提条件 |
+| `DEVICE_METADATA` | buffermgr.cpp, buffermgrdyn.cpp | `buffer_model`, `platform` | 処理経路分岐 |
+| `BUFFER_POOL` | buffermgr.cpp, buffermgrdyn.cpp | `mode`, `size` | 制約チェック |
+| `BUFFER_PROFILE` | buffermgr.cpp, buffermgrdyn.cpp | `pool`, `xon`, `xoff`, `size`, `dynamic_th` | 読み書き双方向 |
+
+<!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgr.cpp:37,206, cfgmgr/buffermgrdyn.cpp:68-93,504-522 -->
+
+### dynamic vs static での cable_length 使われ方の違い
+
+| 観点 | static モード (`buffermgr`) | dynamic モード (`buffermgrdyn`) |
+|------|----------------------------|---------------------------------|
+| headroom 計算方法 | `pg_profile_lookup.ini` (INI ファイル) を `(speed, cable)` キーで引く | ベンダー固有 Lua プラグイン (`buffer_headroom_<vendor>.lua`) をリアルタイム呼び出し |
+| プロファイル名 | `pg_lossless_<speed>_<cable>_profile` (固定) | `speed`・`cable`・`mtu`・`threshold`・`gearbox_model`・`lane_count` を組み合わせて動的生成 |
+| admin down 時の PG 削除 | **Mellanox / Barefoot のみ** (`buffermgr.cpp:206`) | 全ベンダー共通で `refreshPgsForPort` スキップ (`buffermgrdyn.cpp:2191-2194`) |
+| MTU 未設定 fallback | なし (INI はMTU非依存) | `DEFAULT_MTU_STR="9100"` で仮計算、MTU 設定時に再計算 (`buffermgrdyn.cpp:2174`) |
+
+### ASIC ベンダー別 cable length lookup の実装差
+
+**static モード — INI ファイル:**
+
+- `buffermgr.cpp:21` — コンストラクタが `pg_lookup_file` パスを受け取り `readPgProfileLookupFile()` で読み込む
+- `buffermgr.cpp:37` — `ASIC_VENDOR` 環境変数を `m_platform` にセット
+- INI の数値内容はプラットフォームパッケージ (HWSKU) が提供。Broadcom / Mellanox / Marvel 各 ASIC で異なる
+- admin down ポートの PG 削除は `m_platform == "mellanox" || m_platform == "barefoot"` の場合のみ (`buffermgr.cpp:206`)
+
+**dynamic モード — Lua プラグイン:**
+
+- `buffermgrdyn.cpp:68` — `ASIC_VENDOR` 環境変数からプラットフォームを取得
+- `buffermgrdyn.cpp:76-78` — `buffer_headroom_<vendor>.lua` / `buffer_pool_<vendor>.lua` / `buffer_check_headroom_<vendor>.lua` の 3 本をベンダー固有で選択
+- **Mellanox 固有の追加分岐**:
+  - `buffermgrdyn.cpp:85-93` — Mellanox のみ `DEVICE_METADATA.platform` からモデル番号 (SN-XXXX) を抽出し `m_model_number` に保存
+  - `buffermgrdyn.cpp:504-522` — `getDynamicProfileName()` 内で Mellanox かつ 8 レーンポートの場合、プロファイル名に `_8lane` サフィックスを付加
+    - 条件: `lane_count == 8` かつ `(SN4xxx 系で speed != 400000) || (SN5xxx 系で speed != 800000)`
+    - 例: 100G 8 レーン → `pg_lossless_100000_5m_8lane_profile`、4 レーン → `pg_lossless_100000_5m_profile`
+    - 理由: 8 レーンポートは xon 値が他レーン数の 2 倍になるためプロファイルを分離する必要がある
+
+### プロファイル名生成パターンまとめ
+
+```
+static:  pg_lossless_<speed>_<cable>_profile
+         (INI テーブルから数値引き; ベンダー依存 INI ファイル)
+
+dynamic: pg_lossless_<speed>_<cable>[_mtu<N>][_th<T>][_<gearbox>][_8lane]_profile
+         (_8lane は Mellanox 8 レーンポートのみ付加)
+```
+
+<!-- /platform -->
