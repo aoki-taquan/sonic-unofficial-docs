@@ -302,4 +302,57 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 - なし
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### macsecmgr.cpp 固定値
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `AES_LEN_128_BYTE` | `66` | GCM-AES-128 / GCM-AES-XPN-128 の CAK hex 文字数チェック値 | `cfgmgr/macsecmgr.cpp:48` |
+| `AES_LEN_256_BYTE` | `130` | GCM-AES-256 / GCM-AES-XPN-256 の CAK hex 文字数チェック値 | `cfgmgr/macsecmgr.cpp:49` |
+| `rekey_period` デフォルト | `0` | フィールド未設定時のフォールバック値。0 = 能動的 SAK 再生成なし | `cfgmgr/macsecmgr.cpp:377-379` |
+| `RETRY_TIME` | `30` (回) | wpa_supplicant 起動失敗時の最大リトライ回数 | `cfgmgr/macsecmgr.cpp:32` |
+| `RETRY_INTERVAL` | `100` ms | リトライ間隔 | `cfgmgr/macsecmgr.cpp:35` |
+| `WPA_SUPPLICANT_CMD` | `"/sbin/wpa_supplicant"` | wpa_supplicant バイナリパス (ハードコード) | `cfgmgr/macsecmgr.cpp:27` |
+| `WPA_CONF` | `"/etc/wpa_supplicant.conf"` | wpa_supplicant 設定ファイルパス | `cfgmgr/macsecmgr.cpp:29` |
+| `SOCK_DIR` | `"/var/run/"` | wpa_supplicant ソケットディレクトリ | `cfgmgr/macsecmgr.cpp:30` |
+
+### cipher_suite 文字列 → SAI enum マッピング
+
+| CONFIG_DB 文字列 | CAK hex 長 | 備考 |
+|----------------|-----------|------|
+| `GCM-AES-128`（デフォルト） | 66 文字 | `AES_LEN_128_BYTE` |
+| `GCM-AES-256` | 130 文字 | `AES_LEN_256_BYTE` |
+| `GCM-AES-XPN-128` | 66 文字 | XPN = Extended Packet Numbering |
+| `GCM-AES-XPN-256` | 130 文字 | XPN = Extended Packet Numbering |
+| その他 | — | `throw std::invalid_argument("Invalid cipher_suite : ...")` |
+
+<!-- evidence: cfgmgr/macsecmgr.cpp:69-91, 113-135 -->
+
+### macsecorch.cpp 固定値
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `DEFAULT_CIPHER_SUITE` | `SAI_MACSEC_CIPHER_SUITE_GCM_AES_128` | 新規ポート初期化時のデフォルト cipher suite (`GCM-AES-128` と対応) | `orchagent/macsecorch.cpp:42` |
+| `DEFAULT_ENABLE_ENCRYPT` | `true` | 新規ポート初期化時の暗号化有効フラグ | `orchagent/macsecorch.cpp:40` |
+| `DEFAULT_SCI_IN_SECTAG` | `false` | 新規ポート初期化時の SCI in SecTAG フラグ | `orchagent/macsecorch.cpp:41` |
+| `MACSEC_STAT_XPN_POLLING_INTERVAL_MS` | `1000` ms | XPN cipher 使用時の SA 統計ポーリング間隔 | `orchagent/macsecorch.cpp:27` |
+| `MACSEC_STAT_POLLING_INTERVAL_MS` | `10000` ms | 通常 cipher 使用時の SA 統計ポーリング間隔 | `orchagent/macsecorch.cpp:28` |
+| `EAPOL_ETHER_TYPE` | `0x888E` | EAPOL フレーム識別用 EtherType (ACL バイパス) | `orchagent/macsecorch.cpp:25` |
+| `PAUSE_ETHER_TYPE` | `0x8808` | PAUSE フレーム識別用 EtherType (ACL バイパス) | `orchagent/macsecorch.cpp:26` |
+| `AVAILABLE_ACL_PRIORITIES_LIMITATION` | `32` | MACsec ACL に使用可能な優先度数の上限 | `orchagent/macsecorch.cpp:24` |
+| `PFC_MODE_DEFAULT` | `"bypass"` | PFC フレームの MACsec 処理デフォルトモード | `orchagent/macsecorch.cpp:32` |
+
+### PFC mode 文字列定数
+
+| 値 | 意味 |
+|----|------|
+| `"bypass"`（デフォルト） | PFC フレームを MACsec 暗号化対象から除外 |
+| `"encrypt"` | PFC フレームも MACsec 暗号化 |
+| `"strict_encrypt"` | MACsec 有効ポートでは PFC を必ず暗号化 |
+
+<!-- evidence: orchagent/macsecorch.cpp:29-32 -->
+<!-- /constants -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
