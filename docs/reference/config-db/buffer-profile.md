@@ -431,6 +431,61 @@ VOQ chassis での主な差分は `BUFFER_QUEUE` 処理（system port ベース�
 | trim ASIC 非対応 | `packet_discard_action=trim` → `task_ignore` | `bufferorch.cpp` L760-776 |
 | VOQ chassis | BUFFER_PROFILE 処理変化なし | `bufferorch.cpp` L2079 |
 <!-- /platform -->
+
+<!-- ordering -->
+## 書込順依存 (Task F Phase B)
+
+BUFFER_PROFILE エントリを正しく APPL_DB へ転送し SAI buffer profile を生成するには、以下のテーブルが先に登録されている必要がある。
+
+### BUFFER_POOL 先行必須（buffermgrdyn — 動的バッファモデル）
+
+`updateBufferProfileToDb()` の冒頭で `m_bufferPoolReady` フラグを確認する。
+`m_bufferPoolReady == false` の場合、APPL_DB への書き込みを行わず `m_bufferObjectsPending = true` をセットして即座にリターンする。
+BUFFER_POOL が APPL_DB に書き込まれ `m_bufferPoolReady = true` がセットされるまで、BUFFER_PROFILE も APPL_DB に転送されない。
+
+| 依存テーブル | 理由 | 違反時の挙動 | evidence |
+|---|---|---|---|
+| `BUFFER_POOL` | `updateBufferProfileToDb()` 冒頭の `m_bufferPoolReady` フラグチェック | APPL_DB 書き込みをデファー（サイレント保留）。pool 登録後に `handlePendingBufferObjects()` が一括適用 | `buffermgrdyn.cpp:892-896` |
+| `BUFFER_POOL`（内部 lookup） | `handleBufferProfileTable()` が `m_bufferPoolLookup` でプール名を解決。未登録なら `task_need_retry` | `task_need_retry` → Consumer が再試行 | `buffermgrdyn.cpp:2705-2715` |
+
+### SAI create-only 制約（orchagent — processBufferProfile）
+
+`BUFFER_POOL` が先に APPL_DB に存在しない場合、`processBufferProfile()` は `resolveFieldRefValue()` でプール参照を解決できず `task_need_retry` を返す。
+さらに、**一度 SAI buffer profile を作成した後は `pool` および `threshold_mode`（`SAI_BUFFER_POOL_THRESHOLD_MODE_DYNAMIC` / `_STATIC`）は create-only 属性のため変更不可**。既存オブジェクトへの `pool` SET はサイレントにスキップされる。
+
+| 制約 | 詳細 | evidence |
+|---|---|---|
+| `pool` は create-only | 既存 SAI buffer profile の `pool` フィールド変更は**スキップ**（エラーなし） | `bufferorch.cpp:654-659` |
+| `threshold_mode` は create-only | `THRESHOLD_MODE` の SAI SET をスキップ（`SHARED_DYNAMIC_TH` / `SHARED_STATIC_TH` 値のみ試行） | `bufferorch.cpp:692-706, 710-724` |
+| `pool` 未到着 → `task_need_retry` | `ref_resolve_status::not_resolved` → `task_need_retry` | `bufferorch.cpp:641-651` |
+
+### Lua plugin 実行順序（動的バッファモデルのみ）
+
+`buffer_pool_<vendor>.lua` が `BUFFER_POOL` のサイズを計算して APPL_DB に書き込むのが先。
+その後 `buffer_headroom_<vendor>.lua` が `BUFFER_PROFILE` のポート速度・ケーブル長から headroom を計算する。
+どちらも `m_bufferPoolReady == true` となってから実行される。
+MMU サイズ（`STATE_DB.BUFFER_MAX_PARAM_TABLE.global.mmu_size`）が未到着の場合、pool lua plugin は暫定値 0 を返し、到着後に再計算する。
+
+| 順序 | 処理 | evidence |
+|---|---|---|
+| 1 | `buffer_pool_<vendor>.lua` 実行 → BUFFER_POOL サイズ確定 → `m_bufferPoolReady = true` | `buffermgrdyn.cpp:667-819` |
+| 2 | `buffer_headroom_<vendor>.lua` 実行 → BUFFER_PROFILE の `size`/`xon`/`xoff` 確定 | `buffermgrdyn.cpp:605-625, 989-1001` |
+| 3 | `handlePendingBufferObjects()` が pending 状態のすべての BUFFER_PROFILE / PG / Queue を APPL_DB に一括適用 | `buffermgrdyn.cpp:3644-3690` |
+
+### zero profile 適用順序
+
+zero buffer pool / zero buffer profile はポートの reserved buffer 解放（admin-down ポートの未使用バッファ回収）に使用される。
+JSON ファイル内の順序通りに APPL_DB へ書き込まれ、**zero pool より zero profile が先に APPL_DB へ書き込まれる**。
+削除時は逆順（**zero profile を先に削除し、次に zero pool を削除**）でこの依存関係を尊重する。
+
+| フェーズ | 処理 | evidence |
+|---|---|---|
+| 起動時 | JSON 内の順序で zero pool → zero profile を APPL_DB に適用（ベンダー責任で依存順を保証） | `buffermgrdyn.cpp:236-237` |
+| 削除時 | zero profile を先に DEL → その後 zero pool を DEL | `buffermgrdyn.cpp:239, 408-431` |
+| 適用タイミング | cold/fast reboot: `m_bufferPoolReady` 後に 30 秒デファー（fast reboot 高速化）。warm reboot: 即時適用 | `buffermgrdyn.cpp:156-169` |
+
+詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-profile-ordering.md` を参照。
+<!-- /ordering -->
 <!-- constants -->
 ## ハードコード定数 (Task F Phase E)
 
