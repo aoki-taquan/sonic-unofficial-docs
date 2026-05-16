@@ -108,6 +108,108 @@ flowchart LR
 | PAC / 802.1X | `pac_authmgrcfg.cpp:64-76` | `"static"` |
 | fdbsyncd (自動学習) | APPL_DB 直接 (CONFIG_DB を経由しない) | `"dynamic"` |
 
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+`FdbOrch::doTask()` (`fdborch.cpp:707`) と `addFdbEntry()` (`fdborch.cpp:1277`) のコード精読から、以下の順序依存を確認した。
+
+### 1. allPortsReady() ガード（hard block）
+
+```cpp
+// fdborch.cpp:711-714
+if (!m_portsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+PortsOrch が全ポートを初期化完了するまで `doTask()` は即 return する。FDB エントリは **キューに残り**、ポート初期化完了後に一括処理される。`doTask(NotificationConsumer&)` も同等のガード (`fdborch.cpp:927`) を持つ。
+
+→ `PORT` テーブルの初期化完了が FDB 処理より**hard 先行必須**。
+
+### 2. VLAN 先行必須（VLAN OID 解決）
+
+```cpp
+// fdborch.cpp:739-760
+if (!m_portsOrch->getPort(keys[0], vlan))
+{
+    SWSS_LOG_INFO("Failed to locate %s", keys[0].c_str());
+    if (op == DEL_COMMAND) { ... erase ... }
+    else { it++; }  // SET: 待機ループ
+    continue;
+}
+```
+
+キーの `<VlanName>` が PortsOrch の VLAN テーブルに未登録の場合、SET は `it++` で待機ループに入り毎サイクル再試行される。`addFdbEntry()` (`fdborch.cpp:1291-1294`) でも同様に VLAN OID を再確認し、取得失敗時は `return false`。
+
+→ `VLAN|Vlan<id>` が VlanOrch に処理済み（SAI VLAN OID 確定）であることが FDB SET より**先行必須**（soft: 待機ループで自動調停）。
+
+### 3. PORT（ブリッジポート OID）先行
+
+```cpp
+// fdborch.cpp:1298-1305
+if (!m_portsOrch->getPort(port_name, port) || (port.m_bridge_port_id == SAI_NULL_OBJECT_ID))
+{
+    SWSS_LOG_INFO("Saving a fdb entry until port %s becomes active", port_name.c_str());
+    saved_fdb_entries[port_name].push_back({entry.mac, vlan.m_vlan_info.vlan_id, fdbData});
+    return true;
+}
+```
+
+`port` フィールドに指定したポートが PortsOrch 未登録またはブリッジポート OID 未確定の場合、エントリを `saved_fdb_entries` に退避して待機する。ポートが後から有効化されると `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` イベント経由 (`fdborch.cpp:661`) で saved エントリが自動再投入される (`fdborch.cpp:1264-1268`)。
+
+→ `port` フィールドのポートがブリッジポートとして確定済みであることが**推奨先行**（soft: 自動退避 + 再投入）。
+
+### 4. VLAN_MEMBER 先行必須（メンバーシップ確認）
+
+```cpp
+// fdborch.cpp:1313-1318
+if (!m_portsOrch->isVlanMember(vlan, port, end_point_ip))
+{
+    SWSS_LOG_INFO("Saving a fdb entry until port %s becomes vlan %s member", ...);
+    saved_fdb_entries[port_name].push_back({entry.mac, vlan.m_vlan_info.vlan_id, fdbData});
+    return true;
+}
+```
+
+ポートが指定 VLAN のメンバーでない場合も同様に `saved_fdb_entries` に退避。`SUBJECT_TYPE_VLAN_MEMBER_CHANGE` イベント (`fdborch.cpp:655`) で VLAN メンバー追加後に自動再投入される。
+
+→ `VLAN_MEMBER|Vlan<id>|<port>` が VlanOrch に処理済みであることが**推奨先行**（soft: 自動退避 + 再投入）。
+
+### 5. 推奨投入順序
+
+```
+PORT / PORTCHANNEL  (hard: allPortsReady ガード)
+  ↓
+VLAN                (soft: VLAN OID 待機ループ)
+  ↓
+VLAN_MEMBER         (soft: saved_fdb_entries 退避 + VLAN_MEMBER_CHANGE 再投入)
+  ↓
+FDB                 (SAI create_fdb_entry)
+```
+
+ステップ 3/4 は違反時に自動調停されるが、初期起動時の一括投入ではステップ通りの順序が最も効率的である。
+
+### 6. age out 動作順序
+
+- **static エントリ**: `SAI_FDB_EVENT_AGED` 受信時、ポートが VLAN メンバーに残っていれば SAI FDB エントリを即再作成 (`fdborch.cpp:463-483`)。VLAN メンバーでない場合は `saved_fdb_entries` に退避し、VLAN_MEMBER 再追加後に復元される。
+- **dynamic エントリ**: age event 受信後、内部キャッシュ (`m_entries`) と STATE_DB から削除。ハードウェアの MAC aging タイマーに従って削除される (`fdborch.cpp:534-543`)。
+- **MCLAG remote エントリ**: age event を無視し、SAI に `SAI_FDB_ENTRY_TYPE_STATIC` として再追加される (`fdborch.cpp:490-517`)。aging 対象外。
+- **PORT down 時 flush**: dynamic エントリのみが `flushFDBEntries()` でフラッシュされる。static エントリはポート down でも SAI から削除されない (`fdborch.cpp:1121-1127`)。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 強度 | 緩和策 |
+|---|----------|------|--------|
+| 1 | allPortsReady() 完了 → FDB doTask 実行 | hard | なし（PortsOrch 起動待ち） |
+| 2 | VLAN SAI OID 確定 → FDB SET | soft | 待機ループで自動再試行 |
+| 3 | PORT ブリッジポート OID 確定 → FDB SET | soft | saved_fdb_entries + PORT_OPER_STATE 再投入 |
+| 4 | VLAN_MEMBER 登録 → FDB SET | soft | saved_fdb_entries + VLAN_MEMBER_CHANGE 再投入 |
+| 5 | static age out: VLAN_MEMBER 再追加で SAI 復元 | 自動 | VLAN_MEMBER_CHANGE イベント |
+| 6 | PORT down: dynamic flush のみ、static は残存 | 挙動注意 | static は手動削除が必要 |
+
+<!-- /ordering -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`、`VLAN_MEMBER`
