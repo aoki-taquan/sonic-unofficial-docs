@@ -522,4 +522,71 @@ SAI `create_tunnel()` 成功後、`stateTunnelDecapTable` (STATE_DB `STATE_TUNNE
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+### H-1. `ecn_mode` / `encap_ecn_mode` — SAI create-only 属性（全プラットフォーム共通）
+
+`SAI_TUNNEL_ATTR_DECAP_ECN_MODE` と `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` は SAI 仕様上 **create-only** 属性である。この制約は Broadcom / Mellanox を問わず共通であり、`tunneldecaporch.cpp` で明示的にガードされる。
+
+```
+// tunneldecaporch.cpp L179
+SWSS_LOG_WARN("Skip setting ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_DECAP_ECN_MODE is create only");
+
+// tunneldecaporch.cpp L195
+SWSS_LOG_NOTICE("Skip setting encap_ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_ENCAP_ECN_MODE is create only");
+```
+
+既存トンネルへの `ecn_mode` / `encap_ecn_mode` 変更 SET は **SET 全体が無効化** (`valid=false`) され、他フィールドの変更も含めてすべて破棄される。変更には `TUNNEL|MuxTunnel0` DEL 後の再 SET が必要。
+
+### H-2. Dual-ToR QoS DSCP リマッピング — SAI capability 依存
+
+Dual-ToR (`DEVICE_METADATA.subtype = "DualToR"`) 環境では、以下の QoS リマッピングフィールドが利用される。これらに対応する SAI 属性は SAI spec 202012 以降に追加されたため、古い SAI 実装では `SAI_STATUS_NOT_SUPPORTED` が返る場合がある。
+
+| フィールド | SAI 属性 | 担当 orch | 備考 |
+|---|---|---|---|
+| `decap_dscp_to_tc_map` | `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` | tunneldecaporch | decap 時 DSCP→TC 再マッピング |
+| `decap_tc_to_pg_map` | `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` | tunneldecaporch | decap 時 TC→PG 再マッピング |
+| `encap_tc_to_dscp_map` | `SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP` | muxorch 経由 | encap 時 TC+Color→DSCP 書換 |
+| `encap_tc_to_queue_map` | `SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP` | muxorch 経由 | encap 時 TC→Queue 再マッピング |
+
+!!! note "encap 系マップは tunneldecaporch が SAI へ直接 push しない"
+    `encap_tc_to_dscp_map` / `encap_tc_to_queue_map` の OID は tunneldecaporch の内部キャッシュ (`tunnelTable`) に保持され、MuxOrch が `MUX_CABLE` 処理時に `TunnelDecapOrch::getQosMapId()` 経由で取得して自身の SAI 書き込みに利用する。
+
+!!! warning "dscp_mode=pipe が前提"
+    QoS リマッピングが有効に機能するのは `dscp_mode=pipe` のときのみ。`dscp_mode=uniform` では外側 DSCP が内側にコピーされるため、リマッピングの効果が相殺される。
+
+### H-3. Mellanox / Broadcom の明示的なコード分岐なし
+
+`tunneldecaporch.cpp` 内に `MLNX_PLATFORM_SUBSTRING` (`"mellanox"`) や `BRCM_PLATFORM_SUBSTRING` (`"broadcom"`) を参照するコード分岐は存在しない。プラットフォーム差は SAI API の戻り値（`SAI_STATUS_NOT_SUPPORTED` 等）でのみ現れる。
+
+### H-4. overlay RIF MTU のハードコード（全プラットフォーム固定）
+
+Overlay loopback ルータインターフェースの MTU は `OVERLAY_RIF_DEFAULT_MTU = 9100` でハードコードされており、CONFIG_DB から変更できない。Broadcom の最大 MTU 制約が 9100 以下の場合でも同値が SAI に送信される（`tunneldecaporch.cpp` L14, L750`）。
+
+### H-5. P2P / P2MP / MP2MP decap term — SAI capability 事前クエリなし
+
+`tunneldecaporch` は decap term type の SAI capability を事前クエリせず直接 `create_tunnel_term_table_entry()` を呼ぶ。
+
+- **P2P**: Dual-ToR MuxTunnel の decap terminator。`src_ip = PEER_SWITCH.address_ipv4`。
+- **P2MP**: `src_ip` 未設定時のデフォルト。ワイルドカード decap（全 IPinIP を受け入れ）。
+- **MP2MP**: Subnet decap (`IPINIP_SUBNET` / `IPINIP_SUBNET_V6`) 専用。`is_subnet_decap_term && term_type != MP2MP` はエラー（`tunneldecaporch.cpp` L446-448`）。
+
+非対応プラットフォームでは SAI エラーが返り、`handleSaiCreateStatus()` でタスク失敗として処理される（リトライなし）。
+
+### プラットフォーム差まとめ
+
+| 条件 | 影響フィールド | 挙動 | evidence |
+|---|---|---|---|
+| 全プラットフォーム共通 | `ecn_mode`, `encap_ecn_mode` | SAI create-only。既存トンネルへの変更 SET で SET 全体無効化 | `tunneldecaporch.cpp` L179, L195 |
+| SAI spec 202012 未満 | `decap_dscp_to_tc_map` 等 4 フィールド | QoS リマッピング SAI 属性が非サポートとなる可能性あり | SAI spec (202205 対象) |
+| 全プラットフォーム共通 | overlay RIF MTU | 固定値 9100 を SAI に送信。CONFIG_DB 変更不可 | `tunneldecaporch.cpp` L14, L750 |
+| 全プラットフォーム共通 | `ttl_mode`, `dscp_mode` | 既存トンネルへの変更は `set_tunnel_attribute()` 経由で可能。SAI 実装依存で失敗することもある | `tunneldecaporch.cpp` L1050 |
+| Dual-ToR 環境のみ | `encap_tc_to_dscp_map`, `encap_tc_to_queue_map` | MuxOrch 経由で SAI push。tunneldecaporch は内部キャッシュ保持のみ | `tunneldecaporch.cpp` L257, L272; `muxorch.cpp` L2367, L2374 |
+| 非対応 SAI 実装 | P2P/P2MP/MP2MP decap term | SAI create_tunnel_term_table_entry 失敗でリトライなし | `tunneldecaporch.cpp` L979 |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/ipinip-tunnel-platform.md`
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: ae9e20070353 -->
