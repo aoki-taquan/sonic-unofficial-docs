@@ -324,6 +324,48 @@ YANG に `default` なし。counterpoll CLI の表示上のソフトデフォル
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-utilities/counterpoll/main.py -->
+
+### warm-reboot 遅延定数
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `FLEX_COUNTER_DELAY_SEC` | `60` 秒 | warm-reboot 時のみ使用。`SelectableTimer` をこの秒数で起動し、期間中は全 SET を無視する (`m_delayTimerExpired = false`)。通常起動では即 `true` にセットされ不使用 |
+
+### FLEX_COUNTER_STATUS enum 値
+
+| 値 | 意味 |
+|----|------|
+| `"enable"` | カウンタポーリング有効化。各グループフラグ (`m_port_counter_enabled` 等) を `true` にセットし COUNTER_ID_LIST を syncd へ投入 |
+| `"disable"` | カウンタポーリング停止。フラグを `false` にリセット |
+
+`ENABLE = "enable"`, `DISABLE = "disable"` は counterpoll/main.py L15-16 でも定義。上記 2 値以外は `SWSS_LOG_NOTICE("Unsupported field")` でスキップ。
+
+### POLL_INTERVAL CLI ソフトデフォルト
+
+YANG に `default` 宣言なし。orchagent / syncd にもハードコードなし。counterpoll CLI の `show` が CONFIG_DB 未設定時に表示するソフトデフォルト値:
+
+| 定数 | 値 | 対象グループ |
+|------|----|------------|
+| `DEFLT_1_SEC` | `1000` ms | `PORT`, `RIF`, `WRED_ECN_PORT` |
+| `DEFLT_10_SEC` | `10000` ms | `QUEUE`, `PG_DROP`, `ACL`, `TUNNEL`, `FLOW_CNT_TRAP`, `FLOW_CNT_ROUTE`, `WRED_ECN_QUEUE`, `SRV6`, `ENI`, `HA_SET`, `PORT_PHY_ATTR` |
+| `DEFLT_60_SEC` | `60000` ms | `BUFFER_POOL_WATERMARK`, `QUEUE_WATERMARK`, `PG_WATERMARK`, `SWITCH`, `PORT_BUFFER_DROP` |
+
+### POLL_INTERVAL CLI 入力範囲制約
+
+| グループ | 下限 (ms) | 上限 (ms) |
+|---------|----------|----------|
+| `PORT`, `RIF`, `QUEUE`, `PG_DROP`, `ACL`, `TUNNEL`, `FLOW_CNT_TRAP`, `FLOW_CNT_ROUTE`, `WRED_ECN_QUEUE`, `SRV6`, `ENI`, `HA_SET` | 100〜1000 | 30000 |
+| `PORT_PHY_ATTR` | 100 | 30000 |
+| `WATERMARK` 系 (`QUEUE_WATERMARK`, `PG_WATERMARK`, `BUFFER_POOL_WATERMARK`), `SWITCH` | 1000 | 60000 |
+| `PORT_BUFFER_DROP` | **30000** (CPU 負荷大のため) | **300000** |
+
+> YANG `poll_interval` typedef は `range 100..4294967295` で全グループ統一。CLI が group ごとに `IntRange` で上限を強制しており、YANG バリデーションだけでは CLI 制約が守られない。
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
