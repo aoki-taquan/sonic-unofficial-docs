@@ -8,6 +8,9 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-macsec.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: orchagent/macsecorch.cpp
+    ref: master
 related:
   config_db:
     - MACSEC_PROFILE
@@ -533,5 +536,90 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 
 <!-- evidence: orchagent/macsecorch.cpp:29-32 -->
 <!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差異
+
+### Gearbox PHY 搭載ポート vs. NPU ネイティブポート
+
+MACsec の SAI オブジェクト操作対象は、ポートに Gearbox PHY が接続されているかどうかで切り替わる。
+
+| 条件 | MACsec オブジェクト対象 | カウンタ管理 |
+|------|------------------------|-------------|
+| `gearbox_phy_t.macsec_supported == true` | PHY 側の line-side port (`port.m_line_side_id`) と PHY の switch ID を使用 | `m_gb_macsec_sa_stat_manager` / `m_gb_macsec_flow_stat_manager` / `m_gb_macsec_counters_map` |
+| PHY なし、または `macsec_supported == false` | NPU 側の port (`port.m_port_id`) とグローバル switch ID (`gSwitchId`) を使用 | `m_macsec_sa_stat_manager` / `m_macsec_flow_stat_manager` / `m_macsec_counters_map` |
+
+PHY が接続されていても `macsec_supported` が `false` の場合、`MACsecOrch` は NPU 側へフォールバックし、ログに `"backend=NPU (phy marked unsupported)"` を出力する。
+
+**コード証跡** (`macsecorch.cpp:363, 409, 2539, 2547, 2555, 2563`):
+```cpp
+force_npu = !phy->macsec_supported;
+if (!force_npu && port->m_line_side_id != SAI_NULL_OBJECT_ID)
+    m_port_id = port->m_line_side_id;  // PHY 側を使用
+else
+    m_port_id = port->m_port_id;       // NPU 側へフォールバック
+```
+
+### SAI MACsec capability クエリ
+
+初期化時に以下の SAI ケーパビリティを実行時にクエリし、ASIC ベンダーの実装状態に応じて動作を変える。
+
+| SAI ケーパビリティ | 用途 | 非対応時の挙動 |
+|-------------------|------|--------------|
+| `SAI_ACL_TABLE_ATTR_FIELD_MACSEC_SCI` の `create_implemented` | ACL テーブルで SCI フィールドのマッチを使うかどうか | `saiAclFieldSciMatchSupported = false` にして SCI ACL マッチを無効化 |
+| `SAI_MACSEC_ATTR_SCI_IN_INGRESS_MACSEC_ACL` | Ingress ACL で SCI をキーとするか、Flow ごとに複数 ACL エントリを使うかを判定 | get 失敗時は `task_failed` を返しポート有効化を中断 |
+| `SAI_MACSEC_ATTR_MAX_SECURE_ASSOCIATIONS_PER_SC` | SC ごとの最大 SA 数 (2 or 4) | サポートなし時はデフォルト `4` を使用 |
+
+**コード証跡** (`macsecorch.cpp:672–681, 1302–1345`):
+```cpp
+// ACL SCI フィールドサポート確認
+sai_query_attribute_capability(..., SAI_ACL_TABLE_ATTR_FIELD_MACSEC_SCI, &capability);
+if (capability.create_implemented == false)
+    saiAclFieldSciMatchSupported = false;
+
+// SA per SC 数のクエリ (非対応時デフォルト 4)
+attr.id = SAI_MACSEC_ATTR_MAX_SECURE_ASSOCIATIONS_PER_SC;
+status = sai_macsec_api->get_macsec_attribute(...);
+if (status != SAI_STATUS_SUCCESS)
+    m_max_sa_per_sc = 4;  // デフォルトにフォールバック
+```
+
+### POST (Power-On Self-Test) 対応差異
+
+`SAI_MACSEC_ATTR_ENABLE_POST` / `SAI_SWITCH_ATTR_MACSEC_POST_STATUS` は ASIC ベンダー依存の POST 機能。
+
+| POST 状態 | `STATE_DB.MACSEC_POST_STATUS` 値 | 動作 |
+|-----------|----------------------------------|------|
+| `switch-level-post-in-progress` | ASIC 全体レベルで POST が進行中。Switch 初期化時に有効化済み | `SAI_SWITCH_ATTR_MACSEC_POST_STATUS` をポーリングして pass/fail を記録 |
+| `macsec-level-post-in-progress` | MACsec オブジェクト初期化時に POST を有効化する方式 | `SAI_MACSEC_ATTR_ENABLE_POST = true` を egress/ingress オブジェクト作成時に付与 |
+| 上記以外 | POST 非対応 ASIC | POST 通知サブスクリプションを設定しない |
+
+POST 未対応 ASIC (SAI が本属性を実装しない環境) では `m_enable_post = false` のままとなり、MACsec オブジェクト初期化時の `SAI_MACSEC_ATTR_ENABLE_POST` 設定がスキップされる。
+
+**コード証跡** (`macsecorch.cpp:695–728, 1246–1251, 1278–1283`):
+```cpp
+if (m_enable_post) {
+    attr.id = SAI_MACSEC_ATTR_ENABLE_POST;
+    attr.value.booldata = true;
+    attrs.push_back(attr);
+}
+```
+
+### Physical Bypass モード
+
+egress / ingress 両方の MACsec オブジェクト作成時に `SAI_MACSEC_ATTR_PHYSICAL_BYPASS_ENABLE = true` を設定する。これは ASIC が MACsec をバイパスする初期状態を確保するためであり、MKA ネゴシエーション完了後に SA が確立されてから暗号化が有効になる流れを保証する。
+
+**コード証跡** (`macsecorch.cpp:1242–1244, 1274–1276`):
+```cpp
+attr.id = SAI_MACSEC_ATTR_PHYSICAL_BYPASS_ENABLE;
+attr.value.booldata = true;
+```
+
+### 非対応 / スコープ外
+
+- ベンダー固有 ASIC ドライバの内部実装差（SAI 抽象化で隠蔽）
+- ベンダー版 SONiC（NVIDIA Cumulus / Edgecore ECNOS 等）はスコープ外
+- master ブランチ以外のバックポート差異はスコープ外
+<!-- /platform -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
