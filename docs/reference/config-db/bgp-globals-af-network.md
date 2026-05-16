@@ -331,4 +331,63 @@ orchagent / syncd / SAI を経由しない。ASIC ケイパビリティ差によ
 <!-- evidence: sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py (grep: platform/hwsku/asic = 0 hits) -->
 <!-- /platform -->
 
+<!-- pubsub -->
+## 通信メカニズム — ExtConfigDBConnector / Redis keyspace 通知
+
+`frrcfgd`（sonic-frr-mgmt-framework）は `swsscommon.ConsumerStateTable` を使わず、独自の `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）の `subscribe(table, handler)` で `BGP_GLOBALS_AF_NETWORK` を購読する。
+
+### 購読登録フロー
+
+```python
+# frrcfgd.py:2318-2361
+('BGP_GLOBALS_AF_NETWORK', self.bgp_table_handler_common),
+...
+def subscribe_all(self):
+    for table, hdlr in self.table_handler_list:
+        self.config_db.subscribe(table, hdlr)
+
+def start(self):
+    self.subscribe_all()
+    self.config_db.listen()   # 内部スレッドで Redis PSUBSCRIBE 開始
+```
+
+### Redis keyspace 通知の仕組み
+
+`ExtConfigDBConnector.listen()` が起動するバックグラウンドスレッドが `__keyspace@4__:*` を **PSUBSCRIBE** し、全 CONFIG_DB エントリの変更を受信する。
+
+```python
+# frrcfgd.py:1538-1545
+sub_key_space = "__keyspace@{}__:*".format(self.get_dbid(self.db_name))
+self.pubsub.psubscribe(sub_key_space)
+while self.__listen_thread_running:
+    msg = self.pubsub.get_message(timeout, True)
+    if msg:
+        self.sub_msg_handler(msg)
+```
+
+メッセージ受信後、`sub_msg_handler` が channel から `TABLE|row` を解析し、登録済みハンドラに振り分ける（通知本体は操作名のみ。値は HGETALL で再取得）。
+
+### 通知パターン例
+
+| Redis keyspace 通知 | frrcfgd が受け取る呼び出し |
+|---------------------|--------------------------|
+| `__keyspace@4__:BGP_GLOBALS_AF_NETWORK\|default\|ipv4_unicast\|10.0.0.0/8` `hset` | `bgp_table_handler_common(table, "default\|ipv4_unicast\|10.0.0.0/8", {data})` |
+| 同 key `del` | `bgp_table_handler_common(table, key, None)` → `no network <prefix>` を bgpd へ |
+
+### 購読方式まとめ
+
+| 項目 | 内容 |
+|------|------|
+| 購読 API | `ExtConfigDBConnector.subscribe()` + `listen()` |
+| 通知方式 | Redis keyspace 通知 (`PSUBSCRIBE __keyspace@4__:*`) |
+| 受信スレッド | `listen_thread` (バックグラウンド, timeout=10 s) |
+| 変更検知後 | HGETALL で再取得 → `bgp_table_handler_common` 呼び出し |
+| 配送先デーモン | `bgpd` のみ (`TABLE_DAEMON` マッピング `frrcfgd.py:99`) |
+| ConsumerStateTable | 不使用 |
+| NotificationProducer | 不使用 |
+| APPL_DB/STATE_DB 中継 | なし（CONFIG_DB → frrcfgd → FRR vtysh の一方向） |
+
+<!-- evidence: frrcfgd.py:1506-1560,2318,2359-2361,3954-3955 -->
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: fcbe746ecf8b -->
