@@ -121,6 +121,40 @@ CONSOLE_SWITCH|console_mgmt
 - `consutil` (CLI)
 - console switch を有効化したときの host service
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+### 1. CONSOLE_SWITCH.enabled を先に設定する
+
+`CONSOLE_SWITCH|console_mgmt.enabled = "yes"` を書き込んでから `CONSOLE_PORT` エントリを追加する順序を推奨する。逆順（`CONSOLE_PORT` 先）でも `config console add` 自体は成功するが、`consutil connect` 実行時に disabled ガードに当たり接続不能になる。`CONSOLE_SWITCH` 変更は次回 `consutil` 呼び出し時点から即時反映される。<!-- evidence: consutil/lib.py:90-94 -->
+
+### 2. remote_device の移動は 2 ステップ
+
+同一 `remote_device` 名を別ラインへ移動する場合、旧ラインの `remote_device` を先にクリア（`config console remote_device <old_line>`、引数なし）してから新ラインへ追加する。逆順では `isExistingSameDevice()` チェックで一意性エラーになる。<!-- evidence: config/console.py:292-298 -->
+
+### 3. minigraph 由来の flow_control は CLI で再設定が必要
+
+`minigraph.py` は `flow_control` フィールドを integer `0`/`1` で書き込むが、`consutil` は文字列 `"1"` と比較するため、minigraph 経由での初期化のみではフロー制御が常に無効扱いになる。`config console flow_control enable <line>` を実行して文字列 `"1"` で上書きすること。<!-- evidence: minigraph.py:616, consutil/lib.py:152-153 -->
+
+### 4. escape_char の優先順序
+
+ポート個別の `CONSOLE_PORT.escape_char` が存在する場合は `CONSOLE_SWITCH.default_escape_char` より優先される。`default_escape_char` を変更してもポート個別設定があれば影響しない。ポート個別設定を削除（`config console escape <line> clear`）すると global に回帰する。<!-- evidence: consutil/lib.py:168-169 -->
+
+### 5. baud_rate は必須フィールド — 欠如で接続拒否
+
+`CONSOLE_PORT` エントリに `baud_rate` がない場合、`consutil connect` は `InvalidConfigurationError` で接続を拒否する。CLI (`config console add --baud` は required) では防御されているが、直接 DB 書き込みや minigraph から不完全なエントリが生成された場合は注意が必要。<!-- evidence: consutil/lib.py:197-199 -->
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `CONSOLE_SWITCH.enabled=yes` → `CONSOLE_PORT` エントリ追加 | 推奨先行 | 逆順でも DB 書き込みは成功するが接続不能 |
+| 2 | 旧 `remote_device` クリア → 新ラインへ追加 | 先行必須 | 逆順で一意性エラー |
+| 3 | minigraph 初期化後 → CLI flow_control 再設定 | 推奨 | 設定なしは flow_control 常に disabled 扱い |
+| 4 | `CONSOLE_PORT.escape_char` が `CONSOLE_SWITCH.default_escape_char` を上書き | 優先度依存 | clear で global に回帰 |
+| 5 | `baud_rate` 欠如 → 接続拒否 | 必須フィールド | CLI では required で防御済み |
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
