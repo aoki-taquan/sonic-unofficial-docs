@@ -450,3 +450,130 @@ PORTCHANNEL (CONFIG_DB)
 | 640-644 | `exec()` 失敗 → `task_need_retry` 返却 |
 
 <!-- /ordering -->
+
+<!-- pubsub -->
+## PUBSUB / Keyspace 通知メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/interface-pubsub.md`
+> ソース: `sonic-swss/cfgmgr/intfmgrd.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-swss-common/common/subscriberstatetable.cpp`, `sonic-swss-common/common/producerstatetable.cpp`, `sonic-swss-common/common/consumerstatetable.cpp`
+
+### 通知チャネル一覧
+
+| DB | Redis チャネル / パターン | 用途 |
+|---|---|---|
+| CONFIG_DB (db=4) | `__keyspace@4__:PORTCHANNEL_INTERFACE\|*` | `intfmgrd` が `PSUBSCRIBE` — SET/DEL 検知 |
+| APPL_DB (db=0) | `INTF_TABLE_CHANNEL@0` | `IntfsOrch` の `ConsumerStateTable` が `SUBSCRIBE` — INTF_TABLE SET/DEL 受信 |
+| STATE_DB (db=6) | `__keyspace@6__:LAG_TABLE\|*` | `intfmgrd` が `SubscriberStateTable` で LAG 状態 (`state=ok`) を監視 |
+| STATE_DB (db=6) | `__keyspace@6__:PORT_TABLE\|*` | `intfmgrd` が `doPortUpdateTask()` でポート再作成イベントを検知 |
+
+### CONFIG_DB → intfmgrd: SubscriberStateTable (PSUBSCRIBE)
+
+`intfmgrd.cpp:29-35` で `CFG_LAG_INTF_TABLE_NAME`（= `"PORTCHANNEL_INTERFACE"`）を含む複数テーブルを `SubscriberStateTable` で一括登録する:
+
+```cpp
+// intfmgrd.cpp:25-44
+vector<string> cfg_intf_tables = {
+    CFG_INTF_TABLE_NAME,
+    CFG_LAG_INTF_TABLE_NAME,        // "PORTCHANNEL_INTERFACE"
+    CFG_VLAN_INTF_TABLE_NAME,
+    CFG_LOOPBACK_INTERFACE_TABLE_NAME,
+    CFG_VLAN_SUB_INTF_TABLE_NAME,
+};
+IntfMgr intfmgr(&cfgDb, &appDb, &stateDb, cfg_intf_tables);
+```
+
+各テーブルについて `SubscriberStateTable` が以下を実行する（`subscriberstatetable.cpp:20-22`）:
+
+```
+m_keyspace = "__keyspace@4__:PORTCHANNEL_INTERFACE|*"
+PSUBSCRIBE(m_keyspace)   // Redis keyspace notification 購読
+```
+
+- CONFIG_DB の `PORTCHANNEL_INTERFACE|<name>` または `PORTCHANNEL_INTERFACE|<name>|<prefix>` キーへの HSET / DEL が発生すると、Redis が当該 keyspace チャネルに `set` / `del` を PUBLISH する
+- `readData()` (`subscriberstatetable.cpp:45-83`) が `redisGetReply()` で非ブロッキング受信し `m_keyspace_event_buffer` に蓄積
+- `pops()` (`subscriberstatetable.cpp:95-165`) がバッファを消費し `KeyOpFieldsValuesTuple` に変換:
+  - `del` イベント → DEL コマンド（テーブル実データ読取りなし）
+  - その他 → `m_table.get()` で実データを取得して SET コマンドに変換
+- 起動時に既存キーを全件バッファに積み込み、初期同期を行う
+
+### intfmgrd → APPL_DB: ProducerStateTable (PUBLISH)
+
+`intfmgr.cpp:42` で `m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)` が初期化される。`APP_INTF_TABLE_NAME = "INTF_TABLE"` (`schema.h:45`)。
+
+`ProducerStateTable::set()` は Redis Lua スクリプト (EVALSHA) を実行し、以下を **1 トランザクション** で行う（`producerstatetable.cpp:106-113`）:
+
+1. Key を key-set (`INTF_TABLE_KEY_SET`) に `SADD`
+2. フィールドを Hash に `HSET` (`_INTF_TABLE:<alias>` の一時 hash)
+3. `redis.call('PUBLISH', KEYS[1], ARGV[1])` でチャネル `INTF_TABLE_CHANNEL@0` に通知を PUBLISH
+
+PORTCHANNEL_INTERFACE エントリ処理での書き込みタイミング:
+
+| 操作 | AppDB 書き込み箇所 |
+|------|-------------------|
+| 属性ロウ SET (VRF/MAC/MPLS/NAT 等) | `m_appIntfTableProducer.set(alias, data)` — `intfmgr.cpp:1053` |
+| 属性ロウ DEL | `m_appIntfTableProducer.del(alias)` — `intfmgr.cpp:1088` |
+| IP プレフィクスロウ SET | `m_appIntfTableProducer.set(appKey, fvVector)` — `intfmgr.cpp:1137` |
+| IP プレフィクスロウ DEL | `m_appIntfTableProducer.del(appKey)` — `intfmgr.cpp:1161` |
+
+### APPL_DB → IntfsOrch: ConsumerStateTable (SUBSCRIBE + EVALSHA)
+
+`orchdaemon.cpp:296` で `IntfsOrch` が `APP_INTF_TABLE_NAME` (`"INTF_TABLE"`) を購読対象として初期化される:
+
+```cpp
+gIntfsOrch = new IntfsOrch(m_applDb, APP_INTF_TABLE_NAME, vrf_orch, m_chassisAppDb);
+```
+
+`Orch` 基底クラスが `ConsumerStateTable` を生成し `INTF_TABLE_CHANNEL@0` を `SUBSCRIBE` で購読する（`consumerstatetable.cpp:27`）。PUBLISH を受信すると `pops()` が key-set から key を取り出し `IntfsOrch::doTask(Consumer&)` を起動する（`intfsorch.cpp:661`）。
+
+`IntfsOrch::doTask()` がエントリを `setIntf()` / `removeIntf()` に振り分け、LAG 向けには `gPortsOrch->getPort(alias, port)` でポートオブジェクトを取得し `sai_router_intfs_api->create_router_interface()` を呼ぶ（`intfsorch.cpp:1296`）。
+
+### SAI RIF 生成経路
+
+```
+APPL_DB INTF_TABLE|PortChannelN  HSET
+  │  ConsumerStateTable SUBSCRIBE pops()
+  ▼
+IntfsOrch::doTask()
+  │  gPortsOrch->getPort("PortChannelN", port) — LAG オブジェクト存在確認
+  ▼
+IntfsOrch::setIntf() → addRouterIntfs()
+  │  port.m_type == Port::LAG → SAI_ROUTER_INTERFACE_ATTR_PORT_ID に LAG SAI OID
+  ▼
+sai_router_intfs_api->create_router_interface()   // intfsorch.cpp:1296
+  │  SAI RIF オブジェクト生成 (sai_object_id_t → port.m_rif_id)
+  ▼
+IP プレフィクスがある場合: sai_route_api->create_route_entry()
+```
+
+### STATE_DB 書き戻し
+
+| 操作 | 書込み内容 | コード |
+|------|-----------|--------|
+| 属性ロウ SET 完了 | `m_stateIntfTable.hset(alias, "vrf", vrf_name)` | `intfmgr.cpp:1054` |
+| IP プレフィクス SET 完了 | `m_stateIntfTable.hset(alias+"|"+prefix, "state", "ok")` | `intfmgr.cpp:1138` |
+| IP プレフィクス DEL | `m_stateIntfTable.del(...)` | `intfmgr.cpp:1162` |
+| 属性ロウ DEL | `m_stateIntfTable.del(alias)` | `intfmgr.cpp:1089` |
+
+### エンドツーエンド通信シーケンス
+
+```
+CONFIG_DB PORTCHANNEL_INTERFACE|PortChannelN  HSET
+  │  Redis keyspace notify
+  ▼
+SubscriberStateTable.pops() → KeyOpFieldsValuesTuple(SET)
+  │
+IntfMgr::doIntfGeneralTask()
+  │  isIntfStateOk("PortChannelN") → STATE_DB LAG_TABLE 確認
+  │  ip link set PortChannelN master <vrf> / address <mac> / mpls=on …
+  │  ProducerStateTable.set() → PUBLISH "INTF_TABLE_CHANNEL@0"
+  ▼
+APPL_DB INTF_TABLE|PortChannelN
+  │  ConsumerStateTable SUBSCRIBE → IntfsOrch::doTask()
+  ▼
+sai_router_intfs_api->create_router_interface()   // SAI RIF 生成
+  │  IP prefix がある場合: sai_route_api->create_route_entry()
+  ▼
+STATE_DB INTERFACE_TABLE|PortChannelN  vrf=<vrf_name>
+```
+
+<!-- /pubsub -->
