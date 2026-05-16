@@ -594,5 +594,4 @@ SAI OID が VIDTORID に登録された後、`VxlanTunnelOrch::doTask(timer)` �
 4. EVPN NVO / VLAN MAP の削除より前に `VXLAN_TUNNEL` を削除すると `SWSS_LOG_WARN` + リトライ待ちになる (`vxlanorch.cpp:109,112`)。
 
 <!-- /cross-refs -->
-
 <!-- glossary-links-injected: 7e2e79cf3524 -->

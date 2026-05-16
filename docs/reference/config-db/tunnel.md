@@ -456,4 +456,69 @@ SAI tunnel に付与される主要属性: `SAI_TUNNEL_ATTR_TYPE=IPINIP`, `SAI_T
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Consumer 登録経路
+
+`TunnelDecapOrch` は `orchdaemon` から APPL_DB テーブルリストを受け取り `Orch` 基底クラス経由で `ConsumerStateTable` を登録する。加えてコンストラクタ内で CONFIG_DB の `SUBNET_DECAP_TABLE` を `SubscriberStateTable` として個別登録する（`addExecutor(new Consumer(...))`）。
+
+```cpp
+// orchdaemon.cpp L343-347
+vector<string> tunnel_tables = {
+    APP_TUNNEL_DECAP_TABLE_NAME,       // "TUNNEL_DECAP_TABLE"
+    APP_TUNNEL_DECAP_TERM_TABLE_NAME   // "TUNNEL_DECAP_TERM_TABLE"
+};
+gTunneldecapOrch = new TunnelDecapOrch(m_applDb, m_stateDb, m_configDb, tunnel_tables);
+
+// tunneldecaporch.cpp L39-48
+auto cfgSubnetDecapSubTable = new SubscriberStateTable(
+    configDb, CFG_SUBNET_DECAP_TABLE_NAME,
+    TableConsumable::DEFAULT_POP_BATCH_SIZE, 0);
+Orch::addExecutor(new Consumer(cfgSubnetDecapSubTable, this, CFG_SUBNET_DECAP_TABLE_NAME));
+```
+
+### 購読テーブルと API 種別
+
+| テーブル | DB | 購読 API | Handler |
+|---------|----|---------|----|
+| `TUNNEL_DECAP_TABLE` | APPL_DB | `ConsumerStateTable` (Orch 基底) | `doDecapTunnelTask()` |
+| `TUNNEL_DECAP_TERM_TABLE` | APPL_DB | `ConsumerStateTable` (Orch 基底) | `doDecapTunnelTermTask()` |
+| `SUBNET_DECAP_TABLE` | CONFIG_DB | `SubscriberStateTable` + `addExecutor` | `doSubnetDecapTask()` |
+
+CONFIG_DB の `TUNNEL` テーブルは **orchagent が直接購読しない**。`tunnelmgrd` が CONFIG_DB→APPL_DB へ変換し、orchagent は APPL_DB 側を ConsumerStateTable で受け取る二段構成。
+
+### Observer パターン — PortsOrch ゲート
+
+```cpp
+// tunneldecaporch.cpp L55-58
+void TunnelDecapOrch::doTask(Consumer &consumer)
+{
+    if (!gPortsOrch->allPortsReady()) return; // 全ポート ready まで処理停止
+    ...
+}
+```
+
+`gPortsOrch->allPortsReady()` が `false` の間は全トンネルタスクをスキップ。PortsOrch が ready 通知を出すと orchagent の select ループが再度 `doTask()` を呼び出す（Observer パターンの受動的待機）。
+
+### SAI tunnel_api 呼び出し
+
+```cpp
+// tunneldecaporch.cpp L853 / L19
+extern sai_tunnel_api_t* sai_tunnel_api;
+sai_status_t status = sai_tunnel_api->create_tunnel(
+    &tunnel_id, gSwitchId, tunnel_attrs.size(), tunnel_attrs.data());
+task_process_status handle_status = handleSaiCreateStatus(SAI_API_TUNNEL, status);
+```
+
+`handleSaiCreateStatus()` が SAI エラーを `task_need_retry` / `task_success` / `task_failed` に変換。`task_need_retry` はキューに残留して次サイクルでリトライ（QoS map 未作成時）。
+
+### STATE_DB 書き戻し (Observer 逆方向)
+
+SAI `create_tunnel()` 成功後、`stateTunnelDecapTable` (STATE_DB `STATE_TUNNEL_DECAP_TABLE`) と `stateTunnelDecapTermTable` へエントリを書き戻す（`tunneldecaporch.cpp` L287 付近）。これが orchagent → STATE_DB 方向の出力パス。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: ae9e20070353 -->

@@ -339,6 +339,41 @@ runtime 更新時は `set_wred_attribute()` が属性ループを途中で中断
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp WredMapHandler::convertFieldValuesToAttributes() L585-762, addQosItem() L784-860, removeQosItem() L864-874 -->
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`WRED_PROFILE` の SET/DEL を受けた `QosOrch` (`WredMapHandler`) は、SAI 経由で ASIC_DB に書き込む。STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書込はない。
+
+### ASIC_DB 書込み (SAI/syncd 経由)
+
+| タイミング | SAI API | ASIC_DB への反映 |
+|---|---|---|
+| SET → 新規 (`addQosItem()`) | `sai_wred_api->create_wred(&sai_object, gSwitchId, ...)` | `ASIC_STATE:SAI_OBJECT_TYPE_WRED:<oid>` 生成 |
+| SET → 既存更新 (`modifyQosItem()`) | `sai_wred_api->set_wred_attribute(sai_object, &attr)` | `ASIC_STATE:SAI_OBJECT_TYPE_WRED:<oid>` フィールド更新 |
+| DEL → `removeQosItem()` | `sai_wred_api->remove_wred(sai_object)` | `ASIC_STATE:SAI_OBJECT_TYPE_WRED:<oid>` 削除 |
+| QUEUE bind (`applyWredProfileToQueue()`) | `sai_queue_api->set_queue_attribute(queue_id, SAI_QUEUE_ATTR_WRED_PROFILE_ID)` | `ASIC_STATE:SAI_OBJECT_TYPE_QUEUE:<queue_oid>` の `SAI_QUEUE_ATTR_WRED_PROFILE_ID` 更新 |
+| QUEUE unbind (DEL / `wred_profile` 解除) | 同上、値 `SAI_NULL_OBJECT_ID` | 同上フィールドを `NULL` に更新 |
+
+### QUEUE への副次 bind
+
+`WRED_PROFILE` SAI オブジェクト作成後、`QUEUE.wred_profile` で参照されている場合に `applyWredProfileToQueue()` が `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を設定してキューに紐付ける。VoQ スイッチ (`gMySwitchType == "voq"`) では物理キューではなく VoQ ID に適用する (`qosorch.cpp:1709-1730`)。
+
+| 副次 bind 条件 | 処理 | ソース |
+|---|---|---|
+| `QUEUE.wred_profile=<name>` が解決済み | `sai_queue_api->set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` | `qosorch.cpp:1735-1738` |
+| `QUEUE.wred_profile` 未解決 (WRED_PROFILE 未作成) | `task_need_retry` → WRED_PROFILE 作成後に自動再処理 | `qosorch.cpp:1864-1870` |
+| DEL または `wred_profile` フィールド削除 | `SAI_QUEUE_ATTR_WRED_PROFILE_ID = SAI_NULL_OBJECT_ID` で unbind | `qosorch.cpp:1893` |
+
+```bash
+# WRED SAI オブジェクト確認
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_WRED:*'
+# キューへの bind 確認
+sonic-db-cli ASIC_DB hget 'ASIC_STATE:SAI_OBJECT_TYPE_QUEUE:<queue_oid>' SAI_QUEUE_ATTR_WRED_PROFILE_ID
+```
+
+> **証跡**: `create_wred()` L855、`set_wred_attribute()` L774、`remove_wred()` L868、`set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` L1735-1738。`qosorch.cpp` 全 WRED 処理経路読了。STATE_DB / COUNTERS_DB への書込なし確認済み。
+<!-- /side-effects -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
