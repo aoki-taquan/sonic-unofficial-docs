@@ -511,6 +511,64 @@ allPortsReady() = true → VLAN / LAG / INTERFACE / ACL orch がアンブロッ�
 
 **orchList 順序** (`orchdaemon.cpp:500`): `gSwitchOrch → gCrmOrch → gPortsOrch → gBufferOrch → ...`。PortsOrch は 3 番目だが、BufferOrch の ready 判定まで PORT の最終ハードウェア反映は保留される。
 
+### PORT 作成時 CreateOnly 属性順序 (addPortBulk)
+
+`PortsOrch::addPortBulk()` が SAI `create_port()` に渡す属性は以下の順序で `attrList` に積まれる（`portsorch.cpp:1292-1360`）。これらは **CreateOnly** 属性であり、ポート作成後は変更不可。
+
+| 順序 | SAI 属性 | CONFIG_DB フィールド | 条件 |
+|------|---------|---------------------|------|
+| 1 | `SAI_PORT_ATTR_HW_LANE_LIST` | `lanes` | `lanes.is_set` が true（通常は必須） |
+| 2 | `SAI_PORT_ATTR_SPEED` | `speed` | `speed.is_set` が true |
+| 3 | `SAI_PORT_ATTR_AUTO_NEG_MODE` | `autoneg` | `autoneg.is_set` が true |
+| 4 | `SAI_PORT_ATTR_FEC_MODE` + `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` | `fec` | `fec.is_set` が true |
+| 5 | `SAI_PORT_ATTR_TPID` | `tpid` | `tpid != DEFAULT_TPID(0x8100)` のときのみ追加 |
+
+> **注意**: `SAI_PORT_ATTR_HW_LANE_LIST` と `SAI_PORT_ATTR_SPEED` は SAI 仕様上 mandatory。`lanes` または `speed` がない状態で SAI `create_port()` を呼ぶと SAI_STATUS_INVALID_PARAMETER が返り、ポート作成は失敗する。`tpid == 0x8100`（ハードウェアデフォルト）の場合は属性を追加しないことで不要な SAI 呼び出しを避ける。
+
+### Dynamic Port Breakout (DPB) シーケンス
+
+ポートの breakout（例: 1x100G → 4x25G）は PORT テーブルの書き直しで実現される。`PortsOrch::doTask()` が `PORT_CONFIG_RECEIVED` 状態になったとき、既存ポートと新設定を比較して差分を処理する（`portsorch.cpp:4695-4768`）:
+
+```
+[DPB 実行順序]
+1. DEL: 旧レーン構成のポートを removePortBulk() で一括削除
+   (m_portListLaneMap から消えたエントリが対象)
+     ↓
+2. ADD: 新レーン構成のポートを addPortBulk() で一括作成
+   (m_lanesAliasSpeedMap に新規追加されたエントリが対象)
+     ↓
+3. INIT: initPortsBulk() でバッファカウンタ・PG・serdes などを初期化
+     ↓
+4. 通常の SET 処理再開 (speed / mtu / admin_status etc.)
+```
+
+- **DEL が先行**: PortsOrch は同一レーンセットの旧ポートを先に `removePortBulk()` で削除してから新ポートを `addPortBulk()` で作成する。この 2 ステップは同一 `doTask()` 呼び出し内でアトミックに実行される（`portsorch.cpp:4712-4748`）。
+- **Breakout 中の副作用**: `addSubPort()` は親ポートの `hostif` VLAN tag を変更する（最初のサブポート追加時: `portsorch.cpp:2059-2067`）。最後のサブポート削除時に親ポートの hostif tag を復元する（`portsorch.cpp:2122-2130`）。
+- **前提条件**: DPB 実行前に対象ポートの `VLAN_MEMBER` / `PORTCHANNEL_MEMBER` / `INTERFACE` / `BUFFER_PG` / `BUFFER_QUEUE` を全て DEL しておく必要がある（`m_port_ref_count == 0` 要件）。
+
+### host_tx_ready 同期メカニズム
+
+`host_tx_ready` は `STATE_DB|PORT_TABLE|<port>` の `host_tx_ready` フィールドに書き込まれ、CMIS モジュール（光トランシーバ）と ASIC の TX 同期状態を示す。
+
+#### 初期化
+
+- ポート作成後の `initPortsBulk()` 内で `initHostTxReadyState()` を呼び出し、`host_tx_ready` が STATE_DB に存在しなければ `"false"` で初期化する（`portsorch.cpp:5494`）。
+
+#### admin_status との連動 (レガシーモード: `m_cmisModuleAsicSyncSupported == false`)
+
+`setPortAdminStatus()` の中で `host_tx_ready` を更新する（`portsorch.cpp:2213-2274`）:
+
+| タイミング | `host_tx_ready` の値 | 条件 |
+|-----------|---------------------|------|
+| `admin_status=down` 設定前 | `"false"` に設定 | `!m_cmisModuleAsicSyncSupported` |
+| SAI set_attribute 失敗時 | `"false"` に設定 | `!m_cmisModuleAsicSyncSupported` |
+| gearbox 設定失敗時 | `"false"` に設定 | `!m_cmisModuleAsicSyncSupported` |
+| `admin_status=up` かつ SAI/gearbox 成功後 | `"true"` に設定 | `!m_cmisModuleAsicSyncSupported` |
+
+#### CMIS Async モード (`m_cmisModuleAsicSyncSupported == true`)
+
+SAI から `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` コールバック（`on_port_host_tx_ready`）が非同期で通知される方式。admin_status 変更時は `host_tx_ready` を直接変更せず、コールバック受信時に `setHostTxReady()` で STATE_DB を更新する（`portsorch.cpp:9709-9724`）。このモードは `SAI_SWITCH_ATTR_RW_HW_TX_SIGNAL_SUPPORT` と `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` が両方サポートされる場合にのみ有効（`portsorch.cpp:969-980`）。
+
 <!-- /ordering -->
 
 <!-- pubsub -->
