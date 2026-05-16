@@ -328,4 +328,57 @@ enableMACsec()
 詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-failure.md)
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込・外部副作用 (Phase F)
+
+<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/orchagent/macsecorch.cpp -->
+
+### ファイルシステム — `/etc/wpa_supplicant.conf`
+
+`macsecmgrd` が `wpa_supplicant` を起動する際、引数 `-c /etc/wpa_supplicant.conf` としてコンフィグファイルパスを渡す（`WPA_CONF` マクロ）。このファイルはビルドイメージに同梱されており、`macsecmgrd` 自身は上書きしない。MKA パラメータ（`mka_cak`、`mka_ckn`、`mka_priority` 等）は `wpa_cli set_network` コマンド経由でランタイムに注入されるため、設定ファイルへの追記は発生しない。
+
+| 対象 | 操作 | タイミング |
+|------|------|-----------|
+| `/etc/wpa_supplicant.conf` | 読み取り専用（起動引数として参照） | `enableMACsec()` 時 |
+
+### APPL_DB — MACsec テーブル群
+
+`macsecorch`（`sonic-swss/orchagent/macsecorch.cpp`）が APPL_DB の以下のテーブルを Consumer として購読し、SAI MACsec オブジェクト作成後に STATE_DB へ書き込む。`MACSEC_PROFILE` の各フィールドはプロファイル適用時にこれらテーブル経由で伝播する。
+
+| APPL_DB テーブル | 用途 |
+|-----------------|------|
+| `APP_MACSEC_PORT_TABLE` | MACsec が有効化されたポート情報 |
+| `APP_MACSEC_EGRESS_SC_TABLE` | 送信 Secure Channel (SC) |
+| `APP_MACSEC_INGRESS_SC_TABLE` | 受信 Secure Channel (SC) |
+| `APP_MACSEC_EGRESS_SA_TABLE` | 送信 Secure Association (SA)。SAK が確立するたびに更新 |
+| `APP_MACSEC_INGRESS_SA_TABLE` | 受信 Secure Association (SA)。SAK が確立するたびに更新 |
+
+> `macsecmgrd` は APPL_DB への直接書き込みを行わない。APPL_DB への書き込みは `wpa_supplicant` → `macsec_sonic` ドライバ経由のシグナルを受けた `macsecorch` が担う。
+
+### STATE_DB — MACsec テーブル群
+
+MACsec SA 確立に成功した後、`macsecorch` が STATE_DB の以下のテーブルにステータスを書き込む。
+
+| STATE_DB テーブル | 書き込み契機 | 削除契機 |
+|-----------------|------------|---------|
+| `STATE_MACSEC_PORT_TABLE` | MACsec 有効化成功 (`set`) | MACsec 無効化 (`del`) |
+| `STATE_MACSEC_EGRESS_SC_TABLE` | Egress SC 作成成功 | SC 削除 |
+| `STATE_MACSEC_INGRESS_SC_TABLE` | Ingress SC 作成成功 | SC 削除 |
+| `STATE_MACSEC_EGRESS_SA_TABLE` | Egress SA 作成成功（SAK ロールオーバー毎） | SA 削除 |
+| `STATE_MACSEC_INGRESS_SA_TABLE` | Ingress SA 作成成功（SAK ロールオーバー毎） | SA 削除 |
+
+### STATE_DB — PORT テーブル（参照のみ）
+
+`macsecmgrd` は `STATE_PORT_TABLE` を **読み取り専用** で参照し、ポートが `state=ok` かつ `netdev_oper_status=up` であることを確認してから MACsec を有効化する。このテーブルへの書き込みは行わない。
+
+```
+macsecmgrd::isPortStateOk()
+  └─ STATE_PORT_TABLE.get(port_name)
+       ├─ state == "ok" かつ netdev_oper_status == "up" → enableMACsec() 実行
+       └─ それ以外 → task_need_retry（待機継続）
+```
+
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-side-effects.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-side-effects.md)
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
