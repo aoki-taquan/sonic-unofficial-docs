@@ -237,4 +237,65 @@ crm show resources all
 
 > **スキャン証跡**: `CrmOrch::doTask` L440-477 + `handleSetCommand` L478-537 全行読了。6 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 順序依存 (Phase B)
+
+### ポーリング起動順序
+
+`CrmOrch::CrmOrch()` コンストラクタの初期化ステップ（`crmorch.cpp` L398-L419）:
+
+1. `Orch(db, tableName)` 基底クラス初期化 — CONFIG_DB コンシューマー登録
+2. `m_countersDb` / `m_countersCrmTable` 生成 — COUNTERS_DB 接続確立
+3. `m_timer` 生成 (`SelectableTimer`) — デフォルト間隔 300 秒でオブジェクト生成
+4. `m_pollingInterval` 設定 — `chrono::seconds(300)` をメンバへコピー
+5. `m_resourcesMap` 全リソース初期化 — `crmResTypeNameMap` を走査し全 42 リソースを `CrmResourceEntry(name, PERCENTAGE, 70, 85)` で登録
+6. COUNTERS_DB の既存統計削除 — `m_countersCrmTable->del("STATS")` で古いキャッシュをクリア
+7. `ExecutableTimer` 生成・`Orch::addExecutor()` 登録
+8. `m_timer->start()` — タイマー起動（以後 300 秒ごとにポーリング）
+
+> **注意**: リソースエントリ登録（ステップ 5）はタイマー起動（ステップ 8）より必ず先に完了する。<!-- evidence: crmorch.cpp L408-419 -->
+
+### ポーリングループ内呼び出し順
+
+`doTask(SelectableTimer&)` から固定順で呼ばれる（`crmorch.cpp` L751-758）:
+
+```
+1. getResAvailableCounters()   SAI から available counter を取得・更新
+2. updateCrmCountersTable()    COUNTERS_DB の CRM:STATS テーブルへ書込み
+3. checkCrmThresholds()        閾値超過チェック・syslog アラート送信
+```
+
+`checkCrmThresholds()` が `getResAvailableCounters()` より先に実行されることはなく、常に最新の available counter でチェックが行われる。
+
+### リソース種別初期化順序
+
+コンストラクタの `for (const auto &res : crmResTypeNameMap)` は `std::map` の列挙値昇順でイテレートされる。登録順（先頭 12 件）:
+
+| 順 | リソース |
+|----|---------|
+| 1 | CRM_IPV4_ROUTE |
+| 2 | CRM_IPV6_ROUTE |
+| 3 | CRM_IPV4_NEXTHOP |
+| 4 | CRM_IPV6_NEXTHOP |
+| 5 | CRM_IPV4_NEIGHBOR |
+| 6 | CRM_IPV6_NEIGHBOR |
+| 7 | CRM_NEXTHOP_GROUP_MEMBER |
+| 8 | CRM_NEXTHOP_GROUP |
+| 9 | CRM_ACL_TABLE |
+| 10 | CRM_ACL_GROUP |
+| 11 | CRM_ACL_ENTRY |
+| 12 | CRM_ACL_COUNTER |
+| 13-22 | FDB / IPMC / SNAT / DNAT / MPLS / SRv6 / NEXTHOP_GROUP_MAP / EXT_TABLE |
+| 23-42 | DASH 系（VNET / ENI / … / METER_RULE）+ TWAMP_ENTRY |
+
+### SAI 属性読取り優先順位
+
+ポーリング時に `getResAvailability()` が各リソースに対して試みる順:
+
+1. **`sai_object_type_get_availability()`** — `crmResSaiObjAttrMap` で objType が `NULL` 以外のリソース（IPV4_ROUTE / IPV6_ROUTE / IPV4_NEIGHBOR / IPV6_NEIGHBOR / NEXTHOP_GROUP / FDB_ENTRY / MPLS_NEXTHOP / SRV6_NEXTHOP 等）。IP アドレスファミリや NextHop タイプの追加属性を渡す場合あり。<!-- evidence: crmorch.cpp L766-801 -->
+2. **`sai_switch_api->get_switch_attribute()` フォールバック** — 上記が失敗、または objType=NULL のリソース（IPV4_NEXTHOP / IPV6_NEXTHOP / NEXTHOP_GROUP_MEMBER 等）に対して `crmResSaiAvailAttrMap` の `SAI_SWITCH_ATTR_AVAILABLE_*` で取得。<!-- evidence: crmorch.cpp L806-829 -->
+3. **ACL_TABLE / ACL_GROUP のみ**: `sai_acl_resource_t` リスト形式。初期サイズ 256 で取得し `BUFFER_OVERFLOW` 時にリサイズしてリトライ（2-phase 取得）。<!-- evidence: crmorch.cpp L943-980 -->
+4. **DASH 系**: `gMySwitchType != "dpu"` のとき即 `CRM_RES_NOT_SUPPORTED` にセットしスキップ。<!-- evidence: crmorch.cpp L933-936 -->
+<!-- /ordering -->
 <!-- glossary-links-injected: c6e41e02b036 -->
