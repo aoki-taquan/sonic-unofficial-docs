@@ -28917,6 +28917,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        format の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#severity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        severity の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#welf_firewall_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        welf_firewall_name の暗黙ホスト名フォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#syslog_config_feature-local-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSLOG_CONFIG_FEATURE への local fallback（コンテナ側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34924,6 +34985,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        format の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#severity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        severity の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#welf_firewall_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        welf_firewall_name の暗黙ホスト名フォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#syslog_config_feature-local-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSLOG_CONFIG_FEATURE への local fallback（コンテナ側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35321,6 +35443,64 @@
 <p><strong>スキャン証跡</strong>: <code>SYSLOG_CONFIG</code> はグローバル syslog rate limit 設定。<code>rate_limit_interval==0</code> での無効化分岐が主要ポイント。<code>SYSLOG_CONFIG_FEATURE</code> への値の伝播が Phase 6 自動派生相当。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG default 宣言 (<code>format=standard</code> / <code>severity=notice</code>) を補完する形で、テンプレート fallback や <code>containercfgd</code> のローカル fallback が複層に効く。CONFIG_DB に行が無い／フィールドが欠落した場合の実効値を以下にまとめる。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>コード由来デフォルト</th>
+<th>発生源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rate_limit_interval</code></td>
+<td>なし</td>
+<td><strong>未指定 (rsyslog ディレクティブ非出力 → <code>imuxsock</code> 既定で実効 rate limit 無効)</strong></td>
+<td><code>rsyslog.conf.j2</code> L17, L22 <code>is not none</code> ガード</td>
+</tr>
+<tr>
+<td><code>rate_limit_burst</code></td>
+<td>なし</td>
+<td><strong>未指定 (同上、rsyslog <code>imuxsock</code> 既定値)</strong></td>
+<td><code>rsyslog.conf.j2</code> L18, L22 <code>is not none</code> ガード</td>
+</tr>
+<tr>
+<td><code>format</code></td>
+<td><code>standard</code></td>
+<td><strong><code>standard</code></strong> (二重防御)</td>
+<td>YANG <code>default standard</code> + <code>rsyslog.conf.j2</code> L51 <code>gconf.get('format', 'standard')</code></td>
+</tr>
+<tr>
+<td><code>welf_firewall_name</code></td>
+<td>なし</td>
+<td><strong><code>{{ hostname }}</code></strong> (DEVICE_METADATA 由来)</td>
+<td><code>rsyslog.conf.j2</code> L52 <code>gconf.get('welf_firewall_name', hostname)</code></td>
+</tr>
+<tr>
+<td><code>severity</code></td>
+<td><code>notice</code></td>
+<td><strong><code>notice</code></strong> (YANG default) / <code>*</code> (テーブル全欠落時の per-server fallback)</td>
+<td>YANG <code>default notice</code> + <code>rsyslog.conf.j2</code> L92 <code>gconf.get('severity', '*')</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="format"><code>format</code> の詳細<a class="headerlink" href="#format" title="Permanent link">&para;</a></h3>
+<p>YANG が <code>default standard</code> を宣言しているため、CLI / sonic-cfggen / YANG-aware 書き込み経路では <code>format</code> 欠落時に <code>standard</code> が自動付与される。<code>rsyslog.conf.j2</code> L51 はこの YANG default をバイパスする経路（直接 redis-cli 書き込み、<code>SYSLOG_CONFIG|GLOBAL</code> 行欠落）に備えた二重防御で、<code>gconf.get('format', 'standard')</code> で <code>'standard'</code> を最終フォールバックとする。</p>
+<h3 id="severity"><code>severity</code> の詳細<a class="headerlink" href="#severity" title="Permanent link">&para;</a></h3>
+<p>YANG default <code>notice</code> は <code>SYSLOG_CONFIG.GLOBAL.severity</code> に対するもの。テンプレート L92 では per-server severity の fallback として <code>gconf.get('severity', '*')</code> を使うため、<code>SYSLOG_CONFIG</code> テーブル自体が CONFIG_DB に存在しない場合は per-server に対して <code>'*'</code>（rsyslog の全 severity 構文）が適用される。これは YANG-実装 discrepancy（YANG 通過時は <code>notice</code>、未通過時は <code>*</code>）として <code>syslog-server</code> 側にも影響する。</p>
+<h3 id="welf_firewall_name"><code>welf_firewall_name</code> の暗黙ホスト名フォールバック<a class="headerlink" href="#welf_firewall_name" title="Permanent link">&para;</a></h3>
+<p><code>format='welf'</code> で <code>welf_firewall_name</code> を未指定にすると、テンプレート L52 がデバイス hostname（<code>sonic-cfggen</code> が <code>DEVICE_METADATA</code> から注入）を <code>fw="..."</code> として埋め込む。YANG の <code>must "(../format != 'standard')"</code> 制約は <code>format='welf'</code> 時には必須化を強制しないため、welf_firewall_name 欠落 + format=welf という組み合わせは合法だが、実効的にホスト名がそのまま外部 syslog サーバへ送られる。</p>
+<h3 id="syslog_config_feature-local-fallback"><code>SYSLOG_CONFIG_FEATURE</code> への local fallback（コンテナ側）<a class="headerlink" href="#syslog_config_feature-local-fallback" title="Permanent link">&para;</a></h3>
+<p><code>SYSLOG_CONFIG</code> (GLOBAL) はコンテナ内 rsyslog では参照されない（<code>rsyslog-container.conf.j2</code> は <code>SYSLOG_CONFIG_FEATURE</code> のみ参照）。コンテナ側 rate limit のハードコードフォールバックは <code>interval=300</code> / <code>burst=20000</code>（テンプレート L27 の <code>default()</code> フィルタ）。ただし <code>containercfgd.py</code> L143-144 が <code>data.get(..., '0')</code> で空 dict 経由でも <code>'0'</code> を渡すため、ハードコード fallback <code>300/20000</code> が発動するのは sonic-cfggen をスタンドアロン呼び出した特殊ケースに限られる。</p>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>sonic-syslog.yang</code> L156-191、<code>rsyslog.conf.j2</code> L16-22 / L51-52 / L92、<code>rsyslog-container.conf.j2</code> L16-27、<code>containercfgd.py</code> L98-160、<code>hostcfgd</code> L1695-1743 を精読。詳細は <code>meta/_intermediate/cdb-flow/syslog-config-defaults.md</code>。</p>
+</blockquote>
+<!-- /defaults -->
 
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>

@@ -22552,6 +22552,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35144,6 +35155,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35628,6 +35650,73 @@
 <p><code>get_chassis_tsa_status()</code> が <code>CHASSIS_APP_DB.BGP_DEVICE_GLOBAL|STATE.tsa_enabled</code> を読む。非シャーシ環境またはキー不在時のデフォルトは <code>"false"</code> (<code>managers_device_global.py:239</code>)。CONFIG_DB フィールドではなく内部状態変数。</p>
 <!-- evidence: managers_device_global.py:12-14,42-49,78-82,94-98,116,130,239,260,283 -->
 <!-- /defaults -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) ごとの直接分岐は無いが、<code>device_info.is_chassis()</code> / <code>switch_role</code> (<code>DEVICE_METADATA.localhost.type</code>) / <code>switch_type</code> / SAI BFD offload capability の 4 系統でテーブル処理が間接分岐する</strong>。BGP_DEVICE_GLOBAL 自体は <a href="../../glossary/#term-sai">SAI</a> を直接駆動しないが、CONFIG_DB を購読する <code>BgpGlobalStateOrch</code> がコンストラクタで SAI capability を問い合わせ、結果が <code>BfdOrch</code> の software/hw 経路選択に伝播する。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco / Nephos / Centec)</td>
+<td>直接の if/elif は無い</td>
+<td><code>managers_device_global.py</code> を vendor 名で grep して 0 ヒット</td>
+</tr>
+<tr>
+<td>HwSku</td>
+<td>影響なし</td>
+<td><code>managers_device_global.py</code> / <code>bfdorch.cpp</code> に HwSku 参照 0 ヒット</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu</code>)</td>
+<td>実質影響なし</td>
+<td>bgpcfgd は per-namespace に独立起動。テーブル処理に namespace 別フィールドは無い</td>
+</tr>
+<tr>
+<td><code>device_info.is_chassis()</code> 真 (VOQ / packet-based chassis)</td>
+<td><strong>分岐あり</strong></td>
+<td><code>managers_device_global.py:241-251</code> で CHASSIS_APP_DB の <code>BGP_DEVICE_GLOBAL|STATE.tsa_enabled</code> を読み、シャーシ全体 TSA が個別 LC TSA を抑止 (<code>configure_tsa</code> 内 <code>chassis_tsa=="false"</code> ガード)</td>
+</tr>
+<tr>
+<td><code>switch_role == 'SpineRouter' / 'LowerSpineRouter' / 'UpperSpineRouter'</code></td>
+<td><strong>分岐あり</strong></td>
+<td><code>idf_isolation_state</code> の FRR push が Spine 系ロールのみで実行。それ以外 (ToRRouter / LeafRouter / 空) は <code>downstream_isolate_unisolate()</code> が早期 return しテンプレート未送出 (<code>managers_device_global.py:260-262</code>)</td>
+</tr>
+<tr>
+<td><code>switch_type == 'chassis-packet'</code> (VOQ system)</td>
+<td><strong>分岐あり</strong></td>
+<td>TSA route-map 整形で <code>_INTERNAL_</code> / <code>VOQ_</code> を含む name を LC 間 iBGP として <code>internal_route_map=1</code> で render し、シャーシ内セッションをスキップしない処理に切替 (<code>managers_device_global.py:213-225</code>)</td>
+</tr>
+<tr>
+<td>SAI BFD offload capability (<code>SAI_SWITCH_ATTR_SUPPORTED_IPV4/IPV6_BFD_SESSION_OFFLOAD_TYPE</code>)</td>
+<td><strong>分岐あり (間接)</strong></td>
+<td><code>BgpGlobalStateOrch</code> コンストラクタ (<code>bfdorch.cpp:729-791</code>) が v4/v6 両方の offload capability を SAI に問合せ。両対応なら <code>bfd_offload=true</code> → <code>getSoftwareBfd()=false</code>、欠ければ <code>BfdOrch::doTask</code> が <code>m_stateSoftBfdSessionTable</code> 経路へ切替 (<code>bfdorch.cpp:116-188</code>)</td>
+</tr>
+<tr>
+<td><code>software_bfd</code> feature gate (<code>constants.yml</code>)</td>
+<td>build-time</td>
+<td>bgpcfgd 起動時に <code>sys_defaults['software_bfd']['status']=='enabled'</code> でのみ bfd manager を起動 (<code>main.py:118-119</code>)。image build 単位で固定。<code>files/device/&lt;platform&gt;/</code> 別の上書き機構なし</td>
+</tr>
+<tr>
+<td><code>use_software_bfd</code> という BGP_DEVICE_GLOBAL フィールド</td>
+<td><strong>存在しない</strong></td>
+<td><code>bfdorch.cpp:116</code> の local 変数名であり CONFIG_DB のフィールドではない。YANG (<code>sonic-bgp-device-global.yang</code>) にも未定義</td>
+</tr>
+<tr>
+<td><code>tsa_enabled</code> / <code>wcmp_enabled</code> のテーブル受理ロジック</td>
+<td>影響なし</td>
+<td><code>managers_device_global.py</code> の値検証 (<code>"true"/"false"</code>) と FRR push は platform / asic / hwsku を参照しない</td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠 (関数本体・呼出関係・SAI attr id) は <code>meta/_intermediate/cdb-flow/bgp-device-global-platform.md</code> を参照。</p>
+<!-- /platform -->
 
 <!-- glossary-links-injected: 029bff240b1b -->
 

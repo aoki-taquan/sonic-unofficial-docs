@@ -24602,6 +24602,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル / 設定先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-manager-mainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd Manager 起動順 (main.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_handler-vtysh-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_handler 内 vtysh push 順 (固定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment_id0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        deployment_id=0 の二重書き
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35156,6 +35217,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル / 設定先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-manager-mainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd Manager 起動順 (main.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_handler-vtysh-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_handler 内 vtysh push 順 (固定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment_id0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        deployment_id=0 の二重書き
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35596,6 +35718,79 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py</code> / <code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2</code>
+調査日: 2026-05-16</p>
+</blockquote>
+<h3 id="_22">他テーブル / 設定先行必須<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>先行テーブル / 条件</th>
+<th>依存の内容</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>constants.yml</code> (<code>bgp.allow_list.enabled</code>, <code>drop_community</code>, <code>default_action</code>, <code>default_pl_rules</code>, <code>prefix_match_tag</code>)</td>
+<td><code>BGPAllowListMgr.__init__</code> 時点で <code>self.enabled</code> / <code>self.prefix_match_tag</code> / <code>constants_v4/v6</code> が確定。constants 変更は bgpcfgd 再起動まで反映されない</td>
+<td><code>managers_allow_list.py:45-47, 699-734, 652-664</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA|localhost.{type, subtype, switch_type}</code></td>
+<td><code>policies.conf.j2</code> のレンダ条件 (<code>SpineRouter</code>+<code>UpstreamLC</code> 限定の <code>permit 12/13</code>、<code>chassis-packet</code> で <code>set tag</code> 値が分岐)。bgpcfgd 起動前に確定が必要</td>
+<td><code>policies.conf.j2:40-54, 63-77</code></td>
+</tr>
+<tr>
+<td><code>policies.conf.j2</code> 起動時レンダ</td>
+<td><code>route-map FROM_BGP_PEER_V4/V6 permit 10 call ALLOW_LIST_DEPLOYMENT_ID_0_V4/V6</code>、<code>bgp community-list standard allow_list_default_community</code>、deployment_id=0 の <code>permit 65535</code> は <strong>template 起動時に一度だけ</strong> 生成。これより前に <code>BGP_ALLOWED_PREFIXES</code> を SET しても prefix-list が peer に紐付かない</td>
+<td><code>policies.conf.j2:17-32, 34-38, 57-61</code></td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR</code> / <code>BGP_PEER_RANGE</code> (peer-group 定義)</td>
+<td><code>__update_policy</code> 末尾の <code>__find_peer_group()</code> が vtysh running-config を grep して deployment_id に紐づく peer-group を抽出 → <code>restart_peer_groups()</code> で soft-clear。peer-group 未存在のままだと soft-clear 空振りで<strong>フィルタが有効化されない</strong></td>
+<td><code>managers_allow_list.py:177-178, 595-697</code></td>
+</tr>
+<tr>
+<td><code>BGP_ALLOWED_PREFIXES</code> 自身 (CommunityList 連動)</td>
+<td>EMPTY_COMMUNITY 経路 (<code>|&lt;community&gt;</code> 無し) では <code>__update_community</code> が早期 return し community-list を作らない一方、<code>__update_allow_route_map_entry</code> は <code>set tag &lt;prefix_match_tag&gt;</code> を出す。constants の <code>prefix_match_tag</code> が未定義だと tag も付かず、ALLOW_LIST 不一致時の <code>route-map FROM_BGP_PEER_V4 permit 11 match community allow_list_default_community</code> 経路に頼ることになる</td>
+<td><code>managers_allow_list.py:15, 360-362, 432-435</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgpcfgd-manager-mainpy">bgpcfgd Manager 起動順 (main.py)<a class="headerlink" href="#bgpcfgd-manager-mainpy" title="Permanent link">&para;</a></h3>
+<p><code>BGPAllowListMgr</code> は <code>bgpcfgd/main.py:73-104</code> の Manager 配列で次の位置に登録される:</p>
+<ul>
+<li><strong>前</strong>: <code>BGPDataBaseMgr</code> (DEVICE_METADATA), <code>InterfaceMgr</code> 一式, <code>BGPPeerMgrBase</code> 一式 (general / internal / monitors / dynamic / voq_chassis / sentinels)</li>
+<li><strong>後</strong>: <code>BBRMgr</code>, <code>StaticRouteMgr</code>, <code>RouteMapMgr</code>, <code>DeviceGlobalCfgMgr</code></li>
+</ul>
+<p>これにより、初回スキャン時には DEVICE_METADATA / peer-group が <code>BGP_ALLOWED_PREFIXES</code> 処理前に running-config に反映される設計。ただし<strong>運用中の動的追加</strong> (peer-group を後から追加) では順序逆転が発生しうるため、<code>BGP_ALLOWED_PREFIXES</code> の再 SET が必要になる場合がある。</p>
+<h3 id="set_handler-vtysh-push"><code>set_handler</code> 内 vtysh push 順 (固定)<a class="headerlink" href="#set_handler-vtysh-push" title="Permanent link">&para;</a></h3>
+<p><code>__update_policy</code> は <code>cfg_mgr.push_list()</code> に以下を<strong>この順で</strong>渡す (<code>managers_allow_list.py:167-176</code>):</p>
+<ol>
+<li>v4 prefix-list (<code>ip prefix-list &lt;pl_v4&gt; seq N permit ...</code>)</li>
+<li>v6 prefix-list (<code>ipv6 prefix-list &lt;pl_v6&gt; seq N permit ...</code>)</li>
+<li>community-list (<code>bgp community-list standard &lt;name&gt; permit &lt;value&gt;</code>、EMPTY_COMMUNITY 時はスキップ)</li>
+<li>v4 "allow" route-map entry (<code>route-map &lt;rm_v4&gt; permit &lt;seq&gt; / match ip address prefix-list &lt;pl_v4&gt; / [match community &lt;name&gt;|set tag &lt;tag&gt;]</code>)</li>
+<li>v6 "allow" route-map entry</li>
+<li>v4 "default action" route-map entry (<code>route-map &lt;rm_v4&gt; permit 65535 / set community &lt;permit→drop_community|deny→no-export&gt; additive</code>)</li>
+<li>v6 "default action" route-map entry</li>
+</ol>
+<p><code>__remove_policy</code> (DEL) は概ね逆順: allow route-map entry 削除 → prefix-list 削除 → community-list 削除 → default 行更新 (<code>managers_allow_list.py:200-207</code>)。</p>
+<h3 id="deployment_id0">deployment_id=0 の二重書き<a class="headerlink" href="#deployment_id0" title="Permanent link">&para;</a></h3>
+<p><code>policies.conf.j2:17-29</code> は起動時に <strong>deployment_id=0 限定</strong> で <code>route-map ALLOW_LIST_DEPLOYMENT_ID_0_V4|V6 permit 65535 / set community ... additive</code> を書き出す。一方 <code>BGPAllowListMgr.__update_default_route_map_entry</code> も SET ごとに seq=65535 を上書きする。<strong>deployment_id=0 で template 引数 <code>allow_list_default_action</code> と CONFIG_DB の <code>default_action</code> が食い違うと、bgpcfgd 起動直後〜最初の SET 到達までの短時間は template 値、その後は CONFIG_DB 値</strong>という遷移が発生する。</p>
+<p>詳細根拠とスキャンログは intermediate メモ (<code>meta/_intermediate/cdb-flow/bgp-allowed-prefixes-ordering.md</code>) を参照。</p>
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:45 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:167 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:177 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:73 -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2:17 -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2:34 -->
+<!-- /ordering -->
 
 <!-- glossary-links-injected: 43ff039eae38 -->
 
