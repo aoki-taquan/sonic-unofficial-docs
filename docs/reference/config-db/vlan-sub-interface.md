@@ -341,6 +341,44 @@ orchagent 側 (`intfsorch.cpp:905-914`) でも `gPortsOrch->getPort(alias, port)
 
 `intfsorch.cpp:826` — `m_vrfOrch->isVRFexists(vrf_name)` で VRF オブジェクトの存在を確認し、存在しない場合は `task_need_retry`。VRF バインドには `m_vrfOrch->getVRFid()` で SAI VRF OID を取得し、`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` に設定する。
 
+### PORT / PORTCHANNEL — STATE イベント再トリガー
+
+`intfmgr.cpp:1183` — `doTask()` の consumer ループで `table_name == STATE_PORT_TABLE_NAME` または `STATE_LAG_TABLE_NAME` の場合は `doPortTableTask()` を呼ぶ。これにより親ポートの状態変化（リンクアップ / リンクダウン / 削除）が発生した時点でリトライ待ちの sub-interface 設定が再評価される。
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:1183-1188
+if ((table_name == STATE_PORT_TABLE_NAME) || (table_name == STATE_LAG_TABLE_NAME))
+{
+    doPortTableTask(kfvKey(t), kfvFieldsValues(t), kfvOp(t));
+}
+```
+
+### VRF — バインド変更制限
+
+`intfmgr.cpp:846-850` — `isIntfChangeVrf(alias, vrf_name)` が `true`（既に別 VRF にバインド済み）の場合、`SWSS_LOG_ERROR("%s can not change to %s directly, skipping")` を記録して **リトライなし (`return true`)** でスキップする。VRF バインドを変更するには interface を一度削除して再投入する必要がある。
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:846-850
+if (isIntfChangeVrf(alias, vrf_name))
+{
+    SWSS_LOG_ERROR("%s can not change to %s directly, skipping", alias.c_str(), vrf_name.c_str());
+    return true;
+}
+```
+
+### `isIntfStateOk` の PREFIX 分岐（PORT / PORTCHANNEL / VRF 補完）
+
+`intfmgr.cpp:649-686` の `isIntfStateOk()` は alias プレフィックスを見て参照する STATE_DB テーブルを切り替える:
+
+| プレフィックス | 参照テーブル | 備考 |
+|--------------|-------------|------|
+| `Vlan` | `STATE_VLAN_TABLE` | bridge VLAN インタフェース |
+| `PortChannel` | `STATE_LAG_TABLE` | LAG/LACP バンドル |
+| `Vnet` / `Vrf` / `mgmt` | `STATE_VRF_TABLE` | VRF・VNET・管理 VRF |
+| その他 (Ethernet 等) | `STATE_PORT_TABLE` | 物理ポート (`state` フィールドで可否判定) |
+
+sub-interface (`Ethernet0.100`) の `parentAlias` (`Ethernet0`) は物理ポートとして `STATE_PORT_TABLE` で判定される。`PortChannel10.100` の場合は `parentAlias` (`PortChannel10`) が `STATE_LAG_TABLE` で判定される。
+
 ### VLAN との関係（独立経路）
 
 VLAN_SUB_INTERFACE は `ip link add <alias> link <parent> type vlan id <vid>` で kernel sub-IF を作成する経路（`intfmgr.cpp:944-948`）を通り、VLAN テーブルの bridge VLAN とは独立。ただし `isIntfStateOk()` (intfmgr.cpp:649-686) は `Vlan` プレフィックスを持つ alias に対して `m_stateVlanTable` を参照するため、名前衝突に注意が必要。
