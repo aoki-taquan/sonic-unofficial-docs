@@ -302,6 +302,97 @@ ipHelpersTable.pops(entries)
 
 起動後に `DHCP_RELAY` エントリを変更しても、`get_dhcp()` が `dynamic=true` フラグ付きで呼ばれるため、keyspace event を受信しても設定には反映されず `LOG_WARNING "relay config changed, need restart container to take effect"` のみ出力する (config_interface.cpp:76-78)。**コンテナ再起動が必須**。
 
+---
+
+### dhcprelayd (Python) — DHCPv4 リレー制御の通信メカニズム
+
+> **調査根拠**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py`、`dhcp_utilities/common/dhcp_db_monitor.py` 全行精読 (2026-05-16)
+
+`dhcprelayd` は DHCPv4 向け Python デーモンで、CONFIG_DB の複数テーブルを `swss::SubscriberStateTable` 経由で購読し、`isc-dhcp-relay` (`dhcrelay`) プロセスを supervisord / subprocess 経由で制御する。`dhcp6relay` (C++) とは独立した別実装。
+
+#### 購読テーブルと Checker クラス
+
+| Checker クラス | 購読テーブル | 購読条件 | 用途 |
+|---|---|---|---|
+| `DhcpServerFeatureStateChecker` | `FEATURE` | 常時有効 (起動直後から) | `dhcp_server` フィーチャー の enabled/disabled 変更検知 |
+| `DhcpServerTableIntfEnablementEventChecker` | `DHCP_SERVER_IPV4` | dhcp_server 有効時のみ | DHCP_SERVER_IPV4 の `state` フィールド変更検知 |
+| `VlanTableEventChecker` | `VLAN` | dhcp_server 有効かつ VLAN DHCP インタフェース存在時 | VLAN メンバ追加/削除検知 |
+| `VlanIntfTableEventChecker` | `VLAN_INTERFACE` | dhcp_server 有効かつ VLAN DHCP インタフェース存在時 | VLAN に IPv4 アドレス追加/削除検知 |
+| `MidPlaneTableEventChecker` | `MID_PLANE_BRIDGE` | SmartSwitch 環境かつ mid-plane DHCP インタフェース存在時 | MID_PLANE_BRIDGE の bridge フィールド変更検知 |
+
+#### 通信シーケンス
+
+```
+dhcprelayd 起動 (main.py)
+  └─ swsscommon.Select() ← 単一 Select オブジェクトで全テーブルを管理
+  └─ 各 Checker.__init__(sel, config_db)
+  │    └─ subscriber_state_table = None  (disabled 状態で初期化)
+  └─ DhcpRelaydDbMonitor(db_connector, sel, checkers, timeout=5000ms)
+  └─ dhcprelayd.start()
+       ├─ _is_dhcp_server_enabled()  ← FEATURE テーブルを一括取得
+       ├─ DhcpServerFeatureStateChecker.enable()
+       │    └─ SubscriberStateTable(config_db, "FEATURE")
+       │         └─ PSUBSCRIBE __keyspace@4__:FEATURE|*
+       │    └─ sel.addSelectable(subscriber_state_table)
+       └─ dhcp_server 有効時: DhcpServerTableIntfEnablementEventChecker.enable()
+            └─ SubscriberStateTable(config_db, "DHCP_SERVER_IPV4")
+                 └─ PSUBSCRIBE __keyspace@4__:DHCP_SERVER_IPV4|*
+
+dhcprelayd.wait() ループ
+  └─ DhcpRelaydDbMonitor.check_db_update(db_snapshot)
+       └─ sel.select(timeout_ms=5000)
+            ├─ TIMEOUT → {} 返却 (何もしない)
+            └─ OBJECT → 各 enabled Checker.check_update_event(db_snapshot)
+                  └─ subscriber_state_table.pop()  ← keyspace event 取り出し
+                        → 条件判定 → True/False 返却
+  └─ _proceed_with_check_res(check_res) で dhcrelay プロセス制御
+```
+
+#### isc-dhcp-relay (dhcrelay) 制御 — port-watch 経路
+
+`dhcprelayd` は CONFIG_DB 変更を検知すると `dhcrelay` プロセスを以下の手順で再起動する:
+
+```
+refresh_dhcrelay(force_kill)
+  ├─ DHCP_SERVER_IPV4 テーブルを一括取得 (get_config_db_table)
+  ├─ VLAN テーブルを一括取得
+  │    → enabled_dhcp_interfaces を構築 (state=="enabled" かつ VLAN 存在)
+  ├─ VlanTableEventChecker / VlanIntfTableEventChecker の動的 enable/disable
+  ├─ DEVICE_METADATA.has_sonic_dhcpv4_relay が "False" の場合のみ:
+  │    _start_dhcrelay_process(dhcp_interfaces, dhcp_server_ip, force_kill)
+  │         ├─ _kill_exist_relay_releated_process("dhcrelay", force_kill)
+  │         │    └─ psutil.process_iter() で dhcrelay プロセスを走査
+  │         │         → force_kill or インタフェースセット変更時: terminate_proc()
+  │         └─ subprocess.Popen(["/usr/sbin/dhcrelay", "-d", "-m", "discard",
+  │                  "-a", "%h:%p", "%P", "--name-alias-map-file", ...,
+  │                  "-id", <vlan>, ..., "-iu", "docker0", <dhcp_server_ip>])
+  └─ supervisord 経由制御 (dhcp_server 有効/無効切り替え時):
+       supervisorctl stop/start <isc-dhcpv4-relay-VlanXXXX>
+```
+
+**port-watch 経路**: `VlanIntfTableEventChecker` が `VLAN_INTERFACE` テーブルの IPv4 アドレス変更を検知 → `refresh_dhcrelay(force_kill=True)` → dhcrelay プロセスを強制再起動。`VlanTableEventChecker` が VLAN 変更を検知 → `refresh_dhcrelay(force_kill=False)` → インタフェースセット変更時のみ再起動。
+
+#### Select タイムアウトと動的 Checker 制御
+
+| パラメータ | 値 | 根拠 |
+|---|---|---|
+| `DEFAULT_SELECT_TIMEOUT` | `5000` ms | dhcprelayd.py:22 |
+| Checker 起動時有効 | `DhcpServerFeatureStateChecker` のみ | start() で初期化 |
+| dhcp_server 有効時に追加 | `DhcpServerTableIntfEnablementEventChecker` | _proceed_with_check_res() |
+| VLAN あり時に追加 | `VlanTableEventChecker`, `VlanIntfTableEventChecker` | refresh_dhcrelay() |
+| SmartSwitch 時に追加 | `MidPlaneTableEventChecker` | refresh_dhcrelay() |
+| FEATURE / DHCP_SERVER チェッカー | 無効化対象外 (常時維持) | dhcprelayd.py:107-108 |
+
+#### dhcprelayd と dhcp6relay の購読方式比較
+
+| 項目 | dhcp6relay (C++) | dhcprelayd (Python) |
+|---|---|---|
+| 購読テーブル | `DHCP_RELAY` | `FEATURE`, `DHCP_SERVER_IPV4`, `VLAN`, `VLAN_INTERFACE`, `MID_PLANE_BRIDGE` |
+| Select timeout | 1000 ms | 5000 ms |
+| 動的変更への反応 | **無視** (dead consumer) | **即時反応** → dhcrelay 再起動 |
+| 起動時スナップショット | `Table::getKeys()` で即時読み込み | `get_config_db_table()` で都度取得 |
+| プロセス制御 | なし (自身がリレーを実装) | subprocess / supervisorctl で dhcrelay を制御 |
+
 <!-- /pubsub -->
 
 <!-- ordering -->
