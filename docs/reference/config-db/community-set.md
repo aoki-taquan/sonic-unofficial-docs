@@ -103,6 +103,39 @@ EXTENDED_COMMUNITY_SET|<name>
 
 <!-- ref-triangle:end -->
 
+<!-- cross-refs -->
+## 暗黙参照 — COMMUNITY_SET を参照する CONFIG_DB テーブル (Phase C)
+
+`COMMUNITY_SET` は **参照される側**（被参照テーブル）であり、自身が他テーブルを読み出すことはない。以下は `frrcfgd` の実装から抽出した、`COMMUNITY_SET` エントリ名を実行時に解決する上位テーブルの一覧。
+
+### ROUTE_MAP からの被参照
+
+`frrcfgd` の `route_map_key_map` 定義（`frrcfgd.py:1927-1955`）により、`ROUTE_MAP` エントリが `match_community` または `set_community_ref` フィールドを持つ場合に `COMMUNITY_SET` を暗黙参照する。
+
+| 参照元テーブル | フィールド | 参照タイミング | 効果 | evidence |
+|---|---|---|---|---|
+| `ROUTE_MAP` | `match_community` | ROUTE_MAP エントリ適用時（FRR bgpd） | フィールド値（コミュニティセット名）をそのまま FRR の `match community <name>` に展開。COMMUNITY_SET 自体の参照解決は FRR bgpd 内で行われる | `frrcfgd.py:1938` |
+| `ROUTE_MAP` | `set_community_ref` | ROUTE_MAP エントリ適用時（FRR bgpd） | `{:com-ref}` フォーマットで `daemon.comm_set_list` を lookup し、`COMMUNITY_SET` の `community_member` リストに解決する。COMMUNITY_SET が未登録または `is_configurable()` = false の場合、コマンドは生成されない | `frrcfgd.py:1953, L832-834` |
+
+!!! note "match_community と set_community_ref の違い"
+    `match_community` は COMMUNITY_SET 名を FRR にそのまま渡し、FRR 側の community-list 参照として機能する。  
+    `set_community_ref` は `frrcfgd` がランタイムに `comm_set_list` を直接 lookup し、メンバーリストを展開してから FRR コマンドを生成する（frrcfgd 内部での解決）。
+
+### BGP_NEIGHBOR_AF との関係
+
+`BGP_NEIGHBOR_AF` の `send_community` フィールド（`frrcfgd.py:1910`）は FRR の `neighbor <peer> send-community` コマンドを制御するが、`COMMUNITY_SET` テーブルを直接参照しない。community の「送信制御」であり、community-list の「定義参照」ではないため、COMMUNITY_SET との暗黙参照関係はない。
+
+### 参照が失敗した場合の挙動
+
+| 状況 | 挙動 | evidence |
+|---|---|---|
+| `set_community_ref` で参照する COMMUNITY_SET が未登録 | `comm_set_list.get()` が `None` を返し、FRR コマンドを生成しない（サイレントスキップ） | `frrcfgd.py:832-834` |
+| `set_community_ref` で参照する COMMUNITY_SET が `is_configurable()` = false | 同上（コマンド生成スキップ） | `frrcfgd.py:833` |
+| `match_community` で参照する COMMUNITY_SET 名が FRR に未登録 | FRR bgpd が community-list 未定義として扱い、match は常に false（全ルート非マッチ） | FRR bgpd 実装 |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/community-set-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
@@ -181,6 +214,31 @@ vtysh -c 'show bgp community-list'
 - なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`frrcfgd`（`BGPConfigDaemon`）は `COMMUNITY_SET` を購読して FRR の `bgp community-list` に変換する。`ROUTE_MAP` の `match_community` / `set_community_ref` は COMMUNITY_SET 名を参照するため、以下の順序依存が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `COMMUNITY_SET` 登録が `ROUTE_MAP.match_community` 参照より先行 | **先行必須** | 未先行時: FRR community-list が未定義のまま match 評価 → 常に no-match（サイレント失敗、ログなし） |
+| 2 | `set_type` / `match_action` / `community_member` の 3 フィールドが揃うまで FRR へ送信しない | **原子的反映** | `is_configurable()` が `False` の間はコマンド生成スキップ。中途半端な登録を防止 |
+| 3 | `community_member` の書込み順序が FRR に伝播（YANG `ordered-by user`） | **順序保持** | 順序変更には DELETE → re-ADD が必要。`mbr_list` を順序通りに展開 |
+| 4 | `ROUTE_MAP.set_community_ref` 参照は COMMUNITY_SET が `comm_set_list` に登録済みであること | **先行必須** | 未先行時: `com-ref` フォーマットが `None` を返し FRR `set community` コマンドがスキップ（サイレント） |
+
+### 主要な制約詳細
+
+**COMMUNITY_SET 先行必須 (依存 #1)**: `route_map_key_map` の `match_community` エントリは FRR へ `match community <name>` を送る。FRR 側で `bgp community-list <name>` が未定義の場合、route-map 評価は常に no-match となる。frrcfgd はこの整合性を検査しないため、COMMUNITY_SET を先に投入してから ROUTE_MAP を設定する必要がある（`frrcfgd.py:1938`）。
+
+**is_configurable による原子的反映 (依存 #2)**: `CommunityList.is_configurable()` は `match_action`・`is_std`（set_type）・`mbr_list`（community_member）の 3 値がすべて非 None / 非空の場合のみ `True` を返す。`hdl_com_set` はこの条件チェックを経て `bgp community-list` コマンドを発行するため、フィールドが部分的に書き込まれた状態では FRR へ反映されない（`frrcfgd.py:1580-1582`, `frrcfgd.py:988-989`）。
+
+**set_community_ref の先行必須 (依存 #4)**: `CommandArgument.__format__` の `com-ref` 分岐は `daemon.comm_set_list.get(name)` で COMMUNITY_SET を引き当て、`is_configurable()` が `True` の場合のみメンバー列を返す。未登録の場合は `None` が返り FRR コマンドが生成されない（`frrcfgd.py:831-834`）。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/community-set-ordering.md` 参照。
+
+<!-- /ordering -->
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -213,4 +271,119 @@ vtysh -c 'show bgp community-list'
 
 > **スキャン証跡**: `hdl_com_set` L981-1006 全行読了。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
 <!-- /handler-branching -->
+
+<!-- side-effects -->
+## Phase F: 副次 DB 書込・FRR 設定書込 (Direction B)
+
+対象スクリプト: `frrcfgd` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`)
+
+### FRR bgpd への vtysh 書込
+
+`frrcfgd` は CONFIG_DB の `COMMUNITY_SET` エントリを読み取り、`g_run_command()` 経由で `vtysh` コマンドを `bgpd` へ送信する。この書込は CONFIG_DB への往路ではなく、FRR デーモン内部の running-config（`/etc/frr/frr.conf` 相当）への副次書込である。
+
+| 書込先 | 操作 | 発行コマンド例 | 発行条件 | evidence |
+|---|---|---|---|---|
+| FRR `bgpd` running-config | SET | `vtysh -c 'configure terminal' -c 'bgp community-list standard <name> permit <community>'` | `op != OP_DELETE` かつ `match_action == 'any'` — member ごと個別発行 | `frrcfgd.py:1000-1006` |
+| FRR `bgpd` running-config | SET | `vtysh -c 'configure terminal' -c 'bgp community-list standard <name> permit <m1> <m2> ...'` | `op != OP_DELETE` かつ `match_action == 'all'` — 全 member を 1 行で発行 | `frrcfgd.py:993-999` |
+| FRR `bgpd` running-config | SET | `vtysh -c 'configure terminal' -c 'bgp community-list expanded <name> permit <pattern>'` | `set_type == 'EXPANDED'` — 正規表現 community | `frrcfgd.py:986` |
+| FRR `bgpd` running-config | DELETE | `vtysh -c 'configure terminal' -c 'no bgp community-list <type> <name>'` | `op == OP_DELETE` | `frrcfgd.py:989-990` |
+| FRR `bgpd` running-config | SET | `vtysh -c 'configure terminal' -c 'bgp extcommunity-list ...'` | `EXTENDED_COMMUNITY_SET` テーブルの場合（同ハンドラ） | `frrcfgd.py:1975` |
+
+### bgpcfgd の役割
+
+`bgpcfgd` は `COMMUNITY_SET` テーブルを直接購読せず、Jinja2 テンプレート (`bgpd.conf.db.comm_list.j2`) 経由で `bgpd.conf` を生成する起動時パス (`bgpcfgd`) と、ランタイム変更を処理する `frrcfgd` の二段構成。ランタイムの副次書込は `frrcfgd` のみが担う。
+
+### 副次 DB 書込なし (CONFIG_DB / STATE_DB / APPL_DB)
+
+| DB | 操作 | 結論 |
+|---|---|---|
+| CONFIG_DB | なし | `frrcfgd` は `COMMUNITY_SET` を読取専用で消費。自テーブルへの逆書込なし |
+| STATE_DB | なし | community-list に対応する STATE_DB エントリは存在しない |
+| APPL_DB | なし | FRR BGP policy は APPL_DB を経由しない |
+
+### 失敗時挙動
+
+- `g_run_command()` が失敗（vtysh 返値非ゼロ）した場合: `syslog LOG_ERR` を出力し `continue`（再試行なし）。FRR と CONFIG_DB の設定乖離が生じる可能性がある。<!-- evidence: frrcfgd.py:47-62, 2879-2881 -->
+<!-- /side-effects -->
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### FRR バージョン固定
+
+SONiC master は FRR **10.5.1** に固定されている (`rules/frr.mk:3`)。`bgp community-list` / `bgp extcommunity-list` の構文はこのバージョンを前提としており、旧 FRR (< 7.5) で使われていた `ip community-list` 形式はサポートされない。<!-- evidence: sonic-buildimage/rules/frr.mk L3 `FRR_VERSION = 10.5.1` -->
+
+### COMMUNITY_SET vs EXTENDED_COMMUNITY_SET の FRR コマンド差
+
+| テーブル | FRR コマンドプレフィックス | `set_type=standard` 時のメンバー変換 | evidence |
+|---|---|---|---|
+| `COMMUNITY_SET` | `bgp community-list` | なし（値をそのまま渡す） | `frrcfgd.py:1974` `community_set_key_map` |
+| `EXTENDED_COMMUNITY_SET` | `bgp extcommunity-list` | `route-target:<val>` → `rt <val>`、`route-origin:<val>` → `soo <val>` に変換（`parse_ext_community`） | `frrcfgd.py:1975` `extcommunity_set_key_map`、`frrcfgd.py:797-810` |
+
+### standard vs expanded の FRR 挙動差
+
+| `set_type` | FRR へのキーワード | マッチ方式 | EXTENDED_COMMUNITY_SET での追加変換 |
+|---|---|---|---|
+| `STANDARD` | `standard` | 完全一致（数値 `AS:value` / well-known community） | `{:ext-com-list}` フォーマットで `rt`/`soo` プレフィックスを自動付与 |
+| `EXPANDED` | `expanded` | 正規表現マッチ（FRR `expanded` community-list） | プレフィックス変換なし（正規表現文字列をそのまま渡す） |
+
+> **注意**: `EXTENDED_COMMUNITY_SET` で `set_type=standard` かつ `community_member` が `route-target:` / `route-origin:` プレフィックスを持たない場合、`parse_ext_community()` が `None` を返してメンバーが無視される（サイレントドロップ）。<!-- evidence: frrcfgd.py:797-810 `parse_ext_community` returns None for unknown format -->
+
+### bgpd.conf テンプレート（起動時初期化）と frrcfgd（ランタイム）の二重経路
+
+`bgpd.conf.db.comm_list.j2` はコンテナ起動時の初期コンフィグ生成に使用され、`frrcfgd` はその後の差分を vtysh 経由で適用する。両者は同じロジックを持つが独立しており、起動前後で挙動の整合性を確認する必要がある。<!-- evidence: sonic-buildimage/src/sonic-frr-mgmt-framework/templates/bgpd/bgpd.conf.db.comm_list.j2 L1-54 -->
+<!-- /platform -->
+<!-- defaults -->
+## 暗黙デフォルト・コード由来挙動 (Phase A)
+
+### `action` フィールド — dead field / ハードコード固定値
+
+- **YANG-実装 discrepancy**: YANG は `action: permit | deny` を定義するが、実装（`frrcfgd` `hdl_com_set` および `bgpd.conf.db.comm_list.j2`）は常に `permit` を FRR コマンドに埋め込む。`community_set_key_map` は `set_type`・`match_action`・`community_member` の 3 フィールドのみを処理し、`action` は抽出対象外。DB に `action: deny` を書き込んでも FRR へは `bgp community-list ... permit ...` が生成されるため、`deny` は機能しない。<!-- evidence: frrcfgd.py L1974, L998, L1005; bgpd.conf.db.comm_list.j2 L15, L18 -->
+
+### `match_action` — silent fallback (MATCH_ANY)
+
+- `CommunityList.db_data_to_attr` は `val.lower() == 'all'` のみ MATCH_ALL に分類し、それ以外の値（YANG enum 外の文字列を含む）はすべて MATCH_ANY として処理する。`ANY` 以外の予期しない文字列を書いた場合でもエラーなく MATCH_ANY 相当に fallback する。<!-- evidence: frrcfgd.py L1588-1591 -->
+
+### `community_member` — string → comma-split fallback
+
+- DB から leaf-list が文字列型で渡された場合（単一値格納など）、`val.split(',')` でリスト化して処理する。list 型なら直接使用。型によって自動変換されるため、格納形式と動作が乖離する可能性がある。<!-- evidence: frrcfgd.py L1600-1603 -->
+
+### `set_type` / `match_action` — 大文字小文字変換
+
+- DB 格納値は YANG enum に従い大文字 (`STANDARD`, `EXPANDED`, `ANY`, `ALL`) だが、frrcfgd は `.lower()` 変換後に FRR コマンドへ埋め込む (`standard`, `expanded`, `all`, `any`)。<!-- evidence: frrcfgd.py L985, L992, L1588 -->
+
+### 複合必須制約 — 3 フィールド同時欠如でサイレントスキップ
+
+- `set_type`・`match_action`・`community_member` のいずれかが欠如すると FRR コマンドが生成されない（エラーログなし）。この条件は `hdl_com_set` の冒頭ガード (`len(args) < 2 or 0/1/2 not in args[1]`) および `is_configurable()` チェックの両方で実施される。<!-- evidence: frrcfgd.py L982-983, L1580-1582 -->
+
+### DEL 時の partial failure リスク
+
+- FRR の既存 community-list を削除する `no bgp community-list` コマンドは `is_configurable() == True` の場合のみ発行される。3 フィールドが不完全な状態（片方だけ OP_DELETE になった場合など）では削除コマンドがスキップされ、FRR 側の古い設定が残留する。<!-- evidence: frrcfgd.py L989-990 -->
+
+### Jinja2 vs frrcfgd コードパスの乖離
+
+- 起動時の `bgpd.conf` 生成（Jinja2）とランタイムの設定変更（frrcfgd vtysh 直接発行）は独立したコードパス。どちらも `action` フィールドを参照せず `permit` 固定で動作する点は共通。Jinja2 側は `match_action` が `all`/`any` 以外の値の場合にサイレントスキップするが、frrcfgd 側は `all` 以外を MATCH_ANY に fallback する点で挙動が異なる。<!-- evidence: bgpd.conf.db.comm_list.j2 L10-20; frrcfgd.py L1588-1591 -->
+<!-- /defaults -->
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 不正 community 値 → FRR がコマンドを拒否 / syslog LOG_ERR
+
+`community_member` に FRR が受け入れられない値（例: 不正な `AS:value` 形式、整数範囲外の値）を設定した場合、`frrcfgd` は vtysh 経由でコマンドを発行するが FRR bgpd 側が拒否する。`g_run_command` は返値 `False` を検知して `syslog.LOG_ERR 'failed running FRR command: <cmd>'` を出力し、その時点で処理を中断する（`break`）。再試行なし・CONFIG_DB の値はそのまま残留し FRR 側と乖離する。<!-- evidence: frrcfgd.py L763-766 g_run_command / run_command -->
+
+### FRR vtysh 接続失敗 → LOG_ERR + 設定乖離
+
+bgpd との vtysh ソケット通信が失敗した場合（ソケット書き込み失敗・タイムアウト等）、`BgpdClientMgr` は `syslog.LOG_ERR` を出力するが再接続は行わず処理を drop する。FRR 側の community-list が不整合のまま放置される。<!-- evidence: frrcfgd.py L161, L192-195, L264, L269, L356, L364 -->
+
+### 重複名エントリの上書き（silent overwrite）
+
+`COMMUNITY_SET|<name>` が重複して CONFIG_DB に書き込まれた場合、`frrcfgd` は `hdl_com_set` の冒頭で `no bgp community-list <name>` を発行してから新規設定を投入する（`is_configurable()` が True の場合）。エラーや警告は出力されない。先行エントリの community-list 設定が無通知で置き換わる。<!-- evidence: frrcfgd.py L989-990, L988-1006 -->
+
+### `is_configurable()` 失敗 → DEL コマンドがスキップ
+
+`set_type`・`match_action`・`community_member` のいずれかが欠如した不完全エントリに対して OP_DELETE が来た場合、`is_configurable()` が `False` を返すため FRR への `no bgp community-list` が発行されない。FRR 側に該当 community-list が残留し続けるが、frrcfgd はエラーを記録しない。<!-- evidence: frrcfgd.py L1580-1582, L989-990 -->
+
+### 汎用例外 → LOG_ERR + drop（再試行なし）
+
+DB 更新ハンドラ全体を囲む `except Exception as e` ブロックが `syslog.LOG_ERR '[bgp cfgd] Failed handling config DB update with exception: ...'` を出力してそのエントリを破棄する。当該 community-set の変更は反映されず、DB と FRR の乖離が検出されない。<!-- evidence: frrcfgd.py L1532-1534 -->
+<!-- /failure -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
