@@ -151,6 +151,73 @@ show fgnhg active-hops
 
 <!-- /value-behavior -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` L12-13, L265-271, L1154-1165, L1680-1726, L1342, L1369 精読 (2026-05-16)
+
+### モジュール定数
+
+| 定数名 | 値 | 説明 |
+|--------|-----|------|
+| `LINK_DOWN` | `0` | `link` フィールド設定メンバの初期 oper-state（DOWN 扱い）。`link` 未設定時は `LINK_UP` 固定 |
+| `LINK_UP` | `1` | `link` フィールド未設定時のデフォルト oper-state。リンク状態追跡なしで常に UP 扱い |
+
+### SAI next-hop group 属性
+
+| SAI 属性 | 固定値 | 説明 |
+|----------|--------|------|
+| `SAI_NEXT_HOP_GROUP_ATTR_TYPE` | `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` | NHG 作成時に固定設定。通常 ECMP とは別コードパス |
+| `SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE` | `bucket_size` | CONFIG_DB の `bucket_size` をそのまま渡す |
+| `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` | ハードウェア返却値 | VS プラットフォーム以外で SAI get により実バケット数を確認。VS では `configured_bucket_size` を `real_bucket_size` として使用（TODO コメントあり） |
+
+### SAI next-hop group メンバ属性
+
+| SAI 属性 | 値 | 説明 |
+|----------|-----|------|
+| `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_GROUP_ID` | NHG OID | メンバが属する NHG を指定 |
+| `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID` | NH OID | 実際のネクストホップ OID |
+| `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` | `bucket_idx` (0〜real_bucket_size-1) | Fine-Grained ECMP のバケットインデックス |
+
+### hash バケット配置アルゴリズム定数
+
+| 計算式 | 説明 |
+|--------|------|
+| `buckets_per_nexthop = real_bucket_size / num_members` | バンク内の各 NH あたりの基本バケット数（整数除算） |
+| `extra_buckets = real_bucket_size - (buckets_per_nexthop * num_members)` | 端数バケット数。先頭 `extra_buckets` 個の NH が 1 バケット多く持つ |
+
+### prefix-based モード固定値
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `bank_member_changes.resize(1, ...)` | `1` | `match_mode==PREFIX_BASED` 時にバンク数を強制的に 1 に設定 |
+| 初期 `bank` 値 (prefix-based) | `0` | `FGNextHopInfo fg_nh_info = {0, "", LINK_DOWN}` で初期化（bank=0, link="", oper=LINK_DOWN） |
+
+```cpp
+// fgnhgorch.cpp L12-13
+#define LINK_DOWN    0
+#define LINK_UP      1
+
+// L265-271  NHG 作成時の固定 SAI 属性
+nhg_attr.id = SAI_NEXT_HOP_GROUP_ATTR_TYPE;
+nhg_attr.value.s32 = SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP;
+nhg_attr.id = SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE;
+nhg_attr.value.s32 = fgNhgEntry->configured_bucket_size;
+
+// L1342  prefix-based は単一バンク強制
+bank_member_changes.resize(1, BankMemberChanges());
+
+// L1369  prefix-based メンバ初期化
+FGNextHopInfo fg_nh_info = {0, "", LINK_DOWN};  // bank=0, link="", oper=LINK_DOWN
+```
+
+!!! note "VS プラットフォームの特例"
+    VS（Virtual Switch）では `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` の get を省略し、`configured_bucket_size` をそのまま `real_bucket_size` として使用する（L286-288 の TODO コメント）。実ハードウェアでは SAI が割り当て可能な実際のバケット数を返す。
+
+詳細な調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-constants.md`
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来のデフォルト・暗黙挙動 (Phase A)
 
