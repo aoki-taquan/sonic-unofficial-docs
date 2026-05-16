@@ -213,4 +213,63 @@ vtysh -c 'show bgp community-list'
 
 > **スキャン証跡**: `hdl_com_set` L981-1006 全行読了。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
 <!-- /handler-branching -->
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+COMMUNITY_SET テーブルは `frrcfgd` のみが購読する。bgpcfgd は COMMUNITY_SET を直接購読しない。
+
+### frrcfgd (sonic-frr-mgmt-framework)
+
+`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、Redis keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `('COMMUNITY_SET', self.comm_set_handler)` および `('EXTENDED_COMMUNITY_SET', self.comm_set_handler)` を登録し、変更通知を受け取る。
+
+```python
+# frrcfgd.py L2300-2301, 2359-2361
+('COMMUNITY_SET', self.comm_set_handler),
+('EXTENDED_COMMUNITY_SET', self.comm_set_handler),
+...
+def subscribe_all(self):
+    for table, hdlr in self.table_handler_list:
+        self.config_db.subscribe(table, hdlr)
+```
+
+変更検知後、`comm_set_handler` が `bgp_table_handler_common` を経由して `hdl_com_set()` を呼び出し、FRR vtysh コマンドを生成・実行する。
+
+**vtysh 経路** (`hdl_com_set` L981-1006):
+
+```python
+# frrcfgd.py L981-1006
+def hdl_com_set(daemon, cmd_str, op, st_idx, args, extended):
+    if len(args) < 2 or 0 not in args[1] or 1 not in args[1] or 2 not in args[1]:
+        return None  # 必須フィールド欠如 → スキップ
+    set_type = args[1][0][0].lower()
+    if op != CachedDataWithOp.OP_DELETE:
+        match_action = args[1][1][0].lower()
+        if match_action == 'all':
+            # community_member 全員を 1 行にまとめた permit コマンドを生成
+            cmd_list.append(...)
+        elif match_action == 'any':
+            # member ごとに個別の permit コマンドを生成
+            for member in member_list:
+                cmd_list.append(...)
+```
+
+生成された FRR コマンドは `configure terminal` → `bgp community-list <standard|expanded> <name> permit <value>` の形式で vtysh 経由で `bgpd` に送信される。
+
+### bgpcfgd (sonic-bgpcfgd) — 非購読
+
+bgpcfgd は COMMUNITY_SET テーブルを購読しない。COMMUNITY_SET は FRR の BGP policy 設定であり、bgpcfgd のテンプレートエンジン (`bgpd.conf.db.comm_list.j2`) は CONFIG_DB の `COMMUNITY_SET` を初期設定時にのみ読み込む形式（`SubscriberStateTable` による動的購読は行わない）。
+
+### 購読フロー要約
+
+```
+CONFIG_DB COMMUNITY_SET / EXTENDED_COMMUNITY_SET
+  └─ frrcfgd (ExtConfigDBConnector psubscribe → subscribe_all)
+       └─ comm_set_handler → bgp_table_handler_common
+            └─ hdl_com_set (match_action: all/any 分岐)
+                 └─ vtysh configure terminal
+                      └─ bgp community-list <standard|expanded> <name> permit <value>
+```
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
