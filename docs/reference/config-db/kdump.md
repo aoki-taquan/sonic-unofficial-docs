@@ -172,6 +172,39 @@ show kdump config
 **副作用**: `enabled: true` にしてもシステム再起動なしでは kdump カーネルがロードされない。`num_dumps` 変更は次回 coredump 発生時から適用。
 <!-- /runtime-trace -->
 
+<!-- side-effects -->
+## 副次ファイル書込 (Direction B)
+
+`sonic-kdump-config` スクリプト (`sonic-utilities/scripts/sonic-kdump-config`) が CONFIG_DB 変更を契機に、以下のシステムファイルを書き換える。
+
+<!-- evidence: sonic-utilities/scripts/sonic-kdump-config -->
+
+| 書込先ファイル | フィールド / 操作 | トリガー条件 |
+|--------------|----------------|------------|
+| `/etc/default/kdump-tools` | `USE_KDUMP=1` / `USE_KDUMP=0` | `enabled` 変更時 (`write_use_kdump()`) |
+| `/etc/default/kdump-tools` | `KDUMP_NUM_DUMPS=<n>` | `num_dumps` 変更時 (`write_num_dumps()`) |
+| `/etc/default/kdump-tools` | `SSH=<ssh_string>` / `#SSH` コメントアウト | `remote` 変更時 (`write_kdump_remote()`) |
+| `/etc/default/kdump-tools` | `SSH_KEY=<ssh_path>` | `ssh_path` 変更時 (`write_ssh_path()`) |
+| `/host/grub/grub.cfg` | `crashkernel=<memory>` をカーネルコマンドラインに追加/更新/削除 | `enabled=true` → `kdump_enable()` / `enabled=false` → `kdump_disable()` |
+| `/host/image-<ver>/kernel-cmdline` | `crashkernel=<memory>` (Aboot プラットフォーム用) | 上記と同条件（Aboot 環境のみ） |
+| U-Boot 環境変数 (`fw_setenv`) | `crashkernel=<memory>` / `crashkernel=0` | 上記と同条件（U-Boot プラットフォームのみ） |
+
+### 外部コマンド呼び出し
+
+| コマンド | タイミング |
+|---------|----------|
+| `/usr/sbin/kdump-config load` | `enabled=true` かつ `crashkernel` が `/proc/cmdline` に反映済みの場合 |
+| `/usr/sbin/kdump-config unload` | `enabled=false` に変更し `USE_KDUMP=0` 書込成功後 |
+| `/usr/sbin/kdump-config set-remote <ssh_string> <ssh_path>` | `remote=true` でリモート設定を構成する場合 |
+
+### 備考
+
+- `grub.cfg` への `crashkernel` 追記は **次回 reboot 後** に有効化。現行カーネルへの即時反映はされない。
+- `/etc/default/kdump-tools` は `hostcfgd` 経由ではなく `sonic-kdump-config` が直接 `sed -i` で書き換える。
+- `num_dumps` 変更は `/etc/default/kdump-tools` の `KDUMP_NUM_DUMPS` を更新するが、有効化は次回 crash 発生時。
+
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
