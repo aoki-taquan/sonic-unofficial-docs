@@ -339,3 +339,48 @@ YANG バリデーションをバイパスして 8 以上を書き込んだ場合
 | `sai_qos_map_api->remove_qos_map()` | MAP 削除（`qosorch.cpp:220`） |
 
 <!-- /constants -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+`QosOrch` (docker-swss 内 orchagent) は `swsscommon::ConsumerStateTable` 経由で CONFIG_DB の `MAP_PFC_PRIORITY_TO_QUEUE` テーブルを**直接**購読する。APPL_DB 中継なし。
+
+登録箇所: `sonic-swss/orchagent/orchdaemon.cpp:378` — `CFG_PFC_PRIORITY_TO_QUEUE_MAP_TABLE_NAME` を `QosOrch` 初期化時のテーブルリストに含める。
+
+### メッセージフロー
+
+```
+[config CLI / config qos reload / sonic-cfggen]
+    │  HSET MAP_PFC_PRIORITY_TO_QUEUE|<name> <pfc_priority> <qindex>
+    ▼
+CONFIG_DB (Redis db=4)
+    │  swsscommon ConsumerStateTable (channel-based SUBSCRIBE)
+    ▼
+QosOrch::doTask()  →  handlePfcToQueueTable()
+    │  qosorch.cpp:1299 / 1344
+    ▼
+PfcToQueueHandler::processWorkItem()
+    │  stoi(pfc_priority) → key.prio
+    │  stoi(qindex)       → value.queue_index
+    │  SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE
+    ▼
+sai_qos_map_api->create_qos_map() / set_qos_map()
+    ▼
+ASIC (SAI adapter)
+```
+
+APPL_DB / STATE_DB への書き込みは行わない。CONFIG_DB → orchagent → SAI の 2 ホップ経路。
+
+### リトライ・エラー
+
+| 結果 | 条件 |
+|------|------|
+| `task_success` | SAI 操作成功 |
+| `task_invalid_entry` | `stoi()` 失敗または DEL 対象 SAI オブジェクト不在 |
+| `task_failed` | `sai_qos_map_api` 返値 ≠ `SAI_STATUS_SUCCESS` (qosorch.cpp:1032) |
+| `task_need_retry` | DEL 時に `isObjectBeingReferenced()` = true (PORT_QOS_MAP 参照中) |
+
+詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-pubsub.md`
+<!-- /pubsub -->
