@@ -402,6 +402,84 @@ warm-reboot 後は swss 再起動時に APP_DB から全エントリを再読み
 **warm-reboot 中は SRv6 フォワーディングが一時的に停止する**点に注意すること。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## テーブル間暗黙参照（Phase C 解析）
+
+> 根拠: `srv6orch.cpp` 行 98–117, 331–397, 430–480, 871–924, 1129–1132, 1197–1248, 1484–1542, 1639, 1683, 1644, 1689, 1815–1833, 2312, 2384 の全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-orch-cross-refs.md`
+
+### SRV6_MY_SID_TABLE が参照する外部テーブル・Orch
+
+| 参照先 | DB | 参照方向 | 条件 | ブロッキング挙動 |
+|--------|----|---------|----|----------------|
+| `VRF` | CONFIG_DB | 存在確認 + OID + refcount | `action` が `end.t` / `end.dt*` / `udt*` かつ custom VRF 指定時 | `isVRFexists()` false → 即時失敗（ペンディングなし） |
+| `NeighOrch` (NEIGH_TABLE) | — | 存在確認 + OID + refcount + notify | `action` が `end.x` / `end.dx*` / `udx*` / `end.b6.*` / `ua` かつ `adj` 指定時 | `hasNextHop()` false → `m_pendingSRv6MySIDEntries` に保留、neighbor ADD 通知で自動再インストール |
+| `SRV6_MY_LOCATORS` | CONFIG_DB | 読み取り（block/node/func 長） | `action` が `un` / `udt46` かつ IPinIP トンネル生成時 | ロケータ不在 → `return false`（ペンディングなし） |
+| `SRV6_MY_SIDS` | CONFIG_DB | 読み取り（`decap_dscp_mode`）+ keyspace 通知 | `action` が `un` / `udt46` かつ IPinIP トンネル生成時 | `decap_dscp_mode` 未設定 → トンネル生成スキップ（`mySidTunnelRequired()` が false） |
+
+**VRF 参照の詳細**:
+
+`srv6orch.cpp:1488–1491` で `m_vrfOrch->isVRFexists(dt_vrf)` → `getVRFid(dt_vrf)` の順に確認する。
+`isVRFexists()` が true でも SAI OID が null の場合（VrfOrch 初期化中）は別エラーで `return false`。
+登録成功時に `increaseVrfRefCount()`、MySID 削除時に `decreaseVrfRefCount()` を呼ぶ。
+VRF 欠如は再試行キューに入らないため、VRF を先に作成してから SRV6_MY_SID_TABLE を投入すること。
+
+**NeighOrch 参照の詳細**:
+
+`Srv6Orch` は起動時に `m_neighOrch->attach(this)` でオブザーバ登録し、
+neighbor 変化（ADD / DEL）を `updateNeighbor(NeighborUpdate&)` で受け取る。
+
+- **neighbor ADD**: `m_pendingSRv6MySIDEntries` を走査し、解決できる MySID エントリを
+  `createUpdateMysidEntry()` で再インストール試行する（`srv6orch.cpp:1212–1248`）。
+- **neighbor DEL**: 対象 nexthop を使用するインストール済み SID を ASIC から削除し
+  pending に差し戻す（`srv6orch.cpp:1197–1210`）。
+- ECMP adj（カンマ区切り複数アドレス）は `"ECMP adjacency not yet supported"` エラーで全拒否
+  （`srv6orch.cpp:1516–1519`）。全プラットフォーム共通の実装制限。
+
+**CONFIG_DB 直接読み取りの詳細**:
+
+`SRV6_MY_LOCATORS` は `m_locatorCfgTable`、`SRV6_MY_SIDS` は `m_mysidCfgTable` で
+起動時に CONFIG_DB (dbId=4) へ直接接続する（`srv6orch.cpp:106–107`）。
+DSCP mode は `doTaskCfgMySidTable()` が keyspace 通知を受け取るたびにキャッシュを更新し、
+`getMySidEntryDscpMode()` がキャッシュから解決する（逆引きロケータ照合を含む）。
+
+### SRV6_SID_LIST_TABLE — nexthop 参照カウント
+
+`SRV6_MY_SID_TABLE` の nexthop 系エントリが SID リスト名を参照すると、
+`sid_table_[srv6_segment].nexthops` セットに nexthop が追加される（`srv6orch.cpp:875`）。
+SRV6_SID_LIST_TABLE への DEL 操作は `nexthops.size() > 0` の間 `task_need_retry` となり、
+参照中の MySID エントリが先に削除されるまでブロックされる（`srv6orch.cpp:1129–1132`）。
+
+### PIC_CONTEXT_TABLE — RouteOrch との双方向連携
+
+| 操作 | RouteOrch との連携 | evidence |
+|------|--------------------|---------|
+| SET 完了後 | `notifyRetry(gRouteOrch, APP_ROUTE_TABLE_NAME, RETRY_CST_PIC)` でルート再試行を起動 | `srv6orch.cpp:2312` |
+| DEL（ref_count > 0） | `addToRetry(APP_PIC_CONTEXT_TABLE_NAME, RETRY_CST_PIC_REF)` → ref_count が 0 になるまで保留 | `srv6orch.cpp:2323` |
+| ref_count 減算後（0 到達） | `notifyRetry(this, APP_PIC_CONTEXT_TABLE_NAME, RETRY_CST_PIC_REF)` で自動再実行 | `srv6orch.cpp:1833` |
+
+RouteOrch は `increasePicContextIdRefCount()` / `decreasePicContextIdRefCount()` を呼び出して
+PIC エントリの参照カウントを管理する。ref_count > 0 の間は RouteOrch がまだ経路を参照中であり、
+DEL を強制すると転送テーブルの不整合が生じるため、自動的に保留される。
+
+### 参照関係サマリ
+
+```
+SRV6_MY_SID_TABLE (APP_DB)
+  ├─ [暗黙] VRF (CONFIG_DB)                    DT 系 action — 存在確認+OID+refcount（欠如→即時失敗）
+  ├─ [暗黙] NeighOrch (NEIGH_TABLE)            nexthop 系 action — hasNextHop+OID+refcount+notify
+  │                                              （欠如→m_pendingSRv6MySIDEntries に保留、自動再試行）
+  ├─ [暗黙] SRV6_MY_LOCATORS (CONFIG_DB)       un/udt46 の IPinIP tunnel — locator block/node/func 長取得
+  └─ [暗黙] SRV6_MY_SIDS (CONFIG_DB)           un/udt46 の IPinIP tunnel — decap_dscp_mode 取得+通知
+
+SRV6_SID_LIST_TABLE (APP_DB)
+  └─ [暗黙] SRV6_MY_SID_TABLE (APP_DB)         nexthop 参照カウント — DEL は参照中 MySID が先行必須
+
+PIC_CONTEXT_TABLE (APP_DB)
+  └─ [暗黙] RouteOrch / APP_ROUTE_TABLE        SET 後 route 再試行通知 + DEL の ref_count ガード
+```
+<!-- /cross-refs -->
+
 ---
 
 ## 設定例
