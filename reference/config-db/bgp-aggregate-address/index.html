@@ -22431,6 +22431,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-vtysh-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd vtysh push 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動順 / 再起動時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 順依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22459,7 +22520,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差
@@ -34996,6 +35057,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-vtysh-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd vtysh push 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動順 / 再起動時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 順依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35024,7 +35146,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差
@@ -35299,6 +35421,114 @@
 </ul>
 <!-- /entry-points -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py</code> / <code>sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code>
+調査日: 2026-05-16</p>
+</blockquote>
+<h3 id="_17">他テーブル先行必須<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>先行テーブル / 条件</th>
+<th>依存の内容</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA|localhost.bgp_asn</code></td>
+<td><code>AggregateAddressMgr.__init__</code> の依存宣言で未解決の間は <code>set_handler</code> が呼ばれない。<code>address_set_handler</code> 冒頭で <code>directory.get_slot(...)["localhost"]["bgp_asn"]</code> を取得 (未設定で KeyError)</td>
+<td><code>managers_aggregate_address.py:33-40, 93</code></td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS|&lt;vrf&gt;.local_asn</code></td>
+<td>frrcfgd は <code>local_asn is None</code> の VRF 配下の <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> 更新を <code>continue</code> で<strong>黙って捨てる</strong></td>
+<td><code>frrcfgd.py:2658-2662</code></td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS_AF|&lt;vrf&gt;|&lt;af&gt;</code></td>
+<td>frrcfgd の table 列挙順で AF 宣言が aggregate より先に処理される。bgpd 側でも <code>address-family &lt;af&gt;</code> モード遷移後でないと <code>aggregate-address</code> を受け付けない</td>
+<td><code>frrcfgd.py:2139</code> / <code>managers_aggregate_address.py:241-250</code></td>
+</tr>
+<tr>
+<td><code>BGP_BBR|all.status</code> (<code>bbr-required=true</code> の場合)</td>
+<td><code>bbr_status</code> が <code>enabled</code> / <code>disabled</code> 以外 (=未設定) かつ <code>bbr-required=true</code> のエントリは STATE_DB <code>inactive</code> に落とされ FRR 投入をスキップ</td>
+<td><code>managers_aggregate_address.py:73-83</code></td>
+</tr>
+<tr>
+<td><code>ROUTE_MAP</code> / <code>PREFIX_SET</code> (<code>aggr-policy</code> 使用時のみ)</td>
+<td>frrcfgd の <code>af_aggregate_key_map</code> が <code>{5:aggr-policy}</code> をルートマップ名に解決。ROUTE_MAP 未登録だと <code>aggregate-address ... route-map &lt;name&gt;</code> の属性付与が機能しない</td>
+<td><code>frrcfgd.py:1982-1983, 2669-2676</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgpcfgd-vtysh-push">bgpcfgd vtysh push 順序<a class="headerlink" href="#bgpcfgd-vtysh-push" title="Permanent link">&para;</a></h3>
+<p><code>address_set_handler</code> は <code>cfg_mgr.push_list()</code> に以下の順で渡す。</p>
+<ol>
+<li><code>router bgp &lt;asn&gt;</code> → <code>address-family ipv4|ipv6</code> → <code>aggregate-address &lt;prefix&gt; [summary-only] [as-set]</code> → <code>exit-address-family</code> → <code>exit</code></li>
+<li>(<code>aggregate-address-prefix-list</code> 設定時) <code>ip|ipv6 prefix-list &lt;name&gt; permit &lt;prefix&gt;</code></li>
+<li>(<code>contributing-address-prefix-list</code> 設定時) <code>ip|ipv6 prefix-list &lt;name&gt; permit &lt;prefix&gt; le 32|128</code></li>
+</ol>
+<p>aggregate 本体 → prefix-list の順であり、中間状態では aggregate が未登録 prefix-list を参照する瞬間が存在する (bgpd の前方参照許容で動作)。</p>
+<h3 id="_18">起動順 / 再起動時の挙動<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>挙動</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AggregateAddressMgr.__init__</code> 末尾</td>
+<td><code>remove_all_state_of_address()</code> で STATE_DB の <code>BGP_AGGREGATE_ADDRESS</code> を全削除 → CONFIG_DB 購読開始。bgpcfgd 再起動直後は STATE_DB 空。<code>inactive</code> の有無で readiness を判定してはならない</td>
+<td><code>managers_aggregate_address.py:42-44, 203-207</code></td>
+</tr>
+<tr>
+<td><code>BGP_BBR.status</code> が <code>disabled</code> → <code>enabled</code> に遷移</td>
+<td><code>on_bbr_change</code> が STATE_DB を走査し <code>bbr-required=true</code> の全 aggregate を FRR に再投入</td>
+<td><code>managers_aggregate_address.py:46-56</code></td>
+</tr>
+<tr>
+<td><code>BGP_BBR.status</code> が <code>enabled</code> → <code>disabled</code> に遷移</td>
+<td>同じく走査し FRR から削除 + STATE_DB を <code>inactive</code> に</td>
+<td><code>managers_aggregate_address.py:57-61</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 順依存<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>必須順序</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_AGGREGATE_ADDRESS</code> DEL</td>
+<td>STATE_DB が <code>inactive</code> の場合 FRR 削除コマンドをスキップ。<code>inactive</code> の判定が <code>set_address_state</code> 経由でしか書かれないため、CONFIG_DB と STATE_DB の整合が崩れていると削除漏れの可能性</td>
+<td><code>managers_aggregate_address.py:138-146</code></td>
+</tr>
+<tr>
+<td>DEL の vtysh 順</td>
+<td>aggregate 本体 (<code>no aggregate-address ...</code>) → 関連 prefix-list (<code>no ip\|ipv6 prefix-list ...</code>) の順で <code>push_list</code></td>
+<td><code>managers_aggregate_address.py:148-185</code></td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠とスキャンログは intermediate メモ (<code>meta/_intermediate/cdb-flow/bgp-aggregate-address-ordering.md</code>) を参照。</p>
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:33 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:73 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:104 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1982 -->
+<!-- /ordering -->
+
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <p>YANG <code>default</code> 宣言に加えて、<code>bgpcfgd</code> (<code>managers_aggregate_address.py</code>) と <code>sonic-utilities</code> (<code>config/bgp_cli.py</code>) が独立して同値を <code>.get()</code> / <code>is_flag</code> で再定義している。全フィールドで三層 (YANG / bgpcfgd / CLI) が一致しており、フィールド欠落時の挙動は以下のとおり。</p>
@@ -35352,7 +35582,7 @@
 <!-- /defaults -->
 
 <!-- platform -->
-<h2 id="_17">プラットフォーム差<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h2 id="_19">プラットフォーム差<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
 <p><strong>プラットフォーム差なし</strong>。<code>BGP_AGGREGATE_ADDRESS</code> の適用経路は FRR (ユーザ空間 <code>bgpd</code>) で完結し、SAI / ASIC SDK を直接呼び出さない。ASIC ベンダー・T0 / T1 / VOQ chassis・single-asic / multi-asic いずれの構成でも <code>bgpcfgd</code> の <code>AggregateAddressMgr</code> が CONFIG_DB を購読し <code>vtysh</code> 経由で <code>aggregate-address</code> を投入する経路は同一。</p>
 <table>
 <thead>

@@ -24365,6 +24365,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34908,6 +34919,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35448,6 +35470,58 @@
 <li>NEIGHBOR_TYPE キーを含む variant は <code>neighbor_type</code> 単位で個別ポリシーを生成し、同一 deployment_id のグローバルポリシーと AND 結合 (<code>managers_allow_list.py:__update_policy</code>)</li>
 </ul>
 <!-- /value-behavior -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>ASIC・ベンダー依存はないが、<code>switch_type</code> と <code>type/subtype</code> で FRR route-map 生成テンプレートが分岐する</strong>。テーブル処理ロジック自体 (<code>managers_allow_list.py</code>) はプラットフォーム非依存だが、ALLOW_LIST がぶら下がる <code>FROM_BGP_PEER_V4/V6</code> ポリシーの末尾処理が VOQ chassis (chassis-packet) で差し替わり、追加の DEFAULT prefix-list ブロックは UpstreamLC な SpineRouter でのみ生成される。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等)</td>
+<td>影響なし</td>
+<td>BGP_ALLOWED_PREFIXES → FRR prefix-list / route-map → BGP UPDATE フィルタは <a href="../../glossary/#term-frr">FRR</a> ユーザ空間で完結、<a href="../../glossary/#term-sai">SAI</a> 非経由</td>
+</tr>
+<tr>
+<td>HwSku</td>
+<td>影響なし</td>
+<td><code>managers_allow_list.py</code> および <code>policies.conf.j2</code> を <code>hwsku</code> で grep して 0 ヒット</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu</code> true)</td>
+<td>実質影響なし</td>
+<td>各 <code>asicN</code> namespace の <code>bgpcfgd</code> プロセスが同一バイナリで独立に処理。テーブル処理に差は出ない</td>
+</tr>
+<tr>
+<td><code>switch_type == 'chassis-packet'</code></td>
+<td><strong>分岐あり</strong></td>
+<td><code>policies.conf.j2:48,71</code> で <code>route-map FROM_BGP_PEER_V4/V6 permit 13</code> の <code>set tag</code> が <code>route_do_not_send_appdb_tag</code> → <code>route_eligible_for_fallback_to_default_tag</code> に切り替わる (chassis-packet LC では fallback default 用にマーク)</td>
+</tr>
+<tr>
+<td><code>type=='SpineRouter' and subtype=='UpstreamLC'</code></td>
+<td><strong>分岐あり</strong></td>
+<td>route-map permit 12/13 (DEFAULT_IPV4/V6 マッチ + tag/community 付与) は UpstreamLC な SpineRouter でのみ生成 (<code>policies.conf.j2:41,64</code>)。それ以外のロールでは ALLOW_LIST 不一致経路は <code>permit 11 → permit 100</code> で素通り</td>
+</tr>
+<tr>
+<td>constants.yml (<code>bgp.allow_list</code>)</td>
+<td>プラットフォーム非依存</td>
+<td><code>files/image_config/constants/constants.yml</code> 1 ファイルで image 全体共通。<code>files/device/&lt;platform&gt;/</code> 配下の上書き機構なし</td>
+</tr>
+<tr>
+<td>テーブル値検証 (<code>default_action</code>, <code>prefixes_v4/v6</code>)</td>
+<td>影響なし</td>
+<td><code>managers_allow_list.py</code> は IP family 構文のみを見て分岐。<code>platform / asic / chassis / namespace / switch_type</code> を参照する箇所が 0 ヒット</td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/bgp-allowed-prefixes-platform.md</code> を参照。</p>
+<!-- /platform -->
 
 <!-- ref-triangle:start -->
 

@@ -24354,13 +24354,218 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#define" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        #define マクロ (デフォルト値)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session_state_lookup-sai-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        session_state_lookup — SAI 状態 → STATE_DB 文字列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session_type_map-session_type_lookup-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        session_type_map / session_type_lookup — type 双方向変換
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド名・キー区切り文字リテラル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bfdorch-state_db-bfd_session_table-db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — bfdorch が STATE_DB BFD_SESSION_TABLE 書込みに伴い連動する DB / 消費者 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — bfdorch が STATE_DB BFD_SESSION_TABLE 書込みに伴い連動する DB / 消費者 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#direction-a-bfdorch-db-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Direction A — bfdorch が読み出す関連 DB / Orch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#direction-b-state_db-bfd_session_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Direction B — STATE_DB BFD_SESSION_TABLE を読む消費者
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-sai-create_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. SAI セッション作成失敗 (create_bfd_session)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-sai-remove_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. SAI セッション削除失敗 (remove_bfd_session)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-sai-register_bfd_state_change_notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. SAI 通知ハンドラ登録失敗 / 切断 (register_bfd_state_change_notification)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-sai-lookup-dotasknotificationconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. SAI 通知受信時の lookup ミス (doTask(NotificationConsumer))
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-state_db-create_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. 入力バリデーション失敗 → STATE_DB 書込み未到達 (create_bfd_session 前半)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出ロジック補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -24437,7 +24642,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -24448,7 +24653,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -24459,7 +24664,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -24470,7 +24675,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24493,7 +24698,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある確認ポイント
@@ -34870,13 +35075,218 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#define" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        #define マクロ (デフォルト値)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session_state_lookup-sai-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        session_state_lookup — SAI 状態 → STATE_DB 文字列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session_type_map-session_type_lookup-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        session_type_map / session_type_lookup — type 双方向変換
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド名・キー区切り文字リテラル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bfdorch-state_db-bfd_session_table-db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — bfdorch が STATE_DB BFD_SESSION_TABLE 書込みに伴い連動する DB / 消費者 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — bfdorch が STATE_DB BFD_SESSION_TABLE 書込みに伴い連動する DB / 消費者 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#direction-a-bfdorch-db-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Direction A — bfdorch が読み出す関連 DB / Orch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#direction-b-state_db-bfd_session_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Direction B — STATE_DB BFD_SESSION_TABLE を読む消費者
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-sai-create_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. SAI セッション作成失敗 (create_bfd_session)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-sai-remove_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. SAI セッション削除失敗 (remove_bfd_session)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-sai-register_bfd_state_change_notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. SAI 通知ハンドラ登録失敗 / 切断 (register_bfd_state_change_notification)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-sai-lookup-dotasknotificationconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. SAI 通知受信時の lookup ミス (doTask(NotificationConsumer))
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-state_db-create_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. 入力バリデーション失敗 → STATE_DB 書込み未到達 (create_bfd_session 前半)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出ロジック補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -34953,7 +35363,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34964,7 +35374,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34975,7 +35385,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34986,7 +35396,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35009,7 +35419,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある確認ポイント
@@ -35453,8 +35863,144 @@
 </ul>
 <!-- /defaults -->
 
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E — コード由来)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>bfdorch.cpp</code> および <code>orch.h</code> に直接埋め込まれた定数で、CONFIG_DB / STATE_DB / YANG では設定不能なもの。詳細は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-state-constants.md">meta/_intermediate/cdb-flow/bfd-state-constants.md</a> を参照。</p>
+<h3 id="define"><code>#define</code> マクロ (デフォルト値)<a class="headerlink" href="#define" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BFD_SESSION_DEFAULT_TX_INTERVAL</code></td>
+<td><code>1000</code> (ms)</td>
+<td><code>tx_interval</code> 未指定時のデフォルト</td>
+<td><code>bfdorch.cpp:15</code></td>
+</tr>
+<tr>
+<td><code>BFD_SESSION_DEFAULT_RX_INTERVAL</code></td>
+<td><code>1000</code> (ms)</td>
+<td><code>rx_interval</code> 未指定時のデフォルト</td>
+<td><code>bfdorch.cpp:16</code></td>
+</tr>
+<tr>
+<td><code>BFD_SESSION_DEFAULT_DETECT_MULTIPLIER</code></td>
+<td><code>10</code></td>
+<td><code>multiplier</code> 未指定時のデフォルト</td>
+<td><code>bfdorch.cpp:17</code></td>
+</tr>
+<tr>
+<td><code>BFD_SESSION_DEFAULT_TOS</code></td>
+<td><code>192</code></td>
+<td><code>tos</code> 未指定時のデフォルト (DSCP CS6 相当)。STATE_DB 非書込み</td>
+<td><code>bfdorch.cpp:19</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="session_state_lookup-sai-state_db"><code>session_state_lookup</code> — SAI 状態 → STATE_DB 文字列<a class="headerlink" href="#session_state_lookup-sai-state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>SAI 列挙値</th>
+<th>STATE_DB 文字列</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_BFD_SESSION_STATE_ADMIN_DOWN</code></td>
+<td><code>"Admin_Down"</code></td>
+</tr>
+<tr>
+<td><code>SAI_BFD_SESSION_STATE_DOWN</code></td>
+<td><code>"Down"</code></td>
+</tr>
+<tr>
+<td><code>SAI_BFD_SESSION_STATE_INIT</code></td>
+<td><code>"Init"</code></td>
+</tr>
+<tr>
+<td><code>SAI_BFD_SESSION_STATE_UP</code></td>
+<td><code>"Up"</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>bfdorch.cpp:49-55</code> の <code>const map&lt;sai_bfd_session_state_t, string&gt;</code>。<code>hset(key, "state", session_state_lookup.at(state))</code> (<code>bfdorch.cpp:252</code>) および create 直後の固定書込み (<code>bfdorch.cpp:544</code>) で参照される。<strong><code>"Admin_Down"</code> のみアンダースコア表記</strong> に注意 (CLI/監視は完全一致比較が必要)。</p>
+<h3 id="session_type_map-session_type_lookup-type"><code>session_type_map</code> / <code>session_type_lookup</code> — type 双方向変換<a class="headerlink" href="#session_type_map-session_type_lookup-type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>文字列</th>
+<th>SAI 列挙値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"demand_active"</code></td>
+<td><code>SAI_BFD_SESSION_TYPE_DEMAND_ACTIVE</code></td>
+</tr>
+<tr>
+<td><code>"demand_passive"</code></td>
+<td><code>SAI_BFD_SESSION_TYPE_DEMAND_PASSIVE</code></td>
+</tr>
+<tr>
+<td><code>"async_active"</code> (default)</td>
+<td><code>SAI_BFD_SESSION_TYPE_ASYNC_ACTIVE</code></td>
+</tr>
+<tr>
+<td><code>"async_passive"</code></td>
+<td><code>SAI_BFD_SESSION_TYPE_ASYNC_PASSIVE</code></td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB → SAI: <code>session_type_map</code> (<code>bfdorch.cpp:33-39</code>)。SAI → STATE_DB: <code>session_type_lookup</code> (<code>bfdorch.cpp:41-47</code>)。デフォルトは <code>SAI_BFD_SESSION_TYPE_ASYNC_ACTIVE</code> (<code>bfdorch.cpp:340</code>)。</p>
+<h3 id="_10">フィールド名・キー区切り文字リテラル<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"state"</code></td>
+<td>STATE_DB フィールド名 (状態)</td>
+<td><code>bfdorch.cpp:252,544</code></td>
+</tr>
+<tr>
+<td><code>"type"</code></td>
+<td>STATE_DB フィールド名 (セッション種別)</td>
+<td><code>bfdorch.cpp:418</code></td>
+</tr>
+<tr>
+<td><code>"default"</code></td>
+<td>VRF / interface のデフォルト値 (hardware lookup 時の interface)</td>
+<td><code>bfdorch.cpp:482,498,531</code></td>
+</tr>
+<tr>
+<td><code>state_db_key_delimiter = '|'</code></td>
+<td>STATE_DB キー区切り文字 (全 orch 共通)</td>
+<td><code>orch.h:38</code>, <code>bfdorch.cpp:638</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">補足<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>tos</code> のデフォルト <code>192</code> は SAI 属性専用で <strong>STATE_DB / 読み出し不可</strong>。</li>
+<li><code>tx_interval</code> / <code>rx_interval</code> は STATE_DB には ms、SAI には ×1000 した μs で投入される。</li>
+<li><code>state_db_key_delimiter</code> が <code>'|'</code> のため、VRF 名や interface 名に <code>|</code> を含めることはできない。</li>
+</ul>
+<!-- /constants -->
+
 <!-- cdb-exceptions -->
-<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35490,6 +36036,323 @@
 </tbody>
 </table>
 <!-- /cdb-exceptions -->
+
+<!-- cross-refs -->
+<h2 id="bfdorch-state_db-bfd_session_table-db-phase-c">暗黙参照 — <code>bfdorch</code> が STATE_DB <code>BFD_SESSION_TABLE</code> 書込みに伴い連動する DB / 消費者 (Phase C)<a class="headerlink" href="#bfdorch-state_db-bfd_session_table-db-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>bfdorch</code> は STATE_DB <code>BFD_SESSION_TABLE</code> を<strong>単体では書かない</strong>。APPL_DB 入力、<code>BgpGlobalStateOrch</code> 経由で取得する CONFIG_DB <code>BGP_DEVICE_GLOBAL</code> の 2 フラグ、および SAI が返す ASIC_DB のセッション OID と連動し、書込み有無・書込み先テーブル・state 更新タイミングが分岐する。書き込まれた値は複数の orchagent / daemon が observer または SubscriberStateTable で消費する。</p>
+<h3 id="direction-a-bfdorch-db-orch">Direction A — <code>bfdorch</code> が読み出す関連 DB / Orch<a class="headerlink" href="#direction-a-bfdorch-db-orch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル / 値</th>
+<th>DB / 経路</th>
+<th>役割</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../bfd-session/"><code>BFD_SESSION</code></a> (APPL_DB <code>BFD_SESSION_TABLE</code>)</td>
+<td>APPL_DB</td>
+<td>Direction A の入り口。SET/DEL が STATE_DB <code>BFD_SESSION_TABLE</code> の create/del を駆動</td>
+<td><code>bfdorch.cpp</code> <code>BfdOrch::doTask(Consumer&amp;)</code></td>
+</tr>
+<tr>
+<td><a href="../bgp-device-global/"><code>BGP_DEVICE_GLOBAL</code></a> <code>.tsa_enabled</code></td>
+<td>CONFIG_DB → <code>BgpGlobalStateOrch::getTsaState()</code></td>
+<td>TSA 有効時に <code>shutdown_bfd_during_tsa=true</code> のセッションを <code>notify_session_state_down()</code> + STATE_DB から削除する分岐。<code>BgpGlobalStateOrch::doTask()</code> で SET を受けると <code>BfdOrch::handleTsaStateChange()</code> 経由で既存 STATE_DB エントリを一斉に再評価</td>
+<td><code>bfdorch.cpp:114-120,158,193,683-704,743-748,793-840</code></td>
+</tr>
+<tr>
+<td><a href="../bgp-device-global/"><code>BGP_DEVICE_GLOBAL</code></a> <code>.use_software_bfd</code></td>
+<td>CONFIG_DB → <code>BgpGlobalStateOrch::getSoftwareBfd()</code></td>
+<td><code>true</code> のとき STATE_DB <code>BFD_SESSION_TABLE</code> を書かず、代わりに <code>BFD_SOFTWARE_SESSION_TABLE</code> に APPL_DB データを転記。Phase 6 handler-branching の主分岐</td>
+<td><code>bfdorch.cpp:116,120,133-136,182-185,749-753</code></td>
+</tr>
+<tr>
+<td>ASIC_DB <code>SAI_OBJECT_TYPE_BFD_SESSION</code> OID</td>
+<td>ASIC_DB (via SAI)</td>
+<td><code>sai_bfd_api-&gt;create_bfd_session()</code> の返却 OID を <code>bfd_session_lookup</code> に格納し、SAI 通知 (<code>bfd_session_state_change</code>) を STATE_DB key に逆引きして <code>hset(key, "state", ...)</code> を発火</td>
+<td><code>bfdorch.cpp:249-263,567-572,629-631</code></td>
+</tr>
+<tr>
+<td>switch <code>SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY</code></td>
+<td>SAI switch attr</td>
+<td>SAI 通知ハンドラ登録。<strong><code>state</code> フィールドを動かす唯一のトリガ</strong></td>
+<td><code>bfdorch.cpp:277,292</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>BfdOrch</code> と <code>BgpGlobalStateOrch</code> は同 <code>bfdorch.cpp</code> 内で定義され <code>gDirectory</code> 経由で循環参照する。<code>tsa_enabled</code> 1 ビットの変化で全 STATE_DB エントリが再評価される点に注意。</p>
+</blockquote>
+<h3 id="direction-b-state_db-bfd_session_table">Direction B — STATE_DB <code>BFD_SESSION_TABLE</code> を読む消費者<a class="headerlink" href="#direction-b-state_db-bfd_session_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>消費者</th>
+<th>参照経路</th>
+<th>連動内容</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VNetRouteOrch</code> / <code>VNetOrch</code></td>
+<td><code>SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE</code> observer</td>
+<td>BFD Up/Down で VNet monitor ルート (<code>VNET_MONITORING_TYPE_CUSTOM_BFD</code> 等) の next-hop を切替</td>
+<td><code>vnetorch.cpp:786,968,1375,2457-2487,2661,2761</code></td>
+</tr>
+<tr>
+<td><code>NeighOrch</code></td>
+<td><code>SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE</code> observer</td>
+<td>BFD Up で neighbor (next-hop) を有効化</td>
+<td><code>neighorch.cpp:201,631</code></td>
+</tr>
+<tr>
+<td><code>staticroutebfd</code> (<code>sonic-bgpcfgd</code>)</td>
+<td><code>SubscriberStateTable(STATE_DB, BFD_SESSION_TABLE)</code> + 起動時 <code>db.keys(STATE_DB, "BFD_SESSION_TABLE\|*")</code></td>
+<td>CONFIG_DB <code>STATIC_ROUTE.bfd=true</code> のルートで BFD Up セッションが残る next-hop のみを APPL_DB <code>STATIC_ROUTE_TABLE</code> に書き出し、全 Down で APPL_DB エントリ削除</td>
+<td><code>staticroutebfd/main.py:24,116,118,253,275,296,721,736</code></td>
+</tr>
+<tr>
+<td><code>BfdMonitorOrch</code></td>
+<td>STATE_DB <code>BFD_SESSION_TABLE</code> 直接購読</td>
+<td>BFD 状態オーケストレーション監視</td>
+<td><code>orchdaemon.cpp</code> (BFD_SESSION_TABLE 登録)</td>
+</tr>
+<tr>
+<td><code>show bfd peers</code> (sonic-utilities)</td>
+<td>STATE_DB <code>BFD_SESSION_TABLE</code> ダンプ</td>
+<td>CLI 表示</td>
+<td>sonic-utilities <code>show/bfd.py</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_13">範囲外 (誤解されやすい隣接)<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>STATIC_ROUTE_BFD</code> という CONFIG_DB テーブル名は<strong>存在しない</strong>。<code>STATIC_ROUTE.bfd=true</code> フラグを <code>staticroutebfd</code> daemon が読み、本 STATE_DB テーブルを Subscriber で参照して APPL_DB <code>STATIC_ROUTE_TABLE</code> を再構築する経路で「STATIC_ROUTE × BFD」連携が成立する。</li>
+<li><code>BFD_SOFTWARE_SESSION_TABLE</code> (STATE_DB) は <code>use_software_bfd=true</code> の代替テーブルで、本ページの分岐先として上で扱う。フィールド詳細は派生ページの対象 (本ページ範囲外)。</li>
+<li><code>bfd_session_lookup</code> は orchagent プロセス内メモリ (DB ではない) のため暗黙参照には含めない。</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/bfd-state-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>STATE_DB <code>BFD_SESSION_TABLE</code> の書き手は <code>bfdorch</code> のみで、<code>swss::Table::set/hset/del</code> を直接呼ぶ（戻り値なし）。アプリ層で「STATE_DB 書込み自体の失敗」は観測できず、Redis I/O 例外時は orchagent プロセスごと abort → systemd 再起動 → 起動時 cleanup ループ (<code>bfdorch.cpp:74-86</code>) で全エントリ削除後に再作成される自己回復経路に集約される。本節は (A) SAI セッション作成失敗、(B) セッション削除失敗、(C) SAI 通知ハンドラ登録失敗 / 切断、(D) SAI 通知受信時の lookup ミス、(E) 入力バリデーション失敗による書込み未到達、の 5 系統を整理する。</p>
+<h3 id="a-sai-create_bfd_session">A. SAI セッション作成失敗 (<code>create_bfd_session</code>)<a class="headerlink" href="#a-sai-create_bfd_session" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>STATE_DB 反映</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_bfd_api-&gt;create_bfd_session()</code> 失敗 → <code>retry_create_bfd_session()</code> も失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to create bfd session ... rv:%d")</code> → <code>handleSaiCreateStatus(SAI_API_BFD, status)</code>。<code>task_success</code> 以外なら <code>parseHandleSaiStatusFailure()</code> で <code>return false</code>、<code>m_stateBfdSessionTable.set()</code> 行に到達しない</td>
+<td><strong>書込みなし</strong> (<code>bfd_session_map</code> / <code>bfd_session_lookup</code> も未登録)</td>
+<td><code>bfdorch.cpp:547-562</code></td>
+</tr>
+<tr>
+<td><code>retry_create_bfd_session()</code> でポート番号フォールバック (3784→4784) が SAI WARN を出して成功</td>
+<td>通常書込み継続。STATE_DB 反映は正常経路と同一</td>
+<td><code>state="Down"</code> で書込み</td>
+<td><code>bfdorch.cpp:583-606</code></td>
+</tr>
+<tr>
+<td><code>handleSaiCreateStatus</code> が <code>task_success</code> 返却（リトライ可能扱い）</td>
+<td>関数は <code>false</code> を返さず継続するが、<code>bfd_session_id</code> が <code>SAI_NULL_OBJECT_ID</code> のまま STATE_DB 書込みに至る可能性。後段 SAI 通知が来ても <code>bfd_session_lookup</code> に欠けるため hset 不能</td>
+<td>整合性破壊（要 SAI 実装依存）。Phase E 監視推奨</td>
+<td><code>bfdorch.cpp:556-568</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-sai-remove_bfd_session">B. SAI セッション削除失敗 (<code>remove_bfd_session</code>)<a class="headerlink" href="#b-sai-remove_bfd_session" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>STATE_DB 反映</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bfd_session_map</code> に該当 key なし</td>
+<td><code>SWSS_LOG_ERROR("BFD session for ... does not exist")</code> → <code>return true</code>（成功扱い）</td>
+<td><strong>何もしない</strong>（STATE_DB に古いエントリが残ればそのまま）</td>
+<td><code>bfdorch.cpp:611-615</code></td>
+</tr>
+<tr>
+<td><code>sai_bfd_api-&gt;remove_bfd_session()</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to remove bfd session ... rv:%d")</code> → <code>handleSaiRemoveStatus()</code>。<code>task_success</code> 以外なら <code>parseHandleSaiStatusFailure()</code> で <code>return false</code>、<code>m_stateBfdSessionTable.del()</code> 行に到達しない</td>
+<td><strong>削除されず残留</strong>。<code>doTask()</code> 上位 SET/DEL ループで retry 候補に戻るが <code>bfd_session_map</code> には残るため再 DEL 試行になる</td>
+<td><code>bfdorch.cpp:618-627</code></td>
+</tr>
+<tr>
+<td>SAI remove 成功</td>
+<td><code>m_stateBfdSessionTable.del(peer)</code> で STATE_DB 行削除</td>
+<td>削除</td>
+<td><code>bfdorch.cpp:629</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="c-sai-register_bfd_state_change_notification">C. SAI 通知ハンドラ登録失敗 / 切断 (<code>register_bfd_state_change_notification</code>)<a class="headerlink" href="#c-sai-register_bfd_state_change_notification" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>STATE_DB 反映</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_query_attribute_capability(SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY)</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Unable to query the BFD change notification capability")</code> → <code>return false</code></td>
+<td>初期書込み (<code>state="Down"</code>) は走るが、<strong>以降 SAI 通知が届かないため <code>state</code> が永久に <code>"Down"</code> で固着</strong>。<code>BfdMonitorOrch</code> / <code>vnetorch</code> 誤判定の経路</td>
+<td><code>bfdorch.cpp:273-284</code></td>
+</tr>
+<tr>
+<td>capability あるが <code>set_implemented==false</code></td>
+<td><code>SWSS_LOG_ERROR("BFD register change notification not supported")</code> → <code>return false</code></td>
+<td>同上（state 固着）</td>
+<td><code>bfdorch.cpp:286-290</code></td>
+</tr>
+<tr>
+<td><code>set_switch_attribute()</code> でハンドラ登録失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to register BFD notification handler")</code> → <code>return false</code></td>
+<td>同上（state 固着）</td>
+<td><code>bfdorch.cpp:296-301</code></td>
+</tr>
+<tr>
+<td><code>ASIC_DB</code> NOTIFICATIONS チャネル切断（Redis サブスクライブ側）</td>
+<td><code>NotificationConsumer::pop()</code> がブロック / 例外。Redis 切断は <code>DBConnector</code> レイヤで例外 → orchagent abort → systemd 再起動 → init 再走</td>
+<td>プロセス再起動で全エントリクリーンアップ後に再作成</td>
+<td><code>bfdorch.cpp:63-65, 74-86</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">通知ハンドラ登録失敗は『静かな state 固着』を生む</p>
+<p><code>register_bfd_state_change_notification()</code> の失敗（<code>return false</code>）はプロセス abort に直結しない。結果、<code>create_bfd_session()</code> 直後の <code>state="Down"</code> が固定され、SAI/ピアが Up になっても STATE_DB は更新されない。syslog で <code>"BFD register change notification not supported"</code> / <code>"Failed to register BFD notification handler"</code> の出現を監視すべき。</p>
+</div>
+<h3 id="d-sai-lookup-dotasknotificationconsumer">D. SAI 通知受信時の lookup ミス (<code>doTask(NotificationConsumer)</code>)<a class="headerlink" href="#d-sai-lookup-dotasknotificationconsumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>STATE_DB 反映</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bfd_session_lookup[id]</code> が未登録の <code>bfd_session_id</code> を SAI が通知</td>
+<td><code>std::map::operator[]</code> がデフォルト構築（<code>state=0=SAI_BFD_SESSION_STATE_ADMIN_DOWN</code>, <code>peer=""</code>）を<strong>挿入</strong>。差分判定が通る場合 <code>m_stateBfdSessionTable.hset("", "state", ...)</code> で空キー行を生成</td>
+<td><strong><code>BFD_SESSION_TABLE\|</code> (空 peer) という不正キーが生成されうる</strong>。<code>bfd_session_lookup</code> にも誤エントリが永続化</td>
+<td><code>bfdorch.cpp:244-263</code></td>
+</tr>
+<tr>
+<td><code>session_state_lookup.at(state)</code> が範囲外の <code>state</code> を受信</td>
+<td><code>std::out_of_range</code> 例外 → orchagent プロセス abort</td>
+<td>プロセス再起動で全クリーンアップ</td>
+<td><code>bfdorch.cpp:247, 252</code></td>
+</tr>
+<tr>
+<td><code>state == bfd_session_lookup[id].state</code>（差分なし）</td>
+<td><code>if</code> ブロックスキップ。<code>hset</code> も <code>notify()</code> も発火しない</td>
+<td>書込みなし（正常）</td>
+<td><code>bfdorch.cpp:249-263</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="e-state_db-create_bfd_session">E. 入力バリデーション失敗 → STATE_DB 書込み未到達 (<code>create_bfd_session</code> 前半)<a class="headerlink" href="#e-state_db-create_bfd_session" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>STATE_DB 反映</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>key パース失敗（VRF / ifname 欠落）</td>
+<td><code>SWSS_LOG_ERROR("Failed to parse key ... no vrf/ifname is given")</code> → <code>return false</code></td>
+<td>書込みなし</td>
+<td><code>bfdorch.cpp:323-333</code></td>
+</tr>
+<tr>
+<td>同一 key で <code>bfd_session_map</code> に既存</td>
+<td><code>SWSS_LOG_ERROR("BFD session for ... already exists")</code> → <code>return false</code></td>
+<td>書込みなし（既存行はそのまま）</td>
+<td><code>bfdorch.cpp:316-320</code></td>
+</tr>
+<tr>
+<td>BFD type が <code>SESSION_TYPE_MAP</code> に未定義</td>
+<td><code>SWSS_LOG_ERROR("Invalid BFD session type ...")</code> → <code>return false</code></td>
+<td>書込みなし</td>
+<td><code>bfdorch.cpp:383-387</code></td>
+</tr>
+<tr>
+<td>未対応属性キー</td>
+<td><code>SWSS_LOG_ERROR("Unsupported BFD attribute ...")</code> → <code>return false</code></td>
+<td>書込みなし</td>
+<td><code>bfdorch.cpp:404-407</code></td>
+</tr>
+<tr>
+<td><code>src_ip_provided == false</code> (<code>local_addr</code> 欠落)</td>
+<td><code>SWSS_LOG_ERROR("Failed to create BFD session ... source IP is not provided")</code> → <code>return false</code></td>
+<td>書込みなし</td>
+<td><code>bfdorch.cpp:409-413</code></td>
+</tr>
+<tr>
+<td><code>hardware_lookup_valid == false</code> + ポート解決不能</td>
+<td><code>SWSS_LOG_ERROR("Failed to locate port ...")</code> → <code>return false</code></td>
+<td>書込みなし</td>
+<td><code>bfdorch.cpp:485-489</code></td>
+</tr>
+<tr>
+<td><code>hardware_lookup_valid == false</code> + <code>dst_mac</code> 未指定</td>
+<td><code>SWSS_LOG_ERROR("destination MAC address required when hardware lookup not valid")</code> → <code>return false</code></td>
+<td>書込みなし</td>
+<td><code>bfdorch.cpp:491-495</code></td>
+</tr>
+<tr>
+<td><code>hardware_lookup_valid == false</code> + 非 default VRF</td>
+<td><code>SWSS_LOG_ERROR("vrf is not supported when hardware lookup not valid")</code> → <code>return false</code></td>
+<td>書込みなし</td>
+<td><code>bfdorch.cpp:497-502</code></td>
+</tr>
+<tr>
+<td><code>hardware_lookup_valid == true</code> + <code>dst_mac</code> 指定</td>
+<td><code>SWSS_LOG_ERROR("destination MAC address not supported when hardware lookup valid")</code> → <code>return false</code></td>
+<td>書込みなし</td>
+<td><code>bfdorch.cpp:522-528</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_14">検出ロジック補足<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>m_stateBfdSessionTable.set/hset/del</code> の戻り値なし</strong>: <code>swss::Table</code> API は void。Redis 接続失敗時は <code>DBConnector</code> 系から <code>system_error</code> 例外が伝播し orchagent abort → systemd 再起動 → コンストラクタ内 cleanup ループ (<code>bfdorch.cpp:74-86</code>) で全 <code>BFD_SESSION_TABLE</code> / <code>BFD_SOFTWARE_SESSION_TABLE</code> エントリ削除 → CONFIG_DB / APPL_DB 経由で再投入される自己回復経路。STATE_DB 不整合が永続することは設計上ない。</li>
+<li><strong>SAI 通知欠落の最大リスク</strong>: C 系統（register 失敗）は <code>state="Down"</code> 固着、D 系統（lookup ミス）は空キー行生成・整合性破壊で、いずれもプロセス自走中は回復しない。</li>
+<li><strong>B 系統 SAI 削除失敗時の <code>bfd_session_map</code> 残留</strong>: <code>parseHandleSaiStatusFailure</code> が <code>task_need_retry</code> を返した場合でも <code>bfd_session_map</code> は残ったままで、次サイクル DEL は同じ key の再 DEL になる。新規 SET 判定にはならない。</li>
+<li><strong>D 系統 <code>operator[]</code> 副作用</strong>: <code>std::map::operator[]</code> は要素を<strong>挿入する</strong>ため、未知の SAI session id が来ると <code>bfd_session_lookup</code> の汚染が永続化する。<code>.find()</code> ガードがないのは設計上の盲点。Phase E（観測手順）で <code>BFD_SESSION_TABLE</code> キーに空 peer (<code>||</code> 連続) が混入していないか確認推奨。</li>
+</ul>
+<blockquote>
+<p><strong>証跡</strong>: <code>BfdOrch</code> constructor + cleanup L57-88、<code>doTask(Consumer)</code> L99-216、<code>doTask(NotificationConsumer)</code> L220-268、<code>register_bfd_state_change_notification()</code> L271-303、<code>create_bfd_session()</code> L305-575（バリデーション L316-528、SAI 作成 L547-562、STATE_DB 書込み L565-568）、<code>retry_create_bfd_session()</code> L583-606、<code>remove_bfd_session()</code> L609-633、<code>createSoftwareBfdSession()</code> L706-710、<code>removeSoftwareBfdSession()</code> L713-715。詳細グレップ証跡は <code>meta/_intermediate/cdb-flow/bfd-state-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
 
 <!-- platform -->
 <h2 id="sai-capability-hw-vs-sw-bfd-asic-vendor">プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)<a class="headerlink" href="#sai-capability-hw-vs-sw-bfd-asic-vendor" title="Permanent link">&para;</a></h2>
@@ -35628,7 +36491,7 @@
 <p>HW BFD 経路では SAI 通知が ASIC 内のタイマ精度に依存する。broadcom 系は数百 μs 〜 ms 単位、mellanox 系は <code>detect_multiplier × rx_interval</code> に従う。<code>"Down" → "Up"</code> 遷移までの遅延が ASIC vendor 差で 1〜数百 ms 揺れる。STATE_DB を polling する consumer (例 <code>vnetorch</code>) は <code>Init</code> 状態を観測する可能性が vendor によって異なる。</p>
 <!-- /platform -->
 
-<h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_15">関連リファレンス<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../bfd-session/"><code>BFD_SESSION</code></a> — BFD セッション設定パラメータ</li>
 <li>CONFIG_DB: <a href="../bgp-device-global/"><code>BGP_DEVICE_GLOBAL</code></a> — <code>use_software_bfd</code> フラグ</li>
@@ -35636,15 +36499,15 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_16">関連リファレンス<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../bfd-session/"><code>BFD_SESSION</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_17">引用元<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_14">運用ヒント<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_18">運用ヒント<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <h3 id="state_db_2">STATE_DB 確認コマンド<a class="headerlink" href="#state_db_2" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># BFD セッション一覧</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BFD_SESSION_TABLE|*&#39;</span>
@@ -35660,7 +36523,7 @@
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>show<span class="w"> </span>bfd<span class="w"> </span>peers<span class="w"> </span><span class="m">10</span>.0.0.1
 </span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>show<span class="w"> </span>bfd<span class="w"> </span>peers<span class="w"> </span>details
 </span></code></pre></div>
-<h3 id="_15">よくある確認ポイント<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_19">よくある確認ポイント<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>state</code> が <code>"Down"</code> のまま変化しない場合は SAI / ASIC の BFD offload 対応を確認</li>
 <li><code>local_discriminator</code> がセッションごとに異なる値になることは正常動作</li>
