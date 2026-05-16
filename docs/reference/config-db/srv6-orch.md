@@ -276,6 +276,70 @@ MySID の `un` / `udt46` で IPinIP トンネルを使用する際、内部で�
 
 ---
 
+<!-- failure -->
+## 失敗挙動・エラーハンドリング
+
+> 根拠: `srv6orch.cpp` 全体の SWSS_LOG_ERROR / task_process_status 精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-failure.md`
+
+### SRV6_SID_LIST_TABLE の失敗ケース
+
+| 条件 | ログ / 挙動 | task_status |
+|------|------------|-------------|
+| `path` が空（セグメント 0 件） | `SWSS_LOG_ERROR("segment list count is zero, skip")` → SAI 未呼び出しで `return true` | `task_success`（SAI 登録なし） |
+| SAI `create_srv6_sidlist` 失敗 | `SWSS_LOG_ERROR("Failed to create srv6 sidlist object, rv %d")` | `task_failed` |
+| SAI `set_srv6_sidlist_attribute` 失敗 | `SWSS_LOG_ERROR("Failed to set srv6 sidlist object with new segments, rv %d")` | `task_failed` |
+| DEL: 存在しない `seg_name` | `SWSS_LOG_ERROR("segment name %s doesn't exist")` | `task_failed` |
+| DEL: nexthop 参照中（refcount > 0） | `SWSS_LOG_NOTICE("referenced by other nexthops: count %zu, not deleting")` | `task_need_retry`（再キュー） |
+| DEL: SAI `remove_srv6_sidlist` 失敗 | `SWSS_LOG_ERROR("Failed to delete SRV6 sidlist object for %s")` | `task_failed` |
+
+### SRV6_MY_SID_TABLE の失敗ケース
+
+| 条件 | ログ / 挙動 | 備考 |
+|------|------------|------|
+| 不正な `action` 値 | `SWSS_LOG_ERROR("Invalid my_sid action %s")` → `return false` | エントリは SAI 未登録 |
+| VRF が CONFIG_DB に存在しない（DT 系） | `SWSS_LOG_ERROR("VRF %s doesn't exist in DB")` → `return false` | VRF を先に作成する必要あり |
+| VRF が DB に存在するが SAI OID が null | `SWSS_LOG_ERROR("VRF object not created for DT VRF %s")` → `return false` | VRF Orch の初期化待ち |
+| ECMP adjacency（`adj` にカンマ区切り複数指定） | `SWSS_LOG_ERROR("ECMP adjacency not yet supported")` → `return false` | 現行実装では単一 adj のみ対応 |
+| `adj` が NeighOrch に未解決 | `m_pendingSRv6MySIDEntries` に保留 → `return false` | neighbor ADD で自動再インストール |
+| IPinIP トンネル作成失敗（`un`/`udt46`） | `SWSS_LOG_ERROR("Failed to create MySID IPinIP tunnel: %d")` → ロールバック後 `return false` | tunnel term entry 失敗時も `removeMySidIpInIpTunnel()` を呼び部分ロールバック |
+| ロケータが CONFIG_DB に存在しない | `SWSS_LOG_ERROR("Failed to get the SRv6 locator %s - not present in the CONFIG_DB")` | IPinIP tunnel DSCP 解決不可 |
+| 不正な `decap_dscp_mode` 文字列 | `SWSS_LOG_ERROR("Invalid MySID %s DSCP mode: %s")` → キャッシュ未登録で早期 return | CONFIG_DB `SRV6_MY_SIDS` 側の設定ミス |
+| SAI `create_my_sid_entry` 失敗 | `SWSS_LOG_ERROR("Failed to create my_sid entry %s, rv %d")` → `return false` | SAI / プラットフォーム起因エラー |
+| SAI カウンタ作成失敗 | `SWSS_LOG_ERROR("Failed to create SAI counter for SRv6 MySID entry")` → `return false` | SID エントリ全体の作成を中断 |
+| DEL: エントリが存在しない | `SWSS_LOG_ERROR("My_sid_entry doesn't exist for %s")` → `return false` | 二重削除防止 |
+
+**Neighbor pending 機構の詳細**:
+
+1. `adj` に指定された nexthop が NeighOrch に未解決の場合、エントリを `m_pendingSRv6MySIDEntries` に保留する（`srv6orch.cpp:1532-1542`）。
+2. NeighOrch から neighbor ADD 通知が届いた時点で `updateNeighbor()` が `createUpdateMysidEntry()` を再呼び出しする（`srv6orch.cpp:1236-1248`）。
+3. 再インストールも失敗した場合はエントリを pending に残したまま `continue`（ループ継続）。
+4. neighbor DELETE 通知時は、インストール済み SID を ASIC から削除して pending に戻す（`srv6orch.cpp:1197-1210`）。
+
+### PIC_CONTEXT_TABLE の失敗ケース
+
+| 条件 | ログ / 挙動 | task_status |
+|------|------------|-------------|
+| SET: 既存エントリへの上書き試行 | `SWSS_LOG_ERROR("update is not allowed for pic context table")` | `task_duplicated`（PIC は不変） |
+| `nexthop` と `vpn_sid` の件数不一致 | `SWSS_LOG_ERROR("inconsistent number of endpoints(%zu) and vpn sids(%zu)")` | `task_failed`（再試行なし） |
+| VPN 作成失敗（P2P トンネル未確立等） | `SWSS_LOG_ERROR("Failed to create SRv6 VPNs for context id %s")` | `task_need_retry` |
+| DEL: `ref_count` > 0（routeorch 参照中） | `addToRetry()` でリトライキューへ保留 | `task_need_retry`（ref 解放後に自動再実行） |
+| DEL: VPN 削除失敗 | `SWSS_LOG_ERROR("Failed to delete SRv6 VPNs for context id %s")` | `task_need_retry` |
+
+**`task_process_status` の doTask() マッピング**（`srv6orch.cpp:2352-2394`）:
+
+- `task_need_retry` → イテレータを進めて次のイベントループで再処理（エントリは m_toSync に残留）
+- `task_failed` / `task_success` / `task_duplicated` / `task_ignore` → m_toSync から削除（失敗はログのみ）
+
+### SAI エラー伝播パターン
+
+`sai_srv6_api->*` の戻り値（`sai_status_t`）を直接チェックし、`SAI_STATUS_SUCCESS` 以外は
+`SWSS_LOG_ERROR` に `rv %d` 形式で SAI ステータスコードを記録して `return false` を返す。
+複合オブジェクト（IPinIP トンネル + tunnel term entry）の途中失敗時のロールバックは
+`createMySidIpInIpTunnelTermEntry` 失敗時のみ実装されており（`srv6orch.cpp:1564`）、
+それ以外のケースでは作成済み SAI オブジェクトの自動クリーンアップは行われない。
+<!-- /failure -->
+
 ## 依存関係
 
 - **SRV6_MY_SID_TABLE** の `vrf` フィールドに custom VRF を指定する場合は、
