@@ -225,3 +225,39 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 > **スキャン証跡**: minigraph.py:2308 および vrfmgr.cpp:257 を確認、3 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- defaults -->
+## 暗黙デフォルト・コード由来挙動 (Phase A)
+
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp / sonic-host-services/scripts/hostcfgd / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang / sonic-buildimage/src/sonic-config-engine/minigraph.py -->
+
+### フィールドデフォルト一覧
+
+| フィールド | YANG default | コード由来 fallback | 乖離 |
+|-----------|-------------|-------------------|------|
+| `mgmtVrfEnabled` | `false` (`sonic-mgmt_vrf.yang` L28) | `vrfmgr.cpp` ローカル変数 `bool mgmt_vrf_enabled = false`。エントリ不在またはフィールド欠如 → false 扱い → SET が DEL_COMMAND に変換 | なし（YANG と実装一致） |
+| `in_band_mgmt_enabled` | **未定義**（YANG に leaf なし） | `vrfmgr.cpp` ローカル変数 `bool in_band_mgmt_enabled = false`。フィールド不在 → false 扱い → SET が DEL_COMMAND に変換 | **YANG-実装 discrepancy**: YANG 定義なしだが vrfmgr / vrforch が消費する |
+
+### 発見した暗黙挙動
+
+1. **SET → DEL 無音変換**: `mgmtVrfEnabled` が `"true"` 以外、または `in_band_mgmt_enabled` が `"true"` 以外のとき、SET コマンドを受信しても内部で `op = DEL_COMMAND` に上書き。エラーログなし → silent coercion。`vrfmgr.cpp` L257。
+
+2. **hostcfgd silent drop**: `update_mgmt_vrf()` で `data.get('mgmtVrfEnabled', '')` が空文字列のとき即 return（chrony / interfaces-config 再起動なし、エラーログなし）。`hostcfgd` L1652-1654。
+
+3. **mgmt VRF table ID ハードコード**: `#define MGMT_VRF_TABLE_ID 6000`（`vrfmgr.cpp` L15）。通常 VRF は 1001–5097 の動的割当。mgmt VRF のみ固定 6000 番でコンパイル時定数。変更不可。
+
+4. **setLink("mgmt") の特殊処理**: `ip link add` を実行せず固定 table_id 6000 を内部 map に登録するのみ。実際の netdev 作成は hostcfgd の `interfaces-config` restart が担う。`vrfmgr.cpp` L176-183。
+
+5. **delLink("mgmt") の特殊処理**: `ip link del` を実行せず内部 map からエントリを削除するのみ。カーネル側の mgmt VRF netdev は hostcfgd が管理する（責務分離）。`vrfmgr.cpp` L148-153。
+
+6. **初期化時 mgmt netdev 保護**: コンストラクタの既存 VRF 削除ループで `vrfName == "mgmt"` はスキップ（non-warm-restart 時も保護）。`vrfmgr.cpp` L74-79。
+
+7. **DEL 遅延（書き込み順依存）**: DEL 受信後、`isVrfObjExist(vrfName)` が true のうちは `it++; continue` でループ待機。orchagent が STATE_VRF_OBJECT_TABLE を削除するまで netdev 削除が遅延する。`vrfmgr.cpp` L331-335。
+
+8. **minigraph 由来 fallback**: XML `<MgmtVrfGlobal>` ノード不在時 `mvrf = {}` → `results['MGMT_VRF_CONFIG'] = {}` となりテーブルエントリ自体が存在しない。`minigraph.py` L847, L928-934, L2308。
+
+### `in_band_mgmt_enabled` フィールド補足
+
+YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` が読み取るフィールド。HLD (`SONiC_in_band_mgmt_via_mgmt_Vrf_HLD.md`) ではデフォルト `"false"`、`mgmtVrfEnabled=true` のときのみ有効と規定。YANG バリデーションの対象外のため、不正値を書き込んでもバリデーションエラーにならない。
+
+<!-- /defaults -->
