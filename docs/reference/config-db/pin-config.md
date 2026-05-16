@@ -1,0 +1,307 @@
+---
+title: P4RT テーブル (PINS p4rt 設定)
+description: "P4RT テーブル — PINS (P4 Integrated Network Stack) の P4Runtime gRPC サーバ設定。ポート・TLS 証明書・認可ポリシー・genetlink オプションを保持し、p4rt コンテナ起動時に読み込まれる。"
+area: reference
+hard: 0
+verification: code-verified
+last_verified: 2026-05-15
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-sonic-p4rt/p4rt.sh
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-sonic-p4rt/p4rt_vars.j2
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/SONiC
+    path: doc/pins/p4rt_app_hld.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+    - P4RT
+    - DEVICE_METADATA
+  yang: []
+---
+
+# P4RT テーブル（PINS p4rt 設定）
+
+## 概要
+
+[PINS](../../reference/glossary.md#term-pins)（P4 Integrated Network Stack）の **P4Runtime gRPC サーバ設定**を保持するテーブル[^1]。
+`p4rt` コンテナ（`docker-sonic-p4rt`）が起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) を一回読み込み、
+gRPC ポート・TLS 証明書・認可ポリシー・genetlink 設定などを `p4rt` バイナリの起動引数に変換する。
+
+専用 YANG モデルは存在しない。スキーマ強制は `p4rt.sh` 内の `jq` 参照のみで実装される。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>P4RT")]
+  P4RT["p4rt (docker-sonic-p4rt)"]
+  CDB --> P4RT
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
+## key 構造
+
+```text
+P4RT|certs       # TLS 証明書設定
+P4RT|p4rt_app    # P4Runtime gRPC アプリ設定
+```
+
+## P4RT|certs
+
+| フィールド | 型 | 説明 |
+|-----------|----|------|
+| `server_crt` | string (パス) | サーバ証明書ファイルパス |
+| `server_key` | string (パス) | サーバ秘密鍵ファイルパス |
+| `ca_crt` | string (パス) | CA 証明書ファイルパス（mTLS 用） |
+| `cert_crl_dir` | string (パス) | CRL（Certificate Revocation List）ディレクトリ |
+
+## P4RT|p4rt_app
+
+| フィールド | 型 | 説明 |
+|-----------|----|------|
+| `port` | string (数字) | P4Runtime gRPC 待受 TCP ポート |
+| `use_genetlink` | boolean string | Linux Generic Netlink (genetlink) 経由のパケット I/O を使用するか |
+| `use_port_ids` | boolean string | ポート識別に SONiC port ID を使用するか（デフォルト: ifindex） |
+| `save_forwarding_config_file` | string (パス) | P4Runtime forwarding config を保存するファイルパス |
+| `authz_policy` | string (パス) | 認可ポリシー JSON ファイルパス |
+| `p4rt_unix_socket` | string (パス) | UNIX ドメインソケットパス（gRPC over UDS） |
+
+## 購読者
+
+- `p4rt` コンテナ（`docker-sonic-p4rt`）: 起動時に `p4rt.sh` → `sonic-cfggen` → `p4rt_vars.j2` 経由で読み込む
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DEVICE_METADATA` (`x509` サブキー — TLS fallback)
+- YANG モデル: なし（P4RT 専用 YANG 未定義）
+- 関連 CLI: なし（config load / 手動 DB 書き込み）
+
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- HLD: [PINS（P4 Integrated Network Stack）](../../management/pins-hld.md)
+
+<!-- ref-triangle:end -->
+
+## 引用元
+
+[^1]: 起動スクリプト: `p4rt.sh`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-sonic-p4rt/p4rt.sh>
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+```json
+"P4RT": {
+  "certs": {
+    "server_crt": "/keys/server_cert.lnk",
+    "server_key": "/keys/server_key.lnk",
+    "ca_crt": "/keys/ca_cert.lnk",
+    "cert_crl_dir": "/keys/crl"
+  },
+  "p4rt_app": {
+    "port": "9559",
+    "use_genetlink": "false",
+    "use_port_ids": "false",
+    "save_forwarding_config_file": "/etc/sonic/p4rt_forwarding_config.pb.txt",
+    "authz_policy": "/keys/authorization_policy.json"
+  }
+}
+```
+
+### よくある誤設定
+
+- `server_crt` / `server_key` のいずれか一方のみ設定すると insecure モードになる（両方必須）。
+- `P4RT|certs` を未設定のまま `DEVICE_METADATA|localhost|x509` にも証明書がない場合、
+  自動的に `--use_insecure_server_credentials` で起動する（平文 gRPC）。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'P4RT|p4rt_app'
+sonic-db-cli CONFIG_DB hgetall 'P4RT|certs'
+systemctl status p4rt
+```
+<!-- /ops-hint -->
+
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `use_genetlink` (boolean string)
+
+| 値 | 挙動 |
+|----|------|
+| `"true"` | `--use_genetlink=true` を p4rt バイナリに渡す。Linux genetlink 経由でパケット I/O |
+| `"false"` / 未設定 | genetlink 引数なし → バイナリデフォルト（false） |
+
+### `use_port_ids` (boolean string)
+
+| 値 | 挙動 |
+|----|------|
+| `"true"` | `--use_port_ids=true`。SONiC port ID で P4Runtime ポート識別 |
+| `"false"` / 未設定 | ifindex ベースのポート識別（バイナリデフォルト） |
+
+### TLS / 証明書フォールバック
+
+| 条件 | 挙動 |
+|------|------|
+| `P4RT\|certs` に `server_crt` + `server_key` あり | TLS 有効 |
+| `P4RT\|certs` が存在せず `DEVICE_METADATA\|localhost\|x509` に cert あり | x509 設定を代用 |
+| どちらも未設定 | `--use_insecure_server_credentials`（平文 gRPC）|
+| `ca_crt` あり | mTLS 有効 |
+| `cert_crl_dir` あり (かつ `ca_crt` あり) | CRL チェック有効 |
+
+<!-- /value-behavior -->
+
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+- **起動時のみ参照**: `p4rt` コンテナは起動時に一回だけ CONFIG_DB を読み込む。設定変更は `systemctl restart p4rt` まで反映されない。
+- **YANG モデルなし**: スキーマ検証がない。不明フィールドは `jq` が `// empty` として無視し、対応するバイナリ引数が渡されない。
+- **`server_crt` / `server_key` 片方のみ**: 両方揃わないと `--use_insecure_server_credentials` にフォールバックする（証明書エラーではなく insecure 起動）。
+- **`authz_policy` 未設定**: 認可ポリシーなし（全 P4RT クライアントが管理者相当で接続可能）。
+- **`p4rt_unix_socket` 設定時**: ソケットディレクトリが存在しない場合、`mkdir -p` で自動作成する（`p4rt.sh` L92-94）。
+
+<!-- /cdb-exceptions -->
+
+<!-- runtime-trace -->
+## CDB → 実コンテナ動作トレース
+
+### 段階 1: Consumer 登録
+
+- `p4rt.sh` が `sonic-cfggen -d -t p4rt_vars.j2` で CONFIG_DB を読み込み、JSON として `P4RT` テーブルを展開。
+
+### 段階 2: CFG → バイナリ引数変換
+
+- `p4rt.sh` が各フィールドを `jq -r '.field // empty'` で取得し、非空の場合のみ `p4rt` バイナリの引数に追加。
+- APP_DB / STATE_DB への書き込みなし。
+
+### 段階 3: p4rt バイナリ起動
+
+- `exec /usr/local/bin/p4rt ${P4RT_ARGS}` で P4Runtime gRPC サーバが起動。
+- SAI 経由で ASIC の P4 パイプラインを制御。
+
+### 段階 4: タイミング + 副作用
+
+- 設定変更は `systemctl restart p4rt` 後に有効（コンテナ再起動が必要）。
+- P4Runtime クライアント（コントローラ）は再接続が必要。
+
+<!-- /runtime-trace -->
+
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+### CLI
+
+- 専用 CLI なし — `config load` または手動 `sonic-db-cli` で書き込む
+
+### minigraph / sonic-cfggen
+
+- なし（`minigraph.py` に P4RT テーブル生成処理なし）
+
+### REST / gNMI
+
+- なし（YANG モデル未定義のため REST/gNMI トランスフォーマーなし）
+
+### db_migrator
+
+- なし
+
+### ビルド時デフォルト (build-time default)
+
+- `config_db.json` への手動追加のみ（`p4rt_app_hld.md` L172 参照）
+
+### ハードコードデフォルト / ランタイム注入
+
+- なし（全フィールド任意）
+
+<!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+なし。`P4RT` テーブルはランタイム書き込みなし。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 動作 |
+|------|------|
+| `P4RT|certs` が存在する | certs フィールドを TLS 設定に使用 |
+| `P4RT|certs` が存在しない | `DEVICE_METADATA|localhost|x509` を代わりに参照（`p4rt_vars.j2` L4） |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler 内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---------|---------|------|----------|
+| `p4rt.sh` | `server_crt` + `server_key` あり | TLS 有効起動 | `p4rt.sh` L22-27 |
+| `p4rt.sh` | certs なし / 不完全 | `--use_insecure_server_credentials` | `p4rt.sh` L55-56 |
+| `p4rt.sh` | `ca_crt` あり | mTLS 有効 (`--ca_certificate_file`) | `p4rt.sh` L30-37 |
+| `p4rt.sh` | `cert_crl_dir` あり | CRL チェック有効 (`--cert_crl_dir`) | `p4rt.sh` L34-37 |
+| `p4rt.sh` | `authz_policy` あり | `--authz_policy_enabled --authorization_policy_file=<path>` | `p4rt.sh` L60-63 |
+| `p4rt.sh` | `port` あり | `--p4rt_grpc_port=<port>` | `p4rt.sh` L66-69 |
+| `p4rt.sh` | `use_genetlink` あり | `--use_genetlink=<val>` | `p4rt.sh` L72-75 |
+| `p4rt.sh` | `use_port_ids` あり | `--use_port_ids=<val>` | `p4rt.sh` L78-81 |
+| `p4rt.sh` | `save_forwarding_config_file` あり | `--save_forwarding_config_file=<path>` | `p4rt.sh` L84-87 |
+| `p4rt.sh` | `p4rt_unix_socket` あり | `--p4rt_unix_socket=<path>` + ディレクトリ作成 | `p4rt.sh` L90-97 |
+
+<!-- /handler-branching -->
+
+<!-- defaults -->
+## フィールドデフォルト (コード由来)
+
+### YANG デフォルト vs 実行時 fallback
+
+P4RT テーブルには専用 YANG モデルが存在しない。全デフォルトは `p4rt.sh` のランタイム動作で決まる。
+
+### P4RT|p4rt_app
+
+| フィールド | HLD 記述値 | 未設定時の動作 | 設定元 |
+|-----------|-----------|--------------|--------|
+| `port` | `"9559"` | `--p4rt_grpc_port` 引数なし → バイナリ内デフォルト `9559` | `p4rt.sh` L66-69; `p4rt_app_hld.md` L184 |
+| `use_genetlink` | `"false"` | `--use_genetlink` 引数なし → バイナリ内デフォルト `false` | `p4rt.sh` L72-75; `p4rt_app_hld.md` L185 |
+| `use_port_ids` | `"false"` | `--use_port_ids` 引数なし → バイナリ内デフォルト `false` | `p4rt.sh` L78-81; `p4rt_app_hld.md` L186 |
+| `save_forwarding_config_file` | `/etc/sonic/p4rt_forwarding_config.pb.txt` | 引数なし → 転送設定ファイルへの保存なし | `p4rt.sh` L84-87 |
+| `authz_policy` | `/keys/authorization_policy.json` | 引数なし → 認可ポリシー無効（全クライアントフルアクセス） | `p4rt.sh` L60-63 |
+| `p4rt_unix_socket` | (HLD 未記載) | 引数なし → UNIX socket リスナーなし | `p4rt.sh` L90-97 |
+
+### P4RT|certs
+
+| フィールド | HLD 記述値 | 未設定時の動作 | 設定元 |
+|-----------|-----------|--------------|--------|
+| `server_crt` | `/keys/server_cert.lnk` | 片方でも未設定 → insecure モード | `p4rt.sh` L22-27 |
+| `server_key` | `/keys/server_key.lnk` | 片方でも未設定 → insecure モード | `p4rt.sh` L22-27 |
+| `ca_crt` | `/keys/ca_cert.lnk` | 未設定 → mTLS 無効 | `p4rt.sh` L30-32 |
+| `cert_crl_dir` | `/keys/crl` | 未設定 → CRL チェックなし | `p4rt.sh` L33-37 |
+
+> **隠れデフォルト（YANG 未定義）**: `P4RT|certs` エントリが CONFIG_DB に存在しない場合、
+> `p4rt_vars.j2` L4 が `DEVICE_METADATA|localhost|x509` にフォールバックする。
+> `x509` も未設定であれば `--use_insecure_server_credentials` で平文 gRPC 起動（`p4rt.sh` L56）。
+> この動作は YANG モデルに記述されておらず、`p4rt_vars.j2` / `p4rt.sh` のみで実装される。
+
+### コード由来デフォルトの乖離サマリ
+
+| フィールド | HLD 記述 | 実装 | 乖離 |
+|-----------|---------|------|------|
+| `port` | `"9559"` | 未設定時もバイナリが 9559 を使う | 実質なし |
+| `use_genetlink` | `"false"` | 未設定時もバイナリが false を使う | 実質なし |
+| `use_port_ids` | `"false"` | 未設定時もバイナリが false を使う | 実質なし |
+| TLS なし時 | (明示なし) | 自動的に `--use_insecure_server_credentials` | HLD に明記なし（隠れ動作） |
+| `P4RT|certs` 非存在 | (明示なし) | `DEVICE_METADATA|x509` へフォールバック | HLD に明記なし（隠れ動作） |
+
+<!-- /defaults -->
+
+<!-- glossary-links-injected -->

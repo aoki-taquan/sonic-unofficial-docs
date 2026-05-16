@@ -191,6 +191,60 @@ hostcfgd は常時起動し `SYSLOG_SERVER` テーブルを無条件購読する
 
 <!-- /handler-branching -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `rsyslog-config.sh`, `rsyslog.conf.j2`, `hostcfgd` (RSyslogCfg), `config/syslog.py`
+
+### CLI (config syslog add) における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `server_ip_address` が不正 IP 文字列 | `ip_addr_validator()` L208-211 | `click.UsageError` → CLI エラー終了・DB 書き込みなし | `"Invalid value for {}: {}"` | `syslog.py:208-211` |
+| 指定サーバが既に DB に存在（重複 add） | `server_validator()` L186-188 | `click.UsageError` → CLI エラー終了・DB 書き込みなし | `"Invalid value for {}: {} is a valid syslog server"` | `syslog.py:186-188` |
+| `source` がループバック/マルチキャスト/リンクローカル IP | `source_validator()` L227-229 | `click.UsageError` → CLI エラー終了・DB 書き込みなし | `"Invalid value for {}: {} is a loopback/multicast/link-local IP address"` | `syslog.py:227-229` |
+| `source` と `server_ip_address` の IP ファミリ不一致 | `source_validator()` L233-235 | `click.UsageError` → CLI エラー終了・DB 書き込みなし | `"Invalid value for {} / {}: {} / {} IP address family mismatch"` | `syslog.py:233-235` |
+| `vrf` が Linux カーネルに存在しない VRF 名 | `source_to_vrf_validator()` L336-338 | `click.UsageError` → CLI エラー終了・DB 書き込みなし | `"Invalid value for {}: {} VRF doesn't exist in Linux"` | `syslog.py:336-338` |
+| `source` IP が指定 VRF のインターフェースに未設定 | `source_to_vrf_validator()` L343-345 | `click.UsageError` → CLI エラー終了・DB 書き込みなし | `"Invalid value for {}: {} IP doesn't exist in Linux {} VRF"` | `syslog.py:343-345` |
+| DB 書き込み後の `systemctl restart rsyslog-config` 失敗 | `add()` L423-425 | `log_error` → `ctx.fail()` でCLI エラー終了（DB エントリは既に書き込み済みで残存） | LOG_ERROR: `"Failed to add remote syslog logging: {}"` | `syslog.py:423-425` |
+
+### CLI (config syslog del) における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 削除対象サーバが DB に不在 | `server_validator()` L182-184 | `click.UsageError` → CLI エラー終了・DB 変更なし | `"Invalid value for {}: {} is not a valid syslog server"` | `syslog.py:182-184` |
+| DB 削除後の `systemctl restart rsyslog-config` 失敗 | `delete()` L450-452 | `log_error` → `ctx.fail()` でCLI エラー終了（DB エントリは既に削除済み） | LOG_ERROR: `"Failed to remove remote syslog logging: {}"` | `syslog.py:450-452` |
+
+### hostcfgd RSyslogCfg における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `systemctl reset-failed rsyslog-config rsyslog` 失敗 | `update_rsyslog_config()` L1732-1733 | 例外 → キャッチ → `return`（キャッシュ未更新、次回テーブル変更時に再試行） | LOG_ERR: `"RSyslogCfg: Failed to restart rsyslog service"` | `hostcfgd:1732-1739` |
+| `systemctl restart rsyslog-config` 非ゼロ終了 | `update_rsyslog_config()` L1734-1738 | 同上（`raise_exception=True` で例外 raise → キャッチ → `return`） | LOG_ERR: `"RSyslogCfg: Failed to restart rsyslog service"` | `hostcfgd:1734-1739` |
+
+### rsyslog-config.sh における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `cp "$TMPFILE" /etc/rsyslog.conf` 失敗 | `rsyslog-config.sh` L64-68 | `stderr` にエラー出力 → `exit 1`（rsyslog 再起動せず前回設定を保持） | `"Failed to update /etc/rsyslog.conf; not restarting rsyslog"` | `rsyslog-config.sh:67-68` |
+| `systemctl restart rsyslog` 失敗 | `rsyslog-config.sh` L65 | 非ゼロ終了（明示的エラーハンドリングなし、systemctl の stderr 出力のみ） | なし（systemctl の stderr のみ） | `rsyslog-config.sh:65` |
+
+### YANG バリデーション層における失敗（書き込み前拒否）
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `server_address` が `inet:host` 型制約違反 | `sonic-syslog.yang` (inet:host) | YANG バリデーション失敗 → DB 書き込みなし | `sonic-syslog.yang` |
+| `source` と `server_address` の IP ファミリ不一致 | `sonic-syslog.yang` (must) | YANG `must` 制約違反で書き込み拒否 | `sonic-syslog.yang` |
+| `vrf == "mgmt"` かつ `mgmtVrfEnabled != true` | `sonic-syslog.yang` (must) | YANG `must` 制約違反で書き込み拒否 | `sonic-syslog.yang` |
+
+### 補足
+
+- **CLI と hostcfgd の二重再起動**: `config syslog add/del` が CLI 側で `systemctl restart rsyslog-config` を直接実行し、さらに hostcfgd も SYSLOG_SERVER 変更を検知して同サービスを再起動する。CLI 経由では rsyslog-config が二重再起動される設計。
+- **DB 書き込み後 restart 失敗時の不整合**: `add` / `del` は DB 書き込み後に restart を試みる。restart 失敗時は DB と実際の rsyslog 設定が乖離し、次回 hostcfgd による再試行まで古い設定で動作し続ける。
+- **hostcfgd の YANG 再チェックなし**: `RSyslogCfg` は受け取ったテーブル値をそのままテンプレートに渡す。不正 IP・ポート値の再バリデーションは行わない（YANG 層で弾かれた前提）。
+
+<!-- /failure -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -244,5 +298,222 @@ db_migrator.py での SYSLOG_SERVER マイグレーションなし
 
 なし
 <!-- /entry-points -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB 購読 API
+
+`hostcfgd` は `swsscommon.ConfigDBConnector` の `subscribe()` で `SYSLOG_SERVER` テーブルを購読する。`ConsumerStateTable`（channel ベース）は使用しない。
+
+```python
+# sonic-host-services/scripts/hostcfgd L2499-2503
+# Handle SYSLOG_CONFIG and SYSLOG_SERVER changes
+self.config_db.subscribe(swsscommon.CFG_SYSLOG_CONFIG_TABLE_NAME,
+                         make_callback(self.rsyslog_config_handler))
+self.config_db.subscribe(swsscommon.CFG_SYSLOG_SERVER_TABLE_NAME,
+                         make_callback(self.rsyslog_server_handler))
+```
+
+- `ConfigDBConnector.listen()` が内部で Redis **keyspace 通知** (`__keyspace@4__:SYSLOG_SERVER|*` への PSUBSCRIBE) を購読する。
+- `SYSLOG_SERVER` と `SYSLOG_CONFIG` を独立して登録するが、両ハンドラとも同じ `rsyslog_handler()` を呼び、**両テーブルを一括再取得**してキャッシュ比較後に `systemctl restart rsyslog-config` を発行する。
+
+### ハンドラ呼び出しフロー
+
+```
+SYSLOG_SERVER|<ip> 変更 (hset/del)
+  → keyspace 通知 (__keyspace@4__:SYSLOG_SERVER|<ip>)
+  → rsyslog_server_handler(key, op, data)          # hostcfgd L2417-2419
+  → rsyslog_handler()                              # hostcfgd L2410-2415
+      → get_table(SYSLOG_CONFIG) + get_table(SYSLOG_SERVER)
+      → RSyslogCfg.update_rsyslog_config()         # L1715-1743
+          → キャッシュ差分あり → systemctl restart rsyslog-config
+```
+
+### rsyslog SIGHUP / restart 経路
+
+`rsyslog-config.service` の `ExecStart=/usr/bin/rsyslog-config.sh` が実際の設定反映を行う。
+
+```bash
+# sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh L58-73
+sonic-cfggen -d -t rsyslog.conf.j2 ... > "$TMPFILE"
+
+if [ ! -f /etc/rsyslog.conf ] || ! cmp -s "$TMPFILE" /etc/rsyslog.conf; then
+    cp "$TMPFILE" /etc/rsyslog.conf
+    systemctl restart rsyslog      # 設定変更あり → rsyslogd 完全再起動
+else
+    systemctl kill -s HUP rsyslog  # 設定変更なし → SIGHUP のみ（ログファイル再オープン）
+fi
+```
+
+| 状況 | 操作 | 意味 |
+|------|------|------|
+| `/etc/rsyslog.conf` 変化あり | `systemctl restart rsyslog` | rsyslogd プロセス完全再起動（設定全再読込） |
+| `/etc/rsyslog.conf` 変化なし | `systemctl kill -s HUP rsyslog` | SIGHUP でログファイル再オープン（ログローテーション対応）のみ |
+
+!!! note "SIGHUP の役割"
+    SIGHUP は「設定変更なし時」のログローテーション対応専用。通常の設定反映は `systemctl restart rsyslog` が担う。`hostcfgd` 自身は SIGHUP を受信しても無視する（L111-112）。
+
+### keyspace 通知パターン
+
+| Redis keyspace 通知 | hostcfgd ハンドラ |
+|---------------------|------------------|
+| `__keyspace@4__:SYSLOG_SERVER\|192.168.1.1` `hset` | `rsyslog_server_handler("192.168.1.1", SET, {...})` |
+| `__keyspace@4__:SYSLOG_SERVER\|192.168.1.1` `del` | `rsyslog_server_handler("192.168.1.1", DEL, {})` |
+| `__keyspace@4__:SYSLOG_CONFIG\|GLOBAL` `hset` | `rsyslog_config_handler("GLOBAL", SET, {...})` |
+
+- APPL_DB / STATE_DB への中継なし。SAI 経路なし。
+- 経路: CONFIG_DB → hostcfgd (keyspace 通知) → rsyslog-config.service → rsyslogd restart/SIGHUP
+
+<!-- /pubsub -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`rsyslog.conf.j2` および `rsyslog-config.sh` に直接埋め込まれた定数。CONFIG_DB フィールドや YANG で変更不可。
+
+### ポート・プロトコルデフォルト定数 (rsyslog.conf.j2)
+
+| 定数 / 用途 | 値 | ソース |
+|------------|-----|--------|
+| デフォルト UDP ポート | **514** | `rsyslog.conf.j2` L89: `conf.get('port', 514)` |
+| デフォルトプロトコル | **`udp`** | `rsyslog.conf.j2` L90: `conf.get('protocol', 'udp')` |
+| デフォルト VRF | **`default`** | `rsyslog.conf.j2` L91: `conf.get('vrf', 'default')` → `device` を付与しない |
+
+### プロトコル enum 文字列定数 (rsyslog.conf.j2)
+
+`protocol` フィールドの値は以下の 2 択のみ。Jinja2 テンプレートは値をそのまま `Protocol=` オプションに渡す。
+
+| 値 | rsyslog Action オプション | 効果 |
+|----|--------------------------|------|
+| `udp` | `Protocol="udp"` | rsyslog omfwd が UDP で転送。パケットロスあり。 |
+| `tcp` | `Protocol="tcp"` | rsyslog omfwd が TCP で転送。接続失敗時はキュー蓄積。 |
+
+`@` / `@@` 形式は古い rsyslog レガシー構文。現実装 (`rsyslog.conf.j2`) は `omfwd` アクション + `Protocol=` オプション形式を使用する。
+
+### 受信ポート定数 (rsyslog.conf.j2)
+
+rsyslog がローカルで待ち受けるポートは固定値でハードコードされている。
+
+| ポート | プロトコル | 用途 | ソース |
+|-------|-----------|------|--------|
+| **514** | UDP | コンテナ → ホスト syslog 受信 (`imudp`) | `rsyslog.conf.j2` L31 |
+| **2514** | RELP | コンテナ → ホスト RELP syslog 受信 (`imrelp`) | `rsyslog.conf.j2` L42 |
+
+### Action 固定オプション定数 (rsyslog.conf.j2 L124)
+
+リモート転送 `action()` に常時付与されるハードコードオプション。CONFIG_DB で変更不可。
+
+| rsyslog オプション | 固定値 | 意味 |
+|-------------------|--------|------|
+| `action.resumeRetryCount` | **`"60"`** | 接続失敗時の再試行上限 |
+| `queue.type` | **`"LinkedList"`** | 転送キュータイプ |
+| `queue.size` | **`"20000"`** | 転送キューサイズ（メッセージ数） |
+
+### VRF 判定文字列定数 (rsyslog.conf.j2 L97)
+
+```jinja2
+{% set device = vrf if vrf != '' and vrf != 'default' -%}
+```
+
+- `'default'` および空文字列は「VRF バインドなし」と判定される文字列定数。
+- `'mgmt'` や任意 VRF 名の場合は `Device="<vrf>"` オプションを付与。
+
+<!-- evidence: sonic-buildimage/files/image_config/rsyslog/rsyslog.conf.j2 L84-125 -->
+<!-- evidence: sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh -->
+<!-- /constants -->
+
+<!-- defaults -->
+## 暗黙デフォルト (Phase A)
+
+YANG に `default` 宣言がなく、コード（Jinja2 テンプレート）側でフォールバックが注入されるフィールド一覧。
+
+| フィールド | YANG default | コード由来暗黙デフォルト | 根拠 |
+|-----------|-------------|------------------------|------|
+| `port` | なし | **514** | `rsyslog.conf.j2` L89: `conf.get('port', 514)` |
+| `protocol` | なし | **`udp`** | `rsyslog.conf.j2` L90: `conf.get('protocol', 'udp')` → rsyslog `Protocol="udp"` |
+| `vrf` | なし | **`default`** | `rsyslog.conf.j2` L91: `conf.get('vrf', 'default')` → `Device=` オプション付与なし |
+| `severity` | なし (per-server) | **3段階カスケード** (下記参照) | `rsyslog.conf.j2` L92 |
+| `source` | なし | **省略**（rsyslog がルーティングに従い自動選択） | `if source:` ガード → `Address=` 非出力 |
+| `filter` / `filter_regex` | なし | **省略**（全メッセージ転送） | `{% if filter %}` ガード → フィルタ行非出力 |
+
+### `severity` 3段階カスケード
+
+```
+per-server severity 設定あり
+  → そのまま使用
+per-server 未設定 かつ SYSLOG_CONFIG|GLOBAL.severity 設定あり
+  → GLOBAL severity を使用（YANG default: notice）
+per-server 未設定 かつ SYSLOG_CONFIG|GLOBAL 未設定
+  → rsyslog の `*`（全 severity）にフォールバック
+```
+
+**YANG-実装 discrepancy**: YANG の per-server `severity` leaf は `default` なしだが、テンプレートは `SYSLOG_CONFIG.GLOBAL.severity`（YANG default `notice`）を暗黙継承するため、`SYSLOG_CONFIG.GLOBAL` が存在する場合は per-server 未設定でも実質 `notice` として動作する。
+
+### ハードコード固定値（設定不可）
+
+以下の値は CONFIG_DB フィールドなし・YANG 未定義で `rsyslog.conf.j2` にハードコードされており、ユーザーは変更不可:
+
+| rsyslog オプション | 固定値 | 意味 |
+|-------------------|--------|------|
+| `action.resumeRetryCount` | `60` | 接続失敗時の再試行上限 |
+| `queue.type` | `LinkedList` | 転送キュータイプ |
+| `queue.size` | `20000` | 転送キューサイズ（メッセージ数） |
+
+### VRF + source 組み合わせ依存挙動
+
+`rsyslog.conf.j2` L113: `source` フィールドが設定されている場合、`device='eth0'` なら `device` を空にクリアする。  
+`vrf='mgmt'` かつ `source=<eth0 IP>` の組み合わせでは mgmt VRF の `Device=` バインドが消去される。
+
+<!-- evidence: sonic-buildimage/files/image_config/rsyslog/rsyslog.conf.j2 L84-125 -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1695-1743 (RSyslogCfg) -->
+<!-- /defaults -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+rsyslog 設定生成スクリプト (`rsyslog-config.sh`) および Jinja2 テンプレートに含まれるプラットフォーム固有分岐を示す。
+
+### Multi-ASIC プラットフォーム差異
+
+`rsyslog-config.sh` は起動時に `DEVICE_METADATA|localhost` の `platform` フィールドから `asic.conf` を読み込み、`NUM_ASIC` 値に応じて rsyslog 受信 IP アドレスを切り替える。
+
+| 条件 | `udp_server_ip` の決定方法 | 理由 |
+|------|--------------------------|------|
+| `NUM_ASIC == 1`（シングル NPU） | `lo` (loopback) の先頭 IPv4 アドレス | コンテナがホストの loopback 経由で syslog を送信するため |
+| `NUM_ASIC > 1`（マルチ NPU） | `docker0` の IPv4 アドレス | ネットワーク namespace 内のコンテナが docker0 ブリッジ経由で syslog を送信するため |
+
+また、`rsyslog.conf.j2` は `docker0_ip` 変数が非空かつ `udp_server_ip` と異なる場合にのみ、`docker0` 上への追加 UDP/RELP 受信設定を出力する。シングル NPU では `docker0_ip` は空のままとなる（`dhcp_server` Feature が有効な場合を除く）。
+
+```bash
+# rsyslog-config.sh L15-18
+if [[ ($NUM_ASIC -gt 1) ]]; then
+    udp_server_ip=$(ip -o -4 addr list docker0 | awk '{print $4}' | cut -d/ -f1)
+else
+    udp_server_ip=$(ip -j -4 addr list lo scope host | jq -r -M '.[0].addr_info[0].local')
+fi
+```
+
+<!-- evidence: sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh L3-19 -->
+
+### コンテナ内 rsyslog のプラットフォームフィルタ (pmon)
+
+`rsyslog-container.conf.j2` は `pmon` コンテナ向けに Mellanox 特定プラットフォーム (MSN2700 / MSN2700a1 / MSN2410) 上で PSU ファームウェアに起因するノイズログを抑制するフィルタを適用する。このフィルタは `pmon` コンテナに限定される。SYSLOG_SERVER テーブルのリモート転送設定には影響しない。
+
+```jinja2
+# rsyslog-container.conf.j2 L54-56
+if ($.PLATFORM == "x86_64-mlnx_msn2700-r0" or $.PLATFORM == "x86_64-mlnx_msn2700a1-r0"
+    or $.PLATFORM == "x86_64-mlnx_msn2410-r0") then {
+    if $programname contains "sensord" and $msg contains "Error getting sensor data: dps460/#" then stop
+}
+```
+
+<!-- evidence: sonic-buildimage/files/image_config/rsyslog/rsyslog-container.conf.j2 L44-57 -->
+
+### SmartSwitch / DPU
+
+ソースコード調査の結果、SmartSwitch DPU 固有の rsyslog 設定生成ロジックは確認されなかった。DPU 上でも同一の `rsyslog-config.sh` + `rsyslog.conf.j2` が使用される。DPU の `NUM_ASIC` は通常 1 であるため、シングル NPU と同等の loopback 受信設定となる。
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: 639b97382f4c -->
