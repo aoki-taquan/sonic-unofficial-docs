@@ -197,4 +197,60 @@ show lldp table
 - なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+> **Evidence**: `src/sonic-config-engine/minigraph.py`（`parse_device()` / `parse_png()`）、`src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`、`sonic-utilities/pfcwd/main.py`、`sonic-utilities/show/interfaces/__init__.py`、`files/build_templates/buffers_config.j2`、`files/build_templates/qos_config.j2`
+
+### フィールド別暗黙デフォルト
+
+| フィールド | YANG default | コード由来挙動 | カテゴリ |
+|-----------|-------------|----------------|---------|
+| `name` (key) | なし（必須） | XML `<Hostname>` から取得。None の場合は後段でサイレント KeyError リスク | 複合必須制約 |
+| `hwsku` | なし | `<HwSku>` ノード欠落時は `device_data` に追加されない（silent drop） | silent drop |
+| `cluster` | なし | `<ClusterName>` 欠落時 silent drop。自ノードの cluster 取得時は `""` フォールバック（`minigraph.py:2170`） | YANG 外 fallback |
+| `lo_addr` | なし | `<Address><IPPrefix>` 欠落時 silent drop。`show interfaces neighbor expected` では文字列 `'None'` を表示。bgpcfgd での `devices[peer]["lo_addr"]` 直接参照では KeyError リスク | silent drop + consumer 依存 |
+| `lo_addr_v6` | なし | 欠落時 silent drop。bgpcfgd は事前に `'lo_addr_v6' in devices[neighbor]` でガード済み | silent drop |
+| `mgmt_addr` | なし | `<ManagementAddress><IPPrefix>` 欠落時 silent drop。show コマンドでは文字列 `'None'` を表示 | silent drop |
+| `mgmt_addr_v6` | なし | 欠落時 silent drop | silent drop |
+| `type` | なし（string、enum 制約なし） | `<ElementType>` 欠落時は属性 `xsi:type` にフォールバック。それも欠落なら silent drop。pfcwd は `type` キー欠落時に KeyError（`pfcwd/main.py:104`）。qos_config.j2 は `'ToRRouter' in neighbor_info.type` で `type` が None だとエラー。show コマンドでは文字列 `'None'` 表示 | silent drop + 消費者依存エラー |
+| `deployment_id` | なし（uint32） | `<DeploymentId>` テキストを文字列として格納。欠落時 silent drop。bgpcfgd は DEVICE_NEIGHBOR_METADATA の `deployment_id` を直接参照しない（DEVICE_METADATA.localhost.deployment_id を使用） | dead field 候補 |
+| `slice_type` | なし | `<AssociatedSliceStr>` テキストに `"AZNG_Production"` が含まれる場合のみ `"AZNG_Production"` 固定値で書き込まれる。それ以外は silent drop | ハードコード固定値 |
+| `resource_type` | なし | YANG に定義されているが `parse_device()` が書き込まない。minigraph は `resource_type` を DEVICE_METADATA.localhost にのみ書き込む | dead field / YANG-実装 discrepancy |
+| `subtype` | YANG 外フィールド | `parse_device()` が `<SubType>` ノードから読み出し `device_data['subtype']` として書き込む。YANG モデルに定義なし | YANG-実装 discrepancy |
+
+### 経路依存乖離（single-ASIC vs multi-ASIC）
+
+`minigraph.py` の以下ロジックにより格納内容が変わる:
+
+```python
+# single-ASIC または asic_name 未指定: 自ホスト以外の全デバイス
+results['DEVICE_NEIGHBOR_METADATA'] = {
+    key: devices[key] for key in devices if key.lower() != hostname.lower()
+}
+# multi-ASIC（asic_name 指定あり）: DEVICE_NEIGHBOR に出現するデバイスのみ
+results['DEVICE_NEIGHBOR_METADATA'] = {
+    key: devices[key] for key in devices
+    if key in {device['name'] for device in neighbors.values()}
+}
+```
+
+multi-ASIC 環境では直接隣接していないデバイスのメタデータが欠落する。
+
+### `type` フィールドの大文字小文字制約
+
+| 消費者 | 比較方法 | 大文字小文字 |
+|-------|---------|------------|
+| pfcwd | `.lower() == 'server'` | 非感受 |
+| buffers_config.j2 | `neighbor_role \| lower` | 非感受 |
+| qos_config.j2 | `'ToRRouter' in neighbor_info.type` | 感受（大文字小文字区別） |
+| db_migrator | `v.get("type") == "EdgeZoneAggregator"` | 感受 |
+
+`type` 値は大文字小文字を一致させないと qos_config.j2 / db_migrator で意図した分岐に入らない。
+
+### BGP 依存関係と延期ロジック
+
+bgpcfgd では `constants.bgp.use_neighbors_meta` が True の場合のみ DEVICE_NEIGHBOR_METADATA を依存関係として登録する。テーブルが directory に未到達の場合 `log_info("DEVICE_NEIGHBOR_METADATA is not ready...")` を出力し `return False`（到達後に自動再処理）。フラグが False の場合、テーブルは依存関係として登録されず参照もされない。
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 6a290c48f0ce -->
