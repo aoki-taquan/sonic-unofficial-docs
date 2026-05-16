@@ -407,4 +407,70 @@ BGP_PEER_GROUP (asn 変更)
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/bgp-peer-group-side.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`BGP_PEER_GROUP` テーブルへの変更通知は **2 つの独立したデーモン** が受信する。方式は下表の通り異なる。
+
+| 購読者 | 購読 API | 通信方式 | ハンドラ |
+|--------|---------|---------|---------|
+| `frrcfgd` (sonic-frr-mgmt-framework) | `ExtConfigDBConnector.subscribe()` + `listen()` | Redis keyspace `PSUBSCRIBE __keyspace@<dbId>__:*` | `bgp_neighbor_handler` → `bgp_table_handler_common` → `__update_bgp` |
+| `bgpcfgd` (sonic-bgpcfgd) の `BGPPeerMgrBase` | `swsscommon.SubscriberStateTable` + `swsscommon.Select` | Redis PUBLISH/SUBSCRIBE チャネルベース | `Runner.run()` → `BGPPeerMgrBase.handler()` → `set_handler()` / `del_handler()` |
+
+`orchagent` / `syncd` 等の APPL_DB / ASIC_DB レイヤは本テーブルを購読しない（FRR `bgpd` のソフトウェア処理で完結、SAI 非経由）。
+
+### frrcfgd 経路: keyspace 通知 → ハンドラ呼び出し
+
+`frrcfgd` は `ConfigDBConnector` を継承した `ExtConfigDBConnector` を使用する。`subscribe_all()` で `BGP_PEER_GROUP` に `bgp_neighbor_handler` を登録し (`frrcfgd.py` L2303, L2359-2361)、`listen()` でバックグラウンドスレッドを起動して Redis keyspace を監視する (`frrcfgd.py` L1547-1552)。
+
+```
+sonic-db-cli CONFIG_DB hset 'BGP_PEER_GROUP|default|PEER_GROUP_1' local_asn 65001
+  ↓ HSET 後に Redis 側で keyspace 通知発火
+Redis keyspace PUBLISH "__keyspace@4__:BGP_PEER_GROUP|default|PEER_GROUP_1" "hset"
+  ↓ ExtConfigDBConnector.listen_thread() がパターンマッチ (frrcfgd.py:1536-1543)
+sub_msg_handler() → client.hgetall(key)  ← 通知後に値を再取得 (frrcfgd.py:1527-1528)
+raw_to_typed() で型変換・list ソート
+  ↓ _ConfigDBConnector__fire("BGP_PEER_GROUP", "default|PEER_GROUP_1", data)
+bgp_neighbor_handler(table, key, data)
+  → bgp_table_handler_common(table, key, data, [{'keepalive', 'holdtime'}]) (frrcfgd.py:3942-3943)
+  → bgp_message キューへ enqueue → __update_bgp() で処理 (frrcfgd.py:2790-2863)
+  → peer-group 未存在なら vtysh "neighbor PEER_GROUP_1 peer-group" を先行実行 (frrcfgd.py:2793-2802)
+  → 属性コマンド群 key_map.run_command() → vtysh 送出
+```
+
+- keyspace 通知のペイロードは操作名 (`hset` / `del`) のみ。フィールド値は `client.hgetall(key)` で再取得する (`frrcfgd.py` L1527-1528)。
+- `data is None → DEL、それ以外 → SET` の 2 値判定 (`ConfigDBConnector` 標準動作)。
+- `bgp_neighbor_handler` は `comb_attr_list=[{'keepalive', 'holdtime'}]` を渡す。keepalive / holdtime は両方揃わないと FRR タイマーコマンドが生成されない (`frrcfgd.py` L3942-3943)。
+- `listen_thread` は専用スレッドで動作し、`bgp_message` キュー経由で `__update_bgp` に直列化される (`frrcfgd.py` L1551, L3928-3930)。
+- 起動時は `subscribe_all()` 前に `config_db.get_table_data([...])` で全テーブルの一括スナップショットを取得し (`frrcfgd.py` L2340)、`config_mode == "unified"` 時は config replay を実行する (`frrcfgd.py` L2344-2357)。また、起動時に `pg_table = self.config_db.get_table('BGP_PEER_GROUP')` で既存 peer-group を `self.bgp_peer_group` キャッシュに読み込む (`frrcfgd.py` L2187-2191)。
+
+### bgpcfgd 経路: SubscriberStateTable + Runner
+
+`bgpcfgd` は `swsscommon.SubscriberStateTable` を使ったチャネルベース購読を採用する。`Runner.add_manager()` が `BGPPeerMgrBase` を登録すると、対応する CONFIG_DB テーブル (`CFG_BGP_NEIGHBOR_TABLE_NAME` 等) の `SubscriberStateTable` を生成して `swsscommon.Select` に追加する (`runner.py` L49-51)。**bgpcfgd は `BGP_PEER_GROUP` テーブルを直接購読しない**。`BGPPeerGroupMgr` (`managers_bgp.py` L15-84) は `BGPPeerMgrBase.add_peer()` から呼ばれる内部ヘルパーであり、peer-group の Jinja2 テンプレートをレンダリングして `cfg_mgr.push()` 経由で FRR に送出する。
+
+```
+CONFIG_DB BGP_NEIGHBOR / BGP_PEER_RANGE などの変更
+  ↓ SubscriberStateTable が PUBLISH 通知を受信
+Runner.run() → selector.select() → subscriber.pop() → key, op, fvs
+  ↓ callback = BGPPeerMgrBase.handler()
+set_handler() / del_handler()
+  → add_peer() 内で BGPPeerGroupMgr.update() を呼出 (managers_bgp.py:227)
+    → update_policy() / update_pg() → cfg_mgr.push(cmd) → FRR へ vtysh コマンド発行
+```
+
+CONFIG_DB は永続前提のため TTL は設定されない。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `BGP_PEER_GROUP` 変更 (frrcfgd 経路) | FRR `bgpd` への vtysh コマンド送出のみ。`bgpd` プロセス restart なし | `frrcfgd.py` L2790-2863, L3942 |
+| `BGP_PEER_GROUP` 変更 (bgpcfgd 経路) | bgpcfgd は BGP_PEER_GROUP を直接購読せず。BGP_NEIGHBOR 変更時に `BGPPeerGroupMgr.update()` 経由で peer-group テンプレが更新される | `managers_bgp.py` L156, L227 |
+| `local_asn` 未設定 VRF | frrcfgd が silent drop (LOG_DEBUG のみ)。bgpcfgd は `DEVICE_METADATA.bgp_asn` deps 充足まで保留 | `frrcfgd.py` L2658-2662, `managers_bgp.py` L119 |
+
+> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1506-1555, 1536-1543, 2187-2191, 2303, 2340, 2344-2357, 2359-2361, 2790-2863, 3942-3943` (keyspace listen / subscribe / peer-group ハンドラ / 起動スナップショット); `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:31-73` (SubscriberStateTable + Select ループ); `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:15-84, 156-157, 227` (BGPPeerGroupMgr / add_peer); 詳細分析 `meta/_intermediate/cdb-flow/bgp-peer-group-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: d4d0b1f9b453 -->
