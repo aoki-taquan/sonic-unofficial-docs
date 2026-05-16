@@ -409,7 +409,7 @@ if (vrf_table_[vrf_name].ref_count)
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`
+> 調査日 2026-05-16。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/nexthopkey.h`
 
 ### Linux ルーティングテーブル ID 定数
 
@@ -436,6 +436,33 @@ vrfmgrd にはタイムアウト定数が存在しない。VRF DEL 時のパッ�
 | `uint32_t vni = 0`（orchagent 初期化） | `0` | `vrforch.cpp:30` |
 
 YANG `default 0` と一致。VNI 上限 `16777215` は YANG `range "0..16777215"` による制約であり、vrfmgr.cpp 内にマジックナンバーとして現れない。
+
+### orchagent (vrforch.cpp) — VRF 名プレフィクス定数
+
+VRF 名の識別に使われるプレフィクスは `nexthopkey.h` にマクロとして定義されている。
+
+| 定数名 | 値 | 意味 | ソース |
+|--------|-----|------|--------|
+| `VRF_PREFIX` | `"Vrf"` | VRF 名の先頭プレフィクス。routeorch / mplsrouteorch が `compare(0, strlen(VRF_PREFIX), VRF_PREFIX)` で VRF ルートを識別 | `nexthopkey.h:20` |
+
+YANG `sonic-vrf.yang` も `pattern "Vrf[a-zA-Z0-9_-]+"` で同値を強制している。
+
+### orchagent (vrforch.cpp) — SAI virtual_router_attr マッピング
+
+`VRFOrch::addOperation` は APP_DB フィールドを以下の SAI 属性にマッピングする（`vrforch.cpp:38-84`）。これらは CONFIG_DB `VRF` テーブルフィールドには存在せず、VNET テーブル経由の APP_DB 直接書込み時のみ機能する。
+
+| APP_DB フィールド | SAI 属性 | SAI 値型 | ソース |
+|-----------------|---------|---------|--------|
+| `v4` | `SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V4_STATE` | `bool` | `vrforch.cpp:40-41` |
+| `v6` | `SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V6_STATE` | `bool` | `vrforch.cpp:45-46` |
+| `src_mac` | `SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` | `sai_mac_t` | `vrforch.cpp:51-52` |
+| `ttl_action` | `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_TTL1_PACKET_ACTION` | `sai_packet_action_t` | `vrforch.cpp:56-57` |
+| `ip_opt_action` | `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_IP_OPTIONS_PACKET_ACTION` | `sai_packet_action_t` | `vrforch.cpp:61-62` |
+| `l3_mc_action` | `SAI_VIRTUAL_ROUTER_ATTR_UNKNOWN_L3_MULTICAST_PACKET_ACTION` | `sai_packet_action_t` | `vrforch.cpp:66-67` |
+
+`ttl_action` と `l3_mc_action` はいずれも `REQ_T_PACKET_ACTION` 型（`vrforch.h:31,33`）で、取りうる値は SAI 標準の `SAI_PACKET_ACTION_FORWARD` / `SAI_PACKET_ACTION_DROP` / `SAI_PACKET_ACTION_TRAP` 等。デフォルト値のハードコードはなく、フィールド省略時は SAI 実装ベンダーのデフォルトが適用される。
+
+MTU に相当する SAI 属性は `vrforch.cpp` / `vrforch.h` に存在しない（VRF レベルの MTU 設定は SONiC VRF モデルの対象外）。
 
 <!-- /constants -->
 
