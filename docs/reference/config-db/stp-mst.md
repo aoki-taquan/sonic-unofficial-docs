@@ -1,6 +1,6 @@
 ---
 title: STP_MST_INST / STP_MST_PORT テーブル
-description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A 分析。"
+description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -9,6 +9,9 @@ sources:
   - repo: sonic-net/sonic-utilities
     path: config/stp.py
     ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/stpmgr.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - STP_MST_INST
@@ -181,6 +184,91 @@ db.set_entry('STP_PORT', port_key, fvs_port)
 証跡: `config/stp.py:441-470`
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-ordering.md -->
+
+`stpmgrd` は CONFIG_DB イベントを以下の順序で処理する。各テーブルには起動ガードが設けられており、前提テーブルが受信済みになるまでイベントを保留する。
+
+### テーブル購読登録順
+
+| 順序 | テーブル | ハンドラ |
+|---|---|---|
+| 1 | `STP` | `doStpGlobalTask()` |
+| 2 | `STP_VLAN` | `doStpVlanTask()` |
+| 3 | `STP_VLAN_PORT` | `doStpVlanPortTask()` |
+| 4 | `STP_PORT` | `doStpPortTask()` |
+| 5 | `LAG_MEMBER` | `doLagMemUpdateTask()` |
+| 6 | `STATE_VLAN_MEMBER` | `doVlanMemUpdateTask()` |
+| 7 | `STP_MST` | `doStpMstGlobalTask()` |
+| 8 | `STP_MST_INST` | `doStpMstInstTask()` |
+| 9 | `STP_MST_PORT` | `doStpMstInstPortTask()` |
+
+### STP_MST (GLOBAL) の起動ガード
+
+`doStpMstGlobalTask()` (`stpmgr.cpp:344`):
+
+```cpp
+if (stpGlobalTask == false)
+    return;
+```
+
+`STP|GLOBAL` 受信完了 (`stpGlobalTask = true`) が先行必須。`STP_MST|GLOBAL` に書き込む前に `config spanning-tree enable mst` が実行されている必要がある。
+
+### STP_MST_INST の起動ガード
+
+`doStpMstInstTask()` (`stpmgr.cpp:1027-1031`):
+
+```cpp
+if (stpGlobalTask == false || (stpPortTask == false && !isStpPortEmpty()))
+    return;
+
+if (stpMstInstTask == false)
+    stpMstInstTask = true;
+```
+
+| 条件 | 意味 |
+|---|---|
+| `stpGlobalTask == true` | `STP\|GLOBAL` 受信完了 |
+| `stpPortTask == true` または `isStpPortEmpty()` | `STP_PORT` 受信済み、または CONFIG_DB の `STP_PORT` テーブルが空 |
+
+両条件を満たした最初のイベント処理時に `stpMstInstTask = true` がセットされる。
+
+!!! note "キー解析の注意"
+    `doStpMstInstTask()` は `key.substr(13)` で `"MST_INSTANCE|"` プレフィックス（13文字）を除去してインスタンス ID を取得する。
+    MST 有効化時に書き込まれるキー `MST_INSTANCE:INSTANCE0`（コロン区切り）と、stpmgrd が期待するキー `MST_INSTANCE|0`（パイプ区切り）の形式が異なる点は [discrepancy #5](#発見された-discrepancy--暗黙デフォルト-サマリー) に記録済み。
+
+### STP_MST_PORT の起動ガード
+
+`doStpMstInstPortTask()` (`stpmgr.cpp:1160`):
+
+```cpp
+if (stpGlobalTask == false || stpMstInstTask == false || stpPortTask == false)
+    return;
+```
+
+3条件すべてが満たされるまでイベントは保留される:
+
+1. `STP|GLOBAL` 受信済み
+2. `STP_MST_INST` の最初のイベント処理完了 (`stpMstInstTask = true`)
+3. `STP_PORT` 受信済み (`stpPortTask = true`)
+
+### 依存関係グラフ
+
+```
+STP|GLOBAL (stpGlobalTask=true)
+    ├─ STP_MST 受信可能
+    ├─ STP_PORT (stpPortTask=true)
+    │       └─ STP_MST_INST (stpMstInstTask=true)
+    │                 └─ STP_MST_PORT
+    └─ ※ STP_PORT テーブルが空の場合は STP_MST_INST も直接処理可能
+```
+
+PVST 系との差異: `STP_MST_INST` は `stpVlanTask` を必要としない。MST はインスタンスベースであり VLAN 単位のシーケンスに依存しない。
+
+<!-- /ordering -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
