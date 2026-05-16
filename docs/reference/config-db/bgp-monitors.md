@@ -268,6 +268,52 @@ key 形式: default VRF の場合 `<nbr_ip>`, non-default VRF の場合 `<vrf>|<
 
 > **スキャン証跡**: `BGPPeerMgrBase` 597 行・public メソッド set_handler/add_peer/update_peer/change_admin_status 読了。monitors は peer_type="monitors"（内部 BGP セッション向け）、loopback 依存ガードが核心分岐。
 <!-- /handler-branching -->
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `bgpcfgd/managers_bgp.py`, `frrcfgd/frrcfgd.py`, `bgpd/templates/monitors/policies.conf.j2`
+
+### SET 処理（add_peer）における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `DEVICE_METADATA\|localhost.bgp_asn` 不在（deps 未解決） | manager deps ガード L119 | handler 呼び出し自体がスキップ → 自動再試行 | なし | `managers_bgp.py:119` |
+| `Loopback0` IPv4 未設定 かつ `bgp_router_id` 不在 | `add_peer()` L184-189 | `log_warn` → `return False`（自動再試行） | LOG_WARN: `"Loopback0 ipv4 address is not presented yet and bgp_router_id not configured"` | `managers_bgp.py:185-189` |
+| `local_addr` フィールド欠如 | `add_peer()` L194-195 | `log_warn` のみ・処理続行（`update-source` 未設定のまま FRR 注入） | LOG_WARN: `"Peer <addr>. Missing attribute 'local_addr'"` | `managers_bgp.py:194-195` |
+| `local_addr` に対応する interface が未登録 | `get_local_interface()` → `add_peer()` L199-202 | `log_debug` → `return False`（InterfaceMgr 更新後に自動解決） | LOG_DEBUG: `"Peer '<addr>' with local address '<ip>' wait for the corresponding interface to be set"` | `managers_bgp.py:199-202` |
+| Jinja2 テンプレート（`add.conf.j2`）レンダリング失敗 | `add_peer()` L229-234 | `log_err` → `return True`（再試行なし・drop） | LOG_ERR: `"Peer '(<vrf>\|<nbr>)'. Error in rendering the template for 'SET' command '<tpl>': <err>"` | `managers_bgp.py:231-234` |
+| `vtysh -f <tmpfile>` 非ゼロ終了（FRR push 失敗） | `frr.py FRR.write()` L49-51 | `log_err` のみ・`apply_op()` は常に `True` を返す（失敗サイレント握り潰し） | LOG_ERR: `"ConfigMgr::commit(): can't push configuration from file='<f>', rc='<rc>', ...` | `frr.py:49-51` |
+
+### SET 処理（update_peer）における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `admin_status` 以外フィールド更新（既存ピア） | `update_peer()` L319-320 | `log_err` → drop（FRR 命令なし） | LOG_ERR: `"Peer '(<vrf>\|<nbr>)': Can't update the peer. Only 'admin_status' attribute is supported"` | `managers_bgp.py:319-320` |
+| `admin_status` が `'up'`/`'down'` 以外 | `change_admin_status()` L337-339 | `log_err` のみ・FRR 命令なし | LOG_ERR: `"Peer '<vrf>\|<nbr>': Can't update the peer. It has wrong attribute value attr['admin_status'] = '<val>'"` | `managers_bgp.py:337-339` |
+| `apply_admin_status()` で FRR push が `False` | `apply_admin_status()` L352-356 | `log_err` のみ・STATE_DB 更新なし | LOG_ERR: `"Can't set peer '<vrf>\|<nbr>' admin state to '<state>'."` | `managers_bgp.py:355-356` |
+
+### 起動時（load_peers）における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 起動時 `vtysh -c "show bgp vrfs json"` 非ゼロ終了 | `load_peers()` L577-584 | `log_crit` → `Exception` raise → bgpcfgd プロセス異常終了 | LOG_CRIT: `"Can't read bgp vrfs: <err>"` | `managers_bgp.py:583-584` |
+| 起動時 `vtysh -c "show bgp vrf <vrf> neighbors json"` 非ゼロ終了 | `load_peers()` L587-595 | `log_crit` → `Exception` raise → bgpcfgd プロセス異常終了 | LOG_CRIT: `"Can't read vrf '<vrf>' neighbors: <err>"` | `managers_bgp.py:594-595` |
+
+### frrcfgd（bgpd_client ソケット）における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `/run/frr/bgpd.vty` ソケット接続 100 回リトライ失敗 | `BgpdClientMgr.__create_frr_client()` L191-198 | `RuntimeError('connect to FRR daemon failed')` raise → frrcfgd 異常終了 | LOG_ERR: `"re-tried too many times, give up"` | `frrcfgd.py:191-198,221-223` |
+| socket タイムアウト（120 秒）での受信 | `__get_reply()` L157-161 | 接続失敗として `RuntimeError` へ波及 | LOG_ERR: `"socket reading timeout"` | `frrcfgd.py:160-161` |
+| vtysh コマンド非ゼロ終了（`ignore_fail=False`） | `g_run_command()` L52-53 | LOG_ERR のみ（`bgpd_client` 経由） | LOG_ERR: `"command execution failure. Command: \"<cmd>\""` | `frrcfgd.py:52-53` |
+
+### 補足
+
+- **`return False` vs `return True` の非対称性**: loopback/interface 未解決は `return False`（自動再試行）、Jinja2 エラーは `return True`（再試行なし drop）。この戻り値差が再試行可否を制御する。
+- **FRR push 失敗のサイレント握り潰し**: `apply_op()` は常に `True` を返す（`frr.py` の `write()` 失敗を上位に伝播しない）。FRR への設定反映失敗は `log_err` のみで検知できず、`vtysh show running-config` による手動確認が必要。
+- **policies.conf.j2 レンダリング失敗**: `route-map FROM_BGPMON deny 10` / `TO_BGPMON permit 10` が FRR に未定義のまま peer 追加が成立すると全受信拒否が機能せず経路漏洩リスクがある。
+
+<!-- /failure -->
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 

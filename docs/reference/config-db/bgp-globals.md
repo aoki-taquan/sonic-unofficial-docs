@@ -429,6 +429,77 @@ multi-asic 環境では各 ASIC コンテナ（`bgp0`, `bgp1` ...）が独立し
 > **スキャン証跡**: `frrcfgd.py` / `bgpd.conf.db.j2` に `chassis|tsa|switch_role|switch_type|multi_asic|voq` で grep 0 ヒット。`bgpcfgd/` 全体で `is_multi_asic` 0 ヒット（テストファイル除く）。`managers_device_global.py` に `is_chassis` 1 ヒット（TSA status 取得のみ）、`switch_role` 3 ヒット（IDF/AsPath 制御のみ）を確認。
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### FRR コマンド literal (`global_key_map`)
+
+`frrcfgd.py` の `global_key_map` (L1784-1821) に記述された、BGP_GLOBALS フィールドから生成される FRR vtysh コマンド雛形。
+
+| フィールド | 生成される FRR コマンド | evidence |
+|-----------|----------------------|---------|
+| `router_id` | `bgp router-id <ip>` | `frrcfgd.py:1784` |
+| `always_compare_med` | `bgp always-compare-med` | `frrcfgd.py:1787` |
+| `external_compare_router_id` | `bgp bestpath compare-routerid` | `frrcfgd.py:1788` |
+| `ignore_as_path_length` | `bgp bestpath as-path ignore` | `frrcfgd.py:1789` |
+| `graceful_restart_enable` | `bgp graceful-restart` | `frrcfgd.py:1790` |
+| `gr_restart_time` | `bgp graceful-restart restart-time <秒>` | `frrcfgd.py:1791` |
+| `gr_stale_routes_time` | `bgp graceful-restart stalepath-time <秒>` | `frrcfgd.py:1792` |
+| `gr_preserve_fw_state` | `bgp graceful-restart preserve-fw-state` | `frrcfgd.py:1793` |
+| `log_nbr_state_changes` | `bgp log-neighbor-changes` | `frrcfgd.py:1794` |
+| `rr_cluster_id` | `bgp cluster-id <id>` | `frrcfgd.py:1795` |
+| `fast_external_failover` | `bgp fast-external-failover` (false 時は `no bgp fast-external-failover`) | `frrcfgd.py:1798` |
+| `network_import_check` | `bgp network import-check` | `frrcfgd.py:1799` |
+| `graceful_shutdown` | `bgp graceful-shutdown` | `frrcfgd.py:1800` |
+| `rr_clnt_to_clnt_reflection` | `bgp client-to-client reflection` (false 時は `no bgp client-to-client reflection`) | `frrcfgd.py:1801` |
+| `max_dynamic_neighbors` | `bgp listen limit <n>` | `frrcfgd.py:1802` |
+| `coalesce_time` | `coalesce-time <ms>` | `frrcfgd.py:1805` |
+| `route_map_process_delay` | `bgp route-map delay-timer <秒>` | `frrcfgd.py:1806` |
+| `deterministic_med` | `bgp deterministic-med` | `frrcfgd.py:1807` |
+| `default_local_preference` | `bgp default local-preference <n>` | `frrcfgd.py:1812` |
+| `max_med_time` + `max_med_val` | `bgp max-med on-startup <t> <v>` | `frrcfgd.py:1816` |
+| `max_delay` [+ `establish_wait`] | `update-delay <t> [<w>]` | `frrcfgd.py:1817` |
+| `confed_id` | `bgp confederation identifier <asn>` | `frrcfgd.py:1818` |
+| `keepalive` + `holdtime` | `timers bgp <k> <h>` (両フィールド必須) | `frrcfgd.py:1820` |
+
+### FRR 組み込み既定値 (CONFIG_DB 未設定時に FRR が使用する値)
+
+SONiC は `BGP_GLOBALS` フィールドが未設定の場合、FRR 自身のハードコード値をそのまま使用する。
+
+| タイマー/パラメータ | FRR 定数名 | standard モード値 | datacenter モード値 | evidence |
+|-------------------|-----------|-----------------|-------------------|---------|
+| keepalive | `BGP_DEFAULT_KEEPALIVE` | **60 秒** | **3 秒** | `sonic-frr/defaults.h:44,31` / `bgpd.h:1401` |
+| holdtime | `BGP_DEFAULT_HOLDTIME` | **180 秒** | **9 秒** | `sonic-frr/defaults.h:43,30` / `bgpd.h:1400` |
+| connect-retry | `BGP_DEFAULT_CONNECT_RETRY` | **120 秒** | **10 秒** | `sonic-frr/defaults.h:42,29` / `bgpd.h:1404` |
+| graceful-restart restart-time | `BGP_DEFAULT_RESTART_TIME` | **120 秒** | **120 秒** | `sonic-frr/bgpd/bgpd.h:1417` |
+| graceful-restart stalepath-time | `BGP_DEFAULT_STALEPATH_TIME` | **360 秒** | **360 秒** | `sonic-frr/bgpd/bgpd.h:1418` |
+| local-preference | `BGP_DEFAULT_LOCAL_PREF` | **100** | **100** | `sonic-frr/bgpd/bgpd.h:1407` |
+| graceful-shutdown local-pref | `BGP_GSHUT_LOCAL_PREF` | **0** | **0** | `sonic-frr/bgpd/bgpd.h:1411` |
+| subgroup pkt queue max | `BGP_DEFAULT_SUBGROUP_PKT_QUEUE_MAX` | **40** | **40** | `sonic-frr/bgpd/bgpd.h:1414` |
+| dynamic neighbors limit | `BGP_DYNAMIC_NEIGHBORS_LIMIT_DEFAULT` | **100** | **100** | `sonic-frr/bgpd/bgpd.h:1431` |
+
+> **注記**: standard / datacenter モードの切り替えは FRR ビルド時の `--enable-datacenter` フラグで決定される（`sonic-frr/defaults.h`）。SONiC の debian build rules に明示記載なし。keepalive/holdtime を明示設定しない場合、実際の動作値はビルド設定に依存する。
+
+### router-id 自動選択
+
+| 状態 | 動作 |
+|------|------|
+| `router_id` 未設定 | FRR が起動時に最初に up した IF の IP を自動選択（運用でブレる可能性あり） |
+| `router_id` 設定済み | `bgp router-id <ip>` を vtysh 経由で発行（`frrcfgd.py:1784`） |
+
+### local_asn 設定時の固定コマンド
+
+新規 BGP インスタンス生成時、`frrcfgd` は `local_asn` を書き込んだ直後に以下を**ハードコードで**実行する:
+
+```
+vtysh -c "configure terminal" -c "router bgp <asn> vrf <vrf>" -c "no bgp default ipv4-unicast"
+```
+
+これにより、BGP_GLOBALS に `default_ipv4_unicast` フィールドが設定されていなくても、**デフォルトで IPv4 unicast は無効化**される（`frrcfgd.py:2700`）。
+
+> **スキャン証跡**: `frrcfgd.py` L1784-1821 (`global_key_map` 全行), L2700 (`no bgp default ipv4-unicast`), L2716, L3935-3936 確認。`bgpd.conf.db.j2` 全行確認。`sonic-frr/defaults.h` + `bgpd/bgpd.h` L1397-1434 確認。詳細は `meta/_intermediate/cdb-flow/bgp-globals-constants.md` 参照。
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -508,5 +579,44 @@ DEL (`data is None`) では `del_table=True` が設定され `no router bgp <asn
 
 > 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-pubsub.md`
 <!-- /pubsub -->
+
+<!-- failure -->
+## Phase D: 失敗挙動マトリクス
+
+ソース: `sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `local_asn` が未設定の VRF に対し BGP_GLOBALS 以外のテーブル（AF・NEIGHBOR 等）の更新が到達 | `bgp_global_handler()` L2659 | `continue` で silent drop。FRR コマンド一切未発行 | LOG_DEBUG (`'ignore table {} update because local_asn for VRF {} was not configured'`) | `frrcfgd.py:2659-2662` |
+| BGP_GLOBALS SET に `local_asn` が含まれないまま非 default VRF を初回設定 | `bgp_global_handler()` L2713 | `continue` で処理スキップ | LOG_ERR (`'local ASN for VRF {} was not configured'`) | `frrcfgd.py:2712-2715` |
+| 既設定 `local_asn` への UPDATE 操作 | `bgp_global_handler()` L2694-2696 | `prog_asn = False` → ASN 変更なし。FRR には旧 ASN が維持される | LOG_ERR (`'local_asn could not be modified'`) | `frrcfgd.py:2694-2696` |
+| `local_asn` SET 後の vtysh コマンドが失敗 | `bgp_global_handler()` L2706-2707 | `self.bgp_asn[vrf]` に登録されない → 後続 SET も全 skip | LOG_ERR (`'failed to set local_asn {} to VRF {}'`) | `frrcfgd.py:2706-2707` |
+| `key_map.run_command()` が False を返す（グローバル設定コマンド失敗） | `bgp_global_handler()` L2725-2727 | `continue` で以降フィールドをスキップ | LOG_ERR (`'failed running BGP global config command'`) | `frrcfgd.py:2725-2727` |
+| SRV6 locator 設定コマンド失敗 | `bgp_global_handler()` L2722-2724 | `continue` で処理スキップ。他フィールドも適用されない | LOG_ERR (`'failed running SRV6 POLICY config command'`) | `frrcfgd.py:2722-2724` |
+| `bgpd_client` 経由の vtysh コマンド送信が socket エラー | `BgpdClientMgr.__proc_command()` L263-265 | `(False, None)` 返却。LOG_ERR 出力 | LOG_ERR (`'failed to send command to frr daemon: {}'`) | `frrcfgd.py:263-265` |
+| 起動時 bgpd ソケット (`/run/frr/bgpd.vty`) 接続が 100 回超えて失敗 | `BgpdClientMgr.__create_frr_client()` L194-198 | `return False` → `RuntimeError` で frrcfgd 起動失敗 | LOG_ERR (`'re-tried too many times, give up'`) | `frrcfgd.py:194-198, 222-223` |
+| 起動時 daemon 初期 `enable` コマンドが非ゼロ終了 | `BgpdClientMgr.__create_frr_client()` L214-216 | `RuntimeError` で frrcfgd 起動失敗 | LOG_ERR (`'enable command failed: ret_code={}'`) | `frrcfgd.py:214-216` |
+| subprocess 版 vtysh が非ゼロ終了コードで返す | `g_run_command()` L59-62 | `return False`。呼び出し元 handler がスキップ | LOG_ERR (`'[bgp cfgd] command execution returned {}. Command: {}'`) | `frrcfgd.py:59-62` |
+| non-default VRF が `VRF` テーブルに未登録の状態で BGP_GLOBALS 更新 | `bgp_table_handler_common()` L2451 | LOG_ERR 出力後 skip | LOG_ERR (`'non-default VRF {} was not configured'`) | `frrcfgd.py:2451` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `local_asn` DEL 時の vtysh `no router bgp` コマンドが失敗 | `__delete_vrf_asn()` L2462 | LOG_ERR 出力。以降の VRF 更新は全 skip | LOG_ERR (`'failed to delete local_asn for VRF {}'`) | `frrcfgd.py:2462` |
+| bgpd ソケット経由の DEL コマンド送信中に `socket.timeout` (120 s) | `BgpdClientMgr.__get_reply()` L160-161 | LOG_ERR 出力。FRR に届いていない可能性 | LOG_ERR (`'socket reading timeout'`) | `frrcfgd.py:160-161` |
+
+### retry 挙動
+
+| シナリオ | retry 上限 | 間隔 | 上限超過時 |
+|---|---|---|---|
+| 起動時 FRR daemon ソケット接続失敗 | 100 回 | 2 秒 | `RuntimeError` → frrcfgd プロセス終了 |
+| CONFIG_DB 通知ループ内のコマンド失敗 | **なし** | — | `continue` でスキップ・次イベント待機 |
+
+> **補足**: SET/DEL コマンドが一度 FRR に失敗すると frrcfgd は再送しない。次回 CONFIG_DB 変化イベント（同フィールドの再書き込み等）まで未反映状態が持続する。
+
+<!-- /failure -->
 
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
