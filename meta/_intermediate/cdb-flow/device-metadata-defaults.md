@@ -1,3 +1,20 @@
+# device-metadata Phase A: 暗黙デフォルト・fallback 調査 (2026-05-14 追記)
+
+## Phase A 新規発見サマリ
+
+| # | フィールド | 発見種別 | 詳細 |
+|---|-----------|---------|------|
+| D1 | `docker_routing_config_mode` | YANG-実装 discrepancy | YANG default `"unified"` に対し minigraph/frrcfgd は `"separated"` を実効デフォルトとして使用 |
+| D2 | `synchronous_mode` | silent coerce | `swss_vars.j2:9` で非`"disable"` 全部 `"enable"` 扱い (typo/不正値でも警告なし) |
+| D3 | `synchronous_mode` (dpu) | dead consumer | `switch_type=="dpu"` のとき orchagent.sh が ZMQ モード強制、`synchronous_mode` 完全無視 |
+| D4 | `suppress-fib-pending` | 経路依存乖離 | YANG default `disabled`、LeafRouter では minigraph が `enabled` を自動書き込み |
+| D5 | `switch_type` | ハードコード fallback | YANG 説明のみ `npu`、DB 未設定 = npu 動作だが明示なし |
+| D6 | `dhcp_server` | 経路依存乖離 | BmcMgmtToRRouter のみ minigraph が `enabled` を書き込む |
+| D7 | `orch_northbond_dash_zmq_enabled` | dead consumer 可能性 | YANG default `true` だがコード側直接参照未確認 |
+| D8 | `storage_device` | silent drop | キー不在 = false として存在チェックで評価 |
+
+---
+
 # device-metadata Phase A: LSP trace 証跡
 
 ## 訪問した file × function 一覧

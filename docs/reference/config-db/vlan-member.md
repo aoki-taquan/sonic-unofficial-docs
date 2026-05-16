@@ -81,6 +81,31 @@ VLAN_MEMBER|<vlan_name>|<port>
 - 関連 CLI: `config vlan member add/del`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+| フィールド | 暗黙デフォルト | 根拠 | 検出種別 |
+|-----------|--------------|------|---------|
+| `tagging_mode` | `"untagged"` | vlanmgr.cpp:648 `string tagging_mode = "untagged"`、portsorch.cpp:5916 同じ初期化 | YANG `mandatory true` だが実装側は両 consumer が独立に fallback。cvl バイパス経路（warm-restart・直接注入）で乖離 |
+| `tagging_mode` (members@ 経路) | `"untagged"` ハードコード | vlanmgr.cpp:573 `processUntaggedVlanMembers()` | `VLAN` エントリの `members@` フィールド経由の minigraph 互換経路では常に `"untagged"` が注入されユーザー制御不可 |
+| `tagging_mode` (PAC 経路) | `"untagged"` ハードコード | vlanmgr.cpp:873 `doVlanPacVlanMemberTask()` | PAC 制御による VLAN_MEMBER は `tagging_mode = "untagged"` 固定 |
+
+### priority_tagged の dead CLI 経路と bridge/SAI 乖離
+
+`priority_tagged` は YANG typedef (`sonic-types.yang`) に列挙されておりコードでも受理されるが、CLI (`config/vlan.py:407`) は `"untagged"` / `"tagged"` のみを書き込み、`priority_tagged` を設定する CLI 経路は存在しない。
+
+加えて、`priority_tagged` と `untagged` は Linux bridge レベルでは同一コマンド (`bridge vlan add ... pvid untagged`) が使われる (vlanmgr.cpp:238) が、orchagent は SAI では `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` として区別する。Linux ホスト転送と ASIC 転送で動作が乖離する。
+
+### APP_DB フィールド欠落伝播
+
+vlanmgr.cpp:672 は CONFIG_DB の raw フィールド列をそのまま APP_DB に転送する (`kfvFieldsValues(t)`)。`tagging_mode` が CONFIG_DB に存在しない場合 APP_DB にも書かれないが、orchagent 側が再度 `"untagged"` で fallback するため二重の暗黙補完が発生する。
+
+### PAC 経路の非公式フィールド注入
+
+`doVlanPacVlanMemberTask()` (vlanmgr.cpp:887) は PAC 経由の VLAN_MEMBER に `{"dynamic": "yes"}` を APP_DB のみに注入する。このフィールドは YANG 定義なく CONFIG_DB には書かれない隠しフィールド。
+
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 

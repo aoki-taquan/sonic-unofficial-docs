@@ -1,0 +1,310 @@
+---
+title: SSH_SERVER テーブル
+description: "SSH_SERVER テーブル — SSH デーモン (sshd) のセキュリティ・セッションポリシーを保持するシングルトンテーブル。hostcfgd の SshServer クラスが購読し /etc/ssh/sshd_config を更新して sshd を再起動する。"
+area: reference
+hard: 0
+verification: code-verified
+last_verified: 2026-05-14
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-ssh-server.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-host-services
+    path: scripts/hostcfgd
+    ref: c5bbbe8b07b96f078fa4b761316627404b01bd04
+related:
+  config_db:
+    - SSH_SERVER
+    - DEVICE_METADATA
+  cli:
+    - config ssh-server
+  yang:
+    - sonic-ssh-server
+---
+
+# SSH_SERVER テーブル
+
+## 概要
+
+SSH デーモン (sshd) のセキュリティ・セッションポリシーを保持するシングルトンテーブル[^1]。`hostcfgd` の `SshServer` クラスがこのテーブルを購読し、`/etc/ssh/sshd_config` を更新して sshd を再起動する。`max_sessions` フィールドのみ PAM limits 経由で制御される。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>SSH_SERVER")]
+  DM["hostcfgd<br/>(SshServer)"]
+  SSHD["/etc/ssh/sshd_config"]
+  PAM["/etc/security/limits.d/"]
+  CDB --> DM
+  DM --> SSHD
+  DM --> PAM
+```
+
+!!! note "凡例"
+    CONFIG_DB から実コンポーネントまでの経路を示すミニ図。詳細・例外は本ページ本文を参照。
+<!-- /cdb-mermaid -->
+
+## key 構造
+
+```text
+SSH_SERVER|POLICIES
+```
+
+固定キー `POLICIES` のみのシングルトン container。
+
+## フィールド一覧
+
+| フィールド | 型 | YANG default | 説明 |
+|-----------|----|-------------|------|
+| `authentication_retries` | uint32 (1..100) | **6** | sshd `MaxAuthTries`：接続ごとの認証最大試行回数 |
+| `login_timeout` | uint32 (1..600) | **120** | sshd `LoginGraceTime`：SSH 認証完了までの最大待機時間（秒） |
+| `ports` | string (comma-sep, 1..65535) | **`"22"`** | sshd `Port`：リッスンポート（カンマ区切りで複数指定可） |
+| `inactivity_timeout` | uint32 (0..35000) | **15** | sshd `ClientAliveInterval`：セッション無活動タイムアウト（**分**）。0 で無効化 |
+| `max_sessions` | uint32 (0..100) | **0** | PAM limits による最大同時 SSH セッション数。0 は無制限 |
+| `password_authentication` | boolean | **true** | sshd `PasswordAuthentication`：パスワード認証の有効化 |
+| `permit_root_login` | enum | なし | sshd `PermitRootLogin`：root ログイン許可方針 |
+| `ciphers` | leaf-list (enum) | なし | sshd `Ciphers`：許可する暗号アルゴリズム一覧 |
+| `kex_algorithms` | leaf-list (enum) | なし | sshd `KexAlgorithms`：許可する鍵交換アルゴリズム一覧 |
+| `macs` | leaf-list (enum) | なし | sshd `MACs`：許可する MAC アルゴリズム一覧 |
+
+### `permit_root_login` 列挙値
+
+| 値 | 意味 |
+|----|------|
+| `yes` | root の SSH ログインを全許可 |
+| `prohibit-password` | 公開鍵認証のみ許可（パスワード・キーボードインタラクティブ禁止） |
+| `forced-commands-only` | `~root/.ssh/authorized_keys` に `command=` がある場合のみ |
+| `no` | root ログイン完全禁止 |
+
+YANG `default` 宣言なし。DB に設定しない場合は sshd の組み込みデフォルト（OpenSSH `prohibit-password`）が有効。
+
+## 購読者
+
+- `hostcfgd` `SshServer`（`sonic-host-services/scripts/hostcfgd` L1045-L1175）：`/etc/ssh/sshd_config` を更新し `systemctl restart ssh` を実行
+- `hostcfgd` `PamLimitsCfg`（同 L1418-L1441）：`max_sessions` を `/etc/security/limits.d/` に反映
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DEVICE_METADATA`（hostname 参照）
+- 関連 CLI: `config ssh-server`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-ssh-server`
+
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-ssh-server`](../yang/sonic-ssh-server.md)
+- [HLD: SSH Server Global Config](../../management/ssh-server-global-config-hld.md)
+
+<!-- ref-triangle:end -->
+
+## 引用元
+
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-ssh-server.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-ssh-server.yang>
+
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `inactivity_timeout` | `0` | `ClientAliveInterval 0`（不活動タイムアウト無効） |
+| `inactivity_timeout` | `15`（デフォルト） | `ClientAliveInterval 900`（秒）に変換。分→秒変換は hostcfgd 内部で実施 |
+| `max_sessions` | `0`（デフォルト） | PAM limits 設定を出力しない → セッション数無制限 |
+| `max_sessions` | `1`以上 | `/etc/security/limits.d/` に `maxlogins` として書き込み |
+| `password_authentication` | `"false"` | `PasswordAuthentication no`（パスワード認証無効） |
+| `password_authentication` | `"true"` または未設定 | `PasswordAuthentication yes` |
+| `permit_root_login` | 未設定 | sshd 組み込みデフォルト `prohibit-password` が有効 |
+| `ciphers` / `kex_algorithms` / `macs` | 未設定 | sshd_config に書かれず OpenSSH 組み込みデフォルトが有効 |
+
+<!-- /value-behavior -->
+
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+- **`inactivity_timeout` の単位変換**: DB は分単位、sshd_config は秒単位。hostcfgd が `× 60` 変換を実施（L1129-1131）。YANG の description は "minutes" と明記しているが変換ロジックは実装側にのみ存在する。
+- **`max_sessions` は sshd_config 非反映**: `SSH_CONFIG_NAMES` に存在せず `set_policies()` 内で `continue` されスキップ。`PamLimitsCfg` 経由で PAM limits に書かれる（sshd 設定ではなく PAM 設定）。
+- **sshd 設定検証失敗時は変更なし**: `sshd -T -f <tmp>` の返り値が非 0 の場合、一時ファイルを削除して変更をロールバックし、LOG_ERR を記録する（L1164-1168）。
+- **DB エントリ不在時は set_policies() 非実行**: `SshServer.load()` は `POLICIES` キーが存在しない場合 `policies = {}` のまま `modify_conf_file()` を呼ぶが、`len(ssh_policies) == 0` で `set_policies()` がスキップされる。既存の sshd_config に変更は加わらない。
+
+<!-- /cdb-exceptions -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'SSH_SERVER|POLICIES'
+```
+
+### よくある誤設定
+
+- `inactivity_timeout` を秒と勘違いして `900` などを設定すると `ClientAliveInterval 54000`（15 時間）になる。
+- `max_sessions` を増やしても sshd の `MaxSessions` は変わらない（PAM limits 経由のため）。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'SSH_SERVER|POLICIES'
+show ssh-server policies
+sudo sshd -T | grep -Ei "MaxAuth|LoginGrace|Port|ClientAlive|PasswordAuth|PermitRoot|Ciphers|Kex|MACs"
+```
+
+<!-- /ops-hint -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+hostcfgd が `SSH_SERVER|POLICIES` を読み込み、各フィールドを対応する sshd_config ディレクティブに変換して `/etc/ssh/sshd_config` を上書き更新する。`inactivity_timeout` は分単位を秒単位に自動変換（×60）。`ciphers`, `kex_algorithms`, `macs` は leaf-list を comma-delimited 文字列に変換。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+hostcfgd は `SSH_SERVER` テーブルを常時購読（`config_db.subscribe('SSH_SERVER', ...)` L2478）。`DEVICE_METADATA.localhost` の存在確認のみ行う。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `SshServer.set_policies()` | `key == "ports"` | `handle_ports_set()` でマルチポート対応 | `hostcfgd` L1115-1121 |
+| `SshServer.set_policies()` | `key == "inactivity_timeout"` | 分→秒変換 (×60) して `ClientAliveInterval` に書く | `hostcfgd` L1129-1131 |
+| `SshServer.set_policies()` | `key == "password_authentication"` | `"false"` → `"no"`、その他 → `"yes"` 変換 | `hostcfgd` L1132-1143 |
+| `SshServer.set_policies()` | `key in ["ciphers", "kex_algorithms", "macs"]` | leaf-list を `","` 結合して各ディレクティブに書く | `hostcfgd` L1138-1140 |
+| `SshServer.set_policies()` | `key in ["max_sessions"]` | `continue`（sshd_config 非反映、PAM 側で処理） | `hostcfgd` L1144-1145 |
+| `SshServer.set_policies()` | `sshd -T` 失敗 | 一時ファイル削除、変更ロールバック | `hostcfgd` L1164-1168 |
+| `PamLimitsCfg` | `max_sessions == 0` | PAM limits 設定なし（無制限） | `hostcfgd` L1440-1441 |
+| `PamLimitsCfg` | `max_sessions > 0` | `maxlogins` を PAM limits に書き込み | `hostcfgd` L1440 |
+
+<!-- /handler-branching -->
+
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+SSH_SERVER テーブルへの書き込みが発生するコード経路を調査した結果。
+
+### CLI
+
+- `config ssh-server` — `sonic-utilities/config/main.py` L9987-10000 が `config_db.mod_entry("SSH_SERVER", "POLICIES", {...})` を呼ぶ
+
+### minigraph / sonic-cfggen
+
+minigraph.py での SSH_SERVER 自動生成なし
+
+### REST / gNMI
+
+REST/gNMI 経由の書き込み経路なし（YANG モデルは定義済みのため将来対応可能）
+
+### ビルド時デフォルト (build-time default)
+
+なし（`/etc/ssh/sshd_config` のデフォルトは OpenSSH パッケージが提供）
+
+<!-- /entry-points -->
+
+<!-- defaults -->
+## 暗黙デフォルト (Phase A)
+
+YANG `default` 宣言値と、フィールド不在時にコードまたは sshd が適用する実効デフォルトの対応表。
+
+| フィールド | YANG default | コード由来暗黙デフォルト | 実効 sshd_config 値 | 根拠 |
+|-----------|-------------|------------------------|-------------------|------|
+| `authentication_retries` | **6** | なし | `MaxAuthTries 6` | `sonic-ssh-server.yang` L27 |
+| `login_timeout` | **120** | なし | `LoginGraceTime 120` | `sonic-ssh-server.yang` L34 |
+| `ports` | **`"22"`** | なし | `Port 22` | `sonic-ssh-server.yang` L41 |
+| `inactivity_timeout` | **15** (分) | 分→秒変換（×60） → **900** 秒 | `ClientAliveInterval 900` | `sonic-ssh-server.yang` L51; `hostcfgd` L1129 |
+| `max_sessions` | **0** | `0` → PAM 設定なし（`None`） | PAM limits 非出力 = 無制限 | `hostcfgd` L1440-1441 |
+| `password_authentication` | **`true`** | `"false"`→`"no"`, その他→`"yes"` | `PasswordAuthentication yes` | `sonic-ssh-server.yang` L75; `hostcfgd` L1132 |
+| `permit_root_login` | なし | DB 不在 → sshd 組み込みデフォルト | `prohibit-password`（OpenSSH 7.7+） | `sonic-ssh-server.yang` L63-71 |
+| `ciphers` | なし | DB 不在 → OpenSSH デフォルト suite | sshd_config に Ciphers 行なし | `sonic-ssh-server.yang` L77-91 |
+| `kex_algorithms` | なし | DB 不在 → OpenSSH デフォルト suite | sshd_config に KexAlgorithms 行なし | `sonic-ssh-server.yang` L92-110 |
+| `macs` | なし | DB 不在 → OpenSSH デフォルト suite | sshd_config に MACs 行なし | `sonic-ssh-server.yang` L111-131 |
+
+### 注目 discrepancy: `inactivity_timeout` 単位変換
+
+YANG の `description` は "minutes" と明記しているが、変換処理（`× 60`）は hostcfgd 内部にのみ存在する。  
+YANG 型は `uint32` のみで単位変換の記述がないため、コードを読まないと単位が分であることが分からない。
+
+```python
+# hostcfgd L1129-1131
+if key == "inactivity_timeout":
+    # translate min to sec.
+    value = int(value) * 60
+```
+
+### 注目 discrepancy: `max_sessions` の経路
+
+`max_sessions` は `SSH_CONFIG_NAMES` に含まれていないため `sshd_config` の `MaxSessions` には反映されない。  
+代わりに `PamLimitsCfg` が PAM limits（`/etc/security/limits.d/`）に書き込む。  
+OpenSSH の `MaxSessions`（同時チャンネル数の上限）とは別の概念であることに注意。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L61-75 (SSH_CONFIG_NAMES dict) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1175 (SshServer.set_policies) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1441 (PamLimitsCfg.read_max_sessions_config) -->
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang L20-135 -->
+<!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### hostcfgd 起動時の処理順序
+
+hostcfgd は起動時に以下の順序で SSH_SERVER を処理する。
+
+1. **`PamLimitsCfg.__init__()` + `update_config_file()`**（L2191-2192）  
+   `get_table('SSH_SERVER')` を読み込み `read_max_sessions_config()` を実行。  
+   この時点で `SSH_SERVER|POLICIES` が存在しなければ PAM limits は更新されない（KeyError をスルー）。
+
+2. **`SshServer.__init__()`**（L2201）  
+   `policies = {}` のみ初期化。sshd_config への書き込みはなし。
+
+3. **`wait_till_system_init_done()`**  
+   systemd の初期化完了を待機。
+
+4. **`sshscfg.load(ssh_server)`**（L2265）  
+   `set_policies()` 経由で sshd_config 全フィールドを更新し、`systemctl restart ssh` を実行。
+
+5. **`pamLimitsCfg.update_config_file()`（2 回目）**（L2277）  
+   `max_sessions` を `/etc/security/limits.d/` に書き込む（確定値で上書き）。
+
+ステップ 4 と 5 は **順序固定**。`max_sessions` が sshd_config 側でスキップされ PAM 経由で処理されるため、sshd 設定と PAM limits の更新は必ずこの順に完了する。  
+起動直後の短時間（ステップ 4 完了前）は PAM limits が古い値のままになる可能性がある。
+
+### ランタイム更新（subscribe コールバック）
+
+```
+ssh_handler(key, op, data)         # hostcfgd L2297
+  ├─ sshscfg.policies_update()     # sshd_config 更新 + restart
+  └─ pamLimitsCfg.update_config_file()  # PAM limits 更新
+```
+
+sshd_config 更新と PAM limits 更新は**同一ハンドラ内で逐次実行**される（トランザクションなし）。  
+sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者の設定が不整合になる可能性がある。
+
+### `ports` フィールドの順序依存
+
+`handle_ports_set()` は既存 sshd_config.tmp 内の `Port` 行の**行番号**を取得してから挿入する。  
+複数ポートを指定する場合、各ポートは同一行番号に逐次挿入されるため、元の `Port` 行位置が存在しない場合はファイル末尾に追記される。
+
+### `DEVICE_METADATA|localhost` との前提依存
+
+`PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の**どちらも存在しない**場合に early return する（L1430）。  
+`DEVICE_METADATA|localhost` が先に書き込まれている前提で PAM limits の更新が動作する。  
+通常の SONiC デプロイでは `DEVICE_METADATA|localhost` は必ず存在するため問題にならないが、ミニマル構成やテスト環境では注意が必要。
+
+### sshd 検証ゲート（アトミック性）
+
+`set_policies()` はすべてのフィールドを sshd_config.tmp に適用した後、`sshd -T -f <tmp>` で検証する。  
+検証失敗時は tmp を削除してロールバック（フィールド単位のロールバックは行われない）。  
+すべて適用 or すべて棄却の二択であることに注意。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2191-2192, L2201, L2232-2277 (HostConfigDaemon.__init__ + load) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2299 (ssh_handler) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1430 (PamLimitsCfg.update_config_file early-return condition) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1091-1108 (handle_ports_set) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1150-1160 (sshd -T verification gate) -->
+<!-- /ordering -->
