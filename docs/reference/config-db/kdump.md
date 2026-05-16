@@ -268,6 +268,87 @@ show kdump config
 - `hostcfgd` の kdump ハンドラが kernel crashkernel 設定と同期
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+### DEVICE_METADATA への暗黙参照
+
+`KDUMP|config|enabled` のデフォルト値はビルド時プラットフォーム識別子 (`sonic_asic_platform`) で分岐する。
+`cisco-8000` プラットフォームでは `enabled: true` がデフォルトになり、他プラットフォームでは `false`。
+これは `DEVICE_METADATA|localhost|platform` に対応するビルド時設定であり、`init_cfg.json.j2` 経由で注入される。
+
+また `hostcfgd` 起動時に `/proc/cmdline` の `crashkernel=` パラメータを確認し、存在する場合は
+`KDUMP|config|enabled` と `KDUMP|config|memory` を CLI 設定より優先して自動上書きする
+(`sonic-host-services/scripts/hostcfgd:1179-1207`)。
+
+### FEATURE テーブルとの関係
+
+`KDUMP` テーブルは `FEATURE` テーブルの管理対象外。kdump は独立した Docker コンテナを持たず、
+`docker-config-engine` コンテナ内の `hostcfgd` が `KDUMP` テーブルを直接購読・処理する。
+`FEATURE|<name>` の `state` フィールドによる有効化フローは存在しない。
+
+```
+KDUMP (CONFIG_DB) 変更
+  → hostcfgd.kdump_handler()           # subscribe('KDUMP', ...)
+  → KdumpCfg.kdump_update()
+  → sonic-kdump-config (--enable/--disable/--memory/--num_dumps/--ssh_string/--ssh_path/--remote)
+  → /etc/default/kdump-tools 更新
+  → 次回システム再起動で反映
+```
+
+| 暗黙参照元 | 参照先 | 種別 |
+|-----------|--------|------|
+| `KDUMP|config|enabled` デフォルト | `DEVICE_METADATA|localhost|platform` (cisco-8000 判定) | ビルド時条件分岐 |
+| `KDUMP|config|enabled/memory` | `/proc/cmdline` の `crashkernel=` | 起動時自動上書き |
+| `KDUMP` 全フィールド | `hostcfgd` (docker-config-engine) | ランタイム購読 (FEATURE 非管理) |
+
+<!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### ブートローダー別 `crashkernel` 書き込みパス
+
+`sonic-kdump-config` はブートローダーを自動検出し、`crashkernel=` パラメータの書き込み先を切り替える。
+
+| ブートローダー | 判定条件 | `crashkernel` 書き込み先 |
+|--------------|---------|------------------------|
+| GRUB (x86_64 汎用) | `/host/grub/grub.cfg` 存在 | `/host/grub/grub.cfg` |
+| Aboot (Arista) | `/host/machine.conf` に `aboot_platform` を含む | `/host/image-<version>/kernel-cmdline` |
+| U-Boot (ARM 系) | `fw_printenv` コマンドが存在 | `fw_setenv` 経由で `linuxargs` を更新 |
+| 非対応 | 上記以外 | `"Feature not supported on this platform"` を出力して中断 |
+
+### ASIC ベンダー別デフォルト値
+
+`init_cfg.json.j2` のビルド時テンプレートで `sonic_asic_platform` に基づいて `enabled` デフォルトが分岐する。
+
+| `sonic_asic_platform` | `KDUMP|config|enabled` デフォルト |
+|-----------------------|--------------------------------|
+| `cisco-8000` | `"true"` (デフォルト有効) |
+| その他 (broadcom, mellanox, vs 等) | `"false"` (デフォルト無効) |
+
+`memory` / `num_dumps` のデフォルト (`"0M-2G:256M,2G-4G:320M,4G-8G:384M,8G-:448M"` / `"3"`) はプラットフォーム非依存。
+
+### KVM / 仮想プラットフォーム (VS) の差異
+
+KVM/QEMU 環境を考慮した `ata_piix.prefer_ms_hyperv=0` パラメータが `/etc/default/kdump-tools` の `KDUMP_CMDLINE_APPEND` にデフォルトで含まれる。実機 ASIC プラットフォームでは `ata_piix` ドライバが存在しないため無害に無視される。
+
+### ARM (U-Boot) プラットフォームの特殊処理
+
+U-Boot 環境では `fw_printenv`/`fw_setenv` で `linuxargs` の `crashkernel=` を更新する。アーキテクチャ固有のデフォルト `crashkernel` 値はコード上に存在せず、CONFIG_DB の `memory` 値をそのまま使用する。
+
+### デバイス固有の `crashkernel` (installer.conf)
+
+一部デバイスは `ONIE_PLATFORM_EXTRA_CMDLINE_LINUX` で固有の `crashkernel` を持つ。CONFIG_DB の `memory` 変更時は `sonic-kdump-config` が上書きする。
+
+| デバイス | `crashkernel` 初期値 |
+|---------|-------------------|
+| Celestica `cel_ds1000` | `0M-2G:256M,2G-4G:320M,4G-8G:384M,8G-:448M` |
+| Nexthop `5010` / `4010` | `512M` (絶対値固定) |
+| Nokia `ixr7250e` 各 SKU | `8G-:1G` (高メモリ帯のみ) |
+
+<!-- /platform -->
+
 <!-- ordering -->
 ## 書込み順依存・起動順序
 
