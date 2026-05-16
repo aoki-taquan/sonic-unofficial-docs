@@ -219,6 +219,48 @@ STATE_DB `NEIGH_STATE_TABLE` および `BGP_PEER_CONFIGURED_TABLE` には対応�
 - bgpmon 起動時 (`__init__`) に `NEIGH_STATE_TABLE|*` を全削除してから再スキャンするため、コンテナ再起動直後は最大 15 秒間エントリが存在しない場合がある。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B — BGP_PEER_CONFIGURED_TABLE)
+
+STATE_DB `BGP_PEER_CONFIGURED_TABLE` への書き込みは `BGPPeerMgrBase.update_state_db()` が担い、**FRR への設定 push が完了した直後にのみ**実行される。これはテーブルを「FRR 設定投入完了」の確認フラグとして利用する SDN コントローラ向けの設計上の制約である。
+
+### SET: FRR push 成功後にのみ STATE_DB へ書き込む
+
+`add_peer()` では FRR コマンドを `apply_op`（= `cfg_mgr.push`）で送信した直後に `update_state_db(..., "SET")` を呼ぶ。テンプレートのレンダリングエラー (`jinja2.TemplateError`) が発生した場合は `return True` するが `update_state_db` は呼ばれず、STATE_DB には書き込まれない（FRR も未設定のまま）。<!-- evidence: managers_bgp.py:229-239 -->
+
+### admin_status 変更: FRR push 成功確認後に SET
+
+`apply_admin_status()` は `apply_op` の戻り値 (`ret_code`) が `True` のときのみ `update_state_db(..., "SET")` を実行する。`apply_op` は内部で `cfg_mgr.push` を呼び常に `True` を返すため、push が例外なく完了した場合に STATE_DB が更新される。<!-- evidence: managers_bgp.py:341-356 -->
+
+### DEL: FRR push 成功後に STATE_DB からエントリを削除
+
+`del_handler()` は `no neighbor <addr>` を FRR に push し（`apply_op`）、`ret_code=True` を確認してから `update_state_db(..., "DEL")` を呼ぶ。DEL 側の `update_state_db` は `state_peer_table.get(key)` で存在確認してから `delete(key)` を呼ぶため、既に不在の場合は `log_warn` のみで実際には何もしない。<!-- evidence: managers_bgp.py:485-488, 292-295 -->
+
+### DEL 前の listen range 除去（dynamic ピアのみ）
+
+`peer_type` が `dynamic` または `sentinels` の場合、`del_handler` は FRR 10.1 以降の要件として `no bgp listen range ...` を先に発行し、その後で `no neighbor`（ピアグループ削除）を発行する。STATE_DB への DEL はピアグループ削除の後になる。<!-- evidence: managers_bgp.py:461-472 -->
+
+### config reload 時の一時的全削除
+
+`config reload` 処理（`sonic-utilities/config/main.py:1613`）は `BGP_PEER_CONFIGURED_TABLE|*` を全削除する。bgpcfgd 再起動後に CONFIG_DB を replay して各ネイバーを FRR に再投入し、成功後に各エントリを SET する。reload 中（数秒〜数十秒）はエントリが存在しない状態になる。<!-- evidence: config/main.py:1613 -->
+
+### NEIGH_STATE_TABLE との関係
+
+`NEIGH_STATE_TABLE`（書き込み元: bgpmon）と `BGP_PEER_CONFIGURED_TABLE`（書き込み元: bgpcfgd）は独立したデーモンが管理するため、両テーブル間の書込み順序依存はない。bgpmon は起動時に `NEIGH_STATE_TABLE|*` を全削除してから再スキャンするが、これは `BGP_PEER_CONFIGURED_TABLE` に影響しない。<!-- evidence: bgpmon.py:51 -->
+
+### 書込み順依存サマリ
+
+| # | 依存関係 | 対象操作 | 違反時の挙動 |
+|---|----------|---------|------------|
+| 1 | FRR push（ネイバー追加） → STATE_DB SET | add_peer / SET handler | テンプレートエラー時は STATE_DB 未書込（FRR も未設定） |
+| 2 | FRR push（admin_status 変更） → STATE_DB SET | change_admin_status | apply_op 例外時は STATE_DB 未更新 |
+| 3 | FRR `no neighbor` → STATE_DB DEL | del_handler / DEL handler | FRR 除去前に SDN 参照するとエントリがまだ存在 |
+| 4 | FRR `no listen range` → FRR `no neighbor` → STATE_DB DEL | del_handler (dynamic のみ) | listen range 除去なしに削除すると FRR 10.1 以降はエラー |
+| 5 | config reload → 全削除 → bgpcfgd 再投入 | config reload | reload 中は SDN 向けにエントリが存在しない |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-state-ordering.md`
+<!-- /ordering -->
+
 <!-- platform -->
 ## プラットフォーム差分 (Phase H — コード由来)
 
