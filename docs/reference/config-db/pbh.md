@@ -398,3 +398,55 @@ minigraph.py および init_cfg.json.j2 からの `PBH_TABLE` / `PBH_RULE` / `PB
 > **スキャン証跡**: `orchdaemon.cpp:553-565` および `pbhorch.cpp` を確認、5 件分岐抽出。PBH は minigraph 非依存を確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-side-effects.md -->
+
+### ASIC_DB への書込
+
+PbhOrch → AclOrch → SAI API 経路で syncd が ASIC_DB にオブジェクトを書き込む。直接の ASIC_DB アクセスは syncd 経由。
+
+| 操作 | SAI API | ASIC_DB オブジェクト型 | 契機 |
+|---|---|---|---|
+| PBH_TABLE ADD | `aclOrch->addAclTable()` → `sai_acl_api->create_acl_table()` | `SAI_OBJECT_TYPE_ACL_TABLE` | `PBH_TABLE` SET イベント |
+| PBH_RULE ADD | `aclOrch->addAclRule()` → `sai_acl_api->create_acl_entry()` | `SAI_OBJECT_TYPE_ACL_ENTRY` | `PBH_RULE` SET イベント (依存オブジェクト揃い次第) |
+| PBH_HASH ADD | `sai_hash_api->create_hash()` | `SAI_OBJECT_TYPE_HASH` | `PBH_HASH` SET イベント |
+| PBH_HASH_FIELD ADD | `sai_hash_api->create_fine_grained_hash_field()` | `SAI_OBJECT_TYPE_FINE_GRAINED_HASH_FIELD` | `PBH_HASH_FIELD` SET イベント |
+| flow_counter=ENABLED | `sai_acl_api->create_acl_counter()` | `SAI_OBJECT_TYPE_ACL_COUNTER` | PBH_RULE で `flow_counter=ENABLED` 時のみ |
+
+証跡: `pbhorch.cpp:286`（addAclTable）、`pbhorch.cpp:633`（addAclRule）、`pbhorch.cpp:1054`（create_hash）、`aclorch.cpp:1937`（create_acl_counter）
+
+### COUNTERS_DB への書込
+
+`flow_counter=ENABLED` の PBH_RULE のみ、`AclOrch::registerFlexCounter()` を通じて COUNTERS_DB に書き込む。
+
+| COUNTERS_DB キー | 内容 | 書込タイミング |
+|---|---|---|
+| `ACL_COUNTER_RULE_MAP` | `"<table_name>|<rule_name>"` → `<acl_counter_oid>` | `flow_counter=ENABLED` の PBH_RULE が addAclRule → createCounter 成功後 |
+| FlexCounter 登録 | `CounterType::ACL_COUNTER` として packet / byte カウンタ属性を登録 | 同上 (`show pbh statistics` に表示) |
+
+DEL 時: `aclOrch->deregisterFlexCounter()` が `ACL_COUNTER_RULE_MAP` からエントリ削除 + FlexCounter 解除。
+
+証跡: `aclorch.cpp:6041`（hset ACL_COUNTER_RULE_MAP）、`aclorch.cpp:6047`（hdel DEL 時）、`aclorch.cpp:6040`（flex_counter_manager 登録）
+
+### flow_counter=DISABLED（デフォルト）時
+
+`AclRulePbh` は `createCounter=false` で構築 (`pbhorch.cpp:499`)。ACL_COUNTER SAI オブジェクトは作成されず、COUNTERS_DB への書込は発生しない。
+
+### 副次書込サマリ
+
+```
+PBH_RULE (flow_counter=ENABLED)
+  └─► ASIC_DB: SAI_OBJECT_TYPE_ACL_ENTRY  (via sai_acl_api->create_acl_entry)
+  └─► ASIC_DB: SAI_OBJECT_TYPE_ACL_COUNTER (via sai_acl_api->create_acl_counter)
+  └─► COUNTERS_DB: ACL_COUNTER_RULE_MAP["<table>|<rule>"] = <counter_oid>
+  └─► FlexCounter: CounterType::ACL_COUNTER 登録 (show pbh statistics に表示)
+
+PBH_RULE (flow_counter=DISABLED / デフォルト)
+  └─► ASIC_DB: SAI_OBJECT_TYPE_ACL_ENTRY のみ
+  └─► COUNTERS_DB: 書込なし
+```
+
+<!-- /side-effects -->
