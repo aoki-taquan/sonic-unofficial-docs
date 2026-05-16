@@ -259,40 +259,6 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
 <!-- /handler-branching -->
-<!-- ordering -->
-## 書込み順依存・タイミング依存 (Phase B)
-
-### 必須書込み順序
-
-BUFFER_POOL → BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE の順で CONFIG_DB に書くことが必須。逆順でも最終的には retry で収束するが、dynamic buffer model の warm reboot では失敗の原因になる。
-
-| # | 依存関係 | 種別 | 根拠 |
-|---|----------|------|------|
-| 1 | **BUFFER_POOL → BUFFER_PROFILE** | 強制先行必須 | `m_bufferPoolReady == false` のとき `updateBufferProfileToDb()` は即 return し pending。`bufferorch` は pool 参照未解決で `task_need_retry` | `buffermgrdyn.cpp` L840-898, `bufferorch.cpp` L638-655 |
-| 2 | **BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE** | 強制先行必須 | profile 参照未解決で `task_need_retry`。profile 未作成では PG / QUEUE も作れない | `bufferorch.cpp` L964-972, L1340-1348 |
-| 3 | **PORT オブジェクト存在 → BUFFER_PG / BUFFER_QUEUE** | 強制先行必須 | ポート不在なら `task_invalid_entry` で破棄。admin up **前**に PG/QUEUE を書くことが推奨 | `bufferorch.cpp` L1033-1036, L1577-1585 |
-| 4 | **SAI create-only 制約**: pool 作成前に `type`/`mode` 確定 | 作成後変更不可 | 作成後の `type`/`mode` 変更はサイレントスキップ。YANG 非記載 | `bufferorch.cpp` L437-471 |
-| 5 | **zero pool → zero profile**（投入）/ **zero profile → zero pool**（削除） | vendor 構成限定 | `"The zero profiles are removed first and then the zero pools"` | `buffermgrdyn.cpp` L236-239 |
-| 6 | **dynamic model**: `m_bufferPoolReady` ゲート | dynamic 専用 | Lua plugin によるプールサイズ計算完了まで全上位オブジェクトの SAI 反映をブロック | `buffermgrdyn.cpp` L686-695, L840-857 |
-
-### PORT 先行の詳細
-
-`bufferorch` は BUFFER_PG / BUFFER_QUEUE を処理する際、ポートオブジェクトが存在しなければ `task_invalid_entry` を返してエントリを破棄する（`bufferorch.cpp` L1033-1036, L1113-1114）。また、初期設定以外で admin up 済みポートに PG プロファイルを適用すると `SWSS_LOG_WARN("PG profile '%s' applied after port %s is up")` が出力される。PG / QUEUE はポートの admin up **前**に設定するのが正しい順序。
-
-### SAI create-only 属性（変更不可フィールド）
-
-以下のフィールドは SAI オブジェクト**作成時のみ**有効。既存オブジェクトへの変更は SAI に反映されず LOG_INFO のみ出力される。変更するには SAI オブジェクト削除→再作成が必要。
-
-| テーブル | フィールド | SAI 属性 | evidence |
-|---------|-----------|----------|---------|
-| `BUFFER_POOL` | `type` | `SAI_BUFFER_POOL_ATTR_TYPE` | `bufferorch.cpp` L437-441 |
-| `BUFFER_POOL` | `mode` | `SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE` | `bufferorch.cpp` L469-471 |
-| `BUFFER_PROFILE` | `pool` | `SAI_BUFFER_PROFILE_ATTR_POOL_ID` | `bufferorch.cpp` L656-658 |
-| `BUFFER_PROFILE` | `dynamic_th` / `static_th` 型変更 | `SAI_BUFFER_PROFILE_ATTR_THRESHOLD_MODE` | `bufferorch.cpp` L694-698 |
-
-> **スキャン証跡**: `buffermgr.cpp` L1-600 全行読了、`buffermgrdyn.cpp` L230-970 / L2509-2669 全行読了、`bufferorch.cpp` L89-700 / L960-1590 全行読了。順序依存 6 件検出。
-<!-- /ordering -->
-
 <!-- defaults -->
 ## コード由来の暗黙デフォルト / 実装乖離 (Phase A)
 
@@ -339,4 +305,63 @@ else
 
 > **証跡**: `buffermgrdyn.cpp` L2509-2669 全行読了、`bufferorch.cpp` L391-596 全行読了、`buffermgr.cpp` L337-410 全行読了、`buffer_pool_mellanox.lua` L440-476 全行読了。
 <!-- /defaults -->
+
+<!-- platform -->
+## プラットフォーム・ASIC 差 (Phase H)
+
+### 1. dynamic vs static buffer model
+
+`buffermgrdyn.cpp` L68-80 で `ASIC_VENDOR` 環境変数を読み込みプラットフォームを決定する。  
+**Mellanox / Barefoot**: `buffermgrdyn` (dynamic buffer model) が起動し、`buffer_pool_<vendor>.lua` を SAI で実行してプールサイズを逆算する。  
+**Broadcom 等**: `buffermgr` (static buffer model) が起動し、ビルド時に事前計算済みの JSON 固定値を APPL_DB に pass-through する。
+
+| 差分点 | dynamic model (Mellanox/Barefoot) | static model (Broadcom 等) |
+|---|---|---|
+| `size` 省略時 | `dynamic_size = true` → Lua plugin が後書き (`buffermgrdyn.cpp` L2525) | `buffermgr` が pass-through (空のまま APPL_DB も空) |
+| `percentage` フィールド | Lua plugin が APPL_DB から読み実効サイズ計算に使用 | bufferorch が `LOG_ERROR("Unknown pool field specified")` → SAI 非反映 (`bufferorch.cpp` L497-501) |
+| `ingress_lossless_pool` xoff | Lua plugin が SHP サイズを返し動的更新 | 固定値をそのまま SAI へ |
+| `dontUpdatePoolToDb` | `dynamic_size=true` かつ `overSubscribeRatio` 非ゼロかつ SHP size 未設定で APPL_DB 書込みを完全スキップ (`buffermgrdyn.cpp` L2555-2628) | 該当なし |
+
+### 2. Mellanox SN4k/SN5k — 8 lane ポートの xon 値差
+
+`buffermgrdyn.cpp` L504-511: `m_platform == "mellanox"` かつ `lane_count == 8` かつ SN4000 系で非 400G / SN5000 系で非 800G の場合、headroom プロファイルの xon 値を通常の **2 倍**に設定する。これは `ingress_lossless_pool` の SHP (xoff) サイズ計算に間接影響する。Mellanox 以外のプラットフォームにはこの分岐なし。
+
+### 3. ASIC vendor の SAI capability (実行時判定)
+
+bufferorch は静的なベンダ名判定を行わず SAI 戻り値で capability を検出する。
+
+| 判定条件 | 挙動 | ソース |
+|---|---|---|
+| `SAI_STATUS_NOT_SUPPORTED` / `NOT_IMPLEMENTED` on `clear_buffer_pool_stats` | `noWmClrCapability` ビット記録 → 以降 watermark clear をスキップ (Broadcom DNX / Cisco-8000 系など) | `bufferorch.cpp` L310-322 |
+| `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` on pool 属性 SET | `task_ignore` → ハードウェア非反映のまま APPL_DB 成功扱い | `bufferorch.cpp` L506-512 |
+| `type` / `mode` への更新 SET | サイレントスキップ (LOG_INFO のみ、SAI create-only 属性制約) | `bufferorch.cpp` L437-471 |
+
+### 4. VOQ chassis と BUFFER_POOL の関係
+
+`gMySwitchType == "voq"` による分岐は `BUFFER_QUEUE` に集中する。**BUFFER_POOL テーブルの処理経路 (`handleBufferPoolTable` / `processBufferPool`) には VOQ 固有分岐がない**。VOQ chassis でも BUFFER_POOL の key 形式・field 処理・SAI 反映手順は non-VOQ と同一。
+
+`buffers_config.j2` の VOQ 分岐 (L36-38, L278-296) は `BUFFER_QUEUE` の system port 向けエントリ生成のみで、`BUFFER_POOL` 定義ブロック自体は変わらない。
+
+### 5. テンプレートによる初期値差
+
+| ベンダ/HWSKU | dynamic_mode | ingress_lossless_pool.size | xoff 設定 |
+|---|---|---|---|
+| Mellanox SN2700 (`buffers_dynamic.json.j2`) | あり | 省略 (Lua plugin 計算) | Lua plugin 計算 |
+| Mellanox SN2700 (`buffers.json.j2`) | なし | 明示 (`4580864`) | 固定値 |
+| Arista 7260CX3 (Broadcom) | なし | 動的計算 (`buffers_pool_sizes_t0.j2` 参照) | `7827456` |
+| Celestica Seastone / Delta | なし | プラットフォーム別固定値 | 固定値 |
+
+### まとめ
+
+| 差分軸 | BUFFER_POOL への影響 |
+|---|---|
+| dynamic model | `size` 省略・`percentage` 有効・Lua 計算 |
+| static model | `percentage` は bufferorch で LOG_ERROR+skip |
+| Mellanox SN4k/5k 8-lane | xon 2 倍 → SHP xoff 間接影響 |
+| watermark clear 非対応 ASIC | SAI status で実行時検出 |
+| pool SET 属性未実装 | `task_ignore` → ハードウェア非反映 |
+| VOQ chassis | BUFFER_POOL の処理は変化なし |
+
+> **証跡**: `buffermgrdyn.cpp` L68-88, L504-511, L2525, L2555-2628 / `bufferorch.cpp` L310-322, L437-471, L497-501, L506-512, L916, L1049, L1134, L1168 / `buffers_config.j2` L36-38, L265-327, L331-348 / `buffers_defaults_objects.j2` (Mellanox SN2700) / `buffers_defaults_t0.j2` (Arista 7260CX3) 全行読了。
+<!-- /platform -->
 <!-- glossary-links-injected: 44ea702536a5 -->
