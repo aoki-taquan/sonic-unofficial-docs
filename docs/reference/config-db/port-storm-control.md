@@ -331,3 +331,38 @@ minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派
 > **スキャン証跡**: `policerorch.cpp:374-407` を確認、5 件分岐抽出。PORT_STORM_CONTROL が PolicerOrch の `doTask()` 内で最優先にディスパッチされることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 順序依存性 (Phase B)
+
+### PORT 先行制約
+
+`handlePortStormControlTable()` は処理冒頭で `gPortsOrch->getPort(interface_name, port)` を呼ぶ。PORT テーブルが未初期化 (PortsOrch が当該ポートを登録していない) 場合、`task_success` を返してエントリを **erase** する (サイレント破棄、リトライなし)。
+
+さらに `doTask()` 冒頭で `gPortsOrch->allPortsReady()` が false なら即座 `return` するため、PortsOrch の全ポート初期化完了が PORT_STORM_CONTROL 処理の大域ガードになっている。
+
+```
+PORT (PortsOrch 初期化完了)
+  ↓  allPortsReady() == true になるまで doTask() は処理しない
+PORT_STORM_CONTROL エントリ処理
+  ↓  gPortsOrch->getPort() でポート存在確認
+storm policer 作成 → SAI attach
+```
+
+| 順序制約 | 根拠 | evidence |
+|---------|------|---------|
+| PORT → PORT_STORM_CONTROL | `allPortsReady()` ガード + `getPort()` 存在確認 | `policerorch.cpp:379-382`, `policerorch.cpp:138-143` |
+
+### storm policer 命名順序
+
+policer 名は `_<interface_name>_<storm_type>` 形式で自動生成される。同一ポートの 3 種類 (broadcast / unknown-unicast / unknown-multicast) は独立した policer として個別に作成・attach され、相互依存はない。削除時も storm_type 単位で独立して処理される。
+
+| storm_type | SAI 属性 | 相互依存 |
+|-----------|---------|--------|
+| `broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` | なし |
+| `unknown-unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` | なし |
+| `unknown-multicast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` | なし |
+
+証跡: `policerorch.cpp:145-146` (policer 命名), `policerorch.cpp:204-218` (storm_type 分岐)
+
+<!-- /ordering -->
