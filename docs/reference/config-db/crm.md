@@ -485,4 +485,24 @@ SAI object-level availability API。ASIC ベンダーが実装していれば、
 `CRM_EXT_TABLE` はテーブル名を `SAI_GENERIC_PROGRAMMABLE_ATTR_OBJECT_NAME` (s8list) として `sai_object_type_get_availability` に渡す。ASIC ドライバが対象テーブル名を認識しない場合はエラーログのみ（`CRM_RES_NOT_SUPPORTED` フラグは立てない）。<!-- evidence: crmorch.cpp:1022-1047 -->
 <!-- /platform -->
 
+<!-- failure -->
+## 失敗挙動詳細 (Phase D)
+
+ソース: `sonic-swss/orchagent/crmorch.cpp`
+
+| 入力条件 | 失敗箇所 | 挙動 | evidence |
+|---------|---------|------|---------|
+| 不正 `threshold_type` 値（マップ未登録文字列） | `handleSetCommand()` L496: `crmThreshTypeMap.at(value)` | `std::out_of_range` → catch → `SWSS_LOG_ERROR` + `return`。後続フィールドも適用されない | `crmorch.cpp:496, 529-533` |
+| `percentage` 閾値 > 100 | `CrmResourceEntry` コンストラクタ L428-431 | `runtime_error("CRM percentage threshold value must be <= 100%%")` → catch → `SWSS_LOG_ERROR` + `return` | `crmorch.cpp:428-431, 529-533` |
+| `low_threshold >= high_threshold` | `CrmResourceEntry` コンストラクタ L433-435 | `runtime_error("CRM low threshold must be less then high threshold")` → catch → `SWSS_LOG_ERROR` + `return` | `crmorch.cpp:433-435, 529-533` |
+| 非数値・範囲外 `polling_interval` | `handleSetCommand()` L489: `to_uint<uint32_t>(value)` | 変換例外 → catch → `SWSS_LOG_ERROR` + `return`。タイマー更新なし | `crmorch.cpp:489, 529-533` |
+| 未知フィールド名 | `handleSetCommand()` L524-527 | `SWSS_LOG_ERROR("Unknown attribute %s")` のみ。`return` せず次フィールドのループを継続 | `crmorch.cpp:524-527` |
+| SAI リソース取得失敗（`!= SAI_STATUS_SUCCESS`） | `getResAvailability()` L823-826 | `SWSS_LOG_ERROR` + `return false`。COUNTERS_DB の `availableCounter` は前回値のまま | `crmorch.cpp:823-826` |
+| SAI 未サポートリソース（NOT_SUPPORTED / NOT_IMPLEMENTED） | `getResAvailability()` L812-820 | `res.resStatus = CRM_RES_NOT_SUPPORTED` + `SWSS_LOG_NOTICE`。以降ポーリングで skip | `crmorch.cpp:812-820, 884-888` |
+| ACL 系 SAI 取得失敗 | `getResAvailableCounters()` L972-979 | `SWSS_LOG_ERROR` + `handleSaiGetStatus` で non-success なら `break`（そのリソースのカウンタ更新中断） | `crmorch.cpp:972-979` |
+| `DEL_COMMAND` 操作 | `doTask()` L463-466 | `SWSS_LOG_ERROR("Unsupported operation type")` のみ。閾値・interval 変更なし | `crmorch.cpp:463-466` |
+| 不明テーブル名 | `doTask()` L446-449 | `SWSS_LOG_ERROR("Invalid table %s")` のみ。処理継続（`return` しない） | `crmorch.cpp:446-449` |
+
+> **スキャン証跡**: `crmorch.cpp` L428-538（handleSetCommand / CrmResourceEntry コンストラクタ）、L760-835（getResAvailability）、L878-1060（getResAvailableCounters）全行読了。10 件失敗パターン抽出。
+<!-- /failure -->
 <!-- glossary-links-injected: c6e41e02b036 -->
