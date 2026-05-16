@@ -521,4 +521,51 @@ SAI 呼び出し: なし (`BgpGlobalStateOrch` 側で DEL を処理しないた�
 <!-- 証跡: sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py, managers_chassis_app_db.py; sonic-swss/orchagent/bfdorch.cpp:683-840,565,629; sonic-buildimage/dockers/docker-fpm-frr/base_image_files/{TSA,TSB,TS} -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`BGP_DEVICE_GLOBAL` テーブルは **`SubscriberStateTable`** を用いた Redis keyspace notification ベースの push 型購読で 2 プロセスに配信される。
+
+### bgpcfgd — Runner の SubscriberStateTable
+
+```python
+# sonic-bgpcfgd/bgpcfgd/runner.py:49
+subscriber = swsscommon.SubscriberStateTable(conn, table_name)
+self.selector.addSelectable(subscriber)
+```
+
+`Runner` が `DeviceGlobalCfgMgr("CONFIG_DB", CFG_BGP_DEVICE_GLOBAL_TABLE_NAME)` の登録に基づき `SubscriberStateTable` を生成。Redis keyspace 通知をエポールで受信後 `subscriber.pop()` → `set_handler` / `del_handler` へ dispatch し、FRR vtysh push を実行する。タイムアウト間隔 10 s（`runner.py:57`）。
+
+シャーシ環境では `ChassisAppDbMgr` が同じ仕組みで **CHASSIS_APP_DB の `BGP_DEVICE_GLOBAL`** も購読する（`main.py:113`）。
+
+### bgpcfgd — directory.subscribe (in-process)
+
+`DeviceGlobalCfgMgr.__init__` は bgpcfgd プロセス内のインメモリ directory に対して `directory.subscribe` を呼び出し、`DEVICE_METADATA.localhost.type` 変化時に `handle_type_update` でロールを更新する（`managers_device_global.py:33`）。Redis への接続は不要で Python オブジェクト内コールバックとして動作する。
+
+`ChassisAppDbMgr` は同様に `CONFIG_DB.BGP_DEVICE_GLOBAL.tsa_enabled` の変化を `directory.subscribe` で受信し、LC ローカル TSA とシャーシ全体 TSA の調整を行う（`managers_chassis_app_db.py:20`）。
+
+### orchagent — BgpGlobalStateOrch の SubscriberStateTable
+
+```cpp
+// orchagent/orch.cpp:1190
+addExecutor(new Consumer(
+    new SubscriberStateTable(db, tableName, TableConsumable::DEFAULT_POP_BATCH_SIZE, pri),
+    this, tableName));
+```
+
+`BgpGlobalStateOrch(m_configDb, CFG_BGP_DEVICE_GLOBAL_TABLE_NAME)` が `Orch` 基底クラス経由で `SubscriberStateTable(CONFIG_DB, "BGP_DEVICE_GLOBAL")` を生成（`orchdaemon.cpp:240`）。epoll イベント受信後 `BgpGlobalStateOrch::doTask(Consumer&)` が呼び出され、`tsa_enabled` フィールドのみを消費して `BfdOrch::handleTsaStateChange` へ連鎖する（`bfdorch.cpp:793-825`）。`wcmp_enabled` / `idf_isolation_state` は orchagent 側では無視される。
+
+### 購読方式まとめ
+
+| コンシューマ | 購読方式 | 対象 DB | 処理フィールド |
+|------------|---------|---------|--------------|
+| `DeviceGlobalCfgMgr` (bgpcfgd) | `SubscriberStateTable` (Runner 経由) | CONFIG_DB | `tsa_enabled` / `wcmp_enabled` / `idf_isolation_state` |
+| `DeviceGlobalCfgMgr` (bgpcfgd) | `directory.subscribe` (in-process) | CONFIG_DB / `DEVICE_METADATA` | `localhost.type` (switch_role 更新) |
+| `ChassisAppDbMgr` (bgpcfgd, chassis のみ) | `SubscriberStateTable` (Runner 経由) | CHASSIS_APP_DB / `BGP_DEVICE_GLOBAL` | `tsa_enabled` |
+| `ChassisAppDbMgr` (bgpcfgd, chassis のみ) | `directory.subscribe` (in-process) | CONFIG_DB / `BGP_DEVICE_GLOBAL` | `tsa_enabled` (LC ローカル変化追従) |
+| `BgpGlobalStateOrch` (orchagent) | `SubscriberStateTable` (Orch 基底) | CONFIG_DB | `tsa_enabled` のみ |
+
+bgpcfgd と orchagent は独立プロセスのため、同一 SET イベントに対して並列に処理が走り、完了の相対順序は保証されない。詳細根拠は `meta/_intermediate/cdb-flow/bgp-device-global-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 029bff240b1b -->
