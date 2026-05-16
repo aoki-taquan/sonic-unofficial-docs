@@ -305,6 +305,59 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+WRED_PROFILE の処理において、プラットフォーム識別文字列（`broadcom` / `mellanox` / `cisco-8000` 等）による静的分岐は存在しない。SAI capability の動的照会（`querySwitchCapability` / `sai_query_attribute_capability`）も WRED 属性に対しては実施されない。確認されるプラットフォーム差は以下の通り。
+
+### 差異 1: VoQ chassis — WRED プロファイルの bind 対象が VoQ に変わる
+
+`gMySwitchType == "voq"` の場合、`applyWredProfileToQueue()` (`qosorch.cpp:1715-1730`) は物理キュー ID（`port.m_queue_ids[queue_ind]`）の代わりに **VoQ ID**（`gPortsOrch->getPortVoQIds(port)[queue_ind]`）を使用し、SAI 属性 `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を VoQ に設定する。
+
+| 条件 | bind 対象 |
+|------|----------|
+| `gMySwitchType == "voq"` | `getPortVoQIds()` で取得した VoQ ID |
+| それ以外（通常スイッチ / multi-asic / DPU 等） | `port.m_queue_ids[queue_ind]`（物理キュー） |
+
+VoQ chassis ではローカル ASIC のポートか否かも判定される。非ローカルポートへの WRED bind は暗黙的にスキップされる（`qosorch.cpp:1790-1800`）。
+
+### 差異 2: VoQ chassis — QUEUE キーフォーマットが 4 トークンに変わる
+
+`handleQueueTable()` (`qosorch.cpp:1772-1810`) における QUEUE キー解析:
+
+| 条件 | キーフォーマット | 不正時の挙動 |
+|------|----------------|------------|
+| `gMySwitchType == "voq"` | `{hostname}\|{asic}\|{port}\|{index}` (4 トークン必須) | 4 トークン未満 → `task_invalid_entry` |
+| それ以外 | `{port}\|{index}` (2 トークン必須) | 2 トークン以外 → `task_invalid_entry` |
+
+VoQ 環境で `QUEUE` テーブルを書く場合は `hostname|asicN|EthernetX|queue_index` 形式を使用する必要がある。
+
+### 差異 3: 一部ベンダー SAI の min/max threshold 順序制約（対策済み）
+
+コメント (`qosorch.cpp:596-629`) に「一部ベンダー SAI では 1 回の SET ごとに min/max の整合性を検証するため、閾値の過渡的な逆転（旧 max < 新 min）がエラーになる」と記されている。対象ベンダーは明示されていない。
+
+この問題は **2 フェーズ属性適用**（`convertFieldValuesToAttributes()` の `deferred_attributes` 機構, L636-694）で吸収されており、ユーザー操作・CONFIG_DB 書き込み順序には依存しない。全プラットフォームでこの機構が有効。
+
+### 差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明
+
+WRED の各 SAI 属性（`SAI_WRED_ATTR_ECN_MARK_MODE`、`SAI_WRED_ATTR_*_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}`、`SAI_WRED_ATTR_WEIGHT`）は能力照会なしで直接 `sai_wred_api->create_wred()` / `set_wred_attribute()` に渡される。ASIC が非対応の場合 SAI がエラーを返し、orchagent はエントリを破棄する（ログ: `"Failed to create wred profile: %d"`）。対応可否は各ベンダーの `libsai` 実装に依存。
+
+### 差異 5: プラットフォーム別 WRED テンプレート（build-time）
+
+`qos_config.j2:486-506` のマクロ分岐:
+
+| 条件 | 生成される WRED_PROFILE |
+|------|----------------------|
+| hwsku テンプレートが `generate_wred_profiles` マクロを定義している | プラットフォーム固有の WRED プロファイル（カスタム閾値・ECN 設定） |
+| マクロ未定義（デフォルト） | `AZURE_LOSSLESS`（min=1 MiB / max=2 MiB / prob=5% / ecn=ecn_all） |
+
+runtime の orchagent 側にはプラットフォーム別の分岐なし。差異はすべて build-time の j2 テンプレートで吸収される。
+
+!!! note "VoQ スイッチ運用上の注意"
+    VoQ chassis 環境では QUEUE テーブルのキーを `hostname|asic|port|queue_index` の 4 トークン形式で書く必要がある。2 トークン形式（通常スイッチ用）を使うと `task_invalid_entry` で即破棄される。
+
+<!-- /platform -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
