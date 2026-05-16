@@ -274,6 +274,75 @@ show buffer profile
 > **スキャン証跡**: `handleBufferProfileTable` L2671-2935 全行読了。5 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 1. CONFIG_DB → buffermgr/buffermgrdyn: SubscriberStateTable
+
+`buffermgrd.cpp` の dynamic buffer model パスでは `CFG_BUFFER_PROFILE_TABLE_NAME` を含む `vector<TableConnector>` を構築し `BufferMgrDynamic` コンストラクタに渡す（`buffermgrd.cpp:174-187`）。`BufferMgrDynamic` は `Orch(tables)` を継承し、`Orch::addConsumer()` が DB ID を判定する。
+
+```cpp
+// sonic-swss/orchagent/orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || ...)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName, ...), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+CONFIG_DB は DB ID チェックにマッチするため **`SubscriberStateTable`** が選択される。Redis の **keyspace 通知**（`__keyspace@4__:BUFFER_PROFILE|*` の `PSUBSCRIBE`）を購読し、変更検知後に `HGETALL` で値を再取得する。static buffer model（`BufferMgr`）も同様に `SubscriberStateTable` で購読される（`buffermgr.cpp:21-22`）。
+
+### 2. buffermgrdyn → APPL_DB: ProducerStateTable
+
+`handleBufferProfileTable()` の処理結果は `updateBufferProfileToDb()` 経由で APPL_DB に書き込まれる。
+
+```cpp
+// sonic-swss/cfgmgr/buffermgrdyn.cpp:44
+m_applBufferProfileTable(applDb, APP_BUFFER_PROFILE_TABLE_NAME),  // ProducerStateTable
+```
+
+`ProducerStateTable.set()` は Redis の `LPUSH <TABLE>_KEY_SET` + `HSET` によるチャネルベース通知を行う（`buffermgrdyn.cpp:890-922`）。**例外**: `headroom_type=dynamic` かつポート未参照のプロファイルは APPL_DB への書き込みが保留される（`buffermgrdyn.cpp:2820`）。
+
+### 3. APPL_DB → bufferorch: ConsumerStateTable
+
+`orchdaemon.cpp` は `APP_BUFFER_PROFILE_TABLE_NAME` を含む `buffer_tables` ベクタで `BufferOrch` を構築する（`orchdaemon.cpp:386-394`）。`Orch(applDb, tableNames)` コンストラクタが APPL_DB（DB ID ≠ CONFIG_DB）として `addConsumer()` に渡すため **`ConsumerStateTable`** が選択される。`BUFFER_PROFILE_TABLE_CHANNEL` を `SUBSCRIBE` し `ProducerStateTable` の `LPUSH` 通知をリアルタイムで受信する。ディスパッチは `doTask()` → `processBufferProfile()`（`bufferorch.cpp:74`）。
+
+### 4. bufferorch → APPL_STATE_DB: ResponsePublisher
+
+SAI 処理成功後、`m_publisher.publish()` で APPL_STATE_DB の `BUFFER_PROFILE_TABLE` に結果を書き戻す。
+
+```cpp
+// sonic-swss/orchagent/bufferorch.cpp:831-832 (SET 完了後)
+m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, object_name, fvs, ReturnCode(SAI_STATUS_SUCCESS), true);
+
+// bufferorch.cpp:879-880 (DEL 完了後)
+m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, object_name, fvs, ReturnCode(SAI_STATUS_SUCCESS), true);
+```
+
+`m_publisher` は `Orch` 基底クラスの `ResponsePublisher{"APPL_STATE_DB"}`（`orch.h:382`）。`publish()` は Redis channel への PUBLISH と APPL_STATE_DB への `HSET`/`DEL` の両方を実行する（`response_publisher.h:44-50`）。
+
+### 5. データフロー全体
+
+```
+CONFIG_DB:BUFFER_PROFILE
+  │  SubscriberStateTable (keyspace __keyspace@4__:BUFFER_PROFILE|*)
+  ↓  buffermgrd/buffermgrdyn
+buffermgrdyn: handleBufferProfileTable()
+  │  updateBufferProfileToDb(): ProducerStateTable.set()
+  │  ※ headroom_type=dynamic + ポート未参照時は APPL_DB 書き込み保留
+  ↓  BUFFER_PROFILE_TABLE_CHANNEL 通知 (APPL_DB)
+APPL_DB:BUFFER_PROFILE_TABLE
+  │  ConsumerStateTable (bufferorch)
+  ↓  doTask() → processBufferProfile()
+SAI: sai_create_buffer_profile()
+  │  SET/DEL 完了後
+  ↓  ResponsePublisher.publish()
+APPL_STATE_DB:BUFFER_PROFILE_TABLE
+```
+<!-- /pubsub -->
+
 <!-- failure -->
 ## 失敗挙動・retry 分岐 (Phase D)
 

@@ -254,3 +254,49 @@ CABLE_LENGTH テーブルの処理中に `buffermgr` / `buffermgrdyn` が暗黙�
 | `BUFFER_PROFILE` | buffermgr.cpp, buffermgrdyn.cpp | `pool`, `xon`, `xoff`, `size`, `dynamic_th` | 読み書き双方向 |
 
 <!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgr.cpp:37,206, cfgmgr/buffermgrdyn.cpp:68-93,504-522 -->
+
+### dynamic vs static での cable_length 使われ方の違い
+
+| 観点 | static モード (`buffermgr`) | dynamic モード (`buffermgrdyn`) |
+|------|----------------------------|---------------------------------|
+| headroom 計算方法 | `pg_profile_lookup.ini` (INI ファイル) を `(speed, cable)` キーで引く | ベンダー固有 Lua プラグイン (`buffer_headroom_<vendor>.lua`) をリアルタイム呼び出し |
+| プロファイル名 | `pg_lossless_<speed>_<cable>_profile` (固定) | `speed`・`cable`・`mtu`・`threshold`・`gearbox_model`・`lane_count` を組み合わせて動的生成 |
+| admin down 時の PG 削除 | **Mellanox / Barefoot のみ** (`buffermgr.cpp:206`) | 全ベンダー共通で `refreshPgsForPort` スキップ (`buffermgrdyn.cpp:2191-2194`) |
+| MTU 未設定 fallback | なし (INI はMTU非依存) | `DEFAULT_MTU_STR="9100"` で仮計算、MTU 設定時に再計算 (`buffermgrdyn.cpp:2174`) |
+
+### ASIC ベンダー別 cable length lookup の実装差
+
+**static モード — INI ファイル:**
+
+- `buffermgr.cpp:21` — コンストラクタが `pg_lookup_file` パスを受け取り `readPgProfileLookupFile()` で読み込む
+- `buffermgr.cpp:37` — `ASIC_VENDOR` 環境変数を `m_platform` にセット
+- INI の数値内容はプラットフォームパッケージ (HWSKU) が提供。Broadcom / Mellanox / Marvel 各 ASIC で異なる
+- admin down ポートの PG 削除は `m_platform == "mellanox" || m_platform == "barefoot"` の場合のみ (`buffermgr.cpp:206`)
+
+**dynamic モード — Lua プラグイン:**
+
+- `buffermgrdyn.cpp:68` — `ASIC_VENDOR` 環境変数からプラットフォームを取得
+- `buffermgrdyn.cpp:76-78` — `buffer_headroom_<vendor>.lua` / `buffer_pool_<vendor>.lua` / `buffer_check_headroom_<vendor>.lua` の 3 本をベンダー固有で選択
+- **Mellanox 固有の追加分岐**:
+  - `buffermgrdyn.cpp:85-93` — Mellanox のみ `DEVICE_METADATA.platform` からモデル番号 (SN-XXXX) を抽出し `m_model_number` に保存
+  - `buffermgrdyn.cpp:504-522` — `getDynamicProfileName()` 内で Mellanox かつ 8 レーンポートの場合、プロファイル名に `_8lane` サフィックスを付加
+    - 条件: `lane_count == 8` かつ `(SN4xxx 系で speed != 400000) || (SN5xxx 系で speed != 800000)`
+    - 例: 100G 8 レーン → `pg_lossless_100000_5m_8lane_profile`、4 レーン → `pg_lossless_100000_5m_profile`
+    - 理由: 8 レーンポートは xon 値が他レーン数の 2 倍になるためプロファイルを分離する必要がある
+
+### プロファイル名生成パターンまとめ
+
+```
+static:  pg_lossless_<speed>_<cable>_profile
+         (INI テーブルから数値引き; ベンダー依存 INI ファイル)
+
+dynamic: pg_lossless_<speed>_<cable>[_mtu<N>][_th<T>][_<gearbox>][_8lane]_profile
+         (_8lane は Mellanox 8 レーンポートのみ付加)
+```
+
+<!-- /platform -->
