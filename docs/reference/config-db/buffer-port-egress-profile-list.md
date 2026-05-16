@@ -276,6 +276,21 @@ Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一�
 | trimming 制約 | 記述なし | orchagent: trimming-eligible profile は `task_failed` |
 | 複数ポートキー | 記述なし | カンマ区切りポートリストをキーとして設定可能 (内部で展開) |
 <!-- /defaults -->
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`sonic-swss/cfgmgr/buffermgrdyn.cpp` および `sonic-swss/orchagent/bufferorch.cpp` の egress profile list 処理経路（`handleSingleBufferPortProfileListEntry` / `processEgressBufferProfileList` / `processEgressBufferProfileListBulk`）を調査した結果、以下の副次 DB 書込は**存在しない**。
+
+| DB | 書込 | 根拠 |
+|----|------|------|
+| STATE_DB | **なし** | egress handler 経路に書込コードなし。STATE_DB は MMU サイズ・最大 PG/Queue 数の **読み取り** にのみ使用（`buffermgrdyn.cpp:133,261,1277`） |
+| COUNTERS_DB | **なし** | `bufferorch.cpp:56` で接続を保持するが、egress profile list handler では未使用。buffer pool watermark 用 Lua スクリプト（`bufferorch.cpp:240`）専用 |
+| APPL_STATE_DB | **なし** | 両ファイルの egress profile list 処理経路に該当コードなし |
+| FLEX_COUNTER_DB | **なし** | `bufferorch.cpp:1135` は VOQ スイッチの Port Queue counter 更新用であり、本テーブルの処理とは無関係 |
+
+このテーブルの書込先は **APPL_DB の `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE`** のみ（`buffermgrdyn.cpp:3383`）であり、SAI への最終適用は `sai_port_api->set_ports_attribute`（`bufferorch.cpp:2009`）を通じて行われる。
+
+<!-- /side-effects -->
 
 <!-- ordering -->
 ## 書込順依存 (Phase B)
