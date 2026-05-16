@@ -299,6 +299,48 @@ db_migrator.py での SYSLOG_SERVER マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `SYSLOG_SERVER` テーブルの変更に伴って `hostcfgd` の `RSyslogCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書き換えおよび systemd サービス制御に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `RSyslogCfg.update_rsyslog_config()` 内に Producer/Table 書込呼出なし (`sonic-host-services/scripts/hostcfgd:1715-1743`) |
+| STATE_DB | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (`hostcfgd:1759`) と `RestartWaiter` 用 (`hostcfgd:2160`) のみ。`RSyslogCfg` は `state_db_conn` を保持しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。syslog 転送経路は SAI を経由しない |
+| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由。rsyslog は UDP/TCP でリモートサーバへ直接転送 |
+
+### 実際の副作用（ファイル書換 + systemd 制御）
+
+`RSyslogCfg.update_rsyslog_config()` がトリガされると以下の順序でホスト OS への書込が発生する。
+
+```
+SYSLOG_SERVER SET/DEL (CONFIG_DB)
+  └─ hostcfgd rsyslog_server_handler()
+       └─ RSyslogCfg.update_rsyslog_config()
+            ├─ systemctl reset-failed rsyslog-config rsyslog
+            └─ systemctl restart rsyslog-config
+                 └─ /usr/bin/rsyslog-config.sh
+                      ├─ sonic-cfggen -d -t rsyslog.conf.j2 → /tmp/rsyslog.conf.XXXXXX (一時ファイル)
+                      ├─ cmp /tmp/rsyslog.conf.XXXXXX /etc/rsyslog.conf
+                      │    ├─ 差分あり → cp /tmp/rsyslog.conf.XXXXXX /etc/rsyslog.conf  ← ファイル書込
+                      │    │               systemctl restart rsyslog              ← サービス再起動
+                      │    └─ 差分なし → systemctl kill -s HUP rsyslog            ← SIGHUP のみ
+                      └─ rm /tmp/rsyslog.conf.XXXXXX
+```
+
+| 副作用 | 対象 | 条件 |
+|--------|------|------|
+| `/etc/rsyslog.conf` 上書き | ホスト OS ファイルシステム | 設定内容が変化した場合のみ |
+| `rsyslog-config.service` 再起動 | systemd | `SYSLOG_SERVER` または `SYSLOG_CONFIG` のキャッシュ差分があるとき |
+| `rsyslog.service` 再起動 | systemd | `/etc/rsyslog.conf` に差分があるとき |
+| `rsyslog.service` SIGHUP | systemd | `/etc/rsyslog.conf` に差分がないとき（ログファイル再オープン目的） |
+
+> **evidence**: `sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh`、`sonic-host-services/scripts/hostcfgd:1715-1743`
+
+<!-- /side-effects -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
