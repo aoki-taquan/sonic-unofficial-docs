@@ -310,6 +310,72 @@ DEL ACL_TABLE|<acl_name>   # ACL は binding 削除後に削除
 
 <!-- /ordering -->
 
+<!-- platform -->
+## プラットフォーム差・ASIC ベンダー依存 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch L107-149 / enableNatFeature L2534-2581 / addNatEntry L1866-1935 / sonic-swss/orchagent/orch.h L43 / sonic-swss/orchagent/main.cpp L935-949 -->
+
+### SAI NAT capability チェック（全ベンダー共通）
+
+NatOrch 初期化時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を `sai_switch_api->get_switch_attribute()` で照会し、戻り値が **0 より大きい場合のみ** `gIsNatSupported = true` を設定する (`main.cpp:935-949`)。`gIsNatSupported` が `false` の場合、`enableNatFeature()` は即座に `"NAT Feature is not supported in this Platform"` をログして処理を中断し、SAI NAT オブジェクトは一切作成されない (`natorch.cpp:2541-2544`)。
+
+```cpp
+// main.cpp:935-948
+attr.id = SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY;
+status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status == SAI_STATUS_SUCCESS && attr.value.u32 != 0)
+{
+    gIsNatSupported = true;
+}
+```
+
+`maxAllowedSNatEntries` は同属性の戻り値で初期化され、動的 SNAT エントリ上限として使用される。上限に達した新規 SNAT エントリは SAI に投入されず、代わりに `SETTIMEOUTNAT` 通知 (`AGEOUT-SINGLE-NAT`) が送出されてコネクショントラック強制エージアウトが行われる (`natorch.cpp:1882-1889`)。
+
+### Broadcom 専用: DNAT ネクストホップトラッキング
+
+`orchagent/orch.h:43` に `#define BRCM_PLATFORM_SUBSTRING "broadcom"` が定義されており、NatOrch コンストラクタで環境変数 `platform` が `"broadcom"` を含む場合のみ `gNhTrackingSupported = true` が設定される (`natorch.cpp:144-148`)。
+
+```cpp
+// natorch.cpp:144-148
+char *platform = getenv("platform");
+if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
+{
+    gNhTrackingSupported = true;
+}
+```
+
+**`gNhTrackingSupported` による DNAT 処理分岐**:
+
+| プラットフォーム | DNAT エントリの扱い |
+|----------------|-------------------|
+| Broadcom (`gNhTrackingSupported=true`) | `addDnatToNhCache()` でネクストホップ解決キャッシュに格納し、ARP/ルート解決後に `addHwDnatEntry()` を呼び出す |
+| 非 Broadcom (`gNhTrackingSupported=false`) | `addHwDnatEntry()` を即座に呼び出す |
+
+Broadcom では ネクストホップ未解決時に DNAT エントリを SAI に書き込まず、`NeighborOrch` / `RouteOrch` の通知 (`update()`) を受けてから遅延投入する。これにより Broadcom ASIC でのブラックホールルート問題を回避している。
+
+**`gNhTrackingSupported` が影響する主な処理**:
+
+- `addNatEntry()` L1923: DNAT 追加パスの分岐
+- `enableNatFeature()` L2570: NAT 有効化時の NeighborOrch attach
+- `disableNatFeature()` L2607: NAT 無効化時の NeighborOrch detach
+- `addNaptEntry()` / `removeNaptEntry()` / `addTwiceNatEntry()` 等: 全 NAT 型で同様に分岐
+
+### 非 Broadcom: 制限事項
+
+非 Broadcom ASIC では `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が `0` または `SAI_STATUS_NOT_SUPPORTED` を返す実装が多く、その場合 `gIsNatSupported=false` となり NAT 機能全体が無効化される。現行の SONiC コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
+
+### まとめ
+
+| 挙動 | 条件 |
+|------|------|
+| NAT 機能全体が有効 | `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY > 0` (gIsNatSupported=true) |
+| NAT 機能全体が無効 | 上記属性が 0 または不取得 (gIsNatSupported=false) |
+| DNAT ネクストホップ追跡 | Broadcom ASIC のみ (gNhTrackingSupported=true) |
+| DNAT 即時 SAI 投入 | 非 Broadcom (gNhTrackingSupported=false) |
+| SNAT ハードウェア上限超過 | `totalSnatEntries == maxAllowedSNatEntries` → ageout 通知 |
+
+<!-- /platform -->
+
 <!-- constants -->
 ## ハードコード定数（orchagent/natorch.cpp 由来）
 
