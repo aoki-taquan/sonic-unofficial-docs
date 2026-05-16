@@ -3,7 +3,7 @@ title: BGP_DEVICE_GLOBAL テーブル
 description: "BGP_DEVICE_GLOBAL テーブル — スイッチ全体（VRF 横断）の BGP 動作スイッチを保持する。BGP_GLOBALS が VRF 単位なのに対し、BGP_DEVICE_GLOBAL は装置全体スコープ。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-05-16
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang
@@ -473,5 +473,52 @@ orchagent 側では `BgpGlobalStateOrch` (`bfdorch.h:58-72`) が `BGP_DEVICE_GLO
 
 > **スキャン証跡**: `managers_device_global.py` 全 288 行読了 (クラス定数 3、受理文字列 8、ロール 3、substring 4、regex 1)。`bfdorch.cpp` L114-200 / L729-829 読了 (リテラル 8、SAI attr id 2)。FRR j2 テンプレート 5 件読了 (route-map 名 3、seq 番号 9 種、extcommunity リテラル 1)。中間ファイル: `meta/_intermediate/cdb-flow/bgp-device-global-constants.md`
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BGP_DEVICE_GLOBAL|STATE` / `BGP_DEVICE_GLOBAL|CONFED` への SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。bgpcfgd 経路 (`DeviceGlobalCfgMgr` / `ChassisAppDbMgr`) は **副次 DB への直接書込みを行わず**、すべて FRR への vtysh コマンド送出 (`cfg_mgr.push`) と in-process `directory` キャッシュ更新に閉じる。副次 DB 書込みは orchagent 側 `BgpGlobalStateOrch` から `BfdOrch::handleTsaStateChange` への dispatch、および CLI スクリプト (`TSA`/`TSB`) からの直接書込みでのみ発生する。
+
+### SET — `BGP_DEVICE_GLOBAL|STATE`
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `m_stateBfdSessionTable.del(<peer>)` | STATE_DB / `BFD_SESSION_TABLE` | `<peer key>` | `tsa_enabled=true` への変化 かつ `bfd_session_cache` にエントリ有 (`BgpGlobalStateOrch::doTask` → `BfdOrch::handleTsaStateChange`) |
+| `m_stateBfdSessionTable.set(<peer>, fv)` | STATE_DB / `BFD_SESSION_TABLE` | `<peer key>` | `tsa_enabled=false` への変化 かつ退避セッション存在 (同上) |
+| (`sonic-cfggen -a` 経由) CONFIG_DB `BGP_DEVICE_GLOBAL|STATE.tsa_enabled` set | CONFIG_DB / `BGP_DEVICE_GLOBAL` | `STATE` field=`tsa_enabled` | CLI `TSA` / `TSB` 実行時のみ (本テーブル自身への波及書込) |
+| `HMSET BGP_DEVICE_GLOBAL|STATE tsa_enabled <bool>` | CHASSIS_APP_DB / `BGP_DEVICE_GLOBAL` | `STATE` field=`tsa_enabled` | シャーシ supervisor 上で `TSA` / `TSB` 実行時 (各 LC の `ChassisAppDbMgr` が再購読し FRR へ伝播) |
+| `HDEL ALL_SERVICE_STATUS|tsa_tsb_service running` | STATE_DB / `ALL_SERVICE_STATUS` | `tsa_tsb_service` field=`running` | `TSA` / `TSB` スクリプト完了時 (`tsa_tsb_service` サービス管理) |
+
+SAI 呼び出し (`ASIC_DB` に反映):
+
+- `sai_bfd_api->remove_bfd_session(<oid>)` — `tsa_enabled=true` 遷移時に既存 BFD セッションを一括解除 (`BfdOrch::remove_bfd_session`、`bfdorch.cpp:629` 周辺)
+- `sai_bfd_api->create_bfd_session(...)` — `tsa_enabled=false` 復帰時に退避セッションを再作成 (`BfdOrch::create_bfd_session`、`bfdorch.cpp:565` 周辺)
+- `sai_query_attribute_capability(SAI_SWITCH_ATTR_SUPPORTED_IPV4/IPV6_BFD_SESSION_OFFLOAD_TYPE)` — `BgpGlobalStateOrch` コンストラクタで一度だけ実行 (read のみ、DB 書込なし)
+
+注: `wcmp_enabled` / `idf_isolation_state` の変更は副次 DB / SAI への波及なし (FRR vtysh push のみ)。
+
+### DEL — `BGP_DEVICE_GLOBAL|STATE`
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| (なし — bgpcfgd `del_handler` は `configure_{tsa,wcmp,idf}(data=None)` でデフォルト値 (`"false"` / `"unisolated"`) を FRR へ push するのみ) | — | — | `DeviceGlobalCfgMgr.del_handler` (`managers_device_global.py:74-84`) |
+| `m_stateBfdSessionTable.del/set` | STATE_DB / `BFD_SESSION_TABLE` | `<peer key>` | `BgpGlobalStateOrch::doTask` は DEL を `SWSS_LOG_ERROR("DEL on key %s is not expected.")` で拒否 (`bfdorch.cpp:830-833`)、よって BFD 連動は発生しない |
+
+SAI 呼び出し: なし (`BgpGlobalStateOrch` 側で DEL を処理しないため)。
+
+### SET / DEL — `BGP_DEVICE_GLOBAL|CONFED`
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| (なし) | — | — | `DeviceGlobalCfgMgr` は `STATE` のみ処理。`CONFED` は別 manager (`managers_bgp.py` 経由 BGP_GLOBALS の confederation 解決) で FRR へ反映され、副次 DB / SAI 書込みなし |
+
+### 補足
+
+- `BgpGlobalStateOrch` は `tsa_enabled` フィールドのみを `doTask` で処理する。`wcmp_enabled` / `idf_isolation_state` は同 orch 内で参照されない (FRR 側完結)。
+- `BfdOrch::handleTsaStateChange` の波及は **アクティブな BFD セッションが存在する場合のみ** 観察される。`BFD_SESSION` テーブル空状態では STATE_DB / ASIC_DB への書込みは発生しない (`bfdorch.cpp:683-704` の `for (auto it : bfd_session_cache)` ループが空回り)。
+- シャーシ環境では CLI `TSA`/`TSB` の CHASSIS_APP_DB 書込みが各 LC に伝播し、LC 側 `ChassisAppDbMgr.set_handler` 経由で `isolate_unisolate_device` が起動する。この LC 側経路でも副次 DB 書込みは 0 件 (FRR push のみ)。
+
+<!-- 証跡: sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py, managers_chassis_app_db.py; sonic-swss/orchagent/bfdorch.cpp:683-840,565,629; sonic-buildimage/dockers/docker-fpm-frr/base_image_files/{TSA,TSB,TS} -->
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 029bff240b1b -->

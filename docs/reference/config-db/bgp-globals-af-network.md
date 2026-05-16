@@ -270,4 +270,124 @@ vtysh -c "show ip bgp"
 - `bgpcfgd` が FRR running-config を読み CONFIG_DB と同期
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`BGP_GLOBALS_AF_NETWORK` の Consumer は `frrcfgd`。共通ハンドラ `bgp_table_handler_common` を経由し、`bgp_message_handler` ループ内の `BGP_GLOBALS_AF_NETWORK` 専用分岐 (`frrcfgd.py:3169-3186`) で `vtysh -c "router bgp <asn> vrf <vrf>" -c "address-family <af> <ip_type>" -c "network <prefix> [route-map <name>] [backdoor]"` を発行する。**前提テーブル不在時は silent drop、再試行・deferred queue なし**。
+
+### 推奨書込み順序
+
+```
+① VRF|<vrf>                                       (default 以外を使う場合)
+② BGP_GLOBALS|<vrf>  (local_asn)                  ← 不在だと #1 で silent drop
+③ BGP_GLOBALS_AF|<vrf>|<afi_safi>                 (AF レベル属性の一貫性)
+④ ROUTE_MAP / ROUTE_MAP_SET                       (policy 指定時、未存在は permit-any 期間)
+⑤ STATIC_ROUTE / 直結インターフェース             (network_import_check=true の RIB 前提)
+⑥ BGP_GLOBALS_AF_NETWORK|<vrf>|<afi_safi>|<prefix>
+```
+
+### 主要な順序依存
+
+| # | 依存関係 | 方向 | 違反時の挙動 |
+|---|----------|------|--------------|
+| 1 | `BGP_GLOBALS.local_asn` → 本テーブル | 先行必須 | `local_asn=None` なら `syslog DEBUG 'ignore table ...'` で **silent drop**。`__apply_dep_vrf_table` は `ROUTE_REDISTRIBUTE` のみ再適用するため本テーブルは復旧しない (`frrcfgd.py:2656-2662, 2704`) |
+| 2 | `BGP_GLOBALS_AF` → 本テーブル | 推奨 | `table_handler_list` 順序 (`frrcfgd.py:2297 vs 2318`) で起動時は保証、runtime は AF 属性未確定の中間状態あり |
+| 3 | `bgpd` プロセス起動 → 書込み | 先行必須 | 未起動・restart 中の `vtysh` は失敗、`syslog ERR 'failed running BGP IP prefix AF config command'` で `continue`、**リトライなし** (`frrcfgd.py:3184-3186`) |
+| 4 | `ROUTE_MAP` (`policy` 参照先) → 本テーブル | 推奨 | frrcfgd・FRR とも未存在 route-map を受理 (permit-any として扱われ全許可で広告) (`frrcfgd.py:922-924`) |
+| 5 | `VRF|<name>` → 本テーブル | 先行必須 (非 default) | `vrf_tables` メンバ (`frrcfgd.py:2136-2140`)、`vrf_handler` が `table_handler_list` 最先頭 (`frrcfgd.py:2294`) |
+| 6 | RIB 上に prefix 存在 → 実 BGP UPDATE | タイミング | CONFIG_DB 書込み成功・FRR 投入成功でも `network_import_check=true` で広告されない期間が発生 |
+| 7 | DEL 操作 | 即時 | `no network <prefix> ...` を発行。内部キャッシュ更新なし (`BGP_GLOBALS_AF_AGGREGATE_ADDR` と異なる, `frrcfgd.py:3187-3196` は AGGREGATE 限定) |
+
+### 重要 — silent drop の検出可否
+
+- `local_asn` 不在に伴う drop は `syslog LOG_DEBUG` のため、既定 syslog レベルでは可視化されない。発生時の追跡には `swssloglevel -l DEBUG -c frrcfgd` が必要。
+- 一度 drop された `BGP_GLOBALS_AF_NETWORK` エントリは、後から `BGP_GLOBALS.local_asn` が到着しても自動再適用されない (`__apply_dep_vrf_table(vrf, 'ROUTE_REDISTRIBUTE')` は `ROUTE_REDISTRIBUTE` 一択, `frrcfgd.py:2704`)。再投入するには `BGP_GLOBALS_AF_NETWORK` を一度書き直すか frrcfgd を再起動する必要がある。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:99,2136-2140,2294,2297,2318,2656-2662,2704,3169-3196 -->
+<!-- /ordering -->
+
+<!-- platform -->
+## プラットフォーム / ASIC 依存分岐
+
+**プラットフォーム差なし。**
+
+`frrcfgd.py` 全体に `platform`・`hwsku`・`asic` キーワードは一切存在しない。
+`BGP_GLOBALS_AF_NETWORK` ハンドラ (`bgp_table_handler_common`) は全プラットフォームで
+同一コードパスを実行する。
+
+根拠:
+
+| チェック項目 | 結果 |
+|-------------|------|
+| `frrcfgd.py` 内 `platform` 参照 | 0 件 |
+| `frrcfgd.py` 内 `hwsku` 参照 | 0 件 |
+| `frrcfgd.py` 内 `asic` 参照 | 0 件 |
+| `DEVICE_METADATA` 参照 | `frr_mgmt_framework_config` フラグ読み取りのみ（プラットフォーム選択ではない） |
+
+`BGP_GLOBALS_AF_NETWORK` は FRR (`bgpd`) へ直接 vtysh コマンドを発行し、
+orchagent / syncd / SAI を経由しない。ASIC ケイパビリティ差による分岐が
+発生する設計上の余地がない。
+
+<!-- evidence: sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py (grep: platform/hwsku/asic = 0 hits) -->
+<!-- /platform -->
+
+<!-- pubsub -->
+## 通信メカニズム — ExtConfigDBConnector / Redis keyspace 通知
+
+`frrcfgd`（sonic-frr-mgmt-framework）は `swsscommon.ConsumerStateTable` を使わず、独自の `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）の `subscribe(table, handler)` で `BGP_GLOBALS_AF_NETWORK` を購読する。
+
+### 購読登録フロー
+
+```python
+# frrcfgd.py:2318-2361
+('BGP_GLOBALS_AF_NETWORK', self.bgp_table_handler_common),
+...
+def subscribe_all(self):
+    for table, hdlr in self.table_handler_list:
+        self.config_db.subscribe(table, hdlr)
+
+def start(self):
+    self.subscribe_all()
+    self.config_db.listen()   # 内部スレッドで Redis PSUBSCRIBE 開始
+```
+
+### Redis keyspace 通知の仕組み
+
+`ExtConfigDBConnector.listen()` が起動するバックグラウンドスレッドが `__keyspace@4__:*` を **PSUBSCRIBE** し、全 CONFIG_DB エントリの変更を受信する。
+
+```python
+# frrcfgd.py:1538-1545
+sub_key_space = "__keyspace@{}__:*".format(self.get_dbid(self.db_name))
+self.pubsub.psubscribe(sub_key_space)
+while self.__listen_thread_running:
+    msg = self.pubsub.get_message(timeout, True)
+    if msg:
+        self.sub_msg_handler(msg)
+```
+
+メッセージ受信後、`sub_msg_handler` が channel から `TABLE|row` を解析し、登録済みハンドラに振り分ける（通知本体は操作名のみ。値は HGETALL で再取得）。
+
+### 通知パターン例
+
+| Redis keyspace 通知 | frrcfgd が受け取る呼び出し |
+|---------------------|--------------------------|
+| `__keyspace@4__:BGP_GLOBALS_AF_NETWORK\|default\|ipv4_unicast\|10.0.0.0/8` `hset` | `bgp_table_handler_common(table, "default\|ipv4_unicast\|10.0.0.0/8", {data})` |
+| 同 key `del` | `bgp_table_handler_common(table, key, None)` → `no network <prefix>` を bgpd へ |
+
+### 購読方式まとめ
+
+| 項目 | 内容 |
+|------|------|
+| 購読 API | `ExtConfigDBConnector.subscribe()` + `listen()` |
+| 通知方式 | Redis keyspace 通知 (`PSUBSCRIBE __keyspace@4__:*`) |
+| 受信スレッド | `listen_thread` (バックグラウンド, timeout=10 s) |
+| 変更検知後 | HGETALL で再取得 → `bgp_table_handler_common` 呼び出し |
+| 配送先デーモン | `bgpd` のみ (`TABLE_DAEMON` マッピング `frrcfgd.py:99`) |
+| ConsumerStateTable | 不使用 |
+| NotificationProducer | 不使用 |
+| APPL_DB/STATE_DB 中継 | なし（CONFIG_DB → frrcfgd → FRR vtysh の一方向） |
+
+<!-- evidence: frrcfgd.py:1506-1560,2318,2359-2361,3954-3955 -->
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: fcbe746ecf8b -->
