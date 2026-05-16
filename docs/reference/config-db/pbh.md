@@ -398,3 +398,35 @@ minigraph.py および init_cfg.json.j2 からの `PBH_TABLE` / `PBH_RULE` / `PB
 > **スキャン証跡**: `orchdaemon.cpp:553-565` および `pbhorch.cpp` を確認、5 件分岐抽出。PBH は minigraph 非依存を確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-cross-refs.md -->
+
+`PBH_TABLE.interface_list` に記載されたインターフェース名は CONFIG_DB 上では文字列だが、
+`PbhOrch` が `AclTable::validateAddPorts()` → `gPortsOrch->getPort()` を通じて以下のテーブルの
+エントリを**暗黙的に参照**する。YANG の leafref チェックとは独立したコードレベルの依存。
+
+| 参照元フィールド | 参照先テーブル | 参照先キー形式 | SAI バインド種別 | 参照箇所 |
+|---|---|---|---|---|
+| `PBH_TABLE.interface_list` | `PORT` | `PORT\|EthernetN` | `SAI_ACL_BIND_POINT_TYPE_PORT` | `pbhorch.cpp:266-268`, `aclorch.cpp:2698` |
+| `PBH_TABLE.interface_list` | `PORTCHANNEL` | `PORTCHANNEL\|PortChannelN` | `SAI_ACL_BIND_POINT_TYPE_LAG` | `pbhorch.cpp:266-268`, `aclorch.cpp:106` |
+| `PBH_RULE.table_name` | `PBH_TABLE` | `PBH_TABLE\|<table_name>` | N/A (依存エントリ存在チェック) | `pbhmgr.cpp` `deployPbhTasks()` |
+| `PBH_RULE.hash` | `PBH_HASH` | `PBH_HASH\|<hash_name>` | N/A (依存エントリ存在チェック) | `pbhmgr.cpp` `validateDependencies()` |
+
+### 解決タイミング
+
+- `interface_list` に指定したポートが PortsOrch 未登録の場合、`pendingPortSet` に保留され
+  PortsOrch の `SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2698-2703`)。
+- `PBH_RULE.table_name` が指す `PBH_TABLE` エントリが未作成の場合、RULE は `pendingSetupMap` に
+  留まり retry loop に入る (`deployPbhTasks()` — `HASH_FIELD → HASH → TABLE → RULE` 順序依存)。
+- `PBH_RULE.hash` が指す `PBH_HASH` エントリが未作成の場合も同様に retry。
+
+### コンストラクタレベル依存
+
+`PbhOrch` は `AclOrch *` と `PortsOrch *` をコンストラクタ引数に受け取り (`pbhorch.cpp:90-91`)、
+これらのオーケストレータが先に初期化されていることを前提とする。
+`orchdaemon.cpp:553-565` で AclOrch / PortsOrch 作成後に PbhOrch を生成する順序が保証されている。
+
+<!-- /cross-refs -->
