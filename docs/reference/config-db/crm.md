@@ -237,4 +237,41 @@ crm show resources all
 
 > **スキャン証跡**: `CrmOrch::doTask` L440-477 + `handleSetCommand` L478-537 全行読了。6 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### SAI capability 取得方式の差 (ASIC ベンダー依存)
+
+CRM は各リソースの available カウンタを `getResAvailability` で 2 段階フォールバック方式で取得する。
+
+**優先パス: `sai_object_type_get_availability`**
+
+SAI object-level availability API。ASIC ベンダーが実装していれば、より細粒度な capacity を返す。  
+`CRM_IPV4/6_ROUTE`、`CRM_IPV4/6_NEIGHBOR`、`CRM_MPLS_NEXTHOP` (`SAI_NEXT_HOP_TYPE_MPLS` フィルタ)、`CRM_SRV6_NEXTHOP` (`SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` フィルタ)、`CRM_NEXTHOP_GROUP`、`CRM_FDB_ENTRY`、`CRM_MPLS_INSEG`、`CRM_SRV6_MY_SID_ENTRY` など。<!-- evidence: crmorch.cpp:760-801 -->
+
+**フォールバックパス: `sai_switch_api->get_switch_attribute`**
+
+`sai_object_type_get_availability` が失敗した場合、または `crmResSaiObjAttrMap` で `SAI_OBJECT_TYPE_NULL` が設定されているリソースは `SAI_SWITCH_ATTR_AVAILABLE_*` を直接 get する (`CRM_NEXTHOP_GROUP_MEMBER`、`CRM_SNAT/DNAT_ENTRY`、`CRM_TWAMP_ENTRY` 等)。<!-- evidence: crmorch.cpp:806-829 -->
+
+**`SAI_STATUS_NOT_SUPPORTED` / `NOT_IMPLEMENTED` 時**: `res.resStatus = CRM_RES_NOT_SUPPORTED` をセットし、以降の polling cycle でそのリソースを完全スキップする。CONFIG_DB への threshold 設定は受け入れるが COUNTERS_DB には統計が書き込まれない。MPLS / SRv6 / TWAMP 等をサポートしない ASIC では自動的に monitoring が無効化される。<!-- evidence: crmorch.cpp:812-820 -->
+
+### ACL リソースの特殊取得 (stage × bind_point マトリクス)
+
+`CRM_ACL_TABLE` / `CRM_ACL_GROUP` は `aclresource` 型で `SAI_SWITCH_ATTR_AVAILABLE_ACL_TABLE[_GROUP]` を取得し、ingress/egress × port/lag/vlan/rif/switch の組み合わせごとに個別エントリ (`ACL_STATS:INGRESS:PORT` 等) を COUNTERS_DB に書き込む。`SAI_STATUS_BUFFER_OVERFLOW` 時は実際のエントリ数で resize して再取得する。  
+`CRM_ACL_ENTRY` / `CRM_ACL_COUNTER` は per-ACL table で `sai_acl_api->get_acl_table_attribute` を呼び出す（ACL テーブルが存在しない間は 0）。<!-- evidence: crmorch.cpp:943-1020 -->
+
+### DASH / DPU 専用リソース (`gMySwitchType` ガード)
+
+`DEVICE_METADATA.localhost.switch_type != "dpu"` の場合、DASH 系リソース全般（`DASH_VNET`、`DASH_ENI`、`DASH_ENI_ETHER_ADDRESS_MAP`、全 routing/pa_validation/ca_to_pa エントリ、`DASH_IPV4/6_METER_POLICY/RULE`、`DASH_IPV4/6_ACL_GROUP`）は強制的に `CRM_RES_NOT_SUPPORTED` となり monitoring されない。`DASH_IPV4/6_ACL_RULE` は専用の `getDashAclGroupResAvailability` 経由で ACL Group OID ごとに capacity を確認する。<!-- evidence: crmorch.cpp:915-1054 -->
+
+### VOQ chassis での差異
+
+`switch_type = "voq"` に対する CRM 専用パスは存在しない。VOQ システムでも通常スイッチと同一の FIB/ACL/L2 リソースを監視するが、fabric port 側の resource は CRM 対象外。
+
+### EXT_TABLE (Generic Programmable) の ASIC-specific 取得
+
+`CRM_EXT_TABLE` はテーブル名を `SAI_GENERIC_PROGRAMMABLE_ATTR_OBJECT_NAME` (s8list) として `sai_object_type_get_availability` に渡す。ASIC ドライバが対象テーブル名を認識しない場合はエラーログのみ（`CRM_RES_NOT_SUPPORTED` フラグは立てない）。<!-- evidence: crmorch.cpp:1022-1047 -->
+<!-- /platform -->
+
 <!-- glossary-links-injected: c6e41e02b036 -->
