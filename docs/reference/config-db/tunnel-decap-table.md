@@ -249,4 +249,81 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB Consumer 登録
+
+`TunnelDecapOrch` は `orchdaemon.cpp` の初期化フローで以下のように登録される。
+
+```cpp
+// orchdaemon.cpp
+vector<string> tunnel_tables = {
+    APP_TUNNEL_DECAP_TABLE_NAME,         // "TUNNEL_DECAP_TABLE"
+    APP_TUNNEL_DECAP_TERM_TABLE_NAME     // "TUNNEL_DECAP_TERM_TABLE"
+};
+gTunneldecapOrch = new TunnelDecapOrch(m_applDb, m_stateDb, m_configDb, tunnel_tables);
+```
+
+コンストラクタ内部では `Orch(appDb, tableNames)` 基底クラスが各テーブルを `Consumer`（`SubscriberStateTable` ラッパー）として自動登録する。  
+加えて `CFG_SUBNET_DECAP_TABLE_NAME` を **CONFIG_DB** から明示的に `SubscriberStateTable` + `addExecutor(new Consumer(...))` で購読する。
+
+```cpp
+// tunneldecaporch.cpp コンストラクタ
+auto cfgSubnetDecapSubTable = new SubscriberStateTable(
+    configDb, CFG_SUBNET_DECAP_TABLE_NAME,
+    TableConsumable::DEFAULT_POP_BATCH_SIZE, 0);
+Orch::addExecutor(new Consumer(cfgSubnetDecapSubTable, this, CFG_SUBNET_DECAP_TABLE_NAME));
+```
+
+### Observer / doTask ディスパッチ
+
+`select()` ループが Consumer の通知を受け取ると `TunnelDecapOrch::doTask(Consumer &consumer)` が呼ばれ、テーブル名で分岐する。
+
+| Consumer テーブル | ハンドラ | 購読 DB |
+|---|---|---|
+| `APP_TUNNEL_DECAP_TABLE_NAME` | `doDecapTunnelTask()` | APPL_DB |
+| `APP_TUNNEL_DECAP_TERM_TABLE_NAME` | `doDecapTunnelTermTask()` | APPL_DB |
+| `CFG_SUBNET_DECAP_TABLE_NAME` | `doSubnetDecapTask()` | CONFIG_DB |
+
+### SAI tunnel_api 呼び出し
+
+Consumer イベントを処理した後、`TunnelDecapOrch` は **SAI tunnel API** を直接呼び出してハードウェアに反映する。APPL_DB への中間書き込みは行わない（orchagent → SAI 直接経路）。
+
+| SAI 関数 | 用途 |
+|---|---|
+| `sai_tunnel_api->create_tunnel()` | IP-in-IP デカプセルトンネルオブジェクト作成 |
+| `sai_tunnel_api->remove_tunnel()` | トンネルオブジェクト削除 |
+| `sai_tunnel_api->create_tunnel_term_table_entry()` | P2P / P2MP decap term エントリ作成 |
+| `sai_tunnel_api->remove_tunnel_term_table_entry()` | decap term エントリ削除 |
+| `sai_tunnel_api->set_tunnel_attribute()` | QoS マップ等の属性更新 |
+
+### STATE_DB への通知
+
+`TunnelDecapOrch` は SAI 操作成功後に `stateTunnelDecapTable` / `stateTunnelDecapTermTable`（`STATE_TUNNEL_DECAP_TABLE_NAME` / `STATE_TUNNEL_DECAP_TERM_TABLE_NAME`）へ状態を書き込む。これは読み取り専用のモニタリング用ミラーで、他 Orch へのイベント伝播は行わない。
+
+### シーケンス図
+
+```mermaid
+sequenceDiagram
+    participant tunnelmgrd
+    participant APPL_DB
+    participant TunnelDecapOrch
+    participant sai_tunnel_api
+    participant STATE_DB
+
+    tunnelmgrd->>APPL_DB: SET TUNNEL_DECAP_TABLE|<name>
+    APPL_DB-->>TunnelDecapOrch: Consumer notify (doDecapTunnelTask)
+    TunnelDecapOrch->>sai_tunnel_api: create_tunnel()
+    TunnelDecapOrch->>sai_tunnel_api: create_tunnel_term_table_entry()
+    TunnelDecapOrch->>STATE_DB: SET STATE_TUNNEL_DECAP_TABLE|<name>
+
+    Note over TunnelDecapOrch: CFG_SUBNET_DECAP は CONFIG_DB から直接購読
+    TunnelDecapOrch->>TunnelDecapOrch: doSubnetDecapTask()
+```
+
+> **ソース証跡**: `sonic-swss/orchagent/tunneldecaporch.cpp` L29-48, L51-80; `sonic-swss/orchagent/orchdaemon.cpp` L344-348
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->
