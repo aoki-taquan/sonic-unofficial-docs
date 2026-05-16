@@ -411,6 +411,75 @@ SET 時に `decap_orch_` が `MuxTunnel0` の宛先 IP を未登録の場合、`
 
 <!-- /failure -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-ordering.md`
+> ソース: `sonic-swss/orchagent/muxorch.cpp`
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | ソース |
+|---|---|---|
+| `TUNNEL` (MuxTunnel0) | `handlePeerSwitch()` が `decap_orch_->getDstIpAddresses(MUX_TUNNEL)` を確認。未設定なら `return false` でリトライ待機 | `muxorch.cpp:2348-2353` |
+
+### Dual-ToR 全体の必須投入順序
+
+```
+TUNNEL (MuxTunnel0 — decap dst IP 登録)
+       ↓
+PEER_SWITCH|<hostname>  SET
+  → handlePeerSwitch() が create_tunnel() を呼び mux_peer_switch_ を確定
+       ↓
+MUX_CABLE|<port>  SET
+  → handleMuxCfg() が mux_peer_switch_ を参照して MuxCable オブジェクトを生成
+```
+
+`muxorch.cpp:2271` — MUX_CABLE は PEER_SWITCH が未設定だと pending:
+
+```cpp
+if (mux_peer_switch_.isZero())
+{
+    SWSS_LOG_INFO("Mux Peer switch addr not yet configured, port '%s'", port_name.c_str());
+    return false;
+}
+```
+
+### Neighbor キャッシュ更新との関係
+
+`muxorch.cpp:2483` — `processCachedNeighUpdates()` も `mux_peer_switch_` が 0.0.0.0 の場合は
+neighbor 更新を全スキップする:
+
+```cpp
+if (mux_peer_switch_.isZero())
+{
+    SWSS_LOG_NOTICE("Skip process cached neighbor updates, no peer switch addr is configured");
+    return;
+}
+```
+
+すなわち PEER_SWITCH 確定前に到着した neighbor 更新は処理待ちキャッシュに蓄積され、
+PEER_SWITCH 確定後に一括処理される。
+
+### MUX_LINKMGR との関係
+
+MUX_LINKMGR は orchagent 非経由で `linkmgrd` が直接処理するため、PEER_SWITCH との
+orchagent レベルの順序依存はない。ただし linkmgrd は PEER_SWITCH の `address_ipv4` を
+ピアへの ICMP プローブ送信先として使用するため、linkmgrd 起動前に PEER_SWITCH が
+CONFIG_DB に存在していることが望ましい。
+
+!!! warning "PEER_SWITCH DELETE は未実装"
+    `handlePeerSwitch()` の DEL パス (`muxorch.cpp:2387`) は "Not Implemented" のログのみで
+    `mux_peer_switch_` をリセットしない。エントリ削除後も orchagent は旧 peer IP を保持し続ける。
+    **PEER_SWITCH の変更は orchagent 再起動が必要。**
+
+!!! note "max-elements 1 による投入制限"
+    YANG の `max-elements 1` 制約により、既存エントリがある状態での 2 件目の SET は
+    YANG バリデーションで reject される。変更する場合は既存エントリを DEL してから SET する
+    必要があるが、DEL が orchagent に反映されない（未実装）ため orchagent 再起動を伴う。
+
+<!-- /ordering -->
+
 <!-- side-effects -->
 ## 副次 DB 書込・外部テーブル連動 (Phase F)
 
