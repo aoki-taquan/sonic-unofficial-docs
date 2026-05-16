@@ -284,3 +284,98 @@ SmartSwitch では `set_admin_state_gracefully(admin_state)` が別スレッド�
 ### ランタイム注入 (デーモン自動書き込み)
 - なし (chassisd は CONFIG_DB を読むのみ。STATE_DB への書き込みは行うが CONFIG_DB は書き込まない)
 <!-- /entry-points -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+`chassisd` はプラットフォーム種別（VOQ チャシス / SmartSwitch DPU 搭載機）およびカード種別（LINE-CARD / FABRIC-CARD / DPU）によって `CHASSIS_MODULE` テーブルの処理クラスと許容 key prefix を切り替える。
+
+### プラットフォーム種別による Updater クラスの分岐
+
+| プラットフォーム | ModuleConfigUpdater クラス | ModuleUpdater クラス | 判定方法 |
+|-----------------|--------------------------|---------------------|---------|
+| VOQ チャシス（非 SmartSwitch） | `ModuleConfigUpdater` | `ModuleUpdater` | `chassis.is_smartswitch()` が `False` (chassisd:1412-1416) |
+| SmartSwitch（DPU 搭載） | `SmartSwitchModuleConfigUpdater` | `SmartSwitchModuleUpdater` | `chassis.is_smartswitch()` が `True` (chassisd:1415-1416) |
+
+### カード種別による key prefix 制約
+
+#### VOQ チャシス (ModuleConfigUpdater)
+
+受け付ける `CHASSIS_MODULE` key prefix（chassisd:193-199）:
+
+```python
+# chassisd:192-200  ModuleConfigUpdater.module_config_update()
+if not key.startswith(ModuleBase.MODULE_TYPE_SUPERVISOR) and \
+   not key.startswith(ModuleBase.MODULE_TYPE_LINE) and \
+   not key.startswith(ModuleBase.MODULE_TYPE_FABRIC):
+    self.log_error("Incorrect module-name {}. Should start with {} or {} or {}".format(
+        key, MODULE_TYPE_SUPERVISOR, MODULE_TYPE_LINE, MODULE_TYPE_FABRIC))
+    return
+```
+
+| prefix 定数 | 値 | 対象カード |
+|-------------|---|-----------|
+| `MODULE_TYPE_SUPERVISOR` | `"SUPERVISOR"` | スーパーバイザカード |
+| `MODULE_TYPE_LINE` | `"LINE-CARD"` | ラインカード |
+| `MODULE_TYPE_FABRIC` | `"FABRIC-CARD"` | ファブリックカード |
+
+YANG スキーマは `SUPERVISOR*` を key として許可しないが、`ModuleConfigUpdater` は `SUPERVISOR` prefix を受け付ける（YANG-実装 discrepancy）。
+
+#### SmartSwitch (SmartSwitchModuleConfigUpdater)
+
+受け付ける key prefix は `DPU` のみ（chassisd:236-239）:
+
+```python
+# chassisd:235-239  SmartSwitchModuleConfigUpdater.module_config_update()
+if not key.startswith(ModuleBase.MODULE_TYPE_DPU):
+    self.log_error("Incorrect module-name {}. Should start with {}".format(
+        key, ModuleBase.MODULE_TYPE_DPU))
+    return
+```
+
+SmartSwitch では `LINE-CARD` / `FABRIC-CARD` / `SUPERVISOR` キーの設定変更は無効（エラーログが出力され処理がスキップされる）。
+
+### カード種別による midplane 監視の分岐 (VOQ チャシスのみ)
+
+`ModuleUpdater.check_midplane_reachability()` は FABRIC-CARD を midplane 監視対象から除外する（chassisd:549）:
+
+```python
+# chassisd:547-550
+for module in self.chassis.get_all_modules():
+    # Skip fabric cards
+    if module.get_type() == ModuleBase.MODULE_TYPE_FABRIC:
+        continue
+```
+
+また、supervisor として動作している場合は自己の slot を除外し、LINE-CARD として動作している場合は supervisor のみを監視対象とする（chassisd:552-559）。SmartSwitch の `SmartSwitchModuleUpdater` はこのロジックを継承しない（独立実装）。
+
+### カード種別による Chassis App DB クリーンアップの分岐
+
+`CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD`（30 分）経過後の DB クリーンアップは LINE-CARD に限定される（chassisd:677-680）:
+
+```python
+# chassisd:677-681
+if module.startswith(ModuleBase.MODULE_TYPE_LINE):
+    # Module is down for more than 30 minutes. Do the chassis clean up
+    self.log_notice("...")
+    self._cleanup_chassis_app_db(module)
+```
+
+FABRIC-CARD や SUPERVISOR が down 状態でも Chassis App DB のクリーンアップは実行されない。
+
+### SmartSwitch 固有: DPU_STATE テーブルとの連携
+
+SmartSwitch では `SmartSwitchModuleUpdater` が `chassisStateDB` の `DPU_STATE` テーブルを追加で監視し（chassisd:1482, 1506-1521）、DPU の状態変化を `CHASSIS_MODULE_TABLE` と連動させる。VOQ チャシスの `ModuleUpdater` にはこの仕組みは存在しない。
+
+### SmartSwitch 固有: DPU reboot タイムアウト
+
+`dpu_reboot_timeout` は SmartSwitch プラットフォームにのみ適用される（chassisd:721-731）。VOQ チャシスでは LINE-CARD の `linecard_reboot_timeout`（デフォルト 180 秒）が相当する。
+
+| プラットフォーム | タイムアウト定数 | デフォルト値 | 設定ソース |
+|-----------------|----------------|------------|-----------|
+| VOQ チャシス | `linecard_reboot_timeout` | 180 秒 | `/usr/share/sonic/platform/platform_env.conf` |
+| SmartSwitch | `dpu_reboot_timeout` | 360 秒 | `/usr/share/sonic/platform/platform.json` の `"dpu_reboot_timeout"` |
+| SmartSwitch (固定) | `MAX_DPU_REBOOT_DURATION` | 800 秒 | ハードコード（変更不可） |
+
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:193-239,412,463,549-559,677-681,688,721-731,783-785,1412-1416,1482,1506-1521`; `sonic-platform-common/sonic_platform_base/module_base.py:34-37`
+<!-- /platform -->
