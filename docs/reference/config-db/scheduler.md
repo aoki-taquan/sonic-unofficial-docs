@@ -291,4 +291,47 @@ QUEUE|<port>|<idx> の scheduler 参照を解除  →  SCHEDULER|<name> を DEL
 
 <!-- /ordering -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss/orchagent/qosorch.h` L44-53 + `qosorch.cpp` L75-78, L1378-1494 精読 (2026-05-16)
+
+### type enum 文字列 → SAI 変換
+
+| CONFIG_DB 値 | C++ 定数名 | SAI 属性値 |
+|-------------|-----------|-----------|
+| `"DWRR"` | `scheduler_algo_DWRR` | `SAI_SCHEDULING_TYPE_DWRR` |
+| `"WRR"` | `scheduler_algo_WRR` | `SAI_SCHEDULING_TYPE_WRR` |
+| `"STRICT"` | `scheduler_algo_STRICT` | `SAI_SCHEDULING_TYPE_STRICT` |
+
+未知値: `SWSS_LOG_ERROR("Unknown scheduler type value:%s")` → `task_invalid_entry`（エントリ全破棄）。
+
+### weight フィールド
+
+- フィールド名定数: `scheduler_weight_field_name = "weight"`
+- SAI 属性: `SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT`
+- `stoi()` + `(uint8_t)` キャスト。YANG `range "1..100"` はコード未検証。範囲外は暗黙切り捨て。
+
+### meter_type enum 文字列 → SAI 変換
+
+| CONFIG_DB 値 | SAI 属性値 |
+|-------------|-----------|
+| `"packets"` | `SAI_METER_TYPE_PACKETS` |
+| `"bytes"` | `SAI_METER_TYPE_BYTES` |
+
+`scheduler_meter_map.at()` で変換（`std::out_of_range` 未キャッチ）。未知値で orchagent クラッシュ。
+
+### bandwidth rate/burst フィールド名 → SAI 属性
+
+| CONFIG_DB フィールド | SAI 属性 | 説明 |
+|--------------------|---------|------|
+| `cir` | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE` | Committed Information Rate |
+| `cbs` | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_BURST_RATE` | Committed Burst Size |
+| `pir` | `SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_RATE` | Peak Information Rate |
+| `pbs` | `SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_BURST_RATE` | Peak Burst Size |
+
+各フィールドは存在するときのみ SAI 属性を設定。省略時は SAI ベンダーデフォルト（0 相当）。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 96667c52d98d -->
