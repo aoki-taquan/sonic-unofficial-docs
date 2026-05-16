@@ -457,4 +457,56 @@ BGP_GLOBALS 以外のテーブルが起因する STATE_DB 書込が同一プロ�
 > **スキャン証跡**: `frrcfgd.py` 全 3000+ 行、`bgpcfgd/` 全 .py を `STATE_DB`, `COUNTERS_DB`, `hset`, `.set(`, `update_state_db` で検索。BGP_GLOBALS handler と STATE_DB の接点ゼロを確認（`meta/_intermediate/cdb-flow/bgp-globals-side.md` 参照）。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読構成: 二重購読（frrcfgd + bgpcfgd）
+
+`BGP_GLOBALS` は **2 つのデーモンが独立して購読**するが、通常は排他的にどちらか一方のみが稼働する（`frrcfgd.py` コメント L87 参照）。
+
+| 購読者 | 購読 API | 通信方式 | ハンドラ |
+|--------|---------|---------|---------|
+| `frrcfgd` (`sonic-frr-mgmt-framework`) | `ExtConfigDBConnector.subscribe(table, hdlr)` + `listen()` | Redis keyspace 通知 (`psubscribe`) | `bgp_global_handler` |
+| `bgpcfgd` | **購読しない** | — | — |
+
+`bgpcfgd` は `BGP_GLOBALS` を `bgpcfgd/main.py` に登録しない（BGP_NEIGHBOR / BGP_MONITORS 等のみ担当）。BGP_GLOBALS の実質的な購読者は `frrcfgd` のみ。
+
+### frrcfgd の購読方式: Redis keyspace 通知
+
+`frrcfgd` は `swsscommon.ConfigDBConnector` を継承した `ExtConfigDBConnector` を使い、CONFIG_DB 全体に対して Redis **keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:*`) を張る。`SubscriberStateTable`（channel ベース `PUBLISH/SUBSCRIBE`）は使用しない。
+
+```python
+# frrcfgd.py:1536-1552 (ExtConfigDBConnector.listen_thread / listen)
+def listen_thread(self, timeout):
+    sub_key_space = "__keyspace@{}__:*".format(self.get_dbid(self.db_name))
+    self.pubsub.psubscribe(sub_key_space)
+    while self.__listen_thread_running:
+        msg = self.pubsub.get_message(timeout, True)
+        if msg:
+            self.sub_msg_handler(msg)   # → _ConfigDBConnector__fire → bgp_global_handler
+```
+
+- 通知ペイロードは操作名 (`hset` / `del`) のみ。値は `client.hgetall(key)` で再取得 (`frrcfgd.py:1527`)。
+- `BGP_GLOBALS` → `bgp_global_handler` のマッピングは `table_handler_list` で定義 (`frrcfgd.py:2296`)。
+
+### データフロー (keyspace → FRR)
+
+```
+CONFIG_DB hset 'BGP_GLOBALS|default' local_asn 65000
+  ↓ Redis keyspace PUBLISH "__keyspace@4__:BGP_GLOBALS|default" "hset"
+  ↓ ExtConfigDBConnector.listen_thread() (frrcfgd.py:1536)
+  ↓ client.hgetall(key) → raw_to_typed() → __fire("BGP_GLOBALS", "default", data)
+  ↓ bgp_global_handler → bgp_message キュー → __update_bgp()
+  ↓ vtysh: configure terminal / router bgp 65000
+```
+
+DEL (`data is None`) では `del_table=True` が設定され `no router bgp <asn>` 相当を FRR に送出する (`frrcfgd.py:3918`)。
+
+### 起動時 config replay
+
+`subscribe_all()` 前に `config_db.get_table('BGP_GLOBALS')` で全エントリを一括取得し初期設定を replay する (`frrcfgd.py:2175`)。`config_mode == "unified"` のときのみ vtysh への実際の設定適用が行われる。
+
+> 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
