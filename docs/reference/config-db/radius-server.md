@@ -233,6 +233,38 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 
 <!-- /derivation -->
 
+<!-- ordering -->
+## 設定生成順序・PAM 順序 (Phase B)
+
+### RADIUS 設定ファイル生成順序
+
+`hostcfgd` の `modify_conf_file()` は以下の順序で RADIUS 設定を生成する。
+
+1. **グローバル設定マージ**: `radius_global_default` に `RADIUS|global` の値を上書きコピー (`radius_global.update(self.radius_global)`)。
+2. **NAS 情報補完**: `nas_ip` 未設定 → `get_interface_ip("eth0")` で eth0 IP を取得。`nas_id` 未設定 → `get_hostname()` でホスト名を取得。
+3. **サーバエントリ構築**: `RADIUS_SERVER` の各エントリに対し、グローバル設定をコピーして `server.update()` でサーバ固有設定を上書き。
+4. **priority 降順ソート**: `sorted(..., key=lambda t: int(t['priority']), reverse=True)` により `radsrvs_conf` を priority 高い順に並べる（`hostcfgd` L.703）。
+5. **PAM 設定生成**: `common-auth-sonic.j2` テンプレートに `radsrvs_conf`（priority 降順）を渡して `/etc/pam.d/common-auth-sonic` を生成。`AAA.authentication.login` に `radius` が含まれる場合のみ実行（L.722–723）。
+6. **NSS 設定生成**: `radius_nss.conf.j2` テンプレートに同じ `radsrvs_conf` を渡して `/etc/radius_nss.conf` を生成（L.821）。
+7. **per-server ファイル生成**: `radsrvs_conf` の順に `/etc/pam_radius_auth.d/<ip>_<auth_port>.conf` を生成（L.827–837）。ファイル名はサーバ IP と auth_port の組み合わせ。
+8. **aaastatsd 制御**: `radius` が login 認証に含まれ `statistics` が有効な場合 `aaastatsd` を start、そうでなければ stop（L.839–844）。
+
+### PAM スタック内の RADIUS サーバ順序
+
+| 順序決定要因 | 詳細 | evidence |
+|---|---|---|
+| `priority` 降順 | `radsrvs_conf = sorted(..., key=lambda t: int(t['priority']), reverse=True)` — priority 値が大きいサーバが先にリストされ、PAM が先に試行する | `hostcfgd` L.703 |
+| 同 priority の場合 | Python の `sorted()` は安定ソートのため、`self.radius_servers` dict のイテレーション順（登録順）が維持される | Python sort stability |
+| `priority` 未設定時のデフォルト | `radius_global_default['priority'] = 0` — YANG 範囲外 (1..64) の 0 が使われ最低優先度として扱われる | `hostcfgd` L.375 |
+
+### 設定反映タイミング
+
+- RADIUS_SERVER エントリが変更されると `radius_server_update()` → `modify_conf_file()` が即座に呼ばれ、上記手順 1–8 が全実行される（部分更新なし）。
+- PAM の変更は次回ログインから有効。既存 SSH セッションには影響しない。
+- `auth_port` 変更時は旧ポート番号のファイル (`<ip>_<old_port>.conf`) が `/etc/pam_radius_auth.d/` に残留する（自動クリーンアップなし）。
+
+<!-- /ordering -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
