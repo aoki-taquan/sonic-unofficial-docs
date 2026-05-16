@@ -28700,6 +28700,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来のデフォルト・暗黙挙動 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来のデフォルト・暗黙挙動 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dscp_value-queue_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dscp_value / queue_index の暗黙モード派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC capability 不在時の挙動 (重要)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC / CONFIG_DB 乖離時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新規作成 vs 更新の挙動差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dead/特殊フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34724,6 +34796,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来のデフォルト・暗黙挙動 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来のデフォルト・暗黙挙動 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dscp_value-queue_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dscp_value / queue_index の暗黙モード派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC capability 不在時の挙動 (重要)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC / CONFIG_DB 乖離時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        新規作成 vs 更新の挙動差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dead/特殊フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35101,6 +35245,132 @@
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 </ul>
+<!-- defaults -->
+<h2 id="phase-a">コード由来のデフォルト・暗黙挙動 (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-swss/orchagent/switchorch.cpp</code> <code>SwitchOrch::setSwitchTrimming()</code> L1066–1304 + <code>orchagent/switch/trimming/{container.h, helper.cpp, capabilities.cpp, schema.h}</code> 全体精読 (2026-05-16)。<code>portsorch.cpp</code> の trim 関連は <code>nvda_port_trim_drop.lua</code> 統合と <code>DROPPED_TRIM_PACKETS</code> / <code>TX_TRIM_PACKETS</code> カウンタのみで、フィールド既定値処理は無い。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>switchorch 実装の実効デフォルト</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size</code></td>
+<td>なし</td>
+<td><strong>SAI ベンダー依存</strong>（省略時 SAI 属性送信なし）</td>
+<td><code>container.h</code> で <code>size.is_set = false</code>。switchorch.cpp L1087 の <code>if (trim.size.is_set)</code> を通らない</td>
+</tr>
+<tr>
+<td><code>dscp_value</code></td>
+<td>なし</td>
+<td><strong>SAI ベンダー依存</strong>（省略時）。値ごとに parser が DSCP resolution mode を<strong>自動派生</strong></td>
+<td>数値 → <code>SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_DSCP_VALUE</code>、<code>"from-tc"</code> → <code>..._FROM_TC</code> (helper.cpp L96–124)</td>
+</tr>
+<tr>
+<td><code>tc_value</code></td>
+<td>なし</td>
+<td>symmetric DSCP モード時は <strong>明示しても skip + WARN</strong></td>
+<td><code>setSwitchTrimming()</code> L1190 <code>"Skip setting switch trimming TC value for symmetric DSCP mode"</code></td>
+</tr>
+<tr>
+<td><code>queue_index</code></td>
+<td>なし</td>
+<td><strong>SAI ベンダー依存</strong>（省略時）。値ごとに parser が queue resolution mode を<strong>自動派生</strong></td>
+<td>数値 → <code>..._STATIC</code>、<code>"dynamic"</code> → <code>..._DYNAMIC</code> (helper.cpp L163–182)</td>
+</tr>
+<tr>
+<td>全フィールド省略</td>
+<td>—</td>
+<td><strong>エントリ全破棄</strong> (<code>validateTrimConfig</code>)</td>
+<td><code>LOG_ERROR("Validation error: missing valid fields")</code> → <code>parseTrimConfig</code> が <code>false</code> を返し SAI 書き込みなし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dscp_value-queue_index"><code>dscp_value</code> / <code>queue_index</code> の暗黙モード派生<a class="headerlink" href="#dscp_value-queue_index" title="Permanent link">&para;</a></h3>
+<p><code>SWITCH_TRIMMING</code> のフィールドは「値の種類で SAI resolution mode が自動的に決まる」設計。CONFIG_DB 側に <code>mode</code> 専用フィールドは存在せず、parser が値の文字列形を見て対応する SAI enum を選ぶ:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// helper.cpp L96–124 (parseTrimDscp)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">algorithm</span><span class="o">::</span><span class="n">to_lower_copy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SWITCH_TRIMMING_DSCP_VALUE_FROM_TC</span><span class="p">)</span><span class="w"> </span><span class="c1">// &quot;from-tc&quot;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">cfg</span><span class="p">.</span><span class="n">dscp</span><span class="p">.</span><span class="n">mode</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_FROM_TC</span><span class="p">;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">cfg</span><span class="p">.</span><span class="n">dscp</span><span class="p">.</span><span class="n">mode</span><span class="p">.</span><span class="n">is_set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1">// ...数値パース後...</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">cfg</span><span class="p">.</span><span class="n">dscp</span><span class="p">.</span><span class="n">mode</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_DSCP_VALUE</span><span class="p">;</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">cfg</span><span class="p">.</span><span class="n">dscp</span><span class="p">.</span><span class="n">mode</span><span class="p">.</span><span class="n">is_set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span></code></pre></div>
+<ul>
+<li>DSCP 数値の範囲は <strong>0..63</strong> (<code>helper.cpp</code> 内 <code>static const minDscp = 0; maxDscp = 63;</code> L25–26)。範囲外は <code>LOG_ERROR</code> + エントリ破棄。</li>
+<li>大文字小文字は <code>boost::algorithm::to_lower_copy</code> で正規化されるので <code>"FROM-TC"</code> / <code>"Dynamic"</code> も受理される。</li>
+</ul>
+<h3 id="asic-capability">ASIC capability 不在時の挙動 (重要)<a class="headerlink" href="#asic-capability" title="Permanent link">&para;</a></h3>
+<p><code>SwitchTrimmingCapabilities</code> (<code>capabilities.cpp</code> L142–179) はコンストラクタで SAI <code>query_attribute_capability</code> を呼び、各属性が <strong>未サポートのまま (<code>isAttrSupported = false</code>)</strong> だと <code>isSwitchTrimmingSupported()</code> が <code>false</code> を返す。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// switchorch.cpp L1081–1085</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">trimCap</span><span class="p">.</span><span class="n">isSwitchTrimmingSupported</span><span class="p">())</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">SWSS_LOG_WARN</span><span class="p">(</span><span class="s">&quot;Switch trimming configuration is not supported: skipping ...&quot;</span><span class="p">);</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">   </span><span class="c1">// ← エラーではなく成功扱い (no-op)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">サイレント no-op</p>
+<p>Packet trimming 非対応 ASIC では <code>SWITCH_TRIMMING|GLOBAL</code> への SET は <strong>エラーにならず黙って捨てられる</strong>。<code>show switch-trimming</code> で CONFIG_DB 値は見えても SAI には反映されていない。実機サポート有無は <code>STATE_DB</code> 側に書き出される capability テーブル (<code>writeCapabilitiesToDb()</code> 出力) で確認するのが正しい運用。</p>
+</div>
+<p>部分サポートの場合も似た減衰挙動を取る:</p>
+<ul>
+<li>DSCP 数値モード不可 (<code>isDscpValueModeSupported = false</code>) → <code>dscp.isAttrSupported</code> をチェック対象から外す (capabilities.cpp L159–162)</li>
+<li>FROM_TC モード不可 (<code>isFromTcModeSupported = false</code>) → <code>tc.isAttrSupported</code> を無視 (L166–169)</li>
+<li>STATIC queue モード不可 (<code>isStaticModeSupported = false</code>) → <code>queue.index.isAttrSupported</code> を無視 (L173–176)</li>
+</ul>
+<p>enum capability (<code>isEnumSupported = false</code>) のときは <code>validateTrimDscpModeCap</code> / <code>validateTrimQueueModeCap</code> が常に <code>true</code> を返し検証スキップ (<code>capabilities.cpp</code> L185–188, L232–235)。</p>
+<h3 id="asic-config_db">ASIC / CONFIG_DB 乖離時の挙動<a class="headerlink" href="#asic-config_db" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// switchorch.cpp L1349, L1355</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">setSwitchTrimming</span><span class="p">(</span><span class="n">trim</span><span class="p">))</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to set switch trimming: ASIC and CONFIG DB are diverged&quot;</span><span class="p">);</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1">// DEL の場合:</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to remove switch trimming: operation is not supported: ASIC and CONFIG DB are diverged&quot;</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>tObj = trimHlpr.getConfig()</code> と新規 <code>trim</code> を比較し、各フィールドについて <code>tObj</code> 側が <code>is_set</code> 未設定 or 値が異なる場合のみ SAI を更新するロジック。SAI capability 検証や set 呼び出しが失敗するとローカルキャッシュ (<code>trimHlpr.setConfig</code>) を更新せずに <code>false</code> を返すため、再投入には capability 修正か orchagent 再起動が必要。</p>
+<h3 id="vs">新規作成 vs 更新の挙動差異<a class="headerlink" href="#vs" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th>SAI 呼び出し</th>
+<th>省略フィールドの扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>初回 SET (ローカルキャッシュ <code>tObj</code> 空)</td>
+<td>各属性個別の <code>set_switch_attribute()</code> (set 単位)</td>
+<td><code>is_set = false</code> のフィールドは SAI に送られない → SAI 既定値が残る</td>
+</tr>
+<tr>
+<td>既存更新</td>
+<td>変更があった属性のみ <code>set_switch_attribute()</code> を発行</td>
+<td>省略フィールドは現在の SAI 属性値を保持（変更なし）</td>
+</tr>
+<tr>
+<td><code>dscp_value</code> を数値 ↔ <code>from-tc</code> で切替</td>
+<td><code>tc</code> 側 cache (<code>cfg.tc.cache.value</code>) を更新して SAI に反映 (switchorch.cpp L1273–1297)</td>
+<td>symmetric DSCP モードに移ると TC は SAI 送信スキップ + WARN</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dead">dead/特殊フィールド<a class="headerlink" href="#dead" title="Permanent link">&para;</a></h3>
+<ul>
+<li>未知フィールドは <code>parseTrimConfig()</code> の最終 <code>else</code> で <code>SWSS_LOG_WARN("Unknown field(%s): skipping ...")</code> をログするのみで、エントリ自体は破棄されない (helper.cpp L226)。<code>scheduler</code> 等と異なり<strong>未知フィールド混入はエラーにならない</strong>。</li>
+<li><code>DEL</code> 操作は <code>size</code> / <code>dscp.mode</code> のいずれも非サポート: <code>LOG_ERROR("... operation is not supported")</code> + <code>return false</code> (switchorch.cpp L1104, L1149, L1206, L1239)。</li>
+</ul>
+<!-- /defaults -->
+
 <!-- value-behavior -->
 <h2 id="_8">値依存挙動マトリクス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p><code>dscp_value</code> と <code>queue_index</code> は enum ではなく union 型（数値 + 固定文字列）。</p>
@@ -35174,8 +35444,8 @@
 <li>packet trimming 非対応 ASIC に投入して <a href="../../glossary/#term-sai">SAI</a> でエラーになる。</li>
 </ul>
 <h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_TRIMMING|GLOBAL&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>switch-trimming
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_TRIMMING|GLOBAL&#39;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>switch-trimming
 </span></code></pre></div>
 <!-- /ops-hint -->
 
