@@ -321,4 +321,68 @@ DEL VXLAN_TUNNEL|<tunnel_name>   # 他 VNET が残らない場合のみ
 > **スキャン証跡**: `vxlanmgr.cpp:doVxlanCreateTask()` L287-376、`vnetorch.cpp:addOperation()` L434-558、`vnetorch.cpp:VNetCfgRouteOrch::doTask()` L3577-3611、`orchdaemon.cpp` L265-293, L350-354, L590-593 精読。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## テーブル間参照 (Phase C)
+
+### CONFIG_DB 内 leafref
+
+| テーブル | フィールド / key 部位 | 参照先 | YANG leafref パス |
+|---------|----------------------|--------|-------------------|
+| `VNET` | `vxlan_tunnel` | `VXLAN_TUNNEL.name` | `sonic-vxlan/VXLAN_TUNNEL/VXLAN_TUNNEL_LIST/name` |
+| `VNET_ROUTE` | `vnet_name`（key 第 1 部） | `VNET.name` | `sonic-vnet/VNET/VNET_LIST/name` |
+| `VNET_ROUTE_TUNNEL` | `vnet_name`（key 第 1 部） | `VNET.name` | 同上 |
+
+> 出典: `sonic-vnet.yang` L57-58, L120-121, L156-157
+
+### APPL_DB 投影テーブル（書き込み先）
+
+| APPL_DB テーブル | 書き込み元 | 消費者 |
+|-----------------|-----------|--------|
+| `APP_VNET_TABLE` | `vxlanmgrd`（前段処理後） | `VNetOrch` |
+| `APP_VNET_RT_TABLE_NAME` | `VNetCfgRouteOrch` | `VNetRouteOrch` |
+| `APP_VNET_RT_TUNNEL_TABLE_NAME` | `VNetCfgRouteOrch` | `VNetRouteOrch` |
+| `APP_VNET_MONITOR_TABLE_NAME` | `VNetRouteOrch`（monitor 更新時） | `MonitorOrch` |
+
+> 出典: `orchdaemon.cpp` L265-285、`vnetorch.cpp` L738-748
+
+### STATE_DB 参照（読み取り）
+
+| STATE_DB テーブル | 参照元 | 用途 |
+|------------------|--------|------|
+| `STATE_VRF_TABLE` | `vxlanmgrd:isVrfStateOk()` | VRF 作成完了待ち |
+| `STATE_VNET_RT_TUNNEL_TABLE_NAME` | `VNetRouteOrch` | endpoint monitor 結果の取得 |
+| `STATE_VNET_MONITOR_TABLE_NAME` | `MonitorOrch` | BFD/ping monitor 状態の購読 |
+
+> 出典: `vxlanmgr.cpp` L738-752、`vnetorch.cpp` L742-748
+
+### 関連 CONFIG_DB テーブル（ランタイム参照）
+
+| テーブル | フィールド | 参照元 | 用途 |
+|---------|-----------|--------|------|
+| `DEVICE_METADATA\|localhost` | `mac` | `vxlanmgrd:getVxlanRouterMacAddress()` | VXLAN デバイス作成時のルータ MAC 取得 |
+| `INTERFACE` / `VLAN_INTERFACE` | — | `VNetOrch:setIntf()/delIntf()` | VNET スコープのインタフェース登録 |
+
+> 出典: `vxlanmgr.cpp` L784-806、`vnetorch.cpp` L392-428
+
+### オーケストレータ連鎖図
+
+```
+CONFIG_DB: VNET_ROUTE / VNET_ROUTE_TUNNEL
+  └─→ VNetCfgRouteOrch
+        └─→ APPL_DB: APP_VNET_RT_TABLE / APP_VNET_RT_TUNNEL_TABLE
+              └─→ VNetRouteOrch → SAI: route / nexthop / tunnel NHG
+
+CONFIG_DB: VNET
+  └─→ vxlanmgrd (VxlanMgr)
+        ├─ 参照: STATE_VRF_TABLE, DEVICE_METADATA.mac
+        └─→ APPL_DB: APP_VNET_TABLE
+              └─→ VNetOrch
+                    ├─ 参照: VxlanTunnelOrch.isTunnelExists()
+                    ├─→ SAI: sai_virtual_router_api->create_virtual_router()
+                    └─→ IntfsOrch (VNET スコープ IF 管理)
+```
+
+> **スキャン証跡**: `vnetorch.cpp` L40, L392-428, L497-503, L738-748、`vxlanmgr.cpp` L183-213, L738-806、`orchdaemon.cpp` L265-285, L350-358、`sonic-vnet.yang` L57-58, L120-157
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: f94986e6b96c -->
