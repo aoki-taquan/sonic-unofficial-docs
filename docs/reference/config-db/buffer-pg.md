@@ -206,6 +206,57 @@ show buffer pg
 **副作用**: PG バッファ変更は ingress traffic の一時的な pause/drop に影響する可能性がある。warm-reboot では既存バッファ設定が保持される。
 <!-- /runtime-trace -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BUFFER_PG` テーブルの SET/DEL が CONFIG_DB に届くと、`buffermgrdyn` (cfgmgr) と `BufferOrch` (orchagent) は APPL_DB 以外に計 3 DB へ副次書き込みを行う。
+
+### APPL_DB / `BUFFER_PROFILE_TABLE`
+
+動的算出プロファイルが BUFFER_PG 参照により新規生成される場合に書き込む。
+
+| トリガ | 操作 | evidence |
+|--------|------|---------|
+| `buffermgrdyn` が headroom 計算で新プロファイルを生成 (動的モード) | `m_applBufferProfileTable.set(name, fvVector)` | `buffermgrdyn.cpp:919` |
+| 動的プロファイルが不要になった場合 (DEL) | `m_applBufferProfileTable.del(profileName)` | `buffermgrdyn.cpp:1047` |
+
+### STATE_DB / `BUFFER_PROFILE_TABLE`
+
+APPL_DB への書き込みと常に同時に発生する。
+
+| トリガ | 操作 | evidence |
+|--------|------|---------|
+| 動的プロファイル生成 (SET) | `m_stateBufferProfileTable.set(name, fvVector)` | `buffermgrdyn.cpp:920` |
+| 動的プロファイル削除 (DEL) | `m_stateBufferProfileTable.del(profileName)` | `buffermgrdyn.cpp:1049` |
+
+!!! note "静的モード"
+    `buffermgr.cpp`（静的バッファモード）は STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みを行わない（走査結果 0 件）。
+
+### COUNTERS_DB / `COUNTERS_PG_NAME_MAP` · `COUNTERS_PG_PORT_MAP` · `COUNTERS_PG_INDEX_MAP`
+
+`BufferOrch::processPriorityGroupPost()` が SAI 適用成功後に `createPortBufferPgCounters()` を呼び出し、PG の OID マッピングを COUNTERS_DB に書き込む。
+
+| トリガ | テーブル | 操作 | 条件 | evidence |
+|--------|---------|------|------|---------|
+| BUFFER_PG SET 成功（新規 PG） | `COUNTERS_PG_NAME_MAP` | `m_pgCounterNameMapUpdater->setCounterNameMap()` alias:index→OID | `isCreateOnlyConfigDbBuffers=true` かつ `getPgCountersState() \|\| getPgWatermarkCountersState()` | `portsorch.cpp:8937` |
+| 同上 | `COUNTERS_PG_PORT_MAP` | `m_pgPortTable->set("", pgPortVector)` PG OID→port OID | 同上 | `portsorch.cpp:8938` |
+| 同上 | `COUNTERS_PG_INDEX_MAP` | `m_pgIndexTable->set("", pgIndexVector)` PG OID→index | 同上 | `portsorch.cpp:8939` |
+| BUFFER_PG DEL 成功 | 上記 3 テーブル | `delCounterNameMap` / `hdel` | 同上（旧 counter が存在した場合） | `portsorch.cpp:9081-9083` |
+
+### FLEX_COUNTER_DB / PG drop・watermark stat グループ
+
+`addPortBufferPgCounters()` からさらに flex counter ポーリング設定が FLEX_COUNTER_DB に書き込まれる。
+
+| トリガ | グループキー | 操作 | 条件 | evidence |
+|--------|------------|------|------|---------|
+| BUFFER_PG SET 成功（新規 PG） | `PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP:<pg_oid>` | `pg_drop_stat_manager.setCounterIdList()` | `FlexCounterOrch::getPgCountersState()=true` | `portsorch.cpp:8995` |
+| BUFFER_PG SET 成功（新規 PG） | `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP:<pg_oid>` | `pg_watermark_manager.setCounterIdList()` | `FlexCounterOrch::getPgWatermarkCountersState()=true` | `portsorch.cpp:9051` |
+| BUFFER_PG DEL 成功 | 上記グループ | `pg_drop_stat_manager.clearCounterIdList()` / `pg_watermark_manager.clearCounterIdList()` | 対応 counter が存在した場合 | `portsorch.cpp:9089,9095` |
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-side.md`
+
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
