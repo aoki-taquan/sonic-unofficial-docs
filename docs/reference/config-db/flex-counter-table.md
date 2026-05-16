@@ -3,11 +3,15 @@ title: FLEX_COUNTER_TABLE テーブル
 description: "FLEX_COUNTER_TABLE テーブル — orchagent / syncd に対し、各種ハードウェアカウンタのポーリング有効化と周期、bulk API のチャンクサイズを指定するテーブル。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-05-16
+hard: 0
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-flex_counter.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: orchagent/flexcounterorch.cpp
+    ref: master
 related:
   config_db:
     - FLEX_COUNTER_TABLE
@@ -233,5 +237,79 @@ counterpoll show
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- platform -->
+## プラットフォーム差分
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp -->
+
+### SAI counter capability — FLOW_CNT_ROUTE
+
+`FLOW_CNT_ROUTE` グループは SAI が route flow counter capability を持つ場合のみ有効になる。
+
+```cpp
+// flexcounterorch.cpp:324
+if (gFlowCounterRouteOrch && gFlowCounterRouteOrch->getRouteFlowCounterSupported() && key == FLOW_CNT_ROUTE_KEY)
+```
+
+SAI が route flow counter を未サポートの ASIC では、`FLEX_COUNTER_STATUS = enable` を書いても SAI 設定は行われず、エラー通知もない（silent no-op）。`COUNTERS_DB` に該当エントリが現れないことで初めて気づく。
+
+### Gearbox 搭載 ASIC — PORT / MACSEC の二重登録
+
+```cpp
+// flexcounterorch.cpp:204-209, 382-388
+if (gPortsOrch && gPortsOrch->isGearboxEnabled())
+{
+    if (key == PORT_KEY || key.rfind("MACSEC", 0) == 0)
+    {
+        setFlexCounterGroupPollInterval(flexCounterGroupMap[key], value, true);
+        setFlexCounterGroupOperation(flexCounterGroupMap[key], value, true);
+    }
+}
+```
+
+Gearbox（外部 PHY チップ）を搭載するプラットフォームでは、`PORT` および `MACSEC*` グループに対して SAI 側の FlexCounter グループに加えて **PHY 側 FlexCounter グループにも同一の POLL_INTERVAL と STATUS** が設定される。Gearbox なし環境では無効。
+
+### PORT_PHY_ATTR / PORT_PHY_SERDES_ATTR — 連動と ASIC 依存
+
+`PORT_PHY_ATTR` を enable/disable にすると `PORT_PHY_SERDES_ATTR` も自動で連動する（同一 counterpoll knob を共有）。SERDES 属性をサポートする ASIC でのみ実際のカウンタ値が返る。SERDES 未対応 ASIC では空リストが登録されるがエラーにはならない。CONFIG_DB に `FLEX_COUNTER_TABLE|PORT_PHY_SERDES_ATTR` を直接書く必要はなく、書いても `PORT_PHY_ATTR` の設定で上書きされる。
+
+### WRED_ECN カウンタ — ASIC WRED サポート依存
+
+`WRED_ECN_PORT` / `WRED_ECN_QUEUE` は SAI が `SAI_QUEUE_STAT_WRED_*` 属性を実装しているプラットフォームでのみ意味を持つ。未実装 ASIC では enable してもカウンタは増分しない。
+
+### VOQ chassis — QUEUE カウンタ全量収集
+
+```cpp
+// flexcounterorch.cpp:544-551
+if ((!isCreateOnlyConfigDbBuffers()) || (gMySwitchType == "voq"))
+{
+    queuesStateVector.insert(make_pair(createAllAvailableBuffersStr, ...));
+    return queuesStateVector;
+}
+```
+
+通常構成 (`create_only_config_db_buffers = true`) では BUFFER_QUEUE 設定のあるポート/キューのみカウンタを収集するが、**VOQ chassis** (`switch_type == voq`) では BUFFER_QUEUE 設定に関わらず全フロントパネルポートおよびシステムポートの全エグレス・VOQ キューが収集対象となる。PG カウンタ (`PG_DROP`, `PG_WATERMARK`) にはこの VOQ 特例はなく、BUFFER_PG 設定分のみが対象（非対称な動作に注意）。
+
+### DPU — ENI / DASH_METER / HA_SET
+
+`ENI`, `DASH_METER`, `HA_SET` グループは `switch_type == dpu` の環境でのみ `enable_counters.py` がデフォルト `enable` を注入する。非 DPU 環境ではエントリ自体が存在しない。
+
+### プラットフォーム別グループ対応サマリ
+
+| グループ | 標準 TOR | Gearbox 搭載 | VOQ chassis | DPU |
+|---------|---------|------------|------------|-----|
+| `PORT` | ○ | ○ (PHY 側にも二重登録) | ○ | △ |
+| `MACSEC_*` | △ (MACsec 有効時) | ○ (PHY 側にも二重登録) | △ | — |
+| `PORT_PHY_ATTR` | △ (SERDES 対応 ASIC のみ有効) | ○ | △ | — |
+| `PORT_PHY_SERDES_ATTR` | 自動連動 (PORT_PHY_ATTR 依存) | 自動連動 | 自動連動 | — |
+| `FLOW_CNT_ROUTE` | △ (SAI capability 要確認) | △ | △ | △ |
+| `ENI` / `DASH_METER` / `HA_SET` | — | — | — | ○ |
+| `QUEUE` (全量収集) | BUFFER_QUEUE 分のみ | BUFFER_QUEUE 分のみ | 全量 (VOQ 特例) | — |
+| `WRED_ECN_*` | △ (WRED 対応 ASIC のみ) | △ | △ | — |
+
+凡例: ○=常に有効、△=条件付き、—=非対応/未定義
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: 6ca28e02d7fb -->
