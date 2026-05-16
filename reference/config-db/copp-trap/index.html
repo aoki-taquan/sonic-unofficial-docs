@@ -36722,12 +36722,28 @@
 <td><code>true</code> の場合は feature state に関わらず常時インストール。未設定は <code>false</code> 扱い</td>
 <td><code>coppmgr.cpp:90</code></td>
 </tr>
+<tr>
+<td><code>trap_group</code> (間接、queue4_group3 指定時)</td>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a></td>
+<td><code>DEVICE_METADATA\|localhost</code></td>
+<td><code>copp_cfg.j2</code> が <code>DEVICE_METADATA.localhost.type</code> に <code>'Mgmt'</code> を含む場合、COPP_GROUP <code>queue4_group3</code> の policer cir/cbs を 300 pps に設定（通常は 100 pps）。ビルド時 sonic-cfggen 展開時のみ評価</td>
+<td><code>copp_cfg.j2:37-43</code></td>
+</tr>
+<tr>
+<td><code>trap_ids</code> (SAI 適用時)</td>
+<td>SAI HOSTIF オブジェクト</td>
+<td>SAI OID（非 CONFIG_DB）</td>
+<td><code>CoppOrch</code> が <code>sai_hostif_api-&gt;create_hostif_trap()</code> / <code>create_hostif_trap_group()</code> で SAI HOSTIF_TRAP・HOSTIF_TRAP_GROUP を生成。Genetlink 型の <code>trap_group</code> では <code>create_hostif()</code> で netdev ソケットも作成しトラップ受信チャネルに紐付ける</td>
+<td><code>copporch.cpp:661-678</code>, <code>copporch.cpp:780-792</code></td>
+</tr>
 </tbody>
 </table>
 <h3 id="_22">解決タイミング<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>COPP_GROUP</strong>: SET 処理時に即座に参照確認。未解決は保留キューで管理され、GROUP 登録後に <code>doTask</code> 再実行で解消する。</li>
 <li><strong>FEATURE</strong>: <code>doFeatureTask()</code> が FEATURE テーブルの変化を購読し、state 変更のたびに影響する COPP_TRAP を再評価・再書き込みする。</li>
+<li><strong>DEVICE_METADATA</strong>: <code>copp_cfg.j2</code> 展開時（ビルド時または初回起動時）にのみ評価。ランタイムでの再評価はない。</li>
+<li><strong>SAI HOSTIF</strong>: <code>CoppOrch::processCoppTrap()</code> 内でポート初期化完了後に即時生成。SAI オブジェクト ID は <code>m_trap_group_hostif_map</code> / <code>m_trapid_hostif_table_map</code> にキャッシュされる。</li>
 </ul>
 <h3 id="init_cfg">init_cfg 由来の暗黙初期化<a class="headerlink" href="#init_cfg" title="Permanent link">&para;</a></h3>
 <p><code>coppmgr</code> は起動時に <code>/etc/sonic/copp_cfg.json</code>（<code>files/image_config/copp/copp_cfg.j2</code> の展開物）を

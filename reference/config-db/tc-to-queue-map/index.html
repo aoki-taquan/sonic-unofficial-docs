@@ -23336,6 +23336,411 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#qosorch-tc_to_queue_map-config_db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — QosOrch が TC_TO_QUEUE_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — QosOrch が TC_TO_QUEUE_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tc_to_queue_map_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        上流参照元 (TC_TO_QUEUE_MAP を参照するテーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パイプライン上流 (TC を生成する先行テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パイプライン下流 (Queue 番号を消費するテーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照カウンタ連動 (DEL 保留メカニズム)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tc-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TC / queue インデックス範囲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デフォルトマップ名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qosorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド名定数 (qosorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デフォルト恒等写像
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        適用順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="適用順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MAP 適用の前提順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dotask-drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        doTask() の drain 順序による自動保証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port_qos_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT_QOS_MAP からの参照フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の逆順序要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-sai-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT への副次反映（SAI port 属性書込）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC キャパビリティ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダー別 queue 数差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ chassis 差
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側 (publisher)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ディスパッチ経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select タイムアウト・リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35144,6 +35549,411 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#qosorch-tc_to_queue_map-config_db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — QosOrch が TC_TO_QUEUE_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — QosOrch が TC_TO_QUEUE_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tc_to_queue_map_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        上流参照元 (TC_TO_QUEUE_MAP を参照するテーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パイプライン上流 (TC を生成する先行テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パイプライン下流 (Queue 番号を消費するテーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照カウンタ連動 (DEL 保留メカニズム)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tc-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TC / queue インデックス範囲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デフォルトマップ名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qosorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド名定数 (qosorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デフォルト恒等写像
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        適用順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="適用順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MAP 適用の前提順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dotask-drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        doTask() の drain 順序による自動保証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port_qos_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT_QOS_MAP からの参照フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の逆順序要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-sai-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT への副次反映（SAI port 属性書込）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC キャパビリティ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダー別 queue 数差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ chassis 差
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側 (publisher)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ディスパッチ経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select タイムアウト・リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35462,7 +36272,515 @@
 </span></code></pre></div>
 <!-- /defaults -->
 
+<!-- cross-refs -->
+<h2 id="qosorch-tc_to_queue_map-config_db-phase-c">暗黙参照 — <code>QosOrch</code> が TC_TO_QUEUE_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)<a class="headerlink" href="#qosorch-tc_to_queue_map-config_db-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>QosOrch</code> は <code>TC_TO_QUEUE_MAP</code> を <code>SAI_QOS_MAP_TYPE_TC_TO_QUEUE</code> として作成した後、<code>PORT_QOS_MAP</code> ハンドラを通じてポートに bind する。<code>qos_to_ref_table_map</code> (qosorch.cpp:L100-116) および <code>m_qos_maps</code> 参照カウンタ管理 (qosorch.cpp:L81-87) により、以下のテーブルとの連鎖参照が発生する。</p>
+<h3 id="tc_to_queue_map_1">上流参照元 (TC_TO_QUEUE_MAP を参照するテーブル)<a class="headerlink" href="#tc_to_queue_map_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>参照タイミング</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../port-qos-map/"><code>PORT_QOS_MAP</code></a></td>
+<td><code>tc_to_queue_map</code></td>
+<td>SET 処理時 <code>resolveFieldRefValue()</code></td>
+<td>ポートに bind する TC→Queue マップ名を解決。未作成なら <code>task_need_retry</code></td>
+<td>qosorch.cpp:L64,L103,L2077-2133</td>
+</tr>
+<tr>
+<td><a href="../port-qos-map/"><code>PORT_QOS_MAP</code></a></td>
+<td><code>encap_tc_to_queue_map</code></td>
+<td>SET 処理時 <code>resolveFieldRefValue()</code></td>
+<td>トンネル encap 用 TC→Queue マップ。同じ <code>TC_TO_QUEUE_MAP</code> テーブルを参照</td>
+<td>qosorch.cpp:L116</td>
+</tr>
+</tbody>
+</table>
+<p><code>PORT_QOS_MAP</code> が <code>tc_to_queue_map</code> フィールドで <code>TC_TO_QUEUE_MAP</code> の名前を参照し、<code>QosOrch</code> が OID を解決して <code>SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP</code> をポートにセットする。<code>TC_TO_QUEUE_MAP</code> が未作成の場合、<code>PORT_QOS_MAP</code> 処理は <code>task_need_retry</code> でキューに戻される。</p>
+<h3 id="tc">パイプライン上流 (TC を生成する先行テーブル)<a class="headerlink" href="#tc" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>役割</th>
+<th>TC_TO_QUEUE_MAP との関係</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../dscp-to-tc-map/"><code>DSCP_TO_TC_MAP</code></a></td>
+<td>DSCP → TC 変換マップ</td>
+<td>パイプライン前段。受信パケットの DSCP 値を TC に変換し、TC_TO_QUEUE_MAP が TC → egress queue に変換する</td>
+<td>qosorch.cpp:L61,L81,L100,L1329</td>
+</tr>
+</tbody>
+</table>
+<h3 id="queue">パイプライン下流 (Queue 番号を消費するテーブル)<a class="headerlink" href="#queue" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>役割</th>
+<th>TC_TO_QUEUE_MAP との関係</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../scheduler/"><code>SCHEDULER</code></a></td>
+<td>キュースケジューラプロファイル</td>
+<td>TC_TO_QUEUE_MAP が決定した queue index に対して <code>SCHEDULER</code> プロファイルが適用される。<code>PORT_QOS_MAP.scheduler</code> フィールドで参照</td>
+<td>qosorch.cpp:L70,L85,L109,L1333</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">参照カウンタ連動 (DEL 保留メカニズム)<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<p><code>QosOrch::m_qos_maps</code> の <code>object_reference_map</code> (qosorch.cpp:L84,L87) が <code>TC_TO_QUEUE_MAP</code> と <code>PORT_QOS_MAP</code> の参照を追跡する。<code>PORT_QOS_MAP</code> がマップを参照している間は <code>TC_TO_QUEUE_MAP</code> の DEL は <code>m_pendingRemove=true</code> で保留され、参照解放まで SAI <code>remove_qos_map()</code> は呼ばれない。</p>
+<h3 id="_20">範囲外 (誤解されやすい隣接テーブル)<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>QUEUE</code>: <code>TC_TO_QUEUE_MAP</code> が解決した queue index が対象 queue を指定するが、<code>QosOrch</code> の <code>TC_TO_QUEUE_MAP</code> ハンドラが <code>QUEUE</code> テーブルを直接参照するわけではない。<code>QUEUE</code> は別途 <code>handleQueueTable()</code> が購読する独立テーブル。</li>
+<li><code>WRED_PROFILE</code>: queue に適用される drop profile だが、<code>TC_TO_QUEUE_MAP</code> ハンドラからの直接参照はない。</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/tc-to-queue-map-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-swss/orchagent/qosorch.cpp</code>、<code>sonic-swss/orchagent/qosorch.h</code></p>
+<h3 id="tc-queue">TC / queue インデックス範囲<a class="headerlink" href="#tc-queue" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC 最小値</td>
+<td><code>0</code></td>
+<td><code>tc_type</code> YANG typedef 下限</td>
+</tr>
+<tr>
+<td>TC 最大値</td>
+<td><code>7</code></td>
+<td><code>tc_type</code> YANG typedef 上限</td>
+</tr>
+<tr>
+<td>queue インデックス最小値</td>
+<td><code>0</code></td>
+<td><code>sai_qos_map_t.value.queue_index</code> 下限</td>
+</tr>
+<tr>
+<td>queue インデックス最大値</td>
+<td>プラットフォーム依存</td>
+<td>SAI / ASIC が許容する物理キュー数に依存（典型値 8〜12）。YANG 制約は <code>0..9</code> だが実装はチェックしない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_21">デフォルトマップ名<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>デフォルトマップ名</td>
+<td><code>"AZURE"</code></td>
+<td><code>qos_config.j2</code> フォールバック定義。テスト: <code>qosorch_ut.cpp</code> L648, L683, L943</td>
+</tr>
+<tr>
+<td>アップリンク用マップ名</td>
+<td><code>"AZURE_UPLINK"</code></td>
+<td><code>generate_tc_to_queue_map</code> 関数が <code>tunnel_qos_remap_enable=true</code> 時に生成</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai">SAI 定数<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_QOS_MAP_ATTR_TYPE</code></td>
+<td><code>SAI_QOS_MAP_TYPE_TC_TO_QUEUE</code></td>
+<td><code>addQosItem()</code> L458 にハードコード</td>
+</tr>
+<tr>
+<td><code>SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST</code></td>
+<td>—</td>
+<td><code>convertFieldValuesToAttributes()</code> L442</td>
+</tr>
+<tr>
+<td><code>SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP</code></td>
+<td>—</td>
+<td>PORT_QOS_MAP バインド時に使用 (L64)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="qosorchh">フィールド名定数 (qosorch.h)<a class="headerlink" href="#qosorchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tc_to_queue_field_name</code></td>
+<td><code>"tc_to_queue_map"</code></td>
+<td>PORT_QOS_MAP フィールド名</td>
+</tr>
+<tr>
+<td><code>encap_tc_to_queue_field_name</code></td>
+<td><code>"encap_tc_to_queue_map"</code></td>
+<td>トンネルアップリンク用フィールド名</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_22">デフォルト恒等写像<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<p><code>qos_config.j2</code> フォールバック時の TC→queue 対応（マップ名 <code>AZURE</code>）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>TC 0 → queue 0
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>TC 1 → queue 1
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>TC 2 → queue 2
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>TC 3 → queue 3
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>TC 4 → queue 4
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>TC 5 → queue 5
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>TC 6 → queue 6
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>TC 7 → queue 7
+</span></code></pre></div>
+<!-- /constants -->
+
+<!-- ordering -->
+<h2 id="phase-b">適用順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L103 L116 L136-139 L181-191 L433-469 L2118-2129 L2231-2251 -->
+
+<h3 id="map">MAP 適用の前提順序<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
+<p><code>TC_TO_QUEUE_MAP</code> は <code>PORT_QOS_MAP</code> より<strong>先に</strong> CONFIG_DB へ書き込む必要がある。</p>
+<p><code>QosOrch::handlePortQosMapTable()</code> は <code>tc_to_queue_map</code> フィールドを処理する際、<code>resolveFieldRefValue()</code> で対応する <code>TC_TO_QUEUE_MAP|&lt;name&gt;</code> の SAI オブジェクト存在を確認する（qosorch.cpp:2118-2129）。SAI オブジェクトが未作成であれば <code>task_need_retry</code> を返し、Consumer がバックオフ後に再処理する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>推奨書き込み順序:
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  1. TC_TO_QUEUE_MAP|&lt;name&gt;   ← SAI sai_qos_map_api-&gt;create_qos_map() 完了まで待機
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  2. PORT_QOS_MAP|&lt;port&gt; tc_to_queue_map=&lt;name&gt;
+</span></code></pre></div>
+<h3 id="dotask-drain">doTask() の drain 順序による自動保証<a class="headerlink" href="#dotask-drain" title="Permanent link">&para;</a></h3>
+<p><code>QosOrch::doTask()</code> (qosorch.cpp:2231-2251) は以下の順で Consumer を drain する。</p>
+<ol>
+<li>TC_TO_QUEUE_MAP を含む<strong>すべての map 系テーブル</strong>（<code>port_qos_map_cfg_exec</code> と <code>queue_exec</code> 以外）</li>
+<li><code>PORT_QOS_MAP</code>（port_qos_map_cfg_exec）</li>
+<li><code>QUEUE</code>（queue_exec）</li>
+</ol>
+<p>この固定順序により、同一 <code>doTask()</code> 呼び出し内に TC_TO_QUEUE_MAP と PORT_QOS_MAP が同時到着しても TC_TO_QUEUE_MAP の SAI 作成が先行する。ただし SAI create 失敗（task_failed）は retry されないため、当該ターンでは PORT_QOS_MAP の bind もスキップされる。</p>
+<h3 id="port_qos_map">PORT_QOS_MAP からの参照フィールド<a class="headerlink" href="#port_qos_map" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>PORT_QOS_MAP フィールド</th>
+<th>参照先テーブル</th>
+<th>SAI 属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tc_to_queue_map</code></td>
+<td><code>TC_TO_QUEUE_MAP</code></td>
+<td><code>SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP</code></td>
+</tr>
+<tr>
+<td><code>encap_tc_to_queue_map</code></td>
+<td><code>TC_TO_QUEUE_MAP</code></td>
+<td>（encap 経路）</td>
+</tr>
+</tbody>
+</table>
+<p><code>qos_to_ref_table_map</code> でどちらのフィールドも <code>CFG_TC_TO_QUEUE_MAP_TABLE_NAME</code> にマッピングされており、Tunnel encap 経路でも同テーブルが参照先となる（qosorch.cpp:103, 116）。</p>
+<h3 id="del_1">DEL 時の逆順序要件<a class="headerlink" href="#del_1" title="Permanent link">&para;</a></h3>
+<p>マップを削除する場合は参照を先に除去する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>推奨削除順序:
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  1. PORT_QOS_MAP|&lt;port&gt; の tc_to_queue_map フィールドを除去（または PORT_QOS_MAP エントリ DEL）
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  2. TC_TO_QUEUE_MAP|&lt;name&gt; を DEL
+</span></code></pre></div>
+<p>PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとすると <code>m_pendingRemove = true</code> がセットされ、SAI <code>remove_qos_map()</code> は参照解放まで実行されない（qosorch.cpp:181-191）。pending_remove 中は SET も <code>task_need_retry</code> でブロックされる（qosorch.cpp:136-139）。</p>
+<h3 id="sai_1">SAI 制約<a class="headerlink" href="#sai_1" title="Permanent link">&para;</a></h3>
+<p><code>TcToQueueMapHandler::addQosItem()</code> は <code>SAI_QOS_MAP_ATTR_TYPE = SAI_QOS_MAP_TYPE_TC_TO_QUEUE</code> をハードコードし、<code>SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST</code> と同時に 1 回の <code>create_qos_map()</code> で作成する（qosorch.cpp:457-466）。map type は動的解決ではなくハンドラクラスに埋め込み固定であるため、テーブル名を変更しても SAI map type は変わらない。</p>
+<!-- /ordering -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L124-200 L429-479 -->
+
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th>戻り値</th>
+<th>ログレベル</th>
+<th>ログメッセージ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC または queue インデックスが非数値（<code>stoi()</code> 例外）</td>
+<td><code>task_invalid_entry</code></td>
+<td>—</td>
+<td>— （silent drop）</td>
+</tr>
+<tr>
+<td><code>SAI sai_qos_map_api-&gt;create_qos_map()</code> 失敗</td>
+<td><code>task_failed</code></td>
+<td>ERROR</td>
+<td><code>"Failed to create tc_to_queue map. status:%d"</code></td>
+</tr>
+<tr>
+<td><code>SAI sai_qos_map_api-&gt;set_qos_map_attribute()</code> 失敗（既存マップ更新時）</td>
+<td><code>task_failed</code></td>
+<td>ERROR</td>
+<td><code>"Failed to set [TC_TO_QUEUE_MAP:&lt;name&gt;]"</code></td>
+</tr>
+<tr>
+<td>DEL 対象 SAI オブジェクトが未作成（存在チェック失敗）</td>
+<td><code>task_invalid_entry</code></td>
+<td>ERROR</td>
+<td><code>"Object with name:&lt;name&gt; not found."</code></td>
+</tr>
+<tr>
+<td><code>PORT_QOS_MAP</code> 参照中のマップへの DEL</td>
+<td><code>task_need_retry</code></td>
+<td>NOTICE</td>
+<td><code>"Can't remove object &lt;name&gt; due to being referenced"</code></td>
+</tr>
+<tr>
+<td>pending remove 中のエントリへの SET</td>
+<td><code>task_need_retry</code></td>
+<td>NOTICE</td>
+<td><code>"Entry ... is pending remove, need retry"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_23">詳細<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>不正 TC/queue 値</strong>: <code>convertFieldValuesToAttributes()</code> 内で <code>stoi()</code> を try-catch なしで呼び出す。TC フィールドまたは queue インデックスが整数に変換できない場合は例外が伝播し <code>task_invalid_entry</code> となる（エントリはキューから silent drop）。</li>
+<li><strong>SAI qos_map 作成失敗</strong>: <code>addQosItem()</code> が <code>SAI_NULL_OBJECT_ID</code> を返した場合、<code>processWorkItem()</code> が <code>task_failed</code> を返す。SAI ドライバのエラーコードは <code>"Failed to create tc_to_queue map. status:%d"</code> でログ出力される。</li>
+<li><strong>参照存在チェック (DEL 時)</strong>: DEL 操作前に <code>isObjectBeingReferenced()</code> で <code>PORT_QOS_MAP</code> 等の参照を確認する。参照中の場合は <code>m_pendingRemove = true</code> をセットして <code>task_need_retry</code> を返し、SAI <code>remove_qos_map()</code> を呼ばない。参照が解放されると自動的に再処理される。</li>
+</ul>
+<!-- /failure -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L64 L103 L116 L204-230 L449-473 L2115-2204 -->
+
+<h3 id="asic_db">ASIC_DB への書込<a class="headerlink" href="#asic_db" title="Permanent link">&para;</a></h3>
+<p><code>TcToQueueMapHandler::addQosItem()</code> が <code>sai_qos_map_api-&gt;create_qos_map()</code> を呼び出すと、syncd が <code>ASIC_DB</code> の <code>ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:&lt;oid&gt;</code> を自動生成する（orchagent → syncd → ASIC_DB 経路）。</p>
+<table>
+<thead>
+<tr>
+<th>ASIC_DB キー</th>
+<th>属性</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:&lt;oid&gt;</code></td>
+<td><code>SAI_QOS_MAP_ATTR_TYPE</code></td>
+<td><code>SAI_QOS_MAP_TYPE_TC_TO_QUEUE</code></td>
+</tr>
+<tr>
+<td>同上</td>
+<td><code>SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST</code></td>
+<td><code>[(tc=0,queue=0), ...]</code></td>
+</tr>
+</tbody>
+</table>
+<p>更新時は <code>set_qos_map_attribute()</code> (qosorch.cpp:204-213)、DEL 時は <code>remove_qos_map()</code> (qosorch.cpp:216-230) により同エントリが更新・削除される。</p>
+<h3 id="appl_state_db">APPL_STATE_DB への書込<a class="headerlink" href="#appl_state_db" title="Permanent link">&para;</a></h3>
+<p><strong>書込なし。</strong> QosOrch は <code>TC_TO_QUEUE_MAP</code> 処理において APPL_STATE_DB / APPL_DB への書き込みを一切行わない。CONFIG_DB → SAI (ASIC_DB) の直接経路のみ。</p>
+<h3 id="port-sai-port">PORT への副次反映（SAI port 属性書込）<a class="headerlink" href="#port-sai-port" title="Permanent link">&para;</a></h3>
+<p><code>PORT_QOS_MAP</code> テーブルに <code>tc_to_queue_map=&lt;name&gt;</code> が設定された際、<code>QosOrch::handlePortQosMapTable()</code> (qosorch.cpp:2115-2204) は参照先ポート全台に対して以下を実行する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP</span><span class="p">;</span><span class="w">   </span><span class="c1">// qos_to_attr_map L64</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">TC_TO_QUEUE_MAP</span><span class="w"> </span><span class="n">の</span><span class="w"> </span><span class="n">SAI</span><span class="w"> </span><span class="n">OID</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">sai_port_api</span><span class="o">-&gt;</span><span class="n">set_port_attribute</span><span class="p">(</span><span class="n">port</span><span class="p">.</span><span class="n">m_port_id</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attr</span><span class="p">);</span><span class="w">  </span><span class="c1">// qosorch.cpp L2193</span>
+</span></code></pre></div>
+<p>これにより syncd 経由で <code>ASIC_STATE:SAI_OBJECT_TYPE_PORT:&lt;port_oid&gt;</code> の <code>SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP</code> が更新される。<code>encap_tc_to_queue_map</code> フィールドも同テーブルを参照し (qosorch.cpp:116)、Tunnel QoS remap 有効時は Tunnel encap 経路でも同 map OID が書き込まれる。</p>
+<table>
+<thead>
+<tr>
+<th>副次書込先</th>
+<th>書込タイミング</th>
+<th>SAI 属性 / キー</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ASIC_DB</code> <code>SAI_OBJECT_TYPE_QOS_MAP</code></td>
+<td><code>TC_TO_QUEUE_MAP</code> SET 時</td>
+<td><code>SAI_QOS_MAP_ATTR_TYPE</code>, <code>SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST</code></td>
+<td>syncd 経由</td>
+</tr>
+<tr>
+<td><code>ASIC_DB</code> <code>SAI_OBJECT_TYPE_PORT</code></td>
+<td><code>PORT_QOS_MAP.tc_to_queue_map</code> 設定時</td>
+<td><code>SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP</code></td>
+<td>参照ポート全台</td>
+</tr>
+<tr>
+<td>APPL_STATE_DB</td>
+<td>—</td>
+<td>なし</td>
+<td>書込経路なし</td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td>—</td>
+<td>なし</td>
+<td>書込経路なし</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<h3 id="asic">ASIC キャパビリティ<a class="headerlink" href="#asic" title="Permanent link">&para;</a></h3>
+<p><code>TC_TO_QUEUE_MAP</code> ハンドラは SAI の <code>create_qos_map()</code> を直接呼ぶのみで、ASIC ケーパビリティクエリ（<code>querySwitchCapability</code>）を実施しない。<code>DSCP_TO_TC_MAP</code> が <code>SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP</code> でクエリを行うのと異なり、TC→queue マップの対応可否判定は SAI ベンダー実装に委ねられる。<code>create_qos_map()</code> 失敗時は <code>"Failed to create tc_to_queue map. status:%d"</code> を LOG_ERROR して <code>task_failed</code> を返す。</p>
+<h3 id="queue_1">ベンダー別 queue 数差<a class="headerlink" href="#queue_1" title="Permanent link">&para;</a></h3>
+<p><code>qos_config.j2</code> の生成優先順:</p>
+<ol>
+<li><code>generate_tc_to_queue_map()</code> 定義あり かつ <code>tunnel_qos_remap_enable=true</code> → プラットフォーム固有関数（<code>AZURE_UPLINK</code> 等の追加マップを含む）</li>
+<li><code>generate_tc_to_queue_map_per_sku()</code> 定義あり → HWSKU 別マップ</li>
+<li><strong>フォールバック（デフォルト）</strong>: TC 0–7 → queue 0–7 の恒等写像（マップ名 <code>AZURE</code>）</li>
+</ol>
+<p><code>different_tc_to_queue_map=true</code> かつ <code>tunnel_qos_remap_enable=true</code> かつ uplink ポートの条件が揃う場合、PORT_QOS_MAP の <code>tc_to_queue_map</code> フィールドに <code>"AZURE_UPLINK"</code> が適用される。<code>AZURE_UPLINK</code> マップの内容（queue 数を含む）はプラットフォーム固有関数が決定する。</p>
+<h3 id="voq-chassis">VOQ chassis 差<a class="headerlink" href="#voq-chassis" title="Permanent link">&para;</a></h3>
+<p><code>DEVICE_METADATA['localhost']['switch_type'] == 'voq'</code> のとき VOQ chassis モードとなる。</p>
+<ul>
+<li><code>TC_TO_QUEUE_MAP</code> テーブル本体の生成ロジックは標準と同一（VOQ 固有の分岐なし）</li>
+<li><code>QUEUE</code> テーブルは SYSTEM_PORT 単位で生成され、queue 3/4 を lossless (<code>AZURE_LOSSLESS</code>)、queue 0/1/2/5/6 を best-effort として active ポートのみ明示設定する（通常モードのポートごと 0–7 全指定とは異なる）</li>
+<li>orchagent の <code>applyWredProfileToQueue()</code> では <code>gMySwitchType == "voq"</code> 判定があり、VOQ モード時は <code>getPortVoQIds()</code> でキュー OID を解決する（通常は <code>port.m_queue_ids</code>）。TC_TO_QUEUE_MAP の SAI map 作成パス自体は共通</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>通常モード</th>
+<th>VOQ chassis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC_TO_QUEUE_MAP 生成</td>
+<td>qos_config.j2 共通パス</td>
+<td>同上（変化なし）</td>
+</tr>
+<tr>
+<td>queue 数</td>
+<td>HWSKU 依存（デフォルト 0–7）</td>
+<td>SYSTEM_PORT ベース、一部キューのみ明示</td>
+</tr>
+<tr>
+<td>ポート適用時のキュー ID 解決</td>
+<td><code>port.m_queue_ids</code></td>
+<td><code>getPortVoQIds()</code></td>
+</tr>
+<tr>
+<td>ASIC ケーパビリティクエリ</td>
+<td>なし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>uplink 別マップ</td>
+<td><code>AZURE_UPLINK</code>（条件付き）</td>
+<td>非適用</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
 <!-- glossary-links-injected: 16a5b728a75a -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="api">購読 API<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の <code>TC_TO_QUEUE_MAP</code> は <code>orchdaemon.cpp</code> の <code>qos_tables</code> ベクタ経由で <code>QosOrch</code> に登録される。<code>Orch::addConsumer()</code> が CONFIG_DB を検出し <strong><code>swss::SubscriberStateTable</code></strong> を選択する。</p>
+<ul>
+<li>購読方式: Redis <strong>keyspace 通知</strong> (<code>__keyspace@&lt;dbId&gt;__:TC_TO_QUEUE_MAP|*</code> への <code>PSUBSCRIBE</code>)</li>
+<li>通知到着時に <code>HGETALL</code> で値を再取得し <code>(key, op, fvs)</code> タプルとして <code>pops()</code> で返す</li>
+<li>バッチサイズ: <code>TableConsumable::DEFAULT_POP_BATCH_SIZE = 128</code>（<code>table.h:164</code>、ハードコード）</li>
+<li><code>orchagent -b</code> オプションの影響なし（APPL_DB 側 <code>ConsumerStateTable</code> のみに作用）</li>
+</ul>
+<h3 id="publisher">書き込み側 (publisher)<a class="headerlink" href="#publisher" title="Permanent link">&para;</a></h3>
+<p>CLI <code>config qos reload</code>（<code>sonic-cfggen</code> + <code>qos_config.j2</code>）またはプラットフォーム <code>qos.json</code> 投入が <code>swss::Table::set()</code> / <code>HSET</code> を発行。明示的 <code>PUBLISH</code> は行われず Redis keyspace 通知で購読者に伝達。</p>
+<h3 id="_24">ディスパッチ経路<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>SubscriberStateTable (PSUBSCRIBE keyspace)
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  → Consumer::execute() → pops() (HGETALL)
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  → QosOrch::doTask(Consumer&amp;)
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>  → m_qos_handler_map[CFG_TC_TO_QUEUE_MAP_TABLE_NAME]
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>  → QosOrch::handleTcToQueueTable()
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  → TcToQueueMapHandler::processWorkItem()
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>  → addQosItem(): sai_qos_map_api-&gt;create_qos_map() [SAI_QOS_MAP_TYPE_TC_TO_QUEUE]
+</span></code></pre></div>
+<p><code>QosOrch::doTask()</code> は <code>TC_TO_QUEUE_MAP</code> を PORT_QOS_MAP / QUEUE より先に drain する順序制御あり（<code>qosorch.cpp:2231-2252</code>）。</p>
+<h3 id="select">select タイムアウト・リトライ<a class="headerlink" href="#select" title="Permanent link">&para;</a></h3>
+<ul>
+<li>select タイムアウト: <strong>1000 ms</strong> (<code>SELECT_TIMEOUT</code>, <code>orchdaemon.cpp:23</code>)</li>
+<li><code>task_need_retry</code> 時は <code>m_toSync</code> にエントリを残置して次サイクルで再処理</li>
+<li>サービス再起動トリガーなし（SAI ライブ操作のみで完結）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>購読方式</td>
+<td><code>SubscriberStateTable</code> (keyspace <code>PSUBSCRIBE</code>)</td>
+</tr>
+<tr>
+<td>バッチサイズ</td>
+<td>128 (<code>DEFAULT_POP_BATCH_SIZE</code>)</td>
+</tr>
+<tr>
+<td>select タイムアウト</td>
+<td>1000 ms</td>
+</tr>
+<tr>
+<td>ハンドラ</td>
+<td><code>QosOrch::handleTcToQueueTable()</code> → <code>TcToQueueMapHandler</code></td>
+</tr>
+<tr>
+<td>channel PUBLISH</td>
+<td>使わない</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>未使用</td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
 
 <div class="footnote">
 <hr />

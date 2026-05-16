@@ -23102,22 +23102,94 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#phase-g" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順依存・タイミング依存 (Phase B)
+        通信メカニズム (Phase G)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-buffermgrbuffermgrdyn-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → buffermgr/buffermgrdyn: SubscriberStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffermgrbuffermgrdyn-appl_db-producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buffermgr/buffermgrdyn → APPL_DB: ProducerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-buffer_pool_table-bufferorch-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB BUFFER_POOL_TABLE → bufferorch: ConsumerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bufferorch-appl_state_db-responsepublisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bufferorch → APPL_STATE_DB: ResponsePublisher
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
-        必須書込み順序
+        データフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buffermgrdyn-handlebufferpooltable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buffermgrdyn — handleBufferPoolTable() 失敗経路
       
     </span>
   </a>
@@ -23125,10 +23197,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#port" class="md-nav__link">
+  <a href="#buffermgrdyn-lua-plugin" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PORT 先行の詳細
+        buffermgrdyn — Lua plugin ロード失敗
       
     </span>
   </a>
@@ -23136,10 +23208,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai-create-only" class="md-nav__link">
+  <a href="#buffermgrdyn-updatebufferpoolfromluaplugin" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI create-only 属性（変更不可フィールド）
+        buffermgrdyn — updateBufferPoolFromLuaPlugin() 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bufferorch-processbufferpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bufferorch — processBufferPool() 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bufferorch-watermark-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bufferorch — watermark capability 検出失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リトライ・廃棄の判断フロー
       
     </span>
   </a>
@@ -23223,6 +23328,388 @@
     <span class="md-ellipsis">
       
         書き込み経路別 field 扱い早見表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asic-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム・ASIC 差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム・ASIC 差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dynamic-vs-static-buffer-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. dynamic vs static buffer model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mellanox-sn4ksn5k-8-lane-xon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Mellanox SN4k/SN5k — 8 lane ポートの xon 値差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-asic-vendor-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ASIC vendor の SAI capability (実行時判定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-voq-chassis-buffer_pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. VOQ chassis と BUFFER_POOL の関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. テンプレートによる初期値差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-default_lossless_buffer_parameter-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-asic_table-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ASIC_TABLE (STATE_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-lossless_traffic_pattern-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. LOSSLESS_TRAFFIC_PATTERN (CONFIG_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-port_qos_map-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. PORT_QOS_MAP (CONFIG_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照関係サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        登録順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="登録順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pool-profile-pgqueue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pool → Profile → PG/Queue の必須順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-create-only-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI create-only 制約（Pool）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-lua-plugin-dynamic-buffer-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Lua plugin の起動順（dynamic buffer model）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-zero-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. zero profile の登録順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-app_buffer_pool_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB / APP_BUFFER_POOL_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-counters_buffer_pool_name_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / COUNTERS_BUFFER_POOL_NAME_MAP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db-buffer_pool_watermark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_DB / BUFFER_POOL_WATERMARK
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-buffer_max_param_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / BUFFER_MAX_PARAM_TABLE（読み取りのみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pool 名マクロ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-bufferorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type フィールド値定数 (bufferorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode-bufferorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode フィールド値定数 (bufferorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 識別子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex-counter-counter-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex Counter / Counter DB 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        特記事項
       
     </span>
   </a>
@@ -35256,22 +35743,94 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#phase-g" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順依存・タイミング依存 (Phase B)
+        通信メカニズム (Phase G)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-buffermgrbuffermgrdyn-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → buffermgr/buffermgrdyn: SubscriberStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffermgrbuffermgrdyn-appl_db-producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buffermgr/buffermgrdyn → APPL_DB: ProducerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-buffer_pool_table-bufferorch-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB BUFFER_POOL_TABLE → bufferorch: ConsumerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bufferorch-appl_state_db-responsepublisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bufferorch → APPL_STATE_DB: ResponsePublisher
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
-        必須書込み順序
+        データフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buffermgrdyn-handlebufferpooltable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buffermgrdyn — handleBufferPoolTable() 失敗経路
       
     </span>
   </a>
@@ -35279,10 +35838,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#port" class="md-nav__link">
+  <a href="#buffermgrdyn-lua-plugin" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PORT 先行の詳細
+        buffermgrdyn — Lua plugin ロード失敗
       
     </span>
   </a>
@@ -35290,10 +35849,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sai-create-only" class="md-nav__link">
+  <a href="#buffermgrdyn-updatebufferpoolfromluaplugin" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI create-only 属性（変更不可フィールド）
+        buffermgrdyn — updateBufferPoolFromLuaPlugin() 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bufferorch-processbufferpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bufferorch — processBufferPool() 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bufferorch-watermark-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bufferorch — watermark capability 検出失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リトライ・廃棄の判断フロー
       
     </span>
   </a>
@@ -35377,6 +35969,388 @@
     <span class="md-ellipsis">
       
         書き込み経路別 field 扱い早見表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asic-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム・ASIC 差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム・ASIC 差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dynamic-vs-static-buffer-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. dynamic vs static buffer model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mellanox-sn4ksn5k-8-lane-xon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Mellanox SN4k/SN5k — 8 lane ポートの xon 値差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-asic-vendor-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ASIC vendor の SAI capability (実行時判定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-voq-chassis-buffer_pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. VOQ chassis と BUFFER_POOL の関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. テンプレートによる初期値差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-default_lossless_buffer_parameter-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-asic_table-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ASIC_TABLE (STATE_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-lossless_traffic_pattern-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. LOSSLESS_TRAFFIC_PATTERN (CONFIG_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-port_qos_map-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. PORT_QOS_MAP (CONFIG_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照関係サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        登録順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="登録順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pool-profile-pgqueue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pool → Profile → PG/Queue の必須順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-create-only-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI create-only 制約（Pool）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-lua-plugin-dynamic-buffer-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Lua plugin の起動順（dynamic buffer model）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-zero-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. zero profile の登録順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-app_buffer_pool_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB / APP_BUFFER_POOL_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-counters_buffer_pool_name_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / COUNTERS_BUFFER_POOL_NAME_MAP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db-buffer_pool_watermark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_DB / BUFFER_POOL_WATERMARK
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-buffer_max_param_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / BUFFER_MAX_PARAM_TABLE（読み取りのみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pool 名マクロ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-bufferorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type フィールド値定数 (bufferorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode-bufferorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode フィールド値定数 (bufferorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 識別子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex-counter-counter-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex Counter / Counter DB 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        特記事項
       
     </span>
   </a>
@@ -35827,103 +36801,298 @@
 <p><strong>スキャン証跡</strong>: <code>handleBufferPoolTable</code> L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
-<!-- ordering -->
-<h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
-<h3 id="_17">必須書込み順序<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
-<p>BUFFER_POOL → BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE の順で CONFIG_DB に書くことが必須。逆順でも最終的には retry で収束するが、dynamic buffer model の warm reboot では失敗の原因になる。</p>
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="config_db-buffermgrbuffermgrdyn-subscriberstatetable">CONFIG_DB → buffermgr/buffermgrdyn: SubscriberStateTable<a class="headerlink" href="#config_db-buffermgrbuffermgrdyn-subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p><code>buffermgrd</code> は <code>CFG_BUFFER_POOL_TABLE_NAME</code> を <code>vector&lt;TableConnector&gt;</code> に含め <code>BufferMgrDynamic</code> へ渡す（<code>buffermgrd.cpp:177</code>）。<code>Orch::addConsumer()</code> は CONFIG_DB（DB ID = 4）を検出し <strong><code>SubscriberStateTable</code></strong> を選択する（<code>orch.cpp:1188-1190</code>）。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// orch.cpp:1186-1196</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">Orch::addConsumer</span><span class="p">(</span><span class="n">DBConnector</span><span class="w"> </span><span class="o">*</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pri</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CONFIG_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">...)</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">                                 </span><span class="n">DEFAULT_POP_BATCH_SIZE</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>SubscriberStateTable</code> は Redis keyspace 通知（<code>__keyspace@4__:BUFFER_POOL|*</code> の <code>PSUBSCRIBE</code>）を購読し、変更検知後に <code>HGETALL</code> で値を再取得して <code>(key, op, fvs)</code> タプルを返す。バッチサイズは <code>DEFAULT_POP_BATCH_SIZE = 128</code>（<code>table.h:164</code>）。static buffer model の <code>BufferMgr</code> も同じ <code>addConsumer()</code> 経由で <code>SubscriberStateTable</code> を使用する。</p>
+<h3 id="buffermgrbuffermgrdyn-appl_db-producerstatetable">buffermgr/buffermgrdyn → APPL_DB: ProducerStateTable<a class="headerlink" href="#buffermgrbuffermgrdyn-appl_db-producerstatetable" title="Permanent link">&para;</a></h3>
+<p><code>BufferMgrDynamic</code> は <code>handleBufferPoolTable()</code> 内で <code>m_applBufferPoolTable.set(pool, fvVector)</code> / <code>del(pool)</code> で APPL_DB に書き込む。<code>ProducerStateTable</code> は <code>LPUSH &lt;TABLE&gt;_KEY_SET</code> + <code>HSET</code> によるチャネルベース通知を実行する（<code>buffermgrdyn.cpp:2630,2637,885</code>）。</p>
+<h3 id="appl_db-buffer_pool_table-bufferorch-consumerstatetable">APPL_DB BUFFER_POOL_TABLE → bufferorch: ConsumerStateTable<a class="headerlink" href="#appl_db-buffer_pool_table-bufferorch-consumerstatetable" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:387-394</code> が <code>APP_BUFFER_POOL_TABLE_NAME</code> を <code>applDb</code>（APPL_DB）で <code>BufferOrch</code> に渡す。APPL_DB は DB ID チェックの else 節にマッチするため <strong><code>ConsumerStateTable</code></strong>（チャネルベース）が選択される。ディスパッチ先: <code>BufferOrch::doTask()</code> → <code>processBufferPool()</code>。</p>
+<h3 id="bufferorch-appl_state_db-responsepublisher">bufferorch → APPL_STATE_DB: ResponsePublisher<a class="headerlink" href="#bufferorch-appl_state_db-responsepublisher" title="Permanent link">&para;</a></h3>
+<p>SAI 処理後、<code>bufferorch.cpp</code> は <code>m_publisher.publish(APP_BUFFER_POOL_TABLE_NAME, ...)</code> で結果を APPL_STATE_DB に書き戻す。<code>m_publisher</code> は <code>Orch</code> 基底の <code>ResponsePublisher m_publisher{"APPL_STATE_DB"}</code>（<code>orch.h:382</code>）。</p>
+<ul>
+<li><strong>SET + xoff 非空（SHP 有効）</strong>: xoff フィールドのみ publish（<code>bufferorch.cpp:554-555</code>）</li>
+<li><strong>DEL 完了</strong>: 空 fvs で publish（<code>bufferorch.cpp:588-589</code>）</li>
+<li><strong>SET + xoff 空（SHP 無効）</strong>: <code>publish()</code> は呼ばれない</li>
+</ul>
+<h3 id="_17">データフロー<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONFIG_DB:BUFFER_POOL
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  │  SubscriberStateTable (keyspace通知 → HGETALL)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  ↓  buffermgrdyn: handleBufferPoolTable()
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>APPL_DB:BUFFER_POOL_TABLE
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  │  ConsumerStateTable (チャネル通知)
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  ↓  bufferorch: processBufferPool() → SAI
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>APPL_STATE_DB:BUFFER_POOL_TABLE   ← ResponsePublisher (xoff/DEL 時のみ)
+</span></code></pre></div>
 <table>
 <thead>
 <tr>
-<th>#</th>
-<th>依存関係</th>
-<th>種別</th>
-<th>根拠</th>
+<th>区間</th>
+<th>方式</th>
+<th>ソース</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td><strong>BUFFER_POOL → BUFFER_PROFILE</strong></td>
-<td>強制先行必須</td>
-<td><code>m_bufferPoolReady == false</code> のとき <code>updateBufferProfileToDb()</code> は即 return し pending。<code>bufferorch</code> は pool 参照未解決で <code>task_need_retry</code></td>
+<td>CONFIG_DB → buffermgrd(yn)</td>
+<td><code>SubscriberStateTable</code> (keyspace通知)</td>
+<td><code>orch.cpp:1188-1190</code></td>
 </tr>
 <tr>
-<td>2</td>
-<td><strong>BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE</strong></td>
-<td>強制先行必須</td>
-<td>profile 参照未解決で <code>task_need_retry</code>。profile 未作成では PG / QUEUE も作れない</td>
+<td>buffermgrd(yn) → APPL_DB</td>
+<td><code>ProducerStateTable.set/del</code></td>
+<td><code>buffermgrdyn.cpp:2630,2637</code></td>
 </tr>
 <tr>
-<td>3</td>
-<td><strong>PORT オブジェクト存在 → BUFFER_PG / BUFFER_QUEUE</strong></td>
-<td>強制先行必須</td>
-<td>ポート不在なら <code>task_invalid_entry</code> で破棄。admin up <strong>前</strong>に PG/QUEUE を書くことが推奨</td>
+<td>APPL_DB → bufferorch</td>
+<td><code>ConsumerStateTable</code> (チャネル)</td>
+<td><code>orch.cpp:1193-1194</code></td>
 </tr>
 <tr>
-<td>4</td>
-<td><strong>SAI create-only 制約</strong>: pool 作成前に <code>type</code>/<code>mode</code> 確定</td>
-<td>作成後変更不可</td>
-<td>作成後の <code>type</code>/<code>mode</code> 変更はサイレントスキップ。YANG 非記載</td>
-</tr>
-<tr>
-<td>5</td>
-<td><strong>zero pool → zero profile</strong>（投入）/ <strong>zero profile → zero pool</strong>（削除）</td>
-<td>vendor 構成限定</td>
-<td><code>"The zero profiles are removed first and then the zero pools"</code></td>
-</tr>
-<tr>
-<td>6</td>
-<td><strong>dynamic model</strong>: <code>m_bufferPoolReady</code> ゲート</td>
-<td>dynamic 専用</td>
-<td>Lua plugin によるプールサイズ計算完了まで全上位オブジェクトの SAI 反映をブロック</td>
+<td>bufferorch → APPL_STATE_DB</td>
+<td><code>ResponsePublisher.publish</code></td>
+<td><code>bufferorch.cpp:555,589</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="port">PORT 先行の詳細<a class="headerlink" href="#port" title="Permanent link">&para;</a></h3>
-<p><code>bufferorch</code> は BUFFER_PG / BUFFER_QUEUE を処理する際、ポートオブジェクトが存在しなければ <code>task_invalid_entry</code> を返してエントリを破棄する（<code>bufferorch.cpp</code> L1033-1036, L1113-1114）。また、初期設定以外で admin up 済みポートに PG プロファイルを適用すると <code>SWSS_LOG_WARN("PG profile '%s' applied after port %s is up")</code> が出力される。PG / QUEUE はポートの admin up <strong>前</strong>に設定するのが正しい順序。</p>
-<h3 id="sai-create-only">SAI create-only 属性（変更不可フィールド）<a class="headerlink" href="#sai-create-only" title="Permanent link">&para;</a></h3>
-<p>以下のフィールドは SAI オブジェクト<strong>作成時のみ</strong>有効。既存オブジェクトへの変更は SAI に反映されず LOG_INFO のみ出力される。変更するには SAI オブジェクト削除→再作成が必要。</p>
+<!-- /pubsub -->
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-swss/cfgmgr/buffermgrdyn.cpp</code>, <code>cfgmgr/buffermgr.cpp</code>, <code>orchagent/bufferorch.cpp</code></p>
+<h3 id="buffermgrdyn-handlebufferpooltable">buffermgrdyn — handleBufferPoolTable() 失敗経路<a class="headerlink" href="#buffermgrdyn-handlebufferpooltable" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>テーブル</th>
-<th>フィールド</th>
-<th>SAI 属性</th>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
 <th>evidence</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>BUFFER_POOL</code></td>
-<td><code>type</code></td>
-<td><code>SAI_BUFFER_POOL_ATTR_TYPE</code></td>
-<td><code>bufferorch.cpp</code> L437-441</td>
+<td><code>xoff</code> フィールドが <code>ingress_lossless_pool</code> 以外に設定</td>
+<td><code>handleBufferPoolTable()</code> L2623</td>
+<td><code>xoff</code> を無視し他フィールドは正常処理</td>
+<td><code>LOG_ERROR("Field xoff is supported for %s only...")</code></td>
+<td><code>buffermgrdyn.cpp:2625</code></td>
 </tr>
 <tr>
-<td><code>BUFFER_POOL</code></td>
-<td><code>mode</code></td>
-<td><code>SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE</code></td>
-<td><code>bufferorch.cpp</code> L469-471</td>
+<td>SHP 有効化時に SAI 未準備 (<code>isSharedHeadroomPoolEnabledInSai()</code> が false)</td>
+<td><code>handleBufferPoolTable()</code> L2573</td>
+<td><code>task_need_retry</code> → Consumer が backoff 後に再試行</td>
+<td>なし</td>
+<td><code>buffermgrdyn.cpp:2575</code></td>
 </tr>
 <tr>
-<td><code>BUFFER_PROFILE</code></td>
-<td><code>pool</code></td>
-<td><code>SAI_BUFFER_PROFILE_ATTR_POOL_ID</code></td>
-<td><code>bufferorch.cpp</code> L656-658</td>
+<td>SHP 変更後にプロファイルの SAI 同期が未完</td>
+<td><code>handleBufferPoolTable()</code> L2603</td>
+<td><code>task_need_retry</code> → <code>m_configuredSharedHeadroomPoolSize</code> をロールバックして再試行</td>
+<td><code>SWSS_LOG_NOTICE("Retry mode: checking pending profiles")</code></td>
+<td><code>buffermgrdyn.cpp:2585-2607</code></td>
 </tr>
 <tr>
-<td><code>BUFFER_PROFILE</code></td>
-<td><code>dynamic_th</code> / <code>static_th</code> 型変更</td>
-<td><code>SAI_BUFFER_PROFILE_ATTR_THRESHOLD_MODE</code></td>
-<td><code>bufferorch.cpp</code> L694-698</td>
+<td><code>op</code> が <code>SET</code>/<code>DEL</code> 以外</td>
+<td><code>handleBufferPoolTable()</code> L2665</td>
+<td><code>task_invalid_entry</code> → エントリ廃棄</td>
+<td><code>LOG_ERROR("Unknown operation type %s")</code></td>
+<td><code>buffermgrdyn.cpp:2665</code></td>
 </tr>
 </tbody>
 </table>
+<h3 id="buffermgrdyn-lua-plugin">buffermgrdyn — Lua plugin ロード失敗<a class="headerlink" href="#buffermgrdyn-lua-plugin" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loadLuaScript()</code> / <code>loadRedisScript()</code> が例外 (dynamic model 初期化時)</td>
+<td>コンストラクタ L106-123</td>
+<td><code>buffermgrd</code> が起動を中断 → buffer 管理デーモンが機能しない</td>
+<td><code>LOG_ERROR("Lua scripts for buffer calculation were not loaded successfully, buffermgrd won't start")</code></td>
+<td><code>buffermgrdyn.cpp:121</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="buffermgrdyn-updatebufferpoolfromluaplugin">buffermgrdyn — updateBufferPoolFromLuaPlugin() 失敗経路<a class="headerlink" href="#buffermgrdyn-updatebufferpoolfromluaplugin" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lua plugin が返した <code>xoff</code> 値が MMU サイズ超過</td>
+<td><code>updateBufferPoolFromLuaPlugin()</code> L755</td>
+<td>xoff 更新をスキップ・pool size は更新継続</td>
+<td><code>LOG_ERROR("Buffer pool %s: Invalid xoff %s, exceeding the mmu size %s, ignored xoff but the pool size will be updated")</code></td>
+<td><code>buffermgrdyn.cpp:757</code></td>
+</tr>
+<tr>
+<td>Lua plugin が返した pool <code>size</code> 値が MMU サイズ超過</td>
+<td><code>updateBufferPoolFromLuaPlugin()</code> L786</td>
+<td>pool サイズ更新をスキップ → APPL_DB は前値のまま</td>
+<td><code>LOG_ERROR("Buffer pool %s: Invalid size %s, exceeding the mmu size %s")</code></td>
+<td><code>buffermgrdyn.cpp:788</code></td>
+</tr>
+<tr>
+<td>共有バッファプール未設定で headroom 計算を要求</td>
+<td><code>updateBufferPoolFromLuaPlugin()</code> L684</td>
+<td>headroom 計算をスキップ (silent)</td>
+<td><code>SWSS_LOG_NOTICE("No shared buffer pool configured")</code></td>
+<td><code>buffermgrdyn.cpp:684</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bufferorch-processbufferpool">bufferorch — processBufferPool() 失敗経路<a class="headerlink" href="#bufferorch-processbufferpool" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>m_pendingRemove</code> フラグ立ちの pool に SET</td>
+<td><code>processBufferPool()</code> L407</td>
+<td><code>task_need_retry</code></td>
+<td><code>SWSS_LOG_NOTICE("Entry %s %s is pending remove, need retry")</code></td>
+<td><code>bufferorch.cpp:409-410</code></td>
+</tr>
+<tr>
+<td>pool <code>type</code> が <code>ingress</code>/<code>egress</code>/<code>both</code> 以外</td>
+<td><code>processBufferPool()</code> L457</td>
+<td><code>task_invalid_entry</code> → エントリ廃棄</td>
+<td><code>LOG_ERROR("Unknown pool type specified:%s")</code></td>
+<td><code>bufferorch.cpp:457-458</code></td>
+</tr>
+<tr>
+<td>pool <code>mode</code> が <code>static</code>/<code>dynamic</code> 以外</td>
+<td><code>processBufferPool()</code> L484</td>
+<td><code>task_invalid_entry</code> → エントリ廃棄</td>
+<td><code>LOG_ERROR("Unknown pool mode specified:%s")</code></td>
+<td><code>bufferorch.cpp:484-485</code></td>
+</tr>
+<tr>
+<td>不明フィールド (<code>percentage</code> 等) が pool エントリに含まれる</td>
+<td><code>processBufferPool()</code> L499</td>
+<td>フィールドをスキップ・SAI 非反映</td>
+<td><code>LOG_ERROR("Unknown pool field specified:%s, ignoring")</code></td>
+<td><code>bufferorch.cpp:499</code></td>
+</tr>
+<tr>
+<td>SAI <code>set_buffer_pool_attribute</code> が <code>SAI_STATUS_ATTR_NOT_IMPLEMENTED_0</code></td>
+<td><code>processBufferPool()</code> L508</td>
+<td><code>task_ignore</code> → ハードウェア非反映のまま成功扱い</td>
+<td><code>SWSS_LOG_NOTICE("...not implemented. Ignoring it")</code></td>
+<td><code>bufferorch.cpp:508-511</code></td>
+</tr>
+<tr>
+<td>SAI <code>set_buffer_pool_attribute</code> がその他エラー</td>
+<td><code>processBufferPool()</code> L513</td>
+<td><code>handleSaiSetStatus()</code> に委譲 → 通常 <code>task_need_retry</code> or <code>task_failed</code></td>
+<td><code>LOG_ERROR("Failed to modify buffer pool...")</code></td>
+<td><code>bufferorch.cpp:515-519</code></td>
+</tr>
+<tr>
+<td>SAI <code>create_buffer_pool</code> 失敗</td>
+<td><code>processBufferPool()</code> L528</td>
+<td><code>handleSaiCreateStatus()</code> に委譲 → 通常 <code>task_need_retry</code></td>
+<td><code>LOG_ERROR("Failed to create buffer pool %s...")</code></td>
+<td><code>bufferorch.cpp:530-534</code></td>
+</tr>
+<tr>
+<td>DEL 時に pool がまだ参照されている</td>
+<td><code>processBufferPool()</code> L560</td>
+<td><code>m_pendingRemove = true</code> → <code>task_need_retry</code></td>
+<td><code>SWSS_LOG_NOTICE("Can't remove object %s due to being referenced (%s)")</code></td>
+<td><code>bufferorch.cpp:563-566</code></td>
+</tr>
+<tr>
+<td>SAI <code>remove_buffer_pool</code> 失敗</td>
+<td><code>processBufferPool()</code> L573</td>
+<td><code>handleSaiRemoveStatus()</code> に委譲</td>
+<td><code>LOG_ERROR("Failed to remove buffer pool %s...")</code></td>
+<td><code>bufferorch.cpp:575-578</code></td>
+</tr>
+<tr>
+<td><code>op</code> が <code>SET</code>/<code>DEL</code> 以外</td>
+<td><code>processBufferPool()</code> L593</td>
+<td><code>task_invalid_entry</code> → エントリ廃棄</td>
+<td><code>LOG_ERROR("Unknown operation type %s")</code></td>
+<td><code>bufferorch.cpp:593</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bufferorch-watermark-capability">bufferorch — watermark capability 検出失敗<a class="headerlink" href="#bufferorch-watermark-capability" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clear_buffer_pool_stats</code> が <code>SAI_STATUS_NOT_SUPPORTED</code> / <code>SAI_STATUS_NOT_IMPLEMENTED</code></td>
+<td><code>generateBufferPoolWatermarkCounterIdList()</code> L322</td>
+<td><code>noWmClrCapability</code> ビットセット → 該当 pool の watermark clear を永続スキップ</td>
+<td><code>SWSS_LOG_NOTICE("Clear watermark failed on %s, rv: %s")</code></td>
+<td><code>bufferorch.cpp:322-325</code></td>
+</tr>
+<tr>
+<td><code>loadLuaScript("watermark_bufferpool.lua")</code> が <code>runtime_error</code></td>
+<td><code>initFlexCounterGroupTable()</code> L239</td>
+<td>watermark Lua plugin 未ロード → watermark 統計が収集されない</td>
+<td><code>LOG_ERROR("Buffer pool watermark lua script...not set successfully. Runtime error: %s")</code></td>
+<td><code>bufferorch.cpp:244</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_18">リトライ・廃棄の判断フロー<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>processBufferPool() / handleBufferPoolTable()
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  task_need_retry    → Consumer が backoff 後に再試行 (例: SAI pending remove, SHP SAI sync 待ち)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  task_invalid_entry → Consumer が当該エントリを廃棄 (例: 不明な op / type / mode)
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  task_ignore        → bufferorch が当該 SET を成功扱いで無視 (例: SAI_STATUS_ATTR_NOT_IMPLEMENTED_0)
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  task_success       → 正常完了
+</span></code></pre></div>
 <blockquote>
-<p><strong>スキャン証跡</strong>: <code>buffermgr.cpp</code> L1-600 全行読了、<code>buffermgrdyn.cpp</code> L230-970 / L2509-2669 全行読了、<code>bufferorch.cpp</code> L89-700 / L960-1590 全行読了。順序依存 6 件検出。</p>
+<p><strong>スキャン証跡</strong>: <code>buffermgrdyn.cpp</code> L100-123, L684-795, L2509-2669 全行読了、<code>bufferorch.cpp</code> L232-244, L286-335, L395-597 全行読了、<code>buffermgr.cpp</code> L575-590 読了。<code>task_need_retry</code> 6件、<code>task_invalid_entry</code> 4件、<code>task_ignore</code> 1件、<code>LOG_ERROR</code> 11件を抽出。</p>
 </blockquote>
-<!-- /ordering -->
-
+<!-- /failure -->
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト / 実装乖離 (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <h3 id="xoff-yang-default-fallback"><code>xoff</code> — YANG default と実装 fallback が一致<a class="headerlink" href="#xoff-yang-default-fallback" title="Permanent link">&para;</a></h3>
@@ -35933,10 +37102,10 @@
 <p>さらに <code>ingress_lossless_pool</code> は <code>dynamic_size=true</code> かつ <code>overSubscribeRatio</code> 非ゼロかつ SHP が size で有効でない場合、<code>dontUpdatePoolToDb=true</code> となり APPL_DB への直接書き込みが完全にスキップされる (<code>buffermgrdyn.cpp</code> L2555-2628)。</p>
 <h3 id="type-both-egress"><code>type</code> — <code>both</code> は内部キャッシュで <code>EGRESS</code> 扱い (乖離)<a class="headerlink" href="#type-both-egress" title="Permanent link">&para;</a></h3>
 <p><code>buffermgrdyn.cpp</code> L2544-2549 の分岐:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">buffer_value_ingress</span><span class="p">)</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">bufferPool</span><span class="p">.</span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BUFFER_INGRESS</span><span class="p">;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">else</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">bufferPool</span><span class="p">.</span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BUFFER_EGRESS</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;both&quot; はここに落ちる</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">buffer_value_ingress</span><span class="p">)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="n">bufferPool</span><span class="p">.</span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BUFFER_INGRESS</span><span class="p">;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">else</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">bufferPool</span><span class="p">.</span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BUFFER_EGRESS</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;both&quot; はここに落ちる</span>
 </span></code></pre></div>
 <p><code>type=both</code> を設定すると内部キャッシュの <code>direction</code> は <code>BUFFER_EGRESS</code> になる。raw 文字列はそのまま APPL_DB に転送されるため SAI 側では <code>SAI_BUFFER_POOL_TYPE_BOTH</code> を受け取るが、buffermgrdyn の headroom 計算では ingress 側プールとして参照されなくなる可能性がある。</p>
 <h3 id="type-mode-sai-create-only-yang"><code>type</code> / <code>mode</code> — SAI では create-only 属性 (YANG に記述なし)<a class="headerlink" href="#type-mode-sai-create-only-yang" title="Permanent link">&para;</a></h3>
@@ -35990,6 +37159,595 @@
 <p><strong>証跡</strong>: <code>buffermgrdyn.cpp</code> L2509-2669 全行読了、<code>bufferorch.cpp</code> L391-596 全行読了、<code>buffermgr.cpp</code> L337-410 全行読了、<code>buffer_pool_mellanox.lua</code> L440-476 全行読了。</p>
 </blockquote>
 <!-- /defaults -->
+
+<!-- platform -->
+<h2 id="asic-phase-h">プラットフォーム・ASIC 差 (Phase H)<a class="headerlink" href="#asic-phase-h" title="Permanent link">&para;</a></h2>
+<h3 id="1-dynamic-vs-static-buffer-model">1. dynamic vs static buffer model<a class="headerlink" href="#1-dynamic-vs-static-buffer-model" title="Permanent link">&para;</a></h3>
+<p><code>buffermgrdyn.cpp</code> L68-80 で <code>ASIC_VENDOR</code> 環境変数を読み込みプラットフォームを決定する。<br />
+<strong>Mellanox / Barefoot</strong>: <code>buffermgrdyn</code> (dynamic buffer model) が起動し、<code>buffer_pool_&lt;vendor&gt;.lua</code> を SAI で実行してプールサイズを逆算する。<br />
+<strong>Broadcom 等</strong>: <code>buffermgr</code> (static buffer model) が起動し、ビルド時に事前計算済みの JSON 固定値を APPL_DB に pass-through する。</p>
+<table>
+<thead>
+<tr>
+<th>差分点</th>
+<th>dynamic model (Mellanox/Barefoot)</th>
+<th>static model (Broadcom 等)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size</code> 省略時</td>
+<td><code>dynamic_size = true</code> → Lua plugin が後書き (<code>buffermgrdyn.cpp</code> L2525)</td>
+<td><code>buffermgr</code> が pass-through (空のまま APPL_DB も空)</td>
+</tr>
+<tr>
+<td><code>percentage</code> フィールド</td>
+<td>Lua plugin が APPL_DB から読み実効サイズ計算に使用</td>
+<td>bufferorch が <code>LOG_ERROR("Unknown pool field specified")</code> → SAI 非反映 (<code>bufferorch.cpp</code> L497-501)</td>
+</tr>
+<tr>
+<td><code>ingress_lossless_pool</code> xoff</td>
+<td>Lua plugin が SHP サイズを返し動的更新</td>
+<td>固定値をそのまま SAI へ</td>
+</tr>
+<tr>
+<td><code>dontUpdatePoolToDb</code></td>
+<td><code>dynamic_size=true</code> かつ <code>overSubscribeRatio</code> 非ゼロかつ SHP size 未設定で APPL_DB 書込みを完全スキップ (<code>buffermgrdyn.cpp</code> L2555-2628)</td>
+<td>該当なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-mellanox-sn4ksn5k-8-lane-xon">2. Mellanox SN4k/SN5k — 8 lane ポートの xon 値差<a class="headerlink" href="#2-mellanox-sn4ksn5k-8-lane-xon" title="Permanent link">&para;</a></h3>
+<p><code>buffermgrdyn.cpp</code> L504-511: <code>m_platform == "mellanox"</code> かつ <code>lane_count == 8</code> かつ SN4000 系で非 400G / SN5000 系で非 800G の場合、headroom プロファイルの xon 値を通常の <strong>2 倍</strong>に設定する。これは <code>ingress_lossless_pool</code> の SHP (xoff) サイズ計算に間接影響する。Mellanox 以外のプラットフォームにはこの分岐なし。</p>
+<h3 id="3-asic-vendor-sai-capability">3. ASIC vendor の SAI capability (実行時判定)<a class="headerlink" href="#3-asic-vendor-sai-capability" title="Permanent link">&para;</a></h3>
+<p>bufferorch は静的なベンダ名判定を行わず SAI 戻り値で capability を検出する。</p>
+<table>
+<thead>
+<tr>
+<th>判定条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_STATUS_NOT_SUPPORTED</code> / <code>NOT_IMPLEMENTED</code> on <code>clear_buffer_pool_stats</code></td>
+<td><code>noWmClrCapability</code> ビット記録 → 以降 watermark clear をスキップ (Broadcom DNX / Cisco-8000 系など)</td>
+<td><code>bufferorch.cpp</code> L310-322</td>
+</tr>
+<tr>
+<td><code>SAI_STATUS_ATTR_NOT_IMPLEMENTED_0</code> on pool 属性 SET</td>
+<td><code>task_ignore</code> → ハードウェア非反映のまま APPL_DB 成功扱い</td>
+<td><code>bufferorch.cpp</code> L506-512</td>
+</tr>
+<tr>
+<td><code>type</code> / <code>mode</code> への更新 SET</td>
+<td>サイレントスキップ (LOG_INFO のみ、SAI create-only 属性制約)</td>
+<td><code>bufferorch.cpp</code> L437-471</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-voq-chassis-buffer_pool">4. VOQ chassis と BUFFER_POOL の関係<a class="headerlink" href="#4-voq-chassis-buffer_pool" title="Permanent link">&para;</a></h3>
+<p><code>gMySwitchType == "voq"</code> による分岐は <code>BUFFER_QUEUE</code> に集中する。<strong>BUFFER_POOL テーブルの処理経路 (<code>handleBufferPoolTable</code> / <code>processBufferPool</code>) には VOQ 固有分岐がない</strong>。VOQ chassis でも BUFFER_POOL の key 形式・field 処理・SAI 反映手順は non-VOQ と同一。</p>
+<p><code>buffers_config.j2</code> の VOQ 分岐 (L36-38, L278-296) は <code>BUFFER_QUEUE</code> の system port 向けエントリ生成のみで、<code>BUFFER_POOL</code> 定義ブロック自体は変わらない。</p>
+<h3 id="5">5. テンプレートによる初期値差<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ベンダ/HWSKU</th>
+<th>dynamic_mode</th>
+<th>ingress_lossless_pool.size</th>
+<th>xoff 設定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mellanox SN2700 (<code>buffers_dynamic.json.j2</code>)</td>
+<td>あり</td>
+<td>省略 (Lua plugin 計算)</td>
+<td>Lua plugin 計算</td>
+</tr>
+<tr>
+<td>Mellanox SN2700 (<code>buffers.json.j2</code>)</td>
+<td>なし</td>
+<td>明示 (<code>4580864</code>)</td>
+<td>固定値</td>
+</tr>
+<tr>
+<td>Arista 7260CX3 (Broadcom)</td>
+<td>なし</td>
+<td>動的計算 (<code>buffers_pool_sizes_t0.j2</code> 参照)</td>
+<td><code>7827456</code></td>
+</tr>
+<tr>
+<td>Celestica Seastone / Delta</td>
+<td>なし</td>
+<td>プラットフォーム別固定値</td>
+<td>固定値</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">まとめ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>差分軸</th>
+<th>BUFFER_POOL への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dynamic model</td>
+<td><code>size</code> 省略・<code>percentage</code> 有効・Lua 計算</td>
+</tr>
+<tr>
+<td>static model</td>
+<td><code>percentage</code> は bufferorch で LOG_ERROR+skip</td>
+</tr>
+<tr>
+<td>Mellanox SN4k/5k 8-lane</td>
+<td>xon 2 倍 → SHP xoff 間接影響</td>
+</tr>
+<tr>
+<td>watermark clear 非対応 ASIC</td>
+<td>SAI status で実行時検出</td>
+</tr>
+<tr>
+<td>pool SET 属性未実装</td>
+<td><code>task_ignore</code> → ハードウェア非反映</td>
+</tr>
+<tr>
+<td>VOQ chassis</td>
+<td>BUFFER_POOL の処理は変化なし</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>証跡</strong>: <code>buffermgrdyn.cpp</code> L68-88, L504-511, L2525, L2555-2628 / <code>bufferorch.cpp</code> L310-322, L437-471, L497-501, L506-512, L916, L1049, L1134, L1168 / <code>buffers_config.j2</code> L36-38, L265-327, L331-348 / <code>buffers_defaults_objects.j2</code> (Mellanox SN2700) / <code>buffers_defaults_t0.j2</code> (Arista 7260CX3) 全行読了。</p>
+</blockquote>
+<!-- /platform -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>BUFFER_POOL</code> 自身の YANG leafref 定義は <code>BUFFER_PROFILE.pool</code> からの被参照のみだが、実装上の処理経路では以下の 4 テーブルを暗黙参照している。</p>
+<h3 id="1-default_lossless_buffer_parameter-config_db">1. DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)<a class="headerlink" href="#1-default_lossless_buffer_parameter-config_db" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先テーブル</strong>: <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code></li>
+<li><strong>参照方向</strong>: 購読 + 読み取り（<code>over_subscribe_ratio</code>、<code>default_dynamic_th</code>）</li>
+<li><strong>条件</strong>: dynamic buffer model (<code>buffermgrdyn</code>) 起動時のみ</li>
+<li><strong>参照元</strong>: <code>buffermgrdyn.cpp:40</code> (<code>m_cfgDefaultLosslessBufferParam</code> メンバ初期化)、<code>buffermgrdyn.cpp:442</code> (<code>handleDefaultLossLessBufferParam</code> ハンドラ登録)、<code>buffermgrdyn.cpp:1978-2040</code> (<code>handleDefaultLossLessBufferParam()</code> 実装)、Lua plugin <code>buffer_headroom_mellanox.lua:105-109</code> / <code>buffer_pool_mellanox.lua:261-268</code></li>
+<li><strong>意味</strong>:</li>
+<li><code>over_subscribe_ratio</code> の変化が Shared Headroom Pool (SHP) の有効/無効を切り替える。非ゼロ→ゼロへの変化は SHP 無効化・全プロファイルの headroom 再計算をトリガする。</li>
+<li><code>default_dynamic_th</code> は <code>m_defaultThreshold</code> に保持され、<code>BUFFER_PROFILE</code> に <code>dynamic_th</code> が未指定の場合のフォールバック値として headroom 計算 Lua plugin に渡される。</li>
+<li><code>ingress_lossless_pool</code> が未設定の状態で SET コマンドを受信すると <code>task_need_retry</code> を返し、プール設定完了まで処理を遅延する (<code>buffermgrdyn.cpp:1987-1992</code>)。</li>
+</ul>
+<h3 id="2-asic_table-state_db">2. ASIC_TABLE (STATE_DB)<a class="headerlink" href="#2-asic_table-state_db" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先テーブル</strong>: <code>ASIC_TABLE</code> (STATE_DB)</li>
+<li><strong>参照方向</strong>: 読み取り（Lua plugin 経由）</li>
+<li><strong>条件</strong>: dynamic buffer model の headroom / pool size 計算時（Mellanox・Barefoot プラットフォームのみ）</li>
+<li><strong>参照元</strong>: <code>buffer_headroom_mellanox.lua:62-88</code>、<code>buffer_pool_mellanox.lua:289-310</code>、<code>buffer_headroom_barefoot.lua:57-75</code>、<code>buffer_pool_barefoot.lua:9-20</code></li>
+<li><strong>意味</strong>:</li>
+<li>Lua plugin が <code>KEYS('ASIC_TABLE*')</code> でエントリを取得し、<code>cell_size</code>（セル単位変換）、<code>pipeline_latency</code>、<code>mac_phy_delay</code>、<code>peer_response_time</code> を読み取る。</li>
+<li>これらのパラメータは headroom サイズ式の定数として使用され、最終的に <code>ingress_lossless_pool</code> の <code>xoff</code> (SHP サイズ) や各プロファイルの headroom に影響する。</li>
+<li><code>ASIC_TABLE</code> が未設定の場合 Lua plugin は算術エラーを起こし headroom 計算が失敗する（<code>buffermgrdyn.cpp:648</code> で WARNING ログ）。</li>
+<li><code>bufferorch.cpp</code> 経由では <code>ASIC_TABLE</code> は参照されない（Lua plugin 専用の読み取り）。</li>
+</ul>
+<h3 id="3-lossless_traffic_pattern-config_db">3. LOSSLESS_TRAFFIC_PATTERN (CONFIG_DB)<a class="headerlink" href="#3-lossless_traffic_pattern-config_db" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先テーブル</strong>: <code>LOSSLESS_TRAFFIC_PATTERN</code></li>
+<li><strong>参照方向</strong>: 読み取り（Lua plugin 経由）</li>
+<li><strong>条件</strong>: dynamic buffer model の headroom 計算時（Mellanox・Barefoot プラットフォームのみ）</li>
+<li><strong>参照元</strong>: <code>buffer_headroom_mellanox.lua:91-103</code>、<code>buffer_headroom_barefoot.lua:80-93</code></li>
+<li><strong>意味</strong>:</li>
+<li><code>mtu</code>（ロスレストラフィックの MTU）と <code>small_packet_percentage</code>（セル利用率ワーストケース補正係数）を読み取り、headroom 計算式に組み込む。</li>
+<li><code>small_packet_percentage</code> が高いほど headroom が大きく算出され、<code>ingress_lossless_pool</code> の xoff (SHP サイズ) が増加する方向に働く。</li>
+<li><code>LOSSLESS_TRAFFIC_PATTERN</code> が未設定の場合、Lua plugin の <code>lossless_mtu</code> / <code>small_packet_percentage</code> が nil となり headroom 計算が失敗する。</li>
+</ul>
+<h3 id="4-port_qos_map-config_db">4. PORT_QOS_MAP (CONFIG_DB)<a class="headerlink" href="#4-port_qos_map-config_db" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先テーブル</strong>: <code>PORT_QOS_MAP</code></li>
+<li><strong>参照方向</strong>: 購読 + 読み取り（<code>pfc_enable</code> フィールド）</li>
+<li><strong>条件</strong>: static buffer model (<code>buffermgr</code>) 起動時のみ</li>
+<li><strong>参照元</strong>: <code>buffermgrd.cpp:201</code> (<code>CFG_PORT_QOS_MAP_TABLE_NAME</code> を購読リストに追加)、<code>buffermgr.cpp:517-519</code> (<code>doPortQosTableTask()</code> ルーティング)、<code>buffermgr.cpp:416-462</code> (<code>doPortQosTableTask()</code> 実装)</li>
+<li><strong>意味</strong>:</li>
+<li><code>pfc_enable</code> フィールドの変化（PFC が有効なキューの変更）を検知すると <code>doSpeedUpdateTask()</code> を呼び出し、該当ポートの headroom プロファイルを再計算して APPL_DB へ書き込む。</li>
+<li>PFC 有効キューが変わると <code>ingress_lossless_pool</code> の実効使用量（PG headroom 合計）が変化するため BUFFER_POOL の間接的な影響を受ける。</li>
+<li><code>PORT_QOS_MAP</code> エントリが未設定の場合、<code>buffermgr.cpp:175</code> のコメントにあるとおり <code>BUFFER_PG</code> 通知をクリアして <code>pfc_enable</code> が届いてから再処理する遅延ロジックが働く。</li>
+</ul>
+<h3 id="_20">参照関係サマリ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>BUFFER_POOL
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  ├─ [暗黙/dynamic-only] DEFAULT_LOSSLESS_BUFFER_PARAMETER  (over_subscribe_ratio → SHP on/off、default_dynamic_th → フォールバック閾値)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  ├─ [暗黙/lua-only]     STATE_DB.ASIC_TABLE                (cell_size / pipeline_latency / mac_phy_delay / peer_response_time → headroom 計算定数)
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  ├─ [暗黙/lua-only]     LOSSLESS_TRAFFIC_PATTERN           (mtu / small_packet_percentage → headroom 計算パラメータ)
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  └─ [暗黙/static-only]  PORT_QOS_MAP                       (pfc_enable → headroom 再計算トリガ)
+</span></code></pre></div>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>buffermgrdyn.cpp</code> L40, L150-153, L442, L605-815, L1978-2040 読了 / <code>buffermgr.cpp</code> L167-176, L413-462, L517-519 読了 / <code>buffermgrd.cpp</code> L183-201 読了 / <code>buffer_headroom_mellanox.lua</code> L9-115 読了 / <code>buffer_pool_mellanox.lua</code> L261-310 読了 / <code>buffer_headroom_barefoot.lua</code> L8-93 読了 / <code>buffer_pool_barefoot.lua</code> L9-20 読了。</p>
+</blockquote>
+<!-- /cross-refs -->
+<!-- ordering -->
+<h2 id="phase-b">登録順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>BUFFER_POOL → BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE の 3 段が依存関係を形成する。
+誤順序で登録すると <code>task_need_retry</code> や SAI create-only 属性の乖離が生じる。</p>
+<h3 id="1-pool-profile-pgqueue">1. Pool → Profile → PG/Queue の必須順<a class="headerlink" href="#1-pool-profile-pgqueue" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>テーブル</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>BUFFER_POOL</code></td>
+<td><code>BUFFER_PROFILE.pool</code> leafref の参照先が未存在だと <code>ref_resolve_status::not_resolved</code> → <code>task_need_retry</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>BUFFER_PROFILE</code></td>
+<td>PG/Queue がプロファイルを参照。Pool が SAI 登録済みでないと <code>resolveFieldRefValue</code> が pool OID を解決できない</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code></td>
+<td>ポートが admin up になる前にプロファイルを適用しないと WARN ログが出力される</td>
+</tr>
+</tbody>
+</table>
+<p>ソース: <code>bufferorch.cpp:640-662</code> — <code>BUFFER_PROFILE</code> の pool 解決で <code>ref_resolve_status::not_resolved</code> を検出すると <code>task_need_retry</code> を返す。<br />
+ソース: <code>bufferorch.cpp:1206-1210</code> (BUFFER_QUEUE) / <code>bufferorch.cpp:1576-1580</code> (BUFFER_PG) — ポートが up 後にプロファイルを適用すると <code>SWSS_LOG_WARN</code> を出力。</p>
+<h3 id="2-sai-create-only-pool">2. SAI create-only 制約（Pool）<a class="headerlink" href="#2-sai-create-only-pool" title="Permanent link">&para;</a></h3>
+<p><code>BUFFER_POOL</code> の <code>type</code> (<code>SAI_BUFFER_POOL_ATTR_TYPE</code>) と <code>mode</code> (<code>SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE</code>) は <strong>SAI create-only 属性</strong>。
+既存 SAI オブジェクトへの更新 SET では LOG_INFO のみでスキップされ、<strong>SAI には非反映</strong>となる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>既存 pool に SET → bufferorch が type / mode フィールドを検出
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  → &quot;Skip setting buffer pool type/mode ... for pool ...&quot; (LOG_INFO のみ)
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  → SAI set_buffer_pool_attribute は呼ばれない
+</span></code></pre></div>
+<p>ソース: <code>bufferorch.cpp:437-441</code> (type)、<code>bufferorch.cpp:467-471</code> (mode)</p>
+<p>同様に <code>BUFFER_PROFILE.pool</code> (<code>SAI_BUFFER_PROFILE_ATTR_POOL_ID</code>) と threshold mode も create-only。
+プロファイル作成後に pool を変更しても SAI には反映されない (<code>bufferorch.cpp:656-658</code>、<code>bufferorch.cpp:694-712</code>)。</p>
+<h3 id="3-lua-plugin-dynamic-buffer-model">3. Lua plugin の起動順（dynamic buffer model）<a class="headerlink" href="#3-lua-plugin-dynamic-buffer-model" title="Permanent link">&para;</a></h3>
+<p><code>BufferMgrDynamic</code> コンストラクタは以下の順序で 3 本の Lua plugin を Redis に登録する。
+いずれか 1 本でもロードに失敗すると例外をキャッチして <code>buffermgrd</code> が起動中断する。</p>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>plugin ファイル名</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>buffer_headroom_&lt;platform&gt;.lua</code></td>
+<td>headroom サイズ計算 (ASIC_TABLE + LOSSLESS_TRAFFIC_PATTERN 参照)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>buffer_pool_&lt;platform&gt;.lua</code></td>
+<td>プールサイズ・xoff (SHP) 計算</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>buffer_check_headroom_&lt;platform&gt;.lua</code></td>
+<td>headroom 超過チェック</td>
+</tr>
+</tbody>
+</table>
+<p>ソース: <code>buffermgrdyn.cpp:76-78</code> (plugin 名生成)、<code>buffermgrdyn.cpp:108-114</code> (ロード順序)、<code>buffermgrdyn.cpp:121</code> (起動中断ログ)</p>
+<p>Lua plugin がロード完了する前に <code>handleBufferPoolTable()</code> で pool サイズ計算が要求されると、
+Lua script SHA が空のまま <code>evalsha</code> が呼ばれてエラーになる。
+このため <strong>plugin ロードは pool エントリ処理よりも必ず先行する</strong>。</p>
+<h3 id="4-zero-profile">4. zero profile の登録順<a class="headerlink" href="#4-zero-profile" title="Permanent link">&para;</a></h3>
+<p>zero buffer pool を zero buffer profile より先に CONFIG_DB に登録しなければならない。
+<code>buffermgrdyn.cpp:236-237</code> のコメント通り、<code>buffers_*.json</code> テンプレート内のエントリ順序が依存関係を決定する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>// They are loaded into APPL_DB in an order in which they occur in the json file,
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>// which means it&#39;s vendor&#39;s responsibility to guarantee the order reflects
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>// the dependency among zero pools and profiles.
+</span></code></pre></div>
+<p>zero profile の削除は zero pool よりも先に行う（依存関係の逆順）。<br />
+ソース: <code>buffermgrdyn.cpp:239</code> — <code>The zero profiles are removed first and then the zero pools.</code></p>
+<h3 id="_21">まとめ<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>[起動時]
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  1. Lua plugin ロード (headroom → pool → check_headroom)
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  2. BUFFER_POOL SAI 作成  ← type / mode は create-only
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  3. BUFFER_PROFILE SAI 作成 (pool OID 解決後)
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  4. BUFFER_PG / BUFFER_QUEUE 適用 (ポート admin-up 前に完了)
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>[削除時]
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>  BUFFER_PG/QUEUE → BUFFER_PROFILE → BUFFER_POOL (zero: profile 先削除 → pool 削除)
+</span></code></pre></div>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>bufferorch.cpp</code> L437-471, L640-662, L694-712, L1206-1210, L1576-1580 / <code>buffermgrdyn.cpp</code> L76-78, L108-114, L121, L232-239 読了。</p>
+</blockquote>
+<!-- /ordering -->
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>BufferOrch</code> は <code>BUFFER_POOL</code> の SET/DEL 処理後に APPL_STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB へ副次書き込みを行う。<code>buffermgrdyn</code> は STATE_DB を読み取るのみで書き込みは発生しない。</p>
+<h3 id="appl_state_db-app_buffer_pool_table">APPL_STATE_DB / <code>APP_BUFFER_POOL_TABLE</code><a class="headerlink" href="#appl_state_db-app_buffer_pool_table" title="Permanent link">&para;</a></h3>
+<p>SAI buffer pool 操作完了後、<code>m_publisher.publish()</code> が APPL_STATE_DB へ書き込む。
+書き込みは <strong>xoff (Shared Headroom Pool) フィールドが空でない場合のみ</strong>発生する。</p>
+<table>
+<thead>
+<tr>
+<th>トリガ</th>
+<th>フィールド</th>
+<th>値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SHP (xoff) 有効プールの SAI 適用成功 (SET)</td>
+<td><code>xoff</code></td>
+<td>計算済み SHP サイズ (bytes 文字列)</td>
+<td><code>bufferorch.cpp:555</code></td>
+</tr>
+<tr>
+<td>DEL 操作完了後</td>
+<td>— (エントリ削除)</td>
+<td>—</td>
+<td><code>bufferorch.cpp:589</code></td>
+</tr>
+</tbody>
+</table>
+<p>実装: <code>orch.h:382</code> — <code>ResponsePublisher m_publisher{"APPL_STATE_DB"}</code>。
+<code>response_publisher.cpp:141-143</code> — SAI 成功時は intent_attrs を state_attrs として APPL_STATE_DB に書き込む。</p>
+<div class="admonition note">
+<p class="admonition-title">通常プール（xoff なし）は書込なし</p>
+<p><code>ingress_lossy_pool</code> / <code>egress_lossless_pool</code> 等 xoff フィールドを持たないプールでは <code>m_publisher.publish()</code> は呼ばれない (<code>bufferorch.cpp:549-556</code>)。</p>
+</div>
+<h3 id="counters_db-counters_buffer_pool_name_map">COUNTERS_DB / <code>COUNTERS_BUFFER_POOL_NAME_MAP</code><a class="headerlink" href="#counters_db-counters_buffer_pool_name_map" title="Permanent link">&para;</a></h3>
+<p>新規プール作成時に pool 名 → SAI OID マッピングを <code>COUNTERS_DB</code> の hash に登録する。</p>
+<table>
+<thead>
+<tr>
+<th>トリガ</th>
+<th>操作</th>
+<th>フィールド</th>
+<th>値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI pool 新規作成成功 (SET)</td>
+<td><code>hset</code></td>
+<td><code>&lt;pool_name&gt;</code></td>
+<td>SAI OID 文字列</td>
+<td><code>bufferorch.cpp:546</code></td>
+</tr>
+<tr>
+<td>SAI pool 削除成功 (DEL)</td>
+<td><code>hdel</code></td>
+<td><code>&lt;pool_name&gt;</code></td>
+<td>—</td>
+<td><code>bufferorch.cpp:586</code></td>
+</tr>
+</tbody>
+</table>
+<p>実装: <code>bufferorch.cpp:55</code> — <code>CounterNameMapUpdater("COUNTERS_DB", COUNTERS_BUFFER_POOL_NAME_MAP)</code>。</p>
+<div class="admonition note">
+<p class="admonition-title">既存プール更新時は登録スキップ</p>
+<p>SET 操作が既存プールへの更新の場合は <code>setCounterNameMap</code> が呼ばれず COUNTERS_DB への書き込みは発生しない (<code>bufferorch.cpp:540-547</code>)。</p>
+</div>
+<h3 id="flex_counter_db-buffer_pool_watermark">FLEX_COUNTER_DB / <code>BUFFER_POOL_WATERMARK</code><a class="headerlink" href="#flex_counter_db-buffer_pool_watermark" title="Permanent link">&para;</a></h3>
+<p>バッファプール watermark のポーリング設定を FLEX_COUNTER_DB に書き込む。
+FlexCounterOrch から <code>FLEX_COUNTER_STATUS=enable</code> を受信した際に全プール分を一括登録する。</p>
+<table>
+<thead>
+<tr>
+<th>トリガ</th>
+<th>操作</th>
+<th>キー</th>
+<th>フィールド</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_STATUS=enable</code> 受信時</td>
+<td><code>set</code></td>
+<td><code>BUFFER_POOL_WATERMARK:&lt;sai_oid&gt;</code></td>
+<td><code>BUFFER_POOL_COUNTER_ID_LIST=&lt;stat_list&gt;</code></td>
+<td><code>bufferorch.cpp:358</code></td>
+</tr>
+<tr>
+<td>プール削除時 (DEL)</td>
+<td><code>del</code></td>
+<td><code>BUFFER_POOL_WATERMARK:&lt;sai_oid&gt;</code></td>
+<td>—</td>
+<td><code>bufferorch.cpp:281-282</code></td>
+</tr>
+<tr>
+<td>起動時 (group 初期化)</td>
+<td><code>set</code></td>
+<td><code>FLEX_COUNTER_GROUP_TABLE:BUFFER_POOL_WATERMARK</code></td>
+<td>plugin SHA + poll interval</td>
+<td><code>bufferorch.cpp:247-252</code></td>
+</tr>
+</tbody>
+</table>
+<p>実装: <code>bufferorch.cpp:62</code> — コンストラクタで <code>initFlexCounterGroupTable()</code> を呼び出し。
+<code>saihelper.cpp:323</code> — <code>gFlexCounterDb = make_unique&lt;DBConnector&gt;("FLEX_COUNTER_DB", 0)</code> (DB 番号 5)。</p>
+<div class="admonition note">
+<p class="admonition-title">watermark clear 非対応 ASIC</p>
+<p>SAI <code>clear_buffer_pool_stats</code> が <code>NOT_SUPPORTED</code> / <code>NOT_IMPLEMENTED</code> を返す ASIC では <code>stats_mode=READ</code> で登録し watermark clear を抑制する (<code>bufferorch.cpp:310-322</code>)。</p>
+</div>
+<h3 id="state_db-buffer_max_param_table">STATE_DB / <code>BUFFER_MAX_PARAM_TABLE</code>（読み取りのみ）<a class="headerlink" href="#state_db-buffer_max_param_table" title="Permanent link">&para;</a></h3>
+<p><code>buffermgrdyn.cpp</code> は STATE_DB の <code>BUFFER_MAX_PARAM_TABLE</code> から MMU サイズ・最大 PG 数・最大キュー数を <strong>読み取る</strong>のみ (<code>buffermgrdyn.cpp:133-137, 1873-1966</code>)。書き込みは <code>portsorch</code> が行う。</p>
+<h3 id="_22">副次書込なし<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ASIC_DB</strong>: SAI 経由で syncd が書き込む（orchagent の直接書込なし）。</li>
+<li><strong>STATE_DB</strong> (書き込み側): <code>bufferorch</code>/<code>buffermgrdyn</code> は <code>BUFFER_MAX_PARAM_TABLE</code> を読むのみ。</li>
+</ul>
+<!-- /side-effects -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-swss/cfgmgr/buffermgrdyn.cpp</code>, <code>cfgmgr/buffermgr.cpp</code>, <code>orchagent/bufferorch.cpp</code>, <code>orchagent/bufferorch.h</code></p>
+<h3 id="pool">pool 名マクロ<a class="headerlink" href="#pool" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INGRESS_LOSSLESS_PG_POOL_NAME</code></td>
+<td><code>"ingress_lossless_pool"</code></td>
+<td>xoff 書き込みチェック・SHP 計算・mode 取得の基準プール名としてコードにハードコード</td>
+<td><code>buffermgrdyn.h:14</code>, <code>buffermgr.h:13</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>egress_lossless_pool</code> / <code>egress_lossy_pool</code> / <code>ingress_lossy_pool</code> はコード内でハードコードされていない。これらは CONFIG_DB の key から動的に取得される。<code>ingress_lossless_pool</code> のみ SHP / xoff 処理で特別扱いされる。</p>
+</blockquote>
+<h3 id="type-bufferorchh"><code>type</code> フィールド値定数 (bufferorch.h)<a class="headerlink" href="#type-bufferorchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>SAI 対応</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>buffer_value_ingress</code></td>
+<td><code>"ingress"</code></td>
+<td><code>SAI_BUFFER_POOL_TYPE_INGRESS</code></td>
+<td><code>bufferorch.h:31</code>, <code>bufferorch.cpp:443</code></td>
+</tr>
+<tr>
+<td><code>buffer_value_egress</code></td>
+<td><code>"egress"</code></td>
+<td><code>SAI_BUFFER_POOL_TYPE_EGRESS</code></td>
+<td><code>bufferorch.h:32</code>, <code>bufferorch.cpp:447</code></td>
+</tr>
+<tr>
+<td><code>buffer_value_both</code></td>
+<td><code>"both"</code></td>
+<td><code>SAI_BUFFER_POOL_TYPE_BOTH</code></td>
+<td><code>bufferorch.cpp:451</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="mode-bufferorchh"><code>mode</code> フィールド値定数 (bufferorch.h)<a class="headerlink" href="#mode-bufferorchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>SAI 対応</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>buffer_pool_mode_dynamic_value</code></td>
+<td><code>"dynamic"</code></td>
+<td><code>SAI_BUFFER_POOL_THRESHOLD_MODE_DYNAMIC</code></td>
+<td><code>bufferorch.h:21</code>, <code>bufferorch.cpp:476</code></td>
+</tr>
+<tr>
+<td><code>buffer_pool_mode_static_value</code></td>
+<td><code>"static"</code></td>
+<td><code>SAI_BUFFER_POOL_THRESHOLD_MODE_STATIC</code></td>
+<td><code>bufferorch.h:22</code>, <code>bufferorch.cpp:480</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai">SAI 識別子<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>SAI 識別子</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_BUFFER_POOL_ATTR_SIZE</code></td>
+<td><code>size</code> フィールドの SAI 属性 ID</td>
+<td><code>bufferorch.cpp:427</code></td>
+</tr>
+<tr>
+<td><code>SAI_BUFFER_POOL_ATTR_TYPE</code></td>
+<td><code>type</code> フィールドの SAI 属性 ID (create-only)</td>
+<td><code>bufferorch.cpp:460</code></td>
+</tr>
+<tr>
+<td><code>SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE</code></td>
+<td><code>mode</code> フィールドの SAI 属性 ID (create-only)</td>
+<td><code>bufferorch.cpp:487</code></td>
+</tr>
+<tr>
+<td><code>SAI_BUFFER_POOL_ATTR_XOFF_SIZE</code></td>
+<td><code>xoff</code> フィールドの SAI 属性 ID</td>
+<td><code>bufferorch.cpp:493</code></td>
+</tr>
+<tr>
+<td><code>SAI_BUFFER_POOL_STAT_WATERMARK_BYTES</code></td>
+<td>pool 使用量 watermark 統計 ID</td>
+<td><code>bufferorch.cpp:31</code></td>
+</tr>
+<tr>
+<td><code>SAI_BUFFER_POOL_STAT_XOFF_ROOM_WATERMARK_BYTES</code></td>
+<td>SHP (xoff room) watermark 統計 ID</td>
+<td><code>bufferorch.cpp:32</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="flex-counter-counter-db">Flex Counter / Counter DB 定数<a class="headerlink" href="#flex-counter-counter-db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"BUFFER_POOL_WATERMARK_STAT_COUNTER"</code></td>
+<td>FLEX_COUNTER_DB の group name (= <code>FLEX_COUNTER_GROUP_TABLE</code> キー)</td>
+<td><code>bufferorch.h:15</code></td>
+</tr>
+<tr>
+<td><code>BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS</code></td>
+<td><code>"60000"</code> (= 60 秒)</td>
+<td>watermark ポーリング間隔 (ms)。CONFIG_DB から変更不可</td>
+<td><code>bufferorch.h:16</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_BUFFER_POOL_NAME_MAP</code></td>
+<td><code>"COUNTERS_BUFFER_POOL_NAME_MAP"</code></td>
+<td>COUNTERS_DB の pool 名→SAI OID マッピング hash 名</td>
+<td><code>schema.h:238</code>, <code>bufferorch.cpp:55</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_23">特記事項<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>type</code> / <code>mode</code> は SAI create-only 属性</strong>: 既存プールへの更新 SET 時にこれらのフィールドが含まれても LOG_INFO のみでスキップされ SAI に非反映 (<code>bufferorch.cpp:437-471</code>)。YANG にはこの制約の記述なし。</li>
+<li><strong><code>buffer_value_both</code> の乖離</strong>: <code>buffermgrdyn.cpp:2544-2549</code> で <code>"ingress"</code> 以外はすべて <code>BUFFER_EGRESS</code> に分類するため、<code>type=both</code> を指定すると内部キャッシュの <code>direction</code> は <code>BUFFER_EGRESS</code> になる (SAI には <code>SAI_BUFFER_POOL_TYPE_BOTH</code> が渡るが headroom 計算が ingress 側を参照しなくなる)。</li>
+<li><strong>ポーリング間隔非設定</strong>: <code>BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS = "60000"</code> はコードハードコード。CONFIG_DB からの変更手段なし。</li>
+</ul>
+<!-- /constants -->
 <!-- glossary-links-injected: 44ea702536a5 -->
 
 <div class="footnote">

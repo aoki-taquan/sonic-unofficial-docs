@@ -25043,34 +25043,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照テーブル (Phase C)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設計メモ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -25182,7 +25154,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差
@@ -25194,7 +25166,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         根拠
@@ -35756,34 +35728,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照テーブル (Phase C)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設計メモ
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35895,7 +35839,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差
@@ -35907,7 +35851,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         根拠
@@ -36552,73 +36496,6 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </tbody>
 </table>
 <!-- /ordering -->
-
-<!-- cross-refs -->
-<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
-<p><code>bmpcfgd.py</code> および <code>frrcfgd.py</code> を全行走査して検出した、<code>BMP</code> テーブルが暗黙的に依存・生成する関連テーブル。</p>
-<table>
-<thead>
-<tr>
-<th>参照先</th>
-<th>DB</th>
-<th>方向</th>
-<th>直接/間接</th>
-<th>条件</th>
-<th>ソース</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>BGP_NEIGHBOR*</code></td>
-<td><code>BMP_STATE_DB</code></td>
-<td>BMP → BMP_STATE_DB (delete)</td>
-<td>間接（openbmpd が populate、bmpcfgd が reset）</td>
-<td><code>BMP.bgp_neighbor_table</code> 変更時に常時クリア</td>
-<td><code>bmpcfgd.py</code> L63</td>
-</tr>
-<tr>
-<td><code>BGP_RIB_IN_TABLE*</code></td>
-<td><code>BMP_STATE_DB</code></td>
-<td>BMP → BMP_STATE_DB (delete)</td>
-<td>間接（openbmpd が populate、bmpcfgd が reset）</td>
-<td><code>BMP.bgp_rib_in_table</code> 変更時に常時クリア</td>
-<td><code>bmpcfgd.py</code> L64</td>
-</tr>
-<tr>
-<td><code>BGP_RIB_OUT_TABLE*</code></td>
-<td><code>BMP_STATE_DB</code></td>
-<td>BMP → BMP_STATE_DB (delete)</td>
-<td>間接（openbmpd が populate、bmpcfgd が reset）</td>
-<td><code>BMP.bgp_rib_out_table</code> 変更時に常時クリア</td>
-<td><code>bmpcfgd.py</code> L65</td>
-</tr>
-<tr>
-<td><code>BGP_NEIGHBOR</code></td>
-<td><code>CONFIG_DB</code></td>
-<td>BGP_NEIGHBOR → BMP dump</td>
-<td>間接（openbmpd の peer リストとして利用）</td>
-<td><code>bgp_neighbor_table=true</code> 時、openbmpd が BGP_NEIGHBOR の peer を BMP dump 対象に</td>
-<td><code>bmpcfgd.py</code> L41; <code>frrcfgd.py</code> L89</td>
-</tr>
-<tr>
-<td><code>BGP_GLOBALS</code></td>
-<td><code>CONFIG_DB</code></td>
-<td>BGP_GLOBALS → FRR BGP context</td>
-<td>間接（FRR BGP セッションの前提）</td>
-<td>BMP が送出する peer 情報は FRR bgpd の BGP_GLOBALS 由来の AS・router-id を含む</td>
-<td><code>frrcfgd.py</code> L81</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_20">設計メモ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>bmpcfgd.py</code> は <code>BGP_NEIGHBOR</code> / <code>BGP_GLOBALS</code> を <strong>直接読まない</strong>。openbmpd へのライフサイクル管理（stop → reset → start）のみを担う</li>
-<li><code>frrcfgd.py</code> 内に <code>bmp</code> / <code>BMP</code> 文字列は <strong>0件</strong>。BMP 設定の FRR 注入は <code>bgpd.main.conf.j2</code> テンプレートによりコンテナ起動時に静的に実施される</li>
-<li><code>BMP_STATE_DB</code> への書込は openbmpd が非同期で実施。<code>bmpcfgd</code> は <strong>削除のみ</strong>（<code>delete_all_by_pattern</code>）を直接実行する</li>
-<li><code>BGP_MONITORS</code> テーブル（BMP collector 接続定義）は <code>bmpcfgd</code> とは別の管理パスであり、BMP ページの <code>related.config_db</code> に列挙済み</li>
-</ul>
-<!-- /cross-refs -->
-
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <h3 id="yang-vs-fallback">YANG デフォルト vs 実行時 fallback<a class="headerlink" href="#yang-vs-fallback" title="Permanent link">&para;</a></h3>
@@ -36784,9 +36661,9 @@ YANG バリデーションを通った値は常に正しく処理される。た
 <!-- /constants -->
 
 <!-- platform -->
-<h2 id="_21">プラットフォーム差<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
+<h2 id="_20">プラットフォーム差<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
 <p><strong>プラットフォーム差なし。</strong> BMP は全プラットフォームで同一動作する。</p>
-<h3 id="_22">根拠<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<h3 id="_21">根拠<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

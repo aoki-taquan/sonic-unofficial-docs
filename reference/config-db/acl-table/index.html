@@ -23204,6 +23204,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#sai-acl-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ACL table 作成時に設定される属性定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_rule-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_RULE priority 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -35926,6 +35948,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#sai-acl-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ACL table 作成時に設定される属性定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_rule-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_RULE priority 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -37479,8 +37523,86 @@
 </tr>
 </tbody>
 </table>
+<h3 id="sai-acl-table">SAI ACL table 作成時に設定される属性定数<a class="headerlink" href="#sai-acl-table" title="Permanent link">&para;</a></h3>
+<p><code>AclTable::create()</code> (<code>aclorch.cpp:2823-2847</code>) が <code>sai_acl_api-&gt;create_acl_table()</code> を呼ぶ際に設定する SAI 属性:</p>
+<table>
+<thead>
+<tr>
+<th>SAI 属性定数</th>
+<th>設定値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_ACL_TABLE_ATTR_ACL_STAGE</code></td>
+<td><code>SAI_ACL_STAGE_INGRESS</code> / <code>SAI_ACL_STAGE_EGRESS</code></td>
+<td><code>aclorch.cpp:2842</code></td>
+</tr>
+<tr>
+<td><code>SAI_ACL_TABLE_ATTR_ACL_BIND_POINT_TYPE_LIST</code></td>
+<td>バインドポイントリスト (PORT/LAG 等)</td>
+<td><code>aclorch.cpp:2823</code></td>
+</tr>
+<tr>
+<td><code>SAI_ACL_TABLE_ATTR_ACL_ACTION_TYPE_LIST</code></td>
+<td>許可アクションリスト</td>
+<td><code>aclorch.cpp:2835</code></td>
+</tr>
+<tr>
+<td><code>SAI_ACL_TABLE_ATTR_FIELD_*</code></td>
+<td>マッチフィールド群 (自動付与含む)</td>
+<td><code>aclorch.cpp:2614-2650</code></td>
+</tr>
+<tr>
+<td><code>SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE</code></td>
+<td>L4 ポート範囲 match (BRCM EGRESS では省略)</td>
+<td><code>aclorch.cpp:603,2614</code></td>
+</tr>
+<tr>
+<td><code>SAI_ACL_TABLE_ATTR_FIELD_IN_PORTS</code></td>
+<td>PFCWD / DROP type 固有</td>
+<td><code>aclorch.cpp:436,448</code></td>
+</tr>
+<tr>
+<td><code>SAI_ACL_TABLE_ATTR_FIELD_ACL_USER_META</code></td>
+<td>EGR_SET_DSCP type 固有</td>
+<td><code>aclorch.cpp:494</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="acl_rule-priority">ACL_RULE priority 定数<a class="headerlink" href="#acl_rule-priority" title="Permanent link">&para;</a></h3>
+<p>ACL_RULE の <code>PRIORITY</code> フィールド (<code>aclorch.h:25</code>: <code>#define RULE_PRIORITY "PRIORITY"</code>) に対応する priority 範囲は ASIC 問い合わせで動的に決定される:</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>型</th>
+<th>初期値</th>
+<th>取得先</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AclRule::m_minPriority</code></td>
+<td><code>sai_uint32_t</code></td>
+<td><code>0</code></td>
+<td><code>SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY</code></td>
+<td><code>aclorch.cpp:22, 3689</code></td>
+</tr>
+<tr>
+<td><code>AclRule::m_maxPriority</code></td>
+<td><code>sai_uint32_t</code></td>
+<td><code>0</code></td>
+<td><code>SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY</code></td>
+<td><code>aclorch.cpp:23, 3690</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>AclOrch::init()</code> 起動時に <code>sai_switch_api-&gt;get_switch_attribute()</code> で取得 (<code>aclorch.cpp:3689-3700</code>)。取得失敗時は min/max ともに 0 のまま（全 priority を reject）。CONFIG_DB に記録されるフィールドキー: <code>"PRIORITY"</code> (<code>aclorch.h:25</code>)。<code>setPriority()</code> で範囲チェックし範囲外は erase (<code>aclorch.cpp:1656-1662</code>)。</p>
 <blockquote>
-<p><strong>スキャン証跡</strong>: <code>acltable.h:1-76</code> 全行精読、<code>aclorch.h:62-63</code>、<code>aclorch.cpp:42-44,105-106,523-526,6088-6105</code>、<code>schema.h:94-95,514</code> 確認。全マクロ 17 個 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。</p>
+<p><strong>スキャン証跡</strong>: <code>acltable.h:1-76</code> 全行精読、<code>aclorch.h:25,62-63</code>、<code>aclorch.cpp:22-23,42-44,105-106,436,448,494,523-526,603,2614-2650,2823-2847,3689-3700,6088-6105</code>、<code>schema.h:94-95,514</code> 確認。全マクロ 17 個 + SAI 属性 7 件 + priority 定数 2 件 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。</p>
 </blockquote>
 <!-- /constants -->
 

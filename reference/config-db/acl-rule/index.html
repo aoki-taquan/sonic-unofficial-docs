@@ -22932,6 +22932,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#sai-asic-capability-action-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ASIC capability — action list 動的照会
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-acl-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ACL エントリ優先度範囲 (ASIC 上限)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -23026,6 +23048,39 @@
     <span class="md-ellipsis">
       
         SET / DEL 操作順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PRIORITY 値の比較順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stage-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage 別 action 適用順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-acl_entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI acl_entry 属性の設定順序
       
     </span>
   </a>
@@ -35870,6 +35925,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#sai-asic-capability-action-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ASIC capability — action list 動的照会
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-acl-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ACL エントリ優先度範囲 (ASIC 上限)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -35964,6 +36041,39 @@
     <span class="md-ellipsis">
       
         SET / DEL 操作順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PRIORITY 値の比較順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stage-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage 別 action 適用順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-acl_entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI acl_entry 属性の設定順序
       
     </span>
   </a>
@@ -37856,6 +37966,77 @@ IPv6 パケット対象の mirror ルールを適用するには <code>type=MIRR
 <p><code>FLOW_OP</code> / <code>INT_SESSION</code> / <code>DROP_REPORT_ENABLE</code> / <code>TAIL_DROP_REPORT_ENABLE</code> 等の DTel 系 action は
 barefoot / vs 以外では <code>DTelOrch</code> が起動しないため、設定しても SAI に反映されない (<code>orchdaemon.cpp:502-530</code>)。</p>
 </div>
+<h3 id="sai-asic-capability-action-list">SAI ASIC capability — action list 動的照会<a class="headerlink" href="#sai-asic-capability-action-list" title="Permanent link">&para;</a></h3>
+<p><code>AclOrch::queryAclActionCapability()</code> (<code>aclorch.cpp:3975-4058</code>) は init 時に SAI を問い合わせて Ingress/Egress ごとにサポートされる action type 一覧を取得する。ASIC によって返す action set が異なる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>SAI_SWITCH_ATTR_MAX_ACL_ACTION_COUNT → action_list バッファサイズ取得
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>SAI_SWITCH_ATTR_ACL_STAGE_INGRESS / SAI_SWITCH_ATTR_ACL_STAGE_EGRESS → stage ごとの action_list + is_action_list_mandatory 取得
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>デフォルト (SAI 非対応時)</strong></td>
+<td>SAI が <code>SAI_STATUS_SUCCESS</code> を返さない場合は <code>initDefaultAclActionCapabilities()</code> を呼ぶ。Ingress デフォルト = <code>PACKET_ACTION, MIRROR_INGRESS, NO_NAT</code>。Egress デフォルト = <code>PACKET_ACTION</code> のみ (<code>aclorch.cpp:170-196</code>)</td>
+</tr>
+<tr>
+<td><strong>is_action_list_mandatory</strong></td>
+<td>ASIC が <code>sai_acl_capability_t.is_action_list_mandatory = true</code> を返した場合、ACL_TABLE 作成時に action リストを必ず指定する必要がある。Mellanox Spectrum は通常 <code>false</code>。Broadcom XGS/DNX は <code>false</code>。テーブル作成コード (<code>aclorch.cpp:4760-4764</code>) は <code>addMandatoryActions()</code> で不足 action を自動補完する</td>
+</tr>
+<tr>
+<td><strong>PACKET_ACTION 有効値</strong></td>
+<td><code>aclPacketActionLookup</code> に定義された <code>FORWARD</code> / <code>DROP</code> / <code>COPY</code> の 3 値のみ有効 (<code>aclorch.h:83-85, aclorch.cpp:143-148</code>)。<code>TRAP</code> / <code>LOG</code> / <code>DENY</code> 等は CONFIG_DB から設定不可。<code>sai_query_attribute_enum_values_capability</code> でベンダー実装値を照会するが、libsairedis 未対応のため現行実装では全値サポートと仮定する (<code>aclorch.cpp:4042-4051</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">PACKET_ACTION 差異 (Mellanox / Broadcom)</p>
+<p>SONiC レイヤでは FORWARD / DROP / COPY の 3 値のみ受け付ける。ASIC レベルでの <code>SAI_PACKET_ACTION_TRAP</code> / <code>SAI_PACKET_ACTION_LOG</code> 等は <code>aclPacketActionLookup</code> に未登録のため <code>PACKET_ACTION</code> フィールドからは指定できない。Mellanox Spectrum と Broadcom XGS はいずれもこの 3 値を SAI でサポートするが、Mellanox は Egress で <code>PACKET_ACTION</code> のみをデフォルト capability として宣言し、Broadcom は通常 <code>PACKET_ACTION + REDIRECT</code> を宣言する。実際のサポート値は <code>STATE_DB:ACL_ACTION|PACKET_ACTION</code> を参照のこと (<code>aclorch.cpp:4051-4090</code>)。</p>
+</div>
+<h3 id="sai-acl-asic">SAI ACL エントリ優先度範囲 (ASIC 上限)<a class="headerlink" href="#sai-acl-asic" title="Permanent link">&para;</a></h3>
+<p><code>AclOrch::init()</code> (<code>aclorch.cpp:3689-3710</code>) は DPU スイッチタイプ (<code>gMySwitchType == "dpu"</code>) を除いて SAI から優先度範囲を照会し <code>AclRule::setRulePriorities()</code> で設定する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY  → 最小優先度
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY  → 最大優先度
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>優先度範囲 (典型値)</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mellanox Spectrum</td>
+<td>1 〜 16383</td>
+<td>SAI 照会値。PRIORITY フィールド最大値はこの上限に制約</td>
+</tr>
+<tr>
+<td>Broadcom XGS</td>
+<td>1 〜 65535</td>
+<td>SAI 照会値。実際値は ASIC 世代に依存</td>
+</tr>
+<tr>
+<td>Broadcom DNX</td>
+<td>1 〜 65535</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>DPU (<code>gMySwitchType="dpu"</code>)</td>
+<td>照会しない</td>
+<td><code>queryAclActionCapability()</code> 自体をスキップ (<code>aclorch.cpp:3687-3708</code>)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>CONFIG_DB の <code>PRIORITY</code> 値がこの上限を超えると <code>sai_acl_api-&gt;create_acl_entry()</code> が <code>SAI_STATUS_INVALID_ATTR_VALUE</code> を返し rule INACTIVE になる。</li>
+<li>照会失敗時は <code>handleSaiGetStatus()</code> が <code>AclOrch</code> 初期化例外をスローする (<code>aclorch.cpp:3701-3706</code>)。</li>
+</ul>
 <!-- /platform -->
 
 <!-- cross-refs -->
@@ -38194,6 +38375,53 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 </tr>
 </tbody>
 </table>
+<h3 id="priority">PRIORITY 値の比較順序<a class="headerlink" href="#priority" title="Permanent link">&para;</a></h3>
+<p>SAI はルールを PRIORITY 値の<strong>数値降順</strong>で評価する（高い値 = 高い優先度）。</p>
+<ul>
+<li><code>AclOrch</code> 初期化時に <code>SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY</code> / <code>SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY</code> を SAI に問い合わせて有効範囲を取得する (<code>aclorch.cpp:3689-3696</code>)。</li>
+<li><code>setPriority()</code> (<code>aclorch.cpp:1654-1662</code>) は範囲外の値を拒否（<code>SWSS_LOG_ERROR</code> + <code>return false</code>）し、rule は INACTIVE になる。</li>
+<li><code>acl_loader</code> は <code>PRIORITY = max_priority - sequence_id</code>（<code>max_priority=10000</code>）で降順割り当て; <code>acl_app.go</code> は <code>MAX_PRIORITY=65536</code> を基準とするため、同 sequence_id でも経路によって格納値が異なる点に注意。</li>
+<li><code>AclRule::update()</code> は <code>m_priority != updatedRule.m_priority</code> のとき <code>SAI_ACL_ENTRY_ATTR_PRIORITY</code> を <code>set_acl_entry_attribute()</code> で runtime 更新できる (<code>aclorch.cpp:1534-1547</code>)。更新は原子的に行われ、同テーブル内の他ルールの評価順序に影響する。</li>
+</ul>
+<h3 id="stage-action">stage 別 action 適用順序<a class="headerlink" href="#stage-action" title="Permanent link">&para;</a></h3>
+<p>ACL_TABLE の <code>stage</code> フィールド（<code>INGRESS</code> / <code>EGRESS</code>）が ACL_RULE で使用できる action を決定する。</p>
+<table>
+<thead>
+<tr>
+<th>stage</th>
+<th>使用可能 MIRROR action</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INGRESS</code></td>
+<td><code>MIRROR_INGRESS_ACTION</code>, <code>MIRROR_ACTION</code>（後方互換で INGRESS 扱い）</td>
+<td><code>MIRROR_ACTION</code> 旧フィールドは INGRESS 固定</td>
+</tr>
+<tr>
+<td><code>EGRESS</code></td>
+<td><code>MIRROR_EGRESS_ACTION</code></td>
+<td><code>MIRROR_ACTION</code> を使うと意図せず INGRESS mirror が設定される</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>MIRROR_ACTION</code>（旧フィールド）は後方互換のため <code>SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_INGRESS</code> にマッピングされる (<code>aclorch.cpp:2268-2271</code>)。EGRESS テーブルに対してこの旧フィールドを使うと意図しない INGRESS mirror になる。</li>
+<li><code>isActionSupported(stage, ...)</code> (<code>aclorch.cpp:1407-1409</code>) が stage × action の組み合わせを SAI capability に照らして検証するため、platform が対応していない stage-action 組み合わせは <code>validateAddAction()</code> で拒否される。</li>
+<li>INGRESS テーブルに <code>MATCH_IN_PORTS</code>、EGRESS テーブルに <code>MATCH_OUT_PORT/OUT_PORTS</code> が利用可能（<code>stageMandatoryMatchFields</code> <code>aclorch.cpp:427-494</code>）。stage を誤ると match フィールドが SAI に反映されない。</li>
+</ul>
+<h3 id="sai-acl_entry">SAI <code>acl_entry</code> 属性の設定順序<a class="headerlink" href="#sai-acl_entry" title="Permanent link">&para;</a></h3>
+<p><code>AclRule::create()</code> (<code>aclorch.cpp:1280-1344</code>) が <code>sai_acl_api-&gt;create_acl_entry()</code> に渡す属性リストの構築順序は以下のとおり固定されている。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>1. SAI_ACL_ENTRY_ATTR_TABLE_ID   (所属テーブル OID)   ← 必須・先頭固定
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>2. SAI_ACL_ENTRY_ATTR_PRIORITY   (PRIORITY 値)
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>3. SAI_ACL_ENTRY_ATTR_ADMIN_STATE (= true 固定)
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>4. SAI_ACL_ENTRY_ATTR_ACTION_COUNTER (カウンタ OID、存在時のみ)
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>5. SAI_ACL_ENTRY_ATTR_FIELD_ACL_RANGE_TYPE (range object list、存在時のみ)
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>6. m_matches の各 match フィールド (map イテレーション順)
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>7. m_actions の各 action フィールド (map イテレーション順)
+</span></code></pre></div>
+<p>この順序は SAI API 仕様上は問わないが、<code>TABLE_ID</code> は SAI 実装によって先頭が必須とされるケースがある。アプリケーション側からは構築順序を意識する必要はなく、<code>AclOrch</code> が一括で渡す。</p>
 <h3 id="warm-restart-cold-restart">warm-restart / cold-restart 影響<a class="headerlink" href="#warm-restart-cold-restart" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>AclOrch</code> は <code>onWarmBootEnd()</code> を<strong>実装しない</strong>（warm-restart 非対応）。orchagent 再起動（cold）で CONFIG_DB replay により自動再構築。</li>
@@ -38401,8 +38629,8 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 <li><code>packet_action: REDIRECT:</code> の nexthop 解決が失敗すると rule が install されない（syslog 確認）。</li>
 </ul>
 <h3 id="_20">確認コマンド<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_RULE|EVERFLOW|*&#39;</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>aclshow<span class="w"> </span>-a<span class="w"> </span>-t<span class="w"> </span>EVERFLOW
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_RULE|EVERFLOW|*&#39;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>aclshow<span class="w"> </span>-a<span class="w"> </span>-t<span class="w"> </span>EVERFLOW
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -38412,18 +38640,18 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 <h3 id="cli-acl_loader">CLI — acl_loader<a class="headerlink" href="#cli-acl_loader" title="Permanent link">&para;</a></h3>
 <p><code>sonic-utilities/acl_loader/main.py</code> — <code>acl-loader update full / incremental / delete</code></p>
 <p><strong>full update</strong> (<code>full_update()</code> L850):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>           <span class="c1"># 既存全削除</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_config</span><span class="p">({</span><span class="n">ACL_RULE</span><span class="p">:</span> <span class="n">rules_info</span><span class="p">})</span>        <span class="c1"># 新規一括書き込み</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>           <span class="c1"># 既存全削除</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_config</span><span class="p">({</span><span class="n">ACL_RULE</span><span class="p">:</span> <span class="n">rules_info</span><span class="p">})</span>        <span class="c1"># 新規一括書き込み</span>
 </span></code></pre></div>
 <p>入力プロトコル: JSON ファイル（OpenConfig ACL 形式）— <code>&lt;filename&gt;</code> 引数で指定</p>
 <p><strong>incremental update</strong> (<code>incremental_update()</code> L871):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>           <span class="c1"># 追加</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>            <span class="c1"># 削除</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">configdb</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>           <span class="c1"># 内容変更</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>           <span class="c1"># 追加</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>            <span class="c1"># 削除</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">configdb</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>           <span class="c1"># 内容変更</span>
 </span></code></pre></div>
 <p>dataplane ACL は full update 方式、controlplane ACL は差分更新。</p>
 <p><strong>delete</strong> (<code>delete()</code> L946):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Multi-ASIC: 各 namespace の <code>namespace_configdb</code> にも同じ操作を適用。</p>
 <p><strong>デフォルト deny ルール自動追加</strong> (<code>createDefaultDenyAclRule()</code> L1138):</p>
@@ -38634,14 +38862,14 @@ DB 番号: <code>FLEX_COUNTER_DB = 5</code> (<code>schema.h:18</code>)。</p>
 <h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
 <h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
 <p>CONFIG_DB の <code>ACL_RULE</code> への変更通知は、<code>AclOrch</code> が <strong><code>swss::SubscriberStateTable</code></strong> (Redis keyspace 通知ベース) で購読する。<code>Orch::addConsumer()</code> が DB ID で分岐し、CONFIG_DB / STATE_DB / CHASSIS_APP_DB には <code>SubscriberStateTable</code> を、それ以外（APPL_DB 等）には <code>ConsumerStateTable</code> を割り当てる (<code>orch.cpp:1186-1196</code>)。APPL_DB 側 <code>ACL_RULE_TABLE</code> は channel ベース PUBLISH/SUBSCRIBE を使うが、CONFIG_DB 側は <strong>keyspace 通知 <code>__keyspace@&lt;dbId&gt;__:ACL_RULE|*</code> への <code>PSUBSCRIBE</code></strong> で変更を検知する。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// orch.cpp:1186-1196</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">Orch::addConsumer</span><span class="p">(</span><span class="n">DBConnector</span><span class="w"> </span><span class="o">*</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pri</span><span class="p">)</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="p">{</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CONFIG_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CHASSIS_APP_DB</span><span class="p">)</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">TableConsumable</span><span class="o">::</span><span class="n">DEFAULT_POP_BATCH_SIZE</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="k">else</span>
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
-</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// orch.cpp:1186-1196</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">Orch::addConsumer</span><span class="p">(</span><span class="n">DBConnector</span><span class="w"> </span><span class="o">*</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pri</span><span class="p">)</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="p">{</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CONFIG_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CHASSIS_APP_DB</span><span class="p">)</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">TableConsumable</span><span class="o">::</span><span class="n">DEFAULT_POP_BATCH_SIZE</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -38663,18 +38891,18 @@ DB 番号: <code>FLEX_COUNTER_DB = 5</code> (<code>schema.h:18</code>)。</p>
 </table>
 <p>バッチサイズは <code>sonic-swss-common/common/table.h:164</code> の <code>DEFAULT_POP_BATCH_SIZE = 128</code> で固定され、<code>Orch::addConsumer()</code> がこの定数をハードコードで渡す (<code>orch.cpp:1190</code>)。APPL_DB 側で使われる <code>gBatchSize</code> (<code>orchagent -b &lt;n&gt;</code> で上書き可) は CONFIG_DB 側 <code>ACL_RULE</code> には<strong>適用されない</strong>。書き込み側 (CLI / <code>sonic-cfggen</code> / gNMI) は <code>swss::Table::set()</code> または <code>swsssdk</code> 経由で <code>HSET</code> のみ行い、明示的な <code>PUBLISH</code> は発行しない。CONFIG_DB のため TTL は使用されない。</p>
 <h3 id="keyspace">keyspace 通知 → ハンドラ呼び出しの流れ<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>config / sonic-cfggen / gNMI
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  ↓ Table::set(&quot;&lt;table&gt;|&lt;rule&gt;&quot;, fvs)
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>CONFIG_DB: HSET &quot;ACL_RULE|&lt;table&gt;|&lt;rule&gt;&quot; &lt;fields&gt;
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  ↓ Redis keyspace event &quot;__keyspace@4__:ACL_RULE|&lt;table&gt;|&lt;rule&gt;&quot; &quot;hset&quot;
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>OrchDaemon main loop: m_select-&gt;select(&amp;s, 1000ms)  ← SELECT_TIMEOUT
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>  ↓ Consumer::execute() → SubscriberStateTable::pops()
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    └─ HGETALL &quot;ACL_RULE|&lt;table&gt;|&lt;rule&gt;&quot; で値再取得
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>AclOrch::doTask(consumer)  (aclorch.cpp:4272-4295)
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>  ↓ table_name == CFG_ACL_RULE_TABLE_NAME で分岐
-</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>AclOrch::doAclRuleTask(consumer)  (APPL_DB 版と同一ハンドラ)
-</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>  ↓ create / update / remove
-</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>SAI: sai_acl_api-&gt;create_acl_entry / set_acl_entry_attribute / remove_acl_entry
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>config / sonic-cfggen / gNMI
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>  ↓ Table::set(&quot;&lt;table&gt;|&lt;rule&gt;&quot;, fvs)
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>CONFIG_DB: HSET &quot;ACL_RULE|&lt;table&gt;|&lt;rule&gt;&quot; &lt;fields&gt;
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>  ↓ Redis keyspace event &quot;__keyspace@4__:ACL_RULE|&lt;table&gt;|&lt;rule&gt;&quot; &quot;hset&quot;
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>OrchDaemon main loop: m_select-&gt;select(&amp;s, 1000ms)  ← SELECT_TIMEOUT
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>  ↓ Consumer::execute() → SubscriberStateTable::pops()
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>    └─ HGETALL &quot;ACL_RULE|&lt;table&gt;|&lt;rule&gt;&quot; で値再取得
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>AclOrch::doTask(consumer)  (aclorch.cpp:4272-4295)
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>  ↓ table_name == CFG_ACL_RULE_TABLE_NAME で分岐
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>AclOrch::doAclRuleTask(consumer)  (APPL_DB 版と同一ハンドラ)
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>  ↓ create / update / remove
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>SAI: sai_acl_api-&gt;create_acl_entry / set_acl_entry_attribute / remove_acl_entry
 </span></code></pre></div>
 <ul>
 <li><code>SELECT_TIMEOUT = 1000 ms</code> (<code>orchdaemon.cpp:22-23</code>)。1 秒ごとに wake up して retry / flush を回し、keyspace 通知到着で即座に wake up。</li>
