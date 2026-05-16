@@ -593,7 +593,7 @@ VRF が未登録のままだと `m_toSync` に積まれ VRF 登録後にリト�
 
 ### VOQ Chassis — システムインタフェース同期差
 
-`DEVICE_METADATA|localhost.switch_type=voq` のシャーシ構成では、`VLAN_INTERFACE` テーブルへの SET/DEL に伴う RIF 作成・削除が追加の CHASSIS_APP_DB 同期を引き起こす。
+`DEVICE_METADATA|localhost.switch_type=voq` のシャーシ構成では、`VLAN_INTERFACE` テーブルへの SET/DEL に伴う RIF 作成・削除が追加の CHASSIS_APP_DB 同期を引き起こす[^ph1][^ph2]。
 
 ```cpp
 // intfsorch.cpp:1314-1317
