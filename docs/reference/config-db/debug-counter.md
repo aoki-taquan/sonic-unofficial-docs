@@ -285,4 +285,28 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 `debug_counters` / `free_drop_counters` / `free_drop_reasons` はインメモリのみで永続化しない。orchagent 再起動後は Consumer が CONFIG_DB の全エントリを replay し `reconcileFreeDropCounters()` で自動復元する。warm-reboot も同様。再起動中の集計値は失われるが設定は自動復元される。<!-- evidence: debugcounterorch.cpp L579-594 -->
 
 <!-- /ordering -->
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` は **YANG leafref を PORT / FLEX_COUNTER_DB / STATE_DB / COUNTERS_DB に対して持たない**。以下はすべて実装レベルの暗黙参照。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `PORT` (CONFIG_DB / PortsOrch) | 読み取り（ポート一覧取得 + 変更イベント購読） | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` 型カウンタ作成時。`gPortsOrch->getAllPorts()` で `Port::Type::PHY` のみ FlexCounter 登録対象に選択。ポート追加/削除で `installDebugFlexCounters()` / `uninstallDebugFlexCounters()` が自動呼び出し。 | `debugcounterorch.cpp:16,39,71,92,106,629,682` |
+| `FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE` (`DEBUG_COUNTER` グループ) | 書き込み（orchagent → syncd 経路） | `DebugCounterOrch` コンストラクタで初期化。カウンタ作成/削除時に `flex_counter_manager.addFlexCounterStat()` / `removeFlexCounterStat()` で stat を登録・解除。 | `debugcounterorch.cpp:25-29,625,644; debugcounterorch.h:19` |
+| `FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE` (`DEBUG_MONITOR_COUNTER` グループ) | 書き込み（drop monitor Lua 用） | コンストラクタで `setFlexCounterGroupParameter(DEBUG_DROP_MONITOR_FLEX_COUNTER_GROUP, ...)` を呼び、drop_monitor.lua を Lua プラグインとして登録。`drop_monitor_status=enabled` 時に `startFlexCounterPolling()` でポーリング開始。 | `debugcounterorch.cpp:55-59,241,651,710; debugcounterorch.h:20-21` |
+| `STATE_DB DEBUG_COUNTER_CAPABILITIES` | 書き込み（自身が情報源） | 起動時 1 回 `publishDropCounterCapabilities()` が SAI に `sai_query_attribute_enum_values_capability` を投げ、サポートされているカウンタ種別・drop reason 一覧を書き込む。 | `debugcounterorch.cpp:31,314-361` |
+| `COUNTERS_DB COUNTERS_DEBUG_NAME_PORT_STAT_MAP` | 書き込み（counter_name → port stat OID マップ） | PORT_DEBUG 型カウンタ作成時に `m_counterNameToPortStatMap->set()` で書き込む。`drop_monitor.lua` がポーリング時にこのマップを参照する。 | `debugcounterorch.cpp:33; drop_monitor.lua:18-19` |
+| `COUNTERS_DB COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP` | 書き込み（counter_name → switch stat OID マップ） | SWITCH_DEBUG 型カウンタ作成時。`show dropcounters` が参照する逆引きマップ。 | `debugcounterorch.cpp:34` |
+
+!!! note "PORT leafref が存在しない理由"
+    `sonic-debug-counter.yang` は PORT テーブルへの leafref を定義しない。`PORT_INGRESS_DROPS` 型カウンタはポート単位に SAI オブジェクトを作るが、CONFIG_DB エントリには port 名を含まない。ポートとの紐付けは orchagent が `gPortsOrch->getAllPorts()` で動的に解決する。
+
+!!! note "FLEX_COUNTER_DB への書き込みは間接的"
+    `DebugCounterOrch` は直接 FLEX_COUNTER_DB に書かず、`FlexCounterManager` / `flex_counter_manager` 経由で書き込む。`FlexCounterManager` が `FLEX_COUNTER_GROUP_TABLE` / `FLEX_COUNTER_TABLE` を管理する。
+
+詳細な参照経路・行番号は `meta/_intermediate/cdb-flow/debug-counter-cross-refs.md` を参照。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: d2c490dcfe8c -->
