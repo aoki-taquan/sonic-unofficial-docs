@@ -337,6 +337,66 @@ minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はな�
 
 <!-- /handler-branching -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 根拠: `policerorch.cpp` 全行精読、`orchdaemon.cpp:1292-1312`。evidence: `meta/_intermediate/cdb-flow/policer-platform.md`
+
+### SAI Capability クエリ
+
+`policerorch.cpp` 内に `sai_query_attribute_capability()` / `sai_query_enum_capabilities()` の呼び出しは**存在しない**。実行時の ASIC 対応可否は SAI ライブラリ層に委ねられ、orchagent 自体は能力クエリを行わない。
+
+### ベンダー別 MODE / packet_action サポート差
+
+orchagent は `SR_TCM` / `TR_TCM` / `STORM_CONTROL` の 3 モードをすべて定義しているが、SAI レイヤの対応は ASIC ベンダー依存:
+
+| モード | SAI 定数 | ASIC 側サポート |
+|--------|----------|----------------|
+| `SR_TCM` | `SAI_POLICER_MODE_SR_TCM` | ASIC 依存 |
+| `TR_TCM` | `SAI_POLICER_MODE_TR_TCM` | ASIC 依存 |
+| `STORM_CONTROL` | `SAI_POLICER_MODE_STORM_CONTROL` | ASIC 依存 |
+
+SAI が未対応モードを拒否した場合、`create_policer()` が `SAI_STATUS_NOT_SUPPORTED` 等を返し、`handleSaiCreateStatus` の返値次第で `task_need_retry` またはエントリ消失となる。
+
+`packet_action_map` に定義された `COPY` / `COPY_CANCEL` / `TRAP` / `LOG` / `DENY` / `TRANSIT` も ASIC 対応は不定 (`policerorch.cpp:50-59`)。
+
+### PORT_STORM_CONTROL の対応差
+
+#### インターフェース種別制限 (orch レベル)
+
+`handlePortStormControlTable()` は `"Ethernet"` プレフィックスのインターフェースのみ対応する (`policerorch.cpp:131-137`)。PortChannel / Vlan 等は `task_success` で無視される:
+
+| インターフェース種別 | 結果 |
+|---------------------|------|
+| `Ethernet*` | 対応 |
+| `PortChannel*` / `Vlan*` 等 | SWSS_LOG_ERROR 出力 + 無視 (task_success) |
+
+#### ASIC 側 SAI 属性
+
+| storm_type | SAI ポート属性 | ASIC 依存 |
+|-----------|---------------|-----------|
+| `broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` | あり |
+| `unknown-unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` | あり |
+| `unknown-multicast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` | あり |
+
+`set_port_attribute()` が失敗した場合は SAI policer をロールバックして `task_need_retry` を返す (`policerorch.cpp:291-313`)。
+
+#### CBS 更新制限
+
+storm-control UPDATE パスでは `CIR` のみ SAI に渡し、`CBS` は更新されない (`policerorch.cpp:252-253`)。
+
+### VOQ / Chassis 差異
+
+| デプロイ形態 | PolicerOrch 登録 | 備考 |
+|-------------|-----------------|------|
+| 通常ノード (`OrchDaemon`) | 登録あり | POLICER + PORT_STORM_CONTROL 両テーブルを購読 |
+| Fabric カード (`FabricOrchDaemon`) | **登録なし** | `FabricOrchDaemon::init()` には policer 登録コードが存在しない (`orchdaemon.cpp:1292-1312`) |
+| SmartSwitch DPU (`DpuOrchDaemon`) | 登録あり | `OrchDaemon::init()` を継承するため policer は機能する |
+
+VOQ Chassis の Fabric カード上では policer および storm-control は**動作しない**。
+
+<!-- /platform -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
