@@ -141,7 +141,8 @@ WARM_RESTART|<module>
 
 - key 形式: `WARM_RESTART|<module>` (`bgp`, `swss`, `teamd`, `system`)。
 - `enable`: `true` / `false`。
-- `bgp_timer`: 300、`neighsyncd_timer`: 110。
+- `bgp_timer`: 未設定時フォールバック 120 秒 (`DEFAULT_ROUTING_RESTART_INTERVAL`)。設定例として 300 秒が使われることがあるが、コードデフォルトは 120 秒。
+- `neighsyncd_timer`: 未設定時フォールバック 5 秒 (`DEFAULT_NEIGHSYNC_WARMSTART_TIMER`)。
 
 ### よくある誤設定
 
@@ -215,5 +216,39 @@ REST/gNMI 書き込み経路なし
 
 なし
 <!-- /entry-points -->
+
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+YANG に `default` 節が存在しないため、フィールド未設定時の実挙動はすべてコードのハードコード値に依存する。
+
+| フィールド | YANG デフォルト | コード実装フォールバック | 根拠 |
+|-----------|----------------|------------------------|------|
+| `bgp_eoiu` | なし | `false` 相当 — `bgp_eoiu_marker` プロセスが supervisord に登録されない | `docker-fpm-frr/.../supervisord.conf.j2:239` |
+| `bgp_timer` | なし | **120 秒** (`DEFAULT_ROUTING_RESTART_INTERVAL`) | `fpmsyncd.cpp:46,160` |
+| `teamsyncd_timer` | なし | **5 秒** (`DEFAULT_INTERNAL_TIMER_VALUE`) | `warmRestartAssist.h:104` |
+| `neighsyncd_timer` | なし | **5 秒** (`DEFAULT_NEIGHSYNC_WARMSTART_TIMER`) | `neighsync.h:10`, `neighsync.cpp:30` |
+
+!!! warning "既存ドキュメントとの乖離"
+    運用ヒント欄の「典型値: `bgp_timer`: 300、`neighsyncd_timer`: 110」はコード上の根拠がない。
+    実装フォールバックは `bgp_timer` = **120 秒**、`neighsyncd_timer` = **5 秒**。
+    設定例として広く使われている値であっても、コードデフォルトとは異なる。
+
+### undocumented フィールド: `eoiu_hold_timer`
+
+`fpmsyncd` は `WARM_RESTART|bgp` テーブルから `eoiu_hold_timer` フィールドを読む
+(`WarmStart::getWarmStartTimer("eoiu_hold", "bgp")`)。このフィールドは YANG にも CLI にも未定義。
+未設定時は `DEFAULT_EOIU_HOLD_INTERVAL = 3 秒` にフォールバックする。
+
+### `enable` フィールドは CONFIG_DB に存在しない
+
+`config warm_restart enable` は **CONFIG_DB ではなく STATE_DB の `WARM_RESTART_ENABLE_TABLE`** に書き込む。
+`bgp.sh` / `teamd.sh` / `swss.sh` / `WarmStart::checkWarmStart()` はすべて STATE_DB を参照する。
+
+### fast-reboot による副作用
+
+`finalize-warmboot.sh` の `finalize_fast_reboot()` は `CONFIG_DB DEL "WARM_RESTART|teamd"` を実行する。
+fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用がある。
+<!-- /defaults -->
 
 <!-- glossary-links-injected: ddc022697593 -->

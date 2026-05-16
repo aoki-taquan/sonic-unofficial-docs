@@ -249,4 +249,85 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+<!-- evidence: sonic-swss/orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d + tunneldecaporch.h -->
+
+### ハードコード定数（フィールドで上書き不可）
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `OVERLAY_RIF_DEFAULT_MTU` | **9100** | デカプセル用オーバーレイ loopback RIF の MTU。フィールドとして公開されておらず変更不可 |
+| subnet decap tunnel 名 | `"IPINIP_SUBNET"` / `"IPINIP_SUBNET_V6"` | `SubnetDecapConfig` にハードコード。ユーザーが別名を指定しても subnet decap 機能は動作しない |
+
+### フィールド省略時の暗黙デフォルト
+
+| フィールド | 省略時の挙動 |
+|-----------|-------------|
+| `src_ip` | `nullptr` として扱い `SAI_TUNNEL_ATTR_ENCAP_SRC_IP` をスキップ。P2MP タームが自動選択される |
+| `decap_dscp_to_tc_map` | `SAI_NULL_OBJECT_ID` → SAI 属性をプッシュしない（QoS マップなし） |
+| `decap_tc_to_pg_map` | 同上 |
+| `encap_ecn_mode` | 空文字列 → `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` をスキップ（SAI デフォルト依存） |
+| `term_type` (DECAP_TERM) | デフォルト `P2MP`（`TUNNEL_TERM_TYPE_P2MP`、`doDecapTunnelTermTask` 内変数初期値） |
+
+### Dead-SAI フィールド（SAI に流れない）
+
+`encap_tc_to_dscp_map` と `encap_tc_to_queue_map` は `addDecapTunnel()` に渡されず SAI には設定されない。内部 `tunnelTable` に記録され、**`muxorch` が `getQosMapId()` 経由で読み出すためだけに使用**される。tunnel decap の QoS には影響しない。
+
+### Create-Only 属性（更新時スキップ）
+
+| フィールド | 更新時の挙動 |
+|-----------|------------|
+| `ecn_mode` | 既存トンネルへの変更は `SAI_TUNNEL_ATTR_DECAP_ECN_MODE` が create-only のため WARN ログを出してスキップ、エントリ全体が再処理対象外になる |
+| `encap_ecn_mode` | 同様に `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` が create-only。NOTICE ログでスキップ |
+
+### 書込み順依存
+
+- `allPortsReady()` が false の間は `doTask()` が即 return。ports 初期化前のエントリはキューに留まる。
+- DECAP_TERM_TABLE エントリがトンネル本体より先に届いた場合、`unhandledDecapTerms` に蓄積され、トンネル作成成功後にまとめて処理される。
+
+### Unknown フィールドによる Silent Drop
+
+認識されないフィールド名が含まれると `LOG_ERROR` して **エントリ全体をスキップ**する。フィールド名の typo が設定欠落を引き起こす。
+
+<!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+TUNNEL_DECAP_TABLE エントリを書き込む際に守るべき順序制約を実装から導出した。
+
+### 先行必須テーブル (SET 時)
+
+| 依存テーブル | 理由 | 緩和策 | evidence |
+|---|---|---|---|
+| PortsOrch 初期化完了 (`allPortsReady()`) | `doTask()` が false の間即 return — TUNNEL_DECAP_TABLE / DECAP_TERM_TABLE ともにキュー待機 | なし（自動待機） | `tunneldecaporch.cpp:L55-57` |
+| `CONFIG_DB TUNNEL` SET 済み | `tunnelmgrd` が TUNNEL を受け取って初めて APPL_DB へ投影。APPL_DB エントリは自動生成 | なし | `tunnelmgr.cpp:L263-293` |
+| `LOOPBACK_INTERFACE\|Loopback3` IP 設定 | tunnelmgrd がトンネル IF への IP 付与に Loopback3 の IP を参照。未設定時は IP 付与スキップ | Loopback3 後付けで遅延付与される | `tunnelmgr.cpp:L337-348` |
+
+### TUNNEL_DECAP_TABLE と TUNNEL_DECAP_TERM_TABLE の依存
+
+| 操作 | 制約 | 理由 | evidence |
+|---|---|---|---|
+| TUNNEL_DECAP_TERM_TABLE SET | **TUNNEL_DECAP_TABLE より先に届いた term は `unhandledDecapTerms` に蓄積** | `tunnel_exists` が false のとき `addUnhandledDecapTunnelTerm()` に保留。トンネル本体作成成功後に `processUnhandledDecapTunnelTerms()` で一括処理される | `tunneldecaporch.cpp:L309,L513,L1497-1520` |
+| SET の推奨順序 | `TUNNEL_DECAP_TABLE` SET → `TUNNEL_DECAP_TERM_TABLE` SET | 前後逆でも自動調停されるが、トンネル本体が先のほうがエラーログが出ない | — |
+
+### SET / DEL 操作順序
+
+| 操作 | 制約 | 理由 | evidence |
+|---|---|---|---|
+| `src_ip` の変更 | **DEL → SET の順が必須** | 既存トンネルの `src_ip` 更新は LOG_ERROR して拒否。変更には削除→再作成が必要 | `tunneldecaporch.cpp:L136` |
+| `TUNNEL_DECAP_TABLE` の DEL | **TUNNEL_DECAP_TERM_TABLE を先に DEL** | tunneldecaporch はトンネル本体 DEL 時に term を自動削除しない。term 残存のままトンネル本体を削除すると SAI リソースリークの恐れがある | `tunneldecaporch.cpp` `removeDecapTunnel()` |
+
+### warm-restart / cold-restart 影響
+
+- `tunnelmgrd` は warm-restart 対応 (`replayDone` / `m_tunnelReplay`)。warm boot 時は APPL_DB への重複書き込みをスキップし orchagent クラッシュを防ぐ。
+- `tunneldecaporch` は warm-restart 非対応。cold restart 後に CONFIG_DB 再 replay → tunnelmgrd が APPL_DB 再投影 → orchagent が SAI 再設定、という自動再構築フローで収束する。
+
+!!! warning "src_ip の変更"
+    既存トンネルの `src_ip` を変更する場合は `TUNNEL_DECAP_TABLE` エントリを必ず DEL してから SET し直すこと。SET のみでは `"cannot modify src ip for existing tunnel"` を LOG_ERROR してスキップされる (`tunneldecaporch.cpp`)。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->
