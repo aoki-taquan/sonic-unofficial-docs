@@ -24624,6 +24624,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals-bgp_asn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS 先行必須 (bgp_asn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals_af-address-family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS_AF 先行推奨 (address-family コンテキスト)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#__init__-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__ snapshot のコード固定順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-bgpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 起動順 — bgpd 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpd-cli-no-aggregate-address-aggregate-address-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpd CLI 順 — no aggregate-address 先行 → aggregate-address &lt;new&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-vtysh-cache-pop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の vtysh 投入 → cache pop の順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_prefix-continue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正 ip_prefix キーの早期 continue
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35144,6 +35238,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals-bgp_asn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS 先行必須 (bgp_asn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals_af-address-family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS_AF 先行推奨 (address-family コンテキスト)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#__init__-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__ snapshot のコード固定順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-bgpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 起動順 — bgpd 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpd-cli-no-aggregate-address-aggregate-address-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpd CLI 順 — no aggregate-address 先行 → aggregate-address &lt;new&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-vtysh-cache-pop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の vtysh 投入 → cache pop の順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_prefix-continue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正 ip_prefix キーの早期 continue
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35521,6 +35709,25 @@
 <li><code>bgpcfgd</code> が FRR running-config を読み CONFIG_DB と同期</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="bgp_globals-bgp_asn"><code>BGP_GLOBALS</code> 先行必須 (bgp_asn)<a class="headerlink" href="#bgp_globals-bgp_asn" title="Permanent link">&para;</a></h3>
+<p><code>bgp_table_handler_common()</code> の <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> 分岐は <code>self.bgp_asn[vrf]</code> から <code>local_asn</code> を取得し、<code>router bgp &lt;as&gt; vrf &lt;vrf&gt;</code> プレフィクスを組み立てる。対応 VRF の <code>BGP_GLOBALS.local_asn</code> が CONFIG_DB に<strong>先に</strong>存在しないと vtysh コマンドが組み立てられず、aggregate-address は FRR に流れない。<code>table_handler_list</code> (frrcfgd.py L2296-2317) では <code>BGP_GLOBALS</code> (3 番目) が <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> (23 番目) より先に登録されているため load フェーズでは自動保証だが、runtime に aggregate のみ先着した場合は <code>KeyError</code> 系の握り潰しで非反映となり、後続で <code>BGP_GLOBALS</code> が届いても aggregate は自動再投入されない（再 SET が必要）。<!-- evidence: frrcfgd.py:3169-3186, 2296-2317 --></p>
+<h3 id="bgp_globals_af-address-family"><code>BGP_GLOBALS_AF</code> 先行推奨 (address-family コンテキスト)<a class="headerlink" href="#bgp_globals_af-address-family" title="Permanent link">&para;</a></h3>
+<p>aggregate-address は FRR で <code>router bgp &lt;as&gt;</code> → <code>address-family &lt;afi&gt; &lt;safi&gt;</code> → <code>aggregate-address &lt;prefix&gt;</code> の階層下に置かれる。<code>BGP_GLOBALS_AF|&lt;vrf&gt;|&lt;afi_safi&gt;</code> を先に書いてから aggregate を投入することで、AF レベル属性 (<code>multipath</code>、route distance、L2VPN advertise-all-vni 等) と aggregate が同一適用ウィンドウで揃う。順序が逆でも aggregate 自体は反映されるが、AF 属性は AF 設定到着まで非反映。<code>table_handler_list</code> では <code>BGP_GLOBALS_AF</code> (4 番目) が先のため load フェーズでは自動保証。<!-- evidence: frrcfgd.py:2297, 2317, 3169-3186 --></p>
+<h3 id="__init__-snapshot"><code>__init__</code> snapshot のコード固定順<a class="headerlink" href="#__init__-snapshot" title="Permanent link">&para;</a></h3>
+<p><code>BGPConfigDaemon.__init__()</code> は <code>BGP_GLOBALS</code> テーブル取得 (L2207-2213) で <code>bgp_asn[vrf]</code> を構築した後、<code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> テーブル取得 (L2257-2266) で <code>af_aggr_list[vrf][prefix] = AggregateAddr()</code> を構築する。コード上の固定順序により daemon 起動時のスナップショットでは <code>BGP_GLOBALS</code> → aggregate の順で読まれる。aggregate 単独で CONFIG_DB にある状態で daemon が起動すると、<code>af_aggr_list</code> キャッシュは作られても後続 SET イベントで <code>bgp_asn[vrf]</code> 不在となり vtysh 投入は失敗する。<!-- evidence: frrcfgd.py:2207-2213, 2257-2266 --></p>
+<h3 id="frrcfgd-bgpd"><code>frrcfgd</code> 起動順 — bgpd 先行必須<a class="headerlink" href="#frrcfgd-bgpd" title="Permanent link">&para;</a></h3>
+<p>aggregate-address コマンドは <code>vtysh -c 'configure terminal' -c 'router bgp ...'</code> 経由で <code>bgpd</code> に投入される。<code>bgpd</code> の vty socket (<code>/var/run/frr/bgpd.vty</code>) が未生成の状態で vtysh を実行すると <code>failed to connect to any daemon</code> で失敗、<code>key_map.run_command()</code> が False を返し syslog ERR を出して continue する。frrcfgd は失敗時に再試行しないため、bgpd 復活後に CONFIG_DB へ再 SET するか <code>frrcfg.sh restart</code> で replay する必要がある。docker-fpm-frr の supervisord は <code>bgpd</code> → <code>frrcfgd</code> の順を狙うが、warm-restart や crash 復旧時はレースし得る。<!-- evidence: frrcfgd.py:3179-3186 --></p>
+<h3 id="bgpd-cli-no-aggregate-address-aggregate-address-new">bgpd CLI 順 — <code>no aggregate-address</code> 先行 → <code>aggregate-address &lt;new&gt;</code><a class="headerlink" href="#bgpd-cli-no-aggregate-address-aggregate-address-new" title="Permanent link">&para;</a></h3>
+<p><code>hdl_af_aggregate()</code> は UPDATE 操作で対象 vrf+prefix が既に <code>af_aggr_list</code> に存在する場合、先に <code>no aggregate-address &lt;prefix&gt;</code> を生成してから <code>get_command_cmn()</code> で実 SET コマンドを追加する。Update = (Delete + Add) の合成で、<code>as_set</code> / <code>summary_only</code> / <code>policy</code> の欠落フィールドが意図せず引き継がれる事故を避けるための CLI 順。同一 vtysh セッションで連続投入されるが、<code>summary_only=true</code> 運用中はこの 1 瞬の aggregate 消失で more-specific ルートが一時的に広告される副作用に注意。CLI 順自体は逆転できない（コード固定）。<!-- evidence: frrcfgd.py:1313-1326 --></p>
+<h3 id="del-vtysh-cache-pop">DEL 時の vtysh 投入 → cache pop の順<a class="headerlink" href="#del-vtysh-cache-pop" title="Permanent link">&para;</a></h3>
+<p>DEL 操作では <code>key_map.run_command</code> で <code>no aggregate-address</code> を vtysh に投入してから <code>self.af_aggr_list[vrf].pop(norm_ip_prefix, None)</code> を呼ぶ。pop は <code>None</code> デフォルトで KeyError は出ない。vtysh 投入失敗時もキャッシュは pop されないが、次回 UPDATE 時の <code>no</code> 先行発行のキーとして残るのみでリーク影響は小さい。<!-- evidence: frrcfgd.py:3187-3197 --></p>
+<h3 id="ip_prefix-continue">不正 <code>ip_prefix</code> キーの早期 continue<a class="headerlink" href="#ip_prefix-continue" title="Permanent link">&para;</a></h3>
+<p><code>normalize_ip_prefix()</code> が None を返す不正キーは当該 entry のみ skip され、後続エントリの処理は継続する。順序依存なしだが、ログ (<code>invalid IP prefix format</code>) を見落とすと該当 aggregate のみ未適用となる。<!-- evidence: frrcfgd.py:3172-3175 --></p>
+<p>詳細スキャンログは <code>meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-ordering.md</code> を参照。</p>
+<!-- /ordering -->
 
 <!-- glossary-links-injected: fcbe746ecf8b -->
 

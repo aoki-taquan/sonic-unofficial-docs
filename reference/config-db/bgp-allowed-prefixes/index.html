@@ -24304,6 +24304,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-e" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -24879,6 +24890,78 @@
     <span class="md-ellipsis">
       
         リトライ機構の性質
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-pubsub-keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Redis PUBSUB / keyspace notification)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Redis PUBSUB / keyspace notification)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dispatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dispatch チェーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace notification 詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        反映タイミング
       
     </span>
   </a>
@@ -35146,6 +35229,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-e" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35732,6 +35826,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#redis-pubsub-keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Redis PUBSUB / keyspace notification)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Redis PUBSUB / keyspace notification)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dispatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dispatch チェーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace notification 詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35953,6 +36119,44 @@
 <h3 id="_8">機能無効時<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p><code>constants["bgp"]["allow_list"]["enabled"]</code> が <code>false</code> または存在しない場合、SET/DEL 両方とも warn log のみで消化される（テーブル処理が完全スキップ）。<code>managers_allow_list.py:699-707</code>。</p>
 <!-- /defaults -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB <code>BGP_ALLOWED_PREFIXES</code> テーブルの変更に伴って <code>bgpcfgd</code> の <code>BGPAllowListMgr</code> ハンドラが副次的に書き込む DB エントリは <strong>存在しない</strong>。出力はすべて <a href="../../glossary/#term-frr">FRR</a> vtysh への設定 push (<code>ip prefix-list</code> / <code>ipv6 prefix-list</code> / <code>bgp community-list standard</code> / <code>route-map</code>) と必要に応じた peer-group <code>soft clear</code> に閉じる。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>managers_allow_list.py</code> を <code>Producer</code>/<code>Table(</code>/<code>hset</code>/<code>publish</code>/<code>Notification</code>/<code>APPL_DB</code> で grep して 0 ヒット。出力経路は <code>self.cfg_mgr.push_list(cmds)</code> (<code>managers_allow_list.py:176, 209</code>) と <code>self.cfg_mgr.restart_peer_groups(peer_groups)</code> (<code>managers_allow_list.py:178, 211</code>) のみ</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>managers_allow_list.py</code> 全体に <code>STATE_DB</code> / <code>state_db</code> 参照なし。<code>self.cfg_mgr</code> (FRR ConfigMgr) のみで <code>state_db_conn</code> を保持しない</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td><code>managers_allow_list.py</code> 全体に <code>COUNTERS_DB</code> 参照なし。ALLOW_LIST は BGP UPDATE 経路フィルタのため統計テーブルも存在しない</td>
+</tr>
+<tr>
+<td>その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB)</td>
+<td>なし</td>
+<td><a href="../../glossary/#term-sai">SAI</a> 非経由 (段階 3 トレース参照、BGP UPDATE フィルタは FRR ユーザ空間で完結)。<code>sonic-swss/</code> で <code>BGP_ALLOWED_PREFIXES</code> を grep して 0 ヒット (購読 mgrd/orchagent なし)</td>
+</tr>
+</tbody>
+</table>
+<p>主購読者 <code>BGPAllowListMgr.set_handler()</code> / <code>del_handler()</code> の副作用は <code>__update_policy()</code> / <code>__remove_policy()</code> 内の <code>cfg_mgr.push_list()</code> 呼出による FRR vtysh への route-map / prefix-list / community-list 投入 (<code>managers_allow_list.py:167-176, 200-207</code>) と、<code>__find_peer_group()</code> で逆引きした peer-group に対する <code>restart_peer_groups()</code> (BGP soft clear) のみ。Redis (CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB) を経由しない。</p>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/bgp-allowed-prefixes-side.md</code> を参照。</p>
+<!-- /side-effects -->
 
 <!-- constants -->
 <h2 id="phase-e">コード由来のハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
@@ -36757,6 +36961,113 @@
 <p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py</code> (L75-110, 197, 699-707, 736-754, 773-785); <code>dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2</code> L41,48,64,71。</p>
 </blockquote>
 <!-- /failure -->
+
+<!-- pubsub -->
+<h2 id="redis-pubsub-keyspace-notification">通信メカニズム (Redis PUBSUB / keyspace notification)<a class="headerlink" href="#redis-pubsub-keyspace-notification" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-bgpcfgd/bgpcfgd/runner.py</code> + <code>manager.py</code> + <code>managers_allow_list.py</code> + <code>main.py</code> 精読 (2026-05-16)
+詳細証跡: <code>meta/_intermediate/cdb-flow/bgp-allowed-prefixes-pubsub.md</code></p>
+</blockquote>
+<h3 id="_24">購読方式<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<p><code>bgpcfgd</code> は <code>swss::SubscriberStateTable</code> を 1 本の <code>swsscommon.Select</code> ループで束ねる<strong>集中 dispatcher</strong> 構成。テーブルごとに subscriber を 1 つ作り、<code>Runner.run()</code> が <code>select(1000ms)</code> → <code>subscriber.pop()</code> → 各 Manager の <code>handler(key, op, fvs)</code> に振り分ける。<code>BGP_ALLOWED_PREFIXES</code> は <code>main.py:94</code> で <code>BGPAllowListMgr(common_objs, "CONFIG_DB", "BGP_ALLOWED_PREFIXES")</code> として登録され、<code>Runner.add_manager</code> が <code>SubscriberStateTable(CONFIG_DB_conn, "BGP_ALLOWED_PREFIXES")</code> を生成して <code>swsscommon.Select</code> に追加する (<code>runner.py:47-52</code>)。<code>ConsumerStateTable</code> / <code>NotificationConsumer</code> / <code>ProducerStateTable</code> は使用せず、APPL_DB / STATE_DB 中継もない。</p>
+<h3 id="dispatch">dispatch チェーン<a class="headerlink" href="#dispatch" title="Permanent link">&para;</a></h3>
+<p><code>Manager.handler</code> (base class, <code>manager.py:34-53</code>) が op 種別で分岐:</p>
+<table>
+<thead>
+<tr>
+<th>op</th>
+<th>処理</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SET_COMMAND</code></td>
+<td>deps 充足チェック → <code>set_handler(key, data)</code>。<code>False</code> 戻りは <code>set_queue</code> に退避 (暗黙リトライ)</td>
+<td><code>manager.py:41-49</code>, <code>managers_allow_list.py:49</code></td>
+</tr>
+<tr>
+<td><code>DEL_COMMAND</code></td>
+<td><code>del_handler(key)</code> を直接呼ぶ</td>
+<td><code>manager.py:50-51</code>, <code>managers_allow_list.py:115</code></td>
+</tr>
+<tr>
+<td>その他</td>
+<td><code>log_err</code> のみ</td>
+<td><code>manager.py:52-53</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>BGPAllowListMgr</code> は <code>deps=[]</code> で初期化される (<code>managers_allow_list.py:40</code>) ため <code>available_deps([])</code> は常に True。初回イベントから即 <code>set_handler</code> に到達する一方、<code>set_handler</code> が <code>False</code> を返したときの再投入トリガは乏しく (<code>on_deps_change</code> は依存変化が無いので発火しない)、実質的には<strong>次の SET イベント到来時に <code>set_queue</code> の保留分が再走される</strong>挙動。</p>
+<h3 id="keyspace-notification">keyspace notification 詳細<a class="headerlink" href="#keyspace-notification" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Redis DB 番号</td>
+<td>4 (<code>SonicDBConfig.getDbId("CONFIG_DB")</code>)</td>
+</tr>
+<tr>
+<td>PSUBSCRIBE パターン</td>
+<td><code>__keyspace@4__:BGP_ALLOWED_PREFIXES\|*</code> (libswsscommon の <code>SubscriberStateTable</code> が内部で張る)</td>
+</tr>
+<tr>
+<td>Select timeout</td>
+<td>1000 ms (<code>runner.py:21</code> <code>SELECT_TIMEOUT = 1000</code>)</td>
+</tr>
+<tr>
+<td>起動時スナップショット</td>
+<td>あり — <code>SubscriberStateTable</code> 生成時に既存キーを内部キューに enqueue (swsscommon 標準挙動)。<code>bgpcfgd</code> 側に明示の全量 fetch は無い</td>
+</tr>
+<tr>
+<td>バッチ性</td>
+<td>1 select cycle 内で全 subscriber を pop した後 <code>cfg_manager.commit()</code> を<strong>まとめて 1 回</strong>呼び、複数テーブル変更を 1 vtysh バッチに収める (<code>runner.py:63-73</code>)</td>
+</tr>
+<tr>
+<td>APPL_DB / STATE_DB 中継</td>
+<td>なし。<code>cfg_mgr.push_list</code> で vtysh に直接 prefix-list / community-list / route-map を送る</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_25">通信シーケンス<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ユーザ書込み: CONFIG_DB|BGP_ALLOWED_PREFIXES|&lt;deployment&gt;|&lt;id&gt;[|...]
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓ (Redis keyspace event)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>SubscriberStateTable 内部キューに enqueue
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  ↓ (≤ 1000 ms)
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Runner.run() の selector.select() 起床                          # runner.py:57
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  ↓
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>subscriber.pop() → (key, op, fvs)                              # runner.py:65
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  ↓
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>callbacks[4][&quot;BGP_ALLOWED_PREFIXES&quot;] = BGPAllowListMgr.handler  # runner.py:69-70
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  ↓
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>Manager.handler(key, op, dict(fvs))                            # manager.py:34
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>  ├─ SET → set_handler → __set_handler_validate → __update_policy
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>  │           └─ cfg_mgr.push_list([prefix-list, community-list, route-map ...])
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>  └─ DEL → del_handler → __remove_policy
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>              └─ cfg_mgr.push_list([... no ...])
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>  ↓
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>runner ループ末の cfg_manager.commit()                         # runner.py:71
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>  ↓
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>vtysh セッションへ FRR config をバッチ送信
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>  ↓
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>bgpd が prefix-list / route-map / community-list を反映
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>  ↓ (必要に応じ)
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>__find_peer_group → restart_peer_groups → &quot;clear bgp ... soft&quot;
+</span></code></pre></div>
+<h3 id="_26">反映タイミング<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB write から FRR 反映まで通常<strong>≤ 1 秒</strong> (Select timeout = 1000 ms)。<code>set_handler</code> が <code>False</code> を返した場合は <code>set_queue</code> に退避され、後続の SET イベントで再試行される (回数上限・バックオフなし。詳細は Phase D セクションを参照)。</p>
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:21 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:47 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:63 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/manager.py:34 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:94 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:38 -->
+<!-- /pubsub -->
 
 <!-- glossary-links-injected: 43ff039eae38 -->
 
