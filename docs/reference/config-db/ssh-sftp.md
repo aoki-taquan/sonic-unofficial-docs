@@ -115,6 +115,48 @@ SFTP サブシステムに関して CONFIG_DB フィールドは存在しない�
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang (SFTP leaf なし) -->
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`SSH_SFTP` テーブルは存在せず CONFIG_DB 経由の書込み経路はない。`Subsystem sftp` 行は OS テンプレートに固定されており、`hostcfgd` の更新ループ外に位置する。
+
+### hostcfgd 起動シーケンスと SFTP の関係
+
+```
+OS 起動 (OpenSSH パッケージ)
+  └─ /etc/ssh/sshd_config 配置
+       └─ Subsystem sftp /usr/lib/openssh/sftp-server 行が静的に存在
+
+hostcfgd 起動
+  │
+  ├─ SshServer.__init__()              # policies = {} のみ
+  │
+  ├─ load(init_data)
+  │   └─ sshscfg.load(ssh_server)     # SSH_SERVER|POLICIES があれば set_policies()
+  │       ├─ copy2(sshd_config → sshd_config.tmp)
+  │       │   ※ Subsystem sftp 行はコピー元に存在するためそのまま引き継がれる
+  │       ├─ SSH_CONFIG_NAMES の各フィールドを書き換え
+  │       │   ※ Subsystem キーは SSH_CONFIG_NAMES に存在しないため書き換えなし
+  │       ├─ sshd -T -f sshd_config.tmp  (バリデーション)
+  │       └─ OK → rename tmp→本番、systemctl restart ssh
+  │           └─ Subsystem sftp 行はそのまま保持される
+  │
+  └─ subscribe('SSH_SERVER', ssh_handler)
+      └─ 変更時も同様: set_policies() は Subsystem 行を変更しない
+```
+
+### 要点
+
+| 観点 | 内容 |
+|------|------|
+| **SFTP 行の永続性** | `set_policies()` は `copy2(SSH_CONFG, SSH_CONFG_TMP)` でコピー元の Subsystem 行を引き継ぐため、SSH_SERVER 設定更新のたびに SFTP 行も保持される |
+| **バリデーションゲート** | `sshd -T -f <tmp>` は Subsystem 行を含む全設定を検証するが、SFTP 設定自体は変更されないためバリデーション失敗要因にはならない |
+| **起動順序依存なし** | SFTP は OS テンプレート由来のため、hostcfgd の起動タイミングや SSH_SERVER テーブルの有無に関わらず常時有効 |
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1110-1161 (SshServer.set_policies — copy2 でコピー後に SSH_CONFIG_NAMES のみ書き換え) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES に Subsystem キーなし) -->
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
