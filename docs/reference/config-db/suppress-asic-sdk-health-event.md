@@ -220,6 +220,70 @@ end
 [^2]: switchorch 実装: `sonic-swss/orchagent/switchorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/switchorch.cpp>
 
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-ordering.md`
+
+### 1. orchagent 起動時の初期化順序
+
+`orchdaemon.cpp:212` で `SwitchOrch` が生成されると、コンストラクタ内で即座に `initAsicSdkHealthEventNotification()` が呼ばれる。この関数が **CONFIG_DB を起動時スナップショット** として読み取り、SAI に初期登録する。
+
+```
+orchdaemon
+  └─ gSwitchOrch = new SwitchOrch(...)
+       └─ initAsicSdkHealthEventNotification()
+            1. querySwitchCapability(SAI_SWITCH_ATTR_SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY)
+               └─ 非対応 → CAPABILITY=false を記録し return（以降の全登録スキップ）
+            2. set_switch_attribute(NOTIFY コールバック登録)
+            3. severity ごとに querySwitchCapability(REG_FATAL/WARNING/NOTICE_CATEGORY)
+            4. 対応 severity → cfgSuppressASHETable.hget(severity, "categories")
+            5. registerAsicSdkHealthEventCategories(attr, severity, categories, isInitializing=true)
+```
+
+→ **orchagent 起動前** に CONFIG_DB へ書き込んでおくと起動時スナップショットに取り込まれる。**起動後** に初めて書き込んだ場合は次の Consumer イベントで適用される。
+
+### 2. 起動時 (isInitializing=true) と実行中 (false) の挙動差異
+
+| タイミング | `isInitializing` | 全カテゴリ抑制時 (`categories` に全 4 種指定) |
+|-----------|-----------------|----------------------------------------------|
+| 起動時スナップショット | `true` | `interested_categories_set.empty()` → **SAI 登録自体をスキップ** — health event 通知ハンドラが有効にならない (`switchorch.cpp:1390-1394`) |
+| 実行中 SET_COMMAND | `false` | SAI 登録は試行される（エラーになっても orch は継続） |
+
+起動時に全カテゴリを抑制すると、その severity の health event がプラットフォームから届かない初期状態になる点が、実行中に全カテゴリ抑制を設定する場合と異なる。
+
+### 3. SET/DEL 処理の内部順序 (`doCfgSuppressAsicSdkHealthEventTableTask`)
+
+```
+Consumer (SubscriberStateTable: CONFIG_DB SUPPRESS_ASIC_SDK_HEALTH_EVENT)
+  └─ doTask() → doCfgSuppressAsicSdkHealthEventTableTask()
+       1. key 空文字チェック → 空なら erase してスキップ         (switchorch.cpp:1427)
+       2. severity → SAI 属性マッピング (map.at(key))             (:1435)
+       3. m_supportedAsicSdkHealthEventAttributes 確認            (:1455)
+          └─ 非対応 severity → syslog NOTICE のみで erase
+       4. SET_COMMAND:
+          a. categories フィールドあり → registerAsicSdkHealthEventCategories(attr, key, categories)
+          b. categories フィールドなし → registerAsicSdkHealthEventCategories(attr, key)  [全購読]
+       5. DEL_COMMAND → registerAsicSdkHealthEventCategories(attr, key)  [全購読 = 抑制解除]
+```
+
+SET / DEL ともに `registerAsicSdkHealthEventCategories` が唯一の SAI 書込み点であり、アトミックに `set_switch_attribute` を呼ぶ。APPL_DB 中継はなく CONFIG_DB → SAI の直接経路。
+
+### 4. warm reboot との関係
+
+orchagent が warm reboot で再起動すると `initAsicSdkHealthEventNotification()` が再度実行され、CONFIG_DB の最新値を読み取って SAI に再登録する。`RESTARTCHECK` 通知ハンドラ (`switchorch.cpp:1543-1564`) は SUPPRESS テーブルとは無関係で、suppression 状態の凍結・回復ロジックは存在しない。
+
+### 5. 起動順依存まとめ
+
+| 前提条件 | 不成立時の影響 |
+|---------|--------------|
+| SAI が health event notify をサポート (`querySwitchCapability` true) | CAPABILITY=false を記録し全 severity の初期登録をスキップ |
+| 各 severity が SAI でサポート (`m_supportedAsicSdkHealthEventAttributes`) | 非対応 severity への SET は silent skip (syslog NOTICE) |
+| orchagent 起動前に CONFIG_DB にエントリあり | 起動時スナップショットに取り込まれ初期 SAI 登録に反映 |
+| orchagent 起動後に初めて CONFIG_DB に書き込む | Consumer イベント経由で反映。起動時点は抑制なし（全カテゴリ購読）のまま |
+
+<!-- /ordering -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
