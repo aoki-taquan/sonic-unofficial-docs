@@ -163,6 +163,93 @@ chassisd が起動していない場合は 10 秒タイムアウト後に強制�
 
 - `chassisd` (`ModuleConfigUpdater` / `SmartSwitchModuleConfigUpdater`) — CONFIG_DB テーブルチェンジを購読し platform API `set_admin_state()` を呼び出す
 
+<!-- pubsub -->
+## 通信メカニズム
+
+### CONFIG_DB Subscribe — `SubscriberStateTable`
+
+`chassisd` は `swsscommon.SubscriberStateTable` で CONFIG_DB の `CHASSIS_MODULE` テーブルをイベント駆動で購読する。
+
+**非 SmartSwitch** (`ConfigManagerTask.task_worker()`):
+
+```python
+# chassisd:1141-1171
+config_db = daemon_base.db_connect("CONFIG_DB")
+sst = swsscommon.SubscriberStateTable(config_db, CHASSIS_CFG_TABLE)  # 'CHASSIS_MODULE'
+sel.addSelectable(sst)
+
+(key, op, fvp) = sst.pop()
+if op == 'SET':
+    admin_state = MODULE_ADMIN_DOWN   # shutdown 書き込み
+elif op == 'DEL':
+    admin_state = MODULE_ADMIN_UP     # startup = エントリ削除
+```
+
+- `op == 'SET'` → `admin_status: down` を意味する（非 SmartSwitch は `fvp` を参照せず op 種別のみ）
+- `op == 'DEL'` → エントリ削除 = `startup` 相当、`MODULE_ADMIN_UP` を適用
+- `SELECT_TIMEOUT = 1000 ms` — シグナル (SIGTERM) 処理のため短い値
+
+**SmartSwitch** (`SmartSwitchConfigManagerTask.task_worker()`):
+
+```python
+# chassisd:1196-1240
+(key, op, fvp) = sst.pop()
+if op == 'SET':
+    admin_status = dict(fvp).get('admin_status')
+    admin_state = MODULE_ADMIN_UP if admin_status == 'up' else MODULE_ADMIN_DOWN
+elif op == 'DEL':
+    admin_state = MODULE_ADMIN_UP
+```
+
+SmartSwitch では `fvp` の `admin_status` 値を直接参照して up/down を判定する。
+
+`ConfigManagerTask` は `ProcessTaskBase` を継承し**別プロセス**で動作。メインループ (10 秒 poll) とは分離されている。
+
+### CHASSIS_APP_DB 同期
+
+Supervisor スロット上の chassisd はモジュール down から **30 分** (`CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD = 30`) 経過後に CHASSIS_APP_DB をクリーンアップする。
+
+```python
+# chassisd:593-660
+self.chassis_app_db = daemon_base.db_connect("CHASSIS_APP_DB")
+self.chassis_app_db_pipe = swsscommon.RedisPipeline(self.chassis_app_db)
+# Lua スクリプトで chassis Redis (redis_chassis.server:6380, DB=12) を直接操作
+redis_cmd = ['redis-cli', '-h', 'redis_chassis.server', '-p', '6380', '-n', '12',
+             'EVALSHA', self.chassis_app_db_clean_sha, '0', lc, asic]
+```
+
+クリーンアップ対象テーブル: `SYSTEM_NEIGH`、`SYSTEM_INTERFACE`、`SYSTEM_LAG_MEMBER_TABLE`、`SYSTEM_LAG_TABLE`、`SYSTEM_LAG_ID_TABLE`、`SYSTEM_LAG_ID_SET`
+
+```
+module_db_update() [10 秒 poll]
+  → oper_status が Offline に変化 → down_modules に記録
+module_down_chassis_db_cleanup()
+  → 経過 >= 30 分 → _cleanup_chassis_app_db(module)
+```
+
+### systemd 経路 — FABRIC-CARD shutdown
+
+CLI が `config chassis_modules shutdown FABRIC-CARD*` を実行する際、CONFIG_DB への書き込み後 chassisd の反映を最大 10 秒待機し、その後 `systemctl stop swss@<asic>.service` を発行する。
+
+```python
+# sonic-utilities/config/chassis_modules.py (TIMEOUT_SECS = 10)
+check_config_module_state_with_timeout(db, chassis_module_name, 'down')
+fabric_module_set_admin_status(db, chassis_module_name, 'down')
+# → subprocess.run(['systemctl', 'stop', f'swss@{asic_id}.service'])
+```
+
+chassisd が停止中でもタイムアウト後に強制実行される。
+
+### タイミング特性
+
+| メカニズム | 遅延 | 備考 |
+|-----------|------|------|
+| CONFIG_DB Subscribe (SubscriberStateTable) | 即時 (event-driven) | SELECT_TIMEOUT=1000 ms の最大待機あり |
+| STATE_DB 更新 (module_db_update) | 最大 10 秒 | `CHASSIS_INFO_UPDATE_PERIOD_SECS = 10` |
+| CHASSIS_APP_DB クリーンアップ | 30 分後 | `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD = 30` |
+| FABRIC-CARD CLI 待機 | 最大 10 秒 | `TIMEOUT_SECS = 10` |
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `FABRIC_MONITOR`、`FABRIC_PORT`
