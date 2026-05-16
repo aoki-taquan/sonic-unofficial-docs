@@ -12,6 +12,8 @@ nav:
   - mgmt-port.md
   - mgmt-vrf-config.md
   - port.md
+  - appl-port-table.md
+  - appl-buffer.md
   - portchannel.md
   - portchannel-interface.md
   - portchannel-member.md
@@ -35,9 +37,11 @@ nav:
   - route-map.md
   - acl-rule.md
   - acl-table.md
+  - aclorch-state.md
   - copp-group.md
   - copp-trap.md
   - debug-counter.md
+  - counters-state.md
   - mirror-session.md
   - policer.md
   - buffer-pg.md
@@ -46,6 +50,7 @@ nav:
   - buffer-queue.md
   - dscp-to-tc-map.md
   - pfc-wd.md
+  - pwm.md
   - queue.md
   - scheduler.md
   - tc-to-queue-map.md
@@ -57,6 +62,7 @@ nav:
   - crm.md
   - dhcp-server-ipv4.md
   - dhcpv4-relay.md
+  - dpb.md
   - flex-counter-table.md
   - kdump.md
   - ldap-server.md
@@ -67,6 +73,12 @@ nav:
   - telemetry.md
   - device-neighbor.md
   - device-neighbor-metadata.md
+  - neigh.md
   - fg-nhg.md
+  - nhg-table.md
+  - nhg.md
   - sflow.md
+  - route-orch-event.md
+  - stp-state.md
+  - errordb.md
   - ...

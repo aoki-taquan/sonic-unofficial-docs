@@ -233,3 +233,42 @@ minigraph.py および init_cfg.json.j2 からの `NTP_KEY` 自動派生はな�
 > **スキャン証跡**: hostcfgd:1285-1389 確認。NTP_KEY は YANG leafref による参照整合性チェックが主な制約であることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+YANG default 宣言 (`type` = `md5` / `trusted` = `no`) に加えて、`hostcfgd` および `chrony.keys.j2` テンプレートでの取り扱いを整理する。NTP_KEY は Python 側 (`hostcfgd`) でフィールド単位の default 補完ロジックを持たず、テンプレート (`chrony.keys.j2`) の `if` フィルタが暗黙デフォルトを担う。
+
+| フィールド | YANG default | コード由来挙動 | 発生源 |
+|---|---|---|---|
+| `type` | **`md5`** | `chrony.keys.j2`: `type` が falsy なら鍵エントリ自体をスキップ。`upper` フィルタで `MD5`/`SHA1`/`SHA256`/`SHA384`/`SHA512` に正規化 | `chrony.keys.j2:15-17` (`{% for keyid in NTP_KEY if NTP_KEY[keyid].type and NTP_KEY[keyid].value %}`) / `sonic-ntp.yang` typedef `key-type` の `default md5` |
+| `trusted` | **`no`** | `chrony.keys.j2` では **未参照** (dead field 相当)。`trusted_str` は `NTP_SERVER[*].trusted == 'yes'` のサーバから生成され、各 key 行末に共通付与される | `chrony.keys.j2:8-13` / `sonic-ntp.yang` `leaf trusted` の `default no` |
+| `value` | なし (必須) | falsy 値はテンプレで silent skip。`value \| b64decode` で base64 デコードして keyfile に書き出し | `chrony.keys.j2:15-16` |
+| `id` | なし (key) | `range 1..65535` 範囲外は YANG が拒否。`NTP_SERVER_LIST/key` からの leafref 参照整合性 | `sonic-ntp.yang` typedef `key-id` |
+
+### `type` の詳細
+
+YANG default `md5` により、CONFIG_DB に正規化された値は常に non-empty となる。CLI (`config ntp authentication-key add`) 経由では `--type` 省略時に `md5` が補完される。直接 `redis-cli` 書き込みで `type` を空にした場合、`chrony.keys.j2` の `if ... NTP_KEY[keyid].type ...` ガードでテンプレ展開からスキップされ、chrony keyfile に出力されない (silent drop) → 当該鍵での認証は機能しない。
+
+### `trusted` の詳細
+
+注意: `NTP_KEY.trusted` フィールドは `chrony.keys.j2` 内で **参照されていない**。chrony 視点での「信頼鍵」判定は `NTP_SERVER.trusted == 'yes'` を集約した `trusted_str` (key 行末カラム) で行われる。`NTP_KEY.trusted` の YANG default `no` は CONFIG_DB に値を残すのみで、生成される chrony keyfile に直接の差を生まない。
+
+```jinja2
+{% set trusted_arr = [] -%}
+{% for server in NTP_SERVER if NTP_SERVER[server].trusted == 'yes' and
+                               NTP_SERVER[server].resolve_as -%}
+    {% set _ = trusted_arr.append(NTP_SERVER[server].resolve_as) -%}
+{% endfor -%}
+{% set trusted_str = ' ' ~ trusted_arr|join(',') -%}
+```
+
+ドキュメント本文の運用ヒント (「`trusted=no` のキーで authenticate しようとして時刻同期が失敗する」) は CLI/UX レベルの設計意図に基づく記述で、テンプレ実装上は `NTP_KEY.trusted` の値による直接的な keyfile 差分は発生しない。
+
+### hostcfgd 側の default 補完
+
+`NtpCfg` クラス (`hostcfgd:1278-1406`) は AAA 系のような `*_default` dict を持たず、DB の dict をそのまま Jinja2 context に渡す。`ntp_srv_key_update()` (`hostcfgd:1366-1406`) はキャッシュ比較で同一エントリの再生成をスキップするのみで、フィールド単位の補完は行わない。暗黙デフォルトは YANG (`md5` / `no`) とテンプレートの falsy フィルタが二重に担保している。
+
+詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-defaults.md`。
+
+<!-- /defaults -->

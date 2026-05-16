@@ -3,11 +3,18 @@ title: FLEX_COUNTER_TABLE テーブル
 description: "FLEX_COUNTER_TABLE テーブル — orchagent / syncd に対し、各種ハードウェアカウンタのポーリング有効化と周期、bulk API のチャンクサイズを指定するテーブル。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-05-14
+hard: 0
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-flex_counter.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: orchagent/flexcounterorch.cpp
+    ref: master
+  - repo: sonic-net/sonic-utilities
+    path: counterpoll/main.py
+    ref: master
 related:
   config_db:
     - FLEX_COUNTER_TABLE
@@ -233,5 +240,88 @@ counterpoll show
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- defaults -->
+## 暗黙デフォルト・コード由来挙動 (Phase A)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/flexcounterorch.h,
+     sonic-buildimage/files/build_templates/init_cfg.json.j2,
+     sonic-buildimage/src/sonic-config-engine/minigraph.py,
+     sonic-buildimage/dockers/docker-orchagent/enable_counters.py,
+     sonic-utilities/counterpoll/main.py,
+     sonic-utilities/scripts/db_migrator.py,
+     sonic-buildimage/src/sonic-yang-models/yang-models/sonic-flex_counter.yang -->
+
+### `FLEX_COUNTER_STATUS` の暗黙デフォルト
+
+YANG に `default` 宣言なし。orchagent コメント「counters are disabled for polling by default」(flexcounterorch.cpp:227)。未設定時のデフォルトは **`disable`**（カウンタ収集ゼロ）。
+
+**init_cfg.json.j2 で `enable` が書き込まれるグループ**（ビルド時デフォルト）:
+
+| グループ | init_cfg STATUS | init_cfg POLL_INTERVAL |
+|---------|----------------|----------------------|
+| `ACL` | `enable` | `10000` ms（唯一明示） |
+| `PORT` | `enable` | なし（syncd 側 fallback） |
+| `PORT_PHY_ATTR` | `enable` | なし |
+| `RIF` | `enable` | なし |
+| `QUEUE` | `enable` | なし |
+| `PFCWD` | `enable` | なし |
+| `PG_WATERMARK` | `enable` | なし |
+| `PG_DROP` | `enable` | なし |
+| `QUEUE_WATERMARK` | `enable` | なし |
+| `BUFFER_POOL_WATERMARK` | `enable` | なし |
+| `PORT_BUFFER_DROP` | `enable` | なし |
+
+**minigraph 経由 (`BmcMgmtToRRouter` / `MgmtToRRouter` / `MgmtTsToR`) で `disable` に上書き**:
+`BUFFER_POOL_WATERMARK`, `PFCWD`, `PG_DROP`, `PG_WATERMARK`, `PORT_BUFFER_DROP`, `QUEUE`, `QUEUE_WATERMARK`
+
+**DPU (`switch_type == dpu`) でのみ** enable_counters.py が起動後に注入（エントリが空の場合のみ）:
+`ENI`, `DASH_METER`
+
+#### 特殊挙動・罠
+
+| 種類 | 内容 |
+|------|------|
+| dead consumer (プラットフォーム依存) | `FLOW_CNT_ROUTE` は `getRouteFlowCounterSupported()` が false（SAI 未対応 ASIC）の場合、`enable` を書いても SAI 設定ゼロ・エラー通知なし |
+| 経路依存連動 | `PORT_PHY_ATTR` を enable にすると `PORT_PHY_SERDES_ATTR` も **自動で連動** enable/disable される。CONFIG_DB に `PORT_PHY_SERDES_ATTR` キーを直接書く必要はなく、書いても orchagent は `PORT_PHY_ATTR` の値で上書く |
+| 書込み順依存 | `allPortsReady()` が false の間は `doTask` が早期 return → `enable` エントリが m_toSync に蓄積され、全ポート ready 後に一括適用 |
+| warm-reboot 遅延 | warm-reboot 時のみ: delay timer 60 秒間は全 SET が無視される (`m_delayTimerExpired = false`)。通常起動では即時適用 |
+| FLOW_CNT_TRAP 前提条件 | `gCoppOrch` が null の場合 `generateHostIfTrapCounterIdList()` が呼ばれず、enable を書いても silent drop |
+| 大文字小文字制約 | `enable`/`disable` のみ有効。その他の値は `SWSS_LOG_NOTICE("Unsupported field")` でスキップ |
+
+### `FLEX_COUNTER_DELAY_STATUS` の暗黙デフォルト
+
+YANG に `default` なし。未設定時は遅延なし（即時ポーリング開始）。
+
+| 種類 | 内容 |
+|------|------|
+| 暗黙 reset (fast-reboot) | db_migrator `migrate_config_db_flex_counter_delay_status`: fast-reboot 前に全エントリの値を `true` に強制上書き |
+| 暗黙削除 (version migration) | db_migrator `migrate_flex_counter_delay_status_removal`: cross-branch upgrade 時にフィールドを完全削除する migration が走る。フィールドの有無がバージョンに依存 |
+| dead field (通常起動) | 通常起動では `m_delayTimerExpired = true`（コンストラクタで即セット）。`FLEX_COUNTER_DELAY_STATUS` は orchagent から参照されない（syncd 側での参照のみ）。通常は書き込み不要 |
+
+### `POLL_INTERVAL` の暗黙デフォルト
+
+YANG に `default` なし。counterpoll CLI の表示上のソフトデフォルト（orchagent / syncd にはハードコードなし）:
+
+| グループ | CLI ソフトデフォルト | CLI 入力可能範囲 |
+|---------|-------------------|----------------|
+| `PORT` / `RIF` / `WRED_ECN_PORT` | 1000 ms | 100..30000 |
+| `QUEUE` / `PG_DROP` / `ACL` / `TUNNEL` / `FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` / `WRED_ECN_QUEUE` / `SRV6` / `ENI` / `HA_SET` | 10000 ms | 1000..30000 |
+| `BUFFER_POOL_WATERMARK` / `QUEUE_WATERMARK` / `PG_WATERMARK` / `SWITCH` | 60000 ms | 1000..60000 |
+| `PORT_BUFFER_DROP` | 60000 ms | **30000..300000** (CPU 負荷大のため下限 30s) |
+| `PORT_PHY_ATTR` | 10000 ms | 100..30000 |
+
+**YANG vs CLI 乖離**: YANG の `poll_interval` typedef は `range 100..4294967295` で統一。CLI は group ごとに異なる上限を `IntRange` で強制しており、YANG バリデーションだけでは CLI の下限・上限が守られない。
+
+### `BULK_CHUNK_SIZE` / `BULK_CHUNK_SIZE_PER_PREFIX` の暗黙デフォルト
+
+| 種類 | 内容 |
+|------|------|
+| 未設定時 fallback | 未設定時、orchagent は syncd へ `"NULL"` 文字列を送信 → syncd 側で chunk size 無限（上限なし）として扱われる |
+| silent substitution | 片フィールドのみ設定した場合、もう片方は `"NULL"` で自動補完される（flexcounterorch.cpp:405）。ユーザーへの通知なし |
+| 暗黙リセット | 両フィールドを同時に省略した UPDATE を送ると `m_groupsWithBulkChunkSize` から erase → `"NULL","NULL"` を送信してリセット |
+| YANG 定義グループのみ | `BULK_CHUNK_SIZE` を YANG で定義するのは `PORT`, `PORT_BUFFER_DROP`, `QUEUE`, `QUEUE_WATERMARK`, `PG_DROP`, `PG_WATERMARK` のみ。他グループ (`DEBUG_COUNTER`, `PFCWD`, `RIF` 等) は YANG にも orchagent にも定義なし（書いても Unsupported field として無視） |
+
+<!-- /defaults -->
 
 <!-- glossary-links-injected: 6ca28e02d7fb -->

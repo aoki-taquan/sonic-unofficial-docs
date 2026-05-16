@@ -207,4 +207,26 @@ show buffer profile
 - `buffermgrd` がこのテーブルを読み取り Lossless バッファプロファイルを動的に算出
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+### `mtu`
+
+| 検出種類 | 暗黙値 / 挙動 | 証拠 |
+|---|---|---|
+| **ハードコード固定値（j2 テンプレート）** | `"1024"` — `dynamic_mode` が定義されている場合に書き込まれるビルド時デフォルト。ポートの実 MTU（9216 等）とは無関係に固定 | `buffers_config.j2:344` |
+| **ハードコード固定値（db_migrator 移行）** | `"1024"` — 静的→動的バッファ移行時（Mellanox 系）にハードコードで INSERT | `db_migrator.py:414` |
+| **エントリ不在時 Lua エラー** | `LOSSLESS_TRAFFIC_PATTERN` エントリが一切存在しない場合、Lua の `redis.call('HGETALL', lossless_traffic_keys[1])` が `nil` インデックスエラーで失敗 → lossless ヘッドルーム計算が不能になる | `buffer_headroom_mellanox.lua:91-94` |
+
+### `small_packet_percentage`
+
+| 検出種類 | 暗黙値 / 挙動 | 証拠 |
+|---|---|---|
+| **ハードコード固定値（j2 テンプレート）** | `"50"` — dynamic buffer モード全プラットフォームのビルド時デフォルト | `buffers_config.j2:345` |
+| **ハードコード固定値（db_migrator 移行）** | `"100"` — 同移行経路でハードコード INSERT | `db_migrator.py:414` |
+| **経路依存 discrepancy** | j2 テンプレート経由では `50`、db_migrator 移行経由では `100` — 同一フィールドで経路によって初期値が異なる | `buffers_config.j2:345` / `db_migrator.py:414` |
+| **フィールド欠落時 Lua 算術エラー** | `small_packet_percentage` が `nil` の場合、乗算式 `small_packet_percentage * minimal_packet_size` が Lua 算術エラーで失敗 → YANG `mandatory true` で通常防止されるが、手動 redis-cli 書き込み時は発生する可能性 | `buffer_headroom_mellanox.lua:146` |
+
+> **スキャン証跡**: `buffers_config.j2` L342-347 全行読了、`db_migrator.py` L414 確認、`buffer_headroom_mellanox.lua` L91-102, 146-147 全行読了、`buffer_headroom_barefoot.lua` L80-90, 114 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了。
+<!-- /defaults -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
