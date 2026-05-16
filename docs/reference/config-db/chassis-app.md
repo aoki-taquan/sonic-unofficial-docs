@@ -132,6 +132,84 @@ flowchart LR
 
 `SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` の実際の値はプラットフォーム設定による（テスト環境では `1`/`2`）。
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-ordering.md`
+
+### 起動シーケンスと先行条件
+
+CHASSIS_APP_DB への書き込みはすべて `gMultiAsicVoq == true`（＝`isChassisDbInUse()` が true）が前提。このフラグは orchagent 起動時に `DEVICE_METADATA.localhost.switch_type == "voq"` かつ `isChassisAppDbPresent()` の両方が成立した場合にのみ立つ (`main.cpp:727`)。接続失敗時は standalone VOQ モードとなり書き込みは行われない。
+
+```
+CONFIG_DB.DEVICE_METADATA (switch_type=voq)
+  → isChassisAppDbPresent() == true
+    → gMultiAsicVoq = true
+    → chassis_app_db = DBConnector("CHASSIS_APP_DB", 0, true)  [main.cpp:730]
+      ↓
+OrchDaemon::init():
+  PortsOrch(chassisAppDb)   # SYSTEM_LAG_TABLE / SYSTEM_LAG_MEMBER_TABLE テーブル登録 [orchdaemon.cpp:232]
+  IntfsOrch(chassisAppDb)   # SYSTEM_INTERFACE テーブル登録 [orchdaemon.cpp:296]
+  NeighOrch(chassisAppDb)   # SYSTEM_NEIGH テーブル登録    [orchdaemon.cpp:298]
+```
+
+### SET 時の先行必須条件
+
+| テーブル | 先行必須条件 | ブロック時の挙動 | コード根拠 |
+|---------|------------|----------------|-----------|
+| `SYSTEM_INTERFACE` | `PortInitDone` 受信済み (`addSystemPorts()` 完了) かつ port が `m_portList` に登録済み | `gPortsOrch->getPort()` 失敗 → `SWSS_LOG_ERROR` のみでスキップ（リトライなし） | `intfsorch.cpp:1676-1681` |
+| `SYSTEM_INTERFACE` | ポートがローカルシステムポート (`SAI_SYSTEM_PORT_TYPE_REMOTE` でない) | リモートポートはスキップ（無エラー）| `intfsorch.cpp:1689-1692` |
+| `SYSTEM_LAG_TABLE` | `gMultiAsicVoq == true` かつ LAG の `switch_id == gVoqMySwitchId` | ローカル LAG でなければスキップ | `portsorch.cpp:11145-11148` |
+| `SYSTEM_LAG_TABLE` | `SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` が chassis_app_db に書き込み済み（初期化スクリプトが担保） | フリーリスト空 → `LAG_ID_ALLOCATOR_ERROR_TABLE_FULL (-1)` でエラー | `lagids.lua:15-16, portsorch.cpp:11155` |
+| `SYSTEM_LAG_MEMBER_TABLE` | 対応する LAG が `SYSTEM_LAG_TABLE` に登録済み (`voqSyncAddLag` 完了後) | LAG の `switch_id` 不一致でスキップ | `portsorch.cpp:11183-11186` |
+| `SYSTEM_NEIGH` | RIF が存在 (`IntfsOrch::addIntf()` 完了) かつ SAI `encap_index != 0` | `encap_index == 0` → エントリ書き込みをスキップ（無エラー） | `neighorch.cpp:2608-2612` |
+| `BGP_DEVICE_GLOBAL\|STATE` | bgpcfgd が supervisor の CHASSIS_APP_DB を購読中 かつ LC 側 `tsa_enabled == "false"` | lc_tsa != "false" の場合は `isolate_unisolate_device()` を呼ばず上書きしない | `managers_chassis_app_db.py:40-44` |
+
+### PortInitDone ゲートの詳細
+
+PortsOrch は `PortInitDone` メッセージを受け取るまでポートリストを確定させない:
+
+```
+portsyncd → APP_DB:"PORT|PortConfigDone" (count=N)
+  → APP_DB:"PORT|PortInitDone"
+    → PortsOrch::doTask(): addSystemPorts()  # APPL_DB.APP_SYSTEM_PORT_TABLE から登録
+    → m_initDone = true → allPortsReady() = true
+      ↓
+IntfsOrch::addIntf() → voqSyncAddIntf() で SYSTEM_INTERFACE を書き込み可能になる
+```
+
+`voqSyncAddIntf()` 内で `gPortsOrch->getPort()` が失敗した場合はログのみで書き込みをスキップする（`task_need_retry` ではなく静的スキップ）。`PortInitDone` 前にインタフェース追加イベントが到達しても SYSTEM_INTERFACE への書き込みは行われない点に注意。
+
+### warm-reboot での挙動
+
+CHASSIS_APP_DB (redis_chassis) は supervisor 側で保持されるため、**ラインカード orchagent の warm-reboot 中も既存エントリは残存する**。orchagent は `warmRestoreAndSyncUp()` 内で 3 回ループ `doTask()` を実行し、bake() で読み込んだ既存 APP_DB データを再処理して SET を冪等に上書きする (`orchdaemon.cpp:1099-1139`)。
+
+```
+WarmStart::isWarmStart() == true
+  → PortsOrch::bake(): APP_DB "PORT|PortConfigDone" + "PORT|PortInitDone" の存在確認
+    → 存在すれば warm-reboot モード (既存ポートを m_pendingPortSet に投入)
+    → 存在しなければ コールドスタートに fallback (cleanPortTable)
+  → 3回 doTask() ループ:
+    - 1st: SwitchOrch / PortsOrch (port 初期化・hostif 作成)
+    - 2nd: port 設定 (speed/mtu/fec) + IntfsOrch / NeighOrch
+    - 3rd: 残余データドレイン
+  → onWarmBootEnd():
+    - m_isWarmRestoreStage = false
+    - refreshPortStatus() → voqSyncIntfState() で SYSTEM_INTERFACE.oper_status を再書き込み
+```
+
+`m_isWarmRestoreStage == true` の期間は `postPortInit()` がスキップされる (`portsorch.cpp:4076`)。`onWarmBootEnd()` 後に oper_status が更新されるため、**warm-reboot 直後は SYSTEM_INTERFACE の oper_status が一時的に古い値を持つ可能性がある**。
+
+### chassisd クリーンアップとの関係
+
+ラインカードが down しても supervisor の `chassisd` は `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD = 30` 分待機してからエントリを削除する (`chassisd:90,676`)。warm-reboot は通常 30 分以内に完了するため、**warm-reboot の場合はクリーンアップが実行されず既存エントリが保護される**。
+
+### DEL 時の順序制約
+
+`voqSyncDelIntf()` / `voqSyncDelLag()` / `voqSyncDelLagMember()` はいずれも参照先の存在チェックなしに `del()` を実行する。CHASSIS_APP_DB への DEL は依存関係なしで任意のタイミングで発行可能。ただし `SYSTEM_LAG_TABLE` エントリを DEL すると対応する LAG ID が `SYSTEM_LAG_IDS_FREE_LIST` に戻り再利用される点に注意。
+
+<!-- /ordering -->
+
 ## キー構造
 
 | テーブル | Redis キー形式 | 例 |
