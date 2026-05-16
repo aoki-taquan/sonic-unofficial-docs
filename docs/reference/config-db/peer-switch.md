@@ -299,3 +299,54 @@ minigraph.py の `get_tunnel_entries()` 関数が `peer_switch_ip` を受け取�
 > **スキャン証跡**: `orchdaemon.cpp:467-471` + `muxorch.cpp` を確認、3 件分岐抽出。PEER_SWITCH は MuxOrch が MUX_CABLE と同一インスタンスで処理することを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/peer-switch-failure.md -->
+<!-- source: sonic-swss/orchagent/muxorch.cpp -->
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | retry | rollback | ログ |
+|---|------------|------|---------|------|
+| 1 | 不正 `address_ipv4` フォーマット | なし (YANG が先にブロック) | — | 例外伝播（実運用上は到達しない） |
+| 2 | TUNNEL (MuxTunnel0) 未解決 | あり (`return false` でリトライ待機) | — | `SWSS_LOG_INFO` `Mux tunnel not yet created for 'MuxTunnel0' peer ip '...'` |
+| 3 | SAI overlay IF 作成失敗 | なし (consume) | なし | `SWSS_LOG_ERROR` `Mux add operation error Can't create overlay interface` |
+| 4 | SAI tunnel オブジェクト作成失敗 | なし (consume) | なし | `SWSS_LOG_ERROR` `Mux add operation error Can't create a tunnel object` |
+| 5 | DEL (Not Implemented) | — | なし (旧 IP 保持) | `SWSS_LOG_NOTICE` `Mux peer ip '...' delete (Not Implemented)` |
+
+### 詳細
+
+#### 1. 不正 `address_ipv4` → `std::invalid_argument` → エントリスキップ
+
+`request_parser.cpp` の `parseIpAddress` が不正フォーマット (`"999.999.999.999"` 等) で `std::invalid_argument` を送出。`addOperation` の `catch(std::runtime_error&)` は `invalid_argument` を補足しない（継承関係なし）ため外側ハンドラへ伝播し、`mux_peer_switch_` は未設定のまま。実運用では YANG `inet:ipv4-address` 型バリデーションが先行してブロックする。
+
+#### 2. TUNNEL (MuxTunnel0) 未解決 → `return false` でリトライ待機
+
+`muxorch.cpp:2348–2354` (`handlePeerSwitch`):
+
+```cpp
+IpAddresses dst_ips = decap_orch_->getDstIpAddresses(MUX_TUNNEL);
+if (!dst_ips.getSize())
+{
+    SWSS_LOG_INFO("Mux tunnel not yet created for '%s' peer ip '%s'",
+                   MUX_TUNNEL, peer_ip.to_string().c_str());
+    return false;
+}
+```
+
+SET 時に `decap_orch_` が `MuxTunnel0` の宛先 IP を未登録の場合、`return false` でリトライキューに戻る。`mux_peer_switch_` は未設定 (`0.0.0.0`) のままで MUX_CABLE エントリの生成もブロック。ログは INFO レベルのみ（エラーログなし）。
+
+#### 3 & 4. SAI 失敗 → `std::runtime_error` → addOperation が consume して return true
+
+`muxorch.cpp:243` `"Can't create overlay interface"` / `muxorch.cpp:328` `"Can't create a tunnel object"` が `throw std::runtime_error` で投げられ、`addOperation:2409–2413` の `catch(std::runtime_error&)` が補足して `SWSS_LOG_ERROR` を出力して `return true`。エントリはリトライされない — `mux_peer_switch_` は未設定のまま。
+
+#### 5. DEL → "Not Implemented" のみ
+
+`muxorch.cpp:2387` — DEL_COMMAND ハンドラが `SWSS_LOG_NOTICE` を出力するのみで `mux_peer_switch_` をリセットしない。CONFIG_DB からエントリを削除しても orchagent は旧 peer IP を保持し続ける。**orchagent 再起動が唯一の回復手段**。
+
+!!! warning "DEL 未実装の影響"
+    `mux_peer_switch_` が残存するため、PEER_SWITCH 変更後に MUX_CABLE が旧 peer IP でトンネルを張り続ける。変更時は必ず orchagent を再起動すること。
+
+<!-- /failure -->
