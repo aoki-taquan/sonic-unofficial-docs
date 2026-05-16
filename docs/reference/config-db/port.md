@@ -1035,4 +1035,43 @@ elif not port.get('fec') and port.get('speed') == '100000':
 - 100G ポートは `FECDisabled=true` の minigraph プロパティがない限り自動的に `fec: rs` が設定される。
 - 25G、40G、400G 等は明示指定が必要 (`port_config.ini` に記載するか `config interface fec` で変更)。
 
+### Gearbox 差異
+
+Gearbox（外付け PHY）が搭載されたプラットフォーム（例: Barefoot/Tofino 向けアドオン PHY 実装）では、通常の ASIC ポートと異なる初期化フローが走る。
+
+- `_GEARBOX_TABLE` に PHY / Interface / Lane / Port マップが存在する場合、`initGearbox()` (`portsorch.cpp:10372`) が `m_gearboxEnabled=true` に設定する。
+- ポートごとに `initGearboxPort()` (`portsorch.cpp:10402`) が呼ばれ、ASIC ポートに加えて **system-side ポート**と **line-side ポート**の 2 つの SAI ポートオブジェクトが別途作成される。
+  - system-side: ASIC 側の SAI ポート (PHY スイッチ OID で作成)
+  - line-side: 光ファイバ側の SAI ポート (PHY スイッチ OID で作成)
+- Gearbox 有効時のポート速度変更は `m_gearboxTable->hset()` (`portsorch.cpp:3421`) で `_GEARBOX_TABLE` にも書き込む。
+- Gearbox 無効環境では `initGearboxPort()` は no-op となり、通常の単一 SAI ポートのみが作成される。
+- カウンタは `GB_COUNTERS_DB` (`COUNTERS_PORT_NAME_MAP`) に `<alias>_system` / `<alias>_line` キーで記録される (`portsorch.cpp:10650-10656`)。
+
+### VOQ Chassis (system_port) 差異
+
+`gMySwitchType == "voq"` の VOQ chassis 構成では、PORT テーブルに加えて **SYSTEM_PORT** が SAI レイヤに登録される。
+
+- `PortInitDone` 受信後、`addSystemPorts()` (`portsorch.cpp:10864`) が呼ばれ、`APP_SYSTEM_PORT_TABLE` から `switch_id` / `core_index` / `core_port_index` / `system_port_id` を読み取り `SAI_SYSTEM_PORT_ATTR_CONFIG_INFO` で SAI に登録する。
+- PORT テーブルの `core_id` / `core_port_index` / `num_voq` フィールドは VOQ chassis 専用。非 VOQ 環境では設定しても参照されない。
+- `lanes` フィールドは YANG の `when` 条件により `switch_type=voq` / `chassis-packet` / `fabric` の場合は必須でなくなる。
+- VOQ 環境のポートは `SAI_QUEUE_TYPE_UNICAST_VOQ` キューを持ち、カウンタも `COUNTERS_VOQ_NAME_MAP` に記録される (`portsorch.cpp:779`)。
+- ポート作成後、VOQ 環境では `removeDefaultVlanMembers()` と `removeDefaultBridgePorts()` が追加実行される (`portsorch.cpp:1496-1499`)。
+- LAG メンバーの switch_id 整合性チェック: VOQ 環境では `CHASSIS_APP_LAG_MEMBER_TABLE_NAME` 経由のメンバーについて `port.m_system_port_info.switch_id == lag_switch_id` を検証し、不一致はタスク破棄 (`portsorch.cpp:6308-6315`)。
+
+### SAI port_serdes 差異
+
+`SAI_PORT_ATTR_PORT_SERDES_ID` / `sai_port_api->create_port_serdes()` で管理される SerDes チューニング値は、ASIC / Gearbox line-side / Gearbox system-side の 3 種に分岐する。
+
+| SerDes 対象 | SAI スイッチ OID | 設定タイミング |
+|------------|----------------|-------------|
+| ASIC ポート (`m_port_id`) | `gSwitchId` | `doPortTask` 処理中 (`portsorch.cpp:4541`) |
+| Gearbox system-side (`m_system_side_id`) | PHY OID (`phyOid`) | `initGearboxPort()` 内 (`portsorch.cpp:10671`) |
+| Gearbox line-side (`m_line_side_id`) | PHY OID (`phyOid`) | `initGearboxPort()` 内 (`portsorch.cpp:10691`) |
+
+- SerDes 属性適用前にポートを **admin DOWN** にする必要がある (`portsorch.cpp:4527-4538`)。admin UP 状態での設定変更は不可。
+- Gearbox 非搭載環境では `m_system_side_id` / `m_line_side_id` は未設定のままとなり、ASIC ポートのみに SerDes が適用される。
+- `setPortSerdesAttribute()` (`portsorch.cpp:10123`) は既存の serdes オブジェクトを remove してから再作成する（create-only 属性のため）。このとき `m_portIdToSerdesId` マップと `COUNTERS_DB/COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` の両方を更新する。
+- プラットフォームが `SAI_PORT_SERDES_ATTR_PORT_ID` を未実装の場合、`sai_port_api->get_port_attribute(SAI_PORT_ATTR_PORT_SERDES_ID)` が失敗し ERROR ログ後にタスクが中断される。
+- FlexCounter の `PORT_PHY_SERDES_ATTR` カウンタは `getPortPhySerdesSupportedAttrs()` で実際にサポートされる属性のみ登録する (`portsorch.cpp:4177-4181`)。
+
 <!-- /platform -->
