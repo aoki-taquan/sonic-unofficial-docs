@@ -324,6 +324,37 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 | その他 ASIC vendor | **差分なし** | Lua プラグイン名のみ異なる |
 <!-- /platform -->
 
+<!-- failure -->
+## 失敗挙動・エラー分岐
+
+### buffermgrdyn.cpp (dynamic buffer model)
+
+| 失敗条件 | 返却値 | ログレベル | evidence |
+|--------|-------|----------|---------|
+| `profile_list` 内のプロファイルが `m_bufferProfileLookup` に未登録 | `task_need_retry` | INFO | `buffermgrdyn.cpp:3281-3285` (`checkBufferProfileDirection`) |
+| egress 方向プロファイルを ingress profile_list に指定（direction mismatch） | `task_failed` | ERROR | `buffermgrdyn.cpp:3289-3295` (`checkBufferProfileDirection`) |
+| キー内ポート名が空（無効キー形式） | `task_invalid_entry` | ERROR | `buffermgrdyn.cpp:3509-3513` (`handleBufferObjectTables`) |
+| `m_bufferPoolReady == false`（buffer pool 未準備） | pending（`task_success` 返却・APPL_DB 書き込み保留） | NOTICE | `buffermgrdyn.cpp:3408-3414` |
+| `portInfo.state == PORT_ADMIN_DOWN`（admin-down 期間） | silent 置換（zero profile list を APPL_DB へ書き込み） | なし | `buffermgrdyn.cpp:3418-3438` |
+
+> **direction mismatch** は dynamic model のみに適用される。`buffermgr.cpp`（static model）は方向チェックを行わず APPL_DB にそのまま転送する。
+
+### bufferorch.cpp (orchagent)
+
+| 失敗条件 | 返却値 | ログレベル | evidence |
+|--------|-------|----------|---------|
+| `resolveFieldRefArray()` → `not_resolved`（プロファイル参照未解決） | `task_need_retry` | INFO | `bufferorch.cpp:1685-1688` |
+| `resolveFieldRefArray()` その他失敗 | `task_failed` | ERROR | `bufferorch.cpp:1690-1691` |
+| `profCfg.isTrimmingEligible == true`（`packet_discard_action=trim` プロファイル） | `task_failed` | ERROR | `bufferorch.cpp:1725-1731` |
+| `gPortsOrch->getPort()` 失敗（ポート未登録） | `task_invalid_entry` | ERROR | `bufferorch.cpp:1762-1765` |
+| SAI Bulk SET 部分失敗（`SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR`） | 失敗ポートのみ `task_need_retry` で再投入（成功ポートは確定） | ERROR | `bufferorch.cpp:1823-1843` |
+
+> **trim 禁止**は ingress 専用制約。egress profile list (`processEgressBufferProfileList`) には同等チェックが存在しない（SAI 仕様上 egress 側のトリミングは許容される）。
+
+> **SAI Bulk 部分失敗**は `processIngressBufferProfileListBulk()` 内で処理される。`SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` を使用するため、複数ポートの一括 SET において一部ポートが失敗しても処理は継続する。失敗したポートのエントリは `consumer.m_toSync` に再投入され次回リトライされる。
+
+<!-- /failure -->
+
 <!-- side-effects -->
 ## 副次 DB 書込（STATE_DB / COUNTERS_DB / APPL_STATE_DB / FLEX_COUNTER_DB）
 
