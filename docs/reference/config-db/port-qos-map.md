@@ -478,3 +478,61 @@ if self.asic_type not in asics_require_global_dscp_to_tc_map:
 - DEL 時（行 2165–2170）: `removeMeFromObjsReferencedByMe()` で逆参照を解除し、参照先テーブルの削除ブロックを回避。
 
 <!-- /cross-refs -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-side-effects.md -->
+
+`QosOrch` が `PORT_QOS_MAP` エントリを処理する際に発生する副次的な DB 書込・SAI 操作。
+
+### per-port キー (key != "global") — SET
+
+#### SAI ポート属性 bind (ASIC_DB 経由)
+
+`sai_port_api->set_port_attribute(port.m_port_id, &attr)` を全マップフィールドに対して呼び出す。syncd が `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<oid>` を ASIC_DB に書き込む（syncd による間接書込）。
+
+| フィールド | SAI 属性 | evidence |
+|---|---|---|
+| `dscp_to_tc_map` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:60-100` |
+| `tc_to_queue_map` | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` | `qosorch.cpp:64,103` |
+| `tc_to_pg_map` | `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` | `qosorch.cpp:67,106` |
+| `pfc_to_queue_map` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` | `qosorch.cpp:69,108` |
+| `scheduler` | `SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID` | `qosorch.cpp:70,109` |
+| (削除されたマップ) | 上記対応属性、値 `SAI_NULL_OBJECT_ID` | `qosorch.cpp:2171` |
+
+#### PFC bitmask の SAI 書込
+
+`gPortsOrch->setPortPfc(port.m_port_id, pfc_enable)` — `pfc_enable || old_pfc_enable` が true の場合のみ呼び出される。内部で `sai_port_api->set_port_attribute()` を `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` に発行 → ASIC_DB に間接書込。
+
+evidence: `qosorch.cpp:2213-2221`
+
+#### PFC Watchdog bitmask の内部状態更新
+
+`gPortsOrch->setPortPfcWatchdogStatus(port.m_port_id, pfcwd_sw_enable)` — **無条件**に呼び出される。PortsOrch 内部の `m_port_list[].m_pfc_bitmask` を更新する（CONFIG_DB / APPL_DB / ASIC_DB への直接書込なし）。PfcWdOrch がポーリングして参照する。
+
+evidence: `qosorch.cpp:2224`
+
+### global キー (key == "global") — SET
+
+`dscp_to_tc_map` フィールドのみが有効。他フィールドは `SWSS_LOG_WARN` でスキップ。
+
+`sai_switch_api->set_switch_attribute(gSwitchId, &attr)` を `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` に発行。事前に capability を確認し、非対応 ASIC では SAI 呼び出しをスキップ。
+
+evidence: `qosorch.cpp:1951-1976, 2030`
+
+### 副次書込先サマリ
+
+| 書込先 | 操作 | トリガ条件 |
+|---|---|---|
+| ASIC_DB (`SAI_OBJECT_TYPE_PORT`) | SAI ポート属性 set/clear (syncd 経由) | per-port SET / DEL |
+| ASIC_DB (`SAI_OBJECT_TYPE_SWITCH`) | SAI switch 属性 set/clear (syncd 経由) | global SET / DEL |
+| PortsOrch 内部状態 (`m_pfc_bitmask`) | PFC Watchdog bitmask 更新 | `pfcwd_sw_enable` 省略時も含む無条件 |
+| QosOrch in-process (`m_qos_maps`) | 参照カウント更新 | SET / DEL 両方 |
+| APPL_DB | なし (QosOrch は直接 APPL_DB を書かない) | — |
+| CONFIG_DB | なし | — |
+
+!!! note "注意"
+    `pfcwd_sw_enable` は **省略時も 0 として無条件に** PortsOrch 内部状態へ書込まれる（`pfc_enable` の条件付きスキップと非対称）。global キーは `dscp_to_tc_map` 以外のフィールドを無視する。
+
+<!-- /side-effects -->
