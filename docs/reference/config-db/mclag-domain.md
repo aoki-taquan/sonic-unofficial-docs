@@ -266,6 +266,36 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 
 <!-- /handler-branching -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/orchagent/fdborch.cpp / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang -->
+
+### MCLAG_DOMAIN → 参照先
+
+| 参照元フィールド | 参照先テーブル | 参照種別 | evidence |
+|---|---|---|---|
+| `MCLAG_DOMAIN.peer_link` | CONFIG_DB `PORT` / `PORTCHANNEL` | YANG leafref (ISL ポート存在必須) | `sonic-mclag.yang:62-71` |
+| `MCLAG_INTERFACE.if_name` | CONFIG_DB `PORTCHANNEL` | YANG leafref (MLAG member LAG) | `sonic-mclag.yang:115-116` |
+
+### 参照先 → MCLAG_DOMAIN
+
+| 参照元テーブル | 参照フィールド | 参照種別 | evidence |
+|---|---|---|---|
+| `MCLAG_INTERFACE` | `domain_id` leafref | YANG 必須制約 (DOMAIN 先行) | `sonic-mclag.yang:108-109` |
+| `MCLAG_UNIQUE_IP` | (テーブル全体) | YANG must "count(DOMAIN) != 0" | `sonic-mclag.yang:132-134` |
+
+### 下流 FDB テーブルへの暗黙影響
+
+| トリガー | 影響先 | 挙動 | evidence |
+|---|---|---|---|
+| MCLAG_INTERFACE 登録済み PortChannel が oper-down | APPL_DB `FDB_TABLE` | FDB フラッシュをスキップ（ピア側保持のため） | `fdborch.cpp:1209-1212` |
+| MCLAG 広告 FDB の削除 + ポート oper-down | APPL_DB `FDB_TABLE` | 削除 origin を `FDB_ORIGIN_LEARN` に書き換えてローカル MAC 削除 | `fdborch.cpp:1665-1670` |
+
+> **NEIGHBOR への参照なし**: `mlagorch.cpp` は `NEIGHBOR` / `NEIGH` テーブルを直接参照しない。隣接解決は `neighorch` が担当し、MCLAG はポート状態通知に留まる。
+
+<!-- /cross-refs -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
@@ -387,3 +417,56 @@ docker exec swss cat /var/log/swss/orchagent.log | grep -i "MLAG"
 
 > **hard=0**: すべての推奨デフォルトは YANG `default` 文由来。iccpd 内部の定数 (`MCLAG_DEFAULT_PORT 2626` 等) は CONFIG_DB フィールドとは無関係。
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/mclagsyncd/mclag.h / sonic-buildimage/src/iccpd/include/scheduler.h / sonic-buildimage/src/iccpd/include/iccp_csm.h / sonic-swss/mclagsyncd/mclaglink.cpp -->
+
+### MlagOrch 内定数
+
+`mlagorch.cpp` 自体にハードコード数値定数はない。テーブル名照合は `swss-common` 側マクロ (`CFG_MCLAG_TABLE_NAME="MCLAG_DOMAIN"`) を使用。`peer_link` フィールドが空の場合はエントリを erase してスキップ（必須フィールド扱い）。
+
+### YANG デフォルト値
+
+| フィールド | デフォルト | ソース |
+|---|---|---|
+| `keepalive_interval` | `1` 秒 | `sonic-mclag.yang:81` (`default 1;`) |
+| `session_timeout` | `30` 秒 | `sonic-mclag.yang:91` (`default 30;`) |
+
+### iccpd 内部フォールバック定数
+
+CONFIG_DB の `keepalive_interval` / `session_timeout` が空（CLI 外経路で省略）の場合、mclagsyncd は `-1` を iccpd に送信し、iccpd 側で以下の定数にフォールバックする。
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `CONNECT_INTERVAL_SEC` | `1` 秒 | `keepalive_interval` 空時の fallback | `scheduler.h:40` |
+| `HEARTBEAT_TIMEOUT_SEC` | `15` 秒 | `session_timeout` 空時の fallback | `scheduler.h:42` |
+| `CONNECT_TIMEOUT_MSEC` | `100` ms | ピア接続 socket タイムアウト | `scheduler.h:41` |
+
+> **注意**: YANG default (`session_timeout=30`) と iccpd fallback (`HEARTBEAT_TIMEOUT_SEC=15`) は値が異なる。CLI 経由では YANG default が CONFIG_DB に書かれるため、iccpd fallback は CONFIG_DB 直書きで空の場合のみ発火する。  
+> evidence: `iccp_csm.c:125-126`, `mlacp_link_handler.c:3108,3120`
+
+### ICCP セッションポート
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `ICCP_TCP_PORT` | `8888` | iccpd ↔ ピア iccpd 間 ICCP TCP ポート（変更不可） | `iccp_csm.h:53` |
+
+### mclagsyncd ↔ iccpd IPC 定数
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `MCLAG_DEFAULT_IP` | `127.0.0.6` | mclagsyncd IPC listen アドレス | `mclag.h:23` |
+| `MCLAG_DEFAULT_PORT` | `2626` | mclagsyncd ↔ iccpd TCP IPC ポート | `mclag.h:56` |
+
+### SAI bridge_port_attr
+
+mclagsyncd が ISOLATION_GROUP_TABLE の MEMBERS を構築する際、ASIC_DB から以下の SAI 属性を参照してポート OID を解決する。
+
+| 属性 | 役割 | ソース |
+|---|---|---|
+| `SAI_BRIDGE_PORT_ATTR_PORT_ID` | 通常 bridge port のポート OID | `mclaglink.cpp:87` |
+| `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` | トンネル bridge port 時のフォールバック | `mclaglink.cpp:90` |
+
+<!-- /constants -->
