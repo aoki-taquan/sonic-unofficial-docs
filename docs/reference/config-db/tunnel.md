@@ -196,6 +196,52 @@ tunnelmgrd は常時起動し `TUNNEL` テーブルを無条件購読する。`s
 
 <!-- /handler-branching -->
 
+<!-- platform -->
+## プラットフォーム差 (SAI capability / vendor)
+
+### `ecn_mode` / `encap_ecn_mode` — SAI create-only 属性
+
+`SAI_TUNNEL_ATTR_DECAP_ECN_MODE` と `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` は SAI 仕様上の **create-only** フラグを持つ。ベンダー実装に関わらず、`tunneldecaporch` は既存トンネルへの変更 SET を検出すると SET 全体を無効化 (valid=false) し WARN/NOTICE を出力する。変更するには `TUNNEL|MuxTunnel0` の DEL 後に再 SET が必要。<!-- evidence: tunneldecaporch.cpp L179, L195 -->
+
+### Dual-ToR QoS リマッピング — `dscp_mode=pipe` 必須かつ SAI 202012+ 必要
+
+Dual-ToR (`DEVICE_METADATA.subtype = "DualToR"`) 構成でのバウンスバック PFC デッドロック回避のため、4つのトンネル QoS フィールドが SAI 属性として設定される。これらの SAI 属性は SAI spec 202012 (branch 202205 対象) で追加されており、古い SAI 実装ではトンネル CREATE 時に非サポートが返る可能性がある。<!-- evidence: SONiC/doc/qos/tunnel_dscp_remapping.md, muxorch.cpp L308-321, tunneldecaporch.cpp L831-845 -->
+
+| フィールド | SAI 属性 | 担当 orch |
+|---|---|---|
+| `decap_dscp_to_tc_map` | `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` | tunneldecaporch |
+| `decap_tc_to_pg_map` | `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` | tunneldecaporch |
+| `encap_tc_to_dscp_map` | `SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP` | muxorch |
+| `encap_tc_to_queue_map` | `SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP` | muxorch |
+
+!!! note "dscp_mode=pipe が前提"
+    QoS リマッピングを有効にするには `dscp_mode` を `pipe` に設定する必要がある。`uniform` モードでは外側 DSCP が内側にコピーされリマッピングの効果が相殺される。
+
+### SAI Tunnel Peer Mode — P2P/P2MP capability クエリ (VxLAN 系)
+
+`VxlanTunnelOrch` 起動時に `sai_query_attribute_enum_values_capability()` で `SAI_TUNNEL_ATTR_PEER_MODE` のサポート enum を確認する。クエリが失敗した場合は WARN ログを出力し P2P サポートと仮定してフォールバックする。TUNNEL テーブルの `tunneldecaporch` / `muxorch` はこのクエリを行わず P2P を固定使用する。<!-- evidence: vxlanorch.cpp L1256-1274 -->
+
+Dual-ToR の decap terminator 設計では以下の使い分けが行われる:
+- `MuxTunnel` の decap term: `P2P` (src_ip = peer Loopback アドレス指定)
+- 通常 IPinIP トンネルの decap term: `P2MP` (src_ip なし、ワイルドカード)
+
+### VxLAN UDP Source Port セキュリティ — capability 依存
+
+`SwitchOrch` は `SAI_SWITCH_TUNNEL_ATTR_VXLAN_UDP_SPORT_SECURITY` を capability クエリしてから設定する。非対応の SAI 実装ではサイレントにスキップされ NOTICE ログが出力される。TUNNEL テーブル直接の挙動ではないが、VXLAN Tunnel との間接的な動作差に影響する。<!-- evidence: switchorch.cpp L526-538 -->
+
+### プラットフォーム差サマリー
+
+| プラットフォーム条件 | 影響フィールド | 挙動 |
+|---|---|---|
+| 全プラットフォーム共通 | `ecn_mode`, `encap_ecn_mode` | SAI create-only。既存トンネルへの変更 SET で SET 全体無効化 |
+| SAI spec 202012 未満 | QoS リマッピング 4フィールド | `SAI_TUNNEL_ATTR_DECAP_QOS_*` / `ENCAP_QOS_*` 非サポートの可能性あり |
+| SAI capability クエリ非対応 | VxLAN P2P/P2MP peer mode | P2P サポートと仮定してデフォルト動作 |
+| SAI capability クエリ非対応 | VxLAN UDP sport security | 静かにスキップ (NOTICE ログ) |
+| 全プラットフォーム共通 | `ttl_mode`, `dscp_mode` | 既存トンネルへの変更は可能。ベンダー SAI 実装依存で失敗する場合あり |
+| 全プラットフォーム共通 | overlay RIF MTU | ハードコード値 `9100` を SAI に送信 (変更不可) |
+
+<!-- /platform -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
