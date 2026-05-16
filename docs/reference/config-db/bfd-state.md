@@ -445,6 +445,47 @@ HW BFD 経路では SAI 通知が ASIC 内のタイマ精度に依存する。br
 
 <!-- /platform -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F — STATE_DB 以外への波及)
+
+`bfdorch` が `BFD_SESSION_TABLE` (STATE_DB) を更新する際、**STATE_DB 自身以外の DB (COUNTERS_DB / APPL_STATE_DB) への副次書込は行わない**。`bfdorch.cpp` のソース全行を `DBConnector` / `Table` / `swss::Table` インスタンス化箇所で精査した結果、確保される DB ハンドルは以下 4 種類に限定される[^se1]。
+
+### `bfdorch` が保持する DB ハンドル
+
+| ハンドル | DB | 用途 | 書込/読込 |
+|---------|----|------|----------|
+| `Orch::db` (基底) | `APPL_DB` (`BFD_SESSION_TABLE`) | コンシューマー入力 (購読のみ) | **読込専用** (consumer subscribe) |
+| `m_stateBfdSessionTable` | `STATE_DB` (`BFD_SESSION_TABLE`) | セッション state/構成書込 | 書込 (`set` / `hset` / `del`) |
+| `m_stateSoftBfdSessionTable` | `STATE_DB` (`BFD_SOFTWARE_SESSION_TABLE`) | ソフトウェア BFD 経路の転記 | 書込 (`set` / `del`) |
+| `notificationsDb` | `ASIC_DB` (`NOTIFICATIONS` channel) | SAI BFD 状態通知の **subscribe** | **読込専用** (NotificationConsumer) |
+
+### COUNTERS_DB への波及 (該当なし)
+
+- `bfdorch.cpp` 全 841 行に `COUNTERS_DB` / `COUNTERS_TABLE` / `FLEX_COUNTER` への DBConnector 生成も Table 書込も存在しない。
+- BFD セッション統計 (RX/TX パケット数, SessionState 遷移回数) を SAI から polling し COUNTERS_DB に転記する flex counter loop も `bfdorch` 自身には実装されていない[^se1]。
+- このため `show bfd peers` 系の CLI は STATE_DB のみを参照し、COUNTERS_DB を読まない。
+
+### APPL_STATE_DB への波及 (該当なし)
+
+- `bfdorch` は `APPL_STATE_DB` の DBConnector を確保しない。APPL_STATE_DB は `producerstatetable` の `_REMOVE` ack 用途で他 orch (`portsorch` 等) が使うパターンだが、BFD は STATE_DB 直書きモデルのため不要。
+- APPL_DB → SAI 経路で `notify_session_state_down()` (`bfdorch.cpp:683-704`) が SAI 削除前の通知を出すが、これは **STATE_DB 内の `state` フィールド更新** であり APPL_STATE_DB ack ではない。
+
+### ASIC_DB との関係 (subscribe 専用)
+
+`notificationsDb` (ASIC_DB) は `NotificationConsumer("NOTIFICATIONS")` の購読チャネル取得用であり、書込み API は呼ばれない (`bfdorch.cpp:63-65`)。SAI 側 (`syncd`) が ASIC_DB の `NOTIFICATIONS` channel に publish した `bfd_session_state_change` を **受信** するだけで、`bfdorch` が ASIC_DB へ書き戻すことはない。受信後の唯一の DB 副作用は `m_stateBfdSessionTable.hset(key, "state", ...)` (`bfdorch.cpp:252`) で、これも STATE_DB 内の更新である。
+
+### 副次書込が無いことの含意
+
+| 観点 | 含意 |
+|------|------|
+| 故障診断 | BFD セッション統計を取得したい場合、COUNTERS_DB ではなく SAI API (`sai_bfd_api->get_bfd_session_stats`) を直接叩く必要がある (sonic-utilities `show bfd peers details` は STATE_DB しか読まないため統計は出ない) |
+| flex counter 拡張 | 将来 BFD 統計を flex counter 化するには、別途 `BfdCounterOrch` 等を新設し COUNTERS_DB / FLEX_COUNTER_DB への書込を実装する必要がある (現状は SONiC master に存在しない) |
+| ACK パターン | APPL_STATE_DB 経由の two-phase delete (例: portsorch の `_REMOVE` ack) は BFD には適用されない。BFD の削除は同期的に `remove_bfd_session()` → SAI → STATE_DB `del()` で完結 |
+
+[^se1]: `sonic-swss/orchagent/bfdorch.cpp` (L57-88 BfdOrch::BfdOrch — `DBConnector("ASIC_DB")` / `DBConnector("STATE_DB")` 各 1 件のみ、COUNTERS_DB/APPL_STATE_DB の生成 0 件)、`bfdorch.h` (L18-53 メンバ定義 — `m_stateBfdSessionTable` / `m_stateSoftBfdSessionTable` / `m_bfdStateNotificationConsumer` 以外の DB ハンドル無し)。全行 grep で `COUNTERS_DB` / `APPL_STATE_DB` / `FLEX_COUNTER` hit 0 件。<https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
+
+<!-- /side-effects -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`BFD_SESSION`](bfd-session.md) — BFD セッション設定パラメータ
