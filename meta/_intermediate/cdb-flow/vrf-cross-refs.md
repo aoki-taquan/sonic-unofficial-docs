@@ -1,6 +1,6 @@
 # VRF テーブル — 暗黙参照 (Phase C) 調査メモ
 
-調査日: 2026-05-15
+調査日: 2026-05-16 (vrforch.cpp 追加調査)
 対象ページ: `docs/reference/config-db/vrf.md`
 対象ソース:
 - `sonic-swss/cfgmgr/vrfmgr.cpp`
@@ -86,6 +86,27 @@
 - **内容**: `VRF` エントリ追加のたびに vrfmgrd が `VRF_TABLE_START=1001` 〜 `VRF_TABLE_END=5097` の範囲でカーネルルーティングテーブル ID を消費する。CONFIG_DB フィールドに現れない外部リソース。4096 VRF 超で `getFreeTable()=0` となり Linux VRF 作成失敗。
 - **発見種別**: 隠れたリソース上限（CONFIG_DB 非表現）
 
+### 11. FlowCounterRouteOrch — VR 作成/削除時の ROUTE フローカウンタ登録（vrforch.cpp 由来）
+
+- **方向**: `VRFOrch::addOperation` → `gFlowCounterRouteOrch->onAddVR(router_id)` (WRITE); `delOperation` → `gFlowCounterRouteOrch->onRemoveVR(router_id)` (DEL)
+- **場所**: `vrforch.cpp` L110, L184
+- **内容**: SAI Virtual Router 作成成功直後に `FlowCounterRouteOrch` の `onAddVR` を呼び出し、`FLEX_COUNTER_TABLE` および `COUNTERS_DB` 上の ROUTE フローカウンタエントリを自動登録する。VRF 削除時は `onRemoveVR` で解除。CONFIG_DB の `VRF` テーブルには対応フィールドなし。VRF 作成という操作自体が暗黙的に ROUTE カウンタリソースを変化させる。
+- **発見種別**: orchagent 内部副作用（CONFIG_DB 非表現）
+
+### 12. EvpnNvoOrch / VXLAN_EVPN_NVO — VNI マッピング前提条件（vrforch.cpp 由来）
+
+- **方向**: `VRFOrch::updateVrfVNIMap` → `EvpnNvoOrch::getEVPNVtep()` (READ, ランタイム)
+- **場所**: `vrforch.cpp` L205, L225-229
+- **内容**: VNI 非ゼロ設定時、orchagent は `gDirectory.get<EvpnNvoOrch*>()->getEVPNVtep()` で EVPN VTEP の存在を確認し、未設定なら `return false` でエントリを破棄する。`VXLAN_EVPN_NVO` テーブルに有効な NVO エントリが存在しない限り `VRF.vni` の設定は orchagent 側で無効となる。`VRF` テーブルの `vni` フィールドから見えない暗黙の前提条件。
+- **発見種別**: ランタイム前提条件チェック（CONFIG_DB 非表現）
+
+### 13. VxlanTunnelOrch / PortsOrch — VLAN-VNI マッピングと kernel netns L3 VNI（vrforch.cpp 由来）
+
+- **方向**: `VRFOrch::updateVrfVNIMap` → `VxlanTunnelOrch::getVlanMappedToVni(vni)` (READ) → `PortsOrch::updateL3VniStatus(vlan_id, true/false)` (カーネル副作用)
+- **場所**: `vrforch.cpp` L233, L239, L267
+- **内容**: VNI マッピング時に `VxlanTunnelOrch` から対応 VLAN ID を取得し、VLAN が存在する場合は `PortsOrch::updateL3VniStatus` で Linux カーネルの VLAN インタフェース（VE）を L3 VNI として有効化する。削除時は無効化。`VLAN_INTERFACE` / `VLAN` テーブルへの暗黙依存であり、VRF.vni 設定の副作用としてカーネル netns 状態が変化するが CONFIG_DB の `VRF` テーブルには一切現れない。
+- **発見種別**: カーネル netns 副作用（CONFIG_DB 非表現）
+
 ---
 
 ## 参照タイプ別サマリ
@@ -102,3 +123,6 @@
 | `STATIC_ROUTE` | CONFIG_DB | key 埋め込み | staticroutemgrd 処理時 | leafref 強制なし |
 | `PIM_GLOBALS` / `PIM_INTERFACE` | CONFIG_DB | key 埋め込み | frr-mgmt-framework | leafref 強制なし |
 | Linux ルーティングテーブル ID | カーネル | WRITE | VRF 追加時 | 最大 4096 件 |
+| `FlowCounterRouteOrch` (ROUTE カウンタ) | COUNTERS_DB/FLEX_COUNTER_TABLE | WRITE/DEL | VRF 作成・削除時 | vrforch.cpp:110,184 |
+| `VXLAN_EVPN_NVO` (EvpnNvoOrch) | CONFIG_DB | READ (前提チェック) | `VRF.vni` 非ゼロ設定時 | vrforch.cpp:225 |
+| `VLAN` / カーネル VE インタフェース (PortsOrch) | カーネル netns | WRITE | `VRF.vni` + VLAN 存在時 | vrforch.cpp:239,267 |

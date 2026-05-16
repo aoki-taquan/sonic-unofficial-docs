@@ -220,6 +220,51 @@ show dhcprelay_helper ipv4
 `sonic-cfggen` (minigraph.py:1071-1078) および CLI plugin (`dhcp_relay.py`) は `dhcpv6_servers` のみ `DHCP_RELAY` に書き込み、`rfc6939_support` / `interface_id` は**書き込まない**。これらは daemon のハードコードデフォルト（`true` / 環境依存）が適用される。
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/relay.h`, `config_interface.cpp`, `relay.cpp`, `wait_for_intf.sh.j2` 全行精読 (2026-05-15)
+
+### プロトコル定数 (relay.h)
+
+| 定数 | 値 | 証拠 | 意味 |
+|-----|-----|------|------|
+| `RELAY_PORT` | `547` | relay.h:22 | DHCPv6 サーバ・リレー間 UDP ポート (RFC 3315) |
+| `CLIENT_PORT` | `546` | relay.h:23 | DHCPv6 クライアント向け UDP ポート |
+| `HOP_LIMIT` | `8` | relay.h:24 | relay-forward の最大 hop count。RFC 8415 準拠で旧値 32 から変更。超過パケットは silent drop |
+| `DHCPv6_OPTION_LIMIT` | `147` | relay.h:25 | 処理対象オプションコードの上限値 |
+| `RAWSOCKET_RECV_SIZE` | `1048576` (1 MiB) | relay.h:27 | クライアント側 raw socket 受信バッファサイズ |
+| `CLIENT_IF_PREFIX` | `"Ethernet"` | relay.h:28 | クライアント I/F 判定プレフィックス |
+| `BUFFER_SIZE` | `9200` バイト | relay.h:29 | DHCPv6 メッセージシリアライズ用バッファ。ジャンボフレーム (MTU 9000) 対応マジックナンバー |
+| `BATCH_SIZE` | `64` | relay.h:37 | `SubscriberStateTable.pops()` の一回あたり最大エントリ数 |
+| `OPTION_RELAY_MSG` | `9` | relay.h:33 | DHCPv6 OPTION_RELAY_MSG コード (RFC 3315 §22.10) |
+| `OPTION_INTERFACE_ID` | `18` | relay.h:34 | DHCPv6 OPTION_INTERFACE_ID コード (RFC 3315 §22.18) |
+| `OPTION_CLIENT_LINKLAYER_ADDR` | `79` | relay.h:35 | DHCPv6 Option 79 コード (RFC 6939) |
+
+### 動作定数 (config_interface.cpp / relay.cpp)
+
+| 定数 | 値 | 証拠 | 意味 |
+|-----|-----|------|------|
+| `DEFAULT_TIMEOUT_MSEC` | `1000` ms | config_interface.cpp:6 | `swssSelect.select()` タイムアウト。`constexpr auto` で変更不可 |
+| `option_79_default` | `true` | config_interface.cpp:117 | `rfc6939_support` 未設定時のデフォルト（Option 79 有効） |
+| `interface_id_default` (非 DualToR) | `false` | config_interface.cpp:118 | `interface_id` 未設定・非 DualToR 時のデフォルト |
+| `interface_id_default` (DualToR) | `true` | config_interface.cpp:121 | `dual_tor_sock` 存在時に上書き |
+| VLAN ソケット bind retry 回数 | `6` | relay.cpp:641 | `prepare_vlan_sockets()` の最大リトライ回数 |
+| VLAN ソケット bind retry 間隔 | `5` 秒 | relay.cpp:640 | リトライ間 `sleep(5)` |
+| LLA チェックタイマー周期 | `60` 秒 | relay.cpp:1305 | LLA 未準備 VLAN の定期再チェック間隔 (`EV_PERSIST`) |
+
+### 起動待機定数 (wait_for_intf.sh.j2)
+
+| 定数 | 値 | 証拠 | 意味 |
+|-----|-----|------|------|
+| STATE_DB ポーリング間隔 | `1` 秒 | wait_for_intf.sh.j2:18 | `INTERFACE_TABLE\|<intf>\|state == ok` ポーリング間隔 |
+| インタフェース ready 後の追加待機 | `10` 秒 | wait_for_intf.sh.j2:51 | STATE_DB ok 確認後の固定 `sleep 10` |
+
+### 定数の外部変更可否
+
+すべての定数はコンパイル時または起動スクリプト内で固定されており、CONFIG_DB・環境変数・設定ファイルから**変更不可**。`HOP_LIMIT` と `BUFFER_SIZE` のみソースコード変更＋再ビルドで変更可能。
+<!-- /constants -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 

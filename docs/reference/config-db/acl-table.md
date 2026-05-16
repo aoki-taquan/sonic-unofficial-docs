@@ -102,6 +102,30 @@ ACL_TABLE|<table_name>
 - `orchagent` の `AclOrch`: [SAI](../../reference/glossary.md#term-sai) ACL table 生成、ポートへのバインド
 - `copporch`: `CTRLPLANE` 系の登録時に連動
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`AclOrch` は `Orch` 基底クラス経由で `ACL_TABLE` を購読する。CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace 通知** (`__keyspace@<dbId>__:ACL_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB / STATE_DB / CHASSIS_APP_DB 分岐) |
+| keyspace パターン | `__keyspace@4__:ACL_TABLE:*` (CONFIG_DB dbId=4) |
+| key 区切り | `ACL_TABLE\|<table-name>` (TableNameSeparator 既定 `\|`) |
+| POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
+| 優先度 (`pri`) | 0 (`TableConnector` 既定) |
+| 起動時スナップショット | `SubscriberStateTable` が既存エントリを SET イベントとして再配信 |
+| TTL | 未設定 (CONFIG_DB は永続前提) |
+| ディスパッチ | `Consumer::execute()` → `AclOrch::doTask(Consumer&)` → `consumer.getTableName()` 分岐 → `doAclTableTask(consumer)` |
+
+参考: APPL_DB 側の `APP_ACL_TABLE` は同じ `AclOrch` インスタンスが扱うが、`Orch::addConsumer()` の `else` 分岐で `ConsumerStateTable` + `gBatchSize` が使われる点で CONFIG_DB 側と異なる。
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:4197L (AclOrch::AclOrch via Orch(connectors)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1186L (Orch::addConsumer DB 種別分岐) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:408L (TableConnector confDbAclTable) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164L (DEFAULT_POP_BATCH_SIZE = 128) -->
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `ACL_RULE`、`ACL_TABLE_TYPE`、`PORT`、`PORTCHANNEL`、`MIRROR_SESSION`
@@ -632,7 +656,151 @@ STATE_DB テーブル名: `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` (`sch
 | `APP_ACL_TABLE_TYPE_TABLE_NAME` | `"ACL_TABLE_TYPE_TABLE"` | APP_DB | `schema.h:95` |
 | `STATE_ACL_TABLE_TABLE_NAME` | `"ACL_TABLE_TABLE"` | STATE_DB | `schema.h:514` |
 
-> **スキャン証跡**: `acltable.h:1-76` 全行精読、`aclorch.h:62-63`、`aclorch.cpp:42-44,105-106,523-526,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
+### SAI ACL table 作成時に設定される属性定数
+
+`AclTable::create()` (`aclorch.cpp:2823-2847`) が `sai_acl_api->create_acl_table()` を呼ぶ際に設定する SAI 属性:
+
+| SAI 属性定数 | 設定値 | ソース |
+|---|---|---|
+| `SAI_ACL_TABLE_ATTR_ACL_STAGE` | `SAI_ACL_STAGE_INGRESS` / `SAI_ACL_STAGE_EGRESS` | `aclorch.cpp:2842` |
+| `SAI_ACL_TABLE_ATTR_ACL_BIND_POINT_TYPE_LIST` | バインドポイントリスト (PORT/LAG 等) | `aclorch.cpp:2823` |
+| `SAI_ACL_TABLE_ATTR_ACL_ACTION_TYPE_LIST` | 許可アクションリスト | `aclorch.cpp:2835` |
+| `SAI_ACL_TABLE_ATTR_FIELD_*` | マッチフィールド群 (自動付与含む) | `aclorch.cpp:2614-2650` |
+| `SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE` | L4 ポート範囲 match (BRCM EGRESS では省略) | `aclorch.cpp:603,2614` |
+| `SAI_ACL_TABLE_ATTR_FIELD_IN_PORTS` | PFCWD / DROP type 固有 | `aclorch.cpp:436,448` |
+| `SAI_ACL_TABLE_ATTR_FIELD_ACL_USER_META` | EGR_SET_DSCP type 固有 | `aclorch.cpp:494` |
+
+### ACL_RULE priority 定数
+
+ACL_RULE の `PRIORITY` フィールド (`aclorch.h:25`: `#define RULE_PRIORITY "PRIORITY"`) に対応する priority 範囲は ASIC 問い合わせで動的に決定される:
+
+| 定数 | 型 | 初期値 | 取得先 | ソース |
+|---|---|---|---|---|
+| `AclRule::m_minPriority` | `sai_uint32_t` | `0` | `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` | `aclorch.cpp:22, 3689` |
+| `AclRule::m_maxPriority` | `sai_uint32_t` | `0` | `SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY` | `aclorch.cpp:23, 3690` |
+
+`AclOrch::init()` 起動時に `sai_switch_api->get_switch_attribute()` で取得 (`aclorch.cpp:3689-3700`)。取得失敗時は min/max ともに 0 のまま（全 priority を reject）。CONFIG_DB に記録されるフィールドキー: `"PRIORITY"` (`aclorch.h:25`)。`setPriority()` で範囲チェックし範囲外は erase (`aclorch.cpp:1656-1662`)。
+
+> **スキャン証跡**: `acltable.h:1-76` 全行精読、`aclorch.h:25,62-63`、`aclorch.cpp:22-23,42-44,105-106,436,448,494,523-526,603,2614-2650,2823-2847,3689-3700,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + SAI 属性 7 件 + priority 定数 2 件 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
 <!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`ACL_TABLE` の作成可否・bind point・mandatory フィールドは ASIC ベンダーごとに大きく異なる。`AclOrch::init()` (`aclorch.cpp:3480-3720`) が起動時に環境変数 `platform` / `sub_platform` を読み取り、MIRROR / L3V4V6 / isCombinedMirrorV6 / range 上限を **静的比較で決定** する。META_DATA 系および stage capability (`is_action_list_mandatory` / `supported_L3V4V6`) のみ SAI 動的照会 (`sai_query_attribute_capability`) を用いる。
+
+### プラットフォーム識別文字列 (orch.h:40-50)
+
+| 定数 | 値 | プラットフォーム例 |
+|------|----|--------------------|
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` | Broadcom XGS (non-DNX) |
+| `BRCM_DNX_PLATFORM_SUBSTRING` | `"broadcom-dnx"` | Broadcom DNX/Jericho (sub_platform) |
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | Mellanox Spectrum |
+| `BFN_PLATFORM_SUBSTRING` | `"barefoot"` | Intel Tofino (Barefoot) |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | Virtual Switch (テスト用) |
+| `NPS_PLATFORM_SUBSTRING` | `"nephos"` | Nephos |
+| `CISCO_8000_PLATFORM_SUBSTRING` | `"cisco-8000"` | Cisco Silicon One |
+| `XS_PLATFORM_SUBSTRING` | `"xsight"` | xsight |
+| `CLX_PLATFORM_SUBSTRING` | `"clounix"` | Clounix |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` | Marvell Prestera |
+| `MRVL_TL_PLATFORM_SUBSTRING` | `"marvell-teralynx"` | Marvell Teralynx |
+
+### ACL_TABLE 段の capability 差異一覧
+
+| capability | 有効プラットフォーム | 無効/制限プラットフォーム | ACL_TABLE への影響 | evidence |
+|---|---|---|---|---|
+| **type=MIRRORV6 作成可否** (`isAclMirrorV6Supported`) | broadcom / cisco-8000 / mellanox / barefoot / marvell-prestera / marvell-teralynx / nephos / xsight / clounix / vs | それ以外（未知） | false → `type=MIRRORV6` の ACL_TABLE 作成を reject → STATE_DB `status="Inactive"` | `aclorch.cpp:3489-3513, 3500-3541` |
+| **isCombinedMirrorV6Table** | broadcom (非 DNX) / barefoot / marvell-teralynx / nephos / vs / その他 | mellanox / cisco-8000 / marvell-prestera / xsight / clounix / broadcom-dnx | true (統合) → `type=MIRROR` 1 枚で V4/V6 両対応。false (分離) → `MIRROR` / `MIRRORV6` を別 ACL_TABLE として作成必須 | `aclorch.cpp:3546-3560, 5811` |
+| **type=L3V4V6 作成可否** (`isAclL3V4V6TableSupported`) | marvell-prestera / marvell-teralynx / vs | それ以外 | false → `AclTable::validate()` が reject → erase | `aclorch.cpp:3515-3533, 2737-2745` |
+| **PFCWD bind point / mandatory match** | broadcom-dnx: `SAI_ACL_BIND_POINT_TYPE_SWITCH` + `TC` + `OUT_PORT` | それ以外: `SAI_ACL_BIND_POINT_TYPE_PORT` + `TC` のみ | broadcom-dnx では `type=PFCWD` の ACL_TABLE は SWITCH 単位バインド（`ports` フィールド無視） | `aclorch.cpp:3811-3830` |
+| **Egress range フィールド強制付加** (`addStageMandatoryRangeFields`) | broadcom-dnx / mellanox / barefoot / marvell-* / cisco-8000 / nephos / xsight / clounix / vs | broadcom (非 DNX) Egress のみ false | broadcom 非 DNX の `stage=EGRESS` ACL_TABLE では `SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE` が付かず、配下 ACL_RULE の L4 range match 不可 | `aclorch.cpp:2608-2628` |
+| **META_DATA capability** | SAI 動的照会で 3 属性すべて `set_implemented=true` の場合 | SAI が未実装と返した場合 | false → `ACL_TABLE_TYPE.MATCHES` に `META_DATA`、`ACTIONS` に `META_DATA_ACTION` を含むユーザ定義 type が SAI 反映されず、配下 ACL_RULE が INACTIVE | `aclorch.cpp:3563-3664` |
+| **type=DTEL_FLOW_WATCHLIST** (`DTelOrch` 起動) | barefoot / vs | それ以外 | `DTelOrch` 非起動 → DTEL_FLOW_WATCHLIST テーブルが SAI にバインドする先なし | `orchdaemon.cpp:502-530`, `acltable.h:34` |
+| **ACL range オブジェクト上限** (配下 ACL_RULE への間接影響) | — | mellanox: 16 (`MLNX_MAX_RANGES_COUNT`) / clounix: 16 (`CLNX_MAX_RANGES_COUNT`) | ACL_TABLE 段では制限なし。配下 ACL_RULE で 16 超 range を作ると `return NULL` → INACTIVE | `aclorch.cpp:3370-3378`, `aclorch.h:109-110` |
+| **stage capability / action_list_mandatory** | SAI 動的照会で stage ごとに取得 | — | `is_action_list_mandatory=true` の ASIC では `addMandatoryActions()` が `SAI_ACL_ACTION_TYPE_COUNTER` 等を自動付与 → STATE_DB `ACL_STAGE_CAPABILITY_TABLE` に記録 | `aclorch.cpp:2563, 3690-3720, 4056-4101` |
+
+### プラットフォーム別 ACL_TABLE 対応サマリ
+
+| プラットフォーム | MIRRORV6 | Combined Mirror | L3V4V6 | PFCWD bind | Egress range | DTEL |
+|----------------|----------|-----------------|--------|------------|--------------|------|
+| broadcom (非 DNX) | yes | yes (統合) | no | PORT | **付加せず** | no |
+| broadcom-dnx | yes | no (分離) | no | **SWITCH** | 付加 | no |
+| mellanox | yes | no (分離) | no | PORT | 付加 | no |
+| barefoot | yes | yes (統合) | no | PORT | 付加 | **yes** |
+| cisco-8000 | yes | no (分離) | no | PORT | 付加 | no |
+| marvell-prestera | yes | no (分離) | **yes** | PORT | 付加 | no |
+| marvell-teralynx | yes | yes (統合) | **yes** | PORT | 付加 | no |
+| nephos | yes | yes (統合) | no | PORT | 付加 | no |
+| xsight | yes | no (分離) | no | PORT | 付加 | no |
+| clounix | yes | no (分離) | no | PORT | 付加 | no |
+| vs (virtual) | yes | yes (統合) | **yes** | PORT | 付加 | **yes** |
+| 未知 | **no** | yes (統合) | no | PORT | 付加 | no |
+
+!!! note "isCombinedMirrorV6Table の運用上の注意"
+    `isCombinedMirrorV6Table=false` (mellanox / cisco-8000 / marvell-prestera / xsight / clounix / broadcom-dnx) の環境では、IPv6 mirror を有効にするには `type=MIRROR` と `type=MIRRORV6` の ACL_TABLE を **別々に** 作成する。`MIRROR` のみだと IPv6 mirror ACL_RULE が SAI に反映されない (`aclorch.cpp:5811`)。
+
+!!! warning "type=L3V4V6 制限"
+    `type=L3V4V6` の ACL_TABLE は marvell-prestera / marvell-teralynx / vs のみ作成可。それ以外で SET すると `AclTable::validate()` の `isAclL3V4V6TableSupported()` が false → reject、STATE_DB `status="Inactive"`、erase される (`aclorch.cpp:2737-2745`)。
+
+!!! warning "broadcom (非 DNX) Egress + L4 range"
+    broadcom 非 DNX の `stage=EGRESS` ACL_TABLE では range フィールドが SAI 属性として強制付加されない (`aclorch.cpp:2608-2628`)。配下の ACL_RULE で `L4_SRC_PORT_RANGE` / `L4_DST_PORT_RANGE` match を使ってもハードウェアに降りない。
+
+!!! warning "type=PFCWD on broadcom-dnx"
+    broadcom-dnx (sub_platform) では `type=PFCWD` の ACL_TABLE が `SAI_ACL_BIND_POINT_TYPE_SWITCH` 単位でバインドされ、CONFIG_DB の `ports` フィールドが無視される (`aclorch.cpp:3811-3830`)。`OUT_PORT` match が追加で利用可能。
+
+!!! note "multi-asic 環境"
+    multi-asic 構成では `config acl add table` が各 namespace の CONFIG_DB に同一エントリを書き込む。`AclOrch` も namespace ごとに独立起動し、STATE_DB `ACL_STAGE_CAPABILITY_TABLE` も namespace ごとに保存される。通常は同一 ASIC 種別が前提だが、SmartSwitch / heterogeneous Multi-NPU では namespace ごとに `sub_platform` が異なる可能性があり、ACL_TABLE 作成可否が namespace 間で差異を持つことがある。
+
+> **スキャン証跡**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTable::validate()` L2725-2769 / `addStageMandatoryRangeFields()` L2608-2628 / `addMandatoryActions()` L2563 / `putAclActionCapabilityInDB()` L4056-4101 / `orchdaemon.cpp:502-530` / `orch.h:40-50` / `aclorch.h:109-110` 全行精読。中間ファイル: `meta/_intermediate/cdb-flow/acl-table-platform.md`
+<!-- /platform -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`ACL_TABLE` の SET/DEL を受けた `AclOrch` は CONFIG_DB のほか STATE_DB と COUNTERS_DB に以下を書き込む。
+
+### STATE_DB 書込み
+
+| タイミング | テーブル | キー | フィールド | 値 |
+|---|---|---|---|---|
+| SET → `addAclTable()` 成功 | `ACL_TABLE_TABLE` | `<table_name>` | `status` | `"Active"` |
+| SET → `addAclTable()` 失敗 (retry) | `ACL_TABLE_TABLE` | `<table_name>` | `status` | `"Pending creation"` |
+| SET → `bAllAttributesOk=false` or `validate()=false` | `ACL_TABLE_TABLE` | `<table_name>` | `status` | `"Inactive"` |
+| DEL → `removeAclTable()` 失敗 (retry) | `ACL_TABLE_TABLE` | `<table_name>` | `status` | `"Pending removal"` |
+| DEL → `removeAclTable()` 成功 | `ACL_TABLE_TABLE` | `<table_name>` | — | エントリ削除 |
+| AclOrch 起動時 (`init()`) | `ACL_TABLE_TABLE` | 全キー | — | 全エントリ一括削除 (`removeAllAclTableStatus()`) |
+| AclOrch 起動時 SAI capability query 後 | `ACL_STAGE_CAPABILITY_TABLE` | `"INGRESS"` / `"EGRESS"` | `is_action_list_mandatory`, `action_list`, `supported_L3V4V6` | ASIC 問い合わせ結果 |
+
+`ACL_TABLE_TABLE` テーブル名定数: `STATE_ACL_TABLE_TABLE_NAME` (`schema.h:514`)
+`ACL_STAGE_CAPABILITY_TABLE` テーブル名定数: `STATE_ACL_STAGE_CAPABILITY_TABLE_NAME` (`schema.h:418`)
+
+確認コマンド:
+
+```bash
+sonic-db-cli STATE_DB hgetall 'ACL_TABLE_TABLE|<table_name>'
+sonic-db-cli STATE_DB hgetall 'ACL_STAGE_CAPABILITY_TABLE|INGRESS'
+```
+
+### COUNTERS_DB 書込み
+
+ACL_TABLE 自体は COUNTERS_DB に直接書き込まない。ただし ACL_TABLE に紐づく **ACL_RULE** の作成/削除時に以下が連動する。
+
+| タイミング | テーブル | キー | 内容 |
+|---|---|---|---|
+| ACL_RULE 作成 (`registerFlexCounter()`) | `ACL_COUNTER_RULE_MAP` | `<table_name>:<rule_name>` | SAI counter OID 文字列 |
+| ACL_RULE 削除 (`deregisterFlexCounter()`) | `ACL_COUNTER_RULE_MAP` | `<table_name>:<rule_name>` | エントリ削除 |
+| ACL テーブル作成 | CRM カウンタ (`COUNTERS_DB`) | — | `incCrmAclUsedCounter(CRM_ACL_TABLE)` (`aclorch.cpp:2855`) |
+| ACL テーブル削除 | CRM カウンタ (`COUNTERS_DB`) | — | `decCrmAclUsedCounter(CRM_ACL_TABLE)` (`aclorch.cpp:4877`) |
+| ACL_RULE 作成 | CRM カウンタ (`COUNTERS_DB`) | テーブル OID 配下 | `incCrmAclTableUsedCounter(CRM_ACL_ENTRY)` + `CRM_ACL_COUNTER` |
+| ACL_RULE 削除 | CRM カウンタ (`COUNTERS_DB`) | テーブル OID 配下 | `decCrmAclTableUsedCounter(CRM_ACL_ENTRY)` + `CRM_ACL_COUNTER` |
+
+FlexCounter 連動: ACL_RULE 作成時に `FLEX_COUNTER_DB / ACL_STAT_COUNTER` グループへ counter OID を登録し、FlexCounter デーモンが定期的に SAI カウンタをポーリングして `COUNTERS_DB / COUNTERS` に統計値を書き込む。
+
+```bash
+sonic-db-cli COUNTERS_DB hgetall ACL_COUNTER_RULE_MAP
+```
+
+> **証跡**: `setAclTableStatus()` L6088-6098、`removeAllAclTableStatus()` L6119-6125、`putAclActionCapabilityInDB()` L4056-4101、`registerFlexCounter()` L6020-6042、`deregisterFlexCounter()` L6044-6048、`incCrmAclUsedCounter()` L2855、`decCrmAclUsedCounter()` L4877。全行精読 + `schema.h:418,514` 確認。
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 9f69b0796e2c -->
