@@ -273,6 +273,80 @@ show buffer profile
 
 > **スキャン証跡**: `handleBufferProfileTable` L2671-2935 全行読了。5 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- failure -->
+## 失敗挙動・retry 分岐 (Phase D)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `cfgmgr/buffermgr.cpp`, `orchagent/bufferorch.cpp`
+
+### buffermgrdyn — handleBufferProfileTable() 失敗経路
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `pool` フィールドが空文字列 | `task_failed` → エントリ廃棄 | `buffermgrdyn.cpp:2740-2745` |
+| `pool` が `m_bufferPoolLookup` に未登録（プール未準備） | `task_need_retry` → pool 到着後に再試行 | `buffermgrdyn.cpp:2710-2715` |
+| `threshold_mode` がプールの `mode` と不一致（例: `dynamic_th` vs `static` pool） | `task_failed` → エントリ廃棄 | `buffermgrdyn.cpp:2726-2735` |
+| `dynamic_th`/`static_th` の閾値モードが既存プロファイル設定と不整合 | `task_failed` → エントリ廃棄 | `buffermgrdyn.cpp:2773-2782` |
+| `lossless=true` かつ egress pool を参照（方向不一致） | `task_failed` → エントリ廃棄 | `buffermgrdyn.cpp:2809` |
+| DEL 時に `port_pgs` が参照中（headroom override 解除前） | `task_need_retry` → 参照解除まで削除保留 | `buffermgrdyn.cpp:2857-2858` |
+| DEL 対象が `static_configured=false`（自動生成プロファイルの手動 DEL） | `task_invalid_entry` → エントリ廃棄 | `buffermgrdyn.cpp:2862-2863` |
+
+### buffermgrdyn — headroom 超過
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| 速度/ケーブル長更新時に per-port 累積 headroom 上限超過 | `task_failed` + `releaseProfile()` でロールバック | `buffermgrdyn.cpp:1541-1546` |
+| プロファイル更新時に参照中 PG でリソース制限違反 | `task_failed` → APPL_DB 反映なし | `buffermgrdyn.cpp:1855-1857` |
+
+### bufferorch — processBufferProfile() 失敗経路
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| プロファイルが `m_pendingRemove` 状態で SET 到着 | `task_need_retry` → 削除完了後に再処理 | `bufferorch.cpp:616-619` |
+| `pool` 参照が未解決（`ref_resolve_status::not_resolved`） | `task_need_retry` → プール到着後に再試行 | `bufferorch.cpp:646-649` |
+| `pool` 参照解決でその他エラー | `task_failed` → エントリ廃棄 | `bufferorch.cpp:651-652` |
+| `packet_discard_action` に `drop`/`trim` 以外の値 | `task_failed` → エントリ廃棄 | `bufferorch.cpp:740-743` |
+| `packet_discard_action=trim` かつ `isTrimmingProhibited()` が true（ingress PG/profile list への適用） | `task_failed` → エントリ廃棄 | `bufferorch.cpp:757-763` |
+| SAI `set_buffer_profile_attribute` が `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0`（trim 未サポート ASIC 等） | `task_ignore` → ハードウェア非反映のまま成功扱い | `bufferorch.cpp:773-776` |
+| SAI `set_buffer_profile_attribute` がその他エラー（1回リトライ後も失敗） | `handleSaiSetStatus()` に委譲 → 通常 `task_need_retry` または `task_failed` | `bufferorch.cpp:791` |
+| SAI `create_buffer_profile` 失敗 | `handleSaiCreateStatus()` に委譲 → 通常 `task_need_retry` | `bufferorch.cpp:805` |
+| DEL 時にプロファイルが PG/Queue から参照中 | `m_pendingRemove=true` → `task_need_retry` → 参照解除まで削除保留 | `bufferorch.cpp:839-843` |
+| SAI `remove_buffer_profile` 失敗 | `handleSaiRemoveStatus()` に委譲 | `bufferorch.cpp:862` |
+
+### SAI create-only 属性への SET — サイレントスキップ
+
+既存 SAI オブジェクトへの以下属性変更は**エラーなしでスキップ**（SAI の create-only 制約）。
+
+| 属性 | スキップ対象 | evidence |
+|---|---|---|
+| `pool` | `POOL_ID` SAI 属性の SET をスキップ | `bufferorch.cpp:654-659` |
+| `dynamic_th` | `THRESHOLD_MODE` の SET をスキップ（`SHARED_DYNAMIC_TH` 値は SET を試行） | `bufferorch.cpp:692-706` |
+| `static_th` | `THRESHOLD_MODE` の SET をスキップ（`SHARED_STATIC_TH` 値は SET を試行） | `bufferorch.cpp:710-724` |
+
+### buffermgr (static model) — BUFFER_PROFILE 生成失敗
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| 速度/ケーブル長の組み合わせに対応するプロファイルがテンプレートに未定義 | `task_invalid_entry` → BUFFER_PROFILE 未作成 | `buffermgr.cpp:240-242` |
+| PG lossless pool が未作成（初期化中に speed 通知が来た場合） | `task_need_retry` → pool 作成後に再試行 | `buffermgr.cpp:257-258` |
+| ケーブル長が未設定のままポート速度通知が来た | `task_need_retry` → ケーブル長設定後に再試行 | `buffermgr.cpp:154-155` |
+
+### リトライ・廃棄の判断フロー
+
+```
+task_need_retry   → Consumer が backoff 後に再試行
+                    (pool 未準備 / pendingRemove / pool 参照未解決 / DEL 参照中)
+task_failed       → Consumer が当該エントリを廃棄
+                    (pool 空 / threshold_mode 不一致 / lossless+egress / trim 禁止 / headroom 超過)
+task_invalid_entry → Consumer が当該エントリを廃棄
+                    (不明な op / 非 static_configured プロファイルの DEL)
+task_ignore       → bufferorch が当該 SET を成功扱いで無視
+                    (SAI_STATUS_ATTR_NOT_IMPLEMENTED_0)
+task_success      → 正常完了
+```
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
