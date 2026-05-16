@@ -615,4 +615,57 @@ port MTU 取得失敗時は `DEFAULT_MTU_STR="9100"` を使用して headroom �
 pool mode と profile の `threshold_mode` の不一致（例: dynamic pool に `static_th` を指定）は `task_failed` でリジェクト (`buffermgrdyn.cpp:2726-2735`)。
 
 <!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Task F Phase C)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/orchagent/bufferorch.cpp`, `sonic-swss/cfgmgr/buffermgr.cpp`
+
+### 1. BUFFER_POOL (YANG leafref + 実装暗黙依存)
+
+| 参照種別 | 方向 | 条件 | 読み取りフィールド | 効果 | evidence |
+|---------|------|------|-----------------|------|----------|
+| YANG leafref | `pool` → `BUFFER_POOL.name` | 常時 | — | YANG バリデーション。`pool` 指定が BUFFER_POOL に存在しない場合はスキーマエラー | YANG 定義 |
+| 内部 lookup (`m_bufferPoolLookup`) | 読み取り | dynamic model 常時 | `mode`（dynamic/static）、`direction`（ingress/egress） | pool 未登録 → `task_need_retry`。pool の `mode` と profile の threshold_mode 不一致 → `task_failed` | `buffermgrdyn.cpp:2707-2736` |
+| `m_bufferPoolReady` フラグ | 読み取り | dynamic model 常時 | — | `false` のとき APPL_DB への書き込みをサイレントデファー。pool 到着後 `handlePendingBufferObjects()` が一括適用 | `buffermgrdyn.cpp:892-896` |
+| APPL_DB 参照解決 (`resolveFieldRefValue`) | 読み取り | orchagent 常時 | `pool` → SAI pool OID | not_resolved → `task_need_retry`（プール到着待ち） | `bufferorch.cpp:641-652` |
+| lossless + direction チェック | 読み取り | `lossless=true` 時 | `direction` | pool の direction が ingress でない → `task_failed` | `buffermgrdyn.cpp:2807-2814` |
+
+### 2. PORT (CONFIG_DB — dynamic headroom 計算)
+
+| 参照種別 | 方向 | 条件 | 読み取りフィールド | 効果 | evidence |
+|---------|------|------|-----------------|------|----------|
+| 購読 (`CFG_PORT_TABLE_NAME`) | 読み取り | dynamic model、`headroom_type=dynamic` プロファイルが存在 | `speed`、`mtu`、`admin_status`、`adv_speeds`、`autoneg`、`lanes` | 内部 `m_portInfoLookup` に保持。speed/mtu 変化 → headroom 再計算トリガ | `buffermgrdyn.cpp:449, 2266-2344` |
+| headroom 再計算 (`doUpdateBufferProfileForDynamicTh`) | 読み取り | `headroom_type=dynamic` プロファイル変更時 | `effective_speed`、`cable_length`、`mtu` | 参照中の全ポートで `refreshPgsForPort()` を呼び出し、Lua plugin が headroom を再計算 | `buffermgrdyn.cpp:1799-1833` |
+| 8-lane 判定 | 読み取り | Mellanox SN4k/SN5k のみ | `lanes`（→ lane_count） | 8-lane かつ非最大速度 → xon 2 倍・プロファイル名に `_8lane` 付加 | `buffermgrdyn.cpp:504-523` |
+| PORT_READY 待機 | 読み取り | dynamic model | `state` | PORT_READY でないポートはヘッドルーム計算をスキップし、到着後に再計算 | `buffermgrdyn.cpp:1819-1820` |
+
+### 3. DEVICE_METADATA (CONFIG_DB — Mellanox 起動時)
+
+| 参照種別 | 方向 | 条件 | 読み取りフィールド | 効果 | evidence |
+|---------|------|------|-----------------|------|----------|
+| 起動時 1 回読み取り | 読み取り | dynamic model かつ `platform == "mellanox"` | `platform`（`localhost` キー） | モデル番号（SN4xxx/SN5xxx）を抽出 → 8-lane xon 2 倍ロジックの有効/無効判定 | `buffermgrdyn.cpp:87` |
+| `buffer_model` フィールド読み取り | 購読 | static model (`buffermgr`) | `buffer_model` | `"dynamic"` → `dynamic_buffer_model=true` に切り替え（buffermgrd が実行するモデルを決定） | `buffermgr.cpp:390-407` |
+
+### 参照関係サマリ
+
+```
+BUFFER_PROFILE
+  ├─ [YANG leafref / 常時]         CONFIG_DB.BUFFER_POOL
+  │     pool.mode     → threshold_mode 照合（不一致で task_failed）
+  │     pool.direction → lossless は ingress 必須（egress で task_failed）
+  │     m_bufferPoolReady → false 時は APPL_DB 書き込みをサイレントデファー
+  │     APPL_DB 参照解決 → not_resolved で task_need_retry (bufferorch)
+  ├─ [暗黙/dynamic-only]           CONFIG_DB.PORT
+  │     speed / adv_speeds → effective_speed → Lua headroom 計算
+  │     mtu → headroom 計算パラメータ
+  │     lanes → lane_count → Mellanox 8-lane xon 2 倍判定
+  │     admin_status → down 時 lossless PG 削除トリガ
+  └─ [暗黙/Mellanox-startup-only]  CONFIG_DB.DEVICE_METADATA
+        platform → m_model_number → SN4k/SN5k 8-lane 判定
+        buffer_model → dynamic/static モデル選択 (static model)
+```
+
+詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-profile-cross-refs.md` を参照。
+<!-- /cross-refs -->
 <!-- glossary-links-injected: 22dbf67b9d97 -->
