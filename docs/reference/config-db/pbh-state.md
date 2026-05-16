@@ -4,7 +4,7 @@ description: "STATE_DB PBH_CAPABILITIES テーブル — PBH (Policy Based Hashi
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-16
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/pbh/pbhcap.cpp
@@ -17,6 +17,12 @@ sources:
     ref: HEAD
   - repo: sonic-net/sonic-utilities
     path: config/plugins/pbh.py
+    ref: HEAD
+  - repo: sonic-net/sonic-swss
+    path: orchagent/orchdaemon.cpp
+    ref: HEAD
+  - repo: sonic-net/sonic-swss
+    path: orchagent/pbhorch.h
     ref: HEAD
 related:
   config_db:
@@ -182,6 +188,48 @@ Generic platform での期待値:
 ```
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## オブジェクト生成順序・依存関係 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-ordering.md -->
+
+### PbhCapabilities の初期化位置
+
+`PBH_CAPABILITIES` を STATE_DB へ書き込む `PbhCapabilities` クラスは `PbhOrch` の非 static メンバとして宣言されている (`pbhorch.h:88`)。`PbhOrch` が `new PbhOrch(...)` でインスタンス化される瞬間に `PbhCapabilities()` コンストラクタが呼ばれ、STATE_DB への書き込みが一度だけ実行される。
+
+### orchdaemon 内での生成順序
+
+```text
+orchdaemon.cpp:232  gPortsOrch = new PortsOrch(...)
+orchdaemon.cpp:533  gAclOrch   = new AclOrch(...)   ← PbhOrch の引数として必要
+orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch)
+                                  └─ PbhCapabilities() コンストラクタが即座に実行
+                                       1. parsePbhAsicVendor()         — ASIC_VENDOR env var 読み取り
+                                       2. initPbhVendorCapabilities()  — ベンダー別能力オブジェクトを構築
+                                       3. writePbhVendorCapabilitiesToDb() — STATE_DB に 4 キー一括書き込み
+```
+
+### 依存関係まとめ
+
+| 依存対象 | 種別 | 必須か | 備考 |
+|---------|------|--------|------|
+| `STATE_DB` | Redis 接続 (static member) | 必須 | `PbhCapabilities::stateDb` — `pbhcap.cpp:288` |
+| `ASIC_VENDOR` 環境変数 | OS 環境変数 | 任意 | 未設定時 Generic へ fallback (`pbhcap.cpp:297`) |
+| `gAclOrch` / `gPortsOrch` | PbhOrch コンストラクタ引数 | PbhOrch の動作に必要 | `PbhCapabilities` 自体はこれらを参照しない |
+| CONFIG_DB PBH エントリ | CONFIG_DB | 不要 | capabilities 書き込みは CONFIG_DB 読み取りに依存しない |
+
+`PbhCapabilities` の静的メンバは orchdaemon プロセス起動の最初期に初期化されるため、他の Orch オブジェクトが生成される前から STATE_DB 接続が確立されている。
+
+### CONFIG_DB 側との関係
+
+`PBH_CAPABILITIES` は起動時 one-shot write であり、CONFIG_DB の PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD エントリの追加・変更に対して再書き込みは行われない。
+
+### 消費者 (sonic-utilities) の前提条件
+
+`config pbh` コマンドが `pbh_capabilities_query()` を呼ぶ時点で orchestrator が起動済みで STATE_DB に `PBH_CAPABILITIES` が存在しなければ validation が失敗する。orchagent の起動完了を待つ明示的な仕組みは CLI 側にない。
+
+<!-- /ordering -->
 
 ## 関連 CONFIG_DB / CLI
 
