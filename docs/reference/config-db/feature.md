@@ -235,6 +235,58 @@ show feature status
 
 FEATURE テーブルへの書き込みは複数経路が重なるため、フィールドごとに「最終書き込み者」が異なる。誤った順序での操作はユーザ設定の消失やサービス誤動作を引き起こす。
 
+### systemd unit 起動順序
+
+```
+[システム起動]
+  ↓
+docker.service / rc-local.service
+  ↓
+database.service          (Requires=docker.service, After=docker.service rc-local.service)
+  ↓
+config-setup.service      (Requires=database.service config-topology.service)
+  ↓
+featured.service          (Requires=config-setup.service, After=config-setup.service)
+  ↓ featured が CONFIG_DB FEATURE テーブルを読んで render_all_feature_states() 実行
+  ↓ [delayed=False フィーチャー] → 即時 systemctl enable / start
+  ↓ [delayed=True  フィーチャー] → PortInitDone 受信 or 180 秒タイムアウト後に起動
+  ↓
+各 feature service (bgp/teamd/snmp 等)
+```
+
+- `featured.service` は `sonic.target` と `BindsTo` 関係にある（`featured.service:BindsTo=sonic.target`）。
+- `featured` デーモン起動後、`render_all_feature_states()` が全フィーチャーの state を評価し `enabled` なものを `systemctl enable / start` する。
+- `delayed=True` フィーチャーは `APPL_DB PORT_TABLE:PortInitDone` の受信を待ってから起動する（`featured:182-184`）。PortInitDone が来ない場合は `PORT_INIT_TIMEOUT_SEC=180` 秒後に強制起動する（`featured:659-661`）。
+
+### featured が管理する feature service の systemd 依存関係
+
+各 feature の `.service` ファイルはビルド時のテンプレート (`files/build_templates/*.service.j2`) から生成される。主要サービスの依存関係:
+
+| feature service | Requires | After |
+|----------------|----------|-------|
+| `bgp.service` | `config-setup.service` | `config-setup.service swss.service syncd.service` |
+| `snmp.service` | `config-setup.service` | `config-setup.service swss.service syncd.service interfaces-config.service` |
+| `telemetry.service` | `database.service` | `database.service swss.service syncd.service` |
+| `mgmt-framework.service` | `database.service` | `database.service swss.service syncd.service` |
+| `gnmi.service` | `database.service` | `database.service swss.service syncd.service` |
+| `sflow.service` | - | `swss.service syncd.service hostcfgd.service interfaces-config.service` |
+| `nat.service` | `config-setup.service` | `config-setup.service swss.service syncd.service` |
+| `dhcp_relay.service` | `config-setup.service` | `config-setup.service swss.service syncd.service teamd.service` |
+
+すべての feature service は `BindsTo=sonic.target After=sonic.target` を持ち、`sonic.target` 停止時に連動停止する。
+
+### multi-asic / SmartSwitch 環境での instance 起動順序
+
+`featured` は `has_global_scope` / `has_per_asic_scope` / `has_per_dpu_scope` フィールドを参照してインスタンス名を決定する（`featured:408-424`）:
+
+```
+has_global_scope=True   → <feature>.service                   (host インスタンス)
+has_per_asic_scope=True → <feature>@0.service, @1.service, ... (ASIC ごと)
+has_per_dpu_scope=True  → <feature>@dpu0.service, @dpu1.service, ... (DPU ごと)
+```
+
+インスタンス `.service` ファイルは `systemd-sonic-generator` がブート時に `/run/systemd/generator/` 配下に動的生成する。SmartSwitch NPU 環境では `database@dpu<N>.service` に `Requires=systemd-networkd-wait-online@bridge-midplane.service` が追加される（`systemd-sonic-generator.cpp:985-996`）。
+
 ### 書き込み優先順序
 
 ```
@@ -277,7 +329,7 @@ FEATURE テーブルへの書き込みは複数経路が重なるため、フィ
 5. **`always_enabled` / `always_disabled` は CLI で変更不可** (`config/feature.py:24-25`):
    これらの値は init_cfg.json.j2 または FeatureRegistry.register() が設定する。ユーザ変更が必要な場合は DB 直接操作またはビルド設定変更が必要。
 
-> **Evidence**: `sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80`; `sonic-host-services/scripts/featured:200-217,255-275`; `sonic-utilities/config/feature.py:24-25`; 詳細分析 `meta/_intermediate/cdb-flow/feature-ordering.md`
+> **Evidence**: `sonic-host-services/data/debian/sonic-host-services-data.featured.service`; `sonic-buildimage/files/build_templates/*.service.j2`; `sonic-buildimage/src/systemd-sonic-generator/systemd-sonic-generator.cpp:985-996`; `sonic-host-services/scripts/featured:182-184,200-217,255-275,408-424,659-661`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80`; `sonic-utilities/config/feature.py:24-25`; 詳細分析 `meta/_intermediate/cdb-flow/feature-ordering.md`
 <!-- /ordering -->
 
 <!-- failure -->
