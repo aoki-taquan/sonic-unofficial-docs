@@ -269,4 +269,27 @@ vtysh -c 'show bgp community-list'
 
 - 起動時の `bgpd.conf` 生成（Jinja2）とランタイムの設定変更（frrcfgd vtysh 直接発行）は独立したコードパス。どちらも `action` フィールドを参照せず `permit` 固定で動作する点は共通。Jinja2 側は `match_action` が `all`/`any` 以外の値の場合にサイレントスキップするが、frrcfgd 側は `all` 以外を MATCH_ANY に fallback する点で挙動が異なる。<!-- evidence: bgpd.conf.db.comm_list.j2 L10-20; frrcfgd.py L1588-1591 -->
 <!-- /defaults -->
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 不正 community 値 → FRR がコマンドを拒否 / syslog LOG_ERR
+
+`community_member` に FRR が受け入れられない値（例: 不正な `AS:value` 形式、整数範囲外の値）を設定した場合、`frrcfgd` は vtysh 経由でコマンドを発行するが FRR bgpd 側が拒否する。`g_run_command` は返値 `False` を検知して `syslog.LOG_ERR 'failed running FRR command: <cmd>'` を出力し、その時点で処理を中断する（`break`）。再試行なし・CONFIG_DB の値はそのまま残留し FRR 側と乖離する。<!-- evidence: frrcfgd.py L763-766 g_run_command / run_command -->
+
+### FRR vtysh 接続失敗 → LOG_ERR + 設定乖離
+
+bgpd との vtysh ソケット通信が失敗した場合（ソケット書き込み失敗・タイムアウト等）、`BgpdClientMgr` は `syslog.LOG_ERR` を出力するが再接続は行わず処理を drop する。FRR 側の community-list が不整合のまま放置される。<!-- evidence: frrcfgd.py L161, L192-195, L264, L269, L356, L364 -->
+
+### 重複名エントリの上書き（silent overwrite）
+
+`COMMUNITY_SET|<name>` が重複して CONFIG_DB に書き込まれた場合、`frrcfgd` は `hdl_com_set` の冒頭で `no bgp community-list <name>` を発行してから新規設定を投入する（`is_configurable()` が True の場合）。エラーや警告は出力されない。先行エントリの community-list 設定が無通知で置き換わる。<!-- evidence: frrcfgd.py L989-990, L988-1006 -->
+
+### `is_configurable()` 失敗 → DEL コマンドがスキップ
+
+`set_type`・`match_action`・`community_member` のいずれかが欠如した不完全エントリに対して OP_DELETE が来た場合、`is_configurable()` が `False` を返すため FRR への `no bgp community-list` が発行されない。FRR 側に該当 community-list が残留し続けるが、frrcfgd はエラーを記録しない。<!-- evidence: frrcfgd.py L1580-1582, L989-990 -->
+
+### 汎用例外 → LOG_ERR + drop（再試行なし）
+
+DB 更新ハンドラ全体を囲む `except Exception as e` ブロックが `syslog.LOG_ERR '[bgp cfgd] Failed handling config DB update with exception: ...'` を出力してそのエントリを破棄する。当該 community-set の変更は反映されず、DB と FRR の乖離が検出されない。<!-- evidence: frrcfgd.py L1532-1534 -->
+<!-- /failure -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
