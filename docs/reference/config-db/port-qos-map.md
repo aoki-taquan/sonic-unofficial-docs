@@ -364,6 +364,67 @@ REST/gNMI 書き込み経路なし
 
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## 適用順序依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-ordering.md -->
+
+### 1. MAP 先行必須
+
+PORT_QOS_MAP エントリを SET する前に、参照する全 QoS map テーブル（`DSCP_TO_TC_MAP`、`TC_TO_QUEUE_MAP`、`TC_TO_PRIORITY_GROUP_MAP`、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`、`MAP_PFC_PRIORITY_TO_QUEUE`、`SCHEDULER` 等）が CONFIG_DB に存在していなければならない。
+
+`QosOrch::handlePortQosMapTable` は `resolveFieldRefValue` で各 map 名を解決し、未作成の場合は即座に `task_need_retry` を返してイベントループで再試行する（`qosorch.cpp:2118-2130`）。
+
+| 順序 | 操作 |
+|------|------|
+| 先 | 各 QoS map テーブル（DSCP_TO_TC_MAP 等）を CONFIG_DB に投入 |
+| 後 | PORT_QOS_MAP エントリを SET |
+
+### 2. PORT 先行
+
+`doTask(Consumer)` の冒頭で `gPortsOrch->allPortsReady()` を確認し、false の間は全 PORT_QOS_MAP 処理をスキップする（`qosorch.cpp:2258`）。また SET / DEL パスともに `gPortsOrch->getPort(port_name, port)` が失敗したポートはスキップされる（`qosorch.cpp:2068, 2180`）。
+
+**PORT テーブルの全対象ポートが PortsOrch に登録済みになってから PORT_QOS_MAP を投入する**。
+
+### 3. global vs per-port
+
+`key == "global"` の場合は専用パスへ分岐し、`dscp_to_tc_map` フィールドのみを `sai_switch_api` 経由で Switch レベルに適用する（`qosorch.cpp:2011-2014, 2030`）。他フィールドは `global` キーでは WARN ログのみでスキップされる。
+
+per-port エントリは全フィールドを `sai_port_api->set_port_attribute()` でポートに直接適用する。global と per-port は互いをブロックしないが、SAI の仕様上 per-port 属性が Switch レベル設定より優先される。
+
+### 4. doTask() 内 SAI bind 順序
+
+`QosOrch::doTask()` は以下の順で executor を drain する（`qosorch.cpp:2238-2251`）:
+
+1. MAP 系テーブル（`DSCP_TO_TC_MAP`、`TC_TO_QUEUE_MAP`、`SCHEDULER` 等）
+2. `PORT_QOS_MAP`
+3. `QUEUE` テーブル
+
+同一イベントループで全テーブルが同時投入されても「MAP 作成 → PORT_QOS_MAP バインド」という順序が自然に保証される。
+
+### 5. DEL 逆順序
+
+| 順序 | 操作 |
+|------|------|
+| 先 | PORT_QOS_MAP エントリを DEL（SAI 属性を `SAI_NULL_OBJECT_ID` にリセット） |
+| 後 | 参照先 MAP テーブル（DSCP_TO_TC_MAP 等）を DEL |
+
+逆順（MAP を先に DEL）すると SAI reference カウントが残存しドライバ側で削除エラーが発生する恐れがある（`qosorch.cpp:2082-2097`）。
+
+### 6. pfc_enable / pfcwd_sw_enable の処理順序
+
+SET パス内でまず全 map 属性を `sai_port_api->set_port_attribute()` で適用し、その後 PFC 系を処理する（`qosorch.cpp:2187-2224`）:
+
+1. `update_list` の SAI map 属性を全ポートに適用
+2. `getPortPfc` で現在の PFC bitmask を取得
+3. `pfc_enable || old_pfc_enable` が true の場合のみ `setPortPfc` 呼び出し
+4. `pfcwd_sw_enable` は **無条件に** `setPortPfcWatchdogStatus` へ渡す（省略時も 0 が適用される）
+
+!!! warning "pfcwd_sw_enable 省略時の注意"
+    PORT_QOS_MAP を SET する際に `pfcwd_sw_enable` を省略すると、watchdog bitmask が 0（全無効）としてリセットされる。`pfc_enable` の条件付きスキップと非対称な挙動である（`qosorch.cpp:2224`）。
+
+<!-- /ordering -->
+
 <!-- platform -->
 ## プラットフォーム差分 (Phase H)
 
