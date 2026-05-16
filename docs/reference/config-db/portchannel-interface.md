@@ -123,6 +123,55 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp / sonic-swss/cfgmgr/intfmgr.h -->
+
+> **詳細**: `meta/_intermediate/cdb-flow/portchannel-interface-defaults.md`
+
+`PORTCHANNEL_INTERFACE` は `IntfMgr::doIntfGeneralTask()` が `INTERFACE` / `LOOPBACK_INTERFACE` / `VLAN_INTERFACE` と共通処理する。intfmgr.cpp 冒頭のハードコード定数は以下:
+
+| 定数 | 値 | PORTCHANNEL_INTERFACE への適用 |
+|---|---|---|
+| `DEFAULT_MTU_STR` | `9100` | × (サブインタフェース fallback のみ — intfmgr.cpp:29,402,420) |
+| `LOOPBACK_DEFAULT_MTU_STR` | `65536` | × (Loopback IF 専用 — intfmgr.cpp:28,201) |
+| `MTU_INHERITANCE` | `"0"` | × (sub-interface 親 MTU 継承の特殊値) |
+
+### `admin_status` は silent drop
+
+`PORTCHANNEL_INTERFACE` 属性ロウに `admin_status` を書いても intfmgrd は反応しない。`adminStatus` 変数 (intfmgr.cpp:776,797-800) は **`is_lo` ブランチ (Loopback IF) でのみ参照**され、PORTCHANNEL IF を含む非 loopback の `else` 節 (intfmgr.cpp:884-) では未使用。YANG 側でも `PORTCHANNEL_INTERFACE` 属性ロウに `admin_status` leaf 定義なし — LAG の admin up/down は `PORTCHANNEL` テーブルで管理する。
+
+### `mtu` は silent drop
+
+intfmgr.cpp:775 で `mtu = ""` 初期化されるが、PORTCHANNEL_INTERFACE 処理経路では `mtu` フィールドを読み取らない。MTU 変更は `PORTCHANNEL` テーブルで行う必要がある。`DEFAULT_MTU_STR = "9100"` は サブインタフェース (`PortChannel0001.10` 形式) の親 MTU 取得失敗時のフォールバック (intfmgr.cpp:400-402) としてのみ使用される。
+
+### `loopback_action` 未設定時の動作は SAI 実装依存
+
+intfmgr.cpp:825-828,893-898 は `loopback_action` フィールドが空なら APP_INTF_TABLE に push しない (silent skip)。SAI 側の初期値はベンダー実装依存で、概ね `forward` 相当だが明文化されない。
+
+### Loopback IF 専用フォールバック (PORTCHANNEL_INTERFACE には適用されない)
+
+`is_lo` ブランチ (intfmgr.cpp:852-883) では `adminStatus.empty()` のとき `"up"` にフォールバックし、不正値 (`"up"`/`"down"` 以外) も警告付きで `"up"` に補正する。**この補正は Loopback IF のみで PORTCHANNEL_INTERFACE には適用されない**。
+
+### 他フィールドの silent skip
+
+| フィールド | 未設定時の挙動 | ソース |
+|---|---|---|
+| `vrf_name` | default VRF (Linux global namespace) | intfmgr.cpp:789-792 |
+| `mac_addr` | `DEVICE_METADATA.localhost.mac` のシステム MAC | intfmgr.cpp:793-796 |
+| `mpls` | Linux netdev の MPLS 設定を変更しない | intfmgr.cpp:809-812 |
+| `nat_zone` | natmgrd 側で zone `0` 扱い (intfmgr は補填せず) | intfmgr.cpp:813-816 |
+| `ipv6_use_link_local_only` | Linux IPv6 システムデフォルト (YANG default `disable` と整合) | intfmgr.cpp:817-820 |
+
+### 主要 discrepancy
+
+1. **`admin_status` を書いても無視される** — YANG schema にも leaf 定義がなく、intfmgrd も読まない。混同するとユーザは「反映されない」と感じる。
+2. **`mtu` を書いても無視される** — `PORTCHANNEL` テーブル側で管理。
+3. **`loopback_action` 未設定時の SAI 初期値が不明** — ベンダー実装依存で動作が変わる可能性。
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
