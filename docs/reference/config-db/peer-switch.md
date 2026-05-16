@@ -410,3 +410,55 @@ SET 時に `decap_orch_` が `MuxTunnel0` の宛先 IP を未登録の場合、`
     `mux_peer_switch_` が残存するため、PEER_SWITCH 変更後に MUX_CABLE が旧 peer IP でトンネルを張り続ける。変更時は必ず orchagent を再起動すること。
 
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込・外部テーブル連動 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-side-effects.md`
+> ソース: `sonic-swss/orchagent/muxorch.cpp`
+
+### STATE_DB 書込
+
+PEER_SWITCH SET により `mux_peer_switch_` が確定した後、続く MUX_CABLE SET 処理 (`handleMuxCfg()`) が
+STATE_DB `MUX_CABLE_TABLE` へ `neighbor_mode` フィールドを書き込む。
+
+| 書込先 DB | テーブル | キー | フィールド | 値 | トリガー |
+|----------|---------|------|-----------|---|--------|
+| STATE_DB | `MUX_CABLE_TABLE` | `<port_name>` | `neighbor_mode` | `"host-route"` または `"prefix-route"` | MUX_CABLE SET（PEER_SWITCH 確定後） |
+
+```cpp
+// muxorch.cpp:2285
+state_mux_cable_table_->hset(port_name, "neighbor_mode", neighbor_mode_str);
+```
+
+PEER_SWITCH が未設定の場合、`mux_peer_switch_.isZero()` が true となり `handleMuxCfg()` が
+`return false` でリトライ待機するため、この STATE_DB 書込は発生しない。
+
+### TUNNEL_DECAP 連動
+
+`handlePeerSwitch()` は `DecapOrch`（TUNNEL_DECAP 処理済みオブジェクト）から以下を読み出す:
+
+| 取得値 | メソッド | 用途 |
+|-------|---------|------|
+| `dst_ips` (MuxTunnel0 の decap dst IP) | `getDstIpAddresses(MUX_TUNNEL)` | P2P トンネルの ENCAP_SRC_IP |
+| `dscp_mode_name` | `getDscpMode(MUX_TUNNEL)` | トンネル DSCP モード設定 |
+| `tc_to_dscp_map_id` | `getQosMapId(MUX_TUNNEL, ...)` | QoS TC→DSCP マッピング |
+| `tc_to_queue_map_id` | `getQosMapId(MUX_TUNNEL, ...)` | QoS TC→Queue マッピング |
+
+`TUNNEL_DECAP` が未処理（`getDstIpAddresses()` が空を返す）の場合、`handlePeerSwitch()` は
+`return false` でリトライ待機する。PEER_SWITCH 処理は TUNNEL_DECAP 処理完了に依存する。
+
+### SAI 副次効果（PEER_SWITCH SET 時）
+
+`handlePeerSwitch()` SET パスで `create_tunnel()` を呼び出し、以下の SAI オブジェクトが生成される:
+
+1. **overlay loopback RIF**: `sai_router_intfs_api->create_router_interface()` — `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK`
+2. **IP-in-IP P2P トンネル**: `sai_tunnel_api->create_tunnel()` — `SAI_TUNNEL_TYPE_IPINIP` / `SAI_TUNNEL_PEER_MODE_P2P`
+   - ENCAP_SRC_IP = `TUNNEL.src_ip`（MuxTunnel0 の dst_ip から取得）
+   - ENCAP_DST_IP = `PEER_SWITCH.address_ipv4`
+
+!!! warning "DEL 時のクリーンアップ未実装"
+    DEL パス（`muxorch.cpp:2387`）は "Not Implemented" のログのみ。STATE_DB `MUX_CABLE_TABLE` や
+    SAI トンネルオブジェクトは orchagent 再起動まで残存する。
+
+<!-- /side-effects -->
