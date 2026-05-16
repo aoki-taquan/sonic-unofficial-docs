@@ -207,6 +207,87 @@ ASIC が対応していない SAI カウンタは `intfstat` の `get_counters()
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 処理順序と順序依存 (Phase B)
+
+### orchdaemon 初期化順序
+
+`orchdaemon.cpp` における Orch 生成順序は次のとおりで、`gIntfsOrch` は `FlexCounterOrch` より前に生成される[^7]。
+
+| 順序 | 生成クラス | 依存 |
+|------|-----------|------|
+| 1 | `PortsOrch` | — |
+| 2 | `VRFOrch` | — |
+| 3 | `IntfsOrch` | VRFOrch, PortsOrch |
+| 4 | `FlexCounterOrch` | gIntfsOrch (既に設定済み) |
+
+`FlexCounterOrch::doTask()` は `gIntfsOrch != nullptr` を確認してから `generateInterfaceMap()` を呼ぶため、IntfsOrch より前に `FLEX_COUNTER_TABLE|RIF enable` が来ても安全に無視される（`gIntfsOrch` が nullptr なら分岐しない）。
+
+### PortsOrch ガード — 全ポート Ready 前は INTERFACE 処理なし
+
+`IntfsOrch::doTask(Consumer)` の先頭でポート初期化完了を確認する（`intfsorch.cpp:665-668`）。
+
+```
+if (!gPortsOrch->allPortsReady()) return;
+```
+
+`APP_INTF_TABLE` の SET メッセージは Consumer キューに積まれたまま保持され、`PortsOrch::allPortsReady()` が `true` を返した後に初めて処理される。したがって `INTERFACE` エントリに対応する物理ポート（`Ethernet0`、`PortChannel0001`、`Vlan1000` 等）が PortsOrch に登録済みであることが前提になる。
+
+### RIF 作成 → タイマー駆動の非同期 FlexCounter 登録
+
+`addRouterIntfs()` で SAI RIF 作成後、`port` を `m_rifsToAdd` リストにキューイングするのみで FlexCounter には即時登録しない。実際の登録は `UPDATE_MAPS_SEC = 1 秒` 間隔のタイマーが発火して `doTask(SelectableTimer)` が呼ばれた後になる（`intfsorch.cpp:45, 78`）[^8]。
+
+```
+APP_INTF_TABLE SET
+  → doTask(Consumer) → addRouterIntfs() → SAI RIF 作成 → m_rifsToAdd 追加
+  最大 1 秒後
+  → doTask(SelectableTimer) → addRifToFlexCounter()
+      → COUNTERS_RIF_NAME_MAP (name→OID)
+      → COUNTERS_RIF_TYPE_MAP (OID→type)
+      → FLEX_COUNTER_DB: COUNTER_ID_LIST 登録
+  syncd がポーリング開始 (FLEX_COUNTER_TABLE|RIF enable が前提)
+      → COUNTERS:<oid> 更新
+      → RATES:<oid> 更新 (rif_rates.lua)
+```
+
+この最大 1 秒の遅延の間、`COUNTERS_RIF_NAME_MAP` に当該 RIF のエントリが存在しない。`intfstat` を RIF 作成直後に実行すると表示されないことがある。
+
+### gTraditionalFlexCounter モードでの ASIC_DB 待機
+
+`gTraditionalFlexCounter = true`（`--use-sairedis` オプション）の場合、タイマーが発火しても ASIC_DB の `VIDTORID` テーブルに該当 OID が存在するまで `addRifToFlexCounter()` を呼ばない（`intfsorch.cpp:1629-1636`）。
+
+`syncd` が SAI `create_router_interface` の応答を受けて `VIDTORID` を書いた後に初めて登録が完了する。新規 FlexCounter モード (`gTraditionalFlexCounter = false`) では即座に登録する。
+
+### FLEX_COUNTER_TABLE|RIF enable → generateInterfaceMap() 連鎖
+
+`FlexCounterOrch::doTask()` が `FLEX_COUNTER_STATUS = enable` を受信すると（`flexcounterorch.cpp:283-285`）:
+
+```
+FlexCounterOrch::doTask()
+  → gIntfsOrch->generateInterfaceMap()
+      → m_updateMapsTimer->start()
+          → doTask(SelectableTimer) (次回発火時)
+              → m_rifsToAdd の全 RIF を addRifToFlexCounter()
+```
+
+すでに `m_rifsToAdd` に積まれた RIF が一括登録される。orchdaemon 起動直後は `FlexCounterOrch::m_delayTimerExpired = false` のため、warm-reboot 完了前に enable が来ても early return する（`flexcounterorch.cpp:157-160`）。
+
+### 削除時の順序
+
+`removeIntf()` → `removeRouterIntfs()` → `removeRifFromFlexCounter()` の順で処理される:
+
+1. `COUNTERS_RIF_NAME_MAP` と `COUNTERS_RIF_TYPE_MAP` から hdel
+2. `FLEX_COUNTER_DB` の COUNTER_ID_LIST を `stopFlexCounterPolling()` で削除
+3. `COUNTERS:<oid>` は syncd 側が SAI の remove 応答後にクリーンアップする（IntfsOrch は直接削除しない）
+
+`m_rifsToAdd` にまだキューイングされている RIF（`addRifToFlexCounter` 未実行）は `removeRouterIntfs()` 内でリストから除去されるだけで FlexCounter 側のクリーンアップは不要（`intfsorch.cpp:1337-1344`）。
+
+> **コード証跡**: `intfsorch.cpp` L43 (priority 35), L45,78 (UPDATE_MAPS_SEC=1), L665-668 (PortsOrch ガード), L1296-1311 (addRouterIntfs→m_rifsToAdd), L1527-1552 (addRifToFlexCounter 書き込み順序), L1576-1578 (generateInterfaceMap), L1598-1638 (doTask Timer + gTraditionalFlexCounter 分岐), L1337-1344 (削除時クリーンアップ);
+> `flexcounterorch.cpp` L157-160 (delayTimer ガード), L283-285 (RIF enable → generateInterfaceMap);
+> `orchdaemon.cpp` L232, L283, L296, L625 (初期化順序)
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -225,3 +306,5 @@ ASIC が対応していない SAI カウンタは `intfstat` の `get_counters()
 [^4]: ポーリング間隔ハードコード: `sonic-swss/orchagent/intfsorch.h:21`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L21>
 [^5]: RIF_ALPHA/SMOOTH_INTERVAL デフォルト: `sonic-buildimage/dockers/docker-orchagent/enable_counters.py:10-11`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L10>
 [^6]: 起動遅延ロジック: `sonic-buildimage/dockers/docker-orchagent/enable_counters.py:57-64`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57>
+[^7]: orchdaemon 初期化順序: `sonic-swss/orchagent/orchdaemon.cpp:232,283,296,625`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232>
+[^8]: UPDATE_MAPS_SEC タイマー: `sonic-swss/orchagent/intfsorch.cpp:45`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45>
