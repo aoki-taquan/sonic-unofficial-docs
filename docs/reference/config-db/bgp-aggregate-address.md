@@ -194,6 +194,56 @@ vtysh -c 'show bgp ipv4 unicast'
 - `bgpcfgd` が FRR running-config を読み CONFIG_DB と同期
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py` / `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
+> 調査日: 2026-05-16
+
+### 他テーブル先行必須
+
+| 先行テーブル / 条件 | 依存の内容 | コード根拠 |
+|-------------------|-----------|-----------|
+| `DEVICE_METADATA|localhost.bgp_asn` | `AggregateAddressMgr.__init__` の依存宣言で未解決の間は `set_handler` が呼ばれない。`address_set_handler` 冒頭で `directory.get_slot(...)["localhost"]["bgp_asn"]` を取得 (未設定で KeyError) | `managers_aggregate_address.py:33-40, 93` |
+| `BGP_GLOBALS|<vrf>.local_asn` | frrcfgd は `local_asn is None` の VRF 配下の `BGP_GLOBALS_AF_AGGREGATE_ADDR` 更新を `continue` で**黙って捨てる** | `frrcfgd.py:2658-2662` |
+| `BGP_GLOBALS_AF|<vrf>|<af>` | frrcfgd の table 列挙順で AF 宣言が aggregate より先に処理される。bgpd 側でも `address-family <af>` モード遷移後でないと `aggregate-address` を受け付けない | `frrcfgd.py:2139` / `managers_aggregate_address.py:241-250` |
+| `BGP_BBR|all.status` (`bbr-required=true` の場合) | `bbr_status` が `enabled` / `disabled` 以外 (=未設定) かつ `bbr-required=true` のエントリは STATE_DB `inactive` に落とされ FRR 投入をスキップ | `managers_aggregate_address.py:73-83` |
+| `ROUTE_MAP` / `PREFIX_SET` (`aggr-policy` 使用時のみ) | frrcfgd の `af_aggregate_key_map` が `{5:aggr-policy}` をルートマップ名に解決。ROUTE_MAP 未登録だと `aggregate-address ... route-map <name>` の属性付与が機能しない | `frrcfgd.py:1982-1983, 2669-2676` |
+
+### bgpcfgd vtysh push 順序
+
+`address_set_handler` は `cfg_mgr.push_list()` に以下の順で渡す。
+
+1. `router bgp <asn>` → `address-family ipv4|ipv6` → `aggregate-address <prefix> [summary-only] [as-set]` → `exit-address-family` → `exit`
+2. (`aggregate-address-prefix-list` 設定時) `ip|ipv6 prefix-list <name> permit <prefix>`
+3. (`contributing-address-prefix-list` 設定時) `ip|ipv6 prefix-list <name> permit <prefix> le 32|128`
+
+aggregate 本体 → prefix-list の順であり、中間状態では aggregate が未登録 prefix-list を参照する瞬間が存在する (bgpd の前方参照許容で動作)。
+
+### 起動順 / 再起動時の挙動
+
+| タイミング | 挙動 | コード根拠 |
+|-----------|------|-----------|
+| `AggregateAddressMgr.__init__` 末尾 | `remove_all_state_of_address()` で STATE_DB の `BGP_AGGREGATE_ADDRESS` を全削除 → CONFIG_DB 購読開始。bgpcfgd 再起動直後は STATE_DB 空。`inactive` の有無で readiness を判定してはならない | `managers_aggregate_address.py:42-44, 203-207` |
+| `BGP_BBR.status` が `disabled` → `enabled` に遷移 | `on_bbr_change` が STATE_DB を走査し `bbr-required=true` の全 aggregate を FRR に再投入 | `managers_aggregate_address.py:46-56` |
+| `BGP_BBR.status` が `enabled` → `disabled` に遷移 | 同じく走査し FRR から削除 + STATE_DB を `inactive` に | `managers_aggregate_address.py:57-61` |
+
+### DEL 順依存
+
+| 操作 | 必須順序 | コード根拠 |
+|------|---------|-----------|
+| `BGP_AGGREGATE_ADDRESS` DEL | STATE_DB が `inactive` の場合 FRR 削除コマンドをスキップ。`inactive` の判定が `set_address_state` 経由でしか書かれないため、CONFIG_DB と STATE_DB の整合が崩れていると削除漏れの可能性 | `managers_aggregate_address.py:138-146` |
+| DEL の vtysh 順 | aggregate 本体 (`no aggregate-address ...`) → 関連 prefix-list (`no ip\|ipv6 prefix-list ...`) の順で `push_list` | `managers_aggregate_address.py:148-185` |
+
+詳細根拠とスキャンログは intermediate メモ (`meta/_intermediate/cdb-flow/bgp-aggregate-address-ordering.md`) を参照。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:33 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:73 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:104 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1982 -->
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A コード由来)
 
