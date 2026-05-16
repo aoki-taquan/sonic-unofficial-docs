@@ -148,6 +148,53 @@ show interfaces breakout
 | `show interfaces breakout` で対象ポートが未登録 | 対象ポートを skip (エラーなし) | `show/interfaces/__init__.py` L228 |
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-utilities/config/main.py`, `sonic-utilities/config/config_mgmt.py`
+
+### CLI 前処理フェーズの失敗経路
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `platform.json` 不在 / 拡張子が `.json` でない | `[ERROR] Breakout feature is not available without platform.json file` → `Abort` | `config/main.py:5469-5471` |
+| `BREAKOUT_CFG` テーブルが CONFIG_DB に存在しない | `[ERROR] BREAKOUT_CFG table is NOT present in CONFIG DB` → `Abort` | `config/main.py:5481-5483` |
+| 対象ポートが `BREAKOUT_CFG` に未登録 | `[ERROR] {interface_name} interface is NOT present in BREAKOUT_CFG table of CONFIG DB` → `Abort` | `config/main.py:5485-5487` |
+| `target_brkout_mode` が `platform.json` の `breakout_modes` に未定義 | `_validate_interface_mode()` 失敗 → `Abort` | `config/main.py:5491` |
+| `del_intf_dict` が空（削除対象子ポートなし） | `[ERROR] del_intf_dict is None!` → `Abort` | `config/main.py:5504-5506` |
+| 削除予定ポート名が CONFIG_DB に未登録 | `[ERROR] Interface name {intf} is invalid` → `Abort` | `config/main.py:5519-5521` |
+
+### DPB 実行フェーズ: port 削除失敗
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| 依存テーブル (VLAN_MEMBER 等) が存在し `force=False` | `"Dependencies Exist. No further action will be taken"` → `sys.exit(1)` | `config_mgmt.py:501-503; config/main.py:267-270` |
+| YANG バリデーション (`validateConfigData()`) 失敗 (削除後) | `ret=False` → `"[ERROR] Port breakout Failed!!! Opting Out"` → `Abort` | `config_mgmt.py:516` |
+| ノード削除中に予期しない例外 | `LOG_ERR "Port Deletion Failed"` → `ret=False` → `Abort` | `config_mgmt.py:525-528` |
+
+### DPB 実行フェーズ: ASIC DB ポーリングタイムアウト
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `MAX_WAIT=60` 秒以内に削除ポートが ASIC DB から消えない | `LOG_CRIT "!!! Critical Failure, Ports are not Deleted from ASIC DB, Bail Out !!!"` → `Exception` 伝播 → `breakOutPort()` が `None, False` を返す | `config_mgmt.py:403-406` |
+| ASIC DB ポーリング例外 | CONFIG_DB は PORT 削除済みで新ポート未追加のまま停止。`BREAKOUT_CFG` は**旧値のまま**残る | `config_mgmt.py:462-464` |
+
+### DPB 実行フェーズ: port 再作成失敗
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `/etc/sonic/port_breakout_config_db.json` が欠落 (`loadDefConfig=True` 時) | `LOG_ERR "getDefaultConfig Failed, Error: {}"` → 例外伝播 → `ret=False` → `Abort` | `config_mgmt.py:748-751` |
+| YANG バリデーション失敗 (追加後) | `ret=False` → `"[ERROR] Port breakout Failed!!! Opting Out"` → `Abort` | `config_mgmt.py:572` |
+| ポート追加中に予期しない例外 | `LOG_ERR "Port Addition Failed"` → `ret=False` | `config_mgmt.py:583-586` |
+
+### retry・ロールバック挙動
+
+- **retry なし**: DPB はいずれの失敗ステップでも自動 retry を行わない。全フェーズ単発実行。
+- **部分適用リスク**: `writeConfigDB(delConfigToLoad)` 後に `_verifyAsicDB()` タイムアウトが発生した場合、PORT テーブルは削除済みだが新ポートは未追加の状態となり `BREAKOUT_CFG` は旧値のまま残る。手動 `config reload` が必要。
+- **BREAKOUT_CFG 保護**: `breakOutPort()` 失敗時は `BREAKOUT_CFG.brkout_mode` を書き込まない設計（`config/main.py:5548` 以降）。ASIC 状態との乖離を防ぐ意図的なガード。
+- **Yang モデルなしテーブル**: `breakout_warnUser_extraTables()` が失敗すると `raise Exception("Failed in breakout_warnUser_extraTables. Error: {}")` を送出し `sys.exit(1)` で終了。
+
+<!-- /failure -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
