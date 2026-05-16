@@ -308,6 +308,28 @@ YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` 
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp L12-16 -->
+
+| 定数名 | 値 | 型 | 定義場所 | 説明 |
+|--------|----|----|---------|------|
+| `MGMT_VRF_TABLE_ID` | `6000` | `#define` (コンパイル時定数) | `vrfmgr.cpp` L15 | mgmt VRF に割り当てる Linux ルーティングテーブル ID。通常 VRF は 1001–5097 の動的割当範囲だが、mgmt VRF のみ範囲外の固定値 6000 を使用する。変更不可。 |
+| `MGMT_VRF` | `"mgmt"` | `#define` (文字列定数) | `vrfmgr.cpp` L16 | mgmt VRF の Linux netdev 名。`setLink()` / `delLink()` 内で `vrfName == MGMT_VRF` の分岐条件として使用。YANG フィールド `mgmtVrfEnabled` の値とは独立したコード埋め込み定数。 |
+| `mgmtVrfEnabled` デフォルト | `false` | `bool` C++ ローカル変数初期値 | `vrfmgr.cpp` L234 | SET イベント受信時のローカル変数 `bool mgmt_vrf_enabled = false`。フィールドが存在しない、または `"true"` 以外の場合、false のまま処理される。 |
+| カーネル netns デフォルト | デフォルト netns（名前なし） | 暗黙値 | Linux カーネル / iproute2 | mgmt VRF 無効時（`mgmtVrfEnabled=false`）、eth0 はデフォルト network namespace（グローバル netns）に所属する。mgmt VRF 有効時は `mgmt` VRF 内の独立ルーティングテーブル（table ID 6000）に分離される。vrfmgr.cpp は netns を直接操作せず、VRF netdev を通じた分離を行う。 |
+| `VRF_TABLE_START` | `1001` | `#define` | `vrfmgr.cpp` L12 | 通常 VRF の動的割当開始 ID（mgmt VRF は対象外） |
+| `VRF_TABLE_END` | `5097` | `#define` | `vrfmgr.cpp` L13 | 通常 VRF の動的割当終了 ID（mgmt VRF は対象外） |
+
+### 補足
+
+- `MGMT_VRF_TABLE_ID = 6000` は通常 VRF の動的割当範囲（1001–5097）の外にあり、mgmt VRF 専用に予約されている。
+- `MGMT_VRF = "mgmt"` はコンパイル時に埋め込まれた名前であり、CONFIG_DB に書かれた VRF 名ではない。設定で変更することはできない。
+- Linux カーネルの network namespace（netns）は vrfmgr が直接操作するのではなく、hostcfgd が `interfaces-config` restart を通じて管理する（責務分離）。mgmt VRF 無効時のデフォルト netns は Linux のグローバル netns（名前なし）。
+
+<!-- /constants -->
+
 <!-- cross-refs -->
 ## 暗黙参照 — `hostcfgd` が連動して読む関連テーブル (Phase C)
 
