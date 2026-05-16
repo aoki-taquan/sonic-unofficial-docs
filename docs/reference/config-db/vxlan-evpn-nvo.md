@@ -265,6 +265,55 @@ db_migrator.py での VXLAN_EVPN_NVO マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- side-effects -->
+## 副次 DB 書込（Phase F）
+
+`EvpnNvoOrch::addOperation()` 自体は `source_vtep_ptr` の格納のみで DB・SAI への直接書込を行わない。副次書込は後続の EVPN ルート処理で VTEP トンネルが生成される際に連鎖的に発生する。
+
+### SAI: `create_tunnel_map`（`sai_tunnel_api`）
+
+VTEP トンネル初回作成時（`VxlanTunnel::createMapperHw()`）に SAI tunnel_map オブジェクトを作成する。
+
+- **SAI API**: `sai_tunnel_api->create_tunnel_map()` (vxlanorch.cpp:141)
+- **作成されるマップ型**:
+  - `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID` / `VLAN_ID_TO_VNI`
+  - `SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID` / `VIRTUAL_ROUTER_ID_TO_VNI`
+  - `SAI_TUNNEL_MAP_TYPE_VNI_TO_BRIDGE_IF` / `BRIDGE_IF_TO_VNI`
+- **トリガー**: VNI ↔ VLAN/VRF/Bridge マッピング登録時（`VXLAN_TUNNEL_MAP` テーブル処理）
+
+### SAI: `create_tunnel`（`sai_tunnel_api`）
+
+- **SAI API**: `sai_tunnel_api->create_tunnel()` (vxlanorch.cpp:399)
+- **主要属性**: `SAI_TUNNEL_ATTR_TYPE=SAI_TUNNEL_TYPE_VXLAN`、`DECAP_MAPPERS`/`ENCAP_MAPPERS`（上記 map OID 一覧）、`ENCAP_SRC_IP`（VTEP IP）、`PEER_MODE`（P2MP: VTEP、P2P: EVPN 動的トンネル）
+- **トリガー**: `VxlanTunnel::createTunnelHw()` (vxlanorch.cpp:885)
+
+### SAI: `create_tunnel_map_entry`（`sai_tunnel_api`）
+
+- **SAI API**: `sai_tunnel_api->create_tunnel_map_entry()` (vxlanorch.cpp:211)
+- VNI ↔ VLAN/VRF/Bridge ペアごとに 1 呼び出し
+- **トリガー**: `addEncapMapperEntry()` / `addDecapMapperEntry()` 経由 (vxlanorch.cpp:551-560)
+
+### STATE_DB: `VXLAN_TUNNEL_TABLE`
+
+EVPN 動的トンネル（`TNL_CREATION_SRC_EVPN`）が作成されると STATE_DB に書き込まれる。
+
+```cpp
+// sonic-swss/orchagent/vxlanorch.cpp:1935-1944
+fvVector.emplace_back("src_ip", (sip.to_string()).c_str());
+fvVector.emplace_back("dst_ip", (dip.to_string()).c_str());
+fvVector.emplace_back("tnl_src", "EVPN");
+fvVector.emplace_back("operstatus", "down");
+m_stateVxlanTable.set(tunnel_name, fvVector);
+```
+
+- **テーブル名**: `"VXLAN_TUNNEL_TABLE"` (`STATE_VXLAN_TUNNEL_TABLE_NAME`, schema.h:435)
+- **キー形式**: `<tunnel_name>`（EVPN 動的トンネル名）
+- **書込フィールド**: `src_ip`、`dst_ip`、`tnl_src="EVPN"`、`operstatus="down"`
+- **削除**: トンネル削除時に `m_stateVxlanTable.del(tunnel_name)` (vxlanorch.cpp:1953)
+- **コード**: `VxlanTunnelOrch::addRemoveStateTableEntry()` (vxlanorch.cpp:1913)
+
+<!-- /side-effects -->
+
 <!-- cross-refs -->
 ## 暗黙参照 (Phase C / vxlanorch.cpp)
 
