@@ -360,6 +360,33 @@ SAI tunnel 削除・`mux_peer_switch_` リセットは行われない。orchagen
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-platform.md`
+> ソース: `sonic-swss/orchagent/muxorch.cpp`、`sonic-buildimage/src/sonic-config-engine/minigraph.py`
+
+### Dual-ToR vs Single-ToR
+
+`PEER_SWITCH` テーブルは **Dual-ToR 専用** のテーブル。`minigraph.py` の `get_peer_switch_info()` 関数が `GeminiPeeringLink` または `LibraPeeringLink` リンクメタデータを検出した場合のみ `address_ipv4` を CONFIG_DB に投入する。
+
+- **Single-ToR**: `GeminiPeeringLink` / `LibraPeeringLink` が存在しないため PEER_SWITCH エントリは生成されない。`MuxOrch` は orchdaemon 上で起動するが `mux_peer_switch_` は `0.0.0.0`（`isZero() == true`）のまま維持される。MUX_CABLE の `handleMuxCfg()` は `mux_peer_switch_.isZero()` を検出して `return false` でリトライ待機となり、実質的に MUX_CABLE 処理全体が停止する (`muxorch.cpp:2271`)。
+
+| 構成 | PEER_SWITCH エントリ | `mux_peer_switch_` | MUX_CABLE 動作 |
+|------|---------------------|---------------------|----------------|
+| Dual-ToR | 存在（最大 1 エントリ） | peer IPv4 アドレスに設定 | 正常動作 |
+| Single-ToR | 存在しない | `0.0.0.0`（isZero=true） | MUX_CABLE が pending のまま |
+
+### SmartSwitch DPU
+
+`DEVICE_METADATA.localhost.subtype == "SmartSwitch"` の場合、`orchdaemon.cpp:613` で `DashEniFwdOrch` を追加起動するが、`MuxOrch` は条件外で無条件に起動する（orchdaemon.cpp:471）。ただし SmartSwitch トポロジでは Dual-ToR のピアリンク定義（`GeminiPeeringLink` 等）を持たないため minigraph が PEER_SWITCH を生成しない。CONFIG_DB に PEER_SWITCH エントリが存在せず、`handlePeerSwitch()` は呼ばれない。
+
+### muxorch.cpp 内に platform 分岐なし
+
+`muxorch.cpp` 自体には `platform`、`SmartSwitch`、`subtype` による明示的な分岐は存在しない。プラットフォーム差は「CONFIG_DB に PEER_SWITCH エントリが存在するか否か」によって暗黙的に決まる設計である。
+
+<!-- /platform -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
