@@ -266,6 +266,26 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 > **スキャン証跡**: BGP_PEER_GROUP_AF は comb_attr_list なしの `bgp_table_handler_common` に直接渡される。BGP_NEIGHBOR_AF と同一パスを共有。
 <!-- /handler-branching -->
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+`BGP_PEER_GROUP_AF` の処理に **プラットフォーム固有分岐は存在しない**。
+
+### 根拠
+
+| 確認対象 | 結果 | evidence |
+|---|---|---|
+| `frrcfgd.py` 全体の `platform` / `hwsku` / `asic_type` / `sonic_platform` grep | **0 件** | `frrcfgd.py` 全文スキャン |
+| `DEVICE_METADATA` 読み出し内容 | `bgp_asn` と `docker_routing_config_mode` のみ。`platform` / `hwsku` は不参照 | `frrcfgd.py:2162–2170` |
+| `bgp_table_handler_common()` の分岐条件 | `data is None`（DELETE）/ `data あり`（SET）のみ | `frrcfgd.py:3918,3930` |
+| `policies.conf.j2` 全バリアント（sentinels / dynamic / monitors / internal / voq_chassis）の `peer_group` grep | **0 件** — peer-group AF の差分テンプレートなし | 全 5 ファイルスキャン |
+
+### 設計上の理由
+
+`frrcfgd` は FRR (bgpd) と vtysh 経由で通信するコントロールプレーンデーモンであり、ASIC / ハードウェアアクセラレーションと無関係。BGP peer-group の AF 設定は FRR 内部で処理されるため、プラットフォーム種別によるコードパスの差異は生じない。
+
+詳細スキャン手順・grep 証跡は `meta/_intermediate/cdb-flow/bgp-peer-group-af-platform.md` を参照。
+<!-- /platform -->
 <!-- failure -->
 ## 失敗挙動・retry 分岐 (Phase D)
 
