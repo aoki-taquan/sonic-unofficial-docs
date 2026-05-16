@@ -378,4 +378,26 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 
 詳細調査ノートは `meta/_intermediate/cdb-flow/portchannel-interface-ordering.md` 参照。
 
+### teammgr が STATE_LAG_TABLE に書くまでの経路（補完）
+
+上記テーブルの "lagmgrd" は実装上は `TeamMgr` (`sonic-swss/cfgmgr/teammgr.cpp`) が担う。具体的な経路:
+
+```
+PORTCHANNEL (CONFIG_DB)
+  → TeamMgr::doLagTask()                       [teammgr.cpp:234]
+    → TeamMgr::addLag()                        [teammgr.cpp:564]
+      → teamd プロセス起動成功 (task_success)  [teammgr.cpp:647-649]
+        → m_stateLagTable.set(alias, ...)      [intfmgr.cpp:548 / teammgr 側は STATE_DB 直書き]
+          → IntfMgr::isIntfStateOk() が true
+            → PORTCHANNEL_INTERFACE 処理続行
+```
+
+`TeamMgr::addLag()` が teamd 起動に失敗すると `task_need_retry` を返し (teammgr.cpp:644)、LAG を `removeLag()` でクリーンアップしてリトライする (teammgr.cpp:304-308)。この間 `STATE_LAG_TABLE` は未書込みのままなので、`IntfMgr` 側も IP プレフィクス処理をスキップし続ける。
+
+| teammgr.cpp 行 | 内容 |
+|----------------|------|
+| 301-311 | `m_lagList` にない alias は `addLag()` を呼んで teamd 起動 |
+| 564-649 | `addLag()`: teamd コマンド組立・実行、失敗時 `task_need_retry` |
+| 640-644 | `exec()` 失敗 → `task_need_retry` 返却 |
+
 <!-- /ordering -->
