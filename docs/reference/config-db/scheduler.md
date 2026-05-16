@@ -441,4 +441,77 @@ SCHEDULER SET
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`QosOrch` は `SCHEDULER` テーブルを **`swss::SubscriberStateTable`** で購読する。
+
+`Orch::addConsumer()` は接続先 DB の ID で購読方式を自動選択する (`orch.cpp:1186-1196`)。`QosOrch` は `m_configDb`（CONFIG_DB、dbId=4）に接続するため、`CONFIG_DB || STATE_DB || CHASSIS_APP_DB` の分岐に入り `SubscriberStateTable` が割り当てられる。APPL_DB の `ConsumerStateTable` とは異なる方式で、Redis keyspace 通知は使わない。
+
+```cpp
+// sonic-swss/orchagent/orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName,
+            TableConsumable::DEFAULT_POP_BATCH_SIZE, pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+書き込み側（`sonic-cfggen` / CLI `config qos reload`）は swsscommon `ConfigDBConnector.set()` を経由して CONFIG_DB に HSET し、同時に内部チャンネル `SCHEDULER_CHANNEL@4` へ `"G"` を PUBLISH する。`SubscriberStateTable` がそのチャンネルを SUBSCRIBE し、通知を受けたら `pops()` で変更エントリを取り出す。
+
+### QosOrch 初期化経路
+
+```cpp
+// sonic-swss/orchagent/orchdaemon.cpp:367-384
+vector<string> qos_tables = {
+    CFG_TC_TO_QUEUE_MAP_TABLE_NAME,
+    CFG_SCHEDULER_TABLE_NAME,   // "SCHEDULER"
+    // ... 他 QoS テーブル
+};
+gQosOrch = new QosOrch(m_configDb, qos_tables);
+```
+
+`QosOrch` は `Orch(db, tableNames)` を継承し、コンストラクタが `tableNames` をイテレートして各テーブルに `addConsumer()` を呼ぶ。`SCHEDULER` を含む全 QoS テーブルが一括登録される。
+
+### 購読テーブル一覧
+
+| 購読者 | 購読 API | 購読 DB / チャンネル | バッチサイズ |
+|--------|---------|---------------------|------------|
+| `orchagent` (`QosOrch`) | `swss::SubscriberStateTable` | `CONFIG_DB` / `SCHEDULER_CHANNEL@4` | `DEFAULT_POP_BATCH_SIZE` |
+
+### doTask(Consumer&) フロー
+
+```
+config qos reload / sonic-cfggen (producer)
+  ↓ ConfigDBConnector.set("SCHEDULER|<name>", {type, weight, ...})
+CONFIG_DB: HSET "SCHEDULER|<name>" type=DWRR weight=15 ...
+  ↓ Redis PUBLISH "SCHEDULER_CHANNEL@4" "G"
+OrchDaemon main loop: m_select->select(&s, SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::execute() → SubscriberStateTable::pops()
+QosOrch::doTask(Consumer&)            (qosorch.cpp:2254)
+  ├─ allPortsReady() == false → 即 return（全ポート初期化待ち）
+  └─ allPortsReady() == true
+       └─ m_qos_handler_map["SCHEDULER"] → handleSchedulerTable(consumer, tuple)
+            ├─ SET: SAI scheduler profile 作成 / 更新
+            │    └─ sai_scheduler_api->create_scheduler() または set_scheduler_attribute()
+            │         → ASIC_DB: ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>
+            └─ DEL: SAI scheduler profile 削除
+                 └─ sai_scheduler_api->remove_scheduler()
+                      → ASIC_DB: 削除（参照中は m_pendingRemove で保留）
+```
+
+### 非同期性・タイミング
+
+- `m_select->select()` のタイムアウトは 1000ms。CONFIG_DB 書き込みから SAI 反映まで最大約 1 秒の遅延が生じうる。
+- `allPortsReady()` が `false` の間（起動直後のポート初期化フェーズ）は `doTask` が早期 return するため、全ポートが Ready になるまで SCHEDULER エントリの処理は保留される。
+- QUEUE 参照がある SCHEDULER への DEL は `task_need_retry` で保留され、QUEUE 参照解除まで SAI 削除は実行されない。
+
+詳細は `meta/_intermediate/cdb-flow/scheduler-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 96667c52d98d -->
