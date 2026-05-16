@@ -470,6 +470,118 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 - なし
 <!-- /entry-points -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp -->
+
+### 不正 priority
+
+`priority` フィールドの値を uint8 に変換できない場合（例: 256 以上の数値・非数値文字列）、`get_value()` 内の `boost::bad_lexical_cast` が捕捉され `SWSS_LOG_ERROR("Cannot convert value(%s) in field(%s)")` が出力される。変換失敗時は `get_value` が `false` を返し、`MACsecProfile::update()` はデフォルト値 `priority = 255` を適用して処理を続行する。エントリ破棄は発生しない。
+
+```
+priority 変換失敗
+  └─ SWSS_LOG_ERROR("Cannot convert value(%s) in field(%s)")
+  └─ priority = 255 (デフォルト) で継続
+  └─ task_success（エントリ保持）
+```
+
+### CAK 長違反
+
+`primary_cak` / `fallback_cak` の hex 文字列長が `cipher_suite` と不一致の場合、`decodeKey()` が `std::invalid_argument("Invalid length for cipher_string : ...")` を送出する。これは `loadProfile()` の catch ブロックで捕捉され `SWSS_LOG_WARN` が出力されて `task_failed` が返る。**再試行なし**でエントリは破棄される。
+
+| cipher_suite | 期待 CAK 長 | 実際が異なる場合 |
+|---|---|---|
+| `GCM-AES-128` / `GCM-AES-XPN-128` | 66 hex 文字 | `throw std::invalid_argument` → `task_failed` |
+| `GCM-AES-256` / `GCM-AES-XPN-256` | 130 hex 文字 | `throw std::invalid_argument` → `task_failed` |
+
+```
+loadProfile()
+  └─ profile.update(profile_attr)
+       └─ GetValue(ta, primary_cak)
+            └─ decodeKey(cipher_str, cipher_suite)
+                 └─ length mismatch → throw invalid_argument
+  └─ catch(invalid_argument) → SWSS_LOG_WARN
+  └─ return task_failed  ← 再試行なし、エントリ破棄
+```
+
+### SAK refresh（wpa_cli コマンド）失敗
+
+`configureMACsec()` が `wpa_cli_exec_and_check()` を使い `mka_cak` / `mka_priority` 等を `wpa_supplicant` に設定する際、wpa_cli の応答が "OK" で始まらない場合は `std::runtime_error` が送出される。`configureMACsec()` の catch ブロックが `SWSS_LOG_WARN("Enable MACsec fail : %s")` を出力し `false` を返す。`enableMACsec()` はこれを受けて `disableMACsec()` を呼び出してポートを安全な状態に戻す。
+
+`wpa_supplicant` プロセス起動自体が失敗した場合（`startWPASupplicant()` が 0 を返す）は `task_failed`、-1 以下（`fork` 失敗）は `task_need_retry` となる。
+
+```
+enableMACsec()
+  └─ startWPASupplicant()
+       ├─ pid < 0  → SWSS_LOG_WARN → task_need_retry
+       └─ pid == 0 → SWSS_LOG_WARN → task_failed
+  └─ configureMACsec()
+       └─ wpa_cli_exec_and_check() → "OK" でない応答
+            └─ throw runtime_error
+       └─ catch → SWSS_LOG_WARN("Enable MACsec fail : %s")
+       └─ return false
+  └─ disableMACsec() 呼出し（ポートを非暗号化状態へ復元）
+```
+
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-failure.md)
+<!-- /failure -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/cfgmgr/macsecmgrd.cpp -->
+
+### CONFIG_DB Subscribe
+
+`macsecmgrd` は `swss::DBConnector("CONFIG_DB", 0)` で接続し、`Orch` 基底クラスの `Consumer`（`SubscriberStateTable`）を介して `MACSEC_PROFILE` および `PORT` テーブルを購読する。イベントループは `swss::Select::select(&sel, SELECT_TIMEOUT=1000ms)` でポーリングし、FIPS MACSec POST state（STATE_DB の `MACSEC_POST_STATE`）が `"pass"` または `"disabled"` になるまで全処理をブロックする。
+
+| テーブル | コマンド | ハンドラ |
+|---------|---------|---------|
+| `MACSEC_PROFILE` | SET | `loadProfile()` — メモリへプロファイルをキャッシュ |
+| `MACSEC_PROFILE` | DEL | `removeProfile()` — 参照中ポートがあれば拒否 |
+| `PORT` | SET | `enableMACsec()` — `PORT.macsec` が空なら `disableMACsec` に委譲 |
+| `PORT` | DEL | `disableMACsec()` — wpa_supplicant 停止 + MKA セッション解除 |
+
+### wpa_supplicant Unix Domain Socket
+
+ポートごとに Unix Domain Socket `/var/run/<port_name>` を生成し、`fork()` + `execl()` で `wpa_supplicant -s -D macsec_sonic -g /var/run/<port_name>` を起動する。`configureMACsec()` は `/sbin/wpa_cli -g <sock>` で `MACSEC_PROFILE` の各フィールドを注入する。wpa_cli 応答が `"OK"` 以外の場合は `std::runtime_error` → `disableMACsec()` でロールバック。
+
+### APPL_DB MACSEC 経路
+
+`macsecmgrd` は APPL_DB に直接書き込まない。wpa_supplicant が MKA/SAK を確立した後、`MACsecOrch`（orchagent）が下記 APPL_DB テーブルを Subscribe して SAI に変換する。
+
+| APPL_DB テーブル | 役割 |
+|----------------|------|
+| `APP_MACSEC_PORT_TABLE_NAME` | ポートレベル MACsec 設定 |
+| `APP_MACSEC_EGRESS_SC_TABLE_NAME` | 送信 Secure Channel |
+| `APP_MACSEC_INGRESS_SC_TABLE_NAME` | 受信 Secure Channel |
+| `APP_MACSEC_EGRESS_SA_TABLE_NAME` | 送信 Secure Association |
+| `APP_MACSEC_INGRESS_SA_TABLE_NAME` | 受信 Secure Association |
+
+```
+CONFIG_DB:MACSEC_PROFILE (SET)
+  │ SubscriberStateTable
+  ▼
+macsecmgrd::loadProfile()  ─── プロファイルをメモリにキャッシュ
+
+CONFIG_DB:PORT.macsec (SET)
+  │ SubscriberStateTable
+  ▼
+macsecmgrd::enableMACsec()
+  ├─ fork/execl: wpa_supplicant -D macsec_sonic -g /var/run/<port>
+  └─ wpa_cli: mka_cak / mka_ckn / priority / cipher_suite 等を注入
+        │ MKA セッション確立・SAK 配布
+        ▼
+       APPL_DB: APP_MACSEC_{PORT,EGRESS_SC,INGRESS_SC,EGRESS_SA,INGRESS_SA}
+        │ SubscriberStateTable (MACsecOrch)
+        ▼
+       sai_macsec_api → ASIC/HW
+```
+
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-pubsub.md)
+<!-- /pubsub -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Direction B — orch / mgr が書く先)
 
