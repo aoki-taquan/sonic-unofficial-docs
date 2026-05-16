@@ -146,6 +146,46 @@ show switch-hash global
 <!-- /ops-hint -->
 
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+<!-- evidence: meta/_intermediate/cdb-flow/switch-hash-defaults.md -->
+
+### `ecmp_hash` / `lag_hash` field set — コード側デフォルトなし（SAI/ASIC 依存）
+
+`SwitchHash` 構造体 (`sonic-swss/orchagent/switch/switch_container.h:18-26`) は `ecmp_hash` / `lag_hash` をいずれも `is_set = false` で初期化する。CONFIG_DB の `SWITCH_HASH|GLOBAL` エントリにフィールドが含まれない場合、`setSwitchHash()` (`switchorch.cpp:789-822`) は SAI への書き込みを行わず、**有効な hash field 集合は SAI ベンダー実装 / ASIC のデフォルト**（`SAI_SWITCH_ATTR_ECMP_HASH` / `SAI_SWITCH_ATTR_LAG_HASH` が指す hash オブジェクトの初期 `NATIVE_HASH_FIELD_LIST`）に従う。
+
+`sonic-hash.yang` の `ecmp_hash` / `lag_hash` leaf-list には `default` 文が無く、YANG レベルでもデフォルトは規定されていない。SONiC orchagent 自身は IPv4 / IPv6 別の hash-field 集合をハードコードしておらず、`hash-field` enum も `SRC_IP` / `DST_IP` の単一集合で IPv4/IPv6 を区別しない（IPv6 対応は ASIC 側で自動的に handled）。
+
+### `ecmp_hash_algorithm` / `lag_hash_algorithm` — コード側デフォルトなし
+
+同じくフィールド未指定時は SAI 側のデフォルトアルゴリズム（典型的には `SAI_HASH_ALGORITHM_CRC`）が適用される。orchagent 経路でのハードコードデフォルトは存在しない。
+
+### `querySwitchHashDefaults()` は OID キャッシュのみ
+
+`SwitchOrch` コンストラクタ (`switchorch.cpp:169`) が起動時に `querySwitchHashDefaults()` (`switchorch.cpp:2030-2043`) を呼ぶが、これは `SAI_SWITCH_ATTR_ECMP_HASH` / `SAI_SWITCH_ATTR_LAG_HASH` の OID を `m_switchHashDefaults` にキャッシュする**のみ**で、SAI へ新規 SET は発行しない。OID 取得に失敗しても `LOG_WARN("Failed to get switch ECMP/LAG hash OID")` のみで起動は継続する。
+
+### ASIC capability 不在時 — SET は warn skip でエラーにならない
+
+```cpp
+if (swCap.isSwitchEcmpHashSupported())
+{
+    if (!swCap.validateSwitchHashFieldCap(hash.ecmp_hash.value)) { LOG_ERROR; return false; }
+    if (!setSwitchHashFieldListSai(hash, true))                  { LOG_ERROR; return false; }
+    cfgUpd = true;
+}
+else
+{
+    SWSS_LOG_WARN("Switch ECMP hash configuration is not supported: skipping ...");
+}
+```
+
+capability 機構自体が ASIC で未実装の場合 (`isSwitchEcmpHashSupported() / isSwitchLagHashSupported() / isSwitch*HashAlgorithmSupported()` が `false` を返す場合)、ユーザの SET は**エラーにならず**、警告ログのみで握り潰され SAI へ反映されない。`setSwitchHash()` 全体は `cfgUpd=false` のまま帰り、内部キャッシュ (`swHlpr.setSwHash()`) も更新されない。
+
+これに対し「capability 機構は対応しているが指定された field 集合 / アルゴリズムが ASIC capability セットに含まれない」場合は `LOG_ERROR("Failed to validate switch ECMP/LAG hash: capability is not supported")` で `return false` → 上位で `"Failed to set switch hash: ASIC and CONFIG DB are diverged"` ログ（既存「例外条件」節に記載）。両者は混同しやすいので注意。
+
+<!-- /defaults -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 

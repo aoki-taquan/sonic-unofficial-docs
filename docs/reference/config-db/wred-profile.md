@@ -251,6 +251,238 @@ WRED_PROFILE は `WredMapHandler::convertFieldValuesToAttributes()` がフィー
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+CONFIG_DB の `WRED_PROFILE` は `orchdaemon.cpp:375` の `qos_tables` ベクタ経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
+
+- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:WRED_PROFILE|*` への `PSUBSCRIBE`)
+- 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
+- バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
+- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+
+### 書き込み側 (publisher)
+
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）または firstboot 時のテンプレート展開が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。
+
+### ディスパッチ経路
+
+```
+SubscriberStateTable (PSUBSCRIBE keyspace)
+  → Consumer::execute() → pops() (HGETALL)
+  → QosOrch::doTask(Consumer&)           # allPortsReady() チェック後
+  → m_qos_handler_map[CFG_WRED_PROFILE_TABLE_NAME]
+  → QosOrch::handleWredProfileTable()    # qosorch.cpp:877
+  → WredMapHandler::processWorkItem()
+  → addQosItem(): sai_wred_api->create_wred()
+                  [SAI_WRED_ATTR_ECN_MARK_MODE / SAI_WRED_ATTR_*_ENABLE 等]
+```
+
+`QosOrch::doTask()` は WRED_PROFILE を PORT_QOS_MAP / QUEUE より先に drain する順序制御あり（`qosorch.cpp:2231-2252`）。これにより `QUEUE.wred_profile` 参照を解決した状態で QUEUE を処理できる。
+
+### select タイムアウト・リトライ
+
+- select タイムアウト: **1000 ms** (`SELECT_TIMEOUT`, `orchdaemon.cpp:23`)
+- `task_need_retry` 時は `m_toSync` にエントリを残置して次サイクルで再処理
+- サービス再起動トリガーなし（SAI ライブ操作のみで完結）
+
+### APPL_DB / STATE_DB 書き込み
+
+なし。`WRED_PROFILE` は CONFIG_DB → `QosOrch` → SAI の直接経路で完結し、APPL_DB への中継も STATE_DB への反映も行わない。
+
+| 観点 | 値 |
+|---|---|
+| 購読方式 | `SubscriberStateTable` (keyspace `PSUBSCRIBE`) |
+| バッチサイズ | 128 (`DEFAULT_POP_BATCH_SIZE`) |
+| select タイムアウト | 1000 ms |
+| ハンドラ | `QosOrch::handleWredProfileTable()` → `WredMapHandler` |
+| SAI API | `sai_wred_api->create_wred()` / `set_wred_attribute()` / `remove_wred()` |
+| channel PUBLISH | 使わない |
+| APPL_DB 中継 | なし |
+| TTL | 未使用 |
+
+<!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+WRED_PROFILE の処理において、プラットフォーム識別文字列（`broadcom` / `mellanox` / `cisco-8000` 等）による静的分岐は存在しない。SAI capability の動的照会（`querySwitchCapability` / `sai_query_attribute_capability`）も WRED 属性に対しては実施されない。確認されるプラットフォーム差は以下の通り。
+
+### 差異 1: VoQ chassis — WRED プロファイルの bind 対象が VoQ に変わる
+
+`gMySwitchType == "voq"` の場合、`applyWredProfileToQueue()` (`qosorch.cpp:1715-1730`) は物理キュー ID（`port.m_queue_ids[queue_ind]`）の代わりに **VoQ ID**（`gPortsOrch->getPortVoQIds(port)[queue_ind]`）を使用し、SAI 属性 `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を VoQ に設定する。
+
+| 条件 | bind 対象 |
+|------|----------|
+| `gMySwitchType == "voq"` | `getPortVoQIds()` で取得した VoQ ID |
+| それ以外（通常スイッチ / multi-asic / DPU 等） | `port.m_queue_ids[queue_ind]`（物理キュー） |
+
+VoQ chassis ではローカル ASIC のポートか否かも判定される。非ローカルポートへの WRED bind は暗黙的にスキップされる（`qosorch.cpp:1790-1800`）。
+
+### 差異 2: VoQ chassis — QUEUE キーフォーマットが 4 トークンに変わる
+
+`handleQueueTable()` (`qosorch.cpp:1772-1810`) における QUEUE キー解析:
+
+| 条件 | キーフォーマット | 不正時の挙動 |
+|------|----------------|------------|
+| `gMySwitchType == "voq"` | `{hostname}\|{asic}\|{port}\|{index}` (4 トークン必須) | 4 トークン未満 → `task_invalid_entry` |
+| それ以外 | `{port}\|{index}` (2 トークン必須) | 2 トークン以外 → `task_invalid_entry` |
+
+VoQ 環境で `QUEUE` テーブルを書く場合は `hostname|asicN|EthernetX|queue_index` 形式を使用する必要がある。
+
+### 差異 3: 一部ベンダー SAI の min/max threshold 順序制約（対策済み）
+
+コメント (`qosorch.cpp:596-629`) に「一部ベンダー SAI では 1 回の SET ごとに min/max の整合性を検証するため、閾値の過渡的な逆転（旧 max < 新 min）がエラーになる」と記されている。対象ベンダーは明示されていない。
+
+この問題は **2 フェーズ属性適用**（`convertFieldValuesToAttributes()` の `deferred_attributes` 機構, L636-694）で吸収されており、ユーザー操作・CONFIG_DB 書き込み順序には依存しない。全プラットフォームでこの機構が有効。
+
+### 差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明
+
+WRED の各 SAI 属性（`SAI_WRED_ATTR_ECN_MARK_MODE`、`SAI_WRED_ATTR_*_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}`、`SAI_WRED_ATTR_WEIGHT`）は能力照会なしで直接 `sai_wred_api->create_wred()` / `set_wred_attribute()` に渡される。ASIC が非対応の場合 SAI がエラーを返し、orchagent はエントリを破棄する（ログ: `"Failed to create wred profile: %d"`）。対応可否は各ベンダーの `libsai` 実装に依存。
+
+### 差異 5: プラットフォーム別 WRED テンプレート（build-time）
+
+`qos_config.j2:486-506` のマクロ分岐:
+
+| 条件 | 生成される WRED_PROFILE |
+|------|----------------------|
+| hwsku テンプレートが `generate_wred_profiles` マクロを定義している | プラットフォーム固有の WRED プロファイル（カスタム閾値・ECN 設定） |
+| マクロ未定義（デフォルト） | `AZURE_LOSSLESS`（min=1 MiB / max=2 MiB / prob=5% / ecn=ecn_all） |
+
+runtime の orchagent 側にはプラットフォーム別の分岐なし。差異はすべて build-time の j2 テンプレートで吸収される。
+
+!!! note "VoQ スイッチ運用上の注意"
+    VoQ chassis 環境では QUEUE テーブルのキーを `hostname|asic|port|queue_index` の 4 トークン形式で書く必要がある。2 トークン形式（通常スイッチ用）を使うと `task_invalid_entry` で即破棄される。
+
+<!-- /platform -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`WredMapHandler` が CONFIG_DB エントリを処理する際の失敗パターンを網羅する。ソース: `sonic-swss/orchagent/qosorch.cpp`。
+
+| # | 失敗種別 | トリガー条件 | ログメッセージ | エントリ継続 |
+|---|---|---|---|---|
+| 1 | 不正 threshold (min > max) | `*_min_threshold > *_max_threshold` の C++ 側チェック (`convertFieldValuesToAttributes()` 末尾) | `"Wrong wred profile: min threshold is greater than max threshold"` | 破棄 |
+| 2 | SAI `create_wred` 失敗 | `sai_wred_api->create_wred()` がエラーを返す（新規作成時） | `"Failed to create wred profile: %d"` | 破棄 |
+| 3 | SAI `set_wred_attribute` 失敗 | `sai_wred_api->set_wred_attribute()` がエラーを返す（runtime 更新時） | `"Failed to set wred profile attribute, id:%d, status:%d"` | 部分適用（ループ中断） |
+| 4 | 参照中 DEL → `remove_wred` 失敗 | `QUEUE` が参照中の状態で `WRED_PROFILE` エントリを DEL した場合に SAI がエラー | `"Failed to remove scheduler profile, status:%d"` | SAI オブジェクト残留 |
+| 5 | 不正 `ecn` enum 値 | `ecn_map.at(fvValue)` で `std::out_of_range` 例外発生（許可値 8 種以外） | なし（例外伝播、ログなし） | 破棄 |
+| 6 | 不正 `wred_*_enable` 値 | `convertBool()` が `"true"`/`"false"` 以外を受けて失敗 | `"Invalid input specified"` | 破棄 |
+
+### 詳細
+
+**不正 threshold (min > max)** (`qosorch.cpp:754-759`):
+YANG `must` 制約（max >= min）は yang-validation 層で弾くが、orchagent も C++ 側で二重チェックする。
+いずれかの色で `min > max` となる場合、`convertFieldValuesToAttributes()` が `false` を返しエントリを破棄する。
+SAI への変更はなく、CONFIG_DB エントリは残る（hardware に下りない状態が続く）。
+
+**SAI 失敗（create / set）**:
+新規作成時は `create_wred()` 失敗でエントリ破棄。`QUEUE.wred_profile` が参照している場合、参照先が未登録のまま `task_need_retry` ループが継続する。
+runtime 更新時は `set_wred_attribute()` が属性ループを途中で中断するため、失敗前の属性は適用済み・失敗後は未適用という部分適用状態になりうる。
+
+**参照中 DEL**: `QUEUE` が `wred_profile=<name>` で参照している WRED_PROFILE を先に削除すると、SAI 側が `SAI_STATUS_OBJECT_IN_USE` 相当のエラーを返す。`removeQosItem()` が `false` を返し SAI オブジェクトが残留する。正しい手順は QUEUE 側を先に DEL（または `wred_profile` フィールドを除去）してから WRED_PROFILE を DEL する。
+
+**不正 `ecn` enum**: `ecn_map.at()` は try-catch なしで呼ばれるため `std::out_of_range` が上位に伝播し、エントリが無音で破棄される（`SWSS_LOG_ERROR` なし）。YANG 定義の 8 値以外を CONFIG_DB に直接書き込んだ場合のみ発生。
+
+**不正 `wred_*_enable`**: `convertBool()` 内で `SWSS_LOG_ERROR("Invalid input specified")` を出力した後 `false` を返す。`"true"`/`"false"` 以外（例: `"yes"`, `"1"`, `"TRUE"`）で発生。
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp WredMapHandler::convertFieldValuesToAttributes() L585-762, addQosItem() L784-860, removeQosItem() L864-874 -->
+<!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`WRED_PROFILE` の SET/DEL を受けた `QosOrch` (`WredMapHandler`) は、SAI 経由で ASIC_DB に書き込む。STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書込はない。
+
+### ASIC_DB 書込み (SAI/syncd 経由)
+
+| タイミング | SAI API | ASIC_DB への反映 |
+|---|---|---|
+| SET → 新規 (`addQosItem()`) | `sai_wred_api->create_wred(&sai_object, gSwitchId, ...)` | `ASIC_STATE:SAI_OBJECT_TYPE_WRED:<oid>` 生成 |
+| SET → 既存更新 (`modifyQosItem()`) | `sai_wred_api->set_wred_attribute(sai_object, &attr)` | `ASIC_STATE:SAI_OBJECT_TYPE_WRED:<oid>` フィールド更新 |
+| DEL → `removeQosItem()` | `sai_wred_api->remove_wred(sai_object)` | `ASIC_STATE:SAI_OBJECT_TYPE_WRED:<oid>` 削除 |
+| QUEUE bind (`applyWredProfileToQueue()`) | `sai_queue_api->set_queue_attribute(queue_id, SAI_QUEUE_ATTR_WRED_PROFILE_ID)` | `ASIC_STATE:SAI_OBJECT_TYPE_QUEUE:<queue_oid>` の `SAI_QUEUE_ATTR_WRED_PROFILE_ID` 更新 |
+| QUEUE unbind (DEL / `wred_profile` 解除) | 同上、値 `SAI_NULL_OBJECT_ID` | 同上フィールドを `NULL` に更新 |
+
+### QUEUE への副次 bind
+
+`WRED_PROFILE` SAI オブジェクト作成後、`QUEUE.wred_profile` で参照されている場合に `applyWredProfileToQueue()` が `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を設定してキューに紐付ける。VoQ スイッチ (`gMySwitchType == "voq"`) では物理キューではなく VoQ ID に適用する (`qosorch.cpp:1709-1730`)。
+
+| 副次 bind 条件 | 処理 | ソース |
+|---|---|---|
+| `QUEUE.wred_profile=<name>` が解決済み | `sai_queue_api->set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` | `qosorch.cpp:1735-1738` |
+| `QUEUE.wred_profile` 未解決 (WRED_PROFILE 未作成) | `task_need_retry` → WRED_PROFILE 作成後に自動再処理 | `qosorch.cpp:1864-1870` |
+| DEL または `wred_profile` フィールド削除 | `SAI_QUEUE_ATTR_WRED_PROFILE_ID = SAI_NULL_OBJECT_ID` で unbind | `qosorch.cpp:1893` |
+
+```bash
+# WRED SAI オブジェクト確認
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_WRED:*'
+# キューへの bind 確認
+sonic-db-cli ASIC_DB hget 'ASIC_STATE:SAI_OBJECT_TYPE_QUEUE:<queue_oid>' SAI_QUEUE_ATTR_WRED_PROFILE_ID
+```
+
+> **証跡**: `create_wred()` L855、`set_wred_attribute()` L774、`remove_wred()` L868、`set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` L1735-1738。`qosorch.cpp` 全 WRED 処理経路読了。STATE_DB / COUNTERS_DB への書込なし確認済み。
+<!-- /side-effects -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### ECN enum — `ecn_map` (qosorch.cpp:37-44 / qosorch.h:56-63)
+
+CONFIG_DB `ecn` フィールド文字列を SAI `SAI_WRED_ATTR_ECN_MARK_MODE` にマッピングするルックアップテーブル。不正値は `std::out_of_range` → エントリ破棄。
+
+| フィールド値 | SAI 属性値 | ソース |
+|---|---|---|
+| `ecn_none` (**既定**) | `SAI_ECN_MARK_MODE_NONE` | qosorch.cpp:37, qosorch.h:56 |
+| `ecn_green` | `SAI_ECN_MARK_MODE_GREEN` | qosorch.cpp:38, qosorch.h:60 |
+| `ecn_yellow` | `SAI_ECN_MARK_MODE_YELLOW` | qosorch.cpp:39, qosorch.h:58 |
+| `ecn_red` | `SAI_ECN_MARK_MODE_RED` | qosorch.cpp:40, qosorch.h:57 |
+| `ecn_green_yellow` | `SAI_ECN_MARK_MODE_GREEN_YELLOW` | qosorch.cpp:41, qosorch.h:62 |
+| `ecn_green_red` | `SAI_ECN_MARK_MODE_GREEN_RED` | qosorch.cpp:42, qosorch.h:61 |
+| `ecn_yellow_red` | `SAI_ECN_MARK_MODE_YELLOW_RED` | qosorch.cpp:43, qosorch.h:59 |
+| `ecn_all` | `SAI_ECN_MARK_MODE_ALL` | qosorch.cpp:44, qosorch.h:63 |
+
+### SAI wred_attr マッピング (qosorch.cpp:636-746)
+
+`WredMapHandler::convertFieldValuesToAttributes()` が各 CONFIG_DB フィールドを SAI 属性 ID に変換する。
+
+| CONFIG_DB フィールド | SAI 属性 ID |
+|---|---|
+| `green_min_threshold` | `SAI_WRED_ATTR_GREEN_MIN_THRESHOLD` |
+| `green_max_threshold` | `SAI_WRED_ATTR_GREEN_MAX_THRESHOLD` |
+| `yellow_min_threshold` | `SAI_WRED_ATTR_YELLOW_MIN_THRESHOLD` |
+| `yellow_max_threshold` | `SAI_WRED_ATTR_YELLOW_MAX_THRESHOLD` |
+| `red_min_threshold` | `SAI_WRED_ATTR_RED_MIN_THRESHOLD` |
+| `red_max_threshold` | `SAI_WRED_ATTR_RED_MAX_THRESHOLD` |
+| `green_drop_probability` | `SAI_WRED_ATTR_GREEN_DROP_PROBABILITY` |
+| `yellow_drop_probability` | `SAI_WRED_ATTR_YELLOW_DROP_PROBABILITY` |
+| `red_drop_probability` | `SAI_WRED_ATTR_RED_DROP_PROBABILITY` |
+| `wred_green_enable` | `SAI_WRED_ATTR_GREEN_ENABLE` |
+| `wred_yellow_enable` | `SAI_WRED_ATTR_YELLOW_ENABLE` |
+| `wred_red_enable` | `SAI_WRED_ATTR_RED_ENABLE` |
+| `ecn` | `SAI_WRED_ATTR_ECN_MARK_MODE` |
+
+### デフォルト threshold / probability ハードコード値
+
+**drop probability の C++ fallback** (qosorch.cpp:836-850): `wred_*_enable=true` かつ対応 `*_drop_probability` フィールド省略時、`addQosItem()` が SAI 属性リストに自動補完する固定値。
+
+| 対象色 | SAI 属性 | ハードコード値 |
+|---|---|---|
+| Green | `SAI_WRED_ATTR_GREEN_DROP_PROBABILITY` | `100` (%) |
+| Yellow | `SAI_WRED_ATTR_YELLOW_DROP_PROBABILITY` | `100` (%) |
+| Red | `SAI_WRED_ATTR_RED_DROP_PROBABILITY` | `100` (%) |
+
+**threshold**: YANG・orchagent ともにデフォルト値なし。フィールド省略時は SAI ベンダー依存。`AZURE_LOSSLESS` テンプレートが min=1,048,576 bytes / max=2,097,152 bytes を設定。
+
+### weight デフォルト (qosorch.cpp:794-796)
+
+CONFIG_DB に `weight` フィールドは存在しない。`addQosItem()` は WRED オブジェクト作成時に常に `SAI_WRED_ATTR_WEIGHT = 0` を属性リスト先頭へ無条件挿入する（SAI WRED 必須属性を満たすための固定値、ユーザー設定不可）。
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -362,6 +594,41 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C: このテーブルを参照するテーブル)
+
+`WRED_PROFILE` テーブルは他テーブルから名前で参照される被参照テーブル。参照元と解決フローを以下に示す。
+
+### QUEUE テーブル (直接名前参照)
+
+`QUEUE` テーブルの `wred_profile` フィールドが `WRED_PROFILE` のエントリ名を文字列で保持し、`QosOrch::handleQueueTable()` 内で `resolveFieldRefValue()` により実オブジェクトに解決される。
+
+| 参照元テーブル | 参照フィールド | 解決タイミング | 未解決時の挙動 | evidence |
+|---|---|---|---|---|
+| `QUEUE` | `wred_profile` | `handleQueueTable()` SET パス | `task_need_retry` — WRED_PROFILE 先行作成を待つ | `qosorch.cpp:1856-1867` |
+| `QUEUE` | `wred_profile` (DEL) | `handleQueueTable()` DEL パス | `sai_wred_profile = SAI_NULL_OBJECT_ID` で unbind | `qosorch.cpp:1889-1893` |
+
+**解決フロー**:
+
+1. `resolveFieldRefValue(m_qos_maps, wred_profile_field_name, qos_to_ref_table_map.at(wred_profile_field_name), tuple, sai_wred_profile, wred_profile_name)` (qosorch.cpp:1857-1859)
+2. 未解決 (`ref_resolve_status::not_resolved`) → `SWSS_LOG_INFO("Missing or invalid wred profile reference")` + `task_need_retry` (L1864-1867)
+3. 解決成功 → `setObjectReference(m_qos_maps, CFG_QUEUE_TABLE_NAME, key, wred_profile_field_name, wred_profile_name)` (L1886)
+4. `applyWredProfileToQueue(port, queue_ind, sai_wred_profile)` (L1936) → SAI `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を設定
+
+!!! note "VoQ スイッチ"
+    `gMySwitchType == "voq"` の場合、`applyWredProfileToQueue()` (qosorch.cpp:1708-1730) が物理キューではなく VoQ ID に対して WRED を適用する。
+
+### PORT_QOS_MAP / SCHEDULER (参照なし)
+
+- **`PORT_QOS_MAP`**: `wred_profile` フィールドを持たない。`handlePortQosMapTable()` のフィールドループに `wred_profile_field_name` は含まれない (`qosorch.cpp:2021,2124`)。ただし `PORT_QOS_MAP → QUEUE → wred_profile` の間接チェーンは存在する。
+- **`SCHEDULER`**: WRED 属性を扱わない。`SchedulerHandler` は `WRED_PROFILE` を参照しない (`qosorch.cpp:1333-`)。
+
+### build-time 静的参照 (qos_config.j2)
+
+`qos_config.j2:514-660` の QUEUE セクションで RoCE キュー (queue 3, 4 等) に `"wred_profile": "AZURE_LOSSLESS"` を静的設定する。runtime の `resolveFieldRefValue()` 経由ではなく、firstboot / `config qos reload` 時のテンプレート展開で CONFIG_DB に書き込まれる。
+
+<!-- /cross-refs -->
+
 <!-- runtime-trace -->
 ## 起動経路 (Direction B: CFG → APPL → SAI)
 
@@ -396,4 +663,32 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 - **db_migrator**: 旧 DB の `wred_profile` フィールド値 `|AZURE_LOSSLESS|` 形式を `AZURE_LOSSLESS` に変換 (`db_migrator.py:574-585`)。
 
 <!-- /runtime-trace -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`QosOrch` / `WredMapHandler` (`sonic-swss/orchagent/qosorch.cpp`) の処理において、WRED_PROFILE の SAI 作成順・QUEUE からの参照順・SAI bind 順に明確な順序制約が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 重要度 | 緩和策 |
+|---|----------|------|--------|--------|
+| 1 | SAI 属性リスト先頭 `SAI_WRED_ATTR_WEIGHT=0` の固定注入 | 内部固定（CONFIG_DB 記述順に依存しない） | — | `addQosItem()` が常に保証 (`qosorch.cpp:794`) |
+| 2 | `WRED_PROFILE\|<name>` 先行登録 → `QUEUE.wred_profile` 参照 | **先行推奨**（未登録でも retry で最終適用） | 中 | `task_need_retry` 自動再試行 (`qosorch.cpp:1869`) |
+| 3 | SAI WRED create 完了 → `SAI_QUEUE_ATTR_WRED_PROFILE_ID` bind | **先行必須**（orchagent 内部で保証） | 高（内部） | orchagent 内部マップ管理で自動保証 |
+| 4 | DEL 時: QUEUE `wred_profile` 解除 → `remove_wred()` | **先行必須**（SAI 参照カウント整合） | 高 | DEL_COMMAND 処理内で自動順序化 (`qosorch.cpp:1893`) |
+| 5 | 閾値変更: min/max 逆転を避ける 2 フェーズ適用 | 内部固定（orchagent が保証） | — | `convertFieldValuesToAttributes` が自動管理 (`qosorch.cpp:636-644`) |
+
+### 主要な制約詳細
+
+**SAI WRED 属性の注入順序 (依存 #1)**: `addQosItem()` は `sai_wred_api->create_wred()` 呼び出し前に SAI 属性リストを ① `SAI_WRED_ATTR_WEIGHT=0`（無条件先頭）、② `convertFieldValuesToAttributes()` 変換済み属性群、③ `*_drop_probability` 自動補完（Green → Yellow → Red 順）の順序で構築する（`qosorch.cpp:794-850`）。CONFIG_DB フィールドの記述順には依存しない。
+
+**WRED_PROFILE → QUEUE 参照の順序 (依存 #2)**: `handleQueueTable()` は `resolveFieldRefValue()` で `QUEUE.wred_profile` 名前参照を解決する。参照先 `WRED_PROFILE|<name>` が orchagent 内部マップに未登録の場合は `task_need_retry` を返して Consumer キューに再投入し、WRED_PROFILE 登録後に自動再処理される。**推奨順序**: `WRED_PROFILE|<name>` を先に CONFIG_DB に書き込み、その後 `QUEUE|<port>|<index>` の `wred_profile` フィールドを書き込む（`qosorch.cpp:1857-1870`）。
+
+**SAI bind 順序 (依存 #3/4)**: `applyWredProfileToQueue()` は有効な SAI WRED OID が得られた後に `sai_queue_api->set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` を呼ぶ。VoQ スイッチ (`gMySwitchType == "voq"`) では `getPortVoQIds()` 経由で VoQ の queue_id を使用する（`qosorch.cpp:1716-1730`）。DEL 時は `sai_wred_profile = SAI_NULL_OBJECT_ID` でキューから unbind してから `remove_wred()` を実行するため SAI 参照カウント整合が保たれる（`qosorch.cpp:1893, 864-870`）。
+
+**閾値変更の 2 フェーズ適用 (依存 #5)**: min > max の一時的逆転を防ぐため、`convertFieldValuesToAttributes()` は逆転を引き起こさない属性を Phase 1 で先行適用し、deferred リストを Phase 2 で後から適用する（`qosorch.cpp:636-644`）。外部からは透過的で CONFIG_DB 書き込み順序は問わない。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 7c1942297ce7 -->

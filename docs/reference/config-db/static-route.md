@@ -252,6 +252,65 @@ db_migrator.py での STATIC_ROUTE マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## フィールドの暗黙デフォルト (Phase A)
+
+以下はコード精読により判明したコード由来の暗黙デフォルト。YANG の `default` 宣言と実装が乖離している箇所を含む。
+
+### `advertise` — YANG-実装乖離（重大）
+
+| 状態 | YANG デフォルト | 実装挙動 |
+|------|------------|------|
+| フィールド不在 | `"false"`（広告無効） | `ROUTE_ADVERTISE_ENABLE_TAG='1'`（広告**有効**）が使われる |
+| `"false"` を明示 | `"false"` | `ROUTE_ADVERTISE_DISABLE_TAG='2'`（無効）— 正しい |
+| `"true"` を明示 | — | `ROUTE_ADVERTISE_ENABLE_TAG='1'`（有効）— 正しい |
+
+`managers_static_rt.py` L46 の条件式 `'advertise' in data and data['advertise'] == "false"` のため、フィールド不在は有効タグになる。`config route add` CLI は `advertise` を書かないので、CLI 経由で追加した静的経路は BGP 広告有効として扱われることがある[^mgr]。
+
+### `distance` — ゼロ値は FRR に渡さない
+
+`IpNextHop.__format__` は `distance == 0` の場合 FRR コマンドに distance を含めない。結果として FRR の static route デフォルト AD=1 が使われる。YANG デフォルト `"0"` は「FRR デフォルトを使え」という意味[^mgr]。
+
+### `blackhole` — フィールド不在は `'false'`
+
+`IpNextHop.__init__` は `blackhole is None` または `''` の場合 `'false'` を設定する。`staticroutebfd` は `blackhole=true` の経路を完全スキップするため、BFD+blackhole の組み合わせは動作しない（dead consumer パス）[^mgr]。
+
+### `nexthop-vrf` — staticroutebfd による自動補完
+
+`staticroutebfd` では `nexthop-vrf` フィールドが不在の場合、route key の VRF 名でリストを自動補完する（`vrf * len(nh_list)`）。空要素も同様に補完される[^bfd]。
+
+### BFD セッションのハードコードデフォルト
+
+`bfd=true` 時に staticroutebfd が作成する BFD セッションの既定値[^bfd]:
+
+| パラメータ | 値 |
+|-----------|----|
+| `multihop` | `false` |
+| `rx_interval` | `50` ms |
+| `tx_interval` | `50` ms |
+| `multiplier` | `3` |
+
+### ハードコード: route-map 名
+
+BGP redistribute static に使われる route-map 名は `'STATIC_ROUTE_FILTER'`、シーケンス番号は `10` でハードコードされている（`managers_static_rt.py` L224）[^mgr]。
+
+### 静的経路タイマー (APPL_DB)
+
+`static_rt_timer.py` による APPL_DB エントリの有効期限管理:
+
+| パラメータ | 値 |
+|-----------|----|
+| デフォルト有効期限 | 180秒 |
+| タイマーポーリング間隔 | 60秒 |
+| 最大有効期限 | 172800秒（2日） |
+
+`expiry="false"` のエントリは削除されない。`refresh="true"` のエントリは次サイクルに持ち越し（`false` に更新）。その他は DELETE[^timer]。
+
+[^mgr]: bgpcfgd StaticRouteMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py`
+[^bfd]: staticroutebfd 実装: `sonic-buildimage/src/sonic-bgpcfgd/staticroutebfd/main.py` および `vars.py`
+[^timer]: static_rt_timer 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py`
+<!-- /defaults -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
