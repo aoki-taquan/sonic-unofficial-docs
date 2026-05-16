@@ -386,6 +386,55 @@ MUX_CABLE SET    →  MuxCable オブジェクト生成
 
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-side-effects.md`
+> ソース: `sonic-linkmgrd/src/DbInterface.cpp` L463-473、`sonic-swss-common/common/schema.h` L459-460
+
+`MUX_LINKMGR` パラメータを linkmgrd が読み取った結果、発生する **他 DB への副次書込** を示す。
+
+### STATE_DB への書込
+
+| テーブル | キー形式 | フィールド | 値 | トリガ | 証跡 |
+|---------|---------|-----------|-----|--------|------|
+| `MUX_LINKMGR_TABLE` | `<ifname>` (例: `Ethernet0`) | `state` | `active` / `standby` / `unknown` / `wait` | linkmgrd ステートマシン遷移時 (`setMuxLinkmgrState()`) | `DbInterface.cpp:471` |
+| `MUX_METRICS_TABLE` | `<ifname>` | `linkmgrd_switch_<state>_start` / `_end` | タイムスタンプ (ISO8601) | MUX 切替開始・完了時 (`handlePostMuxMetrics()`) | `DbInterface.cpp:484-` |
+| `MUX_SWITCH_CAUSE` | `<ifname>` | `cause` | 切替原因文字列 | ステートマシン遷移原因記録時 | `DbInterface.h:63` |
+
+`MUX_LINKMGR_TABLE` は `show mux status` CLI が参照する最終的な linkmgrd 状態表示用テーブル。
+
+### APPL_DB への書込 (xcvrd 通信)
+
+linkmgrd は `MUX_LINKMGR` の `interval_v4` / `negative_signal_count` 等の変更によりプローバ動作が変化した結果、以下の APPL_DB テーブルへコマンドを書込む。
+
+| テーブル | キー | フィールド | 値 | 目的 | 証跡 |
+|---------|------|-----------|-----|------|------|
+| `MUX_CABLE_COMMAND_TABLE` (APP_DB) | `<ifname>` | `command` | `"probe"` | xcvrd に i2c 経由で MUX ハードウェア状態の読取を指示 | `DbInterface.cpp:443` |
+| `FORWARDING_STATE_COMMAND` (APP_DB) | `<ifname>` | `command` | `"probe"` | xcvrd に gRPC 経由でトランシーバのフォワーディング状態確認を指示 | `DbInterface.cpp:455` |
+
+xcvrd はこれらコマンドを受信後、以下のレスポンステーブルに結果を書き戻す:
+
+- `MUX_CABLE_RESPONSE_TABLE` (APP_DB): MUX state probe レスポンス
+- `FORWARDING_STATE_RESPONSE` (APP_DB): forwarding state probe レスポンス
+
+### 間接連鎖の整理
+
+```
+CONFIG_DB MUX_LINKMGR 変更
+  ↓ linkmgrd がプローバタイマー再設定
+APPL_DB MUX_CABLE_COMMAND_TABLE / FORWARDING_STATE_COMMAND
+  ↓ xcvrd が i2c / gRPC でハードウェア確認
+APPL_DB MUX_CABLE_RESPONSE_TABLE / FORWARDING_STATE_RESPONSE
+  ↓ linkmgrd がステートマシン遷移判定
+STATE_DB MUX_LINKMGR_TABLE (state フィールド更新)
+         MUX_METRICS_TABLE (切替タイムスタンプ記録)
+```
+
+> `interval_v4` / `interval_v6` を変更しても即時 STATE_DB 書込は発生しない。次のプローバサイクル後にステート遷移が起きた場合のみ STATE_DB が更新される。
+
+<!-- /side-effects -->
+
 <!-- failure -->
 ## Phase D: 失敗挙動 (Failure Behavior)
 
