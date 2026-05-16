@@ -405,4 +405,47 @@ YANG leafref は存在せず、すべて実装コードのみに現れる暗黙�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`TUNNEL_DECAP_TABLE` の処理で CONFIG_DB フィールドから読み込まれず、コードに直書きされている定数。`config_db.json` での設定変更は効果なく、変更にはコードのリコンパイルが必要。
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|----|---------|------|
+| `OVERLAY_RIF_DEFAULT_MTU` | `9100` | `tunneldecaporch.cpp` L14 | Overlay loopback ルータインターフェースの MTU。`SAI_ROUTER_INTERFACE_ATTR_MTU` として SAI に渡す。フィールドで上書き不可 |
+| `SAI_TUNNEL_TYPE_IPINIP` | SAI enum | `tunneldecaporch.cpp` L768 | `tunnel_type == "IPINIP"` のとき `SAI_TUNNEL_ATTR_TYPE` に設定される固定値 |
+| `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK` | SAI enum | `tunneldecaporch.cpp` L746 | Overlay [RIF](../../reference/glossary.md#term-rif) は常に LOOPBACK タイプ。変更不可 |
+| `SAI_TUNNEL_TTL_MODE_UNIFORM_MODEL` | SAI enum | `tunneldecaporch.cpp` L811 | `ttl_mode == "uniform"` のとき `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` に設定 |
+| `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` | SAI enum | `tunneldecaporch.cpp` L815 | `ttl_mode == "pipe"` のとき同属性に設定 |
+| `SAI_TUNNEL_DSCP_MODE_UNIFORM_MODEL` | SAI enum | `tunneldecaporch.cpp` L823 | `dscp_mode == "uniform"` のとき `SAI_TUNNEL_ATTR_DECAP_DSCP_MODE` に設定 |
+| `SAI_TUNNEL_DSCP_MODE_PIPE_MODEL` | SAI enum | `tunneldecaporch.cpp` L827 | `dscp_mode == "pipe"` のとき同属性に設定 |
+| `SAI_TUNNEL_DECAP_ECN_MODE_COPY_FROM_OUTER` | SAI enum | `tunneldecaporch.cpp` L789 | `ecn_mode == "copy_from_outer"` のとき `SAI_TUNNEL_ATTR_DECAP_ECN_MODE` に設定 |
+| `SAI_TUNNEL_DECAP_ECN_MODE_STANDARD` | SAI enum | `tunneldecaporch.cpp` L793 | `ecn_mode == "standard"` のとき同属性に設定 |
+| `SAI_TUNNEL_ENCAP_ECN_MODE_STANDARD` | SAI enum | `tunneldecaporch.cpp` L802 | `encap_ecn_mode == "standard"` のとき `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` に設定 |
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2P` | SAI enum | `tunneldecaporch.cpp` L928 | `term_type == P2P` のとき `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_TYPE` に設定 |
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP` | SAI enum | `tunneldecaporch.cpp` L932 | `term_type == P2MP` のとき同属性に設定（省略時のデフォルト） |
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP` | SAI enum | `tunneldecaporch.cpp` L936 | `term_type == MP2MP` のとき同属性に設定（subnet decap 必須） |
+| `MUX_TUNNEL` | `"MuxTunnel0"` | `tunneldecaporch.h` L21 | [MuxOrch](../../reference/glossary.md#term-muxorch) が固定参照する Dual-ToR トンネル名。キーが異なると MuxOrch はトンネルを見つけられずエラー |
+| `SubnetDecapConfig.tunnel` | `"IPINIP_SUBNET"` | `tunneldecaporch.h` L101 | サブネット decap 用 IPv4 トンネル内部識別子 |
+| `SubnetDecapConfig.tunnel_v6` | `"IPINIP_SUBNET_V6"` | `tunneldecaporch.h` L102 | サブネット decap 用 IPv6 トンネル内部識別子 |
+
+### Overlay RIF の固定 SAI 属性
+
+Overlay ループバック RIF は以下の SAI 属性を常時ハードコードで設定する。
+
+| SAI 属性 | 固定値 | 備考 |
+|----------|--------|------|
+| `SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` | `gVirtualRouterId`（デフォルト VRF） | VRF 分離不可。VRF フィールドは存在しない |
+| `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK` | 固定 LOOPBACK タイプ |
+| `SAI_ROUTER_INTERFACE_ATTR_MTU` | `9100`（`OVERLAY_RIF_DEFAULT_MTU`） | Jumbo frame 対応デフォルト |
+
+!!! warning "MuxTunnel0 固定名の制約"
+    [YANG](../../reference/glossary.md#term-yang) パターン `"MuxTunnel[0-9]+"` で複数エントリを許容しているが、
+    `MuxOrch` は `MuxTunnel0` をハードコードで参照する。
+    トンネル名を `MuxTunnel1` 等にすると MuxOrch が対象を見つけられず Dual-ToR が機能しない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-table-constants.md`
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->
