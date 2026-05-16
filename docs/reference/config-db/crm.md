@@ -399,4 +399,54 @@ YANG の `must` は `high_threshold < 100` (strictly less) を要求するが、
 STATE_DB への書込は CrmOrch 単体では行わない。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB 購読経路
+
+`CrmOrch` は `Orch(db, tableName)` 基底コンストラクタに CONFIG_DB コネクタと `CFG_CRM_TABLE_NAME`（= `"CRM"`）を渡すことで、swss の **Consumer / SubscriberStateTable** 経路を確立する。orchdaemon.cpp L194 で `new CrmOrch(m_configDb, CFG_CRM_TABLE_NAME)` としてインスタンス化される。
+
+```
+CONFIG_DB["CRM|Config"]
+  └─ SubscriberStateTable (swss)
+       └─ Consumer → CrmOrch::doTask(Consumer &)   // crmorch.cpp L440
+            └─ handleSetCommand()                   // SET のみ; DEL は log_error で終了
+```
+
+### SelectableTimer ポーリング経路
+
+コンストラクタ (crmorch.cpp L402) で `SelectableTimer` を `CRM_POLLING_INTERVAL_DEFAULT`（300 秒）で生成し、`ExecutableTimer` でラップして `Orch::addExecutor` に登録後 `m_timer->start()` で起動する。タイマー満了ごとに `doTask(SelectableTimer &)` が呼ばれる (crmorch.cpp L751)。
+
+```
+SelectableTimer (300 秒周期, 変更可)
+  └─ ExecutableTimer["CRM_COUNTERS_POLL"]
+       └─ CrmOrch::doTask(SelectableTimer &)        // crmorch.cpp L751
+            ├─ getResAvailableCounters()             // 各リソースの available を SAI へ問い合わせ
+            ├─ updateCrmCountersTable()              // COUNTERS_DB["CRM_STATS"] 書き込み
+            └─ checkCrmThresholds()                 // 閾値比較 → syslog WARN/INFO
+```
+
+`polling_interval` フィールドが SET されると `m_timer->setInterval()` + `m_timer->reset()` で即時リセットされる (crmorch.cpp L490-492)。
+
+### SAI 呼出経路
+
+タイマー起動の `getResAvailableCounters()` 内で 2 系統の SAI API を呼び分ける:
+
+| 系統 | 対象リソース | SAI API | evidence |
+|------|-------------|---------|---------|
+| `sai_object_type_get_availability()` | route / neighbor / nexthop_group / FDB / IPMC / MPLS / SRv6 / DASH 系 (objType != NULL) | `sai_object_type_get_availability(gSwitchId, objType, attrCount, &attr, &availCount)` | crmorch.cpp L800 |
+| `sai_switch_api->get_switch_attribute()` | ACL table/group/entry/counter / nexthop_group_member / TWAMP 等 (objType == NULL または前者が失敗) | `sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr)` | crmorch.cpp L808 |
+
+いずれも `SAI_STATUS_NOT_SUPPORTED` / `SAI_STATUS_NOT_IMPLEMENTED` 系の戻り値で `resStatus = CRM_RES_NOT_SUPPORTED` にセットし、以降の polling から除外する (crmorch.cpp L817)。
+
+### orchdaemon 内の登録順序
+
+`gCrmOrch` は orchdaemon.cpp L194 で早期に生成され、L500 の `m_orchList` に `gSwitchOrch` の直後として追加される。これは CRM が他 Orch（port / route / ACL 等）より先に CONFIG_DB 購読を確立することを意味する。
+
+```
+orchdaemon.cpp L194:  gCrmOrch = new CrmOrch(m_configDb, CFG_CRM_TABLE_NAME)
+orchdaemon.cpp L500:  m_orchList = { gSwitchOrch, gCrmOrch, gPortsOrch, ... }
+```
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: c6e41e02b036 -->
