@@ -219,6 +219,56 @@ HW にマッピング実体が存在しない状態となる。後続の `delOpe
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-constants.md; sonic-swss/orchagent/vxlanorch.h; sonic-swss/orchagent/vxlanorch.cpp -->
+
+### vxlanorch.h — 数値マクロ
+
+| 定数 | 値 | 用途 | コードロケーション |
+|-----|-----|------|-----------------|
+| `MAX_VNI_ID` | `16777215` (= 2^24 − 1) | VNI 上限チェック。`vni_id >= MAX_VNI_ID` の場合 `SWSS_LOG_ERROR` + 永続破棄 (return true)。注: `>=` なので VNI=16777215 も reject。実質有効範囲は 1–16777214 | `vxlanorch.h:48`, `vxlanorch.cpp:2037` |
+| `MIN_VLAN_ID` | `1` | `vlan` 文字列の数字部分を `to_uint<sai_vlan_id_t>()` で変換する際の下限クランプ | `vxlanorch.h:45` |
+| `MAX_VLAN_ID` | `4095` | 同上、上限クランプ。範囲外は例外 → SWSS_LOG_WARN + return false | `vxlanorch.h:46` |
+| `DEFAULT_TUNNEL_ENCAP_TTL` | `255` | `create_tunnel()` の `encap_ttl` 引数省略時に適用される TTL 初期値 | `vxlanorch.h:49` |
+| `TUNNEL_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | トンネル統計 flex counter ポーリング間隔 (10 秒) | `vxlanorch.h:40` |
+
+### vxlanorch.h — 文字列マクロ（ポート名プレフィクス）
+
+| 定数 | 値 | 用途 | コードロケーション |
+|-----|-----|------|-----------------|
+| `TUNNEL_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"TUNNEL_STAT_COUNTER"` | flex_counter_manager へ渡すグループ名 | `vxlanorch.h:39` |
+| `LOCAL_TUNNEL_PORT_PREFIX` | `"Port_SRC_VTEP_"` | 自ノード VTEP 発トンネルポート名のプレフィクス | `vxlanorch.h:41` |
+| `EVPN_TUNNEL_PORT_PREFIX` | `"Port_EVPN_"` | EVPN remote VTEP トンネルポート名のプレフィクス | `vxlanorch.h:42` |
+| `EVPN_TUNNEL_NAME_PREFIX` | `"EVPN_"` | EVPN 動的 DIP トンネル名のプレフィクス | `vxlanorch.h:43` |
+
+### MAP_T 列挙 → SAI マッピングテーブル
+
+`vxlanTunnelMap` / `vxlanTunnelMapKeyVal` テーブル (`vxlanorch.cpp:37-70`) より全 6 エントリを抽出。`VXLAN_TUNNEL_MAP` SET 時は `VNI_TO_VLAN_ID` と `VLAN_ID_TO_VNI` のペアが常に生成される。
+
+| MAP_T 値 | SAI マップ種別 | SAI エントリ key attr | SAI エントリ value attr |
+|---------|-------------|---------------------|-----------------------|
+| `VNI_TO_VLAN_ID` | `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_KEY` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VLAN_ID_VALUE` |
+| `VLAN_ID_TO_VNI` | `SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VLAN_ID_KEY` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_VALUE` |
+| `VRID_TO_VNI` | `SAI_TUNNEL_MAP_TYPE_VIRTUAL_ROUTER_ID_TO_VNI` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VIRTUAL_ROUTER_ID_KEY` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_VALUE` |
+| `VNI_TO_VRID` | `SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_KEY` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VIRTUAL_ROUTER_ID_VALUE` |
+| `BRIDGE_TO_VNI` | `SAI_TUNNEL_MAP_TYPE_BRIDGE_IF_TO_VNI` | `SAI_TUNNEL_MAP_ENTRY_ATTR_BRIDGE_ID_KEY` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_VALUE` |
+| `VNI_TO_BRIDGE` | `SAI_TUNNEL_MAP_TYPE_VNI_TO_BRIDGE_IF` | `SAI_TUNNEL_MAP_ENTRY_ATTR_VNI_ID_KEY` | `SAI_TUNNEL_MAP_ENTRY_ATTR_BRIDGE_ID_VALUE` |
+
+### tunnel_map_use_t — マッパー共有モード
+
+`VXLAN_TUNNEL_MAP` の初回 SET 時に `createTunnelHw()` へ渡されるモードは常に `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP`。このモードでは encap 用 (`VLAN_ID_TO_VNI`) と decap 用 (`VNI_TO_VLAN_ID`) のマッパーが独立した SAI オブジェクトとして生成される。
+
+| 列挙値 | 使用箇所 |
+|--------|---------|
+| `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP` | CLI / NVO VTEP 用（**VXLAN_TUNNEL_MAP 追加時**） (`vxlanorch.cpp:2070`) |
+| `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | EVPN remote DIP トンネル生成時 (`vxlanorch.cpp:1169`) |
+| `TUNNEL_MAP_USE_COMMON_DECAP_DEDICATED_ENCAP` | 混在モード（内部利用） |
+| `TUNNEL_MAP_USE_DECAP_ONLY` | decap 専用（内部利用） |
+
+<!-- /constants -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
