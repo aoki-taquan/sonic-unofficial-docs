@@ -461,6 +461,52 @@ single-ASIC では NEIGH_TABLE のみ参照。multi-ASIC では host kernel ARP 
 
 Cisco / Dell 以外のハードウェアでも AgentX で OID が応答可能な状態になる点に注意。`SNMP` CONFIG_DB テーブルとは直接連携しない。
 
+### 差異 5: MGMT_VRF 環境 — agentAddress / trapsink の VRF バインド
+
+`snmpd.conf.j2` L28–29, L148–170 (hostcfgd ソース: `sonic-host-services/scripts/hostcfgd`)
+
+#### agentAddress の VRF バインド
+
+`SNMP_AGENT_ADDRESS_CONFIG` の `vrf` フィールドが空でない場合、snmpd は指定 VRF のネットワーク名前空間にバインドされる。
+
+```
+agentAddress udp:[<ip>]@<vrf>:<port>
+```
+
+| `SNMP_AGENT_ADDRESS_CONFIG.vrf` | agentAddress 生成結果 | 効果 |
+|---------------------------------|----------------------|------|
+| 空 (`""` / 未設定) | `agentAddress udp:[<ip>]:<port>` | デフォルト (グローバル) ルーティングテーブルでバインド |
+| `"mgmt"` など MGMT_VRF 名 | `agentAddress udp:[<ip>]@mgmt:<port>` | MGMT_VRF のネットワーク名前空間でバインド。管理 IF (`eth0`) 経由のみアクセス可能 |
+
+MGMT_VRF が有効化されている環境では、SNMP ポーリングトラフィックをデータプレーン VRF から完全に分離できる。`MGMT_VRF_CONFIG.mgmtVrfEnabled = "true"` が前提。
+
+#### トラップ送信先の VRF バインド
+
+SNMPv1/v2c/v3 トラップの送信先 IP に VRF を付加する場合、`%<vrf>` サフィックスが `trapsink` / `trap2sink` ディレクティブに展開される。
+
+```
+trapsink <ip>:<port>%<vrf> <community>
+```
+
+| `SNMP_TRAP_CONFIG.<version>TrapDest.vrf` | trapsink 生成結果 | 効果 |
+|------------------------------------------|-----------------|------|
+| `"None"` (文字列) | `trapsink <ip>:<port> <community>` | VRF なし (デフォルトルーティング) |
+| `"mgmt"` など VRF 名 | `trapsink <ip>:<port>%mgmt <community>` | 指定 VRF 経由でトラップ送信 |
+
+### 差異 6: SmartSwitch DPU — switch_type == 'dpu' の挙動
+
+`supervisord.conf.j2` L53–57 (hostcfgd: `DEVICE_METADATA.localhost.switch_type`)
+
+SmartSwitch の DPU ノードでは `switch_type = 'dpu'` が設定される。この場合、snmp-subagent は `--enable_dynamic_frequency` **なし**の固定頻度モードで起動する（差異 1 の `chassis-packet` 分岐に該当しない）。
+
+| `switch_type` | snmp-subagent 動作 | 補足 |
+|---------------|-------------------|------|
+| `dpu` | 固定頻度 (`DEFAULT_UPDATE_FREQUENCY`) | SmartSwitch DPU の ASIC/IF 数は単一チップ相当。動的調整不要 |
+| `chassis-packet` | 動的頻度 (`--enable_dynamic_frequency`) | 大規模 chassis 向け |
+| `npu` / `voq` / `fabric` | 固定頻度 | 標準 switch_type |
+
+DPU ノードで docker-snmp コンテナを起動する場合も `DEVICE_METADATA.localhost` の存在が必須であり、`switch_type` フィールドが欠如していると `supervisord.conf.j2` のテンプレート展開が KeyError で失敗する点は全プラットフォーム共通。
+
 <!-- /platform -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
