@@ -538,3 +538,94 @@ sai_status_t status = sai_policer_api->create_policer(...);
     削除順序: MIRROR_SESSION (DEL) → POLICER (DEL) の順が必須。
 
 <!-- /cross-refs -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> evidence: `meta/_intermediate/cdb-flow/policer-pubsub.md`
+
+### 購読 API — `SubscriberStateTable` (keyspace 通知ベース)
+
+`orchdaemon.cpp:396-402` で `POLICER` テーブルと `PORT_STORM_CONTROL` テーブルの 2 本が `TableConnector(m_configDb, ...)` として生成され、`PolicerOrch` コンストラクタの `tableNames` 引数に渡される。
+
+```cpp
+// orchdaemon.cpp:396-402
+vector<TableConnector> policer_tables = {
+    TableConnector(m_configDb, CFG_POLICER_TABLE_NAME),
+    TableConnector(m_configDb, CFG_PORT_STORM_CONTROL_TABLE_NAME)
+};
+gPolicerOrch = new PolicerOrch(policer_tables, gPortsOrch);
+```
+
+`PolicerOrch(tableNames, portOrch)` は基底クラス `Orch(tableNames)` を呼び出す (`policerorch.cpp:116`)。`Orch` コンストラクタは各 `TableConnector` に対して `addConsumer()` を呼び (`orch.cpp:1186-1196`)、CONFIG_DB の場合は **`SubscriberStateTable`** を選択する:
+
+```cpp
+// orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || ...)
+        addExecutor(new Consumer(
+            new SubscriberStateTable(db, tableName,
+                TableConsumable::DEFAULT_POP_BATCH_SIZE, pri),
+            this, tableName));
+    else
+        addExecutor(new Consumer(
+            new ConsumerStateTable(db, tableName, gBatchSize, pri),
+            this, tableName));
+}
+```
+
+`SubscriberStateTable` は Redis **keyspace 通知** (`__keyspace@<dbId>__:POLICER|*` への `PSUBSCRIBE`) を購読し、通知受信後に `HGETALL` で値を再取得してから `pops()` で `(key, op, fvs)` タプル列を返す。バッチサイズは `DEFAULT_POP_BATCH_SIZE = 128`。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / API |
+|------|------|----------------|
+| CLI / sonic-cfggen → CONFIG_DB `POLICER` | `HSET` (素の Redis write) | PUBLISH 発行なし; Redis keyspace 通知が自動発火 |
+| CONFIG_DB `POLICER` → `PolicerOrch` | `SubscriberStateTable` (`PSUBSCRIBE __keyspace@...`) | `__keyspace@<configDbId>__:POLICER|*` |
+| CONFIG_DB `PORT_STORM_CONTROL` → `PolicerOrch` | `SubscriberStateTable` | `__keyspace@<configDbId>__:PORT_STORM_CONTROL|*` |
+| `PolicerOrch` → SAI | `sai_policer_api->create/set/remove_policer()` | 直接 C API 呼び出し; DB 書込みなし |
+| `PolicerOrch` (OID) → `MirrorOrch` | `increaseRefCount()` / `decreaseRefCount()` | プロセス内メソッド呼び出し; DB 非経由 |
+
+### SAI Policer API 呼び出し経路
+
+```
+CONFIG_DB POLICER|<name>  HSET
+        ↓  (keyspace 通知)
+  SubscriberStateTable.pops()
+        ↓
+  Consumer.execute() → PolicerOrch::doTask(Consumer&)
+        ↓
+  [table_name == CFG_PORT_STORM_CONTROL_TABLE_NAME?]
+    Yes → handlePortStormControlTable()
+           ↓
+           sai_policer_api->create_policer()  (METER_TYPE=BYTES, MODE=STORM_CONTROL 固定)
+           sai_port_api->set_port_attribute()
+    No  → SET: create_policer() / set_policer_attribute()
+           DEL: remove_policer()
+```
+
+APP_DB への書き込みは行われない。`PolicerOrch` は生成した SAI OID を `m_syncdPolicers` (map<string, sai_object_id_t>) に保持し、`MirrorOrch` 等から `getPolicerOid()` で取得される。
+
+### Observer パターン (参照カウント)
+
+`PolicerOrch` は GoF Observer ではなく **参照カウント方式** で OID ライフサイクルを管理する。
+
+| メソッド | 呼び出し元 | 説明 |
+|---------|-----------|------|
+| `increaseRefCount(name)` | `MirrorOrch` (MIRROR_SESSION SET 時) | `m_policerRefCounts[name]++` |
+| `decreaseRefCount(name)` | `MirrorOrch` (MIRROR_SESSION DEL 時) | `m_policerRefCounts[name]--` |
+| `policerExists(name)` | `MirrorOrch`, `AclOrch` (P4) | `m_syncdPolicers.find(name) != end` |
+| `getPolicerOid(name, oid)` | `MirrorOrch`, `AclOrch` (P4) | SAI OID を out-param で返す |
+
+`m_policerRefCounts[key] > 0` の間、DEL は `it++` で永続保留される。明示的な pub/sub イベントは発生せず、MirrorOrch → PolicerOrch 間はプロセス内の直接呼び出しで完結する。
+
+### select() ループとの関係
+
+`OrchDaemon` のメインループ (`orchdaemon.cpp:959`) が `m_select->select(&s, SELECT_TIMEOUT=1000ms)` で待機し、`SubscriberStateTable` からの fd 通知で wake する。`Consumer::execute()` がポップして `PolicerOrch::doTask()` を呼ぶ。`allPortsReady()` が false の間は `doTask()` 冒頭で即 return（キュー保持）。
+
+### Retry 機構
+
+`task_need_retry` が返った場合は `it++` でエントリをキューに残し、次の select wake 時に再処理する。`task_success` / `task_failed` の場合は `erase(it)` でキューから除去する。
+
+<!-- /pubsub -->
