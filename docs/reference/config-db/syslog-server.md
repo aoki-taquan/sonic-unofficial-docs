@@ -291,4 +291,57 @@ per-server 未設定 かつ SYSLOG_CONFIG|GLOBAL 未設定
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1695-1743 (RSyslogCfg) -->
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照 — rsyslog 設定生成時に参照される CONFIG_DB テーブル (Phase C)
+
+`SYSLOG_SERVER` エントリが変化すると `hostcfgd` の `rsyslog_server_handler` が `rsyslog_handler()` を呼び出し、`SYSLOG_CONFIG` と `SYSLOG_SERVER` の**両テーブルを再取得**して `rsyslog-config.service` を restart する。さらに起動された `rsyslog-config.sh` が `sonic-db-cli` で `DEVICE_METADATA|localhost` を直接参照する。この二段階の暗黙参照が存在する。
+
+### CONFIG_DB レベル — 共同再取得
+
+`rsyslog_handler()` (hostcfgd:2410-2415) は `SYSLOG_SERVER` イベントを契機に呼ばれるが、`SYSLOG_CONFIG` テーブルも必ず読み直す。
+
+```python
+# hostcfgd:2410-2415
+def rsyslog_handler(self):
+    rsyslog_config = self.config_db.get_table(CFG_SYSLOG_CONFIG_TABLE_NAME)
+    rsyslog_servers = self.config_db.get_table(CFG_SYSLOG_SERVER_TABLE_NAME)
+    self.rsyslogcfg.update_rsyslog_config(rsyslog_config, rsyslog_servers)
+```
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| `SYSLOG_CONFIG` | `rsyslog_server_handler` 経由で毎回 | `GLOBAL.severity` / `rate_limit_interval` / `rate_limit_burst` / `format` / `welf_firewall_name` を `rsyslog.conf.j2` に渡す | hostcfgd:2410-2415 / rsyslog.conf.j2:16-18,51-52 |
+
+> **影響**: `SYSLOG_SERVER` を 1 エントリ追加するだけで全体設定が再生成される。`SYSLOG_CONFIG` 側の値がその時点で確定していない場合は意図しないデフォルト値で rsyslog が再生成される。
+
+### `DEVICE_METADATA` (rsyslog-config.sh 経由)
+
+`hostcfgd` が `systemctl restart rsyslog-config` を発行すると `rsyslog-config.sh` が起動し、`sonic-db-cli HGET` で `DEVICE_METADATA|localhost` の以下フィールドを読む。
+
+| フィールド | 変数名 | 用途 | evidence |
+|---|---|---|---|
+| `platform` | `$PLATFORM` | ASIC 設定ファイルのパス決定 → Multi-NPU 判定 (複数 ASIC 時は `docker0` IP をリッスン) | rsyslog-config.sh:3,6-8,15-18 |
+| `syslog_with_osversion` | `$syslog_with_osversion` | `true` の場合 rsyslog フォーマットを `SONiCForwardFormatWithOsVersion` に変更（OS バージョン付き） | rsyslog-config.sh:28-31 / rsyslog.conf.j2:63,65-69 |
+| `syslog_counter` | `$syslog_counter` | `true` の場合 `omprog` モジュール + `/usr/bin/syslog-counter` が有効化 | rsyslog-config.sh:38-41 / rsyslog.conf.j2:25-27,127-129 |
+
+> `hostname` は `hostname` コマンドで OS から直接取得する (rsyslog-config.sh:26)。`DEVICE_METADATA.localhost.hostname` は CONFIG_DB 経由では読まれないが、システム hostname と一致する前提で動作する。
+
+### `MGMT_VRF_CONFIG` / `MGMT_INTERFACE` (VRF バインド前提条件)
+
+`SYSLOG_SERVER` エントリの `vrf` フィールドを `mgmt` に設定すると rsyslog が `Device="mgmt"` でパケットを発出する。この動作は `MGMT_VRF_CONFIG.mgmtVrfEnabled == true` を前提とする (`sonic-syslog.yang` の `must` 制約)。`hostcfgd` の `RSyslogCfg` は `MGMT_VRF_CONFIG` を直接 `get_table` しないが、YANG バリデーション層でのエントリ受け付けが前提条件となる。
+
+| テーブル | 参照種別 | 効果 | evidence |
+|---|---|---|---|
+| `MGMT_VRF_CONFIG.mgmtVrfEnabled` | YANG `must` 制約 | `vrf==mgmt` エントリは `mgmtVrfEnabled==true` が前提。違反時は YANG バリデーションで拒否 | sonic-syslog.yang |
+| `MGMT_INTERFACE` | ルーティング依存（間接） | `vrf==mgmt` 時に rsyslog が `Device=mgmt` で発出する宛先インターフェース | rsyslog.conf.j2:116-118 |
+
+### 範囲外 (誤解されやすい隣接テーブル)
+
+- **`VRF`**: `vrf` フィールドが `VRF.name` への leafref だが、`RSyslogCfg` は `VRF` テーブルを `get_table` しない。YANG 制約レベルのみ
+- **`FEATURE`**: `SYSLOG_CONFIG_FEATURE` が leafref で参照するが、rsyslog 設定生成パスで直接読まれない
+- **`DEVICE_METADATA.localhost.hostname`**: rsyslog-config.sh は `hostname` コマンドを使い CONFIG_DB から直接読まない
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/syslog-server-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 639b97382f4c -->
