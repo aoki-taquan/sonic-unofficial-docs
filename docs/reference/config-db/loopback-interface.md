@@ -344,4 +344,96 @@ IP プレフィクスロウ（`doIntfAddrTask()` SET パス）は属性ロウの
 
 <!-- /ordering -->
 
+<!-- implicit-refs -->
+## 暗黙参照 — VRF テーブルへの依存
+
+> 証跡: `sonic-swss/cfgmgr/intfmgr.cpp`
+
+`LOOPBACK_INTERFACE` テーブルの `vrf_name` フィールドは `VRF` テーブルへの leafref だが、
+`intfmgrd` はそれを単純な文字列参照に留めず、**STATE_DB の `STATE_VRF_TABLE`** を使って
+VRF の生成完了を確認する暗黙の依存関係を持つ。
+
+### VRF 生成待ちによるブロック（`isIntfStateOk`）
+
+`vrf_name` が非空のとき、`intfmgrd` は処理前に `STATE_VRF_TABLE.get(vrf_name)` を
+呼び出す（`intfmgr.cpp:839-843`）。STATE_DB にエントリがなければ
+
+```
+SWSS_LOG_DEBUG("VRF is not ready, skipping %s", vrf_name.c_str())
+```
+
+を出力して `false` を返し、イベントをキューに保留する。**CONFIG_DB に VRF エントリが
+存在していても、vrfmgrd が STATE_DB に書き込むまで Loopback は VRF にバインドされない。**
+
+### VRF 変更禁止（`isIntfChangeVrf`）
+
+既に STATE_DB の `STATE_INTF_TABLE.<alias>.vrf` に VRF 名が記録されている場合、
+別の `vrf_name` への直接変更は拒否される（`intfmgr.cpp:846-849`）:
+
+```
+SWSS_LOG_ERROR("%s can not change to %s directly, skipping", alias.c_str(), vrf_name.c_str())
+```
+
+VRF を切り替えるには、先に `vrf_name` を空にして Loopback を解除し、再設定する必要がある。
+
+### VRF バインド実装（`setIntfVrf`）
+
+`vrf_name` が確定すると `intfmgr.cpp:149-163` の `setIntfVrf` が呼ばれ:
+
+```bash
+ip link set <alias> master <vrfName>   # バインド
+ip link set <alias> nomaster            # 解除（vrf_name 空のとき）
+```
+
+バインドは Linux netlink 経由で即時反映される。失敗時は `SWSS_LOG_ERROR` が出るが
+処理は継続される。
+
+### 削除時の IP 残留ガード
+
+DEL_COMMAND では、先に全 IP アドレスが削除されていることを `getIntfIpCount` で確認する。
+IP が残っている場合は DEL を保留し、`vrf_name` の解除（`setIntfVrf(alias, "")`）は
+IP 削除後まで実行されない（`intfmgr.cpp:1059-1065` コメント）。これにより、
+VRF 解除後のアドレス競合（グローバル VRF への暗黙フォールバック）を防ぐ。
+
+### まとめ — 暗黙参照の連鎖
+
+| 参照元フィールド | 参照先テーブル | 確認手段 | 未解決時の挙動 |
+|-----------------|--------------|---------|--------------|
+| `vrf_name` | `VRF`（CONFIG_DB） | STATE_VRF_TABLE（STATE_DB） | Loopback 設定をキューで保留 |
+| `vrf_name` (変更) | STATE_INTF_TABLE（STATE_DB） | `isIntfChangeVrf` | 変更を ERROR ログで拒否 |
+| IP 削除 → VRF 解除 | 自テーブル IP カウント | `getIntfIpCount` | DEL を保留し順序を強制 |
+
+<!-- /implicit-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 証跡: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
+
+### 障害シナリオ一覧
+
+| 障害シナリオ | 処理コンポーネント | ログレベル | 自動リトライ | 主な副作用 |
+|------------|-----------------|-----------|-------------|-----------|
+| `ip link add <Lo> type dummy` 失敗 | intfmgrd | ERROR | **なし** | OS に dummy デバイスが作成されないが `m_loopbackIntfList` には登録済みとなり、以後の SET で再作成が試みられない |
+| `ip link del <Lo>` 失敗 | intfmgrd | ERROR | **なし** | OS の dummy デバイスが残存したまま CONFIG_DB エントリは消去される（不整合状態。次回再起動の `flushLoopbackIntfs` で回収） |
+| `admin_status` に `"up"` / `"down"` 以外の値 | intfmgrd | WARN | — | `"up"` へサイレントフォールバック（`intfmgr.cpp:865-868`） |
+| `ip link set <Lo> up/down` が runtime_error | intfmgrd | WARN | **なし** | OS の admin 状態と CONFIG_DB が乖離（`intfmgr.cpp:879-882`） |
+| VRF 変更（既バインド VRF から別 VRF への直接変更） | intfmgrd | ERROR | **なし** | 変更イベントを消費して拒否。CONFIG_DB の値は書き換わるが実態は旧 VRF のまま（`intfmgr.cpp:846-849`） |
+| `vrf_name` 指定時に STATE_VRF_TABLE に VRF 未登録 | intfmgrd | DEBUG | あり（VRF ready 後） | 設定がキューで保留。VRF 完了後に自動リトライ（`intfmgr.cpp:839-842`） |
+| SAI `create_router_interface` が非 SUCCESS | orchagent IntfsOrch | ERROR | あり（`task_success` 非時） | `handleSaiCreateStatus` 判定後 `runtime_error` → フレームワークがタスクをリトライキューに戻す（`intfsorch.cpp:1296-1304`） |
+| `loopback_action` に `"drop"` / `"forward"` 以外の値 | orchagent IntfsOrch | WARN | **なし** | SAI 属性未設定。SAI 実装依存のデフォルト action が維持される（`intfsorch.cpp:1162`） |
+| RIF 削除時に参照カウント非 0（ネクストホップ等が参照中） | orchagent IntfsOrch | NOTICE | あり（自動） | 参照が解放されるまで RIF 削除を保留してリトライ（`intfsorch.cpp:1327-1330`） |
+| 属性ロウ DEL 時に IP プレフィクスロウが残存 | orchagent IntfsOrch | なし | あり（自動） | IP 削除まで属性ロウ DEL を保留（サイレントリトライ、`intfsorch.cpp:1053-1064`） |
+
+### ポイント
+
+- **`ip link add` / `ip link del` の失敗は自動リカバリなし**。`intfmgrd` は ERROR を記録するだけでイベントを消費する。手動介入か再起動が必要。
+- **VRF 直接変更は拒否されるがイベントが消費される**（リトライされない）。`vrf_name=""` で VRF 解除 → 再設定する 2 ステップが唯一の回避策（`intfmgr.cpp:846-849`）。
+- **SAI 側の失敗はフレームワーク再試行あり**。orchagent は `handleSaiCreateStatus` / `handleSaiSetStatus` で retry / success / failure を判定し、リトライ可能なものはキューに戻す。
+- **DEL の保留はログなし**。IP プレフィクスロウ残存による DEL 保留はサイレントなため、`sonic-db-cli CONFIG_DB hgetall 'LOOPBACK_INTERFACE|Loopback<N>'` で手動確認が必要。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-failure.md` 参照。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: b5270404647a -->
