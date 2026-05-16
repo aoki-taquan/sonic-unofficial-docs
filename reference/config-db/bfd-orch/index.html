@@ -24142,7 +24142,112 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-bgpglobalstateorch-softwarehardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. BgpGlobalStateOrch 先行と software/hardware 経路の静的固定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-port-portsorch-alias-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PORT (PortsOrch) 先行必須 — alias != "default" 経路のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-vrf-vrforch-hardware-lookup-default-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. VRF (VRFOrch) 先行必須 — hardware lookup ＋ 非 default VRF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sai-state-change-set-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SAI state-change 通知ハンドラ登録（最初の SET で 1 回だけ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-software-bfd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. software BFD 経路への切替時の書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-tsa-bfd_session_cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. TSA 連動 — bfd_session_cache リプレイの順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-del-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. DEL → SET 同一キー連続書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -24153,7 +24258,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -24226,7 +24331,68 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#capability_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        capability 照会・初期化の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-create_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理 (create_bfd_session()) の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-remove_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理 (remove_bfd_session()) の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -24287,7 +24453,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         その他の固定リテラル
@@ -24299,6 +24465,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -34564,7 +34741,112 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-bgpglobalstateorch-softwarehardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. BgpGlobalStateOrch 先行と software/hardware 経路の静的固定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-port-portsorch-alias-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PORT (PortsOrch) 先行必須 — alias != "default" 経路のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-vrf-vrforch-hardware-lookup-default-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. VRF (VRFOrch) 先行必須 — hardware lookup ＋ 非 default VRF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sai-state-change-set-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SAI state-change 通知ハンドラ登録（最初の SET で 1 回だけ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-software-bfd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. software BFD 経路への切替時の書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-tsa-bfd_session_cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. TSA 連動 — bfd_session_cache リプレイの順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-del-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. DEL → SET 同一キー連続書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34575,7 +34857,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34648,7 +34930,68 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#capability_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        capability 照会・初期化の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-create_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理 (create_bfd_session()) の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-remove_bfd_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理 (remove_bfd_session()) の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -34709,7 +35052,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         その他の固定リテラル
@@ -34721,6 +35064,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -34896,9 +35250,202 @@
 </table>
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>APPL_DB <code>BFD_SESSION_TABLE</code> を購読する <code>BfdOrch::doTask(Consumer&amp;)</code> (<code>bfdorch.cpp:111-218</code>) は <code>aclorch</code> 等とは異なり <code>gPortsOrch-&gt;allPortsReady()</code> の早期 return ガードを<strong>持たない</strong>。代わりに <code>create_bfd_session()</code> 内で個別に PORT / VRF / SAI capability を解決し、失敗時に <code>return false</code> で <code>it++</code> 待機する設計になっている。</p>
+<h3 id="1-bgpglobalstateorch-softwarehardware">1. BgpGlobalStateOrch 先行と software/hardware 経路の静的固定<a class="headerlink" href="#1-bgpglobalstateorch-softwarehardware" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// bfdorch.cpp:114-121</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">BgpGlobalStateOrch</span><span class="o">*</span><span class="w"> </span><span class="n">bgp_global_state_orch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gDirectory</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">BgpGlobalStateOrch</span><span class="o">*&gt;</span><span class="p">();</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kt">bool</span><span class="w"> </span><span class="n">tsa_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kt">bool</span><span class="w"> </span><span class="n">use_software_bfd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bgp_global_state_orch</span><span class="p">)</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">{</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">tsa_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bgp_global_state_orch</span><span class="o">-&gt;</span><span class="n">getTsaState</span><span class="p">();</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="n">use_software_bfd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bgp_global_state_orch</span><span class="o">-&gt;</span><span class="n">getSoftwareBfd</span><span class="p">();</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>BgpGlobalStateOrch</code> が orchagent 起動シーケンスで <code>BfdOrch</code> より先に生成されていないと <code>gDirectory.get</code> が null を返し、<code>use_software_bfd = true</code>（software 経路）に強制 fallback する。<code>BgpGlobalStateOrch</code> コンストラクタ (<code>bfdorch.cpp:729-736</code>) は <code>offload_supported(IPv4) &amp;&amp; offload_supported(IPv6)</code> を<strong>起動時 1 回</strong>だけ評価して <code>bfd_offload</code> を確定し、<code>getSoftwareBfd()</code> は <code>!bfd_offload</code> を返す純粋関数。</p>
+<p>→ 順序依存: <code>BgpGlobalStateOrch</code> ≺ <code>BfdOrch</code> の生成順。経路の動的切替は不可（swss コンテナ再起動が必須）。</p>
+<h3 id="2-port-portsorch-alias-default">2. PORT (PortsOrch) 先行必須 — <code>alias != "default"</code> 経路のみ<a class="headerlink" href="#2-port-portsorch-alias-default" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// bfdorch.cpp:482-490 (create_bfd_session 内)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">alias</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">Port</span><span class="w"> </span><span class="n">port</span><span class="p">;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">getPort</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="p">))</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to locate port %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">alias</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">  </span><span class="c1">// → doTask の it++ で次イベントループ再試行</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>出力インタフェース指定 BFD（hardware lookup 無効 = ASIC が次ホップを引かない方式）では <code>PORT|&lt;alias&gt;</code> が PortsOrch に登録済みでないと SET が成立しない。一方 <code>alias == "default"</code>（hardware lookup 有効）の純 L3 BFD は PORT 未初期化でも処理が進むため、PortsOrch readiness と無関係。</p>
+<p>→ 順序依存: 出力インタフェース指定時のみ <code>PORT|&lt;alias&gt;</code> が先行必須。</p>
+<h3 id="3-vrf-vrforch-hardware-lookup-default-vrf">3. VRF (VRFOrch) 先行必須 — hardware lookup ＋ 非 default VRF<a class="headerlink" href="#3-vrf-vrforch-hardware-lookup-default-vrf" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// bfdorch.cpp:530-541</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER</span><span class="p">;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vrf_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="p">)</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">{</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gVirtualRouterId</span><span class="p">;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="k">else</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">{</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="n">VRFOrch</span><span class="o">*</span><span class="w"> </span><span class="n">vrf_orch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gDirectory</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">VRFOrch</span><span class="o">*&gt;</span><span class="p">();</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vrf_orch</span><span class="o">-&gt;</span><span class="n">getVRFid</span><span class="p">(</span><span class="n">vrf_name</span><span class="p">);</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>VRFOrch::getVRFid</code> は未登録 VRF に対して <code>SAI_NULL_OBJECT_ID</code> を返すため、後続の <code>sai_bfd_api-&gt;create_bfd_session</code> が失敗する。<code>handleSaiCreateStatus</code> の戻りが <code>task_need_retry</code> であれば次イベントループで再試行される。</p>
+<p>→ 順序依存: hardware lookup ＋ 非 default VRF では <code>VRF|&lt;name&gt;</code> が VRFOrch に登録済みであること。</p>
+<h3 id="4-sai-state-change-set-1">4. SAI state-change 通知ハンドラ登録（最初の SET で 1 回だけ）<a class="headerlink" href="#4-sai-state-change-set-1" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// bfdorch.cpp:307-315 (create_bfd_session 入口)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">register_state_change_notif</span><span class="p">)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">register_bfd_state_change_notification</span><span class="p">())</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;BFD session for %s cannot be created&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="n">register_state_change_notif</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>register_bfd_state_change_notification()</code> (<code>bfdorch.cpp:270-303</code>) は <code>SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY</code> の <code>set_implemented</code> capability を照会し、false の ASIC では永続的に false を返す → そのプラットフォームでは<strong>全 BFD セッションが reject</strong> され続ける（順序解消されない致命的依存）。</p>
+<h3 id="5-software-bfd">5. software BFD 経路への切替時の書込み順序<a class="headerlink" href="#5-software-bfd" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// bfdorch.cpp:131-139 (SET) / 180-188 (DEL)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">use_software_bfd</span><span class="p">)</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">{</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">m_stateSoftBfdSessionTable</span><span class="o">-&gt;</span><span class="n">set</span><span class="p">(</span><span class="n">createStateDBKey</span><span class="p">(</span><span class="n">key</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="p">.</span><span class="n">m_toSync</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>use_software_bfd == true</code> のとき <code>create_bfd_session()</code> を<strong>通らず</strong> STATE_DB <code>SOFTWARE_BFD_SESSION_TABLE</code> に転記して即 erase する。PORT / VRF / SAI capability 依存はすべて回避されるが、代わりに後段で STATE_DB を購読する <code>bgpcfgd/BfdMgr</code> (→ FRR <code>bfdd</code>) の起動順に依存する。<code>bgpcfgd</code> の購読開始前に書き込まれた分は反映されないため、起動順は <strong><code>bgpcfgd</code> ≺ <code>swss/bfdorch</code></strong> が望ましい。</p>
+<p>→ 順序依存: software 経路は bfdorch 内に依存無し、外部 (<code>bgpcfgd</code>) との起動順レースに置換される。</p>
+<h3 id="6-tsa-bfd_session_cache">6. TSA 連動 — <code>bfd_session_cache</code> リプレイの順序<a class="headerlink" href="#6-tsa-bfd_session_cache" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// bfdorch.cpp:155-169 (SET / shutdown_bfd_during_tsa == &quot;true&quot; のとき)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tsa_shutdown_enabled</span><span class="p">)</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">bfd_session_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w">           </span><span class="c1">// 常にキャッシュ更新</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">tsa_enabled</span><span class="p">)</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">create_bfd_session</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">it</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">        </span><span class="n">notify_session_state_down</span><span class="p">(</span><span class="n">key</span><span class="p">);</span><span class="w">      </span><span class="c1">// TSA 中は SAI セッション作らず Down 通知のみ</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// bfdorch.cpp:683-704</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">BfdOrch::handleTsaStateChange</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">tsaState</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">bfd_session_cache</span><span class="p">)</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tsaState</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bfd_session_map</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">first</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">bfd_session_map</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">            </span><span class="p">{</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">                </span><span class="n">notify_session_state_down</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">first</span><span class="p">);</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">                </span><span class="n">remove_bfd_session</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">first</span><span class="p">);</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">        </span><span class="k">else</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bfd_session_map</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">first</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bfd_session_map</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">            </span><span class="p">{</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">                </span><span class="n">create_bfd_session</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="n">it</span><span class="p">.</span><span class="n">second</span><span class="p">);</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>BgpGlobalStateOrch::doTask()</code> (<code>bfdorch.cpp:813-826</code>) が <code>BGP_DEVICE_GLOBAL|STATE</code> の <code>tsa_enabled</code> フィールド変化を検知して <code>BfdOrch::handleTsaStateChange()</code> を呼び、<code>bfd_session_cache</code> 全件を <strong><code>std::map</code> キー辞書順</strong>で replay する。TSA exit 時の create は <code>bfd_session_map</code> 未登録のものに限るため二重 create は抑止されるが、replay 中に PORT/VRF/SAI capability 状態が変動していれば create が失敗する余地がある。<code>shutdown_bfd_during_tsa != "true"</code> の通常セッションは cache 対象外で、TSA 中も SAI セッションが維持される。</p>
+<p>→ タイミング依存: TSA cache replay の対象は <code>shutdown_bfd_during_tsa == "true"</code> のセッションのみ。replay 順は辞書順で、PORT/VRF 復帰前に enter→exit が走ると create 失敗。</p>
+<h3 id="7-del-set">7. DEL → SET 同一キー連続書込み<a class="headerlink" href="#7-del-set" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// bfdorch.cpp:190-209 (DEL)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bfd_session_cache</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">bfd_session_cache</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="n">bfd_session_cache</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">key</span><span class="p">);</span><span class="w">                   </span><span class="c1">// cache 先消し</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">tsa_enabled</span><span class="p">)</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">remove_bfd_session</span><span class="p">(</span><span class="n">key</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">it</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">}</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="k">else</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="p">{</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">remove_bfd_session</span><span class="p">(</span><span class="n">key</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">it</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>remove_bfd_session()</code> は内部で <code>bfd_session_map.erase</code> と <code>bfd_session_lookup.erase(bfd_session_id)</code> を行う (<code>bfdorch.cpp:622-635</code>)。同一 doTask サイクル内では順次処理されるため通常は安全だが、<code>remove_bfd_session</code> が失敗 (<code>it++</code>) して残った状態で次サイクルに DEL→SET が来ると、SET 側の <code>bfd_session_map.find(key) != end</code> チェック (<code>bfdorch.cpp:316-320</code>) が古い OID を引いて <code>"BFD session for %s already exists"</code> で <strong>no-op return true</strong> になり、新パラメータが反映されない。</p>
+<h3 id="_6">順序依存サマリ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>依存項目</th>
+<th>スコープ</th>
+<th>解消メカニズム</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BgpGlobalStateOrch 先行</td>
+<td>起動時 1 回</td>
+<td>null なら software 経路に fallback</td>
+<td>bfdorch.cpp:114-121, 729-736</td>
+</tr>
+<tr>
+<td>software / hardware 経路</td>
+<td>起動時 1 回固定</td>
+<td>SAI capability 1 回照会、動的切替不可</td>
+<td>bfdorch.cpp:749-791</td>
+</tr>
+<tr>
+<td>PORT 初期化</td>
+<td><code>alias != "default"</code> のみ</td>
+<td><code>getPort</code> 失敗で <code>return false</code> → 再試行</td>
+<td>bfdorch.cpp:482-490</td>
+</tr>
+<tr>
+<td>VRF 登録</td>
+<td>hardware lookup ＋ 非 default VRF</td>
+<td><code>getVRFid</code> null → SAI create 失敗 → handleSaiCreateStatus</td>
+<td>bfdorch.cpp:530-541</td>
+</tr>
+<tr>
+<td>SAI state-change 通知登録</td>
+<td>初回 SET 1 回</td>
+<td>capability false で永続 reject</td>
+<td>bfdorch.cpp:270-315</td>
+</tr>
+<tr>
+<td>TSA cache replay</td>
+<td>TSA enter/exit</td>
+<td><code>handleTsaStateChange</code> で辞書順 replay</td>
+<td>bfdorch.cpp:141-178, 683-704</td>
+</tr>
+<tr>
+<td>DEL → SET 同一キー</td>
+<td>連続書込</td>
+<td>DEL 失敗時 SET no-op の落とし穴</td>
+<td>bfdorch.cpp:190-209, 316-320</td>
+</tr>
+<tr>
+<td>software 経路の購読側起動順</td>
+<td>software BFD のみ</td>
+<td><code>bgpcfgd</code> 先行が望ましい</td>
+<td>bfdorch.cpp:131-139</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">PortsOrch readiness ガード非搭載</p>
+<p><code>BfdOrch::doTask()</code> は <code>aclorch</code> 等と異なり <code>gPortsOrch-&gt;allPortsReady()</code> の早期 return を持たない。<code>alias == "default"</code> の hardware lookup BFD は PORT 未初期化状態でも <code>create_bfd_session()</code> まで到達するため、PortsOrch readiness と独立に処理される点に注意。</p>
+</div>
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../bfd-session/"><code>BFD_SESSION</code></a> — CONFIG_DB 側のユーザー設定テーブル</li>
 <li>CONFIG_DB: <a href="../bgp-device-global/"><code>BGP_DEVICE_GLOBAL</code></a> — <code>use_software_bfd</code> / TSA フラグ</li>
@@ -34906,7 +35453,7 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
 <p><code>bfdorch</code> は環境変数 <code>platform</code> / <code>sub_platform</code> を参照しない。プラットフォーム差はすべて <strong>SAI capability 動的照会</strong> (<code>sai_query_attribute_capability</code>) で決定される。経路選択は起動時 1 回のみ評価される。</p>
@@ -35156,13 +35703,222 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_8">補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_9">補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>multiplier</code> のデフォルト値が hardware BFD (<code>bfdorch</code>: 10) と software BFD (<code>bgpcfgd/BfdMgr</code>: 3) で異なる。<code>BGP_DEVICE_GLOBAL.STATE.use_software_bfd</code> フラグで経路が切り替わる。</li>
 <li><code>tx_interval</code> / <code>rx_interval</code> のデフォルトも経路で異なる: hardware=1000ms、bgpcfgd BfdMgr=200ms、static route BFD=50ms。</li>
 <li>APPL_DB <code>BFD_SESSION_TABLE</code> に対応する YANG schema (sonic-bfd.yang 等) は現時点 (2026-05) で sonic-buildimage の yang-models ディレクトリに存在しない。すべての制約はコードレベルで実施される。</li>
 </ul>
 <!-- /defaults -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-net/sonic-swss/orchagent/bfdorch.cpp</code></p>
+<h3 id="capability_1">capability 照会・初期化の失敗経路<a class="headerlink" href="#capability_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_query_attribute_capability(BFD_SESSION_STATE_CHANGE_NOTIFY)</code> が SUCCESS 以外</td>
+<td><code>register_bfd_state_change_notification()</code></td>
+<td><code>false</code> 返却 → 以後 <code>create_bfd_session()</code> が即 reject</td>
+<td><code>LOG_ERROR</code> ("Unable to query the BFD change notification capability")</td>
+<td><code>bfdorch.cpp:276-283</code></td>
+</tr>
+<tr>
+<td><code>capability.set_implemented == false</code> (BFD 通知未実装 ASIC)</td>
+<td>同上</td>
+<td><code>false</code> 返却 → セッション作成不能</td>
+<td><code>LOG_ERROR</code> ("BFD register change notification not supported")</td>
+<td><code>bfdorch.cpp:286-289</code></td>
+</tr>
+<tr>
+<td>通知ハンドラ登録 (<code>set_switch_attribute</code>) 失敗</td>
+<td>同上</td>
+<td><code>false</code> 返却 → セッション作成不能</td>
+<td><code>LOG_ERROR</code> ("Failed to register BFD notification handler")</td>
+<td><code>bfdorch.cpp:297-300</code></td>
+</tr>
+<tr>
+<td><code>sai_query_attribute_capability(SUPPORTED_IPV4/IPV6_BFD_SESSION_OFFLOAD_TYPE)</code> 失敗</td>
+<td><code>BgpGlobalStateOrch::offload_supported()</code></td>
+<td><code>false</code> 返却 → <code>use_software_bfd=true</code> 経路へ縮退</td>
+<td><code>LOG_ERROR</code> ("Unable to query BFD offload capability")</td>
+<td><code>bfdorch.cpp:769-772</code></td>
+</tr>
+<tr>
+<td><code>capability.get_implemented == false</code></td>
+<td>同上</td>
+<td><code>false</code> 返却 → software BFD 経路へ縮退</td>
+<td>なし (silent)</td>
+<td><code>bfdorch.cpp:774-777</code></td>
+</tr>
+<tr>
+<td>offload type 取得失敗 / <code>u32list.count == 0</code></td>
+<td>同上</td>
+<td><code>false</code> 返却 → software BFD 経路</td>
+<td><code>LOG_ERROR</code> ("Could not get supported BFD offload type, rv: %d")</td>
+<td><code>bfdorch.cpp:784-790</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="set-create_bfd_session">SET 処理 (<code>create_bfd_session()</code>) の失敗経路<a class="headerlink" href="#set-create_bfd_session" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>戻り値</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>capability 不在で初期化未完</td>
+<td><code>false</code></td>
+<td>セッション作成 reject、SAI 未呼出</td>
+<td><code>LOG_ERROR</code> ("BFD session for %s cannot be created")</td>
+<td><code>bfdorch.cpp:307-313</code></td>
+</tr>
+<tr>
+<td>同一キーのセッションが既に存在</td>
+<td><code>true</code> (no-op)</td>
+<td>重複作成スキップ。SAI 未呼出</td>
+<td><code>LOG_ERROR</code> ("BFD session for %s already exists")</td>
+<td><code>bfdorch.cpp:316-319</code></td>
+</tr>
+<tr>
+<td>key 分割で vrf が取れない</td>
+<td><code>false</code></td>
+<td>task 再試行</td>
+<td><code>LOG_ERROR</code> ("Failed to parse key %s, no vrf is given")</td>
+<td><code>bfdorch.cpp:323-326</code></td>
+</tr>
+<tr>
+<td>key 分割で interface (alias) が取れない</td>
+<td><code>false</code></td>
+<td>task 再試行</td>
+<td><code>LOG_ERROR</code> ("Failed to parse key %s, no ifname is given")</td>
+<td><code>bfdorch.cpp:330-333</code></td>
+</tr>
+<tr>
+<td><code>type</code> フィールドが enum 範囲外</td>
+<td>(継続)</td>
+<td>enum 更新せず以前の値で進行</td>
+<td><code>LOG_ERROR</code> ("Invalid BFD session type %s")</td>
+<td><code>bfdorch.cpp:385</code></td>
+</tr>
+<tr>
+<td>未知の属性フィールド</td>
+<td>(継続)</td>
+<td>該当 fv を無視</td>
+<td><code>LOG_ERROR</code> ("Unsupported BFD attribute %s")</td>
+<td><code>bfdorch.cpp:402-406</code></td>
+</tr>
+<tr>
+<td><code>local_addr</code> (src_ip) 未指定</td>
+<td><code>true</code> (drop)</td>
+<td>セッション作成スキップ。再試行されない</td>
+<td><code>LOG_ERROR</code> ("Failed to create BFD session %s because source IP is not provided")</td>
+<td><code>bfdorch.cpp:409-413</code></td>
+</tr>
+<tr>
+<td><code>alias != "default"</code> だが <code>gPortsOrch-&gt;getPort()</code> 失敗 (PORT 未準備)</td>
+<td><code>false</code></td>
+<td>task 再試行 → PORT 準備後に再評価</td>
+<td><code>LOG_ERROR</code> ("Failed to locate port %s")</td>
+<td><code>bfdorch.cpp:485-488</code></td>
+</tr>
+<tr>
+<td><code>alias != "default"</code> かつ <code>dst_mac</code> 未指定</td>
+<td><code>true</code> (drop)</td>
+<td>セッション作成スキップ</td>
+<td><code>LOG_ERROR</code> ("destination MAC address required when hardware lookup not valid")</td>
+<td><code>bfdorch.cpp:491-495</code></td>
+</tr>
+<tr>
+<td><code>alias != "default"</code> かつ <code>vrf_name != "default"</code></td>
+<td><code>true</code> (drop)</td>
+<td>セッション作成スキップ。HW lookup 無効に VRF 非対応</td>
+<td><code>LOG_ERROR</code> ("vrf is not supported when hardware lookup not valid")</td>
+<td><code>bfdorch.cpp:498-502</code></td>
+</tr>
+<tr>
+<td><code>alias == "default"</code> かつ <code>dst_mac</code> 指定</td>
+<td><code>true</code> (drop)</td>
+<td>セッション作成スキップ</td>
+<td><code>LOG_ERROR</code> ("destination MAC address not supported when hardware lookup valid")</td>
+<td><code>bfdorch.cpp:523-527</code></td>
+</tr>
+<tr>
+<td><code>sai_bfd_api-&gt;create_bfd_session()</code> 1 回目失敗</td>
+<td>(retry へ)</td>
+<td><code>retry_create_bfd_session()</code> で UDP src port を変えながら <strong>最大 <code>NUM_BFD_SRCPORT_RETRIES = 3</code> 回</strong>再試行</td>
+<td><code>LOG_WARN</code> ("BFD create using port number %d failed. Retrying with port number %d")</td>
+<td><code>bfdorch.cpp:547-552, 585-606</code></td>
+</tr>
+<tr>
+<td>retry 3 回後も SUCCESS 以外</td>
+<td><code>handleSaiCreateStatus()</code> 次第</td>
+<td>recover 不能なら task fail (orchagent abort の可能性)、recover 可能なら次 iteration へ繰越</td>
+<td><code>LOG_ERROR</code> ("Failed to create bfd session %s, rv:%d")</td>
+<td><code>bfdorch.cpp:554-562</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del-remove_bfd_session">DEL 処理 (<code>remove_bfd_session()</code>) の失敗経路<a class="headerlink" href="#del-remove_bfd_session" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>戻り値</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bfd_session_map</code> にキーなし (未作成セッションへの DEL)</td>
+<td><code>true</code> (no-op)</td>
+<td>STATE_DB / map 操作なし</td>
+<td><code>LOG_ERROR</code> ("BFD session for %s does not exist")</td>
+<td><code>bfdorch.cpp:611-614</code></td>
+</tr>
+<tr>
+<td><code>sai_bfd_api-&gt;remove_bfd_session()</code> 失敗</td>
+<td><code>handleSaiRemoveStatus()</code> 次第</td>
+<td>recover 不能なら task fail → 次 iteration へ繰越</td>
+<td><code>LOG_ERROR</code> ("Failed to remove bfd session %s, rv:%d")</td>
+<td><code>bfdorch.cpp:619-626</code></td>
+</tr>
+<tr>
+<td>不明な op (SET/DEL 以外)</td>
+<td>(continue)</td>
+<td>task consume してスキップ</td>
+<td><code>LOG_ERROR</code> ("Unknown operation type %s")</td>
+<td><code>bfdorch.cpp:213, 836</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">補足<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>return true</code> vs <code>return false</code></strong>: <code>true</code> は task を <strong>consume</strong> (再試行なし)、<code>false</code> は <strong>retry 対象</strong>。<code>local_addr</code> 未指定 / <code>dst_mac</code> 制約違反など「ユーザー設定上の誤り」は <code>true</code> (drop)、PORT/VRF 未準備など「依存リソースの一時的未到達」は <code>false</code> (retry) という設計。</li>
+<li><strong>UDP src port retry</strong>: <code>NUM_BFD_SRCPORT_RETRIES = 3</code>、ポート範囲 49152–65535。<code>update_port_number()</code> が <code>bfd_src_port()</code> で port を再生成して attrs を上書き (<code>bfdorch.cpp:577-606</code>)。</li>
+<li><strong>capability 不在は再起動が必要</strong>: <code>register_bfd_state_change_notification()</code> の評価は <code>BfdOrch</code> コンストラクタで 1 回のみ。capability 不在のまま swss 起動した場合、SAI 実装が後で更新されても <strong>swss コンテナ再起動なしには hardware BFD は動かない</strong>。</li>
+<li><strong><code>use_software_bfd</code> 経路では SAI 失敗は発生しない</strong>: SAI API を呼ばず STATE_DB <code>SOFTWARE_BFD_SESSION_TABLE</code> に転記するのみ (<code>bfdorch.cpp:133-139, 182-188</code>)。失敗経路は事前検証 (<code>local_addr</code> 未指定など) のみに縮小される。</li>
+</ul>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/bfd-orch-failure.md</code> を参照。</p>
+<!-- /failure -->
 
 <!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
@@ -35295,7 +36051,7 @@
 </tbody>
 </table>
 <p>セッション作成直後の初期 state は <code>SAI_BFD_SESSION_STATE_DOWN</code> = <code>"Down"</code>。<!-- evidence: bfdorch.cpp:544, 567, 571 --></p>
-<h3 id="_9">その他の固定リテラル<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_11">その他の固定リテラル<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -35342,6 +36098,70 @@
 <p><strong>スキャン証跡</strong>: <code>bfdorch.cpp</code> L1-60, L33-54, L340-475, L505-530, L580-655, L780-800 を読了。マクロ 8 件、SAI 列挙文字列マップ 4+4=8 件、初期値リテラル 5 件を抽出。中間ファイル: <code>meta/_intermediate/cdb-flow/bfd-orch-constants.md</code></p>
 </blockquote>
 <!-- /constants -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>BFD_SESSION</code> (CONFIG_DB → APPL_DB <code>BFD_SESSION_TABLE</code>) は YANG 未定義のため leafref は存在しない。以下はすべて <code>bfdorch.cpp</code> 実装レベルの暗黙参照。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../port/"><code>PORT\|&lt;name&gt;</code></a></td>
+<td>読み取り (Port オブジェクト + SAI port OID + MAC)</td>
+<td><code>&lt;interface&gt; != "default"</code> (hardware lookup 無効経路)。不在 → <code>"Failed to locate port"</code> ERROR + 再試行</td>
+<td><code>bfdorch.cpp</code> L482–520 (<code>gPortsOrch-&gt;getPort(alias, port)</code>、<code>port.m_port_id</code> / <code>port.m_mac</code>)</td>
+</tr>
+<tr>
+<td><a href="../vrf/"><code>VRF\|&lt;name&gt;</code></a></td>
+<td>読み取り (SAI virtual_router OID)</td>
+<td><code>&lt;vrf&gt; != "default"</code> かつ <code>&lt;interface&gt; == "default"</code>。default VRF は <code>gVirtualRouterId</code> を直接使用</td>
+<td><code>bfdorch.cpp</code> L530–541 (<code>gDirectory.get&lt;VRFOrch*&gt;()-&gt;getVRFid(vrf_name)</code> → <code>SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER</code>)</td>
+</tr>
+<tr>
+<td><a href="../bgp-device-global/"><code>BGP_DEVICE_GLOBAL</code></a></td>
+<td>読み取り (TSA + use_software_bfd フラグ)</td>
+<td>全 <code>doTask()</code> 呼び出しの冒頭。<code>use_software_bfd=true</code> → SAI 未経由で STATE_DB 転記のみ。<code>tsa_enabled=true</code> + <code>shutdown_bfd_during_tsa=true</code> → セッション作成スキップ + Down 通知</td>
+<td><code>bfdorch.cpp</code> L114–121, L133–139, L155–178, L755–791 (<code>BgpGlobalStateOrch::getTsaState()</code> / <code>getSoftwareBfd()</code> / <code>offload_supported()</code>)</td>
+</tr>
+<tr>
+<td>NEXTHOP / NHG (逆参照: publish)</td>
+<td>通知配信 (<code>SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE</code>)</td>
+<td>セッション作成時 + 状態変化時。<code>nhgorch</code> / <code>routeorch</code> / <code>vxlanmgr</code> 等の subscriber が BFD 状態に応じて next-hop の up/down を決定</td>
+<td><code>bfdorch.cpp</code> L257–260, L569–572 (<code>BfdUpdate</code> notify)</td>
+</tr>
+<tr>
+<td>STATE_DB <code>BFD_SESSION_TABLE</code> / <code>SOFTWARE_BFD_SESSION_TABLE</code> / ASIC_DB <code>NOTIFICATIONS</code></td>
+<td>書き込み + 購読</td>
+<td>常時。起動時にクリーンアップ、セッション確定値を STATE_DB に書く。ASIC からの <code>bfd_session_state_change</code> を購読して <code>state</code> 更新</td>
+<td><code>bfdorch.cpp</code> L63–86, L252, L544–567, L629</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">NEXTHOP は逆参照（publish 方向）</p>
+<p><code>bfdorch.cpp</code> 自体は <code>NEXTHOP</code> / <code>NeighOrch</code> / <code>RouteOrch</code> を <strong>直接参照しない</strong>。
+next-hop monitoring 用途の BFD は、<code>STATIC_ROUTE_BFD</code> / <code>NEXTHOP_GROUP_MEMBER</code> 等の上位 Orch（または FRR <code>bgpcfgd/BfdMgr</code>）が CONFIG_DB <code>BFD_SESSION</code> を作成し、bfdorch は状態変化を notify するだけの <strong>publisher</strong> として動作する。
+key (<code>&lt;vrf&gt;:&lt;interface&gt;:&lt;peer_ip&gt;</code>) がそのまま next-hop の (vrf, intf, ip) と一致するため、subscriber は key マッチで対応 next-hop を特定する。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">hardware lookup 有効 / 無効による依存切り替え</p>
+<p><code>&lt;interface&gt; == "default"</code> (hardware lookup 有効、<code>SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID=true</code>):
+→ <strong>VRF テーブルのみ参照</strong>（PORT 参照なし、<code>dst_mac</code> 指定不可）。
+<code>&lt;interface&gt; != "default"</code> (hardware lookup 無効、<code>SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID=false</code>):
+→ <strong>PORT テーブルのみ参照</strong>（VRF は <code>default</code> 限定、<code>dst_mac</code> 必須）。
+両経路の同時使用は不可（<code>bfdorch.cpp</code> L498–503）。</p>
+</div>
+<blockquote>
+<p><strong>中間ファイル</strong>: <code>meta/_intermediate/cdb-flow/bfd-orch-cross-refs.md</code></p>
+</blockquote>
+<!-- /cross-refs -->
 
 <div class="footnote">
 <hr />

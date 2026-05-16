@@ -24326,6 +24326,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-hw-vs-sw-bfd-asic-vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hw-bfd-vs-sw-bfd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HW BFD 経路 vs SW BFD 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動的照会される SAI capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hw_lookup_valid-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HW_LOOKUP_VALID 分岐 (interface 指定の有無)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vendor 別の典型挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知の async 配信タイミング差
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34731,6 +34803,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-hw-vs-sw-bfd-asic-vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hw-bfd-vs-sw-bfd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HW BFD 経路 vs SW BFD 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動的照会される SAI capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hw_lookup_valid-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HW_LOOKUP_VALID 分岐 (interface 指定の有無)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vendor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vendor 別の典型挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知の async 配信タイミング差
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34829,7 +34973,7 @@
 
 <h1 id="bfd_session_table-state_db">BFD_SESSION_TABLE (STATE_DB)<a class="headerlink" href="#bfd_session_table-state_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>STATE_DB</code> の <code>BFD_SESSION_TABLE</code> は、<code>sonic-swss</code> の <code>bfdorch</code> が SAI BFD セッションを作成した後に書き込む読み取り専用のセッション状態テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定値（<code>tx_interval</code> 等）とランタイム状態（<code>state</code>）の両方を保持し、SAI からの状態変化通知（<code>bfd_session_state_change</code>）を受信するたびに <code>state</code> フィールドのみ更新される。</p>
+<p><code>STATE_DB</code> の <code>BFD_SESSION_TABLE</code> は、<code>sonic-swss</code> の <code>bfdorch</code> が SAI BFD セッションを作成した後に書き込む読み取り専用のセッション状態テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">2</a></sup>。設定値（<code>tx_interval</code> 等）とランタイム状態（<code>state</code>）の両方を保持し、SAI からの状態変化通知（<code>bfd_session_state_change</code>）を受信するたびに <code>state</code> フィールドのみ更新される。</p>
 <p><code>use_software_bfd = true</code>（<code>BGP_DEVICE_GLOBAL.STATE.use_software_bfd</code>）のソフトウェア BFD モードでは、SAI を経由しないため <code>BFD_SESSION_TABLE</code> は書き込まれず、代わりに <code>BFD_SOFTWARE_SESSION_TABLE</code> に APPL_DB データが転記される。</p>
 <div class="admonition note">
 <p class="admonition-title">CONFIG_DB との関係</p>
@@ -35188,6 +35332,143 @@
 </table>
 <!-- /cdb-exceptions -->
 
+<!-- platform -->
+<h2 id="sai-capability-hw-vs-sw-bfd-asic-vendor">プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)<a class="headerlink" href="#sai-capability-hw-vs-sw-bfd-asic-vendor" title="Permanent link">&para;</a></h2>
+<p><code>bfdorch</code> は <code>platform</code> / <code>sub_platform</code> 環境変数の static 比較を<strong>行わず</strong>、<strong>SAI 動的 capability 照会</strong>のみで ASIC 対応を判定する (他の orch とは設計が異なる)<sup id="fnref:h1"><a class="footnote-ref" href="#fn:h1">1</a></sup>。STATE_DB <code>BFD_SESSION_TABLE</code> への書込みが発生するか否かは、以下の組合せで決まる。</p>
+<h3 id="hw-bfd-vs-sw-bfd">HW BFD 経路 vs SW BFD 経路<a class="headerlink" href="#hw-bfd-vs-sw-bfd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th><code>BFD_SESSION_TABLE</code> (STATE_DB)</th>
+<th><code>BFD_SOFTWARE_SESSION_TABLE</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_DEVICE_GLOBAL.STATE.use_software_bfd == "true"</code></td>
+<td><strong>書込みなし</strong></td>
+<td><code>bfdorch::createSoftwareBfdSession()</code> 経由で書込み</td>
+</tr>
+<tr>
+<td><code>use_software_bfd == "false"</code> (デフォルト) + ASIC が SAI BFD 対応</td>
+<td>書込みあり</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>use_software_bfd == "false"</code> + ASIC が SAI BFD 未対応</td>
+<td><strong>書込みなし</strong> (create 失敗)</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-capability">動的照会される SAI capability<a class="headerlink" href="#sai-capability" title="Permanent link">&para;</a></h3>
+<p><code>bfdorch</code> が起動時 / 初回 create 時に問い合わせる SAI 属性:</p>
+<table>
+<thead>
+<tr>
+<th>SAI 属性</th>
+<th>チェック対象</th>
+<th>失敗時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY</code> (<code>set_implemented</code>)</td>
+<td>BFD 状態変化通知の登録可否</td>
+<td><code>create_bfd_session()</code> 全体が <strong>fail</strong>。STATE_DB エントリ作成自体が起こらない (<code>bfdorch.cpp:286-290, 309-313</code>)</td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_SUPPORTED_IPV4_BFD_SESSION_OFFLOAD_TYPE</code></td>
+<td>IPv4 BFD オフロード対応</td>
+<td><code>bgpcfgd</code> が SW BFD 経路を選択 → STATE_DB <code>BFD_SESSION_TABLE</code> は使われない (<code>bfdorch.cpp:761-790</code>)</td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_SUPPORTED_IPV6_BFD_SESSION_OFFLOAD_TYPE</code></td>
+<td>IPv6 BFD オフロード対応</td>
+<td>同上 (IPv6 family のみ独立)</td>
+</tr>
+</tbody>
+</table>
+<p><code>SUPPORTED_IPV*_BFD_SESSION_OFFLOAD_TYPE</code> の値が <code>SAI_BFD_SESSION_OFFLOAD_TYPE_NONE</code> の場合も SW BFD 経路となる。IPv4 / IPv6 は独立に照会されるため、片方だけ HW 対応の ASIC では対応 family のセッションだけが STATE_DB に出現する。</p>
+<h3 id="hw_lookup_valid-interface"><code>HW_LOOKUP_VALID</code> 分岐 (interface 指定の有無)<a class="headerlink" href="#hw_lookup_valid-interface" title="Permanent link">&para;</a></h3>
+<p><code>bfdorch.cpp:482-542</code> で <code>interface</code> フィールドが <code>"default"</code> か否かにより SAI 属性セットが分岐する。フィールド集合は同一だが ASIC 互換性に差がある。</p>
+<table>
+<thead>
+<tr>
+<th><code>interface</code></th>
+<th><code>SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID</code></th>
+<th>追加必須 SAI 属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"default"</code></td>
+<td>省略 (SAI default = true)</td>
+<td><code>VIRTUAL_ROUTER</code></td>
+</tr>
+<tr>
+<td>具体ポート名 (例 <code>Ethernet0</code>)</td>
+<td><code>false</code> を明示セット</td>
+<td><code>PORT</code>, <code>SRC_MAC</code>, <code>DST_MAC</code> (CONFIG_DB の <code>dst_mac</code> 必須)。<code>vrf != "default"</code> は reject</td>
+</tr>
+</tbody>
+</table>
+<p>ASIC によっては <code>HW_LOOKUP_VALID = false</code> を未サポートで <code>create_bfd_session()</code> 自体が失敗 → STATE_DB に書込みなし。</p>
+<h3 id="vendor">vendor 別の典型挙動<a class="headerlink" href="#vendor" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>HW BFD オフロード</th>
+<th><code>BFD_SESSION_TABLE</code> 書込み</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>broadcom (TD/TH/JR)</td>
+<td>あり (IPv4/IPv6)</td>
+<td>あり</td>
+<td>state 通知レイテンシ低</td>
+</tr>
+<tr>
+<td>mellanox (Spectrum)</td>
+<td>あり (IPv4/IPv6)</td>
+<td>あり</td>
+<td><code>detect_multiplier × rx_interval</code> に従う</td>
+</tr>
+<tr>
+<td>cisco-8000</td>
+<td>あり (IPv4/IPv6)</td>
+<td>あり</td>
+<td>offload type 取得経路を通る</td>
+</tr>
+<tr>
+<td>barefoot (Tofino)</td>
+<td>実装依存</td>
+<td>実装依存</td>
+<td>SAI capability 照会結果に従う</td>
+</tr>
+<tr>
+<td>marvell-prestera</td>
+<td>一部 SKU で SW のみ</td>
+<td>SW モードでは<strong>なし</strong></td>
+<td><code>use_software_bfd = true</code> で動くケースあり</td>
+</tr>
+<tr>
+<td>vs (シミュレーション)</td>
+<td>なし</td>
+<td>SW モードでは<strong>なし</strong></td>
+<td>テスト環境では FRR 経路</td>
+</tr>
+</tbody>
+</table>
+<p>上表は SAI 実装の現状を示すもので、<code>bfdorch.cpp</code> 内の明示的な vendor 文字列比較ではない。<code>bfdorch</code> は ASIC vendor を直接見ず、SAI capability 動的照会のみで分岐する点に注意。</p>
+<h3 id="async">通知の async 配信タイミング差<a class="headerlink" href="#async" title="Permanent link">&para;</a></h3>
+<p>HW BFD 経路では SAI 通知が ASIC 内のタイマ精度に依存する。broadcom 系は数百 μs 〜 ms 単位、mellanox 系は <code>detect_multiplier × rx_interval</code> に従う。<code>"Down" → "Up"</code> 遷移までの遅延が ASIC vendor 差で 1〜数百 ms 揺れる。STATE_DB を polling する consumer (例 <code>vnetorch</code>) は <code>Init</code> 状態を観測する可能性が vendor によって異なる。</p>
+<!-- /platform -->
+
 <h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../bfd-session/"><code>BFD_SESSION</code></a> — BFD セッション設定パラメータ</li>
@@ -35231,8 +35512,11 @@
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:h1">
+<p><code>sonic-swss/orchagent/bfdorch.cpp</code> (L116-205 use_software_bfd 分岐、L270-303 BFD 通知 capability 照会、L482-542 HW_LOOKUP_VALID 分岐、L755-791 BgpGlobalStateOrch::offload_supported)。<code>bfdorch.cpp</code> 全 841 行で <code>platform</code> / <code>sub_platform</code> の static 比較は 0 件。<a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:h1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p><code>sonic-swss/orchagent/bfdorch.cpp</code> (L49-55 session_state_lookup, L57-88 constructor/cleanup, L220-268 SAI 通知受信/hset, L305-575 create_bfd_session/fvVector 書込み, L564-567 STATE_DB set). <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-swss/orchagent/bfdorch.cpp</code> (L49-55 session_state_lookup, L57-88 constructor/cleanup, L220-268 SAI 通知受信/hset, L305-575 create_bfd_session/fvVector 書込み, L564-567 STATE_DB set). <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

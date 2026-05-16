@@ -24070,7 +24070,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#redis-pubsub-keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Redis PUBSUB / keyspace notification)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Redis PUBSUB / keyspace notification)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register_callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読登録 (register_callbacks)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドラ動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace notification 詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド
@@ -24137,7 +24220,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -24176,7 +24259,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込みコマンドと改行コード処理
@@ -24231,7 +24314,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙の前提
@@ -24247,7 +24330,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -24269,7 +24352,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -24325,7 +24408,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         範囲外 (誤解されやすい隣接テーブル)
@@ -24341,7 +24424,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -24364,7 +24447,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         フリーフォームフィールド
@@ -24375,7 +24458,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         複合条件
@@ -24391,7 +24474,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         書込み順序依存
@@ -24403,7 +24486,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         依存関係マップ
@@ -24414,7 +24497,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         書込み順序ルール
@@ -24425,7 +24508,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         タイミング制約
@@ -24452,7 +24535,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -24463,7 +24546,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -24474,7 +24557,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -24485,7 +24568,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_24" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24497,7 +24580,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_25" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24508,7 +24591,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_26" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24519,7 +24602,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_23" class="md-nav__link">
+  <a href="#_27" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -24535,7 +24618,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_24" class="md-nav__link">
+  <a href="#_28" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -24663,7 +24746,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_25" class="md-nav__link">
+  <a href="#_29" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -24674,7 +24757,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_26" class="md-nav__link">
+  <a href="#_30" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -24702,7 +24785,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_27" class="md-nav__link">
+  <a href="#_31" class="md-nav__link">
     <span class="md-ellipsis">
       
         根拠（コード単位）
@@ -24713,10 +24796,60 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_28" class="md-nav__link">
+  <a href="#_32" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込スキャン結果
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実際に発生する副作用 (Redis 外)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        観測手段が限定される影響
       
     </span>
   </a>
@@ -34974,7 +35107,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#redis-pubsub-keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Redis PUBSUB / keyspace notification)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Redis PUBSUB / keyspace notification)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register_callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読登録 (register_callbacks)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドラ動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace notification 詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド
@@ -35041,7 +35257,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -35080,7 +35296,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込みコマンドと改行コード処理
@@ -35135,7 +35351,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙の前提
@@ -35151,7 +35367,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -35173,7 +35389,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35229,7 +35445,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         範囲外 (誤解されやすい隣接テーブル)
@@ -35245,7 +35461,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -35268,7 +35484,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         フリーフォームフィールド
@@ -35279,7 +35495,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         複合条件
@@ -35295,7 +35511,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         書込み順序依存
@@ -35307,7 +35523,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         依存関係マップ
@@ -35318,7 +35534,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         書込み順序ルール
@@ -35329,7 +35545,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         タイミング制約
@@ -35356,7 +35572,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35367,7 +35583,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35378,7 +35594,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35389,7 +35605,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_24" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35401,7 +35617,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_25" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -35412,7 +35628,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_26" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -35423,7 +35639,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_23" class="md-nav__link">
+  <a href="#_27" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35439,7 +35655,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_24" class="md-nav__link">
+  <a href="#_28" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -35567,7 +35783,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_25" class="md-nav__link">
+  <a href="#_29" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -35578,7 +35794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_26" class="md-nav__link">
+  <a href="#_30" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -35606,7 +35822,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_27" class="md-nav__link">
+  <a href="#_31" class="md-nav__link">
     <span class="md-ellipsis">
       
         根拠（コード単位）
@@ -35617,10 +35833,60 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_28" class="md-nav__link">
+  <a href="#_32" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込スキャン結果
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実際に発生する副作用 (Redis 外)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        観測手段が限定される影響
       
     </span>
   </a>
@@ -35677,7 +35943,121 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BANNER_MESSAGE|global
 </span></code></pre></div>
 <p>シングルトン (<code>global</code> の 1 行のみ)。</p>
-<h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- pubsub -->
+<h2 id="redis-pubsub-keyspace-notification">通信メカニズム (Redis PUBSUB / keyspace notification)<a class="headerlink" href="#redis-pubsub-keyspace-notification" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-host-services/scripts/hostcfgd</code> の <code>BannerCfg</code> クラス全体 (2044-2117) + <code>register_callbacks()</code> (2480-2521) 精読、<code>sonic-buildimage/files/image_config/bannerconfig/banner-config.sh</code> 精読 (2026-05-15)<br />
+詳細証跡: <code>meta/_intermediate/cdb-flow/banner-message-pubsub.md</code></p>
+</blockquote>
+<h3 id="_3">購読方式<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p><code>hostcfgd</code> は <code>swsscommon.ConfigDBConnector</code> の <code>subscribe(table, callback)</code> でハンドラを登録する方式を採用する。<code>swsscommon.SubscriberStateTable</code> / <code>ConsumerStateTable</code> / <code>NotificationConsumer</code> を<strong>直接は使わず</strong>、<code>ConfigDBConnector.listen()</code> が内部で Redis keyspace 通知 (<code>__keyspace@4__:BANNER_MESSAGE|*</code> の PSUBSCRIBE) を購読してテーブル名一致のコールバックへディスパッチする。<code>BANNER_MESSAGE</code> テーブルの購読者は <code>hostcfgd.BannerCfg</code> ただ 1 つ。APPL_DB 中継・SAI 経由・NotificationProducer 経由は一切ない。</p>
+<h3 id="register_callbacks">購読登録 (register_callbacks)<a class="headerlink" href="#register_callbacks" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># sonic-host-services/scripts/hostcfgd:2519-2521</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Handle BANNER_MESSAGE changes</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="bp">self</span><span class="o">.</span><span class="n">config_db</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">swsscommon</span><span class="o">.</span><span class="n">CFG_BANNER_MESSAGE_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>                         <span class="n">make_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">banner_handler</span><span class="p">))</span>
+</span></code></pre></div>
+<p><code>swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME</code> は C++ 側で定義された <code>"BANNER_MESSAGE"</code> 定数。channel ベースの <code>PUBLISH/SUBSCRIBE</code> は使わず、CONFIG_DB の <code>HSET</code> を契機とする Redis keyspace notification (<code>notify-keyspace-events</code>) で通知される。TTL は設定されない (永続前提)。</p>
+<h3 id="_4">ハンドラ動作<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>動作</th>
+<th>副作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>banner_handler(key, op, data)</code> (hostcfgd:2442)</td>
+<td><code>op</code> は無視、<code>(key, data)</code> を <code>BannerCfg.banner_message()</code> に転送</td>
+<td>LOG_INFO <code>'BANNER_MESSAGE table handler...'</code></td>
+</tr>
+<tr>
+<td><code>BannerCfg.banner_message(key, data)</code> (hostcfgd:2084)</td>
+<td><code>data</code> 内 1 フィールドでもキャッシュと差分あれば <code>systemctl restart banner-config</code> 発行 → 成功時のみキャッシュ更新</td>
+<td><code>banner-config.service</code> (oneshot) を ExecStart</td>
+</tr>
+<tr>
+<td><code>banner-config.service</code> 起動</td>
+<td><code>/usr/bin/banner-config.sh</code> 実行</td>
+<td><code>/etc/issue.net</code> → <code>/etc/issue</code> → <code>/etc/motd</code> → <code>/etc/logout_message</code> を順次 <code>echo -e ... &gt;</code> 上書き</td>
+</tr>
+</tbody>
+</table>
+<p>差分判定は早期 break (<code>for k,v in data.items(): if v != self.cache.get(k): update_required=True; break</code>) で、complete equality ではなく 1 つでも違えば restart 発行。<code>run_cmd</code> 失敗時はキャッシュ未更新のため、次回 CONFIG_DB 変化 (同値でも) で自動再試行される。</p>
+<h3 id="_5">通信シーケンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config banner motd &quot;...&quot; (CLI)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  └─ sonic-db-cli CONFIG_DB HSET &#39;BANNER_MESSAGE|global&#39; motd &quot;...&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>       └─ Redis keyspace notification: __keyspace@4__:BANNER_MESSAGE|global hset
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>            └─ hostcfgd ConfigDBConnector.listen() ループが受信
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>                 └─ make_callback wrapper: (table, key, data) → (key, op=&quot;SET&quot;, data)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>                      └─ banner_handler(&quot;global&quot;, &quot;SET&quot;, HGETALL BANNER_MESSAGE|global)
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>                           └─ BannerCfg.banner_message(&quot;global&quot;, data)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>                                ├─ type(data) != dict → silent return
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>                                ├─ キャッシュ差分なし → no-op (restart skip)
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>                                └─ 差分あり → systemctl restart banner-config
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>                                     └─ banner-config.service (Type=oneshot, RemainAfterExit=no)
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>                                          └─ /usr/bin/banner-config.sh
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>                                               ├─ sonic-db-cli HGET state/login/motd/logout (再読込)
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>                                               ├─ [[ $STATE == &quot;enabled&quot; ]] ガード
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>                                               └─ echo -e &quot;$LOGIN&quot;  &gt; /etc/issue.net
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>                                                  echo -e &quot;$LOGIN&quot;  &gt; /etc/issue
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>                                                  echo -e &quot;$MOTD&quot;   &gt; /etc/motd
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>                                                  echo -e &quot;$LOGOUT&quot; &gt; /etc/logout_message
+</span></code></pre></div>
+<h3 id="keyspace-notification">keyspace notification 詳細<a class="headerlink" href="#keyspace-notification" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>購読 API</td>
+<td><code>ConfigDBConnector.subscribe('BANNER_MESSAGE', callback)</code> (hostcfgd:2519-2521)</td>
+</tr>
+<tr>
+<td>通知方式</td>
+<td>Redis keyspace notification (内部で PSUBSCRIBE <code>__keyspace@4__:BANNER_MESSAGE\|*</code>)</td>
+</tr>
+<tr>
+<td>通知種別</td>
+<td><code>hset</code> / <code>del</code> (HMSET も hset 通知) — op 種別は区別せず <code>data is None</code> で <code>SET</code> / <code>DEL</code> を識別</td>
+</tr>
+<tr>
+<td>dbId</td>
+<td>4 (CONFIG_DB)</td>
+</tr>
+<tr>
+<td>Select timeout</td>
+<td><code>ConfigDBConnector.listen()</code> 内部 (明示タイムアウトなし、Redis subscribe ブロッキング)</td>
+</tr>
+<tr>
+<td>起動時スナップショット</td>
+<td><code>BannerCfg.load()</code> で state/login/motd/logout 4 フィールドを順次 <code>banner_message()</code> に渡す (hostcfgd:2079-2082) — 最大 4 回 <code>systemctl restart banner-config</code> が連続発行され得る</td>
+</tr>
+<tr>
+<td>実行時変更反映</td>
+<td>差分判定 → 1 フィールドでも差分があれば 1 回 restart。CLI で 4 フィールドを個別変更すると最大 4 回 restart</td>
+</tr>
+<tr>
+<td>ConsumerStateTable / NotificationProducer</td>
+<td>未使用 (<code>BANNER_MESSAGE</code> テーブルに対する他購読者・通知 producer なし)</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>なし (CONFIG_DB は永続前提)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">反映タイミング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB 書込み → keyspace 通知到達 → <code>banner_handler</code> 呼び出し → <code>systemctl restart banner-config</code> → <code>banner-config.sh</code> が CONFIG_DB を <code>sonic-db-cli HGET</code> で再読込 → 4 ファイル順次上書き、までを <code>O(秒)</code> で完了。新規 SSH / console 接続から新 banner が表示される。既存セッションへの影響なし (sshd / PAM の再起動・reload は不要)。<code>banner-config.sh</code> の 4 ファイル書込みは <code>set -e</code> のため途中失敗時は以降スキップで部分書込状態が残存する。</p>
+<!-- /pubsub -->
+
+<h2 id="_7">フィールド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35915,7 +36295,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_4">補足<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h3 id="_8">補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>部分書込</strong>: <code>banner-config.sh</code> の <code>set -e</code> により 4 ファイルのうち最初の失敗位置以降は書かれない。冪等性は次回 <code>systemctl restart</code> で 4 ファイル全再書込により担保される。</li>
 <li><strong>自動 retry</strong>: <code>hostcfgd</code> は <code>run_cmd</code> 失敗時にキャッシュを更新しないため、次回 CONFIG_DB 変化 (同じ値でも) で再 restart が走る。</li>
@@ -35969,7 +36349,7 @@
 <blockquote>
 <p><strong>注意</strong>: <code>/etc/logout_message</code> は Debian / Linux 標準にないファイル名で、SONiC が独自に導入したもの。実際に logout 時に cat されるかは shell プロファイル設定 (<code>/etc/skel/.bash_logout</code> 等) に依存する。</p>
 </blockquote>
-<h3 id="_5">書き込みコマンドと改行コード処理<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_9">書き込みコマンドと改行コード処理<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36154,7 +36534,7 @@
 <blockquote>
 <p><strong>注意</strong>: motd の表示文字 (ASCII アート骨格 + 警告文) は YANG default と init_cfg.json.j2 で等価だが、インデント空白と改行表現が異なる。実 DB には init_cfg.json.j2 の <code>\n</code> 形式が書き込まれる。</p>
 </blockquote>
-<h3 id="_6">暗黙の前提<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_10">暗黙の前提<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>/etc/issue</code> / <code>/etc/issue.net</code> / <code>/etc/motd</code> / <code>/etc/logout_message</code> の所有者・パーミッションは Debian デフォルト (<code>root:root 0644</code>)。<code>banner-config.sh</code> は明示的に <code>chmod</code> / <code>chown</code> しないため、Debian インストール時の値を継承する</li>
 <li><code>state=enabled</code> で上書きしたファイルは <code>state=disabled</code> に戻しても復元されない (CONFIG_DB のみ無効化される)</li>
@@ -36163,7 +36543,7 @@
 <p>詳細な定数一覧 (systemd 依存関係、改行処理の細部、CFG_BANNER_MESSAGE_TABLE_NAME の C++ 由来) は <code>meta/_intermediate/cdb-flow/banner-message-constants.md</code> を参照。</p>
 <!-- /constants -->
 
-<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_11">購読者<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>hostcfgd</code> (<code>host-services</code> パッケージ)。ConfigDBConnector で <code>BANNER_MESSAGE/global</code> を listen し、<code>/etc/issue</code>, <code>/etc/motd</code>, <code>/etc/issue.net</code> をテンプレ展開して書き換える</li>
 </ul>
@@ -36173,7 +36553,7 @@
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-banner</code></li>
 </ul>
 <!-- cdb-exceptions -->
-<h2 id="_8">例外条件・特殊挙動<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -36316,7 +36696,7 @@
 <blockquote>
 <p>cold boot 時の初回 banner 反映は <code>hostcfgd</code> の <code>BannerCfg.load()</code> (hostcfgd:2057-2082) では <code>restart</code> を呼ばず、systemd 側で <code>banner-config.service</code> が <code>WantedBy=sonic.target</code> により独立に oneshot 起動する経路に依存する。</p>
 </blockquote>
-<h3 id="_9">範囲外 (誤解されやすい隣接テーブル)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_13">範囲外 (誤解されやすい隣接テーブル)<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong><code>SSH_SERVER</code></strong>: <code>hostcfgd</code> <code>SshCfg</code> が購読するが、<code>Banner</code> ディレクティブの値 (<code>/etc/issue.net</code> パス) はビルド時固定で CONFIG_DB に流れない。<code>BannerCfg</code> と CONFIG_DB レベルの読み合いはない。両者は「<code>sshd_config</code> の <code>Banner</code> 有効化」というビルド時前提だけで間接的に繋がる</li>
 <li><strong><code>AAA</code> / <code>TACPLUS</code> / <code>RADIUS</code> / <code>LDAP</code></strong>: PAM stack を共有するが、<code>pam_motd</code> 制御は別 PAM 設定で <code>BannerCfg</code> から触らない</li>
@@ -36327,7 +36707,7 @@
 <!-- /cross-refs -->
 
 <!-- value-behavior -->
-<h2 id="_10">値依存挙動マトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_14">値依存挙動マトリクス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <h3 id="state-enum-enableddisabled"><code>state</code> (enum <code>enabled</code>/<code>disabled</code>)<a class="headerlink" href="#state-enum-enableddisabled" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36350,11 +36730,11 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_11">フリーフォームフィールド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_15">フリーフォームフィールド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>login</code> / <code>motd</code> / <code>logout</code> — freeform string。<code>state=enabled</code> の場合のみ評価される</li>
 </ul>
-<h3 id="_12">複合条件<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_16">複合条件<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>state=enabled</code> のときのみ <code>login</code>/<code>motd</code>/<code>logout</code> フィールドが評価される。<code>state=disabled</code> では他フィールドの値に関わらずファイル更新なし</li>
 <li><code>hostcfgd</code> はキャッシュと値が変化した場合のみ <code>systemctl restart banner-config</code> を発行 (重複再起動抑制) (<code>hostcfgd:2074</code>)</li>
@@ -36362,24 +36742,24 @@
 <!-- /value-behavior -->
 
 <!-- ordering -->
-<h2 id="_13">書込み順序依存<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
-<h3 id="_14">依存関係マップ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config-setup.service (起動)
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  └─► database.service (Redis CONFIG_DB)
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        └─► banner-config.service (Requires + BindsTo)
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>hostcfgd.load()  ─── 順次呼び出し ───
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  ├─► PASSW_HARDENING  → PAM common-password 書換え
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  ├─► SSH_SERVER       → sshd_config 書換え + sshd reload
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  ├─► (… 他テーブル …)
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>  └─► BANNER_MESSAGE   → BannerCfg.load() → state/login/motd/logout 順
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        └─► systemctl restart banner-config (変化時のみ)
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>              └─► banner-config.sh
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>                    └─► /etc/issue.net → /etc/issue → /etc/motd → /etc/logout_message
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>                          └─► sshd は接続毎に /etc/issue.net を再読込 (restart 不要)
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>                          └─► pam_motd.so がログイン時に /etc/motd を再読込 (PAM reload 不要)
+<h2 id="_17">書込み順序依存<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h3 id="_18">依存関係マップ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config-setup.service (起動)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─► database.service (Redis CONFIG_DB)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        └─► banner-config.service (Requires + BindsTo)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>hostcfgd.load()  ─── 順次呼び出し ───
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  ├─► PASSW_HARDENING  → PAM common-password 書換え
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  ├─► SSH_SERVER       → sshd_config 書換え + sshd reload
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  ├─► (… 他テーブル …)
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  └─► BANNER_MESSAGE   → BannerCfg.load() → state/login/motd/logout 順
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        └─► systemctl restart banner-config (変化時のみ)
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>              └─► banner-config.sh
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>                    └─► /etc/issue.net → /etc/issue → /etc/motd → /etc/logout_message
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>                          └─► sshd は接続毎に /etc/issue.net を再読込 (restart 不要)
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>                          └─► pam_motd.so がログイン時に /etc/motd を再読込 (PAM reload 不要)
 </span></code></pre></div>
-<h3 id="_15">書込み順序ルール<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_19">書込み順序ルール<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36421,7 +36801,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_16">タイミング制約<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_20">タイミング制約<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>boot 時</strong>: <code>banner-config.service</code> (<code>WantedBy=sonic.target</code>) は sonic.target ramp-up 中に oneshot で 1 度実行される。最初の SSH 接続が <code>banner-config.service</code> 完了より先に到達した場合は Debian デフォルト banner が出るのみで機能影響はない (<code>hostcfgd:2060-2061</code> のコメント参照)。</li>
 <li><strong>runtime 変更</strong>: CONFIG_DB 変更検知から <code>banner-config.sh</code> 完了まで O(秒)。<code>/etc/issue.net</code> → <code>/etc/issue</code> → <code>/etc/motd</code> → <code>/etc/logout_message</code> の個別書込み間に race window があり、新 banner + 旧 motd が短時間混在し得る (banner-config.sh:13-16)。</li>
@@ -36438,36 +36818,36 @@
 
 <!-- ref-triangle:start -->
 
-<h2 id="_17">関連リファレンス<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h2 id="_21">関連リファレンス<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-banner/"><code>sonic-banner</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_18">引用元<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
-<h2 id="_19">関連ページ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
+<h2 id="_22">引用元<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
+<h2 id="_23">関連ページ<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_20">運用ヒント<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
-<h3 id="_21">典型値<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<h2 id="_24">運用ヒント<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
+<h3 id="_25">典型値<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>BANNER_MESSAGE|global</code>。</li>
 <li><code>state</code>: <code>enabled</code>、<code>login</code> / <code>motd</code> / <code>logout</code> に短い文字列を設定。</li>
 </ul>
-<h3 id="_22">よくある誤設定<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<h3 id="_26">よくある誤設定<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
 <ul>
 <li>改行を含めるときに JSON エスケープを忘れて適用が失敗する。</li>
 </ul>
-<h3 id="_23">確認コマンド<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BANNER_MESSAGE|global&#39;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>banner
+<h3 id="_27">確認コマンド<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BANNER_MESSAGE|global&#39;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>banner
 </span></code></pre></div>
 <!-- /ops-hint -->
 
 <!-- runtime-trace -->
-<h2 id="_24">実コンテナ動作トレース<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
+<h2 id="_28">実コンテナ動作トレース<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <p><code>hostcfgd</code> の <code>BannerMessageHandler</code> が CONFIG_DB の <code>BANNER_MESSAGE</code> テーブルを購読する。</p>
 <p><code>BANNER_MESSAGE</code> テーブルの key は <code>login</code> / <code>logout</code> / <code>motd</code>。</p>
@@ -36506,11 +36886,11 @@
 <ul>
 <li><code>init_cfg.json.j2</code> に <code>BANNER_MESSAGE</code> セクションはないが、空エントリがデフォルト</li>
 </ul>
-<h3 id="_25">ハードコードデフォルト<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<h3 id="_29">ハードコードデフォルト<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_26">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<h3 id="_30">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>
@@ -36520,7 +36900,7 @@
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
 <p><strong>結論: プラットフォーム差なし</strong>（multi-asic / chassis / ベンダー固有 banner すべて該当なし）。</p>
 <p><code>BANNER_MESSAGE</code> はホスト名前空間限定のシングルトンテーブルで、購読者である <code>hostcfgd</code> <code>BannerCfg</code> と <code>banner-config.sh</code> はいずれも Linux ホスト上のテキストファイル (<code>/etc/issue</code> / <code>/etc/issue.net</code> / <code>/etc/motd</code> / <code>/etc/logout_message</code>) を書き換えるだけで、SAI / ASIC / chassis ハードウェアには一切タッチしない。</p>
-<h3 id="_27">根拠（コード単位）<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h3>
+<h3 id="_31">根拠（コード単位）<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36562,12 +36942,122 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_28">補足<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h3>
+<h3 id="_32">補足<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h3>
 <ul>
 <li>本判定の詳細は <code>meta/_intermediate/cdb-flow/banner-message-platform.md</code> を参照。</li>
 <li>multi-asic chassis (例: VoQ chassis supervisor + linecard 構成) においても <code>banner-config.service</code> はホスト側に 1 インスタンスのみ存在し、すべての SSH / console セッションで同じバナーが表示される。</li>
 </ul>
 <!-- /platform -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><strong>結論: 副次 Redis DB (APPL_DB / STATE_DB / COUNTERS_DB / その他) への書込は一切なし</strong>。</p>
+<p><code>BANNER_MESSAGE</code> テーブルの変更時に発生する副作用は、Redis 上の他 DB ではなく <strong>Linux ホスト OS のテキストファイル 4 つ</strong> および <strong>systemd unit 1 つの再起動</strong> に閉じる。状態可視化用の STATE_DB エントリ (例: <code>BANNER_STATUS|*</code>) も存在しないため、適用結果の観測は <code>cat /etc/issue</code> 等のファイル参照と <code>systemctl status banner-config</code> のみで行う。</p>
+<h3 id="_33">副次書込スキャン結果<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>走査対象</th>
+<th>パス</th>
+<th>副次 DB 書込</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BannerCfg</code> クラス本体</td>
+<td><code>sonic-host-services/scripts/hostcfgd:2044-2119</code></td>
+<td><strong>なし</strong></td>
+<td><code>set(</code> / <code>hset</code> / <code>publish</code> / <code>Producer</code> / <code>Notification</code> / <code>STATE_DB</code> / <code>APPL_DB</code> / <code>COUNTERS_DB</code> のいずれも 0 件</td>
+</tr>
+<tr>
+<td><code>banner_handler</code> ディスパッチ</td>
+<td><code>hostcfgd:2442-2444</code></td>
+<td><strong>なし</strong></td>
+<td><code>LOG_INFO</code> 出力後 <code>bannermsgcfg.banner_message()</code> に丸投げ</td>
+</tr>
+<tr>
+<td>CONFIG_DB 購読登録</td>
+<td><code>hostcfgd:2519-2521</code></td>
+<td><strong>なし</strong></td>
+<td><code>config_db.subscribe(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, ...)</code> の購読のみ</td>
+</tr>
+<tr>
+<td><code>banner-config.sh</code> Redis 操作</td>
+<td><code>sonic-buildimage/files/image_config/bannerconfig/banner-config.sh:1-18</code></td>
+<td><strong>なし</strong></td>
+<td><code>sonic-db-cli CONFIG_DB HGET</code> を 4 回呼ぶのみ (読み出し)。<code>HSET</code> / <code>SET</code> / <code>PUBLISH</code> 不在</td>
+</tr>
+<tr>
+<td><code>banner-config.service</code> 依存</td>
+<td><code>banner-config.service:1-14</code></td>
+<td><strong>なし</strong></td>
+<td><code>BindsTo=database.service</code> は Redis 起動順序の確保のみ</td>
+</tr>
+<tr>
+<td>sonic-swss mgrd / orchagent</td>
+<td><code>sonic-swss/</code> 全体</td>
+<td><strong>なし</strong></td>
+<td><code>BANNER_MESSAGE</code> を購読する mgrd / orchagent 不在</td>
+</tr>
+<tr>
+<td>sonic-utilities CLI 書込</td>
+<td><code>sonic-utilities/config/main.py:10019,10030,10041,10052</code></td>
+<td><strong>なし</strong></td>
+<td><code>config_db.mod_entry('BANNER_MESSAGE', 'global', ...)</code> で CONFIG_DB のみ更新</td>
+</tr>
+</tbody>
+</table>
+<h3 id="redis">実際に発生する副作用 (Redis 外)<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>副作用</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>systemd unit 再起動</td>
+<td><code>systemctl restart banner-config</code> (差分検出時のみ)</td>
+<td><code>hostcfgd:2111</code></td>
+</tr>
+<tr>
+<td>Linux ファイル書込</td>
+<td><code>echo -e ... &gt; /etc/issue</code> (LOGIN_BANNER_PATH)</td>
+<td><code>banner-config.sh:13</code></td>
+</tr>
+<tr>
+<td>Linux ファイル書込</td>
+<td><code>echo -e ... &gt; /etc/issue.net</code> (LOGIN_NET_BANNER_PATH)</td>
+<td><code>banner-config.sh:12</code></td>
+</tr>
+<tr>
+<td>Linux ファイル書込</td>
+<td><code>echo -e ... &gt; /etc/motd</code> (MOTD_PATH)</td>
+<td><code>banner-config.sh:14</code></td>
+</tr>
+<tr>
+<td>Linux ファイル書込</td>
+<td><code>echo -e ... &gt; /etc/logout_message</code> (LOGOUT_BANNER_PATH)</td>
+<td><code>banner-config.sh:15</code></td>
+</tr>
+<tr>
+<td>インメモリ更新</td>
+<td><code>self.cache[k] = v</code> (hostcfgd プロセス内、差分判定用)</td>
+<td><code>hostcfgd:2117-2118</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_34">観測手段が限定される影響<a class="headerlink" href="#_34" title="Permanent link">&para;</a></h3>
+<ul>
+<li>STATE_DB に <code>BANNER_STATUS|*</code> 相当のエントリが存在しないため、<code>sonic-db-cli STATE_DB ...</code> 経由では banner 適用結果を取得できない</li>
+<li>適用済みかどうかの確認は <strong>ホスト OS ファイル参照</strong> または <strong>systemd journal (<code>journalctl -u banner-config</code>)</strong> に閉じる</li>
+<li>比較として <code>FipsCfg</code> (<code>hostcfgd:1759-1821</code>) は <code>STATE_DB</code> の <code>FIPS_STATS|state</code> を <code>hset</code> で公開するが、<code>BannerCfg</code> には同等のパターンが意図的に実装されていない</li>
+</ul>
+<p>詳細な走査コマンドと grep ヒット一覧は <code>meta/_intermediate/cdb-flow/banner-message-side.md</code> を参照。</p>
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

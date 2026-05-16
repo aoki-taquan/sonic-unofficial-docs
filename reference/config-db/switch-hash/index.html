@@ -28772,6 +28772,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash-lag_hash-field-set-saiasic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash / lag_hash field set — コード側デフォルトなし（SAI/ASIC 依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash_algorithm-lag_hash_algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash_algorithm / lag_hash_algorithm — コード側デフォルトなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryswitchhashdefaults-oid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        querySwitchHashDefaults() は OID キャッシュのみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic-capability-set-warn-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC capability 不在時 — SET は warn skip でエラーにならない
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28950,7 +29011,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -28961,7 +29022,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -34852,6 +34913,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash-lag_hash-field-set-saiasic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash / lag_hash field set — コード側デフォルトなし（SAI/ASIC 依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash_algorithm-lag_hash_algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash_algorithm / lag_hash_algorithm — コード側デフォルトなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryswitchhashdefaults-oid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        querySwitchHashDefaults() は OID キャッシュのみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic-capability-set-warn-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC capability 不在時 — SET は warn skip でエラーにならない
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35030,7 +35152,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -35041,7 +35163,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -35226,6 +35348,33 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- defaults -->
+<h2 id="_14">コード由来の暗黙デフォルト<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/switch-hash-defaults.md -->
+
+<h3 id="ecmp_hash-lag_hash-field-set-saiasic"><code>ecmp_hash</code> / <code>lag_hash</code> field set — コード側デフォルトなし（SAI/ASIC 依存）<a class="headerlink" href="#ecmp_hash-lag_hash-field-set-saiasic" title="Permanent link">&para;</a></h3>
+<p><code>SwitchHash</code> 構造体 (<code>sonic-swss/orchagent/switch/switch_container.h:18-26</code>) は <code>ecmp_hash</code> / <code>lag_hash</code> をいずれも <code>is_set = false</code> で初期化する。CONFIG_DB の <code>SWITCH_HASH|GLOBAL</code> エントリにフィールドが含まれない場合、<code>setSwitchHash()</code> (<code>switchorch.cpp:789-822</code>) は SAI への書き込みを行わず、<strong>有効な hash field 集合は SAI ベンダー実装 / ASIC のデフォルト</strong>（<code>SAI_SWITCH_ATTR_ECMP_HASH</code> / <code>SAI_SWITCH_ATTR_LAG_HASH</code> が指す hash オブジェクトの初期 <code>NATIVE_HASH_FIELD_LIST</code>）に従う。</p>
+<p><code>sonic-hash.yang</code> の <code>ecmp_hash</code> / <code>lag_hash</code> leaf-list には <code>default</code> 文が無く、YANG レベルでもデフォルトは規定されていない。SONiC orchagent 自身は IPv4 / IPv6 別の hash-field 集合をハードコードしておらず、<code>hash-field</code> enum も <code>SRC_IP</code> / <code>DST_IP</code> の単一集合で IPv4/IPv6 を区別しない（IPv6 対応は ASIC 側で自動的に handled）。</p>
+<h3 id="ecmp_hash_algorithm-lag_hash_algorithm"><code>ecmp_hash_algorithm</code> / <code>lag_hash_algorithm</code> — コード側デフォルトなし<a class="headerlink" href="#ecmp_hash_algorithm-lag_hash_algorithm" title="Permanent link">&para;</a></h3>
+<p>同じくフィールド未指定時は SAI 側のデフォルトアルゴリズム（典型的には <code>SAI_HASH_ALGORITHM_CRC</code>）が適用される。orchagent 経路でのハードコードデフォルトは存在しない。</p>
+<h3 id="queryswitchhashdefaults-oid"><code>querySwitchHashDefaults()</code> は OID キャッシュのみ<a class="headerlink" href="#queryswitchhashdefaults-oid" title="Permanent link">&para;</a></h3>
+<p><code>SwitchOrch</code> コンストラクタ (<code>switchorch.cpp:169</code>) が起動時に <code>querySwitchHashDefaults()</code> (<code>switchorch.cpp:2030-2043</code>) を呼ぶが、これは <code>SAI_SWITCH_ATTR_ECMP_HASH</code> / <code>SAI_SWITCH_ATTR_LAG_HASH</code> の OID を <code>m_switchHashDefaults</code> にキャッシュする<strong>のみ</strong>で、SAI へ新規 SET は発行しない。OID 取得に失敗しても <code>LOG_WARN("Failed to get switch ECMP/LAG hash OID")</code> のみで起動は継続する。</p>
+<h3 id="asic-capability-set-warn-skip">ASIC capability 不在時 — SET は warn skip でエラーにならない<a class="headerlink" href="#asic-capability-set-warn-skip" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">swCap</span><span class="p">.</span><span class="n">isSwitchEcmpHashSupported</span><span class="p">())</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">swCap</span><span class="p">.</span><span class="n">validateSwitchHashFieldCap</span><span class="p">(</span><span class="n">hash</span><span class="p">.</span><span class="n">ecmp_hash</span><span class="p">.</span><span class="n">value</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">LOG_ERROR</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">setSwitchHashFieldListSai</span><span class="p">(</span><span class="n">hash</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">))</span><span class="w">                  </span><span class="p">{</span><span class="w"> </span><span class="n">LOG_ERROR</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">cfgUpd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">else</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">{</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="n">SWSS_LOG_WARN</span><span class="p">(</span><span class="s">&quot;Switch ECMP hash configuration is not supported: skipping ...&quot;</span><span class="p">);</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>capability 機構自体が ASIC で未実装の場合 (<code>isSwitchEcmpHashSupported() / isSwitchLagHashSupported() / isSwitch*HashAlgorithmSupported()</code> が <code>false</code> を返す場合)、ユーザの SET は<strong>エラーにならず</strong>、警告ログのみで握り潰され SAI へ反映されない。<code>setSwitchHash()</code> 全体は <code>cfgUpd=false</code> のまま帰り、内部キャッシュ (<code>swHlpr.setSwHash()</code>) も更新されない。</p>
+<p>これに対し「capability 機構は対応しているが指定された field 集合 / アルゴリズムが ASIC capability セットに含まれない」場合は <code>LOG_ERROR("Failed to validate switch ECMP/LAG hash: capability is not supported")</code> で <code>return false</code> → 上位で <code>"Failed to set switch hash: ASIC and CONFIG DB are diverged"</code> ログ（既存「例外条件」節に記載）。両者は混同しやすいので注意。</p>
+<!-- /defaults -->
+
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
@@ -35319,9 +35468,9 @@
 <p>db_migrator.py での SWITCH_HASH マイグレーションなし</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_14">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_15">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_15">死活・デッドコード<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_16">死活・デッドコード<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
 
