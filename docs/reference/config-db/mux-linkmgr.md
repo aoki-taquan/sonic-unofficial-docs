@@ -314,6 +314,55 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-side-effects.md`
+> ソース: `sonic-linkmgrd/src/DbInterface.cpp` L463-473、`sonic-swss-common/common/schema.h` L459-460
+
+`MUX_LINKMGR` パラメータを linkmgrd が読み取った結果、発生する **他 DB への副次書込** を示す。
+
+### STATE_DB への書込
+
+| テーブル | キー形式 | フィールド | 値 | トリガ | 証跡 |
+|---------|---------|-----------|-----|--------|------|
+| `MUX_LINKMGR_TABLE` | `<ifname>` (例: `Ethernet0`) | `state` | `active` / `standby` / `unknown` / `wait` | linkmgrd ステートマシン遷移時 (`setMuxLinkmgrState()`) | `DbInterface.cpp:471` |
+| `MUX_METRICS_TABLE` | `<ifname>` | `linkmgrd_switch_<state>_start` / `_end` | タイムスタンプ (ISO8601) | MUX 切替開始・完了時 (`handlePostMuxMetrics()`) | `DbInterface.cpp:484-` |
+| `MUX_SWITCH_CAUSE` | `<ifname>` | `cause` | 切替原因文字列 | ステートマシン遷移原因記録時 | `DbInterface.h:63` |
+
+`MUX_LINKMGR_TABLE` は `show mux status` CLI が参照する最終的な linkmgrd 状態表示用テーブル。
+
+### APPL_DB への書込 (xcvrd 通信)
+
+linkmgrd は `MUX_LINKMGR` の `interval_v4` / `negative_signal_count` 等の変更によりプローバ動作が変化した結果、以下の APPL_DB テーブルへコマンドを書込む。
+
+| テーブル | キー | フィールド | 値 | 目的 | 証跡 |
+|---------|------|-----------|-----|------|------|
+| `MUX_CABLE_COMMAND_TABLE` (APP_DB) | `<ifname>` | `command` | `"probe"` | xcvrd に i2c 経由で MUX ハードウェア状態の読取を指示 | `DbInterface.cpp:443` |
+| `FORWARDING_STATE_COMMAND` (APP_DB) | `<ifname>` | `command` | `"probe"` | xcvrd に gRPC 経由でトランシーバのフォワーディング状態確認を指示 | `DbInterface.cpp:455` |
+
+xcvrd はこれらコマンドを受信後、以下のレスポンステーブルに結果を書き戻す:
+
+- `MUX_CABLE_RESPONSE_TABLE` (APP_DB): MUX state probe レスポンス
+- `FORWARDING_STATE_RESPONSE` (APP_DB): forwarding state probe レスポンス
+
+### 間接連鎖の整理
+
+```
+CONFIG_DB MUX_LINKMGR 変更
+  ↓ linkmgrd がプローバタイマー再設定
+APPL_DB MUX_CABLE_COMMAND_TABLE / FORWARDING_STATE_COMMAND
+  ↓ xcvrd が i2c / gRPC でハードウェア確認
+APPL_DB MUX_CABLE_RESPONSE_TABLE / FORWARDING_STATE_RESPONSE
+  ↓ linkmgrd がステートマシン遷移判定
+STATE_DB MUX_LINKMGR_TABLE (state フィールド更新)
+         MUX_METRICS_TABLE (切替タイムスタンプ記録)
+```
+
+> `interval_v4` / `interval_v6` を変更しても即時 STATE_DB 書込は発生しない。次のプローバサイクル後にステート遷移が起きた場合のみ STATE_DB が更新される。
+
+<!-- /side-effects -->
+
 <!-- failure -->
 ## Phase D: 失敗挙動 (Failure Behavior)
 
@@ -353,3 +402,46 @@ linkmgrd は SAI を直接呼ばない。MUX switchover は orchagent を通じ�
 > **証跡**: `DbInterface.cpp:49` — `mMuxState = {"active", "standby", "unknown", "Error"}` で `Error` 文字列が明示的に定義されている。`MuxPort.cpp:279,335,391` で `"error"` → `MuxState::Error` への変換を確認。
 
 <!-- /failure -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`linkmgrd` は ASIC ベンダー識別子（broadcom / mellanox 等）を参照しない。プラットフォームプロファイルは **ケーブルタイプ** (`PortCableType`) によって決まる。`MUX_LINKMGR` フィールドの有効性・意味論はケーブルタイプによって以下のとおり異なる。
+
+### 識別方法
+
+`MuxManager::updatePortCableType()` が `MUX_CABLE|<port>.cable_type` フィールドを読み取り、ポートごとの `PortCableType` を決定する（`MuxManager.cpp:245-262`）。
+
+```
+cable_type == "active-standby"  →  PortCableType::ActiveStandby  (DualToR 標準)
+cable_type == "active-active"   →  PortCableType::ActiveActive   (Y-cable SmartNiC)
+それ以外                         →  ActiveStandby にフォールバック（MUXLOGERROR）
+```
+
+### フィールド有効性マトリクス
+
+| フィールド / container | Active-Standby | Active-Active | 備考 |
+|----------------------|---------------|--------------|------|
+| `LINK_PROBER.interval_v4` | 有効 (ICMP heartbeat 間隔) | 有効 | `DbInterface.cpp:1132` |
+| `LINK_PROBER.interval_v6` | 有効 | 有効 | `DbInterface.cpp:1134` |
+| `LINK_PROBER.positive_signal_count` | 有効 | 有効 | `DbInterface.cpp:1136` |
+| `LINK_PROBER.negative_signal_count` | 有効 | 有効 | `DbInterface.cpp:1138` |
+| `LINK_PROBER.use_well_known_mac` | **実質無効** | 有効 (well-known MAC 使用可否を制御) | `MuxManager.cpp:501` のガードにより Active-Standby では効果なし |
+| `LINK_PROBER.src_mac` | 有効 (ICMP 送信元 MAC 選択) | 有効 | `processSrcMac()` は全ポートに適用 |
+| `TIMED_OSCILLATION.oscillation_enabled` | 有効 (定期的な Active ToR 切替) | **限定的** | Active-Active では両 ToR が常時 Active のため切替の意味が異なる |
+| `TIMED_OSCILLATION.interval_sec` | 有効 | 限定的 | 同上 |
+| `MUXLOGGER.log_verbosity` | 有効 | 有効 | |
+| `SERVICE_MGMT.kill_radv` | 有効 | **効果不明** | `processMuxLinkmgrConfigNotifiction()` に `SERVICE_MGMT` キーの分岐なし (`DbInterface.cpp:1120-1214`) |
+
+### 差異詳細
+
+**Active-Standby のみ**: Server (Blade) IPv4 アドレスを ICMP probe 宛先として使用 (`MuxManager.cpp:193-195`)。MUX state は i2c 経由でハードウェアに問い合わせ (`probeMuxState()`)。`detach` モード設定は reject（`MuxPort.cpp:363-366`）。
+
+**Active-Active のみ**: SoC (NiC) IPv4 アドレスを gRPC 疎通確認に使用 (`MuxManager.cpp:216-218`)。MUX state はフォワーディング状態を gRPC 経由で問い合わせ (`probeForwardingState()`)。`failure` ステート（gRPC 障害時）あり (`MuxPort.cpp:304`)。`detach` モード（Detached 遷移）をサポート。初期化時に well-known MAC を生成・設定 (`MuxManager.cpp:501-507`)。
+
+### SmartSwitch DPU との関係
+
+`docker-mux` (linkmgrd) は `feature: subtype=="DualToR"` 環境専用デーモン。SmartSwitch の DPU ポートは `MUX_CABLE` テーブルに登録されず `MUX_LINKMGR` も参照されない。なお Active-Active ケーブルタイプは Y-cable SmartNiC 搭載の DualToR 向けであり、SmartSwitch DPU（`subtype=="SmartSwitch"`）とは別概念。
+
+詳細根拠は `meta/_intermediate/cdb-flow/mux-linkmgr-platform.md` を参照。
+<!-- /platform -->
