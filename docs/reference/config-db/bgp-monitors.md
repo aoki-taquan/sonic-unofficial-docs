@@ -268,6 +268,55 @@ key 形式: default VRF の場合 `<nbr_ip>`, non-default VRF の場合 `<vrf>|<
 
 > **スキャン証跡**: `BGPPeerMgrBase` 597 行・public メソッド set_handler/add_peer/update_peer/change_admin_status 読了。monitors は peer_type="monitors"（内部 BGP セッション向け）、loopback 依存ガードが核心分岐。
 <!-- /handler-branching -->
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### 概要
+
+`BGP_MONITORS` テーブルの処理は全プラットフォームで `bgpcfgd` が担当する（`frrcfgd.py` は非対応）。プラットフォーム分岐は `peer-group.conf.j2` に集中しており、`update-source` に使うループバック インタフェースと IPv6 AF 有効化の有無が異なる。
+
+### peer-group.conf.j2 の 3 分岐
+
+| 分岐条件 | `update-source` | IPv6 AF (`address-family ipv6`) | evidence |
+|---|---|---|---|
+| `switch_type == 'voq'` かつ `chassisdb_conf_present` または `/usr/share/sonic/platform/chassisdb.conf` 存在 | `Loopback4096` | 有効化（activate + route-map + send-community + maximum-prefix 1） | `peer-group.conf.j2:4-7,9-10,23-31` |
+| `switch_type == 'chassis-packet'` | `Loopback4096` | 有効化（同上） | `peer-group.conf.j2:9-10,23-31` |
+| それ以外（通常スイッチ） | `Loopback0` IPv4（`loopback0_ipv4` が存在する場合のみ） | 無効（`address-family ipv6` ブロックなし） | `peer-group.conf.j2:11-13` |
+
+#### VOQ chassis 判定ロジック
+
+```jinja2
+{% if CONFIG_DB__DEVICE_METADATA['localhost']['switch_type'] == 'voq' and
+      ('chassisdb_conf_present' in CONFIG_DB__DEVICE_METADATA['localhost'] or
+       '/usr/share/sonic/platform/chassisdb.conf' | file_exists) %}
+{% set voq_chassis = True %}
+{% endif %}
+```
+
+`switch_type == 'voq'` だけでは不十分で、`chassisdb.conf` の存在（ランタイムフラグまたはファイルシステム）も必要（`peer-group.conf.j2:4-6`）。
+
+### policies.conf.j2 / instance.conf.j2 — 分岐なし
+
+`monitors/policies.conf.j2` は `FROM_BGPMON deny 10` / `TO_BGPMON permit 10` のみ（条件分岐なし）。
+`monitors/instance.conf.j2` は `remote-as`・`peer-group`・`description`・`activate` のみ（条件分岐なし）。
+
+### managers_bgp.py — monitors と internal の差異
+
+| 属性 | monitors (BGP_MONITORS) | internal (BGP_INTERNAL_NEIGHBOR) |
+|---|---|---|
+| `Loopback4096` 依存 | なし | あり（`peer_type == 'internal'` の deps に追加） |
+| `check_neig_meta` | `False` 固定 | `False` 固定 |
+| テンプレートディレクトリ | `bgpd/templates/monitors/` | `bgpd/templates/internal/` |
+
+`managers_bgp.py:145-146` で `peer_type == 'internal'` のみ `Loopback4096` を deps に追加する。`monitors` peer_type はこの追加を行わず `Loopback0` のみに依存する。
+
+### frrcfgd.py（frr-mgmt-framework パス）— 非対応
+
+`frrcfgd.py` は `BGP_MONITORS` を購読しない。`bgpcfgd` 専用パスのみで処理される。`DEVICE_METADATA.frr_mgmt_framework_config=true` の構成でも BGPMON は `bgpcfgd` が担当する。
+
+**根拠**: `frrcfgd.py` 全体を `BGP_MONITORS` / `BGPMON` / `monitor` キーワードでスキャンしたが一致なし。
+
+<!-- /platform -->
 <!-- cross-refs -->
 ## 暗黙テーブル参照 (Phase C)
 
