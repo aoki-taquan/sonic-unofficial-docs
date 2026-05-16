@@ -265,3 +265,32 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 
 - なし
 <!-- /entry-points -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-ordering.md`
+
+対象テーブル: `EXP_TO_FC_MAP`。Consumer: `QosOrch::handleExpToFcTable()` / `QosOrch::handlePortQosMapTable()` (`qosorch.cpp`)。
+
+### SET 時の先行必須テーブル
+
+| # | 依存 | 方向 | 挙動 |
+|---|------|------|------|
+| 1 | `EXP_TO_FC_MAP\|<name>` SAI 作成 → `PORT_QOS_MAP\|<port>` SET | 強制先行 | `resolveFieldRefValue()` が未解決で `task_need_retry`（自動再試行） |
+| 2 | SAI 起動 / `NhgMapOrch::getMaxNumFcs()` 完了 → `EXP_TO_FC_MAP` SET | 暗黙先行 | `max_num_fcs = -1`（初期値）の状態で FC 値を渡すと全エントリが `task_invalid_entry` で reject される |
+| 3 | EXP キー値は `"0"`..`"7"` の整数文字列 | 必須形式 | `stoi()` 失敗 or 範囲外（負数・8以上）は `task_invalid_entry`（エントリ全体が reject） |
+
+> **推奨順序（SET）**: orchagent 起動・SAI 準備完了後 → `EXP_TO_FC_MAP|<name>` → `PORT_QOS_MAP|<port>` の `exp_to_fc_map` フィールド設定
+
+### DEL 時の順序制約
+
+| # | 依存 | 方向 | 挙動 |
+|---|------|------|------|
+| 1 | `PORT_QOS_MAP\|<port>` の `exp_to_fc_map` 参照解除 → `EXP_TO_FC_MAP\|<name>` DEL | 強制先行 | 参照中は `m_pendingRemove=true` + `task_need_retry` ロック (`qosorch.cpp:181-186`) |
+| 2 | pending_remove 解消後のみ SET 可能 | 強制先行 | pending_remove 中の SET は即 `task_need_retry` を返す (`qosorch.cpp:136-139`) |
+
+> **推奨順序（DEL）**: `PORT_QOS_MAP|<port>` の `exp_to_fc_map` フィールド削除 → `EXP_TO_FC_MAP|<name>` DEL
+
+> **Evidence**: `qosorch.cpp:124-201` (QosMapHandler::processWorkItem); `qosorch.cpp:2046-2134` (handlePortQosMapTable); `qosorch.cpp:1132-1213` (ExpToFcMapHandler)
+<!-- /ordering -->
