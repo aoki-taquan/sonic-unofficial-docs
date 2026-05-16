@@ -95,6 +95,40 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3169L -->
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## Phase D: 失敗挙動マトリクス
+
+ソース: `sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `ip_prefix` の形式不正 (`normalize_ip_prefix()` が None を返す) | `frrcfgd.py:3172-3175` | `syslog LOG_ERR` → `continue` でスキップ。FRR 未反映。 | `LOG_ERR: 'invalid IP prefix format %s for af %s'` | `frrcfgd.py:3173-3175` |
+| `af_type` の `_` 区切り不正 (`split('_')` が 2 要素を返さない) | `frrcfgd.py:3171` | `ValueError` が未捕捉で上位に伝播。frrcfgd クラッシュの可能性。 | スタックトレース (未捕捉) | `frrcfgd.py:3170-3171` |
+| FRR `vtysh` コマンド実行失敗 (`run_command` が False) | `frrcfgd.py:3184-3186` | `syslog LOG_ERR` → `continue`。**リトライなし**。FRR running-config と CONFIG_DB が乖離。 | `LOG_ERR: 'failed running BGP IP prefix AF config command'` | `frrcfgd.py:3184-3186` |
+| `bgpd` プロセス未起動・再起動中 | `frrcfgd.py:3182` | `vtysh` 接続失敗 → `run_command` が False → 上記と同経路でスキップ。自動リトライなし。 | `LOG_ERR: 'failed running BGP IP prefix AF config command'` | `frrcfgd.py:3184-3186` |
+| `BGP_GLOBALS.local_asn` が未設定 | `frrcfgd.py:2656-2662` | `LOG_DEBUG 'ignore table ...'` で **silent drop**。後から `local_asn` が設定されても自動再適用されない (`__apply_dep_vrf_table` は `ROUTE_REDISTRIBUTE` のみ対象)。 | `LOG_DEBUG` (既定 syslog レベルでは不可視) | `frrcfgd.py:2656-2662, 2704` |
+| `policy` に存在しない route-map 名を指定 | `frrcfgd.py:922-924` | frrcfgd は `route-map <name>` を含む vtysh コマンドを生成して投入。FRR は未定義 route-map を permit-any として扱い**全プレフィックスを許可**。広告品質が意図と乖離する。 | なし | `frrcfgd.py:922-924` |
+| `backdoor` を `ipv6_unicast` で設定 (YANG 検証コメントアウト) | YANG 検証なし | frrcfgd は `backdoor` キーワードを生成して投入。FRR が拒否する場合は `run_command` False → `LOG_ERR` & continue。 | `LOG_ERR: 'failed running BGP IP prefix AF config command'` (FRR 拒否時) | `frrcfgd.py:1985; sonic-bgp-global.yang:537-540` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| DEL 時 `vtysh` 失敗 | `frrcfgd.py:3184-3186` | `LOG_ERR` → `continue`。FRR から `no network <prefix>` が発行されない。プレフィックスが広告され続ける。 | `LOG_ERR: 'failed running BGP IP prefix AF config command'` | `frrcfgd.py:3184-3186` |
+| DEL 対象が FRR に存在しない (既に削除済み) | `vtysh` 内 | FRR は `no network` を冪等に処理。エラーにならない。 | なし | (FRR 仕様) |
+
+### retry / deferred queue の不在
+
+`BGP_GLOBALS_AF_NETWORK` は `__apply_dep_vrf_table()` の再適用対象外。`frrcfgd.py:2704` では `ROUTE_REDISTRIBUTE` のみが再適用される。一度 drop されたエントリの自動復旧手段はなく、復旧には以下のいずれかが必要:
+
+1. `CONFIG_DB` への `BGP_GLOBALS_AF_NETWORK` エントリの再書き込み
+2. `frrcfgd` の再起動 (`systemctl restart bgp`)
+
+<!-- evidence: frrcfgd.py:3170-3186,2656-2662,2704,922-924,1985; sonic-bgp-global.yang:537-540 -->
+<!-- /failure -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
