@@ -467,4 +467,47 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 未定義の route-map 名を参照する場合、vtysh 自体は `0` を返すが bgpd がピアへポリシーを適用する際に参照解決が失敗する。frrcfgd 側には **エラーが伝播しない**（`STAT_SUCC` 扱い）。対処: 事前に `ROUTE_MAP` テーブルへ route-map を書き込み、frrcfgd の `ROUTE_MAP` ハンドラ経由で FRR に定義済みの状態にしてから `BGP_NEIGHBOR_AF` を書き込む。
 
 <!-- /failure -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`BGP_NEIGHBOR_AF` テーブルの変更通知は **`ExtConfigDBConnector`** (frrcfgd 専用サブクラス) が Redis keyspace notification を **`PSUBSCRIBE`** することで実装される。`swss-common` の `SubscriberStateTable` は使わず、hiredis 直結の Python `redis` ライブラリを利用する点が `orchagent` 系との大きな違いである。
+
+```python
+# frrcfgd.py:1538-1539
+sub_key_space = "__keyspace@{}__:*".format(self.get_dbid(self.db_name))
+self.pubsub.psubscribe(sub_key_space)
+```
+
+CONFIG_DB 全キー (`__keyspace@4__:*`) を一括 PSUBSCRIBE するため、`BGP_NEIGHBOR_AF|<vrf>|<neighbor>|<afi_safi>` への `HSET` / `DEL` はいずれも同チャンネルで捕捉される。
+
+### keyspace → ハンドラ呼び出しの流れ
+
+```
+config / sonic-cfggen / gNMI / REST
+  ↓ Table::set("BGP_NEIGHBOR_AF|<vrf>|<neighbor>|<af>", fvs)
+CONFIG_DB: HSET "BGP_NEIGHBOR_AF|<vrf>|<neighbor>|<af>" <fields>
+  ↓ Redis keyspace event "__keyspace@4__:BGP_NEIGHBOR_AF|..." "hset"
+ExtConfigDBConnector.listen_thread (別スレッド, get_message timeout=10s)
+  ↓ sub_msg_handler(): チャンネル文字列からテーブル・行を分割
+    → HGETALL で最新値を再取得 (frrcfgd.py:1527)
+    → __fire("BGP_NEIGHBOR_AF", row, data)
+bgp_table_handler_common(table, key, data)  (frrcfgd.py:3895)
+  ↓ afi_safi キーから "ipv4"/"ipv6" を抽出 → admin_status マッピング (L2665-2668)
+  ↓ bgp_message.put((key, del_table, table, data))  (L3928)
+  ↓ __update_bgp() → nbr_af_key_map で vtysh コマンド生成
+['vtysh', '-c', 'configure terminal', '-c', 'router bgp <asn> vrf <vrf>',
+ '-c', 'address-family <afi> <safi>', '-c', 'neighbor <addr> activate', ...]
+```
+
+### 購読者サマリ
+
+| 購読者 | 購読 API | 購読パターン | タイムアウト |
+|--------|---------|--------------|-------------|
+| `frrcfgd` (`BgpCfgd`) | `ExtConfigDBConnector` + `redis.pubsub().psubscribe()` | `__keyspace@4__:*` (CONFIG_DB 全キー) | `get_message(10s)` ポーリング |
+
+書き込み側 (CLI / `sonic-cfggen` / gNMI) は `swss::Table::set()` 経由で `HSET` のみ行い、明示的な `PUBLISH` は発行しない。CONFIG_DB のため TTL は使用されない。起動時は `config_mode == "unified"` の場合に `get_table('BGP_NEIGHBOR_AF')` で既存エントリを全件再生する（再起動耐性）。
+<!-- /pubsub -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
