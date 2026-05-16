@@ -467,6 +467,58 @@ minigraph.py および init_cfg.json.j2 からの `PBH_TABLE` / `PBH_RULE` / `PB
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`PbhOrch` は `Orch` 基底クラス経由で `PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` の 4 テーブルを購読する。すべて CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace 通知** (`__keyspace@<dbId>__:<TABLE>:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB 分岐) |
+| keyspace パターン | `__keyspace@4__:PBH_TABLE:*`、`__keyspace@4__:PBH_RULE:*`、`__keyspace@4__:PBH_HASH:*`、`__keyspace@4__:PBH_HASH_FIELD:*` (CONFIG_DB dbId=4) |
+| key 区切り | `PBH_TABLE\|<name>` / `PBH_RULE\|<table>\|<rule>` 等 (TableNameSeparator 既定 `\|`) |
+| POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
+| 優先度 (`pri`) | 0 (`TableConnector` 既定) |
+| 起動時スナップショット | `SubscriberStateTable` が既存エントリを SET イベントとして再配信 |
+| TTL | 未設定 (CONFIG_DB は永続前提) |
+| ディスパッチ | `Consumer::execute()` → `PbhOrch::doTask(Consumer&)` → `consumer.getTableName()` 分岐 → 各 `doPbhXxxTask(consumer)` |
+
+### ディスパッチ詳細
+
+`PbhOrch::doTask()` は `consumer.getTableName()` により 4 テーブルを分岐し、処理後に `deployPbhTasks()` を呼んで依存関係解消ループを回す:
+
+```
+PbhOrch::doTask(Consumer &consumer)          // pbhorch.cpp:1804
+  → tableName == CFG_PBH_TABLE_TABLE_NAME    → doPbhTableTask(consumer)
+  → tableName == CFG_PBH_RULE_TABLE_NAME     → doPbhRuleTask(consumer)
+  → tableName == CFG_PBH_HASH_TABLE_NAME     → doPbhHashTask(consumer)
+  → tableName == CFG_PBH_HASH_FIELD_TABLE_NAME → doPbhHashFieldTask(consumer)
+  → [unknown]                                SWSS_LOG_ERROR
+  → deployPbhTasks()                         依存関係解消ループ
+```
+
+### CONFIG_DB → SAI 経路
+
+CONFIG_DB への書き込みは `sonic-utilities` の `config pbh` CLI (`config/plugins/pbh.py`) が `set_entry()` を呼ぶのみ。`orchagent` は APP_DB を経由せず、`PbhOrch` が CONFIG_DB から直接 SAI へ反映する:
+
+```
+config pbh → HSET CONFIG_DB PBH_RULE|<table>|<rule> ...
+  → Redis keyspace 通知
+  → SubscriberStateTable.pops() (batch=128)
+  → PbhOrch::doTask() → doPbhRuleTask()
+  → AclRulePbh::validate() + sai_acl_api->create_acl_entry()
+```
+
+- APP_DB への書き込みなし (orchagent 直接 SAI)。
+- `allPortsReady()` が false の場合、`PbhOrch::doTask()` は即 return して処理をスキップする。
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/pbhorch.cpp:88-97 (PbhOrch::PbhOrch — Orch(connectorList)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/pbhorch.cpp:1804-1838 (PbhOrch::doTask — getTableName 分岐 + deployPbhTasks) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:553-565 (TableConnector 構築 + gPbhOrch 生成) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp (Orch::addConsumer — CONFIG_DB → SubscriberStateTable 分岐) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164 (DEFAULT_POP_BATCH_SIZE = 128) -->
+<!-- /pubsub -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
