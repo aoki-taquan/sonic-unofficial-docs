@@ -1,12 +1,14 @@
 # SNMP — Phase C: 暗黙参照テーブル分析 (cross-refs)
 
 対象ドキュメント: `docs/reference/config-db/snmp.md`
-解析日: 2026-05-15
+解析日: 2026-05-16 (更新: hostcfgd ソース追加)
 根拠ソース:
 - `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2`
 - `sonic-buildimage/dockers/docker-snmp/supervisord.conf.j2`
 - `sonic-buildimage/dockers/docker-snmp/snmp_yml_to_configdb.py`
 - `sonic-buildimage/dockers/docker-snmp/start.sh`
+- `sonic-host-services/scripts/hostcfgd` (DeviceMetaCfg, MgmtIfaceCfg)
+- `sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py` (sysNameUpdater)
 
 ---
 
@@ -152,6 +154,85 @@ docker-snmp コンテナ起動自体が失敗する。
 
 ---
 
+## 5b. DEVICE_METADATA|localhost (hostname) — SNMP sysName OID (hostcfgd ソース)
+
+### 参照箇所
+
+`sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py` L722–742:
+
+```python
+class sysNameUpdater(MIBUpdater):
+    def __init__(self):
+        ...
+        self.hostname = socket.gethostname()
+
+    def reinit_data(self):
+        device_metadata = self.db_conn.get_all(self.db_conn.CONFIG_DB, "DEVICE_METADATA|localhost")
+        ...
+        if device_metadata and device_metadata.get('hostname'):
+            self.hostname = device_metadata['hostname']
+```
+
+`hostcfgd` の `DeviceMetaCfg.hostname_update()` (`hostcfgd` L1504–1532) が DEVICE_METADATA テーブルの
+`hostname` フィールド変化を検知し `hostname-config` サービスを再起動する。snmp-subagent は
+コンテナ起動時の `reinit_data()` でのみ読み込むため、hostname 変更後は docker-snmp 再起動が必要。
+
+### 依存内容
+
+| `hostname` の状態 | 影響 |
+|---|---|
+| CONFIG_DB に `DEVICE_METADATA\|localhost.hostname` が存在する | SNMP `sysName` OID (`.1.3.6.1.2.1.1.5.0`) にその値を返す |
+| 存在しない | `socket.gethostname()` (OS hostname) を使用。hostcfgd 経由で設定された値と一致しないことがある |
+
+**YANG leafref**: なし。snmp-subagent が直接 CONFIG_DB を参照する。
+
+---
+
+## 5c. MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled) — VRF バインド前提 (hostcfgd ソース)
+
+### 参照箇所
+
+`hostcfgd` `MgmtIfaceCfg` クラス (`hostcfgd` L1605–1693):
+
+```python
+class MgmtIfaceCfg(object):
+    """Handles changes in MGMT_INTERFACE, MGMT_VRF_CONFIG tables."""
+
+    def update_mgmt_vrf(self, data):
+        enabled = data.get('mgmtVrfEnabled', '')
+        if not enabled or enabled == self.mgmt_vrf_enabled:
+            return
+        # Restart related vrfs services
+        run_cmd(['systemctl', 'restart', 'interfaces-config'], ...)
+```
+
+`hostcfgd` は `MGMT_VRF_CONFIG` テーブルを subscribe (`hostcfgd` L2495–2497) し、
+`mgmtVrfEnabled` が変化した際に `interfaces-config` を再起動して管理 VRF を有効化する。
+
+`snmpd.conf.j2` での間接参照:
+
+```jinja2
+# L28-29: SNMP_AGENT_ADDRESS_CONFIG.vrf フィールドを参照
+agentAddress {{ protocol(agentip) }}:[{{ agentip }}]{% if vrf %}@{{ vrf }}{% endif %}...
+
+# L148,158,168: SNMP_TRAP_CONFIG.*.vrf フィールドを参照
+trapsink {{ ip }}:{{ port }}{% if vrf != 'None' %}%{{ vrf }}{% endif %} ...
+```
+
+### 依存内容
+
+| `MGMT_VRF_CONFIG.mgmtVrfEnabled` | `SNMP_AGENT_ADDRESS_CONFIG.vrf` / `SNMP_TRAP_CONFIG.vrf` | 影響 |
+|---|---|---|
+| `true` (mgmt VRF 有効) | `mgmt` | snmpd が管理 VRF 上でバインド / トラップ送出。設定一致で正常動作 |
+| `true` (mgmt VRF 有効) | `None` または未設定 | snmpd がデフォルト VRF にバインドするため管理 VRF 経由のアクセス不可 |
+| `false` または未設定 | `mgmt` と指定 | snmpd が存在しない VRF にバインドしようとして起動失敗の可能性 |
+| `false` または未設定 | `None` | 通常動作 (デフォルト VRF 使用) |
+
+**YANG leafref**: なし。`MGMT_VRF_CONFIG` と `SNMP_AGENT_ADDRESS_CONFIG.vrf` の間に leafref はなく、
+不一致でも CONFIG_DB には書き込まれる。snmpd 起動時にバインド失敗として現れる。
+
+---
+
 ## 6. /etc/sonic/snmp.yml — 起動時 SNMP_COMMUNITY / SNMP|LOCATION 注入元 (ファイル参照)
 
 ### 参照箇所
@@ -183,7 +264,7 @@ SNMP テーブル自体は SAI に書き込まない。
 <!-- cross-refs -->
 ## 暗黙参照 — Phase C (cross-table refs)
 
-> **調査根拠**: `snmpd.conf.j2`, `supervisord.conf.j2`, `snmp_yml_to_configdb.py`, `start.sh` 全行精読 (2026-05-15)  
+> **調査根拠**: `snmpd.conf.j2`, `supervisord.conf.j2`, `snmp_yml_to_configdb.py`, `start.sh`, `sonic-host-services/scripts/hostcfgd`, `sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py` 全行精読 (2026-05-16)  
 > 詳細証跡: `meta/_intermediate/cdb-flow/snmp-cross-refs.md`
 
 `SNMP` テーブルは YANG leafref を持たないが、`docker-snmp` コンテナ起動時テンプレートと hostcfgd が以下のテーブルを暗黙参照する。
@@ -195,6 +276,8 @@ SNMP テーブル自体は SAI に書き込まない。
 | `SNMP_AGENT_ADDRESS_CONFIG\|<ip>\|<port>\|<vrf>` | CONFIG_DB | 読み取り (agentAddress バインド先) | なし | 任意 (未定義で全 IF 公開にフォールバック) | `snmpd.conf.j2` L27–34 |
 | `SNMP_TRAP_CONFIG\|<version>TrapDest` | CONFIG_DB | 読み取り (トラップ送信先) | なし | 任意 (未定義でトラップ無効) | `snmpd.conf.j2` L145–173 |
 | `DEVICE_METADATA\|localhost` (`switch_type`) | CONFIG_DB | 読み取り (snmp-subagent 起動コマンド分岐) | なし | 必須 (未定義でコンテナ起動失敗) | `supervisord.conf.j2` L53–57 |
+| `DEVICE_METADATA\|localhost` (`hostname`) | CONFIG_DB | 読み取り (SNMP sysName OID 設定) | なし | 任意 (未設定時は OS hostname を使用) | `rfc1213.py` L730–733 (hostcfgd 経由で設定変化を検知) |
+| `MGMT_VRF_CONFIG\|vrf_global` (`mgmtVrfEnabled`) | CONFIG_DB | 読み取り (SNMP_AGENT_ADDRESS_CONFIG.vrf / SNMP_TRAP_CONFIG.vrf の前提) | なし | 任意 (mgmt VRF 使用時は VRF 名の一致が必要) | `hostcfgd` L1608–1669; `snmpd.conf.j2` L28–29, L148–168 |
 
 ### SNMP_COMMUNITY — コミュニティ文字列の前提
 
