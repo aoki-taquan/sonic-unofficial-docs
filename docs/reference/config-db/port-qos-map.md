@@ -131,6 +131,46 @@ PORT_QOS_MAP|<PORT.name>
 - 順序依存: PORT_QOS_MAP を先に DEL してから参照 QoS map を DEL しないと SAI 参照カウントで失敗する。
 
 <!-- /cdb-exceptions -->
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-failure.md -->
+
+### 未解決 MAP → task_need_retry
+
+`handlePortQosMapTable` (SET) で参照先 QoS map (`dscp_to_tc_map` / `tc_to_queue_map` 等) がまだ SAI に登録されていない場合、`resolveFieldRefValue` が `success` 以外を返した時点で **即 `task_need_retry`** を返す。後続フィールドの評価は行わない。対応 map が登録されると自動再試行される（`qosorch.cpp:~2129`）。
+
+`PORT_QOS_MAP|global` の場合も同様に `task_need_retry` だが、`continue` で他フィールドへ進む点が異なる（`qosorch.cpp:~2026`）。
+
+### PORT 不在 → continue (retry なし)
+
+SET / DEL いずれも `gPortsOrch->getPort()` が失敗すると `SWSS_LOG_ERROR` を出力して **`continue`** でそのポートをスキップする。`task_need_retry` は返さず、複数ポートが key に含まれる場合は残りポートへの適用を継続する。処理全体は `task_success` で完了する（`qosorch.cpp:~2068, ~2180`）。
+
+### SAI bind 失敗
+
+| コンテキスト | 失敗条件 | 返却ステータス | ソース |
+|------------|---------|--------------|--------|
+| port SET | `sai_port_api->set_port_attribute` 失敗 | `task_invalid_entry` | `qosorch.cpp:~2196-2201` |
+| port DEL | `sai_port_api->set_port_attribute` 失敗 | `task_invalid_entry` | `qosorch.cpp:~2089-2094` |
+| global SET | `applyDscpToTcMapToSwitch` が false | `task_failed` | `qosorch.cpp:~2038-2039` |
+| global DEL | `applyDscpToTcMapToSwitch` が false | `task_failed` | `qosorch.cpp:~2001-2002` |
+| PFC ビット設定失敗 | `setPortPfc` が false | ログのみ (task_success 継続) | `qosorch.cpp:~2217` |
+
+port エントリは `handleSaiSetStatus(SAI_API_PORT, ...)` 経由で `task_invalid_entry` に変換され、エントリがキューから除去される（retry なし）。
+
+### global vs port 失敗差異
+
+| シナリオ | `PORT_QOS_MAP\|global` | `PORT_QOS_MAP\|<port>` |
+|---------|----------------------|----------------------|
+| MAP 未解決 | `task_need_retry`、他フィールドへ continue | `task_need_retry`、即 return |
+| PORT 不在 | 該当なし | `continue`、`task_success` |
+| SAI bind 失敗 | `task_failed` | `task_invalid_entry` |
+| dscp_to_tc_map 以外の map type | `SWSS_LOG_WARN` + skip | フィールド無視 |
+
+!!! warning "global は dscp_to_tc_map 専用"
+    `PORT_QOS_MAP|global` に `tc_to_queue_map` 等を設定しても警告ログのみで SAI に適用されない。`dscp_to_tc_map` のみが switch level QoS map として有効（`qosorch.cpp:~2013`）。
+
+<!-- /failure -->
 
 <!-- defaults -->
 ## 暗黙デフォルト (Phase A)
@@ -323,6 +363,96 @@ REST/gNMI 書き込み経路なし
 > **スキャン証跡**: `qosorch.cpp` PortQosMapHandler + `db_migrator.py:576,711-714` + `qos_config.j2:414-423` を確認、4 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-platform.md -->
+
+### SAI capability チェック
+
+`PORT_QOS_MAP|global` の `dscp_to_tc_map` を switch レベルに適用する際、QosOrch は
+`gSwitchOrch->querySwitchCapability(SAI_OBJECT_TYPE_SWITCH, SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)`
+で ASICが switch-level DSCP→TC map をサポートするか確認する。
+
+| capability 結果 | 挙動 |
+|----------------|------|
+| `true` | `sai_switch_api->set_switch_attribute(gSwitchId, ...)` で switch OID へ直接 SET |
+| `false` | `"Switch level DSCP to TC QoS map configuration is not supported"` を SWSS_LOG_ERROR 出力し no-op で続行 |
+
+ソース: `qosorch.cpp:1955-1975`
+
+### Broadcom global vs Mellanox / その他 per-port
+
+`db_migrator.py` の `migrate_port_qos_map_global()` が `PORT_QOS_MAP|global` エントリを **Broadcom ASIC 限定** で自動挿入する。
+
+```python
+asics_require_global_dscp_to_tc_map = ["broadcom"]
+if self.asic_type not in asics_require_global_dscp_to_tc_map:
+    return
+```
+
+| ASIC | `PORT_QOS_MAP\|global` 自動挿入 | `dscp_to_tc_map` 適用先 |
+|------|-------------------------------|------------------------|
+| Broadcom | db_migrator が自動生成 | switch レベル `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` |
+| Mellanox / その他 | 自動挿入なし（per-port のみ） | port レベル `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` |
+
+ソース: `sonic-utilities/scripts/db_migrator.py:700-715`
+
+### VOQ chassis 差異
+
+`gMySwitchType == "voq"` の場合、PortQosMapHandler から呼ばれる下位関数が以下のように分岐する。
+
+| 関数 | 非 VOQ | VOQ chassis |
+|------|--------|-------------|
+| `applySchedulerToQueueSchedulerGroup` | `port.m_queue_ids[queue_ind]` から queue_id 取得 | remote system port はスキップ。local port を `getPort()` で取得し直して適用 |
+| `applyWredProfileToQueue` | `port.m_queue_ids[queue_ind]` から queue_id 取得 | `getPortVoQIds(port)` で VOQ ID リストを取得して WRED 適用 |
+| `handleQueueTable` key 形式 | `Ethernet4\|0-1`（2 トークン） | `Host\|ASIC0\|Ethernet4\|0-1`（4 トークン）。`gMyHostName` + `gMyAsicName` と照合して local/remote を判別 |
+
+ソース: `qosorch.cpp:1637,1715,1772-1792`
+
+<!-- /platform -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-constants.md -->
+
+### global キー定数
+
+| 定数名 | 値 | ソース |
+|--------|---|--------|
+| `PORT_NAME_GLOBAL` | `"global"` | `qosorch.cpp:122` — global デフォルトエントリのキー。`dscp_to_tc_map` のみ `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` 経由で Switch レベルに適用される |
+
+### スカラー定数
+
+| 定数名 | 値 | ソース |
+|--------|---|--------|
+| `DSCP_MAX_VAL` | `63` | `qosorch.cpp:119` |
+| `EXP_MAX_VAL` | `7` | `qosorch.cpp:120` |
+
+### フィールド名定数 → SAI ポート属性マッピング
+
+`qos_to_attr_map` (qosorch.cpp:60–73) — CONFIG_DB フィールド名と SAI port/switch 属性の対応:
+
+| CONFIG_DB フィールド名 | SAI 属性 |
+|----------------------|---------|
+| `dscp_to_tc_map` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` |
+| `mpls_tc_to_tc_map` | `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_TC_MAP` |
+| `dot1p_to_tc_map` | `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` |
+| `tc_to_queue_map` | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` |
+| `tc_to_dot1p_map` | `SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DOT1P_MAP` |
+| `tc_to_dscp_map` | `SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` |
+| `tc_to_pg_map` | `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` |
+| `pfc_to_pg_map` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` |
+| `pfc_to_queue_map` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` |
+| `scheduler` | `SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID` |
+| `dscp_to_fc_map` | `SAI_PORT_ATTR_QOS_DSCP_TO_FORWARDING_CLASS_MAP` |
+| `exp_to_fc_map` | `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` |
+
+`global` キー専用: `dscp_to_tc_map` → `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` (Switch レベル) (qosorch.cpp:2030)
+
+<!-- /constants -->
 
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
