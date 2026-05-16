@@ -186,6 +186,40 @@ show bfd peers details
 ```
 <!-- /ops-hint -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `bfdorch` が他テーブル由来の状態を直接参照する経路 (Phase C)
+
+`BFD_SESSION` は YANG schema を持たず leafref / subscribe 経由の明示参照を宣言しない。しかし `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) は SAI 投入時に **他 CONFIG_DB テーブル由来の orchagent 内オブジェクト** を直接参照しており、暗黙的な前提依存が発生する。本ブロックではコード経路ベースで観測される暗黙参照をまとめる。
+
+### CONFIG_DB レベル — bfdorch が参照する他テーブル
+
+| 参照先テーブル | 参照タイミング | 用途 | 方向 | evidence |
+|---|---|---|---|---|
+| [`PORT`](port.md) (`PORT|<alias>`) | `create_bfd_session()` で `interface != "default"` のとき | `gPortsOrch->getPort(alias, port)` で `Port::m_port_id` / `Port::m_mac` を取得し SAI `BFD_SESSION_ATTR_PORT` / `SRC_MAC_ADDRESS` に投入 | 入力依存 | `bfdorch.cpp:482-515` |
+| [`VRF`](vrf.md) (`VRF|<name>`) | `create_bfd_session()` で `vrf != "default"` かつ `interface == "default"` のとき | `VRFOrch::getVRFid(vrf_name)` で SAI virtual_router OID を取得し `BFD_SESSION_ATTR_VIRTUAL_ROUTER` に投入 | 入力依存 | `bfdorch.cpp:530-541` |
+| [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) (`STATE.use_software_bfd` / `STATE.tsa_enabled`) | `doTask()` 毎周回 + TSA state change 通知時 | `BgpGlobalStateOrch::getSoftwareBfd()` / `getTsaState()` で hardware/software 経路 と TSA shutdown 挙動を決定 | 制御依存 | `bfdorch.cpp:114-138, 683-748` |
+| `STATIC_ROUTE` (`STATIC_ROUTE|<vrf>|<prefix>`) | `staticroutebfd` プロセス (別プロセス) が CONFIG_DB を subscribe し、BFD 監視対象の next-hop に対応する BFD セッションを APPL_DB `BFD_SESSION_TABLE` に push する | static route の BFD 監視は `staticroutebfd` 経由で **逆方向に `BFD_SESSION_TABLE` を生成** する (`tx/rx_interval=50ms` 既定上書き) | **逆方向** (STATIC_ROUTE → BFD_SESSION) | `staticroutebfd/main.py:23-24, 118-120, 283-288, 366-559, 720-730` |
+
+> 上記は `bfdorch` が CONFIG_DB を直接 subscribe するわけではない点に注意。`PORT` / `VRF` は orchagent 内 in-memory state (`gPortsOrch` / `VRFOrch`) 経由、`BGP_DEVICE_GLOBAL` は `BgpGlobalStateOrch` 経由で参照される。順序依存は [書込み順依存 (Phase B)](#書込み順依存-phase-b--コード由来) を参照。
+
+### STATE_DB / APPL_DB レベル — 経路別の中継
+
+| 参照先 | 役割 | 経路 | evidence |
+|---|---|---|---|
+| `STATE_DB.SOFTWARE_BFD_SESSION_TABLE` | `use_software_bfd=true` 時の中継。`bfdorch` が CONFIG_DB から転記し、`bgpcfgd/BfdMgr` が subscribe して FRR `bfdd` に vtysh 経由で投入 | `bfdorch` (write) → `BfdMgr` (read/subscribe) | `bfdorch.cpp:114-138` / `managers_bfd.py` |
+| `APPL_DB.BFD_SESSION_TABLE` | hardware BFD の SAI 投入直前段。`staticroutebfd` も ProducerStateTable で直接書き込む | `staticroutebfd` (producer) → `bfdorch` (consumer) | `staticroutebfd/main.py:118-120` |
+| `STATE_DB.BFD_SESSION_TABLE` | hardware BFD の状態通知 (`UP` / `DOWN`)。SAI notification handler が更新 | `bfdorch` (write) → `staticroutebfd.bfd_state_set_handler` (read/subscribe) | `bfdorch.cpp:274-302` / `staticroutebfd/main.py:296-300, 641-710` |
+
+### 範囲外 (誤解されやすい隣接テーブル)
+
+- **`INTERFACE` / `PORTCHANNEL_INTERFACE` / `LOOPBACK_INTERFACE`**: `bfdorch.cpp` は `local_addr` の所属インタフェースを検証しない。妥当性確認は SAI 実装側に委ねる。`staticroutebfd` はこれらを subscribe するが、`bfdorch` 自身は読まない (`staticroutebfd/main.py:718-730`)
+- **`ROUTE_TABLE` / 通常の `STATIC_ROUTE` 経路**: `bfdorch` が ROUTE を直接読むことはない。`STATIC_ROUTE` は `staticroutebfd` を経由する**間接的な書込み源**であり、APPL_DB に到達した時点で他の BFD セッションと区別はない
+- **`BGP_NEIGHBOR` / `BGP_PEER_RANGE`**: BGP セッションで BFD を有効化する設定はこちらにあるが、`BFD_SESSION` テーブルへの投入は `bgpcfgd` / FRR が担当し `bfdorch` のスコープ外
+- **`DEVICE_METADATA` / `SWITCH`**: `gSwitchId` / `gVirtualRouterId` は SwitchOrch 起動時に確定済みのグローバル変数として参照される (`bfdorch.cpp:27, 533`)。`bfdorch` が `DEVICE_METADATA` を直接読むことはない
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bfd-session-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
