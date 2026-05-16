@@ -54,6 +54,90 @@ SONiC master における `DHCP_SERVER_IPV6` テーブルの YANG モデル、Py
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> `DHCP_SERVER_IPV6` は未実装のため、DHCPv6 エコシステム（`DHCP_RELAY` / `dhcp6relay`）の暗黙参照を代理調査した結果を示す。
+
+`dhcp6relay` デーモン（`sonic-dhcp-relay/dhcp6relay/src/`）は `DHCP_RELAY` テーブルを処理する際に、YANG leafref 定義なしで以下の CONFIG_DB テーブルを参照する:
+
+| 参照先テーブル | 参照方向 | 条件 | 証拠 |
+|---|---|---|---|
+| `VLAN_INTERFACE\|<vlan>\|*` | 読み取り (IPv6 アドレス必須チェック) | 常時 | `config_interface.cpp:130` |
+| `VLAN_MEMBER\|<vlan>\|*` | 読み取り (ポートマップ構築) | 常時 | `relay.cpp:856` |
+
+**VLAN_INTERFACE**: `config_interface.cpp:130` で `"VLAN_INTERFACE|" + vlan + "|*"` パターンを CONFIG_DB 検索し、IPv6 アドレスが存在しない VLAN は警告を出してスキップする。YANG モデル（`sonic-dhcpv6-relay.yang`）には leafref なし。
+
+**VLAN_MEMBER**: `relay.cpp:856` で `"VLAN_MEMBER|" + vlan + "|*"` を取得し、member interface → VLAN の逆引きマップを構築する。これがないとクライアントパケットの VLAN 判定が不可能。
+
+詳細: [`meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md)
+
+<!-- /cross-refs -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G 調査)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読 (2026-05-16)
+
+### DHCP_SERVER_IPV6 に関する結論
+
+`DHCP_SERVER_IPV6` テーブルは未実装であるため、このテーブルを購読・監視するデーモンは存在しない。CONFIG_DB Subscribe、dhcrelay 制御、netlink 監視はすべて **`DHCP_RELAY` テーブルを対象とした `dhcp6relay` プロセス**が担っている。
+
+### DHCPv6 リレー側の通信メカニズム（参照）
+
+`DHCP_SERVER_IPV6` が将来実装される際の参照として、現在の DHCPv6 関連実装を記録する。
+
+#### CONFIG_DB Subscribe (`dhcp6relay`)
+
+`dhcp6relay` (`sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp`) は以下の方法で CONFIG_DB を購読する:
+
+```
+dhcp6relay 起動
+  └─ initialize_swss()                             (config_interface.cpp:18-29)
+       ├─ DBConnector("CONFIG_DB", 0)               ← Redis DB #4
+       ├─ SubscriberStateTable(db, "DHCP_RELAY")   ← DHCP_RELAY テーブル購読
+       │    └─ PSUBSCRIBE __keyspace@4__:DHCP_RELAY|*
+       └─ swssSelect.addSelectable(&ipHelpersTable)
+            └─ get_dhcp(vlans, table, dynamic=false, config_db)
+                 └─ swssSelect.select(timeout_ms=1000)
+                      └─ handleRelayNotification()
+                           └─ pops() → processRelayNotification()
+```
+
+| 項目 | 値 |
+|------|-----|
+| 購読テーブル | `DHCP_RELAY`（`DHCP_SERVER_IPV6` は **なし**） |
+| SWSS abstraction | `swss::SubscriberStateTable` + `swss::Select` |
+| PSUBSCRIBE パターン | `__keyspace@4__:DHCP_RELAY\|*` |
+| Select timeout | 1000 ms |
+| ConsumerStateTable | **不使用** |
+| NotificationConsumer | **不使用** |
+| TTL / keyspace expire | **不使用** |
+
+#### dhcrelay 制御
+
+`dhcp6relay` はシグナルで制御される。`relay.cpp` で `libevent` を使って SIGINT / SIGTERM をキャッチし、`event_base_loopbreak()` でイベントループを終了する (`relay.cpp:1154-1220`)。
+
+```
+SIGTERM / SIGINT 受信
+  └─ signal_callback(fd, event, base)              (relay.cpp:1214)
+       └─ event_base_loopbreak(base)
+```
+
+**動的設定変更は非対応**: `DHCP_RELAY` エントリを変更しても `dynamic=true` フラグにより無視され、`LOG_WARNING "relay config changed, need restart container to take effect"` のみ出力される。設定反映にはコンテナ再起動が必須 (`config_interface.cpp:76-78`)。
+
+#### netlink（間接利用）
+
+`dhcp6relay` は netlink を直接使用しない。LLA（Link Local Address）の確認は `ip -6 addr show <vlan> scope link` コマンドを `popen()` で呼び出す方式を採用する (`config_interface.cpp:196-209`)。インタフェースインデックスの取得のみ `if_nametoindex()` を使用する (`relay.cpp:829`)。
+
+```
+// LLA 確認 (config_interface.cpp:196-209)
+const std::string cmd = "ip -6 addr show " + vlan + " scope link 2> /dev/null";
+popen(cmd.c_str(), "r")  // netlink ソケット直接使用なし
+```
+
+<!-- /pubsub -->
+
 ## DHCPv6 サポートの現状
 
 SONiC の DHCPv6 対応は次の 2 要素のみ:
