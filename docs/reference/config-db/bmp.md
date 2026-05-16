@@ -214,6 +214,38 @@ show bmp
 
 > **スキャン証跡**: `BMPCfg.load()` L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。
 <!-- /handler-branching -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+ソース: `sonic-net/sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `supervisorctl stop openbmpd` が非ゼロ終了 / openbmpd が存在しない | `stop_bmp()` | `subprocess.call()` は returncode を無視。openbmpd が停止しないまま後続の `reset_bmp_table()` が実行され、動作中プロセスと BMP_STATE_DB 削除が競合する | syslog LOG_NOTICE のみ | `bmpcfgd.py:56-58` |
+| `BMP_STATE_DB` 接続失敗（Redis 未起動 / ポート閉塞） | `BMPCfgDaemon.__init__()` | `SonicV2Connector.connect()` が例外 raise → デーモン起動失敗・supervisord が再起動を試みる | スタックトレースが syslog へ（未捕捉） | `bmpcfgd.py:75-76` |
+| `reset_bmp_table()` の `delete_all_by_pattern()` 失敗（Redis 接続断） | `reset_bmp_table()` | 例外が `load()` まで伝播（catch なし）→ bmpcfgd クラッシュ。BMP_STATE_DB の一部パターンのみ削除された中途状態が残る | スタックトレースが syslog へ（未捕捉） | `bmpcfgd.py:61-65` |
+| `supervisorctl start openbmpd` が非ゼロ終了（バイナリ欠如 / supervisord 未起動） | `start_bmp()` | `subprocess.call()` は returncode を無視。openbmpd が起動しないまま処理続行。BMP データが collector に届かない | syslog LOG_NOTICE のみ | `bmpcfgd.py:68-70` |
+| `CONFIG_DB` 接続失敗（起動直後 Redis 未準備） | `BMPCfgDaemon.__init__()` | `retry_on=True` により無限リトライ。Redis が起動するまでブロック。デーモン起動は完了しない（停止はしない） | swsscommon 内部ログ（接続試行ごと） | `bmpcfgd.py:77-78` |
+| `"True"` / `"TRUE"` / `"1"` などの非小文字 `true` 値が CONFIG_DB に書き込まれた場合 | `is_true()` | `str(val).lower() == 'true'` は小文字 `"true"` のみ受理。`"True"` 等はすべて `False` 扱い → フィールドが無効化されたように見える（silent） | なし | `bmpcfgd.py:27-28, 41-43` |
+| `BMP\|table` エントリが CONFIG_DB に存在しない状態で `load()` が呼ばれる | `load()` L39-43 | 全フィールドが `'false'` fallback → openbmpd を stop → reset → start（全テーブルダンプ無効で再起動）。YANG default の `bgp_neighbor_table=true` は反映されない | syslog LOG_NOTICE（設定値 `False, False, False`） | `bmpcfgd.py:39-44` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `BMP` テーブルの DEL イベント（`bmp_handler` が空データで呼ばれる） | `bmp_handler()` | `config_db.get_table(BMP_TABLE)` を再取得するため空 dict → `load({})` → 全フィールド `False` で openbmpd 再起動（テーブルダンプ全停止）・BMP_STATE_DB クリア | syslog LOG_NOTICE | `bmpcfgd.py:81-83, 39-49` |
+
+### retry / 復旧挙動補足
+
+- **`CONFIG_DB` 無限リトライ**: `retry_on=True` により Redis 応答まで無限ブロック。デーモン停止のトリガーにはならない。
+- **`BMP_STATE_DB` 接続は 1 回のみ**: `SonicV2Connector.connect()` は `__init__` で 1 度のみ呼ばれる。接続断後の自動復旧機構はない。
+- **`supervisorctl` 呼び出しの failure-silencing**: `stop_bmp()` / `start_bmp()` は returncode を確認しない。openbmpd 起動失敗が bmpcfgd に伝わらず、BMP 機能が静かに停止したままになるリスクがある。
+- **vtysh 非使用**: `bmpcfgd.py` は vtysh / FRR CLI を直接呼び出さない。frrcfgd.py の vtysh 失敗経路は BMP テーブル処理に関与しない。
+
+<!-- /failure -->
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
