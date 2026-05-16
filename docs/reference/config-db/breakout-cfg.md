@@ -298,6 +298,54 @@ Dynamic Port Breakout (DPB) は **多段フェーズ**で構成され、各ス�
 
 > これらは BREAKOUT_CFG 自身のフィールドではなく、`brkout_mode` 値に依存した **PORT テーブルへの暗黙派生**。YANG に記述なし。
 <!-- /defaults -->
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+breakout 処理コアに埋め込まれた定数。CONFIG_DB フィールドには現れないが、ポート名生成・FEC 付与・モード検証に直接影響する。
+
+### portconfig.py モジュール定数
+
+ソース: `sonic-buildimage/src/sonic-config-engine/portconfig.py` L36-43
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `PORT_STR` | `"Ethernet"` | 子ポート名プレフィックス。`"Ethernet" + str(base_id + lane_id)` でポート名を構築。変更不可 |
+| `BRKOUT_MODE` | `"default_brkout_mode"` | `hwsku.json` 内のデフォルト breakout モードキー名 |
+| `CUR_BRKOUT_MODE` | `"brkout_mode"` | BREAKOUT_CFG テーブルに書き込まれるフィールド名（CONFIG_DB キー） |
+| `INTF_KEY` | `"interfaces"` | `platform.json` / `hwsku.json` のインターフェース定義セクションキー |
+| `BRKOUT_PATTERN` | `r'(\d{1,6})x(\d{1,6}G?)(\[(\d{1,6}G?,?)*\])?(\((\d{1,6})\))?'` | breakout モード文字列パース用正規表現。`+` 区切りで複合モードにも対応 |
+| `BRKOUT_PATTERN_GROUPS` | `6` | `BRKOUT_PATTERN` の期待キャプチャグループ数 |
+
+### FEC 自動付与しきい値
+
+ソース: `sonic-buildimage/src/sonic-config-engine/portconfig.py` L387
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| FEC 自動付与しきい値 | `50000` Mbps | `default_speed // lanes_per_port >= 50000` のとき `fec: rs` を PORT エントリに自動付与。50 G/lane 以上で FEC 強制 |
+
+### subport 割り当て規則
+
+ソース: `sonic-buildimage/src/sonic-config-engine/portconfig.py` L383
+
+| 条件 | `subport` 値 | 説明 |
+|------|-------------|------|
+| `total_num_ports == 1`（非分割） | `"0"` | 単一ポート（breakout なし）は `subport = "0"` |
+| `total_num_ports > 1`（分割） | `"1"` 〜 `"N"`（連番） | 分割後の子ポートは 1 始まり連番 |
+
+### breakout モード文字列フォーマット（`BRKOUT_PATTERN` 許容形式）
+
+| フォーマット例 | 意味 |
+|--------------|------|
+| `1x100G` | 1 ポート × 100 G（全レーン非分割） |
+| `2x50G` | 2 ポート × 50 G（2 分割） |
+| `4x25G` | 4 ポート × 25 G（4 分割） |
+| `1x400G` | 1 ポート × 400 G（超高速単一ポート） |
+| `1x100G[40G]` | デフォルト 100 G・代替速度 40 G サポート付き |
+| `2x25G(2)+1x50G(2)` | ハイブリッド分割（2x25 G に 2 レーン + 1x50 G に 2 レーン） |
+
+> **設計上の注意**: `PORT_STR = "Ethernet"` および FEC しきい値 `50000` Mbps はコードにハードコードされており、変更する場合は `portconfig.py` の修正が必要。FEC しきい値は 50 G/lane 以上のすべての速度（100 G/2lane、400 G/4lane 等）に適用される。
+<!-- /constants -->
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
