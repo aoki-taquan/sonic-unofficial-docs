@@ -282,6 +282,26 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 なし。`bgpcfgd` / `frrcfgd` は CONFIG_DB → FRR（ユーザー空間ルーティングデーモン）への経路であり、SAI/ASIC に直接触れない。APPL_DB への中継もない。
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BGPPeerMgrBase`（`peer_type="internal"`）は CONFIG_DB `BGP_INTERNAL_NEIGHBOR` の
+set/del を受けて **STATE_DB `BGP_PEER_CONFIGURED_TABLE`** に副次書込を行う。
+COUNTERS_DB / APPL_STATE_DB / ASIC_DB への直接書込は無い。
+FRR bgpd への反映は `cfg_mgr.push()` 経由の vtysh push のみ。
+
+| 副次 DB | テーブル / フィールド | 発火タイミング | コード根拠 |
+|---|---|---|---|
+| STATE_DB | `BGP_PEER_CONFIGURED_TABLE\|<nbr>` (vrf=default) または `\|<vrf>\|<nbr>` | `add_peer()` 成功後 → `SET` (全フィールド) | `managers_bgp.py:239` |
+| STATE_DB | 同上 | `apply_admin_status()` 成功後 → `SET` | `managers_bgp.py:353` |
+| STATE_DB | 同上 | `del_handler()` 成功後 → `DEL` | `managers_bgp.py:487` |
+| COUNTERS_DB | — | 書込なし | `managers_bgp.py` に `COUNTERS_DB` 参照なし |
+
+`frrcfgd.py`（frr-mgmt-framework パス）は `BGP_INTERNAL_NEIGHBOR` を購読しないため副次書込なし（全体スキャンで一致なし）。
+
+詳細スキャン結果: `meta/_intermediate/cdb-flow/bgp-internal-neighbor-side.md`
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
