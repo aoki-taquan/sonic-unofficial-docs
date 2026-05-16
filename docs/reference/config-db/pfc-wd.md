@@ -343,3 +343,30 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 > **スキャン証跡**: `pfcwdorch.cpp:64-278` を全行読了、7 件分岐抽出。PFC-WD の platform 条件付き登録 (MLNX/BFN/BRCM/MRVL等) を実ソースで確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-ordering.md -->
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `PORT` 初期化完了 → `PFC_WD` エントリ処理 | **先行必須**（未完了時は保留・自動再試行） | `doTask()` が `allPortsReady()` で自動再試行 |
+| 2 | `PORT_QOS_MAP` の PFC 有効化 → `PFC_WD` per-port エントリ | **推奨先行**（未設定時 lossless TC なしで WD 無効） | `task_need_retry` で再試行、ただし WD は実質無効 |
+| 3 | `PFC_WD\|GLOBAL` の `POLL_INTERVAL` → per-port エントリ | **推奨先行**（未設定時は 100 ms デフォルト使用） | 後から設定しても次ポーリングサイクルから適用 |
+| 4 | BRCM: 最初の per-port エントリの `action` → 後続エントリ | **同一 action 必須**（不一致で `task_invalid_entry`） | 全ポート同一 `action` を一括設定 |
+| 5 | `PFC_WD` per-port DEL | 即時・順序依存なし | `m_pfcwd_ports` の自動クリーンアップ |
+
+### 主要な制約詳細
+
+**PORT 先行必須 (依存 #1)**: `doTask()` 冒頭 (`pfcwdorch.cpp:68-71`) で `gPortsOrch->allPortsReady()` が `false` の場合は即リターン（タスク保留）。`PORT` の SAI 初期化完了後に Consumer イベントが来た時点で自動的に処理再開される。
+
+**PORT_QOS_MAP PFC 有効化 (依存 #2)**: `registerInWdDb()` (`pfcwdorch.cpp:533-555`) で `getPortPfcWatchdogStatus()` を呼び lossless TC bitmask を取得。`pfcMask == 0` の場合は `startWdOnPort()` が `task_need_retry` を返すが、PFC WD は実質無効のままとなる。`PORT_QOS_MAP` の PFC 有効化を先に行ってから `PFC_WD` エントリを書くことで中間不整合を防ぐ。
+
+**GLOBAL POLL_INTERVAL 推奨先行 (依存 #3)**: orchestrator 起動時のデフォルトは `PFC_WD_POLL_MSECS = 100` ms (`orchdaemon.cpp:24`)。`PFC_WD|GLOBAL` の `POLL_INTERVAL` を per-port エントリより先に書けば、初期ポーリングから一貫した間隔が保証される。後から変更しても `updateGroupPollingInterval()` が適用されるため実害は軽微。
+
+**Broadcom DLR 同一 action 強制 (依存 #4)**: `checkPfcDlrInitEnable()` が true の Broadcom 環境では、最初の `PFC_WD` per-port エントリの `action` が `SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION` としてスイッチレベルに設定される。後続エントリで異なる `action` を指定すると `"Invalid PFC Watchdog action %s as switch level action %s is set"` エラーで reject されるため、全ポートを同一 `action` で一括設定すること (`pfcwdorch.cpp:237-266`)。
+
+<!-- /ordering -->
