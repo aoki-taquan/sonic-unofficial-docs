@@ -252,4 +252,54 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPortIngressProfileListTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME, false)` に委譲。egress 版と同一パス。2 件分岐抽出。
 <!-- /handler-branching -->
+<!-- platform -->
+## プラットフォーム差分
+
+### Dynamic vs Static バッファモデル
+
+| 観点 | Static model (`buffermgr.cpp`) | Dynamic model (`buffermgrdyn.cpp`) |
+|------|-------------------------------|-------------------------------------|
+| 有効条件 | `DEVICE_METADATA.buffer_model != "dynamic"` | `DEVICE_METADATA.buffer_model == "dynamic"` |
+| direction 検証 | なし（orchagent 段で初めて制約が現れる） | あり: egress profile を ingress list に設定 → `task_failed` |
+| profile 存在検証 | なし（orchagent 段で `task_need_retry`） | あり: `m_bufferProfileLookup` に未登録 → `task_need_retry` |
+| admin-down port 置換 | なし（CONFIG_DB 値をそのまま APPL_DB へ） | あり: ゼロプロファイルリストへ差し替え |
+| buffer pool guard | なし | あり: `m_bufferPoolReady == false` → pending |
+| DEL 操作 | APPL_DB から削除 | `// Not supported on Mellanox platform for now.` 注記付きで削除処理 |
+
+evidence: `buffermgrdyn.cpp:3387-3450`, `buffermgr.cpp:476-480`
+
+### ASIC vendor 差分
+
+**Mellanox 固有**:
+- `ASIC_VENDOR` 環境変数でプラットフォームを判別し、Lua ヘッドルームプラグイン (`buffer_headroom_<vendor>.lua`) をロード。
+- Mellanox SN シリーズのモデル番号を取得し、4xxx / 5xxx の特定モデルでは 8 レーンポートの profile 名に `_8lane` を付与。これは参照する `BUFFER_PROFILE` 名に影響するが、本テーブルのキー・フィールド処理コード自体には分岐なし。
+- DEL パスに `// Not supported on Mellanox platform for now.` コメントあり。ingress / egress 両 profile list 共通の関数 `handleSingleBufferPortProfileListEntry` 内に存在（`buffermgrdyn.cpp:3443`）。削除処理は実行されるが正式サポート外。
+
+**trim 禁止制約（ベンダー共通）**:
+- `bufferorch.cpp:1725-1731` の `isTrimmingEligible` チェックにより、`packet_discard_action=trim` のプロファイルを ingress profile list に設定すると `task_failed`。SAI 仕様上の制限でベンダー問わず適用。egress 側には同等制約なし。
+
+**Broadcom / その他**:
+- モデル番号取得や 8 レーン倍増なし。Lua プラグイン名のみ異なる（`buffer_headroom_broadcom.lua` 等）。テーブル処理コードに vendor 条件分岐なし。
+
+### VOQ Chassis
+
+`processIngressBufferProfileList()` / `processIngressBufferProfileListBulk()` 内に `gMySwitchType == "voq"` 分岐は存在しない。VOQ chassis でも同一コードパスが実行される。
+
+VOQ 固有のキー拡張（`tokens.size() == 4` 形式のシステムポートキー）は BUFFER_QUEUE ハンドラにのみ適用され、BUFFER_PORT_INGRESS_PROFILE_LIST には影響しない。
+
+唯一の間接的影響: `bufferorch.cpp:2079-2094` の `doTask()` で、VOQ chassis は `isInitDone()`（非 VOQ は `isConfigDone()`）を使うため処理開始タイミングがやや早くなる。
+
+evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq 分岐なし）、`bufferorch.cpp:116-140`（`initVoqBufferReadyList`: BUFFER_QUEUE のみ対象）
+
+### まとめ
+
+| 差分カテゴリ | 差分有無 | 備考 |
+|------------|---------|------|
+| dynamic vs static model | **あり** | direction 検証・admin-down 置換・pool guard は dynamic のみ |
+| trim プロファイル禁止 | **あり（ingress 専用）** | egress には同等制約なし |
+| Mellanox DEL 未サポートコメント | **あり** | 処理は動作するが正式未サポート注記 |
+| Mellanox 8 レーン xon 倍増 | 間接的 | 参照 BUFFER_PROFILE 名に影響、テーブル処理コードに分岐なし |
+| VOQ Chassis | **差分なし** | 処理開始タイミング以外は同一コードパス |
+| その他 ASIC vendor | **差分なし** | Lua プラグイン名のみ異なる |
+<!-- /platform -->
 <!-- glossary-links-injected: 021ae16e7b9c -->
