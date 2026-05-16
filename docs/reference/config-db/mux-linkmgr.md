@@ -403,6 +403,49 @@ linkmgrd は SAI を直接呼ばない。MUX switchover は orchagent を通じ�
 
 <!-- /failure -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`linkmgrd` は ASIC ベンダー識別子（broadcom / mellanox 等）を参照しない。プラットフォームプロファイルは **ケーブルタイプ** (`PortCableType`) によって決まる。`MUX_LINKMGR` フィールドの有効性・意味論はケーブルタイプによって以下のとおり異なる。
+
+### 識別方法
+
+`MuxManager::updatePortCableType()` が `MUX_CABLE|<port>.cable_type` フィールドを読み取り、ポートごとの `PortCableType` を決定する（`MuxManager.cpp:245-262`）。
+
+```
+cable_type == "active-standby"  →  PortCableType::ActiveStandby  (DualToR 標準)
+cable_type == "active-active"   →  PortCableType::ActiveActive   (Y-cable SmartNiC)
+それ以外                         →  ActiveStandby にフォールバック（MUXLOGERROR）
+```
+
+### フィールド有効性マトリクス
+
+| フィールド / container | Active-Standby | Active-Active | 備考 |
+|----------------------|---------------|--------------|------|
+| `LINK_PROBER.interval_v4` | 有効 (ICMP heartbeat 間隔) | 有効 | `DbInterface.cpp:1132` |
+| `LINK_PROBER.interval_v6` | 有効 | 有効 | `DbInterface.cpp:1134` |
+| `LINK_PROBER.positive_signal_count` | 有効 | 有効 | `DbInterface.cpp:1136` |
+| `LINK_PROBER.negative_signal_count` | 有効 | 有効 | `DbInterface.cpp:1138` |
+| `LINK_PROBER.use_well_known_mac` | **実質無効** | 有効 (well-known MAC 使用可否を制御) | `MuxManager.cpp:501` のガードにより Active-Standby では効果なし |
+| `LINK_PROBER.src_mac` | 有効 (ICMP 送信元 MAC 選択) | 有効 | `processSrcMac()` は全ポートに適用 |
+| `TIMED_OSCILLATION.oscillation_enabled` | 有効 (定期的な Active ToR 切替) | **限定的** | Active-Active では両 ToR が常時 Active のため切替の意味が異なる |
+| `TIMED_OSCILLATION.interval_sec` | 有効 | 限定的 | 同上 |
+| `MUXLOGGER.log_verbosity` | 有効 | 有効 | |
+| `SERVICE_MGMT.kill_radv` | 有効 | **効果不明** | `processMuxLinkmgrConfigNotifiction()` に `SERVICE_MGMT` キーの分岐なし (`DbInterface.cpp:1120-1214`) |
+
+### 差異詳細
+
+**Active-Standby のみ**: Server (Blade) IPv4 アドレスを ICMP probe 宛先として使用 (`MuxManager.cpp:193-195`)。MUX state は i2c 経由でハードウェアに問い合わせ (`probeMuxState()`)。`detach` モード設定は reject（`MuxPort.cpp:363-366`）。
+
+**Active-Active のみ**: SoC (NiC) IPv4 アドレスを gRPC 疎通確認に使用 (`MuxManager.cpp:216-218`)。MUX state はフォワーディング状態を gRPC 経由で問い合わせ (`probeForwardingState()`)。`failure` ステート（gRPC 障害時）あり (`MuxPort.cpp:304`)。`detach` モード（Detached 遷移）をサポート。初期化時に well-known MAC を生成・設定 (`MuxManager.cpp:501-507`)。
+
+### SmartSwitch DPU との関係
+
+`docker-mux` (linkmgrd) は `feature: subtype=="DualToR"` 環境専用デーモン。SmartSwitch の DPU ポートは `MUX_CABLE` テーブルに登録されず `MUX_LINKMGR` も参照されない。なお Active-Active ケーブルタイプは Y-cable SmartNiC 搭載の DualToR 向けであり、SmartSwitch DPU（`subtype=="SmartSwitch"`）とは別概念。
+
+詳細根拠は `meta/_intermediate/cdb-flow/mux-linkmgr-platform.md` を参照。
+<!-- /platform -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 

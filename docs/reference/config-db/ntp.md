@@ -1,6 +1,6 @@
 ---
-title: NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects)
-description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、および /etc/chrony への副次ファイル書込と systemd 経路を網羅した調査ページ。"
+title: NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub)
+description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、/etc/chrony への副次ファイル書込と systemd 経路、および CONFIG_DB Subscribe / chrony 制御 / SIGHUP 通信メカニズムを網羅した調査ページ。"
 area: reference
 hard: 0
 verification: code-verified
@@ -45,7 +45,7 @@ related:
     - sonic-ntp
 ---
 
-# NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F)
+# NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G)
 
 > このページは `NTP` / `NTP_SERVER` / `NTP_KEY` 3 テーブルを横断して、YANG 定義・`init_cfg.json.j2`・`chrony.conf.j2` テンプレート・`hostcfgd` ハンドラの全行精読から得た**暗黙デフォルト**・**乖離**・**dead field**・**silent drop** を記録する。各テーブルの詳細は [`NTP (global)`](./ntp-global.md)・[`NTP_SERVER`](./ntp-server.md)・[`NTP_KEY`](./ntp-key.md) を参照。
 
@@ -488,6 +488,73 @@ CONFIG_DB フィールドと生成内容の対応:
 chrony の実際の起動 VRF は `ExecStart` に登録された `chronyd-starter.sh` が `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled` と `NTP|global.vrf` を動的に読み取り決定する。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G) — CONFIG_DB Subscribe / chrony 制御 / SIGHUP
+
+> 詳細証跡は `meta/_intermediate/cdb-flow/ntp-pubsub.md` を参照。
+
+### CONFIG_DB Subscribe 登録
+
+hostcfgd は `config_db.subscribe()` で 3 テーブルを監視する。<!-- evidence: hostcfgd:2511-2517 -->
+
+| テーブル | swsscommon 定数 | コールバック |
+|---------|---------------|------------|
+| `NTP` | `CFG_NTP_GLOBAL_TABLE_NAME` | `ntp_global_handler` → `NtpCfg.ntp_global_update()` |
+| `NTP_SERVER` | `CFG_NTP_SERVER_TABLE_NAME` | `ntp_srv_key_handler` → `NtpCfg.ntp_srv_key_update()` |
+| `NTP_KEY` | `CFG_NTP_KEY_TABLE_NAME` | `ntp_srv_key_handler` → `NtpCfg.ntp_srv_key_update()` |
+
+`NTP_SERVER` と `NTP_KEY` は**共通ハンドラ** (`ntp_srv_key_handler`) に集約されており、
+いずれかの変更でその時点の両テーブル全件を再取得して chrony を再起動する。<!-- evidence: hostcfgd:2387-2391 -->
+
+### 間接 Subscribe — src_intf 連動
+
+`LOOPBACK_INTERFACE` テーブルも監視しており (`hostcfgd:2483`)、変更時に
+`NtpCfg.handle_ntp_source_intf_chg(lpbk_name)` を呼び出す。<!-- evidence: hostcfgd:2355-2364 -->
+
+条件: `NTP_SERVER` 未設定なら即 return。`src_intf` に含まれるインタフェース名が変化した場合のみ chrony 再起動。
+他インタフェース種別 (`INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE`) には NTP 連動コールなし。<!-- evidence: hostcfgd:2367-2381 -->
+
+### chrony 制御方式
+
+すべての NTP イベントは `systemctl restart chrony` によるフルリスタートで対応する。<!-- evidence: hostcfgd:1280,1324-1329,1355-1361,1396-1402 -->
+
+```python
+CHRONY_RESTART = ['systemctl', 'restart', 'chrony']  # hostcfgd:1280
+```
+
+| ハンドラ | トリガー | キャッシュ差分チェック | キャッシュ更新タイミング |
+|---------|---------|-------------------|-------------------|
+| `ntp_global_update` | `NTP` 変更 | `cache['global'] == data` → no-op | `systemctl restart` 成功後 |
+| `ntp_srv_key_update` | `NTP_SERVER` / `NTP_KEY` 変更 | `cache['servers'] == ntp_servers and cache['keys'] == ntp_keys` → no-op | `systemctl restart` 成功後 |
+| `handle_ntp_source_intf_chg` | `LOOPBACK_INTERFACE` 変更 | インタフェース名照合のみ（差分チェックなし） | キャッシュ更新なし |
+
+### SIGHUP の扱い
+
+hostcfgd 自体は `signal.SIGHUP` を登録するが**何もしない**（無視）。<!-- evidence: hostcfgd:111-112 -->
+
+```python
+def signal_handler(sig, frame):
+    if sig == signal.SIGHUP:
+        syslog.syslog(syslog.LOG_INFO, "HostCfgd: signal 'SIGHUP' is caught and ignoring..")
+```
+
+chrony へ SIGHUP を送る経路は存在しない。NTP 設定変更は必ずフルリスタートであり、
+設定のホットリロード (SIGHUP) は採用されていない。
+（比較: TACACS+ の `audisp-tacplus` へは SIGHUP を送信している — `hostcfgd:489-491`）
+
+### pub/sub ループ起動
+
+```python
+def start(self):
+    self.config_db.listen(init_data_handler=self.load)  # hostcfgd:2527-2528
+```
+
+`config_db.listen()` は swsscommon の SubscriberStateTable を介した Redis Keyspace 通知ポーリングループ。
+`init_data_handler=self.load` によりループ開始前に `NtpCfg.load()` でスナップショット一括取得し
+ブート時のキャッシュを初期化する。<!-- evidence: hostcfgd:1285-1310,2255-2272 -->
+
+<!-- /pubsub -->
 
 ## 関連ページ
 

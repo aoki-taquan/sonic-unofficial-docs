@@ -467,6 +467,183 @@ minigraph.py および init_cfg.json.j2 からの `PBH_TABLE` / `PBH_RULE` / `PB
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`PbhOrch` は `Orch` 基底クラス経由で `PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` の 4 テーブルを購読する。すべて CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace 通知** (`__keyspace@<dbId>__:<TABLE>:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB 分岐) |
+| keyspace パターン | `__keyspace@4__:PBH_TABLE:*`、`__keyspace@4__:PBH_RULE:*`、`__keyspace@4__:PBH_HASH:*`、`__keyspace@4__:PBH_HASH_FIELD:*` (CONFIG_DB dbId=4) |
+| key 区切り | `PBH_TABLE\|<name>` / `PBH_RULE\|<table>\|<rule>` 等 (TableNameSeparator 既定 `\|`) |
+| POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
+| 優先度 (`pri`) | 0 (`TableConnector` 既定) |
+| 起動時スナップショット | `SubscriberStateTable` が既存エントリを SET イベントとして再配信 |
+| TTL | 未設定 (CONFIG_DB は永続前提) |
+| ディスパッチ | `Consumer::execute()` → `PbhOrch::doTask(Consumer&)` → `consumer.getTableName()` 分岐 → 各 `doPbhXxxTask(consumer)` |
+
+### ディスパッチ詳細
+
+`PbhOrch::doTask()` は `consumer.getTableName()` により 4 テーブルを分岐し、処理後に `deployPbhTasks()` を呼んで依存関係解消ループを回す:
+
+```
+PbhOrch::doTask(Consumer &consumer)          // pbhorch.cpp:1804
+  → tableName == CFG_PBH_TABLE_TABLE_NAME    → doPbhTableTask(consumer)
+  → tableName == CFG_PBH_RULE_TABLE_NAME     → doPbhRuleTask(consumer)
+  → tableName == CFG_PBH_HASH_TABLE_NAME     → doPbhHashTask(consumer)
+  → tableName == CFG_PBH_HASH_FIELD_TABLE_NAME → doPbhHashFieldTask(consumer)
+  → [unknown]                                SWSS_LOG_ERROR
+  → deployPbhTasks()                         依存関係解消ループ
+```
+
+### CONFIG_DB → SAI 経路
+
+CONFIG_DB への書き込みは `sonic-utilities` の `config pbh` CLI (`config/plugins/pbh.py`) が `set_entry()` を呼ぶのみ。`orchagent` は APP_DB を経由せず、`PbhOrch` が CONFIG_DB から直接 SAI へ反映する:
+
+```
+config pbh → HSET CONFIG_DB PBH_RULE|<table>|<rule> ...
+  → Redis keyspace 通知
+  → SubscriberStateTable.pops() (batch=128)
+  → PbhOrch::doTask() → doPbhRuleTask()
+  → AclRulePbh::validate() + sai_acl_api->create_acl_entry()
+```
+
+- APP_DB への書き込みなし (orchagent 直接 SAI)。
+- `allPortsReady()` が false の場合、`PbhOrch::doTask()` は即 return して処理をスキップする。
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/pbhorch.cpp:88-97 (PbhOrch::PbhOrch — Orch(connectorList)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/pbhorch.cpp:1804-1838 (PbhOrch::doTask — getTableName 分岐 + deployPbhTasks) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:553-565 (TableConnector 構築 + gPbhOrch 生成) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp (Orch::addConsumer — CONFIG_DB → SubscriberStateTable 分岐) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164 (DEFAULT_POP_BATCH_SIZE = 128) -->
+<!-- /pubsub -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/pbh/pbhschema.h`、`pbhmgr.cpp`、`pbhrule.cpp`
+
+### PBH_RULE.priority — 有効範囲
+
+| 項目 | 値 | 根拠 |
+|------|----|------|
+| 型 | `sai_uint32_t` | `pbhmgr.cpp:506` `to_uint<sai_uint32_t>(value)` |
+| 有効範囲 | `0` – `4294967295` (uint32 全域) | YANG `type uint32`、実装側に上限チェックなし |
+| YANG 定義 | `type uint32; mandatory true` | `sonic-pbh.yang:153-156` |
+
+> YANG / 実装ともに上限は uint32 最大値。実際の SAI 実装が受け入れる上限はプラットフォーム依存だが、ソースコード上の制限は uint32 範囲のみ。
+
+### PBH_RULE.ether_type / inner_ether_type — enum 代表値
+
+`ether_type` / `inner_ether_type` は `0x...` 形式の uint16 hex 文字列。ハードコード mask は `0xFFFF` (exact match)。実装上の代表的な値:
+
+| 値 (hex) | プロトコル | 備考 |
+|----------|-----------|------|
+| `0x0800` | IPv4 | RFC 791 |
+| `0x86DD` | IPv6 | RFC 2460 |
+| `0x8847` | MPLS unicast | RFC 3032 |
+| `0x0806` | ARP | RFC 826 |
+
+`ether_type` mask は `pbhmgr.cpp:558` で `0xFFFF` に固定注入 (YANG 非記述)。
+
+### PBH_RULE.ip_protocol — enum 代表値
+
+`ip_protocol` は `0x...` 形式の uint8 hex 文字列。ハードコード mask は `0xFF` (exact match)。
+
+| 値 (hex) | プロトコル番号 (dec) | 用途 |
+|----------|---------------------|------|
+| `0x04` | 4 | IPv4-in-IPv4 |
+| `0x11` | 17 | UDP |
+| `0x06` | 6 | TCP |
+| `0x2F` | 47 | GRE |
+| `0x3B` | 59 | IPv6 No Next Header |
+
+`ip_protocol` mask は `pbhmgr.cpp:583` で `0xFF` に固定注入 (YANG 非記述)。
+
+### SAI acl_entry_attr マッピング
+
+`pbhrule.cpp` の `validateAddMatch` / `validateAddAction` で使用する SAI 属性:
+
+| CONFIG_DB フィールド | SAI acl_entry_attr | 方向 |
+|--------------------|--------------------|------|
+| `gre_key` | `SAI_ACL_ENTRY_ATTR_FIELD_GRE_KEY` | match |
+| `ether_type` | `SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE` | match |
+| `ip_protocol` | `SAI_ACL_ENTRY_ATTR_FIELD_IP_PROTOCOL` | match |
+| `ipv6_next_header` | `SAI_ACL_ENTRY_ATTR_FIELD_IPV6_NEXT_HEADER` | match |
+| `l4_dst_port` | `SAI_ACL_ENTRY_ATTR_FIELD_L4_DST_PORT` | match |
+| `inner_ether_type` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_ETHER_TYPE` | match |
+| `packet_action=SET_ECMP_HASH` | `SAI_ACL_ENTRY_ATTR_ACTION_SET_ECMP_HASH_ID` | action |
+| `packet_action=SET_LAG_HASH` | `SAI_ACL_ENTRY_ATTR_ACTION_SET_LAG_HASH_ID` | action |
+
+match field が 0 件、または action が 1 件以外の場合は `AclRulePbh::validate()` で reject (`pbhrule.cpp:84-90`)。
+
+### pbhschema.h 文字列定数
+
+```c
+// packet_action 値
+#define PBH_RULE_PACKET_ACTION_SET_ECMP_HASH "SET_ECMP_HASH"
+#define PBH_RULE_PACKET_ACTION_SET_LAG_HASH  "SET_LAG_HASH"
+
+// flow_counter 値
+#define PBH_RULE_FLOW_COUNTER_ENABLED  "ENABLED"
+#define PBH_RULE_FLOW_COUNTER_DISABLED "DISABLED"
+```
+
+<!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-side-effects.md -->
+
+### ASIC_DB への書込
+
+PbhOrch → AclOrch → SAI API 経路で syncd が ASIC_DB にオブジェクトを書き込む。直接の ASIC_DB アクセスは syncd 経由。
+
+| 操作 | SAI API | ASIC_DB オブジェクト型 | 契機 |
+|---|---|---|---|
+| PBH_TABLE ADD | `aclOrch->addAclTable()` → `sai_acl_api->create_acl_table()` | `SAI_OBJECT_TYPE_ACL_TABLE` | `PBH_TABLE` SET イベント |
+| PBH_RULE ADD | `aclOrch->addAclRule()` → `sai_acl_api->create_acl_entry()` | `SAI_OBJECT_TYPE_ACL_ENTRY` | `PBH_RULE` SET イベント (依存オブジェクト揃い次第) |
+| PBH_HASH ADD | `sai_hash_api->create_hash()` | `SAI_OBJECT_TYPE_HASH` | `PBH_HASH` SET イベント |
+| PBH_HASH_FIELD ADD | `sai_hash_api->create_fine_grained_hash_field()` | `SAI_OBJECT_TYPE_FINE_GRAINED_HASH_FIELD` | `PBH_HASH_FIELD` SET イベント |
+| flow_counter=ENABLED | `sai_acl_api->create_acl_counter()` | `SAI_OBJECT_TYPE_ACL_COUNTER` | PBH_RULE で `flow_counter=ENABLED` 時のみ |
+
+証跡: `pbhorch.cpp:286`（addAclTable）、`pbhorch.cpp:633`（addAclRule）、`pbhorch.cpp:1054`（create_hash）、`aclorch.cpp:1937`（create_acl_counter）
+
+### COUNTERS_DB への書込
+
+`flow_counter=ENABLED` の PBH_RULE のみ、`AclOrch::registerFlexCounter()` を通じて COUNTERS_DB に書き込む。
+
+| COUNTERS_DB キー | 内容 | 書込タイミング |
+|---|---|---|
+| `ACL_COUNTER_RULE_MAP` | `"<table_name>|<rule_name>"` → `<acl_counter_oid>` | `flow_counter=ENABLED` の PBH_RULE が addAclRule → createCounter 成功後 |
+| FlexCounter 登録 | `CounterType::ACL_COUNTER` として packet / byte カウンタ属性を登録 | 同上 (`show pbh statistics` に表示) |
+
+DEL 時: `aclOrch->deregisterFlexCounter()` が `ACL_COUNTER_RULE_MAP` からエントリ削除 + FlexCounter 解除。
+
+証跡: `aclorch.cpp:6041`（hset ACL_COUNTER_RULE_MAP）、`aclorch.cpp:6047`（hdel DEL 時）、`aclorch.cpp:6040`（flex_counter_manager 登録）
+
+### flow_counter=DISABLED（デフォルト）時
+
+`AclRulePbh` は `createCounter=false` で構築 (`pbhorch.cpp:499`)。ACL_COUNTER SAI オブジェクトは作成されず、COUNTERS_DB への書込は発生しない。
+
+### 副次書込サマリ
+
+```
+PBH_RULE (flow_counter=ENABLED)
+  └─► ASIC_DB: SAI_OBJECT_TYPE_ACL_ENTRY  (via sai_acl_api->create_acl_entry)
+  └─► ASIC_DB: SAI_OBJECT_TYPE_ACL_COUNTER (via sai_acl_api->create_acl_counter)
+  └─► COUNTERS_DB: ACL_COUNTER_RULE_MAP["<table>|<rule>"] = <counter_oid>
+  └─► FlexCounter: CounterType::ACL_COUNTER 登録 (show pbh statistics に表示)
+
+PBH_RULE (flow_counter=DISABLED / デフォルト)
+  └─► ASIC_DB: SAI_OBJECT_TYPE_ACL_ENTRY のみ
+  └─► COUNTERS_DB: 書込なし
+```
+
+<!-- /side-effects -->
+
 <!-- ordering -->
 ## オブジェクト生成順序・依存関係 (Phase B)
 
@@ -543,3 +720,81 @@ PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
 `orchdaemon.cpp:553-565` で AclOrch / PortsOrch 作成後に PbhOrch を生成する順序が保証されている。
 
 <!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-phaseH-platform.md -->
+
+### ASIC ベンダー検出と capability ロード
+
+`PbhCapabilities` は起動時に環境変数 `ASIC_VENDOR` を読み取り、対応する `PbhVendorFieldCapabilities` サブクラスをロードする (`pbhcap.cpp:310-335`)。`ASIC_VENDOR` 未設定または不明値の場合は `generic` へ fallback し、`SWSS_LOG_WARN` を出力する。
+
+現在サポートするベンダー:
+
+| `ASIC_VENDOR` 値 | ロードされるクラス | STATE_DB `PBH_CAPABILITIES_TABLE` へ書込 |
+|---|---|---|
+| `generic` (またはその他 / 未設定) | `PbhGenericFieldCapabilities` | あり (各フィールドの ADD/UPDATE/REMOVE 組み合わせ) |
+| `mellanox` | `PbhMellanoxFieldCapabilities` | あり (同上) |
+
+### フィールド別 capability 対照表
+
+以下の通り `ASIC_VENDOR` によって ADD / UPDATE / REMOVE の可否が変わる。空欄は "いずれも不可"。
+
+#### PBH_TABLE
+
+| フィールド | Generic | Mellanox |
+|---|---|---|
+| `interface_list` | UPDATE | UPDATE |
+| `description` | UPDATE | UPDATE |
+
+#### PBH_RULE
+
+| フィールド | Generic | Mellanox |
+|---|---|---|
+| `priority` | UPDATE | UPDATE |
+| `gre_key` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `ether_type` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `ip_protocol` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `ipv6_next_header` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `l4_dst_port` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `inner_ether_type` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `hash` | UPDATE | UPDATE |
+| `packet_action` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+| `flow_counter` | ADD, UPDATE, REMOVE | ADD, UPDATE, REMOVE |
+
+#### PBH_HASH
+
+| フィールド | Generic | Mellanox |
+|---|---|---|
+| `hash_field_list` | UPDATE | **(空: 不可)** |
+
+> **Mellanox 固有制約**: `PBH_HASH.hash_field_list` の ADD / UPDATE / REMOVE がすべて無効。`hash_field_list` の変更は capability チェックで拒否され `SWSS_LOG_ERROR("Failed to validate field(hash_field_list): capability(UPDATE/ADD/REMOVE) is not supported")` が記録される。
+
+#### PBH_HASH_FIELD
+
+`PbhHashFieldCapabilities` のフィールド (`hash_field`, `ip_mask`, `sequence_id`) はいずれのベンダーも明示的な capability 登録なし (`PbhVendorFieldCapabilities::hashField` が未初期化のまま) → 事実上 ADD のみ許可 (`updatePbhHashField()` は常に `return false` により UPDATE 禁止)。
+
+### Mellanox W/A: PBH_RULE update 時の action disable
+
+`ASIC_VENDOR=mellanox` かつ `updatePbhRule` の変更フィールドに `hash` または `packet_action` が含まれる場合、`pbhorch.cpp:839-863` にてワークアラウンドを実施:
+
+1. `AclRulePbh::disableAction()` で既存 ACL entry の action attr を先に無効化
+2. その後 `aclOrch->updateAclRule()` を呼び出す
+
+GENERIC platform ではこの処理は行われず、直接 `updateAclRule()` を呼ぶ。
+
+### VOQ / chassis
+
+`sonic-swss/orchagent/pbh/` ディレクトリに VOQ chassis 固有コードは存在しない。`PbhOrch` は `orchdaemon.cpp` で unconditionally 生成されており、VOQ / non-VOQ の分岐なし。
+
+### capability の STATE_DB 書き込み
+
+`PbhCapabilities::writePbhVendorCapabilitiesToDb()` が起動時に `STATE_DB:PBH_CAPABILITIES_TABLE` へ各フィールドの capability 文字列 (`ADD`, `UPDATE`, `REMOVE` のカンマ区切り) を書き込む。確認コマンド:
+
+```bash
+sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES_TABLE|rule'
+sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES_TABLE|hash'
+```
+
+<!-- /platform -->
