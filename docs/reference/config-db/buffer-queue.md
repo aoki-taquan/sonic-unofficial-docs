@@ -531,28 +531,47 @@ profile 名に `_zero_` を含む場合 (`counter_needs_to_add = false`)、カ�
 ### Dynamic / Static バッファモデル
 
 `buffermgrdyn`（Dynamic モード専用）は `BUFFER_QUEUE` の `profile` フィールドをそのまま APPL_DB に転送する。
-BUFFER_PG と異なりキューのヘッドルーム自動計算は行わない。
+BUFFER_PG と異なり egress キューのヘッドルーム自動計算は行わない。キューのプロファイル割り当てはビルド時テンプレートで決定済みのため、Dynamic/Static どちらのモードも実運用上の queue buffer 割り当て内容は同等となる。
 
-#### Dynamic モード固有 — zero profile (`buffermgrdyn.cpp:285-289`)
+#### Dynamic モード固有 — admin-down 時の zero profile 回収 (`buffermgrdyn.cpp:285-289, 1286-1381`)
 
-ベンダー提供の per-platform zero profiles info JSON に `queues_to_apply_zero_profile` / `egress_zero_profile` が定義されている場合、
-admin-down ポートまたはバッファ回収時に指定 queue インデックスへ zero profile を適用する。
-Static モードデーモン (`buffermgr`) はこの処理を持たない。
+ベンダー提供の per-platform zero profiles info JSON に `queues_to_apply_zero_profile` / `egress_zero_profile` が定義されている場合、admin-down ポートのバッファ回収時に `reclaimReservedBufferForPort()` が 2 モードで動作する。
+
+| モード | 条件 | 動作 |
+|--------|------|------|
+| **ベンダー指定対象に zero profile 適用** | `queues_to_apply_zero_profile` が定義済み | 指定 queue index にのみ zero profile を適用し、残りは APPL_DB から削除 |
+| **全設定 queue に zero profile 適用** | `queues_to_apply_zero_profile` が未定義 | 設定済み全 queue + ASIC がサポートする未設定 queue にも zero profile を適用 (`buffers_config.j2` コメント例: 16 queue の場合 0-2, 5-6, 7-15 → lossy zero, 3-4 → lossless zero) |
+
+Static モードデーモン (`buffermgr`) はこの `reclaimReservedBufferForPort` 処理を持たない。
 
 ### ASIC ベンダー差異
 
 `buffermgrdyn` 起動時に `ASIC_VENDOR` 環境変数でベンダーを検出する (`buffermgrdyn.cpp:68`)。
-Mellanox の場合は `DEVICE_METADATA.localhost.platform` からモデル番号を追加取得する。
-ただし BUFFER_QUEUE のプロファイル名はビルド時テンプレートで確定済みであり、
-Mellanox 8-lane サフィックス等のランタイム ASIC 依存処理は BUFFER_QUEUE には適用されない。
+
+| ベンダー値 | 追加取得情報 | BUFFER_QUEUE への影響 |
+|-----------|------------|----------------------|
+| `"mellanox"` | `DEVICE_METADATA.localhost.platform` からモデル番号 4 桁 (`sn****`) を抽出し `m_model_number` に保存 | なし（BUFFER_PG headroom 計算専用）|
+| その他 (`"broadcom"` 等) | なし | なし |
+| 未設定 (`""`) | なし | なし |
+
+ベンダー別 Lua プラグイン (`buffer_headroom_<vendor>.lua`, `buffer_pool_<vendor>.lua`) は BUFFER_PG / BUFFER_POOL の計算専用であり BUFFER_QUEUE の profile 値には影響しない。Mellanox 8-lane サフィックス等のランタイム ASIC 依存処理は BUFFER_QUEUE に適用されない。
+
+### ASIC queue 数差異
+
+YANG の qindex 正規表現は `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` で **0〜15** を許容するが、実際の上限は ASIC が SAI 初期化時に通知する queue 数次第。非 VOQ では `port.m_queue_ids.size()`、VOQ では `getPortVoQIds(port).size()` を実行時に参照し、超過インデックスを `task_invalid_entry` で拒否する (`bufferorch.cpp:1052-1064`)。プラットフォームごとに queue 数が 8 / 16 / それ以外に異なる点に注意。
+
+### Flex counter 条件 (非 VOQ のみ)
+
+非 VOQ の queue buffer counter は `flexcounterorch->isCreateOnlyConfigDbBuffers()` が `true` のときのみ `BufferOrch` が per-queue に追加・削除を行う (`bufferorch.cpp:1139-1152`)。`false` のとき（従来モード）は `FlexCounterOrch` が一括管理するため `BufferOrch` からは操作しない。
 
 ### VOQ Chassis 専用処理
 
 | 処理 | 非 VOQ | VOQ (`switch_type = voq`) | evidence |
 |------|--------|--------------------------|----------|
 | `doTask` 起動ゲート | `isConfigDone()` 待機 | `isInitDone()` 待機 | `bufferorch.cpp:2079-2090` |
-| Warm reboot ready list | `initBufferReadyList()` | `initVoqBufferReadyList()` | `bufferorch.cpp:116-136` |
+| Warm reboot ready list | `initBufferReadyList()` (APPL_DB ソース) | `initVoqBufferReadyList()` (CONFIG_DB ソース、admin-down 除外) | `bufferorch.cpp:116-136` |
 | Key トークン数 | 2 (`<port>\|<qindex>`) | 4 (`<hostname>\|<asic_name>\|<port>\|<qindex>`) | `bufferorch.cpp:916-956` |
+| ローカルポート判定 | 常に local | `gMyHostName` / `gMyAsicName` と照合、不一致なら SAI 書き込みをスキップ | `bufferorch.cpp:916-940` |
 | Queue ID 取得 | `port.m_queue_ids[ind]`、lock チェックあり | `getPortVoQIds(port)[ind]`、lock チェックなし | `bufferorch.cpp:1049-1075` |
 | Flex counter 管理 | `BufferOrch` が per-queue 追加・削除 | `flexcounterorch` が全 VOQ を一括登録するためスキップ | `bufferorch.cpp:1134-1136` |
 | ポート参照カウント | SET/DEL 時に increase/decrease | システムポートは動的生成なしのためスキップ | `bufferorch.cpp:1166-1168` |
