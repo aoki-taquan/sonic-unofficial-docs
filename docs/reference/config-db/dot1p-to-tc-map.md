@@ -246,4 +246,32 @@ show qos map dot1p-tc
 > **Evidence**: `sonic-swss/orchagent/qosorch.cpp:360-397`, `sonic-buildimage/files/build_templates/qos_config.j2:240-253`, `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2:338-346`, `sonic-buildimage/src/sonic-yang-models/tests/yang_model_tests/tests_config/qosmaps.json`
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-ordering.md`
+
+対象テーブル: `DOT1P_TO_TC_MAP`。Consumer: `QosOrch::handleDot1pToTcTable()` / `QosOrch::handlePortQosMapTable()` (`qosorch.cpp`)。
+
+### SET 時の先行必須テーブル
+
+| # | 依存 | 方向 | 挙動 |
+|---|------|------|------|
+| 1 | `DOT1P_TO_TC_MAP\|<name>` SAI 作成 → `PORT_QOS_MAP\|<port>` SET | 先行推奨 | `resolveFieldRefValue()` が未解決で `task_need_retry`（自動再試行、`qosorch.cpp:2120-2130`） |
+| 2 | 不正 dot1p 値のサイレント脱落 | SET 後に上書きで解消 | `stoi()` 失敗エントリは `continue` でスキップ → SAI には有効エントリのみ反映（`qosorch.cpp:360-397`） |
+
+> **推奨順序（SET）**: `DOT1P_TO_TC_MAP|<name>` 登録 → `PORT_QOS_MAP|<port>` の `dot1p_to_tc_map` フィールド設定
+
+### DEL 時の順序制約
+
+| # | 依存 | 方向 | 挙動 |
+|---|------|------|------|
+| 1 | `PORT_QOS_MAP\|<port>` の `dot1p_to_tc_map` 参照解除 → `DOT1P_TO_TC_MAP\|<name>` DEL | **先行必須** | 参照中は `m_pendingRemove=true` + `task_need_retry` ロック（`qosorch.cpp:174-186`） |
+| 2 | pending_remove 解消後のみ SET 可能 | **先行必須** | pending_remove 中の SET は即 `task_need_retry`（`qosorch.cpp:136-139`） |
+
+> **推奨順序（DEL）**: `PORT_QOS_MAP|<port>` の `dot1p_to_tc_map` フィールド削除 → `DOT1P_TO_TC_MAP|<name>` DEL
+
+> **Evidence**: `qosorch.cpp:124-201` (QosMapHandler::processWorkItem); `qosorch.cpp:2046-2134` (handlePortQosMapTable); `qosorch.cpp:422-427` (handleDot1pToTcTable); `qosorch.cpp:360-397` (Dot1pToTcMapHandler::convertFieldValuesToAttributes)
+<!-- /ordering -->
+
 <!-- glossary-links-injected: b1003b21c66f -->
