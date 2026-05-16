@@ -681,6 +681,30 @@ PORT テーブルの SET 処理は `PortsOrch::doTask()` のタスクキュー (
 | **`task_need_retry` → `it++`** | SAI 一時エラー (autoneg / speed / adv_speeds / interface_type / adv_interface_types / link_training) | SAI が `task_need_retry` を返した場合に限りリトライ |
 | **`task_failed` → タスク削除** | autoneg/link_training 非サポート HW, fast_linkup 失敗, fec=auto 非サポート, fec 非サポートモード, link_training on non-PHY | CONFIG_DB の値は残るが実装に反映されない |
 
+### ポート作成時の失敗 (create_ports)
+
+PORT エントリの初回 SET 時に `PortsOrch::addPortBulk()` が SAI の `create_ports()` を呼び出す。この段階の失敗は以下の 2 パターン。
+
+#### lanes 不一致 → invalid (return false)
+
+CONFIG_DB の `lanes` フィールドに指定されたレーン組み合わせがスイッチの `m_portListLaneMap` に存在しない場合:
+
+```
+SWSS_LOG_ERROR("Failed to locate port lane combination alias:%s", alias.c_str());
+return false;
+```
+
+`portsorch.cpp:4025-4031` — `initPort()` がレーン組み合わせ検索に失敗すると即 `return false`。orchagent は当該 PORT エントリを破棄し、**retry なし**。CONFIG_DB の `lanes` 値が HW と一致するまでポートは作成されない。
+
+#### SAI `create_ports()` 一括失敗 → SWSS_LOG_THROW (orchagent abort)
+
+`addPortBulk()` の SAI bulk 呼び出しが失敗した場合:
+
+- **バッチ全体失敗** (`status != SAI_STATUS_SUCCESS`): `SWSS_LOG_ERROR "Failed to create ports with bulk operation, rv:%d"` → `handleSaiCreateStatus` → `task_success` 以外なら `SWSS_LOG_THROW "PortsOrch bulk create failure"` → orchagent プロセス abort → supervisor restart (`portsorch.cpp:1450-1461`)
+- **個別ポート失敗** (`statusList[i] != SAI_STATUS_SUCCESS`): 同様に `SWSS_LOG_ERROR "Failed to create port %s with bulk operation, rv:%d"` → `SWSS_LOG_THROW` (`portsorch.cpp:1466-1479`)
+
+**retry なし。orchagent が supervisor に再起動される。** `SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` を指定しているため、SAI 実装によっては一部ポートのみ失敗が返る場合がある。
+
 ### フィールド別 retry / failure 詳細
 
 #### `autoneg`
@@ -697,6 +721,7 @@ PORT テーブルの SET 処理は `PortsOrch::doTask()` のタスクキュー (
 
 #### `speed`
 
+- **非サポート speed**: `isSpeedSupported()` が false → `SWSS_LOG_ERROR "Unsupported port %s speed %u"` → `it = taskMap.erase(it)` (タスク削除、**retry なし**) (`portsorch.cpp:5024-5033`)。`isSpeedSupported()` が SAI の速度能力リストを取得できないプラットフォーム (`SAI_STATUS_NOT_IMPLEMENTED` 等) では SWSS_LOG_WARN を出して speed 検証をスキップし、任意値を SAI に渡す (`portsorch.cpp:3144-3148`)
 - 変更前一時 DOWN 失敗: `SWSS_LOG_ERROR "Failed to set port %s admin status DOWN to set speed"` → `it++` (`portsorch.cpp:5040-5045`)
 - `setPortSpeed` 失敗: `task_need_retry` / `task_failed` 分岐 (`portsorch.cpp:5052-5067`)
 
