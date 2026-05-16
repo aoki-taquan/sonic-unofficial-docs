@@ -147,6 +147,32 @@ YANG (`sonic-buffer-queue.yang`) の `profile` leafref には明示的な defaul
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込順依存 (Phase B)
+
+BUFFER_QUEUE エントリを正しく適用するには、以下の依存テーブルが先に登録されている必要がある。
+
+| 依存テーブル | 理由 | 違反時の挙動 | evidence |
+|---|---|---|---|
+| `BUFFER_POOL` | `buffermgrd`（動的）が `updateBufferObjectToDb()` 冒頭で `m_bufferPoolReady` フラグを確認。プール未登録なら APPL_DB 書き込みを保留し `m_bufferObjectsPending = true` をセット。 | APPL_DB への転送がデファーされる（サイレント保留） | `buffermgrdyn.cpp:933-936` |
+| `BUFFER_PROFILE` | `buffermgrd`（動的）が `checkBufferProfileDirection()` で `m_bufferProfileLookup` を検索。未登録なら `task_need_retry` を返し処理を延期。 | `task_need_retry` → Consumer が再試行 | `buffermgrdyn.cpp:3282-3286` |
+| `BUFFER_PROFILE` | `orchagent` `BufferOrch` が `resolveFieldRefValue()` で APPL_DB 上のプロファイル参照を解決。未登録なら `task_need_retry`。 | `task_need_retry` → orchagent が再試行 | `bufferorch.cpp:961-970` |
+| `PORT` | `buffermgrd`（動的）が `m_portInfoLookup[port]` を参照。`PORT_ADMIN_DOWN` 時は admin-up 後に APPL_DB 書き込み。`max_queues` 未通知ポートは reserved buffer 処理が保留。 | admin-up 待ちまたは保留 | `buffermgrdyn.cpp:3344-3350` |
+| `PORT` | `orchagent` が `gPortsOrch->getPort()` でポートを取得。未登録なら `task_invalid_entry` を返す。 | `task_invalid_entry` → エントリ破棄 | `bufferorch.cpp:1033-1038` |
+
+### VOQ シャーシ特別扱い
+
+VOQ モード（`gMySwitchType == "voq"`）の場合、key は 4 トークン形式
+`<hostname>|<asic_name>|<port>|<qindex>` を要求する。
+`hostname` と `asic_name` が自ノードと一致する場合のみ local port として SAI に適用し、
+一致しない場合は SAI 書き込みをスキップする（他ノード向けエントリのため）。
+key が 4 トークンでない場合は即 `task_invalid_entry`。
+
+- evidence: `sonic-swss/orchagent/bufferorch.cpp:918-940`
+
+詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-queue-ordering.md` を参照。
+<!-- /ordering -->
+
 ## 購読者
 
 - `buffermgrd`: [APPL_DB](../../reference/glossary.md#term-appl_db) へ転送
