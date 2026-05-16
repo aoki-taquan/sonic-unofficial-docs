@@ -164,6 +164,46 @@ STATIC_ROUTE テーブル変更時に `bgpcfgd` が自動生成する FRR コマ
 
 <!-- /constants -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+### BGP_GLOBALS への暗黙参照
+
+`ROUTE_REDISTRIBUTE` テーブルの処理は `BGP_GLOBALS|<vrf>|local_asn` の存在に依存する。
+`frrcfgd` は VRF テーブル処理前に `__get_vrf_asn(vrf)` を呼び、`local_asn` が未設定の場合は
+`ROUTE_REDISTRIBUTE` の FRR 反映をスキップして `LOG_DEBUG` を出力する
+(`frrcfgd.py` L2658-2662)。
+
+`BGP_GLOBALS|<vrf>|local_asn` が新規設定されると、`frrcfgd` は保留していた
+`ROUTE_REDISTRIBUTE` エントリを `__apply_dep_vrf_table(vrf, 'ROUTE_REDISTRIBUTE')` で再適用する
+(`frrcfgd.py` L2703-2704)。
+
+FRR コマンド生成時には `local_asn` を用いて `router bgp <asn> vrf <vrf>` コンテキストを構築する
+(`frrcfgd.py` L3161-3163):
+
+```
+router bgp <local_asn> vrf <vrf>
+  address-family <af> unicast
+    redistribute <src_proto> [metric <m>] [route-map <name>]
+```
+
+### ROUTE_MAP への暗黙参照
+
+`route_map` フィールドは `sonic-route-common.yang` で `ROUTE_MAP_SET_LIST` への leafref として定義されており、
+YANG バリデーションにより参照先の存在が保証される。
+
+`frrcfgd` の `route_redist_key_map` はこれを `redistribute <proto> route-map <name>` コマンドに展開する
+(`frrcfgd.py` L1979-1980)。SET 操作前に `no redistribute <proto>` を先行発行して冪等性を確保する
+(`hdl_route_redist_set()` L1330-1340)。
+
+| 暗黙参照元 | 参照先 | 種別 |
+|-----------|--------|------|
+| `ROUTE_REDISTRIBUTE` 全エントリ | `BGP_GLOBALS|<vrf>|local_asn` | 実行前提（未設定時は保留） |
+| `ROUTE_REDISTRIBUTE` 全エントリ | `BGP_GLOBALS|<vrf>|local_asn` 設定イベント | 再適用トリガー |
+| `ROUTE_REDISTRIBUTE|…|route_map` | `ROUTE_MAP_SET|<name>` | YANG leafref + FRR redistribute コマンド展開 |
+
+<!-- /cross-refs -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 

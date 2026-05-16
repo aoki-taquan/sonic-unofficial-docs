@@ -252,6 +252,64 @@ db_migrator.py での STATIC_ROUTE マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | nexthop/ifname/blackhole フィールドのリスト長不一致 | `IpNextHopSet.__init__()` → `log_err` + `raise ValueError` | `set_handler()` が `log_crit` + `return False` でエントリをスキップ | なし |
+| 2 | nexthop が zero-IP かつ ifname 未指定（blackhole でない） | `IpNextHop.__init__()` → `log_err('Mandatory attribute not found for nexthop')` + `raise ValueError` | 対象 nexthop のみ `IpNextHopSet` に追加されずスキップ | なし |
+| 3 | nexthop の IP 文字列が不正 (`socket.inet_pton` 失敗) | `IpNextHop.is_ip_valid()` → `socket.error` | 例外が `set_handler()` の `try/except` でキャッチされ `log_crit` + `return False` | なし |
+| 4 | VRF 未解決（APPL_DB key の `:` 区切りが 1 要素以下） | `StaticRouteMgr.split_key()` → `log_debug` + `raise ValueError` | `set_handler()` / `del_handler()` が例外で中断。当該経路は FRR に設定されない | なし |
+| 5 | vtysh への設定書き込み失敗（FRR デーモン未起動等） | `FRR.write()` → `log_err('can\'t push configuration from file ...')` | コマンドリストは破棄。FRR 設定に反映されない。retcode != 0 を返す | なし |
+| 6 | FRR デーモン起動タイムアウト | `FRR.wait_for_daemons()` → `raise RuntimeError` | bgpcfgd プロセスが起動失敗。`systemctl restart bgp` が必要 | なし |
+| 7 | fpmsyncd: VRF ifindex からの名前解決失敗 | `routesync.cpp` → `SWSS_LOG_ERROR("Fail to get the VRF name (ifindex %u)")` + `return` | 当該 netlink メッセージを破棄。APP_DB に反映されない | なし |
+| 8 | fpmsyncd: VRF 名が `Vrf` プレフィクスで始まらない | `routesync.cpp` → `SWSS_LOG_ERROR("Invalid VRF name %s")` + `return` | 同上。APP_DB に反映されない | なし |
+| 9 | fpmsyncd: RTN_BLACKHOLE / RTN_UNREACHABLE / RTN_PROHIBIT 型ルート受信 | `routesync.cpp` → `SWSS_LOG_ERROR("RTN_BLACKHOLE route not expected")` + `return` | static blackhole は FRR → fpmsyncd ではなく bgpcfgd 経路で処理すべき。fpmsyncd 側は破棄 | なし |
+| 10 | BGP ASN 未設定時の redistribute static 保留 | `set_handler()` → `vrf_pending_redistribution.add(vrf)` | redistribute static コマンドを保留。`on_bgp_asn_change()` 呼び出しまで BGP 広告が行われない | 自動回復 (ASN 設定後) |
+
+### IpNextHopSet 構築例外の詳細
+
+```python
+# managers_static_rt.py (bgpcfgd)
+try:
+    ip_nh_set = IpNextHopSet(is_ipv6, bkh_list, nh_list, intf_list, dist_list, nh_vrf_list)
+    ...
+except Exception as exc:
+    log_crit("Got an exception %s: Traceback: %s" % (str(exc), traceback.format_exc()))
+    return False  # エントリは FRR に設定されない
+```
+
+リスト長不一致の具体例: `nexthop=10.0.0.1,10.0.0.2` かつ `ifname=Ethernet0` (1 要素) → `nums = {2, 1}` → `len(nums) != 1` → `ValueError`。
+
+### FRR vtysh 失敗の詳細
+
+```python
+# frr.py (bgpcfgd)
+ret_code, out, err = run_command(["vtysh", "-f", tmp_filename])
+if ret_code != 0:
+    log_err("ConfigMgr::commit(): can't push configuration from file='%s', rc='%d', stdout='%s', stderr='%s'" % err_tuple)
+return ret_code == 0
+```
+
+`push_list()` は `FRR.write()` を呼ぶ。`vtysh` の戻り値が非 0 の場合はエラーログのみで静的経路は FRR に未反映のまま。bgpcfgd プロセスは継続動作するが、内部の `static_routes` キャッシュは更新済みのため再試行されない。
+
+### STATE_DB / ERROR_TABLE への記録
+
+STATIC_ROUTE に関する `STATE_DB` への障害記録はなし。失敗は `syslog`（`log_crit` / `log_err`）への出力のみ。CONFIG_DB のエントリは失敗後も残る。
+
+```bash
+# bgpcfgd ログ確認
+journalctl -u bgp | grep -i "static route"
+# fpmsyncd ログ確認
+journalctl -u swss | grep -i "VRF name\|RTN_BLACKHOLE"
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/static-route-failure.md`
+<!-- /failure -->
+
 <!-- pubsub -->
 ## CONFIG_DB 購読メカニズム (Phase G)
 
@@ -534,5 +592,49 @@ STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依�
 [^4]: bfdmon DPU 分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bfdmon/bfdmon.py>
 
 <!-- /platform -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `bgpcfgd/managers_static_rt.py`、`bgpcfgd/static_rt_timer.py`
+
+### StaticRouteMgr クラス定数
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `OP_DELETE` | `'DELETE'` | 差分演算での削除操作識別子 |
+| `OP_ADD` | `'ADD'` | 差分演算での追加操作識別子 |
+| `ROUTE_ADVERTISE_ENABLE_TAG` | `'1'` | [BGP](../../reference/glossary.md#term-bgp) 広告有効時に FRR へ付与する route-map tag 値 |
+| `ROUTE_ADVERTISE_DISABLE_TAG` | `'2'` | [BGP](../../reference/glossary.md#term-bgp) 広告無効時に FRR へ付与する route-map tag 値 |
+
+### IpNextHop デフォルト値
+
+| フィールド | デフォルト値 | コード根拠 |
+|-----------|------------|-----------|
+| `distance` | `0` | `self.distance = 0 if dist is None else int(dist)` |
+| `blackhole` | `'false'` | `'false' if blackhole is None or blackhole == ''` |
+| `ip` (IPv4 ゼロ) | `'0.0.0.0'` | `zero_ip = lambda af: '0.0.0.0' if af == socket.AF_INET else '::'` |
+| `ip` (IPv6 ゼロ) | `'::'` | 同上 |
+
+### プロトコル enum（FRR コマンド文字列）
+
+| AF | FRR コマンドプレフィクス |
+|----|----------------------|
+| IPv4 (`socket.AF_INET`) | `'ip'` |
+| IPv6 (`socket.AF_INET6`) | `'ipv6'` |
+
+### アドレスファミリ enum（redistribute 対象）
+
+redistribute static コマンドは `["ipv4", "ipv6"]` の両 AF に対して発行される。route-map 名は固定値 `STATIC_ROUTE_FILTER`（permit 10、`match tag 1`）。
+
+### StaticRouteTimer 定数
+
+| 定数名 | 値 | 単位 | 用途 |
+|--------|-----|------|------|
+| `DEFAULT_TIMER` | `180` | 秒 | 未更新 static route を APPL_DB から削除するデフォルト有効期間 |
+| `DEFAULT_SLEEP` | `60` | 秒 | タイマーループのポーリング間隔 |
+| `MAX_TIMER` | `172800` | 秒 (48h) | カスタム expiry time の上限値 |
+
+<!-- /constants -->
 
 <!-- glossary-links-injected: 21a1d1474543 -->
