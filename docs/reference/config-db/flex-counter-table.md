@@ -234,4 +234,59 @@ counterpoll show
 - なし
 <!-- /entry-points -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/flex-counter-table-platform.md -->
+
+### VOQ シャーシ — キューカウンタの全ポート一括登録
+
+`gMySwitchType == "voq"` の場合、`getQueueConfigurations()` は `BUFFER_QUEUE` 設定を無視し、全フロントパネルポートおよびシステムポートの egress / VOQ キューを `createAllAvailableBuffersStr` で一括登録する。非 VOQ 環境では `create_only_config_db_buffers` フラグに従って `BUFFER_QUEUE` の非ゼロ profile エントリのみを対象とする。
+
+```
+flexcounterorch.cpp:getQueueConfigurations()
+  if (!isCreateOnlyConfigDbBuffers() || gMySwitchType == "voq")
+    → 全キューを一括登録して即 return   // VOQ chassis fast path
+  else
+    → BUFFER_QUEUE テーブルから profile 付きエントリのみ列挙
+```
+
+| モード | QUEUE カウンタ登録対象 |
+|--------|----------------------|
+| 非 [VOQ](../../reference/glossary.md#term-voq) (`create_only_config_db_buffers=false`) | 全ポート / 全キュー |
+| 非 [VOQ](../../reference/glossary.md#term-voq) (`create_only_config_db_buffers=true`) | `BUFFER_QUEUE` の非ゼロ profile エントリのみ |
+| [VOQ](../../reference/glossary.md#term-voq) シャーシ | `create_only_config_db_buffers` 設定によらず全キューを一括登録 |
+
+---
+
+### SAI Capability — FLOW_CNT_ROUTE の有効化条件
+
+`FLOW_CNT_ROUTE` グループへの `FLEX_COUNTER_STATUS=enable` 設定は、[SAI](../../reference/glossary.md#term-sai) が `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` の set 操作をサポートしている場合のみ有効となる。起動時に `sai_query_attribute_capability()` を呼び出し、`capability.set_implemented` が `false` または クエリ失敗の ASIC では `FLOW_CNT_ROUTE` の enable は無操作になる。
+
+```
+flow_counter_handler.cpp:queryRouteFlowCounterCapability()
+  sai_query_attribute_capability(SAI_OBJECT_TYPE_ROUTE_ENTRY,
+                                 SAI_ROUTE_ENTRY_ATTR_COUNTER_ID)
+  → capability.set_implemented == false  ⇒  FLOW_CNT_ROUTE 無効
+```
+
+---
+
+### DASH / SmartSwitch (DPU) — ENI / DASH_METER / HA_SET グループ
+
+`ENI`・`DASH_METER`・`HA_SET` グループの `FLEX_COUNTER_STATUS` 変更は、[DASH](../../reference/glossary.md#term-dash) 対応 DPU OrchDaemon でのみ有効となる。通常 NPU 環境では `gDirectory.get<DashOrch*>()` が `nullptr` を返すため、これらグループへの enable/disable は無操作となる。
+
+| プラットフォーム | ENI / DASH_METER / HA_SET 動作 |
+|-----------------|-------------------------------|
+| DPU (SmartSwitch の DPU サイド) | `DashOrch` / `DashHaOrch` が有効。enable/disable が Dash ハンドラに通知される |
+| 通常 NPU / 非 SmartSwitch | `dash_orch == nullptr` のため無操作 |
+
+---
+
+### Fabric シャーシ — Fabric ポートキュー統計
+
+`gFabricPortsOrch` が有効な Fabric シャーシ構成では、`FLEX_COUNTER_STATUS=enable` 時に `gFabricPortsOrch->generateQueueStats()` が追加で呼び出される。非 Fabric 構成では `gFabricPortsOrch == nullptr` のためこのコールは skip される。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 6ca28e02d7fb -->
