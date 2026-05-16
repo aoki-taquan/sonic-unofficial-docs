@@ -506,4 +506,48 @@ BGP セッション状態（Established / Idle 等）や prefix カウンタは 
 
 > **結論**: Phase F 対象の副次書込は存在しない。FRR vtysh 経由でのみ影響が波及する。
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 購読メカニズム — ExtConfigDBConnector / Redis keyspace (Phase G)
+
+`BGP_PEER_GROUP_AF` の変更通知は **`ExtConfigDBConnector` + Redis keyspace PSUBSCRIBE** で実装される。`bgpcfgd` 系の `SubscriberStateTable` とは異なる frrcfgd 独自方式。
+
+### 購読チャンネルパターン
+
+```
+__keyspace@4__:*
+```
+
+`ExtConfigDBConnector.listen_thread()` が CONFIG_DB 全体を glob でカバーする。`BGP_PEER_GROUP_AF|<vrf>|<pg>|<af>` への `HSET`/`DEL` が keyspace notification を発火させ、`sub_msg_handler()` がテーブル名で振り分ける。
+
+ソース: `frrcfgd.py:1538-1539`
+
+### イベント → ハンドラ呼び出しフロー
+
+```
+Redis keyspace pmessage ("__keyspace@4__:BGP_PEER_GROUP_AF|<vrf>|<pg>|<af>")
+  → ExtConfigDBConnector.sub_msg_handler()       (frrcfgd.py:1521-1532)
+    → channel から table / row を分離
+    → client.hgetall(key) でフィールド取得
+    → data=None (空) → DELETE シグナル
+    → __fire(table, row, data)
+      → bgp_table_handler_common(table, key, data)   (frrcfgd.py:2305)
+        → data is None → del_table=True → FRR AF 削除  (frrcfgd.py:3918)
+        → data あり   → del_table=False → FRR AF 設定  (frrcfgd.py:3930)
+```
+
+### listen スレッドと polling 間隔
+
+| 項目 | 値 | ソース |
+|------|---|--------|
+| スレッド | `threading.Thread(target=listen_thread, args=(10,))` | frrcfgd.py:1551 |
+| polling タイムアウト | 10 秒 (`get_message(timeout=10, ignore_subscribe_messages=True)`) | frrcfgd.py:1541 |
+| 起動契機 | `BGPConfigDaemon.start()` → `config_db.listen()` | frrcfgd.py:3956 |
+
+### 初期スナップショット
+
+`start()` 前に `get_table_data(table_list)` で既存エントリを全件ロードし、`__fire()` で再生する。再起動後も CONFIG_DB に残存するエントリは自動的に FRR へ再投入される（frrcfgd.py:2327-2350）。
+
+詳細は `meta/_intermediate/cdb-flow/bgp-peer-group-af-pubsub.md` を参照。
+<!-- /pubsub -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
