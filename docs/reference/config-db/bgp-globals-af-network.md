@@ -306,4 +306,29 @@ vtysh -c "show ip bgp"
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:99,2136-2140,2294,2297,2318,2656-2662,2704,3169-3196 -->
 <!-- /ordering -->
 
+<!-- platform -->
+## プラットフォーム / ASIC 依存分岐
+
+**プラットフォーム差なし。**
+
+`frrcfgd.py` 全体に `platform`・`hwsku`・`asic` キーワードは一切存在しない。
+`BGP_GLOBALS_AF_NETWORK` ハンドラ (`bgp_table_handler_common`) は全プラットフォームで
+同一コードパスを実行する。
+
+根拠:
+
+| チェック項目 | 結果 |
+|-------------|------|
+| `frrcfgd.py` 内 `platform` 参照 | 0 件 |
+| `frrcfgd.py` 内 `hwsku` 参照 | 0 件 |
+| `frrcfgd.py` 内 `asic` 参照 | 0 件 |
+| `DEVICE_METADATA` 参照 | `frr_mgmt_framework_config` フラグ読み取りのみ（プラットフォーム選択ではない） |
+
+`BGP_GLOBALS_AF_NETWORK` は FRR (`bgpd`) へ直接 vtysh コマンドを発行し、
+orchagent / syncd / SAI を経由しない。ASIC ケイパビリティ差による分岐が
+発生する設計上の余地がない。
+
+<!-- evidence: sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py (grep: platform/hwsku/asic = 0 hits) -->
+<!-- /platform -->
+
 <!-- glossary-links-injected: fcbe746ecf8b -->
