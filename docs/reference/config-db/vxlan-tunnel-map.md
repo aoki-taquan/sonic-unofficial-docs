@@ -227,4 +227,24 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- implicit-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`VXLAN_TUNNEL_MAP` エントリ処理時に `orchagent` が暗黙的に参照・依存する外部テーブル・オブジェクト。CONFIG_DB スキーマには記載がなく、コード実行時に解決される。
+
+| 参照先 | 参照方法 | 解決失敗時の挙動 | コードロケーション |
+|--------|---------|----------------|------------------|
+| `VXLAN_TUNNEL`（`tunnel_name` key） | `VxlanTunnelOrch::isTunnelExists(tunnel_name)` で存在確認 | `return false`（リトライ）。トンネル登録後に自動再処理 | `vxlanorch.cpp:2047-2051` |
+| `VLAN`（`vlan` フィールドの VLAN ID） | `gPortsOrch->getVlanByVlanId(vlan_id, tempPort)` で存在確認 | `return false`（リトライ）。VLAN 作成後に自動再処理 | `vxlanorch.cpp:2030-2034` |
+| `VXLAN_TUNNEL`.`del_tnl_hw_pending` フラグ | `tunnel_obj->del_tnl_hw_pending` を確認 | `return false`（リトライ）。親トンネルの HW 削除完了後に再処理 | `vxlanorch.cpp:2057-2061` |
+| VRF 登録状態（L3VNI 判定） | `VRFOrch::isL3VniVlan(vni_id)` で VRF に登録済みか確認 | 真の場合 SAI entry を生成せず `SAI_NULL_OBJECT_ID` を記録（silent no-op） | `vxlanorch.cpp:2096, 2108` |
+
+### 暗黙参照の書込み順制約
+
+- `VXLAN_TUNNEL` → `VXLAN_TUNNEL_MAP` の順で書く必要がある（逆順はリトライ待ちで最終的に処理されるが、即時反映されない）。
+- `VLAN` も `VXLAN_TUNNEL_MAP` より先に存在しなければ同様にリトライ待ちとなる。
+- L3VNI 用途の場合は VRF の登録状態が SAI entry 生成の可否を決定するが、CONFIG_DB 上にその状態は記録されない（`VRFOrch` 内部状態に依存）。
+
+<!-- /implicit-refs -->
+
 <!-- glossary-links-injected: 7111763d84c2 -->
