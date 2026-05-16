@@ -473,7 +473,6 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 - `route-map` / `prefix-list` / `unsuppress-map` の名前は FRR 側名前空間で解決され、CONFIG_DB / YANG では参照先存在を強制しない（暗黙参照）。
 
 <!-- /constants -->
-
 <!-- failure -->
 ## 失敗挙動・リトライ分岐 (Phase D)
 
