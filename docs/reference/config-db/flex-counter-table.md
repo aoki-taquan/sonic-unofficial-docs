@@ -324,4 +324,46 @@ YANG に `default` なし。counterpoll CLI の表示上のソフトデフォル
 
 <!-- /defaults -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/saihelper.cpp,
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp, sonic-swss/orchagent/portsorch.cpp -->
+
+`FLEX_COUNTER_TABLE` への書込は `FlexCounterOrch` を通じて 2 つの副次 DB に波及する。
+
+### FLEX_COUNTER_DB への書込
+
+`setFlexCounterGroupOperation()` → `operateFlexCounterGroupDatabase()` が `FLEX_COUNTER_GROUP_TABLE` に書込む（`gTraditionalFlexCounter=true` モード）。`gTraditionalFlexCounter=false` 時は SAI Redis 属性 `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP` 経由で syncd に通知する。
+
+| テーブル | キーパターン | フィールド | トリガ |
+|---------|------------|---------|-------|
+| `FLEX_COUNTER_GROUP_TABLE` | `<group>` (例: `PORT`) | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL`, `BULK_CHUNK_SIZE`, `BULK_CHUNK_SIZE_PER_PREFIX` | CONFIG_DB の当該フィールド変化時 (`saihelper.cpp:884`) |
+| `FLEX_COUNTER_TABLE` | `<group>:<oid>` (例: `PORT:0x1000000000023`) | `PORT_COUNTER_ID_LIST`, `QUEUE_COUNTER_ID_LIST`, `STATS_MODE` 等 | `FLEX_COUNTER_STATUS=enable` 受信後 `generateXxxMap()` 内で `startFlexCounterPolling()` が書込 (`saihelper.cpp:1047`) |
+| `FLEX_COUNTER_TABLE` | `<group>:<oid>` | (全削除) | disable 時 / オブジェクト削除時 `stopFlexCounterPolling()` (`saihelper.cpp:1075`) |
+
+Gearbox 有効時は `PORT` / `MACSEC*` グループに対して `GB_FLEX_COUNTER_DB` 側にも同様の書込が発生する (`flexcounterorch.cpp:386`)。
+
+`PORT_PHY_ATTR` グループの enable/disable は `PORT_PHY_SERDES_ATTR` グループへも自動で連動書込される (`flexcounterorch.cpp:392`)。
+
+### COUNTERS_DB への書込
+
+`FLEX_COUNTER_STATUS=enable` 受信後に呼ばれる `generatePortCounterMap()` 等が `PortsOrch` 内の各 `CounterNameMapUpdater` / `Table` オブジェクトを通じてポート・キュー・PG の名前→OID マッピングを書込む。
+
+| テーブル | キーパターン | 内容 | トリガグループ |
+|---------|------------|------|--------------|
+| `COUNTERS_PORT_NAME_MAP` | `""` (hash: port_name → OID) | 物理ポート名→SAI OID | `PORT` enable (`portsorch.cpp:9102`) |
+| `COUNTERS_QUEUE_NAME_MAP` | `""` (hash: `Ethernet0:0` → OID) | キュー名→SAI OID | `QUEUE` / `QUEUE_WATERMARK` enable (`portsorch.cpp:778`) |
+| `COUNTERS_PG_NAME_MAP` | `""` (hash: `Ethernet0:0` → OID) | PG 名→SAI OID | `PG_DROP` / `PG_WATERMARK` enable (`portsorch.cpp:785`) |
+| `COUNTERS_QUEUE_PORT_MAP` | `""` (hash: queue_OID → port_OID) | キュー→ポート逆引き | キュー追加時 |
+| `COUNTERS_QUEUE_INDEX_MAP` | `""` (hash: queue_OID → index) | キュー→インデックス | キュー追加時 |
+| `COUNTERS_QUEUE_TYPE_MAP` | `""` (hash: queue_OID → ucast/mcast) | キューのタイプ | キュー追加時 |
+| `COUNTERS_PG_PORT_MAP` | `""` (hash: pg_OID → port_OID) | PG→ポート逆引き | PG 追加時 |
+| `COUNTERS_PG_INDEX_MAP` | `""` (hash: pg_OID → index) | PG→インデックス | PG 追加時 |
+| `COUNTERS_LAG_NAME_MAP` | `""` (hash: lag_name → OID) | LAG 名→OID | LAG ポート追加時 |
+
+これらのマッピングテーブルが存在することで、syncd が SAI bulk counter API で取得したカウンタ値を `COUNTERS_DB` の `COUNTERS:<oid>` キーに書込み、`counterpoll show` / テレメトリ系サービスから名前ベースで参照できる。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 6ca28e02d7fb -->
