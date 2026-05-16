@@ -309,4 +309,61 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/debug-counter-failure.md -->
+
+### retry パターン概要
+
+`DebugCounterOrch::doTask()` は `task_need_retry` を**一切返さない**。依存解決の失敗はすべて `task_success`（pending）か `task_failed` で処理される。orchagent 再起動時は CONFIG_DB の全エントリを replay し `reconcileFreeDropCounters()` で自動復元する。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **`task_failed`** | 未サポート/不正な `type`、未サポート/不正な `drop_reason`、SAI runtime_error、不正な `DEBUG_DROP_MONITOR status` | エントリ削除。retry なし |
+| **`task_ignore`** | 存在しない counter の DEL、`free_drop_counters` 状態の counter DEL、最後の drop_reason の削除 | エントリ削除。SWSS_LOG_WARN 出力。retry なし |
+| **`task_success`（pending）** | drop_reason が揃う前の counter 作成、counter 未存在時の drop_reason 追加、既存 counter への重複 SET | エントリ削除。SAI オブジェクト未作成のまま `free_drop_counters` / `free_drop_reasons` に保留 |
+
+### フィールド別 failure 詳細
+
+#### `type` 不正 / 未サポート → `task_failed`
+
+`type` が `getDebugCounterTypeLookup()` に存在しない場合: `SWSS_LOG_ERROR("Debug counter type '%s' does not exist")` + `throw runtime_error` → `task_failed`。`type` フィールド自体が省略された場合は `counter_type` が空文字 → `supported_counter_types` 未ヒット → `SWSS_LOG_ERROR("Specified counter type '%s' is not supported.")` → `task_failed`。(`debugcounterorch.cpp:385-391, 748-758`)
+
+#### SAI 非対応環境での全カウンタ失敗
+
+起動時 `DropCounter::getSupportedCounterTypes()` が `sai_query_attribute_enum_values_capability` 失敗により `supported_counter_types` を空で返した場合、以降の全 DEBUG_COUNTER 作成が永続的に `task_failed` となる。(`drop_counter.cpp:380-384`)
+
+#### `drop_reason` 無効 → `task_failed`
+
+`isDropReasonValid(drop_reason)` が false（SAI enum 未定義の値）: `SWSS_LOG_ERROR("Specified drop reason '%s' is invalid.")` → `task_failed`。`supported_ingress_drop_reasons` / `supported_egress_drop_reasons` 両方に未ヒット: `SWSS_LOG_ERROR("Specified drop reason '%s' is not supported.")` → `task_failed`。(`debugcounterorch.cpp:443-454`)
+
+#### 最後の drop_reason 削除 → `task_ignore`
+
+`drop_reasons.size() <= 1` の状態で `removeDropReason()` を呼んだ場合: `SWSS_LOG_WARN("Attempted to remove all drop reasons from counter '%s'")` → `task_ignore`。drop counter には SAI 仕様上最低 1 つの理由が必要。(`debugcounterorch.cpp:497-501`)
+
+#### counter 未存在 DEL → `task_ignore`
+
+`debug_counters` にも `free_drop_counters` にも存在しない counter を DEL した場合: `SWSS_LOG_ERROR("Debug counter %s does not exist")` → `task_ignore`。`free_drop_counters` 状態の counter DEL は `deleteFreeCounter()` 後 `task_ignore`。(`debugcounterorch.cpp:404-417`)
+
+#### 既存 counter への重複 SET → `task_success`（冪等スキップ）
+
+`installDebugCounter()` で `debug_counters` に同名エントリが存在する場合: `SWSS_LOG_DEBUG("Debug counter '%s' already exists")` → `task_success`（更新なし）。`type` / drop_reason の変更には DEL + 再 SET が必要。(`debugcounterorch.cpp:374-377`)
+
+#### SAI runtime_error（作成 / 削除失敗）→ `task_failed`
+
+`createDropCounter()` / `uninstallDebugFlexCounters()` が `std::runtime_error` を throw した場合、`doTask()` の catch ブロックが `SWSS_LOG_ERROR("Failed to create/delete debug counter '%s'")` → `task_failed`。システム状態（`debug_counters` / SAI）は変更されない。(`debugcounterorch.cpp:155-163, 167-175`)
+
+#### `DEBUG_DROP_MONITOR` 不正値 → `task_failed`
+
+`status` フィールドが `"enabled"` / `"disabled"` 以外: `SWSS_LOG_ERROR("The status of drop counter monitor was not recognized: %s.")` → `task_failed`。`status` 以外のキー名: `SWSS_LOG_ERROR("Config for drop counter monitor was not recognized: %s.")` → `task_failed`。(`debugcounterorch.cpp:256-265`)
+
+### 部分適用の注意
+
+- `task_failed` は**システム状態を変更しない**（公式コメント: `debugcounterorch.cpp:128-130`）。
+- `task_success`（pending）の場合、`free_drop_counters` / `free_drop_reasons` に保留される。`show dropcounters` / COUNTERS_DB への反映は `reconcileFreeDropCounters()` が正常完了するまで行われない。
+- STATE_DB / ERROR_TABLE への失敗記録は行わない。失敗の確認は `journalctl -u swss` または orchagent ログを参照。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: d2c490dcfe8c -->
