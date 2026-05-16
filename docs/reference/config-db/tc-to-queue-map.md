@@ -262,6 +262,44 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `QosOrch` が TC_TO_QUEUE_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)
+
+`QosOrch` は `TC_TO_QUEUE_MAP` を `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` として作成した後、`PORT_QOS_MAP` ハンドラを通じてポートに bind する。`qos_to_ref_table_map` (qosorch.cpp:L100-116) および `m_qos_maps` 参照カウンタ管理 (qosorch.cpp:L81-87) により、以下のテーブルとの連鎖参照が発生する。
+
+### 上流参照元 (TC_TO_QUEUE_MAP を参照するテーブル)
+
+| テーブル | フィールド | 参照タイミング | 用途 | evidence |
+|---|---|---|---|---|
+| [`PORT_QOS_MAP`](port-qos-map.md) | `tc_to_queue_map` | SET 処理時 `resolveFieldRefValue()` | ポートに bind する TC→Queue マップ名を解決。未作成なら `task_need_retry` | qosorch.cpp:L64,L103,L2077-2133 |
+| [`PORT_QOS_MAP`](port-qos-map.md) | `encap_tc_to_queue_map` | SET 処理時 `resolveFieldRefValue()` | トンネル encap 用 TC→Queue マップ。同じ `TC_TO_QUEUE_MAP` テーブルを参照 | qosorch.cpp:L116 |
+
+`PORT_QOS_MAP` が `tc_to_queue_map` フィールドで `TC_TO_QUEUE_MAP` の名前を参照し、`QosOrch` が OID を解決して `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` をポートにセットする。`TC_TO_QUEUE_MAP` が未作成の場合、`PORT_QOS_MAP` 処理は `task_need_retry` でキューに戻される。
+
+### パイプライン上流 (TC を生成する先行テーブル)
+
+| テーブル | 役割 | TC_TO_QUEUE_MAP との関係 | evidence |
+|---|---|---|---|
+| [`DSCP_TO_TC_MAP`](dscp-to-tc-map.md) | DSCP → TC 変換マップ | パイプライン前段。受信パケットの DSCP 値を TC に変換し、TC_TO_QUEUE_MAP が TC → egress queue に変換する | qosorch.cpp:L61,L81,L100,L1329 |
+
+### パイプライン下流 (Queue 番号を消費するテーブル)
+
+| テーブル | 役割 | TC_TO_QUEUE_MAP との関係 | evidence |
+|---|---|---|---|
+| [`SCHEDULER`](scheduler.md) | キュースケジューラプロファイル | TC_TO_QUEUE_MAP が決定した queue index に対して `SCHEDULER` プロファイルが適用される。`PORT_QOS_MAP.scheduler` フィールドで参照 | qosorch.cpp:L70,L85,L109,L1333 |
+
+### 参照カウンタ連動 (DEL 保留メカニズム)
+
+`QosOrch::m_qos_maps` の `object_reference_map` (qosorch.cpp:L84,L87) が `TC_TO_QUEUE_MAP` と `PORT_QOS_MAP` の参照を追跡する。`PORT_QOS_MAP` がマップを参照している間は `TC_TO_QUEUE_MAP` の DEL は `m_pendingRemove=true` で保留され、参照解放まで SAI `remove_qos_map()` は呼ばれない。
+
+### 範囲外 (誤解されやすい隣接テーブル)
+
+- `QUEUE`: `TC_TO_QUEUE_MAP` が解決した queue index が対象 queue を指定するが、`QosOrch` の `TC_TO_QUEUE_MAP` ハンドラが `QUEUE` テーブルを直接参照するわけではない。`QUEUE` は別途 `handleQueueTable()` が購読する独立テーブル。
+- `WRED_PROFILE`: queue に適用される drop profile だが、`TC_TO_QUEUE_MAP` ハンドラからの直接参照はない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/tc-to-queue-map-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
@@ -390,6 +428,47 @@ PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとす
 - **参照存在チェック (DEL 時)**: DEL 操作前に `isObjectBeingReferenced()` で `PORT_QOS_MAP` 等の参照を確認する。参照中の場合は `m_pendingRemove = true` をセットして `task_need_retry` を返し、SAI `remove_qos_map()` を呼ばない。参照が解放されると自動的に再処理される。
 
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L64 L103 L116 L204-230 L449-473 L2115-2204 -->
+
+### ASIC_DB への書込
+
+`TcToQueueMapHandler::addQosItem()` が `sai_qos_map_api->create_qos_map()` を呼び出すと、syncd が `ASIC_DB` の `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:<oid>` を自動生成する（orchagent → syncd → ASIC_DB 経路）。
+
+| ASIC_DB キー | 属性 | 値 |
+|-------------|------|-----|
+| `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:<oid>` | `SAI_QOS_MAP_ATTR_TYPE` | `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` |
+| 同上 | `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `[(tc=0,queue=0), ...]` |
+
+更新時は `set_qos_map_attribute()` (qosorch.cpp:204-213)、DEL 時は `remove_qos_map()` (qosorch.cpp:216-230) により同エントリが更新・削除される。
+
+### APPL_STATE_DB への書込
+
+**書込なし。** QosOrch は `TC_TO_QUEUE_MAP` 処理において APPL_STATE_DB / APPL_DB への書き込みを一切行わない。CONFIG_DB → SAI (ASIC_DB) の直接経路のみ。
+
+### PORT への副次反映（SAI port 属性書込）
+
+`PORT_QOS_MAP` テーブルに `tc_to_queue_map=<name>` が設定された際、`QosOrch::handlePortQosMapTable()` (qosorch.cpp:2115-2204) は参照先ポート全台に対して以下を実行する。
+
+```cpp
+attr.id = SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP;   // qos_to_attr_map L64
+attr.value.oid = <TC_TO_QUEUE_MAP の SAI OID>;
+sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
+```
+
+これにより syncd 経由で `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<port_oid>` の `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` が更新される。`encap_tc_to_queue_map` フィールドも同テーブルを参照し (qosorch.cpp:116)、Tunnel QoS remap 有効時は Tunnel encap 経路でも同 map OID が書き込まれる。
+
+| 副次書込先 | 書込タイミング | SAI 属性 / キー | 備考 |
+|-----------|--------------|----------------|------|
+| `ASIC_DB` `SAI_OBJECT_TYPE_QOS_MAP` | `TC_TO_QUEUE_MAP` SET 時 | `SAI_QOS_MAP_ATTR_TYPE`, `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | syncd 経由 |
+| `ASIC_DB` `SAI_OBJECT_TYPE_PORT` | `PORT_QOS_MAP.tc_to_queue_map` 設定時 | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` | 参照ポート全台 |
+| APPL_STATE_DB | — | なし | 書込経路なし |
+| APPL_DB | — | なし | 書込経路なし |
+
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 16a5b728a75a -->
 
