@@ -510,7 +510,7 @@ DPC (Direct Port Connect) ポートは q3/q4 の lossless 設定を省略する�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/queue-side.md`
+> 詳細証跡: `meta/_intermediate/cdb-flow/queue-side-effects.md`
 
 QUEUE テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。
 
