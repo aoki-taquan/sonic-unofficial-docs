@@ -283,4 +283,25 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 <!-- evidence: managers_device_global.py:12-14,42-49,78-82,94-98,116,130,239,260,283 -->
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) ごとの直接分岐は無いが、`device_info.is_chassis()` / `switch_role` (`DEVICE_METADATA.localhost.type`) / `switch_type` / SAI BFD offload capability の 4 系統でテーブル処理が間接分岐する**。BGP_DEVICE_GLOBAL 自体は [SAI](../../reference/glossary.md#term-sai) を直接駆動しないが、CONFIG_DB を購読する `BgpGlobalStateOrch` がコンストラクタで SAI capability を問い合わせ、結果が `BfdOrch` の software/hw 経路選択に伝播する。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco / Nephos / Centec) | 直接の if/elif は無い | `managers_device_global.py` を vendor 名で grep して 0 ヒット |
+| HwSku | 影響なし | `managers_device_global.py` / `bfdorch.cpp` に HwSku 参照 0 ヒット |
+| multi-asic (`is_multi_npu`) | 実質影響なし | bgpcfgd は per-namespace に独立起動。テーブル処理に namespace 別フィールドは無い |
+| `device_info.is_chassis()` 真 (VOQ / packet-based chassis) | **分岐あり** | `managers_device_global.py:241-251` で CHASSIS_APP_DB の `BGP_DEVICE_GLOBAL|STATE.tsa_enabled` を読み、シャーシ全体 TSA が個別 LC TSA を抑止 (`configure_tsa` 内 `chassis_tsa=="false"` ガード) |
+| `switch_role == 'SpineRouter' / 'LowerSpineRouter' / 'UpperSpineRouter'` | **分岐あり** | `idf_isolation_state` の FRR push が Spine 系ロールのみで実行。それ以外 (ToRRouter / LeafRouter / 空) は `downstream_isolate_unisolate()` が早期 return しテンプレート未送出 (`managers_device_global.py:260-262`) |
+| `switch_type == 'chassis-packet'` (VOQ system) | **分岐あり** | TSA route-map 整形で `_INTERNAL_` / `VOQ_` を含む name を LC 間 iBGP として `internal_route_map=1` で render し、シャーシ内セッションをスキップしない処理に切替 (`managers_device_global.py:213-225`) |
+| SAI BFD offload capability (`SAI_SWITCH_ATTR_SUPPORTED_IPV4/IPV6_BFD_SESSION_OFFLOAD_TYPE`) | **分岐あり (間接)** | `BgpGlobalStateOrch` コンストラクタ (`bfdorch.cpp:729-791`) が v4/v6 両方の offload capability を SAI に問合せ。両対応なら `bfd_offload=true` → `getSoftwareBfd()=false`、欠ければ `BfdOrch::doTask` が `m_stateSoftBfdSessionTable` 経路へ切替 (`bfdorch.cpp:116-188`) |
+| `software_bfd` feature gate (`constants.yml`) | build-time | bgpcfgd 起動時に `sys_defaults['software_bfd']['status']=='enabled'` でのみ bfd manager を起動 (`main.py:118-119`)。image build 単位で固定。`files/device/<platform>/` 別の上書き機構なし |
+| `use_software_bfd` という BGP_DEVICE_GLOBAL フィールド | **存在しない** | `bfdorch.cpp:116` の local 変数名であり CONFIG_DB のフィールドではない。YANG (`sonic-bgp-device-global.yang`) にも未定義 |
+| `tsa_enabled` / `wcmp_enabled` のテーブル受理ロジック | 影響なし | `managers_device_global.py` の値検証 (`"true"/"false"`) と FRR push は platform / asic / hwsku を参照しない |
+
+詳細根拠 (関数本体・呼出関係・SAI attr id) は `meta/_intermediate/cdb-flow/bgp-device-global-platform.md` を参照。
+<!-- /platform -->
+
 <!-- glossary-links-injected: 029bff240b1b -->
