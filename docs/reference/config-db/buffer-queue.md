@@ -407,4 +407,39 @@ queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反
 
 詳細は `meta/_intermediate/cdb-flow/buffer-queue-failure.md` を参照。
 <!-- /failure -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### Dynamic / Static バッファモデル
+
+`buffermgrdyn`（Dynamic モード専用）は `BUFFER_QUEUE` の `profile` フィールドをそのまま APPL_DB に転送する。
+BUFFER_PG と異なりキューのヘッドルーム自動計算は行わない。
+
+#### Dynamic モード固有 — zero profile (`buffermgrdyn.cpp:285-289`)
+
+ベンダー提供の per-platform zero profiles info JSON に `queues_to_apply_zero_profile` / `egress_zero_profile` が定義されている場合、
+admin-down ポートまたはバッファ回収時に指定 queue インデックスへ zero profile を適用する。
+Static モードデーモン (`buffermgr`) はこの処理を持たない。
+
+### ASIC ベンダー差異
+
+`buffermgrdyn` 起動時に `ASIC_VENDOR` 環境変数でベンダーを検出する (`buffermgrdyn.cpp:68`)。
+Mellanox の場合は `DEVICE_METADATA.localhost.platform` からモデル番号を追加取得する。
+ただし BUFFER_QUEUE のプロファイル名はビルド時テンプレートで確定済みであり、
+Mellanox 8-lane サフィックス等のランタイム ASIC 依存処理は BUFFER_QUEUE には適用されない。
+
+### VOQ Chassis 専用処理
+
+| 処理 | 非 VOQ | VOQ (`switch_type = voq`) | evidence |
+|------|--------|--------------------------|----------|
+| `doTask` 起動ゲート | `isConfigDone()` 待機 | `isInitDone()` 待機 | `bufferorch.cpp:2079-2090` |
+| Warm reboot ready list | `initBufferReadyList()` | `initVoqBufferReadyList()` | `bufferorch.cpp:116-136` |
+| Key トークン数 | 2 (`<port>\|<qindex>`) | 4 (`<hostname>\|<asic_name>\|<port>\|<qindex>`) | `bufferorch.cpp:916-956` |
+| Queue ID 取得 | `port.m_queue_ids[ind]`、lock チェックあり | `getPortVoQIds(port)[ind]`、lock チェックなし | `bufferorch.cpp:1049-1075` |
+| Flex counter 管理 | `BufferOrch` が per-queue 追加・削除 | `flexcounterorch` が全 VOQ を一括登録するためスキップ | `bufferorch.cpp:1134-1136` |
+| ポート参照カウント | SET/DEL 時に increase/decrease | システムポートは動的生成なしのためスキップ | `bufferorch.cpp:1166-1168` |
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-platform.md` を参照。
+<!-- /platform -->
 <!-- glossary-links-injected: efbc9015e957 -->
