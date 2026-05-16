@@ -134,6 +134,65 @@ CLASS_BASED_NEXT_HOP_GROUP_TABLE|<name>
 | 既存と異なる | `SAI_NEXT_HOP_GROUP_ATTR_SELECTION_MAP` を set_attribute で更新 + ref count 更新 | `cbfnhgorch.cpp:557-589` |
 <!-- /value-behavior -->
 
+<!-- ordering -->
+## 順序依存関係 (Phase B)
+
+APPL_DB の `CLASS_BASED_NEXT_HOP_GROUP_TABLE` エントリが SAI へプログラムされるまでの処理順序。
+
+### ポートレディ前提
+
+`CbfNhgOrch::doTask()` は冒頭で `gPortsOrch->allPortsReady()` を確認する。全ポートが ready になるまでタスクループ全体をスキップする (`cbfnhgorch.cpp:42-45`)。
+
+### 想定セットアップ順序
+
+CBF NHG を正常に sync するには次の順序で APPL_DB へ書き込む必要がある。
+
+1. **`FC_TO_NHG_INDEX_MAP_TABLE` エントリ作成** — `NhgMapOrch` が先に selection_map を登録しておく必要がある。`gNhgMapOrch->getMapId()` が `SAI_NULL_OBJECT_ID` を返した場合、`CbfNhg::sync()` は即 `false` を返してタスクを保留する (`cbfnhgorch.cpp:321-325`)。
+2. **`NEXT_HOP_GROUP_TABLE` エントリ作成** — 各メンバー NHG が `NhgOrch` 内で synced でなければならない。未 sync の場合、`syncMembers()` が `false` を返し次タスクループで再試行される (`cbfnhgorch.cpp:644-662`)。一時 NHG (temp NHG) はメンバーとして許容されるが、`hasTemps()` が true のまま保留状態が続く (`cbfnhgorch.cpp:116-119`)。
+3. **`CLASS_BASED_NEXT_HOP_GROUP_TABLE` エントリ作成** — 上記 2 つが揃って初めて SAI プログラムが完了する。
+
+```
+FC_TO_NHG_INDEX_MAP_TABLE エントリ (NhgMapOrch)
+  ↓
+NEXT_HOP_GROUP_TABLE エントリ × N (NhgOrch) → sync 完了
+  ↓
+CLASS_BASED_NEXT_HOP_GROUP_TABLE エントリ (CbfNhgOrch)
+  ↓
+SAI create_next_hop_group (TYPE=CLASS_BASED, SIZE=N, SELECTION_MAP=OID)
+  ↓
+SAI create_next_hop_group_member × N (NHG_ID, NEXT_HOP_ID, INDEX=0..N-1)
+  ↓
+CRM カウンタ加算 (CRM_NEXTHOP_GROUP)
+```
+
+### member index は宣言順固定・変更時は全 remove → 再 sync
+
+`CbfNhg::CbfNhg()` コンストラクタはメンバーを宣言順に `index=0` から割り当てる。`SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` は `CREATE_ONLY` SAI 属性のため、メンバーの追加・削除・順序変更が発生した場合は既存メンバー全件を `removeMembers()` で削除してから新しい順序で `syncMembers()` を再実行する (`cbfnhgorch.cpp:508-553`)。
+
+メンバーが同一で順序も変わらない場合のみ差分更新となり、NHG OID が変化したメンバーだけ `updateNhAttr()` で `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID` を更新する (`cbfnhgorch.cpp:463-503`)。
+
+### DEL + SET の順序保護
+
+同一 key に対して DEL の後に SET が pending にある場合、DEL をスキップして SET を更新扱いにする (`cbfnhgorch.cpp:152-155`)。これにより ref count でブロックされた DEL の完了後に SET が適用されて意図せずオブジェクトが削除されるシナリオを防ぐ。
+
+### NHG 上限による作成保留
+
+新規作成時に `gRouteOrch->getNhgCount() + NhgBase::getSyncedCount() >= gRouteOrch->getMaxNhgCount()` が真の場合、作成を保留して次タスクループへ回す (`cbfnhgorch.cpp:100-103`)。既存 NHG の削除によって上限が下がるまで再試行が続く。
+
+### orchList 内での処理順序
+
+`OrchDaemon` は `m_orchList` の順序どおりに各 Orch の `doTask()` を呼び出す。
+
+```
+m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
+```
+(`orchdaemon.cpp:500`) — `NhgMapOrch` → `NhgOrch` → `CbfNhgOrch` の順で実行されるため、1 回のタスクループ内で依存 Orch が先に処理を完了し、CBF NHG の sync 前提条件が満たされやすい設計になっている。
+
+### warm-reboot 挙動
+
+`OrchDaemon::warmRestoreAndSyncUp()` は全 Orch を 3 回ループして `doTask()` を呼び出す (`orchdaemon.cpp:1095-1170`)。`CbfNhgOrch` 固有の warm-reboot フック（`bake` / `onWarmBootEnd` のオーバーライド）は存在しない。依存 Orch (`NhgMapOrch`, `NhgOrch`) が orchList 上で先行するため、ループ 1 回目で selection_map とメンバー NHG が復元され、2 回目以降で CBF NHG が正常に sync される。pending タスクが残る場合、3 回目のループで解消される設計となっている。
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
