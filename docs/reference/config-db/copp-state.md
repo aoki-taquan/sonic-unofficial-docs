@@ -185,6 +185,80 @@ SAI capability query が失敗した場合、`neighbor_miss` は `default_suppor
 > **スキャン証跡**: coppmgr.cpp L424-451 全行読了。copporch.cpp L104-300, L499-540, L1390-1420 読了。schema.h L448-450 読了。state_db.json (UT mock) 読了。発見 4 件。
 <!-- /defaults -->
 
+<!-- ordering -->
+## STATE_DB 書き込み順序 (Phase B)
+
+### 通常起動シーケンス
+
+STATE_DB への書き込みは 3 段階に分かれ、2 プロセスが非同期に関与する。
+
+#### ステップ 1: `CoppOrch` コンストラクタ（orchagent 起動直後）
+
+```
+CoppOrch::CoppOrch()
+  └─ publishTrapIdsCapability()
+       └─ COPP_TRAP_CAPABILITY_TABLE|traps  ← 起動時 1 回のみ書き込み
+```
+
+SAI の `sai_query_attribute_enum_values_capability()` でプラットフォームサポート情報を取得し、即座に書き込む。失敗時は静的デフォルトリスト（42 種、`neighbor_miss` 除外）にフォールバック。`initDefaultHostIntfTable()` 等の初期化はこの後に実行される。<!-- evidence: copporch.cpp L208-209, L240-300 -->
+
+#### ステップ 2: `CoppMgr` コンストラクタ（coppmgrd 起動時）
+
+```
+CoppMgr::CoppMgr()
+  ├─ [init cfg + CONFIG_DB をマージ]
+  ├─ for each trap: setCoppTrapStateOk(trap)
+  │    → COPP_TRAP_TABLE|<trap>  state=ok
+  ├─ for each group: m_appCoppTable.set(group, ...)
+  │    → APPL_DB APP_COPP_TABLE|<group>
+  └─ setCoppGroupStateOk(group)
+       → COPP_GROUP_TABLE|<group>  state=ok
+```
+
+`COPP_TRAP_TABLE` の `state` が先に書かれ、その後 APPL_DB への書き込みと `COPP_GROUP_TABLE` の `state` が書かれる。`COPP_TRAP_TABLE` の `hw_status` はこの時点では書かれない。<!-- evidence: coppmgr.cpp L334-411 -->
+
+#### ステップ 3: orchagent が APPL_DB を処理した後
+
+```
+CoppOrch::applyAttributesToTrapIds()
+  ├─ sai_hostif_api->create_hostif_trap()  [SAI 成功]
+  └─ updateTrapOperStatus(trap_id, "installed")
+       → COPP_TRAP_TABLE|<trap-name>  hw_status=installed
+```
+
+SAI 操作が成功した場合のみ `hw_status=installed` が書き込まれる。SAI 失敗時は書き込みをスキップし、エラーログのみ出力。<!-- evidence: copporch.cpp L515-526 -->
+
+### 削除・無効化シーケンス
+
+| 操作 | 書き込み順 |
+|---|---|
+| feature 無効化 | `APPL_DB del(group)` → `COPP_GROUP_TABLE del(group)` |
+| SAI remove 成功 | `hw_status=not-installed` |
+| `doCoppTrapTask` DEL | `COPP_TRAP_TABLE del(trap)` → init cfg がある場合は自動復元 |
+
+### Warm-reboot の扱い
+
+`coppmgr.cpp` は `warm_restart.h` を include するが `WarmStart::` の呼び出しは存在しない。STATE_DB への書き込みが **冪等**（同一 key への上書き set）であるため、warm-reboot 時も通常起動と同一フローで再書き込みし、orchagent 側の SAI reconciliation に委ねる設計となっている。<!-- evidence: coppmgr.cpp L10 include のみ、WarmStart:: 呼び出し 0 件 -->
+
+### 依存グラフ
+
+```
+orchagent 起動
+  → COPP_TRAP_CAPABILITY_TABLE|traps
+
+coppmgrd 起動
+  → COPP_TRAP_TABLE|<trap> state=ok  (各トラップ)
+  → APPL_DB APP_COPP_TABLE|<group>
+  → COPP_GROUP_TABLE|<group> state=ok
+
+orchagent が APPL_DB を処理
+  → SAI create_hostif_trap 成功
+  → COPP_TRAP_TABLE|<trap> hw_status=installed
+```
+
+`state` (coppmgr) と `hw_status` (copporch) は同一 Redis キーに非同期で書き込まれるため、両フィールドが揃うタイミングは保証されない。短時間の不整合（`state=ok` だが `hw_status` 未設定、またはその逆）は正常動作である。
+<!-- /ordering -->
+
 ## 確認コマンド
 
 ```bash
