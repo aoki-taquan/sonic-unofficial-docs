@@ -295,6 +295,31 @@ minigraph.py に sFlow テーブル生成なし
 なし
 <!-- /entry-points -->
 
+<!-- platform -->
+## プラットフォーム差異
+
+### ASIC capability クエリ
+
+`sfloworch` は `sai_samplepacket_api->create_samplepacket()` を呼ぶ前に ASIC の capability を事前クエリしない。SAI レイヤで拒否された場合にのみ `SWSS_LOG_ERROR` が出力される。サポートする最小・最大 sample rate はベンダー SAI 実装に依存する。
+
+### ベンダー sample rate 限界差
+
+[YANG](../../reference/glossary.md#term-yang) 制約で `sample_rate` は `uint32 (256..8388608)` に制限される。デフォルト値は `findSamplingRate()` がポートの `oper_speed`（または設定済み `speed`）をそのまま使用（例: 100GE → 100000）。ベンダー [ASIC](../../reference/glossary.md#term-asic) によってはこの範囲内でも対応できないレートがあるが、ソフトウェア側は SAI エラーとしてのみ検出する。
+
+`oper_speed` は STATE_DB に orchagent が書き込む場合のみ追跡される（ベンダー実装依存）。oper_speed が存在する場合は cfg_speed より優先される（[^3]）。
+
+### tx / egress サンプリングのプラットフォーム依存性
+
+`sample_direction = tx` または `both` の場合、`sfloworch` は `SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE` を設定する。egress samplepacket を**サポートしない [ASIC](../../reference/glossary.md#term-asic)** では `set_port_attribute` が失敗し、tx / both 方向のサンプリングは動作しない。`rx` 方向（`SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE`）はほぼ全ベンダーが対応している（[^3]）。
+
+### VOQ chassis
+
+`sfloworch.cpp` および `sflowmgr.cpp` に VOQ chassis 固有のコードパスは存在しない。sFlow は物理フロントパネルポートレベルで管理され、VOQ system port や fabric port への sFlow 設定はサポートされない（[^3]）。
+
+[^3]: sfloworch / sflowmgr 実装調査: `sonic-swss/orchagent/sfloworch.cpp`, `sonic-swss/cfgmgr/sflowmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/sfloworch.cpp>
+
+<!-- /platform -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
