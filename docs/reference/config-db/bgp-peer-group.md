@@ -228,4 +228,34 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 > **スキャン証跡**: `bgp_neighbor_handler` L3942 読了。keepalive/holdtime 組み合わせ制約のみ。
 <!-- /handler-branching -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`BGP_PEER_GROUP` エントリが処理される際に `frrcfgd` / `bgpcfgd` が暗黙的に関与する
+他テーブルとの依存関係を示す。
+
+| 依存方向 | 参照元フィールド | 参照元テーブル | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|----------------|--------------|--------------|--------------|---------|------|
+| 逆参照（被参照） | `peer_group_name` | `BGP_NEIGHBOR` | `BGP_PEER_GROUP`（本テーブル） | `BGP_PEER_GROUP\|<vrf>\|<pg_name>` | NEIGHBOR の peer-group 所属先。peer-group 未存在時は `LOG_ERR('invalid peer-group %s was referenced')` + skip。peer-group を先に登録する必要がある | `frrcfgd.py:2822-2829` |
+| 逆参照（被参照） | `peer_group` | `BGP_GLOBALS_LISTEN_PREFIX` | `BGP_PEER_GROUP`（本テーブル） | `BGP_PEER_GROUP\|<vrf>\|<pg_name>` | dynamic neighbor listen range の peer-group 紐付け。peer-group 変更時に `BGP_GLOBALS_LISTEN_PREFIX` を再適用 | `frrcfgd.py:2845-2846` |
+| 順参照（AF 経由） | `route_map_in` / `route_map_out` | `BGP_PEER_GROUP_AF` | `ROUTE_MAP_SET` | `ROUTE_MAP_SET\|<name>` | インバウンド/アウトバウンド route-map。YANG leafref で制約。`frrcfgd` が `neighbor {} route-map {} in/out` コマンドに変換 | `sonic-bgp-common.yang:385-396`, `frrcfgd.py:1903-1904` |
+| 順参照（AF 経由） | `default_rmap` | `BGP_PEER_GROUP_AF` | `ROUTE_MAP_SET` | `ROUTE_MAP_SET\|<name>` | default-originate 時の route-map | `sonic-bgp-common.yang:356` |
+| 順参照（AF 経由） | `unsuppress_map_name` | `BGP_PEER_GROUP_AF` | `ROUTE_MAP_SET` | `ROUTE_MAP_SET\|<name>` | suppress 解除 route-map | `sonic-bgp-common.yang:410` |
+| ランタイム逆参照 | peer-group の route-map in（running-config） | `bgpcfgd` allow-list | FRR running-config | — | allow-list 更新時に peer-group に紐付く route-map in を FRR running-config から抽出し `ALLOW_LIST` prefix-list を更新 | `managers_allow_list.py:609-618` |
+
+### 解決タイミング
+
+- **BGP_NEIGHBOR → BGP_PEER_GROUP**: `BGP_NEIGHBOR.peer_group_name` SET 時に `frrcfgd` が
+  インメモリキャッシュ (`self.bgp_peer_group`) を即座に照合。未解決は `LOG_ERR` + skip（保留キューなし）。
+- **BGP_PEER_GROUP_AF → ROUTE_MAP_SET**: YANG leafref はバリデーション時に解決。
+  FRR 実行時は `frrcfgd` が vtysh に route-map コマンドを発行し、ROUTE_MAP 未存在の場合は FRR 側エラー。
+- **BGP_GLOBALS_LISTEN_PREFIX → BGP_PEER_GROUP**: peer-group 変更時に `frrcfgd` が
+  `__apply_dep_vrf_table` で listen prefix を再適用する。
+
+> **スキャン証跡**: `frrcfgd.py` L2187-2211, L2822-2855, L1893-1904 読了。
+> `sonic-bgp-common.yang` L356, 385-396, 410 読了。
+> `managers_allow_list.py` L609-618 読了。
+> 中間ファイル: `meta/_intermediate/cdb-flow/bgp-peer-group-cross-refs.md`
+<!-- /cross-refs -->
 <!-- glossary-links-injected: d4d0b1f9b453 -->
