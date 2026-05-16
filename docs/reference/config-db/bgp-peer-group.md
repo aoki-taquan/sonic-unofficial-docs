@@ -263,6 +263,56 @@ FRR `neighbor <pg> route-map <name> in/out` コマンドの `<name>` として�
 指定した route-map が FRR に未定義でも frrcfgd はエラーを返さない（FRR 側 no-op）。
 <!-- /cross-refs -->
 
+<!-- platform -->
+## プラットフォーム / SAI 差分
+
+`BGP_PEER_GROUP` は FRR (`bgpd`) 止まりで SAI に直接到達しないが、`DEVICE_METADATA` の `type`・`sub_role`・`switch_type`・`subtype` に基づいて Jinja2 テンプレートが切り替わり、FRR へ発行されるコマンドが大きく異なる。frrcfgd 動的更新経路 (`frr_mgmt_framework_config=true`) は Jinja2 を経由しないため platform 差なし。
+
+### general peer-group (`peer_type=external` / ToR・Spine など)
+
+ソース: `bgpd/templates/general/peer-group.conf.j2`
+
+| `DEVICE_METADATA.type` | FRR コマンド差 |
+|------------------------|---------------|
+| `ToRRouter` | `neighbor PEER_V4/V6 allowas-in 1` (IPv4 + IPv6 AF) |
+| `LeafRouter` かつ `BGP_BBR.status=enabled` | `neighbor PEER_V4/V6 allowas-in 1` |
+| `SpineRouter && subtype=UpstreamLC` または `UpperSpineRouter` | `table-map SELECTIVE_ROUTE_DOWNLOAD_V4/V6`；anchor-route community-list + `TO_BGP_PEER permit 50/60` |
+| その他 | `allowas-in` なし、`table-map` なし |
+
+### internal peer-group (`peer_type=internal` / iBGP・multi-ASIC)
+
+ソース: `bgpd/templates/internal/peer-group.conf.j2`
+
+| `DEVICE_METADATA` 条件 | FRR コマンド差 |
+|------------------------|---------------|
+| `switch_type=chassis-packet` | `neighbor INTERNAL_PEER_V4/V6 update-source Loopback4096` + `ttl-security hops 1` |
+| `sub_role=BackEnd` | AF 内に `neighbor INTERNAL_PEER_V4/V6 route-reflector-client`；route-map に `set originator-id <Loopback4096>` |
+| `switch_type=chassis-packet && subtype != DownstreamLC` | FALLBACK_COMMUNITY を `set tag route_eligible_for_fallback_to_default_tag` |
+| その他 (single-ASIC) | `route-reflector-client` なし、`update-source` なし |
+
+### VoQ シャーシ peer-group (`peer_type=voq_chassis`)
+
+ソース: `bgpd/templates/voq_chassis/peer-group.conf.j2`
+
+| `DEVICE_METADATA` 条件 | FRR コマンド差 |
+|------------------------|---------------|
+| `bgp_asn` フィールドあり | `neighbor VOQ_CHASSIS_V4/V6_PEER remote-as <bgp_asn>` |
+| `type=ToRRouter` | `neighbor VOQ_CHASSIS_V4/V6_PEER allowas-in 1` |
+| 全ケース共通 | `addpath-tx-all-paths`、`send-community` が常に付与 |
+
+### BGP モニタ peer-group (`peer_type=monitors`)
+
+ソース: `bgpd/templates/monitors/peer-group.conf.j2`
+
+| `DEVICE_METADATA` 条件 | FRR コマンド差 |
+|------------------------|---------------|
+| `switch_type=voq` (chassisdb.conf 存在) または `switch_type=chassis-packet` | `neighbor BGPMON update-source Loopback4096`；IPv6 AF ブロック有効化 |
+| 非 VoQ・非 chassis-packet | `neighbor BGPMON update-source <Loopback0 IPv4>` |
+| その他 | `update-source` なし、IPv6 AF なし |
+
+> **根拠**: `bgpd/templates/general/peer-group.conf.j2`、`internal/peer-group.conf.j2`、`voq_chassis/peer-group.conf.j2`、`monitors/peer-group.conf.j2`、`general/policies.conf.j2`、`internal/policies.conf.j2` を精読。frrcfgd.py は `BGP_PEER_GROUP` ハンドラ内に `switch_type` / `sub_role` 参照なし（動的更新経路は platform 非依存）。詳細: `meta/_intermediate/cdb-flow/bgp-peer-group-platform.md`
+<!-- /platform -->
+
 <!-- defaults -->
 ## 暗黙デフォルトとコード由来 fallback (Phase A)
 
