@@ -324,4 +324,83 @@ YANG に `default` なし。counterpoll CLI の表示上のソフトデフォル
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB Consumer — `FlexCounterOrch`
+
+`FlexCounterOrch` は `Orch` 基底クラスを継承し、`swsscommon` の **`ConsumerStateTable`** で `FLEX_COUNTER_TABLE` を購読する（`orchdaemon.cpp` 620-625）。`Orch(db, tableNames)` コンストラクタが各テーブル名に対して `ConsumerStateTable` を自動生成・`Select` へ登録する。
+
+購読チャネルは Redis keyspace 通知ではなく、`swsscommon` 固有の `ProducerStateTable`/`ConsumerStateTable` ペア（lpush による keyset + hset による hash 更新）。`config CLI` / `sonic-cfggen` は `swsscommon` ラッパ経由で CONFIG_DB へ HSET し、`ConsumerStateTable` の内部チャネルを通じて orchagent へ通知する。
+
+### ハンドラ分岐 — `doTask(Consumer &consumer)`
+
+`OrchDaemon` の `Select::select()` が通知を受け取ると `FlexCounterOrch::doTask` を呼ぶ（`flexcounterorch.cpp:145`）。
+
+| 条件 | 処理 |
+|------|------|
+| `consumer.getTableName() == CFG_DEVICE_METADATA_TABLE_NAME` | `handleDeviceMetadataTable()` へ転送 |
+| `!m_delayTimerExpired` (warm-reboot 60s 遅延中) | 早期 return、SET を `m_toSync` に蓄積 |
+| `!gPortsOrch->allPortsReady()` | 早期 return、全ポート ready 後に一括適用 |
+| `op == SET`, `field == POLL_INTERVAL_FIELD` | `setFlexCounterGroupPollInterval()` → SAI |
+| `op == SET`, `field == FLEX_COUNTER_STATUS_FIELD` | `setFlexCounterGroupOperation()` + 各 Orch 通知 |
+| `op == SET`, `field == BULK_CHUNK_SIZE_FIELD` | `setFlexCounterGroupBulkChunkSize()` → SAI |
+| `op == DEL` | `delFlexCounterGroup()` |
+
+### FLEX_COUNTER_DB 書き込み経路
+
+設定変更は `saihelper.cpp` の関数群が 2 つの経路で `syncd` に伝える:
+
+**経路 A — Traditional FlexCounter** (`gTraditionalFlexCounter == true`):
+`ProducerTable`（`FLEX_COUNTER_DB` の `FLEX_COUNTER_GROUP_TABLE`）へ直接 SET。`syncd` の FlexCounter スレッドが `ConsumerTable` で購読し、SAI counter group を更新する（`saihelper.cpp:868-885`）。
+
+**経路 B — SAI Redis API**（現在の主流）:
+`sai_switch_api->set_switch_attribute(gSwitchId, SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP, &param)` を呼び出す。`sairedis` が内部で `syncd` への Notification を生成し、FLEX_COUNTER_DB を経由せずに直接カウンタグループパラメータを渡す（`saihelper.cpp:837-854`）。
+
+### SAI Counter API — COUNTER_ID_LIST 書き込み
+
+`FLEX_COUNTER_STATUS = enable` 受信時、`FlexCounterOrch` は各サブ Orch を呼び出し、それらが `FLEX_COUNTER_DB` へ `COUNTER_ID_LIST` を書き込む。`syncd` はこのリストを読み取り、定周期で各 SAI stats API を呼び出す:
+
+| グループ | 呼び出し先 Orch | SAI API |
+|---------|----------------|---------|
+| `PORT` | `gPortsOrch->generatePortCounterMap()` | `sai_port_api->get_port_stats()` |
+| `QUEUE` | `gPortsOrch->generateQueueMap()` | `sai_queue_api->get_queue_stats()` |
+| `PG_DROP` | `gPortsOrch->generatePriorityGroupMap()` | `sai_buffer_api->get_ingress_priority_group_stats()` |
+| `RIF` | `gIntfsOrch->generateInterfaceMap()` | `sai_router_interface_api->get_router_interface_stats()` |
+| `BUFFER_POOL_WATERMARK` | `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` | `sai_buffer_api->get_buffer_pool_stats()` |
+| `TUNNEL` | `vxlan_tunnel_orch->generateTunnelCounterMap()` | `sai_tunnel_api->get_tunnel_stats()` |
+| `FLOW_CNT_TRAP` | `gCoppOrch->generateHostIfTrapCounterIdList()` | `sai_hostif_api->get_hostif_trap_stats()` |
+| `FLOW_CNT_ROUTE` | `gFlowCounterRouteOrch->generateRouteFlowStats()` | `sai_counter_api->get_counter_stats()` |
+| `ENI` | `dash_orch->handleFCStatusUpdate(true)` | DASH SAI ENI stats |
+
+### シーケンス図
+
+```mermaid
+sequenceDiagram
+    participant CLI as config CLI / counterpoll
+    participant CDB as CONFIG_DB<br/>FLEX_COUNTER_TABLE
+    participant FCO as FlexCounterOrch
+    participant SubOrch as PortsOrch 等
+    participant FCDB as FLEX_COUNTER_DB
+    participant syncd as syncd FlexCounter
+    participant SAI as SAI (sairedis)
+
+    CLI->>CDB: HSET FLEX_COUNTER_TABLE|PORT FLEX_COUNTER_STATUS enable
+    CDB-->>FCO: ConsumerStateTable 通知
+    FCO->>SubOrch: generatePortCounterMap()
+    SubOrch->>FCDB: ProducerTable set(COUNTER_ID_LIST)
+    FCO->>SAI: sai_switch_api->set_switch_attribute(SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP)
+    SAI->>syncd: Notification (group, operation=enable, poll_interval)
+    syncd->>SAI: 定周期 sai_port_api->get_port_stats()
+    SAI-->>syncd: カウンタ値
+    syncd->>FCDB: COUNTERS_DB COUNTERS|<oid> 更新
+```
+
+### 非使用パス
+
+- `APPL_DB` への中継なし（orchagent が直接 FLEX_COUNTER_DB へ書く）
+- `NotificationProducer` / `NotificationConsumer` は不使用
+- Redis keyspace 通知 (`__keyspace@N__:FLEX_COUNTER_TABLE|*`) は不使用
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 6ca28e02d7fb -->
