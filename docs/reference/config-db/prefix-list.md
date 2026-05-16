@@ -378,4 +378,33 @@ except (netaddr.NotRegisteredError, netaddr.AddrFormatError, netaddr.AddrConvers
 
 <!-- /failure -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### FRR バージョン差
+
+`managers_prefix_list.py` および bgpcfgd コード全体に FRR バージョン条件分岐は存在しない。`ip prefix-list` / `ipv6 prefix-list` コマンド構文は FRR 7.x 以降で安定しており、SONiC が対象とする FRR バージョン範囲 (7.5+) 内で差異なし。テンプレートもバージョン分岐なし。
+
+### IPv4 / IPv6 差
+
+`get_ip_type()` が `netaddr.IPNetwork.version` を判定し、FRR コマンド種別と prefix list 名を分岐させる。
+
+| 条件 | FRR コマンド種別 | デフォルト prefix list 名 (SUPPRESS_PREFIX) |
+|---|---|---|
+| IPv4 (`prefix.version == 4`) | `ip prefix-list` | `SUPPRESS_IPV4_PREFIX` |
+| IPv6 (`prefix.version == 6`) | `ipv6 prefix-list` | `SUPPRESS_IPV6_PREFIX` |
+
+ANCHOR_PREFIX の場合は IPv4/IPv6 とも prefix list 名は `ANCHOR_CONTRIBUTING_ROUTES` (固定)。constants の `bgp.prefix_list.<type>.ipv4_name` / `ipv6_name` でデプロイごとに上書き可能。
+
+### デバイスタイプ差
+
+| `prefix_type` | 対応デバイス | 非対応時の挙動 |
+|---|---|---|
+| `ANCHOR_PREFIX` | SpineRouter/UpstreamLC、UpperSpineRouter | `log_warn` + スキップ (FRR 設定生成なし) |
+| `SUPPRESS_PREFIX` | 全デバイス | 制限なし |
+
+ASIC ベンダー差・アーキテクチャ差・SmartSwitch 専用ロジックはなし。PREFIX_LIST はコントロールプレーン (FRR bgpd) のみで処理され SAI を経由しないため、ASIC 依存性ゼロ。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 62ecddfa9dc4 -->
