@@ -5,7 +5,7 @@ area: reference
 hard: 0
 verification: stub
 monitor: not_implemented
-last_verified: 2026-05-14
+last_verified: 2026-05-16
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang
@@ -13,6 +13,9 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-dhcpv6-relay.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-dhcp-relay
+    path: dhcp6relay/src/relay.h
+    ref: 7316417034fee6a6c6002490362c9bc75eeafde1
 related:
   config_db:
     - DHCP_SERVER_IPV4
@@ -158,6 +161,43 @@ CONFIG_DB の `dhcpv6_servers` を変更しても dhcp6relay は無視する。*
 詳細: [`meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md)
 
 <!-- /cross-refs -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E — コード由来)
+
+`DHCP_SERVER_IPV6` テーブル自体は未実装だが、DHCPv6 プロトコル処理に直接関係する定数は **dhcp6relay**（`sonic-dhcp-relay` リポジトリ）の `relay.h` にハードコードされている。将来の `DHCP_SERVER_IPV6` 実装でも同一ポート・hop 上限が継承される見込みのため記録する。
+
+### UDP ポート定数
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| `RELAY_PORT` | `547` | DHCPv6 サーバ／リレー間 UDP ポート (RFC 8415 §7.2) | relay.h L22 |
+| `CLIENT_PORT` | `546` | DHCPv6 クライアント向け UDP ポート (RFC 8415 §7.2) | relay.h L23 |
+
+BPF フィルタは `"udp and port 547"` を使用する。`dhcp6relay` は L2 ソケットを開きポート 547 宛のパケットを直接キャプチャする（`relay.cpp:403`）。
+
+### ホップ上限
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| `HOP_LIMIT` | `8` | RELAY-FORWARD の hop_count がこの値以上のパケットはドロップ | relay.h L24 |
+
+コメントに `"HOP_LIMIT reduced from 32 to 8 as stated in RFC8415"` と明記されている。ドロップ時は `syslog(LOG_WARNING, ...)` を出力する（`relay.cpp:747-751`）。新規クライアントパケットは hop_count=0 で開始し、中継ごとに +1 される（`relay.cpp:692, 758`）。**CONFIG_DB から上書き不可のハードコード定数**。
+
+### その他の主要定数
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| `DHCPv6_OPTION_LIMIT` | `147` | サポートする DHCPv6 オプション上限 (IANA Option Codes 準拠) | relay.h L25 |
+| `RAWSOCKET_RECV_SIZE` | `1048576` (1 MiB) | L2 ソケット受信バッファサイズ上限 | relay.h L27 |
+| `BUFFER_SIZE` | `9200` | パケット処理バッファサイズ（ジャンボフレーム対応） | relay.h L29 |
+| `OPTION_RELAY_MSG` | `9` | DHCPv6 Option 9 (Relay Message) | relay.h L33 |
+| `OPTION_INTERFACE_ID` | `18` | DHCPv6 Option 18 (Interface-ID、RFC 3315) | relay.h L34 |
+| `OPTION_CLIENT_LINKLAYER_ADDR` | `79` | DHCPv6 Option 79 (Client Link-Layer Address、RFC 6939) | relay.h L35 |
+
+> Evidence: `sonic-net/sonic-dhcp-relay@dhcp6relay/src/relay.h:22-37` (SHA: 7316417034fee6a6c6002490362c9bc75eeafde1)
+
+<!-- /constants -->
 
 <!-- pubsub -->
 ## 通信メカニズム (Phase G 調査)
