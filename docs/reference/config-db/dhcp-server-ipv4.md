@@ -542,4 +542,41 @@ CONFIG_DB 変更を検知するたびに `dump_dhcp4_config()` が `/etc/kea/kea
 > **Evidence**: `dhcpservd.py:142`; `dhcp_cfggen.py:70-71,165-168`
 <!-- /side-effects -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> **調査根拠**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`、`common/utils.py` 全行精読 (2026-05-16)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-platform.md`
+
+### kea-dhcp4 vs dnsmasq
+
+`sonic-dhcp-server` は **kea-dhcp4 のみ**を DHCP バックエンドとして使用する。dnsmasq は一切使用されない（コード内に参照なし）。`dhcpservd` が Jinja2 テンプレート (`kea-dhcp4.conf.j2`) で `/etc/kea/kea-dhcp4.conf` を生成し、SIGHUP で kea-dhcp4 に再読込させる構造。プラットフォームによるバックエンド切替は存在しない。
+
+### SmartSwitch DPU 差異
+
+`DEVICE_METADATA.localhost.subtype == "SmartSwitch"` を `is_smart_switch()` で判定し、以下が分岐する。
+
+| 項目 | 通常 SONiC | SmartSwitch |
+|---|---|---|
+| DHCP 対象インタフェース | `VLAN` / `VLAN_INTERFACE` ベース | 上記 + `MID_PLANE_BRIDGE.GLOBAL.bridge` (mid-plane bridge) |
+| DPU ポート扱い | なし | `DPUS.*.midplane_interface` を仮想ポートとして追加 |
+| kea-dhcp4 subnet ID | VLAN 番号を整数変換 (例: `Vlan100` → `100`) | `MID_PLANE_BRIDGE_SUBNET_ID = 10000` 固定 |
+| 追加購読テーブル | なし | `DPUS`、`MID_PLANE_BRIDGE` (`SMART_SWITCH_CHECKER`) |
+| `DHCP_SERVER_IPV4` key 形式 | `DHCP_SERVER_IPV4\|Vlan<id>` | `DHCP_SERVER_IPV4\|<bridge名>` |
+
+SmartSwitch でも `MID_PLANE_BRIDGE.GLOBAL.bridge` / `ip_prefix` が未設定の場合、DPU 向け DHCP は無効化される（dhcpservd 自体は継続し、通常 VLAN の DHCP は機能する）。
+
+> **Evidence**: `dhcp_cfggen.py:19,23,67,76,84-98,251`; `common/utils.py:153-163`
+
+### FEATURE 有効化差異
+
+| 制御ポイント | 挙動 (全プラットフォーム共通) |
+|---|---|
+| `FEATURE\|dhcp_server.state` | CLI 入口で確認。`enabled` でなければ全サブコマンドが `ctx.fail()` で即時失敗 (`dhcp_server.py:54`) |
+| `DEVICE_METADATA.localhost.dhcp_server` | `enabled` でなければ dhcpservd 自体が起動しない |
+
+SmartSwitch 固有の追加前提: `MID_PLANE_BRIDGE.GLOBAL.{bridge,ip_prefix}` と `DPUS` テーブルが存在しないと DPU 向け DHCP 配布が無効化される（FEATURE 有効化とは独立した実装上の前提条件）。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 75921d013977 -->
