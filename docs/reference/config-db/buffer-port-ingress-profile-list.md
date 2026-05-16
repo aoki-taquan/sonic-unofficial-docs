@@ -273,6 +273,85 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPortIngressProfileListTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME, false)` に委譲。egress 版と同一パス。2 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB 購読 — `SubscriberStateTable`
+
+`buffermgrd`（dynamic モード）は `swsscommon` の `Orch` 基底クラスを通じて、
+`TableConnector(&cfgDb, CFG_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME)` で登録された
+`SubscriberStateTable` により CONFIG_DB を購読する。内部では Redis **keyspace 通知**
+（`__keyspace@<dbId>__:BUFFER_PORT_INGRESS_PROFILE_LIST|*` への PSUBSCRIBE）を使い、
+`HSET` / `DEL` による変更を `KeyOpFieldsValuesTuple` として受信する。
+
+```cpp
+// buffermgrd.cpp:181
+TableConnector(&cfgDb, CFG_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME),
+// buffermgrdyn.cpp:32
+BufferMgrDynamic::BufferMgrDynamic(..., const vector<TableConnector> &tables, ...)
+    : Orch(tables), ...   // Orch が SubscriberStateTable として登録
+```
+
+### CONFIG_DB → APPL_DB 転送 — `ProducerStateTable`
+
+APPL_DB への書き込みは `ProducerStateTable` を使用する。
+`ProducerStateTable.set()` は **HSET + PUBLISH を原子的に実行**（Redis MULTI/EXEC）し、
+orchagent の `ConsumerStateTable` にリアルタイム通知を届ける。
+
+```cpp
+// buffermgrdyn.cpp:47
+m_applBufferProfileListTables{
+    ProducerStateTable(applDb, APP_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME), ...};
+// buffermgrdyn.cpp:3384,3437
+ProducerStateTable &appTable = m_applBufferProfileListTables[BUFFER_INGRESS];
+appTable.set(port, fvVector);  // SET: profile_list をポートに書き込み
+```
+
+### APPL_DB 購読 — `ConsumerStateTable` (orchagent)
+
+`BufferOrch` は `Orch(applDb, tableNames)` で `APP_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME`
+を `ConsumerStateTable` として購読する。`PUBLISH` 通知を受信すると `HGETALL` でフィールドを
+取得し、`processIngressBufferProfileList()` / `processIngressBufferProfileListBulk()` に渡す。
+
+```cpp
+// bufferorch.cpp:53-54,77,80
+BufferOrch::BufferOrch(...) : Orch(applDb, tableNames), ...
+m_bufferHandlerMap[APP_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME]
+    = &BufferOrch::processIngressBufferProfileList;
+m_bufferFlushHandlerMap[APP_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME]
+    = &BufferOrch::processIngressBufferProfileListBulk;
+```
+
+### Bulk Set 経路 — `sai_port_api->set_ports_attribute`
+
+orchagent は複数ポートを **SAI Bulk API** でまとめて処理する。
+
+```cpp
+// bufferorch.cpp:1823-1824
+sai_port_api->set_ports_attribute(
+    objectCount, oids.data(), attrs.data(),
+    SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR, statuses.data());
+// SAI 属性 ID: SAI_PORT_ATTR_QOS_INGRESS_BUFFER_PROFILE_LIST (bufferorch.cpp:1675)
+```
+
+`SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` により部分失敗を許容し、失敗ポートは
+`task_need_retry` で再投入される（`bufferorch.cpp:1840-1843`）。
+
+### メッセージフロー
+
+| ステップ | コンポーネント | API / 手段 |
+|---------|--------------|-----------|
+| CONFIG_DB 変化検知 | `buffermgrd` (BufferMgrDynamic) | `SubscriberStateTable` (keyspace 通知) |
+| バリデーション・変換 | `handleBufferPortIngressProfileListTable()` | `buffermgrdyn.cpp:3566` |
+| APPL_DB 書き込み | `ProducerStateTable.set()` | HSET + PUBLISH (channel ベース) |
+| APPL_DB 受信 | `BufferOrch` | `ConsumerStateTable` (channel SUBSCRIBE) |
+| SAI 適用 | `processIngressBufferProfileListBulk()` | `sai_port_api->set_ports_attribute()` (Bulk) |
+
+> **static vs dynamic**: static バッファモデル (`buffermgr.cpp`) では `ConsumerStateTable`
+> (cfgDb) で CONFIG_DB を直接購読し、バリデーションなしに APPL_DB へ転送する。
+<!-- /pubsub -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
