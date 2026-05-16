@@ -62,6 +62,18 @@ VXLAN_EVPN_NVO|<name>
 |-----------|----|------|------|
 | `source_vtep` | leafref → `VXLAN_TUNNEL.name` | yes | ソース VTEP として参照する VXLAN_TUNNEL |
 
+<!-- defaults -->
+## フィールドのコード由来デフォルト
+
+| フィールド | デフォルト | 根拠 |
+|-----------|-----------|------|
+| `source_vtep` | なし（必須） | YANG `mandatory true`。CLI が `fvs = {'source_vtep': vxlan_name}` を書き込む (`config/vxlan.py:127`)。コード側にハードコードデフォルトなし |
+| `name` (key) | なし（必須） | オペレータ指定。minigraph / db_migrator による自動生成なし |
+
+> コード調査: `sonic-utilities/config/vxlan.py:102-131`、`sonic-swss/cfgmgr/vxlanmgr.cpp:672-705`、`sonic-vxlan.yang`
+
+<!-- /defaults -->
+
 ## 制約
 
 - `source_vtep` は `VXLAN_TUNNEL` への leafref（先にトンネル作成が必要）
