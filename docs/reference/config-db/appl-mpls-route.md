@@ -338,7 +338,7 @@ APPL_DB は YANG 非対応のため leafref は **存在しない**。本セク�
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`mplsrouteorch` / `nhgorch` MPLS 経路 / `CrmOrch` MPLS resource から抽出した APPL_DB `LABEL_ROUTE_TABLE` 経路に関わる主要ハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/appl-mpls-route-constants.md`。
+`mplsrouteorch` / `nhgorch` MPLS 経路 / `CrmOrch` MPLS resource から抽出した APPL_DB `LABEL_ROUTE_TABLE` 経路に関わる主要ハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/appl-mpls-route-constants.md` および `meta/_intermediate/cdb-flow/mpls-constants.md`。
 
 ### APPL_DB テーブル名マクロ（`schema.h`）
 

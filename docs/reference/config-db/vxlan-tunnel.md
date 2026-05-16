@@ -233,6 +233,106 @@ db_migrator.py での VXLAN_TUNNEL マイグレーションなし
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`VXLAN_TUNNEL` テーブルの変更は **vxlanmgrd → orchagent** の 2 段階パイプラインで処理される。
+
+**段階 1 — vxlanmgrd が CONFIG_DB を購読**
+
+`vxlanmgrd` は `Orch` 基底クラスの `addConsumer()` 経由で CONFIG_DB の `VXLAN_TUNNEL`（`CFG_VXLAN_TUNNEL_TABLE_NAME`）を購読する。CONFIG_DB のため `Orch::addConsumer()` は `swss::SubscriberStateTable`（Redis keyspace 通知 `__keyspace@4__:VXLAN_TUNNEL|*` への PSUBSCRIBE）を割り当てる (`vxlanmgrd.cpp:48-57`)。
+
+**段階 2 — orchagent が APP_DB を購読**
+
+`orchagent` の `VxlanTunnelOrch` は `Orch2` 基底クラスで APP_DB の `VXLAN_TUNNEL_TABLE`（`APP_VXLAN_TUNNEL_TABLE_NAME`）を購読する。APP_DB のため `Orch::addConsumer()` は `swss::ConsumerStateTable`（PUBLISH/SUBSCRIBE channel ベース）を割り当てる (`orchdaemon.cpp:350-351`)。
+
+| 購読者 | 購読 API | 購読テーブル | バッチ |
+|--------|---------|--------------|--------|
+| `vxlanmgrd` (`VxlanMgr`) | `SubscriberStateTable` (keyspace) | `VXLAN_TUNNEL` (CONFIG_DB) | `DEFAULT_POP_BATCH_SIZE` (128) |
+| `orchagent` (`VxlanTunnelOrch`) | `ConsumerStateTable` (channel) | `VXLAN_TUNNEL_TABLE` (APP_DB) | `gBatchSize` (CLI `-b` 引数) |
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+CLI: config vxlan add <name> <src_ip>
+  ↓ sonic-utilities/config/vxlan.py:49
+  Table::set("VXLAN_TUNNEL|<name>", {src_ip: <ip>})
+CONFIG_DB: HSET "VXLAN_TUNNEL|<name>" src_ip <ip>
+  ↓ Redis keyspace event "__keyspace@4__:VXLAN_TUNNEL|<name>" "hset"
+vxlanmgrd: SubscriberStateTable::pops() → HGETALL
+  ↓ VxlanMgr::doTask(consumer) [vxlanmgr.cpp:214-260]
+    CFG_VXLAN_TUNNEL_TABLE_NAME → doVxlanTunnelCreateTask()
+  ↓ ip link add ... type vxlan + m_appVxlanTunnelTable.set(...)
+APP_DB: HSET "VXLAN_TUNNEL_TABLE|<name>" src_ip <ip>  + PUBLISH channel
+  ↓ ConsumerStateTable channel notification
+orchagent: VxlanTunnelOrch::addOperation(request) [vxlanorch.cpp:1591]
+  ↓ vxlan_tunnel_table_[name] = new VxlanTunnel(...)
+  ↓ create_tunnel() [vxlanorch.cpp:291]
+SAI: sai_tunnel_api->create_tunnel(&tunnel_id, ...) [vxlanorch.cpp:397]
+     sai_tunnel_api->create_tunnel_term_table_entry(...) [vxlanorch.cpp:482]
+```
+
+- `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:22-23`)。keyspace 通知到着で即座に wake up し、タイムアウト前に処理。
+- `VxlanTunnelOrch::addOperation()` が `VxlanTunnel` オブジェクトを生成し、NVO/マップ登録時に `SAI_TUNNEL_TYPE_VXLAN` トンネルを作成する。削除時は NVO・MAP が先に消えていないと `delOperation()` が `false` を返しリトライキューに積まれる (`vxlanorch.cpp:1648-1672`)。
+
+### gDirectory を介した Orch 間連携 (Observer 代替)
+
+`VxlanTunnelOrch` は伝統的な `attach()`/`notify()` Observer インタフェースを持たず、`gDirectory` グローバルレジストリ経由で他 Orch が直接参照を取得する。
+
+| 呼び出し元 | 呼び出し先 | 契機 |
+|-----------|-----------|------|
+| `VxlanTunnelOrch` | `EvpnNvoOrch` (`gDirectory.get`) | `addTunnelUser()` / `delTunnelUser()` 時にリモート VTEP 処理 (`vxlanorch.cpp:1678,1733,1795`) |
+| `VxlanTunnelMapOrch` | `VxlanTunnelOrch` (`gDirectory.get`) | MAP addOperation 時にトンネル存在確認 + OID 取得 (`vxlanorch.cpp:2046`) |
+| `VxlanVrfMapOrch` | `VxlanTunnelOrch` + `VxlanTunnelMapOrch` | VRF-VNI マッピング生成 (`vxlanorch.cpp:2260-2261`) |
+
+### STATE_DB フィードバックパス
+
+`VxlanTunnelOrch` は `addRemoveStateTableEntry()` で `STATE_DB` の `STATE_VXLAN_TUNNEL_TABLE_NAME` にトンネル稼働状態を書き戻す (`vxlanorch.cpp:1913-1955`)。`vxlanmgrd` も `m_stateVxlanTunnelTable` (STATE_DB) を参照して tunnel が active かを確認し（`vxlanmgr.cpp:196`）、削除時に STATE テーブルが空でないと `SWSS_LOG_WARN` + リトライする。これは監視フィードバックパスであり、双方向 pub/sub ではない。
+
+### サービス再起動トリガー
+
+なし。`VxlanTunnelOrch` は orchagent 内インメモリハンドラであり、`VXLAN_TUNNEL` の追加・削除は `sai_tunnel_api->create_tunnel()` / `remove_tunnel()` のライブ SAI 操作で反映される。プロセス再起動・サービス restart を伴わない。`vxlanmgrd` 側も netlink（`ip link add/del`）のライブ操作のみ。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23,350-351,573` (SELECT_TIMEOUT / VxlanTunnelOrch 生成)、`sonic-swss/orchagent/vxlanorch.cpp:1245-1308,1591-1672,291-400,1678,1733` (Orch2 コンストラクタ / addOperation / create_tunnel / EvpnNvoOrch 連携)、`sonic-swss/cfgmgr/vxlanmgrd.cpp:44-58` (CFG_VXLAN_TUNNEL_TABLE_NAME 購読)、`sonic-swss/cfgmgr/vxlanmgr.cpp:183-260` (VxlanMgr::doTask ディスパッチ); 詳細分析 `meta/_intermediate/cdb-flow/vxlan-tunnel-pubsub.md`
+<!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差異
+
+SONiC の VXLAN トンネル実装は、ASIC の SAI ケーパビリティによって動作モードが分岐する。
+
+### EVPN 対応 ASIC: P2MP vs P2P トンネルモード
+
+`VxlanTunnelOrch` 初期化時に `sai_query_attribute_enum_values_capability()` で ASIC の tunnel peer mode サポートを問い合わせる (vxlanorch.cpp:1256-1274)。
+
+| 条件 | 動作モード |
+|------|-----------|
+| SAI クエリ失敗（ドライバ未対応など） | P2P (DIP tunnel) モードに自動 fallback |
+| `SAI_TUNNEL_PEER_MODE_P2P` が返される | DIP トンネルサポートあり (P2P モード) |
+| P2MP のみが返される | P2MP モード (`is_dip_tunnel_supported = false`) |
+
+### DIP (Destination IP) トンネル差異
+
+**DIP サポートあり（P2P モード）**: EVPN リモート VTEP ごとに個別の P2P DIP トンネルを動的生成する (`createDynamicDIPTunnel()`)。SAI トンネルは `SAI_TUNNEL_PEER_MODE_P2P` + `SAI_TUNNEL_ATTR_ENCAP_DST_IP` で生成。FDB エントリを DIP トンネルポート単位で管理する (vxlanorch.cpp:1701-1724)。
+
+**DIP サポートなし（P2MP モード）**: DIP トンネルを作成しない。単一の P2MP SIP トンネルブリッジポートを使い回し、IMET ルートの L2MC グループメンバーとして実現する。`addTunnelUser()` はリモート VTEP の IP 参照カウントのみを更新する (vxlanorch.cpp:1701-1704)。
+
+### SIP トンネル遅延削除
+
+EVPN シナリオでは SIP トンネル HW の削除が DIP 参照カウントに依存する。DIP トンネルが残存している間は `del_tnl_hw_pending` フラグで削除を延期し、DIP カウントが 0 になった後に `deletePendingSIPTunnel()` が HW を削除する (vxlanorch.cpp:955-964)。P2MP モードでは DIP カウントが常に 0 のため即時削除可能。
+
+### P2P vs P2MP の SAI 作成差
+
+EVPN 動的 DIP トンネル (`TNL_CREATION_SRC_EVPN`, dst_ip 非ゼロ) は `SAI_TUNNEL_PEER_MODE_P2P` で作成される。一方 CLI 経由の静的トンネル (`TNL_CREATION_SRC_CLI`) は dst_ip の有無によらず `SAI_TUNNEL_PEER_MODE_P2MP` で作成される (vxlanorch.cpp:899-907)。
+
+### SmartSwitch / DPU
+
+`vxlanorch.cpp` に SmartSwitch DPU 固有の分岐コードは存在しない。現実装は NPU 通常モードのみを対象とし、DPU 側 VXLAN 処理は別スタックが担当する。
+
+<!-- /platform -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
@@ -471,4 +571,27 @@ SAI OID が VIDTORID に登録された後、`VxlanTunnelOrch::doTask(timer)` �
 
 <!-- /side-effects -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`orchagent/vxlanorch.cpp` の静的解析から抽出した、`VXLAN_TUNNEL` が暗黙的に依存するテーブル・オブジェクト一覧。
+
+| 参照先テーブル/オブジェクト | 参照種別 | 依存方向 | コード根拠 |
+|---------------------------|---------|---------|-----------|
+| `VRF` (VRFOrch) | VRF SAI OID 解決 | VXLAN_TUNNEL → VRF | `vxlanorch.cpp:2095,2286,2311` — `VRFOrch::getVRFid(vrf_name)` で VRF OID を取得し SAI tunnel-map entry に設定 |
+| `VXLAN_TUNNEL_MAP` | L2 VNI-VLAN マッピング | VXLAN_TUNNEL → VXLAN_TUNNEL_MAP | `vxlanorch.cpp:2110,2120` — tunnel 作成後に `addVlanMappedToVni()` で VLAN-VNI 対応を登録; map 未登録時は tunnel inactive |
+| `VXLAN_EVPN_NVO` | VTEP EVPN バインド | VXLAN_TUNNEL → EVPN_NVO | `vxlanorch.cpp:2780-2784` — `EvpnNvoOrch::addOperation()` が `source_vtep` leafref で VXLAN_TUNNEL.name を参照; NVO 残留時はトンネル削除失敗 |
+| `VLAN` (PortsOrch) | VLAN OID 検索 | VXLAN_TUNNEL_MAP → VLAN | `vxlanorch.cpp:2030,2145,2483` — `gPortsOrch->getVlanByVlanId(vlan_id)` で VLAN オブジェクトを取得; VLAN 未作成時は `SWSS_LOG_WARN` でスキップ |
+| SAI `VNI_TO_VLAN_ID` / `VLAN_ID_TO_VNI` map | SAI トンネルマップ | 内部 | `vxlanorch.cpp:40-54,759-760` — TUNNEL_MAP_T_VLAN 用の encap/decap map pair を SAI に生成 |
+| SAI `VNI_TO_VRID` / `VRID_TO_VNI` map | SAI トンネルマップ (L3) | 内部 | `vxlanorch.cpp:42-60,767-768` — TUNNEL_MAP_T_VIRTUAL_ROUTER 用 map pair; VRF-VNI バインド時に有効化 |
+| `VxlanVrfMapOrch` (VXLAN_VRF_MAP) | VRF-VNI マッピング登録 | VXLAN_TUNNEL → VRF-VNI | `vxlanorch.cpp:2250-2335` — VRF が存在しない場合は pending; 存在確認は `vrf_orch->isVRFexists()` |
+
+### 依存解決の順序制約
+
+1. `VXLAN_TUNNEL` エントリが先に存在しないと `VXLAN_EVPN_NVO` の `source_vtep` 解決が失敗する (`vxlanorch.cpp:2784`)。
+2. `VLAN` が PortsOrch に登録されていないと `VXLAN_TUNNEL_MAP` の VNI-VLAN 紐付けがスキップされる (`vxlanorch.cpp:2030`)。
+3. `VRF` が VRFOrch に登録されていないと `VXLAN_VRF_MAP` の addOperation が pending になる (`vxlanorch.cpp:2290`)。
+4. EVPN NVO / VLAN MAP の削除より前に `VXLAN_TUNNEL` を削除すると `SWSS_LOG_WARN` + リトライ待ちになる (`vxlanorch.cpp:109,112`)。
+
+<!-- /cross-refs -->
 <!-- glossary-links-injected: 7e2e79cf3524 -->
