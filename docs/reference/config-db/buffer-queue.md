@@ -331,6 +331,56 @@ YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外
 > **スキャン証跡**: `handleBufferQueueTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` に委譲（`keyWithIds=true`）。BUFFER_PG と同一パスを共有。2 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+BUFFER_QUEUE テーブルの変更は以下のチェーンで伝搬する。
+
+### 購読チェーン
+
+```
+CONFIG_DB (BUFFER_QUEUE)
+  └─ SubscriberStateTable ← buffermgrd (dynamic / static)
+       └─ ProducerStateTable → APPL_DB (APP_BUFFER_QUEUE_TABLE)
+            └─ ConsumerStateTable ← orchagent BufferOrch
+                 └─ sai_queue_api (bulk SET) → ASIC_DB / SAI
+```
+
+### CONFIG_DB 購読 (buffermgrd)
+
+`BufferMgrDynamic` は `Orch(tables)` 基底クラス経由で CONFIG_DB の `BUFFER_QUEUE` テーブルを **SubscriberStateTable** として購読する。
+`buffermgrd.cpp:174-186` にて `vector<TableConnector>` に `TableConnector(&cfgDb, CFG_BUFFER_QUEUE_TABLE_NAME)` を含めて登録。
+イベント受信後 `doTask(Consumer&)` → `handleBufferQueueTable` → `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` の順にディスパッチされる。
+
+最終的に `updateBufferObjectToDb(key, profile, add, BUFFER_QUEUE)` が
+`m_applBufferObjectTables[BUFFER_QUEUE]` (= `ProducerStateTable(applDb, APP_BUFFER_QUEUE_TABLE_NAME)`) を介して APPL_DB へ書き込む。
+
+| デーモン | DB | テーブル | 方式 | evidence |
+|---|---|---|---|---|
+| `buffermgrd` (dynamic) | CONFIG_DB | `BUFFER_QUEUE` | SubscriberStateTable | `buffermgrd.cpp:180` |
+| `buffermgrd` (static) | CONFIG_DB | `BUFFER_QUEUE` | SubscriberStateTable | `buffermgr.cpp:499` |
+
+### APPL_DB 購読 (orchagent BufferOrch)
+
+`BufferOrch` は `Orch(applDb, tableNames)` 基底クラス経由で APPL_DB の `APP_BUFFER_QUEUE_TABLE` を **ConsumerStateTable** として購読する。
+`orchdaemon.cpp:386-394` にて `vector<string> buffer_tables` に `APP_BUFFER_QUEUE_TABLE_NAME` を含めて `BufferOrch` コンストラクタへ渡す。
+
+`doTask(Consumer&)` (`bufferorch.cpp:2075`) が `processQueue` / `processQueueBulk` をディスパッチし、
+`sai_queue_api->set_queues_attribute()` bulk API で SAI queue buffer attribute を書き込む。
+
+| デーモン | DB | テーブル | 方式 | evidence |
+|---|---|---|---|---|
+| `orchagent` (BufferOrch) | APPL_DB | `APP_BUFFER_QUEUE_TABLE` | ConsumerStateTable | `orchdaemon.cpp:389` |
+
+### ASIC_DB notification
+
+BUFFER_QUEUE フローで bufferorch が ASIC_DB 通知を直接購読する仕組みは存在しない。
+SAI への書き込みは syncd が ASIC_DB に転送し、結果は SAI return code で受け取る通常フロー。
+（BUFFER_POOL_WATERMARK に対する `SubscriberStateTable` は存在するが BUFFER_QUEUE とは無関係: `bufferorch.cpp:290`）
+
+詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-queue-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
