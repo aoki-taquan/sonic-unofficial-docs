@@ -54,6 +54,56 @@ SONiC master における `DHCP_SERVER_IPV6` テーブルの YANG モデル、Py
 
 <!-- /defaults -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Direction B — dhcp6relay が書く先)
+
+> ソース: `sonic-net/sonic-dhcp-relay dhcp6relay/src/relay.cpp`
+
+`DHCP_SERVER_IPV6` テーブルは未実装だが、DHCPv6 リレー機能を担う `dhcp6relay` プロセスは
+`DHCP_RELAY` テーブルを読み込み、STATE_DB へカウンタを書き込む。将来の `DHCP_SERVER_IPV6`
+実装時も同等のカウンタ機構が継承される見込みのため、現在の動作を記録する。
+
+### STATE_DB
+
+`dhcp6relay` は起動時および各 DHCPv6 メッセージ受信時に `DHCPv6_COUNTER_TABLE` へ書き込む。
+
+```cpp
+// dhcp6relay/src/relay.cpp:18
+static std::string counter_table = "DHCPv6_COUNTER_TABLE|";
+```
+
+#### 初期化（`initialize_counter`）
+
+VLAN インターフェースの LLA が確認できたタイミングで呼び出される（`lla_check_callback` → `relay.cpp:1401`）。
+
+| テーブル | キー形式 | 書込フィールド | 初期値 | タイミング |
+|----------|----------|----------------|--------|------------|
+| `DHCPv6_COUNTER_TABLE` | `<vlan_ifname>` | `Unknown`, `Solicit`, `Advertise`, `Request`, `Confirm`, `Renew`, `Rebind`, `Reply`, `Release`, `Decline`, `Reconfigure`, `Information-Request`, `Relay-Forward`, `Relay-Reply`, `Malformed` | `"0"` | `initialize_counter()` 呼び出し時（LLA 確認後） |
+
+事前に `clear_counter()` で既存エントリ（パターン `DHCPv6_COUNTER_TABLE|*`）を全削除してから再初期化する。
+
+#### カウンタ増分（`increase_counter`）
+
+各 DHCPv6 メッセージ処理時に該当フィールドをインクリメントする（`relay.cpp:292-305`）。
+
+| 書込パス | 対象フィールド | タイミング |
+|----------|----------------|------------|
+| `relay_client()` — クライアント→サーバ方向 | `Solicit` / `Request` / `Confirm` / `Renew` / `Rebind` / `Release` / `Decline` / `Information-Request` / `Malformed` のいずれか | クライアントパケット受信時 |
+| `relay_relay_forw()` — Relay-Forward 転送 | `Relay-Forward` | Relay-Forward パケットをサーバへ転送するとき |
+| `relay_relay_reply()` — サーバ→クライアント方向 | `Advertise` / `Reply` / `Reconfigure` / `Relay-Reply` / `Malformed` / `Unknown` のいずれか | サーバ応答パケット受信時 |
+| ループバック受信（loopback インターフェース） | `Relay-Reply` | ループバックソケットから受信時（`relay.cpp:1098`） |
+
+書込みは `state_db->hset(table_name, type, toString(count + 1))` で行われ、
+フィールドが存在しない場合は `"1"` で新規作成される。
+
+### 設定ファイル書込
+
+`dhcp6relay` は設定ファイルへの書込みを行わない。すべての状態情報は STATE_DB のみに保持される。
+
+> Evidence: `sonic-net/sonic-dhcp-relay@dhcp6relay/src/relay.cpp:18,52-68,273-306,1342-1348,1401`
+
+<!-- /side-effects -->
+
 ## DHCPv6 サポートの現状
 
 SONiC の DHCPv6 対応は次の 2 要素のみ:
