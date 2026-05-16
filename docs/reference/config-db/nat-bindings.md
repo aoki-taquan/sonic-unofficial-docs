@@ -457,9 +457,9 @@ Broadcom では ネクストホップ未解決時に DNAT エントリを SAI �
 <!-- /platform -->
 
 <!-- constants -->
-## ハードコード定数（orchagent/natorch.cpp 由来）
+## ハードコード定数（orchagent/natorch.cpp 由来）(Phase E)
 
-<!-- evidence: sonic-swss/orchagent/natorch.cpp -->
+<!-- evidence: sonic-swss/orchagent/natorch.cpp, sonic-swss/orchagent/natorch.h -->
 
 `orchagent/natorch.cpp` の `NatOrch` が使用する主要ハードコード定数。`nat_type` フィールドの文字列値は APPL_DB 経由で orchagent に渡され、対応する SAI NAT タイプに変換される。
 
@@ -471,7 +471,7 @@ Broadcom では ネクストホップ未解決時に DNAT エントリを SAI �
 | `"dnat"` | `SAI_NAT_TYPE_DESTINATION_NAT` | 宛先 IP 変換（外→内方向） |
 
 ```cpp
-// natorch.cpp:1879-1921 (addNatEntry 内での分岐)
+// natorch.cpp:1901-1921 (addNatEntry 内での分岐)
 if (entry.nat_type == "snat")
 {
     snat_entry.nat_type = SAI_NAT_TYPE_SOURCE_NAT;
@@ -525,6 +525,44 @@ if ((entry.nat_type == "snat") and
     // 動的 SNAT ルールの追加処理
 }
 ```
+
+### タイマー周期定数（natorch.h）
+
+`NatOrch` はコンストラクタで 2 種類の `SelectableTimer` を起動する。周期は `natorch.h` でマクロ定義されている。
+
+| マクロ | 値 | 用途 |
+|-------|---|------|
+| `NAT_HITBIT_N_CNTRS_QUERY_PERIOD` | `5` 秒 | hitbit クエリ＋統計カウンタ更新タイマー |
+| `NAT_CONNTRACK_TIMEOUT_PERIOD` | `86400` 秒 (1 日) | conntrack エントリ定期 ageout 通知タイマー |
+| `NAT_HITBIT_QUERY_MULTIPLE` | `6` | hitbit は `5×6=30` 秒ごとにクエリ |
+
+```cpp
+// natorch.h:37-39
+#define NAT_HITBIT_N_CNTRS_QUERY_PERIOD   5        // 5 secs
+#define NAT_CONNTRACK_TIMEOUT_PERIOD      86400    // 1 day
+#define NAT_HITBIT_QUERY_MULTIPLE         6        // Hit bits are queried every 30 secs
+```
+
+### デフォルトタイムアウト値（natorch.cpp コンストラクタ）
+
+コンストラクタでハードコードされるデフォルト値。`NAT_GLOBAL` テーブルの対応フィールドで上書き可能。
+
+| 内部変数 | デフォルト | 単位 | `NAT_GLOBAL` 上書きフィールド |
+|---------|-----------|------|--------------------------|
+| `timeout` | `600` | 秒 | `nat_timeout` |
+| `tcp_timeout` | `86400` | 秒 (1 日) | `nat_tcp_timeout` |
+| `udp_timeout` | `300` | 秒 | `nat_udp_timeout` |
+
+```cpp
+// natorch.cpp:66-73
+timeout = 600;      // NAT default timeout
+tcp_timeout = 86400; // NAT default tcp timeout (1 Day)
+udp_timeout = 300;  // NAT default udp timeout
+```
+
+これらの値は初期化時に `COUNTERS_DB` の `NAT_TABLE|Values` キーへ書き込まれる[^E1]。
+
+[^E1]: `natorch.cpp:127-135` — `MAX_NAT_ENTRIES`, `TIMEOUT`, `UDP_TIMEOUT`, `TCP_TIMEOUT` を `m_countersGlobalNatTable.set("Values", values)` で COUNTERS_DB に反映。
 <!-- /constants -->
 
 <!-- cross-refs -->
