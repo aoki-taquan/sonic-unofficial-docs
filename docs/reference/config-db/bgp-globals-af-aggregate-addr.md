@@ -262,6 +262,28 @@ vtysh -c "show running-config bgpd" | grep aggregate-address
 - `bgpcfgd` が FRR running-config を読み CONFIG_DB と同期
 <!-- /entry-points -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+### STATE_DB / COUNTERS_DB への書込: **なし**
+
+`frrcfgd.py` 全体 (3985行) を `STATE_DB`、`COUNTERS_DB`、`APPL_DB`、`StateTable`、`CounterTable` で精査した結果、これらへの参照は **0 件**。`BGP_GLOBALS_AF_AGGREGATE_ADDR` ハンドラ (`hdl_af_aggregate` L1313 / `__update_bgp` L3169-3196) の処理は以下のみで完結する:
+
+1. **vtysh コマンド発行** — `configure terminal` → `router bgp <asn> vrf <vrf>` → `address-family <afi> <safi>` → `aggregate-address <prefix> [as-set] [summary-only] [route-map <name>]` を FRR `bgpd` に投入。`bgpd` は受信後に RIB 計算ループで集約ルートを生成し BGP UPDATE として広告する（FRR 内部処理）。
+2. **プロセス内キャッシュ更新** — `self.af_aggr_list[vrf][norm_ip_prefix] = AggregateAddr()` (SET 時) / `self.af_aggr_list[vrf].pop(norm_ip_prefix, None)` (DEL 時)。frrcfgd プロセスのメモリ内のみ。Redis への書き戻しなし。
+3. **syslog 出力** — `syslog.LOG_INFO` / `syslog.LOG_ERR` のみ。DB ではない。
+
+| 対象 DB | 書込 | 根拠 |
+|---------|------|------|
+| STATE_DB | なし | `frrcfgd.py` に `STATE_DB` / `StateTable` 参照 0 件 |
+| COUNTERS_DB | なし | `frrcfgd.py` に `COUNTERS_DB` / `CounterTable` 参照 0 件 |
+| APPL_DB | なし | `frrcfgd.py` に `APPL_DB` / `AppDBConnector` 参照 0 件 |
+| CONFIG_DB (書き戻し) | なし | CONFIG_DB の変更は受信するが書き戻しは行わない |
+| FRR vtysh (bgpd) | あり | vtysh 経由で `aggregate-address` コマンドを `bgpd` に投入 (SAI 非経由) |
+
+> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L1-3985 全体 grep 結果 (STATE_DB / COUNTERS_DB / APPL_DB / StateTable / CounterTable 各 0 件); ハンドラ L1313-1328, L3169-3196 実装確認。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-side.md`
+<!-- /side-effects -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
