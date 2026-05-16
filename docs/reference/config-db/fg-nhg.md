@@ -243,6 +243,77 @@ if (!link.empty()) {
 
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+## 書込み順依存・NEXTHOP 解決順序 (Phase B)
+
+> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` `calculateBankHashBucketStartIndices()` L146–213, `createFineGrainedNextHopGroup()` L257–314, `setActiveBankHashBucketChanges()` L568–820, `sprayBankNhgMembers()` L1113–1198, `doTaskFgNhg()` L1673–1744, `doTaskFgNhgMember()` L1969–2030 精読 (2026-05-16)
+
+### 3 テーブルの投入順序
+
+```
+FG_NHG|<name>          ← 最初に投入（必須）
+  ↓
+FG_NHG_PREFIX|<prefix> ← FG_NHG 処理完了後（逆順は破棄・再試行なし）
+FG_NHG_MEMBER|<nh_ip>  ← FG_NHG 処理完了後（逆順は自動 retry あり）
+```
+
+- `FG_NHG_PREFIX` は親 FG_NHG が未存在の場合 `SWSS_LOG_ERROR` + `return true`（破棄・再試行なし）。**FG_NHG より後に投入しないと消える**。
+- `FG_NHG_MEMBER` は親 FG_NHG が未存在の場合 `return false`（Consumer キューに残り自動 retry）。FG_NHG の処理完了後に自動投入される。
+
+### NEXTHOP 解決順序
+
+- FG_NHG グループは SAI 上で先に作成される（NH 解決を待たない）。
+- 各 NH が NeighOrch に解決されるたびに `validNextHopInNextHopGroup()` が呼ばれ、対応バンクのバケットに割り当てられる（遅延追加・自動調停）。
+- NH 未解決の間はバケットに割り当てられないため、active NH 数が少ないほど残 NH へのトラフィック集中が発生する。
+
+### SAI Fine-Grained NHG メンバー作成順序
+
+1. SAI NHG 作成 (`SAI_NEXT_HOP_GROUP_ATTR_TYPE = FINE_GRAINED` + `CONFIGURED_SIZE`)
+2. バンク割り当て計算 (`calculateBankHashBucketStartIndices`: バンク 0 から昇順、NH 比例配分)
+3. バケット範囲を昇順スキャンし、ラウンドロビンで NH を割り当て (`bucket_idx % nhs_to_add.size()`)
+4. 各バケットに SAI `create_next_hop_group_member`:
+   - `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_GROUP_ID`
+   - `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID`
+   - `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` (= bucket index)
+
+### NH 追加・削除時のバケット再配分
+
+- 再配分はバンク単位で独立（他バンクに波及しない）。
+- **単純ラウンドロビンは採用しない**。各 NH のバケット数を均等化するアルゴリズムを使用（`setActiveBankHashBucketChanges()`）:
+  - 目標バケット数 = `num_buckets_in_bank / active_nhs`、余剰は先頭 NH から 1 ずつ加算
+  - NH 削除: 削除 NH のバケットを残存 NH に均等移譲
+  - NH 追加: 既存 NH からバケットを奪取して新規 NH に均等分配
+
+### warm-reboot 復元
+
+- orchagent 再起動時、`m_recoveryMap` (WARM_RESTART DB) に保存済みのバケット→NH マッピングを優先復元。ラウンドロビン再割り当ては行わない。
+- 復元時に NH が別バンクにある場合（バンク全断代替）は `inactive_to_active_map` に記録しフォールバックを設定。
+
+### DEL 推奨順序
+
+```
+FG_NHG_MEMBER|<nh_ip>  ← 先に削除
+FG_NHG_PREFIX|<prefix> ← 次に削除
+FG_NHG|<name>          ← 最後に削除
+```
+
+逆順での DEL はリソースリークまたは内部マップ不整合が生じる可能性がある（逆順でも SAI はクリーンアップされるが CONFIG_DB の整合性のため推奨順守）。
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | FG_NHG SET → FG_NHG_MEMBER SET | 強制先行（自動 retry あり） | Consumer キュー残留で自動再試行 |
+| 2 | FG_NHG SET → FG_NHG_PREFIX SET | 強制先行（再試行なし） | PREFIX を先に書くと破棄される |
+| 3 | NeighOrch NH 解決 → SAI バケット割り当て | 遅延追加で自動調停 | validNextHopInNextHopGroup で随時追加 |
+| 4 | バンク番号昇順（0 始まり連番推奨） | 欠番は空バンクとして確保 | 欠番回避のため bank 値は 0 始まり連番推奨 |
+| 5 | SAI NHG member 属性: GROUP_ID → NH_ID → INDEX | create 時固定順 | FgNhgOrch が構築（アプリ側不要） |
+| 6 | NH 追加/削除時のバケット均等化 | バンク単位独立、自動 | 均等化アルゴリズム（ラウンドロビン非採用） |
+| 7 | warm-reboot 復元（recoveryMap 優先） | 復元マップが通常割り当てより優先 | orchagent 起動前に recoveryMap ロード完了 |
+| 8 | prefix-based グループへの FG_NHG_MEMBER 投入禁止 | 破棄（再試行なし） | match_mode 確認後に MEMBER 投入 |
+| 9 | DEL 順序: MEMBER → PREFIX → FG_NHG | 推奨（逆順は SAI クリーンアップ後に DB 残留） | 逆順は推奨しない |
+
+詳細な調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-ordering.md`
+<!-- /ordering -->
+
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
@@ -376,5 +447,72 @@ if (!link.empty()) {
 `sai_next_hop_group_api` (NEXT_HOP_GROUP / NEXT_HOP_GROUP_MEMBER の CRUD) と `sai_route_api` (SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID の更新) を直接使用する (fgnhgorch.cpp:18–19, 238, 363)。
 
 <!-- /cross-refs -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`FgNhgOrch` は CONFIG_DB の `FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` を受けて、ASIC_DB（SAI 経由）・STATE_DB・APPL_DB の 3 か所に書き込む。
+
+### ASIC_DB 書込み（SAI 経由）
+
+orchagent は直接 ASIC_DB には書き込まず、SAI API 呼び出しを通じて syncd が ASIC_DB へ反映する。
+
+| タイミング | SAI API | SAI オブジェクト型 | 主な属性 |
+|---|---|---|---|
+| `FG_NHG` SET → `createFineGrainedNextHopGroup()` 成功 | `sai_next_hop_group_api->create_next_hop_group_member`（RouteOrch 経由） | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP` | `SAI_NEXT_HOP_GROUP_ATTR_TYPE=SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP`、`SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE=bucket_size` |
+| バケット割り当て (`setNewNhgMembers()`) | `sai_next_hop_group_api->create_next_hop_group_member` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` | `ATTR_NEXT_HOP_GROUP_ID`、`ATTR_NEXT_HOP_ID`、`ATTR_INDEX`（バケット位置） |
+| バケット再割り当て (`writeHashBucketChange()`) | `sai_next_hop_group_api->set_next_hop_group_member_attribute` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` | `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID`（バケット先変更） |
+| メンバ削除 (`removeFineGrainedNextHopGroup()`) | `sai_next_hop_group_api->remove_next_hop_group_member` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` | — |
+| NHG 削除 | RouteOrch `removeFineGrainedNextHopGroup()` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP` | — |
+| FG ルートの next-hop 切替 (`modifyRoutesNextHopId()`) | `sai_route_api->set_route_entry_attribute` | `SAI_OBJECT_TYPE_ROUTE_ENTRY` | `SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID` |
+
+CRM カウンタ連動: NHG メンバ作成時に `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP_MEMBER)` (fgnhgorch.cpp:1194)、削除時に `decCrmResUsedCounter` (fgnhgorch.cpp:338)。
+
+確認コマンド:
+
+```bash
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP:*'
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER:*'
+```
+
+### STATE_DB 書込み
+
+| タイミング | テーブル | キー | フィールド | 値 |
+|---|---|---|---|---|
+| バケット割り当て/変更（`setStateDbRouteEntry()`） | `FG_ROUTE_TABLE` | `<ip_prefix>` | `<bucket_index>` (文字列) | `<nexthop_ip>` (文字列) |
+| FG ルート削除（`m_stateWarmRestartRouteTable.del()`） | `FG_ROUTE_TABLE` | `<ip_prefix>` | — | エントリ全削除 |
+| warm-restart 復旧完了後（`m_stateWarmRestartRouteTable.del()`） | `FG_ROUTE_TABLE` | `<ip_prefix>` | — | エントリ削除 |
+
+`FG_ROUTE_TABLE` は warm-restart 用の復旧スナップショットとして機能する。各バケットインデックスをフィールドとし、割り当てられた next-hop IP を値として保持する（fgnhgorch.cpp:218–226）。
+
+確認コマンド:
+
+```bash
+sonic-db-cli STATE_DB keys 'FG_ROUTE_TABLE:*'
+sonic-db-cli STATE_DB hgetall 'FG_ROUTE_TABLE|<ip_prefix>'
+```
+
+### APPL_DB 書込み
+
+`FgNhgOrch` は `m_routeTable`（`ProducerStateTable` → `APPL_DB:ROUTE_TABLE`）に直接書き込む。これは `FG_NHG_PREFIX` の SET/DEL 時に既存の通常 ECMP 経路を FG 経路へ移行するために行われる。
+
+| タイミング | テーブル | キー | 操作 |
+|---|---|---|---|
+| `FG_NHG_PREFIX` SET → FG 移行開始 (`doTaskFgNhgPrefix()`) | `ROUTE_TABLE` | `<ip_prefix>` | DEL（既存通常ルート削除） |
+| RouteOrch 削除完了待ち後に FG 経路として再投入 | `ROUTE_TABLE` | `<ip_prefix>` | SET（FG 経路として再登録） |
+| `FG_NHG_PREFIX` DEL → 非 FG 移行 | `ROUTE_TABLE` | `<ip_prefix>` | DEL/SET（通常 ECMP に戻す） |
+
+証跡: fgnhgorch.cpp:1865 `m_routeTable->del()`、1877 `m_routeTable->set()`、1931 `m_routeTable->del()`、1951 `m_routeTable->set()`。
+
+> **注意**: APPL_DB:ROUTE_TABLE への書込権限がない状態では `FG_NHG_PREFIX` の SET/DEL が永久に `return false` でリトライし続ける（cross-refs セクション参照）。
+
+確認コマンド:
+
+```bash
+sonic-db-cli APPL_DB hgetall 'ROUTE_TABLE|<ip_prefix>'
+```
+
+> **証跡**: `setStateDbRouteEntry()` L218–226、`writeHashBucketChange()` L231–253、`setNewNhgMembers()` L1169–1195、`removeFineGrainedNextHopGroup()` L316–342、`modifyRoutesNextHopId()` L356–376、`doTaskFgNhgPrefix()` L1863–1879 / L1929–1951、詳細調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-side-effects.md`
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 0a0e619e9fbc -->
