@@ -284,4 +284,52 @@ vtysh -c 'show bgp summary'
 > **注意**: `BGP_MONITORS|<addr>|asn` を CONFIG_DB に設定しても、bgpcfgd は FRR peer の `remote-as` をローカル ASN (DEVICE_METADATA) から取得するため、そのフィールドは無視される。BGP_MONITORS の peer は常にローカル ASN に対してピアリングする設計（内部 route-monitor 用途）。
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`BGP_MONITORS` エントリを CONFIG_DB に書き込む際は、以下の先行条件を満たすこと。`bgpcfgd` の `BGPPeerMgrBase` は依存未解決時に `return False` で再試行するが、一部の欠如は silent に副作用を生む。
+
+### 必須先行テーブル
+
+| 先行テーブル / フィールド | 依存理由 | 欠如時の挙動 | evidence |
+|--------------------------|---------|------------|---------|
+| `DEVICE_METADATA\|localhost.bgp_asn` | `add_peer()` が `bgp_asn` を直接参照。未設定は `KeyError` | `return False` → 再試行ループ | `managers_bgp.py:119,192` |
+| `DEVICE_METADATA\|localhost.bgp_router_id` または `LOOPBACK_INTERFACE\|Loopback0\|<ip>` | loopback IPv4 ガード: 両方欠如で `return False` | `return False` → 再試行ループ | `managers_bgp.py:186-189` |
+
+### 推奨先行テーブル
+
+| 先行テーブル / フィールド | 依存理由 | 欠如時の挙動 | evidence |
+|--------------------------|---------|------------|---------|
+| `LOOPBACK_INTERFACE\|Loopback0\|<ip>` | `neighbor BGPMON update-source <lo0_ipv4>` に使用。欠如時 `update-source` が FRR に設定されない | peer 追加は続行するが `update-source` なし | `managers_bgp.py:216-218`, `peer-group.conf.j2:12` |
+| `INTERFACE\|<intf>\|<local_addr>` | `local_addr` 指定時に `get_local_interface()` が参照。未設定は `return False` | `return False` → InterfaceMgr 更新後に自動解決 | `managers_bgp.py:198-202` |
+
+### bgpcfgd ハンドラ内部の起動順
+
+```
+main.py の managers リスト（上から順）:
+  1. BGPDataBaseMgr(DEVICE_METADATA)  ← bgp_asn を directory に格納
+  2. InterfaceMgr(LOOPBACK_INTERFACE) ← Loopback0 IPv4 を directory に格納
+  3. BGPPeerMgrBase("BGP_MONITORS")   ← L89: deps ガード解除後に add_peer()
+```
+
+- `BGPPeerGroupMgr.update()` は内部で `update_policy()` (route-map 定義) → `update_pg()` (peer-group + route-map 紐付け) の順序を保証する (`managers_bgp.py:36-38`)。外部から vtysh で直接 peer-group を先行設定した場合は route-map が未定義になるため非推奨。
+- `BGP_MONITORS` の `asn` フィールドは bgpcfgd に**無視される**。FRR への `remote-as` は `DEVICE_METADATA.bgp_asn` から取得される（`instance.conf.j2:4`）。`BGP_GLOBALS` テーブルの直接依存はないが、DEVICE_METADATA 経由で ASN が決定される。
+
+### 正しい書込み順の例
+
+```
+# 1. DEVICE_METADATA を先に確定
+CONFIG_DB SET DEVICE_METADATA|localhost bgp_asn=65001 bgp_router_id=10.0.0.1
+
+# 2. Loopback0 IPv4 を設定（update-source 用）
+CONFIG_DB SET LOOPBACK_INTERFACE|Loopback0|10.0.0.1/32 {}
+
+# 3. local_addr に使うインターフェースがあれば先に設定
+CONFIG_DB SET INTERFACE|eth0|192.0.2.1/30 {}
+
+# 4. BGP_MONITORS エントリを書く
+CONFIG_DB SET BGP_MONITORS|192.0.2.2 name=BGPMonitor asn=65001 local_addr=192.0.2.1 admin_status=up
+```
+<!-- /ordering -->
 <!-- glossary-links-injected: a1dd9e34d62e -->
