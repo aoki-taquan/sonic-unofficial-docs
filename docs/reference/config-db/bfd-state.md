@@ -4,7 +4,7 @@ description: "STATE_DB BFD_SESSION_TABLE — bfdorch が SAI セッション作�
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-16
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/bfdorch.cpp
@@ -158,6 +158,41 @@ void BfdOrch::createSoftwareBfdSession(const string &key, const vector<swss::Fie
 TSA (Traffic Shift Away) が有効かつ `shutdown_bfd_during_tsa = "true"` のセッションは、`handleTsaStateChange(true)` で `notify_session_state_down()` が呼ばれた後 `remove_bfd_session()` で STATE_DB エントリが削除される。TSA 解除時は再作成される (`bfdorch.cpp:683-704`)。
 
 <!-- /value-behavior -->
+
+<!-- ordering -->
+## STATE_DB 書込み順依存
+
+`bfdorch` は STATE_DB `BFD_SESSION_TABLE` に対して、orchagent シングルスレッドの select loop 上で書込み順を厳密に制御している。consumer (vnetorch / BfdMonitorOrch / `show bfd peers`) はこの順序を前提に状態を解釈する。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 補足 |
+|---|----------|------|------|
+| 1 | constructor の STATE_DB 全削除 → notifier 登録 | 強制先行 | 起動直後の stale `state=Up` を consumer に見せない (`bfdorch.cpp:74-86`) |
+| 2 | 初回 `create_bfd_session()` での SAI 通知ハンドラ登録 → STATE_DB 書込み | 遅延（初回のみ） | 登録失敗時は STATE_DB 未書込み (`bfdorch.cpp:307-315`) |
+| 3 | SAI BFD `create_bfd_session()` 成功 → `m_stateBfdSessionTable.set()` → `bfd_session_map` / `bfd_session_lookup` 登録 | 強制先行 | STATE_DB 書込みが先、map 登録が後 (`bfdorch.cpp:544-567`) |
+| 4 | SAI create 失敗（リトライ含む）→ STATE_DB 未書込み | 負の制約 | `handle_status != task_success` 経路 (`bfdorch.cpp:549-562`) |
+| 5 | `bfd_session_lookup` 登録済み → SAI 状態変化通知受信 → `hset("state", ...)` | 強制先行 | 通知 consumer は同 select loop で逐次処理 (`bfdorch.cpp:242-263`) |
+| 6 | 同一 state 通知 → STATE_DB 書込みスキップ | 冪等 | `state != bfd_session_lookup[id].state` のときのみ更新 (`bfdorch.cpp:249-263`) |
+| 7 | TSA 有効化: `notify_session_state_down()` → `remove_bfd_session()` (STATE_DB del) | 強制（notify が先） | consumer は Down 通知の後にエントリ消滅を観測 (`bfdorch.cpp:683-704`) |
+| 8 | TSA 解除の replay: `bfd_session_cache` iteration 順で `create_bfd_session()` | 非決定 | `local_discriminator` は新規連番に置換 (`bfdorch.cpp:696-702`, `641-645`) |
+| 9 | `use_software_bfd` フラグで `BFD_SESSION_TABLE` / `BFD_SOFTWARE_SESSION_TABLE` 経路を排他選択 | 排他 | 同 key 二重書込みなし (`bfdorch.cpp:114-122`, `706-710`) |
+
+### 主要な順序保証の詳細
+
+**(1) 起動時クリーンアップが notifier 登録より先**
+`BfdOrch::BfdOrch()` は `m_stateBfdSessionTable` の全キーを列挙して `del()` した後 (`bfdorch.cpp:74-85`)、`Orch::addExecutor(bfdStateNotificatier)` で SAI 通知 consumer を登録する (`bfdorch.cpp:86`)。orchagent 再起動直後の `BFD_SESSION_TABLE` には**必ず**新規セッションのみが残り、再起動前の `state=Up` を vnetorch が誤って拾うことはない。
+
+**(3) SAI create 成功が STATE_DB 書込みの絶対条件**
+`create_bfd_session()` は `fvVector` を `type` → `local_discriminator` → `local_addr` → `tx_interval` → `rx_interval` → `multiplier` → `multihop` → `state="Down"` の順で組み立て (`bfdorch.cpp:418-544`)、SAI `create_bfd_session()` 成功（または `retry_create_bfd_session()` 経由のリトライ成功）した場合に限り `m_stateBfdSessionTable.set(state_db_key, fvVector)` を実行する (`bfdorch.cpp:547-565`)。STATE_DB 書込みは `bfd_session_map` / `bfd_session_lookup` への登録 (`bfdorch.cpp:566-567`) より**前**に行われる。
+
+**(5) 通知ハンドラは `bfd_session_lookup` 登録済み前提**
+`doTask(NotificationConsumer)` は受信した `bfd_session_id` を `bfd_session_lookup[id]` で逆引きして STATE_DB キーを取得する (`bfdorch.cpp:244-252`)。`bfd_session_lookup` への登録は `create_bfd_session()` の最終段 (`bfdorch.cpp:567`) でのみ行われるため、SAI 通知が早着しても orchagent シングルスレッドの select loop で逐次処理されるため race は発生しない。
+
+**(7) TSA 有効化は Down 通知 → STATE_DB 削除の順**
+`handleTsaStateChange(true)` は各セッションについて先に `notify_session_state_down(key)` で `SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE` を `SAI_BFD_SESSION_STATE_DOWN` で伝播し (`bfdorch.cpp:692`)、続けて `remove_bfd_session(key)` で SAI remove → STATE_DB `del()` を実行する (`bfdorch.cpp:693`, `629`)。consumer は「Down 通知を先に受け取り、その後で `BFD_SESSION_TABLE` エントリが消える」順で観測するため、`state=Up` のスナップショットを抱えたままエントリが消える「孤立 Up」を防ぐ。
+
+<!-- /ordering -->
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
@@ -316,6 +351,64 @@ STATE_DB `BFD_SESSION_TABLE` の書き手は `bfdorch` のみで、`swss::Table:
 > **証跡**: `BfdOrch` constructor + cleanup L57-88、`doTask(Consumer)` L99-216、`doTask(NotificationConsumer)` L220-268、`register_bfd_state_change_notification()` L271-303、`create_bfd_session()` L305-575（バリデーション L316-528、SAI 作成 L547-562、STATE_DB 書込み L565-568）、`retry_create_bfd_session()` L583-606、`remove_bfd_session()` L609-633、`createSoftwareBfdSession()` L706-710、`removeSoftwareBfdSession()` L713-715。詳細グレップ証跡は `meta/_intermediate/cdb-flow/bfd-state-failure.md` を参照。
 
 <!-- /failure -->
+
+
+<!-- platform -->
+## プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)
+
+`bfdorch` は `platform` / `sub_platform` 環境変数の static 比較を**行わず**、**SAI 動的 capability 照会**のみで ASIC 対応を判定する (他の orch とは設計が異なる)[^h1]。STATE_DB `BFD_SESSION_TABLE` への書込みが発生するか否かは、以下の組合せで決まる。
+
+### HW BFD 経路 vs SW BFD 経路
+
+| 条件 | `BFD_SESSION_TABLE` (STATE_DB) | `BFD_SOFTWARE_SESSION_TABLE` |
+|------|-------------------------------|------------------------------|
+| `BGP_DEVICE_GLOBAL.STATE.use_software_bfd == "true"` | **書込みなし** | `bfdorch::createSoftwareBfdSession()` 経由で書込み |
+| `use_software_bfd == "false"` (デフォルト) + ASIC が SAI BFD 対応 | 書込みあり | なし |
+| `use_software_bfd == "false"` + ASIC が SAI BFD 未対応 | **書込みなし** (create 失敗) | なし |
+
+### 動的照会される SAI capability
+
+`bfdorch` が起動時 / 初回 create 時に問い合わせる SAI 属性:
+
+| SAI 属性 | チェック対象 | 失敗時の挙動 |
+|---------|-------------|------------|
+| `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` (`set_implemented`) | BFD 状態変化通知の登録可否 | `create_bfd_session()` 全体が **fail**。STATE_DB エントリ作成自体が起こらない (`bfdorch.cpp:286-290, 309-313`) |
+| `SAI_SWITCH_ATTR_SUPPORTED_IPV4_BFD_SESSION_OFFLOAD_TYPE` | IPv4 BFD オフロード対応 | `bgpcfgd` が SW BFD 経路を選択 → STATE_DB `BFD_SESSION_TABLE` は使われない (`bfdorch.cpp:761-790`) |
+| `SAI_SWITCH_ATTR_SUPPORTED_IPV6_BFD_SESSION_OFFLOAD_TYPE` | IPv6 BFD オフロード対応 | 同上 (IPv6 family のみ独立) |
+
+`SUPPORTED_IPV*_BFD_SESSION_OFFLOAD_TYPE` の値が `SAI_BFD_SESSION_OFFLOAD_TYPE_NONE` の場合も SW BFD 経路となる。IPv4 / IPv6 は独立に照会されるため、片方だけ HW 対応の ASIC では対応 family のセッションだけが STATE_DB に出現する。
+
+### `HW_LOOKUP_VALID` 分岐 (interface 指定の有無)
+
+`bfdorch.cpp:482-542` で `interface` フィールドが `"default"` か否かにより SAI 属性セットが分岐する。フィールド集合は同一だが ASIC 互換性に差がある。
+
+| `interface` | `SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID` | 追加必須 SAI 属性 |
+|-------------|----------------------------------------|------------------|
+| `"default"` | 省略 (SAI default = true) | `VIRTUAL_ROUTER` |
+| 具体ポート名 (例 `Ethernet0`) | `false` を明示セット | `PORT`, `SRC_MAC`, `DST_MAC` (CONFIG_DB の `dst_mac` 必須)。`vrf != "default"` は reject |
+
+ASIC によっては `HW_LOOKUP_VALID = false` を未サポートで `create_bfd_session()` 自体が失敗 → STATE_DB に書込みなし。
+
+### vendor 別の典型挙動
+
+| プラットフォーム | HW BFD オフロード | `BFD_SESSION_TABLE` 書込み | 備考 |
+|-----------------|------------------|---------------------------|------|
+| broadcom (TD/TH/JR) | あり (IPv4/IPv6) | あり | state 通知レイテンシ低 |
+| mellanox (Spectrum) | あり (IPv4/IPv6) | あり | `detect_multiplier × rx_interval` に従う |
+| cisco-8000 | あり (IPv4/IPv6) | あり | offload type 取得経路を通る |
+| barefoot (Tofino) | 実装依存 | 実装依存 | SAI capability 照会結果に従う |
+| marvell-prestera | 一部 SKU で SW のみ | SW モードでは**なし** | `use_software_bfd = true` で動くケースあり |
+| vs (シミュレーション) | なし | SW モードでは**なし** | テスト環境では FRR 経路 |
+
+上表は SAI 実装の現状を示すもので、`bfdorch.cpp` 内の明示的な vendor 文字列比較ではない。`bfdorch` は ASIC vendor を直接見ず、SAI capability 動的照会のみで分岐する点に注意。
+
+### 通知の async 配信タイミング差
+
+HW BFD 経路では SAI 通知が ASIC 内のタイマ精度に依存する。broadcom 系は数百 μs 〜 ms 単位、mellanox 系は `detect_multiplier × rx_interval` に従う。`"Down" → "Up"` 遷移までの遅延が ASIC vendor 差で 1〜数百 ms 揺れる。STATE_DB を polling する consumer (例 `vnetorch`) は `Init` 状態を観測する可能性が vendor によって異なる。
+
+[^h1]: `sonic-swss/orchagent/bfdorch.cpp` (L116-205 use_software_bfd 分岐、L270-303 BFD 通知 capability 照会、L482-542 HW_LOOKUP_VALID 分岐、L755-791 BgpGlobalStateOrch::offload_supported)。`bfdorch.cpp` 全 841 行で `platform` / `sub_platform` の static 比較は 0 件。<https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
+
+<!-- /platform -->
 
 ## 関連リファレンス
 

@@ -216,4 +216,23 @@ YANG `default` 宣言に加えて、`bgpcfgd` (`managers_aggregate_address.py`) 
 <!-- evidence: sonic-net/sonic-utilities/config/bgp_cli.py -->
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差
+
+**プラットフォーム差なし**。`BGP_AGGREGATE_ADDRESS` の適用経路は FRR (ユーザ空間 `bgpd`) で完結し、SAI / ASIC SDK を直接呼び出さない。ASIC ベンダー・T0 / T1 / VOQ chassis・single-asic / multi-asic いずれの構成でも `bgpcfgd` の `AggregateAddressMgr` が CONFIG_DB を購読し `vtysh` 経由で `aggregate-address` を投入する経路は同一。
+
+| 観点 | 差分有無 | 根拠 |
+|------|---------|------|
+| ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Barefoot) | なし | 集約は FRR `bgpd` で生成され、SAI route API はすべてのベンダーで共通の `RouteOrch` から呼ばれる |
+| T0 / T1 / T2 / VOQ chassis | なし | `main.py` L105-106 の `AggregateAddressMgr` 登録は無条件 (`is_chassis()` 分岐は別マネージャ `ChassisAppDbMgr` のため) |
+| single-asic / multi-asic | なし | `managers_aggregate_address.py` / `frrcfgd.py` を `platform / asic / chassis / multi_npu` で grep しても 0 ヒット |
+| platform-specific j2 / hwsku 上書き | なし | `device/<vendor>/<platform>/` および `files/image_config/` に aggregate-address 差分なし |
+
+詳細根拠は intermediate メモ (`meta/_intermediate/cdb-flow/bgp-aggregate-address-platform.md`) を参照。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:105 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1313 -->
+<!-- /platform -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
