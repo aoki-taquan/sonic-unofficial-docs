@@ -1,0 +1,297 @@
+---
+title: DPU_STATE フィールド詳細 (CHASSIS_STATE_DB) — デフォルト・更新条件
+description: "CHASSIS_STATE_DB の DPU_STATE テーブル各フィールドのコード由来デフォルト・fallback・更新タイミングを chassisd ソースから精査した詳細リファレンス。"
+area: reference
+hard: 0
+verification: code-verified
+last_verified: 2026-05-15
+sources:
+  - repo: sonic-net/sonic-platform-daemons
+    path: sonic-chassisd/scripts/chassisd
+    ref: master
+  - repo: sonic-net/sonic-utilities
+    path: show/system_health.py
+    ref: master
+related:
+  config_db:
+    - DPU
+    - DPUS
+    - CHASSIS_MODULE
+  cli:
+    - show dpu
+  yang: []
+  _no_related_yang: true
+---
+
+# DPU_STATE フィールド詳細 (CHASSIS_STATE_DB)
+
+## 概要
+
+`DPU_STATE` テーブル (`CHASSIS_STATE_DB`, Redis DB ID=13) の各フィールドについて、
+YANG `default` 文が存在しない STATE_DB テーブルにおける **コード由来のデフォルト値・fallback・更新タイミング** を
+`chassisd` ソースコードから精査したページ。
+
+概要・key 構造・書き込み元クラスは [`DPU_STATE テーブル`](dpu-state.md) を参照。
+このページは **各フィールドのデフォルト値の根拠** に特化している。
+
+---
+
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A — コード由来)
+
+このテーブルは YANG `default` 文を持たない。以下はソースコードから読み取った
+実効デフォルト / fallback の一覧。
+
+### フィールド一覧と実効デフォルト
+
+| フィールド | YANG default | 実効デフォルト (コード由来) | 更新タイミング |
+|-----------|-------------|--------------------------|------------|
+| `dpu_midplane_link_state` | なし | `'down'` (platform API 未実装時の安全側) | midplane 変化検知 + 起動時 |
+| `dpu_midplane_link_reason` | なし | `""` (常に空文字列) | `update_dpu_state()` 呼び出し時 (常時) |
+| `dpu_midplane_link_time` | なし | `get_formatted_time()` 現在時刻 | `update_dpu_state()` 呼び出し時 (常時) |
+| `dpu_control_plane_state` | なし | `'down'` (midplane down 時 / SYSTEM_READY 未到達) | CP state 変化時のみ |
+| `dpu_control_plane_time` | なし | 未書き込み (midplane down パスでは更新なし) | `_update_cp_dpu_state()` 経由のみ |
+| `dpu_data_plane_state` | なし | `'down'` (midplane down 時 / 全ポート up 未達) | DP state 変化時のみ |
+| `dpu_data_plane_time` | なし | 未書き込み (midplane down パスでは更新なし) | `_update_dp_dpu_state()` 経由のみ |
+
+---
+
+### `dpu_midplane_link_state`
+
+**実効デフォルト: `'down'`**
+
+起動時 (`set_initial_dpu_admin_state`) の決定ロジック:
+
+```python
+# chassisd:1386-1391
+dpu_state_key = "DPU_STATE|" + module_name
+if operational_state == ModuleBase.MODULE_STATUS_ONLINE:
+    op_state = 'up'
+else:
+    op_state = 'down'
+self.module_updater.update_dpu_state(dpu_state_key, op_state)
+```
+
+- `get_oper_status()` が `MODULE_STATUS_ONLINE` → `'up'`
+- それ以外 (OFFLINE / EMPTY 等) → `'down'`
+- `get_oper_status()` が `NotImplementedError` → `try_get()` の default `MODULE_STATUS_OFFLINE` → `'down'`
+
+運用中 (midplane ポーリング) の決定ロジック:
+
+```python
+# chassisd:1102-1105
+if is_midplane_reachable:
+    self.update_dpu_state(key, 'up')
+else:
+    self.update_dpu_state(key, 'down')
+```
+
+`is_midplane_reachable()` が `NotImplementedError` → `try_get()` default `False` → `'down'`。
+
+---
+
+### `dpu_midplane_link_reason`
+
+**実効デフォルト: `""` (空文字列、変化なし)**
+
+```python
+# chassisd:876-880 (update_dpu_state)
+updates = {
+    "dpu_midplane_link_state": state,
+    "dpu_midplane_link_reason": "",       # state='up'/'down' 問わず常に空文字列
+    "dpu_midplane_link_time": get_formatted_time(),
+}
+```
+
+`update_dpu_state()` は `state` が `'up'` / `'down'` いずれの場合も `dpu_midplane_link_reason` を `""` で書き込む。
+platform API の `get_oper_status()` が down 理由を返すインターフェースを持たないため、
+実装上この値が空文字列以外になることはない。
+
+---
+
+### `dpu_midplane_link_time`
+
+**実効デフォルト: `get_formatted_time()` — 書き込み時の現在時刻**
+
+```python
+# chassisd:879
+"dpu_midplane_link_time": get_formatted_time(),
+```
+
+時刻フォーマット: `"%a %b %d %I:%M:%S %p UTC %Y"` (例: `"Thu May 15 10:30:45 AM UTC 2026"`)
+
+`update_dpu_state()` が呼ばれるたびに現在時刻を書き込む。
+midplane 状態が変化しない場合でも `update_dpu_state()` が呼ばれれば時刻は更新される。
+
+---
+
+### `dpu_control_plane_state`
+
+**実効デフォルト: `'down'`** (起動時 midplane down / SYSTEM_READY 未到達)
+
+2 つの書き込みパスが存在する:
+
+**パス 1 — SmartSwitchModuleUpdater (midplane down 連動)**
+
+```python
+# chassisd:881-884
+if state == "down":
+    updates[CP_STATE] = "down"   # 'dpu_control_plane_state'
+    updates[DP_STATE] = "down"   # 'dpu_data_plane_state'
+```
+
+midplane が `'down'` に設定される際に CP_STATE も強制的に `'down'` にする。
+
+**パス 2 — DpuStateUpdater (platform API または fallback)**
+
+```python
+# chassisd:1255-1260
+try:
+    self.chassis.get_controlplane_state()
+except NotImplementedError:
+    self._get_cp_state = self._get_control_plane_state_common   # fallback
+else:
+    self._get_cp_state = self.chassis.get_controlplane_state    # platform API
+```
+
+platform API が `NotImplementedError` を送出する場合の fallback:
+
+```python
+# chassisd:1277-1284
+def _get_control_plane_state_common(self):
+    sysready_table = swsscommon.Table(self.state_db, 'SYSTEM_READY')
+    status, sysready_state = sysready_table.hget('SYSTEM_STATE', 'Status')
+    if not status or sysready_state.lower() != 'up':
+        return False
+    return True
+```
+
+`STATE_DB SYSTEM_READY|SYSTEM_STATE.Status == 'up'` → `True` → `'up'`、それ以外 → `False` → `'down'`
+
+CP state は **変化した場合のみ** DB に書き込まれる (chassisd:1311-1315)。
+
+---
+
+### `dpu_control_plane_time`
+
+**実効デフォルト: 未書き込み (midplane down パスでは更新なし)**
+
+```python
+# chassisd:1293-1295
+def _update_cp_dpu_state(self, state):
+    self.dpu_state_table.hset(self.name, CP_STATE, state)
+    self.dpu_state_table.hset(self.name, CP_UPDATE_TIME, self._time_now())
+```
+
+`SmartSwitchModuleUpdater` の midplane down パス (パス 1) では CP_UPDATE_TIME が **書き込まれない**。
+`DpuStateUpdater._update_cp_dpu_state()` 経由 (CP state が変化した場合) のみ時刻が更新される。
+
+!!! warning "重要: 時刻フィールドと state フィールドの非対称性"
+    `dpu_control_plane_state` が `'down'` に設定された場合でも、
+    それが midplane down 連動パス経由であれば `dpu_control_plane_time` は**更新されない**。
+    時刻が正確に記録されるのは `DpuStateUpdater` が CP state の変化を検知した場合のみ。
+
+---
+
+### `dpu_data_plane_state`
+
+**実効デフォルト: `'down'`** (起動時 midplane down / 全ポート up 未達)
+
+`dpu_control_plane_state` と同構造。2 パスの書き込み:
+
+**パス 1**: midplane down 連動 (上記 chassisd:882-884 参照)
+
+**パス 2 — DpuStateUpdater fallback**:
+
+```python
+# chassisd:1267-1275
+def _get_data_plane_state_common(self):
+    port_table = swsscommon.Table(self.app_db, 'PORT_TABLE')
+    for port in self.config_db.get_table('PORT'):
+        status, oper_status = port_table.hget(port, 'oper_status')
+        if not status or oper_status.lower() != 'up':
+            return False
+    return True
+```
+
+CONFIG_DB `PORT` テーブルの**全ポートの `oper_status` が `'up'`** でなければ `False` → `'down'`。
+
+!!! note "空ポートテーブルの場合"
+    `PORT` テーブルが空の場合、`for` ループが回らず関数は `True` を返す → `dpu_data_plane_state = 'up'`。
+    これは Python の空イテラブルに対するループの挙動による。
+
+---
+
+### `dpu_data_plane_time`
+
+**実効デフォルト: 未書き込み (midplane down パスでは更新なし)**
+
+`dpu_control_plane_time` と同じ非対称性を持つ。
+
+```python
+# chassisd:1289-1291
+def _update_dp_dpu_state(self, state):
+    self.dpu_state_table.hset(self.name, DP_STATE, state)
+    self.dpu_state_table.hset(self.name, DP_UPDATE_TIME, self._time_now())
+```
+
+midplane down 連動パスでは DP_UPDATE_TIME は更新されない。
+`DpuStateUpdater._update_dp_dpu_state()` 経由 (DP state 変化時) のみ更新。
+
+---
+
+### chassisd 停止時 (`deinit`) の状態変化
+
+```python
+# chassisd:1318-1320
+def deinit(self):
+    self._update_dp_dpu_state('down')   # DP state + time を更新
+    self._update_cp_dpu_state('down')   # CP state + time を更新
+```
+
+| フィールド | deinit 後の値 |
+|-----------|-------------|
+| `dpu_data_plane_state` | `'down'` |
+| `dpu_data_plane_time` | 現在時刻 (更新あり) |
+| `dpu_control_plane_state` | `'down'` |
+| `dpu_control_plane_time` | 現在時刻 (更新あり) |
+| `dpu_midplane_link_state` | **変更なし** (deinit は midplane フィールドを触らない) |
+| `dpu_midplane_link_reason` | **変更なし** |
+| `dpu_midplane_link_time` | **変更なし** |
+
+---
+
+### `show dpu` の oper-status 算出
+
+`dpu_*_state` フィールドを読み取って以下のロジックで oper-status を算出:
+
+```python
+# system_health.py:190-204
+if midplanedown:        oper_status = "Offline"
+elif up_cnt == 3:       oper_status = "Online"
+else:                   oper_status = "Partial Online"
+```
+
+`up_cnt` = `dpu_midplane_link_state`, `dpu_control_plane_state`, `dpu_data_plane_state` の 3 フィールド中 `'up'` の個数。
+
+| 条件 | `show dpu` 表示 |
+|------|---------------|
+| `dpu_midplane_link_state == 'down'` | `Offline` |
+| 3 フィールド全て `'up'` | `Online` |
+| midplane `'up'` + CP/DP いずれか `'down'` | `Partial Online` |
+<!-- /defaults -->
+
+---
+
+## 関連ページ
+
+- [`DPU_STATE テーブル`](dpu-state.md) — テーブル概要・key 構造・書き込み元クラス説明
+- [`DPU テーブル`](dpu.md) — CONFIG_DB の DPU 設定テーブル
+- [`CHASSIS_MODULE テーブル`](chassis-module.md) — モジュール管理状態
+
+## 引用元
+
+[^1]: `chassisd` ソース: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` —
+    フィールド名定数 (line 108-111)、`update_dpu_state()` (line 864-891)、
+    `DpuStateUpdater` クラス (line 1234-1320)、`set_initial_dpu_admin_state()` (line 1364-1405)。
+    `show dpu` CLI: `sonic-utilities/show/system_health.py:show_dpu_state()` (line 172-222)。

@@ -247,3 +247,64 @@ OpenSSH の `MaxSessions`（同時チャンネル数の上限）とは別の概�
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1441 (PamLimitsCfg.read_max_sessions_config) -->
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang L20-135 -->
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### hostcfgd 起動時の処理順序
+
+hostcfgd は起動時に以下の順序で SSH_SERVER を処理する。
+
+1. **`PamLimitsCfg.__init__()` + `update_config_file()`**（L2191-2192）  
+   `get_table('SSH_SERVER')` を読み込み `read_max_sessions_config()` を実行。  
+   この時点で `SSH_SERVER|POLICIES` が存在しなければ PAM limits は更新されない（KeyError をスルー）。
+
+2. **`SshServer.__init__()`**（L2201）  
+   `policies = {}` のみ初期化。sshd_config への書き込みはなし。
+
+3. **`wait_till_system_init_done()`**  
+   systemd の初期化完了を待機。
+
+4. **`sshscfg.load(ssh_server)`**（L2265）  
+   `set_policies()` 経由で sshd_config 全フィールドを更新し、`systemctl restart ssh` を実行。
+
+5. **`pamLimitsCfg.update_config_file()`（2 回目）**（L2277）  
+   `max_sessions` を `/etc/security/limits.d/` に書き込む（確定値で上書き）。
+
+ステップ 4 と 5 は **順序固定**。`max_sessions` が sshd_config 側でスキップされ PAM 経由で処理されるため、sshd 設定と PAM limits の更新は必ずこの順に完了する。  
+起動直後の短時間（ステップ 4 完了前）は PAM limits が古い値のままになる可能性がある。
+
+### ランタイム更新（subscribe コールバック）
+
+```
+ssh_handler(key, op, data)         # hostcfgd L2297
+  ├─ sshscfg.policies_update()     # sshd_config 更新 + restart
+  └─ pamLimitsCfg.update_config_file()  # PAM limits 更新
+```
+
+sshd_config 更新と PAM limits 更新は**同一ハンドラ内で逐次実行**される（トランザクションなし）。  
+sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者の設定が不整合になる可能性がある。
+
+### `ports` フィールドの順序依存
+
+`handle_ports_set()` は既存 sshd_config.tmp 内の `Port` 行の**行番号**を取得してから挿入する。  
+複数ポートを指定する場合、各ポートは同一行番号に逐次挿入されるため、元の `Port` 行位置が存在しない場合はファイル末尾に追記される。
+
+### `DEVICE_METADATA|localhost` との前提依存
+
+`PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の**どちらも存在しない**場合に early return する（L1430）。  
+`DEVICE_METADATA|localhost` が先に書き込まれている前提で PAM limits の更新が動作する。  
+通常の SONiC デプロイでは `DEVICE_METADATA|localhost` は必ず存在するため問題にならないが、ミニマル構成やテスト環境では注意が必要。
+
+### sshd 検証ゲート（アトミック性）
+
+`set_policies()` はすべてのフィールドを sshd_config.tmp に適用した後、`sshd -T -f <tmp>` で検証する。  
+検証失敗時は tmp を削除してロールバック（フィールド単位のロールバックは行われない）。  
+すべて適用 or すべて棄却の二択であることに注意。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2191-2192, L2201, L2232-2277 (HostConfigDaemon.__init__ + load) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2299 (ssh_handler) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1430 (PamLimitsCfg.update_config_file early-return condition) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1091-1108 (handle_ports_set) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1150-1160 (sshd -T verification gate) -->
+<!-- /ordering -->

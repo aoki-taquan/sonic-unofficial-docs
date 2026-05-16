@@ -182,22 +182,6 @@ evidence: `sonic-host-services/scripts/hostcfgd:1422,1485-2493`
 
 evidence: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:64,111-113`
 
-### stpmgr (sonic-swss/cfgmgr/stpmgrd.cpp)
-
-| 読み取りフィールド | 行 | 用途 |
-|---|---|---|
-| `mac` (推定) | L81 | STP Bridge ID に使用するシステム MAC |
-
-evidence: `sonic-swss/cfgmgr/stpmgrd.cpp:81`
-
-### vxlanmgr (sonic-swss/cfgmgr/vxlanmgrd.cpp)
-
-| 読み取りフィールド | 行 | 用途 |
-|---|---|---|
-| `mac` (推定) | L68 | VXLAN 内部 MAC 設定 |
-
-evidence: `sonic-swss/cfgmgr/vxlanmgrd.cpp:68`
-
 ## 2. cross-refs セクション構造案
 
 起動時参照 daemon を「参照タイミング」×「フィールド」の 2 軸で整理:
