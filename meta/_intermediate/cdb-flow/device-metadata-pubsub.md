@@ -102,9 +102,52 @@
 
 ---
 
+---
+
+## G-6. orchagent 起動時一括読み込み → ASIC_DB SAI switch 操作
+
+`SwitchOrch` / `orchagent` は `DEVICE_METADATA` を **subscribe しない**。起動時に `hget` で一括取得し SAI API 経由で ASIC_DB に反映する。
+
+### 起動時読み込みフィールドと SAI 変換
+
+| フィールド | 読み込み関数 | SAI 属性 / グローバル変数 | evidence |
+|---|---|---|---|
+| `switch_type` | `getCfgSwitchType()` | `SAI_SWITCH_ATTR_TYPE` (voq→`VOQ`, fabric→`FABRIC`) | `main.cpp:242-276` |
+| `subtype` | `getCfgSwitchType()` | `gMySwitchSubType` (SmartSwitch 判定) | `main.cpp:269` |
+| `switch_id` (VOQ) | `getSystemPortConfigList()` | `SAI_SWITCH_ATTR_SWITCH_ID` | `main.cpp:305-313` |
+| `max_cores` (VOQ) | `getSystemPortConfigList()` | `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES` | `main.cpp:321-335` |
+| `hostname` (VOQ) | `getSystemPortConfigList()` | `gMyHostName` | `main.cpp:337-349` |
+| `asic_name` (VOQ) | `getSystemPortConfigList()` | `gMyAsicName` | `main.cpp:351-363` |
+| `switch_id` (fabric) | 直接 `hget` | `SAI_SWITCH_ATTR_SWITCH_ID` | `main.cpp:746-769` |
+
+### SAI create_switch 呼び出しフロー
+
+```
+DEVICE_METADATA|localhost.switch_type (hget)
+  → getCfgSwitchType() → gMySwitchType / gMySwitchSubType
+  → attrs[] に SAI_SWITCH_ATTR_TYPE / SAI_SWITCH_ATTR_SWITCH_ID / SAI_SWITCH_ATTR_MAX_SYSTEM_CORES 等を追加
+  → sai_switch_api->create_switch(gSwitchId, attrs)
+  → sairedis → ASIC_DB (ASIC_STATE:SAI_OBJECT_TYPE_SWITCH)
+```
+
+### orchagent 内コンポーネント間共有経路 (gDirectory)
+
+| 共有経路 | 方向 | 内容 |
+|---|---|---|
+| `gDirectory.set(gSwitchOrch)` → `gDirectory.get<SwitchOrch*>()` | SwitchOrch → 依存 Orch | PFC DLR init 状態、restart ready フラグ |
+| `gDirectory.set(flexCounterOrch)` | FlexCounterOrch → 依存 Orch | `create_only_config_db_buffers` フラグ (DEVICE_METADATA 由来) |
+| `gSwitchOrch->checkPfcDlrInitEnable()` | OrchDaemon → SwitchOrch | バッファ設定タイミング制御 |
+| `gSwitchOrch->checkRestartReady()` | OrchDaemon ループ → SwitchOrch | warmboot/fastboot 再起動チェック |
+
+> `SwitchOrch` 自体は `APP_SWITCH_TABLE`・`CFG_ASIC_SENSORS`・`CFG_SWITCH_HASH` 等を subscribe するが、`DEVICE_METADATA` を直接 subscribe しない。runtime の `DEVICE_METADATA` 変更を ASIC_DB に反映するには orchagent 再起動が必要。  
+> evidence: `sonic-swss/orchagent/main.cpp:242,292,658,746`; `orchdaemon.cpp:213,500,766`; `switchorch.cpp:148-175,1493-1527`
+
+---
+
 ## 注記
 
-- **orchagent main (起動時のみ)**: `main.cpp:244,292,658` で `switch_type`、`subtype`、`switch_id` を `hget` で一度だけ取得 (subscribe なし)。runtime 変更は反映されない
+- **orchagent main (起動時のみ)**: `main.cpp:244,292,658,746` で `switch_type`、`subtype`、`switch_id`、`max_cores`、`hostname`、`asic_name` を `hget` で一括取得 (subscribe なし)。runtime 変更は反映されない
+- **SwitchOrch と DEVICE_METADATA**: SwitchOrch は DEVICE_METADATA を subscribe しない。DEVICE_METADATA 値は orchagent 起動時の SAI create_switch attrs に組み込まれ ASIC_DB へ反映される
 - **bgpcfgd の Directory 機構**: `SubscriberStateTable` イベントを `BGPDataBaseMgr.set_handler` → `Directory.put()` → `Directory.subscribe()` で登録されたサブコールバックへと伝播させる独自の pub-sub 実装。Redis native pub/sub とは別レイヤー
 - **Python ConfigDBConnector**: `swsscommon.ConfigDBConnector.subscribe()` は内部で `swsscommon.SubscriberStateTable` を生成し Redis keyspace notification を購読する
 - **fpmsyncd の条件付き addSelectable**: suppress-fib-pending を `enabled` にした場合のみ `NotificationConsumer` (APPL_STATE_DB のルート応答チャネル) が追加登録される動的な subscribe 拡張がある点が特徴的

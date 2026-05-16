@@ -483,4 +483,63 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 > **Evidence**: sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:128-150,199-215,332-340,418-434,452-454`; `dhcpservd.py:70-112,127-133`; `dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54`
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `dhcp_lease.py`, `dhcpservd.py`, `dhcp_cfggen.py` 全行精読 (2026-05-16)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-side-effects.md`
+
+CONFIG_DB の `DHCP_SERVER_IPV4` を書き込むと、`dhcpservd` が以下の副次書き込みを行う。
+
+### STATE_DB: DHCP_SERVER_IPV4_LEASE
+
+kea-dhcp4 がリースイベント（割当・更新・解放）を `lease_update.sh` 経由で dhcpservd に SIGUSR1 通知する。`KeaDhcp4LeaseHandler._update_lease()` が `/var/lib/kea/kea-lease.csv` を読み取り、STATE_DB を更新する。
+
+**key 形式**:
+
+```
+DHCP_SERVER_IPV4_LEASE|Vlan<subnet_id>|<mac_address>       # 通常 VLAN
+DHCP_SERVER_IPV4_LEASE|<midplane_bridge_name>|<mac_address> # SmartSwitch
+```
+
+**フィールド**:
+
+| フィールド | 説明 |
+|---|---|
+| `ip` | クライアントに割り当てた IPv4 アドレス |
+| `lease_start` | リース開始 UNIX タイムスタンプ（`lease_end - valid_lifetime` で算出） |
+| `lease_end` | リース終了 UNIX タイムスタンプ（kea-lease.csv の expire カラム） |
+
+**書き込み条件**: `lease_start != lease_end` かつ `now < lease_end`（有効リース）の場合のみ `hset`。期限切れリースは DEL。`lease_update_interval=2` 秒のレートリミットあり。
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_lease.py:79-93,102-112,140-144`
+
+### STATE_DB: DHCP_SERVER_IPV4_SERVER_IP
+
+dhcpservd 起動時（`start()` 内）に 1 回のみ実行。dhcp_server コンテナの `eth0` IPv4 アドレスを STATE_DB に書き込む。
+
+**key 形式**:
+
+```
+DHCP_SERVER_IPV4_SERVER_IP|eth0
+```
+
+**フィールド**: `ip` — eth0 の IPv4 アドレス文字列  
+eth0 アドレス取得失敗時は 5 秒間隔で最大 10 回リトライ。10 回失敗で `sys.exit(1)`。
+
+> **Evidence**: `dhcpservd.py:22,70-87`
+
+### ファイル: /etc/kea/kea-dhcp4.conf
+
+CONFIG_DB 変更を検知するたびに `dump_dhcp4_config()` が `/etc/kea/kea-dhcp4.conf` を上書きし、kea-dhcp4 に SIGHUP を送信して設定を再読込させる。Jinja2 テンプレート（`kea-dhcp4.conf.j2`）を使用して生成。テンプレートは `hooks-libraries`（SIGUSR1 lease 通知用）、`lease-database`（`/var/lib/kea/kea-lease.csv`、lfc-interval=3600）、`subnet4`（enabled VLAN ごとのサブネット＋プール）、`client-classes`（PORT モード）を含む。
+
+> **Evidence**: `dhcpservd.py:51-68`; `dhcp_cfggen.py:155-162,264`; `tests/test_data/kea-dhcp4.conf.j2`
+
+### ポート購読 (VLAN_MEMBER)
+
+`dhcpservd` は `VlanMemberTableEventChecker` で `VLAN_MEMBER` テーブルを購読し、`generate()` 内で全量読み取りする。`_parse_port()` がポートの VLAN メンバー登録を確認し、未登録ポートは LOG_WARNING でスキップ。
+
+> **Evidence**: `dhcpservd.py:142`; `dhcp_cfggen.py:70-71,165-168`
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 75921d013977 -->
