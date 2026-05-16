@@ -148,6 +148,72 @@ ChassisOrch* chassis_frontend_orch = new ChassisOrch(m_configDb, m_applDb, chass
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+`ChassisOrch` (`chassis_frontend_orch`) は `orchdaemon.cpp` の初期化シーケンスと `m_orchList` に特定の順序制約を持つ。
+
+### 1. VNetRouteOrch より後に生成（必須）
+
+```cpp
+// orchagent/orchdaemon.cpp:281-293
+VNetRouteOrch *vnet_rt_orch = new VNetRouteOrch(m_applDb, vnet_tables, vnet_orch);
+gDirectory.set(vnet_rt_orch);
+// ...
+ChassisOrch* chassis_frontend_orch = new ChassisOrch(m_configDb, m_applDb, chassis_frontend_tables, vnet_rt_orch);
+```
+
+`ChassisOrch` の constructor は `VNetRouteOrch*` を直接受け取り、メンバー `m_vNetRouteOrch` として保持する。`VNetRouteOrch` が先に生成されていないとコンパイル時に依存が解決できない（ポインタが null になりクラッシュする）。
+
+→ **生成順依存**: `VNetRouteOrch` ≺ `ChassisOrch`（必須）
+
+### 2. m_orchList 登録位置と doTask 処理順
+
+```
+// orchagent/orchdaemon.cpp 抜粋
+m_orchList = { gSwitchOrch, ..., gPortsOrch, ..., gRouteOrch, ... };  // 初期一覧
+// ...push_back 群:
+gFdbOrch → gMirrorOrch → gAclOrch → gPbhOrch → chassis_frontend_orch → vrf_orch → ...
+// → cfg_vnet_rt_orch → vnet_orch → vnet_rt_orch (VNetRouteOrch)
+```
+
+`m_orchList` における処理順では `chassis_frontend_orch` は `vnet_rt_orch` より**前**に配置される。  
+ただし `ChassisOrch::doTask()` は CONFIG_DB テーブルの key を読み `VNetRouteOrch::attach()/detach()` を呼ぶだけで、SAI API を直接呼び出さない。そのため m_orchList 上の前後関係が機能的な問題を起こすことはない。
+
+### 3. allPortsReady ガードなし
+
+`ChassisOrch::doTask()` に `gPortsOrch->allPortsReady()` による early-return ガードは存在しない。
+
+```cpp
+// orchagent/chassisorch.cpp:50-72
+void ChassisOrch::doTask(Consumer &consumer)
+{
+    auto it = consumer.m_toSync.begin();
+    while (it != consumer.m_toSync.end())
+    {
+        // ガードなし — ポート初期化完了を待たずに実行
+        const std::string & op = kfvOp(t);
+        const std::string & ip = kfvKey(t);
+        if (op == SET_COMMAND)
+            m_vNetRouteOrch->attach(this, ip);
+        else
+            m_vNetRouteOrch->detach(this, ip);
+        it = consumer.m_toSync.erase(it);
+    }
+}
+```
+
+CONFIG_DB にエントリが存在すれば、ポート初期化完了前でも即座に `attach()/detach()` が実行される。
+
+### 4. warm-reboot 挙動
+
+warm-reboot シーケンスでは `OrchDaemon::warmRestoreAndSyncUp()` が `m_orchList` 全体を対象に `bake()` → `doTask()` を **3 イテレーション**実行する（`orchdaemon.cpp:1100-1136`）。
+
+`ChassisOrch` は warm-reboot 専用の reconciliation ロジック（`bake()` オーバーライド・`onWarmBootEnd()` オーバーライド）を持たない。CONFIG_DB に残存するエントリが再通知されることで `attach()` が再度呼ばれ、`VNetRouteOrch` に observer として自然に再登録される。APP_DB への実際の書き込みは `VNetRouteOrch` からの `VNetNextHopUpdate` 通知を待ってから行われる。
+
+→ **warm-reboot 依存順**: `VNetRouteOrch` の state restore が完了してから `VNetNextHopUpdate` が流れる必要があるが、これは `VNetRouteOrch` 側の責務であり `ChassisOrch` 側での特別なハンドリングは不要。
+<!-- /ordering -->
+
 ## 制約
 
 - `<IP_prefix>` は `IpPrefix` クラスで正規化される（ホストビットが切り捨てられる）
