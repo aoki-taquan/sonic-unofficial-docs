@@ -440,6 +440,64 @@ except (netaddr.NotRegisteredError, netaddr.AddrFormatError, netaddr.AddrConvers
 
 <!-- /failure -->
 
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+PREFIX_LIST テーブルは `bgpcfgd` (`docker-fpm-frr`) が `swsscommon.SubscriberStateTable` で購読する。
+
+### bgpcfgd (PrefixListMgr)
+
+`main.py` の `do_work()` が `PrefixListMgr(common_objs, "CONFIG_DB", "PREFIX_LIST")` を生成し、`Runner.add_manager()` に渡す。`Runner` は `swsscommon.SubscriberStateTable(conn, "PREFIX_LIST")` を `swsscommon.Select` に登録し、1000 ms タイムアウトのイベントループで変更を待機する。
+
+```python
+# runner.py L49-52
+subscriber = swsscommon.SubscriberStateTable(conn, table_name)
+self.subscribers.add(subscriber)
+self.selector.addSelectable(subscriber)
+self.callbacks[db][table_name].append(manager.handler)
+```
+
+変更通知を受け取ると `subscriber.pop()` で `(key, op, fvs)` を取得し、`op == "SET"` なら `set_handler`、`op == "DEL"` なら `del_handler` を呼び出す。
+
+### Jinja2 テンプレート経路
+
+`PrefixListMgr.__init__` で `PREFIX_TYPE_CONFIG` の各エントリに対し Jinja2 テンプレートを事前ロードする。
+
+| `prefix_type` | add テンプレート | del テンプレート |
+|---|---|---|
+| `ANCHOR_PREFIX` | `bgpd/radian/add_radian.conf.j2` | `bgpd/radian/del_radian.conf.j2` |
+| `SUPPRESS_PREFIX` | `bgpd/suppress_prefix/add_suppress_prefix.conf.j2` | `bgpd/suppress_prefix/del_suppress_prefix.conf.j2` |
+
+`add_radian.conf.j2`（ANCHOR_PREFIX 用）の展開例:
+
+```jinja2
+{{ data.ipv }} prefix-list ANCHOR_CONTRIBUTING_ROUTES permit {{ data.prefix }} ge {{ data.prefixlen + 1 }}
+router bgp {{ data.bgp_asn }}
+ address-family ipv4/ipv6 unicast
+  aggregate-address {{ data.prefix }} route-map TAG_ANCHOR_COMMUNITY
+```
+
+`add_suppress_prefix.conf.j2`（SUPPRESS_PREFIX 用）:
+
+```jinja2
+{{ data.ipv }} prefix-list {{ data.prefix_list_name }} permit {{ data.prefix }}
+```
+
+テンプレート展開後、`cfg_mgr.push(cmd)` で FRR [vtysh](../../reference/glossary.md#term-vtysh) に送信する。APP_DB への書き込みはなく、FRR bgpd への直接設定となる。
+
+### 購読フロー要約
+
+```
+CONFIG_DB PREFIX_LIST (SubscriberStateTable)
+  └─ bgpcfgd PrefixListMgr
+       ├─ set_handler → netaddr.IPNetwork parse → generate_prefix_list_config(add=True)
+       │    ├─ ANCHOR_PREFIX → add_radian.conf.j2 → vtysh (ip/ipv6 prefix-list + aggregate-address)
+       │    └─ SUPPRESS_PREFIX → add_suppress_prefix.conf.j2 → vtysh (ip/ipv6 prefix-list permit)
+       └─ del_handler → generate_prefix_list_config(add=False) → del テンプレート → vtysh
+```
+
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
