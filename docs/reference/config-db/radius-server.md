@@ -429,6 +429,58 @@ db_migrator.py での RADIUS_SERVER マイグレーションなし
 - `skip_msg_auth`: YANG 未定義・CLI 未実装だが hostcfgd が参照。直接 DB 書き込みのみで設定可能なフィールド
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## Phase G: CONFIG_DB Subscribe 経路と PAM 再生成
+
+### Subscribe 登録
+
+| 購読テーブル | コールバック | 登録箇所 | evidence |
+|---|---|---|---|
+| `RADIUS_SERVER` | `radius_server_handler` | `hostcfgd` L2474: `self.config_db.subscribe('RADIUS_SERVER', make_callback(self.radius_server_handler))` | `hostcfgd:2474` |
+| `RADIUS` | `radius_global_handler` | `hostcfgd` L2473: `self.config_db.subscribe('RADIUS', make_callback(self.radius_global_handler))` | `hostcfgd:2473` |
+| `LOOPBACK_INTERFACE` | `lpbk_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2483 — `src_intf` が Loopback の場合にトリガー | `hostcfgd:2483,500-509` |
+| `MGMT_INTERFACE` | `mgmt_intf_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2485 — `src_intf` が eth0/mgmt の場合にトリガー | `hostcfgd:2485,500-509` |
+| `VLAN_INTERFACE` | `vlan_intf_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2486 — `src_intf` が VLAN インタフェースの場合にトリガー | `hostcfgd:2486,500-509` |
+| `DEVICE_METADATA` | `hostname_update` 経由 | `hostcfgd` L2492 — ホスト名変更時に NAS-Identifier を更新して `modify_conf_file()` 再実行 | `hostcfgd:566-574` |
+
+### PAM 再生成経路
+
+```
+CONFIG_DB RADIUS_SERVER キー変更
+  └─ config_db.subscribe コールバック
+       └─ HostConfigDaemon.radius_server_handler()        [hostcfgd:2317-2322]
+            └─ AaaCfgMgr.radius_server_update(key, data)  [hostcfgd:535-545]
+                 ├─ data == {} → radius_servers から削除
+                 ├─ data != {} → radius_servers[key] = data (skip_msg_auth を bool 変換)
+                 └─ modify_conf_file()                     [hostcfgd:681-851]
+                      ├─ RADIUS_SERVER × RADIUS|global をマージ
+                      ├─ src_intf あり → get_interface_ip() で src_ip 解決
+                      ├─ jinja2 テンプレート展開
+                      │    → /etc/pam_radius_auth.d/<ip>_<auth_port>.conf
+                      ├─ /etc/sonic/radius_nss.conf 更新
+                      ├─ common-auth-sonic PAM スタック更新
+                      └─ aaastatsd を start/stop (サーバリスト空否で分岐)
+```
+
+### インタフェース IP 変更トリガー
+
+`src_intf` フィールドが設定されている RADIUS_SERVER エントリは、インタフェース設定変更によっても PAM 再生成がトリガーされる。
+
+```
+CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INTERFACE 変更
+  └─ handle_radius_source_intf_ip_chg(key)               [hostcfgd:500-525]
+       └─ radius_servers 内で src_intf == key[0] のエントリを検索
+            └─ 一致あり → modify_conf_file() で PAM 再生成
+```
+
+### 非同期性・タイミング
+
+- 購読は `ConfigDBConnector` の poll ループで処理される。設定変更から PAM ファイル反映まで数十ミリ秒〜数秒のラグが生じる場合がある。
+- PAM ファイルが書き換わった直後から新規 SSH セッションに反映される。既存セッションは影響を受けない。
+- `auth_port` 変更時は新ポートのファイルが生成されるが旧ファイルは削除されない (残留)。
+
+<!-- /pubsub -->
+
 <!-- cross-refs -->
 ## 暗黙参照 — `radius_server_update` が間接読み出す関連 CONFIG_DB テーブル (Phase C)
 
