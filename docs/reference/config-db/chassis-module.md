@@ -284,3 +284,53 @@ SmartSwitch では `set_admin_state_gracefully(admin_state)` が別スレッド�
 ### ランタイム注入 (デーモン自動書き込み)
 - なし (chassisd は CONFIG_DB を読むのみ。STATE_DB への書き込みは行うが CONFIG_DB は書き込まない)
 <!-- /entry-points -->
+
+<!-- ordering -->
+## 起動順序依存・CHASSIS_APP_DB 連携
+
+### 1. SmartSwitch: CHASSIS_MODULE エントリは chassisd 起動前に存在必須
+
+`ChassisdDaemon.run()` は `is_smartswitch()` 判定後、`SmartSwitchConfigManagerTask` を起動する**前**に `set_initial_dpu_admin_state()` (chassisd:1432) を呼び出す。この関数は CONFIG_DB の `CHASSIS_MODULE` テーブルをポーリングして各 DPU の初期 admin_status を決定する。
+
+**順序依存**: SmartSwitch 環境では `CHASSIS_MODULE|DPU*` エントリが **chassisd 起動時点で CONFIG_DB に存在しない場合**、`get_module_admin_status()` が `MODULE_STATUS_EMPTY` を返し DPU は `MODULE_ADMIN_DOWN` で起動する (chassisd:1382–1384)。エントリが事前に存在すれば `set_admin_state_gracefully()` は呼ばれない。
+
+- **推奨**: `CHASSIS_MODULE|DPU*` エントリの書き込みは chassisd 起動前（`sonic-config-engine` テンプレート展開フェーズ）に完了させること。
+- Evidence: `chassisd:1364–1405, 1412–1437`
+
+### 2. CHASSIS_APP_DB クリーンアップの 30 分遅延
+
+`ModuleUpdater.module_down_chassis_db_cleanup()` はモジュールが offline 遷移してから `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD = 30` 分後に CHASSIS_APP_DB (redis_chassis.server:6380) の関連エントリを削除する (chassisd:593–680)。
+
+クリーンアップ対象: `SYSTEM_NEIGH`, `SYSTEM_INTERFACE`, `SYSTEM_LAG_MEMBER_TABLE`, `SYSTEM_LAG_TABLE` — ラインカード/ファブリックカードに紐づく全 ASIC エントリ。
+
+**影響**: ラインカード down 直後に CHASSIS_APP_DB を参照するコンポーネント（`voqutil` 等）は旧エントリが**最大 30 分間残存**する可能性がある。モジュール再起動シナリオでは再起動から 30 分以内に旧エントリと新エントリが混在し得る。
+
+CHASSIS_APP_DB 接続 (`daemon_base.db_connect("CHASSIS_APP_DB")`) はクリーンアップ実行時点で初めて確立し、それ以前は接続なし。Evidence: `chassisd:593–680, 90`
+
+### 3. Supervisor 専有: ConfigManagerTask は supervisor スロットのみで起動
+
+標準モジュラーチャシスでは `supervisor_slot == my_slot` の場合のみ `ConfigManagerTask` を起動する (chassisd:1435–1437)。ラインカード/ファブリックカード上では `config_manager = None` — `CHASSIS_MODULE` テーブルの subscribe が行われず、platform API への `set_admin_state()` 呼び出しも発生しない。
+
+### 4. CONFIG_DB 書き込み → DPU 電源変化の非同期遅延 (SmartSwitch)
+
+SmartSwitch の `SmartSwitchConfigManagerTask` は `module_config_update()` 内で `set_admin_state_gracefully()` を**別スレッド**で非同期実行する (chassisd:250–256)。CONFIG_DB への `admin_status` 書き込みと実際の DPU 電源変化の間に不定の遅延が生じる。`DEFAULT_DPU_REBOOT_TIMEOUT = 360` 秒以内に midplane が復旧しない場合は警告ログを発出。STATE_DB への `oper_status` 反映は最大 10 秒遅延 (`CHASSIS_INFO_UPDATE_PERIOD_SECS=10`)。Evidence: `chassisd:1165–1172, 248–256, 89`
+
+### 5. DEL イベントの挙動差異 (非 SmartSwitch vs SmartSwitch)
+
+| プラットフォーム | DEL イベント解釈 | platform API 呼び出し |
+|-----------------|-----------------|----------------------|
+| 非 SmartSwitch | `MODULE_ADMIN_UP` | `set_admin_state(1)` |
+| SmartSwitch | `MODULE_ADMIN_DOWN` | `set_admin_state(0)` |
+
+`config chassis_modules startup <name>` (非 SmartSwitch) はエントリを削除 (`set_entry(..., None)`) するため DEL イベントが発火し、chassisd は即時 `set_admin_state(MODULE_ADMIN_UP)` を呼び出す。待機ループなし。Evidence: `chassisd:1165–1172, 1216–1228`
+
+### 起動順序依存サマリ
+
+| # | 依存関係 | 環境 | 影響 |
+|---|----------|------|------|
+| 1 | `CHASSIS_MODULE|DPU*` エントリ → chassisd 起動 | SmartSwitch | 不在時 DPU がデフォルト down 起動 |
+| 2 | ラインカード down → CHASSIS_APP_DB クリーンアップ | 全環境 | 30 分間旧エントリ残存 |
+| 3 | ConfigManagerTask は supervisor スロットのみ | 非 SmartSwitch | ラインカード上 chassisd は subscribe なし |
+| 4 | admin_status 書き込み → DPU 電源変化 | SmartSwitch | 360 秒タイムアウト; STATE_DB 最大 10 秒遅延 |
+| 5 | DEL イベント解釈 | プラットフォーム依存 | 非 SS: up / SS: down |
+<!-- /ordering -->
