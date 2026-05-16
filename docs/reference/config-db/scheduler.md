@@ -150,6 +150,40 @@ show queue counters
 [^2]: qosorch 実装: `sonic-swss/orchagent/qosorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
 
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `type` が `DWRR`/`WRR`/`STRICT` 以外の不正値 | `handleSchedulerTable()` L1394 | `task_invalid_entry`。エントリ全体を破棄、[SAI](../../reference/glossary.md#term-sai) 非反映 | `SWSS_LOG_ERROR("Unknown scheduler type value:%s")` |
+| `meter_type` が `packets`/`bytes` 以外の不正値 | `handleSchedulerTable()` L1407 | `scheduler_meter_map.at()` が `std::out_of_range` 例外をスロー → **orchagent クラッシュ** | uncaught exception |
+| 未知フィールド（例: `priority`）を含む SET | `handleSchedulerTable()` L1434 | `task_invalid_entry`。`type`/`weight`/`meter_type` 等を含む全フィールドが SAI 未反映 | `SWSS_LOG_ERROR("Unknown field:%s")` |
+| `weight` に YANG `range "1..100"` 違反の値 | `handleSchedulerTable()` L1401–1404 | `(uint8_t)stoi()` で暗黙キャスト・切り捨て。バリデーションなし、異常値が SAI に渡る | なし |
+| SAI `create_scheduler()` 失敗（新規作成時） | `handleSchedulerTable()` L1460–1467 | `handleSaiCreateStatus()` 返り値に従う。`task_success` 以外なら失敗ステータスを返す | `SWSS_LOG_ERROR("Failed to create scheduler profile [%s:%s], rv:%d")` |
+| SAI `set_scheduler_attribute()` 失敗（既存更新時） | `handleSchedulerTable()` L1446–1454 | `handleSaiSetStatus()` 返り値に従う | `SWSS_LOG_ERROR("fail to set scheduler attribute, id:%d")` |
+| エントリ既存で SAI オブジェクト ID が `SAI_NULL_OBJECT_ID`（内部不整合） | `handleSchedulerTable()` L1362–1366 | `task_invalid_entry` | `SWSS_LOG_ERROR("Error sai_object must exist for key %s")` |
+| `m_pendingRemove=true` 状態のエントリへの SET | `handleSchedulerTable()` L1368–1372 | `task_need_retry`。DEL 完了まで SET は保留 | `SWSS_LOG_NOTICE("Entry %s %s is pending remove, need retry")` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| 存在しないオブジェクトの DEL | `handleSchedulerTable()` L1478–1482 | `task_invalid_entry` | `SWSS_LOG_ERROR("Object with name:%s not found.")` |
+| QUEUE 参照中の SCHEDULER を DEL | `handleSchedulerTable()` L1484–1490 | `m_pendingRemove=true` をセット → `task_need_retry`。QUEUE 参照が解除されるまでリトライ | `SWSS_LOG_NOTICE("Can't remove object %s due to being referenced (%s)")` |
+| SAI `remove_scheduler()` 失敗 | `handleSchedulerTable()` L1490–1497 | `handleSaiRemoveStatus()` 返り値に従う。[CONFIG_DB](../../reference/glossary.md#term-config_db) からは削除されても ASIC に古いプロファイルが残留する可能性あり | `SWSS_LOG_ERROR("Failed to remove scheduler profile. db name:%s sai object:...")` |
+
+### 補足
+
+- **`priority` フィールドの全破棄**: YANG に `leaf priority` が定義されているが qosorch に対応分岐なし。`priority` を含む SET は **全フィールドが** SAI 未反映になる（partial 適用なし）。
+- **`meter_type` クラッシュリスク**: `scheduler_meter_map.at()` は `"packets"`/`"bytes"` 以外で `std::out_of_range` をスロー。orchagent プロセスごとクラッシュするため、直接 `sonic-db-cli` 書き込み時は要注意。
+- **`m_pendingRemove` による SET/DEL シリアライズ**: QUEUE 参照がある SCHEDULER に DEL → SET を発行しても DEL がリトライし続け SET も保留される。QUEUE 参照を解除 → DEL 完了 → SET の順を守ること。
+
+<!-- /failure -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
