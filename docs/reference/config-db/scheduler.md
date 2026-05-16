@@ -514,4 +514,39 @@ QosOrch::doTask(Consumer&)            (qosorch.cpp:2254)
 詳細は `meta/_intermediate/cdb-flow/scheduler-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> **調査根拠**: `sonic-net/sonic-swss/orchagent/qosorch.cpp` `applySchedulerToQueueSchedulerGroup()` / `handleQueueTable()` 精読 (2026-05-16)
+
+### VOQ シャーシ構成
+
+`applySchedulerToQueueSchedulerGroup()` に `gMySwitchType == "voq"` 分岐が存在する。
+
+| ポート種別 | 挙動 |
+|-----------|------|
+| リモートシステムポート (`SAI_SYSTEM_PORT_TYPE_REMOTE`) | `applySchedulerToQueueSchedulerGroup` が即時 `true` を返して SAI 書き込みをスキップ。SCHEDULER オブジェクト自体は作成済みだが、リモートポートのキューには bind されない |
+| ローカルシステムポート | `port.m_system_port_info.local_port_oid` でローカル物理ポートを解決し、`m_queue_ids[queue_ind]` からキュー OID を取得。標準パスと同じ SAI 処理を実行 |
+
+**QUEUE キー形式の違い**: VOQ モードでは `QUEUE` テーブルのキーが 4 トークン（`<hostname>|<ASIC_NAME>|<port>|<index_range>`）必須。SCHEDULER 自体の挙動は変わらないが、QUEUE からの参照が成立するための前提条件が異なる。
+
+### SmartSwitch / DPU
+
+`qosorch.cpp` に SmartSwitch / DPU 固有の分岐は**存在しない**。NPU / DPU 問わず同一コードパスを辿る。
+
+### ベンダー ASIC 差異（SAI 抽象化）
+
+`handleSchedulerTable()` はベンダー固有の条件分岐を持たず、SAI API を通じて差異を吸収する。ただし以下の点でベンダー依存の挙動がある。
+
+| 項目 | ベンダー依存度 | 備考 |
+|------|-------------|------|
+| フィールド省略時のデフォルト動作 | 高 | `type` / `weight` / `meter_type` を省略すると SAI 属性を送信しない。ベンダーの SAI デフォルト値が適用される（保証なし） |
+| `DWRR` サポート | 中 | `SAI_SCHEDULING_TYPE_DWRR` 非対応の ASIC では `handleSaiCreateStatus` 経由でエラー処理 |
+| `weight` 有効範囲 | 低 | YANG は 1..100 だが SAI は 0-255 を受け入れるベンダーもある |
+| CIR/PIR の `meter_type` | 低 | `SAI_METER_TYPE_PACKETS` / `SAI_METER_TYPE_BYTES` は SAI 標準で安定 |
+
+[^4]: Platform 分岐証跡: `sonic-swss/orchagent/qosorch.cpp` L1631–1710, L1772–1812. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 96667c52d98d -->
