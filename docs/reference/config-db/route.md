@@ -355,6 +355,89 @@ MuxOrch が初期化されていない場合 (`gDirectory.get<MuxOrch*>()` が�
 [^cr1]: `orchagent/routeorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラーハンドリング (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-failure.md -->
+
+`ROUTE_TABLE` 処理の失敗は **フィールド検証エラー（即時破棄）** と **依存オブジェクト未解決による後回し** と **SAI Bulk 操作失敗** の 3 種類に分類される。
+
+### フィールド検証エラー（即時破棄・再試行なし）
+
+以下の場合はエントリを `m_toSync` から erase し、SAI 操作を行わず再試行もしない[^fa1]:
+
+| 条件 | ログ |
+|------|------|
+| `nexthop_group` と `nexthop`/`ifname` を同時指定 | `SWSS_LOG_ERROR("Route %s has both nexthop_group and ips/aliases")` |
+| EVPN `router_mac` / `vni_label` フィールド不正フォーマット | `SWSS_LOG_ERROR("Skip route %s, it has an invalid router mac field %s")` |
+| SRv6 エンドポイント数と VPN SID 数が不一致 | `SWSS_LOG_ERROR("inconsistent number of endpoints and srv6 vpn sids.")` |
+| SRv6 `segment` 数と `seg_src` 数が不一致 | `SWSS_LOG_ERROR("inconsistent number of srv6_segv and srv6_srcs.")` |
+
+これらのエラーは `publishRouteState` が呼ばれないため APPL_STATE_DB への失敗通知も行われない。
+
+### 依存オブジェクト未解決による後回し（自動回復あり）
+
+依存するオブジェクトが未登録の場合は `it++` または `return false` で後回しにし、次の doTask() 呼び出しで再試行する[^fa1]:
+
+| 条件 | コード箇所 | 自動回復タイミング |
+|------|-----------|------------------|
+| VRF 名 (`Vrf-*`) が VRFOrch に未登録 | `doTask()` `isVRFexists()` 確認 (L711) | VRF エントリ登録後 |
+| `nexthop_group` が NhgOrch / CbfNhgOrch に未登録 | `addRoutePre()` `hasNhg()` 確認 (L2411) | NEXTHOP_GROUP_TABLE エントリ登録後 |
+| nexthop IP の ARP/NDP が未解決 | `addNextHopGroup()` `isNeighborResolved()` 確認 (L1963) | neighbor 解決後 |
+| インタフェース直結 nexthop の RIF が未登録 | `addRoute()` `getRouterIntfsId()` 確認 (L2083) | INTERFACE IP 設定後 |
+| EVPN `vni_label` の L3 VNI が VRFOrch に未登録 | `doTask()` `isL3VniVlan()` 確認 (L872) | VNI / VRF 設定後 |
+
+### SAI Bulk 操作失敗
+
+`gRouteBulker` / `gLabelRouteBulker` の bulk flush 後に `addRoutePost()` / `removeRoutePost()` が SAI ステータスを確認する。失敗時は `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` → `parseHandleSaiStatusFailure` で振り分け[^fa1]:
+
+| SAI ステータス | `handleSai*Status` 結果 | 最終動作 |
+|--------------|----------------------|---------|
+| `SAI_STATUS_TABLE_FULL` 等 | `task_need_retry` | 後回し（自動回復待ち） |
+| `SAI_STATUS_SUCCESS` | `task_success` | 正常完了 |
+| その他致命的エラー | `task_failed` | エントリ erase |
+
+**特例: `SAI_STATUS_ITEM_NOT_FOUND`（set 操作）**: Dual-ToR でトンネル経路と学習経路が競合した際に発生する。内部キャッシュ (`m_syncdRoutes`) から当該エントリを削除して次回 doTask() で create として再試行する[^fa1]:
+
+```cpp
+if (status == SAI_STATUS_ITEM_NOT_FOUND)
+{
+    m_syncdRoutes.at(vrf_id).erase(ipPrefix);
+    return false;
+}
+```
+
+`publishRouteState()` は `addRoute` / `removeRoute` の完了後に必ず呼ばれ、成否を APPL_STATE_DB の `ROUTE_TABLE` に書き込む (`protocol` フィールドのみ SET、DEL はエントリ削除)。
+
+### fpmsyncd — APPL_DB 書き込み前の破棄
+
+netlink メッセージ処理時に VRF ifindex からデバイス名を解決できない場合、fpmsyncd は当該 RTM_NEWROUTE を破棄し APPL_DB への書き込みを行わない。再試行なし[^fa2]:
+
+```cpp
+if (!getIfName(vrf_index, destipprefix, IFNAMSIZ))
+{
+    SWSS_LOG_ERROR("Fail to get the VRF name (ifindex %u)", vrf_index);
+    return;
+}
+```
+
+### 診断コマンド
+
+```bash
+# orchagent エラーログ（SAI 失敗・フィールド検証エラー）
+journalctl -u swss | grep -E "has both nexthop_group|invalid router mac|invalid vni label|Failed to create route|Failed to set route|Failed to remove route"
+
+# fpmsyncd 経路破棄ログ
+journalctl -u swss | grep -E "Fail to get the VRF name|Invalid VRF name"
+
+# APPL_STATE_DB で処理ステータス確認
+sonic-db-cli APPL_STATE_DB hgetall 'ROUTE_TABLE:10.0.0.0/24'
+```
+
+[^fa1]: `orchagent/routeorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
+[^fa2]: `fpmsyncd/routesync.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp>
+<!-- /failure -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` は同時に存在できない（orchagent がエラー棄却）。
