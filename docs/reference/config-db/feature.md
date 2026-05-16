@@ -371,7 +371,9 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 <!-- constants -->
 ## ハードコード定数
 
-`featured` スクリプト (`sonic-host-services/scripts/featured`) に埋め込まれた定数。
+`featured` スクリプト (`sonic-host-services/scripts/featured`) および `sonic_package_manager` (`sonic-utilities`) に埋め込まれた定数。
+
+### タイミング・優先度定数（モジュールレベル）
 
 | 定数名 | 値 | 定義場所 | 用途 |
 |--------|-----|---------|------|
@@ -381,7 +383,39 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 | `DEFAULT_SELECT_TIMEOUT` | `1000` ms | `featured:23` | メインイベントループの `selector.select()` タイムアウト。1 秒ごとに PORT_INIT タイムアウト判定を実施 |
 | `HOSTCFGD_MAX_PRI` | `10` | `featured:22` | FEATURE テーブル subscriber の select 優先度（PORT テーブルは `10-1=9`） |
 
-> **Evidence**: `sonic-host-services/scripts/featured:22-24,426-427,630,644-648,654-661`; 詳細分析 `meta/_intermediate/cdb-flow/feature-constants.md`
+### state / auto_restart 有効値 enum（`Feature.__init__` ハードコード）
+
+`Feature.__init__` の `_get_feature_table_key_render_value()` 呼び出しで `expected_values` としてハードコードされている。これ以外の値が CONFIG_DB に入ると `ValueError` → `handler()` を通じてデーモン全体がクラッシュする。
+
+| フィールド | 有効値セット | 定義場所 |
+|-----------|-----------|---------|
+| `state` | `['enabled', 'disabled', 'always_enabled', 'always_disabled']` | `featured:81` |
+| `delayed` | `['True', 'False']` | `featured:83` |
+| `has_global_scope` | `['True', 'False']`、欠落時デフォルト `'True'` | `featured:84` |
+| `has_per_asic_scope` | `['True', 'False']`、欠落時デフォルト `'False'` | `featured:85` |
+| `auto_restart` | 制約なし（`str`）。`"enabled"` を含む場合 systemd `Restart=always`、それ以外 `Restart=no` | `featured:82,380` |
+
+### クラスレベル定数（`FeatureHandler`）
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|-----|---------|------|
+| `FEATURE_STATE_ENABLED` | `"enabled"` | `featured:132` | STATE_DB に書き込む「起動成功」状態文字列 |
+| `FEATURE_STATE_DISABLED` | `"disabled"` | `featured:133` | STATE_DB に書き込む「停止成功」状態文字列 |
+| `FEATURE_STATE_FAILED` | `"failed"` | `featured:134` | STATE_DB に書き込む「失敗」状態文字列。`systemctl start/stop/mask` 非ゼロ終了時に記録 |
+| `FEATURE_EXCLUSION_LIST` | `{"telemetry", "frr_bmp"}` | `featured:135` | systemd 操作をスキップするフィーチャー名セット。CONFIG_DB の state 変化を検知しても enable/disable を実行しない |
+| `SYSTEMD_SYSTEM_DIR` | `'/etc/systemd/system/'` | `featured:128` | サービスファイルを配置するルートディレクトリ |
+| `SYSTEMD_SERVICE_CONF_DIR` | `'/etc/systemd/system/{}.service.d/'` | `featured:129` | `auto_restart.conf` を配置するサービス別 drop-in ディレクトリ |
+
+### `sonic_package_manager` デフォルト定数
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|-----|---------|------|
+| `DEFAULT_FEATURE_CONFIG['state']` | `'disabled'` | `feature.py:13` | パッケージ新規インストール時のデフォルト state（YANG デフォルト `enabled` と乖離） |
+| `DEFAULT_FEATURE_CONFIG['auto_restart']` | `'enabled'` | `feature.py:14` | 新規インストール時のデフォルト auto_restart |
+| `DEFAULT_FEATURE_CONFIG['high_mem_alert']` | `'disabled'` | `feature.py:15` | 新規インストール時のデフォルト high_mem_alert |
+| `DEFAULT_FEATURE_CONFIG['set_owner']` | `'local'` | `feature.py:16` | 新規インストール時のデフォルト set_owner |
+
+> **Evidence**: `sonic-host-services/scripts/featured:22-24,81-86,128-135,380,426-427,630,644-648,654-661`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17`; 詳細分析 `meta/_intermediate/cdb-flow/feature-constants.md`
 <!-- /constants -->
 
 <!-- cross-refs -->
