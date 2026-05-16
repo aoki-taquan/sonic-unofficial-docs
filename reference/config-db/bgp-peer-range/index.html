@@ -24849,6 +24849,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-bgp_peer_configured_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — BGP_PEER_CONFIGURED_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / APPL_DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fallback" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -25081,6 +25120,45 @@
     <span class="md-ellipsis">
       
         デフォルト peer-group 名・interface 名
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-subscriberstatetable-runner-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路: SubscriberStateTable + Runner (同期 Select ループ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-extconfigdbconnector-redis-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 経路: ExtConfigDBConnector + Redis psubscribe 別スレッド (非同期)
       
     </span>
   </a>
@@ -35557,6 +35635,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-bgp_peer_configured_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — BGP_PEER_CONFIGURED_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / APPL_DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fallback" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35789,6 +35906,45 @@
     <span class="md-ellipsis">
       
         デフォルト peer-group 名・interface 名
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-subscriberstatetable-runner-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路: SubscriberStateTable + Runner (同期 Select ループ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-extconfigdbconnector-redis-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 経路: ExtConfigDBConnector + Redis psubscribe 別スレッド (非同期)
       
     </span>
   </a>
@@ -36253,15 +36409,70 @@
 </blockquote>
 <!-- /ordering -->
 
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>bgpcfgd/managers_bgp.py</code> L271–304, L239, L353, L443, L487 精読 (2026-05-16)
+詳細証跡: <code>meta/_intermediate/cdb-flow/bgp-peer-range-side.md</code></p>
+</blockquote>
+<h3 id="state_db-bgp_peer_configured_table">STATE_DB — BGP_PEER_CONFIGURED_TABLE<a class="headerlink" href="#state_db-bgp_peer_configured_table" title="Permanent link">&para;</a></h3>
+<p><code>BGPPeerMgrBase.update_state_db()</code> が FRR へのコマンド適用成功時に <code>STATE_DB</code> の <code>BGP_PEER_CONFIGURED_TABLE</code> へ副次書込を行う。</p>
+<table>
+<thead>
+<tr>
+<th>トリガー</th>
+<th>op</th>
+<th>key 形式</th>
+<th>書込内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add_peer()</code> 成功時 (L239)</td>
+<td>SET</td>
+<td><code>&lt;name&gt;</code> (default VRF) / <code>&lt;vrf&gt;\|&lt;name&gt;</code> (非 default)</td>
+<td>CONFIG_DB フィールド (ip_range, peer_asn 等)</td>
+</tr>
+<tr>
+<td><code>apply_admin_status()</code> 成功時 (L353)</td>
+<td>SET</td>
+<td>同上</td>
+<td>更新後の data</td>
+</tr>
+<tr>
+<td><code>change_ip_range()</code> 成功時 (L443)</td>
+<td>SET</td>
+<td>同上</td>
+<td>ip_range 更新後の data</td>
+</tr>
+<tr>
+<td><code>del_handler()</code> FRR 削除成功時 (L487)</td>
+<td>DEL</td>
+<td>同上</td>
+<td>空 (<code>{}</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><code>STATE_BGP_PEER_CONFIGURED_TABLE_NAME</code> は <code>"BGP_PEER_CONFIGURED_TABLE"</code> に解決される（tests/test_bgp.py L201 より）。</p>
+<h3 id="counters_db-appl_db">COUNTERS_DB / APPL_DB 書込<a class="headerlink" href="#counters_db-appl_db" title="Permanent link">&para;</a></h3>
+<p><strong>なし</strong>。<code>bgpcfgd</code> は FRR vtysh 経由の直接制御アーキテクチャのため <code>APPL_DB</code> を介在させない。<code>COUNTERS_DB</code> への参照も存在しない。<code>frrcfgd.py</code>（<code>BGP_GLOBALS_LISTEN_PREFIX</code> 経路）も同様に STATE_DB / COUNTERS_DB / APPL_DB への書込は行わない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>BGP_PEER_RANGE SET/DEL
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  └→ bgpcfgd BGPPeerMgrBase
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>       ├→ apply_op() → FRR vtysh  [主経路]
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>       └→ update_state_db()
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>            └→ STATE_DB: BGP_PEER_CONFIGURED_TABLE SET/DEL  [副次書込]
+</span></code></pre></div>
+<!-- /side-effects -->
+
 <!-- defaults -->
 <h2 id="fallback">フィールド暗黙デフォルトと fallback<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h2>
 <h3 id="peer_asn-deployment_id_asn_map-fallback"><code>peer_asn</code> — <code>deployment_id_asn_map</code> fallback<a class="headerlink" href="#peer_asn-deployment_id_asn_map-fallback" title="Permanent link">&para;</a></h3>
 <p><code>peer_asn</code> を省略すると <code>instance.conf.j2</code> が <code>constants.deployment_id_asn_map</code> を参照して自動的に AS 番号を決定する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>peer_asn 未設定
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  → constants.yml deployment_id_asn_map[DEVICE_METADATA.localhost.deployment_id]
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    &quot;1&quot; → 65432
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    &quot;2&quot; → 65433
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  → DEVICE_METADATA に deployment_id が未設定 → Jinja2 KeyError → log_err + drop
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>peer_asn 未設定
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  → constants.yml deployment_id_asn_map[DEVICE_METADATA.localhost.deployment_id]
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    &quot;1&quot; → 65432
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    &quot;2&quot; → 65433
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  → DEVICE_METADATA に deployment_id が未設定 → Jinja2 KeyError → log_err + drop
 </span></code></pre></div>
 <p>YANG は <code>peer_asn</code> を optional としているが、この fallback の存在は YANG に記載がない。</p>
 <h3 id="src_address-loopback1-fallback"><code>src_address</code> — Loopback1 ハードコード fallback<a class="headerlink" href="#src_address-loopback1-fallback" title="Permanent link">&para;</a></h3>
@@ -36639,6 +36850,108 @@
 <li><strong><code>dynamic/peer-group.conf.j2</code></strong>: dynamic タイプの peer-group テンプレートは実質空（コメントのみ）。peer-group 属性はすべて <code>instance.conf.j2</code> 側で定義済み。</li>
 </ul>
 <!-- /constants -->
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>bgpcfgd/runner.py</code>, <code>bgpcfgd/main.py</code>, <code>frrcfgd/frrcfgd.py</code> 精読 (2026-05-16)
+詳細証跡: <code>meta/_intermediate/cdb-flow/bgp-peer-range-pubsub.md</code></p>
+</blockquote>
+<h3 id="bgpcfgd-subscriberstatetable-runner-select">bgpcfgd 経路: SubscriberStateTable + Runner (同期 Select ループ)<a class="headerlink" href="#bgpcfgd-subscriberstatetable-runner-select" title="Permanent link">&para;</a></h3>
+<p><code>bgpcfgd</code> は <code>swsscommon.SubscriberStateTable</code> を利用した Redis keyspace 通知モデルを採用する。</p>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>コードポイント</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Manager 生成</td>
+<td><code>main.py:90</code></td>
+<td><code>BGPPeerMgrBase(..., "BGP_PEER_RANGE", "dynamic", False)</code> を Runner へ登録</td>
+</tr>
+<tr>
+<td>2. SubscriberStateTable 生成</td>
+<td><code>runner.py:49</code></td>
+<td><code>swsscommon.SubscriberStateTable(conn, "BGP_PEER_RANGE")</code></td>
+</tr>
+<tr>
+<td>3. Select 登録</td>
+<td><code>runner.py:51</code></td>
+<td><code>selector.addSelectable(subscriber)</code></td>
+</tr>
+<tr>
+<td>4. メインループ待機</td>
+<td><code>runner.py:57</code></td>
+<td><code>selector.select(1000ms)</code> ブロッキング</td>
+</tr>
+<tr>
+<td>5. イベント取得</td>
+<td><code>runner.py:65</code></td>
+<td><code>subscriber.pop()</code> → <code>(key, op, fvs)</code></td>
+</tr>
+<tr>
+<td>6. ハンドラ呼び出し</td>
+<td><code>runner.py:69–70</code></td>
+<td><code>BGPPeerMgrBase.handler(key, op, fvs)</code> → <code>set_handler()</code> / <code>del_handler()</code></td>
+</tr>
+</tbody>
+</table>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>CONFIG_DB: BGP_PEER_RANGE (Redis keyspace イベント)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  └→ SubscriberStateTable(&quot;BGP_PEER_RANGE&quot;)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>       └→ Select.select(1000ms) ブロッキング
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>            └→ Runner.run() ループ
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>                 └→ BGPPeerMgrBase.handler()
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>                      ├→ set_handler()  [op=SET]
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>                      └→ del_handler()  [op=DEL]
+</span></code></pre></div>
+<h3 id="frrcfgd-extconfigdbconnector-redis-psubscribe">frrcfgd 経路: ExtConfigDBConnector + Redis psubscribe 別スレッド (非同期)<a class="headerlink" href="#frrcfgd-extconfigdbconnector-redis-psubscribe" title="Permanent link">&para;</a></h3>
+<p><code>frrcfgd</code> は <code>BGP_PEER_RANGE</code> を直接購読せず、機能的に同等な <code>BGP_GLOBALS_LISTEN_PREFIX</code> テーブルを独自の <code>ExtConfigDBConnector</code> で購読する。</p>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>コードポイント</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. テーブル登録</td>
+<td><code>frrcfgd.py:92</code></td>
+<td><code>BGP_GLOBALS_LISTEN_PREFIX</code> を bgpd 管理テーブルとして登録</td>
+</tr>
+<tr>
+<td>2. subscribe_all</td>
+<td><code>frrcfgd.py:2359</code></td>
+<td><code>config_db.subscribe(table, hdlr)</code> で全テーブルにハンドラ登録</td>
+</tr>
+<tr>
+<td>3. listen 起動</td>
+<td><code>frrcfgd.py:3955</code></td>
+<td><code>start()</code> → <code>subscribe_all()</code> + <code>config_db.listen()</code></td>
+</tr>
+<tr>
+<td>4. pubsub スレッド</td>
+<td><code>frrcfgd.py:1539</code></td>
+<td><code>pubsub.psubscribe("__keyspace@&lt;dbid&gt;__:*")</code> で全 keyspace 購読</td>
+</tr>
+<tr>
+<td>5. メッセージ処理</td>
+<td><code>frrcfgd.py:1529</code></td>
+<td><code>sub_msg_handler()</code> → <code>__fire(table, row, data)</code></td>
+</tr>
+<tr>
+<td>6. ハンドラ分岐</td>
+<td><code>frrcfgd.py:2783</code></td>
+<td><code>bgp_table_handler_common()</code> が <code>BGP_GLOBALS_LISTEN_PREFIX</code> を処理</td>
+</tr>
+</tbody>
+</table>
+<p><strong>二重管理構造</strong>: <code>bgpcfgd</code> の <code>BGP_PEER_RANGE</code> 経路と <code>frrcfgd</code> の <code>BGP_GLOBALS_LISTEN_PREFIX</code> 経路は別テーブルを購読するが、FRR への <code>bgp listen range</code> コマンド生成という同等機能を持つ。実運用では <code>bgpcfgd</code> が主経路として機能する。</p>
+<!-- /pubsub -->
 <!-- glossary-links-injected: 9543a3643673 -->
 
 <div class="footnote">

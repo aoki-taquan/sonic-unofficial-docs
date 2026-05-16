@@ -24909,6 +24909,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-buffer_profile-dynamic-model-buffermgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: BUFFER_PROFILE 先行 (dynamic model — buffermgrd 段)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-buffer_profile-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: BUFFER_PROFILE 先行 (orchagent 段)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-port-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: PORT 先行 (orchagent 段)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35210,6 +35260,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-buffer_profile-dynamic-model-buffermgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: BUFFER_PROFILE 先行 (dynamic model — buffermgrd 段)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-buffer_profile-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: BUFFER_PROFILE 先行 (orchagent 段)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-port-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: PORT 先行 (orchagent 段)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35623,6 +35723,48 @@
 </tbody>
 </table>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>このテーブルを有効に設定するには、以下の順序で CONFIG_DB / APPL_DB への書き込みが完了している必要がある。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>1. BUFFER_POOL
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>2. BUFFER_PROFILE  （egress 方向）
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>3. PORT
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>4. BUFFER_PORT_EGRESS_PROFILE_LIST  ← 本テーブル
+</span></code></pre></div>
+<h3 id="1-buffer_profile-dynamic-model-buffermgrd">依存 1: BUFFER_PROFILE 先行 (dynamic model — buffermgrd 段)<a class="headerlink" href="#1-buffer_profile-dynamic-model-buffermgrd" title="Permanent link">&para;</a></h3>
+<p><code>buffermgrdyn.cpp:checkBufferProfileDirection</code> は SET 時に <code>profile_list</code> の各プロファイルを <code>m_bufferProfileLookup</code> で検索する。プロファイルが未登録の場合は <code>task_need_retry</code> を返してエントリを保留し、BUFFER_PROFILE 到着後に自動再処理される。<!-- evidence: buffermgrdyn.cpp:3282-3287 --></p>
+<h3 id="2-buffer_profile-orchagent">依存 2: BUFFER_PROFILE 先行 (orchagent 段)<a class="headerlink" href="#2-buffer_profile-orchagent" title="Permanent link">&para;</a></h3>
+<p><code>bufferorch.cpp:processEgressBufferProfileList</code> は <code>resolveFieldRefArray</code> でプロファイル SAI OID を解決する。参照先 BUFFER_PROFILE が APPL_DB に未登録の場合 <code>task_need_retry</code> を返す（自動リトライ）。<!-- evidence: bufferorch.cpp:1869-1877 --></p>
+<h3 id="3-port-orchagent">依存 3: PORT 先行 (orchagent 段)<a class="headerlink" href="#3-port-orchagent" title="Permanent link">&para;</a></h3>
+<p>同関数末尾で <code>gPortsOrch-&gt;getPort(port_name, port)</code> を実行する。指定ポートが PortsOrch のマップに存在しない場合は <code>task_invalid_entry</code> を返す。<strong>retry なし</strong>のためエントリが破棄される点に注意。<!-- evidence: bufferorch.cpp:1950-1957 --></p>
+<table>
+<thead>
+<tr>
+<th>未先行リソース</th>
+<th>返却ステータス</th>
+<th>自動リトライ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BUFFER_PROFILE 未登録 (buffermgrd)</td>
+<td><code>task_need_retry</code></td>
+<td>あり（到着後に再処理）</td>
+</tr>
+<tr>
+<td>BUFFER_PROFILE 未登録 (orchagent)</td>
+<td><code>task_need_retry</code></td>
+<td>あり</td>
+</tr>
+<tr>
+<td>PORT 未登録 (orchagent)</td>
+<td><code>task_invalid_entry</code></td>
+<td><strong>なし</strong>（エントリ破棄）</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
 <!-- glossary-links-injected: 5ad0ecc20ddb -->
 
 <div class="footnote">

@@ -23057,6 +23057,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込先テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        呼び出し経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36124,6 +36174,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込先テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        呼び出し経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37387,6 +37487,75 @@
 <p>中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-neighbor-pubsub.md</code></p>
 </blockquote>
 <!-- /pubsub -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>BGPPeerMgrBase</code> は CONFIG_DB <code>BGP_NEIGHBOR</code> の変化を FRR に反映した後、STATE_DB の <code>BGP_PEER_CONFIGURED_TABLE</code> にも書き込む。APPL_DB / ASIC_DB への書込はない。</p>
+<h3 id="_20">書込先テーブル<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次書込先 DB</th>
+<th>テーブル名</th>
+<th>key 形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>BGP_PEER_CONFIGURED_TABLE</code></td>
+<td><code>&lt;neighbor&gt;</code> (default VRF) / <code>&lt;vrf&gt;\|&lt;neighbor&gt;</code> (named VRF)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_21">呼び出し経路<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>呼び出し元</th>
+<th>条件</th>
+<th>STATE_DB 操作</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add_peer()</code></td>
+<td>テンプレートレンダリング成功後</td>
+<td><code>SET key data</code>（全フィールド sorted fvs）</td>
+<td><code>managers_bgp.py:239</code></td>
+</tr>
+<tr>
+<td><code>apply_admin_status()</code></td>
+<td><code>apply_op()</code> が <code>True</code> の場合のみ</td>
+<td><code>SET key data</code></td>
+<td><code>managers_bgp.py:353</code></td>
+</tr>
+<tr>
+<td><code>apply_range_changes()</code></td>
+<td>ip_range 更新成功後</td>
+<td><code>SET key data</code></td>
+<td><code>managers_bgp.py:443</code></td>
+</tr>
+<tr>
+<td><code>del_handler()</code></td>
+<td><code>apply_op()</code> が <code>True</code> の場合のみ</td>
+<td><code>DEL key</code></td>
+<td><code>managers_bgp.py:487</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_22">注意点<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>apply_admin_status()</code> は FRR への <code>apply_op()</code> が <code>True</code> を返した場合のみ <code>update_state_db()</code> を呼ぶ。FRR 操作失敗時は STATE_DB 書込が発生しない。</li>
+<li><code>admin_status</code> が <code>up</code>/<code>down</code> 以外の場合は <code>change_admin_status()</code> で早期エラーログ → <code>apply_admin_status()</code> 呼び出しなし → STATE_DB 書込なし。</li>
+<li><code>update_state_db()</code> 内で Exception が発生すると <code>LOG_ERR</code> を出すが FRR 操作は既に完了しているため <strong>FRR と STATE_DB が乖離しうる</strong>。<code>ERROR_TABLE</code> への記録はなし。</li>
+<li>DEL 時に key が STATE_DB に存在しない場合は <code>LOG_WARN</code> のみで処理続行（no-op）。</li>
+</ul>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-neighbor-side.md</code></p>
+</blockquote>
+<!-- /side-effects -->
 
 <!-- platform -->
 <h2 id="sai">プラットフォーム / SAI 差分<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>

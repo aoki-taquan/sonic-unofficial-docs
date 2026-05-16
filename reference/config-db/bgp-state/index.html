@@ -24483,6 +24483,255 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bgppeermgrbase-frr-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — BGPPeerMgrBase が読み出す関連テーブルと FRR 状態 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — BGPPeerMgrBase が読み出す関連テーブルと FRR 状態 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 購読テーブル (転写元)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 前提依存テーブル (ピア追加のブロッカー)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr-bgpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR bgpd 状態の暗黙読み出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neigh_state_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NEIGH_STATE_TABLE との非同期関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名定数 (schema.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-bgpmonpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state フィールド文字列定数 (bgpmon.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peertype-bgpmonpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peerType フィールド文字列定数 (bgpmon.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#managers_bgppy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        操作種別文字列定数 (managers_bgp.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpmonpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポーリング・バッチ定数 (bgpmon.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpmonpy_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコードされたパス・コマンド文字列 (bgpmon.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d-bgppeermgrbase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D — BGPPeerMgrBase)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D — BGPPeerMgrBase)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr-push-apply_op-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR push 結果は非同期 — apply_op は常に True を返す
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_peer-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_peer — テンプレートレンダリング失敗 → STATE_DB 未書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_peer-update_state_db-frr-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_peer — update_state_db 例外 → FRR 投入済みだが STATE_DB 未書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_handler-peer-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        del_handler — peer 未登録時は STATE_DB エントリを削除しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-update_state_db-peers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理の順序乖離 — update_state_db 例外時に peers 残存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パスまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -24495,7 +24744,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#neigh_state_table" class="md-nav__link">
+  <a href="#neigh_state_table_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         NEIGH_STATE_TABLE
@@ -24517,7 +24766,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -24533,7 +24782,218 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#phase-b-bgp_peer_configured_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B — BGP_PEER_CONFIGURED_TABLE)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B — BGP_PEER_CONFIGURED_TABLE)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-frr-push-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET: FRR push 成功後にのみ STATE_DB へ書き込む
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin_status-frr-push-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status 変更: FRR push 成功確認後に SET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-frr-push-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL: FRR push 成功後に STATE_DB からエントリを削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-listen-range-dynamic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 前の listen range 除去（dynamic ピアのみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config reload 時の一時的全削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neigh_state_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NEIGH_STATE_TABLE との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        マルチ ASIC 構成での動作（テーブル内容に変化なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_voq_chassis_neighbor-bgp_internal_neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        備考: BGP_VOQ_CHASSIS_NEIGHBOR / BGP_INTERNAL_NEIGHBOR との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_peer_configured_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_PEER_CONFIGURED_TABLE — 書き込みのみ / 購読者なし
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="BGP_PEER_CONFIGURED_TABLE — 書き込みのみ / 購読者なし">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        消費パターン (ポーリング)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neigh_state_table-bgpmon-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NEIGH_STATE_TABLE — bgpmon ポーリング書き込み / SNMP 読み取り
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -24544,7 +25004,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34597,6 +35057,255 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bgppeermgrbase-frr-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — BGPPeerMgrBase が読み出す関連テーブルと FRR 状態 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — BGPPeerMgrBase が読み出す関連テーブルと FRR 状態 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 購読テーブル (転写元)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 前提依存テーブル (ピア追加のブロッカー)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr-bgpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR bgpd 状態の暗黙読み出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neigh_state_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NEIGH_STATE_TABLE との非同期関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名定数 (schema.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-bgpmonpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state フィールド文字列定数 (bgpmon.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peertype-bgpmonpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peerType フィールド文字列定数 (bgpmon.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#managers_bgppy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        操作種別文字列定数 (managers_bgp.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpmonpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポーリング・バッチ定数 (bgpmon.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpmonpy_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコードされたパス・コマンド文字列 (bgpmon.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d-bgppeermgrbase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D — BGPPeerMgrBase)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D — BGPPeerMgrBase)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr-push-apply_op-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR push 結果は非同期 — apply_op は常に True を返す
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_peer-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_peer — テンプレートレンダリング失敗 → STATE_DB 未書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_peer-update_state_db-frr-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_peer — update_state_db 例外 → FRR 投入済みだが STATE_DB 未書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_handler-peer-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        del_handler — peer 未登録時は STATE_DB エントリを削除しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-update_state_db-peers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理の順序乖離 — update_state_db 例外時に peers 残存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パスまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34609,7 +35318,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#neigh_state_table" class="md-nav__link">
+  <a href="#neigh_state_table_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         NEIGH_STATE_TABLE
@@ -34631,7 +35340,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -34647,7 +35356,218 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#phase-b-bgp_peer_configured_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B — BGP_PEER_CONFIGURED_TABLE)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B — BGP_PEER_CONFIGURED_TABLE)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-frr-push-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET: FRR push 成功後にのみ STATE_DB へ書き込む
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin_status-frr-push-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status 変更: FRR push 成功確認後に SET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-frr-push-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL: FRR push 成功後に STATE_DB からエントリを削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-listen-range-dynamic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 前の listen range 除去（dynamic ピアのみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config reload 時の一時的全削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neigh_state_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NEIGH_STATE_TABLE との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        マルチ ASIC 構成での動作（テーブル内容に変化なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_voq_chassis_neighbor-bgp_internal_neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        備考: BGP_VOQ_CHASSIS_NEIGHBOR / BGP_INTERNAL_NEIGHBOR との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_peer_configured_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_PEER_CONFIGURED_TABLE — 書き込みのみ / 購読者なし
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="BGP_PEER_CONFIGURED_TABLE — 書き込みのみ / 購読者なし">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        消費パターン (ポーリング)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neigh_state_table-bgpmon-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NEIGH_STATE_TABLE — bgpmon ポーリング書き込み / SNMP 読み取り
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34658,7 +35578,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34865,10 +35785,434 @@
 <hr />
 <h2 id="show-bgp"><code>show bgp</code> コマンドとの対応<a class="headerlink" href="#show-bgp" title="Permanent link">&para;</a></h2>
 <p><code>NEIGH_STATE_TABLE</code> の <code>state</code> は <code>show bgp summary</code> が表示する <code>State/PfxRcd</code> 列の状態と対応する。ただし bgpmon のポーリング間隔は 15 秒であるため、リアルタイムの FRR 状態とは最大 15 秒の遅延が生じる。</p>
+<!-- cross-refs -->
+<h2 id="bgppeermgrbase-frr-phase-c">暗黙参照 — <code>BGPPeerMgrBase</code> が読み出す関連テーブルと FRR 状態 (Phase C)<a class="headerlink" href="#bgppeermgrbase-frr-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>bgpcfgd</code> の <code>BGPPeerMgrBase</code> は CONFIG_DB 上の複数 BGP テーブルを購読し、FRR bgpd へ設定を投入した後に <code>BGP_PEER_CONFIGURED_TABLE</code> を更新する。テーブルへの書き込みはこれら暗黙参照が揃って初めて成立する。</p>
+<h3 id="config_db">CONFIG_DB 購読テーブル (転写元)<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>main.py</code> L87-91 で <code>BGPPeerMgrBase</code> は以下のテーブルを購読し、SET / DEL イベントを <code>BGP_PEER_CONFIGURED_TABLE</code> へ転写する。</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB テーブル</th>
+<th>peer_type</th>
+<th><code>BGP_PEER_CONFIGURED_TABLE</code> への影響</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_NEIGHBOR</code></td>
+<td><code>"general"</code> (外部 eBGP)</td>
+<td>SET → エントリ追加、DEL → エントリ削除</td>
+<td>main.py:87, managers_bgp.py:239</td>
+</tr>
+<tr>
+<td><code>BGP_INTERNAL_NEIGHBOR</code></td>
+<td><code>"internal"</code> (iBGP)</td>
+<td>SET → エントリ追加、DEL → エントリ削除</td>
+<td>main.py:88</td>
+</tr>
+<tr>
+<td><code>BGP_MONITORS</code></td>
+<td><code>"monitors"</code></td>
+<td>SET → エントリ追加、DEL → エントリ削除</td>
+<td>main.py:89</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_RANGE</code></td>
+<td><code>"dynamic"</code> (listen range)</td>
+<td>SET → エントリ追加 (<code>ip_range</code> フィールド含む)</td>
+<td>main.py:90</td>
+</tr>
+<tr>
+<td><code>BGP_VOQ_CHASSIS_NEIGHBOR</code></td>
+<td><code>"voq_chassis"</code></td>
+<td>SET → エントリ追加 (VOQ シャーシ間 iBGP)</td>
+<td>main.py:91</td>
+</tr>
+<tr>
+<td><code>BGP_SENTINELS</code></td>
+<td><code>"sentinels"</code></td>
+<td>SET → エントリ追加</td>
+<td>main.py:91</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>テーブルごとに独立した <code>BGPPeerMgrBase</code> インスタンスが動作するため、<code>BGP_PEER_CONFIGURED_TABLE</code> には複数テーブル由来のエントリが混在する。フィールドセットはソーステーブルの内容そのままで固定スキーマはない (managers_bgp.py:289)。</p>
+</blockquote>
+<h3 id="config_db_1">CONFIG_DB 前提依存テーブル (ピア追加のブロッカー)<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
+<p><code>BGPPeerMgrBase.__init__</code> の <code>deps</code> リスト (managers_bgp.py:118-127) により、以下のテーブルが揃うまでピア追加・<code>update_state_db()</code> 呼び出しがブロックされる。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー / フィールド</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a></td>
+<td><code>localhost/bgp_asn</code></td>
+<td><code>router bgp &lt;ASN&gt;</code> コマンド生成</td>
+<td>managers_bgp.py:119,192</td>
+</tr>
+<tr>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a></td>
+<td><code>localhost/type</code></td>
+<td>デバイスロール判定 (spine / leaf 等)</td>
+<td>managers_bgp.py:120</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE</code></td>
+<td><code>Loopback0</code></td>
+<td>ルータ ID の IPv4 アドレスを取得</td>
+<td>managers_bgp.py:121,186</td>
+</tr>
+<tr>
+<td><code>BGP_DEVICE_GLOBAL</code></td>
+<td><code>tsa_enabled</code> / <code>idf_isolation_state</code></td>
+<td>TSA / IDF isolation ルートマップ適用判定</td>
+<td>managers_bgp.py:122-123</td>
+</tr>
+<tr>
+<td><code>DEVICE_NEIGHBOR_METADATA</code></td>
+<td>—</td>
+<td><code>use_neighbors_meta = true</code> のとき、ネイバーのメタ情報検証</td>
+<td>managers_bgp.py:140,220</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frr-bgpd">FRR bgpd 状態の暗黙読み出し<a class="headerlink" href="#frr-bgpd" title="Permanent link">&para;</a></h3>
+<p><code>BGP_PEER_CONFIGURED_TABLE</code> への書き込みは FRR への設定投入が成功した <strong>後</strong> に行われる (managers_bgp.py:239,353,444)。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>呼び出し箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vtysh -c 'show bgp vrfs json'</code></td>
+<td><code>load_peers()</code> — managers_bgp.py:577</td>
+<td>起動時に FRR 登録済みピアセットを取得し <code>self.peers</code> を初期化</td>
+</tr>
+<tr>
+<td><code>vtysh -c 'show bgp vrf &lt;vrf&gt; neighbors json'</code></td>
+<td><code>load_peers()</code> — managers_bgp.py:587</td>
+<td>VRF ごとのネイバー一覧を初期ロード</td>
+</tr>
+<tr>
+<td><code>vtysh -c 'show bgp peer-group &lt;name&gt; json'</code></td>
+<td><code>get_existing_ip_ranges()</code> — managers_bgp.py:398</td>
+<td>動的ピアの ip_range 更新時に既存 range を取得</td>
+</tr>
+<tr>
+<td><code>cfg_mgr.push(cmd)</code> (FRR 設定書き込み)</td>
+<td><code>apply_op()</code> — managers_bgp.py:507</td>
+<td>FRR に <code>neighbor</code> コマンド投入。<strong>投入後</strong> に <code>update_state_db()</code> を呼び出す</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>FRR bgpd が応答不能の場合、<code>cfg_mgr.push()</code> は内部キューに留まり、<code>update_state_db()</code> も呼ばれない。結果として <code>BGP_PEER_CONFIGURED_TABLE</code> への反映が遅延・欠落する可能性がある。</p>
+</blockquote>
+<h3 id="neigh_state_table">NEIGH_STATE_TABLE との非同期関係<a class="headerlink" href="#neigh_state_table" title="Permanent link">&para;</a></h3>
+<p><code>BGP_PEER_CONFIGURED_TABLE</code> が設定完了を示した後、実際の BGP セッション確立状態は <code>bgpmon</code> の次回ポーリング (最大 15 秒後) まで <code>NEIGH_STATE_TABLE</code> に反映されない。2 テーブル間に常時非同期ウィンドウが存在する。</p>
+<h3 id="_8">範囲外<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ASIC_DB BGP セッション state</strong>: bgpcfgd / bgpmon は ASIC_DB を参照しない。ASIC_DB への BGP 関連書き込みは <code>routeorch</code> (SWSS) が担当し、本テーブル群とは独立した経路。</li>
+<li><strong><code>BGP_PEER_GROUP</code></strong> (CONFIG_DB): 独立テーブルとして存在しない。peer-group 設定は <code>BGP_NEIGHBOR</code> 等の内容から Jinja2 テンプレートで生成され、FRR に直接投入される。</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/bgp-state-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>bgpmon</code> および <code>bgpcfgd BGPPeerMgrBase</code> が <code>NEIGH_STATE_TABLE</code> / <code>BGP_PEER_CONFIGURED_TABLE</code> へ書き込む際、STATE_DB 以外の副次 DB への波及は<strong>存在しない</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>bgpmon.py</code> / <code>managers_bgp.py</code> に <code>APPL_DB</code> への接続・書込呼出が 0 件</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td>両ファイルに <code>COUNTERS_DB</code> 参照が 0 件。BGP セッション統計は FRR / <code>show bgp summary</code> で直接取得するため STATE_DB 内に統計テーブルは存在しない</td>
+</tr>
+<tr>
+<td>ASIC_DB / FLEX_COUNTER_DB</td>
+<td>なし</td>
+<td>BGP 経路情報の SAI 投入は <code>fpmsyncd</code> → <code>routeorch</code> の別経路であり <code>bgpmon</code> / <code>bgpcfgd</code> は SAI に直接アクセスしない</td>
+</tr>
+<tr>
+<td>EVENTS_DB</td>
+<td>なし</td>
+<td>両ファイルに <code>EVENTS_DB</code> / <code>publish</code> / <code>notify</code> 参照が 0 件</td>
+</tr>
+<tr>
+<td>CHASSIS_APP_DB</td>
+<td>なし</td>
+<td>マルチシャーシ向け参照なし</td>
+</tr>
+</tbody>
+</table>
+<p><code>NEIGH_STATE_TABLE</code> の下流購読者は SNMP サブエージェント (<code>sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py</code>) のみであり、同エージェントはテーブルを <strong>読み取るだけ</strong> で他 DB への書き込みは行わない。<code>BGP_PEER_CONFIGURED_TABLE</code> の下流は SDN コントローラ（外部プロセス）であり STATE_DB 側から能動的に他 DB へ書き込む経路は存在しない。</p>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/bgp-state-side.md</code> を参照。</p>
+<!-- /side-effects -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h3 id="schemah">テーブル名定数 (schema.h)<a class="headerlink" href="#schemah" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>C マクロ名</th>
+<th>文字列値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_BGP_PEER_CONFIGURED_TABLE_NAME</code></td>
+<td><code>"BGP_PEER_CONFIGURED_TABLE"</code></td>
+<td><code>sonic-swss-common/common/schema.h:511</code></td>
+</tr>
+<tr>
+<td><code>STATE_BGP_TABLE_NAME</code></td>
+<td><code>"BGP_STATE_TABLE"</code></td>
+<td><code>sonic-swss-common/common/schema.h:437</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>BGP_PEER_CONFIGURED_TABLE_NAME</code> は <code>managers_bgp.py:287</code> で <code>swsscommon.STATE_BGP_PEER_CONFIGURED_TABLE_NAME</code> として参照される。<code>NEIGH_STATE_TABLE</code> はソースコード中に文字列リテラルとしてハードコードされており、対応する schema.h マクロは存在しない（<code>bgpmon.py:51,157,179</code> の文字列リテラル <code>"NEIGH_STATE_TABLE|*"</code> が実体）。</p>
+<h3 id="state-bgpmonpy">state フィールド文字列定数 (bgpmon.py)<a class="headerlink" href="#state-bgpmonpy" title="Permanent link">&para;</a></h3>
+<p><code>NEIGH_STATE_TABLE</code> の <code>state</code> フィールド値は FRR <code>show bgp summary json</code> の <code>state</code> キーをそのまま転写する。bgpmon.py に直接定義はなく、FRR が出力する文字列に依存する。SNMP サブエージェント (<code>bgp4.py</code>) は以下の文字列を定数的に扱う:</p>
+<table>
+<thead>
+<tr>
+<th><code>state</code> 文字列値</th>
+<th>意味</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"Idle"</code> または <code>"Idle (Admin)"</code></td>
+<td>セッション停止中</td>
+<td>SNMP 整数値 1</td>
+</tr>
+<tr>
+<td><code>"Connect"</code></td>
+<td>TCP 接続試行中</td>
+<td>SNMP 整数値 2</td>
+</tr>
+<tr>
+<td><code>"Active"</code></td>
+<td>TCP 接続待機中</td>
+<td>SNMP 整数値 3</td>
+</tr>
+<tr>
+<td><code>"OpenSent"</code></td>
+<td>OPEN メッセージ送信済み</td>
+<td>SNMP 整数値 4</td>
+</tr>
+<tr>
+<td><code>"OpenConfirm"</code></td>
+<td>OPEN 確認待ち</td>
+<td>SNMP 整数値 5</td>
+</tr>
+<tr>
+<td><code>"Established"</code></td>
+<td>セッション確立済み</td>
+<td>SNMP 整数値 6</td>
+</tr>
+<tr>
+<td><code>"Clearing"</code></td>
+<td>セッション解除中 (FRR 独自)</td>
+<td>SNMP 対応なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="peertype-bgpmonpy">peerType フィールド文字列定数 (bgpmon.py)<a class="headerlink" href="#peertype-bgpmonpy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド値</th>
+<th>判定条件</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"i-BGP"</code></td>
+<td><code>remoteAs == localAs</code></td>
+<td><code>bgpmon.py:163,171</code></td>
+</tr>
+<tr>
+<td><code>"e-BGP"</code></td>
+<td><code>remoteAs != localAs</code></td>
+<td><code>bgpmon.py:163,171</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="managers_bgppy">操作種別文字列定数 (managers_bgp.py)<a class="headerlink" href="#managers_bgppy" title="Permanent link">&para;</a></h3>
+<p><code>BGPPeerMgrBase.update_state_db</code> の <code>op</code> 引数として使用されるリテラル:</p>
+<table>
+<thead>
+<tr>
+<th>文字列値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"SET"</code></td>
+<td>ネイバー追加 / 管理状態変更時に STATE_DB へ書き込む</td>
+<td><code>managers_bgp.py:239,288,353,443</code></td>
+</tr>
+<tr>
+<td><code>"DEL"</code></td>
+<td>ネイバー削除時に STATE_DB からエントリを消す</td>
+<td><code>managers_bgp.py:487,291</code></td>
+</tr>
+</tbody>
+</table>
+<p>VRF が <code>"default"</code> の場合は key = <code>nbr</code>、それ以外は <code>vrf + "|" + nbr</code> とするロジックも文字列リテラル <code>"default"</code> としてハードコードされている (<code>managers_bgp.py:280</code>)。</p>
+<h3 id="bgpmonpy">ポーリング・バッチ定数 (bgpmon.py)<a class="headerlink" href="#bgpmonpy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名 / 用途</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PIPE_BATCH_MAX_COUNT</code> — Redis パイプラインのバッチ上限</td>
+<td><strong>50</strong></td>
+<td><code>bgpmon.py:35</code></td>
+</tr>
+<tr>
+<td>ポーリング sleep — bgpmon メインループの待機間隔</td>
+<td><strong>15</strong> 秒 (<code>time.sleep(15)</code>)</td>
+<td><code>bgpmon.py:203</code></td>
+</tr>
+<tr>
+<td>FRR ログ確認待機 — FRR 変化なし時の sleep</td>
+<td><strong>1</strong> 秒 (<code>time.sleep(1)</code>)</td>
+<td><code>bgpmon.py:109,115</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgpmonpy_1">ハードコードされたパス・コマンド文字列 (bgpmon.py)<a class="headerlink" href="#bgpmonpy_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>文字列値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"/var/log/frr/frr.log"</code></td>
+<td>FRR ログファイルのタイムスタンプ監視</td>
+<td><code>bgpmon.py:61</code></td>
+</tr>
+<tr>
+<td><code>"show bgp summary json"</code></td>
+<td>vtysh 経由で BGP ネイバー状態を取得するコマンド</td>
+<td><code>bgpmon.py:80</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /constants -->
+
+<!-- failure -->
+<h2 id="phase-d-bgppeermgrbase">失敗挙動 (Phase D — BGPPeerMgrBase)<a class="headerlink" href="#phase-d-bgppeermgrbase" title="Permanent link">&para;</a></h2>
+<p><code>bgpcfgd</code> の <code>BGPPeerMgrBase</code> が <code>BGP_PEER_CONFIGURED_TABLE</code> を書き込む際の失敗・retry 分岐を示す<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
+<h3 id="frr-push-apply_op-true">FRR push 結果は非同期 — <code>apply_op</code> は常に <code>True</code> を返す<a class="headerlink" href="#frr-push-apply_op-true" title="Permanent link">&para;</a></h3>
+<p><code>BGPPeerMgrBase.apply_op()</code> (L494–508) は <code>cfg_mgr.push(cmd)</code> でコマンドをキューに入れるだけで、FRR 側の実行結果を確認しない。返値は<strong>常に <code>True</code></strong>。FRR がコマンドを拒否してもハンドラは成功扱いとなり、<code>BGP_PEER_CONFIGURED_TABLE</code> への書き込みが行われる。エラーは FRR ログにのみ現れ、<strong>retry なし</strong>。</p>
+<h3 id="add_peer-state_db"><code>add_peer</code> — テンプレートレンダリング失敗 → STATE_DB 未書き込み<a class="headerlink" href="#add_peer-state_db" title="Permanent link">&para;</a></h3>
+<p><code>add_peer()</code> でのレンダリング例外 (L229–234) は早期 <code>return True</code> を起こし、<code>apply_op</code>・<code>self.peers.add(key)</code>・<code>update_state_db</code> のすべてがスキップされる。<strong><code>BGP_PEER_CONFIGURED_TABLE</code> への書き込みなし</strong>。subscriber が entry を erase するため <strong>retry なし</strong>。テンプレートが <code>None</code> を返す場合も同様のスキップが発生する (L235)。</p>
+<h3 id="add_peer-update_state_db-frr-state_db"><code>add_peer</code> — <code>update_state_db</code> 例外 → FRR 投入済みだが STATE_DB 未書き込み<a class="headerlink" href="#add_peer-update_state_db-frr-state_db" title="Permanent link">&para;</a></h3>
+<p><code>add_peer()</code> は <code>self.peers.add(key)</code> の後に <code>update_state_db()</code> を呼ぶが、その戻り値を確認しない。STATE_DB への接続・書き込みが例外を投げた場合 (L302–304)、FRR には設定が投入済みで <code>self.peers</code> にも登録済みなのに <strong><code>BGP_PEER_CONFIGURED_TABLE</code> への書き込みなし</strong>。コントローラは設定完了を検知できない。<strong>retry なし</strong>（次回 SET は <code>update_peer</code> ルートに入る）。</p>
+<h3 id="del_handler-peer-state_db"><code>del_handler</code> — peer 未登録時は STATE_DB エントリを削除しない<a class="headerlink" href="#del_handler-peer-state_db" title="Permanent link">&para;</a></h3>
+<p><code>del_handler()</code> は <code>self.peers</code> に key が存在しない場合に早期 return する (L453–455)。過去に <code>update_state_db("SET")</code> が成功していた場合でも <strong><code>BGP_PEER_CONFIGURED_TABLE</code> のエントリが残存</strong>し、CONFIG_DB から DELETE 済みなのにコントローラが「設定済み」と誤認し続けるリスクがある。<strong>retry なし</strong>。</p>
+<h3 id="del-update_state_db-peers">DEL 処理の順序乖離 — <code>update_state_db</code> 例外時に peers 残存<a class="headerlink" href="#del-update_state_db-peers" title="Permanent link">&para;</a></h3>
+<p><code>del_handler()</code> の成功パスでは <code>apply_op</code> → <code>update_state_db("DEL")</code> → <code>peers.remove()</code> の順で処理される。<code>update_state_db</code> が例外を投げた場合 <code>peers.remove()</code> に到達せず peer が <code>self.peers</code> に残存し、次の DEL イベントで同じ <code>no neighbor</code> コマンドが再び FRR に送られる（二重削除コマンドリスク）。STATE_DB 側には DEL 時に存在チェックがあり (L292–297)、エントリ不在の場合は警告ログのみでスキップする。</p>
+<h3 id="_9">失敗パスまとめ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>トリガー</th>
+<th>FRR 投入</th>
+<th><code>BGP_PEER_CONFIGURED_TABLE</code></th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FRR push 非同期失敗</td>
+<td>不明（非同期）</td>
+<td>書き込みあり（乖離）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>テンプレートレンダリング例外 (add)</td>
+<td>なし</td>
+<td>書き込みなし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>テンプレート戻り値 None (add)</td>
+<td>なし</td>
+<td>書き込みなし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>STATE_DB 書き込み例外 (add)</td>
+<td>あり</td>
+<td>書き込みなし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>del 時 peers 未登録</td>
+<td>なし</td>
+<td>削除されず残存</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>del 時 <code>update_state_db</code> 例外</td>
+<td>投入済み</td>
+<td>削除されず（二重削除リスク）</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<p>デーモン再起動時に <code>load_peers()</code> が FRR 現状を読み直すことが唯一の reconciliation 手段。</p>
+<!-- /failure -->
+
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <p>STATE_DB <code>NEIGH_STATE_TABLE</code> および <code>BGP_PEER_CONFIGURED_TABLE</code> には対応する YANG schema が存在しない。値はすべてコードレベルで決定される。</p>
-<h3 id="neigh_state_table">NEIGH_STATE_TABLE<a class="headerlink" href="#neigh_state_table" title="Permanent link">&para;</a></h3>
+<h3 id="neigh_state_table_1">NEIGH_STATE_TABLE<a class="headerlink" href="#neigh_state_table_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -34912,7 +36256,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_8">補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_10">補足<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>NEIGH_STATE_TABLE</code> はエントリ作成後も <code>state</code> / <code>peerType</code> 両フィールドが更新される (bgpmon.py L164)。状態が変化しない場合は STATE_DB への書き込みをスキップする (bgpmon.py L159-160)。</li>
 <li><code>NEIGH_STATE_TABLE</code> にエントリが存在しない間 (bgpmon 起動直後、または全ネイバー消失時)、SNMP は該当 MIB オブジェクトを返さない。</li>
@@ -34921,18 +36265,176 @@
 </ul>
 <!-- /defaults -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h2 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># NEIGH_STATE_TABLE の全エントリ確認</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEIGH_STATE_TABLE|*&#39;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;NEIGH_STATE_TABLE|10.0.0.1&#39;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># BGP_PEER_CONFIGURED_TABLE の全エントリ確認</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_PEER_CONFIGURED_TABLE|*&#39;</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BGP_PEER_CONFIGURED_TABLE|10.0.0.1&#39;</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># FRR から直接 BGP ネイバー状態を取得 (bgpmon の参照元と同じコマンド)</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp summary json&#39;</span>
+<!-- ordering -->
+<h2 id="phase-b-bgp_peer_configured_table">書込み順依存 (Phase B — BGP_PEER_CONFIGURED_TABLE)<a class="headerlink" href="#phase-b-bgp_peer_configured_table" title="Permanent link">&para;</a></h2>
+<p>STATE_DB <code>BGP_PEER_CONFIGURED_TABLE</code> への書き込みは <code>BGPPeerMgrBase.update_state_db()</code> が担い、<strong>FRR への設定 push が完了した直後にのみ</strong>実行される。これはテーブルを「FRR 設定投入完了」の確認フラグとして利用する SDN コントローラ向けの設計上の制約である。</p>
+<h3 id="set-frr-push-state_db">SET: FRR push 成功後にのみ STATE_DB へ書き込む<a class="headerlink" href="#set-frr-push-state_db" title="Permanent link">&para;</a></h3>
+<p><code>add_peer()</code> では FRR コマンドを <code>apply_op</code>（= <code>cfg_mgr.push</code>）で送信した直後に <code>update_state_db(..., "SET")</code> を呼ぶ。テンプレートのレンダリングエラー (<code>jinja2.TemplateError</code>) が発生した場合は <code>return True</code> するが <code>update_state_db</code> は呼ばれず、STATE_DB には書き込まれない（FRR も未設定のまま）。<!-- evidence: managers_bgp.py:229-239 --></p>
+<h3 id="admin_status-frr-push-set">admin_status 変更: FRR push 成功確認後に SET<a class="headerlink" href="#admin_status-frr-push-set" title="Permanent link">&para;</a></h3>
+<p><code>apply_admin_status()</code> は <code>apply_op</code> の戻り値 (<code>ret_code</code>) が <code>True</code> のときのみ <code>update_state_db(..., "SET")</code> を実行する。<code>apply_op</code> は内部で <code>cfg_mgr.push</code> を呼び常に <code>True</code> を返すため、push が例外なく完了した場合に STATE_DB が更新される。<!-- evidence: managers_bgp.py:341-356 --></p>
+<h3 id="del-frr-push-state_db">DEL: FRR push 成功後に STATE_DB からエントリを削除<a class="headerlink" href="#del-frr-push-state_db" title="Permanent link">&para;</a></h3>
+<p><code>del_handler()</code> は <code>no neighbor &lt;addr&gt;</code> を FRR に push し（<code>apply_op</code>）、<code>ret_code=True</code> を確認してから <code>update_state_db(..., "DEL")</code> を呼ぶ。DEL 側の <code>update_state_db</code> は <code>state_peer_table.get(key)</code> で存在確認してから <code>delete(key)</code> を呼ぶため、既に不在の場合は <code>log_warn</code> のみで実際には何もしない。<!-- evidence: managers_bgp.py:485-488, 292-295 --></p>
+<h3 id="del-listen-range-dynamic">DEL 前の listen range 除去（dynamic ピアのみ）<a class="headerlink" href="#del-listen-range-dynamic" title="Permanent link">&para;</a></h3>
+<p><code>peer_type</code> が <code>dynamic</code> または <code>sentinels</code> の場合、<code>del_handler</code> は FRR 10.1 以降の要件として <code>no bgp listen range ...</code> を先に発行し、その後で <code>no neighbor</code>（ピアグループ削除）を発行する。STATE_DB への DEL はピアグループ削除の後になる。<!-- evidence: managers_bgp.py:461-472 --></p>
+<h3 id="config-reload">config reload 時の一時的全削除<a class="headerlink" href="#config-reload" title="Permanent link">&para;</a></h3>
+<p><code>config reload</code> 処理（<code>sonic-utilities/config/main.py:1613</code>）は <code>BGP_PEER_CONFIGURED_TABLE|*</code> を全削除する。bgpcfgd 再起動後に CONFIG_DB を replay して各ネイバーを FRR に再投入し、成功後に各エントリを SET する。reload 中（数秒〜数十秒）はエントリが存在しない状態になる。<!-- evidence: config/main.py:1613 --></p>
+<h3 id="neigh_state_table_2">NEIGH_STATE_TABLE との関係<a class="headerlink" href="#neigh_state_table_2" title="Permanent link">&para;</a></h3>
+<p><code>NEIGH_STATE_TABLE</code>（書き込み元: bgpmon）と <code>BGP_PEER_CONFIGURED_TABLE</code>（書き込み元: bgpcfgd）は独立したデーモンが管理するため、両テーブル間の書込み順序依存はない。bgpmon は起動時に <code>NEIGH_STATE_TABLE|*</code> を全削除してから再スキャンするが、これは <code>BGP_PEER_CONFIGURED_TABLE</code> に影響しない。<!-- evidence: bgpmon.py:51 --></p>
+<h3 id="_11">書込み順依存サマリ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>対象操作</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>FRR push（ネイバー追加） → STATE_DB SET</td>
+<td>add_peer / SET handler</td>
+<td>テンプレートエラー時は STATE_DB 未書込（FRR も未設定）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>FRR push（admin_status 変更） → STATE_DB SET</td>
+<td>change_admin_status</td>
+<td>apply_op 例外時は STATE_DB 未更新</td>
+</tr>
+<tr>
+<td>3</td>
+<td>FRR <code>no neighbor</code> → STATE_DB DEL</td>
+<td>del_handler / DEL handler</td>
+<td>FRR 除去前に SDN 参照するとエントリがまだ存在</td>
+</tr>
+<tr>
+<td>4</td>
+<td>FRR <code>no listen range</code> → FRR <code>no neighbor</code> → STATE_DB DEL</td>
+<td>del_handler (dynamic のみ)</td>
+<td>listen range 除去なしに削除すると FRR 10.1 以降はエラー</td>
+</tr>
+<tr>
+<td>5</td>
+<td>config reload → 全削除 → bgpcfgd 再投入</td>
+<td>config reload</td>
+<td>reload 中は SDN 向けにエントリが存在しない</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-state-ordering.md</code></p>
+</blockquote>
+<!-- /ordering -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差分 (Phase H — コード由来)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>BGP_PEER_CONFIGURED_TABLE</code> を書き込む <code>BGPPeerMgrBase.update_state_db()</code>（managers_bgp.py L271–304）
+および <code>NEIGH_STATE_TABLE</code> を書き込む <code>bgpmon.py</code> には、<code>switch_type</code>・<code>sub_role</code>・
+<code>DEVICE_METADATA.localhost.type</code> による分岐が<strong>一切存在しない</strong>。</p>
+<p>両テーブルのスキーマ・フィールドはすべてのプラットフォームで同一である。</p>
+<h3 id="_12">根拠<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>検索対象</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switch_type</code> in managers_bgp.py</td>
+<td>0 件（分岐なし）</td>
+</tr>
+<tr>
+<td><code>sub_role</code> in managers_bgp.py</td>
+<td>0 件（分岐なし）</td>
+</tr>
+<tr>
+<td><code>is_chassis()</code> in managers_bgp.py</td>
+<td>0 件（分岐なし）</td>
+</tr>
+<tr>
+<td><code>localhost/type</code></td>
+<td>deps 依存ガード登録のみ、値参照なし（L120）</td>
+</tr>
+<tr>
+<td>bgpmon.py の platform 分岐</td>
+<td>0 件（分岐なし）</td>
+</tr>
+</tbody>
+</table>
+<p><code>localhost/type</code> は <code>BGPPeerMgrBase.__init__</code> の deps リスト（L120）に登録されているが、
+これは swsscommon の依存性ガード（キーが CONFIG_DB に存在するまで handler 呼び出しをブロック）
+として利用されているだけであり、値による動作の切り替えには使われていない。</p>
+<h3 id="asic">マルチ ASIC 構成での動作（テーブル内容に変化なし）<a class="headerlink" href="#asic" title="Permanent link">&para;</a></h3>
+<p>マルチ ASIC 構成では、bgpmon および bgpcfgd は各 ASIC コンテナ内で独立して動作し、
+それぞれの namespace 内 STATE_DB に書き込む。テーブルのスキーマ・フィールドに変化はない。</p>
+<p><strong>SNMP 読み取り側</strong>（<code>sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py</code> L22, L29–30）
+のみマルチ ASIC 対応が存在する。<code>Namespace.init_namespace_dbs()</code> で全 namespace（asic0, asic1, …）
+の STATE_DB 接続リストを生成し、<code>dbs_keys_namespace()</code> で全 namespace の
+<code>NEIGH_STATE_TABLE|*</code> を横断収集して CiscoBgp4MIB を組み立てる。
+これは読み取り側の集約動作であり、テーブル自体のスキーマには影響しない。</p>
+<h3 id="bgp_voq_chassis_neighbor-bgp_internal_neighbor">備考: BGP_VOQ_CHASSIS_NEIGHBOR / BGP_INTERNAL_NEIGHBOR との関係<a class="headerlink" href="#bgp_voq_chassis_neighbor-bgp_internal_neighbor" title="Permanent link">&para;</a></h3>
+<p>プラットフォーム固有の BGP セッションは <code>BGP_NEIGHBOR</code> ではなく
+<code>BGP_VOQ_CHASSIS_NEIGHBOR</code>（VoQ シャーシ）または <code>BGP_INTERNAL_NEIGHBOR</code>（マルチ ASIC / chassis-packet）
+テーブルに書き込まれる（minigraph.py によるテーブル振り分け）。
+これらのセッションが bgpcfgd で処理される際も、<code>BGP_PEER_CONFIGURED_TABLE</code> への
+書き込みロジック（<code>update_state_db</code>）は同一コードが使用される。</p>
+<!-- /platform -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="bgp_peer_configured_table_1">BGP_PEER_CONFIGURED_TABLE — 書き込みのみ / 購読者なし<a class="headerlink" href="#bgp_peer_configured_table_1" title="Permanent link">&para;</a></h3>
+<p><code>bgpcfgd</code> の <code>BGPPeerMgrBase.update_state_db()</code> (managers_bgp.py L271-303) が <code>swsscommon.Table</code> 経由で直接 STATE_DB へ HSET / DEL を発行する。<code>swsscommon.Table</code> は <strong>ProducerStateTable ではない</strong> ため、専用通知チャンネルへの PUBLISH は行わない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>bgpcfgd (BGPPeerMgrBase.update_state_db)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  → swsscommon.Table.set() / delete()
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    → Redis HSET / DEL (STATE_DB DB=6)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>      → BGP_PEER_CONFIGURED_TABLE|&lt;key&gt;
+</span></code></pre></div>
+<p>keyspace notification (<code>__keyspace@6__:BGP_PEER_CONFIGURED_TABLE|*</code>) は STATE_DB では通常無効であり、アクティブに購読するデーモンは <strong>存在しない</strong>。</p>
+<h4 id="_13">根拠<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>managers_bgp.py</code> 内に <code>subscribe</code>・<code>psubscribe</code>・<code>keyspace</code>・<code>notify</code> を含む記述はゼロ件</li>
+<li>HLD (<code>Bgpcfgd-dyn-peer-modification-support.md §1.1</code>) が「SDN コントローラはポーリングで確認する」設計を明示</li>
+</ul>
+<h4 id="_14">消費パターン (ポーリング)<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>利用者</th>
+<th>アクセス方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SDN コントローラ</td>
+<td><code>EXISTS</code> / <code>HGETALL BGP_PEER_CONFIGURED_TABLE|&lt;key&gt;</code> のポーリング — bgpcfgd による FRR 設定投入完了を検知するため</td>
+</tr>
+<tr>
+<td><code>show</code> コマンド系</td>
+<td><code>sonic-db-cli STATE_DB keys 'BGP_PEER_CONFIGURED_TABLE|*'</code> などによる手動確認</td>
+</tr>
+</tbody>
+</table>
+<h3 id="neigh_state_table-bgpmon-snmp">NEIGH_STATE_TABLE — bgpmon ポーリング書き込み / SNMP 読み取り<a class="headerlink" href="#neigh_state_table-bgpmon-snmp" title="Permanent link">&para;</a></h3>
+<p><code>bgpmon</code> が 15 秒周期で FRR から取得した状態を <code>NEIGH_STATE_TABLE</code> へ書き込む。SNMP サブエージェントは <code>NEIGH_STATE_TABLE|*</code> を <strong>ポーリング読み取り</strong> して CiscoBgp4MIB に変換する。Redis Pub-Sub / keyspace notification は使用しない。</p>
+<p>詳細は <code>meta/_intermediate/cdb-flow/bgp-state-pubsub.md</code> を参照。</p>
+<!-- /pubsub -->
+
+<h2 id="_15">引用元<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_16">確認コマンド<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># NEIGH_STATE_TABLE の全エントリ確認</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEIGH_STATE_TABLE|*&#39;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;NEIGH_STATE_TABLE|10.0.0.1&#39;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># BGP_PEER_CONFIGURED_TABLE の全エントリ確認</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_PEER_CONFIGURED_TABLE|*&#39;</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BGP_PEER_CONFIGURED_TABLE|10.0.0.1&#39;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># FRR から直接 BGP ネイバー状態を取得 (bgpmon の参照元と同じコマンド)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp summary json&#39;</span>
 </span></code></pre></div>
 <div class="footnote">
 <hr />
@@ -34951,6 +36453,9 @@
 </li>
 <li id="fn:5">
 <p><code>sonic-swss-common/common/schema.h</code> (L437 STATE_BGP_TABLE_NAME, L511 STATE_BGP_PEER_CONFIGURED_TABLE_NAME). <a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</code> (L229–243 add_peer テンプレート失敗分岐, L271–304 update_state_db 例外処理, L446–492 del_handler 失敗・順序乖離, L494–508 apply_op 常時 True). <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

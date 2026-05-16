@@ -23102,6 +23102,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT 先行の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-create-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI create-only 属性（変更不可フィールド）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35206,6 +35256,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT 先行の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-create-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI create-only 属性（変更不可フィールド）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35727,6 +35827,103 @@
 <p><strong>スキャン証跡</strong>: <code>handleBufferPoolTable</code> L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="_17">必須書込み順序<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p>BUFFER_POOL → BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE の順で CONFIG_DB に書くことが必須。逆順でも最終的には retry で収束するが、dynamic buffer model の warm reboot では失敗の原因になる。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>種別</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>BUFFER_POOL → BUFFER_PROFILE</strong></td>
+<td>強制先行必須</td>
+<td><code>m_bufferPoolReady == false</code> のとき <code>updateBufferProfileToDb()</code> は即 return し pending。<code>bufferorch</code> は pool 参照未解決で <code>task_need_retry</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE</strong></td>
+<td>強制先行必須</td>
+<td>profile 参照未解決で <code>task_need_retry</code>。profile 未作成では PG / QUEUE も作れない</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>PORT オブジェクト存在 → BUFFER_PG / BUFFER_QUEUE</strong></td>
+<td>強制先行必須</td>
+<td>ポート不在なら <code>task_invalid_entry</code> で破棄。admin up <strong>前</strong>に PG/QUEUE を書くことが推奨</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>SAI create-only 制約</strong>: pool 作成前に <code>type</code>/<code>mode</code> 確定</td>
+<td>作成後変更不可</td>
+<td>作成後の <code>type</code>/<code>mode</code> 変更はサイレントスキップ。YANG 非記載</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>zero pool → zero profile</strong>（投入）/ <strong>zero profile → zero pool</strong>（削除）</td>
+<td>vendor 構成限定</td>
+<td><code>"The zero profiles are removed first and then the zero pools"</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>dynamic model</strong>: <code>m_bufferPoolReady</code> ゲート</td>
+<td>dynamic 専用</td>
+<td>Lua plugin によるプールサイズ計算完了まで全上位オブジェクトの SAI 反映をブロック</td>
+</tr>
+</tbody>
+</table>
+<h3 id="port">PORT 先行の詳細<a class="headerlink" href="#port" title="Permanent link">&para;</a></h3>
+<p><code>bufferorch</code> は BUFFER_PG / BUFFER_QUEUE を処理する際、ポートオブジェクトが存在しなければ <code>task_invalid_entry</code> を返してエントリを破棄する（<code>bufferorch.cpp</code> L1033-1036, L1113-1114）。また、初期設定以外で admin up 済みポートに PG プロファイルを適用すると <code>SWSS_LOG_WARN("PG profile '%s' applied after port %s is up")</code> が出力される。PG / QUEUE はポートの admin up <strong>前</strong>に設定するのが正しい順序。</p>
+<h3 id="sai-create-only">SAI create-only 属性（変更不可フィールド）<a class="headerlink" href="#sai-create-only" title="Permanent link">&para;</a></h3>
+<p>以下のフィールドは SAI オブジェクト<strong>作成時のみ</strong>有効。既存オブジェクトへの変更は SAI に反映されず LOG_INFO のみ出力される。変更するには SAI オブジェクト削除→再作成が必要。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>SAI 属性</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_POOL</code></td>
+<td><code>type</code></td>
+<td><code>SAI_BUFFER_POOL_ATTR_TYPE</code></td>
+<td><code>bufferorch.cpp</code> L437-441</td>
+</tr>
+<tr>
+<td><code>BUFFER_POOL</code></td>
+<td><code>mode</code></td>
+<td><code>SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE</code></td>
+<td><code>bufferorch.cpp</code> L469-471</td>
+</tr>
+<tr>
+<td><code>BUFFER_PROFILE</code></td>
+<td><code>pool</code></td>
+<td><code>SAI_BUFFER_PROFILE_ATTR_POOL_ID</code></td>
+<td><code>bufferorch.cpp</code> L656-658</td>
+</tr>
+<tr>
+<td><code>BUFFER_PROFILE</code></td>
+<td><code>dynamic_th</code> / <code>static_th</code> 型変更</td>
+<td><code>SAI_BUFFER_PROFILE_ATTR_THRESHOLD_MODE</code></td>
+<td><code>bufferorch.cpp</code> L694-698</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>buffermgr.cpp</code> L1-600 全行読了、<code>buffermgrdyn.cpp</code> L230-970 / L2509-2669 全行読了、<code>bufferorch.cpp</code> L89-700 / L960-1590 全行読了。順序依存 6 件検出。</p>
+</blockquote>
+<!-- /ordering -->
+
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト / 実装乖離 (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <h3 id="xoff-yang-default-fallback"><code>xoff</code> — YANG default と実装 fallback が一致<a class="headerlink" href="#xoff-yang-default-fallback" title="Permanent link">&para;</a></h3>

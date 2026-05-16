@@ -24777,6 +24777,300 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry / 復旧挙動補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / COUNTERS_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bmp_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BMP_STATE_DB への削除操作（唯一の副次書込）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr-vtysh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR vtysh への反映
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠（ソース確認）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時スナップショット
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset_bmp_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reset_bmp_table の起動経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ConsumerStateTable 非使用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-device_metadatabgp_asn-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: DEVICE_METADATA.bgp_asn 先行必須（FRR テンプレート経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bgpd-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: bgpd 起動後に bgpcfgd が動作する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-router-bmp-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: router bmp CLI の内部順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-openbmpd-stop-bmp_state_db-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 4: openbmpd の stop → BMP_STATE_DB クリア → start 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-featurebmpstateenabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 5: FEATURE|bmp.state=enabled とコンテナ起動順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計メモ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -24826,6 +25120,84 @@
     <span class="md-ellipsis">
       
         CLI 部分書き込み時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr-bmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR BMP 設定定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bmp-watchdog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BMP Watchdog 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bmpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bmpcfgd 内部定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠
       
     </span>
   </a>
@@ -35118,6 +35490,300 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry / 復旧挙動補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / COUNTERS_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bmp_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BMP_STATE_DB への削除操作（唯一の副次書込）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr-vtysh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR vtysh への反映
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠（ソース確認）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時スナップショット
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset_bmp_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reset_bmp_table の起動経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ConsumerStateTable 非使用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-device_metadatabgp_asn-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: DEVICE_METADATA.bgp_asn 先行必須（FRR テンプレート経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bgpd-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: bgpd 起動後に bgpcfgd が動作する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-router-bmp-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: router bmp CLI の内部順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-openbmpd-stop-bmp_state_db-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 4: openbmpd の stop → BMP_STATE_DB クリア → start 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-featurebmpstateenabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 5: FEATURE|bmp.state=enabled とコンテナ起動順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計メモ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35167,6 +35833,84 @@
     <span class="md-ellipsis">
       
         CLI 部分書き込み時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr-bmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR BMP 設定定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bmp-watchdog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BMP Watchdog 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bmpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bmpcfgd 内部定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠
       
     </span>
   </a>
@@ -35501,6 +36245,380 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 <p><strong>スキャン証跡</strong>: <code>BMPCfg.load()</code> L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-net/sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py</code></p>
+<h3 id="set">SET 処理における失敗経路<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>supervisorctl stop openbmpd</code> が非ゼロ終了 / openbmpd が存在しない</td>
+<td><code>stop_bmp()</code></td>
+<td><code>subprocess.call()</code> は returncode を無視。openbmpd が停止しないまま後続の <code>reset_bmp_table()</code> が実行され、動作中プロセスと BMP_STATE_DB 削除が競合する</td>
+<td>syslog LOG_NOTICE のみ</td>
+<td><code>bmpcfgd.py:56-58</code></td>
+</tr>
+<tr>
+<td><code>BMP_STATE_DB</code> 接続失敗（Redis 未起動 / ポート閉塞）</td>
+<td><code>BMPCfgDaemon.__init__()</code></td>
+<td><code>SonicV2Connector.connect()</code> が例外 raise → デーモン起動失敗・supervisord が再起動を試みる</td>
+<td>スタックトレースが syslog へ（未捕捉）</td>
+<td><code>bmpcfgd.py:75-76</code></td>
+</tr>
+<tr>
+<td><code>reset_bmp_table()</code> の <code>delete_all_by_pattern()</code> 失敗（Redis 接続断）</td>
+<td><code>reset_bmp_table()</code></td>
+<td>例外が <code>load()</code> まで伝播（catch なし）→ bmpcfgd クラッシュ。BMP_STATE_DB の一部パターンのみ削除された中途状態が残る</td>
+<td>スタックトレースが syslog へ（未捕捉）</td>
+<td><code>bmpcfgd.py:61-65</code></td>
+</tr>
+<tr>
+<td><code>supervisorctl start openbmpd</code> が非ゼロ終了（バイナリ欠如 / supervisord 未起動）</td>
+<td><code>start_bmp()</code></td>
+<td><code>subprocess.call()</code> は returncode を無視。openbmpd が起動しないまま処理続行。BMP データが collector に届かない</td>
+<td>syslog LOG_NOTICE のみ</td>
+<td><code>bmpcfgd.py:68-70</code></td>
+</tr>
+<tr>
+<td><code>CONFIG_DB</code> 接続失敗（起動直後 Redis 未準備）</td>
+<td><code>BMPCfgDaemon.__init__()</code></td>
+<td><code>retry_on=True</code> により無限リトライ。Redis が起動するまでブロック。デーモン起動は完了しない（停止はしない）</td>
+<td>swsscommon 内部ログ（接続試行ごと）</td>
+<td><code>bmpcfgd.py:77-78</code></td>
+</tr>
+<tr>
+<td><code>"True"</code> / <code>"TRUE"</code> / <code>"1"</code> などの非小文字 <code>true</code> 値が CONFIG_DB に書き込まれた場合</td>
+<td><code>is_true()</code></td>
+<td><code>str(val).lower() == 'true'</code> は小文字 <code>"true"</code> のみ受理。<code>"True"</code> 等はすべて <code>False</code> 扱い → フィールドが無効化されたように見える（silent）</td>
+<td>なし</td>
+<td><code>bmpcfgd.py:27-28, 41-43</code></td>
+</tr>
+<tr>
+<td><code>BMP\|table</code> エントリが CONFIG_DB に存在しない状態で <code>load()</code> が呼ばれる</td>
+<td><code>load()</code> L39-43</td>
+<td>全フィールドが <code>'false'</code> fallback → openbmpd を stop → reset → start（全テーブルダンプ無効で再起動）。YANG default の <code>bgp_neighbor_table=true</code> は反映されない</td>
+<td>syslog LOG_NOTICE（設定値 <code>False, False, False</code>）</td>
+<td><code>bmpcfgd.py:39-44</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 処理における失敗経路<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BMP</code> テーブルの DEL イベント（<code>bmp_handler</code> が空データで呼ばれる）</td>
+<td><code>bmp_handler()</code></td>
+<td><code>config_db.get_table(BMP_TABLE)</code> を再取得するため空 dict → <code>load({})</code> → 全フィールド <code>False</code> で openbmpd 再起動（テーブルダンプ全停止）・BMP_STATE_DB クリア</td>
+<td>syslog LOG_NOTICE</td>
+<td><code>bmpcfgd.py:81-83, 39-49</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="retry">retry / 復旧挙動補足<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>CONFIG_DB</code> 無限リトライ</strong>: <code>retry_on=True</code> により Redis 応答まで無限ブロック。デーモン停止のトリガーにはならない。</li>
+<li><strong><code>BMP_STATE_DB</code> 接続は 1 回のみ</strong>: <code>SonicV2Connector.connect()</code> は <code>__init__</code> で 1 度のみ呼ばれる。接続断後の自動復旧機構はない。</li>
+<li><strong><code>supervisorctl</code> 呼び出しの failure-silencing</strong>: <code>stop_bmp()</code> / <code>start_bmp()</code> は returncode を確認しない。openbmpd 起動失敗が bmpcfgd に伝わらず、BMP 機能が静かに停止したままになるリスクがある。</li>
+<li><strong>vtysh 非使用</strong>: <code>bmpcfgd.py</code> は vtysh / FRR CLI を直接呼び出さない。frrcfgd.py の vtysh 失敗経路は BMP テーブル処理に関与しない。</li>
+</ul>
+<!-- /failure -->
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<h3 id="state_db-counters_db">STATE_DB / COUNTERS_DB への書込<a class="headerlink" href="#state_db-counters_db" title="Permanent link">&para;</a></h3>
+<p><strong>なし。</strong> <code>bmpcfgd.py</code> は STATE_DB・COUNTERS_DB へ接続・書込を行わない。
+<code>frrcfgd.py</code> 内に "bmp" / "BMP" の参照はゼロ（確認: <code>frrcfgd.py</code> 全行 grep）。
+<code>bgpcfgd/managers_*.py</code> にも BMP 関連コードは存在しない。</p>
+<h3 id="bmp_state_db">BMP_STATE_DB への削除操作（唯一の副次書込）<a class="headerlink" href="#bmp_state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>DB</th>
+<th>パターン</th>
+<th>タイミング</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>delete_all_by_pattern</code></td>
+<td><code>BMP_STATE_DB</code></td>
+<td><code>BGP_NEIGHBOR*</code></td>
+<td>CONFIG_DB <code>BMP</code> テーブル変更時（常に）</td>
+<td><code>bmpcfgd.py</code> L63</td>
+</tr>
+<tr>
+<td><code>delete_all_by_pattern</code></td>
+<td><code>BMP_STATE_DB</code></td>
+<td><code>BGP_RIB_IN_TABLE*</code></td>
+<td>同上</td>
+<td><code>bmpcfgd.py</code> L64</td>
+</tr>
+<tr>
+<td><code>delete_all_by_pattern</code></td>
+<td><code>BMP_STATE_DB</code></td>
+<td><code>BGP_RIB_OUT_TABLE*</code></td>
+<td>同上</td>
+<td><code>bmpcfgd.py</code> L65</td>
+</tr>
+</tbody>
+</table>
+<p><code>bmpcfgd</code> 自身は BMP_STATE_DB に値を <strong>書き込まない</strong>。<code>reset_bmp_table()</code> による削除ののち <code>openbmpd</code> を再起動し、openbmpd が非同期に BMP_STATE_DB を再構築する。</p>
+<h3 id="frr-vtysh">FRR vtysh への反映<a class="headerlink" href="#frr-vtysh" title="Permanent link">&para;</a></h3>
+<p><code>bmpcfgd</code> は FRR vtysh に直接コマンドを発行しない。BMP 設定は FRR テンプレート <code>bgpd.main.conf.j2</code> によりコンテナ起動時に静的に注入される。openbmpd 再起動のみで BMP セッションが再確立する設計。</p>
+<h3 id="_17">根拠（ソース確認）<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>bmpcfgd.py</code> 全 98 行: <code>APPL_DB</code>・<code>STATE_DB</code>・<code>COUNTERS_DB</code> への接続ゼロ。<code>BMP_STATE_DB</code> のみ接続（L76）、かつ操作は delete のみ（L63-65）。</li>
+<li><code>frrcfgd.py</code>: "bmp" / "BMP" 文字列ゼロヒット。</li>
+<li><code>bgpcfgd/</code> 全モジュール: BMP 関連コードなし。</li>
+</ul>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="api">購読 API<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
+<p><code>bmpcfgd</code> は <code>swsscommon</code> Python ラッパの <code>ConfigDBConnector.subscribe()</code> で <code>BMP</code> テーブルにハンドラを登録し、<code>listen(init_data_handler=...)</code> で keyspace 通知ループを開始する。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># bmpcfgd.py:85-89</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">register_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">config_db</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">BMP_TABLE</span><span class="p">,</span>          <span class="c1"># &quot;BMP&quot;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>                             <span class="k">lambda</span> <span class="n">table</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>                                 <span class="bp">self</span><span class="o">.</span><span class="n">bmp_handler</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">config_db</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">init_data_handler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bmpcfg</span><span class="o">.</span><span class="n">load</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><code>ConfigDBConnector.listen()</code> が内部で Redis の <strong>keyspace 通知</strong> (<code>__keyspace@4__:BMP|*</code> の PSUBSCRIBE) を購読する。channel ベースの <code>ConsumerStateTable</code> 形式は使用しない。</li>
+<li>CONFIG_DB への書き込み側（<code>config bmp</code> CLI / sonic-cfggen）は <code>HSET</code> のみを実行し、明示的な <code>PUBLISH</code> は行わない。Redis keyspace notification 機能が変更を通知する。</li>
+</ul>
+<h3 id="_18">起動時スナップショット<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><code>listen(init_data_handler=self.bmpcfg.load)</code> を渡すことで、Subscribe ループ開始前に CONFIG_DB の現在値を一括取得して <code>BMPCfg.load()</code> に渡す。bmpcfgd 再起動時にも既存設定が openbmpd へ即座に反映される。</p>
+<h3 id="reset_bmp_table"><code>reset_bmp_table</code> の起動経路<a class="headerlink" href="#reset_bmp_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>起動経路</th>
+<th>トリガー</th>
+<th>コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>起動時スナップショット</td>
+<td>bmpcfgd 起動 → <code>listen(init_data_handler=self.bmpcfg.load)</code></td>
+<td><code>bmpcfgd.py:89</code></td>
+</tr>
+<tr>
+<td>差分通知</td>
+<td><code>BMP|table</code> の <code>HSET</code>/<code>DEL</code> → <code>bmp_handler</code> → <code>cfg_handler</code> → <code>load</code></td>
+<td><code>bmpcfgd.py:81-83</code></td>
+</tr>
+</tbody>
+</table>
+<p>いずれの経路でも <code>stop_bmp()</code> → <code>reset_bmp_table()</code> → <code>start_bmp()</code> の順序は変わらない。keyspace 通知本体には値が含まれないため、<code>bmp_handler</code> は受信後に <code>get_table("BMP")</code> で再 HGETALL する。</p>
+<h3 id="keyspace">keyspace 通知パターン<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Redis 通知</th>
+<th>bmpcfgd 受信</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>__keyspace@4__:BMP\|table</code> <code>hset</code></td>
+<td><code>bmp_handler("table", …)</code> → <code>load()</code> → openbmpd 再起動</td>
+</tr>
+<tr>
+<td><code>__keyspace@4__:BMP\|table</code> <code>del</code></td>
+<td><code>bmp_handler("table", {})</code> → <code>load({})</code> → 全フィールド <code>false</code> で再起動</td>
+</tr>
+</tbody>
+</table>
+<h3 id="consumerstatetable">ConsumerStateTable 非使用<a class="headerlink" href="#consumerstatetable" title="Permanent link">&para;</a></h3>
+<p><code>BMP</code> テーブルは <code>ConsumerStateTable</code>（channel ベース）および <code>NotificationProducer</code> を使用しない。CONFIG_DB → bmpcfgd（keyspace 通知）→ supervisorctl / BMP_STATE_DB の一方向で完結する。</p>
+<!-- /pubsub -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="1-device_metadatabgp_asn-frr">依存 1: <code>DEVICE_METADATA.bgp_asn</code> 先行必須（FRR テンプレート経路）<a class="headerlink" href="#1-device_metadatabgp_asn-frr" title="Permanent link">&para;</a></h3>
+<p><code>bgpd.main.conf.j2</code> L94-139 では <code>bmp targets sonic-bmp</code> / <code>bmp connect</code> ブロックが<br />
+<strong><code>router bgp &lt;asn&gt;</code> コンテキストの内側</strong>に配置される。</p>
+<ul>
+<li><code>DEVICE_METADATA|localhost.bgp_asn</code> が未設定・<code>"none"</code> の場合、テンプレート条件分岐により <code>router bgp</code> ブロック全体が生成されず、<code>bmp targets</code> も FRR に投入されない。</li>
+<li>evidence: <code>dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:94-139</code></li>
+</ul>
+<h3 id="2-bgpd-bgpcfgd">依存 2: bgpd 起動後に bgpcfgd が動作する<a class="headerlink" href="#2-bgpd-bgpcfgd" title="Permanent link">&para;</a></h3>
+<p><code>supervisord.conf.j2</code> の依存チェーン（priority順）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>rsyslogd (priority=1)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─ zebra (priority=4)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       └─ bgpd (priority=5, wait_for=zsocket:exited)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>            └─ bgpcfgd / frrcfgd (priority=6, wait_for=bgpd:running)
+</span></code></pre></div>
+<ul>
+<li><code>bgpcfgd</code> は <code>dependent_startup_wait_for=bgpd:running</code> により bgpd 起動完了後に初期化を開始する。</li>
+<li><code>bgpcfgd/main.py</code> L47 でも <code>frr.wait_for_daemons(seconds=20)</code> で能動的に bgpd 応答を確認する。</li>
+<li>evidence: <code>dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:100-179</code>、<code>bgpcfgd/main.py:47</code></li>
+</ul>
+<h3 id="3-router-bmp-cli">依存 3: <code>router bmp</code> CLI の内部順序<a class="headerlink" href="#3-router-bmp-cli" title="Permanent link">&para;</a></h3>
+<p>FRR vtysh での BMP 設定は以下の固定順で注入される（<code>bgpd.main.conf.j2</code> L130-136）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>bmp mirror buffer-limit 4294967214
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>bmp targets sonic-bmp
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>bmp stats interval 1000
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>bmp monitor ipv4 unicast pre-policy
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>bmp monitor ipv6 unicast pre-policy
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>bmp connect 127.0.0.1 port 5000 min-retry 10000 max-retry 15000
+</span></code></pre></div>
+<ul>
+<li><code>bmp targets sonic-bmp</code> の宣言 → <code>bmp connect</code> の順が FRR vtysh CLI 階層に準拠する（逆順は無効）。</li>
+<li>この設定はコンテナ起動時に静的注入される。<code>bmpcfgd</code> は実行中に vtysh コマンドを発行しない。</li>
+<li>evidence: <code>bgpd.main.conf.j2:130-136</code></li>
+</ul>
+<h3 id="4-openbmpd-stop-bmp_state_db-start">依存 4: openbmpd の stop → BMP_STATE_DB クリア → start 順序<a class="headerlink" href="#4-openbmpd-stop-bmp_state_db-start" title="Permanent link">&para;</a></h3>
+<p><code>bmpcfgd.py</code> L47-49 は <code>BMP</code> テーブル変更のたびに必ず以下の順序を実行する:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">stop_bmp</span><span class="p">()</span>         <span class="c1"># supervisorctl stop openbmpd</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">reset_bmp_table</span><span class="p">()</span>  <span class="c1"># BMP_STATE_DB: BGP_NEIGHBOR* / BGP_RIB_* を削除</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="bp">self</span><span class="o">.</span><span class="n">start_bmp</span><span class="p">()</span>        <span class="c1"># supervisorctl start openbmpd</span>
+</span></code></pre></div>
+<ul>
+<li>stop → reset → start の順が<strong>競合防止の必要条件</strong>。reset を stop より前に実行すると、動作中の openbmpd と BMP_STATE_DB の削除が競合する。</li>
+<li><code>supervisorctl stop</code> の失敗は catch されないため、openbmpd が予期せず停止済みの場合は <code>bmpcfgd</code> 自身がクラッシュする可能性がある。</li>
+<li>evidence: <code>bmpcfgd.py:47-49, 56-70</code></li>
+</ul>
+<h3 id="5-featurebmpstateenabled">依存 5: <code>FEATURE|bmp.state=enabled</code> とコンテナ起動順<a class="headerlink" href="#5-featurebmpstateenabled" title="Permanent link">&para;</a></h3>
+<p><code>supervisord.conf.j2</code> L101-107 により bgpd の起動コマンドが分岐する:</p>
+<ul>
+<li><code>FEATURE|bmp.state=enabled</code> または <code>FEATURE|frr_bmp.state=enabled</code> → bgpd が <code>-M bmp</code> 付きで起動</li>
+<li>それ以外 → bgpd は <code>-M bmp</code> なしで起動（BMP プラグイン無効）</li>
+</ul>
+<p><code>FEATURE</code> フラグはコンテナ起動前に確定している必要がある。<code>BMP|table</code> の変更だけでは bgpd の <code>-M bmp</code> フラグは変わらない。機能有効化の完全な手順:</p>
+<ol>
+<li><code>FEATURE|bmp.state=enabled</code> を設定</li>
+<li>docker-fpm-frr コンテナを再起動（bgpd が <code>-M bmp</code> 付きで再起動、<code>bmp targets</code> が静的注入される）</li>
+<li>
+<p><code>BMP|table</code> フィールドを設定（bmpcfgd が openbmpd を制御）</p>
+</li>
+<li>
+<p>evidence: <code>supervisord.conf.j2:101-107</code>、<code>bgpd.main.conf.j2:126-139</code></p>
+</li>
+</ol>
+<h3 id="_19">推奨書込み順まとめ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>操作</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>FEATURE\|bmp.state=enabled</code></td>
+<td>bgpd に <code>-M bmp</code> を付与するため（コンテナ起動前）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DEVICE_METADATA\|localhost.bgp_asn</code></td>
+<td>FRR テンプレートの <code>router bgp</code> ブロック生成のため</td>
+</tr>
+<tr>
+<td>3</td>
+<td>コンテナ再起動（docker-fpm-frr）</td>
+<td>bgpd + bmp targets の静的注入</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>BMP\|table</code> フィールド設定</td>
+<td>bmpcfgd が検知し openbmpd を stop→reset→start で制御</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>bmpcfgd.py</code> および <code>frrcfgd.py</code> を全行走査して検出した、<code>BMP</code> テーブルが暗黙的に依存・生成する関連テーブル。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB</th>
+<th>方向</th>
+<th>直接/間接</th>
+<th>条件</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_NEIGHBOR*</code></td>
+<td><code>BMP_STATE_DB</code></td>
+<td>BMP → BMP_STATE_DB (delete)</td>
+<td>間接（openbmpd が populate、bmpcfgd が reset）</td>
+<td><code>BMP.bgp_neighbor_table</code> 変更時に常時クリア</td>
+<td><code>bmpcfgd.py</code> L63</td>
+</tr>
+<tr>
+<td><code>BGP_RIB_IN_TABLE*</code></td>
+<td><code>BMP_STATE_DB</code></td>
+<td>BMP → BMP_STATE_DB (delete)</td>
+<td>間接（openbmpd が populate、bmpcfgd が reset）</td>
+<td><code>BMP.bgp_rib_in_table</code> 変更時に常時クリア</td>
+<td><code>bmpcfgd.py</code> L64</td>
+</tr>
+<tr>
+<td><code>BGP_RIB_OUT_TABLE*</code></td>
+<td><code>BMP_STATE_DB</code></td>
+<td>BMP → BMP_STATE_DB (delete)</td>
+<td>間接（openbmpd が populate、bmpcfgd が reset）</td>
+<td><code>BMP.bgp_rib_out_table</code> 変更時に常時クリア</td>
+<td><code>bmpcfgd.py</code> L65</td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR</code></td>
+<td><code>CONFIG_DB</code></td>
+<td>BGP_NEIGHBOR → BMP dump</td>
+<td>間接（openbmpd の peer リストとして利用）</td>
+<td><code>bgp_neighbor_table=true</code> 時、openbmpd が BGP_NEIGHBOR の peer を BMP dump 対象に</td>
+<td><code>bmpcfgd.py</code> L41; <code>frrcfgd.py</code> L89</td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS</code></td>
+<td><code>CONFIG_DB</code></td>
+<td>BGP_GLOBALS → FRR BGP context</td>
+<td>間接（FRR BGP セッションの前提）</td>
+<td>BMP が送出する peer 情報は FRR bgpd の BGP_GLOBALS 由来の AS・router-id を含む</td>
+<td><code>frrcfgd.py</code> L81</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">設計メモ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>bmpcfgd.py</code> は <code>BGP_NEIGHBOR</code> / <code>BGP_GLOBALS</code> を <strong>直接読まない</strong>。openbmpd へのライフサイクル管理（stop → reset → start）のみを担う</li>
+<li><code>frrcfgd.py</code> 内に <code>bmp</code> / <code>BMP</code> 文字列は <strong>0件</strong>。BMP 設定の FRR 注入は <code>bgpd.main.conf.j2</code> テンプレートによりコンテナ起動時に静的に実施される</li>
+<li><code>BMP_STATE_DB</code> への書込は openbmpd が非同期で実施。<code>bmpcfgd</code> は <strong>削除のみ</strong>（<code>delete_all_by_pattern</code>）を直接実行する</li>
+<li><code>BGP_MONITORS</code> テーブル（BMP collector 接続定義）は <code>bmpcfgd</code> とは別の管理パスであり、BMP ページの <code>related.config_db</code> に列挙済み</li>
+</ul>
+<!-- /cross-refs -->
+
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <h3 id="yang-vs-fallback">YANG デフォルト vs 実行時 fallback<a class="headerlink" href="#yang-vs-fallback" title="Permanent link">&para;</a></h3>
@@ -35545,8 +36663,8 @@ YANG スキーマ上は <code>bgp_neighbor_table=true</code> であるべきだ�
 YANG default に反して neighbor dump は <strong>無効</strong>。<code>config bmp enable bgp-neighbor-table</code> で明示的に有効化が必要。</p>
 </blockquote>
 <h3 id="is_true"><code>is_true()</code> の大文字非許容<a class="headerlink" href="#is_true" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">is_true</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">is_true</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
 </span></code></pre></div>
 <p><code>"true"</code>（小文字）のみ <code>True</code> と判定。<code>"True"</code>, <code>"TRUE"</code>, <code>"1"</code>, <code>"yes"</code> はすべて <code>False</code> 扱い。
 YANG <code>stypes:boolean_type</code> は <code>"true"</code> / <code>"false"</code> の小文字 enum のみを許容するため、
@@ -35557,6 +36675,156 @@ YANG バリデーションを通った値は常に正しく処理される。た
 <code>bgp_rib_in_table</code> / <code>bgp_rib_out_table</code> は DB に書き込まれず未定義のまま残る。
 <code>bmpcfgd</code> はそれらを <code>'false'</code> として処理する（YANG default の <code>false</code> と一致するため実害なし）。</p>
 <!-- /defaults -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>FRR テンプレートおよびデーモンコードに埋め込まれた定数。CONFIG_DB には現れないが、BMP 動作に直接影響する。</p>
+<h3 id="frr-bmp">FRR BMP 設定定数<a class="headerlink" href="#frr-bmp" title="Permanent link">&para;</a></h3>
+<p>ソース: <code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code> L130-136</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BMP target 名</td>
+<td><code>sonic-bmp</code></td>
+<td><code>bmp targets sonic-bmp</code>。FRR vtysh でハードコードされた target station 名。変更不可</td>
+</tr>
+<tr>
+<td>mirror buffer-limit</td>
+<td><code>4294967214</code></td>
+<td><code>bmp mirror buffer-limit 4294967214</code>（バイト）。<code>2^32 - 82</code> 相当の最大値近似</td>
+</tr>
+<tr>
+<td>stats interval</td>
+<td><code>1000</code> ms</td>
+<td><code>bmp stats interval 1000</code>。BMP 統計メッセージ送信間隔（1 秒）</td>
+</tr>
+<tr>
+<td>connect host</td>
+<td><code>127.0.0.1</code></td>
+<td>openbmpd 接続先 IP。ローカルホスト固定（外部 collector への直接送信は非サポート）</td>
+</tr>
+<tr>
+<td>connect port</td>
+<td><code>5000</code></td>
+<td><code>bmp connect 127.0.0.1 port 5000</code>。openbmpd 待ち受け TCP ポート</td>
+</tr>
+<tr>
+<td>min-retry</td>
+<td><code>10000</code> ms</td>
+<td>BMP セッション再接続最小待機時間（10 秒）</td>
+</tr>
+<tr>
+<td>max-retry</td>
+<td><code>15000</code> ms</td>
+<td>BMP セッション再接続最大待機時間（15 秒）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bmp-watchdog">BMP Watchdog 定数<a class="headerlink" href="#bmp-watchdog" title="Permanent link">&para;</a></h3>
+<p>ソース: <code>sonic-buildimage/dockers/docker-bmp-watchdog/watchdog/src/main.rs</code> L41, L49-50</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BMP 生死確認ポート</td>
+<td><code>5000</code></td>
+<td>watchdog が <code>127.0.0.1:5000</code> への TCP 接続で openbmpd の死活確認。FRR 側ポートと一致</td>
+</tr>
+<tr>
+<td>watchdog HTTP ポート</td>
+<td><code>50060</code></td>
+<td>watchdog 自身の Health Check HTTP サーバ（コンテナ内部のみ）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bmpcfgd">bmpcfgd 内部定数<a class="headerlink" href="#bmpcfgd" title="Permanent link">&para;</a></h3>
+<p>ソース: <code>sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py</code> L20-24</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BMP_STATE_DB</code></td>
+<td><code>"BMP_STATE_DB"</code></td>
+<td>BMP 状態テーブル書き込み先 DB 名</td>
+</tr>
+<tr>
+<td><code>REDIS_HOSTIP</code></td>
+<td><code>"127.0.0.1"</code></td>
+<td>Redis 接続先 IP（固定）</td>
+</tr>
+<tr>
+<td><code>BMP_TABLE</code></td>
+<td><code>"BMP"</code></td>
+<td>購読する CONFIG_DB テーブル名</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>設計上の注意</strong>: <code>bmp connect port 5000</code> は FRR テンプレート、bmpcfgd、watchdog の 3 箇所に独立してハードコードされており、変更する場合はすべてを同期する必要がある。</p>
+</blockquote>
+<!-- /constants -->
+
+<!-- platform -->
+<h2 id="_21">プラットフォーム差<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
+<p><strong>プラットフォーム差なし。</strong> BMP は全プラットフォームで同一動作する。</p>
+<h3 id="_22">根拠<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>確認観点</th>
+<th>結果</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ビルドフラグ <code>INCLUDE_SYSTEM_BMP</code></td>
+<td><code>rules/config</code> でデフォルト <code>y</code>。プラットフォーム別 <code>.mk</code> による上書きなし</td>
+<td><code>sonic-buildimage/rules/config:163</code>、<code>platform/*/</code> 全 <code>.mk</code> 0 ヒット</td>
+</tr>
+<tr>
+<td><code>bmpcfgd.py</code> の ASIC / namespace 分岐</td>
+<td><code>device_info</code> / <code>is_multi_npu()</code> / <code>asic_id</code> / <code>namespace</code> への参照が全 98 行で 0 ヒット</td>
+<td><code>sonic-bmpcfgd/bmpcfgd/bmpcfgd.py</code> 全行</td>
+</tr>
+<tr>
+<td><code>frrcfgd.py</code> との関係</td>
+<td><code>frrcfgd.py</code> 内に "bmp" / "BMP" 文字列が 0 ヒット。BMP は <code>frrcfgd</code> 経由なし</td>
+<td><code>sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>docker-sonic-bmp</code> コンテナ</td>
+<td>ベースは <code>docker-config-engine-bookworm</code> のみ。SAI / ASIC SDK 依存なし</td>
+<td><code>dockers/docker-sonic-bmp/Dockerfile.j2</code></td>
+</tr>
+<tr>
+<td>SAI 経由の有無</td>
+<td>BMP は TCP レベルのアプリケーション層プロトコル。SAI / ASIC 非依存</td>
+<td>アーキテクチャ上自明</td>
+</tr>
+</tbody>
+</table>
+<p>multi-asic 構成でも <code>bmpcfgd</code> は host CONFIG_DB の <code>BMP</code> テーブルのみを購読し、<code>asicN</code> namespace への接続は実装されていない。</p>
+<!-- /platform -->
 
 <!-- glossary-links-injected: 9e5a57a09d49 -->
 
