@@ -337,4 +337,42 @@ SET 受信時、frrcfgd は FRR に peer-group が存在しなければ属性コ
 > 詳細分析: `meta/_intermediate/cdb-flow/bgp-peer-group-ordering.md`
 <!-- /ordering -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+### frrcfgd.py BGP_PEER_GROUP ハンドラ直接書込
+
+`frrcfgd.py` は STATE_DB / APPL_DB / COUNTERS_DB への書込クラスをインポートしておらず、
+BGP_PEER_GROUP ハンドラの唯一の外部副作用は **FRR vtysh への設定投入** のみ。
+
+| DB | 書込 |
+|---|---|
+| STATE_DB | なし |
+| APPL_DB | なし |
+| COUNTERS_DB | なし |
+
+### bgpcfgd BGPPeerMgrBase 経由 — 間接書込
+
+BGP_PEER_GROUP の `asn` フィールド変更時、`frrcfgd.py` の
+`__apply_dep_vrf_table('BGP_NEIGHBOR')` (L2848) がメンバーネイバーを再適用し、
+`bgpcfgd` の `BGPPeerMgrBase.update_state_db()` が発火する。
+
+| DB | テーブル | 操作 | キー形式 | 条件 |
+|---|---|---|---|---|
+| STATE_DB | `BGP_PEER_CONFIGURED_TABLE` | SET | `<nbr_ip>` (default VRF) または `<vrf>\|<nbr_ip>` | peer-group `asn` 変更で BGP_NEIGHBOR re-apply が発火した場合 |
+| STATE_DB | `BGP_PEER_CONFIGURED_TABLE` | DEL | 同上 | peer-group 削除でメンバー neighbor が削除された場合 |
+
+書込経路:
+
+```
+BGP_PEER_GROUP (asn 変更)
+  └─→ frrcfgd __apply_dep_vrf_table('BGP_NEIGHBOR') [frrcfgd.py L2848]
+        └─→ bgpcfgd BGPPeerMgrBase.add_peer() / del_handler()
+              └─→ update_state_db() [managers_bgp.py L239/L487]
+                    └─→ STATE_DB:BGP_PEER_CONFIGURED_TABLE SET/DEL
+```
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/bgp-peer-group-side.md`
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: d4d0b1f9b453 -->
