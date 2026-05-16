@@ -1,0 +1,212 @@
+---
+title: TAM テーブル
+description: "TAM / IFA (In-band Flow Analyzer) テーブル — デバイス ID 設定・コレクタ宛先・IFA 機能フラグ・フロー定義の 4 コンテナを含む。sonic-mgmt-common の CVL と sonic-swss orchagent が参照する。"
+area: reference
+hard: 0
+verification: code-verified
+last_verified: 2026-05-14
+sources:
+  - repo: sonic-net/sonic-mgmt-common
+    path: cvl/testdata/schema/sonic-tam.yang
+    ref: HEAD
+  - repo: sonic-net/sonic-mgmt-common
+    path: cvl/testdata/schema/sonic-ifa.yang
+    ref: HEAD
+related:
+  config_db:
+    - TAM_DEVICE_TABLE
+    - TAM_COLLECTOR_TABLE
+    - TAM_INT_IFA_FEATURE_TABLE
+    - TAM_INT_IFA_FLOW_TABLE
+    - ACL_TABLE
+    - ACL_RULE
+  yang:
+    - sonic-tam
+    - sonic-ifa
+---
+
+# TAM テーブル
+
+## 概要
+
+Telemetry and Monitoring (TAM) および In-band Flow Analyzer (IFA) に関する CONFIG_DB エントリ群。4 つのテーブルで構成される。
+
+- **TAM_DEVICE_TABLE**: デバイス固有の TAM ID（`deviceid`）を保持する。
+- **TAM_COLLECTOR_TABLE**: telemetry データの送信先コレクタ（IP アドレス・ポート）を定義する。
+- **TAM_INT_IFA_FEATURE_TABLE**: IFA 機能の有効/無効フラグを保持する。
+- **TAM_INT_IFA_FLOW_TABLE**: ACL ルールに紐付いた IFA フローを定義する。
+
+<!-- defaults -->
+### コード由来デフォルト
+
+| テーブル | フィールド | デフォルト | 根拠 |
+|---------|-----------|-----------|------|
+| `TAM_DEVICE_TABLE\|device` | `deviceid` | `0` | YANG `default 0` (sonic-tam.yang) |
+| `TAM_INT_IFA_FEATURE_TABLE\|feature` | `enable` | なし（false 相当） | boolean、DB に存在しない場合は IFA 無効 |
+| `TAM_COLLECTOR_TABLE\|<name>` | `port` | なし | inet:port-number、省略可 |
+| `TAM_INT_IFA_FLOW_TABLE\|<name>` | `sampling-rate` | なし | uint16 1..10000、省略可 |
+| `TAM_INT_IFA_FLOW_TABLE\|<name>` | `collector-name` | なし | string、省略可 |
+
+<!-- /defaults -->
+
+## key / 構造
+
+```text
+TAM_DEVICE_TABLE|device              # デバイス TAM 設定（singleton）
+TAM_COLLECTOR_TABLE|<name>           # コレクタ定義（名前キー）
+TAM_INT_IFA_FEATURE_TABLE|feature    # IFA 機能フラグ（singleton）
+TAM_INT_IFA_FLOW_TABLE|<name>        # IFA フロー定義（名前キー）
+```
+
+## TAM_DEVICE_TABLE
+
+singleton エントリ。key は固定値 `device`。
+
+| フィールド | 型 | 既定 | 説明 |
+|-----------|----|------|------|
+| `deviceid` | uint16 | **0** | TAM デバイス識別子。`0` は未設定を意味する。 |
+
+`deviceid` は SAI_TAM_INT_ATTR_DEVICE_ID に渡される（`portsorch.cpp`）。
+
+## TAM_COLLECTOR_TABLE
+
+テレメトリデータの送信先を定義する。名前（`<name>`）をキーとする。
+
+| フィールド | 型 | 既定 | 必須 | 説明 |
+|-----------|----|------|------|------|
+| `ipaddress-type` | enum `ipv4`/`ipv6` | - | yes | IP アドレスの種別。`must` 制約で `ipaddress` の内容と一致する必要がある。 |
+| `ipaddress` | inet:ip-address | - | yes | コレクタの IP アドレス（IPv4/IPv6）。`ipaddress-type` と対で指定。 |
+| `port` | inet:port-number (0..65535) | - | no | コレクタの UDP ポート番号。 |
+
+`name` の文字種: `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,32})`（最大 32 文字）。  
+`must` 制約: IPv6 アドレス（`:` 含む）なら `ipaddress-type=ipv6`、IPv4（`.` 含む）なら `ipaddress-type=ipv4` でなければ CVL が拒否する。
+
+## TAM_INT_IFA_FEATURE_TABLE
+
+IFA 機能の全体的な有効/無効フラグ。singleton。key は固定値 `feature`。
+
+| フィールド | 型 | 既定 | 説明 |
+|-----------|----|------|------|
+| `enable` | boolean | なし (false 相当) | IFA を有効化する場合 `true`。DB にエントリが存在しない場合は無効扱い。 |
+
+## TAM_INT_IFA_FLOW_TABLE
+
+特定の ACL ルールに IFA フロー設定を紐付ける。
+
+| フィールド | 型 | 既定 | 必須 | 説明 |
+|-----------|----|------|------|------|
+| `acl-table-name` | leafref → `ACL_TABLE.aclname` | - | yes | 対象 ACL テーブル名。 |
+| `acl-rule-name` | leafref → `ACL_RULE.rulename` | - | yes | 対象 ACL ルール名（`acl-table-name` と対で解決）。 |
+| `sampling-rate` | uint16 (1..10000) | - | no | 1/N パケットサンプリングレート。省略時はサンプリングなし。 |
+| `collector-name` | string (1..32) | - | no | `TAM_COLLECTOR_TABLE` のエントリ名を参照する（string 型、leafref ではない）。 |
+
+`name` の文字種: `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,32})`（最大 32 文字）。  
+`sampling-rate` の範囲外値（0 または 10001+）は YANG 制約 `error-app-tag "Invalid IFA flow sampling rate."` でブロックされる。
+
+## 購読者・処理経路
+
+- `sonic-mgmt-common` CVL: YANG ベースの設定バリデーション（`must` / `mandatory` / `leafref` 制約）
+- `sonic-swss/orchagent/portsorch.cpp`: `SAI_TAM_INT_ATTR_DEVICE_ID` に `deviceid` を設定（Path Tracing 機能）
+- `sonic-swss/orchagent/high_frequency_telemetry/hftelorch.cpp`: `SAI_TAM_COLLECTOR_ATTR_*` を参照（High Frequency Telemetry）
+
+## 関連 CONFIG_DB / YANG
+
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `ACL_TABLE`、`ACL_RULE`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-tam`、`sonic-ifa`
+
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-tam`](../yang/sonic-tam.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-ifa`](../yang/sonic-ifa.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-table`](acl-table.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-rule`](acl-rule.md)
+
+<!-- ref-triangle:end -->
+
+## 引用元
+
+[^1]: YANG 定義 (TAM): `sonic-tam.yang`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/testdata/schema/sonic-tam.yang>
+
+[^2]: YANG 定義 (IFA): `sonic-ifa.yang`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/testdata/schema/sonic-ifa.yang>
+
+[^3]: SAI 属性参照: `portsorch.cpp:11593-11609`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/portsorch.cpp#L11593>
+
+[^4]: High Frequency Telemetry TAM_COLLECTOR: `hftelorch.cpp:183-188`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/high_frequency_telemetry/hftelorch.cpp#L183>
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
+
+<!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型設定手順
+
+```bash
+# デバイス ID 設定
+sonic-db-cli CONFIG_DB hset 'TAM_DEVICE_TABLE|device' deviceid 12345
+
+# コレクタ登録
+sonic-db-cli CONFIG_DB hmset 'TAM_COLLECTOR_TABLE|col1' \
+  ipaddress-type ipv4 ipaddress 192.0.2.10 port 9999
+
+# IFA 機能有効化
+sonic-db-cli CONFIG_DB hset 'TAM_INT_IFA_FEATURE_TABLE|feature' enable true
+
+# IFA フロー設定（ACL と紐付け）
+sonic-db-cli CONFIG_DB hmset 'TAM_INT_IFA_FLOW_TABLE|flow1' \
+  acl-table-name MY_ACL acl-rule-name RULE1 \
+  sampling-rate 100 collector-name col1
+```
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'TAM_DEVICE_TABLE|device'
+sonic-db-cli CONFIG_DB hgetall 'TAM_COLLECTOR_TABLE|col1'
+sonic-db-cli CONFIG_DB hgetall 'TAM_INT_IFA_FEATURE_TABLE|feature'
+sonic-db-cli CONFIG_DB hgetall 'TAM_INT_IFA_FLOW_TABLE|flow1'
+```
+<!-- /ops-hint -->
+
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `TAM_DEVICE_TABLE.deviceid` 値別挙動
+
+| 値 | 挙動 |
+|----|------|
+| `0`（デフォルト） | TAM デバイス ID 未設定。SAI_TAM_INT_ATTR_DEVICE_ID に `0` が渡される。 |
+| `1..65535` | デバイス固有の ID として ASIC に設定される（Path Tracing で使用）。 |
+
+### `TAM_INT_IFA_FEATURE_TABLE.enable` 値別挙動
+
+| 値 | 挙動 |
+|----|------|
+| `true` | IFA 機能を有効化。フロー定義（`TAM_INT_IFA_FLOW_TABLE`）が処理される。 |
+| `false` / エントリなし | IFA 機能を無効化。フロー設定が存在しても IFA 処理は行われない。 |
+
+### `TAM_INT_IFA_FLOW_TABLE.sampling-rate` 値別挙動
+
+| 値 | 挙動 |
+|----|------|
+| 省略 | サンプリングなし（全パケット対象、または機能オフ）。 |
+| `1` | 1/1 = 全パケットサンプリング。 |
+| `100` | 1/100 パケットをサンプリング。 |
+| `10000` | 最大間引き（YANG range 上限）。 |
+
+### `TAM_COLLECTOR_TABLE.ipaddress-type` と `ipaddress` の対関係
+
+| `ipaddress-type` | `ipaddress` 形式 | YANG must 結果 |
+|-----------------|----------------|----------------|
+| `ipv4` | `192.0.2.1`（`.` 含む） | OK |
+| `ipv6` | `2001:db8::1`（`:` 含む） | OK |
+| `ipv4` | `2001:db8::1` | エラー（`ipaddress-type-mismatch`） |
+| `ipv6` | `192.0.2.1` | エラー（`ipaddress-type-mismatch`） |
+
+<!-- /value-behavior -->

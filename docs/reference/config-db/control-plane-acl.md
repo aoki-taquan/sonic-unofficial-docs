@@ -1,0 +1,319 @@
+---
+title: ACL_TABLE (CTRLPLANE) テーブル
+description: "ACL_TABLE テーブルで type=CTRLPLANE を指定した場合のコントロールプレーン ACL。SAI テーブルは生成されず、CoPP (COPP_GROUP/COPP_TRAP) 経路で制御される。"
+area: reference
+hard: 0
+verification: code-verified
+last_verified: 2026-05-14
+sources:
+  - repo: sonic-net/sonic-swss
+    path: orchagent/aclorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/aclorch.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/acltable.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-config-engine/minigraph.py
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db:
+    - ACL_TABLE
+    - ACL_RULE
+    - COPP_GROUP
+    - COPP_TRAP
+  cli:
+    - config acl
+  yang: []
+---
+
+# ACL_TABLE (CTRLPLANE) テーブル
+
+## 概要
+
+`ACL_TABLE` テーブルで `type=CTRLPLANE` を指定した場合のコントロールプレーン [ACL](../../reference/glossary.md#term-acl)。`orchagent` の `AclOrch` はこのテーブルを [SAI](../../reference/glossary.md#term-sai) に投入せず、`m_ctrlAclTables` に記録するのみ[^1]。実際の CPU 宛パケット制御は `COPP_GROUP` / `COPP_TRAP` テーブル → `coppmgr` → `CoppOrch` の別経路で行われる。
+
+!!! warning "YANG 未定義"
+    `ACL_TABLE` (CTRLPLANE 含む) は現時点で `sonic-yang-models` に該当する YANG モジュールが存在しない。スキーマの正本は `sonic-swss/orchagent/aclorch.{h,cpp}` の定数とロジック。
+
+!!! note "CTRLPLANE ACL と CoPP の関係"
+    SONiC の実装では、`ACL_TABLE|<name>` に `type=CTRLPLANE` を設定しても、orchagent は SAI テーブルを生成しない。`COPP_GROUP` / `COPP_TRAP` が CoPP を管理する本体であり、CTRLPLANE ACL テーブルは歴史的経緯によるラベルとして残っている。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>ACL_TABLE (CTRLPLANE)")]
+  DM["AclOrch"]
+  CDB --> DM
+  DM -->|"m_ctrlAclTables<br/>(SAI 投入なし)"| MEM["orchagent 内部"]
+  COPP_CDB[("CONFIG_DB<br/>COPP_GROUP / COPP_TRAP")]
+  COPPMGR["coppmgrd"]
+  COPP_CDB --> COPPMGR
+  APPDB[("APP_DB<br/>COPP_TABLE")]
+  COPPMGR --> APPDB
+  SAI["SAI<br/>sai_hostif_api"]
+  APPDB --> SAI
+```
+
+!!! note "凡例"
+    CTRLPLANE ACL テーブルは orchagent が SAI に渡さない。実際の CPU 宛パケット制御は COPP_GROUP/COPP_TRAP 経路が担う。
+<!-- /cdb-mermaid -->
+
+## key 構造
+
+```text
+ACL_TABLE|<table_name>
+```
+
+`<table_name>` はユーザ任意の文字列。`type` フィールドに `CTRLPLANE` を指定することでコントロールプレーン ACL として扱われる。
+
+## フィールド一覧
+
+| フィールド | 型 | 必須 | 説明 |
+|-----------|----|------|------|
+| `type` | `CTRLPLANE` (固定) | ✅ | コントロールプレーン ACL を示す type 値 |
+| `policy_desc` | string | - | テーブルの説明文 |
+| `stage` | enum `ingress`/`egress` | - | ACL 適用段 (CTRLPLANE では orchagent が無視) |
+| `services` | カンマ区切り string | - | サービス名リスト (orchagent が読み捨て) |
+| `ports` | カンマ区切り PORT 名 | - | バインドポート (CTRLPLANE では通常空) |
+
+## 購読者
+
+- `orchagent` の `AclOrch`: `m_ctrlAclTables` に記録するのみ。SAI テーブル未生成
+- `AclOrch::doAclRuleTask()`: `m_ctrlAclTables` に登録済みのテーブル名の ACL_RULE は INFO ログ後 erase (無視)
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `COPP_GROUP`、`COPP_TRAP`、`ACL_TABLE`、`ACL_RULE`
+- 関連 CLI: [`config acl`](../cli/config-acl.md)
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし（[YANG](../../reference/glossary.md#term-yang) 未定義）
+
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| `type=CTRLPLANE` | `AclTable::validate()` が stage チェックをスキップして即 `return true` |
+| `type=CTRLPLANE` + `addAclTable()` | SAI `create_acl_table` を呼ばず `m_ctrlAclTables` に追加して即 return |
+| `ACL_TABLE_SERVICES` フィールド | `doAclTableTask()` 内で `continue`（完全無視） |
+| `ACL_RULE` を CTRLPLANE テーブルに追加 | `doAclRuleTask()` が `m_ctrlAclTables` でキーを発見 → INFO ログ + erase |
+| default trap group DEL 試行 | `CoppOrch` が `"Cannot remove default trap group"` と WARN して task_ignore を返す |
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:2727,4680,5556,5410 -->
+<!-- /cdb-exceptions -->
+
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `type` 値別挙動 (CTRLPLANE 専用)
+
+CTRLPLANE を `TABLE_TYPE_CTRLPLANE` マクロで定義 (`acltable.h:33`)。
+
+| 値 | SAI 動作 | stage 参照 | ACL_RULE 処理 | evidence |
+|---|---|---|---|---|
+| `CTRLPLANE` | SAI テーブル非生成。`m_ctrlAclTables` 登録のみ | 無視 | INFO ログ後 erase (スキップ) | `aclorch.cpp:2727,4680,5556` |
+
+### `services` 値別挙動
+
+YANG では `must` 制約で CTRLPLANE 時に必須とされるが、orchagent は `continue` で無視する。
+
+| 経路 | 挙動 |
+|---|---|
+| minigraph.py | XML `<Type>` 要素テキストを `services` リストに追加 (minigraph.py:1232,1247) |
+| orchagent (doAclTableTask) | `continue` で完全無視 (aclorch.cpp:5410-5413) |
+| CoPP 実際の制御 | `COPP_TRAP.trap_ids` フィールドが担う (copporch.cpp:26) |
+
+### `stage` 値別挙動 (CTRLPLANE での特殊性)
+
+| 値 | 通常 ACL の動作 | CTRLPLANE での動作 |
+|---|---|---|
+| `INGRESS` | SAI_ACL_STAGE_INGRESS | validate() で stage チェックをスキップ。SAI 未投入 |
+| `EGRESS` | SAI_ACL_STAGE_EGRESS | 同上。stage 値は orchagent 内部でも実質参照されない |
+
+<!-- /value-behavior -->
+
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+YANG 未定義テーブルのため、全デフォルトはコード実装が正本。CTRLPLANE ACL 固有の挙動を重点的に列挙する。
+
+### field × 種別 一覧
+
+| フィールド | 種別 | 暗黙デフォルト値 | ソース |
+|---|---|---|---|
+| `type` | 必須フィールド、デフォルトなし | — (省略時 erase) | `aclorch.cpp:5823` |
+| `stage` | C++ struct 初期値 | **`INGRESS`** (CTRLPLANE では SAI 未送出のため実質無効) | `aclorch.h` struct メンバ初期値 |
+| `policy_desc` | minigraph fallback / 直接書き込み | **`<table_name>`** (minigraph.py 経由) / `""` (直接) | `minigraph.py:1244`, `AclTable::description` |
+| `ports` | 省略時空リスト | **`[]`** (minigraph.py は CTRLPLANE に ports をセットしない) | `minigraph.py:1229-1247` |
+| `services` | orchagent 読み捨て | **実質なし** (orchagent が `continue` で無視) | `aclorch.cpp:5410-5413` |
+
+### `stage` の詳細
+
+`AclTable` C++ struct はメンバ変数 `stage` を `ACL_STAGE_INGRESS` で初期化する。`type=CTRLPLANE` の場合、`AclTable::validate()` (aclorch.cpp:2727-2730) は `stage==ACL_STAGE_UNKNOWN` チェックを実行せずに即 `return true` するため、stage 値はバリデーションに影響しない。また `addAclTable()` (aclorch.cpp:4680-4684) は CTRLPLANE 判定後に即 return するため SAI にも送出されない。minigraph.py が `stage=ingress/egress` を設定しても、orchagent 処理では完全に無視される。
+
+### `services` の詳細
+
+YANG モデル (`sonic-acl.yang.j2:438`) には `must "(not(type = 'CTRLPLANE')) or (boolean(services))"` の制約があり、CTRLPLANE では `services` が必須とされる。しかし orchagent の `doAclTableTask()` (aclorch.cpp:5410-5413) は `attr_name == ACL_TABLE_SERVICES` のとき `continue` を実行し、このフィールドを SAI 属性リストに追加しない。実際の CPU 宛パケット制御は `COPP_TRAP` テーブルの `trap_ids` フィールドが担う。
+
+### `ports` の詳細
+
+minigraph.py は `acl_intfs` リストが空 (インターフェースバインドなし) の場合に CTRLPLANE ACL と判定し、`ports` フィールドをエントリに含めない (`minigraph.py:1207-1247`)。orchagent の `processAclTablePorts()` が呼ばれたとしても、SAI テーブルが作成されないため bind point 設定も発生しない。
+
+### CTRLPLANE ACL ルールの扱い
+
+`ACL_RULE|<ctrlplane_table>|<rule>` が CONFIG_DB に存在する場合、orchagent の `doAclRuleTask()` は `m_ctrlAclTables` でテーブルを検索し、見つかれば INFO ログ `"Skip control plane ACL rule"` を出力してエントリを erase する (aclorch.cpp:5556-5560)。ACL_RULE は SAI に一切送出されない。
+
+### LSP トレース証跡
+
+- 訪問ファイル数: 4 (`aclorch.cpp`, `aclorch.h`, `acltable.h`, `minigraph.py`)
+- 訪問関数数: 8
+- 検出 fallback: 5 件 (stage 初期値・policy_desc fallback・ports 空リスト・services 読み捨て・ルール erase)
+- 中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-defaults.md`
+
+<!-- /defaults -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `type` | minigraph.py: acl_intfs が空 (インターフェースバインドなし) | `CTRLPLANE` | `minigraph.py:1229-1247` |
+| `policy_desc` | minigraph.py: 常に | `<aclname>` (テーブル名と同値) | `minigraph.py:1244` |
+| `stage` | minigraph.py: XML `InAcl` タグ | `ingress` (orchagent では無視) | `minigraph.py:1103-1104` |
+| `stage` | minigraph.py: XML `OutAcl` タグ | `egress` (orchagent では無視) | `minigraph.py:1106-1107` |
+| `services` | minigraph.py: XML `<Type>` 要素テキスト | サービス文字列 (orchagent では無視) | `minigraph.py:1232,1247` |
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `AclOrch` は常時登録 (platform 非依存) | CTRLPLANE ACL_TABLE 購読は無条件 | `orchdaemon.cpp:533,569` |
+| `type=CTRLPLANE` | SAI テーブル非生成。`m_ctrlAclTables` に登録して即 return | `aclorch.cpp:4680-4684` |
+| `COPP_GROUP` / `COPP_TRAP` の存在 | 実際の CPU 宛パケット制御はこちらが担う。CoppOrch は platform に関係なく登録 | `orchdaemon.cpp:577` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| `TABLE_TYPE_CTRLPLANE` マクロ参照 | 4 | `aclorch.cpp:2727,3972,4680,5556`, `acltable.h:33` |
+| minigraph.py CTRLPLANE 生成 | 3 | `minigraph.py:1237,1244,1245` |
+| services `continue` (読み捨て) | 1 | `aclorch.cpp:5410-5413` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+CTRLPLANE ACL は `AclOrch::doAclTableTask()` と `doAclRuleTask()` の両方で特殊処理される。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `AclOrch` | `doAclTableTask()` → `processAclTableType()` | `type=CTRLPLANE` | `processAclTableType()` 通過 (非空文字のため reject されない) | `aclorch.cpp:5380-5388,5823` |
+| `AclOrch` | `doAclTableTask()` | `attr_name == ACL_TABLE_SERVICES` | `continue`（完全無視 — CTRLPLANE 専用フィールドのため orchagent は処理しない）| `aclorch.cpp:5410-5413` |
+| `AclOrch` | `AclTable::validate()` | `type == TABLE_TYPE_CTRLPLANE` | `stage` バリデーションをスキップして即 `return true` | `aclorch.cpp:2727-2730` |
+| `AclOrch` | `addAclTable()` | `type == TABLE_TYPE_CTRLPLANE` | SAI テーブル作成なし。`m_ctrlAclTables.emplace()` して即 return | `aclorch.cpp:4680-4684` |
+| `AclOrch` | `doAclRuleTask()` | `table_oid == SAI_NULL_OBJECT_ID` かつ `m_ctrlAclTables` にキーあり | INFO ログ `"Skip control plane ACL rule"` + erase。ルール SAI 未投入 | `aclorch.cpp:5556-5560` |
+
+> **スキャン証跡**: `doAclTableTask()` L5346-5520 および `doAclRuleTask()` L5520-5700 全行読了。`AclTable::validate()` L2725-2750、`addAclTable()` L4675-4700 確認。CTRLPLANE 固有分岐 5 件抽出。`services` フィールドの `continue` は L5410-5413 で確認、コメントに `"TODO: validate control plane ACL table has this attribute"` が残存 (L5412)。
+
+<!-- /handler-branching -->
+
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- CLI: [`config acl`](../cli/config-acl.md)
+- CONFIG_DB: [`COPP_GROUP`](copp-group.md)
+- CONFIG_DB: [`COPP_TRAP`](copp-trap.md)
+- CONFIG_DB: [`ACL_TABLE`](acl-table.md)
+
+<!-- ref-triangle:end -->
+
+## 引用元
+
+[^1]: CTRLPLANE ACL の動作は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) の `AclTable::validate()`、`addAclTable()`、`doAclTableTask()`、`doAclRuleTask()` から抽出。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/aclorch.cpp>
+
+## 関連ページ
+
+- [HLD: ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
+- [CLI: config acl](../cli/config-acl.md)
+- [CONFIG_DB: ACL_TABLE](acl-table.md)
+- [CONFIG_DB: ACL_RULE](acl-rule.md)
+- [CONFIG_DB: COPP_GROUP](copp-group.md)
+- [CONFIG_DB: COPP_TRAP](copp-trap.md)
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: ACL / CoPP / Mirror / Packet Action](../../topics/07-acl-copp-mirror/index.md)
+
+<!-- /topics-back-ref -->
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### 典型値
+
+- key 形式: `ACL_TABLE|<table-name>`。
+- `type`: `CTRLPLANE` (固定)。
+- `services`: minigraph 由来のサービス文字列 (例: `SSH`, `SNMP`, `NTP`)。orchagent は無視するため show acl 等には反映されるが SAI には送出されない。
+- `ports`: 通常空。
+
+### よくある誤設定
+
+- CTRLPLANE ACL に `ACL_RULE` を追加しても orchagent が erase するため、ルールは hardware に降りない。CPU 宛パケット制御は `COPP_GROUP` / `COPP_TRAP` で行う。
+- `services` フィールドを変更しても orchagent に影響なし。CoPP 設定は `COPP_TRAP.trap_ids` を変更する。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli CONFIG_DB hgetall 'ACL_TABLE|SNMP_SSH_WHITELIST'
+show acl table
+sonic-db-cli CONFIG_DB keys 'COPP_TRAP|*'
+```
+<!-- /ops-hint -->
+
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+CONFIG_DB の `ACL_TABLE` (CTRLPLANE) を書き込むコードパス。
+
+### minigraph
+
+`sonic-buildimage/src/sonic-config-engine/minigraph.py:1102-1249`
+
+XML `<AclInterface>` でインターフェースリストが空のとき CTRLPLANE ACL として生成。
+
+| 生成フィールド | 生成値 |
+|---|---|
+| `type` | `CTRLPLANE` |
+| `policy_desc` | `<aclname>` |
+| `stage` | `ingress` (InAcl) / `egress` (OutAcl) |
+| `services` | XML `<Type>` 要素テキスト |
+
+### CLI
+
+`sonic-utilities/config/main.py:8084-8123` — `config acl add table -t CTRLPLANE`
+
+```python
+config_db.set_entry("ACL_TABLE", table_name, table_info)
+```
+
+- `type=CTRLPLANE` を明示指定することで CTRLPLANE ACL として登録可能
+- CLI 経由の場合 `services` フィールドは設定されない
+
+### build-time デフォルト
+
+なし。`init_cfg.json.j2` に ACL_TABLE エントリは存在しない。
+
+### 死活 (runtime injection)
+
+`orchagent` の `AclOrch` は ACL_TABLE を購読するのみ（書き込みなし）。
+
+<!-- /entry-points -->
