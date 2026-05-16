@@ -102,6 +102,52 @@ show mgmt-vrf
 ```
 <!-- /ops-hint -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp VrfMgr::doTask / sonic-host-services/scripts/hostcfgd MgmtIfaceCfg::update_mgmt_vrf -->
+
+### カーネル VRF netdev 作成失敗 → SWSS_LOG_ERROR (処理継続)
+
+`VrfMgr::doTask()` で `setLink(vrfName)` が false を返した場合、`SWSS_LOG_ERROR("Failed to create vrf netdev %s")` をログ出力するが、後続の STATE_DB への `state=ok` 書き込みは **継続される**（vrfmgr.cpp:281-289）。netdev が実際には存在しないまま STATE_VRF_TABLE に `state=ok` が登録される不整合が生じる。
+
+> mgmt VRF の場合は `setLink()` が `ip link add` を実行せず table_id 6000 を内部 map に登録するのみのため、この経路では通常エラーが発生しない。
+
+### カーネル VRF netdev 削除失敗 → SWSS_LOG_ERROR (処理継続)
+
+`delLink(vrfName)` が false を返した場合、`SWSS_LOG_ERROR("Failed to remove vrf netdev %s")` をログ出力する（vrfmgr.cpp:356-358）。その直後に `SWSS_LOG_NOTICE("Removed vrf netdev %s")` が出力されるため、実際の失敗が成功ログで隠蔽される。
+
+### VRF VNI マップ設定失敗 → エントリ消費・再試行なし
+
+`doVrfVxlanTableCreateTask()` 失敗時は `SWSS_LOG_ERROR("VRF VNI Map Config Failed")` をログ出力し、エントリを消費してスキップする（vrfmgr.cpp:296-300）。**再試行しない**。
+
+### 未知オペレーション → SWSS_LOG_ERROR + ドロップ
+
+SET でも DEL でもない op コードを受信した場合、`SWSS_LOG_ERROR("Unknown operation: %s")` をログ出力してエントリを消費する（vrfmgr.cpp:365-366）。
+
+### hostcfgd: systemd サービス再起動失敗 → LOG_ERR + 即 return
+
+`MgmtIfaceCfg::update_mgmt_vrf()` (hostcfgd:1659-1666) で `systemctl stop chrony` / `restart interfaces-config` / `start chrony` のいずれかが `CalledProcessError` を送出した場合:
+
+| 失敗箇所 | エラーログ | 挙動 |
+|---------|-----------|------|
+| `systemctl stop chrony` | `syslog.LOG_ERR`: `"Failed to restart management vrf services"` | 即 `return`。残りのコマンドは実行されない |
+| `systemctl restart interfaces-config` | 同上 | chrony の stop は完了済みだが start は実行されない |
+| `systemctl start chrony` | 同上 | 即 `return` |
+
+`self.mgmt_vrf_enabled` が更新されないため、次回も同じ値で再試行が発生しうる。
+
+### hostcfgd: eth0 IP ルート削除失敗 → LOG_WARNING + return
+
+`mgmtVrfEnabled = 'true'` 時の eth0 デフォルトルート確認失敗は `syslog.LOG_WARNING`: `"MgmtIfaceCfg: Could not delete eth0 route"` をログして即 `return`（hostcfgd:1688-1691）。`ip route del` コマンド自体の失敗は `run_cmd(..., False)` により silent failure（例外なし）となる（hostcfgd:1693）。
+
+### hostcfgd: mgmtVrfEnabled が空文字列 → silent drop
+
+`data.get('mgmtVrfEnabled', '')` が空文字列の場合、`update_mgmt_vrf()` は即 `return` し、chrony / interfaces-config の再起動を一切行わない。**エラーログなし**（hostcfgd:1652-1654）。
+
+> **Evidence**: `sonic-swss/cfgmgr/vrfmgr.cpp:281-289,296-300,354-366` / `sonic-host-services/scripts/hostcfgd:1652-1693`
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -261,3 +307,145 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` が読み取るフィールド。HLD (`SONiC_in_band_mgmt_via_mgmt_Vrf_HLD.md`) ではデフォルト `"false"`、`mgmtVrfEnabled=true` のときのみ有効と規定。YANG バリデーションの対象外のため、不正値を書き込んでもバリデーションエラーにならない。
 
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp L12-16 -->
+
+| 定数名 | 値 | 型 | 定義場所 | 説明 |
+|--------|----|----|---------|------|
+| `MGMT_VRF_TABLE_ID` | `6000` | `#define` (コンパイル時定数) | `vrfmgr.cpp` L15 | mgmt VRF に割り当てる Linux ルーティングテーブル ID。通常 VRF は 1001–5097 の動的割当範囲だが、mgmt VRF のみ範囲外の固定値 6000 を使用する。変更不可。 |
+| `MGMT_VRF` | `"mgmt"` | `#define` (文字列定数) | `vrfmgr.cpp` L16 | mgmt VRF の Linux netdev 名。`setLink()` / `delLink()` 内で `vrfName == MGMT_VRF` の分岐条件として使用。YANG フィールド `mgmtVrfEnabled` の値とは独立したコード埋め込み定数。 |
+| `mgmtVrfEnabled` デフォルト | `false` | `bool` C++ ローカル変数初期値 | `vrfmgr.cpp` L234 | SET イベント受信時のローカル変数 `bool mgmt_vrf_enabled = false`。フィールドが存在しない、または `"true"` 以外の場合、false のまま処理される。 |
+| カーネル netns デフォルト | デフォルト netns（名前なし） | 暗黙値 | Linux カーネル / iproute2 | mgmt VRF 無効時（`mgmtVrfEnabled=false`）、eth0 はデフォルト network namespace（グローバル netns）に所属する。mgmt VRF 有効時は `mgmt` VRF 内の独立ルーティングテーブル（table ID 6000）に分離される。vrfmgr.cpp は netns を直接操作せず、VRF netdev を通じた分離を行う。 |
+| `VRF_TABLE_START` | `1001` | `#define` | `vrfmgr.cpp` L12 | 通常 VRF の動的割当開始 ID（mgmt VRF は対象外） |
+| `VRF_TABLE_END` | `5097` | `#define` | `vrfmgr.cpp` L13 | 通常 VRF の動的割当終了 ID（mgmt VRF は対象外） |
+
+### 補足
+
+- `MGMT_VRF_TABLE_ID = 6000` は通常 VRF の動的割当範囲（1001–5097）の外にあり、mgmt VRF 専用に予約されている。
+- `MGMT_VRF = "mgmt"` はコンパイル時に埋め込まれた名前であり、CONFIG_DB に書かれた VRF 名ではない。設定で変更することはできない。
+- Linux カーネルの network namespace（netns）は vrfmgr が直接操作するのではなく、hostcfgd が `interfaces-config` restart を通じて管理する（責務分離）。mgmt VRF 無効時のデフォルト netns は Linux のグローバル netns（名前なし）。
+
+<!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込・ファイルシステム副作用 (Phase F)
+
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp:289,303,338-339 / sonic-host-services/scripts/hostcfgd:1660-1662,1693 / sonic-buildimage/files/image_config/interfaces/interfaces.j2:9-15,88-90 / sonic-buildimage/files/image_config/interfaces/interfaces-config.sh:69 -->
+
+### vrfmgrd による副次書込み
+
+`vrfmgrd` は `MGMT_VRF_CONFIG` の SET/DEL を処理し、以下の DB へ書き込む。
+
+**SET 時（mgmtVrfEnabled=true かつ in_band_mgmt_enabled=true のみ）:**
+
+| 操作 | 対象 DB | テーブル | キー / フィールド |
+|------|--------|--------|-----------------|
+| `m_stateVrfTable.set("mgmt", [{state:"ok"}])` | STATE_DB | `VRF_TABLE` | `mgmt` / `state=ok` |
+| `m_appVrfTableProducer.set("mgmt", fields)` | APPL_DB | `VRF_TABLE` | `mgmt` |
+
+**DEL 時（または mgmtVrfEnabled=false で SET が DEL に強制変換された場合）:**
+
+| 操作 | 対象 DB | テーブル | キー |
+|------|--------|--------|------|
+| `m_appVrfTableProducer.del("mgmt")` | APPL_DB | `VRF_TABLE` | `mgmt` |
+| `m_stateVrfTable.del("mgmt")` | STATE_DB | `VRF_TABLE` | `mgmt` |
+
+> **mgmt VRF 特殊挙動**: `setLink("mgmt")` / `delLink("mgmt")` は `ip link add/del` を実行せず内部 map の更新のみ。実際のカーネル VRF netdev 作成は `hostcfgd` → `interfaces-config` が担う（責務分離）。
+
+### hostcfgd による `/etc/network/interfaces` 書込みとサービス制御
+
+`hostcfgd` は `mgmtVrfEnabled` が変化するたびに以下を順次実行する:
+
+| 順序 | 操作 | 補足 |
+|------|------|------|
+| 1 | `systemctl stop chrony` | NTP デーモンを一時停止 |
+| 2 | `systemctl restart interfaces-config` | `/etc/network/interfaces` を再生成して `ifup eth0` を実行 |
+| 3 | `systemctl start chrony` | mgmt VRF 内で NTP 再起動 |
+
+`interfaces-config` が実行する `sonic-cfggen -t interfaces.j2,/etc/network/interfaces` により、`/etc/network/interfaces` に以下が書き込まれる（`mgmtVrfEnabled=true` 時）:
+
+```text
+auto mgmt
+iface mgmt
+    vrf-table 6000
+# loopback for mgmt VRF (NTP 等が使用)
+auto lo-m
+    up ip link set dev lo-m master mgmt
+
+# eth0 stanza に追加
+iface eth0
+    vrf mgmt
+```
+
+`mgmtVrfEnabled=true` 時、eth0 の metric=202 デフォルトルートが存在する場合は `ip -4 route del default dev eth0 metric 202` も実行する。
+
+### DEL 遅延条件
+
+orchestrator が `STATE_DB.VRF_OBJECT_TABLE|mgmt` を保持する間、`isVrfObjExist()` が true を返し、`m_appVrfTableProducer.del` / `m_stateVrfTable.del` の実行が無制限に遅延する (vrfmgr.cpp:331–345)。
+
+<!-- /side-effects -->
+
+<!-- cross-refs -->
+## 暗黙参照 — `hostcfgd` が連動して読む関連テーブル (Phase C)
+
+`hostcfgd` の `MgmtIfaceCfg` クラスは `MGMT_VRF_CONFIG` と `MGMT_INTERFACE` を一体として購読し、mgmt VRF の有効化と eth0 アドレス設定を協調して管理する。また `DEVICE_METADATA` は mgmt VRF 有効化に伴うサービス再起動を通じて間接的に関与する。
+
+### 共依存テーブル (起動時 + subscribe)
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | 起動時 + subscribe | `MgmtIfaceCfg.load()` で eth0 アドレス設定を初期ロード。runtime では `update_mgmt_iface()` が MGMT_INTERFACE 変更を受けて `interfaces-config restart` を実行し、mgmt VRF への eth0 組み込みを完了させる | hostcfgd:2248, 1617-1643, 2485 |
+| [`DEVICE_METADATA`](device-metadata.md) | 起動時 + subscribe | `DeviceMetaCfg.load()` で hostname / timezone を初期取得。mgmt VRF 有効化時の SSH / NTP / chrony 再起動が `/etc/hostname` (hostname 由来) および timezone 設定に依存する | hostcfgd:2247, 2267, 2404-2408, 2492-2493 |
+
+### 暗黙参照の詳細
+
+#### MGMT_INTERFACE
+
+`hostcfgd` の `get_interface_ip("eth0")` (hostcfgd:599-600) は NTP / RADIUS の送信元 IP 解決のために `MGMT_INTERFACE` キー一覧を取得する。`mgmtVrfEnabled=true` 時に eth0 が mgmt VRF 名前空間に移動するため、**MGMT_INTERFACE に IP が設定されていないと VRF 有効化後の src_ip 解決が失敗する**。CLI (`config vrf add mgmt`) はこの順序を強制しないため、手動設定時は MGMT_INTERFACE → MGMT_VRF_CONFIG の順で設定することが推奨される。
+
+#### DEVICE_METADATA
+
+vrfmgr も MgmtIfaceCfg も `DEVICE_METADATA` を直接 subscribe して MGMT_VRF_CONFIG の動作を変えることはない。依存は「`mgmtVrfEnabled=true` → chrony / interfaces-config / SSH 再起動 → 各サービスが `DEVICE_METADATA.hostname` / `DEVICE_METADATA.timezone` を参照」という間接経路。hostname が空文字の場合、VRF 有効化後の SSH デーモン再起動で接続が不安定になる可能性がある (hostcfgd:1422, 1516)。
+
+<!-- /cross-refs -->
+
+<!-- ordering -->
+## 書込み順序依存・タイミング依存 (Phase B)
+
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp / sonic-host-services/scripts/hostcfgd MgmtIfaceCfg.update_mgmt_vrf() -->
+
+### MGMT_VRF 作成順序（vrfmgr）
+
+`MGMT_VRF_CONFIG|vrf_global` に `mgmtVrfEnabled=true` を書き込んだ場合、`vrfmgr` の `setLink("mgmt")` は通常 VRF と異なり `ip link add` を実行せず、テーブル ID 6000 を内部 map に登録するのみ（`vrfmgr.cpp:176-183`）。実際の kernel VRF netdev 作成は後続の hostcfgd が `interfaces-config` restart 経由で実施する（責務分離）。
+
+DEL 処理は `STATE_VRF_OBJECT_TABLE` に orchagent が "mgmt" オブジェクトを削除するまでループ待機する（`vrfmgr.cpp:331-335`）。orchagent の処理完了前は `delLink()` が実行されず kernel netdev が残存し続ける。
+
+### kernel netns 順序（hostcfgd）
+
+`update_mgmt_vrf()` (`hostcfgd:1659-1662`) は以下の**固定順序**でサービスを操作し、`eth0` を `mgmt` VRF に所属させる:
+
+```
+1. systemctl stop chrony
+2. systemctl restart interfaces-config   # eth0 → mgmt VRF への移動
+3. systemctl start chrony                # mgmt VRF 内で bind し直し
+```
+
+`interfaces-config` restart 失敗時は `subprocess.CalledProcessError` が送出され、chrony は停止したままになる（自動復旧なし）。
+
+`mgmtVrfEnabled=true` 完了後、`/proc/net/route` に eth0 のデフォルトルート (metric 202) が残存していれば追加で削除する（`hostcfgd:1693`）。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | vrfmgr `setLink` → hostcfgd `interfaces-config` → kernel `mgmt` netdev 作成 | 順次非同期 | APP_VRF_TABLE 登録と kernel netdev 作成は別タイミング（中間状態あり） |
+| 2 | DEL: STATE_VRF_OBJECT_TABLE orchagent 削除 → vrfmgr `delLink` が unblock | DEL 待機ループ | orchagent 完了待ち；タイムアウトなし |
+| 3 | `stop chrony` → `restart interfaces-config` → `start chrony` | 固定強制順序 | 途中失敗で chrony 停止のまま残存（手動 `systemctl start chrony` が必要） |
+| 4 | `MGMT_VRF_CONFIG=true` 確立後 → `NTP|global.vrf=mgmt` 設定 | 先行必須 | CLI は YANG reject；DB 直書き時は bypass されるためバリデーション欠如に注意 |
+| 5 | 同値再書き込み → silent drop（`interfaces-config` restart なし） | 即時スキップ | 意図的なサービス再起動には値変更（`false`→`true`）が必要 |
+| 6 | non-warm-restart 起動時: `mgmt` VRF netdev は削除されない | 起動時保護 | `vrfmgr.cpp:73-79` のスキップにより double-create 防止；hostcfgd が kernel netdev の master |
+
+<!-- /ordering -->
