@@ -133,6 +133,23 @@ YANG の `default` 節には値がないが、`bgpcfgd` (`managers_allow_list.py
 
 <!-- /defaults -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `BGP_ALLOWED_PREFIXES` テーブルの変更に伴って `bgpcfgd` の `BGPAllowListMgr` ハンドラが副次的に書き込む DB エントリは **存在しない**。出力はすべて [FRR](../../reference/glossary.md#term-frr) vtysh への設定 push (`ip prefix-list` / `ipv6 prefix-list` / `bgp community-list standard` / `route-map`) と必要に応じた peer-group `soft clear` に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `managers_allow_list.py` を `Producer`/`Table(`/`hset`/`publish`/`Notification`/`APPL_DB` で grep して 0 ヒット。出力経路は `self.cfg_mgr.push_list(cmds)` (`managers_allow_list.py:176, 209`) と `self.cfg_mgr.restart_peer_groups(peer_groups)` (`managers_allow_list.py:178, 211`) のみ |
+| STATE_DB | なし | `managers_allow_list.py` 全体に `STATE_DB` / `state_db` 参照なし。`self.cfg_mgr` (FRR ConfigMgr) のみで `state_db_conn` を保持しない |
+| COUNTERS_DB | なし | `managers_allow_list.py` 全体に `COUNTERS_DB` 参照なし。ALLOW_LIST は BGP UPDATE 経路フィルタのため統計テーブルも存在しない |
+| その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (段階 3 トレース参照、BGP UPDATE フィルタは FRR ユーザ空間で完結)。`sonic-swss/` で `BGP_ALLOWED_PREFIXES` を grep して 0 ヒット (購読 mgrd/orchagent なし) |
+
+主購読者 `BGPAllowListMgr.set_handler()` / `del_handler()` の副作用は `__update_policy()` / `__remove_policy()` 内の `cfg_mgr.push_list()` 呼出による FRR vtysh への route-map / prefix-list / community-list 投入 (`managers_allow_list.py:167-176, 200-207`) と、`__find_peer_group()` で逆引きした peer-group に対する `restart_peer_groups()` (BGP soft clear) のみ。Redis (CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB) を経由しない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- constants -->
 ## コード由来のハードコード定数 (Phase E)
 
