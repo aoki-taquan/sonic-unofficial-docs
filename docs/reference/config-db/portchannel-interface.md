@@ -327,6 +327,29 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 
 <!-- /handler-branching -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+以下の定数は `sonic-swss/cfgmgr/intfmgr.cpp` および `orchagent/intfsorch.cpp` から検出したマジックナンバー・閾値。PORTCHANNEL_INTERFACE に直接影響する定数を優先して記載する。
+
+| 定数 / マクロ名 | 値 | 定義ファイル | 意味・影響 |
+|-----------------|-----|--------------|-----------|
+| `DEFAULT_MTU_STR` | `9100` | `intfmgr.cpp:29` | サブインタフェース (`PortChannel0001.10` 形式) の親 MTU 取得失敗時のフォールバック MTU (bytes)。PORTCHANNEL_INTERFACE 属性ロウ自体の MTU は `PORTCHANNEL` テーブルで管理し、本値は直接適用されない (`intfmgr.cpp:400-402`, `intfmgr.cpp:419-420`) |
+| `LOOPBACK_DEFAULT_MTU_STR` | `65536` | `intfmgr.cpp:28` | ループバック IF 作成時のみ `ip link add <alias> mtu 65536 type dummy` で固定使用。PORTCHANNEL_INTERFACE には適用されない (`intfmgr.cpp:201`) |
+| `MTU_INHERITANCE` | `"0"` | `intfmgr.cpp:24` | サブインタフェースが親ポートの MTU を継承することを示す内部マーカー。APP_DB に `mtu=0` として書き込まれる。PORTCHANNEL 親 IF の MTU 継承にも使用 (`intfmgr.cpp:975-977`) |
+| SAI RIF タイプ (LAG) | `SAI_ROUTER_INTERFACE_TYPE_PORT` | `intfsorch.cpp:1216` | `Port::LAG` 型は `Port::PHY` / `Port::SYSTEM` と同じ `SAI_ROUTER_INTERFACE_TYPE_PORT` として SAI RIF 作成される。PORTCHANNEL_INTERFACE が L3 RIF になる際の SAI 属性 |
+| SAI RIF MTU 設定 | `port.m_mtu` (動的) | `intfsorch.cpp:1272-1274` | `SAI_ROUTER_INTERFACE_ATTR_MTU` に `port.m_mtu` を設定。値は `PORTCHANNEL` テーブルの `mtu` フィールドから取得される |
+| `nat_zone` 有効範囲 | `0..3` (uint8) | `sonic-portchannel.yang` | YANG `range` 制約。4 ゾーンのみ許容。デフォルト `0` |
+| STATE_LAG Consumer 優先度 | `200` | `intfmgr.cpp:51` | `SubscriberStateTable` の pri 引数。STATE_LAG_TABLE 変化通知のキュー優先度 |
+
+!!! note "SAI RIF タイプと MTU の補足"
+    PORTCHANNEL_INTERFACE が L3 有効化されると、orchagent (`IntfsOrch`) は `SAI_ROUTER_INTERFACE_TYPE_PORT` で SAI RIF を作成する (`intfsorch.cpp:1214-1217`)。MTU は `PORTCHANNEL` テーブルの値がそのまま `SAI_ROUTER_INTERFACE_ATTR_MTU` に渡され (`intfsorch.cpp:1272-1274`)、`intfmgr.cpp` の `DEFAULT_MTU_STR=9100` は PORTCHANNEL_INTERFACE 自体には適用されない。
+
+!!! note "デフォルト MTU の注意点"
+    `DEFAULT_MTU_STR = 9100` は PORTCHANNEL のサブインタフェース (`PortChannel0001.10` 等) の MTU フォールバック専用。PORTCHANNEL_INTERFACE (L3 RIF) の MTU を変更したい場合は `PORTCHANNEL` テーブルの `mtu` フィールドを設定すること。
+
+<!-- /constants -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
