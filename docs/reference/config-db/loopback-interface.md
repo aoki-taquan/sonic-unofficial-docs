@@ -307,14 +307,23 @@ APP_INTF_TABLE に記録される。
 
 ```
 1. is_lo = true 確認                              (alias が "Loopback" で始まる)
-2. ip link add <name> mtu 65536 type dummy       (新規作成時。MTU はハードコード)
-3. ip link set <name> master <vrf>               (vrf_name 指定時)
-   または ip link set <name> nomaster            (VRF 除去時)
-4. ip link set <name> address <mac>              (mac_addr 指定時)
-5. ip link set <name> up/down                    (adminStatus: デフォルト "up")
+2. ip link add <name> mtu 65536 type dummy       (新規作成時のみ。m_loopbackIntfList 未登録の場合)
+                                                  MTU はハードコード 65536
+3. adminStatus 正規化 → ip link set <name> up/down
+                                                  (空値・不正値は "up" にフォールバック。
+                                                   intfmgr.cpp:861-868, 870-880)
+   ※ ステップ 2–3 は is_lo ブロック内（L856-880）
+4. setIntfVrf(alias, vrf_name)                   (vrf_name 指定時。ip link set master/nomaster)
+   ※ is_lo ブロック外の共通パス（L1007-1010）
+5. setIntfMac(alias, mac) / mac_addr = "00:00:00:00:00:00" デフォルト付与
+                                                  (intfmgr.cpp:1012-1020)
 6. m_appIntfTableProducer.set(alias, data)       (APP_DB INTF_TABLE SET)
 7. m_stateIntfTable.hset(alias, "vrf", …)        (STATE_DB 書込み)
 ```
+
+> **注意**: 旧版ドキュメントではステップ 3（VRF）と 4（MAC）を admin_status 設定の前に記載していたが、
+> コード上は VRF・MAC の設定（`setIntfVrf` / `setIntfMac`）は `is_lo` ブロックの外の共通パスに位置し、
+> `ip link set up/down` の後に実行される（`intfmgr.cpp:1007-1020`）。
 
 IP プレフィクスロウ（`doIntfAddrTask()` SET パス）は属性ロウの STATE_DB 書込み後に実行される。
 
