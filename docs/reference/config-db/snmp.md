@@ -428,7 +428,7 @@ CLI (`config snmp contact/location add/modify/del`) は書き込み後に常に 
 <!-- cross-refs -->
 ## 暗黙参照 — Phase C (cross-table refs)
 
-> **調査根拠**: `snmpd.conf.j2`, `supervisord.conf.j2`, `snmp_yml_to_configdb.py`, `start.sh`, `sonic-host-services/scripts/hostcfgd`, `sonic-snmpagent/src/sonic_ax_impl/mibs/ietf/rfc1213.py` 全行精読 (2026-05-16)  
+> **調査根拠**: `snmpd.conf.j2`, `supervisord.conf.j2`, `snmp_yml_to_configdb.py`, `start.sh` 全行精読 (2026-05-15)  
 > 詳細証跡: `meta/_intermediate/cdb-flow/snmp-cross-refs.md`
 
 `SNMP` テーブルは YANG leafref を持たないが、`docker-snmp` コンテナ起動時テンプレートと hostcfgd が以下のテーブルを暗黙参照する。
@@ -440,8 +440,6 @@ CLI (`config snmp contact/location add/modify/del`) は書き込み後に常に 
 | `SNMP_AGENT_ADDRESS_CONFIG\|<ip>\|<port>\|<vrf>` | CONFIG_DB | 読み取り (agentAddress バインド先) | なし | 任意 (未定義で全 IF 公開にフォールバック) | `snmpd.conf.j2` L27–34 |
 | `SNMP_TRAP_CONFIG\|<version>TrapDest` | CONFIG_DB | 読み取り (トラップ送信先) | なし | 任意 (未定義でトラップ無効) | `snmpd.conf.j2` L145–173 |
 | `DEVICE_METADATA\|localhost` (`switch_type`) | CONFIG_DB | 読み取り (snmp-subagent 起動コマンド分岐) | なし | 必須 (未定義でコンテナ起動失敗) | `supervisord.conf.j2` L53–57 |
-| `DEVICE_METADATA\|localhost` (`hostname`) | CONFIG_DB | 読み取り (SNMP sysName OID 設定) | なし | 任意 (未設定時は OS hostname を使用) | `rfc1213.py` L730–733 (hostcfgd 経由で設定変化を検知) |
-| `MGMT_VRF_CONFIG\|vrf_global` (`mgmtVrfEnabled`) | CONFIG_DB | 読み取り (SNMP_AGENT_ADDRESS_CONFIG.vrf / SNMP_TRAP_CONFIG.vrf の前提) | なし | 任意 (mgmt VRF 使用時は VRF 名の一致が必要) | `hostcfgd` L1608–1669; `snmpd.conf.j2` L28–29, L148–168 |
 
 ### SNMP_COMMUNITY — コミュニティ文字列の前提
 
@@ -462,14 +460,6 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 ### DEVICE_METADATA.localhost.switch_type — snmp-subagent 起動モード
 
 `supervisord.conf.j2` L53–57 でテンプレート展開される。`switch_type == 'chassis-packet'` の場合は `--enable_dynamic_frequency` フラグ付きで `sonic_ax_impl` を起動する。`DEVICE_METADATA.localhost` が CONFIG_DB に存在しない場合、テンプレート展開が KeyError で失敗し docker-snmp コンテナが起動しない。
-
-### DEVICE_METADATA.localhost.hostname — SNMP sysName OID (hostcfgd)
-
-`sonic-snmpagent` の `sysNameUpdater` クラス (`rfc1213.py` L722–742) が起動時に `CONFIG_DB` の `DEVICE_METADATA|localhost` を `get_all()` で読み込み、`hostname` フィールドを `sysName` OID (`.1.3.6.1.2.1.1.5.0`) に設定する。`hostname` が存在しない場合は `socket.gethostname()` (OS hostname) にフォールバックする。hostcfgd の `DeviceMetaCfg` ハンドラ (`hostcfgd` L1482–1532) が `DEVICE_METADATA` テーブルの `hostname` 変化を検知して `hostname-config` サービスを再起動するため、OS hostname と CONFIG_DB の値が一致した状態に保たれる。
-
-### MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled — VRF バインド前提 (hostcfgd)
-
-hostcfgd の `MgmtIfaceCfg` クラス (`hostcfgd` L1605–1693) が `MGMT_VRF_CONFIG` テーブルを購読し、`mgmtVrfEnabled` の変化時に管理 VRF (`mgmt`) を有効化する。SNMP が管理 VRF 経由でアクセスを受ける場合、`SNMP_AGENT_ADDRESS_CONFIG` の `vrf` フィールドに `mgmt` を指定する必要がある (`snmpd.conf.j2` L28–29: `agentAddress ... @{{ vrf }}`)。同様に `SNMP_TRAP_CONFIG` の `vrf` フィールドが `None` 以外に設定される場合は管理 VRF が有効である必要がある (`snmpd.conf.j2` L148–168)。`MGMT_VRF_CONFIG` と `SNMP_AGENT_ADDRESS_CONFIG.vrf` の間に YANG leafref はなく、不一致でも設定は受け付けられるが snmpd がバインドに失敗する。
 
 ### SAI 参照
 
@@ -561,6 +551,44 @@ single-ASIC では NEIGH_TABLE のみ参照。multi-ASIC では host kernel ARP 
 | Dell Force10 `SSeriesMIB` (`.1.3.6.1.4.1.6027.3.10.1.2.9`) | `/proc` CPU・メモリ |
 
 Cisco / Dell 以外のハードウェアでも AgentX で OID が応答可能な状態になる点に注意。`SNMP` CONFIG_DB テーブルとは直接連携しない。
+
+### 差異 5: MGMT_VRF 環境 — agentAddress / trapsink の VRF バインド
+
+`snmpd.conf.j2` L28–29, L148–170
+
+#### agentAddress の VRF バインド
+
+`SNMP_AGENT_ADDRESS_CONFIG` の `vrf` フィールドが空でない場合、snmpd は指定 VRF のネットワーク名前空間にバインドされる。
+
+| `SNMP_AGENT_ADDRESS_CONFIG.vrf` | agentAddress 生成結果 | 効果 |
+|---------------------------------|----------------------|------|
+| 空 (`""` / 未設定) | `agentAddress udp:[<ip>]:<port>` | グローバルルーティングテーブルでバインド |
+| `"mgmt"` など MGMT_VRF 名 | `agentAddress udp:[<ip>]@mgmt:<port>` | MGMT_VRF の netns でバインド。管理 IF (`eth0`) 経由のみアクセス可能 |
+
+MGMT_VRF が有効化されている環境 (`MGMT_VRF_CONFIG.mgmtVrfEnabled = "true"`) での推奨構成。SNMP アクセスをデータプレーンから完全に分離できる。
+
+#### トラップ送信先の VRF バインド
+
+`SNMP_TRAP_CONFIG.<version>TrapDest.vrf` が `"None"` (文字列) 以外の場合、`trapsink` / `trap2sink` に `%<vrf>` サフィックスが付加される。
+
+| `SNMP_TRAP_CONFIG.<version>TrapDest.vrf` | trapsink 生成結果 |
+|------------------------------------------|-----------------|
+| `"None"` (文字列) | `trapsink <ip>:<port> <community>` (VRF なし) |
+| `"mgmt"` など VRF 名 | `trapsink <ip>:<port>%mgmt <community>` |
+
+### 差異 6: SmartSwitch DPU — switch_type == 'dpu' の挙動
+
+`supervisord.conf.j2` L53–57
+
+SmartSwitch の DPU ノード (`switch_type = 'dpu'`) は `chassis-packet` 分岐に該当しないため、snmp-subagent は `--enable_dynamic_frequency` **なし**の固定頻度モードで起動する。
+
+| `switch_type` | snmp-subagent 動作 |
+|---------------|-------------------|
+| `dpu` | 固定頻度 (`DEFAULT_UPDATE_FREQUENCY`) |
+| `chassis-packet` | 動的頻度 (`--enable_dynamic_frequency`) |
+| `npu` / `voq` / `fabric` | 固定頻度 |
+
+DPU ノードでも `DEVICE_METADATA.localhost` の存在が必須 (欠如時は KeyError でコンテナ起動失敗)。
 
 <!-- /platform -->
 
