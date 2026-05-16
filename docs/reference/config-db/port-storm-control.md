@@ -197,6 +197,20 @@ YANG にも CLI にも CBS・Green packet action・Yellow packet action は公�
 
 <!-- /cdb-exceptions -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+`PORT_STORM_CONTROL` テーブルは以下の CONFIG_DB テーブルへ暗黙的に依存する。`policerorch.cpp` は CONFIG_DB の `PORT` テーブルを直接 lookup せず、`PortsOrch` のメモリ内キャッシュを介して PORT エントリの SAI object id を取得する。
+
+| 参照先テーブル | 参照元 | 参照の性質 |
+|--------------|-------|-----------|
+| `PORT` | `PolicerOrch::handlePortStormControlTable()` — `gPortsOrch->getPort(interface_name, port)` (`policerorch.cpp:138`) | key の `<ifname>` を `PortsOrch::getPort()` で照合。PORT 未登録の場合は `SWSS_LOG_ERROR` を出力し `task_success` で silent drop (リトライなし) |
+| `PORT` (初期化状態) | `PolicerOrch::doTask()` — `gPortsOrch->allPortsReady()` (`policerorch.cpp:379`) | 全 PORT エントリ初期化完了まで `doTask()` を早期リターン。起動時に CONFIG_DB へ先書きされたエントリは silent defer される |
+| `PORT` (SAI oid) | `sai_port_api->set_port_attribute(port.m_port_id, ...)` (`policerorch.cpp:278, 291`) | `getPort()` で得た `port.m_port_id` (PORT 由来 SAI oid) を直接 SAI 呼び出しに渡す。CONFIG_DB には SAI oid は格納されない |
+
+詳細証跡: `meta/_intermediate/cdb-flow/port-storm-control-cross-refs.md`
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
