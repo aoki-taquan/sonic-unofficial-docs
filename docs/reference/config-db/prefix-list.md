@@ -133,21 +133,6 @@ vtysh -c 'show ip prefix-list'
 [^2]: [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) PrefixListMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py`
 
 
-<!-- defaults -->
-## フィールドのコード由来デフォルト
-
-PREFIX_LIST テーブルは全フィールドが key または YANG `must` 制約付きであり、コードが自動補完するデフォルト値は存在しない。
-
-| フィールド | YANG `default` | コード由来デフォルト | 根拠 |
-|-----------|---------------|-------------------|------|
-| `prefix_type` | なし (key) | なし | key フィールドのため省略不可 |
-| `ip-prefix` | なし (key) | なし | key フィールド。PrefixListMgr が `netaddr.IPNetwork().cidr` で正規化するのみ |
-| `family` | なし | なし | YANG `must` で `ip-prefix` と整合チェック。FRR 展開の IPv4/IPv6 判定は `get_ip_type()` が `ip-prefix` の netaddr version から動的に導出（`family` フィールドは不使用） |
-
-> **スキャン証跡**: `managers_prefix_list.py` L112 `data["ipv"] = self.get_ip_type(prefix)`、L138-143 `get_ip_type` 全行読了。`sonic-bgp-prefix-list.yang` の `family` leaf に `default` 文なし確認済み。
-
-<!-- /defaults -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 

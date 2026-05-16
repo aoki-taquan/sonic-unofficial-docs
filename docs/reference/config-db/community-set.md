@@ -213,35 +213,4 @@ vtysh -c 'show bgp community-list'
 
 > **スキャン証跡**: `hdl_com_set` L981-1006 全行読了。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
 <!-- /handler-branching -->
-<!-- defaults -->
-## 暗黙デフォルト・コード由来挙動 (Phase A)
-
-### `action` フィールド — dead field / ハードコード固定値
-
-- **YANG-実装 discrepancy**: YANG は `action: permit | deny` を定義するが、実装（`frrcfgd` `hdl_com_set` および `bgpd.conf.db.comm_list.j2`）は常に `permit` を FRR コマンドに埋め込む。`community_set_key_map` は `set_type`・`match_action`・`community_member` の 3 フィールドのみを処理し、`action` は抽出対象外。DB に `action: deny` を書き込んでも FRR へは `bgp community-list ... permit ...` が生成されるため、`deny` は機能しない。<!-- evidence: frrcfgd.py L1974, L998, L1005; bgpd.conf.db.comm_list.j2 L15, L18 -->
-
-### `match_action` — silent fallback (MATCH_ANY)
-
-- `CommunityList.db_data_to_attr` は `val.lower() == 'all'` のみ MATCH_ALL に分類し、それ以外の値（YANG enum 外の文字列を含む）はすべて MATCH_ANY として処理する。`ANY` 以外の予期しない文字列を書いた場合でもエラーなく MATCH_ANY 相当に fallback する。<!-- evidence: frrcfgd.py L1588-1591 -->
-
-### `community_member` — string → comma-split fallback
-
-- DB から leaf-list が文字列型で渡された場合（単一値格納など）、`val.split(',')` でリスト化して処理する。list 型なら直接使用。型によって自動変換されるため、格納形式と動作が乖離する可能性がある。<!-- evidence: frrcfgd.py L1600-1603 -->
-
-### `set_type` / `match_action` — 大文字小文字変換
-
-- DB 格納値は YANG enum に従い大文字 (`STANDARD`, `EXPANDED`, `ANY`, `ALL`) だが、frrcfgd は `.lower()` 変換後に FRR コマンドへ埋め込む (`standard`, `expanded`, `all`, `any`)。<!-- evidence: frrcfgd.py L985, L992, L1588 -->
-
-### 複合必須制約 — 3 フィールド同時欠如でサイレントスキップ
-
-- `set_type`・`match_action`・`community_member` のいずれかが欠如すると FRR コマンドが生成されない（エラーログなし）。この条件は `hdl_com_set` の冒頭ガード (`len(args) < 2 or 0/1/2 not in args[1]`) および `is_configurable()` チェックの両方で実施される。<!-- evidence: frrcfgd.py L982-983, L1580-1582 -->
-
-### DEL 時の partial failure リスク
-
-- FRR の既存 community-list を削除する `no bgp community-list` コマンドは `is_configurable() == True` の場合のみ発行される。3 フィールドが不完全な状態（片方だけ OP_DELETE になった場合など）では削除コマンドがスキップされ、FRR 側の古い設定が残留する。<!-- evidence: frrcfgd.py L989-990 -->
-
-### Jinja2 vs frrcfgd コードパスの乖離
-
-- 起動時の `bgpd.conf` 生成（Jinja2）とランタイムの設定変更（frrcfgd vtysh 直接発行）は独立したコードパス。どちらも `action` フィールドを参照せず `permit` 固定で動作する点は共通。Jinja2 側は `match_action` が `all`/`any` 以外の値の場合にサイレントスキップするが、frrcfgd 側は `all` 以外を MATCH_ANY に fallback する点で挙動が異なる。<!-- evidence: bgpd.conf.db.comm_list.j2 L10-20; frrcfgd.py L1588-1591 -->
-<!-- /defaults -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
