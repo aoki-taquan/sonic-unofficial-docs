@@ -436,6 +436,38 @@ LAG を VLAN に trunk させる場合は PORTCHANNEL_MEMBER として物理ポ�
 
 <!-- /cross-refs -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-constants.md -->
+
+### SAI lag_member_attr — create_lag_member() 時
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `SAI_LAG_MEMBER_ATTR_LAG_ID` | SAI enum | `portsorch.cpp:8152` | LAG OID を渡す必須属性 |
+| `SAI_LAG_MEMBER_ATTR_PORT_ID` | SAI enum | `portsorch.cpp:8156` | 物理ポート OID を渡す必須属性 |
+| `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE` | `true` (初期値ハードコード) | `portsorch.cpp:8162` | `status != "enabled"` かつ SYSTEM 型以外の場合、egress 無効状態で追加 |
+| `SAI_LAG_MEMBER_ATTR_INGRESS_DISABLE` | `true` (初期値ハードコード) | `portsorch.cpp:8166` | 同上、ingress も無効状態で追加 |
+
+### SAI lag_member_attr — set_lag_member_attribute() 時
+
+| 定数名 | 定義箇所 | 用途 |
+|---|---|---|
+| `SAI_LAG_MEMBER_ATTR_INGRESS_DISABLE` | `portsorch.cpp:8304` | `setCollectionOnLagMember()` 経由で ingress 許可/禁止を動的制御 |
+| `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE` | `portsorch.cpp:8335` | `setDistributionOnLagMember()` 経由で egress 許可/禁止を動的制御 |
+
+### forwarding 制御の文字列定数
+
+| 文字列 | 判定式 | 定義箇所 | 効果 |
+|---|---|---|---|
+| `"enabled"` | `member_status == "enabled"` | `portsorch.cpp:8141` | EGRESS/INGRESS_DISABLE を追加せず forwarding 有効でメンバ作成 |
+| `"enabled"` 以外 | `member_status != "enabled"` | `portsorch.cpp:8160` | EGRESS_DISABLE=true + INGRESS_DISABLE=true を付与してメンバを無効状態で作成 |
+
+> **注意**: `status` フィールドは APP_DB `LAG_MEMBER_TABLE` が保持する値。CONFIG_DB の `PORTCHANNEL_MEMBER` は key-only テーブルのため CONFIG_DB レベルのハードコード数値定数は存在しない。`min_links` 等の LAG 全体定数は [`PORTCHANNEL` テーブル](portchannel.md) を参照。
+
+<!-- /constants -->
+
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
