@@ -419,6 +419,39 @@ QUEUE テーブルの SET 処理は `QosOrch::handleQueueTable()` が `task_proc
 `scheduler` が未解決の段階で `task_need_retry` を返すため、**SCHEDULER が未解決の間は
 WRED_PROFILE の確認・適用も保留される**。
 
+### SAI queue bind 順序
+
+フィールド解決後、各 queue index に対して以下の順で SAI 呼び出しが行われる（`qosorch.cpp:1920-1944`）:
+
+1. **`applySchedulerToQueueSchedulerGroup()`** — `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` を scheduler group に設定
+2. **`applyWredProfileToQueue()`** — `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を queue オブジェクトに設定
+
+`scheduler` と `wred_profile` は独立した SAI オブジェクト（scheduler group / queue）に別々に bind される。
+`scheduler` の SAI 書き込みが成功した後に `wred_profile` が失敗した場合、scheduler は SAI に残ったまま rollback されない（部分適用）。
+
+### VOQ 4-token key の順序制約
+
+VOQ シャーシ (`gMySwitchType == "voq"`) では key は 4 トークン必須（`qosorch.cpp:1772-1799`）:
+
+```
+QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
+```
+
+`handleQueueTable` は token[0]==`gMyHostName` かつ token[1]==`gMyAsicName`（大文字小文字無視）の場合のみ `local_port = true` としてローカルポートとして処理する。それ以外はリモートシステムポート扱いで `applySchedulerToQueueSchedulerGroup` の VOQ 分岐が `return true` (no-op) を返す。
+
+**VOQ 環境での投入要件**: `hostname` と `asic_name` が自 ASIC と一致するエントリのみ scheduler 適用が実行される。リモートポートへの scheduler 適用は意図的にスキップされる。
+
+### bufferorch との関係 (BUFFER_QUEUE)
+
+`bufferorch` は `BUFFER_QUEUE` テーブル (APPL_DB) を購読し、`SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` を設定する。これは `qosorch` の QUEUE テーブル処理とは独立した経路だが、同一 queue OID を共有する:
+
+| orch | テーブル | SAI 属性 | 先行必須 |
+|------|---------|---------|---------|
+| `qosorch` | `QUEUE` (CONFIG_DB) | `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` / `SAI_QUEUE_ATTR_WRED_PROFILE_ID` | PORT, SCHEDULER, WRED_PROFILE |
+| `bufferorch` | `BUFFER_QUEUE` (APPL_DB) | `SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` | PORT, BUFFER_PROFILE |
+
+`bufferorch.processQueue()` も VOQ 4-token key を同じロジックで処理する（`bufferorch.cpp:920-944`）。BUFFER_PROFILE が未解決の場合は `task_need_retry`。
+
 ### DEL 時の順序制約
 
 DEL ハンドラは参照先（SCHEDULER / WRED_PROFILE）の存在チェックを行わず、SAI attribute を
@@ -434,7 +467,11 @@ allPortsReady() = true → QosOrch アンブロック
   ↓
 SCHEDULER / WRED_PROFILE エントリが CONFIG_DB に存在
   ↓
-QUEUE エントリを投入 → QosOrch が OID 解決 → SAI 適用
+QUEUE エントリを投入
+  ↓ resolveFieldRefValue: scheduler → wred_profile の順に OID 解決
+  ↓ for each port_name / queue_ind:
+      applySchedulerToQueueSchedulerGroup() → SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID
+      applyWredProfileToQueue()             → SAI_QUEUE_ATTR_WRED_PROFILE_ID
 ```
 
 実運用では `config qos reload` が `qos_config.j2` テンプレートから
@@ -510,7 +547,7 @@ DPC (Direct Port Connect) ポートは q3/q4 の lossless 設定を省略する�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/queue-side.md`
+> 詳細証跡: `meta/_intermediate/cdb-flow/queue-side-effects.md`
 
 QUEUE テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。
 
@@ -572,5 +609,92 @@ VoQ モードでは `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が自動追加�
 
 <!-- 証跡: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/qosorch.cpp, sonic-swss/orchagent/flexcounterorch.cpp -->
 <!-- /side-effects -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 証跡: `meta/_intermediate/cdb-flow/queue-cross-refs.md`
+
+YANG leafref に加え、`qosorch.cpp` の実装レベルで依存する他テーブルを示す。
+
+| 参照先テーブル | YANG leafref | 参照種別 | 参照元コード | 非充足時の挙動 |
+|---------------|:------------:|---------|------------|--------------|
+| `SCHEDULER` | ✅ (`scheduler` フィールド) | 必須: OID 解決 → `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` 設定 | `qosorch.cpp:1822-1854` | `task_need_retry`。SCHEDULER 登録後に自動再試行。解決不可なら `task_failed` |
+| `WRED_PROFILE` | ✅ (`wred_profile` フィールド) | 必須: OID 解決 → `SAI_QUEUE_ATTR_WRED_PROFILE_ID` 設定 | `qosorch.cpp:1857-1887` | `task_need_retry`。WRED_PROFILE 登録後に自動再試行。解決不可なら `task_failed` |
+| `PORT` | ✅ (`ifname` key の leafref) | 必須: `gPortsOrch->getPort()` で OID 取得。PortInitDone ゲート | `qosorch.cpp:1911-1914`, `2258` | `task_invalid_entry`（retry なし、恒久スキップ） |
+| `PORT_QOS_MAP` | ✗ | 実行順序先行依存: `doTask()` で `PORT_QOS_MAP` を QUEUE より先に drain | `qosorch.cpp:2231-2260` | 直接エラーなし。QUEUE の SAI 適用タイミングに影響 |
+
+### 解決順序の詳細
+
+`handleQueueTable()` は `scheduler` → `wred_profile` の順に `resolveFieldRefValue` を呼び出す。`scheduler` が未解決の段階で `task_need_retry` を返すため、**SCHEDULER が未解決の間は WRED_PROFILE の確認・適用も保留される**。
+
+`doTask()` (L2231) は以下の実行順序を強制する:
+
+1. `SCHEDULER` / `WRED_PROFILE` などの参照先テーブルを先に drain
+2. `PORT_QOS_MAP` を drain
+3. 最後に `QUEUE` を drain（参照先が揃った状態で実行し `task_need_retry` を最小化）
+
+PORT が PortInitDone 済みでない状態で QUEUE エントリを書いても `task_invalid_entry` となりリトライキューに残らない。必ず `portsyncd` が PortInitDone を発行した後に投入すること。
+
+<!-- /cross-refs -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+QUEUE テーブル処理でコード内に固定された定数の一覧。`scheduler` / `wred_profile` 以外のフィールドは存在せず、フィールド数は最少クラスに属する。
+
+### フィールド名文字列定数 (`qosorch.h`)
+
+| 定数名 | 値 | 行 |
+|---|---|---|
+| `scheduler_field_name` | `"scheduler"` | `qosorch.h:22` |
+| `wred_profile_field_name` | `"wred_profile"` | `qosorch.h:39` |
+
+### key 区切り文字定数 (`orch.h`)
+
+| 定数名 | 値 | 用途 | 行 |
+|---|---|---|---|
+| `config_db_key_delimiter` | `'|'` | key トークン分割 | `orch.h:37` |
+| `range_specifier` | `'-'` | `qindex` 範囲 `X-Y` の区切り | `orch.h:36` |
+
+### key トークン数制約
+
+| 環境 | 要求トークン数 | 違反時の動作 |
+|---|---|---|
+| 非 [VOQ](../../reference/glossary.md#term-voq) | **2** (`ifname|qindex`) | `task_invalid_entry` (`qosorch.cpp:1801`) |
+| [VOQ](../../reference/glossary.md#term-voq) | **4** (`hostname|asic_name|ifname|qindex`) | `task_invalid_entry` (`qosorch.cpp:1774`) |
+
+### `parseIndexRange` 制約 (`orch.cpp:1024`)
+
+| 制約 | 値 |
+|---|---|
+| 単一インデックス | 符号なし整数 (`stoul`) |
+| 範囲形式 | `X-Y` で **X < Y** が必須。X >= Y は `task_invalid_entry` |
+| 型 | `sai_uint32_t` (uint32) |
+
+YANG 型は `string` のため YANG バリデーションでは弾かれないが、orchagent がエントリを捨てる。
+
+### SAI 属性 ID 定数
+
+| 定数名 | 用途 | ソース |
+|---|---|---|
+| `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` | scheduler を queue の scheduler group に設定 | `qosorch.cpp:1689` |
+| `SAI_QUEUE_ATTR_WRED_PROFILE_ID` | WRED プロファイルを queue に設定 | `qosorch.cpp:1735` |
+| `SAI_NULL_OBJECT_ID` | フィールド削除時に NULL OID を設定して解除 | `qosorch.cpp:1842, 1877` |
+
+### ビルド時デフォルト queue 割当 (`qos_config.j2`)
+
+標準 L2/L3 ポート（非 DPC）:
+
+| qindex | `scheduler` | `wred_profile` |
+|---|---|---|
+| `3`, `4` | `"scheduler.1"` | `"AZURE_LOSSLESS"` |
+| `0`, `1`, `2`, `5`, `6` | `"scheduler.0"` | (なし) |
+
+DPC ポートは q3/q4 も `"scheduler.0"` (lossless なし)。VOQ remote port には scheduler 未適用。`SELECT_TIMEOUT` = `1000` ms（`orchdaemon.cpp:23`）。
+
+> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/queue-constants.md`
+
+<!-- /constants -->
 
 <!-- glossary-links-injected: f9445b5b4106 -->

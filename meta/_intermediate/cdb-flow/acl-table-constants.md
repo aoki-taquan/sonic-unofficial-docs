@@ -110,9 +110,37 @@ enum 定義: `aclorch.cpp:124`。STATUS_DB キー: `STATE_ACL_TABLE_TABLE_NAME` 
 
 ---
 
+## SAI ACL table 作成時属性定数 (aclorch.cpp:2823-2847)
+
+`AclTable::create()` が `sai_acl_api->create_acl_table()` 呼び出し時に設定する SAI 属性定数:
+
+| SAI 属性定数 | 設定値の由来 | 行 |
+|---|---|---|
+| `SAI_ACL_TABLE_ATTR_ACL_STAGE` | `STAGE_INGRESS` / `STAGE_EGRESS` → `SAI_ACL_STAGE_*` | `aclorch.cpp:2842` |
+| `SAI_ACL_TABLE_ATTR_ACL_BIND_POINT_TYPE_LIST` | `aclBindPointTypeLookup` 経由 | `aclorch.cpp:2823` |
+| `SAI_ACL_TABLE_ATTR_ACL_ACTION_TYPE_LIST` | `addMandatoryActions()` + type/stage 組み合わせ | `aclorch.cpp:2835` |
+| `SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE` | L4 ポート範囲 match (BRCM EGRESS では省略) | `aclorch.cpp:603,2614` |
+| `SAI_ACL_TABLE_ATTR_FIELD_IN_PORTS` | PFCWD / DROP type 固有 match | `aclorch.cpp:436,448` |
+| `SAI_ACL_TABLE_ATTR_FIELD_ACL_USER_META` | EGR_SET_DSCP type 固有 match | `aclorch.cpp:494` |
+
+---
+
+## ACL_RULE priority 定数 (aclorch.h:25, aclorch.cpp:22-23)
+
+CONFIG_DB フィールドキー: `RULE_PRIORITY = "PRIORITY"` (`aclorch.h:25`)。
+
+| 定数 | 型 | 初期値 | SAI 取得元 | 行 |
+|---|---|---|---|---|
+| `AclRule::m_minPriority` | `sai_uint32_t` | `0` | `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` | `aclorch.cpp:22, 3689` |
+| `AclRule::m_maxPriority` | `sai_uint32_t` | `0` | `SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY` | `aclorch.cpp:23, 3690` |
+
+`AclOrch::init()` 起動時に `sai_switch_api->get_switch_attribute()` で動的取得 (`aclorch.cpp:3689-3700`)。取得失敗時は 0 のまま（全値 reject）。`setPriority()` で `[m_minPriority, m_maxPriority]` 範囲外は erase (`aclorch.cpp:1656-1662`)。
+
+---
+
 ## スキャン証跡
 
 - `acltable.h:1-76` 全行精読 — フィールドキー・stage・type・enum・lookup map すべて確認
-- `aclorch.h:62-63` — BIND_POINT_TYPE マクロ確認
-- `aclorch.cpp:42-44, 105-106, 523-526, 6088-6105` — STATUS 値・バインドポイント lookup・STATE_DB 書込み確認
+- `aclorch.h:25,62-63` — RULE_PRIORITY・BIND_POINT_TYPE マクロ確認
+- `aclorch.cpp:22-23, 42-44, 105-106, 436, 448, 494, 523-526, 603, 2614-2650, 2823-2847, 3689-3700, 6088-6105` — SAI 属性・priority 範囲・STATUS 値・バインドポイント lookup・STATE_DB 書込み確認
 - `schema.h:94-95, 514` — APP_DB / STATE_DB テーブル名確認

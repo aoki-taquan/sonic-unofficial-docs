@@ -511,6 +511,64 @@ allPortsReady() = true → VLAN / LAG / INTERFACE / ACL orch がアンブロッ�
 
 **orchList 順序** (`orchdaemon.cpp:500`): `gSwitchOrch → gCrmOrch → gPortsOrch → gBufferOrch → ...`。PortsOrch は 3 番目だが、BufferOrch の ready 判定まで PORT の最終ハードウェア反映は保留される。
 
+### PORT 作成時 CreateOnly 属性順序 (addPortBulk)
+
+`PortsOrch::addPortBulk()` が SAI `create_port()` に渡す属性は以下の順序で `attrList` に積まれる（`portsorch.cpp:1292-1360`）。これらは **CreateOnly** 属性であり、ポート作成後は変更不可。
+
+| 順序 | SAI 属性 | CONFIG_DB フィールド | 条件 |
+|------|---------|---------------------|------|
+| 1 | `SAI_PORT_ATTR_HW_LANE_LIST` | `lanes` | `lanes.is_set` が true（通常は必須） |
+| 2 | `SAI_PORT_ATTR_SPEED` | `speed` | `speed.is_set` が true |
+| 3 | `SAI_PORT_ATTR_AUTO_NEG_MODE` | `autoneg` | `autoneg.is_set` が true |
+| 4 | `SAI_PORT_ATTR_FEC_MODE` + `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` | `fec` | `fec.is_set` が true |
+| 5 | `SAI_PORT_ATTR_TPID` | `tpid` | `tpid != DEFAULT_TPID(0x8100)` のときのみ追加 |
+
+> **注意**: `SAI_PORT_ATTR_HW_LANE_LIST` と `SAI_PORT_ATTR_SPEED` は SAI 仕様上 mandatory。`lanes` または `speed` がない状態で SAI `create_port()` を呼ぶと SAI_STATUS_INVALID_PARAMETER が返り、ポート作成は失敗する。`tpid == 0x8100`（ハードウェアデフォルト）の場合は属性を追加しないことで不要な SAI 呼び出しを避ける。
+
+### Dynamic Port Breakout (DPB) シーケンス
+
+ポートの breakout（例: 1x100G → 4x25G）は PORT テーブルの書き直しで実現される。`PortsOrch::doTask()` が `PORT_CONFIG_RECEIVED` 状態になったとき、既存ポートと新設定を比較して差分を処理する（`portsorch.cpp:4695-4768`）:
+
+```
+[DPB 実行順序]
+1. DEL: 旧レーン構成のポートを removePortBulk() で一括削除
+   (m_portListLaneMap から消えたエントリが対象)
+     ↓
+2. ADD: 新レーン構成のポートを addPortBulk() で一括作成
+   (m_lanesAliasSpeedMap に新規追加されたエントリが対象)
+     ↓
+3. INIT: initPortsBulk() でバッファカウンタ・PG・serdes などを初期化
+     ↓
+4. 通常の SET 処理再開 (speed / mtu / admin_status etc.)
+```
+
+- **DEL が先行**: PortsOrch は同一レーンセットの旧ポートを先に `removePortBulk()` で削除してから新ポートを `addPortBulk()` で作成する。この 2 ステップは同一 `doTask()` 呼び出し内でアトミックに実行される（`portsorch.cpp:4712-4748`）。
+- **Breakout 中の副作用**: `addSubPort()` は親ポートの `hostif` VLAN tag を変更する（最初のサブポート追加時: `portsorch.cpp:2059-2067`）。最後のサブポート削除時に親ポートの hostif tag を復元する（`portsorch.cpp:2122-2130`）。
+- **前提条件**: DPB 実行前に対象ポートの `VLAN_MEMBER` / `PORTCHANNEL_MEMBER` / `INTERFACE` / `BUFFER_PG` / `BUFFER_QUEUE` を全て DEL しておく必要がある（`m_port_ref_count == 0` 要件）。
+
+### host_tx_ready 同期メカニズム
+
+`host_tx_ready` は `STATE_DB|PORT_TABLE|<port>` の `host_tx_ready` フィールドに書き込まれ、CMIS モジュール（光トランシーバ）と ASIC の TX 同期状態を示す。
+
+#### 初期化
+
+- ポート作成後の `initPortsBulk()` 内で `initHostTxReadyState()` を呼び出し、`host_tx_ready` が STATE_DB に存在しなければ `"false"` で初期化する（`portsorch.cpp:5494`）。
+
+#### admin_status との連動 (レガシーモード: `m_cmisModuleAsicSyncSupported == false`)
+
+`setPortAdminStatus()` の中で `host_tx_ready` を更新する（`portsorch.cpp:2213-2274`）:
+
+| タイミング | `host_tx_ready` の値 | 条件 |
+|-----------|---------------------|------|
+| `admin_status=down` 設定前 | `"false"` に設定 | `!m_cmisModuleAsicSyncSupported` |
+| SAI set_attribute 失敗時 | `"false"` に設定 | `!m_cmisModuleAsicSyncSupported` |
+| gearbox 設定失敗時 | `"false"` に設定 | `!m_cmisModuleAsicSyncSupported` |
+| `admin_status=up` かつ SAI/gearbox 成功後 | `"true"` に設定 | `!m_cmisModuleAsicSyncSupported` |
+
+#### CMIS Async モード (`m_cmisModuleAsicSyncSupported == true`)
+
+SAI から `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` コールバック（`on_port_host_tx_ready`）が非同期で通知される方式。admin_status 変更時は `host_tx_ready` を直接変更せず、コールバック受信時に `setHostTxReady()` で STATE_DB を更新する（`portsorch.cpp:9709-9724`）。このモードは `SAI_SWITCH_ATTR_RW_HW_TX_SIGNAL_SUPPORT` と `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` が両方サポートされる場合にのみ有効（`portsorch.cpp:969-980`）。
+
 <!-- /ordering -->
 
 <!-- pubsub -->
@@ -681,6 +739,30 @@ PORT テーブルの SET 処理は `PortsOrch::doTask()` のタスクキュー (
 | **`task_need_retry` → `it++`** | SAI 一時エラー (autoneg / speed / adv_speeds / interface_type / adv_interface_types / link_training) | SAI が `task_need_retry` を返した場合に限りリトライ |
 | **`task_failed` → タスク削除** | autoneg/link_training 非サポート HW, fast_linkup 失敗, fec=auto 非サポート, fec 非サポートモード, link_training on non-PHY | CONFIG_DB の値は残るが実装に反映されない |
 
+### ポート作成時の失敗 (create_ports)
+
+PORT エントリの初回 SET 時に `PortsOrch::addPortBulk()` が SAI の `create_ports()` を呼び出す。この段階の失敗は以下の 2 パターン。
+
+#### lanes 不一致 → invalid (return false)
+
+CONFIG_DB の `lanes` フィールドに指定されたレーン組み合わせがスイッチの `m_portListLaneMap` に存在しない場合:
+
+```
+SWSS_LOG_ERROR("Failed to locate port lane combination alias:%s", alias.c_str());
+return false;
+```
+
+`portsorch.cpp:4025-4031` — `initPort()` がレーン組み合わせ検索に失敗すると即 `return false`。orchagent は当該 PORT エントリを破棄し、**retry なし**。CONFIG_DB の `lanes` 値が HW と一致するまでポートは作成されない。
+
+#### SAI `create_ports()` 一括失敗 → SWSS_LOG_THROW (orchagent abort)
+
+`addPortBulk()` の SAI bulk 呼び出しが失敗した場合:
+
+- **バッチ全体失敗** (`status != SAI_STATUS_SUCCESS`): `SWSS_LOG_ERROR "Failed to create ports with bulk operation, rv:%d"` → `handleSaiCreateStatus` → `task_success` 以外なら `SWSS_LOG_THROW "PortsOrch bulk create failure"` → orchagent プロセス abort → supervisor restart (`portsorch.cpp:1450-1461`)
+- **個別ポート失敗** (`statusList[i] != SAI_STATUS_SUCCESS`): 同様に `SWSS_LOG_ERROR "Failed to create port %s with bulk operation, rv:%d"` → `SWSS_LOG_THROW` (`portsorch.cpp:1466-1479`)
+
+**retry なし。orchagent が supervisor に再起動される。** `SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` を指定しているため、SAI 実装によっては一部ポートのみ失敗が返る場合がある。
+
 ### フィールド別 retry / failure 詳細
 
 #### `autoneg`
@@ -697,6 +779,7 @@ PORT テーブルの SET 処理は `PortsOrch::doTask()` のタスクキュー (
 
 #### `speed`
 
+- **非サポート speed**: `isSpeedSupported()` が false → `SWSS_LOG_ERROR "Unsupported port %s speed %u"` → `it = taskMap.erase(it)` (タスク削除、**retry なし**) (`portsorch.cpp:5024-5033`)。`isSpeedSupported()` が SAI の速度能力リストを取得できないプラットフォーム (`SAI_STATUS_NOT_IMPLEMENTED` 等) では SWSS_LOG_WARN を出して speed 検証をスキップし、任意値を SAI に渡す (`portsorch.cpp:3144-3148`)
 - 変更前一時 DOWN 失敗: `SWSS_LOG_ERROR "Failed to set port %s admin status DOWN to set speed"` → `it++` (`portsorch.cpp:5040-5045`)
 - `setPortSpeed` 失敗: `task_need_retry` / `task_failed` 分岐 (`portsorch.cpp:5052-5067`)
 
@@ -777,6 +860,8 @@ if (!gBufferOrch->isPortReady(pCfg.key))
 > 詳細証跡: `meta/_intermediate/cdb-flow/port-side-effects.md`
 
 CONFIG_DB の PORT テーブルへの SET/DEL は複数の DB に副次的な書き込みを引き起こす。以下は portmgrd・PortsOrch・portsyncd の実装精読から抽出した全副次書き込み。
+
+> **ソース精読メモ**: `APPL_DB PORT_TABLE_TX_READY` という独立テーブルは `portsorch.cpp` に存在しない。`host_tx_ready` フィールドは **STATE_DB の `PORT_TABLE`** (`m_portStateTable`) に書き込まれる (`portsorch.cpp:2274`)。また **APPL_STATE_DB** は portsorch の PORT 処理では使用されない（`ResponsePublisher::publish()` が PORT テーブルに対して呼ばれていないため）。
 
 ### portmgrd — APPL_DB への転送
 
@@ -949,5 +1034,44 @@ elif not port.get('fec') and port.get('speed') == '100000':
 
 - 100G ポートは `FECDisabled=true` の minigraph プロパティがない限り自動的に `fec: rs` が設定される。
 - 25G、40G、400G 等は明示指定が必要 (`port_config.ini` に記載するか `config interface fec` で変更)。
+
+### Gearbox 差異
+
+Gearbox（外付け PHY）が搭載されたプラットフォーム（例: Barefoot/Tofino 向けアドオン PHY 実装）では、通常の ASIC ポートと異なる初期化フローが走る。
+
+- `_GEARBOX_TABLE` に PHY / Interface / Lane / Port マップが存在する場合、`initGearbox()` (`portsorch.cpp:10372`) が `m_gearboxEnabled=true` に設定する。
+- ポートごとに `initGearboxPort()` (`portsorch.cpp:10402`) が呼ばれ、ASIC ポートに加えて **system-side ポート**と **line-side ポート**の 2 つの SAI ポートオブジェクトが別途作成される。
+  - system-side: ASIC 側の SAI ポート (PHY スイッチ OID で作成)
+  - line-side: 光ファイバ側の SAI ポート (PHY スイッチ OID で作成)
+- Gearbox 有効時のポート速度変更は `m_gearboxTable->hset()` (`portsorch.cpp:3421`) で `_GEARBOX_TABLE` にも書き込む。
+- Gearbox 無効環境では `initGearboxPort()` は no-op となり、通常の単一 SAI ポートのみが作成される。
+- カウンタは `GB_COUNTERS_DB` (`COUNTERS_PORT_NAME_MAP`) に `<alias>_system` / `<alias>_line` キーで記録される (`portsorch.cpp:10650-10656`)。
+
+### VOQ Chassis (system_port) 差異
+
+`gMySwitchType == "voq"` の VOQ chassis 構成では、PORT テーブルに加えて **SYSTEM_PORT** が SAI レイヤに登録される。
+
+- `PortInitDone` 受信後、`addSystemPorts()` (`portsorch.cpp:10864`) が呼ばれ、`APP_SYSTEM_PORT_TABLE` から `switch_id` / `core_index` / `core_port_index` / `system_port_id` を読み取り `SAI_SYSTEM_PORT_ATTR_CONFIG_INFO` で SAI に登録する。
+- PORT テーブルの `core_id` / `core_port_index` / `num_voq` フィールドは VOQ chassis 専用。非 VOQ 環境では設定しても参照されない。
+- `lanes` フィールドは YANG の `when` 条件により `switch_type=voq` / `chassis-packet` / `fabric` の場合は必須でなくなる。
+- VOQ 環境のポートは `SAI_QUEUE_TYPE_UNICAST_VOQ` キューを持ち、カウンタも `COUNTERS_VOQ_NAME_MAP` に記録される (`portsorch.cpp:779`)。
+- ポート作成後、VOQ 環境では `removeDefaultVlanMembers()` と `removeDefaultBridgePorts()` が追加実行される (`portsorch.cpp:1496-1499`)。
+- LAG メンバーの switch_id 整合性チェック: VOQ 環境では `CHASSIS_APP_LAG_MEMBER_TABLE_NAME` 経由のメンバーについて `port.m_system_port_info.switch_id == lag_switch_id` を検証し、不一致はタスク破棄 (`portsorch.cpp:6308-6315`)。
+
+### SAI port_serdes 差異
+
+`SAI_PORT_ATTR_PORT_SERDES_ID` / `sai_port_api->create_port_serdes()` で管理される SerDes チューニング値は、ASIC / Gearbox line-side / Gearbox system-side の 3 種に分岐する。
+
+| SerDes 対象 | SAI スイッチ OID | 設定タイミング |
+|------------|----------------|-------------|
+| ASIC ポート (`m_port_id`) | `gSwitchId` | `doPortTask` 処理中 (`portsorch.cpp:4541`) |
+| Gearbox system-side (`m_system_side_id`) | PHY OID (`phyOid`) | `initGearboxPort()` 内 (`portsorch.cpp:10671`) |
+| Gearbox line-side (`m_line_side_id`) | PHY OID (`phyOid`) | `initGearboxPort()` 内 (`portsorch.cpp:10691`) |
+
+- SerDes 属性適用前にポートを **admin DOWN** にする必要がある (`portsorch.cpp:4527-4538`)。admin UP 状態での設定変更は不可。
+- Gearbox 非搭載環境では `m_system_side_id` / `m_line_side_id` は未設定のままとなり、ASIC ポートのみに SerDes が適用される。
+- `setPortSerdesAttribute()` (`portsorch.cpp:10123`) は既存の serdes オブジェクトを remove してから再作成する（create-only 属性のため）。このとき `m_portIdToSerdesId` マップと `COUNTERS_DB/COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` の両方を更新する。
+- プラットフォームが `SAI_PORT_SERDES_ATTR_PORT_ID` を未実装の場合、`sai_port_api->get_port_attribute(SAI_PORT_ATTR_PORT_SERDES_ID)` が失敗し ERROR ログ後にタスクが中断される。
+- FlexCounter の `PORT_PHY_SERDES_ATTR` カウンタは `getPortPhySerdesSupportedAttrs()` で実際にサポートされる属性のみ登録する (`portsorch.cpp:4177-4181`)。
 
 <!-- /platform -->

@@ -47,6 +47,73 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
+<!-- defaults -->
+## コード由来デフォルト
+
+### field: `mtu`
+
+`intfmgr.cpp:24` で `#define MTU_INHERITANCE "0"` と定義され、CONFIG_DB の `mtu` フィールドが省略された場合に APP_DB へ `mtu = "0"` を書き込むことで「親 IF の MTU を継承」を表現する。
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:973-978
+if (!mtu.empty())
+{
+    string parentMtu = getIntfMtu(subIf.parentIntf());
+    subintf_mtu = setHostSubIntfMtu(alias, mtu, parentMtu);
+    // ...
+}
+else
+{
+    FieldValueTuple fvTuple("mtu", MTU_INHERITANCE);
+    data.push_back(fvTuple);
+    m_subIntfList[alias].mtu = MTU_INHERITANCE;
+}
+```
+
+親 IF の MTU が取得できない場合は `updateSubIntfMtu()` で `DEFAULT_MTU_STR = 9100` (intfmgr.cpp:29) にフォールバック。
+
+### field: `admin_status`
+
+`intfmgr.cpp:980-985` で `adminStatus.empty()` の場合に `"up"` を補完し APP_DB へ書き戻す。実効値は親 IF の admin_status との合成 (`setHostSubIntfAdminStatus`, intfmgr.cpp:512-525): 親が `down` のときは sub-IF も `down` に従う。
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:980-985
+if (adminStatus.empty())
+{
+    adminStatus = "up";
+    FieldValueTuple fvTuple("admin_status", adminStatus);
+    data.push_back(fvTuple);
+}
+```
+
+### field: `vlan` (encapsulation VLAN ID)
+
+short-name 形式 (`Po1.10` / `Eth0.100`) では `vlan` フィールドは必須。`intfmgr.cpp:936-940` で `vlanId == "0"` または空のときは `addHostSubIntf` を呼ばずに `return false` でリトライ待ちになる。
+
+long-name 形式 (`Ethernet0.100` / `PortChannel10.100`) では `subIntf::subIntfIdx()` が名前のドット後 ID を自動採用する (intfmgr.cpp:763-767)。
+
+### parent / sub-IF 関係
+
+`<parent>.<vlanId>` 形式の alias から `subIntf::parentIntf()` で親 IF を導出。`parentAlias.empty()` でない経路でのみ上記の MTU / admin_status 既定処理が動く (intfmgr.cpp:931 以降)。親 IF が `isIntfStateOk()` を満たさない場合は `return false` でリトライ待ち。親 MTU を `setHostSubIntfMtu` 内で上限としてクランプする。
+
+### 関連: vlanmgr.cpp の VLAN tag 既定 (参考)
+
+`vlanmgr.cpp:18` で `#define DEFAULT_VLAN_ID "1"` (bridge default VLAN)、`VLAN_MEMBER.tagging_mode` の暗黙既定は `"untagged"` (vlanmgr.cpp:648)。VLAN_SUB_INTERFACE は kernel 上で `type vlan id` の sub-IF として作られ、bridge default VLAN とは独立な経路。
+
+### デフォルト要約
+
+| フィールド | コード由来デフォルト | 出典 |
+|-----------|---------------------|------|
+| `mtu` | `"0"` (MTU_INHERITANCE、親継承) | intfmgr.cpp:24, 975-977 |
+| `admin_status` | `"up"` (親が `down` なら親に従う) | intfmgr.cpp:982-983, 512-525 |
+| `vlan` (short-name) | なし (必須、未設定はリトライ待ち) | intfmgr.cpp:936-940 |
+| `vlan` (long-name) | 名前のドット後 ID を自動採用 | intfmgr.cpp:763-767 |
+| `loopback_action` / `vrf_name` / `vnet_name` | なし (省略時 APP_DB に書かない) | intfmgr.cpp:789-828 |
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/vlan-sub-interface-defaults.md` 参照。
+
+<!-- /defaults -->
+
 ## key 構造
 
 ```text
