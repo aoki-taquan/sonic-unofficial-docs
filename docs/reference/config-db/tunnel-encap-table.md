@@ -118,6 +118,55 @@ APPL_DB:   P4RT_TABLE:FIXED_TUNNEL_TABLE:<json_key>
 - 関連 YANG: なし
 - 関連 CLI: なし（P4RT controller が直接 APPL_DB に書き込む）
 
+<!-- ordering -->
+## 処理順序・依存関係・Warm-reboot 挙動
+
+### P4Orch 内の ADD 優先順位
+
+`p4orch.cpp` の `m_p4ManagerAddPrecedence` リスト（`p4orch.cpp:88-102`）により、`FIXED_TUNNEL_TABLE` は **4 番目** に処理される[^5]:
+
+| 優先順位 | マネージャ | テーブル |
+|---------|-----------|---------|
+| 1 | TablesDefnManager | TABLE_DEFINITION |
+| 2 | RouterInterfaceManager | ROUTER_INTERFACE |
+| 3 | NeighborManager | NEIGHBOR |
+| **4** | **GreTunnelManager** | **FIXED_TUNNEL_TABLE** |
+| 5 | NextHopManager | NEXTHOP |
+| 6 | WcmpManager | WCMP_GROUP |
+| ... | ... | ... |
+
+### SET の依存前提条件
+
+`validateGreTunnelAppDbEntry()` が SET 操作時に以下を強制チェックする（`gre_tunnel_manager.cpp:106-177`）:
+
+1. `router_interface_id` に対応する `SAI_OBJECT_TYPE_ROUTER_INTERFACE` が P4OidMapper に存在すること
+2. `(router_interface_id, encap_dst_ip)` の neighbor エントリ (`SAI_OBJECT_TYPE_NEIGHBOR_ENTRY`) が存在すること
+
+いずれかが欠けると `SWSS_RC_NOT_FOUND` エラーとなりエントリは作成されない。
+
+### DEL の依存チェック（参照カウント）
+
+DEL 操作では `m_p4OidMapper->getRefCount(SAI_OBJECT_TYPE_TUNNEL, ...)` で参照カウントを確認し、`ref_count > 0` の場合は `SWSS_RC_INVALID_PARAM` エラーを返す（`gre_tunnel_manager.cpp:161-173`）。GRE tunnel を参照するオブジェクト（NextHop 等）を先に削除しないと消せない。
+
+推奨削除順: (NextHop など上流) → **GRE Tunnel** → Neighbor / RIF
+
+### Warm-reboot 復元挙動
+
+`P4Orch::doTask()` は `consumer.m_toSync` が空でない場合を warm-boot 復元フェーズとみなす（`p4orch.cpp:142-152`）:
+
+1. `m_publisher.setEnableDbWriteAndNotify(false)` — DB への書き戻しを無効化
+2. 残留エントリを全件 enqueue
+3. `P4Orch::drain()` を呼び出し — `m_p4ManagerAddPrecedence` 順に各マネージャの `drain()` を実行
+4. 完了後 `setEnableDbWriteAndNotify(true)` に復帰
+
+GRE tunnel は warm-reboot 後に P4RT controller が APPL_DB に再書き込みを行い、orchagent が SAI 状態を再作成する。重複 SET (既存エントリへの再設定) は `SWSS_RC_UNIMPLEMENTED` を返すため、controller は DEL → SET で再構築する必要がある（`gre_tunnel_manager.cpp:278-281`）。
+
+### Bulk SAI 呼び出しモード
+
+`createGreTunnels()` は `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` で `sai_tunnel_api->create_tunnels()` を呼び出す（`gre_tunnel_manager.cpp:429`）。バッチ内で 1 件でも失敗すると後続エントリはすべてキャンセルされ `SWSS_RC_NOT_EXECUTED` が返る。
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -132,3 +181,4 @@ APPL_DB:   P4RT_TABLE:FIXED_TUNNEL_TABLE:<json_key>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L72>
 [^3]: SAI 属性設定: `gre_tunnel_manager.cpp` `prepareSaiAttrs()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L37-L65>
 [^4]: `createGreTunnels()` overlay_if / neighbor_id: `gre_tunnel_manager.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425>
+[^5]: P4Orch マネージャ ADD 優先順位 (`m_p4ManagerAddPrecedence`): `p4orch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/p4orch.cpp#L88-L102>
