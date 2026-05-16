@@ -240,6 +240,48 @@ vtysh -c 'show bgp summary'
 
 > **スキャン証跡**: `BGPPeerMgrBase` 597 行・public メソッド set_handler/add_peer/update_peer/change_admin_status 読了。monitors は peer_type="monitors"（内部 BGP セッション向け）、loopback 依存ガードが核心分岐。
 <!-- /handler-branching -->
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+`BGP_MONITORS` は YANG leafref を持たないが、`bgpcfgd` / `frrcfgd` 実装レベルで以下のテーブルを暗黙参照する。
+
+### 1. DEVICE_METADATA|localhost — bgp_asn / bgp_router_id（必須）
+
+| 参照フィールド | 利用箇所 | 条件 | 証跡 |
+|--------------|---------|------|------|
+| `bgp_asn` | FRR `remote-as <asn>` および `router bgp <asn>` | 常時。未設定なら `add_peer()` が `KeyError` で失敗 | `managers_bgp.py:192` |
+| `bgp_router_id` | Loopback0 IPv4 未設定時のフォールバックチェック | Loopback0 IPv4 が None の場合のみ | `managers_bgp.py:186-188` |
+
+> **注意**: CONFIG_DB の `BGP_MONITORS|<addr>|asn` フィールドは `bgpcfgd` に**参照されない**。FRR の `remote-as` は常に `DEVICE_METADATA.bgp_asn` から取得する（dead field）。
+
+### 2. BGP_GLOBALS — 間接依存（frrcfgd との整合性要件）
+
+`bgpcfgd` は `BGP_GLOBALS` を直接購読しないが、同一 FRR デーモン上で `frrcfgd` が `BGP_GLOBALS` を管理する。`bgpcfgd` が `DEVICE_METADATA.bgp_asn` で入力する BGP コンテキストと `BGP_GLOBALS.local_asn` が一致している必要がある（不一致は設定破損につながる）。
+
+- **参照元**: `frrcfgd.py:81` (`BGP_GLOBALS` → bgpd マッピング), `frrcfgd.py:2175` (`BGP_GLOBALS` テーブル読み取り)
+
+### 3. ROUTE_MAP — FROM_BGPMON / TO_BGPMON（テンプレートハードコード）
+
+`BGP_MONITORS` エントリ追加時、`bgpcfgd` は `policies.conf.j2` テンプレートを用いて以下の route-map を FRR に直接注入する。これらは CONFIG_DB の `ROUTE_MAP` テーブルを経由しない。
+
+| route-map 名 | 方向 | 内容 | 証跡 |
+|-------------|------|------|------|
+| `FROM_BGPMON deny 10` | in (受信) | 全受信経路を拒否（モニターは経路を受け取らない設計） | `policies.conf.j2`, `result_all.conf:8` |
+| `TO_BGPMON permit 10` | out (送信) | 全送信経路を許可（自RIBをモニターに公開） | `policies.conf.j2`, `result_all.conf:9` |
+
+> **注意**: CONFIG_DB に `ROUTE_MAP|FROM_BGPMON` / `ROUTE_MAP|TO_BGPMON` を手動追加すると `bgpcfgd` 注入分と競合する恐れがある。
+
+### 参照関係サマリ
+
+```
+BGP_MONITORS (bgpcfgd)
+  ├─ [必須] DEVICE_METADATA|localhost.bgp_asn       → FRR remote-as / router bgp <asn>
+  ├─ [条件付き] DEVICE_METADATA|localhost.bgp_router_id → Loopback0 未設定時フォールバック
+  ├─ [間接] BGP_GLOBALS                              → frrcfgd との bgp_asn 整合性要件
+  └─ [出力] ROUTE_MAP 名前空間                        → FROM_BGPMON / TO_BGPMON を FRR に直接注入
+```
+
+<!-- /cross-refs -->
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来の固定値 (Phase A)
 
