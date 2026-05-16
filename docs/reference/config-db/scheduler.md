@@ -368,4 +368,38 @@ QUEUE|<port>|<idx> の scheduler 参照を解除  →  SCHEDULER|<name> を DEL
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` / `applySchedulerToQueueSchedulerGroup()` / `handleQueueTable()` 精読 (2026-05-16)
+
+APPL_DB / STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書き込みは **一切なし**。
+副次 DB 書き込みは SAI API 経由の ASIC_DB のみ。
+
+### ASIC_DB 書き込み
+
+| ASIC_DB テーブル | 属性 | トリガ | evidence |
+|----------------|------|--------|---------|
+| `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` | スケジューラ全属性 (type / weight / meter_type / cir / cbs / pir / pbs) | `handleSchedulerTable` SET で `sai_scheduler_api->create_scheduler()` または `set_scheduler_attribute()` | `qosorch.cpp:L1460, L1446` |
+| `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` | — (削除) | `handleSchedulerTable` DEL で `sai_scheduler_api->remove_scheduler()` | `qosorch.cpp:L1490` |
+| `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER_GROUP:<group_oid>` | `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` | QUEUE が当該 SCHEDULER を `scheduler` フィールドで参照するとき `applySchedulerToQueueSchedulerGroup()` が呼ばれ scheduler_group 属性を更新 | `qosorch.cpp:L1690` |
+
+### SCHEDULER → QUEUE 副次バインド経路
+
+```
+SCHEDULER SET
+  └─ sai_scheduler_api->create_scheduler()  → ASIC_DB: SCHEDULER OID 生成
+       ↓ (QUEUE.scheduler フィールドが参照)
+  QUEUE handleQueueTable()
+    └─ applySchedulerToQueueSchedulerGroup(port, queue_ind, scheduler_profile_id)
+         └─ getSchedulerGroup(port, queue_id)  ← SAI_PORT_ATTR_QOS_SCHEDULER_GROUP_LIST 探索
+              └─ sai_scheduler_group_api->set_scheduler_group_attribute()
+                   → ASIC_DB: SCHEDULER_GROUP の SCHEDULER_PROFILE_ID 更新
+```
+
+- **voq モード例外**: `gMySwitchType == "voq"` かつ `SAI_SYSTEM_PORT_TYPE_REMOTE` の場合は `applySchedulerToQueueSchedulerGroup` が早期 return し ASIC 書き込みをスキップする。
+- **DEL 時**: QUEUE 参照が解除されてから `remove_scheduler()` が呼ばれる（`isObjectBeingReferenced` で保護）。QUEUE DEL 時は `scheduler_profile_id = SAI_NULL_OBJECT_ID` を渡してバインドを解除。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 96667c52d98d -->
