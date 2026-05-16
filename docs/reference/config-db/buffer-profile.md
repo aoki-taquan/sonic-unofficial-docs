@@ -209,6 +209,50 @@ show buffer profile
 **副作用**: プロファイル変更はそれを参照するすべての PG/Queue に即座に影響。`xoff` 変更は PFC pause frame 送信タイミングに影響。
 <!-- /runtime-trace -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `cfgmgr/buffermgr.cpp`, `orchagent/bufferorch.cpp`
+
+### STATE_DB `BUFFER_PROFILE_TABLE` (副次書込 A)
+
+`buffermgrdyn` の `updateBufferProfileToDb()` は APPL_DB への書込と **同時に** STATE_DB の `BUFFER_PROFILE_TABLE` にも同一 fvVector を書込む。
+
+| 操作 | 対象 DB / テーブル | 条件 | evidence |
+|------|------------------|------|----------|
+| `m_stateBufferProfileTable.set(name, fvVector)` | STATE_DB / `BUFFER_PROFILE_TABLE` | `updateBufferProfileToDb()` 内 — `m_bufferPoolReady==true` のとき即時書込 | `buffermgrdyn.cpp:920` |
+| `m_stateBufferProfileTable.set(key, fvs)` | STATE_DB / `BUFFER_PROFILE_TABLE` | warm reboot 時のゼロプロファイル初期化ロード | `buffermgrdyn.cpp:361` |
+| `m_stateBufferProfileTable.del(name)` | STATE_DB / `BUFFER_PROFILE_TABLE` | `releaseProfile()` — APPL_DB 削除と同時 | `buffermgrdyn.cpp:1049` |
+| `m_stateBufferProfileTable.del(zeroProfileName)` | STATE_DB / `BUFFER_PROFILE_TABLE` | ゼロプロファイルアンロード（全ポート admin-up 後） | `buffermgrdyn.cpp:421` |
+
+lossless プロファイルのみ `xon` / `xoff` / `xon_offset` フィールドを含む（lossy では omit）。
+
+### APPL_STATE_DB `BUFFER_PROFILE_TABLE` (副次書込 B — ResponsePublisher)
+
+`BufferOrch` は `Orch::m_publisher` (`ResponsePublisher{"APPL_STATE_DB"}`) 経由で **lossless プロファイルのみ** SAI 反映完了を APPL_STATE_DB に publish する。lossy プロファイル（`xoff` フィールドなし）は publish されない。
+
+| 操作 | 対象 DB / テーブル | 条件 | evidence |
+|------|------------------|------|----------|
+| `m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, name, fvs, SAI_STATUS_SUCCESS, force=true)` | APPL_STATE_DB / `BUFFER_PROFILE_TABLE` | `processBufferProfile()` SET 成功 かつ `is_lossless==true`（`xoff` フィールド存在時） | `bufferorch.cpp:824-833` |
+| `m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, name, [], SAI_STATUS_SUCCESS, force=true)` | APPL_STATE_DB / `BUFFER_PROFILE_TABLE` | `processBufferProfile()` DEL 成功 かつ `is_lossless==true` | `bufferorch.cpp:875-880` |
+
+### COUNTERS_DB / FLEX_COUNTER_DB — BUFFER_PROFILE は対象外
+
+COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書込は **BUFFER_POOL** 操作に紐づく。BUFFER_PROFILE 単体の SET/DEL では COUNTERS_DB / FLEX_COUNTER_DB への書込は発生しない。<!-- evidence: bufferorch.cpp L55-56, L546, L586 — counterNameMapUpdater は processBufferPool() 内のみ呼出 -->
+
+### 副次書込の発火順序
+
+```
+1. buffermgrd(yn): CONFIG_DB BUFFER_PROFILE|<name> SET 受信
+2. updateBufferProfileToDb():
+   2a. APPL_DB  BUFFER_PROFILE_TABLE|<name> SET  ← 主書込
+   2b. STATE_DB BUFFER_PROFILE_TABLE|<name> SET  ← 副次書込 A (同時)
+3. bufferorch: APPL_DB イベント受信 → SAI create_buffer_profile() → ASIC_DB
+4. (is_lossless==true のとき)
+   APPL_STATE_DB BUFFER_PROFILE_TABLE|<name> publish ← 副次書込 B
+```
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
@@ -273,6 +317,75 @@ show buffer profile
 
 > **スキャン証跡**: `handleBufferProfileTable` L2671-2935 全行読了。5 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 1. CONFIG_DB → buffermgr/buffermgrdyn: SubscriberStateTable
+
+`buffermgrd.cpp` の dynamic buffer model パスでは `CFG_BUFFER_PROFILE_TABLE_NAME` を含む `vector<TableConnector>` を構築し `BufferMgrDynamic` コンストラクタに渡す（`buffermgrd.cpp:174-187`）。`BufferMgrDynamic` は `Orch(tables)` を継承し、`Orch::addConsumer()` が DB ID を判定する。
+
+```cpp
+// sonic-swss/orchagent/orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || ...)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName, ...), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+CONFIG_DB は DB ID チェックにマッチするため **`SubscriberStateTable`** が選択される。Redis の **keyspace 通知**（`__keyspace@4__:BUFFER_PROFILE|*` の `PSUBSCRIBE`）を購読し、変更検知後に `HGETALL` で値を再取得する。static buffer model（`BufferMgr`）も同様に `SubscriberStateTable` で購読される（`buffermgr.cpp:21-22`）。
+
+### 2. buffermgrdyn → APPL_DB: ProducerStateTable
+
+`handleBufferProfileTable()` の処理結果は `updateBufferProfileToDb()` 経由で APPL_DB に書き込まれる。
+
+```cpp
+// sonic-swss/cfgmgr/buffermgrdyn.cpp:44
+m_applBufferProfileTable(applDb, APP_BUFFER_PROFILE_TABLE_NAME),  // ProducerStateTable
+```
+
+`ProducerStateTable.set()` は Redis の `LPUSH <TABLE>_KEY_SET` + `HSET` によるチャネルベース通知を行う（`buffermgrdyn.cpp:890-922`）。**例外**: `headroom_type=dynamic` かつポート未参照のプロファイルは APPL_DB への書き込みが保留される（`buffermgrdyn.cpp:2820`）。
+
+### 3. APPL_DB → bufferorch: ConsumerStateTable
+
+`orchdaemon.cpp` は `APP_BUFFER_PROFILE_TABLE_NAME` を含む `buffer_tables` ベクタで `BufferOrch` を構築する（`orchdaemon.cpp:386-394`）。`Orch(applDb, tableNames)` コンストラクタが APPL_DB（DB ID ≠ CONFIG_DB）として `addConsumer()` に渡すため **`ConsumerStateTable`** が選択される。`BUFFER_PROFILE_TABLE_CHANNEL` を `SUBSCRIBE` し `ProducerStateTable` の `LPUSH` 通知をリアルタイムで受信する。ディスパッチは `doTask()` → `processBufferProfile()`（`bufferorch.cpp:74`）。
+
+### 4. bufferorch → APPL_STATE_DB: ResponsePublisher
+
+SAI 処理成功後、`m_publisher.publish()` で APPL_STATE_DB の `BUFFER_PROFILE_TABLE` に結果を書き戻す。
+
+```cpp
+// sonic-swss/orchagent/bufferorch.cpp:831-832 (SET 完了後)
+m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, object_name, fvs, ReturnCode(SAI_STATUS_SUCCESS), true);
+
+// bufferorch.cpp:879-880 (DEL 完了後)
+m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, object_name, fvs, ReturnCode(SAI_STATUS_SUCCESS), true);
+```
+
+`m_publisher` は `Orch` 基底クラスの `ResponsePublisher{"APPL_STATE_DB"}`（`orch.h:382`）。`publish()` は Redis channel への PUBLISH と APPL_STATE_DB への `HSET`/`DEL` の両方を実行する（`response_publisher.h:44-50`）。
+
+### 5. データフロー全体
+
+```
+CONFIG_DB:BUFFER_PROFILE
+  │  SubscriberStateTable (keyspace __keyspace@4__:BUFFER_PROFILE|*)
+  ↓  buffermgrd/buffermgrdyn
+buffermgrdyn: handleBufferProfileTable()
+  │  updateBufferProfileToDb(): ProducerStateTable.set()
+  │  ※ headroom_type=dynamic + ポート未参照時は APPL_DB 書き込み保留
+  ↓  BUFFER_PROFILE_TABLE_CHANNEL 通知 (APPL_DB)
+APPL_DB:BUFFER_PROFILE_TABLE
+  │  ConsumerStateTable (bufferorch)
+  ↓  doTask() → processBufferProfile()
+SAI: sai_create_buffer_profile()
+  │  SET/DEL 完了後
+  ↓  ResponsePublisher.publish()
+APPL_STATE_DB:BUFFER_PROFILE_TABLE
+```
+<!-- /pubsub -->
 
 <!-- failure -->
 ## 失敗挙動・retry 分岐 (Phase D)
