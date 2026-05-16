@@ -252,4 +252,25 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPortIngressProfileListTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME, false)` に委譲。egress 版と同一パス。2 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`BUFFER_PORT_INGRESS_PROFILE_LIST` エントリが CONFIG_DB に書かれたとき、`buffermgrd` および `BufferOrch` が以下のテーブルを**暗黙的に leafref 参照**する。YANG スキーマ上は leafref として定義されているが、実装上はコード内 lookup / resolve で処理される。
+
+| 参照元フィールド / 状態 | 参照先テーブル | 参照先キー形式 | 解決主体 | 未解決時の挙動 |
+|---|---|---|---|---|
+| `profile_list` 各要素 | `BUFFER_PROFILE` | `BUFFER_PROFILE\|<name>` | `buffermgrd` の `m_bufferProfileLookup` | `task_need_retry`（silent retry）— `buffermgrdyn.cpp:3280-3285` |
+| `profile_list` 各要素 | APPL_DB `BUFFER_PROFILE_TABLE` | `BUFFER_PROFILE_TABLE:<name>` | `BufferOrch` の `resolveFieldRefArray` | `task_need_retry` — `bufferorch.cpp:1683-1688` |
+| SET 処理時の pool 準備チェック | `BUFFER_POOL` (ingress 系全プール) | `BUFFER_POOL\|<pool>` | `buffermgrd` の `m_bufferPoolReady` フラグ | APPL_DB 書き込みを pending（`m_bufferObjectsPending=true`）、BUFFER_POOL 完了後自動再処理 — `buffermgrdyn.cpp:3408-3414` |
+| キー `<port>` (ポート名) | `PORT` | `PORT\|<port>` | `BufferOrch` の PortsOrch ポートマップ | `task_invalid_entry`（エントリ消去）— `bufferorch.cpp:1762-1765` |
+| キー `<port>` (ポート名) | `PORT` | `PORT\|<port>` | `buffermgrd` の `m_portInfoLookup` | admin-down 判定に使用。空文字なら `task_invalid_entry` — `buffermgrdyn.cpp:3509-3513` |
+
+### 特記事項
+
+- `profile_list` の各プロファイルは `direction=ingress` でなければならない。egress プロファイルを混入すると `task_failed`（`buffermgrdyn.cpp:3289-3296`）。
+- `packet_discard_action=trim` のプロファイルは `BufferOrch` が ingress profile list への適用を拒否（`bufferorch.cpp:1725-1731`）。
+- admin-down ポートでは `m_portInfoLookup[port].state == PORT_ADMIN_DOWN` を検出し、通常 profile_list の代わりに zero profile list を APPL_DB に書き込む（`buffermgrdyn.cpp:3418-3438`）。
+- 詳細スキャン記録: `meta/_intermediate/cdb-flow/buffer-port-ingress-profile-list-cross-refs.md`
+<!-- /cross-refs -->
 <!-- glossary-links-injected: 021ae16e7b9c -->
