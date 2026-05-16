@@ -510,7 +510,7 @@ DPC (Direct Port Connect) ポートは q3/q4 の lossless 設定を省略する�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/queue-side.md`
+> 詳細証跡: `meta/_intermediate/cdb-flow/queue-side-effects.md`
 
 QUEUE テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。
 
@@ -572,6 +572,34 @@ VoQ モードでは `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が自動追加�
 
 <!-- 証跡: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/qosorch.cpp, sonic-swss/orchagent/flexcounterorch.cpp -->
 <!-- /side-effects -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 証跡: `meta/_intermediate/cdb-flow/queue-cross-refs.md`
+
+YANG leafref に加え、`qosorch.cpp` の実装レベルで依存する他テーブルを示す。
+
+| 参照先テーブル | YANG leafref | 参照種別 | 参照元コード | 非充足時の挙動 |
+|---------------|:------------:|---------|------------|--------------|
+| `SCHEDULER` | ✅ (`scheduler` フィールド) | 必須: OID 解決 → `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` 設定 | `qosorch.cpp:1822-1854` | `task_need_retry`。SCHEDULER 登録後に自動再試行。解決不可なら `task_failed` |
+| `WRED_PROFILE` | ✅ (`wred_profile` フィールド) | 必須: OID 解決 → `SAI_QUEUE_ATTR_WRED_PROFILE_ID` 設定 | `qosorch.cpp:1857-1887` | `task_need_retry`。WRED_PROFILE 登録後に自動再試行。解決不可なら `task_failed` |
+| `PORT` | ✅ (`ifname` key の leafref) | 必須: `gPortsOrch->getPort()` で OID 取得。PortInitDone ゲート | `qosorch.cpp:1911-1914`, `2258` | `task_invalid_entry`（retry なし、恒久スキップ） |
+| `PORT_QOS_MAP` | ✗ | 実行順序先行依存: `doTask()` で `PORT_QOS_MAP` を QUEUE より先に drain | `qosorch.cpp:2231-2260` | 直接エラーなし。QUEUE の SAI 適用タイミングに影響 |
+
+### 解決順序の詳細
+
+`handleQueueTable()` は `scheduler` → `wred_profile` の順に `resolveFieldRefValue` を呼び出す。`scheduler` が未解決の段階で `task_need_retry` を返すため、**SCHEDULER が未解決の間は WRED_PROFILE の確認・適用も保留される**。
+
+`doTask()` (L2231) は以下の実行順序を強制する:
+
+1. `SCHEDULER` / `WRED_PROFILE` などの参照先テーブルを先に drain
+2. `PORT_QOS_MAP` を drain
+3. 最後に `QUEUE` を drain（参照先が揃った状態で実行し `task_need_retry` を最小化）
+
+PORT が PortInitDone 済みでない状態で QUEUE エントリを書いても `task_invalid_entry` となりリトライキューに残らない。必ず `portsyncd` が PortInitDone を発行した後に投入すること。
+
+<!-- /cross-refs -->
 
 <!-- constants -->
 ## ハードコード定数 (Phase E)
