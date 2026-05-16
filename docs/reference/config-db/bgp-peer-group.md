@@ -337,4 +337,36 @@ SET 受信時、frrcfgd は FRR に peer-group が存在しなければ属性コ
 > 詳細分析: `meta/_intermediate/cdb-flow/bgp-peer-group-ordering.md`
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動・retry 分岐 (Phase D)
+
+### frrcfgd 経路
+
+| # | 失敗トリガー | 結果 | retry | ログ |
+|---|------------|------|-------|------|
+| 1 | 対象 VRF の `BGP_GLOBALS.local_asn` 未設定 | FRR 未投入、CONFIG_DB エントリ残存 | なし (silent skip) | `LOG_DEBUG: ignore table BGP_PEER_GROUP update because local_asn for VRF {} was not configured` |
+| 2 | peer-group 自動作成 (`neighbor <pg> peer-group`) vtysh 失敗 | 属性設定全体を skip (`continue`)、`self.bgp_peer_group` にエントリ未登録 | なし (外部 re-SET で再試行可) | `LOG_ERR: failed to create peer-group %s for VRF %s` |
+| 3 | 属性コマンド群 (`key_map.run_command`) vtysh 失敗 | 部分適用の可能性あり、`continue` | なし | `LOG_ERR: failed running BGP neighbor config command` |
+| 4 | peer-group DELETE vtysh 失敗 | `__delete_vrf_neighbor` は呼ばれる (キャッシュは更新) | なし | `LOG_ERR: failed to delete VRF %s bgp neigbor %s` |
+| 5 | bgpd ソケット接続失敗 (起動時) | frrcfgd 起動失敗、全 BGP テーブル未処理 | 最大 100 回 / 2秒間隔 | `LOG_ERR: failed to connect to frr daemon` |
+
+### bgpcfgd 経路 (BGPPeerMgrBase / BGPPeerGroupMgr)
+
+| # | 失敗トリガー | 結果 | retry | ログ |
+|---|------------|------|-------|------|
+| 6 | Loopback0 IPv4 未設定 かつ `bgp_router_id` 未設定 | `add_peer()` が `False` を返す、Manager 基底クラスが deps 充足まで保留 | deps 充足まで自動保留 | `log_warn: Loopback0 ipv4 address is not presented yet` |
+| 7 | `BGPPeerGroupMgr.update_pg()` Jinja2 テンプレートエラー | `False` 返却、peer-group FRR 未投入 (peer 追加処理は継続) | なし | `log_err: Can't render peer-group template: '%s'` |
+| 8 | `BGPPeerGroupMgr.update_policy()` Jinja2 テンプレートエラー | `False` 返却、routing policy FRR 未投入 | なし | `log_err: Can't render policy template name: '%s'` |
+| 9 | `DEVICE_NEIGHBOR_METADATA` 未準備 (`check_neig_meta=True` 時) | `add_peer()` が `False`、Manager 基底クラスが保留 | deps 充足まで自動保留 | `log_info: DEVICE_NEIGHBOR_METADATA is not ready for neighbor` |
+
+### 設計上の注意点
+
+- **frrcfgd は運用中 retry を持たない**: 失敗時は CONFIG_DB エントリを残したまま次イベントへ進む。FRR との整合性回復にはオペレータが再度 SET する必要がある
+- **BGP_GLOBALS 不在 → silent skip**: LOG_ERR ではなく LOG_DEBUG のみのため、障害検知にはログレベルの引き上げが必要
+- **peer-group 自動作成失敗 → 属性全体 skip**: `neighbor <pg> peer-group` の vtysh 失敗は属性コマンド群の発行を全てブロックする
+- **rollback 未実装**: 部分失敗時 CONFIG_DB エントリは残存し、FRR 側との整合性は保証されない
+
+> 詳細分析: `meta/_intermediate/cdb-flow/bgp-peer-group-failure.md`
+<!-- /failure -->
+
 <!-- glossary-links-injected: d4d0b1f9b453 -->
