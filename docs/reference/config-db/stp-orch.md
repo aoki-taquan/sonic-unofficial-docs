@@ -1,6 +1,6 @@
 ---
 title: APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
-description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピングを詳解。Phase A 分析。"
+description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存を詳解。Phase A+B 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -248,6 +248,146 @@ STATE_DB: STP|GLOBAL.max_stp_inst = (SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1)
 証跡: `stporch.cpp:17-43, 603-616`
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+`StpOrch::doTask()` は APPL_DB の 4 テーブルを購読するが、各テーブルの処理には明確な前提条件がある。前提未成立時の挙動はテーブルごとに異なる (残置 `it++` / コンシューマ全体ブロック `return` / fail-silent) ため、運用上のトラブルシューティングで重要になる。
+
+### 1. 全テーブル共通: PortsOrch readiness ガード
+
+```cpp
+// stporch.cpp:578-581
+void StpOrch::doTask(Consumer &consumer)
+{
+    if (!gPortsOrch->allPortsReady())
+        return;
+    // ...
+}
+```
+
+`allPortsReady()` が false の間、**すべてのテーブル処理を無音スキップ**する。PortsOrch が `PORT_INIT_DONE` を受信するまで `m_toSync` のエントリは保留され、エラーログも出力されない。
+
+→ 順序依存: PortsOrch の初期化完了が StpOrch 全体の前提。
+
+### 2. STP_VLAN_INSTANCE_TABLE — VLAN 先行ガード
+
+`addVlanToStpInstance()` (`stporch.cpp:123-126`):
+
+```cpp
+if (!gPortsOrch->getPort(vlan_alias, vlan))
+{
+    return false;
+}
+```
+
+VLAN が PortsOrch に未登録の場合は false を返す。呼び出し元 `doStpTask()` (`stporch.cpp:410-414`) は:
+
+```cpp
+if(!addVlanToStpInstance(vlan_alias, instance))
+{
+    it++;   // erase せず次エントリへ
+    continue;
+}
+```
+
+`it++` で残置し、後続エントリは処理を継続する。DEL 時の `removeVlanFromStpInstance()` も同様に `getPort()` を内部で呼ぶため同じ条件でブロックされる。
+
+→ 順序依存: VLAN の PortsOrch 登録 (`VLAN_MEMBER` / PortsOrch 経由) が `STP_VLAN_INSTANCE_TABLE` の SET より先行必須。
+
+### 3. STP_PORT_STATE_TABLE — ポート先行ガード (コンシューマ全体ブロック)
+
+`doStpPortStateTask()` (`stporch.cpp:449-453`):
+
+```cpp
+if (!gPortsOrch->getPort(port_alias, port))
+{
+    return;   // it++ でなく return
+}
+```
+
+ポートが PortsOrch に未登録の場合、`it++` ではなく **`return`** で抜ける。これにより同一コンシューマの後続エントリもすべてブロックされる点が `STP_VLAN_INSTANCE_TABLE` と異なる。
+
+不正キー (`<port>:<instance>` 形式でない) も同様に `return` でブロック:
+
+```cpp
+// stporch.cpp:439-443
+if (found == string::npos)
+{
+    return;
+}
+```
+
+→ 順序依存: 物理ポート / LAG の PortsOrch 登録が `STP_PORT_STATE_TABLE` の SET より先行必須。
+
+### 4. STP_PORT_STATE_TABLE — Bridge Port 自動作成
+
+`addStpPort()` (`stporch.cpp:218-227`):
+
+```cpp
+if(port.m_bridge_port_id == SAI_NULL_OBJECT_ID)
+{
+    gPortsOrch->addBridgePort(port);
+    if(port.m_bridge_port_id == SAI_NULL_OBJECT_ID)
+    {
+        SWSS_LOG_ERROR("Failed to add STP port %s invalid bridge port id ...", ...);
+        return SAI_NULL_OBJECT_ID;
+    }
+}
+```
+
+Bridge port が未作成の場合は `addBridgePort()` で自動作成を試みる。失敗すると `SAI_NULL_OBJECT_ID` → `updateStpPortState()` が false → `it++` 残置。
+
+→ タイミング依存: bridge port 作成は自動試行されるが SAI 失敗時は残置。
+
+### 5. STP_FASTAGEING_FLUSH_TABLE — VLAN 未登録は fail-silent
+
+`stpVlanFdbFlush()` (`stporch.cpp:369-372`):
+
+```cpp
+if (!gPortsOrch->getPort(vlan_alias, vlan))
+{
+    return false;
+}
+```
+
+VLAN 未登録時は false を返すが、`doStpFastageTask()` は戻り値を**チェックしない**。エントリは常に `erase()` される (fail-silent)。フラッシュが実行されなくてもエラーログは出ない。
+
+→ タイミング依存: VLAN が PortsOrch に未登録の状態でフラッシュ指示が届いても無音で消える。
+
+### 6. STP_INST_PORT_FLUSH_TABLE — VLAN→インスタンス割当が前提
+
+`doMstInstPortFlushTask()` (`stporch.cpp:553-561`):
+
+```cpp
+auto it_map = m_vlanAliasToStpInstanceMap.find(instance);
+if (it_map != m_vlanAliasToStpInstanceMap.end())
+{
+    for (const auto& vlan_alias : it_map->second.stp_inst_vlan_list)
+    {
+        stpVlanFdbFlush(vlan_alias);
+    }
+}
+```
+
+`m_vlanAliasToStpInstanceMap` は `addVlanToStpInstance()` が `STP_VLAN_INSTANCE_TABLE` を処理した際に更新される。インスタンスが未登録の場合はフラッシュ対象 VLAN リストが空で no-op になる (エラーログなし)。
+
+→ 順序依存: `STP_INST_PORT_FLUSH_TABLE` の SET は `STP_VLAN_INSTANCE_TABLE` の SET (VLAN→インスタンス割当) より後に到達すること。
+
+### 処理依存のまとめ
+
+| テーブル | 必須先行条件 | 不成立時の挙動 |
+|---|---|---|
+| 全テーブル | `allPortsReady()` (PortsOrch 初期化) | 無音 `return` (保留) |
+| `STP_VLAN_INSTANCE_TABLE` SET | VLAN が PortsOrch に登録済み | `it++` 残置 (後続は継続) |
+| `STP_VLAN_INSTANCE_TABLE` DEL | VLAN が PortsOrch に登録済み | `it++` 残置 |
+| `STP_PORT_STATE_TABLE` SET/DEL | ポートが PortsOrch に登録済み | `return` (コンシューマ全体ブロック) |
+| `STP_PORT_STATE_TABLE` SET | Bridge port 作成成功 | `it++` 残置 |
+| `STP_FASTAGEING_FLUSH_TABLE` SET | VLAN が PortsOrch に登録済み | fail-silent (消去) |
+| `STP_INST_PORT_FLUSH_TABLE` SET | STP_VLAN_INSTANCE_TABLE で割当済み | no-op (消去) |
+
+詳細根拠は `meta/_intermediate/cdb-flow/stp-orch-ordering.md` を参照。
+<!-- /ordering -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
