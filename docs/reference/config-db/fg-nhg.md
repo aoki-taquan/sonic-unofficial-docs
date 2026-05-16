@@ -243,6 +243,47 @@ if (!link.empty()) {
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/fgnhgorch.cpp`
+
+### NEXTHOP 未解決 → retry（return false）
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `FG_NHG_MEMBER` 投入時に nexthop が neighOrch に未登録（ARP/NDP 未解決） | `doTaskFgNhgMember()` L2071 | Consumer キューに残り retry | `SWSS_LOG_INFO "Nexthop %s is not resolved yet"` |
+| `FG_NHG_PREFIX` 投入時に親 `FG_NHG` エントリが未受信 | `doTaskFgNhgPrefix()` L1821 | `return false` → retry | `SWSS_LOG_INFO "FG_NHG entry not received yet, continue"` |
+| `FG_NHG_MEMBER` 投入時に親 `FG_NHG` エントリが未受信 | `doTaskFgNhgMember()` L2004 | `return false` → retry | `SWSS_LOG_INFO "FG_NHG entry not received yet, continue"` |
+| prefix 移行中（APP_DB delete 後に routeorch 削除完了待ち） | `doTaskFgNhgPrefix()` L1883 | `return false` → retry | `SWSS_LOG_INFO "Route(%s) ADD exists in routeorch..."` |
+| 全 bank 空で bucket 割り当て不能 | `createFgNhg()` L1067 | `return false` → retry 期待 | `SWSS_LOG_INFO "Found no next-hops to add, skipping"` |
+
+### SAI fg_nhg 操作失敗
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `createFineGrainedNextHopGroup` 失敗（SAI NHG 生成エラー） | `createFgNhg()` L275 | `return false`（エントリ破棄） | `SWSS_LOG_ERROR "Failed to create next hop group %s"` |
+| `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` クエリ失敗 | `createFgNhg()` L294 | NHG ロールバック後 `return false` | `SWSS_LOG_ERROR "Failed to query next hop group %s SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE"` |
+| SAI next hop group member 作成失敗（`create_next_hop_group_member`） | `setNewNhgMembers()` L1174 | NHG 全体をロールバック後 `return false` | `SWSS_LOG_ERROR "Failed to create next hop group %s member %s: %d"` |
+| `validNextHopInNextHopGroup` 失敗（nexthop の SAI 登録失敗） | `doTaskFgNhgMember()` L2078 | メンバー情報ロールバック後 `return false` | `SWSS_LOG_INFO "Failing validNextHopInNextHopGroup for %s"` |
+| Fine Grained NHG 削除失敗 | `removeFineGrainedNextHopGroup()` L343 | `return false` | `SWSS_LOG_ERROR "Failed to remove nhgid %"` |
+
+### 不正 bucket_size・設定値
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `bucket_size == 0`（未指定または明示的 0） | `doTaskFgNhg()` L1722 | `SWSS_LOG_ERROR` → `return true`（破棄、再試行なし） | `SWSS_LOG_ERROR "Received bucket_size which is 0 for key %s"` |
+| `match_mode==prefix-based` かつ `max_next_hops==0` | `doTaskFgNhg()` L1719 | `SWSS_LOG_ERROR`（処理継続・SAI 動作不定） | `SWSS_LOG_ERROR "Received match_mode==prefix_based with max_next_hops 0..."` |
+| `FG_NHG_MEMBER` を `prefix-based` グループに投入 | `doTaskFgNhgMember()` L2011 | `SWSS_LOG_ERROR` → `return true`（破棄） | `SWSS_LOG_ERROR "Received FG_NHG member for prefix-based match_mode..."` |
+| `FG_NHG` / `FG_NHG_MEMBER` で `fg_nhg_name` が空文字 | L1816 / L2000 | `SWSS_LOG_ERROR` → `return true`（破棄） | `SWSS_LOG_ERROR "Received FG_NHG with empty name for key %s"` |
+
+!!! warning "bucket_size=0 は再試行なしで破棄"
+    `bucket_size` が 0 の場合、`return true` でエントリが Consumer キューから外れる。設定エラーは syslog の `SWSS_LOG_ERROR` 以外に通知されないため見落としに注意。
+
+!!! note "nexthop 未解決は自動 retry"
+    neighOrch での nexthop 未解決は `return false` によりキューに残り、ARP/NDP 解決後に自動で再処理される。ユーザー操作不要。
+
+<!-- /failure -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
@@ -295,5 +336,45 @@ if (!link.empty()) {
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` 全行精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/fg-nhg-cross-refs.md`
+
+`FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` テーブルは YANG leafref を最小限しか持たないが、`FgNhgOrch` の実行時に以下のテーブル・Orch を暗黙参照する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `ROUTE_TABLE\|<vrf>\|<prefix>` (APPL_DB) | APPL_DB | 読み書き (FG 適用判定・経路切替) | なし | 実質必須 | fgnhgorch.cpp:1851, 1865, 1877 |
+| `NEIGH_TABLE` / NeighOrch | APPL_DB | 読み取り (nexthop 解決・refcount) | なし | 実質必須 | fgnhgorch.cpp:1415, 1459, 1479, 1547 |
+| `PORT` / `PORTCHANNEL` (PortsOrch) | CONFIG_DB | 読み取り (link oper-state 監視) | `FG_NHG_MEMBER.link` leafref のみ | link 設定時必須 | fgnhgorch.cpp:46-92, 1374-1393 |
+| `STATE_FG_ROUTE_TABLE` (STATE_DB) | STATE_DB | 書き込み (warm-restart 復旧用) | なし | warm-restart 時必須 | fgnhgorch.cpp:31 |
+| `VRF` (VRFOrch) | CONFIG_DB / APPL_DB | 読み取り (VRF refcount 管理) | なし | VRF 利用時必須 | fgnhgorch.cpp:1326 |
+
+### ROUTE_TABLE (APPL_DB) — FG 経路切替の核心
+
+`FgNhgOrch` は `m_routeTable`（`ProducerStateTable` → `APPL_DB:ROUTE_TABLE`）に直接書き込む。`FG_NHG_PREFIX` SET/DEL 時に既存の通常 ECMP 経路を一度削除し (`m_routeTable->del()`)、その後 FG 経路として再投入する (`m_routeTable->set()`) という「del → wait for RouteOrch 削除完了 → set」という 2 ステップ移行シーケンスを踏む（fgnhgorch.cpp:1863–1879）。**APPL_DB ROUTE_TABLE への書き込み権限が無いと FG_NHG_PREFIX の SET/DEL が永久に `return false` でリトライし続ける。**
+
+さらに `RouteOrch::addRoute()` から `m_fgNhgOrch->isRouteFineGrained()` / `setFgNhg()` が呼ばれ、APPL_DB 受信ルートが FG 対象か否かを判定する（routeorch.cpp:2028–2040）。FG 対象ルートは RouteOrch ではなく FgNhgOrch が SAI 操作を担当する。
+
+### NeighOrch — nexthop 解決の前提
+
+`FgNhgOrch` は `m_neighOrch->hasNextHop()` / `getNextHopId()` / `increaseNextHopRefCount()` / `decreaseNextHopRefCount()` を多用する。nexthop が NeighOrch に未登録の場合、`SWSS_LOG_NOTICE("Failed to get next hop ... in neighorch")` を出力してそのネクストホップをスキップする（fgnhgorch.cpp:1415–1419）。**NeighOrch にネクストホップが解決されるまで FG ECMP グループのメンバーとして使われない。**
+
+### PORT / PORTCHANNEL (PortsOrch) — link oper-state 連動
+
+`FgNhgOrch::update()` は `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` を購読し (fgnhgorch.cpp:46)、ポートの UP/DOWN 変化を `m_syncdFGRouteTables` に反映する。`FG_NHG_MEMBER.link` に物理ポートを指定した場合、そのリンクがダウンするとバンク再分配が自動トリガーされる (fgnhgorch.cpp:60–92)。YANG leafref は `PORT` / `PORTCHANNEL` 両方を union leafref で参照しているが、`fgnhgorch.cpp:1377` では `Port::PHY` 型のみ link 追跡対象となる（PORTCHANNEL は別フロー）。
+
+### STATE_FG_ROUTE_TABLE (STATE_DB) — warm-restart 復旧
+
+コンストラクタで `m_stateWarmRestartRouteTable(stateDb, STATE_FG_ROUTE_TABLE_NAME)` を初期化する (fgnhgorch.cpp:31)。warm-restart 時にこの STATE_DB テーブルから FG ルートの状態を復旧するためのテーブルであり、通常運用時は読み取り専用。
+
+### SAI 参照
+
+`sai_next_hop_group_api` (NEXT_HOP_GROUP / NEXT_HOP_GROUP_MEMBER の CRUD) と `sai_route_api` (SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID の更新) を直接使用する (fgnhgorch.cpp:18–19, 238, 363)。
+
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 0a0e619e9fbc -->
