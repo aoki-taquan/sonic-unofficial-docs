@@ -221,14 +221,35 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
-`portmgr.cpp` が MGMT_PORT を処理する:
+> **訂正 (Phase A 調査)**: `portmgr.cpp` / `portmgrd` は `CFG_PORT_TABLE_NAME`（= `"PORT"`、データポート）のみを購読し、`MGMT_PORT` テーブルは処理しない (`sonic-swss/cfgmgr/portmgrd.cpp:28`)。以下は実際の MGMT_PORT コンシューマ。
 
-| Handler | メソッド | 分岐条件 | 効果 | evidence |
-|---|---|---|---|---|
-| `PortMgr` | `doTask()` | `admin_status == "up"` | カーネルインタフェースを up に設定 (`ip link set eth0 up`) | `sonic-swss/cfgmgr/portmgr.cpp` |
-| `PortMgr` | `doTask()` | `speed` フィールドあり | `ethtool -s eth0 speed <n>` で速度設定 | `sonic-swss/cfgmgr/portmgr.cpp` |
-| `PortMgr` | `doTask()` | `speed` フィールドなし | 速度設定処理をスキップ | `sonic-swss/cfgmgr/portmgr.cpp` |
+| Handler | 処理内容 | 効果 | evidence |
+|---|---|---|---|
+| `mgmt_oper_status.py` | CONFIG_DB 全フィールドを STATE_DB へ同期 + `/sys/class/net/<port>/operstate` を読み oper_status を更新 | STATE_DB `MGMT_PORT_TABLE\|eth0` の更新 | `sonic-buildimage/files/image_config/monit/mgmt_oper_status.py:16-51` |
+| `lldpd.conf.j2` | `alias` フィールドを参照 | LLDP portidsubtype local に alias 値を設定 | `sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2:17-18` |
+| `sonic-snmpagent` | `alias` フィールドを読み取り (`get('alias', if_name)`) | SNMP MIB インタフェーステーブルに alias を返却、未設定時は if_name (eth0) をフォールバック | `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py:270` |
 
-> **スキャン証跡**: minigraph.py:2281-2296 確認。admin_status は常時 "up" で固定であることを確認 — 誤読なし。
+> **スキャン証跡**: minigraph.py:2281-2296 確認。admin_status は常時 "up" で固定であることを確認 — 誤読なし。portmgrd.cpp:28 確認、CFG_PORT_TABLE_NAME="PORT" のみ購読。
 
 <!-- /handler-branching -->
+
+<!-- defaults -->
+## 暗黙デフォルト・コード由来フォールバック (Phase A)
+
+<!-- evidence: sonic-buildimage/src/sonic-config-engine/minigraph.py / sonic-buildimage/files/image_config/monit/mgmt_oper_status.py / sonic-swss/cfgmgr/portmgr.h / sonic-buildimage/files/image_config/interfaces/interfaces.j2 / sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py -->
+
+| フィールド | 種別 | 暗黙デフォルト / 挙動 | ソース |
+|---|---|---|---|
+| `admin_status` | YANG default + ハードコード注入 | YANG default `up`。minigraph は常時 `"up"` を注入。フィールド省略時も YANG が `up` を返す | `sonic-mgmt_port.yang:74`, `minigraph.py:2294` |
+| `mtu` | dead write | YANG default `1500`。STATE_DB へは同期されるが `/etc/network/interfaces` に展開されず eth0 の実 MTU は変化しない | `sonic-mgmt_port.yang:68`, `interfaces.j2` (MGMT_PORT.mtu 参照なし) |
+| `speed` | dead write + プラットフォーム依存 | minigraph が HwSku の `ManagementInterface/Speed` 要素から取得した場合のみ書き込む。フィールドが存在しても ethtool による実際の速度変更は行われない | `minigraph.py:1683-1690, 2295-2296` |
+| `autoneg` | dead field | YANG 定義あり、実装コンシューマなし。設定しても eth0 の autoneg は変化しない | `sonic-mgmt_port.yang:46-51` (コンシューマなし) |
+| `description` | dead field | YANG 定義あり、実装コンシューマなし | `sonic-mgmt_port.yang:57-60` (コンシューマなし) |
+| `alias` | implicit fallback | 省略時: SNMP MIB が `if_name` (例: `eth0`) をフォールバック返却。LLDP は portidsubtype を `mgmt_if.port_name` にフォールバック | `sonic-snmpagent/mibs/__init__.py:270`, `lldpd.conf.j2:19` |
+
+### YANG-実装 discrepancy
+
+- **`portmgr.cpp` は MGMT_PORT を処理しない**: `portmgrd` は `PORT`（データポート）テーブルのみを購読。Phase 8 の旧記述は誤り。`DEFAULT_ADMIN_STATUS_STR="down"` / `DEFAULT_MTU_STR="9100"` はデータポート専用定数でありマネジメントポートには無関係 (`sonic-swss/cfgmgr/portmgr.h:14-15`)。
+- **`mtu` / `speed` / `autoneg` の書き込み→読み取り非対称**: CONFIG_DB に書き込んでも eth0 の物理設定に反映するコードが存在しない。YANG バリデーションは通過するが実効性がない (silent accept / dead write)。
+
+<!-- /defaults -->
