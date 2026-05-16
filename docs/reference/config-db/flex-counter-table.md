@@ -355,6 +355,80 @@ YANG に `default` なし。counterpoll CLI の表示上のソフトデフォル
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/orchdaemon.cpp -->
+
+### orchdaemon 初期化順序
+
+`FlexCounterOrch` は依存する全 Orch が生成済みの後に生成される（`orchdaemon.cpp:625`）。依存 Orch の生成順の抜粋:
+
+| 順番 | オブジェクト | 役割 |
+|------|------------|------|
+| 1 | `gPortsOrch` | 物理ポート管理 |
+| 2 | `gFlowCounterRouteOrch` | ルートフローカウンタ |
+| 3 | `gIntfsOrch` | インタフェース/RIF 管理 |
+| 4 | `gCoppOrch` | COPP/Trap 管理 |
+| 5 | `gBufferOrch` | バッファプール/キュー管理 |
+| 6 | `FlexCounterOrch` (本 Orch) | flex counter グループ制御 |
+
+### doTask ガード順序
+
+`FlexCounterOrch::doTask(Consumer &consumer)` の早期 return ガード（順番どおり）:
+
+1. テーブルが `DEVICE_METADATA` なら `handleDeviceMetadataTable()` に委譲して即 return
+2. `!m_delayTimerExpired` (warm-reboot 遅延 60 秒) の間は全処理を保留
+3. `gPortsOrch->allPortsReady() == false` の間は全処理を保留（ポート初期化待ち）
+4. `gFabricPortsOrch->allPortsReady() == false` の間は全処理を保留（Fabric ポート初期化待ち）
+5. `flexCounterGroupMap` に存在しないキーは即破棄（`SWSS_LOG_NOTICE("Invalid flex counter group input")` → リトライなし）
+
+### グループ別 enable 前提条件
+
+`FLEX_COUNTER_STATUS=enable` の書込みは、対応 Orch が初期化完了していなければ silent drop（ガード無しで null ポインタ deref を避けるため）:
+
+| グループ | 前提条件 |
+|---------|---------|
+| `PORT` / `PORT_BUFFER_DROP` / `QUEUE` / `QUEUE_WATERMARK` / `PG_DROP` / `PG_WATERMARK` / `WRED_ECN_PORT` / `WRED_ECN_QUEUE` / `PORT_PHY_ATTR` | `gPortsOrch` 非 NULL かつ `allPortsReady()` |
+| `QUEUE` / `QUEUE_WATERMARK` / `PG_DROP` / `PG_WATERMARK` (`create_only_config_db_buffers=true` のみ) | `gBufferOrch` に BUFFER_QUEUE/BUFFER_PG の非ゼロ profile エントリが存在 |
+| `RIF` | `gIntfsOrch` 非 NULL |
+| `BUFFER_POOL_WATERMARK` | `gBufferOrch` 非 NULL |
+| `TUNNEL` | `VxlanTunnelOrch` が `gDirectory` 登録済み |
+| `ENI` / `DASH_METER` | `DashOrch` が `gDirectory` 登録済み |
+| `HA_SET` | `DashHaOrch` が `gDirectory` 登録済み |
+| `FLOW_CNT_TRAP` | `gCoppOrch` 非 NULL |
+| `FLOW_CNT_ROUTE` | `gFlowCounterRouteOrch` 非 NULL かつ SAI 能力クエリで `set_implemented == true` |
+| `SRV6` | `gSrv6Orch` 非 NULL |
+| `SWITCH` | `gSwitchOrch` 非 NULL |
+
+### 同一 SET 内のフィールド処理順
+
+複数フィールドを 1 つの SET コマンドにまとめて送ると、ループ内で以下の順で適用される:
+
+```
+POLL_INTERVAL       → setFlexCounterGroupPollInterval()  (即時)
+BULK_CHUNK_SIZE     → 変数に保管（ループ後にまとめて適用）
+FLEX_COUNTER_STATUS → enable/disable アクション + setFlexCounterGroupOperation()
+```
+
+`POLL_INTERVAL` と `FLEX_COUNTER_STATUS` を同一 SET にまとめると、`POLL_INTERVAL` が必ず先に適用される。
+
+### disable 時の非対称性
+
+多くのグループは `disable` 時に FLEX_COUNTER_DB の per-OID エントリを削除しない（syncd がポーリングを止めるだけ）。例外として以下は明示削除を行う:
+
+| グループ | disable 時のアクション |
+|---------|---------------------|
+| `FLOW_CNT_TRAP` | `gCoppOrch->clearHostIfTrapCounterIdList()` |
+| `FLOW_CNT_ROUTE` | `gFlowCounterRouteOrch->clearRouteFlowStats()` |
+| `PORT_PHY_ATTR` | `gPortsOrch->clearPortPhyAttrCounterMap()` + `clearPortPhySerdesAttrCounterMap()` |
+
+### warm-reboot: bake() は意図的 no-op
+
+`FlexCounterOrch::bake()` は `return true` のみ。`FLEX_COUNTER_TABLE` はデータプレーン整合性に不要なため reconciling 処理を行わない。60 秒の遅延タイマー満了後に通常通り SET を処理する。
+
+<!-- /ordering -->
+
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
