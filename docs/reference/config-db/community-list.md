@@ -167,6 +167,39 @@ show snmp community
 - **IPv4 と IPv6 は分離不可**: `TYPE: RO` 時は `rocommunity` と `rocommunity6` が同一コミュニティ名で生成される。IPv4 のみ / IPv6 のみに限定する仕組みは本テーブルにない。ネットワーク分離が必要な場合は snmpd.conf を直接編集する必要があるが、それは CONFIG_DB 管理外となる。<!-- evidence: snmpd.conf.j2 L51-52 -->
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 1. replace コマンド: 新 community SET → 旧 community DEL（逆順禁止）
+
+`config snmp community replace <current> <new>` は新 community を先に SET してから旧 community を DEL する順序で動作する（`config/main.py:4449-4454`）。
+
+逆順（旧 DEL → 新 SET）にした場合、DEL 直後に snmpd 再起動が走ると新 community がまだ DB に存在しない瞬間が生じ、全 SNMPv1/v2c アクセスが一時的に拒否される。CLI は新旧両方が DB に存在する時間帯を作ることでこのリスクを回避している。
+
+### 2. TYPE は大文字で書き込む（direct DB 書込み時）
+
+`snmpd.conf.j2` は `SNMP_COMMUNITY[community]['TYPE'] == 'RO'` / `== 'RW'` と大文字で比較する（`snmpd.conf.j2:50,59`）。CLI は `string_type.upper()` で自動大文字化するが（`config/main.py:4376`）、`sonic-db-cli` などで直接書き込む場合は `TYPE: ro`（小文字）では比較に失敗し、snmpd.conf の community 行が生成されない（サイレントスキップ）。
+
+### 3. 複数 community を一括 SET してから snmpd を 1 回再起動
+
+CONFIG_DB への SET/DEL は即時反映されず、`docker-snmp` コンテナ再起動（`systemctl restart snmp.service`）後にテンプレートが再生成される。CLI を使うと SET ごとに自動再起動が走るため非効率。direct DB 書込みで複数 community を一括投入する場合はすべての SET を完了してから 1 回の再起動を行うことで snmpd.conf が最終状態を一括生成できる（`config/main.py:4395-4401`）。
+
+### 4. snmp_yml_to_configdb.py の注入順序（RO 単数 → RO 複数 → RW 単数 → RW 複数）
+
+ブート時注入スクリプトは `full_snmp_comm_list = ['snmp_rocommunity', 'snmp_rocommunities', 'snmp_rwcommunity', 'snmp_rwcommunities']` の固定順でループする（`snmp_yml_to_configdb.py:31`）。既存 DB エントリと重複する community は冪等スキップするため、注入順序を変えても上書きは発生しない。
+
+### 5. YANG unique 制約なし: 同一 name への重複 SET は上書き
+
+`SNMP_COMMUNITY_LIST` に `unique` ステートメントなし（`sonic-snmp.yang:52-65`）。同一 `name` key で TYPE を変更したい場合は DEL 不要で上書き SET が可能。`SNMP_AGENT_ADDRESS_CONFIG` の `unique "agent_ip port"` とは異なる。
+
+| # | 依存関係 | 方向 | 違反時の挙動 |
+|---|----------|------|------------|
+| 1 | replace: 新 community SET → 旧 community DEL | **CLI 固定順** | 逆順時: snmpd 再起動タイミングで全 v1/v2c アクセス一時拒否リスク |
+| 2 | TYPE 書込み: 大文字必須（RO / RW） | **書込み前提** | 小文字（ro/rw）→ テンプレート比較失敗 → snmpd 行不生成（サイレント） |
+| 3 | 一括 SET 後に snmpd を 1 回再起動 | **推奨順序** | SET ごとの再起動でも機能するが非効率 |
+| 4 | snmp_yml_to_configdb.py 注入順序は固定（RO 単→複, RW 単→複） | **実装固定** | 重複 community は冪等スキップ（順序変更で上書き不可） |
+<!-- /ordering -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
