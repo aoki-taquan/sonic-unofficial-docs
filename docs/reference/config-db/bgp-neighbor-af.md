@@ -259,6 +259,47 @@ vtysh -c 'show bgp neighbor <ip>'
 > **スキャン証跡**: BGP_NEIGHBOR_AF は `bgp_table_handler_common` に直接渡され、BGP_GLOBALS_AF 相当の comb_attr_list 制約はなし。2 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-ordering.md`
+
+### 強制先行 (書かないと FRR に反映されない)
+
+| 順序 | 先行テーブル / 設定 | 後続 | 依存根拠 |
+|---|---|---|---|
+| 1 | `BGP_GLOBALS.<vrf>.local_asn` | `BGP_NEIGHBOR_AF` | `frrcfgd.py:2658-2662` — `__get_vrf_asn()` が None を返すと `__update_bgp()` 内で LOG_DEBUG を出して silent skip。FRR 側も `router bgp <asn>` がなければ `address-family` ブロックに入れない |
+| 2 | `BGP_NEIGHBOR.<vrf>\|<nbr>` (remote-as 定義) | `BGP_NEIGHBOR_AF` | FRR bgpd は `address-family` 内の `neighbor <addr> activate` 等を `neighbor <addr> remote-as` が未定義のまま受け付けない。`frrcfgd.py:2851-2853` — `BGP_NEIGHBOR` SET 完了後に `__apply_dep_vrf_table` で後追い再適用するため、逆順でも最終収束は可能 |
+
+### 推奨先行 (逆順でも後追い再適用で収束するが初期状態が不完全になる)
+
+| 順序 | 先行テーブル / 設定 | 後続 | 依存根拠 |
+|---|---|---|---|
+| 3 | `BGP_GLOBALS_AF.<vrf>\|<afi_safi>` | `BGP_NEIGHBOR_AF` | `frrcfgd.py:2297, 2847-2853` — `table_handler_list` 上 BGP_GLOBALS_AF (L2297) が BGP_NEIGHBOR_AF (L2306) より前。`bgp_af_handler` が BGP_GLOBALS_AF SET 完了後に `__apply_dep_vrf_table(vrf, 'BGP_NEIGHBOR_AF', key, af)` で後追い適用 |
+| 4 | `ROUTE_MAP` / `PREFIX_LIST` | `BGP_NEIGHBOR_AF` | `frrcfgd.py:2302` — `table_handler_list` 上 ROUTE_MAP (L2302) が BGP_NEIGHBOR_AF より前。`route_map_in` / `route_map_out` / `default_rmap` / `unsuppress_map_name` / `prefix_list_in` / `prefix_list_out` は FRR 名前空間で文字列参照。未定義名でも vtysh は通るが期待動作にならない |
+
+### FRR vtysh 投入順（frrcfgd が保証）
+
+```
+configure terminal
+  router bgp <asn> [vrf <vrf>]     # BGP_GLOBALS.local_asn
+    neighbor <addr> remote-as <asn> # BGP_NEIGHBOR
+    address-family <af> <ip_type>   # BGP_GLOBALS_AF → BGP_NEIGHBOR_AF の CLI 親階層
+      neighbor <addr> activate       # BGP_NEIGHBOR_AF.admin_status=up
+      neighbor <addr> route-map <name> in/out  # BGP_NEIGHBOR_AF.route_map_in/out
+      neighbor <addr> maximum-prefix <limit>   # BGP_NEIGHBOR_AF.max_prefix_limit
+```
+
+`frrcfgd.py:2869-2874` — `cmd_prefix` で `configure terminal` → `router bgp <asn> vrf <vrf>` → `address-family <af> <ip_type>` を構成してから `key_map.run_command()` に渡す。CLI 階層が保証されるのは frrcfgd 側であり、CONFIG_DB 書き込み順は緩和策で補完される。
+
+### bgpcfgd パス固有の依存
+
+| 依存 | 内容 | evidence |
+|---|---|---|
+| `BGP_NEIGHBOR` 先行必須 | `bgpcfgd/managers_bgp.py` は BGP_NEIGHBOR 単位で Jinja2 テンプレートを展開。AF 設定はテンプレート内に埋め込まれるため、`BGP_NEIGHBOR_AF` を単独で書いても bgpcfgd パスでは無視される | `managers_bgp.py:181-183, 229-243` |
+
+<!-- /ordering -->
+
 <!-- cross-refs -->
 ## 暗黙参照マップ (Phase C)
 
