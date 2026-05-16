@@ -113,10 +113,48 @@ snmpd に AgentX サブエージェントとして接続し、各 MIB OID に対
 
 ---
 
+## 差異 5: MGMT_VRF 環境での agentAddress / trapsink VRF バインド
+
+### agentAddress
+
+`snmpd.conf.j2` L28–29: `SNMP_AGENT_ADDRESS_CONFIG.vrf` が非空の場合 `@<vrf>` サフィックスが付加される。
+
+| `vrf` フィールド値 | 生成結果 |
+|------------------|---------|
+| 空 / 未設定 | `agentAddress udp:[<ip>]:<port>` |
+| `"mgmt"` | `agentAddress udp:[<ip>]@mgmt:<port>` |
+
+MGMT_VRF 有効環境 (`MGMT_VRF_CONFIG.mgmtVrfEnabled=true`) でのデータ/管理プレーン分離に使用。
+
+### trapsink の VRF バインド
+
+`snmpd.conf.j2` L148–170: `vrf != "None"` の場合 `%<vrf>` サフィックスが付加される。
+
+| `vrf` | trapsink 生成結果 |
+|-------|-----------------|
+| `"None"` (文字列) | VRF なし |
+| `"mgmt"` など | `trapsink <ip>:<port>%mgmt <community>` |
+
+---
+
+## 差異 6: SmartSwitch DPU (switch_type == 'dpu') の挙動
+
+`supervisord.conf.j2` L53–57: `dpu` は `chassis-packet` 分岐に該当しないため固定頻度モード。
+
+| `switch_type` | 動作 |
+|---------------|------|
+| `dpu` | 固定頻度 |
+| `chassis-packet` | 動的頻度 (`--enable_dynamic_frequency`) |
+| `npu` / `voq` / `fabric` | 固定頻度 |
+
+DPU ノードでも `DEVICE_METADATA.localhost` 必須。
+
+---
+
 ## スキャン証跡
 
 - `supervisord.conf.j2` 全行精読 (2026-05-15)
-- `snmpd.conf.j2` L1–34 精読 (multi-asic コメント確認)
+- `snmpd.conf.j2` L1–34, L140–175 精読 (multi-asic コメント・VRF バインド確認)
 - `sysDescription.j2` 全行精読
 - `sonic_ax_impl/__main__.py` `arg_parser.py` `main.py` 精読
 - `mibs/ietf/rfc4292.py` L1–95 精読
@@ -124,3 +162,4 @@ snmpd に AgentX サブエージェントとして接続し、各 MIB OID に対
 - `mibs/vendor/cisco/*.py` 全ファイル確認
 - `mibs/vendor/dell/force10.py` 確認
 - `ax_interface/mib.py` L30–340 (enable_dynamic_frequency ロジック) 確認
+- `hostcfgd` SNMP 関連ハンドラ確認 (2026-05-16)
