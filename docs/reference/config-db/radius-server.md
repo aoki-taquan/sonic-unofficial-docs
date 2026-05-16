@@ -233,6 +233,52 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 
 <!-- /derivation -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/radius-server-ordering.md`
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | 強度 | ソース |
+|---|---|---|---|
+| `RADIUS\|global` | `modify_conf_file()` が `radius_global_default` をベースに各サーバをマージ。未設定時はハードコードデフォルトで代替されるが `nas_ip`/`nas_id`/`src_ip` が空になる | 推奨 | `hostcfgd` L.670-695 |
+| `AAA` (`authentication.login=radius`) | `AAA` に `radius` がなければ PAM に反映されない。NSS radius プラグインが無効のままになる | 推奨 | `hostcfgd` L.825-844 |
+| `MGMT_INTERFACE` / `INTERFACE` | `src_intf` を設定する場合、インタフェース設定が未存在だと `src_ip` が空になる。後から `MGMT_INTERFACE` 変更が来ると自動更新される | 推奨先行 | `hostcfgd` L.686-695 |
+| `DEVICE_METADATA` (`hostname`) | `nas_id` 未設定時の自動補完ソース。load フェーズ内は自動保証、runtime 追加時は事前設定が必要 | load 内自動保証 | `hostcfgd` L.2273-2275 |
+
+!!! warning "推奨書込み順"
+    `RADIUS|global` → `RADIUS_SERVER` → `AAA` の順で書き込むことで、中間不整合期間（RADIUS サーバがあるが NAS-IP/AAA が未設定の状態）を最小化できる。逆順でも runtime の subscribe コールバックが自動更新するが、数秒間は不正な PAM ファイルが生成される。
+
+### PAM 設定生成の内部書込み順序
+
+`modify_conf_file()` 内で以下の固定順で処理・生成される:
+
+1. **`radius_servers` を `priority` 降順ソート** (`reverse=True`) — 高優先サーバが PAM の先頭に来る
+2. **各サーバの pam_radius_auth.conf 生成** (`/etc/pam_radius_auth.d/<ip>_<port>.conf`) — Jinja2 テンプレート展開
+3. **NSS 設定生成** (`/etc/radius_nss.conf`) — 全サーバ一括書き込み
+4. **`aaastatsd` 起動 / 停止** — `radsrvs_conf` が空なら stop、1 台以上あれば start
+
+この順序はコードで固定されており変更不可。`auth_port` 変更時は旧ポートファイル (`<ip>_<old_port>.conf`) が残留する（自動削除なし）。
+
+### AAA 連動（認証反映条件）
+
+```
+RADIUS_SERVER エントリ存在
+    AND AAA|authentication.login に "radius" が含まれる
+    → PAM common-auth-sonic に radius 行が追加される
+    → aaastatsd が起動される
+
+RADIUS_SERVER エントリ存在
+    AND AAA|authentication.login に "radius" が含まれない
+    → PAM には反映されない
+    → 実際のログイン認証には RADIUS は使用されない
+```
+
+`RADIUS_SERVER` テーブルを書き込んだだけでは認証は変わらない。`AAA` テーブルとのセットで初めて有効になる。
+
+<!-- /ordering -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
