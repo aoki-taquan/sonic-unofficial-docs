@@ -252,6 +252,70 @@ db_migrator.py での STATIC_ROUTE マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`STATIC_ROUTE` テーブルへの書込が発生すると、`bgpcfgd` の `StaticRouteMgr` が以下の副次処理を行う。
+
+### FRR vtysh コマンド発行
+
+`set_handler` / `del_handler` は `generate_command()` で vtysh コマンド文字列を生成し、
+`cfg_mgr.push_list()` → `FRR.write()` → `vtysh -f <tmpfile>` で FRR に一括投入する[^F1]。
+
+```
+# 追加
+ip route <prefix> <nexthop> [<ifname>] [<distance>] [nexthop-vrf <vrf>] tag <route_tag>
+ipv6 route <prefix> <nexthop> [<ifname>] [<distance>] [nexthop-vrf <vrf>] tag <route_tag>
+ip route <prefix> blackhole tag <route_tag>
+
+# 削除
+no ip route <prefix> <nexthop> [...] tag <route_tag>
+```
+
+`route_tag`: `advertise=true` → `1`（ROUTE_ADVERTISE_ENABLE_TAG）、`advertise=false` → `2`（ROUTE_ADVERTISE_DISABLE_TAG）。
+
+### BGP redistribute コマンド発行
+
+VRF 初回経路追加時（該当 VRF の静的経路が 0 件 → 1 件）に `enable_redistribution_command()` を発行する[^F1]。
+
+```
+route-map STATIC_ROUTE_FILTER permit 10
+ match tag 1
+router bgp <asn> [vrf <vrf>]
+ address-family ipv4
+  redistribute static route-map STATIC_ROUTE_FILTER
+ exit-address-family
+ address-family ipv6
+  redistribute static route-map STATIC_ROUTE_FILTER
+ exit-address-family
+exit
+```
+
+最終経路削除時（0 件になるとき）は `disable_redistribution_command()` で `no redistribute static` を発行する。
+`bgp_asn` が未設定の場合は `vrf_pending_redistribution` に保留し、`on_bgp_asn_change()` で後適用する。
+
+### kernel FIB 反映
+
+FRR `staticd` が vtysh コマンドを受け取り、`zebra` → `netlink` 経由で kernel FIB を更新する。
+nexthop の ARP 解決が必要な場合は ARP/ND 解決完了後に FIB 挿入される。
+`ip route show` / `ip -6 route show` で確認可能。
+
+### STATE_DB
+
+`StaticRouteMgr` は STATE_DB への直接書込を行わない。
+BFD 連携時は `staticroutebfd` が APPL_DB `STATIC_ROUTE_TABLE` を更新し、
+`bfdmon` が STATE_DB `BFD_SESSION_TABLE` を管理する。
+
+### APPL_DB 管理 (StaticRouteTimer)
+
+`static_rt_timer.py` の `StaticRouteTimer` は APPL_DB `STATIC_ROUTE:*` の
+`refresh` フィールドを監視し、デフォルト 180 秒周期で未更新エントリ（`refresh=false`、`expiry≠false`）を削除する（REST API 経由動的経路の有効期限管理）[^F2]。
+
+[^F1]: `bgpcfgd` StaticRouteMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py>
+[^F2]: StaticRouteTimer 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py>
+
+<!-- /side-effects -->
+
 <!-- ordering -->
 ## 順序依存関係 (Phase B)
 
