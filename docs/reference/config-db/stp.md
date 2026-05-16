@@ -292,6 +292,115 @@ stpmgrd 側の `STP_DEFAULT_MAX_INSTANCES = 255` (`stpmgr.h:38`) と整合して
 [^2]: STP Manager 実装: `stpmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp>
 [^3]: STP Manager ヘッダ: `stpmgr.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h>
 
+<!-- ordering -->
+## 処理順序・依存関係・warm-reboot 挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-ordering.md -->
+
+### 1. 起動前提条件 — PORT_INIT_DONE 待機
+
+`stpmgrd` は起動直後に `isPortInitDone()` (`stpmgr.cpp:1257-1273`) を呼び出し、
+APPL_DB の `APP_PORT_TABLE` に `PortInitDone` キーが出現するまで **1 秒ポーリングでブロッキング待機** する。
+`portsyncd` / `orchagent` が PORT テーブルを初期化しない限り、stpmgrd は STP 処理を開始できない。
+
+```
+APPL_DB:APP_PORT_TABLE|PortInitDone が存在する → 処理開始
+```
+
+証跡: `stpmgr.cpp:1257-1273`, `stpmgrd.cpp:72`
+
+---
+
+### 2. CONFIG_DB 購読テーブルと処理依存グラフ
+
+`stpmgrd.cpp:43-64` が以下の TableConnector を生成し、`doTask()` でディスパッチする:
+
+- `STP|GLOBAL` (`CFG_STP_GLOBAL_TABLE_NAME`)
+- `STP_VLAN` (`CFG_STP_VLAN_TABLE_NAME`)
+- `STP_VLAN_PORT` (`CFG_STP_VLAN_PORT_TABLE_NAME`)
+- `STP_PORT` (`CFG_STP_PORT_TABLE_NAME`)
+- `STP_MST` / `STP_MST_INST` / `STP_MST_PORT`
+- `PORTCHANNEL_MEMBER` (LAG メンバー更新)
+- `STATE_VLAN_MEMBER` (State DB)
+
+各タスク関数には **bool フラグによるガード** が実装されており、
+前提タスクのフラグが立つ前の消費は `return` (silent defer) となる:
+
+| タスク関数 | guard 条件 (stpmgr.cpp) |
+|---|---|
+| `doStpGlobalTask()` | なし (最初の受信でフラグ立て) |
+| `doStpPortTask()` | `stpGlobalTask == true` |
+| `doStpMstGlobalTask()` | `stpGlobalTask == true` |
+| `doStpVlanTask()` | `stpGlobalTask && (stpPortTask || isStpPortEmpty())` |
+| `doStpMstInstTask()` | `stpGlobalTask && (stpPortTask || isStpPortEmpty())` |
+| `doStpMstInstPortTask()` | `stpGlobalTask && stpMstInstTask && stpPortTask` |
+| `doStpVlanPortTask()` | `stpGlobalTask && stpVlanTask && stpPortTask` |
+
+#### PVST 推奨書き込み順序
+
+```
+1. STP|GLOBAL       ← stpGlobalTask フラグを立てる
+2. STP_PORT         ← stpPortTask フラグを立てる
+3. STP_VLAN         ← STATE_VLAN 存在確認後に処理
+4. STP_VLAN_PORT    ← 全フラグが揃った後
+```
+
+#### MST 推奨書き込み順序
+
+```
+1. STP|GLOBAL       ← stpGlobalTask フラグを立てる
+2. STP_PORT         ← stpPortTask フラグを立てる
+3. STP_MST          ← stpGlobalTask 依存のみ
+4. STP_MST_INST     ← stpMstInstTask フラグを立てる
+5. STP_MST_PORT     ← 全フラグが揃った後
+```
+
+証跡: `stpmgr.cpp:51-86, 179-188, 340-346, 444-450, 630-638, 1023-1031, 1155-1160`
+
+---
+
+### 3. VLAN 依存 — STATE_VLAN 存在確認
+
+`doStpVlanTask()` は SET 操作ごとに `isVlanStateOk(key)` (`stpmgr.cpp:1276-1290`) を呼び出す。
+`STATE_VLAN_TABLE` に対象 VLAN のエントリが存在しない場合、その SET を **スキップ (`it++`) して次ループへ持ち越す**。
+
+!!! warning "VLAN が State DB に登録される前に STP_VLAN を書き込むと設定が適用されない"
+    `vlanmgrd` が STATE_VLAN を書き込む前に `config spanning-tree enable pvst` を実行した場合、
+    `doStpVlanTask()` が無限に defer し、エラーログも出力されない (silent skip)。
+
+証跡: `stpmgr.cpp:210, 1276-1290`
+
+---
+
+### 4. LAG (PortChannel) 依存
+
+`doStpPortTask()` はキーが `PortChannel` を含む場合に `isLagEmpty(key)` を確認する。
+LAG にメンバーが存在しない場合、SET をスキップする (`stpmgr.cpp:648-653`)。
+この場合の再試行は `doLagMemUpdateTask()` による `m_lagMap` 更新後、次回 SELECT ループに依存する。
+
+証跡: `stpmgr.cpp:648-653, doLagMemUpdateTask()`
+
+---
+
+### 5. warm-reboot 挙動
+
+`stpmgrd.cpp:39-40` で `WarmStart::initialize("stpmgrd", "stpd")` と `WarmStart::checkWarmStart()` を呼び出すが、
+`stpmgr.cpp` 内に **reconciliation ロジックや `setWarmStartState()` 呼び出しは実装されていない**。
+
+warm reboot 時も cold reboot と同一フロー（PORT_INIT_DONE 待機 → CONFIG_DB 全件再処理）で動作する。
+STP トポロジ情報の保持・復旧は `stpd`（STP デーモン）側に委ねられている設計であり、
+stpmgrd 自身の warm-reboot reconcile フェーズは **事実上スタブ** となっている。
+
+!!! note "warm reboot 時のトポロジ収束"
+    stpmgrd が warm reboot 宣言のみで reconcile を実装していないため、
+    warm reboot 後の BPDU 送受信再開タイミングは stpd の実装に依存する。
+    CONFIG_DB → stpmgrd → stpd IPC が完了するまでの間、
+    STP ポート状態は stpd の内部状態に基づき継続される。
+
+証跡: `stpmgrd.cpp:39-40`, `stpmgr.cpp`（setWarmStartState 呼び出しなし）
+
+<!-- /ordering -->
+
 ## 関連ページ
 
 - [CONFIG_DB: VLAN](vlan.md)
