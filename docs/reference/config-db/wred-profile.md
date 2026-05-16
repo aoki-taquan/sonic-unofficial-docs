@@ -396,4 +396,32 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 - **db_migrator**: 旧 DB の `wred_profile` フィールド値 `|AZURE_LOSSLESS|` 形式を `AZURE_LOSSLESS` に変換 (`db_migrator.py:574-585`)。
 
 <!-- /runtime-trace -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`QosOrch` / `WredMapHandler` (`sonic-swss/orchagent/qosorch.cpp`) の処理において、WRED_PROFILE の SAI 作成順・QUEUE からの参照順・SAI bind 順に明確な順序制約が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 重要度 | 緩和策 |
+|---|----------|------|--------|--------|
+| 1 | SAI 属性リスト先頭 `SAI_WRED_ATTR_WEIGHT=0` の固定注入 | 内部固定（CONFIG_DB 記述順に依存しない） | — | `addQosItem()` が常に保証 (`qosorch.cpp:794`) |
+| 2 | `WRED_PROFILE\|<name>` 先行登録 → `QUEUE.wred_profile` 参照 | **先行推奨**（未登録でも retry で最終適用） | 中 | `task_need_retry` 自動再試行 (`qosorch.cpp:1869`) |
+| 3 | SAI WRED create 完了 → `SAI_QUEUE_ATTR_WRED_PROFILE_ID` bind | **先行必須**（orchagent 内部で保証） | 高（内部） | orchagent 内部マップ管理で自動保証 |
+| 4 | DEL 時: QUEUE `wred_profile` 解除 → `remove_wred()` | **先行必須**（SAI 参照カウント整合） | 高 | DEL_COMMAND 処理内で自動順序化 (`qosorch.cpp:1893`) |
+| 5 | 閾値変更: min/max 逆転を避ける 2 フェーズ適用 | 内部固定（orchagent が保証） | — | `convertFieldValuesToAttributes` が自動管理 (`qosorch.cpp:636-644`) |
+
+### 主要な制約詳細
+
+**SAI WRED 属性の注入順序 (依存 #1)**: `addQosItem()` は `sai_wred_api->create_wred()` 呼び出し前に SAI 属性リストを ① `SAI_WRED_ATTR_WEIGHT=0`（無条件先頭）、② `convertFieldValuesToAttributes()` 変換済み属性群、③ `*_drop_probability` 自動補完（Green → Yellow → Red 順）の順序で構築する（`qosorch.cpp:794-850`）。CONFIG_DB フィールドの記述順には依存しない。
+
+**WRED_PROFILE → QUEUE 参照の順序 (依存 #2)**: `handleQueueTable()` は `resolveFieldRefValue()` で `QUEUE.wred_profile` 名前参照を解決する。参照先 `WRED_PROFILE|<name>` が orchagent 内部マップに未登録の場合は `task_need_retry` を返して Consumer キューに再投入し、WRED_PROFILE 登録後に自動再処理される。**推奨順序**: `WRED_PROFILE|<name>` を先に CONFIG_DB に書き込み、その後 `QUEUE|<port>|<index>` の `wred_profile` フィールドを書き込む（`qosorch.cpp:1857-1870`）。
+
+**SAI bind 順序 (依存 #3/4)**: `applyWredProfileToQueue()` は有効な SAI WRED OID が得られた後に `sai_queue_api->set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` を呼ぶ。VoQ スイッチ (`gMySwitchType == "voq"`) では `getPortVoQIds()` 経由で VoQ の queue_id を使用する（`qosorch.cpp:1716-1730`）。DEL 時は `sai_wred_profile = SAI_NULL_OBJECT_ID` でキューから unbind してから `remove_wred()` を実行するため SAI 参照カウント整合が保たれる（`qosorch.cpp:1893, 864-870`）。
+
+**閾値変更の 2 フェーズ適用 (依存 #5)**: min > max の一時的逆転を防ぐため、`convertFieldValuesToAttributes()` は逆転を引き起こさない属性を Phase 1 で先行適用し、deferred リストを Phase 2 で後から適用する（`qosorch.cpp:636-644`）。外部からは透過的で CONFIG_DB 書き込み順序は問わない。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 7c1942297ce7 -->
