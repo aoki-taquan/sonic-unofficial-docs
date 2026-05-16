@@ -276,4 +276,63 @@ Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一�
 | trimming 制約 | 記述なし | orchagent: trimming-eligible profile は `task_failed` |
 | 複数ポートキー | 記述なし | カンマ区切りポートリストをキーとして設定可能 (内部で展開) |
 <!-- /defaults -->
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+`BUFFER_PORT_EGRESS_PROFILE_LIST` は **2 段階中継** で CONFIG_DB から SAI に到達する。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|---------------------|
+| CONFIG_DB → buffermgrd | `SubscriberStateTable` | `PSUBSCRIBE __keyspace@{cfg_db_id}__:BUFFER_PORT_EGRESS_PROFILE_LIST\|*` |
+| buffermgrd → APPL_DB | `ProducerStateTable` | `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE_CHANNEL@0` に PUBLISH |
+| APPL_DB → BufferOrch | `ConsumerStateTable` | `SUBSCRIBE BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE_CHANNEL@0` |
+| BufferOrch → APPL_STATE_DB | `ResponsePublisher` | **なし**（BUFFER_POOL / BUFFER_PROFILE のみ ack あり） |
+
+### SubscriberStateTable (CONFIG_DB 側)
+
+`buffermgrdyn` は `Orch::addConsumer()` (`orch.cpp:1188-1190`) を通じて CONFIG_DB に `SubscriberStateTable` を生成する。Redis keyspace notification:
+
+```
+PSUBSCRIBE __keyspace@{config_db_id}__:BUFFER_PORT_EGRESS_PROFILE_LIST|*
+```
+
+で変化を検出し、`handleBufferPortEgressProfileListTable` → `handleBufferObjectTables(tuple, CFG_BUFFER_PORT_EGRESS_PROFILE_LIST_NAME, false)` (`buffermgrdyn.cpp:3571`) に委譲。コンマ区切りポートキーを分解して各ポートに `handleSingleBufferPortEgressProfileListEntry` を呼ぶ (`L3536-3547`)。<!-- evidence: buffermgrdyn.cpp:448,456 -->
+
+### ProducerStateTable → ConsumerStateTable (APPL_DB)
+
+`buffermgrdyn` は `m_applBufferProfileListTables[BUFFER_EGRESS]` (`ProducerStateTable(applDb, APP_BUFFER_PORT_EGRESS_PROFILE_LIST_NAME)`) で APPL_DB に書き込む (`buffermgrdyn.cpp:47`)。
+
+`BufferOrch` は `Orch(applDb, tableNames)` を通じて APPL_DB を `ConsumerStateTable` で購読する。`addConsumer()` の DB id 分岐（APPL_DB = 0 は `else` 側）で `ConsumerStateTable` が生成される (`orch.cpp:1191-1195`)。<!-- evidence: bufferorch.cpp:53, orchdaemon.cpp:386-394 -->
+
+### doTask と drain 順序
+
+`BufferOrch::doTask()` (`bufferorch.cpp:2040-2073`) は BUFFER_POOL → BUFFER_PROFILE の順に先 drain し、その後 `m_consumerMap` 残りを drain する。`BUFFER_PORT_EGRESS_PROFILE_LIST` は最後のループで処理され、参照先 pool / profile が先に適用された状態で実行される。
+
+### ResponsePublisher — このテーブルに上り ack なし
+
+`processEgressBufferProfileList` および `processEgressBufferProfileListBulk` は `m_publisher.publish()` を呼ばない。SAI 書き込み成功/失敗は `task_success` / `task_failed` / `task_need_retry` のリターンコードのみで管理される。<!-- evidence: bufferorch.cpp:1869-1944 -->
+
+### データフロー
+
+```
+CONFIG_DB[BUFFER_PORT_EGRESS_PROFILE_LIST|<port>]
+  ↓ SubscriberStateTable (keyspace notification)
+  ↓ PSUBSCRIBE __keyspace@cfg_db_id__:BUFFER_PORT_EGRESS_PROFILE_LIST|*
+buffermgrd (buffermgrdyn)
+  ↓ handleSingleBufferPortEgressProfileListEntry()
+  ↓ [admin-down → zero profile list 置換]
+  ↓ [pool 未準備 → pending, task_success]
+  ↓ ProducerStateTable::set()
+  ↓ PUBLISH BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE_CHANNEL@0
+APPL_DB[BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE:<port>]
+  ↓ ConsumerStateTable (orchagent select loop, 1000ms timeout)
+  ↓ BufferOrch::doTask() → processEgressBufferProfileList()
+  ↓ [trimming-eligible profile → task_failed]
+  ↓ [profile_list 変化なし → skip]
+  ↓ sai_port_api SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST
+ASIC (sairedis → ASIC_DB)
+```
+<!-- /pubsub -->
 <!-- glossary-links-injected: 5ad0ecc20ddb -->
