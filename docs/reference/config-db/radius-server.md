@@ -220,6 +220,39 @@ show radius
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` L91-98
+
+### RADIUS サーバデフォルト定数
+
+| 定数名 | 値 | 対応フィールド | ソース行 |
+|--------|----|---------------|---------|
+| `RADIUS_SERVER_AUTH_PORT_DEFAULT` | `"1812"` | `auth_port` | hostcfgd L92 |
+| `RADIUS_SERVER_PASSKEY_DEFAULT` | `""` (空文字列) | `passkey` | hostcfgd L93 |
+| `RADIUS_SERVER_RETRANSMIT_DEFAULT` | `"3"` | `retransmit` | hostcfgd L94 |
+| `RADIUS_SERVER_TIMEOUT_DEFAULT` | `"5"` | `timeout` | hostcfgd L95 |
+| `RADIUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | `auth_type` | hostcfgd L96 |
+| `RADIUS_PAM_AUTH_CONF_DIR` | `"/etc/pam_radius_auth.d/"` | 設定ファイルディレクトリ | hostcfgd L97 |
+| `RADIUS_SERVER_SKIP_MSG_AUTH` | `False` | `skip_msg_auth` (YANG 未定義) | hostcfgd L98 |
+
+### `auth_type` 列挙値
+
+| 値 | 意味 |
+|----|------|
+| `"pap"` | PAP 平文パスワード認証（デフォルト）。hostcfgd 定数 `RADIUS_SERVER_AUTH_TYPE_DEFAULT` と YANG enum が一致。 |
+| `"chap"` | CHAP チャレンジ認証。 |
+| `"mschapv2"` | MS-CHAPv2 認証。Active Directory 連携向け。 |
+
+hostcfgd はこれらの値を検証せず `pam_radius_auth.conf.j2` に直接渡す。無効値は PAM ライブラリ側で認証失敗となる。
+
+### 定数の適用経路
+
+各 RADIUS_SERVER エントリは `radius_global_default`（L374-381）をコピーして CONFIG_DB の値で上書きする。上記定数は CONFIG_DB に未設定のフィールドに対して補完される。`retransmit: 0` は YANG では有効（`range "0..10"`）だが CLI は `IntRange(1, 10)` のため設定不能 — 定数デフォルト `"3"` が適用される。
+
+<!-- /constants -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
