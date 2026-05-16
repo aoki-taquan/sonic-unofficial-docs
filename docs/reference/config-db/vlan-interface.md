@@ -228,6 +228,36 @@ CONFIG_DB: VLAN_INTERFACE|Vlan100|10.0.0.1/24  → (intfmgrd doIntfAddrTask, isI
   2. VLAN_INTERFACE|Vlan<N>  vrf_name=<new-VRF>  (rebind)
 ```
 
+### warm-reboot 時の挙動
+
+#### `buildIntfReplayList()` に VLAN_INTERFACE が含まれる
+
+warm-start 時、intfmgrd は `buildIntfReplayList()` で `m_cfgVlanIntfTable.getKeys()` の結果を `m_pendingReplayIntfList` に追加する（`intfmgr.cpp:277-278`）。
+
+```cpp
+// intfmgr.cpp:277-278
+m_cfgVlanIntfTable.getKeys(intfList);
+std::copy(intfList.begin(), intfList.end(), std::inserter(m_pendingReplayIntfList, ...));
+```
+
+リストが空になった時点で `setWarmReplayDoneState()` を呼び `REPLAYED` → `RECONCILED` と遷移する。reconciliation ロジックはなく、カーネルへの再 replay で完了とみなされる。**VLAN が STATE_DB で ready になってから VLAN_INTERFACE が replay 収束する** 順序は通常時と同じ。
+
+#### `ipv6_use_link_local_only` は in-memory 状態がリセットされる
+
+`m_ipv6LinkLocalModeList` は `std::set`（in-memory）。warm-reboot 後は空に戻るため、CONFIG_DB に `ipv6_use_link_local_only: enable` エントリが残っていても replay が再 SET を処理するまでの間は link-local モードが失われる。replay で CONFIG_DB 内容が再処理されれば収束する（`intfmgr.cpp:913`）。
+
+### 書込み順依存まとめ
+
+| 依存カテゴリ | 必須順序 | ソース |
+|------------|---------|-------|
+| VLAN → VLAN_INTERFACE | `VLAN` エントリ + vlanmgrd の STATE_VLAN_TABLE ready が先 | `intfmgr.cpp:653-660` |
+| VRF → VLAN_INTERFACE | `VRF` エントリ + vrfmgrd の STATE_VRF_TABLE ready が先 | `intfmgr.cpp:839-842` |
+| VNET → VLAN_INTERFACE | VNetOrch が VNET 処理済みであること | `intfsorch.cpp:933-939` |
+| 属性ロウ → IP prefix | `VLAN_INTERFACE\|Vlan<N>` SET → STATE_INTF 反映後に `VLAN_INTERFACE\|Vlan<N>\|<ip>` SET | `intfmgr.cpp:1115` |
+| IP prefix DEL → 属性ロウ DEL | すべての IP prefix を DEL してから属性ロウを DEL | `intfmgr.cpp:1060-1063` |
+| VRF 変更 2 ステップ | unbind (`vrf_name=""`) → rebind (`vrf_name=<新VRF>`) | `intfmgr.cpp:846-849` |
+| warm-reboot replay | VLAN STATE_DB ready 後に VLAN_INTERFACE replay 収束 | `intfmgr.cpp:277-278, 286-292` |
+
 <!-- /ordering -->
 
 <!-- ref-triangle:start -->

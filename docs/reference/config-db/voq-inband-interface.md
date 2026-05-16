@@ -220,4 +220,41 @@ db_migrator.py での VOQ_INBAND_INTERFACE マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`
+> 調査日: 2026-05-16
+
+### 他テーブル先行必須
+
+`VOQ_INBAND_INTERFACE` は `intfmgrd` が購読する（`intfmgrd.cpp:34`）が、単一キー SET の場合は `doIntfGeneralTask()` を呼ばず**直接 APP_DB へ relay** する（`intfmgr.cpp:1195-1204`）。
+
+```cpp
+// intfmgr.cpp:1195-1203
+if((table_name == CFG_VOQ_INBAND_INTERFACE_TABLE_NAME) &&
+        (op == SET_COMMAND))
+{
+    //No further processing needed. Just relay to orchagent
+    m_appIntfTableProducer.set(keys[0], data);
+    m_stateIntfTable.hset(keys[0], "vrf", "");
+    ...
+}
+```
+
+| 先行テーブル / 条件 | 依存の内容 | コード根拠 |
+|------------------|-----------|-----------|
+| VOQ 環境が有効 (`switch_type == "voq"`) | `VoqOrch` が起動していること。non-VOQ 環境では orchagent がスキップ | `sonic-swss/orchagent/voqorch.cpp` |
+| IP プレフィクスロウは属性ロウの STATE_DB 書込み後 | `isIntfCreated()` が false → IP プレフィクスロウをスキップ（2-key パスは `doIntfAddrTask` 経由） | `intfmgr.cpp:1115` |
+
+### 主要ポイント
+
+- 単一キー SET（属性ロウ）は `isIntfStateOk()` 検査をバイパスし、即 APP_DB に relay される — PORT / LAG / VLAN の STATE_DB ready を待たない
+- IP プレフィクスロウ（2-key）は通常の `doIntfAddrTask()` パスを通るため `isIntfCreated()` が必要
+- `VoqOrch` が APP_DB の `INTF_TABLE` を購読し、inband ポートの SAI RIF を作成する
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/voq-inband-interface-ordering.md` 参照。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
