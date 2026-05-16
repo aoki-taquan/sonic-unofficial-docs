@@ -262,4 +262,58 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 適用順序依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L103 L116 L136-139 L181-191 L433-469 L2118-2129 L2231-2251 -->
+
+### MAP 適用の前提順序
+
+`TC_TO_QUEUE_MAP` は `PORT_QOS_MAP` より**先に** CONFIG_DB へ書き込む必要がある。
+
+`QosOrch::handlePortQosMapTable()` は `tc_to_queue_map` フィールドを処理する際、`resolveFieldRefValue()` で対応する `TC_TO_QUEUE_MAP|<name>` の SAI オブジェクト存在を確認する（qosorch.cpp:2118-2129）。SAI オブジェクトが未作成であれば `task_need_retry` を返し、Consumer がバックオフ後に再処理する。
+
+```
+推奨書き込み順序:
+  1. TC_TO_QUEUE_MAP|<name>   ← SAI sai_qos_map_api->create_qos_map() 完了まで待機
+  2. PORT_QOS_MAP|<port> tc_to_queue_map=<name>
+```
+
+### doTask() の drain 順序による自動保証
+
+`QosOrch::doTask()` (qosorch.cpp:2231-2251) は以下の順で Consumer を drain する。
+
+1. TC_TO_QUEUE_MAP を含む**すべての map 系テーブル**（`port_qos_map_cfg_exec` と `queue_exec` 以外）
+2. `PORT_QOS_MAP`（port_qos_map_cfg_exec）
+3. `QUEUE`（queue_exec）
+
+この固定順序により、同一 `doTask()` 呼び出し内に TC_TO_QUEUE_MAP と PORT_QOS_MAP が同時到着しても TC_TO_QUEUE_MAP の SAI 作成が先行する。ただし SAI create 失敗（task_failed）は retry されないため、当該ターンでは PORT_QOS_MAP の bind もスキップされる。
+
+### PORT_QOS_MAP からの参照フィールド
+
+| PORT_QOS_MAP フィールド | 参照先テーブル | SAI 属性 |
+|------------------------|--------------|----------|
+| `tc_to_queue_map` | `TC_TO_QUEUE_MAP` | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` |
+| `encap_tc_to_queue_map` | `TC_TO_QUEUE_MAP` | （encap 経路） |
+
+`qos_to_ref_table_map` でどちらのフィールドも `CFG_TC_TO_QUEUE_MAP_TABLE_NAME` にマッピングされており、Tunnel encap 経路でも同テーブルが参照先となる（qosorch.cpp:103, 116）。
+
+### DEL 時の逆順序要件
+
+マップを削除する場合は参照を先に除去する。
+
+```
+推奨削除順序:
+  1. PORT_QOS_MAP|<port> の tc_to_queue_map フィールドを除去（または PORT_QOS_MAP エントリ DEL）
+  2. TC_TO_QUEUE_MAP|<name> を DEL
+```
+
+PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとすると `m_pendingRemove = true` がセットされ、SAI `remove_qos_map()` は参照解放まで実行されない（qosorch.cpp:181-191）。pending_remove 中は SET も `task_need_retry` でブロックされる（qosorch.cpp:136-139）。
+
+### SAI 制約
+
+`TcToQueueMapHandler::addQosItem()` は `SAI_QOS_MAP_ATTR_TYPE = SAI_QOS_MAP_TYPE_TC_TO_QUEUE` をハードコードし、`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` と同時に 1 回の `create_qos_map()` で作成する（qosorch.cpp:457-466）。map type は動的解決ではなくハンドラクラスに埋め込み固定であるため、テーブル名を変更しても SAI map type は変わらない。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 16a5b728a75a -->
