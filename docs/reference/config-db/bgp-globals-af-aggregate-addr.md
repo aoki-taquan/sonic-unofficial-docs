@@ -296,6 +296,27 @@ DEL 操作では `key_map.run_command` で `no aggregate-address` を vtysh に�
 詳細スキャンログは `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-ordering.md` を参照。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`BGP_GLOBALS_AF_AGGREGATE_ADDR` の YANG (`sonic-bgp-global.yang`) は `vrf_name` を `BGP_GLOBALS.vrf_name`、`policy` を `ROUTE_MAP_SET.name` への leafref として宣言する。実装側 (`frrcfgd.py`) では、これらに加え `BGP_GLOBALS` の `local_asn`、`BGP_GLOBALS_AF` の AF コンテキスト、`DEVICE_METADATA.frr_mgmt_framework_config = true` が暗黙の前提として読み取れる。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| [`BGP_GLOBALS\|<vrf>`](bgp-globals.md) | 読み取り (`local_asn` → vtysh コマンドプレフィクス) | 常時 (UPDATE / DELETE 共通)。不在 → `bgp_asn[vrf]` `KeyError` で握り潰され FRR 未反映 | `frrcfgd.py` L3162, L3180 (`router bgp {} vrf {}`)、L2207-2213 (`bgp_asn` 構築) |
+| [`BGP_GLOBALS_AF\|<vrf>\|<afi_safi>`](bgp-globals-af.md) | 暗黙の先行依存 (FRR コマンド階層上の親 AF コンテキスト) | `cmd_prefix` 第 3 要素として常に発行されるが、AF レベル属性 (`multipath` / route distance / L2VPN advertise-all-vni 等) は本テーブル単独では反映されない | `frrcfgd.py` L3163, L3181 (`address-family {} {}`)、L2297 (`table_handler_list` 登録順) |
+| [`ROUTE_MAP_SET\|<name>`](route-map-set.md) (および [`ROUTE_MAP`](route-map.md)) | 読み取り (`policy` フィールド → vtysh `route-map <name>` 引数) | `policy` 非空のとき。route-map 実在性は frrcfgd では検証せず `bgpd` 側で検証 | `frrcfgd.py` L1982-1983 (`af_aggregate_key_map` の `+policy`)、L928-930 (`format == 'aggr-policy'` 分岐) |
+| [`DEVICE_METADATA\|localhost`](device-metadata.md) (`frr_mgmt_framework_config`) | 起動時前提 (経路選択フラグ) | `true` でないと frrcfgd 経路全体が無効化され、bgpcfgd テンプレ経路 (`BGP_AGGREGATE_ADDRESS` テーブル) が代わりに動作 | `frrcfgd.py` L80, L2162-2170 (`get_entry('DEVICE_METADATA', 'localhost')`) |
+
+!!! note "YANG leafref vs 実装暗黙参照"
+    YANG (`sonic-bgp-global.yang`) は `vrf_name` (→`BGP_GLOBALS.vrf_name`) と `policy` (→`ROUTE_MAP_SET.name`) の 2 つを明示的な leafref として宣言する。`BGP_GLOBALS_AF` への参照および `DEVICE_METADATA.frr_mgmt_framework_config` への参照は YANG では宣言されておらず、`frrcfgd.py` の実装に暗黙的に存在する。
+
+!!! note "VRF / PORT / NEXTHOP は参照しない"
+    `frrcfgd.py` の `BGP_GLOBALS_AF_AGGREGATE_ADDR` 分岐 (L3169-3197) および `hdl_af_aggregate()` (L1313-) は **`VRF` / `PORT` / `INTERFACE` / `NEXTHOP` / `ROUTE_TABLE`** を直接参照しない。aggregate-address は L3 prefix ベースで bgpd 内部 RIB に基づき集約計算されるため、interface / nexthop の CONFIG_DB エントリには依存しない。
+
+> **中間ファイル**: `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-cross-refs.md`
+<!-- /cross-refs -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
