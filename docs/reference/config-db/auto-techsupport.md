@@ -82,6 +82,8 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
+### memory_threshold_check.py 経由
+
 | 条件 | 挙動 |
 |------|------|
 | `GLOBAL` エントリが存在しない | デフォルト値で動作 (`available_mem_threshold`=10%, `min_available_mem`=200MB) |
@@ -92,6 +94,23 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 | `rate_limit_interval` / `max_techsupport_limit` | memory_threshold_check では読まれない（coredump 監視デーモンが別途使用） |
 
 <!-- evidence: sonic-net/sonic-utilities/scripts/memory_threshold_check.py:153L -->
+
+<!-- failure -->
+### coredump_gen_handler.py 経由の失敗挙動
+
+| consumer | 条件 | 挙動 | ソース |
+|---|---|---|---|
+| `coredump_gen_handler` | core ファイルが生成後 20 秒以内に存在しない (`verify_recent_file_creation` 失敗) | `"Spurious Invocation"` を syslog INFO に記録して即返却。techsupport / cleanup いずれも実行しない | `coredump_gen_handler.py:73-75` |
+| `coredump_gen_handler` | `AUTO_TECHSUPPORT\|GLOBAL` の `state` が `"enabled"` 以外 | `"auto_invoke_ts is disabled"` を syslog NOTICE に記録し techsupport 起動をスキップ | `coredump_gen_handler.py:47-49` |
+| `coredump_gen_handler` | `AUTO_TECHSUPPORT_FEATURE\|<container>` の `state` が `"enabled"` 以外 | `"auto-techsupport feature for <container> is not enabled"` を syslog NOTICE に記録し techsupport 起動をスキップ | `coredump_gen_handler.py:55-57` |
+| `handle_coredump_cleanup` | `AUTO_TECHSUPPORT\|GLOBAL` の `state` が `"enabled"` 以外 | `"coredump_cleanup is disabled"` を syslog NOTICE に記録して cleanup をスキップ | `coredump_gen_handler.py:17-19` |
+| `handle_coredump_cleanup` | `max_core_limit` が `float()` 変換不可または `0` | cleanup をスキップ（`core_usage = 0.0` にフォールバック、`if not core_usage` 節で早期 return） | `coredump_gen_handler.py:22-31` |
+| `invoke_ts_cmd` | `show techsupport` が `EXT_LOCKFAIL` (rc=2) で終了 | `"Another instance of techsupport running"` を syslog NOTICE に記録し、今回の起動を中断 | `auto_techsupport_helper.py:240` |
+| `invoke_ts_cmd` | `show techsupport` が `EXT_RETRY` (rc=4) で終了かつ再試行上限 (`MAX_RETRY_LIMIT=2`) 超過 | `"MAX_RETRY_LIMIT for show techsupport invocation exceeded"` を syslog ERR に記録 | `auto_techsupport_helper.py:243-245` |
+| `invoke_ts_cmd` | `show techsupport` が成功 (rc=0) だが stdout に dump 名が見つからない | `"no techsupport dump is found"` を syslog ERR に記録。STATE_DB への書き込みは行わない | `auto_techsupport_helper.py:249-251` |
+
+> **Evidence**: `sonic-net/sonic-utilities/scripts/coredump_gen_handler.py:14-78`, `utilities_common/auto_techsupport_helper.py:232-254`
+<!-- /failure -->
 <!-- /cdb-exceptions -->
 
 <!-- value-behavior -->
