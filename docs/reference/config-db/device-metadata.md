@@ -764,6 +764,24 @@ evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
 | bgpcfgd `DeviceGlobalCfgMgr` | IDF ステータスが有効値以外 | `LOG_ERR "IDF: invalid value(X) is provided"` | `return False` → IDF isolation 設定が適用されない | `managers_device_global.py:257-258` |
 | bgpcfgd `DeviceGlobalCfgMgr` | CHASSIS_APP_DB 接続失敗 | `LOG_ERR "Got an exception ..."` | chassis_tsa_status が None → chassis TSA 判定が行われない。ローカル tsa_status のみで判断 | `managers_device_global.py:248-249` |
 | fpmsyncd | `suppress-fib-pending` 値が `"enabled"` 以外 | なし | suppress-fib-pending 無効のまま（if 分岐に入らない）。runtime 変更は動的に反映 | `fpmsyncd.cpp:113-118` |
+| orchagent `main.cpp` | `mac` フィールド不在かつ SAI `SAI_SWITCH_ATTR_SRC_MAC_ADDRESS` 取得失敗 | `SWSS_LOG_ERROR("Failed to get MAC address from switch, rv:%d")` | `handleSaiFailure(SAI_API_SWITCH, "get", status, true)` 呼び出し → orchagent プロセス終了（fatal=true） | `sonic-swss/orchagent/main.cpp:877-884` |
+| orchagent `main.cpp` | `switch_type` が `voq`/`fabric`/`chassis-packet`/`switch`/`dpu` 以外の不正値 | `SWSS_LOG_ERROR("Invalid switch type %s configured", switch_type.c_str())` | `switch_type = "switch"` にフォールバックして続行。設定意図と乖離したまま npu モードで SAI 初期化 | `sonic-swss/orchagent/main.cpp:260-264` |
+| buffermgrd (dynamic) | `ASIC_VENDOR` 環境変数未設定（platform 未定義） | `SWSS_LOG_ERROR("Platform environment variable is not defined, buffermgrd won't start")` | 即 `return` → `BufferMgrDynamic` 初期化中断。Lua ヘッドルーム計算スクリプトが読み込まれず、dynamic buffer 機能が完全に停止 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:71` |
+| buffermgrd (static) | `buffer_model` が `"dynamic"` 以外（不正値・空値含む） | なし（サイレント） | `dynamic_buffer_model = false` → static モード（`pg_profile_lookup.ini` ベース）で動作。DEL 操作でも同様に false。不正値でも警告なし | `sonic-swss/cfgmgr/buffermgr.cpp:390-406` |
+
+### switchorch.cpp MAC / switch_type 失敗詳細
+
+`orchagent` 起動時 (`main.cpp`) の MAC 取得フロー:
+
+1. `orchagent.sh:12-16` — `sonic-cfggen` で `DEVICE_METADATA.mac` を取得。不在 / `"None"` → eth0 MAC にフォールバック（起動続行）
+2. `main.cpp:675-679` — `gMySwitchType != "fabric"` かつ `gMacAddress` が設定済みなら SAI `create_switch` に `SAI_SWITCH_ATTR_SRC_MAC_ADDRESS` として渡す
+3. `main.cpp:877-884` — `gMacAddress` が未設定（フォールバックも失敗）の場合のみ SAI `get_switch_attribute` を試みる。SAI が失敗すると `handleSaiFailure(fatal=true)` → プロセス終了
+
+`switch_type` 不正値フロー (`main.cpp:260-264`):
+
+- `getCfgSwitchType()` が既知 5 値 (`voq`/`fabric`/`chassis-packet`/`switch`/`dpu`) 以外を検出 → `SWSS_LOG_ERROR` + `switch_type = "switch"` 強制上書き
+- `system_error` 例外時も同様に `"switch"` にフォールバック (`main.cpp:256`)
+- フィールド不在時は `"switch"` に設定（エラーなし、`main.cpp:251`）
 
 ### STATE_DB / ERROR_TABLE 記録方針
 
@@ -772,7 +790,7 @@ evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
 - hostcfgd は CONFIG_DB への書き戻しなし（読み取り専用）
 - fpmsyncd の `suppress-fib-pending` runtime 変更: 既存ルートを offloaded マークして遷移（`fpmsyncd.cpp:291-300`）
 
-> **調査証跡**: `managers_bgp.py` 600+ 行・失敗パス 10 箇所精読、`managers_device_global.py` 287 行・失敗パス 6 箇所精読、`hostcfgd` `DeviceMetaCfg` クラス全メソッド精読、`orchagent.sh` 146 行全読、`DbInterface.cpp:565-599` 精読。詳細: `meta/_intermediate/cdb-flow/device-metadata-failure.md`
+> **調査証跡**: `managers_bgp.py` 600+ 行・失敗パス 10 箇所精読、`managers_device_global.py` 287 行・失敗パス 6 箇所精読、`hostcfgd` `DeviceMetaCfg` クラス全メソッド精読、`orchagent.sh` 146 行全読、`DbInterface.cpp:565-599` 精読、`sonic-swss/orchagent/main.cpp:242-284,877-884` 精読（switch_type バリデーション・MAC SAI 取得失敗パス）、`sonic-swss/cfgmgr/buffermgrdyn.cpp:60-130` 精読（platform 未設定失敗パス）、`sonic-swss/cfgmgr/buffermgr.cpp:390-406` 精読（buffer_model 不整合サイレント挙動）。詳細: `meta/_intermediate/cdb-flow/device-metadata-failure.md`
 
 <!-- /failure -->
 
