@@ -327,7 +327,6 @@ FDB_TABLE|Vlan<vid>:<mac>
 
 <!-- /side-effects -->
 
-
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
