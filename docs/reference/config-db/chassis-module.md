@@ -547,6 +547,68 @@ SmartSwitch の `SmartSwitchConfigManagerTask` は `module_config_update()` 内�
 | 5 | DEL イベント解釈 | プラットフォーム依存 | 非 SS: up / SS: down |
 <!-- /ordering -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`chassisd` は CONFIG_DB の `CHASSIS_MODULE` テーブルを購読し platform API を制御するが、その過程で **STATE_DB・CHASSIS_STATE_DB・CHASSIS_APP_DB・systemd** への副次的な書込と制御が発生する。
+
+### STATE_DB — CHASSIS_MODULE_TABLE への oper_status 書込
+
+```
+STATE_DB  CHASSIS_MODULE_TABLE|<module_name>
+  フィールド: name, desc, slot, oper_status, num_asics, serial, presence, model, is_replaceable
+```
+
+`ModuleUpdater.module_db_update()` (chassisd:364-397) が `CHASSIS_INFO_UPDATE_PERIOD_SECS=10` 秒間隔のポーリングで STATE_DB を更新する。`admin_status: down` のモジュールも含めて全モジュールを更新する（oper_status 書込は admin_status 非依存）。
+
+| 条件 | 書込内容 |
+|------|---------|
+| 10 秒毎ポーリング (platform API 成功) | platform API 取得値を書き込み |
+| platform API 失敗 (`try_get` fallback) | `oper_status='Offline'`, `slot=-1`, その他 `'N/A'` |
+| `deinit` 時 | `module_table._del(name)` でエントリ削除 |
+
+### CHASSIS_STATE_DB — CHASSIS_ASIC_INFO_TABLE への書込
+
+```
+CHASSIS_STATE_DB  CHASSIS_ASIC_TABLE|asic<N>                    (Supervisor)
+CHASSIS_STATE_DB  <module_name>|CHASSIS_ASIC_TABLE|asic<N>      (Linecard)
+  フィールド: pci_address, name, asic_id_in_module
+```
+
+`module_db_update()` (chassisd:447-457) が `oper_status == 'Online'` かつ `admin_status != 'down'` のモジュール ASIC エントリを書き込む。モジュールが offline になると対応する全 ASIC エントリを削除する (chassisd:470-478)。
+
+SmartSwitch の Supervisor 上では `CHASSIS_FABRIC_ASIC_TABLE` に書き込む。
+
+### STATE_DB — CHASSIS_MIDPLANE_INFO_TABLE への書込
+
+```
+STATE_DB  CHASSIS_MIDPLANE_INFO_TABLE|<module_name>
+  フィールド: ip, access
+```
+
+`ModuleUpdater.midplane_status_update()` (chassisd:530-591) が 10 秒ポーリング毎に midplane IP と到達可否を STATE_DB に書き込む。platform API 失敗時は `ip='0.0.0.0'`, `access=False` を書き込む。
+
+### CHASSIS_APP_DB クリーンアップ（モジュール down から 30 分後）
+
+モジュールが offline になってから `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD=30` 分経過後に、Supervisor 上の `chassisd` が CHASSIS_APP_DB (redis_chassis.server:6380, DB#12) の下記テーブルを削除する (chassisd:593-680):
+
+- `SYSTEM_NEIGH*`、`SYSTEM_INTERFACE*`、`SYSTEM_LAG_MEMBER_TABLE*` — 対象ホスト・ASIC のエントリを削除
+- `SYSTEM_LAG_TABLE*` — 対象エントリを削除し、`SYSTEM_LAG_ID_TABLE` と `SYSTEM_LAG_ID_SET` の LAG ID を返却
+
+### systemd サービス制御（FABRIC-CARD 限定）
+
+`config chassis_modules shutdown/startup FABRIC-CARD*` は CONFIG_DB 書込後、最大 `TIMEOUT_SECS=10` 秒待機して chassisd の反映を確認し、タイムアウト後に `fabric_module_set_admin_status()` 経由で systemd を制御する (config/chassis_modules.py:94-131):
+
+| `admin_status` | systemctl 操作 |
+|---------------|---------------|
+| `down` | `stop swss@<asic>.service` → `CHASSIS_FABRIC_ASIC_TABLE` エントリ削除 → `reset-failed + start` (修復) |
+| `up` | `start swss@<asic>.service` |
+
+ASIC リストは `CHASSIS_STATE_DB.CHASSIS_FABRIC_ASIC_TABLE` から取得する。chassisd が未起動の場合は 10 秒タイムアウト後に強制実行される。
+
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:364-478,530-591,593-680`; `sonic-utilities/config/chassis_modules.py:83-131`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-module-side-effects.md`
+<!-- /side-effects -->
+
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
