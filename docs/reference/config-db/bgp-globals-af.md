@@ -433,4 +433,20 @@ address-family <af> <safi>
 [^ord5]: comb_attr_list: `frrcfgd.py:3938-3941`.
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`frrcfgd.py` の `BGP_GLOBALS_AF` ハンドラ (`bgp_af_handler`) が実行時に参照する暗黙依存テーブル。
+
+| 参照先テーブル | 必須度 | 参照用途 |
+|---|---|---|
+| `BGP_GLOBALS` | **必須** | `local_asn` 取得。未設定 VRF のイベントは silent drop される（`frrcfgd.py:2659`） |
+| `ROUTE_MAP` | 推奨（route-map フィールド使用時） | `import_vrf_route_map` / `route_download_filter` フィールドが参照する route-map の実体。frrcfgd は存在検証なしに即時 FRR コマンドを発行する |
+| `BGP_GLOBALS_AF_AGGREGATE_ADDR` | 従属（本テーブルが先行） | aggregate-address を保持する派生テーブル。`table_handler_list` で BGP_GLOBALS_AF が先に登録され AF コンテキストを確立する（`frrcfgd.py:2297 vs 2317`） |
+| `BGP_GLOBALS_AF_NETWORK` | 従属（本テーブルが先行） | network statement を保持する派生テーブル。同上 |
+| `DEVICE_METADATA` | 前提フラグ | `frr_mgmt_framework_config = true` の場合のみ frrcfgd が有効化される（`frrcfgd.py:2162-2168`） |
+
+> 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-cross-refs.md`
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 803f36c2634d -->
