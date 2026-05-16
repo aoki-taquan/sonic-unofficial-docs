@@ -285,4 +285,63 @@ APP_INTF_TABLE に記録される。
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`
+> 調査日: 2026-05-16
+
+### 他テーブル先行必須
+
+`LOOPBACK_INTERFACE` は `intfmgrd` が処理する。`isIntfStateOk()` 内で `Loopback` プレフィクスを検知すると **即 `true` を返す**（`intfmgr.cpp:696-699`）。PORT / PORTCHANNEL / VLAN など他テーブルへの依存は存在しない。
+
+| 先行テーブル / 条件 | 確認先 STATE_DB | 依存の内容 | コード根拠 |
+|------------------|----------------|-----------|-----------|
+| 依存なし | — | `isIntfStateOk("Loopback*")` は常に `true` | `intfmgr.cpp:696-699` |
+| `VRF` + vrfmgrd が STATE_VRF_TABLE に書く | `STATE_VRF_TABLE` | `vrf_name` 指定時のみ。未 ready → retry | `intfmgr.cpp:839-842` |
+| Loopback 属性ロウが STATE_INTERFACE_TABLE に存在 | `STATE_INTERFACE_TABLE` | `isIntfCreated(alias)` が false → IP プレフィクスロウをスキップ | `intfmgr.cpp:1115` |
+
+### Loopback 生成順序 (kernel)
+
+`doIntfGeneralTask()` SET パス（Loopback 向け、`intfmgr.cpp` L772–1054）:
+
+```
+1. is_lo = true 確認                              (alias が "Loopback" で始まる)
+2. ip link add <name> mtu 65536 type dummy       (新規作成時のみ。m_loopbackIntfList 未登録の場合)
+                                                  MTU はハードコード 65536
+3. adminStatus 正規化 → ip link set <name> up/down
+                                                  (空値・不正値は "up" にフォールバック。
+                                                   intfmgr.cpp:861-868, 870-880)
+   ※ ステップ 2–3 は is_lo ブロック内（L856-880）
+4. setIntfVrf(alias, vrf_name)                   (vrf_name 指定時。ip link set master/nomaster)
+   ※ is_lo ブロック外の共通パス（L1007-1010）
+5. setIntfMac(alias, mac) / mac_addr = "00:00:00:00:00:00" デフォルト付与
+                                                  (intfmgr.cpp:1012-1020)
+6. m_appIntfTableProducer.set(alias, data)       (APP_DB INTF_TABLE SET)
+7. m_stateIntfTable.hset(alias, "vrf", …)        (STATE_DB 書込み)
+```
+
+> **注意**: 旧版ドキュメントではステップ 3（VRF）と 4（MAC）を admin_status 設定の前に記載していたが、
+> コード上は VRF・MAC の設定（`setIntfVrf` / `setIntfMac`）は `is_lo` ブロックの外の共通パスに位置し、
+> `ip link set up/down` の後に実行される（`intfmgr.cpp:1007-1020`）。
+
+IP プレフィクスロウ（`doIntfAddrTask()` SET パス）は属性ロウの STATE_DB 書込み後に実行される。
+
+### SET 後 DEL 順依存
+
+| 操作 | 必須順序 | コード根拠 |
+|------|---------|-----------|
+| Loopback 属性ロウ (`LOOPBACK_INTERFACE|Loopback<N>`) の DEL | すべての IP プレフィクスロウを先に DEL してから | `intfmgr.cpp:1058-1063` |
+| VRF 変更 | `vrf_name=""` で unbind → 新 VRF で rebind の 2 ステップ | `intfmgr.cpp:846-849` |
+
+### 主要ポイント
+
+- Loopback は他 IF と異なり STATE_DB の ready 待ちが**一切ない**（`isIntfStateOk` 常 true）
+- `cold restart` 時は `flushLoopbackIntfs()` でカーネルから全 Loopback を削除後に再作成する（`intfmgr.cpp:57`）
+- `warm-start` 時は `buildIntfReplayList()` が CONFIG_DB から Loopback キーを収集し replay する
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-ordering.md` 参照。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: b5270404647a -->
