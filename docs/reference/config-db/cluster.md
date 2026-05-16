@@ -142,51 +142,6 @@ leaf cluster {
 
 <!-- /ordering -->
 
-<!-- cross-refs -->
-## 暗黙参照 — cluster フィールドの daemon 参照状況 (Phase C)
-
-`cluster` フィールドは **daemon に直接消費されない metadata-only フィールド**である。
-以下は実コードを横断して確認した参照一覧と、混同しやすい隣接フィールドとの関係を示す。
-
-### daemon / スクリプトによる参照
-
-| コンポーネント | cluster 参照 | 実際に参照するフィールド | evidence |
-|-------------|------------|----------------------|---------|
-| `orchagent` | **なし** | `switch_type`, `mac`, `switch_id`, `max_cores`, `subtype` | sonic-swss/orchagent/main.cpp:244-355 |
-| `bgpcfgd` | **なし** | `type`, `subtype` | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:122-130 |
-| `swss_vars.j2` | **なし** | `asic_id`, `mac`, `synchronous_mode`, `switch_type` 等 | sonic-buildimage/files/build_templates/swss_vars.j2 |
-| `nbrmgrd` | **なし** | `switch_type` | sonic-swss/cfgmgr/nbrmgr.cpp:73-78 |
-| `intfmgrd` | **なし** | `switch_type` | sonic-swss/cfgmgr/intfmgr.cpp:71-74 |
-| `vlanmgrd` | **なし** | `mac` | sonic-swss/cfgmgr/vlanmgrd.cpp:56-61 |
-
-> **結論**: `cluster` フィールドを起動時・ランタイムに読み出す daemon は現時点で存在しない。
-> フィールドはデータセンター運用ツール（外部スクリプト・NMS 等）が `sonic-db-cli` / gNMI 経由で参照することを想定した識別子として設計されている。
-
-### DEVICE_METADATA 内での同時書き込みフィールド
-
-`minigraph.py` は同一パスで以下フィールドを `DEVICE_METADATA|localhost` に書き込む（minigraph.py:2161-2176）。
-`cluster` は他のフィールドと**独立**して書き込まれ、相互に依存しない。
-
-| フィールド | 書き込み条件 |
-|-----------|------------|
-| `chassis_hostname` | chassis 構成時 |
-| `deployment_id` | `is not None` check |
-| `cluster` | truthy check（`""` はスキップ） |
-| `slice_type` | 非空かつ chassis 構成時 |
-
-### DEVICE_NEIGHBOR_METADATA との共同書き込み
-
-`parse_devices()` (minigraph.py:804-826) は `cluster`・`deployment_id`・`hwsku`・`type` 等を同一 `device_data` dict に格納してから `devices[name]` に代入する。フィールド間の書き込み依存はない。
-
-### CHASSIS_APP_DB との非連携（確認済み）
-
-`cluster` フィールドは CONFIG_DB の `DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA` にのみ存在し、CHASSIS_APP_DB への伝播コードは存在しない。VOQ 構成の `SYSTEM_NEIGH` / `SYSTEM_PORT` 等も `cluster` を参照しない。
-
-### sonic-bgp-global.yang の rr_cluster_id との混同注意
-
-`sonic-bgp-global.yang` には `rr_cluster_id`（BGP Route Reflector Cluster ID）および `ibgp_equal_cluster_length` が存在するが、これらは **`BGP_GLOBALS` テーブルのフィールド**であり、`DEVICE_METADATA.cluster` / `DEVICE_NEIGHBOR_METADATA.cluster` とは完全に別物である（evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-global.yang:115,406）。
-<!-- /cross-refs -->
-
 ## 書き込み入り口 (Direction A)
 
 対象テーブル: `DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA` の `cluster` フィールド
@@ -227,6 +182,41 @@ leaf cluster {
 
 - 親テーブル: [`DEVICE_METADATA`](./device-metadata.md)、[`DEVICE_NEIGHBOR_METADATA`](./device-neighbor-metadata.md)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-device_metadata`、`sonic-device_neighbor_metadata`
+
+<!-- cross-refs -->
+## 暗黙参照 — ランタイム消費デーモン調査 (Phase C)
+
+`cluster` フィールドはコードベース全体を grep した結果、**ランタイムで読み出すデーモンが存在しない write-only フィールド**であることが確認された。
+
+### CONFIG_DB 消費側
+
+| 参照候補 | `cluster` フィールド参照 | 実際の参照フィールド | evidence |
+|---------|------------------------|-------------------|---------|
+| `bgpcfgd` (`managers_bgp.py`) | **なし** | `name` (ready check のみ) | `managers_bgp.py:220-222` |
+| `bgpcfgd` テンプレート (`*.j2`) | **なし** | — | grep 0 件 |
+| `buffers_config.j2` | **なし** | `DEVICE_NEIGHBOR_METADATA[...].type` | `buffers_config.j2:83,209-210` |
+| `qos_config.j2` | **なし** | `DEVICE_NEIGHBOR_METADATA[...].type` | `qos_config.j2:107-116,150-151` |
+| `swss_vars.j2` | **なし** | — | grep 0 件 |
+| `hostcfgd` | **なし** | — | grep 0 件 |
+| `orchagent` | **なし** | — | grep 0 件 |
+
+> `bgpcfgd` は `DEVICE_NEIGHBOR_METADATA` テーブル全体を subscribe (`managers_bgp.py:140`) するが、`cluster` フィールドは参照せず、`name` の存在確認 (neighbor ready チェック) のみを行う。
+
+### 書き込み経路（再確認）
+
+`cluster` フィールドを書き込むのは `minigraph.py` のみであり、書き込み後は何れのデーモンもこのフィールドを読まない。
+
+| 書き込み元 | 対象テーブル | evidence |
+|-----------|------------|---------|
+| `minigraph.py:668` | `DEVICE_NEIGHBOR_METADATA\|<device>` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:662-668` |
+| `minigraph.py:811` | `DEVICE_NEIGHBOR_METADATA\|<device>` (chassis 用途) | `sonic-buildimage/src/sonic-config-engine/minigraph.py:806-811` |
+| `minigraph.py:2172` | `DEVICE_METADATA\|localhost` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2170-2172` |
+
+### 用途
+
+`cluster` フィールドは **minigraph XML から CONFIG_DB への一方向伝達** のみを目的とする。他のシステムコンポーネント（デーモン・テンプレート・CLI）がこのフィールドを読んで動作を変える経路はない。フィールドが存在するかどうかによる副作用もない（デーモン起動失敗・警告ログなし）。
+
+<!-- /cross-refs -->
 
 <!-- ref-triangle:start -->
 

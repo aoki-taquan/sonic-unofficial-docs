@@ -302,4 +302,56 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetimedead|port|clientaliveinterval
 
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+### 1. systemd 初期化完了待ち — SSH_SERVER / SERIAL_CONSOLE は wait 後に適用
+
+`hostcfgd.load()` は `load_independent_config()` で AAA 系を先行適用し、`wait_till_system_init_done()` 完了後に `sshscfg.load()` / `serialconscfg.load()` を呼ぶ。<!-- evidence: hostcfgd:2233,2237,2265,2273 -->
+
+| 依存 | 方向 | 備考 |
+|------|------|------|
+| systemd 初期化 完了 → SSH_SERVER / SERIAL_CONSOLE 適用 | 強制先行 | sshd / serial-config.service 起動前は `sshd -T` 失敗リスク |
+| AAA / TACPLUS / RADIUS / LDAP → SSH_SERVER / SERIAL_CONSOLE | AAA が先 | load_independent_config() は systemctl 待ち前に実行 |
+
+### 2. PamLimitsCfg の DEVICE_METADATA 先行必須
+
+`PamLimitsCfg.update_config_file()` (hostcfgd:1421-1435) は `DEVICE_METADATA|localhost` が CONFIG_DB に存在しない場合に early return する。`SSH_SERVER.max_sessions` が設定されていても `DEVICE_METADATA` 不在では PAM limits が適用されない。<!-- evidence: hostcfgd:1430 -->
+
+| 依存 | 方向 | 備考 |
+|------|------|------|
+| `DEVICE_METADATA\|localhost` → `SSH_SERVER.max_sessions` (PAM limits) | 先行必須 | 不在時 early return、max_sessions 未反映 |
+
+### 3. ssh_handler() — SSH_SERVER 変更後 PamLimitsCfg が自動連動
+
+runtime の `SSH_SERVER` 変化では `ssh_handler()` が `policies_update()` 呼び出し後に必ず `pamLimitsCfg.update_config_file()` を呼ぶ。`pamLimitsCfg` は CONFIG_DB を再読みするため `policies_update()` の適用内容が確実に反映される。順序依存は `ssh_handler()` 内部で自動的に保証される。<!-- evidence: hostcfgd:2296-2299 -->
+
+### 4. SerialConsoleCfg.load() はキャッシュ格納のみ — serial-config.service 再起動なし
+
+load フェーズでは `serial-config.service` の再起動は行わず、キャッシュを初期化するだけ。runtime の差分変更時のみ `serial_console_config_handler()` が再起動を実行する。<!-- evidence: hostcfgd:2018-2021, 2023-2043 -->
+
+| 依存 | 方向 | 備考 |
+|------|------|------|
+| load 後の runtime 変更 → `serial-config.service` 再起動 | 差分検出で自動 | 進行中のシリアルコンソール接続が切断される可能性あり |
+
+### 5. SSH_SERVER|POLICIES DEL は sshd_config に即時反映されない
+
+`ssh_handler()` が DEL（`data == {}`）を受けると `policies_update()` は `self.policies` を更新しない（`if data:` で skip）。直前の `self.policies` が `modify_conf_file()` で再適用されるため、sshd_config は変更されない。hostcfgd 再起動後に初期化される。<!-- evidence: hostcfgd:1068-1077, 1059-1063 -->
+
+### 6. sshd 設定検証フォールバック — 設定不正時は既存 sshd_config を保持
+
+`set_policies()` は一時ファイルに書き込み、`sshd -T -f` 検証成功時のみ `os.rename()` で適用する。検証失敗時は一時ファイルを削除し、既存 `/etc/ssh/sshd_config` が維持される（無効設定による sshd 停止を防ぐ安全フォールバック）。<!-- evidence: hostcfgd:1155-1170 -->
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | systemd init 完了 → SSH_SERVER / SERIAL_CONSOLE 適用 | 強制先行 | AAA のみ systemctl 待ち前に先行 |
+| 2 | `DEVICE_METADATA\|localhost` 存在 → PAM limits 有効 | 先行必須 | 不在時 early return (max_sessions 未反映) |
+| 3 | `sshscfg.policies_update()` → `pamLimitsCfg.update_config_file()` | ssh_handler 内で自動連動 | DB 再読みで順序問題なし |
+| 4 | load 後の差分変更 → serial-config.service 再起動 | 差分検出で自動 | 一括変更でセッション切断回数を最小化 |
+| 5 | SSH_SERVER DEL → sshd_config クリア | hostcfgd 再起動で初期化 | DEL 後 hostcfgd を再起動すると反映 |
+| 6 | 設定不正 → 既存 sshd_config 保持 | sshd -T 検証フォールバック | 無効設定は自動破棄される |
+<!-- /ordering -->
+
 <!-- glossary-links-injected: d5320e852f7a -->

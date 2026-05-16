@@ -1,56 +1,73 @@
-# cluster フィールド — Phase C cross-refs 調査メモ
+# cluster フィールド 暗黙参照スキャン (Phase C)
 
-## 調査対象
+`docs/reference/config-db/cluster.md` の Phase C (暗黙参照) ブロック裏付け資料。
 
-`DEVICE_METADATA|localhost.cluster` および `DEVICE_NEIGHBOR_METADATA|<device>.cluster`
+対象フィールド:
+- `DEVICE_METADATA|localhost.cluster`
+- `DEVICE_NEIGHBOR_METADATA|<device>.cluster`
 
-## 暗黙参照の調査結果
+## スキャン手順
 
-### DEVICE_METADATA との共同書き込み
+```bash
+# 1. cluster フィールドを直接読む箇所
+grep -rn "\.cluster\|\[.cluster.\]" \
+  .cache/sonic-sources/sonic-buildimage/src/ \
+  --include="*.py" --include="*.j2" --include="*.cpp" | grep -v test
 
-`minigraph.py` の `parse_minigraph_meta()` は同一パスで以下フィールドを `DEVICE_METADATA|localhost` に書き込む。`cluster` は `deployment_id`、`chassis_hostname`、`slice_type` と同一 Python スコープで処理される（minigraph.py:2164-2176）。
+# 2. DEVICE_NEIGHBOR_METADATA を subscribe / read するデーモンが cluster を使うか
+grep -rn "neigmeta\|DEVICE_NEIGHBOR_METADATA\[" \
+  .cache/sonic-sources/sonic-buildimage/src/sonic-bgpcfgd/ --include="*.j2"
 
-| フィールド | 書き込み条件 | 依存関係 |
+# 3. swss_vars.j2 / buffers_config.j2 / qos_config.j2 で cluster フィールドの参照
+grep -n "cluster" \
+  .cache/sonic-sources/sonic-buildimage/files/build_templates/buffers_config.j2 \
+  .cache/sonic-sources/sonic-buildimage/files/build_templates/qos_config.j2 \
+  .cache/sonic-sources/sonic-buildimage/files/build_templates/swss_vars.j2
+```
+
+## 検出結果
+
+### CONFIG_DB 消費側
+
+`cluster` フィールドを **直接読む** デーモン・スクリプトはコードベース全体で確認されなかった。
+
+`DEVICE_NEIGHBOR_METADATA` テーブル全体を subscribe するデーモンとして `bgpcfgd` (`managers_bgp.py:140`) が存在するが、参照するのは `name` フィールドの存在確認 (ready チェック) のみであり (`managers_bgp.py:221-222`)、`cluster` フィールドには一切アクセスしない。
+
+`buffers_config.j2` / `qos_config.j2` は `DEVICE_NEIGHBOR_METADATA[...].type` フィールドを参照するが、`cluster` フィールドは参照しない（grep 結果: 0 件）。
+
+`swss_vars.j2` も `cluster` を参照しない（grep 結果: 0 件）。
+
+| 参照候補 | cluster 参照 | 参照フィールド (実際) | evidence |
+|---------|-------------|-------------------|---------|
+| `bgpcfgd managers_bgp.py` | **なし** | `name` (ready check のみ) | `managers_bgp.py:220-222` |
+| `bgpcfgd templates/*.j2` | **なし** | — | grep 0 件 |
+| `buffers_config.j2` | **なし** | `.type` | `buffers_config.j2:83,209-210` |
+| `qos_config.j2` | **なし** | `.type` | `qos_config.j2:107-116,150-151` |
+| `swss_vars.j2` | **なし** | — | grep 0 件 |
+| `hostcfgd` | **なし** | — | grep 0 件 |
+| `orchagent` | **なし** | — | grep 0 件 |
+
+### 書き込み経路（再確認）
+
+`cluster` フィールドを書き込むのは `minigraph.py` のみ。
+
+| 書き込み元 | 対象テーブル | evidence |
 |-----------|------------|---------|
-| `deployment_id` | `is not None` check | cluster と独立 |
-| `chassis_hostname` | chassis構成時 | cluster と独立 |
-| `cluster` | truthy check | 上記と独立 |
-| `slice_type` | 非空かつ chassis 構成 | cluster と独立 |
+| `minigraph.py:668` | `DEVICE_NEIGHBOR_METADATA|<device>` | `minigraph.py:662-668` |
+| `minigraph.py:811` | `DEVICE_NEIGHBOR_METADATA|<device>` (chassis 用途) | `minigraph.py:806-811` |
+| `minigraph.py:2172` | `DEVICE_METADATA|localhost` | `minigraph.py:2170-2172` |
 
-### DEVICE_NEIGHBOR_METADATA との共同書き込み
+### test コードによる存在確認
 
-`parse_devices()` (minigraph.py:804-826) で `cluster`・`deployment_id`・`hwsku`・`type` 等を同一 `device_data` dict に格納してから `devices[name] = device_data` とする。並列依存はない。
+`test_minigraph_case.py:207-217` に `test_minigraph_cluster()` があり、`DEVICE_METADATA['localhost']['cluster']` が `'DB5PrdApp11'` であることを assert している。これは minigraph→DB の書き込みが正しく機能することのリグレッションテスト。`test_chassis_cfggen.py` でも複数箇所で `'cluster': 'TestbedForstr-sonic'` が期待値として用いられており、chassis 環境における `DEVICE_NEIGHBOR_METADATA` への書き込みも確認されている。
 
-### daemon / 消費側の参照状況
+## まとめ — `cluster.md` Phase C 記載対象
 
-| コンポーネント | cluster 参照 | 備考 |
-|-------------|------------|------|
-| `orchagent` | なし | `switch_type`/`mac`/`switch_id` のみ参照 |
-| `bgpcfgd` | なし | `type`/`subtype` のみ参照 |
-| `swss_vars.j2` | なし | `cluster` フィールドは Jinja2 展開に含まれない |
-| `nbrmgrd` | なし | `switch_type` のみ参照 |
-| `intfmgrd` | なし | `switch_type` のみ参照 |
+| カテゴリ | 対象 | 種別 |
+|---|---|---|
+| 共依存 CONFIG_DB テーブル | **なし** | cluster フィールドは独立 |
+| ランタイム消費デーモン | **なし** | 書き込み専用フィールド |
+| 隣接テーブル参照 | `DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA` (親テーブル) | cluster フィールドを介した相互参照なし |
+| テスト確認 | `test_minigraph_case.py` / `test_chassis_cfggen.py` | 書き込み正確性の回帰テスト |
 
-### CHASSIS_APP_DB との関係
-
-`cluster` フィールドは CONFIG_DB (`DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA`) にのみ存在する。
-CHASSIS_APP_DB への伝播コードは確認されない（minigraph.py 全体を grep して該当なし）。
-VOQ 構成の `SYSTEM_NEIGH` / `SYSTEM_PORT` 等も `cluster` を参照しない。
-
-### sonic-bgp-global.yang の rr_cluster_id との混同注意
-
-`sonic-bgp-global.yang` に `rr_cluster_id`（BGP Route Reflector Cluster ID）と `ibgp_equal_cluster_length` フィールドが存在するが、これらは `BGP_GLOBALS` テーブルのフィールドであり、`DEVICE_METADATA.cluster` / `DEVICE_NEIGHBOR_METADATA.cluster` とは無関係。
-
-## 結論
-
-`cluster` フィールドを消費する daemon は存在しない（metadata-only フィールド）。
-minigraph.py が XML から書き込む唯一の入り口であり、読み出し側は `minigraph.py:2170` の自己参照のみ。
-cross-refs セクションでは「暗黙参照なし」と「BGP rr_cluster_id との混同注意」を明記する。
-
-## Evidence
-
-- `sonic-buildimage/src/sonic-config-engine/minigraph.py:493,515,524,662-668,806-813,2164-2176`
-- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang:184-187`
-- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_neighbor_metadata.yang:39-42`
-- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-global.yang:115,406`（rr_cluster_id は別物）
-- `sonic-buildimage/files/build_templates/swss_vars.j2`（cluster 参照なし確認）
+`cluster` フィールドは **write-only** の性質を持つ — minigraph XML → CONFIG_DB への一方向伝達のみであり、デーモンがランタイムで読み出して動作を変える経路は存在しない。

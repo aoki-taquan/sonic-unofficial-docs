@@ -149,6 +149,76 @@ VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除 → VXLAN_TUNNEL 削除 →
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗・リトライ挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-failure.md; sonic-swss/orchagent/vxlanorch.cpp -->
+
+### addOperation() 失敗分類
+
+#### 永続破棄（return true）― リトライなし
+
+| 条件 | ログメッセージ | コードロケーション |
+|------|-------------|------------------|
+| マップキーが既にキャッシュに存在 | `"Vxlan tunnel map '%s' already exist"` (SWSS_LOG_ERROR) | `vxlanorch.cpp:2025-2027` |
+| `vni` >= 16777215 (`MAX_VNI_ID`) | `"Vxlan tunnel map vni id is too big: %d"` (SWSS_LOG_ERROR) | `vxlanorch.cpp:2037-2040` |
+
+#### リトライ待ち（return false）― 依存オブジェクト未解決
+
+| 条件 | ログメッセージ | コードロケーション |
+|------|-------------|------------------|
+| VLAN が PortsOrch に未登録 | `"Vxlan tunnel map vlan id doesn't exist: %d"` (SWSS_LOG_WARN) | `vxlanorch.cpp:2030-2033` |
+| 親 VXLAN_TUNNEL が未存在 | `"Vxlan tunnel '%s' doesn't exist"` (SWSS_LOG_WARN) | `vxlanorch.cpp:2047-2050` |
+| `del_tnl_hw_pending` フラグが立っている | `"Tunnel Mapper deletion is pending"` (SWSS_LOG_WARN) | `vxlanorch.cpp:2057-2060` |
+| `createTunnelHw()` が失敗（SAI 内部エラー） | — | `vxlanorch.cpp:2069-2074` |
+
+#### SAI 呼び出し失敗（runtime_error catch → return false）
+
+| 操作 | SAI API | ログメッセージ | コードロケーション |
+|------|---------|-------------|------------------|
+| トンネルマップオブジェクト作成失敗 | `create_tunnel_map()` | `"Can't create tunnel map object"` (SWSS_LOG_ERROR)、`SAI_NULL_OBJECT_ID` 返却 | `vxlanorch.cpp:147-154` |
+| トンネルマップエントリ作成失敗 | `create_tunnel_map_entry()` | `"Can't create a tunnel map entry object"` (SWSS_LOG_ERROR)、`SAI_NULL_OBJECT_ID` 返却 | `vxlanorch.cpp:215-221` |
+| エントリ作成で例外送出 | — | `"Error adding tunnel map entry. Tunnel: %s. Entry: %s. Error: %s"` (SWSS_LOG_WARN)、`return false` | `vxlanorch.cpp:2113-2117` |
+| SAI トンネルオブジェクト作成失敗 | `create_tunnel()` | `"Can't create a tunnel object"` (SWSS_LOG_ERROR)、`return false` | `vxlanorch.cpp:403-409` |
+| SAI tunnel-term 作成失敗 | `create_tunnel_term_table_entry()` | `"Can't create a tunnel term table object"` (SWSS_LOG_ERROR)、`return false` | `vxlanorch.cpp:488-494` |
+
+### delOperation() 失敗分類
+
+#### 永続破棄（return true）― 警告のみ・処理継続
+
+| 条件 | ログメッセージ | コードロケーション |
+|------|-------------|------------------|
+| 削除対象マップキーが存在しない | `"Vxlan tunnel map '%s' doesn't exist"` (SWSS_LOG_WARN) | `vxlanorch.cpp:2138-2141` |
+| 削除時に VLAN が消えていた | `"Delete VLAN-VNI map.vlan id doesn't exist: %d"` (SWSS_LOG_ERROR) | `vxlanorch.cpp:2145-2148` |
+| ブリッジポート取得失敗（マップ数ゼロ時） | `"Get port failed for source vtep %s"` (SWSS_LOG_ERROR) | `vxlanorch.cpp:2196-2197` |
+| ブリッジポート削除失敗 | `"Remove Bridge port failed for source vtep = %s fdbcount = %d"` (SWSS_LOG_ERROR) | `vxlanorch.cpp:2202-2204` |
+
+#### SAI 呼び出し失敗（runtime_error catch → return false）
+
+| 操作 | SAI API | ログメッセージ | コードロケーション |
+|------|---------|-------------|------------------|
+| SAI マップエントリ削除失敗 | `remove_tunnel_map_entry()` | `"Can't delete a tunnel map entry object"` (SWSS_LOG_ERROR) | `vxlanorch.cpp:237-242` |
+| 削除で例外送出 | — | `"Error removing tunnel map %s: %s"` (SWSS_LOG_ERROR)、`return false` | `vxlanorch.cpp:2158-2161` |
+
+### del_tnl_hw_pending による連鎖ブロック
+
+最後の MAP エントリ削除時（`vlan_vrf_vni_count == 0`）に DIP トンネルが残存している場合、
+`del_tnl_hw_pending = true` が設定され（`vxlanorch.cpp:2215`）、以降の MAP 追加は
+`"Tunnel Mapper deletion is pending"` で return false となる。
+DIP トンネルが解放されて `del_tnl_hw_pending` が `false` に戻るまで MAP 追加は全てブロックされる。
+
+### SAI 失敗後の状態不整合（既知リスク）
+
+`create_tunnel_map_entry()` が `SAI_NULL_OBJECT_ID` を返した場合、`vxlan_tunnel_map_table_` には
+`map_entry_id = SAI_NULL_OBJECT_ID` のままエントリが記録される（`vxlanorch.cpp:2108`）。
+これは L3VNI の意図的 no-op と同じコードパスであるため、ログ上は正常に見えるが
+HW にマッピング実体が存在しない状態となる。後続の `delOperation()` では
+`remove_tunnel_map_entry(SAI_NULL_OBJECT_ID)` 呼び出し時に
+`if (obj_id != SAI_NULL_OBJECT_ID)` ガードでスキップされるため SAI エラーにはならない
+（`vxlanorch.cpp:232-235`）。ただしパケット転送には影響する。
+
+<!-- /failure -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->

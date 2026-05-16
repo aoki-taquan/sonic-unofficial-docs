@@ -245,6 +245,79 @@ def add_storm_config(self, port, storm_type, kbps):
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/storm-control-ordering.md -->
+
+`PolicerOrch::doTask()` / `handlePortStormControlTable()` (`sonic-swss/orchagent/policerorch.cpp`) の実装から導出した順序制約。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|---|---|---|
+| 1 | `PORT` (PortsOrch allPortsReady) → `PORT_STORM_CONTROL` | **先行必須** (全ポート初期化完了前は doTask が即 return) | 起動後は自動処理; 手動適用時は起動完了を確認 |
+| 2 | `PORT_STORM_CONTROL` キー内ポート名が `Ethernet` で始まること | **先行必須** (PortChannel / VLAN は silent drop) | LAG メンバーポートに直接設定すること |
+| 3 | 対象 `PORT` エントリが CONFIG_DB に存在すること | **先行必須** (`getPort()` 失敗 → task_success erase、リトライなし) | PORT を先に設定してから STORM_CONTROL を書き込む |
+| 4 | 3 種 (broadcast / unknown-unicast / unknown-multicast) は相互独立 | 順不同で設定可 | — |
+| 5 | kbps 値を更新する場合: 旧 policer の NULL → CIR 更新 → reapply の順序 | orchagent 内部固定順序 | — (orchagent 自動制御) |
+
+### 主要な制約詳細
+
+**PORT 先行必須 (依存 #1, #3)**:
+`doTask()` 冒頭 (`policerorch.cpp:379-382`):
+
+```cpp
+if (!gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+`gPortsOrch->allPortsReady()` が `false` の間、`doTask` は即 return する。SONiC 起動シーケンス中は PortsOrch が全ポートを学習し終わるまで PORT_STORM_CONTROL の処理は **自動的にキュー待機**される。
+
+ポートが存在しない場合 (`policerorch.cpp:138-143`):
+
+```cpp
+if (!gPortsOrch->getPort(interface_name, port))
+{
+    SWSS_LOG_ERROR("Failed to apply storm-control %s to port %s. Port not found", ...);
+    return task_process_status::task_success;  // サイレント erase
+}
+```
+
+`task_success` が返されるため `consumer.m_toSync` からエントリが erase される。**リトライなし**。syslog ERROR は出力されるがオペレータ通知手段は限定的。
+
+**Ethernet 以外 silent drop (依存 #2)**:
+`policerorch.cpp:131-135` で ETHERNET_PREFIX チェックを行う。`PortChannel`・VLAN インタフェースは `task_success` で erase される (silent drop)。HLD では「physical interfaces のみ対応」と明記されているが、orchagent 側には YANG/CLI バリデーションへの依存がなく、直接 DB 書き込みの場合は同様に drop される。
+
+証跡: `sonic-swss/orchagent/policerorch.cpp:131-143, 379-382`
+
+### orchlist 起動順序
+
+`orchdaemon.cpp:500` の orchlist 定義:
+
+```
+gSwitchOrch → gCrmOrch → gPortsOrch → gBufferOrch → ... → gPolicerOrch → ...
+```
+
+`gPortsOrch` は `gPolicerOrch` より先に登録されており、PortsOrch が allPortsReady を設定してから PolicerOrch の処理が有効になる設計。
+
+### 順序フロー図
+
+```
+CONFIG_DB|PORT (PortsOrch allPortsReady = true)
+  ↓ (先行必須)
+CONFIG_DB|PORT_STORM_CONTROL|<Ethernet ifname>|<storm_type>
+  kbps 値 (mandatory)
+  ↓
+PolicerOrch::handlePortStormControlTable()
+  ├─ create_policer (meter=BYTES, mode=STORM_CONTROL, red_action=DROP, CIR=kbps*1000/8)
+  └─ set_port_attribute (SAI_PORT_ATTR_{BROADCAST|FLOOD|MULTICAST}_STORM_CONTROL_POLICER_ID)
+```
+
+<!-- /ordering -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
