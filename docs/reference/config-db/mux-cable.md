@@ -256,6 +256,87 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 
 <!-- /handler-branching -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence:
+  sonic-swss/orchagent/muxorch.h:15-43
+  sonic-swss/orchagent/muxorch.cpp:48-85,437-448,2209-2210,2218-2228,2535
+  sonic-swss/orchagent/tunneldecaporch.h:21
+  sonic-swss-common/common/schema.h:140-143,457-465
+-->
+
+### state enum — MuxState
+
+| 列挙値 | 文字列 | 意味 |
+|--------|--------|------|
+| `MUX_STATE_INIT` | `"init"` | 初期状態 / warmboot 復旧待ち。初期値は standby または init (warmboot 時) |
+| `MUX_STATE_ACTIVE` | `"active"` | この ToR がトラフィックを直接転送 |
+| `MUX_STATE_STANDBY` | `"standby"` | ピア ToR 経由で転送。`"unknown"` 文字列も本状態に fallback される |
+| `MUX_STATE_PENDING` | `"pending"` | 状態遷移中 |
+| `MUX_STATE_FAILED` | `"failed"` | ICMP プローブ失敗等による異常状態 |
+
+**重要**: 文字列 `"unknown"` は `MUX_STATE_STANDBY` にマッピングされる (`muxorch.cpp:81`)。ハードウェアが未知状態を返した場合でも standby 動作となる。
+
+### 有効な状態遷移
+
+| 遷移前 | 遷移後 | 遷移種別 |
+|--------|--------|---------|
+| `init` | `active` | `MUX_STATE_INIT_ACTIVE` |
+| `init` | `standby` | `MUX_STATE_INIT_STANDBY` |
+| `active` | `standby` | `MUX_STATE_ACTIVE_STANDBY` |
+| `standby` | `active` | `MUX_STATE_STANDBY_ACTIVE` |
+
+上記以外の遷移は `MUX_STATE_UNKNOWN_STATE` として扱われ、エラーログ後に無視される。
+
+### 初期状態ハードコード
+
+| 起動モード | 初期 state | コード箇所 |
+|-----------|-----------|-----------|
+| 通常起動 | `standby` | `muxorch.cpp:445-447` |
+| warmboot | `init` | `muxorch.cpp:440-441` |
+
+### cable_type / neighbor_mode コードデフォルト
+
+| フィールド | コードデフォルト | コード箇所 |
+|-----------|----------------|-----------|
+| `cable_type` | `ACTIVE_STANDBY` (`"active-standby"`) | `muxorch.cpp:2209` |
+| `neighbor_mode` | `NBR_HANDLER_HOST_ROUTE` (`"host-route"`) | `muxorch.cpp:2210` |
+
+### SOC IP の扱い
+
+`soc_ipv4` / `soc_ipv6` は orchagent の `skip_neighbors` リストに追加される。当該 IP は通常の ARP/NDP neighbor エントリとして処理されず、active-active 構成で SoC (Smart Cable on-chip) へのルートが二重登録されないよう抑制される (`muxorch.cpp:2218-2228`)。
+
+### HW state 定数
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `MUX_HW_STATE_UNKNOWN` | `"unknown"` | ハードウェア MUX の状態不明 |
+| `MUX_HW_STATE_ERROR` | `"error"` | ハードウェア MUX のエラー状態 |
+
+### トンネル名定数
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `MUX_TUNNEL` | `"MuxTunnel0"` | active-standby 切替時のトンネルエンドポイント名 |
+| `MUX_ACL_TABLE_NAME` | `INGRESS_TABLE_DROP` | standby 時のパケットドロップ用 ACL テーブル |
+| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | 当該 ACL ルール名 |
+
+### DB テーブル名定数
+
+| 定数 | 値 | DB |
+|------|----|----|
+| `APP_MUX_CABLE_TABLE_NAME` | `"MUX_CABLE_TABLE"` | APPL_DB |
+| `APP_HW_MUX_CABLE_TABLE_NAME` | `"HW_MUX_CABLE_TABLE"` | APPL_DB |
+| `STATE_MUX_CABLE_TABLE_NAME` | `"MUX_CABLE_TABLE"` | STATE_DB |
+| `STATE_MUX_METRICS_TABLE_NAME` | `"MUX_METRICS_TABLE"` | STATE_DB |
+
+### metrics タイムスタンプ精度
+
+`MUX_METRICS_TABLE` に記録される切替タイムスタンプはマイクロ秒 6 桁精度 (`precision = 6`, `muxorch.cpp:2535`)。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
