@@ -213,4 +213,31 @@ vtysh -c 'show bgp community-list'
 
 > **スキャン証跡**: `hdl_com_set` L981-1006 全行読了。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
 <!-- /handler-branching -->
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### FRR バージョン固定
+
+SONiC master は FRR **10.5.1** に固定されている (`rules/frr.mk:3`)。`bgp community-list` / `bgp extcommunity-list` の構文はこのバージョンを前提としており、旧 FRR (< 7.5) で使われていた `ip community-list` 形式はサポートされない。<!-- evidence: sonic-buildimage/rules/frr.mk L3 `FRR_VERSION = 10.5.1` -->
+
+### COMMUNITY_SET vs EXTENDED_COMMUNITY_SET の FRR コマンド差
+
+| テーブル | FRR コマンドプレフィックス | `set_type=standard` 時のメンバー変換 | evidence |
+|---|---|---|---|
+| `COMMUNITY_SET` | `bgp community-list` | なし（値をそのまま渡す） | `frrcfgd.py:1974` `community_set_key_map` |
+| `EXTENDED_COMMUNITY_SET` | `bgp extcommunity-list` | `route-target:<val>` → `rt <val>`、`route-origin:<val>` → `soo <val>` に変換（`parse_ext_community`） | `frrcfgd.py:1975` `extcommunity_set_key_map`、`frrcfgd.py:797-810` |
+
+### standard vs expanded の FRR 挙動差
+
+| `set_type` | FRR へのキーワード | マッチ方式 | EXTENDED_COMMUNITY_SET での追加変換 |
+|---|---|---|---|
+| `STANDARD` | `standard` | 完全一致（数値 `AS:value` / well-known community） | `{:ext-com-list}` フォーマットで `rt`/`soo` プレフィックスを自動付与 |
+| `EXPANDED` | `expanded` | 正規表現マッチ（FRR `expanded` community-list） | プレフィックス変換なし（正規表現文字列をそのまま渡す） |
+
+> **注意**: `EXTENDED_COMMUNITY_SET` で `set_type=standard` かつ `community_member` が `route-target:` / `route-origin:` プレフィックスを持たない場合、`parse_ext_community()` が `None` を返してメンバーが無視される（サイレントドロップ）。<!-- evidence: frrcfgd.py:797-810 `parse_ext_community` returns None for unknown format -->
+
+### bgpd.conf テンプレート（起動時初期化）と frrcfgd（ランタイム）の二重経路
+
+`bgpd.conf.db.comm_list.j2` はコンテナ起動時の初期コンフィグ生成に使用され、`frrcfgd` はその後の差分を vtysh 経由で適用する。両者は同じロジックを持つが独立しており、起動前後で挙動の整合性を確認する必要がある。<!-- evidence: sonic-buildimage/src/sonic-frr-mgmt-framework/templates/bgpd/bgpd.conf.db.comm_list.j2 L1-54 -->
+<!-- /platform -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
