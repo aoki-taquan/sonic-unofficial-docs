@@ -406,4 +406,51 @@ APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-cross-refs.md`
+
+`SFLOW` / `SFLOW_SESSION` / `SFLOW_COLLECTOR` テーブルは YANG leafref を最小限しか持たないが、実行時に以下のテーブルを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `PORT\|<name>` | CONFIG_DB | 読み取り (speed → デフォルトサンプリングレート算出) | なし | 実質必須 | sflowmgr.cpp:26,34,409 |
+| `PORT_TABLE\|<name>` | STATE_DB | 読み取り (oper_speed 変化 → サンプリングレート更新) | なし | 実質必須 | sflowmgr.cpp:414,184,195 |
+| `PORT\|<name>` (gPortsOrch 経由) | CONFIG_DB | 読み取り (ポート OID → SAI samplepacket 設定) | なし | 実質必須 | sfloworch.cpp:370,382 |
+| `MGMT_VRF_CONFIG\|vrf_global` | CONFIG_DB | 読み取り (mgmtVrfEnabled チェック) | must 制約 | `collector_vrf=mgmt` 時必須 | sonic-sflow.yang must 制約 |
+
+### PORT (CONFIG_DB) — デフォルトサンプリングレートの算出前提
+
+`SflowMgr` は `doTask()` で `table == CFG_PORT_TABLE_NAME` を処理し (`sflowmgr.cpp:409`)、ポートの `speed` フィールドを `m_sflowPortConfMap` に記録する。`findSamplingRate()` がこのマップを参照してデフォルトサンプリングレートを返す (`sflowmgr.cpp:385-401`)。
+
+`PORT_TABLE` consumer が未登録の場合 `SWSS_LOG_ERROR("Consumer object for PORT_TABLE not found")` が出力され、全ポートのデフォルトレートが `ERROR_SPEED` になる (`sflowmgr.cpp:34`)。**YANG leafref は存在しないが、ポート速度 → サンプリングレートの暗黙前提が実装上必須**。
+
+### STATE_DB PORT_TABLE — oper_speed フィードバック
+
+`SflowMgr` は `STATE_PORT_TABLE_NAME` も consumer として購読し (`sflowmgr.cpp:414`)、oper speed が変化した場合に `sflowProcessOperSpeed()` を呼んでサンプリングレートを再計算・更新する (`sflowmgr.cpp:167-218`)。
+
+オートネゴシエーション環境では CONFIG_DB の `speed` と実際のリンク速度がずれるため、STATE_DB `PORT_TABLE.speed` (oper_speed) への依存が実質必須となる。
+
+### PORT (orchagent / gPortsOrch 経由) — SAI ポート OID 解決
+
+`SflowOrch::doTask()` は `gPortsOrch->allPortsReady()` で全ポート初期化完了を待ち (`sfloworch.cpp:370`)、`gPortsOrch->getPort(alias, port)` でポート名を SAI Port OID に変換する (`sfloworch.cpp:382`)。
+
+`SFLOW_SESSION|<port>` の key として指定されたポート名が `PORT` テーブルに存在しないと OID 取得に失敗し、`sai_port_api->set_port_attribute()` が呼ばれない（セッションが ASIC に設定されない）。
+
+### MGMT_VRF_CONFIG — collector_vrf=mgmt の YANG must 制約
+
+`SFLOW_COLLECTOR.collector_vrf = 'mgmt'` を設定する場合、YANG `must` 制約が `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled = 'true'` であることを要求する (sonic-sflow.yang)。この制約は実装コードではなく YANG バリデーション層で強制される。
+
+### SFLOW_COLLECTOR — hsflowd が直接参照
+
+C++ レベルの `sflowmgr.cpp` / `sfloworch.cpp` に `SFLOW_COLLECTOR` を直接読み込むコードはない。`SFLOW_COLLECTOR` テーブルは **hsflowd** (ユーザー空間 sFlow エージェント) が CONFIG_DB から直接読み取り、コレクタ IP / ポート / VRF を設定ファイルに反映する。`sflowmgrd` は hsflowd の起動トリガーに徹する。
+
+### SAI 参照
+
+`SflowOrch` が `sai_samplepacket_api` および `sai_port_api` を使用する。`SFLOW` / `SFLOW_SESSION` テーブルは間接的に `SAI_PORT_ATTR_INGRESS/EGRESS_SAMPLEPACKET_ENABLE` 属性に影響する。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 8e8594481100 -->
