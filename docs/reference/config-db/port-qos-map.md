@@ -131,6 +131,46 @@ PORT_QOS_MAP|<PORT.name>
 - 順序依存: PORT_QOS_MAP を先に DEL してから参照 QoS map を DEL しないと SAI 参照カウントで失敗する。
 
 <!-- /cdb-exceptions -->
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-failure.md -->
+
+### 未解決 MAP → task_need_retry
+
+`handlePortQosMapTable` (SET) で参照先 QoS map (`dscp_to_tc_map` / `tc_to_queue_map` 等) がまだ SAI に登録されていない場合、`resolveFieldRefValue` が `success` 以外を返した時点で **即 `task_need_retry`** を返す。後続フィールドの評価は行わない。対応 map が登録されると自動再試行される（`qosorch.cpp:~2129`）。
+
+`PORT_QOS_MAP|global` の場合も同様に `task_need_retry` だが、`continue` で他フィールドへ進む点が異なる（`qosorch.cpp:~2026`）。
+
+### PORT 不在 → continue (retry なし)
+
+SET / DEL いずれも `gPortsOrch->getPort()` が失敗すると `SWSS_LOG_ERROR` を出力して **`continue`** でそのポートをスキップする。`task_need_retry` は返さず、複数ポートが key に含まれる場合は残りポートへの適用を継続する。処理全体は `task_success` で完了する（`qosorch.cpp:~2068, ~2180`）。
+
+### SAI bind 失敗
+
+| コンテキスト | 失敗条件 | 返却ステータス | ソース |
+|------------|---------|--------------|--------|
+| port SET | `sai_port_api->set_port_attribute` 失敗 | `task_invalid_entry` | `qosorch.cpp:~2196-2201` |
+| port DEL | `sai_port_api->set_port_attribute` 失敗 | `task_invalid_entry` | `qosorch.cpp:~2089-2094` |
+| global SET | `applyDscpToTcMapToSwitch` が false | `task_failed` | `qosorch.cpp:~2038-2039` |
+| global DEL | `applyDscpToTcMapToSwitch` が false | `task_failed` | `qosorch.cpp:~2001-2002` |
+| PFC ビット設定失敗 | `setPortPfc` が false | ログのみ (task_success 継続) | `qosorch.cpp:~2217` |
+
+port エントリは `handleSaiSetStatus(SAI_API_PORT, ...)` 経由で `task_invalid_entry` に変換され、エントリがキューから除去される（retry なし）。
+
+### global vs port 失敗差異
+
+| シナリオ | `PORT_QOS_MAP\|global` | `PORT_QOS_MAP\|<port>` |
+|---------|----------------------|----------------------|
+| MAP 未解決 | `task_need_retry`、他フィールドへ continue | `task_need_retry`、即 return |
+| PORT 不在 | 該当なし | `continue`、`task_success` |
+| SAI bind 失敗 | `task_failed` | `task_invalid_entry` |
+| dscp_to_tc_map 以外の map type | `SWSS_LOG_WARN` + skip | フィールド無視 |
+
+!!! warning "global は dscp_to_tc_map 専用"
+    `PORT_QOS_MAP|global` に `tc_to_queue_map` 等を設定しても警告ログのみで SAI に適用されない。`dscp_to_tc_map` のみが switch level QoS map として有効（`qosorch.cpp:~2013`）。
+
+<!-- /failure -->
 
 <!-- defaults -->
 ## 暗黙デフォルト (Phase A)
