@@ -230,6 +230,107 @@ show feature status
 - `featured` デーモンが systemd サービス状態を監視し FEATURE テーブルと同期
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書き込み順依存 (Phase B)
+
+FEATURE テーブルへの書き込みは複数経路が重なるため、フィールドごとに「最終書き込み者」が異なる。誤った順序での操作はユーザ設定の消失やサービス誤動作を引き起こす。
+
+### 書き込み優先順序
+
+```
+① init_cfg.json.j2      — ビルド時に全フィールドを初期注入 (set_entry)
+② db_migrator.py        — 起動時マイグレーション (set_entry / mod_entry)
+③ FeatureRegistry       — パッケージ登録時 (set_entry、既存 DB 値優先ロジック付き)
+④ CLI                   — state / auto_restart / set_owner を部分更新 (mod_entry)
+⑤ featured デーモン     — state / delayed / has_*_scope を条件付き上書き (mod_entry)
+```
+
+### フィールド別「最終権限」
+
+| フィールド | CLI 変更可 | featured 上書き可 | 最終権限者 |
+|-----------|----------|-----------------|-----------|
+| `state` | ✅ (always_* 除く) | ✅ (always_* or template のみ) | CLI > featured (条件付) |
+| `auto_restart` | ✅ | ❌ | CLI |
+| `delayed` | ❌ | ✅ (DB と不一致時) | FeatureRegistry / featured |
+| `has_global_scope` | ❌ | ✅ (条件付) | FeatureRegistry / featured |
+| `has_per_asic_scope` | ❌ | ✅ (条件付) | FeatureRegistry / featured |
+| `has_per_dpu_scope` | ❌ | ❌ | init_cfg |
+| `high_mem_alert` | ❌ | ❌ | init_cfg |
+| `set_owner` | ✅ | ❌ | CLI |
+| `check_up_status` | ❌ | ❌ | FeatureRegistry (register 時) |
+| `support_syslog_rate_limit` | ❌ | ❌ | FeatureRegistry (register 時) |
+
+### 重要な順序依存ルール
+
+1. **FeatureRegistry は既存 DB 値を優先する** (`feature.py:71-80`):
+   `new_cfg = defaults ← current_cfg ← non_cfg_entries` の順で合成。`state` / `auto_restart` はユーザ設定が保持されるが、`delayed` / `has_*_scope` / `check_up_status` / `support_syslog_rate_limit` はパッケージ再インストール時に manifest 値で強制上書き。
+
+2. **featured は `auto_restart` を `state` より先に更新する** (`featured:200-217`):
+   `update_systemd_config()` → `update_feature_state()` の順で実行。逆順では、サービスが failed 状態になった後 auto_restart が更新されず再起動されないリスクがある。
+
+3. **`delayed=True` のフィーチャーは PortInitDone または 180 秒タイムアウト待ち** (`featured:273-275`):
+   先に FEATURE テーブルへ `state=enabled` を書き込んでも、条件成立まで systemd 起動は実行されない。
+
+4. **`set_owner=kube` への変更は KUBERNETES_MASTER 設定が前提**:
+   `KUBERNETES_MASTER` テーブルに k8s cluster 接続設定を書き込んでから `set_owner` を変更すること。逆順では featured が k8s 接続試行に失敗する。
+
+5. **`always_enabled` / `always_disabled` は CLI で変更不可** (`config/feature.py:24-25`):
+   これらの値は init_cfg.json.j2 または FeatureRegistry.register() が設定する。ユーザ変更が必要な場合は DB 直接操作またはビルド設定変更が必要。
+
+> **Evidence**: `sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80`; `sonic-host-services/scripts/featured:200-217,255-275`; `sonic-utilities/config/feature.py:24-25`; 詳細分析 `meta/_intermediate/cdb-flow/feature-ordering.md`
+<!-- /ordering -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### STATE_DB への障害記録
+
+`FeatureHandler.set_feature_state()` (`featured:585-590`) が `STATE_DB` の `FEATURE|<name>` テーブルに `state` フィールドを書き込む:
+
+| 状態値 | 発生ケース |
+|--------|-----------|
+| `"enabled"` | `enable_feature()` 正常完了 |
+| `"disabled"` | `disable_feature()` 正常完了 |
+| `"failed"` | `systemctl start/stop/mask` のいずれかが非ゼロ終了（`featured:508-510, 542-544`） |
+
+確認コマンド: `sonic-db-cli STATE_DB hgetall 'FEATURE|<feature_name>'`
+
+### enable / disable 失敗 → "failed" + CONFIG_DB resync
+
+`enable_feature()` / `disable_feature()` 内で `run_cmd(..., raise_exception=True)` が例外を投げると `set_feature_state(feature, "failed")` が STATE_DB に書き込まれ、`handler()` は `update_feature_state()` の `False` 返却を受けて `resync_feature_state()` を呼び出す（`featured:212-217`）。`resync_feature_state()` は CONFIG_DB の `state` フィールドを変更前の cached 値に書き戻す（`always_enabled`/`always_disabled` またはテンプレート値の場合のみ書き戻し実施、それ以外はユーザ設定を保持）。
+
+> **注意**: `systemctl enable` のみ `raise_exception=False` で失敗を無視する（`/run` 配下の生成サービスファイルへの enable 制限への対処）。
+
+### disable 中の activating 待ち（最大 60 秒）
+
+`disable_feature()` は `wait_for_service_stable()` (`featured:429-449`) を先行して呼び出し、サービスが `activating` 状態を抜けるまで最大 60 秒ポーリングする。タイムアウト後は警告ログを出力して stop を実行する（ExecStop 未実行でコンテナが孤立するリスクを回避するための措置）。
+
+### stop → disable → mask の途中失敗 → 中途状態
+
+disable 処理は `stop → disable → mask` の順で逐次実行され、最初の失敗で `return False` する。後続コマンドは実行されず、コンテナが稼働中のまま残るリスクがある（`featured:533-545`）。
+
+### `has_timer` / 不正 state render → `ValueError` → デーモン終了リスク
+
+`Feature.__init__()` は以下の場合に `ValueError` を raise する（`featured:75-78, 112-113`）:
+
+- CONFIG_DB の `FEATURE|<name>` に `has_timer` フィールドが存在する（廃止フィールド）
+- `state` フィールドの Jinja2 render 結果が `enabled`/`disabled`/`always_enabled`/`always_disabled` 以外
+
+`handler()` は try/except なしで `Feature()` を呼ぶため、例外がイベントループに伝播してデーモン全体がクラッシュする可能性がある。STATE_DB への書き込みはなし。
+
+復旧手順: 不正フィールドを DB から削除後、`systemctl restart featured`。
+
+### FEATURE_EXCLUSION_LIST によるサイレントスキップ
+
+`telemetry` / `frr_bmp` は `enable_feature()` / `disable_feature()` の冒頭で即 return する（`featured:469-471, 517-519`）。CONFIG_DB の state 変更が systemd に適用されない。STATE_DB は更新される（"enabled"/"disabled" が記録されるが systemd 操作はゼロ）。
+
+### multi-asic scope 失敗 → DB 乖離
+
+`sync_feature_scope()` 内で `has_per_asic_scope` / `has_global_scope` が False に変化した際の stop/disable/mask が失敗すると、`set_feature_state("failed")` 後に即 `return`（`featured:342-345`）。後続の `_conditional_update_scope()` による CONFIG_DB 更新がスキップされ、scope フィールドが古い値のまま残る（DB とシステム実態の乖離）。
+
+> **Evidence**: `sonic-host-services/scripts/featured:75-78,112-113,186-217,429-449,468-548,585-590`; 詳細分析 `meta/_intermediate/cdb-flow/feature-failure.md`
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
@@ -266,5 +367,71 @@ show feature status
 
 > **Evidence**: `sonic-host-services/scripts/featured:75-86,135,375-380,466,551-596`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17,228-237`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:113,117-124`; `sonic-utilities/sonic_package_manager/manifest.py:202-217`
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数
+
+`featured` スクリプト (`sonic-host-services/scripts/featured`) に埋め込まれた定数。
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|-----|---------|------|
+| `PORT_INIT_TIMEOUT_SEC` | `180` 秒 | `featured:24` | `delayed=True` フィーチャーの強制起動タイムアウト。PortInitDone を 180 秒待っても受信しない場合、`handle_port_table_timeout()` がすべての delayed フィーチャーを強制 enable する |
+| `WAIT_FOR_STABLE_TIMEOUT` | `60` 秒 | `featured:426` | `disable_feature()` が `systemctl stop` 前に `activating` 状態抜けを待つ最大時間。タイムアウト後は警告ログを出力して stop を続行する |
+| `WAIT_FOR_STABLE_POLL_INTERVAL` | `1` 秒 | `featured:427` | `wait_for_service_stable()` 内の `systemctl is-active` ポーリング間隔 |
+| `DEFAULT_SELECT_TIMEOUT` | `1000` ms | `featured:23` | メインイベントループの `selector.select()` タイムアウト。1 秒ごとに PORT_INIT タイムアウト判定を実施 |
+| `HOSTCFGD_MAX_PRI` | `10` | `featured:22` | FEATURE テーブル subscriber の select 優先度（PORT テーブルは `10-1=9`） |
+
+> **Evidence**: `sonic-host-services/scripts/featured:22-24,426-427,630,644-648,654-661`; 詳細分析 `meta/_intermediate/cdb-flow/feature-constants.md`
+<!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照マップ
+
+| 参照方向 | このテーブル | 相手テーブル / ページ | 条件 |
+|---------|------------|---------------------|------|
+| FEATURE → | `set_owner = "kube"` | [`KUBERNETES_MASTER`](./kubernetes-master.md) | k8s 管理切替え時。featured が k8s API 呼び出し前に KUBERNETES_MASTER の接続情報を参照 |
+| FEATURE → | `support_syslog_rate_limit = "true"` | [`SYSLOG_CONFIG_FEATURE`](./syslog-config-feature.md) | containercfgd が SYSLOG_CONFIG_FEATURE の rate-limit 値を読んでコンテナ内 rsyslog を再設定 |
+| FEATURE → | `state` / `has_*_scope` (ビルド時) | [`DEVICE_METADATA`](./device-metadata.md) | init_cfg.json.j2 が `localhost.type` / `subtype` を条件に state を決定 |
+| → FEATURE | `SYSLOG_CONFIG_FEATURE.<service>` | [`SYSLOG_CONFIG_FEATURE`](./syslog-config-feature.md) | key が FEATURE_LIST.name を leafref — 未登録 feature は設定不可 |
+| → FEATURE | `AUTO_TECHSUPPORT_FEATURE.<feature_name>` | [`AUTO_TECHSUPPORT_FEATURE`](./auto-techsupport-feature.md) | key が FEATURE.name に対応（YANG leafref 未実装、運用上の依存） |
+| CLI | `config/show feature` | [`show feature`](../cli/show-feature.md) | FEATURE テーブルの読み書き CLI |
+| YANG | `FEATURE_LIST` | [`sonic-feature`](../yang/sonic-feature.md) | 全フィールドのスキーマ定義 |
+
+<!-- /cross-refs -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`FEATURE` テーブルへの変更通知は **`SubscriberStateTable` (keyspace PSUBSCRIBE)** で配信される。`ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。
+
+| 購読者 | 購読 API | PSUBSCRIBE パターン | 用途 |
+|--------|---------|---------------------|------|
+| `featured` (`FeatureDaemon`) | `swsscommon.SubscriberStateTable` | `__keyspace@<dbId>__:FEATURE\|*` | 全フィーチャーの state/scope/auto_restart 制御 |
+| `dhcprelayd` (`DhcpServerFeatureStateChecker`) | `swsscommon.SubscriberStateTable` | `__keyspace@<dbId>__:FEATURE\|*` | `dhcp_server` エントリの `state` 変化のみ検出 |
+| `route_check.py` | `get_table` (HGETALL) | 購読なし | 起動時スナップショット (`bgp` の state 確認) |
+
+`containercfgd` は `FEATURE` テーブルを直接購読せず、`SYSLOG_CONFIG_FEATURE` テーブルのみを `ConfigDBConnector.listen()` で購読する。
+
+### featured イベントループ
+
+```
+CONFIG_DB HSET "FEATURE|bgp" state enabled
+  ↓ keyspace PUBLISH "__keyspace@<dbId>__:FEATURE|bgp"  "hset"
+featured SubscriberStateTable.pops()
+  ↓ HGETALL "FEATURE|bgp"  ← 通知後に別途フィールド取得
+feature_handler.handler(key="bgp", op=SET, data={state:enabled,...})
+  ↓ enable_feature(bgp)  →  systemctl start bgp.service
+  ↓ STATE_DB HSET "FEATURE|bgp" state enabled
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は HGETALL で取得する。
+- `featured` は `FEATURE_TBL` (pri=10) と `PORT_TBL` (pri=9) を同一 `swsscommon.Select` で多重化する。
+- ポーリング間隔: `DEFAULT_SELECT_TIMEOUT = 1000 ms`。TIMEOUT 時に `delayed` フィーチャーの PORT_INIT タイムアウト判定を実施。
+- 起動時は `render_all_feature_states()` が `get_table()` で全エントリをスナップショット処理してから Subscribe ループを開始する。
+
+> **Evidence**: `sonic-host-services/scripts/featured:22-23,600-678`; `sonic-swss-common/common/subscriberstatetable.cpp:17-165`; `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:388-411`; 詳細分析 `meta/_intermediate/cdb-flow/feature-pubsub.md`
+<!-- /pubsub -->
 
 <!-- glossary-links-injected: 92d0997ed33c -->

@@ -432,4 +432,243 @@ if (vrf_table_[vrf_name].ref_count)
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`
+
+### Linux ルーティングテーブル ID 定数
+
+vrfmgrd は VRF ごとに Linux カーネルのルーティングテーブル ID を自動割り当てする。これらの値は CONFIG_DB フィールドに一切現れない内部定数。
+
+| 定数名 | 値 | 意味 | ソース |
+|--------|-----|------|--------|
+| `VRF_TABLE_START` | `1001` | 通常 VRF に割り当てる table ID の開始値 | `vrfmgr.cpp:12` |
+| `VRF_TABLE_END` | `5097` | 通常 VRF に割り当てる table ID の終端値（排他） | `vrfmgr.cpp:13` |
+| `TABLE_LOCAL_PREF` | `1001` | `ip rule` で local テーブルを移動する preference 値 | `vrfmgr.cpp:14` |
+| `MGMT_VRF_TABLE_ID` | `6000` | `mgmt` VRF 専用の固定 table ID（通常プール外） | `vrfmgr.cpp:15` |
+
+**最大同時 VRF 数**: `VRF_TABLE_END - VRF_TABLE_START = 4096`。超過すると `getFreeTable()` が `0` を返し、Linux VRF デバイス作成が失敗する（`vrfmgr.cpp:185-188`）。VRF 削除により `recycleTable()` でプールに返却される。
+
+### リトライ定数
+
+vrfmgrd にはタイムアウト定数が存在しない。VRF DEL 時のパッシブリトライは **タイムアウトなし・無制限**。`isVrfObjExist()` が `true` を返す（orchagent 側の SAI オブジェクトが残存する）間、Consumer キューをスキップして次回ループで再試行し続ける。
+
+### VNI デフォルト定数
+
+| 変数 | 値 | ソース |
+|------|-----|--------|
+| `uint32_t vni = 0`（vrfmgrd 初期化） | `0` | `vrfmgr.cpp:418` |
+| `uint32_t vni = 0`（orchagent 初期化） | `0` | `vrforch.cpp:30` |
+
+YANG `default 0` と一致。VNI 上限 `16777215` は YANG `range "0..16777215"` による制約であり、vrfmgr.cpp 内にマジックナンバーとして現れない。
+
+<!-- /constants -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vrf-pubsub.md -->
+
+### Producer/Consumer ペア
+
+CONFIG_DB から SAI までの全通信は Redis の **keyspace notification** と **ProducerStateTable/ConsumerStateTable** パターンで構成される。
+
+#### CONFIG_DB → vrfmgrd
+
+`vrfmgrd` は起動時に `Orch(cfgDb, tableNames)` コンストラクタ経由で `Orch::addConsumer()` を呼ぶ。CONFIG_DB（db_id=4）に対しては `SubscriberStateTable` が選択される（`orch.cpp:1186-1190`）。
+
+購読テーブル（`vrfmgrd.cpp:29-34`）:
+
+| テーブル | 用途 |
+|---------|------|
+| `VRF` | VRF インスタンス作成・削除 |
+| `VNET` | VNET (VRF ベース仮想ネットワーク) |
+| `VXLAN_EVPN_NVO` | EVPN NVO トンネル設定 |
+| `MGMT_VRF_CONFIG` | mgmt VRF 有効化制御 |
+
+`SubscriberStateTable` は Redis keyspace notification を使用する（`subscriberstatetable.cpp:20-24`）。
+
+```
+PSUBSCRIBE __keyspace@4__:VRF|*
+```
+
+イベント受信フロー:
+
+1. CONFIG_DB への `hset` / `hdel` / `del` を Redis が検知し keyspace 通知を発行
+2. `Select::select()` が fd を wake-up（タイムアウト 1000 ms）
+3. `readData()` が `redisGetReply()` でイベントをバッファへ蓄積
+4. `pops()` がイベントから key を抽出し `TABLE.get(key)` で現在値取得
+5. `Consumer::execute()` → `VrfMgr::doTask(Consumer&)` を呼び出し
+
+また起動時は `getKeys()` で既存エントリを全件スキャンし `m_buffer` に積み込み、warm restart 時のリプレイに対応する。
+
+#### vrfmgrd → APPL_DB
+
+処理完了後、`ProducerStateTable` で APPL_DB に書き込む（`vrfmgr.h:46`）。
+
+| Producer | 書き込み先 | 用途 |
+|---------|-----------|------|
+| `m_appVrfTableProducer` | `APPL_DB::VRF_TABLE` | VRF エントリ |
+| `m_appVnetTableProducer` | `APPL_DB::VNET_TABLE` | VNET エントリ |
+| `m_appVxlanVrfTableProducer` | `APPL_DB::VXLAN_VRF_TABLE` | VRF-VNI マッピング |
+
+Lua スクリプト（`EVALSHA`）がアトミックに実行（`vrfmgr.cpp:303`）:
+
+```
+SADD VRF_TABLE_KEY_SET <vrfName>
+HSET _VRF_TABLE:<vrfName> <fields>
+PUBLISH VRF_TABLE_CHANNEL@0 G
+```
+
+#### APPL_DB → orchagent (VRFOrch)
+
+`orchdaemon.cpp:283`:
+
+```cpp
+VRFOrch *vrf_orch = new VRFOrch(m_applDb, APP_VRF_TABLE_NAME,
+                                 m_stateDb, STATE_VRF_OBJECT_TABLE_NAME);
+```
+
+`VRFOrch` が `Orch2(appDb, APP_VRF_TABLE_NAME, request_)` を通じて `ConsumerStateTable` を使用する（`orch.cpp:1194`）。APPL_DB（db_id=0）への通知を購読:
+
+```
+SUBSCRIBE VRF_TABLE_CHANNEL@0
+```
+
+チャンネル通知で wake-up → `consumer_state_table_pops.lua`（`SPOP KEY_SET` + `HGETALL _VRF_TABLE:<key>`）→ `VRFOrch::addOperation()` / `delOperation()` → `sai_virtual_router_api`。
+
+### STATE_DB への書き込み
+
+| テーブル | 書き込み元 | タイミング | 操作 |
+|---------|-----------|-----------|------|
+| `STATE_VRF_TABLE\|<name>` | vrfmgrd | `setLink()` 成功直後 | `hset("state", "ok")` (`vrfmgr.cpp:288`) |
+| `STATE_VRF_TABLE\|<name>` | vrfmgrd | VRF DEL 実行時 | `del()` (`vrfmgr.cpp:339`) |
+| `STATE_VRF_OBJECT_TABLE\|<name>` | VRFOrch | SAI VR 作成成功 | `hset("state", "ok")` |
+| `STATE_VRF_OBJECT_TABLE\|<name>` | VRFOrch | SAI VR 削除完了 | `del()` |
+
+`vrfmgrd` は `isVrfObjExist()` で `STATE_VRF_OBJECT_TABLE` を読み取り専用参照し、orchagent 側 SAI オブジェクトが削除されるまで VRF DEL をブロックする（2 フェーズ非同期削除）。
+
+### select() ループと retry
+
+`vrfmgrd.cpp:49-84`（`SELECT_TIMEOUT = 1000 ms`）:
+
+```
+s.select(&sel, 1000 ms)
+  TIMEOUT → vrfmgr.doTask()   // 全 consumer のキューを再試行
+  EVENT   → c->execute()       // 該当 consumer を処理
+```
+
+VRF DEL 処理中に `isVrfObjExist()` が true（orchagent 未完了）の場合、`it++; continue;` でキューに残し次のループで再試行（タイムアウトなし・無制限待機）。
+
+### 通信フロー全体図
+
+```
+CONFIG_DB[VRF|*]
+  │  keyspace notification: PSUBSCRIBE __keyspace@4__:VRF|*
+  ▼
+vrfmgrd::VrfMgr::doTask
+  │  (VRF / MGMT_VRF_CONFIG) ProducerStateTable::set/del
+  │  EVALSHA → SADD KEY_SET + HSET _VRF_TABLE:<key>
+  │            + PUBLISH VRF_TABLE_CHANNEL@0 G
+  ├─→ STATE_DB[VRF_TABLE|<name>]  hset(state=ok) / del
+  ▼
+APPL_DB[VRF_TABLE|*]
+  │  ConsumerStateTable: SUBSCRIBE VRF_TABLE_CHANNEL@0
+  │  consumer_state_table_pops.lua → SPOP + HGETALL
+  ▼
+orchagent::VRFOrch::addOperation / delOperation
+  │  sai_virtual_router_api::create / remove_virtual_router
+  ├─→ STATE_DB[VRF_OBJECT_TABLE|<name>]  hset(state=ok) / del
+  ▼
+SAI (ハードウェア VRF)
+```
+
+<!-- /pubsub -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss-common/common/schema.h`
+
+`VRF` エントリの SET/DEL が CONFIG_DB 外の DB テーブルへ書き込む副次効果を網羅する。
+
+### vrfmgrd — SET 時の副次書込み
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `m_stateVrfTable.set(name, [{state:"ok"}])` | STATE_DB / `VRF_TABLE` | `<name>` field=`state` | Linux netdev 作成後、常時 (vrfmgr.cpp:289) |
+| `m_appVrfTableProducer.set(name, fields)` | APPL_DB / `VRF_TABLE` | `<name>` | VRF_TABLE または MGMT_VRF_CONFIG 経由 (vrfmgr.cpp:303) |
+| `m_appVxlanVrfTableProducer.set(key, [{vni,vrf}])` | APPL_DB / `VXLAN_VRF_TABLE` | `<tunnel>:evpn_map_<vni>_<vrf>` | `vni` 非ゼロ かつ EVPN NVO トンネル設定済み (vrfmgr.cpp:521) |
+
+カーネル副作用 (DB 外): `ip link add <name> type vrf table <id>` / `ip link set <name> up`。mgmt VRF では `ip link add` をスキップ。
+
+### vrfmgrd — DEL 時の副次書込み
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|------------------|------|------|
+| `m_appVrfTableProducer.del(name)` | APPL_DB / `VRF_TABLE` | `<name>` | STATE_DB に該当エントリが存在する場合 (vrfmgr.cpp:338) |
+| `m_stateVrfTable.del(name)` | STATE_DB / `VRF_TABLE` | `<name>` | 同上 (vrfmgr.cpp:339) |
+| `m_appVxlanVrfTableProducer.del(key)` | APPL_DB / `VXLAN_VRF_TABLE` | `<tunnel>:evpn_map_<vni>_<vrf>` | `vni` マッピングが存在する場合 (vrfmgr.cpp:524) |
+
+カーネル副作用: `ip link del <name>`。DEL 実行は orchagent が `VRF_OBJECT_TABLE` を消去するまで遅延する。
+
+### VRFOrch (orchagent) — APPL_DB VRF_TABLE 受信後の副次書込み
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `m_stateVrfObjectTable.hset(name, "state", "ok")` | STATE_DB / `VRF_OBJECT_TABLE` | `<name>` field=`state` | SAI create/set 成功後 (vrforch.cpp:120, 150) |
+| `m_stateVrfObjectTable.del(name)` | STATE_DB / `VRF_OBJECT_TABLE` | `<name>` | SAI remove 成功後 (vrforch.cpp:193) |
+
+SAI 副作用 (ASIC_DB 経由): `create_virtual_router` / `remove_virtual_router` / `set_virtual_router_attribute`。VNI 設定時は `VxlanTunnelOrch` を経由して ASIC_DB に VXLAN エントリが反映される。
+
+### STATE_DB テーブル役割まとめ
+
+| STATE_DB テーブル | 書込みプロセス | 削除プロセス | 役割 |
+|-----------------|-------------|------------|------|
+| `VRF_TABLE\|<name>` (`state=ok`) | vrfmgrd | vrfmgrd | intfmgrd の VRF readiness ガード |
+| `VRF_OBJECT_TABLE\|<name>` (`state=ok`) | VRFOrch | VRFOrch | vrfmgrd DEL の遅延同期ゲート |
+
+### 確認コマンド
+
+```bash
+sonic-db-cli STATE_DB hgetall 'VRF_TABLE|VrfRed'
+sonic-db-cli STATE_DB hgetall 'VRF_OBJECT_TABLE|VrfRed'
+sonic-db-cli APPL_DB hgetall 'VRF_TABLE:VrfRed'
+sonic-db-cli APPL_DB hgetall 'VXLAN_VRF_TABLE:vtep1:evpn_map_10001_VrfRed'
+```
+
+<!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-sairedis/vslib/vpp/SwitchVpp.cpp`, `sonic-sairedis/vslib/vpp/SwitchVppRif.cpp`, `sonic-host-services/scripts/hostcfgd`
+
+### mgmt VRF — hostcfgd 初期化前提の Linux デバイス作成スキップ
+
+`vrfName == "mgmt"` の場合、`vrfmgrd` は `ip link add ... type vrf table <id>` を実行しない（`vrfmgr.cpp:176-183`）。`hostcfgd` が `systemctl restart interfaces-config` 経由で Linux の管理 VRF を事前に初期化している前提であり、固定テーブル ID `6000` を通常プール（1001–5096）外に割り当てる。管理インタフェース（`eth0`）の有無はハードウェア形態に依存するが、vrfmgrd のコードパスはプラットフォーム共通。
+
+### Linux ルーティングテーブル ID プール — 全プラットフォーム共通定数
+
+テーブル ID 範囲（`VRF_TABLE_START=1001`〜`VRF_TABLE_END=5097`、最大 4096 VRF）はハードウェア ASIC とは無関係な Linux カーネルリソース。一部の組み込み Linux 構成（SmartSwitch DPU 等）ではカーネルのルーティングテーブル最大数設定が異なる場合があるが、vrfmgrd の定数は変更されない。
+
+### VNET 経由 SAI Virtual Router 属性 — ASIC ベンダー依存
+
+orchagent は `v4`/`v6`/`src_mac`/`ttl_action`/`ip_opt_action`/`l3_mc_action` を SAI VR 属性に変換できるが、これらは CONFIG_DB `VRF` テーブルフィールドには存在せず、VNET テーブル経由の APP_DB 直接書込み時のみ機能する残存コード（`vrforch.cpp:38-84`）。`SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` 等の対応は ASIC ベンダーにより異なる。SAI capability query は実施されておらず、非サポート ASIC に渡した場合の挙動はベンダー SAI 実装依存。
+
+### `fallback` フィールド — 全 ASIC で silent drop
+
+YANG に定義された `fallback` フィールドは `vrfmgrd` が APPL_DB へ pass-through するが、`orchagent/VRFOrch::addOperation` にハンドラが存在しない（`vrforch.cpp:80-82` の `else` ブランチで `SWSS_LOG_ERROR("Logic error: Unknown attribute")` → 破棄）。Linux カーネル・SAI・FRR のいずれにも影響しない dead field であり、ASIC の種類にかかわらず常に無視される。
+
+### VS / VPP SAI — Linux + VPP の二重 VRF 管理
+
+VPP（Vector Packet Processing）SAI バックエンドを使う VS プラットフォームでは、SAI VR create が VPP API `ip_vrf_add()` を呼び出し、ECMP フローハッシュも設定する（`SwitchVppRif.cpp:1403-1414`）。標準 VS（`SwitchStateBase`）では SAI OID 割り当てのみ。実 ASIC（Broadcom / Mellanox / Marvell 等）では SAI VR create はハードウェアへの ASIC_DB 操作のみであり、Linux VRF デバイス管理は別プロセス（vrfmgrd）が担う。
+
+### EVPN L3 VNI (`vni` フィールド) — VTEP 設定必須
+
+`VRF.vni` に非ゼロ値を設定した場合、`VRFOrch::updateVrfVNIMap` が EVPN NVO（VTEP）の存在を確認し、未設定なら `return false` でエントリを破棄する（`vrforch.cpp:225-230`）。VXLAN EVPN を動作させる ASIC（Broadcom TD3/TH2, Mellanox SN シリーズ等）と、EVPN をサポートしない環境（VTEP 設定なし、または EVPN 非対応プラットフォーム）では `vni` フィールドの有効性が異なる。VTEP 未設定環境では `VRF.vni` は常に無効。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: e2892b76fd9a -->
