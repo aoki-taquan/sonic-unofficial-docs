@@ -369,6 +369,52 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 - Tunnel decap 経路 (`tunneldecaporch.cpp:832-836`): `dscp_to_tc_map_id == SAI_NULL_OBJECT_ID` 時はトンネル作成時に設定しない（silent skip）
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
+
+### DSCP / TC 範囲定数
+
+| 定数名 | 値 | 定義箇所 | 説明 |
+|--------|----|---------|------|
+| `DSCP_MAX_VAL` | `63` | `qosorch.cpp:119` | DSCP 値の最大値。超過時 `task_failed` |
+| DSCP key 範囲 | `0`..`63` | 上記定数に基づく | 超過は `task_failed`（`stoi` 変換後に範囲チェック） |
+| TC value 範囲 (YANG) | `0`..`15` | `sonic-types.yang.j2:338` | YANG 定義上の上限 |
+| TC value 範囲 (実運用) | `0`..`7` | ASIC/SAI 制約 | 8 以上は SAI エラー → `task_failed` |
+
+### フィールド名定数
+
+| 定数名 | 値 | 定義箇所 | 説明 |
+|--------|----|---------|------|
+| `dscp_to_tc_field_name` | `"dscp_to_tc_map"` | `qosorch.h:11` | PORT_QOS_MAP フィールド名 |
+| `decap_dscp_to_tc_field_name` | `"decap_dscp_to_tc_map"` | `qosorch.h:34` | Tunnel decap 用フィールド名 |
+
+### デフォルトマップ名
+
+| マップ名 | 用途 |
+|---------|------|
+| `"AZURE"` | 標準 DSCP→TC マップ（`qos_config.j2` フォールバック） |
+| `"AZURE_TUNNEL"` | Tunnel QoS 用 `decap_dscp_to_tc_map` |
+
+### SAI 定数
+
+| 定数 | 使用箇所 | 説明 |
+|------|---------|------|
+| `SAI_QOS_MAP_TYPE_DSCP_TO_TC` | `qosorch.cpp:265` | SAI qos_map_type — マップ種別指定 |
+| `SAI_QOS_MAP_ATTR_TYPE` | `qosorch.cpp:264` | create 時の type 属性 ID |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `qosorch.cpp:249,268` | マップエントリリスト属性 ID |
+| `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:61` | ポートバインド属性 ID |
+| `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:1993,2030` | スイッチレベルバインド属性 ID |
+
+### 型変換・例外処理
+
+- `qosorch.cpp:245`: `(uint8_t)stoi(fvField(*i))` — DSCP key を uint8 変換。非数値文字列は `std::invalid_argument` → `task_failed`（try/catch なし）
+- `qosorch.cpp:246`: `(uint8_t)stoi(fvValue(*i))` — TC 値も同様
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:119,245-246,264-265,273`; `orchagent/qosorch.h:11,34`
+<!-- /constants -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
@@ -473,5 +519,108 @@ DSCP_TO_TC_MAP は `TUNNEL_DECAP_TABLE` の `decap_dscp_to_tc_map` フィール�
 
 > **Evidence**: `sonic-swss/orchagent/qosorch.cpp:61,181-186,207,265-276,289-293,1956-1975,1993,2086,2193`; `orchagent/tunneldecaporch.cpp:831-834,1084`
 <!-- /side-effects -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
+
+### DSCP / TC 範囲定数
+
+| 定数名 | 値 | 定義箇所 | 説明 |
+|--------|----|---------|------|
+| `DSCP_MAX_VAL` | `63` | `qosorch.cpp:119` | DSCP 値の最大値。超過時 `task_failed` |
+| DSCP key 範囲 | `0`..`63` | 上記定数に基づく | 超過は `task_failed`（`stoi` 変換後に範囲チェック） |
+| TC value 範囲 (YANG) | `0`..`15` | `sonic-types.yang.j2:338` | YANG 定義上の上限 |
+| TC value 範囲 (実運用) | `0`..`7` | ASIC/SAI 制約 | 8 以上は SAI エラー → `task_failed` |
+
+### フィールド名定数
+
+| 定数名 | 値 | 定義箇所 | 説明 |
+|--------|----|---------|------|
+| `dscp_to_tc_field_name` | `"dscp_to_tc_map"` | `qosorch.h:11` | PORT_QOS_MAP フィールド名 |
+| `decap_dscp_to_tc_field_name` | `"decap_dscp_to_tc_map"` | `qosorch.h:34` | Tunnel decap 用フィールド名 |
+
+### デフォルトマップ名
+
+| マップ名 | 用途 |
+|---------|------|
+| `"AZURE"` | 標準 DSCP→TC マップ（`qos_config.j2` フォールバック） |
+| `"AZURE_TUNNEL"` | Tunnel QoS 用 `decap_dscp_to_tc_map` |
+
+### SAI 定数
+
+| 定数 | 使用箇所 | 説明 |
+|------|---------|------|
+| `SAI_QOS_MAP_TYPE_DSCP_TO_TC` | `qosorch.cpp:265` | SAI qos_map_type — マップ種別指定 |
+| `SAI_QOS_MAP_ATTR_TYPE` | `qosorch.cpp:264` | create 時の type 属性 ID |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `qosorch.cpp:249,268` | マップエントリリスト属性 ID |
+| `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:61` | ポートバインド属性 ID |
+| `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:1993,2030` | スイッチレベルバインド属性 ID |
+
+### 型変換・例外処理
+
+- `qosorch.cpp:245`: `(uint8_t)stoi(fvField(*i))` — DSCP key を uint8 変換。非数値文字列は `std::invalid_argument` → `task_failed`（try/catch なし）
+- `qosorch.cpp:246`: `(uint8_t)stoi(fvValue(*i))` — TC 値も同様
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:119,245-246,264-265,273`; `orchagent/qosorch.h:11,34`
+<!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差分
+
+### SAI capability クエリによる分岐
+
+スイッチレベルへの DSCP→TC map 適用時、`applyDscpToTcMapToSwitch()` は
+`sai_query_attribute_capability(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)` で
+`set_implemented` を確認する (`qosorch.cpp:1955-1975`)。
+
+| SAI 応答 | 挙動 |
+|---------|------|
+| `set_implemented == true` | `sai_switch_api->set_switch_attribute()` を発行 |
+| `set_implemented == false` または query 失敗 | **silent skip**（エラーなし、`true` を返す） |
+
+`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` 非対応 ASIC では `PORT_QOS_MAP|global` 設定はノーオペレーションになる。
+
+### Broadcom: スイッチレベル global map の自動生成
+
+`db_migrator.py:700-715` の `migrate_port_qos_map_global()`:
+
+```python
+asics_require_global_dscp_to_tc_map = ["broadcom"]
+if self.asic_type not in asics_require_global_dscp_to_tc_map:
+    return
+```
+
+- **Broadcom ASIC のみ**がアップグレード時に `PORT_QOS_MAP|global` を自動生成する。
+- 複数の `DSCP_TO_TC_MAP` が存在する場合は `get_keys()` の **先頭 1 件（順序未定義）** を適用。
+- Mellanox / その他 ASIC ではこの自動生成は行われない。
+
+### Mellanox: AZURE_UPLINK マップと tunnel_qos_remap
+
+Mellanox プラットフォーム向け `qos.json.j2` は `different_dscp_to_tc_map = true` を設定し、
+`generate_dscp_to_tc_map()` マクロで `AZURE` と `AZURE_UPLINK` の 2 種類を生成する。
+
+`qos_config.j2` はデバイスタイプに応じてポートへの割り当てを切り替える:
+
+| デバイスタイプ | `tunnel_qos_remap` | 適用マップ |
+|---|---|---|
+| LeafRouter（ToR 隣接ポート） | enabled | `AZURE_UPLINK` |
+| DualToR（LeafRouter 隣接ポート） | enabled | `AZURE_UPLINK` |
+| その他全ポート | enabled | `AZURE` |
+| 全デバイス | disabled | `AZURE`（single map） |
+
+### TC 範囲の ASIC 差分
+
+YANG 定義は `tc_type: uint8 range "0..15"` だが、実際の ASIC 対応は以下の通り:
+
+| ASIC | 実用 TC 範囲 | 備考 |
+|------|------------|------|
+| Broadcom（大多数） | 0..7 | TC 8+ で SAI エラー → `task_failed` |
+| Mellanox（大多数） | 0..7 | 同上 |
+| 一部高性能 ASIC | 0..15（可能性） | SAI ベンダー実装依存 |
+
+> **Evidence**: `qosorch.cpp:1955-1975` (capability check); `db_migrator.py:700-715` (Broadcom 限定自動生成); `qos_config.j2:437-447` (AZURE_UPLINK 条件分岐); `device/mellanox/.../qos.json.j2:23,160-170` (`different_dscp_to_tc_map`)
+<!-- /platform -->
 
 <!-- glossary-links-injected: 9e94f614fc2c -->

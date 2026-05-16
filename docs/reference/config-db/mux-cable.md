@@ -286,3 +286,63 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 - **`neighbor_mode` 初期化タイミング**: MuxCable オブジェクト生成時にのみ有効。生成後に CONFIG_DB を更新しても orchagent は変更を拒否する（ポート削除+再登録が必要）。
 
 <!-- /defaults -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:468,493,1490,1619,1861,2290,2348,2359,2367,2374,2462 -->
+
+`MuxOrch` が `MUX_CABLE` 処理時に直接購読せず間接参照する CONFIG_DB / APPL_DB テーブル。
+
+| テーブル | 参照方法 | 参照箇所 | 用途 |
+|---|---|---|---|
+| `PORT` | `gPortsOrch->getPort(mux_name_, port)` | muxorch.cpp:468, 493 | MUX ポートの SAI oid 取得。欠落時は処理スキップ |
+| `PORT` | `gPortsOrch->getAllPorts()` | muxorch.cpp:1490 | ACL テーブルバインド時に全 PHY/LAG を列挙 |
+| `NEIGHBOR_TABLE` (APPL_DB) | `gNeighOrch->getMuxNeighborsForPort()` | muxorch.cpp:2290 | MUX ポート設定前に学習済みネイバーを一括取得し MUX ネイバーに変換 |
+| `NEIGHBOR_TABLE` (APPL_DB) | `gNeighOrch->getNeighborEntry()` | muxorch.cpp:1619, 2462 | ネクストホップ更新時に MAC / alias を照合 |
+| `TUNNEL` | `decap_orch_->getDstIpAddresses("MuxTunnel0")` | muxorch.cpp:2348 | PEER_SWITCH 処理時に MuxTunnel0 の dst_ip を取得して P2P tunnel を生成。未作成時は処理を延期 |
+| `TUNNEL` | `decap_orch_->getDscpMode("MuxTunnel0")` | muxorch.cpp:2359 | MuxTunnel0 の dscp_mode を読み取り SAI encap 属性に反映 |
+| `TUNNEL` | `decap_orch_->getQosMapId("MuxTunnel0", ...)` | muxorch.cpp:2367, 2374 | TC→DSCP / TC→Queue QoS マップ OID を取得 |
+| `VLAN` | `gPortsOrch->getAllVlans()` | muxorch.cpp:1861 | FDB 更新後に VLAN 上の既存ネイバーを MUX ネイバーへ変換する際 VLAN 一覧を取得 |
+
+> - `PORT` は leafref 先でもある。`MUX_CABLE|<ifname>` の `<ifname>` は `PORT.name` への YANG leafref であり、MuxOrch はポート未登録時に処理を保留する。
+> - `NEIGHBOR_TABLE` は MuxOrch が直接 subscribe しない。NeighOrch が APPL_DB の `NEIGH_TABLE` を管理し、`updateNeighbor()` コールバック経由で MuxOrch に通知される。
+> - `TUNNEL` は TunnelDecapOrch のキャッシュ経由で参照される。`MuxTunnel0` エントリが未作成の場合は `handlePeerSwitch()` が `return false` でリトライされる。
+
+<!-- /cross-refs -->
+
+<!-- ordering -->
+## 順序依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:2271-2275,2348-2353,2380,2445-2447,432-435,445-448,463-483,488-508,2256-2266 -->
+
+### PORT / NEIGHBOR 先行制約
+
+- **PORT 先行必須**: `MuxCable::stateActive()` / `stateStandby()` は冒頭で `gPortsOrch->getPort()` を呼ぶ。ポートが未登録なら `return false` でリトライ待機となり、active/standby 切替は進まない (muxorch.cpp:468, 493)。
+- **NEIGHBOR 後付け取り込みあり**: `handleMuxCfg()` の SET 処理終盤で MUX_CABLE 設定**前**に学習済みのネイバーを `getMuxNeighborsForPort()` → `updateNeighbor()` で取り込む (muxorch.cpp:2288-2315)。NEIGHBOR は MUX_CABLE より先行・後続どちらでも動作する。
+
+### Tunnel encap 先行制約
+
+1. **MuxTunnel0 (TUNNEL テーブル) が最初**: `handlePeerSwitch()` は `decap_orch_->getDstIpAddresses(MUX_TUNNEL)` が空なら `return false` (muxorch.cpp:2348-2353)。Tunnel の decap dst IP が登録されていないと PEER_SWITCH 処理がリトライ待機に入る。
+2. **PEER_SWITCH が次**: PEER_SWITCH テーブルが SET されると `create_tunnel()` で SAI トンネルオブジェクトを生成し `mux_peer_switch_` を確定する (muxorch.cpp:2380-2381)。
+3. **MUX_CABLE は PEER_SWITCH 後**: `handleMuxCfg()` で `mux_peer_switch_.isZero()` の場合は `return false` (muxorch.cpp:2271-2275)。PEER_SWITCH 未設定のまま MUX_CABLE を追加しても処理されない。
+4. **Tunnel NH 先行 (standalone route)**: `createStandaloneTunnelRoute()` は Tunnel NH が `SAI_NULL_OBJECT_ID` なら silent skip (muxorch.cpp:2445-2447)。
+
+### active / standby 状態遷移順序
+
+| 遷移 | 登録ハンドラ | 操作順序 |
+|------|------------|---------|
+| INIT → ACTIVE | `stateInitActive()` | neighbor を local NH に切替のみ |
+| STANDBY → ACTIVE | `stateActive()` | ① ACL drop rule **削除** → ② neighbor を local NH に切替 |
+| INIT → STANDBY | `stateStandby()` | ① neighbor を tunnel NH に切替 → ② ACL drop rule **追加** |
+| ACTIVE → STANDBY | `stateStandby()` | ① neighbor を tunnel NH に切替 → ② ACL drop rule **追加** |
+
+- **初期状態は必ず standby**: コンストラクタで `stateStandby()` を実行してから `MUX_STATE_STANDBY` をセットする (muxorch.cpp:445-448)。Warm restart 時は `MUX_STATE_INIT` で開始し APP_DB sync 後に前回状態へ復元。
+- **standby 遷移では neighbor → ACL の順**: トラフィックをまず tunnel 経由に退避してから drop rule を追加する（逆順だと一瞬パケットロスが拡大する）。
+- **active 遷移では ACL → neighbor の順**: drop rule を先に削除してからネクストホップを切り替える。
+
+### neighbor_mode 変更不可
+
+既存 MuxCable オブジェクトへの `neighbor_mode` 動的変更は不可。試みると `SWSS_LOG_ERROR` を出して `return false` (muxorch.cpp:2256-2266)。変更には MUX_CABLE エントリの DELETE + 再 SET（ポート再登録）が必要。
+
+<!-- /ordering -->
