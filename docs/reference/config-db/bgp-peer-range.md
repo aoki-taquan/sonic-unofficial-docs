@@ -239,6 +239,33 @@ vtysh -c 'show bgp listen range'
 
 > **スキャン証跡**: peer_type="dynamic" 固有の ip_range 更新分岐と del_handler の `no listen range` テンプレート使用を確認。3 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `BGP_GLOBALS.<vrf>.local_asn` → `BGP_PEER_RANGE` | 先行必須（欠如時 silent drop） | bgpcfgd は deps ガードで再試行待ち、frrcfgd は `continue` でスキップ（リトライなし） |
+| 2 | `BGP_PEER_GROUP` → listen range 設定（frrcfgd 経路） | 自動 defer（逆順は後付け再適用） | `__apply_dep_vrf_table` で peer-group 作成後に自動再適用 |
+| 3 | `no bgp listen range` → peer-group 削除（FRR 10.1+） | 強制順序（bgpcfgd が自動処理） | 外部直接操作時は `no bgp listen range` を先に発行すること |
+| 4 | `DEVICE_METADATA.localhost.bgp_asn` → `BGP_PEER_RANGE` | 先行必須（deps guard） | 起動時は DEVICE_METADATA が先に読み込まれる前提 |
+| 5 | `ip_range` 差分計算の逐次性 | 推奨（並行変更は重複リスク） | SET を逐次発行し vtysh 反映を確認してから次変更を送ること |
+
+### 詳細
+
+#### BGP_GLOBALS (local_asn) が先行必須
+
+`frrcfgd` の `__update_bgp()` は VRF ベーステーブル処理前に `__get_vrf_asn(vrf)` を呼び出し、`local_asn` が未設定の場合は即座にスキップする（frrcfgd.py:2658–2662）。`BGP_GLOBALS_LISTEN_PREFIX` は `vrf_tables` に属するためこの guard が適用される。bgpcfgd も `bgp_asn`（`DEVICE_METADATA.localhost.bgp_asn`）を deps に登録しており、未設定時は `add_peer()` が `False` を返しリトライ待ちとなる（managers_bgp.py:192）。
+
+#### listen range 削除順序（FRR 10.1+）
+
+FRR 10.1 以降は peer-group に listen range が紐付いている場合、peer-group を先に削除すると FRR がエラーを返す。`del_handler()` はこれに対応し `no bgp listen range <prefix> peer-group <name>` を先に発行してから peer-group 削除コマンドを送る（managers_bgp.py:456–472）。listen range 削除失敗時は `log_err` のみで処理を続行するため、FRR 側でエラーが残るリスクがある。
+
+> **ソース**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:119,192,456-472,2658-2662`、`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658-2662,2847`。詳細は `meta/_intermediate/cdb-flow/bgp-peer-range-ordering.md` を参照。
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルトと fallback
 
