@@ -265,4 +265,60 @@ show interfaces breakout
 
 > これらは BREAKOUT_CFG 自身のフィールドではなく、`brkout_mode` 値に依存した **PORT テーブルへの暗黙派生**。YANG に記述なし。
 <!-- /defaults -->
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### 概要
+
+DPB (Dynamic Port Breakout) は `platform.json` の有無と内容に強く依存し、プラットフォームごとに動作が大きく異なる。
+
+### platform.json 有無によるプラットフォーム分岐
+
+| プラットフォーム種別 | 設定ファイル | DPB 可否 | BREAKOUT_CFG 有無 |
+|---|---|---|---|
+| `platform.json` + `hwsku.json` 搭載 | `platform.json` (`.json` 判定) | **可** | CONFIG_DB に存在 |
+| `port_config.ini` のみ | `port_config.ini` (`.ini` 判定) | **不可** | テーブル非生成 |
+
+`config interface breakout` 実行時に `platform.json` 拡張子チェックが通らない場合は即 Abort する (`config/main.py` L5469–5471)。`port_config.ini` 環境では `get_breakout_mode()` が `None` を返し BREAKOUT_CFG テーブル自体が初期化されない (`portconfig.py` L464–465)。
+
+### ASIC/プラットフォームごとの breakout モード差異
+
+利用可能な `brkout_mode` 値は `platform.json` の `interfaces.<port>.breakout_modes` で定義され、ASIC の物理 lane 構成に依存する:
+
+| ベンダー / プラットフォーム例 | lane 構成 | 代表的な breakout モード |
+|---|---|---|
+| Arista 7050CX3-32S | 4-lane / 100G | `1x100G[50G,40G,25G,10G]`, `2x50G[40G,25G,10G]`, `4x25G[10G]` |
+| Arista 7060DX5-32 | 8-lane / 400G | `1x400G[200G,100G,50G,40G,25G,10G]`, `2x200G[100G]`, `4x100G[50G,40G,25G,10G]` |
+| Celestica Silverstone | 8-lane / 400G | `1x400G`, `2x200G`, `2x100G`, `4x100G`, `4x25G(4)`, `4x10G(4)` |
+| Mellanox/Nvidia SN2700 | 4-lane / 100G | `1x100G[50G,40G,25G,10G,1G]`, `2x50G[40G,25G,10G]`, `4x25G[10G]` |
+| Accton/Edge-core AS9516 | 4-lane / 100G | `1x100G[40G]`, `2x50G`, `4x25G[10G]` |
+
+Arista は `[fallback_speed_list]` 構文、Celestica/Accton は `(num_lanes)` 構文と、ベンダーごとにモード文字列の書式が異なる。いずれも `BRKOUT_PATTERN` 正規表現でパース可能 (`portconfig.py`)。
+
+### PORT テーブルへの FEC 自動付与のプラットフォーム依存
+
+`BreakoutCfg.get_config()` が PORT エントリを生成する際、`50G/lane` 以上で `fec: rs` を自動付与する (`portconfig.py` L387–388)。同じ分割数でも lane 数とポート速度の組み合わせによって結果が変わる:
+
+| breakout モード | lanes_per_port | default_speed | FEC 自動付与 |
+|---|---|---|---|
+| `4x25G[10G]` (4-lane) | 1 | 25000 | なし (25G/lane < 50G) |
+| `2x50G[40G]` (4-lane) | 2 | 50000 | なし (25G/lane < 50G) |
+| `4x100G` (8-lane, 2-lane/port) | 2 | 100000 | **あり** (50G/lane ≥ 50G) |
+| `2x200G` (8-lane, 4-lane/port) | 4 | 200000 | **あり** (50G/lane ≥ 50G) |
+
+### multi-ASIC 構成
+
+`portconfig.py` の `get_port_config()` は `asic_id` 引数を受け取り `hwsku/<asic_id>/port_config.ini` を参照するが、`config/main.py` の `breakout()` 関数は `get_path_to_port_config_file()` を引数なしで呼び出すため、**CLI での multi-ASIC 個別 DPB は現状未対応**。
+
+### portsorch での ASIC バリデーション
+
+`portsorch.cpp` は DPB で追加されたチャイルドポートの `lanes` が `m_portListLaneMap`（SAI 初期化時に ASIC から取得した lane マップ）に存在するかをバリデーションする (L4026–4032)。`platform.json` の lane 定義が ASIC 物理 lane と不一致な場合ここで失敗する。`isMlnxPlatform()` による breakout 経路固有の分岐はなく、Mellanox 固有処理は Flex Counter / Trim Stat 計算のみ (L858–863)。
+
+### ソース
+
+- `sonic-utilities/config/main.py` L5467–5471: `platform.json` チェック
+- `sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py` L445–509: ファイルパス解決
+- `sonic-buildimage/src/sonic-config-engine/portconfig.py` L186–208, L387–388, L461–465: 分岐・FEC 付与
+- `sonic-swss/orchagent/portsorch.cpp` L4026–4032, L858–863: ASIC バリデーション・Mellanox 分岐
+<!-- /platform -->
 <!-- glossary-links-injected: 17ab2ab6ed91 -->
