@@ -299,4 +299,27 @@ hostcfgd は `sorted(..., key=lambda t: int(t['priority']))` でソートする�
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L665 L728-731 L483-493 L816, sonic-host-services/data/templates/common-auth-sonic.j2 L18 -->
+
+### 不正 `priority` による設定生成中断 (ValueError)
+
+`modify_conf_file()` はサーバーリストを `sorted(..., key=lambda t: int(t['priority']), reverse=True)` でソートする（`hostcfgd L665`）。`priority` フィールドに整数として解釈できない文字列が含まれる場合、`int()` が `ValueError` を送出し `modify_conf_file()` 全体が中断する。PAM 設定ファイル (`/etc/pam.d/common-auth-sonic`) および NSS 設定は更新されず、直前の状態のまま残る。例外はキャッチされず呼び出し元に伝播する（unhandled exception）。CLI (`config tacacs add`) は常に `priority=1` を書き込むため通常経路では発生しないが、`sonic-db-cli` 等による直接 DB 操作時に注意が必要。
+
+### PAM 設定ファイル生成失敗
+
+`modify_conf_file()` は Jinja2 テンプレートをレンダリングし `/etc/pam.d/common-auth-sonic.tmp` に書き込んだ後 atomic rename する（`hostcfgd L728-731`）。ファイルシステムの権限不足・ディスクフル・テンプレートレンダリングエラー等が発生した場合、例外は `modify_conf_file()` 内でキャッチされず上位に伝播する。`generate_file_from_template()` 関数経由のパスでは `LOG_ERR: 'Failed generate_file_from_template error={e}'` が出力されるが、`modify_conf_file()` の直接 `open/write/rename` パスでは同等のキャッチがない。認証設定は前回生成済みファイルのまま残る。
+
+### 不正 `auth_type` による pam_tacplus 認証プロトコル失敗 (silent)
+
+hostcfgd は `auth_type` の値を検証せずテンプレートに直接渡す（`hostcfgd L725`）。PAM 設定行は `login={{ server.auth_type }}` として生成される（`common-auth-sonic.j2 L18`）。YANG 列挙 (`pap`/`chap`/`mschap`/`login`) 以外の文字列が設定されると、無効な `login=<値>` が PAM 行に書き込まれる。pam_tacplus はサーバーへの接続を試みるが認証プロトコルのネゴシエーションに失敗し認証拒否 (`auth_err`) となる。hostcfgd 側にはエラーログが出力されない（silent failure）。
+
+### audisp-tacplus SIGHUP 失敗 (accounting への影響)
+
+`notify_audisp_tacplus_reload_config()` は audisp-tacplus プロセスに SIGHUP を送信して accounting 設定を再読み込みさせる（`hostcfgd L483-493`）。PID ファイルが存在しないか `os.kill()` が失敗した場合は `LOG_WARNING: 'Send SIGHUP to audisp-tacplus failed with exception: {}'` を出力して継続する。PAM 認証設定自体は更新済みのため **ログイン認証には影響しない** が、TACACS+ accounting ログが古い設定で動作し続ける。audisp-tacplus が起動していない環境では常に発生する。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: e0332a023fdb -->

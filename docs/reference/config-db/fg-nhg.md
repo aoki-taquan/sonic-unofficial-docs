@@ -469,4 +469,71 @@ nexthop が NeighOrch に未登録の場合は `return false` でエントリを
 > **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:301-310` (FgNhgOrch 生成・テーブル登録)、`sonic-swss/orchagent/fgnhgorch.cpp:36` (gPortsOrch->attach)、`fgnhgorch.cpp:40-92` (update/Observer)、`fgnhgorch.cpp:1415,1459,1479,1547` (NeighOrch 呼び出し)、`fgnhgorch.cpp:2126-2160` (doTask ディスパッチ); 詳細分析 `meta/_intermediate/cdb-flow/fg-nhg-pubsub.md`
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`FgNhgOrch` は CONFIG_DB の `FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` を受けて、ASIC_DB（SAI 経由）・STATE_DB・APPL_DB の 3 か所に書き込む。
+
+### ASIC_DB 書込み（SAI 経由）
+
+orchagent は直接 ASIC_DB には書き込まず、SAI API 呼び出しを通じて syncd が ASIC_DB へ反映する。
+
+| タイミング | SAI API | SAI オブジェクト型 | 主な属性 |
+|---|---|---|---|
+| `FG_NHG` SET → `createFineGrainedNextHopGroup()` 成功 | `sai_next_hop_group_api->create_next_hop_group_member`（RouteOrch 経由） | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP` | `SAI_NEXT_HOP_GROUP_ATTR_TYPE=SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP`、`SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE=bucket_size` |
+| バケット割り当て (`setNewNhgMembers()`) | `sai_next_hop_group_api->create_next_hop_group_member` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` | `ATTR_NEXT_HOP_GROUP_ID`、`ATTR_NEXT_HOP_ID`、`ATTR_INDEX`（バケット位置） |
+| バケット再割り当て (`writeHashBucketChange()`) | `sai_next_hop_group_api->set_next_hop_group_member_attribute` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` | `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID`（バケット先変更） |
+| メンバ削除 (`removeFineGrainedNextHopGroup()`) | `sai_next_hop_group_api->remove_next_hop_group_member` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` | — |
+| NHG 削除 | RouteOrch `removeFineGrainedNextHopGroup()` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP` | — |
+| FG ルートの next-hop 切替 (`modifyRoutesNextHopId()`) | `sai_route_api->set_route_entry_attribute` | `SAI_OBJECT_TYPE_ROUTE_ENTRY` | `SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID` |
+
+CRM カウンタ連動: NHG メンバ作成時に `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP_MEMBER)` (fgnhgorch.cpp:1194)、削除時に `decCrmResUsedCounter` (fgnhgorch.cpp:338)。
+
+確認コマンド:
+
+```bash
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP:*'
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER:*'
+```
+
+### STATE_DB 書込み
+
+| タイミング | テーブル | キー | フィールド | 値 |
+|---|---|---|---|---|
+| バケット割り当て/変更（`setStateDbRouteEntry()`） | `FG_ROUTE_TABLE` | `<ip_prefix>` | `<bucket_index>` (文字列) | `<nexthop_ip>` (文字列) |
+| FG ルート削除（`m_stateWarmRestartRouteTable.del()`） | `FG_ROUTE_TABLE` | `<ip_prefix>` | — | エントリ全削除 |
+| warm-restart 復旧完了後（`m_stateWarmRestartRouteTable.del()`） | `FG_ROUTE_TABLE` | `<ip_prefix>` | — | エントリ削除 |
+
+`FG_ROUTE_TABLE` は warm-restart 用の復旧スナップショットとして機能する。各バケットインデックスをフィールドとし、割り当てられた next-hop IP を値として保持する（fgnhgorch.cpp:218–226）。
+
+確認コマンド:
+
+```bash
+sonic-db-cli STATE_DB keys 'FG_ROUTE_TABLE:*'
+sonic-db-cli STATE_DB hgetall 'FG_ROUTE_TABLE|<ip_prefix>'
+```
+
+### APPL_DB 書込み
+
+`FgNhgOrch` は `m_routeTable`（`ProducerStateTable` → `APPL_DB:ROUTE_TABLE`）に直接書き込む。これは `FG_NHG_PREFIX` の SET/DEL 時に既存の通常 ECMP 経路を FG 経路へ移行するために行われる。
+
+| タイミング | テーブル | キー | 操作 |
+|---|---|---|---|
+| `FG_NHG_PREFIX` SET → FG 移行開始 (`doTaskFgNhgPrefix()`) | `ROUTE_TABLE` | `<ip_prefix>` | DEL（既存通常ルート削除） |
+| RouteOrch 削除完了待ち後に FG 経路として再投入 | `ROUTE_TABLE` | `<ip_prefix>` | SET（FG 経路として再登録） |
+| `FG_NHG_PREFIX` DEL → 非 FG 移行 | `ROUTE_TABLE` | `<ip_prefix>` | DEL/SET（通常 ECMP に戻す） |
+
+証跡: fgnhgorch.cpp:1865 `m_routeTable->del()`、1877 `m_routeTable->set()`、1931 `m_routeTable->del()`、1951 `m_routeTable->set()`。
+
+> **注意**: APPL_DB:ROUTE_TABLE への書込権限がない状態では `FG_NHG_PREFIX` の SET/DEL が永久に `return false` でリトライし続ける（cross-refs セクション参照）。
+
+確認コマンド:
+
+```bash
+sonic-db-cli APPL_DB hgetall 'ROUTE_TABLE|<ip_prefix>'
+```
+
+> **証跡**: `setStateDbRouteEntry()` L218–226、`writeHashBucketChange()` L231–253、`setNewNhgMembers()` L1169–1195、`removeFineGrainedNextHopGroup()` L316–342、`modifyRoutesNextHopId()` L356–376、`doTaskFgNhgPrefix()` L1863–1879 / L1929–1951、詳細調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-side-effects.md`
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 0a0e619e9fbc -->

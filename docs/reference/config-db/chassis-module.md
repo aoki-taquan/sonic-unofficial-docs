@@ -412,6 +412,54 @@ SmartSwitch では `set_admin_state_gracefully(admin_state)` が別スレッド�
 - なし (chassisd は CONFIG_DB を読むのみ。STATE_DB への書き込みは行うが CONFIG_DB は書き込まない)
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数
+
+### admin_status enum 値
+
+`admin_status` フィールドが取りうる文字列値は YANG スキーマおよびコードで固定されている。
+
+| 値 | 意味 | 定義箇所 |
+|----|------|----------|
+| `"up"` | モジュール稼働許可（管理 UP） | `sonic-chassis-module.yang`、chassisd:1219 |
+| `"down"` | モジュール管理停止（管理 DOWN） | `sonic-chassis-module.yang`、chassisd:1222 |
+
+chassisd 内部では整数定数に変換して platform API へ渡す:
+
+| 定数 | 値 | 定義箇所 | 対応 admin_status |
+|------|----|----------|-------------------|
+| `MODULE_ADMIN_DOWN` | `0` | chassisd:103 | `"down"` |
+| `MODULE_ADMIN_UP` | `1` | chassisd:104 | `"up"` |
+
+### type enum (module name prefix)
+
+`CHASSIS_MODULE` key は以下の prefix で始まる。chassisd の入力バリデーション (`key.startswith(...)`) で使用される。
+
+| 定数 | 値 | 定義箇所 |
+|------|----|----------|
+| `ModuleBase.MODULE_TYPE_SUPERVISOR` | `"SUPERVISOR"` | module_base.py:34 |
+| `ModuleBase.MODULE_TYPE_LINE` | `"LINE-CARD"` | module_base.py:35 |
+| `ModuleBase.MODULE_TYPE_FABRIC` | `"FABRIC-CARD"` | module_base.py:36 |
+| `ModuleBase.MODULE_TYPE_DPU` | `"DPU"` | module_base.py:37 |
+
+!!! note "YANG-実装 discrepancy"
+    YANG key パターンは `LINE-CARD[0-9]+|FABRIC-CARD[0-9]+|DPU[0-9]+` のみ許可するが、CLI は `SUPERVISOR` prefix も受け付ける。
+
+### タイムアウト・操作定数
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|----|----------|------|
+| `CHASSIS_INFO_UPDATE_PERIOD_SECS` | `10` 秒 | chassisd:89 | STATE_DB 更新間隔（poll ベース）|
+| `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD` | `30` 分 | chassisd:90 | モジュール down 後の chassis app DB クリーンアップ遅延 |
+| `DEFAULT_LINECARD_REBOOT_TIMEOUT` | `180` 秒 | chassisd:81 | `platform_env.conf` 未設定時のラインカードリブートタイムアウト |
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | chassisd:82 | `platform.json` 未設定時の DPU ミッドプレーン再接続タイムアウト |
+| `MAX_DPU_REBOOT_DURATION` | `800` 秒 | chassisd:83 | DPU reboot cause の同一 reboot 判定窓（変更不可のハードコード固定値）|
+| `MODULE_ADMIN_DOWN` | `0` | chassisd:103 | `"down"` を platform API に渡す整数値 |
+| `MODULE_ADMIN_UP` | `1` | chassisd:104 | `"up"` を platform API に渡す整数値 |
+
+> **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:81-104`; `sonic-platform-common` `sonic_platform_base/module_base.py:34-57`
+<!-- /constants -->
+
 <!-- failure -->
 ## 失敗挙動
 
@@ -498,3 +546,160 @@ SmartSwitch の `SmartSwitchConfigManagerTask` は `module_config_update()` 内�
 | 4 | admin_status 書き込み → DPU 電源変化 | SmartSwitch | 360 秒タイムアウト; STATE_DB 最大 10 秒遅延 |
 | 5 | DEL イベント解釈 | プラットフォーム依存 | 非 SS: up / SS: down |
 <!-- /ordering -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`chassisd` は CONFIG_DB の `CHASSIS_MODULE` テーブルを購読し platform API を制御するが、その過程で **STATE_DB・CHASSIS_STATE_DB・CHASSIS_APP_DB・systemd** への副次的な書込と制御が発生する。
+
+### STATE_DB — CHASSIS_MODULE_TABLE への oper_status 書込
+
+```
+STATE_DB  CHASSIS_MODULE_TABLE|<module_name>
+  フィールド: name, desc, slot, oper_status, num_asics, serial, presence, model, is_replaceable
+```
+
+`ModuleUpdater.module_db_update()` (chassisd:364-397) が `CHASSIS_INFO_UPDATE_PERIOD_SECS=10` 秒間隔のポーリングで STATE_DB を更新する。`admin_status: down` のモジュールも含めて全モジュールを更新する（oper_status 書込は admin_status 非依存）。
+
+| 条件 | 書込内容 |
+|------|---------|
+| 10 秒毎ポーリング (platform API 成功) | platform API 取得値を書き込み |
+| platform API 失敗 (`try_get` fallback) | `oper_status='Offline'`, `slot=-1`, その他 `'N/A'` |
+| `deinit` 時 | `module_table._del(name)` でエントリ削除 |
+
+### CHASSIS_STATE_DB — CHASSIS_ASIC_INFO_TABLE への書込
+
+```
+CHASSIS_STATE_DB  CHASSIS_ASIC_TABLE|asic<N>                    (Supervisor)
+CHASSIS_STATE_DB  <module_name>|CHASSIS_ASIC_TABLE|asic<N>      (Linecard)
+  フィールド: pci_address, name, asic_id_in_module
+```
+
+`module_db_update()` (chassisd:447-457) が `oper_status == 'Online'` かつ `admin_status != 'down'` のモジュール ASIC エントリを書き込む。モジュールが offline になると対応する全 ASIC エントリを削除する (chassisd:470-478)。
+
+SmartSwitch の Supervisor 上では `CHASSIS_FABRIC_ASIC_TABLE` に書き込む。
+
+### STATE_DB — CHASSIS_MIDPLANE_INFO_TABLE への書込
+
+```
+STATE_DB  CHASSIS_MIDPLANE_INFO_TABLE|<module_name>
+  フィールド: ip, access
+```
+
+`ModuleUpdater.midplane_status_update()` (chassisd:530-591) が 10 秒ポーリング毎に midplane IP と到達可否を STATE_DB に書き込む。platform API 失敗時は `ip='0.0.0.0'`, `access=False` を書き込む。
+
+### CHASSIS_APP_DB クリーンアップ（モジュール down から 30 分後）
+
+モジュールが offline になってから `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD=30` 分経過後に、Supervisor 上の `chassisd` が CHASSIS_APP_DB (redis_chassis.server:6380, DB#12) の下記テーブルを削除する (chassisd:593-680):
+
+- `SYSTEM_NEIGH*`、`SYSTEM_INTERFACE*`、`SYSTEM_LAG_MEMBER_TABLE*` — 対象ホスト・ASIC のエントリを削除
+- `SYSTEM_LAG_TABLE*` — 対象エントリを削除し、`SYSTEM_LAG_ID_TABLE` と `SYSTEM_LAG_ID_SET` の LAG ID を返却
+
+### systemd サービス制御（FABRIC-CARD 限定）
+
+`config chassis_modules shutdown/startup FABRIC-CARD*` は CONFIG_DB 書込後、最大 `TIMEOUT_SECS=10` 秒待機して chassisd の反映を確認し、タイムアウト後に `fabric_module_set_admin_status()` 経由で systemd を制御する (config/chassis_modules.py:94-131):
+
+| `admin_status` | systemctl 操作 |
+|---------------|---------------|
+| `down` | `stop swss@<asic>.service` → `CHASSIS_FABRIC_ASIC_TABLE` エントリ削除 → `reset-failed + start` (修復) |
+| `up` | `start swss@<asic>.service` |
+
+ASIC リストは `CHASSIS_STATE_DB.CHASSIS_FABRIC_ASIC_TABLE` から取得する。chassisd が未起動の場合は 10 秒タイムアウト後に強制実行される。
+
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:364-478,530-591,593-680`; `sonic-utilities/config/chassis_modules.py:83-131`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-module-side-effects.md`
+<!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+`chassisd` はプラットフォーム種別（VOQ チャシス / SmartSwitch DPU 搭載機）およびカード種別（LINE-CARD / FABRIC-CARD / DPU）によって `CHASSIS_MODULE` テーブルの処理クラスと許容 key prefix を切り替える。
+
+### プラットフォーム種別による Updater クラスの分岐
+
+| プラットフォーム | ModuleConfigUpdater クラス | ModuleUpdater クラス | 判定方法 |
+|-----------------|--------------------------|---------------------|---------|
+| VOQ チャシス（非 SmartSwitch） | `ModuleConfigUpdater` | `ModuleUpdater` | `chassis.is_smartswitch()` が `False` (chassisd:1412-1416) |
+| SmartSwitch（DPU 搭載） | `SmartSwitchModuleConfigUpdater` | `SmartSwitchModuleUpdater` | `chassis.is_smartswitch()` が `True` (chassisd:1415-1416) |
+
+### カード種別による key prefix 制約
+
+#### VOQ チャシス (ModuleConfigUpdater)
+
+受け付ける `CHASSIS_MODULE` key prefix（chassisd:193-199）:
+
+```python
+# chassisd:192-200  ModuleConfigUpdater.module_config_update()
+if not key.startswith(ModuleBase.MODULE_TYPE_SUPERVISOR) and \
+   not key.startswith(ModuleBase.MODULE_TYPE_LINE) and \
+   not key.startswith(ModuleBase.MODULE_TYPE_FABRIC):
+    self.log_error("Incorrect module-name {}. Should start with {} or {} or {}".format(
+        key, MODULE_TYPE_SUPERVISOR, MODULE_TYPE_LINE, MODULE_TYPE_FABRIC))
+    return
+```
+
+| prefix 定数 | 値 | 対象カード |
+|-------------|---|-----------|
+| `MODULE_TYPE_SUPERVISOR` | `"SUPERVISOR"` | スーパーバイザカード |
+| `MODULE_TYPE_LINE` | `"LINE-CARD"` | ラインカード |
+| `MODULE_TYPE_FABRIC` | `"FABRIC-CARD"` | ファブリックカード |
+
+YANG スキーマは `SUPERVISOR*` を key として許可しないが、`ModuleConfigUpdater` は `SUPERVISOR` prefix を受け付ける（YANG-実装 discrepancy）。
+
+#### SmartSwitch (SmartSwitchModuleConfigUpdater)
+
+受け付ける key prefix は `DPU` のみ（chassisd:236-239）:
+
+```python
+# chassisd:235-239  SmartSwitchModuleConfigUpdater.module_config_update()
+if not key.startswith(ModuleBase.MODULE_TYPE_DPU):
+    self.log_error("Incorrect module-name {}. Should start with {}".format(
+        key, ModuleBase.MODULE_TYPE_DPU))
+    return
+```
+
+SmartSwitch では `LINE-CARD` / `FABRIC-CARD` / `SUPERVISOR` キーの設定変更は無効（エラーログが出力され処理がスキップされる）。
+
+### カード種別による midplane 監視の分岐 (VOQ チャシスのみ)
+
+`ModuleUpdater.check_midplane_reachability()` は FABRIC-CARD を midplane 監視対象から除外する（chassisd:549）:
+
+```python
+# chassisd:547-550
+for module in self.chassis.get_all_modules():
+    # Skip fabric cards
+    if module.get_type() == ModuleBase.MODULE_TYPE_FABRIC:
+        continue
+```
+
+また、supervisor として動作している場合は自己の slot を除外し、LINE-CARD として動作している場合は supervisor のみを監視対象とする（chassisd:552-559）。SmartSwitch の `SmartSwitchModuleUpdater` はこのロジックを継承しない（独立実装）。
+
+### カード種別による Chassis App DB クリーンアップの分岐
+
+`CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD`（30 分）経過後の DB クリーンアップは LINE-CARD に限定される（chassisd:677-680）:
+
+```python
+# chassisd:677-681
+if module.startswith(ModuleBase.MODULE_TYPE_LINE):
+    # Module is down for more than 30 minutes. Do the chassis clean up
+    self.log_notice("...")
+    self._cleanup_chassis_app_db(module)
+```
+
+FABRIC-CARD や SUPERVISOR が down 状態でも Chassis App DB のクリーンアップは実行されない。
+
+### SmartSwitch 固有: DPU_STATE テーブルとの連携
+
+SmartSwitch では `SmartSwitchModuleUpdater` が `chassisStateDB` の `DPU_STATE` テーブルを追加で監視し（chassisd:1482, 1506-1521）、DPU の状態変化を `CHASSIS_MODULE_TABLE` と連動させる。VOQ チャシスの `ModuleUpdater` にはこの仕組みは存在しない。
+
+### SmartSwitch 固有: DPU reboot タイムアウト
+
+`dpu_reboot_timeout` は SmartSwitch プラットフォームにのみ適用される（chassisd:721-731）。VOQ チャシスでは LINE-CARD の `linecard_reboot_timeout`（デフォルト 180 秒）が相当する。
+
+| プラットフォーム | タイムアウト定数 | デフォルト値 | 設定ソース |
+|-----------------|----------------|------------|-----------|
+| VOQ チャシス | `linecard_reboot_timeout` | 180 秒 | `/usr/share/sonic/platform/platform_env.conf` |
+| SmartSwitch | `dpu_reboot_timeout` | 360 秒 | `/usr/share/sonic/platform/platform.json` の `"dpu_reboot_timeout"` |
+| SmartSwitch (固定) | `MAX_DPU_REBOOT_DURATION` | 800 秒 | ハードコード（変更不可） |
+
+> **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:193-239,549-559,677-681,721-731,1412-1416,1482,1506-1521`; `sonic-platform-common/sonic_platform_base/module_base.py:34-37`
+<!-- /platform -->

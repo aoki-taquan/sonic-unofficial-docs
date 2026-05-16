@@ -690,6 +690,110 @@ VLAN 単位の server listen event 生成失敗は **プロセスを停止させ
 > **Evidence**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:97-98, 259-262, 290-313, 375-385`
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込・プロセス制御 (Phase F)
+
+> **調査根拠**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 全行精読、`sonic-dhcp-relay/dhcp6relay/src/relay.cpp:264-304, 1342-1401` (2026-05-16)
+
+### 概要
+
+`DHCP_RELAY` テーブルを起点として発生する副次的な DB 書込・プロセス制御は以下の 3 種類に分類される。
+
+| 種別 | 主体 | 対象 |
+|------|------|------|
+| STATE_DB 書き込み | `dhcp6relay` (sonic-dhcp-relay) | `DHCPv6_COUNTER_TABLE\|<vlan>` |
+| プロセス起動・停止 | `dhcprelayd` (sonic-buildimage) | `dhcrelay` / `dhcpmon` subprocess |
+| supervisord プログラム制御 | `dhcprelayd` | `isc-dhcpv4-relay-*` / `dhcpmon-*` |
+
+### 1. STATE_DB への書き込み (`dhcp6relay`)
+
+`dhcp6relay` は `DHCP_RELAY` に登録された VLAN ごとに `STATE_DB::DHCPv6_COUNTER_TABLE|<vlan>` を初期化・更新する。
+
+#### 初期化
+
+```
+loop_relay() → lla_check_callback() → prepare_relay_config()
+  └── initialize_counter(state_db, ifname)   # relay.cpp:1401
+        └── clear_counter(state_db)          # relay.cpp:1342-1346: DEL "DHCPv6_COUNTER_TABLE|<vlan>|*"
+        └── state_db->hset(table_name, msg_type, "0")  # relay.cpp:277: 全メッセージ種別を 0 で初期化
+```
+
+#### メッセージ受信ごとのカウンタ加算
+
+```
+client_callback() / server_callback()
+  └── increase_counter(state_db, ifname, msg_type)  # relay.cpp:292-304
+        ├── state_db->hget(table_name, type)         # 現在値を取得
+        └── state_db->hset(table_name, type, count+1)  # インクリメント
+```
+
+| 書き込みキー | タイミング | 値 |
+|------------|----------|-----|
+| `DHCPv6_COUNTER_TABLE\|<vlan>\|Solicit` 等 | パケット受信ごと | 累積カウント (string) |
+| `DHCPv6_COUNTER_TABLE\|<vlan>\|Malformed` | 不正パケット受信ごと | 累積カウント |
+| 全カウンタ | `dhcp6relay` 起動時 (`initialize_counter`) | `"0"` にリセット |
+
+`sendto()` 失敗時はカウンタ加算されない (`sender.cpp:21-27`)。
+
+### 2. `dhcprelayd` によるプロセス制御 (`dhcrelay` / `dhcpmon` subprocess)
+
+`dhcprelayd` は `DHCP_RELAY` を直接購読しないが、`DHCP_SERVER_IPV4` / `VLAN` / `VLAN_INTERFACE` / `FEATURE` の変更を受けて `dhcrelay` プロセスを制御する。`DHCP_RELAY` の設定内容（relay 先インタフェース一覧）が `dhcrelay` の起動引数に反映される。
+
+```python
+# dhcprelayd.py:301-306
+cmds = ["/usr/sbin/dhcrelay", "-d", "-m", "discard", "-a", "%h:%p", "%P",
+        "--name-alias-map-file", "/tmp/port-name-alias-map.txt"]
+for dhcp_interface in new_dhcp_interfaces:
+    cmds += ["-id", dhcp_interface]
+cmds += ["-iu", "docker0", dhcp_server_ip]
+popen_res = subprocess.Popen(cmds)
+```
+
+| 条件 | 動作 |
+|------|------|
+| `DHCP_SERVER_IPV4[intf]['state'] == 'enabled'` かつ VLAN に対応する relay インタフェース存在 | `dhcrelay` subprocess 起動 |
+| `new_dhcp_interfaces` が空 | `dhcrelay` 停止のみ（起動しない） |
+| `force_kill=True`（VLAN_INTERFACE 変更時） | 既存 `dhcrelay` を SIGTERM→SIGKILL で強制終了してから再起動 |
+| 既存 `-id` セットが変化なし かつ `force_kill=False` | `NOT_KILLED`（再起動なし） |
+
+`_kill_exist_relay_releated_process()` (`dhcprelayd.py:343-373`) が `psutil` で `"dhcrelay"` / `"dhcpmon"` プロセスを検索し終了する。
+
+### 3. supervisord プログラム制御
+
+`dhcp_server` feature の enabled/disabled 遷移時に `supervisorctl stop/start` で supervisord 管理下のプログラムを制御する。
+
+```python
+# dhcprelayd.py:219-224
+cmds = ["supervisorctl", op, program]
+res = subprocess.run(cmds, check=True)
+```
+
+| 遷移 | `supervisorctl` 操作 |
+|------|--------------------|
+| `disabled → enabled` | `stop <isc-dhcpv4-relay-*>` + `stop <dhcpmon-*>` |
+| `enabled → disabled` | `start <isc-dhcpv4-relay-*>` + `start <dhcpmon-*>` |
+
+設定ファイル (`/etc/supervisor/conf.d/docker-dhcp-relay.supervisord.conf`) はコンテナ起動時に `docker_init.sh` が `sonic-cfggen` + Jinja2 テンプレートで生成する（`dhcprelayd` 自体はファイル書き込みを行わない）。
+
+### 4. STATE_DB 読み取り (`dhcprelayd`)
+
+`dhcprelayd` は `STATE_DB::DHCP_SERVER_IPV4_SERVER_IP|eth0` から `ip` フィールドを読み取り `dhcrelay` 起動引数に使用する (`dhcprelayd.py:376-384`)。10 回リトライ (各 10 秒 sleep)、失敗で `sys.exit(1)`。**書き込みはなし**。
+
+### 5. COUNTERS_DB クリア（コンテナ起動時・`start.sh`）
+
+`dhcprelayd` ではなく `start.sh` が担うが、`DHCP_RELAY` に関連する副次効果として記録する。コンテナ起動時に `COUNTERS_DB::DHCPV4_COUNTER_TABLE:*` キーを全削除する。
+
+### 副次書込なし（スコープ外）
+
+| DB | 理由 |
+|----|------|
+| APPL_DB | 書き込みなし（dhcp6relay・dhcprelayd ともに非使用） |
+| ASIC_DB / SAI | dhcrelay は L4 UDP relay。SAI/ASIC 非経由 |
+| ERROR_TABLE (STATE_DB) | dhcp6relay は ERROR_TABLE を使用しない |
+
+> **Evidence**: `relay.cpp:18, 264-304, 1342-1401`（STATE_DB カウンタ書込）、`dhcprelayd.py:209-225`（supervisorctl）、`dhcprelayd.py:290-313`（dhcrelay subprocess）、`dhcprelayd.py:343-373`（プロセス終了）、`dhcprelayd.py:376-384`（STATE_DB 読み取り）、`start.sh:6-9`（COUNTERS_DB クリア）
+<!-- /side-effects -->
+
 <!-- cross-refs -->
 ## 暗黙参照 — Phase C (cross-table refs)
 
