@@ -449,4 +449,48 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 - **`Loopback1`**: `src_address` フィールド未設定時の update-source fallback。`instance.conf.j2` にリテラルでハードコード。`Loopback0` や別名への変更不可。
 - **`dynamic/peer-group.conf.j2`**: dynamic タイプの peer-group テンプレートは実質空（コメントのみ）。peer-group 属性はすべて `instance.conf.j2` 側で定義済み。
 <!-- /constants -->
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `bgpcfgd/runner.py`, `bgpcfgd/main.py`, `frrcfgd/frrcfgd.py` 精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-pubsub.md`
+
+### bgpcfgd 経路: SubscriberStateTable + Runner (同期 Select ループ)
+
+`bgpcfgd` は `swsscommon.SubscriberStateTable` を利用した Redis keyspace 通知モデルを採用する。
+
+| ステップ | コードポイント | 内容 |
+|---|---|---|
+| 1. Manager 生成 | `main.py:90` | `BGPPeerMgrBase(..., "BGP_PEER_RANGE", "dynamic", False)` を Runner へ登録 |
+| 2. SubscriberStateTable 生成 | `runner.py:49` | `swsscommon.SubscriberStateTable(conn, "BGP_PEER_RANGE")` |
+| 3. Select 登録 | `runner.py:51` | `selector.addSelectable(subscriber)` |
+| 4. メインループ待機 | `runner.py:57` | `selector.select(1000ms)` ブロッキング |
+| 5. イベント取得 | `runner.py:65` | `subscriber.pop()` → `(key, op, fvs)` |
+| 6. ハンドラ呼び出し | `runner.py:69–70` | `BGPPeerMgrBase.handler(key, op, fvs)` → `set_handler()` / `del_handler()` |
+
+```
+CONFIG_DB: BGP_PEER_RANGE (Redis keyspace イベント)
+  └→ SubscriberStateTable("BGP_PEER_RANGE")
+       └→ Select.select(1000ms) ブロッキング
+            └→ Runner.run() ループ
+                 └→ BGPPeerMgrBase.handler()
+                      ├→ set_handler()  [op=SET]
+                      └→ del_handler()  [op=DEL]
+```
+
+### frrcfgd 経路: ExtConfigDBConnector + Redis psubscribe 別スレッド (非同期)
+
+`frrcfgd` は `BGP_PEER_RANGE` を直接購読せず、機能的に同等な `BGP_GLOBALS_LISTEN_PREFIX` テーブルを独自の `ExtConfigDBConnector` で購読する。
+
+| ステップ | コードポイント | 内容 |
+|---|---|---|
+| 1. テーブル登録 | `frrcfgd.py:92` | `BGP_GLOBALS_LISTEN_PREFIX` を bgpd 管理テーブルとして登録 |
+| 2. subscribe_all | `frrcfgd.py:2359` | `config_db.subscribe(table, hdlr)` で全テーブルにハンドラ登録 |
+| 3. listen 起動 | `frrcfgd.py:3955` | `start()` → `subscribe_all()` + `config_db.listen()` |
+| 4. pubsub スレッド | `frrcfgd.py:1539` | `pubsub.psubscribe("__keyspace@<dbid>__:*")` で全 keyspace 購読 |
+| 5. メッセージ処理 | `frrcfgd.py:1529` | `sub_msg_handler()` → `__fire(table, row, data)` |
+| 6. ハンドラ分岐 | `frrcfgd.py:2783` | `bgp_table_handler_common()` が `BGP_GLOBALS_LISTEN_PREFIX` を処理 |
+
+**二重管理構造**: `bgpcfgd` の `BGP_PEER_RANGE` 経路と `frrcfgd` の `BGP_GLOBALS_LISTEN_PREFIX` 経路は別テーブルを購読するが、FRR への `bgp listen range` コマンド生成という同等機能を持つ。実運用では `bgpcfgd` が主経路として機能する。
+<!-- /pubsub -->
 <!-- glossary-links-injected: 9543a3643673 -->
