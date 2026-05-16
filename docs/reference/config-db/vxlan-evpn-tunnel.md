@@ -1,0 +1,173 @@
+---
+title: EVPN DIP トンネル (動的生成)
+description: "EVPN DIP トンネル — BGP EVPN でリモート VTEP を学習した際に orchagent が動的生成する per-remote-VTEP P2P トンネルのコード由来デフォルトと暗黙挙動を解説する。"
+area: reference
+hard: 0
+verification: code-verified
+last_verified: 2026-05-14
+sources:
+  - repo: sonic-net/sonic-swss
+    path: orchagent/vxlanorch.cpp
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/vxlanorch.h
+    ref: master
+related:
+  config_db:
+    - VXLAN_TUNNEL
+    - VXLAN_EVPN_NVO
+    - VXLAN_TUNNEL_MAP
+  cli:
+    - config vxlan
+  yang:
+    - sonic-vxlan
+---
+
+# EVPN DIP トンネル (動的生成)
+
+## 概要
+
+[CONFIG_DB](../../reference/glossary.md#term-config_db) に `VXLAN_EVPN_TUNNEL` テーブルは存在しない。
+本ページで扱う **EVPN DIP トンネル** は、`orchagent` の `VxlanTunnel::createDynamicDIPTunnel()` が
+[BGP](../../reference/glossary.md#term-bgp) [EVPN](../../reference/glossary.md#term-evpn) でリモート
+[VTEP](../../reference/glossary.md#term-vtep) を学習した際に**ランタイムで動的生成**する
+per-remote-VTEP P2P トンネルである[^1]。
+
+- トンネル名: `EVPN_<remote_vtep_ip>` (prefix `EVPN_TUNNEL_NAME_PREFIX`)
+- トンネルポート名: `Port_EVPN_<remote_vtep_ip>` (prefix `EVPN_TUNNEL_PORT_PREFIX`)
+- 生成元: `vxlanorch.cpp:1160` — `new VxlanTunnel(tunnel_name, src_ip_, dipaddr, TNL_CREATION_SRC_EVPN)`
+
+この動的トンネルは `VXLAN_TUNNEL` [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルの
+CLI 生成エントリ (`TNL_CREATION_SRC_CLI`) とは別物であり、オペレータが直接設定する対象ではない。
+[VXLAN_EVPN_NVO](vxlan-evpn-nvo.md) を通じて有効化された EVPN コントロールプレーンが自動管理する。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  BGP["bgpd / FRR<br/>(EVPN type-2/3)"]
+  FPMSYNCD["fpmsyncd"]
+  APPDB[("APP_DB<br/>EVPN_REMOTE_VNI_TABLE")]
+  BGP --> FPMSYNCD
+  FPMSYNCD --> APPDB
+  APPDB --> ORCH["orchagent<br/>EvpnRemoteVniOrch"]
+  ORCH --> SAI["SAI<br/>sai_tunnel_api (P2P)"]
+```
+
+!!! note "凡例"
+    CONFIG_DB 由来ではなく APP_DB 経由の動的生成フロー。`VXLAN_TUNNEL` (CONFIG_DB) で定義した
+    VTEP が先に有効化されている前提で動作する。
+<!-- /cdb-mermaid -->
+
+## トンネル識別
+
+| 属性 | 値 | 根拠 |
+|------|----|------|
+| 名前プレフィックス | `EVPN_` | `vxlanorch.h:43` `EVPN_TUNNEL_NAME_PREFIX` |
+| ポートプレフィックス | `Port_EVPN_` | `vxlanorch.h:42` `EVPN_TUNNEL_PORT_PREFIX` |
+| 生成元種別 | `TNL_CREATION_SRC_EVPN` | `vxlanorch.h:54` |
+| STATE_DB `tnl_src` | `"EVPN"` | `vxlanorch.cpp:1939` |
+
+## 購読者
+
+- `orchagent` `EvpnRemoteVniOrch` / `EvpnRemoteVnip2pOrch`: `EVPN_REMOTE_VNI_TABLE` (APP_DB) を
+  購読し DIP トンネルを生成
+- `EvpnNvoOrch`: EVPN VTEP ポインタを管理し `getEVPNVtep()` で参照提供
+
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+| 属性 / 挙動 | デフォルト / 実挙動 | 分類 | 根拠 |
+|------------|-------------------|------|------|
+| `decap_ttl_mode` | `VxlanTunnelTTLMode::NOT_SET` → `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` を SAI に渡さない → プラットフォーム依存 | プラットフォーム依存 silent default | `vxlanorch.h:152` (デフォルト引数), `vxlanorch.cpp:1160`, `vxlanorch.cpp:372-383` |
+| `peer_mode` | 常に `SAI_TUNNEL_PEER_MODE_P2P` (`TNL_CREATION_SRC_EVPN` ハードコード) | ハードコード | `vxlanorch.cpp:903`, `vxlanorch.cpp:356-363` |
+| `mapper_list` | VLAN + VRF のみ (BRIDGE なし) + `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | ハードコード | `vxlanorch.cpp:1167-1169` |
+| `with_term` | `false` (SAI tunnel termination を生成しない) | ハードコード | `vxlanorch.cpp:1169` |
+| `tagging_mode` | `"untagged"` (VLAN flood domain 参加時) | ハードコード | `vxlanorch.cpp:2525-2527`, `vxlanorch.cpp:2685-2687` |
+| `operstatus` 初期値 | `"down"` (STATE_DB 初期登録時) | ハードコード初期値 | `vxlanorch.cpp:1942` |
+| EVPN VTEP 不在時 | `addTunnelUser()` が `false` を返しサイレント失敗。キュー残留なし | dead-consumer / silent drop | `vxlanorch.cpp:1685-1692` |
+| VTEP 未 active 時 | `SWSS_LOG_WARN("VTEP not yet active")` で `false` 返却。リトライは呼び出し元依存 | dead-consumer / silent drop | `vxlanorch.cpp:1694-1699` |
+
+### `decap_ttl_mode` の詳細
+
+EVPN DIP トンネルの `VxlanTunnel` コンストラクタ呼び出し (`vxlanorch.cpp:1160`) は
+`ttl_mode` 引数を省略するため、ヘッダで定義されたデフォルト値 `VxlanTunnelTTLMode::NOT_SET`
+が適用される。`createTunnelHw()` 内の `create_tunnel()` では `NOT_SET` の場合は
+`SAI_TUNNEL_ATTR_DECAP_TTL_MODE` を属性リストに追加しない。結果として SAI プラットフォーム
+実装のデフォルト TTL モードが適用される（通常は `PIPE` または `UNIFORM` だがプラットフォーム依存）。
+
+### `tagging_mode` の設計上の注記
+
+コード内に明示的なコメント `// NOTE: does 'untagged' make the most sense here?` が 2 箇所存在
+(`vxlanorch.cpp:2525`, `vxlanorch.cpp:2685`)。実装者が `"untagged"` の妥当性に迷いを示しているが、
+実装はハードコードされており設定変更手段はない。
+
+<!-- /defaults -->
+
+## 例外条件・特殊挙動
+
+- **isDipTunnelsSupported() = false の場合**: DIP トンネルは作成されず、リモート VTEP の
+  IP 参照カウントのみ更新される (`vxlanorch.cpp:1701-1704`)。プラットフォームが DIP トンネルを
+  サポートしない場合の縮退動作。
+- **重複リモート VTEP**: `tnl_users_` マップにすでに DIP が存在する場合、新規トンネル作成は
+  行われず参照カウントのみインクリメントされる (`vxlanorch.cpp:1173-1177`)。
+- **削除順序依存**: EVPN NVO 削除は DIP トンネルの `del_tnl_hw_pending` フラグが true の場合に
+  ブロックされる (`vxlanorch.cpp:2803-2807`)。
+
+## 関連 CONFIG_DB / YANG / CLI
+
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VXLAN_TUNNEL`](vxlan-tunnel.md)、[`VXLAN_EVPN_NVO`](vxlan-evpn-nvo.md)、[`VXLAN_TUNNEL_MAP`](vxlan-tunnel-map.md)
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vxlan`
+- 関連 CLI: [`config vxlan`](../cli/config-vxlan.md)
+
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- [CONFIG_DB: VXLAN_TUNNEL](vxlan-tunnel.md)
+- [CONFIG_DB: VXLAN_EVPN_NVO](vxlan-evpn-nvo.md)
+- [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
+- [CLI: config vxlan](../cli/config-vxlan.md)
+
+<!-- ref-triangle:end -->
+
+## 引用元
+
+[^1]: `sonic-swss/orchagent/vxlanorch.cpp` `createDynamicDIPTunnel()` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vxlanorch.cpp>
+
+## 関連ページ
+
+- [HLD: VXLAN / VNet 全体設計](../../overlay/vxlan-sonic.md)
+- [CONFIG_DB: VXLAN_TUNNEL](vxlan-tunnel.md)
+- [CONFIG_DB: VXLAN_EVPN_NVO](vxlan-evpn-nvo.md)
+- [CONFIG_DB: VXLAN_TUNNEL_MAP](vxlan-tunnel-map.md)
+- [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
+
+<!-- ops-hint -->
+## 運用ヒント
+
+### EVPN DIP トンネルの確認
+
+```bash
+# STATE_DB でダイナミックトンネルを確認 (tnl_src=EVPN のもの)
+sonic-db-cli STATE_DB keys 'VXLAN_TUNNEL_TABLE|EVPN_*'
+
+# 個別トンネルの状態
+sonic-db-cli STATE_DB hgetall 'VXLAN_TUNNEL_TABLE|EVPN_<remote_vtep_ip>'
+
+# show コマンド
+show vxlan tunnel
+show vxlan remotevtep
+```
+
+### よくある問題
+
+- **EVPN VTEP 不在**: `VXLAN_EVPN_NVO` が設定されていないと DIP トンネルが生成されない。
+  先に `config vxlan evpn_nvo add <name> <vtep>` を実行する。
+- **VTEP 未 active**: `VXLAN_TUNNEL` テーブルの `src_ip` が設定されており active でないと
+  DIP トンネル生成が `false` を返す。VTEP の active 状態を `show vxlan tunnel` で確認。
+- **`decap_ttl_mode` の挙動**: EVPN DIP トンネルは TTL モードを SAI に渡さないため、
+  プラットフォームの ASIC デフォルトが適用される。TTL 関連のトラフィック問題時は ASIC
+  ベンダーのドキュメントを参照。
+<!-- /ops-hint -->
