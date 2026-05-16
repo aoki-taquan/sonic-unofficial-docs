@@ -308,6 +308,90 @@ redis.call('HSET', ..., periodic_shared_wm and math.max(...) or pg_shared_wm)
 > **証跡**: `portsorch.cpp` L88-93, L389-435, L733-750, L866-885, L1852-1909, L8597-8680, L8932-9051, L9138-9146 全行読了。`bufferorch.cpp` L29-32, L234-344 全行読了。`watermarkorch.cpp` L1-349 全行読了。`watermark_pg.lua` / `watermark_queue.lua` / `watermark_bufferpool.lua` 全行読了。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 処理順序・依存関係 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/bufferorch.cpp, flexcounterorch.cpp, orchdaemon.cpp -->
+
+### orchdaemon 初期化順序
+
+`orchdaemon.cpp` でオーケストレータは以下の順に生成され、後段は前段の完了を前提とする[^10]。
+
+| 生成順 | オーケストレータ | 役割 |
+|--------|----------------|------|
+| 1 | `PortsOrch` | ポート OID 生成・`allPortsReady()` 提供 |
+| 2 | `BufferOrch` | `BUFFER_POOL` SAI オブジェクト生成 |
+| 3 | `WatermarkOrch` | テレメトリタイマー管理 |
+| 4 | `FlexCounterOrch` | `FLEX_COUNTER_STATUS=enable` 受信でカウンタ登録トリガー |
+
+### BUFFER_POOL 内の処理順序
+
+`BufferOrch::doTask()` (`bufferorch.cpp:2040`) は SAI ドキュメント記載の依存ツリーに従い、drain 順を固定している[^11]。
+
+```
+1. APP_BUFFER_POOL_TABLE       を drain  ← 先頭
+2. APP_BUFFER_PROFILE_TABLE    を drain
+3. その他（BUFFER_PG / BUFFER_QUEUE / PORT_INGRESS_PROFILE_LIST 等）を drain
+```
+
+この順序を SAI 仕様コメントが明示している:
+
+```
+buffer pool
+└── buffer profile
+    ├── buffer port ingress/egress profile list
+    ├── buffer queue
+    └── buffer pq table
+```
+
+`doTask(Consumer)` 先頭のガード (`bufferorch.cpp:2090-2099`) により、非 VOQ 構成では `gPortsOrch->isConfigDone()` が `true` になるまで全バッファタスクが早期 return する。
+
+### BUFFER_POOL_WATERMARK カウンタ登録の 2 段階起動
+
+```
+段階 1 — BufferOrch コンストラクタ (bufferorch.cpp:234-250)
+  watermark_bufferpool.lua を BUFFER_POOL_WATERMARK グループに登録し
+  ポーリング間隔 60000ms を設定する。
+  ただしプール OID は未生成のためポーリングは実質無効。
+
+段階 2 — FlexCounterOrch::doTask (flexcounterorch.cpp:287-289)
+  FLEX_COUNTER_STATUS=enable 受信時に
+  gBufferOrch->generateBufferPoolWatermarkCounterIdList() を呼出し、
+  全既存プール OID に対して COUNTER_ID_LIST を FLEX_COUNTER_DB に push する。
+  m_isBufferPoolWatermarkCounterIdListGenerated フラグを true に設定し再実行を防止。
+```
+
+段階 2 が段階 1 より必ず後に実行される理由:
+
+- `FlexCounterOrch` は `orchdaemon` で `BufferOrch` より後に生成される
+- `m_delayTimerExpired` が `false` の間は `doTask` が早期 return する
+- `allPortsReady()` が `false` ならスキップ (`flexcounterorch.cpp:166-169`)
+
+!!! warning "generateBufferPoolWatermarkCounterIdList の冪等性"
+    `m_isBufferPoolWatermarkCounterIdListGenerated` フラグにより、`BUFFER_POOL_WATERMARK` キースペースへの追加書き込みがあるたびに `SubscriberStateTable` が再通知を受けても、実際の登録は初回のみ実行される (`bufferorch.cpp:294`)。
+
+### Queue / PG カウンタ登録と BufferOrch の協調
+
+`getPgConfigurations()` / `getQueueConfigurations()` (`flexcounterorch.cpp`) は内部で `gBufferOrch->getBufferObjectsWithNonZeroProfile()` を呼び出し、非ゼロプロファイル付き PG / Queue エントリを取得してから `gPortsOrch->addPriorityGroupFlexCounters()` 等を呼ぶ[^12]。
+
+つまり PG / Queue のカウンタ登録は:
+1. `BufferOrch` が `BUFFER_PG` / `BUFFER_QUEUE` を SAI に適用する
+2. `FlexCounterOrch` が `FLEX_COUNTER_STATUS=enable` を受信する
+
+の **両方** が完了して初めて実行される。
+
+### BUFFER_POOL 名→OID マッピングの書き込みタイミング差異
+
+| 対象 | 書き込みタイミング | 実装箇所 |
+|------|----------------|---------|
+| `BUFFER_POOL` | SAI `create_buffer_pool` 成功直後 | `bufferorch.cpp:546` |
+| `BUFFER_PG` / `BUFFER_QUEUE` | `FLEX_COUNTER_STATUS=enable` 受信後 | `flexcounterorch.cpp:262-268` |
+
+!!! note "設計上の意図"
+    コード上のコメント (`bufferorch.cpp:542-545`) に明示: *"In pg and queue case, this mapping installment is deferred to FlexCounterOrch at a reception of field FLEX_COUNTER_STATUS"*
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -332,3 +416,6 @@ redis.call('HSET', ..., periodic_shared_wm and math.max(...) or pg_shared_wm)
 [^7]: DEFAULT_TELEMETRY_INTERVAL: `sonic-swss/orchagent/watermarkorch.cpp:9`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/watermarkorch.cpp#L9>
 [^8]: Lua nil fallback: `sonic-swss/orchagent/watermark_pg.lua:36`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/watermark_pg.lua#L36>
 [^9]: WRED 能力照会: `sonic-swss/orchagent/portsorch.cpp:1882-1909`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L1882>
+[^10]: orchdaemon 初期化順序: `sonic-swss/orchagent/orchdaemon.cpp:232,394,437,625`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232>
+[^11]: BufferOrch::doTask 処理順: `sonic-swss/orchagent/bufferorch.cpp:2040-2073`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L2040>
+[^12]: getPgConfigurations と BufferOrch 連携: `sonic-swss/orchagent/flexcounterorch.cpp:621-624`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L621>
