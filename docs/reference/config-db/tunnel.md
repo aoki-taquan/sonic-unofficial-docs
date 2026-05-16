@@ -252,4 +252,57 @@ REST/gNMI 書き込み経路なし
 TUNNEL テーブルはレガシー汎用トンネルテーブル; 現行は VXLAN_TUNNEL / NVGRE_TUNNEL が使用される
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### SET 操作の推奨順序
+
+`tunneldecaporch.cpp` の `addDecapTunnel()` は以下のSAI呼び出し順序で実行される。
+各ステップの前提リソースが未作成の場合は `task_need_retry` またはエラーで処理が中断する。
+
+| 順序 | テーブル / 操作 | 理由 | evidence |
+|------|----------------|------|---------|
+| 1 | `LOOPBACK_INTERFACE\|Loopback3\|<ip>` SET | `tun0` ローカル IP ソース (ハードコード `LOOPBACK_SRC="Loopback3"`)。後着でも `m_tunnelCache` 経由で遅延付与 | `tunnelmgr.cpp` L19, L339 |
+| 2 | `PEER_SWITCH\|<name>` SET (`address_ipv4`) | `m_peerIp` 未設定時は Linux tunnel 未作成。**PEER_SWITCH 設定後の自動再処理なし** — TUNNEL 再 SET が必要 | `tunnelmgr.cpp` L258-261 |
+| 3 | `DSCP_TO_TC_MAP\|<name>` SET (使用時) | `tunneldecaporch` が `gQosOrch->resolveTunnelQosMap()` で OID 解決。未作成 map は `task_need_retry` 無限待機 | `tunneldecaporch.cpp` L215-221 |
+| 4 | `TC_TO_PRIORITY_GROUP_MAP\|<name>` SET (使用時) | `decap_tc_to_pg_map` フィールド使用時に同様の OID 解決が必要 | `tunneldecaporch.cpp` L230-236 |
+| 5 | `TUNNEL\|MuxTunnel0` SET | 1-4 が揃ってから。内部で SAI 呼び出し順序 (下記) に従う | `tunneldecaporch.cpp` L717-849 |
+
+### SAI 内部呼び出し順序 (`addDecapTunnel`)
+
+`TUNNEL` SET を受けた `tunneldecaporch` は以下の順序で SAI オブジェクトを作成する。
+
+| SAI ステップ | SAI API 呼び出し | 依存リソース |
+|------------|----------------|------------|
+| 1. Overlay RIF 作成 | `sai_router_intfs_api->create_router_interface()` | `gVirtualRouterId` (デフォルト VRF) が orchagent 起動時に設定済み必須 |
+| 2. トンネル属性設定 | tunnel_attrs に `TYPE`, `OVERLAY_INTERFACE`, `UNDERLAY_INTERFACE`, `DECAP_ECN_MODE`, `DECAP_TTL_MODE`, `DECAP_DSCP_MODE` を push | ステップ 1 の overlay RIF OID が必要 |
+| 3. DSCP_TO_TC_MAP 付与 (任意) | `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` を push | `dscp_to_tc_map_id != SAI_NULL_OBJECT_ID` の場合のみ。ステップ 3/4 で OID が解決済みであること |
+| 4. TC_TO_PG_MAP 付与 (任意) | `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` を push | `tc_to_pg_map_id != SAI_NULL_OBJECT_ID` の場合のみ |
+| 5. トンネル作成 | `sai_tunnel_api->create_tunnel()` | ステップ 1-4 が完了後に一括送信 |
+| 6. Decap Term Entry 作成 | `sai_tunnel_api->create_tunnel_term_table_entry()` | ステップ 5 で取得した `tunnel_id` と `gVirtualRouterId` が必要。VR_ID は `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID` として設定 |
+
+!!! warning "VRF (gVirtualRouterId) の暗黙依存"
+    `addDecapTunnel()` と `addDecapTunnelTermEntry()` の両方が `gVirtualRouterId` を参照する。
+    これは orchagent 起動時に `intfsOrch` が初期化するデフォルト VRF の OID であり、
+    CONFIG_DB の `VRF` テーブルとは無関係にハードコードで使われる。
+    orchagent が正常起動していることが前提条件。
+
+### 変更不可フィールド（DEL → SET が必要）
+
+- `ecn_mode` / `encap_ecn_mode`: SAI `create-only` 属性。既存トンネルへの変更 SET で `valid=false` となり、**SET 全体（他フィールドを含む）が無効化**される。変更には `TUNNEL` DEL 後に再 SET が必要。
+  - evidence: `tunneldecaporch.cpp` L168-183, L193-198
+
+### DEL 操作の安全順序
+
+```
+DEL MUX_CABLE|*        # TUNNEL を参照する MUX_CABLE エントリを先に削除
+DEL TUNNEL|MuxTunnel0  # tunnelmgrd → APPL_DB DEL → tunneldecaporch → SAI DEL
+                        # SAI DEL 順: tunnel_term_table_entry → tunnel → overlay RIF
+DEL PEER_SWITCH|*      # TUNNEL DEL の後
+```
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-ordering.md`
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: ae9e20070353 -->
