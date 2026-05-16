@@ -119,6 +119,54 @@ string type = "dynamic";
 
 <!-- /constants -->
 
+<!-- pubsub -->
+## 通信メカニズム（Pub/Sub・イベント経路）
+
+### CONFIG_DB → APPL_DB（`swssconfig` 転記）
+
+`CONFIG_DB` の `FDB` テーブルは `FdbOrch` に直接購読されない。`swssconfig` が `CONFIG_DB:FDB` を読み出し、`APPL_DB:FDB_TABLE` へ転記する。`FdbOrch` は `APPL_DB:FDB_TABLE` を `Consumer`（SubscribeTable）として購読する。
+
+```
+CONFIG_DB:FDB  ──swssconfig──▶  APPL_DB:FDB_TABLE  ──Consumer──▶  FdbOrch::doTask(Consumer&)
+```
+
+コード根拠: `fdborch.cpp:27–48` — `FdbOrch` コンストラクタは `applDbConnector` と `appFdbTables` を `Orch` 基底クラスに渡し、APPL_DB の Consumer として登録する。
+
+### APPL_DB → SAI（`sai_fdb_api`）
+
+`FdbOrch::doTask(Consumer&)` (`fdborch.cpp:707`) が APPL_DB のエントリ変更イベントを受け取り、`addFdbEntry()` / `removeFdbEntry()` 経由で `sai_fdb_api->create_fdb_entry()` / `sai_fdb_api->remove_fdb_entry()` を呼び出す。
+
+### ASIC_DB → FdbOrch（SAI fdb_event 通知）
+
+ハードウェアで MAC が学習・エージングすると syncd が `ASIC_DB:NOTIFICATIONS` チャンネルに `fdb_event` を publish する。`FdbOrch` コンストラクタはこのチャンネルに `NotificationConsumer` を登録している。
+
+```cpp
+// fdborch.cpp:45-48
+m_notificationsDb = make_shared<DBConnector>("ASIC_DB", 0);
+m_fdbNotificationConsumer = new swss::NotificationConsumer(m_notificationsDb.get(), "NOTIFICATIONS");
+auto fdbNotifier = new Notifier(m_fdbNotificationConsumer, this, "FDB_NOTIFICATIONS");
+Orch::addExecutor(fdbNotifier);
+```
+
+`FdbOrch::doTask(NotificationConsumer&)` (`fdborch.cpp:923`) でイベントを受信し、`op == "fdb_event"` のとき `sai_deserialize_fdb_event_ntf()` でデシリアライズ後 `FdbOrch::update()` (`fdborch.cpp:278`) を呼ぶ。
+
+### APPL_DB → FdbOrch（FLUSHFDBREQUEST 通知）
+
+`APPL_DB:FLUSHFDBREQUEST` チャンネルを `NotificationConsumer` で購読し、`op == "ALL"` で `sai_fdb_api->flush_fdb_entries()` を発行する (`fdborch.cpp:940–955`)。
+
+### 通信経路サマリ
+
+| 経路 | チャンネル / テーブル | 方向 | ハンドラ |
+|------|----------------------|------|---------|
+| CONFIG_DB → APPL_DB | `FDB_TABLE` | swssconfig 転記 | — |
+| APPL_DB → FdbOrch | `APP_FDB_TABLE_NAME` | Subscribe (Consumer) | `doTask(Consumer&)` |
+| FdbOrch → SAI | `sai_fdb_api` | 同期 API 呼び出し | `addFdbEntry()` / `removeFdbEntry()` |
+| syncd → FdbOrch | `ASIC_DB:NOTIFICATIONS` `fdb_event` | Pub/Sub (Notifier) | `doTask(NotificationConsumer&)` → `update()` |
+| FdbOrch → APPL_DB (応答) | `FDB_TABLE` (STATE_DB) | 書き戻し | `storeFdbEntryState()` |
+| CLI → FdbOrch | `APPL_DB:FLUSHFDBREQUEST` | Pub/Sub (Notifier) | `doTask(NotificationConsumer&)` `op=ALL` |
+
+<!-- /pubsub -->
+
 ## key 構造
 
 ```text
