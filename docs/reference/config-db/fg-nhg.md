@@ -243,6 +243,77 @@ if (!link.empty()) {
 
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+## 書込み順依存・NEXTHOP 解決順序 (Phase B)
+
+> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` `calculateBankHashBucketStartIndices()` L146–213, `createFineGrainedNextHopGroup()` L257–314, `setActiveBankHashBucketChanges()` L568–820, `sprayBankNhgMembers()` L1113–1198, `doTaskFgNhg()` L1673–1744, `doTaskFgNhgMember()` L1969–2030 精読 (2026-05-16)
+
+### 3 テーブルの投入順序
+
+```
+FG_NHG|<name>          ← 最初に投入（必須）
+  ↓
+FG_NHG_PREFIX|<prefix> ← FG_NHG 処理完了後（逆順は破棄・再試行なし）
+FG_NHG_MEMBER|<nh_ip>  ← FG_NHG 処理完了後（逆順は自動 retry あり）
+```
+
+- `FG_NHG_PREFIX` は親 FG_NHG が未存在の場合 `SWSS_LOG_ERROR` + `return true`（破棄・再試行なし）。**FG_NHG より後に投入しないと消える**。
+- `FG_NHG_MEMBER` は親 FG_NHG が未存在の場合 `return false`（Consumer キューに残り自動 retry）。FG_NHG の処理完了後に自動投入される。
+
+### NEXTHOP 解決順序
+
+- FG_NHG グループは SAI 上で先に作成される（NH 解決を待たない）。
+- 各 NH が NeighOrch に解決されるたびに `validNextHopInNextHopGroup()` が呼ばれ、対応バンクのバケットに割り当てられる（遅延追加・自動調停）。
+- NH 未解決の間はバケットに割り当てられないため、active NH 数が少ないほど残 NH へのトラフィック集中が発生する。
+
+### SAI Fine-Grained NHG メンバー作成順序
+
+1. SAI NHG 作成 (`SAI_NEXT_HOP_GROUP_ATTR_TYPE = FINE_GRAINED` + `CONFIGURED_SIZE`)
+2. バンク割り当て計算 (`calculateBankHashBucketStartIndices`: バンク 0 から昇順、NH 比例配分)
+3. バケット範囲を昇順スキャンし、ラウンドロビンで NH を割り当て (`bucket_idx % nhs_to_add.size()`)
+4. 各バケットに SAI `create_next_hop_group_member`:
+   - `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_GROUP_ID`
+   - `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_NEXT_HOP_ID`
+   - `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` (= bucket index)
+
+### NH 追加・削除時のバケット再配分
+
+- 再配分はバンク単位で独立（他バンクに波及しない）。
+- **単純ラウンドロビンは採用しない**。各 NH のバケット数を均等化するアルゴリズムを使用（`setActiveBankHashBucketChanges()`）:
+  - 目標バケット数 = `num_buckets_in_bank / active_nhs`、余剰は先頭 NH から 1 ずつ加算
+  - NH 削除: 削除 NH のバケットを残存 NH に均等移譲
+  - NH 追加: 既存 NH からバケットを奪取して新規 NH に均等分配
+
+### warm-reboot 復元
+
+- orchagent 再起動時、`m_recoveryMap` (WARM_RESTART DB) に保存済みのバケット→NH マッピングを優先復元。ラウンドロビン再割り当ては行わない。
+- 復元時に NH が別バンクにある場合（バンク全断代替）は `inactive_to_active_map` に記録しフォールバックを設定。
+
+### DEL 推奨順序
+
+```
+FG_NHG_MEMBER|<nh_ip>  ← 先に削除
+FG_NHG_PREFIX|<prefix> ← 次に削除
+FG_NHG|<name>          ← 最後に削除
+```
+
+逆順での DEL はリソースリークまたは内部マップ不整合が生じる可能性がある（逆順でも SAI はクリーンアップされるが CONFIG_DB の整合性のため推奨順守）。
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | FG_NHG SET → FG_NHG_MEMBER SET | 強制先行（自動 retry あり） | Consumer キュー残留で自動再試行 |
+| 2 | FG_NHG SET → FG_NHG_PREFIX SET | 強制先行（再試行なし） | PREFIX を先に書くと破棄される |
+| 3 | NeighOrch NH 解決 → SAI バケット割り当て | 遅延追加で自動調停 | validNextHopInNextHopGroup で随時追加 |
+| 4 | バンク番号昇順（0 始まり連番推奨） | 欠番は空バンクとして確保 | 欠番回避のため bank 値は 0 始まり連番推奨 |
+| 5 | SAI NHG member 属性: GROUP_ID → NH_ID → INDEX | create 時固定順 | FgNhgOrch が構築（アプリ側不要） |
+| 6 | NH 追加/削除時のバケット均等化 | バンク単位独立、自動 | 均等化アルゴリズム（ラウンドロビン非採用） |
+| 7 | warm-reboot 復元（recoveryMap 優先） | 復元マップが通常割り当てより優先 | orchagent 起動前に recoveryMap ロード完了 |
+| 8 | prefix-based グループへの FG_NHG_MEMBER 投入禁止 | 破棄（再試行なし） | match_mode 確認後に MEMBER 投入 |
+| 9 | DEL 順序: MEMBER → PREFIX → FG_NHG | 推奨（逆順は SAI クリーンアップ後に DB 残留） | 逆順は推奨しない |
+
+詳細な調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-ordering.md`
+<!-- /ordering -->
+
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
