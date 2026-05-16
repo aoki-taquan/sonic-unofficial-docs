@@ -212,3 +212,83 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 - `length` の YANG パターン (`[0-9]+m`) 違反値 → YANG バリデーションで拒否される (コード側 fallback なし)
 
 <!-- /defaults -->
+
+<!-- failure -->
+## 失敗挙動・retry 分岐 (Phase D)
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp, cfgmgr/buffermgr.cpp -->
+
+### dynamic モード (buffermgrdyn) — handleCableLenTable
+
+#### speed 未設定 → 計算延期、retry なし
+
+- **箇所**: `buffermgrdyn.cpp:2155-2159`
+- **条件**: `portInfo.effective_speed.empty()` が真（speed が PORT テーブルからまだ届いていない）
+- **挙動**: `SWSS_LOG_WARN("Speed for %s hasn't been configured yet, unable to calculate headroom")` を出力して当該ポートを `continue` でスキップ。他ポートの処理は継続。Consumer への `task_need_retry` 返却はしない（コード内コメント: "We don't retry here because it doesn't make sense until the speed is configured."）。
+- **復帰**: speed が後着したとき `handlePortTable` 内で `refreshPgsForPort` が呼ばれ headroom 計算が実行される。
+
+#### allocateProfile でバッファプール未生成 → task_need_retry
+
+- **箇所**: `buffermgrdyn.cpp:975-979`
+- **条件**: `getPgPoolMode()` が空文字を返す（lossless pool がまだ存在しない）
+- **挙動**: `SWSS_LOG_INFO("BUFFER_PROFILE %s cannot be created because the buffer pool isn't ready")` を出力し `task_need_retry` 返却。`handleCableLenTable` は即座に `task_need_retry` を返し Consumer フレームワークがメッセージを再キューに戻す。後続ポートは処理されない。
+- **復帰**: プール生成後に Consumer が再処理を試みる。
+
+#### headroom 上限超過 → task_failed (non-recoverable)
+
+- **箇所**: `buffermgrdyn.cpp:1539-1546`
+- **条件**: `isHeadroomResourceValid()` が偽（累積 headroom がポート上限を超える）
+- **挙動**: `SWSS_LOG_ERROR("Update speed (%s) and cable length (%s) for port %s failed, accumulative headroom size exceeds the limit")` を出力し `task_failed` 返却。`handleCableLenTable` は `failed_item_count` をインクリメントして後続ポートを処理し続け、最終的に `task_failed` を返す。
+- **復帰**: cable 長を短縮するか当該ポートの PG 数を削減する必要あり（設定変更が必要）。
+
+#### PORT_ADMIN_DOWN → no-op、task_success
+
+- **箇所**: `buffermgrdyn.cpp:2191-2194`
+- **条件**: `portInfo.state == PORT_ADMIN_DOWN`
+- **挙動**: `SWSS_LOG_INFO("Nothing to be done when port %s's cable length updated")` のみ出力し `task_success` 返却。`portInfo.cable_length` はキャッシュに保存済みなので admin-up 時に `handlePortTable` が正しい値で `refreshPgsForPort` を呼ぶ。
+
+#### Lua headroom 計算失敗 → WARN、プロファイルはサイズ空のまま継続
+
+- **箇所**: `buffermgrdyn.cpp:622, 648`
+- **条件**: Lua スクリプト実行失敗またはフォーマット不正な戻り値
+- **挙動**: `SWSS_LOG_WARN("Failed to calculate headroom for %s")` 出力。xon/xoff/size フィールドが空のまま `updateBufferProfileToDb` が呼ばれる。`task_failed` は返らず処理が続くため、SAI 側で空プロファイルが適用されてしまう危険がある。
+
+---
+
+### static モード (buffermgr) — doCableTask / doSpeedUpdateTask
+
+#### pg_profile_lookup.ini にエントリなし → task_invalid_entry (ドロップ)
+
+- **箇所**: `buffermgr.cpp:238-242`
+- **条件**: `m_pgProfileLookup[speed][cable]` にエントリが存在しない（speed/cable の組み合わせが `pg_profile_lookup.ini` に未定義）
+- **挙動**: `SWSS_LOG_ERROR("Unable to create/update PG profile for port %s. No PG profile configured for speed %s and cable length %s")` 出力、`task_invalid_entry` 返却。エントリはドロップ（retry なし）。
+- **復帰**: `pg_profile_lookup.ini` に該当 speed/cable エントリを追加するか、ケーブル長を定義済みの値に変更する必要あり。
+
+#### PORT ステータス未取得 → task_need_retry
+
+- **箇所**: `buffermgr.cpp:165-170`
+- **条件**: `m_portStatusLookup.count(port) == 0`（PORT_QOS_MAP より先に CABLE_LENGTH 通知が届いた場合等）
+- **挙動**: `SWSS_LOG_INFO("pfc_enable status is not available for port %s")` 出力、`task_need_retry` 返却。Consumer フレームワークが再処理。
+
+#### lossless pool 未生成 → task_need_retry
+
+- **箇所**: `buffermgr.cpp:253-258`
+- **条件**: `getPgPoolMode()` が空文字を返す
+- **挙動**: `SWSS_LOG_INFO("PG lossless pool is not yet created")` 出力、`task_need_retry` 返却。スイッチ初期化完了でプールが生成されると自動復帰。
+
+---
+
+### 失敗パターン早見表
+
+| モード | 条件 | 結果 | retry | ログ |
+|--------|------|------|-------|------|
+| dynamic | speed 未設定 | スキップ (continue) | なし | WARN |
+| dynamic | pool 未生成 (`allocateProfile`) | task_need_retry | あり | INFO |
+| dynamic | headroom 上限超過 | task_failed | なし | ERROR |
+| dynamic | PORT_ADMIN_DOWN | task_success (no-op) | — | INFO |
+| dynamic | Lua 計算失敗 | 継続 (サイズ空) | なし | WARN |
+| static | pg_profile_lookup miss | task_invalid_entry | なし | ERROR |
+| static | PORT status 未取得 | task_need_retry | あり | INFO |
+| static | pool 未生成 | task_need_retry | あり | INFO |
+
+<!-- /failure -->
