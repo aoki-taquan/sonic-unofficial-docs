@@ -148,6 +148,74 @@ if (!nhg_index.empty() && (!ips.empty() || !aliases.empty()))
 `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` が有効な場合、全フィールド（空文字列のものを含む）を常に送信する。フィールド不在が発生しないため orchagent 側の「フィールド不在=デフォルト」ロジックは使われない。
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-platform.md -->
+
+### ASIC 別 ECMP グループ数上限
+
+RouteOrch コンストラクタ起動時に `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を問い合わせ ECMP グループ上限 (`m_maxNextHopGroupCount`) を決定する[^3]:
+
+```cpp
+// routeorch.cpp:61-91 (抜粋)
+attr.id = SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS;
+status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status != SAI_STATUS_SUCCESS)
+    m_maxNextHopGroupCount = DEFAULT_NUMBER_OF_ECMP_GROUPS;  // 128
+else
+{
+    m_maxNextHopGroupCount = attr.value.s32;
+    char *platform = getenv("platform");
+    if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))  // "mellanox"
+        m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;  // ÷ 32
+}
+```
+
+| プラットフォーム | SAI 返値の解釈 | 有効上限 |
+|-----------------|---------------|---------|
+| Mellanox (`"mellanox"`) | ECMP size=1 前提の最大数を返すため ÷32 補正 | `SAI 返値 / 32` |
+| その他 ASIC | SAI 返値をそのまま使用 | `SAI 返値` |
+| SAI 問い合わせ失敗 | フォールバック | 128 |
+
+この上限は `SwitchOrch::set_switch_capability()` で `MAX_NEXTHOP_GROUP_COUNT` として STATE_DB に公開される。
+
+### VOQ chassis — ECMP メンバー数上限キャップ
+
+`gMySwitchType == "voq"` のとき orchagent が ECMP メンバー数を最大 128 に固定して SAI に書き戻す[^3]:
+
+```cpp
+// routeorch.cpp:109-117 (抜粋)
+if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
+{
+    maxEcmpGroupSize = 128;
+    attr.id = SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT;
+    attr.value.s32 = maxEcmpGroupSize;
+    sai_switch_api->set_switch_attribute(gSwitchId, &attr);
+}
+```
+
+VOQ chassis では複数 line card 間でフォワーディングテーブルを同期するため ECMP メンバー数を抑えて同期負荷を制限する。通常の box スイッチや fabric スイッチでは ASIC 能力値をそのまま使う。
+
+| `gMySwitchType` | ECMP メンバー上限の扱い |
+|-----------------|----------------------|
+| `"voq"` | min(ASIC 能力, 128) を SAI に設定 |
+| `"switch"` / `"fabric"` 等 | ASIC 能力値のまま（orchagent から変更しない） |
+
+### SAI Bulk API 対応差
+
+RouteOrch は 3 種の Bulker を使用し、デフォルト `gMaxBulkSize = 1000` エントリ単位でまとめて SAI に渡す[^3]:
+
+| Bulker | 対象 SAI API |
+|--------|-------------|
+| `gRouteBulker` | `sai_route_api` (sai_route_entry_t) |
+| `gLabelRouteBulker` | `sai_mpls_api` (label route entry) |
+| `gNextHopGroupMemberBulker` | `sai_next_hop_group_api` (NHG member) |
+
+SAI 実装がバルク操作 (`sai_bulk_create_route_entry` 等) を実装していない場合、Bulker 内部でシングルエントリ呼び出しにフォールバックする。ECMP グループ数が上限に達した状態で pending DEL がある場合、通常の flush タイミング（doTask ループ末尾）より早期に `gRouteBulker.flush()` が呼ばれる (routeorch.cpp:1094-1097)。
+
+<!-- /platform -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 

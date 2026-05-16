@@ -426,3 +426,66 @@ status = sai_fdb_api->create_fdb_entry(&fdb_entry, (uint32_t)attrs.size(), attrs
 ## 引用元
 
 [^1]: `sonic-swss-common/common/schema.h:358` — `#define CFG_FDB_TABLE_NAME "FDB"`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
+
+<!-- platform -->
+## プラットフォーム差
+
+### SAI FDB サポート差 — DIP トンネル vs SIP トンネル
+
+VXLAN FDB エントリの SAI プログラム方法はプラットフォームの VTEP トンネルモデルによって二分岐する（`fdborch.cpp:836-854, 1308-1313`）。
+
+| 項目 | DIP トンネル対応 ASIC | SIP トンネル ASIC（DIP 非対応） |
+|------|----------------------|-------------------------------|
+| トンネルポート | リモート VTEP ごとに個別ポート (`getTunnelPortName(remote_ip)`) | EVPN VTEP 単一共有ポート (`getEVPNVtep()`) |
+| `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` | 設定しない | リモート IP をセット（VLAN メンバー一意識別のため必須） |
+| VLAN メンバー解決 | port のみで識別 | port + `end_point_ip` で識別 |
+| warm-reboot 後の STATE_DB 復旧要件 | ポート名保持で充足 | エンドポイント IP も STATE_DB に保持が必要 |
+
+```cpp
+// fdborch.cpp:1308-1313 — SIP トンネル時のみ end_point_ip をセット
+if (!tunnel_orch->isDipTunnelsSupported())
+{
+    end_point_ip = fdbData.remote_ip;
+}
+```
+
+### MCLAG 連携差
+
+MCLAG リモート MAC (`FDB_ORIGIN_MCLAG_ADVERTIZED`) は通常の PROVISIONED MAC とは異なる SAI 属性で登録される。
+
+**SAI\_FDB\_ENTRY\_TYPE マッピング差** (`fdborch.cpp:449-455`):
+
+| `type` 値 | `origin` | SAI FDB Type |
+|-----------|----------|-------------|
+| `"dynamic"` | PROVISIONED | `SAI_FDB_ENTRY_TYPE_DYNAMIC` |
+| `"static"` | PROVISIONED | `SAI_FDB_ENTRY_TYPE_STATIC` |
+| `"dynamic"` | MCLAG\_ADVERTIZED | `SAI_FDB_ENTRY_TYPE_STATIC` |
+| `"dynamic_local"` | MCLAG\_ADVERTIZED | `SAI_FDB_ENTRY_TYPE_DYNAMIC` |
+| any | VXLAN\_ADVERTIZED | `SAI_FDB_ENTRY_TYPE_STATIC` |
+
+**`SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` の付加** (`fdborch.cpp:461-465`): MCLAG/VXLAN リモート `dynamic` MAC には `ALLOW_MAC_MOVE=true` が付与される。ローカル学習イベントで同一 MAC が到達した際に SAI レベルで上書き移動が許可される。
+
+**AGE イベントでの MCLAG MAC 保護** (`fdborch.cpp:490-521`): MCLAG リモートエントリが ASIC の aging で削除通知を受けた場合、orchagent は削除せず `SAI_FDB_ENTRY_TYPE_STATIC` + `ALLOW_MAC_MOVE=true` で即座に再作成する。MCLAG ピアから広告されたリモート MAC が ASIC aging によって消えないよう保護する。
+
+**MCLAG リモート → ローカル移動** (`fdborch.cpp:332-384`): LEARN イベントで既存 MCLAG リモート MAC と同一エントリを検出した場合、SAI FDB エントリをローカルブリッジポート + `SAI_FDB_ENTRY_TYPE_DYNAMIC` で更新し、STATE_DB の MCLAG FDB テーブル (`m_mclagFdbStateTable`) から当該エントリを削除する。
+
+### VXLAN 連携差
+
+VXLAN FDB (`FDB_ORIGIN_VXLAN_ADVERTIZED`) は常に `SAI_FDB_ENTRY_TYPE_STATIC` として登録される。`type="dynamic"` の場合のみ `ALLOW_MAC_MOVE=true` が付与される。
+
+VXLAN origin のエントリが PROVISIONED origin に変更された場合（origin 変更）、orchagent は `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` をゼロアドレスでセットしてクリアし（`fdborch.cpp:513-519`）、さらに `ALLOW_MAC_MOVE=false` を明示的に設定する（`fdborch.cpp:524-530`）。
+
+### Warm-reboot リカバリ差
+
+`FdbOrch::bake()` (`fdborch.cpp:51-66`) が warm-reboot 後の FDB リカバリを担う。
+
+```cpp
+// fdborch.cpp:63
+size_t refilled = consumer->refillToSync(&m_fdbStateTable);
+SWSS_LOG_NOTICE("Add warm input FDB State: %s, %zd", APP_FDB_TABLE_NAME, refilled);
+```
+
+- STATE_DB `FDB_TABLE` に保存された FDB エントリを `APP_FDB_TABLE_NAME` コンシューマの `m_toSync` キューに再投入する。ASIC 再起動後の FDB 再プログラムを、APPL_DB からの通常フローと同じ処理パスで実行できる。
+- **DIP トンネル ASIC**: STATE_DB にポート名が残存していれば warm-reboot 後の VXLAN FDB リカバリは完結する。
+- **SIP トンネル ASIC**: STATE_DB に `remote_ip`（エンドポイント IP）が保存・復元されていないと `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` のセットに失敗し、VLAN メンバー識別が不能になる。
+<!-- /platform -->

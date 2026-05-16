@@ -120,11 +120,86 @@ orch.h:40-50 で定義するプラットフォーム識別文字列:
 - `DTelOrch` は `platform == "barefoot" || platform == "vs"` の場合のみ起動。
   → それ以外のプラットフォームでは DTel 系 action を持つルールを設定しても SAI に反映されない。
 
+## 差異 9: SAI ASIC capability — action list 動的照会 (queryAclActionCapability)
+
+`aclorch.cpp:3975-4058` — `AclOrch::queryAclActionCapability()`
+
+init 時に `SAI_SWITCH_ATTR_MAX_ACL_ACTION_COUNT` でバッファサイズを取得後、Ingress / Egress それぞれの action list を SAI から照会する。
+
+```
+フロー:
+  SAI_SWITCH_ATTR_MAX_ACL_ACTION_COUNT (バッファ確保)
+    ↓
+  SAI_SWITCH_ATTR_ACL_STAGE_INGRESS → action_list + is_action_list_mandatory
+  SAI_SWITCH_ATTR_ACL_STAGE_EGRESS  → action_list + is_action_list_mandatory
+    ↓ (失敗時)
+  initDefaultAclActionCapabilities():
+    Ingress default: PACKET_ACTION + MIRROR_INGRESS + NO_NAT (aclorch.cpp:170-187)
+    Egress  default: PACKET_ACTION のみ (aclorch.cpp:188-196)
+```
+
+| 項目 | 詳細 |
+|------|------|
+| **is_action_list_mandatory** | ASIC が `sai_acl_capability_t.is_action_list_mandatory=true` を返した場合、テーブル作成 SAI 呼び出しに action リストを必ず渡す必要がある。`addMandatoryActions()` が不足分を自動補完 (`aclorch.cpp:4760-4764`) |
+| **STATE_DB への書出し** | `putAclActionCapabilityInDB()` が `ACL_ACTIONS|INGRESS` / `ACL_ACTIONS|EGRESS` に `action_list` と `is_action_list_mandatory` を書く (`aclorch.cpp:4056-4110`) |
+| **isAclActionSupported()** | rule 作成時に `m_aclCapabilities[stage].actionList` を参照。未サポート action は SAI に渡さず無視される (`aclorch.cpp:2584-2595`) |
+
+### PACKET_ACTION 有効値とベンダー対応差
+
+`aclorch.cpp:143-148`、`aclorch.h:83-85`
+
+```
+aclPacketActionLookup = {
+    "FORWARD" → SAI_PACKET_ACTION_FORWARD
+    "DROP"    → SAI_PACKET_ACTION_DROP
+    "COPY"    → SAI_PACKET_ACTION_COPY
+}
+```
+
+CONFIG_DB から指定できる `PACKET_ACTION` 値は **FORWARD / DROP / COPY の 3 種のみ**。`TRAP` / `LOG` / `DENY` / `TRANSIT` は `aclPacketActionLookup` 未登録のため受け付けない。
+
+`sai_query_attribute_enum_values_capability` で ASIC がサポートする値を照会するが、libsairedis が SAI object API 未対応のため**現行実装では全値サポートと仮定**する (`aclorch.cpp:4042-4051`)。
+
+| プラットフォーム | PACKET_ACTION: COPY のサポート状況 |
+|----------------|----------------------------------|
+| Mellanox Spectrum | SAI は COPY サポートを宣言するが、Egress ACL では COPY 非対応の ASIC 世代あり。実 SAI 応答に依存 |
+| Broadcom XGS | FORWARD / DROP / COPY すべてを Ingress/Egress ともにサポート |
+| Broadcom DNX | FORWARD / DROP は対応。COPY は ASIC 世代依存 |
+| VS (仮想) | すべて対応（テスト用固定） |
+
+実際にどの値が有効かは `STATE_DB:ACL_ACTION|PACKET_ACTION` の `action_values` フィールドを参照すること。
+
+## 差異 10: SAI ACL エントリ優先度範囲 (ASIC 上限)
+
+`aclorch.cpp:3686-3710` — DPU 以外で init 時に SAI から優先度範囲を照会する。
+
+```
+条件: gMySwitchType != "dpu"
+attrs[0].id = SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY
+attrs[1].id = SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY
+→ AclRule::setRulePriorities(min, max)
+```
+
+| プラットフォーム | 最小優先度 | 最大優先度 | 備考 |
+|----------------|-----------|-----------|------|
+| Mellanox Spectrum | 1 | 16383 | SAI 照会値 (典型値、ASIC 世代依存) |
+| Broadcom XGS | 1 | 65535 | SAI 照会値 (典型値) |
+| Broadcom DNX | 1 | 65535 | SAI 照会値 |
+| DPU (`gMySwitchType="dpu"`) | 照会なし | 照会なし | `queryAclActionCapability()` ごとスキップ |
+
+- CONFIG_DB の `PRIORITY` フィールドがこの上限を超えると `sai_acl_api->create_acl_entry()` が `SAI_STATUS_INVALID_ATTR_VALUE` を返し、rule は INACTIVE になる。
+- **Mellanox の制約**: 上限 16383 のため、`PRIORITY=65535` 等の高い値を Mellanox 環境で設定すると rule 作成失敗となる点に注意。
+- 照会失敗時は `handleSaiGetStatus()` が exception をスローし `AclOrch` 初期化が中断される (`aclorch.cpp:3701-3706`)。
+
 ## スキャン証跡
 
 - `AclOrch::init()` L3480-3720 全行読了
 - `AclOrch::initDefaultTableTypes()` L3724-3830 全行読了
+- `AclOrch::queryAclActionCapability()` L3975-4058 全行読了
+- `AclOrch::queryAclActionAttrEnumValues()` L4121-4200 確認
 - `isAclMirrorV6Supported()` / `isAclL3V4V6TableSupported()` / `isAclMetaDataSupported()` 実装確認 (L5196-5267)
 - `AclTable::addStageMandatoryRangeFields()` 確認 (L2608-2628)
 - `orchdaemon.cpp` DTelOrch 条件 L502-530 確認
 - orch.h プラットフォーム定数 L40-50 確認
+- `aclorch.h` PACKET_ACTION 定数 L83-85, L109-110 確認
+- `defaultAclActionsSupported` テーブル L170-196 確認
