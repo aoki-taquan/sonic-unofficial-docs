@@ -231,6 +231,82 @@ CreateUser {{ user }} {{ SNMP_USER[user]['SNMP_USER_AUTH_TYPE'] }} {{ SNMP_USER[
 
 ---
 
+<!-- ordering -->
+## 書込み順序依存（Phase B）
+
+`SNMP_AGENT_ADDRESS_CONFIG` および `SNMP_USER` テーブルへの書込みには、以下の順序依存が存在する。
+
+### 1. YANG unique 制約による同一 (ip, port) 重複禁止
+
+`sonic-snmp.yang` の `SNMP_AGENT_ADDRESS_CONFIG_LIST` には `unique "agent_ip port"` 制約があり、同一 `(agent_ip, port)` の組み合わせを異なる `vrf_name` で重複登録することは YANG バリデーション層でリジェクトされる。[^2]
+
+```yang
+list SNMP_AGENT_ADDRESS_CONFIG_LIST {
+    key "agent_ip port vrf_name";
+    unique "agent_ip port";
+    ...
+}
+```
+
+CLI (`config snmp agentaddress add`) は `get_keys` で重複チェックを事前実施し YANG レベル到達前に防ぐ（`config/main.py:4177-4182`）。[^3]
+
+**正しい順序**: 既存の `SNMP_AGENT_ADDRESS_CONFIG|<ip>|<port>|<vrf_old>` を DEL → 新エントリ `|<ip>|<port>|<vrf_new>` を SET。
+
+### 2. MGMT_VRF_CONFIG との順序依存（CLI 経路）
+
+`-v`（VRF）指定なしで `config snmp agentaddress add <ip>` を実行した場合、CLI は `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled` を参照する。Management VRF が有効 (`mgmtVrfEnabled = 'true'`) にもかかわらず VRF 指定を省略するとエラーで CLI がブロックし、CONFIG_DB への書込みは発生しない。[^3]
+
+```python
+# config/main.py:4153-4157
+if not vrf:
+    entry = config_db.get_entry('MGMT_VRF_CONFIG', "vrf_global")
+    if entry and entry['mgmtVrfEnabled'] == 'true':
+        click.echo("ManagementVRF is Enabled. Provide vrf.")
+        return False
+```
+
+**正しい順序**: Management VRF を有効化する場合は `-v mgmt` を明示して追加する。
+
+### 3. NIC への IP 付与確認（CLI 経路）
+
+CLI は `netifaces.interfaces()` で NIC を走査し、指定した IP が実際にアサインされていることを確認する（`config/main.py:4160-4171`）。IP が付与されていない場合は "IP address is not available" で拒否される。[^3]
+
+**正しい順序**: NIC への IP 付与 → `config snmp agentaddress add <ip>`。
+
+### 4. VRF 作成の先行（推奨）
+
+`vrf_name` に `mgmt` や `Vrf<name>` を指定しても、VRF がカーネル上に実在しない場合は CONFIG_DB への書込みは成功するが snmpd の agentAddress バインドが失敗する。YANG バリデーションは VRF の実在チェックを行わない。
+
+**推奨順序**:
+- Management VRF: `config vrf add mgmt` → `config snmp agentaddress add <ip> -v mgmt`
+- データ VRF: `config vrf add Vrf<name>` → `config snmp agentaddress add <ip> -v Vrf<name>`
+
+### 5. docker-snmp コンテナ再起動の必要性
+
+`snmpd.conf` は `docker-snmp` コンテナ起動時に `sonic-cfggen` が CONFIG_DB を読み込んでテンプレートレンダリングする。CONFIG_DB への変更は `systemctl restart snmp` によるコンテナ再起動なしには反映されない。[^1]
+
+CLI の `add_snmp_agent_address()` と `del_snmp_agent_address()` は最後に `os.system("systemctl restart snmp")` を自動実行する（`config/main.py:4188-4190, 4208`）。[^3]
+
+### 6. minigraph 経路: MGMT_INTERFACE / LOOPBACK_INTERFACE 先行書込み
+
+minigraph.py は `MGMT_VRF_CONFIG` を先行して格納後、`mgmt_intf`（MGMT_INTERFACE）と `lo_intfs`（LOOPBACK_INTERFACE）のアドレスを列挙して `SNMP_AGENT_ADDRESS_CONFIG` エントリを生成する。multi-asic 環境または `asic_name` 指定時は常に空辞書になる（L2312-2324）。[^5]
+
+**순序**: `sonic-cfggen` が minigraph 一括処理する場合は自動的に順序保証される（手動介入不要）。
+
+### 書込み順序依存サマリ
+
+| # | 依存関係 | 強制区分 | 違反時の挙動 |
+|---|----------|----------|------------|
+| 1 | 旧エントリ DEL → 同 `(ip, port)` 新エントリ SET | YANG / CLI 強制 | SET 失敗（unique 制約違反）/ CLI 早期リターン |
+| 2 | `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` 時は `-v mgmt` 必須 | CLI 強制 | vrf 指定なしは CLI がブロック |
+| 3 | NIC への IP 付与 先行 | CLI 強制 | "IP address is not available" で拒否 |
+| 4 | VRF 作成 先行 → `agentaddress add <ip> -v <vrf>` | 推奨 | DB 書込み成功、snmpd bind 失敗 |
+| 5 | CONFIG_DB 変更 → `systemctl restart snmp` | 必須後続 | snmpd.conf 未更新（旧設定継続） |
+| 6 | `MGMT_INTERFACE`/`LOOPBACK_INTERFACE` 先行 | minigraph 内部保証 | multi-asic では常時空辞書 |
+<!-- /ordering -->
+
+---
+
 ## 関連リファレンス
 
 - [CONFIG_DB: SNMP_AGENT_ADDRESS_CONFIG](snmp-agent-address-config.md)
