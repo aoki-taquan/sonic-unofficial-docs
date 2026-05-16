@@ -368,6 +368,45 @@ QUEUE|<port>|<idx> の scheduler 参照を解除  →  SCHEDULER|<name> を DEL
 
 <!-- /constants -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`SCHEDULER` プロファイルは CONFIG_DB 上では独立したエントリだが、`QosOrch` の
+`resolveFieldRefValue` 機構を通じて以下のテーブルから**暗黙的に leafref 参照**される。
+YANG leafref として明示されていない参照もコードレベルで強制される。
+
+### SCHEDULER を参照するテーブル (被参照)
+
+| 参照元テーブル | 参照元フィールド | 参照先キー形式 | SAI 効果 | 参照箇所 |
+|---|---|---|---|---|
+| `QUEUE` | `scheduler` | `SCHEDULER\|<name>` | `SAI_QUEUE_ATTR_SCHEDULER_PROFILE_ID` バインド | `qosorch.cpp:1822-1853` |
+| `PORT_QOS_MAP` | `scheduler` | `SCHEDULER\|<name>` | `SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID` バインド | `qosorch.cpp:2124-2133` |
+
+### 解決タイミングと retry 挙動
+
+- `QUEUE.scheduler` または `PORT_QOS_MAP.scheduler` が SET された時点で `SCHEDULER|<name>` が
+  未存在の場合、`task_need_retry` が返され参照が解決されるまで SAI バインドは保留される。
+- 参照が解決された後、`setObjectReference()` で参照カウントが増加し、被参照中の SCHEDULER は
+  DEL ハンドラで削除保留 (`m_pendingRemove = true`) となる。
+
+### WRED_PROFILE との連携
+
+- `QUEUE` は `scheduler` と `wred_profile` フィールドを並列に解決する (`qosorch.cpp:1857-1886`)。
+  SCHEDULER (帯域制御) と WRED_PROFILE (ドロップ確率制御) は互いに独立だが、同一 QUEUE に
+  同時適用することで帯域制御と輻輳回避を組み合わせることができる。
+- SCHEDULER と WRED_PROFILE の間に直接の参照関係はない。
+
+### 削除順序制約
+
+```
+QUEUE の scheduler / PORT_QOS_MAP の scheduler 参照を解除
+  ↓
+SCHEDULER|<name> を DEL
+```
+
+参照が残っている間は SAI レベルで EBUSY となり `Failed to remove scheduler profile` エラーが発生する。
+<!-- /cross-refs -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
