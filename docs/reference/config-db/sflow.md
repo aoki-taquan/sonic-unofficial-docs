@@ -180,6 +180,34 @@ show sflow
 
 [^2]: sflowmgr / sfloworch 実装: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### PORT 未解決 → retry
+
+`readPortConfig()` 呼び出し時に PORT_TABLE の consumer が `m_consumerMap` に存在しない場合、`SWSS_LOG_ERROR("Consumer object for PORT_TABLE not found")` を出力して処理をスキップする。ポート速度ベースのデフォルト `sample_rate` が解決できないため、`findSamplingRate()` は `ERROR_SPEED` を返し続ける。[^3]
+
+ポート名が `m_sflowPortConfMap` に未登録の状態で `findSamplingRate()` を呼び出すと `SWSS_LOG_ERROR("%s not found in port configuration map")` を出力し `ERROR_SPEED` を返す。この値は `sflowExtractInfo()` で `rate=0` に変換され、`sfloworch` の `doTask` で `rate == 0` 判定によりセッション作成がスキップ・リトライ扱いとなる (`it++; continue;`)。[^3]
+
+### 不正 sample_rate (rate=0 スキップ)
+
+APP_DB に `sample_rate=error` が書き込まれた場合、`sfloworch` の `sflowExtractInfo()` は `rate=0` にフォールバックする。新規ポート処理時に `rate == 0` であれば `doTask` がエントリを次回処理に持ち越すため、そのポートの sFlow セッションは作成されない。[^3]
+
+### SAI samplepacket 失敗
+
+`sai_samplepacket_api->create_samplepacket()` が失敗すると `SWSS_LOG_ERROR("Failed to create sample packet session with rate %d")` を出力し `false` を返す。呼び出し元 `doTask` は `it++; continue;` でリトライキューに残す。[^3]
+
+レート変更時の `remove_samplepacket()` が失敗した場合は `SWSS_LOG_ERROR("Failed to destroy sample packet session with id ...")` を出力するが処理を続行する。古いレートのセッションが ASIC に残留し、複数レートのセッションが混在するリスクがある。[^3]
+
+`sai_port_api->set_port_attribute()` (`SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` / `SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE`) が失敗すると `SWSS_LOG_ERROR("Failed to set session ... on port ...")` を出力し `false` を返す。`doTask` は `it++; continue;` でそのポートエントリを次回処理に持ち越す (retry)。[^3]
+
+### hsflowd サービス制御失敗
+
+`swss::exec("service hsflowd restart/stop")` が非ゼロ終了コードを返した場合、`SWSS_LOG_ERROR("Command '%s' failed with rc %d")` を出力して処理を継続する。CONFIG_DB の `admin_state` と実際の hsflowd サービス状態がずれたままになる。[^3]
+
+[^3]: 失敗挙動抽出: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/sfloworch.cpp>
+
+<!-- /failure -->
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -296,6 +324,31 @@ minigraph.py に sFlow テーブル生成なし
 - `agent_id` フィールドのデフォルト値は仕様・コードともに明示されない（オプションフィールド）。
 
 <!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差異
+
+### ASIC capability クエリ
+
+`sfloworch` は `sai_samplepacket_api->create_samplepacket()` を呼ぶ前に ASIC の capability を事前クエリしない。SAI レイヤで拒否された場合にのみ `SWSS_LOG_ERROR` が出力される。サポートする最小・最大 sample rate はベンダー SAI 実装に依存する。
+
+### ベンダー sample rate 限界差
+
+[YANG](../../reference/glossary.md#term-yang) 制約で `sample_rate` は `uint32 (256..8388608)` に制限される。デフォルト値は `findSamplingRate()` がポートの `oper_speed`（または設定済み `speed`）をそのまま使用（例: 100GE → 100000）。ベンダー [ASIC](../../reference/glossary.md#term-asic) によってはこの範囲内でも対応できないレートがあるが、ソフトウェア側は SAI エラーとしてのみ検出する。
+
+`oper_speed` は STATE_DB に orchagent が書き込む場合のみ追跡される（ベンダー実装依存）。oper_speed が存在する場合は cfg_speed より優先される（[^3]）。
+
+### tx / egress サンプリングのプラットフォーム依存性
+
+`sample_direction = tx` または `both` の場合、`sfloworch` は `SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE` を設定する。egress samplepacket を**サポートしない [ASIC](../../reference/glossary.md#term-asic)** では `set_port_attribute` が失敗し、tx / both 方向のサンプリングは動作しない。`rx` 方向（`SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE`）はほぼ全ベンダーが対応している（[^3]）。
+
+### VOQ chassis
+
+`sfloworch.cpp` および `sflowmgr.cpp` に VOQ chassis 固有のコードパスは存在しない。sFlow は物理フロントパネルポートレベルで管理され、VOQ system port や fabric port への sFlow 設定はサポートされない（[^3]）。
+
+[^3]: sfloworch / sflowmgr 実装調査: `sonic-swss/orchagent/sfloworch.cpp`, `sonic-swss/cfgmgr/sflowmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/sfloworch.cpp>
+
+<!-- /platform -->
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
