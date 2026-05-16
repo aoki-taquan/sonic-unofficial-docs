@@ -108,40 +108,6 @@ FLEX_COUNTER_TABLE|<group>
 - 関連 CLI: `counterpoll <group> enable/disable`、`counterpoll <group> interval <ms>`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-flex_counter`
 
-<!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/saihelper.cpp, sonic-swss/orchagent/portsorch.cpp -->
-
-`FLEX_COUNTER_TABLE` への書込は CONFIG_DB から直接 `FlexCounterOrch` が購読し、以下の副次書込が発生する。
-
-### FLEX_COUNTER_DB — グループ設定書込
-
-| 書込先 DB | テーブル | キー形式 | フィールド | トリガ |
-|----------|---------|---------|----------|-------|
-| `FLEX_COUNTER_DB` | `FLEX_COUNTER_GROUP_TABLE` | `<group>` (例: `PORT`, `QUEUE`) | `POLL_INTERVAL` | `POLL_INTERVAL` フィールド変化時 (`setFlexCounterGroupPollInterval()`) |
-| `FLEX_COUNTER_DB` | `FLEX_COUNTER_GROUP_TABLE` | `<group>` | `FLEX_COUNTER_STATUS` (`enable`/`disable`) | `FLEX_COUNTER_STATUS` フィールド変化時 (`setFlexCounterGroupOperation()`) |
-| `FLEX_COUNTER_DB` | `FLEX_COUNTER_GROUP_TABLE` | `<group>` | `BULK_CHUNK_SIZE`, `BULK_CHUNK_SIZE_PER_PREFIX` | `BULK_CHUNK_SIZE*` フィールド変化時。未設定の場合は `"NULL"` で書込 |
-| `FLEX_COUNTER_DB` | `FLEX_COUNTER_TABLE` | `PORT:<OID>` 等 | `COUNTER_ID_LIST` | `FLEX_COUNTER_STATUS=enable` 時 (`generate*CounterMap()` / `add*FlexCounters()`) |
-
-`gTraditionalFlexCounter=false`（デフォルト）の場合は Redis ProducerTable 書込ではなく SAI Redis 属性 (`SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP`) 経由に切り替わる (`saihelper.cpp:894`)。
-
-**PORT_PHY_ATTR の自動連動**: `PORT_PHY_ATTR` の `FLEX_COUNTER_STATUS` を変更すると `PORT_PHY_SERDES_ATTR` グループにも自動で同一の operation が書き込まれる (`flexcounterorch.cpp:386-392`)。
-
-### COUNTERS_DB — 名前マップ書込
-
-`FLEX_COUNTER_STATUS=enable` 時、`generate*Map()` が各ポート/キュー/PG の名前→OID マップを `COUNTERS_DB` に書き込む（一度生成後はフラグで再生成をスキップ）。
-
-| 書込先 DB | テーブル | キー / フィールド | トリガ |
-|----------|---------|----------------|-------|
-| `COUNTERS_DB` | `COUNTERS_PORT_NAME_MAP` | `<port_alias>` → OID | `PORT` グループ enable 時 (`portsorch.cpp:4118`) |
-| `COUNTERS_DB` | `COUNTERS_QUEUE_NAME_MAP` | `<port_alias>:<queue_index>` → OID | `QUEUE` / `QUEUE_WATERMARK` / `WRED_ECN_QUEUE` enable 時 (`portsorch.cpp:8524`) |
-| `COUNTERS_DB` | `COUNTERS_PG_NAME_MAP` | `<port_alias>:<pg_index>` → OID | `PG_DROP` / `PG_WATERMARK` enable 時 (`portsorch.cpp:8882`) |
-
-ポート削除時・キュー削除時は対応エントリを `delCounterNameMap()` で削除。
-
-<!-- /side-effects -->
-
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -357,5 +323,113 @@ YANG に `default` なし。counterpoll CLI の表示上のソフトデフォル
 | YANG 定義グループのみ | `BULK_CHUNK_SIZE` を YANG で定義するのは `PORT`, `PORT_BUFFER_DROP`, `QUEUE`, `QUEUE_WATERMARK`, `PG_DROP`, `PG_WATERMARK` のみ。他グループ (`DEBUG_COUNTER`, `PFCWD`, `RIF` 等) は YANG にも orchagent にも定義なし（書いても Unsupported field として無視） |
 
 <!-- /defaults -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp -->
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `key` が未定義グループ名 | `doTask()` L183-188 | エントリをスキップ（設定未適用） | `SWSS_LOG_NOTICE("Invalid flex counter group input, %s")` |
+| `FLEX_COUNTER_STATUS` に `enable`/`disable` 以外の値 | `doTask()` L235-393 | 各 orch ブロックすべてが silent skip。`setFlexCounterGroupOperation()` には不正値が渡る | なし（ログ未出力） |
+| `POLL_INTERVAL` に非数値・YANG 範囲外の値を直接書き込み | `setFlexCounterGroupPollInterval()` | orchagent 側バリデーションなし。値をそのまま syncd に渡す。拒否はプラットフォーム依存 | なし |
+| `gPortsOrch == nullptr` で PORT / QUEUE / PG / WRED 系を `enable` | `doTask()` L235 | `gPortsOrch` null チェックで全ブロックをスキップ → SAI カウンタ設定ゼロ | なし（silent drop） |
+| `gCoppOrch == nullptr` で `FLOW_CNT_TRAP` を `enable` | `doTask()` L311 | `generateHostIfTrapCounterIdList()` 呼び出しスキップ → trap flow counter 未設定 | なし（silent drop） |
+| `gFlowCounterRouteOrch` null または `getRouteFlowCounterSupported() == false` で `FLOW_CNT_ROUTE` を `enable` | `doTask()` L324 | ルートフローカウンタ設定ゼロ・`m_route_flow_counter_enabled` 更新なし | なし（silent drop） |
+| `allPortsReady() == false` の間に SET | `doTask()` 早期 return | エントリが `m_toSync` に蓄積。全ポート ready 後に一括処理 | なし |
+| warm-reboot 中（delay timer 60s 未満）に SET | delay guard | `m_delayTimerExpired == false` の間は全 SET が無視される | なし |
+| `create_only_config_db_buffers` 読み取りで `std::system_error` | コンストラクタ L122-124 | `m_createOnlyConfigDbBuffers` がデフォルト (`false`) のまま → バッファカウンタ設定が変わる可能性 | `SWSS_LOG_ERROR("System error reading create_only_config_db_buffers: %s")` |
+| `BUFFER_QUEUE` key がトークン数 ≠ 2 | `getQueueConfigurations()` L559-562 | エントリスキップ（カウンタ未適用） | `SWSS_LOG_ERROR("Invalid BUFFER_QUEUE key: [%s]")` |
+| queue / PG インデックスが非整数または範囲外 | `getQueueConfigurations()` L599-601 / `getPgConfigurations()` L661-663 | `std::invalid_argument` キャッチ → そのポートのカウンタ設定をスキップ | `SWSS_LOG_ERROR("Invalid queue/pg index ...")` |
+| `BUFFER_PG` key がトークン数 ≠ 2 | `getPgConfigurations()` L628-631 | エントリスキップ | `SWSS_LOG_ERROR("Invalid BUFFER_PG key: [%s]")` |
+
+<!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-utilities/counterpoll/main.py -->
+
+### warm-reboot 遅延定数
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `FLEX_COUNTER_DELAY_SEC` | `60` 秒 | warm-reboot 時のみ使用。`SelectableTimer` をこの秒数で起動し、期間中は全 SET を無視する (`m_delayTimerExpired = false`)。通常起動では即 `true` にセットされ不使用 |
+
+### FLEX_COUNTER_STATUS enum 値
+
+| 値 | 意味 |
+|----|------|
+| `"enable"` | カウンタポーリング有効化。各グループフラグ (`m_port_counter_enabled` 等) を `true` にセットし COUNTER_ID_LIST を syncd へ投入 |
+| `"disable"` | カウンタポーリング停止。フラグを `false` にリセット |
+
+`ENABLE = "enable"`, `DISABLE = "disable"` は counterpoll/main.py L15-16 でも定義。上記 2 値以外は `SWSS_LOG_NOTICE("Unsupported field")` でスキップ。
+
+### POLL_INTERVAL CLI ソフトデフォルト
+
+YANG に `default` 宣言なし。orchagent / syncd にもハードコードなし。counterpoll CLI の `show` が CONFIG_DB 未設定時に表示するソフトデフォルト値:
+
+| 定数 | 値 | 対象グループ |
+|------|----|------------|
+| `DEFLT_1_SEC` | `1000` ms | `PORT`, `RIF`, `WRED_ECN_PORT` |
+| `DEFLT_10_SEC` | `10000` ms | `QUEUE`, `PG_DROP`, `ACL`, `TUNNEL`, `FLOW_CNT_TRAP`, `FLOW_CNT_ROUTE`, `WRED_ECN_QUEUE`, `SRV6`, `ENI`, `HA_SET`, `PORT_PHY_ATTR` |
+| `DEFLT_60_SEC` | `60000` ms | `BUFFER_POOL_WATERMARK`, `QUEUE_WATERMARK`, `PG_WATERMARK`, `SWITCH`, `PORT_BUFFER_DROP` |
+
+### POLL_INTERVAL CLI 入力範囲制約
+
+| グループ | 下限 (ms) | 上限 (ms) |
+|---------|----------|----------|
+| `PORT`, `RIF`, `QUEUE`, `PG_DROP`, `ACL`, `TUNNEL`, `FLOW_CNT_TRAP`, `FLOW_CNT_ROUTE`, `WRED_ECN_QUEUE`, `SRV6`, `ENI`, `HA_SET` | 100〜1000 | 30000 |
+| `PORT_PHY_ATTR` | 100 | 30000 |
+| `WATERMARK` 系 (`QUEUE_WATERMARK`, `PG_WATERMARK`, `BUFFER_POOL_WATERMARK`), `SWITCH` | 1000 | 60000 |
+| `PORT_BUFFER_DROP` | **30000** (CPU 負荷大のため) | **300000** |
+
+> YANG `poll_interval` typedef は `range 100..4294967295` で全グループ統一。CLI が group ごとに `IntRange` で上限を強制しており、YANG バリデーションだけでは CLI 制約が守られない。
+<!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/saihelper.cpp,
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp, sonic-swss/orchagent/portsorch.cpp -->
+
+`FLEX_COUNTER_TABLE` への書込は `FlexCounterOrch` を通じて 2 つの副次 DB に波及する。
+
+### FLEX_COUNTER_DB への書込
+
+`setFlexCounterGroupOperation()` → `operateFlexCounterGroupDatabase()` が `FLEX_COUNTER_GROUP_TABLE` に書込む（`gTraditionalFlexCounter=true` モード）。`gTraditionalFlexCounter=false` 時は SAI Redis 属性 `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP` 経由で syncd に通知する。
+
+| テーブル | キーパターン | フィールド | トリガ |
+|---------|------------|---------|-------|
+| `FLEX_COUNTER_GROUP_TABLE` | `<group>` (例: `PORT`) | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL`, `BULK_CHUNK_SIZE`, `BULK_CHUNK_SIZE_PER_PREFIX` | CONFIG_DB の当該フィールド変化時 (`saihelper.cpp:884`) |
+| `FLEX_COUNTER_TABLE` | `<group>:<oid>` (例: `PORT:0x1000000000023`) | `PORT_COUNTER_ID_LIST`, `QUEUE_COUNTER_ID_LIST`, `STATS_MODE` 等 | `FLEX_COUNTER_STATUS=enable` 受信後 `generateXxxMap()` 内で `startFlexCounterPolling()` が書込 (`saihelper.cpp:1047`) |
+| `FLEX_COUNTER_TABLE` | `<group>:<oid>` | (全削除) | disable 時 / オブジェクト削除時 `stopFlexCounterPolling()` (`saihelper.cpp:1075`) |
+
+Gearbox 有効時は `PORT` / `MACSEC*` グループに対して `GB_FLEX_COUNTER_DB` 側にも同様の書込が発生する (`flexcounterorch.cpp:386`)。
+
+`PORT_PHY_ATTR` グループの enable/disable は `PORT_PHY_SERDES_ATTR` グループへも自動で連動書込される (`flexcounterorch.cpp:392`)。
+
+### COUNTERS_DB への書込
+
+`FLEX_COUNTER_STATUS=enable` 受信後に呼ばれる `generatePortCounterMap()` 等が `PortsOrch` 内の各 `CounterNameMapUpdater` / `Table` オブジェクトを通じてポート・キュー・PG の名前→OID マッピングを書込む。
+
+| テーブル | キーパターン | 内容 | トリガグループ |
+|---------|------------|------|--------------|
+| `COUNTERS_PORT_NAME_MAP` | `""` (hash: port_name → OID) | 物理ポート名→SAI OID | `PORT` enable (`portsorch.cpp:9102`) |
+| `COUNTERS_QUEUE_NAME_MAP` | `""` (hash: `Ethernet0:0` → OID) | キュー名→SAI OID | `QUEUE` / `QUEUE_WATERMARK` enable (`portsorch.cpp:778`) |
+| `COUNTERS_PG_NAME_MAP` | `""` (hash: `Ethernet0:0` → OID) | PG 名→SAI OID | `PG_DROP` / `PG_WATERMARK` enable (`portsorch.cpp:785`) |
+| `COUNTERS_QUEUE_PORT_MAP` | `""` (hash: queue_OID → port_OID) | キュー→ポート逆引き | キュー追加時 |
+| `COUNTERS_QUEUE_INDEX_MAP` | `""` (hash: queue_OID → index) | キュー→インデックス | キュー追加時 |
+| `COUNTERS_QUEUE_TYPE_MAP` | `""` (hash: queue_OID → ucast/mcast) | キューのタイプ | キュー追加時 |
+| `COUNTERS_PG_PORT_MAP` | `""` (hash: pg_OID → port_OID) | PG→ポート逆引き | PG 追加時 |
+| `COUNTERS_PG_INDEX_MAP` | `""` (hash: pg_OID → index) | PG→インデックス | PG 追加時 |
+| `COUNTERS_LAG_NAME_MAP` | `""` (hash: lag_name → OID) | LAG 名→OID | LAG ポート追加時 |
+
+これらのマッピングテーブルが存在することで、syncd が SAI bulk counter API で取得したカウンタ値を `COUNTERS_DB` の `COUNTERS:<oid>` キーに書込み、`counterpoll show` / テレメトリ系サービスから名前ベースで参照できる。
+
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 6ca28e02d7fb -->
