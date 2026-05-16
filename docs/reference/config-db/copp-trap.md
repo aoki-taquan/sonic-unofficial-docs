@@ -225,4 +225,27 @@ show copp config
 
 > **スキャン証跡**: `doTask` L880-935 + `processCoppTrap` L1164-1200 全行読了。4 件分岐抽出。
 <!-- /handler-branching -->
+<!-- platform -->
+## プラットフォーム差異
+
+### trap_priority サポート状況
+
+`SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` は **Mellanox** (`platform` 環境変数に `"mellanox"`) および **Marvell-Prestera** (`"marvell-prestera"`) では非対応。これらのプラットフォームでは CONFIG_DB に `trap_priority` を設定しても SAI 属性は送出されない（silently ignored）。Broadcom 等のその他 ASIC では有効。<!-- evidence: copporch.cpp L349-358, L1186-1194; orch.h L41-42 -->
+
+### SAI capability query とフォールバック
+
+起動時に `sai_query_attribute_enum_values_capability()` で ASIC がサポートする trap type 一覧を取得する。capability query が失敗するベンダー SAI では `default_supported_trap_ids` へフォールバックする。このフォールバックリストには `neighbor_miss` trap が含まれないため、capability 未対応 SAI では `neighbor_miss` が自動的に非サポート扱いとなる点に注意。<!-- evidence: copporch.cpp L103-151, L259-270 -->
+
+### NAT trap (src_nat_miss / dest_nat_miss)
+
+ASIC が NAT をサポートしない場合 (`gIsNatSupported == false`)、`src_nat_miss` / `dest_nat_miss` trap_id は適用時にスキップされ NOTICE ログを出力する。<!-- evidence: copporch.cpp L401-406 -->
+
+### queue 番号の上限
+
+`queue` フィールドの有効値の上限はプラットフォームの SAI 実装によって異なる。コード上の静的上限チェックはなく、範囲外の値は SAI エラーとして実行時に検出される。<!-- evidence: copporch.cpp L1169-1172 -->
+
+### policer_mode と genetlink
+
+`storm` policer モードは SAI 実装依存であり、非対応 ASIC では SAI エラーが返る。`genetlink_name` / `genetlink_mcgrp_name` による Genetlink hostif も対応 ASIC のみ有効であり、非対応 ASIC では trap group 全体の作成が失敗する。<!-- evidence: copporch.cpp L44-48, L657-670 -->
+<!-- /platform -->
 <!-- glossary-links-injected: 7a3847939b09 -->
