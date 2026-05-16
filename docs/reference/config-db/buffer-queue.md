@@ -282,4 +282,49 @@ show buffer queue
 
 > **スキャン証跡**: `handleBufferQueueTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` に委譲（`keyWithIds=true`）。BUFFER_PG と同一パスを共有。2 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `orchagent/bufferorch.cpp`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 結果 | ログ出力 | evidence |
+|---|---|---|---|
+| key トークン数不正（非 VOQ: 2 個以外） | `task_invalid_entry`・SAI 未呼び出し | LOG_ERROR "malformed key: Must contain 2 tokens" | `bufferorch.cpp:943-946` |
+| key トークン数不正（VOQ: 4 個以外） | `task_invalid_entry`・SAI 未呼び出し | LOG_ERROR "malformed key: Must contain 4 tokens" | `bufferorch.cpp:918-921` |
+| queue index 範囲パース失敗（`parseIndexRange` 失敗） | `task_invalid_entry`（VOQ / 非 VOQ 共通） | なし | `bufferorch.cpp:925-927, 950-952` |
+| `BUFFER_PROFILE` 参照が未解決 (`not_resolved`) | `task_need_retry`・orchagent が再試行キューに投入 | LOG_INFO "Missing or invalid queue buffer profile reference specified" | `bufferorch.cpp:966-969` |
+| `BUFFER_PROFILE` 参照解決が上記以外のエラー | `task_failed`（致命的失敗・再試行なし） | LOG_ERROR "Resolving queue profile reference failed" | `bufferorch.cpp:972-973` |
+| PORT が `gPortsOrch` に未登録（ポート未初期化） | `task_invalid_entry` | LOG_ERROR "Port with alias:xxx not found" | `bufferorch.cpp:1033-1036` |
+| queue index がポートの queue 数を超過（非 VOQ） | `task_invalid_entry` | LOG_ERROR "Invalid queue index specified" | `bufferorch.cpp:1061-1064` |
+| queue index が VoQ 数を超過（VOQ シャーシ） | `task_invalid_entry` | LOG_ERROR "Invalid voq index specified" | `bufferorch.cpp:1052-1055` |
+| queue ロック中 (`port.m_queue_lock[ind] == true`) | `task_need_retry`・`m_partiallyAppliedQueues` に登録、ロック解除後に再適用 | LOG_WARN "Queue X on port Y is locked, will retry" | `bufferorch.cpp:1066-1070` |
+| SAI set 失敗 (`sai_queue_api` != SUCCESS) | `handleSaiSetStatus` 委譲（`task_success` / `task_need_retry` / `task_failed`） | LOG_ERROR "Failed to set queue's buffer profile attribute" | `bufferorch.cpp:1124-1130` |
+| `buffermgrdyn`: key に port パートが空 | `task_invalid_entry` | LOG_ERROR "Invalid key format X for BUFFER_QUEUE table" | `buffermgrdyn.cpp:3510-3513` |
+| `buffermgrdyn`: key に ids パート（queue range）が空 | `task_invalid_entry` | LOG_ERROR "Invalid key format X for BUFFER_QUEUE table" | `buffermgrdyn.cpp:3517-3523` |
+| `buffermgrdyn`: 複数ポートリスト展開時に単一ポートハンドラが `task_need_retry` | 即座に `task_need_retry`・残ポートの処理打ち切り | なし（個別ハンドラのログに依存） | `buffermgrdyn.cpp:3546-3547` |
+| `buffermgrdyn`: 動的バッファ計算中にポートが未準備 (`PORT_READY` 以外) | 当該エントリをスキップ（continue）・ポート準備後に再処理 | LOG_INFO "Nothing to be done for X since port is not ready" | `buffermgrdyn.cpp:1485-1488` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 結果 | ログ出力 | evidence |
+|---|---|---|---|
+| DEL 時に key が `APP_BUFFER_QUEUE_TABLE` に存在しない | SAI 呼び出しをスキップ・`task_success` 返却 | LOG_INFO "X doesn't not exist, don't need to notify SAI" | `bufferorch.cpp:1000-1003` |
+| DEL 時の SAI set 失敗（`SAI_NULL_OBJECT_ID` セット失敗） | `handleSaiSetStatus` 委譲 | LOG_ERROR "Failed to set queue's buffer profile attribute" | `bufferorch.cpp:1124-1130` |
+| 不明 op コマンド (SET / DEL 以外) | `task_invalid_entry` | LOG_ERROR "Unknown operation type X" | `bufferorch.cpp:1012-1014` |
+
+### VOQ 固有制約
+
+- VOQ モード時: FlexCounter の queue buffer counter 追加・削除をスキップ（`flexcounterorch` が system port 全体を管理するため）。<!-- evidence: bufferorch.cpp:1134-1136 -->
+- VOQ モード時: `m_port_ready_list_ref` の初期化ソースが CONFIG_DB（非 VOQ は APPL_DB）。admin-down ポートを ready-list から除外し初期化待ちポートを正確に追跡する。<!-- evidence: bufferorch.cpp:132-140 -->
+
+### 補足
+
+- **`m_partiallyAppliedQueues`**: queue ロック中に `task_need_retry` を返した key を保持する集合。同一 key で profile 変更がなくても登録があれば SAI 更新を強制する（`bufferorch.cpp:979-986`）。
+- **SAI 呼び出しの 2 段構成**: `processBufferQueue` がキューへバッファし `processQueuePost` で実際の SAI 結果を評価する。SAI 失敗は `processQueuePost` 側で検出される（`bufferorch.cpp:1099-1131`）。
+
+詳細は `meta/_intermediate/cdb-flow/buffer-queue-failure.md` を参照。
+<!-- /failure -->
 <!-- glossary-links-injected: efbc9015e957 -->
