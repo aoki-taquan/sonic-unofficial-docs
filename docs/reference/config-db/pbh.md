@@ -81,6 +81,34 @@ PBH_HASH_FIELD|<hash_field_name>
 | `packet_action` | enum | `SET_ECMP_HASH` | rule action |
 | `flow_counter` | enum | `DISABLED` | packet / byte counter の有効化 |
 
+<!-- defaults -->
+## フィールドデフォルト (Phase A)
+
+### PBH_HASH
+
+| フィールド | デフォルト | 由来 |
+|-----------|-----------|------|
+| `hash_field_list` | なし (mandatory) | YANG `min-elements 1` + `validatePbhHash()` — 未設定時 validation エラー |
+
+### PBH_HASH_FIELD
+
+| フィールド | デフォルト | 由来 |
+|-----------|-----------|------|
+| `hash_field` | なし (mandatory) | YANG `mandatory true` + `validatePbhHashField()` — 未設定時 validation エラー |
+| `ip_mask` | なし (条件付き必須) | YANG `when`/`must` 条件 — `hash_field` が `INNER_DST_IPV4`/`INNER_SRC_IPV4`/`INNER_DST_IPV6`/`INNER_SRC_IPV6` のとき必須、それ以外は設定禁止 |
+| `sequence_id` | なし (mandatory) | YANG `mandatory true` + `validatePbhHashField()` — 未設定時 validation エラー |
+
+### PBH_RULE (参考: 既存 default 動作の確認)
+
+| フィールド | デフォルト | 由来 |
+|-----------|-----------|------|
+| `packet_action` | `SET_ECMP_HASH` | YANG `default "SET_ECMP_HASH"` + `validatePbhRule()` が `SAI_ACL_ENTRY_ATTR_ACTION_SET_ECMP_HASH_ID` を自動注入 (`pbhmgr.cpp:998-1010`) |
+| `flow_counter` | `DISABLED` | YANG `default "DISABLED"` + `validatePbhRule()` が `false` を自動注入 (`pbhmgr.cpp:1012-1024`) |
+
+> **注**: `PBH_HASH_FIELD` は作成後の更新が禁止されている (`updatePbhHashField()` は常に `return false`)。
+
+<!-- /defaults -->
+
 ## 制約
 
 - `PBH_TABLE.interface_list` は 1 要素以上で、`PORT` または `PORTCHANNEL` への leafref。
@@ -248,6 +276,86 @@ db_migrator.py での PBH マイグレーションなし
 
 なし
 <!-- /entry-points -->
+
+<!-- defaults -->
+## 暗黙デフォルト・ハードコード挙動 (Phase A)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-defaults.md -->
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-defaults.md -->
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-hash-defaults.md -->
+
+### PBH_TABLE フィールド別デフォルト
+
+| フィールド | YANG 定義 | 実装デフォルト | 備考 |
+|---|---|---|---|
+| `interface_list` | `leaf-list; min-elements 1; leafref PORT\|PORTCHANNEL` | **なし** (mandatory) | 空リスト → parse error。重複 interface は `unordered_set` で dedup + SWSS_LOG_WARN のみ (error にならない) |
+| `description` | `mandatory true; string length 1..255` | **なし** (mandatory) | 空文字列 → parse error |
+
+- 未知フィールドは `SWSS_LOG_WARN("Unknown field(%s): skipping ...")` でサイレントスキップ (error にならない)
+- YANG-実装 discrepancy: なし (両フィールドとも YANG mandatory/min-elements と実装が一致)
+
+### PBH_RULE フィールド別デフォルト
+
+| フィールド | YANG default | 実装デフォルト (pbhmgr.cpp `validatePbhRule`) | 備考 |
+|---|---|---|---|
+| `packet_action` | `SET_ECMP_HASH` | `SAI_ACL_ENTRY_ATTR_ACTION_SET_ECMP_HASH_ID` を注入 + fieldValueMap 書き戻し | YANG default と一致。未指定でも `SWSS_LOG_NOTICE` のみ |
+| `flow_counter` | `DISABLED` | `false` (bool) を注入 + `"DISABLED"` を fieldValueMap 書き戻し | AclRulePbh(…, createCounter=false) で構築 |
+
+### ハードコード mask (YANG 記述なし)
+
+`pbhmgr.cpp` の parse 関数内で、以下フィールドは CONFIG_DB から値のみ受け取り、mask をコードで固定注入する。YANG 側にマスク仕様の記述はない (YANG-実装 discrepancy)。
+
+| フィールド | 注入 mask | SAI attr |
+|---|---|---|
+| `ether_type` | `0xFFFF` | `SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE` |
+| `ip_protocol` | `0xFF` | `SAI_ACL_ENTRY_ATTR_FIELD_IP_PROTOCOL` |
+| `ipv6_next_header` | `0xFF` | `SAI_ACL_ENTRY_ATTR_FIELD_IPV6_NEXT_HEADER` |
+| `l4_dst_port` | `0xFFFF` | `SAI_ACL_ENTRY_ATTR_FIELD_L4_DST_PORT` |
+| `inner_ether_type` | `0xFFFF` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_ETHER_TYPE` |
+
+`gre_key` のみ `value/mask` の 2 値をユーザーが明示指定する (YANG パターン `0x.../0x...`)。
+
+### SAI implicit constraint (YANG 非記述)
+
+`AclRulePbh::validate()` は `m_matches.size() == 0 || m_actions.size() != 1` で fail する。つまり：
+
+- **match field が 1 つも設定されない PBH_RULE は SAI バリデーションで reject** される
+- YANG 側にこの制約の記述はなく、YANG は全 match field を optional として定義する
+
+### PBH_HASH フィールド別デフォルト
+
+| フィールド | YANG 定義 | 実装デフォルト | 備考 |
+|---|---|---|---|
+| `hash_field_list` | `leaf-list; min-elements 1; ordered-by user; leafref PBH_HASH_FIELD` | **なし** (mandatory) | 空リスト → `validatePbhHash` が `SWSS_LOG_ERROR` + `return false`。重複エントリは `unordered_set` で dedup + SWSS_LOG_WARN のみ |
+
+- 未知フィールドは `SWSS_LOG_WARN("Unknown field(%s): skipping ...")` でサイレントスキップ
+- YANG-実装 discrepancy: なし (`min-elements 1` と実装が一致)
+
+### PBH_HASH_FIELD フィールド別デフォルト
+
+| フィールド | YANG 定義 | 実装デフォルト (pbhmgr.cpp `validatePbhHashField`) | 備考 |
+|---|---|---|---|
+| `hash_field` | `mandatory true; enum INNER_IP_PROTOCOL\|INNER_L4_*\|INNER_*_IPV4\|INNER_*_IPV6` | **なし** (mandatory) | 未設定 → `SWSS_LOG_ERROR` + `return false` |
+| `ip_mask` | `when hash_field is IP addr type; inet:ip-address-no-zone` | **なし** (条件付き必須) | `hash_field` が `INNER_DST/SRC_IPV4/6` のとき必須; 非 IP フィールドで設定すると `isIpv4/6MaskRequired` が false → validation error。未設定でも `sequence_id` があれば通過 |
+| `sequence_id` | `mandatory true; uint32` | **なし** (mandatory) | 未設定 → `SWSS_LOG_ERROR` + `return false`。同値を複数フィールドで使用可能 (uniqueness 制約なし) |
+
+- 非 IP フィールド (`INNER_IP_PROTOCOL`, `INNER_L4_DST_PORT`, `INNER_L4_SRC_PORT`) に `ip_mask` を設定するとエラー
+- `ip_mask` の IPv4/IPv6 混在も YANG `must` 条件でエラー (`.` 含むなら IPv4 フィールド専用、`:` 含むなら IPv6 フィールド専用)
+- YANG-実装 discrepancy: なし
+
+### dead update: PBH_HASH_FIELD
+
+`updatePbhHashField()` は常に `return false` (エラーログ: `"update is prohibited"`)。`PBH_HASH_FIELD` の変更は削除後に再作成が必要。
+
+### 書込み順依存 (dependency retry)
+
+`deployPbhTasks()` は `HASH_FIELD → HASH → TABLE → RULE` の順で setup する。CONFIG_DB に RULE だけ先に書いた場合 `validateDependencies(rule)` が false を返し、RULE は `pendingSetupMap` に留まって retry loop に入る。
+
+### プラットフォーム依存 (Mellanox W/A)
+
+`ASIC_VENDOR=mellanox` 時のみ、`updatePbhRule` 中に `hash` または `packet_action` を変更すると `disableAction()` で既存 ACL action を先に disable してから `updateAclRule` を呼ぶ。GENERIC platform にはこの処理なし。ASIC_VENDOR 未設定時は GENERIC へ fallback (`pbhcap.cpp:296-303`)。
+
+<!-- /defaults -->
 
 <!-- glossary-links-injected: 32758c44ab11 -->
 
