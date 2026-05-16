@@ -310,6 +310,86 @@ DEL ACL_TABLE|<acl_name>   # ACL は binding 削除後に削除
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / addTwiceNatEntry L1981-2004 / addHwSnatEntry L1307-1316 / addHwTwiceNatEntry L1387-1397 / addHwDnatPoolEntry L1806-1814 / NatOrch constructor L107-122 -->
+
+### SNAT ハードウェア容量上限到達 (dynamic SNAT/Twice NAT) → 即時エージアウト通知
+
+`natorch.cpp:1882-1889` (`addNatEntry`) および `natorch.cpp:1996-2003` (`addTwiceNatEntry`):
+
+```cpp
+// addNatEntry - dynamic SNAT
+if (totalSnatEntries == maxAllowedSNatEntries)
+{
+    SWSS_LOG_INFO("Reached the max allowed NAT entries in the hardware, dropping new SNAT translation with ip %s and translated ip %s", ...);
+    setTimeoutNotifier->send("AGEOUT-SINGLE-NAT", natKey, fvVector);
+    return true;
+}
+
+// addTwiceNatEntry - dynamic Twice NAT
+if (totalSnatEntries == maxAllowedSNatEntries)
+{
+    SWSS_LOG_INFO("Reached the max allowed NAT entries in the hardware, dropping new Twice NAT translation with src ip %s, dst ip %s ...", ...);
+    setTimeoutNotifier->send("AGEOUT-TWICE-NAT", twiceNatKey, fvVector);
+    return true;
+}
+```
+
+- ログ: `SWSS_LOG_INFO "Reached the max allowed NAT entries in the hardware, dropping new SNAT/Twice NAT translation..."`
+- 効果: エントリをキャッシュに追加せず `AGEOUT-SINGLE-NAT` / `AGEOUT-TWICE-NAT` 通知を送信して即時エージアウト。SAI 登録なし。`return true` でタスクは消費 (retry なし)。
+- **容量 0 の罠**: 起動時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` の取得が失敗した場合 `maxAllowedSNatEntries=0` のまま (`natorch.cpp:112-118`)。この状態では最初の dynamic SNAT エントリ到着と同時にドロップが発生する。取得失敗のログ: `SWSS_LOG_NOTICE "Failed to get the SNAT available entry count, rv:%d"`。
+
+### SAI NAT エントリ作成失敗 → ERROR + handleSaiCreateStatus
+
+`natorch.cpp:1307-1316` (SNAT), `natorch.cpp:1387-1397` (Twice NAT), `natorch.cpp:1475-1485` (SNAT NAPT), `natorch.cpp:1806-1814` (DNAT Pool):
+
+```cpp
+// SNAT 例 (addHwSnatEntry)
+status = sai_nat_api->create_nat_entry(&snat_entry, attr_count, nat_entry_attr);
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to create %s SNAT NAT entry with ip %s and it's translated ip %s",
+                   entry.entry_type.c_str(), ip_address.to_string().c_str(), entry.translated_ip.to_string().c_str());
+    task_process_status handle_status = handleSaiCreateStatus(SAI_API_NAT, status);
+    if (handle_status != task_success)
+    {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+}
+
+// DNAT Pool 例 (addHwDnatPoolEntry)
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to create DNAT Pool entry with ip %s", ip_address.to_string().c_str());
+    task_process_status handle_status = handleSaiCreateStatus(SAI_API_NAT, status);
+    if (handle_status != task_success)
+    {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+}
+```
+
+- ログ: `SWSS_LOG_ERROR "Failed to create %s SNAT NAT entry..."` / `"Failed to create %s Twice NAT entry..."` / `"Failed to create %s SNAT NAPT entry..."` / `"Failed to create DNAT Pool entry with ip %s"`
+- 効果: `parseHandleSaiStatusFailure()` が abort / retry / erase を決定する。DNAT Pool 登録失敗時は対象 IP への DNAT トラフィックがハードウェアでドロップされる。STATE_DB への書き込みなし。
+- NAT feature 未有効化時は SAI 呼び出し前に `SWSS_LOG_WARN "NAT Feature is not yet enabled, skipped adding DNAT Pool entry with ip %s"` でスキップされる (`natorch.cpp:1789-1793`)。
+
+### 失敗挙動サマリ
+
+| # | 条件 | コンポーネント | パターン | retry | STATE_DB 記録 |
+|---|---|---|---|---|---|
+| 1 | SNAT ハードウェア容量上限 (dynamic SNAT) | NatOrch | AGEOUT-SINGLE-NAT 通知 + ドロップ | なし | なし |
+| 2 | Twice NAT ハードウェア容量上限 (dynamic) | NatOrch | AGEOUT-TWICE-NAT 通知 + ドロップ | なし | なし |
+| 3 | SAI SNAT create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
+| 4 | SAI Twice NAT create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
+| 5 | SAI SNAT NAPT create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
+| 6 | SAI DNAT Pool create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
+| 7 | SNAT 容量取得失敗 (orchagent 起動時) | NatOrch | maxAllowedSNatEntries=0 → 全 dynamic SNAT ドロップ | — | なし |
+
+NatOrch は `ERROR_TABLE` への書き込みなし。syslog (`SWSS_LOG_ERROR` / `WARN` / `NOTICE` / `INFO`) のみ。
+<!-- /failure -->
+
 <!-- platform -->
 ## プラットフォーム差・ASIC ベンダー依存 (Phase H)
 
@@ -472,6 +552,92 @@ if ((entry.nat_type == "snat") and
 - **ACL_TABLE / ACL_RULE 依存**: `doNatAclTableTask()` / `doNatAclRuleTask()` が CONFIG_DB の変化を購読。ACL の登録・削除のたびに iptables SNAT ルールを再評価。未解決の ACL 名は次回 ACL 登録時に自動補完される。
 - **RouteOrch / NeighOrch observer (BRCM 専用)**: `gNhTrackingSupported == true` のときのみ有効。DNAT translated IP の next-hop / neighbor 解決状態に応じてリアルタイムに SAI DNAT エントリを差し替える。非 BRCM 環境では経路変更時に stale エントリになるリスクあり。
 <!-- /cross-refs -->
+
+<!-- pubsub -->
+## 通信メカニズム — Redis Subscribe / SAI nat_api / conntrack (Phase G)
+
+<!-- evidence: sonic-swss/cfgmgr/natmgrd.cpp:100-198 / natmgr.cpp:35-49,4621-4679,6868-7100 / orchagent/natorch.cpp:82-140,1271-1309,3033-3094 -->
+
+### CONFIG_DB 購読 — SubscriberStateTable
+
+`natmgrd` は起動時に `CFG_NAT_BINDINGS_TABLE_NAME` (`"NAT_BINDINGS"`) を含む 11 テーブルを `Orch::addConsumer()` 経由で登録する (`natmgrd.cpp:109-121`)。CONFIG_DB に対しては **`SubscriberStateTable`** が生成され、以下の Redis keyspace チャンネルを PSUBSCRIBE する:
+
+```
+PSUBSCRIBE __keyspace@4__:NAT_BINDINGS|*
+```
+
+CONFIG_DB の DB 番号は通常 4。`NAT_BINDINGS|<binding_name>` への HSET / HDEL / DEL が pmessage として到達する。
+
+起動時には `SubscriberStateTable` コンストラクタ (`subscriberstatetable.cpp:25-42`) が既存 key を全件取得し SET イベントとして積むため、**natmgrd 再起動後もバインディングが自動再処理**される。
+
+### natmgrd select ループ → doNatBindingTask
+
+```
+CONFIG_DB HSET NAT_BINDINGS|<name>
+  → __keyspace@4__:NAT_BINDINGS|<name> pmessage
+  → SubscriberStateTable::readData() → pops() → KeyOpFieldsValuesTuple
+  → natmgrd select ループ (1000ms タイムアウト)
+    → Consumer::execute() → NatMgr::doTask(Consumer&)
+      → doNatBindingTask(key, op, fvs)           # natmgr.cpp:6868-7100
+        → addDynamicNatRule(key)                 # natmgr.cpp:4621-4679
+          ├─ isNatEnabled() 確認
+          ├─ m_natPoolInfo[pool_name] 存在確認
+          ├─ twice_nat_id が空 → setDynamicAllForwardOrAclbasedRules() (iptables)
+          └─ twice_nat_id が非空 → addDynamicTwiceNatRule(key)
+```
+
+### conntrack 経路 (Dynamic NAT)
+
+Dynamic SNAT は kernel iptables ルール経由で conntrack に委ねられる:
+
+```
+送信元パケット → iptables MASQUERADE / SNAT ルール
+  → kernel conntrack が動的接続追跡エントリを生成
+  → NatOrch::m_natQueryTimer 発火 → conntrack テーブル読み込み
+  → APP_NAT_TABLE / APP_NAPT_TABLE に ProducerStateTable::set()
+```
+
+natmgr.cpp では以下の `ProducerStateTable` を APPL_DB に向けて保持する (`natmgr.cpp:43-49`):
+
+| Producer | APPL_DB テーブル |
+|---|---|
+| `m_appNatTableProducer` | `APP_NAT_TABLE` |
+| `m_appNaptTableProducer` | `APP_NAPT_TABLE` |
+| `m_appTwiceNatTableProducer` | `APP_NAT_TWICE_TABLE` |
+| `m_appTwiceNaptTableProducer` | `APP_NAPT_TWICE_TABLE` |
+| `m_appNatDnatPoolProducer` | `APP_NAT_DNAT_POOL_TABLE` |
+
+### APPL_DB 購読 → NatOrch → SAI
+
+NatOrch (`orchagent`) は APPL_DB の `APP_NAT_TABLE_NAME` 等を **`ConsumerStateTable`** で購読し、`NatOrch::doTask(Consumer&)` (`natorch.cpp:3033`) でディスパッチする:
+
+```
+APP_NAT_TABLE → addHwSnatEntry()
+  → sai_nat_api->create_nat_entry()  [SAI_NAT_TYPE_SOURCE_NAT]
+APP_NAT_TWICE_TABLE → addHwTwiceNatEntry()
+  → sai_nat_api->create_nat_entry()  [SAI_NAT_TYPE_DOUBLE_NAT]
+```
+
+`addHwSnatEntry()` (`natorch.cpp:1271-1309`) の主要 SAI 属性:
+
+```cpp
+nat_entry_attr[0].id = SAI_NAT_ENTRY_ATTR_SRC_IP;
+nat_entry_attr[1].id = SAI_NAT_ENTRY_ATTR_SRC_IP_MASK;
+nat_entry_attr[2].id = SAI_NAT_ENTRY_ATTR_ENABLE_PACKET_COUNT;
+nat_entry_attr[3].id = SAI_NAT_ENTRY_ATTR_ENABLE_BYTE_COUNT;
+snat_entry.nat_type  = SAI_NAT_TYPE_SOURCE_NAT;
+status = sai_nat_api->create_nat_entry(&snat_entry, attr_count, nat_entry_attr);
+```
+
+### 非同期通知チャンネル
+
+| チャンネル名 | DB | 方向 | 用途 |
+|---|---|---|---|
+| `SETTIMEOUTNAT` | APPL_DB | NatOrch → natmgrd | conntrack timeout 変更通知 (natorch.cpp:137 / natmgrd.cpp:149) |
+| `FLUSHNATENTRIES` | APPL_DB | 外部 CLI → natmgrd | conntrack エントリ全フラッシュ (natmgrd.cpp:152) |
+| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 終了時の ASIC/Redis クリーンアップ (natmgrd.cpp:127 / natorch.cpp:89) |
+
+<!-- /pubsub -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
