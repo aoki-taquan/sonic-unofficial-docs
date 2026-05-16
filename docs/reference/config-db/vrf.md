@@ -363,6 +363,30 @@ if (!isVrfObjExist(vrfName))
 - VRFOrch が `m_stateVrfObjectTable.del(vrfName)` を呼ぶまで無制限に待機
 - タイムアウトなし
 
+### orchagent (VRFOrch) の不正属性・存在しない VRF
+
+`VRFOrch::addOperation` のフィールドループで認識できないフィールド名が来た場合、エラーログを出力して当該フィールドを **スキップし処理を継続する**（エントリ全体は破棄されない）。
+
+```cpp
+// vrforch.cpp:80-83
+SWSS_LOG_ERROR("Logic error: Unknown attribute: %s", name.c_str());
+continue;   // attrs に push せず次フィールドへ
+```
+
+- `fallback` フィールドはこのパスに落ちる（Phase A で確認済み）
+- 不明フィールドがあっても `sai_virtual_router_api->create_virtual_router()` は残りの有効属性で呼ばれる
+
+`VRFOrch::delOperation` で対象 VRF が `vrf_table_` に存在しない場合は `SWSS_LOG_ERROR("VRF '%s' doesn't exist")` を出力して `true` を返す（**成功扱い・no-op**）。リトライなし、エントリ破棄もなし。
+
+```cpp
+// vrforch.cpp:163-167
+if (vrf_table_.find(vrf_name) == std::end(vrf_table_))
+{
+    SWSS_LOG_ERROR("VRF '%s' doesn't exist", vrf_name.c_str());
+    return true;
+}
+```
+
 ### orchagent (VRFOrch) の task_need_retry
 
 `VRFOrch::addOperation` の SAI create / set 失敗、`delOperation` の SAI remove 失敗は `handleSai*Status` → `parseHandleSaiStatusFailure` を通じてリトライ判定される。
@@ -400,6 +424,8 @@ if (vrf_table_[vrf_name].ref_count)
 | VNI 重複 | vrfmgrd | なし | 重複 VNI 解除後に再設定 |
 | VNI 上書き | vrfmgrd | なし | `vni=0` リセット → 新 VNI 設定 |
 | VRF DEL (orchagent 未削除) | vrfmgrd | passive (無制限) | orchagent の ref_count ゼロを待つ |
+| 不明属性フィールド | orchagent | なし (フィールドスキップ、エントリ継続) | 有効フィールドのみで SAI create が進む |
+| DEL 対象 VRF 不在 | orchagent | なし (no-op、success 扱い) | 冪等操作のため何もしなくてよい |
 | SAI create リソース不足 | orchagent | task_need_retry (自動) | リソース解放後に自動回復 |
 | SAI remove OBJECT_IN_USE | orchagent | task_need_retry (自動) | 参照オブジェクト削除後に自動回復 |
 | ref_count > 0 で VRF DEL | orchagent | passive (無制限) | インタフェース・ルートを先に削除 |
