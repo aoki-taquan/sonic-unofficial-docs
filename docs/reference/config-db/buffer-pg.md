@@ -516,4 +516,27 @@ syncd → SAI sai_buffer_api
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-pubsub.md`
 
 <!-- /pubsub -->
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref は `profile → BUFFER_PROFILE.name` の 1 件のみ定義。以下はすべて実装レベルの暗黙参照。
+
+| 参照先テーブル / リソース | YANG leafref | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|:------------:|---------|------|----------------|
+| `BUFFER_PROFILE\|<name>` | ✅ | 存在確認 + 属性取得（`dynamic_calculated`, `lossless`, `direction`） | `profile` フィールドが非 NULL のとき。未設定 → `task_need_retry`、egress 方向 → `task_failed` | `buffermgrdyn.cpp` L3141–3168 (`handleSingleBufferPgEntry()`) |
+| `BUFFER_POOL` | ✗ | ブロッキング（`m_bufferPoolReady` フラグ） | 常時。BUFFER_POOL が確立するまで全 PG 書き込みをデファー | `buffermgrdyn.cpp` L933–935 / `buffermgr.cpp` L118 |
+| `PORT` (speed / mtu / admin_status / lanes) | ✗ | 読み取り（内部キャッシュ `m_portInfoLookup`） | 常時。speed + mtu が揃わない限り headroom 計算をスキップ | `buffermgrdyn.cpp` L1485–1487 / `buffermgr.cpp` L155–179 / `bufferorch.cpp` L1431 |
+| `CABLE_LENGTH` (ポートごとのケーブル長) | ✗ | 読み取り（`handleCableLenTable` 購読） | dynamic モードの lossless PG headroom 計算時。`0m` → lossless PG を APPL_DB から silent delete | `buffermgrdyn.cpp` L2142–2148, L1492–1523 / `buffermgr.cpp` L101–106 |
+| `DEFAULT_LOSSLESS_BUFFER_PARAMETER` (`default_dynamic_th`) | ✗ | 読み取り（起動時 + 動的更新） | dynamic モードで lossless PG の threshold を決定。未設定なら BUFFER_POOL ready 後もデファー | `buffermgrdyn.cpp` L150–153, L1460, L1521 |
+| `LOSSLESS_TRAFFIC_PATTERN` (Lua 経由) | ✗ | 間接読み取り（`buffer_headroom_<platform>.lua` 内 Redis KEYS） | Mellanox / Barefoot プラットフォームでの headroom 計算時のみ有効 | `cfgmgr/buffer_headroom_mellanox.lua` L91 / `buffermgrdyn.cpp` L76–78 |
+
+!!! note "BUFFER_POOL と DEFAULT_LOSSLESS_BUFFER_PARAMETER の二重ゲート"
+    dynamic モードでは `m_bufferPoolReady == true` かつ `m_defaultThreshold.empty() == false` の両条件が揃わない限り、lossless BUFFER_PG の APPL_DB 書き込みは開始されない（`buffermgrdyn.cpp` L1460, L3645）。CONFIG_DB への BUFFER_PG 設定だけでは不十分で、BUFFER_POOL と DEFAULT_LOSSLESS_BUFFER_PARAMETER の先行設定が必須。
+
+!!! note "LOSSLESS_TRAFFIC_PATTERN の適用範囲"
+    `buffermgrdyn.cpp` 本体は `LOSSLESS_TRAFFIC_PATTERN` を直接購読しない。参照は `buffer_headroom_mellanox.lua` / `buffer_headroom_barefoot.lua` の Lua スクリプト内のみで行われる。汎用（`buffer_headroom_generic.lua`）では参照しない。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-cross-refs.md`
+
+<!-- /cross-refs -->
 <!-- glossary-links-injected: 566f959873ea -->
