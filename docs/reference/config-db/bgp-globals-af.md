@@ -336,4 +336,26 @@ vtysh -c 'show bgp l2vpn evpn summary'
 
 > **スキャン証跡**: `bgp_af_handler` L3938 全行読了。2 組の comb_attr_list 制約のみ。
 <!-- /handler-branching -->
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**結論: プラットフォーム差なし。**
+
+`BGP_GLOBALS_AF` の購読・適用は `frrcfgd.BGPConfigDaemon.bgp_af_handler` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`) 一本に集約され、最終 sink は FRR (`bgpd`) の vtysh コマンドである。SAI / ASIC SDK / platform driver には到達しない純制御プレーン経路のため、ASIC 種別・hwsku・multi-asic / VOQ chassis 等の物理構成差で挙動が変わらない。
+
+### 根拠サマリ
+
+| 観点 | 確認結果 |
+|------|----------|
+| `bgpcfgd/` 配下の `BGP_GLOBALS_AF` 参照 | 0 件 (`grep -rn 'BGP_GLOBALS_AF' src/sonic-bgpcfgd/bgpcfgd/`) |
+| `frrcfgd.py` の `platform` / `hwsku` / `asic_type` 参照 | 0 件 |
+| `DEVICE_METADATA` 参照キー | `bgp_asn` と `docker_routing_config_mode` のみ (L2162-2168)。構成判別キーは未参照 |
+| multi-asic / VOQ chassis | 各 `asicN` namespace で同一コードが独立に動作。frrcfgd 自身に namespace 分岐なし |
+| 最終 sink | FRR vtysh (`address-family <afi> <safi>` 配下の `maximum-paths` / `distance bgp` / `bgp dampening` / `autort` / `advertise-all-vni` 等) |
+
+`max_ebgp_paths` / `max_ibgp_paths` の YANG 上限 (1..256) は制御プレーン上の multipath 計算上限であり、ASIC の ECMP group 容量との突き合わせは本テーブル外 (別経路で扱う)。
+
+詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-platform.md`。
+<!-- /platform -->
+
 <!-- glossary-links-injected: 803f36c2634d -->
