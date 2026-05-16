@@ -181,6 +181,44 @@ MACSEC_PROFILE|<name>
 
 <!-- ref-triangle:end -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp -->
+
+### PORT テーブルからの参照
+
+`PORT` テーブルの `macsec` フィールドに記載されたプロファイル名を `macsecmgrd` (`MACsecMgr::enableMACsec`) が読み取り、`MACSEC_PROFILE` エントリを検索する。プロファイルが未ロードの場合は `task_need_retry` が返却され、ポートの MACsec は有効化されない。
+
+```
+CONFIG_DB:PORT.macsec  ──名前参照──▶  CONFIG_DB:MACSEC_PROFILE
+```
+
+プロファイル削除時、当該プロファイルを参照中のポートが存在する場合は削除が拒否される (`task_failed`)。
+
+### MACSEC_SC への間接参照
+
+`configureMACsec()` が `wpa_supplicant` を通じて MKA セッションを確立後、`macsecorch` が APPL_DB 経由で SAI MACsec SC (Secure Channel) オブジェクトを生成する。`send_sci` / `policy` / `cipher_suite` の各フィールドが SC の動作モードに直接影響する。
+
+### wpa_supplicant 連携
+
+`macsecmgrd` は MACsec コントロールプレーンとして `/sbin/wpa_supplicant` を子プロセスで起動し、`/sbin/wpa_cli` を介して以下のパラメータを注入する。
+
+| MACSEC_PROFILE フィールド | wpa_cli パラメータ |
+|--------------------------|-------------------|
+| `primary_cak` | `mka_cak` |
+| `primary_ckn` | `mka_ckn` |
+| `priority` | `mka_priority` |
+| `rekey_period` | `mka_rekey_period`（0 の場合は設定しない） |
+| `cipher_suite` | `macsec_ciphersuite` |
+| `send_sci` | `macsec_include_sci` |
+| `enable_replay_protect` | `macsec_replay_protect` |
+| `replay_window` | `macsec_replay_window`（`enable_replay_protect=true` 時のみ） |
+| `policy` | `macsec_integ_only`（`integrity_only` → 1） |
+
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md)
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-macsec.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-macsec.yang>
