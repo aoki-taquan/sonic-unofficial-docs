@@ -132,6 +132,43 @@ show runningconfiguration snmp
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト・Fallback
+
+`SNMP_AGENT_ADDRESS_CONFIG` は hostcfgd を経由せず、`docker-snmp` の Jinja2 テンプレート (`dockers/docker-snmp/snmpd.conf.j2`) が CONFIG_DB を直接読んで `snmpd.conf` を生成する。このため「コード由来デフォルト」はテンプレートのレンダリングロジックと net-snmp 既定値の組み合わせで決まる。YANG `sonic-snmp.yang` 側に `default` 宣言は無く、空文字許容 (`pattern ''`) のみ。
+
+### `port` 空文字 → 実効 161/udp（テンプレ + net-snmp 既定）
+
+`snmpd.conf.j2:28-29` の for ループは `{% if port %}:{{ port }}{% endif %}` で port 指定が空ならコロンサフィックスを省略する。生成される行は `agentAddress udp:[<ip>]` となり、net-snmp は port 省略時に **161/udp** にバインドする。YANG `default` 宣言は無いため、161 という値は完全にコード（テンプレ + net-snmp）由来。
+
+### エントリ 0 件時 → `udp:161` + `udp6:161` のハードコード fallback
+
+`snmpd.conf.j2:31-34` の `{% else %}` 分岐:
+
+```jinja
+{% else %}
+agentAddress udp:161
+agentAddress udp6:161
+{% endif %}
+```
+
+テーブルにエントリが 1 件もない場合、IPv4 と IPv6 の両方で 161/udp listen が **テンプレ内ハードコード** で出力される。CONFIG_DB / YANG にこの fallback を示すフィールドは無く、ソース上はこの 2 行が唯一の真実源。
+
+### `vrf_name` 空文字 → 実効 default VRF（テンプレ）
+
+`snmpd.conf.j2:29` の `{% if vrf %}@{{ vrf }}{% endif %}` により `vrf` が空文字なら `@<vrf>` サフィックスが省略され、snmpd はカーネル default routing namespace（= default VRF）でリッスンする。「空文字 = default VRF」というセマンティクスは YANG 側に明示宣言が無く、テンプレと net-snmp の挙動でのみ担保される。ただし `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` の状態では CLI (`config/main.py:4153-4157`) が `-v` 省略を **CLI 層で拒否** するため、この「vrf 空 → default」経路が成立するのは Management VRF 無効時のみ。
+
+### プロトコル (`udp` / `udp6`) の自動選択
+
+`snmpd.conf.j2:19-25` の `protocol(ip_addr)` macro が `agent_ip` を `split('%')[0]` した上で `|ipv6` Jinja2 フィルタで判定し、IPv6 リテラルなら `udp6`、それ以外なら `udp` を返す。CONFIG_DB / YANG にプロトコル種別フィールドは存在せず、**完全にテンプレ macro 由来の派生**。link-local アドレスの zone id (`%eth0` 等) は判定前に除去されるため誤判定しない。
+
+### CLI 側の補助挙動
+
+`sonic-utilities/config/main.py:4139-4140` で `-p` / `-v` には click `default=` が **宣言されておらず**、省略時は CONFIG_DB key に空文字部分 (`<ip>||` 等) が格納される。実効値はすべてテンプレ側で補完される設計。
+
+> **Evidence**: `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2:19-34` (テンプレ macro + for/else 分岐)、`sonic-utilities/config/main.py:4137-4190` (CLI 側 click default 不在)、`sonic-host-services/scripts/hostcfgd` (grep で `SNMP_AGENT_ADDRESS` ヒット 0 件 = 非経由)。詳細は `meta/_intermediate/cdb-flow/snmp-agent-address-config-defaults.md` を参照。
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -225,5 +262,43 @@ db_migrator.py での SNMP_AGENT_ADDRESS_CONFIG マイグレーションなし
 
 なし
 <!-- /entry-points -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 1. 同一 (ip, port) 重複: DEL 先行が必須
+
+`unique "agent_ip port"` 制約（`sonic-snmp.yang` L171）により、同一 `(ip, port)` を異なる `vrf_name` で重複登録すると YANG バリデーションが拒否する。VRF を変更する場合は旧エントリを DEL してから新エントリを SET する。CLI は `get_keys` による事前重複チェックで YANG 層到達前に防ぐ（`config/main.py:4177-4182`）。
+
+### 2. MGMT_VRF_CONFIG が有効な場合は VRF 指定必須
+
+`config snmp agentaddress add <ip>` に `-v` オプションを省略した状態で `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled = 'true'` が存在すると、CLI が "ManagementVRF is Enabled. Provide vrf." を出力して CONFIG_DB への書込みをブロックする（`config/main.py:4153-4157`）。Management VRF を使う場合は `-v mgmt` を明示する。
+
+### 3. IP アドレスが NIC に付与済みであること
+
+CLI は `netifaces.interfaces()` で agentip が実際にホスト NIC に付与されているかを確認する（`config/main.py:4160-4171`）。IP 未付与の場合は "IP address is not available" でリジェクトされる。
+
+### 4. VRF が実在してから agentaddress を設定
+
+`vrf_name` に `mgmt` / `Vrf<name>` を指定しても VRF がカーネルに存在しない場合、CONFIG_DB への書込みは成功するが snmpd が agentAddress バインドに失敗する。YANG は VRF 実在チェックを行わない。正しい順序: `config vrf add <vrf>` → `config snmp agentaddress add <ip> -v <vrf>`。
+
+### 5. SET 後は snmp コンテナ再起動が必要
+
+エントリを SET しても `systemctl restart snmp` でコンテナを再起動しなければ snmpd.conf は更新されない。CLI (`config snmp agentaddress add/del`) は書込み直後に自動で `os.system("systemctl restart snmp")` を呼ぶ（`config/main.py:4189`）。直接 `sonic-db-cli` で書き込む場合は手動で再起動が必要。
+
+### 6. minigraph 経路: MGMT_INTERFACE → SNMP_AGENT_ADDRESS_CONFIG
+
+`minigraph.py` は `MGMT_INTERFACE` / `LOOPBACK_INTERFACE` を解析した後に `SNMP_AGENT_ADDRESS_CONFIG` を生成する（L2308-2322）。multi-asic 環境では自動生成が行われず空辞書となる。
+
+| # | 依存関係 | 方向 | 違反時の挙動 |
+|---|----------|------|------------|
+| 1 | 旧エントリ DEL → 同 (ip,port) 新エントリ SET | **必須先行** | YANG unique 違反（SET 失敗） |
+| 2 | `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` 時は `-v mgmt` 指定 | **CLI 強制** | CLI ブロック（DB 書込み不達） |
+| 3 | NIC への IP 付与 → `agentaddress add <ip>` | **CLI 強制** | "IP address is not available" 拒否 |
+| 4 | `config vrf add <vrf>` → `agentaddress add <ip> -v <vrf>` | **推奨先行** | DB 書込み成功、snmpd bind 失敗 |
+| 5 | SET 完了 → `systemctl restart snmp` | **必須後続** | snmpd.conf 未更新（旧設定継続） |
+| 6 | `MGMT_INTERFACE`/`LOOPBACK_INTERFACE` 先行 → minigraph 自動生成 | **minigraph 内部** | 空辞書（multi-asic では常時空） |
+
+<!-- /ordering -->
 
 <!-- glossary-links-injected: 59acbdd0f2b6 -->

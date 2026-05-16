@@ -104,6 +104,51 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来デフォルト (Task F Phase A)
+
+<!-- evidence: meta/_intermediate/cdb-flow/nvgre-tunnel-defaults.md -->
+
+`sonic-swss/orchagent/nvgreorch.{h,cpp}` を全行調査した結果、**NVGRE_TUNNEL / NVGRE_TUNNEL_MAP 双方のフィールドにコード由来のデフォルト値は存在しない**。`request_description_t` の mandatory リストに全フィールドが登録されており、未指定時は `request_parser` 段階で reject される。
+
+### フィールド別 デフォルト有無
+
+| フィールド | テーブル | コード由来デフォルト | 未指定時の挙動 | ソース |
+|-----------|---------|-------------------|---------------|--------|
+| `tunnel_name` (key) | `NVGRE_TUNNEL` | なし | key 必須、自動採番なし | `nvgreorch.h:32` |
+| `src_ip` | `NVGRE_TUNNEL` | なし | mandatory、`request_parser` reject | `nvgreorch.h:36`, `nvgreorch.cpp:354` |
+| `tunnel_map_name` (key) | `NVGRE_TUNNEL_MAP` | なし | key 必須 | `nvgreorch.h:141` |
+| `vlan_id` | `NVGRE_TUNNEL_MAP` | なし | mandatory、reject | `nvgreorch.h:144,146` |
+| `vsid` | `NVGRE_TUNNEL_MAP` | なし | mandatory、reject | `nvgreorch.h:143,146` |
+
+```cpp
+// nvgreorch.h:31-37 (NVGRE_TUNNEL の request 定義 — 第3要素が mandatory リスト)
+const request_description_t nvgre_tunnel_request_description = {
+            { REQ_T_STRING },
+            {
+                { "src_ip", REQ_T_IP },
+            },
+            { "src_ip" }
+};
+```
+
+### 付随する SAI ハードコード値 (デフォルトではないが固定)
+
+`NvgreTunnel` 構築時、フィールド値とは独立に以下が常時 SAI へ渡される (`nvgreorch.cpp:136-257`):
+
+| SAI 属性 | 値 | 備考 |
+|---|---|---|
+| `SAI_TUNNEL_ATTR_TYPE` | `SAI_TUNNEL_TYPE_NVGRE` | テーブル名から確定 |
+| `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` | `gUnderlayIfId` | 起動時のグローバル RIF |
+| `SAI_TUNNEL_TERM_..._TYPE` | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP` | NVGRE は P2MP 固定 |
+| `SAI_TUNNEL_TERM_..._VR_ID` | `gVirtualRouterId` | デフォルト VRF |
+| Encap/Decap mapper | `MAP_T_VLAN` / `MAP_T_BRIDGE` を常時両方作成 | `nvgreMapTypes` static |
+| VSID 上限 | `NVGRE_VSID_MAX_VALUE = 16777214` | `nvgreorch.cpp:7` |
+
+> **結論**: 利用者視点では「CLI / RESTCONF で全フィールドを明示指定するしかなく、未指定の救済デフォルトは無い」と覚えればよい。
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

@@ -81,6 +81,90 @@ SWITCH_TRIMMING|GLOBAL
 ## 関連ページ
 - [CONFIG_DB index](index.md)
 
+<!-- defaults -->
+## コード由来のデフォルト・暗黙挙動 (Phase A)
+
+> **調査根拠**: `sonic-swss/orchagent/switchorch.cpp` `SwitchOrch::setSwitchTrimming()` L1066–1304 + `orchagent/switch/trimming/{container.h, helper.cpp, capabilities.cpp, schema.h}` 全体精読 (2026-05-16)。`portsorch.cpp` の trim 関連は `nvda_port_trim_drop.lua` 統合と `DROPPED_TRIM_PACKETS` / `TX_TRIM_PACKETS` カウンタのみで、フィールド既定値処理は無い。
+
+| フィールド | YANG default | switchorch 実装の実効デフォルト | 備考 |
+|-----------|-------------|------------------------------|------|
+| `size` | なし | **SAI ベンダー依存**（省略時 SAI 属性送信なし） | `container.h` で `size.is_set = false`。switchorch.cpp L1087 の `if (trim.size.is_set)` を通らない |
+| `dscp_value` | なし | **SAI ベンダー依存**（省略時）。値ごとに parser が DSCP resolution mode を**自動派生** | 数値 → `SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_DSCP_VALUE`、`"from-tc"` → `..._FROM_TC` (helper.cpp L96–124) |
+| `tc_value` | なし | symmetric DSCP モード時は **明示しても skip + WARN** | `setSwitchTrimming()` L1190 `"Skip setting switch trimming TC value for symmetric DSCP mode"` |
+| `queue_index` | なし | **SAI ベンダー依存**（省略時）。値ごとに parser が queue resolution mode を**自動派生** | 数値 → `..._STATIC`、`"dynamic"` → `..._DYNAMIC` (helper.cpp L163–182) |
+| 全フィールド省略 | — | **エントリ全破棄** (`validateTrimConfig`) | `LOG_ERROR("Validation error: missing valid fields")` → `parseTrimConfig` が `false` を返し SAI 書き込みなし |
+
+### `dscp_value` / `queue_index` の暗黙モード派生
+
+`SWITCH_TRIMMING` のフィールドは「値の種類で SAI resolution mode が自動的に決まる」設計。CONFIG_DB 側に `mode` 専用フィールドは存在せず、parser が値の文字列形を見て対応する SAI enum を選ぶ:
+
+```cpp
+// helper.cpp L96–124 (parseTrimDscp)
+if (boost::algorithm::to_lower_copy(value) == SWITCH_TRIMMING_DSCP_VALUE_FROM_TC) // "from-tc"
+{
+    cfg.dscp.mode.value = SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_FROM_TC;
+    cfg.dscp.mode.is_set = true;
+    return true;
+}
+// ...数値パース後...
+cfg.dscp.mode.value = SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_DSCP_VALUE;
+cfg.dscp.mode.is_set = true;
+```
+
+- DSCP 数値の範囲は **0..63** (`helper.cpp` 内 `static const minDscp = 0; maxDscp = 63;` L25–26)。範囲外は `LOG_ERROR` + エントリ破棄。
+- 大文字小文字は `boost::algorithm::to_lower_copy` で正規化されるので `"FROM-TC"` / `"Dynamic"` も受理される。
+
+### ASIC capability 不在時の挙動 (重要)
+
+`SwitchTrimmingCapabilities` (`capabilities.cpp` L142–179) はコンストラクタで SAI `query_attribute_capability` を呼び、各属性が **未サポートのまま (`isAttrSupported = false`)** だと `isSwitchTrimmingSupported()` が `false` を返す。
+
+```cpp
+// switchorch.cpp L1081–1085
+if (!trimCap.isSwitchTrimmingSupported())
+{
+    SWSS_LOG_WARN("Switch trimming configuration is not supported: skipping ...");
+    return true;   // ← エラーではなく成功扱い (no-op)
+}
+```
+
+!!! warning "サイレント no-op"
+    Packet trimming 非対応 ASIC では `SWITCH_TRIMMING|GLOBAL` への SET は **エラーにならず黙って捨てられる**。`show switch-trimming` で CONFIG_DB 値は見えても SAI には反映されていない。実機サポート有無は `STATE_DB` 側に書き出される capability テーブル (`writeCapabilitiesToDb()` 出力) で確認するのが正しい運用。
+
+部分サポートの場合も似た減衰挙動を取る:
+
+- DSCP 数値モード不可 (`isDscpValueModeSupported = false`) → `dscp.isAttrSupported` をチェック対象から外す (capabilities.cpp L159–162)
+- FROM_TC モード不可 (`isFromTcModeSupported = false`) → `tc.isAttrSupported` を無視 (L166–169)
+- STATIC queue モード不可 (`isStaticModeSupported = false`) → `queue.index.isAttrSupported` を無視 (L173–176)
+
+enum capability (`isEnumSupported = false`) のときは `validateTrimDscpModeCap` / `validateTrimQueueModeCap` が常に `true` を返し検証スキップ (`capabilities.cpp` L185–188, L232–235)。
+
+### ASIC / CONFIG_DB 乖離時の挙動
+
+```cpp
+// switchorch.cpp L1349, L1355
+if (!setSwitchTrimming(trim))
+    SWSS_LOG_ERROR("Failed to set switch trimming: ASIC and CONFIG DB are diverged");
+// DEL の場合:
+SWSS_LOG_ERROR("Failed to remove switch trimming: operation is not supported: ASIC and CONFIG DB are diverged");
+```
+
+`tObj = trimHlpr.getConfig()` と新規 `trim` を比較し、各フィールドについて `tObj` 側が `is_set` 未設定 or 値が異なる場合のみ SAI を更新するロジック。SAI capability 検証や set 呼び出しが失敗するとローカルキャッシュ (`trimHlpr.setConfig`) を更新せずに `false` を返すため、再投入には capability 修正か orchagent 再起動が必要。
+
+### 新規作成 vs 更新の挙動差異
+
+| 状況 | SAI 呼び出し | 省略フィールドの扱い |
+|------|------------|-------------------|
+| 初回 SET (ローカルキャッシュ `tObj` 空) | 各属性個別の `set_switch_attribute()` (set 単位) | `is_set = false` のフィールドは SAI に送られない → SAI 既定値が残る |
+| 既存更新 | 変更があった属性のみ `set_switch_attribute()` を発行 | 省略フィールドは現在の SAI 属性値を保持（変更なし） |
+| `dscp_value` を数値 ↔ `from-tc` で切替 | `tc` 側 cache (`cfg.tc.cache.value`) を更新して SAI に反映 (switchorch.cpp L1273–1297) | symmetric DSCP モードに移ると TC は SAI 送信スキップ + WARN |
+
+### dead/特殊フィールド
+
+- 未知フィールドは `parseTrimConfig()` の最終 `else` で `SWSS_LOG_WARN("Unknown field(%s): skipping ...")` をログするのみで、エントリ自体は破棄されない (helper.cpp L226)。`scheduler` 等と異なり**未知フィールド混入はエラーにならない**。
+- `DEL` 操作は `size` / `dscp.mode` のいずれも非サポート: `LOG_ERROR("... operation is not supported")` + `return false` (switchorch.cpp L1104, L1149, L1206, L1239)。
+
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
