@@ -1,4 +1,4 @@
-# BUFFER_POOL — Phase B 書込み順依存スキャンノート
+# BUFFER_POOL — Phase B 書込み順依存スキャンノート (v2 updated 2026-05-16)
 
 対象テーブル: `BUFFER_POOL`
 Consumer: `buffermgrd` (static model) / `buffermgrdyn` (dynamic model) / `bufferorch` (SAI)
