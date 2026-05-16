@@ -293,4 +293,41 @@ REST/gNMI 書き込み経路なし
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+TUNNEL_DECAP_TABLE エントリを書き込む際に守るべき順序制約を実装から導出した。
+
+### 先行必須テーブル (SET 時)
+
+| 依存テーブル | 理由 | 緩和策 | evidence |
+|---|---|---|---|
+| PortsOrch 初期化完了 (`allPortsReady()`) | `doTask()` が false の間即 return — TUNNEL_DECAP_TABLE / DECAP_TERM_TABLE ともにキュー待機 | なし（自動待機） | `tunneldecaporch.cpp:L55-57` |
+| `CONFIG_DB TUNNEL` SET 済み | `tunnelmgrd` が TUNNEL を受け取って初めて APPL_DB へ投影。APPL_DB エントリは自動生成 | なし | `tunnelmgr.cpp:L263-293` |
+| `LOOPBACK_INTERFACE\|Loopback3` IP 設定 | tunnelmgrd がトンネル IF への IP 付与に Loopback3 の IP を参照。未設定時は IP 付与スキップ | Loopback3 後付けで遅延付与される | `tunnelmgr.cpp:L337-348` |
+
+### TUNNEL_DECAP_TABLE と TUNNEL_DECAP_TERM_TABLE の依存
+
+| 操作 | 制約 | 理由 | evidence |
+|---|---|---|---|
+| TUNNEL_DECAP_TERM_TABLE SET | **TUNNEL_DECAP_TABLE より先に届いた term は `unhandledDecapTerms` に蓄積** | `tunnel_exists` が false のとき `addUnhandledDecapTunnelTerm()` に保留。トンネル本体作成成功後に `processUnhandledDecapTunnelTerms()` で一括処理される | `tunneldecaporch.cpp:L309,L513,L1497-1520` |
+| SET の推奨順序 | `TUNNEL_DECAP_TABLE` SET → `TUNNEL_DECAP_TERM_TABLE` SET | 前後逆でも自動調停されるが、トンネル本体が先のほうがエラーログが出ない | — |
+
+### SET / DEL 操作順序
+
+| 操作 | 制約 | 理由 | evidence |
+|---|---|---|---|
+| `src_ip` の変更 | **DEL → SET の順が必須** | 既存トンネルの `src_ip` 更新は LOG_ERROR して拒否。変更には削除→再作成が必要 | `tunneldecaporch.cpp:L136` |
+| `TUNNEL_DECAP_TABLE` の DEL | **TUNNEL_DECAP_TERM_TABLE を先に DEL** | tunneldecaporch はトンネル本体 DEL 時に term を自動削除しない。term 残存のままトンネル本体を削除すると SAI リソースリークの恐れがある | `tunneldecaporch.cpp` `removeDecapTunnel()` |
+
+### warm-restart / cold-restart 影響
+
+- `tunnelmgrd` は warm-restart 対応 (`replayDone` / `m_tunnelReplay`)。warm boot 時は APPL_DB への重複書き込みをスキップし orchagent クラッシュを防ぐ。
+- `tunneldecaporch` は warm-restart 非対応。cold restart 後に CONFIG_DB 再 replay → tunnelmgrd が APPL_DB 再投影 → orchagent が SAI 再設定、という自動再構築フローで収束する。
+
+!!! warning "src_ip の変更"
+    既存トンネルの `src_ip` を変更する場合は `TUNNEL_DECAP_TABLE` エントリを必ず DEL してから SET し直すこと。SET のみでは `"cannot modify src ip for existing tunnel"` を LOG_ERROR してスキップされる (`tunneldecaporch.cpp`)。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->

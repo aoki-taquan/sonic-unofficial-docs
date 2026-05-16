@@ -266,6 +266,100 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 
 <!-- /handler-branching -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 -->
+
+### MlagOrch 失敗パス一覧
+
+| # | トリガー | 箇所 | 動作 | retry |
+|---|---------|------|------|-------|
+| 1 | 不正テーブル名 | `doTask()` L62-65 | `SWSS_LOG_ERROR("MLAG receives invalid table %s")` + キューに残留 | なし（永続エラー） |
+| 2 | SET 時 `peer_link` フィールドが空または未存在 | `doMlagDomainTask()` L91-99 | erase してサイレントスキップ。ISL 登録は行われない | なし |
+| 3 | `addIslInterface()` が false を返す | `doMlagDomainTask()` L93-96 | `it++`（erase せず） → 次の doTask() で再試行 | あり（現実装では到達不可） |
+| 4 | 重複 MLAG IF ADD (`m_mlagIntfs` に既存) | `addMlagInterface()` L198-201 | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface %s")` + notify なし | なし |
+| 5 | 未知 MLAG IF の DEL (`m_mlagIntfs` に不在) | `delMlagInterface()` L220-223 | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface %s")` + notify なし | なし |
+| 6 | 不明な op_type | `doMlagDomainTask()` L108-112 / `doMlagInterfaceTask()` L149-152 | `SWSS_LOG_ERROR("MLAG receives unknown operation type %s")` + erase | なし |
+
+### peer_ip バリデーション
+
+`MlagOrch` は `peer_ip` フィールドを参照しない。`peer_ip` の不正値（フォーマット違反等）は YANG (`sonic-mclag.yang` `inet:ipv4-address` 型) でバリデーション段階に拒否され、`mlagorch.cpp` レベルには到達しない。
+
+### PORTCHANNEL 未解決時の挙動
+
+`addIslInterface()` (L156-172) は Port オブジェクトの存在確認を行わない（`gPortsOrch->getPort()` コールなし）。指定した `peer_link` の PORTCHANNEL が CONFIG_DB に未存在でも `addIslInterface()` は成功し `SUBJECT_TYPE_MLAG_ISL_CHANGE` を notify する。PORTCHANNEL 未解決による失敗は下流 observer 側で検知される。
+
+### SAI bridge_port 失敗
+
+`MlagOrch` は SAI API を直接呼ばない。`addIslInterface()` / `delIslInterface()` は observer 通知 (`notify()`) のみ実行する。SAI bridge_port 操作は下流 observer が担当し、失敗フィードバックは `mlagorch.cpp` には返らない。
+
+### STATE_DB / ERROR_TABLE への記録
+
+`MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。
+
+```bash
+docker exec swss cat /var/log/swss/orchagent.log | grep -i "MLAG"
+```
+
+<!-- /failure -->
+
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 / sonic-swss/mclagsyncd/mclaglink.cpp L626-930 / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang / sonic-utilities/config/mclag.py -->
+
+### 設定順序（追加）
+
+1. **PORT / PORTCHANNEL** を先に CONFIG_DB に存在させる
+   - `MCLAG_DOMAIN.peer_link` の YANG leafref は `PORT.name` または `PORTCHANNEL.name` への参照。存在しないと YANG バリデーション拒否。
+   - `MCLAG_INTERFACE.if_name` の YANG leafref は `PORTCHANNEL.name` への参照。同様に先行必須。
+   - evidence: `sonic-mclag.yang:62-71`, `sonic-mclag.yang:115-116`
+
+2. **MCLAG_DOMAIN** を設定してから MCLAG_INTERFACE / MCLAG_UNIQUE_IP を書く
+   - `MCLAG_INTERFACE.domain_id` は `MCLAG_DOMAIN.domain_id` への leafref（YANG 必須）。
+   - `MCLAG_UNIQUE_IP` には `must "count(MCLAG_DOMAIN_LIST/domain_id) != 0"` が課されており、MCLAG_DOMAIN が 0 件だとエントリ書込み拒否。
+   - CLI `config mclag unique-ip add` も Python 側で `MCLAG_DOMAIN` キー存在を事前チェック。
+   - evidence: `sonic-mclag.yang:108-109`, `sonic-mclag.yang:132-134`, `config/mclag.py:328-329`
+
+3. **mclagsyncd の購読開始タイミング**に注意する
+   - mclagsyncd は MCLAG_DOMAIN の**初回 SET 成功後**に初めて `MCLAG_INTERFACE` テーブルと `MCLAG_UNIQUE_IP` テーブルの購読を開始する（`addDomainCfgDependentSelectables()`）。
+   - MCLAG_DOMAIN の書込み前に MCLAG_INTERFACE / MCLAG_UNIQUE_IP を書いても iccpd への通知は届かない。
+   - evidence: `mclaglink.cpp:814-818`, `mclaglink.cpp:903-907`, `mclaglink.cpp:910-921`
+
+4. **VLAN_INTERFACE の IP / VRF を先に削除**してから MCLAG_UNIQUE_IP を有効化する
+   - CLI は対象 VLAN IF に VRF バインドまたは IP アドレスがある場合に `ctx.fail()` で拒否する。
+   - YANG 側の back-link 制約は現在コメントアウトされているため、sonic-db-cli 直接書込みでは回避できるが非推奨。
+   - evidence: `config/mclag.py:338-347`, `sonic-mclag.yang:137-142`
+
+5. **allPortsReady() 完了後**にエントリが処理される
+   - `MlagOrch::doTask()` L49-52 で全ポート初期化前は即 return。PortsOrch 起動完了が先行必須。
+   - evidence: `mlagorch.cpp:49-52`
+
+### 削除順序
+
+| ステップ | 操作 | 理由 |
+|---------|------|------|
+| 1 | `MCLAG_INTERFACE` を DEL | `domain_id` leafref の dangling 防止 |
+| 2 | `MCLAG_UNIQUE_IP` を DEL | MCLAG_DOMAIN DEL で mclagsyncd が購読停止する前に整理 |
+| 3 | `MCLAG_DOMAIN` を DEL | CLI `config mclag del` は 1-2 を自動実行してから domain を削除 |
+
+> CLI `config mclag del <domain_id>` は同ドメインの全 MCLAG_INTERFACE を自動削除してから MCLAG_DOMAIN を削除する（`config/mclag.py:186-199`）。手動で sonic-db-cli を使う場合は上記順序に従うこと。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 強制度 | 緩和策 |
+|---|----------|--------|--------|
+| 1 | allPortsReady() 完了 → MCLAG 処理 | 強制 | PortsOrch 起動待ち（自動） |
+| 2 | PORT / PORTCHANNEL → MCLAG_DOMAIN.peer_link | YANG バリデーション必須 | ポートを先に設定 |
+| 3 | PORTCHANNEL + MCLAG_DOMAIN → MCLAG_INTERFACE | YANG バリデーション必須 | 1→2→3 の順序 |
+| 4 | MCLAG_DOMAIN → MCLAG_UNIQUE_IP | YANG must 必須 + CLI チェック | MCLAG_DOMAIN を先に書く |
+| 5 | MCLAG_DOMAIN 初回 ADD → mclagsyncd が INTF/UNIQUE_IP 購読開始 | mclagsyncd 内部 | MCLAG_DOMAIN SET 完了後に書く |
+| 6 | VLAN_INTERFACE IP/VRF 削除 → MCLAG_UNIQUE_IP 設定 | CLI チェック必須 | CLI 経由では先に IP/VRF を外す |
+| 7 | MCLAG_INTERFACE DEL → MCLAG_UNIQUE_IP DEL → MCLAG_DOMAIN DEL | 推奨 | CLI del が自動実行（INTF のみ） |
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールドデフォルト (Phase A)
 
