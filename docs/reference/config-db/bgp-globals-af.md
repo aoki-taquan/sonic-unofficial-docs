@@ -465,4 +465,33 @@ address-family <af> <safi>
 > **スキャン証跡**: `frrcfgd.py` L2771-2782（BGP_GLOBALS_AF 分岐）/ L3910-3933（common handler）/ L3938-3940（bgp_af_handler）読了。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-side.md`
 <!-- /side-effects -->
 
+<!-- failure -->
+## 失敗挙動・リトライ分岐 (Phase D)
+
+`frrcfgd.py` の `bgp_af_handler` → `bgp_table_handler_common` → `__update_bgp` → `g_run_command` パスで検出される失敗パターンと挙動を示す。
+
+### 失敗パターン一覧
+
+| 失敗トリガー | 挙動 | リトライ | evidence |
+|---|---|---|---|
+| `local_asn` 未設定 VRF のイベント到達 | `LOG_DEBUG: ignore table BGP_GLOBALS_AF update because local_asn for VRF {} was not configured` → **silent drop** (continue) | なし（次の CONFIG_DB イベント到達まで保留なし） | `frrcfgd.py:2659-2661` |
+| vtysh `BGP_GLOBALS_AF` コマンド失敗（`g_run_command` が False を返す） | `LOG_ERR: failed running BGP global AF config command` → **continue** (該当イベント drop、キャッシュ更新なし) | なし（frrcfgd はリトライせず次イベント待ち） | `frrcfgd.py:2779-2781` |
+| FRR コマンド個別失敗（`run_command` 内ループ） | `LOG_ERR: failed running FRR command: <cmd>` → ループを `break`、`ret_val = False` | なし（コマンド列の残りも発行中断） | `frrcfgd.py:764-765` |
+| vtysh コマンド実行失敗（`bgpd_client.run_vtysh_command` が False） | `LOG_ERR: command execution failure. Command: "<cmd>"` → False を返す | なし（上位で continue） | `frrcfgd.py:53-54` |
+| `distance bgp` コマンドの部分フィールド設定（3 つ揃わない） | コマンド生成自体をスキップ（`comb_attr_list` 制約）。LOG 出力なし | N/A（設計上スキップ） | `frrcfgd.py:3938-3941` |
+| `route_flap_dampen_*` 部分フィールド設定（suppress/reuse/max_suppress 揃わない） | 同上（`comb_attr_list` 制約）。dampening コマンド生成スキップ | N/A（設計上スキップ） | `frrcfgd.py:3939-3941` |
+| `ROUTE_MAP` 未準備（`import_vrf_route_map` / `route_download_filter` 参照先が未設定） | frrcfgd は存在チェックを行わず即時 FRR コマンド発行 → FRR 側で `Unknown command` または警告。frrcfgd 側は FRR の return code 次第（非零なら LOG_ERR + drop） | なし | `frrcfgd.py:2779-2781`、`frrcfgd.py` L1863 |
+| bgpd ソケット接続失敗（`__create_frr_client`） | `LOG_ERR: failed to connect to frr daemon <daemon>: <msg>` → 最大 100 回 × 2 秒 sleep でリトライ。100 回超過または `main_loop=False` で `LOG_ERR: re-tried too many times, give up` → RuntimeError | **あり**（最大 100 回、2 秒間隔）。それ以上は frrcfgd 自体が起動失敗 | `frrcfgd.py:186-195` |
+| bgpd ソケット送受信失敗（`run_vtysh_command`） | `LOG_ERR: socket writing failed` / `LOG_ERR: failed to get reply from frr daemon` → False 返却 → 上位 continue | なし（ソケット再接続なし） | `frrcfgd.py:263-269, 364` |
+| `bgp_af_handler` 例外（Python 例外がバブルアップした場合） | `LOG_ERR: [bgp cfgd] Failed handling config DB update with exception: <e>` → 例外を吸収して継続 | なし | `frrcfgd.py:1533` |
+
+### 補足メモ
+
+- **drop の意味**: `continue` で該当エントリのキャッシュが `STAT_SUCC` に更新されないため、次回同 key のイベントで再度コマンドが発行される可能性がある（ただし frrcfgd のイベント駆動モデルでは CONFIG_DB の変化がなければ再トリガーされない）。
+- **bgpd ソケットリトライ**: 起動時のみ実施。稼働中のソケット切断に対するリコネクト機構は存在しない。
+- **comb_attr_list スキップ** は失敗ではなく設計上の「部分設定ガード」。distance や dampening は 3 フィールドが揃うまで FRR コマンドを発行しない。
+
+> 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-failure.md`
+<!-- /failure -->
+
 <!-- glossary-links-injected: 803f36c2634d -->
