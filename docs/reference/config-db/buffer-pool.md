@@ -554,4 +554,58 @@ FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プ�
 - **STATE_DB** (書き込み側): `bufferorch`/`buffermgrdyn` は `BUFFER_MAX_PARAM_TABLE` を読むのみ。
 
 <!-- /side-effects -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `cfgmgr/buffermgr.cpp`, `orchagent/bufferorch.cpp`, `orchagent/bufferorch.h`
+
+### pool 名マクロ
+
+| 定数名 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `INGRESS_LOSSLESS_PG_POOL_NAME` | `"ingress_lossless_pool"` | xoff 書き込みチェック・SHP 計算・mode 取得の基準プール名としてコードにハードコード | `buffermgrdyn.h:14`, `buffermgr.h:13` |
+
+> `egress_lossless_pool` / `egress_lossy_pool` / `ingress_lossy_pool` はコード内でハードコードされていない。これらは CONFIG_DB の key から動的に取得される。`ingress_lossless_pool` のみ SHP / xoff 処理で特別扱いされる。
+
+### `type` フィールド値定数 (bufferorch.h)
+
+| 定数名 | 値 | SAI 対応 | ソース |
+|---|---|---|---|
+| `buffer_value_ingress` | `"ingress"` | `SAI_BUFFER_POOL_TYPE_INGRESS` | `bufferorch.h:31`, `bufferorch.cpp:443` |
+| `buffer_value_egress` | `"egress"` | `SAI_BUFFER_POOL_TYPE_EGRESS` | `bufferorch.h:32`, `bufferorch.cpp:447` |
+| `buffer_value_both` | `"both"` | `SAI_BUFFER_POOL_TYPE_BOTH` | `bufferorch.cpp:451` |
+
+### `mode` フィールド値定数 (bufferorch.h)
+
+| 定数名 | 値 | SAI 対応 | ソース |
+|---|---|---|---|
+| `buffer_pool_mode_dynamic_value` | `"dynamic"` | `SAI_BUFFER_POOL_THRESHOLD_MODE_DYNAMIC` | `bufferorch.h:21`, `bufferorch.cpp:476` |
+| `buffer_pool_mode_static_value` | `"static"` | `SAI_BUFFER_POOL_THRESHOLD_MODE_STATIC` | `bufferorch.h:22`, `bufferorch.cpp:480` |
+
+### SAI 識別子
+
+| SAI 識別子 | 用途 | ソース |
+|---|---|---|
+| `SAI_BUFFER_POOL_ATTR_SIZE` | `size` フィールドの SAI 属性 ID | `bufferorch.cpp:427` |
+| `SAI_BUFFER_POOL_ATTR_TYPE` | `type` フィールドの SAI 属性 ID (create-only) | `bufferorch.cpp:460` |
+| `SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE` | `mode` フィールドの SAI 属性 ID (create-only) | `bufferorch.cpp:487` |
+| `SAI_BUFFER_POOL_ATTR_XOFF_SIZE` | `xoff` フィールドの SAI 属性 ID | `bufferorch.cpp:493` |
+| `SAI_BUFFER_POOL_STAT_WATERMARK_BYTES` | pool 使用量 watermark 統計 ID | `bufferorch.cpp:31` |
+| `SAI_BUFFER_POOL_STAT_XOFF_ROOM_WATERMARK_BYTES` | SHP (xoff room) watermark 統計 ID | `bufferorch.cpp:32` |
+
+### Flex Counter / Counter DB 定数
+
+| 定数名 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"BUFFER_POOL_WATERMARK_STAT_COUNTER"` | FLEX_COUNTER_DB の group name (= `FLEX_COUNTER_GROUP_TABLE` キー) | `bufferorch.h:15` |
+| `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` (= 60 秒) | watermark ポーリング間隔 (ms)。CONFIG_DB から変更不可 | `bufferorch.h:16` |
+| `COUNTERS_BUFFER_POOL_NAME_MAP` | `"COUNTERS_BUFFER_POOL_NAME_MAP"` | COUNTERS_DB の pool 名→SAI OID マッピング hash 名 | `schema.h:238`, `bufferorch.cpp:55` |
+
+### 特記事項
+
+- **`type` / `mode` は SAI create-only 属性**: 既存プールへの更新 SET 時にこれらのフィールドが含まれても LOG_INFO のみでスキップされ SAI に非反映 (`bufferorch.cpp:437-471`)。YANG にはこの制約の記述なし。
+- **`buffer_value_both` の乖離**: `buffermgrdyn.cpp:2544-2549` で `"ingress"` 以外はすべて `BUFFER_EGRESS` に分類するため、`type=both` を指定すると内部キャッシュの `direction` は `BUFFER_EGRESS` になる (SAI には `SAI_BUFFER_POOL_TYPE_BOTH` が渡るが headroom 計算が ingress 側を参照しなくなる)。
+- **ポーリング間隔非設定**: `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS = "60000"` はコードハードコード。CONFIG_DB からの変更手段なし。
+<!-- /constants -->
 <!-- glossary-links-injected: 44ea702536a5 -->
