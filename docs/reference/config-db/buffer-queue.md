@@ -522,7 +522,7 @@ queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反
 
 profile 名に `_zero_` を含む場合 (`counter_needs_to_add = false`)、カウンタ追加は行わない。既存カウンタがあれば削除する。`bufferorch.cpp:1017, 1020`
 
-詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-side.md` を参照。
+詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
