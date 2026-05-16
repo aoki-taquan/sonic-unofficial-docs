@@ -184,6 +184,56 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## フィールド書込み順序と前提依存
+
+`BFD_SESSION_TABLE` (STATE_DB) は `bfdorch` が 2 つの異なる経路で書き込む。経路によって書込み順序と前提条件が異なる。
+
+### 経路 1: セッション作成時（`create_bfd_session()`）— 全フィールド一括書込み
+
+SAI セッション作成が **成功した後**に全フィールドをまとめて `m_stateBfdSessionTable.set()` する。`fvVector` への追加順序は以下の通り[^ord1]:
+
+| 順序 | フィールド | 追加箇所 |
+|-----|-----------|---------|
+| 1 | `type` | `bfdorch.cpp:418` |
+| 2 | `local_discriminator` | `bfdorch.cpp:424` |
+| 3 | `local_addr` | `bfdorch.cpp:445` |
+| 4 | `tx_interval` | `bfdorch.cpp:454` |
+| 5 | `rx_interval` | `bfdorch.cpp:459` |
+| 6 | `multiplier` | `bfdorch.cpp:464` |
+| 7 | `multihop` | `bfdorch.cpp:475 / 479` |
+| 8 | `state = "Down"` | `bfdorch.cpp:544`（**最後に追加**）|
+
+SAI create 呼出し（`bfdorch.cpp:547`）→ 成功確認（`bfdorch.cpp:554-562`）→ `m_stateBfdSessionTable.set(state_db_key, fvVector)`（`bfdorch.cpp:565`）の順。**SAI create が失敗した場合（3 回リトライ後も）は STATE_DB に一切書き込まれない。** 中間状態（フィールドが一部しかない状態）は外部から観測できない。
+
+### 経路 2: SAI 通知受信時（`doTask(NotificationConsumer&)`）— `state` のみ更新
+
+SAI `bfd_session_state_change` 通知を受信するたびに `m_stateBfdSessionTable.hset(key, "state", ...)` で `state` フィールド**のみ**を上書きする（`bfdorch.cpp:252`）。他のフィールドは変更されない。
+
+前提条件: `bfd_session_lookup[bfd_session_id]` が登録済み（= 経路 1 が完了済み）であること。
+
+### 前提依存サマリ
+
+| 依存項目 | 対象経路 | 前提未解決時の挙動 |
+|---------|---------|----------------|
+| SAI BFD capability 登録（初回 SET 時に 1 回）| 全 hardware BFD | `register_bfd_state_change_notification()` 失敗 → STATE_DB 書込みなし (`bfdorch.cpp:307-313`) |
+| PORT 初期化（`alias != "default"` 経路）| hardware BFD, 出力インタフェース指定 | `gPortsOrch->getPort()` 失敗 → `return false` → 次イベントループで再試行 (`bfdorch.cpp:485-489`) |
+| VRF 登録（`vrf != "default"` 経路）| hardware BFD, 非デフォルト VRF | `VRFOrch::getVRFid()` 失敗 → SAI create 失敗 → handleSaiCreateStatus 再試行 (`bfdorch.cpp:537-540`) |
+| BgpGlobalStateOrch 先行起動 | software/hardware 経路選択 | 未起動の場合は `use_software_bfd=true` 固定 → `BFD_SOFTWARE_SESSION_TABLE` に転記（本テーブルには書かれない）(`bfdorch.cpp:114-121`) |
+
+### orchagent 再起動時のクリーンアップ
+
+orchagent 起動直後、コンストラクタ（`bfdorch.cpp:74-84`）が `BFD_SESSION_TABLE` の**全エントリを削除**してから通常処理を開始する。この瞬間、STATE_DB テーブルが一時的に空になるため、`vnetorch` 等の consumer が参照するタイミングによっては全セッションが Down 扱いになる。
+
+### TSA 操作時の書込み順序
+
+- **TSA enter**: `notify_session_state_down(key)` で内部 observer へ Down 通知（STATE_DB の `state` は**変更しない**）→ `remove_bfd_session()` で STATE_DB エントリを削除。外部から見ると「`state` フィールドが "Down" を経由せずエントリが消える」挙動になる（`bfdorch.cpp:692-693`）。
+- **TSA exit**: `bfd_session_cache`（`std::map` = キー辞書順）を走査して `create_bfd_session()` を再呼び出し。辞書順でセッションが順次 STATE_DB に再出現する（`bfdorch.cpp:697-703`）。
+
+[^ord1]: `sonic-swss/orchagent/bfdorch.cpp` (L418-565): `fvVector` へのフィールド追加順序および `m_stateBfdSessionTable.set()` 呼出し。<https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
