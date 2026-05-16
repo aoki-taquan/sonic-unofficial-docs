@@ -354,9 +354,9 @@ ipHelpersTable.pops(entries)
 
 ### 概要
 
-`DHCP_RELAY` テーブルの consumer (`dhcp6relay`) は **起動時に一度だけ** CONFIG_DB を読み込む設計であり、ランタイム中の変更は無視される。そのため SET/DEL の順序と、先行テーブルの存在有無が動作に直接影響する。
+`DHCP_RELAY` テーブルは **dhcp6relay** (DHCPv6) と **isc-dhcp-relay** / **dhcprelayd** (DHCPv4) の 2 系統の consumer を持つ。それぞれ起動タイミングと参照テーブルが異なり、書き込み順違反時の挙動も異なる。
 
-### 順序依存マトリクス
+### dhcp6relay (DHCPv6) — 順序依存マトリクス
 
 | フィールド / 操作 | 依存テーブル / 条件 | 順序制約 | 違反時の挙動 |
 |-----------------|-------------------|---------|------------|
@@ -368,22 +368,62 @@ ipHelpersTable.pops(entries)
 | `rfc6939_support` / `interface_id` | 起動時の `DEVICE_METADATA.subtype` / `-u` 引数 | サービス起動前に確定（boot 時）。変更は再起動が必要 | DualToR 環境では `-u Loopback0` 引数で `dual_tor_sock=true` → `interface_id` デフォルト `true`。非 DualToR はデフォルト `false` |
 | 全フィールド（boot 時） | STATE_DB `INTERFACE_TABLE\|<vlan>\|<prefix>\|state == ok` | `wait_for_intf.sh` が STATE_DB をポーリングし、インタフェース up 確認後さらに 10 秒待機してから dhcp6relay を起動 | VLAN インタフェースが STATE_DB に `ok` 状態で現れる前に dhcp_relay コンテナを起動しても dhcp6relay は起動しない |
 
+### isc-dhcp-relay (`dhcrelay`) (IPv4) — 順序依存マトリクス
+
+旧方式の IPv4 relay は `DHCP_RELAY` テーブルを使わず、**`VLAN[<vlan>].dhcp_servers`** フィールドを参照する。supervisord テンプレート (`dhcpv4-relay.agents.j2`) がコンテナ起動時に `isc-dhcpv4-relay-<vlan>` プログラムエントリを生成する。
+
+| 操作 / 依存 | 前提条件 | 順序制約 | 違反時の挙動 |
+|-----------|---------|---------|------------|
+| `isc-dhcpv4-relay-<vlan>` プロセス起動 | `VLAN_INTERFACE` に IPv4 prefix が存在する VLAN (`pfx_filter` で抽出) | `VLAN` + `VLAN_INTERFACE`（IPv4 prefix 付き）が設定済みでコンテナ再生成 | j2 テンプレートが該当 VLAN をスキップ。コンテナ再起動しても `isc-dhcpv4-relay-<vlan>` が supervisord に登録されない |
+| `VLAN[<vlan>].dhcp_servers` 設定 | `VLAN` エントリが存在し `dhcp_servers` フィールドに IPv4 アドレスが 1 件以上 | `VLAN` → `VLAN_INTERFACE`（IPv4）→ `VLAN.dhcp_servers` 設定 → コンテナ再起動 | `dhcp_servers` が空または `VLAN` が存在しなければ j2 テンプレートがプロセスエントリを生成しない |
+| upstream インタフェース (`-iu`) の決定 | `VLAN_INTERFACE`、`INTERFACE`、`PORTCHANNEL_INTERFACE` が設定済み | upstream IF 設定 → コンテナ起動 | `-iu` なしで起動すると relay reply を受信するインタフェースがなくなる |
+| DualToR: `-U Loopback0 -dt` オプション | `DEVICE_METADATA.localhost.subtype == "DualToR"` | subtype 設定 → コンテナ起動 | subtype 未設定では DualToR 用オプションが付かない |
+| PORT 監視 (`dhcpmon`) | `isc-dhcpv4-relay-<vlan>:running` (または `dhcp4relay:running`) が supervisord 上で running 状態 | `isc-dhcpv4-relay-<vlan>` 起動 (priority=3) → `dhcpmon-<vlan>` 起動 (priority=4) | `dhcpmon` は `dependent_startup_wait_for` で isc-dhcpv4-relay が running になるまで起動しない |
+
+### dhcprelayd (Python supervisor) — VLAN/PORT 動的監視
+
+`dhcprelayd` は supervisord priority=3 で `start:exited` 後に起動する Python デーモンで、`DHCP_SERVER_IPV4` が enabled のときに `dhcrelay` / `dhcpmon` プロセスの動的管理を担う。
+
+| 操作 / 依存 | 監視テーブル | 順序制約 | 挙動 |
+|-----------|-----------|---------|------|
+| `dhcrelay` プロセス起動 | `DHCP_SERVER_IPV4[<intf>].state == "enabled"` + `VLAN[<intf>]` が存在 | `VLAN` → `DHCP_SERVER_IPV4` (state=enabled) → `dhcprelayd` が `refresh_dhcrelay()` | VLAN が存在しない enabled インタフェースは `dhcp_interfaces` から除外されプロセスが起動しない（dhcprelayd.py:97-98） |
+| VLAN 変更検知 | `VlanTableEventChecker` (`VLAN` テーブル購読) | VLAN 追加/削除 → dhcprelayd が `refresh_dhcrelay(force_kill=False)` | VLAN エントリ変更で dhcrelay を非強制再起動。インタフェースセットが変わらなければ kill しない（dhcprelayd.py:159） |
+| VLAN_INTERFACE 変更検知 | `VlanIntfTableEventChecker` (`VLAN_INTERFACE` テーブル購読) | VLAN_INTERFACE 変更 → dhcprelayd が `refresh_dhcrelay(force_kill=True)` | VLAN_INTERFACE 変更は **force kill** で dhcrelay を再起動（dhcprelayd.py:156-158）。MidPlane 変更も同様 |
+| FEATURE.dhcp_server 切替 | `DhcpServerFeatureStateChecker` (`FEATURE` テーブル) | `dhcp_server.state` enabled/disabled 切替 → supervisord の relay プロセスを stop/start | disabled → enabled: supervisord の isc-dhcpv4-relay を stop し dhcprelayd が dhcrelay を管理。enabled → disabled: dhcrelay を kill して supervisord の isc-dhcpv4-relay を start（dhcprelayd.py:148-174） |
+| dhcprelayd 起動後の 5 秒待機 | — | `start()` 内で `time.sleep(5)` 後に処理開始 | supervisord が isc-dhcpv4-relay を起動するための猶予。VLAN/DHCP_SERVER_IPV4 を読む前に既存 dhcrelay が起動済みであることを保証（dhcprelayd.py:67） |
+
+### ブート時の supervisord 起動順 (全体)
+
+```
+priority=1: rsyslogd
+priority=2: start (wait_for_intf.sh) — STATE_DB INTERFACE_TABLE|<vlan>|state==ok ポーリング + sleep 10
+priority=3: dhcp6relay       (dependent_startup_wait_for=start:exited)
+            isc-dhcpv4-relay-<vlan>  (同上、DEVICE_METADATA.has_sonic_dhcpv4_relay==False の場合)
+            dhcprelayd       (同上、常時)
+priority=4: dhcpmon-<vlan>   (dependent_startup_wait_for=isc-dhcpv4-relay-<vlan>:running
+                               または dhcp4relay:running)
+```
+
+`wait_for_intf.sh.j2` は `VLAN_INTERFACE` に IPv4 prefix を持つ VLAN と `DHCP_RELAY` に IPv6 prefix を持つ VLAN を列挙し、全て STATE_DB で `ok` になるまでブロックする。`VLAN_INTERFACE` が空 (VLAN 未設定) の場合、ポーリング対象なし → 即座に exited → dhcp6relay/isc-dhcpv4-relay が設定なしで起動する。
+
 ### Evidence
 
-- `config_interface.cpp:63-79` — `get_dhcp` が `dynamic=true` 時に変更を無視して警告ログを出すコードパス
+- `config_interface.cpp:63-79` — dhcp6relay `get_dhcp` が `dynamic=true` 時に変更を無視して警告ログを出すコードパス
 - `config_interface.cpp:117-121` — `dual_tor_sock` による `interface_id_default` 切り替え
 - `config_interface.cpp:130-143` — `VLAN_INTERFACE|<vlan>|*` キー存在チェック + IPv6 アドレス確認
-- `config_interface.cpp:145-148` — `has_ipv6_address == false` 時のスキップ
 - `config_interface.cpp:160-165` — `dhcpv6_servers` の順序付き push_back（`ordered-by user` 反映）
 - `config_interface.cpp:176-179` — `servers.empty()` 時のスキップ
 - `dhcp_relay.py:51-61` — `restart_dhcp_relay_service`: add/del 後に `systemctl stop/reset-failed/start dhcp_relay` を自動実行
-- `dhcp_relay.py:155-162` — `del_dhcp_relay`: servers が空になると `set_entry(None)` でエントリ全削除 (DEL 伝播)
 - `wait_for_intf.sh.j2:12-19` — STATE_DB `INTERFACE_TABLE|<intf>|<prefix>|state` ポーリング
 - `wait_for_intf.sh.j2:49-52` — `sleep 10` (インタフェース ready 後の追加待機)
-- `docker-dhcp-relay.supervisord.conf.j2:33-44` — `start` (priority=2) → `dhcp6relay` (priority=3, `dependent_startup_wait_for=start:exited`)
-- `dhcpv6-relay.agents.j2:2-10` — `DHCP_RELAY[vlan_name]['dhcpv6_servers']|length > 0` で dhcp6relay プログラムエントリ生成を制御
+- `docker-dhcp-relay.supervisord.conf.j2:47-102` — 全 program エントリ、priority, dependent_startup_wait_for
+- `dhcpv4-relay.agents.j2:2-45` — `isc-dhcpv4-relay-<vlan>` 生成条件 (`VLAN.dhcp_servers|length > 0`, `VLAN_INTERFACE|pfx_filter`)
+- `dhcp-relay.monitors.j2:52-56` — `dhcpmon` が `isc-dhcpv4-relay-<vlan>:running` または `dhcp4relay:running` を待機
+- `dhcprelayd.py:67` — `time.sleep(5)` dhcrelay 起動待機
+- `dhcprelayd.py:94-113` — `refresh_dhcrelay`: VLAN / DHCP_SERVER_IPV4 / VLAN_INTERFACE 依存関係チェック
+- `dhcprelayd.py:148-174` — FEATURE.dhcp_server 切替時の stop/start シーケンス
 
-### LSP トレース証跡
+### LSP トレース証跡 (dhcp6relay)
 
 ```
 main.cpp:37          initialize_swss(vlans)
@@ -598,5 +638,66 @@ DualToR 環境でのみ、クライアントパケット受信時に `STATE_DB::
 
 なし。`dhcp6relay` は Linux カーネルの L4 UDP relay であり SAI/ASIC に一切触れない。
 <!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差 (Task F Phase H)
+
+> **調査根拠**: `dhcprelayd.py`, `utils.py`, `dhcp_db_monitor.py`, `dhcpv4-relay.agents.j2`, `dhcpv6-relay.agents.j2`, `docker-dhcp-relay.supervisord.conf.j2` 全行精読 (2026-05-16)
+
+### 1. SmartSwitch DPU — mid-plane bridge 対応
+
+`DEVICE_METADATA.localhost.subtype == "SmartSwitch"` の場合、`dhcprelayd` は `VLAN` テーブルに加え `MID_PLANE_BRIDGE` テーブルも監視し、DPU 向けの IPv4 DHCP リレーを有効化する。
+
+| 項目 | 通常スイッチ | SmartSwitch (DPU) |
+|------|------------|-------------------|
+| リレー対象インタフェース | VLAN テーブルのみ | VLAN + `MID_PLANE_BRIDGE.GLOBAL.bridge`（例: `bridge-midplane`） |
+| イベント監視 | `VlanTableEventChecker` / `VlanIntfTableEventChecker` | 上記に加え `MidPlaneTableEventChecker` を動的有効化 |
+| dhcp_server 無効化時 | VLAN 系 checker を解除 | `MID_PLANE_CHECKER` も解除対象に追加 |
+| DPU への IP 割当 | N/A | `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|dpu0` 等で個別 IP を割当 |
+
+`DHCP_RELAY` テーブル（DHCPv6 設定）自体は引き続き VLAN ベースで動作し、mid-plane bridge 経路とは独立している。
+
+`dhcprelayd.py:97-103`, `utils.py:153-161`。
+
+### 2. DualToR — `interface_id` デフォルト差
+
+`DEVICE_METADATA.localhost.subtype == "DualToR"` の場合、`dhcpv6-relay.agents.j2` が `dhcp6relay` に `-u Loopback0` オプションを追加し、`dual_tor_sock` フラグが立つ。これにより `interface_id` のハードコードデフォルトが変化する。
+
+| 環境 | `dhcp6relay` 起動オプション | `interface_id` デフォルト |
+|------|--------------------------|--------------------------|
+| 通常スイッチ | `-u` オプションなし | `false`（Interface-ID 挿入なし） |
+| DualToR | `-u Loopback0` 付き | `true`（Interface-ID オプション自動挿入） |
+
+さらに DualToR 環境では `STATE_DB::HW_MUX_CABLE_TABLE|<port>` の `state == "standby"` ポートからのパケットをリレーしない制御が追加される (`relay.cpp:915`)。
+
+DHCPv4 側の DualToR オプションは `-U Loopback0 -dt`（大文字 U + `-dt` フラグ）で、DHCPv6 の `-u Loopback0`（小文字 u）と異なる点に注意。
+
+`dhcpv6-relay.agents.j2:9-12`, `config_interface.cpp:117-122`。
+
+### 3. IPv4 vs IPv6 relay の実装差
+
+DHCPv4 と DHCPv6 では relay の設定テーブル・プロセス・ランタイム変更可否がすべて異なる。
+
+| 比較項目 | DHCPv4 relay | DHCPv6 relay |
+|---------|-------------|-------------|
+| 設定テーブル | `VLAN.dhcp_servers`（旧）または `DHCP_SERVER_IPV4`（新） | `DHCP_RELAY` テーブル専用 |
+| プロセス | `dhcrelay`（ISC DHCP）または `dhcp4relay`（SONiC 独自） | `dhcp6relay`（SONiC 独自）|
+| 切替フラグ | `DEVICE_METADATA.localhost.has_sonic_dhcpv4_relay == "True"` で新旧切替 | 切替なし |
+| ランタイム変更 | `dhcprelayd` が kill + 再起動で反映 | dead consumer — コンテナ再起動が必要 |
+| deployment_id 分岐 | `deployment_id == "8"` 時に `-si` オプション追加 | deployment_id 依存なし |
+
+`has_sonic_dhcpv4_relay == "True"` 環境では `dhcprelayd` が DHCP_SERVER_IPV4 テーブルを動的に読んで dhcrelay を管理し、ランタイム設定変更に対応できる。`"False"` 環境では従来の ISC `dhcrelay` を supervisord が VLAN ごとに静的起動する。
+
+`docker-dhcp-relay.supervisord.conf.j2:29-46`, `dhcprelayd.py:112`。
+
+### まとめ
+
+| 差分軸 | 影響フィールド / 挙動 | 検出方法 | ソース |
+|--------|---------------------|----------|--------|
+| SmartSwitch DPU | mid-plane bridge がリレー対象に追加、MidPlaneTableEventChecker 有効化 | `DEVICE_METADATA.subtype == "SmartSwitch"` | `dhcprelayd.py:65,102`, `utils.py:161` |
+| DualToR (DHCPv6) | `interface_id` デフォルト `true`、standby ポートのリレー無効 | `DEVICE_METADATA.subtype == "DualToR"` | `dhcpv6-relay.agents.j2:9-12`, `config_interface.cpp:121` |
+| `has_sonic_dhcpv4_relay` | DHCPv4 relay が ISC dhcrelay か SONiC dhcp4relay か切替 | `DEVICE_METADATA.localhost.has_sonic_dhcpv4_relay` | `supervisord.conf.j2:29-46`, `dhcprelayd.py:112` |
+| IPv4 vs IPv6 | relay プロセス・テーブル・ランタイム変更可否が異なる | プロトコル種別 | `dhcpv4-relay.agents.j2`, `dhcpv6-relay.agents.j2` |
+<!-- /platform -->
 
 <!-- glossary-links-injected: 11715e560dc6 -->
