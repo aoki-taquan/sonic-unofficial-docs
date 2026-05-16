@@ -252,6 +252,53 @@ db_migrator.py での ROUTE_MAP マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- side-effects -->
+## 副次 DB 書込・外部副作用 (Phase F)
+
+### FRR vtysh コマンド発行 (bgpcfgd)
+
+`managers_rm.py` の `RouteMapMgr` は `cfg_mgr.push_list()` → `ConfigMgr.commit()` → `vtysh -f <tmpfile>` で FRR bgpd へ設定を書込む[^3]。
+
+| イベント | vtysh コマンド | 対象デーモン |
+|---|---|---|
+| set (FROM_SDN_SLB/APPLIANCE_ROUTES) | `route-map <NAME>_RM permit 100` | bgpd |
+| set | `set as-path prepend <asn> <asn>` | bgpd |
+| set | `set community <community_id>` | bgpd |
+| set | `set origin incomplete` | bgpd |
+| del | `no route-map <NAME>_RM permit 100` | bgpd |
+
+### FRR vtysh コマンド発行 (frrcfgd)
+
+`frrcfgd.py` は `ROUTE_MAP` テーブルを `['zebra', 'bgpd', 'ospfd']` の各デーモンに対して反映する[^4]。
+
+| イベント | vtysh コマンド | 対象デーモン |
+|---|---|---|
+| set (`route_operation=permit`) | `route-map <name> permit <seq>` | zebra, bgpd, ospfd |
+| set (`route_operation=deny`) | `route-map <name> deny <seq>` | zebra, bgpd, ospfd |
+| set (match_*/set_* フィールド) | 各 `match`/`set` サブコマンド | zebra, bgpd, ospfd |
+| del | `no route-map <name> <action> <seq>` | zebra, bgpd, ospfd |
+
+### kernel route 経路への影響
+
+route-map は FRR の BGP/OSPF/zebra ルーティングポリシーとして機能する。`set local-preference` / `set next-hop` 等の変更がルート選択に影響し、zebra が kernel RIB (`ip route`) を更新する。BGP ピアへの影響は次の UPDATE/KEEPALIVE 以降。
+
+### 副次書込まとめ
+
+| 副次先 | 操作 | 内容 | evidence |
+|---|---|---|---|
+| FRR bgpd (vtysh) | configure | `route-map <NAME>_RM permit 100` + AS-path/community/origin set | `managers_rm.py:87-98`[^3] |
+| FRR bgpd (vtysh) | delete | `no route-map <NAME>_RM permit 100` | `managers_rm.py:41-44`[^3] |
+| FRR zebra/bgpd/ospfd (vtysh) | configure | `route-map <name> permit/deny <seq>` + match/set サブコマンド | `frrcfgd.py:3118-3126`[^4] |
+| FRR zebra/bgpd/ospfd (vtysh) | delete | `no route-map <name> <action> <seq>` | `frrcfgd.py:3143-3148`[^4] |
+| kernel RIB (`ip route`) | 間接変更 | zebra が FRR RIB 変化を kernel に反映 | FRR zebra 標準動作 |
+| STATE_DB | なし | — | スキャン 0 件 |
+| APPL_DB | なし | — | スキャン 0 件 |
+
+<!-- /side-effects -->
+
+[^3]: bgpcfgd RouteMapMgr set/del 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py>
+[^4]: frrcfgd ROUTE_MAP handler 実装: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py>
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
