@@ -489,4 +489,21 @@ FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドリテラル、�
 
 <!-- /constants -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Task F Phase C)
+
+`frrcfgd` の `BGP_GLOBALS_AF_NETWORK` ハンドラが直接・間接に参照する他テーブルの一覧。
+
+| 参照先テーブル | 必須度 | 参照箇所 | 用途 / 違反時挙動 |
+|---|---|---|---|
+| `BGP_GLOBALS` | **必須**（先行） | `frrcfgd.py:2659, 2175` | `local_asn` 取得。不在時は `LOG_DEBUG` で silent drop。`__apply_dep_vrf_table` の再適用対象外のため自動復旧なし |
+| `BGP_GLOBALS_AF` | 推奨（先行） | `frrcfgd.py:2297, 2771` | AF コンテキストを FRR 側で先行確立。`table_handler_list` 登録順で起動時は保証されるが runtime は非保証 |
+| `ROUTE_MAP` | 推奨（`policy` 参照時） | `frrcfgd.py:2113, 922-924` | `policy` フィールドで route-map 名を参照。未存在の場合 frrcfgd は検証せず FRR に投入 → FRR は permit-any として全プレフィックスを広告（意図しない漏洩リスク） |
+| `DEVICE_METADATA` | 前提フラグ | `frrcfgd.py:2162-2168` | 起動時に `frr_mgmt_framework_config` / `docker_routing_config_mode` を読み取る。`frr_mgmt_framework_config` が未設定または `false` の環境ではハンドラ自体が有効化されない |
+
+> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/bgp-globals-af-network-cross-refs.md`
+
+<!-- evidence: frrcfgd.py:99,2107,2113,2136-2140,2162-2168,2297,2318,2659,2771,922-924,3169-3186 -->
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: fcbe746ecf8b -->
