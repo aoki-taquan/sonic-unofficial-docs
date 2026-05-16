@@ -368,4 +368,43 @@ Broadcom・その他ベンダーでは vendor 固有の条件分岐なし。テ�
 **結論**: VOQ Chassis において BUFFER_PORT_EGRESS_PROFILE_LIST の挙動は標準スイッチと同一。`doTask(Consumer &)` 内の `isInitDone()` 使用による処理開始タイミングの早期化のみが間接的に関係する（`bufferorch.cpp:2079-2094`）。
 <!-- /platform -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`BUFFER_PORT_EGRESS_PROFILE_LIST` のキーおよびフィールドは YANG 上では leafref として宣言されているが、
+`buffermgrdyn.cpp` と `bufferorch.cpp` のランタイム処理においてもコードレベルの暗黙参照が存在する。
+YANG leafref が静的 validation を提供するのに対し、以下の参照はランタイムに動的解決される。
+
+| 参照元フィールド | 参照先テーブル | 参照先キー形式 | 参照タイミング | 未解決時の挙動 | evidence |
+|---|---|---|---|---|---|
+| `profile_list` (各プロファイル名) | `BUFFER_PROFILE` | `BUFFER_PROFILE\|<name>` | `buffermgrdyn.cpp:checkBufferProfileDirection` — SET 時に `m_bufferProfileLookup` で検索 | `task_need_retry`（到着後に自動再処理） | `buffermgrdyn.cpp:3281-3286` |
+| `profile_list` (各プロファイル名) | `BUFFER_PROFILE` | `APPL_DB: BUFFER_PROFILE_TABLE:<name>` | `bufferorch.cpp:processEgressBufferProfileList` — `resolveFieldRefArray` で SAI OID 解決 | `task_need_retry`（自動リトライ） | `bufferorch.cpp:1870-1879` |
+| キー `<port>` | `PORT` | `PORT\|<port_name>` | `bufferorch.cpp:processEgressBufferProfileList` — `gPortsOrch->getPort(port_name, port)` | `task_invalid_entry`（**リトライなし**、エントリ破棄） | `bufferorch.cpp:1952-1956` |
+| `profile_list` → `BUFFER_PROFILE.pool_name` | `BUFFER_POOL` | `BUFFER_POOL\|<pool_name>` | `buffermgrdyn.cpp:handleSingleBufferPortProfileListEntry` — `m_bufferPoolReady` フラグで pool 準備状態を確認 | `m_bufferObjectsPending=true` を立てて `task_success` 返却（APPL_DB への書き込みを保留） | `buffermgrdyn.cpp:3408-3415` |
+
+### 参照の詳細
+
+#### BUFFER_PROFILE への暗黙参照（2 段階）
+
+1. **buffermgrd 段（dynamic model）**: `checkBufferProfileDirection` が `profile_list` の各プロファイル名を `m_bufferProfileLookup` で検索する。存在しない場合は `task_need_retry` を返して保留する。存在する場合は方向（`BUFFER_EGRESS`）を検証し、ingress 方向プロファイルが egress list に指定された場合は `task_failed` を返す (`buffermgrdyn.cpp:3289-3296`)。
+
+2. **orchagent 段**: `resolveFieldRefArray` が `buffer_profile_list_field_name` をキーに `m_buffer_type_maps[APP_BUFFER_PROFILE_TABLE_NAME]` を検索し、各プロファイルの SAI OID を解決する。未登録の場合 `ref_resolve_status::not_resolved` となり `task_need_retry` を返す (`bufferorch.cpp:1873-1879`)。
+
+#### PORT への暗黙参照
+
+`bufferorch.cpp:processEgressBufferProfileList` はキーのポート名を `gPortsOrch->getPort(port_name, port)` で解決する。PortsOrch のポートマップに存在しない場合は `task_invalid_entry` を返し、エントリが**永続的に破棄**される（retry なし）。PORT テーブルが先に存在している必要がある (`bufferorch.cpp:1952-1956`)。
+
+#### BUFFER_POOL への間接参照
+
+`buffermgrdyn.cpp:handleSingleBufferPortProfileListEntry` は `m_bufferPoolReady` フラグを確認する。`BUFFER_POOL` が未準備（buffer pool が APPL_DB に反映されていない）の場合、エントリを APPL_DB に書き込まず `m_bufferObjectsPending=true` を立てて `task_success` を返す。pool 準備完了後にペンディングオブジェクトが一括再処理される (`buffermgrdyn.cpp:3408-3415`)。
+
+### YANG leafref との対比
+
+| 参照 | YANG leafref | コードレベル参照 | 差異 |
+|---|---|---|---|
+| `BUFFER_PROFILE` | あり (`sonic-buffer-port-egress-profile-list.yang`) | あり（2 段階: buffermgrd + orchagent） | YANG は静的 validation、コードは方向・trim 制約を追加検証 |
+| `PORT` | あり（key の leafref） | あり（`gPortsOrch->getPort()`） | YANG: validate 時点、コード: ランタイム解決（未解決でエントリ破棄） |
+| `BUFFER_POOL` | 直接なし（BUFFER_PROFILE 経由） | あり（`m_bufferPoolReady` フラグ） | コードのみで存在する間接依存 |
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 5ad0ecc20ddb -->
