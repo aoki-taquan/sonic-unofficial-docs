@@ -452,4 +452,58 @@ DIP トンネル（動的 EVPN remote）が残存している間は SIP トン�
 
 <!-- /ordering -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp; sonic-swss/cfgmgr/vxlanmgr.cpp -->
+
+### APPL_DB — APP_VXLAN_TUNNEL_TABLE
+
+| 操作 | トリガ | 書込経路 |
+|------|-------|---------|
+| SET | CONFIG_DB に `VXLAN_TUNNEL` エントリが作成される | `vxlanmgrd` の `doVxlanTunnelCreateTask()` が `m_appVxlanTunnelTable.set(name, fvs)` を呼ぶ (`vxlanmgr.cpp:432`) |
+| DEL | CONFIG_DB から `VXLAN_TUNNEL` エントリが削除され NVO / MAP 参照がゼロになる | `doVxlanTunnelDeleteTask()` が `m_appVxlanTunnelTable.del(name)` を呼ぶ (`vxlanmgr.cpp:463`) |
+
+書き込まれるフィールド: CONFIG_DB フィールドをそのまま転送 (`kfvFieldsValues(t)` を渡す)。
+
+### STATE_DB — STATE_VXLAN_TUNNEL_TABLE
+
+| 操作 | トリガ | 書込フィールド |
+|------|-------|--------------|
+| SET (初回登録) | `VxlanTunnelOrch` が SAI トンネル生成直後 `addRemoveStateTableEntry(add=true)` | `src_ip`, `dst_ip`, `tnl_src`(`CLI`\|`EVPN`), `operstatus=down` (`vxlanorch.cpp:1930–1943`) |
+| SET (oper 更新) | SAI port oper status 変化イベント `updateDbTunnelOperStatus()` | `operstatus=up`\|`down` (`vxlanorch.cpp:1910`) |
+| DEL | `addRemoveStateTableEntry(add=false)` — トンネル削除時 | — (`vxlanorch.cpp:1953`) |
+
+!!! note "ウォームブート例外"
+    `WarmStart::INITIALIZED` 状態かつ既に STATE_DB にエントリが存在する場合は SET をスキップし既存エントリを保持する (`vxlanorch.cpp:1927-1948`)。
+
+### ASIC_DB — SAI tunnel オブジェクト (syncd 経由)
+
+| SAI API 呼び出し | 生成オブジェクト |
+|----------------|--------------|
+| `sai_tunnel_api->create_tunnel()` | `SAI_OBJECT_TYPE_TUNNEL` (VXLAN) (`vxlanorch.cpp:397`) |
+| `sai_tunnel_api->create_tunnel_term_table_entry()` | `SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` (`vxlanorch.cpp:482`) |
+| `sai_tunnel_api->create_tunnel_map()` | `SAI_OBJECT_TYPE_TUNNEL_MAP` (VNI↔VLAN 等) (`vxlanorch.cpp:141`) |
+| `sai_tunnel_api->create_tunnel_map_entry()` | `SAI_OBJECT_TYPE_TUNNEL_MAP_ENTRY` (`vxlanorch.cpp:211`) |
+
+主な SAI 属性: `SAI_TUNNEL_ATTR_TYPE=SAI_TUNNEL_TYPE_VXLAN`、`SAI_TUNNEL_ATTR_PEER_MODE=P2P/P2MP`、`SAI_TUNNEL_ATTR_ENCAP_SRC_IP`、`SAI_TUNNEL_ATTR_DECAP_TTL_MODE`(ttl_mode 指定時のみ)。
+
+### カーネル netlink — VXLAN netdevice
+
+`vxlanmgrd` が SAI 経由ではなく `ip` / `bridge` コマンドでカーネル netlink を直接操作する。
+
+| netlink 操作 | コマンド例 |
+|-------------|---------|
+| VXLAN netdevice 作成 | `ip link add <name> type vxlan id <vni> local <src_ip> dstport 4789 nolearning` (`vxlanmgr.cpp:56`) |
+| FDB learning 無効化 | `bridge link set dev <vxlan> learning off` — EVPN NVO 登録後 (`vxlanmgr.cpp:146`) |
+| VXLAN netdevice 削除 | `ip link del dev <name>` (`vxlanmgr.cpp:135`) |
+
+`dstport 4789` と `nolearning` フラグは設定フィールドなしでハードコード付与される。
+
+### COUNTERS_DB — COUNTERS_TUNNEL_NAME_MAP / COUNTERS_TUNNEL_TYPE_MAP
+
+SAI OID が VIDTORID に登録された後、`VxlanTunnelOrch::doTask(timer)` が非同期で `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` に SAI OID を登録する (`vxlanorch.cpp:1328-1329`)。削除時は `hdel()` で除去 (`vxlanorch.cpp:1365-1366`)。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 7e2e79cf3524 -->
