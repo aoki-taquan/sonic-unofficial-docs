@@ -417,3 +417,58 @@ policer 名は `_<interface_name>_<storm_type>` 形式で自動生成される�
 証跡: `policerorch.cpp:145-146` (policer 命名), `policerorch.cpp:204-218` (storm_type 分岐)
 
 <!-- /ordering -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-failure.md -->
+<!-- source: sonic-swss/orchagent/policerorch.cpp — handlePortStormControlTable() -->
+
+### PORT 未解決 → silent drop
+
+`gPortsOrch->getPort(interface_name, port)` が false を返した場合、orchagent は `SWSS_LOG_ERROR "Failed to apply storm-control %s to port %s. Port not found"` を出力したうえで **`task_success` を返す**。  
+`task_success` はエントリを erase するため、エントリは**リトライなしで永久に消える**（silent drop）。起動直後のレース等で PORT オブジェクトが未初期化の場合に発生しうる。
+
+証跡: `policerorch.cpp:139-143`
+
+### 非 Ethernet インタフェース → silent drop
+
+インタフェース名が `"Ethernet"` プレフィックスを持たない場合（LAG / VLAN / PortChannel 等）、`SWSS_LOG_ERROR "%s: Unsupported / Invalid interface %s"` を出力して **`task_success` を返す**。  
+同様に erase → silent drop（リトライなし）。YANG leafref は物理ポートのみ許可するが、直接 DB 書き込み時は到達しうる。
+
+証跡: `policerorch.cpp:131-137`
+
+### storm_type 不正 → task_failed (エントリ消去)
+
+キーの第 2 トークンが `broadcast` / `unknown-unicast` / `unknown-multicast` 以外の場合、SET / DEL 両パスで `SWSS_LOG_ERROR "Unknown storm_type %s"` を出力して **`task_failed` を返す**。  
+`task_failed` もエントリを erase するため、リトライなし。通常の CLI 経由では YANG が事前拒否するが、直接 DB 書き込みでは発生する。
+
+証跡: `policerorch.cpp:218-219` (SET), `policerorch.cpp:338-339` (DEL)
+
+### SAI policer create 失敗
+
+`sai_policer_api->create_policer()` が `SAI_STATUS_SUCCESS` 以外を返した場合、`SWSS_LOG_ERROR "Failed to create policer %s, rv:%d"` を出力。`handleSaiCreateStatus` の判定が `task_need_retry` なら **リトライ**、それ以外はエラーログのみでフォールスルーし port への attach を試みる。
+
+証跡: `policerorch.cpp:228-235`
+
+### SAI set_port_attribute 失敗 → policer rollback + task_need_retry
+
+`sai_port_api->set_port_attribute()` (policer attach) が失敗した場合、直前に作成した policer を `remove_policer()` でロールバックしてから **`task_need_retry` を返す**。  
+rollback の `remove_policer` 自体が失敗した場合もログのみ（`SWSS_LOG_ERROR "Failed to remove policer %s, rv:%d"`）で続行する（エラー抑制）。  
+`m_syncdPolicers` および `m_policerRefCounts` から該当エントリを erase してリトライ待ち状態に入る。
+
+証跡: `policerorch.cpp:292-312`
+
+### SAI set_policer_attribute 失敗 (update パス)
+
+既存 policer の CIR 更新（`set_policer_attribute`）が失敗した場合、`SWSS_LOG_ERROR "Failed to update policer %s attribute, rv:%d"` を出力。`handleSaiSetStatus` が `task_need_retry` を返せばリトライ。
+
+証跡: `policerorch.cpp:259-266`
+
+### SAI remove storm-control 失敗 (update 中間ステップ)
+
+update 時の remove-then-reapply フローで、一時解除の `set_port_attribute(SAI_NULL_OBJECT_ID)` が失敗した場合、`SWSS_LOG_ERROR "Failed to remove storm-control %s from port %s, rv:%d"` を出力。`handleSaiSetStatus` が `task_need_retry` ならリトライ。
+
+証跡: `policerorch.cpp:279-286`
+
+<!-- /failure -->
