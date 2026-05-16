@@ -368,6 +368,44 @@ ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装か
 | ACL_TABLE を DEL する前に ACL_RULE を DEL | **推奨**（必須ではない） | `removeAclTable()` が暗黙に全ルールを SAI から削除するが CONFIG_DB の ACL_RULE エントリは残存するため、再起動時に再投入される | `aclorch.cpp:4849-4857` |
 | SAI リソース枯渇時: 既存ルール DEL → retry 自動発火 | 自動 | ルール DEL 成功時に `notifyRetry()` が同テーブルの待機キャッシュを再処理 | `aclorch.cpp:5716-5720` |
 
+### PRIORITY 値の比較順序
+
+SAI はルールを PRIORITY 値の**数値降順**で評価する（高い値 = 高い優先度）。
+
+- `AclOrch` 初期化時に `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` / `SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY` を SAI に問い合わせて有効範囲を取得する (`aclorch.cpp:3689-3696`)。
+- `setPriority()` (`aclorch.cpp:1654-1662`) は範囲外の値を拒否（`SWSS_LOG_ERROR` + `return false`）し、rule は INACTIVE になる。
+- `acl_loader` は `PRIORITY = max_priority - sequence_id`（`max_priority=10000`）で降順割り当て; `acl_app.go` は `MAX_PRIORITY=65536` を基準とするため、同 sequence_id でも経路によって格納値が異なる点に注意。
+- `AclRule::update()` は `m_priority != updatedRule.m_priority` のとき `SAI_ACL_ENTRY_ATTR_PRIORITY` を `set_acl_entry_attribute()` で runtime 更新できる (`aclorch.cpp:1534-1547`)。更新は原子的に行われ、同テーブル内の他ルールの評価順序に影響する。
+
+### stage 別 action 適用順序
+
+ACL_TABLE の `stage` フィールド（`INGRESS` / `EGRESS`）が ACL_RULE で使用できる action を決定する。
+
+| stage | 使用可能 MIRROR action | 不可 |
+|---|---|---|
+| `INGRESS` | `MIRROR_INGRESS_ACTION`, `MIRROR_ACTION`（後方互換で INGRESS 扱い） | `MIRROR_EGRESS_ACTION` 単体は非推奨 |
+| `EGRESS` | `MIRROR_EGRESS_ACTION` | `MIRROR_INGRESS_ACTION` はテーブル種別・platform 依存 |
+
+- `MIRROR_ACTION`（旧フィールド）は後方互換のため `SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_INGRESS` にマッピングされる (`aclorch.cpp:2268-2271`)。EGRESS テーブルに対してこの旧フィールドを使うと意図しない INGRESS mirror になる。
+- `isActionSupported(stage, ...)` (`aclorch.cpp:1407-1409`) が stage × action の組み合わせを SAI capability に照らして検証するため、platform が対応していない stage-action 組み合わせは `validateAddAction()` で拒否される。
+- INGRESS テーブルに `MATCH_IN_PORTS`、EGRESS テーブルに `MATCH_OUT_PORT/OUT_PORTS` が利用可能（`stageMandatoryMatchFields` `aclorch.cpp:427-494`）。stage を誤ると match フィールドが SAI に反映されない。
+
+### SAI `acl_entry` 属性の設定順序
+
+`AclRule::create()` (`aclorch.cpp:1280-1344`) が `sai_acl_api->create_acl_entry()` に渡す属性リストの構築順序は以下のとおり固定されている。
+
+```
+1. SAI_ACL_ENTRY_ATTR_TABLE_ID   (所属テーブル OID)   ← 必須・先頭固定
+2. SAI_ACL_ENTRY_ATTR_PRIORITY   (PRIORITY 値)
+3. SAI_ACL_ENTRY_ATTR_ADMIN_STATE (= true 固定)
+4. SAI_ACL_ENTRY_ATTR_ACTION_COUNTER (カウンタ OID、存在時のみ)
+5. SAI_ACL_ENTRY_ATTR_FIELD_ACL_RANGE_TYPE (range object list、存在時のみ)
+6. m_matches の各 match フィールド (map イテレーション順)
+7. m_actions の各 action フィールド (map イテレーション順)
+```
+
+この順序は SAI API 仕様上は問わないが、`TABLE_ID` は SAI 実装によって先頭が必須とされるケースがある。アプリケーション側からは構築順序を意識する必要はなく、`AclOrch` が一括で渡す。
+
 ### warm-restart / cold-restart 影響
 
 - `AclOrch` は `onWarmBootEnd()` を**実装しない**（warm-restart 非対応）。orchagent 再起動（cold）で CONFIG_DB replay により自動再構築。
