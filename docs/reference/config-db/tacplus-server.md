@@ -341,4 +341,47 @@ hostcfgd は `sorted(..., key=lambda t: int(t['priority']))` でソートする�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/tacplus-server-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L354-398 L640-816 L2182, sonic-host-services/data/templates/common-auth-sonic.j2, sonic-host-services/data/templates/tacplus_nss.conf.j2, sonic-buildimage/src/sonic-config-engine/minigraph.py L2668 -->
+
+### 基本方針: プラットフォーム差なし
+
+`hostcfgd` の TACACS+ 処理は host-only な「Linux PAM / NSS 設定ファイル再生成」であり、ASIC 種別・multi-asic / chassis 構成・CPU アーキテクチャ (ARM/x86) に関わらず動作・適用範囲は同一。
+
+### multi-asic / VOQ chassis
+
+| 観点 | 挙動 |
+|------|------|
+| TACPLUS_SERVER の配置 | host CONFIG_DB (`namespace=""`) にのみ存在。`asicN` namespace には配置されない |
+| 各 host での動作 | line card / supervisor それぞれが独立に `hostcfgd` を起動し `/etc/pam.d/common-auth-sonic` および `/etc/tacplus_nss.conf` を各 host で生成 |
+| 集中管理機構 | なし。chassis 全体への一括配布はオペレータが各 line card 宛に `config tacacs add ...` を実行する運用が前提 |
+
+### SmartSwitch (DPU)
+
+`AaaCfg` は `DEVICE_METADATA.localhost.subtype` を参照しない。DPU は独立した SONiC インスタンスとして動作し、NPU 側 supervisor の TACACS+ 設定とは連動しない。DPU / NPU それぞれで `hostcfgd` が同一コードパスを実行する。
+
+### ARM / x86 アーキテクチャ差
+
+テンプレート (`common-auth-sonic.j2`、`tacplus_nss.conf.j2`) に CPU アーキテクチャ固有の分岐なし。`pam_tacplus.so` / `libnss_tacplus.so` は community SONiC の Debian パッケージとしてアーキテクチャ共通で提供される。
+
+### PAM 設定差 — 管理 VRF binding
+
+`TACPLUS_SERVER.vrf` に `mgmt` を設定すると `pam_tacplus.so` の `vrf=mgmt` パラメータが有効になり、Linux mgmt VRF 経由で TACACS+ サーバに接続する。
+
+| 条件 | 挙動 |
+|------|------|
+| `vrf=mgmt` かつ `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` | mgmt VRF ルーティングで正常接続 |
+| `vrf=mgmt` かつ mgmt VRF 未有効化 | mgmt VRF ルーティングテーブルが存在せず接続失敗 → 認証失敗 (silent) |
+| `vrf` 未設定 | デフォルト VRF で接続。mgmt VRF 有無に関わらず機能する |
+
+`AaaCfg` は `MGMT_VRF_CONFIG.mgmtVrfEnabled` を直接参照しないため、VRF 状態の不整合はログなしで認証失敗として現れる。
+
+### minigraph からの初期投入
+
+`minigraph.py` (L2668) は MetadataDeclaration の TACACS サーバ IP リストを `TACPLUS_SERVER = { ip: {'priority': '1', 'tcp_port': '49'} }` として投入する。chassis 構成 (`parse_chassis_meta()`) でも同等の処理が行われ、プラットフォーム型による分岐はない。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: e0332a023fdb -->
