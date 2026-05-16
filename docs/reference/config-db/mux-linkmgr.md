@@ -313,3 +313,79 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 > - `oscillation_enabled` / `kill_radv` の 2 フィールドは DualToR 全体の動作モードを制御するが、参照する他テーブルはない。変更の反映は linkmgrd 内部ステートのみ。
 
 <!-- /cross-refs -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB Subscribe 経路
+
+`linkmgrd` (`docker-mux` 内) は `DbInterface::handleSwssNotification()` スレッドで `swss::SubscriberStateTable` を使って CONFIG_DB を購読する。
+
+```
+CONFIG_DB
+  └─ MUX_LINKMGR (CFG_MUX_LINKMGR_TABLE_NAME)
+       ↓ swss::SubscriberStateTable (configDbMuxLinkmgrTable)
+       ↓ swss::Select::select() ループ
+       ↓ DbInterface::handleMuxLinkmgrConfigNotifiction()
+       ↓ DbInterface::processMuxLinkmgrConfigNotifiction()
+            ├─ LINK_PROBER キー → MuxManager::setTimeoutIpv4_msec() 等
+            ├─ MUXLOGGER キー  → MuxManager::updateLogVerbosity()
+            └─ TIMED_OSCILLATION キー → MuxManager::setOscillationEnabled() / setOscillationInterval_sec()
+```
+
+| 購読テーブル | DB | SwSS クラス | ハンドラ | 処理先 |
+|---|---|---|---|---|
+| `CFG_MUX_LINKMGR_TABLE_NAME` (= `MUX_LINKMGR`) | CONFIG_DB | `SubscriberStateTable` | `handleMuxLinkmgrConfigNotifiction()` | `processMuxLinkmgrConfigNotifiction()` |
+| `CFG_MUX_CABLE_TABLE_NAME` (= `MUX_CABLE`) | CONFIG_DB | `SubscriberStateTable` | `handleMuxPortConfigNotifiction()` | `processMuxPortConfigNotifiction()` |
+| `STATE_MUX_CABLE_TABLE_NAME` | STATE_DB | `SubscriberStateTable` | `handleMuxStateNotifiction()` | `processMuxStateNotifiction()` (orchagent 更新受信) |
+
+> **証跡**: `sonic-linkmgrd/src/DbInterface.cpp:1820` — `swss::SubscriberStateTable configDbMuxLinkmgrTable(configDbPtr.get(), CFG_MUX_LINKMGR_TABLE_NAME);`
+> **選択ループ**: `DbInterface.cpp:1887-1888` — `if (selectable == &configDbMuxLinkmgrTable) { handleMuxLinkmgrConfigNotifiction(...); }`
+
+### xcvrd 経路
+
+`linkmgrd` は MUX 状態確認が必要な場合に `xcvrd` (transceiver daemon) へコマンドを送出し、応答を APP_DB 経由で受信する。
+
+```
+linkmgrd
+  ↓ DbInterface::probeMuxState(portName)
+  ↓ handleProbeMuxState() — APPL_DB::APP_MUX_CABLE_COMMAND_TABLE_NAME に {"command": "probe"} を書込
+       ↓
+     xcvrd (platform-daemons) が APP_MUX_CABLE_COMMAND を監視
+     → I2C 経由で MUX チップの物理状態を読取
+     → APP_MUX_CABLE_RESPONSE_TABLE_NAME に {"response": "active"|"standby"} を書戻
+       ↓
+linkmgrd SubscriberStateTable (appDbMuxResponseTable)
+  ↓ handleMuxResponseNotifiction()
+  ↓ processMuxResponseNotifiction()
+  ↓ MuxManager::processProbeMuxState(port, v)
+```
+
+gRPC 経由の転送状態確認 (Active-Active モード):
+
+```
+linkmgrd
+  ↓ DbInterface::probeForwardingState(portName)
+  ↓ handleProbeForwardingState() — APPL_DB::APP_FORWARDING_STATE_COMMAND_TABLE_NAME に {"command": "probe"} を書込
+       ↓
+     xcvrd が gRPC で NIC/SoC の転送状態を確認
+     → APP_FORWARDING_STATE_RESPONSE_TABLE_NAME に {"response": "...", "response_peer": "..."} を書戻
+       ↓
+linkmgrd SubscriberStateTable (appDbForwardingResponseTable)
+  ↓ handleForwardingResponseNotification()
+  ↓ processForwardingResponseNotification()
+  ↓ MuxManager::processProbeMuxState() / processPeerMuxState()
+```
+
+| 方向 | テーブル | DB | 役割 |
+|---|---|---|---|
+| linkmgrd → xcvrd | `APP_MUX_CABLE_COMMAND_TABLE_NAME` | APPL_DB | MUX 状態確認コマンド (I2C) |
+| xcvrd → linkmgrd | `APP_MUX_CABLE_RESPONSE_TABLE_NAME` | APPL_DB | MUX 状態確認応答 |
+| linkmgrd → xcvrd | `APP_FORWARDING_STATE_COMMAND_TABLE_NAME` | APPL_DB | 転送状態確認コマンド (gRPC) |
+| xcvrd → linkmgrd | `APP_FORWARDING_STATE_RESPONSE_TABLE_NAME` | APPL_DB | 転送状態確認応答 |
+
+> **証跡**: `DbInterface.cpp:439-443` — `mAppDbMuxCommandTablePtr->hset(portName, "command", "probe");`
+> **証跡**: `DbInterface.cpp:449-455` — `mAppDbForwardingCommandTablePtr->hset(portName, "command", "probe");`
+> **証跡**: `DbInterface.cpp:1829` — `swss::SubscriberStateTable appDbMuxResponseTable(appDbPtr.get(), APP_MUX_CABLE_RESPONSE_TABLE_NAME);`
+
+<!-- /pubsub -->
