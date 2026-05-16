@@ -13,6 +13,9 @@ sources:
     path: common/schema.h
     ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
   - repo: sonic-net/sonic-swss
+    path: cfgmgr/intfmgrd.cpp
+    ref: master
+  - repo: sonic-net/sonic-swss
     path: cfgmgr/intfmgr.cpp
     ref: master
   - repo: sonic-net/sonic-swss
@@ -530,6 +533,67 @@ SAI sub-port の属性として `SAI_ROUTER_INTERFACE_ATTR_PORT_ID`（親ポー�
 
 <!-- /failure-behavior -->
 
+<!-- platform-diff -->
+## プラットフォーム差異 (Phase H)
+
+VLAN_SUB_INTERFACE の実挙動はプラットフォームタイプによって以下の点で異なる。
+
+### VOQ Chassis / system_port
+
+VOQ (Virtual Output Queue) chassis 構成では `DEVICE_METADATA|localhost` の `switch_type` フィールドが `"voq"` に設定される。この場合 `intfmgrd` は IPv6 アドレス付与コマンドに `metric 256` を追加する[^ph1]。
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:103-106
+if(mySwitchType == "voq")
+{
+   metric = " metric 256";
+}
+```
+
+**理由**: VOQ system では eBGP/iBGP 経由で学習されるルートと直接接続ルートの metric を同一にすることで ECMP グループを正しく形成する必要がある。IPv4 は connected/static どちらも metric 0 のため変更不要。IPv6 の connected route は kernel がデフォルト 256 を付与するため明示的に揃える。
+
+`orchagent` 側では、VOQ system_port は `Port::SYSTEM` タイプとして扱われ、RIF タイプは通常の物理ポートと同じ `SAI_ROUTER_INTERFACE_TYPE_PORT` が選択される[^ph2]。VLAN_SUB_INTERFACE（`Port::SUBPORT`）を VOQ system_port 上に直接重ねることはサポートされない。
+
+VOQ inband interface (`CFG_VOQ_INBAND_INTERFACE_TABLE_NAME`) は `intfmgrd` の通常処理をスキップし、APP_DB へ直接リレーされる[^ph1]:
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:1195-1200
+if((table_name == CFG_VOQ_INBAND_INTERFACE_TABLE_NAME) &&
+        (op == SET_COMMAND))
+{
+    //No further processing needed. Just relay to orchagent
+    m_appIntfTableProducer.set(keys[0], data);
+    m_stateIntfTable.hset(keys[0], "vrf", "");
+```
+
+voqSyncAddIntf / voqSyncDelIntf (`intfsorch.cpp:1672-1748`) は `CHASSIS_APP_DB` 上の `SYSTEM_INTERFACE_TABLE` にローカル IF の状態を同期する。リモート system_port（`SAI_SYSTEM_PORT_TYPE_REMOTE`）はスキップされ、ローカル側のみ同期対象となる[^ph2]。
+
+### SmartSwitch DPU
+
+SmartSwitch アーキテクチャでは NPU 側と DPU 側でそれぞれ独立した `orchagent` インスタンスが動作する。VLAN_SUB_INTERFACE は NPU 側の物理ポートまたは PortChannel に対して定義し、DPU 側には直接適用しない。DPU 側は独自のインタフェース管理を持ち、`intfmgr.cpp` に DPU 固有分岐は存在しない。DPU 対向の `switch_type` は `"dpu"` となり、VOQ 分岐（`mySwitchType == "voq"`）には入らないため、IPv6 metric 補正も適用されない。
+
+### Mellanox (Spectrum ASIC)
+
+Mellanox/Spectrum は SAI の `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` をネイティブサポートする。`intfsorch.cpp` の SUBPORT 分岐（`port.m_parent_port_id` + `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID`）はそのまま動作する[^ph2]。`intfmgr.cpp` 側に Mellanox 固有の条件分岐はなく、MTU 継承・admin_status 合成・kernel netdev 操作は共通コードで処理される。
+
+### Broadcom (ASIC)
+
+Broadcom SAI も `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` をサポートする。動作は Mellanox と同様で `intfmgr.cpp` に Broadcom 固有分岐はない。ただし Broadcom プラットフォームでは SAI 実装（`libsai.so`）が VLAN tag の内部処理を担うため、kernel の vlan netdev が持つ VLAN ID と SAI の `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID` が一致している必要がある。`intfsorch.cpp:1255-1256` でこの一致が保証される。
+
+### プラットフォーム差異要約
+
+| 観点 | 標準 (非VOQ) | VOQ Chassis | SmartSwitch DPU |
+|------|-------------|-------------|-----------------|
+| IPv6 metric 付与 | なし | `metric 256` 追加 | なし |
+| system_port 上の VLAN_SUB_INTERFACE | サポート (物理/LAG) | 非サポート (SYSTEM タイプは SUB_PORT 不可) | N/A (DPU 側は別管理) |
+| CHASSIS_APP_DB 同期 | なし | voqSyncAddIntf で同期 | なし |
+| inband interface 処理 | 通常 doIntfGeneralTask | APP_DB 直リレー (スキップ) | なし |
+| SAI RIF タイプ | SUB_PORT | PORT (system_port) | SUB_PORT |
+
+[^ph1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^ph2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+
+<!-- /platform-diff -->
 <!-- secondary-db-writes -->
 ## 副次 DB 書込（Phase F）
 
@@ -678,5 +742,119 @@ APPL_DB INTF_TABLE[<alias>] 消費
 | ASIC_DB (SAI) | `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` | CREATE | orchagent/IntfsOrch | `intfsorch.cpp:1224, 1296` |
 
 <!-- /secondary-db-writes -->
+
+<!-- comm-mechanism -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+CONFIG_DB から SAI までの全通信は Redis の **keyspace notification** と **ProducerStateTable/ConsumerStateTable** パターンで構成される。
+
+#### CONFIG_DB → intfmgrd (SubscriberStateTable)
+
+`intfmgrd` は `intfmgrd.cpp:28-35` で `cfg_intf_tables` ベクタに `CFG_VLAN_SUB_INTF_TABLE_NAME` を含め、`Orch(cfgDb, tableNames)` コンストラクタが各テーブルに対して `SubscriberStateTable` を生成する。
+
+```cpp
+// sonic-swss/cfgmgr/intfmgrd.cpp:28-35
+vector<string> cfg_intf_tables = {
+    CFG_INTF_TABLE_NAME,
+    CFG_LAG_INTF_TABLE_NAME,
+    CFG_VLAN_INTF_TABLE_NAME,
+    CFG_LOOPBACK_INTERFACE_TABLE_NAME,
+    CFG_VLAN_SUB_INTF_TABLE_NAME,      // ← VLAN_SUB_INTERFACE テーブル
+    CFG_VOQ_INBAND_INTERFACE_TABLE_NAME,
+};
+```
+
+`SubscriberStateTable` は Redis の keyspace notification を用いる。
+
+```
+PSUBSCRIBE __keyspace@4__:VLAN_SUB_INTERFACE|*
+```
+
+`hset` / `hdel` / `del` イベント受信 → `readData()` がバッファに蓄積 → `pops()` でキーを取り出し `TABLE.get(key)` で現在値取得 → `Consumer::doTask()` → `IntfMgr::doTask()` 呼び出し。
+
+また、親ポートの状態変化を検知するために STATE_DB の `STATE_PORT_TABLE` と `STATE_LAG_TABLE` も別途 `SubscriberStateTable` で購読する (`intfmgr.cpp:45-53`)。親の admin_status・MTU 変化を sub-interface に伝播するために必要。
+
+#### intfmgrd → APPL_DB (ProducerStateTable)
+
+`doIntfGeneralTask` がサブインタフェース属性を確定した後、`m_appIntfTableProducer`（`ProducerStateTable(appDb, APP_INTF_TABLE_NAME)`）で `APP_INTF_TABLE` に書き込む (`intfmgr.cpp:1053`)。
+
+| 項目 | 値 |
+|------|----|
+| Publish チャンネル | `APP_INTF_TABLE_CHANNEL@0` |
+| Key SET | `APP_INTF_TABLE_KEY_SET` |
+| Del SET | `APP_INTF_TABLE_DEL_SET` |
+| 一時 hash | `_APP_INTF_TABLE:<alias>` |
+
+Lua スクリプト (`EVALSHA`) が `SADD KEY_SET` + `HSET _APP_INTF_TABLE:<alias>` + `PUBLISH APP_INTF_TABLE_CHANNEL@0 G` をアトミックに実行する。IP prefix 行 (`doIntfAddrTask`) も同じ Producer を使い `APP_INTF_TABLE|<alias>|<prefix>` キーで書き込む (`intfmgr.cpp:1137`)。
+
+#### APPL_DB → orchagent/IntfsOrch (ConsumerStateTable → SAI sub_port)
+
+`orchdaemon` が `IntfsOrch` を生成し、`ConsumerStateTable` が `APP_INTF_TABLE_CHANNEL@0` を購読する。
+
+```
+WATCH APP_INTF_TABLE_KEY_SET
+SUBSCRIBE APP_INTF_TABLE_CHANNEL@0
+```
+
+チャンネル通知で `Select::select()` が wake-up → `consumer_state_table_pops.lua` (`SPOP KEY_SET` + `HGETALL _APP_INTF_TABLE:<alias>`) で一括取得 → `IntfsOrch::doTask()` → サブインタフェース処理へ進む (`intfsorch.cpp:905-914`)。
+
+**SAI sub_port RIF 作成経路**:
+
+```cpp
+// sonic-swss/orchagent/intfsorch.cpp:1223-1265
+case Port::SUBPORT:
+    attr.value.s32 = SAI_ROUTER_INTERFACE_TYPE_SUB_PORT;   // RIF タイプ
+    attrs.push_back(attr);
+    ...
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_PORT_ID;
+    attr.value.oid = port.m_parent_port_id;                // 親ポート OID
+    attrs.push_back(attr);
+
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID;
+    attr.value.u16 = port.m_vlan_info.vlan_id;             // VLAN tag
+    attrs.push_back(attr);
+
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE;
+    attr.value.booldata = port.m_admin_state_up;
+    attrs.push_back(attr);
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_ADMIN_V6_STATE;
+    attr.value.booldata = port.m_admin_state_up;
+    attrs.push_back(attr);
+```
+
+`sai_router_intf_api->create_router_interface()` に `attrs` を渡して ASIC に sub_port RIF を生成する。`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID`（VRF OID）は全 RIF タイプで先頭に push される固定順序 (`intfsorch.cpp:1183`)。
+
+### STATE_DB への書き込み
+
+`intfmgrd` はサブインタフェース処理完了時に STATE_DB (`STATE_INTERFACE_TABLE`) に書き込む。TTL は使用しない。
+
+| タイミング | 操作 |
+|-----------|------|
+| sub-IF 属性設定完了 | `m_stateIntfTable.hset(alias, "vrf", vrf_name)` |
+| IP アドレス追加完了 | `m_stateIntfTable.hset("<alias>\|<prefix>", "state", "ok")` |
+| IP アドレス削除 | `m_stateIntfTable.del("<alias>\|<prefix>")` |
+| sub-IF 削除 | `m_stateIntfTable.del(alias)` |
+
+`setSubIntfStateOk(alias)` / `removeSubIntfState(alias)` (`intfmgr.cpp:542-567`) が STATE_DB 操作を担当する。`isIntfCreated(alias)` は `m_stateIntfTable.get(alias, ...)` で STATE_DB エントリの有無を確認し、IP アドレス設定の前提条件チェックに用いる。
+
+### select() ループと retry
+
+`intfmgrd` の main ループはタイムアウト 1000 ms で `Select::select()` を呼ぶ (`intfmgrd.cpp:17,59`)。
+
+```
+SELECT_TIMEOUT = 1000 ms
+if (TIMEOUT) { intfmgr.doTask(); }  // 未処理タスクを全 consumer で再試行
+```
+
+`doIntfGeneralTask` / `doIntfAddrTask` が `false` を返した場合（親 IF / VRF が not ready）、エントリは `m_toSync` に残留し次のループで再試行される。
+
+**出典**:
+- `sonic-swss/cfgmgr/intfmgrd.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgrd.cpp>
+- `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+- `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+
+<!-- /comm-mechanism -->
 
 <!-- glossary-links-injected: 8acafc795b83 -->

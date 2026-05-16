@@ -214,6 +214,38 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## 書込み順序依存・タイミング依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/switch-hash-ordering.md -->
+
+### SAI 初期化 → OID キャッシュ → SWITCH_HASH SET（先行必須）
+
+`SwitchOrch` コンストラクタ (`switchorch.cpp:169`) は起動直後に `querySwitchHashDefaults()` (`switchorch.cpp:2030-2043`) を呼び、`SAI_SWITCH_ATTR_ECMP_HASH` / `SAI_SWITCH_ATTR_LAG_HASH` の OID を `m_switchHashDefaults` にキャッシュする。`setSwitchHashFieldListSai()` (`switchorch.cpp:750-769`) はこの OID を使って `sai_hash_api->set_hash_attribute()` を呼ぶため、OID キャッシュが取得できていない状態で CONFIG_DB に `SWITCH_HASH|GLOBAL` を書き込むと SAI の field-list SET が失敗する。OID 取得失敗時は `LOG_WARN` のみで起動継続するため、エラーが静かに握りつぶされる点に注意。
+
+### Warm-reboot — `gSwitchOrch` は `m_orchList` 先頭で最初のイテレーションで再適用
+
+`orchdaemon.cpp:500` で `m_orchList = { gSwitchOrch, gCrmOrch, gPortsOrch, ... }` が構築されており、`gSwitchOrch` は常に先頭に位置する。`warmRestoreAndSyncUp()` (`orchdaemon.cpp:1095-1172`) は 3 イテレーションで `m_orchList` 順に `doTask()` を実行する（コメント: 「First iteration: switchorch, Port init/hostif create part of portorch, buffers configuration」）。`SwitchOrch` には port 依存がないため `gPortsOrch->allPortsReady()` 待ちなしで即時処理される。`onWarmBootEnd()` のオーバーライドはなく、warm-reboot リストアは cold-reboot と同一経路 (`doCfgSwitchHashTableTask()` → `setSwitchHash()`) で行われる。
+
+### `ecmp_hash` と `ecmp_hash_algorithm` を別 SET で送る場合の中間状態
+
+`parseSwHash()` (`switch_helper.cpp:150-194`) は `hash.fieldValueMap` のフィールドを独立して解析するため、CONFIG_DB 内の届き順は無関係。ただし `ecmp_hash` と `ecmp_hash_algorithm` を **2 回の別 SET** として書き込む場合、1 回目の SET では `ecmp_hash_algorithm.is_set = false` のまま `setSwitchHash()` が呼ばれ、アルゴリズムは SAI デフォルト (`SAI_HASH_ALGORITHM_CRC`) のままになる。2 回目の SET でアルゴリズムが適用される。中間期にトラフィックの ECMP 分散は継続するが、意図したアルゴリズムが適用されない期間が生じる。**同一 SET にフィールドをまとめて書き込む**ことで中間状態を回避できる。
+
+### SAI SET 失敗時のキャッシュ未更新と再試行不可
+
+`setSwitchHash()` は SAI SET 成功時のみ `swHlpr.setSwHash(hash)` を呼んで内部キャッシュを更新する。SAI SET 失敗時はキャッシュが更新されないが、`doCfgSwitchHashTableTask()` は Consumer の `m_toSync` エントリを `map.erase(it)` で消費するため (`switchorch.cpp:996`)、Consumer レベルの自動再試行は行われない。CLI / `sonic-db-cli` で同値を再書き込みすることで再試行できる。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | SAI 初期化 → `querySwitchHashDefaults()` OID キャッシュ → SWITCH_HASH SET | 先行必須 | OID 取得失敗時は LOG_WARN のみ、SAI SET は失敗 |
+| 2 | Warm-reboot: `gSwitchOrch` が `m_orchList` 先頭 → 第 1 イテレーションで再適用 | orchdaemon 設計による強制先行 | `onWarmBootEnd` オーバーライドなし、cold と同一経路 |
+| 3 | `ecmp_hash` / `ecmp_hash_algorithm` を別 SET で送る | 推奨: 1 回の SET にまとめる | 2 回目 SET でアルゴリズム適用、中間期は SAI デフォルト |
+| 4 | SAI SET 失敗 → キャッシュ未更新 → Consumer エントリ消費済み | 再試行不可 | CLI / sonic-db-cli で再書き込み |
+
+<!-- /ordering -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 

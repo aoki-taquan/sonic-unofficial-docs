@@ -638,3 +638,60 @@ status = sai_nat_api->create_nat_entry(&snat_entry, attr_count, nat_entry_attr);
 | `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 終了時の ASIC/Redis クリーンアップ (natmgrd.cpp:127 / natorch.cpp:89) |
 
 <!-- /pubsub -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`NAT_BINDINGS` エントリが処理されると、`natmgrd` → `orchagent / NatOrch` の経路で以下の副次書込が発生する。ソース: `sonic-swss/orchagent/natorch.cpp`[^F1]。
+
+### ASIC_DB — SAI nat_entry
+
+`NatOrch` が `sai_nat_api->create_nat_entry()` を呼び出して SAI NAT オブジェクトを ASIC_DB 経由で書込む。
+
+| 操作関数 | SAI nat_type | 適用条件 |
+|---------|-------------|---------|
+| `addHwSnatEntry()` | `SAI_NAT_TYPE_SOURCE_NAT` | dynamic SNAT エントリ (Single NAT) |
+| `addHwSnaptEntry()` | `SAI_NAT_TYPE_SOURCE_NAT` + ポート | dynamic SNAPT エントリ |
+| `addHwTwiceNatEntry()` | `SAI_NAT_TYPE_DOUBLE_NAT` | `twice_nat_id` 指定時 |
+| `addHwDnatPoolEntry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | DNAT pool エントリ追加時 |
+
+SNAT エントリには `SAI_NAT_ENTRY_ATTR_SRC_IP`（変換後 pool IP）、`SAI_NAT_ENTRY_ATTR_ENABLE_PACKET_COUNT=true`、`SAI_NAT_ENTRY_ATTR_ENABLE_BYTE_COUNT=true` が設定される (`natorch.cpp:1289-1302`)。
+
+**書込前提条件**:
+
+1. `isNatEnabled()` が true — `NAT_GLOBAL.admin_mode=enabled` が APPL_DB に伝播済みであること。
+2. dynamic SNAT: `totalSnatEntries < maxAllowedSNatEntries`（SAI クエリ値）。上限到達時は `"AGEOUT-SINGLE-NAT"` 通知を送り最古エントリをエージアウトしてから追加する (`natorch.cpp:1888-1900`)。
+3. DNAT + nexthop tracking 有効時: nexthop 解決完了後に遅延書込される。
+
+### COUNTERS_DB — グローバルおよび per-entry カウンタ
+
+| テーブル | キー | 書込フィールド | 更新タイミング |
+|---------|------|--------------|-------------|
+| `COUNTERS_GLOBAL_NAT` | `Values` | `SNAT_ENTRIES` | SNAT エントリ追加/削除ごと (`natorch.cpp:4569`) |
+| `COUNTERS_GLOBAL_NAT` | `Values` | `DNAT_ENTRIES` | DNAT エントリ追加/削除ごと (`natorch.cpp:4580`) |
+| `COUNTERS_GLOBAL_NAT` | `Values` | `DYNAMIC_NAT_ENTRIES`, `DYNAMIC_NAPT_ENTRIES` | dynamic エントリ数変化時 |
+| `COUNTERS_NAT` | `<global_ip>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` | hitbit タイマー 5 秒周期 |
+| `COUNTERS_NAPT` | `<proto>:<ip>:<port>` | 同上 | 同上 |
+| `COUNTERS_TWICE_NAT` | `<src_ip>:<dst_ip>` | 同上 | 同上 |
+| `COUNTERS_TWICE_NAPT` | `<proto>:<src_ip>:<src_port>:<dst_ip>:<dst_port>` | 同上 | 同上 |
+
+### CRM カウンタ更新
+
+SAI エントリの追加/削除に連動して `gCrmOrch` が CRM リソースカウンタを増減する。
+
+| 操作 | CRM リソース | ソース |
+|------|------------|-------|
+| SNAT エントリ追加 | `incCrmResUsedCounter(CRM_SNAT_ENTRY)` | `natorch.cpp:1325` |
+| SNAT エントリ削除 | `decCrmResUsedCounter(CRM_SNAT_ENTRY)` | `natorch.cpp:1647` |
+| DNAT エントリ追加 | `incCrmResUsedCounter(CRM_DNAT_ENTRY)` | `natorch.cpp:791` |
+| DNAT エントリ削除 | `decCrmResUsedCounter(CRM_DNAT_ENTRY)` | `natorch.cpp:944` |
+
+`show crm resources all` で使用量を確認できる。
+
+### STATE_DB — 書込なし
+
+`NatOrch` および `NatMgr` は STATE_DB への書込を行わない。`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` / `STATE_INTERFACE_TABLE` は L3 インタフェース readiness ガード用の**読み取り専用**アクセスのみ。
+
+[^F1]: NatOrch ASIC 書込実装: `sonic-swss/orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/natorch.cpp>
+
+<!-- /side-effects -->
