@@ -1,6 +1,6 @@
 ---
-title: NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub)
-description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、/etc/chrony への副次ファイル書込と systemd 経路、および CONFIG_DB Subscribe / chrony 制御 / SIGHUP 通信メカニズムを網羅した調査ページ。"
+title: NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、/etc/chrony への副次ファイル書込と systemd 経路、CONFIG_DB Subscribe 通信メカニズム、および SmartSwitch / MGMT_VRF / multi-asic プラットフォーム差を網羅した調査ページ。"
 area: reference
 hard: 0
 verification: code-verified
@@ -45,7 +45,7 @@ related:
     - sonic-ntp
 ---
 
-# NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G)
+# NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)
 
 > このページは `NTP` / `NTP_SERVER` / `NTP_KEY` 3 テーブルを横断して、YANG 定義・`init_cfg.json.j2`・`chrony.conf.j2` テンプレート・`hostcfgd` ハンドラの全行精読から得た**暗黙デフォルト**・**乖離**・**dead field**・**silent drop** を記録する。各テーブルの詳細は [`NTP (global)`](./ntp-global.md)・[`NTP_SERVER`](./ntp-server.md)・[`NTP_KEY`](./ntp-key.md) を参照。
 
@@ -555,6 +555,79 @@ def start(self):
 ブート時のキャッシュを初期化する。<!-- evidence: hostcfgd:1285-1310,2255-2272 -->
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence:
+  chrony.conf.j2:57-64 (SmartSwitch NPU server_role / dhcp)
+  chrony.conf.j2:86-116 (src_intf bindacqaddress, vrf=mgmt 分岐)
+  chrony.conf.j2:109 (vrf==mgmt で bindacqaddress 抑制)
+  chronyd-starter.sh:1-16 (MGMT_VRF ランタイム選択)
+  hostcfgd:1645-1693 (MgmtIfaceCfg.update_mgmt_vrf chrony stop/start)
+-->
+
+> 詳細証跡は `meta/_intermediate/cdb-flow/ntp-platform.md` を参照。
+
+### SmartSwitch — NTP server 機能の自動有効化
+
+`chrony.conf.j2` L57-64 は `DEVICE_METADATA.localhost.subtype == 'SmartSwitch'` かつ `type != 'SmartSwitchDPU'` のときのみ `allow` + `binddevice bridge-midplane` を生成し、chrony を NTP server として動作させる。
+
+```jinja2
+{% if device_metadata.subtype == 'SmartSwitch' and device_metadata.type != 'SmartSwitchDPU' -%}
+{% if global.server_role == 'enabled' or global.dhcp == 'enabled' -%}
+allow
+binddevice bridge-midplane
+{% endif -%}
+{% endif -%}
+```
+
+| プラットフォーム | `allow`+`binddevice bridge-midplane` 追加条件 |
+|----------------|----------------------------------------------|
+| 通常スイッチ (T0/T1 等) | **追加されない**（dead block） |
+| SmartSwitch NPU | `server_role=enabled` **または** `dhcp=enabled` のとき |
+| SmartSwitch DPU | **追加されない**（`type == 'SmartSwitchDPU'` で除外） |
+
+`dhcp` デフォルトが `enabled` であるため（`init_cfg.json.j2` L212）、SmartSwitch NPU では **`server_role` 値に関わらず** NTP server として動作する。非 SmartSwitch では `NTP.server_role` は完全な dead field。
+
+`binddevice bridge-midplane` は NPU-DPU 間ブリッジインタフェース。DPU は NPU をアップストリーム NTP サーバとして参照する構成が前提。DPU 側では `NTP_SERVER` に NPU の bridge-midplane IP を手動で追加する必要がある。
+
+### MGMT_VRF — chronyd-starter.sh によるランタイム VRF 選択
+
+`chronyd-starter.sh` はサービス起動時に `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled` を CONFIG_DB から読み取り、chrony の実行 VRF を決定する。
+
+| `MGMT_VRF_CONFIG.mgmtVrfEnabled` | `NTP|global.vrf` | chronyd 起動方法 |
+|----------------------------------|------------------|-----------------|
+| `false` または読み取り失敗 | 任意 | デフォルト VRF（`exec /usr/sbin/chronyd`） |
+| `true` | `"default"` | デフォルト VRF |
+| `true` | それ以外（例: `"mgmt"`） | mgmt VRF（`ip vrf exec mgmt chronyd`） |
+
+さらに `MgmtIfaceCfg.update_mgmt_vrf()` (`hostcfgd` L1659-1666) は `MGMT_VRF_CONFIG` 変更時に `systemctl stop chrony` → `systemctl restart interfaces-config` → `systemctl start chrony` の順で chrony を再起動し、`chronyd-starter.sh` を再評価させる。
+
+`vrf == 'mgmt'` のとき `chrony.conf.j2` L109 の条件 `{% if not ((NTP) and NTP['global']['vrf'] == 'mgmt') %}` により `bindacqaddress` ディレクティブが生成されない。mgmt VRF 上では chrony が `eth0` を暗黙的に使用するため `src_intf` 設定は無視される。
+
+### multi-asic / VOQ chassis での NTP 適用範囲
+
+`NtpCfg` は host CONFIG_DB のみを参照し、`asicN` namespace への接続を行わない。NTP はホスト管理プレーンで完結するため ASIC 数に依存しない。
+
+ただし `src_intf` の有効性は構成に依存する:
+
+| `src_intf` 値 | multi-asic での注意点 |
+|---------------|---------------------|
+| `eth0` | host に 1 つ。multi-asic でも同じ動作 |
+| `LoopbackX` | host CONFIG_DB の `LOOPBACK_INTERFACE` に IP が設定されているかを確認 |
+| `EthernetX` / `PortChannelX` | multi-asic 環境ではデータプレーン側インタフェースが ASIC namespace に存在し、host CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` にアドレスが設定されない場合がある。その場合 `bindacqaddress` が空となり、ソース IP 制限が実質的に無効化される（エラーなしのサイレント動作） |
+
+### プラットフォーム差サマリ
+
+| 分類 | 影響フィールド | 挙動 | 発生条件 |
+|------|--------------|------|---------|
+| **SmartSwitch NPU のみ** | `NTP.server_role`、`NTP.dhcp` | `allow`+`binddevice bridge-midplane` 生成 → NTP server 有効化 | `subtype=SmartSwitch` かつ `type!=SmartSwitchDPU` |
+| **SmartSwitch DPU / 通常スイッチ** | `NTP.server_role` | dead field | それ以外全プラットフォーム |
+| **MGMT_VRF 有効時** | `NTP.vrf`、`MGMT_VRF_CONFIG` | chrony を mgmt VRF で起動、`bindacqaddress` 抑制 | `mgmtVrfEnabled=true` かつ `vrf!=default` |
+| **multi-asic** | `NTP.src_intf` (EthernetX/PortChannelX) | host CONFIG_DB に IP なし → `bindacqaddress` 空 → ソース IP 制限無効化（サイレント） | `src_intf` にデータプレーンインタフェース設定時 |
+
+<!-- /platform -->
 
 ## 関連ページ
 
