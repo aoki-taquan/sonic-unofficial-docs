@@ -373,3 +373,126 @@ PORTCHANNEL_INTERFACE (intfmgr SET処理)
 ```
 
 <!-- /implicit-ref -->
+<!-- platform-diff -->
+## プラットフォーム差 (Phase H)
+
+> **調査対象**: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
+> **調査日**: 2026-05-16
+
+### VOQ chassis (`switch_type == "voq"`)
+
+| 差異点 | 通常動作 | VOQ chassis 動作 | コード根拠 |
+|--------|---------|----------------|-----------|
+| IPv6 アドレス付与コマンド | `ip -6 address add <prefix> dev <lag>` | `metric 256` を自動付加 | `intfmgr.cpp:103-106` |
+| LAG RIF 作成後の CHASSIS_APP_DB 同期 | なし | `isChassisDbInUse()` が true のとき `voqSyncAddIntf(alias)` を呼び出し、`CHASSIS_APP_DB.SYSTEM_INTERFACE_TABLE` に `oper_status` を書く | `intfsorch.cpp:1314-1317` |
+| LAG RIF 削除後の CHASSIS_APP_DB 同期 | なし | `voqSyncDelIntf(alias)` で同テーブルから削除 | `intfsorch.cpp:1367-1370` |
+| リモート System LAG のスキップ | — | `port.m_system_lag_info.switch_id != gVoqMySwitchId` のとき `voqSyncAddIntf` / `voqSyncDelIntf` は何もしない（リモートリーフ由来 LAG は sync 対象外） | `intfsorch.cpp:1681-1683, 1726-1728` |
+| VOQ inband interface 特殊処理 | 通常 `doIntfGeneralTask()` を経由 | `CFG_VOQ_INBAND_INTERFACE_TABLE_NAME` の SET は `doIntfGeneralTask` をスキップし、即座に `APP_INTF_TABLE` に relay して `STATE_INTERFACE_TABLE` に `vrf=""` をセット | `intfmgr.cpp:1195-1203` |
+
+**IPv6 metric 256 の理由**: VOQ chassis では eBGP / iBGP 経由で学習した経路と connected route の metric を揃えることで、ECMP グループが正しく構成される。IPv4 は connected route のデフォルト metric が 0 なので不要。
+
+**PORTCHANNEL_INTERFACE への実質影響**: `PORTCHANNEL_INTERFACE` に IPv6 プレフィクスを設定したとき、intfmgrd が発行する `ip -6 address add` コマンドに `metric 256` が自動付加される。ユーザ側で metric を意識する必要はないが、Linux カーネルの `ip addr show` でメトリックが `256` と表示される。
+
+### SmartSwitch / DPU (`switch_type == "smartswitch"`)
+
+`intfmgr.cpp` および `intfsorch.cpp` に SmartSwitch / DPU に関する `PORTCHANNEL_INTERFACE` 固有の分岐コードは存在しない（2026-05-16 時点の master 調査結果）。SmartSwitch における Portchannel L3 IF の扱いは通常の `IntfMgr` フローと同一であり、midplane / DPU 側への追加同期処理はなし。
+
+<!-- /platform-diff -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+以下の定数は `sonic-swss/cfgmgr/intfmgr.cpp` および `orchagent/intfsorch.cpp` から検出したマジックナンバー・閾値。PORTCHANNEL_INTERFACE に直接影響する定数を優先して記載する。
+
+| 定数 / マクロ名 | 値 | 定義ファイル | 意味・影響 |
+|-----------------|-----|--------------|-----------|
+| `DEFAULT_MTU_STR` | `9100` | `intfmgr.cpp:29` | サブインタフェース (`PortChannel0001.10` 形式) の親 MTU 取得失敗時のフォールバック MTU (bytes)。PORTCHANNEL_INTERFACE 属性ロウ自体の MTU は `PORTCHANNEL` テーブルで管理し、本値は直接適用されない (`intfmgr.cpp:400-402`, `intfmgr.cpp:419-420`) |
+| `LOOPBACK_DEFAULT_MTU_STR` | `65536` | `intfmgr.cpp:28` | ループバック IF 作成時のみ `ip link add <alias> mtu 65536 type dummy` で固定使用。PORTCHANNEL_INTERFACE には適用されない (`intfmgr.cpp:201`) |
+| `MTU_INHERITANCE` | `"0"` | `intfmgr.cpp:24` | サブインタフェースが親ポートの MTU を継承することを示す内部マーカー。APP_DB に `mtu=0` として書き込まれる。PORTCHANNEL 親 IF の MTU 継承にも使用 (`intfmgr.cpp:975-977`) |
+| SAI RIF タイプ (LAG) | `SAI_ROUTER_INTERFACE_TYPE_PORT` | `intfsorch.cpp:1216` | `Port::LAG` 型は `Port::PHY` / `Port::SYSTEM` と同じ `SAI_ROUTER_INTERFACE_TYPE_PORT` として SAI RIF 作成される。PORTCHANNEL_INTERFACE が L3 RIF になる際の SAI 属性 |
+| SAI RIF MTU 設定 | `port.m_mtu` (動的) | `intfsorch.cpp:1272-1274` | `SAI_ROUTER_INTERFACE_ATTR_MTU` に `port.m_mtu` を設定。値は `PORTCHANNEL` テーブルの `mtu` フィールドから取得される |
+| `nat_zone` 有効範囲 | `0..3` (uint8) | `sonic-portchannel.yang` | YANG `range` 制約。4 ゾーンのみ許容。デフォルト `0` |
+| STATE_LAG Consumer 優先度 | `200` | `intfmgr.cpp:51` | `SubscriberStateTable` の pri 引数。STATE_LAG_TABLE 変化通知のキュー優先度 |
+
+!!! note "SAI RIF タイプと MTU の補足"
+    PORTCHANNEL_INTERFACE が L3 有効化されると、orchagent (`IntfsOrch`) は `SAI_ROUTER_INTERFACE_TYPE_PORT` で SAI RIF を作成する (`intfsorch.cpp:1214-1217`)。MTU は `PORTCHANNEL` テーブルの値がそのまま `SAI_ROUTER_INTERFACE_ATTR_MTU` に渡され (`intfsorch.cpp:1272-1274`)、`intfmgr.cpp` の `DEFAULT_MTU_STR=9100` は PORTCHANNEL_INTERFACE 自体には適用されない。
+
+!!! note "デフォルト MTU の注意点"
+    `DEFAULT_MTU_STR = 9100` は PORTCHANNEL のサブインタフェース (`PortChannel0001.10` 等) の MTU フォールバック専用。PORTCHANNEL_INTERFACE (L3 RIF) の MTU を変更したい場合は `PORTCHANNEL` テーブルの `mtu` フィールドを設定すること。
+
+<!-- /constants -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
+> 調査日: 2026-05-16
+
+### 他テーブル先行必須
+
+`PORTCHANNEL_INTERFACE` は `intfmgrd` が `doIntfGeneralTask()` 内で処理する。`isIntfStateOk()` はエイリアスの先頭を `PortChannel` と照合し `STATE_LAG_TABLE` のエントリ存在を確認する（`intfmgr.cpp:661-667`）。
+
+| 先行テーブル / 条件 | 確認先 STATE_DB | 依存の内容 | コード根拠 |
+|------------------|----------------|-----------|-----------|
+| `PORTCHANNEL` + lagmgrd が `STATE_LAG_TABLE` に書く | `STATE_LAG_TABLE` | `isIntfStateOk(alias)` が false → SET をスキップ・retry | `intfmgr.cpp:661-667` |
+| `VRF` + vrfmgrd が `STATE_VRF_TABLE` に書く | `STATE_VRF_TABLE` | `vrf_name` 指定時。未 ready → retry | `intfmgr.cpp:839-842` |
+| orchagent 側: `gPortsOrch->getPort()` で LAG オブジェクト存在確認 | — | false → `m_toSync` 残留・retry（APP_DB 側でも二段階依存） | `intfsorch.cpp:905-924` |
+| orchagent 側: `m_vrfOrch->isVRFexists(vrf_name)` | — | false → retry（orchagent 内 VRF 未生成） | `intfsorch.cpp:826-830` |
+| `PORTCHANNEL_INTERFACE|<name>` 属性ロウが STATE_INTERFACE_TABLE に存在 | `STATE_INTERFACE_TABLE` | `isIntfCreated()` が false → IP プレフィクスロウをスキップ | `intfmgr.cpp:1115` |
+
+### 属性適用順序 (kernel netlink)
+
+`doIntfGeneralTask()` SET パス（`intfmgr.cpp` L831–1054）:
+
+```
+1. isIntfStateOk("PortChannel*") ガード          (STATE_LAG_TABLE 確認)
+2. isIntfStateOk(vrf_name) ガード                (vrf_name 指定時のみ)
+3. isIntfChangeVrf() 確認                        (直接 VRF 変更をブロック)
+4. ip link set <alias> master <vrf>             (vrf_name 指定時)
+   または ip link set <alias> nomaster          (VRF 除去時)
+5. ip link set <alias> address <mac>            (mac_addr 指定時)
+6. sysctl net.mpls.conf.<alias>.input=1/0       (mpls=enable/disable 時)
+7. m_appIntfTableProducer.set(alias, data)      (APP_DB INTF_TABLE SET)
+8. m_stateIntfTable.hset(alias, "vrf", …)       (STATE_DB 書込み)
+```
+
+### SET 後 DEL 順依存
+
+| 操作 | 必須順序 | コード根拠 |
+|------|---------|-----------|
+| 属性ロウ (`PORTCHANNEL_INTERFACE|<name>`) の DEL | すべての IP プレフィクスロウを先に DEL してから | `intfmgr.cpp:1058-1063` |
+| VRF 変更 | `vrf_name=""` で unbind → 新 VRF で rebind の 2 ステップ | `intfmgr.cpp:846-849` |
+
+### Notification 順序
+
+`intfmgrd` は起動時に `SubscriberStateTable(stateDb, STATE_LAG_TABLE_NAME)` を購読する（pri=200）。lagmgrd が PORTCHANNEL の `state=ok` を STATE_DB に書いた瞬間、`doPortTableTask` がトリガされ、ペンディング中の `PORTCHANNEL_INTERFACE` エントリが再処理される。
+
+### warm-reboot 影響
+
+`buildIntfReplayList()` で CONFIG_DB の `PORTCHANNEL_INTERFACE` キーが `m_pendingReplayIntfList` に収集され（`intfmgr.cpp:276`）、warm-start 時に replay される。replay 完了後 `RECONCILED` に遷移。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/portchannel-interface-ordering.md` 参照。
+
+### teammgr が STATE_LAG_TABLE に書くまでの経路（補完）
+
+上記テーブルの "lagmgrd" は実装上は `TeamMgr` (`sonic-swss/cfgmgr/teammgr.cpp`) が担う。具体的な経路:
+
+```
+PORTCHANNEL (CONFIG_DB)
+  → TeamMgr::doLagTask()                       [teammgr.cpp:234]
+    → TeamMgr::addLag()                        [teammgr.cpp:564]
+      → teamd プロセス起動成功 (task_success)  [teammgr.cpp:647-649]
+        → m_stateLagTable.set(alias, ...)      [intfmgr.cpp:548 / teammgr 側は STATE_DB 直書き]
+          → IntfMgr::isIntfStateOk() が true
+            → PORTCHANNEL_INTERFACE 処理続行
+```
+
+`TeamMgr::addLag()` が teamd 起動に失敗すると `task_need_retry` を返し (teammgr.cpp:644)、LAG を `removeLag()` でクリーンアップしてリトライする (teammgr.cpp:304-308)。この間 `STATE_LAG_TABLE` は未書込みのままなので、`IntfMgr` 側も IP プレフィクス処理をスキップし続ける。
+
+| teammgr.cpp 行 | 内容 |
+|----------------|------|
+| 301-311 | `m_lagList` にない alias は `addLag()` を呼んで teamd 起動 |
+| 564-649 | `addLag()`: teamd コマンド組立・実行、失敗時 `task_need_retry` |
+| 640-644 | `exec()` 失敗 → `task_need_retry` 返却 |
+
+<!-- /ordering -->
