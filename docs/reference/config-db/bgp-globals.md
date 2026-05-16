@@ -429,4 +429,32 @@ multi-asic 環境では各 ASIC コンテナ（`bgp0`, `bgp1` ...）が独立し
 > **スキャン証跡**: `frrcfgd.py` / `bgpd.conf.db.j2` に `chassis|tsa|switch_role|switch_type|multi_asic|voq` で grep 0 ヒット。`bgpcfgd/` 全体で `is_multi_asic` 0 ヒット（テストファイル除く）。`managers_device_global.py` に `is_chassis` 1 ヒット（TSA status 取得のみ）、`switch_role` 3 ヒット（IDF/AsPath 制御のみ）を確認。
 <!-- /platform -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+**STATE_DB / COUNTERS_DB への副次書込: なし**
+
+`BGP_GLOBALS` の変更を処理する `frrcfgd.BGPConfigDaemon.bgp_global_handler()`（`frrcfgd.py:3935`）および `bgpcfgd` の全 manager は、**STATE_DB / COUNTERS_DB / APPL_DB への書込を行わない**。出力先は FRR vtysh（プロセス内設定）のみ。
+
+### 根拠
+
+| 検索対象 | 結果 |
+|---------|------|
+| `frrcfgd.py` 全体で `STATE_DB` / `COUNTERS_DB` / `DBConnector` を検索 | ヒット 0 — `frrcfgd` は CONFIG_DB Connector のみ使用 |
+| `bgpcfgd/managers_bgp.py:update_state_db()` の呼び出し元 | `BGP_NEIGHBOR` / `BGP_NEIGHBOR_AF` ハンドラのみ（`managers_bgp.py:239,353,443,487`）。BGP_GLOBALS ハンドラからの呼び出しなし |
+| `bgpcfgd/main.py` の Manager 登録 | BGP_GLOBALS 対応 Manager なし（bgpcfgd は BGP_GLOBALS を直接購読しない） |
+
+### 隣接テーブルの副次書込（BGP_GLOBALS とは無関係）
+
+BGP_GLOBALS 以外のテーブルが起因する STATE_DB 書込が同一プロセス内に存在するが、BGP_GLOBALS の SET/DEL では起動されない。
+
+| トリガー CONFIG_DB テーブル | STATE_DB 書込先 | 担当 Manager |
+|---------------------------|----------------|--------------|
+| `BGP_NEIGHBOR` / `BGP_NEIGHBOR_AF` | `BGP_PEER_CONFIGURED_TABLE` | `BGPPeerMgrBase.update_state_db()` |
+| `BGP_AGGREGATE_ADDRESS` | `BGP_AGGREGATE_ADDRESS` (STATE_DB) | `AggregateAddressMgr` |
+| `BGP_INTERFACE` | `STATE_INTERFACE_TABLE_NAME` | `ZebraSetSrc` |
+
+> **スキャン証跡**: `frrcfgd.py` 全 3000+ 行、`bgpcfgd/` 全 .py を `STATE_DB`, `COUNTERS_DB`, `hset`, `.set(`, `update_state_db` で検索。BGP_GLOBALS handler と STATE_DB の接点ゼロを確認（`meta/_intermediate/cdb-flow/bgp-globals-side.md` 参照）。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
