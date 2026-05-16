@@ -1,10 +1,10 @@
 ---
-title: NTP テーブル群 (Phase A defaults + Phase D failure)
-description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動を網羅した調査ページ。"
+title: NTP テーブル群 (Phase A defaults + Phase D failure + Phase E constants)
+description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数を網羅した調査ページ。"
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-16
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-ntp.yang
@@ -23,6 +23,9 @@ sources:
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-host-services
     path: scripts/hostcfgd
+    ref: master
+  - repo: sonic-net/sonic-host-services
+    path: scripts/caclmgrd
     ref: master
 related:
   config_db:
@@ -289,6 +292,85 @@ DEL の逆順序: `NTP_SERVER` の `key` フィールドをクリアまたは `N
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/ntp-ordering.md`
 <!-- /ordering -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence:
+  caclmgrd:95-100
+  sonic-ntp.yang:66-73,268
+  chrony.conf.j2:127
+-->
+
+### NTP UDP ポート定数 (caclmgrd)
+
+`caclmgrd:95-100` の `ACL_SERVICES` 辞書:
+
+```python
+ACL_SERVICES = {
+    "NTP": {
+        "ip_protocols": ["udp"],
+        "dst_ports": ["123"],
+        "multi_asic_ns_to_host_fwd": False
+    },
+```
+
+| 定数 | 値 | ソース |
+|------|-----|--------|
+| NTP サービスポート (UDP) | **`123`** | `caclmgrd:98` |
+| プロトコル | **`udp`** | `caclmgrd:97` |
+| multi_asic_ns_to_host_fwd | **`False`** | `caclmgrd:99` |
+
+ポート 123 は CONFIG_DB 非依存のリテラル定数。iptables フィルタルール生成のみに使用され、`NTP` テーブルに対応フィールドは存在しない。
+
+### NTP_KEY.type デフォルト定数 (sonic-ntp.yang)
+
+`sonic-ntp.yang:66-73` の `key-type` typedef と L268 の `default` 宣言:
+
+```yang
+typedef key-type {
+    type enumeration {
+        enum md5;
+        enum sha1;
+        enum sha256;
+        enum sha384;
+        enum sha512;
+    }
+}
+...
+leaf type {
+    type key-type;
+    default md5;
+}
+```
+
+| 定数 | 値 | ソース |
+|------|-----|--------|
+| `NTP_KEY.type` YANG default | **`md5`** | `sonic-ntp.yang:268` |
+| key-type 許容値 | `md5 / sha1 / sha256 / sha384 / sha512` | `sonic-ntp.yang:66-73` |
+
+`chrony.keys.j2:17` は `NTP_KEY[keyid].type | upper` でキーファイルに出力する（`MD5`、`SHA1`、`SHA256` 等）。**`md5` は RFC 8573 で非推奨**。SHA-256 以上への移行が推奨される。
+
+### minpoll / maxpoll — CONFIG_DB 非存在
+
+chrony のポーリング間隔 (`minpoll` / `maxpoll`) に対応する CONFIG_DB フィールドは `NTP` テーブルにも YANG にも存在しない。chrony 内部デフォルト（minpoll 6 = **64 秒**、maxpoll 10 = **1024 秒**）がそのまま適用される。
+
+### keyfile パス定数 (chrony.conf.j2)
+
+`chrony.conf.j2:127` でハードコード:
+
+```text
+keyfile /etc/chrony/chrony.keys
+```
+
+| 定数 | 値 | ソース |
+|------|-----|--------|
+| chrony keyfile パス | **`/etc/chrony/chrony.keys`** | `chrony.conf.j2:127` |
+
+CONFIG_DB の NTP テーブルにキーファイルパスを変更するフィールドはない。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/ntp-constants.md`
+<!-- /constants -->
 
 ## 関連ページ
 
