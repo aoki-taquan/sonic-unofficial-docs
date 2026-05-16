@@ -306,4 +306,40 @@ vtysh -c "show ip bgp"
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:99,2136-2140,2294,2297,2318,2656-2662,2704,3169-3196 -->
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+> YANG leafref で強制される構造的参照に加え、`frrcfgd.py` の `bgp_table_handler_common`
+> (`BGP_GLOBALS_AF_NETWORK` 分岐: L3169-3186) が FRR vtysh コマンドを構成する際に
+> 間接参照されるテーブル / リソースを網羅する。
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-globals-af-network-cross-refs.md`
+
+### BGP_GLOBALS_AF_NETWORK が参照する下流テーブル / リソース
+
+| 対象 | 参照機構 | 効果 |
+|---|---|---|
+| `BGP_GLOBALS` (`vrf_name`, `local_asn`) | `frrcfgd.py:2658-2662` `__get_vrf_asn()` + L3180 `router bgp {} vrf {}` 展開 | `local_asn` 未設定 VRF への更新は LOG_DEBUG で silent drop。後から `local_asn` 到達しても本テーブルは自動再適用されない (`__apply_dep_vrf_table` は `ROUTE_REDISTRIBUTE` 限定, L2704) |
+| `BGP_GLOBALS_AF` (`vrf_name`, `afi_safi`) | `table_handler_list` 登録順 (L2297 < L2318)。YANG leafref で `vrf_name` → `BGP_GLOBALS` も間接保証 | 起動時一括処理では AF 設定が先行。ランタイム更新では順序保証なし。`address-family {} {}` は本テーブルハンドラが自前発行するため厳密強制ではないが推奨先行 |
+| `ROUTE_MAP` (`policy` フィールド参照先) | `network-policy` フォーマッタ (`frrcfgd.py:922-924`) — `policy` 値を `route-map <name>` 文字列に変換 | CONFIG_DB `ROUTE_MAP` 未投入でも FRR は permit-any 相当で受理。YANG では文字列型のみ、leafref 強制なし |
+| `DEVICE_METADATA|localhost|bgp_asn` | `frrcfgd.py:2162-2164` — `__init__` 時に `self.metadata_asn` へ読み込み。`metadata_handler` (L2371-2374) で動的更新 | frrcfgd デーモン起動条件。`bgpd.main.conf.j2` で `bgp_asn` 未設定時に `router bgp` ブロック自体が生成されず BGP_GLOBALS_AF_NETWORK も無効化される |
+
+### BGP_GLOBALS_AF_NETWORK を参照する上流コンポーネント
+
+| 参照元 | 参照機構 | 効果 |
+|---|---|---|
+| `frrcfgd` (`BGPConfigDaemon`) | `bgp_table_handler_common` 購読 (`frrcfgd.py:2318`) | CONFIG_DB 更新を FRR `network <prefix> [route-map <name>] [backdoor]` コマンド列へ変換 |
+| `bgpd` (FRR) | vtysh 経由 | `network` ステートメントを BGP テーブルに注入し、ピアへ広告 |
+| `sonic-yang-mgmt` | YANG バリデーション (`sonic-bgp-global.yang`) | `vrf_name` の leafref チェック |
+
+### 暗黙参照の特徴
+
+`BGP_GLOBALS_AF_NETWORK` の YANG leafref は `vrf_name` → `BGP_GLOBALS` の 1 件のみだが、
+`frrcfgd.py` のハンドラロジックにより **4 件の暗黙依存** が存在する。特に `BGP_GLOBALS.local_asn`
+未設定時の silent drop は YANG バリデーション成功後に CONFIG_DB への書き込みが完了しているにもかかわらず
+FRR へ反映されない点で運用上の落とし穴となる。`DEVICE_METADATA.bgp_asn` は `frrcfgd` デーモン起動に
+影響するグローバル参照であり、本テーブル固有の参照ではないが間接的に全 BGP テーブルの動作に影響する。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:99,922-924,2136-2140,2162-2164,2294,2297,2318,2371-2374,2658-2662,2704,3169-3186 -->
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: fcbe746ecf8b -->
