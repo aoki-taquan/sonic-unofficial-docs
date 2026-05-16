@@ -8,6 +8,12 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-buffer-pool.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/buffermgrdyn.cpp
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/buffermgr.cpp
+  - repo: sonic-net/sonic-swss
+    path: orchagent/bufferorch.cpp
 related:
   config_db:
     - BUFFER_POOL
@@ -259,6 +265,62 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
 <!-- /handler-branching -->
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB → buffermgr/buffermgrdyn: SubscriberStateTable
+
+`buffermgrd` は `CFG_BUFFER_POOL_TABLE_NAME` を `vector<TableConnector>` に含め `BufferMgrDynamic` へ渡す（`buffermgrd.cpp:177`）。`Orch::addConsumer()` は CONFIG_DB（DB ID = 4）を検出し **`SubscriberStateTable`** を選択する（`orch.cpp:1188-1190`）。
+
+```cpp
+// orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || ...)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName,
+                                 DEFAULT_POP_BATCH_SIZE, pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+`SubscriberStateTable` は Redis keyspace 通知（`__keyspace@4__:BUFFER_POOL|*` の `PSUBSCRIBE`）を購読し、変更検知後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`）。static buffer model の `BufferMgr` も同じ `addConsumer()` 経由で `SubscriberStateTable` を使用する。
+
+### buffermgr/buffermgrdyn → APPL_DB: ProducerStateTable
+
+`BufferMgrDynamic` は `handleBufferPoolTable()` 内で `m_applBufferPoolTable.set(pool, fvVector)` / `del(pool)` で APPL_DB に書き込む。`ProducerStateTable` は `LPUSH <TABLE>_KEY_SET` + `HSET` によるチャネルベース通知を実行する（`buffermgrdyn.cpp:2630,2637,885`）。
+
+### APPL_DB BUFFER_POOL_TABLE → bufferorch: ConsumerStateTable
+
+`orchdaemon.cpp:387-394` が `APP_BUFFER_POOL_TABLE_NAME` を `applDb`（APPL_DB）で `BufferOrch` に渡す。APPL_DB は DB ID チェックの else 節にマッチするため **`ConsumerStateTable`**（チャネルベース）が選択される。ディスパッチ先: `BufferOrch::doTask()` → `processBufferPool()`。
+
+### bufferorch → APPL_STATE_DB: ResponsePublisher
+
+SAI 処理後、`bufferorch.cpp` は `m_publisher.publish(APP_BUFFER_POOL_TABLE_NAME, ...)` で結果を APPL_STATE_DB に書き戻す。`m_publisher` は `Orch` 基底の `ResponsePublisher m_publisher{"APPL_STATE_DB"}`（`orch.h:382`）。
+
+- **SET + xoff 非空（SHP 有効）**: xoff フィールドのみ publish（`bufferorch.cpp:554-555`）
+- **DEL 完了**: 空 fvs で publish（`bufferorch.cpp:588-589`）
+- **SET + xoff 空（SHP 無効）**: `publish()` は呼ばれない
+
+### データフロー
+
+```
+CONFIG_DB:BUFFER_POOL
+  │  SubscriberStateTable (keyspace通知 → HGETALL)
+  ↓  buffermgrdyn: handleBufferPoolTable()
+APPL_DB:BUFFER_POOL_TABLE
+  │  ConsumerStateTable (チャネル通知)
+  ↓  bufferorch: processBufferPool() → SAI
+APPL_STATE_DB:BUFFER_POOL_TABLE   ← ResponsePublisher (xoff/DEL 時のみ)
+```
+
+| 区間 | 方式 | ソース |
+|------|------|--------|
+| CONFIG_DB → buffermgrd(yn) | `SubscriberStateTable` (keyspace通知) | `orch.cpp:1188-1190` |
+| buffermgrd(yn) → APPL_DB | `ProducerStateTable.set/del` | `buffermgrdyn.cpp:2630,2637` |
+| APPL_DB → bufferorch | `ConsumerStateTable` (チャネル) | `orch.cpp:1193-1194` |
+| bufferorch → APPL_STATE_DB | `ResponsePublisher.publish` | `bufferorch.cpp:555,589` |
+<!-- /pubsub -->
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
@@ -322,7 +384,6 @@ processBufferPool() / handleBufferPoolTable()
 
 > **スキャン証跡**: `buffermgrdyn.cpp` L100-123, L684-795, L2509-2669 全行読了、`bufferorch.cpp` L232-244, L286-335, L395-597 全行読了、`buffermgr.cpp` L575-590 読了。`task_need_retry` 6件、`task_invalid_entry` 4件、`task_ignore` 1件、`LOG_ERROR` 11件を抽出。
 <!-- /failure -->
-
 <!-- defaults -->
 ## コード由来の暗黙デフォルト / 実装乖離 (Phase A)
 
@@ -491,7 +552,6 @@ BUFFER_POOL
 
 > **スキャン証跡**: `buffermgrdyn.cpp` L40, L150-153, L442, L605-815, L1978-2040 読了 / `buffermgr.cpp` L167-176, L413-462, L517-519 読了 / `buffermgrd.cpp` L183-201 読了 / `buffer_headroom_mellanox.lua` L9-115 読了 / `buffer_pool_mellanox.lua` L261-310 読了 / `buffer_headroom_barefoot.lua` L8-93 読了 / `buffer_pool_barefoot.lua` L9-20 読了。
 <!-- /cross-refs -->
-
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
