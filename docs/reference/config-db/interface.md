@@ -258,9 +258,14 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 
 | 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
 |--------|-----------|------|------|-----------|
+| `PORT` (via `gPortsOrch->getPort()`) | CONFIG_DB / PortOrch | READ | RIF 作成時。`Port::PHY` / `Port::LAG` / `Port::VLAN` / `Port::SUBPORT` の type と SAI oid を取得し SAI RIF 属性 (`SAI_ROUTER_INTERFACE_ATTR_PORT_ID`) に使用 | `intfsorch.cpp` L403, L609, L905, L1085, L1216-1251 |
+| `VLAN_INTERFACE` (warm-reboot replay) | CONFIG_DB | READ | `intfmgrd` warm-reboot 時に `buildIntfReplayList()` がキー収集。VLAN L3 IF も replay 対象に含む | `intfmgr.cpp` L277-278 |
+| `PORTCHANNEL_INTERFACE` / `LAG_INTERFACE` (warm-reboot replay) | CONFIG_DB | READ | `buildIntfReplayList()` が LAG IF もキー収集し pending replay リストに追加 | `intfmgr.cpp` L280-281 |
+| `LOOPBACK_INTERFACE` (warm-reboot replay) | CONFIG_DB | READ | `buildIntfReplayList()` が Loopback IF もキー収集し pending replay リストに追加 | `intfmgr.cpp` L274-275 |
+| `STATE_VLAN_TABLE` | STATE_DB | READ | SET 時 readiness ガード。alias が `Vlan` プレフィクスのとき `m_stateVlanTable.get()` で VLAN が state=ok か確認 | `intfmgr.cpp` L653-659 |
 | `STATE_PORT_TABLE` | STATE_DB | READ | SET 時 readiness ガード。ポートが state=ok でなければ処理をキューに戻し再試行 | `intfmgr.cpp` L686 |
-| `STATE_LAG_TABLE` | STATE_DB | READ | PortChannel プレフィクスのとき LAG readiness を確認 | `intfmgr.cpp` L663 |
-| `STATE_VRF_TABLE` | STATE_DB | READ | `vrf_name` / `vnet_name` 指定時に VRF/VNET が ready か確認 | `intfmgr.cpp` L671-680 |
+| `STATE_LAG_TABLE` | STATE_DB | READ | PortChannel / LAG サブインタフェースの readiness を確認 | `intfmgr.cpp` L663, L702 |
+| `STATE_VRF_TABLE` | STATE_DB | READ | `vrf_name` / `vnet_name` 指定時に VRF/VNET が ready か確認 | `intfmgr.cpp` L671-684 |
 | `DEVICE_METADATA|localhost.switch_type` | CONFIG_DB | READ | `intfmgrd` 起動時 1 回。`voq` のとき IPv6 アドレス追加に `metric 256` を付与 | `intfmgr.cpp` L71-75 |
 | `NAT_GLOBAL` → `gIsNatSupported` | CONFIG_DB | READ | orchagent 起動時にグローバルフラグ化。`gIsNatSupported==true` のとき SAI RIF 作成時に `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` を設定する | `intfsorch.cpp` L1287-1294 |
 | `DEVICE_METADATA|localhost.mac` → `gMacAddress` | CONFIG_DB | READ | orchagent 起動時にグローバル変数化。ポート固有 `mac_addr` 未指定時に SAI `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` のフォールバック値として使用 | `intfsorch.cpp` L1205 |
@@ -270,6 +275,9 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 | `APP_NEIGH_TABLE` | APP_DB | WRITE | `ipv6_use_link_local_only` を `disable` に変更したとき、同 IF の link-local ネイバーエントリを削除する副作用 | `intfmgr.cpp` L712-738 |
 
 !!! note "補足"
+    - **`PORT` / `gPortsOrch` 依存** は YANG leafref では `PORT.name` への leafref として現れるが、実行時は PortOrch が管理するポートオブジェクト（型・SAI OID）への直接参照に変わる。ポートが PortOrch に未登録なら `INTERFACE` の SAI 適用もスキップされる。
+    - **warm-reboot replay 参照** (`VLAN_INTERFACE`, `PORTCHANNEL_INTERFACE`, `LOOPBACK_INTERFACE`) は通常起動では関係しない。warm-start 時のみ `buildIntfReplayList()` がこれら兄弟テーブルを横断的に読む。
+    - **`STATE_VLAN_TABLE` 依存** は `VLAN_INTERFACE` (VLAN L3 IF) のユースケースで関係するが、`INTERFACE` テーブル（物理ポート）の readiness 判定ではこの分岐に入らない。
     - **`STATE_*TABLE` 依存** は leafref には現れない実行時 readiness ガード。VRF / LAG / ポートのいずれかが未 ready なら Consumer がエントリを保持して再試行する。
     - **`NAT_GLOBAL` 依存** は `nat_zone` フィールドを持っていても NAT が無効なプラットフォームでは SAI に渡らないことを意味する。
     - **VoQ 専用参照** (`DEVICE_METADATA.switch_type=voq`, `CHASSIS_APP_DB`) は non-VoQ 環境では動作しない。

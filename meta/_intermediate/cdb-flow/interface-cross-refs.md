@@ -1,6 +1,6 @@
 # INTERFACE テーブル — 暗黙参照 (Phase C) 調査メモ
 
-調査日: 2026-05-14
+調査日: 2026-05-14 (更新: 2026-05-16)
 対象ソース:
 - `sonic-swss/cfgmgr/intfmgr.cpp`
 - `sonic-swss/orchagent/intfsorch.cpp`
@@ -13,6 +13,24 @@
 ---
 
 ## 検出した暗黙参照
+
+### 0. PORT テーブル / PortOrch (CONFIG_DB + orchagent 内部)
+
+- **場所**: `intfsorch.cpp` L403, L609, L905, L1085, L1216-1251
+- **方向**: `INTERFACE` SET 時に `gPortsOrch->getPort(alias, port)` を呼び出して PORT オブジェクトを取得 (READ)
+- **内容**: ポートの `m_type`（`Port::PHY` / `Port::LAG` / `Port::VLAN` / `Port::SUBPORT`）と SAI port oid を取得し、`SAI_ROUTER_INTERFACE_ATTR_TYPE` と `SAI_ROUTER_INTERFACE_ATTR_PORT_ID` に設定する。PortOrch に登録されていないポートは RIF 作成をスキップ。YANG leafref `PORT.name` とは独立した実行時依存。
+
+### 0b. VLAN_INTERFACE / PORTCHANNEL_INTERFACE / LOOPBACK_INTERFACE (warm-reboot replay)
+
+- **場所**: `intfmgr.cpp` L267-283 (`buildIntfReplayList()`)
+- **方向**: warm-reboot 時のみ CONFIG_DB の兄弟テーブルを横断的に READ
+- **内容**: `intfmgrd` の warm-start 時、`buildIntfReplayList()` が `INTERFACE`・`LOOPBACK_INTERFACE`・`VLAN_INTERFACE`・`LAG_INTERFACE` の全キーを収集して `m_pendingReplayIntfList` に追加する。通常起動では発生しない暗黙参照。
+
+### 0c. STATE_VLAN_TABLE (STATE_DB)
+
+- **場所**: `intfmgr.cpp` L39, L55-56, L653-659
+- **方向**: alias が `Vlan` プレフィクスのとき `m_stateVlanTable.get()` を呼び出して VLAN readiness を確認 (READ)
+- **内容**: `VLAN_INTERFACE` テーブルのエントリ処理時に使用されるガード。物理 `INTERFACE` エントリでは通常この分岐に入らないが、`isIntfStateOk()` は INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INTERFACE を統一的に処理するため同じコードパスに存在する。
 
 ### 1. STATE_PORT_TABLE (STATE_DB)
 
@@ -80,8 +98,13 @@
 
 | テーブル | DB | 方向 | 契機 | 備考 |
 |---------|-----|------|------|------|
+| `PORT` (via PortOrch) | CONFIG_DB | READ | RIF 作成時 | port type / SAI oid 取得 |
+| `VLAN_INTERFACE` | CONFIG_DB | READ | warm-reboot replay のみ | `buildIntfReplayList()` |
+| `PORTCHANNEL_INTERFACE` | CONFIG_DB | READ | warm-reboot replay のみ | `buildIntfReplayList()` |
+| `LOOPBACK_INTERFACE` | CONFIG_DB | READ | warm-reboot replay のみ | `buildIntfReplayList()` |
+| `STATE_VLAN_TABLE` | STATE_DB | READ | `Vlan` プレフィクス alias のとき | `isIntfStateOk()` 共通コードパス |
 | `STATE_PORT_TABLE` | STATE_DB | READ | SET 時 readiness ガード | ポート名が `PortChannel` / `Vlan` 以外 |
-| `STATE_LAG_TABLE` | STATE_DB | READ | SET 時 readiness ガード | `PortChannel` プレフィクス |
+| `STATE_LAG_TABLE` | STATE_DB | READ | SET 時 readiness ガード | `PortChannel` プレフィクス / LAG サブ IF |
 | `STATE_VRF_TABLE` | STATE_DB | READ | `vrf_name` / `vnet_name` 指定時 | VRF/VNET readiness |
 | `DEVICE_METADATA` | CONFIG_DB | READ | intfmgrd 起動時 1 回 | `switch_type=voq` 判定 |
 | `NAT_GLOBAL` / `gIsNatSupported` | CONFIG_DB | READ | orchagent 起動時 | NAT_ZONE_ID SAI 設定の可否 |
