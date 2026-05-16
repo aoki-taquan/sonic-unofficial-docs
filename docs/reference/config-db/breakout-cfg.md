@@ -382,6 +382,57 @@ flex counter が有効な環境では、新子ポートのキュー OID マッ�
 
 詳細分析: `meta/_intermediate/cdb-flow/breakout-cfg-side.md`
 <!-- /side-effects -->
+<!-- cross-refs -->
+## 暗黙参照 — DPB が読み出す関連 CONFIG_DB テーブル (Phase C)
+
+Dynamic Port Breakout (DPB) は `BREAKOUT_CFG` 単体ではなく、`CONFIG_DB` 内の関連テーブルを YANG leafref 解析で検出し、削除対象ポートに依存するエントリを **cascade 削除**（`--force-remove-dependencies` 時）またはユーザー警告対象として扱う。依存解決は `ConfigMgmtDPB._deletePorts()` 内の `SonicYang.find_data_dependencies()` が担う (`config_mgmt.py` L488-495)。
+
+### cascade 削除対象テーブル (YANG モデルあり、leafref 由来)
+
+`force=False` 時は依存一覧を表示して中断。`force=True` (`--force-remove-dependencies`) 時に cascade 削除される。
+
+| テーブル | YANG ファイル | 参照フィールド | 削除契機 |
+|---|---|---|---|
+| `BUFFER_PG` | `sonic-buffer-pg.yang` L43 | `port` leafref → `PORT.name` | 対象ポートの BUFFER_PG エントリが削除 |
+| `BUFFER_QUEUE` | `sonic-buffer-queue.yang` L51 | `port` leafref → `PORT.name` | 対象ポートの BUFFER_QUEUE エントリが削除 |
+| `INTERFACE` | `sonic-interface.yang` L58, L128 | `name` leafref → `PORT.name` | INTERFACE / INTERFACE_IPPREFIX エントリが削除 |
+| `VLAN_MEMBER` | `sonic-vlan.yang` L292 | `port` leafref → `PORT.name` | VLAN_MEMBER_LIST エントリが削除 |
+| `PORT_QOS_MAP` | `sonic-port-qos-map.yang` L78 | `name` leafref → `PORT.name` | QoS マッピングエントリが削除 |
+| `BUFFER_PORT_INGRESS_PROFILE_LIST` | `sonic-buffer-port-ingress-profile-list.yang` L41 | `port` leafref → `PORT.name` | バッファイングレスプロファイルが削除 |
+| `BUFFER_PORT_EGRESS_PROFILE_LIST` | `sonic-buffer-port-egress-profile-list.yang` L41 | `port` leafref → `PORT.name` | バッファイグレスプロファイルが削除 |
+| `PFC_WD` | `sonic-pfcwd.yang` L38 | `ifname` leafref → `PORT.name` | PFC Watchdog エントリが削除 |
+| `QUEUE` | `sonic-queue.yang` L67 | `port` leafref → `PORT.name` | QUEUE エントリが削除 |
+| `CABLE_LENGTH` | `sonic-cable-length.yang` L47 | `port` leafref → `PORT.name` | ケーブル長エントリが削除 |
+| `STORM_CONTROL` | `sonic-storm-control.yang` L41 | `ifname` leafref → `PORT.name` | ストームコントロールエントリが削除 |
+| `LLDP_PORT_TABLE` | `sonic-lldp.yang` L109 | `name` leafref → `PORT.name` | LLDP ポート設定が削除 |
+| `DEVICE_NEIGHBOR` | `sonic-device_neighbor.yang` L55 | `name` leafref → `PORT.name` | 隣接デバイス情報が削除 |
+| `SFLOW` (port sampler) | `sonic-sflow.yang` L110 | `port` leafref → `PORT.name` | sFlow ポートサンプラーが削除 |
+| `BGP_NEIGHBOR` | `sonic-bgp-neighbor.yang` L85 | `local_addr` leafref → `PORT.name` | BGP neighbor (port 指定) が削除 |
+| `MIRROR_SESSION` | `sonic-mirror-session.yang` L149 | `dst_port` leafref → `PORT.name` | ミラーセッションの宛先が対象ポートの場合に削除 |
+
+> 依存の検出は `SonicYang.find_data_dependencies(xPathPort)` が YANG データツリーを走査して行う。leafref でない参照（`ACL_TABLE.ports` 等）はここでは検出されない。
+
+### ユーザー警告対象テーブル (YANG モデルなし — 自動削除不可)
+
+YANG モデルが存在しないテーブルは `tablesWithOutYang` に収集され、該当ポートのエントリを持つ場合に `breakout_warnUser_extraTables()` がユーザーへの確認プロンプトを表示する (`config/main.py` L239, L5539)。**自動削除はされない**ため、手動での事前整理が必要。
+
+| テーブル | DPB での挙動 | 手動対応例 |
+|---|---|---|
+| `ACL_TABLE` (`.ports` フィールドに対象ポートあり) | 警告表示 + 確認要求。削除はユーザー任せ | `config acl remove table <table>` |
+| `ACL_RULE` | `ACL_TABLE` 依存エントリが警告対象に含まれることがある | `config acl remove rule` |
+| `MUX_CABLE` | 対象ポートにエントリがある場合に警告 | 手動削除 |
+
+> `tablesWithOutYang` の実際のリストはランタイムの CONFIG_DB 内容に依存する。ACL_TABLE が最も頻出する。
+
+### PORT 再作成フェーズ (breakout 後)
+
+削除フェーズ完了後、新子ポートが `PORT` テーブルに追加される。`loadDefConfig=True` の場合は以下がデフォルト設定で暗黙的に再作成される:
+
+| テーブル | 再作成契機 | evidence |
+|---|---|---|
+| `PORT` | 新子ポートエントリを `platform.json` + `portconfig.py` から生成 | `config_mgmt.py` L439, `portconfig.py` L350-390 |
+| `BUFFER_PG` / `BUFFER_QUEUE` | `loadDefConfig=True` 時にデフォルトバッファ設定を注入 | `portconfig.py` (デフォルト設定 JSON) |
+<!-- /cross-refs -->
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
