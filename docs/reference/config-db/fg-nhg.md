@@ -243,6 +243,47 @@ if (!link.empty()) {
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/fgnhgorch.cpp`
+
+### NEXTHOP 未解決 → retry（return false）
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `FG_NHG_MEMBER` 投入時に nexthop が neighOrch に未登録（ARP/NDP 未解決） | `doTaskFgNhgMember()` L2071 | Consumer キューに残り retry | `SWSS_LOG_INFO "Nexthop %s is not resolved yet"` |
+| `FG_NHG_PREFIX` 投入時に親 `FG_NHG` エントリが未受信 | `doTaskFgNhgPrefix()` L1821 | `return false` → retry | `SWSS_LOG_INFO "FG_NHG entry not received yet, continue"` |
+| `FG_NHG_MEMBER` 投入時に親 `FG_NHG` エントリが未受信 | `doTaskFgNhgMember()` L2004 | `return false` → retry | `SWSS_LOG_INFO "FG_NHG entry not received yet, continue"` |
+| prefix 移行中（APP_DB delete 後に routeorch 削除完了待ち） | `doTaskFgNhgPrefix()` L1883 | `return false` → retry | `SWSS_LOG_INFO "Route(%s) ADD exists in routeorch..."` |
+| 全 bank 空で bucket 割り当て不能 | `createFgNhg()` L1067 | `return false` → retry 期待 | `SWSS_LOG_INFO "Found no next-hops to add, skipping"` |
+
+### SAI fg_nhg 操作失敗
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `createFineGrainedNextHopGroup` 失敗（SAI NHG 生成エラー） | `createFgNhg()` L275 | `return false`（エントリ破棄） | `SWSS_LOG_ERROR "Failed to create next hop group %s"` |
+| `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` クエリ失敗 | `createFgNhg()` L294 | NHG ロールバック後 `return false` | `SWSS_LOG_ERROR "Failed to query next hop group %s SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE"` |
+| SAI next hop group member 作成失敗（`create_next_hop_group_member`） | `setNewNhgMembers()` L1174 | NHG 全体をロールバック後 `return false` | `SWSS_LOG_ERROR "Failed to create next hop group %s member %s: %d"` |
+| `validNextHopInNextHopGroup` 失敗（nexthop の SAI 登録失敗） | `doTaskFgNhgMember()` L2078 | メンバー情報ロールバック後 `return false` | `SWSS_LOG_INFO "Failing validNextHopInNextHopGroup for %s"` |
+| Fine Grained NHG 削除失敗 | `removeFineGrainedNextHopGroup()` L343 | `return false` | `SWSS_LOG_ERROR "Failed to remove nhgid %"` |
+
+### 不正 bucket_size・設定値
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `bucket_size == 0`（未指定または明示的 0） | `doTaskFgNhg()` L1722 | `SWSS_LOG_ERROR` → `return true`（破棄、再試行なし） | `SWSS_LOG_ERROR "Received bucket_size which is 0 for key %s"` |
+| `match_mode==prefix-based` かつ `max_next_hops==0` | `doTaskFgNhg()` L1719 | `SWSS_LOG_ERROR`（処理継続・SAI 動作不定） | `SWSS_LOG_ERROR "Received match_mode==prefix_based with max_next_hops 0..."` |
+| `FG_NHG_MEMBER` を `prefix-based` グループに投入 | `doTaskFgNhgMember()` L2011 | `SWSS_LOG_ERROR` → `return true`（破棄） | `SWSS_LOG_ERROR "Received FG_NHG member for prefix-based match_mode..."` |
+| `FG_NHG` / `FG_NHG_MEMBER` で `fg_nhg_name` が空文字 | L1816 / L2000 | `SWSS_LOG_ERROR` → `return true`（破棄） | `SWSS_LOG_ERROR "Received FG_NHG with empty name for key %s"` |
+
+!!! warning "bucket_size=0 は再試行なしで破棄"
+    `bucket_size` が 0 の場合、`return true` でエントリが Consumer キューから外れる。設定エラーは syslog の `SWSS_LOG_ERROR` 以外に通知されないため見落としに注意。
+
+!!! note "nexthop 未解決は自動 retry"
+    neighOrch での nexthop 未解決は `return false` によりキューに残り、ARP/NDP 解決後に自動で再処理される。ユーザー操作不要。
+
+<!-- /failure -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
