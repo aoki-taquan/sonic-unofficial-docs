@@ -310,6 +310,89 @@ journalctl -u swss | grep -i "VRF name\|RTN_BLACKHOLE"
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/static-route-failure.md`
 <!-- /failure -->
 
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+`STATIC_ROUTE` テーブルは `bgpcfgd` の `StaticRouteMgr` が `SubscriberStateTable` 経由で購読し、FRR vtysh コマンドに変換する。
+
+### bgpcfgd — StaticRouteMgr (CONFIG_DB / APPL_DB)
+
+`main.py` が `Runner.add_manager()` で `StaticRouteMgr` を 2 インスタンス登録する。
+
+```python
+# sonic-bgpcfgd/bgpcfgd/main.py L98-99
+StaticRouteMgr(common_objs, "CONFIG_DB", "STATIC_ROUTE"),
+StaticRouteMgr(common_objs, "APPL_DB",  "STATIC_ROUTE"),
+```
+
+`Runner.add_manager()` は各テーブルに対して `swsscommon.SubscriberStateTable` を生成し、`swsscommon.Select` に登録する。
+
+```python
+# sonic-bgpcfgd/bgpcfgd/runner.py L49-52
+subscriber = swsscommon.SubscriberStateTable(conn, table_name)
+self.subscribers.add(subscriber)
+self.selector.addSelectable(subscriber)
+self.callbacks[db][table_name].append(manager.handler)
+```
+
+Redis からのイベント到着時、`runner.py` は `subscriber.pop()` でキー・オペレーション・フィールド値を取得し、`StaticRouteMgr.handler(key, op, fvs)` を呼ぶ。
+
+### set_handler → vtysh 経路
+
+`set_handler` は受け取った `data` から nexthop セットを構築し、差分コマンドを生成して FRR に送信する。
+
+```python
+# managers_static_rt.py L211-218  generate_command
+return '{}{} route {}{}{}{}'.format(
+    'no ' if op == self.OP_DELETE else '',
+    'ipv6' if ip_nh.af == socket.AF_INET6 else 'ip',
+    ip_prefix,
+    ip_nh,                                      # nexthop / blackhole / distance / nexthop-vrf
+    ' vrf {}'.format(vrf) if vrf != 'default' else '',
+    ' tag {}'.format(route_tag)
+)
+```
+
+生成されたコマンドは `cfg_mgr.push_list(cmd_list)` でバッファに積まれ、`Runner.run()` の `cfg_manager.commit()` で `vtysh -f <tmpfile>` として一括実行される。
+
+**FRR vtysh コマンド例:**
+
+```
+ip route 10.0.0.0/24 192.0.2.1 tag 1
+ip route 10.0.0.0/24 blackhole tag 2
+ipv6 route 2001:db8::/32 2001:db8::1 vrf Vrf-red tag 1
+no ip route 10.0.0.0/24 192.0.2.1 tag 1
+```
+
+### advertise フラグと route-tag
+
+`advertise=true` → `ROUTE_ADVERTISE_ENABLE_TAG = '1'`、`advertise=false` (デフォルト) → `ROUTE_ADVERTISE_DISABLE_TAG = '2'` を FRR タグとして付与。初回経路設定時に BGP への redistribute を有効化する vtysh コマンドも発行する。
+
+```python
+# managers_static_rt.py L221-235  enable_redistribution_command
+cmd_list.append("route-map STATIC_ROUTE_FILTER permit 10")
+cmd_list.append(" match tag %s" % self.ROUTE_ADVERTISE_ENABLE_TAG)
+...
+cmd_list.append("  redistribute static route-map STATIC_ROUTE_FILTER")
+```
+
+### 購読フロー要約
+
+```
+CONFIG_DB STATIC_ROUTE
+  └─ bgpcfgd StaticRouteMgr (SubscriberStateTable, CONFIG_DB)
+       ├─ set_handler → IpNextHopSet 構築 → generate_command
+       │    └─ cfg_mgr.push_list → vtysh ip/ipv6 route <prefix> [nexthop|blackhole] [vrf] tag <tag>
+       └─ del_handler → no ip/ipv6 route → vtysh
+
+APPL_DB STATIC_ROUTE
+  └─ bgpcfgd StaticRouteMgr (SubscriberStateTable, APPL_DB)
+       └─ del_handler（BFD セッション全断時 staticroutebfd が削除したエントリを追従）
+            └─ skip_appl_del() で CONFIG_DB 残存確認 → FRR からの削除可否判定
+```
+
+<!-- /pubsub -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -489,5 +572,25 @@ STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依�
 
 詳細エビデンス: `meta/_intermediate/cdb-flow/static-route-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+### VOQ Chassis
+
+`bgpcfgd` 起動時に `device_info.is_chassis()` が `True` の場合、`ChassisAppDbMgr` が追加登録され、Supervisor の TSA (Traffic Shift Away) 状態変化を `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL` から購読する[^3]。これにより Line Card 全体の BGP が isolate/unisolate される。`STATIC_ROUTE` テーブルの処理ロジック自体は VOQ 構成でも共通。VOQ Chassis 固有の BGP peer は `BGP_VOQ_CHASSIS_NEIGHBOR` で別管理されており、静的経路の nexthop 到達性に間接的に影響しうる。
+
+### SmartSwitch DPU
+
+`switch_type == "dpu"` の場合、`bfdmon` が BFD プローブ状態を `STATE_DB.DPU_BFD_PROBE_STATE` ではなく `DPU_STATE_DB.DASH_BFD_PROBE_STATE` から取得する[^4]。`bfd=true` を持つ `STATIC_ROUTE` エントリの BFD 監視経路が異なる DB を参照する点に注意。CONFIG_DB 書き込みおよび FRR への静的経路反映ロジックは DPU 固有差分なし。
+
+### FRR バージョン差
+
+`bgpcfgd` レイヤに FRR バージョン検出・分岐コードは存在しない。`vtysh` へ渡すコマンド文字列（`ip route` / `ipv6 route` 形式）は固定であり、FRR バージョンによる挙動差は bgpcfgd レベルでは吸収されている。
+
+[^3]: bgpcfgd main.py チャーシス分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/main.py>
+[^4]: bfdmon DPU 分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bfdmon/bfdmon.py>
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: 21a1d1474543 -->
