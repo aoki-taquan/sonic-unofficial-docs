@@ -399,6 +399,60 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`featured` デーモンは CONFIG_DB の `FEATURE` テーブルを購読して systemd サービスを制御するが、その過程で **STATE_DB・CONFIG_DB・ファイルシステム**の 3 箇所に副次的な書込を行う。
+
+### STATE_DB — FEATURE 状態反映
+
+```
+STATE_DB  FEATURE|<feature_name>  state  <enabled|disabled|failed>
+```
+
+`FeatureHandler.set_feature_state(feature, state)` (`featured:585-590`) が次のタイミングで呼ばれる:
+
+| タイミング | 書込値 | コード箇所 |
+|-----------|--------|-----------|
+| `enable_feature()` 正常完了 | `"enabled"` | `featured:513` |
+| `disable_feature()` 正常完了 | `"disabled"` | `featured:547` |
+| `enable_feature()` / `disable_feature()` でコマンド失敗 | `"failed"` | `featured:510, 544` |
+| `sync_feature_scope()` で stop/disable/mask 失敗 | `"failed"` | `featured:344` |
+
+multi-asic 環境では各 namespace の STATE_DB にも同値を書き込む (`featured:588-590`)。
+
+確認コマンド:
+```bash
+sonic-db-cli STATE_DB hgetall 'FEATURE|bgp'
+```
+
+### CONFIG_DB — フィールド書き戻し (resync 系)
+
+`featured` は起動時および state 変化時に CONFIG_DB へも副次書込を行う。
+
+| メソッド | 書込フィールド | 条件 |
+|---------|--------------|------|
+| `resync_feature_state` (`featured:550-572`) | `state` | rendered 値が `always_enabled`/`always_disabled`、または現 DB 値が Jinja2 テンプレート |
+| `sync_feature_delay_state` (`featured:574-583`) | `delayed` | manifest 値と現 DB 値が不一致 |
+| `_conditional_update_scope` (`featured:289-355`) | `has_per_asic_scope`, `has_global_scope` | rendered 値と現 DB 値が不一致の場合のみ `mod_entry` |
+
+いずれも multi-asic では各 namespace の CONFIG_DB にも書き込む。
+
+### ファイルシステム — systemd unit override ファイル
+
+`auto_restart` フィールド変化または起動時に `/etc/systemd/system/<feature>.service.d/auto_restart.conf` を生成し `Restart=always|no` を書込後、`systemctl daemon-reload` を実行する (`featured:382-403`)。
+
+multi-asic では `<feature>@<asic_id>.service.d/auto_restart.conf` も生成。
+
+**SpineRouter 特例**: `DEVICE_METADATA.localhost.type == 'SpineRouter'` のとき `syncd` / `gbsyncd` は CONFIG_DB の `auto_restart` 値を無視して `Restart=no` を強制書込する (`featured:374-378`)。
+
+### Kubernetes 切替 (set_owner = kube) — featured スコープ外
+
+`set_owner = "kube"` フィールドは `sonic-feature.yang` で定義されているが、**`featured` スクリプト内に kube 制御コードは存在しない**。Kubernetes 管理切替は別のコンポーネント（`hostcfgd` KubeHandler 等）が担う。`featured` の副次書込対象は STATE_DB と CONFIG_DB (resync) およびファイルシステムのみ。
+
+> **Evidence**: `sonic-host-services/scripts/featured:289-355,357-406,508-513,540-547,550-583,585-590`; 詳細分析 `meta/_intermediate/cdb-flow/feature-side-effects.md`
+<!-- /side-effects -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
