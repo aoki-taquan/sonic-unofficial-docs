@@ -552,6 +552,85 @@ BUFFER_POOL
 
 > **スキャン証跡**: `buffermgrdyn.cpp` L40, L150-153, L442, L605-815, L1978-2040 読了 / `buffermgr.cpp` L167-176, L413-462, L517-519 読了 / `buffermgrd.cpp` L183-201 読了 / `buffer_headroom_mellanox.lua` L9-115 読了 / `buffer_pool_mellanox.lua` L261-310 読了 / `buffer_headroom_barefoot.lua` L8-93 読了 / `buffer_pool_barefoot.lua` L9-20 読了。
 <!-- /cross-refs -->
+<!-- ordering -->
+## 登録順序依存 (Phase B)
+
+BUFFER_POOL → BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE の 3 段が依存関係を形成する。
+誤順序で登録すると `task_need_retry` や SAI create-only 属性の乖離が生じる。
+
+### 1. Pool → Profile → PG/Queue の必須順
+
+| 順序 | テーブル | 根拠 |
+|------|---------|------|
+| 1 | `BUFFER_POOL` | `BUFFER_PROFILE.pool` leafref の参照先が未存在だと `ref_resolve_status::not_resolved` → `task_need_retry` | 
+| 2 | `BUFFER_PROFILE` | PG/Queue がプロファイルを参照。Pool が SAI 登録済みでないと `resolveFieldRefValue` が pool OID を解決できない |
+| 3 | `BUFFER_PG` / `BUFFER_QUEUE` | ポートが admin up になる前にプロファイルを適用しないと WARN ログが出力される |
+
+ソース: `bufferorch.cpp:640-662` — `BUFFER_PROFILE` の pool 解決で `ref_resolve_status::not_resolved` を検出すると `task_need_retry` を返す。  
+ソース: `bufferorch.cpp:1206-1210` (BUFFER_QUEUE) / `bufferorch.cpp:1576-1580` (BUFFER_PG) — ポートが up 後にプロファイルを適用すると `SWSS_LOG_WARN` を出力。
+
+### 2. SAI create-only 制約（Pool）
+
+`BUFFER_POOL` の `type` (`SAI_BUFFER_POOL_ATTR_TYPE`) と `mode` (`SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE`) は **SAI create-only 属性**。
+既存 SAI オブジェクトへの更新 SET では LOG_INFO のみでスキップされ、**SAI には非反映**となる。
+
+```text
+既存 pool に SET → bufferorch が type / mode フィールドを検出
+  → "Skip setting buffer pool type/mode ... for pool ..." (LOG_INFO のみ)
+  → SAI set_buffer_pool_attribute は呼ばれない
+```
+
+ソース: `bufferorch.cpp:437-441` (type)、`bufferorch.cpp:467-471` (mode)
+
+同様に `BUFFER_PROFILE.pool` (`SAI_BUFFER_PROFILE_ATTR_POOL_ID`) と threshold mode も create-only。
+プロファイル作成後に pool を変更しても SAI には反映されない (`bufferorch.cpp:656-658`、`bufferorch.cpp:694-712`)。
+
+### 3. Lua plugin の起動順（dynamic buffer model）
+
+`BufferMgrDynamic` コンストラクタは以下の順序で 3 本の Lua plugin を Redis に登録する。
+いずれか 1 本でもロードに失敗すると例外をキャッチして `buffermgrd` が起動中断する。
+
+| 順序 | plugin ファイル名 | 役割 |
+|------|-----------------|------|
+| 1 | `buffer_headroom_<platform>.lua` | headroom サイズ計算 (ASIC_TABLE + LOSSLESS_TRAFFIC_PATTERN 参照) |
+| 2 | `buffer_pool_<platform>.lua` | プールサイズ・xoff (SHP) 計算 |
+| 3 | `buffer_check_headroom_<platform>.lua` | headroom 超過チェック |
+
+ソース: `buffermgrdyn.cpp:76-78` (plugin 名生成)、`buffermgrdyn.cpp:108-114` (ロード順序)、`buffermgrdyn.cpp:121` (起動中断ログ)
+
+Lua plugin がロード完了する前に `handleBufferPoolTable()` で pool サイズ計算が要求されると、
+Lua script SHA が空のまま `evalsha` が呼ばれてエラーになる。
+このため **plugin ロードは pool エントリ処理よりも必ず先行する**。
+
+### 4. zero profile の登録順
+
+zero buffer pool を zero buffer profile より先に CONFIG_DB に登録しなければならない。
+`buffermgrdyn.cpp:236-237` のコメント通り、`buffers_*.json` テンプレート内のエントリ順序が依存関係を決定する。
+
+```
+// They are loaded into APPL_DB in an order in which they occur in the json file,
+// which means it's vendor's responsibility to guarantee the order reflects
+// the dependency among zero pools and profiles.
+```
+
+zero profile の削除は zero pool よりも先に行う（依存関係の逆順）。  
+ソース: `buffermgrdyn.cpp:239` — `The zero profiles are removed first and then the zero pools.`
+
+### まとめ
+
+```
+[起動時]
+  1. Lua plugin ロード (headroom → pool → check_headroom)
+  2. BUFFER_POOL SAI 作成  ← type / mode は create-only
+  3. BUFFER_PROFILE SAI 作成 (pool OID 解決後)
+  4. BUFFER_PG / BUFFER_QUEUE 適用 (ポート admin-up 前に完了)
+
+[削除時]
+  BUFFER_PG/QUEUE → BUFFER_PROFILE → BUFFER_POOL (zero: profile 先削除 → pool 削除)
+```
+
+> **スキャン証跡**: `bufferorch.cpp` L437-471, L640-662, L694-712, L1206-1210, L1576-1580 / `buffermgrdyn.cpp` L76-78, L108-114, L121, L232-239 読了。
+<!-- /ordering -->
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
