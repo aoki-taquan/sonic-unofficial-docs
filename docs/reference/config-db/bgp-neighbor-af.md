@@ -474,6 +474,40 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 
 <!-- /constants -->
 
+<!-- failure -->
+## 失敗挙動・リトライ分岐 (Phase D)
+
+> 調査対象: `frrcfgd.py` `__update_bgp`、`bgp_table_handler_common`、`g_run_command`、`BgpdClientMgr.__create_frr_client`
+
+### 失敗ケース一覧
+
+| ケース | 検出箇所 (frrcfgd.py) | 挙動 | ログ |
+|--------|----------------------|------|------|
+| **VRF の `local_asn` 未設定** (`BGP_GLOBALS` が未書き込み) | `__update_bgp` L2658-2662 (`__get_vrf_asn()` → `None`) | `continue` で当該エントリをサイレントスキップ。メッセージキューから取り出し済みのため **再試行なし** | `LOG_DEBUG: 'ignore table BGP_NEIGHBOR_AF update because local_asn for VRF {} was not configured'` |
+| **key フォーマット不正** (`<nbr>\|<af>` の `\|` が欠損) | `__update_bgp` L2866 (`key.split('\|')`) | `continue` でスキップ。設定値起因の恒久エラーのため再試行なし | ログ出力なし |
+| **vtysh コマンド失敗** (`key_map.run_command()` が `False` を返す) | `__update_bgp` L2872-2874 | `LOG_ERR` を出力し `continue` でスキップ。**リトライなし**。次回 CONFIG_DB 更新イベントが来るまで FRR への反映は行われない | `LOG_ERR: 'failed running BGP neighbor AF config command'` |
+| **vtysh/bgpd ソケット接続失敗** (FRR デーモン起動前) | `BgpdClientMgr.__create_frr_client` L186-200 | 2 秒インターバルで最大 100 回リトライ（合計最大 200 秒）。超過時は全ソケット close し `RuntimeError` → frrcfgd 起動失敗 | `LOG_ERR: 'failed to connect to frr daemon {}: {}'` / `'re-tried too many times, give up'` |
+| **`g_run_command` での vtysh 非ゼロ終了** | `g_run_command` L59-62 | `False` を返す (`ignore_fail=False` 時のみ `LOG_ERR`) | `LOG_ERR: 'command execution failure. Command: "{}"'` |
+| **ROUTE_MAP / PREFIX_LIST が FRR 未定義** | vtysh コマンド送信後、bgpd 内部解決 | frrcfgd レベルでは検出しない。vtysh 自体は成功扱いとなるが bgpd がポリシー適用時に参照解決失敗。**CONFIG_DB 側エラーは発生しない** | FRR `/var/log/frr/bgpd.log` 側にエラーが記録される可能性あり |
+
+### BGP_NEIGHBOR 未準備時のサイレントスキップ詳細
+
+`BGP_NEIGHBOR_AF` は `__vrf_based_table()` が `True` を返すテーブルであるため、`__update_bgp` 冒頭で **VRF の `local_asn`（= `BGP_GLOBALS.local_asn`）** の存在チェックが必ず実施される (`frrcfgd.py:2656-2662`)。
+
+`BGP_NEIGHBOR` エントリが存在していても `BGP_GLOBALS` に `local_asn` が未書き込みの場合は同じ `continue` パスでスキップされる。メッセージキューから取り出し後の skip のため **更新は失われる**。`BGP_GLOBALS.local_asn` が後から書き込まれると `__apply_dep_vrf_table(vrf, 'BGP_NEIGHBOR')` → `__apply_dep_vrf_table(vrf, 'BGP_NEIGHBOR_AF', ...)` の再適用チェーン (`frrcfgd.py:2851-2853`) により CONFIG_DB キャッシュから再投入される。
+
+### vtysh 失敗時のリトライなし設計
+
+`BGP_NEIGHBOR_AF` ハンドラブロック (`frrcfgd.py:2865-2874`) では `key_map.run_command()` が `False` を返した場合にエラーをログ出力して `continue` するのみで **自動リトライは行わない**。次回 CONFIG_DB 変更イベントが届くまで FRR への反映は再試行されない。
+
+### ROUTE_MAP 参照の失敗挙動
+
+`route_map_in` / `route_map_out` / `default_rmap` / `unsuppress_map_name` に設定した route-map 名は `nbr_af_key_map` (`frrcfgd.py:1899-1906`) によって `neighbor <addr> route-map <name> in|out` 等の vtysh コマンドに変換される。frrcfgd はコマンド送信後の **bgpd 側の名前解決結果を確認しない**。
+
+未定義の route-map 名を参照する場合、vtysh 自体は `0` を返すが bgpd がピアへポリシーを適用する際に参照解決が失敗する。frrcfgd 側には **エラーが伝播しない**（`STAT_SUCC` 扱い）。対処: 事前に `ROUTE_MAP` テーブルへ route-map を書き込み、frrcfgd の `ROUTE_MAP` ハンドラ経由で FRR に定義済みの状態にしてから `BGP_NEIGHBOR_AF` を書き込む。
+
+<!-- /failure -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
