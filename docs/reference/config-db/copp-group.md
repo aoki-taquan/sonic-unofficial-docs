@@ -45,6 +45,58 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB → APPL_DB (coppmgr)
+
+`coppmgr` (`docker-swss` 内) が `CONFIG_DB COPP_GROUP` テーブルを **Consumer** として購読する。
+
+- **クラス**: `CoppMgr` — コンストラクタで `Orch(cfgDb, tableNames)` に `CFG_COPP_GROUP_TABLE_NAME` を渡して登録。<!-- evidence: coppmgr.cpp L296-297 -->
+- **ハンドラ**: `doTask(Consumer&)` → `doCoppGroupTask(Consumer&)` — SET 時はフィールドをマージして `m_appCoppTable.set(key, modified_fvs)` で `APP_DB COPP_TABLE` へ書き込む。DEL 時は `m_appCoppTable.del(key)`。<!-- evidence: coppmgr.cpp L840-925, L968-984 -->
+- **重複チェック**: `coppGroupGetModifiedFvs()` が変更のないフィールドを除外し、差分のみ APP_DB に伝播する。<!-- evidence: coppmgr.cpp L869-874 -->
+- **STATE_DB**: `setCoppGroupStateOk(key)` で `STATE_DB STATE_COPP_GROUP_TABLE_NAME` に `ok` を書き込む。<!-- evidence: coppmgr.cpp L302, L875 -->
+
+### APPL_DB → SAI (CoppOrch)
+
+`orchagent` 内の `CoppOrch` が `APP_DB COPP_TABLE` を Consumer として購読し、`processCoppTrapGroup()` でSAI API を呼び出す。
+
+- **クラス**: `CoppOrch(DBConnector* db, string tableName) : Orch(db, tableName)` — APP_DB `COPP_TABLE` を登録。<!-- evidence: copporch.cpp L191-192 -->
+- **SAI API 呼び出し一覧**:
+
+| 操作 | SAI API | 条件 |
+|------|---------|------|
+| トラップグループ新規作成 | `sai_hostif_api->create_hostif_trap_group()` | グループが未存在 (`m_trap_group_map` に未登録) |
+| トラップグループ属性更新 | `sai_hostif_api->set_hostif_trap_group_attribute()` | グループが既存 |
+| ポリサー作成・更新 | `sai_policer_api->create_policer()` | `policer_attribs` が非空 |
+| Genetlink hostif 作成 | `sai_hostif_api->create_hostif()` | `genetlink_name` フィールドあり |
+| hostif テーブルエントリ作成 | `sai_hostif_api->create_hostif_table_entry()` | Genetlink hostif 作成後 |
+| trap 新規作成 | `sai_hostif_api->create_hostif_trap()` | trap_id 追加時 |
+
+<!-- evidence: copporch.cpp L762, L780, L795-801, L844, L453, L515 -->
+
+### pub/sub シーケンス図
+
+```mermaid
+sequenceDiagram
+  participant CFG as CONFIG_DB<br/>COPP_GROUP
+  participant MGR as coppmgrd<br/>CoppMgr
+  participant APP as APP_DB<br/>COPP_TABLE
+  participant OA as orchagent<br/>CoppOrch
+  participant SAI as SAI<br/>sai_hostif_api
+
+  CFG->>MGR: Consumer notify (SET/DEL)
+  MGR->>MGR: doCoppGroupTask()<br/>merge + diff check
+  MGR->>APP: m_appCoppTable.set/del(key, fvs)
+  APP->>OA: Consumer notify (SET/DEL)
+  OA->>OA: processCoppTrapGroup()
+  OA->>SAI: create/set_hostif_trap_group()
+  OA->>SAI: create_policer() [if policer_attribs]
+  OA->>SAI: create_hostif_trap() [if trap_id change]
+```
+
+<!-- /pubsub -->
+
 ## key 構造
 
 ```text

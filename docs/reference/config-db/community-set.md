@@ -512,4 +512,31 @@ bgpd との vtysh ソケット通信が失敗した場合（ソケット書き�
 
 DB 更新ハンドラ全体を囲む `except Exception as e` ブロックが `syslog.LOG_ERR '[bgp cfgd] Failed handling config DB update with exception: ...'` を出力してそのエントリを破棄する。当該 community-set の変更は反映されず、DB と FRR の乖離が検出されない。<!-- evidence: frrcfgd.py L1532-1534 -->
 <!-- /failure -->
+<!-- cross-refs-extcomm -->
+## 暗黙参照 — EXTENDED_COMMUNITY_SET を参照する CONFIG_DB テーブル (Phase C)
+
+`frrcfgd` の `BGPConfigDaemon` は起動時に `get_table('EXTENDED_COMMUNITY_SET')` で全エントリを `self.extcomm_set_list` キャッシュに一括ロードする (frrcfgd.py:2221-2226)。以下は `frrcfgd.py` のスキャンで検出した暗黙参照テーブル。
+
+### ROUTE_MAP からの被参照 (name leafref)
+
+`ROUTE_MAP` テーブルは `EXTENDED_COMMUNITY_SET` を 2 つのフィールド経由で参照する。
+
+| 参照フィールド | FRR コマンド | 依存タイミング | evidence |
+|---|---|---|---|
+| `ROUTE_MAP.match_ext_community` | `match extcommunity <name>` | ランタイム: FRR に名前文字列をそのまま渡す。YANG leafref により DB 整合は保証されるが FRR 側での名前解決は自前 | frrcfgd.py:1939; sonic-route-map.yang:L256-260 |
+| `ROUTE_MAP.set_ext_community_ref` | `set extcommunity rt/soo <members>` | ランタイム: `hdl_set_extcomm()` が `daemon.extcomm_set_list.get(name)` でキャッシュを参照し、未設定または `is_configurable()` が False の場合 `LOG_ERR` を出力して FRR コマンド生成をスキップする | frrcfgd.py:423-427; sonic-route-map.yang:L355-358 |
+
+> `set_ext_community_ref` は `EXTENDED_COMMUNITY_SET` エントリが先にキャッシュされていないと FRR への `set extcommunity` が生成されない。`EXTENDED_COMMUNITY_SET` → `ROUTE_MAP` の設定順序が重要。
+
+### BGP_NEIGHBOR_AF — 間接参照 (ランタイムキャッシュ経由)
+
+`BGP_NEIGHBOR_AF` が直接 `EXTENDED_COMMUNITY_SET` を参照するフィールドはないが、`ROUTE_MAP` 経由で `set_ext_community_ref` を利用する場合、`hdl_set_extcomm()` が `daemon.extcomm_set_list` を参照するため間接的に連動する。
+
+| 参照種別 | タイミング | evidence |
+|---|---|---|
+| 起動時一括ロード | `get_table('EXTENDED_COMMUNITY_SET')` → `self.extcomm_set_list` キャッシュ | frrcfgd.py:2221-2226 |
+| ランタイム間接参照 | `ROUTE_MAP` の `set_ext_community_ref` 処理時に `hdl_set_extcomm()` がキャッシュを参照 | frrcfgd.py:423-427, 856-863 |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ext-community-set-cross-refs.md` を参照。
+<!-- /cross-refs-extcomm -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
