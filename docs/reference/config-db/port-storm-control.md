@@ -71,6 +71,43 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 - 関連 CLI: `config interface storm-control <type> <ifname> <kbps>`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-storm-control`
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-constants.md -->
+
+### storm_type 文字列定数
+
+キーの第 2 トークンとして受け付ける有効値と SAI 属性のマッピング (`policerorch.cpp:31-33`):
+
+| CONFIG_DB 値 | C++ 変数 | SAI 属性 |
+|---|---|---|
+| `broadcast` | `storm_broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` |
+| `unknown-unicast` | `storm_unknown_unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` |
+| `unknown-multicast` | `storm_unknown_mcast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` |
+
+上記以外の値は `SWSS_LOG_ERROR("Unknown storm_type %s")` → `task_failed`。
+
+### policer モード固定値
+
+storm control 用 SAI policer 作成時に常にハードコードされる属性 (`policerorch.cpp:156-169`):
+
+| SAI 属性 | 固定値 | ソースコメント |
+|---|---|---|
+| `SAI_POLICER_ATTR_METER_TYPE` | `SAI_METER_TYPE_BYTES` | `/*Meter type hardcoded to BYTES*/` |
+| `SAI_POLICER_ATTR_MODE` | `SAI_POLICER_MODE_STORM_CONTROL` | `/*Policer mode hardcoded to STORM_CONTROL*/` |
+| `SAI_POLICER_ATTR_RED_PACKET_ACTION` | `SAI_PACKET_ACTION_DROP` | `/*Red Packet Action hardcoded to DROP*/` |
+
+CONFIG_DB / YANG / CLI からの変更手段はない。
+
+### policer 命名規則
+
+内部 policer 名は `"_" + <ifname> + "_" + <storm_type>` (`policerorch.cpp:146`)。
+
+例: キー `Ethernet0|broadcast` → 内部名 `_Ethernet0_broadcast`。先頭 `_` が通常 POLICER テーブルエントリと衝突しないためのプレフィックス。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
 
@@ -196,6 +233,20 @@ YANG にも CLI にも CBS・Green packet action・Yellow packet action は公�
 - 未設定 storm policer の参照: `Policer %s not configured` → SWSS_LOG_ERROR。
 
 <!-- /cdb-exceptions -->
+
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+`PORT_STORM_CONTROL` テーブルは以下の CONFIG_DB テーブルへ暗黙的に依存する。`policerorch.cpp` は CONFIG_DB の `PORT` テーブルを直接 lookup せず、`PortsOrch` のメモリ内キャッシュを介して PORT エントリの SAI object id を取得する。
+
+| 参照先テーブル | 参照元 | 参照の性質 |
+|--------------|-------|-----------|
+| `PORT` | `PolicerOrch::handlePortStormControlTable()` — `gPortsOrch->getPort(interface_name, port)` (`policerorch.cpp:138`) | key の `<ifname>` を `PortsOrch::getPort()` で照合。PORT 未登録の場合は `SWSS_LOG_ERROR` を出力し `task_success` で silent drop (リトライなし) |
+| `PORT` (初期化状態) | `PolicerOrch::doTask()` — `gPortsOrch->allPortsReady()` (`policerorch.cpp:379`) | 全 PORT エントリ初期化完了まで `doTask()` を早期リターン。起動時に CONFIG_DB へ先書きされたエントリは silent defer される |
+| `PORT` (SAI oid) | `sai_port_api->set_port_attribute(port.m_port_id, ...)` (`policerorch.cpp:278, 291`) | `getPort()` で得た `port.m_port_id` (PORT 由来 SAI oid) を直接 SAI 呼び出しに渡す。CONFIG_DB には SAI oid は格納されない |
+
+詳細証跡: `meta/_intermediate/cdb-flow/port-storm-control-cross-refs.md`
+<!-- /cross-refs -->
 
 <!-- ref-triangle:start -->
 
@@ -331,3 +382,38 @@ minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派
 > **スキャン証跡**: `policerorch.cpp:374-407` を確認、5 件分岐抽出。PORT_STORM_CONTROL が PolicerOrch の `doTask()` 内で最優先にディスパッチされることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 順序依存性 (Phase B)
+
+### PORT 先行制約
+
+`handlePortStormControlTable()` は処理冒頭で `gPortsOrch->getPort(interface_name, port)` を呼ぶ。PORT テーブルが未初期化 (PortsOrch が当該ポートを登録していない) 場合、`task_success` を返してエントリを **erase** する (サイレント破棄、リトライなし)。
+
+さらに `doTask()` 冒頭で `gPortsOrch->allPortsReady()` が false なら即座 `return` するため、PortsOrch の全ポート初期化完了が PORT_STORM_CONTROL 処理の大域ガードになっている。
+
+```
+PORT (PortsOrch 初期化完了)
+  ↓  allPortsReady() == true になるまで doTask() は処理しない
+PORT_STORM_CONTROL エントリ処理
+  ↓  gPortsOrch->getPort() でポート存在確認
+storm policer 作成 → SAI attach
+```
+
+| 順序制約 | 根拠 | evidence |
+|---------|------|---------|
+| PORT → PORT_STORM_CONTROL | `allPortsReady()` ガード + `getPort()` 存在確認 | `policerorch.cpp:379-382`, `policerorch.cpp:138-143` |
+
+### storm policer 命名順序
+
+policer 名は `_<interface_name>_<storm_type>` 形式で自動生成される。同一ポートの 3 種類 (broadcast / unknown-unicast / unknown-multicast) は独立した policer として個別に作成・attach され、相互依存はない。削除時も storm_type 単位で独立して処理される。
+
+| storm_type | SAI 属性 | 相互依存 |
+|-----------|---------|--------|
+| `broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` | なし |
+| `unknown-unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` | なし |
+| `unknown-multicast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` | なし |
+
+証跡: `policerorch.cpp:145-146` (policer 命名), `policerorch.cpp:204-218` (storm_type 分岐)
+
+<!-- /ordering -->
