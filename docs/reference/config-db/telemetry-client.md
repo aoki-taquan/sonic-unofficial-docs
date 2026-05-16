@@ -57,8 +57,8 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 |-----------|----|-----------|------|
 | `retry_interval` | uint64 (秒) | なし | 再接続リトライ間隔 |
 | `src_ip` | `inet:ip-address` | なし | dial-out 送信元アドレス |
-| `encoding` | enum `JSON_IETF`/`ASCII`/`BYTES`/`PROTO` | なし | テレメトリのエンコーディング |
-| `unidirectional` | boolean | `true` | 単方向ストリームか |
+| `encoding` | enum `JSON_IETF`/`ASCII`/`BYTES`/`PROTO` | `JSON_IETF` (コード強制) | テレメトリのエンコーディング。実装未対応のため DB 値を無視して常に `JSON_IETF` が使用される |
+| `unidirectional` | boolean | `true` (コード強制) | 単方向ストリームか。実装未対応のため DB 値を無視して常に `true` |
 
 ### `TELEMETRY_CLIENT|Subscription|<name>` / `TELEMETRY_CLIENT|DestinationGroup|<name>`
 
@@ -70,8 +70,27 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 | `dst_group` | string | なし | 紐づける DestinationGroup 名 (Subscription 側で使用)。must で同 list 内 `name` に存在することを要求 |
 | `path_target` | enum `APPL_DB`/`CONFIG_DB`/`COUNTERS_DB`/`STATE_DB`/`OTHERS` | なし | 購読先 DB |
 | `paths` | string (カンマ区切り) | なし | 購読するデータパス |
-| `report_interval` | uint64 (ms) | `5000` | 報告周期 (ms 単位) |
-| `report_type` | enum `periodic`/`stream`/`once` | なし | 報告モード |
+| `report_interval` | uint64 (ms) | `5000` (YANG + コード一致) | 報告周期 (ms 単位) |
+| `report_type` | enum `periodic`/`stream`/`once` | なし (省略時サイレント無効) | 報告モード |
+
+<!-- defaults -->
+## コード由来デフォルト (Phase A)
+
+> **調査対象**: `sonic-gnmi/dialout/dialout_client/dialout_client.go` (processTelemetryClientConfig / clientSubscription struct)、`sonic-telemetry_client.yang`
+
+| フィールド | スコープ | コード由来デフォルト | YANG デフォルト | 根拠 |
+|-----------|--------|-------------------|----------------|------|
+| `unidirectional` | Global | `true` **強制固定** | `true` | `dialout_client.go` L503-505: DB 値を無視して `clientCfg.Unidirectional = true` |
+| `encoding` | Global | `JSON_IETF` **強制固定** | なし | `dialout_client.go` L501-503: "Flexible encoding Not supported yet" コメントで `gpb.Encoding_JSON_IETF` に固定 |
+| `report_interval` | Subscription | `5000` ms | `5000` | `dialout_client.go` L582: `interval: 5000`、YANG L134: `default 5000` で一致 |
+| `retry_interval` | Global | 呼び出し元 CLI 依存 | なし | 未設定時は `ccfg` (起動オプション) の値を引き継ぐ |
+| `src_ip` | Global | `""` (OS のルーティング依存) | なし | 省略時 gRPC が OS のデフォルト送信元を使用 |
+| `report_type` | Subscription | `Unknown` (= 無効) | なし | 省略時 `publishRun()` が `"Unsupported report type"` をログして処理を行わない |
+| `dst_addr` | DestinationGroup | (必須) | なし | `Destination.Validate()` が空なら `"Destination.Addrs is empty"` を返す |
+
+**重要**: `encoding` と `unidirectional` は YANG に定義が存在するが、現行 Go 実装では DB の値を読み込んでもランタイムで上書きするため、CONFIG_DB への設定変更が反映されない。これは既知の未実装事項 ("Not supported yet") である。
+
+<!-- /defaults -->
 
 ## 制約
 

@@ -60,7 +60,51 @@ DHCPV4_RELAY|<name>
 | `link_selection` | `mode-status` | - | `disable` | RFC 3527 Link selection sub-option |
 | `server_id_override` | `mode-status` | - | `disable` | RFC 5107 server-id override |
 | `vrf_selection` | `mode-status` | - | `disable` | RFC 6607 [VRF](../../reference/glossary.md#term-vrf) selection |
-| その他 | - | - | - | （詳細は [YANG](../../reference/glossary.md#term-yang) 直参照） |
+| `agent_relay_mode` | `relay-agent-mode` | - | `forward_untouched` (YANG) / discard (実装) | 既存 Option82 を持つパケットの処理モード。**注意**: YANG default `"forward_untouched"` はコードで認識されず discard になる |
+| `max_hop_count` | uint8 (1..16) | - | `4` (YANG) / `16` (C++ struct) | ホップ数上限。YANG-実装間で default 値が乖離 |
+
+<!-- defaults -->
+## コード由来の暗黙デフォルトと挙動の罠
+
+### `agent_relay_mode` — YANG-実装 discrepancy (critical)
+
+YANG default 値は `forward_untouched` だが、`dhcp4relay.cpp` の文字列比較は `"append"` / `"replace"` / `"forward"` のみを認識する。`"forward_untouched"` は else 分岐に落ち、**discard (全パケットドロップ)** になる。
+
+```
+// dhcp4relay.cpp:607-620
+if (config.agent_relay_mode == "append") { ... }
+else if (config.agent_relay_mode == "replace") { ... }
+else if (config.agent_relay_mode == "forward") { /* pass through */ }
+else { /* discard — includes "forward_untouched" */ drop packet }
+```
+
+**影響**: YANG default のまま DB に書かれた場合、既存 Option82 を持つ relay パケットが全てドロップされる。CLI が `forward_untouched` を DB に書かないかを確認すること。
+
+### `max_hop_count` — YANG default 4 vs C++ struct default 16
+
+YANG は `default 4` を宣言するが、C++ の `relay_config` struct は `uint8_t max_hop_count = MAX_HOP_COUNT` (= `16`) で初期化される (`dhcp4relay.h:120`)。DB から field が届かない場合（ゼロデイ互換や直接書き込み等）は 16 が使われる。`stoi()` 例外時も struct 値 (16) のまま続行する (WARNING ログのみ)。
+
+### `server_vrf` 未設定時の暗黙 fallback + 書き込み順依存
+
+`server_vrf` が未設定のとき、`dhcp4relay_mgr.cpp:422-431` が `VLAN_INTERFACE[vlan].vrf_name` を参照し、空なら `relay_msg->vrf = "default"` を採用する。`DHCPV4_RELAY` SET の時点で `VLAN_INTERFACE` の VRF が未設定だと、`"default"` VRF のソケットが作られる。後から VLAN_INTERFACE が更新されると `VLAN_INTERFACE_UPDATE` イベントで修正されるが、起動順序次第で一時的に誤 VRF になる。
+
+### `link_selection` + DualToR — プラットフォーム依存強制上書き
+
+`DEVICE_METADATA.subtype = "DualToR"` のとき、DB の `link_selection` 設定値に関わらず Link Selection sub-option が強制 enable され、`source_interface` も `"Loopback0"` に自動上書きされる。DualToR 環境ではこれら2フィールドの設定は実質 dead field となる。
+
+### `source_interface` 未設定 → giaddr fallback
+
+`source_interface` 未設定かつ VLAN に primary IP がない場合、giaddr = 0 となりパケットをドロップする (`dhcp4relay.cpp:587-592`)。YANG must 制約は `link_selection = enable` のときのみ `source_interface` を必須とするが、この drop は `link_selection = disable` でも起きる。
+
+### `dhcpv4_servers` 空 → silent skip
+
+DB を YANG バリデーション外で書いた場合、`servers` が空のとき `dhcp4relay_mgr.cpp:443-447` が WARNING ログのみで config event をスキップする。relay 設定は適用されず、エラーにはならない。
+
+### `feature_dhcp_server = enabled` → DHCPV4_RELAY が dead consumer
+
+`FEATURE.dhcp_server.state = "enabled"` のとき、`DHCPV4_RELAY` テーブルの watch が停止し (`dhcp4relay_mgr.cpp:135-157`)、以降の DHCPV4_RELAY 変更は全て無視される。
+
+<!-- /defaults -->
 
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
