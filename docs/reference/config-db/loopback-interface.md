@@ -591,4 +591,85 @@ Redis keyspace: PUBLISH "__keyspace@4__:LOOPBACK_INTERFACE|Loopback0|192.0.2.1/3
 > **Evidence**: `sonic-swss/cfgmgr/intfmgrd.cpp:19-80`、`sonic-swss/cfgmgr/intfmgr.cpp:31-76,1053,1137`、`sonic-swss/orchagent/orchdaemon.cpp:296`、`sonic-swss/orchagent/intfsorch.cpp:61-108`、`sonic-swss-common/common/subscriberstatetable.cpp:17-43`、`sonic-swss-common/common/producerstatetable.cpp:72-120`、`sonic-swss-common/common/table.h:85-96,164`; 詳細分析 `meta/_intermediate/cdb-flow/loopback-interface-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / 環境差異 (Phase H)
+
+> 証跡: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`,
+> `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`,
+> `sonic-utilities/scripts/ipintutil`  
+> 調査日: 2026-05-16
+
+### switch_type = "voq" — IPv6 metric 256 付与
+
+`intfmgrd` は起動時に `DEVICE_METADATA.localhost.switch_type` を読み込み `mySwitchType` に保持する（`intfmgr.cpp:70-75`）。
+`mySwitchType == "voq"` の場合、Loopback インターフェースへの **IPv6 アドレス付与コマンドに `metric 256` を追加**する（`intfmgr.cpp:103-106`）。
+
+```
+# 非 VOQ
+ip -6 address add 2001:db8::1/128 dev Loopback0
+
+# VOQ
+ip -6 address add 2001:db8::1/128 dev Loopback0 metric 256
+```
+
+これは連結経路と static 経路を同一 metric にして eBGP / iBGP の ECMP グループを統一するためである。IPv4 アドレスへの影響はない（`intfmgr.cpp:87-91`）。
+
+### VOQ 環境 — Loopback4096 必須依存 (bgpcfgd)
+
+`bgpcfgd` は `peer_type == 'internal'` の BGP peer を処理する際、
+`LOOPBACK_INTERFACE|Loopback4096` を依存として要求する（`managers_bgp.py:145-146`）。
+`Loopback4096` が CONFIG_DB に存在しない限り **internal BGP peer の設定がブロック**される。
+
+`Loopback4096` は Voq Inband Interface として機能し、通常の管理ツール（`show ip interfaces` 等）からは非表示にされる（`ipintutil:68-69`）。
+
+### VOQ シャーシ — CHASSIS_APP_DB 連携 (orchagent)
+
+`isChassisDbInUse()` が true（VOQ シャーシ構成）の場合、SAI RIF 作成後に `voqSyncAddIntf(alias)` が呼ばれ `CHASSIS_APP_DB.SYSTEM_INTERFACE_TABLE|<system_alias>` に `oper_status` を書く（`intfsorch.cpp:1314-1317`）。
+
+| 環境 | CHASSIS_APP_DB 書込み |
+|------|----------------------|
+| 非 VOQ | なし |
+| VOQ ローカル port/LAG | `SYSTEM_INTERFACE_TABLE|<system_alias>.oper_status` |
+| VOQ リモート port | なし（`SAI_SYSTEM_PORT_TYPE_REMOTE` チェックでスキップ） |
+
+### NAT サポート有無 — SAI RIF 属性の差異
+
+`gIsNatSupported` フラグにより SAI RIF 作成時の属性が変わる（`intfsorch.cpp:1287-1294`）。
+
+| 環境 | SAI 属性 |
+|------|---------|
+| NAT 非サポート（`gIsNatSupported == false`） | `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` 未設定 — SAI 実装デフォルト（通常 0） |
+| NAT サポート（`gIsNatSupported == true`） | `NAT_ZONE_ID = port.m_nat_zone_id`（CONFIG_DB の `nat_zone` 値） |
+
+> Loopback での `nat_zone` は `natmgrd` が mangle ルールを生成しないため実効 NAT 効果はゼロ。ただし NAT サポート環境では SAI RIF 属性として設定される。
+
+### Cold restart / Warm restart — Loopback 保持ポリシー
+
+| 起動モード | Loopback の扱い |
+|-----------|---------------|
+| Cold restart | `flushLoopbackIntfs()` でカーネルから全 dummy デバイス（`Loopback<N>`）を削除後、CONFIG_DB から再作成（`intfmgr.cpp:55-57, 222-242`） |
+| Warm restart | `buildIntfReplayList()` で CONFIG_DB から既存 Loopback キーを収集してリプレイ。カーネルの dummy デバイスは保持（`intfmgr.cpp:61-67`） |
+
+`flushLoopbackIntfs()` は `ip link show type dummy | grep -o 'Loopback[^:]*'` で全 dummy デバイスを列挙し `delLoopbackIntf()` を呼ぶ。
+
+### VoqInband Interface — doIntfGeneralTask バイパス
+
+`CFG_VOQ_INBAND_INTERFACE_TABLE_NAME`（`Loopback4096` など inband 専用インターフェース）への SET は `doIntfGeneralTask` をバイパスして APPL_DB に直接リレーする（`intfmgr.cpp:1195-1204`）。通常の L3 有効化フロー（dummy デバイス作成 / admin_status 設定）は実行されない。
+
+### まとめ
+
+| 差異要因 | 非デフォルト挙動 | コード根拠 |
+|---------|----------------|-----------|
+| `switch_type == "voq"` | Loopback への IPv6 アドレスに `metric 256` を付与 | `intfmgr.cpp:103-106` |
+| VOQ + internal BGP peer | `Loopback4096` が CONFIG_DB に必須 | `managers_bgp.py:146` |
+| VOQ シャーシ (`isChassisDbInUse`) | SAI RIF 作成後に CHASSIS_APP_DB に `oper_status` を同期 | `intfsorch.cpp:1314-1317` |
+| `gIsNatSupported == true` | SAI RIF に `NAT_ZONE_ID` 属性を設定 | `intfsorch.cpp:1287-1294` |
+| Cold restart | `flushLoopbackIntfs()` でカーネルの全 Loopback を削除後再作成 | `intfmgr.cpp:55-57` |
+| Warm restart | `buildIntfReplayList()` でリプレイ、dummy デバイス保持 | `intfmgr.cpp:61-67` |
+| VoqInband (Loopback4096 等) | `doIntfGeneralTask` バイパス → APPL_DB 直接リレー | `intfmgr.cpp:1195-1204` |
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-platform.md` 参照。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: b5270404647a -->
