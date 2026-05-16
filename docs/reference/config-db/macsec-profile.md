@@ -328,4 +328,59 @@ enableMACsec()
 詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-failure.md)
 <!-- /failure -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/cfgmgr/macsecmgrd.cpp -->
+
+### CONFIG_DB Subscribe
+
+`macsecmgrd` は `swss::DBConnector("CONFIG_DB", 0)` で接続し、`Orch` 基底クラスの `Consumer`（`SubscriberStateTable`）を介して `MACSEC_PROFILE` および `PORT` テーブルを購読する。イベントループは `swss::Select::select(&sel, SELECT_TIMEOUT=1000ms)` でポーリングし、FIPS MACSec POST state（STATE_DB の `MACSEC_POST_STATE`）が `"pass"` または `"disabled"` になるまで全処理をブロックする。
+
+| テーブル | コマンド | ハンドラ |
+|---------|---------|---------|
+| `MACSEC_PROFILE` | SET | `loadProfile()` — メモリへプロファイルをキャッシュ |
+| `MACSEC_PROFILE` | DEL | `removeProfile()` — 参照中ポートがあれば拒否 |
+| `PORT` | SET | `enableMACsec()` — `PORT.macsec` が空なら `disableMACsec` に委譲 |
+| `PORT` | DEL | `disableMACsec()` — wpa_supplicant 停止 + MKA セッション解除 |
+
+### wpa_supplicant Unix Domain Socket
+
+ポートごとに Unix Domain Socket `/var/run/<port_name>` を生成し、`fork()` + `execl()` で `wpa_supplicant -s -D macsec_sonic -g /var/run/<port_name>` を起動する。`configureMACsec()` は `/sbin/wpa_cli -g <sock>` で `MACSEC_PROFILE` の各フィールドを注入する。wpa_cli 応答が `"OK"` 以外の場合は `std::runtime_error` → `disableMACsec()` でロールバック。
+
+### APPL_DB MACSEC 経路
+
+`macsecmgrd` は APPL_DB に直接書き込まない。wpa_supplicant が MKA/SAK を確立した後、`MACsecOrch`（orchagent）が下記 APPL_DB テーブルを Subscribe して SAI に変換する。
+
+| APPL_DB テーブル | 役割 |
+|----------------|------|
+| `APP_MACSEC_PORT_TABLE_NAME` | ポートレベル MACsec 設定 |
+| `APP_MACSEC_EGRESS_SC_TABLE_NAME` | 送信 Secure Channel |
+| `APP_MACSEC_INGRESS_SC_TABLE_NAME` | 受信 Secure Channel |
+| `APP_MACSEC_EGRESS_SA_TABLE_NAME` | 送信 Secure Association |
+| `APP_MACSEC_INGRESS_SA_TABLE_NAME` | 受信 Secure Association |
+
+```
+CONFIG_DB:MACSEC_PROFILE (SET)
+  │ SubscriberStateTable
+  ▼
+macsecmgrd::loadProfile()  ─── プロファイルをメモリにキャッシュ
+
+CONFIG_DB:PORT.macsec (SET)
+  │ SubscriberStateTable
+  ▼
+macsecmgrd::enableMACsec()
+  ├─ fork/execl: wpa_supplicant -D macsec_sonic -g /var/run/<port>
+  └─ wpa_cli: mka_cak / mka_ckn / priority / cipher_suite 等を注入
+        │ MKA セッション確立・SAK 配布
+        ▼
+       APPL_DB: APP_MACSEC_{PORT,EGRESS_SC,INGRESS_SC,EGRESS_SA,INGRESS_SA}
+        │ SubscriberStateTable (MACsecOrch)
+        ▼
+       sai_macsec_api → ASIC/HW
+```
+
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-pubsub.md)
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
