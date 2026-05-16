@@ -399,6 +399,51 @@ minigraph.py および init_cfg.json.j2 からの `PBH_TABLE` / `PBH_RULE` / `PB
 
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## オブジェクト生成順序・依存関係 (Phase B)
+
+### CONFIG_DB 書き込み順序の要件
+
+`PbhOrch::deployPbhTasks()` (`sonic-swss/orchagent/pbhorch.cpp:1539-1550`) は毎回以下の順序で pending タスクを処理する。
+
+**Setup (作成) 順序**:
+
+```
+PBH_HASH_FIELD → PBH_HASH → PBH_TABLE → PBH_RULE
+```
+
+**Remove (削除) 順序** (Setup と逆順):
+
+```
+PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
+```
+
+### 依存関係の詳細
+
+| オブジェクト | 依存先 | 依存チェック関数 | 未解決時の挙動 |
+|---|---|---|---|
+| `PBH_RULE` | `PBH_TABLE` (table_name leafref) + `PBH_HASH` (hash leafref) | `validateDependencies(PbhRule)` (`pbhmgr.cpp:81-98`) | `pendingSetupMap` に留まり retry ループ (`pbhorch.cpp:943`) |
+| `PBH_HASH` | `PBH_HASH_FIELD` (hash_field_list の各エントリ) | `validateDependencies(PbhHash)` (`pbhmgr.cpp:99-113`) | `pendingSetupMap` に留まり retry ループ (`pbhorch.cpp:1241`) |
+| `PBH_TABLE` | なし (PORT / PORTCHANNEL は leafref だが portsOrch 経由で確認) | — | `allPortsReady()` が false の間は `doTask()` 自体が early return |
+| `PBH_HASH_FIELD` | なし | — | 即時 SAI 作成 |
+
+### SAI 呼び出し順序
+
+1. `sai_hash_api->create_fine_grained_hash_field()` — `PBH_HASH_FIELD` ごと (`pbhorch.cpp:1369`)
+2. `sai_hash_api->create_hash()` — `PBH_HASH` ごと、hash_field OID リストを付与 (`pbhorch.cpp:1054`)
+3. ACL table 作成 (AclOrch 経由) — `PBH_TABLE` ごと
+4. `sai_acl_api->create_acl_entry()` — `PBH_RULE` ごと、SAI ACL match + `ACTION_SET_ECMP_HASH_ID` / `ACTION_SET_LAG_HASH_ID` を設定 (`pbhorch.cpp:515-595`)
+
+### 削除時の参照カウント保護
+
+- `PBH_TABLE` / `PBH_HASH` / `PBH_HASH_FIELD` は `refCount > 0` の間削除不可 (`hasDependencies()` が true → retry)。
+- `PBH_RULE` 削除時に `decRefCount(rule)` が `PBH_TABLE` と `PBH_HASH` の参照カウントを減算 (`pbhmgr.cpp:163-185`)。
+- `PBH_HASH` 削除時に `decRefCount(hash)` が各 `PBH_HASH_FIELD` の参照カウントを減算 (`pbhmgr.cpp:187-210`)。
+
+> **証跡**: `pbhorch.cpp:1539-1550` (deployPbhTasks), `pbhmgr.cpp:81-113` (validateDependencies), `pbhorch.cpp:943, 1241` (retry log)
+
+<!-- /ordering -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
