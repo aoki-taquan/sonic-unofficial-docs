@@ -102,6 +102,24 @@ evidence: `sonic-swss/cfgmgr/vlanmgrd.cpp:56-61`
 起動時 1 回のみ読み出し (static)。
 evidence: `sonic-swss/cfgmgr/teammgr.cpp:31,54-57`
 
+### stpmgr (sonic-swss/cfgmgr/stpmgrd.cpp)
+
+| 読み取りフィールド | 行 | 用途 |
+|---|---|---|
+| `mac` | L81-88 | STP Bridge ID に使用するシステム MAC を取得。未設定時は起動失敗 |
+
+起動時 1 回のみ読み出し (static)。
+evidence: `sonic-swss/cfgmgr/stpmgrd.cpp:81-88`
+
+### vxlanmgr (sonic-swss/cfgmgr/vxlanmgrd.cpp)
+
+| 読み取りフィールド | 行 | 用途 |
+|---|---|---|
+| `mac` | L65-72 | VXLAN トンネルの内部 switch MAC として設定。未設定時は起動失敗 |
+
+起動時 1 回のみ読み出し (static)。
+evidence: `sonic-swss/cfgmgr/vxlanmgrd.cpp:65-72`
+
 ### nbrmgr (sonic-swss/cfgmgr/nbrmgr.cpp)
 
 | 読み取りフィールド | 行 | 用途 |
@@ -197,6 +215,9 @@ evidence: `sonic-swss/cfgmgr/vxlanmgrd.cpp:68`
 | nbrmgrd | `switch_type` | VoQ SYSTEM_NEIGH 購読有無 |
 | intfmgrd | `switch_type` | mySwitchType 初期値 |
 | bgpcfgd (main.py) | `type`, `subtype` | AsPathMgr 条件付き登録 |
+| stpmgrd | `mac` | STP Bridge ID MAC 初期設定 |
+| vxlanmgrd | `mac` | VXLAN switch MAC 初期設定 |
+| buffermgrdyn (Mellanox のみ) | `platform` | モデル番号抽出・XON 値決定 |
 
 ### runtime 更新に対応 (subscribe)
 
