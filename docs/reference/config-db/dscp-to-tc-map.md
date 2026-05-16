@@ -167,6 +167,45 @@ show qos map dscp-tc
 **副作用**: DSCP→TC マップ変更はそのマップを使用するすべてのポートの QoS 分類に即座に影響。L3 traffic の優先度処理が変化する。
 <!-- /runtime-trace -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読方式
+
+`QosOrch` は `orchdaemon.cpp:367-384` で `qos_tables` ベクタの一員として `CFG_DSCP_TO_TC_MAP_TABLE_NAME` を指定され、`new QosOrch(m_configDb, qos_tables)` に渡される。基底 `Orch(db, tableNames)` が `Orch::addConsumer()` を呼び、CONFIG_DB ID の分岐により **`swss::SubscriberStateTable`** が選択される（`orch.cpp:1186-1196`）。
+
+`SubscriberStateTable` は Redis keyspace 通知 `__keyspace@<dbId>__:DSCP_TO_TC_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、`orchagent -b` の `gBatchSize` 影響なし）。
+
+### ハンドラ登録とディスパッチ
+
+```
+orchdaemon.cpp:367-384  qos_tables に CFG_DSCP_TO_TC_MAP_TABLE_NAME を追加
+qosorch.cpp:1329        initTableHandlers() で m_qos_handler_map[CFG_DSCP_TO_TC_MAP_TABLE_NAME]
+                         = &QosOrch::handleDscpToTcTable を登録
+qosorch.cpp:2231-2252   QosOrch::doTask() が PORT_QOS_MAP / QUEUE より先に本テーブルを drain
+                         （DSCP map の先行処理を保証）
+qosorch.cpp:2254-2295   QosOrch::doTask(Consumer&) がハンドラ関数ポインタ経由でディスパッチ
+```
+
+`handleDscpToTcTable()` → `DscpToTcMapHandler::processWorkItem()` → `DscpToTcMapHandler::createAttributeList()` → `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()`。
+
+### select タイムアウト・リトライ
+
+select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`）。keyspace 通知到着時は即時 wake up。リトライキャッシュは未使用で `m_toSync` 残留方式（`task_need_retry` 時はエントリを保持し次回 drain で再処理）。
+
+| 観点 | 内容 |
+|---|---|
+| 購読方式 | `SubscriberStateTable`（keyspace `PSUBSCRIBE` + `HGETALL`） |
+| バッチサイズ | 128（`DEFAULT_POP_BATCH_SIZE`、固定） |
+| select タイムアウト | 1000 ms |
+| SAI 呼び出し | `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()` |
+| リトライ方式 | `m_toSync` 残留（キャッシュなし） |
+| channel PUBLISH | 使わない |
+| TTL | 未使用（CONFIG_DB 永続） |
+
+> **Evidence**: `orchdaemon.cpp:22-23,367-384`; `orch.cpp:1186-1196`; `qosorch.cpp:1313-1345,2231-2295`; `table.h:164`
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
@@ -199,28 +238,40 @@ show qos map dscp-tc
 ## 書込み順依存 (Phase B)
 
 対象テーブル: `DSCP_TO_TC_MAP`。Consumer: `QosOrch::handleDscpToTcTable()` / `handlePortQosMapTable()` (`qosorch.cpp`)。
+スキャン範囲: `qosorch.cpp` 全行精読、`tunneldecaporch.cpp:101-302`、`db_migrator.py:700-715`。
 
 ### SET 時の順序制約
 
-| # | 依存 | 方向 | 挙動 |
-|---|------|------|------|
-| 1 | `DSCP_TO_TC_MAP|<name>` SAI 作成 → `PORT_QOS_MAP|<port>` SET | 強制先行 | `resolveFieldRefValue()` 未解決で `task_need_retry`（自動再試行）|
-| 2 | `DSCP_TO_TC_MAP|<name>` 作成 → `PORT_QOS_MAP\|global` SET（Broadcom） | 強制先行 | 同上。db_migrator が自動生成するが複数マップ時は先頭 1 件（順序未定義）|
-| 3 | `DSCP_TO_TC_MAP|<name>` 作成 → `TUNNEL_DECAP_TABLE|<name>` SET | 強制先行 | `resolveTunnelQosMap()` 未解決で `task_need_retry`（未指定は silent skip） |
-| 4 | dscp 値は数値文字列のみ | 必須 | `stoi()` に例外処理なし。非数値 → `std::invalid_argument` → `task_failed` |
+| # | 依存関係 | 方向 | 挙動 |
+|---|----------|------|------|
+| 1 | `DSCP_TO_TC_MAP\|<name>` SAI 作成完了 → `PORT_QOS_MAP\|<port>` SET | 強制先行 | `resolveFieldRefValue()` 未解決で `task_need_retry`（自動再試行） |
+| 2 | `DSCP_TO_TC_MAP\|<name>` 作成 → `PORT_QOS_MAP\|global` SET（Broadcom） | 強制先行 | 同上。db_migrator が自動生成するが複数マップ時は `get_keys()` 先頭 1 件（順序未定義） |
+| 4 | `DSCP_TO_TC_MAP\|<name>` 作成 → `TUNNEL_DECAP_TABLE\|<name>` SET | 強制先行 | `resolveTunnelQosMap()` 未解決で `task_need_retry`（フィールド未指定は silent skip） |
+| 6 | dscp 値は数値文字列のみ | 必須 | `stoi()` に例外処理なし。非数値 → `std::invalid_argument` → `task_failed`（自動 retry なし） |
 
 > **推奨順序（SET）**: `DSCP_TO_TC_MAP|<name>` → `PORT_QOS_MAP|<port>` → `TUNNEL_DECAP_TABLE`（参照順に書く）。
 
 ### DEL 時の順序制約
 
-| # | 依存 | 方向 | 挙動 |
-|---|------|------|------|
-| 3 | `PORT_QOS_MAP|<port>` の `dscp_to_tc_map` 参照解除 → `DSCP_TO_TC_MAP|<name>` DEL | 強制先行 | 参照中は `m_pendingRemove=true` + `task_need_retry` ロック |
-| 5 | pending_remove 解消 → SET（再書き込み）可能 | 強制先行 | pending_remove 中の SET は即 `task_need_retry` |
+| # | 依存関係 | 方向 | 挙動 |
+|---|----------|------|------|
+| 3 | `PORT_QOS_MAP\|<port>` / Tunnel の参照解除 → `DSCP_TO_TC_MAP\|<name>` DEL | 強制先行 | 参照中は `m_pendingRemove=true` + `task_need_retry` ロック（`qosorch.cpp:181-186`） |
+| 5 | pending_remove 解消 → SET（再書き込み）実行可能 | 強制先行 | pending_remove 中の SET も即 `task_need_retry` 返却（ロールバック・入れ替えもブロック） |
 
-> **推奨順序（DEL）**: `PORT_QOS_MAP|<port>` の dscp_to_tc_map フィールド削除 → `DSCP_TO_TC_MAP|<name>` DEL。
+> **推奨順序（DEL）**: `PORT_QOS_MAP|<port>` の `dscp_to_tc_map` フィールド削除（参照ポート全解除）→ `DSCP_TO_TC_MAP|<name>` DEL。
 
-> **Evidence**: `qosorch.cpp:136-139,181-186,2021-2026,2124-2129`; `tunneldecaporch.cpp:217-221`; `db_migrator.py:700-715`
+### SAI 操作失敗と retry なし
+
+- CREATE / SET / DELETE で SAI エラーが発生した場合、`task_failed` を返し自動 retry は行われない（`qosorch.cpp:151-191`）。
+- `DscpToTcMapHandler` の dscp 文字列変換 (`stoi()`) に例外処理なし。非数値文字列 → `std::invalid_argument` → `task_failed`（`Dot1pToTcMapHandler` は try/catch あり、`DscpToTcMapHandler` はなし）。
+
+### PORT_QOS_MAP からの参照順（SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP）
+
+- `PORT_QOS_MAP` の `dscp_to_tc_map` フィールドが `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` にマップされる（`qosorch.cpp:61`）。
+- `PORT_QOS_MAP|global` ではスイッチレベル属性 `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` を使用（ポートごとと別属性）。
+- Broadcom 向け自動生成: `db_migrator.migrate_port_qos_map_global()` が `DSCP_TO_TC_MAP` の最初の 1 件を `PORT_QOS_MAP|global` へ自動登録（複数マップ存在時は `get_keys()` 返却順で先頭、順序未定義）。
+
+> **Evidence**: `qosorch.cpp:61,136-139,181-191,2021-2026,2124-2129`; `tunneldecaporch.cpp:217-221,831-836`; `db_migrator.py:700-715`
 <!-- /ordering -->
 
 <!-- defaults -->
@@ -279,5 +330,43 @@ show qos map dscp-tc
 - pending_remove 中に SET が来ても **実行せず** `task_need_retry` を返す
 - Tunnel decap 経路 (`tunneldecaporch.cpp:832-836`): `dscp_to_tc_map_id == SAI_NULL_OBJECT_ID` 時はトンネル作成時に設定しない（silent skip）
 <!-- /defaults -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`
+
+### PORT_QOS_MAP への参照
+
+`DSCP_TO_TC_MAP|<name>` は `PORT_QOS_MAP|<port>` の `dscp_to_tc_map` フィールドから名前参照される。
+`QosOrch::handlePortQosMapTable()` が `resolveFieldRefValue()` で DSCP_TO_TC_MAP オブジェクトを解決し、`SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` としてポートへバインドする（`qosorch.cpp:100,103`）。
+
+`PORT_QOS_MAP|global`（スイッチレベル）では `handleGlobalQosMap()` が `applyDscpToTcMapToSwitch(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP, id)` を呼び出して SAI スイッチ属性として設定する（`qosorch.cpp:1988,2030-2032`）。
+
+| 参照元 | フィールド | SAI 属性 | ソース行 |
+|--------|-----------|----------|---------|
+| `PORT_QOS_MAP\|<port>` | `dscp_to_tc_map` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:61,100` |
+| `PORT_QOS_MAP\|global` | `dscp_to_tc_map` | `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:1956,1988,2030` |
+
+### SWITCH_TABLE (スイッチ capability) への参照
+
+スイッチレベル適用前に `gSwitchOrch->querySwitchCapability(SAI_OBJECT_TYPE_SWITCH, SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)` で対応可否を問い合わせる。
+未対応の場合は適用をスキップ（エラーなし）。スイッチ能力テーブル `SWITCH_TABLE` に格納された capability 情報を参照している（`qosorch.cpp:1955-1961`）。
+
+| 参照先 | 用途 | ソース行 |
+|--------|------|---------|
+| `SWITCH_TABLE` (capability) | `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` サポート確認 | `qosorch.cpp:1956` |
+
+### TC_TO_QUEUE_MAP との関係
+
+`PORT_QOS_MAP` は `dscp_to_tc_map` と `tc_to_queue_map` を同一エントリで保持し、DSCP→TC→Queue の 2 段マッピングを形成する。
+`qos_to_ref_table_map` に両テーブルが同列で登録されており、`PORT_QOS_MAP` SET 時は両マップが未解決なら `task_need_retry` となる（`qosorch.cpp:103,1332`）。
+
+| 参照元 | フィールド | 関連テーブル | ソース行 |
+|--------|-----------|-------------|---------|
+| `PORT_QOS_MAP\|<port>` | `tc_to_queue_map` | `TC_TO_QUEUE_MAP` | `qosorch.cpp:64,103` |
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:61,64,81,84,100,103,1329,1332,1955-1956,1988,2030-2032`
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 9e94f614fc2c -->

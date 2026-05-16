@@ -189,6 +189,84 @@ CABLE_LENGTH テーブルへの書き込みが発生するコード経路。
 
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgrd.cpp:174-203, buffermgrdyn.cpp:450/603-648/2124-2200/3574-3610, buffermgr.h:48-51 -->
+
+### CONFIG_DB 購読 — SubscriberStateTable
+
+`buffermgrd` は起動時に buffer モードに応じて `CABLE_LENGTH` テーブルを `SubscriberStateTable` 経由で購読登録する。
+
+**dynamic buffer モード** (`buffermgrdyn`): `buffermgrd.cpp:174-186`
+
+```cpp
+TableConnector(&cfgDb, CFG_PORT_CABLE_LEN_TABLE_NAME)  // CABLE_LENGTH
+```
+
+`Orch` フレームワークの `Select` ループが `SubscriberStateTable::pops()` でイベントを取り出し、`Consumer::m_toSync` キューへ積む。`doTask(Consumer &)` がディスパッチマップ (`m_bufferTableHandlerMap`) を参照して `handleCableLenTable()` を呼び出す (`buffermgrdyn.cpp:450, 3574-3610`)。
+
+**static buffer モード** (`buffermgr`): `buffermgrd.cpp:191-203`
+
+```cpp
+CFG_PORT_CABLE_LEN_TABLE_NAME  // Orch(cfgDb, tableNames) コンストラクタで購読
+```
+
+### ハンドラ処理フロー (`handleCableLenTable`)
+
+`buffermgrdyn.cpp:2124-2200` で CABLE_LENGTH の SET イベントを処理する:
+
+1. フィールド全体をイテレートしポート→ケーブル長マップ (`m_cableLengths`) を更新
+2. `portInfo.cable_length` が変化していなければスキップ
+3. `effective_speed` 未設定なら WARN ログのみで skip (retry しない)
+4. `mtu` 未設定なら `DEFAULT_MTU_STR = "9100"` で仮設定
+5. `portInfo.state` に応じて分岐:
+   - `PORT_INITIALIZING` → `PORT_READY` に遷移して `refreshPgsForPort()` 呼び出し
+   - `PORT_READY` → 即時 `refreshPgsForPort()` 呼び出し
+   - `PORT_ADMIN_DOWN` → スキップ (ログのみ)
+
+### Lua plugin 経路 — headroom 計算
+
+`refreshPgsForPort()` → `calculateHeadroomSize()` がベンダー固有 Lua スクリプトを Redis EVALSHA 経由で実行する (`buffermgrdyn.cpp:603-648`)。
+
+```
+EVALSHA buffer_headroom_<platform>.lua 1 <profile_name>
+        <speed> <cable_length> <mtu> <gearbox_delay> <lane_count>
+→ ["xon:18432", "xoff:18432", "size:36864", "xon_offset:2048"]
+```
+
+スクリプトは起動時に **APPL_DB** の Redis インスタンスへロードされる (`loadRedisScript(applDb, ...)`)。ロード失敗時は `buffermgrd` が起動を中断する (`buffermgrdyn.cpp:121`)。対象スクリプト: `buffer_headroom_<platform>.lua`, `buffer_pool_<platform>.lua`, `buffer_check_headroom_<platform>.lua`。
+
+### APPL_DB ProducerStateTable 書き込み
+
+headroom 計算後、`allocateProfile()` が APPL_DB へ書き込む:
+
+| APPL_DB テーブル | ProducerStateTable メンバ | 後続コンシューマ |
+|----------------|------------------------|----------------|
+| `BUFFER_PROFILE_TABLE` | `m_applBufferProfileTable` (static) / dynamic は内部 | `bufferorch` ConsumerStateTable |
+| `BUFFER_PG_TABLE` | `m_applBufferPgTable` / `m_applBufferObjectTables[0]` | `bufferorch` → SAI PG headroom |
+| `BUFFER_POOL_TABLE` | `m_applBufferPoolTable` | `bufferorch` → SAI buffer pool |
+
+### 全体フロー
+
+```
+CONFIG_DB:CABLE_LENGTH|AZURE
+  │ SubscriberStateTable (Orch フレームワーク)
+  ▼
+buffermgrd (BufferMgrDynamic::handleCableLenTable)
+  │ portInfo.cable_length 更新 → refreshPgsForPort()
+  │   └─ calculateHeadroomSize()
+  │         └─ EVALSHA buffer_headroom_<platform>.lua (APPL_DB Redis)
+  │               → xon / xoff / size / xon_offset
+  ▼
+APPL_DB:BUFFER_PROFILE_TABLE / BUFFER_PG_TABLE  [ProducerStateTable]
+  │ ConsumerStateTable (bufferorch / orchagent)
+  ▼
+SAI buffer API → チップ PG headroom 設定
+```
+
+<!-- /pubsub -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
@@ -265,6 +343,44 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 - `length` の YANG パターン (`[0-9]+m`) 違反値 → YANG バリデーションで拒否される (コード側 fallback なし)
 
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数一覧 (Phase E)
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.h:15, buffermgrdyn.cpp:485,2174,2378, buffermgr.cpp:159,183-184, buffer_headroom_mellanox.lua:42-51,119-120,160, buffer_headroom_barefoot.lua:13, buffer_pool_barefoot.lua:13 -->
+
+バッファ計算処理に埋め込まれたハードコード定数。設定変更の影響範囲を把握するために重要。
+
+### 定数表
+
+| 定数名 / 値 | 型 | 定義場所 | 用途 | 備考 |
+|---|---|---|---|---|
+| `DEFAULT_MTU_STR = "9100"` | `string` (bytes) | `buffermgrdyn.h:15` | MTU 未設定ポートの headroom 仮計算に使用 | mtu 設定後に再計算される |
+| `INGRESS_LOSSLESS_PG_POOL_NAME = "ingress_lossless_pool"` | `string` | `buffermgrdyn.h:14` | lossless PG プロファイルが割り当てられるプール名 | ハードコード固定 |
+| `BUFFERMGR_TIMER_PERIOD = 10` | `int` (秒) | `buffermgrdyn.h:17` | バッファマネージャのポーリング間隔 | 10 秒周期でリトライキュー処理 |
+| `speed_of_light = 198000000` | `int` (m/s) | `buffer_headroom_mellanox.lua:119` | ケーブル内伝播遅延計算に使用 (光速の約 66%) | `bytes_on_cable = 2 * cable_length * port_speed * 1e9 / speed_of_light / 8000` |
+| `minimal_packet_size = 64` | `int` (bytes) | `buffer_headroom_mellanox.lua:120` | worst-case cell 占有率計算の最小パケット長 | cell_size > 128 → `cell/64`, それ以外 → `2*cell/(1+cell)` |
+| `pause_quanta_per_speed[1G] = 2` | `int` | `buffer_headroom_mellanox.lua:50` | 速度別 PFC pause quanta (1 Gbps) | 512-bit 単位 |
+| `pause_quanta_per_speed[10G] = 67` | `int` | `buffer_headroom_mellanox.lua:49` | 速度別 PFC pause quanta (10 Gbps) | 同上 |
+| `pause_quanta_per_speed[25G] = 80` | `int` | `buffer_headroom_mellanox.lua:48` | 速度別 PFC pause quanta (25 Gbps) | 同上 |
+| `pause_quanta_per_speed[40G] = 118` | `int` | `buffer_headroom_mellanox.lua:47` | 速度別 PFC pause quanta (40 Gbps) | 同上 |
+| `pause_quanta_per_speed[50G] = 147` | `int` | `buffer_headroom_mellanox.lua:46` | 速度別 PFC pause quanta (50 Gbps) | 同上 |
+| `pause_quanta_per_speed[100G] = 394` | `int` | `buffer_headroom_mellanox.lua:45` | 速度別 PFC pause quanta (100 Gbps) | 同上 |
+| `pause_quanta_per_speed[200G] = 453` | `int` | `buffer_headroom_mellanox.lua:44` | 速度別 PFC pause quanta (200 Gbps) | 同上 |
+| `pause_quanta_per_speed[400G] = 905` | `int` | `buffer_headroom_mellanox.lua:43` | 速度別 PFC pause quanta (400 Gbps) | 同上 |
+| `pause_quanta_per_speed[800G] = 905` | `int` | `buffer_headroom_mellanox.lua:42` | 速度別 PFC pause quanta (800 Gbps) | 400G と同値 |
+| `ppg_headroom = 400 * cell_size` | `int` (bytes) | `buffer_pool_barefoot.lua:13` | Barefoot (Tofino) ASIC の per-PG headroom 固定計算式 | cell_size は ASIC テーブルから取得 |
+| `gearbox_delay = 0` | `int` | `buffer_headroom_mellanox.lua:57` | gearbox 遅延未設定時のフォールバック値 | ARGV[4] が nil のとき 0 バイトと扱う |
+| プロファイル名テンプレート `"pg_lossless_<speed>_<cable>_profile"` | `string` | `buffermgr.cpp:183-184`, `buffermgrdyn.cpp:487,491` | PG プロファイルのキー命名規則 | MTU = 9100 のとき mtu サフィックス省略; `pg_lossless_<speed>_<cable>_mtu<mtu>_profile` に変化 |
+
+### 注記
+
+- **`DEFAULT_MTU_STR`**: `buffermgrdyn.cpp:2174` および `2378` の 2 箇所で使用。cable_length が来た時点で mtu が空なら `"9100"` で仮計算し、後から mtu が設定されると `refreshPgsForPort` が再実行される。
+- **`speed_of_light`**: 光ファイバー内の実効速度 (真空中の約 2/3)。銅線の伝播速度は若干異なるが、Mellanox headroom lua ではこの値で統一。
+- **`minimal_packet_size`**: 64 bytes は Ethernet 最小フレーム長 (payload 46 bytes + ヘッダ 18 bytes)。cell_size との比較で worst-case factor を決定する分岐に使用。
+- **`BUFFERMGR_TIMER_PERIOD`**: 設定変更が失敗した際の再試行は 10 秒ごと。cable_length 設定変更後に headroom 計算が即座に反映されない場合の待機目安。
+
+<!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込み (Phase F)
