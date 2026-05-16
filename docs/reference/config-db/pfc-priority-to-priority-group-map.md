@@ -272,3 +272,43 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 > **スキャン証跡**: `qosorch.cpp` PfcPriorityToPgHandler 部を確認、3 件分岐抽出。qos_config.j2 経由での自動設定を確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- failure -->
+## Phase D: 失敗挙動
+
+ソース: `sonic-swss/orchagent/qosorch.cpp` (`PfcPrioToPgHandler`, `QosMapHandler::processWorkItem`)
+
+### invalid_entry: priority / pg 値不正
+
+`PfcPrioToPgHandler::convertFieldValuesToAttributes()` (qosorch.cpp:947-948) が `stoi()` で
+フィールド名 (`pfc_priority`) と値 (`pg`) を数値変換する。非数値・空文字列を渡すと例外が伝播し
+`task_invalid_entry` が返される (qosorch.cpp:147)。エントリは破棄され再キューされない。
+
+DEL 時に map 名が SAI に存在しない場合も `task_invalid_entry`:
+- ログ: `"Object with name:%s not found."` (qosorch.cpp:178)
+
+不明な op (SET/DEL 以外):
+- ログ: `"Unknown operation type %s"` (qosorch.cpp:198)
+- 結果: `task_invalid_entry`
+
+### failed: SAI API 失敗
+
+| 操作 | SAI 呼び出し | ログ | 結果 |
+|------|------------|------|------|
+| SET (新規) | `create_qos_map()` | `"Failed to create pfc_priority_to_queue map. status:%d"` (qosorch.cpp:977) | `task_failed` |
+| SET (更新) | `set_qos_map_attribute()` | `"Failed to set [%s:%s]"` (qosorch.cpp:153) | `task_failed` |
+| DEL | `remove_qos_map()` | `"Failed to remove QoS map. db name:%s sai object:%"PRIx64` (qosorch.cpp:190) | `task_failed` |
+
+> **注**: create 失敗時のログ文字列は `"pfc_priority_to_queue map"` とコピー由来の誤記になっているが、
+> 実際は `SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP` map の作成失敗を指す (qosorch.cpp:966,977)。
+
+### need_retry: 参照中エントリの DEL
+
+DEL 操作時に `isObjectBeingReferenced()` が true (PORT_QOS_MAP 等から参照が残っている):
+- ログ: `"Can't remove object %s due to being referenced (%s)"` (qosorch.cpp:184)
+- 副作用: `m_pendingRemove = true` がセット → 以降の SET も `task_need_retry` に
+- ログ (保留中 SET): `"Entry %s %s is pending remove, need retry"` (qosorch.cpp:138)
+- 結果: `task_need_retry` → Consumer キューへ戻し、参照解除後に再処理
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-failure.md -->
+<!-- /failure -->
