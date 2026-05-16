@@ -487,5 +487,78 @@ feature_handler.handler(key="bgp", op=SET, data={state:enabled,...})
 
 > **Evidence**: `sonic-host-services/scripts/featured:22-23,600-678`; `sonic-swss-common/common/subscriberstatetable.cpp:17-165`; `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:388-411`; 詳細分析 `meta/_intermediate/cdb-flow/feature-pubsub.md`
 <!-- /pubsub -->
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+### 概要
+
+`FEATURE` テーブルの `featured` デーモンは、プラットフォーム構成に応じて 4 軸で挙動が変化する。
+
+### 1. multi-asic (is_multi_npu == True)
+
+`FeatureHandler` は起動時に `device_info.is_multi_npu()` を確認し、multi-asic 環境では namespace ごとに `ConfigDBConnector` と STATE_DB `Table` を初期化する（`featured:142,151-162`）。
+
+**CONFIG_DB / STATE_DB 同期の差異**:
+
+| 操作 | single-asic | multi-asic |
+|------|-------------|-----------|
+| `resync_feature_state()` (`featured:570-573`) | host CONFIG_DB のみ | host + 全 namespace CONFIG_DB |
+| `sync_feature_delay_state()` (`featured:583-584`) | host CONFIG_DB のみ | host + 全 namespace CONFIG_DB |
+| `set_feature_state()` (`featured:588-591`) | host STATE_DB のみ | host + 全 namespace STATE_DB |
+| `sync_feature_scope()` (`featured:312-355`) | `is_multi_npu == False` で全処理スキップ | `has_per_asic_scope` / `has_global_scope` を DB に反映、不要インスタンスを stop/disable/mask |
+
+### 2. feature インスタンス名の生成
+
+`get_multiasic_feature_instances()` (`featured:408-415`) が systemd ユニット名を決定する:
+
+| 構成 | インスタンス名 | 条件 |
+|------|--------------|------|
+| single-asic または `has_global_scope = True` | `<feature>` | `not is_multi_npu` または `has_global_scope` |
+| multi-asic + `has_per_asic_scope = True` | `<feature>@0`, `<feature>@1`, ... | `is_multi_npu == True` かつ `has_per_asic_scope` |
+| SmartSwitch + `has_per_dpu_scope = True` | `<feature>@dpu0`, `<feature>@dpu1`, ... | `num_dpus > 0` |
+| multi-asic + global_scope = False + per_asic = False | インスタンスなし | ホストインスタンスが省略される |
+
+single-asic では `is_multi_npu == False` のため、`has_global_scope` の値に関わらず常にホストインスタンス `[feature.name]` が生成される。
+
+### 3. SmartSwitch / DPU (`has_per_dpu_scope`)
+
+`num_dpus = device_info.get_num_dpus()` (`featured:148`) で DPU 数を取得。SmartSwitch 構成 (`num_dpus > 0`) では `has_per_dpu_scope = True` の feature が DPU ごとのインスタンスを生成する。
+
+- `has_per_dpu_scope` は `sonic_package_manager` の非設定可能フィールド管理外 (`feature.py:228-237`) であり、manifest ではなく CONFIG_DB 値をそのまま参照する。
+- 標準 `init_cfg.json.j2` には `has_per_dpu_scope = True` の feature エントリは存在しない。SmartSwitch 固有 feature はプラットフォーム固有パッケージが別途登録する。
+
+### 4. SpineRouter — `syncd` / `gbsyncd` の auto_restart 強制
+
+`update_systemd_config()` (`featured:373-380`) は `DEVICE_METADATA.localhost.type == 'SpineRouter'` かつ feature が `syncd` / `gbsyncd` の場合、`auto_restart` CONFIG_DB 設定を無視して systemd `Restart=no` を強制する:
+
+```python
+if device_type == 'SpineRouter' and is_dependent_service:
+    restart_field_str = "no"   # CONFIG_DB 値を無視
+else:
+    restart_field_str = "always" if "enabled" in feature_config.auto_restart else "no"
+```
+
+**背景**: SpineRouter (VOQ chassis) では `syncd` が `swss` 依存として連動起動/停止するため、クリティカルプロセスクラッシュ時に二重停止が発生する。また VOQ chassis では早期 `syncd` 再起動がトラフィック断を引き起こす。このため SpineRouter では `config feature autorestart syncd enabled` を実行しても systemd `Restart=always` には変わらない。
+
+### 5. init_cfg.json.j2 ビルド時プラットフォーム条件
+
+ビルド時 Jinja2 テンプレートが `DEVICE_METADATA` / `DEVICE_RUNTIME_METADATA` の値に応じてデフォルト `state` を決定する:
+
+| feature | 条件 | state |
+|---------|------|-------|
+| `bgp` | supervisor モジュール または `ETHERNET_PORTS_PRESENT == False` | `disabled` |
+| `teamd` | `ETHERNET_PORTS_PRESENT == False` | `disabled` |
+| `mux` | `subtype == 'DualToR'` | `enabled` |
+| `mux` | 上記以外 | `always_disabled` |
+| `macsec` | `type in ['SpineRouter', 'UpperSpineRouter', 'LowerRegionalHub']` かつ `MACSEC_SUPPORTED` | `enabled` |
+| `macsec` | 上記以外 | `disabled` |
+| `dhcp_relay` | type が ToR/EPMS/MgmtToR 系 | `disabled` |
+| `gbsyncd` | `sonic_asic_platform == "vs"` のみ追加 | `enabled` |
+| `pmon` | `delayed`: type が `SpineRouter` → `False`、それ以外 → `True` | (delayed のみ) |
+
+`lldp` の `has_global_scope` / `has_per_asic_scope` のみランタイム Jinja2 テンプレートで chassis モジュールタイプに応じて動的決定される（`init_cfg.json.j2:109-110`）。
+
+> **Evidence**: `sonic-host-services/scripts/featured:142,148,151-162,312-355,373-380,408-415,570-591`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67-130`; 詳細分析 `meta/_intermediate/cdb-flow/feature-platform.md`
+<!-- /platform -->
 
 <!-- glossary-links-injected: 92d0997ed33c -->
