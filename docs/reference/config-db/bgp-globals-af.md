@@ -494,4 +494,53 @@ address-family <af> <safi>
 > 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-failure.md`
 <!-- /failure -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読方式: Redis keyspace 通知 (`ExtConfigDBConnector`)
+
+`BGP_GLOBALS_AF` の唯一の購読者は `frrcfgd` (`sonic-frr-mgmt-framework`) である。`frrcfgd` は `swsscommon.ConfigDBConnector` を継承した独自クラス `ExtConfigDBConnector` を使い、CONFIG_DB 全体に対して Redis **keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:*`) を張る。
+
+| 購読者 | 購読 API | 通信方式 | ハンドラ |
+|--------|---------|---------|---------|
+| `frrcfgd` | `ExtConfigDBConnector.subscribe(table, hdlr)` + `listen()` | Redis keyspace 通知 (`psubscribe`) | `bgp_af_handler` |
+
+`bgpcfgd` は `BGP_GLOBALS_AF` を購読しない。`orchagent` / `syncd` も本テーブルを読まず、FRR `bgpd` のソフト処理経路で完結する。
+
+### keyspace 通知の仕組み
+
+```python
+# frrcfgd.py:1536-1552 (ExtConfigDBConnector.listen_thread / listen)
+def listen_thread(self, timeout):
+    sub_key_space = "__keyspace@{}__:*".format(self.get_dbid(self.db_name))
+    self.pubsub.psubscribe(sub_key_space)
+    while self.__listen_thread_running:
+        msg = self.pubsub.get_message(timeout, True)
+        if msg:
+            self.sub_msg_handler(msg)   # → _ConfigDBConnector__fire → bgp_af_handler
+```
+
+- 通知ペイロードは操作名 (`hset` / `del`) のみ。値は `client.hgetall(key)` で再取得 (`frrcfgd.py:1527`)。
+- `SubscriberStateTable`（channel ベースの `PUBLISH/SUBSCRIBE`）は使用しない。
+
+### 起動時 config replay
+
+`subscribe_all()` 前に `config_db.get_table_data([...])` で全テーブルのスナップショットを一括取得。`config_mode == "unified"` のとき `bgp_message` キュー経由で `__update_bgp()` が初期設定を replay する (`frrcfgd.py:2340-2357`)。
+
+### データフロー (keyspace → FRR)
+
+```
+CONFIG_DB hset 'BGP_GLOBALS_AF|default|ipv4_unicast' max_ebgp_paths 8
+  ↓ Redis keyspace PUBLISH "__keyspace@4__:BGP_GLOBALS_AF|default|ipv4_unicast" "hset"
+  ↓ ExtConfigDBConnector.listen_thread() (frrcfgd.py:1536)
+  ↓ client.hgetall(key) → raw_to_typed() → __fire("BGP_GLOBALS_AF", "default|ipv4_unicast", data)
+  ↓ bgp_af_handler → bgp_message キュー → __update_bgp()
+  ↓ vtysh: configure terminal / router bgp <asn> / address-family ipv4 unicast / maximum-paths 8
+```
+
+DEL (`data is None`) では `del_table=True` が設定され AF 設定全体を FRR から削除 (`frrcfgd.py:3918`)。プロセス再起動は発生しない。
+
+詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-pubsub.md`。
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 803f36c2634d -->
