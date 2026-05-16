@@ -251,6 +251,60 @@ WRED_PROFILE は `WredMapHandler::convertFieldValuesToAttributes()` がフィー
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+CONFIG_DB の `WRED_PROFILE` は `orchdaemon.cpp:375` の `qos_tables` ベクタ経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
+
+- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:WRED_PROFILE|*` への `PSUBSCRIBE`)
+- 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
+- バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
+- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+
+### 書き込み側 (publisher)
+
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）または firstboot 時のテンプレート展開が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。
+
+### ディスパッチ経路
+
+```
+SubscriberStateTable (PSUBSCRIBE keyspace)
+  → Consumer::execute() → pops() (HGETALL)
+  → QosOrch::doTask(Consumer&)           # allPortsReady() チェック後
+  → m_qos_handler_map[CFG_WRED_PROFILE_TABLE_NAME]
+  → QosOrch::handleWredProfileTable()    # qosorch.cpp:877
+  → WredMapHandler::processWorkItem()
+  → addQosItem(): sai_wred_api->create_wred()
+                  [SAI_WRED_ATTR_ECN_MARK_MODE / SAI_WRED_ATTR_*_ENABLE 等]
+```
+
+`QosOrch::doTask()` は WRED_PROFILE を PORT_QOS_MAP / QUEUE より先に drain する順序制御あり（`qosorch.cpp:2231-2252`）。これにより `QUEUE.wred_profile` 参照を解決した状態で QUEUE を処理できる。
+
+### select タイムアウト・リトライ
+
+- select タイムアウト: **1000 ms** (`SELECT_TIMEOUT`, `orchdaemon.cpp:23`)
+- `task_need_retry` 時は `m_toSync` にエントリを残置して次サイクルで再処理
+- サービス再起動トリガーなし（SAI ライブ操作のみで完結）
+
+### APPL_DB / STATE_DB 書き込み
+
+なし。`WRED_PROFILE` は CONFIG_DB → `QosOrch` → SAI の直接経路で完結し、APPL_DB への中継も STATE_DB への反映も行わない。
+
+| 観点 | 値 |
+|---|---|
+| 購読方式 | `SubscriberStateTable` (keyspace `PSUBSCRIBE`) |
+| バッチサイズ | 128 (`DEFAULT_POP_BATCH_SIZE`) |
+| select タイムアウト | 1000 ms |
+| ハンドラ | `QosOrch::handleWredProfileTable()` → `WredMapHandler` |
+| SAI API | `sai_wred_api->create_wred()` / `set_wred_attribute()` / `remove_wred()` |
+| channel PUBLISH | 使わない |
+| APPL_DB 中継 | なし |
+| TTL | 未使用 |
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
