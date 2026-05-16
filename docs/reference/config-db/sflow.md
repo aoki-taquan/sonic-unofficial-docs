@@ -267,4 +267,90 @@ minigraph.py に sFlow テーブル生成なし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+### SflowMgr コンストラクタのハードコード初期値
+
+`sflowmgr.cpp` コンストラクタで以下の内部状態が初期化される。これらは CONFIG_DB に対応するフィールドがない:
+
+| 内部変数 | 初期値 | 意味 |
+|---------|-------|------|
+| `m_gEnable` | `false` | グローバル admin_state 内部表現。YANG `default "down"` と一致。 |
+| `m_gDirection` | `"rx"` | グローバル sample_direction 内部表現。YANG `default "rx"` と一致。 |
+| `m_intfAllConf` | `true` | SFLOW_SESSION\|all 未設定時の「全ポートにグローバル設定を適用」フラグ。CONFIG_DB / YANG に対応フィールドなし。SFLOW_SESSION\|all を DEL すると `true` に戻る。 |
+| `m_intfAllDir` | `"rx"` | SFLOW_SESSION\|all の direction 内部表現。 |
+
+### `sample_rate` — 速度由来動的デフォルト
+
+`sample_rate` を SFLOW_SESSION に指定しない場合、`findSamplingRate()` がポートの **oper_speed**（なければ cfg_speed の文字列）をそのまま返す。つまりサンプリングレートはポート速度文字列（例: `"1000"`, `"10000"`）になる。ポートが未登録の場合は `"error"` を返し、SflowOrch は rate=0 としてセッション作成をスキップする。
+
+### `sample_direction` — YANG-実装 discrepancy (D1)
+
+YANG では `SFLOW_SESSION.sample_direction default "rx"` だが、実装 (`sflowmgr.cpp:374-378`) では per-port に direction が指定されていない場合、固定 `"rx"` ではなく `m_gDirection`（グローバルの現在値）を採用する。グローバル direction が `"tx"` や `"both"` に変更された後に per-port セッションを作成すると、YANG default とは異なる値が APP_DB に書き込まれる。**書込み順依存乖離**。
+
+### `admin_state` — 欠落時の `"up"` 注入
+
+per-port セッションに `admin_state` フィールドが存在しない場合、sflowmgrd は `"up"` をハードコードで注入する (`sflowmgr.cpp:364-368`)。YANG `default "up"` と一致するが、実装側でも明示的に強制している。
+
+### `agent_id` — 欠落時のサイレントスキップ
+
+`SFLOW.global.agent_id` が CONFIG_DB に存在しない場合、sflowmgrd は hsflowd 設定ファイルの agent IP 行を生成しない。エラーログなし（silent drop）。hsflowd 自身のデフォルト agent IP 選択ロジックが使われる。
+
+### SflowOrch の書込み順依存 (D3)
+
+SflowOrch は `m_sflowStatus = false` で初期化され、APP_SFLOW_TABLE の SET で `true` になるまで per-port SESSION の SET を全て無視する。APP_SFLOW_TABLE より先に APP_SFLOW_SESSION_TABLE が届くと per-port 設定が捨てられる。
+<!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+SFLOW テーブル群を CONFIG_DB へ書き込む際の **必須・推奨順序** を実装コードから導出した。
+
+### O1: `PORT` → `SFLOW_SESSION` (必須)
+
+`sflowmgr.cpp:522-528`: per-port SESSION の SET イベント処理時に `m_sflowPortConfMap` にポートが未登録だと `it++; continue` で永続スキップされる（リトライなし）。
+
+```
+PORT|<port>  SET  →  SFLOW_SESSION|<port>  SET
+```
+
+### O2: `SFLOW|global` admin=up → `SFLOW_SESSION` の APP_DB 反映 (実質必須)
+
+`sflowmgr.cpp:531-534`: `m_gEnable == false` の場合、per-port SESSION を書いても APP_DB には書かれない。グローバルを後から up にすると `sflowHandleSessionAll/Local()` が再適用する。
+
+```
+SFLOW|global (admin_state=up)  →  SFLOW_SESSION|<port>  SET
+```
+
+### O3: `APP_SFLOW_TABLE` → `APP_SFLOW_SESSION_TABLE` (SflowOrch 段・必須)
+
+`sfloworch.cpp:365-392`: `m_sflowStatus = false` の間は SESSION テーブルの全 SET を `return` でスキップする。APP_SFLOW_TABLE の SET が届くまで SESSION は永続無視。
+
+```
+APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
+```
+
+### O4: `SFLOW_SESSION|all` → `SFLOW_SESSION|<port>` (推奨)
+
+`sflowmgr.cpp:374-382`: per-port に `sample_direction` 未指定の場合 `m_gDirection` (グローバル方向) をフォールバックとして採用。`SFLOW_SESSION|all` が先行すると `sflowHandleSessionAll()` が全ポートに正しい方向を適用してから per-port 設定が上書きする。順序が逆だと per-port の初期 direction が `m_gDirection` 固定になる。
+
+### O5: oper_speed 確定 → `SFLOW_SESSION` 書込み (推奨)
+
+`sflowmgr.cpp:385-401`: `sample_rate` 未指定時は `oper_speed`（STATE_DB）優先、なければ `cfg_speed` を使う。ポート up 前に書き込むと cfg_speed ベースの暫定レートが入る。`local_rate_cfg=false` の場合は oper_speed 確定時に自動更新される。
+
+### 推奨書込み順序（総合）
+
+```
+1. PORT|<port>              (ポート登録)
+2. SFLOW|global             (admin_state=up、グローバル有効化)
+3. SFLOW_SESSION|all        (全ポートデフォルト方向・admin 設定)
+4. SFLOW_SESSION|<port>     (per-port 個別設定)
+5. SFLOW_COLLECTOR|<name>   (コレクタ設定、hsflowd は再起動で反映)
+```
+
+ステップ 2 と 3 を入れ替えると per-port の初期 direction が不定になるリスクがある。ステップ 1 より先に 4 を書くとエントリが永続スキップされる（O1 違反）。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 8e8594481100 -->

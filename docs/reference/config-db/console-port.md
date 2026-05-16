@@ -67,6 +67,33 @@ CONSOLE_SWITCH|console_mgmt
 | `enabled` | `yes`/`no` | `no` | console switch 機能の有効化フラグ |
 | `default_escape_char` | string `[a-z]` | — | picocom のグローバル既定エスケープ文字 |
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+### CONSOLE_PORT フィールド
+
+| フィールド | YANG default | CLI 省略時挙動 | 実行時 fallback |
+|---|---|---|---|
+| `baud_rate` | なし | `--baud` required — 必ず書き込まれる | フィールド欠如で接続時 `InvalidConfigurationError`（consutil/lib.py L198） |
+| `flow_control` | `"0"` (YANG L62) | `--flowcontrol` は is_flag — 省略で `"0"` を明示書き込み | フィールド欠如は `False` 扱い（`== "1"` 比較、consutil/lib.py L153） |
+| `remote_device` | なし | 省略時はエントリに key 自体を含めない (silent omit) | `None` のまま接続は続行可 |
+| `escape_char` | なし | 省略時は key なし。書き込み前に `escape.lower()` 強制小文字化 | `CONSOLE_SWITCH.default_escape_char` → 未設定なら picocom デフォルト (`-e` なし = Ctrl+A) |
+
+### CONSOLE_SWITCH フィールド
+
+| フィールド | YANG default | CLI 省略時挙動 | 実行時 fallback |
+|---|---|---|---|
+| `enabled` | `"no"` (YANG L86) | `config console enable/disable` で明示設定 | `feature_state.get(..., "no")` — エントリ不在は `"no"` 扱い (consutil/lib.py L94) |
+| `default_escape_char` | なし | `clear` で key を del | CONSOLE_SWITCH disabled 時は DB 値に関わらず `None` に固定 (consutil/lib.py L93–98) |
+
+### 特記事項
+
+- **`flow_control` 書き込み vs 実行時乖離**: minigraph 経由では integer `0`/`1` が格納されるが、consutil は文字列 `"1"` との比較を行うため、minigraph 由来のエントリは常に flow_control = False 判定になる。<!-- evidence: minigraph.py L616, consutil/lib.py L153 -->
+- **`escape_char` 大文字小文字制約**: YANG は `[a-z]` のみ許可するが CLI の `click.Choice` は大文字も受け入れ、`.lower()` で変換後に書き込む。ユーザーには大文字が受け付けられるように見えるが DB には小文字が格納される UX 乖離。<!-- evidence: config/console.py L65,L101,L82,L126,L282 -->
+- **デバイスパスのプラットフォーム依存**: `SysInfoProvider.DEVICE_PREFIX` はデフォルト `/dev/ttyUSB`。プラットフォームの `udevprefix.conf` が存在する場合は上書きされる。同一 line_num でもプラットフォームにより物理デバイスが変わる。<!-- evidence: consutil/lib.py L297,L301–307 -->
+- **`baud_rate` の minigraph パス**: XML `<Bandwidth>` タグから取得。タグ不在時の None チェックなし — AttributeError の潜在リスク。<!-- evidence: minigraph.py L615 -->
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
