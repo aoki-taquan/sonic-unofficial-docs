@@ -176,6 +176,34 @@ vtysh -c 'show bgp summary'
 **副作用**: BMP サーバへの接続が開始/停止される。既存 BGP セッションには影響なし。
 <!-- /runtime-trace -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BGPPeerMgrBase` は `BGP_MONITORS` の SET/DEL 処理後に FRR (vtysh) への適用が成功するたびに **STATE_DB / `BGP_PEER_CONFIGURED_TABLE`** へ副次書き込みを行う。`update_state_db()` が各ハンドラから直接呼ばれる設計であり、APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない。
+
+### STATE_DB / `BGP_PEER_CONFIGURED_TABLE`
+
+key 形式: default VRF の場合 `<nbr_ip>`, non-default VRF の場合 `<vrf>|<nbr_ip>`。
+
+| トリガ | 操作 | 格納内容 | evidence |
+|--------|------|---------|----------|
+| `add_peer()` が FRR 適用成功 (SET 新規) | `state_peer_table.set(key, data.items())` | CONFIG_DB から受け取ったフィールド一式をソート済みリストで格納 | `managers_bgp.py:239` |
+| `apply_admin_status()` が FRR 適用成功 (admin_status 更新) | `state_peer_table.set(key, data.items())` | 更新後の data を格納 | `managers_bgp.py:353` |
+| `change_ip_range()` が FRR 適用成功 (ip_range 更新) | `state_peer_table.set(key, data.items())` | 更新後の data を格納 | `managers_bgp.py:443` |
+| `del_handler()` が FRR 削除成功 (DEL) | `state_peer_table.delete(key)` | エントリ削除 | `managers_bgp.py:487` |
+
+!!! note "FRR 適用失敗時は書き込まない"
+    `update_state_db()` は各ハンドラが FRR (vtysh) への適用 (`apply_op()`) で成功を確認した後にのみ呼ばれる。`apply_op()` が False を返した場合、STATE_DB は更新されない (`managers_bgp.py:351-356`, `managers_bgp.py:484-489`)。
+
+テーブル名定数: `STATE_BGP_PEER_CONFIGURED_TABLE_NAME = "BGP_PEER_CONFIGURED_TABLE"` (`sonic-swss-common/common/schema.h:511`)。
+
+### 副次書込なし
+
+- **APPL_DB**: `bgpcfgd` は CONFIG_DB → FRR (vtysh) の直接送信モデルを採用。APPL_DB 中間層は存在しない。
+- **COUNTERS_DB / FLEX_COUNTER_DB**: BGP peer カウンタは `bgpcfgd` ではなく FRR 統計として管理される。`managers_bgp.py` に COUNTERS_DB / FLEX_COUNTER_DB への書き込みは存在しない。
+
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
@@ -289,6 +317,48 @@ vtysh -c 'show bgp summary'
 **根拠**: `frrcfgd.py` 全体を `BGP_MONITORS` / `BGPMON` / `monitor` キーワードでスキャンしたが一致なし。
 
 <!-- /platform -->
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+`BGP_MONITORS` は YANG leafref を持たないが、`bgpcfgd` / `frrcfgd` 実装レベルで以下のテーブルを暗黙参照する。
+
+### 1. DEVICE_METADATA|localhost — bgp_asn / bgp_router_id（必須）
+
+| 参照フィールド | 利用箇所 | 条件 | 証跡 |
+|--------------|---------|------|------|
+| `bgp_asn` | FRR `remote-as <asn>` および `router bgp <asn>` | 常時。未設定なら `add_peer()` が `KeyError` で失敗 | `managers_bgp.py:192` |
+| `bgp_router_id` | Loopback0 IPv4 未設定時のフォールバックチェック | Loopback0 IPv4 が None の場合のみ | `managers_bgp.py:186-188` |
+
+> **注意**: CONFIG_DB の `BGP_MONITORS|<addr>|asn` フィールドは `bgpcfgd` に**参照されない**。FRR の `remote-as` は常に `DEVICE_METADATA.bgp_asn` から取得する（dead field）。
+
+### 2. BGP_GLOBALS — 間接依存（frrcfgd との整合性要件）
+
+`bgpcfgd` は `BGP_GLOBALS` を直接購読しないが、同一 FRR デーモン上で `frrcfgd` が `BGP_GLOBALS` を管理する。`bgpcfgd` が `DEVICE_METADATA.bgp_asn` で入力する BGP コンテキストと `BGP_GLOBALS.local_asn` が一致している必要がある（不一致は設定破損につながる）。
+
+- **参照元**: `frrcfgd.py:81` (`BGP_GLOBALS` → bgpd マッピング), `frrcfgd.py:2175` (`BGP_GLOBALS` テーブル読み取り)
+
+### 3. ROUTE_MAP — FROM_BGPMON / TO_BGPMON（テンプレートハードコード）
+
+`BGP_MONITORS` エントリ追加時、`bgpcfgd` は `policies.conf.j2` テンプレートを用いて以下の route-map を FRR に直接注入する。これらは CONFIG_DB の `ROUTE_MAP` テーブルを経由しない。
+
+| route-map 名 | 方向 | 内容 | 証跡 |
+|-------------|------|------|------|
+| `FROM_BGPMON deny 10` | in (受信) | 全受信経路を拒否（モニターは経路を受け取らない設計） | `policies.conf.j2`, `result_all.conf:8` |
+| `TO_BGPMON permit 10` | out (送信) | 全送信経路を許可（自RIBをモニターに公開） | `policies.conf.j2`, `result_all.conf:9` |
+
+> **注意**: CONFIG_DB に `ROUTE_MAP|FROM_BGPMON` / `ROUTE_MAP|TO_BGPMON` を手動追加すると `bgpcfgd` 注入分と競合する恐れがある。
+
+### 参照関係サマリ
+
+```
+BGP_MONITORS (bgpcfgd)
+  ├─ [必須] DEVICE_METADATA|localhost.bgp_asn       → FRR remote-as / router bgp <asn>
+  ├─ [条件付き] DEVICE_METADATA|localhost.bgp_router_id → Loopback0 未設定時フォールバック
+  ├─ [間接] BGP_GLOBALS                              → frrcfgd との bgp_asn 整合性要件
+  └─ [出力] ROUTE_MAP 名前空間                        → FROM_BGPMON / TO_BGPMON を FRR に直接注入
+```
+
+<!-- /cross-refs -->
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来の固定値 (Phase A)
 
