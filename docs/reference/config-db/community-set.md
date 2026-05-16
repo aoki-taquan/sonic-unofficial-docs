@@ -181,6 +181,31 @@ vtysh -c 'show bgp community-list'
 - なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`frrcfgd`（`BGPConfigDaemon`）は `COMMUNITY_SET` を購読して FRR の `bgp community-list` に変換する。`ROUTE_MAP` の `match_community` / `set_community_ref` は COMMUNITY_SET 名を参照するため、以下の順序依存が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `COMMUNITY_SET` 登録が `ROUTE_MAP.match_community` 参照より先行 | **先行必須** | 未先行時: FRR community-list が未定義のまま match 評価 → 常に no-match（サイレント失敗、ログなし） |
+| 2 | `set_type` / `match_action` / `community_member` の 3 フィールドが揃うまで FRR へ送信しない | **原子的反映** | `is_configurable()` が `False` の間はコマンド生成スキップ。中途半端な登録を防止 |
+| 3 | `community_member` の書込み順序が FRR に伝播（YANG `ordered-by user`） | **順序保持** | 順序変更には DELETE → re-ADD が必要。`mbr_list` を順序通りに展開 |
+| 4 | `ROUTE_MAP.set_community_ref` 参照は COMMUNITY_SET が `comm_set_list` に登録済みであること | **先行必須** | 未先行時: `com-ref` フォーマットが `None` を返し FRR `set community` コマンドがスキップ（サイレント） |
+
+### 主要な制約詳細
+
+**COMMUNITY_SET 先行必須 (依存 #1)**: `route_map_key_map` の `match_community` エントリは FRR へ `match community <name>` を送る。FRR 側で `bgp community-list <name>` が未定義の場合、route-map 評価は常に no-match となる。frrcfgd はこの整合性を検査しないため、COMMUNITY_SET を先に投入してから ROUTE_MAP を設定する必要がある（`frrcfgd.py:1938`）。
+
+**is_configurable による原子的反映 (依存 #2)**: `CommunityList.is_configurable()` は `match_action`・`is_std`（set_type）・`mbr_list`（community_member）の 3 値がすべて非 None / 非空の場合のみ `True` を返す。`hdl_com_set` はこの条件チェックを経て `bgp community-list` コマンドを発行するため、フィールドが部分的に書き込まれた状態では FRR へ反映されない（`frrcfgd.py:1580-1582`, `frrcfgd.py:988-989`）。
+
+**set_community_ref の先行必須 (依存 #4)**: `CommandArgument.__format__` の `com-ref` 分岐は `daemon.comm_set_list.get(name)` で COMMUNITY_SET を引き当て、`is_configurable()` が `True` の場合のみメンバー列を返す。未登録の場合は `None` が返り FRR コマンドが生成されない（`frrcfgd.py:831-834`）。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/community-set-ordering.md` 参照。
+
+<!-- /ordering -->
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
