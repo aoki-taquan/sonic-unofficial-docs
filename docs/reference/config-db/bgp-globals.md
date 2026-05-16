@@ -395,4 +395,28 @@ BGP_GLOBALS ハンドラが実装上参照する、YANG leafref 以外の暗黙�
 | `BGP_NEIGHBOR` / `BGP_NEIGHBOR_AF`（同 VRF） | `frrcfgd.py:2849-2853` | `local_asn` 確定後に pending の neighbor / neighbor-AF を再適用する |
 | `BGP_GLOBALS_EVPN_VNI` / `BGP_GLOBALS_EVPN_RT` / `BGP_GLOBALS_EVPN_VNI_RT` | `frrcfgd.py:2100-2103, 2659` | VRF-based テーブルとして `local_asn` の存在確認を共有する。未設定なら skip |
 <!-- /cross-refs -->
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**BGP_GLOBALS のフィールド本体 (router_id / local_asn / keepalive / holdtime / max_med / graceful_restart 等) の値変換と FRR コマンド生成にプラットフォーム差は無い**。`frr-mgmt-framework` の `frrcfgd.py` (3985 行) および `bgpd.conf.db.j2` (204 行) を `platform` / `asic_type` / `switch_type` / `chassis` / `multi_npu` / `namespace` / `sub_role` / `TSA` で grep して **0 ヒット**。BGP_GLOBALS は [SAI](../../reference/glossary.md#term-sai) を直接駆動しないため、ASIC ベンダー固有の capability / mandatory フィールド差もそもそも発生しない。
+
+ただし、`bgpcfgd` 側の `BGP_DEVICE_GLOBAL` 経路で `chassis_tsa` / `switch_role` / `switch_type` / `device_info.is_chassis()` が **同一 `router bgp <asn>` ブロック配下の neighbor route-map と IDF state push に間接的に影響する** (`BGP_GLOBALS` のフィールド値は変更しない)。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco / Barefoot / Nephos / Centec / vs) | 影響なし | BGP_GLOBALS は SAI 非経由。`frrcfgd.py` / `bgpd.conf.db.j2` を vendor 名で grep して 0 ヒット |
+| HwSku | 影響なし | 同 grep で 0 ヒット。`files/device/<platform>/` 配下にも BGP_GLOBALS 特化の override 機構なし |
+| multi-asic (`is_multi_npu()` / `asicN` namespace) | 影響なし (per-namespace 独立) | `frrcfgd.py` に namespace / multi_npu 参照 0 ヒット。各 namespace の CONFIG_DB を独立した `frrcfgd` プロセスが同一コードで処理し、`BGP_GLOBALS\|<vrf>` の key 空間は namespace ごとに独立する |
+| `device_info.is_chassis()` 真 (VOQ / packet-based chassis) | **間接影響あり** | `bgpcfgd/main.py:112-113` で `ChassisAppDbMgr` を追加し `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL\|STATE.tsa_enabled` を取得可能化。BGP_GLOBALS フィールドは変更されない |
+| `chassis_tsa` (`CHASSIS_APP_DB.BGP_DEVICE_GLOBAL\|STATE.tsa_enabled`) | **間接影響あり** (route-map のみ) | `managers_device_global.py:238-251` で chassis_tsa を取得。`check_state_and_get_tsa_routemaps()` (L171-181) が tsa_status または chassis_tsa が真のとき `router bgp <local_asn>` ブロック末尾に TSA 用 route-map を追記 (`managers_bgp.py:69-71`)。**BGP_GLOBALS の `local_asn` / `router_id` / `keepalive` 等は不変** |
+| `switch_role` (`DEVICE_METADATA.localhost.type`) | **間接影響あり** (IDF / AsPath のみ) | `SpineRouter` / `LowerSpineRouter` / `UpperSpineRouter` のときのみ `downstream_isolate_unisolate()` が IDF route-map を push (`managers_device_global.py:260-262`)。`UpstreamLC` / `UpperSpineRouter` で `AsPathMgr` が追加起動 (`bgpcfgd/main.py:122-129`)。BGP_GLOBALS フィールド本体には不介入 |
+| `switch_type == 'chassis-packet'` (VOQ system) | **間接影響あり** (TSA route-map 整形のみ) | `__generate_routemaps_from_template()` (`managers_device_global.py:213-225`) が `_INTERNAL_` / `VOQ_` を含む route-map 名を chassis 内 iBGP として `internal_route_map=1` で render。BGP_GLOBALS の値変換には不介入 |
+| `BGP_GLOBALS` フィールド本体の FRR コマンド生成 | 全プラットフォーム同一 | `frrcfgd.py` `global_key_map` (L1784-1821)、`bgp_global_handler()` (L3918-3937)、`__update_bgp()` (L2685-2727) 全行に platform / chassis / asic 系分岐なし。`vrf == 'default'` か否かの構文分岐のみ |
+| `vrf == 'default'` 代替パス | VRF scope 差 (platform 差ではない) | `default` VRF のみ `DEVICE_METADATA.bgp_asn` を `local_asn` の代替 source として受理 (`frrcfgd.py:2162-2166, 2442-2447`) |
+
+!!! note "chassis_tsa の作用範囲"
+    `chassis_tsa` は `BGP_DEVICE_GLOBAL` 経路で **neighbor の `route-map ... out` を TSA 用に差し替える** のみで、`BGP_GLOBALS` テーブルのフィールド (router_id / local_asn / keepalive / holdtime 等) は変更しない。詳細は [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) の Phase H ブロックを参照。
+
+詳細根拠 (grep 結果、関数本体、呼出関係) は `meta/_intermediate/cdb-flow/bgp-globals-platform.md` を参照。
+<!-- /platform -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
