@@ -196,6 +196,40 @@ bool is_match(sai_object_id_t vrf, IpPrefix prefix) const
 - 関連 CLI: `config flow_counters route`、`show flow_counters route`
 - 関連 YANG: 未定義（スキーマの正本は `flowcounterrouteorch.cpp` / `flow_counter_util/route.py`）
 
+<!-- cross-refs -->
+## 暗黙参照 — `FlowCounterRouteOrch` が依存する関連テーブル (Phase C)
+
+`FLOW_COUNTER_ROUTE_PATTERN` は YANG 定義を持たない（YANG 未カバー）ため leafref による明示参照はゼロ件。
+代わりに `flowcounterrouteorch.cpp` の全 997 行から抽出した **8 系統の暗黙依存** が実装レベルの cross-table 参照となる。
+
+### 主要テーブル / Orch 参照
+
+| 参照先 (テーブル / Orch) | フィールド / 条件 | 参照方向 | evidence |
+|---|---|---|---|
+| `RouteOrch` / `ROUTE_TABLE` (APPL_DB) | 常時（パターンマッチング走査） | 読み取り（シンク済みルート一覧） | `flowcounterrouteorch.cpp:634` `gRouteOrch->getSyncdRoutes()` |
+| `VRFOrch` / `VRF` (CONFIG_DB) | key の `<vrf_name>` が非デフォルト VRF のとき | OID → 名前変換 | `flowcounterrouteorch.cpp:410-411` `getVRFname(vrf_id)` |
+| `VNetOrch` / VNET ルートキャッシュ | key の `<vrf_name>` が VNET 名のとき | 読み取り（VNET ルートマップ走査） | `flowcounterrouteorch.cpp:696-743` `getRouteMap()` |
+| `FlexCounterOrch` / `FLEX_COUNTER_TABLE` (CONFIG_DB) | 常時（カウンター有効化フラグ確認） | 状態読み取り | `flowcounterrouteorch.cpp:947-948` `getRouteFlowCountersState()` |
+| `ASIC_DB:VIDTORID` | バインド試行時（VID 存在確認） | 読み取り（RID 解決） | `flowcounterrouteorch.cpp:116` `mVidToRidTable->hget()` |
+| `COUNTERS_DB:COUNTERS_ROUTE_NAME_MAP` | バインド成功後 | 書き込み（prefix → counter OID） | `flowcounterrouteorch.cpp:33, 126, 152, 921` |
+| `COUNTERS_DB:COUNTERS_ROUTE_TO_PATTERN_MAP` | バインド成功後 | 書き込み（prefix → パターン逆引き） | `flowcounterrouteorch.cpp:34, 129, 155, 920` |
+| `STATE_DB:FLOW_COUNTER_CAPABILITY_TABLE\|route` | orchagent 起動時（一度のみ） | 書き込み（`support = true/false`） | `flowcounterrouteorch.cpp:174-178` |
+
+### 初期化ガード順序
+
+1. `gRouteOrch` が null → CONFIG_DB パターン処理全体が即時 return（`flowcounterrouteorch.cpp:57-60`）。
+2. `mRouteFlowCounterSupported = false`（プラットフォーム非対応）→ 同様に全処理スキップ。
+3. `isRouteFlowCounterEnabled() = false`（`FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` が無効）→ counter バインド処理のみスキップ（パターン登録は保持）。
+4. `ASIC_DB:VIDTORID` に VID が未登録 → `mPendingAddToFlexCntr` にキューイング、`FLEX_COUNTER_UPD_TIMER`（1 秒周期）で再試行。
+
+### 範囲外
+
+- `ROUTE_TABLE (STATE_DB)` — デフォルトルート到達性の side-effect 書き込み先であり、FlowCounterRouteOrch は参照しない。
+- `NEIGH_TABLE` / `INTF_TABLE` — RouteOrch が参照するが FlowCounterRouteOrch は直接参照しない。
+
+詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/route-orch-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
