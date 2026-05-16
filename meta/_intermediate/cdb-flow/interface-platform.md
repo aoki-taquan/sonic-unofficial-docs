@@ -107,14 +107,48 @@ SAI_INIT_CONFIG_FILE=/usr/share/sonic/hwsku/th-a7260cx3-64-flex.config.bcm
 - `SAI_NUM_ECMP_MEMBERS=64` は Broadcom Arista SKU に多い設定 (Mellanox はデフォルト値)
 - Mellanox: XML ベース SAI 設定、RIF 上限はチップ世代依存 (SN2700 vs SN4700 等)
 
+### 7. VOQ Chassis — システムインタフェース同期
+
+**検出箇所**: `intfsorch.cpp:1316-1317`, `intfsorch.cpp:1369-1370`, `intfsorch.cpp:586-593`, `intfmgr.cpp:103-106`
+
+```cpp
+// intfsorch.cpp:1316-1317  RIF 作成直後
+voqSyncAddIntf(port.m_alias);
+// intfsorch.cpp:1369-1370  RIF 削除直後
+voqSyncDelIntf(port.m_alias);
+```
+
+- `switch_type=voq` のシャーシ環境では、ローカルポートの `INTERFACE` SET/DEL が `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` への書き込み/削除を引き起こす
+- `voqSyncAddIntf` はポートが `SAI_SYSTEM_PORT_TYPE_REMOTE` でないことを確認してからのみ同期する
+- inband ポート (`isInbandPort(alias)` が真) への IP 追加/削除時は `addInbandNeighbor` / `delInbandNeighbor` を呼び出してリモート ASIC にネイバー情報を伝播する
+- リモートポートの IF 状態変化は `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` への通知として届き、`ifChangeInformRemoteNextHop` でネクストホップを更新する
+- IPv6 アドレス追加時に `metric 256` を付与 (`intfmgr.cpp:103-106`) して connected ルートと static ルートのメトリクスを一致させる（通常シングルスイッチでは metric 指定なし）
+
+**通常シングルスイッチとの差分**:
+
+| 操作 | 通常シングルスイッチ | VOQ Chassis |
+|------|---------------------|------------|
+| `INTERFACE` SET (local port) | RIF 作成のみ | RIF 作成 + CHASSIS_APP_DB 同期 |
+| `INTERFACE` DEL (local port) | RIF 削除のみ | RIF 削除 + CHASSIS_APP_DB 削除 |
+| `INTERFACE\|<port>\|<ip>` (inband) | IP2me ルート追加 | IP2me ルート + inband neighbor 追加 |
+| IPv6 アドレス追加 | `ip -6 address add <ip>` | `ip -6 address add <ip> metric 256` |
+
+### 8. SmartSwitch DPU — コード差なし (2026-05-16 時点)
+
+**検出箇所**: `intfsorch.cpp` 全体、`intfmgr.cpp` 全体
+
+`sonic-swss/orchagent/intfsorch.cpp` および `cfgmgr/intfmgr.cpp` には SmartSwitch / DPU 固有の条件分岐は存在しない。DPU 上の `INTERFACE` テーブル処理は通常の物理ポートと同一経路をたどる。SmartSwitch 固有のインタフェース管理は `dpuorch` / `midplaneorch` に委譲されており、本テーブルには影響しない。
+
 ---
 
 ## 結論
 
-| フィールド | 差の性質 | 影響 ASIC |
-|-----------|---------|----------|
+| フィールド / 構成 | 差の性質 | 影響 ASIC / 環境 |
+|-----------------|---------|----------------|
 | `nat_zone` | SAI capability query で有効/無効決定 | NAT 非対応 ASIC では黙殺 |
 | `ipv6_use_link_local_only` | Mellanox SAI プロファイルキー `SAI_NOT_DROP_SIP_DIP_LINK_LOCAL` で転送可否変化 | Mellanox/NVIDIA のみ sai.profile 設定あり |
 | `loopback_action` | 未設定時は SAI プラットフォームデフォルト依存 | ベンダー差あり |
 | `mac_addr` | VS ではそのまま、実 ASIC では switch global MAC | VS vs 実 HW |
 | `proxy_arp` | VLAN IF のみ SAI flood control 変更、物理 IF では SAI 無変更 | VLAN flood 実装がベンダー依存 |
+| VOQ Chassis | CHASSIS_APP_DB 同期・inband neighbor・IPv6 metric 256 が追加される | `switch_type=voq` のシャーシのみ |
+| SmartSwitch DPU | コード差なし。DPU 固有処理は dpuorch/midplaneorch に委譲 | 本テーブルへの影響なし |
