@@ -93,6 +93,7 @@ VLAN|<name>
 | `DEFAULT_VLAN_ID` | `"1"` | vlanmgr.cpp:18 | Bridge 初期化時に削除する IEEE 802.1Q デフォルト VLAN（`bridge vlan del vid 1`）|
 | `DOT1Q_BRIDGE_NAME` | `"Bridge"` | vlanmgr.cpp:15 | Linux dot1q ブリッジデバイス名（固定文字列）|
 | `VLAN_PREFIX` | `"Vlan"` | vlanmgr.cpp:16 | VLAN インタフェース名プレフィクス。キー長チェックに `4` バイトとして使用 |
+| `LAG_PREFIX` | `"PortChannel"` | vlanmgr.cpp:17 | LAG インタフェース名プレフィクス。`VLAN_MEMBER` 追加時のレースコンディション判定（PortChannel vs Ethernet の挙動分岐）に使用 |
 | `VLAN_HLEN` | `4` | vlanmgr.cpp:20 | IEEE 802.1Q ヘッダ長（バイト）— 定義のみ・ファイル内未参照（dead define）|
 | `MAX_VALID_VLAN_ID` | `4094` | portsorch.cpp:82 | サブインタフェース VLAN ID 上限。YANG `range 2..4094` と一致 |
 | `DEFAULT_SYSTEM_PORT_MTU` | `9100` | portsorch.cpp:79 | portsorch 側の MTU 初期値。vlanmgr.cpp の `DEFAULT_MTU_STR` とは独立定義 |
@@ -325,6 +326,24 @@ REST/gNMI 書き込み経路なし
 
 1. **`VLAN_MEMBER` DEL → `VLAN` DEL**: VLAN を先に DEL すると `STATE_VLAN_TABLE` から対象エントリが即座に削除される。残存する `VLAN_MEMBER` タスクは `isVlanStateOk()` チェックが永遠に false になり孤立する (`vlanmgr.cpp:456-471`)。**必ず VLAN_MEMBER を全削除してから VLAN を削除すること**。
 
+### Linux IF 設定順（addHostVlan / addHostVlanMember 内部）
+
+VLAN SET が受け付けられ `addHostVlan()` が実行される際の **カーネル側コマンド実行順序**（`vlanmgr.cpp:118-143`）:
+
+1. `bridge vlan add vid <N> dev Bridge self` — dot1q ブリッジへの VLAN ID 登録
+2. `ip link add link Bridge up name Vlan<N> address <gMacAddress> type vlan id <N>` — VLAN インタフェース作成（Bridge にリンクし、スイッチ MAC を付与）
+3. `echo 0 > /proc/sys/net/ipv4/conf/Vlan<N>/arp_evict_nocarrier` — ARP evict on nocarrier を無効化（ベストエフォート、失敗しても vlanmgrd はクラッシュしない）
+
+ステップ 1 が完了してから 2 を実行するため、ブリッジに VLAN ID が存在しない状態でインタフェースが作成されることはない。ステップ 2 失敗（`EXEC_WITH_ERROR_THROW`）は `vlanmgrd` プロセスをクラッシュさせる。
+
+VLAN_MEMBER SET が受け付けられ `addHostVlanMember()` が実行される際のコマンド順序（`vlanmgr.cpp:233-273`）:
+
+1. `ip link set <port_alias> master Bridge` — ポートを dot1q ブリッジに収容
+2. `bridge vlan del vid 1 dev <port_alias>` — デフォルト VLAN 1 を削除
+3. `bridge vlan add vid <N> dev <port_alias> [pvid untagged]` — 指定 VLAN ID を追加
+
+これら 3 ステップは 1 つの bash -c 呼び出しで &&チェーン実行される。いずれかが失敗すると以降のステップは実行されない。PortChannel の場合のみ失敗時に `false` を返してリトライ（Ethernet はクラッシュ）。
+
 ### warm-reboot / restart 影響
 
 - **swss docker restart（warm-reboot）**: Linux カーネルのブリッジ・VLAN インタフェースはカーネル空間に残存するため、vlanmgrd は `ip link show Bridge` で存在を確認してブリッジ再作成をスキップする (`vlanmgr.cpp:64-75`)。STATE_DB の既存エントリと照合して重複作成を回避し、`WarmStart::REPLAYED` → `RECONCILED` に自動遷移する (`vlanmgr.cpp:371-378, 479-488`)。
@@ -415,6 +434,41 @@ DEL VLAN|Vlan100
 <!-- platform -->
 ## プラットフォーム差・SAI capability 分岐
 
+<!-- evidence: sonic-swss/cfgmgr/vlanmgr.cpp; sonic-swss/orchagent/portsorch.cpp -->
+
+### VOQ chassis / DPU モード差 (`gMySwitchType`)
+
+`PortsOrch` 初期化時に `gMySwitchType` を参照し、`"dpu"` の場合は以下をスキップする (portsorch.cpp:987-1066)[^plat1]:
+
+| 処理 | 通常モード | DPU モード |
+|------|-----------|-----------|
+| SAI デフォルト 1Q Bridge / VLAN OID 取得 (`SAI_SWITCH_ATTR_DEFAULT_1Q_BRIDGE_ID` 等) | 実行 | スキップ |
+| `removeDefaultVlanMembers()` / `removeDefaultBridgePorts()` | 実行 | スキップ |
+| FDB event notify 設定 (`SAI_SWITCH_ATTR_FDB_EVENT_NOTIFY`) | 実行 | スキップ |
+
+DPU はホスト側 Linux bridge を通常通り作成する（vlanmgr.cpp は `gMySwitchType` を参照しない）。**VOQ chassis** (`gMySwitchType == "voq"`) については LAG/SystemPort 系の分岐が存在するが、`addVlan()` / `removeVlan()` に直接影響する分岐はなく VLAN SAI フローは標準と同一[^plat1]。
+
+### SmartSwitch DPU — `host_ifname` フィールドによる SAI HOSTIF バインド
+
+APP_DB `VLAN_TABLE` の `host_ifname` フィールドが設定されている場合に `createVlanHostIntf()` が呼ばれ、SAI `create_hostif()` で VLAN OID に `SAI_HOSTIF_TYPE_NETDEV` ホストインタフェースをバインドする (portsorch.cpp:5820-5828)[^plat1]。
+
+- `host_ifname` は YANG 外かつ CONFIG_DB の `VLAN` テーブルには未定義。vlanmgrd が受け取った場合は APP_DB に透過転送する (vlanmgr.cpp:416-418, 434)[^plat2]。
+- SmartSwitch NPU→DPU の監視用途で使用。エラー時は graceful failure（プロセスクラッシュしない）。
+- `removeVlan()` 時に `host_intf_id` が設定されていれば `removeVlanHostIntf()` を先に呼ぶ (portsorch.cpp:7457)[^plat1]。
+
+### カーネル Linux bridge vs SAI VLAN — 二重平面の非対称動作
+
+SONiC の VLAN 制御は 2 平面で並列動作し、互いの完了を待たない:
+
+| 平面 | コンポーネント | 実装 |
+|------|--------------|------|
+| カーネル側 | vlanmgrd | `ip link add Bridge type bridge`、`bridge vlan add vid <N>` |
+| ASIC/SAI 側 | orchagent (VlanOrch) | `sai_vlan_api->create_vlan(SAI_VLAN_ATTR_VLAN_ID)` のみ |
+
+- **DPU モードでもカーネル bridge は作成される**。DPU の転送はカーネル bridge を通過しないため、カーネル bridge は制御面・管理面専用となる[^plat2]。
+- **MTU 非対称**: vlanmgrd は `DEFAULT_MTU_STR=9100` を APP_DB に書くが、カーネル netdev MTU の設定は TODO 状態 (vlanmgr.cpp:401-406)。ホスト側と SAI 側で MTU が乖離し得る[^plat2]。
+- **SAI デフォルト属性依存**: `create_vlan()` は `SAI_VLAN_ATTR_VLAN_ID` のみ指定し flooding control 等はベンダー SAI デフォルトに委ねる (portsorch.cpp:7392)。VS SAI と実 ASIC SAI でデフォルト挙動が異なる[^plat1]。
+
 ### SAI Flood control capability — `COMBINED` 非対応 ASIC
 
 orchagent 起動時に `sai_query_attribute_enum_values_capability()` で UUC (Unknown Unicast) / BC (Broadcast) の flood control タイプを問い合わせる (portsorch.cpp:900-931)。`SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` をサポートしない ASIC では、VXLAN EVPN エンドポイント (`VLAN_MEMBER.end_point_ip`) を用いた flood group 設定がエラー終了する (portsorch.cpp:7517-7524)。VS (Virtual Switch) SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返し `COMBINED` を返さないため、VS 環境では EVPN flood group は設定不可[^plat1]。
@@ -442,6 +496,7 @@ orchagent は `platform` 環境変数の部分文字列でベンダーを識別�
 | `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` |
 
 [^plat1]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+[^plat2]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
 
 <!-- /platform -->
 
@@ -497,5 +552,33 @@ orchagent VlanOrch
 - ポートが STATE_DB に未登録の間は `it++`（スキップ）で retry; 対象が用意され次第 commit
 
 <!-- /pubsub -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`VLAN` テーブルエントリが CONFIG_DB に書かれたとき、`vlanmgrd` (`cfgmgr/vlanmgr.cpp`) が
+STATE_DB を通じて以下のテーブルを**暗黙的に参照**する。YANG leafref として公式定義されていない
+コードレベルの依存を含む。
+
+| 参照元 | 参照先テーブル | 参照先キー形式 | 参照タイミング | 参照箇所 |
+|---|---|---|---|---|
+| `VLAN_MEMBER\|Vlan<N>\|EthernetM` | `PORT` (STATE_PORT_TABLE) | `STATE_PORT_TABLE\|EthernetM` | VLAN_MEMBER SET 処理時 | `vlanmgr.cpp:503` |
+| `VLAN_MEMBER\|Vlan<N>\|PortChannelM` | `PORTCHANNEL` (STATE_LAG_TABLE) | `STATE_LAG_TABLE\|PortChannelM` | VLAN_MEMBER SET 処理時 | `vlanmgr.cpp:495-502` |
+| `VLAN\|Vlan<N>` (`members@` フィールド) | `VLAN_MEMBER` | `VLAN_MEMBER\|Vlan<N>\|<port>` | VLAN SET 処理時 (レガシー形式) | `vlanmgr.cpp:552-584` |
+| `VLAN_INTERFACE\|Vlan<N>` (被参照) | `VLAN` (STATE_VLAN_TABLE) | `STATE_VLAN_TABLE\|Vlan<N>` | VLAN_INTERFACE SET 処理時 | `intfmgr.cpp:649-658` |
+
+### 解決タイミング
+
+- `VLAN_MEMBER` にポートを追加する際、メンバーポート (`EthernetN` / `PortChannelN`) が
+  `STATE_PORT_TABLE` / `STATE_LAG_TABLE` に未登録の場合、vlanmgrd は `m_toSync` に保留し
+  次ポーリング (1000ms タイムアウト) で自動再試行する (`vlanmgr.cpp:642-647`)。
+- `VLAN` エントリの `members@` フィールド（旧形式）は vlanmgrd が `VLAN_MEMBER` に変換して処理。
+
+### 間接参照
+
+- `VLAN_INTERFACE` は YANG `leafref` で `VLAN.name` を参照する。vlanmgrd が
+  `STATE_VLAN_TABLE|Vlan<N>` (`state=ok`) を書き込むことで `intfmgr` の処理がアンブロックされる。
+  `VLAN` を先に SET せずに `VLAN_INTERFACE` を SET すると L3 IF が孤立する。
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 6981be1a469d -->

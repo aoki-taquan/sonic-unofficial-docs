@@ -124,6 +124,47 @@ multi-ASIC では `namespace_id` をオフセットとして加算する (`hash_
 
 ---
 
+### 13. SwitchOrch ポーリング定数 (switchorch.cpp / switchorch.h)
+
+`SwitchOrch` (`sonic-swss/orchagent/switchorch.cpp`) に定義された固定ポーリング間隔・重複排除ウィンドウ。`DEVICE_METADATA` の `switch_type`/`type` 値に依存しない共通定数だが、`SwitchOrch` は `DEVICE_METADATA` の主要 consumer (SAI スイッチ初期化・カウンタ管理) であるため記録する。
+
+| 定数名 | 値 | 用途 | source |
+|--------|-----|------|--------|
+| `SWITCH_STAT_COUNTER_POLLING_INTERVAL_MS` | `60,000` ms | SWITCH_STAT カウンタ (dropped_trim / tx_trim) の FlexCounter ポーリング間隔 | `sonic-swss/orchagent/switchorch.cpp:32,157` |
+| `DEFAULT_ASIC_SENSORS_POLLER_INTERVAL` | `60` 秒 | ASIC 温度センサーポーリング初期値 (`ASIC_SENSORS_POLLER_INTERVAL` で上書き可) | `sonic-swss/orchagent/switchorch.h:12; switchorch.cpp:154` |
+| `ASIC_SDK_HEALTH_EVENT_ELIMINATE_INTERVAL` | `3,600` 秒 | ASIC SDK health event の重複排除ウィンドウ (同一 severity × category を 1 時間内に重複送信しない) | `sonic-swss/orchagent/switchorch.h:29` |
+
+### 14. `switch_type` 有効 enum 値と既定値
+
+`orchagent/main.cpp` の `getCfgSwitchType()` 関数がバリデーションする値のリスト。
+
+| 値 | 既定 | SAI マッピング | source |
+|----|------|--------------|--------|
+| `switch` | ◎ (未設定時 fallback) | `SAI_SWITCH_TYPE_NPU` | `sonic-swss/orchagent/main.cpp:251,264` |
+| `voq` | — | `SAI_SWITCH_TYPE_VOQ` | `sonic-swss/orchagent/main.cpp:698` |
+| `fabric` | — | `SAI_SWITCH_TYPE_FABRIC` | `sonic-swss/orchagent/main.cpp:742` |
+| `chassis-packet` | — | `SAI_SWITCH_TYPE_NPU` (multi-ASIC chassis) | `sonic-swss/orchagent/main.cpp:260` |
+| `dpu` | — | `SAI_SWITCH_TYPE_NPU` (ZMQ 強制) | `sonic-swss/orchagent/main.cpp:260` |
+
+### 15. `hostname` 既定値
+
+| コンテキスト | 既定値 | source |
+|------------|--------|--------|
+| `generate_sample_config()` / `config_db.json` 初期生成 | `"sonic"` | `sonic-buildimage/src/sonic-config-engine/config_samples.py:50,154` |
+| `migrate_config_db_to_new_schema()`（`hostname` 不在時のみ挿入） | `"sonic"` | `sonic-buildimage/src/sonic-config-engine/config_samples.py:219-220` |
+| orchagent VoQ モード（`switch_type=voq`） | 必須フィールド扱い → 欠如時にエラー終了 | `sonic-swss/orchagent/main.cpp:337-347` |
+
+### 16. `buffer_model` enum 値と `dynamic_buffer_model` フラグ
+
+`sonic-swss/cfgmgr/buffermgr.cpp:390-406` が `buffer_model` を読み取り内部フラグを設定する。
+
+| 値 | `dynamic_buffer_model` | 挙動 | source |
+|----|----------------------|------|--------|
+| `dynamic` | `true` | BUFFER_POOL / BUFFER_PROFILE の APPL_DB 転写をスキップ (dynamic buffer manager が SAI を直接制御) | `sonic-swss/cfgmgr/buffermgr.cpp:392-394,476` |
+| `traditional` またはその他 / 未設定 | `false` | BUFFER_POOL / BUFFER_PROFILE を APPL_DB へ転写 | `sonic-swss/cfgmgr/buffermgr.cpp:397-406` |
+
+---
+
 ## 定数分類サマリ
 
 | 分類 | 定数数 | 依存フィールド |
@@ -138,8 +179,12 @@ multi-ASIC では `namespace_id` をオフセットとして加算する (`hash_
 | bfdmon retry/poll | 2 | `switch_type != 'dpu'` |
 | ECMP hash_seed | 8 × 3 = 24 値 | `type` |
 | orchagent heartbeat | 1 | `HEARTBEAT` テーブル (DEVICE_METADATA 間接) |
+| SwitchOrch ポーリング/重複排除 | 3 | 常時 (switchorch.cpp) |
+| `switch_type` enum 定義 | 5 値 | `switch_type` |
+| `hostname` 既定値 | 1 | `hostname` |
+| `buffer_model` enum 定義 | 2 値 | `buffer_model` |
 
-**合計: 約 54 個の数値定数** を DEVICE_METADATA フィールドに関連する consumer コードから確認。
+**合計: 約 63 個の数値定数・enum 値** を DEVICE_METADATA フィールドに関連する consumer コードから確認。
 
 ---
 
