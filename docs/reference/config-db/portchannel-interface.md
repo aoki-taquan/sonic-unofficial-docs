@@ -326,3 +326,65 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 > **スキャン証跡**: `minigraph.py:2546-2561` + `intfmgr.cpp` を確認、5 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- failure-behavior -->
+## 失敗挙動・エラー処理 (Phase D)
+
+### PORTCHANNEL 未解決時のリトライ
+
+`doIntfGeneralTask()` と `doIntfAddrTask()` は処理冒頭で `isIntfStateOk(alias)` を呼び出す。PORTCHANNEL が STATE_DB `LAG_TABLE` に存在しない場合（lacp が未完了、teamd 起動前等）は `return false` でタスクをキューに戻し、次回ポーリングサイクルで再試行する。ログは `SWSS_LOG_DEBUG` レベルのため通常は見えない。
+
+| チェック対象 | 参照テーブル | 失敗時挙動 |
+|---|---|---|
+| PORTCHANNEL 本体 | `STATE_DB:LAG_TABLE` | `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` → `return false`（retry）|
+| `vrf_name` 指定時の VRF | `STATE_DB:VRF_TABLE` | `SWSS_LOG_DEBUG("VRF is not ready, skipping %s")` → `return false`（retry）|
+
+> ソース: `sonic-swss/cfgmgr/intfmgr.cpp:833-842`
+
+### IP アドレス設定失敗
+
+`doIntfAddrTask()` が `setIntfIp()` を呼ぶ。`ip address add` コマンドが失敗した場合の挙動:
+
+| ケース | 挙動 | ログ |
+|---|---|---|
+| IPv6 アドレス追加で初回失敗 | `enableIpv6Flag()` でカーネル IPv6 を有効化してリトライ | `SWSS_LOG_NOTICE("Failed to assign IPv6 on interface %s ... trying to enable IPv6 and retry")` |
+| リトライ後も失敗（または IPv4 失敗） | エラーログのみ。タスクは `true` 返却で**リトライなし** | `SWSS_LOG_ERROR("Command '%s' failed with rc %d")` |
+| IPv6 有効化自体が失敗 | `return`（早期リターン）でアドレス付与断念 | `SWSS_LOG_ERROR("Failed to enable IPv6 on interface %s")` |
+
+> `setIntfIp()` は `void` ではなく呼び出し元 (`doIntfAddrTask`) が `return true` を返すため、IP コマンド失敗でもタスクは完了扱いになり**再試行されない**点に注意。
+>
+> ソース: `sonic-swss/cfgmgr/intfmgr.cpp:78-148`
+
+### MPLS 設定失敗
+
+`setIntfMpls()` は `sysctl` コマンドで MPLS を設定する。
+
+| ケース | 挙動 | ログ |
+|---|---|---|
+| `mpls` フィールドが `enable`/`disable` 以外 | `return false`（`doIntfGeneralTask` も `return false`） | `SWSS_LOG_ERROR("MPLS state is invalid: \"%s\"")` |
+| `sysctl` コマンド失敗かつ `mpls` が明示設定 | エラーログ、`return true`（タスク完了扱い） | `SWSS_LOG_ERROR("Command '%s' failed with rc %d")` |
+| `sysctl` コマンド失敗かつ `mpls` が未設定 | エラー無視（`mpls.empty()` 時はエラーを返さない） | なし |
+
+> ソース: `sonic-swss/cfgmgr/intfmgr.cpp:168-193`
+
+### VRF 変更の直接変更禁止
+
+既存 VRF バインドを別 VRF に直接変更しようとした場合（例: `Vrf1` → `Vrf2`）、`isIntfChangeVrf()` が検出してタスクをスキップする。**削除→再追加** の手順が必要。
+
+| 条件 | 挙動 | ログ |
+|---|---|---|
+| 現在の VRF と異なる VRF を指定 | `return true`（タスク完了扱いでスキップ、APP_DB 更新なし） | `SWSS_LOG_ERROR("%s can not change to %s directly, skipping")` |
+
+> ソース: `sonic-swss/cfgmgr/intfmgr.cpp:847-849`
+
+### DEL 時の IP 残留によるブロック
+
+`doIntfGeneralTask()` の DEL 処理では、当該インタフェースの IP アドレスがまだ残っている場合、属性ロウの削除をブロックする。
+
+| 条件 | 挙動 |
+|---|---|
+| `getIntfIpCount(alias) > 0` | `return false`（retry）。先に IP プレフィクスロウを削除してから属性ロウを削除する必要がある |
+
+> ソース: `sonic-swss/cfgmgr/intfmgr.cpp:1058-1062`
+
+<!-- /failure-behavior -->
