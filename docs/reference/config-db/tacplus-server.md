@@ -218,6 +218,60 @@ runtime 中はテーブル更新のたびに `modify_conf_file()` が呼ばれ�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照・共依存テーブル (Phase C)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2221-2230 L641-816 L754-783, sonic-utilities/scripts/db_migrator.py L856-903, sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-aaa.yang L50-52 -->
+
+`hostcfgd` の `AaaCfg.modify_conf_file()` は `TACPLUS_SERVER` テーブルの変化をトリガーとして、以下のテーブルを**同時に**読み込んで PAM / NSS 設定を再生成する。`TACPLUS_SERVER` 単独では PAM 設定を決定できず、これらのテーブルとの協調が前提となる。
+
+### 共依存テーブル群 — 起動時一括ロード
+
+`load_independent_config()` → `AaaCfg.load()` (hostcfgd:2221-2230) で 7 テーブルを一括ロードし、`modify_conf_file()` を **1 回**だけ呼んで PAM/NSS を確定する。
+
+| テーブル | TACPLUS_SERVER への影響 | evidence |
+|---|---|---|
+| `AAA` | `authentication.login` に `tacacs+` が含まれる場合のみ PAM 行と nsswitch.conf への TACACS+ エントリを生成する。このテーブルがなければ `TACPLUS_SERVER` にエントリがあっても PAM に反映されない | hostcfgd:755 |
+| `TACPLUS` | `auth_type` / `timeout` / `passkey` / `src_ip` の global デフォルトを提供。per-server 値の継承元 (per-server で未指定のフィールドは global 値で補完される) | hostcfgd:648-665 |
+| `RADIUS` / `RADIUS_SERVER` | nsswitch.conf の `passwd` 行を tacplus/radius で排他制御するため `modify_conf_file()` が同時参照する | hostcfgd:757-783 |
+| `LDAP` / `LDAP_SERVER` | 同上。LDAP 有効時は nsswitch の `group`/`shadow` 行も書き換えるため同時参照される | hostcfgd:770-783 |
+
+### nsswitch.conf 排他制御 — tacplus / radius / ldap の優先順位
+
+`modify_conf_file()` は `AAA|authentication.login` の値に基づいて nsswitch.conf の `passwd` 行を **排他 elif** で書き換える。複数プロトコルが列挙されていても最初にマッチした 1 つのみが有効になる。
+
+| 優先順 | 条件 | nsswitch.conf passwd 行の結果 |
+|--------|------|-------------------------------|
+| 1 | `tacacs+` in login かつ `servers_conf` が非空 | `tacplus files` または `tacplus compat` に上書き |
+| 2 | `radius` in login | `files radius` または `compat radius` に上書き |
+| 3 | `ldap` in login | `files ldap` または `compat ldap` に上書き |
+| 4 | いずれも含まれない | tacplus / radius / ldap 行を全削除して `files` のみに戻す |
+
+### YANG 制約による外部依存
+
+`sonic-system-aaa.yang` の `must` 制約が `TACPLUS|global.passkey` を**外部参照**する。
+
+```
+must 'not(./type = "authentication" and contains(./login, "tacacs+")
+      and not(/sonic-system-tacacs/TACPLUS/global/passkey))'
+error-message: "Authentication with 'tacacs+' is not allowed when passkey not exists."
+```
+
+`TACPLUS|global.passkey` が未設定の状態で `AAA|authentication.login = "tacacs+"` を CLI から書き込もうとすると YANG バリデーションで reject される。
+
+### db_migrator — `migrate_aaa()` による条件付き削除
+
+`db_migrator.py` の `migrate_aaa()` は `TACPLUS|global.passkey` の有無を確認してから `AAA|authorization` を設定する (L890-903)。
+
+| 条件 | 動作 |
+|---|---|
+| `TACPLUS\|global.passkey` が存在し非空 | `AAA\|authorization` を migration ソースの値で設定 |
+| `TACPLUS\|global.passkey` が空または欠如 | `AAA\|authorization` エントリを DB から削除してコマンド認可を無効化 |
+
+これにより、アップグレード時に passkey が引き継がれない場合、コマンド認可設定が消えて認可が `local` に戻る。
+
+<!-- /cross-refs -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 

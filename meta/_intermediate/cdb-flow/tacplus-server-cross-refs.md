@@ -1,89 +1,85 @@
-# TACPLUS_SERVER テーブル 暗黙参照スキャン (Phase C)
+# TACPLUS_SERVER 暗黙参照スキャン (Phase C)
 
 `docs/reference/config-db/tacplus-server.md` の Phase C (暗黙参照) ブロック裏付け資料。
 
-ソースは `sonic-net/sonic-host-services/scripts/hostcfgd`。`TACPLUS_SERVER` / `TACPLUS` テーブル変更時に `hostcfgd` (`AaaCfg`) が間接的に読み出す関連 CONFIG_DB テーブルを列挙する。
+ソースは `sonic-net/sonic-host-services/scripts/hostcfgd`、`sonic-utilities/scripts/db_migrator.py`、
+`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-aaa.yang`。
 
 ## スキャン手順
 
 ```
-grep -n "TACPLUS\|tacacs\|tacplus" \
-    .cache/sonic-sources/sonic-host-services/scripts/hostcfgd | \
-    grep -i "subscribe\|init_data\|load_independent"
+grep -nE 'subscribe\(|init_data\[|AaaCfg\.load|tacplus_global|tacplus_servers|modify_conf_file' \
+    .cache/sonic-sources/sonic-host-services/scripts/hostcfgd
 
-grep -n "modify_conf_file\|authentication\|login" \
-    .cache/sonic-sources/sonic-host-services/scripts/hostcfgd | head -60
+grep -nE 'TACPLUS|tacplus|AAA|authorization' \
+    .cache/sonic-sources/sonic-utilities/scripts/db_migrator.py
+
+grep -nE 'tacacs|TACPLUS' \
+    .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-aaa.yang
 ```
-
-`hostcfgd` の `load_independent_config()` (L2221-2230) で `AaaCfg.load()` に渡される 7 テーブル、`modify_conf_file()` 内で参照される `authentication['login']` の値、および `register_callbacks()` (L2456-2509) で `TACPLUS_SERVER` に間接影響する subscribe を抽出。
 
 ## 検出された暗黙参照テーブル
 
-### 起動時一括ロード (load_independent_config — hostcfgd:2221-2230)
+### 共依存 — 同一 `AaaCfg.load()` 一括ロード (hostcfgd:2221-2230)
 
-`AaaCfg.load(aaa, tacacs_global, tacacs_server, radius_global, radius_server, ldap_global, ldap_server)` に 7 テーブルが渡される。`TACPLUS_SERVER` はその一員だが、**PAM/NSS テンプレ再生成は全 7 テーブルの dict 結合後に `modify_conf_file()` が一括実行**する。つまり `AAA` の値が `TACPLUS_SERVER` の効果を決定する。
+`load_independent_config()` は `init_data` から 7 テーブルを読み出して `AaaCfg.load()` に一括渡し、
+最後に `modify_conf_file()` を 1 回だけ呼ぶ。`TACPLUS_SERVER` が変化すると `modify_conf_file()` が
+これら全テーブルの in-memory コピーを結合して PAM/NSS を再生成する。
 
-| テーブル | 参照タイミング | 用途 | evidence |
-|---|---|---|---|
-| `AAA` | load + subscribe | `authentication['login']` の値が `'tacacs+'` を含む場合のみ TACACS+ 行を PAM/NSS に出力。TACPLUS_SERVER の設定全体の有効化を制御 | hostcfgd:2223,2470,755 |
-| `TACPLUS` | load + subscribe | TACACS+ global (`passkey` / `auth_type` / `timeout` / `src_ip`) を per-server dict にマージして `tacplus_global_default` の上書き元 | hostcfgd:2224,2471,648-649 |
-
-> `TACPLUS_SERVER` が存在しても `AAA|authentication.login` に `tacacs+` が含まれない場合、`modify_conf_file()` 内の `if 'tacacs+' in authentication['login'] and servers_conf:` (hostcfgd:755) が偽となり、PAM 設定と `nsswitch.conf` の tacplus 行が**生成されない** (silent skip)。
-
-### `AAA|authentication.login` の PAM 連動制御
-
-`modify_conf_file()` (hostcfgd:640-830) 内でテンプレートレンダリング時に `authentication['login']` の内容に応じて分岐する:
-
-| 条件 | 効果 | evidence |
+| テーブル | 役割 | evidence |
 |---|---|---|
-| `'tacacs+'` in `authentication['login']` かつ `servers_conf` 非空 | `/etc/pam.d/common-auth-sonic` を TACACS+ chain で生成 + `nsswitch.conf` に `tacplus` を prepend | hostcfgd:725,755-761 |
-| `'tacacs+'` なし | PAM から TACACS+ 行を除去 + `nsswitch.conf` の `tacplus` を削除 | hostcfgd:779-781 |
-| `'radius'` in `authentication['login']` | PAM を RADIUS chain で生成 (TACACS+ より優先: `if radius` が `else` ブランチで上書き) | hostcfgd:723,763-770 |
-| `'ldap'` in `authentication['login']` | PAM を LDAP chain で生成 | hostcfgd:721,771-778 |
+| `AAA` | `authentication.login` に `tacacs+` が含まれる場合のみ PAM 行・nsswitch.conf への TACACS+ エントリ生成を行う制御テーブル | hostcfgd:2223, L755 |
+| `TACPLUS` | `auth_type`/`timeout`/`passkey`/`src_ip` の global デフォルトを提供。per-server 値の継承元 | hostcfgd:2224, L648-665 |
+| `RADIUS` / `RADIUS_SERVER` | `modify_conf_file()` 内で NSS 設定 (nsswitch.conf の `passwd` 行) を tacplus/radius の排他制御で決定するために同時参照される | hostcfgd:2226-2227, L757-783 |
+| `LDAP` / `LDAP_SERVER` | 同上。LDAP 有効時は nsswitch の `group`/`shadow` 行も書き換え。TACACS+ との排他は `elif` チェーンで制御 | hostcfgd:2228-2229, L770-783 |
 
-### PAM 設定ファイル連動 (ファイル間接参照)
+### YANG 制約による依存 (sonic-system-aaa.yang:50-52)
 
-`modify_conf_file()` が書き換えるファイルのうち、TACACS+ 有効時に影響するもの:
+`AAA_LIST[type="authentication"].login` に `tacacs+` を設定するためには
+`/sonic-system-tacacs/TACPLUS/global/passkey` が存在することを YANG `must` 文が要求する。
+すなわち `TACPLUS|global.passkey` が未設定の状態では `AAA|authentication.login = "tacacs+"` を
+CLI から書き込むこと自体が YANG バリデーションで reject される。
 
-| ファイル | 書き換え内容 | evidence |
-|---|---|---|
-| `/etc/pam.d/common-auth-sonic` | Jinja2 テンプレ `common-auth-sonic.j2` を展開。TACACS+ chain を含む | hostcfgd:715,725,728-731 |
-| `/etc/nsswitch.conf` | `passwd` 行に `tacplus` を prepend または削除 | hostcfgd:757-761,779 |
-| `/etc/tacplus_nss.conf` | `tacplus_nss.conf.j2` テンプレを展開。認証/認可/accounting の設定と server list を含む | hostcfgd:805-815 |
-| `/etc/pam.d/sshd` | `common-auth-sonic` include に書き換え (TACACS+ 有効時) | hostcfgd:748 |
-| `/etc/pam.d/login` | 同上 | hostcfgd:749 |
+```yang
+must 'not(./type = "authentication" and contains(./login, "tacacs+")
+      and not(/tacacs:sonic-system-tacacs/tacacs:TACPLUS/tacacs:global/tacacs:passkey))' {
+    error-message "Authentication with 'tacacs+' is not allowed when passkey not exists.";
+}
+```
 
-### `AAA|authorization` / `AAA|accounting` の連動
+evidence: `sonic-system-aaa.yang` L50-52
 
-`TACPLUS_SERVER` の設定は `AAA|authorization.login` / `AAA|accounting.login` の値にも間接依存する。`tacplus_nss.conf.j2` に `tacacs_authorization` / `tacacs_accounting` フラグとして渡される。
+### db_migrator — マイグレーション時の相互依存 (db_migrator.py:856-903)
 
-| テーブル.フィールド | 用途 | evidence |
-|---|---|---|
-| `AAA|authorization.login` | `'tacacs+'` を含む場合 `tacacs_authorization_conf="on"` を NSS テンプレに渡す | hostcfgd:784-785 |
-| `AAA|accounting.login` | `'tacacs+'` を含む場合 `tacacs_accounting_conf="on"` を NSS テンプレに渡す | hostcfgd:789-790 |
+`migrate_aaa()` は `TACPLUS|global.passkey` の有無を確認してから `AAA|authorization` を設定する。
 
-### 範囲外 (誤解されやすい隣接テーブル)
+| 条件 | 動作 |
+|---|---|
+| `TACPLUS\|global.passkey` が存在し非空 | `AAA\|authorization` を migration ソースの値で設定 |
+| `TACPLUS\|global.passkey` が空または欠如 | `AAA\|authorization` エントリを DB から削除してコマンド認可を無効化 |
 
-- `RADIUS` / `RADIUS_SERVER`: 同 `modify_conf_file()` 内で処理されるが `TACPLUS_SERVER` の設定とは独立したブランチ。`authentication['login']` が `'radius'` の場合は TACACS+ chain が上書きされるため相互排他的な関係。
-- `LDAP` / `LDAP_SERVER`: 同様に独立ブランチ。
-- `DEVICE_METADATA` / インタフェーステーブル: RADIUS の `nas_ip` / `src_intf` 解決のみに使用。TACACS+ 経路には現れない (`src_intf` は dead code — Phase A 参照)。
+evidence: `db_migrator.py:890-903`
+
+### NSS 設定排他制御 (hostcfgd:754-783)
+
+`modify_conf_file()` の nsswitch.conf 編集ロジックは tacplus / radius / ldap を排他 elif で制御する。
+`AAA|authentication.login` に複数プロトコルが列挙された場合でも、nsswitch.conf の `passwd` 行追加は
+最初にマッチしたプロトコル (tacacs+ → radius → ldap の優先順) のみ。
+
+| 優先順 | 条件 | nsswitch.conf passwd 行 |
+|--------|------|-------------------------|
+| 1 | `tacacs+ in login AND servers_conf` | `tacplus files` / `tacplus compat` |
+| 2 | `radius in login` | `files radius` / `compat radius` |
+| 3 | `ldap in login` | `files ldap` / `compat ldap` |
+| 4 | none | tacplus / radius / ldap 行を全削除 |
+
+evidence: `hostcfgd:755-783`
 
 ## まとめ — `tacplus-server.md` Phase C 記載対象
 
-| カテゴリ | テーブル / フィールド |
+| カテゴリ | テーブル / モジュール |
 |---|---|
-| 有効化制御 (PAM/NSS への反映を制御) | `AAA|authentication.login` (`'tacacs+'` 要否) |
-| global 設定マージ元 | `TACPLUS|global` (`passkey` / `auth_type` / `timeout` / `src_ip`) |
-| 認可・accounting フラグ | `AAA|authorization.login` / `AAA|accounting.login` |
-
-## 検証コマンド
-
-```bash
-grep -n "subscribe\|init_data\['\(AAA\|TACPLUS\)" \
-    .cache/sonic-sources/sonic-host-services/scripts/hostcfgd
-
-grep -n "tacacs+\|modify_conf_file\|servers_conf\|authentication\[.login" \
-    .cache/sonic-sources/sonic-host-services/scripts/hostcfgd | head -40
-```
-
-このスキャン結果から派生して `docs/reference/config-db/tacplus-server.md` の `<!-- cross-refs -->` ブロックを生成する。
+| 共依存 (load 一括) | `AAA` / `TACPLUS` / `RADIUS` / `RADIUS_SERVER` / `LDAP` / `LDAP_SERVER` |
+| YANG 制約 | `sonic-system-aaa` の `must` 文が `TACPLUS\|global.passkey` を外部参照 |
+| db_migrator | `migrate_aaa()` が `TACPLUS\|global.passkey` を参照して `AAA\|authorization` を条件付き削除 |
+| nsswitch.conf 排他制御 | `AAA\|authentication.login` の値で tacplus/radius/ldap の nsswitch エントリが排他切替 |
