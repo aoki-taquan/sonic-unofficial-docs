@@ -82,6 +82,56 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 - 関連 CLI: `config bgp`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`ROUTE_REDISTRIBUTE` テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）を全行精読して確認した。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-redistribute-ordering.md`。
+
+### 必須制約（違反すると silent drop）
+
+1. **`BGP_GLOBALS.<vrf>.local_asn` を先に設定する** — `ROUTE_REDISTRIBUTE` は `vrf_tables` に属するため、イベント処理の冒頭で `__get_vrf_asn(vrf)` を呼び出す。対象 VRF の `BGP_GLOBALS.local_asn` が未設定の場合（`local_asn is None`）、当該イベントは `LOG_DEBUG` のみ出力して **silent drop** される（FRR への `redistribute` コマンド未送出）。`ROUTE_REDISTRIBUTE|<vrf>|…` を書き込む前に必ず `BGP_GLOBALS|<vrf>` の `local_asn` を設定すること。
+
+   - `__get_vrf_asn()` は `self.bgp_asn[vrf]`（`BGP_GLOBALS` イベント経由）または `self.metadata_asn`（`DEVICE_METADATA.bgp_asn`、default VRF のみ有効）を参照する。
+   - evidence: `frrcfgd.py:2658-2661`, `frrcfgd.py:2442-2447`
+
+2. **`dst_protocol` は `'bgp'` のみ** — `frrcfgd` は `dst_proto != 'bgp'` の場合に `LOG_ERR` を出力して `continue`（drop）する。`dst_protocol` フィールドが `'bgp'` 以外の CONFIG_DB エントリは FRR に一切反映されない（ランタイム制約）。
+
+   - evidence: `frrcfgd.py:3156-3158`
+
+### 自動リカバー挙動
+
+3. **`BGP_GLOBALS.local_asn` SET 後に ROUTE_REDISTRIBUTE が自動再適用される** — `BGP_GLOBALS.local_asn` の SET が frrcfgd で成功した直後、`__apply_dep_vrf_table(vrf, 'ROUTE_REDISTRIBUTE')` が呼ばれ、CONFIG_DB に存在する当該 VRF の全 ROUTE_REDISTRIBUTE エントリが `bgp_message` キューへ再送され再適用される。すなわち順序が逆（BGP_GLOBALS 設定前に ROUTE_REDISTRIBUTE を書き込み）でも、その後 `BGP_GLOBALS.local_asn` を設定すれば最終的には FRR に反映される。ただし本番環境では正順（BGP_GLOBALS → ROUTE_REDISTRIBUTE）を守ることを推奨する。
+
+   - evidence: `frrcfgd.py:2703-2704`, `frrcfgd.py:2530-2545`
+
+### 推奨制約（違反すると FRR 側に redistribute 設定残留）
+
+4. **削除順序: `ROUTE_REDISTRIBUTE` DEL → `BGP_GLOBALS.local_asn` DEL** — `BGP_GLOBALS.local_asn` を削除すると `bgp_asn[vrf]` が消去される。その後に `ROUTE_REDISTRIBUTE` を削除しようとしても `local_asn is None` で silent drop となり、FRR bgpd に `no redistribute <src>` が送出されない。結果として **FRR は `redistribute` 設定を保持したまま**になる。
+
+   - 推奨削除順序: `ROUTE_REDISTRIBUTE` 全エントリを DEL → `BGP_GLOBALS.local_asn` を DEL。
+   - evidence: `frrcfgd.py:2658-2661`, `frrcfgd.py:2449-2465`
+
+### src_protocol / address_family の組み合わせ注意
+
+5. **`ospf3` + `ipv6` は FRR では `ospf6` に変換される** — CONFIG_DB キーに `ospf3` と書いた場合、`af=ipv6` のときのみ FRR コマンド生成前に `ospf6` へ書き換えられる（`frrcfgd.py` L3151-3152）。`af=ipv4` + `src_protocol=ospf3` の組み合わせはそのまま `redistribute ospf3` として送出され、FRR bgpd が認識しないため設定エラーになる。書込み順の問題ではないが、src_protocol + address_family の組み合わせを CONFIG_DB 書き込み時点で正しく指定すること。
+
+### 書込み順依存サマリ
+
+| # | 依存関係 | 方向 | 影響 | 緩和策 |
+|---|----------|------|------|--------|
+| 1 | `BGP_GLOBALS.local_asn` 設定 → `ROUTE_REDISTRIBUTE` 書き込み | ハード先行必須 | silent drop | BGP_GLOBALS を先に設定 |
+| 2 | `dst_protocol='bgp'` 以外の書き込み | ランタイム制約 | LOG_ERR + drop | `bgp` 固定で書くこと |
+| 3 | BGP_GLOBALS.local_asn SET 後の自動再適用 | 自動リカバー | 逆順でも最終的に反映 | 本番では正順を推奨 |
+| 4 | `ROUTE_REDISTRIBUTE` DEL → `BGP_GLOBALS` DEL | 推奨削除順序 | FRR に redistribute 残存 | ROUTE_REDISTRIBUTE を先に全削除 |
+| 5 | `ospf3` + `ipv4` 組み合わせ禁止 | 書込み制約 | FRR 設定エラー | af=ipv6 のみ ospf3 を使用 |
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658-2661L (local_asn ゲート) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2703-2704L (BGP_GLOBALS 後の自動再適用) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3156-3158L (dst_protocol バリデーション) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2530-2545L (__apply_dep_vrf_table) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2449-2465L (__delete_vrf_asn) -->
+<!-- /ordering -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
