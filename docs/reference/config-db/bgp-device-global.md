@@ -333,6 +333,70 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 詳細根拠 (関数本体・呼出関係・SAI attr id) は `meta/_intermediate/cdb-flow/bgp-device-global-platform.md` を参照。
 <!-- /platform -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+`BGP_DEVICE_GLOBAL` テーブル本体のフィールド (`tsa_enabled` / `wcmp_enabled` / `idf_isolation_state` / `asn` / `peers`) には現れないが、`bgpcfgd` の `DeviceGlobalCfgMgr` と orchagent の `BgpGlobalStateOrch` / `BfdOrch` が**間接的に**読み出すエンティティ群。詳細根拠は `meta/_intermediate/cdb-flow/bgp-device-global-cross-refs.md` を参照。
+
+### `DEVICE_METADATA` (CONFIG_DB)
+
+`DeviceGlobalCfgMgr.__init__` は `directory.subscribe([("CONFIG_DB", DEVICE_METADATA, "localhost/type")], self.handle_type_update)` を明示的に登録する:
+
+| フィールド | 役割 | evidence |
+|---|---|---|
+| `localhost.type` (`switch_role`) | `downstream_isolate_unisolate()` が `SpineRouter` / `LowerSpineRouter` / `UpperSpineRouter` 以外で IDF 適用を **早期 return** | `managers_device_global.py:23,33,53-55,260-262` |
+
+> 初期値は `self.switch_role = ""` (空文字)。`switch_role and switch_role not in [...]` 条件のため、**`DEVICE_METADATA` 未設定時は条件 falsy → IDF 適用が進む**（スキップされない）。`DEVICE_METADATA.localhost.bgp_asn` / `subtype` / `switch_type` は `managers_device_global.py` で 0 ヒット (TSA/W-ECMP/IDF は AS 番号非依存)。
+
+### `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL` (別 DB / 同名テーブル)
+
+`get_chassis_tsa_status()` は `CHASSIS_APP_DB` の `BGP_DEVICE_GLOBAL|STATE.tsa_enabled` を直接読み、シャーシ全体 TSA を表現する:
+
+| 参照キー | 役割 | evidence |
+|---|---|---|
+| `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL|STATE.tsa_enabled` | `chassis_tsa == "true"` の間は個別 LC の `BGP_DEVICE_GLOBAL|STATE.tsa_enabled` 書き込みでも `isolate_unisolate_device()` が呼ばれない (chassis TSA 優先) | `managers_device_global.py:100,106,238-251` |
+
+> `device_info.is_chassis() == false` の通常スイッチでは固定で `"false"` を返し CHASSIS_APP_DB アクセスは発生しない。シャーシでは `ChassisAppDbMgr` (`main.py:113`) が CHASSIS_APP_DB を別途購読し、CONFIG_DB / CHASSIS_APP_DB の二系統で同名テーブル `BGP_DEVICE_GLOBAL` が並走する設計。
+
+### `BgpGlobalStateOrch` → `BfdOrch` (orchagent プロセス内 directory 経由)
+
+orchagent 側では `BgpGlobalStateOrch` (`bfdorch.h:58-72`) が `BGP_DEVICE_GLOBAL` の CONFIG_DB consumer となり、`BfdOrch::doTask` から `gDirectory.get<BgpGlobalStateOrch*>()` 経由で読み出される:
+
+| API | 役割 | evidence |
+|---|---|---|
+| `BgpGlobalStateOrch::getTsaState()` | `BfdOrch::doTask` 内で `tsa_enabled` を取得。`shutdown_bfd_during_tsa == "true"` の BFD セッション作成可否を判定 | `bfdorch.cpp:114-160`, `bfdorch.h:64` |
+| `BgpGlobalStateOrch::getSoftwareBfd()` | `m_stateSoftBfdSessionTable` 経路で software BFD に切替えるか判定 | `bfdorch.cpp:114-188`, `bfdorch.h:65` |
+
+`orchdaemon.cpp:239-241` で `BgpGlobalStateOrch` を `BfdOrch` 構築の **前** に `new` + `gDirectory.set()` する順序が明示。`m_orchList` (`orchdaemon.cpp:500`) でも `bgp_global_state_orch` が `gBfdOrch` より先に並ぶ。**CONFIG_DB ではなく orchagent プロセス内 directory 経由の暗黙参照**である点に注意。
+
+### `BFD_SESSION` (CONFIG_DB) — `BGP_DEVICE_GLOBAL` 変化が波及
+
+`BGP_DEVICE_GLOBAL.tsa_enabled` 変化時に `BfdOrch::doTask` (`bfdorch.cpp:141-160`) の判定経由で `shutdown_bfd_during_tsa = "true"` を持つ BFD セッションの作成/維持判定が再評価される。
+
+| エンティティ | 関係 | evidence |
+|---|---|---|
+| `BFD_SESSION` (CONFIG_DB) | `tsa_enabled` 変化時に `shutdown_bfd_during_tsa=true` セッションの作成/維持判定を再評価 (逆方向の暗黙参照) | `bfdorch.cpp:114-160` |
+
+### `FEATURE` (CONFIG_DB) — 直接参照なし
+
+`managers_device_global.py` および `bfdorch.{cpp,h}` を `FEATURE` で grep して **0 ヒット**。BGP コンテナ起動制御 (`FEATURE|bgp.state`) は `hostcfgd` 側に分離されており、`BGP_DEVICE_GLOBAL` フロー内には `FEATURE` 参照は存在しない。
+
+> `software_bfd` 機能ゲートは `constants.yml` (build-time) で制御され (`main.py:118-119`)、CONFIG_DB の `FEATURE` ではない。隣接リファレンスとして `FEATURE|bgp` は BGP コンテナ起動の前提となる運用上の含意のみ持つ。
+
+### `constants.yml` (CONFIG_DB 外部依存)
+
+| 経路 | 用途 | evidence |
+|---|---|---|
+| `tsa_template.render(... constants=self.constants)` | TSA route-map テンプレ展開 | `managers_device_global.py:225` |
+| `idf_isolate_template.render(... constants=self.constants)` | IDF isolate route-map テンプレ展開 | `managers_device_global.py:269,285` |
+| `idf_unisolate_template.render(constants=self.constants)` | IDF unisolate route-map テンプレ展開 | `managers_device_global.py:266` |
+
+### `BGP_GLOBALS` (CONFIG_DB) — 隣接だが直接参照なし
+
+`managers_device_global.py` で `BGP_GLOBALS` を grep して 0 ヒット。`BGP_DEVICE_GLOBAL` (装置全体スコープ) と `BGP_GLOBALS` (VRF 単位) は同 `bgpcfgd` プロセス内で別マネージャが処理する設計分離。TSA route-map は `cfg_mgr.get_text()` (FRR running-config) から `neighbor <X> route-map <name> out` を逆引きするため、`BGP_GLOBALS` 由来の neighbor 設定が FRR に反映済みであることが**実行時の前提** (CONFIG_DB レベルの読み合いではない)。
+
+<!-- /cross-refs -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
