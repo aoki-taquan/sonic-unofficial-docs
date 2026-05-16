@@ -117,6 +117,37 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数
+
+> コード精読（`intfmgr.cpp` / `intfsorch.cpp` / `portsorch.cpp`）から抽出した数値・文字列定数。YANG 定義には現れないが実挙動を決定する[^c1][^c2][^c3]。
+
+| 定数 / マジック値 | 値 | 定義箇所 | 用途 |
+|-----------------|-----|---------|------|
+| `DEFAULT_MTU_STR` | `9100` | `intfmgr.cpp:29` | VLAN IF の省略時 MTU。`ip link` コマンドに渡す |
+| `LOOPBACK_DEFAULT_MTU_STR` | `"65536"` | `intfmgr.cpp:28` | Loopback ダミー IF 専用。VLAN IF には非適用 |
+| `grat_arp=enabled` → `arp_accept` | `"2"` | `intfmgr.cpp:582` | `/proc/sys/net/ipv4/conf/<IF>/arp_accept` に書く値（値 `1` とは意味が異なる） |
+| `grat_arp=disabled` → `arp_accept` | `"0"` | `intfmgr.cpp:586` | 同ファイルへの無効化値 |
+| `accept_untracked_na` (IPv6) | `"2"` / `"0"` | `intfmgr.cpp:608` | IPv6 NA 用カーネルパラメータ。カーネル非対応時はスキップ |
+| `proxy_arp=enabled` → `/proxy_arp` | `"1"` | `intfmgr.cpp:624,642` | `/proc/sys/net/ipv4/conf/<IF>/proxy_arp` と `proxy_arp_pvlan` に書く値 |
+| `proxy_arp=disabled` → `/proxy_arp` | `"0"` | `intfmgr.cpp:628,642` | 同ファイルへの無効化値 |
+| `sysctl mpls input` (enabled) | `1` | `intfmgr.cpp:176` | `net.mpls.conf.<IF>.input=1` で MPLS 有効化 |
+| `sysctl mpls input` (disabled) | `0` | `intfmgr.cpp:180` | `net.mpls.conf.<IF>.input=0` で MPLS 無効化 |
+| `mac_addr` 省略時 APP_DB 値 | `"00:00:00:00:00:00"` | `intfmgr.cpp:1019` | ゼロ MAC を APP_DB へ書く。orchagent はゼロ MAC 受信時にスイッチ全体 MAC (`gMacAddress`) を SAI に適用 |
+| `scope` 固定値 | `"global"` | `intfmgr.cpp:1134` | IP prefix ロウの `scope` は常に `"global"` を APP_DB へ書く（CONFIG_DB 値無視） |
+| `family` 自動判定値 | `IPV4_NAME` / `IPV6_NAME` | `intfmgr.cpp:1129` | IP prefix の型 (`isV4()`) から自動判定（CONFIG_DB 値無視） |
+| `admin_status` フォールバック | `"up"` | `intfmgr.cpp:863,868` | 省略・不正値時に `"up"` へ強制補完（`SWSS_LOG_WARN` あり） |
+| `nat_zone_id` 初期値 | `0` (uint32) | `intfsorch.cpp:713` | `nat_zone` 省略時の orchagent 内部変数。NAT 非対応プラットフォームでは SAI へ送信しない |
+| `loopback_action` 変換テーブル | `"drop"` → `SAI_PACKET_ACTION_DROP` | `intfsorch.cpp:1150` | `getSaiLoopbackAction()` による文字列→SAI 定数マッピング |
+| `loopback_action` 変換テーブル | `"forward"` → `SAI_PACKET_ACTION_FORWARD` | `intfsorch.cpp:1151` | 同上。省略時は attrs に含めず SAI 実装依存デフォルト（多くは `forward`） |
+| `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` | 省略（SAI 側デフォルト disabled） | `intfsorch.cpp:1278` | `mpls` 省略 / `disable` 時は RIF create attrs に含めない |
+
+[^c1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^c2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+[^c3]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+
+<!-- /constants -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
@@ -239,6 +270,73 @@ show ip interfaces
 ```
 <!-- /ops-hint -->
 
+
+<!-- pubsub -->
+## 通信メカニズム (Redis Pub/Sub)
+
+VLAN_INTERFACE テーブルは **2 系統の異なる購読方式** で伝搬する。
+
+### CONFIG_DB → intfmgrd (SubscriberStateTable / keyspace notification)
+
+`intfmgrd` は起動時に `Orch(cfgDb, tableNames)` を経由して `CFG_VLAN_INTF_TABLE_NAME`（`"VLAN_INTERFACE"`）を登録する。`Orch::addConsumer()` は CONFIG_DB (db_id=4) を検出すると `SubscriberStateTable` を選択し、以下の `PSUBSCRIBE` を発行する[^ps1][^ps2]。
+
+```
+PSUBSCRIBE __keyspace@4__:VLAN_INTERFACE|*
+```
+
+- CONFIG_DB の `notify-keyspace-events = "KEA"` が有効なため、CLI / minigraph 等が `HSET VLAN_INTERFACE|Vlan100 …` を書き込むと Redis が自動で `PUBLISH __keyspace@4__:VLAN_INTERFACE|Vlan100 hset` を発行する
+- `SubscriberStateTable::pops()` がイベントチャンネルからキーを取り出し、`HGETALL VLAN_INTERFACE|Vlan100` で現在値を取得して `KeyOpFieldsValuesTuple` に変換する
+- `op = "hset"` → `SET_COMMAND`、`op = "del"` → `DEL_COMMAND`
+
+### intfmgrd → APPL_DB (ProducerStateTable / channel PUBLISH)
+
+`IntfMgr` は `ProducerStateTable m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)` を保持する[^ps1]。書き込み時は Lua スクリプトをアトミック実行する：
+
+```
+EVALSHA <luaSet>
+  SADD INTF_TABLE_KEY_SET "Vlan100"
+  HSET _INTF_TABLE|Vlan100 field1 val1 …
+  PUBLISH INTF_TABLE_CHANNEL@0 "G"
+```
+
+PUBLISH ペイロードは固定文字列 `"G"`。
+
+### APPL_DB → orchagent (ConsumerStateTable / channel SUBSCRIBE)
+
+`orchagent` の `IntfsOrch` は APPL_DB (db_id=0) に対して `ConsumerStateTable` を使用し `INTF_TABLE_CHANNEL@0` を `SUBSCRIBE` する[^ps2][^ps3]。`consumer_state_table_pops.lua` が `SPOP INTF_TABLE_KEY_SET` → `HGETALL _INTF_TABLE|key` → 本体ハッシュへコピーをアトミック実行する。
+
+### STATE_DB への書き戻し
+
+`intfmgrd` は処理完了後に STATE_DB `STATE_INTERFACE_TABLE` へ TTL なしで書き込む：
+
+| タイミング | 操作 |
+|-----------|------|
+| L3 IF 設定完了 | `hset(alias, "vrf", vrf_name)` |
+| IP アドレス追加完了 | `hset(alias+"\|"+pfx, "state", "ok")` |
+| IP / IF 削除 | `del(...)` |
+
+**hSetWithTTL は使用されない。**
+
+### 特性まとめ
+
+| 特性 | 内容 |
+|------|------|
+| CONFIG_DB → intfmgrd | Redis PSUBSCRIBE (keyspace notification) |
+| keyspace pattern | `__keyspace@4__:VLAN_INTERFACE\|*` |
+| intfmgrd → APPL_DB | Redis PUBLISH/SUBSCRIBE (channel ベース) |
+| Publish チャンネル | `INTF_TABLE_CHANNEL@0`、ペイロード固定 `"G"` |
+| APPL_DB → orchagent | ConsumerStateTable + `SUBSCRIBE` |
+| NotificationConsumer | **不使用** |
+| TTL / keyevent expire | **不使用** |
+| Select タイムアウト | 1000ms → `intfmgr.doTask()` で未処理タスクを再試行 |
+| warm-restart | `buildIntfReplayList()` で起動時に既存 STATE_DB をスキャン |
+| chassis (VOQ) | `SubscriberStateTable(chassisAppDb, CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME)` で追加購読 |
+
+[^ps1]: `sonic-swss/cfgmgr/intfmgr.cpp` / `intfmgr.h` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^ps2]: `sonic-swss/orchagent/orch.cpp` L1186-1195 (`Orch::addConsumer`) <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orch.cpp>
+[^ps3]: `sonic-swss/orchagent/orchdaemon.cpp` L296 / `intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>
+
+<!-- /pubsub -->
 
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース

@@ -313,4 +313,124 @@ mergeConfig(COPP_GROUP)  # L372: GROUP をマージ — checkTrapGroupPending() 
 `g_copp_init_set` に登録された key（`copp.json` 由来）は、最初の CONFIG_DB SET イベントを読み飛ばす（`coppmgr.cpp:855-860`）。`copp.json` デフォルト GROUP を上書きする場合は SET を 2 回送る必要はなく、通常の CONFIG_DB 書き込みで上書きできる（init 時に既にマージ済みのため）。
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | 未知フィールド名 | `parseTrapGroupAttribute()` → `task_failed` | `doTask()` ループ終了（後続 COPP 更新が停止） | なし |
+| 2 | SAI `create_hostif_trap_group` 恒久エラー | `handleSaiCreateStatus()` → `task_failed` | 同上（一時エラーは `task_need_retry` で無制限 retry） | なし/無制限 |
+| 3 | policer `meter`/`mode`/`color` 変更試行 | `trapGroupUpdatePolicer()` → `continue` | エラーログのみ。当該属性スキップ、他属性は更新継続 | — |
+| 4 | policer SAI set 恒久エラー | `handleSaiSetStatus()` → `task_failed` | `doTask()` ループ終了 | なし |
+| 5 | `genetlink_name` 二重登録 | `processCoppTrapGroup()` → `task_failed` | `doTask()` ループ終了 | なし |
+| 6 | `DEL` で `default` グループ削除試行 | `task_ignore` | WARN ログのみ。erase して続行 | — |
+| 7 | 未知 op type | `task_invalid_entry` | エラーログ。erase して次エントリへ | なし |
+| 8 | `out_of_range` / `exception` | `doCoppTask()` catch → `task_invalid_entry` | エラーログ。erase して次エントリへ | なし |
+| 9 | `copp_cfg.json` ファイル未検出 | `CoppMgr::parseInitFile()` | デフォルト CoPP ポリシーが適用されない | — |
+
+### task_failed 後の挙動
+
+`task_failed` が発生すると `doCoppTask()` の `doTask()` が即 `return` し、当該 Consumer の後続処理が停止する（orchagent プロセス自体は継続）。再起動（`systemctl restart swss`）が必要。<!-- evidence: copporch.cpp L920-923 -->
+
+```text
+SWSS_LOG_ERROR("Processing copp task item failed, exiting. ");
+return;
+```
+
+### 変更不可属性のスキップ挙動
+
+既存 policer の `meter_type` / `mode` / `color_source` を変更しようとすると、エラーログを出力して **`continue`** し他属性の更新を継続する。ハードウェアへの反映はゼロ。変更するにはエントリを **DEL → SET** で再作成する必要がある。<!-- evidence: copporch.cpp L1327-1350 trapGroupUpdatePolicer -->
+
+### STATE_DB / ERROR_TABLE への記録
+
+COPP_GROUP に関する `STATE_DB` への障害記録はなし。`syslog`（`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`）への出力のみ。CONFIG_DB のエントリは失敗後も残る。
+
+```bash
+# syslog 確認
+journalctl -u swss | grep -i copp
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/copp-group-failure.md`
+<!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### copporch.h / copporch.cpp 固定値
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `default_trap_group` | `"default"` | デフォルトグループ名リテラル。DEL 拒否判定に使用 | `copporch.cpp:184` |
+| `default_trap_ids` | `{SAI_HOSTIF_TRAP_TYPE_TTL_ERROR}` | 起動時に強制登録される trap ID リスト | `copporch.cpp:185-187` |
+| TTL_ERROR `trap_priority` | `1` | `initDefaultTrapIds()` で SAI に設定するハードコード優先度。Mellanox/Marvell ではスキップ | `copporch.cpp:357` |
+| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | HostIF trap FlexCounter ポーリング間隔 (10 秒) | `copporch.cpp:189` |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | FlexCounter 更新タイマー間隔 | `copporch.cpp:37` |
+| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | FlexCounter グループ名 (COUNTERS_DB キー) | `copporch.h:23` |
+
+### プラットフォーム判定文字列 (orch.h)
+
+| 定数 | 値 | 意味 |
+|-----|-----|------|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | Mellanox プラットフォーム判定。`trap_priority` 設定をスキップ |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` | Marvell Prestera 判定。同様に `trap_priority` をスキップ |
+
+`platform` 環境変数に上記文字列が含まれる場合、TTL_ERROR および通常 COPP グループの `trap_priority` は SAI に渡されない (silent drop)。<!-- evidence: copporch.cpp:354,1189; orch.h:41-42 -->
+
+### copp_cfg.j2 デフォルト値
+
+`sonic-buildimage` の Jinja2 テンプレートが生成する初期 COPP グループのハードコード pps 値:
+
+| グループ | queue | cir = cbs (pps) | trap_action | trap_priority |
+|---------|-------|-----------------|-------------|---------------|
+| `default` | 0 | 600 | (未設定→SAI 実装依存) | (未設定) |
+| `queue4_group1` | 4 | 6000 | `trap` | 4 |
+| `queue4_group2` | 4 | 600 | `copy` | 4 |
+| `queue4_group3` | 4 | **100** (Mgmt 型: **300**) | `trap` | 4 |
+| `queue1_group1` | 1 | 6000 | `trap` | 1 |
+| `queue1_group2` | 1 | 600 | `trap` | 1 |
+| `queue1_group3` | 1 | 200 | `trap` | 1 |
+| `queue2_group1` | 2 | 1000 | `trap` | 1 |
+
+`queue4_group3` は `DEVICE_METADATA['localhost']['type']` に `'Mgmt'` を含む場合のみ `cir=cbs=300`、それ以外 `100`。<!-- evidence: copp_cfg.j2:37-43 -->
+
+> **スキャン証跡**: `copporch.h` 全行、`copporch.cpp` L1-200, L330-370, `orch.h` L41-42、`copp_cfg.j2` 全行読了。定数 6+2+8 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/copp-group-constants.md`
+<!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`COPP_GROUP` エントリが処理される際に `coppmgr` / `CoppOrch` が暗黙的に関与する
+他テーブルの依存関係を示す。COPP_GROUP 自体は他テーブルへの leafref を持たないが、
+ビルド時テンプレートと逆方向の参照（COPP_TRAP → COPP_GROUP）が存在する。
+
+| 依存方向 | 参照元フィールド / 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|------------------------|--------------|--------------|---------|------|
+| 逆参照（被参照） | `COPP_TRAP.trap_group` | `COPP_GROUP`（本テーブル） | `COPP_GROUP\|<name>` | COPP_GROUP が SAI 未登録の場合、COPP_TRAP の APPL_DB 書き込みが保留される。COPP_GROUP を DEL すると紐付く COPP_TRAP が pending 状態になる | `coppmgr.cpp:62-79`, `copporch.cpp:584` |
+| ビルド時依存 | `queue4_group3` の `cir`/`cbs` 初期値 | `DEVICE_METADATA` | `DEVICE_METADATA\|localhost` | `type` フィールドに `'Mgmt'` が含まれる場合 `cir=cbs=300` pps、それ以外は `100` pps。`sonic-cfggen` によるテンプレート展開時に解決（実行時依存なし） | `copp_cfg.j2:37-43` |
+| 間接依存（COPP_TRAP 経由） | `COPP_GROUP` に属する `COPP_TRAP` の `trap_ids` | `FEATURE` | `FEATURE\|<feature-name>` | feature `state=disabled` の場合、そのグループ宛ての trap_id が APPL_DB `COPP_TABLE\|<group>` から除外される。`queue2_group1`（sflow/`sample_packet`）が典型例 | `coppmgr.cpp:173-191` |
+| init 依存（自動復元） | `COPP_GROUP` (全エントリ) | `/etc/sonic/copp_cfg.json` | — | 起動時に init セットをロード。ユーザー DEL 後も init cfg に同名キーがあれば自動復元（実質「DEL = init リセット」）。`default` グループは DEL 自体が `task_ignore` で拒否 | `coppmgr.cpp:898-921`, `copporch.cpp:861-864` |
+
+### 解決タイミング
+
+- **COPP_TRAP → COPP_GROUP 依存**: COPP_TRAP の SET 処理時に即座に確認。未解決は
+  保留キューで管理され、COPP_GROUP 登録後の `doTask()` 再実行で解消。
+- **DEVICE_METADATA → cir/cbs**: ビルド時（`sonic-cfggen`）に解決済み。
+  実行時の DEVICE_METADATA 変化は COPP_GROUP に影響しない。
+- **FEATURE → trap_ids**: `doFeatureTask()` が FEATURE テーブルの変化を購読し、
+  state 変更のたびに影響する COPP_TRAP の trap_ids を再評価・APPL_DB を更新。
+  COPP_GROUP エントリ自体は変化しない（APPL_DB 上の `trap_ids` リストが変化する）。
+
+### init_cfg 由来の暗黙初期化
+
+`coppmgr` は起動時に `/etc/sonic/copp_cfg.json`（`files/image_config/copp/copp_cfg.j2` の展開物）を
+読み込み、`COPP_GROUP` の初期セットを `m_coppGroupInitCfg` に保持する。
+ユーザーが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で
+自動復元される（実質「DEL = init リセット」）。`coppmgr.cpp:898-921`
+
+- 既定グループ例: `default`、`queue4_group1`（BGP/LLDP）、`queue2_group1`（sflow/genetlink）
+- `default` グループは `CoppOrch` 側でも削除を `task_ignore` で拒否する二重防護
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 87fa713c3c5e -->

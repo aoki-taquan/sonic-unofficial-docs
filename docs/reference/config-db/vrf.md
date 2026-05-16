@@ -363,6 +363,30 @@ if (!isVrfObjExist(vrfName))
 - VRFOrch が `m_stateVrfObjectTable.del(vrfName)` を呼ぶまで無制限に待機
 - タイムアウトなし
 
+### orchagent (VRFOrch) の不正属性・存在しない VRF
+
+`VRFOrch::addOperation` のフィールドループで認識できないフィールド名が来た場合、エラーログを出力して当該フィールドを **スキップし処理を継続する**（エントリ全体は破棄されない）。
+
+```cpp
+// vrforch.cpp:80-83
+SWSS_LOG_ERROR("Logic error: Unknown attribute: %s", name.c_str());
+continue;   // attrs に push せず次フィールドへ
+```
+
+- `fallback` フィールドはこのパスに落ちる（Phase A で確認済み）
+- 不明フィールドがあっても `sai_virtual_router_api->create_virtual_router()` は残りの有効属性で呼ばれる
+
+`VRFOrch::delOperation` で対象 VRF が `vrf_table_` に存在しない場合は `SWSS_LOG_ERROR("VRF '%s' doesn't exist")` を出力して `true` を返す（**成功扱い・no-op**）。リトライなし、エントリ破棄もなし。
+
+```cpp
+// vrforch.cpp:163-167
+if (vrf_table_.find(vrf_name) == std::end(vrf_table_))
+{
+    SWSS_LOG_ERROR("VRF '%s' doesn't exist", vrf_name.c_str());
+    return true;
+}
+```
+
 ### orchagent (VRFOrch) の task_need_retry
 
 `VRFOrch::addOperation` の SAI create / set 失敗、`delOperation` の SAI remove 失敗は `handleSai*Status` → `parseHandleSaiStatusFailure` を通じてリトライ判定される。
@@ -400,6 +424,8 @@ if (vrf_table_[vrf_name].ref_count)
 | VNI 重複 | vrfmgrd | なし | 重複 VNI 解除後に再設定 |
 | VNI 上書き | vrfmgrd | なし | `vni=0` リセット → 新 VNI 設定 |
 | VRF DEL (orchagent 未削除) | vrfmgrd | passive (無制限) | orchagent の ref_count ゼロを待つ |
+| 不明属性フィールド | orchagent | なし (フィールドスキップ、エントリ継続) | 有効フィールドのみで SAI create が進む |
+| DEL 対象 VRF 不在 | orchagent | なし (no-op、success 扱い) | 冪等操作のため何もしなくてよい |
 | SAI create リソース不足 | orchagent | task_need_retry (自動) | リソース解放後に自動回復 |
 | SAI remove OBJECT_IN_USE | orchagent | task_need_retry (自動) | 参照オブジェクト削除後に自動回復 |
 | ref_count > 0 で VRF DEL | orchagent | passive (無制限) | インタフェース・ルートを先に削除 |
@@ -624,5 +650,36 @@ sonic-db-cli APPL_DB hgetall 'VXLAN_VRF_TABLE:vtep1:evpn_map_10001_VrfRed'
 ```
 
 <!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-sairedis/vslib/vpp/SwitchVpp.cpp`, `sonic-sairedis/vslib/vpp/SwitchVppRif.cpp`, `sonic-host-services/scripts/hostcfgd`
+
+### mgmt VRF — hostcfgd 初期化前提の Linux デバイス作成スキップ
+
+`vrfName == "mgmt"` の場合、`vrfmgrd` は `ip link add ... type vrf table <id>` を実行しない（`vrfmgr.cpp:176-183`）。`hostcfgd` が `systemctl restart interfaces-config` 経由で Linux の管理 VRF を事前に初期化している前提であり、固定テーブル ID `6000` を通常プール（1001–5096）外に割り当てる。管理インタフェース（`eth0`）の有無はハードウェア形態に依存するが、vrfmgrd のコードパスはプラットフォーム共通。
+
+### Linux ルーティングテーブル ID プール — 全プラットフォーム共通定数
+
+テーブル ID 範囲（`VRF_TABLE_START=1001`〜`VRF_TABLE_END=5097`、最大 4096 VRF）はハードウェア ASIC とは無関係な Linux カーネルリソース。一部の組み込み Linux 構成（SmartSwitch DPU 等）ではカーネルのルーティングテーブル最大数設定が異なる場合があるが、vrfmgrd の定数は変更されない。
+
+### VNET 経由 SAI Virtual Router 属性 — ASIC ベンダー依存
+
+orchagent は `v4`/`v6`/`src_mac`/`ttl_action`/`ip_opt_action`/`l3_mc_action` を SAI VR 属性に変換できるが、これらは CONFIG_DB `VRF` テーブルフィールドには存在せず、VNET テーブル経由の APP_DB 直接書込み時のみ機能する残存コード（`vrforch.cpp:38-84`）。`SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` 等の対応は ASIC ベンダーにより異なる。SAI capability query は実施されておらず、非サポート ASIC に渡した場合の挙動はベンダー SAI 実装依存。
+
+### `fallback` フィールド — 全 ASIC で silent drop
+
+YANG に定義された `fallback` フィールドは `vrfmgrd` が APPL_DB へ pass-through するが、`orchagent/VRFOrch::addOperation` にハンドラが存在しない（`vrforch.cpp:80-82` の `else` ブランチで `SWSS_LOG_ERROR("Logic error: Unknown attribute")` → 破棄）。Linux カーネル・SAI・FRR のいずれにも影響しない dead field であり、ASIC の種類にかかわらず常に無視される。
+
+### VS / VPP SAI — Linux + VPP の二重 VRF 管理
+
+VPP（Vector Packet Processing）SAI バックエンドを使う VS プラットフォームでは、SAI VR create が VPP API `ip_vrf_add()` を呼び出し、ECMP フローハッシュも設定する（`SwitchVppRif.cpp:1403-1414`）。標準 VS（`SwitchStateBase`）では SAI OID 割り当てのみ。実 ASIC（Broadcom / Mellanox / Marvell 等）では SAI VR create はハードウェアへの ASIC_DB 操作のみであり、Linux VRF デバイス管理は別プロセス（vrfmgrd）が担う。
+
+### EVPN L3 VNI (`vni` フィールド) — VTEP 設定必須
+
+`VRF.vni` に非ゼロ値を設定した場合、`VRFOrch::updateVrfVNIMap` が EVPN NVO（VTEP）の存在を確認し、未設定なら `return false` でエントリを破棄する（`vrforch.cpp:225-230`）。VXLAN EVPN を動作させる ASIC（Broadcom TD3/TH2, Mellanox SN シリーズ等）と、EVPN をサポートしない環境（VTEP 設定なし、または EVPN 非対応プラットフォーム）では `vni` フィールドの有効性が異なる。VTEP 未設定環境では `VRF.vni` は常に無効。
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: e2892b76fd9a -->

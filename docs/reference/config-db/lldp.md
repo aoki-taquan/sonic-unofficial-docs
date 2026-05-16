@@ -91,6 +91,43 @@ grouping `lldp_mode_config` を `uses`:
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-lldp`、`sonic-port`
 - 関連 CLI: `config lldp`、`show lldp`
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 根拠: `dockers/docker-lldp/lldpmgrd`
+
+### 構造的前提
+
+`lldpmgrd` は `LLDP` / `LLDP_PORT` テーブルを**直接購読しない**。購読対象は `APPL_DB PORT`（ポート oper_status）、`CONFIG_DB MGMT_INTERFACE`、`CONFIG_DB DEVICE_METADATA` のみ。したがって `LLDP|GLOBAL` や `LLDP_PORT|<ifname>` への書き込みは lldpmgrd に到達せず、エラーログも生成されない（構造的 no-op）。
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB 記録 | evidence |
+|---------|---------|------|--------------|---------|
+| `hostname` が空文字 / None | `update_hostname()` | WARNING ログ → `return`（lldpcli 未発行） | なし | `lldpmgrd:84-87` |
+| `lldpcli configure system hostname` 失敗 | `update_hostname()` | WARNING ログ → `self.hostname` 未更新。次回 DEVICE_METADATA イベントまで再試行なし | なし | `lldpmgrd:90-96` |
+| `lldpcli configure system ip management pattern` 失敗 | `update_mgmt_addr()` | WARNING ログ → `self.mgmt_ip` 未更新。次回 MGMT_INTERFACE イベントまで再試行なし | なし | `lldpmgrd:109-114` |
+| ポートが `netdev_oper_status != up` | `process_pending_cmds()` | INFO ログ → コマンドをキューに残し 10 秒後に再チェック | なし | `lldpmgrd:176-179` |
+| `lldpcli configure ports <ifname>` 失敗（retry 中） | `process_pending_cmds()` | INFO ログ → `failed_count++`、6 秒後に再試行（最大 5 回） | なし | `lldpmgrd:197-200` |
+| `lldpcli configure ports <ifname>` 失敗（5 回超過） | `process_pending_cmds()` | **ERROR ログ → silent drop**。当該ポートの `portidsubtype`/`description` が lldpd に未反映のまま継続 | なし | `lldpmgrd:193-196` |
+| `lldpcli resume` 失敗 | `run()` | **ERROR ログ → `sys.exit(1)`**。supervisord がプロセス再起動。lldpd は `pause` 状態のまま PDU 送出停止 | なし | `lldpmgrd:340-341` |
+| `PORT_INIT_TIMEOUT`（300 秒）超過 かつフロントエンドポートあり | `check_timeout()` | **ERROR ログ → 強制 `lldpcli resume`**。未設定ポートが誤 portid を広告する可能性あり | なし | `lldpmgrd:363-368` |
+| `PORT_INIT_TIMEOUT` 超過 かつフロントエンドポート不在 | `check_timeout()` | ログなし（silent timeout）→ 強制 resume | なし | `lldpmgrd:365` |
+| `LLDP\|GLOBAL` / `LLDP_PORT\|<ifname>` への書き込み | — | **lldpmgrd はイベントを受信しない（構造的 no-op）**。CONFIG_DB には書けるが lldpd に一切反映されない | なし | `lldpmgrd:300-325` |
+
+### retry / recovery まとめ
+
+| 失敗種別 | retry | 上限 | 間隔 | recovery 条件 |
+|---------|-------|------|------|--------------|
+| hostname lldpcli 失敗 | なし | — | — | 次回 DEVICE_METADATA 変化 |
+| mgmt IP lldpcli 失敗 | なし | — | — | 次回 MGMT_INTERFACE 変化 |
+| portidsubtype lldpcli 失敗 | あり | 5 回 | 6 秒 | 5 回超過で silent drop |
+| ポート down 待機 | 自動 | なし | 10 秒ループ | ポート up 検知 |
+| `lldpcli resume` 失敗 | supervisord 再起動後に再試行 | — | — | lldpmgrd 再起動 |
+| LLDP/LLDP_PORT 書き込み | 構造的 no-op | — | — | なし（設計上未購読） |
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

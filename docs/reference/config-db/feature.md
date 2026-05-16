@@ -399,4 +399,39 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 
 <!-- /cross-refs -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`FEATURE` テーブルへの変更通知は **`SubscriberStateTable` (keyspace PSUBSCRIBE)** で配信される。`ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。
+
+| 購読者 | 購読 API | PSUBSCRIBE パターン | 用途 |
+|--------|---------|---------------------|------|
+| `featured` (`FeatureDaemon`) | `swsscommon.SubscriberStateTable` | `__keyspace@<dbId>__:FEATURE\|*` | 全フィーチャーの state/scope/auto_restart 制御 |
+| `dhcprelayd` (`DhcpServerFeatureStateChecker`) | `swsscommon.SubscriberStateTable` | `__keyspace@<dbId>__:FEATURE\|*` | `dhcp_server` エントリの `state` 変化のみ検出 |
+| `route_check.py` | `get_table` (HGETALL) | 購読なし | 起動時スナップショット (`bgp` の state 確認) |
+
+`containercfgd` は `FEATURE` テーブルを直接購読せず、`SYSLOG_CONFIG_FEATURE` テーブルのみを `ConfigDBConnector.listen()` で購読する。
+
+### featured イベントループ
+
+```
+CONFIG_DB HSET "FEATURE|bgp" state enabled
+  ↓ keyspace PUBLISH "__keyspace@<dbId>__:FEATURE|bgp"  "hset"
+featured SubscriberStateTable.pops()
+  ↓ HGETALL "FEATURE|bgp"  ← 通知後に別途フィールド取得
+feature_handler.handler(key="bgp", op=SET, data={state:enabled,...})
+  ↓ enable_feature(bgp)  →  systemctl start bgp.service
+  ↓ STATE_DB HSET "FEATURE|bgp" state enabled
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は HGETALL で取得する。
+- `featured` は `FEATURE_TBL` (pri=10) と `PORT_TBL` (pri=9) を同一 `swsscommon.Select` で多重化する。
+- ポーリング間隔: `DEFAULT_SELECT_TIMEOUT = 1000 ms`。TIMEOUT 時に `delayed` フィーチャーの PORT_INIT タイムアウト判定を実施。
+- 起動時は `render_all_feature_states()` が `get_table()` で全エントリをスナップショット処理してから Subscribe ループを開始する。
+
+> **Evidence**: `sonic-host-services/scripts/featured:22-23,600-678`; `sonic-swss-common/common/subscriberstatetable.cpp:17-165`; `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:388-411`; 詳細分析 `meta/_intermediate/cdb-flow/feature-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 92d0997ed33c -->

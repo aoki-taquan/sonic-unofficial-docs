@@ -632,6 +632,150 @@ multi-ASIC 環境では `hash_seed + namespace_id` が実際の設定値にな�
 詳細トレース: `meta/_intermediate/cdb-flow/device-metadata-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## Phase H: プラットフォーム差分 (ASIC_VENDOR / switch_type / subtype / sub_role)
+
+> **用語**: `ASIC_VENDOR` はビルド時定数 (`sonic_asic_platform`: `mellanox`/`broadcom`/`barefoot`/`cisco-8000` 等)。`DEVICE_METADATA` フィールドではないが、`switch_type`/`subtype`/`sub_role` と組み合わせて J2 テンプレートおよび orchdaemon でベンダ固有分岐を形成する。
+
+### ASIC_VENDOR 伝搬経路
+
+```
+ビルド時 sonic_asic_platform
+  → docker_image_ctl.j2:792 : -e ASIC_VENDOR={{ sonic_asic_platform }}  (swss コンテナのみ)
+  → docker-init.j2:13       : sonic-cfggen -a '{"ASIC_VENDOR":"${ASIC_VENDOR:-unknown}"}'
+  → ipinip.json.j2 / switch.json.j2 などの J2 テンプレートで参照
+
+orchagent.sh 側は swss_vars.j2:2 が出力する "asic_type" を
+jq で読み取り export platform=<value> として利用。
+```
+
+### ASIC_VENDOR 分岐: IPinIP トンネルの DSCP モード
+
+| 条件 | `dscp_mode` | evidence |
+|------|-------------|---------|
+| `ASIC_VENDOR` に `"broadcom"` を含む かつ `type == LeafRouter` (is_broadcom_t1) | `"pipe"` | sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2:11-13,98-100 |
+| `ASIC_VENDOR` に `"broadcom"` を含む かつ LeafRouter 以外 | `"uniform"` | ipinip.json.j2:97-102 |
+| `ASIC_VENDOR` が broadcom 以外 (Mellanox 等) | `"pipe"` + `decap_dscp_to_tc_map: "AZURE"` (AZURE QoS map 存在時) | ipinip.json.j2:103-108 |
+
+### platform 分岐: PFC Watchdog Handler
+
+`orchdaemon.cpp:190` で `getenv("platform")` を読む。
+
+| platform 値 | PfcWd Handler | portStatIds 差異 | evidence |
+|-------------|--------------|-----------------|---------|
+| `mellanox` / `vs` | `PfcWdZeroBufferHandler` + `PfcWdLossyHandler` | `SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US` (microsecond) | sonic-swss/orchagent/orchdaemon.cpp:635-672 |
+| `marvell-*` / `centec` / `barefoot` / `nephos` | `PfcWdZeroBufferHandler` or `PfcWdAclHandler` + `PfcWdLossyHandler` | `SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION` (無単位) | orchdaemon.cpp:674-731 |
+| `broadcom` | `PfcWdDlrHandler`/`PfcWdAclHandler` + `PfcWdLossyHandler` (pfcDlrInit 条件) | `SAI_PORT_STAT_PFC_*_ON2OFF_RX_PKTS` を追加 | orchdaemon.cpp:733-803 |
+| `cisco-8000` | `PfcWdSwOrch` with Cisco stat IDs | `SAI_PORT_STAT_PFC_*_RX_PKTS` のみ | orchdaemon.cpp:804-860 |
+| それ以外 / 未設定 | PfcWd なし | — | — |
+
+### platform 分岐: DTel (Dataplane Telemetry) 初期化
+
+| platform 値 | DTelOrch 初期化 | evidence |
+|-------------|----------------|---------|
+| `barefoot` / `vs` | `DTelOrch` を `m_orchList` に追加 | sonic-swss/orchagent/orchdaemon.cpp:503-524 |
+| それ以外 | DTelOrch 不使用 | orchdaemon.cpp:503 |
+
+### subtype 分岐: SmartSwitch DashEniFwdOrch
+
+| `subtype` 値 | 追加 Orch | evidence |
+|-------------|----------|---------|
+| `SmartSwitch` | `DashEniFwdOrch` を m_orchList に追加 | sonic-swss/orchagent/orchdaemon.cpp:613-618 |
+| それ以外 | 追加なし | — |
+
+### switch_type 分岐: OrchDaemon クラス選択
+
+| `switch_type` 値 | 起動クラス | evidence |
+|----------------|-----------|---------|
+| `fabric` | `FabricOrchDaemon` — 通常 OrchDaemon とは別クラス; portsyncd/neighsyncd 等の非 fabric プロセスを critical_processes から除外 | sonic-swss/orchagent/main.cpp:1009; sonic-buildimage/dockers/docker-orchagent/critical_processes.j2:2-4 |
+| それ以外 | 通常 `OrchDaemon` | main.cpp:1002-1009 |
+
+### switch_type 分岐: orchagent pop batch size (-b フラグ)
+
+| `LOCALHOST_SWITCHTYPE` 値 | `-b` 値 | evidence |
+|--------------------------|--------|---------|
+| `chassis-packet` | `128` (高速リンク通知用) | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:23-25 |
+| `dpu` | `65536` (大量オブジェクト対応) | orchagent.sh:26-28 |
+| それ以外 | `1024` (デフォルト) | orchagent.sh:29-31 |
+
+### sub_role 分岐: startup_tsa_tsb.py — TSA 設定対象 ASIC
+
+| `sub_role` 値 | 挙動 | evidence |
+|-------------|------|---------|
+| `FrontEnd` | multi-ASIC 構成で TSA 有効かチェックして TSA コマンドを実行 | sonic-buildimage/files/scripts/startup_tsa_tsb.py:53-56 |
+| `BackEnd` / `Fabric` / その他 | multi-ASIC 時は TSA 設定をスキップ (FrontEnd のみが TSA 対象) | startup_tsa_tsb.py:53-57 |
+
+### sub_role 分岐: ipinip.json.j2 — loopback interface 集合
+
+| `sub_role` 値 | loopback interface リスト | evidence |
+|-------------|--------------------------|---------|
+| `FrontEnd` または `BackEnd` | `['Loopback0', 'Loopback4096']` — chassis 内部通信用 Loopback4096 を含む | sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2:22-26 |
+| それ以外 (npu 通常モード等) | `['Loopback0', 'Loopback2', 'Loopback3']` — 通常ルーティング loopback | ipinip.json.j2:25-26 |
+
+### switch_type 分岐: switch.json.j2 — SWITCH_TABLE 生成
+
+| 条件 | SWITCH_TABLE パラメータ | evidence |
+|------|-----------------------|---------|
+| `switch_type != "dpu"` | `ecmp_hash_seed`, `lag_hash_seed`, `fdb_aging_time: 600` を生成 | sonic-buildimage/dockers/docker-orchagent/switch.json.j2:35-38 |
+| `switch_type == "dpu"` | 上記 3 フィールドを生成しない | switch.json.j2:35 |
+| `switch_type != "chassis-packet"` かつ `!= "dpu"` | `ecmp_hash_offset`, `lag_hash_offset` を生成 | switch.json.j2:39-41 |
+
+### switch_type 分岐: arp_update 起動条件
+
+| 条件 | 挙動 | evidence |
+|------|------|---------|
+| VLAN テーブル存在 OR `switch_type == "chassis-packet"` | arp_update.conf を supervisor に追加 → arp_update 起動 | sonic-buildimage/dockers/docker-orchagent/docker-init.j2:38-40 |
+| それ以外 | arp_update 不起動 | docker-init.j2:38-40 |
+
+### asic_id 動的更新 (SmartSwitch Chassis)
+
+`docker-init.j2:53-67` で `/etc/sonic/chassisdb.conf` が存在する場合、`CHASSIS_STATE_DB.CHASSIS_FABRIC_ASIC_TABLE|asic{N}` から PCI アドレスを取得し CONFIG_DB の `DEVICE_METADATA|localhost.asic_id` を runtime に書き込む。orchagent / hostcfgd 以外が DEVICE_METADATA を書き換える唯一の既知ケース。
+
+evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
+<!-- /platform -->
+
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+### bgpcfgd retry メカニズム
+
+`manager.py` 基底クラスが `set_queue` ベースの retry を実装。`set_handler()` が `False` を返すと `set_queue` に追記し、deps 変化（Loopback0 IP 付与・bgp_asn 登録等）で `on_deps_change()` が全件 replay する。retry 間隔: 依存変化ドリブン、上限: なし、backoff: なし。
+
+### 失敗パス一覧
+
+| consumer | 条件 | ログ | 効果 | evidence |
+|---|---|---|---|---|
+| bgpcfgd | `bgp_asn` 未設定 | なし（deps 未充足で silent） | BGP ピア追加処理が開始されない。bgp_asn 設定後に自動 replay | `managers_bgp.py:119`（dep 登録） |
+| bgpcfgd | `bgp_router_id` 未設定 + Loopback0 IPv4 未設定 | `LOG_WARN "Loopback0 ipv4 address is not presented yet and bgp_router_id not configured"` | `return False` → `set_queue` 追記。Loopback0 IP 付与後に replay | `managers_bgp.py:186-189` |
+| orchagent.sh | `sonic-cfggen` が DEVICE_METADATA から SWSS_VARS 生成失敗 | sonic-cfggen のエラーログ | `exit 1` → orchagent プロセス起動中断。supervisord が再起動 | `orchagent.sh:8` |
+| orchagent.sh | `mac` フィールド不在または `"None"` | syslog `"Mac address not found in Device Metadata, Falling back to eth0"` | eth0 MAC にフォールバック（起動続行） | `orchagent.sh:13-16` |
+| linkmgrd | `mac` フォーマット不正 | `MUX_ERROR(ConfigNotFound, "Invalid ToR MAC address ...")` | linkmgrd 起動失敗（DualToR 構成で mux 機能停止） | `DbInterface.cpp:575-577` |
+| linkmgrd | `mac` フィールド自体が CONFIG_DB に存在しない | `MUX_ERROR(ConfigNotFound, "ToR MAC address is not found")` | 同上 | `DbInterface.cpp:596-598` |
+| hostcfgd | `hostname` が空文字 | `LOG_ERR "Hostname was not updated: Empty not allowed"` | hostname-config restart スキップ。ホスト名変更なし | `hostcfgd:1516-1518` |
+| hostcfgd | `hostname` 変更時 service restart 失敗 | `LOG_ERR "DeviceMetaCfg: Failed to set new hostname: ..."` | hostname は内部キャッシュに反映されない（早期 return） | `hostcfgd:1528-1531` |
+| hostcfgd | `timezone` に対応する tzdata ファイル不在 | `LOG_ERR "DeviceMetaCfg: Invalid timezone files for ... : ..."` | timedatectl 実行されず、rsyslog 再起動されない | `hostcfgd:1563-1564` |
+| hostcfgd | `timedatectl set-timezone` コマンド失敗 | `LOG_ERR "DeviceMetaCfg: Failed to set-timezone ... and restart rsyslog: ..."` | タイムゾーン変更されず | `hostcfgd:1565-1566` |
+| YANG バリデーション | `suppress-fib-pending=enabled` かつ `synchronous_mode!=enable` | sonic-yang バリデーションエラー | config load / CLI で reject（CONFIG_DB への書き込み自体が行われない） | `sonic-device_metadata.yang:250` |
+| ValidatedConfigDB | `yang_config_validation=enable` 時に YANG 制約違反の変更 | GCU: `log_notice "Unable to remove entry ..."` または例外ログ | GCU が rollback して変更拒否。CLI から見ると成功に見えるが CONFIG_DB は変更されない | `validated_config_db_connector.py:108-110` |
+| bgpcfgd `DeviceGlobalCfgMgr` | `set_handler` 呼び出し時 data が None | `LOG_ERR "DeviceGlobalCfgMgr:: data is None"` | `return False` → `set_queue` 追記 | `managers_device_global.py:62-63` |
+| bgpcfgd `DeviceGlobalCfgMgr` | W-ECMP ステータスが `"true"/"false"` 以外 | `LOG_ERR "W-ECMP: invalid value(X) is provided"` | `return False` → `set_queue` 追記。deps 変化がなければ永続キュー化 | `managers_device_global.py:147-148` |
+| bgpcfgd `DeviceGlobalCfgMgr` | W-ECMP Jinja2 テンプレートレンダリング失敗 | `LOG_ERR "W-ECMP: error in template rendering: ..."` | `return False` → `set_queue` 追記 | `managers_device_global.py:159-162` |
+| bgpcfgd `DeviceGlobalCfgMgr` | TSA ステータスが `"true"/"false"` 以外 | `LOG_ERR "TSA: invalid value(X) is provided"` | `return False` → TSA/TSB route-map 適用されない | `managers_device_global.py:187-188` |
+| bgpcfgd `DeviceGlobalCfgMgr` | IDF ステータスが有効値以外 | `LOG_ERR "IDF: invalid value(X) is provided"` | `return False` → IDF isolation 設定が適用されない | `managers_device_global.py:257-258` |
+| bgpcfgd `DeviceGlobalCfgMgr` | CHASSIS_APP_DB 接続失敗 | `LOG_ERR "Got an exception ..."` | chassis_tsa_status が None → chassis TSA 判定が行われない。ローカル tsa_status のみで判断 | `managers_device_global.py:248-249` |
+| fpmsyncd | `suppress-fib-pending` 値が `"enabled"` 以外 | なし | suppress-fib-pending 無効のまま（if 分岐に入らない）。runtime 変更は動的に反映 | `fpmsyncd.cpp:113-118` |
+
+### STATE_DB / ERROR_TABLE 記録方針
+
+- bgpcfgd は成功時のみ `BGP_PEER_CONFIGURED_TABLE` (STATE_DB) に書き込む。`return False` 時は未書き込み
+- bgpcfgd は `ERROR_TABLE` を使用しない（orchagent の `task_failed` 機構とは別系統）
+- hostcfgd は CONFIG_DB への書き戻しなし（読み取り専用）
+- fpmsyncd の `suppress-fib-pending` runtime 変更: 既存ルートを offloaded マークして遷移（`fpmsyncd.cpp:291-300`）
+
+> **調査証跡**: `managers_bgp.py` 600+ 行・失敗パス 10 箇所精読、`managers_device_global.py` 287 行・失敗パス 6 箇所精読、`hostcfgd` `DeviceMetaCfg` クラス全メソッド精読、`orchagent.sh` 146 行全読、`DbInterface.cpp:565-599` 精読。詳細: `meta/_intermediate/cdb-flow/device-metadata-failure.md`
+
+<!-- /failure -->
+
 ## 購読者
 
 - `bgpcfgd` / `sonic-frr-mgmt-framework`: `bgp_asn`、`bgp_router_id`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`default_bgp_status`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
