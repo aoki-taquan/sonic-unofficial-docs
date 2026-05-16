@@ -334,6 +334,44 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 なし。`bgpcfgd` / `frrcfgd` は CONFIG_DB → FRR（ユーザー空間ルーティングデーモン）への経路であり、SAI/ASIC に直接触れない。APPL_DB への中継もない。
 <!-- /cross-refs -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`BGP_INTERNAL_NEIGHBOR` テーブルへの変更通知は、`bgpcfgd` (`docker-fpm-frr` 内) の `Runner` クラスが **`swsscommon.SubscriberStateTable`** を使って受信する。`Runner.add_manager()` が `BGPPeerMgrBase` (peer_type=`"internal"`) を受け取ると、`SubscriberStateTable(conn, "BGP_INTERNAL_NEIGHBOR")` を生成して Redis keyspace 通知を購読する (`runner.py:47-51`)。`frrcfgd` はこのテーブルを購読しない（`table_handler_list` に `BGP_INTERNAL_NEIGHBOR` が含まれないことを確認済み）。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|------------|---------|
+| `bgpcfgd` (`BGPPeerMgrBase` peer_type=`internal`) | `swsscommon.SubscriberStateTable` | `BGP_INTERNAL_NEIGHBOR` | `BGPPeerMgrBase.handler` → `add_peer()` / `del_peer()` |
+| `frrcfgd` | `ExtConfigDBConnector.subscribe()` (pubsub) | （購読しない） | — |
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+CONFIG_DB へ書込 (HSET "BGP_INTERNAL_NEIGHBOR|10.0.0.1" asn 65001 ...)
+  ↓ Redis keyspace: PUBLISH "__keyspace@4__:BGP_INTERNAL_NEIGHBOR|10.0.0.1"  "hset"
+SubscriberStateTable 内部バッファにイベント蓄積
+  ↓ Runner.run() → selector.select(1000ms) がシグナルを検出
+subscriber.pop() → (key="10.0.0.1", op="SET", fvs={asn:65001, ...})
+  ↓ BGPPeerMgrBase.handler(key, "SET", fvs)
+managers_bgp.py: deps 充足チェック → add_peer() / update_peer()
+  ↓ Jinja2 テンプレート (bgpd/templates/internal/*.conf.j2) 展開
+  ↓ cfg_manager.commit() → FRR bgpd へ設定コマンド投入
+```
+
+- `op == "SET"` → `add_peer()` / `update_peer()`、`op == "DEL"` → `del_peer()` に分岐。
+- `Runner.SELECT_TIMEOUT = 1000 ms`（epoll 相当の待機）。イベントなしは `TIMEOUT` で次ループへ。
+- 全サブスクライバのイベント処理完了後に `cfg_manager.commit()` を一括実行 (`runner.py:71`)。
+- 起動時は deps (`DEVICE_METADATA.bgp_asn`、`Loopback0`、`Loopback4096`) 充足まで `BGP_INTERNAL_NEIGHBOR` イベントが保留される (`managers_bgp.py:118-146`)。
+
+### frrcfgd の非購読（確認済み）
+
+`frrcfgd` は `ExtConfigDBConnector.listen_thread()` でデータベース全体の keyspace (`__keyspace@<dbId>__:*`) を `psubscribe` するが、`sub_msg_handler` 内の `table in self.handlers` チェックにより `BGP_INTERNAL_NEIGHBOR` はスキップされる。`DEVICE_METADATA.frr_mgmt_framework_config=true` 構成でも内部 iBGP は常に `bgpcfgd` 専用パスで処理される。
+
+> **Evidence**: `bgpcfgd/runner.py:23-73` (Runner クラス全体)、`bgpcfgd/main.py:88,134-136` (BGP_INTERNAL_NEIGHBOR 登録)、`bgpcfgd/managers_bgp.py:87-182` (BGPPeerMgrBase 初期化・deps)、`frrcfgd/frrcfgd.py:1536-1543` (ExtConfigDBConnector.listen_thread)、`frrcfgd/frrcfgd.py:2293-2338` (table_handler_list — BGP_INTERNAL_NEIGHBOR 不在確認)、`frrcfgd/frrcfgd.py:2359-2361` (subscribe_all); 詳細分析 `meta/_intermediate/cdb-flow/bgp-internal-neighbor-pubsub.md`
+<!-- /pubsub -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -353,6 +391,72 @@ FRR bgpd への反映は `cfg_mgr.push()` 経由の vtysh push のみ。
 
 詳細スキャン結果: `meta/_intermediate/cdb-flow/bgp-internal-neighbor-side.md`
 <!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### 対象プラットフォーム
+
+`BGP_INTERNAL_NEIGHBOR` テーブルは **multi-ASIC** プラットフォームおよび **chassis-packet** スイッチ専用である。シングル ASIC 非 chassis 機器では minigraph パーサがこのテーブルに一切エントリを生成しない。
+
+`VOQ chassis` 向け iBGP は **別テーブル** `BGP_VOQ_CHASSIS_NEIGHBOR` を使用し、本テーブルには入らない（minigraph.py L1345-1347）。
+
+### minigraph.py によるテーブル振り分け
+
+`parse_cpg()` (minigraph.py L1297) が `BGPSession` ごとにテーブルを決定する:
+
+| 振り分け条件 | 宛先テーブル | admin_status | evidence |
+|---|---|---|---|
+| `<ChassisInternal>` == `"chassis-packet"` または BgpGroup Start/End が `CHASSIS_CARD_PACKET` | `BGP_INTERNAL_NEIGHBOR` | `'up'`（強制） | `minigraph.py:1341-1350` |
+| 両端が同一 `local_devices` 内（FrontEnd/BackEnd ASIC ペア） | `BGP_INTERNAL_NEIGHBOR` | `'up'`（強制） | `minigraph.py:1351-1353` |
+| `<ChassisInternal>` == `"voq"` または BgpGroup が `CHASSIS_CARD_VOQ` | `BGP_VOQ_CHASSIS_NEIGHBOR` | `'up'` | `minigraph.py:1345-1347` |
+| それ以外（外部 eBGP / 通常 iBGP） | `BGP_NEIGHBOR` | `None`（未設定） | `minigraph.py:1354-1356` |
+
+multi-ASIC 機器では `enable_internal_bgp_session()` (L1888-1901) が FrontEnd/BackEnd ペアの `admin_status` を `'up'` に上書きする。
+
+### bgpd/templates/internal/policies.conf.j2 の 3 分岐
+
+`policies.conf.j2` は `DEVICE_METADATA.localhost.sub_role` および `switch_type` に応じて 3 分岐する:
+
+| 分岐条件 | 生成される FRR 設定 | evidence |
+|---|---|---|
+| `sub_role == 'BackEnd'`（multi-ASIC BackEnd ASIC） | `FROM_BGP_INTERNAL_PEER_V4/V6` に `set originator-id`（`bgp_router_id` または Loopback4096 IP） | `internal/policies.conf.j2:8-27` |
+| `switch_type == 'chassis-packet'`（chassis-packet スイッチ） | community-list 定義 + `FROM/TO_BGP_INTERNAL_PEER_V4/V6` に community tag・delete 操作。`subtype` によりさらに分岐 | `internal/policies.conf.j2:28-93` |
+| それ以外（multi-ASIC FrontEnd など） | `FROM_BGP_INTERNAL_PEER_V6 permit 1` の `set ipv6 next-hop prefer-global` のみ | `internal/policies.conf.j2:94-97` |
+
+#### chassis-packet における subtype 二次分岐
+
+| subtype 値 | `FROM_BGP_INTERNAL_PEER_V4/V6 permit 3/4` の挙動 |
+|---|---|
+| `DownstreamLC` | fallback community を **delete のみ**（`set tag` なし） |
+| その他（`UpstreamLC` 等） | fallback community を delete + `set tag route_eligible_for_fallback_to_default_tag` |
+
+### managers_bgp.py の内部 peer 固有分岐
+
+| 条件 | 効果 | evidence |
+|---|---|---|
+| `peer_type == 'internal'`（BGP_INTERNAL_NEIGHBOR のみ） | `Loopback4096` を依存として deps に追加 | `managers_bgp.py:145-146` |
+| `check_neig_meta=False`（固定） | `DEVICE_NEIGHBOR_METADATA` に依存しない | `bgpcfgd/main.py:88` |
+
+他 peer_type（`general`・`voq_chassis`・`monitors` 等）は `Loopback4096` 依存を持たない。
+
+### frrcfgd.py（frr-mgmt-framework パス）— 非対応
+
+`frrcfgd.py` は `BGP_INTERNAL_NEIGHBOR` を購読しない。`bgpcfgd` 専用パスのみで処理される。`DEVICE_METADATA.frr_mgmt_framework_config=true` の構成でも内部 iBGP は `bgpcfgd` が担当する。
+
+**根拠**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` 全体を `BGP_INTERNAL_NEIGHBOR` / `internal_neighbor` キーワードでスキャンしたが一致なし。
+
+### VOQ chassis（BGP_VOQ_CHASSIS_NEIGHBOR）との差異
+
+| 属性 | BGP_INTERNAL_NEIGHBOR | BGP_VOQ_CHASSIS_NEIGHBOR |
+|---|---|---|
+| テンプレートディレクトリ | `bgpd/templates/internal/` | `bgpd/templates/voq_chassis/` |
+| route-map 名 | `FROM/TO_BGP_INTERNAL_PEER_V4/V6` | `FROM/TO_VOQ_CHASSIS_V4/V6_PEER` |
+| subtype 分岐 | `DownstreamLC` vs その他（permit で tag 有無） | `UpstreamLC` vs その他（**deny** vs permit で逆） |
+| Loopback 依存 | `Loopback4096`（managers_bgp.py deps に追加） | `Loopback4096` 依存なし |
+| 生成プラットフォーム | chassis-packet / multi-ASIC | VOQ chassis |
+
+<!-- /platform -->
 
 <!-- ref-triangle:start -->
 
