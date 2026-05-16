@@ -332,4 +332,52 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 
 `max_prefix_limit` が必須のアンカー。`max_prefix_warning_threshold` が不在の場合は `max_prefix_restart_interval` と `max_prefix_warning_only` も生成されない（`++` オプション連鎖）。
 <!-- /defaults -->
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`frrcfgd` の `bgp_table_handler_common()` が BGP_PEER_GROUP_AF を処理する際に検出された順序依存を示す。
+
+| # | 先行テーブル / 設定 | 依存元フィールド | 方向 | 緩和策 | evidence |
+|---|---|---|---|---|---|
+| 1 | `BGP_GLOBALS\|<vrf>.local_asn` | 全フィールド（VRF guard） | **先行必須**（hard block） | なし — LOG_DEBUG + skip | `frrcfgd.py:2656–2662` |
+| 2 | `BGP_PEER_GROUP\|<vrf>\|<pg_name>` | 全フィールド（FRR peer-group 未登録） | **先行必須**（FRR コマンド失敗） | なし — LOG_ERR + continue | `frrcfgd.py:2790–2801, 2873` |
+| 3 | `BGP_GLOBALS_AF\|<vrf>\|<af_safi>` | 全フィールド（AF コンテキスト） | **先行必須**（FRR コンテキスト未存在） | 起動時は `table_handler_list` 順（#4 < #12）で自動保証 | `frrcfgd.py:2297, 2771–2781` |
+| 4 | `ROUTE_MAP\|<name>\|<seq>` | `route_map_in`, `route_map_out`, `default_rmap`, `unsuppress_map_name` | **先行推奨**（中間状態のみ） | FRR は名前を受付、route-map 定義後に有効化 | `frrcfgd.py:3109–3133` |
+| 5 | bgpd CLI 内 `max_prefix_limit` | `max_prefix_warning_threshold`, `max_prefix_restart_interval`, `max_prefix_warning_only` | **同時書き込み推奨** | limit 不在時 FRR が後続オプションを無視 | `frrcfgd.py:2865–2872` |
+
+> **推奨書き込み順**: `BGP_GLOBALS` → `BGP_GLOBALS_AF` → `ROUTE_MAP` → `BGP_PEER_GROUP` → `BGP_PEER_GROUP_AF`
+<!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照 — `BGPConfigDaemon` が読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`frrcfgd` の `BGPConfigDaemon` は `BGP_PEER_GROUP_AF` テーブル単体ではなく、起動時に関連テーブルを一括ロードし、ランタイム処理の前提として参照する。以下は `frrcfgd.py` のスキャンで検出した暗黙参照テーブル。
+
+### 必須前提テーブル
+
+| テーブル | 参照種別 | 用途 | evidence |
+|---|---|---|---|
+| [`BGP_PEER_GROUP`](./bgp-peer-group.md) | 起動時 `get_table()` + ランタイム前提 | 起動時に `self.bgp_peer_group[vrf][pg_name]` キャッシュを構築。peer-group が FRR に存在しない状態で AF 設定を発行すると vtysh コマンドが失敗し `LOG_ERR` を出力する。`BGP_PEER_GROUP_AF` より先に設定する必要がある | frrcfgd.py:2187-2191, 2865, 2873 |
+| `BGP_GLOBALS` | ランタイム guard | `__get_vrf_asn(vrf)` が None (= `local_asn` 未設定) の VRF に対する更新を `LOG_DEBUG` して silent skip する。VRF の `BGP_GLOBALS.local_asn` が設定されるまで `BGP_PEER_GROUP_AF` の変更は無効 | frrcfgd.py:2658-2662 |
+
+### 処理順序依存テーブル
+
+| テーブル | 参照種別 | 用途 | evidence |
+|---|---|---|---|
+| [`BGP_GLOBALS_AF`](./bgp-globals-af.md) | 処理順序依存 | `address-family <af> <type>` コンテキストを事前に FRR へ確立するテーブル。`BGP_PEER_GROUP_AF` のコマンドは同コンテキスト内で発行されるため、`BGP_GLOBALS_AF` の設定が先行している必要がある | frrcfgd.py:2297, 2771-2781, 2869-2871 |
+
+### 文字列名参照テーブル (フィールド値として名前参照)
+
+| テーブル | 参照フィールド | FRR コマンド | evidence |
+|---|---|---|---|
+| `ROUTE_MAP` | `route_map_in` | `neighbor <pg> route-map <name> in` | frrcfgd.py:1903, 2206 |
+| `ROUTE_MAP` | `route_map_out` | `neighbor <pg> route-map <name> out` | frrcfgd.py:1904, 2206 |
+| `ROUTE_MAP` | `default_rmap` | `neighbor <pg> default-originate route-map <name>` | frrcfgd.py:1900, 2206 |
+| `PREFIX` / `PREFIX_SET` | `prefix_list_in` | `neighbor <pg> prefix-list <name> in` | frrcfgd.py:1918, 2227-2247 |
+| `PREFIX` / `PREFIX_SET` | `prefix_list_out` | `neighbor <pg> prefix-list <name> out` | frrcfgd.py:1919, 2227-2247 |
+
+> `ROUTE_MAP` と `PREFIX` / `PREFIX_SET` は `frrcfgd` が起動時に一括ロードしてキャッシュする (L2206, L2227-2247)。フィールド値は FRR に文字列として渡されるだけで DB ルックアップは行われないが、FRR 側で未定義名を参照すると policy が機能しない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-peer-group-af-cross-refs.md` を参照。
+<!-- /cross-refs -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->

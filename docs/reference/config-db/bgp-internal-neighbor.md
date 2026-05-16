@@ -458,6 +458,47 @@ multi-ASIC 機器では `enable_internal_bgp_session()` (L1888-1901) が FrontEn
 
 <!-- /platform -->
 
+<!-- failure -->
+## 失敗挙動
+
+`bgpcfgd` (`managers_bgp.py`) および `frrcfgd.py` から検出された失敗経路を示す。
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `DEVICE_METADATA\|localhost.bgp_asn` / `.type` が未存在 | deps フレームワーク L118-120 | SET イベント全件が保留（deps 未充足）。FRR への設定投入ゼロ | なし（内部保留） |
+| `Loopback0` IPv4 未設定 かつ `bgp_router_id` も未設定 | `add_peer()` L184-189 | `return False` → 再試行待ち。自動回復あり | `log_warn("... ipv4 address is not presented yet and bgp_router_id not configured")` |
+| `Loopback4096` が CONFIG_DB に未存在（`peer_type == 'internal'` 専用 dep） | deps フレームワーク L145-146 | 全 `BGP_INTERNAL_NEIGHBOR` イベントが保留。Loopback4096 が登録されるまで peer 追加ゼロ | なし |
+| `local_addr` フィールド欠如 | `add_peer()` L194-196 | `log_warn` 後に処理続行（YANG mandatory 違反をランタイムは無視） | `log_warn("Peer %s. Missing attribute 'local_addr'")` |
+| `local_addr` に対応するインターフェースが `LOCAL.interfaces` に未登録 | `add_peer()` L198-202 | `return False` → 再試行待ち。インターフェース登録後に自動回復 | `log_debug("Peer '%s' with local address '%s' wait for the corresponding interface to be set")` |
+| `instance.conf.j2` テンプレートレンダリング失敗（`jinja2.TemplateError`） | `add_peer()` L229-234 | `log_err` 後 **`return True`**（再試行なし・FRR に peer 未追加の silent drop） | `log_err("Peer '(%s\|%s)'. Error in rendering the template for 'SET' command '%s'")` |
+| `policies.conf.j2` レンダリング時 `sub_role`/`switch_type` キー欠如 | `BGPPeerGroupMgr.update_policy()` L47-50 | `log_err` → `return False`。peer-group 設定が FRR に未反映 | `log_err("Can't render policy template name: '%s': %s")` |
+| `sub_role == 'BackEnd'` かつ `Loopback4096` に IPv4 なし | `policies.conf.j2` L7-13 | `originator-id` 行が生成されない（テンプレート内サイレントスキップ）。ルートリフレクタ機能が劣化 | なし |
+| `BGP_GLOBALS\|<vrf>.local_asn` が frrcfgd 処理前に未設定 | `frrcfgd.py` L2659-2662 | frrcfgd が当該 VRF の全テーブル更新をスキップ。FRR bgpd インスタンス未生成のまま bgpcfgd 出力も無視 | `syslog LOG_DEBUG("ignore table {} update because local_asn for VRF {} was not configured")` |
+| `/run/frr/bgpd.vty` ソケット接続が 100 回リトライ後も失敗 | `frrcfgd.py` L183-198 `__create_frr_client()` | `RuntimeError` → frrcfgd プロセスがクラッシュ・再起動ループ。最大待ち時間 200 秒 | `syslog LOG_ERR("re-tried too many times, give up")` + `LOG_ERR("failed to create socket to FRR daemon")` |
+| vtysh コマンド失敗（bgp_asn 設定時） | `frrcfgd.py` L2701, 2706-2707 | `LOG_ERR` 後 `self.bgp_asn[vrf]` 未更新。後続イベントも local_asn 未設定としてスキップされ続ける | `syslog LOG_ERR("failed to set local_asn %s to VRF %s")` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---|---|---|
+| `self.peers` セットに未登録の peer を DEL（二重 DEL など） | `del_handler()` L452-454 | `log_warn` 後即 `return`。FRR コマンド送信なし | `log_warn("Peer '(%s\|%s)' has not been found")` |
+| `delete` テンプレートレンダリング失敗 | `del_handler()` L480-484 | `log_err` 後も不定 `cmd` で `apply_op` を呼び出す可能性。FRR コマンドが不正になるリスク | `log_err("Peer '(%s\|%s)'. Error in rendering the template for 'DEL' command '%s'")` |
+| `apply_op()` が FRR push 失敗 | `del_handler()` L485-491 | `log_err` 後 peer が `self.peers` から削除されない。次 SET 時に `update_peer()` 分岐（`admin_status` のみ処理可能）に入る | `log_err("Peer '(%s\|%s)' hasn't been removed")` |
+
+### 重要な失敗パターン補足
+
+1. **`return True` の罠（テンプレートエラー時）**: `instance.conf.j2` レンダリングエラー時に `return True` を返すため、bgpcfgd はイベントを「処理済み」とみなし再試行しない。FRR に peer が追加されないまま silent drop される。`return False` と異なり自動回復がない。
+
+2. **deps 保留は無音**: `DEVICE_METADATA.bgp_asn` / `Loopback0` / `Loopback4096` のいずれかが未存在の間は、`BGP_INTERNAL_NEIGHBOR` へのすべての SET/DEL がフレームワーク内部で保留される。syslog にも出力されないため運用者には「何も起きていない」ように見える。
+
+3. **frrcfgd の bgpd ソケット待ち**: コンテナ起動直後の最大 200 秒間、frrcfgd は `/run/frr/bgpd.vty` 接続待ちのブロック状態になる。この間は CONFIG_DB の変更が FRR に反映されない。
+
+4. **Loopback4096 が `BackEnd` で二重の役割**: deps として peer 確立を保留させる役割（L146）と、`policies.conf.j2:7` で `originator-id` 取得に使う役割の両方を持つ。IPv4 アドレス未割り当ての場合、deps は充足されても originator-id がサイレントスキップされる点に注意。
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
