@@ -190,6 +190,24 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-state-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`bgpmon` および `bgpcfgd BGPPeerMgrBase` が `NEIGH_STATE_TABLE` / `BGP_PEER_CONFIGURED_TABLE` へ書き込む際、STATE_DB 以外の副次 DB への波及は**存在しない**。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `bgpmon.py` / `managers_bgp.py` に `APPL_DB` への接続・書込呼出が 0 件 |
+| COUNTERS_DB | なし | 両ファイルに `COUNTERS_DB` 参照が 0 件。BGP セッション統計は FRR / `show bgp summary` で直接取得するため STATE_DB 内に統計テーブルは存在しない |
+| ASIC_DB / FLEX_COUNTER_DB | なし | BGP 経路情報の SAI 投入は `fpmsyncd` → `routeorch` の別経路であり `bgpmon` / `bgpcfgd` は SAI に直接アクセスしない |
+| EVENTS_DB | なし | 両ファイルに `EVENTS_DB` / `publish` / `notify` 参照が 0 件 |
+| CHASSIS_APP_DB | なし | マルチシャーシ向け参照なし |
+
+`NEIGH_STATE_TABLE` の下流購読者は SNMP サブエージェント (`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py`) のみであり、同エージェントはテーブルを **読み取るだけ** で他 DB への書き込みは行わない。`BGP_PEER_CONFIGURED_TABLE` の下流は SDN コントローラ（外部プロセス）であり STATE_DB 側から能動的に他 DB へ書き込む経路は存在しない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-state-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
