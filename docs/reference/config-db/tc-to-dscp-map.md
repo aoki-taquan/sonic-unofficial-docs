@@ -246,3 +246,46 @@ qos_map_attr.value.u32 = SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP;
 
 > **Evidence**: `sonic-swss/orchagent/qosorch.cpp:1216-1290` (TcToDscpMapHandler 実装全体); `sonic-buildimage/files/build_templates/qos_config.j2:334-337`; `sonic-buildimage/device/common/profiles/th2/7260/BALANCED/qos.json.j2:422`
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-ordering.md`
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | ソース |
+|---|---|---|
+| `TC_TO_DSCP_MAP`（本テーブル）を先に作成 | `PORT_QOS_MAP` ハンドラが `resolveFieldRefValue` で本マップの OID を参照。未解決なら `task_need_retry`（自動リトライ） | `qosorch.cpp:2124-2129` |
+| `TC_TO_DSCP_MAP`（本テーブル）を先に作成 | `TUNNEL.encap_tc_to_dscp_map` 設定時に `resolveTunnelQosMap` が同様に OID 解決。未解決なら `SAI_NULL_OBJECT_ID` → handler が `task_need_retry` | `qosorch.cpp:2318` |
+
+!!! info "doTask() 実行順保証"
+    `QosOrch::doTask()` は map 系テーブル（DSCP_TO_TC / TC_TO_QUEUE / TC_TO_DSCP_MAP 等）を
+    **PORT_QOS_MAP・QUEUE より先に drain** する (`qosorch.cpp:2235-2251`)。
+    同一 QosOrch サイクル内で config を一括投入した場合でも、本マップが先に SAI 登録される。
+
+### SAI qos_map 制約
+
+`TcToDscpMapHandler::addQosItem()` は `SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP` 型で
+`sai_qos_map_api->create_qos_map()` を呼び出す (`qosorch.cpp:1271-1285`)。
+SAI 仕様上、`SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` へ有効 OID を渡すには
+map object が事前に存在している必要がある。
+
+### DEL 時の順序制約
+
+DEL ハンドラ (`qosorch.cpp:181-189`) は `isObjectBeingReferenced()` で参照チェックを行い、
+`PORT_QOS_MAP` または `TUNNEL` から参照中の場合は `m_pendingRemove = true` をセットして `task_need_retry` を返す。
+**`PORT_QOS_MAP.tc_to_dscp_map` フィールドおよび `TUNNEL.encap_tc_to_dscp_map` を解除（NULL 設定または DEL）してから**
+本マップを削除しなければ、削除は保留され続ける。
+
+### 起動時シーケンス
+
+```
+config qos reload
+  └─ sonic-cfggen が qos_config.j2 を展開
+       ├─ TC_TO_DSCP_MAP エントリ書込み（例: AZURE_TUNNEL マップ）
+       └─ PORT_QOS_MAP.tc_to_dscp_map / TUNNEL.encap_tc_to_dscp_map 書込み
+             └─ QosOrch::doTask() が map 系を先に drain → OID 解決後に PORT_QOS_MAP を適用
+```
+
+<!-- /ordering -->
