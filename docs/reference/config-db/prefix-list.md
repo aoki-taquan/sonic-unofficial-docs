@@ -292,6 +292,68 @@ db_migrator.py での PREFIX_LIST マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`managers_prefix_list.py` の `PREFIX_TYPE_CONFIG` 辞書および `PrefixListMgr` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py`。
+
+### サポート済み prefix_type 名
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| (キー) | `"ANCHOR_PREFIX"` | Spine/UpperSpine 専用アンカー prefix list。`SpineRouter/UpstreamLC` または `UpperSpineRouter` のみで有効。それ以外は `log_warn` してスキップ | managers_prefix_list.py L6 |
+| (キー) | `"SUPPRESS_PREFIX"` | 全デバイスタイプで有効なサプレス prefix list | managers_prefix_list.py L11 |
+
+> `PREFIX_TYPE_CONFIG` に存在しない type 名はすべて `"PrefixListMgr:: Prefix type '...' is not supported"` を `log_warn` してスキップされ、FRR への設定生成は行われない。
+
+### デフォルト prefix list 名
+
+| 定数 | 値 | 条件 | ソース |
+|------|----|------|--------|
+| ANCHOR_PREFIX list 名 | `"ANCHOR_CONTRIBUTING_ROUTES"` | IPv4/IPv6 両方で共通（`lambda ipv:` が常に同値を返す） | managers_prefix_list.py L14 |
+| SUPPRESS_PREFIX list 名 (IPv4) | `"SUPPRESS_IPV4_PREFIX"` | `ipv == "ip"` のとき | managers_prefix_list.py L22 |
+| SUPPRESS_PREFIX list 名 (IPv6) | `"SUPPRESS_IPV6_PREFIX"` | `ipv == "ipv6"` のとき | managers_prefix_list.py L22 |
+
+> これらの値は `constants` dict の `bgp.prefix_list.<type>.ipv4_name` / `bgp.prefix_list.<type>.ipv6_name` キーで上書き可能（override 優先）。
+
+### constants オーバーライドキー
+
+| キーパス | 型 | 効果 |
+|----------|----|------|
+| `bgp.prefix_list.ANCHOR_PREFIX.ipv4_name` | string | ANCHOR_PREFIX の IPv4 prefix list 名をデフォルト `ANCHOR_CONTRIBUTING_ROUTES` から上書き |
+| `bgp.prefix_list.ANCHOR_PREFIX.ipv6_name` | string | ANCHOR_PREFIX の IPv6 prefix list 名を上書き |
+| `bgp.prefix_list.SUPPRESS_PREFIX.ipv4_name` | string | SUPPRESS_PREFIX の IPv4 prefix list 名をデフォルト `SUPPRESS_IPV4_PREFIX` から上書き |
+| `bgp.prefix_list.SUPPRESS_PREFIX.ipv6_name` | string | SUPPRESS_PREFIX の IPv6 prefix list 名をデフォルト `SUPPRESS_IPV6_PREFIX` から上書き |
+
+### 許可デバイスタイプ (ANCHOR_PREFIX)
+
+| 設定 | 値 | ソース |
+|------|----|--------|
+| allowed_devices[0] | `("SpineRouter", "UpstreamLC")` — type=SpineRouter かつ subtype=UpstreamLC | managers_prefix_list.py L12 |
+| allowed_devices[1] | `("UpperSpineRouter", None)` — type=UpperSpineRouter（subtype 不問） | managers_prefix_list.py L13 |
+| SUPPRESS_PREFIX allowed_devices | `None`（制限なし）— 全デバイスタイプで許可 | managers_prefix_list.py L21 |
+
+### FRR テンプレートパス
+
+| 用途 | 値 | ソース |
+|------|----|--------|
+| ANCHOR_PREFIX add テンプレート | `"bgpd/radian/add_radian"` (`.conf.j2` を付与してロード) | managers_prefix_list.py L7 |
+| ANCHOR_PREFIX del テンプレート | `"bgpd/radian/del_radian"` | managers_prefix_list.py L8 |
+| SUPPRESS_PREFIX add テンプレート | `"bgpd/suppress_prefix/add_suppress_prefix"` | managers_prefix_list.py L19 |
+| SUPPRESS_PREFIX del テンプレート | `"bgpd/suppress_prefix/del_suppress_prefix"` | managers_prefix_list.py L20 |
+
+### IP バージョン判定定数
+
+| 戻り値 | 条件 | 効果 |
+|--------|------|------|
+| `"ip"` | `prefix.version == 4` | FRR コマンド `ip prefix-list` を使用 |
+| `"ipv6"` | `prefix.version == 6` | FRR コマンド `ipv6 prefix-list` を使用 |
+| `None` | それ以外 | 事実上到達不能（`netaddr.IPNetwork` は v4/v6 のみ） |
+
+> `get_ip_type()` の戻り値は `data["ipv"]` に格納され、テンプレートレンダリングおよび `prefix_list_name` ラムダの引数として使われる（managers_prefix_list.py L139-143）。
+
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込・外部状態変化 (Phase F)
 
