@@ -83,3 +83,31 @@ Consumer: `AclOrch::doAclRuleTask()` (`sonic-swss/orchagent/aclorch.cpp`)
 | 6 | ACL_RULE DEL → リソース枯渇解消 → 自動 retry SET | 自動 | notifyRetry 機構 |
 | 7 | orchagent 再起動後の replay | 自動復元（ACL_TABLE → ACL_RULE 自動調停） | warm-restart 非対応、cold restart で再構築 |
 | 8 | REDIRECT 先 NH 解決 → ACL_RULE REDIRECT_ACTION | 推奨先行（未解決は rule INACTIVE） | NH group は自動作成を試みる |
+| 9 | PRIORITY 値比較（数値降順） | 高値=高優先 / SAI 範囲内必須 | runtime set_acl_entry_attribute で変更可 |
+| 10 | stage (INGRESS/EGRESS) × action 組合せ | stage が action 適用可否を決定 | MIRROR_ACTION 旧フィールドは INGRESS 固定 |
+| 11 | SAI acl_entry 属性設定順序 (TABLE_ID先頭) | create_acl_entry 呼出し時固定順 | アプリ側は意識不要（AclOrch が構築） |
+
+---
+
+## 追記 (Phase B 拡張): PRIORITY 比較・stage 順序・SAI acl_entry 順序
+
+### PRIORITY 比較
+
+- SAI は PRIORITY 値の数値降順でルールを評価（高い値 = 先に評価）。
+- 有効範囲: `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY`〜`SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY`（起動時に問い合わせ、`aclorch.cpp:3689-3696`）。
+- 範囲外は `setPriority()` が `SWSS_LOG_ERROR` + `return false` → rule INACTIVE (`aclorch.cpp:1654-1662`)。
+- `acl_loader` の `max_priority=10000` vs `acl_app.go` の `MAX_PRIORITY=65536` の差異に注意（evidence: `aclorch.cpp:3695`）。
+
+### stage 順序
+
+- `MIRROR_ACTION`（旧フィールド）は後方互換で `INGRESS` stage として処理される (`aclorch.cpp:2268-2271`)。EGRESS テーブルで使うと意図しない INGRESS mirror が設定される。
+- `isActionSupported(stage, action)` が stage × action 組合せを SAI capability で検証する (`aclorch.cpp:1407-1409`)。
+- INGRESS: `MATCH_IN_PORTS` 利用可。EGRESS: `MATCH_OUT_PORT` / `MATCH_OUT_PORTS` 利用可（`stageMandatoryMatchFields`）。
+
+### SAI acl_entry 属性設定順序 (`create_acl_entry` 時)
+
+```
+1. TABLE_ID → 2. PRIORITY → 3. ADMIN_STATE(true) → 4. COUNTER(条件) → 5. RANGE_TYPE(条件) → 6. matches → 7. actions
+```
+
+evidence: `aclorch.cpp:1282-1344`

@@ -99,6 +99,83 @@ POLICER|<name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): 直接の [YANG](../../reference/glossary.md#term-yang) モジュールは無し（参照側 [YANG](../../reference/glossary.md#term-yang) が個別フィールドを持つ）
 - 関連 CLI: なし（`config_db.json` で投入）
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 根拠: `policerorch.cpp` 全行精読。evidence: `meta/_intermediate/cdb-flow/policer-constants.md`
+
+### enum マップ — CONFIG_DB 値 → SAI 属性
+
+#### MODE (`policer_mode_map`, `policerorch.cpp:39-43`)
+
+| CONFIG_DB 値 | SAI 属性値 |
+|-------------|-----------|
+| `SR_TCM` | `SAI_POLICER_MODE_SR_TCM` |
+| `TR_TCM` | `SAI_POLICER_MODE_TR_TCM` |
+| `STORM_CONTROL` | `SAI_POLICER_MODE_STORM_CONTROL` |
+
+#### COLOR_SOURCE (`policer_color_source_map`, `policerorch.cpp:45-48`)
+
+| CONFIG_DB 値 | SAI 属性値 |
+|-------------|-----------|
+| `AWARE` | `SAI_POLICER_COLOR_SOURCE_AWARE` |
+| `BLIND` | `SAI_POLICER_COLOR_SOURCE_BLIND` |
+
+#### \*_PACKET_ACTION (`packet_action_map`, `policerorch.cpp:50-59`)
+
+| CONFIG_DB 値 | SAI 属性値 |
+|-------------|-----------|
+| `FORWARD` | `SAI_PACKET_ACTION_FORWARD` |
+| `DROP` | `SAI_PACKET_ACTION_DROP` |
+| `COPY` | `SAI_PACKET_ACTION_COPY` |
+| `COPY_CANCEL` | `SAI_PACKET_ACTION_COPY_CANCEL` |
+| `TRAP` | `SAI_PACKET_ACTION_TRAP` |
+| `LOG` | `SAI_PACKET_ACTION_LOG` |
+| `DENY` | `SAI_PACKET_ACTION_DENY` |
+| `TRANSIT` | `SAI_PACKET_ACTION_TRANSIT` |
+
+ドキュメント外の値 (`COPY` / `COPY_CANCEL` / `TRAP` / `LOG` / `DENY` / `TRANSIT`) も実装では受理されるが、SAI 対応状況は ASIC 依存。
+
+### storm-control ハードコード固定値 (`policerorch.cpp:156-169`)
+
+PORT_STORM_CONTROL テーブル経由で policer を作成する際、以下の SAI 属性はコードでハードコードされ CONFIG_DB フィールドを無視する:
+
+| SAI 属性 | ハードコード値 | コード根拠 |
+|---------|-------------|----------|
+| `SAI_POLICER_ATTR_METER_TYPE` | `SAI_METER_TYPE_BYTES` | `policerorch.cpp:157-159` — `/*Meter type hardcoded to BYTES*/` |
+| `SAI_POLICER_ATTR_MODE` | `SAI_POLICER_MODE_STORM_CONTROL` | `policerorch.cpp:161-164` — `/*Policer mode hardcoded to STORM_CONTROL*/` |
+| `SAI_POLICER_ATTR_RED_PACKET_ACTION` | `SAI_PACKET_ACTION_DROP` | `policerorch.cpp:166-169` — `/*Red Packet Action hardcoded to DROP*/` |
+
+### KBPS → CIR 変換式 (`policerorch.cpp:181-184`)
+
+```
+SAI CIR (bytes/sec) = stoul(KBPS) × 1000 / 8
+```
+
+整数演算のため端数切り捨てが発生する。例: `KBPS=1` → CIR = 125 bytes/sec。
+
+### storm_type → SAI ポート属性マッピング (`policerorch.cpp:204-219`)
+
+| PORT_STORM_CONTROL `storm_type` | SAI ポート属性 |
+|--------------------------------|--------------|
+| `broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` |
+| `unknown-unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` |
+| `unknown-multicast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` |
+| その他 | `SWSS_LOG_ERROR("Unknown storm_type %s")` + `task_failed` |
+
+### 内部 policer 命名規則 (`policerorch.cpp:146`)
+
+storm-control 由来の SAI policer は `POLICER` テーブルとは独立した内部名で管理される:
+
+```
+"_" + interface_name + "_" + storm_type
+# 例: "_Ethernet0_broadcast"
+```
+
+`m_syncdPolicers` マップのキーとして使用されるが、CONFIG_DB には公開されない。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
