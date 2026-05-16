@@ -285,3 +285,82 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 > **スキャン証跡**: minigraph.py:2281-2297,2869-2880 を確認、4 件分岐抽出。MGMT_INTERFACE は orchagent 非経由を確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- pubsub -->
+## Phase G: CONFIG_DB Subscribe 機構 (通信メカニズム)
+
+### hostcfgd — MGMT_INTERFACE Subscribe 登録
+
+`hostcfgd` (`sonic-host-services/scripts/hostcfgd`) が起動時に `ConfigDBConnector.subscribe()` を使って `MGMT_INTERFACE` テーブルを購読する。
+
+```python
+# hostcfgd L2485
+self.config_db.subscribe('MGMT_INTERFACE', make_callback(self.mgmt_intf_handler))
+```
+
+`make_callback()` は内部 helper で、`data is None` のとき op=`"DEL"`、それ以外で op=`"SET"` にマップして `mgmt_intf_handler(key, op, data)` を呼び出す。
+
+### mgmt_intf_handler の処理フロー
+
+```python
+# hostcfgd L2345-2350
+def mgmt_intf_handler(self, key, op, data):
+    key = ConfigDBConnector.deserialize_key(key)
+    mgmt_intf_name = self.__get_intf_name(key)
+    self.aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)
+    self.aaacfg.handle_radius_nas_ip_chg(mgmt_intf_name)
+    self.mgmtifacecfg.update_mgmt_iface(mgmt_intf_name, key, data)
+```
+
+1. RADIUS source interface / NAS IP の再評価 (`AaaCfg`)
+2. `MgmtIfaceCfg.update_mgmt_iface()` で `interfaces-config` サービスを再起動
+
+### MgmtIfaceCfg — interfaces-config 経路
+
+`MgmtIfaceCfg` クラス (`hostcfgd L1605-1669`) が管理インターフェース設定の変化を検知し、`systemctl restart interfaces-config` を発行する。
+
+```python
+# hostcfgd L1636-1637
+run_cmd(['sudo', 'systemctl', 'restart', 'interfaces-config'], True, True)
+```
+
+`interfaces-config.sh` は以下を実行する:
+
+1. `sonic-cfggen -d -j ... -t interfaces.j2,/etc/network/interfaces` を呼び出し CONFIG_DB の現在値から `/etc/network/interfaces` を再生成
+2. `systemctl restart networking` でカーネルに netlink 経由で IP アドレス / ルート設定を反映
+
+### MGMT_VRF_CONFIG 連動
+
+`MGMT_VRF_CONFIG` の変化も同一の `interfaces-config` 再起動経路を通る:
+
+```python
+# hostcfgd L2496-2497
+self.config_db.subscribe(swsscommon.CFG_MGMT_VRF_CONFIG_TABLE_NAME,
+                         make_callback(self.mgmt_vrf_handler))
+```
+
+`mgmt_vrf_handler` → `MgmtIfaceCfg.update_mgmt_vrf()` → `systemctl restart interfaces-config`
+
+### 通信フロー全体図
+
+```
+CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
+  └─ [docker-mgmt/host] hostcfgd
+       │  config_db.subscribe('MGMT_INTERFACE', mgmt_intf_handler)
+       │  mgmt_intf_handler(key, op, data)
+       │    ├─ AaaCfg.handle_radius_source_intf_ip_chg()
+       │    ├─ AaaCfg.handle_radius_nas_ip_chg()
+       │    └─ MgmtIfaceCfg.update_mgmt_iface()
+       │         └─ systemctl restart interfaces-config
+       │
+       └─ interfaces-config.sh
+            │  sonic-cfggen ... -t interfaces.j2,/etc/network/interfaces
+            │  （CONFIG_DB 全体を読み直し /e/n/i を再生成）
+            └─ systemctl restart networking
+                 └─ Linux kernel netlink: ip addr add/del, ip route add/del
+                    （APPL_DB / SAI 非経由 — kernel 直接制御）
+```
+
+> **注**: `intfmgrd` (`sonic-swss/cfgmgr/intfmgrd.cpp`) は `MGMT_INTERFACE` を**購読しない**。管理インターフェース専用の制御経路は `hostcfgd + interfaces-config` であり、データプレーンインターフェース (`IntfMgr`) とは完全に分離されている。
+
+<!-- /pubsub -->
