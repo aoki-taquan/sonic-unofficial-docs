@@ -276,6 +276,50 @@ show bmp
 - `bgpcfgd/` 全モジュール: BMP 関連コードなし。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+`bmpcfgd` は `swsscommon` Python ラッパの `ConfigDBConnector.subscribe()` で `BMP` テーブルにハンドラを登録し、`listen(init_data_handler=...)` で keyspace 通知ループを開始する。
+
+```python
+# bmpcfgd.py:85-89
+def register_callbacks(self):
+    self.config_db.subscribe(BMP_TABLE,          # "BMP"
+                             lambda table, key, data:
+                                 self.bmp_handler(key, data))
+    self.config_db.listen(init_data_handler=self.bmpcfg.load)
+```
+
+- `ConfigDBConnector.listen()` が内部で Redis の **keyspace 通知** (`__keyspace@4__:BMP|*` の PSUBSCRIBE) を購読する。channel ベースの `ConsumerStateTable` 形式は使用しない。
+- CONFIG_DB への書き込み側（`config bmp` CLI / sonic-cfggen）は `HSET` のみを実行し、明示的な `PUBLISH` は行わない。Redis keyspace notification 機能が変更を通知する。
+
+### 起動時スナップショット
+
+`listen(init_data_handler=self.bmpcfg.load)` を渡すことで、Subscribe ループ開始前に CONFIG_DB の現在値を一括取得して `BMPCfg.load()` に渡す。bmpcfgd 再起動時にも既存設定が openbmpd へ即座に反映される。
+
+### `reset_bmp_table` の起動経路
+
+| 起動経路 | トリガー | コード |
+|---------|---------|--------|
+| 起動時スナップショット | bmpcfgd 起動 → `listen(init_data_handler=self.bmpcfg.load)` | `bmpcfgd.py:89` |
+| 差分通知 | `BMP|table` の `HSET`/`DEL` → `bmp_handler` → `cfg_handler` → `load` | `bmpcfgd.py:81-83` |
+
+いずれの経路でも `stop_bmp()` → `reset_bmp_table()` → `start_bmp()` の順序は変わらない。keyspace 通知本体には値が含まれないため、`bmp_handler` は受信後に `get_table("BMP")` で再 HGETALL する。
+
+### keyspace 通知パターン
+
+| Redis 通知 | bmpcfgd 受信 |
+|-----------|-------------|
+| `__keyspace@4__:BMP\|table` `hset` | `bmp_handler("table", …)` → `load()` → openbmpd 再起動 |
+| `__keyspace@4__:BMP\|table` `del`  | `bmp_handler("table", {})` → `load({})` → 全フィールド `false` で再起動 |
+
+### ConsumerStateTable 非使用
+
+`BMP` テーブルは `ConsumerStateTable`（channel ベース）および `NotificationProducer` を使用しない。CONFIG_DB → bmpcfgd（keyspace 通知）→ supervisorctl / BMP_STATE_DB の一方向で完結する。
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
