@@ -486,4 +486,62 @@ SAI 属性: `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION`
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次書込み (Phase F)
+
+> 証跡: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`  
+> 調査日: 2026-05-16
+
+`LOOPBACK_INTERFACE` テーブルへの書込みは CONFIG_DB にとどまらず、以下の DB に副次書込みを発生させる。
+
+### APPL_DB — APP_INTF_TABLE
+
+`intfmgrd` は `doIntfGeneralTask()` / `doIntfAddrTask()` で `m_appIntfTableProducer`（Producer Channel）を使い APPL_DB に書く。
+
+| キー | 書込みフィールド | タイミング | コード根拠 |
+|------|----------------|-----------|-----------|
+| `APP_INTF_TABLE\|<alias>` | `vrf_name`, `mac_addr`（未設定時 `"00:00:00:00:00:00"`）, `loopback_action`（指定時のみ） | 属性ロウ SET | `intfmgr.cpp:1053` |
+| `APP_INTF_TABLE\|<alias>:<ip-prefix>` | `scope="global"`（ハードコード）, `family` | IP プレフィクスロウ SET（IPv6 link-local を除く） | `intfmgr.cpp:1137` |
+
+**IPv6 link-local アドレス（`fe80::/10`）は APPL_DB に書かれない**。カーネルには付与されるが、APP_INTF_TABLE への `set` はスキップされる（`intfmgr.cpp:1123-1139`）。
+
+### STATE_DB — STATE_INTERFACE_TABLE
+
+`m_stateIntfTable` を通じて STATE_DB に書く。
+
+| キー | 書込みフィールド | タイミング | コード根拠 |
+|------|----------------|-----------|-----------|
+| `STATE_INTERFACE_TABLE\|<alias>` | `vrf`（VRF 名。デフォルト VRF は空文字列） | 属性ロウ SET | `intfmgr.cpp:1054` |
+| `STATE_INTERFACE_TABLE\|<alias>\|<ip-prefix>` | `state="ok"` | IP プレフィクスロウ SET（link-local 除く） | `intfmgr.cpp:1138` |
+
+この `STATE_INTERFACE_TABLE` エントリが `isIntfCreated(alias)` チェックに使われるため、**IP プレフィクスロウの処理は属性ロウの STATE_DB 書込み後**でないと実行されない。
+
+### COUNTERS_DB — COUNTERS_RIF_NAME_MAP / COUNTERS_RIF_TYPE_MAP
+
+`orchagent` `IntfsOrch` は SAI RIF 作成後に `m_rifsToAdd` リストへ追加し、`UPDATE_MAPS_SEC = 1` 秒インターバルのタイマー（`generateInterfaceMap()`）で COUNTERS_DB に書く（`intfsorch.cpp:1530-1538`）。
+
+| テーブル | ハッシュキー | フィールド | コード根拠 |
+|---------|------------|-----------|-----------|
+| `COUNTERS_RIF_NAME_MAP` | `""` | `<alias>` = `<sai_object_id>` | `intfsorch.cpp:1537` |
+| `COUNTERS_RIF_TYPE_MAP` | `""` | `<sai_object_id>` = `<rif_type>` | `intfsorch.cpp:1538` |
+
+削除時は `removeRifFromFlexCounter()` が `hdel` で両テーブルから削除し、FLEX_COUNTER_DB のポーリングを停止する（`intfsorch.cpp:1559-1566`）。
+
+### CHASSIS_APP_DB — SYSTEM_INTERFACE_TABLE（VOQ 環境のみ）
+
+`isChassisDbInUse()` が true（VOQ シャーシ構成）の場合のみ `voqSyncAddIntf()` が呼ばれ、`SYSTEM_INTERFACE_TABLE|<system_alias>` に `oper_status` を書く（`intfsorch.cpp:1316-1317`）。通常の非 VOQ 環境では書込みは発生しない。
+
+### まとめ表
+
+| DB | テーブル | タイミング |
+|----|---------|-----------|
+| APPL_DB | `APP_INTF_TABLE` | 属性/IP ロウ SET 即時 |
+| STATE_DB | `STATE_INTERFACE_TABLE` | 属性/IP ロウ SET 即時 |
+| COUNTERS_DB | `COUNTERS_RIF_NAME_MAP`, `COUNTERS_RIF_TYPE_MAP` | SAI RIF 確定後 ≤1 秒 |
+| CHASSIS_APP_DB | `SYSTEM_INTERFACE_TABLE` | SAI RIF 作成時（VOQ のみ） |
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-side-effects.md` 参照。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: b5270404647a -->
