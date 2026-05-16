@@ -812,6 +812,65 @@ jq で読み取り export platform=<value> として利用。
 `docker-init.j2:53-67` で `/etc/sonic/chassisdb.conf` が存在する場合、`CHASSIS_STATE_DB.CHASSIS_FABRIC_ASIC_TABLE|asic{N}` から PCI アドレスを取得し CONFIG_DB の `DEVICE_METADATA|localhost.asic_id` を runtime に書き込む。orchagent / hostcfgd 以外が DEVICE_METADATA を書き換える唯一の既知ケース。
 
 evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
+
+### switch_type 分岐: SAI スイッチ起動属性 (orchagent/main.cpp)
+
+`getCfgSwitchType()` (main.cpp:242) が `DEVICE_METADATA|localhost.switch_type` を読み出し、グローバル変数 `gMySwitchType` に設定する。未設定または不明な値は `"switch"` として扱う。
+
+| `switch_type` 値 | SAI 起動属性 | 必須フィールド | evidence |
+|----------------|------------|-------------|---------|
+| `voq` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ`; `SAI_SWITCH_ATTR_SWITCH_ID = switch_id`; `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES = max_cores`; `SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST = <sysport list>` | `switch_id`, `max_cores`, `asic_name`, `hostname` が未設定なら起動失敗 (exit) | sonic-swss/orchagent/main.cpp:694-721 |
+| `fabric` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_FABRIC`; `SAI_SWITCH_ATTR_SWITCH_ID = switch_id` | `switch_id` が未設定なら起動失敗 (exit); MAC アドレス設定をスキップ (`gMySwitchType != "fabric"` 条件 main.cpp:675) | sonic-swss/orchagent/main.cpp:738-770 |
+| `dpu` | `DpuOrchDaemon` を生成; `DPU_APPL_DB` + `DPU_APPL_STATE_DB` に専用 DBConnector を接続; ZMQ sync 強制 (`-z zmq_sync -k 65536`) | — | sonic-swss/orchagent/main.cpp:990-994 |
+| `npu` / `switch` / 未設定 | 通常 `OrchDaemon`; `SAI_SWITCH_ATTR_TYPE` を明示設定しない (SAI デフォルト = NPU) | — | main.cpp:997-999 |
+| `chassis-packet` | 通常 `OrchDaemon`; VoQ と同様に `CHASSIS_APP_DB` に接続するが `SAI_SWITCH_TYPE` は NPU | — | main.cpp:997-999 |
+
+### switch_type 分岐: SAI sync タイムアウト (orchagent/main.cpp)
+
+`SAI_REDIS_SWITCH_ATTR_SYNC_OPERATION_RESPONSE_TIMEOUT` を switch_type に応じて拡張し、SWITCH 作成完了後にデフォルト値へ戻す。
+
+| `switch_type` 値 | タイムアウト倍率 | evidence |
+|----------------|--------------|---------|
+| `voq` / `chassis-packet` / `dpu` | デフォルト × 5 | sonic-swss/orchagent/main.cpp:822-824 |
+| `fabric` | デフォルト × 10 | main.cpp:826-828 |
+| `npu` / それ以外 | デフォルト × 1 (変更なし) | main.cpp:830-833 |
+
+> `ASAN_OPTIONS` 環境変数が設定されている場合は各倍率がさらに × 2 される (ASAN デバッグビルド向け)。
+
+### switch_type 分岐: voq モードの必須フィールド検証 (orchagent/main.cpp)
+
+`switch_type = "voq"` のとき `getSystemPortConfigList()` (main.cpp:290) が以下フィールドを順に検証する。いずれかが未設定・不正な場合は orchagent が exit する。
+
+| フィールド | 必須条件 | エラー時の挙動 |
+|-----------|---------|-------------|
+| `switch_id` | 0 以上の整数として存在 | `return false` → SAI voq 作成スキップ |
+| `max_cores` | 1 以上の整数として存在 | `return false` → SAI voq 作成スキップ |
+| `hostname` | 空でない文字列 | `return false` |
+| `asic_name` | 空でない文字列 | `return false` |
+
+evidence: sonic-swss/orchagent/main.cpp:305-363
+
+### buffer_model 分岐: BUFFER_POOL.mode SAI 属性マッピング (orchagent/bufferorch.cpp)
+
+`buffer_model` フィールドは `buffermgrd` の起動モードを決めるだけでなく、`BUFFER_POOL` テーブルの `mode` フィールド値 (= `"dynamic"` / `"static"`) が bufferorch.cpp 経由で SAI 属性に変換される。
+
+| `BUFFER_POOL.mode` 値 | SAI 属性 | evidence |
+|----------------------|---------|---------|
+| `"dynamic"` | `SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE = SAI_BUFFER_POOL_THRESHOLD_MODE_DYNAMIC` | sonic-swss/orchagent/bufferorch.cpp:474-476; orchagent/bufferorch.h:22 |
+| `"static"` | `SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE = SAI_BUFFER_POOL_THRESHOLD_MODE_STATIC` | sonic-swss/orchagent/bufferorch.cpp:478-480; orchagent/bufferorch.h:23 |
+| それ以外 | `task_invalid_entry` エラー → エントリを reject | bufferorch.cpp:484 |
+
+> BUFFER_POOL の `mode` は **create-only** 属性のため、プール作成後に変更しても `bufferorch.cpp:469-471` でスキップされる。`buffer_model = "dynamic"` の環境では `buffermgrd -a /etc/sonic/asic_table.json` (dynamic モード) が BUFFER_POOL エントリを生成し、`mode = "dynamic"` を設定する。`buffer_model = "traditional"` では `buffermgrd -l pg_profile_lookup.ini` が生成し `mode = "static"` を設定する。
+
+### platform 分岐: saihelper — init 時の SAI sync タイムアウト (orchagent/saihelper.cpp)
+
+`sai_initialize_switch()` 内で `getenv("platform")` を読み、INIT_VIEW 送信前後のタイムアウトをベンダ毎に調整する。
+
+| platform 値 | INIT_VIEW 前タイムアウト | INIT_VIEW 後タイムアウト | evidence |
+|-------------|----------------------|----------------------|---------|
+| `mellanox` / `xsight` / `marvell-prestera` | `SAI_REDIS_SYNC_OPERATION_RESPONSE_TIMEOUT` (拡張値) | — (戻さない) | sonic-swss/orchagent/saihelper.cpp:423-440 |
+| `mellanox` / `xsight` | 上記に加え INIT_VIEW 後にデフォルト値へ復元 | デフォルト値に戻す | saihelper.cpp:453-467 |
+| それ以外 | 変更なし | 変更なし | — |
 <!-- /platform -->
 
 <!-- failure -->
