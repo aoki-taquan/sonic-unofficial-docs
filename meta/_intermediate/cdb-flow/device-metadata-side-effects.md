@@ -79,3 +79,67 @@ bmc ロウを購読しているコンシューマが実装上確認されてい�
 | `syslog_with_osversion` | hostcfgd | Linux のみ | rsyslog-config restart | hostcfgd:1600 |
 
 > **結論**: DEVICE_METADATA|localhost の SET/DEL が **直接** 他 DB へ書込みを行うケースは `suppress-fib-pending` 切替時の APPL_DB `APP_ROUTE_TABLE` 応答処理のみ。他は全て内部フラグ更新または Linux システム呼び出しに留まる。
+
+---
+
+## switchorch.cpp による起動時副次 DB 書込 (SwitchOrch 初期化)
+
+ソース: `sonic-swss/orchagent/switchorch.cpp`, `sonic-swss/orchagent/main.cpp`
+
+DEVICE_METADATA フィールドは runtime の consumer イベントとして SwitchOrch に届くのではなく、**orchagent 起動時の一読み出し**で消費される。その結果 SwitchOrch コンストラクタと init 関数群が以下の DB 書込を行う。
+
+### 5. SwitchOrch → STATE_DB / `SWITCH_CAPABILITY` (起動時)
+
+`set_switch_capability()` (switchorch.cpp:1864-1867) が `m_switchTable.set("switch", values)` を呼び出す。`m_switchTable` は `STATE_DB:SWITCH_CAPABILITY` (orchdaemon.cpp:196 で `STATE_SWITCH_CAPABILITY_TABLE_NAME` を渡して構築)。
+
+書込タイミング・フィールド:
+
+| 呼び出し元 | 書込フィールド | evidence |
+|-----------|--------------|---------|
+| `set_switch_pfc_dlr_init_capability()` (コンストラクタ) | `PFC_DLR_INIT_CAPABLE` = "true"/"false" | switchorch.cpp:137,143 |
+| `initAsicSdkHealthEventNotification()` (コンストラクタ) | `ASIC_SDK_HEALTH_EVENT` / `REG_FATAL/WARNING/NOTICE_ASIC_SDK_HEALTH_CATEGORY` | switchorch.cpp:231,246,266,271 |
+| `querySwitchOrderedEcmpCapability()` (doAppSwitchTableTask) | `ORDERED_ECMP_CAPABLE` = "true"/"false" | switchorch.cpp:491-502 |
+| `querySwitchPortEgressSampleCapability()` (コンストラクタ) | `PORT_EGRESS_SAMPLE_CAPABLE` | switchorch.cpp:1886-1896 |
+| `querySwitchPortMirrorCapability()` (コンストラクタ) | `PORT_INGRESS_MIRROR_CAPABLE`, `PORT_EGRESS_MIRROR_CAPABLE` | switchorch.cpp:1915,1939 |
+| `querySwitchTpidCapability()` (コンストラクタ) | `PORT_TPID_CAPABLE`, `LAG_TPID_CAPABLE` | switchorch.cpp:1975,1995 |
+| `setSwitchIcmpOffloadCapability()` (コンストラクタ) | `ICMP_OFFLOAD_CAPABLE` | switchorch.cpp:2056,2061 |
+| `setFastLinkupCapability()` (コンストラクタ) | `FAST_LINKUP_CAPABLE`, `FAST_LINKUP_POLLING_TIMER_RANGE`, `FAST_LINKUP_GUARD_TIMER_RANGE` | switchorch.cpp:2107,2145 |
+
+`switch_type` フィールドが `fabric` のとき orchagent は SAI_SWITCH_TYPE_FABRIC で create_switch し、一部ケーパビリティが無効となる (main.cpp:740-770)。
+
+### 6. SwitchOrch → STATE_DB / `ASIC_TEMPERATURE_INFO` (タイマー駆動)
+
+SwitchOrch は `ASIC_SENSORS_POLL_TIMER` 割り込みで `m_asicSensorsTable->set("", values)` を定期呼び出しする (switchorch.cpp:1728,1746,1770,1841,1853,1860)。`m_asicSensorsTable` は `STATE_DB:ASIC_TEMPERATURE_INFO` (schema.h:138)。
+
+起動時に `initSensorsTable()` (switchorch.cpp:165 呼び出し) でタイマーが開始される。DEVICE_METADATA `switch_type` が `fabric` の場合はセンサポーリング動作が変わる可能性あり。
+
+### 7. SwitchOrch → STATE_DB / `ASIC_SDK_HEALTH_EVENT_TABLE` (イベント駆動)
+
+SAI から ASIC SDK health event が通知されたとき `onSwitchAsicSdkHealthEvent()` (switchorch.cpp:1578) が `m_asicSdkHealthEventTable->set(time_ss.str(), values)` を呼び出す (switchorch.cpp:1661)。`m_asicSdkHealthEventTable` は `STATE_DB:ASIC_SDK_HEALTH_EVENT_TABLE` (schema.h:507)。
+
+`DEVICE_METADATA.switch_type` = `fabric` / `dpu` 時に SAI イベントのサポート可否が異なる。
+
+### 8. APPL_DB → ASIC_DB / SAI switch attributes (APPL_DB SWITCH_TABLE 経由)
+
+SwitchOrch は APPL_DB `SWITCH_TABLE` を consumer として購読し (tableName == APP_SWITCH_TABLE_NAME: switchorch.cpp:1499)、フィールドごとに `sai_switch_api->set_switch_attribute(gSwitchId, &attr)` を呼び出す (switchorch.cpp:722)。
+
+DEVICE_METADATA の `switch_type` フィールドが `voq` のとき、起動時に `switch.json.j2` などで APPL_DB `SWITCH_TABLE` に `ecmp_hash_seed`/`lag_hash_seed` を書き込む処理があり (sonic-buildimage:switch.json.j2:16-17)、それが SwitchOrch→SAI→ASIC_DB 書込につながる。
+
+マッピング表 (switchorch.cpp:44-54):
+
+| CONFIG_DB `switch_type` 依存の APPL_DB フィールド | SAI 属性 |
+|--------------------------------------------------|---------|
+| `ecmp_hash_seed` | `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_SEED` |
+| `lag_hash_seed` | `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_SEED` |
+| `fdb_aging_time` | `SAI_SWITCH_ATTR_FDB_AGING_TIME` |
+| `vxlan_port` | `SAI_SWITCH_ATTR_VXLAN_DEFAULT_PORT` |
+| `vxlan_router_mac` | `SAI_SWITCH_ATTR_VXLAN_DEFAULT_ROUTER_MAC` |
+
+## 更新後サマリ (switchorch 含む)
+
+| トリガー | consumer | 対象 DB | 書込 / 副作用 | evidence |
+|---------|---------|--------|--------------|---------|
+| orchagent 起動 (`switch_type`/`subtype`/`switch_id` 読み出し) | SwitchOrch init | STATE_DB `SWITCH_CAPABILITY` | PFC_DLR/ECMP/Mirror/TPID/ICMP 等のケーパビリティフラグ | switchorch.cpp:145,251,276,492,502,1866,1900,1957,2009,2063,2145 |
+| タイマー割り込み (`switch_type` 依存で動作変化) | SwitchOrch | STATE_DB `ASIC_TEMPERATURE_INFO` | ASIC 温度センサ値 | switchorch.cpp:1728,1746,1770 |
+| SAI health event 通知 | SwitchOrch | STATE_DB `ASIC_SDK_HEALTH_EVENT_TABLE` | ASIC SDK 健全性イベント | switchorch.cpp:1661 |
+| APPL_DB SWITCH_TABLE SET (`switch_type` 依存値から生成) | SwitchOrch | ASIC_DB (SAI) | ecmp_hash_seed / lag_hash_seed / fdb_aging_time 等 | switchorch.cpp:722 |

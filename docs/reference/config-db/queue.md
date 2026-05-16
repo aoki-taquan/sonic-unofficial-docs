@@ -419,6 +419,39 @@ QUEUE テーブルの SET 処理は `QosOrch::handleQueueTable()` が `task_proc
 `scheduler` が未解決の段階で `task_need_retry` を返すため、**SCHEDULER が未解決の間は
 WRED_PROFILE の確認・適用も保留される**。
 
+### SAI queue bind 順序
+
+フィールド解決後、各 queue index に対して以下の順で SAI 呼び出しが行われる（`qosorch.cpp:1920-1944`）:
+
+1. **`applySchedulerToQueueSchedulerGroup()`** — `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` を scheduler group に設定
+2. **`applyWredProfileToQueue()`** — `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を queue オブジェクトに設定
+
+`scheduler` と `wred_profile` は独立した SAI オブジェクト（scheduler group / queue）に別々に bind される。
+`scheduler` の SAI 書き込みが成功した後に `wred_profile` が失敗した場合、scheduler は SAI に残ったまま rollback されない（部分適用）。
+
+### VOQ 4-token key の順序制約
+
+VOQ シャーシ (`gMySwitchType == "voq"`) では key は 4 トークン必須（`qosorch.cpp:1772-1799`）:
+
+```
+QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
+```
+
+`handleQueueTable` は token[0]==`gMyHostName` かつ token[1]==`gMyAsicName`（大文字小文字無視）の場合のみ `local_port = true` としてローカルポートとして処理する。それ以外はリモートシステムポート扱いで `applySchedulerToQueueSchedulerGroup` の VOQ 分岐が `return true` (no-op) を返す。
+
+**VOQ 環境での投入要件**: `hostname` と `asic_name` が自 ASIC と一致するエントリのみ scheduler 適用が実行される。リモートポートへの scheduler 適用は意図的にスキップされる。
+
+### bufferorch との関係 (BUFFER_QUEUE)
+
+`bufferorch` は `BUFFER_QUEUE` テーブル (APPL_DB) を購読し、`SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` を設定する。これは `qosorch` の QUEUE テーブル処理とは独立した経路だが、同一 queue OID を共有する:
+
+| orch | テーブル | SAI 属性 | 先行必須 |
+|------|---------|---------|---------|
+| `qosorch` | `QUEUE` (CONFIG_DB) | `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` / `SAI_QUEUE_ATTR_WRED_PROFILE_ID` | PORT, SCHEDULER, WRED_PROFILE |
+| `bufferorch` | `BUFFER_QUEUE` (APPL_DB) | `SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` | PORT, BUFFER_PROFILE |
+
+`bufferorch.processQueue()` も VOQ 4-token key を同じロジックで処理する（`bufferorch.cpp:920-944`）。BUFFER_PROFILE が未解決の場合は `task_need_retry`。
+
 ### DEL 時の順序制約
 
 DEL ハンドラは参照先（SCHEDULER / WRED_PROFILE）の存在チェックを行わず、SAI attribute を
@@ -434,7 +467,11 @@ allPortsReady() = true → QosOrch アンブロック
   ↓
 SCHEDULER / WRED_PROFILE エントリが CONFIG_DB に存在
   ↓
-QUEUE エントリを投入 → QosOrch が OID 解決 → SAI 適用
+QUEUE エントリを投入
+  ↓ resolveFieldRefValue: scheduler → wred_profile の順に OID 解決
+  ↓ for each port_name / queue_ind:
+      applySchedulerToQueueSchedulerGroup() → SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID
+      applyWredProfileToQueue()             → SAI_QUEUE_ATTR_WRED_PROFILE_ID
 ```
 
 実運用では `config qos reload` が `qos_config.j2` テンプレートから
