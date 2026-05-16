@@ -54,6 +54,26 @@ SONiC master における `DHCP_SERVER_IPV6` テーブルの YANG モデル、Py
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> `DHCP_SERVER_IPV6` は未実装のため、DHCPv6 エコシステム（`DHCP_RELAY` / `dhcp6relay`）の暗黙参照を代理調査した結果を示す。
+
+`dhcp6relay` デーモン（`sonic-dhcp-relay/dhcp6relay/src/`）は `DHCP_RELAY` テーブルを処理する際に、YANG leafref 定義なしで以下の CONFIG_DB テーブルを参照する:
+
+| 参照先テーブル | 参照方向 | 条件 | 証拠 |
+|---|---|---|---|
+| `VLAN_INTERFACE\|<vlan>\|*` | 読み取り (IPv6 アドレス必須チェック) | 常時 | `config_interface.cpp:130` |
+| `VLAN_MEMBER\|<vlan>\|*` | 読み取り (ポートマップ構築) | 常時 | `relay.cpp:856` |
+
+**VLAN_INTERFACE**: `config_interface.cpp:130` で `"VLAN_INTERFACE|" + vlan + "|*"` パターンを CONFIG_DB 検索し、IPv6 アドレスが存在しない VLAN は警告を出してスキップする。YANG モデル（`sonic-dhcpv6-relay.yang`）には leafref なし。
+
+**VLAN_MEMBER**: `relay.cpp:856` で `"VLAN_MEMBER|" + vlan + "|*"` を取得し、member interface → VLAN の逆引きマップを構築する。これがないとクライアントパケットの VLAN 判定が不可能。
+
+詳細: [`meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md)
+
+<!-- /cross-refs -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G 調査)
 
