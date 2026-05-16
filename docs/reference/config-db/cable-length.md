@@ -320,6 +320,110 @@ APPL_DB.BUFFER_PROFILE / BUFFER_PG 生成 → bufferorch → SAI buffer API
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動・エラー処理 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/cable-length-failure.md`
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp:978,1106,1117,1541-1548,2155-2159,2189-2219, cfgmgr/buffermgr.cpp:154-155,168-170,240-243,257-258 -->
+
+### dynamic モード (buffermgrdyn) の失敗パターン
+
+#### speed 未設定 → headroom 計算スキップ（no retry）
+
+`handleCableLenTable()` 処理中に `effectiveSpeed.empty()` の場合、headroom 計算はスキップされる。
+
+```
+WARN: "Speed for %s hasn't been configured yet, unable to calculate headroom"
+```
+
+- リトライキューへは積まれず、`continue` で次ポートの処理へ移行する（`buffermgrdyn.cpp:2155-2159`）。
+- speed が後から設定された時点で `handlePortTable()` が `refreshPgsForPort()` を呼び出す設計のため、明示的な retry は不要とされている。
+- **注意**: speed が永久に設定されない場合、lossless PG は設定されないままになる。
+
+#### accumulative headroom 超過 → task_failed
+
+`refreshPgsForPort()` → `isHeadroomResourceValid()` でポートの累積 headroom がプラットフォーム上限を超えた場合:
+
+```
+ERROR: "Update speed (%s) and cable length (%s) for port %s failed,
+        accumulative headroom size exceeds the limit"
+```
+
+- `releaseProfile(newProfile)` で新プロファイルを即時解放（`buffermgrdyn.cpp:1541-1548`）。
+- `handleCableLenTable()` は当該ポートをエラーカウントに加算し、**全ポートの処理を完了してから** `task_failed` を返す（`buffermgrdyn.cpp:2200-2208`）。途中で中断しないため、後続ポートへの影響はない。
+- Orch フレームワークは `task_failed` エントリを破棄する（再 retry なし）。
+
+#### BUFFER_POOL 未準備 → task_need_retry
+
+`allocateProfile()` で `ingress_lossless_pool` が未確立（`getPgPoolMode()` が空文字列を返す）の場合:
+
+- `task_process_status::task_need_retry` を返却（`buffermgrdyn.cpp:978-979`）。
+- Orch フレームワークが `BUFFERMGR_TIMER_PERIOD=10` 秒後に自動再試行。BUFFER_POOL 確立後に自動解消される。
+
+#### Lua プラグイン実行失敗 → WARN のみ、プロファイル値は空
+
+`calculateHeadroomSize()` 内の EVALSHA 呼び出しが失敗した場合、xon/xoff/size フィールドは空文字列のまま処理が続行される（`buffermgrdyn.cpp:621-648`）。
+
+```
+WARN: "Failed to calculate headroom for %s"          # ret.empty() の場合
+WARN: "Lua scripts for headroom calculation were not executed successfully"  # 例外の場合
+```
+
+- 関数は `return` で抜けるだけで例外は伝播しない。
+- 空フィールドで APPL_DB に書き込まれると `bufferorch` 側でエラーが発生する可能性がある。
+- 根本原因: Lua スクリプトの Redis ロード失敗（通常は起動時に検出されるが、APPL_DB 再起動等で再発する場合あり）。
+
+#### headroom チェック Lua 失敗 → WARN のみ、制約スキップ
+
+`isHeadroomResourceValid()` でチェック用 Lua が失敗した場合は **true を返却**（`buffermgrdyn.cpp:1106`）。headroom 超過チェックが事実上スキップされ、プラットフォームのバッファ容量を超えた設定が通ってしまう可能性がある。
+
+### static モード (buffermgr) の失敗パターン
+
+#### pg_profile_lookup.ini に該当エントリなし → task_invalid_entry
+
+`m_pgProfileLookup` に対象 speed/cable の組み合わせが存在しない場合（`buffermgr.cpp:240-243`）:
+
+```
+ERROR: "Unable to create/update PG profile for port %s.
+        No PG profile configured for speed %s and cable length %s"
+```
+
+- `task_process_status::task_invalid_entry` を返却。エントリは**破棄**され retry されない。
+- **static モード固有の罠**: INI ファイルに存在しない speed/cable の組み合わせを設定すると、恒久的に lossless PG が設定されない。CLI/config エラーにはならず、ログ監視が必要。
+
+#### PORT_QOS_MAP 未着 → task_need_retry (static)
+
+`pfc_enable` が未取得（`m_portStatusLookup.count(port) == 0`）の場合（`buffermgr.cpp:168-170`）:
+
+- `task_process_status::task_need_retry` を返却。
+- PORT_QOS_MAP が着信した時点で自動再処理される。
+
+### 失敗挙動まとめ
+
+| 条件 | モード | ステータス | retry | ログレベル |
+|------|--------|-----------|-------|------------|
+| speed 未設定 | dynamic | ポートスキップ | no（speed 設定時に再処理） | WARN |
+| speed/cable 未設定 | static | task_need_retry | yes（10 秒周期） | INFO |
+| accumulative headroom 超過 | dynamic | task_failed | no（エントリ破棄） | ERROR |
+| BUFFER_POOL 未準備 | dynamic | task_need_retry | yes（10 秒周期） | INFO |
+| BUFFER_POOL 未準備 | static | task_need_retry | yes | INFO |
+| Lua 実行失敗 | dynamic | (関数継続、空値) | no | WARN |
+| INI エントリなし | static | task_invalid_entry | no（エントリ破棄） | ERROR |
+| PORT_QOS_MAP 未着 | static | task_need_retry | yes（PORT_QOS_MAP 着信時） | INFO |
+| PORT_ADMIN_DOWN | dynamic | task_success | —（admin up 時に再処理） | INFO |
+
+!!! warning "INI エントリなしは silent failure"
+    static buffer モードでは `pg_profile_lookup.ini` に存在しない speed/cable の組み合わせを設定しても
+    CLI はエラーを返さず、lossless PG が永続的に欠落する。`show buffer configuration` で意図したプロファイルが
+    設定されているか確認すること。
+
+!!! warning "accumulative headroom 超過は non-recoverable"
+    `task_failed` として処理が破棄されるため、ケーブル長を元に戻す（または短くする）操作が必要。
+    `show buffer information` で各ポートの headroom 使用量を確認してから変更すること。
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
