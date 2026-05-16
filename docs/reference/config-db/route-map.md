@@ -552,6 +552,36 @@ ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。`
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref および frrcfgd 実装スキャンにより確認した参照先テーブル一覧。詳細抽出は `meta/_intermediate/cdb-flow/route-map-cross-refs.md` を参照。
+
+| 参照先テーブル / リソース | 参照方向 | 参照フィールド | 条件・備考 |
+|--------------------------|---------|--------------|-----------|
+| [`PREFIX_SET`](prefix-set.md) | leafref (必須) | `match_prefix_set`, `match_next_hop_set` | frrcfgd が `PREFIX_SET.mode` を動的参照して IPv4/IPv6 AF を決定。PREFIX_SET 未作成時は FRR コマンド未発行 (silent drop) |
+| [`PREFIX_SET`](prefix-set.md) | leafref (YANG のみ) | `match_ipv6_prefix_set` | YANG leafref あり、frrcfgd `route_map_key_map` 未実装 → dead field |
+| [`COMMUNITY_SET`](community-set.md) | leafref (推奨事前作成) | `match_community`, `set_community_ref` | frrcfgd が `get_table('COMMUNITY_SET')` で全件参照。未作成時は FRR コマンド未発行 |
+| `EXTENDED_COMMUNITY_SET` | leafref (推奨事前作成) | `match_ext_community`, `set_ext_community_ref` | frrcfgd が `get_table('EXTENDED_COMMUNITY_SET')` で全件参照 |
+| [`AS_PATH_SET`](as-path-set.md) | leafref (推奨事前作成) | `match_as_path` | frrcfgd が `get_table('AS_PATH_SET')` で全件参照。未作成時 FRR 側で無効参照エラー |
+| [`ROUTE_MAP_SET`](route-map-set.md) | leafref (推奨事前作成) | `call_route_map` | 参照先 route-map 未定義時は FRR が素通り（ポリシー未適用） |
+| [`PORT`](port.md) | leafref | `match_interface` (union), `match_neighbor` (union) | 物理ポート名で interface match / neighbor match |
+| [`PORTCHANNEL`](portchannel.md) | leafref | `match_interface` (union), `match_neighbor` (union) | LAG 名で interface match / neighbor match |
+| [`LOOPBACK_INTERFACE`](loopback-interface.md) | leafref | `match_interface` (union) | loopback 名で interface match。`match_neighbor` には非対応 |
+| [`VRF`](vrf.md) | leafref | `match_src_vrf` | union (`default` 固定文字列 または VRF leafref)。VRF 未作成時は FRR コマンド対象外 |
+| [`BGP_NEIGHBOR_AF`](bgp-neighbor-af.md) | 逆参照（被参照） | `route_map_in`, `route_map_out` | BGP_NEIGHBOR_AF が ROUTE_MAP_SET.name を leafref で参照。frrcfgd が `neighbor {} route-map {} in/out` に変換 |
+| [`BGP_PEER_GROUP_AF`](bgp-peer-group-af.md) | 逆参照（被参照） | `route_map_in`, `route_map_out` | BGP_PEER_GROUP_AF が ROUTE_MAP_SET.name を leafref で参照。BGP_NEIGHBOR_AF と同一 handler |
+
+!!! note "VLAN は YANG でコメントアウト"
+    `match_interface` / `match_neighbor` の VLAN union は `sonic-route-map.yang` 内でコメントアウト済み (`//type leafref vlan...`)。VLAN 名を指定してもコンパイルエラーまたは無視される。
+
+!!! note "EXTENDED_COMMUNITY_SET ページ"
+    `EXTENDED_COMMUNITY_SET` のスタンドアロン参照ページは未作成。frrcfgd は `COMMUNITY_SET` と `EXTENDED_COMMUNITY_SET` を同一 handler (`comm_set_handler`) で処理する。
+
+> **スキャン証跡**: `sonic-route-map.yang` 全 leafref、`frrcfgd.py` L2671 (PREFIX_SET AF 解決)、L2875-2882 (COMMUNITY_SET get_table)、L2907-2908 (PREFIX_SET get_table)、L1903-1904 (BGP_NEIGHBOR_AF route_map_in/out)。詳細は `meta/_intermediate/cdb-flow/route-map-cross-refs.md` を参照。
+
+<!-- /cross-refs -->
+
 <!-- pubsub -->
 ## CONFIG_DB 購読メカニズム (Phase G)
 
