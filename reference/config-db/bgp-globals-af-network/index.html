@@ -24674,6 +24674,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要 — silent drop の検出可否
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35188,6 +35238,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要 — silent drop の検出可否
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35552,6 +35652,80 @@
 <li><code>bgpcfgd</code> が FRR running-config を読み CONFIG_DB と同期</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>BGP_GLOBALS_AF_NETWORK</code> の Consumer は <code>frrcfgd</code>。共通ハンドラ <code>bgp_table_handler_common</code> を経由し、<code>bgp_message_handler</code> ループ内の <code>BGP_GLOBALS_AF_NETWORK</code> 専用分岐 (<code>frrcfgd.py:3169-3186</code>) で <code>vtysh -c "router bgp &lt;asn&gt; vrf &lt;vrf&gt;" -c "address-family &lt;af&gt; &lt;ip_type&gt;" -c "network &lt;prefix&gt; [route-map &lt;name&gt;] [backdoor]"</code> を発行する。<strong>前提テーブル不在時は silent drop、再試行・deferred queue なし</strong>。</p>
+<h3 id="_20">推奨書込み順序<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>① VRF|&lt;vrf&gt;                                       (default 以外を使う場合)
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>② BGP_GLOBALS|&lt;vrf&gt;  (local_asn)                  ← 不在だと #1 で silent drop
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>③ BGP_GLOBALS_AF|&lt;vrf&gt;|&lt;afi_safi&gt;                 (AF レベル属性の一貫性)
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>④ ROUTE_MAP / ROUTE_MAP_SET                       (policy 指定時、未存在は permit-any 期間)
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>⑤ STATIC_ROUTE / 直結インターフェース             (network_import_check=true の RIB 前提)
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>⑥ BGP_GLOBALS_AF_NETWORK|&lt;vrf&gt;|&lt;afi_safi&gt;|&lt;prefix&gt;
+</span></code></pre></div>
+<h3 id="_21">主要な順序依存<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>BGP_GLOBALS.local_asn</code> → 本テーブル</td>
+<td>先行必須</td>
+<td><code>local_asn=None</code> なら <code>syslog DEBUG 'ignore table ...'</code> で <strong>silent drop</strong>。<code>__apply_dep_vrf_table</code> は <code>ROUTE_REDISTRIBUTE</code> のみ再適用するため本テーブルは復旧しない (<code>frrcfgd.py:2656-2662, 2704</code>)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>BGP_GLOBALS_AF</code> → 本テーブル</td>
+<td>推奨</td>
+<td><code>table_handler_list</code> 順序 (<code>frrcfgd.py:2297 vs 2318</code>) で起動時は保証、runtime は AF 属性未確定の中間状態あり</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>bgpd</code> プロセス起動 → 書込み</td>
+<td>先行必須</td>
+<td>未起動・restart 中の <code>vtysh</code> は失敗、<code>syslog ERR 'failed running BGP IP prefix AF config command'</code> で <code>continue</code>、<strong>リトライなし</strong> (<code>frrcfgd.py:3184-3186</code>)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>ROUTE_MAP</code> (<code>policy</code> 参照先) → 本テーブル</td>
+<td>推奨</td>
+<td>frrcfgd・FRR とも未存在 route-map を受理 (permit-any として扱われ全許可で広告) (<code>frrcfgd.py:922-924</code>)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>VRF|&lt;name&gt;</code> → 本テーブル</td>
+<td>先行必須 (非 default)</td>
+<td><code>vrf_tables</code> メンバ (<code>frrcfgd.py:2136-2140</code>)、<code>vrf_handler</code> が <code>table_handler_list</code> 最先頭 (<code>frrcfgd.py:2294</code>)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>RIB 上に prefix 存在 → 実 BGP UPDATE</td>
+<td>タイミング</td>
+<td>CONFIG_DB 書込み成功・FRR 投入成功でも <code>network_import_check=true</code> で広告されない期間が発生</td>
+</tr>
+<tr>
+<td>7</td>
+<td>DEL 操作</td>
+<td>即時</td>
+<td><code>no network &lt;prefix&gt; ...</code> を発行。内部キャッシュ更新なし (<code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> と異なる, <code>frrcfgd.py:3187-3196</code> は AGGREGATE 限定)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="silent-drop">重要 — silent drop の検出可否<a class="headerlink" href="#silent-drop" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>local_asn</code> 不在に伴う drop は <code>syslog LOG_DEBUG</code> のため、既定 syslog レベルでは可視化されない。発生時の追跡には <code>swssloglevel -l DEBUG -c frrcfgd</code> が必要。</li>
+<li>一度 drop された <code>BGP_GLOBALS_AF_NETWORK</code> エントリは、後から <code>BGP_GLOBALS.local_asn</code> が到着しても自動再適用されない (<code>__apply_dep_vrf_table(vrf, 'ROUTE_REDISTRIBUTE')</code> は <code>ROUTE_REDISTRIBUTE</code> 一択, <code>frrcfgd.py:2704</code>)。再投入するには <code>BGP_GLOBALS_AF_NETWORK</code> を一度書き直すか frrcfgd を再起動する必要がある。</li>
+</ul>
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:99,2136-2140,2294,2297,2318,2656-2662,2704,3169-3196 -->
+<!-- /ordering -->
 
 <!-- glossary-links-injected: fcbe746ecf8b -->
 
