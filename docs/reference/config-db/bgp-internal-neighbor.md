@@ -180,6 +180,58 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 - 関連 YANG: `sonic-bgp-internal-neighbor`、`sonic-bgp-common`
 - 関連 CLI: マルチ ASIC 環境では `show ip bgp summary` / `vtysh -c 'show bgp neighbor'`
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### タイマー固定値（`internal/instance.conf.j2`）
+
+CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テンプレートが以下をハードコードで適用する:
+
+| FRR 設定 | ハードコード値 | CONFIG_DB フィールド | evidence |
+|---------|-------------|-------------------|---------|
+| `neighbor <addr> timers <keepalive> <holdtime>` | keepalive=`3`秒、holdtime=`10`秒 | `keepalive`/`holdtime`（無視） | `internal/instance.conf.j2:6` |
+| `neighbor <addr> timers connect <retry>` | connect-retry=`10`秒 | （フィールドなし） | `internal/instance.conf.j2:7` |
+
+### peer-group 名定数（`internal/peer-group.conf.j2`）
+
+| 定数 | 値 | evidence |
+|-----|-----|---------|
+| IPv4 internal peer-group 名 | `INTERNAL_PEER_V4` | `peer-group.conf.j2:4` |
+| IPv6 internal peer-group 名 | `INTERNAL_PEER_V6` | `peer-group.conf.j2:5` |
+
+### peer-group 固定設定（CONFIG_DB 値非依存）
+
+| 設定 | ハードコード値 | 適用条件 | evidence |
+|-----|-------------|---------|---------|
+| `allowas-in` | `1` | 常時（IPv4/IPv6 両 AF） | `peer-group.conf.j2:15,29` |
+| `soft-reconfiguration` | `inbound` | 常時 | `peer-group.conf.j2:14,28` |
+| `send-community` | — | 常時 | `peer-group.conf.j2:18,32` |
+| `ttl-security hops` | `1` | `switch_type == 'chassis-packet'` 時のみ | `peer-group.conf.j2:8,22` |
+
+### route-map 名定数（`internal/policies.conf.j2`）
+
+| 定数 | 値 | 使用箇所 | evidence |
+|-----|-----|---------|---------|
+| IPv4 inbound route-map | `FROM_BGP_INTERNAL_PEER_V4` | peer-group の `route-map ... in`、policies 全分岐 | `peer-group.conf.j2:16`、`policies.conf.j2:9,32,37,43,47,99` |
+| IPv4 outbound route-map | `TO_BGP_INTERNAL_PEER_V4` | peer-group の `route-map ... out` | `peer-group.conf.j2:17`、`policies.conf.j2:78,82,103` |
+| IPv6 inbound route-map | `FROM_BGP_INTERNAL_PEER_V6` | 同上 IPv6 | `peer-group.conf.j2:30`、`policies.conf.j2:16,20,53,57,62,68,72,93,101` |
+| IPv6 outbound route-map | `TO_BGP_INTERNAL_PEER_V6` | 同上 IPv6 | `peer-group.conf.j2:31`、`policies.conf.j2:85,89,105` |
+
+### chassis-packet 向け community / tag 定数（`policies.conf.j2`、`constants.bgp.*`）
+
+`switch_type == 'chassis-packet'` の場合のみ参照される設定注入定数。
+
+| 定数キー | テスト参照値 | 用途 | evidence |
+|---------|------------|------|---------|
+| `constants.bgp.internal_community` | `12345:556` | `DEVICE_INTERNAL_COMMUNITY` community-list。`TO_BGP_INTERNAL_PEER` で tag 付与 | `policies.conf.j2:34`、`param_chasiss_packet.json:9` |
+| `constants.bgp.internal_fallback_community` | `1111:2222` | `DEVICE_INTERNAL_FALLBACK_COMMUNITY` community-list。フォールバック経路識別 | `policies.conf.j2:35`、`param_chasiss_packet.json:15` |
+| `constants.bgp.local_anchor_route_community` | `12345:555` | `LOCAL_ANCHOR_ROUTE_COMMUNITY`。`TO_BGP_INTERNAL_PEER deny 15` で deny 判定 | `policies.conf.j2:36`、`param_chasiss_packet.json:16` |
+| `constants.bgp.internal_community_match_tag` | `101` | `FROM_BGP_INTERNAL_PEER permit 1/2` での `set tag` | `policies.conf.j2:40,58`、`param_chasiss_packet.json:13` |
+| `constants.bgp.route_eligible_for_fallback_to_default_tag` | `203` | `FROM_BGP_INTERNAL_PEER permit 3/4`（非 DownstreamLC）での `set tag` | `policies.conf.j2:50,70`、`param_chasiss_packet.json:14` |
+| NO_EXPORT route local-preference | `80` | `NO_EXPORT` community 一致時の `set local-preference 80` | `policies.conf.j2:45,65` |
+
+<!-- /constants -->
+
 <!-- ordering -->
 ## 書込み順依存（CONFIG_DB への投入順序）
 
