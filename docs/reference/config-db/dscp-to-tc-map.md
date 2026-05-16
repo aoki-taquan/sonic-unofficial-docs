@@ -369,4 +369,71 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 > **Evidence**: `sonic-swss/orchagent/qosorch.cpp:61,64,81,84,100,103,1329,1332,1955-1956,1988,2030-2032`
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/tunneldecaporch.cpp`
+
+`DSCP_TO_TC_MAP` を SET/DEL した際に [orchagent](../../reference/glossary.md#term-orchagent) が書き込む副次 DB を示す。cfgmgr ステージは存在しない（[CONFIG_DB](../../reference/glossary.md#term-config_db) → orchagent 直結）。[STATE_DB](../../reference/glossary.md#term-state_db) / APPL_STATE_DB への書き込みはない。
+
+### SET — DSCP_TO_TC_MAP 作成・更新
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_DSCP_TO_TC, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` | 新規マップ作成 (qosorch.cpp:265-276) |
+| `sai_qos_map_api->set_qos_map_attribute(...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` field=`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | 既存マップ更新時 (qosorch.cpp:207) |
+
+### SET — PORT_QOS_MAP によるポートバインド
+
+`PORT_QOS_MAP|<port>` に `dscp_to_tc_map` フィールドを書いた際の副次書き込み:
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP, oid)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `<port_oid>` field=`SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | 参照先 DSCP_TO_TC_MAP が SAI 解決済みの各ポート (qosorch.cpp:2086,2193) |
+
+### SET — PORT_QOS_MAP|global によるスイッチレベル適用
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_switch_api->set_switch_attribute(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP, oid)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | `<switch_oid>` field=`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | PORT_QOS_MAP\|global 指定かつ `querySwitchCapability()` が true (qosorch.cpp:1956-1975) |
+
+### DEL — DSCP_TO_TC_MAP 削除
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_qos_map_api->remove_qos_map(sai_object)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` 削除 | `<qos_map_oid>` | PORT_QOS_MAP / TUNNEL 非参照時 (qosorch.cpp:289-293) |
+| pending_remove=true → `task_need_retry`（削除スキップ） | — | — | PORT_QOS_MAP または TUNNEL_DECAP_TABLE から参照中 (qosorch.cpp:181-186) |
+
+### DEL — PORT_QOS_MAP|global によるスイッチレベル解除
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_switch_api->set_switch_attribute(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP, SAI_NULL_OBJECT_ID)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | `<switch_oid>` field=`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | PORT_QOS_MAP\|global の dscp_to_tc_map フィールド存在時 (qosorch.cpp:1993) |
+
+### TUNNEL_DECAP_TABLE 経由の副次書き込み
+
+DSCP_TO_TC_MAP は `TUNNEL_DECAP_TABLE` の `decap_dscp_to_tc_map` フィールドからも参照される:
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_tunnel_api->create_tunnel(..., SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP, oid)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL` | `<tunnel_oid>` field=`SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` | `dscp_to_tc_map_id != SAI_NULL_OBJECT_ID` (tunneldecaporch.cpp:831-834) |
+
+`dscp_to_tc_map_id == SAI_NULL_OBJECT_ID` の場合はトンネル作成時に属性をスキップ（silent skip）。
+
+### 副次書き込みサマリ
+
+| DB | テーブル / 属性 | SET 時 | DEL 時 |
+|----|----------------|--------|--------|
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | create / update (syncd 経由) | remove (syncd 経由, 非参照時のみ) |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_PORT` field=`SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | set_port_attribute (syncd 経由) | set SAI_NULL_OBJECT_ID (PORT_QOS_MAP DEL 時) |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` field=`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | set_switch_attribute (syncd 経由, global あり) | SAI_NULL_OBJECT_ID (global DEL 時) |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL` field=`SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` | create_tunnel (syncd 経由, 非 null 時) | — |
+| APPL_DB | — | なし | なし |
+| STATE_DB | — | なし | なし |
+| APPL_STATE_DB | — | なし | なし |
+| COUNTERS_DB | — | なし | なし |
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:61,181-186,207,265-276,289-293,1956-1975,1993,2086,2193`; `orchagent/tunneldecaporch.cpp:831-834,1084`
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 9e94f614fc2c -->
