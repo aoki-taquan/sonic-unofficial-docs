@@ -596,6 +596,17 @@ SAI (ハードウェア VRF)
 
 SAI 副作用 (ASIC_DB 経由): `create_virtual_router` / `remove_virtual_router` / `set_virtual_router_attribute`。VNI 設定時は `VxlanTunnelOrch` を経由して ASIC_DB に VXLAN エントリが反映される。
 
+### VRFOrch — orchagent 内部副次操作（DB 外）
+
+| 操作 | 対象 | 条件 |
+|------|------|------|
+| `gFlowCounterRouteOrch->onAddVR(router_id)` | FlowCounterRouteOrch 内部登録 | SAI create_virtual_router 成功後 (vrforch.cpp:110) |
+| `gFlowCounterRouteOrch->onRemoveVR(router_id)` | FlowCounterRouteOrch 内部解除 | SAI remove_virtual_router 成功後 (vrforch.cpp:184) |
+| `gPortsOrch->updateL3VniStatus(vlan_id, true)` | VLAN VE インタフェース UP | VNI マッピング追加時、VLAN-VNI マップが既存の場合 (vrforch.cpp:239) |
+| `gPortsOrch->updateL3VniStatus(vlan_id, false)` | VLAN VE インタフェース DOWN | VNI マッピング削除時、VLAN-VNI マップが存在する場合 (vrforch.cpp:267) |
+
+`updateL3VniStatus` は VLAN の VE（Virtual Ethernet）インタフェースの UP/DOWN を制御し、L3 VNI の有効化/無効化と連動する。VTEP・VLAN-VNI マッピングが存在しない場合は実行されない。
+
 ### STATE_DB テーブル役割まとめ
 
 | STATE_DB テーブル | 書込みプロセス | 削除プロセス | 役割 |
