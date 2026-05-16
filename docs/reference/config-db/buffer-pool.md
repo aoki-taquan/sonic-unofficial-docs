@@ -8,6 +8,12 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-buffer-pool.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/buffermgrdyn.cpp
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/buffermgr.cpp
+  - repo: sonic-net/sonic-swss
+    path: orchagent/bufferorch.cpp
 related:
   config_db:
     - BUFFER_POOL
@@ -259,6 +265,62 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
 <!-- /handler-branching -->
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB → buffermgr/buffermgrdyn: SubscriberStateTable
+
+`buffermgrd` は `CFG_BUFFER_POOL_TABLE_NAME` を `vector<TableConnector>` に含め `BufferMgrDynamic` へ渡す（`buffermgrd.cpp:177`）。`Orch::addConsumer()` は CONFIG_DB（DB ID = 4）を検出し **`SubscriberStateTable`** を選択する（`orch.cpp:1188-1190`）。
+
+```cpp
+// orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || ...)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName,
+                                 DEFAULT_POP_BATCH_SIZE, pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+`SubscriberStateTable` は Redis keyspace 通知（`__keyspace@4__:BUFFER_POOL|*` の `PSUBSCRIBE`）を購読し、変更検知後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`）。static buffer model の `BufferMgr` も同じ `addConsumer()` 経由で `SubscriberStateTable` を使用する。
+
+### buffermgr/buffermgrdyn → APPL_DB: ProducerStateTable
+
+`BufferMgrDynamic` は `handleBufferPoolTable()` 内で `m_applBufferPoolTable.set(pool, fvVector)` / `del(pool)` で APPL_DB に書き込む。`ProducerStateTable` は `LPUSH <TABLE>_KEY_SET` + `HSET` によるチャネルベース通知を実行する（`buffermgrdyn.cpp:2630,2637,885`）。
+
+### APPL_DB BUFFER_POOL_TABLE → bufferorch: ConsumerStateTable
+
+`orchdaemon.cpp:387-394` が `APP_BUFFER_POOL_TABLE_NAME` を `applDb`（APPL_DB）で `BufferOrch` に渡す。APPL_DB は DB ID チェックの else 節にマッチするため **`ConsumerStateTable`**（チャネルベース）が選択される。ディスパッチ先: `BufferOrch::doTask()` → `processBufferPool()`。
+
+### bufferorch → APPL_STATE_DB: ResponsePublisher
+
+SAI 処理後、`bufferorch.cpp` は `m_publisher.publish(APP_BUFFER_POOL_TABLE_NAME, ...)` で結果を APPL_STATE_DB に書き戻す。`m_publisher` は `Orch` 基底の `ResponsePublisher m_publisher{"APPL_STATE_DB"}`（`orch.h:382`）。
+
+- **SET + xoff 非空（SHP 有効）**: xoff フィールドのみ publish（`bufferorch.cpp:554-555`）
+- **DEL 完了**: 空 fvs で publish（`bufferorch.cpp:588-589`）
+- **SET + xoff 空（SHP 無効）**: `publish()` は呼ばれない
+
+### データフロー
+
+```
+CONFIG_DB:BUFFER_POOL
+  │  SubscriberStateTable (keyspace通知 → HGETALL)
+  ↓  buffermgrdyn: handleBufferPoolTable()
+APPL_DB:BUFFER_POOL_TABLE
+  │  ConsumerStateTable (チャネル通知)
+  ↓  bufferorch: processBufferPool() → SAI
+APPL_STATE_DB:BUFFER_POOL_TABLE   ← ResponsePublisher (xoff/DEL 時のみ)
+```
+
+| 区間 | 方式 | ソース |
+|------|------|--------|
+| CONFIG_DB → buffermgrd(yn) | `SubscriberStateTable` (keyspace通知) | `orch.cpp:1188-1190` |
+| buffermgrd(yn) → APPL_DB | `ProducerStateTable.set/del` | `buffermgrdyn.cpp:2630,2637` |
+| APPL_DB → bufferorch | `ConsumerStateTable` (チャネル) | `orch.cpp:1193-1194` |
+| bufferorch → APPL_STATE_DB | `ResponsePublisher.publish` | `bufferorch.cpp:555,589` |
+<!-- /pubsub -->
 <!-- defaults -->
 ## コード由来の暗黙デフォルト / 実装乖離 (Phase A)
 
@@ -364,67 +426,4 @@ bufferorch は静的なベンダ名判定を行わず SAI 戻り値で capabilit
 
 > **証跡**: `buffermgrdyn.cpp` L68-88, L504-511, L2525, L2555-2628 / `bufferorch.cpp` L310-322, L437-471, L497-501, L506-512, L916, L1049, L1134, L1168 / `buffers_config.j2` L36-38, L265-327, L331-348 / `buffers_defaults_objects.j2` (Mellanox SN2700) / `buffers_defaults_t0.j2` (Arista 7260CX3) 全行読了。
 <!-- /platform -->
-
-<!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-`BufferOrch` は `BUFFER_POOL` の SET/DEL 処理後に APPL_STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB へ副次書き込みを行う。`buffermgrdyn` は STATE_DB を読み取るのみで書き込みは発生しない。
-
-### APPL_STATE_DB / `APP_BUFFER_POOL_TABLE`
-
-SAI buffer pool 操作完了後、`m_publisher.publish()` が APPL_STATE_DB へ書き込む。
-書き込みは **xoff (Shared Headroom Pool) フィールドが空でない場合のみ**発生する。
-
-| トリガ | フィールド | 値 | evidence |
-|--------|------------|-----|----------|
-| SHP (xoff) 有効プールの SAI 適用成功 (SET) | `xoff` | 計算済み SHP サイズ (bytes 文字列) | `bufferorch.cpp:555` |
-| DEL 操作完了後 | — (エントリ削除) | — | `bufferorch.cpp:589` |
-
-実装: `orch.h:382` — `ResponsePublisher m_publisher{"APPL_STATE_DB"}`。
-`response_publisher.cpp:141-143` — SAI 成功時は intent_attrs を state_attrs として APPL_STATE_DB に書き込む。
-
-!!! note "通常プール（xoff なし）は書込なし"
-    `ingress_lossy_pool` / `egress_lossless_pool` 等 xoff フィールドを持たないプールでは `m_publisher.publish()` は呼ばれない (`bufferorch.cpp:549-556`)。
-
-### COUNTERS_DB / `COUNTERS_BUFFER_POOL_NAME_MAP`
-
-新規プール作成時に pool 名 → SAI OID マッピングを `COUNTERS_DB` の hash に登録する。
-
-| トリガ | 操作 | フィールド | 値 | evidence |
-|--------|------|-----------|-----|----------|
-| SAI pool 新規作成成功 (SET) | `hset` | `<pool_name>` | SAI OID 文字列 | `bufferorch.cpp:546` |
-| SAI pool 削除成功 (DEL) | `hdel` | `<pool_name>` | — | `bufferorch.cpp:586` |
-
-実装: `bufferorch.cpp:55` — `CounterNameMapUpdater("COUNTERS_DB", COUNTERS_BUFFER_POOL_NAME_MAP)`。
-
-!!! note "既存プール更新時は登録スキップ"
-    SET 操作が既存プールへの更新の場合は `setCounterNameMap` が呼ばれず COUNTERS_DB への書き込みは発生しない (`bufferorch.cpp:540-547`)。
-
-### FLEX_COUNTER_DB / `BUFFER_POOL_WATERMARK`
-
-バッファプール watermark のポーリング設定を FLEX_COUNTER_DB に書き込む。
-FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プール分を一括登録する。
-
-| トリガ | 操作 | キー | フィールド | evidence |
-|--------|------|------|-----------|----------|
-| `FLEX_COUNTER_STATUS=enable` 受信時 | `set` | `BUFFER_POOL_WATERMARK:<sai_oid>` | `BUFFER_POOL_COUNTER_ID_LIST=<stat_list>` | `bufferorch.cpp:358` |
-| プール削除時 (DEL) | `del` | `BUFFER_POOL_WATERMARK:<sai_oid>` | — | `bufferorch.cpp:281-282` |
-| 起動時 (group 初期化) | `set` | `FLEX_COUNTER_GROUP_TABLE:BUFFER_POOL_WATERMARK` | plugin SHA + poll interval | `bufferorch.cpp:247-252` |
-
-実装: `bufferorch.cpp:62` — コンストラクタで `initFlexCounterGroupTable()` を呼び出し。
-`saihelper.cpp:323` — `gFlexCounterDb = make_unique<DBConnector>("FLEX_COUNTER_DB", 0)` (DB 番号 5)。
-
-!!! note "watermark clear 非対応 ASIC"
-    SAI `clear_buffer_pool_stats` が `NOT_SUPPORTED` / `NOT_IMPLEMENTED` を返す ASIC では `stats_mode=READ` で登録し watermark clear を抑制する (`bufferorch.cpp:310-322`)。
-
-### STATE_DB / `BUFFER_MAX_PARAM_TABLE`（読み取りのみ）
-
-`buffermgrdyn.cpp` は STATE_DB の `BUFFER_MAX_PARAM_TABLE` から MMU サイズ・最大 PG 数・最大キュー数を **読み取る**のみ (`buffermgrdyn.cpp:133-137, 1873-1966`)。書き込みは `portsorch` が行う。
-
-### 副次書込なし
-
-- **ASIC_DB**: SAI 経由で syncd が書き込む（orchagent の直接書込なし）。
-- **STATE_DB** (書き込み側): `bufferorch`/`buffermgrdyn` は `BUFFER_MAX_PARAM_TABLE` を読むのみ。
-
-<!-- /side-effects -->
 <!-- glossary-links-injected: 44ea702536a5 -->
