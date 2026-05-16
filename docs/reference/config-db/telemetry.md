@@ -240,4 +240,33 @@ db_migrator.py での TELEMETRY マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## フィールドデフォルト (コード由来)
+
+### TELEMETRY|gnmi
+
+| フィールド | デフォルト値 | 設定元 | 備考 |
+|-----------|-------------|--------|------|
+| `port` | `50051` (minigraph 注入) / `8080` (gnmi キー未存在時) | `minigraph.py` L2680; `telemetry.sh` L85 | gnmi キー自体が CONFIG_DB にない場合 `telemetry.sh` が `8080` にフォールバック |
+| `client_auth` | `"true"` (minigraph 注入) / 未設定 → `false` 扱い | `minigraph.py` L2679; `telemetry.sh` L96 | 空または `"false"` のとき `--allow_no_client_auth` を付与して起動 |
+| `log_level` | `2` | `minigraph.py` L2681; `telemetry.sh` L104 | 非数値 or 未設定なら `-v=2` にフォールバック |
+| `save_on_set` | 未設定（= 無効） | `telemetry.sh` L107 コメント | 明示的に `"true"` を設定した場合のみ有効化 |
+| `enable_crl` | 未設定（= 無効） | `telemetry.sh` L150 | `user_auth=cert` かつ `enable_crl=true` のときのみ `--enable_crl` フラグを渡す |
+| `crl_expire_duration` | 未設定（gnmiサーバ組み込み値を使用） | `telemetry.sh` L155 | 値がある場合のみ `--crl_expire_duration` を渡す |
+| `user_auth` | 未設定（= 認証なし） | `telemetry.sh` L142 | 未設定 / `null` のとき `--client_auth` 引数が渡されない |
+
+> **隠れデフォルト（YANG 未定義）**: `threshold=100`、`idle_conn_duration=5`（秒）は YANG に定義がなく `telemetry.sh` のみで管理される（L121, L134）。
+
+### TELEMETRY|certs
+
+| フィールド | デフォルト値 | 設定元 |
+|-----------|-------------|--------|
+| `server_crt` | `/etc/sonic/telemetry/streamingtelemetryserver.cer` | `minigraph.py` L2684 |
+| `server_key` | `/etc/sonic/telemetry/streamingtelemetryserver.key` | `minigraph.py` L2685 |
+| `ca_crt` | `/etc/sonic/telemetry/dsmsroot.cer` | `minigraph.py` L2686 |
+
+> YANG (`sonic-telemetry.yang`) には `default` 文が一切定義されていない。すべてのデフォルトはランタイム側（`telemetry.sh` / `minigraph.py`）で実装される。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 896d391185a9 -->

@@ -252,4 +252,372 @@ db_migrator.py での ROUTE_MAP マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+ROUTE_MAP テーブルは 2 つの独立したデーモンが購読する。
+
+### frrcfgd (sonic-frr-mgmt-framework)
+
+`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、Redis keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `('ROUTE_MAP', self.bgp_table_handler_common)` を登録し、変更通知を受け取る。
+
+```python
+# frrcfgd.py L2302, 2359-2361
+('ROUTE_MAP', self.bgp_table_handler_common),
+...
+def subscribe_all(self):
+    for table, hdlr in self.table_handler_list:
+        self.config_db.subscribe(table, hdlr)
+```
+
+変更検知後、`bgp_table_handler_common` が Jinja2 テンプレート (`bgpd.conf.db.route_map.j2`) を展開して FRR vtysh コマンドを生成・実行する。
+
+**Jinja2 テンプレート経路** (`bgpd.conf.db.route_map.j2`):
+
+```jinja2
+{% if ROUTE_MAP is defined and ROUTE_MAP|length > 0 %}
+{% for rm_key, rm_val in ROUTE_MAP.items() %}
+{% if 'route_operation' in rm_val %}
+route-map {{rm_key[0]}} {{rm_val['route_operation']}} {{rm_key[1]}}
+{% if 'match_as_path' in rm_val %}
+ match as-path {{rm_val['match_as_path']}}
+{% endif %}
+...
+{% endif %}
+{% endfor %}
+{% endif %}
+```
+
+テンプレートは `ROUTE_MAP` 全エントリを走査し、`route_operation` (permit/deny)、各 `match_*` / `set_*` フィールドを条件付きで FRR コマンドに変換する。適用対象デーモンは `['zebra', 'bgpd', 'ospfd']`。
+
+### bgpcfgd (sonic-bgpcfgd) — SDN 専用経路
+
+`RouteMapMgr` は `APPL_DB` の `BGP_PROFILE_TABLE` を `SubscriberStateTable` 相当で購読し、SDN 専用の 2 キー (`FROM_SDN_SLB_ROUTES`, `FROM_SDN_APPLIANCE_ROUTES`) のみを処理する。ROUTE_MAP テーブルを直接購読するのではなく、bgpcfgd テンプレートエンジンが CONFIG_DB の ROUTE_MAP を読み込んで FRR 設定を生成する。
+
+```python
+# managers_rm.py L47-52
+ROUTE_MAPS = ["FROM_SDN_SLB_ROUTES", "FROM_SDN_APPLIANCE_ROUTES"]
+
+def set_handler(self, key, data):
+    if not self.__set_handler_validate(key, data):
+        return True
+    self.__update_rm(key, data)
+```
+
+`__update_rm` は `cfg_mgr.push_list(cmds)` で FRR vtysh に直接コマンドを送信する。
+
+### 購読フロー要約
+
+```
+CONFIG_DB ROUTE_MAP
+  ├─ frrcfgd (ExtConfigDBConnector psubscribe)
+  │    └─ bgp_table_handler_common
+  │         └─ Jinja2 (bgpd.conf.db.route_map.j2)
+  │              └─ vtysh configure terminal / route-map <name> <action> <seq>
+  └─ bgpcfgd RouteMapMgr (SDN 専用; APPL_DB BGP_PROFILE 経由)
+       └─ cfg_mgr.push_list → vtysh route-map FROM_SDN_*_RM
+```
+
+<!-- /pubsub -->
+<!-- side-effects -->
+## 副次 DB 書込・外部副作用 (Phase F)
+
+### FRR vtysh コマンド発行 (bgpcfgd)
+
+`managers_rm.py` の `RouteMapMgr` は `cfg_mgr.push_list()` → `ConfigMgr.commit()` → `vtysh -f <tmpfile>` で FRR bgpd へ設定を書込む[^3]。
+
+| イベント | vtysh コマンド | 対象デーモン |
+|---|---|---|
+| set (FROM_SDN_SLB/APPLIANCE_ROUTES) | `route-map <NAME>_RM permit 100` | bgpd |
+| set | `set as-path prepend <asn> <asn>` | bgpd |
+| set | `set community <community_id>` | bgpd |
+| set | `set origin incomplete` | bgpd |
+| del | `no route-map <NAME>_RM permit 100` | bgpd |
+
+### FRR vtysh コマンド発行 (frrcfgd)
+
+`frrcfgd.py` は `ROUTE_MAP` テーブルを `['zebra', 'bgpd', 'ospfd']` の各デーモンに対して反映する[^4]。
+
+| イベント | vtysh コマンド | 対象デーモン |
+|---|---|---|
+| set (`route_operation=permit`) | `route-map <name> permit <seq>` | zebra, bgpd, ospfd |
+| set (`route_operation=deny`) | `route-map <name> deny <seq>` | zebra, bgpd, ospfd |
+| set (match_*/set_* フィールド) | 各 `match`/`set` サブコマンド | zebra, bgpd, ospfd |
+| del | `no route-map <name> <action> <seq>` | zebra, bgpd, ospfd |
+
+### kernel route 経路への影響
+
+route-map は FRR の BGP/OSPF/zebra ルーティングポリシーとして機能する。`set local-preference` / `set next-hop` 等の変更がルート選択に影響し、zebra が kernel RIB (`ip route`) を更新する。BGP ピアへの影響は次の UPDATE/KEEPALIVE 以降。
+
+### 副次書込まとめ
+
+| 副次先 | 操作 | 内容 | evidence |
+|---|---|---|---|
+| FRR bgpd (vtysh) | configure | `route-map <NAME>_RM permit 100` + AS-path/community/origin set | `managers_rm.py:87-98`[^3] |
+| FRR bgpd (vtysh) | delete | `no route-map <NAME>_RM permit 100` | `managers_rm.py:41-44`[^3] |
+| FRR zebra/bgpd/ospfd (vtysh) | configure | `route-map <name> permit/deny <seq>` + match/set サブコマンド | `frrcfgd.py:3118-3126`[^4] |
+| FRR zebra/bgpd/ospfd (vtysh) | delete | `no route-map <name> <action> <seq>` | `frrcfgd.py:3143-3148`[^4] |
+| kernel RIB (`ip route`) | 間接変更 | zebra が FRR RIB 変化を kernel に反映 | FRR zebra 標準動作 |
+| STATE_DB | なし | — | スキャン 0 件 |
+| APPL_DB | なし | — | スキャン 0 件 |
+
+<!-- /side-effects -->
+
+[^3]: bgpcfgd RouteMapMgr set/del 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py>
+[^4]: frrcfgd ROUTE_MAP handler 実装: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py>
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`bgpcfgd` の `RouteMapMgr` (`managers_rm.py`) から抽出した ROUTE_MAP 経路に関わるハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-map-constants.md`。
+
+### 処理対象キー定数 (`ROUTE_MAPS`)
+
+`RouteMapMgr` が受け付けるキーは以下の 2 値のみ。それ以外は `log_err` で拒否される。
+
+| 定数 | 値 | evidence |
+|------|-----|---------|
+| `ROUTE_MAPS[0]` | `"FROM_SDN_SLB_ROUTES"` | `managers_rm.py:5` |
+| `ROUTE_MAPS[1]` | `"FROM_SDN_APPLIANCE_ROUTES"` | `managers_rm.py:5` |
+
+### action enum と固定シーケンス番号
+
+`RouteMapMgr` が生成する FRR コマンドの action は `permit` のみ。`deny` は生成しない。シーケンス番号は `100` 固定。
+
+| FRR コマンド | action | seq | evidence |
+|------------|--------|-----|---------|
+| `route-map <key>_RM permit 100` | `permit` | `100` | `managers_rm.py:87` |
+| `no route-map <key>_RM permit 100` | `permit` | `100` | `managers_rm.py:41` |
+
+### `FROM_SDN_SLB_DEPLOYMENT_ID` 定数
+
+ASN 解決時に `constants["deployment_id_asn_map"]` から引くキー。
+
+| 定数名 | 値 | 型 | evidence |
+|--------|-----|-----|---------|
+| `FROM_SDN_SLB_DEPLOYMENT_ID` | `'2'` | str | `managers_rm.py:6` |
+
+### community_id バリデーション範囲
+
+| 検証対象 | 許容範囲 | evidence |
+|---------|---------|---------|
+| community_id 形式 | `<A>:<B>`（コロン区切り 2 要素） | `managers_rm.py:56-57` |
+| `<A>` / `<B>` | `0` 〜 `65535` の整数 | `managers_rm.py:58-59` |
+
+### FRR set 句ハードコード値
+
+| FRR コマンド | ハードコード部分 | 動的部分 | evidence |
+|------------|--------------|---------|---------|
+| ` set as-path prepend <asn> <asn>` | コマンド形式 | `<asn>` = `constants["deployment_id_asn_map"]["2"]` | `managers_rm.py:92` |
+| ` set community <community_id>` | コマンド形式 | `<community_id>` = data フィールド値 | `managers_rm.py:93` |
+| ` set origin incomplete` | `incomplete` 固定 | — | `managers_rm.py:94` |
+
+### route-map 名生成ルール
+
+| テンプレート | 生成例 | evidence |
+|-----------|--------|---------|
+| `<key>_RM` | `FROM_SDN_SLB_ROUTES_RM`, `FROM_SDN_APPLIANCE_ROUTES_RM` | `managers_rm.py:41,87` |
+
+### constants 依存キー
+
+| 定数キー | 型 | 未設定時の挙動 | evidence |
+|---------|-----|-------------|---------|
+| `deployment_id_asn_map` | dict | `log_err` + ASN=None → route-map 更新スキップ | `managers_rm.py:76-81` |
+| `deployment_id_asn_map["2"]` | str/int | `log_err` + ASN=None → route-map 更新スキップ | `managers_rm.py:79-81` |
+
+<!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差・ファミリー差
+
+### bgpcfgd vs frrcfgd 実装差
+
+ROUTE_MAP テーブルは **2 つの独立したデーモン** が異なる経路で処理する:
+
+| 観点 | bgpcfgd RouteMapMgr | frrcfgd |
+|------|---------------------|---------|
+| 購読元 | APPL_DB `BGP_PROFILE_TABLE` | CONFIG_DB `ROUTE_MAP` |
+| 対象キー | `FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` のみ | 任意の route-map 名・seq |
+| FRR コマンド範囲 | `set as-path prepend` / `set community` / `set origin incomplete` の 3 件 | `match_*` / `set_*` 全 30+ フィールド |
+| ユースケース | SDN SLB / SDN Appliance 専用 | 汎用 BGP ポリシー |
+
+### IPv4 / IPv6 ファミリー差 (frrcfgd)
+
+- `match_prefix_set|ipv4` → FRR `match ip address prefix-list`
+- `match_prefix_set|ipv6` → FRR `match ipv6 address prefix-list`
+- `match_next_hop_set|ipv6` は **IPv6 next-hop prefix-list が FRR 未サポート** のため `match ip next-hop prefix-list`（IPv4 コマンド）へフォールバック。
+- `set_ipv6_next_hop_global` / `set_ipv6_next_hop_prefer_global` は bgpd 限定。zebra・ospfd には送信されない。
+- BGP 属性系 match（`match_origin`, `match_local_pref`, `match_community`, `match_as_path` 等）は bgpd 限定。
+- `match_protocol`（`match source-protocol`）は zebra 限定。
+
+### SmartSwitch DPU
+
+SmartSwitch / DPU 固有の分岐なし。通常の BGP コンテナと同一処理経路。
+<!-- /platform -->
+<!-- defaults -->
+## 暗黙デフォルト・コード由来の落とし穴
+
+### `route_operation` 欠落 → 全フィールド処理スキップ
+
+frrcfgd は起動時に `route_operation` を内部キャッシュに登録する。フィールドが CONFIG_DB エントリに存在しない場合、後続の `match_*` / `set_*` フィールドが全て `route-map {name} seq {seq} not found for update` エラーでスキップされる（silent drop）。YANG に mandatory / default 宣言なし。
+
+### `match_ipv6_prefix_set` — dead field (frrcfgd 未処理)
+
+YANG に定義はあるが `frrcfgd` の `route_map_key_map` に対応エントリなし。CONFIG_DB に書き込んでも FRR に反映されない。IPv6 prefix-list match は `match_prefix_set` で代替し、参照先 `PREFIX_SET.mode=IPv6` で AF を決定させること。
+
+### `set_tag` — dead field (frrcfgd 未処理)
+
+YANG に `set_tag` (uint32) が定義されているが `route_map_key_map` に対応エントリなし。frrcfgd は無視する。
+
+### `match_prefix_set` / `match_next_hop_set` — 書き込み順依存
+
+frrcfgd は参照先 `PREFIX_SET.mode` を動的に参照して IPv4/IPv6 を判定する。PREFIX_SET が先に作成されていない場合、AF が特定できず FRR へのコマンド発行がスキップされる。**PREFIX_SET を先に作成してから ROUTE_MAP を設定すること。**
+
+### `set_metric_action` + `set_metric` の組み合わせ依存
+
+- `METRIC_SET_VALUE` / `METRIC_ADD_VALUE` / `METRIC_SUBTRACT_VALUE` は `set_metric` が必須。未設定時 `handle_rmap_set_metric` が `LOG_ERR` を出力し `None` を返却 → FRR コマンド未発行（silent drop）。
+- RTT 系 (`METRIC_SET_RTT` / `METRIC_ADD_RTT` / `METRIC_SUBTRACT_RTT`) は `set_metric` 不要。
+- `set_metric_action` なしで `set_med` のみを設定した場合、`set_med` の値がそのまま `set metric` コマンドに使われる（フォールバック）。
+
+### `set_repeat_asn` 単独設定 — silent drop
+
+`set_asn` が未設定で `set_repeat_asn` のみ設定しても `hdl_set_asn` が `return None` → FRR コマンド未発行。`set_repeat_asn` は `set_asn` とセットで設定すること。`set_repeat_asn` 省略時は繰り返し 1 回（デフォルト）。
+
+### `set_asn_list` — カンマ区切り → スペース区切り変換
+
+CONFIG_DB では `"1111,2222,3333"` 形式で格納するが、FRR コマンドでは `"1111 2222 3333"` に自動変換される。
+
+### `match_protocol` — zebra daemon のみ有効
+
+`[zebra]` タグが付いており bgpd インスタンスでは無視される。また `ospf3` は frrcfgd が `ospf6` に変換して発行する。
+
+### `match_neighbor` — max-elements 1 だが複数書込み時は先頭のみ
+
+YANG は `max-elements 1` の leaf-list。frrcfgd の format `:peer-ip` は list の場合先頭要素のみ使用。2 番目以降は silent drop。
+
+### BGPRouteMapMgr のハードコード (SDN ユースケース専用)
+
+`FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` の 2 キーに限り `managers_rm.py` が以下をハードコード:
+- シーケンス番号: **`permit 100`** (固定)
+- `set origin incomplete` (固定)
+- `set as-path prepend <bgp_asn> <bgp_asn>` (ASN を **2 回** prepend)
+
+BGP ASN は `constants['deployment_id_asn_map']['2']` から取得。未設定時は既存 route-map を残したまま更新スキップ。
+
+### `set_community_ref` — 参照先未作成時 silent drop
+
+参照先 `COMMUNITY_SET` が CONFIG_DB に存在しないか `is_configurable()` が False の場合、FRR コマンドが生成されない。COMMUNITY_SET を先に作成すること。
+
+<!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）を全行精読して確認した。
+
+### 必須制約（違反すると silent drop）
+
+1. **`route_operation` を最初に書き込む** — 同一キー `ROUTE_MAP|<name>|<seq>` の処理で `route_operation` が内部キャッシュ（`self.route_map`）に登録されていない場合、後続の `match_*` / `set_*` フィールドは全て `route-map {} seq {} not found for update` エラーでスキップされる（FRR への反映なし）。
+
+2. **`match_prefix_set` / `match_next_hop_set` を書く前に `PREFIX_SET` を先に作成する** — frrcfgd は `PREFIX_SET.mode` (IPv4/IPv6) を参照して FRR コマンドの `match ip address prefix-list` / `match ipv6 address prefix-list` を選択する。`PREFIX_SET` が未登録の場合は AF が特定できず FRR コマンド未発行（silent drop）。
+
+3. **`route_operation` を permit → deny（またはその逆）に変更する場合は DEL → SET** — FRR では `route-map <name> permit <seq>` と `route-map <name> deny <seq>` は**別エントリ**として扱われる。SET 上書きでは古いエントリが残るため、`no route-map` で旧エントリを削除してから新規作成すること。
+
+### 推奨制約（違反すると FRR 側でエラーまたは運用影響）
+
+4. **`set_community_ref` を書く前に `COMMUNITY_SET` を先に作成する** — 参照先が未作成の場合 FRR `set community` コマンドが発行されない（silent drop）。
+
+5. **`match_as_path` を書く前に `AS_PATH_SET` を先に作成する** — 未作成の場合 FRR bgpd 側で無効参照エラーが発生し BGP ポリシーが機能しない。
+
+6. **`call_route_map` 参照先 route-map を先に作成する** — 参照先が未定義の場合 FRR は黙って素通り（ポリシー未適用）。
+
+7. **ROUTE_MAP を DEL する前に `BGP_NEIGHBOR_AF` / `BGP_PEER_GROUP_AF` の参照（`route_map_in` / `route_map_out`）を先に解除する** — 参照中の route-map を先に削除すると BGP フィルタが消えた状態でセッションが継続しトラフィックに影響する可能性がある。
+
+8. **`match_prefix_set` を参照している ROUTE_MAP エントリを更新する前に参照先 `PREFIX_SET` を削除しない** — PREFIX_SET DEL 後は frrcfgd の内部 AF キャッシュからエントリが消え、以降の ROUTE_MAP 更新で AF が特定できず silent drop になる。
+
+### 書込み順依存サマリ
+
+| # | 依存関係 | 方向 | 影響 |
+|---|----------|------|------|
+| 1 | `route_operation` → `match_*` / `set_*` | 同一エントリ内で先行必須 | silent drop |
+| 2 | `PREFIX_SET` → `match_prefix_set` / `match_next_hop_set` | PREFIX_SET 先行必須 | silent drop |
+| 3 | `route_operation` 変更: DEL → SET | DEL 後に SET | FRR に旧エントリ残留 |
+| 4 | `COMMUNITY_SET` → `set_community_ref` | 先行推奨 | silent drop |
+| 5 | `AS_PATH_SET` → `match_as_path` | 先行推奨 | FRR 無効参照 |
+| 6 | 参照先 route-map → `call_route_map` | 先行推奨 | FRR 素通り |
+| 7 | BGP_NEIGHBOR_AF 参照解除 → ROUTE_MAP DEL | 先行推奨 | BGP フィルタ消滅 |
+| 8 | ROUTE_MAP 参照除去 → PREFIX_SET DEL | 先行推奨 | subsequent update silent drop |
+
+> **スキャン証跡**: `frrcfgd.py` L2669-2676 (PREFIX_SET AF 解決), L3113-3133 (route_operation ガード), L3139-3148 (DEL 処理), L2875-2882 (COMMUNITY_SET), L2907-2908 (PREFIX_SET DEL)。詳細は `meta/_intermediate/cdb-flow/route-map-ordering.md` を参照。
+
+<!-- /ordering -->
+
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+ROUTE_MAP テーブルは 2 つの独立したデーモンが購読する。
+
+### frrcfgd (sonic-frr-mgmt-framework)
+
+`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、Redis keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `('ROUTE_MAP', self.bgp_table_handler_common)` を登録し、変更通知を受け取る。
+
+```python
+# frrcfgd.py L2302, 2359-2361
+('ROUTE_MAP', self.bgp_table_handler_common),
+...
+def subscribe_all(self):
+    for table, hdlr in self.table_handler_list:
+        self.config_db.subscribe(table, hdlr)
+```
+
+変更検知後、`bgp_table_handler_common` が Jinja2 テンプレート (`bgpd.conf.db.route_map.j2`) を展開して FRR vtysh コマンドを生成・実行する。
+
+**Jinja2 テンプレート経路** (`bgpd.conf.db.route_map.j2`):
+
+```jinja2
+{% if ROUTE_MAP is defined and ROUTE_MAP|length > 0 %}
+{% for rm_key, rm_val in ROUTE_MAP.items() %}
+{% if 'route_operation' in rm_val %}
+route-map {{rm_key[0]}} {{rm_val['route_operation']}} {{rm_key[1]}}
+{% if 'match_as_path' in rm_val %}
+ match as-path {{rm_val['match_as_path']}}
+{% endif %}
+...
+{% endif %}
+{% endfor %}
+{% endif %}
+```
+
+テンプレートは `ROUTE_MAP` 全エントリを走査し、`route_operation` (permit/deny)、各 `match_*` / `set_*` フィールドを条件付きで FRR コマンドに変換する。適用対象デーモンは `['zebra', 'bgpd', 'ospfd']`。
+
+### bgpcfgd (sonic-bgpcfgd) — SDN 専用経路
+
+`RouteMapMgr` は `APPL_DB` の `BGP_PROFILE_TABLE` を購読し、SDN 専用の 2 キー (`FROM_SDN_SLB_ROUTES`, `FROM_SDN_APPLIANCE_ROUTES`) のみを処理する。汎用 ROUTE_MAP の CONFIG_DB 購読は frrcfgd が担当し、bgpcfgd テンプレートエンジンが CONFIG_DB の ROUTE_MAP を読み込んで FRR 設定を生成する。
+
+```python
+# managers_rm.py L5-6, 27-31
+ROUTE_MAPS = ["FROM_SDN_SLB_ROUTES", "FROM_SDN_APPLIANCE_ROUTES"]
+
+def set_handler(self, key, data):
+    if not self.__set_handler_validate(key, data):
+        return True
+    self.__update_rm(key, data)
+```
+
+`__update_rm` は `cfg_mgr.push_list(cmds)` で FRR vtysh に直接コマンドを送信する。
+
+### 購読フロー要約
+
+```
+CONFIG_DB ROUTE_MAP
+  ├─ frrcfgd (ExtConfigDBConnector psubscribe)
+  │    └─ bgp_table_handler_common
+  │         └─ Jinja2 (bgpd.conf.db.route_map.j2)
+  │              └─ vtysh configure terminal / route-map <name> <action> <seq>
+  └─ bgpcfgd RouteMapMgr (SDN 専用; APPL_DB BGP_PROFILE 経由)
+       └─ cfg_mgr.push_list → vtysh route-map FROM_SDN_*_RM
+```
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 24dbb72211e3 -->

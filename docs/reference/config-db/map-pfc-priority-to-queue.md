@@ -217,6 +217,35 @@ enum なし — `pfc_priority`/`qindex` は数値文字列のみ。
 - なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## 暗黙デフォルト・コード由来デフォルト (Phase A)
+
+<!-- evidence: sonic-buildimage/files/build_templates/qos_config.j2:206-221 / sonic-swss/orchagent/qosorch.cpp:991-1009 -->
+
+### YANG デフォルト
+
+`sonic-pfc-priority-queue-map.yang` に `default` 文は一切なし。`name` / `pfc_priority` / `qindex` いずれもデフォルト値未定義。
+
+### ビルド時コード由来デフォルト (qos_config.j2)
+
+`config qos reload` 実行時、platform 側が `generate_pfc_to_queue_map` Jinja マクロを定義していない場合に限り、`qos_config.j2:209-220` のハードコード fallback が適用される:
+
+| フィールド | fallback 値 | 条件 |
+|-----------|------------|------|
+| `name` | `"AZURE"` | platform が `generate_pfc_to_queue_map` を未定義のとき |
+| `pfc_priority` | `"0"`.`"7"` (全 8 エントリ) | 同上 |
+| `qindex` | `pfc_priority` と同値 (identity map) | 同上 |
+
+platform が `generate_pfc_to_queue_map` を定義している場合はそちらが優先されるため、**マップ名・マッピング内容ともにプラットフォーム依存**となる。
+
+### 実装の暗黙挙動
+
+- **`stoi()` 例外なし版**: `PfcToQueueHandler::convertFieldValuesToAttributes` は try/catch を持たない。空文字・非数値 field/value は uncaught `std::invalid_argument` を発生させ、呼び出し元 `processWorkItem` が `task_invalid_entry` を返す。他の Handler (Dot1pToTcMapHandler 等) が try/catch で `continue` するのと異なる点に注意。
+- **`qindex` 欠落時の silent skip**: YANG に mandatory 指定がないため CONFIG_DB に `qindex` なしエントリが存在しえるが、その field-value pair 自体が `kfvFieldsValues` に入らないため SAI list からその priority のエントリが除外される (silent skip)。
+- **`(uint8_t)` キャスト**: `stoi()` 結果を無検証でキャスト。YANG バリデーションが 0..7 を保証するため通常は問題ないが、YANG バリデーションをバイパスして書き込んだ場合は 0..255 範囲で切り捨てのみ。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: d2191ccfe0bd -->
 
 <!-- derivation -->
@@ -246,6 +275,25 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 
 <!-- /derivation -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+`MAP_PFC_PRIORITY_TO_QUEUE` が関わる CONFIG_DB テーブル間の暗黙参照を `qosorch.cpp` から抽出した。
+
+| 参照方向 | 参照元テーブル | フィールド | SAI 属性 | evidence |
+|---------|-------------|-----------|---------|---------|
+| 被参照 (referenced by) | `PORT_QOS_MAP` | `pfc_to_queue_map` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` | `qosorch.cpp:69,108` |
+| 参照管理 | `handlePortQosMapTable` | SET 時 object_id 解決 / DEL 時参照解除 | — | `qosorch.cpp:2046,2077,2108,2133` |
+| SWITCH レベル適用 | なし | PFC マップは SWITCH 直接適用なし | — | `qosorch.cpp:1956` |
+
+- `PORT_QOS_MAP.pfc_to_queue_map` に map 名を設定すると、`QosOrch` が `MAP_PFC_PRIORITY_TO_QUEUE` の SAI オブジェクト ID を解決してポートへ適用する (`SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP`)。
+- `PORT_QOS_MAP` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留。
+- `SWITCH` への直接適用は `DSCP_TO_TC_MAP` (`PORT_QOS_MAP|global` 経路) のみで、PFC 系マップは非対象。
+
+> 詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-cross-refs.md`
+
+<!-- /cross-refs -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
@@ -261,3 +309,161 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 > **スキャン証跡**: `QosOrch::PfcToQueueHandler` を全行読了、4 件分岐抽出。Phase 6/7 derivation ブロックの evidence 再確認: qos_config.j2 からの platform 別マップ書き込みは実ソースと整合 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.h:15 / qosorch.cpp:1001-1004,1020-1021,1029 / sonic-swss-common/common/schema.h:363 -->
+
+### テーブル名定数
+
+| 定数名 | 値 |
+|---|---|
+| `CFG_PFC_PRIORITY_TO_QUEUE_MAP_TABLE_NAME` | `"MAP_PFC_PRIORITY_TO_QUEUE"` |
+
+ソース: `sonic-swss-common/common/schema.h:363`
+
+### フィールド名定数
+
+| 定数名 | 値 | 用途 |
+|---|---|---|
+| `pfc_to_queue_map_name` | `"pfc_to_queue_map"` | `PORT_QOS_MAP` テーブル内で MAP_PFC_PRIORITY_TO_QUEUE 名を指す field 名 |
+
+ソース: `sonic-swss/orchagent/qosorch.h:15`
+
+### SAI qos_map_type 定数
+
+| 定数名 | 用途 |
+|---|---|
+| `SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE` | `addQosItem()` で `SAI_QOS_MAP_ATTR_TYPE` に設定される SAI map type（`qosorch.cpp:1021`） |
+| `SAI_QOS_MAP_ATTR_TYPE` | SAI attribute ID — map type を指定（`qosorch.cpp:1020`） |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | SAI attribute ID — pfc→queue ペアのリストを渡す（`qosorch.cpp:1004,1024`） |
+| `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` | PORT_QOS_MAP バインド時の SAI port attribute（`qosorch.cpp:69`） |
+
+### 値域ハードコード
+
+| フィールド | 範囲 | 型変換コード |
+|---|---|---|
+| `pfc_priority` (key) | 0..7（YANG `pattern "[0-7]?"` が保証） | `(uint8_t)stoi(fvField(*i))`（`qosorch.cpp:1001`） |
+| `qindex` (value) | 0..7（YANG `pattern "[0-7]?"` が保証） | `(uint8_t)stoi(fvValue(*i))`（`qosorch.cpp:1002`） |
+
+YANG バリデーションをバイパスして 8 以上を書き込んだ場合は `(uint8_t)` キャストで 0..255 に切り捨てのみ（SAI 側でエラーになる可能性あり）。
+
+### SAI API
+
+| 関数 | 用途 |
+|---|---|
+| `sai_qos_map_api->create_qos_map()` | MAP 新規作成（`qosorch.cpp:1029`） |
+| `sai_qos_map_api->set_qos_map_attribute()` | 既存 MAP 更新（`qosorch.cpp:207`） |
+| `sai_qos_map_api->remove_qos_map()` | MAP 削除（`qosorch.cpp:220`） |
+
+<!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp PfcToQueueHandler::addQosItem (L1011-1035) / QosOrch::handlePortQosMapTable (L2186-2205) -->
+
+`MAP_PFC_PRIORITY_TO_QUEUE` テーブルの変更時、`QosOrch` (`PfcToQueueHandler`) は直接 DB API を呼び出さない。すべての副次書込は SAI API 経由で syncd が仲介する形で ASIC_DB に反映される。
+
+| 副次 DB | 書込契機 | 書込内容 | evidence |
+|---|---|---|---|
+| ASIC_DB (syncd 経由) | マップ作成/更新時 | `SAI_OBJECT_TYPE_QOS_MAP` オブジェクト新規作成 (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE`) | `qosorch.cpp:1021,1029` |
+| ASIC_DB (syncd 経由) | `PORT_QOS_MAP.pfc_to_queue_map` から参照時 | ポートオブジェクト (`SAI_OBJECT_TYPE_PORT`) の属性 `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` を qos_map OID で更新 | `qosorch.cpp:69,2193` |
+| APPL_DB | — | 書込なし | — |
+| STATE_DB | — | 書込なし | — |
+| COUNTERS_DB | — | 書込なし | — |
+| APPL_STATE_DB | — | 書込なし | — |
+
+**補足**: `PORT_QOS_MAP` 側の `handlePortQosMapTable()` が複数ポートをループし、各ポートに `set_port_attribute` を呼ぶ。マップ削除時には OID に `SAI_NULL_OBJECT_ID` を設定して属性をクリアする。
+
+
+詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-side-effects.md`
+
+<!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+`QosOrch` (docker-swss 内 orchagent) は `swsscommon::ConsumerStateTable` 経由で CONFIG_DB の `MAP_PFC_PRIORITY_TO_QUEUE` テーブルを**直接**購読する。APPL_DB 中継なし。
+
+登録箇所: `sonic-swss/orchagent/orchdaemon.cpp:378` — `CFG_PFC_PRIORITY_TO_QUEUE_MAP_TABLE_NAME` を `QosOrch` 初期化時のテーブルリストに含める。
+
+### メッセージフロー
+
+```
+[config CLI / config qos reload / sonic-cfggen]
+    │  HSET MAP_PFC_PRIORITY_TO_QUEUE|<name> <pfc_priority> <qindex>
+    ▼
+CONFIG_DB (Redis db=4)
+    │  swsscommon ConsumerStateTable (channel-based SUBSCRIBE)
+    ▼
+QosOrch::doTask()  →  handlePfcToQueueTable()
+    │  qosorch.cpp:1299 / 1344
+    ▼
+PfcToQueueHandler::processWorkItem()
+    │  stoi(pfc_priority) → key.prio
+    │  stoi(qindex)       → value.queue_index
+    │  SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE
+    ▼
+sai_qos_map_api->create_qos_map() / set_qos_map()
+    ▼
+ASIC (SAI adapter)
+```
+
+APPL_DB / STATE_DB への書き込みは行わない。CONFIG_DB → orchagent → SAI の 2 ホップ経路。
+
+### リトライ・エラー
+
+| 結果 | 条件 |
+|------|------|
+| `task_success` | SAI 操作成功 |
+| `task_invalid_entry` | `stoi()` 失敗または DEL 対象 SAI オブジェクト不在 |
+| `task_failed` | `sai_qos_map_api` 返値 ≠ `SAI_STATUS_SUCCESS` (qosorch.cpp:1032) |
+| `task_need_retry` | DEL 時に `isObjectBeingReferenced()` = true (PORT_QOS_MAP 参照中) |
+
+詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-pubsub.md`
+<!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp / sonic-buildimage/files/build_templates/qos_config.j2 / sonic-buildimage/device/**/ -->
+
+### ASIC capability チェック
+
+`MAP_PFC_PRIORITY_TO_QUEUE` に対して `querySwitchCapability` 呼び出しは行われない。`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE` のサポートは全 ASIC で同一 SAI API を使用する。`DSCP_TO_TC_MAP` が `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` で capability を確認するのとは対照的に、PFC 系 queue マップには SWITCH レベル適用パスもなく、capability 分岐なし (`qosorch.cpp:1956` 参照)。
+
+### PFC priority / queue 数の制限
+
+YANG `pattern "[0-7]?"` により pfc_priority / qindex は 0..7 (8 値) に固定。実際のプラットフォーム実装を確認した結果、**全プラットフォームで 0→0 .. 7→7 の identity map** のみ使用されている。非 identity マッピングはコード上サポートされるが公式デバイス設定には存在しない。
+
+| プラットフォーム | map 名 | エントリ数 | マッピング | ソース |
+|--------------|-------|----------|-----------|-------|
+| デフォルト fallback | `"AZURE"` | 8 | identity (0→0..7→7) | `qos_config.j2:211` |
+| Marvell dbmvtx9180 | `"AZURE"` | 8 | identity | `device/marvell/.../qos.json.j2:21` |
+| DellEMC Z9332f (参照実装) | `"DEFAULT"` | 8 | identity | `device/dell/x86_64-dellemc_z9332f_d1508-r0/.../qos.json.j2.pfc.reference` |
+| DellEMC S52xx/Z94xx | `"AZURE"` | 8 | identity | `device/dell/x86_64-dellemc_s5248f_c3538-r0/.../qos.json.j2` |
+| Supermicro sse_t7132s | `"AZURE"` | 8 | identity | `device/supermicro/.../qos.json.j2` |
+
+### pfc_to_pg_map_supported_asics との関係
+
+`qos_config.j2:163` の `pfc_to_pg_map_supported_asics = ['mellanox', 'barefoot']` は **ingress 側 `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`** の ASIC 制限であり、本テーブル（egress 側 queue マップ）には影響しない。Mellanox / Tofino ASIC 以外でも `MAP_PFC_PRIORITY_TO_QUEUE` の設定・SAI 適用は可能。
+
+### VOQ chassis 差分
+
+| 項目 | 非 VOQ | VOQ chassis |
+|------|-------|------------|
+| `PfcToQueueHandler` コードパス | 共通 | 共通 (VOQ 分岐なし) |
+| `QUEUE` テーブル key 形式 | `port\|index` (2 トークン) | `hostname\|asic\|port\|index` (4 トークン) (`qosorch.cpp:1772`) |
+| WRED キュー ID 取得 | `port.m_queue_ids` | `getPortVoQIds()` (`qosorch.cpp:1715`) |
+| リモートポート scheduler | 適用あり | スキップ (`SAI_SYSTEM_PORT_TYPE_REMOTE` 判定, `qosorch.cpp:1639`) |
+| qos_config.j2 QUEUE 生成対象 | 物理ポート | システムポート (ロスレスキュー 3/4 に `AZURE_LOSSLESS`) |
+
+VOQ chassis でも `MAP_PFC_PRIORITY_TO_QUEUE` マップオブジェクト自体の作成・削除は非 VOQ と同一コードパスで処理される。差異は QUEUE テーブルとの連携（システムポート key 形式）と WRED プロファイル適用先のキュー ID 取得方法のみ。
+
+> 詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-platform.md`
+
+<!-- /platform -->
