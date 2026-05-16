@@ -140,6 +140,37 @@ EVPN remote VTEP 削除 → VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除
 [^exc1]: `sonic-swss/cfgmgr/vxlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vxlanmgr.cpp>
 [^exc2]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vxlan.yang>
 
+<!-- platform -->
+## プラットフォーム差異 (EVPN 対応 ASIC)
+
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp:1256-1274, 1701-1724, 1807-1822, 903, 356-370 -->
+
+`VXLAN_EVPN_NVO` が参照する source VTEP（`VXLAN_TUNNEL`）の実際の ASIC 動作は、`VxlanTunnelOrch` 初期化時に `sai_query_attribute_enum_values_capability` で `SAI_TUNNEL_ATTR_PEER_MODE` を問い合わせた結果で決まる。
+
+| 差異ポイント | P2P モード (DIP サポートあり) | P2MP モード (DIP サポートなし) |
+|---|---|---|
+| SAI ケーパビリティクエリ失敗時 | `is_dip_tunnel_supported = true` へ自動 fallback | — |
+| リモート VTEP ごとのトンネル | 動的 DIP トンネルを個別生成 | 生成しない (IP 参照カウントのみ) |
+| SIP トンネル削除タイミング | DIP カウントが 0 になるまで延期 | 参照カウント 0 で即時可能 |
+| ブリッジポート | VTEP ごとに個別作成 | SIP 単一ブリッジポートを共有 |
+| FDB/flooding | DIP トンネルポート経由 | P2MP + L2MC グループ (IMET ルート) 経由 |
+| EVPN DIP トンネル SAI mode | `SAI_TUNNEL_PEER_MODE_P2P` | 使用しない |
+| CLI 静的トンネル SAI mode | `SAI_TUNNEL_PEER_MODE_P2MP` | 同左 |
+
+### P2P モード詳細 (DIP トンネルサポートあり)
+
+EVPN ルート受信時に `addTunnelUser()` (vxlanorch.cpp:1701) が `createDynamicDIPTunnel(remote_vtep, usr)` を呼び出し、SAI `create_tunnel()` を `SAI_TUNNEL_PEER_MODE_P2P` + `SAI_TUNNEL_ATTR_ENCAP_DST_IP` で実行する。EVPN 動的 DIP トンネル生成時 (`TNL_CREATION_SRC_EVPN`) は `p2p = true` が明示される (vxlanorch.cpp:903)。
+
+### P2MP モード詳細 (DIP トンネルサポートなし)
+
+`addTunnelUser()` は DIP トンネルを生成せず、リモート VTEP の IP 参照カウントを更新するのみ。FDB フラッディングは P2MP SIP トンネルブリッジポートと IMET ルートの L2MC グループメンバーで実現する (vxlanorch.cpp コメント: `"P2MP scenario where P2MP tunnel port is used for FDB learning"`)。
+
+### SmartSwitch / DPU
+
+`vxlanorch.cpp` に SmartSwitch DPU 固有の分岐コードは存在しない。EVPN NVO テーブルは NPU 通常モード向けのみであり、DPU 側のオーバーレイスタックとの連携は orchagent 実装外となる。
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
