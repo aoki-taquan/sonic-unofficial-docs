@@ -544,4 +544,51 @@ SAI 属性: `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION`
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`LOOPBACK_INTERFACE` テーブルへの変更通知は、`intfmgrd` が **`SubscriberStateTable`** を通じた **Redis keyspace 通知** (`PSUBSCRIBE __keyspace@4__:LOOPBACK_INTERFACE|*`) によって受信する。CONFIG_DB の書き手（`config loopback` CLI / `sonic-cfggen` / `swssconfig`）は `HSET LOOPBACK_INTERFACE|<key> ...` を直接実行するだけで `PUBLISH` は行わない。Redis サーバの `notify-keyspace-events` 機能がキー変更時に通知を自動配信する。
+
+| 購読者 | 購読 API | 対象 DB | 購読テーブル / チャンネル | ハンドラ |
+|--------|---------|---------|--------------------------|---------|
+| `intfmgrd` | `SubscriberStateTable` (keyspace PSUBSCRIBE) | CONFIG_DB | `LOOPBACK_INTERFACE` | `doIntfGeneralTask()` / `doIntfAddrTask()` |
+| `orchagent` `IntfsOrch` | `ConsumerStateTable` (channel SUBSCRIBE) | APPL_DB | `INTF_TABLE_CHANNEL` | `doTask()` → `doIntfTask()` |
+| `orchagent` `IntfsOrch` (VOQ のみ) | `SubscriberStateTable` (keyspace PSUBSCRIBE) | CHASSIS_APP_DB | `SYSTEM_INTERFACE_TABLE` | `doTask()` → VOQ パス |
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config interface ip add Loopback0 192.0.2.1/32
+  ↓ HSET "LOOPBACK_INTERFACE|Loopback0|192.0.2.1/32" ...
+Redis keyspace: PUBLISH "__keyspace@4__:LOOPBACK_INTERFACE|Loopback0|192.0.2.1/32"  "hset"
+  ↓ SubscriberStateTable::psubscribe パターンマッチ
+  ↓ Consumer::execute() → IntfMgr::doTask(Consumer&)
+  ↓ doIntfAddrTask():  ip address add 192.0.2.1/32 dev Loopback0
+  ↓ m_appIntfTableProducer.set("Loopback0:192.0.2.1/32", {scope="global", family="IPv4"})
+     SADD INTF_TABLE_KEY_SET "Loopback0:192.0.2.1/32"
+     HSET _INTF_TABLE|Loopback0:192.0.2.1/32 scope global family IPv4
+     PUBLISH INTF_TABLE_CHANNEL@0 G          ← orchagent への通知
+  ↓ m_stateIntfTable.hset("Loopback0|192.0.2.1/32", "state", "ok")
+  ↓ ConsumerStateTable (orchagent IntfsOrch) が受信
+  ↓ sai_router_intf_api->create_router_interface(...)
+```
+
+- keyspace 通知のペイロードは操作名（`hset`/`del` 等）のみ。フィールド値は `HGETALL` で再取得する。
+- `ProducerStateTable` は Lua スクリプトで SADD→HSET→PUBLISH をアトミックに実行する（`producerstatetable.cpp:72-120`）。
+- チャンネル名は `Table::getChannelName(dbId)` = `INTF_TABLE_CHANNEL@<dbId>` (`table.h:94`)。
+- `SubscriberStateTable` の `DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`）—— 1 回の `pops()` で最大 128 件を一括取得。
+
+### 起動時スナップショット
+
+`SubscriberStateTable` コンストラクタは購読開始前に既存キーを `HGETALL` 相当でスキャンして `m_buffer` に流し込む (`subscriberstatetable.cpp:26-42`)。これにより `intfmgrd` 起動時に CONFIG_DB に既存する `LOOPBACK_INTERFACE|*` エントリがすべて `SET` として再適用される。Cold restart 時は `flushLoopbackIntfs()` でカーネルから全 Loopback を削除後に再作成し (`intfmgr.cpp:57`)、Warm start 時は `buildIntfReplayList()` がリプレイする。
+
+### SELECT_TIMEOUT ポーリング
+
+`intfmgrd` の Select ループは `SELECT_TIMEOUT = 1000` ミリ秒でタイムアウトし、`intfmgr.doTask()` をフォールバック呼び出しする (`intfmgrd.cpp:17,65-68`)。keyspace 通知が届いていない場合でもペンディングキューを定期的に再処理する。
+
+> **Evidence**: `sonic-swss/cfgmgr/intfmgrd.cpp:19-80`、`sonic-swss/cfgmgr/intfmgr.cpp:31-76,1053,1137`、`sonic-swss/orchagent/orchdaemon.cpp:296`、`sonic-swss/orchagent/intfsorch.cpp:61-108`、`sonic-swss-common/common/subscriberstatetable.cpp:17-43`、`sonic-swss-common/common/producerstatetable.cpp:72-120`、`sonic-swss-common/common/table.h:85-96,164`; 詳細分析 `meta/_intermediate/cdb-flow/loopback-interface-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: b5270404647a -->
