@@ -305,6 +305,33 @@ DEL NAT_POOL|<name>        # pool を後に削除
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`NAT_POOL` エントリが処理される際に `natmgrd` (`natmgr.cpp`) および `NatOrch` (`natorch.cpp`) が
+暗黙的に依存する他テーブルの関係を示す。
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatPoolTask L6748-6822 / addDynamicNatRule L4621-4680 / getIpEnabledIntf L236-255 / isPoolMappedtoBinding L182-200 / sonic-swss/orchagent/natorch.cpp doDnatPoolTableTask L2968-3031 / addAllDnatPoolEntries L1854-1863 -->
+
+| 依存方向 | 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|--------|--------------|--------------|---------|------|
+| natmgr → NAT_GLOBAL | `addDynamicNatRule()` — `isNatEnabled()` | `NAT_GLOBAL` (CONFIG_DB) / `APP_NAT_GLOBAL_TABLE` (APPL_DB) | `NAT_GLOBAL\|Values` | `admin_mode=enabled` が APPL_DB に伝播するまで pool の iptables / APPL_DB 反映をスキップ | `natmgr.cpp:4632-4636` |
+| natmgr → INTERFACE 系 | `addDynamicNatRule()` — `getIpEnabledIntf()` | `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` (CONFIG_DB) | 各インタフェース名 | pool `nat_ip` 低位アドレスのサブネットに一致する L3 インタフェース (nat_zone 設定済み) が必要。未一致の場合 dynamic NAT ルール設定をスキップ | `natmgr.cpp:4654-4659`, `natmgr.cpp:8179` |
+| natmgr → NAT_BINDINGS | `doNatPoolTask()` — `isPoolMappedtoBinding()` | `NAT_BINDINGS` (CONFIG_DB) | `NAT_BINDINGS\|<name>` | pool 追加・更新時に参照している binding を自動検出して `addDynamicNatRule()` を再呼び出し。binding 側から見た pool の後続再評価トリガ | `natmgr.cpp:6815-6822`, `natmgr.cpp:182-200` |
+| NAT_BINDINGS → NAT_POOL | YANG leafref (`nat_pool` フィールド) | `NAT_POOL` (CONFIG_DB) | `NAT_POOL\|<name>` | YANG バリデーション参照整合性。`nat_pool` に指定した名前が `NAT_POOL` に存在しなければ YANG レベルで拒否される | `sonic-nat.yang:271` |
+| natmgr → STATIC_NAT | `doNatPoolTask()` — `m_staticNatEntry` 走査 | `STATIC_NAT` (CONFIG_DB) | `STATIC_NAT\|<ip>` | pool の `nat_ip` 範囲が `STATIC_NAT` の global IP と重複する場合は silent drop (`isOverlap` チェック) | `natmgr.cpp:6748-6775` |
+| natmgr → APP_NAT_DNAT_POOL_TABLE | `setDnatPoolfromNatPool()` | `NAT_DNAT_POOL_TABLE` (APPL_DB) | `NAT_DNAT_POOL_TABLE\|<ip>` | pool の各 IP を APPL_DB に書き込み NatOrch に伝達。NatOrch が SAI `SAI_NAT_TYPE_DESTINATION_NAT_POOL` エントリを作成 | `natmgr.cpp:2276-2277`, `natorch.cpp:2968-3031` |
+
+### 解決タイミング
+
+- **NAT_GLOBAL `admin_mode` 依存**: `isNatEnabled()` は `m_natGlobal.adminMode == ENABLED_STRING` を確認する。`doNatGlobalTableTask()` が NAT_GLOBAL 変更を受けて内部フラグを更新。有効化前の pool / binding は iptables / APPL_DB に反映されず、有効化後に binding イベント再処理で補完される。
+- **INTERFACE 系依存**: `m_natIpInterfaceInfo` は `doNatInterfaceTask()` (`natmgr.cpp:8179`) が `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` / `LOOPBACK_INTERFACE` の変更ごとに更新。インタフェース有効化後の pool 自動再評価はなく、nat_zone 変更イベントで間接的に再処理される。
+- **NAT_BINDINGS 双方向依存**: pool 登録時に `isPoolMappedtoBinding()` で全 binding をイテレートし、この pool を参照する binding があれば `addDynamicNatRule()` を即座に再呼び出し。pool の新規追加・更新・削除のいずれでも発火する。
+- **STATIC_NAT 重複チェック**: pool 書き込み時点で `m_staticNatEntry` をメモリ内で走査する同期チェック。STATIC_NAT の追加後に pool を追加した場合のみ検出可能。逆順（pool 後に STATIC_NAT 追加）の重複は検出されない。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-cross-refs.md`
+<!-- /cross-refs -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
