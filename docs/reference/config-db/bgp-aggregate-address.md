@@ -443,4 +443,35 @@ journalctl -u bgp | grep -iE 'aggregate|frr daemon'
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang -->
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込
+
+`BGP_AGGREGATE_ADDRESS` テーブルの SET / DEL を契機に `bgpcfgd`
+(`AggregateAddressMgr`) が行う副次 DB 書込は **STATE_DB
+`BGP_AGGREGATE_ADDRESS|<prefix>` の `state` フィールドのみ** であり、
+COUNTERS_DB / APPL_STATE_DB / ASIC_DB / ERROR_TABLE への副次書込は無い。
+それ以外の経路反映は FRR vtysh push (`bgpd` → APPL_DB `ROUTE_TABLE` →
+`RouteOrch`) に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| STATE_DB | あり (`state=active|inactive`) | `AggregateAddressMgr.__init__` で `state_db_connector` から `BGP_AGGREGATE_ADDRESS` テーブルをオープン (`managers_aggregate_address.py:42-44`)、`set_address_state()` (L209-216) が `state` を書込み。発火点は `set_handler` / `del_handler` / `on_bbr_change` / `address_set_handler` |
+| COUNTERS_DB | なし | `managers_aggregate_address.py` / `frrcfgd.py` に `COUNTERS_DB` / `FlexCounter` 参照なし。BGP 集約はカウンタ統合対象外 |
+| APPL_STATE_DB | なし | 両ファイルに `APPL_STATE_DB` / `APP_STATE_DB` 参照なし。FRR が APPL_DB `ROUTE_TABLE` に集約ルートを注入する経路は `RouteOrch` 配下で扱われ、`BGP_AGGREGATE_ADDRESS` handler とは独立 |
+| ASIC_DB | なし (間接のみ) | bgpcfgd は SAI を直接呼ばない。FRR → APPL_DB `ROUTE_TABLE` → `RouteOrch` → `sairedis` 経路で ASIC_DB に到達するが、これは `ROUTE_TABLE` の副作用であり本テーブルの handler 由来ではない |
+| ERROR_TABLE | なし | 失敗パス (Phase D 既調査) のいずれも ERROR_TABLE 書込を行わず、syslog 出力に限定 |
+
+!!! note "frrcfgd 経路との非対称"
+    別テーブル `BGP_GLOBALS_AF_AGGREGATE_ADDR` (frr-mgmt-framework 経路) は
+    vtysh push のみで STATE_DB ミラーを持たない。bgpcfgd 経路と frrcfgd 経路
+    で STATE_DB 反映の有無が**非対称**である点に注意 (本ページ対象は
+    bgpcfgd 経路)。
+
+詳細な走査ログは `meta/_intermediate/cdb-flow/bgp-aggregate-address-side.md` を参照。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:42 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:209 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1982 -->
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
