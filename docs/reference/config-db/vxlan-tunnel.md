@@ -233,4 +233,39 @@ db_migrator.py での VXLAN_TUNNEL マイグレーションなし
 
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差異
+
+SONiC の VXLAN トンネル実装は、ASIC の SAI ケーパビリティによって動作モードが分岐する。
+
+### EVPN 対応 ASIC: P2MP vs P2P トンネルモード
+
+`VxlanTunnelOrch` 初期化時に `sai_query_attribute_enum_values_capability()` で ASIC の tunnel peer mode サポートを問い合わせる (vxlanorch.cpp:1256-1274)。
+
+| 条件 | 動作モード |
+|------|-----------|
+| SAI クエリ失敗（ドライバ未対応など） | P2P (DIP tunnel) モードに自動 fallback |
+| `SAI_TUNNEL_PEER_MODE_P2P` が返される | DIP トンネルサポートあり (P2P モード) |
+| P2MP のみが返される | P2MP モード (`is_dip_tunnel_supported = false`) |
+
+### DIP (Destination IP) トンネル差異
+
+**DIP サポートあり（P2P モード）**: EVPN リモート VTEP ごとに個別の P2P DIP トンネルを動的生成する (`createDynamicDIPTunnel()`)。SAI トンネルは `SAI_TUNNEL_PEER_MODE_P2P` + `SAI_TUNNEL_ATTR_ENCAP_DST_IP` で生成。FDB エントリを DIP トンネルポート単位で管理する (vxlanorch.cpp:1701-1724)。
+
+**DIP サポートなし（P2MP モード）**: DIP トンネルを作成しない。単一の P2MP SIP トンネルブリッジポートを使い回し、IMET ルートの L2MC グループメンバーとして実現する。`addTunnelUser()` はリモート VTEP の IP 参照カウントのみを更新する (vxlanorch.cpp:1701-1704)。
+
+### SIP トンネル遅延削除
+
+EVPN シナリオでは SIP トンネル HW の削除が DIP 参照カウントに依存する。DIP トンネルが残存している間は `del_tnl_hw_pending` フラグで削除を延期し、DIP カウントが 0 になった後に `deletePendingSIPTunnel()` が HW を削除する (vxlanorch.cpp:955-964)。P2MP モードでは DIP カウントが常に 0 のため即時削除可能。
+
+### P2P vs P2MP の SAI 作成差
+
+EVPN 動的 DIP トンネル (`TNL_CREATION_SRC_EVPN`, dst_ip 非ゼロ) は `SAI_TUNNEL_PEER_MODE_P2P` で作成される。一方 CLI 経由の静的トンネル (`TNL_CREATION_SRC_CLI`) は dst_ip の有無によらず `SAI_TUNNEL_PEER_MODE_P2MP` で作成される (vxlanorch.cpp:899-907)。
+
+### SmartSwitch / DPU
+
+`vxlanorch.cpp` に SmartSwitch DPU 固有の分岐コードは存在しない。現実装は NPU 通常モードのみを対象とし、DPU 側 VXLAN 処理は別スタックが担当する。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 7e2e79cf3524 -->
