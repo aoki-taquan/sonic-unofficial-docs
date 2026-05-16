@@ -199,28 +199,40 @@ show qos map dscp-tc
 ## 書込み順依存 (Phase B)
 
 対象テーブル: `DSCP_TO_TC_MAP`。Consumer: `QosOrch::handleDscpToTcTable()` / `handlePortQosMapTable()` (`qosorch.cpp`)。
+スキャン範囲: `qosorch.cpp` 全行精読、`tunneldecaporch.cpp:101-302`、`db_migrator.py:700-715`。
 
 ### SET 時の順序制約
 
-| # | 依存 | 方向 | 挙動 |
-|---|------|------|------|
-| 1 | `DSCP_TO_TC_MAP|<name>` SAI 作成 → `PORT_QOS_MAP|<port>` SET | 強制先行 | `resolveFieldRefValue()` 未解決で `task_need_retry`（自動再試行）|
-| 2 | `DSCP_TO_TC_MAP|<name>` 作成 → `PORT_QOS_MAP\|global` SET（Broadcom） | 強制先行 | 同上。db_migrator が自動生成するが複数マップ時は先頭 1 件（順序未定義）|
-| 3 | `DSCP_TO_TC_MAP|<name>` 作成 → `TUNNEL_DECAP_TABLE|<name>` SET | 強制先行 | `resolveTunnelQosMap()` 未解決で `task_need_retry`（未指定は silent skip） |
-| 4 | dscp 値は数値文字列のみ | 必須 | `stoi()` に例外処理なし。非数値 → `std::invalid_argument` → `task_failed` |
+| # | 依存関係 | 方向 | 挙動 |
+|---|----------|------|------|
+| 1 | `DSCP_TO_TC_MAP\|<name>` SAI 作成完了 → `PORT_QOS_MAP\|<port>` SET | 強制先行 | `resolveFieldRefValue()` 未解決で `task_need_retry`（自動再試行） |
+| 2 | `DSCP_TO_TC_MAP\|<name>` 作成 → `PORT_QOS_MAP\|global` SET（Broadcom） | 強制先行 | 同上。db_migrator が自動生成するが複数マップ時は `get_keys()` 先頭 1 件（順序未定義） |
+| 4 | `DSCP_TO_TC_MAP\|<name>` 作成 → `TUNNEL_DECAP_TABLE\|<name>` SET | 強制先行 | `resolveTunnelQosMap()` 未解決で `task_need_retry`（フィールド未指定は silent skip） |
+| 6 | dscp 値は数値文字列のみ | 必須 | `stoi()` に例外処理なし。非数値 → `std::invalid_argument` → `task_failed`（自動 retry なし） |
 
 > **推奨順序（SET）**: `DSCP_TO_TC_MAP|<name>` → `PORT_QOS_MAP|<port>` → `TUNNEL_DECAP_TABLE`（参照順に書く）。
 
 ### DEL 時の順序制約
 
-| # | 依存 | 方向 | 挙動 |
-|---|------|------|------|
-| 3 | `PORT_QOS_MAP|<port>` の `dscp_to_tc_map` 参照解除 → `DSCP_TO_TC_MAP|<name>` DEL | 強制先行 | 参照中は `m_pendingRemove=true` + `task_need_retry` ロック |
-| 5 | pending_remove 解消 → SET（再書き込み）可能 | 強制先行 | pending_remove 中の SET は即 `task_need_retry` |
+| # | 依存関係 | 方向 | 挙動 |
+|---|----------|------|------|
+| 3 | `PORT_QOS_MAP\|<port>` / Tunnel の参照解除 → `DSCP_TO_TC_MAP\|<name>` DEL | 強制先行 | 参照中は `m_pendingRemove=true` + `task_need_retry` ロック（`qosorch.cpp:181-186`） |
+| 5 | pending_remove 解消 → SET（再書き込み）実行可能 | 強制先行 | pending_remove 中の SET も即 `task_need_retry` 返却（ロールバック・入れ替えもブロック） |
 
-> **推奨順序（DEL）**: `PORT_QOS_MAP|<port>` の dscp_to_tc_map フィールド削除 → `DSCP_TO_TC_MAP|<name>` DEL。
+> **推奨順序（DEL）**: `PORT_QOS_MAP|<port>` の `dscp_to_tc_map` フィールド削除（参照ポート全解除）→ `DSCP_TO_TC_MAP|<name>` DEL。
 
-> **Evidence**: `qosorch.cpp:136-139,181-186,2021-2026,2124-2129`; `tunneldecaporch.cpp:217-221`; `db_migrator.py:700-715`
+### SAI 操作失敗と retry なし
+
+- CREATE / SET / DELETE で SAI エラーが発生した場合、`task_failed` を返し自動 retry は行われない（`qosorch.cpp:151-191`）。
+- `DscpToTcMapHandler` の dscp 文字列変換 (`stoi()`) に例外処理なし。非数値文字列 → `std::invalid_argument` → `task_failed`（`Dot1pToTcMapHandler` は try/catch あり、`DscpToTcMapHandler` はなし）。
+
+### PORT_QOS_MAP からの参照順（SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP）
+
+- `PORT_QOS_MAP` の `dscp_to_tc_map` フィールドが `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` にマップされる（`qosorch.cpp:61`）。
+- `PORT_QOS_MAP|global` ではスイッチレベル属性 `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` を使用（ポートごとと別属性）。
+- Broadcom 向け自動生成: `db_migrator.migrate_port_qos_map_global()` が `DSCP_TO_TC_MAP` の最初の 1 件を `PORT_QOS_MAP|global` へ自動登録（複数マップ存在時は `get_keys()` 返却順で先頭、順序未定義）。
+
+> **Evidence**: `qosorch.cpp:61,136-139,181-191,2021-2026,2124-2129`; `tunneldecaporch.cpp:217-221,831-836`; `db_migrator.py:700-715`
 <!-- /ordering -->
 
 <!-- defaults -->
