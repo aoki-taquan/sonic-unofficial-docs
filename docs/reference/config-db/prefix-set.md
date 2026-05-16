@@ -255,4 +255,46 @@ db_migrator.py での PREFIX_SET マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`frrcfgd` (`bgp_table_handler_common`) が `PREFIX_SET` / `PREFIX` / `ROUTE_MAP` 三者間の順序依存を持つ。`frrcfgd.py` L2227-2246, L2894-2916, L2663-2676 および `sonic-route-map.yang:163-187` の精読から抽出。
+
+### 強制順序（破ると DROP またはサイレントスキップ）
+
+| # | 依存関係 | 方向 | 破った場合の挙動 |
+|---|----------|------|----------------|
+| 1 | `PREFIX_SET\|<name>` SET → `PREFIX\|<name>\|*` SET | **先行必須** | `PREFIX` イベント受信時 `pfx_set_name not in prefix_set_list` → LOG_ERR + `continue`（PREFIX エントリが完全 DROP） |
+| 2 | `PREFIX_SET\|<name>` SET → `ROUTE_MAP.match_prefix_set/<name>` SET | **先行必須**（YANG 経路） | YANG leafref validation reject。直書き経路は通るが FRR コマンド生成時 af_mode 不明 → IPv4 として誤扱い |
+| 3 | `PREFIX_SET\|<name>` SET → `ROUTE_MAP.match_next_hop_set/<name>` SET | **先行必須**（YANG 経路） | 同上 |
+| 4 | `ROUTE_MAP.match_prefix_set` 参照削除 → `PREFIX\|<name>\|*` DEL → `PREFIX_SET\|<name>` DEL | 推奨 DEL 順 | YANG 経路: `PREFIX_SET` を先に DEL しようとすると leafref reject。直書き: DEL は通るが FRR ip prefix-list が残留 |
+
+### mode 変更時のシーケンス（UPDATE 非対応）
+
+runtime で既存 `PREFIX_SET|<name>` に SET イベントが届いても `mode` の変更は静かに無視される（`if pfx_set_name in self.prefix_set_list: continue`、L2896-2900）。`mode` を変更するには以下の順序が必要:
+
+1. `ROUTE_MAP.match_prefix_set` / `match_next_hop_set` の当該 set 参照を削除
+2. `PREFIX|<name>|*` の全エントリを DEL（FRR prefix-list エントリ削除）
+3. `PREFIX_SET|<name>` を DEL（frrcfgd の内部キャッシュから削除）
+4. `PREFIX_SET|<name>` を新 mode で SET
+5. `PREFIX|<name>|*` を再投入
+
+### daemon 優先度（PREFIX vs PREFIX_SET）
+
+| テーブル | TABLE_DAEMON | 影響 FRR プロセス |
+|---------|-------------|-----------------|
+| `PREFIX_SET` | `['bgpd']` | bgpd のみ |
+| `PREFIX` | `['zebra', 'bgpd', 'ospfd', 'pimd']` | 複数デーモン同時 |
+
+`PREFIX` エントリの DEL は zebra / ospfd / pimd にも `no ip prefix-list` を発行するため、ルーティングポリシーへの波及が広い。
+
+### 起動時の読み込み順（自然保証）
+
+frrcfgd init (L2227-2245) は `PREFIX_SET` → `PREFIX` の順でテーブルを読み込む。起動時は順序衝突なし。runtime の非同期イベントのみ順序依存が問題となる。
+
+<!-- evidence: frrcfgd.py:83,87,2227-2246,2894-2916,2663-2676; sonic-route-map.yang:163-187 -->
+
+> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-ordering.md` を参照
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 88e792f23f63 -->
