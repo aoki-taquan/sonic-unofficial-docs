@@ -24336,6 +24336,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bfdorch-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — bfdorch が他テーブル由来の状態を直接参照する経路 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — bfdorch が他テーブル由来の状態を直接参照する経路 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-bfdorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB レベル — bfdorch が参照する他テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / APPL_DB レベル — 経路別の中継
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -24348,7 +24398,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -24376,7 +24426,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -34852,6 +34902,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bfdorch-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — bfdorch が他テーブル由来の状態を直接参照する経路 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — bfdorch が他テーブル由来の状態を直接参照する経路 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-bfdorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB レベル — bfdorch が参照する他テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / APPL_DB レベル — 経路別の中継
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34864,7 +34964,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -34892,7 +34992,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -35344,6 +35444,95 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cross-refs -->
+<h2 id="bfdorch-phase-c">暗黙参照 — <code>bfdorch</code> が他テーブル由来の状態を直接参照する経路 (Phase C)<a class="headerlink" href="#bfdorch-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>BFD_SESSION</code> は YANG schema を持たず leafref / subscribe 経由の明示参照を宣言しない。しかし <code>bfdorch</code> (<code>sonic-swss/orchagent/bfdorch.cpp</code>) は SAI 投入時に <strong>他 CONFIG_DB テーブル由来の orchagent 内オブジェクト</strong> を直接参照しており、暗黙的な前提依存が発生する。本ブロックではコード経路ベースで観測される暗黙参照をまとめる。</p>
+<h3 id="config_db-bfdorch">CONFIG_DB レベル — bfdorch が参照する他テーブル<a class="headerlink" href="#config_db-bfdorch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル</th>
+<th>参照タイミング</th>
+<th>用途</th>
+<th>方向</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../port/"><code>PORT</code></a> (<code>PORT|&lt;alias&gt;</code>)</td>
+<td><code>create_bfd_session()</code> で <code>interface != "default"</code> のとき</td>
+<td><code>gPortsOrch-&gt;getPort(alias, port)</code> で <code>Port::m_port_id</code> / <code>Port::m_mac</code> を取得し SAI <code>BFD_SESSION_ATTR_PORT</code> / <code>SRC_MAC_ADDRESS</code> に投入</td>
+<td>入力依存</td>
+<td><code>bfdorch.cpp:482-515</code></td>
+</tr>
+<tr>
+<td><a href="../vrf/"><code>VRF</code></a> (<code>VRF|&lt;name&gt;</code>)</td>
+<td><code>create_bfd_session()</code> で <code>vrf != "default"</code> かつ <code>interface == "default"</code> のとき</td>
+<td><code>VRFOrch::getVRFid(vrf_name)</code> で SAI virtual_router OID を取得し <code>BFD_SESSION_ATTR_VIRTUAL_ROUTER</code> に投入</td>
+<td>入力依存</td>
+<td><code>bfdorch.cpp:530-541</code></td>
+</tr>
+<tr>
+<td><a href="../bgp-device-global/"><code>BGP_DEVICE_GLOBAL</code></a> (<code>STATE.use_software_bfd</code> / <code>STATE.tsa_enabled</code>)</td>
+<td><code>doTask()</code> 毎周回 + TSA state change 通知時</td>
+<td><code>BgpGlobalStateOrch::getSoftwareBfd()</code> / <code>getTsaState()</code> で hardware/software 経路 と TSA shutdown 挙動を決定</td>
+<td>制御依存</td>
+<td><code>bfdorch.cpp:114-138, 683-748</code></td>
+</tr>
+<tr>
+<td><code>STATIC_ROUTE</code> (<code>STATIC_ROUTE|&lt;vrf&gt;|&lt;prefix&gt;</code>)</td>
+<td><code>staticroutebfd</code> プロセス (別プロセス) が CONFIG_DB を subscribe し、BFD 監視対象の next-hop に対応する BFD セッションを APPL_DB <code>BFD_SESSION_TABLE</code> に push する</td>
+<td>static route の BFD 監視は <code>staticroutebfd</code> 経由で <strong>逆方向に <code>BFD_SESSION_TABLE</code> を生成</strong> する (<code>tx/rx_interval=50ms</code> 既定上書き)</td>
+<td><strong>逆方向</strong> (STATIC_ROUTE → BFD_SESSION)</td>
+<td><code>staticroutebfd/main.py:23-24, 118-120, 283-288, 366-559, 720-730</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>上記は <code>bfdorch</code> が CONFIG_DB を直接 subscribe するわけではない点に注意。<code>PORT</code> / <code>VRF</code> は orchagent 内 in-memory state (<code>gPortsOrch</code> / <code>VRFOrch</code>) 経由、<code>BGP_DEVICE_GLOBAL</code> は <code>BgpGlobalStateOrch</code> 経由で参照される。順序依存は <a href="#書込み順依存-phase-b--コード由来">書込み順依存 (Phase B)</a> を参照。</p>
+</blockquote>
+<h3 id="state_db-appl_db">STATE_DB / APPL_DB レベル — 経路別の中継<a class="headerlink" href="#state_db-appl_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>役割</th>
+<th>経路</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_DB.SOFTWARE_BFD_SESSION_TABLE</code></td>
+<td><code>use_software_bfd=true</code> 時の中継。<code>bfdorch</code> が CONFIG_DB から転記し、<code>bgpcfgd/BfdMgr</code> が subscribe して FRR <code>bfdd</code> に vtysh 経由で投入</td>
+<td><code>bfdorch</code> (write) → <code>BfdMgr</code> (read/subscribe)</td>
+<td><code>bfdorch.cpp:114-138</code> / <code>managers_bfd.py</code></td>
+</tr>
+<tr>
+<td><code>APPL_DB.BFD_SESSION_TABLE</code></td>
+<td>hardware BFD の SAI 投入直前段。<code>staticroutebfd</code> も ProducerStateTable で直接書き込む</td>
+<td><code>staticroutebfd</code> (producer) → <code>bfdorch</code> (consumer)</td>
+<td><code>staticroutebfd/main.py:118-120</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB.BFD_SESSION_TABLE</code></td>
+<td>hardware BFD の状態通知 (<code>UP</code> / <code>DOWN</code>)。SAI notification handler が更新</td>
+<td><code>bfdorch</code> (write) → <code>staticroutebfd.bfd_state_set_handler</code> (read/subscribe)</td>
+<td><code>bfdorch.cpp:274-302</code> / <code>staticroutebfd/main.py:296-300, 641-710</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_14">範囲外 (誤解されやすい隣接テーブル)<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code></strong>: <code>bfdorch.cpp</code> は <code>local_addr</code> の所属インタフェースを検証しない。妥当性確認は SAI 実装側に委ねる。<code>staticroutebfd</code> はこれらを subscribe するが、<code>bfdorch</code> 自身は読まない (<code>staticroutebfd/main.py:718-730</code>)</li>
+<li><strong><code>ROUTE_TABLE</code> / 通常の <code>STATIC_ROUTE</code> 経路</strong>: <code>bfdorch</code> が ROUTE を直接読むことはない。<code>STATIC_ROUTE</code> は <code>staticroutebfd</code> を経由する<strong>間接的な書込み源</strong>であり、APPL_DB に到達した時点で他の BFD セッションと区別はない</li>
+<li><strong><code>BGP_NEIGHBOR</code> / <code>BGP_PEER_RANGE</code></strong>: BGP セッションで BFD を有効化する設定はこちらにあるが、<code>BFD_SESSION</code> テーブルへの投入は <code>bgpcfgd</code> / FRR が担当し <code>bfdorch</code> のスコープ外</li>
+<li><strong><code>DEVICE_METADATA</code> / <code>SWITCH</code></strong>: <code>gSwitchId</code> / <code>gVirtualRouterId</code> は SwitchOrch 起動時に確定済みのグローバル変数として参照される (<code>bfdorch.cpp:27, 533</code>)。<code>bfdorch</code> が <code>DEVICE_METADATA</code> を直接読むことはない</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/bfd-session-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <p>YANG schema が存在しないため、すべてのデフォルトはコード (<code>bfdorch.cpp</code>) の変数初期化またはマクロ定義から由来する。</p>
@@ -35413,7 +35602,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_14">補足<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_15">補足<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>multiplier</code> のデフォルト値が hardware BFD (<code>bfdorch</code>: 10) と software BFD (<code>bgpcfgd/BfdMgr</code>: 3) で異なる。<code>use_software_bfd</code> フラグ (<code>BGP_DEVICE_GLOBAL.STATE.use_software_bfd</code>) で経路が切り替わる。</li>
 <li><code>tx_interval</code> / <code>rx_interval</code> のデフォルトも経路で異なる: hardware=1000ms、bgpcfgd BfdMgr=200ms、static route BFD=50ms。</li>
@@ -35478,7 +35667,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_15">補足<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_16">補足<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <ul>
 <li>依存 #1 / #2 は doTask が <strong>false 返却 → <code>it++</code> で次イベントループ周回再試行</strong>する設計のため、PORT / VRF が後追いで作成されても自動的に追従する。ただし orchagent ログには <code>Failed to locate port ...</code> が周回ごとに記録され続けるため、ログノイズを避けたい場合は PORT/VRF を先行投入することが望ましい。</li>
 <li>依存 #3 は software ⇄ hardware の経路切替が運用中に発生する珍しいケース。通常は <code>BGP_DEVICE_GLOBAL</code> を最初に確定してから BFD_SESSION を投入する。</li>

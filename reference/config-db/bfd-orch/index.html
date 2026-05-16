@@ -24269,6 +24269,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34929,6 +34940,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35576,6 +35598,40 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>本ページが扱う主作用テーブルは <strong>APPL_DB <code>BFD_SESSION_TABLE</code></strong> (bfdorch が consumer として購読) であり、<code>BfdOrch</code> の主作用は SAI BFD セッションの作成・削除 (ASIC_DB 経由) である。これに加え、<code>BfdOrch</code> は <strong>STATE_DB の 2 テーブル</strong> へ副次的にエントリを書き込む。SAI BFD セッション自体の書込み (ASIC_DB 経由) は主作用のため除外する。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込内容</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>BFD_SESSION_TABLE\|&lt;vrf&gt;:&lt;ifname&gt;:&lt;peer_ip&gt;</code></td>
+<td><code>create_bfd_session()</code> 成功時に <code>state="Down"</code> で初期化 (<code>set</code>)。ASIC_DB <code>NOTIFICATIONS</code> 受信で <code>state</code> を <code>Down</code>/<code>Init</code>/<code>Up</code>/<code>Admin_Down</code> に <code>hset</code> 更新。<code>remove_bfd_session()</code> 時に <code>del</code>。コンストラクタで起動時に既存エントリを全 <code>del</code> cleanup</td>
+<td><code>bfdorch.cpp:59</code> (<code>m_stateBfdSessionTable</code> 構築), <code>:78</code> (起動時 cleanup), <code>:252</code> (<code>hset("state", ...)</code>), <code>:565</code> (<code>set(state_db_key, fvVector)</code>), <code>:629</code> (<code>del</code>)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>SOFTWARE_BFD_SESSION_TABLE\|&lt;vrf&gt;:&lt;ifname&gt;:&lt;peer_ip&gt;</code></td>
+<td><code>use_software_bfd == true</code> 経路で APPL_DB SET 受信時に FV をそのまま転記 (<code>set</code>)。DEL 受信時に <code>del</code>。コンストラクタで起動時に既存エントリを全 <code>del</code> cleanup。<code>bgpcfgd/BfdMgr</code> がこのテーブルを購読し FRR <code>bfdd</code> へ設定注入</td>
+<td><code>bfdorch.cpp:68</code> (<code>m_stateSoftBfdSessionTable</code> 構築), <code>:84</code> (起動時 cleanup), <code>:136</code> (<code>set</code>), <code>:185</code> (<code>del</code>), <code>:706-714</code> (<code>createSoftwareBfdSession()</code> / <code>removeSoftwareBfdSession()</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>呼出しトリガは APPL_DB <code>BFD_SESSION_TABLE</code> の SET / DEL 受信 (<code>doTask()</code> L111-217)、ASIC_DB <code>NOTIFICATIONS</code> の <code>bfd_session_state_change</code> 受信 (L226-263) と orchagent 起動時 cleanup (L75-86)。</p>
+<p><code>BfdOrch</code> は <strong>COUNTERS_DB / FLEX_COUNTER_DB / APPL_DB / CONFIG_DB に対する書込みを一切行わない</strong> (BFD は SAI counter 統計の対象外であり、<code>ProducerStateTable</code> / <code>NotificationProducer</code> メンバも未保有)。プロセス内 observer pattern (<code>notify(SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE, ...)</code> L260 / L572 / L680) は orchagent 内の <code>NhgOrch</code> / <code>RouteOrch</code> 等への通知であり DB 書込ではない。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/bfdorch.cpp</code> L59-86 (DB ハンドル構築 + 起動時 cleanup), L136 / L185 (software 経路 set/del), L252 (state hset), L565 (create 後の初期化 set), L629 (remove 時 del), L706-714 (<code>createSoftwareBfdSession()</code> / <code>removeSoftwareBfdSession()</code>); 詳細スキャンと grep 結果は <code>meta/_intermediate/cdb-flow/bfd-orch-side.md</code> を参照。</p>
+</blockquote>
+<!-- /side-effects -->
+
 <!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
 <p><code>bfdorch</code> は環境変数 <code>platform</code> / <code>sub_platform</code> を参照しない。プラットフォーム差はすべて <strong>SAI capability 動的照会</strong> (<code>sai_query_attribute_capability</code>) で決定される。経路選択は起動時 1 回のみ評価される。</p>
