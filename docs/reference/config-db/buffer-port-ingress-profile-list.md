@@ -96,6 +96,27 @@ YANG に `default` 節は存在しない。以下はすべてコード実装か�
 > **YANG vs 実装 discrepancy**: YANG の `leaf-list profile_list` に `default`・方向制約・trim 禁止の記述はない。これらは純粋に実装（buffermgrdyn.cpp / bufferorch.cpp）による制約。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+このテーブルにエントリを書き込む前に以下の前提条件を満たす必要がある。
+
+| # | 先行必須テーブル / 条件 | 違反時の挙動 | evidence |
+|---|----------------------|------------|---------|
+| 1 | `BUFFER_PROFILE` エントリが先行（参照プロファイルが `m_bufferProfileLookup` / orchagent に認識済み） | `task_need_retry`（silent retry、ログに残る） | `buffermgrdyn.cpp:3282-3285`, `bufferorch.cpp:1683-1688` |
+| 2 | `BUFFER_POOL` エントリが先行（`m_bufferPoolReady == true`） | APPL_DB 書き込み pending（`m_bufferObjectsPending=true`）、BUFFER_POOL 完了後自動再処理 | `buffermgrdyn.cpp:3408-3414` |
+| 3 | `PORT` エントリが先行（PortsOrch にポート認識済み） | `task_invalid_entry`（エントリ消去、永続エラー） | `bufferorch.cpp:1762-1765` |
+
+### ハードコード禁止事項
+
+| 禁止条件 | 違反時の挙動 | evidence |
+|---------|------------|---------|
+| `packet_discard_action=trim` のプロファイルを `profile_list` に指定 | `task_failed`（エントリ消去）― ingress 側 trim は SAI 仕様禁止 | `bufferorch.cpp:1725-1731` |
+| `direction=egress` のプロファイルを `profile_list` に指定（dynamic モード） | `task_failed`（エントリ消去）― SAI 方向制約違反 | `buffermgrdyn.cpp:3289-3296` |
+
+> **推奨書込み順**: `BUFFER_POOL` → `BUFFER_PROFILE` → `PORT` → `BUFFER_PORT_INGRESS_PROFILE_LIST`
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
