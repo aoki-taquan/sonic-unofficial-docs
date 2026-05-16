@@ -302,11 +302,15 @@ show copp config
 | `trap_group` | [`COPP_GROUP`](./copp-group.md) | `COPP_GROUP\|<name>` | グループ未登録の場合 `coppmgr` は APPL_DB 書き込みを保留。`CoppOrch` は `task_need_retry` を返して再試行 | `coppmgr.cpp:62-79`, `copporch.cpp:584` |
 | `trap_ids` (各 trap_id) | [`FEATURE`](./feature.md) | `FEATURE\|<feature-name>` | feature の `state=disabled` の場合、対応 trap_id を APPL_DB から除外（`always_enabled=false` のみ対象） | `coppmgr.cpp:173-191` |
 | `always_enabled` | [`FEATURE`](./feature.md) | `FEATURE\|<feature-name>` | `true` の場合は feature state に関わらず常時インストール。未設定は `false` 扱い | `coppmgr.cpp:90` |
+| `trap_group` (初期値、間接) | [`DEVICE_METADATA`](./device-metadata.md) | `DEVICE_METADATA\|localhost` | `copp_cfg.j2` が `DEVICE_METADATA.localhost.type` に `'Mgmt'` を含む場合、`queue4_group3` の cir/cbs を 300 に設定（通常は 100）。COPP_TRAP の `trap_group` がこのグループを参照する場合に間接影響。ビルド時 sonic-cfggen 展開。 | `copp_cfg.j2:37-43` |
+| `trap_ids` (SAI 適用時) | SAI HOSTIF オブジェクト | n/a（CONFIG_DB テーブルではなく SAI 層） | `CoppOrch` が `sai_hostif_api->create_hostif_trap_group()` / `create_hostif_trap()` を呼び出し SAI HOSTIF_TRAP・HOSTIF_TRAP_GROUP オブジェクトを生成。Genetlink 型の trap_group では `sai_create_hostif()` で netdev ソケットを作成しトラップ受信チャネルに紐付ける。 | `copporch.cpp:661-678`, `copporch.cpp:780-792` |
 
 ### 解決タイミング
 
 - **COPP_GROUP**: SET 処理時に即座に参照確認。未解決は保留キューで管理され、GROUP 登録後に `doTask` 再実行で解消する。
 - **FEATURE**: `doFeatureTask()` が FEATURE テーブルの変化を購読し、state 変更のたびに影響する COPP_TRAP を再評価・再書き込みする。
+- **DEVICE_METADATA**: `copp_cfg.j2` 展開時（ビルド時または `sonic-cfggen` 再実行時）にのみ参照される。ランタイムでの再評価はない。
+- **SAI HOSTIF**: `CoppOrch::processCoppTrap()` 内でポート初期化完了後に即時生成。SAI オブジェクト ID は `m_trap_group_hostif_map` / `m_trapid_hostif_table_map` にキャッシュされる。
 
 ### init_cfg 由来の暗黙初期化
 
