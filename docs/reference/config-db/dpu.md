@@ -158,6 +158,32 @@ YANG `default` 文はいずれのフィールドにも存在しない。以下�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DPU` テーブルは SmartSwitch 固有の CONFIG_DB テーブルとして他の複数テーブルと暗黙依存関係を持つ。
+YANG `leafref` による明示的な参照は持たないが、orchagent / chassisd / monit の実行時コードが
+以下のテーブルを連携して参照する。
+
+| 依存方向 | 参照元フィールド / 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|------------------------|--------------|--------------|---------|------|
+| 制御依存（被制御） | `CHASSIS_MODULE.admin_status` | `CHASSIS_MODULE`（被参照） | `CHASSIS_MODULE\|DPU<n>` | `chassisd` の `SmartSwitchConfigManagerTask` が `CHASSIS_MODULE` テーブルを購読。`admin_status=down` 書き込みで DPU のシャットダウン処理を起動する。YANG の key pattern `DPU[0-9]+` により `DPU0`〜`DPU7` が合法。`DPU.state` フィールドとは独立して動作する | `chassisd:1196-1228,235-256`, `sonic-chassis-module.yang:23` |
+| 条件依存（起動ゲート） | `DEVICE_METADATA.localhost.subtype` | `DEVICE_METADATA` | `DEVICE_METADATA\|localhost` | `orchagent/main.cpp:269` が `subtype` フィールドを読み取り `gMySwitchSubType` に格納。`gMySwitchSubType == "SmartSwitch"` のときのみ `DashEniFwdOrch`（`DPU` テーブル購読者）が初期化される。この条件が満たされない環境では `DPU` テーブルへの書き込みが ENI ルール生成に繋がらない | `orchagent/main.cpp:269`, `orchdaemon.cpp:613-618`, `sonic-device_metadata.yang:191` |
+| 分業参照（姉妹テーブル） | `container_checker` / `sonic-dpu-mgmt-traffic.sh` | `DPUS` | `DPUS\|<dpu_name>` | コンテナ監視（`container_checker`）は `DPUS` テーブルから DPU 名を取得して `databasedpu<n>` コンテナの必須起動判定を行う。`DPU` テーブルとは役割分担があり、`DPUS` は物理インタフェース（`midplane_interface`）情報を保持する | `container_checker:117-121`, `sonic-dpu-mgmt-traffic.sh:111,145`, `sonic-smart-switch.yang:81-106` |
+| 連携参照（ENI 解決チェーン） | `DashEniFwdOrch` 初期化時の一括取得 | `REMOTE_DPU`, `VDPU` | `REMOTE_DPU\|<name>`, `VDPU\|<name>` | `dashenifwdorch.cpp:215-344` が `DPU`・`REMOTE_DPU`・`VDPU` を HA 準備完了時に一括取得。`VDPU.main_dpu_ids` フィールドが DPU 識別子リストを持ち、ENI→VDPU→DPU の名前解決チェーンを形成する。`VDPU` の `main_dpu_ids` に不正な DPU 名があると `WARN` ログが出力される | `dashenifwdorch.cpp:215-344`, `dashenifwdorch.h:63-65,80` |
+
+### 依存解決タイミング
+
+- **CHASSIS_MODULE → DPU 制御**: `chassisd` の `SmartSwitchConfigManagerTask` がリアルタイムに
+  `CHASSIS_MODULE` の変化を購読。`admin_status` 変化のたびに DPU の admin state が更新される。
+- **DEVICE_METADATA.subtype → DashEniFwdOrch 起動**: `orchagent` 起動時（`main.cpp:269`）に一度だけ読み取る。
+  実行時の変化は反映されない（orchagent 再起動が必要）。
+- **DPUS 参照**: `container_checker` は monit が定期実行するたびに `DPUS` テーブルを参照する。
+  `DPU` テーブルと `DPUS` テーブルは別々に書き込まれるが、SmartSwitch では両方の整合が必要。
+- **REMOTE_DPU / VDPU の一括読み込み**: HA セッション確立前に一括読み込みが行われる。
+  `DPU`・`REMOTE_DPU`・`VDPU` が揃っていない状態での HA 初期化は `WARN` ログを伴う不完全な状態になる。
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
