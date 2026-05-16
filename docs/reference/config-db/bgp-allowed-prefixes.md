@@ -522,4 +522,77 @@ vtysh -c 'show running-config bgp'
 > **Evidence**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py` (L75-110, 197, 699-707, 736-754, 773-785); `dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2` L41,48,64,71。
 <!-- /failure -->
 
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / keyspace notification)
+
+> **調査根拠**: `sonic-bgpcfgd/bgpcfgd/runner.py` + `manager.py` + `managers_allow_list.py` + `main.py` 精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-pubsub.md`
+
+### 購読方式
+
+`bgpcfgd` は `swss::SubscriberStateTable` を 1 本の `swsscommon.Select` ループで束ねる**集中 dispatcher** 構成。テーブルごとに subscriber を 1 つ作り、`Runner.run()` が `select(1000ms)` → `subscriber.pop()` → 各 Manager の `handler(key, op, fvs)` に振り分ける。`BGP_ALLOWED_PREFIXES` は `main.py:94` で `BGPAllowListMgr(common_objs, "CONFIG_DB", "BGP_ALLOWED_PREFIXES")` として登録され、`Runner.add_manager` が `SubscriberStateTable(CONFIG_DB_conn, "BGP_ALLOWED_PREFIXES")` を生成して `swsscommon.Select` に追加する (`runner.py:47-52`)。`ConsumerStateTable` / `NotificationConsumer` / `ProducerStateTable` は使用せず、APPL_DB / STATE_DB 中継もない。
+
+### dispatch チェーン
+
+`Manager.handler` (base class, `manager.py:34-53`) が op 種別で分岐:
+
+| op | 処理 | 根拠 |
+|----|------|------|
+| `SET_COMMAND` | deps 充足チェック → `set_handler(key, data)`。`False` 戻りは `set_queue` に退避 (暗黙リトライ) | `manager.py:41-49`, `managers_allow_list.py:49` |
+| `DEL_COMMAND` | `del_handler(key)` を直接呼ぶ | `manager.py:50-51`, `managers_allow_list.py:115` |
+| その他 | `log_err` のみ | `manager.py:52-53` |
+
+`BGPAllowListMgr` は `deps=[]` で初期化される (`managers_allow_list.py:40`) ため `available_deps([])` は常に True。初回イベントから即 `set_handler` に到達する一方、`set_handler` が `False` を返したときの再投入トリガは乏しく (`on_deps_change` は依存変化が無いので発火しない)、実質的には**次の SET イベント到来時に `set_queue` の保留分が再走される**挙動。
+
+### keyspace notification 詳細
+
+| 項目 | 値 |
+|------|-----|
+| Redis DB 番号 | 4 (`SonicDBConfig.getDbId("CONFIG_DB")`) |
+| PSUBSCRIBE パターン | `__keyspace@4__:BGP_ALLOWED_PREFIXES\|*` (libswsscommon の `SubscriberStateTable` が内部で張る) |
+| Select timeout | 1000 ms (`runner.py:21` `SELECT_TIMEOUT = 1000`) |
+| 起動時スナップショット | あり — `SubscriberStateTable` 生成時に既存キーを内部キューに enqueue (swsscommon 標準挙動)。`bgpcfgd` 側に明示の全量 fetch は無い |
+| バッチ性 | 1 select cycle 内で全 subscriber を pop した後 `cfg_manager.commit()` を**まとめて 1 回**呼び、複数テーブル変更を 1 vtysh バッチに収める (`runner.py:63-73`) |
+| APPL_DB / STATE_DB 中継 | なし。`cfg_mgr.push_list` で vtysh に直接 prefix-list / community-list / route-map を送る |
+
+### 通信シーケンス
+
+```
+ユーザ書込み: CONFIG_DB|BGP_ALLOWED_PREFIXES|<deployment>|<id>[|...]
+  ↓ (Redis keyspace event)
+SubscriberStateTable 内部キューに enqueue
+  ↓ (≤ 1000 ms)
+Runner.run() の selector.select() 起床                          # runner.py:57
+  ↓
+subscriber.pop() → (key, op, fvs)                              # runner.py:65
+  ↓
+callbacks[4]["BGP_ALLOWED_PREFIXES"] = BGPAllowListMgr.handler  # runner.py:69-70
+  ↓
+Manager.handler(key, op, dict(fvs))                            # manager.py:34
+  ├─ SET → set_handler → __set_handler_validate → __update_policy
+  │           └─ cfg_mgr.push_list([prefix-list, community-list, route-map ...])
+  └─ DEL → del_handler → __remove_policy
+              └─ cfg_mgr.push_list([... no ...])
+  ↓
+runner ループ末の cfg_manager.commit()                         # runner.py:71
+  ↓
+vtysh セッションへ FRR config をバッチ送信
+  ↓
+bgpd が prefix-list / route-map / community-list を反映
+  ↓ (必要に応じ)
+__find_peer_group → restart_peer_groups → "clear bgp ... soft"
+```
+
+### 反映タイミング
+
+CONFIG_DB write から FRR 反映まで通常**≤ 1 秒** (Select timeout = 1000 ms)。`set_handler` が `False` を返した場合は `set_queue` に退避され、後続の SET イベントで再試行される (回数上限・バックオフなし。詳細は Phase D セクションを参照)。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:21 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:47 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:63 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/manager.py:34 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:94 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:38 -->
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 43ff039eae38 -->
