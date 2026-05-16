@@ -39,6 +39,14 @@
 - `frrcfgd.py` L81: `BGP_GLOBALS` を `bgpd` プロセスへ反映。BMP が動作するには FRR BGP セッションが確立している必要があり、BGP_GLOBALS で定義された AS・router-id 等が前提となる
 - `bmpcfgd.py` は `BGP_GLOBALS` を直接読まないが、FRR BMP プラグインは BGP セッション文脈（BGP_GLOBALS 由来の AS番号・peer 情報）を BMP メッセージ内に含める
 
+### 6. CONFIG_DB.DEVICE_METADATA.bgp_asn (読取・間接)
+
+- 参照種別: **間接参照（FRR テンプレート経由）**
+- `bgpd.main.conf.j2` L94: `DEVICE_METADATA['localhost']['bgp_asn']` が未設定または `"none"` / `"null"` の場合、`router bgp` ブロックが生成されず `bmp targets sonic-bmp` が FRR に注入されない
+- BMP 機能の有効化は `DEVICE_METADATA|localhost.bgp_asn` の設定を前提とする
+- `bmpcfgd.py` は `DEVICE_METADATA` を直接参照しないが、FRR テンプレートを通じた暗黙の依存が存在する
+- evidence: `dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:94-136`
+
 ---
 
 ## frrcfgd.py の BMP 関連確認
@@ -61,3 +69,4 @@ BMP の設定注入は `bgpd.main.conf.j2` テンプレートで起動時にハ�
 | `BMP_STATE_DB.BGP_RIB_OUT_TABLE*` | State テーブル | BMP → BMP_STATE_DB | 間接（openbmpd） | bmpcfgd.py L65 |
 | `CONFIG_DB.BGP_NEIGHBOR` | CONFIG テーブル | BGP_NEIGHBOR → BMP dump | 間接（openbmpd peer リスト） | bmpcfgd.py L41, frrcfgd.py L89 |
 | `CONFIG_DB.BGP_GLOBALS` | CONFIG テーブル | BGP_GLOBALS → FRR context | 間接（FRR BGP セッション前提） | frrcfgd.py L81 |
+| `CONFIG_DB.DEVICE_METADATA.bgp_asn` | CONFIG テーブル | DEVICE_METADATA → FRR bmp targets 注入の前提 | 間接（FRR j2 テンプレート） | bgpd.main.conf.j2 L94-136 |
