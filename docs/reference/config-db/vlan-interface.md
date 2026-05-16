@@ -141,6 +141,7 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 | `loopback_action` 変換テーブル | `"drop"` → `SAI_PACKET_ACTION_DROP` | `intfsorch.cpp:1150` | `getSaiLoopbackAction()` による文字列→SAI 定数マッピング |
 | `loopback_action` 変換テーブル | `"forward"` → `SAI_PACKET_ACTION_FORWARD` | `intfsorch.cpp:1151` | 同上。省略時は attrs に含めず SAI 実装依存デフォルト（多くは `forward`） |
 | `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` | 省略（SAI 側デフォルト disabled） | `intfsorch.cpp:1278` | `mpls` 省略 / `disable` 時は RIF create attrs に含めない |
+| `VLAN_PREFIX` | `"Vlan"` | `intfmgr.cpp:19` | VLAN インタフェース名判定用プレフィックス。`alias.compare(0, strlen(VLAN_PREFIX), VLAN_PREFIX)` で VLAN IF か否かを識別する |
 
 [^c1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 [^c2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
@@ -227,7 +228,82 @@ CONFIG_DB: VLAN_INTERFACE|Vlan100|10.0.0.1/24  → (intfmgrd doIntfAddrTask, isI
   2. VLAN_INTERFACE|Vlan<N>  vrf_name=<new-VRF>  (rebind)
 ```
 
+### warm-reboot 時の挙動
+
+#### `buildIntfReplayList()` に VLAN_INTERFACE が含まれる
+
+warm-start 時、intfmgrd は `buildIntfReplayList()` で `m_cfgVlanIntfTable.getKeys()` の結果を `m_pendingReplayIntfList` に追加する（`intfmgr.cpp:277-278`）。
+
+```cpp
+// intfmgr.cpp:277-278
+m_cfgVlanIntfTable.getKeys(intfList);
+std::copy(intfList.begin(), intfList.end(), std::inserter(m_pendingReplayIntfList, ...));
+```
+
+リストが空になった時点で `setWarmReplayDoneState()` を呼び `REPLAYED` → `RECONCILED` と遷移する。reconciliation ロジックはなく、カーネルへの再 replay で完了とみなされる。**VLAN が STATE_DB で ready になってから VLAN_INTERFACE が replay 収束する** 順序は通常時と同じ。
+
+#### `ipv6_use_link_local_only` は in-memory 状態がリセットされる
+
+`m_ipv6LinkLocalModeList` は `std::set`（in-memory）。warm-reboot 後は空に戻るため、CONFIG_DB に `ipv6_use_link_local_only: enable` エントリが残っていても replay が再 SET を処理するまでの間は link-local モードが失われる。replay で CONFIG_DB 内容が再処理されれば収束する（`intfmgr.cpp:913`）。
+
+### 書込み順依存まとめ
+
+| 依存カテゴリ | 必須順序 | ソース |
+|------------|---------|-------|
+| VLAN → VLAN_INTERFACE | `VLAN` エントリ + vlanmgrd の STATE_VLAN_TABLE ready が先 | `intfmgr.cpp:653-660` |
+| VRF → VLAN_INTERFACE | `VRF` エントリ + vrfmgrd の STATE_VRF_TABLE ready が先 | `intfmgr.cpp:839-842` |
+| VNET → VLAN_INTERFACE | VNetOrch が VNET 処理済みであること | `intfsorch.cpp:933-939` |
+| 属性ロウ → IP prefix | `VLAN_INTERFACE\|Vlan<N>` SET → STATE_INTF 反映後に `VLAN_INTERFACE\|Vlan<N>\|<ip>` SET | `intfmgr.cpp:1115` |
+| IP prefix DEL → 属性ロウ DEL | すべての IP prefix を DEL してから属性ロウを DEL | `intfmgr.cpp:1060-1063` |
+| VRF 変更 2 ステップ | unbind (`vrf_name=""`) → rebind (`vrf_name=<新VRF>`) | `intfmgr.cpp:846-849` |
+| warm-reboot replay | VLAN STATE_DB ready 後に VLAN_INTERFACE replay 収束 | `intfmgr.cpp:277-278, 286-292` |
+
 <!-- /ordering -->
+
+<!-- phase-d:start -->
+## 失敗挙動 (Phase D)
+
+> コード精読（`intfmgr.cpp` / `intfsorch.cpp`）から導出した失敗モード一覧。  
+> 引用元: [^pd1][^pd2]
+
+### VLAN 未解決による処理保留
+
+| 条件 | 実挙動 | 証拠 |
+|------|--------|------|
+| `STATE_VLAN_TABLE\|Vlan<N>` が STATE_DB に未登録 | `isIntfStateOk()` が `false` を返し `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` を記録。エントリは `m_toSync` に残り次回 Select タイムアウト（1000ms）後にリトライ | `intfmgr.cpp:833-836` |
+| orchagent 側で VLAN ポートオブジェクト未生成 | `gPortsOrch->getPort(alias, port)` が失敗し `it++; continue` でイテレータを進めてスキップ。`task_need_retry` 相当の暗黙リトライ | `intfsorch.cpp:905,921-925` |
+| `vrf_name` 指定かつ `STATE_VRF_TABLE\|<name>` 未登録 | `isIntfStateOk(vrf_name)` が `false` → `SWSS_LOG_DEBUG("VRF is not ready, skipping %s")` → `return false` でリトライ | `intfmgr.cpp:839-842` |
+| IP プレフィクス行を属性ロウより先に投入 | `isIntfCreated()` が `false` を返して `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` → リトライキュー | `intfmgr.cpp:1112-1118` |
+| `vnet_name` が VNetOrch で未処理 | `vnet_orch->isVnetExists(vnet_name)` が `false` → `it++; continue` でスキップ | `intfsorch.cpp:936-939` |
+
+**収束保証**: いずれのケースも silent retry であり、前提条件が満たされれば自動収束する。ただし前提が永続的に未解決の場合（例: 存在しない VLAN 名を指定）はエントリが `m_toSync` に残り続けログには現れない（`DEBUG` レベルのため syslog のデフォルト設定では非表示）。
+
+### SAI RIF 作成失敗
+
+| 条件 | 実挙動 | 証拠 |
+|------|--------|------|
+| `create_router_interface()` が `SAI_STATUS_SUCCESS` 以外を返却 | `SWSS_LOG_ERROR("Failed to create router interface %s, rv:%d")` → `handleSaiCreateStatus()` を呼び出し | `intfsorch.cpp:1297-1301` |
+| `handleSaiCreateStatus()` が `task_success` 以外 | `throw runtime_error("Failed to create router interface.")` が発行され orchagent プロセスが例外捕捉可能な上位ハンドラへ伝播 | `intfsorch.cpp:1301-1304` |
+| `remove_router_interface()` 失敗 | `SWSS_LOG_ERROR("Failed to remove router interface for port %s, rv:%d")` → `handleSaiRemoveStatus()` | `intfsorch.cpp:1350-1353` |
+| RIF に IP アドレスが残っている状態で RIF 削除を試みる | `m_syncdIntfses[port.m_alias].ref_count > 0` を検出し `SWSS_LOG_NOTICE("Router interface %s is still referenced with ref count %d")` → `return false` で削除を中断 | `intfsorch.cpp:1327-1331` |
+| MAC set / MTU set / NAT zone set 等の属性更新失敗 | 各 `sai_router_intfs_api->set_router_interface_attribute()` の戻り値を `handleSaiSetStatus()` で処理。`task_need_retry` 相当の場合は呼び出し元がリトライ | `intfsorch.cpp:205-295` |
+| IP2me ルート作成失敗（IP prefix 付与時） | `SWSS_LOG_ERROR("Failed to create IP2me route ip:%s, rv:%d")` → `handleSaiCreateStatus()` | `intfsorch.cpp:1398-1401` |
+
+**SAI 例外時の注意**: `runtime_error` は orchagent の例外ハンドラが捕捉し `SWSS_LOG_ERROR` を記録したうえでプロセス継続またはクラッシュ再起動を行う。SAI 実装（ASIC SDK）の返す具体的なエラーコードは `rv` フィールドに整数で記録される。
+
+### intfmgr 側のカーネル操作失敗
+
+| 操作 | 失敗時の挙動 |
+|------|------------|
+| `sysctl mpls input` 設定失敗 | `SWSS_LOG_ERROR("Command '%s' failed with rc %d")` → `return false` で処理中断、エントリはリトライ待ち (`intfmgr.cpp:191`) |
+| `ip addr add` 等の IP 操作失敗（IPv6 有効化含む） | `SWSS_LOG_ERROR` または `SWSS_LOG_NOTICE` → `return false` (`intfmgr.cpp:119-130`) |
+| `proxy_arp` / `grat_arp` 無効値 | `SWSS_LOG_ERROR("... state is invalid")` → `return false` で処理中断 (`intfmgr.cpp:590,632`) |
+| `admin_status` 設定失敗 | `SWSS_LOG_WARN` → `return false` (`intfmgr.cpp:501-503`) |
+
+[^pd1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^pd2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+
+<!-- phase-d:end -->
 
 <!-- ref-triangle:start -->
 
@@ -553,84 +629,5 @@ VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 add
 [^ph2]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 
 <!-- /platform -->
-
-<!-- secondary-db-writes -->
-## 副次 DB 書込み (Phase F)
-
-> intfmgr が CONFIG_DB エントリを処理した結果として書き込む APPL_DB・STATE_DB のキー・フィールドを網羅的に記録する。  
-> 調査根拠: `sonic-swss/cfgmgr/intfmgr.cpp` 全行精読 (2026-05-16)
-
-### APPL_DB — `INTF_TABLE`
-
-`intfmgrd` は `ProducerStateTable m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)` を使用して書き込む。
-
-#### 属性ロウ (`INTF_TABLE|Vlan<N>`)
-
-| フィールド | 値の由来 | 条件 |
-|-----------|---------|------|
-| `vrf_name` | CONFIG_DB 値そのまま | 常時 |
-| `mac_addr` | CONFIG_DB 値 または省略時 `"00:00:00:00:00:00"` | 常時 |
-| `admin_status` | CONFIG_DB 値 または省略時 `"up"` にフォールバック | 常時 |
-| `proxy_arp` | CONFIG_DB 値 (`"enabled"` / `"disabled"`) | VLAN_PREFIX 一致時かつ `proxy_arp` 非空 |
-| `grat_arp` | CONFIG_DB 値 (`"enabled"` / `"disabled"`) | VLAN_PREFIX 一致時かつ `grat_arp` 非空 |
-| `mtu` | `DEFAULT_MTU_STR = 9100`（subintf 伝搬時） | サブインタフェース継承時のみ |
-
-書き込みタイミング: `doIntfGeneralTask()` が SET コマンドを処理した末尾で `m_appIntfTableProducer.set(alias, data)` を 1 回呼ぶ（`intfmgr.cpp:1053`）。
-
-DEL 時: `m_appIntfTableProducer.del(alias)` を呼ぶ。IP プレフィクスが残っている場合は `return false`（retry）。
-
-#### IP プレフィクスロウ (`INTF_TABLE|Vlan<N>|<ip_prefix>`)
-
-| フィールド | 固定値 | 備考 |
-|-----------|-------|------|
-| `scope` | `"global"` | CONFIG_DB 値を無視して常時固定 (`intfmgr.cpp:1134`) |
-| `family` | `"IPv4"` / `"IPv6"` | `ip_prefix.isV4()` から自動判定。CONFIG_DB 値を無視 (`intfmgr.cpp:1129`) |
-
-制約: IPv4 リンクローカルアドレスは APPL_DB に送信しない（`intfmgr.cpp:1131`）。
-
-書き込みタイミング: `doIntfAddrTask()` → SET 末尾で `m_appIntfTableProducer.set(appKey, fvVector)` を呼ぶ（`intfmgr.cpp:1137`）。
-
-DEL 時: `m_appIntfTableProducer.del(appKey)` を呼ぶ（IPv4 リンクローカルを除く）。
-
-### STATE_DB — `STATE_INTERFACE_TABLE`
-
-`intfmgrd` は `Table m_stateIntfTable(stateDb, STATE_INTERFACE_TABLE_NAME)` を使用して書き込む。
-
-#### 属性ロウ (`STATE_INTERFACE_TABLE|Vlan<N>`)
-
-| フィールド | 値 | タイミング |
-|-----------|-----|----------|
-| `vrf` | `vrf_name`（空文字列を含む） | SET 処理完了後 (`intfmgr.cpp:1054`) |
-
-DEL 時: `m_stateIntfTable.del(alias)` で行ごと削除 (`intfmgr.cpp:1089`)。  
-VRF unbind 時: `m_stateIntfTable.hset(alias, "vrf", "")` で空文字列に更新 (`intfmgr.cpp:1200`)。
-
-#### IP プレフィクスロウ (`STATE_INTERFACE_TABLE|Vlan<N>|<ip_prefix>`)
-
-| フィールド | 値 | タイミング |
-|-----------|-----|----------|
-| `state` | `"ok"` | IP 追加処理完了後 (`intfmgr.cpp:1138`) |
-
-DEL 時: `m_stateIntfTable.del(keys[0] + "|" + keys[1])` で行ごと削除 (`intfmgr.cpp:1162`)。
-
-**TTL なし** — STATE_DB エントリは明示的な DEL まで残存する。
-
-### 書込みフロー全体図
-
-```
-CONFIG_DB: VLAN_INTERFACE|Vlan100
-    └─ intfmgrd.doIntfGeneralTask() (SET)
-           ├─ APPL_DB:  INTF_TABLE|Vlan100  {vrf_name, mac_addr, admin_status, proxy_arp, grat_arp}
-           └─ STATE_DB: STATE_INTERFACE_TABLE|Vlan100  {vrf: <vrf_name>}
-
-CONFIG_DB: VLAN_INTERFACE|Vlan100|10.0.0.1/24
-    └─ intfmgrd.doIntfAddrTask() (SET)
-           ├─ APPL_DB:  INTF_TABLE|Vlan100|10.0.0.1/24  {scope: "global", family: "IPv4"}
-           └─ STATE_DB: STATE_INTERFACE_TABLE|Vlan100|10.0.0.1/24  {state: "ok"}
-```
-
-[^fdb1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
-
-<!-- /secondary-db-writes -->
 
 <!-- glossary-links-injected: b8bde3f9637a -->

@@ -69,6 +69,115 @@ flowchart LR
     `PIC_CONTEXT_TABLE` は ECMP 経路制御コンポーネントが直接書き込む。
 <!-- /cdb-mermaid -->
 
+<!-- pubsub -->
+## 通信メカニズム（Phase G 解析）
+
+> 根拠: `routesync.cpp` 155-164, 1389, 1424, 1562, 1667, 3389, 3441 / `orchdaemon.cpp` 312-324 / `srv6orch.cpp` 98-140, 2352-2386 / `srv6orch.h` 238-242 / `managers_srv6.py` 14-133 の全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-pubsub.md`
+
+### 全体データフロー
+
+SRv6 の設定は CONFIG_DB から SAI まで以下の **非同期パイプライン** を通じて伝達される。
+Redis の `ProducerStateTable` / `ConsumerStateTable` は APP_DB 区間のみで使用され、
+他の区間は vtysh CLI または FPM TCP ソケットで繋がれる。
+
+```
+CONFIG_DB (SRV6_MY_SIDS / SRV6_MY_LOCATORS)
+  ↓ Redis keyspace notification (dbId=4)
+bgpcfgd — SRv6Mgr (managers_srv6.py)
+  ↓ vtysh cfg_mgr.push_list() (TCP, 非 Redis)
+FRR zebra / bgpd
+  ↓ FPM TCP (port 2620, netlink エンコード, 非 Redis)
+fpmsyncd — RouteSync (routesync.cpp)
+  ↓ ProducerStateTable + RedisPipeline → APP_DB
+    SRV6_SID_LIST_TABLE / SRV6_MY_SID_TABLE / PIC_CONTEXT_TABLE
+  ↓ ConsumerStateTable (TableConnector)
+Srv6Orch (srv6orch.cpp)
+  ↓ SAI C++ API
+ASIC
+```
+
+### CONFIG_DB → bgpcfgd (SRv6Mgr)
+
+`bgpcfgd` の `SRv6Mgr` は `Manager` 基底クラスを継承し、
+`directory.subscribe()` が内部で CONFIG_DB (dbId=4) の Redis **keyspace notification**
+(`PSUBSCRIBE __keyspace@4__:SRV6_MY_SIDS|*` 等) を購読する。
+
+| CONFIG_DB テーブル | コールバック | 処理内容 |
+|-------------------|-------------|---------|
+| `SRV6_MY_LOCATORS` | `locators_set_handler()` | ロケータ情報をキャッシュし `cfg_mgr.push_list(["segment-routing","srv6","locators",...])` |
+| `SRV6_MY_SIDS` | `sids_set_handler()` | ロケータ依存解決後に `cfg_mgr.push_list(["segment-routing","srv6","static-sids",...])` |
+
+- `SRV6_MY_SIDS` エントリは参照するロケータ名 (`SRV6_MY_LOCATORS`) が未到達の場合、
+  `directory.subscribe()` でロケータ到着を待ちペンディングする（`managers_srv6.py:62-68`）。
+- `cfg_mgr.push_list()` は vtysh TCP ソケット経由で FRR bgpd へコマンドを送信する。
+  Redis channel は介在しない。
+
+### fpmsyncd → APP_DB (ProducerStateTable)
+
+`RouteSync` クラス (`routesync.cpp`) が FPM インタフェース（TCP port 2620）経由で
+FRR zebra からのネットリンクメッセージを受信し、APP_DB に `ProducerStateTable` で書き込む。
+
+```cpp
+// routesync.cpp:163-164, 159
+m_srv6MySidTable(pipeline, APP_SRV6_MY_SID_TABLE_NAME, true),  // "SRV6_MY_SID_TABLE"
+m_srv6SidListTable(pipeline, APP_SRV6_SID_LIST_TABLE_NAME, true), // "SRV6_SID_LIST_TABLE"
+m_pic_context_groupTable(pipeline, APP_PIC_CONTEXT_TABLE_NAME, true), // "PIC_CONTEXT_TABLE"
+```
+
+| APP_DB テーブル | 書き込み操作 | routesync.cpp 行 |
+|----------------|------------|-----------------|
+| `SRV6_SID_LIST_TABLE` | `m_srv6SidListTable.set()` / `.del()` | 1424 / 1389 |
+| `SRV6_MY_SID_TABLE` | `m_srv6MySidTable.set()` / `.del()` | 1667 / 1562 |
+| `PIC_CONTEXT_TABLE` | `m_pic_context_groupTable.set()` / `.del()` | 3441 / 3389 |
+
+- `RedisPipeline` でバッチ書き込み。フラッシュ間隔は `gFlushTimeout` で制御。
+- Route テーブルと異なり SRv6 テーブルは ZMQ バイパスなし（pipeline 直接書き込み）。
+
+### APP_DB → Srv6Orch (ConsumerStateTable)
+
+`orchdaemon.cpp:312-324` で `TableConnector` を 4 テーブル分設定し、
+`Orch(tables)` コンストラクタへ渡すことで `ConsumerStateTable` + `Executor` が自動生成される。
+
+| テーブル | DB | channel (Redis key pattern) |
+|---------|----|-----------------------------|
+| `SRV6_SID_LIST_TABLE` | APP_DB (dbId=0) | `_QUEUEEVENTS` keyspace 通知 |
+| `SRV6_MY_SID_TABLE` | APP_DB (dbId=0) | 同上 |
+| `PIC_CONTEXT_TABLE` | APP_DB (dbId=0) | 同上 |
+| `SRV6_MY_SIDS` | CONFIG_DB (dbId=4) | 同上 |
+
+`Srv6Orch::doTask(Consumer &consumer)` (`srv6orch.cpp:2352`) がテーブル名で分岐し、
+各 `doTaskXxx()` ハンドラへディスパッチする。
+
+```cpp
+// srv6orch.cpp:2362-2386
+if      (table_name == APP_SRV6_SID_LIST_TABLE_NAME)  doTaskSidTable(t);
+else if (table_name == APP_SRV6_MY_SID_TABLE_NAME)    doTaskMySidTable(t);
+else if (table_name == APP_PIC_CONTEXT_TABLE_NAME)     doTaskPicContextTable(t);
+else if (table_name == CFG_SRV6_MY_SID_TABLE_NAME)    doTaskCfgMySidTable(t);
+```
+
+`SelectableTimer` ベースの `doTask()` (`srv6orch.cpp:286`) も存在し、
+`PIC_CONTEXT_TABLE` の参照カウント待ちリトライキューを定期処理する。
+
+### ProducerStateTable メンバ（書き込み専用）
+
+`srv6orch.h:238-240` の以下メンバは SAI 処理結果を APP_DB へ書き戻す目的で宣言されている。
+ConsumerStateTable としての購読とは別チャネルであり、二重登録ではない。
+
+| メンバ | 書き込み先 |
+|--------|-----------|
+| `m_sidTable` | `SRV6_SID_LIST_TABLE` |
+| `m_mysidTable` | `SRV6_MY_SID_TABLE` |
+| `m_piccontextTable` | `PIC_CONTEXT_TABLE` |
+
+### NotificationProducer / SubscriberStateTable 非使用確認
+
+- `SRV6_MY_SIDS` / `SRV6_MY_LOCATORS` に対して orchagent が `SubscriberStateTable` を直接使う箇所はなし。
+- `NotificationProducer` で SRv6 関連の通知を発行する箇所はソース全体になし。
+- STATE_DB への書き戻しは Srv6Orch 自体が行わず、SAI/ASIC 層で完結する。
+<!-- /pubsub -->
+
 ---
 
 ## SRV6_SID_LIST_TABLE
@@ -241,6 +350,58 @@ MySID の `un` / `udt46` で IPinIP トンネルを使用する際、内部で�
 | Decap TTL mode | `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` | `srv6orch.cpp:535` |
 | Decap DSCP mode | CONFIG_DB の `decap_dscp_mode` 値 | `srv6orch.cpp:530-532` |
 
+<!-- ordering -->
+## 処理順序と依存関係（Phase B 解析）
+
+> 根拠: `srv6orch.cpp` 行 1119–1143, 1384–1543, 2272–2342, `managers_srv6.py` 行 56–115 の全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-ordering.md`
+
+### 投入（SET）推奨順序
+
+```
+1. VRF テーブル            ← end.t / end.dt* / udt* で decap_vrf に custom VRF を使う場合
+2. SRV6_MY_LOCATORS         ← bgpcfgd が FRR へ locator prefix を通知
+3. SRV6_SID_LIST_TABLE      ← fpmsyncd / FRR 経由で SID リストを APP_DB に書き込み
+4. SRV6_MY_SIDS             ← bgpcfgd がロケータ確認後に FRR へ static-sids を反映
+5. SRV6_MY_SID_TABLE        ← Srv6Orch が VRF・Nexthop 確認後に SAI MY_SID_ENTRY を投入
+6. PIC_CONTEXT_TABLE        ← VPN 経路が確立した後に PIC コンテキストを登録
+```
+
+### 削除（DEL）推奨順序
+
+```
+1. PIC_CONTEXT_TABLE 参照ルート  ← ref_count を 0 に下げる
+2. PIC_CONTEXT_TABLE エントリ   ← ref_count == 0 でないと task_need_retry (srv6orch.cpp:2328)
+3. SRV6_MY_SID_TABLE エントリ   ← SID リストへの nexthop 参照を先に解除
+4. SRV6_SID_LIST_TABLE エントリ  ← nexthops.size() > 0 なら task_need_retry (srv6orch.cpp:1133)
+5. SRV6_MY_SIDS                 ← FRR 側 SID 削除 (static-sids no コマンド)
+6. SRV6_MY_LOCATORS             ← FRR 側ロケータ削除 (SID を先に削除してから)
+```
+
+### 各テーブルのペンディング・ブロック機構
+
+| テーブル | 条件 | 挙動 |
+|---------|------|------|
+| `SRV6_MY_SIDS` (bgpcfgd 経由) | ロケータが `SRV6_MY_LOCATORS` に未登録 | `deps` サブスクリプションで保留、ロケータ登録後に自動再試行 (`managers_srv6.py:62–68`) |
+| `SRV6_MY_SID_TABLE` (VRF 系 action) | `m_vrfOrch->isVRFexists()` が false | 即時失敗（`return false`）、ペンディング機構なし (`srv6orch.cpp:1500`) |
+| `SRV6_MY_SID_TABLE` (nexthop 系 action) | `m_neighOrch->hasNextHop()` が false | `m_pendingSRv6MySIDEntries` に登録、neighbor ADD 通知で自動再インストール (`srv6orch.cpp:1532–1542`) |
+| `SRV6_SID_LIST_TABLE` DEL | `nexthops.size() > 0` | `task_need_retry`（参照 nexthop が残っている間はリトライ） |
+| `PIC_CONTEXT_TABLE` DEL | `ref_count > 0` | `task_need_retry`（RouteOrch が参照を解放するまで） |
+
+### IPinIP トンネル自動生成の条件
+
+`un` / `udt46` アクションで IPinIP トンネルを自動生成するには、CONFIG_DB `SRV6_MY_SIDS` の
+`decap_dscp_mode` が設定されている必要がある（`mySidTunnelRequired()` の `dscp_mode.has_value()` 判定）。
+`decap_dscp_mode` 未設定時はトンネルを生成せず、Overlay RIF も作成されない。
+
+### Warm-reboot 非対応
+
+`srv6orch.cpp` / `srv6orch.h` に `WarmStart` / reconcil 実装は存在しない。
+warm-reboot 後は swss 再起動時に APP_DB から全エントリを再読み込みして SAI を再プログラムする
+（cold-recovery 相当）。FRR (`bgpcfgd`) 側も warm-reboot ガードを持たないため、
+**warm-reboot 中は SRv6 フォワーディングが一時的に停止する**点に注意すること。
+<!-- /ordering -->
+
 ---
 
 ## 設定例
@@ -276,6 +437,105 @@ MySID の `un` / `udt46` で IPinIP トンネルを使用する際、内部で�
 
 ---
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`SRV6_MY_SID_TABLE` の SET/DEL 処理後に `Srv6Orch` が書き込む副次テーブル一覧。
+`SRV6_SID_LIST_TABLE` / `PIC_CONTEXT_TABLE` 処理ではカウンタ管理・CRM 更新は行われない。
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/srv6-side-effects.md`
+
+| 副次 DB | テーブル / キー | 操作 | 主要フィールド | evidence |
+|---------|----------------|------|---------------|----------|
+| COUNTERS_DB | `COUNTERS_SRV6_NAME_MAP` | hset / hdel | `<sid_prefix>` → `counter_oid` | `srv6orch.cpp:199,223` |
+| FLEX_COUNTER_DB | `SRV6_STAT_COUNTER:<oid>` | set / del | `SRV6_COUNTER_ID_LIST` = `SAI_COUNTER_STAT_PACKETS,SAI_COUNTER_STAT_BYTES` | `srv6orch.cpp:300,229` |
+| ASIC_DB | `VIDTORID` | hget (読み取りのみ) | VID→RID 解決確認（gTraditionalFlexCounter 有効時のみ） | `srv6orch.cpp:294` |
+| CRM (COUNTERS_DB) | `CRM_STATS` (CrmOrch 経由) | inc / dec | `CRM_SRV6_MY_SID_ENTRY` 使用カウンタ | `srv6orch.cpp:1612,1675` |
+
+**COUNTERS_DB `COUNTERS_SRV6_NAME_MAP`**:
+MY_SID 追加時に `addMySidCounter()` (`srv6orch.cpp:184-210`) が `m_mysid_counters_table->set("", fvs)` で書き込む。
+hash フィールドは `getMySidCounterKey()` が返す SID プレフィックス文字列（例: `fc00:0:1:1::/64`）、値は SAI counter OID のシリアライズ文字列。
+MY_SID 削除時は `removeMySidCounter()` が `m_mysid_counters_table->hdel("", key)` で削除。
+**条件**: `getMySidCountersSupported()` かつ `getMySidCountersEnabled()` が両方 true の場合のみ。
+起動時に `sai_query_attribute_capability()` (`srv6orch.cpp:147`) で SAI 能力を確認し、非対応プラットフォームでは全 counter 機能が無効化される。
+
+**FLEX_COUNTER_DB `SRV6_STAT_COUNTER`**:
+counter OID は一度 `m_pending_counters` に積まれ、`SRV6_FLEX_COUNTER_UPDATE_TIMER = 1` 秒タイマーが満了するたびに `doTask(SelectableTimer&)` を実行する。
+`gTraditionalFlexCounter` 有効時は ASIC_DB `VIDTORID` で VID→RID 変換が確認できた OID のみ FLEX_COUNTER_DB に登録し、未解決分は次周期に持ち越す。`m_pending_counters` が空になるとタイマーは自動停止する。
+グループ名: `SRV6_STAT_COUNTER` (`srv6orch.h:30`)、ポーリング間隔: 10 秒 (`srv6orch.cpp:27`)。
+
+**CRM カウンタ**:
+`sai_srv6_api->create_my_sid_entry()` 成功後に `gCrmOrch->incCrmResUsedCounter(CRM_SRV6_MY_SID_ENTRY)` (`srv6orch.cpp:1612`)、
+`sai_srv6_api->remove_my_sid_entry()` 成功後に `decCrmResUsedCounter` (`srv6orch.cpp:1675`) を呼ぶ。
+CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（書き出し責務は `crmorch.cpp` 側）。
+<!-- /side-effects -->
+
+---
+
+<!-- failure -->
+## 失敗挙動・エラーハンドリング
+
+> 根拠: `srv6orch.cpp` 全体の SWSS_LOG_ERROR / task_process_status 精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-failure.md`
+
+### SRV6_SID_LIST_TABLE の失敗ケース
+
+| 条件 | ログ / 挙動 | task_status |
+|------|------------|-------------|
+| `path` が空（セグメント 0 件） | `SWSS_LOG_ERROR("segment list count is zero, skip")` → SAI 未呼び出しで `return true` | `task_success`（SAI 登録なし） |
+| SAI `create_srv6_sidlist` 失敗 | `SWSS_LOG_ERROR("Failed to create srv6 sidlist object, rv %d")` | `task_failed` |
+| SAI `set_srv6_sidlist_attribute` 失敗 | `SWSS_LOG_ERROR("Failed to set srv6 sidlist object with new segments, rv %d")` | `task_failed` |
+| DEL: 存在しない `seg_name` | `SWSS_LOG_ERROR("segment name %s doesn't exist")` | `task_failed` |
+| DEL: nexthop 参照中（refcount > 0） | `SWSS_LOG_NOTICE("referenced by other nexthops: count %zu, not deleting")` | `task_need_retry`（再キュー） |
+| DEL: SAI `remove_srv6_sidlist` 失敗 | `SWSS_LOG_ERROR("Failed to delete SRV6 sidlist object for %s")` | `task_failed` |
+
+### SRV6_MY_SID_TABLE の失敗ケース
+
+| 条件 | ログ / 挙動 | 備考 |
+|------|------------|------|
+| 不正な `action` 値 | `SWSS_LOG_ERROR("Invalid my_sid action %s")` → `return false` | エントリは SAI 未登録 |
+| VRF が CONFIG_DB に存在しない（DT 系） | `SWSS_LOG_ERROR("VRF %s doesn't exist in DB")` → `return false` | VRF を先に作成する必要あり |
+| VRF が DB に存在するが SAI OID が null | `SWSS_LOG_ERROR("VRF object not created for DT VRF %s")` → `return false` | VRF Orch の初期化待ち |
+| ECMP adjacency（`adj` にカンマ区切り複数指定） | `SWSS_LOG_ERROR("ECMP adjacency not yet supported")` → `return false` | 現行実装では単一 adj のみ対応 |
+| `adj` が NeighOrch に未解決 | `m_pendingSRv6MySIDEntries` に保留 → `return false` | neighbor ADD で自動再インストール |
+| IPinIP トンネル作成失敗（`un`/`udt46`） | `SWSS_LOG_ERROR("Failed to create MySID IPinIP tunnel: %d")` → ロールバック後 `return false` | tunnel term entry 失敗時も `removeMySidIpInIpTunnel()` を呼び部分ロールバック |
+| ロケータが CONFIG_DB に存在しない | `SWSS_LOG_ERROR("Failed to get the SRv6 locator %s - not present in the CONFIG_DB")` | IPinIP tunnel DSCP 解決不可 |
+| 不正な `decap_dscp_mode` 文字列 | `SWSS_LOG_ERROR("Invalid MySID %s DSCP mode: %s")` → キャッシュ未登録で早期 return | CONFIG_DB `SRV6_MY_SIDS` 側の設定ミス |
+| SAI `create_my_sid_entry` 失敗 | `SWSS_LOG_ERROR("Failed to create my_sid entry %s, rv %d")` → `return false` | SAI / プラットフォーム起因エラー |
+| SAI カウンタ作成失敗 | `SWSS_LOG_ERROR("Failed to create SAI counter for SRv6 MySID entry")` → `return false` | SID エントリ全体の作成を中断 |
+| DEL: エントリが存在しない | `SWSS_LOG_ERROR("My_sid_entry doesn't exist for %s")` → `return false` | 二重削除防止 |
+
+**Neighbor pending 機構の詳細**:
+
+1. `adj` に指定された nexthop が NeighOrch に未解決の場合、エントリを `m_pendingSRv6MySIDEntries` に保留する（`srv6orch.cpp:1532-1542`）。
+2. NeighOrch から neighbor ADD 通知が届いた時点で `updateNeighbor()` が `createUpdateMysidEntry()` を再呼び出しする（`srv6orch.cpp:1236-1248`）。
+3. 再インストールも失敗した場合はエントリを pending に残したまま `continue`（ループ継続）。
+4. neighbor DELETE 通知時は、インストール済み SID を ASIC から削除して pending に戻す（`srv6orch.cpp:1197-1210`）。
+
+### PIC_CONTEXT_TABLE の失敗ケース
+
+| 条件 | ログ / 挙動 | task_status |
+|------|------------|-------------|
+| SET: 既存エントリへの上書き試行 | `SWSS_LOG_ERROR("update is not allowed for pic context table")` | `task_duplicated`（PIC は不変） |
+| `nexthop` と `vpn_sid` の件数不一致 | `SWSS_LOG_ERROR("inconsistent number of endpoints(%zu) and vpn sids(%zu)")` | `task_failed`（再試行なし） |
+| VPN 作成失敗（P2P トンネル未確立等） | `SWSS_LOG_ERROR("Failed to create SRv6 VPNs for context id %s")` | `task_need_retry` |
+| DEL: `ref_count` > 0（routeorch 参照中） | `addToRetry()` でリトライキューへ保留 | `task_need_retry`（ref 解放後に自動再実行） |
+| DEL: VPN 削除失敗 | `SWSS_LOG_ERROR("Failed to delete SRv6 VPNs for context id %s")` | `task_need_retry` |
+
+**`task_process_status` の doTask() マッピング**（`srv6orch.cpp:2352-2394`）:
+
+- `task_need_retry` → イテレータを進めて次のイベントループで再処理（エントリは m_toSync に残留）
+- `task_failed` / `task_success` / `task_duplicated` / `task_ignore` → m_toSync から削除（失敗はログのみ）
+
+### SAI エラー伝播パターン
+
+`sai_srv6_api->*` の戻り値（`sai_status_t`）を直接チェックし、`SAI_STATUS_SUCCESS` 以外は
+`SWSS_LOG_ERROR` に `rv %d` 形式で SAI ステータスコードを記録して `return false` を返す。
+複合オブジェクト（IPinIP トンネル + tunnel term entry）の途中失敗時のロールバックは
+`createMySidIpInIpTunnelTermEntry` 失敗時のみ実装されており（`srv6orch.cpp:1564`）、
+それ以外のケースでは作成済み SAI オブジェクトの自動クリーンアップは行われない。
+<!-- /failure -->
+
 ## 依存関係
 
 - **SRV6_MY_SID_TABLE** の `vrf` フィールドに custom VRF を指定する場合は、
@@ -290,5 +550,105 @@ MySID の `un` / `udt46` で IPinIP トンネルを使用する際、内部で�
 - `SRV6_MY_SIDS` (CONFIG_DB) — SRv6 SID の設定源
 - `SRV6_MY_LOCATORS` (CONFIG_DB) — SRv6 ロケータ設定
 - `VRF` (CONFIG_DB) — VRF 定義
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/srv6orch.cpp`、`sonic-swss/orchagent/srv6orch.h`
+
+### マクロ定義
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `ADJ_DELIMITER` | `','` | `adj` フィールドの複数 nexthop 区切り文字 |
+| `OVERLAY_RIF_DEFAULT_MTU` | `9100` | IpInIp Decap 用オーバーレイ RIF の MTU (bytes) |
+| `LOCATOR_DEFAULT_BLOCK_LEN` | `"32"` | ロケータ block 長のデフォルト値 (bits) |
+| `LOCATOR_DEFAULT_NODE_LEN` | `"16"` | ロケータ node 長のデフォルト値 (bits) |
+| `LOCATOR_DEFAULT_FUNC_LEN` | `"16"` | ロケータ function 長のデフォルト値 (bits) |
+| `LOCATOR_DEFAULT_ARG_LEN` | `"0"` | ロケータ argument 長のデフォルト値 (bits) |
+| `SRV6_FLEX_COUNTER_UPDATE_TIMER` | `1` (秒) | Flex counter 更新タイマー周期 |
+| `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS` | `10000` (ms) | カウンタポーリング間隔 |
+| `SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"SRV6_STAT_COUNTER"` | Flex counter グループ名 |
+| `COUNTERS_SRV6_NAME_MAP` | `"COUNTERS_SRV6_NAME_MAP"` | COUNTERS_DB 上の SRv6 名前マップキー |
+
+### エンドポイント動作 (action) — SAI enum マッピング
+
+`end_behavior_map` (`srv6orch.cpp` 行 41–61):
+
+| action 文字列 | SAI エンドポイント動作 enum |
+|--------------|--------------------------|
+| `end` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_E` |
+| `end.x` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_X` |
+| `end.t` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_T` |
+| `end.dx6` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX6` |
+| `end.dx4` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX4` |
+| `end.dt4` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT4` |
+| `end.dt6` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT6` |
+| `end.dt46` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT46` |
+| `end.b6.encaps` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_B6_ENCAPS` |
+| `end.b6.encaps.red` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_B6_ENCAPS_RED` |
+| `end.b6.insert` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_B6_INSERT` |
+| `end.b6.insert.red` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_B6_INSERT_RED` |
+| `udx6` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX6` |
+| `udx4` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX4` |
+| `udt6` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT6` |
+| `udt4` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT4` |
+| `udt46` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT46` |
+| `un` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN` |
+| `ua` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UA` |
+
+### エンドポイント flavor — SAI enum マッピング
+
+`end_flavor_map` (`srv6orch.cpp` 行 64–70):
+
+| action 文字列 | SAI flavor enum |
+|--------------|----------------|
+| `end`, `end.x`, `end.t`, `ua` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD` |
+| `un` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_NONE` |
+| 上記以外 | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_NONE` (デフォルト初期値) |
+
+### SID リスト種別 (type) — SAI enum マッピング
+
+`sidlist_type_map` (`srv6orch.cpp` 行 73–78):
+
+| type 文字列 | SAI sidlist type enum | フォールバック |
+|------------|----------------------|--------------|
+| `insert` | `SAI_SRV6_SIDLIST_TYPE_INSERT` | — |
+| `insert.red` | `SAI_SRV6_SIDLIST_TYPE_INSERT_RED` | — |
+| `encaps` | `SAI_SRV6_SIDLIST_TYPE_ENCAPS` | — |
+| `encaps.red` | `SAI_SRV6_SIDLIST_TYPE_ENCAPS_RED` | — |
+| 不明・未指定 | `SAI_SRV6_SIDLIST_TYPE_ENCAPS_RED` | 行 1083 参照 |
+
+### アクション別必須リソース分岐
+
+| 判定関数 | `true` となるアクション |
+|----------|----------------------|
+| `mySidVrfRequired()` | `end.t`, `end.dt4`, `end.dt6`, `end.dt46`, `udt4`, `udt6`, `udt46` |
+| `mySidNextHopRequired()` | `end.x`, `end.dx4`, `end.dx6`, `udx4`, `udx6`, `end.b6.encaps`, `end.b6.encaps.red`, `end.b6.insert`, `end.b6.insert.red`, `ua` |
+| `mySidTunnelRequired()` | `un` と `udt46` を除くすべての `u*` 系アクション |
+
+### SAI 属性一覧
+
+| SAI 属性 | 固定値 / 用途 |
+|---------|--------------|
+| `SAI_MY_SID_ENTRY_ATTR_ENDPOINT_BEHAVIOR` | エンドポイント動作種別 |
+| `SAI_MY_SID_ENTRY_ATTR_ENDPOINT_BEHAVIOR_FLAVOR` | PSP/USD flavor |
+| `SAI_MY_SID_ENTRY_ATTR_VRF` | VRF OID |
+| `SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID` | nexthop OID |
+| `SAI_MY_SID_ENTRY_ATTR_TUNNEL_ID` | IpInIp tunnel OID |
+| `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` | Flex counter OID（オプション） |
+| `SAI_SRV6_SIDLIST_ATTR_TYPE` | SID リスト種別 |
+| `SAI_SRV6_SIDLIST_ATTR_SEGMENT_LIST` | IPv6 SID 配列 |
+| `SAI_NEXT_HOP_ATTR_TYPE` | `SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` (固定) |
+| `SAI_NEXT_HOP_ATTR_SRV6_SIDLIST_ID` | SID リスト OID |
+| `SAI_NEXT_HOP_ATTR_TUNNEL_ID` | SRv6 トンネル OID |
+| `SAI_TUNNEL_ATTR_TYPE` (SRv6 Encap) | `SAI_TUNNEL_TYPE_SRV6` (固定) |
+| `SAI_TUNNEL_ATTR_PEER_MODE` (SRv6) | `SAI_TUNNEL_PEER_MODE_P2MP` (固定) |
+| `SAI_TUNNEL_ATTR_TYPE` (IpInIp Decap) | `SAI_TUNNEL_TYPE_IPINIP` (固定) |
+| `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` | `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` (固定) |
+| `SAI_TUNNEL_ATTR_DECAP_DSCP_MODE` | DSCP mode 設定値依存 (`UNIFORM_MODEL` / `PIPE_MODEL`) |
+| `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK` (固定) |
+| `SAI_ROUTER_INTERFACE_ATTR_MTU` | `9100` (`OVERLAY_RIF_DEFAULT_MTU`) |
+<!-- /constants -->
 
 [^1]: `sonic-swss/orchagent/srv6orch.cpp` (revision 4305596156d70e9797e8a881b3d19b46de0bce0d) より。
