@@ -268,4 +268,188 @@ EVPN 動的 DIP トンネル (`TNL_CREATION_SRC_EVPN`, dst_ip 非ゼロ) は `SA
 
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/vxlanorch.cpp`, `sonic-swss/orchagent/vxlanorch.h`, `sonic-swss/cfgmgr/vxlanmgr.cpp`
+
+### UDP デスティネーションポート
+
+| 定数 | 値 | 根拠 |
+|------|----|------|
+| VXLAN UDP dstport | **4789** | `vxlanmgr.cpp:67` `vxlanmgr.cpp:1015` — `ip link add ... dstport 4789` にハードコード |
+
+IANA 標準ポート (RFC 7348)。CONFIG_DB に設定フィールドなし・変更不可。
+
+### SAI tunnel_type enum
+
+| シンボル | 用途 |
+|---------|------|
+| `SAI_TUNNEL_TYPE_VXLAN` | `SAI_TUNNEL_ATTR_TYPE` に常時セット (`vxlanorch.cpp:304`) |
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP` | `dst_ip` 省略時の termination エントリ型 (`vxlanorch.cpp:451`) |
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2P` | `dst_ip` 明示時の termination エントリ型 (`vxlanorch.cpp:457`) |
+
+### SAI tunnel_attr セット一覧
+
+| SAI 属性 | 設定条件 | 値 |
+|---------|---------|-----|
+| `SAI_TUNNEL_ATTR_TYPE` | 常時 | `SAI_TUNNEL_TYPE_VXLAN` |
+| `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` | 常時 | `gUnderlayIfId` (アンダーレイ RIF OID) |
+| `SAI_TUNNEL_ATTR_DECAP_MAPPERS` | 常時 | decap mapper OID リスト |
+| `SAI_TUNNEL_ATTR_ENCAP_MAPPERS` | 常時 | encap mapper OID リスト |
+| `SAI_TUNNEL_ATTR_ENCAP_SRC_IP` | `src_ip` あり | src VTEP IP |
+| `SAI_TUNNEL_ATTR_PEER_MODE` | 常時 | `P2P` (dst_ip あり) / `P2MP` (dst_ip なし) |
+| `SAI_TUNNEL_ATTR_ENCAP_DST_IP` | `dst_ip` あり | dst VTEP IP |
+| `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` | `ttl_mode=pipe` | `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` |
+| `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` | `ttl_mode=uniform` | `SAI_TUNNEL_TTL_MODE_UNIFORM_MODEL` |
+| `SAI_TUNNEL_ATTR_ENCAP_TTL_MODE` | `encap_ttl != 0` | `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` (dead path) |
+| `SAI_TUNNEL_ATTR_ENCAP_TTL_VAL` | `encap_ttl != 0` | encap_ttl 値 (dead path) |
+
+### TTL モード enum (VxlanTunnelTTLMode)
+
+```cpp
+// vxlanorch.h:142
+enum class VxlanTunnelTTLMode {
+    NOT_SET,   // デフォルト: SAI に TTL 属性を渡さない → プラットフォーム ASIC 依存
+    PIPE,      // ttl_mode="pipe": SAI_TUNNEL_TTL_MODE_PIPE_MODEL
+    UNIFORM    // ttl_mode="uniform": SAI_TUNNEL_TTL_MODE_UNIFORM_MODEL
+};
+```
+
+`ttl_mode` 省略時は `NOT_SET` → `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` は SAI に送られず、プラットフォーム実装のデフォルトが適用される。
+
+### デフォルト encap TTL
+
+```cpp
+// vxlanorch.h:49
+#define DEFAULT_TUNNEL_ENCAP_TTL 255
+```
+
+`createTunnelHw()` のデフォルト引数値は `255` だが、CONFIG_DB / YANG に `encap_ttl` フィールドが存在しないため呼び出し元は常に `encap_ttl=0` を渡す。結果として `SAI_TUNNEL_ATTR_ENCAP_TTL_VAL` は実際には設定されない (dead path)。
+
+### DSCP モード
+
+`SAI_TUNNEL_ATTR_DECAP_DSCP_MODE` / `SAI_TUNNEL_ATTR_ENCAP_DSCP_MODE` は `vxlanorch.cpp` に設定コードなし。DSCP モードは未実装で、プラットフォームデフォルトが適用される。
+
+<!-- /constants -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
+
+### 1. VRF 未解決 → `return false` (無制限 retry)
+
+`VxlanVrfMapOrch::addOperation()` (`vxlanorch.cpp:2320-2323`) で VNI→VRF マッピング SET 時に参照先 VRF が VRFOrch にまだ登録されていない場合:
+
+```
+SWSS_LOG_WARN("Vrf '%s' hasn't been created yet", vrf_name.c_str());
+return false;
+```
+
+`return false` によりエントリがキューに残り、次回 `doTask()` で再試行される（無制限 retry）。VRF が後から作成されれば自動的に適用される。rollback なし[^fail1]。
+
+### 2. SAI tunnel 作成失敗 → mapper rollback + `active_ = false` で停止
+
+`VxlanTunnel::createTunnelHw()` (`vxlanorch.cpp:912-921`) で `sai_tunnel_api->create_tunnel()` が失敗すると `SAI_NULL_OBJECT_ID` を返す。orchagent は mapper をロールバックし `active_ = false` にセットして `false` を返す:
+
+```
+deleteMapperHw(mapper_list, map_src);
+ids_.tunnel_id = SAI_NULL_OBJECT_ID;
+active_ = false;
+return false;
+```
+
+`tunnel_obj->isActive()` が false のまま固定され、後続の `VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO` 処理がすべてサスペンドされる。自動 retry なし。DEL + 再 SET でリカバリ[^fail1]。
+
+SAI term table 作成失敗時も同様に tunnel + mapper を全ロールバック (`vxlanorch.cpp:926-937`)。
+
+### 3. 不正 `src_ip` / `dst_ip` アドレスファミリ不一致 → エントリ破棄 (drop)
+
+`VxlanTunnelOrch::addOperation()` (`vxlanorch.cpp:1610-1614`) で src_ip と dst_ip のアドレスファミリ（IPv4/IPv6）が一致しない場合:
+
+```
+SWSS_LOG_ERROR("Format mismatch: 'src_ip' and 'dst_ip' must be of the same family");
+return true;
+```
+
+`return true` でエントリをキューから破棄する。トンネルオブジェクトは作成されない。retry なし。CONFIG_DB のエントリは残存する（YANG バリデーション回避時のみ発生）[^fail1]。
+
+`ttl_mode` の不正値 (`vxlanorch.cpp:1631`) も同様に `return true` で破棄。
+
+### 4. DEL 時に依存オブジェクト残存 → retry 待ち
+
+`VXLAN_TUNNEL` DEL 時に `VXLAN_EVPN_NVO` / `VXLAN_TUNNEL_MAP` / state テーブルエントリが残存している場合、`delOperation()` が `false` を返しキューに残る。cfgmgr 側でも WARN ログを記録してリトライ待ちとなる[^exc1]。
+
+適切な削除順序: `VXLAN_TUNNEL_MAP` → `VXLAN_EVPN_NVO` → `VXLAN_TUNNEL`。
+
+### retry パターンサマリ
+
+| ケース | 挙動 | 自動復旧 |
+|--------|------|----------|
+| VRF 未解決 | `return false` → 無制限 retry | VRF 作成後に自動復旧 |
+| SAI tunnel 作成失敗 | mapper rollback + `active_=false` | 手動 DEL + 再 SET 必要 |
+| src/dst_ip ファミリ不一致・不正 ttl_mode | `return true` エントリ破棄 | なし |
+| DEL 時依存オブジェクト残存 | `return false` → retry 待ち | 依存 DEL 後に自動復旧 |
+| SAI term table 作成失敗 | tunnel/mapper 全 rollback + `false` | 手動 DEL + 再 SET 必要 |
+
+[^fail1]: `sonic-swss/orchagent/vxlanorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vxlanorch.cpp>
+
+<!-- /failure -->
+
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
+
+### 1. VXLAN_TUNNEL が MAP/NVO より先行必須
+
+`VxlanTunnelOrch::addOperation()` (vxlanorch.cpp:1591) は `VXLAN_TUNNEL` 受信時に **SAI トンネルオブジェクトを作成しない**。`vxlan_tunnel_table_` にメモリオブジェクトを登録するだけであり、SAI HW 作成は `VXLAN_TUNNEL_MAP` 初回エントリ受信時 (vxlanorch.cpp:2063) または `VXLAN_EVPN_NVO` / VRF マップ受信時 (vxlanorch.cpp:2292) にトリガーされる。`VXLAN_TUNNEL` が存在しない状態で MAP を書くと `getVxlanTunnel()` がヌルを返す。
+
+### 2. SAI 作成順序: tunnel_map → tunnel → tunnel_term
+
+`createTunnelHw()` (vxlanorch.cpp:885) 内部では以下の順で SAI オブジェクトを生成する:
+
+1. `createMapperHw()` — `sai_tunnel_api->create_tunnel_map()` (encap/decap mapper × VLAN/VRF/Bridge)
+2. `create_tunnel()` — `sai_tunnel_api->create_tunnel()` (mapper OID を `SAI_TUNNEL_ATTR_DECAP_MAPPERS`/`SAI_TUNNEL_ATTR_ENCAP_MAPPERS` に渡す)
+3. `create_tunnel_termination()` — `sai_tunnel_api->create_tunnel_term_table_entry()` (with_term=true 時のみ)
+
+`create_tunnel()` 失敗時は `deleteMapperHw()` でマッパーをロールバックし `active_=false` にリセット (vxlanorch.cpp:913-921)。`create_tunnel_termination()` 失敗時は `remove_tunnel()` → `deleteMapperHw()` で全段ロールバック (vxlanorch.cpp:927-936)。
+
+### 3. VRF が VRF マップより先行必須
+
+`VxlanVrfMapOrch::addOperation()` (vxlanorch.cpp:2290) は `vrf_orch->isVRFexists(vrf_name)` をチェックし、VRF 未作成なら `SWSS_LOG_WARN("Vrf '%s' hasn't been created yet")` → `return false` (vxlanorch.cpp:2315-2316)。`return false` は orchagent がエントリをキューに戻して**再処理する**設計だが、VRF 作成まで SAI への VNI→VRF マッピングが未設定のままとなる。
+
+### 4. EVPN_NVO は source_vtep 参照先の VXLAN_TUNNEL が先行必須
+
+`EvpnNvoOrch::addOperation()` (vxlanorch.cpp:2775) は `tunnel_orch->getVxlanTunnel(vtep_name)` で参照先 VTEP を取得し `source_vtep_ptr` に格納する。VTEP が存在しない場合 null が入り、後続の `addTunnelUser()` (vxlanorch.cpp:1685) で `SWSS_LOG_WARN("Unable to find EVPN VTEP")` → `return false` となる。
+
+### 5. VTEP isActive() — MAP 1 件後に EVPN remote を追加
+
+`addTunnelUser()` (vxlanorch.cpp:1694) は `vtep_ptr->isActive()` を確認し、false なら `SWSS_LOG_WARN("VTEP not yet active")` → `return false`。`isActive()` は `createTunnelHw()` 完了後に `active_=true` (vxlanorch.cpp:939) にセットされる。EVPN remote VTEP 設定は `VXLAN_TUNNEL_MAP` 1 件書き込み（= HW 作成トリガー）の後に行う。
+
+### 6. 削除は追加の逆順
+
+DIP トンネル（動的 EVPN remote）が残存している間は SIP トンネルの HW 削除が保留 (`del_tnl_hw_pending` フラグ)。`EvpnNvoOrch::delOperation()` (vxlanorch.cpp:2803) は `del_tnl_hw_pending=true` の場合 `return false` でリトライ待ちになる。
+
+**推奨 CONFIG_DB 書込み順序**:
+
+```
+追加:
+  1. VRF テーブルエントリ（EVPN L3VNI が必要な場合）
+  2. VXLAN_TUNNEL|<name>          ← SAI 未作成・メモリ登録のみ
+  3. VXLAN_TUNNEL_MAP|<name>|<map>  ← 初回 MAP で SAI HW 作成がトリガー
+  4. VXLAN_EVPN_NVO|<name>        ← source_vtep は step 2 で存在必須
+  5. EVPN remote VTEP 設定        ← VTEP active (step 3 完了) 後
+
+削除（逆順）:
+  5. EVPN remote VTEP 削除
+  4. VXLAN_EVPN_NVO 削除
+  3. VXLAN_TUNNEL_MAP 全削除
+  2. VXLAN_TUNNEL 削除
+  1. VRF 削除
+```
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 7e2e79cf3524 -->
