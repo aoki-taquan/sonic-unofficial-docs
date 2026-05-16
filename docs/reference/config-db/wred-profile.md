@@ -251,6 +251,60 @@ WRED_PROFILE は `WredMapHandler::convertFieldValuesToAttributes()` がフィー
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+CONFIG_DB の `WRED_PROFILE` は `orchdaemon.cpp:375` の `qos_tables` ベクタ経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
+
+- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:WRED_PROFILE|*` への `PSUBSCRIBE`)
+- 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
+- バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
+- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+
+### 書き込み側 (publisher)
+
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）または firstboot 時のテンプレート展開が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。
+
+### ディスパッチ経路
+
+```
+SubscriberStateTable (PSUBSCRIBE keyspace)
+  → Consumer::execute() → pops() (HGETALL)
+  → QosOrch::doTask(Consumer&)           # allPortsReady() チェック後
+  → m_qos_handler_map[CFG_WRED_PROFILE_TABLE_NAME]
+  → QosOrch::handleWredProfileTable()    # qosorch.cpp:877
+  → WredMapHandler::processWorkItem()
+  → addQosItem(): sai_wred_api->create_wred()
+                  [SAI_WRED_ATTR_ECN_MARK_MODE / SAI_WRED_ATTR_*_ENABLE 等]
+```
+
+`QosOrch::doTask()` は WRED_PROFILE を PORT_QOS_MAP / QUEUE より先に drain する順序制御あり（`qosorch.cpp:2231-2252`）。これにより `QUEUE.wred_profile` 参照を解決した状態で QUEUE を処理できる。
+
+### select タイムアウト・リトライ
+
+- select タイムアウト: **1000 ms** (`SELECT_TIMEOUT`, `orchdaemon.cpp:23`)
+- `task_need_retry` 時は `m_toSync` にエントリを残置して次サイクルで再処理
+- サービス再起動トリガーなし（SAI ライブ操作のみで完結）
+
+### APPL_DB / STATE_DB 書き込み
+
+なし。`WRED_PROFILE` は CONFIG_DB → `QosOrch` → SAI の直接経路で完結し、APPL_DB への中継も STATE_DB への反映も行わない。
+
+| 観点 | 値 |
+|---|---|
+| 購読方式 | `SubscriberStateTable` (keyspace `PSUBSCRIBE`) |
+| バッチサイズ | 128 (`DEFAULT_POP_BATCH_SIZE`) |
+| select タイムアウト | 1000 ms |
+| ハンドラ | `QosOrch::handleWredProfileTable()` → `WredMapHandler` |
+| SAI API | `sai_wred_api->create_wred()` / `set_wred_attribute()` / `remove_wred()` |
+| channel PUBLISH | 使わない |
+| APPL_DB 中継 | なし |
+| TTL | 未使用 |
+
+<!-- /pubsub -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
@@ -340,7 +394,6 @@ CONFIG_DB `ecn` フィールド文字列を SAI `SAI_WRED_ATTR_ECN_MARK_MODE` �
 CONFIG_DB に `weight` フィールドは存在しない。`addQosItem()` は WRED オブジェクト作成時に常に `SAI_WRED_ATTR_WEIGHT = 0` を属性リスト先頭へ無条件挿入する（SAI WRED 必須属性を満たすための固定値、ユーザー設定不可）。
 
 <!-- /constants -->
-
 
 <!-- ref-triangle:start -->
 
@@ -452,6 +505,41 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 `orchagent` の `QosOrch` は WRED_PROFILE を購読するのみ（書き込みなし）。
 
 <!-- /entry-points -->
+
+<!-- cross-refs -->
+## 暗黙参照 (Phase C: このテーブルを参照するテーブル)
+
+`WRED_PROFILE` テーブルは他テーブルから名前で参照される被参照テーブル。参照元と解決フローを以下に示す。
+
+### QUEUE テーブル (直接名前参照)
+
+`QUEUE` テーブルの `wred_profile` フィールドが `WRED_PROFILE` のエントリ名を文字列で保持し、`QosOrch::handleQueueTable()` 内で `resolveFieldRefValue()` により実オブジェクトに解決される。
+
+| 参照元テーブル | 参照フィールド | 解決タイミング | 未解決時の挙動 | evidence |
+|---|---|---|---|---|
+| `QUEUE` | `wred_profile` | `handleQueueTable()` SET パス | `task_need_retry` — WRED_PROFILE 先行作成を待つ | `qosorch.cpp:1856-1867` |
+| `QUEUE` | `wred_profile` (DEL) | `handleQueueTable()` DEL パス | `sai_wred_profile = SAI_NULL_OBJECT_ID` で unbind | `qosorch.cpp:1889-1893` |
+
+**解決フロー**:
+
+1. `resolveFieldRefValue(m_qos_maps, wred_profile_field_name, qos_to_ref_table_map.at(wred_profile_field_name), tuple, sai_wred_profile, wred_profile_name)` (qosorch.cpp:1857-1859)
+2. 未解決 (`ref_resolve_status::not_resolved`) → `SWSS_LOG_INFO("Missing or invalid wred profile reference")` + `task_need_retry` (L1864-1867)
+3. 解決成功 → `setObjectReference(m_qos_maps, CFG_QUEUE_TABLE_NAME, key, wred_profile_field_name, wred_profile_name)` (L1886)
+4. `applyWredProfileToQueue(port, queue_ind, sai_wred_profile)` (L1936) → SAI `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を設定
+
+!!! note "VoQ スイッチ"
+    `gMySwitchType == "voq"` の場合、`applyWredProfileToQueue()` (qosorch.cpp:1708-1730) が物理キューではなく VoQ ID に対して WRED を適用する。
+
+### PORT_QOS_MAP / SCHEDULER (参照なし)
+
+- **`PORT_QOS_MAP`**: `wred_profile` フィールドを持たない。`handlePortQosMapTable()` のフィールドループに `wred_profile_field_name` は含まれない (`qosorch.cpp:2021,2124`)。ただし `PORT_QOS_MAP → QUEUE → wred_profile` の間接チェーンは存在する。
+- **`SCHEDULER`**: WRED 属性を扱わない。`SchedulerHandler` は `WRED_PROFILE` を参照しない (`qosorch.cpp:1333-`)。
+
+### build-time 静的参照 (qos_config.j2)
+
+`qos_config.j2:514-660` の QUEUE セクションで RoCE キュー (queue 3, 4 等) に `"wred_profile": "AZURE_LOSSLESS"` を静的設定する。runtime の `resolveFieldRefValue()` 経由ではなく、firstboot / `config qos reload` 時のテンプレート展開で CONFIG_DB に書き込まれる。
+
+<!-- /cross-refs -->
 
 <!-- runtime-trace -->
 ## 起動経路 (Direction B: CFG → APPL → SAI)
