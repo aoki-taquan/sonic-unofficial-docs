@@ -232,6 +232,68 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 
 <!-- /constants -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `NeighOrch` が依存する関連テーブル (Phase C)
+
+`orchagent` の `NeighOrch` は APPL_DB `NEIGH_TABLE` を処理する際、CONFIG_DB `NEIGH` → `nbrmgrd` → Netlink 経路とは独立して、複数のオーケストレーターを通じて以下のテーブルを暗黙参照する。
+
+### INTERFACE（IntfsOrch 経由）
+
+最も重要な依存関係。`addNeighbor()` の先頭で `m_intfsOrch->getRouterIntfsId(alias)` を呼び出し、INTERFACE テーブルが確立した RIF (Router Interface) SAI オブジェクト ID を取得する。
+
+| 参照タイミング | 用途 | evidence |
+|---|---|---|
+| `addNeighbor()` | `rif_id` → `sai_neighbor_entry_t.rif_id` に設定 | neighorch.cpp:1204–1212 |
+| `addNextHop()` | `rif_id` → `SAI_NEXT_HOP_ATTR_ROUTER_INTERFACE_ID` に設定 | neighorch.cpp:271,304–305 |
+| `removeNeighbor()` | `rif_id` 取得 → 削除対象 `neighbor_entry` の特定 | neighorch.cpp:1492,1501,1633 |
+| `doSetNeighTask()` 早期スキップ | `p.m_rif_id == 0` なら `it++`（キュー留め） | neighorch.cpp:949–954 |
+| 管理 VRF フィルタ | `isInbandIntfInMgmtVrf(alias)` で管理 VRF 上の neigh をスキップ | neighorch.cpp:912 |
+| リモートシステムポート判定 | `isRemoteSystemPortIntf(alias)` でリモートポートの neighbor を inband 経由に切替 | neighorch.cpp:260,654,685,833 |
+| サブネット判定 | `isPrefixSubnet(ipll_prefix, alias)` で link-local scope の `no_host_route` 判定 | neighorch.cpp:1232 |
+
+RIF が存在しない（`rif_id == SAI_NULL_OBJECT_ID`）場合は即 `false` を返し SAI プログラミングをスキップする。RIF が解決されるまで neighbor はキューに留まる。`NeighOrch` は RIF 参照カウントを `increaseRouterIntfsRefCount` / `decreaseRouterIntfsRefCount` で管理し、INTERFACE テーブル側との整合を保つ。
+
+### VRF（VRFOrch 経由）
+
+VRF は `Port.m_vr_id` フィールドを通じて間接参照される。明示的な VRF テーブル購読は行わず、`gDirectory.get<VRFOrch*>()` を介してオンデマンドに VRF 名を解決する。
+
+| 参照タイミング | 用途 | evidence |
+|---|---|---|
+| `addNeighbor()` 重複チェック | `existing_vlan.m_vr_id == new_vlan.m_vr_id` で同一 VRF 判定、旧 neighbor を削除 | neighorch.cpp:1287–1296 |
+| `addPrefixRouteForNeighbor()` | `port.m_vr_id` → `sai_route_entry_t.vr_id` に設定 | neighorch.cpp:1082,1091 |
+| `removeNeighbor()` | `port_vrf_id = port.m_vr_id` → prefix route 削除時の VR ID | neighorch.cpp:1455–1471 |
+| VRF 名ログ出力 | `gDirectory.get<VRFOrch*>()->getVRFname(existing_vlan.m_vr_id)` | neighorch.cpp:1289 |
+
+`port.m_vr_id` が 0 の場合はグローバル VRF (`gVirtualRouterId`) を使用する（neighorch.cpp:1077,1456）。
+
+### FDB（FdbOrch 経由）
+
+`NeighOrch` はコンストラクタで `m_fdbOrch->attach(this)` を呼び出し、FDB flush イベントの Observer として登録される。VLAN からポートが削除されると FDB がフラッシュされ、該当 MAC を持つ neighbor エントリが自動的に再解決キューへ入る。
+
+| 参照タイミング | 用途 | evidence |
+|---|---|---|
+| `processFDBFlushUpdate()` | FDB エントリの MAC と VLAN を neighbor テーブルと照合し、一致する neighbor を再解決 | neighorch.cpp:155–185 |
+| `update(SUBJECT_TYPE_FDB_FLUSH_CHANGE)` | FdbOrch からの通知を受けて `processFDBFlushUpdate()` を dispatch | neighorch.cpp:195–198 |
+| コンストラクタ | `m_fdbOrch->attach(this)` で Observer 登録 | neighorch.cpp:43 |
+| デストラクタ | `m_fdbOrch->detach(this)` で Observer 解除 | neighorch.cpp:67–70 |
+
+FDB エントリの MAC が変化・消滅すると、対応する NEIGH エントリも再解決トリガーがかかる。
+
+### 参照方向まとめ
+
+```
+CONFIG_DB NEIGH  ─(nbrmgrd)──────────────────────→  Linux kernel RTM_NEWNEIGH
+APPL_DB NEIGH_TABLE ─(NeighOrch)─→ IntfsOrch [INTERFACE RIF]
+                                              ↓ rif_id
+                                   SAI create_neighbor_entry / create_next_hop
+                                              ↑ flush 通知
+                                   FdbOrch   [FDB flush → neighbor 再解決]
+                                   VRFOrch   [Port.m_vr_id → route_entry.vr_id]
+```
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/neigh-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
