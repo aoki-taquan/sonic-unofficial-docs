@@ -370,4 +370,77 @@ journalctl -u bgp | grep -iE 'aggregate|frr daemon'
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1313 -->
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`bgpcfgd` (`managers_aggregate_address.py`) と `frr-mgmt-framework` (`frrcfgd.py`) が CONFIG_DB / STATE_DB のフィールド名・FRR vtysh コマンドリテラル・プレフィクス長上限を module-level / 関数内リテラルとしてハードコード保持する。YANG / CONFIG_DB から変更できない値はここに集約される。
+
+### CONFIG_DB / STATE_DB キー定数（bgpcfgd module-level）
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `BGP_AGGREGATE_ADDRESS_TABLE_NAME` | `"BGP_AGGREGATE_ADDRESS"` | CONFIG_DB / STATE_DB テーブル名 | `managers_aggregate_address.py:10` |
+| `BBR_REQUIRED_KEY` / `AS_SET_KEY` / `SUMMARY_ONLY_KEY` | `"bbr-required"` / `"as-set"` / `"summary-only"` | フィールド名（FRR キーワードと同名） | `managers_aggregate_address.py:11-13` |
+| `AGGREGATE_ADDRESS_PREFIX_LIST_KEY` | `"aggregate-address-prefix-list"` | フィールド名 | `managers_aggregate_address.py:14` |
+| `CONTRIBUTING_ADDRESS_PREFIX_LIST_KEY` | `"contributing-address-prefix-list"` | フィールド名 | `managers_aggregate_address.py:15` |
+| `COMMON_TRUE_STRING` / `COMMON_FALSE_STRING` | `"true"` / `"false"` | bool リテラル / 全 bool フィールドの暗黙デフォルト | `managers_aggregate_address.py:16-17` |
+| `ADDRESS_STATE_KEY` | `"state"` | STATE_DB フィールド名 | `managers_aggregate_address.py:18` |
+| `ADDRESS_ACTIVE_STATE` / `ADDRESS_INACTIVE_STATE` | `"active"` / `"inactive"` | STATE_DB state 値 | `managers_aggregate_address.py:19-20` |
+
+### FRR vtysh コマンドリテラル（bgpcfgd 生成）
+
+`generate_aggregate_address_commands()` と `generate_prefix_list_commands()` が以下の文字列を組み立てる。
+
+| コマンド断片 | 値 | 条件 | ソース |
+|---|---|---|---|
+| router-bgp 入口 | `"router bgp %s"` (asn) | 常時 | `managers_aggregate_address.py:241` |
+| address-family | `"address-family ipv4"` / `"address-family ipv6"` | `net.version == 4` で分岐 | `managers_aggregate_address.py:242` |
+| 集約本体 | `"aggregate-address %s"` (prefix) | 常時（削除時は `"no "` プレフィクス） | `managers_aggregate_address.py:243-244` |
+| `summary-only` 接尾辞 | `" summary-only"` | `summary_only=="true"` かつ非削除 | `managers_aggregate_address.py:245-246` |
+| `as-set` 接尾辞 | `" as-set"` | `as_set=="true"` かつ非削除 | `managers_aggregate_address.py:247-248` |
+| 退出 | `"exit-address-family"` / `"exit"` | 常時 | `managers_aggregate_address.py:250-251` |
+| prefix-list 前置詞 | `"ip"` / `"ipv6"` | `is_v4` で分岐 | `managers_aggregate_address.py:258` |
+| prefix-list 本体 | `" prefix-list %s permit %s"` | aggregate / contributing 共通 | `managers_aggregate_address.py:259-260` |
+
+### プレフィクス長上限のハードコード（contributing prefix-list）
+
+`generate_prefix_list_commands()` が contributing 経路用 prefix-list に **IPv4=32 / IPv6=128** を `le` 句として固定付与する。CONFIG_DB / YANG から構成不可。
+
+| 値 | 用途 | ソース |
+|---|---|---|
+| `32` | IPv4 最大プレフィクス長（`le 32`） | `managers_aggregate_address.py:262` |
+| `128` | IPv6 最大プレフィクス長（`le 128`） | `managers_aggregate_address.py:262` |
+
+### prefix-list 名のバリデーション範囲（YANG 由来）
+
+| 制約 | 値 | ソース |
+|---|---|---|
+| pattern | `[0-9a-zA-Z_-]*` | `sonic-bgp-aggregate-address.yang:63, 72` |
+| length | `0..128` 文字 | `sonic-bgp-aggregate-address.yang:64, 73` |
+
+### frrcfgd 経路の FRR コマンドテンプレート
+
+`BGP_GLOBALS_AF_AGGREGATE_ADDR` 経由の代替経路（frr-mgmt-framework）も独立に FRR コマンドフォーマットをハードコードする。
+
+| 定数 | 値 | ソース |
+|---|---|---|
+| コマンドテンプレート | `"{no:no-prefix}aggregate-address {2} {3:aggr-as-set} {4:aggr-summary-only} {5:aggr-policy}"` | `frrcfgd.py:1983` |
+| `aggr-as-set` → FRR キーワード | `as-set` | `frrcfgd.py:815` |
+| `aggr-summary-only` → FRR キーワード | `summary-only` | `frrcfgd.py:816` |
+| `aggr-policy` 前置詞 | `"route-map "` | `frrcfgd.py:928-930` |
+| 対象 daemon | `'bgpd'` | `frrcfgd.py:98` |
+| `AggregateAddr.as_set` / `.summary_only` 初期値 | `False` | `frrcfgd.py:1704-1705` |
+
+### 特記事項
+
+1. **IPv4=32 / IPv6=128 固定** — contributing prefix-list の `le` suffix は CONFIG_DB / YANG から変更不可。サブネット階層構成によっては期待外の contributing 経路にマッチする。
+2. **bgpcfgd / frrcfgd の二重定義** — 同じ FRR コマンドリテラルが二経路 (`managers_aggregate_address.py` / `frrcfgd.py`) で独立にハードコードされている。片方を変更しても他方は追従しない（更新時の整合性リスク）。
+3. **VRF 非対応のハードコード** — bgpcfgd 経路は `DEVICE_METADATA.localhost.bgp_asn` を直接読むため default VRF 専用。frrcfgd 経路のみ VRF キーを受け付ける。
+4. **空文字列の `bbr_status` フォールバック** — `BGP_BBR` テーブル不在時に `bbr_status=""` が設定され、`bbr-required=true` のエントリは恒久的に `inactive` になる (`managers_aggregate_address.py:73-80`)。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang -->
+<!-- /constants -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
