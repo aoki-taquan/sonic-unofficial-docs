@@ -335,6 +335,70 @@ APPL_DB STATIC_ROUTE
 
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`STATIC_ROUTE` テーブルへの書込が発生すると、`bgpcfgd` の `StaticRouteMgr` が以下の副次処理を行う。
+
+### FRR vtysh コマンド発行
+
+`set_handler` / `del_handler` は `generate_command()` で vtysh コマンド文字列を生成し、
+`cfg_mgr.push_list()` → `FRR.write()` → `vtysh -f <tmpfile>` で FRR に一括投入する[^F1]。
+
+```
+# 追加
+ip route <prefix> <nexthop> [<ifname>] [<distance>] [nexthop-vrf <vrf>] tag <route_tag>
+ipv6 route <prefix> <nexthop> [<ifname>] [<distance>] [nexthop-vrf <vrf>] tag <route_tag>
+ip route <prefix> blackhole tag <route_tag>
+
+# 削除
+no ip route <prefix> <nexthop> [...] tag <route_tag>
+```
+
+`route_tag`: `advertise=true` → `1`（ROUTE_ADVERTISE_ENABLE_TAG）、`advertise=false` → `2`（ROUTE_ADVERTISE_DISABLE_TAG）。
+
+### BGP redistribute コマンド発行
+
+VRF 初回経路追加時（該当 VRF の静的経路が 0 件 → 1 件）に `enable_redistribution_command()` を発行する[^F1]。
+
+```
+route-map STATIC_ROUTE_FILTER permit 10
+ match tag 1
+router bgp <asn> [vrf <vrf>]
+ address-family ipv4
+  redistribute static route-map STATIC_ROUTE_FILTER
+ exit-address-family
+ address-family ipv6
+  redistribute static route-map STATIC_ROUTE_FILTER
+ exit-address-family
+exit
+```
+
+最終経路削除時（0 件になるとき）は `disable_redistribution_command()` で `no redistribute static` を発行する。
+`bgp_asn` が未設定の場合は `vrf_pending_redistribution` に保留し、`on_bgp_asn_change()` で後適用する。
+
+### kernel FIB 反映
+
+FRR `staticd` が vtysh コマンドを受け取り、`zebra` → `netlink` 経由で kernel FIB を更新する。
+nexthop の ARP 解決が必要な場合は ARP/ND 解決完了後に FIB 挿入される。
+`ip route show` / `ip -6 route show` で確認可能。
+
+### STATE_DB
+
+`StaticRouteMgr` は STATE_DB への直接書込を行わない。
+BFD 連携時は `staticroutebfd` が APPL_DB `STATIC_ROUTE_TABLE` を更新し、
+`bfdmon` が STATE_DB `BFD_SESSION_TABLE` を管理する。
+
+### APPL_DB 管理 (StaticRouteTimer)
+
+`static_rt_timer.py` の `StaticRouteTimer` は APPL_DB `STATIC_ROUTE:*` の
+`refresh` フィールドを監視し、デフォルト 180 秒周期で未更新エントリ（`refresh=false`、`expiry≠false`）を削除する（REST API 経由動的経路の有効期限管理）[^F2]。
+
+[^F1]: `bgpcfgd` StaticRouteMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py>
+[^F2]: StaticRouteTimer 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py>
+
+<!-- /side-effects -->
+
 <!-- ordering -->
 ## 順序依存関係 (Phase B)
 
@@ -450,5 +514,25 @@ STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依�
 
 詳細エビデンス: `meta/_intermediate/cdb-flow/static-route-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+### VOQ Chassis
+
+`bgpcfgd` 起動時に `device_info.is_chassis()` が `True` の場合、`ChassisAppDbMgr` が追加登録され、Supervisor の TSA (Traffic Shift Away) 状態変化を `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL` から購読する[^3]。これにより Line Card 全体の BGP が isolate/unisolate される。`STATIC_ROUTE` テーブルの処理ロジック自体は VOQ 構成でも共通。VOQ Chassis 固有の BGP peer は `BGP_VOQ_CHASSIS_NEIGHBOR` で別管理されており、静的経路の nexthop 到達性に間接的に影響しうる。
+
+### SmartSwitch DPU
+
+`switch_type == "dpu"` の場合、`bfdmon` が BFD プローブ状態を `STATE_DB.DPU_BFD_PROBE_STATE` ではなく `DPU_STATE_DB.DASH_BFD_PROBE_STATE` から取得する[^4]。`bfd=true` を持つ `STATIC_ROUTE` エントリの BFD 監視経路が異なる DB を参照する点に注意。CONFIG_DB 書き込みおよび FRR への静的経路反映ロジックは DPU 固有差分なし。
+
+### FRR バージョン差
+
+`bgpcfgd` レイヤに FRR バージョン検出・分岐コードは存在しない。`vtysh` へ渡すコマンド文字列（`ip route` / `ipv6 route` 形式）は固定であり、FRR バージョンによる挙動差は bgpcfgd レベルでは吸収されている。
+
+[^3]: bgpcfgd main.py チャーシス分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/main.py>
+[^4]: bfdmon DPU 分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bfdmon/bfdmon.py>
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: 21a1d1474543 -->
