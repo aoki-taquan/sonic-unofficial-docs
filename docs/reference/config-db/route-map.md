@@ -552,72 +552,63 @@ ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。`
 
 <!-- /ordering -->
 
-<!-- pubsub -->
-## CONFIG_DB 購読メカニズム (Phase G)
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
 
-ROUTE_MAP テーブルは 2 つの独立したデーモンが購読する。
+ROUTE_MAP テーブルが直接・間接に参照する他テーブル、および ROUTE_MAP を参照する逆方向テーブルの一覧。`sonic-route-map.yang` leafref 全行スキャンと `frrcfgd.py` のランタイム参照から抽出。[^5]
 
-### frrcfgd (sonic-frr-mgmt-framework)
+### ROUTE_MAP → 他テーブル (順方向 leafref)
 
-`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、Redis keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `('ROUTE_MAP', self.bgp_table_handler_common)` を登録し、変更通知を受け取る。
+| フィールド | 参照先テーブル | 参照方式 | 備考 |
+|-----------|--------------|---------|------|
+| `match_interface` | `PORT` | YANG leafref | union 1: ポート名 |
+| `match_interface` | `PORTCHANNEL` | YANG leafref | union 2: LAG 名 |
+| `match_interface` | `LOOPBACK_INTERFACE` | YANG leafref | union 3: Loopback 名 |
+| `match_prefix_set` | `PREFIX_SET` | YANG leafref + frrcfgd ランタイム参照 | frrcfgd が `PREFIX_SET.mode` を参照して IPv4/IPv6 AF を決定 |
+| `match_ipv6_prefix_set` | `PREFIX_SET` | YANG leafref のみ | frrcfgd 未処理 (dead field) |
+| `match_next_hop_set` | `PREFIX_SET` | YANG leafref + frrcfgd ランタイム参照 | IPv6 next-hop は IPv4 コマンドにフォールバック |
+| `match_src_vrf` | `VRF` | YANG leafref | union 内; `default` 文字列は leafref 外 |
+| `match_neighbor` | `PORT` | YANG leafref | union; max-elements 1 |
+| `match_neighbor` | `PORTCHANNEL` | YANG leafref | union |
+| `match_community` | `COMMUNITY_SET` | YANG leafref + frrcfgd `get_table()` | set 未作成時 silent drop |
+| `match_ext_community` | `EXTENDED_COMMUNITY_SET` | YANG leafref + frrcfgd `get_table()` | |
+| `match_as_path` | `AS_PATH_SET` | YANG leafref + frrcfgd `get_table()` | 未作成時 FRR 無効参照 |
+| `call_route_map` | `ROUTE_MAP_SET` | YANG leafref (同モジュール内) | 参照先未作成時 FRR 素通り |
+| `set_community_ref` | `COMMUNITY_SET` | YANG leafref + frrcfgd `get_table()` | 未作成時 silent drop |
+| `set_ext_community_ref` | `EXTENDED_COMMUNITY_SET` | YANG leafref + frrcfgd `get_table()` | |
 
-```python
-# frrcfgd.py L2302, 2359-2361
-('ROUTE_MAP', self.bgp_table_handler_common),
-...
-def subscribe_all(self):
-    for table, hdlr in self.table_handler_list:
-        self.config_db.subscribe(table, hdlr)
-```
+VLAN (`match_interface` / `match_neighbor`) は YANG 上でコメントアウト済みのため実際には参照不可。
 
-変更検知後、`bgp_table_handler_common` が Jinja2 テンプレート (`bgpd.conf.db.route_map.j2`) を展開して FRR vtysh コマンドを生成・実行する。
+### 他テーブル → ROUTE_MAP (逆方向参照)
 
-**Jinja2 テンプレート経路** (`bgpd.conf.db.route_map.j2`):
+frrcfgd および YANG の逆方向 leafref スキャン結果:
 
-```jinja2
-{% if ROUTE_MAP is defined and ROUTE_MAP|length > 0 %}
-{% for rm_key, rm_val in ROUTE_MAP.items() %}
-{% if 'route_operation' in rm_val %}
-route-map {{rm_key[0]}} {{rm_val['route_operation']}} {{rm_key[1]}}
-{% if 'match_as_path' in rm_val %}
- match as-path {{rm_val['match_as_path']}}
-{% endif %}
-...
-{% endif %}
-{% endfor %}
-{% endif %}
-```
+| 参照元テーブル | フィールド | leafref 先 | 参照コード |
+|--------------|-----------|-----------|---------|
+| `BGP_NEIGHBOR_AF` | `route_map_in` | `ROUTE_MAP_SET.name` | `frrcfgd.py` L1903, `sonic-bgp-common.yang` L385 |
+| `BGP_NEIGHBOR_AF` | `route_map_out` | `ROUTE_MAP_SET.name` | `frrcfgd.py` L1904, `sonic-bgp-common.yang` L394 |
+| `BGP_NEIGHBOR_AF` | `default_rmap` | `ROUTE_MAP_SET.name` | `frrcfgd.py` L1900, `sonic-bgp-common.yang` L354 |
+| `BGP_PEER_GROUP_AF` | `route_map_in` | `ROUTE_MAP_SET.name` | `frrcfgd.py` L1903, `sonic-bgp-common.yang` L385 |
+| `BGP_PEER_GROUP_AF` | `route_map_out` | `ROUTE_MAP_SET.name` | `frrcfgd.py` L1904, `sonic-bgp-common.yang` L394 |
+| `BGP_PEER_GROUP_AF` | `default_rmap` | `ROUTE_MAP_SET.name` | `frrcfgd.py` L1900 |
+| `BGP_GLOBALS_AF` | `import_vrf_route_map` | `ROUTE_MAP_SET.name` | `frrcfgd.py` L1863, `sonic-bgp-global.yang` L371 |
+| `ROUTE_REDISTRIBUTE` | `route_map` | `ROUTE_MAP_SET.name` | `frrcfgd.py` L1979, `sonic-route-common.yang` L60 |
 
-テンプレートは `ROUTE_MAP` 全エントリを走査し、`route_operation` (permit/deny)、各 `match_*` / `set_*` フィールドを条件付きで FRR コマンドに変換する。適用対象デーモンは `['zebra', 'bgpd', 'ospfd']`。
+ROUTE_MAP 名は `ROUTE_MAP_SET` テーブルで管理される。`BGP_NEIGHBOR_AF` 等の `route_map_in` / `route_map_out` は `ROUTE_MAP_SET.name` を leafref で参照し、frrcfgd が `neighbor <X> route-map <name> in/out` コマンドを生成する。
 
-### bgpcfgd (sonic-bgpcfgd) — SDN 専用経路
+### 依存テーブル削除時の影響
 
-`RouteMapMgr` は `APPL_DB` の `BGP_PROFILE_TABLE` を購読し、SDN 専用の 2 キー (`FROM_SDN_SLB_ROUTES`, `FROM_SDN_APPLIANCE_ROUTES`) のみを処理する。汎用 ROUTE_MAP の CONFIG_DB 購読は frrcfgd が担当し、bgpcfgd テンプレートエンジンが CONFIG_DB の ROUTE_MAP を読み込んで FRR 設定を生成する。
+| 削除テーブル | ROUTE_MAP への影響 |
+|------------|------------------|
+| `PREFIX_SET` | frrcfgd 内部 AF キャッシュからエントリ消去 → 以降の `match_prefix_set` / `match_next_hop_set` 更新が silent drop |
+| `COMMUNITY_SET` | `match_community` / `set_community_ref` の FRR コマンド未発行 |
+| `AS_PATH_SET` | `match_as_path` の FRR bgpd 側で無効参照エラー |
+| `ROUTE_MAP_SET` | `call_route_map` 参照先消滅 → FRR 素通り |
 
-```python
-# managers_rm.py L5-6, 27-31
-ROUTE_MAPS = ["FROM_SDN_SLB_ROUTES", "FROM_SDN_APPLIANCE_ROUTES"]
+> **スキャン証跡**: `sonic-route-map.yang` leafref 全行、`frrcfgd.py` L82-99, L1863, L1899-1904, L1942, L1979, L2214-2249, L2298-2315。詳細は `meta/_intermediate/cdb-flow/route-map-cross-refs.md`。
 
-def set_handler(self, key, data):
-    if not self.__set_handler_validate(key, data):
-        return True
-    self.__update_rm(key, data)
-```
+[^5]: YANG leafref 定義: `sonic-route-map.yang`, `sonic-bgp-common.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-route-map.yang>
 
-`__update_rm` は `cfg_mgr.push_list(cmds)` で FRR vtysh に直接コマンドを送信する。
-
-### 購読フロー要約
-
-```
-CONFIG_DB ROUTE_MAP
-  ├─ frrcfgd (ExtConfigDBConnector psubscribe)
-  │    └─ bgp_table_handler_common
-  │         └─ Jinja2 (bgpd.conf.db.route_map.j2)
-  │              └─ vtysh configure terminal / route-map <name> <action> <seq>
-  └─ bgpcfgd RouteMapMgr (SDN 専用; APPL_DB BGP_PROFILE 経由)
-       └─ cfg_mgr.push_list → vtysh route-map FROM_SDN_*_RM
-```
-
-<!-- /pubsub -->
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 24dbb72211e3 -->
