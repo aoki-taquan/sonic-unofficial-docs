@@ -262,6 +262,59 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
+
+### TC / queue インデックス範囲
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| TC 最小値 | `0` | `tc_type` YANG typedef 下限 |
+| TC 最大値 | `7` | `tc_type` YANG typedef 上限 |
+| queue インデックス最小値 | `0` | `sai_qos_map_t.value.queue_index` 下限 |
+| queue インデックス最大値 | プラットフォーム依存 | SAI / ASIC が許容する物理キュー数に依存（典型値 8〜12）。YANG 制約は `0..9` だが実装はチェックしない |
+
+### デフォルトマップ名
+
+| 定数 | 値 | 箇所 |
+|------|----|------|
+| デフォルトマップ名 | `"AZURE"` | `qos_config.j2` フォールバック定義。テスト: `qosorch_ut.cpp` L648, L683, L943 |
+| アップリンク用マップ名 | `"AZURE_UPLINK"` | `generate_tc_to_queue_map` 関数が `tunnel_qos_remap_enable=true` 時に生成 |
+
+### SAI 定数
+
+| 定数 | 値 | 箇所 |
+|------|----|------|
+| `SAI_QOS_MAP_ATTR_TYPE` | `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` | `addQosItem()` L458 にハードコード |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | — | `convertFieldValuesToAttributes()` L442 |
+| `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` | — | PORT_QOS_MAP バインド時に使用 (L64) |
+
+### フィールド名定数 (qosorch.h)
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `tc_to_queue_field_name` | `"tc_to_queue_map"` | PORT_QOS_MAP フィールド名 |
+| `encap_tc_to_queue_field_name` | `"encap_tc_to_queue_map"` | トンネルアップリンク用フィールド名 |
+
+### デフォルト恒等写像
+
+`qos_config.j2` フォールバック時の TC→queue 対応（マップ名 `AZURE`）:
+
+```
+TC 0 → queue 0
+TC 1 → queue 1
+TC 2 → queue 2
+TC 3 → queue 3
+TC 4 → queue 4
+TC 5 → queue 5
+TC 6 → queue 6
+TC 7 → queue 7
+```
+
+<!-- /constants -->
+
 <!-- ordering -->
 ## 適用順序依存 (Phase B)
 
@@ -315,5 +368,27 @@ PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとす
 `TcToQueueMapHandler::addQosItem()` は `SAI_QOS_MAP_ATTR_TYPE = SAI_QOS_MAP_TYPE_TC_TO_QUEUE` をハードコードし、`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` と同時に 1 回の `create_qos_map()` で作成する（qosorch.cpp:457-466）。map type は動的解決ではなくハンドラクラスに埋め込み固定であるため、テーブル名を変更しても SAI map type は変わらない。
 
 <!-- /ordering -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L124-200 L429-479 -->
+
+| 状況 | 戻り値 | ログレベル | ログメッセージ |
+|------|--------|-----------|--------------|
+| TC または queue インデックスが非数値（`stoi()` 例外） | `task_invalid_entry` | — | — （silent drop） |
+| `SAI sai_qos_map_api->create_qos_map()` 失敗 | `task_failed` | ERROR | `"Failed to create tc_to_queue map. status:%d"` |
+| `SAI sai_qos_map_api->set_qos_map_attribute()` 失敗（既存マップ更新時） | `task_failed` | ERROR | `"Failed to set [TC_TO_QUEUE_MAP:<name>]"` |
+| DEL 対象 SAI オブジェクトが未作成（存在チェック失敗） | `task_invalid_entry` | ERROR | `"Object with name:<name> not found."` |
+| `PORT_QOS_MAP` 参照中のマップへの DEL | `task_need_retry` | NOTICE | `"Can't remove object <name> due to being referenced"` |
+| pending remove 中のエントリへの SET | `task_need_retry` | NOTICE | `"Entry ... is pending remove, need retry"` |
+
+### 詳細
+
+- **不正 TC/queue 値**: `convertFieldValuesToAttributes()` 内で `stoi()` を try-catch なしで呼び出す。TC フィールドまたは queue インデックスが整数に変換できない場合は例外が伝播し `task_invalid_entry` となる（エントリはキューから silent drop）。
+- **SAI qos_map 作成失敗**: `addQosItem()` が `SAI_NULL_OBJECT_ID` を返した場合、`processWorkItem()` が `task_failed` を返す。SAI ドライバのエラーコードは `"Failed to create tc_to_queue map. status:%d"` でログ出力される。
+- **参照存在チェック (DEL 時)**: DEL 操作前に `isObjectBeingReferenced()` で `PORT_QOS_MAP` 等の参照を確認する。参照中の場合は `m_pendingRemove = true` をセットして `task_need_retry` を返し、SAI `remove_qos_map()` を呼ばない。参照が解放されると自動的に再処理される。
+
+<!-- /failure -->
 
 <!-- glossary-links-injected: 16a5b728a75a -->

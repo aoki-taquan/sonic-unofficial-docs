@@ -187,16 +187,70 @@ VOQ シャーシのシステムポートは動的に生成・削除されない�
 
 ---
 
+## 4. ASIC queue 数差異
+
+YANG の qindex 正規表現は 0〜15 を許容するが、実際の上限は ASIC が SAI 初期化時に通知する queue 数次第。
+
+- 非 VOQ: `port.m_queue_ids.size() <= ind` → `task_invalid_entry` (`bufferorch.cpp:1061-1064`)
+- VOQ: `getPortVoQIds(port).size() <= ind` → `task_invalid_entry` (`bufferorch.cpp:1052-1055`)
+
+プラットフォームごとに 8 / 16 / それ以外の queue 数がありうる。YANG 上の 0-15 制約はソフトウェア側の上限であり、ASIC ベンダーごとに実際の上限が異なる。
+
+---
+
+## 5. Flex Counter — `isCreateOnlyConfigDbBuffers()` 条件 (非 VOQ のみ)
+
+`bufferorch.cpp:1139-1152`:
+
+```cpp
+// non-VOQ のみ
+auto flexCounterOrch = gDirectory.get<FlexCounterOrch*>();
+if (flexCounterOrch->isCreateOnlyConfigDbBuffers())
+{
+    if (!queueContext.counter_was_added && queueContext.counter_needs_to_add && ...)
+        gPortsOrch->createPortBufferQueueCounters(port, queues);
+    else if (queueContext.counter_was_added && !queueContext.counter_needs_to_add && ...)
+        gPortsOrch->removePortBufferQueueCounters(port, queues);
+}
+```
+
+- `isCreateOnlyConfigDbBuffers() == true`: CONFIG_DB ベースのバッファ設定があるときのみ FlexCounter counter を作成するモード。`BufferOrch` が per-queue に counter を追加・削除する。
+- `isCreateOnlyConfigDbBuffers() == false`: 従来モード（`FlexCounterOrch` が一括管理）。`BufferOrch` からは操作しない。
+- VOQ シャーシではこのブロック全体をスキップ（`flexcounterorch` が system port 全体の VOQ counter を管理）。
+
+---
+
+## 6. VOQ — ローカルポート判定とリモートエントリスキップ
+
+`bufferorch.cpp:916-940`:
+
+```cpp
+if (gMySwitchType == "voq")
+{
+    // tokens[0]=hostname, tokens[1]=asic_name, tokens[2]=port, tokens[3]=qindex
+    local_port = (tokens[0] == gMyHostName) && (tmp_token_1 == tmp_gMyAsicName);
+    // local_port == false のとき SAI 書き込みをスキップ（リモートシャーシのエントリ）
+}
+```
+
+VOQ シャーシでは複数ラインカードの BUFFER_QUEUE エントリが CONFIG_DB に混在する。
+自ノードの `gMyHostName` と `gMyAsicName` が一致しないエントリは SAI に書き込まず `task_success` を返す。
+
+---
+
 ## スキャン証跡
 
 | ファイル | 行 | 確認内容 |
 |---------|-----|---------|
 | `buffermgrdyn.cpp` | L68-102 | `ASIC_VENDOR` 取得、Mellanox モデル番号抽出 |
 | `buffermgrdyn.cpp` | L285-289 | BUFFER_QUEUE 用 zero profile 設定読み取り |
+| `buffermgrdyn.cpp` | L1286-1381 | `reclaimReservedBufferForPort` — admin-down 時 zero profile 2 モード |
 | `buffermgrdyn.cpp` | L3784-3786 | port 削除時 zero profile cleanup |
 | `bufferorch.cpp` | L116-136 | VOQ warm reboot — `initVoqBufferReadyList` 分岐 |
-| `bufferorch.cpp` | L916-956 | VOQ key 4-トークンパース、ローカルポート判定 |
+| `bufferorch.cpp` | L916-940 | VOQ key 4-トークンパース、ローカルポート判定・リモートスキップ |
 | `bufferorch.cpp` | L1049-1075 | VOQ `getPortVoQIds()` vs 通常 `m_queue_ids`、lock チェックスキップ |
+| `bufferorch.cpp` | L1052-1064 | ASIC queue 数チェック（VOQ/非 VOQ）|
 | `bufferorch.cpp` | L1134-1136 | VOQ flex counter 管理スキップ |
+| `bufferorch.cpp` | L1139-1152 | 非 VOQ: `isCreateOnlyConfigDbBuffers()` 条件付き counter 追加・削除 |
 | `bufferorch.cpp` | L1166-1168 | VOQ 参照カウントスキップ |
 | `bufferorch.cpp` | L2079-2090 | VOQ `isInitDone()` ゲート |
