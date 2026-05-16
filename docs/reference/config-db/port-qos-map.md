@@ -77,6 +77,68 @@ PORT_QOS_MAP|<PORT.name>
 
 - `orchagent` の `QosOrch` (`sonic-swss/orchagent/qosorch.cpp`): [CONFIG_DB](../../reference/glossary.md#term-config_db) の [QoS](../../reference/glossary.md#term-qos) map binding を直接 subscribe し、[SAI](../../reference/glossary.md#term-sai) QoS map、scheduler、PFC 設定として port に反映する（master には独立した `qosmgrd` プロセスは存在せず、[CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) の中間段は無い）。
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+CONFIG_DB の `PORT_QOS_MAP` は `orchdaemon.cpp` の `qos_tables` ベクタ（`orchdaemon.cpp:367-383`）経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
+
+- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:PORT_QOS_MAP|*` への `PSUBSCRIBE`)
+- 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
+- バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`sonic-swss-common/common/table.h:164`、ハードコード）
+- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+- APPL_DB 経由の中間段なし — CONFIG_DB → SAI の直結経路
+
+### 書き込み側 (publisher)
+
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）またはプラットフォーム `qos.json` 投入が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。`db_migrator.py` が `PORT_QOS_MAP|global` を自動挿入する経路でも `HSET` のみ。
+
+### ディスパッチ経路
+
+```
+SubscriberStateTable (PSUBSCRIBE keyspace)
+  → Consumer::execute() → pops() (HGETALL)
+  → QosOrch::doTask(Consumer&)          [qosorch.cpp:2254]
+  → m_qos_handler_map[CFG_PORT_QOS_MAP_TABLE_NAME]   [qosorch.cpp:1335]
+  → QosOrch::handlePortQosMapTable()    [qosorch.cpp:2046]
+  → key == "global": handleGlobalQosMap()
+    → sai_switch_api->set_switch_attribute() [SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP]
+  → key == <port>: gPortsOrch->getPort()
+    → sai_port_api->set_port_attribute() [SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP 他]
+```
+
+`QosOrch::doTask()` は `PORT_QOS_MAP` Consumer を **最後に drain** する順序制御を持ち、先行する map テーブル（`DSCP_TO_TC_MAP` 等）の処理が完了してから `PORT_QOS_MAP` を処理する（`qosorch.cpp:2235-2251`）。
+
+### select タイムアウト・リトライ
+
+- select タイムアウト: **1000 ms** (`SELECT_TIMEOUT`, `orchdaemon.cpp:23`)
+- `task_need_retry` 時は `m_toSync` にエントリを残置して次サイクルで再処理
+- サービス再起動トリガーなし（SAI ライブ操作のみで完結）
+
+### 起動時スナップショット
+
+`SubscriberStateTable` は購読開始時に既存エントリを SET イベントとして再配信するため、`orchagent` 起動時に CONFIG_DB に存在する `PORT_QOS_MAP|*` エントリも一度ハンドラ経路に乗る。
+
+| 観点 | 値 |
+|---|---|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB 分岐) |
+| keyspace パターン | `__keyspace@4__:PORT_QOS_MAP\|*` (CONFIG_DB dbId=4) |
+| バッチサイズ | 128 (`DEFAULT_POP_BATCH_SIZE`) |
+| select タイムアウト | 1000 ms |
+| ハンドラ | `QosOrch::handlePortQosMapTable()` |
+| drain 順序 | PORT_QOS_MAP は最後（map テーブル処理後） |
+| channel PUBLISH | 使わない |
+| TTL | 未使用 |
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:367L (qos_tables ベクタ + QosOrch 生成) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/qosorch.cpp:1313L (QosOrch::QosOrch コンストラクタ) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/qosorch.cpp:1335L (m_qos_handler_map PORT_QOS_MAP 登録) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/qosorch.cpp:2046L (handlePortQosMapTable) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/qosorch.cpp:2231L (doTask drain 順序制御) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/qosorch.cpp:2254L (doTask(Consumer&)) -->
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `PORT`、`DSCP_TO_TC_MAP`、`TC_TO_QUEUE_MAP`、`TC_TO_PRIORITY_GROUP_MAP`、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`、`SCHEDULER`、`PFC_WD`
