@@ -93,6 +93,7 @@ VLAN|<name>
 | `DEFAULT_VLAN_ID` | `"1"` | vlanmgr.cpp:18 | Bridge 初期化時に削除する IEEE 802.1Q デフォルト VLAN（`bridge vlan del vid 1`）|
 | `DOT1Q_BRIDGE_NAME` | `"Bridge"` | vlanmgr.cpp:15 | Linux dot1q ブリッジデバイス名（固定文字列）|
 | `VLAN_PREFIX` | `"Vlan"` | vlanmgr.cpp:16 | VLAN インタフェース名プレフィクス。キー長チェックに `4` バイトとして使用 |
+| `LAG_PREFIX` | `"PortChannel"` | vlanmgr.cpp:17 | LAG インタフェース名プレフィクス。`VLAN_MEMBER` 追加時のレースコンディション判定（PortChannel vs Ethernet の挙動分岐）に使用 |
 | `VLAN_HLEN` | `4` | vlanmgr.cpp:20 | IEEE 802.1Q ヘッダ長（バイト）— 定義のみ・ファイル内未参照（dead define）|
 | `MAX_VALID_VLAN_ID` | `4094` | portsorch.cpp:82 | サブインタフェース VLAN ID 上限。YANG `range 2..4094` と一致 |
 | `DEFAULT_SYSTEM_PORT_MTU` | `9100` | portsorch.cpp:79 | portsorch 側の MTU 初期値。vlanmgr.cpp の `DEFAULT_MTU_STR` とは独立定義 |
