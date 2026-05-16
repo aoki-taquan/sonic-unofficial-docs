@@ -266,6 +266,44 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 
 <!-- /handler-branching -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 -->
+
+### MlagOrch 失敗パス一覧
+
+| # | トリガー | 箇所 | 動作 | retry |
+|---|---------|------|------|-------|
+| 1 | 不正テーブル名 | `doTask()` L62-65 | `SWSS_LOG_ERROR("MLAG receives invalid table %s")` + キューに残留 | なし（永続エラー） |
+| 2 | SET 時 `peer_link` フィールドが空または未存在 | `doMlagDomainTask()` L91-99 | erase してサイレントスキップ。ISL 登録は行われない | なし |
+| 3 | `addIslInterface()` が false を返す | `doMlagDomainTask()` L93-96 | `it++`（erase せず） → 次の doTask() で再試行 | あり（現実装では到達不可） |
+| 4 | 重複 MLAG IF ADD (`m_mlagIntfs` に既存) | `addMlagInterface()` L198-201 | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface %s")` + notify なし | なし |
+| 5 | 未知 MLAG IF の DEL (`m_mlagIntfs` に不在) | `delMlagInterface()` L220-223 | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface %s")` + notify なし | なし |
+| 6 | 不明な op_type | `doMlagDomainTask()` L108-112 / `doMlagInterfaceTask()` L149-152 | `SWSS_LOG_ERROR("MLAG receives unknown operation type %s")` + erase | なし |
+
+### peer_ip バリデーション
+
+`MlagOrch` は `peer_ip` フィールドを参照しない。`peer_ip` の不正値（フォーマット違反等）は YANG (`sonic-mclag.yang` `inet:ipv4-address` 型) でバリデーション段階に拒否され、`mlagorch.cpp` レベルには到達しない。
+
+### PORTCHANNEL 未解決時の挙動
+
+`addIslInterface()` (L156-172) は Port オブジェクトの存在確認を行わない（`gPortsOrch->getPort()` コールなし）。指定した `peer_link` の PORTCHANNEL が CONFIG_DB に未存在でも `addIslInterface()` は成功し `SUBJECT_TYPE_MLAG_ISL_CHANGE` を notify する。PORTCHANNEL 未解決による失敗は下流 observer 側で検知される。
+
+### SAI bridge_port 失敗
+
+`MlagOrch` は SAI API を直接呼ばない。`addIslInterface()` / `delIslInterface()` は observer 通知 (`notify()`) のみ実行する。SAI bridge_port 操作は下流 observer が担当し、失敗フィードバックは `mlagorch.cpp` には返らない。
+
+### STATE_DB / ERROR_TABLE への記録
+
+`MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。
+
+```bash
+docker exec swss cat /var/log/swss/orchagent.log | grep -i "MLAG"
+```
+
+<!-- /failure -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -327,6 +365,60 @@ FDB_TABLE|Vlan<vid>:<mac>
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+MCLAG の通信経路は **MlagOrch 系**（orchagent 内・Observer パターン）と **mclagsyncd 系**（独立デーモン・TCP IPC 経由で iccpd へ転送）の二系統ある。
+
+### CONFIG_DB 購読経路
+
+**MlagOrch** は `Orch` 継承により `MCLAG_DOMAIN`・`MCLAG_INTERFACE` を CONFIG_DB から直接 Consumer として購読する（`orchdaemon.cpp:536-540`）。keyspace 通知 (`__keyspace@4__:MCLAG|*`) を受信し、`doTask()` → `doMlagDomainTask()` / `doMlagInterfaceTask()` でディスパッチする。
+
+**mclagsyncd** は同時に別の SubscriberStateTable で同テーブルを購読する。`MCLAG_DOMAIN` は起動時から購読し、初回 SET 成功後に `MCLAG_INTERFACE` と `MCLAG_UNIQUE_IP` を動的に追加する（`addDomainCfgDependentSelectables()`、`mclaglink.cpp:903-921`）。
+
+### MlagOrch → 内部 Observer 通知 → FdbOrch
+
+MlagOrch は SAI を直接呼ばず、orchagent 内の Observer 通知を使う:
+
+| SubjectType | 発生トリガー | 影響先 |
+|-------------|------------|--------|
+| `SUBJECT_TYPE_MLAG_ISL_CHANGE` | `peer_link` 追加/削除 | FdbOrch が `isIslInterface()` で ISL 判定 |
+| `SUBJECT_TYPE_MLAG_INTF_CHANGE` | MC-LAG メンバー追加/削除 | FdbOrch が `isMlagInterface()` でフラッシュ制御 |
+
+SAI 操作は FdbOrch 経由: MCLAG メンバーが oper-down の場合に `sai_fdb_api->remove_fdb_entry()` を呼ぶ（`fdborch.cpp:1666`）。mclagsyncd は ASIC_DB の `ASIC_STATE:SAI_OBJECT_TYPE_BRIDGE_PORT:*` を**読み取り専用**で参照し FDB ポート OID を解決する（`mclaglink.cpp:79-95`）。
+
+### mclagsyncd → iccpd TCP IPC
+
+```
+CONFIG_DB ──SubscriberStateTable──▶ mclagsyncd ──TCP 127.0.6.1:2626──▶ iccpd
+```
+
+定数: `MCLAG_DEFAULT_IP = 0x7f000006`（127.0.6.1）、`MCLAG_DEFAULT_PORT = 2626`（`mclag.h:23,56`）。  
+mclagsyncd が TCP サーバとして `listen / accept` し、iccpd が接続する。テーブル変化ごとに差分のみを `write(m_connection_socket, ...)` で送信する。
+
+### mclagsyncd → APPL_DB (ProducerStateTable)
+
+iccpd からの命令を受けて APPL_DB へ書き込む:
+
+| APPL_DB テーブル | 消費者 |
+|-----------------|--------|
+| `MCLAG_FDB_TABLE` | FdbOrch |
+| `ISOLATION_GROUP_TABLE` | IsolationGroupOrch |
+| `INTF_TABLE` / `LAG_TABLE` / `PORT_TABLE` | IntfsOrch / PortsOrch |
+| `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` | AclOrch |
+| `FLUSHFDBREQUEST`（NotificationProducer） | FdbOrch |
+
+### タイムアウト / リトライ
+
+| デーモン | select タイムアウト | リトライ |
+|---------|-------------------|--------|
+| mclagsyncd | 無限（デフォルト max） | 接続断で即時再 accept() |
+| orchagent | 1000 ms (`orchdaemon.cpp:23`) | 特別なバックオフなし |
+| iccpd | 1 秒（CONNECT_INTERVAL_SEC） | TCP 再接続周期 |
+
+> **中間解析メモ**: `meta/_intermediate/cdb-flow/mclag-domain-pubsub.md`
+<!-- /pubsub -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
@@ -357,43 +449,7 @@ FDB_TABLE|Vlan<vid>:<mac>
 
 <!-- /cross-refs -->
 
-<!-- failure -->
-## 失敗挙動 (Phase D)
 
-<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 -->
-
-### MlagOrch 失敗パス一覧
-
-| # | トリガー | 箇所 | 動作 | retry |
-|---|---------|------|------|-------|
-| 1 | 不正テーブル名 | `doTask()` L62-65 | `SWSS_LOG_ERROR("MLAG receives invalid table %s")` + キューに残留 | なし（永続エラー） |
-| 2 | SET 時 `peer_link` フィールドが空または未存在 | `doMlagDomainTask()` L91-99 | erase してサイレントスキップ。ISL 登録は行われない | なし |
-| 3 | `addIslInterface()` が false を返す | `doMlagDomainTask()` L93-96 | `it++`（erase せず） → 次の doTask() で再試行 | あり（現実装では到達不可） |
-| 4 | 重複 MLAG IF ADD (`m_mlagIntfs` に既存) | `addMlagInterface()` L198-201 | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface %s")` + notify なし | なし |
-| 5 | 未知 MLAG IF の DEL (`m_mlagIntfs` に不在) | `delMlagInterface()` L220-223 | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface %s")` + notify なし | なし |
-| 6 | 不明な op_type | `doMlagDomainTask()` L108-112 / `doMlagInterfaceTask()` L149-152 | `SWSS_LOG_ERROR("MLAG receives unknown operation type %s")` + erase | なし |
-
-### peer_ip バリデーション
-
-`MlagOrch` は `peer_ip` フィールドを参照しない。`peer_ip` の不正値（フォーマット違反等）は YANG (`sonic-mclag.yang` `inet:ipv4-address` 型) でバリデーション段階に拒否され、`mlagorch.cpp` レベルには到達しない。
-
-### PORTCHANNEL 未解決時の挙動
-
-`addIslInterface()` (L156-172) は Port オブジェクトの存在確認を行わない（`gPortsOrch->getPort()` コールなし）。指定した `peer_link` の PORTCHANNEL が CONFIG_DB に未存在でも `addIslInterface()` は成功し `SUBJECT_TYPE_MLAG_ISL_CHANGE` を notify する。PORTCHANNEL 未解決による失敗は下流 observer 側で検知される。
-
-### SAI bridge_port 失敗
-
-`MlagOrch` は SAI API を直接呼ばない。`addIslInterface()` / `delIslInterface()` は observer 通知 (`notify()`) のみ実行する。SAI bridge_port 操作は下流 observer が担当し、失敗フィードバックは `mlagorch.cpp` には返らない。
-
-### STATE_DB / ERROR_TABLE への記録
-
-`MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。
-
-```bash
-docker exec swss cat /var/log/swss/orchagent.log | grep -i "MLAG"
-```
-
-<!-- /failure -->
 
 
 <!-- ordering -->
