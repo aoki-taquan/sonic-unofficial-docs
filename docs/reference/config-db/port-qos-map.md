@@ -323,3 +323,57 @@ REST/gNMI 書き込み経路なし
 > **スキャン証跡**: `qosorch.cpp` PortQosMapHandler + `db_migrator.py:576,711-714` + `qos_config.j2:414-423` を確認、4 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-side-effects.md -->
+
+### per-port キー SET — SAI ポート属性 bind (ASIC_DB 間接書込)
+
+`sai_port_api->set_port_attribute()` を各マップフィールドに発行。syncd が `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<oid>` を ASIC_DB に書き込む。
+
+| フィールド | SAI 属性 | evidence |
+|---|---|---|
+| `dscp_to_tc_map` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:60,100` |
+| `tc_to_queue_map` | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` | `qosorch.cpp:64,103` |
+| `tc_to_pg_map` | `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` | `qosorch.cpp:67,106` |
+| `pfc_to_queue_map` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` | `qosorch.cpp:69,108` |
+| `scheduler` | `SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID` | `qosorch.cpp:70,109` |
+| (削除されたマップ) | 上記対応属性、値 `SAI_NULL_OBJECT_ID` | `qosorch.cpp:2171` |
+
+DEL 時は全属性に `SAI_NULL_OBJECT_ID` をセットし、`setPortPfc(port_id, 0)` で PFC を全無効化する（`qosorch.cpp:2082-2105`）。
+
+### per-port キー SET — PFC bitmask (ASIC_DB 間接書込)
+
+`pfc_enable || old_pfc_enable` が true の場合のみ `gPortsOrch->setPortPfc(port.m_port_id, pfc_enable)` を呼び出す。内部で `sai_port_api->set_port_attribute()` → ASIC_DB 間接書込（`qosorch.cpp:2213-2221`）。
+
+### per-port キー SET — PFC Watchdog 内部状態更新 (DB 書込なし)
+
+`gPortsOrch->setPortPfcWatchdogStatus(port.m_port_id, pfcwd_sw_enable)` は **無条件**に呼び出される。PortsOrch の in-process `m_pfc_bitmask` を更新するのみで CONFIG_DB / APPL_DB / ASIC_DB への書込はない（`qosorch.cpp:2224`）。
+
+### global キー SET — Switch レベル SAI bind (ASIC_DB 間接書込)
+
+`PORT_QOS_MAP|global` は `dscp_to_tc_map` フィールドのみ有効。他フィールドは `SWSS_LOG_WARN` でスキップ。
+
+`sai_switch_api->set_switch_attribute(gSwitchId, SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP, id)` を発行し、syncd が `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH:<switch_oid>` を ASIC_DB に書き込む（`qosorch.cpp:1968, 2030`）。
+
+事前に `gSwitchOrch->querySwitchCapability()` で capability を確認し、非対応 ASIC ではスキップ（`qosorch.cpp:1956-1961`）。
+
+DEL 時は `SAI_NULL_OBJECT_ID` を `sai_switch_api->set_switch_attribute()` で設定する（`qosorch.cpp:1993`）。
+
+### 副次書込先サマリ
+
+| 書込先 | 操作 | 条件 |
+|---|---|---|
+| ASIC_DB (`SAI_OBJECT_TYPE_PORT`) | SAI ポート属性 set/clear (syncd 経由) | per-port SET / DEL |
+| ASIC_DB (`SAI_OBJECT_TYPE_SWITCH`) | SAI switch 属性 set/clear (syncd 経由) | global SET / DEL |
+| PortsOrch 内部状態 | `m_pfc_bitmask` 更新 | `pfcwd_sw_enable` 省略時も含む無条件 |
+| QosOrch 内部 (`m_qos_maps`) | 参照カウント更新 | SET / DEL 両方 |
+| APPL_DB | なし | — |
+| CONFIG_DB | なし | — |
+
+!!! note "APPL_DB への書込なし"
+    QosOrch は CONFIG_DB を直接購読し SAI に即反映する。`qosmgrd` 相当の中間プロセスは master ブランチに存在しない。
+
+<!-- /side-effects -->
