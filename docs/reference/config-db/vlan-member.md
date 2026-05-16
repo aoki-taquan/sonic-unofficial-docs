@@ -312,6 +312,62 @@ show vlan brief
 - 副作用: ポートを VLAN から削除すると、そのポートの MAC エントリが FDB から自動削除される。
 
 <!-- /runtime-trace -->
+
+<!-- side-effects -->
+## SET/DEL 副次 DB 書込み
+
+`CONFIG_DB VLAN_MEMBER` エントリの SET / DEL が引き起こす他 DB への書込み一覧。
+
+### vlanmgrd による書込み (cfgmgr/vlanmgr.cpp)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET: `m_appVlanMemberTableProducer.set(key, kfvFieldsValues(t))` | APPL_DB / `VLAN_MEMBER_TABLE` | `Vlan<id>\|<port>` | addHostVlanMember() 成功後[^se1] |
+| SET: `m_stateVlanMemberTable.set(kfvKey(t), [{state, ok}])` | STATE_DB / `VLAN_MEMBER_TABLE` | `Vlan<id>\|<port>` | 同上[^se1] |
+| DEL: `m_appVlanMemberTableProducer.del(key)` | APPL_DB / `VLAN_MEMBER_TABLE` | `Vlan<id>\|<port>` | isVlanMemberStateOk() == true[^se1] |
+| DEL: `m_stateVlanMemberTable.del(kfvKey(t))` | STATE_DB / `VLAN_MEMBER_TABLE` | `Vlan<id>\|<port>` | 同上[^se1] |
+
+APPL_DB に書き込まれるフィールド: CONFIG_DB の raw フィールドをそのまま転送 (`kfvFieldsValues(t)`)。`tagging_mode` が CONFIG_DB に存在しない場合 APPL_DB にも書かれず、orchagent 側で `"untagged"` にフォールバックする（二重の暗黙補完）。
+
+### PortsOrch::addVlanMember / removeVlanMember による書込み (orchagent/portsorch.cpp)
+
+APPL_DB `VLAN_MEMBER_TABLE` を PortsOrch が購読し SAI 呼び出しを行い、syncd 経由で ASIC_DB へ書き込まれる。
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|-----------------|-----------------|------|
+| SET: `sai_vlan_api->create_vlan_member(...)` | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:<oid>` | `SAI_VLAN_MEMBER_ATTR_VLAN_ID`, `SAI_VLAN_MEMBER_ATTR_BRIDGE_PORT_ID`, `SAI_VLAN_MEMBER_ATTR_VLAN_TAGGING_MODE` | 常時[^se2] |
+| SET: `setPortPvid(port, vlan_id)` (SAI_PORT_ATTR_PORT_VLAN_ID) | ASIC_DB (SAI 経由) | ポート OID | `tagging_mode == "untagged"` かつ非 TUNNEL の場合[^se2] |
+| DEL: `sai_vlan_api->remove_vlan_member(vlan_member_id)` | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:<oid>` 削除 | `<oid>` | 常時[^se2] |
+| DEL (FDB 連鎖): FDB エントリ自動削除 | ASIC_DB / FDB エントリ | — | ポートが VLAN から除去された際 fdborch が `SUBJECT_TYPE_VLAN_MEMBER_CHANGE` を受信して削除[^se3] |
+
+### カーネル操作 (DB 外)
+
+- SET: `ip link set <port> master Bridge` — ポートをブリッジに参加
+- SET: `bridge vlan del vid 1 dev <port>` — デフォルト VLAN 1 を除去
+- SET: `bridge vlan add vid <vlan_id> dev <port> [pvid untagged]` — `untagged` / `priority_tagged` 時は `pvid untagged` オプション付与[^se1]
+- DEL: `bridge vlan del vid <vlan_id> dev <port>` — VLAN からポートを除去
+- DEL: `ip link set <port> nomaster` — ポートが他 VLAN のメンバーでなくなった場合にブリッジから切り離し
+
+### COUNTERS_DB
+
+VLAN_MEMBER SET/DEL 単体では **COUNTERS_DB への書込みはない**。
+
+### 副作用サマリ
+
+| DB | テーブル | キー形式 | SET | DEL |
+|-----|---------|---------|-----|-----|
+| APPL_DB | `VLAN_MEMBER_TABLE` | `Vlan<id>\|<port>` | 書込 (vlanmgrd) | 削除 (vlanmgrd) |
+| STATE_DB | `VLAN_MEMBER_TABLE` | `Vlan<id>\|<port>` | `{state: ok}` 書込 (vlanmgrd) | 削除 (vlanmgrd) |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:<oid>` | OID | syncd 経由で作成 | syncd 経由で削除 |
+| ASIC_DB | ポート属性 `SAI_PORT_ATTR_PORT_VLAN_ID` | ポート OID | `untagged` 時に PVID 書込 | — |
+| ASIC_DB | FDB エントリ | — | — | ポート削除時に自動削除 (fdborch) |
+| COUNTERS_DB | — | — | 書込なし | 書込なし |
+
+[^se1]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
+[^se2]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+[^se3]: `sonic-swss/orchagent/fdborch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/fdborch.cpp>
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
