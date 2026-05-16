@@ -116,7 +116,7 @@ pause_quanta_per_speed テーブル (IEEE 802.3 31B.3.7 準拠):
 | 200000 | 453 | 28,992 |
 | 100000 | 394 | 25,216 |
 | 50000 | 147 | 9,408 |
-| 40000 | 40G | 7,552 |
+| 40000 | 118 | 7,552 |
 | 25000 | 80 | 5,120 |
 | 10000 | 67 | 4,288 |
 | 1000 | 2 | 128 |
@@ -129,3 +129,4 @@ pause_quanta_per_speed テーブル (IEEE 802.3 31B.3.7 準拠):
 | `gMySwitchType` 比較値 | `"voq"` | `bufferorch.cpp:116, 916, 1049` | VOQ モード判定文字列 |
 | VOQ key トークン数 | `4` | `bufferorch.cpp:918` | VOQ key の必須トークン数 |
 | 非 VOQ key トークン数 | `2` | `bufferorch.cpp:943` | 非 VOQ key の必須トークン数 |
+| `BUFFER_QUEUE` enum値 | `1` (BUFFER_PG=0, BUFFER_QUEUE=1 の想定) | `buffermgrdyn.cpp:289` | `m_bufferZeroProfileName[BUFFER_QUEUE]` / `m_bufferObjectIdsToZero[BUFFER_QUEUE]` インデックス |
