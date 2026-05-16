@@ -472,3 +472,27 @@ update 時の remove-then-reapply フローで、一時解除の `set_port_attri
 証跡: `policerorch.cpp:279-286`
 
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `PORT_STORM_CONTROL` への変更が連鎖して書き込まれる副次テーブル一覧。
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/port-storm-control-phaseF-side-effects.md`
+
+| 副次 DB | オブジェクト / テーブル | 操作 | 条件 | evidence |
+|---|---|---|---|---|
+| ASIC_DB (syncd 経由) | SAI policer (`SAI_OBJECT_TYPE_POLICER`) | create | SET かつ新規 (未登録) | `policerorch.cpp:226` |
+| ASIC_DB (syncd 経由) | SAI policer — CIR 属性 | set_attribute | SET かつ既存 (更新) | `policerorch.cpp:257` |
+| ASIC_DB (syncd 経由) | SAI PORT 属性 `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=broadcast | `policerorch.cpp:278, 291` |
+| ASIC_DB (syncd 経由) | SAI PORT 属性 `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=unknown-unicast | `policerorch.cpp:278, 291` |
+| ASIC_DB (syncd 経由) | SAI PORT 属性 `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=unknown-multicast | `policerorch.cpp:278, 291` |
+| ASIC_DB (syncd 経由) | SAI policer | remove | DEL | `policerorch.cpp:355` |
+| ASIC_DB (syncd 経由) | SAI PORT 属性 (`SAI_NULL_OBJECT_ID` でクリア) | set_port_attribute | DEL / update の一時解除 | `policerorch.cpp:278, 344` |
+
+**フロー概要**:
+1. `PolicerOrch::handlePortStormControlTable()` が `sai_policer_api->create_policer()` で SAI policer を作成 (syncd が ASIC_DB へ反映)
+2. 作成した policer OID を `sai_port_api->set_port_attribute(SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID)` でポートに attach
+3. update 時は先に `SAI_NULL_OBJECT_ID` で一時解除 → CIR 更新 → 再 attach の 3 ステップ
+4. APPL_DB / STATE_DB / COUNTERS_DB への書込は **なし**。CRM カウンタ更新も **なし**
+<!-- /side-effects -->
