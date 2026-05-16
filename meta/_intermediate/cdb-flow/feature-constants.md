@@ -2,8 +2,9 @@
 
 調査対象ソース:
 - `sonic-host-services/scripts/featured`
+- `sonic-utilities/sonic_package_manager/service_creator/feature.py`
 
-## 発見定数一覧
+## タイミング・優先度定数（モジュールレベル）
 
 | 定数名 | 値 | 定義場所 | 用途 |
 |--------|-----|---------|------|
@@ -12,6 +13,38 @@
 | `PORT_INIT_TIMEOUT_SEC` | `180` (秒) | `featured:24` | `delayed=True` フィーチャーを強制起動するまでのポート初期化待ちタイムアウト。経過後 `handle_port_table_timeout()` が呼ばれ全 delayed フィーチャーを enable する |
 | `WAIT_FOR_STABLE_TIMEOUT` | `60` (秒) | `featured:426` | `disable_feature()` が `wait_for_service_stable()` で systemd unit の `activating` 状態抜けを待つ最大時間 |
 | `WAIT_FOR_STABLE_POLL_INTERVAL` | `1` (秒) | `featured:427` | `wait_for_service_stable()` 内のポーリング間隔。`time.sleep(1)` で繰り返し `systemctl is-active` を実行 |
+
+## state / auto_restart 有効値 enum（Feature.__init__ ハードコード）
+
+`Feature.__init__` の `_get_feature_table_key_render_value()` 呼び出しで `expected_values` としてハードコードされている。これ以外の値が CONFIG_DB に入ると `ValueError` を raise してイベントループがクラッシュする。
+
+| フィールド | 有効値セット | 定義場所 |
+|-----------|-----------|---------|
+| `state` | `['enabled', 'disabled', 'always_enabled', 'always_disabled']` | `featured:81` |
+| `delayed` | `['True', 'False']` | `featured:83` |
+| `has_global_scope` | `['True', 'False']`、欠落時デフォルト `'True'` | `featured:84` |
+| `has_per_asic_scope` | `['True', 'False']`、欠落時デフォルト `'False'` | `featured:85` |
+| `auto_restart` | 制約なし（`str`）。`"enabled"` を含む場合 systemd `Restart=always`、それ以外 `Restart=no` | `featured:82,380` |
+
+## クラスレベル定数（FeatureHandler）
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|-----|---------|------|
+| `FEATURE_STATE_ENABLED` | `"enabled"` | `featured:132` | STATE_DB に書き込む「起動成功」状態文字列 |
+| `FEATURE_STATE_DISABLED` | `"disabled"` | `featured:133` | STATE_DB に書き込む「停止成功」状態文字列 |
+| `FEATURE_STATE_FAILED` | `"failed"` | `featured:134` | STATE_DB に書き込む「失敗」状態文字列 |
+| `FEATURE_EXCLUSION_LIST` | `{"telemetry", "frr_bmp"}` | `featured:135` | systemd 操作をスキップするフィーチャー名セット |
+| `SYSTEMD_SYSTEM_DIR` | `'/etc/systemd/system/'` | `featured:128` | サービスファイルを配置するルートディレクトリ |
+| `SYSTEMD_SERVICE_CONF_DIR` | `'/etc/systemd/system/{}.service.d/'` | `featured:129` | `auto_restart.conf` を配置するサービス別 drop-in ディレクトリ |
+
+## sonic_package_manager デフォルト定数
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|-----|---------|------|
+| `DEFAULT_FEATURE_CONFIG['state']` | `'disabled'` | `feature.py:13` | 新規インストール時のデフォルト（YANG の `enabled` と乖離） |
+| `DEFAULT_FEATURE_CONFIG['auto_restart']` | `'enabled'` | `feature.py:14` | 新規インストール時のデフォルト |
+| `DEFAULT_FEATURE_CONFIG['high_mem_alert']` | `'disabled'` | `feature.py:15` | 新規インストール時のデフォルト |
+| `DEFAULT_FEATURE_CONFIG['set_owner']` | `'local'` | `feature.py:16` | 新規インストール時のデフォルト |
 
 ## 定数の用途詳細
 
@@ -80,7 +113,11 @@ state, selectable_ = self.selector.select(DEFAULT_SELECT_TIMEOUT)
 
 ## 証跡
 
-- `sonic-host-services/scripts/featured:22-24` — モジュール定数
+- `sonic-host-services/scripts/featured:22-24` — モジュールレベル定数
+- `sonic-host-services/scripts/featured:81-86` — `Feature.__init__` 有効値セット
+- `sonic-host-services/scripts/featured:128-135` — `FeatureHandler` クラス定数
+- `sonic-host-services/scripts/featured:380` — `auto_restart` → `Restart=` 変換ロジック
 - `sonic-host-services/scripts/featured:426-449` — `wait_for_service_stable()`
 - `sonic-host-services/scripts/featured:630,644-648` — subscriber 登録
 - `sonic-host-services/scripts/featured:654-661` — メインループ
+- `sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17` — `DEFAULT_FEATURE_CONFIG`

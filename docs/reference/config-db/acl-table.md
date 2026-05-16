@@ -102,6 +102,30 @@ ACL_TABLE|<table_name>
 - `orchagent` の `AclOrch`: [SAI](../../reference/glossary.md#term-sai) ACL table 生成、ポートへのバインド
 - `copporch`: `CTRLPLANE` 系の登録時に連動
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`AclOrch` は `Orch` 基底クラス経由で `ACL_TABLE` を購読する。CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace 通知** (`__keyspace@<dbId>__:ACL_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB / STATE_DB / CHASSIS_APP_DB 分岐) |
+| keyspace パターン | `__keyspace@4__:ACL_TABLE:*` (CONFIG_DB dbId=4) |
+| key 区切り | `ACL_TABLE\|<table-name>` (TableNameSeparator 既定 `\|`) |
+| POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
+| 優先度 (`pri`) | 0 (`TableConnector` 既定) |
+| 起動時スナップショット | `SubscriberStateTable` が既存エントリを SET イベントとして再配信 |
+| TTL | 未設定 (CONFIG_DB は永続前提) |
+| ディスパッチ | `Consumer::execute()` → `AclOrch::doTask(Consumer&)` → `consumer.getTableName()` 分岐 → `doAclTableTask(consumer)` |
+
+参考: APPL_DB 側の `APP_ACL_TABLE` は同じ `AclOrch` インスタンスが扱うが、`Orch::addConsumer()` の `else` 分岐で `ConsumerStateTable` + `gBatchSize` が使われる点で CONFIG_DB 側と異なる。
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:4197L (AclOrch::AclOrch via Orch(connectors)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1186L (Orch::addConsumer DB 種別分岐) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:408L (TableConnector confDbAclTable) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164L (DEFAULT_POP_BATCH_SIZE = 128) -->
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `ACL_RULE`、`ACL_TABLE_TYPE`、`PORT`、`PORTCHANNEL`、`MIRROR_SESSION`
@@ -632,7 +656,32 @@ STATE_DB テーブル名: `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` (`sch
 | `APP_ACL_TABLE_TYPE_TABLE_NAME` | `"ACL_TABLE_TYPE_TABLE"` | APP_DB | `schema.h:95` |
 | `STATE_ACL_TABLE_TABLE_NAME` | `"ACL_TABLE_TABLE"` | STATE_DB | `schema.h:514` |
 
-> **スキャン証跡**: `acltable.h:1-76` 全行精読、`aclorch.h:62-63`、`aclorch.cpp:42-44,105-106,523-526,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
+### SAI ACL table 作成時に設定される属性定数
+
+`AclTable::create()` (`aclorch.cpp:2823-2847`) が `sai_acl_api->create_acl_table()` を呼ぶ際に設定する SAI 属性:
+
+| SAI 属性定数 | 設定値 | ソース |
+|---|---|---|
+| `SAI_ACL_TABLE_ATTR_ACL_STAGE` | `SAI_ACL_STAGE_INGRESS` / `SAI_ACL_STAGE_EGRESS` | `aclorch.cpp:2842` |
+| `SAI_ACL_TABLE_ATTR_ACL_BIND_POINT_TYPE_LIST` | バインドポイントリスト (PORT/LAG 等) | `aclorch.cpp:2823` |
+| `SAI_ACL_TABLE_ATTR_ACL_ACTION_TYPE_LIST` | 許可アクションリスト | `aclorch.cpp:2835` |
+| `SAI_ACL_TABLE_ATTR_FIELD_*` | マッチフィールド群 (自動付与含む) | `aclorch.cpp:2614-2650` |
+| `SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE` | L4 ポート範囲 match (BRCM EGRESS では省略) | `aclorch.cpp:603,2614` |
+| `SAI_ACL_TABLE_ATTR_FIELD_IN_PORTS` | PFCWD / DROP type 固有 | `aclorch.cpp:436,448` |
+| `SAI_ACL_TABLE_ATTR_FIELD_ACL_USER_META` | EGR_SET_DSCP type 固有 | `aclorch.cpp:494` |
+
+### ACL_RULE priority 定数
+
+ACL_RULE の `PRIORITY` フィールド (`aclorch.h:25`: `#define RULE_PRIORITY "PRIORITY"`) に対応する priority 範囲は ASIC 問い合わせで動的に決定される:
+
+| 定数 | 型 | 初期値 | 取得先 | ソース |
+|---|---|---|---|---|
+| `AclRule::m_minPriority` | `sai_uint32_t` | `0` | `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` | `aclorch.cpp:22, 3689` |
+| `AclRule::m_maxPriority` | `sai_uint32_t` | `0` | `SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY` | `aclorch.cpp:23, 3690` |
+
+`AclOrch::init()` 起動時に `sai_switch_api->get_switch_attribute()` で取得 (`aclorch.cpp:3689-3700`)。取得失敗時は min/max ともに 0 のまま（全 priority を reject）。CONFIG_DB に記録されるフィールドキー: `"PRIORITY"` (`aclorch.h:25`)。`setPriority()` で範囲チェックし範囲外は erase (`aclorch.cpp:1656-1662`)。
+
+> **スキャン証跡**: `acltable.h:1-76` 全行精読、`aclorch.h:25,62-63`、`aclorch.cpp:22-23,42-44,105-106,436,448,494,523-526,603,2614-2650,2823-2847,3689-3700,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + SAI 属性 7 件 + priority 定数 2 件 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
 <!-- /constants -->
 
 <!-- platform -->

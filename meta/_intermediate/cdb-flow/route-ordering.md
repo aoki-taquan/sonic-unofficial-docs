@@ -133,6 +133,30 @@ evidence: `routeorch.cpp:1102-1108`, `routeorch.cpp:2409-2415`, `routeorch.cpp:7
 
 ---
 
+## 7. SAI bulk batch — gRouteBulker によるバッチ SAI 発行
+
+`RouteOrch` は SAI route エントリ操作を 1 件ずつ発行せず、`EntityBulker<sai_route_api_t> gRouteBulker(sai_route_api, gMaxBulkSize)` にキューイングしてバッチで送る。
+
+**コード証跡**:
+- `routeorch.cpp:41` — `gRouteBulker(sai_route_api, gMaxBulkSize)` コンストラクタ
+- `routeorch.cpp:2301` — `gRouteBulker.create_entry()` (ADD)
+- `routeorch.cpp:2791,2797,2802` — `gRouteBulker.set_entry_attribute()` / `remove_entry()` (DEL)
+- `routeorch.cpp:1117` — `gRouteBulker.flush()` (バッチ発行)
+- `routeorch.cpp:1094-1100` — NHG 枯渇時の中間 flush
+
+**処理シーケンス**:
+1. `m_toSync` 全エントリをループ → `addRoute` / `removeRoute` が bulker にキューイング（SAI 未発行）
+2. ループ後 `gRouteBulker.flush()` → `sai_route_bulk_create` / `sai_route_bulk_remove` 一括発行
+3. `addRoutePost` / `removeRoutePost` で SAI ステータス確認、失敗は `m_toSync` に残留（リトライ）
+
+**中間 flush 条件**: NHG 数が `m_maxNextHopGroupCount` に到達かつ bulker 内に削除待ちエントリがある場合、ループを中断して flush し NHG を回収してから再開（`routeorch.cpp:1094-1100`）。
+
+**独立 bulker**: MPLS ラベル経路は `gLabelRouteBulker(sai_mpls_api, gMaxBulkSize)` で別バッチ管理（`routeorch.cpp:42`）。NHG メンバは `gNextHopGroupMemberBulker` で独立管理。
+
+evidence: `routeorch.cpp:41-43`, `routeorch.cpp:1094-1120`, `routeorch.cpp:2277-2375`, `routeorch.cpp:2739-2810`
+
+---
+
 ## 順序依存サマリ
 
 | # | 依存関係 | 方向 | 緩和策 |
@@ -143,3 +167,4 @@ evidence: `routeorch.cpp:1102-1108`, `routeorch.cpp:2409-2415`, `routeorch.cpp:7
 | 4 | L3 VNI 登録 → EVPN overlay 経路 (`vni_label` 付き) ADD | 強制先行（isL3VniVlan が false → `it++` 後回し） | VXLAN_TUNNEL_MAP / VRF 設定後に経路を書き込む |
 | 5 | IntfsOrch RIF 登録 → インタフェース直結経路 ADD | 強制先行（getRouterIntfsId==NULL → `return false` 後回し） | INTERFACE テーブルに IP を設定後に経路を書き込む |
 | 6 | ROUTE_TABLE DEL → NHG / VRF DEL | 推奨（参照解除なし DEL はリファレンスカウントが詰まる） | 経路 DEL 後にリファレンス先を DEL |
+| 7 | SAI bulk batch: ループ内 queue → flush → post 確認 | 実装制約（flush 前は SAI 未発行、post 前はステータス不定） | NHG 枯渇時は中間 flush が自動発生 |

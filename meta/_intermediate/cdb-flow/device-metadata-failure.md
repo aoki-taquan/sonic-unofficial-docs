@@ -315,7 +315,97 @@ except Exception as e:
 |---|---|---|
 | DEVICE_METADATA が CONFIG_DB に存在しない | `sonic-cfggen` (orchagent.sh:8) | `exit 1` → orchagent コンテナ起動失敗 |
 | `mac` フィールド不在 | orchagent.sh:13-16 | eth0 MAC へフォールバック（起動続行） |
+| `mac` フィールド不在かつ SAI get_switch_attribute 失敗 | main.cpp:877-884 | `handleSaiFailure(fatal=true)` → orchagent プロセス終了 |
 | `mac` フォーマット不正 | DbInterface.cpp:576 | linkmgrd 起動失敗（MUX_ERROR） |
+| `switch_type` 不正値 | main.cpp:260-264 | `SWSS_LOG_ERROR` + `"switch"` にフォールバック（起動続行、設定意図と乖離） |
 | `hostname` 空 | hostcfgd:1517 | hostname-config restart スキップ |
 | `timezone` 不正 | hostcfgd:1564 | timedatectl 失敗、rsyslog 再起動されず |
 | `suppress-fib-pending=enabled` かつ `synchronous_mode!=enable` | sonic-device_metadata.yang:250 | YANG reject（書き込み前に拒否） |
+
+---
+
+## switchorch.cpp / main.cpp / cfgmgr 追加調査 (Task F Phase D 補完)
+
+### 17. MAC 取得失敗 (SAI) → handleSaiFailure (fatal)
+
+`sonic-swss/orchagent/main.cpp:877-884`:
+
+```cpp
+if (!gMacAddress)
+{
+    attr.id = SAI_SWITCH_ATTR_SRC_MAC_ADDRESS;
+    status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+    if (status != SAI_STATUS_SUCCESS)
+    {
+        SWSS_LOG_ERROR("Failed to get MAC address from switch, rv:%d", status);
+        handleSaiFailure(SAI_API_SWITCH, "get", status, true);
+    }
+```
+
+- 前提: `mac` フィールド不在 (`orchagent.sh` で eth0 フォールバック成功)、かつ SAI switchId の MAC 属性取得も失敗
+- `handleSaiFailure(fatal=true)` → orchagent プロセス終了
+- フロー: `orchagent.sh:13-16` (eth0 フォールバック) → `main.cpp:675` (`gMacAddress` チェック) → `main.cpp:877` (SAI get)
+
+### 18. 不正 switch_type → "switch" フォールバック + SWSS_LOG_ERROR
+
+`sonic-swss/orchagent/main.cpp:248-264` (`getCfgSwitchType()`):
+
+```cpp
+if (!cfgDeviceMetaDataTable.hget("localhost", "switch_type", switch_type))
+    switch_type = "switch";   // 不在: silent fallback
+
+// ...
+if (switch_type != "voq" && switch_type != "fabric" && switch_type != "chassis-packet"
+    && switch_type != "switch" && switch_type != "dpu")
+{
+    SWSS_LOG_ERROR("Invalid switch type %s configured", switch_type.c_str());
+    switch_type = "switch";   // 不正値: error + fallback
+}
+```
+
+- ログ: `SWSS_LOG_ERROR("Invalid switch type %s configured", ...)` (不正値のみ)
+- フィールド不在時はサイレント (`"switch"` フォールバック)
+- `system_error` 例外時も `"switch"` にフォールバック (main.cpp:256)
+- 注: `hld.json`/`yang` では有効値は `chassis-packet/fabric/npu/voq/dpu/dummy-sup` だが、`main.cpp` の検証では `npu` ではなく `switch` を既知値として扱っている（コードと HLD の乖離）
+
+### 19. platform (ASIC_VENDOR) 未設定 → buffermgrd (dynamic) 起動中断
+
+`sonic-swss/cfgmgr/buffermgrdyn.cpp:68-73`:
+
+```cpp
+string platform = getenv("ASIC_VENDOR") ? getenv("ASIC_VENDOR") : "";
+if (platform == "")
+{
+    SWSS_LOG_ERROR("Platform environment variable is not defined, buffermgrd won't start");
+    return;
+}
+```
+
+- `ASIC_VENDOR` はコンテナ起動時に `docker_image_ctl.j2` が `-e ASIC_VENDOR=<sonic_asic_platform>` でセットする環境変数
+- 未設定 (`DEVICE_METADATA.platform` フィールドとは別物) → `return` で初期化中断
+- Lua スクリプト (`buffer_headroom_<platform>.lua` 等) が読み込まれないため dynamic buffer 計算が機能しない
+- static buffermgr (`buffermgr.cpp`) は `SWSS_LOG_WARN` のみで続行可能
+
+### 20. buffer_model 不整合 → サイレント static モード
+
+`sonic-swss/cfgmgr/buffermgr.cpp:390-406`:
+
+```cpp
+if (fvField(i) == "buffer_model")
+{
+    if (fvValue(i) == "dynamic")
+        dynamic_buffer_model = true;
+    else
+        dynamic_buffer_model = false;
+    break;
+}
+// ...
+else if (op == DEL_COMMAND)
+    dynamic_buffer_model = false;
+```
+
+- `buffer_model` が `"dynamic"` 以外（空値・`"traditional"` 以外の不正値を含む）→ `dynamic_buffer_model = false`
+- ログ出力なし、エラーなし（完全サイレント）
+- `dynamic_buffer_model = false` のとき `buffermgr` は `pg_profile_lookup.ini` ベースの static バッファ計算を使用
+- `buffer_model = "dynamic"` を設定しても static buffermgr (`buffermgr.cpp`) は `dynamic_buffer_model = true` にするだけで、実際の dynamic 計算は `buffermgrdyn.cpp` が担当する（別プロセス分岐）
+- `buffermgrd.sh:13-15` で `buffer_model == "dynamic"` のとき `buffermgrdyn` を起動し、そうでなければ `buffermgr` を起動するシェル分岐が存在する

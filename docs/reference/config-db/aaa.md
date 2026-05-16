@@ -400,4 +400,138 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/aaa-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`AAA` / `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` / `LDAP` / `LDAP_SERVER` テーブル群および `hostcfgd` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd` と `sonic-host-services/scripts/ldap.py`。
+
+### PAM / NSS 設定ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PAM_AUTH_CONF` | `/etc/pam.d/common-auth-sonic` | SONiC 専用 PAM auth 共通インクルード (テンプレートから再生成) | hostcfgd L28 |
+| `PAM_PASSWORD_CONF` | `/etc/pam.d/common-password` | パスワードポリシー PAM 設定 | hostcfgd L30 |
+| `NSS_TACPLUS_CONF` | `/etc/tacplus_nss.conf` | libnss-tacplus 設定ファイル | hostcfgd L34 |
+| `NSS_RADIUS_CONF` | `/etc/radius_nss.conf` | libnss-radius 設定ファイル | hostcfgd L36 |
+| `NSS_CONF` | `/etc/nsswitch.conf` | NSS スイッチ設定 (`passwd:` 行を書換) | hostcfgd L39 |
+| `LDAP_CONF` | `/etc/ldap/ldap.conf` | LDAP クライアント設定 | hostcfgd L41 |
+| `NSLCD_CONF` | `/etc/nslcd.conf` | nslcd デーモン設定 | hostcfgd L43 |
+| `PAM_SESSION_CONF` | `/etc/pam.d/common-session` | PAM session 共通設定 (mkhomedir ルール挿入対象) | hostcfgd L44 |
+| `PAM_SESSION_NONINT_CONF` | `/etc/pam.d/common-session-noninteractive` | PAM session noninteractive | hostcfgd L45 |
+| `ETC_PAMD_SSHD` | `/etc/pam.d/sshd` | sshd PAM (`common-auth` インクルードを `common-auth-sonic` に書換) | hostcfgd L50 |
+| `ETC_PAMD_LOGIN` | `/etc/pam.d/login` | login PAM (同上の include 書換) | hostcfgd L51 |
+| `ETC_LOGIN_DEF` | `/etc/login.defs` | Linux パスワードエージング設定 | hostcfgd L52 |
+| `RADIUS_PAM_AUTH_CONF_DIR` | `/etc/pam_radius_auth.d/` | サーバごと `{ip}_{auth_port}.conf` を 0600 で生成するディレクトリ | hostcfgd L97, L829 |
+
+> **注意**: SONiC は `/etc/pam.d/common-auth` (Debian 標準) を直接書換せず、`/etc/pam.d/common-auth-sonic` を生成して `sshd` / `login` の include 行のみ書き換える。これにより Debian の `pam-auth-update` 機構を回避している。
+
+### PAM モジュール / セッションルール
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MKHOME_DIR_RULE` | `session required pam_mkhomedir.so skel=/etc/skel/ umask=0022 silent` | リモート認証ユーザのホーム自動作成ルール (`common-session` 末尾の `# end of pam-auth-update config` 直前に挿入) | hostcfgd L46-47 |
+| `MKHOME_DIR_LIB` | `pam_mkhomedir.so` | mkhomedir モジュール名 (ルール存在チェック) | hostcfgd L48 |
+
+### TACACS+ サーバデフォルト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `TACPLUS_SERVER_PASSKEY_DEFAULT` | `""` (空) | `TACPLUS_SERVER.passkey` 未指定時のデフォルト (= passkey なし) | hostcfgd L87 |
+| `TACPLUS_SERVER_TIMEOUT_DEFAULT` | `"5"` 秒 | `TACPLUS_SERVER.timeout` 未指定時のデフォルト | hostcfgd L88 |
+| `TACPLUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | `TACPLUS_SERVER.auth_type` 未指定時のデフォルト認証方式 | hostcfgd L89 |
+| TACACS+ TCP ポート | `49` (YANG default) | `hostcfgd` 内にリテラル定数なし。CONFIG_DB `TACPLUS_SERVER.tcp_port` から直接 NSS/PAM テンプレートに渡される (IANA well-known) | YANG: sonic-system-tacacs |
+
+### RADIUS サーバデフォルト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `RADIUS_SERVER_AUTH_PORT_DEFAULT` | `"1812"` (UDP) | `RADIUS_SERVER.auth_port` 未指定時 (RFC 2865) | hostcfgd L92 |
+| `RADIUS_SERVER_PASSKEY_DEFAULT` | `""` (空) | RADIUS 共有秘密未指定時 | hostcfgd L93 |
+| `RADIUS_SERVER_RETRANSMIT_DEFAULT` | `"3"` | 再送回数デフォルト | hostcfgd L94 |
+| `RADIUS_SERVER_TIMEOUT_DEFAULT` | `"5"` 秒 | タイムアウトデフォルト | hostcfgd L95 |
+| `RADIUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | 認証方式デフォルト | hostcfgd L96 |
+| `RADIUS_SERVER_SKIP_MSG_AUTH` | `False` | Message-Authenticator 属性スキップフラグ | hostcfgd L98 |
+
+### LDAP デフォルト (ldap.py)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `LdapCfg.PORT` | `389` (TCP) | `LDAP_SERVER.port` 未指定時のデフォルト (RFC 4511) | ldap.py L15 |
+| `LdapCfg.TIMEOUT_SEARCH` | `5` 秒 | `LDAP.search_timeout` デフォルト | ldap.py L13 |
+| `LdapCfg.TIMEOUT_BIND` | `5` 秒 | `LDAP.bind_timeout` デフォルト | ldap.py L14 |
+| `LdapCfg.VERSION` | `'3'` | LDAP プロトコルバージョン | ldap.py L12 |
+| `LdapCfg.BASE` | `'ou=users,dc=example,dc=com'` | サンプル base_dn プレースホルダ (本番で必ず上書き) | ldap.py L9 |
+| `LdapCfg.SCOPE` | `"sub"` | デフォルト検索スコープ (subtree) | ldap.py L16 |
+| `TLS1_2` cipher | `SECURE128:SECURE192:SECURE256:-VERS-TLS1.0:-VERS-DTLS1.0:-VERS-TLS1.1:-SHA1` | LDAPS TLS1.2 GnuTLS 暗号スイート (固定) | ldap.py L4 |
+| `TLS1_3` cipher | `SECURE128:SECURE192:SECURE256:-VERS-TLS-ALL:-VERS-DTLS-ALL:+VERS-TLS1.3` | LDAPS TLS1.3 GnuTLS 暗号スイート (固定) | ldap.py L5 |
+
+> **注意**: LDAPS の well-known ポート `636` は定数化されていない。`LdapCfg.PORT = 389` のみ。LDAPS 使用時はユーザが `LDAP_SERVER.port` で明示 636 を指定する必要がある。`ldap_mode` (`ldap`/`ldaps`) は URI スキームのみ切替する (ldap.py L58)。
+
+### Linux login.def デフォルト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `LINUX_DEFAULT_PASS_MAX_DAYS` | `99999` | パスワードハードニング無効時の最大有効日数 (Debian 標準) | hostcfgd L57 |
+| `LINUX_DEFAULT_PASS_WARN_AGE` | `7` | パスワード期限切れ警告日数 | hostcfgd L58 |
+
+### FIPS
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `FIPS_CONFIG_FILE` | `/etc/sonic/fips.json` | FIPS モード設定ファイル | hostcfgd L101 |
+| `OPENSSL_FIPS_CONFIG_FILE` | `/etc/fips/fips_enable` | OpenSSL FIPS 有効化フラグ | hostcfgd L102 |
+| `DEFAULT_FIPS_RESTART_SERVICES` | `['ssh', 'telemetry.service', 'restapi']` | FIPS 切替時に再起動するサービス固定リスト | hostcfgd L103 |
+
+詳細な定数一覧 (mkhomedir 正規表現、PAM_SESSION_LAST_LINE マーカ、SSH min/max 値、nslcd 制御等) は `meta/_intermediate/cdb-flow/aaa-constants.md` を参照。
+<!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照 — `AaaCfg` が読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`hostcfgd` の `AaaCfg` ハンドラは `AAA` 単体ではなく、関連 7 テーブルを起動時に一括ロードし (`load_independent_config()` — hostcfgd:2222-2231)、`modify_conf_file()` 内で結合した dict から PAM / NSS テンプレ (`common-auth-sonic.j2` / `tacplus_nss.conf.j2` 等) を再生成する。さらに RADIUS `nas_ip` / `src_ip` / `nas_id` の動的解決のために、関連インタフェーステーブルを都度参照する。
+
+### 共依存テーブル (起動時 + subscribe で一括ロード)
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| `TACPLUS` | load + subscribe | TACACS+ global (`passkey` / `auth_type` / `timeout` / `src_intf`) | hostcfgd:2224,2471 |
+| [`TACPLUS_SERVER`](tacplus-server.md) | load + subscribe | TACACS+ サーバ毎の `priority` / `tcp_port` / `passkey` | hostcfgd:2225,2472 |
+| [`RADIUS`](radius.md) | load + subscribe | RADIUS global (`nas_ip` / `nas_id` / `src_intf` / `statistics`) | hostcfgd:2226,2473 |
+| [`RADIUS_SERVER`](radius-server.md) | load + subscribe | RADIUS サーバ毎の `auth_port` / `passkey` / `retransmit` / `timeout` / `src_intf` | hostcfgd:2227,2474 |
+| `LDAP` | load + subscribe | LDAP global (`bind_dn` / `base_dn` / `bind_password`) — `is_ldap_config_complete()` の判定対象 | hostcfgd:2228,2475 |
+| [`LDAP_SERVER`](ldap-server.md) | load + subscribe | LDAP サーバ毎の `port` / `priority` — 空なら `nslcd` を mask | hostcfgd:2229,2476 |
+
+> 1 テーブルの変化でも `modify_conf_file()` は **7 テーブル分** の dict を結合し直して PAM/NSS テンプレを丸ごと再生成する。「中間状態」は事実上避けられないため、変更順序が重要 (Phase B `ordering` 参照)。
+
+### RADIUS の動的 IP / hostname 解決 (`get_interface_ip` 経由)
+
+`RADIUS` / `RADIUS_SERVER` の `src_intf` 指定や `nas_ip` 自動補完のため、`AaaCfg.get_interface_ip()` (hostcfgd:582-617) が間接的に以下のインタフェーステーブルを読み出す。
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `get_interface_ip("eth0")` | RADIUS `nas_ip` 未指定時に `eth0` の管理 IP を `nas_ip` として注入 | hostcfgd:600,670-674 |
+| `INTERFACE` | `get_interface_ip("Eth...")` | `RADIUS_SERVER.src_intf` が物理ポートのとき src_ip を解決 | hostcfgd:586,694 |
+| `VLAN_INTERFACE` | `get_interface_ip("Vlan...")` | `src_intf` が VLAN のとき | hostcfgd:593 |
+| `VLAN_SUB_INTERFACE` | `get_interface_ip` 分岐 | `src_intf` が VLAN sub-interface のとき | hostcfgd:588 |
+| `PORTCHANNEL_INTERFACE` | `get_interface_ip("Po...")` | `src_intf` が PortChannel のとき | hostcfgd:591 |
+| `LOOPBACK_INTERFACE` | `get_interface_ip("Loopback...")` | `src_intf` が Loopback のとき | hostcfgd:595 |
+| [`DEVICE_METADATA`](device-metadata.md) (`localhost.hostname`) | `aaacfg.hostname_update()` | RADIUS `nas_id` 未指定時にホスト名で補完 | hostcfgd:566-577,683-686,2280,2406 |
+
+### 連動 subscribe (AAA 状態を間接更新)
+
+| テーブル | handler | AAA への影響 | evidence |
+|---|---|---|---|
+| `MGMT_INTERFACE` | `mgmt_intf_handler` → `aaacfg.handle_radius_nas_ip_chg()` | `eth0` IP 変化時に RADIUS `nas_ip` を再計算 | hostcfgd:2349,2485 |
+| `INTERFACE` / `VLAN_INTERFACE` / `VLAN_SUB_INTERFACE` / `PORTCHANNEL_INTERFACE` | 各 `*_intf_handler` | `src_intf` の IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2486-2489 |
+| [`DEVICE_METADATA`](device-metadata.md) | `device_metadata_handler` → `devmetacfg.hostname_update` → `aaacfg.hostname_update` | hostname 変化時に RADIUS `nas_id` を再生成 | hostcfgd:2406,2492 |
+| `MGMT_VRF_CONFIG` | `mgmt_vrf_handler` | 管理 VRF 切替で `eth0` 到達性が変わり nas_ip 解決に影響 | hostcfgd:2496 |
+
+### 範囲外 (誤解されやすい隣接テーブル)
+
+- `FIPS`: 同 `hostcfgd` プロセス内の `FipsCfg` (hostcfgd:1753-1843) が独立購読。`AaaCfg` からの直接参照なし。OpenSSL FIPS フラグと `ssh`/`telemetry`/`restapi` の再起動を司るだけで、CONFIG_DB レベルで AAA と読み合わない。
+- `SSH_SERVER`: `PamLimitsCfg.update_config_file()` (hostcfgd:1422-1430) が `DEVICE_METADATA` と併読するのみ。`AaaCfg` の参照経路には現れない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/aaa-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 8d5a139c8eba -->
