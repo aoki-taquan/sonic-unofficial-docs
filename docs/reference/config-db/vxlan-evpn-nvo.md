@@ -211,4 +211,41 @@ db_migrator.py での VXLAN_EVPN_NVO マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C / vxlanorch.cpp)
+
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
+
+以下の参照は `VXLAN_EVPN_NVO` テーブルが間接的に依存するが、CONFIG_DB スキーマや YANG には明示されていない。
+
+### VXLAN_TUNNEL → EvpnNvoOrch
+
+- **参照箇所**: `vxlanorch.cpp:2782-2786`
+- `EvpnNvoOrch::addOperation()` は `tunnel_orch->getVxlanTunnel(source_vtep)` で VXLAN_TUNNEL オブジェクトを取得し `source_vtep_ptr` に格納する。
+- VXLAN_TUNNEL が未登録の場合 `source_vtep_ptr = NULL` となり、後続の DIP トンネル作成 (`addTunnelUser`) で NULL 参照が生じる可能性がある。
+- 削除時: `EvpnNvoOrch::delOperation()` が `source_vtep_ptr->del_tnl_hw_pending` を確認し、HW 削除保留中は `return false` でリトライ待ちになる。**NVO は VXLAN_TUNNEL より先に削除する必要がある。**
+
+### VXLAN_TUNNEL_MAP / EVPN リモート VNI → addTunnelUser
+
+- **参照箇所**: `vxlanorch.cpp:1678,1733`
+- `VxlanTunnelOrch::addTunnelUser()` / `delTunnelUser()` 内で `gDirectory.get<EvpnNvoOrch*>()` で NVO オブジェクトを参照し、EVPN 状態 (`source_vtep_ptr`) を確認する。
+- NVO が設定されていない状態でリモート VNI 追加処理が走ると `source_vtep_ptr` が NULL のため DIP トンネルが不完全になる。
+
+### VLAN (PortsOrch)
+
+- **参照箇所**: `vxlanorch.cpp:1719-1721,1750-1761`
+- EVPN NVO 有効状態で DIP トンネル作成時に `gPortsOrch->addTunnel()` / `addBridgePort()` でリモートトンネルポートを VLAN ブリッジドメインに登録する。
+- 対応 VLAN が未作成の場合、ブリッジポート登録が失敗してリモート MAC/IP ルートが HW に反映されない。
+
+### 依存解決順序
+
+```
+VLAN (PortsOrch) ──┐
+VRF  (VRFOrch)  ───┼──→ VXLAN_TUNNEL ──→ VXLAN_TUNNEL_MAP ──→ VXLAN_EVPN_NVO
+```
+
+削除は逆順: `VXLAN_EVPN_NVO` → `VXLAN_TUNNEL_MAP` → `VXLAN_TUNNEL`
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 7e2e79cf3524 -->

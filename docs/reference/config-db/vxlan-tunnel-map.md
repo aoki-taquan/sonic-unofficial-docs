@@ -227,4 +227,51 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C / vxlanorch.cpp)
+
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
+
+以下の参照は `VXLAN_TUNNEL_MAP` テーブルが間接的に依存するが、CONFIG_DB スキーマや YANG には明示されていない。
+
+### VXLAN_TUNNEL (VxlanTunnelOrch)
+
+- **参照箇所**: `vxlanorch.cpp:2047-2058`
+- `VxlanTunnelMapOrch::addOperation()` が `tunnel_orch->isTunnelExists(tunnel_name)` で親トンネルを確認し、`tunnel_orch->getVxlanTunnel(tunnel_name)` でポインタを取得する。
+- 未登録時は `SWSS_LOG_WARN("Vxlan tunnel '%s' doesn't exist")` を記録して `return false` (リトライ待ち)。
+- `del_tnl_hw_pending` フラグが立っている場合も `SWSS_LOG_WARN("Tunnel Mapper deletion is pending")` を記録して `return false` でブロック (`vxlanorch.cpp:2053-2058`)。
+- **MAP エントリ数がゼロになると TUNNEL HW 削除がトリガされる**: `vlan_vrf_vni_count == 0` になった時点で `deleteTunnelHw()` が呼ばれ、DIP トンネルが残存している場合は `del_tnl_hw_pending = true` が設定される (`vxlanorch.cpp:2193-2226`)。
+
+### VLAN (PortsOrch)
+
+- **参照箇所**: `vxlanorch.cpp:2030-2034, 2145-2148`
+- `gPortsOrch->getVlanByVlanId(vlan_id, tempPort)` で VLAN オブジェクトを取得する。
+- VLAN が `PortsOrch` に未登録の場合 `SWSS_LOG_WARN("Vxlan tunnel map vlan id doesn't exist: %d", vlan_id)` を記録して `return false` (リトライ待ち)。
+- 削除時に VLAN が消えていた場合は `SWSS_LOG_ERROR("Delete VLAN-VNI map.vlan id doesn't exist: %d")` を記録して `return true` (永続破棄、警告のみ)。
+
+### VRF (VRFOrch) — L3VNI 判定
+
+- **参照箇所**: `vxlanorch.cpp:2095-2113`
+- `VRFOrch* vrf_orch = gDirectory.get<VRFOrch*>()` → `vrf_orch->isL3VniVlan(vni_id)` でこの VNI が L3VNI として登録済みかを確認する。
+- `isL3VniVlan()` が `true` の場合、SAI `create_tunnel_map_entry()` を呼ばず `SAI_NULL_OBJECT_ID` を記録する (暗黙 no-op)。
+- CONFIG_DB に L3VNI を明示するフィールドはなく VRFOrch 内部状態に依存する **silent 挙動差**。同じ `vni` 値でも VRF 登録状態により SAI エントリが生成されるかどうかが変わる。
+
+### PortsOrch — トンネルポート / ブリッジポート管理
+
+- **参照箇所**: `vxlanorch.cpp:2082-2084`
+- `VXLAN_TUNNEL_MAP` の最初のエントリ追加がトンネルポートの HW 作成トリガになる（トンネルが非 active かつ DIP トンネル不使用の場合に `gPortsOrch->addTunnel()` / `addBridgePort()` を呼ぶ）。
+- 逆に最後のエントリ削除時 (`vlan_vrf_vni_count == 0`) にトンネルポートの HW 削除が走る。
+
+### 依存解決順序
+
+```
+VLAN (PortsOrch) ──┐
+VRF  (VRFOrch)  ───┼──→ VXLAN_TUNNEL ──→ VXLAN_TUNNEL_MAP
+```
+
+削除は逆順: `VXLAN_EVPN_NVO` → `VXLAN_TUNNEL_MAP` → `VXLAN_TUNNEL`  
+(`VLAN` は `VXLAN_TUNNEL_MAP` 全削除後に削除可)
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 7111763d84c2 -->
