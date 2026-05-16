@@ -332,4 +332,19 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 
 `max_prefix_limit` が必須のアンカー。`max_prefix_warning_threshold` が不在の場合は `max_prefix_restart_interval` と `max_prefix_warning_only` も生成されない（`++` オプション連鎖）。
 <!-- /defaults -->
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`frrcfgd` の `bgp_table_handler_common()` が BGP_PEER_GROUP_AF を処理する際に検出された順序依存を示す。
+
+| # | 先行テーブル / 設定 | 依存元フィールド | 方向 | 緩和策 | evidence |
+|---|---|---|---|---|---|
+| 1 | `BGP_GLOBALS\|<vrf>.local_asn` | 全フィールド（VRF guard） | **先行必須**（hard block） | なし — LOG_DEBUG + skip | `frrcfgd.py:2656–2662` |
+| 2 | `BGP_PEER_GROUP\|<vrf>\|<pg_name>` | 全フィールド（FRR peer-group 未登録） | **先行必須**（FRR コマンド失敗） | なし — LOG_ERR + continue | `frrcfgd.py:2790–2801, 2873` |
+| 3 | `BGP_GLOBALS_AF\|<vrf>\|<af_safi>` | 全フィールド（AF コンテキスト） | **先行必須**（FRR コンテキスト未存在） | 起動時は `table_handler_list` 順（#4 < #12）で自動保証 | `frrcfgd.py:2297, 2771–2781` |
+| 4 | `ROUTE_MAP\|<name>\|<seq>` | `route_map_in`, `route_map_out`, `default_rmap`, `unsuppress_map_name` | **先行推奨**（中間状態のみ） | FRR は名前を受付、route-map 定義後に有効化 | `frrcfgd.py:3109–3133` |
+| 5 | bgpd CLI 内 `max_prefix_limit` | `max_prefix_warning_threshold`, `max_prefix_restart_interval`, `max_prefix_warning_only` | **同時書き込み推奨** | limit 不在時 FRR が後続オプションを無視 | `frrcfgd.py:2865–2872` |
+
+> **推奨書き込み順**: `BGP_GLOBALS` → `BGP_GLOBALS_AF` → `ROUTE_MAP` → `BGP_PEER_GROUP` → `BGP_PEER_GROUP_AF`
+<!-- /ordering -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
