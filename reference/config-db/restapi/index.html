@@ -27906,6 +27906,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35156,6 +35167,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35472,10 +35494,54 @@
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <h3 id="_15">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
-<p>なし</p>
+<p><code>rest-server.sh</code> 起動スクリプトがコード由来デフォルトを注入する（下記 <code>&lt;!-- defaults --&gt;</code> ブロック参照）。</p>
 <h3 id="_16">死活・デッドコード<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p><code>docker-sonic-mgmt-framework/rest-server.sh</code> が CONFIG_DB 値を読み込む際に適用するランタイムデフォルト。YANG スキーマに <code>default</code> 文が存在しない場合でも、起動スクリプト側で値が補完される。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>コード由来デフォルト</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>client_auth</code></td>
+<td><code>"user"</code></td>
+<td><code>CLIENT_AUTH=$(... jq -r '.client_auth // "user"')</code> — CONFIG_DB 未設定時にユーザー認証モードを強制</td>
+</tr>
+<tr>
+<td><code>log_level</code></td>
+<td>（省略 = 引数なし = <code>trace</code> 相当の詳細ログ）</td>
+<td><code>LOG_LEVEL=$(... jq -r '.log_level // empty')</code> — 空の場合は <code>-v</code> 引数が付かず rest_server デフォルト (<code>trace</code>) が適用</td>
+</tr>
+<tr>
+<td><code>server_crt</code> / <code>server_key</code></td>
+<td><code>/tmp/cert.pem</code> / <code>/tmp/key.pem</code>（自動生成）</td>
+<td>証明書パスが未設定の場合 <code>generate_cert --host="localhost,127.0.0.1"</code> で自己署名証明書を <code>/tmp/</code> に生成</td>
+</tr>
+<tr>
+<td><code>allow_insecure</code> (HTTP)</td>
+<td>無効 (<code>-enablehttp</code> フラグなし)</td>
+<td>起動引数に HTTP 許可フラグが含まれず、HTTPS のみで起動</td>
+</tr>
+<tr>
+<td><code>port</code></td>
+<td>rest_server バイナリデフォルト（8443）</td>
+<td><code>SERVER_PORT=$(... jq -r '.port // empty')</code> — 空の場合は <code>-port</code> 引数なし、rest_server の組み込みデフォルトが有効</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh</code> の起動スクリプトより抽出。YANG <code>sonic-restapi.yang</code> には <code>default</code> 文なし。コード由来デフォルトのみ。</p>
+</blockquote>
+<!-- /defaults -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
 
@@ -35487,6 +35553,9 @@
 </li>
 <li id="fn:2">
 <p>YANG 定義: <code>sonic-restapi.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-restapi.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-restapi.yang</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-sonic-mgmt-framework/rest-server.sh">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-sonic-mgmt-framework/rest-server.sh</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

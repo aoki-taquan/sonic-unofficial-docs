@@ -24421,10 +24421,259 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#internalinstanceconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー固定値（internal/instance.conf.j2）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group-internalpeer-groupconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 名定数（internal/peer-group.conf.j2）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 固定設定（CONFIG_DB 値非依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route-map-internalpoliciesconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        route-map 名定数（internal/policies.conf.j2）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis-packet-community-tag-policiesconfj2constantsbgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassis-packet 向け community / tag 定数（policies.conf.j2、constants.bgp.*）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存（CONFIG_DB への投入順序）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存（CONFIG_DB への投入順序）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. DEVICE_METADATA 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bgp_globalslocal_asn-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. BGP_GLOBALS.local_asn 先行必須（FRR レイヤ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-port-portchannel-interface-local_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. PORT / PORTCHANNEL / INTERFACE 先行必須（local_addr 解決）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-loopback0-loopback4096" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Loopback0 / Loopback4096 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-bgpcfgd-post_dependencies_init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. bgpcfgd ハンドラ起動順（post_dependencies_init）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-bgpd-frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. bgpd ソケット待ち（frrcfgd 起動時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c-cross-table-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — Phase C (cross-table refs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — Phase C (cross-table refs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA — 多目的暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS — FRR レイヤの前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-portchannel_interface-interface-local_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT / PORTCHANNEL_INTERFACE / INTERFACE — local_addr 解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback0-loopback4096-ibgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loopback0 / Loopback4096 — iBGP 専用依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route_map-bgp_peer_group-frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROUTE_MAP / BGP_PEER_GROUP — frrcfgd / テンプレートが自動生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
       
     </span>
   </a>
@@ -24435,7 +24684,7 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -24444,6 +24693,17 @@
       
         <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24477,7 +24737,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34641,10 +34901,259 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#internalinstanceconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー固定値（internal/instance.conf.j2）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group-internalpeer-groupconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 名定数（internal/peer-group.conf.j2）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 固定設定（CONFIG_DB 値非依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route-map-internalpoliciesconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        route-map 名定数（internal/policies.conf.j2）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis-packet-community-tag-policiesconfj2constantsbgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassis-packet 向け community / tag 定数（policies.conf.j2、constants.bgp.*）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存（CONFIG_DB への投入順序）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存（CONFIG_DB への投入順序）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. DEVICE_METADATA 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bgp_globalslocal_asn-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. BGP_GLOBALS.local_asn 先行必須（FRR レイヤ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-port-portchannel-interface-local_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. PORT / PORTCHANNEL / INTERFACE 先行必須（local_addr 解決）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-loopback0-loopback4096" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Loopback0 / Loopback4096 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-bgpcfgd-post_dependencies_init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. bgpcfgd ハンドラ起動順（post_dependencies_init）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-bgpd-frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. bgpd ソケット待ち（frrcfgd 起動時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c-cross-table-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — Phase C (cross-table refs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — Phase C (cross-table refs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA — 多目的暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS — FRR レイヤの前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-portchannel_interface-interface-local_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT / PORTCHANNEL_INTERFACE / INTERFACE — local_addr 解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback0-loopback4096-ibgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loopback0 / Loopback4096 — iBGP 専用依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route_map-bgp_peer_group-frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROUTE_MAP / BGP_PEER_GROUP — frrcfgd / テンプレートが自動生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
       
     </span>
   </a>
@@ -34655,7 +35164,7 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -34664,6 +35173,17 @@
       
         <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34697,7 +35217,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35066,18 +35586,448 @@
 <li>関連 YANG: <code>sonic-bgp-internal-neighbor</code>、<code>sonic-bgp-common</code></li>
 <li>関連 CLI: マルチ ASIC 環境では <code>show ip bgp summary</code> / <code>vtysh -c 'show bgp neighbor'</code></li>
 </ul>
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h3 id="internalinstanceconfj2">タイマー固定値（<code>internal/instance.conf.j2</code>）<a class="headerlink" href="#internalinstanceconfj2" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の <code>holdtime</code> / <code>keepalive</code> フィールドは <strong>dead field</strong>。テンプレートが以下をハードコードで適用する:</p>
+<table>
+<thead>
+<tr>
+<th>FRR 設定</th>
+<th>ハードコード値</th>
+<th>CONFIG_DB フィールド</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>neighbor &lt;addr&gt; timers &lt;keepalive&gt; &lt;holdtime&gt;</code></td>
+<td>keepalive=<code>3</code>秒、holdtime=<code>10</code>秒</td>
+<td><code>keepalive</code>/<code>holdtime</code>（無視）</td>
+<td><code>internal/instance.conf.j2:6</code></td>
+</tr>
+<tr>
+<td><code>neighbor &lt;addr&gt; timers connect &lt;retry&gt;</code></td>
+<td>connect-retry=<code>10</code>秒</td>
+<td>（フィールドなし）</td>
+<td><code>internal/instance.conf.j2:7</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="peer-group-internalpeer-groupconfj2">peer-group 名定数（<code>internal/peer-group.conf.j2</code>）<a class="headerlink" href="#peer-group-internalpeer-groupconfj2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IPv4 internal peer-group 名</td>
+<td><code>INTERNAL_PEER_V4</code></td>
+<td><code>peer-group.conf.j2:4</code></td>
+</tr>
+<tr>
+<td>IPv6 internal peer-group 名</td>
+<td><code>INTERNAL_PEER_V6</code></td>
+<td><code>peer-group.conf.j2:5</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="peer-group-config_db">peer-group 固定設定（CONFIG_DB 値非依存）<a class="headerlink" href="#peer-group-config_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>ハードコード値</th>
+<th>適用条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allowas-in</code></td>
+<td><code>1</code></td>
+<td>常時（IPv4/IPv6 両 AF）</td>
+<td><code>peer-group.conf.j2:15,29</code></td>
+</tr>
+<tr>
+<td><code>soft-reconfiguration</code></td>
+<td><code>inbound</code></td>
+<td>常時</td>
+<td><code>peer-group.conf.j2:14,28</code></td>
+</tr>
+<tr>
+<td><code>send-community</code></td>
+<td>—</td>
+<td>常時</td>
+<td><code>peer-group.conf.j2:18,32</code></td>
+</tr>
+<tr>
+<td><code>ttl-security hops</code></td>
+<td><code>1</code></td>
+<td><code>switch_type == 'chassis-packet'</code> 時のみ</td>
+<td><code>peer-group.conf.j2:8,22</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="route-map-internalpoliciesconfj2">route-map 名定数（<code>internal/policies.conf.j2</code>）<a class="headerlink" href="#route-map-internalpoliciesconfj2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>使用箇所</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IPv4 inbound route-map</td>
+<td><code>FROM_BGP_INTERNAL_PEER_V4</code></td>
+<td>peer-group の <code>route-map ... in</code>、policies 全分岐</td>
+<td><code>peer-group.conf.j2:16</code>、<code>policies.conf.j2:9,32,37,43,47,99</code></td>
+</tr>
+<tr>
+<td>IPv4 outbound route-map</td>
+<td><code>TO_BGP_INTERNAL_PEER_V4</code></td>
+<td>peer-group の <code>route-map ... out</code></td>
+<td><code>peer-group.conf.j2:17</code>、<code>policies.conf.j2:78,82,103</code></td>
+</tr>
+<tr>
+<td>IPv6 inbound route-map</td>
+<td><code>FROM_BGP_INTERNAL_PEER_V6</code></td>
+<td>同上 IPv6</td>
+<td><code>peer-group.conf.j2:30</code>、<code>policies.conf.j2:16,20,53,57,62,68,72,93,101</code></td>
+</tr>
+<tr>
+<td>IPv6 outbound route-map</td>
+<td><code>TO_BGP_INTERNAL_PEER_V6</code></td>
+<td>同上 IPv6</td>
+<td><code>peer-group.conf.j2:31</code>、<code>policies.conf.j2:85,89,105</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="chassis-packet-community-tag-policiesconfj2constantsbgp">chassis-packet 向け community / tag 定数（<code>policies.conf.j2</code>、<code>constants.bgp.*</code>）<a class="headerlink" href="#chassis-packet-community-tag-policiesconfj2constantsbgp" title="Permanent link">&para;</a></h3>
+<p><code>switch_type == 'chassis-packet'</code> の場合のみ参照される設定注入定数。</p>
+<table>
+<thead>
+<tr>
+<th>定数キー</th>
+<th>テスト参照値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>constants.bgp.internal_community</code></td>
+<td><code>12345:556</code></td>
+<td><code>DEVICE_INTERNAL_COMMUNITY</code> community-list。<code>TO_BGP_INTERNAL_PEER</code> で tag 付与</td>
+<td><code>policies.conf.j2:34</code>、<code>param_chasiss_packet.json:9</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.internal_fallback_community</code></td>
+<td><code>1111:2222</code></td>
+<td><code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> community-list。フォールバック経路識別</td>
+<td><code>policies.conf.j2:35</code>、<code>param_chasiss_packet.json:15</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.local_anchor_route_community</code></td>
+<td><code>12345:555</code></td>
+<td><code>LOCAL_ANCHOR_ROUTE_COMMUNITY</code>。<code>TO_BGP_INTERNAL_PEER deny 15</code> で deny 判定</td>
+<td><code>policies.conf.j2:36</code>、<code>param_chasiss_packet.json:16</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.internal_community_match_tag</code></td>
+<td><code>101</code></td>
+<td><code>FROM_BGP_INTERNAL_PEER permit 1/2</code> での <code>set tag</code></td>
+<td><code>policies.conf.j2:40,58</code>、<code>param_chasiss_packet.json:13</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.route_eligible_for_fallback_to_default_tag</code></td>
+<td><code>203</code></td>
+<td><code>FROM_BGP_INTERNAL_PEER permit 3/4</code>（非 DownstreamLC）での <code>set tag</code></td>
+<td><code>policies.conf.j2:50,70</code>、<code>param_chasiss_packet.json:14</code></td>
+</tr>
+<tr>
+<td>NO_EXPORT route local-preference</td>
+<td><code>80</code></td>
+<td><code>NO_EXPORT</code> community 一致時の <code>set local-preference 80</code></td>
+<td><code>policies.conf.j2:45,65</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /constants -->
+
+<!-- ordering -->
+<h2 id="config_db">書込み順依存（CONFIG_DB への投入順序）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
+<p><code>BGP_INTERNAL_NEIGHBOR</code> エントリを CONFIG_DB に書き込む際、以下の順序依存が <code>bgpcfgd</code> の実装（<code>managers_bgp.py</code>）および <code>frrcfgd.py</code> から検出されている。</p>
+<h3 id="1-device_metadata">1. DEVICE_METADATA 先行必須<a class="headerlink" href="#1-device_metadata" title="Permanent link">&para;</a></h3>
+<p><code>BGPPeerMgrBase</code> は <code>deps</code> リストに <code>DEVICE_METADATA|localhost.bgp_asn</code> と <code>DEVICE_METADATA|localhost.type</code> を登録する（<code>managers_bgp.py</code> L118-120）。これらが未充足の間はテーブルイベント自体がハンドラに届かない。さらに <code>add_peer()</code> は <code>bgp_asn</code> を直接参照する（L192）。</p>
+<p><strong>順序依存</strong>: <code>DEVICE_METADATA|localhost.bgp_asn</code> と <code>.type</code> は <code>BGP_INTERNAL_NEIGHBOR</code> より先行して CONFIG_DB に存在しなければならない。</p>
+<h3 id="2-bgp_globalslocal_asn-frr">2. BGP_GLOBALS.local_asn 先行必須（FRR レイヤ）<a class="headerlink" href="#2-bgp_globalslocal_asn-frr" title="Permanent link">&para;</a></h3>
+<p><code>frrcfgd</code> は <code>BGP_GLOBALS.local_asn</code> 受信時に <code>router bgp &lt;ASN&gt;</code> インスタンスを FRR bgpd に生成する（<code>frrcfgd.py</code> L2700-2703）。<code>local_asn</code> が未設定の VRF に対する BGP 設定はすべてスキップされる（L2659-2662）。<code>bgpcfgd</code> テンプレートが生成する FRR コマンドも <code>router bgp &lt;ASN&gt;</code> コンテキスト内で実行されるため、FRR 側に該当 ASN のインスタンスが先に存在していることが前提となる。</p>
+<p><strong>推奨順序</strong>: <code>BGP_GLOBALS|default.local_asn</code> → <code>BGP_INTERNAL_NEIGHBOR</code></p>
+<h3 id="3-port-portchannel-interface-local_addr">3. PORT / PORTCHANNEL / INTERFACE 先行必須（local_addr 解決）<a class="headerlink" href="#3-port-portchannel-interface-local_addr" title="Permanent link">&para;</a></h3>
+<p><code>add_peer()</code> はフィールド <code>local_addr</code> に対応するインターフェースを <code>get_local_interface()</code> で解決する（<code>managers_bgp.py</code> L198-201）。<code>LOCAL.interfaces</code> スロットに対応エントリが未登録の場合は <code>return False</code>（再試行待ち）となり、peer 確立が延期される。deps にも <code>("LOCAL", "local_addresses", "")</code> と <code>("LOCAL", "interfaces", "")</code> が含まれる（L124-125）。</p>
+<p><strong>順序依存</strong>: <code>BGP_INTERNAL_NEIGHBOR.local_addr</code> が指す IP アドレスに対応する <code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> エントリが先行していること。</p>
+<h3 id="4-loopback0-loopback4096">4. Loopback0 / Loopback4096 先行必須<a class="headerlink" href="#4-loopback0-loopback4096" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Loopback0</strong>（L121）: deps 宣言。<code>add_peer()</code> は Loopback0 の IPv4 アドレスを取得できず、かつ <code>DEVICE_METADATA.bgp_router_id</code> も未設定の場合は <code>return False</code>（L184-189）。</li>
+<li><strong>Loopback4096</strong>（L145-146）: <code>peer_type == 'internal'</code> 専用の deps。<code>policies.conf.j2</code> L7 でも <code>originator-id</code> 設定のため参照される（<code>sub_role == 'BackEnd'</code> 時）。</li>
+</ul>
+<p><strong>順序依存</strong>: <code>LOOPBACK_INTERFACE|Loopback0|&lt;IPv4&gt;</code> および <code>LOOPBACK_INTERFACE|Loopback4096|&lt;IPv4&gt;</code> が <code>BGP_INTERNAL_NEIGHBOR</code> エントリより先行していること（マルチ ASIC 環境では minigraph が自動生成する）。</p>
+<h3 id="5-bgpcfgd-post_dependencies_init">5. bgpcfgd ハンドラ起動順（post_dependencies_init）<a class="headerlink" href="#5-bgpcfgd-post_dependencies_init" title="Permanent link">&para;</a></h3>
+<p><code>BGPPeerMgrBase</code> は <code>post_dependencies_init_complete = False</code> で初期化される（L101）。deps（DEVICE_METADATA, Loopback0, Loopback4096）が充足された後の最初の <code>set_handler</code> 呼び出し時に <code>post_dependencies_init()</code> が実行され、追加 loopback リストを拡張する（L181-182, L245-268）。この一回性初期化は最初の <code>add_peer()</code> 前に完了する。</p>
+<h3 id="6-bgpd-frrcfgd">6. bgpd ソケット待ち（frrcfgd 起動時）<a class="headerlink" href="#6-bgpd-frrcfgd" title="Permanent link">&para;</a></h3>
+<p><code>frrcfgd</code> は起動時に <code>/run/frr/bgpd.vty</code> 等の FRR デーモンソケットに接続するまで最大 100 回 × 2秒 = 200秒 リトライする（<code>frrcfgd.py</code> L183-200）。bgpd ソケットが存在しない間は、frrcfgd・bgpcfgd とも FRR への設定投入を開始できない。コンテナ起動直後の数秒間は CONFIG_DB にエントリが存在しても FRR への反映が遅延する。</p>
+<h3 id="_11">順序依存サマリ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>先行必須エントリ</th>
+<th>影響</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>DEVICE_METADATA|localhost.bgp_asn</code> / <code>.type</code></td>
+<td>deps 未充足でイベント保留</td>
+<td>minigraph が同時書き込み</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>BGP_GLOBALS|default.local_asn</code>（FRR レイヤ）</td>
+<td>bgpd router インスタンス未生成</td>
+<td>frrcfgd が通常先行処理</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code>（local_addr 対応）</td>
+<td><code>return False</code> で再試行待ち</td>
+<td>runtime は自動再試行</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>LOOPBACK_INTERFACE|Loopback0</code> / <code>Loopback4096</code></td>
+<td>deps 未充足・<code>return False</code></td>
+<td>minigraph が自動生成</td>
+</tr>
+<tr>
+<td>5</td>
+<td>deps 充足 → post_dependencies_init</td>
+<td>最初の add_peer 前に一回実行</td>
+<td>deps 充足後に自動実行</td>
+</tr>
+<tr>
+<td>6</td>
+<td>bgpd ソケット存在</td>
+<td>frrcfgd/bgpcfgd が設定投入不可</td>
+<td>docker-fpm-frr 起動シーケンスで保証</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c-cross-table-refs">暗黙参照 — Phase C (cross-table refs)<a class="headerlink" href="#phase-c-cross-table-refs" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>managers_bgp.py</code>、<code>frrcfgd.py</code>、<code>policies.conf.j2</code>（internal）全行精読 (2026-05-16)
+詳細証跡: <code>meta/_intermediate/cdb-flow/bgp-internal-neighbor-cross-refs.md</code></p>
+</blockquote>
+<p><code>BGP_INTERNAL_NEIGHBOR</code> テーブルは YANG leafref が最小限だが、実行時に以下のテーブルを暗黙参照する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB</th>
+<th>参照方向</th>
+<th>YANG leafref</th>
+<th>実装上の必須度</th>
+<th>証拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.bgp_asn</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (ASN 検証・bgp_asn 取得)</td>
+<td>なし</td>
+<td>必須 (deps 宣言)</td>
+<td>managers_bgp.py L119, L192</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.type</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (check_deployment_id 判定)</td>
+<td>なし</td>
+<td>必須 (deps 宣言)</td>
+<td>managers_bgp.py L120</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.sub_role</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (peer-group / route-map 分岐)</td>
+<td>なし</td>
+<td>プラットフォーム依存</td>
+<td>policies.conf.j2 L8, peer-group.conf.j2</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.switch_type</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (chassis-packet 分岐)</td>
+<td>なし</td>
+<td>プラットフォーム依存</td>
+<td>policies.conf.j2 L26, peer-group.conf.j2</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.bgp_router_id</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (originator-id fallback)</td>
+<td>なし</td>
+<td>省略可 (Loopback4096 が代替)</td>
+<td>policies.conf.j2 L10-11, L21-22</td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS\|&lt;vrf&gt;.local_asn</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (router bgp インスタンス生成)</td>
+<td>なし</td>
+<td>実質必須 (FRR レイヤ)</td>
+<td>frrcfgd.py L2700-2703, L2659-2662</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE\|Loopback0</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (router_id / local_addr 解決)</td>
+<td>なし</td>
+<td>必須 (deps 宣言)</td>
+<td>managers_bgp.py L121, L216</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE\|Loopback4096</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (originator-id / update-source)</td>
+<td>なし</td>
+<td>internal 専用 deps</td>
+<td>managers_bgp.py L146, policies.conf.j2 L7</td>
+</tr>
+<tr>
+<td><code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (local_addr インターフェース解決)</td>
+<td>なし</td>
+<td>local_addr が必要な場合は必須</td>
+<td>managers_bgp.py L198-201, deps L124-125</td>
+</tr>
+<tr>
+<td><code>ROUTE_MAP\|FROM_BGP_INTERNAL_PEER_V4</code></td>
+<td>CONFIG_DB / FRR</td>
+<td>書き込み (frrcfgd が生成)</td>
+<td>なし</td>
+<td>ハードコード参照</td>
+<td>policies.conf.j2 L9, 32, 99</td>
+</tr>
+<tr>
+<td><code>ROUTE_MAP\|TO_BGP_INTERNAL_PEER_V4</code></td>
+<td>CONFIG_DB / FRR</td>
+<td>書き込み (frrcfgd が生成)</td>
+<td>なし</td>
+<td>ハードコード参照</td>
+<td>policies.conf.j2 L78, 103</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_GROUP\|INTERNAL_PEER_V4</code></td>
+<td>CONFIG_DB / FRR</td>
+<td>書き込み (peer-group.conf.j2 が生成)</td>
+<td>なし</td>
+<td>ハードコード参照</td>
+<td>peer-group.conf.j2 全体</td>
+</tr>
+</tbody>
+</table>
+<h3 id="device_metadata">DEVICE_METADATA — 多目的暗黙参照<a class="headerlink" href="#device_metadata" title="Permanent link">&para;</a></h3>
+<p><code>managers_bgp.py</code> は <code>deps</code> リスト（L119-120）に <code>DEVICE_METADATA|localhost.bgp_asn</code> と <code>DEVICE_METADATA|localhost.type</code> を登録する。これらが CONFIG_DB に存在しない間はテーブルイベント自体がハンドラに届かない。さらに <code>add_peer()</code> は <code>bgp_asn</code> を直接読み取り（L192）、テンプレート展開時は <code>CONFIG_DB__DEVICE_METADATA</code> を辞書全体として渡す（L205）。</p>
+<p><code>policies.conf.j2</code> は <code>DEVICE_METADATA['localhost']['sub_role']</code> と <code>switch_type</code> を分岐条件として使用する（L8, L26）。<code>bgp_router_id</code> フィールドは <code>originator-id</code> のプライマリソースで、未設定時は Loopback4096 の IPv4 アドレスにフォールバックする（L10-13）。</p>
+<h3 id="bgp_globals-frr">BGP_GLOBALS — FRR レイヤの前提条件<a class="headerlink" href="#bgp_globals-frr" title="Permanent link">&para;</a></h3>
+<p><code>frrcfgd.py</code> は <code>BGP_GLOBALS|&lt;vrf&gt;.local_asn</code> を受信した時点で <code>router bgp &lt;ASN&gt;</code> インスタンスを FRR bgpd に生成する（L2700-2703）。<code>local_asn</code> が設定されていない VRF への BGP 設定は <code>vrf_tables</code> チェック（L2659-2662）でスキップされる。<code>bgpcfgd</code> テンプレートが生成する FRR コマンドも <code>router bgp &lt;ASN&gt;</code> コンテキスト内で実行されるため、<strong>FRR 側に BGP インスタンスが先に存在していることが前提</strong>。YANG leafref はないが実質的な必須依存。</p>
+<h3 id="port-portchannel_interface-interface-local_addr">PORT / PORTCHANNEL_INTERFACE / INTERFACE — local_addr 解決<a class="headerlink" href="#port-portchannel_interface-interface-local_addr" title="Permanent link">&para;</a></h3>
+<p><code>add_peer()</code> は <code>local_addr</code> フィールドを解決するため <code>get_local_interface()</code> を呼び出し（L198-201）、<code>LOCAL.interfaces</code> と <code>LOCAL.local_addresses</code> スロットを参照する（deps L124-125）。対応エントリが未登録の場合は <code>return False</code> となり peer 確立が自動再試行待ちになる。YANG leafref はないが、<code>local_addr</code> を使用する限り INTERFACE / PORTCHANNEL_INTERFACE が先行して存在する必要がある。</p>
+<h3 id="loopback0-loopback4096-ibgp">Loopback0 / Loopback4096 — iBGP 専用依存<a class="headerlink" href="#loopback0-loopback4096-ibgp" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Loopback0</strong>: deps 宣言（L121）。<code>add_peer()</code> は Loopback0 の IPv4 アドレスを取得し、<code>bgp_router_id</code> 未設定時の router-id として使用（L184-189）。取得できず <code>bgp_router_id</code> も未設定なら <code>return False</code>。</li>
+<li><strong>Loopback4096</strong>: <code>peer_type == 'internal'</code> 専用の deps（L146）。<code>policies.conf.j2</code> L7 で <code>get_ipv4_loopback_address(CONFIG_DB__LOOPBACK_INTERFACE, "Loopback4096")</code> を直接参照し、<code>sub_role == 'BackEnd'</code> 時の <code>originator-id</code> に使用。<code>switch_type == 'chassis-packet'</code> 時の <code>update-source Loopback4096</code> でも参照される。</li>
+</ul>
+<h3 id="route_map-bgp_peer_group-frrcfgd">ROUTE_MAP / BGP_PEER_GROUP — frrcfgd / テンプレートが自動生成<a class="headerlink" href="#route_map-bgp_peer_group-frrcfgd" title="Permanent link">&para;</a></h3>
+<p><code>FROM_BGP_INTERNAL_PEER_V4</code>、<code>TO_BGP_INTERNAL_PEER_V4</code>（および V6 版）は <code>policies.conf.j2</code> が FRR に直接生成するルートマップ。<code>INTERNAL_PEER_V4</code> / <code>INTERNAL_PEER_V6</code> は <code>peer-group.conf.j2</code> が生成するピアグループ。いずれも CONFIG_DB の <code>ROUTE_MAP</code> / <code>BGP_PEER_GROUP</code> テーブルへの YANG leafref はなく、テンプレート側がハードコードした名称で FRR に注入する。<code>frrcfgd.py</code> L81-90 で <code>BGP_GLOBALS</code>・<code>ROUTE_MAP</code>・<code>BGP_PEER_GROUP</code> は <code>bgpd</code> デーモン宛テーブルとして登録されており、frrcfgd 経由の設定と bgpcfgd テンプレート経由の設定が同一 FRR インスタンスに並存する。</p>
+<h3 id="sai">SAI 参照<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<p>なし。<code>bgpcfgd</code> / <code>frrcfgd</code> は CONFIG_DB → FRR（ユーザー空間ルーティングデーモン）への経路であり、SAI/ASIC に直接触れない。APPL_DB への中継もない。</p>
+<!-- /cross-refs -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>BGPPeerMgrBase</code>（<code>peer_type="internal"</code>）は CONFIG_DB <code>BGP_INTERNAL_NEIGHBOR</code> の
+set/del を受けて <strong>STATE_DB <code>BGP_PEER_CONFIGURED_TABLE</code></strong> に副次書込を行う。
+COUNTERS_DB / APPL_STATE_DB / ASIC_DB への直接書込は無い。
+FRR bgpd への反映は <code>cfg_mgr.push()</code> 経由の vtysh push のみ。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / フィールド</th>
+<th>発火タイミング</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>BGP_PEER_CONFIGURED_TABLE\|&lt;nbr&gt;</code> (vrf=default) または <code>\|&lt;vrf&gt;\|&lt;nbr&gt;</code></td>
+<td><code>add_peer()</code> 成功後 → <code>SET</code> (全フィールド)</td>
+<td><code>managers_bgp.py:239</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>同上</td>
+<td><code>apply_admin_status()</code> 成功後 → <code>SET</code></td>
+<td><code>managers_bgp.py:353</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>同上</td>
+<td><code>del_handler()</code> 成功後 → <code>DEL</code></td>
+<td><code>managers_bgp.py:487</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>—</td>
+<td>書込なし</td>
+<td><code>managers_bgp.py</code> に <code>COUNTERS_DB</code> 参照なし</td>
+</tr>
+</tbody>
+</table>
+<p><code>frrcfgd.py</code>（frr-mgmt-framework パス）は <code>BGP_INTERNAL_NEIGHBOR</code> を購読しないため副次書込なし（全体スキャンで一致なし）。</p>
+<p>詳細スキャン結果: <code>meta/_intermediate/cdb-flow/bgp-internal-neighbor-side.md</code></p>
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <code>sonic-bgp-internal-neighbor</code> / <code>sonic-bgp-common</code></li>
 <li>CONFIG_DB: <a href="../bgp-neighbor/">BGP_NEIGHBOR</a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_13">運用ヒント<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">運用ヒント<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <h3 id="minigraph">典型値（minigraph 生成時）<a class="headerlink" href="#minigraph" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">&quot;BGP_INTERNAL_NEIGHBOR&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;10.0.0.1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -35094,7 +36044,7 @@
 </span></code></pre></div>
 <h3 id="holdtimekeepalive">注意: holdtime/keepalive は実際には効かない<a class="headerlink" href="#holdtimekeepalive" title="Permanent link">&para;</a></h3>
 <p>上記の <code>holdtime: 180</code>, <code>keepalive: 60</code> は minigraph が書き込むが、<code>bgpcfgd</code> テンプレートが <code>timers 3 10</code> をハードコードで上書きするため FRR に反映されない。</p>
-<h3 id="_14">確認コマンド<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_15">確認コマンド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BGP_INTERNAL_NEIGHBOR|10.0.0.1&#39;</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp neighbor 10.0.0.1&#39;</span>

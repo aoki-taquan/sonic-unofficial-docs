@@ -22697,6 +22697,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassis-chassisappdbmgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassis 環境: ChassisAppDbMgr の条件起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_role-idf-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_role による IDF isolation スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-subtype-aspath-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type / subtype による AsPath Manager 限定起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic 構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-bgp_voq_chassis_neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ chassis: BGP_VOQ_CHASSIS_NEIGHBOR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35378,6 +35450,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassis-chassisappdbmgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassis 環境: ChassisAppDbMgr の条件起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_role-idf-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_role による IDF isolation スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-subtype-aspath-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type / subtype による AsPath Manager 限定起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic 構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-bgp_voq_chassis_neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ chassis: BGP_VOQ_CHASSIS_NEIGHBOR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36234,6 +36378,43 @@
 </tbody>
 </table>
 <!-- /cross-refs -->
+
+<!-- platform -->
+<h2 id="_20">プラットフォーム差異<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
+<p>BGP_GLOBALS 本体のフィールド処理（router-id / local_asn / graceful-restart 等）に<strong>プラットフォーム固有分岐はない</strong>。<code>frrcfgd.py</code> および <code>bgpd.conf.db.j2</code> ともに chassis / switch_role / multi-asic に依存する条件分岐を持たない（grep 0 ヒット確認）。以下の隣接機能がプラットフォーム種別によって挙動を変える。</p>
+<h3 id="chassis-chassisappdbmgr">chassis 環境: ChassisAppDbMgr の条件起動<a class="headerlink" href="#chassis-chassisappdbmgr" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>非 chassis</td>
+<td><code>ChassisAppDbMgr</code> 未登録。<code>CHASSIS_APP_DB</code> を購読しない</td>
+</tr>
+<tr>
+<td>chassis</td>
+<td><code>device_info.is_chassis() == True</code> のとき <code>ChassisAppDbMgr</code> が追加登録される。スーパーバイザの <code>CHASSIS_APP_DB.BGP_DEVICE_GLOBAL|STATE.tsa_enabled</code> を監視し、line card の TSA 状態と連動</td>
+</tr>
+</tbody>
+</table>
+<p>TSA は <code>BGP_DEVICE_GLOBAL</code> テーブルを経由して BGP peer-group の route-map として適用される。BGP_GLOBALS フィールドを直接書き換えない。<code>get_chassis_tsa_status()</code> は非 chassis 環境では即座に <code>"false"</code> を返す（<code>managers_device_global.py:241</code>）。</p>
+<h3 id="switch_role-idf-isolation">switch_role による IDF isolation スキップ<a class="headerlink" href="#switch_role-idf-isolation" title="Permanent link">&para;</a></h3>
+<p><code>DEVICE_METADATA|localhost|type</code> で取得した <code>switch_role</code> が <code>SpineRouter</code> / <code>LowerSpineRouter</code> / <code>UpperSpineRouter</code> 以外の場合、<code>downstream_isolate_unisolate()</code> は即 <code>return True</code> してスキップする（<code>managers_device_global.py:260-261</code>）。<code>LeafRouter</code> / <code>ToRRouter</code> / 未設定では IDF isolation が動作しない。BGP_GLOBALS 本体フィールドへの影響はない。</p>
+<h3 id="switch_type-subtype-aspath-manager">switch_type / subtype による AsPath Manager 限定起動<a class="headerlink" href="#switch_type-subtype-aspath-manager" title="Permanent link">&para;</a></h3>
+<p><code>DEVICE_METADATA|localhost|type == "SpineRouter"</code> かつ <code>subtype == "UpstreamLC"</code>、または <code>type == "UpperSpineRouter"</code> の場合のみ <code>AsPathMgr</code> が追加される（<code>bgpcfgd/main.py:122-130</code>）。AS_PATH ポリシー操作のみを担い、BGP_GLOBALS テーブルとの直接相互作用はない。</p>
+<h3 id="multi-asic">multi-asic 構成<a class="headerlink" href="#multi-asic" title="Permanent link">&para;</a></h3>
+<p>multi-asic 環境では各 ASIC コンテナ（<code>bgp0</code>, <code>bgp1</code> ...）が独立して <code>bgpcfgd</code> を起動し、対応 ASIC namespace の CONFIG_DB に接続する。<code>bgpcfgd</code> 内に <code>is_multi_asic()</code> / <code>is_multi_npu()</code> の呼び出しは存在しない（全ディレクトリ grep 0 ヒット）。multi-asic 対応はコンテナ多重起動で実現され、BGP_GLOBALS 処理ロジック自体は単一 CONFIG_DB 前提のまま変わらない。</p>
+<h3 id="voq-chassis-bgp_voq_chassis_neighbor">VOQ chassis: BGP_VOQ_CHASSIS_NEIGHBOR<a class="headerlink" href="#voq-chassis-bgp_voq_chassis_neighbor" title="Permanent link">&para;</a></h3>
+<p><code>BGPPeerMgrBase</code> は <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> を常時登録する（条件なし）。VOQ chassis 以外ではこのテーブルにデータが入らないため実質 no-op。BGP_GLOBALS 本体処理への影響はない。</p>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>frrcfgd.py</code> / <code>bgpd.conf.db.j2</code> に <code>chassis|tsa|switch_role|switch_type|multi_asic|voq</code> で grep 0 ヒット。<code>bgpcfgd/</code> 全体で <code>is_multi_asic</code> 0 ヒット（テストファイル除く）。<code>managers_device_global.py</code> に <code>is_chassis</code> 1 ヒット（TSA status 取得のみ）、<code>switch_role</code> 3 ヒット（IDF/AsPath 制御のみ）を確認。</p>
+</blockquote>
+<!-- /platform -->
+
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
 
 <div class="footnote">
