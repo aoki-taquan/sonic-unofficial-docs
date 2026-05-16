@@ -97,6 +97,54 @@ PIM_INTERFACE|<vrf>|<af>|<interface>
 | `hello-interval` | string | `"30"` | Hello メッセージ間隔 (秒)。カンマ区切りで `"<interval>,<hold-time>"` 形式も可。FRR `pim_pim.h` で `PIM_DEFAULT_HELLO_PERIOD = 30`[^5] |
 | `bfd-enabled` | boolean string | `"false"` | BFD による PIM 隣接監視を有効化 |
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`frrcfgd` (`BGPConfigDaemon`) が CONFIG_DB の `PIM_GLOBALS` および `PIM_INTERFACE` を購読し、`bgp_table_handler_common` を通じて `__update_bgp()` キューで逐次処理する[^1]。以下の書き込み順序を守ること。
+
+### 依存関係サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `PIM_INTERFACE` SET に `mode` を必ず含める | **必須**（欠如時 全フィールド silent drop） | なし |
+| 2 | `VRF\|<vrf>` → `PIM_GLOBALS\|<vrf>\|<af>` / `PIM_INTERFACE\|<vrf>\|<af>\|<if>` | 推奨先行 | VRF 欠如時 vtysh が LOG_ERR を出力 |
+| 3 | `PORT` / `VLAN` 等インタフェース → `PIM_INTERFACE\|...\|<if>` | 推奨先行 | インタフェース未存在時 FRR が LOG_ERR を出力 |
+| 4 | `PIM_GLOBALS` → `PIM_INTERFACE` | 推奨（中間状態最小化） | FRR デフォルト値で pimd が動作継続 |
+| 5 | `ecmp-enabled = "true"` → `ecmp-rebalance-enabled = "true"` | **必須**（FRR が rebalance を無視） | なし |
+| 6 | `PIM_INTERFACE` DEL (`mode`) → `PIM_GLOBALS` DEL | 推奨（FRR 状態整合） | 逆順でも動作するが中間状態あり |
+
+### 詳細
+
+**`mode` 必須 (依存 #1)**
+
+`frrcfgd.py` L3787-3802 において、`PIM_INTERFACE` の処理は `'mode' in data` の条件を通過した場合のみ `key_map.run_command()` を呼び出す[^1]。`mode` が SET に含まれない UPDATE では `dr-priority` / `hello-interval` / `bfd-enabled` を含む全フィールドが **silent drop** される。YANG mandatory 宣言はないが動作上は必須フィールドである。
+
+```
+PIM_INTERFACE|<vrf>|ipv4|<if>  ← mode を含む SET が必須
+  mode = "sm"                  → ip pim (sparse-mode 有効化)
+  dr-priority = ...            → ip pim drpriority ...
+  hello-interval = ...         → ip pim hello ...
+  bfd-enabled = ...            → ip pim bfd
+```
+
+**VRF 先行推奨 (依存 #2)**
+
+`frrcfgd` は VRF 存在確認を行わず、vtysh コマンドを `vrf <vrf>` コンテキストで直接発行する（frrcfgd.py L3808-3809）。`VRF|<vrf>` が CONFIG_DB に存在しない場合、カーネル VRF が未作成なため vtysh が失敗し LOG_ERR が出力される。非 default VRF では `VRF|<vrf>` を先行設定すること。
+
+**インタフェース先行推奨 (依存 #3)**
+
+`PIM_INTERFACE` の vtysh コマンドは `configure terminal` → `interface <if_name>` として発行される（frrcfgd.py L3778-3779）。カーネル上にインタフェースが存在しない場合、FRR がインタフェースコンテキストを生成できず LOG_ERR となる可能性がある。
+
+**`ecmp-rebalance-enabled` の前提条件 (依存 #5)**
+
+`ecmp-rebalance-enabled = "true"` は `ecmp-enabled = "true"` が先行している場合のみ有効。frrcfgd は両フィールドを独立したコマンドとして発行する（frrcfgd.py L2068-2069）が、FRR pimd は ECMP が無効な状態では rebalance を無視する。CONFIG_DB レベルの強制はないため、先行順序を手動で守る必要がある。
+
+**削除順序 (依存 #6)**
+
+`mode` の OP_DELETE 受信時、frrcfgd は他フィールドのキャッシュを `STAT_SUCC + OP_DELETE` にフラッシュする（frrcfgd.py L3790-3796）。このため `PIM_INTERFACE` の `mode` を DEL した後に `PIM_GLOBALS` を削除する順序が推奨される。逆順では pimd 側に不整合な中間状態（ECMP 設定が残るが sparse-mode が無効）が生じ得る。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールドのコード由来デフォルト
 
