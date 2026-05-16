@@ -292,6 +292,23 @@ else
 
 [^1]: `sonic-swss/orchagent/bfdorch.cpp` (L15-20 マクロ定義、L305-574 `create_bfd_session()`、L111-217 `doTask()`). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+本ページが扱う主作用テーブルは **APPL_DB `BFD_SESSION_TABLE`** (bfdorch が consumer として購読) であり、`BfdOrch` の主作用は SAI BFD セッションの作成・削除 (ASIC_DB 経由) である。これに加え、`BfdOrch` は **STATE_DB の 2 テーブル** へ副次的にエントリを書き込む。SAI BFD セッション自体の書込み (ASIC_DB 経由) は主作用のため除外する。
+
+| 副次 DB | テーブル / キー | 書込内容 | 根拠 |
+|---|---|---|---|
+| STATE_DB | `BFD_SESSION_TABLE\|<vrf>:<ifname>:<peer_ip>` | `create_bfd_session()` 成功時に `state="Down"` で初期化 (`set`)。ASIC_DB `NOTIFICATIONS` 受信で `state` を `Down`/`Init`/`Up`/`Admin_Down` に `hset` 更新。`remove_bfd_session()` 時に `del`。コンストラクタで起動時に既存エントリを全 `del` cleanup | `bfdorch.cpp:59` (`m_stateBfdSessionTable` 構築), `:78` (起動時 cleanup), `:252` (`hset("state", ...)`), `:565` (`set(state_db_key, fvVector)`), `:629` (`del`) |
+| STATE_DB | `SOFTWARE_BFD_SESSION_TABLE\|<vrf>:<ifname>:<peer_ip>` | `use_software_bfd == true` 経路で APPL_DB SET 受信時に FV をそのまま転記 (`set`)。DEL 受信時に `del`。コンストラクタで起動時に既存エントリを全 `del` cleanup。`bgpcfgd/BfdMgr` がこのテーブルを購読し FRR `bfdd` へ設定注入 | `bfdorch.cpp:68` (`m_stateSoftBfdSessionTable` 構築), `:84` (起動時 cleanup), `:136` (`set`), `:185` (`del`), `:706-714` (`createSoftwareBfdSession()` / `removeSoftwareBfdSession()`) |
+
+呼出しトリガは APPL_DB `BFD_SESSION_TABLE` の SET / DEL 受信 (`doTask()` L111-217)、ASIC_DB `NOTIFICATIONS` の `bfd_session_state_change` 受信 (L226-263) と orchagent 起動時 cleanup (L75-86)。
+
+`BfdOrch` は **COUNTERS_DB / FLEX_COUNTER_DB / APPL_DB / CONFIG_DB に対する書込みを一切行わない** (BFD は SAI counter 統計の対象外であり、`ProducerStateTable` / `NotificationProducer` メンバも未保有)。プロセス内 observer pattern (`notify(SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE, ...)` L260 / L572 / L680) は orchagent 内の `NhgOrch` / `RouteOrch` 等への通知であり DB 書込ではない。
+
+> **Evidence**: `sonic-swss/orchagent/bfdorch.cpp` L59-86 (DB ハンドル構築 + 起動時 cleanup), L136 / L185 (software 経路 set/del), L252 (state hset), L565 (create 後の初期化 set), L629 (remove 時 del), L706-714 (`createSoftwareBfdSession()` / `removeSoftwareBfdSession()`); 詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/bfd-orch-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
