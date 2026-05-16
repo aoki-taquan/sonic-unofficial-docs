@@ -62,6 +62,27 @@ Consumer: `vlanmgrd` (`sonic-swss/cfgmgr/vlanmgr.cpp`)
 - **順序依存**: minigraph からのバルク投入では `VLAN` と `members@` が同時に書かれるため、VLAN 作成と VLAN_MEMBER 処理が同一ループ内で順序保証される。ただしポートが STATE_PORT_TABLE に ready 状態でなければ VLAN_MEMBER の処理は後回しになる。
 - evidence: `vlanmgr.cpp` L408-410, L451-454, L552-590
 
+### 8. Linux IF 設定順（addHostVlan / addHostVlanMember 内部コマンド順序）
+
+`addHostVlan()` (`vlanmgr.cpp:118-143`):
+
+1. `bridge vlan add vid <N> dev Bridge self` — dot1q ブリッジへの VLAN ID 登録
+2. `ip link add link Bridge up name Vlan<N> address <gMacAddress> type vlan id <N>` — VLAN インタフェース作成
+3. `echo 0 > /proc/sys/net/ipv4/conf/Vlan<N>/arp_evict_nocarrier` — arp_evict_nocarrier 無効化（ベストエフォート）
+
+ステップ 1→2 は `&&` チェーンで実行。ステップ 2 失敗は `EXEC_WITH_ERROR_THROW` で例外→プロセスクラッシュ。ステップ 3 は `swss::exec` でソフト実行（失敗しても継続）。
+
+`addHostVlanMember()` (`vlanmgr.cpp:233-273`):
+
+1. `ip link set <port_alias> master Bridge` — ポートをブリッジに収容
+2. `bridge vlan del vid 1 dev <port_alias>` — デフォルト VLAN 1 削除
+3. `bridge vlan add vid <N> dev <port_alias> [pvid untagged]` — 指定 VLAN 追加
+
+同じく `&&` チェーン。PortChannel は失敗時に `false` を返してリトライ、Ethernet は `EXEC_WITH_ERROR_THROW` 再実行→クラッシュ。
+
+- **順序依存**: ステップ 1 完了（ブリッジ VLAN ID 登録）→ ステップ 2（インタフェース作成）は内部順序保証。外部からの介入で任意順序変更は不可。
+- evidence: `vlanmgr.cpp` L118-143, L233-273
+
 ---
 
 ## 順序依存サマリ
@@ -75,3 +96,5 @@ Consumer: `vlanmgrd` (`sonic-swss/cfgmgr/vlanmgr.cpp`)
 | 5 | VLAN SET 完了 (STATE_VLAN_TABLE ready) → VLAN_INTERFACE SET 処理 | 強制先行 | VLAN 先書き推奨、intfmgr が自動リトライ |
 | 6 | warm-restart: Linux ブリッジ既存 → ブリッジ作成スキップ | 自動スキップ | warm-reboot では影響なし、コールドリブートは全再処理 |
 | 7 | VLAN SET 完了 → members@ 経由 VLAN_MEMBER 処理 | 同一ループ内順序保証 | minigraph バルク投入では自動処理 |
+| 8 | addHostVlan: bridge vlan add → ip link add → arp_evict_nocarrier | 内部コマンド順序（固定） | 変更不可、外部から干渉手段なし |
+| 9 | addHostVlanMember: ip link set master → bridge vlan del vid 1 → bridge vlan add | 内部コマンド順序（固定） | 変更不可、PortChannel のみリトライ |
