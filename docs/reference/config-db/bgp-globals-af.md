@@ -358,4 +358,79 @@ vtysh -c 'show bgp l2vpn evpn summary'
 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-platform.md`。
 <!-- /platform -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 依存サマリ
+
+| # | 依存関係 | 方向 | 重大度 |
+|---|----------|------|--------|
+| 1 | `BGP_GLOBALS\|<vrf>.local_asn` → `BGP_GLOBALS_AF\|<vrf>\|<af>` | 強制先行（未設定なら全 skip） | 必須 |
+| 2 | `DEVICE_METADATA.bgp_asn` → `BGP_GLOBALS_AF\|default\|<af>`（default VRF のみ代替） | 代替パス | 条件付き |
+| 3 | frrcfgd 起動時: `BGP_GLOBALS` → `BGP_GLOBALS_AF`（ハンドラ登録・初期スキャン順） | 自動保証 | 保証済み |
+| 4 | `bgpd` 起動 → frrcfgd 購読開始（Unix socket 待ち最大 200 秒） | 自動保証 | 保証済み |
+| 5 | bgpd CLI: `configure terminal` → `router bgp <asn>` → `address-family <af>` → AF フィールド | 固定順 | 保証済み |
+| 6 | `distance bgp` 3 フィールド / `bgp dampening` 3 フィールドは同一 SET 必須 | comb_attr_list | 必須 |
+| 7 | DEL: `BGP_GLOBALS_AF` → `BGP_GLOBALS`（推奨） | 推奨 | 推奨 |
+
+### 詳細
+
+#### (1) `BGP_GLOBALS.local_asn` 先行必須
+
+`frrcfgd` の `__update_bgp()` は、VRF ベーステーブル（`BGP_GLOBALS_AF` を含む）を処理する際に必ず `__get_vrf_asn(vrf)` を呼ぶ。対象 VRF の `local_asn` が未設定の場合は `continue` でイベントを黙って捨てる[^ord1]。
+
+```python
+# frrcfgd.py L2658-2662
+if self.__vrf_based_table(table):
+    vrf = prefix
+    local_asn = self.__get_vrf_asn(vrf)
+    if local_asn is None and (table != 'BGP_GLOBALS' or 'local_asn' not in data):
+        syslog.syslog(..., 'ignore table {} update because local_asn for VRF {} was not configured')
+        continue
+```
+
+推奨書込み順（非 default VRF）:
+
+1. `BGP_GLOBALS|<vrf>` (`local_asn` 含む)
+2. `BGP_GLOBALS_AF|<vrf>|<af>`
+
+#### (2) default VRF の代替パス
+
+`default` VRF のみ、`BGP_GLOBALS|default` が未設定でも `DEVICE_METADATA|localhost|bgp_asn` が設定されていれば `BGP_GLOBALS_AF|default|<af>` が処理される[^ord2]。非 default VRF では代替なし。
+
+#### (3)(4) bgpd 起動 → frrcfgd 購読の自動保証
+
+`frrcfgd` の `main()` は `BgpdClientMgr.start()` → `BGPConfigDaemon.start()` の順で起動する。`BgpdClientMgr` は `/run/frr/bgpd.vty` ソケットへの接続を最大 100 回（2 秒間隔、計 200 秒）リトライするため、`bgpd` が起動済みでない限り CONFIG_DB 購読を開始しない[^ord3]。
+
+#### (5) bgpd CLI コマンド順
+
+`BGP_GLOBALS_AF` 処理時、frrcfgd は以下の固定順で vtysh コマンドを積み上げる[^ord4]:
+
+```
+configure terminal
+router bgp <asn> [vrf <vrf>]
+address-family <af> <safi>
+<AF フィールドコマンド群>
+```
+
+`local_asn` ガード（依存 #1）により `router bgp` インスタンスが確立済みであることが保証される。
+
+#### (6) comb_attr_list: 3 フィールドは同一 SET に含める
+
+`bgp_af_handler()` は 2 組の `comb_attr_list` を持つ[^ord5]:
+
+- **組 A**: `ebgp_route_distance` / `ibgp_route_distance` / `local_route_distance` — 3 フィールドが揃わないと `distance bgp` コマンドを生成しない
+- **組 B**: `route_flap_dampen_reuse_threshold` / `route_flap_dampen_suppress_threshold` / `route_flap_dampen_max_suppress` — 3 フィールドが揃わないと dampening 引数を生成しない
+
+片方だけ後から追加 SET しても補完されない（comb_attr_list は同一操作内のみ検査）。
+
+詳細: `meta/_intermediate/cdb-flow/bgp-globals-af-ordering.md`
+
+[^ord1]: VRF based table ガード: `frrcfgd.py:2136-2140, 2658-2662`.
+[^ord2]: default VRF 代替パス: `frrcfgd.py:2162-2166, 2442-2447`.
+[^ord3]: bgpd 接続待ち: `frrcfgd.py:183-204, 3970-3981`.
+[^ord4]: bgpd CLI 順: `frrcfgd.py:2769-2779`.
+[^ord5]: comb_attr_list: `frrcfgd.py:3938-3941`.
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 803f36c2634d -->
