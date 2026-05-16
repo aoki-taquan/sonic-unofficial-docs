@@ -471,4 +471,49 @@ BUFFER_PG エントリが正常に SAI まで到達するには、以下の順�
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-failure.md`
 
 <!-- /failure -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`BUFFER_PG` テーブルの変更が CONFIG_DB から SAI へ到達するまでに経由する subscribe 方式を示す。
+
+### CONFIG_DB → buffermgr / buffermgrdyn（Orch subscribe）
+
+| consumer | 購読方式 | 購読 DB / テーブル | ハンドラ | evidence |
+|---|---|---|---|---|
+| `BufferMgrDynamic` (動的モード) | `Orch` コンストラクタ経由 `TableConnector` subscribe | `CONFIG_DB / BUFFER_PG` (`CFG_BUFFER_PG_TABLE_NAME`) | `handleBufferPgTable()` → `handleBufferObjectTables()` | `buffermgrd.cpp:179`, `buffermgrdyn.cpp:446` |
+| `BufferMgr` (静的モード) | `Orch(cfgDb, tableNames)` コンストラクタ経由 subscribe | `CONFIG_DB / BUFFER_PG` (`CFG_BUFFER_PG_TABLE_NAME`) | `doTask()` 内 `table_name == CFG_BUFFER_PG_TABLE_NAME` 分岐 | `buffermgrd.cpp:196`, `buffermgr.cpp:22,493` |
+
+`Orch` 基底クラスは各 `TableConnector` に対して内部的に `SubscriberStateTable` を生成し、Redis Keyspace Notification を SELECT loop で受信する。`buffermgrd.cpp` の `main()` が `cfgOrchList` を構築し、動的/静的モードを `-a`/`-l` フラグで切り替える。
+
+### APPL_DB → BufferOrch（ConsumerStateTable）
+
+| consumer | 購読方式 | 購読 DB / テーブル | ハンドラ | evidence |
+|---|---|---|---|---|
+| `BufferOrch` | `Orch(applDb, tableNames)` コンストラクタ経由 `ConsumerStateTable` | `APPL_DB / BUFFER_PG_TABLE` (`APP_BUFFER_PG_TABLE_NAME`) | `processPriorityGroup()` / `processPriorityGroupBulk()` | `bufferorch.cpp:54`, `orchdaemon.cpp:390,394` |
+
+`orchdaemon.cpp` は `buffer_tables` ベクタに `APP_BUFFER_PG_TABLE_NAME` を含めて `BufferOrch` を生成する。`Orch` 基底クラスが `ConsumerStateTable` を介して APPL_DB の BUFFER_PG_TABLE 変更を受信し、`doTask()` が `m_bufferHandlerMap[APP_BUFFER_PG_TABLE_NAME]` → `processPriorityGroup()` を呼び出す。
+
+### データフロー概要
+
+```
+CONFIG_DB / BUFFER_PG
+  │  (SubscriberStateTable via Orch)
+  ▼
+buffermgrdyn.cpp::handleBufferPgTable()          ← 動的モード
+buffermgr.cpp::doTask() / CFG_BUFFER_PG 分岐     ← 静的モード
+  │  (ProducerStateTable.set/del → APPL_DB)
+  ▼
+APPL_DB / BUFFER_PG_TABLE
+  │  (ConsumerStateTable via Orch)
+  ▼
+bufferorch.cpp::processPriorityGroup()
+  │  (SAI API)
+  ▼
+syncd → SAI sai_buffer_api
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-pubsub.md`
+
+<!-- /pubsub -->
 <!-- glossary-links-injected: 566f959873ea -->
