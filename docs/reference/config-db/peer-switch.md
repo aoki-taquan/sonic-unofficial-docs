@@ -124,6 +124,43 @@ PEER_SWITCH|<peer_switch>
 
 <!-- /cdb-exceptions -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-cross-refs.md`
+> ソース: `sonic-swss/orchagent/muxorch.cpp`
+
+`MuxOrch::handlePeerSwitch()` が `PEER_SWITCH` SET 処理中に暗黙的に参照するテーブル・内部オブジェクト。
+
+### TUNNEL (MuxTunnel0) — decap 情報の暗黙読み出し
+
+`handlePeerSwitch()` は `decap_orch_->getDstIpAddresses(MUX_TUNNEL)` を呼び出し、`TUNNEL` テーブルに登録済みの decap dst_ip を取得する。未登録なら `return false` でリトライ待機。
+
+| 参照対象 | 参照箇所 | 用途 |
+|---|---|---|
+| `TUNNEL` MuxTunnel0 — `dst_ip` | `muxorch.cpp:2348-2353` | `decap_orch_->getDstIpAddresses(MUX_TUNNEL)` — 未取得なら pending |
+| `TUNNEL` MuxTunnel0 — `dscp_mode` | `muxorch.cpp:2359` | `decap_orch_->getDscpMode(MUX_TUNNEL)` — encap トンネルの DSCP モード |
+| `TUNNEL` MuxTunnel0 — `tc_to_dscp_map_id` | `muxorch.cpp:2367` | `decap_orch_->getQosMapId(...)` — encap 用 QoS マップ |
+| `TUNNEL` MuxTunnel0 — `tc_to_queue_map_id` | `muxorch.cpp:2374` | `decap_orch_->getQosMapId(...)` — encap 用キューマップ |
+
+### MUX_CABLE — 暗黙の前提依存
+
+`handleMuxCfg()` (MUX_CABLE ハンドラ) は `mux_peer_switch_` が確定していることを前提とする。`PEER_SWITCH` SET 前に `MUX_CABLE` が到達すると pending 扱いとなる。
+
+| 参照対象 | 参照箇所 | 用途 |
+|---|---|---|
+| `mux_peer_switch_` (PEER_SWITCH 由来) | `muxorch.cpp:2271-2274` | `.isZero()` が真なら MUX_CABLE エントリを `return false` でスキップ |
+| `mux_peer_switch_` (PEER_SWITCH 由来) | `muxorch.cpp:2280` | `MuxCable(port_name, srv_ip, srv_ip6, mux_peer_switch_, ...)` コンストラクタ引数 |
+| `mux_peer_switch_` (PEER_SWITCH 由来) | `muxorch.cpp:2483-2486` | `updateCachedNeighbors()` — isZero() 時はキャッシュ済み Neighbor 更新をスキップ |
+
+### SAI トンネル NextHop — 暗黙参照
+
+| 参照対象 | 参照箇所 | 用途 |
+|---|---|---|
+| `MUX_TUNNEL` nexthop (SAI) | `muxorch.cpp:2445-2447` | `getNextHopTunnelId(MUX_TUNNEL, mux_peer_switch_)` — SAI_NULL_OBJECT_ID なら tunnel route 生成スキップ |
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
