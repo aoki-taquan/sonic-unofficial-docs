@@ -287,6 +287,30 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:468,493,1490,1619,1861,2290,2348,2359,2367,2374,2462 -->
+
+`MuxOrch` が `MUX_CABLE` 処理時に直接購読せず間接参照する CONFIG_DB / APPL_DB テーブル。
+
+| テーブル | 参照方法 | 参照箇所 | 用途 |
+|---|---|---|---|
+| `PORT` | `gPortsOrch->getPort(mux_name_, port)` | muxorch.cpp:468, 493 | MUX ポートの SAI oid 取得。欠落時は処理スキップ |
+| `PORT` | `gPortsOrch->getAllPorts()` | muxorch.cpp:1490 | ACL テーブルバインド時に全 PHY/LAG を列挙 |
+| `NEIGHBOR_TABLE` (APPL_DB) | `gNeighOrch->getMuxNeighborsForPort()` | muxorch.cpp:2290 | MUX ポート設定前に学習済みネイバーを一括取得し MUX ネイバーに変換 |
+| `NEIGHBOR_TABLE` (APPL_DB) | `gNeighOrch->getNeighborEntry()` | muxorch.cpp:1619, 2462 | ネクストホップ更新時に MAC / alias を照合 |
+| `TUNNEL` | `decap_orch_->getDstIpAddresses("MuxTunnel0")` | muxorch.cpp:2348 | PEER_SWITCH 処理時に MuxTunnel0 の dst_ip を取得して P2P tunnel を生成。未作成時は処理を延期 |
+| `TUNNEL` | `decap_orch_->getDscpMode("MuxTunnel0")` | muxorch.cpp:2359 | MuxTunnel0 の dscp_mode を読み取り SAI encap 属性に反映 |
+| `TUNNEL` | `decap_orch_->getQosMapId("MuxTunnel0", ...)` | muxorch.cpp:2367, 2374 | TC→DSCP / TC→Queue QoS マップ OID を取得 |
+| `VLAN` | `gPortsOrch->getAllVlans()` | muxorch.cpp:1861 | FDB 更新後に VLAN 上の既存ネイバーを MUX ネイバーへ変換する際 VLAN 一覧を取得 |
+
+> - `PORT` は leafref 先でもある。`MUX_CABLE|<ifname>` の `<ifname>` は `PORT.name` への YANG leafref であり、MuxOrch はポート未登録時に処理を保留する。
+> - `NEIGHBOR_TABLE` は MuxOrch が直接 subscribe しない。NeighOrch が APPL_DB の `NEIGH_TABLE` を管理し、`updateNeighbor()` コールバック経由で MuxOrch に通知される。
+> - `TUNNEL` は TunnelDecapOrch のキャッシュ経由で参照される。`MuxTunnel0` エントリが未作成の場合は `handlePeerSwitch()` が `return false` でリトライされる。
+
+<!-- /cross-refs -->
+
 <!-- ordering -->
 ## 順序依存 (Phase B)
 

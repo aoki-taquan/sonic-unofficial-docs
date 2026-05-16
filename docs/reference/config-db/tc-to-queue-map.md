@@ -391,4 +391,92 @@ PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとす
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L64 L103 L116 L204-230 L449-473 L2115-2204 -->
+
+### ASIC_DB への書込
+
+`TcToQueueMapHandler::addQosItem()` が `sai_qos_map_api->create_qos_map()` を呼び出すと、syncd が `ASIC_DB` の `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:<oid>` を自動生成する（orchagent → syncd → ASIC_DB 経路）。
+
+| ASIC_DB キー | 属性 | 値 |
+|-------------|------|-----|
+| `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:<oid>` | `SAI_QOS_MAP_ATTR_TYPE` | `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` |
+| 同上 | `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `[(tc=0,queue=0), ...]` |
+
+更新時は `set_qos_map_attribute()` (qosorch.cpp:204-213)、DEL 時は `remove_qos_map()` (qosorch.cpp:216-230) により同エントリが更新・削除される。
+
+### APPL_STATE_DB への書込
+
+**書込なし。** QosOrch は `TC_TO_QUEUE_MAP` 処理において APPL_STATE_DB / APPL_DB への書き込みを一切行わない。CONFIG_DB → SAI (ASIC_DB) の直接経路のみ。
+
+### PORT への副次反映（SAI port 属性書込）
+
+`PORT_QOS_MAP` テーブルに `tc_to_queue_map=<name>` が設定された際、`QosOrch::handlePortQosMapTable()` (qosorch.cpp:2115-2204) は参照先ポート全台に対して以下を実行する。
+
+```cpp
+attr.id = SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP;   // qos_to_attr_map L64
+attr.value.oid = <TC_TO_QUEUE_MAP の SAI OID>;
+sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
+```
+
+これにより syncd 経由で `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<port_oid>` の `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` が更新される。`encap_tc_to_queue_map` フィールドも同テーブルを参照し (qosorch.cpp:116)、Tunnel QoS remap 有効時は Tunnel encap 経路でも同 map OID が書き込まれる。
+
+| 副次書込先 | 書込タイミング | SAI 属性 / キー | 備考 |
+|-----------|--------------|----------------|------|
+| `ASIC_DB` `SAI_OBJECT_TYPE_QOS_MAP` | `TC_TO_QUEUE_MAP` SET 時 | `SAI_QOS_MAP_ATTR_TYPE`, `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | syncd 経由 |
+| `ASIC_DB` `SAI_OBJECT_TYPE_PORT` | `PORT_QOS_MAP.tc_to_queue_map` 設定時 | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` | 参照ポート全台 |
+| APPL_STATE_DB | — | なし | 書込経路なし |
+| APPL_DB | — | なし | 書込経路なし |
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 16a5b728a75a -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+CONFIG_DB の `TC_TO_QUEUE_MAP` は `orchdaemon.cpp` の `qos_tables` ベクタ経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
+
+- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:TC_TO_QUEUE_MAP|*` への `PSUBSCRIBE`)
+- 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
+- バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
+- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+
+### 書き込み側 (publisher)
+
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）またはプラットフォーム `qos.json` 投入が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。
+
+### ディスパッチ経路
+
+```
+SubscriberStateTable (PSUBSCRIBE keyspace)
+  → Consumer::execute() → pops() (HGETALL)
+  → QosOrch::doTask(Consumer&)
+  → m_qos_handler_map[CFG_TC_TO_QUEUE_MAP_TABLE_NAME]
+  → QosOrch::handleTcToQueueTable()
+  → TcToQueueMapHandler::processWorkItem()
+  → addQosItem(): sai_qos_map_api->create_qos_map() [SAI_QOS_MAP_TYPE_TC_TO_QUEUE]
+```
+
+`QosOrch::doTask()` は `TC_TO_QUEUE_MAP` を PORT_QOS_MAP / QUEUE より先に drain する順序制御あり（`qosorch.cpp:2231-2252`）。
+
+### select タイムアウト・リトライ
+
+- select タイムアウト: **1000 ms** (`SELECT_TIMEOUT`, `orchdaemon.cpp:23`)
+- `task_need_retry` 時は `m_toSync` にエントリを残置して次サイクルで再処理
+- サービス再起動トリガーなし（SAI ライブ操作のみで完結）
+
+| 観点 | 値 |
+|---|---|
+| 購読方式 | `SubscriberStateTable` (keyspace `PSUBSCRIBE`) |
+| バッチサイズ | 128 (`DEFAULT_POP_BATCH_SIZE`) |
+| select タイムアウト | 1000 ms |
+| ハンドラ | `QosOrch::handleTcToQueueTable()` → `TcToQueueMapHandler` |
+| channel PUBLISH | 使わない |
+| TTL | 未使用 |
+
+<!-- /pubsub -->
