@@ -498,4 +498,32 @@ orchagent VlanOrch
 
 <!-- /pubsub -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`VLAN` テーブルエントリが CONFIG_DB に書かれたとき、`vlanmgrd` (`cfgmgr/vlanmgr.cpp`) が
+STATE_DB を通じて以下のテーブルを**暗黙的に参照**する。YANG leafref として公式定義されていない
+コードレベルの依存を含む。
+
+| 参照元 | 参照先テーブル | 参照先キー形式 | 参照タイミング | 参照箇所 |
+|---|---|---|---|---|
+| `VLAN_MEMBER\|Vlan<N>\|EthernetM` | `PORT` (STATE_PORT_TABLE) | `STATE_PORT_TABLE\|EthernetM` | VLAN_MEMBER SET 処理時 | `vlanmgr.cpp:503` |
+| `VLAN_MEMBER\|Vlan<N>\|PortChannelM` | `PORTCHANNEL` (STATE_LAG_TABLE) | `STATE_LAG_TABLE\|PortChannelM` | VLAN_MEMBER SET 処理時 | `vlanmgr.cpp:495-502` |
+| `VLAN\|Vlan<N>` (`members@` フィールド) | `VLAN_MEMBER` | `VLAN_MEMBER\|Vlan<N>\|<port>` | VLAN SET 処理時 (レガシー形式) | `vlanmgr.cpp:552-584` |
+| `VLAN_INTERFACE\|Vlan<N>` (被参照) | `VLAN` (STATE_VLAN_TABLE) | `STATE_VLAN_TABLE\|Vlan<N>` | VLAN_INTERFACE SET 処理時 | `intfmgr.cpp:649-658` |
+
+### 解決タイミング
+
+- `VLAN_MEMBER` にポートを追加する際、メンバーポート (`EthernetN` / `PortChannelN`) が
+  `STATE_PORT_TABLE` / `STATE_LAG_TABLE` に未登録の場合、vlanmgrd は `m_toSync` に保留し
+  次ポーリング (1000ms タイムアウト) で自動再試行する (`vlanmgr.cpp:642-647`)。
+- `VLAN` エントリの `members@` フィールド（旧形式）は vlanmgrd が `VLAN_MEMBER` に変換して処理。
+
+### 間接参照
+
+- `VLAN_INTERFACE` は YANG `leafref` で `VLAN.name` を参照する。vlanmgrd が
+  `STATE_VLAN_TABLE|Vlan<N>` (`state=ok`) を書き込むことで `intfmgr` の処理がアンブロックされる。
+  `VLAN` を先に SET せずに `VLAN_INTERFACE` を SET すると L3 IF が孤立する。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
