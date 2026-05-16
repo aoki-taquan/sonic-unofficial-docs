@@ -102,6 +102,37 @@ FLEX_COUNTER_TABLE|<group>
 - `FlexCounterOrch` ([orchagent](../../reference/glossary.md#term-orchagent) 内)
 - `pfcwd`、`watermarkmgr` 等のカウンタ依存モジュール
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`FlexCounterOrch` は `Orch` 基底クラス経由で `FLEX_COUNTER_TABLE` を購読する。CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace 通知** (`__keyspace@4__:FLEX_COUNTER_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB / STATE_DB / CHASSIS_APP_DB 分岐) |
+| keyspace パターン | `__keyspace@4__:FLEX_COUNTER_TABLE:*` (CONFIG_DB dbId=4) |
+| key 区切り | `FLEX_COUNTER_TABLE\|<group>` (TableNameSeparator 既定 `\|`) |
+| POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
+| 優先度 (`pri`) | 0 (`TableConnector` 既定) |
+| 起動時スナップショット | `SubscriberStateTable` が既存エントリを SET イベントとして再配信 |
+| TTL | 未設定 (CONFIG_DB は永続前提) |
+| ディスパッチ | `Consumer::execute()` → `FlexCounterOrch::doTask(Consumer&)` → `key` でグループ判定 → SAI flex counter group 更新 |
+
+`FlexCounterOrch` が変更を受信後、SAI 呼び出しパスは **2 系統**ある:
+
+1. **新方式 (gTraditionalFlexCounter=false)**: `setFlexCounterGroupOperation()` / `setFlexCounterGroupPollInterval()` が `sai_redis_flex_counter_group_parameter_t` を構築し、`SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP` 属性で `notifySyncdCounterOperation()` を呼ぶ。SAI/syncd 側で flex counter polling が制御される。
+2. **旧方式 (gTraditionalFlexCounter=true)**: `operateFlexCounterGroupDatabase()` が `FLEX_COUNTER_DB` の `FLEX_COUNTER_GROUP_TABLE` (`ProducerTable: gFlexCounterGroupTable`) に直接書き込み、syncd が `ConsumerStateTable` 経由で読む。
+
+FLEX_COUNTER_DB は `saihelper.cpp:323` で `DBConnector("FLEX_COUNTER_DB", 0)` として初期化。CONFIG_DB Consumer → orchagent 内処理 → FLEX_COUNTER_DB writer / SAI counter API の一方向フローとなる。
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/flexcounterorch.cpp:102L (FlexCounterOrch::FlexCounterOrch via Orch(db, tableNames)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1188L (Orch::addConsumer DB 種別分岐 CONFIG_DB→SubscriberStateTable) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:620L (flex_counter_tables 定義, FlexCounterOrch 生成) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/saihelper.cpp:323L (gFlexCounterDb = DBConnector("FLEX_COUNTER_DB")) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/saihelper.cpp:918L (setFlexCounterGroupOperation SAI 呼び出し) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/saihelper.cpp:941L (setFlexCounterGroupPollInterval SAI 呼び出し) -->
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLOW_COUNTER_ROUTE_PATTERN`、`COUNTERS_DB`（実カウンタ値の読み出し先）
