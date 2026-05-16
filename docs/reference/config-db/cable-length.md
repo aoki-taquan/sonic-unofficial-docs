@@ -189,6 +189,84 @@ CABLE_LENGTH テーブルへの書き込みが発生するコード経路。
 
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgrd.cpp:174-203, buffermgrdyn.cpp:450/603-648/2124-2200/3574-3610, buffermgr.h:48-51 -->
+
+### CONFIG_DB 購読 — SubscriberStateTable
+
+`buffermgrd` は起動時に buffer モードに応じて `CABLE_LENGTH` テーブルを `SubscriberStateTable` 経由で購読登録する。
+
+**dynamic buffer モード** (`buffermgrdyn`): `buffermgrd.cpp:174-186`
+
+```cpp
+TableConnector(&cfgDb, CFG_PORT_CABLE_LEN_TABLE_NAME)  // CABLE_LENGTH
+```
+
+`Orch` フレームワークの `Select` ループが `SubscriberStateTable::pops()` でイベントを取り出し、`Consumer::m_toSync` キューへ積む。`doTask(Consumer &)` がディスパッチマップ (`m_bufferTableHandlerMap`) を参照して `handleCableLenTable()` を呼び出す (`buffermgrdyn.cpp:450, 3574-3610`)。
+
+**static buffer モード** (`buffermgr`): `buffermgrd.cpp:191-203`
+
+```cpp
+CFG_PORT_CABLE_LEN_TABLE_NAME  // Orch(cfgDb, tableNames) コンストラクタで購読
+```
+
+### ハンドラ処理フロー (`handleCableLenTable`)
+
+`buffermgrdyn.cpp:2124-2200` で CABLE_LENGTH の SET イベントを処理する:
+
+1. フィールド全体をイテレートしポート→ケーブル長マップ (`m_cableLengths`) を更新
+2. `portInfo.cable_length` が変化していなければスキップ
+3. `effective_speed` 未設定なら WARN ログのみで skip (retry しない)
+4. `mtu` 未設定なら `DEFAULT_MTU_STR = "9100"` で仮設定
+5. `portInfo.state` に応じて分岐:
+   - `PORT_INITIALIZING` → `PORT_READY` に遷移して `refreshPgsForPort()` 呼び出し
+   - `PORT_READY` → 即時 `refreshPgsForPort()` 呼び出し
+   - `PORT_ADMIN_DOWN` → スキップ (ログのみ)
+
+### Lua plugin 経路 — headroom 計算
+
+`refreshPgsForPort()` → `calculateHeadroomSize()` がベンダー固有 Lua スクリプトを Redis EVALSHA 経由で実行する (`buffermgrdyn.cpp:603-648`)。
+
+```
+EVALSHA buffer_headroom_<platform>.lua 1 <profile_name>
+        <speed> <cable_length> <mtu> <gearbox_delay> <lane_count>
+→ ["xon:18432", "xoff:18432", "size:36864", "xon_offset:2048"]
+```
+
+スクリプトは起動時に **APPL_DB** の Redis インスタンスへロードされる (`loadRedisScript(applDb, ...)`)。ロード失敗時は `buffermgrd` が起動を中断する (`buffermgrdyn.cpp:121`)。対象スクリプト: `buffer_headroom_<platform>.lua`, `buffer_pool_<platform>.lua`, `buffer_check_headroom_<platform>.lua`。
+
+### APPL_DB ProducerStateTable 書き込み
+
+headroom 計算後、`allocateProfile()` が APPL_DB へ書き込む:
+
+| APPL_DB テーブル | ProducerStateTable メンバ | 後続コンシューマ |
+|----------------|------------------------|----------------|
+| `BUFFER_PROFILE_TABLE` | `m_applBufferProfileTable` (static) / dynamic は内部 | `bufferorch` ConsumerStateTable |
+| `BUFFER_PG_TABLE` | `m_applBufferPgTable` / `m_applBufferObjectTables[0]` | `bufferorch` → SAI PG headroom |
+| `BUFFER_POOL_TABLE` | `m_applBufferPoolTable` | `bufferorch` → SAI buffer pool |
+
+### 全体フロー
+
+```
+CONFIG_DB:CABLE_LENGTH|AZURE
+  │ SubscriberStateTable (Orch フレームワーク)
+  ▼
+buffermgrd (BufferMgrDynamic::handleCableLenTable)
+  │ portInfo.cable_length 更新 → refreshPgsForPort()
+  │   └─ calculateHeadroomSize()
+  │         └─ EVALSHA buffer_headroom_<platform>.lua (APPL_DB Redis)
+  │               → xon / xoff / size / xon_offset
+  ▼
+APPL_DB:BUFFER_PROFILE_TABLE / BUFFER_PG_TABLE  [ProducerStateTable]
+  │ ConsumerStateTable (bufferorch / orchagent)
+  ▼
+SAI buffer API → チップ PG headroom 設定
+```
+
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
