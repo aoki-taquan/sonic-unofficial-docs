@@ -71,6 +71,43 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 - 関連 CLI: `config interface storm-control <type> <ifname> <kbps>`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-storm-control`
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-constants.md -->
+
+### storm_type 文字列定数
+
+キーの第 2 トークンとして受け付ける有効値と SAI 属性のマッピング (`policerorch.cpp:31-33`):
+
+| CONFIG_DB 値 | C++ 変数 | SAI 属性 |
+|---|---|---|
+| `broadcast` | `storm_broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` |
+| `unknown-unicast` | `storm_unknown_unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` |
+| `unknown-multicast` | `storm_unknown_mcast` | `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` |
+
+上記以外の値は `SWSS_LOG_ERROR("Unknown storm_type %s")` → `task_failed`。
+
+### policer モード固定値
+
+storm control 用 SAI policer 作成時に常にハードコードされる属性 (`policerorch.cpp:156-169`):
+
+| SAI 属性 | 固定値 | ソースコメント |
+|---|---|---|
+| `SAI_POLICER_ATTR_METER_TYPE` | `SAI_METER_TYPE_BYTES` | `/*Meter type hardcoded to BYTES*/` |
+| `SAI_POLICER_ATTR_MODE` | `SAI_POLICER_MODE_STORM_CONTROL` | `/*Policer mode hardcoded to STORM_CONTROL*/` |
+| `SAI_POLICER_ATTR_RED_PACKET_ACTION` | `SAI_PACKET_ACTION_DROP` | `/*Red Packet Action hardcoded to DROP*/` |
+
+CONFIG_DB / YANG / CLI からの変更手段はない。
+
+### policer 命名規則
+
+内部 policer 名は `"_" + <ifname> + "_" + <storm_type>` (`policerorch.cpp:146`)。
+
+例: キー `Ethernet0|broadcast` → 内部名 `_Ethernet0_broadcast`。先頭 `_` が通常 POLICER テーブルエントリと衝突しないためのプレフィックス。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
 
