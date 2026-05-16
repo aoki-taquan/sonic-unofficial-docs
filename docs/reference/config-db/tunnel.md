@@ -452,7 +452,8 @@ SAI tunnel に付与される主要属性: `SAI_TUNNEL_ATTR_TYPE=IPINIP`, `SAI_T
 `encap_tc_to_dscp_map` / `encap_tc_to_queue_map` は SAI に直接 push **されない**。tunneldecaporch は OID を内部キャッシュ (`tunnelTable`) に保持し、MuxOrch が `MUX_CABLE` 処理時に `TunnelDecapOrch::getQosMapId()` 経由で取得して自身の SAI 書き込みに利用する。
 
 !!! note "詳細スキャンノート"
-    `meta/_intermediate/cdb-flow/tunnel-side-effects.md`
+    `meta/_intermediate/cdb-flow/tunnel-side-effects.md`  
+    `meta/_intermediate/cdb-flow/tunnel-phaseF-side-effects.md`
 
 <!-- /side-effects -->
 
