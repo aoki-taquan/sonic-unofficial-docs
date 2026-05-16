@@ -285,4 +285,65 @@ APP_INTF_TABLE に記録される。
 
 <!-- /defaults -->
 
+<!-- implicit-refs -->
+## 暗黙参照 — VRF テーブルへの依存
+
+> 証跡: `sonic-swss/cfgmgr/intfmgr.cpp`
+
+`LOOPBACK_INTERFACE` テーブルの `vrf_name` フィールドは `VRF` テーブルへの leafref だが、
+`intfmgrd` はそれを単純な文字列参照に留めず、**STATE_DB の `STATE_VRF_TABLE`** を使って
+VRF の生成完了を確認する暗黙の依存関係を持つ。
+
+### VRF 生成待ちによるブロック（`isIntfStateOk`）
+
+`vrf_name` が非空のとき、`intfmgrd` は処理前に `STATE_VRF_TABLE.get(vrf_name)` を
+呼び出す（`intfmgr.cpp:839-843`）。STATE_DB にエントリがなければ
+
+```
+SWSS_LOG_DEBUG("VRF is not ready, skipping %s", vrf_name.c_str())
+```
+
+を出力して `false` を返し、イベントをキューに保留する。**CONFIG_DB に VRF エントリが
+存在していても、vrfmgrd が STATE_DB に書き込むまで Loopback は VRF にバインドされない。**
+
+### VRF 変更禁止（`isIntfChangeVrf`）
+
+既に STATE_DB の `STATE_INTF_TABLE.<alias>.vrf` に VRF 名が記録されている場合、
+別の `vrf_name` への直接変更は拒否される（`intfmgr.cpp:846-849`）:
+
+```
+SWSS_LOG_ERROR("%s can not change to %s directly, skipping", alias.c_str(), vrf_name.c_str())
+```
+
+VRF を切り替えるには、先に `vrf_name` を空にして Loopback を解除し、再設定する必要がある。
+
+### VRF バインド実装（`setIntfVrf`）
+
+`vrf_name` が確定すると `intfmgr.cpp:149-163` の `setIntfVrf` が呼ばれ:
+
+```bash
+ip link set <alias> master <vrfName>   # バインド
+ip link set <alias> nomaster            # 解除（vrf_name 空のとき）
+```
+
+バインドは Linux netlink 経由で即時反映される。失敗時は `SWSS_LOG_ERROR` が出るが
+処理は継続される。
+
+### 削除時の IP 残留ガード
+
+DEL_COMMAND では、先に全 IP アドレスが削除されていることを `getIntfIpCount` で確認する。
+IP が残っている場合は DEL を保留し、`vrf_name` の解除（`setIntfVrf(alias, "")`）は
+IP 削除後まで実行されない（`intfmgr.cpp:1059-1065` コメント）。これにより、
+VRF 解除後のアドレス競合（グローバル VRF への暗黙フォールバック）を防ぐ。
+
+### まとめ — 暗黙参照の連鎖
+
+| 参照元フィールド | 参照先テーブル | 確認手段 | 未解決時の挙動 |
+|-----------------|--------------|---------|--------------|
+| `vrf_name` | `VRF`（CONFIG_DB） | STATE_VRF_TABLE（STATE_DB） | Loopback 設定をキューで保留 |
+| `vrf_name` (変更) | STATE_INTF_TABLE（STATE_DB） | `isIntfChangeVrf` | 変更を ERROR ログで拒否 |
+| IP 削除 → VRF 解除 | 自テーブル IP カウント | `getIntfIpCount` | DEL を保留し順序を強制 |
+
+<!-- /implicit-refs -->
+
 <!-- glossary-links-injected: b5270404647a -->
