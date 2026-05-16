@@ -267,4 +267,70 @@ minigraph.py に sFlow テーブル生成なし
 なし
 <!-- /entry-points -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F — Direction B)
+
+CONFIG_DB SFLOW / SFLOW_SESSION テーブルへの書込をトリガーとして、他 DB・テーブルへ副次的に書き込まれる経路を `sflowmgr.cpp` / `sfloworch.cpp` から抽出した。
+
+### 1. APPL_DB `SFLOW_TABLE` への書込 (sflowmgrd 直接転送)
+
+`SFLOW|global` SET 時に `m_appSflowTable.set(key, values)` でフィールドをそのまま APPL_DB `SFLOW_TABLE` に転送する (sflowmgr.cpp:468)。DEL 時は `m_appSflowTable.del(key)` (sflowmgr.cpp:550)。SflowOrch はこの APPL_DB エントリを購読して `m_sflowStatus` を更新し、SAI samplepacket 操作の前提条件とする。[^3]
+
+### 2. APPL_DB `SFLOW_SESSION_TABLE` への書込 (sflowmgrd)
+
+| トリガー | 書込条件 | 書込フィールド | evidence |
+|---------|---------|--------------|---------|
+| `SFLOW\|global` admin_state=up | `sflowHandleSessionAll(true)` — 全ポートを走査 | `admin_state` / `sample_rate` / `sample_direction` | sflowmgr.cpp:246 |
+| `SFLOW\|global` admin_state=down | `sflowHandleSessionAll(false)` — ローカル設定なしポートを削除 | キー削除 | sflowmgr.cpp:250 |
+| `SFLOW_SESSION\|<port>` SET (gEnable=true) | `sflowCheckAndFillValues()` で補完後 set | `admin_state` / `sample_rate` / `sample_direction` | sflowmgr.cpp:533 |
+| `SFLOW_SESSION\|<port>` DEL | `m_appSflowSessionTable.del(key)` | キー削除 | sflowmgr.cpp:567 |
+| `SFLOW_SESSION\|all` SET | `sflowHandleSessionAll()` で全ポート一斉更新 | `admin_state` / `sample_rate` / `sample_direction` | sflowmgr.cpp:513 |
+| PORT 速度変化 (oper_speed 更新) | `sflowProcessOperSpeed()` → rate_update=true のとき | `sample_rate` を速度ベースで自動更新 | sflowmgr.cpp:211 |
+
+`sample_rate` は `findSamplingRate()` が `oper_speed` (優先) または `cfg_speed` を返す。ポートが port configuration map に存在しない場合は `ERROR_SPEED` を返す (sflowmgr.cpp:391)。[^3]
+
+### 3. ASIC_DB — SAI samplepacket セッション操作 (SflowOrch 経由)
+
+SflowOrch が APPL_DB `SFLOW_SESSION_TABLE` を購読し、SAI API でハードウェアサンプリングを設定する。
+
+#### 3a. `sai_samplepacket_api->create_samplepacket()`
+
+新しいサンプリングレートのセッション作成 (sfloworch.cpp:29):
+
+```
+attr.id = SAI_SAMPLEPACKET_ATTR_SAMPLE_RATE
+attr.value.u32 = rate
+sai_samplepacket_api->create_samplepacket(&session_id, gSwitchId, 1, &attr)
+```
+
+セッションは `m_sflowRateSampleMap[rate]` で参照カウント管理し、複数ポートが同レートを共有する。[^3]
+
+#### 3b. `sai_port_api->set_port_attribute()` — ポート samplepacket 設定
+
+| 方向条件 | SAI 属性 | 有効化時の値 | 無効化時の値 |
+|---------|---------|-----------|-----------|
+| `rx` または `both` | `SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` | `session_id` | `SAI_NULL_OBJECT_ID` |
+| `tx` または `both` | `SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE` | `session_id` | `SAI_NULL_OBJECT_ID` |
+
+evidence: sfloworch.cpp:119–150 (`sflowAddPort`), sfloworch.cpp:161–195 (`sflowDelPort`)[^3]
+
+#### 3c. `sai_samplepacket_api->remove_samplepacket()`
+
+セッションの参照カウントがゼロになったとき削除 (sfloworch.cpp:49)。レート変更時には古いセッションの `destroy` → 新セッション `create` の順で実行。[^3]
+
+### 4. OS — hsflowd サービス制御 (sflowmgrd)
+
+`SFLOW|global` の `admin_state` が変化したとき `sflowHandleService()` がシステムコマンドを発行:
+
+| 条件 | コマンド | 効果 |
+|------|---------|------|
+| `admin_state` が `down` → `up` へ | `service hsflowd restart` | hsflowd プロセスを起動・再起動 |
+| `admin_state` が `up` → `down` へ | `service hsflowd stop` | hsflowd プロセスを停止 |
+
+evidence: sflowmgr.cpp:58–62。hsflowd は sFlow パケットをコレクタへ UDP 送信するユーザースペースデーモン。SAI 経路（ハードウェアサンプリング）とは独立して動作する。[^3]
+
+[^3]: 副次書込調査: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 8e8594481100 -->
