@@ -180,6 +180,74 @@ ip_mask は IPv4 フィールドの場合 `.` 含む、IPv6 フィールドの�
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-phaseD-failure.md -->
+
+### 不正 match field（`pbhrule.cpp:validateAddMatch`）
+
+`AclRulePbh::validateAddMatch()` は受け付ける SAI attribute を 6 種のみに制限する（`GRE_KEY` / `ETHER_TYPE` / `IP_PROTOCOL` / `IPV6_NEXT_HEADER` / `L4_DST_PORT` / `INNER_ETHER_TYPE`）。それ以外の attribute が渡されると:
+
+```
+SWSS_LOG_ERROR("Failed to validate match field: invalid attribute %s", attrName.c_str())
+→ return false
+```
+
+YANG はこれら match field を optional と定義しており YANG 検証は通過するが、実装ホワイトリストで拒否される（YANG-実装 discrepancy）。
+
+### match field ゼロ / action 数異常（`pbhrule.cpp:validate`）
+
+```cpp
+if (m_matches.size() == 0 || m_actions.size() != 1)
+    SWSS_LOG_ERROR("Failed to validate rule: invalid parameters")
+    → return false
+```
+
+match field が 1 つも指定されない PBH_RULE、または action が 1 個でない場合は SAI バリデーション段で reject される。YANG は全 match field を optional として定義するため YANG 検証を通過してしまう。
+
+### SAI create / update 失敗（`pbhorch.cpp`）
+
+| 操作 | 条件 | ログメッセージ |
+|------|------|--------------|
+| CREATE | 重複 key | `Failed to create PBH rule(%s) in SAI: object already exists` |
+| CREATE | priority 設定失敗 | `Failed to configure PBH rule(%s) priority` |
+| CREATE | match 設定失敗 | `Failed to configure PBH rule(%s) match: <FIELD>` |
+| CREATE | action 設定失敗 | `Failed to configure PBH rule(%s) action` |
+| CREATE | validate() 失敗 | `Failed to validate PBH rule(%s)` |
+| CREATE | SAI `create_acl_entry` 失敗 | `Failed to create PBH rule(%s) in SAI` |
+| UPDATE | key 不在 | `Failed to update PBH rule(%s) in SAI: object doesn't exist` |
+| UPDATE | Mellanox action disable 失敗 | `Failed to disable PBH rule(%s) action` |
+| UPDATE | SAI set_acl_entry 失敗 | `Failed to update PBH rule(%s) in SAI` |
+
+全ケースで `return false`。エントリは CONFIG_DB に残るが SAI には反映されない。
+
+### SAI capability 超過（`pbhcap.cpp:validatePbhRuleCap`）
+
+プラットフォームが特定フィールドの ADD / UPDATE / REMOVE をサポートしない場合:
+
+```
+SWSS_LOG_ERROR("Failed to validate field(%s): capability(%s) is not supported", ...)
+→ return false
+```
+
+対象フィールド: `priority`, `gre_key`, `ether_type`, `ip_protocol`, `ipv6_next_header`, `l4_dst_port`, `inner_ether_type`, `hash`, `packet_action`, `flow_counter`。ASIC_VENDOR 未設定時は GENERIC へ fallback（`pbhcap.cpp:297-318`）。
+
+### 依存関係未解決（`pbhmgr.cpp:validateDependencies`）
+
+参照先の `PBH_TABLE` または `PBH_HASH` が CONFIG_DB に存在しない場合、`validateDependencies()` が `false` を返し、RULE は `pendingSetupMap` に留まって retry loop に入る（サイレント待機、エラーログなし）。依存が解決されるまで SAI への反映はされない。
+
+### parse 失敗（`pbhmgr.cpp`）
+
+| 条件 | ログメッセージ |
+|------|--------------|
+| 空文字列 | `Failed to parse field(%s): empty value is prohibited` |
+| 不正 hex 文字列 | `Failed to parse field(%s): invalid value(%s)` |
+| 数値変換例外 | `Failed to parse field(%s): <exception message>` |
+| `gre_key` フォーマット不正 | `invalid_argument` 例外（`0x.../0x...` 形式必須） |
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -398,3 +466,153 @@ minigraph.py および init_cfg.json.j2 からの `PBH_TABLE` / `PBH_RULE` / `PB
 > **スキャン証跡**: `orchdaemon.cpp:553-565` および `pbhorch.cpp` を確認、5 件分岐抽出。PBH は minigraph 非依存を確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/pbh/pbhschema.h`、`pbhmgr.cpp`、`pbhrule.cpp`
+
+### PBH_RULE.priority — 有効範囲
+
+| 項目 | 値 | 根拠 |
+|------|----|------|
+| 型 | `sai_uint32_t` | `pbhmgr.cpp:506` `to_uint<sai_uint32_t>(value)` |
+| 有効範囲 | `0` – `4294967295` (uint32 全域) | YANG `type uint32`、実装側に上限チェックなし |
+| YANG 定義 | `type uint32; mandatory true` | `sonic-pbh.yang:153-156` |
+
+> YANG / 実装ともに上限は uint32 最大値。実際の SAI 実装が受け入れる上限はプラットフォーム依存だが、ソースコード上の制限は uint32 範囲のみ。
+
+### PBH_RULE.ether_type / inner_ether_type — enum 代表値
+
+`ether_type` / `inner_ether_type` は `0x...` 形式の uint16 hex 文字列。ハードコード mask は `0xFFFF` (exact match)。実装上の代表的な値:
+
+| 値 (hex) | プロトコル | 備考 |
+|----------|-----------|------|
+| `0x0800` | IPv4 | RFC 791 |
+| `0x86DD` | IPv6 | RFC 2460 |
+| `0x8847` | MPLS unicast | RFC 3032 |
+| `0x0806` | ARP | RFC 826 |
+
+`ether_type` mask は `pbhmgr.cpp:558` で `0xFFFF` に固定注入 (YANG 非記述)。
+
+### PBH_RULE.ip_protocol — enum 代表値
+
+`ip_protocol` は `0x...` 形式の uint8 hex 文字列。ハードコード mask は `0xFF` (exact match)。
+
+| 値 (hex) | プロトコル番号 (dec) | 用途 |
+|----------|---------------------|------|
+| `0x04` | 4 | IPv4-in-IPv4 |
+| `0x11` | 17 | UDP |
+| `0x06` | 6 | TCP |
+| `0x2F` | 47 | GRE |
+| `0x3B` | 59 | IPv6 No Next Header |
+
+`ip_protocol` mask は `pbhmgr.cpp:583` で `0xFF` に固定注入 (YANG 非記述)。
+
+### SAI acl_entry_attr マッピング
+
+`pbhrule.cpp` の `validateAddMatch` / `validateAddAction` で使用する SAI 属性:
+
+| CONFIG_DB フィールド | SAI acl_entry_attr | 方向 |
+|--------------------|--------------------|------|
+| `gre_key` | `SAI_ACL_ENTRY_ATTR_FIELD_GRE_KEY` | match |
+| `ether_type` | `SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE` | match |
+| `ip_protocol` | `SAI_ACL_ENTRY_ATTR_FIELD_IP_PROTOCOL` | match |
+| `ipv6_next_header` | `SAI_ACL_ENTRY_ATTR_FIELD_IPV6_NEXT_HEADER` | match |
+| `l4_dst_port` | `SAI_ACL_ENTRY_ATTR_FIELD_L4_DST_PORT` | match |
+| `inner_ether_type` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_ETHER_TYPE` | match |
+| `packet_action=SET_ECMP_HASH` | `SAI_ACL_ENTRY_ATTR_ACTION_SET_ECMP_HASH_ID` | action |
+| `packet_action=SET_LAG_HASH` | `SAI_ACL_ENTRY_ATTR_ACTION_SET_LAG_HASH_ID` | action |
+
+match field が 0 件、または action が 1 件以外の場合は `AclRulePbh::validate()` で reject (`pbhrule.cpp:84-90`)。
+
+### pbhschema.h 文字列定数
+
+```c
+// packet_action 値
+#define PBH_RULE_PACKET_ACTION_SET_ECMP_HASH "SET_ECMP_HASH"
+#define PBH_RULE_PACKET_ACTION_SET_LAG_HASH  "SET_LAG_HASH"
+
+// flow_counter 値
+#define PBH_RULE_FLOW_COUNTER_ENABLED  "ENABLED"
+#define PBH_RULE_FLOW_COUNTER_DISABLED "DISABLED"
+```
+
+<!-- /constants -->
+
+<!-- ordering -->
+## オブジェクト生成順序・依存関係 (Phase B)
+
+### CONFIG_DB 書き込み順序の要件
+
+`PbhOrch::deployPbhTasks()` (`sonic-swss/orchagent/pbhorch.cpp:1539-1550`) は毎回以下の順序で pending タスクを処理する。
+
+**Setup (作成) 順序**:
+
+```
+PBH_HASH_FIELD → PBH_HASH → PBH_TABLE → PBH_RULE
+```
+
+**Remove (削除) 順序** (Setup と逆順):
+
+```
+PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
+```
+
+### 依存関係の詳細
+
+| オブジェクト | 依存先 | 依存チェック関数 | 未解決時の挙動 |
+|---|---|---|---|
+| `PBH_RULE` | `PBH_TABLE` (table_name leafref) + `PBH_HASH` (hash leafref) | `validateDependencies(PbhRule)` (`pbhmgr.cpp:81-98`) | `pendingSetupMap` に留まり retry ループ (`pbhorch.cpp:943`) |
+| `PBH_HASH` | `PBH_HASH_FIELD` (hash_field_list の各エントリ) | `validateDependencies(PbhHash)` (`pbhmgr.cpp:99-113`) | `pendingSetupMap` に留まり retry ループ (`pbhorch.cpp:1241`) |
+| `PBH_TABLE` | なし (PORT / PORTCHANNEL は leafref だが portsOrch 経由で確認) | — | `allPortsReady()` が false の間は `doTask()` 自体が early return |
+| `PBH_HASH_FIELD` | なし | — | 即時 SAI 作成 |
+
+### SAI 呼び出し順序
+
+1. `sai_hash_api->create_fine_grained_hash_field()` — `PBH_HASH_FIELD` ごと (`pbhorch.cpp:1369`)
+2. `sai_hash_api->create_hash()` — `PBH_HASH` ごと、hash_field OID リストを付与 (`pbhorch.cpp:1054`)
+3. ACL table 作成 (AclOrch 経由) — `PBH_TABLE` ごと
+4. `sai_acl_api->create_acl_entry()` — `PBH_RULE` ごと、SAI ACL match + `ACTION_SET_ECMP_HASH_ID` / `ACTION_SET_LAG_HASH_ID` を設定 (`pbhorch.cpp:515-595`)
+
+### 削除時の参照カウント保護
+
+- `PBH_TABLE` / `PBH_HASH` / `PBH_HASH_FIELD` は `refCount > 0` の間削除不可 (`hasDependencies()` が true → retry)。
+- `PBH_RULE` 削除時に `decRefCount(rule)` が `PBH_TABLE` と `PBH_HASH` の参照カウントを減算 (`pbhmgr.cpp:163-185`)。
+- `PBH_HASH` 削除時に `decRefCount(hash)` が各 `PBH_HASH_FIELD` の参照カウントを減算 (`pbhmgr.cpp:187-210`)。
+
+> **証跡**: `pbhorch.cpp:1539-1550` (deployPbhTasks), `pbhmgr.cpp:81-113` (validateDependencies), `pbhorch.cpp:943, 1241` (retry log)
+
+<!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-cross-refs.md -->
+
+`PBH_TABLE.interface_list` に記載されたインターフェース名は CONFIG_DB 上では文字列だが、
+`PbhOrch` が `AclTable::validateAddPorts()` → `gPortsOrch->getPort()` を通じて以下のテーブルの
+エントリを**暗黙的に参照**する。YANG の leafref チェックとは独立したコードレベルの依存。
+
+| 参照元フィールド | 参照先テーブル | 参照先キー形式 | SAI バインド種別 | 参照箇所 |
+|---|---|---|---|---|
+| `PBH_TABLE.interface_list` | `PORT` | `PORT\|EthernetN` | `SAI_ACL_BIND_POINT_TYPE_PORT` | `pbhorch.cpp:266-268`, `aclorch.cpp:2698` |
+| `PBH_TABLE.interface_list` | `PORTCHANNEL` | `PORTCHANNEL\|PortChannelN` | `SAI_ACL_BIND_POINT_TYPE_LAG` | `pbhorch.cpp:266-268`, `aclorch.cpp:106` |
+| `PBH_RULE.table_name` | `PBH_TABLE` | `PBH_TABLE\|<table_name>` | N/A (依存エントリ存在チェック) | `pbhmgr.cpp` `deployPbhTasks()` |
+| `PBH_RULE.hash` | `PBH_HASH` | `PBH_HASH\|<hash_name>` | N/A (依存エントリ存在チェック) | `pbhmgr.cpp` `validateDependencies()` |
+
+### 解決タイミング
+
+- `interface_list` に指定したポートが PortsOrch 未登録の場合、`pendingPortSet` に保留され
+  PortsOrch の `SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2698-2703`)。
+- `PBH_RULE.table_name` が指す `PBH_TABLE` エントリが未作成の場合、RULE は `pendingSetupMap` に
+  留まり retry loop に入る (`deployPbhTasks()` — `HASH_FIELD → HASH → TABLE → RULE` 順序依存)。
+- `PBH_RULE.hash` が指す `PBH_HASH` エントリが未作成の場合も同様に retry。
+
+### コンストラクタレベル依存
+
+`PbhOrch` は `AclOrch *` と `PortsOrch *` をコンストラクタ引数に受け取り (`pbhorch.cpp:90-91`)、
+これらのオーケストレータが先に初期化されていることを前提とする。
+`orchdaemon.cpp:553-565` で AclOrch / PortsOrch 作成後に PbhOrch を生成する順序が保証されている。
+
+<!-- /cross-refs -->
