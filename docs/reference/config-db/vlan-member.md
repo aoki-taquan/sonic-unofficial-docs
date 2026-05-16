@@ -236,4 +236,33 @@ db_migrator.py での VLAN_MEMBER マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- platform -->
+## プラットフォーム差
+
+### EVPN `end_point_ip` — `SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` 非対応 ASIC でメンバ追加失敗
+
+APP_DB `VLAN_MEMBER_TABLE` エントリに `end_point_ip` が付与される EVPN VXLAN BUM flooding 構成では、`addVlanMember()` (portsorch.cpp:7517-7521) が起動時照会した flood control capability に `SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` が含まれない場合 `"Flood group with end point ip is not supported"` を返して即時失敗する。VS SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返すため、**VS 環境では `end_point_ip` を持つ VLAN_MEMBER は常に設定不可**。Broadcom TD3/TH 系は多くの場合 `COMBINED` をサポートする。CONFIG_DB の VLAN_MEMBER テーブル自体は `end_point_ip` フィールドを持たない（YANG 外・VxlanOrch が APP_DB に動的注入）。
+
+### TUNNEL ポートへの PVID 設定スキップ
+
+`tagging_mode=untagged` で VLAN_MEMBER に追加されるポートが `Port::TUNNEL` 型（VXLAN トンネルポート）の場合、`setPortPvid()` による SAI PVID 設定を**スキップ**する (portsorch.cpp:7568-7575)。`removeVlanMember()` 時も同条件でスキップ (portsorch.cpp:7905-7912)。TUNNEL ポートに PVID の概念が適用されないための処置。VXLAN EVPN 構成では `tagging_mode=untagged` を設定しても SAI 側で PVID は変更されない。
+
+### Storage Backend T0 — minigraph 経由で全メンバを強制 `tagged`
+
+`BackEndToRRouter` / `BackEndLeafRouter` デバイスタイプ（Storage Backend T0）では、`minigraph.py` が設定生成時に VLAN_MEMBER の `tagging_mode` をすべて `"tagged"` に上書きする (minigraph.py:2565, 2593)。CONFIG_DB に書き込まれる段階ですでに `tagged` が入るため、CLI で `untagged` を指定しても minigraph 再生成により上書きされる。通常の T0 / T1 / T2 ではこの強制上書きは発生しない。
+
+### SmartSwitch DPU — SAI 1Q Bridge 初期化省略
+
+`gMySwitchType == "dpu"` 時、orchagent は SAI デフォルト 1Q Bridge/VLAN の取得・デフォルトメンバ削除・FDB event notify 設定をすべてスキップする (portsorch.cpp:987-1066)。一方 vlanmgrd は `gMySwitchType` を参照せず DPU 上でも Linux kernel bridge を通常通り作成する。結果として DPU では kernel bridge は存在するが SAI VLAN 初期状態が通常と異なり、VLAN_MEMBER を CONFIG_DB に書いても SAI 側の VLAN member 作成が不完全になる可能性がある。SmartSwitch NPU 側の VLAN_MEMBER 操作は通常通り動作する。
+
+### VOQ Chassis — VLAN_MEMBER への直接影響なし
+
+VOQ Chassis の Inband インタフェースに `Vlan` タイプが定義されているが "not used, adding to be future proof" の状態 (minigraph.py:906)。vlanmgr.cpp / portsorch.cpp の `addVlanMember()` / `removeVlanMember()` に VOQ 固有分岐はなく、通常の物理 T0 と同一の処理経路を通る。
+
+### Multi-ASIC — CLI で `--namespace` 必須
+
+Multi-ASIC 環境では `config vlan member add/del` に `--namespace` が必須で、指定なしはエラー終了する (config/vlan.py:23)。VLAN_MEMBER は特定 ASIC の namespace DB に書き込まれる。Single ASIC 環境では `DEFAULT_NAMESPACE` が自動設定されるため不要。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
