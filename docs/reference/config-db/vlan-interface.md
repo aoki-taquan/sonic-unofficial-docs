@@ -260,6 +260,51 @@ std::copy(intfList.begin(), intfList.end(), std::inserter(m_pendingReplayIntfLis
 
 <!-- /ordering -->
 
+<!-- phase-d:start -->
+## 失敗挙動 (Phase D)
+
+> コード精読（`intfmgr.cpp` / `intfsorch.cpp`）から導出した失敗モード一覧。  
+> 引用元: [^pd1][^pd2]
+
+### VLAN 未解決による処理保留
+
+| 条件 | 実挙動 | 証拠 |
+|------|--------|------|
+| `STATE_VLAN_TABLE\|Vlan<N>` が STATE_DB に未登録 | `isIntfStateOk()` が `false` を返し `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` を記録。エントリは `m_toSync` に残り次回 Select タイムアウト（1000ms）後にリトライ | `intfmgr.cpp:833-836` |
+| orchagent 側で VLAN ポートオブジェクト未生成 | `gPortsOrch->getPort(alias, port)` が失敗し `it++; continue` でイテレータを進めてスキップ。`task_need_retry` 相当の暗黙リトライ | `intfsorch.cpp:905,921-925` |
+| `vrf_name` 指定かつ `STATE_VRF_TABLE\|<name>` 未登録 | `isIntfStateOk(vrf_name)` が `false` → `SWSS_LOG_DEBUG("VRF is not ready, skipping %s")` → `return false` でリトライ | `intfmgr.cpp:839-842` |
+| IP プレフィクス行を属性ロウより先に投入 | `isIntfCreated()` が `false` を返して `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` → リトライキュー | `intfmgr.cpp:1112-1118` |
+| `vnet_name` が VNetOrch で未処理 | `vnet_orch->isVnetExists(vnet_name)` が `false` → `it++; continue` でスキップ | `intfsorch.cpp:936-939` |
+
+**収束保証**: いずれのケースも silent retry であり、前提条件が満たされれば自動収束する。ただし前提が永続的に未解決の場合（例: 存在しない VLAN 名を指定）はエントリが `m_toSync` に残り続けログには現れない（`DEBUG` レベルのため syslog のデフォルト設定では非表示）。
+
+### SAI RIF 作成失敗
+
+| 条件 | 実挙動 | 証拠 |
+|------|--------|------|
+| `create_router_interface()` が `SAI_STATUS_SUCCESS` 以外を返却 | `SWSS_LOG_ERROR("Failed to create router interface %s, rv:%d")` → `handleSaiCreateStatus()` を呼び出し | `intfsorch.cpp:1297-1301` |
+| `handleSaiCreateStatus()` が `task_success` 以外 | `throw runtime_error("Failed to create router interface.")` が発行され orchagent プロセスが例外捕捉可能な上位ハンドラへ伝播 | `intfsorch.cpp:1301-1304` |
+| `remove_router_interface()` 失敗 | `SWSS_LOG_ERROR("Failed to remove router interface for port %s, rv:%d")` → `handleSaiRemoveStatus()` | `intfsorch.cpp:1350-1353` |
+| RIF に IP アドレスが残っている状態で RIF 削除を試みる | `m_syncdIntfses[port.m_alias].ref_count > 0` を検出し `SWSS_LOG_NOTICE("Router interface %s is still referenced with ref count %d")` → `return false` で削除を中断 | `intfsorch.cpp:1327-1331` |
+| MAC set / MTU set / NAT zone set 等の属性更新失敗 | 各 `sai_router_intfs_api->set_router_interface_attribute()` の戻り値を `handleSaiSetStatus()` で処理。`task_need_retry` 相当の場合は呼び出し元がリトライ | `intfsorch.cpp:205-295` |
+| IP2me ルート作成失敗（IP prefix 付与時） | `SWSS_LOG_ERROR("Failed to create IP2me route ip:%s, rv:%d")` → `handleSaiCreateStatus()` | `intfsorch.cpp:1398-1401` |
+
+**SAI 例外時の注意**: `runtime_error` は orchagent の例外ハンドラが捕捉し `SWSS_LOG_ERROR` を記録したうえでプロセス継続またはクラッシュ再起動を行う。SAI 実装（ASIC SDK）の返す具体的なエラーコードは `rv` フィールドに整数で記録される。
+
+### intfmgr 側のカーネル操作失敗
+
+| 操作 | 失敗時の挙動 |
+|------|------------|
+| `sysctl mpls input` 設定失敗 | `SWSS_LOG_ERROR("Command '%s' failed with rc %d")` → `return false` で処理中断、エントリはリトライ待ち (`intfmgr.cpp:191`) |
+| `ip addr add` 等の IP 操作失敗（IPv6 有効化含む） | `SWSS_LOG_ERROR` または `SWSS_LOG_NOTICE` → `return false` (`intfmgr.cpp:119-130`) |
+| `proxy_arp` / `grat_arp` 無効値 | `SWSS_LOG_ERROR("... state is invalid")` → `return false` で処理中断 (`intfmgr.cpp:590,632`) |
+| `admin_status` 設定失敗 | `SWSS_LOG_WARN` → `return false` (`intfmgr.cpp:501-503`) |
+
+[^pd1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^pd2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+
+<!-- phase-d:end -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
