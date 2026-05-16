@@ -276,4 +276,38 @@ Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一�
 | trimming 制約 | 記述なし | orchagent: trimming-eligible profile は `task_failed` |
 | 複数ポートキー | 記述なし | カンマ区切りポートリストをキーとして設定可能 (内部で展開) |
 <!-- /defaults -->
+<!-- failure -->
+## 失敗挙動・retry 分岐 (Phase D)
+
+### buffermgrd (Dynamic model) 段の失敗分岐
+
+| 条件 | 結果 | ログ / evidence |
+|------|------|----------------|
+| `profile_list` に指定した `BUFFER_PROFILE` が `m_bufferProfileLookup` に未登録 | `task_need_retry`（プロファイル登録後に再処理） | `SWSS_LOG_INFO("Profile %s doesn't exist, need retry")` / `buffermgrdyn.cpp:3284-3285` |
+| ingress 方向のプロファイルを egress profile list に指定（direction mismatch） | `task_failed`（エントリ破棄、再試行なし） | `SWSS_LOG_ERROR("Profile %s's direction is %s but %s is expected")` / `buffermgrdyn.cpp:3291-3295` |
+| buffer pool が未準備（`!m_bufferPoolReady`） | `m_bufferObjectsPending=true` を立てて `task_success` 返却、APPL_DB 書き込みを保留 | `SWSS_LOG_NOTICE("Buffer pools are not ready … pending")` / `buffermgrdyn.cpp:3408-3414` |
+| ポートが admin-down 状態 | CONFIG_DB 値ではなくゼロプロファイルリストを APPL_DB に書き込む（silent substitution） | `buffermgrdyn.cpp:3418-3438`、ゼロプロファイル未ロード時は `loadZeroPoolAndProfiles()` 呼び出し |
+| キー形式不正（`parseObjectNameFromKey()` が空を返す） | `task_invalid_entry`（エントリ破棄） | `SWSS_LOG_ERROR("Invalid key format %s for %s table")` / `buffermgrdyn.cpp:3512-3513` |
+| 複数ポートキー処理中にいずれかのポートが `task_need_retry` | 即 return、後続ポートは未処理のまま残る（partial failure） | `buffermgrdyn.cpp:3546-3547` |
+
+### orchagent (BufferOrch) 段の失敗分岐
+
+| 条件 | 結果 | ログ / evidence |
+|------|------|----------------|
+| `resolveFieldRefArray()` が `not_resolved`（BUFFER_PROFILE が APPL_DB 未到着） | `task_need_retry` | `SWSS_LOG_INFO("Missing or invalid egress buffer profile reference specified for:%s")` / `bufferorch.cpp:1875-1878` |
+| `resolveFieldRefArray()` がその他エラー | `task_failed` | `SWSS_LOG_ERROR("Failed resolving egress buffer profile reference specified for:%s")` / `bufferorch.cpp:1880-1881` |
+| `packet_discard_action = trim` のプロファイル（trimming-eligible）を指定 | `task_failed` | `SWSS_LOG_ERROR("Failed to configure egress buffer profile list(%s): buffer profile(%s) is trimming eligible")` / `bufferorch.cpp:1917-1921` |
+| ポート名が PortsOrch マップに未登録 | `task_invalid_entry` | `SWSS_LOG_ERROR("Port with alias:%s not found")` / `bufferorch.cpp:1954-1955` |
+| SAI `set_ports_attribute` 失敗（Bulk SAI） | `handleSaiSetStatus()` 経由で retry 判定、retry 時は consumer に再登録 | `SWSS_LOG_ERROR("Failed to set egress buffer profile list on port, status:%d, key:%s")` / `bufferorch.cpp:1974`、Bulk は `SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` で他ポートをブロックしない（L2013-2014） |
+
+### retry 解消トリガ
+
+| 保留原因 | 解消トリガ |
+|---------|-----------|
+| BUFFER_PROFILE 未登録（`task_need_retry`） | 当該 BUFFER_PROFILE の SET イベント到着後、次の doTask サイクルで再処理 |
+| buffer pool 未準備（pending） | `m_bufferPoolReady` が true になった時点で `handlePendingBufferObjects()` が再適用 |
+| orchagent での profile 参照未解決 | APPL_DB に profile が書き込まれた後の次サイクルで `resolveFieldRefArray()` 成功 |
+| SAI 失敗（retry） | Bulk flush の次サイクルで `consumer.m_toSync` から再処理 |
+
+<!-- /failure -->
 <!-- glossary-links-injected: 5ad0ecc20ddb -->
