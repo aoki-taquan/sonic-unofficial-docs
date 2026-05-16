@@ -133,6 +133,66 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 
 `NEIGH_STATE_TABLE` の `state` は `show bgp summary` が表示する `State/PfxRcd` 列の状態と対応する。ただし bgpmon のポーリング間隔は 15 秒であるため、リアルタイムの FRR 状態とは最大 15 秒の遅延が生じる。
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### テーブル名定数 (schema.h)
+
+| C マクロ名 | 文字列値 | ソース |
+|-----------|---------|--------|
+| `STATE_BGP_PEER_CONFIGURED_TABLE_NAME` | `"BGP_PEER_CONFIGURED_TABLE"` | `sonic-swss-common/common/schema.h:511` |
+| `STATE_BGP_TABLE_NAME` | `"BGP_STATE_TABLE"` | `sonic-swss-common/common/schema.h:437` |
+
+`BGP_PEER_CONFIGURED_TABLE_NAME` は `managers_bgp.py:287` で `swsscommon.STATE_BGP_PEER_CONFIGURED_TABLE_NAME` として参照される。`NEIGH_STATE_TABLE` はソースコード中に文字列リテラルとしてハードコードされており、対応する schema.h マクロは存在しない（`bgpmon.py:51,157,179` の文字列リテラル `"NEIGH_STATE_TABLE|*"` が実体）。
+
+### state フィールド文字列定数 (bgpmon.py)
+
+`NEIGH_STATE_TABLE` の `state` フィールド値は FRR `show bgp summary json` の `state` キーをそのまま転写する。bgpmon.py に直接定義はなく、FRR が出力する文字列に依存する。SNMP サブエージェント (`bgp4.py`) は以下の文字列を定数的に扱う:
+
+| `state` 文字列値 | 意味 | 備考 |
+|----------------|------|------|
+| `"Idle"` または `"Idle (Admin)"` | セッション停止中 | SNMP 整数値 1 |
+| `"Connect"` | TCP 接続試行中 | SNMP 整数値 2 |
+| `"Active"` | TCP 接続待機中 | SNMP 整数値 3 |
+| `"OpenSent"` | OPEN メッセージ送信済み | SNMP 整数値 4 |
+| `"OpenConfirm"` | OPEN 確認待ち | SNMP 整数値 5 |
+| `"Established"` | セッション確立済み | SNMP 整数値 6 |
+| `"Clearing"` | セッション解除中 (FRR 独自) | SNMP 対応なし |
+
+### peerType フィールド文字列定数 (bgpmon.py)
+
+| フィールド値 | 判定条件 | ソース |
+|------------|---------|--------|
+| `"i-BGP"` | `remoteAs == localAs` | `bgpmon.py:163,171` |
+| `"e-BGP"` | `remoteAs != localAs` | `bgpmon.py:163,171` |
+
+### 操作種別文字列定数 (managers_bgp.py)
+
+`BGPPeerMgrBase.update_state_db` の `op` 引数として使用されるリテラル:
+
+| 文字列値 | 用途 | ソース |
+|---------|------|--------|
+| `"SET"` | ネイバー追加 / 管理状態変更時に STATE_DB へ書き込む | `managers_bgp.py:239,288,353,443` |
+| `"DEL"` | ネイバー削除時に STATE_DB からエントリを消す | `managers_bgp.py:487,291` |
+
+VRF が `"default"` の場合は key = `nbr`、それ以外は `vrf + "|" + nbr` とするロジックも文字列リテラル `"default"` としてハードコードされている (`managers_bgp.py:280`)。
+
+### ポーリング・バッチ定数 (bgpmon.py)
+
+| 定数名 / 用途 | 値 | ソース |
+|-------------|----|----|
+| `PIPE_BATCH_MAX_COUNT` — Redis パイプラインのバッチ上限 | **50** | `bgpmon.py:35` |
+| ポーリング sleep — bgpmon メインループの待機間隔 | **15** 秒 (`time.sleep(15)`) | `bgpmon.py:203` |
+| FRR ログ確認待機 — FRR 変化なし時の sleep | **1** 秒 (`time.sleep(1)`) | `bgpmon.py:109,115` |
+
+### ハードコードされたパス・コマンド文字列 (bgpmon.py)
+
+| 文字列値 | 用途 | ソース |
+|---------|------|--------|
+| `"/var/log/frr/frr.log"` | FRR ログファイルのタイムスタンプ監視 | `bgpmon.py:61` |
+| `"show bgp summary json"` | vtysh 経由で BGP ネイバー状態を取得するコマンド | `bgpmon.py:80` |
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
