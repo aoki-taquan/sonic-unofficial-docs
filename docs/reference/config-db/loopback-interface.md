@@ -436,4 +436,54 @@ VRF 解除後のアドレス競合（グローバル VRF への暗黙フォー�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss/cfgmgr/intfmgr.cpp` L22-29, L201 / `sonic-swss/orchagent/intfsorch.cpp` L43-47, L1148-1165, L1210-1228 / `sonic-utilities/config/main.py` L104-108 精読 (2026-05-16)
+
+### intfmgrd — ループバック識別・MTU ハードコード
+
+| 定数名 | 値 | 定義場所 | 説明 |
+|--------|-----|---------|------|
+| `LOOPBACK_PREFIX` | `"Loopback"` | `intfmgr.cpp` L22 | ループバック名のプレフィクス。`alias.compare(0, strlen(LOOPBACK_PREFIX), LOOPBACK_PREFIX)` で `is_lo = true` を判定する |
+| `LOOPBACK_DEFAULT_MTU_STR` | `"65536"` | `intfmgr.cpp` L28 | Linux dummy デバイス作成時の固定 MTU。`ip link add <name> mtu 65536 type dummy` にハードコードされており、CONFIG_DB から変更する手段はない（`LOOPBACK_INTERFACE` テーブルに `mtu` フィールドなし） |
+| `DEFAULT_MTU_STR` | `9100` | `intfmgr.cpp` L29 | 一般インターフェース（Ethernet/LAG/VLAN）のデフォルト MTU。Loopback には使用されない |
+
+### orchagent IntfsOrch — タスク優先度・更新インターバル
+
+| 定数名 | 値 | 定義場所 | 説明 |
+|--------|-----|---------|------|
+| `intfsorch_pri` | `35` | `intfsorch.cpp` L43 | `IntfsOrch` のタスク優先度。orchagent 内の複数 Orch が同時イベントを持つ場合の処理順序を決定 |
+| `UPDATE_MAPS_SEC` | `1` 秒 | `intfsorch.cpp` L45 | RIF 統計マップの更新インターバル。Loopback IF の統計もこの周期で収集される |
+
+### orchagent IntfsOrch — loopback_action マッピング
+
+`getSaiLoopbackAction()` 内の固定マップ（`intfsorch.cpp` L1148-1165）:
+
+| CONFIG_DB 値 | SAI 列挙値 | 説明 |
+|-------------|-----------|------|
+| `"drop"` | `SAI_PACKET_ACTION_DROP` | ループバックパケットをドロップ |
+| `"forward"` | `SAI_PACKET_ACTION_FORWARD` | ループバックパケットを転送 |
+| その他の値 | — | `SWSS_LOG_WARN("Unsupported loopback action [%s]")` → SAI 属性未設定 |
+
+SAI 属性: `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION`
+
+### CLI バリデーション定数 (sonic-utilities)
+
+| 定数名 | 値 | 説明 |
+|--------|-----|------|
+| `CFG_LOOPBACK_PREFIX` | `"Loopback"` | CLI バリデーション用プレフィクス |
+| `CFG_LOOPBACK_NAME_TOTAL_LEN_MAX` | `11` | `Loopback<N>` の最大文字列長（`Loopback999` = 11 文字） |
+| `CFG_LOOPBACK_ID_MAX_VAL` | `999` | インターフェース番号 `<N>` の最大値 |
+
+### 補足
+
+- **`SAI_ROUTER_INTERFACE_TYPE_LOOPBACK` は使用されない**: `intfsorch.cpp` の `addRouterIntfs()` における `SAI_ROUTER_INTERFACE_ATTR_TYPE` の設定に Loopback 専用タイプは存在しない（`intfsorch.cpp` L1210-1228）。ループバック動作制御は `loopback_action` フィールドと `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` 属性で行う。
+- **`loopback_action` 未設定時のデフォルト**: CONFIG_DB に `loopback_action` がなければ SAI 属性は設定されず、SAI 実装依存のデフォルト（通常 `forward`）が維持される。
+- **MTU 変更不可**: `LOOPBACK_DEFAULT_MTU_STR = "65536"` はカーネル dummy デバイス作成コマンドにハードコードされており、CONFIG_DB 経由での変更手段は存在しない。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-constants.md` 参照。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: b5270404647a -->
