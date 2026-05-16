@@ -234,4 +234,40 @@ counterpoll show
 - なし
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 証跡: `meta/_intermediate/cdb-flow/flex-counter-table-cross-refs.md`
+
+`FLEX_COUNTER_TABLE` 自体は他 CONFIG_DB テーブルへの YANG leafref を持たない。しかし `flexcounterorch.cpp` の実装レベルでは、各グループ `enable` 時に複数の Orch へ処理を委譲し、それらの Orch が参照先テーブルの解決済み OID を要求する。以下に示す依存は全て**実装レベルの暗黙参照**（コード経由の間接依存）である。
+
+| 参照先テーブル / DB | YANG leafref | 参照種別 | 参照元コード | 非充足時の挙動 |
+|-------------------|:------------:|---------|------------|--------------|
+| `PORT` (CONFIG_DB) | ✗ | 必須: `gPortsOrch->allPortsReady()` ゲート | `flexcounterorch.cpp:164-167` | ゲート未通過の場合 `doTask` が早期 return → SET が `m_toSync` に蓄積。PortInitDone 後に自動再処理 |
+| `FLOW_COUNTER_ROUTE_PATTERN` (CONFIG_DB) | ✗ | 必須: `FLOW_CNT_ROUTE` enable 時に `gFlowCounterRouteOrch` が本テーブルのパターンを読み込む | `flexcounterorch.cpp:324-336` | パターン未設定でも `enable` 自体は成功。カウンタ付与ルートが 0 件となるだけ（silent） |
+| `DEVICE_METADATA` (CONFIG_DB) | ✗ | 初期化時読み込み: `create_only_config_db_buffers` フラグ取得 | `flexcounterorch.cpp:114-125` | 読み取り失敗時 `SWSS_LOG_ERROR` → `m_createOnlyConfigDbBuffers = false`（バッファカウンタはデフォルト動作） |
+| `COUNTERS_DB` (出力先) | ✗ | 書き込み先: 各 Orch が SAI カウンタ収集後に `COUNTERS_DB` へ結果を書き込む | `portsorch.cpp`, `intfsorch.cpp` 等 | `FLEX_COUNTER_STATUS = disable` の間は更新されない。enable 後に SAI polling 開始 |
+| `gPortsOrch` (PortsOrch) | ✗ | `PORT` / `QUEUE` / `PG_DROP` / `PG_WATERMARK` / `PORT_BUFFER_DROP` / `WRED_ECN_*` enable 時に委譲 | `flexcounterorch.cpp:235-282` | `gPortsOrch == nullptr` の場合は対象グループの enable が silent skip |
+| `gIntfsOrch` (IntfsOrch) | ✗ | `RIF` enable 時: `gIntfsOrch->generateInterfaceMap()` | `flexcounterorch.cpp:283-286` | `gIntfsOrch == nullptr` で silent skip |
+| `gBufferOrch` (BufferOrch) | ✗ | `BUFFER_POOL_WATERMARK` enable 時: `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` | `flexcounterorch.cpp:287-290` | `gBufferOrch == nullptr` で silent skip |
+| `gCoppOrch` (CoppOrch) | ✗ | `FLOW_CNT_TRAP` enable/disable 時: `gCoppOrch->generateHostIfTrapCounterIdList()` / `clearHostIfTrapCounterIdList()` | `flexcounterorch.cpp:311-323` | `gCoppOrch == nullptr` で silent skip。trap カウンタが有効にならない |
+| `gFlowCounterRouteOrch` (FlowCounterRouteOrch) | ✗ | `FLOW_CNT_ROUTE` enable 時: `getRouteFlowCounterSupported()` + `generateRouteFlowStats()` | `flexcounterorch.cpp:324-336` | SAI 未対応 ASIC では `getRouteFlowCounterSupported() == false` → enable しても SAI 設定ゼロ・エラー通知なし |
+| `gSrv6Orch` (Srv6Orch) | ✗ | `SRV6` enable/disable 時: `gSrv6Orch->setCountersState()` | `flexcounterorch.cpp:337-340` | `gSrv6Orch == nullptr` で silent skip |
+| `gSwitchOrch` (SwitchOrch) | ✗ | `SWITCH` enable 時: `gSwitchOrch->generateSwitchCounterIdList()` | `flexcounterorch.cpp:370-373` | `gSwitchOrch == nullptr` で silent skip |
+| `DashOrch` / `DashHaOrch` (Directory 経由) | ✗ | `ENI` / `DASH_METER` / `HA_SET` enable 時: `gDirectory.get<>()` で動的取得 | `flexcounterorch.cpp:161-162, 299-310` | orch 未登録（non-DPU HW）の場合 `nullptr` → silent skip |
+| `VxlanTunnelOrch` (Directory 経由) | ✗ | `TUNNEL` enable 時: `vxlan_tunnel_orch->generateTunnelCounterMap()` | `flexcounterorch.cpp:161, 295-298` | `nullptr` で silent skip |
+| `gFabricPortsOrch` (FabricPortsOrch) | ✗ | `allFabricPortsReady()` ゲート + `generateQueueStats()` | `flexcounterorch.cpp:169-172, 291-294` | 未準備の場合 `doTask` 早期 return |
+
+### 解決順序の詳細
+
+1. **PortInitDone ゲート**: `gPortsOrch->allPortsReady()` が false の間、`FLEX_COUNTER_TABLE` への全 SET が保留される。`portsyncd` が PortInitDone を APPL_DB に書き込んだ後に一括適用される。
+
+2. **warm-reboot 遅延**: `WarmStart::isWarmStart()` == true の場合のみ 60 秒タイマー (`FLEX_COUNTER_DELAY_SEC`) が起動。タイマー満了まで全 SET が無視される。通常起動では `m_delayTimerExpired = true`（コンストラクタ内で即セット）。
+
+3. **FLOW_CNT_ROUTE と FLOW_COUNTER_ROUTE_PATTERN の連携**: `FLOW_CNT_ROUTE` を `enable` にしても `FLOW_COUNTER_ROUTE_PATTERN` が空の場合はカウンタ付与ルートがゼロ。パターンを先に投入してから enable するのが推奨順序。
+
+4. **PORT_PHY_ATTR / PORT_PHY_SERDES_ATTR 連動**: `PORT_PHY_ATTR` を enable にすると `PORT_PHY_SERDES_ATTR` も自動 enable される。`PORT_PHY_SERDES_ATTR` キーを直接書く必要はない。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 6ca28e02d7fb -->
