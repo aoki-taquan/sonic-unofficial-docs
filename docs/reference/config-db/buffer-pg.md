@@ -342,4 +342,32 @@ show buffer pg
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-platform.md`
 
 <!-- /platform -->
+
+<!-- ordering -->
+## 書込順依存 (Phase B)
+
+BUFFER_PG エントリが正常に SAI まで到達するには、以下の順序制約を満たす必要がある。
+
+| # | 先行必須リソース | 依存先処理 | 違反時の挙動 | evidence |
+|---|----------------|-----------|-------------|---------|
+| 1 | **BUFFER_POOL** が APPL_DB に存在すること | `buffermgrdyn` が PG を APPL_DB に書き込む | `m_bufferObjectsPending = true` に設定、書き込みデファー | `buffermgrdyn.cpp:935` |
+| 2 | **BUFFER_PROFILE** が APPL_DB に存在すること | `BufferOrch::processPriorityGroup()` がプロファイル参照を解決する | `task_need_retry`（orchagent が再試行） | `bufferorch.cpp:1345-1348` |
+| 3 | **PORT** speed + cable_length が設定済みであること（動的モード） | `buffermgrdyn` が headroom を計算して PG を書き込む | `"Nothing to be done for %s since port is not ready"` → スキップ | `buffermgrdyn.cpp:1485-1487` |
+| 4 | **PORT** admin_status + PORT_QOS_MAP.pfc_enable が設定済みであること（静的モード） | `buffermgr.doSpeedUpdateTask()` が PG を作成する | `task_need_retry` または silent skip | `buffermgr.cpp:155,167,175-179` |
+| 5 | **BUFFER_PG** は PORT admin up **前**に設定すること | `BufferOrch` が SAI に PG プロファイルを適用する | PORT up 後の設定は `SWSS_LOG_WARN` を発行（SAI 適用自体は行われるが運用上 unsafe） | `bufferorch.cpp:1576-1589` |
+
+### 確定 SAI call 順序
+
+```
+1. sai_create_buffer_pool()              ← BUFFER_POOL
+2. sai_create_buffer_profile()           ← BUFFER_PROFILE (pool 依存)
+3. sai_set_port_attribute(PORT_UP=false) ← PORT admin down のまま保持
+4. set_ingress_priority_groups_attribute(SAI_INGRESS_PRIORITY_GROUP_ATTR_BUFFER_PROFILE)
+                                         ← BUFFER_PG (pool + profile + port 依存)
+5. sai_set_port_attribute(PORT_UP=true)  ← PORT を up にする (BUFFER_PG 設定後)
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-ordering.md`
+
+<!-- /ordering -->
 <!-- glossary-links-injected: 566f959873ea -->
