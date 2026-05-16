@@ -455,3 +455,79 @@ CONFIG_DB `MUX_CABLE` エントリの処理に伴い `orchagent` / `MuxOrch` / `
 - **APPL_DB `TUNNEL_ROUTE_TABLE`**: standby ポートはサーバ宛トラフィックをピア ToR へのトンネル経路に迂回させる。`addTunnelRoute()` で prefix → tunnel alias を登録し、active 復帰時に `delTunnelRoute()` で削除。
 
 <!-- /side-effects -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp -->
+
+### state 遷移失敗
+
+| 失敗箇所 | 条件 | 挙動 | ソース行 |
+|---------|------|------|---------|
+| `setState()` — 未定義遷移 | `muxStateTransition` に `(prev, new)` ペアが存在しない | HW mux state のみ更新。SAI プログラミングはスキップ。同一 state なら `SWSS_LOG_NOTICE`、異なる state なら `SWSS_LOG_ERROR` を出力して処理中断 | `muxorch.cpp:523-538` |
+| ハンドラ失敗 → ロールバック | `state_machine_handlers_` が false を返す | `state_` を `prev_state_` に復元、`st_chg_failed_ = true`、`std::runtime_error` をスロー | `muxorch.cpp:547-553` |
+| `stateActive()` — ポート未登録 | `gPortsOrch->getPort()` が失敗 | `SWSS_LOG_NOTICE("Port %s not found")` → false 返却 | `muxorch.cpp:468-471` |
+| `stateActive()` — ACL 削除失敗 | `aclHandler(..., false)` が false | `SWSS_LOG_INFO("Remove ACL drop rule failed")` → false 返却 | `muxorch.cpp:474-478` |
+| `stateStandby()` — ポート未登録 | `gPortsOrch->getPort()` が失敗 | `SWSS_LOG_NOTICE("Port %s not found")` → false 返却 | `muxorch.cpp:493-496` |
+| `stateStandby()` — ACL 追加失敗 | `aclHandler(..., true)` が false | `SWSS_LOG_INFO("Add ACL drop rule failed")` → false 返却 | `muxorch.cpp:504-507` |
+| `rollbackStateChange()` — FAILED/PENDING | `prev_state_` が `FAILED` または `PENDING` | ロールバック不可。`SWSS_LOG_ERROR("[%s] Rollback to %s not supported")` → 処理中断 | `muxorch.cpp:568-572` |
+| `rollbackStateChange()` — ロールバック失敗 | ロールバックハンドラが false を返す | `st_chg_failed_ = true`、`SWSS_LOG_ERROR("[%s] Rollback to %s failed")` | `muxorch.cpp:606-609` |
+
+### Tunnel 未解決 → retry
+
+| 失敗箇所 | 条件 | 挙動 |
+|---------|------|------|
+| `nbrHandler(disable)` — Tunnel NH 未解決 | `createNextHopTunnel()` が `SAI_NULL_OBJECT_ID` を返す | `SWSS_LOG_INFO("Null NH object id, retry for %s")` → false 返却。明示的 retry ループなし。orchagent のタスクキューが次サイクルで再試行 (`muxorch.cpp:667-671`) |
+| `create_nh_tunnel()` — SAI 失敗 | `sai_next_hop_api->create_next_hop()` 失敗 | `SWSS_LOG_ERROR("Tunnel NH create failed for ip %s")` → `SAI_NULL_OBJECT_ID` 返却 (`muxorch.cpp:358-361`) |
+| `create_route()` — SAI 失敗 | `sai_route_api->create_route_entry()` 失敗 (ITEM_ALREADY_EXISTS 以外) | `SWSS_LOG_ERROR("Failed to create tunnel route %s")` → エラー status 返却 (`muxorch.cpp:118-127`) |
+
+### NEIGHBOR 未解決時の挙動
+
+| 失敗箇所 | 条件 | 挙動 |
+|---------|------|------|
+| `enable()` — neighbor 有効化失敗 | `gNeighOrch->enableNeighbors()` が false | false 返却、遷移中断 (`muxorch.cpp:813-816`) |
+| `enable()` / `disable()` — route 更新失敗 | `gRouteOrch->updateNextHopRoutes()` が false | `SWSS_LOG_INFO("Update route failed for NH %s")` → false 返却 |
+| `enable()` / `disable()` — NH グループ更新失敗 | `invalidnexthopinNextHopGroup()` または `validnexthopinNextHopGroup()` が false | `SWSS_LOG_ERROR("Removing/Adding NH failed for %s")` → false 返却 |
+| `disable()` — addRoutes 失敗 | `addRoutes()` が false | false 返却、遷移中断 (`muxorch.cpp:930-933`) |
+| `disable()` — neighbor 無効化失敗 | `gNeighOrch->disableNeighbors()` が false | false 返却 (`muxorch.cpp:935-937`) |
+| `MuxNbrHandler::update()` — 未知 state | state が INIT/ACTIVE/STANDBY 以外 | `SWSS_LOG_NOTICE("State '%s' not handled for nbr %s update")` → no-op (`muxorch.cpp:778-782`) |
+
+<!-- /failure -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:625-628,1094-1100,2192-2193,2218-2228,2240-2246,2281,2327 -->
+
+### Active-Standby vs Active-Active モデル差
+
+| 観点 | Active-Standby (default) | Active-Active |
+|------|--------------------------|---------------|
+| ACL drop rule | standby 遷移時に追加 | **skip** — `cable_type_ == ACTIVE_ACTIVE` 時に `aclHandler` を即 `return true` (muxorch.cpp:625-628) |
+| `soc_ipv4` / `soc_ipv6` | 無視 | `skip_neighbors` に追加し tunnel 経由を抑制 (muxorch.cpp:2218-2228) |
+| `state=detach` | linkmgrd が WARN → 無視 | NIC/ToR を論理的に切り離す active-active 専用機能 |
+| tunnel NH | standby 遷移で peer ToR への SAI tunnel NH を使用 | 両 ToR で tunnel NH 設定可能 |
+
+### xcvrd (hardware prober / gRPC) 実装差
+
+- `prober_type=hardware` では xcvrd が gRPC 経由でハードウェア MUX を制御する。
+- active-active 構成で `soc_ipv4`/`soc_ipv6` が設定されると、当該 IP は `skip_neighbors` セットに登録される。
+- `MuxNbrHandler::updateTunnelRoute()` 呼び出し時、skip_neighbor は tunnel route 更新をスキップ — xcvrd(gRPC) のトラフィックが NIC(SoC) へローカルフローするよう保護される (muxorch.cpp:1094-1100)。
+- `prober_type=software` (linkmgrd ICMP) との差: linkmgrd は APPL_DB 経由で state を切り替えるが、xcvrd は gRPC でハードウェア MUX を直接操作する別経路。
+
+### SmartSwitch DPU 差
+
+- `soc_ipv4` / `soc_ipv6` は SmartSwitch の SoC (DPU: Data Processing Unit) に対応するフィールド。
+- SoC IP は `addSkipNeighbors()` で登録され、通常の neighbor → tunnel NH 切替から除外される (muxorch.cpp:2281)。
+- DELETE 時は `removeSkipNeighbors()` でクリア (muxorch.cpp:2327)。
+- `prefix_nbrs_supported_` が `false` の ASIC では `neighbor_mode=prefix-route` を指定しても silent に `host-route` 動作となる (muxorch.cpp:2240)。起動時ログ: `"MuxOrch: prefix_nbrs_supported_ = %s"` (muxorch.cpp:2193)。
+
+### neighbor_mode × ASIC サポート差
+
+| ASIC 能力 | `prefix_nbrs_supported_` | `neighbor_mode=prefix-route` 効果 |
+|-----------|--------------------------|-----------------------------------|
+| `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` 対応 | `true` | `MuxPrefixBasedNbrHandler` 選択 |
+| 非対応 | `false` | `MuxNbrHandler` (host-route) に強制降格（ログのみ） |
+
+<!-- /platform -->
