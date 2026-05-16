@@ -150,6 +150,78 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::addEniO
 
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存・タイミング依存
+
+### 1. DASH_APPLIANCE_TABLE が先行必須
+
+`addEniObject()` は `appliance_entries_` が空の場合に `false` を返してリトライキューに戻す。`DASH_ENI_TABLE` を書く前に `DASH_APPLIANCE_TABLE` のエントリが登録済みでなければならない[^1]。
+
+> コード根拠: `dashorch.cpp:578–582`
+
+### 2. DASH_VNET_TABLE が先行必須
+
+`vnet` フィールドに指定した VNET 名が `gVnetNameToId` に存在しない場合、`addEniObject()` は即座に `false` を返す。`DASH_VNET_TABLE` への登録が先行していること[^1]。
+
+> コード根拠: `dashorch.cpp:570–576`
+
+### 3. DASH_METER_POLICY_TABLE が先行必須（メータポリシー使用時）
+
+`v4_meter_policy_id` / `v6_meter_policy_id` が指定されている場合、`DashMeterOrch::getMeterPolicyOid()` が `SAI_NULL_OBJECT_ID` を返すとリトライ。対応する `DASH_METER_POLICY_TABLE` エントリを ENI より先に書くこと[^1]。
+
+> コード根拠: `dashorch.cpp:584–607`
+
+### 4. ENI SAI オブジェクト → ENI ether address map entry（作成順）
+
+`addEni()` は ① `addEniObject()`（`sai_dash_eni_api->create_eni()`）→ ② `addEniAddrMapEntry()`（`create_eni_ether_address_map_entry()`）の順で実行する。ether address map entry は ENI OID を参照するため、この順序は不変[^1]。
+
+> コード根拠: `dashorch.cpp:861`
+
+### 5. ENI 本体 → trusted VNI エントリ（作成順）
+
+`addEni()` は ENI オブジェクトと ether address map entry が両方成功した後にのみ `addEniTrustedVnis()` を呼び出す。途中失敗時は `removeEni()` でロールバック[^1]。
+
+> コード根拠: `dashorch.cpp:866–878`
+
+### 6. DASH_ENI_TABLE → DASH_ENI_ROUTE_TABLE の順
+
+`setEniRoute()` は `eni_entries_` に ENI が存在しない場合に `false` を返してリトライ。ENI Route を書く前に ENI 本体が `DASH_ENI_TABLE` 経由で登録済みでなければならない[^1]。
+
+> コード根拠: `dashorch.cpp:1186–1189`
+
+### 7. DASH_ROUTE_GROUP_TABLE → DASH_ENI_ROUTE_TABLE の順
+
+`setEniRoute()` は `DashRouteOrch::getRouteGroupOid()` が `SAI_NULL_OBJECT_ID` を返した場合にもリトライ。ルートグループが先行して作成されている必要がある[^1]。
+
+> コード根拠: `dashorch.cpp:1192–1198`
+
+### 8. ENI 削除順: ether address map entry → ENI SAI オブジェクト（逆順）
+
+`removeEni()` は ① `removeEniAddrMapEntry()` → ② `removeEniObject()` の順で削除する（作成の逆順）。ENI SAI オブジェクトが `SAI_STATUS_OBJECT_IN_USE` を返した場合は削除をリトライし、参照元 (ACL / Route 等) の解放を待つ[^1]。
+
+> コード根拠: `dashorch.cpp:1015–1043`
+
+### 9. Warm-reboot 時の再適用順序
+
+Warm start 時 `warmRestoreAndSyncUp()` は全 Orch の `bake()` で APP_DB の既存エントリを toSync キューに積み直した後、3 イテレーション `doTask()` を実行する。DASH 系は ZMQ Consumer のため、厳密には orchagent 再起動後のコントローラ再送で依存解決される設計。orchdaemon の `addOrchList` 登録順は `DashAclOrch → DashVnetOrch → DashRouteOrch → DashOrch → ...` であり、依存テーブルが先行処理されることを前提とした順序になっている[^1]。
+
+> コード根拠: `orchdaemon.cpp:1095–1170`, `orchdaemon.cpp:1408–1421`
+
+### 順序依存サマリ
+
+| # | 先行テーブル / 操作 | 後続テーブル / 操作 | 緩和策 |
+|---|-------------------|-------------------|--------|
+| 1 | `DASH_APPLIANCE_TABLE` 登録 | `DASH_ENI_TABLE` 書込 | `appliance_entries_` が空 → リトライ |
+| 2 | `DASH_VNET_TABLE` 登録 | `DASH_ENI_TABLE` 書込 | `gVnetNameToId` miss → リトライ |
+| 3 | `DASH_METER_POLICY_TABLE` 登録 | `DASH_ENI_TABLE` 書込（meter 使用時） | `getMeterPolicyOid` SAI_NULL → リトライ |
+| 4 | `create_eni()` 成功 | `create_eni_ether_address_map_entry()` | SAI 構造上保証（同一 `addEni()` 内） |
+| 5 | ENI + address map 成功 | trusted VNI エントリ追加 | 失敗時 `removeEni()` でロールバック |
+| 6 | `DASH_ENI_TABLE` 登録 | `DASH_ENI_ROUTE_TABLE` 書込 | ENI 未存在 → リトライ |
+| 7 | `DASH_ROUTE_GROUP_TABLE` 登録 | `DASH_ENI_ROUTE_TABLE` 書込 | RouteGroup OID null → リトライ |
+| 8 | address map entry 削除 | ENI SAI オブジェクト削除 | `OBJECT_IN_USE` → リトライ |
+
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/dash/dash-sonic-hld.md` §3.2.3 ENI (DASH_ENI_TABLE スキーマ定義・ENI モード・admin-state ワークフロー). <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md>
