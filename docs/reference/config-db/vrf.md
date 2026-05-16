@@ -288,7 +288,7 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang`
+> 調査日 2026-05-16。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang`
 
 ### `STATE_VRF_TABLE` (STATE_DB) — readiness sentinel
 
@@ -326,6 +326,18 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 ### Linux ルーティングテーブル ID（隠れたリソース上限）
 
 `vrfmgrd` は VRF 追加のたびに Linux カーネルのルーティングテーブル ID（`VRF_TABLE_START=1001` 〜 `VRF_TABLE_END=5097`）を消費する。CONFIG_DB フィールドに現れない外部リソースで、最大 4096 VRF を超えると `getFreeTable()=0` となり Linux VRF デバイス作成が失敗する。
+
+### `FlowCounterRouteOrch` — VR 作成/削除時の ROUTE フローカウンタ登録（vrforch.cpp 由来）
+
+`VRFOrch::addOperation` は SAI Virtual Router 作成成功直後に `gFlowCounterRouteOrch->onAddVR(router_id)` を呼び出し、`delOperation` では `gFlowCounterRouteOrch->onRemoveVR(router_id)` を呼び出す（`vrforch.cpp:110, 184`）。これにより `FLEX_COUNTER_TABLE` や `COUNTERS_DB` 上の ROUTE フローカウンタエントリが VRF の生死に連動して自動登録・解除される。CONFIG_DB `VRF` テーブルに対応フィールドは存在せず、VRF 追加/削除という操作自体が暗黙的に ROUTE カウンタリソースに副作用を及ぼす。
+
+### `EvpnNvoOrch` / `VXLAN_EVPN_NVO` — VNI マッピング前提条件（vrforch.cpp 由来）
+
+`VRFOrch::updateVrfVNIMap` は VNI 非ゼロ設定時に `gDirectory.get<EvpnNvoOrch*>()->getEVPNVtep()` を呼び出し、EVPN VTEP が未設定の場合 `return false` でエントリを破棄する（`vrforch.cpp:225-229`）。`VXLAN_EVPN_NVO` テーブルに有効な NVO エントリが存在しない限り `VRF.vni` の設定は orchagent 側で無効化される。CONFIG_DB の `VRF` テーブルには `vni` フィールドしか見えないが、実際には `VXLAN_EVPN_NVO` への暗黙依存がある。
+
+### `VxlanTunnelOrch` / `PortsOrch` — VLAN-VNI マッピングと kernel netns L3 VNI（vrforch.cpp 由来）
+
+VNI マッピング設定時、`VRFOrch::updateVrfVNIMap` は `gDirectory.get<VxlanTunnelOrch*>()->getVlanMappedToVni(vni)` で対応 VLAN ID を取得し（`vrforch.cpp:233`）、VLAN が存在する場合は `gPortsOrch->updateL3VniStatus(vlan_id, true)` で Linux カーネルの VLAN インタフェース（VE）を L3 VNI として有効化する（`vrforch.cpp:239`）。削除時は `updateL3VniStatus(vlan_id, false)` で無効化（`vrforch.cpp:267`）。`VLAN_INTERFACE` テーブルおよびカーネルの netns 状態が `VRF.vni` 設定の副作用として変化するが、CONFIG_DB の `VRF` テーブルには一切現れない暗黙の連携。
 
 <!-- /cross-refs -->
 
