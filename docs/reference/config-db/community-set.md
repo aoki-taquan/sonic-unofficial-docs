@@ -103,6 +103,39 @@ EXTENDED_COMMUNITY_SET|<name>
 
 <!-- ref-triangle:end -->
 
+<!-- cross-refs -->
+## 暗黙参照 — COMMUNITY_SET を参照する CONFIG_DB テーブル (Phase C)
+
+`COMMUNITY_SET` は **参照される側**（被参照テーブル）であり、自身が他テーブルを読み出すことはない。以下は `frrcfgd` の実装から抽出した、`COMMUNITY_SET` エントリ名を実行時に解決する上位テーブルの一覧。
+
+### ROUTE_MAP からの被参照
+
+`frrcfgd` の `route_map_key_map` 定義（`frrcfgd.py:1927-1955`）により、`ROUTE_MAP` エントリが `match_community` または `set_community_ref` フィールドを持つ場合に `COMMUNITY_SET` を暗黙参照する。
+
+| 参照元テーブル | フィールド | 参照タイミング | 効果 | evidence |
+|---|---|---|---|---|
+| `ROUTE_MAP` | `match_community` | ROUTE_MAP エントリ適用時（FRR bgpd） | フィールド値（コミュニティセット名）をそのまま FRR の `match community <name>` に展開。COMMUNITY_SET 自体の参照解決は FRR bgpd 内で行われる | `frrcfgd.py:1938` |
+| `ROUTE_MAP` | `set_community_ref` | ROUTE_MAP エントリ適用時（FRR bgpd） | `{:com-ref}` フォーマットで `daemon.comm_set_list` を lookup し、`COMMUNITY_SET` の `community_member` リストに解決する。COMMUNITY_SET が未登録または `is_configurable()` = false の場合、コマンドは生成されない | `frrcfgd.py:1953, L832-834` |
+
+!!! note "match_community と set_community_ref の違い"
+    `match_community` は COMMUNITY_SET 名を FRR にそのまま渡し、FRR 側の community-list 参照として機能する。  
+    `set_community_ref` は `frrcfgd` がランタイムに `comm_set_list` を直接 lookup し、メンバーリストを展開してから FRR コマンドを生成する（frrcfgd 内部での解決）。
+
+### BGP_NEIGHBOR_AF との関係
+
+`BGP_NEIGHBOR_AF` の `send_community` フィールド（`frrcfgd.py:1910`）は FRR の `neighbor <peer> send-community` コマンドを制御するが、`COMMUNITY_SET` テーブルを直接参照しない。community の「送信制御」であり、community-list の「定義参照」ではないため、COMMUNITY_SET との暗黙参照関係はない。
+
+### 参照が失敗した場合の挙動
+
+| 状況 | 挙動 | evidence |
+|---|---|---|
+| `set_community_ref` で参照する COMMUNITY_SET が未登録 | `comm_set_list.get()` が `None` を返し、FRR コマンドを生成しない（サイレントスキップ） | `frrcfgd.py:832-834` |
+| `set_community_ref` で参照する COMMUNITY_SET が `is_configurable()` = false | 同上（コマンド生成スキップ） | `frrcfgd.py:833` |
+| `match_community` で参照する COMMUNITY_SET 名が FRR に未登録 | FRR bgpd が community-list 未定義として扱い、match は常に false（全ルート非マッチ） | FRR bgpd 実装 |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/community-set-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
