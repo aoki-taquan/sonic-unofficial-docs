@@ -232,4 +232,41 @@ db_migrator.py での PREFIX_LIST マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+### 不正 prefix 文字列
+
+`PREFIX_LIST|<prefix_type>|<ip-prefix>` の `<ip-prefix>` 部が CIDR として解析不能な場合、`netaddr.IPNetwork()` が `NotRegisteredError` / `AddrFormatError` / `AddrConversionError` のいずれかを送出する。`set_handler` / `del_handler` ともに例外をキャッチし、`log_warn("PrefixListMgr:: Prefix '%s' format is wrong for prefix list '%s'")` を出力して `return True` で処理を継続する（FRR への設定生成はスキップ、エラーとして扱わない）。[^3]
+
+```python
+# managers_prefix_list.py L106-109 (set_handler)
+try:
+    prefix = netaddr.IPNetwork(str(prefix_str))
+except (netaddr.NotRegisteredError, netaddr.AddrFormatError, netaddr.AddrConversionError):
+    log_warn("PrefixListMgr:: Prefix '%s' format is wrong for prefix list '%s'" % (prefix_str, prefix_type))
+    return True
+```
+
+代表的な不正例:
+- `999.999.999.999/32` — アドレス値が範囲外
+- `192.168.1.0/33` — prefix 長が範囲外 (IPv4 は /0〜/32)
+- `not-an-ip` — 完全に非 IP 文字列
+
+### FRR vtysh エラー
+
+`bgpcfgd` は `cfg_mgr.push(cmd)` で FRR vtysh にコマンドを送信する。vtysh が構文エラーを返した場合、`bgpcfgd` のコマンドマネージャはログに記録するが、`PrefixListMgr` 自体はエラーを再送しない（fire-and-forget）。FRR 側では `ip prefix-list` コマンドの prefix 長範囲が YANG 制約と一致しない場合に `% Invalid prefix range for af_ipv4, make sure len < ge, le >= ge` のような vtysh エラーが発生しうる。確認は `vtysh -c 'show ip prefix-list'` で FRR への反映有無を検証する。[^3]
+
+### 重複 seq（このテーブルには seq なし）
+
+`PREFIX_LIST` テーブルはシーケンス番号 (seq) を key に持たない。FRR の `ip prefix-list` に展開する際は bgpcfgd テンプレートが seq を自動付与するため、同じ `<prefix_type>|<ip-prefix>` キーが複数存在することは YANG の list key 制約上あり得ない（重複キーは CONFIG_DB レベルで上書きされる）。seq の重複問題は本テーブルでは発生しない。
+
+### prefix_type が未サポート
+
+`ANCHOR_PREFIX` / `SUPPRESS_PREFIX` 以外の `prefix_type` 値を指定した場合、`generate_prefix_list_config()` が `log_warn("PrefixListMgr:: Prefix type '%s' is not supported")` を出力して `return False` を返す。FRR への設定生成は行われず、CONFIG_DB エントリはそのまま残る。[^3]
+
+[^3]: bgpcfgd PrefixListMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py` (set_handler L101-117、del_handler L119-136、generate_prefix_list_config L58-99)
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 62ecddfa9dc4 -->
