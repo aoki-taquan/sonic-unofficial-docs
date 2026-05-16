@@ -294,3 +294,230 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 > **スキャン証跡**: MUX_LINKMGR は orchagent 非経由で linkmgrd が直接処理することを確認。orchdaemon.cpp での条件付き登録なし — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp / sonic-linkmgrd/src/DbInterface.cpp / sonic-linkmgrd/src/MuxManager.cpp -->
+
+`MUX_LINKMGR` を購読する `linkmgrd` が内部パラメータ適用時に直接 subscribe せずに間接参照する CONFIG_DB テーブルを列挙する。`linkmgrd` は `MUX_LINKMGR` で設定されたプローブ間隔・閾値・オシレーション設定を読み取り、`MUX_CABLE` / `PEER_SWITCH` に紐付く各インターフェースのステートマシンに適用する。
+
+| テーブル | 参照方法 | 参照箇所 | 用途 |
+|---|---|---|---|
+| `MUX_CABLE` | `ConfigDBConnector` で別途購読 + `MuxPort::setMuxLinkmgrStateMachineConfig()` | `sonic-linkmgrd/src/MuxManager.cpp` | `MUX_LINKMGR` のプローブパラメータ (`interval_v4`, `interval_v6`, `positive_signal_count`, `negative_signal_count`) を各 `MUX_CABLE|<ifname>` に対応する `MuxPort` ステートマシンへ一括適用する。`MUX_CABLE` エントリが存在しないインターフェースには設定が反映されない |
+| `MUX_CABLE` | `MuxPort::setTimeoutIpv4_msec()` / `setTimeoutIpv6_msec()` 等の setter | `sonic-linkmgrd/src/MuxPort.cpp` | `interval_v4` / `interval_v6` 変更時に各 MuxPort の ICMP heartbeat タイマーを動的更新。`MUX_CABLE` テーブルにポートエントリがなければ対象ポートの MuxPort オブジェクト自体が存在せずスキップされる |
+| `PEER_SWITCH` | `MuxOrch::handlePeerSwitch()` 経由 (orchagent 側) — linkmgrd は STATE_DB の `MUX_CABLE_TABLE` を介して間接参照 | `sonic-swss/orchagent/muxorch.cpp:2340-` / `sonic-linkmgrd/src/DbInterface.cpp` | `PEER_SWITCH` に定義された peer ToR IP は orchagent がトンネル (MuxTunnel0) を生成する際に参照する。linkmgrd 側は `MUX_LINKMGR|LINK_PROBER.interval_v4` 等を ICMP probe 送出間隔として使い、peer ToR への heartbeat 経路 (PEER_SWITCH 由来のトンネル) でリンク品質を測定する。`PEER_SWITCH` エントリが未設定だとトンネルが生成されず Active-Standby の peer リンクチェックが機能しない |
+
+> - `MUX_CABLE` は leafref の起点でもある。`MUX_LINKMGR` で変更したパラメータは `MuxManager::processMuxLinkmgrConfigNotification()` が受け取り、その時点で登録済みの全 `MuxPort` (= `MUX_CABLE` エントリに対応) へ伝搬させる。`MUX_CABLE` エントリが後から追加されても `MuxPort` 生成時に既存の `MUX_LINKMGR` 設定を引き継ぐ。
+> - `PEER_SWITCH` は `MUX_LINKMGR` から直接参照されない。`linkmgrd` は peer ToR の IP を `PEER_SWITCH` ではなく orchagent が STATE_DB / APPL_DB に書き込んだ結果を通じて取得する。ただし `MUX_LINKMGR|LINK_PROBER.interval_v4` 等で制御される ICMP probe がそのトンネル経路を利用するため、`PEER_SWITCH` 設定の有無が `MUX_LINKMGR` パラメータの実効性に影響する。
+> - `oscillation_enabled` / `kill_radv` の 2 フィールドは DualToR 全体の動作モードを制御するが、参照する他テーブルはない。変更の反映は linkmgrd 内部ステートのみ。
+
+<!-- /cross-refs -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-side-effects.md`
+> ソース: `sonic-linkmgrd/src/DbInterface.cpp` L463-473、`sonic-swss-common/common/schema.h` L459-460
+
+`MUX_LINKMGR` パラメータを linkmgrd が読み取った結果、発生する **他 DB への副次書込** を示す。
+
+### STATE_DB への書込
+
+| テーブル | キー形式 | フィールド | 値 | トリガ | 証跡 |
+|---------|---------|-----------|-----|--------|------|
+| `MUX_LINKMGR_TABLE` | `<ifname>` (例: `Ethernet0`) | `state` | `active` / `standby` / `unknown` / `wait` | linkmgrd ステートマシン遷移時 (`setMuxLinkmgrState()`) | `DbInterface.cpp:471` |
+| `MUX_METRICS_TABLE` | `<ifname>` | `linkmgrd_switch_<state>_start` / `_end` | タイムスタンプ (ISO8601) | MUX 切替開始・完了時 (`handlePostMuxMetrics()`) | `DbInterface.cpp:484-` |
+| `MUX_SWITCH_CAUSE` | `<ifname>` | `cause` | 切替原因文字列 | ステートマシン遷移原因記録時 | `DbInterface.h:63` |
+
+`MUX_LINKMGR_TABLE` は `show mux status` CLI が参照する最終的な linkmgrd 状態表示用テーブル。
+
+### APPL_DB への書込 (xcvrd 通信)
+
+linkmgrd は `MUX_LINKMGR` の `interval_v4` / `negative_signal_count` 等の変更によりプローバ動作が変化した結果、以下の APPL_DB テーブルへコマンドを書込む。
+
+| テーブル | キー | フィールド | 値 | 目的 | 証跡 |
+|---------|------|-----------|-----|------|------|
+| `MUX_CABLE_COMMAND_TABLE` (APP_DB) | `<ifname>` | `command` | `"probe"` | xcvrd に i2c 経由で MUX ハードウェア状態の読取を指示 | `DbInterface.cpp:443` |
+| `FORWARDING_STATE_COMMAND` (APP_DB) | `<ifname>` | `command` | `"probe"` | xcvrd に gRPC 経由でトランシーバのフォワーディング状態確認を指示 | `DbInterface.cpp:455` |
+
+xcvrd はこれらコマンドを受信後、以下のレスポンステーブルに結果を書き戻す:
+
+- `MUX_CABLE_RESPONSE_TABLE` (APP_DB): MUX state probe レスポンス
+- `FORWARDING_STATE_RESPONSE` (APP_DB): forwarding state probe レスポンス
+
+### 間接連鎖の整理
+
+```
+CONFIG_DB MUX_LINKMGR 変更
+  ↓ linkmgrd がプローバタイマー再設定
+APPL_DB MUX_CABLE_COMMAND_TABLE / FORWARDING_STATE_COMMAND
+  ↓ xcvrd が i2c / gRPC でハードウェア確認
+APPL_DB MUX_CABLE_RESPONSE_TABLE / FORWARDING_STATE_RESPONSE
+  ↓ linkmgrd がステートマシン遷移判定
+STATE_DB MUX_LINKMGR_TABLE (state フィールド更新)
+         MUX_METRICS_TABLE (切替タイムスタンプ記録)
+```
+
+> `interval_v4` / `interval_v6` を変更しても即時 STATE_DB 書込は発生しない。次のプローバサイクル後にステート遷移が起きた場合のみ STATE_DB が更新される。
+
+<!-- /side-effects -->
+
+<!-- failure -->
+## Phase D: 失敗挙動 (Failure Behavior)
+
+ソース: `sonic-linkmgrd` — `src/DbInterface.cpp`, `src/MuxPort.cpp`, `src/MuxManager.cpp`, `src/link_manager/LinkManagerStateMachineActiveStandby.cpp`
+
+### 不正値 (Invalid values)
+
+| フィールド | 不正値の例 | linkmgrd の挙動 | ログ |
+|-----------|-----------|----------------|------|
+| `interval_v4` / `interval_v6` / `positive_signal_count` / `negative_signal_count` / `suspend_timer` / `interval_pck_loss_count_update` | 数値以外の文字列 | `boost::bad_lexical_cast` catch → 更新スキップ、直前値を維持 | `MUXLOGWARNING: "bad lexical cast: ..."` (`DbInterface.cpp:1162`) |
+| `interval_sec` (TIMED_OSCILLATION) | 数値以外の文字列 | 同上 (スキップ) | `MUXLOGWARNING: "bad lexical cast: ..."` (`DbInterface.cpp:1201`) |
+| `interval_sec` が 300 未満の整数 | `"100"` | setter 内で `300` に clamp (下限強制)。設定値は反映されない | なし |
+| `interval_pck_loss_count_update` が 50 未満 | `"10"` | setter 内で `50` に clamp | なし |
+| `use_well_known_mac = "enabled"` | YANG 準拠値 | コードは `v == "enable"` で比較 (末尾 `d` が不一致) → 常に `false` (動的 MAC) として動作。**サイレント誤動作** (実装バグ疑い) | なし |
+| `oscillation_enabled` に `"true"` / `"false"` 以外 | `"yes"` / `"1"` | いずれの分岐にも入らず無視。`setOscillationEnabled()` は呼ばれない | なし |
+| `log_verbosity` に不正値 | `"verbose"` | マッチせず info レベルを維持 | なし |
+
+### xcvrd 通信失敗
+
+| ケース | linkmgrd の挙動 | ログ |
+|--------|----------------|------|
+| xcvrd が MUX state probe に対して `"unknown"` を返す | `MuxState::Unknown` へ遷移。状態機械は不定状態のままリトライを繰り返す (`MuxPort.cpp:299`) | なし |
+| xcvrd が応答しない (無応答) | プローブ応答待ちタイマーなし。`swssSelect` のポーリングループが次の通知を待つが、xcvrd 無応答を失敗として検知する機構はない。`MuxState::Unknown` のまま留まる | なし |
+| xcvrd が Active-Active ポートで gRPC 失敗時に `"failure"` を返す | `MuxPort::handleProbeMuxState()` から `handleProbeMuxFailure()` を呼び出す (`MuxPort.cpp:307`)。Active-Standby ポートでは `Unknown` ラベルとして処理 | なし |
+| `swssSelect.select()` が `Select::ERROR` を返す | `MUXLOGERROR` を出力してループ継続。xcvrd 通信は継続される (`DbInterface.cpp:1877`) | `MUXLOGERROR: "Error had been returned in select"` |
+
+### SAI 失敗 (orchagent 経由)
+
+linkmgrd は SAI を直接呼ばない。MUX switchover は orchagent を通じて SAI に要求される。
+
+| ケース | linkmgrd の挙動 | ログ |
+|--------|----------------|------|
+| orchagent が SAI switchover 失敗で STATE_DB の MUX state を `"error"` に設定 | `processMuxStateNotifiction()` → `MuxPort::handleMuxState()` で `MuxState::Error` へマップ → 状態機械は `LinkProberState::Wait` へ遷移 (`LinkManagerStateMachineActiveStandby.cpp:1160-1161`) | なし |
+| `{LinkProberActive, MuxError, LinkUp}` 状態に遷移 | `LinkProberActiveMuxErrorLinkUpTransitionFunction()` が `enterMuxWaitState()` を呼びプローブを再試行 (`LinkManagerStateMachineActiveStandby.cpp:1332`) | `MUXLOGINFO` |
+| `{LinkProberStandby, MuxError, LinkUp}` 状態に遷移 | `LinkProberStandbyMuxErrorLinkUpTransitionFunction()` が `enterMuxWaitState()` を呼びプローブを再試行 (`LinkManagerStateMachineActiveStandby.cpp:1350`) | `MUXLOGINFO` |
+
+> **証跡**: `DbInterface.cpp:49` — `mMuxState = {"active", "standby", "unknown", "Error"}` で `Error` 文字列が明示的に定義されている。`MuxPort.cpp:279,335,391` で `"error"` → `MuxState::Error` への変換を確認。
+
+<!-- /failure -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`linkmgrd` は ASIC ベンダー識別子（broadcom / mellanox 等）を参照しない。プラットフォームプロファイルは **ケーブルタイプ** (`PortCableType`) によって決まる。`MUX_LINKMGR` フィールドの有効性・意味論はケーブルタイプによって以下のとおり異なる。
+
+### 識別方法
+
+`MuxManager::updatePortCableType()` が `MUX_CABLE|<port>.cable_type` フィールドを読み取り、ポートごとの `PortCableType` を決定する（`MuxManager.cpp:245-262`）。
+
+```
+cable_type == "active-standby"  →  PortCableType::ActiveStandby  (DualToR 標準)
+cable_type == "active-active"   →  PortCableType::ActiveActive   (Y-cable SmartNiC)
+それ以外                         →  ActiveStandby にフォールバック（MUXLOGERROR）
+```
+
+### フィールド有効性マトリクス
+
+| フィールド / container | Active-Standby | Active-Active | 備考 |
+|----------------------|---------------|--------------|------|
+| `LINK_PROBER.interval_v4` | 有効 (ICMP heartbeat 間隔) | 有効 | `DbInterface.cpp:1132` |
+| `LINK_PROBER.interval_v6` | 有効 | 有効 | `DbInterface.cpp:1134` |
+| `LINK_PROBER.positive_signal_count` | 有効 | 有効 | `DbInterface.cpp:1136` |
+| `LINK_PROBER.negative_signal_count` | 有効 | 有効 | `DbInterface.cpp:1138` |
+| `LINK_PROBER.use_well_known_mac` | **実質無効** | 有効 (well-known MAC 使用可否を制御) | `MuxManager.cpp:501` のガードにより Active-Standby では効果なし |
+| `LINK_PROBER.src_mac` | 有効 (ICMP 送信元 MAC 選択) | 有効 | `processSrcMac()` は全ポートに適用 |
+| `TIMED_OSCILLATION.oscillation_enabled` | 有効 (定期的な Active ToR 切替) | **限定的** | Active-Active では両 ToR が常時 Active のため切替の意味が異なる |
+| `TIMED_OSCILLATION.interval_sec` | 有効 | 限定的 | 同上 |
+| `MUXLOGGER.log_verbosity` | 有効 | 有効 | |
+| `SERVICE_MGMT.kill_radv` | 有効 | **効果不明** | `processMuxLinkmgrConfigNotifiction()` に `SERVICE_MGMT` キーの分岐なし (`DbInterface.cpp:1120-1214`) |
+
+### 差異詳細
+
+**Active-Standby のみ**: Server (Blade) IPv4 アドレスを ICMP probe 宛先として使用 (`MuxManager.cpp:193-195`)。MUX state は i2c 経由でハードウェアに問い合わせ (`probeMuxState()`)。`detach` モード設定は reject（`MuxPort.cpp:363-366`）。
+
+**Active-Active のみ**: SoC (NiC) IPv4 アドレスを gRPC 疎通確認に使用 (`MuxManager.cpp:216-218`)。MUX state はフォワーディング状態を gRPC 経由で問い合わせ (`probeForwardingState()`)。`failure` ステート（gRPC 障害時）あり (`MuxPort.cpp:304`)。`detach` モード（Detached 遷移）をサポート。初期化時に well-known MAC を生成・設定 (`MuxManager.cpp:501-507`)。
+
+### SmartSwitch DPU との関係
+
+`docker-mux` (linkmgrd) は `feature: subtype=="DualToR"` 環境専用デーモン。SmartSwitch の DPU ポートは `MUX_CABLE` テーブルに登録されず `MUX_LINKMGR` も参照されない。なお Active-Active ケーブルタイプは Y-cable SmartNiC 搭載の DualToR 向けであり、SmartSwitch DPU（`subtype=="SmartSwitch"`）とは別概念。
+
+詳細根拠は `meta/_intermediate/cdb-flow/mux-linkmgr-platform.md` を参照。
+<!-- /platform -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-constants.md`
+> ソース: `sonic-linkmgrd/src/common/MuxConfig.h`, `sonic-linkmgrd/src/common/MuxLogger.h`, `sonic-linkmgrd/src/LinkMgrdMain.cpp`, `sonic-linkmgrd/src/DbInterface.h`
+
+### MuxConfig.h — C++ メンバ初期化子
+
+`linkmgrd` の動作パラメータはすべて `common::MuxConfig` クラスのメンバ初期化子として焼き込まれている。CONFIG_DB に対応フィールドが存在しない場合は以下の値が有効になる。
+
+| 定数名 (メンバ) | 値 | 単位 | 対応 CONFIG_DB フィールド | 備考 |
+|---|---|---|---|---|
+| `mTimeoutIpv4_msec` | `100` | ms | `interval_v4` | IPv4 ICMP heartbeat 送信間隔 |
+| `mTimeoutIpv6_msec` | `1000` | ms | `interval_v6` | IPv6 ICMP heartbeat 送信間隔 |
+| `mRxTimeoutIpv4_msec` | `300` | ms | — | IPv4 受信タイムアウト (CONFIG_DB 非公開) |
+| `mPositiveStateChangeRetryCount` | `1` | 回 | `positive_signal_count` | active 判定連続受信回数 |
+| `mNegativeStateChangeRetryCount` | `3` | 回 | `negative_signal_count` | standby 判定連続喪失回数 |
+| `mLinkProberStatUpdateIntervalCount` | `300` | 回 | `interval_pck_loss_count_update` | 統計更新間隔 (下限 50 で clamp) |
+| `mSuspendTimeout_msec` | `500` | ms | `suspend_timer` | setter 初期値 (getter は `(neg+1)*interval_v4` を返す) |
+| `mMuxStateChangeRetryCount` | `1` | 回 | — | MuxState 変更リトライ数 |
+| `mLinkStateChangeRetryCount` | `1` | 回 | — | LinkState 変更リトライ数 |
+| `mEnableTimedOscillationWhenNoHeartbeat` | `true` | bool | `oscillation_enabled` | タイマー駆動オシレーション有効 |
+| `mOscillationTimeout_sec` | `300` | 秒 | `interval_sec` | オシレーション間隔 (下限 300 で clamp) |
+| `mDecreasedTimeoutIpv4_msec` | `10` | ms | — | 切替計測時の短縮 IPv4 間隔 |
+| `mMuxReconciliationTimeout_sec` | `10` | 秒 | — | warmboot リコンシリエーション待機 |
+| `mUseWellKnownMacActiveActive` | `true` | bool | `use_well_known_mac` | Active-Active 時 well-known MAC 使用 |
+| `mEnableUseTorMac` | `false` | bool | `src_mac` | ToR MAC を送信元 MAC として使用 |
+| `mNumberOfThreads` | `5` | 本 | — | linkmgrd 内部スレッド数 |
+
+### MuxLogger.h — ログレベルデフォルト
+
+```cpp
+// sonic-linkmgrd/src/common/MuxLogger.h:250
+boost::log::trivial::severity_level mLevel = boost::log::trivial::info;
+```
+
+`MuxLogger` クラス内部の初期値は `info`。
+
+### LinkMgrdMain.cpp — CLI 起動時デフォルト
+
+```cpp
+// sonic-linkmgrd/src/LinkMgrdMain.cpp:46
+static auto DEFAULT_LOGGING_FILTER_LEVEL = boost::log::trivial::debug;
+```
+
+`linkmgrd` を CLI 引数なしで起動した場合の verbosity フィルタは `debug`。`MuxLogger` 内部の `info` 初期値とは異なる点に注意。
+
+### DbInterface.h — DB テーブル名定数
+
+```cpp
+// sonic-linkmgrd/src/DbInterface.h:60-61
+#define STATE_ICMP_ECHO_SESSION_TABLE_NAME  "ICMP_ECHO_SESSION_TABLE"
+#define APP_ICMP_ECHO_SESSION_TABLE_NAME    "ICMP_ECHO_SESSION_TABLE"
+```
+
+ICMP_ECHO_SESSION を STATE_DB / APPL_DB 両方に同名テーブルで管理する。
+
+### IcmpPayload.h — ICMP バッファサイズ
+
+```cpp
+// sonic-linkmgrd/src/link_prober/IcmpPayload.h:39
+#define MUX_MAX_ICMP_BUFFER_SIZE  9100  // bytes
+```
+
+ICMP heartbeat パケットバッファの最大サイズ。Jumbo frame 対応 (MTU 9100)。
+
+### clamp 制約まとめ
+
+| フィールド | clamp 式 | 出典 |
+|---|---|---|
+| `interval_pck_loss_count_update` | `count > 50 ? count : 50` (下限 50) | `MuxConfig.h:131` |
+| `interval_sec` | `force=false` 時 `300` 以下は `300` に丸め | `MuxConfig.h:338-342` |
+| `suspend_timer` | setter 値 500ms は未使用; getter は `(neg+1)*interval_v4` を計算で返す | `MuxConfig.h:308,493` |
+
+<!-- /constants -->
