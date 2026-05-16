@@ -159,6 +159,49 @@ STATE_DB `NEIGH_STATE_TABLE` および `BGP_PEER_CONFIGURED_TABLE` には対応�
 - bgpmon 起動時 (`__init__`) に `NEIGH_STATE_TABLE|*` を全削除してから再スキャンするため、コンテナ再起動直後は最大 15 秒間エントリが存在しない場合がある。
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H — コード由来)
+
+`BGP_PEER_CONFIGURED_TABLE` を書き込む `BGPPeerMgrBase.update_state_db()`（managers_bgp.py L271–304）
+および `NEIGH_STATE_TABLE` を書き込む `bgpmon.py` には、`switch_type`・`sub_role`・
+`DEVICE_METADATA.localhost.type` による分岐が**一切存在しない**。
+
+両テーブルのスキーマ・フィールドはすべてのプラットフォームで同一である。
+
+### 根拠
+
+| 検索対象 | 結果 |
+|---------|------|
+| `switch_type` in managers_bgp.py | 0 件（分岐なし） |
+| `sub_role` in managers_bgp.py | 0 件（分岐なし） |
+| `is_chassis()` in managers_bgp.py | 0 件（分岐なし） |
+| `localhost/type` | deps 依存ガード登録のみ、値参照なし（L120） |
+| bgpmon.py の platform 分岐 | 0 件（分岐なし） |
+
+`localhost/type` は `BGPPeerMgrBase.__init__` の deps リスト（L120）に登録されているが、
+これは swsscommon の依存性ガード（キーが CONFIG_DB に存在するまで handler 呼び出しをブロック）
+として利用されているだけであり、値による動作の切り替えには使われていない。
+
+### マルチ ASIC 構成での動作（テーブル内容に変化なし）
+
+マルチ ASIC 構成では、bgpmon および bgpcfgd は各 ASIC コンテナ内で独立して動作し、
+それぞれの namespace 内 STATE_DB に書き込む。テーブルのスキーマ・フィールドに変化はない。
+
+**SNMP 読み取り側**（`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py` L22, L29–30）
+のみマルチ ASIC 対応が存在する。`Namespace.init_namespace_dbs()` で全 namespace（asic0, asic1, …）
+の STATE_DB 接続リストを生成し、`dbs_keys_namespace()` で全 namespace の
+`NEIGH_STATE_TABLE|*` を横断収集して CiscoBgp4MIB を組み立てる。
+これは読み取り側の集約動作であり、テーブル自体のスキーマには影響しない。
+
+### 備考: BGP_VOQ_CHASSIS_NEIGHBOR / BGP_INTERNAL_NEIGHBOR との関係
+
+プラットフォーム固有の BGP セッションは `BGP_NEIGHBOR` ではなく
+`BGP_VOQ_CHASSIS_NEIGHBOR`（VoQ シャーシ）または `BGP_INTERNAL_NEIGHBOR`（マルチ ASIC / chassis-packet）
+テーブルに書き込まれる（minigraph.py によるテーブル振り分け）。
+これらのセッションが bgpcfgd で処理される際も、`BGP_PEER_CONFIGURED_TABLE` への
+書き込みロジック（`update_state_db`）は同一コードが使用される。
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py` (L37-51 BgpStateGet.__init__, L70-76 update_new_peer_states, L154-189 update_neigh_states, L163,171 peerType 判定). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpmon/bgpmon.py>

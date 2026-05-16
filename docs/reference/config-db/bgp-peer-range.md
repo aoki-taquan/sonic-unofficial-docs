@@ -290,6 +290,39 @@ FRR 10.1 以降は peer-group に listen range が紐付いている場合、pee
 > **ソース**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:119,192,456-472,2658-2662`、`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658-2662,2847`。詳細は `meta/_intermediate/cdb-flow/bgp-peer-range-ordering.md` を参照。
 <!-- /ordering -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `bgpcfgd/managers_bgp.py` L271–304, L239, L353, L443, L487 精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-side.md`
+
+### STATE_DB — BGP_PEER_CONFIGURED_TABLE
+
+`BGPPeerMgrBase.update_state_db()` が FRR へのコマンド適用成功時に `STATE_DB` の `BGP_PEER_CONFIGURED_TABLE` へ副次書込を行う。
+
+| トリガー | op | key 形式 | 書込内容 |
+|---|---|---|---|
+| `add_peer()` 成功時 (L239) | SET | `<name>` (default VRF) / `<vrf>\|<name>` (非 default) | CONFIG_DB フィールド (ip_range, peer_asn 等) |
+| `apply_admin_status()` 成功時 (L353) | SET | 同上 | 更新後の data |
+| `change_ip_range()` 成功時 (L443) | SET | 同上 | ip_range 更新後の data |
+| `del_handler()` FRR 削除成功時 (L487) | DEL | 同上 | 空 (`{}`) |
+
+`STATE_BGP_PEER_CONFIGURED_TABLE_NAME` は `"BGP_PEER_CONFIGURED_TABLE"` に解決される（tests/test_bgp.py L201 より）。
+
+### COUNTERS_DB / APPL_DB 書込
+
+**なし**。`bgpcfgd` は FRR vtysh 経由の直接制御アーキテクチャのため `APPL_DB` を介在させない。`COUNTERS_DB` への参照も存在しない。`frrcfgd.py`（`BGP_GLOBALS_LISTEN_PREFIX` 経路）も同様に STATE_DB / COUNTERS_DB / APPL_DB への書込は行わない。
+
+```
+BGP_PEER_RANGE SET/DEL
+  └→ bgpcfgd BGPPeerMgrBase
+       ├→ apply_op() → FRR vtysh  [主経路]
+       └→ update_state_db()
+            └→ STATE_DB: BGP_PEER_CONFIGURED_TABLE SET/DEL  [副次書込]
+```
+
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルトと fallback
 
