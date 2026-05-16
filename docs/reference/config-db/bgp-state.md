@@ -262,6 +262,41 @@ STATE_DB `NEIGH_STATE_TABLE` および `BGP_PEER_CONFIGURED_TABLE` には対応�
 書き込みロジック（`update_state_db`）は同一コードが使用される。
 <!-- /platform -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### BGP_PEER_CONFIGURED_TABLE — 書き込みのみ / 購読者なし
+
+`bgpcfgd` の `BGPPeerMgrBase.update_state_db()` (managers_bgp.py L271-303) が `swsscommon.Table` 経由で直接 STATE_DB へ HSET / DEL を発行する。`swsscommon.Table` は **ProducerStateTable ではない** ため、専用通知チャンネルへの PUBLISH は行わない。
+
+```
+bgpcfgd (BGPPeerMgrBase.update_state_db)
+  → swsscommon.Table.set() / delete()
+    → Redis HSET / DEL (STATE_DB DB=6)
+      → BGP_PEER_CONFIGURED_TABLE|<key>
+```
+
+keyspace notification (`__keyspace@6__:BGP_PEER_CONFIGURED_TABLE|*`) は STATE_DB では通常無効であり、アクティブに購読するデーモンは **存在しない**。
+
+#### 根拠
+
+- `managers_bgp.py` 内に `subscribe`・`psubscribe`・`keyspace`・`notify` を含む記述はゼロ件
+- HLD (`Bgpcfgd-dyn-peer-modification-support.md §1.1`) が「SDN コントローラはポーリングで確認する」設計を明示
+
+#### 消費パターン (ポーリング)
+
+| 利用者 | アクセス方法 |
+|--------|------------|
+| SDN コントローラ | `EXISTS` / `HGETALL BGP_PEER_CONFIGURED_TABLE|<key>` のポーリング — bgpcfgd による FRR 設定投入完了を検知するため |
+| `show` コマンド系 | `sonic-db-cli STATE_DB keys 'BGP_PEER_CONFIGURED_TABLE|*'` などによる手動確認 |
+
+### NEIGH_STATE_TABLE — bgpmon ポーリング書き込み / SNMP 読み取り
+
+`bgpmon` が 15 秒周期で FRR から取得した状態を `NEIGH_STATE_TABLE` へ書き込む。SNMP サブエージェントは `NEIGH_STATE_TABLE|*` を **ポーリング読み取り** して CiscoBgp4MIB に変換する。Redis Pub-Sub / keyspace notification は使用しない。
+
+詳細は `meta/_intermediate/cdb-flow/bgp-state-pubsub.md` を参照。
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: `sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py` (L37-51 BgpStateGet.__init__, L70-76 update_new_peer_states, L154-189 update_neigh_states, L163,171 peerType 判定). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpmon/bgpmon.py>
