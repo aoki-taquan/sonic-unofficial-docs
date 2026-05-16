@@ -239,6 +239,96 @@ tunnelmgrd は常時起動し `SUBNET_DECAP` テーブルを無条件購読す�
 - 副作用: サブネット範囲の重複があると ACL リソース競合が発生する可能性。
 
 <!-- /runtime-trace -->
+
+<!-- ordering -->
+## 処理順序と順序依存 (Phase B)
+
+### orchagent 初期化順序
+
+`TunnelDecapOrch` は orchdaemon 起動時に他の Orch より先に `CONFIG_DB` の
+`SUBNET_DECAP` テーブルを **`pops()` で即時先読み** し、`subnetDecapConfig`
+構造体を初期化する（`tunneldecaporch.cpp` コンストラクタ行 39-46）。
+その後 Consumer として `addExecutor` に登録され、以降の差分変更を受信する。
+
+この先読み設計は以下の順序依存を解決するためのものである:
+
+1. **SUBNET_DECAP → TUNNEL_DECAP_TERM の前提関係**  
+   `doDecapTunnelTermTask()` は `subnetDecapConfig.src_ip` / `src_ip_v6` を参照して
+   MP2MP tunnel term の source IP を補完する。SUBNET_DECAP の設定が tunnel term 処理
+   より前に確定していなければ、subnet decap term を正しく生成できない。
+
+2. **PortsOrch 依存**  
+   `doTask()` は `gPortsOrch->allPortsReady()` が `true` を返すまで早期リターンする。
+   したがって SUBNET_DECAP の実際の反映はポート初期化完了後になる。
+
+3. **TUNNEL_DECAP_TABLE の先行投入**  
+   `ipinip.json.j2` が `SUBNET_DECAP.status == enable` を確認してから
+   `TUNNEL_DECAP_TABLE:IPINIP_SUBNET` / `IPINIP_SUBNET_V6` を APP_DB に投入する。
+   このトンネルオブジェクトが存在しない間は tunnel term が `unhandledDecapTerms`
+   に積まれ、tunnel 追加後に再処理される。
+
+### VIP ルートとの連動順序
+
+`RouteOrch::addRoute()` および `VNetRouteOrch` は VIP ルート追加時に
+`gTunneldecapOrch->getSubnetDecapConfig().enable` を参照して動的に
+MP2MP tunnel term (`subnet_type: vip`) を生成する。
+
+```
+SUBNET_DECAP (enable) ──┐
+                         ├─→ subnetDecapConfig.enable = true
+                         │
+RouteOrch::addRoute()   ─┤─→ createVipRouteSubnetDecapTerm()
+                         │       └─→ APP_DB TUNNEL_DECAP_TERM_TABLE SET
+                         │
+VNetRouteOrch::set()    ─┘─→ createSubnetDecapTerm()
+                                 └─→ APP_DB TUNNEL_DECAP_TERM_TABLE SET
+```
+
+SUBNET_DECAP の enable が確定する前にルートが先行投入された場合、
+tunnel term は生成されない（ルート削除・再投入が必要）。
+
+### ビルド時プロビジョニング順序
+
+`dockers/docker-orchagent/ipinip.json.j2` の処理順序:
+
+| 順序 | 生成エントリ | 条件 |
+|------|-------------|------|
+| 1 | `TUNNEL_DECAP_TABLE:IPINIP_SUBNET` | `subnet_decap.enable = true` かつ IPv4 loopback あり |
+| 2 | `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<vlan-prefix>` (MP2MP, vlan) | 上記と同条件 |
+| 3 | `TUNNEL_DECAP_TABLE:IPINIP_TUNNEL` | IPv4 loopback あり |
+| 4 | `TUNNEL_DECAP_TABLE:IPINIP_SUBNET_V6` | `subnet_decap.enable = true` かつ IPv6 loopback あり |
+| 5 | `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET_V6:<vlan-prefix>` (MP2MP, vlan) | 上記と同条件 |
+
+VIP 系の MP2MP term (`subnet_type: vip`) はビルド時 JSON には含まれず、
+routeorch / vnetorch が **ランタイムで動的生成** する。
+
+### warm-reboot 挙動
+
+`TunnelDecapOrch` に warm-reboot 固有のコードパスはない。
+
+- orchagent 再起動時にコンストラクタの `pops()` が CONFIG_DB から再読み込みを行うため、
+  `subnetDecapConfig` は自動的に復元される（CONFIG_DB は永続ストアのため設定値は保持）
+- APP_DB の `TUNNEL_DECAP_TABLE` / `TUNNEL_DECAP_TERM_TABLE` は
+  通常の warm-reboot SAI reconciliation フローで再プログラムされる
+- `unhandledDecapTerms` はメモリ上の状態なので再起動でリセットされるが、
+  APP_DB からの再投入で自動的に再処理される
+
+### 削除時の順序
+
+`SUBNET_DECAP` エントリの DEL 受信時:
+
+- `subnetDecapConfig.enable = false` に即座に設定
+- 既存の tunnel term エントリは **自動的には削除されない**（GC なし）
+- 以降の新規 tunnel term 生成が抑止されるのみ
+- 既存 term を削除するには `APP_TUNNEL_DECAP_TERM_TABLE` への明示的な DEL 操作が必要
+
+> **コード証跡**: `tunneldecaporch.cpp` L39-48 (先読み初期化), L55-57 (PortsOrch ガード),
+> L392-394 (is_subnet_decap_term 判定), L468-509 (src_ip 補完ロジック), L691-694 (DEL処理);
+> `routeorch.cpp` L2714-2718, L3220-3235; `vnetorch.cpp` L1563-1594;
+> `orchdaemon.cpp` L343-348; `ipinip.json.j2` L37-42, L93-123, L160-190
+
+<!-- /ordering -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
