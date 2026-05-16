@@ -108,6 +108,57 @@ flowchart LR
 | PAC / 802.1X | `pac_authmgrcfg.cpp:64-76` | `"static"` |
 | fdbsyncd (自動学習) | APPL_DB 直接 (CONFIG_DB を経由しない) | `"dynamic"` |
 
+<!-- side-effects -->
+## 副次 DB 書込（Phase F）
+
+CONFIG_DB `FDB` エントリが APPL_DB `FDB_TABLE` 経由で `FdbOrch::addFdbEntry()` に処理されると、以下の副次書込が発生する。
+
+### APPL_DB: `FDB_TABLE`
+
+`swssconfig` が CONFIG_DB `FDB` を読み取り APPL_DB `FDB_TABLE` に転記する（橋渡し）。`FdbOrch` はこのテーブルを Subscribe し、エントリを処理する。
+
+- **キー形式**: `FDB_TABLE:Vlan<id>:<MAC>`
+- **書込フィールド**: `port`、`type`
+- **コード箇所**: `fdborch.cpp:55`（`APP_FDB_TABLE_NAME` の Consumer として登録）
+
+### STATE_DB: `FDB_TABLE`
+
+`addFdbEntry()` がローカル MAC エントリを正常登録した後、STATE_DB `FDB_TABLE` に書き込む（`fdborch.cpp:1574-1582`）。MCLAG 広告元エントリ（`FDB_ORIGIN_MCLAG_ADVERTIZED`）かつ `dynamic_local` 以外の場合は STATE_DB には書き込まれない。
+
+```cpp
+// sonic-swss/orchagent/fdborch.cpp:1574-1582
+/* State-DB is updated only for Local Mac addresses */
+std::vector<FieldValueTuple> fvs;
+fvs.push_back(FieldValueTuple("port", port_name));
+if (fdbData.type == "dynamic_local")
+    fvs.push_back(FieldValueTuple("type", "dynamic"));
+else
+    fvs.push_back(FieldValueTuple("type", fdbData.type));
+m_fdbStateTable.set(key, fvs);
+```
+
+- **キー形式**: `Vlan<id>:<MAC>`
+- **書込フィールド**: `port`（ポート名）、`type`（`"static"` / `"dynamic"`; `"dynamic_local"` は `"dynamic"` に変換）
+- **削除条件**: エントリ削除時（`fdborch.cpp:170`）、または MCLAG 広告元エントリへの更新時（`fdborch.cpp:1592`）
+
+動的学習（LEARN イベント）の場合も `storeFdbEntryState()` 経由で同様に STATE_DB へ書き込む（`fdborch.cpp:131-135`）。
+
+### ASIC_DB: `ASIC_STATE:SAI_OBJECT_TYPE_FDB_ENTRY`
+
+`addFdbEntry()` が SAI API を呼び出すことで syncd が ASIC_DB に SAI FDB エントリを生成する。
+
+```cpp
+// sonic-swss/orchagent/fdborch.cpp:1531
+status = sai_fdb_api->create_fdb_entry(&fdb_entry, (uint32_t)attrs.size(), attrs.data());
+```
+
+- **エントリ型**: `SAI_OBJECT_TYPE_FDB_ENTRY`（`bv_id` / MAC アドレス をキーに）
+- **主要属性**: `SAI_FDB_ENTRY_ATTR_TYPE`（`SAI_FDB_ENTRY_TYPE_STATIC` または `SAI_FDB_ENTRY_TYPE_DYNAMIC`）、`SAI_FDB_ENTRY_ATTR_BRIDGE_PORT_ID`
+- **更新**: MAC-Update 時は `sai_fdb_api->set_fdb_entry_attribute()` を使用（`fdborch.cpp:1507`）
+- **削除**: `sai_fdb_api->remove_fdb_entry()` — `removeFdbEntry()` 呼出時（`fdborch.cpp:1701`）
+
+<!-- /side-effects -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `VLAN`、`VLAN_MEMBER`
