@@ -384,16 +384,16 @@ SAI への書き込みは syncd が ASIC_DB に転送し、結果は SAI return 
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/orchagent/bufferorch.cpp`
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/orchagent/bufferorch.cpp`, `sonic-swss/cfgmgr/buffermgrdyn.h`, `sonic-swss/orchagent/bufferorch.h`, `sonic-swss/cfgmgr/buffer_headroom_mellanox.lua`
 
 ### queue index 範囲
 
-| モード | key トークン数 | 範囲上限チェック | evidence |
-|---|---|---|---|
-| 非 VOQ | 2 (`<port>\|<qindex>`) | `port.m_queue_ids.size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:943, 1061-1064` |
-| VOQ シャーシ | 4 (`<hostname>\|<asic_name>\|<port>\|<qindex>`) | `getPortVoQIds(port).size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:918, 1052-1055` |
+| モード | key 形式 | トークン数 | 範囲上限チェック | evidence |
+|---|---|---|---|---|
+| 非 VOQ | `<port>\|<qindex>` | **2** | `port.m_queue_ids.size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:943, 1061-1064` |
+| VOQ シャーシ | `<hostname>\|<asic_name>\|<port>\|<qindex>` | **4** | `getPortVoQIds(port).size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:918, 1052-1055` |
 
-YANG regex が許容する qindex 範囲は **0〜15**（`(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?`）。実際の上限は SAI / プラットフォームが提供する queue 数次第。
+YANG regex が許容する qindex 範囲は **0〜15**（`(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?`）。実際の上限は SAI / プラットフォームが提供する queue 数次第（典型的に 8 queue）。デフォルト j2 テンプレートでは `0-2`・`3-4`・`5-6` の 3 レンジのみ設定する（`buffers_config.j2:307-324`）。
 
 ### SAI 識別子
 
@@ -405,13 +405,38 @@ YANG regex が許容する qindex 範囲は **0〜15**（`(1[0-5]|[0-9])((-)(1[0
 
 queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反映される (`bufferorch.cpp:1269`)。
 
-### フィールド名文字列定数
+### フィールド名文字列定数 (`bufferorch.h`)
 
 | 定数変数 | ハードコード値 | evidence |
 |---|---|---|
-| `buffer_profile_field_name` | `"profile"` | `bufferorch.cpp:30` |
-| `buffer_pool_mode_dynamic_value` | `"dynamic"` | `bufferorch.cpp:22` |
-| `buffer_pool_mode_static_value` | `"static"` | `bufferorch.cpp:23` |
+| `buffer_profile_field_name` | `"profile"` | `bufferorch.h:30` |
+| `buffer_pool_field_name` | `"pool"` | `bufferorch.h:21` |
+| `buffer_pool_mode_dynamic_value` | `"dynamic"` | `bufferorch.h:22` |
+| `buffer_pool_mode_static_value` | `"static"` | `bufferorch.h:23` |
+| `buffer_value_ingress` | `"ingress"` | `bufferorch.h:31` |
+| `buffer_value_egress` | `"egress"` | `bufferorch.h:32` |
+| `buffer_value_both` | `"both"` | `bufferorch.h:33` |
+| `buffer_pool_xoff_field_name` | `"xoff"` | `bufferorch.h:24` |
+| `buffer_xon_field_name` | `"xon"` | `bufferorch.h:25` |
+| `buffer_xon_offset_field_name` | `"xon_offset"` | `bufferorch.h:26` |
+| `buffer_xoff_field_name` | `"xoff"` | `bufferorch.h:27` |
+| `buffer_dynamic_th_field_name` | `"dynamic_th"` | `bufferorch.h:28` |
+| `buffer_static_th_field_name` | `"static_th"` | `bufferorch.h:29` |
+
+### デーモン設定定数 (`buffermgrdyn.h`)
+
+| 定数 | 値 | 意味 |
+|---|---|---|
+| `DEFAULT_MTU_STR` | `"9100"` | profile 名生成時に MTU が未指定の場合に使用するデフォルト MTU (バイト) (`buffermgrdyn.h:15`) |
+| `INGRESS_LOSSLESS_PG_POOL_NAME` | `"ingress_lossless_pool"` | ingress lossless pool 名 (`buffermgrdyn.h:14`) |
+| `BUFFERMGR_TIMER_PERIOD` | `10` | buffermgrd 内部タイマーの周期（秒）。headroom 再計算・retry に使用 (`buffermgrdyn.h:17`) |
+
+### FlexCounter 統計 polling 定数 (`bufferorch.h`)
+
+| 定数 | 値 | 意味 |
+|---|---|---|
+| `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` | buffer pool watermark の FlexCounter polling 間隔（ms = 60 秒）(`bufferorch.h:16`) |
+| `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"BUFFER_POOL_WATERMARK_STAT_COUNTER"` | FlexCounter グループ名 (`bufferorch.h:15`) |
 
 ### `_zero_` profile 判定文字列
 
@@ -435,6 +460,33 @@ queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反
 ### gMySwitchType 比較文字列
 
 - `"voq"` (ハードコード): `bufferorch.cpp:116, 916, 1049` で VOQ モード判定に使用
+
+### headroom 計算 Lua スクリプト内の定数 (`buffer_headroom_mellanox.lua`)
+
+cell_size・pipeline_latency (IPL)・mac_phy_delay はハードコードされず、`STATE_DB.ASIC_TABLE` から取得する。ただし以下の定数はスクリプト内にハードコードされる:
+
+| 定数 | 値 | 意味 | evidence |
+|---|---|---|---|
+| `speed_of_light` | `198000000` m/s (光速の約 2/3) | ケーブル伝播遅延計算用 | `buffer_headroom_mellanox.lua:118` |
+| `minimal_packet_size` | `64` バイト | worst-case cell 占有率算出に使用 | `buffer_headroom_mellanox.lua:120` |
+| IPG (`peer_response_time`) | `pause_quanta * 512 / 8` バイト | IEEE 802.3 の pause quanta を IPG (bytes) に変換 | `buffer_headroom_mellanox.lua:157` |
+
+pause quanta テーブル (IEEE 802.3 31B.3.7 準拠、ハードコード):
+
+| 速度 (Mb/s) | pause_quanta | peer_response_time (バイト) |
+|---|---|---|
+| 800000 (800G) | 905 | 57,920 |
+| 400000 (400G) | 905 | 57,920 |
+| 200000 (200G) | 453 | 28,992 |
+| 100000 (100G) | 394 | 25,216 |
+| 50000 (50G) | 147 | 9,408 |
+| 40000 (40G) | 118 | 7,552 |
+| 25000 (25G) | 80 | 5,120 |
+| 10000 (10G) | 67 | 4,288 |
+| 1000 (1G) | 2 | 128 |
+| 100 (100M) | 1 | 64 |
+
+xoff（PFC pause 起動閾値）の繰り上げ粒度: **1024 バイト** (`math.ceil(xoff_value / 1024) * 1024`)。
 
 詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-constants.md` を参照。
 <!-- /constants -->
@@ -522,7 +574,7 @@ queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反
 
 profile 名に `_zero_` を含む場合 (`counter_needs_to_add = false`)、カウンタ追加は行わない。既存カウンタがあれば削除する。`bufferorch.cpp:1017, 1020`
 
-詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-side.md` を参照。
+詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
@@ -531,28 +583,47 @@ profile 名に `_zero_` を含む場合 (`counter_needs_to_add = false`)、カ�
 ### Dynamic / Static バッファモデル
 
 `buffermgrdyn`（Dynamic モード専用）は `BUFFER_QUEUE` の `profile` フィールドをそのまま APPL_DB に転送する。
-BUFFER_PG と異なりキューのヘッドルーム自動計算は行わない。
+BUFFER_PG と異なり egress キューのヘッドルーム自動計算は行わない。キューのプロファイル割り当てはビルド時テンプレートで決定済みのため、Dynamic/Static どちらのモードも実運用上の queue buffer 割り当て内容は同等となる。
 
-#### Dynamic モード固有 — zero profile (`buffermgrdyn.cpp:285-289`)
+#### Dynamic モード固有 — admin-down 時の zero profile 回収 (`buffermgrdyn.cpp:285-289, 1286-1381`)
 
-ベンダー提供の per-platform zero profiles info JSON に `queues_to_apply_zero_profile` / `egress_zero_profile` が定義されている場合、
-admin-down ポートまたはバッファ回収時に指定 queue インデックスへ zero profile を適用する。
-Static モードデーモン (`buffermgr`) はこの処理を持たない。
+ベンダー提供の per-platform zero profiles info JSON に `queues_to_apply_zero_profile` / `egress_zero_profile` が定義されている場合、admin-down ポートのバッファ回収時に `reclaimReservedBufferForPort()` が 2 モードで動作する。
+
+| モード | 条件 | 動作 |
+|--------|------|------|
+| **ベンダー指定対象に zero profile 適用** | `queues_to_apply_zero_profile` が定義済み | 指定 queue index にのみ zero profile を適用し、残りは APPL_DB から削除 |
+| **全設定 queue に zero profile 適用** | `queues_to_apply_zero_profile` が未定義 | 設定済み全 queue + ASIC がサポートする未設定 queue にも zero profile を適用 (`buffers_config.j2` コメント例: 16 queue の場合 0-2, 5-6, 7-15 → lossy zero, 3-4 → lossless zero) |
+
+Static モードデーモン (`buffermgr`) はこの `reclaimReservedBufferForPort` 処理を持たない。
 
 ### ASIC ベンダー差異
 
 `buffermgrdyn` 起動時に `ASIC_VENDOR` 環境変数でベンダーを検出する (`buffermgrdyn.cpp:68`)。
-Mellanox の場合は `DEVICE_METADATA.localhost.platform` からモデル番号を追加取得する。
-ただし BUFFER_QUEUE のプロファイル名はビルド時テンプレートで確定済みであり、
-Mellanox 8-lane サフィックス等のランタイム ASIC 依存処理は BUFFER_QUEUE には適用されない。
+
+| ベンダー値 | 追加取得情報 | BUFFER_QUEUE への影響 |
+|-----------|------------|----------------------|
+| `"mellanox"` | `DEVICE_METADATA.localhost.platform` からモデル番号 4 桁 (`sn****`) を抽出し `m_model_number` に保存 | なし（BUFFER_PG headroom 計算専用）|
+| その他 (`"broadcom"` 等) | なし | なし |
+| 未設定 (`""`) | なし | なし |
+
+ベンダー別 Lua プラグイン (`buffer_headroom_<vendor>.lua`, `buffer_pool_<vendor>.lua`) は BUFFER_PG / BUFFER_POOL の計算専用であり BUFFER_QUEUE の profile 値には影響しない。Mellanox 8-lane サフィックス等のランタイム ASIC 依存処理は BUFFER_QUEUE に適用されない。
+
+### ASIC queue 数差異
+
+YANG の qindex 正規表現は `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` で **0〜15** を許容するが、実際の上限は ASIC が SAI 初期化時に通知する queue 数次第。非 VOQ では `port.m_queue_ids.size()`、VOQ では `getPortVoQIds(port).size()` を実行時に参照し、超過インデックスを `task_invalid_entry` で拒否する (`bufferorch.cpp:1052-1064`)。プラットフォームごとに queue 数が 8 / 16 / それ以外に異なる点に注意。
+
+### Flex counter 条件 (非 VOQ のみ)
+
+非 VOQ の queue buffer counter は `flexcounterorch->isCreateOnlyConfigDbBuffers()` が `true` のときのみ `BufferOrch` が per-queue に追加・削除を行う (`bufferorch.cpp:1139-1152`)。`false` のとき（従来モード）は `FlexCounterOrch` が一括管理するため `BufferOrch` からは操作しない。
 
 ### VOQ Chassis 専用処理
 
 | 処理 | 非 VOQ | VOQ (`switch_type = voq`) | evidence |
 |------|--------|--------------------------|----------|
 | `doTask` 起動ゲート | `isConfigDone()` 待機 | `isInitDone()` 待機 | `bufferorch.cpp:2079-2090` |
-| Warm reboot ready list | `initBufferReadyList()` | `initVoqBufferReadyList()` | `bufferorch.cpp:116-136` |
+| Warm reboot ready list | `initBufferReadyList()` (APPL_DB ソース) | `initVoqBufferReadyList()` (CONFIG_DB ソース、admin-down 除外) | `bufferorch.cpp:116-136` |
 | Key トークン数 | 2 (`<port>\|<qindex>`) | 4 (`<hostname>\|<asic_name>\|<port>\|<qindex>`) | `bufferorch.cpp:916-956` |
+| ローカルポート判定 | 常に local | `gMyHostName` / `gMyAsicName` と照合、不一致なら SAI 書き込みをスキップ | `bufferorch.cpp:916-940` |
 | Queue ID 取得 | `port.m_queue_ids[ind]`、lock チェックあり | `getPortVoQIds(port)[ind]`、lock チェックなし | `bufferorch.cpp:1049-1075` |
 | Flex counter 管理 | `BufferOrch` が per-queue 追加・削除 | `flexcounterorch` が全 VOQ を一括登録するためスキップ | `bufferorch.cpp:1134-1136` |
 | ポート参照カウント | SET/DEL 時に increase/decrease | システムポートは動的生成なしのためスキップ | `bufferorch.cpp:1166-1168` |
