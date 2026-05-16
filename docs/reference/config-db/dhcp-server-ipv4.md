@@ -542,4 +542,61 @@ CONFIG_DB 変更を検知するたびに `dump_dhcp4_config()` が `/etc/kea/kea
 > **Evidence**: `dhcpservd.py:142`; `dhcp_cfggen.py:70-71,165-168`
 <!-- /side-effects -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py`, `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py`, `dockers/docker-dhcp-server/kea-dhcp4.conf.j2`, `src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang` (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-constants.md`
+
+### `state` フィールド — `admin_mode` enum 値
+
+| 定数値 | 定義箇所 | 意味 |
+|--------|---------|------|
+| `"enabled"` | YANG `stypes:admin_mode`; `dhcp_cfggen.py:199`; `dhcp_server.py:175` | DHCPv4 サーバを有効化。`dhcp_cfggen` がそのインタフェースを kea-dhcp4 設定に組み込む |
+| `"disabled"` | `dhcp_server.py:105` (add コマンドの初期値) | DHCPv4 サーバを無効化。`dhcp_cfggen` がそのインタフェースを silent skip する (`dhcp_cfggen.py:199`) |
+
+`add` コマンドは常に `"disabled"` を書き込む。有効化には明示的に `enable` サブコマンドが必要。
+
+### `lease_time` — デフォルト値
+
+| 定数名 | 値 | 定義箇所 |
+|--------|-----|---------|
+| `DEFAULT_LEASE_TIME` | `900` 秒 | `dhcp_cfggen.py:25` |
+| CLI `--lease_time` デフォルト | `"900"` | `dhcp_server.py:70` |
+| Jinja2 テンプレート `default_lease_time` | `900` | `kea-dhcp4.conf.j2:1` |
+
+CLI 省略時・DB に `lease_time` が存在しない場合ともに `900` 秒 (15 分) を使用する。YANG は `mandatory true` を宣言しているが、実装はフォールバックで動作継続する（YANG-実装 discrepancy）。
+
+### kea-dhcp4 デフォルト受信ポート
+
+kea-dhcp4 はデフォルトで UDP **ポート 67** (BOOTP/DHCP サーバ標準ポート) を使用する。`kea-dhcp4.conf.j2` および `kea-dhcp4-init.conf` にポート番号の明示的なオーバーライドはなく、kea-dhcp4 のビルトインデフォルト (67) がそのまま適用される。`interfaces-config.interfaces` で `"eth0"` のみを指定。
+
+### `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS.type` — オプション型 enum
+
+YANG (`sonic-dhcp-server-ipv4.yang:141-148`) で定義された型 enum。実装側のサポート対象は `SUPPORT_DHCP_OPTION_TYPE` (`dhcp_cfggen.py:30`) と対応する。
+
+| 値 | YANG定義 | `SUPPORT_DHCP_OPTION_TYPE`対応 |
+|----|---------|-------------------------------|
+| `string` | ✅ | ✅ |
+| `ipv4-address` | ✅ | ✅ |
+| `uint8` | ✅ | ✅ |
+| `uint16` | ✅ | ✅ |
+| `uint32` | ✅ | ✅ |
+| `binary` | ❌ (YANG未定義) | ✅ (実装のみ) |
+| `boolean` | ❌ (YANG未定義) | ✅ (実装のみ) |
+
+YANG 未定義の `binary` / `boolean` は直接 DB 書込みによる拡張型として実装でのみサポートされる。
+
+### その他ハードコード定数
+
+| 定数名 | 値 | 定義箇所 | 意味 |
+|--------|-----|---------|------|
+| `MID_PLANE_BRIDGE_SUBNET_ID` | `10000` | `dhcp_cfggen.py:19` | SmartSwitch 環境での kea-dhcp4 subnet ID 固定値 |
+| `OPTION_DHCP_SERVER_ID` | `"54"` | `dhcp_cfggen.py:31` | DHCP option 54 (dhcp-server-identifier) の自動注入に使用 |
+| `DEFAULT_LEASE_PATH` | `"/var/lib/kea/kea-lease.csv"` | `dhcp_cfggen.py:26` | kea-dhcp4 リースファイルパス |
+| `lfc-interval` | `3600` 秒 | `kea-dhcp4.conf.j2:37` | kea リースファイル整理間隔 |
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:19,25,26,30,31,199`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:70,105,175`; `dockers/docker-dhcp-server/kea-dhcp4.conf.j2:1,37`; `dockers/docker-dhcp-server/kea-dhcp4-init.conf`; `src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang:105,141-148`
+<!-- /constants -->
+
 <!-- glossary-links-injected: 75921d013977 -->
