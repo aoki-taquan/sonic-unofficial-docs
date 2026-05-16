@@ -246,6 +246,31 @@ enum なし。
 
 <!-- glossary-links-injected: 896d391185a9 -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+YANG leafref を超えた他テーブル・他設定ファイルへの実装上の依存関係。ソース: `intfmgr`（`sonic-swss/cfgmgr/intfmgr.cpp`）および `interfaces.j2`（`sonic-buildimage/files/image_config/interfaces/interfaces.j2`）。
+
+| 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
+|--------|-----------|------|------|-----------|
+| `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` | CONFIG_DB | READ | `interfaces.j2` 生成時。`"true"` のとき `vrf-table 6000` / `vrf mgmt` を追記し、全ルートを mgmt VRF テーブル (6000) へ向ける。`"false"` 時は `default` テーブルを使用 | `interfaces.j2` L9,88,152 |
+| `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` | CONFIG_DB | READ | DHCP フォールバックパス (`MGMT_INTERFACE` 未設定) でも `mgmtVrfEnabled=true` なら `vrf mgmt` を付与 | `interfaces.j2` L152-153 |
+| `DEVICE_METADATA\|localhost.subtype` + `switch_type` | CONFIG_DB | READ | `interfaces.j2` で `subtype=SmartSwitch` かつ `switch_type=dpu` のとき DHCP フォールバックブロック自体を生成しない。DPU では `eth0` に何も設定されない | `interfaces.j2` L144-148 |
+| `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | READ | `intfmgr` 起動時に 1 回読み取り。`switch_type=voq` のとき IPv6 アドレス追加に `metric 256` を付与 | `intfmgr.cpp` L71-75 |
+| `DEVICE_METADATA\|bmc.bmc_if_name` / `bmc_if_addr` / `bmc_net_mask` | CONFIG_DB | READ | BMC インタフェースが定義されているとき、`interfaces.j2` が `eth0` よりも先に BMC インタフェース設定ブロックを生成 | `interfaces.j2` L33-39 |
+| `SYSLOG_SERVER` | CONFIG_DB | READ | `SYSLOG_SERVER` が設定されていれば各サーバ IP への policy routing rule (pref 32764) を mgmt テーブルに追加。**未設定**の場合は `10.20.6.16/32` をハードコードで注入 | `interfaces.j2` L101-113 |
+
+!!! note "MGMT_VRF_CONFIG 連携の要点"
+    - `mgmtVrfEnabled=true` が有効なとき、`interfaces.j2` は `auto mgmt` / `vrf-table 6000` / ループバック `lo-m` を生成する。
+    - `MGMT_INTERFACE` エントリの全ルート（ネットワーク経路・デフォルト GW・`forced_mgmt_routes`）が `table 6000` に書き込まれる。
+    - `mgmtVrfEnabled` の変更は `/etc/network/interfaces` の再生成（`hostcfgd` 再起動 or `ifupdown` 再適用）が必要。
+
+!!! note "DEVICE_METADATA 暗黙依存の影響"
+    - `switch_type=voq` のとき `intfmgr` が IPv6 metric を変更するが、これは管理 IF ではなくデータ IF に対する挙動。管理 IF (`eth0`) は `intfmgr` でなく `interfaces.j2` → `hostcfgd` 経由で設定される。
+    - `subtype=SmartSwitch` + `switch_type=dpu` の組み合わせのみ DHCP フォールバックが抑制される。片方だけでは抑制されない。
+
+<!-- /cross-refs -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
