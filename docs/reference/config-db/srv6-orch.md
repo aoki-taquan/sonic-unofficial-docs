@@ -69,6 +69,115 @@ flowchart LR
     `PIC_CONTEXT_TABLE` は ECMP 経路制御コンポーネントが直接書き込む。
 <!-- /cdb-mermaid -->
 
+<!-- pubsub -->
+## 通信メカニズム（Phase G 解析）
+
+> 根拠: `routesync.cpp` 155-164, 1389, 1424, 1562, 1667, 3389, 3441 / `orchdaemon.cpp` 312-324 / `srv6orch.cpp` 98-140, 2352-2386 / `srv6orch.h` 238-242 / `managers_srv6.py` 14-133 の全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-pubsub.md`
+
+### 全体データフロー
+
+SRv6 の設定は CONFIG_DB から SAI まで以下の **非同期パイプライン** を通じて伝達される。
+Redis の `ProducerStateTable` / `ConsumerStateTable` は APP_DB 区間のみで使用され、
+他の区間は vtysh CLI または FPM TCP ソケットで繋がれる。
+
+```
+CONFIG_DB (SRV6_MY_SIDS / SRV6_MY_LOCATORS)
+  ↓ Redis keyspace notification (dbId=4)
+bgpcfgd — SRv6Mgr (managers_srv6.py)
+  ↓ vtysh cfg_mgr.push_list() (TCP, 非 Redis)
+FRR zebra / bgpd
+  ↓ FPM TCP (port 2620, netlink エンコード, 非 Redis)
+fpmsyncd — RouteSync (routesync.cpp)
+  ↓ ProducerStateTable + RedisPipeline → APP_DB
+    SRV6_SID_LIST_TABLE / SRV6_MY_SID_TABLE / PIC_CONTEXT_TABLE
+  ↓ ConsumerStateTable (TableConnector)
+Srv6Orch (srv6orch.cpp)
+  ↓ SAI C++ API
+ASIC
+```
+
+### CONFIG_DB → bgpcfgd (SRv6Mgr)
+
+`bgpcfgd` の `SRv6Mgr` は `Manager` 基底クラスを継承し、
+`directory.subscribe()` が内部で CONFIG_DB (dbId=4) の Redis **keyspace notification**
+(`PSUBSCRIBE __keyspace@4__:SRV6_MY_SIDS|*` 等) を購読する。
+
+| CONFIG_DB テーブル | コールバック | 処理内容 |
+|-------------------|-------------|---------|
+| `SRV6_MY_LOCATORS` | `locators_set_handler()` | ロケータ情報をキャッシュし `cfg_mgr.push_list(["segment-routing","srv6","locators",...])` |
+| `SRV6_MY_SIDS` | `sids_set_handler()` | ロケータ依存解決後に `cfg_mgr.push_list(["segment-routing","srv6","static-sids",...])` |
+
+- `SRV6_MY_SIDS` エントリは参照するロケータ名 (`SRV6_MY_LOCATORS`) が未到達の場合、
+  `directory.subscribe()` でロケータ到着を待ちペンディングする（`managers_srv6.py:62-68`）。
+- `cfg_mgr.push_list()` は vtysh TCP ソケット経由で FRR bgpd へコマンドを送信する。
+  Redis channel は介在しない。
+
+### fpmsyncd → APP_DB (ProducerStateTable)
+
+`RouteSync` クラス (`routesync.cpp`) が FPM インタフェース（TCP port 2620）経由で
+FRR zebra からのネットリンクメッセージを受信し、APP_DB に `ProducerStateTable` で書き込む。
+
+```cpp
+// routesync.cpp:163-164, 159
+m_srv6MySidTable(pipeline, APP_SRV6_MY_SID_TABLE_NAME, true),  // "SRV6_MY_SID_TABLE"
+m_srv6SidListTable(pipeline, APP_SRV6_SID_LIST_TABLE_NAME, true), // "SRV6_SID_LIST_TABLE"
+m_pic_context_groupTable(pipeline, APP_PIC_CONTEXT_TABLE_NAME, true), // "PIC_CONTEXT_TABLE"
+```
+
+| APP_DB テーブル | 書き込み操作 | routesync.cpp 行 |
+|----------------|------------|-----------------|
+| `SRV6_SID_LIST_TABLE` | `m_srv6SidListTable.set()` / `.del()` | 1424 / 1389 |
+| `SRV6_MY_SID_TABLE` | `m_srv6MySidTable.set()` / `.del()` | 1667 / 1562 |
+| `PIC_CONTEXT_TABLE` | `m_pic_context_groupTable.set()` / `.del()` | 3441 / 3389 |
+
+- `RedisPipeline` でバッチ書き込み。フラッシュ間隔は `gFlushTimeout` で制御。
+- Route テーブルと異なり SRv6 テーブルは ZMQ バイパスなし（pipeline 直接書き込み）。
+
+### APP_DB → Srv6Orch (ConsumerStateTable)
+
+`orchdaemon.cpp:312-324` で `TableConnector` を 4 テーブル分設定し、
+`Orch(tables)` コンストラクタへ渡すことで `ConsumerStateTable` + `Executor` が自動生成される。
+
+| テーブル | DB | channel (Redis key pattern) |
+|---------|----|-----------------------------|
+| `SRV6_SID_LIST_TABLE` | APP_DB (dbId=0) | `_QUEUEEVENTS` keyspace 通知 |
+| `SRV6_MY_SID_TABLE` | APP_DB (dbId=0) | 同上 |
+| `PIC_CONTEXT_TABLE` | APP_DB (dbId=0) | 同上 |
+| `SRV6_MY_SIDS` | CONFIG_DB (dbId=4) | 同上 |
+
+`Srv6Orch::doTask(Consumer &consumer)` (`srv6orch.cpp:2352`) がテーブル名で分岐し、
+各 `doTaskXxx()` ハンドラへディスパッチする。
+
+```cpp
+// srv6orch.cpp:2362-2386
+if      (table_name == APP_SRV6_SID_LIST_TABLE_NAME)  doTaskSidTable(t);
+else if (table_name == APP_SRV6_MY_SID_TABLE_NAME)    doTaskMySidTable(t);
+else if (table_name == APP_PIC_CONTEXT_TABLE_NAME)     doTaskPicContextTable(t);
+else if (table_name == CFG_SRV6_MY_SID_TABLE_NAME)    doTaskCfgMySidTable(t);
+```
+
+`SelectableTimer` ベースの `doTask()` (`srv6orch.cpp:286`) も存在し、
+`PIC_CONTEXT_TABLE` の参照カウント待ちリトライキューを定期処理する。
+
+### ProducerStateTable メンバ（書き込み専用）
+
+`srv6orch.h:238-240` の以下メンバは SAI 処理結果を APP_DB へ書き戻す目的で宣言されている。
+ConsumerStateTable としての購読とは別チャネルであり、二重登録ではない。
+
+| メンバ | 書き込み先 |
+|--------|-----------|
+| `m_sidTable` | `SRV6_SID_LIST_TABLE` |
+| `m_mysidTable` | `SRV6_MY_SID_TABLE` |
+| `m_piccontextTable` | `PIC_CONTEXT_TABLE` |
+
+### NotificationProducer / SubscriberStateTable 非使用確認
+
+- `SRV6_MY_SIDS` / `SRV6_MY_LOCATORS` に対して orchagent が `SubscriberStateTable` を直接使う箇所はなし。
+- `NotificationProducer` で SRv6 関連の通知を発行する箇所はソース全体になし。
+- STATE_DB への書き戻しは Srv6Orch 自体が行わず、SAI/ASIC 層で完結する。
+<!-- /pubsub -->
+
 ---
 
 ## SRV6_SID_LIST_TABLE
