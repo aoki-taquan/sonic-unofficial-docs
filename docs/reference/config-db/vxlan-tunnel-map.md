@@ -116,6 +116,39 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-ordering.md; sonic-swss/orchagent/vxlanorch.cpp -->
+
+### 作成順序
+
+| 順序 | テーブル | 理由 |
+|------|---------|------|
+| 1 | `VLAN\|<id>` | `VxlanTunnelMapOrch::addOperation()` が `gPortsOrch->getVlanByVlanId()` で VLAN の存在を確認。未作成なら `return false`（リトライ待ち）(vxlanorch.cpp:2030) |
+| 2 | `VXLAN_TUNNEL\|<tunnel-name>` | `isTunnelExists()` チェック。TUNNEL 未登録なら `return false`（リトライ待ち）(vxlanorch.cpp:2047) |
+| 3 | `VXLAN_TUNNEL_MAP\|<tunnel>\|<map>` | 初回エントリ受信時に `createTunnelHw()` が呼ばれ SAI トンネルオブジェクト（mapper → tunnel → tunnel-term）が一括生成される (vxlanorch.cpp:2063)。VXLAN_TUNNEL 単体では SAI HW は作成されない点に注意 |
+
+複数の MAP エントリは VLAN・TUNNEL が揃っていれば順不同で書込み可能。
+
+### SAI HW 作成の内部順序（参考）
+
+`createTunnelHw()` 内部では以下の順で SAI オブジェクトを生成する:
+
+1. `createMapperHw()` — `sai_tunnel_api->create_tunnel_map()`（encap/decap マッパー）
+2. `create_tunnel()` — `sai_tunnel_api->create_tunnel()`（マッパー OID リストを参照）
+3. `create_tunnel_termination()` — `sai_tunnel_api->create_tunnel_term_table_entry()`
+
+### 削除順序（逆順）
+
+```
+VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除 → VXLAN_TUNNEL 削除 → VLAN 削除
+```
+
+`del_tnl_hw_pending` フラグが true の間は MAP 追加もブロックされる (vxlanorch.cpp:2057)。削除途中での再追加は避けること。
+
+<!-- /ordering -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
@@ -227,24 +260,51 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
-<!-- implicit-refs -->
-## 暗黙参照テーブル (Phase C)
+<!-- cross-refs -->
+## 暗黙参照 (Phase C / vxlanorch.cpp)
 
-`VXLAN_TUNNEL_MAP` エントリ処理時に `orchagent` が暗黙的に参照・依存する外部テーブル・オブジェクト。CONFIG_DB スキーマには記載がなく、コード実行時に解決される。
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
 
-| 参照先 | 参照方法 | 解決失敗時の挙動 | コードロケーション |
-|--------|---------|----------------|------------------|
-| `VXLAN_TUNNEL`（`tunnel_name` key） | `VxlanTunnelOrch::isTunnelExists(tunnel_name)` で存在確認 | `return false`（リトライ）。トンネル登録後に自動再処理 | `vxlanorch.cpp:2047-2051` |
-| `VLAN`（`vlan` フィールドの VLAN ID） | `gPortsOrch->getVlanByVlanId(vlan_id, tempPort)` で存在確認 | `return false`（リトライ）。VLAN 作成後に自動再処理 | `vxlanorch.cpp:2030-2034` |
-| `VXLAN_TUNNEL`.`del_tnl_hw_pending` フラグ | `tunnel_obj->del_tnl_hw_pending` を確認 | `return false`（リトライ）。親トンネルの HW 削除完了後に再処理 | `vxlanorch.cpp:2057-2061` |
-| VRF 登録状態（L3VNI 判定） | `VRFOrch::isL3VniVlan(vni_id)` で VRF に登録済みか確認 | 真の場合 SAI entry を生成せず `SAI_NULL_OBJECT_ID` を記録（silent no-op） | `vxlanorch.cpp:2096, 2108` |
+以下の参照は `VXLAN_TUNNEL_MAP` テーブルが間接的に依存するが、CONFIG_DB スキーマや YANG には明示されていない。
 
-### 暗黙参照の書込み順制約
+### VXLAN_TUNNEL (VxlanTunnelOrch)
 
-- `VXLAN_TUNNEL` → `VXLAN_TUNNEL_MAP` の順で書く必要がある（逆順はリトライ待ちで最終的に処理されるが、即時反映されない）。
-- `VLAN` も `VXLAN_TUNNEL_MAP` より先に存在しなければ同様にリトライ待ちとなる。
-- L3VNI 用途の場合は VRF の登録状態が SAI entry 生成の可否を決定するが、CONFIG_DB 上にその状態は記録されない（`VRFOrch` 内部状態に依存）。
+- **参照箇所**: `vxlanorch.cpp:2047-2058`
+- `VxlanTunnelMapOrch::addOperation()` が `tunnel_orch->isTunnelExists(tunnel_name)` で親トンネルを確認し、`tunnel_orch->getVxlanTunnel(tunnel_name)` でポインタを取得する。
+- 未登録時は `SWSS_LOG_WARN("Vxlan tunnel '%s' doesn't exist")` を記録して `return false` (リトライ待ち)。
+- `del_tnl_hw_pending` フラグが立っている場合も `SWSS_LOG_WARN("Tunnel Mapper deletion is pending")` を記録して `return false` でブロック (`vxlanorch.cpp:2053-2058`)。
+- **MAP エントリ数がゼロになると TUNNEL HW 削除がトリガされる**: `vlan_vrf_vni_count == 0` になった時点で `deleteTunnelHw()` が呼ばれ、DIP トンネルが残存している場合は `del_tnl_hw_pending = true` が設定される (`vxlanorch.cpp:2193-2226`)。
 
-<!-- /implicit-refs -->
+### VLAN (PortsOrch)
+
+- **参照箇所**: `vxlanorch.cpp:2030-2034, 2145-2148`
+- `gPortsOrch->getVlanByVlanId(vlan_id, tempPort)` で VLAN オブジェクトを取得する。
+- VLAN が `PortsOrch` に未登録の場合 `SWSS_LOG_WARN("Vxlan tunnel map vlan id doesn't exist: %d", vlan_id)` を記録して `return false` (リトライ待ち)。
+- 削除時に VLAN が消えていた場合は `SWSS_LOG_ERROR("Delete VLAN-VNI map.vlan id doesn't exist: %d")` を記録して `return true` (永続破棄、警告のみ)。
+
+### VRF (VRFOrch) — L3VNI 判定
+
+- **参照箇所**: `vxlanorch.cpp:2095-2113`
+- `VRFOrch* vrf_orch = gDirectory.get<VRFOrch*>()` → `vrf_orch->isL3VniVlan(vni_id)` でこの VNI が L3VNI として登録済みかを確認する。
+- `isL3VniVlan()` が `true` の場合、SAI `create_tunnel_map_entry()` を呼ばず `SAI_NULL_OBJECT_ID` を記録する (暗黙 no-op)。
+- CONFIG_DB に L3VNI を明示するフィールドはなく VRFOrch 内部状態に依存する **silent 挙動差**。同じ `vni` 値でも VRF 登録状態により SAI エントリが生成されるかどうかが変わる。
+
+### PortsOrch — トンネルポート / ブリッジポート管理
+
+- **参照箇所**: `vxlanorch.cpp:2082-2084`
+- `VXLAN_TUNNEL_MAP` の最初のエントリ追加がトンネルポートの HW 作成トリガになる（トンネルが非 active かつ DIP トンネル不使用の場合に `gPortsOrch->addTunnel()` / `addBridgePort()` を呼ぶ）。
+- 逆に最後のエントリ削除時 (`vlan_vrf_vni_count == 0`) にトンネルポートの HW 削除が走る。
+
+### 依存解決順序
+
+```
+VLAN (PortsOrch) ──┐
+VRF  (VRFOrch)  ───┼──→ VXLAN_TUNNEL ──→ VXLAN_TUNNEL_MAP
+```
+
+削除は逆順: `VXLAN_EVPN_NVO` → `VXLAN_TUNNEL_MAP` → `VXLAN_TUNNEL`  
+(`VLAN` は `VXLAN_TUNNEL_MAP` 全削除後に削除可)
+
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 7111763d84c2 -->
