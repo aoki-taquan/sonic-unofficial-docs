@@ -323,3 +323,52 @@ REST/gNMI 書き込み経路なし
 > **スキャン証跡**: `qosorch.cpp` PortQosMapHandler + `db_migrator.py:576,711-714` + `qos_config.j2:414-423` を確認、4 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-platform.md -->
+
+### SAI capability チェック
+
+`PORT_QOS_MAP|global` の `dscp_to_tc_map` を switch レベルに適用する際、QosOrch は
+`gSwitchOrch->querySwitchCapability(SAI_OBJECT_TYPE_SWITCH, SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)`
+で ASICが switch-level DSCP→TC map をサポートするか確認する。
+
+| capability 結果 | 挙動 |
+|----------------|------|
+| `true` | `sai_switch_api->set_switch_attribute(gSwitchId, ...)` で switch OID へ直接 SET |
+| `false` | `"Switch level DSCP to TC QoS map configuration is not supported"` を SWSS_LOG_ERROR 出力し no-op で続行 |
+
+ソース: `qosorch.cpp:1955-1975`
+
+### Broadcom global vs Mellanox / その他 per-port
+
+`db_migrator.py` の `migrate_port_qos_map_global()` が `PORT_QOS_MAP|global` エントリを **Broadcom ASIC 限定** で自動挿入する。
+
+```python
+asics_require_global_dscp_to_tc_map = ["broadcom"]
+if self.asic_type not in asics_require_global_dscp_to_tc_map:
+    return
+```
+
+| ASIC | `PORT_QOS_MAP\|global` 自動挿入 | `dscp_to_tc_map` 適用先 |
+|------|-------------------------------|------------------------|
+| Broadcom | db_migrator が自動生成 | switch レベル `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` |
+| Mellanox / その他 | 自動挿入なし（per-port のみ） | port レベル `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` |
+
+ソース: `sonic-utilities/scripts/db_migrator.py:700-715`
+
+### VOQ chassis 差異
+
+`gMySwitchType == "voq"` の場合、PortQosMapHandler から呼ばれる下位関数が以下のように分岐する。
+
+| 関数 | 非 VOQ | VOQ chassis |
+|------|--------|-------------|
+| `applySchedulerToQueueSchedulerGroup` | `port.m_queue_ids[queue_ind]` から queue_id 取得 | remote system port はスキップ。local port を `getPort()` で取得し直して適用 |
+| `applyWredProfileToQueue` | `port.m_queue_ids[queue_ind]` から queue_id 取得 | `getPortVoQIds(port)` で VOQ ID リストを取得して WRED 適用 |
+| `handleQueueTable` key 形式 | `Ethernet4\|0-1`（2 トークン） | `Host\|ASIC0\|Ethernet4\|0-1`（4 トークン）。`gMyHostName` + `gMyAsicName` と照合して local/remote を判別 |
+
+ソース: `qosorch.cpp:1637,1715,1772-1792`
+
+<!-- /platform -->
