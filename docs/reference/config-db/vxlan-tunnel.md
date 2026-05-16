@@ -233,6 +233,71 @@ db_migrator.py での VXLAN_TUNNEL マイグレーションなし
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`VXLAN_TUNNEL` テーブルの変更は **vxlanmgrd → orchagent** の 2 段階パイプラインで処理される。
+
+**段階 1 — vxlanmgrd が CONFIG_DB を購読**
+
+`vxlanmgrd` は `Orch` 基底クラスの `addConsumer()` 経由で CONFIG_DB の `VXLAN_TUNNEL`（`CFG_VXLAN_TUNNEL_TABLE_NAME`）を購読する。CONFIG_DB のため `Orch::addConsumer()` は `swss::SubscriberStateTable`（Redis keyspace 通知 `__keyspace@4__:VXLAN_TUNNEL|*` への PSUBSCRIBE）を割り当てる (`vxlanmgrd.cpp:48-57`)。
+
+**段階 2 — orchagent が APP_DB を購読**
+
+`orchagent` の `VxlanTunnelOrch` は `Orch2` 基底クラスで APP_DB の `VXLAN_TUNNEL_TABLE`（`APP_VXLAN_TUNNEL_TABLE_NAME`）を購読する。APP_DB のため `Orch::addConsumer()` は `swss::ConsumerStateTable`（PUBLISH/SUBSCRIBE channel ベース）を割り当てる (`orchdaemon.cpp:350-351`)。
+
+| 購読者 | 購読 API | 購読テーブル | バッチ |
+|--------|---------|--------------|--------|
+| `vxlanmgrd` (`VxlanMgr`) | `SubscriberStateTable` (keyspace) | `VXLAN_TUNNEL` (CONFIG_DB) | `DEFAULT_POP_BATCH_SIZE` (128) |
+| `orchagent` (`VxlanTunnelOrch`) | `ConsumerStateTable` (channel) | `VXLAN_TUNNEL_TABLE` (APP_DB) | `gBatchSize` (CLI `-b` 引数) |
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+CLI: config vxlan add <name> <src_ip>
+  ↓ sonic-utilities/config/vxlan.py:49
+  Table::set("VXLAN_TUNNEL|<name>", {src_ip: <ip>})
+CONFIG_DB: HSET "VXLAN_TUNNEL|<name>" src_ip <ip>
+  ↓ Redis keyspace event "__keyspace@4__:VXLAN_TUNNEL|<name>" "hset"
+vxlanmgrd: SubscriberStateTable::pops() → HGETALL
+  ↓ VxlanMgr::doTask(consumer) [vxlanmgr.cpp:214-260]
+    CFG_VXLAN_TUNNEL_TABLE_NAME → doVxlanTunnelCreateTask()
+  ↓ ip link add ... type vxlan + m_appVxlanTunnelTable.set(...)
+APP_DB: HSET "VXLAN_TUNNEL_TABLE|<name>" src_ip <ip>  + PUBLISH channel
+  ↓ ConsumerStateTable channel notification
+orchagent: VxlanTunnelOrch::addOperation(request) [vxlanorch.cpp:1591]
+  ↓ vxlan_tunnel_table_[name] = new VxlanTunnel(...)
+  ↓ create_tunnel() [vxlanorch.cpp:291]
+SAI: sai_tunnel_api->create_tunnel(&tunnel_id, ...) [vxlanorch.cpp:397]
+     sai_tunnel_api->create_tunnel_term_table_entry(...) [vxlanorch.cpp:482]
+```
+
+- `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:22-23`)。keyspace 通知到着で即座に wake up し、タイムアウト前に処理。
+- `VxlanTunnelOrch::addOperation()` が `VxlanTunnel` オブジェクトを生成し、NVO/マップ登録時に `SAI_TUNNEL_TYPE_VXLAN` トンネルを作成する。削除時は NVO・MAP が先に消えていないと `delOperation()` が `false` を返しリトライキューに積まれる (`vxlanorch.cpp:1648-1672`)。
+
+### gDirectory を介した Orch 間連携 (Observer 代替)
+
+`VxlanTunnelOrch` は伝統的な `attach()`/`notify()` Observer インタフェースを持たず、`gDirectory` グローバルレジストリ経由で他 Orch が直接参照を取得する。
+
+| 呼び出し元 | 呼び出し先 | 契機 |
+|-----------|-----------|------|
+| `VxlanTunnelOrch` | `EvpnNvoOrch` (`gDirectory.get`) | `addTunnelUser()` / `delTunnelUser()` 時にリモート VTEP 処理 (`vxlanorch.cpp:1678,1733,1795`) |
+| `VxlanTunnelMapOrch` | `VxlanTunnelOrch` (`gDirectory.get`) | MAP addOperation 時にトンネル存在確認 + OID 取得 (`vxlanorch.cpp:2046`) |
+| `VxlanVrfMapOrch` | `VxlanTunnelOrch` + `VxlanTunnelMapOrch` | VRF-VNI マッピング生成 (`vxlanorch.cpp:2260-2261`) |
+
+### STATE_DB フィードバックパス
+
+`VxlanTunnelOrch` は `addRemoveStateTableEntry()` で `STATE_DB` の `STATE_VXLAN_TUNNEL_TABLE_NAME` にトンネル稼働状態を書き戻す (`vxlanorch.cpp:1913-1955`)。`vxlanmgrd` も `m_stateVxlanTunnelTable` (STATE_DB) を参照して tunnel が active かを確認し（`vxlanmgr.cpp:196`）、削除時に STATE テーブルが空でないと `SWSS_LOG_WARN` + リトライする。これは監視フィードバックパスであり、双方向 pub/sub ではない。
+
+### サービス再起動トリガー
+
+なし。`VxlanTunnelOrch` は orchagent 内インメモリハンドラであり、`VXLAN_TUNNEL` の追加・削除は `sai_tunnel_api->create_tunnel()` / `remove_tunnel()` のライブ SAI 操作で反映される。プロセス再起動・サービス restart を伴わない。`vxlanmgrd` 側も netlink（`ip link add/del`）のライブ操作のみ。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23,350-351,573` (SELECT_TIMEOUT / VxlanTunnelOrch 生成)、`sonic-swss/orchagent/vxlanorch.cpp:1245-1308,1591-1672,291-400,1678,1733` (Orch2 コンストラクタ / addOperation / create_tunnel / EvpnNvoOrch 連携)、`sonic-swss/cfgmgr/vxlanmgrd.cpp:44-58` (CFG_VXLAN_TUNNEL_TABLE_NAME 購読)、`sonic-swss/cfgmgr/vxlanmgr.cpp:183-260` (VxlanMgr::doTask ディスパッチ); 詳細分析 `meta/_intermediate/cdb-flow/vxlan-tunnel-pubsub.md`
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差異
 
