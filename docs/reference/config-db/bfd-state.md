@@ -184,6 +184,59 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E — コード由来)
+
+`bfdorch.cpp` および `orch.h` に直接埋め込まれた定数で、CONFIG_DB / STATE_DB / YANG では設定不能なもの。詳細は [meta/_intermediate/cdb-flow/bfd-state-constants.md](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-state-constants.md) を参照。
+
+### `#define` マクロ (デフォルト値)
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `BFD_SESSION_DEFAULT_TX_INTERVAL` | `1000` (ms) | `tx_interval` 未指定時のデフォルト | `bfdorch.cpp:15` |
+| `BFD_SESSION_DEFAULT_RX_INTERVAL` | `1000` (ms) | `rx_interval` 未指定時のデフォルト | `bfdorch.cpp:16` |
+| `BFD_SESSION_DEFAULT_DETECT_MULTIPLIER` | `10` | `multiplier` 未指定時のデフォルト | `bfdorch.cpp:17` |
+| `BFD_SESSION_DEFAULT_TOS` | `192` | `tos` 未指定時のデフォルト (DSCP CS6 相当)。STATE_DB 非書込み | `bfdorch.cpp:19` |
+
+### `session_state_lookup` — SAI 状態 → STATE_DB 文字列
+
+| SAI 列挙値 | STATE_DB 文字列 |
+|-----------|---------------|
+| `SAI_BFD_SESSION_STATE_ADMIN_DOWN` | `"Admin_Down"` |
+| `SAI_BFD_SESSION_STATE_DOWN` | `"Down"` |
+| `SAI_BFD_SESSION_STATE_INIT` | `"Init"` |
+| `SAI_BFD_SESSION_STATE_UP` | `"Up"` |
+
+`bfdorch.cpp:49-55` の `const map<sai_bfd_session_state_t, string>`。`hset(key, "state", session_state_lookup.at(state))` (`bfdorch.cpp:252`) および create 直後の固定書込み (`bfdorch.cpp:544`) で参照される。**`"Admin_Down"` のみアンダースコア表記** に注意 (CLI/監視は完全一致比較が必要)。
+
+### `session_type_map` / `session_type_lookup` — type 双方向変換
+
+| 文字列 | SAI 列挙値 |
+|-------|----------|
+| `"demand_active"` | `SAI_BFD_SESSION_TYPE_DEMAND_ACTIVE` |
+| `"demand_passive"` | `SAI_BFD_SESSION_TYPE_DEMAND_PASSIVE` |
+| `"async_active"` (default) | `SAI_BFD_SESSION_TYPE_ASYNC_ACTIVE` |
+| `"async_passive"` | `SAI_BFD_SESSION_TYPE_ASYNC_PASSIVE` |
+
+CONFIG_DB → SAI: `session_type_map` (`bfdorch.cpp:33-39`)。SAI → STATE_DB: `session_type_lookup` (`bfdorch.cpp:41-47`)。デフォルトは `SAI_BFD_SESSION_TYPE_ASYNC_ACTIVE` (`bfdorch.cpp:340`)。
+
+### フィールド名・キー区切り文字リテラル
+
+| 値 | 用途 | ソース |
+|----|------|--------|
+| `"state"` | STATE_DB フィールド名 (状態) | `bfdorch.cpp:252,544` |
+| `"type"` | STATE_DB フィールド名 (セッション種別) | `bfdorch.cpp:418` |
+| `"default"` | VRF / interface のデフォルト値 (hardware lookup 時の interface) | `bfdorch.cpp:482,498,531` |
+| `state_db_key_delimiter = '|'` | STATE_DB キー区切り文字 (全 orch 共通) | `orch.h:38`, `bfdorch.cpp:638` |
+
+### 補足
+
+- `tos` のデフォルト `192` は SAI 属性専用で **STATE_DB / 読み出し不可**。
+- `tx_interval` / `rx_interval` は STATE_DB には ms、SAI には ×1000 した μs で投入される。
+- `state_db_key_delimiter` が `'|'` のため、VRF 名や interface 名に `|` を含めることはできない。
+
+<!-- /constants -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -197,6 +250,72 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 | SAI セッション作成失敗 | `sai_bfd_api->create_bfd_session()` 失敗時は STATE_DB に書き込まれない |
 
 <!-- /cdb-exceptions -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+STATE_DB `BFD_SESSION_TABLE` の書き手は `bfdorch` のみで、`swss::Table::set/hset/del` を直接呼ぶ（戻り値なし）。アプリ層で「STATE_DB 書込み自体の失敗」は観測できず、Redis I/O 例外時は orchagent プロセスごと abort → systemd 再起動 → 起動時 cleanup ループ (`bfdorch.cpp:74-86`) で全エントリ削除後に再作成される自己回復経路に集約される。本節は (A) SAI セッション作成失敗、(B) セッション削除失敗、(C) SAI 通知ハンドラ登録失敗 / 切断、(D) SAI 通知受信時の lookup ミス、(E) 入力バリデーション失敗による書込み未到達、の 5 系統を整理する。
+
+### A. SAI セッション作成失敗 (`create_bfd_session`)
+
+| 失敗条件 | 結果 | STATE_DB 反映 | evidence |
+|---|---|---|---|
+| `sai_bfd_api->create_bfd_session()` 失敗 → `retry_create_bfd_session()` も失敗 | `SWSS_LOG_ERROR("Failed to create bfd session ... rv:%d")` → `handleSaiCreateStatus(SAI_API_BFD, status)`。`task_success` 以外なら `parseHandleSaiStatusFailure()` で `return false`、`m_stateBfdSessionTable.set()` 行に到達しない | **書込みなし** (`bfd_session_map` / `bfd_session_lookup` も未登録) | `bfdorch.cpp:547-562` |
+| `retry_create_bfd_session()` でポート番号フォールバック (3784→4784) が SAI WARN を出して成功 | 通常書込み継続。STATE_DB 反映は正常経路と同一 | `state="Down"` で書込み | `bfdorch.cpp:583-606` |
+| `handleSaiCreateStatus` が `task_success` 返却（リトライ可能扱い） | 関数は `false` を返さず継続するが、`bfd_session_id` が `SAI_NULL_OBJECT_ID` のまま STATE_DB 書込みに至る可能性。後段 SAI 通知が来ても `bfd_session_lookup` に欠けるため hset 不能 | 整合性破壊（要 SAI 実装依存）。Phase E 監視推奨 | `bfdorch.cpp:556-568` |
+
+### B. SAI セッション削除失敗 (`remove_bfd_session`)
+
+| 失敗条件 | 結果 | STATE_DB 反映 | evidence |
+|---|---|---|---|
+| `bfd_session_map` に該当 key なし | `SWSS_LOG_ERROR("BFD session for ... does not exist")` → `return true`（成功扱い） | **何もしない**（STATE_DB に古いエントリが残ればそのまま） | `bfdorch.cpp:611-615` |
+| `sai_bfd_api->remove_bfd_session()` 失敗 | `SWSS_LOG_ERROR("Failed to remove bfd session ... rv:%d")` → `handleSaiRemoveStatus()`。`task_success` 以外なら `parseHandleSaiStatusFailure()` で `return false`、`m_stateBfdSessionTable.del()` 行に到達しない | **削除されず残留**。`doTask()` 上位 SET/DEL ループで retry 候補に戻るが `bfd_session_map` には残るため再 DEL 試行になる | `bfdorch.cpp:618-627` |
+| SAI remove 成功 | `m_stateBfdSessionTable.del(peer)` で STATE_DB 行削除 | 削除 | `bfdorch.cpp:629` |
+
+### C. SAI 通知ハンドラ登録失敗 / 切断 (`register_bfd_state_change_notification`)
+
+| 失敗条件 | 結果 | STATE_DB 反映 | evidence |
+|---|---|---|---|
+| `sai_query_attribute_capability(SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY)` 失敗 | `SWSS_LOG_ERROR("Unable to query the BFD change notification capability")` → `return false` | 初期書込み (`state="Down"`) は走るが、**以降 SAI 通知が届かないため `state` が永久に `"Down"` で固着**。`BfdMonitorOrch` / `vnetorch` 誤判定の経路 | `bfdorch.cpp:273-284` |
+| capability あるが `set_implemented==false` | `SWSS_LOG_ERROR("BFD register change notification not supported")` → `return false` | 同上（state 固着） | `bfdorch.cpp:286-290` |
+| `set_switch_attribute()` でハンドラ登録失敗 | `SWSS_LOG_ERROR("Failed to register BFD notification handler")` → `return false` | 同上（state 固着） | `bfdorch.cpp:296-301` |
+| `ASIC_DB` NOTIFICATIONS チャネル切断（Redis サブスクライブ側） | `NotificationConsumer::pop()` がブロック / 例外。Redis 切断は `DBConnector` レイヤで例外 → orchagent abort → systemd 再起動 → init 再走 | プロセス再起動で全エントリクリーンアップ後に再作成 | `bfdorch.cpp:63-65, 74-86` |
+
+!!! warning "通知ハンドラ登録失敗は『静かな state 固着』を生む"
+    `register_bfd_state_change_notification()` の失敗（`return false`）はプロセス abort に直結しない。結果、`create_bfd_session()` 直後の `state="Down"` が固定され、SAI/ピアが Up になっても STATE_DB は更新されない。syslog で `"BFD register change notification not supported"` / `"Failed to register BFD notification handler"` の出現を監視すべき。
+
+### D. SAI 通知受信時の lookup ミス (`doTask(NotificationConsumer)`)
+
+| 失敗条件 | 結果 | STATE_DB 反映 | evidence |
+|---|---|---|---|
+| `bfd_session_lookup[id]` が未登録の `bfd_session_id` を SAI が通知 | `std::map::operator[]` がデフォルト構築（`state=0=SAI_BFD_SESSION_STATE_ADMIN_DOWN`, `peer=""`）を**挿入**。差分判定が通る場合 `m_stateBfdSessionTable.hset("", "state", ...)` で空キー行を生成 | **`BFD_SESSION_TABLE\|` (空 peer) という不正キーが生成されうる**。`bfd_session_lookup` にも誤エントリが永続化 | `bfdorch.cpp:244-263` |
+| `session_state_lookup.at(state)` が範囲外の `state` を受信 | `std::out_of_range` 例外 → orchagent プロセス abort | プロセス再起動で全クリーンアップ | `bfdorch.cpp:247, 252` |
+| `state == bfd_session_lookup[id].state`（差分なし） | `if` ブロックスキップ。`hset` も `notify()` も発火しない | 書込みなし（正常） | `bfdorch.cpp:249-263` |
+
+### E. 入力バリデーション失敗 → STATE_DB 書込み未到達 (`create_bfd_session` 前半)
+
+| 失敗条件 | 結果 | STATE_DB 反映 | evidence |
+|---|---|---|---|
+| key パース失敗（VRF / ifname 欠落） | `SWSS_LOG_ERROR("Failed to parse key ... no vrf/ifname is given")` → `return false` | 書込みなし | `bfdorch.cpp:323-333` |
+| 同一 key で `bfd_session_map` に既存 | `SWSS_LOG_ERROR("BFD session for ... already exists")` → `return false` | 書込みなし（既存行はそのまま） | `bfdorch.cpp:316-320` |
+| BFD type が `SESSION_TYPE_MAP` に未定義 | `SWSS_LOG_ERROR("Invalid BFD session type ...")` → `return false` | 書込みなし | `bfdorch.cpp:383-387` |
+| 未対応属性キー | `SWSS_LOG_ERROR("Unsupported BFD attribute ...")` → `return false` | 書込みなし | `bfdorch.cpp:404-407` |
+| `src_ip_provided == false` (`local_addr` 欠落) | `SWSS_LOG_ERROR("Failed to create BFD session ... source IP is not provided")` → `return false` | 書込みなし | `bfdorch.cpp:409-413` |
+| `hardware_lookup_valid == false` + ポート解決不能 | `SWSS_LOG_ERROR("Failed to locate port ...")` → `return false` | 書込みなし | `bfdorch.cpp:485-489` |
+| `hardware_lookup_valid == false` + `dst_mac` 未指定 | `SWSS_LOG_ERROR("destination MAC address required when hardware lookup not valid")` → `return false` | 書込みなし | `bfdorch.cpp:491-495` |
+| `hardware_lookup_valid == false` + 非 default VRF | `SWSS_LOG_ERROR("vrf is not supported when hardware lookup not valid")` → `return false` | 書込みなし | `bfdorch.cpp:497-502` |
+| `hardware_lookup_valid == true` + `dst_mac` 指定 | `SWSS_LOG_ERROR("destination MAC address not supported when hardware lookup valid")` → `return false` | 書込みなし | `bfdorch.cpp:522-528` |
+
+### 検出ロジック補足
+
+- **`m_stateBfdSessionTable.set/hset/del` の戻り値なし**: `swss::Table` API は void。Redis 接続失敗時は `DBConnector` 系から `system_error` 例外が伝播し orchagent abort → systemd 再起動 → コンストラクタ内 cleanup ループ (`bfdorch.cpp:74-86`) で全 `BFD_SESSION_TABLE` / `BFD_SOFTWARE_SESSION_TABLE` エントリ削除 → CONFIG_DB / APPL_DB 経由で再投入される自己回復経路。STATE_DB 不整合が永続することは設計上ない。
+- **SAI 通知欠落の最大リスク**: C 系統（register 失敗）は `state="Down"` 固着、D 系統（lookup ミス）は空キー行生成・整合性破壊で、いずれもプロセス自走中は回復しない。
+- **B 系統 SAI 削除失敗時の `bfd_session_map` 残留**: `parseHandleSaiStatusFailure` が `task_need_retry` を返した場合でも `bfd_session_map` は残ったままで、次サイクル DEL は同じ key の再 DEL になる。新規 SET 判定にはならない。
+- **D 系統 `operator[]` 副作用**: `std::map::operator[]` は要素を**挿入する**ため、未知の SAI session id が来ると `bfd_session_lookup` の汚染が永続化する。`.find()` ガードがないのは設計上の盲点。Phase E（観測手順）で `BFD_SESSION_TABLE` キーに空 peer (`||` 連続) が混入していないか確認推奨。
+
+> **証跡**: `BfdOrch` constructor + cleanup L57-88、`doTask(Consumer)` L99-216、`doTask(NotificationConsumer)` L220-268、`register_bfd_state_change_notification()` L271-303、`create_bfd_session()` L305-575（バリデーション L316-528、SAI 作成 L547-562、STATE_DB 書込み L565-568）、`retry_create_bfd_session()` L583-606、`remove_bfd_session()` L609-633、`createSoftwareBfdSession()` L706-710、`removeSoftwareBfdSession()` L713-715。詳細グレップ証跡は `meta/_intermediate/cdb-flow/bfd-state-failure.md` を参照。
+
+<!-- /failure -->
 
 ## 関連リファレンス
 
