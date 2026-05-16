@@ -367,4 +367,36 @@ YANG の `must` は `high_threshold < 100` (strictly less) を要求するが、
 `crmThreshTypeMap` は `"percentage"` / `"used"` / `"free"` の小文字のみを受け付ける。大文字 (`PERCENTAGE` 等) を CONFIG_DB に書き込むと `std::out_of_range` 例外 → `SWSS_LOG_ERROR` + `return` (残フィールドも適用されない)。YANG 型 `crm_threshold_type` は大文字も許容するため、YANG バリデーション通過後でも実装側でエラーとなる。<!-- evidence: crmorch.cpp L299-303, L496, L530-531 -->
 <!-- /defaults -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`CRM|Config` の SET 処理後、`CrmOrch` は以下の副次書込を行う。
+
+### COUNTERS_DB — `CRM` テーブル
+
+書込タイミング: `polling_interval` 秒ごと (`updateCrmCountersTable()`)。
+
+| 操作 | キー | フィールド | 条件 |
+|------|------|-----------|------|
+| `set` | `STATS` (通常リソース) または ACL/DASH OID キー | `crm_stats_<resource>_used` | 各リソースの使用カウンタを毎 poll 書込 (`crmorch.cpp:1082`) |
+| `set` | 同上 | `crm_stats_<resource>_available` | 各リソースの空きカウンタを毎 poll 書込 (`crmorch.cpp:1106`) |
+| `del` | `STATS` | — | orchagent 起動時コンストラクタで既存統計を全消去 (`crmorch.cpp:414`) |
+| `del` | ACL テーブル OID キー | — | ACL テーブル削除時 (`crmorch.cpp:616`) |
+| `del` | DASH ACL グループキー | — | DASH ACL グループ削除時 (`crmorch.cpp:730, 736`) |
+
+`crm_stats_*` フィールドは全 40+ リソース (`ipv4_route`, `ipv6_route`, `ipv4_nexthop`, `acl_table`, `fdb_entry`, `dash_eni` 等) の `_used` / `_available` 二種類。COUNTERS_DB テーブル名定数 `COUNTERS_CRM_TABLE = "CRM"` (`sonic-swss-common/common/schema.h:237`)。
+
+### syslog / Event (STATE_DB 書込なし)
+
+| 出力先 | 内容 | 条件 |
+|--------|------|------|
+| syslog WARN | `THRESHOLD_EXCEEDED for <type> <N>%% Used <U> free <F>` | `utilization >= highThreshold` かつ `exceededLogCounter < 10` (`crmorch.cpp:1175`) |
+| syslog WARN | `THRESHOLD_CLEAR for <type> <N>%% Used <U> free <F>` | `utilization <= lowThreshold` かつ `exceededLogCounter > 0` (`crmorch.cpp:1183`) |
+| Event `chk_crm_threshold` | `{percent, used_cnt, free_cnt}` | THRESHOLD_EXCEEDED 時 (`crmorch.cpp:1178`) |
+
+`exceededLogCounter` が 10 (`CRM_EXCEEDED_MSG_MAX`) 以上で syslog 停止。`threshold_type` 変更時にリセット (`crmorch.cpp:503–507`)。
+
+STATE_DB への書込は CrmOrch 単体では行わない。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: c6e41e02b036 -->
