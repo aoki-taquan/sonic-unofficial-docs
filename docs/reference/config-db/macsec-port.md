@@ -309,3 +309,43 @@ APPL_DB 経由で `MACsecOrch` が SAI オブジェクトを生成する順序�
 
 詳細分析: [`meta/_intermediate/cdb-flow/macsec-port-ordering.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-ordering.md)
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`PORT|<ifname>` の `macsec` フィールドを処理する際、`macsecmgrd` および `MACsecOrch` が Direction A 入力以外に暗黙的に参照するテーブル・DB を列挙する。スキャン詳細は [`meta/_intermediate/cdb-flow/macsec-port-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-cross-refs.md) を参照。
+
+### STATE_DB — PORT_TABLE（ポート ready ゲート）
+
+| 参照先 | 参照方向 | 条件 | evidence |
+|--------|---------|------|----------|
+| STATE_DB `PORT_TABLE` (`state`, `netdev_oper_status`) | 読み出し (ゲート) — 必須 | `isPortStateOk()` が `state == "ok"` かつ `netdev_oper_status == "up"` を確認。未達なら `task_need_retry` | `macsecmgr.cpp:614-631` |
+
+### CONFIG_DB — MACSEC_PROFILE（プロファイルキャッシュ）
+
+| 参照先 | 参照方向 | 条件 | evidence |
+|--------|---------|------|----------|
+| CONFIG_DB `MACSEC_PROFILE` (`m_profiles` キャッシュ経由) | 読み出し (インメモリ) — 必須 | `m_profiles.find(profile_name)` が失敗するとプロファイル未ロードとして `task_need_retry` | `macsecmgr.cpp:488-495` |
+
+### APPL_DB — MACSEC テーブル群（macsecmgrd → MACsecOrch パス）
+
+| 参照先 | 参照方向 | 条件 | evidence |
+|--------|---------|------|----------|
+| APPL_DB `MACSEC_PORT_TABLE` | macsecmgrd が書き込み → MACsecOrch が読み出し | `enableMACsec()` 成功後 | `macsecorch.cpp:872-874` |
+| APPL_DB `MACSEC_EGRESS_SC_TABLE` / `MACSEC_INGRESS_SC_TABLE` | MACsecOrch 読み出し | SC 作成時 | `macsecorch.cpp:876-882` |
+| APPL_DB `MACSEC_EGRESS_SA_TABLE` / `MACSEC_INGRESS_SA_TABLE` | MACsecOrch 読み出し | SA 作成時 | `macsecorch.cpp:884-890` |
+
+### STATE_DB — MACSEC 状態テーブル（MACsecOrch 書き戻し）
+
+| 参照先 | 参照方向 | 条件 | evidence |
+|--------|---------|------|----------|
+| STATE_DB `STATE_MACSEC_PORT_TABLE_NAME` | 書き戻し (MACsecOrch) | SAI MACsec Port 作成後 | `macsecorch.cpp:633` |
+| STATE_DB `STATE_MACSEC_{EGRESS,INGRESS}_SC_TABLE_NAME` | 書き戻し | SC 作成後 | `macsecorch.cpp:634-635` |
+| STATE_DB `STATE_MACSEC_{EGRESS,INGRESS}_SA_TABLE_NAME` | 書き戻し | SA 作成後 | `macsecorch.cpp:636-637` |
+
+### COUNTERS_DB — MACsec カウンタマップ
+
+| 参照先 | 参照方向 | 条件 | evidence |
+|--------|---------|------|----------|
+| `COUNTERS_DB` `COUNTERS_MACSEC_NAME_MAP` / `COUNTERS_MACSEC_SA_GROUP` 等 | 書き込み (MACsecOrch) | MACsec SA 有効化後にフレックスカウンタを登録 | `macsecorch.cpp:639-667` |
+<!-- /cross-refs -->
