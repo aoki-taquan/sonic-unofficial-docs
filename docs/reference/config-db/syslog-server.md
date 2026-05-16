@@ -511,6 +511,63 @@ per-server 未設定 かつ SYSLOG_CONFIG|GLOBAL 未設定
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1695-1743 (RSyslogCfg) -->
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`hostcfgd` (`RSyslogCfg`) は `SYSLOG_SERVER` と `SYSLOG_CONFIG` の **両テーブルをまとめて再読込** して `rsyslog-config.service` を再起動する。このため書込み順序が中間状態の整合性に直結する。
+
+### systemd 起動順序
+
+```
+config-setup.service (Requires/After)
+  └─ rsyslog-config.service
+       ├─ After=config-setup.service
+       ├─ After=sonic.target
+       └─ After=interfaces-config.service
+            └─ ExecStart=/usr/bin/rsyslog-config.sh
+                 └─ sonic-cfggen -d -t rsyslog.conf.j2 → /etc/rsyslog.conf
+                      └─ systemctl restart rsyslog
+```
+
+`rsyslog-config.service` は `config-setup.service` 完了後かつ `interfaces-config.service` 完了後に起動する。インターフェース設定（`source` フィールド向け送信元 IP や VRF デバイス名）が確定してから rsyslog.conf が生成される。
+
+### hostcfgd ロード時の順序
+
+```
+HostConfigDaemon.load(init_data)
+  │
+  ├─ load_independent_config()   # AAA/TACACS/RADIUS/LDAP（systemd 待機前）
+  │
+  ├─ wait_till_system_init_done()  # systemctl is-system-running --wait
+  │
+  ├─ rsyslogcfg.load(syslog_cfg, syslog_srv)   # L2269
+  │   └─ キャッシュに SYSLOG_CONFIG + SYSLOG_SERVER を格納（サービス再起動なし）
+  │
+  └─ register_callbacks()
+      ├─ subscribe(SYSLOG_CONFIG, rsyslog_config_handler)   # L2500-2501
+      └─ subscribe(SYSLOG_SERVER, rsyslog_server_handler)   # L2502-2503
+```
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `SYSLOG_CONFIG` を先書き → `SYSLOG_SERVER` 追加 | 推奨（中間状態最小化） | runtime は両テーブルを再読込するため最終的に整合 |
+| 2 | `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` → `SYSLOG_SERVER.<key>.vrf=mgmt` | **先行必須**（YANG must 違反で書き込み拒否） | YANG バリデーション層で reject |
+| 3 | `VRF.<name>` 作成 → `SYSLOG_SERVER.<key>.vrf=<name>` (leafref) | **先行必須**（YANG leafref 参照未解決で reject） | YANG バリデーション層で reject |
+| 4 | サーバー変更 or 削除 → `rsyslog-config.service` 再起動 | 原子操作なし（再起動中は旧設定）| `RemainAfterExit=yes` で完了状態を保持 |
+| 5 | 複数 `SYSLOG_SERVER` エントリ追加 | 順序不問（全エントリを一括再生成） | `update_rsyslog_config()` はキャッシュ比較後に一括適用 |
+
+### 主要な制約詳細
+
+**VRF 先行必須（依存 #2/#3）**: `vrf=mgmt` を使用する場合は `MGMT_VRF_CONFIG|mgmtVrfEnabled=true` を先に設定すること。YANG `must` 制約が DB 書き込み時に評価されるため、VRF 未設定のままサーバーエントリを追加しようとすると CLI/REST いずれからも reject される。VRF 名を leafref で参照する場合は `VRF` テーブルのエントリ作成が先行必須。
+
+**SYSLOG_CONFIG と SYSLOG_SERVER の結合再生成（依存 #1/#5）**: `rsyslog_server_handler()` は `SYSLOG_SERVER` への変更（追加・削除・変更）をトリガーに `SYSLOG_CONFIG` テーブルも再取得してから `rsyslog-config.service` を再起動する。これは `severity` の 3 段階カスケード（per-server → GLOBAL → rsyslog デフォルト）を正しく計算するために両テーブルが必要なため。`SYSLOG_SERVER` を追加する前に `SYSLOG_CONFIG|GLOBAL` の設定（特に `severity`）を確定させることを推奨する。
+
+**再起動中の中間状態（依存 #4）**: `rsyslog-config.service` 再起動中（`rsyslog.conf.j2` テンプレート展開 + `systemctl restart rsyslog`）の数秒間はリモート転送が停止する。複数サーバーを追加する場合は一括での `config reload` を利用することでサービス再起動回数を 1 回に抑制できる。
+
+<!-- /ordering -->
+
 <!-- cross-refs -->
 ## 暗黙参照 — rsyslog 設定生成時に参照される CONFIG_DB テーブル (Phase C)
 
