@@ -331,4 +331,52 @@ vtysh -c 'show running-config bgp'
 <!-- evidence: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2:34 -->
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> **調査根拠**: `bgpcfgd/managers_allow_list.py` および `docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2` 精読 (2026-05-16)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-failure.md`
+
+`BGPAllowListMgr` (Manager 基底) の `set_handler` / `del_handler` 戻り値は CONFIG_DB SubscriberStateTable ループで解釈される。**`return False` は「未消化」扱いで自動再投入** され、依存物 (FRR `community-list`、vtysh セッション、constants 整備) が揃うまで暗黙にリトライが続く。`return True` は消化 (成功または明示スキップ)。
+
+### SET 失敗マトリクス (`managers_allow_list.py`)
+
+| 条件 | 戻り値 | リトライ | ログ |
+|---|---|---|---|
+| `constants["bgp"]["allow_list"]["enabled"]` が false / 未定義 | `True` (消化) | なし | `LOG_WARN "... but this feature is disabled in constants"` (L699-707) |
+| key が `key_re` (`DEPLOYMENT_ID\|<id>...`) 不一致 | `False` | **再投入** | `LOG_ERR "... invalid key"` |
+| `data` が `None` | `False` | 再投入 | `LOG_ERR` |
+| `default_action` が `permit`/`deny` 以外 | `False` | 再投入 | `LOG_ERR` |
+| `prefixes_v4` に IPv6 表記 / `prefixes_v6` に IPv4 表記 | `False` | 再投入 | `LOG_ERR` |
+| `prefixes_v4` と `prefixes_v6` が両方空 | `False` | 再投入 | `LOG_ERR "... without prefixes. Skip it."` (L107-109) |
+| FRR `community-list` (`drop_community` 前提) 未準備で vtysh コマンド失敗 | `False` | **再投入** (FRR 起動 / community-list 整備まで待機) | `LOG_ERR` (vtysh stderr) |
+| `cfg_mgr.push_list()` 戻り False (vtysh 文法エラー / セッション切断) | `False` | 再投入 | `LOG_ERR "push_list failed"` |
+| `deployment_id` が `DEVICE_METADATA.localhost.deployment_id` と不一致 | `True` (消化) | なし | silent (debug 程度)。FRR ポリシー差し替えは行われず effective には no-op |
+| `__to_prefix_list()` 内で prefix 解析例外 | 例外伝播 → `False` | 再投入 | スタックトレース (未捕捉) |
+
+### DEL 失敗マトリクス
+
+| 条件 | 戻り値 | 結果 |
+|---|---|---|
+| key が `key_re` 不一致 | `True` (silent skip) | `LOG_ERR` のみ。再投入なし |
+| `enabled=false` | `True` (消化) | `LOG_WARN` のみ |
+| vtysh `cfg_mgr.push_list()` 失敗 | `False` | FRR 復旧まで再試行 |
+| DEL 後フォールバック (`data=None` で `__update_policy` 再呼) | n/a | 最後の deployment に対し constants 由来の default-action ルールが残置 (`managers_allow_list.py:197`) |
+
+### `policies.conf.j2` (FRR テンプレ) 由来の暗黙失敗
+
+| 条件 | 結果 |
+|---|---|
+| `switch_type == 'chassis-packet'` で `route_eligible_for_fallback_to_default_tag` 未定義 | Jinja undefined → render 失敗。`bgpcfgd` 起動シーケンスで FRR config が空となり SET が**未消化ループ** (`False`) に陥る (`policies.conf.j2:48,71`) |
+| `type == 'SpineRouter'` だが `subtype != 'UpstreamLC'` | DEFAULT_IPV4/V6 マッチブロックを生成しない (silent skip)。ALLOW_LIST 不一致経路は `permit 11 → permit 100` で素通り (`policies.conf.j2:41,64`) |
+
+### リトライ機構の性質
+
+- `set_handler` が `False` を返すと SubscriberStateTable 側で自動再投入。**回数上限・バックオフなし**。
+- FRR 起動直後 / vtysh セッション復旧待ち / `community-list` 準備中などの過渡状態は数秒〜十数秒で自然消化。
+- **`deployment_id` 変化はサブされていない**ため、`DEVICE_METADATA.localhost.deployment_id` を後から書き換えても再評価されない。`config reload` または各 `BGP_ALLOWED_PREFIXES` エントリの再書き込みが必要。
+
+> **Evidence**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py` (L75-110, 197, 699-707, 736-754, 773-785); `dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2` L41,48,64,71。
+<!-- /failure -->
+
 <!-- glossary-links-injected: 43ff039eae38 -->
