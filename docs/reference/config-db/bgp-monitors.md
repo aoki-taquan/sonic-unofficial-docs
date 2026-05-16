@@ -374,4 +374,40 @@ CONFIG_DB SET INTERFACE|eth0|192.0.2.1/30 {}
 CONFIG_DB SET BGP_MONITORS|192.0.2.2 name=BGPMonitor asn=65001 local_addr=192.0.2.1 admin_status=up
 ```
 <!-- /ordering -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+以下の定数は CONFIG_DB フィールドから取得されず、bgpcfgd テンプレートまたは YANG 制約にハードコードされている。
+
+### peer-group 名
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| monitors peer-group 名 | `BGPMON` | `monitors/peer-group.conf.j2:8`, `monitors/instance.conf.j2:5` |
+
+BGP_MONITORS エントリは常に `BGPMON` peer-group に所属する。CONFIG_DB に別の peer-group を指定するフィールドは存在しない。
+
+### route-map 名
+
+| 定数 | 値 | 効果 | ソース |
+|------|----|------|--------|
+| `FROM_BGPMON` | `route-map FROM_BGPMON deny 10` | 全受信経路を拒否（route-monitor は経路を受け取らない設計） | `monitors/policies.conf.j2:4` |
+| `TO_BGPMON` | `route-map TO_BGPMON permit 10` | 全送信経路を許可 | `monitors/policies.conf.j2:6` |
+
+これらの route-map 名は `monitors/peer-group.conf.j2` でも参照される（`neighbor BGPMON route-map FROM_BGPMON in` / `TO_BGPMON out`）。
+
+### その他固定値
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| maximum-prefix (IPv4/IPv6) | `1` | `monitors/peer-group.conf.j2:20,29` |
+| send-community | 無条件有効 | `monitors/peer-group.conf.j2:19,28` |
+| update-source (chassis/VoQ) | `Loopback4096` | `monitors/peer-group.conf.j2:10` |
+| TCP ポート | `179` (BGP well-known) | FRR/OS レベル固定。CONFIG_DB フィールドなし |
+| `name` フィールド制約 | `BGPMonitor` | YANG `must "current() = 'BGPMonitor'"` (`sonic-bgp-monitor.yang:41`) |
+
+> **設計意図**: `FROM_BGPMON deny 10` により monitors peer は経路を受信しない。`maximum-prefix 1` はさらなる安全弁。monitors peer-group は route-monitor 用途（自装置の経路を外部から観測させる）に特化しており、通常の BGP 経路交換とは完全に分離されている。
+
+<!-- /constants -->
 <!-- glossary-links-injected: a1dd9e34d62e -->
