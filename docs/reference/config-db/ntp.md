@@ -1,6 +1,6 @@
 ---
-title: NTP テーブル群 (Phase A defaults + Phase D failure + Phase E constants)
-description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数を網羅した調査ページ。"
+title: NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects)
+description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、および /etc/chrony への副次ファイル書込と systemd 経路を網羅した調査ページ。"
 area: reference
 hard: 0
 verification: code-verified
@@ -21,6 +21,12 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: files/image_config/chrony/chronyd-starter.sh
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: files/image_config/chrony/chrony-config.sh
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: files/image_config/chrony/override.conf
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-host-services
     path: scripts/hostcfgd
     ref: master
@@ -39,7 +45,7 @@ related:
     - sonic-ntp
 ---
 
-# NTP テーブル群 — コード由来デフォルト (Phase A) + 失敗挙動 (Phase D)
+# NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F)
 
 > このページは `NTP` / `NTP_SERVER` / `NTP_KEY` 3 テーブルを横断して、YANG 定義・`init_cfg.json.j2`・`chrony.conf.j2` テンプレート・`hostcfgd` ハンドラの全行精読から得た**暗黙デフォルト**・**乖離**・**dead field**・**silent drop** を記録する。各テーブルの詳細は [`NTP (global)`](./ntp-global.md)・[`NTP_SERVER`](./ntp-server.md)・[`NTP_KEY`](./ntp-key.md) を参照。
 
@@ -372,6 +378,59 @@ CONFIG_DB の NTP テーブルにキーファイルパスを変更するフィ�
 > 中間調査詳細: `meta/_intermediate/cdb-flow/ntp-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込・ファイル書込 (Phase F)
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/ntp-side-effects.md`
+
+### APPL_DB / STATE_DB への副次書込
+
+**0 件。** NTP 処理系は APPL_DB / STATE_DB への書込を一切行わない。NTP 同期ステータスは STATE_DB に記録されず、`chronyc tracking` / `chronyc sources` コマンドによる直接観測のみ。
+
+### ファイル書込: `/etc/chrony/chrony.conf`
+
+CONFIG_DB の NTP テーブル変更は `hostcfgd` の `NtpCfg` ハンドラが検出し `systemctl restart chrony` を発行する。chrony サービスの `ExecStartPre` に登録された `chrony-config.sh` が `sonic-cfggen -d -t chrony.conf.j2` を実行し、CONFIG_DB の内容をもとに `/etc/chrony/chrony.conf` を上書き生成する[^4]。
+
+```
+CONFIG_DB 変更 (NTP / NTP_SERVER / NTP_KEY)
+  → hostcfgd NtpCfg.handler()
+    → ntp_global_update() / ntp_srv_key_update()
+      → systemctl restart chrony    # hostcfgd:1280,1325,1357,1398
+        → ExecStartPre: chrony-config.sh
+          → sonic-cfggen -d -t chrony.conf.j2 > /etc/chrony/chrony.conf
+```
+
+CONFIG_DB フィールドと生成内容の対応:
+
+| CONFIG_DB フィールド | chrony.conf への影響 | evidence |
+|---------------------|---------------------|---------|
+| `NTP_SERVER.<addr>.admin_state == 'disabled'` | そのサーバ行を除外 | `chrony.conf.j2:20` |
+| `NTP_SERVER.<addr>.association_type` | `server` / `pool` ディレクティブ切替 | `chrony.conf.j2:26,49,53` |
+| `NTP_SERVER.<addr>.iburst` | `iburst` オプション付加（truthy 判定バグあり） | `chrony.conf.j2:37` |
+| `NTP_SERVER.<addr>.version` | `version N` オプション付加 | `chrony.conf.j2:43` |
+| `NTP_SERVER.<addr>.key` | `key N` オプション付加 (authentication=enabled 時のみ) | `chrony.conf.j2:30-34` |
+| `NTP.global.authentication == 'enabled'` | `keyfile /etc/chrony/chrony.keys` 行を追加 | `chrony.conf.j2:124-128` |
+| `NTP.global.src_intf` | `bindacqaddress <ip>` 行を追加 (vrf!=mgmt 時) | `chrony.conf.j2:87-116` |
+| `NTP.global.server_role` / `dhcp` | SmartSwitch のみ `allow` + `binddevice bridge-midplane` | `chrony.conf.j2:58-64` |
+
+### ファイル書込: `/etc/chrony/chrony.keys`
+
+同じ `chrony-config.sh` が `sonic-cfggen -d -t chrony.keys.j2 > /etc/chrony/chrony.keys` を実行し、`NTP_KEY` テーブルの内容を書込む。書込後に `chmod o-r /etc/chrony/chrony.keys` でパーミッション制限を適用する[^5]。`NTP_KEY.trusted` フィールドは `chrony.keys.j2` に未参照（dead field）。
+
+### systemd 経路まとめ
+
+| 起動シナリオ | 発行コマンド | 発行元 | evidence |
+|------------|------------|--------|---------|
+| NTP_GLOBAL 変更 | `systemctl restart chrony` | `ntp_global_update()` | `hostcfgd:1357` |
+| NTP_SERVER / NTP_KEY 変更 | `systemctl restart chrony` | `ntp_srv_key_update()` | `hostcfgd:1398` |
+| src_intf の参照インタフェース IP 変更 | `systemctl restart chrony` | `handle_ntp_source_intf_chg()` | `hostcfgd:1325` |
+| MGMT_VRF_CONFIG 変更 | `systemctl stop chrony` + `systemctl start chrony` | mgmt_vrf ハンドラ | `hostcfgd:1660-1662` |
+| ブート時 | `ExecStartPre: chrony-config.sh` のみ（chrony restart なし） | `config-setup.service` → `chrony.service` | `override.conf:9-11` |
+
+chrony の実際の起動 VRF は `ExecStart` に登録された `chronyd-starter.sh` が `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled` と `NTP|global.vrf` を動的に読み取り決定する。
+
+<!-- /side-effects -->
+
 ## 関連ページ
 
 - [CONFIG_DB: NTP (global)](./ntp-global.md)
@@ -387,3 +446,7 @@ CONFIG_DB の NTP テーブルにキーファイルパスを変更するフィ�
 [^2]: `hostcfgd` L1319: `ifs = self.cache.get('global', {}).get('src_intf', '').split(';')` — leaf-list が `;` 区切り文字列として格納される CONFIG_DB の実装依存。<https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
 
 [^3]: `chrony.conf.j2` L37: `{% if config.iburst %}` — Jinja2 で文字列 `'off'` は truthy。`iburst = 'off'` のサーバも `iburst` オプションが生成される潜在的挙動。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony.conf.j2#L37>
+
+[^4]: `chrony-config.sh:9-10`: `sonic-cfggen -d -t /usr/share/sonic/templates/chrony.conf.j2 >/etc/chrony/chrony.conf` および `sonic-cfggen -d -t /usr/share/sonic/templates/chrony.keys.j2 >/etc/chrony/chrony.keys`。`override.conf:9` の `ExecStartPre=!/usr/bin/chrony-config.sh` で chrony サービス起動前に実行される。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony-config.sh>
+
+[^5]: `chrony-config.sh:11`: `chmod o-r /etc/chrony/chrony.keys` — 鍵ファイルへの world-read アクセスを禁止。`chrony.keys.j2:7-18` が `NTP_KEY` テーブルから鍵 ID・タイプ・Base64 デコード済み値を書き込む。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony.keys.j2>
