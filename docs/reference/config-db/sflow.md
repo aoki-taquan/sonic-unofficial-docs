@@ -180,6 +180,34 @@ show sflow
 
 [^2]: sflowmgr / sfloworch 実装: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### PORT 未解決 → retry
+
+`readPortConfig()` 呼び出し時に PORT_TABLE の consumer が `m_consumerMap` に存在しない場合、`SWSS_LOG_ERROR("Consumer object for PORT_TABLE not found")` を出力して処理をスキップする。ポート速度ベースのデフォルト `sample_rate` が解決できないため、`findSamplingRate()` は `ERROR_SPEED` を返し続ける。[^3]
+
+ポート名が `m_sflowPortConfMap` に未登録の状態で `findSamplingRate()` を呼び出すと `SWSS_LOG_ERROR("%s not found in port configuration map")` を出力し `ERROR_SPEED` を返す。この値は `sflowExtractInfo()` で `rate=0` に変換され、`sfloworch` の `doTask` で `rate == 0` 判定によりセッション作成がスキップ・リトライ扱いとなる (`it++; continue;`)。[^3]
+
+### 不正 sample_rate (rate=0 スキップ)
+
+APP_DB に `sample_rate=error` が書き込まれた場合、`sfloworch` の `sflowExtractInfo()` は `rate=0` にフォールバックする。新規ポート処理時に `rate == 0` であれば `doTask` がエントリを次回処理に持ち越すため、そのポートの sFlow セッションは作成されない。[^3]
+
+### SAI samplepacket 失敗
+
+`sai_samplepacket_api->create_samplepacket()` が失敗すると `SWSS_LOG_ERROR("Failed to create sample packet session with rate %d")` を出力し `false` を返す。呼び出し元 `doTask` は `it++; continue;` でリトライキューに残す。[^3]
+
+レート変更時の `remove_samplepacket()` が失敗した場合は `SWSS_LOG_ERROR("Failed to destroy sample packet session with id ...")` を出力するが処理を続行する。古いレートのセッションが ASIC に残留し、複数レートのセッションが混在するリスクがある。[^3]
+
+`sai_port_api->set_port_attribute()` (`SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` / `SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE`) が失敗すると `SWSS_LOG_ERROR("Failed to set session ... on port ...")` を出力し `false` を返す。`doTask` は `it++; continue;` でそのポートエントリを次回処理に持ち越す (retry)。[^3]
+
+### hsflowd サービス制御失敗
+
+`swss::exec("service hsflowd restart/stop")` が非ゼロ終了コードを返した場合、`SWSS_LOG_ERROR("Command '%s' failed with rc %d")` を出力して処理を継続する。CONFIG_DB の `admin_state` と実際の hsflowd サービス状態がずれたままになる。[^3]
+
+[^3]: 失敗挙動抽出: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/sfloworch.cpp>
+
+<!-- /failure -->
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
