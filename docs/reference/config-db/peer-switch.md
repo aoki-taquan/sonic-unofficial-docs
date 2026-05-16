@@ -262,3 +262,63 @@ minigraph.py の `get_tunnel_entries()` 関数が `peer_switch_ip` を受け取�
 > **スキャン証跡**: `orchdaemon.cpp:467-471` + `muxorch.cpp` を確認、3 件分岐抽出。PEER_SWITCH は MuxOrch が MUX_CABLE と同一インスタンスで処理することを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- pubsub -->
+## Phase G: 通信メカニズム (CONFIG_DB Subscribe → SAI Tunnel)
+
+> 証跡: `meta/_intermediate/cdb-flow/peer-switch-phaseG.md`
+> ソース: `sonic-swss/orchagent/orchdaemon.cpp:467-471`, `muxorch.cpp:217-331,2182-2391`
+
+### CONFIG_DB Subscribe 登録
+
+`orchdaemon.cpp:467-471` — `MuxOrch` が `CONFIG_DB` の `PEER_SWITCH` テーブルを
+`Orch2` フレームワーク経由で購読。`CFG_MUX_CABLE_TABLE_NAME` と同一インスタンス・同一
+ディスパッチループ内で処理される。
+
+```cpp
+// orchdaemon.cpp:467-471
+vector<string> mux_tables = {
+    CFG_MUX_CABLE_TABLE_NAME,
+    CFG_PEER_SWITCH_TABLE_NAME          // ← PEER_SWITCH を購読
+};
+gMuxOrch = new MuxOrch(m_configDb, mux_tables, gTunneldecapOrch, gNeighOrch, gFdbOrch);
+```
+
+`muxorch.cpp:2189-2190` — コンストラクタ内で handler を登録:
+
+```cpp
+handler_map_.insert(handler_pair(CFG_PEER_SWITCH_TABLE_NAME, &MuxOrch::handlePeerSwitch));
+```
+
+### SAI Tunnel 生成経路 (SET 時)
+
+```
+CONFIG_DB  PEER_SWITCH|<hostname>  SET
+  └─ MuxOrch::handlePeerSwitch()          muxorch.cpp:2340-2384
+       ├─ decap_orch_->getDstIpAddresses(MUX_TUNNEL)
+       │    TUNNEL 未設定 → return false (retry キュー)
+       ├─ decap_orch_->getDscpMode / getQosMapId
+       └─ create_tunnel(&peer_ip, &dst_ip, ...)  muxorch.cpp:2380
+            ├─ sai_router_intfs_api->create_router_interface(...)
+            │    SAI_ROUTER_INTERFACE_TYPE_LOOPBACK  (overlay IF)
+            └─ sai_tunnel_api->create_tunnel(...)    muxorch.cpp:325
+                 SAI_TUNNEL_ATTR_TYPE          = SAI_TUNNEL_TYPE_IPINIP
+                 SAI_TUNNEL_ATTR_PEER_MODE     = SAI_TUNNEL_PEER_MODE_P2P
+                 SAI_TUNNEL_ATTR_ENCAP_SRC_IP  = PEER_SWITCH.address_ipv4
+                 SAI_TUNNEL_ATTR_ENCAP_DST_IP  = TUNNEL.src_ip
+                 SAI_TUNNEL_ATTR_ENCAP/DECAP_TTL_MODE = PIPE_MODEL
+                 SAI_TUNNEL_ATTR_LOOPBACK_PACKET_ACTION = DROP
+```
+
+### DEL 時 (未実装)
+
+`handlePeerSwitch()` DEL パス (`muxorch.cpp:2387`) は `SWSS_LOG_NOTICE "Not Implemented"` のみ。
+SAI tunnel 削除・`mux_peer_switch_` リセットは行われない。orchagent 再起動が必要。
+
+### linkmgrd の独立購読
+
+`linkmgrd` は `ConfigDBConnector` (Python) で `PEER_SWITCH` を orchagent とは独立して購読。
+`address_ipv4` を peer への ICMPv4/ICMPv6 プローブ送信先として使用。起動時 1 回読み込みのみ
+（実行中の変更は反映されない）。
+
+<!-- /pubsub -->
