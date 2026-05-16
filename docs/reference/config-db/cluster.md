@@ -183,6 +183,41 @@ leaf cluster {
 - 親テーブル: [`DEVICE_METADATA`](./device-metadata.md)、[`DEVICE_NEIGHBOR_METADATA`](./device-neighbor-metadata.md)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-device_metadata`、`sonic-device_neighbor_metadata`
 
+<!-- cross-refs -->
+## 暗黙参照 — ランタイム消費デーモン調査 (Phase C)
+
+`cluster` フィールドはコードベース全体を grep した結果、**ランタイムで読み出すデーモンが存在しない write-only フィールド**であることが確認された。
+
+### CONFIG_DB 消費側
+
+| 参照候補 | `cluster` フィールド参照 | 実際の参照フィールド | evidence |
+|---------|------------------------|-------------------|---------|
+| `bgpcfgd` (`managers_bgp.py`) | **なし** | `name` (ready check のみ) | `managers_bgp.py:220-222` |
+| `bgpcfgd` テンプレート (`*.j2`) | **なし** | — | grep 0 件 |
+| `buffers_config.j2` | **なし** | `DEVICE_NEIGHBOR_METADATA[...].type` | `buffers_config.j2:83,209-210` |
+| `qos_config.j2` | **なし** | `DEVICE_NEIGHBOR_METADATA[...].type` | `qos_config.j2:107-116,150-151` |
+| `swss_vars.j2` | **なし** | — | grep 0 件 |
+| `hostcfgd` | **なし** | — | grep 0 件 |
+| `orchagent` | **なし** | — | grep 0 件 |
+
+> `bgpcfgd` は `DEVICE_NEIGHBOR_METADATA` テーブル全体を subscribe (`managers_bgp.py:140`) するが、`cluster` フィールドは参照せず、`name` の存在確認 (neighbor ready チェック) のみを行う。
+
+### 書き込み経路（再確認）
+
+`cluster` フィールドを書き込むのは `minigraph.py` のみであり、書き込み後は何れのデーモンもこのフィールドを読まない。
+
+| 書き込み元 | 対象テーブル | evidence |
+|-----------|------------|---------|
+| `minigraph.py:668` | `DEVICE_NEIGHBOR_METADATA\|<device>` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:662-668` |
+| `minigraph.py:811` | `DEVICE_NEIGHBOR_METADATA\|<device>` (chassis 用途) | `sonic-buildimage/src/sonic-config-engine/minigraph.py:806-811` |
+| `minigraph.py:2172` | `DEVICE_METADATA\|localhost` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2170-2172` |
+
+### 用途
+
+`cluster` フィールドは **minigraph XML から CONFIG_DB への一方向伝達** のみを目的とする。他のシステムコンポーネント（デーモン・テンプレート・CLI）がこのフィールドを読んで動作を変える経路はない。フィールドが存在するかどうかによる副作用もない（デーモン起動失敗・警告ログなし）。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
