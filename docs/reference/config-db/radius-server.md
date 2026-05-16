@@ -281,6 +281,64 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 
 <!-- /handler-branching -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` 全行精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/radius-server-side-effects.md`
+
+`RADIUS_SERVER` テーブルへの書込みが発生すると、`hostcfgd` の `AaaCfg.modify_conf_file()` が以下の副次処理を行う。DB への書込みは発生しない（すべてファイルシステム書込みと systemd サービス制御）。
+
+### `/etc/pam_radius_auth.d/<ip>_<port>.conf`（PAM 認証設定）
+
+サーバ 1 台ごとに `RADIUS_PAM_AUTH_CONF_DIR + srv['ip'] + "_" + srv['auth_port'] + ".conf"` を生成する。テンプレート: `pam_radius_auth.conf.j2`。パーミッション `0o600`。`radsrvs_conf` が空（RADIUS_SERVER エントリなし）の場合は生成をスキップ。`auth_port` 変更時は旧ポートのファイルが残留する（自動削除なし）。
+
+> **Evidence**: `hostcfgd:825-837`
+
+### `/etc/radius_nss.conf`（NSS RADIUS 設定）
+
+サーバリストと debug/trace フラグを `radius_nss.conf.j2` でレンダリングし、`/etc/radius_nss.conf` に常時上書きする。`radsrvs_conf` が空の場合も実行される（空リスト）。
+
+> **Evidence**: `hostcfgd:818-823`
+
+### `/etc/nsswitch.conf`（NSS passwd エントリ）
+
+`AAA.authentication.login` に `radius` が含まれる場合、`sed` インプレース編集で `passwd` 行に `radius` を追加する。含まれない場合は ` radius` を除去する。
+
+```
+# radius 有効時の sed 操作（L.765-767）
+/^passwd/s/tacplus //
+/^passwd/s/ ldap//
+/radius/b; /^passwd/s/compat/& radius/; /^passwd/s/files/& radius/
+```
+
+> **Evidence**: `hostcfgd:763-780`
+
+### `/etc/pam.d/common-auth-sonic`（PAM 認証スタック）
+
+`common-auth-sonic.j2` テンプレートから生成し、アトミック書込み（`.tmp` → `os.rename()`）で `/etc/pam.d/common-auth-sonic` に反映する。`radius` が `authentication.login` に含まれる場合は `radsrvs_conf` をレンダリングコンテキストに渡す。
+
+> **Evidence**: `hostcfgd:715-731`
+
+### `/etc/pam.d/sshd`、`/etc/pam.d/login`（@include 書き換え）
+
+`common-auth-sonic` が存在する場合は `@include common-auth` → `@include common-auth-sonic` に、存在しない場合は逆方向に `sed` 書き換えする。`/etc/pam.d/sudo` は対象外。
+
+> **Evidence**: `hostcfgd:744-752`
+
+### `aaastatsd` systemd サービス制御
+
+| 条件 | 操作 |
+|------|------|
+| `radius` が `authentication.login` に含まれ `RADIUS\|global.statistics=true` | `service aaastatsd start` |
+| 上記以外 | `service aaastatsd stop` |
+
+失敗時は `CalledProcessError` をキャッチし `LOG_ERR` を記録して継続する。RADIUS_SERVER エントリ変更のたびに毎回評価される。
+
+> **Evidence**: `hostcfgd:839-851`
+
+<!-- /side-effects -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
