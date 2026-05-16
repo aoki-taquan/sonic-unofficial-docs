@@ -176,6 +176,34 @@ vtysh -c 'show bgp summary'
 **副作用**: BMP サーバへの接続が開始/停止される。既存 BGP セッションには影響なし。
 <!-- /runtime-trace -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BGPPeerMgrBase` は `BGP_MONITORS` の SET/DEL 処理後に FRR (vtysh) への適用が成功するたびに **STATE_DB / `BGP_PEER_CONFIGURED_TABLE`** へ副次書き込みを行う。`update_state_db()` が各ハンドラから直接呼ばれる設計であり、APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない。
+
+### STATE_DB / `BGP_PEER_CONFIGURED_TABLE`
+
+key 形式: default VRF の場合 `<nbr_ip>`, non-default VRF の場合 `<vrf>|<nbr_ip>`。
+
+| トリガ | 操作 | 格納内容 | evidence |
+|--------|------|---------|----------|
+| `add_peer()` が FRR 適用成功 (SET 新規) | `state_peer_table.set(key, data.items())` | CONFIG_DB から受け取ったフィールド一式をソート済みリストで格納 | `managers_bgp.py:239` |
+| `apply_admin_status()` が FRR 適用成功 (admin_status 更新) | `state_peer_table.set(key, data.items())` | 更新後の data を格納 | `managers_bgp.py:353` |
+| `change_ip_range()` が FRR 適用成功 (ip_range 更新) | `state_peer_table.set(key, data.items())` | 更新後の data を格納 | `managers_bgp.py:443` |
+| `del_handler()` が FRR 削除成功 (DEL) | `state_peer_table.delete(key)` | エントリ削除 | `managers_bgp.py:487` |
+
+!!! note "FRR 適用失敗時は書き込まない"
+    `update_state_db()` は各ハンドラが FRR (vtysh) への適用 (`apply_op()`) で成功を確認した後にのみ呼ばれる。`apply_op()` が False を返した場合、STATE_DB は更新されない (`managers_bgp.py:351-356`, `managers_bgp.py:484-489`)。
+
+テーブル名定数: `STATE_BGP_PEER_CONFIGURED_TABLE_NAME = "BGP_PEER_CONFIGURED_TABLE"` (`sonic-swss-common/common/schema.h:511`)。
+
+### 副次書込なし
+
+- **APPL_DB**: `bgpcfgd` は CONFIG_DB → FRR (vtysh) の直接送信モデルを採用。APPL_DB 中間層は存在しない。
+- **COUNTERS_DB / FLEX_COUNTER_DB**: BGP peer カウンタは `bgpcfgd` ではなく FRR 統計として管理される。`managers_bgp.py` に COUNTERS_DB / FLEX_COUNTER_DB への書き込みは存在しない。
+
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
