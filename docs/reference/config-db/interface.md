@@ -557,6 +557,36 @@ if (port.m_type == Port::VLAN) {
 
 RIF (Router Interface) 数上限・ECMP メンバ数はこれらの初期化ファイルで決定される。`INTERFACE` テーブルで大量の L3 IF を作成する場合は ASIC ごとの制限に注意が必要。
 
+### VOQ Chassis — システムインタフェース同期差
+
+`DEVICE_METADATA|localhost.switch_type=voq` のシャーシ構成では、`INTERFACE` テーブルへの SET/DEL が追加の CHASSIS_APP_DB 同期を引き起こす。
+
+```cpp
+// intfsorch.cpp:1316-1317
+// RIF 作成直後に自動実行
+voqSyncAddIntf(port.m_alias);  // CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE に書き込み
+
+// intfsorch.cpp:1369-1370
+// RIF 削除直後に自動実行
+voqSyncDelIntf(port.m_alias);  // CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE から削除
+```
+
+`voqSyncAddIntf` はローカルポート（`SAI_SYSTEM_PORT_TYPE_REMOTE` でないもの）のみを同期する。リモートポートの IF は `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` を購読して受信し、`gNeighOrch->ifChangeInformRemoteNextHop` でネクストホップ状態を更新する。
+
+VOQ 構成での追加動作:
+
+| 構成 | 追加動作 |
+|------|---------|
+| VOQ chassis (local port) | `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` に `oper_status` を SET |
+| VOQ chassis (inband port) | IP 追加/削除時に `addInbandNeighbor` / `delInbandNeighbor` を呼び出しリモート ASIC にネイバー伝播 |
+| VOQ chassis (remote port) | `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` からの通知でリモートネクストホップを更新 |
+| VOQ chassis (IPv6 アドレス追加) | `ip -6 address add ... metric 256` を付与 (`intfmgr.cpp:103-106`)。通常構成は metric 指定なし |
+| 通常シングルスイッチ | CHASSIS_APP_DB 操作は一切なし |
+
+### SmartSwitch DPU — 現時点でのコード差なし
+
+`sonic-swss/orchagent/intfsorch.cpp` および `cfgmgr/intfmgr.cpp` には SmartSwitch / DPU 固有の条件分岐は存在しない（2026-05-16 時点）。DPU 上の `INTERFACE` テーブル処理は通常の物理ポートと同一経路をたどる。SmartSwitch 固有のインタフェース管理は `dpuorch` / `midplaneorch` に委譲されており、本テーブルには影響しない。
+
 <!-- /platform -->
 
 <!-- side-effects -->
