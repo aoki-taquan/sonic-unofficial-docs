@@ -87,6 +87,28 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 - **最後の drop_reason の削除 → task_ignore**: drop_reasons が 1 件のときに `removeDropReason()` を呼ぶと `SWSS_LOG_WARN("Attempted to remove all drop reasons from counter")` → `task_ignore`。drop counter は最低 1 つの理由が必要。<!-- evidence: debugcounterorch.cpp L476-479 -->
 - **更新はべき等・失敗は状態を変更しない**: 失敗した更新はシステム状態を変更しない。同一リクエストの繰り返しは同一結果となる。<!-- evidence: debugcounterorch.cpp L128-130 -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+| フィールド | YANG default | 実行時 fallback | 種別 | evidence |
+|---|---|---|---|---|
+| `alias` | なし | **無視** (SAI・FlexCounter に不伝播) | dead field | `debugcounterorch.cpp:726-758` |
+| `desc` | なし | **無視** (同上) | dead field | `debugcounterorch.cpp:726-758` |
+| `group` | なし | **無視** (同上) | dead field | `debugcounterorch.cpp:726-758` |
+| `drop_monitor_status` | `"disabled"` | `false` (C++ メンバ初期値) | YANG default = 実装整合 | `debugcounterorch.h:102` |
+| `window` | `900` 秒 | **`0`** (Lua `tonumber(nil) or 0`) | YANG default 外 fallback — 欠損時は全インシデントを即クリア | `drop_monitor.lua:34` |
+| `incident_count_threshold` | `3` | **`0`** (同 Lua fallback) | YANG default 外 fallback — 欠損時は 1 インシデントでアラート発火 | `drop_monitor.lua:33, 80` |
+| `drop_count_threshold` | `100` | **`0`** (同 Lua fallback) | YANG default 外 fallback — 欠損時は 1 ドロップでインシデント登録 | `drop_monitor.lua:32, 59` |
+| `type` | mandatory | 欠損時は空文字 → `task_failed` | mandatory 違反は silent empty fallback 後に task_failed | `debugcounterorch.cpp:385-391` |
+
+### 補足: ハードコード固定値・プラットフォーム依存
+
+- **FlexCounter polling interval**: `60000` ms ハードコード（`debugcounterorch.h:21` `DEBUG_DROP_MONITOR_FLEX_COUNTER_POLLING_INTERVAL_MS`）。`window` の精度はこの値に依存。
+- **PHY ポートのみ対象**: `PORT_DEBUG` カウンタは `Port::Type::PHY` のみ追跡。LAG・VLAN・CPU ポートは silent skip（`debugcounterorch.cpp:639`）。
+- **SAI 非サポート環境**: `sai_query_attribute_enum_values_capability` が失敗すると `supported_counter_types` が空になり、全カウンタ作成が `task_failed`（`drop_counter.cpp:380-384`）。
+- **drop_reason 未設定の counter**: SAI オブジェクトを作成せず `free_drop_counters` に保留。`task_success` を返すが SAI 上にカウンタは存在しない（partial pending）（`debugcounterorch.cpp:393-394`）。
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
@@ -231,4 +253,36 @@ show dropcounters configuration
 
 > **スキャン証跡**: `doTask` L129-220 全行読了。`allPortsReady()` ガードと 2 テーブルの dispatch 分岐が核心。5 件抽出。
 <!-- /handler-branching -->
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 前提条件: allPortsReady() ガード
+
+`doTask()` は `gPortsOrch->allPortsReady()` が false の間は即 return する。ポート初期化完了前は `DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` / `DEBUG_DROP_MONITOR` のいずれの処理もブロックされる。CONFIG_DB への書き込み自体は受け付けるが、orchagent が処理するのはポート初期化完了後。<!-- evidence: debugcounterorch.cpp L136-139 -->
+
+### DEBUG_COUNTER と DEBUG_COUNTER_DROP_REASON の到着順序
+
+DROP_REASON が counter より先に届いても動作する。`addDropReason()` は counter が未存在の場合 `free_drop_reasons` に理由を蓄積し、`reconcileFreeDropCounters()` で counter と理由が揃った時点で SAI debug counter を作成する。ただし **両エントリが揃うまで SAI counter は存在せず集計は行われない**。<!-- evidence: debugcounterorch.cpp L456-466, L579-594 -->
+
+### type 変更は DEL → SET が必須
+
+`installDebugCounter()` は counter_name が既に `debug_counters` に存在する場合 `task_success` を即返して更新しない（冪等）。`type` を変更するには `DEL DEBUG_COUNTER|<name>` で削除後に `SET` で再作成する必要がある。SET のみでの上書きはサイレント無視。<!-- evidence: debugcounterorch.cpp L374-377 -->
+
+### 最後の DROP_REASON は削除不可
+
+`removeDropReason()` は `drop_reasons.size() <= 1` の場合 `task_ignore` を返して削除しない。drop counter は SAI 上で最低 1 つの理由が必要なため制約。counter を削除したい場合は DROP_REASON を全削除してから counter を DEL する手順は機能しない。`DEL DEBUG_COUNTER|<name>` を直接使うこと。<!-- evidence: debugcounterorch.cpp L476-501 -->
+
+### counter DEL 前の free_drop_reasons 孤立
+
+counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL すると、`free_drop_reasons` に残った理由はクリアされない。その後同名で SET すると孤立していた理由が引き継がれる副作用がある。対策: counter 作成をキャンセルする場合は `DEL DEBUG_COUNTER_DROP_REASON|<name>|<reason>` で理由を先に削除する。<!-- evidence: debugcounterorch.cpp L400-417, L526-538 -->
+
+### DEBUG_DROP_MONITOR の有効化タイミング
+
+`DEBUG_DROP_MONITOR|CONFIG` の `status=enabled` 設定時はその時点で存在する全ポートに `startFlexCounterPolling()` を呼ぶ。有効化後に追加された `PORT_DEBUG` 型 counter も即時モニタ登録される。有効化タイミングの前後で挙動が変わるわけではないが、有効化前に追加されたカウンタは有効化時に一括登録、有効化後の追加は counter 作成時に個別登録という経路の違いがある。<!-- evidence: debugcounterorch.cpp L232-243, L649-656 -->
+
+### restart / warm-reboot
+
+`debug_counters` / `free_drop_counters` / `free_drop_reasons` はインメモリのみで永続化しない。orchagent 再起動後は Consumer が CONFIG_DB の全エントリを replay し `reconcileFreeDropCounters()` で自動復元する。warm-reboot も同様。再起動中の集計値は失われるが設定は自動復元される。<!-- evidence: debugcounterorch.cpp L579-594 -->
+
+<!-- /ordering -->
 <!-- glossary-links-injected: d2c490dcfe8c -->
