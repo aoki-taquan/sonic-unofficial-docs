@@ -271,4 +271,61 @@ show macsec
 - なし
 <!-- /entry-points -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp -->
+
+### 不正 priority
+
+`priority` フィールドの値を uint8 に変換できない場合（例: 256 以上の数値・非数値文字列）、`get_value()` 内の `boost::bad_lexical_cast` が捕捉され `SWSS_LOG_ERROR("Cannot convert value(%s) in field(%s)")` が出力される。変換失敗時は `get_value` が `false` を返し、`MACsecProfile::update()` はデフォルト値 `priority = 255` を適用して処理を続行する。エントリ破棄は発生しない。
+
+```
+priority 変換失敗
+  └─ SWSS_LOG_ERROR("Cannot convert value(%s) in field(%s)")
+  └─ priority = 255 (デフォルト) で継続
+  └─ task_success（エントリ保持）
+```
+
+### CAK 長違反
+
+`primary_cak` / `fallback_cak` の hex 文字列長が `cipher_suite` と不一致の場合、`decodeKey()` が `std::invalid_argument("Invalid length for cipher_string : ...")` を送出する。これは `loadProfile()` の catch ブロックで捕捉され `SWSS_LOG_WARN` が出力されて `task_failed` が返る。**再試行なし**でエントリは破棄される。
+
+| cipher_suite | 期待 CAK 長 | 実際が異なる場合 |
+|---|---|---|
+| `GCM-AES-128` / `GCM-AES-XPN-128` | 66 hex 文字 | `throw std::invalid_argument` → `task_failed` |
+| `GCM-AES-256` / `GCM-AES-XPN-256` | 130 hex 文字 | `throw std::invalid_argument` → `task_failed` |
+
+```
+loadProfile()
+  └─ profile.update(profile_attr)
+       └─ GetValue(ta, primary_cak)
+            └─ decodeKey(cipher_str, cipher_suite)
+                 └─ length mismatch → throw invalid_argument
+  └─ catch(invalid_argument) → SWSS_LOG_WARN
+  └─ return task_failed  ← 再試行なし、エントリ破棄
+```
+
+### SAK refresh（wpa_cli コマンド）失敗
+
+`configureMACsec()` が `wpa_cli_exec_and_check()` を使い `mka_cak` / `mka_priority` 等を `wpa_supplicant` に設定する際、wpa_cli の応答が "OK" で始まらない場合は `std::runtime_error` が送出される。`configureMACsec()` の catch ブロックが `SWSS_LOG_WARN("Enable MACsec fail : %s")` を出力し `false` を返す。`enableMACsec()` はこれを受けて `disableMACsec()` を呼び出してポートを安全な状態に戻す。
+
+`wpa_supplicant` プロセス起動自体が失敗した場合（`startWPASupplicant()` が 0 を返す）は `task_failed`、-1 以下（`fork` 失敗）は `task_need_retry` となる。
+
+```
+enableMACsec()
+  └─ startWPASupplicant()
+       ├─ pid < 0  → SWSS_LOG_WARN → task_need_retry
+       └─ pid == 0 → SWSS_LOG_WARN → task_failed
+  └─ configureMACsec()
+       └─ wpa_cli_exec_and_check() → "OK" でない応答
+            └─ throw runtime_error
+       └─ catch → SWSS_LOG_WARN("Enable MACsec fail : %s")
+       └─ return false
+  └─ disableMACsec() 呼出し（ポートを非暗号化状態へ復元）
+```
+
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-failure.md)
+<!-- /failure -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
