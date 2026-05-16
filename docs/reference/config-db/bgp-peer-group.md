@@ -457,6 +457,7 @@ BGP_PEER_GROUP (asn 変更)
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/bgp-peer-group-side.md`
 <!-- /side-effects -->
 
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
