@@ -306,4 +306,39 @@ db_migrator.py での RADIUS_SERVER マイグレーションなし
 - `skip_msg_auth`: YANG 未定義・CLI 未実装だが hostcfgd が参照。直接 DB 書き込みのみで設定可能なフィールド
 <!-- /entry-points -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`
+
+### 結論
+
+**プラットフォーム差なし**。RADIUS_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダー固有 PAM モジュールに依存しない。
+
+### 根拠
+
+#### 1. multi-asic: `is_multi_npu` は AaaCfg に渡されない
+
+`hostcfgd` 行 2182 で `self.is_multi_npu = device_info.is_multi_npu()` を取得するが、行 2185 の `AaaCfg(self.config_db)` コンストラクタには渡されない。`AaaCfg.__init__` は `ConfigDBConnector` 1 個のみを保持し、`asic0..N` namespace への接続や iteration を一切しない。RADIUS_SERVER テーブルは host CONFIG_DB のみに置かれ、`asicN` namespace の CONFIG_DB には存在しない。
+
+#### 2. MGMT_VRF_CONFIG は RADIUS_SERVER 処理に直接影響しない
+
+`MGMT_VRF_CONFIG` の変更は `MgmtIfaceCfg.update_mgmt_vrf()` が受け取り、`chrony` / `interfaces-config` サービスのみ再起動する (`hostcfgd` 行 1657–1668)。`AaaCfg.modify_conf_file()` は呼ばれない。RADIUS_SERVER の `vrf` フィールドはオペレータが per-server で明示的に `mgmt` / `default` を設定するものであり、`MGMT_VRF_CONFIG.mgmtVrfEnabled` から自動注入されることはない。
+
+`MGMT_INTERFACE` の変更は `handle_radius_source_intf_ip_chg()` を呼び出し (`hostcfgd` 行 2348)、`src_intf` が管理インタフェースを参照している場合のみ `modify_conf_file()` を再実行する。これは VRF 設定の伝播ではなく IP アドレス再解決のトリガーである。
+
+#### 3. PAM モジュールにプラットフォーム差なし
+
+`pam_radius_auth.so` は community SONiC の標準 Debian パッケージ。`common-auth-sonic.j2` テンプレート (`sonic-host-services/data/templates/`) を `platform|asic|chassis|namespace|vendor` で検索してもヒットなし。条件分岐は `AAA.authentication.login` 文字列・`failthrough` / `debug` / `trace` ブール・サーバリストのみ。`pam_radius_auth.conf.j2` テンプレートもプラットフォーム固有分岐なし。
+
+#### 4. VOQ chassis / line card
+
+VOQ chassis の各 line card / supervisor は独立した host `hostcfgd` を持ち、それぞれが自身の host CONFIG_DB の RADIUS_SERVER テーブルを処理する。chassis 全体での集中適用機構は存在しない。オペレータが各 host に同一の RADIUS_SERVER 設定を流す運用が前提。
+
+#### 5. `NAS-IP-Address` の自動補完は eth0 固定
+
+`nas_ip` が `RADIUS|global` 未設定の場合、`get_interface_ip("eth0")` で管理インタフェース IP を自動補完する (`hostcfgd` 行付近)。この処理は `eth0` 固定であり、管理インタフェース名が異なるプラットフォーム（例: `ma1`）では IP 解決に失敗し `NAS-IP-Address` が省略される可能性がある。これが唯一の実質的なプラットフォーム依存点だが、YANG / CONFIG_DB スキーマ上の差異ではなくランタイム挙動の差にとどまる。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: radius-server-2026-05-14 -->
