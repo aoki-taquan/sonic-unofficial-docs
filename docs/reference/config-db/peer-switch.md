@@ -300,6 +300,66 @@ minigraph.py の `get_tunnel_entries()` 関数が `peer_switch_ip` を受け取�
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## Phase G: 通信メカニズム (CONFIG_DB Subscribe → SAI Tunnel)
+
+> 証跡: `meta/_intermediate/cdb-flow/peer-switch-phaseG.md`
+> ソース: `sonic-swss/orchagent/orchdaemon.cpp:467-471`, `muxorch.cpp:217-331,2182-2391`
+
+### CONFIG_DB Subscribe 登録
+
+`orchdaemon.cpp:467-471` — `MuxOrch` が `CONFIG_DB` の `PEER_SWITCH` テーブルを
+`Orch2` フレームワーク経由で購読。`CFG_MUX_CABLE_TABLE_NAME` と同一インスタンス・同一
+ディスパッチループ内で処理される。
+
+```cpp
+// orchdaemon.cpp:467-471
+vector<string> mux_tables = {
+    CFG_MUX_CABLE_TABLE_NAME,
+    CFG_PEER_SWITCH_TABLE_NAME          // ← PEER_SWITCH を購読
+};
+gMuxOrch = new MuxOrch(m_configDb, mux_tables, gTunneldecapOrch, gNeighOrch, gFdbOrch);
+```
+
+`muxorch.cpp:2189-2190` — コンストラクタ内で handler を登録:
+
+```cpp
+handler_map_.insert(handler_pair(CFG_PEER_SWITCH_TABLE_NAME, &MuxOrch::handlePeerSwitch));
+```
+
+### SAI Tunnel 生成経路 (SET 時)
+
+```
+CONFIG_DB  PEER_SWITCH|<hostname>  SET
+  └─ MuxOrch::handlePeerSwitch()          muxorch.cpp:2340-2384
+       ├─ decap_orch_->getDstIpAddresses(MUX_TUNNEL)
+       │    TUNNEL 未設定 → return false (retry キュー)
+       ├─ decap_orch_->getDscpMode / getQosMapId
+       └─ create_tunnel(&peer_ip, &dst_ip, ...)  muxorch.cpp:2380
+            ├─ sai_router_intfs_api->create_router_interface(...)
+            │    SAI_ROUTER_INTERFACE_TYPE_LOOPBACK  (overlay IF)
+            └─ sai_tunnel_api->create_tunnel(...)    muxorch.cpp:325
+                 SAI_TUNNEL_ATTR_TYPE          = SAI_TUNNEL_TYPE_IPINIP
+                 SAI_TUNNEL_ATTR_PEER_MODE     = SAI_TUNNEL_PEER_MODE_P2P
+                 SAI_TUNNEL_ATTR_ENCAP_SRC_IP  = PEER_SWITCH.address_ipv4
+                 SAI_TUNNEL_ATTR_ENCAP_DST_IP  = TUNNEL.src_ip
+                 SAI_TUNNEL_ATTR_ENCAP/DECAP_TTL_MODE = PIPE_MODEL
+                 SAI_TUNNEL_ATTR_LOOPBACK_PACKET_ACTION = DROP
+```
+
+### DEL 時 (未実装)
+
+`handlePeerSwitch()` DEL パス (`muxorch.cpp:2387`) は `SWSS_LOG_NOTICE "Not Implemented"` のみ。
+SAI tunnel 削除・`mux_peer_switch_` リセットは行われない。orchagent 再起動が必要。
+
+### linkmgrd の独立購読
+
+`linkmgrd` は `ConfigDBConnector` (Python) で `PEER_SWITCH` を orchagent とは独立して購読。
+`address_ipv4` を peer への ICMPv4/ICMPv6 プローブ送信先として使用。起動時 1 回読み込みのみ
+（実行中の変更は反映されない）。
+
+<!-- /pubsub -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
@@ -419,3 +479,55 @@ CONFIG_DB に存在していることが望ましい。
     必要があるが、DEL が orchagent に反映されない（未実装）ため orchagent 再起動を伴う。
 
 <!-- /ordering -->
+
+<!-- side-effects -->
+## 副次 DB 書込・外部テーブル連動 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-side-effects.md`
+> ソース: `sonic-swss/orchagent/muxorch.cpp`
+
+### STATE_DB 書込
+
+PEER_SWITCH SET により `mux_peer_switch_` が確定した後、続く MUX_CABLE SET 処理 (`handleMuxCfg()`) が
+STATE_DB `MUX_CABLE_TABLE` へ `neighbor_mode` フィールドを書き込む。
+
+| 書込先 DB | テーブル | キー | フィールド | 値 | トリガー |
+|----------|---------|------|-----------|---|--------|
+| STATE_DB | `MUX_CABLE_TABLE` | `<port_name>` | `neighbor_mode` | `"host-route"` または `"prefix-route"` | MUX_CABLE SET（PEER_SWITCH 確定後） |
+
+```cpp
+// muxorch.cpp:2285
+state_mux_cable_table_->hset(port_name, "neighbor_mode", neighbor_mode_str);
+```
+
+PEER_SWITCH が未設定の場合、`mux_peer_switch_.isZero()` が true となり `handleMuxCfg()` が
+`return false` でリトライ待機するため、この STATE_DB 書込は発生しない。
+
+### TUNNEL_DECAP 連動
+
+`handlePeerSwitch()` は `DecapOrch`（TUNNEL_DECAP 処理済みオブジェクト）から以下を読み出す:
+
+| 取得値 | メソッド | 用途 |
+|-------|---------|------|
+| `dst_ips` (MuxTunnel0 の decap dst IP) | `getDstIpAddresses(MUX_TUNNEL)` | P2P トンネルの ENCAP_SRC_IP |
+| `dscp_mode_name` | `getDscpMode(MUX_TUNNEL)` | トンネル DSCP モード設定 |
+| `tc_to_dscp_map_id` | `getQosMapId(MUX_TUNNEL, ...)` | QoS TC→DSCP マッピング |
+| `tc_to_queue_map_id` | `getQosMapId(MUX_TUNNEL, ...)` | QoS TC→Queue マッピング |
+
+`TUNNEL_DECAP` が未処理（`getDstIpAddresses()` が空を返す）の場合、`handlePeerSwitch()` は
+`return false` でリトライ待機する。PEER_SWITCH 処理は TUNNEL_DECAP 処理完了に依存する。
+
+### SAI 副次効果（PEER_SWITCH SET 時）
+
+`handlePeerSwitch()` SET パスで `create_tunnel()` を呼び出し、以下の SAI オブジェクトが生成される:
+
+1. **overlay loopback RIF**: `sai_router_intfs_api->create_router_interface()` — `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK`
+2. **IP-in-IP P2P トンネル**: `sai_tunnel_api->create_tunnel()` — `SAI_TUNNEL_TYPE_IPINIP` / `SAI_TUNNEL_PEER_MODE_P2P`
+   - ENCAP_SRC_IP = `TUNNEL.src_ip`（MuxTunnel0 の dst_ip から取得）
+   - ENCAP_DST_IP = `PEER_SWITCH.address_ipv4`
+
+!!! warning "DEL 時のクリーンアップ未実装"
+    DEL パス（`muxorch.cpp:2387`）は "Not Implemented" のログのみ。STATE_DB `MUX_CABLE_TABLE` や
+    SAI トンネルオブジェクトは orchagent 再起動まで残存する。
+
+<!-- /side-effects -->
