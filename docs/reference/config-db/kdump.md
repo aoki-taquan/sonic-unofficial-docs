@@ -240,4 +240,107 @@ YANG は `range "1 .. 9"` を定義するが、CLI `config kdump num_dumps` は 
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB Subscribe (hostcfgd Python)
+
+`hostcfgd` (`sonic-host-services/scripts/hostcfgd`) は Python の `swsscommon.ConfigDBConnector` を使い、
+`KDUMP` テーブルを subscribe する。
+
+```python
+# sonic-host-services/scripts/hostcfgd:2468
+self.config_db.subscribe('KDUMP', make_callback(self.kdump_handler))
+```
+
+`make_callback` はテーブル変化イベントを `(key, op, data)` に変換し `kdump_handler` へ転送する。
+
+```python
+# sonic-host-services/scripts/hostcfgd:2393-2395
+def kdump_handler(self, key, op, data):
+    syslog.syslog(syslog.LOG_INFO, 'Kdump handler...')
+    self.kdumpCfg.kdump_update(key, data)
+```
+
+### ハンドラ分岐 (KdumpCfg.kdump_update)
+
+`key == "config"` の場合のみ処理が走る（単一 container のため実質常にこの分岐）。
+
+```python
+# sonic-host-services/scripts/hostcfgd:1225-1270
+def kdump_update(self, key, data):
+    if key == "config":
+        # enabled / memory / num_dumps / ssh_string / ssh_path を data から取得し
+        # sonic-kdump-config コマンド群を順に実行する
+        run_cmd(["sonic-kdump-config", "--enable"])   # または --disable
+        run_cmd(["sonic-kdump-config", "--memory", memory])
+        run_cmd(["sonic-kdump-config", "--num_dumps", num_dumps])
+        run_cmd(["sonic-kdump-config", "--ssh_string", ssh_string])
+        run_cmd(["sonic-kdump-config", "--ssh_path", ssh_path])
+        run_cmd(["sonic-kdump-config", "--remote"])
+```
+
+### sonic-kdump-config → grub-mkconfig 経路
+
+`sonic-kdump-config --enable/--disable` はカーネルブートラインの `crashkernel=` パラメータを
+`/host/grub/grub.cfg` に直接書き込む (`rewrite_cfg()`)。grub-mkconfig は呼ばず、
+SONiC 独自の grub.cfg 直接書き換え方式を採用している。
+
+```python
+# sonic-utilities/scripts/sonic-kdump-config:686-687
+if changed:
+    rewrite_cfg(lines, cmdline_file)  # /host/grub/grub.cfg を上書き
+```
+
+`sonic-kdump-config --memory/--num_dumps` は `/etc/default/kdump-tools`
+(`USE_KDUMP` / `KDUMP_NUM_DUMPS` フィールド) を直接書き換える。
+
+### systemctl 制御
+
+hostcfgd 自体は `kdump-tools` サービスを直接 `systemctl restart` しない。
+grub.cfg と `/etc/default/kdump-tools` の更新のみを行い、
+次回システム再起動時に kdump kernel がロードされる仕組み。
+
+クラッシュカーネルがすでに /proc/cmdline にロードされている場合のみ
+`/usr/sbin/kdump-config load` を呼び出してオンラインリロードを試みる。
+
+```python
+# sonic-utilities/scripts/sonic-kdump-config:712-716
+if crash_kernel_in_cmdline is not None:
+    run_command("/usr/sbin/kdump-config load", use_shell=False)
+```
+
+### 起動時初期化フロー
+
+```
+hostcfgd 起動
+  → KdumpCfg.__init__()
+    → init_kdump_config_from_cmdline()   # /proc/cmdline の crashkernel= を確認
+    → 存在する場合: KDUMP|config|enabled / memory を強制上書き
+  → HostConfigDaemon.start()
+    → get_table('KDUMP') で初期値取得
+    → KdumpCfg.load()                   # 未設定フィールドをデフォルトで埋め込み
+    → kdump_update("config", data)      # 初回 sonic-kdump-config 実行
+  → register_callbacks()
+    → config_db.subscribe('KDUMP', ...)  # 以降の変化はイベント駆動
+```
+
+### イベント経路まとめ
+
+```
+KDUMP|config 変更 (CLI / DB 直接書き込み)
+  → ConfigDBConnector subscribe コールバック
+  → HostConfigDaemon.kdump_handler(key, op, data)
+  → KdumpCfg.kdump_update(key, data)
+  → sonic-kdump-config --enable/--disable   → /host/grub/grub.cfg 更新
+  → sonic-kdump-config --memory <val>       → /etc/default/kdump-tools 更新
+  → sonic-kdump-config --num_dumps <val>    → /etc/default/kdump-tools 更新
+  → sonic-kdump-config --ssh_string <val>   → /etc/default/kdump-tools 更新
+  → sonic-kdump-config --ssh_path <val>     → /etc/default/kdump-tools 更新
+  → sonic-kdump-config --remote             → /etc/default/kdump-tools 更新
+  (次回 reboot でカーネル反映)
+```
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
