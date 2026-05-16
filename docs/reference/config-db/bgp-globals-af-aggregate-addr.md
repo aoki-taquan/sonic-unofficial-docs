@@ -296,4 +296,56 @@ DEL 操作では `key_map.run_command` で `no aggregate-address` を vtysh に�
 詳細スキャンログは `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-ordering.md` を参照。
 <!-- /ordering -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブルへの変更通知は **`frrcfgd` (sonic-frr-mgmt-framework) のみ** が受信する。`frrcfgd` は `ConfigDBConnector` を継承した独自 `ExtConfigDBConnector.subscribe()` + `listen()` で **Redis keyspace 通知 (`PSUBSCRIBE __keyspace@<dbId>__:*`)** を購読する。`swsscommon.SubscriberStateTable` (channel ベース PUBLISH/SUBSCRIBE) は本経路では使用しない。CONFIG_DB は永続前提のため TTL は設定されない。
+
+`bgpcfgd` のテンプレ経路 (`bgpd.conf.db.addr_family.j2`) は別テーブル `BGP_AGGREGATE_ADDRESS` (フラット) を使用し、本テーブルは購読しない (Phase F `<!-- side-effects -->` で確認済)。両者は同一機能の異なる設定経路のため、混在は避ける。
+
+| 購読者 | 対象テーブル | 購読 API | 通信方式 | ハンドラ |
+|--------|------------|---------|---------|---------|
+| `frrcfgd` | `BGP_GLOBALS_AF_AGGREGATE_ADDR` | `ExtConfigDBConnector.subscribe()` + `listen()` (keyspace 通知) | Redis `PSUBSCRIBE __keyspace@<dbId>__:*` | `bgp_table_handler_common` → `hdl_af_aggregate` |
+
+`orchagent` / `syncd` 等の APPL_DB / ASIC_DB レイヤは本テーブルを購読しない (FRR `bgpd` のソフト処理で完結、SAI 非経由)。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ (frrcfgd 経路)
+
+```
+sonic-db-cli CONFIG_DB hset 'BGP_GLOBALS_AF_AGGREGATE_ADDR|default|ipv4_unicast|10.0.0.0/8' summary_only true
+  ↓ HSET 後に Redis 側で keyspace 通知発火
+Redis keyspace PUBLISH "__keyspace@4__:BGP_GLOBALS_AF_AGGREGATE_ADDR|default|ipv4_unicast|10.0.0.0/8" "hset"
+  ↓ ExtConfigDBConnector.listen_thread() がパターンマッチ
+sub_msg_handler() → client.hgetall(key)  ← 通知後に値を再取得
+raw_to_typed() で型変換
+  ↓ _ConfigDBConnector__fire("BGP_GLOBALS_AF_AGGREGATE_ADDR", "default|ipv4_unicast|10.0.0.0/8", data)
+bgp_table_handler_common(table, key, data) → bgp_message キューへ enqueue
+  ↓ __update_bgp() で順次処理 (frrcfgd.py:3169-3196)
+  ↓ key を vrf / af_type / ip_prefix に分解、normalize_ip_prefix() で正規化
+  ↓ cmd_prefix = ['configure terminal', 'router bgp <asn> vrf <vrf>', 'address-family <af> <ip_type>']
+  ↓ vtysh -c "aggregate-address 10.0.0.0/8 summary-only"
+  ↓ AggregateAddr() を self.af_aggr_list[vrf][prefix] にキャッシュ
+```
+
+- keyspace 通知のペイロードは操作名 (`hset` / `del` 等) のみ。フィールド値は `client.hgetall(key)` で再取得 (`frrcfgd.py:1527-1528`)。
+- `data is None ? DEL : SET` の 2 値判定 (`ConfigDBConnector` 標準動作)。`HDEL` / `HSET` の Redis 操作種別は区別しない。
+- DEL では `self.af_aggr_list[vrf].pop(norm_ip_prefix, None)` でキャッシュから除去 (`frrcfgd.py:3194-3196`、`pop(..., None)` のため未登録 prefix でも KeyError は出ない)。
+- `listen_thread` は専用スレッドで動作 (`frrcfgd.py:1551`)。テーブルハンドラは同スレッド内で逐次実行され、内部キュー `bgp_message` 経由で `__update_bgp` に直列化される。
+- 起動時は `subscribe_all()` (`frrcfgd.py:2359-2361`) 開始前に `config_db.get_table_data([...])` で `table_handler_list` 全テーブルの一括スナップショットを取得し (`frrcfgd.py:2340`)、`config_mode == "unified"` であれば各エントリを `bgp_message` 経由で config replay する (`frrcfgd.py:2344-2357`)。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `BGP_GLOBALS_AF_AGGREGATE_ADDR` 変更 | FRR `bgpd` への vtysh `(no )aggregate-address <prefix> [as-set] [summary-only] [route-map <name>]` 送出のみ。`bgpd` プロセス restart **なし** | `frrcfgd.py:3169-3196`, `1982-1983` |
+| IP prefix 形式不正 | `MatchPrefix.normalize_ip_prefix()` → `None` で syslog ERR & continue | `frrcfgd.py:3172-3175` |
+| `BGP_GLOBALS` (`bgp_asn`) 未設定 | `local_asn` 未解決のため当該 update は依存待ちで保留 | `frrcfgd.py:__update_bgp` 上層 |
+
+vtysh コマンド送出のみで BGP セッション自体は再起動されない。集約広告の反映は **FRR の RIB 計算ループ** の次サイクルで行われ、contributing route が RIB に 1 本以上存在する場合のみ aggregate が広告される (BGP 仕様)。
+
+> **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:98, 1313, 1506-1555, 1982-1983, 2118, 2257, 2317, 2340-2357, 2359-2361, 3169-3196, 3955-3956` (keyspace listen / subscribe / `bgp_table_handler_common` / `hdl_af_aggregate` / 起動スナップショット / config replay); 詳細分析 `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: fcbe746ecf8b -->
