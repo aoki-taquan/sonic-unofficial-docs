@@ -449,6 +449,22 @@ address-family <af> <safi>
 > 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`frrcfgd.py` の `bgp_af_handler` → `bgp_table_handler_common` → `__update_bgp` 呼び出しチェーンを全行スキャンした結果、**STATE_DB・COUNTERS_DB・APPL_DB への副次書込は存在しない**。
+
+| 副次書込先 | 有無 | 根拠 |
+|-----------|------|------|
+| STATE_DB | なし | `frrcfgd.py` 全体で `STATE_DB` / `state_db` の記述ゼロ件 |
+| COUNTERS_DB | なし | 同上 (`COUNTERS_DB` / `counters_db` ゼロ件) |
+| APPL_DB | なし | 同上 (`APPL_DB` / `appl_db` ゼロ件) |
+
+`bgp_af_handler` が行う唯一の外部書込は **FRR vtysh への設定投入**のみ。`key_map.run_command()` が `configure terminal` → `router bgp <asn> vrf <vrf>` → `address-family <af> <ip_type>` の vtysh コマンド列を発行し、FRR running-config（BGP デーモン内部状態）を変更する。CONFIG_DB 以外の Redis DB には一切書き込まない。
+
+> **スキャン証跡**: `frrcfgd.py` L2771-2782（BGP_GLOBALS_AF 分岐）/ L3910-3933（common handler）/ L3938-3940（bgp_af_handler）読了。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-side.md`
+<!-- /side-effects -->
+
 <!-- failure -->
 ## 失敗挙動・リトライ分岐 (Phase D)
 
