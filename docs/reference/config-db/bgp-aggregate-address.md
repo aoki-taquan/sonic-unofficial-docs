@@ -108,6 +108,32 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 - `summary-only=true` かつ contributing route が RIB に 0 本 → FRR で aggregate 生成されない (BGP 仕様)
 <!-- /value-behavior -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`BGP_AGGREGATE_ADDRESS` の YANG (`sonic-bgp-aggregate-address.yang`) には leafref 宣言がない。以下はすべて `bgpcfgd` (`managers_aggregate_address.py`) および参考として `frr-mgmt-framework` (`frrcfgd.py`) の実装レベル暗黙参照。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `DEVICE_METADATA\|localhost.bgp_asn` | 購読 + 読み取り（必須） | 常時。set/del いずれの handler も先頭で参照 | `managers_aggregate_address.py` L36 (subscribe), L93 / L149 (`directory.get_slot`) |
+| `BGP_BBR.bbr_status` | 購読 + 読み取り（条件付き） | `bbr-required=true` のエントリのみ実害あり。状態変化で STATE_DB / FRR 同期 | `managers_aggregate_address.py` L41 (subscribe + `on_bbr_change`), L73-83 (set_handler 内分岐) |
+| FRR `ip prefix-list <name>` (出力先) | 書き込み | `aggregate-address-prefix-list` / `contributing-address-prefix-list` が非空のとき | `managers_aggregate_address.py` L114-132, L255-264 (`generate_prefix_list_commands`) |
+| `BGP_GLOBALS.local_asn` / `vrf` (frrcfgd 経路) | 読み取り（必須） | `BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブル経由のみ。`BGP_AGGREGATE_ADDRESS` (bgpcfgd 経路) では非該当 | `frrcfgd.py` L3161-3163, L3179-3181 (`cmd_prefix`) |
+| `BGP_GLOBALS_AF` (frrcfgd 経路) | 読み取り（必須） | `BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブル経由のみ。address-family コンテキスト生成 | `frrcfgd.py` L3171, L3181 |
+| `ROUTE_MAP` (frrcfgd 経路) | 値参照（条件付き） | `BGP_GLOBALS_AF_AGGREGATE_ADDR.policy` 非空時。`aggregate-address ... route-map <name>` に展開 | `frrcfgd.py` L1982-1983, L928-930 (`aggr-policy` フォーマッタ) |
+
+!!! note "2 経路の差分"
+    本ページが対象とする `BGP_AGGREGATE_ADDRESS` テーブル (bgpcfgd 経路) は VRF を取らず default VRF 固定で、`DEVICE_METADATA.bgp_asn` のみを直接購読する。
+    一方 `frr-mgmt-framework` が扱う別テーブル `BGP_GLOBALS_AF_AGGREGATE_ADDR` (VRF/AF 分離) は `BGP_GLOBALS` / `BGP_GLOBALS_AF` / `ROUTE_MAP` への暗黙依存を持つ。
+    関連 CONFIG_DB の `BGP_GLOBALS` リンク (frontmatter) は後者経路を念頭に置いたもの。
+
+!!! note "prefix-list フィールドと PREFIX_SET の関係"
+    `aggregate-address-prefix-list` / `contributing-address-prefix-list` は `bgpcfgd` が FRR `ip prefix-list <name>` を**直接生成**するための名前であり、CONFIG_DB の `PREFIX_SET` テーブルから値を引くわけではない。`PREFIX_SET` テーブルとは独立した FRR 名前空間として運用される (`generate_prefix_list_commands` L255-264)。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py -->
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
