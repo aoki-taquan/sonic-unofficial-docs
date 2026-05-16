@@ -90,14 +90,63 @@
 
 ---
 
-## 7. 制約まとめ (ordering ブロック向け)
+## 7. kernel netlink コマンド発行順序 (doIntfGeneralTask SET パス)
+
+`intfmgr.cpp` の `doIntfGeneralTask()` SET ブランチでの実際の発行順:
+
+```
+Step  コマンド / 操作                            条件
+1     isIntfStateOk(port/LAG/VLAN)              always — 未 ready なら return false
+2     isIntfStateOk(vrf_name)                   vrf_name 指定時のみ
+3     isIntfChangeVrf() 確認                    always — VRF 直接変更をブロック
+4     ip link add <alias> link <parent> type vlan id <vlanId>
+                                                サブインタフェース新規作成時
+5     ip link set <alias> mtu <mtu>             サブインタフェースかつ mtu 指定時
+      (min(parent_mtu, config_mtu) を選択)
+6     ip link set <alias> master <vrf>          vrf_name 指定時
+      または ip link set <alias> nomaster       VRF 除去時 (vrf_name 空)
+7     ip link set <alias> address <mac>         mac_addr 指定時
+8     sysctl net.mpls.conf.<alias>.input=1/0    mpls=enable/disable 時
+9     echo 1/0 > /proc/sys/net/ipv4/conf/<alias>/proxy_arp
+                                                proxy_arp 指定時
+10    echo 1/0 > /proc/sys/net/ipv4/conf/<alias>/arp_accept
+                                                grat_arp 指定時
+11    m_appIntfTableProducer.set(alias, data)   always — APP_DB INTF_TABLE
+12    m_stateIntfTable.hset(alias, "vrf", ...)  always — STATE_DB 更新
+```
+
+`doIntfAddrTask()` SET パス (IP プレフィクスロウ):
+
+```
+Step  コマンド / 操作                            条件
+1     isIntfStateOk(alias) && isIntfCreated()   always — 属性ロウ完了確認
+2     ip address add <ip/plen> [broadcast <bcast>] dev <alias>
+                                                IPv4 (/31 未満は broadcast 付き)
+      ip -6 address add <ip/plen> [broadcast <bcast>] dev <alias> [metric 256]
+                                                IPv6 (VoQ 時は metric 256 付与)
+3     enableIpv6Flag() + retry                  IPv6 add 失敗時のみ
+4     m_appIntfTableProducer.set(appKey, ...)   always — APP_DB
+5     m_stateIntfTable.hset("<alias>|<ip>", "state", "ok")
+                                                always — STATE_DB
+```
+
+**重要な順序制約**: VRF binding (Step 6) は IP 付与 (`doIntfAddrTask`) より必ず先に完了する。
+属性ロウ処理 (`doIntfGeneralTask`) が STATE_DB に完了を書いた後でなければ
+`doIntfAddrTask` は `isIntfCreated()` を通過しない。
+
+---
+
+## 8. 制約まとめ (ordering ブロック向け)
 
 | # | 順序ルール | 根拠コード |
 |---|-----------|-----------|
-| 1 | PORT (STATE_DB ready) → INTERFACE SET | `isIntfStateOk()` L833 |
-| 2 | VRF (STATE_DB ready) → INTERFACE SET with vrf_name | L839 |
-| 3 | VNET (APP_DB 存在) → INTERFACE SET with vnet_name | intfsorch L933 |
-| 4 | INTERFACE 属性ロウ SET → IP プレフィクスロウ SET | `isIntfCreated()` L1115 |
-| 5 | IP プレフィクスロウ DEL (全件) → INTERFACE 属性ロウ DEL | `getIntfIpCount()` L1060 |
-| 6 | VRF 除去 SET → 新 VRF SET (VRF 変更は 2 ステップ必須) | `isIntfChangeVrf()` L846 |
-| 7 | allPortsReady (orchagent) → SAI RIF 作成 | intfsorch L665 |
+| 1 | PORT (STATE_DB `STATE_PORT_TABLE` ready) → INTERFACE SET | `isIntfStateOk()` L686 |
+| 2 | PORTCHANNEL (STATE_DB `STATE_LAG_TABLE` ready) → LAG_INTERFACE SET | `isIntfStateOk()` L661 |
+| 3 | VLAN (STATE_DB `STATE_VLAN_TABLE` ready) → VLAN_INTERFACE SET | `isIntfStateOk()` L653 |
+| 4 | VRF (STATE_DB `STATE_VRF_TABLE` ready) → INTERFACE SET with vrf_name | L839 |
+| 5 | VNET (APP_DB 存在) → INTERFACE SET with vnet_name | intfsorch L933 |
+| 6 | VRF binding (ip link set master) → MTU → MAC → APP_DB SET の順序 | doIntfGeneralTask L1007-1053 |
+| 7 | INTERFACE 属性ロウ SET + STATE_DB 完了 → IP プレフィクスロウ SET | `isIntfCreated()` L1115 |
+| 8 | IP プレフィクスロウ DEL (全件) → INTERFACE 属性ロウ DEL | `getIntfIpCount()` L1060 |
+| 9 | VRF 除去 SET (nomaster) → 新 VRF SET (master) の 2 ステップ | `isIntfChangeVrf()` L846 |
+| 10 | allPortsReady (orchagent) → SAI RIF 作成 | intfsorch L665 |

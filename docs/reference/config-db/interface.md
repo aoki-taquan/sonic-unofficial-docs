@@ -254,15 +254,62 @@ show ip interfaces
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
+> 調査日: 2026-05-16
+
 ### 他テーブル先行必須
 
-| 前提テーブル / 状態 | チェック担当 | 条件未満時の挙動 |
-|-------------------|------------|----------------|
-| `PORT` → STATE_DB `PORT_TABLE` に `state=ok` | `intfmgr.cpp` `isIntfStateOk()` | SET をスキップしてキューに残す (`return false`) |
-| `PORTCHANNEL` → STATE_DB `LAG_TABLE` に ready | 同 `isIntfStateOk()` | 同上 |
-| `VRF` → STATE_DB `VRF_TABLE` に ready | `doIntfGeneralTask()` L839–843 | `vrf_name` 指定時に追加チェック。未 ready なら skip |
-| `VNET` → orchagent が VNET オブジェクトを保持 | `intfsorch.cpp` `isVnetExists()` | `it++; continue` でリトライ |
-| portsorch の `allPortsReady()` | `IntfsOrch::doTask()` L665 | 全ポート ready 前は INTERFACE の SAI 処理全体をブロック |
+`intfmgrd` は `doIntfGeneralTask()` および `doIntfAddrTask()` の冒頭で `isIntfStateOk()` を呼び、依存先テーブルの STATE_DB エントリを確認してから設定を進める。未 ready の場合は `return false` でエントリをキューに残し、1000ms 周期の retry ループで再処理される。
+
+| 前提テーブル | 確認先 (STATE_DB) | チェック担当 | 条件未満時の挙動 |
+|-------------|-----------------|------------|----------------|
+| `PORT` | `STATE_PORT_TABLE` に `state` フィールド存在 | `isIntfStateOk()` L686 | SET をスキップしてキューに残す (`return false`) |
+| `PORTCHANNEL` (LAG) | `STATE_LAG_TABLE` に alias エントリ存在 | `isIntfStateOk()` L661 | 同上 |
+| `VLAN` | `STATE_VLAN_TABLE` に alias エントリ存在 | `isIntfStateOk()` L653 | 同上 |
+| `VRF` | `STATE_VRF_TABLE` に vrf_name エントリ存在 | `doIntfGeneralTask()` L839–843 | `vrf_name` 指定時のみ追加チェック。未 ready なら skip |
+| `VNET` | orchagent 内部オブジェクト存在 | `intfsorch.cpp` `isVnetExists()` | `it++; continue` でリトライ |
+| `INTERFACE|<port>` (L3 enable 行) | `STATE_INTERFACE_TABLE` に alias エントリ存在 | `isIntfCreated()` L1115 | IP プレフィクスロウ SET をスキップ |
+| portsorch `allPortsReady()` | portsorch 内部フラグ | `IntfsOrch::doTask()` | 全ポート ready 前は INTERFACE の SAI 処理全体をブロック |
+
+**VLAN → VLAN_INTERFACE**、**LAG → LAG_INTERFACE** の場合も同じ `isIntfStateOk()` を呼ぶため、VLAN や PORTCHANNEL が STATE_DB に登録される前に INTERFACE エントリを書いても反映されない。
+
+### IP / MTU / VRF 属性の適用順序 (kernel netlink)
+
+`doIntfGeneralTask()` の SET パス内でのカーネル netlink コマンド発行順序:
+
+```
+1. isIntfStateOk(port/LAG/VLAN)   # STATE_DB ready ガード
+2. isIntfStateOk(vrf_name)         # VRF ready ガード (vrf_name 指定時のみ)
+3. isIntfChangeVrf() 確認          # 直接 VRF 変更ブロック
+4. addHostSubIntf()                # サブインタフェース作成 (ip link add ... type vlan)
+5. setHostSubIntfMtu()             # MTU 設定 (ip link set <alias> mtu <mtu>)
+   ※ min(parent_mtu, config_mtu) を適用
+6. setIntfVrf()                    # VRF binding (ip link set <alias> master <vrf>)
+   または ip link set <alias> nomaster (VRF 除去)
+7. setIntfMac()                    # MAC アドレス設定 (ip link set <alias> address <mac>)
+8. setIntfMpls()                   # MPLS 設定 (sysctl net.mpls.conf.<alias>.input=1/0)
+9. setIntfProxyArp()               # proxy_arp 設定 (/proc/sys/net/ipv4/conf/<alias>/proxy_arp)
+10. setIntfGratArp()               # grat_arp 設定 (/proc/sys/net/ipv4/conf/<alias>/arp_accept)
+11. m_appIntfTableProducer.set()   # APP_DB への ProducerStateTable SET
+12. m_stateIntfTable.hset(alias, "vrf", vrf_name)  # STATE_DB 書込み
+```
+
+IP プレフィクスロウ (`doIntfAddrTask`) は属性ロウとは **独立したループ** で処理される:
+
+```
+1. isIntfStateOk(alias)   # PORT/VLAN/LAG ready ガード
+2. isIntfCreated(alias)   # STATE_INTERFACE_TABLE に属性ロウ完了済みか確認
+3. setIntfIp("add", ip_prefix)
+   # IPv4(/31未満): ip address add <ip/plen> broadcast <bcast> dev <alias>
+   # IPv4(/31,/32): ip address add <ip/plen> dev <alias>
+   # IPv6(/127未満): ip -6 address add <ip/plen> broadcast <bcast> dev <alias> [metric 256]
+   # IPv6(/127,/128): ip -6 address add <ip/plen> dev <alias> [metric 256]
+   # IPv6 失敗時: enableIpv6Flag() してリトライ
+4. m_appIntfTableProducer.set(appKey, {scope, family})  # APP_DB SET
+5. m_stateIntfTable.hset("<alias>|<ip_prefix>", "state", "ok")  # STATE_DB SET
+```
+
+**VRF binding (手順 6) は必ず IP 追加 (手順 3) より前に完了する**。これは同じ `doIntfGeneralTask()` の中で行われるためであり、IP プレフィクスロウの適用時 (`doIntfAddrTask`) には VRF binding が既に完了している。
 
 ### SET 後 DEL 順序
 
@@ -273,19 +320,38 @@ show ip interfaces
 
 2. **VRF 変更は 2 ステップ必須**: `vrf_name` を別の VRF 名に直接書き換えると  
    `isIntfChangeVrf()` が検出してエラーログを出力しエントリを破棄する。  
-   正しい手順: ① `vrf_name` を空にした SET (VRF 除去) → ② 新 VRF 名で SET  
+   正しい手順: ① `vrf_name` を空にした SET (`ip link set nomaster`) → ② 新 VRF 名で SET  
    (`intfmgr.cpp` L846–849)。
 
-### Notification 順
+### Notification 順と STATE_DB トリガ
 
 ```
-CONFIG_DB INTERFACE SET
+portmgrd → STATE_PORT_TABLE  "state=ok"
+  ↓ (SubscriberStateTable 通知, pri=100)
+intfmgrd::doPortTableTask()
+  → ペンディング中の INTERFACE エントリを retry
+
+lagmgrd → STATE_LAG_TABLE  ready
+  ↓ (SubscriberStateTable 通知, pri=200)
+intfmgrd::doPortTableTask()
+  → ペンディング中の LAG_INTERFACE / INTERFACE エントリを retry
+
+vlanmgrd → STATE_VLAN_TABLE  ready
+  → ペンディング中の VLAN_INTERFACE エントリを retry
+
+CONFIG_DB INTERFACE SET (portmgrd ready 後)
   → intfmgrd: isIntfStateOk(port) + isIntfStateOk(vrf) 確認
+  → [VRF binding] ip link set <alias> master <vrf>
+  → [MTU] ip link set <alias> mtu <mtu>  (サブ IF の場合)
   → APP_DB INTF_TABLE SET (属性ロウ)
-  → STATE_DB INTERFACE_TABLE hset(alias, "vrf", ...)
+  → STATE_DB INTERFACE_TABLE hset(alias, "vrf", vrf_name)
   → IntfsOrch: APP_DB 変化受信 → addRouterIntfs() → SAI create_router_interface
-  ※ IP プレフィクスロウは isIntfCreated(alias) (STATE_DB 確認) 成功後に
-    APP_DB INTF_TABLE SET でプレフィクスを送出 (intfmgr.cpp L1115)
+
+CONFIG_DB INTERFACE|<port>|<ip> SET (属性ロウ STATE_DB ready 後)
+  → intfmgrd: isIntfCreated(alias) 確認
+  → [IP 付与] ip address add / ip -6 address add
+  → APP_DB INTF_TABLE SET (プレフィクスロウ)
+  → STATE_DB INTERFACE_TABLE hset("<alias>|<ip>", "state", "ok")
 ```
 
 ### select() ポーリング
