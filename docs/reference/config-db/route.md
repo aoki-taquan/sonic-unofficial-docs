@@ -191,6 +191,27 @@ ROUTE_TABLE|<prefix> DEL
   → VRF DEL
 ```
 
+### SAI bulk batch — `gRouteBulker` による一括 SAI 発行
+
+`RouteOrch` は SAI route API 呼び出しを 1 エントリごとに発行せず、`EntityBulker<sai_route_api_t> gRouteBulker(sai_route_api, gMaxBulkSize)` にキューイングしてバッチで SAI へ送る[^3]。
+
+**処理シーケンス（`doTask` 1 回の中）**:
+
+1. `m_toSync` の全エントリをループし、`addRoute(ctx)` / `removeRoute(ctx)` がそれぞれ `gRouteBulker.create_entry()` / `gRouteBulker.remove_entry()` / `gRouteBulker.set_entry_attribute()` を呼ぶ（この時点では SAI 未発行）。
+2. ループ終了後に `gRouteBulker.flush()` を呼び、バッチで SAI に発行する（`routeorch.cpp:1117`）。
+3. `flush()` 後に `addRoutePost()` / `removeRoutePost()` が SAI の返却ステータスを確認し、成功したエントリは `m_syncdRoutes` に反映、失敗は `m_toSync` に残す。
+
+```
+[ループ] addRoute/removeRoute → gRouteBulker.create_entry / remove_entry / set_entry_attribute
+         （SAI は未発行）
+[ループ後] gRouteBulker.flush() → sai_route_bulk_create / sai_route_bulk_remove 一括発行
+           → addRoutePost / removeRoutePost でステータス確認
+```
+
+**NHG 枯渇時の中間 flush**: nexthop group 数が上限 (`m_maxNextHopGroupCount`) に達し、かつ bulker に削除待ちエントリが存在する場合、ループを抜けて中間 `flush()` を行い、解放された NHG を回収してから処理を継続する（`routeorch.cpp:1094-1100`）。
+
+**MPLS ラベル経路は別 bulker**: `gLabelRouteBulker(sai_mpls_api, gMaxBulkSize)` が独立して存在し、MPLS フォワーディングエントリは別バッチで SAI に発行される[^3]。
+
 <!-- /ordering -->
 
 ## 制約
