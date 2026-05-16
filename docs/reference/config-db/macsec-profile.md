@@ -68,6 +68,27 @@ MACSEC_PROFILE|<name>
 | `send_sci` | boolean | `true` | 送信フレームに SCI を含める |
 | `rekey_period` | uint32 | `0` | 能動的 SAK 再生成周期 [秒]。0 で再生成しない |
 
+<!-- defaults -->
+## コード由来デフォルト値
+
+> **出典**: `sonic-swss/cfgmgr/macsecmgr.cpp` (GetValue フォールバック)、`docker-macsec/cli/config/plugins/macsec.py` (`add_profile` コマンド)、`sonic-macsec.yang` (`default` ステートメント) — 三者完全一致。
+
+| フィールド | デフォルト値 | 根拠 |
+|-----------|------------|------|
+| `priority` | `255` | YANG `default 255` / C++ fallback `priority = 255` / CLI `default=255` |
+| `cipher_suite` | `GCM-AES-128` | YANG `default "GCM-AES-128"` / CLI `default="GCM-AES-128"` |
+| `policy` | `security` | YANG `default "security"` / C++ fallback `policy = Policy::SECURITY` / CLI `default="security"` |
+| `enable_replay_protect` | `false` | YANG `default "false"` / C++ fallback `enable_replay_protect = false` / CLI `default=False` |
+| `replay_window` | `0` (暗黙) | C++ fallback `replay_window = 0` / CLI `default=0`。YANG `default` なし (`when` 条件で `enable_replay_protect = true` 時のみ有効) |
+| `send_sci` | `true` | YANG `default "true"` / C++ fallback `send_sci = true` / CLI `default=True` |
+| `rekey_period` | `0` | YANG `default 0` / C++ fallback `rekey_period = 0` / CLI `default=0` |
+| `primary_cak` | — (必須) | YANG `mandatory true` / CLI `required=True` |
+| `primary_ckn` | — (必須) | YANG `mandatory true` / CLI `required=True` |
+| `fallback_cak` | — (省略可) | YANG optional leaf、設定省略時はフォールバック MKA 無効 |
+| `fallback_ckn` | — (省略可) | YANG optional leaf、`fallback_cak` 設定時に必要 |
+
+<!-- /defaults -->
+
 ## 制約 (YANG `must`)
 
 - `fallback_cak` を設定する場合は `primary_cak` と同じ長さ
