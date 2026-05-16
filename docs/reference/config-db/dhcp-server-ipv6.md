@@ -54,6 +54,60 @@ SONiC master における `DHCP_SERVER_IPV6` テーブルの YANG モデル、Py
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B 調査)
+
+`DHCP_SERVER_IPV6` は未実装だが、SONiC の DHCPv6 リレー機能（`DHCP_RELAY` テーブル / `dhcp6relay` プロセス）には以下の順序依存が確認されている。将来 `DHCP_SERVER_IPV6` が実装された場合も同等の VLAN 前提条件が継承される見込み。
+
+### VLAN_INTERFACE 先行が必須
+
+`dhcp6relay` の起動時 (`initialize_swss()` → `processRelayNotification()`) は `DHCP_RELAY|<vlan>` エントリを処理する際に CONFIG_DB の `VLAN_INTERFACE|<vlan>|*` キーを検索し、**IPv6 アドレス（コロン含む）が 1 件も存在しない VLAN は無条件でスキップ**する。
+
+```
+// dhcp6relay/src/config_interface.cpp:130-148
+const std::string match_pattern = "VLAN_INTERFACE|" + vlan + "|*";
+auto keys = config_db->keys(match_pattern);
+...
+if (!has_ipv6_address) {
+    syslog(LOG_WARNING, "%s doesn't have IPv6 address configured, skip it", vlan.c_str());
+    continue;
+}
+```
+
+runtime 中の動的更新は「コンテナ再起動が必要」ログを出すのみで設定反映されないため、**DHCP_RELAY 書込み前に VLAN_INTERFACE への IPv6 アドレス付与が完了していること**が必要。
+
+推奨書込み順序:
+
+```
+1. VLAN（ブリッジ定義）
+2. VLAN_INTERFACE|<vlan>|<ipv6-prefix>  ← IPv6 グローバルアドレス
+3. DHCP_RELAY|<vlan>（dhcpv6_servers を含む）
+```
+
+### dhcp6relay 起動条件（supervisor テンプレート）
+
+`dhcpv6-relay.agents.j2` / `dhcp-relay.programs.j2` は supervisord エントリを Jinja2 で動的生成する。`dhcp6relay` プログラムは次の条件がすべて真のときのみ登録・起動される:
+
+1. `VLAN_INTERFACE` にエントリが存在する
+2. 当該 VLAN が `DHCP_RELAY` に存在し `dhcpv6_servers` が空でない
+3. `dhcpv6_servers` に有効な IPv6 アドレスが 1 件以上含まれる
+
+条件を満たさない状態でコンテナが起動すると `dhcp6relay` はそもそも supervisord に登録されない。
+
+### systemd 起動順（dhcp-relay.service）
+
+`dhcp_relay.service.j2` は以下の `After=` を持つ:
+
+```
+After=config-setup.service swss.service syncd.service teamd.service
+```
+
+`teamd.service` が完了して VLAN インターフェースが UP し LLA が生成された後に `dhcp-relay` コンテナが起動するため、**LLA 未生成によるソケット開設失敗は通常発生しない**。ただし `After=` は完了順序のみ保証し、CONFIG_DB への全データ書込みは `config-setup.service` の完了に依存する。
+
+> Evidence: `sonic-net/sonic-dhcp-relay@dhcp6relay/src/config_interface.cpp:130-148`、`sonic-net/sonic-buildimage@dockers/docker-dhcp-relay/dhcpv6-relay.agents.j2:2-10`、`sonic-net/sonic-buildimage@files/build_templates/dhcp_relay.service.j2:4`
+
+<!-- /ordering -->
+
 ## DHCPv6 サポートの現状
 
 SONiC の DHCPv6 対応は次の 2 要素のみ:
