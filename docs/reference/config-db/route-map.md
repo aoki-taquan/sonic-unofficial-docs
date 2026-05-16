@@ -252,4 +252,32 @@ db_migrator.py での ROUTE_MAP マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- platform -->
+## プラットフォーム差・ファミリー差
+
+### bgpcfgd vs frrcfgd 実装差
+
+ROUTE_MAP テーブルは **2 つの独立したデーモン** が異なる経路で処理する:
+
+| 観点 | bgpcfgd RouteMapMgr | frrcfgd |
+|------|---------------------|---------|
+| 購読元 | APPL_DB `BGP_PROFILE_TABLE` | CONFIG_DB `ROUTE_MAP` |
+| 対象キー | `FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` のみ | 任意の route-map 名・seq |
+| FRR コマンド範囲 | `set as-path prepend` / `set community` / `set origin incomplete` の 3 件 | `match_*` / `set_*` 全 30+ フィールド |
+| ユースケース | SDN SLB / SDN Appliance 専用 | 汎用 BGP ポリシー |
+
+### IPv4 / IPv6 ファミリー差 (frrcfgd)
+
+- `match_prefix_set|ipv4` → FRR `match ip address prefix-list`
+- `match_prefix_set|ipv6` → FRR `match ipv6 address prefix-list`
+- `match_next_hop_set|ipv6` は **IPv6 next-hop prefix-list が FRR 未サポート** のため `match ip next-hop prefix-list`（IPv4 コマンド）へフォールバック。
+- `set_ipv6_next_hop_global` / `set_ipv6_next_hop_prefer_global` は bgpd 限定。zebra・ospfd には送信されない。
+- BGP 属性系 match（`match_origin`, `match_local_pref`, `match_community`, `match_as_path` 等）は bgpd 限定。
+- `match_protocol`（`match source-protocol`）は zebra 限定。
+
+### SmartSwitch DPU
+
+SmartSwitch / DPU 固有の分岐なし。通常の BGP コンテナと同一処理経路。
+<!-- /platform -->
+
 <!-- glossary-links-injected: 24dbb72211e3 -->
