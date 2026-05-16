@@ -278,4 +278,57 @@ vtysh -c 'show running-config bgp'
 - なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py` / `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2`
+> 調査日: 2026-05-16
+
+### 他テーブル / 設定先行必須
+
+| 先行テーブル / 条件 | 依存の内容 | コード根拠 |
+|-------------------|-----------|-----------|
+| `constants.yml` (`bgp.allow_list.enabled`, `drop_community`, `default_action`, `default_pl_rules`, `prefix_match_tag`) | `BGPAllowListMgr.__init__` 時点で `self.enabled` / `self.prefix_match_tag` / `constants_v4/v6` が確定。constants 変更は bgpcfgd 再起動まで反映されない | `managers_allow_list.py:45-47, 699-734, 652-664` |
+| `DEVICE_METADATA|localhost.{type, subtype, switch_type}` | `policies.conf.j2` のレンダ条件 (`SpineRouter`+`UpstreamLC` 限定の `permit 12/13`、`chassis-packet` で `set tag` 値が分岐)。bgpcfgd 起動前に確定が必要 | `policies.conf.j2:40-54, 63-77` |
+| `policies.conf.j2` 起動時レンダ | `route-map FROM_BGP_PEER_V4/V6 permit 10 call ALLOW_LIST_DEPLOYMENT_ID_0_V4/V6`、`bgp community-list standard allow_list_default_community`、deployment_id=0 の `permit 65535` は **template 起動時に一度だけ** 生成。これより前に `BGP_ALLOWED_PREFIXES` を SET しても prefix-list が peer に紐付かない | `policies.conf.j2:17-32, 34-38, 57-61` |
+| `BGP_NEIGHBOR` / `BGP_PEER_RANGE` (peer-group 定義) | `__update_policy` 末尾の `__find_peer_group()` が vtysh running-config を grep して deployment_id に紐づく peer-group を抽出 → `restart_peer_groups()` で soft-clear。peer-group 未存在のままだと soft-clear 空振りで**フィルタが有効化されない** | `managers_allow_list.py:177-178, 595-697` |
+| `BGP_ALLOWED_PREFIXES` 自身 (CommunityList 連動) | EMPTY_COMMUNITY 経路 (`|<community>` 無し) では `__update_community` が早期 return し community-list を作らない一方、`__update_allow_route_map_entry` は `set tag <prefix_match_tag>` を出す。constants の `prefix_match_tag` が未定義だと tag も付かず、ALLOW_LIST 不一致時の `route-map FROM_BGP_PEER_V4 permit 11 match community allow_list_default_community` 経路に頼ることになる | `managers_allow_list.py:15, 360-362, 432-435` |
+
+### bgpcfgd Manager 起動順 (main.py)
+
+`BGPAllowListMgr` は `bgpcfgd/main.py:73-104` の Manager 配列で次の位置に登録される:
+
+- **前**: `BGPDataBaseMgr` (DEVICE_METADATA), `InterfaceMgr` 一式, `BGPPeerMgrBase` 一式 (general / internal / monitors / dynamic / voq_chassis / sentinels)
+- **後**: `BBRMgr`, `StaticRouteMgr`, `RouteMapMgr`, `DeviceGlobalCfgMgr`
+
+これにより、初回スキャン時には DEVICE_METADATA / peer-group が `BGP_ALLOWED_PREFIXES` 処理前に running-config に反映される設計。ただし**運用中の動的追加** (peer-group を後から追加) では順序逆転が発生しうるため、`BGP_ALLOWED_PREFIXES` の再 SET が必要になる場合がある。
+
+### `set_handler` 内 vtysh push 順 (固定)
+
+`__update_policy` は `cfg_mgr.push_list()` に以下を**この順で**渡す (`managers_allow_list.py:167-176`):
+
+1. v4 prefix-list (`ip prefix-list <pl_v4> seq N permit ...`)
+2. v6 prefix-list (`ipv6 prefix-list <pl_v6> seq N permit ...`)
+3. community-list (`bgp community-list standard <name> permit <value>`、EMPTY_COMMUNITY 時はスキップ)
+4. v4 "allow" route-map entry (`route-map <rm_v4> permit <seq> / match ip address prefix-list <pl_v4> / [match community <name>|set tag <tag>]`)
+5. v6 "allow" route-map entry
+6. v4 "default action" route-map entry (`route-map <rm_v4> permit 65535 / set community <permit→drop_community|deny→no-export> additive`)
+7. v6 "default action" route-map entry
+
+`__remove_policy` (DEL) は概ね逆順: allow route-map entry 削除 → prefix-list 削除 → community-list 削除 → default 行更新 (`managers_allow_list.py:200-207`)。
+
+### deployment_id=0 の二重書き
+
+`policies.conf.j2:17-29` は起動時に **deployment_id=0 限定** で `route-map ALLOW_LIST_DEPLOYMENT_ID_0_V4|V6 permit 65535 / set community ... additive` を書き出す。一方 `BGPAllowListMgr.__update_default_route_map_entry` も SET ごとに seq=65535 を上書きする。**deployment_id=0 で template 引数 `allow_list_default_action` と CONFIG_DB の `default_action` が食い違うと、bgpcfgd 起動直後〜最初の SET 到達までの短時間は template 値、その後は CONFIG_DB 値**という遷移が発生する。
+
+詳細根拠とスキャンログは intermediate メモ (`meta/_intermediate/cdb-flow/bgp-allowed-prefixes-ordering.md`) を参照。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:45 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:167 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:177 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:73 -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2:17 -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2:34 -->
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 43ff039eae38 -->
