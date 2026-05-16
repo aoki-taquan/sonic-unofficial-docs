@@ -317,6 +317,83 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'REBOOT_CAUSE|DPU0|2026_05_14_10_30_45'
 ```
 <!-- /ops-hint -->
 
+<!-- ordering -->
+## 書き込み順序・起動シーケンス
+
+### ChassisdDaemon 起動シーケンス（モジュラーチャシス）
+
+```
+1. is_smartswitch() 判定
+   ├─ SmartSwitch: SmartSwitchModuleUpdater 生成
+   └─ モジュラーチャシス: my_slot / supervisor_slot 取得 → ModuleUpdater 生成
+2. modules_num_update()
+   → STATE_DB CHASSIS_INFO に num_modules を書き込み
+3. [SmartSwitch のみ] set_initial_dpu_admin_state()
+   → 各 DPU の get_oper_status() 読み取り → DPU_STATE 初期化
+   → admin_state=empty なら別スレッドで set_admin_state_gracefully() 実行
+4. [supervisor のみ] ConfigManagerTask.task_run()
+   → CONFIG_DB CHASSIS_MODULE テーブルの購読開始
+5. メインループ（10 秒間隔）
+   a. module_db_update()        ← CHASSIS_STATE_DB への主要な書き込み
+   b. check_midplane_reachability()
+   c. module_down_chassis_db_cleanup()
+```
+
+### ModuleUpdater.__init__() の初期化順
+
+1. STATE_DB に接続 → CHASSIS_INFO_TABLE / CHASSIS_MODULE_INFO_TABLE / CHASSIS_MIDPLANE_INFO_TABLE テーブルを準備
+2. CHASSIS_STATE_DB に接続
+   - supervisor: `CHASSIS_FABRIC_ASIC_INFO_TABLE`
+   - 非 supervisor: `CHASSIS_ASIC_INFO_TABLE`
+   - 共通: `CHASSIS_MODULE_HOSTNAME_TABLE`、`CHASSIS_MODULE_REBOOT_INFO_TABLE`
+3. `platform_env.conf` から `linecard_reboot_timeout` を読み込み（デフォルト 180 秒）
+4. `chassis.init_midplane_switch()` → `midplane_initialized` フラグ設定（失敗時 False、以降 check_midplane_reachability がスキップ）
+
+### module_db_update() の処理順
+
+全モジュールを `0 〜 num_modules` でループし、以下を実行する（chassisd:364-478）:
+
+1. `_get_module_info(index)` で platform API から name / desc / slot / oper_status / asics / serial / presence / replaceable / model を取得
+2. STATE_DB `CHASSIS_MODULE_INFO_TABLE` に `fvs` を set
+3. `presence=True` の場合 `PHYSICAL_ENTITY_INFO_TABLE` を更新
+4. `oper_status != ONLINE` の場合:
+   - 直前状態が ONLINE だった場合のみ `notOnlineModules` に追加し `down_modules` にタイムスタンプ記録
+   - `continue`（ASIC テーブル更新をスキップ）
+5. `oper_status == ONLINE` かつ `admin_status != 'down'` の場合:
+   - 非 supervisor: CHASSIS_STATE_DB `CHASSIS_ASIC_TABLE` にエントリ書き込み
+   - supervisor: CHASSIS_STATE_DB `CHASSIS_FABRIC_ASIC_TABLE` にエントリ書き込み
+6. 非 supervisor のみ: CHASSIS_STATE_DB `CHASSIS_MODULE_TABLE`（hostname_table）に `hostname / slot / num_asics` を書き込み
+7. `notOnlineModules` に含まれるモジュールの ASIC エントリを CHASSIS_STATE_DB から一括削除
+
+### CHASSIS_STATE_DB 書き込みタイミングまとめ
+
+| テーブル | 書き込みタイミング | 書き込み主体 |
+|---------|----------------|------------|
+| `CHASSIS_ASIC_TABLE` | 10 秒ポーリング、ONLINE かつ admin≠down | 非 supervisor ライン card |
+| `CHASSIS_FABRIC_ASIC_TABLE` | 10 秒ポーリング、ONLINE かつ admin≠down | supervisor |
+| `CHASSIS_MODULE_TABLE` (hostname) | 10 秒ポーリング（毎回上書き） | 非 supervisor ライン card |
+| `CHASSIS_MIDPLANE_INFO_TABLE` | 10 秒ポーリング、`midplane_initialized=True` の場合のみ | supervisor / ライン card |
+| `CHASSIS_MODULE_REBOOT_INFO_TABLE` | midplane 喪失検知時 (timestamp 書き込み) / 回復時 (エントリ削除) | supervisor / ライン card |
+| `DPU_STATE` | 起動時 `set_initial_dpu_admin_state()`、midplane 状態変化時 | SmartSwitch chassis |
+| `DPU_STATE` CP/DP フィールド | `DpuStateUpdater` が状態変化時のみ更新 | DPU 上の chassisd |
+| `REBOOT_CAUSE` | DPU offline → online 遷移時に `/host/reboot-cause/module/<dpu>/history/` から読み込んで書き込み | `SmartSwitchModuleUpdater` |
+
+### asic_status.py が CHASSIS_FABRIC_ASIC_TABLE を読む順序
+
+supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し、ファブリック ASIC エントリの到着を 1000 ms ポーリングで待機する。ASIC が ONLINE になると対応する syncd / orchagent 等サービスの起動判定に使用される（asic_status.py:40-50）。
+
+### warm-reboot 挙動
+
+`chassisd` は warm-reboot を明示的に検出しない（WarmStart API を使用しない）。
+
+- **SIGTERM 受信**: メインループを終了する。CHASSIS_STATE_DB の内容はそのまま残る
+- **ModuleUpdater.deinit()**: STATE_DB の `CHASSIS_MODULE_INFO_TABLE` / `CHASSIS_MIDPLANE_INFO_TABLE` / `PHYSICAL_ENTITY_INFO_TABLE` を削除するが、CHASSIS_STATE_DB（ASIC テーブル・hostname テーブル）は削除しない
+- **DpuStateUpdater.deinit()**: `dpu_data_plane_state` / `dpu_control_plane_state` を `'down'` に設定して終了（chassisd:1318-1320）
+- **再起動後**: `set_initial_dpu_admin_state()` が DPU_STATE を `get_oper_status()` の現在値で上書き。ONLINE なら `midplane_link_state='up'`、それ以外なら `'down'`（CP/DP も同時に 'down'）
+
+> **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:265-311,336-345,364-478,541-591,667-680,1303-1320,1364-1405,1408-1456`; `sonic-buildimage` `files/scripts/asic_status.py:40-50`
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
