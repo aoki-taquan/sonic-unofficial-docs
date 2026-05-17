@@ -461,4 +461,36 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `LDAP_SERVER` / `LDAP|global` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えおよび `nslcd` サービス再起動に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `ldap_server_update` / `ldap_global_update` 内に Producer/Table の書込呼出が 0 件 (`sonic-host-services/scripts/hostcfgd:547-564` を `set(`/`hset`/`Producer`/`Notification` で grep して 0 ヒット) |
+| STATE_DB | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (`hostcfgd:1792`) と `RestartWaiter` 用 (`hostcfgd:2160-2163`) のみ。`AaaCfg` は `state_db_conn` を保持しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。LDAP は認証経路のため統計テーブルも存在しない |
+| その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB) | なし | SAI 非経由（実コンテナ動作トレース参照）。`LDAP_SERVER` テーブルを購読する mgrd/orchagent は `sonic-swss/` に存在しない |
+
+### Linux ホスト OS 副作用（ファイル書換とサービス再起動）
+
+`ldap_server_update()` / `ldap_global_update()` は `handle_nslcd_service()` と `modify_conf_file()` を経由して以下を変更する:
+
+| 副作用 | 対象 | 条件 | evidence |
+|--------|------|------|----------|
+| `nslcd.conf` 再生成 | `/etc/nslcd.conf` | LDAP_SERVER / LDAP\|global 変更時常時 | `hostcfgd` L.43, `handle_nslcd_service()` L.241–251 |
+| `nslcd` サービス再起動 | `systemctl restart nslcd` | `is_ldap_config_complete()` = True のとき | `hostcfgd` L.241–244 |
+| `nslcd` 停止・mask | `systemctl stop/mask nslcd` | `is_ldap_config_complete()` = False かつ nslcd が enabled のとき | `hostcfgd` L.246–251 |
+| `common-auth-sonic` 再生成 (PAM) | `/etc/pam.d/common-auth-sonic` | `AAA.authentication.login` に `ldap` を含む場合 | `hostcfgd` L.28, L.720–731 |
+| `common-session` 更新 (PAM mkhomedir) | `/etc/pam.d/common-session` / `/etc/pam.d/common-session-noninteractive` | `ldap` 有効時: `pam_mkhomedir.so` 行を挿入、無効時: 削除 | `hostcfgd` L.44–45, L.733–742 |
+| `nsswitch.conf` 更新 (NSS) | `/etc/nsswitch.conf` | `ldap` 優先時: `passwd`/`group`/`shadow` 行に `ldap` を追加；他方式（tacacs+/radius）選択時: `ldap` を削除 | `hostcfgd` L.39, L.770–783 |
+| `sshd` / `login` PAM インクルード書換 | `/etc/pam.d/sshd`, `/etc/pam.d/login` | `common-auth-sonic` 存在時に `@include` を `common-auth-sonic` へ切替 | `hostcfgd` L.50–51, L.747–751 |
+
+!!! note "既存 SSH セッションへの影響"
+    `nslcd` 再起動中は LDAP 認証が一時中断されるが、既存 SSH セッションは影響なし（PAM session フェーズは認証完了済みのため）。新規ログイン試行のみが中断期間中に失敗する可能性がある。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ldap-server-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 32758c44ab11 -->
