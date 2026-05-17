@@ -402,6 +402,61 @@ DEL 後に同名 type を参照する新規 `ACL_TABLE` が到着すると `getA
 
 ---
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-swss/orchagent/aclorch.cpp` L4197-4299、`orchagent/orchdaemon.cpp` L408-422, L533-534、`orchagent/orch.cpp` L1186-1196
+> 調査日: 2026-05-17
+
+`ACL_TABLE_TYPE` には **CONFIG_DB 経路** と **APPL_DB 経路** の 2 つの購読チャンネルがある。
+
+### 購読チャンネル一覧
+
+| チャンネル | DB | テーブル名 | 購読クラス | 発行元 |
+|---|---|---|---|---|
+| CONFIG_DB | CONFIG_DB (dbId=4) | `ACL_TABLE_TYPE`（`CFG_ACL_TABLE_TYPE_TABLE_NAME`） | `SubscriberStateTable` | `sonic-cfggen` / `config` CLI / `swssconfig` |
+| APPL_DB | APPL_DB (dbId=0) | `ACL_TABLE_TYPE_TABLE`（`APP_ACL_TABLE_TYPE_TABLE_NAME`） | `ConsumerStateTable` | `VnetOrch`、`DashEniFwdOrch`（内部 ProducerStateTable） |
+
+`Orch::addConsumer()` (`orch.cpp:1186-1196`) は DB の `getDbId()` により購読クラスを切り替える。CONFIG_DB には `SubscriberStateTable`（Redis keyspace 通知）、APPL_DB には `ConsumerStateTable`（Redis Lists）が選ばれる。
+
+### CONFIG_DB 経路（`SubscriberStateTable`）
+
+`confDbAclTableType` は `acl_table_connectors` の**先頭**に置かれる (`orchdaemon.cpp:415-416`)。
+
+```cpp
+// orchdaemon.cpp:408-422
+TableConnector confDbAclTableType(m_configDb, CFG_ACL_TABLE_TYPE_TABLE_NAME);
+TableConnector appDbAclTableType(m_applDb, APP_ACL_TABLE_TYPE_TABLE_NAME);
+vector<TableConnector> acl_table_connectors = {
+    confDbAclTableType, confDbAclTable, confDbAclRuleTable,
+    appDbAclTable, appDbAclRuleTable, appDbAclTableType,
+};
+```
+
+- Redis keyspace 通知 (`PSUBSCRIBE __keyspace@4__:ACL_TABLE_TYPE|*`) を購読。CONFIG_DB への `HSET "ACL_TABLE_TYPE|<name>" ...` が自動的に PUBLISH される。
+- 1 回の `pops()` で最大 `DEFAULT_POP_BATCH_SIZE = 128` 件を一括取得 (`table.h:164`)。
+- **起動時スナップショット**: `SubscriberStateTable` は購読開始前に既存エントリを `m_buffer` へ流し込む。orchagent 再起動後も CONFIG_DB に残存する `ACL_TABLE_TYPE` エントリは SET として再配信され、`m_AclTableTypes` が再構築される。
+
+### APPL_DB 経路（`ConsumerStateTable`）
+
+`ProducerStateTable` → Redis Lists → `ConsumerStateTable` の pops() で受信。現在 APPL_DB 経由で書く実装:
+
+| 実装 | ファイル | 用途 |
+|---|---|---|
+| `VnetOrch` | `orchagent/vnetorch.cpp:3738, 3781` | VNET トンネル終端用カスタム type を自動 SET |
+| `DashEniFwdOrch` | `orchagent/dash/dashenifwdorch.cpp:404, 625, 649` | DASH ENI フォワーディング用 type を SET / DEL |
+
+- バッチサイズ: `gBatchSize`（orchagent 起動時に決定、デフォルト 128）。
+- 起動時スナップショット機能は `ConsumerStateTable` にはなく、orchagent 再起動時に APPL_DB 経由の type は上位 orch（`VnetOrch` 等）が再 SET する責任を持つ。
+
+### ディスパッチ
+
+両チャンネルの通知は共通の `AclOrch::doTask(Consumer&)` (`aclorch.cpp:4272`) → `doAclTableTypeTask(consumer)` (`aclorch.cpp:4291-4294`) に合流する。CONFIG_DB と APPL_DB の区別は `doAclTableTypeTask()` 内では行われない。
+
+<!-- /pubsub -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)、[`APPL_DB ACL`](appl-acl.md)
@@ -412,3 +467,4 @@ DEL 後に同名 type を参照する新規 `ACL_TABLE` が到着すると `getA
 
 [^1]: テーブル定義は `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2` (sha `9ea932ec`) L354-388 (`ACL_TABLE_TYPE` コンテナ) より。処理ロジックは `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L752-895 (`AclTableTypeParser`)、L4912-4942 (`addAclTableType`/`removeAclTableType`)、L5740-5773 (`doAclTableTypeTask`)、L3724 (`initDefaultTableTypes`) より。フィールド定数は `orchagent/acltable.h` L18-20 より。
 [^2]: 副作用の調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) `doAclTableTypeTask()` L5738-5774、`addAclTableType()` L4912-4930、`removeAclTableType()` L4932-4948、`doAclTableTask()` L5432 (`getAclTableType()` による retry 制御) より。STATE_DB テーブル名は `sonic-swss-common/common/schema.h` L418/514/515 より。
+[^3]: 通信メカニズムの調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L4197-4299 (AclOrch ctor、doTask)、`orchagent/orchdaemon.cpp` L408-422, L533-534 (TableConnector 構築)、`orchagent/orch.cpp` L1186-1196 (addConsumer DB 種別分岐)、`orchagent/vnetorch.cpp` L3738, L3781、`orchagent/dash/dashenifwdorch.cpp` L404, L625, L649、`sonic-swss-common/common/schema.h` L95 (`APP_ACL_TABLE_TYPE_TABLE_NAME`) より。
