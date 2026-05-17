@@ -383,6 +383,70 @@ COUNTERS_DB:COUNTERS:<oid> フィールドが更新される
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counters-port-failure.md -->
+
+### retry パターン概要
+
+`FlexCounterOrch::doTask()` はタスクキュー (`m_toSync`) ベースで動作し、失敗時の挙動は以下の通り。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **保留 (m_toSync 残留)** | `allPortsReady() = false` / Warm Start 60 秒タイマー中 | エントリを `m_toSync` に保持し次 `doTask()` 呼び出しで自動再試行。上限なし |
+| **即削除** | 不正 flex counter グループキー（`flexCounterGroupMap` 未登録） | `SWSS_LOG_NOTICE "Invalid flex counter group input, <key>"` 出力後エントリ削除。retry なし |
+| **silent skip** | 未サポートフィールド (`POLL_INTERVAL`/`FLEX_COUNTER_STATUS` 以外) | `SWSS_LOG_NOTICE "Unsupported field <field>"` 出力のみ。エントリは削除されず他フィールドの処理は継続 |
+| **プロセスクラッシュ** | Redis 接続断（`setCounterIdList` 内部の `RedisReply` 例外） | 未 catch のため orchagent クラッシュ。supervisor が再起動するまで全カウンタ収集停止 |
+
+### 不正グループキーの即削除
+
+`FLEX_COUNTER_TABLE` に `flexCounterGroupMap` 未登録のキー（タイポ等）を書いた場合、
+`SWSS_LOG_NOTICE` 出力後にエントリが即削除される (flexcounterorch.cpp:183-188)。
+
+```cpp
+if (!flexCounterGroupMap.count(key))
+{
+    SWSS_LOG_NOTICE("Invalid flex counter group input, %s", key.c_str());
+    consumer.m_toSync.erase(it++);
+    continue;
+}
+```
+
+PORT カウンタ自体には影響しない（`PORT` キーは登録済み）。
+
+### Warm Start 時の 60 秒全保留
+
+Warm Start の場合、`FlexCounterOrch` ctor が `FLEX_COUNTER_DELAY_SEC = 60` 秒タイマーを起動し、
+タイマー満了まで `doTask()` が全リターンする (flexcounterorch.cpp:127-136, 155-158)。
+通常起動時は `m_delayTimerExpired = true` が即設定されるため遅延なし。
+
+!!! warning "Warm Start 後 60 秒間は PORT カウンタ収集停止"
+    Warm Start 環境では PortInitDone 後も 60 秒間、`FLEX_COUNTER_TABLE|PORT` への書き込みが
+    処理されない。再起動直後に `portstat` で参照される値は最後のポーリング時点の stale 値。
+
+### SAI カウンタ非サポート時の N/A 表示
+
+SAI が特定の counter stat を返せない場合（ASIC 実装なし等）、syncd は当該フィールドを
+`COUNTERS:<oid>` に書き込まない。`portstat.py` はフィールドが取得できない場合 `STATUS_NA`
+('N/A') を返す (portstat.py:297-329)。WRED drop counter は起動時に
+`STATE_DB:PORT_COUNTER_CAPABILITIES` を確認し、未サポートなら `counter_bucket_dict` から
+事前に除外される。
+
+| ケース | portstat 表示 | COUNTERS_DB 状態 |
+|--------|-------------|-----------------|
+| ASIC サポートあり | 数値 | 値あり |
+| ASIC 非サポート (WRED 等) | N/A | フィールド不在 or 0 |
+| counterpoll disable 後 | 前回値 (stale) | 最後の値が残留 |
+
+### counterpoll disable 後の値残留
+
+`FLEX_COUNTER_TABLE|PORT FLEX_COUNTER_STATUS=disable` 書き込み後、syncd はポーリングを停止するが
+`COUNTERS_DB:COUNTERS:<oid>` のハッシュは**削除されない**。最後のポーリング値がそのまま残る。
+ポート削除時のみ `COUNTERS_PORT_NAME_MAP` から当該エントリが除去される (portsorch.cpp:4312)。
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
