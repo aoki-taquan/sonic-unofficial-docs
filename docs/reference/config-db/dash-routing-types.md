@@ -57,6 +57,55 @@ flowchart LR
     `DASH_ROUTING_TYPE_TABLE` に書き込まれた routing type は orchagent のメモリに保持され、VNET マッピング・ルートエントリのプログラム時に SAI 属性へ変換される。
 <!-- /cdb-mermaid -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/dash/dashorch.cpp addRoutingTypeEntry:441 / getRouteTypeActions:82 / dashvnetorch.cpp addOutboundCaToPa:313 -->
+
+`DASH_ROUTING_TYPE_TABLE` 自体は外部テーブルに依存せず任意のタイミングで SET できる。ただし `DASH_VNET_MAPPING_TABLE` のプログラミング時に routing type の登録が必須となるため、以下の SET 順序を守ることが重要。
+
+### 依存 1: DASH_ROUTING_TYPE_TABLE は前提テーブルなし（自己完結）
+
+```
+DASH_ROUTING_TYPE_TABLE|<routing_type>  SET
+```
+
+`addRoutingTypeEntry()` (`dashorch.cpp:441-455`) は外部 orchagent の状態を一切参照しない。受信した protobuf を `routing_type_entries_` マップに格納するのみ。`parsePbMessage()` のデシリアライズ失敗時のみ erase してスキップ（再試行なし）。
+
+**違反時**: なし（前提テーブルが存在しない）。
+
+### 依存 2: DASH_ROUTING_TYPE_TABLE → DASH_VNET_MAPPING_TABLE（必須先行・自動回復あり）
+
+```
+DASH_ROUTING_TYPE_TABLE|<routing_type>  SET 完了（routing_type_entries_ に格納済み）
+  ↓
+DASH_VNET_MAPPING_TABLE|<vnet>:<ip>  SET
+```
+
+`DashVnetOrch::addOutboundCaToPa()` (`dashvnetorch.cpp:313-319`) は `getRouteTypeActions()` を呼び、該当 routing type が `routing_type_entries_` に存在しない場合に `return false` でエントリを保留する。上位 `doTask()` が `it++` で ConsumerBase の次の周回まで保留し、ROUTING_TYPE が登録された後に自動再処理される（無限ポーリング）。
+
+**違反時**: `DASH_VNET_MAPPING_TABLE` のエントリが保留され、`DASH_ROUTING_TYPE_TABLE` SET 後に自動回復する。
+
+### 依存 3: DEL 推奨順序（VNET Mapping → ROUTING_TYPE）
+
+```
+DASH_VNET_MAPPING_TABLE|<vnet>:<ip>  DEL  先行（推奨）
+  ↓
+DASH_ROUTING_TYPE_TABLE|<routing_type>  DEL
+```
+
+`removeRoutingTypeEntry()` (`dashorch.cpp:457-471`) は即時 `routing_type_entries_` から削除する。VNET Mapping が残ったまま ROUTING_TYPE を先に削除すると、VNET Mapping の再 SET や orchagent 再起動時の replay で `getRouteTypeActions()` miss が発生し Mapping が処理待ちになる。
+
+**違反時**: 即時機能影響はないが、VNET Mapping の再設定が必要になる。
+
+| # | 依存関係 | 方向 | 違反時挙動 |
+|---|----------|------|-----------|
+| 1 | DASH_ROUTING_TYPE_TABLE SET の前提テーブルなし | — | — |
+| 2 | ROUTING_TYPE SET → VNET_MAPPING SET | 強制先行（自動再試行・自動回復） | VNET Mapping 保留、自動回復 |
+| 3 | VNET_MAPPING DEL → ROUTING_TYPE DEL | 推奨先行（違反しても即時影響なし） | VNET Mapping 再設定時に再試行待ち |
+
+<!-- /ordering -->
+
 ## key 構造
 
 ```text
