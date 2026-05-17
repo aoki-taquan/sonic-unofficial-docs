@@ -205,6 +205,62 @@ m_stateVrfObjectTable.hset(vrf_name, "state", "ok");
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査日 2026-05-17。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vxlanmgr.cpp`
+> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-ordering.md`
+
+### SET 方向の書込み順序
+
+VRF 作成時の書込み順序は以下のとおり固定されている:
+
+```
+CONFIG_DB VRF|<name> SET
+  ↓
+vrfmgrd: Linux VRF デバイス作成 (setLink)
+  ↓ (1)
+vrfmgrd: STATE_DB VRF_TABLE|<name> SET {state=ok}   ← vrfmgrd が先に書く
+  ↓ (2)
+vrfmgrd: APP_DB APP_VRF_TABLE|<name> SET             ← その後 APP_DB に通知
+  ↓ (3)
+VRFOrch: SAI create_virtual_router()
+  ↓ (4)
+VRFOrch: STATE_DB VRF_OBJECT_TABLE|<name> SET {state=ok}
+```
+
+`VRF_TABLE` は APP_DB への書込みと **同時または直前** に書かれる (vrfmgr.cpp:289, 305)。
+`VRF_OBJECT_TABLE` は SAI 成功後に orchagent が書くため、必ず `VRF_TABLE` より **後** になる。
+
+### DEL 方向の書込み順序と polling ループ
+
+```
+CONFIG_DB VRF|<name> DEL
+  ↓
+vrfmgrd: isVrfObjExist() → STATE_DB VRF_OBJECT_TABLE|<name> の存在確認
+  → false (orchagent 未完了): m_toSync キューに残して次の doTask() で再確認
+  → true  (orchagent 完了済み): 削除処理へ進む (vrfmgr.cpp:331)
+  ↓
+vrfmgrd: APP_DB APP_VRF_TABLE|<name> DEL
+vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
+  ↓
+VRFOrch: SAI remove_virtual_router()
+VRFOrch: STATE_DB VRF_OBJECT_TABLE|<name> DEL
+```
+
+`VRF_TABLE` の DEL は必ず `VRF_OBJECT_TABLE` の DEL より **先** になる。
+これにより fpmsyncd が VRF インタフェース名を参照できる期間を保証する (vrfmgr.cpp:316 コメント)。
+
+### 後続プロセスの待機依存
+
+| 後続プロセス | 参照テーブル | 待機条件 | ソース |
+|-------------|------------|---------|--------|
+| `intfmgrd` | `VRF_TABLE` | VRF バインドの前提として存在確認。なければ `m_toSync` に残留 | intfmgr.cpp:671, 680 |
+| `vxlanmgr` | `VRF_TABLE` | VXLAN VRF マッピング設定前に `isVrfStateOk()` で確認 | vxlanmgr.cpp:744 |
+| `vrfmgrd` 自身 | `VRF_OBJECT_TABLE` | DEL 時に orchagent の SAI 削除完了を待機 | vrfmgr.cpp:331, 342 |
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
