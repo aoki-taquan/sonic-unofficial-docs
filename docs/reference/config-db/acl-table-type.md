@@ -354,6 +354,54 @@ CONFIG_DB / APPL_DB の他テーブルを**一切参照しない**。フィー�
 
 ---
 
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+`ACL_TABLE_TYPE` エントリの SET/DEL は **orchagent 内の in-memory マップ `m_AclTableTypes`** のみを変更する。SAI API 呼び出し・STATE_DB 書き込み・AppDB 書き込みはいずれも発生しない。[^2]
+
+### SET 時の副作用
+
+#### 1. `m_AclTableTypes` へのエントリ追加
+
+`addAclTableType()` が成功すると `AclOrch::m_AclTableTypes`（`unordered_map<string, AclTableType>`）にエントリが追加される。以降、同名の `ACL_TABLE` が CONFIG_DB / AppDB に到着した際に `getAclTableType()` が参照する。
+
+#### 2. 後続 `ACL_TABLE` 処理のアンブロック
+
+`doAclTableTask()` は `ACL_TABLE_TYPE` が未登録の状態で `ACL_TABLE` が先に到着すると `it++`（retry pending）で保留する。`ACL_TABLE_TYPE` の SET が成功して `m_AclTableTypes` に登録されると、次の `doTask()` サイクルでペンディングが解消され、SAI テーブル生成・STATE_DB `ACL_TABLE_TABLE` への `status=active` 書き込みが行われる。
+
+### DEL 時の副作用
+
+#### 3. `m_AclTableTypes` からのエントリ削除
+
+`removeAclTableType()` はエントリを削除するのみ。既存の `AclTable` は `AclTableType` のコピーを保持しているため、削除しても実行中の ACL テーブルへの影響はない（SAI オブジェクトも存在しないため SAI 側変更もなし）。
+
+#### 4. 新規 `ACL_TABLE` の参照失敗
+
+DEL 後に同名 type を参照する新規 `ACL_TABLE` が到着すると `getAclTableType()` が `nullptr` を返し、`doAclTableTask()` の `it++` ループでペンディングが蓄積する。
+
+### STATE_DB への影響なし
+
+`doAclTableTypeTask()` は `setAclTableStatus()` を一切呼び出さない。以下の STATE_DB テーブルへの書き込みは `ACL_TABLE_TYPE` の処理では発生しない:
+
+| STATE_DB テーブル | 書き込みトリガ |
+|---|---|
+| `ACL_TABLE_TABLE` | `doAclTableTask()` （`ACL_TABLE` の SET/DEL 時） |
+| `ACL_RULE_TABLE` | `doAclRuleTask()` （`ACL_RULE` の SET/DEL 時） |
+| `ACL_STAGE_CAPABILITY_TABLE` | `queryAclActionCapability()` （起動時 SAI 問い合わせ） |
+
+### 副作用サマリ
+
+| 操作 | 直接副作用 | 間接副作用 |
+|---|---|---|
+| SET（parse 成功・新規） | `m_AclTableTypes` に追加 | 後続ペンディング `ACL_TABLE` のアンブロック → SAI テーブル生成・STATE_DB 書込み |
+| SET（parse 失敗 or 重複） | なし | なし |
+| DEL（登録済み） | `m_AclTableTypes` から削除 | 同名 type 参照の新規 `ACL_TABLE` がペンディング蓄積 |
+| DEL（未登録） | なし | なし |
+
+<!-- /side-effects -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)、[`APPL_DB ACL`](appl-acl.md)
@@ -363,3 +411,4 @@ CONFIG_DB / APPL_DB の他テーブルを**一切参照しない**。フィー�
 ## 引用元
 
 [^1]: テーブル定義は `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2` (sha `9ea932ec`) L354-388 (`ACL_TABLE_TYPE` コンテナ) より。処理ロジックは `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L752-895 (`AclTableTypeParser`)、L4912-4942 (`addAclTableType`/`removeAclTableType`)、L5740-5773 (`doAclTableTypeTask`)、L3724 (`initDefaultTableTypes`) より。フィールド定数は `orchagent/acltable.h` L18-20 より。
+[^2]: 副作用の調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) `doAclTableTypeTask()` L5738-5774、`addAclTableType()` L4912-4930、`removeAclTableType()` L4932-4948、`doAclTableTask()` L5432 (`getAclTableType()` による retry 制御) より。STATE_DB テーブル名は `sonic-swss-common/common/schema.h` L418/514/515 より。
