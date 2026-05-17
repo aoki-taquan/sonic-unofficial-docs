@@ -353,6 +353,62 @@ minigraph.py は `MGMT_VRF_CONFIG` を先行して格納後、`mgmt_intf`（MGMT
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-failure.md`
+
+### SNMP_AGENT_ADDRESS_CONFIG の失敗経路
+
+#### key フォーマット不正によるテンプレートレンダリング失敗
+
+`snmpd.conf.j2` L28 は `{% for (agentip, port, vrf) in SNMP_AGENT_ADDRESS_CONFIG %}` で 3 要素タプルをアンパックする。CONFIG_DB の key が `<ip>|<port>|<vrf>` の正規形でない場合、`sonic-cfggen` がテンプレート展開中に例外を送出し `/etc/snmp/snmpd.conf` が生成されない。`start.sh` が non-zero で終了するため supervisord が snmpd を起動しない。[^1]
+
+#### VRF 実在確認なし — サイレント bind 失敗
+
+`vrf_name` に `mgmt` / `Vrf<name>` を設定しても VRF がカーネルに存在しない場合、snmpd は起動後に該当 agentAddress のバインドに失敗する。snmpd は他の agentAddress でのリッスンを継続するため、CONFIG_DB レベル・YANG バリデーション層のいずれでも検知されない。[^2]
+
+#### systemctl restart snmp の失敗が CLI で無視される
+
+CLI の `add_snmp_agent_address()` は `os.system("systemctl restart snmp")` の戻り値をチェックしない（`config/main.py:4189`）。再起動に失敗した場合でも CLI はエラーを報告せず、snmpd.conf は更新されないまま処理を終える。[^3]
+
+### SNMP_USER の失敗経路
+
+#### YANG must 制約違反（直接書き込み時）
+
+`sonic-snmp.yang` L120-163 の `must` 制約は `SNMP_USER_TYPE` の値に連動する。CLI `add_user()` は Python レベルで事前検証するため CLI 経由では YANG 層に到達しない。しかし `sonic-db-cli` で直接書き込む場合はフィールド不整合が YANG バリデーション違反として SET 拒否される。[^2]
+
+| 失敗条件 | 結果 |
+|---|---|
+| `noAuthNoPriv` ユーザに `SNMP_USER_AUTH_TYPE != ""` | YANG `must` 違反で SET 拒否 |
+| `AuthNoPriv` / `Priv` ユーザに `SNMP_USER_AUTH_TYPE = ""` | YANG `must` 違反で SET 拒否 |
+| `Priv` ユーザに `SNMP_USER_ENCRYPTION_TYPE` が DES/AES 以外 | YANG `must` 違反で SET 拒否 |
+| `noAuthNoPriv` / `AuthNoPriv` ユーザに `SNMP_USER_ENCRYPTION_PASSWORD != ""` | YANG `must` 違反で SET 拒否 |
+
+#### フィールド欠落による snmpd.conf 生成失敗
+
+`snmpd.conf.j2` L70 の `CreateUser` 行は `SNMP_USER_AUTH_TYPE` / `SNMP_USER_AUTH_PASSWORD` / `SNMP_USER_ENCRYPTION_TYPE` / `SNMP_USER_ENCRYPTION_PASSWORD` の 4 フィールドを参照する。YANG バリデーションをバイパスして SET し、フィールドが CONFIG_DB に存在しない場合は `sonic-cfggen` が `UndefinedError` で失敗し snmpd.conf が生成されない。[^1]
+
+### コンテナ起動経路の失敗（全テーブル共通）
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| `/etc/sonic/snmp.yml` の `snmp_location` キー不在 | `snmp_yml_to_configdb.py:55-56` | `sys.exit(1)` → `start.sh` 失敗 → snmpd 未起動 |
+| snmpd.conf.j2 レンダリング例外 | `start.sh`（sonic-cfggen 呼び出し） | `start.sh` 失敗 → snmpd 未起動 |
+| `DEVICE_METADATA.localhost.switch_type` が CONFIG_DB に不在 | `supervisord.conf.j2:53-57` | supervisord 設定生成失敗 → コンテナ起動不可 |
+
+### 失敗の可観測性
+
+| 確認項目 | コマンド |
+|---------|---------|
+| docker-snmp コンテナ状態 | `docker ps \| grep snmp` |
+| start.sh / snmpd ログ | `docker logs snmp 2>&1 \| grep -iE 'error\|fail'` |
+| snmpd agentAddress バインドエラー | `docker exec snmp cat /var/log/supervisor/snmpd.log` |
+| 実際の snmpd.conf 確認 | `docker exec snmp cat /etc/snmp/snmpd.conf` |
+| CONFIG_DB ユーザ設定確認 | `sonic-db-cli CONFIG_DB hgetall 'SNMP_USER\|<user>'` |
+
+<!-- /failure -->
+
 ---
 
 ## 関連リファレンス
