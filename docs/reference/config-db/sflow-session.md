@@ -463,3 +463,52 @@ sess_info = sess_db.get_all(sess_db.APPL_DB, intf_key)
 `NotificationProducer` / `NotificationConsumer` は SFLOW_SESSION の経路では一切使用しない。
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+`sflowmgrd` および `SflowOrch` の全コードを精読した結果、SFLOW_SESSION 処理に **プラットフォーム固有分岐は存在しない**。
+
+> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-platform.md`
+
+### 静的プラットフォーム比較: なし
+
+`sflowmgr.cpp` / `sfloworch.cpp` のいずれにも `getenv("platform")` / `getenv("sub_platform")` の呼び出しが存在しない。ACL 系が行うようなベンダー名文字列比較 (`broadcom`, `mellanox`, etc.) は一切ない。
+
+VOQ Chassis (`is_chassis()`) / SmartSwitch DPU (`switch_type == "dpu"`) の特殊モード分岐も存在しない。
+
+### 動的 SAI capability 照会: なし
+
+`sfloworch.cpp` は `sai_query_attribute_capability()` を呼び出さず、以下の SAI 属性を全プラットフォーム共通で直接呼び出す:
+
+| SAI API / 属性 | 用途 |
+|---------------|------|
+| `sai_samplepacket_api->create_samplepacket()` | サンプリングレートごとのセッション作成 |
+| `sai_samplepacket_api->remove_samplepacket()` | セッション削除 |
+| `SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` | rx / both 方向のポートサンプリング有効化 |
+| `SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE` | tx / both 方向のポートサンプリング有効化 |
+| `SAI_SAMPLEPACKET_ATTR_SAMPLE_RATE` | サンプリングレート (uint32_t) |
+
+SAI がエラーを返した場合は `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` 経由でログを出力し `it++; continue` でスキップする。BFD のような software fallback 経路は存在しない。
+
+### ASIC ベンダー別傾向 (SAI 実装依存)
+
+`sfloworch.cpp` 自体はベンダー文字列を参照しないが、SAI 実装ごとの典型的な対応状況:
+
+| ASIC / プラットフォーム | hardware sFlow | 備考 |
+|---|---|---|
+| broadcom (Trident3 / Tomahawk) | あり | SAI samplepacket API 実装済み |
+| broadcom-dnx (Jericho / Qumran) | 機種依存 | DNX SAI で一部制限あり |
+| mellanox (Spectrum 系) | あり | Spectrum / Spectrum-2/3/4 で対応 |
+| barefoot (Tofino) | 通常なし | 標準 SAI samplepacket 未実装が多い |
+| cisco-8000 (Silicon One) | あり | SAI samplepacket 実装済み |
+| marvell-prestera | 機種依存 | SAI 実装次第 |
+| vs (Virtual Switch) | **なし** | libsai が samplepacket 未実装 — `create_samplepacket` がエラーを返しスキップされる |
+
+!!! note "最終判定は SAI 実装"
+    上表は一般的傾向であり、実際の動作可否は各ベンダーの SAI ライブラリ実装が決定する。
+    vs (仮想スイッチ) では sflowmgrd / hsflowd の userspace 処理は正常動作するが、
+    ハードウェアサンプリングは機能しない（SAI エラーをログ出力してスキップ）。
+
+<!-- /platform -->
