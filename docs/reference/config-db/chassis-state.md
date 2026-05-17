@@ -413,6 +413,64 @@ supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し
 > **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:354-362,444-457,593-682,1241-1243,1267-1284,1477-1533`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+### platform API 失敗時の DB 書き込み経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `get_oper_status()` が `NotImplementedError` | `try_get()` | fallback `'Offline'` → ASIC テーブル更新スキップ | なし | `chassisd:125-141,490` |
+| `get_slot()` が `NotImplementedError` | `try_get()` | fallback `-1` (INVALID_SLOT) → STATE_DB に `slot=-1` 書き込み | なし | `chassisd:125-141,488` |
+| `get_all_asics()` が `NotImplementedError` | `try_get()` | fallback `[]` → ASIC テーブル書き込みをスキップ | なし | `chassisd:125-141,491` |
+| `get_name()` が `NotImplementedError` | `try_get()` | fallback `'N/A'` を key として STATE_DB に書き込み（複数モジュールで同時に失敗するとキー衝突） | なし | `chassisd:486` |
+| `get_midplane_ip()` が `NotImplementedError` | `try_get()` | fallback `'0.0.0.0'` → CHASSIS_MIDPLANE_INFO_TABLE に書き込み | なし | `chassisd:563` |
+| `is_midplane_reachable()` が `NotImplementedError` | `try_get()` | fallback `False` → midplane down 扱い | なし | `chassisd:564` |
+| `init_midplane_switch()` が `NotImplementedError` | `try_get()` | `midplane_initialized=False` → 以降 `check_midplane_reachability()` 全スキップ | `LOG_ERROR "Chassisd midplane intialization failed"` | `chassisd:309-311` |
+| `get_module_index()` が `NotImplementedError` | `try_get()` | fallback `-1` → `module_config_update()` が early return | `LOG_ERROR "Unable to get module-index for key..."` | `chassisd:202-206` |
+| `set_admin_state()` が `NotImplementedError` | `try_get()` | fallback `False` → platform への状態変更不実施 (silent) | なし | `chassisd:212` |
+
+### platform.json / platform_env.conf パース失敗
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `platform.json` が `json.JSONDecodeError` | `SmartSwitchModuleUpdater.__init__` | `dpu_reboot_timeout` がデフォルト 360 秒のまま | `LOG_ERROR "Error parsing {}: ..."` | `chassisd:728-729` |
+| `platform.json` のパース中に予期しない例外 | `SmartSwitchModuleUpdater.__init__` | 同上 | `LOG_ERROR "Unexpected error: ..."` | `chassisd:730-731` |
+| `platform_env.conf` が存在しない | `ModuleUpdater.__init__` | `linecard_reboot_timeout` がデフォルト 180 秒のまま (silent) | なし | `chassisd:302-307` |
+
+### REBOOT_CAUSE ファイル処理の失敗
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `json.load()` が `json.JSONDecodeError` | `update_dpu_reboot_cause_to_db()` | 該当ファイルをスキップ; 他のファイルは継続処理 | `LOG_WARNING "Failed to decode JSON from file: ..."` | `chassisd:1069-1070` |
+| ファイル処理中に `Exception` | `update_dpu_reboot_cause_to_db()` | 該当ファイルをスキップ; 他のファイルは継続処理 | `LOG_WARNING "Error processing file ..."` | `chassisd:1071-1072` |
+| 対象モジュールのヒストリファイルが 0 件 | `update_dpu_reboot_cause_to_db()` | DB 書き込みなしで early return | `LOG_WARNING "No reboot cause history files found for module: ..."` | `chassisd:1046-1048` |
+| `previous-reboot-cause.json` が存在しない | `retrieve_dpu_reboot_info()` | `(None, None)` を返す; `is_reboot=False` で進む | `LOG_DEBUG "{module}: previous-reboot-cause.json not found"` | `chassisd:772-773` |
+| `previous-reboot-cause.json` のパースに失敗 | `retrieve_dpu_reboot_info()` | `(None, None)` を返す | `LOG_ERROR "{module}: Failed to read previous-reboot-cause.json: ..."` | `chassisd:773-774` |
+| `history/` ディレクトリが `FileNotFoundError` | `_rotate_files()` | `return` してローテーション中断 (silent) | なし | `chassisd:1018-1019` |
+
+### DPU_STATE 書き込み失敗
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `chassis_state_db.hset()` または `db_connect()` が例外 | `update_dpu_state()` | DB 書き込み不実施; `DPU_STATE` が古い値のまま | `LOG_ERROR "Unexpected error: ..."` | `chassisd:890-891` |
+| `get_dpu_midplane_state()` 中に例外 | `get_dpu_midplane_state()` | `None` を返す → `dpu_mp_state != 'up'` 判定 → `update_dpu_state()` 呼び出し | `LOG_ERROR "Unexpected error: ..."` | `chassisd:905-906` |
+| `set_initial_dpu_admin_state()` 内で例外 | `ChassisdDaemon.set_initial_dpu_admin_state()` | ログ出力後に継続（当該 DPU の初期化スキップ） | `LOG_ERROR "Error in run: ..."` | `chassisd:1400-1401` |
+
+### ConfigManagerTask の異常系
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `sel.select()` が `OBJECT` 以外 | `ConfigManagerTask.task_worker()` | `log_warning` 後に次のループへ | `LOG_WARNING "sel.select() did not return swsscommon.Select.OBJECT"` | `chassisd:1159-1160` |
+| キー名が `LINE-CARD`/`FABRIC-CARD`/`SUPERVISOR` のいずれでも始まらない | `ModuleConfigUpdater.module_config_update()` | early return; platform API 呼び出しなし | `LOG_ERROR "Incorrect module-name ..."` | `chassisd:193-199` |
+| SmartSwitch で `admin_status` が `'up'`/`'down'` 以外 | `SmartSwitchModuleConfigUpdater.module_config_update()` | `log_warning` 後に early return | `LOG_WARNING "Invalid admin_state value: ..."` | `chassisd:252-253` |
+
+!!! warning "`try_get()` と非 `NotImplementedError` 例外"
+    `try_get()` は `NotImplementedError` のみを捕捉する。platform API 実装バグで `AttributeError` 等が発生した場合、`module_db_update()` ループ全体が中断される。`DpuStateUpdater.deinit()` の DB 書き込み失敗もエラーハンドリングなしで例外が伝播する（chassisd:1318-1320）。
+
+> **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:125-141,193-212,237-253,302-311,486-495,563-564,728-731,772-774,890-891,905-906,1018-1019,1046-1072,1159-1160,1318-1320,1400-1401`
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
