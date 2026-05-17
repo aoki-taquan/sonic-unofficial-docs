@@ -287,6 +287,44 @@ YANG `leafref` による明示的な参照は持たないが、orchagent / chass
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dpu-side-effects.md`
+
+`DPU` テーブルへの SET / DEL が発生したとき、各コンシューマが他テーブル・OS・ハードウェアに
+対して行う副作用を示す。
+
+| # | トリガ操作 | コンポーネント | 副作用先 | 副作用内容 | 証跡 |
+|---|------------|--------------|---------|-----------|------|
+| 1 | 起動時 `DPU` SET (populate) | orchagent `DpuRegistry` | ヒープ (`dpus_name_map_`) | DPU 名 → `{ type=LOCAL, pa_v4 }` を内部マップに登録。runtime 変更は反映されない（orchagent 再起動が必要） | `dashenifwdorch.cpp:255-258` |
+| 2 | `ENI` SET（初回）→ DPU 情報解決 | orchagent `EniFwdCtxBase` | APPL_DB `ACL_TABLE_TYPE\|ENI_REDIRECT` | ACL テーブルタイプを作成（matches: `dst_ip`, `inner_dst_mac`, `tunnel_term`） | `dashenifwdorch.cpp:603-625` |
+| 3 | `ENI` SET（初回）→ DPU 情報解決 | orchagent `EniFwdCtxBase` | APPL_DB `ACL_TABLE\|ENI` | 外部物理/LAG ポートをバインドポートとして ACL テーブルを作成 | `dashenifwdorch.cpp:635-643` |
+| 4 | `ENI` SET（ネクストホップ解決後）| orchagent `EniAclRule` | APPL_DB `ACL_RULE\|ENI:<vnet>:<mac>` | `redirect_action = DPU.pa_ipv4` の ACL ルールを set | `dashenifwdinfo.cpp:193-206` |
+| 5 | `ENI` SET（LOCAL DPU 未解決時） | orchagent `LocalEniNH` | `NeighOrch` → ARP / SAI | DPU `pa_ipv4` に対する ARP 解決要求を発行。ARP 解決後コールバックで ACL ルール書き込み | `dashenifwdinfo.cpp:18-31` |
+| 6 | `ENI` DEL（最後のルール削除） | orchagent `EniFwdCtxBase` | APPL_DB `ACL_TABLE\|ENI`, `ACL_TABLE_TYPE\|ENI_REDIRECT` | ACL テーブル・テーブルタイプを APPL_DB から削除 | `dashenifwdorch.cpp:646-650` |
+| 7 | `DPU` SET（`swbus_port` あり、`dash-ha` feature 有効） | caclmgrd | Linux iptables / ip6tables | `INPUT` チェーン位置 2 に `tcp dport <swbus_port> ACCEPT` を挿入（IPv4 + IPv6） | `caclmgrd:1073-1079` |
+| 8 | `DPU` DEL（`swbus_port` 既登録） | caclmgrd | Linux iptables / ip6tables | 対応 `swbus_port` の ACCEPT ルールを削除 | `caclmgrd:1083-1090` |
+| 9 | `DPU` SET（`swbus_port` 値変更） | caclmgrd | Linux iptables / ip6tables | 旧ポートルール削除 → 新ポートルール挿入（アトミックではない） | `caclmgrd:1104-1108` |
+
+### ガード条件
+
+- **副作用 #7-#9**: `FEATURE` テーブルに `"dash-ha"` キーが存在する場合のみ実行される (`caclmgrd:1265`)。
+  `dash-ha` feature が無効のとき `DPU` テーブルへの変化は iptables に影響しない。
+- **副作用 #7**: `swbus_port` フィールドが欠如した SET は iptables 操作なし（INFO ログのみ出力）。
+- **副作用 #1-#6**: `DPU.state = "down"` のエントリは DpuRegistry に未登録となり、
+  ENI フォワーディングの ACL ルール生成に使用されない。
+
+### runtime 変更の非対称性
+
+orchagent は `DPU` テーブルを起動時に一括読み込み（`DpuRegistry::populate()`）し、
+**runtime の DPU SET/DEL イベントは orchagent には届かない**（副作用 #1）。
+一方 caclmgrd は `SubscriberStateTable` で常時購読しており runtime 変更を即時反映する（副作用 #7-#9）。
+
+DPU の設定変更（`state` / `pa_ipv4` 等）を orchagent に反映させるには
+`swss` コンテナの再起動が必要。`swbus_port` 変更は orchagent 不要、caclmgrd が即時対応する。
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
