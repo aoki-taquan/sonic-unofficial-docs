@@ -316,3 +316,76 @@ findSamplingRate() がポート未登録を検出
 ```
 
 <!-- /constants -->
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`SFLOW_SESSION` テーブルへの書込をトリガーとして、他 DB・テーブルへ副次的に書き込まれる経路を `sflowmgr.cpp` / `sfloworch.cpp` から抽出した。
+
+### 1. APPL_DB `SFLOW_SESSION_TABLE` への書込 (sflowmgrd)
+
+`SFLOW_SESSION` の SET/DEL イベントを受けた `SflowMgr::doTask()` が `m_appSflowSessionTable.set()` / `.del()` を呼び出す。
+
+#### 1a. `SFLOW_SESSION|<port>` SET 時
+
+`sflowCheckAndFillValues()` でフィールドを補完後、グローバル admin_state が有効（`m_gEnable=true`）の場合のみ APPL_DB に書き込む (sflowmgr.cpp:531-534)。[^4]
+
+| フィールド | 書込値 | evidence |
+|-----------|-------|---------|
+| `admin_state` | ローカル設定値、なければ `"up"` | sflowmgr.cpp:361-369 |
+| `sample_rate` | ローカル設定値、なければ `findSamplingRate()` 結果 | sflowmgr.cpp:345-358 |
+| `sample_direction` | ローカル設定値、なければ `m_gDirection` (デフォルト `"rx"`) | sflowmgr.cpp:373-382 |
+
+#### 1b. `SFLOW_SESSION|<port>` DEL 時
+
+`m_appSflowSessionTable.del(key)` でポートエントリを削除する (sflowmgr.cpp:567)。その後 `m_intfAllConf=true` であれば `sflowGetGlobalInfo()` でグローバル設定を同ポートに再投入する (sflowmgr.cpp:576-581)。[^4]
+
+#### 1c. `SFLOW_SESSION|all` SET 時
+
+`m_intfAllConf` / `m_intfAllDir` を更新し、`m_gEnable=true` のとき `sflowHandleSessionAll()` で全ポートの `SFLOW_SESSION_TABLE` を一斉更新する (sflowmgr.cpp:511-514)。ローカル設定を持つポートはローカル値を優先し、それ以外はグローバル値を使用する (sflowmgr.cpp:227-244)。[^4]
+
+#### 1d. `SFLOW_SESSION|all` DEL 時
+
+`m_intfAllConf=false` だった場合かつ `m_gEnable=true` であれば、`sflowHandleSessionAll(true, m_gDirection)` で全ポートを再有効化する (sflowmgr.cpp:558-563)。その後 `m_intfAllConf=true` にリセットされる。[^4]
+
+### 2. ASIC_DB — SAI samplepacket セッション操作 (SflowOrch 経由)
+
+SflowOrch が APPL_DB `SFLOW_SESSION_TABLE` を購読し、SAI API でハードウェアサンプリングを設定する。
+
+#### 2a. `sai_samplepacket_api->create_samplepacket()`
+
+新レートのセッション作成 (sfloworch.cpp:29)。セッションは `m_sflowRateSampleMap[rate]` で参照カウント管理し、同レートのポートがセッションを共有する。[^4]
+
+```
+attr.id = SAI_SAMPLEPACKET_ATTR_SAMPLE_RATE
+attr.value.u32 = rate
+sai_samplepacket_api->create_samplepacket(&session_id, gSwitchId, 1, &attr)
+```
+
+#### 2b. `sai_port_api->set_port_attribute()` — ポート samplepacket 設定
+
+| 方向 | SAI 属性 | 有効化時 | 無効化時 |
+|------|---------|--------|--------|
+| `rx` / `both` | `SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` | `session_id` | `SAI_NULL_OBJECT_ID` |
+| `tx` / `both` | `SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE` | `session_id` | `SAI_NULL_OBJECT_ID` |
+
+evidence: sfloworch.cpp:119–150 (`sflowAddPort`), sfloworch.cpp:161–195 (`sflowDelPort`)[^4]
+
+#### 2c. `sai_samplepacket_api->remove_samplepacket()`
+
+参照カウントがゼロになったとき呼び出す (sfloworch.cpp:49)。レート変更時は旧セッション destroy → 新セッション create の順で実行 (sfloworch.cpp:95-106)。[^4]
+
+### 副次書込 サマリテーブル
+
+| トリガー | consumer | 対象 DB | テーブル | 書込内容 | evidence |
+|---------|---------|--------|---------|---------|---------|
+| `SFLOW_SESSION\|<port>` SET (gEnable=true) | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | admin_state / sample_rate / sample_direction | sflowmgr.cpp:533 |
+| `SFLOW_SESSION\|<port>` DEL | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | キー削除 | sflowmgr.cpp:567 |
+| DEL 後 intfAllConf=true | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | グローバル設定で再 SET | sflowmgr.cpp:578-580 |
+| `SFLOW_SESSION\|all` SET (gEnable=true) | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | 全ポート一斉更新 | sflowmgr.cpp:513 |
+| `SFLOW_SESSION\|all` DEL (intfAllConf=false, gEnable=true) | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | 全ポート再有効化 | sflowmgr.cpp:558-563 |
+| APPL_DB `SFLOW_SESSION_TABLE` SET | SflowOrch | ASIC_DB | SAI samplepacket | create_samplepacket + INGRESS/EGRESS 属性 SET | sfloworch.cpp:29,122,139 |
+| APPL_DB `SFLOW_SESSION_TABLE` DEL | SflowOrch | ASIC_DB | SAI samplepacket | remove_samplepacket + SAI_NULL_OBJECT_ID でポートリセット | sfloworch.cpp:49,165,183 |
+
+[^4]: 副次書込調査: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
+
+<!-- /side-effects -->
