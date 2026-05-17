@@ -295,3 +295,27 @@ DASH ACL オブジェクトには厳密なコード由来の依存関係があ�
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-ordering.md`
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dash-acl-cross-refs.md -->
+
+各テーブルが SAI 書き込み時に参照する外部テーブル・リソース。YANG leafref は存在しないため、すべて実装レベルの暗黙参照。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `DASH_ENI_TABLE` | OID 解決（必須） | `DASH_ACL_IN/OUT_TABLE` SET 時常時。ENI 未登録 → `task_need_retry`（自動リトライ） | `dashaclgroupmgr.cpp:457,461` (`m_dash_orch->getEni()`) |
+| `DASH_ACL_GROUP_TABLE` | OID 解決（必須） | `DASH_ACL_RULE_TABLE` ルール作成時。グループ未作成 → `task_need_retry`（自動リトライ） | `dashaclgroupmgr.cpp:385-390` |
+| `DASH_ACL_GROUP_TABLE` | OID 解決（必須） | `DASH_ACL_IN/OUT_TABLE` バインド時。グループ未作成 → `task_failed`（自動回復なし） | `dashaclgroupmgr.cpp:442-446` |
+| `DASH_PREFIX_TAG_TABLE` | タグ存在確認（条件付き） | `DASH_ACL_RULE_TABLE` で `src_tag` / `dst_tag` 指定時のみ。タグ未登録 → `task_need_retry` | `dashaclgroupmgr.cpp:393-408` (`getDashAclTagMgr().exists()`) |
+| CrmOrch (`gCrmOrch`) | リソースカウンタ | ACL ルール SAI 作成成功時に `incCrmDashAclUsedCounter` を呼び出し | `dashaclgroupmgr.cpp:372-376` |
+
+!!! note "バインド時の参照失敗の非対称性"
+    `DASH_ACL_IN/OUT_TABLE` バインド時のグループ参照失敗は `task_failed`（破棄）だが、ENI 参照失敗は `task_need_retry`（リトライ）と非対称。グループは事前作成必須だが ENI は後から来ても自動解消できる設計による。
+
+!!! note "YANG leafref なし"
+    4 テーブルはすべて YANG 未定義のため leafref による静的な参照整合性チェックは行われない。参照整合性はすべて `DashAclOrch` / `DashAclGroupMgr` のランタイムチェックのみで保証される。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-cross-refs.md`
+<!-- /cross-refs -->
