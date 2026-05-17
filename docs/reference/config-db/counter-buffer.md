@@ -670,6 +670,93 @@ Gearbox PHY が有効な環境では、`COUNTERS_PORT_NAME_MAP` が
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-pubsub.md -->
+
+バッファ / ウォーターマークカウンタ周辺で使われる通知経路は 3 種類存在する。
+すべて HLD には明示されていない。
+
+### 1. CONFIG_DB → watermarkorch / flexcounterorch — SubscriberStateTable
+
+`WatermarkOrch` は `orchdaemon` 初期化時に `CFG_WATERMARK_TABLE_NAME` と
+`CFG_FLEX_COUNTER_TABLE_NAME` を `swsscommon::Orch(db, tables)` コンストラクタ経由で
+`ConsumerStateTable` として購読する（orchdaemon.cpp:432-437）。
+
+| 購読テーブル | 受信ハンドラ | 動作 |
+|------------|------------|------|
+| `WATERMARK_TABLE\|TELEMETRY_INTERVAL` | `handleWmConfigUpdate()` | `SelectableTimer` の周期を変更 |
+| `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` | `handleFcConfigUpdate()` | `m_wmStatus` を更新してタイマーを開始/停止 |
+| `FLEX_COUNTER_TABLE\|PG_WATERMARK` | `handleFcConfigUpdate()` | 同上（PG WM のビットを制御） |
+
+`FlexCounterOrch` も `CFG_FLEX_COUNTER_TABLE_NAME` を購読し、`FLEX_COUNTER_STATUS:enable`
+を受信すると `gPortsOrch` / `gBufferOrch` の対応メソッドを呼び出して FLEX_COUNTER_TABLE
+（syncd 側）への `COUNTER_ID_LIST` 書き込みを起動する（flexcounterorch.cpp:235-295）。
+
+| グループキー | 呼び出し先 |
+|------------|----------|
+| `QUEUE_STAT` | `gPortsOrch->generateQueueCounterMap()` |
+| `QUEUE_WATERMARK` | `gPortsOrch->generateQueueWatermarkCounterMap()` |
+| `PG_STAT` | `gPortsOrch->generatePriorityGroupCounterMap()` |
+| `PG_WATERMARK` | `gPortsOrch->generatePriorityGroupWatermarkCounterMap()` |
+| `PORT_BUFFER_DROP` | `gPortsOrch->generatePortBufferDropCounterMap()` |
+| `BUFFER_POOL_WATERMARK` | `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` |
+
+!!! note "portsorch / bufferorch は CONFIG_DB を直接購読しない"
+    Queue / PG / Port Buffer Drop カウンタの有効化は FlexCounterOrch 経由でのみ行われる。
+    `counterpoll` CLI → `CONFIG_DB FLEX_COUNTER_TABLE` → `FlexCounterOrch` → `gPortsOrch` / `gBufferOrch`
+    という多段経路になる点に注意。
+
+### 2. APPL_DB → watermarkorch — Redis PUBLISH/SUBSCRIBE (NotificationConsumer)
+
+`WatermarkOrch` は初期化時に `swss::NotificationConsumer` を APPL_DB の
+`WATERMARK_CLEAR_REQUEST` チャネルに登録する（watermarkorch.cpp:35-39）。
+
+送信者は `watermarkstat` CLI（sonic-utilities/scripts/watermarkstat:323-325）:
+
+```
+watermarkstat --clear --type pg_shared
+  ↓ db.publish('APPL_DB', 'WATERMARK_CLEAR_REQUEST', '["USER","PG_SHARED"]')
+Redis PUBLISH NOTIFY__WATERMARK_CLEAR_REQUEST
+  ↓ WatermarkOrch::doTask(NotificationConsumer &consumer)
+clearSingleWm(USER_WATERMARKS, "SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES", pg_ids)
+  ↓ COUNTERS_DB USER_WATERMARKS:<oid> のフィールドを "0" にリセット
+```
+
+op / data の組み合わせと対象テーブル:
+
+| op | data | 対象テーブル |
+|----|------|------------|
+| `PERSISTENT` | `PG_HEADROOM` / `PG_SHARED` / `Q_SHARED_*` / `BUFFER_POOL` / `HEADROOM_POOL` | `PERSISTENT_WATERMARKS` |
+| `USER` | 同上 | `USER_WATERMARKS` |
+
+**これは CONFIG_DB の keyspace 通知とは別の Redis PUBLISH/SUBSCRIBE 機構**であり、
+TTL なし・永続コネクション・fan-out なしの 1:1 通知。HLD への記述は存在しない。
+
+### 3. SelectableTimer — PERIODIC_WATERMARKS 定期リセット
+
+`WatermarkOrch` は `SelectableTimer` を `DEFAULT_TELEMETRY_INTERVAL = 120` 秒で作成し、
+タイマー発火ごとに `PERIODIC_WATERMARKS` テーブル全フィールドを `"0"` にリセットする
+（watermarkorch.cpp:233-281）。
+
+タイマーの動作状態は FLEX_COUNTER_STATUS と連動する:
+
+- `QUEUE_WATERMARK` または `PG_WATERMARK` グループが `enable` → `m_telemetryTimer->start()`
+- 両グループが `disable` → 次回タイマー発火時に `m_telemetryTimer->stop()`（watchdog 的停止）
+- `WATERMARK_TABLE|TELEMETRY_INTERVAL` が更新されると `m_timerChanged = true` をセットし、
+  次回発火後に `reset()` で新周期に切り替わる（watermarkorch.cpp:249-253）
+
+!!! warning "Buffer Pool WM はタイマーリセット対象に含まれない"
+    `doTask(SelectableTimer)` は `SAI_BUFFER_POOL_STAT_WATERMARK_BYTES` と
+    `SAI_BUFFER_POOL_STAT_XOFF_ROOM_WATERMARK_BYTES` を clearSingleWm に渡しているが、
+    対象は `m_periodicWatermarkTable (PERIODIC_WATERMARKS)` のみ。
+    Buffer Pool WM の User/Persistent クリアは `WATERMARK_CLEAR_REQUEST` 経由でのみ行われる。
+
+> **Evidence**: `watermarkorch.cpp:23-44` (コンストラクタ)、`watermarkorch.cpp:52-92` (doTask Consumer)、`watermarkorch.cpp:116-142` (handleFcConfigUpdate)、`watermarkorch.cpp:144-231` (doTask NotificationConsumer)、`watermarkorch.cpp:233-281` (doTask SelectableTimer)、`flexcounterorch.cpp:225-295` (FLEX_COUNTER_STATUS ハンドラ)、`orchdaemon.cpp:432-437` (WatermarkOrch 初期化)、`watermarkstat:323-325` (CLI 送信側); 詳細分析 `meta/_intermediate/cdb-flow/counter-buffer-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
