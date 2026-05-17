@@ -460,6 +460,75 @@ YANG の `SNMP_USER_AUTH_TYPE` は `type string` で明示的な enum 制約を�
 
 ---
 
+<!-- side-effects -->
+## 副次 DB 書込・ファイル書込 (Phase F)
+
+> **調査根拠**: `dockers/docker-snmp/start.sh` L14-26, `dockers/docker-snmp/snmpd.conf.j2` 全行, `sonic-utilities/config/main.py` L4188-4209, L4786-4813 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-side-effects.md`
+
+### ファイル書込: `/etc/snmp/snmpd.conf`
+
+`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` への書込後、CLI は必ず `systemctl restart snmp` を実行する。
+コンテナ内の `start.sh` が `sonic-cfggen` を呼び出し、`snmpd.conf.j2` テンプレートから `/etc/snmp/snmpd.conf` を再生成する。[^6]
+
+```bash
+# start.sh:19-26 — snmpd.conf 生成フロー
+SONIC_CFGGEN_ARGS=" \
+    -d \
+    -y /etc/sonic/sonic_version.yml \
+    -t /usr/share/sonic/templates/sysDescription.j2,/etc/ssw/sysDescription \
+    -t /usr/share/sonic/templates/snmpd.conf.j2,/etc/snmp/snmpd.conf \
+"
+sonic-cfggen $SONIC_CFGGEN_ARGS
+```
+
+生成後、`snmpd` → `snmp-subagent (sonic_ax_impl)` の順でプロセスが再起動し、新しい設定が反映される。
+
+| CONFIG_DB テーブル | `/etc/snmp/snmpd.conf` への展開 |
+|--------------------|--------------------------------|
+| `SNMP_AGENT_ADDRESS_CONFIG` | `agentAddress udp:[<ip>][@vrf][:port]`（エントリ数分出力） |
+| `SNMP_USER` | `rouser`/`rwuser` + `CreateUser <user> <auth> <passwd> <enc> <passwd>` |
+| `SNMP_COMMUNITY` | `rocommunity`/`rwcommunity` ディレクティブ |
+| `SNMP` (LOCATION/CONTACT) | `sysLocation` / `sysContact` |
+
+### CLI 書込後の `systemctl restart snmp` 自動実行
+
+```python
+# config/main.py:4188-4190 — SNMP_AGENT_ADDRESS_CONFIG add/del 共通
+#Restarting the SNMP service will regenerate snmpd.conf and rerun snmpd
+cmd="systemctl restart snmp"
+os.system(cmd)
+
+# config/main.py:4787-4791 — SNMP_USER add/del 共通
+clicommon.run_command(['systemctl', 'reset-failed', 'snmp.service'], display_cmd=False)
+clicommon.run_command(['systemctl', 'restart', 'snmp.service'], display_cmd=False)
+```
+
+`SNMP_AGENT_ADDRESS_CONFIG` 経路は `os.system()` で呼ぶため戻り値を検査しない（失敗時サイレント）。
+`SNMP_USER` 経路は `SystemExit` 例外をキャッチして `click.Abort()` を返す。[^4]
+
+### Net-SNMP 永続ステート: `/var/lib/snmp/snmpd.conf`
+
+`CreateUser` ディレクティブは Net-SNMP が処理した後 `usmUser` 行に書き換えて `/var/lib/snmp/snmpd.conf` に自動保存する（Net-SNMP の内部動作）。
+SONiC の `docker-snmp` コンテナは `/var/lib/snmp/` を永続ボリュームとしてマウントしていないため、コンテナ再起動ごとにリセットされ、常に `snmpd.conf` の `CreateUser` ディレクティブから再構築される。
+
+### APPL_DB / STATE_DB への副次書込
+
+`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` を購読して APPL_DB / STATE_DB へ転写するハンドラは存在しない。
+これらのテーブルは **CONFIG_DB 完結型** であり、`snmpd.conf` を経由して `snmpd` に直接反映される。
+
+| 副次先 | 書込内容 | トリガー |
+|--------|----------|----------|
+| `/etc/snmp/snmpd.conf` | agentAddress / CreateUser ディレクティブ等 | `systemctl restart snmp` |
+| `/var/lib/snmp/snmpd.conf` | Net-SNMP 内部: `CreateUser` → `usmUser` 変換 | `snmpd` 起動時（net-snmp 自動処理） |
+| `/var/sonic/config_status` | 固定コメント行 | コンテナ再起動時のみ |
+| APPL_DB | なし | — |
+| STATE_DB | なし | — |
+
+<!-- /side-effects -->
+
+---
+
 ## 関連リファレンス
 
 - [CONFIG_DB: SNMP_AGENT_ADDRESS_CONFIG](snmp-agent-address-config.md)
@@ -478,3 +547,5 @@ YANG の `SNMP_USER_AUTH_TYPE` は `type string` で明示的な enum 制約を�
 [^4]: `sonic-utilities/config/main.py:4708-4784` — `add_user()`. <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
 
 [^5]: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2310-2324` — SNMP_AGENT_ADDRESS_CONFIG 自動生成. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py>
+
+[^6]: `sonic-buildimage/dockers/docker-snmp/start.sh` L14-26 — snmpd.conf 生成フロー (sonic-cfggen 呼び出し). <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/start.sh>
