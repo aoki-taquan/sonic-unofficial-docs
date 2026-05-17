@@ -498,4 +498,29 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `SERIAL_CONSOLE` / `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の各ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えおよびシステムサービス制御に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `SerialConsoleCfg` / `SshServer` / `PamLimitsCfg` 全クラスに `ProducerStateTable` / `Table.set()` 呼出が 0 件 (hostcfgd L2013-2043, L1030-1170, L1404-1480) |
+| STATE_DB | なし | `hostcfgd` の STATE_DB 書込は `FipsCfg` (hostcfgd:1759-1821) と `RestartWaiter` のみ。対象クラスは `state_db_conn` を保持しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 書込なし。CLI セッション設定は SAI 非経由 |
+| ASIC_DB / FLEX_COUNTER_DB | なし | `hostcfgd` は orchagent / SAI 非経由。カーネル・デーモン設定のみ |
+
+代わりに以下のファイルシステム書込とサービス再起動が副作用として発生する:
+
+| 書込先 | トリガー | evidence |
+|--------|----------|----------|
+| `/etc/ssh/sshd_config` | `SSH_SERVER\|POLICIES` 変化 → `SshServer.set_policies()` → `os.rename(SSH_CONFG_TMP, SSH_CONFG)` | hostcfgd L1150-1153 |
+| `systemctl restart ssh` | `sshd_config` 更新成功後 → `run_cmd(['systemctl', 'restart', 'ssh'])` | hostcfgd L1154 |
+| `service serial-config restart` | `SERIAL_CONSOLE\|POLICIES` 変化 (キャッシュ差分時) → `run_cmd(['sudo', 'service', 'serial-config', 'restart'])` | hostcfgd L2035 |
+| `/etc/pam.d/pam-limits-conf` | `SSH_SERVER\|POLICIES.max_sessions` 変化 → `PamLimitsCfg.render_conf_file()` | hostcfgd L1466 |
+| `/etc/security/limits.conf` | `SSH_SERVER\|POLICIES.max_sessions` 変化 → `PamLimitsCfg.render_conf_file()` | hostcfgd L1471 |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/cli-config-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
