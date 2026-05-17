@@ -3,7 +3,7 @@ title: SRV6_MY_SIDS テーブル
 description: "SRV6_MY_SIDS テーブル — ローカル SRv6 SID エントリ（エンドポイント動作・デカプセル化 VRF・DSCP モード）の CONFIG_DB スキーマ詳解。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-17
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-srv6.yang
@@ -141,6 +141,49 @@ DEL SRV6_MY_LOCATORS|<locator_name>            # ロケータは後
 `locators_del_handler()` (`managers_srv6.py:106-115`) はロケータ削除時に bgpcfgd の依存購読を解除するが、対応 SID エントリを自動削除しない。ロケータより先に SID を削除しないと孤立エントリが残る。
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## テーブル間参照 (Phase C)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-cross-refs.md`
+
+### 読込み元テーブル（SRV6_MY_SIDS が依存するテーブル）
+
+| 参照元フィールド | 参照先テーブル | チェック場所 | 動作 |
+|----------------|--------------|------------|------|
+| `locator_name`（key） | `SRV6_MY_LOCATORS` | `sonic-srv6.yang:108-110` (YANG leafref) | スキーマ検証で参照整合性を保証 |
+| `locator_name`（key） | `SRV6_MY_LOCATORS` | `managers_srv6.py:62-68` (bgpcfgd) | ロケータ未存在時は依存購読を登録して処理を保留（自動再試行あり） |
+| `locator_name`（key） | `SRV6_MY_LOCATORS` | `srv6orch.cpp:331-350` (Srv6Orch) | `getLocatorCfgFromDb()` でロケータの block_len/node_len/func_len/arg_len を取得し MY_SID エントリのビット長フィールドを決定 |
+| `decap_vrf` | `VRF` | `sonic-srv6.yang:123-125` (YANG leafref) | スキーマ検証で参照整合性を保証 |
+| `decap_vrf` | `VRF` (via VRFOrch) | `srv6orch.cpp:1488` (Srv6Orch) | `isVRFexists()` が false の場合はエラーで終了（自動再試行なし） |
+| adj（`end.x`/`ua` 等） | `NEIGH_TABLE` (via NeighOrch) | `srv6orch.cpp:1524` (Srv6Orch) | 隣接未解決時は `m_pendingSRv6MySIDEntries` に保留し、隣接 ADD イベントで自動再インストール |
+
+**`decap_vrf = "default"` の特例**:
+`srv6orch.cpp:1484-1486` で `dt_vrf == "default"` の場合は `gVirtualRouterId`（グローバル VRF の SAI オブジェクト）に直接解決され、`VRF` テーブルへの実行時参照は発生しない。
+
+### 書込み先・副作用テーブル
+
+| 書込み先 | タイミング | 場所 |
+|---------|----------|------|
+| FRR `segment-routing srv6 static-sids` | SET/DEL 処理時 | `managers_srv6.py:88-94, 127-131` (bgpcfgd → vtysh) |
+| `APP_SRV6_MY_SID_TABLE` (APP_DB) | Srv6Orch が APP_DB から読み取り SAI へ投入 | `srv6orch.cpp:104` (`m_mysidTable`) |
+| `SAI_OBJECT_TYPE_MY_SID_ENTRY` | SET 処理完了時 | `srv6orch.cpp:1606` (`create_my_sid_entry`) |
+| `SAI_OBJECT_TYPE_TUNNEL` + TERM_ENTRY | uDT46 等デカプセル動作時のみ | `srv6orch.cpp:1551-1576` (`createMySidIpInIpTunnel`) |
+| `COUNTERS_SRV6_NAME_MAP` (COUNTERS_DB) | MySID 作成・削除時（カウンタ有効時のみ） | `srv6orch.cpp:199, 223` |
+| CRM `CRM_SRV6_MY_SID_ENTRY` | MySID 作成（inc）・削除（dec）時 | `srv6orch.cpp:1612, 1675` |
+
+### 参照カウント管理
+
+SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が付与される。DEL 操作前に参照側（SID）を先に削除することで、参照先リソースの誤削除を防ぐ。
+
+- **VRFOrch refcount**: `srv6orch.cpp:1639` (SET時 inc) / `srv6orch.cpp:1683` (DEL時 dec)。refcount が正のうちは VRF の削除がブロックされる。
+- **NeighOrch refcount**: `srv6orch.cpp:1644` (SET時 inc) / `srv6orch.cpp:1689` (DEL時 dec)。`end.x` / `ua` 等 nexthop を持つ action に限定。
+
+### 逆参照（他テーブルから SRV6_MY_SIDS を参照するもの）
+
+なし。SRV6_MY_SIDS は末端テーブルであり、他のテーブルから leafref 参照されない。
+
+<!-- /cross-refs -->
 
 ## 設定例
 
