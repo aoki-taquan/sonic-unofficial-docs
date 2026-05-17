@@ -314,6 +314,59 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp:145-418,
+     sonic-swss/orchagent/flex_counter_manager.cpp:203-260,
+     sonic-swss/orchagent/portsorch.cpp:9102-9165 -->
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-flex-failure.md`
+
+`FlexCounterOrch` と `FlexCounterManager` における失敗パターンと回復挙動のまとめ。
+
+| # | トリガー | ログレベル | FLEX_COUNTER_DB への影響 | 自動回復 | 証拠 |
+|---|---------|---------|----------------------|---------|------|
+| 1 | 無効グループキー | NOTICE | なし | なし（再書き込みが必要） | `flexcounterorch.cpp:183` |
+| 2 | `allPortsReady() = false` | なし | 保留 | 自動（PortInitDone 後） | `flexcounterorch.cpp:164` |
+| 3 | Warm-reboot 60 秒タイマー中 | NOTICE（タイムアウト後） | 保留 | 自動（60 秒後） | `flexcounterorch.cpp:128-136` |
+| 4 | 未サポートフィールド名 | NOTICE | なし | 不要（他フィールドは継続） | `flexcounterorch.cpp:396` |
+| 5 | Redis 接続断 (例外) | — (未キャッチ例外) | 不定（orchagent クラッシュ） | supervisor 再起動後 | `flex_counter_manager.cpp` |
+| 6 | 未対応 CounterType | ERROR | なし（書き込みスキップ） | なし（コード修正要） | `flex_counter_manager.cpp:216` |
+| 7 | `m_isXxxMapGenerated = true` | なし | なし（設計上の冪等） | 不要 | `portsorch.cpp:generateXxxMap` |
+| 8 | DEVICE_METADATA 読み込み失敗 | ERROR | なし | 自動（デフォルト `false` で継続） | `flexcounterorch.cpp:122` |
+
+### 主要失敗パターン詳細
+
+#### 無効グループキー（パターン 1）
+
+`FLEX_COUNTER_TABLE` に `flexCounterGroupMap` 未登録のキーが書かれた場合（`flexcounterorch.cpp:183-188`）:
+
+```text
+SWSS_LOG_NOTICE("Invalid flex counter group input, %s", key)
+→ consumer.m_toSync.erase(it++)  # 即削除、retry なし
+```
+
+復旧には正しいキーで再書き込みが必要。FLEX_COUNTER_DB は無変更。
+
+#### `allPortsReady() = false` 保留（パターン 2）
+
+PortsOrch 初期化完了前は `doTask()` が全エントリを `m_toSync` に保持してリターン。`portsyncd` が PortInitDone を発行した後の最初のイベントループで自動処理される。保留の上限なし。
+
+#### Redis 接続断でクラッシュ（パターン 5）
+
+`FlexCounterManager::setCounterIdList()` 内で `RedisReply` 例外が発生すると orchagent がクラッシュする。supervisor（supervisord）による自動再起動後、warm-reboot 相当の処理で再初期化される。通常は発生しない（Redis は systemd socket activation で確保）。
+
+#### `m_isPortCounterMapGenerated` ガード（パターン 7）
+
+`generatePortCounterMap()` / `generateQueueMap()` 等は先頭のフラグでガードされており、初回 enable 後は再呼び出しが no-op になる（設計上の冪等保護）。`disable` → `enable` 繰り返しでも per-OID エントリは再生成されない。FLOW_CNT_TRAP / FLOW_CNT_ROUTE / PORT_PHY_ATTR はフラグガードなしで disable 時に明示削除 → re-enable で再生成される（グループ別の差異）。
+
+!!! warning "silent 失敗の識別"
+    パターン 1・4・7 はログが NOTICE / なしで、障害と区別しにくい。
+    `counterpoll show` で STATUS が `enable` になっているのにカウンタがゼロの場合、
+    orchagent ログ（`swssloglevel -l NOTICE -c orchagent`）でこれらのパターンを確認すること。
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/portsorch.cpp` `port_stat_ids[]` (line 242), `queue_stat_ids[]` (line 389), `wred_port_stat_ids[]` (line 421), `wred_queue_stat_ids[]` (line 429). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
