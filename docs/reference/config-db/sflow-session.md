@@ -207,3 +207,48 @@ PORT|<port>  SET  →  m_sflowPortConfMap 登録  →  SFLOW_SESSION|<port>  SET
 | `gPortsOrch` | PortsOrch 初期化完了待ち | allPortsReady()=false の間 SESSION 処理なし | `sfloworch.cpp:370-373` |
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+`sflowmgrd` および `SflowOrch` の失敗経路を実装コードから導出した。
+
+> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-failure.md`
+
+### sflowmgrd — SET 処理の失敗経路
+
+| 失敗条件 | 結果 | ログ | コード箇所 |
+|---------|------|------|-----------|
+| per-port SET 時にポートが `m_sflowPortConfMap` に未登録 | `it++; continue` で永続スキップ。後から PORT が追加されても SFLOW_SESSION の再処理なし | なし | `sflowmgr.cpp:522-528` |
+| `m_gEnable == false`（SFLOW\|global admin_state が up 未設定）で per-port SET | `APP_SFLOW_SESSION_TABLE` への書き込みをスキップ。グローバルが後から up になると `sflowHandleSessionAll/Local()` が再適用して回復する | なし | `sflowmgr.cpp:531-534` |
+| `findSamplingRate()` が `ERROR_SPEED` を返す（ポート未登録） | `SWSS_LOG_ERROR` 出力後 `sample_rate=error` が APP_DB に書き込まれる | SWSS_LOG_ERROR ("%s not found in port configuration map") | `sflowmgr.cpp:389-393` |
+| `hsflowd` restart/stop が rc != 0 で失敗 | `SWSS_LOG_ERROR` を出力。例外送出・リトライなく CONFIG_DB → APP_DB 書き込みは続行 | SWSS_LOG_ERROR ("Command '%s' failed with rc %d") | `sflowmgr.cpp:67-71` |
+
+### sflowmgrd — DEL 処理の失敗経路
+
+| 失敗条件 | 結果 | コード箇所 |
+|---------|------|-----------|
+| per-port DEL 時にポートが `m_sflowPortConfMap` に未登録 | サイレントスキップ。`erase()` も `del()` も呼ばれない | `sflowmgr.cpp:149-150` |
+| `SFLOW_SESSION\|all` DEL 時に `m_intfAllConf == true`（既に true） | `sflowHandleSessionAll()` が呼ばれず DEL が実質 no-op | `sflowmgr.cpp:556-563` |
+
+### SflowOrch — SET 処理の失敗経路
+
+| 失敗条件 | 結果 | ログ | コード箇所 |
+|---------|------|------|-----------|
+| `m_sflowStatus == false`（APP_SFLOW_TABLE SET が未到着） | `return` でループ全体を抜ける。m_toSync にエントリ残留、次回 `doTask()` で再試行 | なし | `sfloworch.cpp:389-392` |
+| `gPortsOrch->allPortsReady()` が false | `return` でスキップ。PortsOrch 完了後に処理再開 | なし | `sfloworch.cpp:370-373` |
+| `rate == 0`（error 文字列由来）の新規ポート | `it++; continue` でスキップ。SAI 設定なし | なし | `sfloworch.cpp:410-415` |
+| `sai_samplepacket_api->create_samplepacket()` が SAI エラー | `handleSaiCreateStatus()` 判定。`task_success` 以外は `it++; continue` | SWSS_LOG_ERROR ("Failed to create sample packet session with rate %d") | `sfloworch.cpp:29-39` |
+| `sai_port_api->set_port_attribute()` (ingress/egress) が SAI エラー | `handleSaiSetStatus()` 判定。false で `it++; continue` | SWSS_LOG_ERROR ("Failed to set session on port") | `sfloworch.cpp:122-150` |
+| 旧セッション破棄 (`sflowDestroySession()`) が SAI エラー | SWSS_LOG_ERROR のみ。`m_sflowRateSampleMap.erase()` をスキップ。SAI 上のセッションが残存する可能性あり | SWSS_LOG_ERROR ("Failed to clean old session") | `sfloworch.cpp:97-105` |
+
+### SflowOrch — DEL 処理の失敗経路
+
+| 失敗条件 | 結果 | コード箇所 |
+|---------|------|-----------|
+| DEL 時にポートが `m_sflowPortInfoMap` に未登録 | サイレントスキップ | `sfloworch.cpp:331-332` |
+| `sflowDelPort()` が SAI エラーで false | `handleSflowSessionDel()` が false を返し `it++; continue` | `sfloworch.cpp:338-340` |
+| `sflowDestroySession()` が SAI エラーで false（ref_count が 0 時） | `m_sflowRateSampleMap.erase()` をスキップ。SAI 上のセッションが残存 | `sfloworch.cpp:349-354` |
+
+<!-- /failure -->
