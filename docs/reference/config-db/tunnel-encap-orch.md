@@ -4,13 +4,19 @@ description: "VxlanTunnelOrch が VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / VXLAN_EVPN_N
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-17
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/vxlanorch.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: orchagent/vxlanorch.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/orchdaemon.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/vxlanmgr.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
@@ -76,6 +82,47 @@ encap 方向の mapper タイプは以下の対応に従って SAI に設定さ�
 | `TUNNEL_MAP_T_VIRTUAL_ROUTER` | `SAI_TUNNEL_MAP_TYPE_VIRTUAL_ROUTER_ID_TO_VNI` |
 | `TUNNEL_MAP_T_BRIDGE` | `SAI_TUNNEL_MAP_TYPE_BRIDGE_IF_TO_VNI` |
 
+<!-- ordering -->
+## 処理順序・依存関係
+
+VXLAN_TUNNEL エントリは CONFIG_DB → vxlanmgr (cfgmgrd) → APPL_DB → orchagent の順に処理される[^2]。
+
+```mermaid
+flowchart TD
+  CDB[("CONFIG_DB\nVXLAN_TUNNEL\nVXLAN_TUNNEL_MAP\nVXLAN_EVPN_NVO")]
+  MGR["vxlanmgr (cfgmgrd)\nVxlanMgr::doTask()"]
+  ADB[("APPL_DB\nAPP_VXLAN_TUNNEL_TABLE\nAPP_VXLAN_TUNNEL_MAP_TABLE\nAPP_VXLAN_VRF_TABLE")]
+  VTO["VxlanTunnelOrch\naddOperation()\n(SAI 呼び出しなし)"]
+  VTMO["VxlanTunnelMapOrch\naddOperation()\n(SAI create_tunnel)"]
+  VVMO["VxlanVrfMapOrch\naddOperation()\n(SAI create_tunnel)"]
+  SAI["SAI\nsai_tunnel_api->create_tunnel()"]
+  CDB --> MGR --> ADB
+  ADB --> VTO
+  ADB --> VTMO
+  ADB --> VVMO
+  VTMO --> SAI
+  VVMO --> SAI
+```
+
+**処理の前提条件**:
+
+| 依存 | 理由 |
+|-----|------|
+| `VXLAN_TUNNEL` エントリが先に存在すること | `VXLAN_TUNNEL_MAP` 追加時に `findTunnel()` を呼ぶ。存在しなければ処理失敗 (`vxlanorch.cpp:2030`) |
+| `gUnderlayIfId` が初期化済みであること | SAI `create_tunnel()` でアンダーレイ RIF として参照 (`main.cpp:967`, `vxlanorch.cpp:907`) |
+| `VxlanTunnelOrch` が `gDirectory` に登録済みであること | `VxlanTunnelMapOrch` / `VxlanVrfMapOrch` が `gDirectory.get<VxlanTunnelOrch*>()` で参照 (`orchdaemon.cpp:351,353,355`) |
+
+**orchdaemon 登録順序** (`orchdaemon.cpp:350-355`):
+
+1. `VxlanTunnelOrch` — line 350–351
+2. `VxlanTunnelMapOrch` — line 352–353
+3. `VxlanVrfMapOrch` — line 354–355
+
+**SAI トンネル生成は遅延**: `VXLAN_TUNNEL` エントリ追加時は SAI 呼び出しなし。
+実際の `sai_tunnel_api->create_tunnel()` は `VXLAN_TUNNEL_MAP` または `VRF_MAP` の追加時に初めて実行される[^2]。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来デフォルト・暗黙挙動
 
@@ -138,3 +185,4 @@ CLI (`config vxlan add`) で作成されたトンネルは `TNL_CREATION_SRC_CLI
 ## 引用元
 
 [^1]: VxlanTunnelOrch 実装: `orchagent/vxlanorch.cpp`, `orchagent/vxlanorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
+[^2]: orchdaemon 初期化順序 (`orchdaemon.cpp:350-590`), VxlanMgr::doTask() (`cfgmgr/vxlanmgr.cpp:213-262`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
