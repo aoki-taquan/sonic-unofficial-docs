@@ -387,6 +387,75 @@ return;  // FLEX_COUNTER_DB へ書き込まずリターン
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.h:29-43,
+     sonic-swss/orchagent/portsorch.cpp:87-93,
+     sonic-swss-common/common/schema.h:288-313 -->
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-flex-constants.md`
+
+### 初期ポーリング間隔定数 (portsorch.cpp:87-93)
+
+`PortsOrch` コンストラクタで `FlexCounterManager` に渡される初期値。CONFIG_DB の `POLL_INTERVAL` で後から上書き可能。
+
+| マクロ名 | 値 | 対象グループ |
+|---------|----|----|
+| `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | **1000 ms** | `PORT`、`WRED_ECN_PORT` |
+| `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS` | **60000 ms** | `PORT_BUFFER_DROP` |
+| `PORT_PHY_ATTR_FLEX_COUNTER_POLLING_INTERVAL_MS` | **10000 ms** | `PORT_PHY_ATTR`、`PORT_PHY_SERDES_ATTR` |
+| `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | **10000 ms** | `QUEUE`、`WRED_ECN_QUEUE` |
+| `QUEUE_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | **60000 ms** | `QUEUE_WATERMARK` |
+| `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | **60000 ms** | `PG_WATERMARK` |
+| `PG_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | **10000 ms** | `PG_DROP` |
+
+### FlexCounter グループ名定数 (portsorch.h:29-43)
+
+FLEX_COUNTER_DB のキー `FLEX_COUNTER_TABLE|<group>|<oid>` の内部グループ名。CONFIG_DB の `FLEX_COUNTER_TABLE|<group>` キーとは **一致しない**（FlexCounterOrch の `flexCounterGroupMap` が変換する）。
+
+| マクロ名 | 内部グループ名文字列 |
+|---------|-------------------|
+| `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PORT_STAT_COUNTER"` |
+| `PORT_RATE_COUNTER_FLEX_COUNTER_GROUP` | `"PORT_RATE_COUNTER"` |
+| `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP` | `"PORT_BUFFER_DROP_STAT"` |
+| `PORT_PHY_ATTR_FLEX_COUNTER_GROUP` | `"PORT_PHY_ATTR"` |
+| `PORT_PHY_SERDES_ATTR_FLEX_COUNTER_GROUP` | `"PORT_PHY_SERDES_ATTR"` |
+| `QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"QUEUE_STAT_COUNTER"` |
+| `QUEUE_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"QUEUE_WATERMARK_STAT_COUNTER"` |
+| `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_WATERMARK_STAT_COUNTER"` |
+| `PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_DROP_STAT_COUNTER"` |
+| `WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"WRED_ECN_QUEUE_STAT_COUNTER"` |
+| `WRED_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"WRED_ECN_PORT_STAT_COUNTER"` |
+
+### COUNTER_ID_LIST フィールド名定数 (schema.h:288-313)
+
+FLEX_COUNTER_DB 各エントリのフィールド名として使用される文字列定数。
+
+| マクロ名 | フィールド名 | 対象グループ |
+|---------|------------|------------|
+| `PORT_COUNTER_ID_LIST` | `"PORT_COUNTER_ID_LIST"` | `PORT`, `PORT_BUFFER_DROP`, `WRED_ECN_PORT` |
+| `QUEUE_COUNTER_ID_LIST` | `"QUEUE_COUNTER_ID_LIST"` | `QUEUE`, `QUEUE_WATERMARK`, `WRED_ECN_QUEUE` |
+| `PG_COUNTER_ID_LIST` | `"PG_COUNTER_ID_LIST"` | `PG_DROP`, `PG_WATERMARK` |
+| `RIF_COUNTER_ID_LIST` | `"RIF_COUNTER_ID_LIST"` | `RIF` |
+| `TUNNEL_COUNTER_ID_LIST` | `"TUNNEL_COUNTER_ID_LIST"` | `TUNNEL` |
+| `SWITCH_COUNTER_ID_LIST` | `"SWITCH_COUNTER_ID_LIST"` | `SWITCH` |
+| `ACL_COUNTER_ATTR_ID_LIST` | `"ACL_COUNTER_ATTR_ID_LIST"` | `ACL` |
+| `FLOW_COUNTER_ID_LIST` | `"FLOW_COUNTER_ID_LIST"` | `FLOW_CNT_TRAP`, `FLOW_CNT_ROUTE` |
+| `ENI_COUNTER_ID_LIST` | `"ENI_COUNTER_ID_LIST"` | `ENI` |
+| `SRV6_COUNTER_ID_LIST` | `"SRV6_COUNTER_ID_LIST"` | `SRV6` |
+| `HA_SET_COUNTER_ID_LIST` | `"HA_SET_COUNTER_ID_LIST"` | `HA_SET` |
+| `DASH_METER_COUNTER_ID_LIST` | `"DASH_METER_COUNTER_ID_LIST"` | `DASH_METER` |
+| `BUFFER_POOL_COUNTER_ID_LIST` | `"BUFFER_POOL_COUNTER_ID_LIST"` | `BUFFER_POOL_WATERMARK` |
+| `PORT_PHY_ATTR_ID_LIST` | `"PORT_PHY_ATTR_ID_LIST"` | `PORT_PHY_ATTR` |
+| `PORT_PHY_SERDES_ATTR_ID_LIST` | `"PORT_PHY_SERDES_ATTR_ID_LIST"` | `PORT_PHY_SERDES_ATTR` |
+
+!!! note "CONFIG_DB グループキーと FLEX_COUNTER_DB 内部名の対応"
+    `sonic-db-cli FLEX_COUNTER_DB keys 'FLEX_COUNTER_TABLE|*'` で確認できる内部グループ名
+    （例: `PORT_STAT_COUNTER`）は、CONFIG_DB の `FLEX_COUNTER_TABLE|PORT` とは異なる。
+    `counterpoll show` は CONFIG_DB グループキー名で表示するため混同に注意。
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/portsorch.cpp` `port_stat_ids[]` (line 242), `queue_stat_ids[]` (line 389), `wred_port_stat_ids[]` (line 421), `wred_queue_stat_ids[]` (line 429). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
