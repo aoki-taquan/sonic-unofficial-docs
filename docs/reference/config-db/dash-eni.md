@@ -471,6 +471,58 @@ STATE_DB・CONFIG_DB への書き込みは一切行われない[^orch]。
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差・SAI capability (Phase H)
+
+> **調査根拠**: `sonic-swss/orchagent/main.cpp`, `orchdaemon.cpp`, `dashorch.cpp`, `dashorch.h` 精読 (2026-05-17)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dash-eni-platform.md`
+
+### 動作条件: switch_type=dpu のみ
+
+`DASH_ENI_TABLE` を処理する `DashOrch` は **`switch_type=dpu`** のノードでのみ起動する。`getCfgSwitchType()` が `CONFIG_DB:DEVICE_METADATA:localhost:switch_type` を読み取り、`gMySwitchType == "dpu"` の場合のみ `DpuOrchDaemon` が生成され `DashOrch` が登録される (`main.cpp:990-994`)。
+
+| switch_type | DashOrch 起動 | 備考 |
+|-------------|--------------|------|
+| `"dpu"` | **起動** | SmartSwitch の DPU ロール。`DPU_APPL_DB` を購読 |
+| `""` / `"switch"` / `"voq"` / `"fabric"` / `"chassis-packet"` | **不起動** | 通常 T0/T1 / VOQ chassis / fabric blade |
+| SmartSwitch NPU 側 (`switch_sub_type=SmartSwitch`, `switch_type=switch`) | **不起動** | NPU 側では `DashEniFwdOrch` のみ登録 (`orchdaemon.cpp:613`) |
+
+`DashOrch` は `DPU_APPL_DB`（`m_dpu_appDb`）・`DPU_APPL_STATE_DB`（`m_dpu_appstateDb`）を使用し、通常の `APPL_DB` とは独立したデータベース接続で動作する。
+
+### SmartSwitch NPU 側: DashEniFwdOrch（ENI 転送専用）
+
+SmartSwitch の NPU 側では `DashEniFwdOrch` が `APP_DASH_ENI_FORWARD_TABLE` を処理し、ENI を DPU に転送するための ACL ルールをインストールする。`DASH_ENI_TABLE` への直接関与はなく、`DashOrch` は NPU 側では起動しない (`orchdaemon.cpp:613-615`)。
+
+### SAI DASH ENI API — ベンダー分岐なし
+
+`dashorch.cpp` は `sai_dash_eni_api->create_eni()` / `remove_eni()` 等の SAI DASH Extension API を一律呼び出す。ベンダー固有の環境変数（`platform` / `sub_platform` 等）への参照は一切存在せず、ASIC ベンダー差は SAI 実装側が抽象化する。
+
+### SAI capability クエリ: HA Flow Owner 属性（唯一のプラットフォーム差）
+
+`isHaFlowOwnerAttrSupported()` (`dashorch.cpp:102-125`) が起動時に一度だけ `sai_query_attribute_capability()` を呼び出し、SAI ASIC が `SAI_ENI_ATTR_IS_HA_FLOW_OWNER` の `set_implemented` または `create_implemented` をサポートするかを検出する。
+
+| capability 検出結果 | ENI 作成時の挙動 |
+|--------------------|----------------|
+| サポートあり (`set_implemented \|\| create_implemented`) | HA Scope が存在する場合、HA ロール (ACTIVE / STANDBY 等) に応じて `SAI_ENI_ATTR_IS_HA_FLOW_OWNER` を push する (`dashorch.cpp:694`) |
+| サポートなし（SAI がエラー返却）| `m_ha_flow_owner_attr_supported = false` → 属性を push しない (`dashorch.cpp:715`) |
+
+これが `dashorch.cpp` における **唯一の SAI capability 条件分岐**であり、ベンダー SAI 実装の差異が動作に影響する唯一の経路。
+
+!!! note "HA Flow Owner はオプション機能"
+    HA 機能（`DASH_HA_SCOPE_TABLE`）を使用しない場合、`isHaFlowOwnerAttrSupported()` は呼び出されず、この分岐は ENI 作成に影響しない。
+
+### SAI_DASH_APPLIANCE_ATTR_LOCAL_REGION_ID capability クエリ（間接影響）
+
+`addApplianceEntry()` (`dashorch.cpp:141-148`) で `SAI_DASH_APPLIANCE_ATTR_LOCAL_REGION_ID` の capability を問い合わせ、`create_implemented` の場合のみ `local_region_id` を Appliance に設定する。ENI 作成への直接影響はないが、Appliance の設定内容が ENI の VM VNI 取得元 (`appliance_entries_[0].vm_vni()`) に影響する。
+
+### FlexCounter ポーリング間隔（全ベンダー共通）
+
+ENI 統計 (`ENI_STAT_COUNTER_FLEX_COUNTER_GROUP`) および Meter 統計 (`METER_STAT_COUNTER_FLEX_COUNTER_GROUP`) のポーリング間隔は `10,000 ms` にハードコードされており (`dashorch.h:30, 33`)、ASIC ベンダーによる差異はない。
+
+> **Evidence**: `main.cpp:242-268, 990-994`（switch_type 判定・DpuOrchDaemon 起動）、`orchdaemon.cpp:613-615, 1322-1418`（DashEniFwdOrch 登録・DpuOrchDaemon::init）、`dashorch.cpp:39, 102-125, 692-715, 738`（SAI API 参照・capability 検出・ENI 作成）、`dashorch.h:29-33`（FlexCounter 定数）
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/dash/dash-sonic-hld.md` §3.2.3 ENI (DASH_ENI_TABLE スキーマ定義・ENI モード・admin-state ワークフロー). <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md>
