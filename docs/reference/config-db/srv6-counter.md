@@ -397,4 +397,49 @@ YANG `sonic-flex_counter.yang` の `SRV6` container には leafref 定義が存�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/srv6-counter-side-effects.md`
+
+`FLEX_COUNTER_TABLE|SRV6` への書込みが引き起こす [CONFIG_DB](../../reference/glossary.md#term-config_db) 以外の DB への書込みと SAI 呼び出しを示す。
+
+### `FLEX_COUNTER_STATUS` 変更 → enable
+
+`FlexCounterOrch` が `Srv6Orch::setCountersState(true)` を呼び出し、全既存 MY_SID エントリに対して以下を実行する (`flexcounterorch.cpp:337-340`):
+
+| 副次 DB / API | キー / 操作 | ソース |
+|-------------|-----------|--------|
+| COUNTERS_DB / `COUNTERS_SRV6_NAME_MAP` | `hset("", sid_prefix, counter_oid)` — MySID ごとのカウンタ OID を登録 | `srv6orch.cpp:196-199` |
+| FLEX_COUNTER_DB / `SRV6_STAT_COUNTER:<oid>` | `setCounterIdList` — ASIC_DB VIDTORID 確認後に登録（1 秒タイマー経由） | `srv6orch.cpp:300` |
+| SAI / `sai_srv6_api` | `set_my_sid_entry_attribute(SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, counter_oid)` — ASIC へのカウンタ紐付け | `srv6orch.cpp:276, 244` |
+
+FLEX_COUNTER_DB への書込みは `gTraditionalFlexCounter` が有効な場合は ASIC_DB `VIDTORID` の VID→RID 解決を確認してから行われる（`srv6orch.cpp:293-295`）。プラットフォームが `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` を非サポートの場合は `setCountersState` が early-return し、副次書込みは一切発生しない（`srv6orch.cpp:256-260`）。
+
+### `FLEX_COUNTER_STATUS` 変更 → disable
+
+| 副次 DB / API | キー / 操作 | ソース |
+|-------------|-----------|--------|
+| SAI / `sai_srv6_api` | `set_my_sid_entry_attribute(SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, SAI_NULL_OBJECT_ID)` — ASIC からカウンタ切離し | `srv6orch.cpp:278, 244` |
+| COUNTERS_DB / `COUNTERS_SRV6_NAME_MAP` | `hdel("", sid_prefix)` — 名前マップエントリ削除 | `srv6orch.cpp:223` |
+| FLEX_COUNTER_DB / `SRV6_STAT_COUNTER:<oid>` | `clearCounterIdList` — FLEX_COUNTER_DB エントリ削除 | `srv6orch.cpp:229` |
+
+`m_mysid_counters_enabled` フラグにより冪等性を保証。同一値の連続書込みは no-op (`srv6orch.cpp:261-263`)。
+
+### `POLL_INTERVAL` 変更
+
+`setFlexCounterGroupPollInterval(SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP, value)` を呼び出す (`flexcounterorch.cpp:202`):
+
+| モード | 副次 DB / API | 操作 |
+|-------|-------------|------|
+| `gTraditionalFlexCounter=true` | FLEX_COUNTER_DB / `SRV6_STAT_COUNTER` group | `POLL_INTERVAL` フィールドを直接更新 |
+| `gTraditionalFlexCounter=false` | SAI Redis 通知 (`notifySyncdCounterOperation`) | `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP` 経由で syncd に伝達 |
+
+### 副次書込みが発生しない DB
+
+STATE_DB・APPL_DB・CONFIG_DB（書き戻し）への書込みはいずれのケースでも発生しない。
+
+<!-- 証跡: sonic-swss/orchagent/srv6orch.cpp, sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/saihelper.cpp -->
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: srv6-counter-page -->
