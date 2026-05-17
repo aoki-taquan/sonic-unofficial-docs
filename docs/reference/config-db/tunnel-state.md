@@ -232,6 +232,40 @@ DEL CONFIG_DB VXLAN_TUNNEL|<name>                       # vxlanmgrd が STATE_DB
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 他テーブル・Orch とのクロスリファレンス (Phase C)
+
+STATE_DB の TUNNEL 系テーブルは他 Orch からの**直接読み取り対象ではない**。他 Orch はインメモリキャッシュを通じて参照し、STATE_DB はモニタリング向けの読み取り専用ミラーとして機能する。ただし、STATE_DB 書き込みの**契機**となるイベントは複数の Orch にまたがる。
+
+### TUNNEL_DECAP_TABLE — 参照元 Orch
+
+| 参照元 | 呼び出し箇所 | 参照内容 |
+|-------|------------|---------|
+| `MuxOrch` (muxorch.cpp:2348-2374) | `MuxCable::updateTunnelRoute()` | `getDstIpAddresses()` / `getDscpMode()` / `getQosMapId()` で MUX_TUNNEL の設定値を取得 |
+| `RouteOrch` (routeorch.cpp:2714, 3222, 3245) | SubnetDecap ルート処理 | `getSubnetDecapConfig()` で decap src_ip・有効フラグを取得 |
+| `VnetOrch` (vnetorch.cpp:1565, 1583) | VNET ルートフィルタ | `getSubnetDecapConfig()` で decap 有効フラグを取得 |
+
+MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE` の STATE_DB エントリが存在しない（トンネル SAI 未作成）状態での `MUX_CABLE` SET は不整合を引き起こす[^6]。
+
+### VXLAN_TUNNEL_TABLE — 書き込み契機 Orch
+
+`VxlanTunnelOrch::addRemoveStateTableEntry()` は以下の経路から呼ばれる:
+
+| 経路 | 書き込み種別 |
+|-----|------------|
+| `EvpnNvoOrch` → `addTunnelUser()` (vxlanorch.cpp:1678) | EVPN IMR/IP 経由の DIP トンネル作成 |
+| `EvpnNvoOrch` → `createDynamicDIPTunnel()` (vxlanorch.cpp:1733) | 動的 DIP トンネル作成 |
+| `PortsOrch::addTunnel()` 完了直後 (vxlanorch.cpp:1719-1720) | `gPortsOrch` へのトンネル登録後に STATE_DB 書き込み |
+| `PortsOrch::removeTunnel()` 完了直後 (vxlanorch.cpp:1761, 1843) | `gPortsOrch` からのトンネル削除後に STATE_DB 削除 |
+
+### VXLAN_TABLE — 独立した書き込みフロー
+
+`VxlanMgr` (cfgmgr) が Linux VXLAN netdevice を作成した際に独立して書き込む。`VxlanTunnelOrch` や他 Orch との直接的な依存はない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-crossrefs.md`
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: schema.h 定数定義: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L488-L489>
@@ -243,3 +277,5 @@ DEL CONFIG_DB VXLAN_TUNNEL|<name>                       # vxlanmgrd が STATE_DB
 [^4]: `addRemoveStateTableEntry()` 実装: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1913-L1953>
 
 [^5]: `createVxlan()` 実装: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vxlanmgr.cpp#L890-L892>
+
+[^6]: `MuxCable` コンストラクタで `TunnelDecapOrch*` を保持: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/muxorch.cpp#L2183-L2185>
