@@ -1,80 +1,82 @@
 # DASH_ROUTING_* — Phase B 書込み順依存スキャンノート
 
 対象テーブル: `DASH_ROUTING_TYPE_TABLE`, `DASH_ROUTE_GROUP_TABLE`, `DASH_ROUTE_TABLE`, `DASH_ROUTE_RULE_TABLE`
-Consumer: `DashOrch` (`dashorch.cpp`), `DashRouteOrch` (`dashrouteorch.cpp`)
-スキャン範囲: `addOutboundRouting()`, `addInboundRouting()`, `addRouteGroup()`, `removeRouteGroup()`, `setEniRoute()`, `isRouteGroupBound()`, `bindRouteGroup()`, `unbindRouteGroup()` 全行精読
+Consumer: `DashOrch::doTaskRoutingTypeTable()` (`dashorch.cpp`) / `DashRouteOrch::doTaskRouteGroupTable()` / `doTaskRouteTable()` / `doTaskRouteRuleTable()` (`dashrouteorch.cpp`)
+スキャン範囲: `dashrouteorch.cpp:61-920` 全行精読、`dashorch.cpp:473-537` 参照
 
 ---
 
 ## 検出した順序依存・タイミング依存
 
-### 1. DASH_ROUTE_GROUP_TABLE → DASH_ROUTE_TABLE (先行必須)
+### 1. DASH_ROUTE_GROUP_TABLE が DASH_ROUTE_TABLE より先行必須
 
-- `DashRouteOrch::addOutboundRouting()` は `getRouteGroupOid(ctxt.route_group)` を呼び、結果が `SAI_NULL_OBJECT_ID` の場合は `SWSS_LOG_INFO("Retry as route group %s not found")` + `return false` でリトライキューに戻る。
-- `DASH_ROUTE_GROUP_TABLE:<group_id>` エントリが **先に投入されていなければ** `DASH_ROUTE_TABLE` の SET メッセージは全て retry され、SAI エントリが作成されない。
-- **順序依存**: `DASH_ROUTE_GROUP_TABLE` → `DASH_ROUTE_TABLE`（同一 group_id で）。
+- `addOutboundRouting()` L61-191: 最初に `this->getRouteGroupOid(ctxt.route_group)` を呼び、`SAI_NULL_OBJECT_ID` が返った場合は `SWSS_LOG_INFO("Retry as route group %s not found")` + `return false` (リトライ)。
+- ルートグループが `DASH_ROUTE_GROUP_TABLE` の SAI 作成完了前に `DASH_ROUTE_TABLE` エントリを投入すると、Consumer キューに残留して毎イベントループで再試行される。
+- 順序依存: `DASH_ROUTE_GROUP_TABLE|<group_id>` の SAI 作成完了後に `DASH_ROUTE_TABLE|<group_id>:<prefix>` を SET すること。
 - evidence: `dashrouteorch.cpp:70-74`
 
-### 2. DASH_ENI_TABLE → DASH_ROUTE_RULE_TABLE (先行必須)
+### 2. DASH_ENI_TABLE が DASH_ROUTE_RULE_TABLE より先行必須
 
-- `DashRouteOrch::addInboundRouting()` は `dash_orch_->getEni(ctxt.eni)` を呼び、ENI が未登録なら `SWSS_LOG_INFO("Retry as ENI entry %s not found")` + `return false`。
-- `DashOrch::eni_entries_` に ENI が存在しない間、対応する `DASH_ROUTE_RULE_TABLE` エントリは全てリトライされる。
-- **順序依存**: `DASH_ENI_TABLE` → `DASH_ROUTE_RULE_TABLE`（同一 ENI キーで）。
+- `addInboundRouting()` L421-476: `dash_orch_->getEni(ctxt.eni)` が nullptr を返すと `SWSS_LOG_INFO("Retry as ENI entry %s not found")` + `return false` (リトライ)。
+- `DashOrch` の `getEni()` は ENI OID がマップに登録されていない場合に nullptr を返す。
+- 順序依存: `DASH_ENI_TABLE|<eni>` の SAI 作成完了後に `DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<prefix>` を SET すること。
 - evidence: `dashrouteorch.cpp:425-428`
 
-### 3. DASH_VNET_TABLE → DASH_ROUTE_TABLE (routing_type=vnet / vnet_direct 時)
+### 3. DASH_VNET_TABLE が DASH_ROUTE_TABLE (vnet/vnet_direct) より先行必須
 
-- `addOutboundRouting()` は `routing_type=ROUTING_TYPE_VNET` かつ `has_vnet()=true` の場合に `gVnetNameToId.find(vnet)` をチェックし、未登録なら `return false`。
-- `ROUTING_TYPE_VNET_DIRECT` で `has_vnet_direct()=true` の場合も同様に `gVnetNameToId.find(vnet_direct().vnet())` をチェック。
-- **順序依存**: `DASH_VNET_TABLE` → `DASH_ROUTE_TABLE`（`routing_type=vnet` / `vnet_direct` のエントリのみ）。`routing_type=direct` / `drop` は VNET 参照なしで即時プログラム可能。
-- evidence: `dashrouteorch.cpp:78-93`
+- `addOutboundRouting()` L78-92: `routing_type=ROUTING_TYPE_VNET` または `ROUTING_TYPE_VNET_DIRECT` の場合、`gVnetNameToId.find(vnet)` が end() を返すと `return false` (リトライ)。
+- `gVnetNameToId` はグローバルマップ。`DashVnetOrch` が `DASH_VNET_TABLE` 処理時に登録する。
+- 順序依存: `DASH_VNET_TABLE|<vnet>` の SAI 作成完了後に `vnet` フィールドを参照する `DASH_ROUTE_TABLE` エントリを SET すること。
+- evidence: `dashrouteorch.cpp:78-92`
 
-### 4. DASH_VNET_TABLE → DASH_ROUTE_RULE_TABLE (vnet 指定時)
+### 4. DASH_VNET_TABLE が DASH_ROUTE_RULE_TABLE (vnet 付き) より先行必須
 
-- `addInboundRouting()` は `ctxt.metadata.has_vnet()=true` の場合に `gVnetNameToId.find(vnet)` をチェックし、未登録なら `return false`。
-- **順序依存**: `DASH_VNET_TABLE` → `DASH_ROUTE_RULE_TABLE`（`vnet` フィールドが指定されたエントリのみ）。
-- evidence: `dashrouteorch.cpp:430-433`
+- `addInboundRouting()` L429-433: `ctxt.metadata.has_vnet()` が true かつ `gVnetNameToId.find(vnet)` が end() なら `SWSS_LOG_INFO("Retry as vnet %s not found")` + `return false`。
+- `vnet` フィールドが設定されている ROUTE_RULE は、対応する VNET が登録済みであることが必要。
+- evidence: `dashrouteorch.cpp:429-433`
 
-### 5. DASH_ROUTE_GROUP_TABLE と DASH_ENI_ROUTE_TABLE の相互排他制約
+### 5. DASH_TUNNEL_TABLE が DASH_ROUTE_TABLE (tunnel フィールド) より先行必須
 
-- `DashOrch::setEniRoute()` は `DASH_ROUTE_GROUP_TABLE` にグループが登録済みでなければリトライする（`dashorch.cpp:1193-1197`）。
-- ENI にルートグループがバインドされた後 (`bindRouteGroup()` 呼び出し後)、`isRouteGroupBound()` が `true` を返す間は以下の操作が全て **即時拒否**（`return true`/`return false`、リトライなし）される:
-  - `addOutboundRouting()`: ルートグループがバインド済みの場合は `SWSS_LOG_WARN` + `return true`（追加されずに消費）— `dashrouteorch.cpp:65-68`
-  - `removeOutboundRouting()`: 同様に SWSS_LOG_WARN + `return false` — `dashrouteorch.cpp:231-234`
-  - `removeRouteGroup()`: SWSS_LOG_WARN + `return false` — `dashrouteorch.cpp:755-758`
-- **解除順序**: `DASH_ENI_ROUTE_TABLE` DEL → `unbindRouteGroup()` が呼ばれた後 → `DASH_ROUTE_TABLE` / `DASH_ROUTE_GROUP_TABLE` DEL が実行可能になる。
-- evidence: `dashorch.cpp:1232`, `dashrouteorch.cpp:65-68`, `dashrouteorch.cpp:231-234`, `dashrouteorch.cpp:755-758`
+- `addOutboundRouting()` L173-178: `has_tunnel()` が true の場合、`dash_tunnel_orch->getTunnelOid(tunnel)` が `SAI_NULL_OBJECT_ID` を返すと `SWSS_LOG_INFO("Retry as tunnel %s not found")` + `return false`。
+- `DashTunnelOrch` は `DASH_TUNNEL_TABLE` からトンネル OID を管理する。
+- 順序依存: `DASH_TUNNEL_TABLE|<tunnel>` の SAI 作成完了後に `tunnel` フィールドを指定した `DASH_ROUTE_TABLE` エントリを SET すること。
+- evidence: `dashrouteorch.cpp:173-178`
 
-### 6. DASH_ROUTE_TABLE DEL — ルートグループ未バインド状態での実施が必須
+### 6. ルートグループが ENI にバインドされている間はルート変更不可
 
-- ルートグループが ENI にバインドされている状態では `removeOutboundRouting()` が `return false` を返し、DEL がリトライキューに残留する（消費されない）。
-- バインド解除 (`DASH_ENI_ROUTE_TABLE` DEL) を先に行ってから `DASH_ROUTE_TABLE` DEL を実施すること。
-- evidence: `dashrouteorch.cpp:227-234`
+- `addOutboundRouting()` L65-68: `isRouteGroupBound(route_group)` が true なら `SWSS_LOG_WARN("Cannot add new route to route group %s as it is already bound")` + `return false`。
+- `removeOutboundRouting()` L231-236: 同様にバインド中はルート削除も不可。
+- `removeRouteGroup()` L751-758: バインド中はグループ削除も不可。
+- バインド管理: `DashEniFwdOrch` が `bindRouteGroup()` / `unbindRouteGroup()` を呼び、参照カウントで管理 (`route_group_bind_count_`)。
+- ルートグループのルートを変更するには、ENI のルートグループバインドを解除（`DASH_ENI_ROUTE_TABLE` DEL）してから行う必要がある。
+- evidence: `dashrouteorch.cpp:65-68, 231-236, 751-758, 803-831`
+
+### 7. DASH_ROUTING_TYPE_TABLE の重複登録は上書き不可
+
+- orchagent がルーティングタイプエントリを既存と判断した場合、`SWSS_LOG_WARN` を出力して success (true) を返し、既存エントリを保持する。変更するには DEL 後に再 SET が必要。
+- evidence: `dashorch.cpp:473-537`
+
+### 8. DEL 順序の推奨
+
+推奨 DEL 順序（依存関係の逆順）:
+```
+DEL DASH_ENI_ROUTE_TABLE|<eni>                               # ENI からルートグループ解除
+DEL DASH_ROUTE_TABLE|<group>:<prefix>                        # バインド解除後にルート削除
+DEL DASH_ROUTE_GROUP_TABLE|<group_id>                        # ルート削除後にグループ削除
+DEL DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<prefix>:<priority>    # Inbound ルール削除
+```
 
 ---
 
-## 推奨書込み順序まとめ
+## 順序依存サマリ
 
-### 追加時
-
-```
-1. DASH_ROUTING_TYPE_TABLE (ルーティングタイプ定義)
-2. DASH_VNET_TABLE (VNET エントリ — vnet / vnet_direct ルート使用時)
-3. DASH_ENI_TABLE (ENI エントリ)
-4. DASH_ROUTE_GROUP_TABLE (ルートグループ)
-5. DASH_ROUTE_TABLE (Outbound LPM ルート — グループへの追加)
-6. DASH_ROUTE_RULE_TABLE (Inbound ルートルール)
-7. DASH_ENI_ROUTE_TABLE (ENI とルートグループのバインド — 最後)
-```
-
-### 削除時（追加の逆順）
-
-```
-1. DASH_ENI_ROUTE_TABLE DEL (バインド解除を先に)
-2. DASH_ROUTE_TABLE DEL
-3. DASH_ROUTE_RULE_TABLE DEL
-4. DASH_ROUTE_GROUP_TABLE DEL
-5. DASH_ENI_TABLE DEL
-6. DASH_VNET_TABLE DEL
-7. DASH_ROUTING_TYPE_TABLE DEL
-```
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | DASH_ROUTE_GROUP_TABLE SAI 完了 → DASH_ROUTE_TABLE SET | 必須先行 | return false で自動リトライ |
+| 2 | DASH_ENI_TABLE SAI 完了 → DASH_ROUTE_RULE_TABLE SET | 必須先行 | return false で自動リトライ |
+| 3 | DASH_VNET_TABLE SAI 完了 → DASH_ROUTE_TABLE (vnet/vnet_direct) SET | 必須先行 | return false で自動リトライ |
+| 4 | DASH_VNET_TABLE SAI 完了 → DASH_ROUTE_RULE_TABLE (vnet 付き) SET | 必須先行 | return false で自動リトライ |
+| 5 | DASH_TUNNEL_TABLE SAI 完了 → DASH_ROUTE_TABLE (tunnel 付き) SET | 必須先行 | return false で自動リトライ |
+| 6 | DASH_ENI_ROUTE_TABLE DEL → ルートグループ内 ROUTE 変更 | 必須 | バインド中は SET/DEL とも WARN + return false |
+| 7 | DASH_ROUTING_TYPE_TABLE: 重複 SET は上書き不可 | 必須 | 変更時は DEL → SET |
+| 8 | DEL: ENI_ROUTE → ROUTE_TABLE → ROUTE_GROUP | 推奨 | バインドカウント依存 |
