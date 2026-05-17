@@ -233,6 +233,68 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss/orchagent/dash/dashvnetorch.cpp` 全行 + `dashorch.h:35-36` + `crmorch.h:38,45-48` + `sonic-swss-common/common/schema.h:172,184-185,188` 精読 (2026-05-17)
+
+### 結果コード定数（dashorch.h）
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `DASH_RESULT_SUCCESS` | `0` | APPL_STATE_DB result table への成功コード (`dashorch.h:35`) |
+| `DASH_RESULT_FAILURE` | `1` | APPL_STATE_DB result table への失敗コード (`dashorch.h:36`) |
+
+### APPL_DB テーブル名文字列定数（schema.h）
+
+| 定数名 | 値 | ソース |
+|--------|-----|--------|
+| `APP_DASH_VNET_TABLE_NAME` | `"DASH_VNET_TABLE"` | `schema.h:172` |
+| `APP_DASH_VNET_MAPPING_TABLE_NAME` | `"DASH_VNET_MAPPING_TABLE"` | `schema.h:188` |
+| `APP_DASH_APPLIANCE_TABLE_NAME` | `"DASH_APPLIANCE_TABLE"` | `schema.h:185` |
+| `APP_DASH_ROUTING_TYPE_TABLE_NAME` | `"DASH_ROUTING_TYPE_TABLE"` | `schema.h:184` |
+
+### PA validation action 固定値
+
+- `SAI_PA_VALIDATION_ENTRY_ACTION_PERMIT` が `addPaValidation()` で**常に**設定される（`dashvnetorch.cpp:474-475`）。
+- CONFIG_DB でユーザーが変更する手段は存在しない（PA validation は常に PERMIT 固定）。
+
+### encap_type 初期値と変換
+
+| protobuf 値 | SAI 変換先 | ソース |
+|------------|-----------|--------|
+| `ENCAP_TYPE_VXLAN` | `SAI_DASH_ENCAPSULATION_VXLAN` | `dashvnetorch.cpp:328-329` |
+| `ENCAP_TYPE_NVGRE` | `SAI_DASH_ENCAPSULATION_NVGRE` | `dashvnetorch.cpp:333-334` |
+| それ以外 / 未設定 | `SAI_DASH_ENCAPSULATION_INVALID`（初期値） | `dashvnetorch.cpp:322` → SWSS_LOG_ERROR |
+
+### CRM リソースタイプ定数（crmorch.h）
+
+| 定数名 | inc/dec タイミング | ソース |
+|--------|-------------------|--------|
+| `CRM_DASH_VNET` | VNET 作成 (`addVnetPost`) / 削除 (`removeVnetPost`) | `dashvnetorch.cpp:103, 164` |
+| `CRM_DASH_IPV4_OUTBOUND_CA_TO_PA` | IPv4 CA to PA 作成/削除時 | `dashvnetorch.cpp:525, 662` |
+| `CRM_DASH_IPV6_OUTBOUND_CA_TO_PA` | IPv6 CA to PA 作成/削除時 | `dashvnetorch.cpp:525, 662` |
+| `CRM_DASH_IPV4_PA_VALIDATION` | IPv4 PA validation 作成/削除時 | `dashvnetorch.cpp:561, 706` |
+| `CRM_DASH_IPV6_PA_VALIDATION` | IPv6 PA validation 作成/削除時 | `dashvnetorch.cpp:561, 706` |
+
+### グローバルマップ定数
+
+- `gVnetNameToId` (`std::unordered_map<std::string, sai_object_id_t>`) — `dashvnetorch.cpp:33` でグローバル宣言。
+  VNET 作成時に `addVnetPost()` で追加、削除時に `removeVnetPost()` で erase。
+  `DASH_VNET_MAPPING_TABLE` の `addVnetMap()` (`L489`) がこのマップを参照するため、
+  VNET エントリが存在しない状態での VNET_MAPPING SET は即 `false` 返却となる[^orch]。
+
+### SAI 返却ステータス固定判定値
+
+| SAI ステータス | 判定箇所 | 挙動 |
+|--------------|---------|------|
+| `SAI_STATUS_NOT_EXECUTED` | VNET/CA to PA DEL post-op | retry（bulker 未実行扱い） |
+| `SAI_STATUS_OBJECT_IN_USE` | PA validation DEL post-op | retry（参照カウント有り） |
+| `SAI_STATUS_ITEM_ALREADY_EXISTS` | CA to PA / PA validation SET post-op | 正常完了扱い（重複は許容） |
+| `SAI_STATUS_ITEM_NOT_FOUND` | CA to PA DEL post-op | 警告のみ、正常完了扱い |
+
+<!-- /constants -->
+
 ## 設定例
 
 ```json
