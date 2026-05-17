@@ -394,4 +394,40 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 | `serial-config.service` | systemd サービス | SERIAL_CONSOLE 変化 → サービス再起動 | 直接（subprocess） | `hostcfgd:2035` |
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗モード・エラー処理 (Phase D)
+
+`SshServer` / `SerialConsoleCfg` / `PamLimitsCfg` が CONFIG_DB 変化を処理する際に発生しうる失敗モードと hostcfgd の対応を示す。
+
+### SSH_SERVER フィールド処理失敗
+
+| # | 失敗箇所 | 検出条件 | ログ (syslog) | 影響 | 回復方法 |
+|---|---------|---------|--------------|------|---------|
+| 1 | `handle_ports_set()` | `ports` 値が 1–65535 外 | `LOG_ERR "Ssh port <N> out of range"` → `"Failed to update sshd config files - wrong port configuration"` | sshd_config 更新中断・既存値保持 | 正値を CONFIG_DB に再設定 |
+| 2 | `set_policies()` 数値検証 | `authentication_retries` / `login_timeout` / `inactivity_timeout` が YANG 範囲外 | `LOG_ERR "Ssh {} {} out of range"` | 当該フィールドのみスキップ（部分適用）、他フィールドは継続 | 正値を CONFIG_DB に再設定 |
+| 3 | `set_policies()` 未知キー | `SSH_CONFIG_NAMES` にも `max_sessions` リストにもないキー | `LOG_ERR "Failed to update sshd config file - wrong key {}"` | 未知キーのみ無視、処理継続 | CONFIG_DB から不正キーを削除 |
+| 4 | `sshd -T` 検証失敗 | 一時 sshd_config が構文不正 | `LOG_ERR "Failed to update sshd config file - sshd -T returned {code} with error {stderr}"` | 一時ファイルを `os.remove()` で削除、既存 `/etc/ssh/sshd_config` 保持 | DB 値を正値に修正 |
+| 5 | `systemctl restart ssh` 失敗 | ssh サービス起動失敗 | `LOG_ERR "Failed to update sshd config file"` | sshd_config は更新済みだが実行中 sshd は旧設定を維持（DB値 vs プロセス不一致） | `systemctl restart ssh` を手動実行 |
+
+!!! warning "失敗 5 の注意"
+    `sshd -T` 検証成功後に `os.rename()` で sshd_config は更新されるが、`systemctl restart ssh` が失敗すると実行中の sshd は旧設定のまま継続する。DB 値と実際の sshd 挙動が一時的に乖離する。次回の `set_policies()` 呼び出し（次の CONFIG_DB 変更時）で再度 restart が試みられる。<!-- evidence: hostcfgd:1152-1157 -->
+
+### SERIAL_CONSOLE フィールド処理失敗
+
+| # | 失敗箇所 | 検出条件 | ログ (syslog) | 影響 | 回復方法 |
+|---|---------|---------|--------------|------|---------|
+| 6 | `update_serial_console_cfg()` | `serial-config.service restart` 失敗 | `LOG_ERR "Failed to update {key} serial-config.service config"` | キャッシュ未更新（`return` が `cache.update()` の前に実行）→ 次回同値変更でも再試行ループ | `service serial-config start` で手動起動 |
+
+!!! note "キャッシュ未更新ループ"
+    `run_cmd` が例外を送出すると `return` が呼ばれ、`self.cache.update({key: data})` (L2040) に到達しない。キャッシュが古いままのため、次回同じ値の SET イベントで再び `cache != data` が True になり `serial-config restart` を再試行する。serial-config.service が恒久的に不在の環境では無限再試行が発生する。<!-- evidence: hostcfgd:2031-2040 -->
+
+### PamLimitsCfg 処理失敗
+
+| # | 失敗箇所 | 検出条件 | ログ (syslog) | 影響 | 回復方法 |
+|---|---------|---------|--------------|------|---------|
+| 7 | `render_conf_file()` | jinja2 展開例外 / ファイル書き込み権限エラー | `LOG_ERR "modify pam_limits config file failed with exception: {}"` | PAM limits ファイル未更新、`max_sessions` 制限が未反映 | hostcfgd 再起動 + テンプレートファイル確認 |
+| 8 | `update_config_file()` | `SSH_SERVER` テーブル不在 (KeyError) | (ログなし — safe early return) | PAM limits 無変更（設計上の正常系） | なし（テーブル追加後に自動反映） |
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
