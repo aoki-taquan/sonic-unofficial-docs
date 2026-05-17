@@ -535,3 +535,69 @@ DASH ACL 系の SAI 呼び出しは `sai_dash_acl_api` と `sai_dash_eni_api` �
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-side-effects.md`
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis / ZMQ 購読方式
+
+`DashAclOrch` は `ZmqOrch` を継承する (`dashaclorch.h:33`)。`ZmqOrch::addConsumer()` (`zmqorch.cpp:59-78`) は DB が `DPU_APPL_DB` の場合、`ZmqServer` の有無によって二系統の Executor を切り替える。
+
+| 系統 | 条件 | Executor 型 | 購読 API |
+|------|------|------------|---------|
+| ZMQ 有効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = true`（デフォルト） | `ZmqConsumer`（`ZmqConsumerStateTable` ベース） | ZMQ PUSH/PULL ソケット受信 |
+| ZMQ 無効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = false` | `Consumer`（`ConsumerStateTable` ベース） | Redis channel PUBLISH/SUBSCRIBE |
+
+**購読テーブル** (`orchdaemon.cpp:1371-1377`):
+
+| テーブル | DB |
+|----------|----|
+| `DASH_PREFIX_TAG_TABLE` | DPU_APPL_DB |
+| `DASH_ACL_IN_TABLE` | DPU_APPL_DB |
+| `DASH_ACL_OUT_TABLE` | DPU_APPL_DB |
+| `DASH_ACL_GROUP_TABLE` | DPU_APPL_DB |
+| `DASH_ACL_RULE_TABLE` | DPU_APPL_DB |
+
+### ZMQ 有効化フラグ
+
+`DEVICE_METADATA|localhost` の `orch_northbond_dash_zmq_enabled` フィールド（`orch_zmq_config.h:21`）で制御される。`get_feature_status()` がデフォルト `true` で呼ばれるため、フィールドが未設定の場合も ZMQ 有効となる。
+
+### ZMQ 有効時のデータフロー
+
+```
+gNMI / SDN コントローラ
+  ↓ ZmqProducerStateTable (DPU_APPL_DB, tcp://localhost:<port>)
+ZMQ チャネル (PUSH/PULL)
+  ↓
+ZmqServer (orchagent 内)
+  ↓ ZmqConsumerStateTable.pops()
+ZmqConsumer.execute() → addToSync(entries) → drain()
+  ↓
+DashAclOrch::doTask(ConsumerBase&)  ← テーブル名で分岐
+  ├─ DASH_PREFIX_TAG_TABLE → taskUpdateDashPrefixTag / taskRemoveDashPrefixTag
+  ├─ DASH_ACL_IN_TABLE    → taskUpdateDashAclIn / taskRemoveDashAclIn
+  ├─ DASH_ACL_OUT_TABLE   → taskUpdateDashAclOut / taskRemoveDashAclOut
+  ├─ DASH_ACL_GROUP_TABLE → taskUpdateDashAclGroup / taskRemoveDashAclGroup
+  └─ DASH_ACL_RULE_TABLE  → taskUpdateDashAclRule
+```
+
+`ZmqConsumer::execute()` はソケットイベント駆動で即座に wake up する（明示的な SELECT_TIMEOUT なし）。`ordered_queue = false`（デフォルト）のため `pops()` → `addToSync()` → `drain()` の一回し処理。
+
+### ZMQ 無効時のデータフロー
+
+```
+gNMI / SDN コントローラ
+  ↓ ProducerStateTable → Redis PUBLISH (DPU_APPL_DB channel)
+Consumer.execute() → addToSync() → drain()
+  ↓
+DashAclOrch::doTask(ConsumerBase&)
+```
+
+ZMQ 無効時は通常の `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）経由となる。Redis keyspace 通知ではなく channel ベースのため、SET / DEL 操作が APP_DB に書き込まれると即座に通知が届く。
+
+### orchList 登録
+
+`orchdaemon.cpp:1409` にて `addOrchList(dash_acl_orch)` が呼ばれ、`DpuOrchDaemon` の `m_orchList` に登録される。`m_orchList` はメインの event loop でイテレーションされ、各 Executor の `drain()` を定期的に呼び出す。
+
+> **Evidence**: `sonic-swss/orchagent/dash/dashaclorch.h:33` (`ZmqOrch` 継承)、`sonic-swss/orchagent/zmqorch.cpp:8-78` (`ZmqConsumer::execute` / `ZmqOrch::addConsumer`)、`sonic-swss/orchagent/orchdaemon.cpp:1327-1378,1409` (フラグ確認・テーブル登録・addOrchList)、`sonic-swss/lib/orch_zmq_config.h:21` (`ORCH_NORTHBOND_DASH_ZMQ_ENABLED`)；詳細分析 `meta/_intermediate/cdb-flow/dash-acl-pubsub.md`
+<!-- /pubsub -->
