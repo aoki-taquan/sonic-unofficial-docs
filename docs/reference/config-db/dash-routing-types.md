@@ -220,6 +220,38 @@ warm-reboot 後のリプレイで `DASH_VNET_MAPPING_TABLE` が先にキュー�
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-ordering.md`
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DASH_ROUTING_TYPE_TABLE` は他の DASH テーブルへの暗黙参照を持たない。外部 OID 解決も CRM カウンタ更新も行わない自己完結型テーブルであり、他テーブルから参照される側（被参照）として機能する。
+
+### DASH_ROUTING_TYPE_TABLE が参照するテーブル
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | ブロッキング | evidence |
+|--------------------------|---------|------|------------|----------|
+| *(なし)* | — | — | — | — |
+
+`DashOrch::addRoutingTypeEntry()` (`dashorch.cpp:441-455`) は外部 orchagent・テーブルを一切参照せず、受信した protobuf を `routing_type_entries_` in-memory マップに格納するのみ。
+
+### DASH_ROUTING_TYPE_TABLE を参照するテーブル（被参照・逆方向）
+
+| 被参照元テーブル | 参照方法 | 参照条件 | 未登録時の挙動 | evidence |
+|---------------|---------|---------|--------------|---------|
+| `DASH_VNET_MAPPING_TABLE` | `getRouteTypeActions()` で `routing_type_entries_` を検索 | VNET マッピング SET 時・常時 | `return false` → VnetMapping をリトライキューに戻す | `dashvnetorch.cpp:313–319` |
+
+`DashVnetOrch::addOutboundCaToPa()` は `gDirectory.get<DashOrch*>()->getRouteTypeActions(ctxt.metadata.routing_type(), route_type_actions)` を呼ぶ。`routing_type_entries_` に該当エントリがなければ `SWSS_LOG_WARN` を出して `false` を返し、上位 `doTask()` がこのエントリを次の周回まで保留する（自動回復）。
+
+### 結果 DB 書き込み (APP_STATE_DB)
+
+SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_str, DASH_RESULT_SUCCESS)` (`dashorch.cpp:517`) が APP_STATE_DB の `DASH_ROUTING_TYPE_TABLE` に結果を書き込む。DEL 完了後は `removeResultFromDB()` (`dashorch.cpp:524`) で削除する。外部コントローラ（gNMI 等）が SAI プログラム結果を参照するための非同期通知チャネルとして機能する。
+
+### CRM カウンタ
+
+使用なし。`DASH_ROUTING_TYPE_TABLE` は SAI OID を返さないため CRM リソースカウンタは不使用。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-cross-refs.md`
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
