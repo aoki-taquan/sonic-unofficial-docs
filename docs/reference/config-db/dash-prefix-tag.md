@@ -217,6 +217,52 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`DASH_PREFIX_TAG_TABLE` 処理に関わる、YANG / CONFIG_DB スキーマで管理されないハードコード定数の一覧。
+
+### テーブル名定数 (schema.h)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `APP_DASH_PREFIX_TAG_TABLE_NAME` | `"DASH_PREFIX_TAG_TABLE"` | `DashAclOrch` TaskMap でのテーブル名登録、`orchdaemon.cpp` Consumer 初期化 | `sonic-swss-common/common/schema.h:183` |
+
+### IP バージョン Enum 値 (pbutils.cpp)
+
+`to_sai(IpVersion, ...)` が受理する `dash::types::IpVersion` enum 値。proto3 では フィールド省略時に `0` が送られるが拒否される。
+
+| enum 名 | 数値 | SAI 変換先 | ソース |
+|--------|------|-----------|--------|
+| `IP_VERSION_IPV4` | `1` | `SAI_IP_ADDR_FAMILY_IPV4` | `pbutils.cpp:13-15` |
+| `IP_VERSION_IPV6` | `2` | `SAI_IP_ADDR_FAMILY_IPV6` | `pbutils.cpp:16-18` |
+| `IP_VERSION_UNSPECIFIED` (proto3 デフォルト) | `0` | 拒否 (`return false` → `task_failed`) | `pbutils.cpp:19-21` |
+
+### ACL Rule 展開時のフォールバック定数 (dashaclgroupmgr.cpp)
+
+タグの展開時に `src_tag` / `dst_tag` 由来の prefix セットが空だった場合、`any_ip` ラムダ (L266) が group の ip_version から全アドレス (`0.0.0.0/0` または `::/0` 相当) を補完する。
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `all_protocols` | `uint8_t` 0〜255 の全値 | ACL rule の `protocol` 未指定時の全プロトコルマッチ | `dashaclgroupmgr.cpp:28` |
+| `all_ports` | `{0, 65535}` (uint16 全範囲) | ACL rule の `src_port` / `dst_port` 未指定時の全ポートマッチ | `dashaclgroupmgr.cpp:29` |
+
+### ABORT_IF_NOT マクロ（防御的 assert）
+
+`DashTagMgr::getPrefixes()` / `attach()` / `detach()` (`dashtagmgr.cpp:107, 117, 131`) は、タグが `m_tag_table` に存在しない場合に `ABORT_IF_NOT` で `runtime_error` をスローして **orchagent プロセスを停止**させる。`DashAclGroupMgr::createRule()` は `exists()` チェック後に `getPrefixes()` を呼ぶため通常は到達しないが、実装上のバグや状態不整合時はプロセスクラッシュの原因になる。
+
+### スキーマ / YANG 管理済み（ハードコード定数なし）の項目
+
+| 項目 | 管理方法 |
+|------|---------|
+| `ip_version` 許容値 | protobuf enum `IpVersion` (proto 定義) |
+| `prefix_list` サイズ上限 | 実装上制限なし（SAI / ASIC 依存） |
+| タグ名フォーマット | 任意文字列（制限なし） |
+| refcount (`m_groups`) 上限 | 実装上制限なし |
+
+詳細根拠は `meta/_intermediate/cdb-flow/dash-prefix-tag-constants.md` を参照。
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
