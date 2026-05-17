@@ -165,6 +165,31 @@ YANG `sonic-syslog.yang` の `leaf service` が `FEATURE_LIST.name` を `leafref
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 障害モード・エラー伝播 (Phase D)
+
+> **調査根拠**: `containercfgd.py` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-feature-failure.md`
+
+### 障害経路一覧
+
+| # | 障害 | 検出 | 影響 | 回復方法 |
+|---|------|------|------|---------|
+| 1 | `sonic-cfggen` コマンド失敗 (`CalledProcessError`) | ERR ログ: `"Failed to config syslog for container {} with data {} - {}"` | DB 値は反映済み・rsyslog は旧設定のまま。`current_interval`/`current_burst` 更新されず再試行されない | 設定値を変えて再書き込みし差分を発生させる |
+| 2 | `supervisorctl restart rsyslogd` 失敗 | 同上 ERR ログ | rsyslogd は旧設定で稼働継続。次回変更時に再試行 | 設定値を変えて再書き込み |
+| 3 | `/etc/rsyslog.conf` 不在 (起動時 `parse_syslog_conf` 失敗) | `FileNotFoundError` — containercfgd クラッシュ | CONFIG_DB 変更を全く受け付けられない | コンテナ再起動（rsyslog conf を先に生成してから） |
+| 4 | CONFIG_DB と rsyslog 設定の乖離 | `docker exec <svc> cat /etc/rsyslog.conf` と DB 値を目視比較 | rate-limit が意図しない値で動作 | 設定値を変えて再書き込み |
+
+### 主要な挙動詳細
+
+**汎用 try/except による silent failure**: `handle_config()` は `update_syslog_config()` 全体を `try/except Exception` で囲み、例外時は ERR ログのみ出力して戻る (`containercfgd.py:120-125`)。CONFIG_DB 書き込みは既に完了しているため、DB 値と実コンテナ rsyslog 設定が乖離した状態が持続する。
+
+**冪等性の欠如**: `current_interval` / `current_burst` は成功時のみ更新される (`containercfgd.py:161-162`)。失敗後に同じ値を再書き込みしても「変更なし」と判定されてスキップされる。**意図的に値を別の値へ変更してから元の値に戻す**操作が必要。
+
+**`handle_init_data` の例外伝播**: `handle_init_data()` に独立した try/except がないため、例外は swsscommon の listen ループに伝播する可能性がある (`containercfgd.py:127-132`)。
+
+<!-- /failure -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
