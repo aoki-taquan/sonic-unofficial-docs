@@ -3,11 +3,14 @@ title: FLEX_COUNTER 個別カウンタフィールド
 description: "FLEX_COUNTER 個別カウンタフィールド — orchagent が FLEX_COUNTER_DB に自動書き込む per-OID カウンタ ID リスト（COUNTER_ID_LIST / ATTR_ID_LIST）の構造とコード由来デフォルト。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-17
 hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/flexcounterorch.cpp
     ref: master
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
@@ -275,9 +278,47 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 他グループへの影響はない。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-flex-cross-refs.md`
+
+`FlexCounterOrch` は YANG leafref として定義されていない以下のテーブル・グローバル Orch を暗黙参照して、個別カウンタフィールドの生成範囲を決定する。
+
+| 参照先 | DB | 参照タイミング | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `DEVICE_METADATA\|localhost` (`create_only_config_db_buffers`) | CONFIG_DB | コンストラクタ初期化時・変更通知 | なし | QUEUE/PG 生成範囲に影響 | flexcounterorch.cpp:110-125 |
+| `APP_BUFFER_QUEUE_TABLE` (APP_DB) | APP_DB | QUEUE/QUEUE_WATERMARK/WRED_ECN_QUEUE enable 時 | なし | `create_only_config_db_buffers=true` 時必須 | flexcounterorch.cpp:554 |
+| `APP_BUFFER_PG_TABLE` (APP_DB) | APP_DB | PG_DROP/PG_WATERMARK enable 時 | なし | `create_only_config_db_buffers=true` 時必須 | flexcounterorch.cpp:623 |
+| `gPortsOrch`（PORT_TABLE/APP_DB） | APP_DB | 全 PORT 系グループ enable 時 | なし | allPortsReady 待ち必須 | flexcounterorch.cpp:164-167 |
+| `gIntfsOrch`（INTF_TABLE/APP_DB） | APP_DB | RIF enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:283 |
+| `gBufferOrch`（BUFFER_POOL_TABLE/APP_DB） | APP_DB | BUFFER_POOL_WATERMARK enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:287 |
+| `gCoppOrch`（COPP_TABLE/APP_DB） | APP_DB | FLOW_CNT_TRAP enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:313-315 |
+| `gSwitchOrch` | — | SWITCH enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:370 |
+| `vxlan_tunnel_orch`（gDirectory） | — | TUNNEL enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:295 |
+| `dash_orch`/`dash_ha_orch`（gDirectory） | — | ENI/DASH_METER/HA_SET enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:301-309 |
+
+### create_only_config_db_buffers によるフィルタリング
+
+`DEVICE_METADATA|localhost|create_only_config_db_buffers = true` かつ VoQ 非使用環境では:
+
+- **QUEUE 系**: `APP_BUFFER_QUEUE_TABLE` で non-zero buffer profile が設定されたポート+キュー範囲のみを FLEX_COUNTER_DB に登録。未設定ポートの QUEUE カウンタはゼロリストになる。
+- **PG 系**: `APP_BUFFER_PG_TABLE` で non-zero profile の PG のみを登録。
+
+`create_only_config_db_buffers = false`（デフォルト）または VoQ 環境では、全ポートの全キュー / 全 PG を対象とする。
+
+!!! note "YANG 非定義の暗黙制約"
+    これらの依存関係はいずれも `sonic-flex_counter.yang` に leafref として記述されていない[^2]。
+    `counterpoll enable` 後にカウンタが全ゼロに見える場合、`DEVICE_METADATA` と
+    APP_DB の `BUFFER_QUEUE`/`BUFFER_PG` エントリの存在を確認すること。
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/portsorch.cpp` `port_stat_ids[]` (line 242), `queue_stat_ids[]` (line 389), `wred_port_stat_ids[]` (line 421), `wred_queue_stat_ids[]` (line 429). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+
+[^2]: `sonic-swss/orchagent/flexcounterorch.cpp` `FlexCounterOrch::FlexCounterOrch()` (line ~102-138), `getQueueConfigurations()` (line ~538-607), `getPgConfigurations()` (line ~609-668). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/flexcounterorch.cpp>
 
 <!-- ref-triangle:start -->
 
