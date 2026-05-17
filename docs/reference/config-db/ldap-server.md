@@ -288,6 +288,51 @@ sudo cat /etc/nslcd.conf
 
 <!-- /ordering -->
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L.386, L.437-442, L.547-564, L.650-651, L.706-713, L.855-863; `sonic-host-services/scripts/ldap.py` L.8-18  
+> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-derivation.md`
+
+### Phase 6: 自動派生
+
+hostcfgd は `LDAP_SERVER` テーブルを受信後、`modify_conf_file()` 内で以下の自動補完・派生処理を行う。
+
+**ldap_global_default は空 dict**: `AaaCfg.__init__()` で `self.ldap_global_default = {}` と初期化する (`hostcfgd:386`)。TACACS+ / RADIUS と異なり LDAP は hostcfgd レイヤでのデフォルト注入を行わない。未設定フィールドの fallback は `LdapCfg` クラス属性が担う。
+
+**LdapCfg クラス属性による fallback 補完**: `modify_conf_file()` は Jinja2 テンプレートへ `ldap_cfg=ldap.LdapCfg` を渡す (`hostcfgd:855, 863`)。テンプレートが `ldap_cfg` を参照して CONFIG_DB に値が存在しないフィールドを補完する。
+
+| フィールド | LdapCfg 定数 | fallback 値 | コード |
+|-----------|------------|------------|--------|
+| `base_dn` | `LdapCfg.BASE` | `'ou=users,dc=example,dc=com'` | `ldap.py:9` |
+| `bind_dn` | `LdapCfg.BIND` | `''` (空文字) | `ldap.py:10` |
+| `bind_password` | `LdapCfg.BINDPW` | `""` (空文字) | `ldap.py:11` |
+| `version` | `LdapCfg.VERSION` | `'3'` | `ldap.py:12` |
+| `timeout` (search) | `LdapCfg.TIMEOUT_SEARCH` | `5` | `ldap.py:13` |
+| `bind_timeout` | `LdapCfg.TIMEOUT_BIND` | `5` | `ldap.py:14` |
+| `port` | `LdapCfg.PORT` | `389` | `ldap.py:15` |
+| `scope` | `LdapCfg.SCOPE` | `"sub"` (CONFIG_DB から設定不可) | `ldap.py:16` |
+
+**priority 降順ソートによる nslcd サーバ順序派生**: `ldapsrvs_conf = sorted(ldapsrvs_conf, key=lambda t: int(t['priority']), reverse=True)` でサーバリストを降順ソートし nslcd.conf / ldap.conf へ反映する (`hostcfgd:713`)。YANG default `priority=1` との組み合わせで、単一サーバ登録時も常にソート処理が実行される。
+
+**global → per-server マージ**: `ldap_global = self.ldap_global_default.copy(); ldap_global.update(self.ldap_global)` で global 設定を確定後、各サーバで `server = ldap_global.copy(); server.update(self.ldap_servers[addr])` とマージする (`hostcfgd:650-651, 708-711`)。per-server フィールドが global フィールドを上書きする継承パターン。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+hostcfgd は起動時から `LDAP` / `LDAP_SERVER` テーブルを常時購読する (`hostcfgd:2475-2476`)。ただし `is_ldap_config_complete()` が `True` を返す場合のみ nslcd が起動する。
+
+**`is_ldap_config_complete()` の AND 条件** (`hostcfgd:437-442`):
+
+1. `LDAP|global.bind_dn` が空でない
+2. `LDAP|global.base_dn` が空でない
+3. `LDAP|global.bind_password` が空でない
+4. `AAA|authentication.login` に `ldap` が含まれる
+5. `LDAP_SERVER` にエントリが 1 件以上存在する
+
+いずれか未達の場合 `handle_nslcd_service(False)` が呼ばれ nslcd を停止・mask する (`hostcfgd:241-251`)。条件が揃うと `handle_nslcd_service(True)` で nslcd を再起動する（自動復旧）。
+
+<!-- /derivation -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
