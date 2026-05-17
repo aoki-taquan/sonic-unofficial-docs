@@ -467,6 +467,50 @@ link-up / link-down イベントが発生すると `PortsOrch::updateDbPortOperS
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム・pub/sub (Phase G)
+
+STATE_DB のトンネル関連テーブルへの書き込みはすべて `swsscommon::Table::set()` / `del()` による直接操作であり、`NotificationProducer` / `ConsumerStateTable` ベースのチャネル通知は使用しない。
+
+### 書き込みメカニズム
+
+| STATE_DB テーブル | 書き込み API | 書き込み元 |
+|-----------------|-------------|----------|
+| `TUNNEL_DECAP_TABLE` | `stateTunnelDecapTable->set()` / `->del()` | `setDecapTunnelStatus()` / `removeDecapTunnelStatus()` (tunneldecaporch.cpp L1531, L1536) |
+| `TUNNEL_DECAP_TERM_TABLE` | `stateTunnelDecapTermTable->set()` / `->del()` | `setDecapTunnelTermStatus()` / `removeDecapTunnelTermStatus()` (tunneldecaporch.cpp L1560, L1566) |
+| `VXLAN_TUNNEL_TABLE` | `m_stateVxlanTable.set()` / `.del()` | `addRemoveStateTableEntry()` (vxlanorch.cpp L1943, L1953) |
+| `VXLAN_TUNNEL_TABLE` (`operstatus` のみ) | `m_stateVxlanTable.set()` | `updateDbTunnelOperStatus()` (vxlanorch.cpp L1910) |
+| `VXLAN_TABLE` | `m_stateVxlanTable.set()` | `VxlanMgr::createVxlan()` (vxlanmgr.cpp L890-892) |
+
+### 購読者 — sonic-utilities CLI
+
+`show vxlan remotevtep` コマンド (sonic-utilities/show/vxlan.py L253-268) が STATE_DB の `VXLAN_TUNNEL_TABLE|*` を **polling** で読む唯一の CLI 購読者。keyspace 通知ではなく `SonicV2Connector.keys()` + `get_all()` を使用する[^14]。
+
+`TUNNEL_DECAP_TABLE` / `TUNNEL_DECAP_TERM_TABLE` / `VXLAN_TABLE` に特化した show コマンドは存在しない（テスト用アサーションは除く）。
+
+### operstatus 更新の通知フロー
+
+`VXLAN_TUNNEL_TABLE.operstatus` は SAI の port oper-status イベントを起点に更新される[^15]:
+
+```
+SAI ポートリンク変化通知
+  └─ PortsOrch::updateDbPortOperStatus()        (portsorch.cpp L3920-3924)
+       └─ port.m_type == Port::TUNNEL のとき
+            └─ VxlanTunnelOrch::updateDbTunnelOperStatus()   (vxlanorch.cpp L1893-1910)
+                 └─ m_stateVxlanTable.set(tunnel_name, {operstatus: "up"/"down"})
+```
+
+外部監視ツールが `operstatus` 変化を検出するには STATE_DB の polling が必要。
+
+### NotificationProducer / SubscriberStateTable 非使用の確認
+
+- `tunneldecaporch.cpp` L39 の `SubscriberStateTable` は CONFIG_DB の `CFG_SUBNET_DECAP_TABLE_NAME` 購読専用であり、STATE_DB 書き込み通知とは無関係
+- STATE_DB のいずれのトンネルテーブルも、`NotificationProducer` / `NotificationConsumer` による channel 通知パスを持たない
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-pubsub.md`
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: schema.h 定数定義: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L488-L489>
@@ -494,3 +538,7 @@ link-up / link-down イベントが発生すると `PortsOrch::updateDbPortOperS
 [^12]: `updateDbTunnelOperStatus` を `PortsOrch` が呼び出す: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp#L3916-L3923>
 
 [^13]: `createVxlan` → `m_stateVxlanTable.set`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vxlanmgr.cpp#L807-L892>
+
+[^14]: `show vxlan remotevtep` が STATE_DB `VXLAN_TUNNEL_TABLE` を polling: <https://github.com/sonic-net/sonic-utilities/blob/master/show/vxlan.py#L253-L268>
+
+[^15]: `PortsOrch::updateDbPortOperStatus()` → `updateDbTunnelOperStatus()` 委譲: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp#L3916-L3923>
