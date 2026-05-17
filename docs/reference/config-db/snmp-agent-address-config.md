@@ -451,4 +451,44 @@ CONFIG_DB → APPL_DB / STATE_DB / ASIC_DB / COUNTER_DB への伝播なし。SAI
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py`, `hostcfgd` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-pubsub.md`
+
+### 購読方式: なし (起動時スナップショット読み取りのみ)
+
+`SNMP_AGENT_ADDRESS_CONFIG` を **リアルタイムで購読するプロセスは存在しない**。`docker-snmp/start.sh` が起動時に `sonic-cfggen -d` (CONFIG_DB への一括 HGETALL) を実行して `snmpd.conf.j2` を展開・`snmpd.conf` を生成する。Redis keyspace 通知 (PSUBSCRIBE) / `SubscriberStateTable` / `ConsumerStateTable` はいずれも使用しない。
+
+| コンポーネント | 通信方式 | 対象テーブル | 備考 |
+|---|---|---|---|
+| `docker-snmp` (`start.sh` + `snmpd.conf.j2`) | `sonic-cfggen -d` (起動時一括読み取り) | `SNMP_AGENT_ADDRESS_CONFIG` | 起動時のみ。実行中の変更は反映しない |
+| `sonic-snmpagent` (`sonic_ax_impl`) | `psubscribe("__keyspace@{db}__:{pattern}")` | COUNTERS_DB / STATE_DB (MIB データ) | `SNMP_AGENT_ADDRESS_CONFIG` は対象外 |
+| `hostcfgd` | `ConfigDBConnector.subscribe()` | SNMP_AGENT_ADDRESS_CONFIG を購読しない | — |
+| `orchagent` | ConsumerStateTable | SNMP_AGENT_ADDRESS_CONFIG を処理しない | — |
+
+### 変更の反映経路
+
+CONFIG_DB への書き込みから snmpd.conf への反映まで、keyspace 通知を経由しない:
+
+```
+CLI: config snmp agentaddress add <ip>
+  ↓ config_db.set_entry('SNMP_AGENT_ADDRESS_CONFIG', key, {})
+  ↓ os.system("systemctl restart snmp")   ← CLI が自動呼び出し (config/main.py:4189)
+docker-snmp コンテナ再起動
+  ↓ start.sh: sonic-cfggen -d -t snmpd.conf.j2,/etc/snmp/snmpd.conf
+  ↓ SNMP_AGENT_ADDRESS_CONFIG を HGETALL で一括読み取り
+  ↓ agentAddress 行を生成 (snmpd.conf.j2 L27–34)
+snmpd 起動 → 新しいアドレス/ポートで listen
+```
+
+`sonic-db-cli` / `redis-cli HSET` で直接書き込んだ場合は snmpd.conf は更新されない。手動で `systemctl restart snmp` が必要。
+
+### APPL_DB / SAI 中継
+
+なし。`SNMP_AGENT_ADDRESS_CONFIG` は CONFIG_DB → snmpd.conf（ファイル）で完結し、APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 59acbdd0f2b6 -->
