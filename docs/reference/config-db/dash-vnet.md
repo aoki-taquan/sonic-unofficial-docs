@@ -340,6 +340,77 @@ STATE_DB・CONFIG_DB・FLEX_COUNTER_DB・COUNTERS_DB への書き込みは一切
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### ZMQ チャネル経由の購読 — `ZmqConsumerStateTable`
+
+`DashVnetOrch` は `ZmqOrch` を継承し、通常の Redis `ConsumerStateTable` ではなく
+**ZeroMQ (`ZmqConsumerStateTable`) チャネル**で APPL_DB (DPU_APPL_DB) を購読する。
+
+```cpp
+// orchdaemon.cpp:1333-1340
+vector<string> dash_vnet_tables = {
+    APP_DASH_VNET_TABLE_NAME,          // "DASH_VNET_TABLE"
+    APP_DASH_VNET_MAPPING_TABLE_NAME   // "DASH_VNET_MAPPING_TABLE"
+};
+DashVnetOrch *dash_vnet_orch = new DashVnetOrch(
+    m_dpu_appDb, dash_vnet_tables, m_dpu_appstateDb, dash_zmq_server);
+```
+
+`ZmqOrch::addConsumer()` が ZMQ サーバが有効な場合に `ZmqConsumerStateTable` を生成する。
+ZMQ が無効（`nullptr`）の場合は通常の `ConsumerStateTable` にフォールバックする。
+
+### イベントディスパッチフロー
+
+```
+gnmi-server (gNMI 北行インターフェース)
+    └─ DPU_APPL_DB
+           DASH_VNET_TABLE / DASH_VNET_MAPPING_TABLE
+               ↓ ZMQ channel (または Redis ConsumerStateTable)
+    ZmqConsumerStateTable::pops()
+    ZmqConsumer::execute() → drain()
+    DashVnetOrch::doTask(ConsumerBase&)
+        ├─ "DASH_VNET_TABLE"         → doTaskVnetTable()
+        └─ "DASH_VNET_MAPPING_TABLE" → doTaskVnetMapTable()
+```
+
+### SAI バルク呼び出し
+
+各 `doTask*()` 内でイテレーション後に bulker を `flush()` し一括 SAI 送信する:
+
+| Bulker | SAI API | `flush()` タイミング |
+|--------|---------|---------------------|
+| `vnet_bulker_` (`ObjectBulker<sai_dash_vnet_api_t>`) | `create_vnets()` / `remove_vnets()` | `doTaskVnetTable()` 内 |
+| `outbound_ca_to_pa_bulker_` (`EntityBulker`) | `create/remove_outbound_ca_to_pa_entries()` | `doTaskVnetMapTable()` 内 |
+| `pa_validation_bulker_` (`EntityBulker`) | `create/remove_pa_validation_entries()` | `doTaskVnetMapTable()` 内 |
+
+### APPL_STATE_DB への結果書き戻し
+
+処理結果は `DPU_APPL_STATE_DB` の対応テーブルへ書き戻される（CONFIG_DB への書き戻しはなし）:
+
+| 操作 | 結果テーブル | 値 |
+|------|------------|-----|
+| VNET SET 成功 | APPL_STATE_DB / `DASH_VNET_TABLE` | `DASH_RESULT_SUCCESS (0)` |
+| VNET SET 失敗 (post-op `false`) | 同上 | `DASH_RESULT_FAILURE (1)` |
+| VNET DEL 成功 | 同上 | エントリ削除 |
+| VNET_MAPPING SET 成功/失敗 | APPL_STATE_DB / `DASH_VNET_MAPPING_TABLE` | `DASH_RESULT_SUCCESS/FAILURE` |
+
+### CONFIG_DB との関係
+
+`DashVnetOrch` は CONFIG_DB `DASH_VNET` を**直接購読しない**。
+CONFIG_DB への書き込み（CLI / sonic-cfggen）は gnmi-server が検知し APPL_DB へ転送する経路を取る。
+keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
+
+### フィーチャフラグ
+
+`ORCH_NORTHBOND_DASH_ZMQ_ENABLED`（デフォルト `true`）が ZMQ モードを制御する。
+無効時は `ConsumerStateTable`（Redis Pub/Sub）にフォールバックし、テスト環境・後方互換で使用される。
+
+> **Evidence**: `orchdaemon.cpp:1325-1345`（DashVnetOrch 登録・ZMQ フィーチャフラグ）、`zmqorch.cpp` 全行（ZmqConsumer / ZmqOrch 実装）、`dashvnetorch.cpp:42-51`（コンストラクタ）、`dashvnetorch.cpp:869-884`（doTask ディスパッチ）; 詳細分析 `meta/_intermediate/cdb-flow/dash-vnet-pubsub.md`
+
+<!-- /pubsub -->
+
 ## 設定例
 
 ```json
