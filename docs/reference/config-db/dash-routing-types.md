@@ -345,6 +345,43 @@ CONFIG_DB / APPL_DB に書き込める値をソースから確認。
 > **スキャン証跡**: `dashorch.h` L29-36、`dashorch.cpp` L45-46,73,487-488、`dashrouteorch.cpp` L41-47,78-130,326、`dashvnetorch.cpp` L314-374,771、`dashtunnelorch.cpp` L289-292、`sonic-dash.yang` L356-398 読了。定数 2 (result code) + 2 (key transform) + 4 (sOutboundAction) + 2 (encap) + 4 (YANG pattern) = 14 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/dash-routing-types-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/dash-routing-types-side.md`
+
+`DASH_ROUTING_TYPE_TABLE` の SET/DEL が引き起こす副次書込は **DPU_APPL_STATE_DB への結果書込のみ**。SAI API 呼び出しは一切発生せず、`routing_type_entries_` in-memory マップへの格納で処理が完結するため、ASIC_DB・COUNTERS_DB・FLEX_COUNTER_DB への書込もない。
+
+### SET 時 — DPU_APPL_STATE_DB 結果書込
+
+`doTaskRoutingTypeTable()` (`dashorch.cpp:517`) は SET_COMMAND 処理後に必ず `writeResultToDB(dash_routing_type_result_table_, routing_type_str, result)` を呼ぶ。`dash_routing_type_result_table_` は `DPU_APPL_STATE_DB`（`DBConnector("DPU_APPL_STATE_DB", 0)` — `orchdaemon.cpp:993`）の `DASH_ROUTING_TYPE_TABLE` に接続される。
+
+| 書込先 DB | テーブル | キー形式 | フィールド | 値（成功） | 値（失敗） |
+|----------|---------|---------|---------|---------|---------|
+| `DPU_APPL_STATE_DB` | `DASH_ROUTING_TYPE_TABLE` | `ROUTING_TYPE_<NAME>` | `result` | `"0"` | `"1"` |
+
+- **キー変換**: 入力キー（例: `vnet_encap`）は `std::transform(::toupper)` → `"ROUTING_TYPE_"` プレフィックス付加後の文字列（例: `ROUTING_TYPE_VNET_ENCAP`）で書き込まれる (`dashorch.cpp:487-488,517`)
+- **書込タイミング**: `addRoutingTypeEntry()` の返り値によらず常に書き込まれる（成功・再登録スキップ・失敗のいずれも）
+- **protobuf デシリアライズ失敗時**: `parsePbMessage()` が失敗した場合は `writeResultToDB` が呼ばれず、DPU_APPL_STATE_DB への書込なし (`dashorch.cpp:500-505`)
+
+### DEL 時 — DPU_APPL_STATE_DB エントリ削除
+
+`removeRoutingTypeEntry()` 成功時のみ `removeResultFromDB(dash_routing_type_result_table_, routing_type_str)` (`dashorch.cpp:524`) が呼ばれ、対応する result エントリが削除される。DEL が失敗（エントリ不存在）した場合は `removeResultFromDB` は呼ばれず既存の result エントリが残留する。
+
+### 副次書込の有無まとめ
+
+| DB / リソース | 書込発生 | 理由 |
+|-------------|---------|------|
+| `DPU_APPL_STATE_DB` | ✅ SET/DEL | 外部コントローラへの非同期結果通知 |
+| `ASIC_DB` | ❌ なし | routing type は in-memory のみ。SAI DASH API 呼び出しなし |
+| `COUNTERS_DB` | ❌ なし | SAI OID を持たないため CRM カウンタ更新なし |
+| `FLEX_COUNTER_DB` | ❌ なし | 同上 |
+| `STATE_DB` | ❌ なし | DASH 系は DPU_APPL_STATE_DB を使用 |
+| `CONFIG_DB` | ❌ なし | orchagent は CONFIG_DB への書戻しを行わない |
+
+`DPU_APPL_STATE_DB / DASH_ROUTING_TYPE_TABLE` は gNMI 等の外部コントローラが SAI プログラム状態を確認するための非同期通知チャネルとして機能する。外部コントローラは `result` フィールドをポーリングすることで routing type の登録成否を確認できる。
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
