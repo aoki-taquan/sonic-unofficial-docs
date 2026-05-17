@@ -214,6 +214,54 @@ warm-reboot シーケンスでは `OrchDaemon::warmRestoreAndSyncUp()` が `m_or
 → **warm-reboot 依存順**: `VNetRouteOrch` の state restore が完了してから `VNetNextHopUpdate` が流れる必要があるが、これは `VNetRouteOrch` 側の責務であり `ChassisOrch` 側での特別なハンドリングは不要。
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/chassisorch.cpp`、`orchagent/vnetorch.cpp`
+
+### doTask() — 入力バリデーションなし
+
+`ChassisOrch::doTask()` は CONFIG_DB エントリの key に対するバリデーションを行わない。不正な IP 文字列が key として書き込まれた場合、`IpAddress` コンストラクタが例外を投げ、`m_toSync` に未処理エントリを残したまま例外が上位に伝播する。
+
+| 失敗条件 | 挙動 |
+|---------|------|
+| key が無効な IP プレフィックス文字列 | `IpAddress()` コンストラクタが例外; `m_toSync.erase()` に到達しない → エントリが残留しリトライが繰り返される |
+| `SET` 操作で `VNetRouteOrch::attach()` が呼ばれた後に即 `DEL` 操作 | `detach()` が正常に実行される（attach 済み observer は `next_hop_observers_` に存在するため） |
+
+### VNetRouteOrch::detach() の assert(false)
+
+CONFIG_DB から `DEL` 操作が到達すると `m_vNetRouteOrch->detach(this, ip)` が呼ばれる。対応 observer エントリが存在しない場合は `SWSS_LOG_ERROR` + `assert(false)` が実行される:
+
+```cpp
+// vnetorch.cpp:1910-1950
+void VNetRouteOrch::detach(Observer* observer, const IpAddress& dstAddr)
+{
+    auto observerEntry = next_hop_observers_.find(dstAddr);
+    if (observerEntry == next_hop_observers_.end())
+    {
+        SWSS_LOG_ERROR("Failed to detach observer for %s. Entry not found.",
+                       dstAddr.to_string().c_str());
+        assert(false);  // デバッグビルドではクラッシュ
+        return;
+    }
+    // observer が見つからない場合も同様
+    SWSS_LOG_ERROR("Failed to detach observer for %s. Observer not found.", ...);
+    assert(false);
+}
+```
+
+| 失敗条件 | 発生経路 | 挙動 |
+|---------|---------|------|
+| `DEL` 到着時に observer エントリが `next_hop_observers_` に不在 | CONFIG_DB 直接書込 / warm-reboot 再同期ズレ | `SWSS_LOG_ERROR` + `assert(false)` (デバッグビルド: クラッシュ) |
+| observer リストに自身が含まれない | observer 二重 detach | `SWSS_LOG_ERROR` + `assert(false)` |
+
+### VoQ 非環境での silent drop
+
+`ChassisOrch` は `orchdaemon.cpp` で VoQ が有効な場合のみ生成される。VoQ 無効環境では `PASS_THROUGH_ROUTE_TABLE` への書き込みがあっても購読者が存在せず、APP_DB への転送は一切行われない (silent drop)。
+
+> **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:50-72`; `sonic-swss/orchagent/vnetorch.cpp:1910-1952`; `sonic-swss/orchagent/orchdaemon.cpp:281-293`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-failure.md`
+<!-- /failure -->
+
 ## 制約
 
 - `<IP_prefix>` は `IpPrefix` クラスで正規化される（ホストビットが切り捨てられる）
