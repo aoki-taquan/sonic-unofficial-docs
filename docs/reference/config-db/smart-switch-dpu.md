@@ -303,6 +303,52 @@ leaf vnet_name {
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`dhcp_cfggen` (`dhcpservd`) は `generate()` 呼び出しごとに CONFIG_DB を全量読み直してミッドプレーン DHCP 設定を再生成する。このため書き込み順序がミッドプレーンブリッジの DHCP 払い出し動作に直結する。
+
+### 他テーブル先行必須
+
+| 先行テーブル / フィールド | 理由 | 違反時の挙動 |
+|---|---|---|
+| `DEVICE_METADATA\|localhost.subtype = "SmartSwitch"` | `is_smart_switch()` チェックで `False` になると `MID_PLANE_BRIDGE` / `DPUS` を完全無視 | ミッドプレーン DHCP 設定が生成されず DPU への IP 払い出し停止（`dhcp_cfggen.py:67,76`） |
+| `MID_PLANE_BRIDGE\|GLOBAL` (`bridge` + `ip_prefix` 両フィールド) | `dhcp_cfggen.py:84` で両フィールドの存在を明示チェック。どちらか欠如すると `dhcp_interfaces` にブリッジが登録されない | `DPUS` エントリが存在しても処理スキップ。DPU への IP 割当なし |
+| `VNET\|<vnet_name>` (→ `DASH_HA_GLOBAL_CONFIG.dpu_vnet`) | YANG `leafref` 制約。`VNET` エントリが先行していないと YANG バリデーション違反 | CLI 経由の書き込みは `ctx.fail()` で拒否 |
+
+### 推奨書込み順序（ビルド時 / 手動設定共通）
+
+```
+# 1. デバイス種別の確定
+SET DEVICE_METADATA|localhost  subtype=SmartSwitch
+
+# 2. ミッドプレーンブリッジの定義
+SET MID_PLANE_BRIDGE|GLOBAL  bridge=bridge-midplane  ip_prefix=169.254.200.254/24
+
+# 3. DPU エントリの登録（複数ある場合は natsorted 順）
+SET DPUS|dpu0  midplane_interface=dpu0
+SET DPUS|dpu1  midplane_interface=dpu1
+...
+
+# 4. DHCP サーバー設定（DHCP_SERVER_IPV4 / DHCP_SERVER_IPV4_PORT）
+SET DHCP_SERVER_IPV4|bridge-midplane  ...
+SET DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu0  ...
+
+# 5. DASH HA 設定（VNET が先行していること）
+SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=<vnet_name>  ...
+```
+
+`config_samples.py:81-151` (`generate_t1_smartswitch_switch_sample_config`) はこの順序を自動保証している。
+
+### ランタイム変更の反映タイミング
+
+- `DPUS` の変更は `DpusTableEventChecker` が無条件にトリガー → dhcpservd 再生成 → kea-dhcp4 SIGHUP（最大 5000 ms ポーリング待ち）
+- `MID_PLANE_BRIDGE` の変更は `MidPlaneTableEventChecker` が `bridge` フィールドを `enabled_dhcp_interfaces` と照合してから再生成をトリガー
+- `DPU` / `REMOTE_DPU` / `VDPU` は dhcpservd の購読対象外。変更は dashhaorch / sonic-gnmi が別途処理する
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:65-100`; `common/dhcp_db_monitor.py:349-386`; `src/sonic-config-engine/config_samples.py:81-151`; `src/sonic-dhcp-utilities/dhcp_utilities/common/utils.py:153-161`
+<!-- /ordering -->
+
 ## 制約
 
 - `MID_PLANE_BRIDGE|GLOBAL` の `bridge` は `bridge-midplane` 固定。変更不可。
