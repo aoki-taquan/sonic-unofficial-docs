@@ -287,6 +287,34 @@ YANG `leafref` による明示的な参照は持たないが、orchagent / chass
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `DPU` テーブルの変更に伴って各購読者が副次的に書き込む DB エントリは **存在しない**。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `DashEniFwdOrch` は DPU テーブルを起動時の `populateDpuRegistry()` で静的に読み取るのみ。実行時 SET/DEL イベントを購読しない (`orchdaemon.cpp:615`—購読テーブルは `APP_DASH_ENI_FORWARD_TABLE`) |
+| STATE_DB | なし | 3 購読者 (`DashEniFwdOrch`・`caclmgrd`・`sonic-gnmi` proxy) のいずれも `DPU` テーブル処理コード内に STATE_DB 書込呼出なし |
+| COUNTERS_DB | なし | SAI 非経由。DPU テーブルを購読する orchagent ハンドラは存在しない |
+| その他 (ASIC_DB / FLEX_COUNTER_DB) | なし | `DashEniFwdOrch` の APPL_DB 書込 (`APP_ACL_RULE_TABLE_NAME` 等) は ENI SET/DEL によって発火するものであり DPU テーブルの SET/DEL には連動しない |
+
+**実行時副作用（DB 外）— caclmgrd による iptables/ip6tables 操作**:
+
+`caclmgrd` は CONFIG_DB `DPU` テーブルを `SubscriberStateTable` でリアルタイム購読し (`caclmgrd:1163`)、`swbus_port` フィールドの変化に応じて Linux カーネルの iptables/ip6tables ルールをその場で反映する。
+
+| イベント | 操作 | コマンド例 |
+|---------|------|-----------|
+| SET (`swbus_port` 初回 or 変更) | INPUT チェーンに TCP 許可ルールを挿入 (位置 2) | `iptables -I INPUT 2 -p tcp --dport <port> -j ACCEPT` / `ip6tables -I INPUT 2 -p tcp --dport <port> -j ACCEPT` |
+| SET (旧 port → 新 port 変更) | 旧ルールを削除してから新ルールを挿入 | `iptables -D INPUT -p tcp --dport <old_port> -j ACCEPT` → `iptables -I INPUT 2 -p tcp --dport <new_port> -j ACCEPT` |
+| DEL | 対応 TCP 許可ルールを削除 | `iptables -D INPUT -p tcp --dport <port> -j ACCEPT` / `ip6tables -D INPUT -p tcp --dport <port> -j ACCEPT` |
+| `swbus_port` フィールドが欠如した SET | 処理スキップ（ルール変更なし） | `caclmgrd:1100` ログ出力: `"Received DPU configuration without swbus_port. Ignore it."` |
+
+この iptables 反映は Redis DB への書込を伴わない。`caclmgrd` は操作後の状態をプロセス内メモリ (`dashHaPortMap` dict) のみに保持し、STATE_DB へは記録しない (`caclmgrd:1109`)。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dpu-side-effects.md` を参照。
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
