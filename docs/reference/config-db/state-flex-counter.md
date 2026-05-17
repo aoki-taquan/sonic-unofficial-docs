@@ -3,7 +3,7 @@ title: FLEX_COUNTER_DB — ランタイム状態フィールド
 description: "FLEX_COUNTER_DB（DB 5）のランタイム状態フィールド — syncd の FlexCounter モジュールが管理する per-group ポーリング状態とコード由来デフォルト。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-17
 hard: 0
 sources:
   - repo: sonic-net/sonic-sairedis
@@ -213,6 +213,30 @@ FLEX_COUNTER_DB は warm-reboot 後に全クリアされ、orchagent 起動時�
 STATE_DB（DB 6）に FLEX_COUNTER 専用の独立テーブルはない。FLEX_COUNTER システムが STATE_DB を参照するのは syncd の warm-reboot 状態（`STATE_DB:WARM_RESTART_TABLE`）のみ（Syncd.cpp:5824）。ポーリング状態・カウンタ値は FLEX_COUNTER_DB と COUNTERS_DB で完結する。
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`FlexCounterOrch` → `FLEX_COUNTER_DB` → `syncd FlexCounter` の 3 段パイプラインでは、`FLEX_COUNTER_GROUP_TABLE`（グループ制御）と `FLEX_COUNTER_TABLE`（per-OID カウンタ ID リスト）が **別の Redis キー空間**に書き込まれるため、syncd が受信するイベントの順序は保証されない。ポーリング起動条件（`m_enable && !allIdsEmpty() && m_pollInterval > 0`）が揃うまでの間は中間状態が観測しうる。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 中間状態 | 緩和策 |
+|---|----------|------|---------|--------|
+| 1 | `FLEX_COUNTER_GROUP_TABLE` STATUS=enable と `FLEX_COUNTER_TABLE` OID リストの syncd 到着順不定 | Redis イベントキュー | `m_enable=true` + OID 空、または OID あり + `m_enable=false` — どちらも 3 条件が揃った時点でポーリング自動起動 | `FlexCounter::addCounter()` / `setStatus()` は独立更新、3 条件チェックは毎ポーリングループで再評価 |
+| 2 | portsorch ハードコード `POLL_INTERVAL` 書込み → CONFIG_DB 値による上書き | 起動順序（init → doTask） | orchagent 起動直後〜`FlexCounterOrch::doTask()` が CONFIG_DB 値を処理するまで FLEX_COUNTER_DB には portsorch 初期値が入っている | `counterpoll interval <group> <ms>` で再設定すると即上書き可能 |
+| 3 | `FLEX_COUNTER_STATUS=enable` 受信 → `generatePortCounterMap()` → `setFlexCounterGroupOperation()` の 2 ステップ | 単一 doTask イテレーション内 | COUNTER_TABLE SET と GROUP_TABLE SET は別 Redis write — syncd では依存 #1 と同様に別イベントとして到達 | 最終的に収束（依存 #1 の自動解消と同様） |
+| 4 | PortsOrch ポート初期化完了 → OID 逐次追加 | 起動シーケンス（initPort() ループ） | orchagent 起動直後は `FLEX_COUNTER_TABLE` が空 → `allIdsEmpty()=true` でポーリング無効 | `initPort()` が各 Ethernet<N> を追加するたびに OID リストが追記され、最終的にすべてのポートがカバーされる |
+
+### 主要な制約詳細
+
+**GROUP_TABLE / COUNTER_TABLE 到着順不定 (依存 #1)**: Syncd のメインループ（`Syncd.cpp:5982,5986`）は `m_flexCounter`（`FLEX_COUNTER_TABLE`）と `m_flexCounterGroup`（`FLEX_COUNTER_GROUP_TABLE`）を別の `swss::Selectable` として `swss::Select::addSelectable()` で登録する。Redis 通知はキューの到着順に配信されるため、orchagent 側での書込み順とは独立して syncd に届く。`processFlexCounterGroupEvent()` が `STATUS=enable` を処理して `FlexCounter::setStatus(true)`（`m_enable=true`）にした後でも `allIdsEmpty()` が真であればポーリングは開始されない。逆に `processFlexCounterEvent()` が OID リストを先に登録しても `m_enable=false` のままではポーリングしない。いずれの順序でも 3 条件が揃い次第（次回ポーリングスレッドの判定で）ポーリングが起動する（`FlexCounter.cpp:3538`）。
+
+**起動直後のポート OID 逐次追加 (依存 #4)**: `FlexCounterOrch::doTask()` が `FLEX_COUNTER_STATUS=enable` を受信した時点で `gPortsOrch->generatePortCounterMap()` を呼ぶが（`flexcounterorch.cpp:237-244`）、この時点で portsorch が `initPort()` を完了していないポートは OID リストに含まれない。その後 portsorch が `initPort()` で各ポートを追加するたびに `m_port_counter_enabled` フラグ（`flexcounterorch.cpp:240`）を参照して FLEX_COUNTER_TABLE への OID 追記が行われる。結果として起動後のポーリング対象は徐々に拡大し、全ポート初期化完了後に安定する。
+
+**ハードコード POLL_INTERVAL の先行書込み (依存 #2)**: `portsorch.cpp:87-93` で定義された定数（`PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS = 1000` 等）は portsorch コンストラクタ内で `FlexCounterOrch::createCounterTable()` を通じて FLEX_COUNTER_GROUP_TABLE に書き込まれる。その後 orchagent の通常 doTask ループで CONFIG_DB の `POLL_INTERVAL` フィールドが処理されると `setFlexCounterGroupPollInterval()` で上書きされる。CONFIG_DB に `POLL_INTERVAL` が設定されていない場合、portsorch のハードコード値がそのまま有効になるが、YANG `poll_interval` typedef（`range 100..4294967295`）のバリデーション対象外であることに注意。
+
+<!-- /ordering -->
 
 ## 確認コマンド
 
