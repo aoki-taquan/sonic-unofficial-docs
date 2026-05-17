@@ -376,6 +376,26 @@ RouteOrch / VNetRouteOrch
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+TUNNEL_DECAP_TERM_TABLE エントリを **処理する `tunneldecaporch`** にはプラットフォーム差なし。差異は **書き込み側**（`ipinip.json.j2` テンプレート）で生じ、`switch_type`・ASIC ベンダー・デバイスタイプ・ルーティング IF 数の組み合わせによって生成エントリ数が変わる。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| `switch_type == "dpu"` | TERM エントリ生成なし（JSON `[]`） | `ipinip.json.j2` L1: DPU では IP-in-IP decap を使用しない設計 |
+| BackEnd デバイスタイプ（`storage_device` メタデータなし） | TERM エントリ生成なし | `ipinip.json.j2` L67-76: `BackEndToRRouter` / `BackEndLeafRouter` / `BackEndSpineRouter` かつ `storage_device` 未設定時はアドレスリストをリセット |
+| ルーティング IF 数 > 128 | 生成対象を Loopback + VLAN アドレスに限定 | `ipinip.json.j2` L79-83: SAI が `TABLE_FULL` を返す恐れがあるため制限（コメント明記） |
+| Broadcom T1 (LeafRouter) | 親 TUNNEL の `dscp_mode=pipe`。TERM フィールドへの影響なし | `ipinip.json.j2` L97-108 |
+| Broadcom 非 T1 (ToR / Spine) | 親 TUNNEL の `dscp_mode=uniform`。TERM フィールドへの影響なし | `ipinip.json.j2` L100 |
+| 非 Broadcom + AZURE QoS マップ | 親 TUNNEL に `decap_dscp_to_tc_map=AZURE`。TERM フィールドへの影響なし | `ipinip.json.j2` L104-107 |
+| src_ip / dst_ip IP バージョン不一致（v4/v6 混在） | `addDecapTunnelTermEntry()` が `false` を返し SAI 呼び出しスキップ | `tunneldecaporch.cpp` L950-954: 全 ASIC 共通のソフトウェアチェック |
+| multi-asic / VOQ chassis | 各 asic-namespace の orchagent が独立処理。ロジック差なし | orchagent は namespace ごとに分離起動 |
+| Dual-ToR (MuxTunnel0) | MuxTunnel0 向け term エントリが追加されるが処理ロジックは通常 term と同一 | `tunneldecaporch.h` L21; `muxorch.cpp` 呼び出し |
+
+詳細根拠は `meta/_intermediate/cdb-flow/tunnel-decap-term-platform.md` を参照。
+<!-- /platform -->
+
 ## 購読者
 
 - `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) `create_tunnel_term_table_entry()` / `remove_tunnel_term_table_entry()` を呼び出す
