@@ -225,6 +225,36 @@ Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイ�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp (createPortBufferQueueCounters,
+     createPortBufferPgCounters, addPortBufferQueueCounters, initializeQueuesBulk),
+     sonic-swss/orchagent/flexcounterorch.cpp (getQueueConfigurations, getPgConfigurations,
+     getQueueCountersState, getPgCountersState, handleDeviceMetadataTable) -->
+
+`FlexCounterOrch` / `PortsOrch` がキュー・PG カウンタを処理する際に暗黙的に参照する他テーブルを示す。YANG の leafref として定義されたものはなく、コードのみで表現された依存関係である。
+
+| 参照元処理 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---|---|---|---|---|
+| `createPortBufferQueueCounters()` の FlexCounter 登録判断 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE` | `getQueueCountersState()=true`（`FLEX_COUNTER_STATUS=enable`）のときのみ SAI カウンタを FLEX_COUNTER_DB に登録。`false` の場合は COUNTERS_QUEUE_NAME_MAP へのマッピングのみ書込み | `portsorch.cpp:8731`, `flexcounterorch.cpp:453` |
+| `createPortBufferQueueCounters()` の Watermark 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` | `getQueueWatermarkCountersState()=true` の場合のみ Watermark FlexCounter を登録 | `portsorch.cpp:8736-8738` |
+| `createPortBufferQueueCounters()` の WRED 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` | `getWredQueueCountersState()=true` の場合のみ WRED FlexCounter を登録 | `portsorch.cpp:8741-8745` |
+| `createPortBufferPgCounters()` の PG_DROP 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|PG_DROP` | `getPgCountersState()=true` の場合のみ PG ドロップカウンタを登録 | `portsorch.cpp:8925-8927` |
+| `createPortBufferPgCounters()` の PG_WATERMARK 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|PG_WATERMARK` | `getPgWatermarkCountersState()=true` の場合のみ PG Watermark カウンタを登録 | `portsorch.cpp:8930-8933` |
+| `getQueueConfigurations()` のキュー範囲決定 | [`BUFFER_QUEUE`](buffer-queue.md) | `BUFFER_QUEUE\|<port>:<queue_range>` | `create_only_config_db_buffers=true` の場合、非ゼロプロファイルを持つキューのみ FlexCounter 登録対象。`false`（デフォルト）または VoQ モードでは全キューを対象 | `flexcounterorch.cpp:545-554` |
+| `getPgConfigurations()` の PG 範囲決定 | [`BUFFER_PG`](buffer-pg.md) | `BUFFER_PG\|<port>:<pg_range>` | `create_only_config_db_buffers=true` の場合、非ゼロプロファイルを持つ PG のみ FlexCounter 登録対象 | `flexcounterorch.cpp:620-623` |
+| `getQueueConfigurations()` / `getPgConfigurations()` のモード分岐 | `DEVICE_METADATA` | `DEVICE_METADATA\|localhost` フィールド `create_only_config_db_buffers` | バッファモード切替フラグ。`true` → BUFFER_QUEUE / BUFFER_PG 限定。`false`（デフォルト）→ 全対象。実行時変更は `handleDeviceMetadataTable()` で反映されるが既登録カウンタは変更されない | `flexcounterorch.cpp:110-124`, `flexcounterorch.cpp:508-513` |
+| `generateQueueMap()` の前提 | `PORT` | `APP_PORT_TABLE\|<port_name>` | `allPortsReady()` が false の間 `FlexCounterOrch::doTask()` は即 return。ポートの SAI OID（`port.m_queue_ids`）が確定しないと `generateQueueMap()` のループが 0 回で終わる | `portsorch.cpp:6583-6598`, `flexcounterorch.cpp:164-167` |
+
+### 解決タイミング
+
+- **FLEX_COUNTER_TABLE**: `FlexCounterOrch::doTask()` が即時評価。`enable` 書込み時点でカウンタ登録処理が実行される（allPortsReady 後）。
+- **BUFFER_QUEUE / BUFFER_PG**: `getQueueConfigurations()` / `getPgConfigurations()` が呼ばれるたびに `gBufferOrch->getBufferObjectsWithNonZeroProfile()` で動的に再取得される（`create_only_config_db_buffers=true` 時のみ）。
+- **DEVICE_METADATA**: コンストラクタで 1 回読込み + `handleDeviceMetadataTable()` で動的更新。既登録カウンタへの遡及適用はなく、orchagent 再起動が必要。
+- **PORT**: `allPortsReady()` による自動待機。portsorch が全ポート初期化完了後に `FlexCounterOrch` のキュー処理がアンブロックされる。
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
 
