@@ -341,4 +341,37 @@ systemctl restart telemetry
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `docker-sonic-telemetry/docker-telemetry-entry.sh`, `telemetry.sh`, `telemetry_vars.j2`, `gnmi_server/server.go` L380-660 精読 (2026-05-17)
+
+`TELEMETRY` テーブルは YANG leafref を持たないが、実行時に以下のテーブルを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | 条件 | 証拠 |
+|--------|-----|---------|------|------|
+| `FEATURE\|telemetry.state` | CONFIG_DB | 読み取り (コンテナ起動制御) | 常時 | `docker-telemetry-entry.sh:40` |
+| `DEVICE_METADATA\|localhost.x509` | CONFIG_DB | 読み取り (legacy 証明書フォールバック) | `TELEMETRY\|certs` 未設定時 | `telemetry_vars.j2:4`, `telemetry.sh:66-80` |
+| `GNMI_CLIENT_CERT\|*` | CONFIG_DB | 読み取り (証明書 fingerprint チェック) | `user_auth=cert` 設定時 | `telemetry.sh:147-148` |
+| `DEVICE_METADATA\|localhost.chassis_serial_number` | STATE_DB | 書き込み (シリアル番号更新) | watchdog オプション有効時 | `telemetry.sh:10-13` |
+| CONFIG_DB Journal | CONFIG_DB | 書き込み (gNMI Set 変更ログ) | `save_on_set=true` 時 | `server.go:647-649` |
+
+### FEATURE|telemetry — コンテナ起動前提
+
+`docker-telemetry-entry.sh` L39-48 が `redis-cli -n 4 HGET "FEATURE|telemetry" state` でポーリングし、`state == "enabled"` でなければ supervisord を起動しない。`TELEMETRY` テーブルを読む前に `FEATURE|telemetry` が CONFIG_DB に存在していることが実質必須（YANG leafref なし — 実装上の暗黙依存）。
+
+### DEVICE_METADATA|localhost.x509 — legacy 証明書フォールバック
+
+`telemetry_vars.j2` L4 が `DEVICE_METADATA["x509"]` を参照する。`TELEMETRY|certs` が CONFIG_DB に存在しない場合、`telemetry.sh` L66-80 は `DEVICE_METADATA|x509.server_crt` / `server_key` / `ca_crt` を証明書パスとして使用する（legacy 経路）。どちらも未設定の場合は `--noTLS` で起動する。YANG leafref なし。
+
+### GNMI_CLIENT_CERT — cert 認証時の動的参照
+
+`user_auth=cert` を設定すると、`telemetry.sh` L147-148 が `--config_table_name GNMI_CLIENT_CERT` フラグを gnmi_server に渡す。gnmi_server が実行時に `GNMI_CLIENT_CERT` テーブルを参照してクライアント証明書の fingerprint チェックを行う。`GNMI_CLIENT_CERT` エントリが存在しない状態で `user_auth=cert` に切り替えると、接続時に認証失敗となる。
+
+### SAI 参照
+
+なし。telemetry (gnmi_server) は CONFIG_DB / STATE_DB / DATA_DB を gRPC/gNMI 経由でクライアントに公開するが、SAI/ASIC に直接アクセスしない。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 896d391185a9 -->
