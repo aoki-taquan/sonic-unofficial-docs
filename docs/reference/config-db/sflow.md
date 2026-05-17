@@ -626,4 +626,53 @@ C++ レベルの `sflowmgr.cpp` / `sfloworch.cpp` に `SFLOW_COLLECTOR` を直�
 `SflowOrch` が `sai_samplepacket_api` および `sai_port_api` を使用する。`SFLOW` / `SFLOW_SESSION` テーブルは間接的に `SAI_PORT_ATTR_INGRESS/EGRESS_SAMPLEPACKET_ENABLE` 属性に影響する。
 
 <!-- /cross-refs -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`SFLOW` / `SFLOW_SESSION` テーブルへの変更通知は、`sflowmgrd` が **`swss::Orch`** フレームワークの `TableConnector` + `SubscriberStateTable` (keyspace 通知) で受信する。`APPL_DB` への書込は `ProducerStateTable` (`m_appSflowTable` / `m_appSflowSessionTable`) で行い、`orchagent` の `SflowOrch` が APPL_DB `ConsumerStateTable` 経由で受信して SAI API を呼ぶ。
+
+| 購読者 | DB | 購読テーブル | 受信 API |
+|-------|----|------------|---------|
+| `sflowmgrd` (`SflowMgr`) | CONFIG_DB | `SFLOW` | `Orch`/`SubscriberStateTable` |
+| `sflowmgrd` (`SflowMgr`) | CONFIG_DB | `SFLOW_SESSION` | 同上 |
+| `sflowmgrd` (`SflowMgr`) | CONFIG_DB | `PORT` | 同上 (ポート登録追跡) |
+| `sflowmgrd` (`SflowMgr`) | STATE_DB | `PORT_TABLE` | 同上 (`oper_speed` 変化追跡) |
+| `orchagent` (`SflowOrch`) | APPL_DB | `SFLOW_TABLE` | `Orch`/`ConsumerStateTable` |
+| `orchagent` (`SflowOrch`) | APPL_DB | `SFLOW_SESSION_TABLE` | 同上 |
+| `orchagent` (`SflowOrch`) | APPL_DB | `SFLOW_SAMPLE_RATE_TABLE` | 同上 |
+
+`SFLOW_COLLECTOR` は `sflowmgrd` の購読テーブルに含まれない。`hsflowd.conf` 生成時に CONFIG_DB から直接スナップショット参照する（イベント駆動ではない）。
+
+### イベントフロー
+
+```
+CLI / gNMI / db_migrator
+  ↓ HSET "SFLOW|global" / "SFLOW_SESSION|<port>"
+CONFIG_DB (keyspace 通知)
+  ↓ sflowmgrd SflowMgr::doTask()
+  ↓ ProducerStateTable::set()  →  APPL_DB SFLOW_TABLE / SFLOW_SESSION_TABLE
+APPL_DB (ConsumerStateTable channel)
+  ↓ orchagent SflowOrch::doTask()
+  ↓ sai_samplepacket_api / sai_port_api
+SAI / ASIC
+```
+
+STATE_DB → sflowmgrd フロー (`oper_speed` 変化時のみ):
+
+```
+PORT oper_speed 変化  →  STATE_DB PORT_TABLE 更新
+  ↓ SflowMgr::sflowProcessOperSpeed()
+  local_rate_cfg == false のポートにサンプリングレートを自動反映
+  ↓ APPL_DB SFLOW_SESSION_TABLE (上書き)
+```
+
+### 起動時スナップショット
+
+`sflowmgrd.cpp:46` の `sflowmgr.readPortConfig()` が Subscribe ループ開始前に CONFIG_DB `PORT` テーブルを一括スキャンし `m_sflowPortConfMap` を構築する。これにより起動時のイベント受信順序に依存しない初期状態が保証される。
+
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:31-46` (テーブル登録・起動スナップショット)、`sonic-swss/cfgmgr/sflowmgr.h:39-40` (`ProducerStateTable` 宣言)、`sonic-swss/cfgmgr/sflowmgr.cpp:403-410` (`doTask` テーブル名ルーティング)、`sonic-swss/orchagent/orchdaemon.cpp:439-444` (`SflowOrch` 登録)、`sonic-swss/orchagent/sfloworch.cpp:359-369` (APPL_DB 振り分け); 詳細分析 `meta/_intermediate/cdb-flow/sflow-pubsub.md`
+<!-- /pubsub -->
 <!-- glossary-links-injected: 8e8594481100 -->
