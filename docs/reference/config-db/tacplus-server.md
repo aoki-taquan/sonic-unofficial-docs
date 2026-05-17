@@ -472,4 +472,32 @@ hostcfgd は `auth_type` の値を検証せずテンプレートに直接渡す�
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `TACPLUS_SERVER` / `TACPLUS|global` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えおよびプロセスシグナル送信に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `AaaCfg` クラス内に `Producer` / `Table` / `hset` / `Notification` の呼び出しが 0 件。`modify_conf_file()` (hostcfgd:641-870) を `Producer`/`set(`/`hset` で grep して 0 ヒット |
+| STATE_DB | なし | `state_db_conn` は `FipsCfg` (hostcfgd:1792) と `RestartWaiter` (hostcfgd:2160) のみが保持。`AaaCfg` は `state_db_conn` を保持しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。AAA / TACACS+ はコントロールプレーン処理のため統計テーブルも存在しない |
+| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由 (runtime-trace 段階 3 参照)。`TACPLUS_SERVER` を購読する orchagent は存在しない |
+| LOGLEVEL_DB | なし | hostcfgd 全体に LOGLEVEL_DB 参照なし |
+
+### 実際の副作用 (ファイル書き換え・プロセスシグナル)
+
+`TACPLUS_SERVER` / `TACPLUS|global` の変更がトリガーとなって `modify_conf_file()` が呼ぶ副作用は以下の通り:
+
+| 副作用 | 対象ファイル / 操作 | 条件 | evidence |
+|---|---|---|---|
+| PAM 認証設定再生成 | `/etc/pam.d/common-auth-sonic` (`.tmp` → atomic rename) | 常時 | `hostcfgd:728-731` |
+| sshd / login include 書換 | `/etc/pam.d/sshd`, `/etc/pam.d/login` の `@include` 行 | 常時 | `hostcfgd:755-783` |
+| NSS passwd 行書換 | `/etc/nsswitch.conf` の `passwd:` 行 | `tacacs+` が `login` に含まれる場合 | `hostcfgd:756-783` |
+| TACACS+ NSS 設定再生成 | `/etc/tacplus_nss.conf` | 常時 | `hostcfgd:800-815` |
+| audisp-tacplus へ SIGHUP | `os.kill(pid, SIGHUP)` — アカウンティング設定リロード | 常時 (プロセス不在時は LOG_WARNING のみ) | `hostcfgd:483-493` |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:354-870` を `Producer`/`set(`/`hset`/`Notification`/`state_db` でスキャンして 0 ヒット。副作用は Linux ファイルシステム操作と `os.kill()` のみ (hostcfgd:641-870)。詳細スキャン手順は `meta/_intermediate/cdb-flow/tacplus-server-ordering.md` を参照。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: e0332a023fdb -->
