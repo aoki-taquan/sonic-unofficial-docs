@@ -392,6 +392,33 @@ buffer pool
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counter-buffer-cross-refs.md`
+
+以下はすべて実装レベルの暗黙参照（YANG leafref なし）。
+
+| 参照元処理 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|-----------|--------------|--------------|---------|------|
+| `generateBufferPoolWatermarkCounterIdList()` のトリガー | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|BUFFER_POOL_WATERMARK` | `FlexCounterOrch::doTask()` が `FLEX_COUNTER_STATUS=enable` を検知し `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` を呼び出す。`disable` では `clearBufferPoolWatermarkCounterIdList()` が呼ばれ各プール OID の `COUNTER_ID_LIST` を削除 | `flexcounterorch.cpp:287-289` |
+| `createPortBufferQueueCounters()` の FlexCounter 登録判断 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE` | `getQueueCountersState()=true`（`FLEX_COUNTER_STATUS=enable`）のときのみ SAI カウンタを FLEX_COUNTER_DB に登録。`false` の場合は `COUNTERS_QUEUE_NAME_MAP` へのマッピングのみ | `portsorch.cpp:8731`, `flexcounterorch.cpp:453` |
+| `createPortBufferPgCounters()` の PG_DROP 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|PG_DROP` | `getPgCountersState()=true` のときのみ PG ドロップカウンタを FLEX_COUNTER_DB に登録 | `portsorch.cpp:8925-8927` |
+| `createPortBufferQueueCounters()` の Watermark 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` | `getQueueWatermarkCountersState()=true` のときのみ Queue Watermark を登録 | `portsorch.cpp:8736-8738` |
+| `createPortBufferPgCounters()` の PG_WATERMARK 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|PG_WATERMARK` | `getPgWatermarkCountersState()=true` のときのみ PG Watermark を登録 | `portsorch.cpp:8930-8933` |
+| `getQueueConfigurations()` / `getPgConfigurations()` のモード分岐 | `DEVICE_METADATA` | `DEVICE_METADATA\|localhost` フィールド `create_only_config_db_buffers` | 起動時に 1 回読込み `m_createOnlyConfigDbBuffers` にキャッシュ。`true` → 非ゼロプロファイル付き Queue / PG のみ FlexCounter 対象。`false`（デフォルト）または VoQ → 全対象。実行時変更は `handleDeviceMetadataTable()` で反映されるが**既登録カウンタへの遡及なし** | `flexcounterorch.cpp:110-124`, `flexcounterorch.cpp:508-513` |
+| `generateBufferPoolWatermarkCounterIdList()` の OID 取得元 | `APP_DB:BUFFER_POOL_TABLE` | `APP_BUFFER_POOL_TABLE\|<pool_name>` | `BufferOrch::processBufferPool()` が SAI `create_buffer_pool` 後に OID を `m_buffer_type_maps` に蓄積。`generateBufferPoolWatermarkCounterIdList()` が全プール OID をイテレートして `COUNTER_ID_LIST` を FLEX_COUNTER_DB に push する | `bufferorch.cpp:316-344`, `bufferorch.cpp:540-547` |
+| `COUNTERS_DB:COUNTERS_BUFFER_POOL_NAME_MAP` への書き込み | `APP_DB:BUFFER_POOL_TABLE` | `APP_BUFFER_POOL_TABLE\|<pool_name>` | `processBufferPool()` で SAI create 成功直後に `m_counterNameMapUpdater->setCounterNameMap()` で書き込み。Queue / PG と異なり `FLEX_COUNTER_STATUS` に依存せず即時書き込まれる | `bufferorch.cpp:542-547` |
+| 全バッファカウンタグループの enable 処理 | `APP_DB:PORT_TABLE` | `PORT_TABLE\|PortInitDone` | `allPortsReady()` が `false` の間 `FlexCounterOrch::doTask()` は先頭で `return`。BUFFER_POOL_WATERMARK / QUEUE / PG の enable イベントはすべて PortInitDone 後まで保留される | `flexcounterorch.cpp:164-169` |
+
+!!! note "COUNTERS_BUFFER_POOL_NAME_MAP の書き込みタイミング"
+    Queue / PG カウンタのマッピング（`COUNTERS_QUEUE_NAME_MAP` 等）が `FLEX_COUNTER_STATUS=enable` 受信後に書かれるのと対照的に、`COUNTERS_BUFFER_POOL_NAME_MAP` は `BufferOrch` が SAI プール生成直後に即時書き込む。`flexcounterorch.cpp` のコメントにも "In pg and queue case, this mapping installment is deferred to FlexCounterOrch..." と明示されている (`bufferorch.cpp:542-545`)。
+
+!!! note "create_only_config_db_buffers の遡及不可"
+    `DEVICE_METADATA|localhost|create_only_config_db_buffers` を実行時に変更しても、`handleDeviceMetadataTable()` は `m_createOnlyConfigDbBuffers` フラグを更新するだけで既登録カウンタを削除・再登録しない。変更を完全に反映するには orchagent の再起動が必要となる (`flexcounterorch.cpp:508-516`)。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
