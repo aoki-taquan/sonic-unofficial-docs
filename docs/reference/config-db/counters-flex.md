@@ -314,6 +314,79 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-failure.md -->
+
+### retry パターン概要
+
+`FlexCounterOrch::doTask()` はタスクキュー (`m_toSync`) ベースで動作し、失敗時の挙動は以下の通り。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **保留 (m_toSync 残留)** | `allPortsReady() = false` / Warm Start 60 秒タイマー中 | エントリを `m_toSync` に保持し次 `doTask()` 呼び出しで自動再試行。上限なし |
+| **即削除** | 不正 flex counter グループキー（`flexCounterGroupMap` 未登録） | `SWSS_LOG_NOTICE "Invalid flex counter group input, <key>"` 出力後エントリ削除。retry なし |
+| **silent skip** | 未サポートフィールド (`POLL_INTERVAL`/`FLEX_COUNTER_STATUS` 以外) | `SWSS_LOG_NOTICE "Unsupported field <field>"` 出力のみ。エントリは削除されず他フィールドの処理は継続 |
+| **プロセスクラッシュ** | Redis 接続断（`setCounterIdList` 内部の `RedisReply` 例外） | 未 catch のため orchagent クラッシュ。supervisor が再起動するまで全カウンタ収集停止 |
+
+### 不正グループキーの即削除
+
+`FLEX_COUNTER_TABLE` に `flexCounterGroupMap` 未登録のキー（タイポ等）を書いた場合、
+`SWSS_LOG_NOTICE` 出力後にエントリが即削除される (flexcounterorch.cpp:183-188)。
+
+```cpp
+if (!flexCounterGroupMap.count(key))
+{
+    SWSS_LOG_NOTICE("Invalid flex counter group input, %s", key.c_str());
+    consumer.m_toSync.erase(it++);
+    continue;
+}
+```
+
+FLEX_COUNTER_DB の per-OID エントリへの影響はない。
+
+### Warm Start 時の 60 秒全保留
+
+Warm Start の場合、`FlexCounterOrch` ctor が `FLEX_COUNTER_DELAY_SEC = 60` 秒タイマーを起動し、
+タイマー満了まで `doTask()` が全リターンする (flexcounterorch.cpp:127-136, 155-158)。
+通常起動時は `m_delayTimerExpired = true` が即設定されるため遅延なし。
+
+!!! warning "Warm Start 後 60 秒間は FlexCounter 全保留"
+    Warm Start 環境では PortInitDone 後も 60 秒間、`FLEX_COUNTER_TABLE` へのすべての
+    書き込みが処理されない。FLEX_COUNTER_DB への per-OID エントリは 60 秒後に初めて書き込まれる。
+
+### `m_isPortCounterMapGenerated` ガードによる silent no-op
+
+`generatePortCounterMap()` は一度実行されると `m_isPortCounterMapGenerated = true` を設定し、
+以降の呼び出しは先頭で即 return する。`disable` → `enable` のサイクルでも再生成されない。
+
+| 状態 | 挙動 | ログ |
+|------|------|------|
+| 未生成 (`false`) | 全 PHY ポートの per-OID エントリを FLEX_COUNTER_DB に書き込み | `SWSS_LOG_DEBUG` |
+| 生成済み (`true`) | 即 return。FLEX_COUNTER_DB 変更なし | なし（silent） |
+
+### setCounterIdList の CounterType 未定義エラー
+
+`FlexCounterManager::setCounterIdList()` で `counter_id_field_lookup` に CounterType が登録されていない場合
+(flex_counter_manager.cpp:215-219):
+
+```cpp
+SWSS_LOG_ERROR("Could not update flex counter id list for group '%s': counter type not found.",
+               group_name.c_str());
+return;  // FLEX_COUNTER_DB へ書き込まずリターン
+```
+
+実運用では発生しない（静的初期化）が、コード改変時の回帰として記録。
+
+### DEVICE_METADATA 読み込み失敗時のデフォルトフォールバック
+
+コンストラクタ内の `std::system_error` キャッチ (flexcounterorch.cpp:121-124) により、
+`create_only_config_db_buffers` 読み込みに失敗した場合は `false`（全バッファ対象モード）で
+初期化を継続する。
+
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/portsorch.cpp` `port_stat_ids[]` (line 242), `queue_stat_ids[]` (line 389), `wred_port_stat_ids[]` (line 421), `wred_queue_stat_ids[]` (line 429). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
