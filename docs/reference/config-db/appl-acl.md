@@ -284,6 +284,43 @@ if (bHasTCPFlag && !bHasIPProtocol)
 
 ---
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`AclOrch::doTask()` は CONFIG_DB / APPL_DB の ACL エントリを処理する際、いくつかの前提条件の充足を待ってから SAI へ反映する。書き込み元プロセス（vnetorch / mclagsyncd / dashenifwdorch）が APPL_DB へ同時または順番を変えて書き込んだ場合でも、以下の順序依存が成立する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `allPortsReady()` 完了 → 全 ACL テーブル処理開始 | 強制先行 | doTask 冒頭で return（m_toSync 保留、次回イテレーションで自動再試行） |
+| 2 | ACL_TABLE_TYPE_TABLE（カスタム type）SET → ACL_TABLE_TABLE SET | 強制先行（カスタム type 時のみ） | `it++` 周回再試行、無制限 |
+| 3 | PORT 作成（PortsOrch 登録）→ ACL_TABLE の PORTS バインド完了 | 部分調停（未バインドでも TABLE 自体は作成される） | PortsOrch observer → `AclTable::onUpdate()` で自動バインド |
+| 4 | bind 可能ポート型の事前確認 → PORTS 指定 | 破壊的制約（bind 不可ポート型は即廃棄・retry なし） | 正しいポート型のみ指定 |
+| 5 | ACL_TABLE_TABLE SAI 成功（`m_AclTables` 登録）→ ACL_RULE_TABLE 処理 | 強制先行 | `it++` 周回再試行、無制限 |
+| 6 | 同テーブル内ルール DEL 成功 → retry cache の `Pending creation` ルール再評価 | 操作依存（非自明） | `notifyRetry()` 自動再キュー |
+| 7 | SAI リソース確保 → `addAclTable()` 成功 | 自動再試行（`it++`、無制限） | — |
+| 8 | ACL_TABLE_TYPE_TABLE の全 3 フィールド（MATCHES / ACTIONS / BIND_POINTS）を 1 回 SET | 入力制約（分割 SET 非サポート） | 1 回の APPL_DB SET で 3 フィールドを一括投入 |
+
+### 主要な制約詳細
+
+**`allPortsReady()` 先行必須 (#1)**: `doTask()` L4276–4279 で `gPortsOrch->allPortsReady()` が false の間、関数冒頭で `return`。APPL_DB の全 ACL イベントが `Consumer::m_toSync` に積まれたまま保留される。ログ出力・STATE_DB 書込みともなし。
+
+**ACL_TABLE_TYPE → ACL_TABLE 待機 (#2)**: `doAclTableTask()` L5432–5436 で `getAclTableType(tableTypeName)` が `nullptr` の場合（カスタム type 未登録）、`it++; continue;` で無制限再試行。組込み type（`L3`, `L3V6`, `MIRROR` 等）は起動時に `initAclTableTypes()` で登録済みのため待機不要。vnetorch が使う `VNET_TUNNEL_TERM_ACL_TABLE_TYPE` 等のカスタム type は ACL_TABLE_TYPE_TABLE への先行 SET が必要。
+
+**PORTS の部分解決は許容・自動バインド (#3)**: `processAclTablePorts()` L5786–5791 で PortsOrch 未登録のポートは `pendingPortSet` に追加して処理を続行する。PortsOrch が後からポートを作成すると `AclOrch::update()` → `AclTable::onUpdate()` L2882–2891 が `pendingPortSet` からポートを取り出して `bind()` する（observer pattern による自動調停）。一方、PortsOrch に登録済みでも `getAclBindPortId()` が false のポート（bind 不可な型）は `return false` → 即廃棄（evidence: L5795–5799）。
+
+**ACL_TABLE → ACL_RULE 親子順序 (#5)**: `doAclRuleTask()` L5548–5564 で `getTableById(table_id)` が `SAI_NULL_OBJECT_ID` を返す間（対応 ACL_TABLE が SAI 未登録）、`it++; continue;` で無制限待機。書き込み元プロセスが ACL_RULE_TABLE を先に投入しても自動待機で吸収される。
+
+**retry cache 経由の非自明な順序 (#6)**: SAI リソース枯渇 (`isSaiStatusResourceFull()` が真) で `addAclRule()` が失敗した場合、`APP_ACL_RULE_TABLE_NAME` の RetryCache にパークして `"Pending creation"` を STATE_DB に書く。同テーブル内の別ルールが `removeAclRule()` 成功すると `notifyRetry()` L5714–5721 が再キューし、成功時に `"Active"` へ上書きされる。**ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE は RetryCache 対象外**（evidence: `aclorch.cpp:4221–4222`）。
+
+**ACL_TABLE_TYPE_TABLE の分割 SET 非サポート (#8)**: `doAclTableTypeTask()` L5742–5772 では 1 回の SET で MATCHES / ACTIONS / BIND_POINTS の 3 フィールドが揃っている前提で処理する。部分フィールドで SET した場合は type オブジェクトが不完全となり廃棄される（関連 ACL_TABLE は #2 の無制限待機に入る）。
+
+> **証跡**: `doTask()` L4276–4279、`doAclTableTask()` L5432–5436, L5484, L5795–5799、`doAclRuleTask()` L5548–5564, L5681–5697, L5714–5721、`doAclTableTypeTask()` L5742–5772、`processAclTablePorts()` L5786–5799、`AclOrch::update()` L4243–4266、`AclTable::onUpdate()` L2860–2912、`createRetryCache()` L4221–4222。
+<!-- /ordering -->
+
+---
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
