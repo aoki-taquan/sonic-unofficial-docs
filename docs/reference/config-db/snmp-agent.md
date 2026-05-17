@@ -305,6 +305,54 @@ minigraph.py は `MGMT_VRF_CONFIG` を先行して格納後、`mgmt_intf`（MGMT
 | 6 | `MGMT_INTERFACE`/`LOOPBACK_INTERFACE` 先行 | minigraph 内部保証 | multi-asic では常時空辞書 |
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `dockers/docker-snmp/snmpd.conf.j2`, `supervisord.conf.j2`, `sonic-utilities/config/main.py` L4095–4210 & L4709–4800, `src/sonic-config-engine/minigraph.py` L2308–2324, `sonic-snmp.yang` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-cross-refs.md`
+
+`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` は YANG leafref を持たないが、CLI・テンプレートエンジン・minigraph の実装レベルで以下のテーブルを暗黙参照する。
+
+### SNMP_AGENT_ADDRESS_CONFIG の暗黙参照
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `MGMT_VRF_CONFIG\|vrf_global` (`mgmtVrfEnabled`) | CONFIG_DB | 読み取り (VRF 指定省略時チェック) | なし | CLI 強制 (VRF 未指定時にエラー) | `config/main.py:4154-4157` |
+| `MGMT_INTERFACE\|<intf>\|<ip>` | CONFIG_DB | 読み取り (minigraph 自動生成元) | なし | minigraph 内部 (multi-asic は空) | `minigraph.py:2308-2314` |
+| `LOOPBACK_INTERFACE\|<intf>\|<ip>` | CONFIG_DB | 読み取り (minigraph 自動生成元) | なし | minigraph 内部 (multi-asic は空) | `minigraph.py:2315-2322` |
+| `DEVICE_METADATA\|localhost` (`switch_type`) | CONFIG_DB | 読み取り (snmp-subagent 起動コマンド分岐) | なし | 必須 (不在でコンテナ起動失敗) | `supervisord.conf.j2:53-57` |
+
+#### MGMT_VRF_CONFIG — CLI 経路での VRF チェック
+
+`config snmp agentaddress add <ip>` 実行時に `-v` オプションを省略した場合、CLI は `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled` を読み取る (`config/main.py:4154-4157`)。`mgmtVrfEnabled == 'true'` かつ VRF 未指定の場合は `"ManagementVRF is Enabled. Provide vrf."` を出力して早期リターンし CONFIG_DB への書き込みは発生しない。
+
+#### MGMT_INTERFACE / LOOPBACK_INTERFACE — minigraph 経路での自動生成
+
+`minigraph.py:2308-2322` は `MGMT_INTERFACE` と `LOOPBACK_INTERFACE` のアドレス一覧を元に `SNMP_AGENT_ADDRESS_CONFIG` エントリを自動生成する。エントリの key は `<ip>|161|`（port=161, vrf=空文字）で固定。multi-asic 環境または `asic_name` 指定時は自動生成がスキップされ空辞書となる。
+
+#### DEVICE_METADATA.localhost — docker-snmp コンテナ起動共通前提
+
+`supervisord.conf.j2:53-57` が `DEVICE_METADATA['localhost']['switch_type']` を参照して `snmp-subagent` の起動オプション (`--enable_dynamic_frequency`) を決定する。`DEVICE_METADATA.localhost` が CONFIG_DB に存在しない場合はテンプレート展開が KeyError で失敗し docker-snmp コンテナ全体が起動しない。
+
+---
+
+### SNMP_USER の暗黙参照
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `SNMP_COMMUNITY\|<name>` | CONFIG_DB | 読み取り (同一 snmpd.conf.j2 テンプレートで v1/v2c と v3 を同時展開) | なし | 任意 (v3 のみ利用時は不要) | `snmpd.conf.j2:48-64, 66-77` |
+| `DEVICE_METADATA\|localhost` (`switch_type`) | CONFIG_DB | 読み取り (snmp-subagent 起動コマンド分岐) | なし | 必須 (不在でコンテナ起動失敗) | `supervisord.conf.j2:53-57` |
+
+#### SNMP_COMMUNITY — テンプレートでの隣接展開
+
+`snmpd.conf.j2` は `SNMP_COMMUNITY`（v1/v2c 設定、L48–64）と `SNMP_USER`（v3 設定、L66–77）を同一テンプレートで展開する。両テーブルの有無は独立して判定される (`{% if SNMP_COMMUNITY is defined %}` / `{% if SNMP_USER is defined %}`)。`SNMP_USER` を登録しても `SNMP_COMMUNITY` が未定義であれば SNMPv1/v2c はすべて拒否される（v3 のみアクセスには影響なし）。
+
+### SAI 参照
+
+なし。`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` はいずれも snmpd（ユーザー空間デーモン）の設定のみに作用し、SAI・ASIC・APPL_DB には一切関与しない。
+
+<!-- /cross-refs -->
+
 ---
 
 ## 関連リファレンス
