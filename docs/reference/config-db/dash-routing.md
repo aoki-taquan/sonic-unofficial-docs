@@ -671,6 +671,24 @@ dash_route_orch->unbindRouteGroup(old_group_id);
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+**DPU (SmartSwitch) 専用**: `DashRouteOrch` / `DashOrch` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブル群は存在しない。[SAI](../../reference/glossary.md#term-sai) DASH Outbound/Inbound Routing API を経由するため [ASIC](../../reference/glossary.md#term-asic) が当該 API をサポートすることが前提。コード内に ASIC 種別の条件分岐はなく SAI 実装（syncd 経由のベンダー SAI ライブラリ）に委ねられる。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | SAI 実装依存・コード差分なし | SAI DASH API 経由の抽象化。`dashrouteorch.cpp` 内に ASIC 条件分岐なし |
+| DPU (SmartSwitch) 専用 | 通常スイッチでは無効 | `main.cpp:990`: `gMySwitchType == "dpu"` のみ `DPU_APPL_DB` 接続 → `DpuOrchDaemon` → `DashRouteOrch` を生成 |
+| multi-asic (`is_multi_npu` 環境) | 非対応 | DPU 専用構成のため namespace iterate コードなし |
+| VOQ chassis / Fabric | 無効 | `DashRouteOrch` は DPU モード限定。`orchdaemon.cpp:1313` にて明示的に分離 |
+| ZMQ トランスポート | feature flag `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` で制御 | デフォルト `true`（ZMQ 有効）。`false` で Redis subscribe フォールバック (`orchdaemon.cpp:1329`) |
+| バルクサイズ上限 | デフォルト 1000、`orchagent -k` で変更可 | `DEFAULT_MAX_BULK_SIZE = 1000` (`orchdaemon.cpp:81`)。`outbound_routing_bulker_` / `inbound_routing_bulker_` 両方に適用 |
+| IPv6 `underlay_sip` | 未サポート（無言スキップ） | `has_ipv4()` ガードのみ (`dashrouteorch.cpp:149`)。IPv6 underlay SIP は ASIC 非依存のコード上の制約 |
+
+> **Evidence**: `sonic-swss/orchagent/main.cpp:990`（`gMySwitchType == "dpu"` 分岐）、`sonic-swss/orchagent/orchdaemon.cpp:81,1313,1329,1362-1368`（`DEFAULT_MAX_BULK_SIZE`、`DpuOrchDaemon`、ZMQ feature flag、`DashRouteOrch` 生成）、`sonic-swss/orchagent/dash/dashrouteorch.cpp:34-35,50-51,149`（SAI extern ポインタ、bulker 初期化、underlay_sip IPv4 ガード）；詳細分析 `meta/_intermediate/cdb-flow/dash-routing-platform.md`
+<!-- /platform -->
+
 ## 関連 CONFIG_DB / APP_DB テーブル
 
 - [`DASH_ENI_TABLE`](dash-eni.md): ENI エントリ。`DASH_ROUTE_RULE_TABLE` の親
