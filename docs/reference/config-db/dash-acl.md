@@ -4,7 +4,7 @@ description: "DASH_ACL_IN_TABLE / DASH_ACL_OUT_TABLE / DASH_ACL_GROUP_TABLE / DA
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-17
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/dash/dashaclorch.cpp
@@ -462,3 +462,76 @@ DEL 操作で ACL エントリが `m_dash_acl_in/out_table` に存在しない�
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-constants.md`
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込み (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dash-acl-side-effects.md -->
+
+### ASIC_DB 書込み（SAI 経由）
+
+DASH ACL 系の SAI 呼び出しは `sai_dash_acl_api` と `sai_dash_eni_api` を通じて syncd → ASIC_DB に反映される。
+
+| 操作 | SAI API | ASIC_DB への反映 |
+|------|---------|-----------------|
+| `DASH_ACL_GROUP_TABLE` SET 成功 | `create_dash_acl_group` | `ASIC_STATE:SAI_OBJECT_TYPE_DASH_ACL_GROUP:<oid>` 生成 |
+| `DASH_ACL_GROUP_TABLE` DEL 成功 | `remove_dash_acl_group` | 対応 OID エントリ削除 |
+| `DASH_ACL_RULE_TABLE` SET 成功 | `create_dash_acl_rule` | `ASIC_STATE:SAI_OBJECT_TYPE_DASH_ACL_RULE:<oid>` 生成 |
+| `DASH_ACL_IN/OUT_TABLE` SET（バインド）成功 | `set_eni_attribute` (ステージ属性 = group OID) | `ASIC_STATE:SAI_OBJECT_TYPE_ENI:<eni_oid>` のステージ ACL グループ属性更新 |
+| `DASH_ACL_IN/OUT_TABLE` DEL（アンバインド）成功 | `set_eni_attribute` (`attr.value.oid = SAI_NULL_OBJECT_ID`) | 対応 ENI OID のステージ属性を NULL にクリア |
+
+証跡: `dashaclgroupmgr.cpp:167,206,367,430,485`
+
+### STATE_DB 書込み
+
+**DASH ACL テーブルは STATE_DB に一切書き込まない。**
+
+通常の `ACL_TABLE` が `STATE_ACL_TABLE_TABLE_NAME` へステータスを書き込むのに対し、`DashAclOrch` / `DashAclGroupMgr` にはその実装が存在しない。コンストラクタ引数の `app_state_db` は受け取るが本体では使用されず、メンバーにも格納されない。
+
+### CRM カウンタ（COUNTERS_DB 経由）
+
+`gCrmOrch->incCrmDashAclUsedCounter` / `decCrmDashAclUsedCounter` で COUNTERS_DB の DASH ACL 使用カウンタを更新する。
+
+| タイミング | 操作 | CRM リソースタイプ |
+|-----------|------|------------------|
+| グループ作成成功 | `incCrmDashAclUsedCounter(GROUP, oid)` | `CRM_DASH_IPV4_ACL_GROUP` or `CRM_DASH_IPV6_ACL_GROUP` |
+| グループ削除成功 | `decCrmDashAclUsedCounter(GROUP, oid)` | 同上（ルールカウンタも一括リセット） |
+| ルール作成成功 | `incCrmDashAclUsedCounter(RULE, group_oid)` | `CRM_DASH_IPV4_ACL_RULE` or `CRM_DASH_IPV6_ACL_RULE` |
+
+!!! note "ルール削除時のカウンタ"
+    ルール個別の `decCrmDashAclUsedCounter` は呼ばれない。グループ削除時の `decCrmDashAclUsedCounter(GROUP, ...)` が配下のルールカウンタも一括リセットする設計（`dashaclgroupmgr.cpp:215`）。
+
+証跡: `dashaclgroupmgr.cpp:174-176,213-216,374-376`
+
+### タグ attach/detach の連鎖（インメモリ）
+
+ルール作成時に `attachTags()` → `DashTagMgr::attach()` が呼ばれ、タグの `m_groups` セットにグループ ID を追加する。グループ削除時に `detachTags()` → `DashTagMgr::detach()` が `m_groups` からグループ ID を除去する。`m_groups` が非空のタグへの DEL は `task_need_retry` となる。
+
+```
+ルール作成 → attachTags(group_id, tags)
+  → DashTagMgr::attach(tag_id, group_id)
+    → tag.m_groups.insert(group_id)
+
+グループ削除 → detachTags(group_id, tags)
+  → DashTagMgr::detach(tag_id, group_id)
+    → tag.m_groups.erase(group_id)
+```
+
+証跡: `dashaclgroupmgr.cpp:558-576`, `dashtagmgr.cpp:84-88`
+
+### APP_DB / FlexCounter
+
+`m_dash_acl_rules_table`（`APP_DASH_ACL_RULE_TABLE_NAME` 向け `Table` オブジェクト）はメンバーとして保持されるが、コード中で読み書きは行われていない（デッドフィールド）。APP_DB への書き戻しはなし。FlexCounter も未登録のため `FLEX_COUNTER_DB` への書込みも発生しない。
+
+### 副次書込みまとめ
+
+| DB | 書込み | 備考 |
+|----|--------|------|
+| ASIC_DB | あり（syncd 経由） | SAI DASH ACL / ENI 属性 |
+| STATE_DB | **なし** | DASH ACL 固有ステータステーブル未実装 |
+| COUNTERS_DB | あり（CRM カウンタ） | `CRM_DASH_IPV{4,6}_ACL_{GROUP,RULE}` |
+| FLEX_COUNTER_DB | **なし** | FlexCounter 未登録 |
+| APP_DB | **なし** | 購読のみ、書き戻しなし |
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-side-effects.md`
+<!-- /side-effects -->
