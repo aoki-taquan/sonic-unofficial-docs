@@ -276,6 +276,62 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-side-effects.md`
+
+`SRV6_MY_SIDS` テーブルへの書込みは **bgpcfgd パス** と **Srv6Orch パス** の 2 経路で副次書込みを引き起こす。CONFIG_DB への書き戻しは発生しない。
+
+### bgpcfgd パス（SRv6Mgr → FRR）
+
+`SRv6Mgr::sids_set_handler()` (`managers_srv6.py:88-94`) は FRR への vtysh コマンドを `cfg_mgr.push_list()` に積む:
+
+```
+segment-routing
+ srv6
+  static-sids
+   sid <ip_prefix> locator <locator_name> behavior <action> [vrf <decap_vrf>]
+```
+
+`decap_vrf` が `"default"` の場合 `vrf` オプションは省略される。
+DEL 時は `sids_del_handler()` (`managers_srv6.py:127-131`) が `no sid ...` コマンドを発行する。
+
+### Srv6Orch パス（APPL_DB 経由 → SAI / ASIC）
+
+`Srv6Orch` は `APP_SRV6_MY_SID_TABLE`（APP_DB）をサブスクライブし、`createUpdateMysidEntry()` / `deleteMysidEntry()` で処理する。
+
+#### SET 時の副次書込み
+
+| 副次 DB / API | 操作 | 条件 | ソース |
+|-------------|------|------|--------|
+| SAI / `sai_srv6_api` | `create_my_sid_entry` | 新規エントリ | `srv6orch.cpp:1606` |
+| SAI / `sai_srv6_api` | `set_my_sid_entry_attribute`（VRF / NH 更新） | フィールド変更時 | `srv6orch.cpp:1619, 1628` |
+| SAI / `sai_router_intfs_api` | `create_router_interface`（loopback RIF, MTU=9100） | `decap_dscp_mode` 指定時のみ | `srv6orch.cpp:505` |
+| SAI / `sai_tunnel_api` | `create_tunnel`（IPinIP）+ `create_tunnel_term_table_entry` | `decap_dscp_mode` 指定時のみ | `srv6orch.cpp:538, 1561` |
+| CRM | `incCrmResUsedCounter(CRM_SRV6_MY_SID_ENTRY)` | 新規エントリ | `srv6orch.cpp:1612` |
+| COUNTERS_DB / `COUNTERS_SRV6_NAME_MAP` | `hset("", sid_key, counter_oid)` | カウンタ有効時のみ | `srv6orch.cpp:199` |
+
+IPinIP Tunnel SAI オブジェクトは `decap_dscp_mode` 値ごとに 1 つ共有（参照カウント管理）。新規 SID のたびに作成されない。
+
+#### DEL 時の副次書込み
+
+| 副次 DB / API | 操作 | 条件 | ソース |
+|-------------|------|------|--------|
+| SAI / `sai_srv6_api` | `remove_my_sid_entry` | 常時 | `srv6orch.cpp:1669` |
+| CRM | `decCrmResUsedCounter(CRM_SRV6_MY_SID_ENTRY)` | 常時 | `srv6orch.cpp:1675` |
+| COUNTERS_DB / `COUNTERS_SRV6_NAME_MAP` | `hdel("", sid_key)` | カウンタ有効時のみ | `srv6orch.cpp:223` |
+| FLEX_COUNTER_DB | `clearCounterIdList(counter_oid)` | カウンタ有効かつ VID→RID 解決済み | `srv6orch.cpp:229` |
+| SAI / `sai_tunnel_api` | `remove_tunnel_term_table_entry` + `remove_tunnel` | tunnel_term_entry が存在する場合 | `srv6orch.cpp:1698-1704` |
+| VRFOrch / NeighOrch | refcount dec | VRF 要求 / Nexthop 要求 action の場合 | `srv6orch.cpp:1683, 1689` |
+
+### in-memory 副作用
+
+- `srv6_my_sid_table_[key]` — SET 時に内部キャッシュへ登録、DEL 時に `erase()` (`srv6orch.cpp:1652, 1711`)
+- `m_pendingSRv6MySIDEntries` — nexthop 未解決時の保留リスト。Neighbor ADD イベント受信時に自動再インストール (`srv6orch.cpp:1224-1260`)
+
+<!-- /side-effects -->
+
 ## 設定例
 
 ```json
