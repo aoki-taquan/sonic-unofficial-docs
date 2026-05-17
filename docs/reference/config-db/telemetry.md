@@ -374,4 +374,94 @@ systemctl restart telemetry
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> **調査根拠**: `docker-sonic-telemetry/telemetry.sh`, `supervisord.conf`, `gnmi_server/server.go` L381-649, `telemetry/telemetry.go` L440-470 精読 (2026-05-17)
+
+### autorestart=false — 起動失敗時にプロセスが再起動しない
+
+`supervisord.conf` の `[program:telemetry]` は **`autorestart=false`** に設定されている。`telemetry.sh` がエラー終了しても supervisord は再起動を試みない。`dialout` も `dependent_startup_wait_for=telemetry:running` のため、telemetry が起動しなければ dial-out ストリーミングも動作しない。
+
+障害検知: `supervisorctl status telemetry` が `EXITED` を返す。
+復旧: フィールド修正後に `docker restart telemetry` または `systemctl restart telemetry`。
+
+> evidence: `dockers/docker-sonic-telemetry/supervisord.conf:50-62`
+
+### 設定値不正による起動失敗 (exitcode=2)
+
+`telemetry.sh` は以下フィールドが正整数でない場合 `exit 2` で終了する:
+
+| フィールド | 期待値 | エラーメッセージ (stderr) |
+|-----------|--------|--------------------------|
+| `TELEMETRY\|gnmi.port` | 正整数 | `Incorrect port value <PORT>, expecting positive integers` |
+| `TELEMETRY\|gnmi.threshold` | 正整数 or 未設定 | `Incorrect threshold value, expecting positive integers` |
+| `TELEMETRY\|gnmi.idle_conn_duration` | 正整数 or 未設定 | `Incorrect idle_conn_duration value, expecting positive integers` |
+
+未設定 (`null` / キー不在) の場合は内部デフォルト値が使われるため不正扱いにならない。不正値を設定した場合のみ `exit 2` → supervisord は再起動しない。
+
+> evidence: `dockers/docker-sonic-telemetry/telemetry.sh:83-87,109-115,123-130`
+
+### 証明書ファイル不在・不正による起動失敗
+
+`SrvAdvConfig()` が以下の条件でエラーを返し、gNMI サーバが起動しない:
+
+| 条件 | エラーメッセージ |
+|------|----------------|
+| `server_crt` XOR `server_key` が空 | `"server certificate or key file path is empty"` |
+| `server_crt` パスのファイルが存在しない | `"server certificate file stat error: <err>"` |
+| `server_key` パスのファイルが存在しない | `"server key file stat error: <err>"` |
+| `ca_crt` パスのファイルが存在しない | `"CA certificate file not found: <err>"` |
+| `enable_crl=true` かつ CRL ディレクトリ不在 | `os.ReadDir error` |
+
+> evidence: `gnmi_server/server.go:400-418`
+
+**証明書内容不正の場合は自動回復**: `tls.LoadX509KeyPair()` が失敗すると `telemetry.go` は fsnotify で証明書ファイルの変更を待機するループに入り、ファイルが正しい内容に上書きされると自動でリトライする。この場合はプロセス再起動不要。
+
+> evidence: `telemetry/telemetry.go:463-470`
+
+### user_auth 不正値による起動失敗
+
+`user_auth` に `"cert"`, `"password"`, `"jwt"`, `"none"`, `""` 以外の値を設定すると `AuthTypes.Set()` がエラーを返す:
+```
+Expecting one or more of 'cert', 'password' or 'jwt'
+```
+gnmi_server 起動時に検証されプロセスが終了する。`autorestart=false` のため再起動なし。
+
+> evidence: `gnmi_server/server.go:315-327`
+
+### ポート競合 — TCP リスナー縮退 (Warning のみ)
+
+指定ポートへの `net.Listen("tcp", ...)` が失敗した場合、TCP リスナーを無効化して処理を続行する:
+```
+Failed to open listener port <port>: <err>; disabling TCP listener
+```
+UnixSocket も未設定の場合は `"no listener configured: port must be > 0 or unix_socket must be set"` エラーでサーバが起動しない。
+
+> evidence: `gnmi_server/server.go:593-600, 643`
+
+### save_on_set=true 時の dbus 失敗 — サイレント
+
+`save_on_set=true` 設定時に gNMI Set RPC が完了した後 `SaveOnSetEnabled()` が dbus で `config save` を実行する。dbus 失敗はログ出力のみで Set RPC 自体は成功とみなされる。CONFIG_DB 変更が永続化されない (再起動で消える) サイレント障害となる。
+
+```
+Saving startup config failed to create dbus client: <err>
+Saving startup config failed: <err>
+```
+
+> evidence: `gnmi_server/server.go:1054-1061`
+
+### 障害サマリ
+
+| 障害 | 検知方法 | 自動回復 | 手動回復 |
+|------|----------|----------|---------|
+| 不正フィールド値 (port 等) | `supervisorctl status` → EXITED | なし | `sonic-db-cli` 修正 → `docker restart telemetry` |
+| 証明書ファイル不在 | `supervisorctl status` → EXITED | なし | ファイル配置 → `docker restart telemetry` |
+| 証明書内容不正 | ログ: `could not load server key pair` | ✅ ファイル上書きで自動回復 | — |
+| ポート競合 | `WARNING: Failed to open listener port` | なし (UDS のみで縮退動作) | ポート解放 → `docker restart telemetry` |
+| save_on_set dbus 失敗 | ログのみ (`log.V(0)`) | なし | hostcfgd / dbus 確認 |
+
+> **Evidence**: `dockers/docker-sonic-telemetry/supervisord.conf:50-62`; `telemetry.sh:83-130`; `gnmi_server/server.go:315-327,400-418,593-649,1054-1061`; `telemetry/telemetry.go:463-470`; 詳細 `meta/_intermediate/cdb-flow/telemetry-failure.md`
+<!-- /failure -->
+
 <!-- glossary-links-injected: 896d391185a9 -->
