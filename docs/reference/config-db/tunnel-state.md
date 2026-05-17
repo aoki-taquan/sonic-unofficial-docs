@@ -511,6 +511,67 @@ SAI ポートリンク変化通知
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `orchagent/vxlanorch.cpp`, `orchagent/tunneldecaporch.cpp`, `cfgmgr/vxlanmgr.cpp`
+> 調査日: 2026-05-17
+
+### VXLAN_TUNNEL_TABLE — P2P DIP トンネルの SAI 対応可否
+
+`VxlanTunnelOrch` 起動時に `sai_query_attribute_enum_values_capability()` で `SAI_TUNNEL_ATTR_PEER_MODE` の対応値を問い合わせる[^16]。
+
+```cpp
+// vxlanorch.cpp:1256-1274
+status = sai_query_attribute_enum_values_capability(gSwitchId, SAI_OBJECT_TYPE_TUNNEL,
+                                                    SAI_TUNNEL_ATTR_PEER_MODE, &values);
+// 能力取得失敗時はデフォルトで P2P 対応とみなす
+if (status != SAI_STATUS_SUCCESS) {
+    is_dip_tunnel_supported = true;
+}
+```
+
+| ASIC 対応状況 | `is_dip_tunnel_supported` | VXLAN_TUNNEL_TABLE への影響 |
+|-------------|--------------------------|--------------------------|
+| `SAI_TUNNEL_PEER_MODE_P2P` 対応 | `true` | EVPN 由来 DIP トンネルが STATE_DB に書かれる |
+| `SAI_TUNNEL_PEER_MODE_P2P` 非対応 | `false` | `createDynamicDIPTunnel()` が呼ばれず、DIP エントリが STATE_DB に書かれない |
+| SAI 能力取得 API 未対応 | `true` (デフォルト) | DIP トンネル作成を試みる |
+
+### TUNNEL_DECAP_TABLE — overlay RIF MTU ハードコード (9100 バイト)
+
+decap トンネル作成時に overlay Router Interface の MTU を `9100` にハードコードして SAI に渡す[^17]。ASIC の MTU 上限がこれより低い環境では `sai_router_intfs_api->create_router_interface()` が失敗し、STATE_DB `TUNNEL_DECAP_TABLE` への書き込みが行われない。
+
+```cpp
+// tunneldecaporch.cpp:14 + L749-750
+#define OVERLAY_RIF_DEFAULT_MTU 9100
+overlay_intf_attr.value.u32 = OVERLAY_RIF_DEFAULT_MTU;
+```
+
+この値は CONFIG_DB から変更できない（ハードコード）。
+
+### TUNNEL_DECAP_TABLE — SAI create-only 属性 (全プラットフォーム共通制約)
+
+以下の SAI 属性は `sai_tunnel_api->create_tunnel()` 時のみ設定可能であり、既存トンネルへの変更要求は全プラットフォームで黙殺される。
+
+| STATE_DB フィールド | SAI 属性 | 変更要求時の動作 |
+|-------------------|---------|---------------|
+| `ecn_mode` | `SAI_TUNNEL_ATTR_DECAP_ECN_MODE` | SWSS_LOG_WARN でスキップ。STATE_DB の値はそのまま残るが SAI は変更されない (`tunneldecaporch.cpp:179`) |
+| `encap_ecn_mode` | `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` | SWSS_LOG_NOTICE でスキップ。同様 (`tunneldecaporch.cpp:195`) |
+
+SAI 仕様上の create-only 属性であるため ASIC ベンダーによらず共通の制約。
+
+### VXLAN_TUNNEL_TABLE — FlexCounter 登録方式の差 (Traditional vs Non-Traditional)
+
+`gTraditionalFlexCounter` フラグが `true` の場合、COUNTERS_DB への書き込みは ASIC_DB `VIDTORID` に RID が登録された後に行われる。`false` の場合は SAI 作成完了後すぐに書き込まれる[^18]。**STATE_DB `VXLAN_TUNNEL_TABLE` への書き込みタイミング自体は本フラグの影響を受けない**（FlexCounter は COUNTERS_DB 専用）。
+
+### VXLAN_TABLE — Linux カーネル VXLAN モジュール依存
+
+`createVxlan()` は Linux カーネルの VXLAN デバイス作成に依存する。カーネルモジュール (`vxlan.ko`) が未ロードの環境では `ip link add ... type vxlan` が失敗し、`m_stateVxlanTable.set()` が呼ばれず `state=ok` が書き込まれない。VS (virtual switch) 環境ではカーネル VXLAN が利用可能なためテスト動作する。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-platform.md`
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: schema.h 定数定義: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L488-L489>
@@ -542,3 +603,9 @@ SAI ポートリンク変化通知
 [^14]: `show vxlan remotevtep` が STATE_DB `VXLAN_TUNNEL_TABLE` を polling: <https://github.com/sonic-net/sonic-utilities/blob/master/show/vxlan.py#L253-L268>
 
 [^15]: `PortsOrch::updateDbPortOperStatus()` → `updateDbTunnelOperStatus()` 委譲: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp#L3916-L3923>
+
+[^16]: `sai_query_attribute_enum_values_capability` による P2P 対応判定: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1256-L1274>
+
+[^17]: `OVERLAY_RIF_DEFAULT_MTU` ハードコード定数: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L14>
+
+[^18]: `gTraditionalFlexCounter` による VIDTORID 使用分岐: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1297-L1318>
