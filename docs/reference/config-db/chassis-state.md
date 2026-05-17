@@ -579,6 +579,104 @@ supervisor の `module_down_chassis_db_cleanup()` (chassisd:667-680) がモジ�
 > **Evidence**: `chassisd:541-591,593-680,1289-1320,1477-1529`; `asic_status.py:40-44`; `chassis_modules.py:83-131`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Pub/Sub チャネル詳細 (Phase G)
+
+chassisd が `swsscommon.Select` + `SubscriberStateTable` で構築するイベント駆動ループと外部購読者をまとめる。
+
+### 購読チャネル一覧
+
+| 発行 DB | テーブル | 購読プロセス / クラス | タイムアウト | イベント処理 |
+|---|---|---|---|---|
+| CONFIG_DB | `CHASSIS_MODULE` | `ConfigManagerTask` | 1000 ms | `SET` → admin down、`DEL` → admin up (chassisd:1154) |
+| CONFIG_DB | `CHASSIS_MODULE` | `SmartSwitchConfigManagerTask` | 1000 ms | `SET` → `admin_status` フィールドで up/down 判定、`DEL` → down (chassisd:1205) |
+| APPL_DB | `PORT_TABLE` | `DpuStateManagerTask` | 1000 ms | ポート oper_status 変化 → DP state 再評価 (chassisd:1480,1490) |
+| STATE_DB | `SYSTEM_READY` | `DpuStateManagerTask` | 1000 ms | SYSTEM_STATE.Status 変化 → CP state 再評価 (chassisd:1481,1490) |
+| CHASSIS_STATE_DB | `DPU_STATE` | `DpuStateManagerTask` | 1000 ms | 自 DPU の midplane 変化のみ処理; 他 DPU はスキップ (chassisd:1482,1509-1510) |
+| CHASSIS_STATE_DB | `CHASSIS_FABRIC_ASIC_TABLE` | `asic_status.py` (外部プロセス) | 5000 ms | ファブリック ASIC の SET/DEL → syncd 起動許可 / 停止 (asic_status.py:43-74) |
+
+### ConfigManagerTask の購読ループ (モジュラーチャシス専用)
+
+```python
+# chassisd:1147-1173
+sel = swsscommon.Select()
+sst = swsscommon.SubscriberStateTable(config_db, CHASSIS_CFG_TABLE)  # CHASSIS_MODULE
+sel.addSelectable(sst)
+while True:
+    (state, c) = sel.select(SELECT_TIMEOUT)  # 1000 ms
+    (key, op, fvp) = sst.pop()
+    if op == 'SET':
+        admin_state = MODULE_ADMIN_DOWN  # SET = 管理者が disable
+    elif op == 'DEL':
+        admin_state = MODULE_ADMIN_UP   # DEL = エントリ削除 = enable
+    self.config_updater.module_config_update(key, admin_state)
+```
+
+### SmartSwitchConfigManagerTask の差異 (SmartSwitch 専用)
+
+```python
+# chassisd:1198-1231
+(key, op, fvp) = sst.pop()
+if op == 'SET':
+    fvs = dict(fvp)
+    admin_status = fvs.get('admin_status')
+    admin_state = MODULE_ADMIN_UP if admin_status == 'up' else MODULE_ADMIN_DOWN
+elif op == 'DEL':
+    admin_state = MODULE_ADMIN_DOWN  # DEL → down (モジュラーと逆)
+```
+
+> **注意**: モジュラーチャシスでは `DEL` → admin up、SmartSwitch では `DEL` → admin down と解釈が逆転する。
+
+### DpuStateManagerTask の多重 Select ループ (SmartSwitch DPU 上のみ)
+
+```python
+# chassisd:1478-1530
+sel = swsscommon.Select()
+selectable = [
+    swsscommon.SubscriberStateTable(self.app_db, 'PORT_TABLE'),
+    swsscommon.SubscriberStateTable(self.state_db, 'SYSTEM_READY'),
+    swsscommon.SubscriberStateTable(self.chassis_state_db, 'DPU_STATE')
+]
+for s in selectable:
+    sel.addSelectable(s)
+while True:
+    (state, c) = sel.select(SELECT_TIMEOUT)  # 1000 ms — 3 テーブルを同一 Select に多重化
+    for s in selectable:
+        result = s.pop()
+        key, op, fvp = result
+        if s.getDbConnector().getDbName() == 'CHASSIS_STATE_DB':
+            if key != self.dpu_state_updater.name:  # 他 DPU の変化はスキップ
+                update_required = False
+                continue
+            # 同一 DP/CP state なら update_state() を呼ばない（重複排除）
+    if update_required:
+        [self.current_dp_state, self.current_cp_state] = self.dpu_state_updater.update_state()
+```
+
+### asic_status.py の購読ループ (外部プロセス / supervisor 上)
+
+```python
+# asic_status.py:40-74
+state_db = daemon_base.db_connect("CHASSIS_STATE_DB")
+sel = swsscommon.Select()
+sst = swsscommon.SubscriberStateTable(state_db, 'CHASSIS_FABRIC_ASIC_TABLE')
+sel.addSelectable(sst)
+while True:
+    (state, c) = sel.select(5000)  # SELECT_TIMEOUT_MSECS=5000 ms
+    (asic_key, asic_op, asic_fvp) = sst.pop()
+    asic_id = re.search(r'\d+$', asic_key).group(0)
+    if asic_op == 'SET':
+        asic_name = asic_fvs.get('name')
+        if asic_name.startswith('FABRIC-CARD') and asic_id == args_asic_id:
+            sys.exit(0)  # ASIC online → syncd 起動許可
+    elif asic_op == 'DEL':
+        if asic_id == args_asic_id:
+            sys.exit(1)  # ASIC offline → 起動停止
+```
+
+> **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:44,95,1147-1173,1198-1231,1464-1531`; `sonic-buildimage` `files/scripts/asic_status.py:21,40-74`
+<!-- /pubsub -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
