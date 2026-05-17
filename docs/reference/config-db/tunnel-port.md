@@ -156,6 +156,28 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+VXLAN トンネルポートオブジェクト (`Port::TUNNEL`) は CONFIG_DB テーブルを直接購読しないが、生成・削除・状態更新の各フェーズで以下のオブジェクト / テーブルを暗黙的に参照する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `VXLAN_EVPN_NVO` (CONFIG_DB) | 読み取り (`gDirectory.get<EvpnNvoOrch*>()`) | `addTunnelUser()` 呼び出し時に `evpn_orch->getEVPNVtep()` を取得。未設定なら `Port_EVPN_*` 生成不可 | `vxlanorch.cpp:1678`, `vxlanorch.cpp:1685-1692` |
+| `VXLAN_TUNNEL` (CONFIG_DB) | 読み取り (SAI トンネル OID) | `addTunnel(port_name, tunnel_id, ...)` の `tunnel_id` 引数は SIP トンネルの SAI OID。`isActive()` が `false` なら生成ブロック | `vxlanorch.cpp:1694-1699`, `vxlanorch.cpp:1719` |
+| `VXLAN_TUNNEL_MAP` (CONFIG_DB) | 読み取り (生成トリガー) | DIP 非サポート環境では `VxlanTunnelMapOrch::addOperation` からのみ `Port_SRC_VTEP_*` が生成される | `vxlanorch.cpp:2079-2082` |
+| `STATE_DB:VXLAN_TUNNEL_TABLE` | 書き込み | `updateDbTunnelOperStatus()` がトンネルポートの `operstatus`（`up`/`down`）を STATE_DB に反映 | `vxlanorch.cpp:1893-1912` |
+| `PortsOrch::m_portList` (内部) | 書き込み / 読み取り | `addTunnel()` がポートオブジェクトを登録。`getTunnelPort()` が名前で検索して重複防止 | `portsorch.cpp:8362`, `vxlanorch.cpp:1715`, `vxlanorch.cpp:1957-1966` |
+| `PortsOrch::m_default1QBridge` (内部) | 読み取り (ハードコード) | `addBridgePort()` が SAI `SAI_BRIDGE_PORT_ATTR_BRIDGE_ID` にデフォルト 1Q ブリッジ OID を使用 | `portsorch.cpp:7238` |
+| `FdbOrch` (間接) | 参照カウント | `m_fdb_count` が 0 になるまでブリッジポート削除がブロックされる。FDB エントリの追加・削除は FdbOrch が管理 | `vxlanorch.cpp:1770-1776`, `port.h:234` |
+
+!!! note "STATE_DB への operstatus 書き込み"
+    `updateDbTunnelOperStatus()` (vxlanorch.cpp:1893) は `STATE_DB:VXLAN_TUNNEL_TABLE` の `operstatus` フィールドを `"up"` / `"down"` で更新する。初期値は `"down"` で、アンダーレイルートが確立されて SAI ポートイベントが `UP` を通知した時点で `"up"` に遷移する。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-ordering.md`
+
+<!-- /cross-refs -->
+
 ## 例外条件・特殊挙動
 
 - **二重生成の防止**: `getTunnelPort()` が既存エントリを発見した場合 `addTunnel()` を呼ばない。ポートは 1 remote VTEP につき 1 つのみ存在する (`vxlanorch.cpp:1715`)。
