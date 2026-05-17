@@ -355,8 +355,58 @@ CRM しきい値は `CRM_TABLE` で設定可能。しきい値超過アラート
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DashOrch` は SAI (ASIC_DB) への書き込みに加えて、以下の DB 副次書込を行う[^orch]。
+
+### DASH_ENI_TABLE SET
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| `writeResultToDB(..., DASH_RESULT_SUCCESS)` | APPL_STATE_DB / `DASH_ENI_TABLE` | `<eni_mac>` | `addEni()` が `true` を返した時点（成功時）|
+| `writeResultToDB(..., DASH_RESULT_FAILURE)` | APPL_STATE_DB / `DASH_ENI_TABLE` | `<eni_mac>` | `addEni()` が `false` を返した時点（失敗時）|
+| `gCrmOrch->incCrmResUsedCounter(CRM_DASH_ENI)` | CRM 内部カウンタ | — | `create_eni()` SAI 成功後 |
+| `gCrmOrch->incCrmResUsedCounter(CRM_DASH_ENI_ETHER_ADDRESS_MAP)` | CRM 内部カウンタ | — | `create_eni_ether_address_map_entry()` SAI 成功後 |
+| `EniCounter.addToFC(eni_id, eni)` | FLEX_COUNTER_DB / `ENI_STAT_COUNTER` | ENI OID | `addEniObject()` 完了後、FlexCounter 有効時 |
+| `MeterCounter.addToFC(eni_id, eni)` | FLEX_COUNTER_DB / `METER_STAT_COUNTER` | ENI OID | `addEniObject()` 完了後、FlexCounter 有効時 |
+| `m_eni_name_table->set("", ...)` | COUNTERS_DB / `COUNTERS_ENI_NAME_MAP` | `""` | ENI OID 確定後、`addEniMapEntry()` 内 |
+| `dash_meter_orch->incrMeterPolicyEniBindCount(v4_meter_policy)` | DashMeterOrch 内部 | — | `v4_meter_policy_id` 指定時 |
+| `dash_meter_orch->incrMeterPolicyEniBindCount(v6_meter_policy)` | DashMeterOrch 内部 | — | `v6_meter_policy_id` 指定時 |
+
+### DASH_ENI_TABLE DEL
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| `removeResultFromDB(...)` | APPL_STATE_DB / `DASH_ENI_TABLE` | `<eni_mac>` | `removeEni()` が `true` を返した時点（成功時）|
+| `gCrmOrch->decCrmResUsedCounter(CRM_DASH_ENI)` | CRM 内部カウンタ | — | `remove_eni()` SAI 成功後 |
+| `gCrmOrch->decCrmResUsedCounter(CRM_DASH_ENI_ETHER_ADDRESS_MAP)` | CRM 内部カウンタ | — | `remove_eni_ether_address_map_entry()` SAI 成功後 |
+| `EniCounter.removeFromFC(eni_id, eni)` | FLEX_COUNTER_DB / `ENI_STAT_COUNTER` | ENI OID | `removeEniObject()` 冒頭 |
+| `MeterCounter.removeFromFC(eni_id, eni)` | FLEX_COUNTER_DB / `METER_STAT_COUNTER` | ENI OID | `removeEniObject()` 冒頭 |
+| `m_eni_name_table->hdel("", name)` | COUNTERS_DB / `COUNTERS_ENI_NAME_MAP` | `""` | `removeEniMapEntry()` 内 |
+| `dash_meter_orch->decrMeterPolicyEniBindCount(v4_meter_policy)` | DashMeterOrch 内部 | — | `v4_meter_policy_id` 指定時 |
+| `dash_meter_orch->decrMeterPolicyEniBindCount(v6_meter_policy)` | DashMeterOrch 内部 | — | `v6_meter_policy_id` 指定時 |
+
+### DASH_ENI_ROUTE_TABLE SET / DEL
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| `writeResultToDB(..., DASH_RESULT_SUCCESS/FAILURE)` | APPL_STATE_DB / `DASH_ENI_ROUTE_TABLE` | `<eni_mac>` | SET 成功/失敗時 |
+| `removeResultFromDB(...)` | APPL_STATE_DB / `DASH_ENI_ROUTE_TABLE` | `<eni_mac>` | DEL 成功時 |
+| `dash_route_orch->bindRouteGroup(entry.group_id())` | DashRouteOrch 内部 | — | ENI route SET 成功時 |
+| `dash_route_orch->unbindRouteGroup(old_group_id)` | DashRouteOrch 内部 | — | ENI route SET 時に旧グループが存在する場合 |
+| `dash_route_orch->unbindRouteGroup(...)` | DashRouteOrch 内部 | — | ENI route DEL 成功時 |
+
+### 副次書込が行われない DB
+
+STATE_DB・CONFIG_DB への書き込みは一切行われない[^orch]。
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/dash/dash-sonic-hld.md` §3.2.3 ENI (DASH_ENI_TABLE スキーマ定義・ENI モード・admin-state ワークフロー). <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md>
+
+[^orch]: `sonic-net/sonic-swss/orchagent/dash/dashorch.cpp` — `doTaskEniTable()` (L1045–1097), `addEniObject()` (L566–768), `removeEniObject()` (L896–942), `addEniAddrMapEntry()` (L770–800), `removeEniAddrMapEntry()` (L944–974), `addEniMapEntry()` (L1368–1383), `removeEniMapEntry()` (L1385–1397), `setEniRoute()` (L1181–1241), `removeEniRoute()` (L1243–1279).
 
 <!-- glossary-links-injected: dash-eni-2026-0514 -->
