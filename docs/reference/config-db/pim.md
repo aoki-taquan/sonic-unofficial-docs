@@ -145,6 +145,46 @@ PIM_INTERFACE|<vrf>|ipv4|<if>  ← mode を含む SET が必須
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `frrcfgd` が読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`frrcfgd` (`BGPConfigDaemon`) は起動時に `config_db.get_table_data()` で購読テーブルの初期データを一括取得し、変更イベントは `config_db.subscribe()` で受信する[^1]。`PIM_GLOBALS` / `PIM_INTERFACE` ハンドラが直接・間接に依存するテーブルを以下に示す。
+
+### 共依存テーブル (frrcfgd が購読 + 同一 pimd へ設定注入)
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---------|--------------|------|---------|
+| `VRF` | 各イベント (間接) | vtysh `configure terminal; vrf <vrf>` コンテキストの VRF 名として使用。VRF が未作成の場合は vtysh が失敗し LOG_ERR 出力 | frrcfgd.py L3808 |
+| `IGMP_INTERFACE` | 各イベント (同一 pimd) | PIM sparse-mode と連動する IGMP インタフェース設定。`pimd` デーモンに注入 | frrcfgd.py L2132, L2333 |
+| `IGMP_INTERFACE_QUERY` | 各イベント (同一 pimd) | IGMP クエリ設定 (query-interval / query-max-response-time 等) | frrcfgd.py L2133, L2334 |
+| `DEVICE_METADATA` | 起動時のみ | frrcfgd プロセス全体の初期化 (`bgp_asn` / `vrf_name` 等) | frrcfgd.py L2162 |
+
+### 4 テーブルが同一 pimd デーモンへ集約
+
+frrcfgd の `daemon_table_map` (frrcfgd.py L117-120) により、以下の 4 テーブルすべての vtysh コマンドが同一 `pimd` プロセスへ送信される。
+
+```python
+'PIM_GLOBALS':          ['pimd'],
+'PIM_INTERFACE':        ['pimd'],
+'IGMP_INTERFACE':       ['pimd'],
+'IGMP_INTERFACE_QUERY': ['pimd'],
+```
+
+IGMP は PIM sparse-mode が有効な (`mode = "sm"`) インタフェースでのみ動作するため、`PIM_INTERFACE` の設定が `IGMP_INTERFACE` より先行していることが前提となる。
+
+### VRF 削除時の孤立キャッシュ
+
+`vrf_handler` は BGP / static-route のキャッシュ整合を行うが、PIM テーブルはその処理対象に含まれない (frrcfgd.py L2415-2467)。`VRF` エントリを削除した後に `PIM_GLOBALS` / `PIM_INTERFACE` エントリが残存すると、frrcfgd のキャッシュ内に孤立データが残り得る。VRF 削除時は先に PIM テーブルを削除すること。
+
+### 範囲外 (誤解されやすいテーブル)
+
+- `PORT` / `INTERFACE` / `VLAN`: PIM ハンドラはインタフェース存在確認を行わない。インタフェース名は vtysh の `interface <if_name>` コンテキストとして文字列がそのまま使用される。
+- `PREFIX_SET`: `ssm-ranges` フィールドが参照する prefix-list は FRR pimd 内部で評価される。frrcfgd は prefix-list 名の文字列を vtysh に渡すだけで `PREFIX_SET` テーブルを読み出すことはない。
+- `ROUTE_MAP`: PIM は route-map を使用しない。frrcfgd の PIM ハンドラは `ROUTE_MAP` テーブルを参照しない。
+
+詳細スキャン手順は `meta/_intermediate/cdb-flow/pim-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールドのコード由来デフォルト
 
