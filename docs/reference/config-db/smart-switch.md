@@ -447,6 +447,77 @@ NPU ブリッジ IP (`169.254.200.254`) は最大値 `.8`（`dpu7`）と衝突�
 > **Evidence**: `src/sonic-config-engine/config_samples.py:83-103,133-143`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:17-31`; `src/sonic-yang-models/yang-models/sonic-smart-switch.yang:63-70,88-101,155-162`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込・ファイルシステム副作用 (Phase F)
+
+> **調査根拠**: `dhcpservd.py`, `dhcp_cfggen.py`, `dhcp_lease.py`, `dhcprelayd.py`, `config_samples.py` 全行精読 (2026-05-17)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-side-effects.md`
+
+`MID_PLANE_BRIDGE` / `DPUS` / `DHCP_SERVER_IPV4_PORT` を CONFIG_DB へ書き込むと、以下の副次書き込みが発生する。
+
+### STATE_DB: DHCP_SERVER_IPV4_LEASE（SmartSwitch 専用キー形式）
+
+kea-dhcp4 が DPU へ IP アドレスをリース割り当てするたびに SIGUSR1 で dhcpservd に通知し、`KeaDhcp4LeaseHandler` が `/var/lib/kea/kea-lease.csv` を読み取って STATE_DB に書き込む。SmartSwitch では `Vlan<id>` の代わりに `bridge-midplane` をプレフィックスに使用する。
+
+**key 形式**:
+
+```
+DHCP_SERVER_IPV4_LEASE|bridge-midplane|<mac_address>
+```
+
+`MID_PLANE_BRIDGE.GLOBAL.bridge` の値（`"bridge-midplane"`）が `midplane_bridge_name` として使われる (`dhcp_lease.py:37-39`)。
+
+**フィールド**:
+
+| フィールド | 説明 |
+|---|---|
+| `ip` | DPU に割り当てた IPv4 アドレス（`169.254.200.x`） |
+| `lease_start` | リース開始 UNIX タイムスタンプ（`lease_end - valid_lifetime` で算出） |
+| `lease_end` | リース終了 UNIX タイムスタンプ（kea-lease.csv の expire カラム） |
+
+有効リース（`lease_start != lease_end` かつ `now < lease_end`）のみ `hset`。期限切れは `state_db.delete`。`lease_update_interval=2` 秒のレートリミットあり。
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_lease.py:34-39,108-112,79-93`
+
+### STATE_DB: DHCP_SERVER_IPV4_SERVER_IP
+
+dhcpservd 起動時に 1 回のみ実行。dhcp_server コンテナの `eth0` IPv4 アドレスを STATE_DB に書き込む。SmartSwitch 環境ではこの IP が DPU → NPU 向け DHCP リレーの参照先となる。
+
+**key 形式**: `DHCP_SERVER_IPV4_SERVER_IP|eth0`  
+**フィールド**: `ip` — eth0 の IPv4 アドレス文字列  
+取得失敗時は 5 秒間隔で最大 10 回リトライ。10 回失敗で `sys.exit(1)`。
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:70-87`
+
+### ファイル: /etc/kea/kea-dhcp4.conf（SmartSwitch 固有の差異）
+
+`DpusTableEventChecker` / `MidPlaneTableEventChecker` が変更を検知するたびに `dump_dhcp4_config()` が `/etc/kea/kea-dhcp4.conf` を上書きして kea-dhcp4 に SIGHUP を送信する。SmartSwitch 固有の差異:
+
+- `subnet_id` に VLAN 番号の代わり固定値 `MID_PLANE_BRIDGE_SUBNET_ID = 10000` を使用
+- `bridge-midplane` が `subnet4` の対象ネットワークとして追加される
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:51-68`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:97-100,251`
+
+### CONFIG_DB: FEATURE テーブル（minigraph 投入時の連鎖書き込み）
+
+`config_samples.py` の `generate_t1_smartswitch_switch_sample_config()` は `DPUS` エントリが存在する場合（`if dhcp_server_ports:`）に限り、`FEATURE` テーブルへ `dhcp_relay` / `dhcp_server` エントリを自動投入する。`DPUS` が空のとき `FEATURE` エントリは投入されず dhcp_server コンテナは起動しない。
+
+```python
+data['FEATURE'] = {
+    "dhcp_relay": {"state": "enabled", ...},
+    "dhcp_server": {"state": "enabled", ...}
+}
+```
+
+> **Evidence**: `src/sonic-config-engine/config_samples.py:105-131`
+
+### dhcrelay プロセス制御（dhcprelayd 経由）
+
+`dhcprelayd` は SmartSwitch の場合、`MidPlaneTableEventChecker` で `MID_PLANE_BRIDGE` の変更を購読する。`bridge-midplane` が `DHCP_SERVER_IPV4` で `state=enabled` のとき、midplane ブリッジを対象とした `dhcrelay` プロセスを起動・再起動する。
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:82-113`
+<!-- /side-effects -->
+
 ---
 
 ## 関連 CONFIG_DB / YANG / CLI
