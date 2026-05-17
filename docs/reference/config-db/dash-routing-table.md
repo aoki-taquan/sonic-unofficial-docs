@@ -373,3 +373,82 @@ DEL DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<pfx>:<prio>
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-failure.md`
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`DashRouteOrch` (`dashrouteorch.cpp`) および関連ヘッダ内のハードコード定数を網羅する。
+
+### APP_DB テーブル名文字列定数 (`sonic-swss-common/common/schema.h`)
+
+| 定数名 | 値 |
+|---|---|
+| `APP_DASH_ROUTE_TABLE_NAME` | `"DASH_ROUTE_TABLE"` (L186) |
+| `APP_DASH_ROUTE_RULE_TABLE_NAME` | `"DASH_ROUTE_RULE_TABLE"` (L187) |
+| `APP_DASH_ROUTE_GROUP_TABLE_NAME` | `"DASH_ROUTE_GROUP_TABLE"` (L190) |
+| `APP_DASH_ENI_ROUTE_TABLE_NAME` | `"DASH_ENI_ROUTE_TABLE"` (L189) |
+
+`doTask()` (L904-915) のテーブル名分岐と、コンストラクタ (L56-58) の結果テーブル初期化で使用される。
+
+### 結果コード定数 (`dashorch.h:35-36`)
+
+| 定数名 | 値 | 意味 |
+|---|---|---|
+| `DASH_RESULT_SUCCESS` | `0` | SET/DEL 操作成功 |
+| `DASH_RESULT_FAILURE` | `1` | SAI API 失敗 |
+
+`writeResultToDB()` (saihelper.cpp) が APP_DB 結果テーブルの `"result"` フィールドへ文字列化して書き込む (`L1138`)。`DASH_ROUTE_GROUP_TABLE` のみ `"version"` フィールドも追記する (`L1142-1143`)。
+
+### `sOutboundAction` 静的マップ (`dashrouteorch.cpp:41-47`)
+
+| protobuf RoutingType | SAI アクション定数 |
+|---|---|
+| `ROUTING_TYPE_VNET` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_VNET` |
+| `ROUTING_TYPE_VNET_DIRECT` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_VNET_DIRECT` |
+| `ROUTING_TYPE_DIRECT` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_DIRECT` |
+| `ROUTING_TYPE_DROP` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_DROP` |
+
+`ROUTING_TYPE_UNSPECIFIED` (proto3 ゼロ値) を含む上記 4 種類以外はマップに存在しないため `task_failed` となる。HLD 記載の `servicetunnel` / `privatelink` / `appliance` も現行実装では未登録。
+
+### SAI 属性 ID 定数 — アウトバウンドルート
+
+| SAI 属性 ID | 対応フィールド | 行 |
+|---|---|---|
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_ACTION` | `routing_type` (sOutboundAction 変換後) | `L110` |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_DST_VNET_ID` | `vnet` (vnet / vnet_direct 両方) | `L122`, `L131` |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_OVERLAY_IP` | `overlay_ip` (vnet_direct のみ) | `L135` |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_UNDERLAY_SIP` | `underlay_sip` (`has_underlay_sip()` guard) | `L151` |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_OR` | `metering_class_or` (`has_` guard) | `L160` |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_AND` | `metering_class_and` (`has_` guard) | `L166` |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_DASH_TUNNEL_ID` | `tunnel` (`has_tunnel()` guard) | `L180` |
+
+### SAI 属性 ID 定数 — インバウンドルート
+
+| SAI 属性 ID | 対応フィールド / 値 | 行 |
+|---|---|---|
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_ACTION` | `pa_validation` → `TUNNEL_DECAP_PA_VALIDATE` / `TUNNEL_DECAP` | `L449-450` |
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_SRC_VNET_ID` | `vnet` (`has_vnet()` guard) | `L455` |
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_OR` | `metering_class_or` (`has_` guard) | `L461` |
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_AND` | `metering_class_and` (`has_` guard) | `L467` |
+
+`pa_validation` による定数分岐:
+
+```cpp
+// dashrouteorch.cpp:449-450
+inbound_routing_attr.id = SAI_INBOUND_ROUTING_ENTRY_ATTR_ACTION;
+inbound_routing_attr.value.u32 =
+    ctxt.metadata.pa_validation()
+        ? SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_PA_VALIDATE
+        : SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP;
+```
+
+### SAI ステータス定数
+
+| SAI ステータス | 使用箇所 | 挙動 |
+|---|---|---|
+| `SAI_STATUS_ITEM_ALREADY_EXISTS` | `addOutboundRoutingPost()` L206, `addInboundRoutingPost()` L493 | `return false` → bulker 再実行 |
+| `SAI_STATUS_NOT_EXECUTED` | `removeOutboundRoutingPost()` L266, `removeInboundRoutingPost()` L550 | `return false` → bulker 再実行 |
+| `SAI_STATUS_OBJECT_IN_USE` | `removeRouteGroup()` L772 | `return false` → グループ削除拒否ループ |
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-constants.md`
+<!-- /constants -->
