@@ -552,4 +552,42 @@ dbId は CONFIG_DB の通常値 4 (sonic-swss-common の `database_config.json` 
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`, `sonic-net/sonic-host-services/scripts/ldap.py`, `sonic-net/sonic-buildimage/files/build_templates/sonic_debian_extension.j2`
+
+### 結論
+
+**プラットフォーム差なし**。LDAP_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU・ベンダー固有 PAM モジュールに依存しない。
+
+### 根拠
+
+#### 1. multi-asic: `is_multi_npu` は AaaCfg に渡されない
+
+`hostcfgd` 行 2182 で `self.is_multi_npu = device_info.is_multi_npu()` を取得するが、行 2185 の `AaaCfg(self.config_db)` コンストラクタには渡されない。`AaaCfg.__init__` は `ConfigDBConnector` 1 個のみを保持し、`asic0..N` namespace への接続や iteration を一切しない。`LDAP_SERVER` / `LDAP|global` テーブルは host CONFIG_DB のみに置かれ、`asicN` namespace の CONFIG_DB には存在しない（`hostcfgd:2182-2185`）。
+
+#### 2. VOQ chassis / line card
+
+`hostcfgd` ソース全体を `chassis`, `supervisor`, `linecard` で検索してもゼロヒット。VOQ chassis の各 line card / supervisor は独立した host `hostcfgd` を持ち、それぞれが自身の host CONFIG_DB の LDAP_SERVER テーブルを処理する。chassis 全体での集中適用機構は存在しない。オペレータが各 host に同一の LDAP_SERVER 設定を流す運用が前提。
+
+#### 3. SmartSwitch / DPU
+
+`AaaCfg` クラスに `has_per_dpu_scope` や `num_dpus` を参照する箇所はない。SmartSwitch 固有の LDAP 処理分岐は存在しない。
+
+#### 4. ビルド時 platform 条件分岐なし
+
+`sonic_debian_extension.j2` の LDAP 関連インストール部分（行 304–315）に `{% if sonic_asic_platform == ... %}` 等の条件分岐は存在しない。`libnss-ldapd` / `libpam-ldapd` / `nslcd` は全プラットフォーム共通でインストールされ、デフォルトで masked 状態に設定される。
+
+#### 5. PAM / nslcd 設定にプラットフォーム差なし
+
+`nslcd.conf.j2` テンプレートに `platform`, `asic`, `chassis`, `namespace` キーワードなし。`uid nslcd` / `gid nslcd` / `tls_cacertfile /etc/ssl/certs/ca-certificates.crt` / `nss_min_uid 1000` / `nss_initgroups_ignoreusers ALLLOCAL` は全プラットフォーム固定値（`sonic-host-services/data/templates/nslcd.conf.j2`）。
+
+#### 6. MGMT_VRF は LDAP に影響しない
+
+LDAP_SERVER / LDAP|global テーブルには RADIUS の `vrf` フィールドに相当するフィールドが YANG で定義されていない。`mgmt_vrf_handler` は `MgmtIfaceCfg.update_mgmt_vrf()` のみを呼び、`AaaCfg.modify_conf_file()` は呼ばれない。nslcd の VRF バインドはシステムレベルでの対応が必要だが、hostcfgd はこれを自動化しない（`hostcfgd:2352-2353`）。
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-platform.md`
+<!-- /platform -->
+
 <!-- glossary-links-injected: 32758c44ab11 -->
