@@ -597,6 +597,80 @@ APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない�
 
 ---
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> **調査根拠**: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2312-2324`, `dockers/docker-snmp/snmpd.conf.j2:16-34`, `dockers/docker-snmp/start.sh`, `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py:586-607`, `src/sonic-config-engine/tests/test_cfggen.py:1158-1165` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-platform.md`
+
+### Single-ASIC vs Multi-ASIC: 初期値生成の分岐
+
+`minigraph.py` は `is_multi_asic()` フラグで `SNMP_AGENT_ADDRESS_CONFIG` の初期値生成を切り替える。
+
+```python
+# minigraph.py:2312-2324
+if not is_multi_asic() and asic_name is None:
+    results['SNMP_AGENT_ADDRESS_CONFIG'] = {}
+    port = '161'
+    for intf in list(mgmt_intf.keys()) + list(lo_intfs.keys()):
+        ip_addr = ipaddress.ip_address(UNICODE_TYPE(intf[1].split('/')[0]))
+        if ip_addr.version == 6 and ip_addr.is_link_local:
+            agent_addr = str(ip_addr) + '%' + intf[0]
+        else:
+            agent_addr = str(ip_addr)
+        snmp_key = agent_addr + '|' + port + '|'
+        results['SNMP_AGENT_ADDRESS_CONFIG'][snmp_key] = {}
+else:
+    results['SNMP_AGENT_ADDRESS_CONFIG'] = {}
+```
+
+| 環境 | minigraph 初期値 | snmpd の listen 動作 |
+|------|----------------|---------------------|
+| **Single-ASIC** | MGMT IP + Loopback IP を自動列挙。`<ip>\|161\|` 形式でエントリを生成 | 特定の IP アドレスでのみ listen |
+| **Multi-ASIC** (`is_multi_asic() == True` または ASIC 分割時) | 空辞書 `{}` のみ。エントリなし | フォールバック: `agentAddress udp:161` / `udp6:161` — 全インタフェースで listen |
+
+`snmpd.conf.j2` の先頭コメントに明示されている:
+```
+# Listen for connections on all ip addresses, including eth0, ipv4 lo for multi-asic platform
+# Listen on managment and loopback0 ips for single asic platform
+```
+
+Multi-ASIC では全 ASIC の COUNTERS_DB を単一の docker-snmp コンテナで集約するため、snmpd を全インタフェースでリッスンさせる設計になっている。[^5]
+
+### IPv6 リンクローカルアドレスのスコープサフィックス (Single-ASIC のみ)
+
+Management IF / Loopback IF が IPv6 リンクローカルアドレス (`fe80::/10`) を持つ場合、minigraph は key に `%<intf>` スコープサフィックスを付与する。
+
+```python
+# minigraph.py:2317-2318
+if ip_addr.version == 6 and ip_addr.is_link_local:
+    agent_addr = str(ip_addr) + '%' + intf[0]
+```
+
+テスト期待値 (`test_cfggen.py:1163`): `'fe80::1%Management0|161|'`
+
+`snmpd.conf.j2` の `protocol()` マクロは `ip_addr.split('%')[0]` でスコープサフィックスを除去してから IPv6 判定するため、スコープサフィックス付き key でも `udp6` が正しく選択される。Multi-ASIC ではこのエントリは生成されない（テーブルが空のため）。
+
+### snmpd.conf.j2 / SNMP_USER: プラットフォーム非依存
+
+`snmpd.conf.j2` はプラットフォーム・ASIC ベンダー固有の分岐を持たない:
+
+- `agentAddress` 行: `SNMP_AGENT_ADDRESS_CONFIG` テーブルの内容をそのまま展開
+- `CreateUser` / `rouser` / `rwuser`: SNMPv3 標準プロトコル。ASIC ベンダー非依存
+- `master agentx` / `agentxsocket tcp:localhost:3161`: 全プラットフォーム共通
+
+`SNMP_USER` テーブルはプラットフォームに依存しない。認証・暗号化アルゴリズム (`MD5` / `SHA` / `AES` / `DES`) は Net-SNMP ライブラリが処理するため ASIC ベンダーと無関係。
+
+デバイス固有の設定ファイル (`sonic-buildimage/device/` 配下) に SNMP 固有のオーバーライドは存在しない。
+
+### MIB agent (sonic_ax_impl): multi-ASIC DB 接続差異
+
+MIB データ収集のため `sonic_ax_impl` は multi-ASIC 環境で `database_global.json` を使用して全 namespace の DB に接続する。ただし SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER テーブルは MIB agent が直接読まない。MIB agent は COUNTERS_DB / STATE_DB / ASIC_DB のみを参照する。[^7]
+
+<!-- /platform -->
+
+---
+
 ## 関連リファレンス
 
 - [CONFIG_DB: SNMP_AGENT_ADDRESS_CONFIG](snmp-agent-address-config.md)
@@ -617,3 +691,5 @@ APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない�
 [^5]: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2310-2324` — SNMP_AGENT_ADDRESS_CONFIG 自動生成. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py>
 
 [^6]: `sonic-buildimage/dockers/docker-snmp/start.sh` L14-26 — snmpd.conf 生成フロー (sonic-cfggen 呼び出し). <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/start.sh>
+
+[^7]: `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py:580-630` — multi-ASIC DB 接続初期化 (database_global.json). <https://github.com/sonic-net/sonic-snmpagent/blob/master/src/sonic_ax_impl/mibs/__init__.py>
