@@ -306,6 +306,72 @@ Evidence: `managers_chassis_app_db.py:36-46`, `managers_device_global.py:244-249
 
 <!-- /failure -->
 
+<!-- constants -->
+## コード定数・魔法数値 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-constants.md`
+> 調査対象: `sonic-swss-common/common/schema.h` @ 158de8d3463ff4b841653f6d57190bb142b80d9c, `sonic-swss-common/common/database_config.json` @ 158de8d3463ff4b841653f6d57190bb142b80d9c, `sonic-swss/orchagent/lagid.h` @ 4305596, `sonic-swss/orchagent/lagids.lua` @ 4305596, `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` @ 4ba9612, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py` @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+
+### DB ID / Redis インスタンス定数
+
+| 定数 / 設定値 | 値 | 定義箇所 |
+|-------------|----|---------| 
+| `CHASSIS_APP_DB` (#define) | `12` | `schema.h:25` |
+| `CHASSIS_STATE_DB` (#define) | `13` | `schema.h:26` |
+| redis_chassis ホスト | `redis_chassis.server` | `database_config.json` |
+| redis_chassis ポート | `6380` | `database_config.json` |
+| redis_chassis Unix ソケット | `/var/run/redis/redis_chassis.sock` | `database_config.json` |
+| CHASSIS_APP_DB キー区切り文字 | `\|` (pipe) | `database_config.json` |
+
+### テーブル名文字列定数 (schema.h:411-414)
+
+| #define | 文字列値 |
+|---------|---------|
+| `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` | `"SYSTEM_INTERFACE"` |
+| `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` | `"SYSTEM_NEIGH"` |
+| `CHASSIS_APP_LAG_TABLE_NAME` | `"SYSTEM_LAG_TABLE"` |
+| `CHASSIS_APP_LAG_MEMBER_TABLE_NAME` | `"SYSTEM_LAG_MEMBER_TABLE"` |
+
+### LAG ID アロケータエラーコード (lagid.h:12-16)
+
+| #define | 値 | 意味 |
+|---------|----|------|
+| `LAG_ID_ALLOCATOR_ERROR_DELETE_ENTRY_NOT_FOUND` | `0` | 削除対象エントリが存在しない（no-op として処理、エラーログなし） |
+| `LAG_ID_ALLOCATOR_ERROR_TABLE_FULL` | `-1` | フリーリスト枯渇でこれ以上 LAG ID を払い出せない |
+| `LAG_ID_ALLOCATOR_ERROR_GET_ENTRY_NOT_FOUND` | `-2` | `SYSTEM_LAG_ID_TABLE` にエントリが存在しない |
+| `LAG_ID_ALLOCATOR_ERROR_INVALID_OP` | `-3` | Lua スクリプトへの操作コードが不正 |
+| `LAG_ID_ALLOCATOR_ERROR_DB_ERROR` | `-4` | Redis Lua スクリプト実行がエラーを返した |
+
+> `DELETE_ENTRY_NOT_FOUND = 0` は「正常 no-op」を示す慣習的な 0 値であり、削除失敗を意味しない[^3]。
+
+### LAG ID 範囲キー (`lagids.lua:15-16`)
+
+`SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` は string 型 Redis キーとして CHASSIS_APP_DB に書き込まれ、Lua スクリプトが `tonumber()` で読み取る。値はプラットフォーム固有の初期化スクリプトが設定する（テスト環境での実例: start=`1`, end=`2`）。
+
+### chassisd 動作定数 (chassisd)
+
+| 定数名 | 値 | 意味 |
+|-------|----|------|
+| `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD` | `30` 分 | ラインカード down 後、CHASSIS_APP_DB エントリをクリーンアップするまでの待機時間 |
+| `CHASSIS_INFO_UPDATE_PERIOD_SECS` | `10` 秒 | chassisd メインループ周期 |
+| `SELECT_TIMEOUT` | `1000` ms | swsscommon `sel.select()` タイムアウト |
+| `DEFAULT_LINECARD_REBOOT_TIMEOUT` | `180` 秒 | ラインカードリブート最大待機 |
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | DPU リブート最大待機 |
+| `CHASSIS_LOAD_ERROR` | `1` | chassis プラグインロード失敗時の exit code |
+| `CHASSIS_NOT_SUPPORTED` | `2` | chassis API 未サポート時の exit code |
+
+### BGP_DEVICE_GLOBAL フィールドのデフォルト値 (`managers_device_global.py:12-14`)
+
+| クラス定数 | 値 | 対応フィールド |
+|-----------|----|-----------| 
+| `TSA_DEFAULTS` | `"false"` | `tsa_enabled` |
+| `WCMP_DEFAULTS` | `"false"` | `wcmp_enabled` |
+| `IDF_DEFAULTS` | `"unisolated"` | `idf_isolation_state` |
+
+フィールドが存在しない場合のみ `DeviceGlobalCfgMgr.__init__()` が `directory.put()` で書き込む（`managers_device_global.py:42-49`）。
+
+<!-- /constants -->
+
 ## キー構造
 
 | テーブル | Redis キー形式 | 例 |
@@ -336,3 +402,4 @@ Evidence: `managers_chassis_app_db.py:36-46`, `managers_device_global.py:244-249
 
 [^1]: `sonic-swss-common/common/schema.h:411-414` @ 158de8d3463ff4b841653f6d57190bb142b80d9c — テーブル名定数 `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME`, `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME`, `CHASSIS_APP_LAG_TABLE_NAME`, `CHASSIS_APP_LAG_MEMBER_TABLE_NAME`
 [^2]: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:593-658` @ 4ba9612 — `_cleanup_chassis_app_db()` の実装
+[^3]: `sonic-swss/orchagent/lagid.h:12` @ 4305596 — `LAG_ID_ALLOCATOR_ERROR_DELETE_ENTRY_NOT_FOUND = 0` の定義。`lagIdDel()` が 0 を返しても削除失敗ではなくエントリ不在の no-op を意味する
