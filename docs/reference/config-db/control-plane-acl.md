@@ -575,6 +575,41 @@ BFD セッションの最初の SET を検出後、caclmgrd は `sel.removeSelec
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+`caclmgrd` は `device_info` API でプラットフォーム種別を検出し、iptables ルールセットを切り替える。`AclOrch` 側はプラットフォーム非依存で常時登録される。
+
+### プラットフォーム別挙動マトリクス
+
+| プラットフォーム種別 | 判定条件 | 追加挙動 | ソース |
+|---|---|---|---|
+| 単一 ASIC 標準スイッチ | 上記以外 | デフォルト namespace のみ処理。追加ルールなし | — |
+| multi-ASIC | `device_info.is_multi_npu()` | 全 namespace (front/back/fabric) で独立ルールセット適用。`SNMP` / `SSH` の front panel → host NAT (SNAT/DNAT) ルールを namespace 単位で生成 | `caclmgrd L147,169-190,1124,1169-1184,476-516` |
+| DualToR | `DEVICE_METADATA\|localhost\|subtype == 'DualToR'` | DHCP カスタムチェーン作成。`MUX_CABLE_TABLE` / `DHCP_PACKET_MARK` 購読。SoC 向け POSTROUTING SNAT 追加。BGP to Loopback1 DROP ルール追加。chain flush 時に DHCP チェーンを除外 | `caclmgrd L165-167,1143-1154,644,707-708,935-940` |
+| Chassis (ラインカード) | `device_info.is_chassis() and not namespace` | midplane インターフェース `eth1-midplane` の IP を取得し、自己 IP → 自己 IP ACCEPT + midplane デバイスからの全 INPUT ACCEPT を追加 | `caclmgrd L358-363` |
+| SmartSwitch | `device_info.is_smartswitch()` | `MID_PLANE_BRIDGE\|GLOBAL\|ip_prefix` から midplane bridge IP を取得し、その IP 宛 INPUT ACCEPT を追加。取得失敗時 fallback `169.254.200.254` | `caclmgrd L365-368,333-354` |
+
+### AclOrch / orchdaemon 側
+
+`orchdaemon.cpp:533-534` で `gAclOrch = new AclOrch(...)` はプラットフォーム条件なしで無条件登録される。`type=CTRLPLANE` の `m_ctrlAclTables` 登録ロジックも platform 非依存。**iptables ルール適用は caclmgrd が担い、orchagent 側に platform 分岐はない。**
+
+### multi-ASIC 時の NAT ルール対象サービス
+
+`ACL_SERVICES` 定義のうち `multi_asic_ns_to_host_fwd: True` のサービスのみ namespace → host NAT 対象となる。
+
+| サービス | multi_asic_ns_to_host_fwd | NAT 対象 |
+|---|---|---|
+| `NTP` | False | 非対象 |
+| `SNMP` | True | PREROUTING DNAT + POSTROUTING SNAT |
+| `SSH` | True | PREROUTING DNAT + POSTROUTING SNAT |
+| `EXTERNAL_CLIENT` | False | 非対象 |
+| `ANY` | False | 非対象 |
+
+> スキャン証跡: `caclmgrd` 全行読了。`device_info.is_chassis()` / `is_smartswitch()` / `is_multi_npu()` / `DualToR` 各分岐を確認。`orchdaemon.cpp:533` にて platform 条件なしの AclOrch 登録を確認。中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-platform.md`
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
