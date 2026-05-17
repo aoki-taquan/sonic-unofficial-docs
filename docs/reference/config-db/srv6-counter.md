@@ -300,4 +300,32 @@ YANG `sonic-flex_counter.yang` の `SRV6` container には leafref 定義が存�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗・エラー処理 (Phase D)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-counter-failure.md`
+> 根拠: `sonic-swss/orchagent/srv6orch.cpp` L144–155, L184–210, L212–234, L236–249, L251–284, L286–312
+
+| 失敗ポイント | 挙動 | ログレベル | リトライ |
+|------------|------|-----------|---------|
+| `queryMySidCountersCapability()` — SAI API 非成功 | `m_mysid_counters_supported = false`。以降の `enable` 書き込みは常に silent drop | `SWSS_LOG_WARN` | なし（orchagent 再起動が必要） |
+| `queryMySidCountersCapability()` — `set_implemented` または `create_implemented` が false | 同上（ログなし） | — | なし |
+| `setCountersState()` — プラットフォーム非対応ガード | `"Ignoring SRv6 counters state change as they are not supported on this platform"` で early return | `SWSS_LOG_WARN` | なし |
+| `createGenericCounter()` 失敗 (`addMySidCounter`) | 当該 MySID のカウンタ未登録（`COUNTERS_SRV6_NAME_MAP` / `m_pending_counters` に追加されない）。ループは次の MySID へ続行（partial failure）| `SWSS_LOG_ERROR` | なし |
+| `set_my_sid_entry_attribute()` 失敗 (`setMySidEntryCounter`) | SAI カウンタ OID は作成済みだが MySID エントリへの紐付けが失敗した孤立状態。syncd はポーリングするがカウンタ値は常にゼロ | `SWSS_LOG_ERROR` | なし |
+| ASIC_DB `VIDTORID` 未登録（`gTraditionalFlexCounter` 有効時） | `m_pending_counters` に残留し、`SRV6_FLEX_COUNTER_UPDATE_TIMER`（1 秒）ごとに再試行。上限なし | なし | 自動（1 秒タイマー） |
+| `removeMySidCounter()` — `counter_oid == SAI_NULL_OBJECT_ID` | 早期リターン。`addMySidCounter` 失敗済みの SID を安全にスキップ | なし | N/A |
+
+### 失敗パスの詳細
+
+**プラットフォーム能力チェック失敗（最重要）**: `initializeCounters()` → `queryMySidCountersCapability()` が起動時 1 度だけ実行される (`srv6orch.cpp:122`)。`sai_query_attribute_capability()` の戻り値が `SAI_STATUS_SUCCESS` でない場合、または `capability.set_implemented && capability.create_implemented` が false の場合、`m_mysid_counters_supported = false` が確定し、以降の `FLEX_COUNTER_STATUS = enable` 書き込みはすべて `SWSS_LOG_WARN` と共に無視される。**orchagent 再起動なしに状態を変える方法はない**。
+
+**SAI カウンタ生成 partial failure**: `setCountersState(true)` は `srv6_my_sid_table_` を for ループで全走査するが、`addMySidCounter()` の戻り値を確認しない。あるSID で `createGenericCounter()` が失敗しても、ループは中断せず次の SID へ進む。結果として一部の MySID にのみカウンタが登録される中間状態が発生しうる (`srv6orch.cpp:275`)。
+
+**孤立カウンタ（`setMySidEntryCounter` 失敗時）**: `addMySidCounter()` が成功（SAI カウンタ OID 取得済み）後に `setMySidEntryCounter()` が失敗した場合、OID は `COUNTERS_SRV6_NAME_MAP` と `m_pending_counters` に登録されているが、MySID エントリの `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` には紐付けられていない。syncd はポーリングを試みるがハードウェアカウンタは増えない。ログは `SWSS_LOG_ERROR` のみで自動回復処理なし (`srv6orch.cpp:247`)。
+
+**VIDTORID 待機ループ**: `gTraditionalFlexCounter == true` の環境でのみ発生。ASIC_DB の `VIDTORID` テーブルに対象 OID が現れるまで `m_pending_counters` に残留し、1 秒ごとの `SelectableTimer` で再確認する。通常は syncd が ASIC_DB に OID を書き込むまでの数百ミリ秒以内に解消されるが、異常時には無限ループ相当になる (`srv6orch.cpp:294`)。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: srv6-counter-page -->
