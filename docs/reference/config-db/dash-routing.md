@@ -372,6 +372,61 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dash-routing-failure.md -->
+
+`DashRouteOrch` / `DashOrch` はハンドラが `bool` を返し、`false` でリトライ、`true` で消費（廃棄）となる。STATE_DB / ERROR_TABLE への失敗記録は行わない。
+
+### DASH_ROUTING_TYPE_TABLE
+
+| 失敗ケース | ログレベル | 戻り値 | retry |
+|-----------|-----------|--------|-------|
+| routing_type 文字列を enum 変換失敗 | SWSS_LOG_ERROR | true | なし（廃棄） |
+| 重複登録（既存エントリあり） | SWSS_LOG_WARN | true | なし（既存維持） |
+| SAI `create_dash_routing_type` 失敗 | SWSS_LOG_ERROR | false | 自動リトライ |
+| DEL: 存在しない routing_type | SWSS_LOG_WARN | true | なし |
+
+### DASH_ROUTE_GROUP_TABLE
+
+| 失敗ケース | ログレベル | 戻り値 | retry |
+|-----------|-----------|--------|-------|
+| SAI `create_outbound_routing_group` 失敗 | SWSS_LOG_ERROR | false | 自動リトライ |
+| DEL: グループが ENI にバインド中 | SWSS_LOG_WARN | false | ENI アンバインド後に自動リトライ |
+| DEL: グループ未登録 | SWSS_LOG_WARN | true | なし |
+
+### DASH_ROUTE_TABLE
+
+| 失敗ケース | ログレベル | 戻り値 | retry |
+|-----------|-----------|--------|-------|
+| `routing_type` が UNSPECIFIED かつ deprecated `action_type` も UNSPECIFIED | SWSS_LOG_WARN | false | 自動リトライ（永続滞留の可能性あり） |
+| `route_group` 未登録 | なし | false | グループ登録まで自動リトライ |
+| ルートグループ ENI バインド中 (SET) | SWSS_LOG_WARN | **true** | なし（**サイレント廃棄**） |
+| ルートグループ ENI バインド中 (DEL) | SWSS_LOG_WARN | false | アンバインドまで保留 |
+| `routing_type=vnet` で `vnet` 未登録 | SWSS_LOG_WARN | false | VNET 登録まで自動リトライ |
+| `routing_type=vnet_direct` で `overlay_ip` 未設定 | SWSS_LOG_WARN | false | 自動リトライ |
+| `tunnel` 未登録 | SWSS_LOG_INFO | false | トンネル登録まで自動リトライ |
+| bulk SAI 部分失敗 | SWSS_LOG_ERROR | 失敗分 false | 失敗エントリのみリトライ |
+
+!!! warning "ENI バインド中の SET はサイレント廃棄"
+    `addOutboundRouting()` は ENI バインド中に `return true` を返すため、ルートエントリが**消費されてキューから削除**される。SAI への書き込みは行われず、ログのみ出力される。コントローラは ENI アンバインド後に再投入する必要がある (`dashrouteorch.cpp:65-68`)。
+
+### DASH_ROUTE_RULE_TABLE
+
+| 失敗ケース | ログレベル | 戻り値 | retry |
+|-----------|-----------|--------|-------|
+| ENI 未登録 | SWSS_LOG_INFO | false | ENI 登録まで自動リトライ |
+| `vnet` 指定で `gVnetNameToId` 未登録 | SWSS_LOG_WARN | false | VNET 登録まで自動リトライ |
+| bulk SAI 部分失敗 | SWSS_LOG_ERROR | 失敗分 false | 失敗エントリのみリトライ |
+| DEL: ルール未登録 | SWSS_LOG_WARN | true | なし |
+
+### 永続滞留リスク
+
+`routing_type=ROUTING_TYPE_UNSPECIFIED` かつ deprecated `action_type` も `UNSPECIFIED` のエントリは依存テーブルが揃っても `return false` が返り続ける。コントローラ側で正しい `routing_type` を設定した再投入が必要。
+
+<!-- /failure -->
+
 ## 関連 CONFIG_DB / APP_DB テーブル
 
 - [`DASH_ENI_TABLE`](dash-eni.md): ENI エントリ。`DASH_ROUTE_RULE_TABLE` の親
