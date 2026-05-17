@@ -262,6 +262,36 @@ void VNetRouteOrch::detach(Observer* observer, const IpAddress& dstAddr)
 > **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:50-72`; `sonic-swss/orchagent/vnetorch.cpp:1910-1952`; `sonic-swss/orchagent/orchdaemon.cpp:281-293`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-failure.md`
 <!-- /failure -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`ChassisOrch` が消費する `PASS_THROUGH_ROUTE_TABLE` はフィールドを持たない key-only テーブルであるため、フィールドベースの leafref は存在しない。ただし key（IP プレフィックス文字列）がコードレベルで複数のオブジェクトと暗黙的な依存を形成する。
+
+| 参照元 | 参照先 | 参照種別 | 解決タイミング |
+|--------|--------|---------|--------------|
+| `PASS_THROUGH_ROUTE_TABLE\|<ip>` の key | `VNetRouteOrch::next_hop_observers_`（メモリ上の `std::map<IpAddress, VNetNextHopObserverEntry>`） | Observer 登録（コード内依存） | `doTask()` SET 実行時 |
+| CONFIG_DB key（IP） | `VNetRouteOrch::syncd_routes_` 内プレフィックス（APP_DB VNet ルートから同期） | サブネット包含チェック（`isAddressInSubnet()`） | `attach()` 呼び出し時（即時または遅延） |
+| CONFIG_DB key（IP）→ 正規化後 | APP_DB `PASS_THROUGH_ROUTE_TABLE\|<prefix>` | 書き込み先（1:1 正規化対応、ホストビット切り捨て） | `VNetNextHopUpdate` 受信時 |
+
+### 解決タイミングの詳細
+
+**即時通知（`syncd_routes_` にマッチあり）**: `VNetRouteOrch::attach()` 呼び出し時点で `syncd_routes_` に dstAddr を包含するプレフィックスが存在する場合、`attach()` の内部で即座に `observer->update(SUBJECT_TYPE_NEXTHOP_CHANGE, ...)` が呼ばれる。ChassisOrch は `attach()` の呼び出し完了前に `VNetNextHopUpdate` を受け取り APP_DB への書込みが行われる[^3]。
+
+```cpp
+// vnetorch.cpp:1869-1905
+for (auto route : syncd_routes_)
+{
+    if (route.first.isAddressInSubnet(dstAddr))
+        observerEntry->second.routeTable.emplace(route.first, route.second);
+}
+// bestRoute が存在すれば即座に observer->update() を呼ぶ
+```
+
+**遅延通知（`syncd_routes_` にマッチなし）**: CONFIG_DB に `PASS_THROUGH_ROUTE_TABLE` エントリを書いた時点では `VNetRouteOrch` が対応 VNet ルートを未処理の場合、`routeTable` は空となり即時通知は行われない。後から VNet ルートが追加・解決されると `VNetRouteOrch` が `notifyObservers()` を呼び、登録済み Observer である ChassisOrch に `VNetNextHopUpdate` が届く。
+
+> **Evidence**: `vnetorch.cpp:1861-1905`（`attach()` 実装）; `chassisorch.cpp:14-27`（`update()` 実装）; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-cross-refs.md`
+<!-- /cross-refs -->
+
 ## 制約
 
 - `<IP_prefix>` は `IpPrefix` クラスで正規化される（ホストビットが切り捨てられる）
@@ -300,3 +330,4 @@ void VNetRouteOrch::detach(Observer* observer, const IpAddress& dstAddr)
 
 [^1]: ChassisOrch 実装: `chassisorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/chassisorch.cpp>
 [^2]: ChassisOrch の `doTask()`: `chassisorch.cpp:50-67`. observer attach/detach のみを行い、CONFIG_DB フィールドは参照しない。
+[^3]: `VNetRouteOrch::attach()` の即時通知: `vnetorch.cpp:1891-1905`. `syncd_routes_` に一致プレフィックスがある場合は `attach()` 内部で `observer->update()` を呼ぶ。
