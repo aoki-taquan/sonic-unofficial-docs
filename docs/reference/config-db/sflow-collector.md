@@ -137,3 +137,37 @@ SFLOW_COLLECTOR|<name>  SET  →  (hsflowd 再起動) → 反映
 ステップ 3 (hsflowd 起動) より前にコレクタを書いた場合、hsflowd が /etc/hsflowd.conf を読み込む際に反映される。既に hsflowd が稼働中のときは再起動が必要。
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照（テーブル間依存）(Phase C)
+
+SFLOW_COLLECTOR テーブルを処理する際に暗黙的に依存するテーブル・コンポーネントを実装コードから導出した。
+
+> **調査根拠**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` 全行精読 (2026-05-17)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-collector-cross-refs.md`
+
+### MGMT_VRF_CONFIG（`collector_vrf = 'mgmt'` 時の必須依存）
+
+`sonic-sflow.yang:86-88`: `collector_vrf` フィールドに `'mgmt'` を指定する場合、YANG `must` 制約により `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled = 'true'` が必須。この制約は YANG バリデーション時に評価され、`ValidatedConfigDBConnector` 経由の書き込み（`config sflow collector add --vrf mgmt`）で検査される。違反時のエラーメッセージ: `"Must condition not satisfied. Try enable Management VRF."`。
+
+```
+MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── SFLOW_COLLECTOR|<name> (collector_vrf=mgmt)
+```
+
+`collector_vrf = 'default'` または未指定の場合はこの依存なし。
+
+### SFLOW（グローバル有効化 — 実効化の間接依存）
+
+`sflowmgr.cpp:456-459`: sflowmgrd は `SFLOW|global.admin_state` の変化を検出すると `sflowHandleService(enable)` を呼び `service hsflowd restart/stop` を実行する。SFLOW_COLLECTOR の変更は sflowmgrd の購読対象外であるため、コレクタ追加・変更・削除の実効化には hsflowd 再起動が必要。`SFLOW|global` の admin_state トグルがそのトリガとなる。
+
+### sflowmgrd — SFLOW_COLLECTOR を購読しない（重要な非依存）
+
+`sflowmgrd.cpp:31-41`: sflowmgrd の TableConnector リストは `PORT`・`STATE_DB PORT`・`SFLOW`・`SFLOW_SESSION` の 4 テーブルのみ。`SFLOW_COLLECTOR` は含まれない。コレクタ設定は hsflowd 起動時に `/etc/hsflowd.conf` として読み込まれ、hsflowd が稼働中は動的変更を検知しない。
+
+| 参照先 | 参照種別 | 条件 | コード箇所 |
+|--------|---------|------|-----------|
+| `MGMT_VRF_CONFIG\|vrf_global` | YANG must 制約（必須） | `collector_vrf = 'mgmt'` のとき | `sonic-sflow.yang:86-88` |
+| `SFLOW\|global` | 間接依存（hsflowd 再起動トリガ） | SFLOW_COLLECTOR 変更の実効化 | `sflowmgr.cpp:456-459` |
+| `sflowmgrd` | 非購読（購読対象外） | SFLOW_COLLECTOR は TableConnector 外 | `sflowmgrd.cpp:36-41` |
+
+<!-- /cross-refs -->
