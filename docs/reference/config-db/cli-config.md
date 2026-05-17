@@ -430,4 +430,72 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`SERIAL_CONSOLE` / `SSH_SERVER` テーブルを処理する `hostcfgd` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd` と `sonic-buildimage/files/image_config/cli_sessions/tmout-env.sh.j2`。
+
+### sshd_config ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `SSH_CONFG` | `/etc/ssh/sshd_config` | sshd 設定ファイル本体。`set_policies()` がコピー → 差分書き換え → `os.rename()` で置換する | hostcfgd L32 |
+| `SSH_CONFG_TMP` | `/etc/ssh/sshd_config.tmp` | `SSH_CONFG + ".tmp"` として算出される一時ファイル。`sshd -T` 検証失敗時は `os.remove()` で削除し既存設定を保護 | hostcfgd L33 |
+
+### PAM limits ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PAM_LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/pam_limits.j2` | `max_sessions > 0` 時に展開する PAM limits Jinja2 テンプレート | hostcfgd L81 |
+| `LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/limits.conf.j2` | `/etc/security/limits.conf` 生成テンプレート | hostcfgd L82 |
+| `PAM_LIMITS_CONF` | `/etc/pam.d/pam-limits-conf` | PAM limits 設定出力先。`PamLimitsCfg.render_conf_file()` が上書き | hostcfgd L83 |
+| `LIMITS_CONF` | `/etc/security/limits.conf` | PAM limits の `limits.conf` 出力先 | hostcfgd L84 |
+
+### SSH フィールド検証定数
+
+#### SSH_INT_VALUES — 整数型フィールド名リスト (hostcfgd L61)
+
+`["authentication_retries", "login_timeout", "inactivity_timeout", "max_sessions"]`
+
+このリスト内のフィールドは `int()` 変換後に `SSH_MIN_VALUES` / `SSH_MAX_VALUES` 範囲チェックが行われる。チェック失敗時は `LOG_ERR` を出力して当該フィールドの適用をスキップする。
+
+#### SSH_MIN_VALUES / SSH_MAX_VALUES — 値域境界 (hostcfgd L62-65)
+
+| フィールド | コード最小値 | コード最大値 | YANG range | 乖離 |
+|-----------|------------|------------|-----------|------|
+| `authentication_retries` | **3** | 100 | `1..100` | YANG は 1 以上許容するがコードは 3 未満を拒否 |
+| `login_timeout` | 1 | 600 | `1..600` | 一致 |
+| `ports` | 1 | 65535 | N/A (string) | TCP ポート全域 |
+| `inactivity_timeout` | 0 | 35000 | `0..35000` | 一致 |
+| `max_sessions` | 0 | 100 | `0..100` | 一致 |
+
+!!! warning "`authentication_retries` の YANG-コード乖離"
+    YANG `range 1..100` は 1 以上を許容するが、hostcfgd の `SSH_MIN_VALUES["authentication_retries"] = 3` により、値 1 または 2 を CONFIG_DB に設定すると `LOG_ERR "Ssh authentication_retries <N> out of range"` が出力され sshd_config への適用が拒否される。<!-- evidence: hostcfgd L62, L1122-1126 -->
+
+#### SSH_CONFIG_NAMES — DB フィールドと sshd_config ディレクティブの対応表 (hostcfgd L67-75)
+
+| CONFIG_DB フィールド | sshd_config ディレクティブ | ソース |
+|---------------------|--------------------------|--------|
+| `authentication_retries` | `MaxAuthTries` | hostcfgd L68 |
+| `login_timeout` | `LoginGraceTime` | hostcfgd L69 |
+| `ports` | `Port` | hostcfgd L70 |
+| `inactivity_timeout` | `ClientAliveInterval` | hostcfgd L71 |
+| `permit_root_login` | `PermitRootLogin` | hostcfgd L72 |
+| `password_authentication` | `PasswordAuthentication` | hostcfgd L73 |
+| `ciphers` | `Ciphers` | hostcfgd L74 |
+| `kex_algorithms` | `KexAlgorithms` | hostcfgd L74 |
+| `macs` | `MACs` | hostcfgd L75 |
+
+> `max_sessions` はこのマップに含まれないため `set_policies()` でスキップされ、sshd_config の `MaxSessions` には反映されない。PAM limits 経路のみに反映される。<!-- evidence: hostcfgd L1127-1145 -->
+
+### tmout-env.sh.j2 ハードコードデフォルト
+
+| 値 | 用途 | ソース |
+|----|------|--------|
+| `900` 秒 (15 分) | `SERIAL_CONSOLE\|POLICIES.inactivity_timeout` が DB 不在または未解決のとき `TMOUT=900` をシェル環境に設定するフォールバック値 | `tmout-env.sh.j2` L2 |
+
+> DB に `inactivity_timeout = 15`（分）が存在する場合は `15 × 60 = 900` 秒に変換されるため、YANG default と実質的に一致する。DB 完全不在時もこのコードパス (900 秒) が正常に機能する。<!-- evidence: tmout-env.sh.j2 L1-11 -->
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
