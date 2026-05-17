@@ -491,4 +491,66 @@ snmpd 起動 → 新しいアドレス/ポートで listen
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> **調査根拠**: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2310-2324`, `dockers/docker-snmp/snmpd.conf.j2:16-34`, `dockers/docker-snmp/supervisord.conf.j2:52-64` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-platform.md`
+
+### single-ASIC と multi-ASIC の挙動差異
+
+`minigraph.py:2312` の `if not is_multi_asic() and asic_name is None:` 分岐が、プラットフォームによる自動生成の有無を決定する。
+
+| 環境 | minigraph による自動生成 | snmpd のリッスン範囲 |
+|------|------------------------|-------------------|
+| **single-ASIC** | `MGMT_INTERFACE` + `LOOPBACK_INTERFACE` の全 IP を port=161、vrf='' で自動登録 | 管理 IP + Loopback0 IP のみ（明示的バインド） |
+| **multi-ASIC / chassis** | 空辞書（自動生成なし） | `udp:161` + `udp6:161` の全インタフェース fallback |
+
+`snmpd.conf.j2:16-17` のコメントがこの設計意図を明示している:
+
+```
+# Listen for connections on all ip addresses, including eth0, ipv4 lo for multi-asic platform
+# Listen on managment and loopback0 ips for single asic platform
+```
+
+multi-ASIC 環境では `SNMP_AGENT_ADDRESS_CONFIG` が空のため `snmpd.conf.j2` の else 分岐（L32-33）が適用され、全インタフェースで SNMP が公開される。セキュリティ要件がある場合は CLI で明示的にエントリを登録して絞り込む。
+
+### chassis-packet (switch_type) の差異
+
+`supervisord.conf.j2:53-56` の分岐により、`switch_type == 'chassis-packet'` の場合のみ snmp-subagent の起動コマンドが変化する。
+
+```jinja
+{% if DEVICE_METADATA['localhost']['switch_type'] == 'chassis-packet' %}
+command=/usr/bin/env python3 -m sonic_ax_impl --enable_dynamic_frequency
+{% else %}
+command=/usr/bin/env python3 -m sonic_ax_impl
+{% endif %}
+```
+
+`--enable_dynamic_frequency` は MIB ポーリング頻度を動的に調整するオプション。`SNMP_AGENT_ADDRESS_CONFIG` のリッスンアドレス設定自体には影響しないが、同一コンテナで動作する snmp-subagent の MIB 収集挙動が変化する。
+
+### link-local IPv6 アドレスの自動処理 (single-ASIC のみ)
+
+single-ASIC の minigraph 自動生成では、管理インタフェースに link-local IPv6 アドレスがある場合に zone id（インタフェース名）を自動付与する（`minigraph.py:2317-2318`）。
+
+```python
+if ip_addr.version == 6 and ip_addr.is_link_local:
+    agent_addr = str(ip_addr) + '%' + intf[0]
+# 例: fe80::1%Management0|161|
+```
+
+`snmpd.conf.j2` の `protocol()` マクロは `split('%')[0]` で zone id を除去してから IPv6 判定を行うため、link-local アドレスでも誤判定しない。multi-ASIC 環境では自動生成がないため、この処理は発生しない。
+
+### 差異まとめ
+
+| 項目 | single-ASIC | multi-ASIC / chassis | chassis-packet |
+|------|-------------|---------------------|----------------|
+| minigraph 自動生成 | MGMT + LO0 IP で自動登録 | 空辞書（なし） | 空辞書（なし） |
+| デフォルト listen 範囲 | 管理 IP + Loopback0 のみ | 全 IF (`udp:161` / `udp6:161`) | 全 IF (`udp:161` / `udp6:161`) |
+| link-local IPv6 自動処理 | あり（zone id 付与） | なし | なし |
+| snmp-subagent 起動オプション | なし | なし | `--enable_dynamic_frequency` |
+| CLI による手動登録 | 可能（自動生成を上書き） | 必要（自動生成なし） | 必要（自動生成なし） |
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 59acbdd0f2b6 -->
