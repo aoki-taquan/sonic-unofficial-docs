@@ -448,4 +448,41 @@ Overlay ループバック RIF は以下の SAI 属性を常時ハードコー�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`tunneldecaporch` が APPL_DB の `TUNNEL_DECAP_TABLE` を処理する際に発生する副次的な DB 書き込みを整理する。
+
+### ASIC_DB — SAI オブジェクト群
+
+| SAI API | 生成オブジェクト | トリガ条件 |
+|---------|--------------|----------|
+| `sai_router_intfs_api->create_router_interface()` | `SAI_OBJECT_TYPE_ROUTER_INTERFACE` (overlay loopback, MTU=9100) | `addDecapTunnel()` 実行時・常時 |
+| `sai_tunnel_api->create_tunnel()` | `SAI_OBJECT_TYPE_TUNNEL` (IPINIP) | `addDecapTunnel()` 成功時 |
+| `sai_tunnel_api->create_tunnel_term_table_entry()` | `SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` | `addDecapTunnelTermEntry()` 成功時 |
+
+SAI tunnel に付与される主要属性: `SAI_TUNNEL_ATTR_TYPE=IPINIP`, `SAI_TUNNEL_ATTR_DECAP_ECN_MODE`, `SAI_TUNNEL_ATTR_DECAP_TTL_MODE`, `SAI_TUNNEL_ATTR_DECAP_DSCP_MODE`。
+`decap_dscp_to_tc_map` が設定済みなら `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` も付与。
+`decap_tc_to_pg_map` が設定済みなら `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` も付与。
+
+### STATE_DB — STATE_TUNNEL_DECAP_TABLE / STATE_TUNNEL_DECAP_TERM_TABLE
+
+| テーブル | 操作 | トリガ | 書込フィールド |
+|---------|------|-------|--------------|
+| `STATE_TUNNEL_DECAP_TABLE` | SET | SAI `create_tunnel` 成功後 (`setDecapTunnelStatus()`) | `tunnel_type`, `dscp_mode`, `ecn_mode`, `encap_ecn_mode`, `ttl_mode` |
+| `STATE_TUNNEL_DECAP_TABLE` | DEL | トンネル削除時 (`removeDecapTunnelStatus()`) | — |
+| `STATE_TUNNEL_DECAP_TERM_TABLE` | SET | SAI `create_tunnel_term_table_entry` 成功後 (`setDecapTunnelTermStatus()`) | `term_type`, `src_ip` (P2P/MP2MP のみ), `subnet_type` (サブネット decap 時のみ) |
+| `STATE_TUNNEL_DECAP_TERM_TABLE` | DEL | decap term 削除時 (`removeDecapTunnelTermStatus()`) | — |
+
+evidence: `tunneldecaporch.cpp` L1521-1566
+
+### MuxOrch への間接 QoS 副次反映
+
+`encap_tc_to_dscp_map` / `encap_tc_to_queue_map` は SAI に直接 push **されない**。`tunneldecaporch` は OID を内部キャッシュ (`tunnelTable`) に保持し、`MuxOrch` が `MUX_CABLE` 処理時に `TunnelDecapOrch::getQosMapId()` 経由で取得して自身の SAI 書き込みに利用する (`muxorch.cpp:L2368-2380`)。
+
+!!! note "詳細スキャンノート"
+    `meta/_intermediate/cdb-flow/tunnel-decap-table-cross-refs.md`
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->
