@@ -604,6 +604,72 @@ CONFIG_DB の BUFFER_POOL / BUFFER_PROFILE テーブルのフィールド名と�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書き込み (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-side.md -->
+
+バッファカウンタに関連する処理が COUNTERS_DB / APPL_STATE_DB / syncd FLEX_COUNTER_TABLE へ
+行う副次書き込みの全体像。YANG / HLD には明示されていない。
+
+### COUNTERS_DB — 名前 → OID マップ登録
+
+| トリガー | テーブル | 内容 | 経路 |
+|---------|---------|------|------|
+| Buffer Pool CREATE | `COUNTERS_BUFFER_POOL_NAME_MAP` | `pool_name → SAI OID` | bufferorch 直接 (`bufferorch.cpp:546`) |
+| Buffer Pool DELETE | `COUNTERS_BUFFER_POOL_NAME_MAP` | エントリ削除 | bufferorch 直接 (`bufferorch.cpp:586`) |
+| Port 追加 | `COUNTERS_PORT_NAME_MAP` | `port_name → port OID` | portsorch (`portsorch.cpp:4118`) |
+| Port 削除 | `COUNTERS_PORT_NAME_MAP` | エントリ削除 | portsorch (`portsorch.cpp:4312`) |
+| Queue 初期化 | `COUNTERS_QUEUE_NAME_MAP` | `port:idx → OID` | portsorch (`portsorch.cpp:8524`) |
+| Queue 初期化 | `COUNTERS_QUEUE_PORT_MAP` | `OID → port OID` | portsorch (`portsorch.cpp:8527`) |
+| Queue 初期化 | `COUNTERS_QUEUE_INDEX_MAP` | `OID → queue index` | portsorch (`portsorch.cpp:8528`) |
+| Queue 初期化 | `COUNTERS_QUEUE_TYPE_MAP` | `OID → SAI_QUEUE_TYPE_*` | portsorch (`portsorch.cpp:8529`) |
+| PG 初期化 | `COUNTERS_PG_NAME_MAP` | `port:idx → OID` | portsorch (`portsorch.cpp:8882`) |
+| PG 初期化 | `COUNTERS_PG_PORT_MAP` | `OID → port OID` | portsorch (`portsorch.cpp:8883`) |
+| PG 初期化 | `COUNTERS_PG_INDEX_MAP` | `OID → PG index` | portsorch (`portsorch.cpp:8884`) |
+
+!!! note "Buffer Pool のマップ登録タイミング"
+    Queue / PG の `COUNTERS_*_NAME_MAP` 登録は FlexCounterOrch が
+    `FLEX_COUNTER_STATUS:enable` を受信した後に実行されるが、
+    Buffer Pool のマップ登録は bufferorch が SAI プール作成直後に **即座に** 実行する。
+    FLEX_COUNTER_STATUS の有効化を待たずに `COUNTERS_BUFFER_POOL_NAME_MAP` にエントリが出現する。[^19]
+
+### APPL_STATE_DB — shared headroom pool / lossless profile 結果フィードバック
+
+bufferorch は `ResponsePublisher` (宛先: `APPL_STATE_DB`) を保持しており、
+以下の条件で副次書き込みを行う。[^20]
+
+| 条件 | テーブル | 書き込み内容 |
+|------|---------|------------|
+| Buffer Pool CREATE (xoff あり) | `APPL_STATE_DB / BUFFER_POOL_TABLE \| <name>` | `{xoff: <bytes>}` — shared headroom 適用結果 |
+| Buffer Pool DELETE | `APPL_STATE_DB / BUFFER_POOL_TABLE \| <name>` | 空 fvs (エントリ削除) |
+| Buffer Profile SET (lossless) | `APPL_STATE_DB / BUFFER_PROFILE_TABLE \| <name>` | 変更結果フィールド群 |
+| Buffer Profile DELETE | `APPL_STATE_DB / BUFFER_PROFILE_TABLE \| <name>` | 空 fvs (エントリ削除) |
+
+`xoff` フィールドのない通常の ingress/egress プールは APPL_STATE_DB に書き込まれない。
+
+### syncd FLEX_COUNTER_GROUP_TABLE / FLEX_COUNTER_TABLE
+
+bufferorch は初期化時に `initFlexCounterGroupTable()` 内で
+`FLEX_COUNTER_GROUP_TABLE | BUFFER_POOL_WATERMARK` へポーリング間隔と
+`watermark_bufferpool.lua` の SHA を書き込む (`bufferorch.cpp:247`)。
+
+その後 `generateBufferPoolWatermarkCounterIdList()` 呼び出し時（FlexCounterOrch が
+`BUFFER_POOL_WATERMARK` グループに `FLEX_COUNTER_STATUS:enable` を受信した段階）に
+プールごとに `FLEX_COUNTER_TABLE | BUFFER_POOL_WATERMARK:<oid>` へ counter_id_list を書き込む。
+SAI clear_stats 能力の検査結果に応じて STATS_MODE が個別設定される (`bufferorch.cpp:333-358`)。[^21]
+
+Buffer Pool 削除時は `clearBufferPoolWatermarkCounterIdList()` を通じて
+対応する `FLEX_COUNTER_TABLE` エントリを削除する (`bufferorch.cpp:282`)。
+
+### GB_COUNTERS_DB (gearbox 環境のみ)
+
+Gearbox PHY が有効な環境では、`COUNTERS_PORT_NAME_MAP` が
+通常の `COUNTERS_DB` に加えて `GB_COUNTERS_DB` にも書き込まれる (`portsorch.cpp:10392-10393`)。
+通常のシングル ASIC 環境では GB_COUNTERS_DB への書き込みは発生しない。
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -637,3 +703,6 @@ CONFIG_DB の BUFFER_POOL / BUFFER_PROFILE テーブルのフィールド名と�
 [^16]: FLEX_COUNTER_TABLE キー定数: `sonic-swss/orchagent/flexcounterorch.cpp:46-64`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L46>
 [^17]: COUNTERS_DB フィールド名定数: `sonic-swss-common/common/schema.h:225-333`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h#L225>
 [^18]: bufferorch.h フィールド名文字列: `sonic-swss/orchagent/bufferorch.h:18-35`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.h#L18>
+[^19]: Buffer Pool 名前マップ即時登録: `sonic-swss/orchagent/bufferorch.cpp:546,586`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L546>
+[^20]: APPL_STATE_DB ResponsePublisher: `sonic-swss/orchagent/bufferorch.cpp:555,589,832,880`, `orchagent/orch.h:382`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L555>
+[^21]: FLEX_COUNTER_TABLE Buffer Pool WM 登録: `sonic-swss/orchagent/bufferorch.cpp:247,333-358`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L247>
