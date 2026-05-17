@@ -263,6 +263,22 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 詳細根拠は `meta/_intermediate/cdb-flow/dash-prefix-tag-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DASH_PREFIX_TAG_TABLE` の SET / DEL に伴って `DashAclOrch` / `DashTagMgr` が副次的に書き込む DB エントリは **存在しない**。タグは orchagent 内の `m_tag_table` (`unordered_map<string, DashTag>`) にのみ保持される SAI 非経由オブジェクトであり、DB コネクタを保持しない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `DashTagMgr` 内に `swsscommon::Table` / `ProducerStateTable` の write 呼出が 0 件 (`dashtagmgr.cpp` 全行精読) |
+| STATE_DB | なし | `DashAclOrch` コンストラクタは `app_state_db` 引数を受け取るが初期化リストで `DashTagMgr` へは渡されない (`dashaclorch.cpp:77-85`) |
+| COUNTERS_DB | なし | DASH タグは SAI オブジェクト非作成。カウンタテーブルのエントリも存在しない |
+| ASIC_DB (via CRM) | なし | `gCrmOrch->incCrmDashAclUsedCounter()` は ACL group / rule 作成時のみ発生 (`dashaclgroupmgr.cpp:175-176, 374-376`)。タグ SET/DEL では CRM 更新なし |
+| FLEX_COUNTER_DB | なし | DASH タグに対応する flex-counter エントリなし |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dash-prefix-tag-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
