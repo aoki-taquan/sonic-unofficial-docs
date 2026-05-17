@@ -320,4 +320,34 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L.241-251, L.437-442, L.547-564, L.706-713, L.854-863  
+> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-failure.md`
+
+### `is_ldap_config_complete()` が False → nslcd stop + mask
+
+`hostcfgd` の `is_ldap_config_complete()` は `bind_dn`・`base_dn`・`bind_password` の全フィールド設定、`AAA|authentication.login` に `ldap` が含まれること、`LDAP_SERVER` エントリが 1 件以上存在することをすべて AND 評価する（`hostcfgd` L.437-442）。いずれかが欠けると `handle_nslcd_service(False)` が呼ばれ、nslcd が `stop` + `mask` される（`hostcfgd` L.247-251）。LDAP 設定が追加・修正された次のイベントで `is_ldap_config_complete()` が再評価され自動復旧する。
+
+### 不正 `priority` による ValueError — modify_conf_file() 中断
+
+`ldapsrvs_conf = sorted(..., key=lambda t: int(t['priority']), reverse=True)` のソート処理で、`priority` フィールドが整数変換不可能な文字列の場合 `int()` が `ValueError` を送出し `modify_conf_file()` 全体が中断される（`hostcfgd` L.713）。`/etc/nslcd.conf` および `/etc/ldap/ldap.conf` は更新されず前回の内容のまま残る。例外はキャッチされず呼び出し元に伝播する（unhandled）。CLI 経由では有効な数値が書き込まれるため通常は発生しないが、`sonic-db-cli` での直接書き込み時に注意が必要。
+
+### generate_file_from_template 失敗 — LOG_ERR のみ・前回設定で nslcd 再起動
+
+`nslcd.conf` / `ldap.conf` の生成は `generate_file_from_template()` 経由で行われる（`hostcfgd` L.855, L.863）。ファイルシステム権限不足・ディスクフル・Jinja2 テンプレートエラーが発生した場合、例外は関数内でキャッチされ `syslog LOG_ERR: 'Failed generate_file_from_template error={e}'` が出力されるが処理は継続する。設定ファイルは更新されず前回の内容のまま残り、その後 `handle_nslcd_service(is_ldap_config_complete())` が呼ばれるため nslcd は**前回の設定で再起動**される。メモリ上の `self.ldap_servers` と nslcd 実行設定が乖離する可能性がある。
+
+### 失敗ケース一覧
+
+| 失敗ケース | トリガー | syslog 出力 | 自動復旧 | evidence |
+|---|---|---|---|---|
+| `is_ldap_config_complete() == False` | `bind_dn`/`base_dn`/`bind_password` 欠如、`AAA login` に `ldap` なし、`LDAP_SERVER` 空 | LOG_DEBUG "nslcd: deactivating (Ldap disabled)" | 次の LDAP 更新イベントで自動復旧 | `hostcfgd` L.437-442, L.247-251 |
+| `priority` 不正値 ValueError | `int(t['priority'])` 変換失敗（直接 DB 書き込み時） | なし（unhandled exception） | なし（手動修正が必要） | `hostcfgd` L.713 |
+| `generate_file_from_template` 失敗 | FS 権限不足・ディスクフル・テンプレートエラー | LOG_ERR "Failed generate_file_from_template error={e}" | なし（前回設定で nslcd 再起動） | `hostcfgd` L.200-216, L.855, L.863 |
+| `pam_conf` 生成失敗 | `open`/`write`/`rename` エラー（FS 障害等） | 例外伝播（syslog 保証なし） | なし | `hostcfgd` L.716-731 |
+| 存在しない key の DEL | `data == {}` + key 未存在 | なし（silent skip） | 不要（副作用なし） | `hostcfgd` L.554-558 |
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 32758c44ab11 -->
