@@ -303,6 +303,58 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 > **証跡**: `doTaskEniTable()` L1045-1097, `addEni()` L841-881, `addEniObject()` L566-768, `addEniAddrMapEntry()` L770-800, `addEniTrustedVnis()` L802-839, `removeEni()` L1015-1043, `removeEniObject()` L896-941, `removeEniAddrMapEntry()` L944-974, `removeEniTrustedVnis()` L976-1013
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-net/sonic-swss/orchagent/dash/dashorch.h`, `dashorch.cpp`, `crmorch.h`
+
+### FlexCounter グループ定数
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `ENI_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"ENI_STAT_COUNTER"` | ENI 統計 FlexCounter グループ名。COUNTERS_DB テーブル名としても使用 (`dashorch.h:29`) |
+| `ENI_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | ENI 統計 FlexCounter のポーリング間隔 (`dashorch.h:30`) |
+| `METER_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"METER_STAT_COUNTER"` | Meter カウンタ FlexCounter グループ名 (`dashorch.h:32`) |
+| `METER_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | Meter 統計 FlexCounter のポーリング間隔 (`dashorch.h:33`) |
+
+!!! note "ポーリング間隔は変更不可"
+    ENI 統計・Meter 統計のポーリング間隔は `10,000 ms` (10 秒) にハードコードされており、YANG / CLI から変更できない。
+
+### SAI 処理結果コード
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `DASH_RESULT_SUCCESS` | `0` | SET 成功時に `APPL_STATE_DB:DASH_ENI_TABLE:<eni_mac>` の `result` フィールドに書込む値 (`dashorch.h:35`) |
+| `DASH_RESULT_FAILURE` | `1` | SET 失敗時（依存未解決 / SAI エラー）に `result` フィールドに書込む値 (`dashorch.h:36`) |
+
+コントローラはこのフィールドをポーリングして ENI 作成の完了・失敗を確認する。確認コマンド: `sonic-db-cli APPL_STATE_DB hgetall 'DASH_ENI_TABLE:<eni_mac>'`
+
+### ENI モードマップ（ハードコードマッピング）
+
+```cpp
+// dashorch.cpp:48-52
+static const std::unordered_map<dash::eni::EniMode, sai_dash_eni_mode_t> eniModeMap =
+{
+    { dash::eni::MODE_VM,   SAI_DASH_ENI_MODE_VM   },
+    { dash::eni::MODE_FNIC, SAI_DASH_ENI_MODE_FNIC }
+};
+```
+
+マップ外の値は `SAI_DASH_ENI_MODE_VM` (VM モード) にフォールバックし `SWSS_LOG_ERROR` を出力する (`dashorch.cpp:732-733`)。
+
+### CRM リソース識別子
+
+ENI 1 件の作成・削除ごとに以下の **2 つのカウンタが独立して** 変動する。
+
+| CRM リソース型 | +1 タイミング | -1 タイミング | evidence |
+|---------------|-------------|-------------|---------|
+| `CRM_DASH_ENI` | `create_eni()` 成功後 | `remove_eni()` 成功後 | `dashorch.cpp:754`, `dashorch.cpp:937` |
+| `CRM_DASH_ENI_ETHER_ADDRESS_MAP` | `create_eni_ether_address_map_entry()` 成功後 | `remove_eni_ether_address_map_entry()` 成功後 | `dashorch.cpp:795`, `dashorch.cpp:969` |
+
+CRM しきい値は `CRM_TABLE` で設定可能。しきい値超過アラートは各リソース型で独立して発火する (`crmorch.h:38-40`)。
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/dash/dash-sonic-hld.md` §3.2.3 ENI (DASH_ENI_TABLE スキーマ定義・ENI モード・admin-state ワークフロー). <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md>
