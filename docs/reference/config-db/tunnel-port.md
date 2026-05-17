@@ -4,7 +4,7 @@ description: "VXLAN トンネルポート — orchagent が VXLAN_TUNNEL_MAP / E
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-17
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/vxlanorch.cpp
@@ -177,6 +177,46 @@ VXLAN トンネルポートオブジェクト (`Port::TUNNEL`) は CONFIG_DB テ
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-ordering.md`
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+### SET 処理 (addTunnelUser / VxlanTunnelMapOrch::addOperation) における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `evpn_orch->getEVPNVtep()` が NULL (`VXLAN_EVPN_NVO` 未設定) | `addTunnelUser()` | `return false` → Orch 再試行キューへ。`Port_EVPN_*` は生成されない | `SWSS_LOG_WARN("Unable to find EVPN VTEP. user=%d remote_vtep=%s")` | `vxlanorch.cpp:1689-1692` |
+| `vtep_ptr->isActive()` が false (SIP トンネル HW 未作成) | `addTunnelUser()` | `return false` → Orch 再試行キューへ。`Port_EVPN_*` は生成されない | `SWSS_LOG_WARN("VTEP not yet active.user=%d remote_vtep=%s")` | `vxlanorch.cpp:1696-1699` |
+| `sai_bridge_api->create_bridge_port()` が SAI_STATUS_SUCCESS 以外を返す | `PortsOrch::addBridgePort()` | `handleSaiCreateStatus()` を実行。`task_success` 以外なら `parseHandleSaiStatusFailure()` が呼ばれ `return false` | `SWSS_LOG_ERROR("Failed to add bridge port %s to default 1Q bridge, rv:%d")` | `portsorch.cpp:7261-7265` |
+| `setHostIntfsStripTag()` が false を返す (hostif VLAN タグ設定失敗) | `PortsOrch::addBridgePort()` 末尾 | `return false` — `bridge_port_id` は設定済みだが `m_portList` 更新・通知がスキップされる | `SWSS_LOG_ERROR("Failed to set %s for hostif of port %s")` | `portsorch.cpp:7272-7274` |
+| VLAN ID が VLAN テーブルに存在しない (DIP 非サポート時) | `VxlanTunnelMapOrch::addOperation()` | `return false` — Local SRC VTEP ポートも生成されない | `SWSS_LOG_WARN("Vxlan tunnel map vlan id doesn't exist: %d")` | `vxlanorch.cpp:2032` |
+| VNI ID が最大値超過 (`vni_id >= (1 << 24)`) | `VxlanTunnelMapOrch::addOperation()` | `return false` — 恒久エラー | `SWSS_LOG_ERROR("Vxlan tunnel map vni id is too big: %d")` | `vxlanorch.cpp:2039` |
+| `VXLAN_TUNNEL` が CONFIG_DB に存在しない | `VxlanTunnelMapOrch::addOperation()` | `return false` → Orch 再試行キューへ | `SWSS_LOG_WARN("Vxlan tunnel '%s' doesn't exist")` | `vxlanorch.cpp:2049` |
+
+### DEL 処理 (delTunnelUser / deleteTunnelPort) における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `evpn_orch->getEVPNVtep()` が NULL (削除時) | `delTunnelUser()` | `return true` (操作完了扱い) — ポート削除はスキップされ SAI リソースが残留する可能性 | `SWSS_LOG_WARN("Unable to find VTEP. remote=%s vlan=%d usr=%d")` | `vxlanorch.cpp:1738-1741` |
+| `sai_bridge_api->set_bridge_port_attribute(ADMIN_STATE=DOWN)` 失敗 | `PortsOrch::removeBridgePort()` | `parseHandleSaiStatusFailure()` → `return false` — 削除処理が中断し SAI bridge port が残留 | `SWSS_LOG_ERROR("Failed to set bridge port %s admin status to DOWN, rv:%d")` | `portsorch.cpp:7303-7308` |
+| `sai_bridge_api->remove_bridge_port()` 失敗 | `PortsOrch::removeBridgePort()` | `parseHandleSaiStatusFailure()` → `return false` | `SWSS_LOG_ERROR("Failed to remove bridge port %s from default 1Q bridge, rv:%d")` | `portsorch.cpp:7327-7332` |
+| `deleteTunnelPort()` 時に `evpn_orch->getEVPNVtep()` が NULL | `deleteTunnelPort()` | `return` — ブリッジポート・トンネルポートが削除されずに処理終了 | `SWSS_LOG_WARN("Unable to find VTEP. tunnelPort=%s")` | `vxlanorch.cpp:1803` |
+| DIP サポート有り環境で `refcnt > 0` (IMR/IP ルートが残存) | `deleteTunnelPort()` | ブリッジポート削除をスキップ — 意図的なガード。ルート削除後に再呼び出しが必要 | `SWSS_LOG_INFO("Tunnel bridge port not removed. remote = %s refcnt = %d")` | `vxlanorch.cpp:1826-1829` |
+| `m_fdb_count != 0` の状態で削除試行 | `delTunnelUser()` / `deleteTunnelPort()` | `removeBridgePort()` は実行されるが SAI がエラーを返す場合あり。呼出し元は `return true` で完了扱い | `SWSS_LOG_ERROR("Remove Bridge port failed for remote = %s fdbcount = %d")` | `vxlanorch.cpp:1775, 1839` |
+
+### 失敗時の自動回復動作
+
+| 失敗パターン | 自動回復 | 回復条件 |
+|---|---|---|
+| `getEVPNVtep()` NULL → `addTunnelUser()` 失敗 | あり | `VXLAN_EVPN_NVO` が CONFIG_DB に書き込まれると次の SET イベントで成功する |
+| `isActive()` false → `addTunnelUser()` 失敗 | あり | `VXLAN_TUNNEL_MAP` 処理完了で `active_=true` となり、次の SET で成功する |
+| VLAN 未設定 → `addOperation()` 失敗 | あり | VLAN が作成されると Orch が再実行される |
+| SAI `create_bridge_port()` 失敗 | SAI 依存 | SAI がリトライ可能ステータスを返せば `handleSaiCreateStatus` がキューに戻す |
+| `m_fdb_count != 0` でブリッジポート削除ブロック | あり | FDB エントリがエージング後に `deleteTunnelPort()` が再呼び出しされると削除が進行する |
+
+> スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-failure.md`
+
+<!-- /failure -->
 
 ## 例外条件・特殊挙動
 
