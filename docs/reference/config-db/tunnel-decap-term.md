@@ -174,6 +174,26 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`tunneldecaporch` / `routeorch` / `vnetorch` が TUNNEL_DECAP_TERM_TABLE の処理に際してコードレベルで参照・操作するテーブル一覧（YANG leafref 非対象、APPL_DB テーブルのため）。
+
+| 参照先 | 方向 | 機構 | 条件 |
+|--------|------|------|------|
+| `APPL_DB.TUNNEL_DECAP_TABLE` | 読み取り | `tunnelTable` メモリキャッシュで親トンネル存在確認。不在なら `unhandledDecapTerms` に保留し、親トンネル作成後に `processUnhandledDecapTunnelTerms()` で自動フラッシュ | SET/DEL イベント処理毎 (`tunneldecaporch.cpp:392, 511-521`) |
+| `STATE_DB.TUNNEL_DECAP_TERM_TABLE` | 書き込み | SAI `create_tunnel_term_table_entry()` 成功後に `setDecapTunnelTermStatus()` でミラー書き込み。`src_ip` / `subnet_type` は空でない場合のみ書き込む。DEL 時は `removeDecapTunnelTermStatus()` で削除 | SAI create/remove 成功時 (`tunneldecaporch.cpp:998, 1539-1567`) |
+| `CONFIG_DB.SUBNET_DECAP`（`subnetDecapConfig` 経由） | 読み取り | subnet decap tunnel 名一致時に `subnetDecapConfig.enable` / `src_ip` / `src_ip_v6` を参照してエントリの採否を決定。`enable=false` または `src_ip` 未設定なら永続スキップ | `tunnel_name` が subnet decap tunnel に一致する term の処理時 (`tunneldecaporch.cpp:393-394, 472-509`) |
+| `APPL_DB.TUNNEL_DECAP_TERM_TABLE`（書き込み元: RouteOrch） | 書き込み | VIP ルート追加時に `m_appTunnelDecapTermProducer.set(key, {{"term_type","MP2MP"},{"subnet_type","vip"}})` を直接書き込む。`getSubnetDecapConfig().enable` が false ならスキップ。`m_SubnetDecapTermsCreated` で重複防止 | VIP subnet decap ルート追加/削除時 (`routeorch.cpp:3220-3251`) |
+| `APPL_DB.TUNNEL_DECAP_TERM_TABLE`（書き込み元: VNetRouteOrch） | 書き込み | VNet VIP ルート追加時に `app_tunnel_decap_term_producer_.set(key, {{"term_type","MP2MP"},{"subnet_type","vip"}})` を書き込む。RouteOrch と独立した `subnet_decap_terms_created_` で重複防止 | VNet VIP ルート追加/削除時 (`vnetorch.cpp:1563-1594`) |
+
+!!! note "RouteOrch / VNetRouteOrch による自動書き込み"
+    VIP subnet decap を有効化すると、RouteOrch または VNetRouteOrch が `SUBNET_DECAP.enable=true` を確認し、VIP prefix のルート追加時に TUNNEL_DECAP_TERM_TABLE へ `subnet_type=vip` の `MP2MP` term を自動的に書き込む。これらの term は `tunnelmgrd` や `swssconfig` ではなく orchagent 側から生成されるため、APPL_DB を直接監視しない限りトレースが難しい。
+
+> **Evidence**: `tunneldecaporch.cpp:35,392-521,998,1539-1567`; `routeorch.cpp:53,3220-3251`; `vnetorch.cpp:734,1563-1594`
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-cross-refs.md`
+<!-- /cross-refs -->
+
 ## 購読者
 
 - `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) `create_tunnel_term_table_entry()` / `remove_tunnel_term_table_entry()` を呼び出す
