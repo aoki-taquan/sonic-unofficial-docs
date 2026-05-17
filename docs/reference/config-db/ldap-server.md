@@ -493,4 +493,63 @@ CONFIG_DB `LDAP_SERVER` / `LDAP|global` テーブルの変更に伴って `hostc
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ldap-server-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L.2454-2466, L.2475-2476, L.2528, L.2331-2343, L.399-417, L.547-564, L.437-442, L.241-251  
+> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-pubsub.md`
+
+### Redis 購読方式
+
+`LDAP_SERVER` / `LDAP|global` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`AaaCfg` 経由) | `ConfigDBConnector.subscribe()` | `LDAP` | `ldap_global_handler` → `ldap_global_update` |
+| `hostcfgd` (`AaaCfg` 経由) | 同上 | `LDAP_SERVER` | `ldap_server_handler` → `ldap_server_update` |
+
+`hostcfgd` 以外で `LDAP_SERVER` テーブルを購読するプロセスは存在しない（`pam_ldap` / `nslcd` は設定ファイルを起動時に読むのみで Redis を購読しない）。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config ldap add 10.0.0.1
+  ↓ HSET "LDAP_SERVER|10.0.0.1" priority "1"
+Redis keyspace PUBLISH "__keyspace@4__:LDAP_SERVER|10.0.0.1"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ HGETALL "LDAP_SERVER|10.0.0.1"  ← 通知後に値を再取得
+ldap_server_handler(key="10.0.0.1", op=SET, data={priority:"1"})
+  ↓ AaaCfg.ldap_server_update() → modify_conf_file()
+  ↓ nslcd.conf / ldap.conf 再生成 (/etc/nslcd.conf, /etc/ldap/ldap.conf)
+  ↓ handle_nslcd_service(is_ldap_config_complete())
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `HGETALL` で取得する。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `AaaCfg.load()` が `init_data['LDAP']` / `init_data['LDAP_SERVER']` を一括スナップショットで適用する。
+
+### keyspace 通知パターン
+
+| Redis 通知チャンネル | 操作 | hostcfgd 受信 |
+|---|---|---|
+| `__keyspace@4__:LDAP\|global` | `hset` | `ldap_global_handler("global", SET, {...})` |
+| `__keyspace@4__:LDAP\|global` | `del` | `ldap_global_handler("global", DEL, {})` |
+| `__keyspace@4__:LDAP_SERVER\|<ip>` | `hset` | `ldap_server_handler("<ip>", SET, {priority:"1",...})` |
+| `__keyspace@4__:LDAP_SERVER\|<ip>` | `del` | `ldap_server_handler("<ip>", DEL, {})` |
+
+dbId は CONFIG_DB の通常値 4 (sonic-swss-common の `database_config.json` 既定)。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `LDAP_SERVER` / `LDAP\|global` 変更で `is_ldap_config_complete()` が True | `systemctl unmask/restart nslcd` | `restart_service("nslcd")` — hostcfgd:241-244 |
+| `LDAP_SERVER` / `LDAP\|global` / `AAA` 変更で `is_ldap_config_complete()` が False | `systemctl stop/mask nslcd` | `handle_nslcd_service(False)` — hostcfgd:246-251 |
+| `nslcd.conf` / `ldap.conf` 書き換え | デーモン restart あり (`nslcd` は設定をロード時のみ読む) | `modify_conf_file()` → `handle_nslcd_service()` |
+
+> **ConsumerStateTable / NotificationProducer 非使用の確認**: `LDAP_SERVER` は `swsscommon.ConsumerStateTable` の購読者なし。`NotificationProducer` で LDAP 関連通知を出す箇所も SONiC ソース内になし。APPL_DB/STATE_DB の中継・通知パスを持たない。
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 32758c44ab11 -->
