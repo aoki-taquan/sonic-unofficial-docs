@@ -566,6 +566,96 @@ RIF 作成時 (intfsorch.cpp:1309) と削除時 (intfsorch.cpp:1363) に `gPorts
 > 中間調査詳細: `meta/_intermediate/cdb-flow/counters-rif-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-rif-pubsub.md`
+> 調査対象: `sonic-swss/orchagent/flexcounterorch.cpp`, `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-utilities/scripts/intfstat`
+
+### Producer/Consumer ペア
+
+RIF カウンタの制御経路は **CONFIG_DB → FlexCounterOrch → IntfsOrch → syncd** という 4 段構成をとる。APPL_DB 中継なし。
+
+| 区間 | 方式 | 詳細 |
+|------|------|------|
+| CONFIG_DB → FlexCounterOrch | `SubscriberStateTable` | `FLEX_COUNTER_TABLE\|RIF` を購読。keyspace notification で変化を検出 |
+| FlexCounterOrch → IntfsOrch | 直接関数呼び出し | `gIntfsOrch->generateInterfaceMap()` → `m_updateMapsTimer->start()` |
+| IntfsOrch タイマー起動後 | `SelectableTimer` 駆動 | `doTask(SelectableTimer&)` で `m_rifsToAdd` リストを処理 |
+| IntfsOrch → COUNTERS_DB | 直接書き込み | `m_rifNameTable->set()` / `m_rifTypeTable->set()` |
+| IntfsOrch → FLEX_COUNTER_DB | `startFlexCounterPolling()` | `RIF_STAT_COUNTER:<oid>:COUNTER_ID_LIST` を書き込む |
+| syncd → ASIC | SAI flex counter ポーリング | 1000 ms 間隔で SAI stat API をポーリング |
+| syncd → COUNTERS_DB | 直接書き込み | `COUNTERS:<oid>` Hash に各 SAI フィールドをアトミック更新 |
+| syncd + rif_rates.lua | Lua プラグイン実行 | ポーリング毎に `RATES:<oid>` の RX_BPS/TX_BPS/RX_PPS/TX_PPS を指数平滑化計算 |
+| COUNTERS_DB → intfstat | `SonicV2Connector.get()` 直接読み出し | `COUNTERS_RIF_NAME_MAP` で名前→OID 解決後、`COUNTERS:<oid>` を読む（pull 型） |
+
+`FlexCounterOrch::doTask()` における RIF 経路 (flexcounterorch.cpp:283-286):
+
+```cpp
+if(gIntfsOrch && (key == RIF_KEY) && (value == "enable"))
+{
+    gIntfsOrch->generateInterfaceMap();
+}
+```
+
+### warm-start 遅延タイマー
+
+`FlexCounterOrch` は cold-start では即座に処理を開始するが、warm-start では **60 秒**のタイマー (`FLEX_COUNTER_DELAY_SEC = 60`) が期限切れになるまで `doTask()` 全体をブロックする (flexcounterorch.cpp:127-137, 156-158)。これは syncd の warm-start 完了前に SAI ポーリングを開始しないための設計。
+
+```
+cold-start: m_delayTimerExpired = true → 即処理可能
+warm-start: SelectableTimer(60s) 起動 → 60s 間 doTask ブロック
+```
+
+### gTraditionalFlexCounter モードの非同期待機
+
+`gTraditionalFlexCounter == true` の場合、IntfsOrch は `m_rifsToAdd` に RIF を一旦キューイングし、`doTask(SelectableTimer&)` のたびに ASIC_DB `VIDTORID` テーブルに OID が現れるまで待機する (intfsorch.cpp:1627-1636)。`gTraditionalFlexCounter == false`（新モード）では VIDTORID 未到達でも即時 `addRifToFlexCounter()` が呼ばれる。
+
+### intfstat の読み出しパス（pull 型）
+
+`intfstat` は COUNTERS_DB を **直接読み取る**（pull 型）。`SubscriberStateTable` / `ConsumerStateTable` / Redis `PSUBSCRIBE` は使用しない。コマンド実行時点の最新スナップショットを取得する。
+
+```python
+# intfstat:81-82
+self.db = SonicV2Connector(use_unix_socket_path=False)
+self.db.connect(self.db.COUNTERS_DB)
+
+# intfstat:123 — 名前→OID 解決
+counter_rif_name_map = self.db.get_all(self.db.COUNTERS_DB, COUNTERS_RIF_NAME_MAP)
+# intfstat:96 — SAI カウンタ値取得
+counter_data = self.db.get(self.db.COUNTERS_DB, full_table_id, counter_name)
+# intfstat:109 — RATES テーブル読み出し
+counter_data = self.db.get(self.db.COUNTERS_DB, rates_table_id, name)
+```
+
+### データフロー図
+
+```text
+CONFIG_DB[FLEX_COUNTER_TABLE|RIF]
+  ↓ SubscriberStateTable (keyspace notification)
+orchdaemon select() loop
+  ↓ FlexCounterOrch::doTask()
+      [m_delayTimerExpired チェック]
+      [gPortsOrch->allPortsReady() チェック]
+      gIntfsOrch->generateInterfaceMap() → m_updateMapsTimer->start()
+  ↓ IntfsOrch::doTask(SelectableTimer&) → addRifToFlexCounter()
+      COUNTERS_DB[COUNTERS_RIF_NAME_MAP] / [COUNTERS_RIF_TYPE_MAP]
+      FLEX_COUNTER_DB[RIF_STAT_COUNTER:<oid>:COUNTER_ID_LIST]
+  ↓ syncd FlexCounter スレッド (1000ms ポーリング)
+      sai_router_intfs_api->get_router_interface_stats()
+      COUNTERS_DB[COUNTERS:<oid>] ← SAI 統計値 (uint64 文字列)
+      rif_rates.lua 実行 → COUNTERS_DB[RATES:<oid>] ← 指数平滑 BPS/PPS
+  ↓ intfstat (pull 型 direct read)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationConsumer: なし（カウンタ配信に使用せず）
+```
+
+[^17]: FlexCounterOrch RIF enable ブランチ: `sonic-swss/orchagent/flexcounterorch.cpp:283-286`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L283>
+[^18]: IntfsOrch doTask(SelectableTimer) / addRifToFlexCounter: `sonic-swss/orchagent/intfsorch.cpp:1598-1637`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1598>
+[^19]: intfstat COUNTERS_DB 直接読み出し: `sonic-utilities/scripts/intfstat:81-82,96,109,123`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bd/scripts/intfstat#L81>
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
