@@ -308,6 +308,85 @@ leaf midplane_interface {
 
 ---
 
+<!-- failure -->
+## 無効入力・障害時の挙動 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/smart-switch-failure.md -->
+
+### 1. YANG バリデーション失敗（書き込み拒否）
+
+**`MID_PLANE_BRIDGE.bridge` パターン違反**  
+`sonic-smart-switch.yang:63-69` の `pattern "bridge-midplane"` により、`"bridge-midplane"` 以外の値は
+CLI 書き込み時に即座に拒否される。`must "(current()/../ip_prefix)"` 制約により、`bridge` のみを書いて
+`ip_prefix` を省略した場合も同様に拒否される。
+
+**`DHCP_SERVER_IPV4_PORT` leafref 解決失敗**  
+`DHCP_SERVER_IPV4|bridge-midplane` が存在しない状態で `DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu0` を
+書き込むと YANG leafref 制約違反で拒否される（`sonic-dhcp-server-ipv4.yang:217-219`）。
+同様に `DPUS|dpu0` が存在しない状態での `port` フィールド参照も拒否される（同:231-233）。
+
+### 2. dhcpservd — サイレント失敗
+
+SmartSwitch 向け DHCP 処理の多くは失敗時にエラーログを出さずスキップする。
+
+| 条件 | コード位置 | 挙動 |
+|------|-----------|------|
+| `DEVICE_METADATA.subtype != "SmartSwitch"` | `dhcp_cfggen.py:67,76` | `_parse_dpu()` を呼ばず空辞書返却。`MID_PLANE_BRIDGE` / `DPUS` を完全無視 |
+| `bridge` または `ip_prefix` 欠落 | `dhcp_cfggen.py:84` | midplane が `dhcp_interfaces` に未登録。DPU への IP 払い出しが停止 |
+| `DHCP_SERVER_IPV4_PORT` のポートが `dhcp_members` に不在 | `dhcp_cfggen.py:424-425` | `LOG_WARNING` を出力して当該ポートをスキップ。他ポートは処理継続 |
+| `dhcp_interface` に IPv4 アドレスなし | `dhcp_cfggen.py:432-433` | `LOG_WARNING` を出力してスキップ |
+| `ips` と `ranges` の同時指定 | `dhcp_cfggen.py:418-420` | `LOG_WARNING` を出力して当該ポートをスキップ（YANG は通常書き込み時に弾く） |
+
+上記の「サイレント失敗」はいずれも CONFIG_DB を変更せず、他テーブルや他ポートの処理に影響を与えない。
+
+### 3. dhcpservd — 致命的エラー（generate() 全体失敗）
+
+**hostname 未設定** (`dhcp_cfggen.py:171-174`):
+
+```python
+if localhost_entry is None or "hostname" not in localhost_entry:
+    syslog.syslog(syslog.LOG_ERR, "Cannot get hostname")
+    raise Exception("Cannot get hostname")
+```
+
+`DEVICE_METADATA|localhost.hostname` が存在しない場合、`LOG_ERR` を出力して例外を送出する。
+`generate()` 全体が失敗し Kea 設定ファイルが更新されない。
+
+### 4. dhcprelayd — プロセス起動失敗
+
+**dhcrelay ゾンビ起動** (`dhcprelayd.py:306-313`):  
+dhcrelay プロセスが起動直後にゾンビ状態になった場合、`LOG_ERR` を出力してプロセスを
+強制終了し `sys.exit(1)` する。`dhcprelayd` コンテナが再起動する。
+
+**dhcp_server IP タイムアウト** (`dhcprelayd.py:375-385`):  
+STATE_DB の `DHCP_SERVER_IPV4_SERVER_IP|eth0.ip` を 10 回（合計 100 秒）リトライして
+取得できない場合、`LOG_ERR` を出力して `sys.exit(1)` する。コンテナが再起動する。
+
+### 5. dhcp_lease — lease ファイル不在
+
+**lease ファイル不在** (`dhcp_lease.py:116-121`):  
+Kea の lease ファイル（デフォルト `/var/lib/kea/kea-lease.csv`）が存在しない場合、
+`LOG_ERR` を出力して例外を再送出する。STATE_DB の `DHCP_SERVER_IPV4_LEASE` テーブルは更新されない。
+
+### 障害影響まとめ
+
+| 障害シナリオ | ログレベル | CONFIG_DB への影響 | 挙動 |
+|---|---|---|---|
+| YANG pattern/must 制約違反 | — | 書き込み拒否 | CLI がエラーを返す |
+| `subtype != SmartSwitch` | なし | 不変 | サイレント。DHCP 設定不生成 |
+| `bridge`/`ip_prefix` 片欠落 | なし | 不変 | サイレント。midplane DHCP 停止 |
+| port が dhcp_members に不在 | WARNING | 不変 | 当該ポートのみスキップ |
+| IPv4 アドレスなし dhcp_interface | WARNING | 不変 | 当該インターフェースのみスキップ |
+| `ips` + `ranges` 同時指定 | WARNING | 不変 | 当該ポートのみスキップ |
+| hostname 未設定 | ERR | 不変 | `generate()` 全体失敗 |
+| dhcrelay ゾンビ起動 | ERR | 不変 | コンテナ再起動 |
+| dhcp_server IP タイムアウト | ERR | 不変 | コンテナ再起動 |
+| lease ファイル不在 | ERR | 不変 | `DHCP_SERVER_IPV4_LEASE` 更新停止 |
+
+<!-- /failure -->
+
+---
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DHCP_SERVER_IPV4`、`DPUS`、`DPU`、`DEVICE_METADATA`
