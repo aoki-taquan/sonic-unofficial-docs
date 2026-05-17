@@ -325,6 +325,62 @@ DPU の設定変更（`state` / `pa_ipv4` 等）を orchagent に反映させる
 `swss` コンテナの再起動が必要。`swbus_port` 変更は orchagent 不要、caclmgrd が即時対応する。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dpu-pubsub.md`
+
+`DPU` テーブルの変化を購読するコンポーネントと、その購読方式を示す。
+
+| # | コンポーネント | 購読方式 | テーブル | タイムアウト | ガード条件 |
+|---|---------------|---------|---------|-------------|-----------|
+| 1 | `caclmgrd` | `SubscriberStateTable` (CONFIG_DB) | `DPU` | 1000 ms | `"dash-ha"` が FEATURE テーブルに存在する場合のみ `update_dash_ha_rules` 実行 |
+| 2 | `orchagent` (`DpuRegistry`) | `Table` — 起動時一括読み取り | `DPU` | なし（一回読み） | `gMySwitchSubType == "SmartSwitch"` かつ `swss` コンテナ初期化時のみ |
+
+### caclmgrd の購読フロー
+
+```
+CONFIG_DB[DPU|<dpu_name>]  SET / DEL
+  ↓ SubscriberStateTable (caclmgrd:1163, SELECT_TIMEOUT=1000ms)
+  ↓ pop() → (key, op, fvs)
+  ↓ guard: "dash-ha" in self.feature_present  (caclmgrd:1265)
+update_dash_ha_rules(namespace, key, op, fvs)
+  SET   swbus_port あり → iptables/ip6tables INPUT 位置 2 に ACCEPT 挿入
+  DEL   swbus_port 登録済み → 対応 ACCEPT ルール削除
+  SET   swbus_port 変更   → 旧ルール削除 → 新ルール挿入（アトミックではない）
+  SET   swbus_port なし   → INFO ログのみ、iptables 操作なし
+```
+
+`caclmgrd` は `dashHaPortMap`（`{dpu_name: swbus_port}`）で差分管理し、
+重複挿入・二重削除を回避する (`caclmgrd:130, 1082-1109`)。
+
+### orchagent の読み取りフロー
+
+```
+DashEniFwdOrch::addOperation() (初回呼び出し)
+  → lazyInit()
+  → ctx->populateDpuRegistry()
+  → DpuRegistry::populate(cfg_db)
+      Table dpuTable(cfg_db, "DPU")   ← one-shot read (caclmgrd 型の購読なし)
+      dpuTable.getKeys() → 全キー取得
+        state == "down" → skip
+        state == "active" → dpus_name_map_ に { type=LOCAL, pa_v4 } 登録
+```
+
+**Runtime 変更の非対称性**: `caclmgrd` は `SubscriberStateTable` で常時購読するため
+`DPU` テーブルの runtime 変更（`swbus_port` 等）をリアルタイムで反映する。
+一方 `orchagent` (`DpuRegistry`) は起動時に一括読み取りのみで、
+runtime の SET/DEL は orchagent に伝播しない。`pa_ipv4` / `state` 変更を
+orchagent に反映させるには `swss` コンテナ再起動が必要（Phase F と同様の注意点）。
+
+### Producer
+
+`DPU` テーブルへの書き込みは以下が行う:
+
+- **起動時**: `sonic-cfggen` が `platform.json` を読み込み `smartswitch_config.py` 経由で CONFIG_DB に書き込む (`smartswitch_config.py:43-44`)
+- **Runtime**: gNMI 経由でネットワークコントローラ (NC) が直接書き込む（`caclmgrd` が即時検知）
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
