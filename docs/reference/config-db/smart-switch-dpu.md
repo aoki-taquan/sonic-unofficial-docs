@@ -405,6 +405,73 @@ SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=<vnet_name>  ...
 `MID_PLANE_BRIDGE` / `DPUS` / `DPU` / `REMOTE_DPU` / `VDPU` はいずれも SAI を直接操作しない。`DASH_HA_GLOBAL_CONFIG` は `dashhaorch` (orchagent) 経由で DASH SAI に設定を渡すが、orchagent の SAI 呼び出し詳細は DASH 固有実装に依存する。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 異常系・無効入力時の挙動 (Phase D)
+
+> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-83,106,718-720,801-840,1075-1105`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:76,84,119`; `src/sonic-yang-models/yang-models/sonic-smart-switch.yang:65,69,90,98,101,160,295-306` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-failure.md`
+
+### YANG バリデーション失敗（書き込み拒否）
+
+| テーブル / フィールド | 違反条件 | 結果 |
+|---|---|---|
+| `MID_PLANE_BRIDGE.bridge` | `"bridge-midplane"` 以外の値 | CLI が書き込み拒否（`pattern "bridge-midplane"` 制約） |
+| `MID_PLANE_BRIDGE` (`bridge` のみ、`ip_prefix` 欠落) | `ip_prefix` なしで `bridge` を設定 | YANG `must` 制約違反で拒否（`must "(current()/../ip_prefix)"`) |
+| `DPUS.midplane_interface` | `dpu_name` と異なる値 | YANG `must "(current() = current()/../dpu_name)"` 違反 |
+| `DPU.dpu_id` | `"8"` 以上・2桁・負数 | `pattern [0-7]` 違反で書き込み拒否 |
+| `DASH_HA_GLOBAL_CONFIG.dpu_vnet` | 存在しない VNET 名を指定 | YANG `leafref` 解決失敗。CLI が拒否 |
+
+### dhcpservd — ミッドプレーン DHCP の無音失敗
+
+以下の条件が成立するとエラーログなしで DHCP 設定生成がスキップされる。
+
+| 条件 | コード位置 | 影響 |
+|---|---|---|
+| `DEVICE_METADATA.localhost.subtype != "SmartSwitch"` | `dhcp_cfggen.py:76` | `MID_PLANE_BRIDGE` / `DPUS` テーブルを完全スキップ。DPU への IP 払い出し停止 |
+| `MID_PLANE_BRIDGE.GLOBAL` の `bridge` または `ip_prefix` いずれかが欠落 | `dhcp_cfggen.py:84` | ミッドプレーンブリッジが `dhcp_interfaces` に未登録。`DPUS` が存在しても IP 払い出し停止 |
+| `DPUS` エントリに `midplane_interface` フィールドなし | `dhcp_cfggen.py:119` | 当該エントリをフィルタアウト。対応 DPU の IP 払い出しのみ停止 |
+
+いずれの場合も `dhcpservd` はエラーを出力しない。症状（DPU が IP を取得できない）が唯一の手掛かりになる。
+
+### chassisd — midplane 初期化失敗
+
+`SmartSwitchModuleUpdater.__init__()` で `chassis.init_midplane_switch()` が `False` または例外を返した場合:
+
+```python
+# chassisd:718-720
+self.midplane_initialized = try_get(chassis.init_midplane_switch, default=False)
+if not self.midplane_initialized:
+    self.log_error("Chassisd midplane intialization failed")
+```
+
+- `check_midplane_reachability()` の先頭で `if not self.midplane_initialized: return` となりループ全体をスキップ
+- `CHASSIS_STATE_DB.DPU_STATE` の midplane 状態が更新されない
+- `CONFIG_DB` は変更されない
+
+### DPU offline 遷移時の挙動
+
+`CHASSIS_MODULE` の oper_status が `offline` に遷移すると chassisd が以下を記録する（`DPU` / `DPUS` テーブルは変更しない）:
+
+1. `/host/reboot-cause/module/<dpu>/prev_reboot_time.txt` にダウン時刻を記録
+2. `/host/reboot-cause/module/<dpu>/history/<time>_reboot_cause.json` に原因 JSON を保存（最大 `MAX_HISTORY_FILES=10` 件でローテーション）
+3. `CHASSIS_STATE_DB.REBOOT_CAUSE|<DPU>|<time>` に書き込み
+
+midplane 疎通切断時:
+
+```text
+"Unexpected: Module <DPU> lost midplane connectivity"  # syslog WARNING
+```
+
+`CHASSIS_STATE_DB.DPU_STATE|<DPU>` の `dpu_midplane_link_state` / `dpu_control_plane_state` / `dpu_data_plane_state` を全て `"down"` にセット（`chassisd:882-884`）。CONFIG_DB の DPU 関連テーブルは変更されない。
+
+### DPU リブート判定（MAX_DPU_REBOOT_DURATION）
+
+DPU が online 復帰したとき、同一のリブート原因で `MAX_DPU_REBOOT_DURATION=800` 秒以内なら
+`is_reboot=True` とみなしリブート原因の再書き込みをスキップする（`chassisd:830`）。
+`DEFAULT_DPU_REBOOT_TIMEOUT=360` 秒は `platform.json` の `dpu_reboot_timeout` で上書き可能（`chassisd:727`）。
+
+<!-- /failure -->
+
 ## 制約
 
 - `MID_PLANE_BRIDGE|GLOBAL` の `bridge` は `bridge-midplane` 固定。変更不可。
