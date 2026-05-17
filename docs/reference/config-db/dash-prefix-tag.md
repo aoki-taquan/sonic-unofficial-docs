@@ -164,6 +164,40 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/dash/dashtagmgr.cpp` + `dashaclorch.cpp` + `dashaclgroupmgr.cpp`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `ip_version` が proto3 デフォルト `0` (`IP_VERSION_UNSPECIFIED`) | `from_pb()` → `to_sai(data.ip_version(), ...)` | `from_pb` が `false` → `task_failed`。エントリ恒久スキップ | なし (silent reject) | `dashtagmgr.cpp:11-14` |
+| `ip_version` が 1/2 以外の未知値 | `to_sai(IpVersion, ...)` — pbutils.cpp | 同上: `false` → `task_failed` → 恒久スキップ | なし | `pbutils.cpp:9-24` |
+| `prefix_list` の `IpPrefix` 変換失敗 (アドレス不正) | `to_sai(data.prefix_list(), ...)` — pbutils.cpp | `from_pb` が `false` → `task_failed` → 恒久スキップ | なし | `dashtagmgr.cpp:16-19` |
+| 既存タグへの SET で `ip_version` が変更 (イミュータブル) | `DashTagMgr::update()` L61-65 | `task_failed`。`m_prefixes` 更新なし | WARN: `"'ip_version' changing is not supported for tag %s"` | `dashtagmgr.cpp:61-65` |
+| 未存在タグへの update (`m_tag_table` にキーなし) | `DashTagMgr::update()` L52-57 | `task_failed` | ERROR: `"Prefix tag %s does not exist"` | `dashtagmgr.cpp:52-57` |
+| 同一 `tag_id` での重複 create | `DashTagMgr::create()` L34-37 | `task_failed` (ログなし) | なし | `dashtagmgr.cpp:34-37` |
+
+`task_failed` を受け取った `doTask()` は `m_toSync.erase(itr)` でエントリを削除し WARN ログ `"Task %s - %s fail"` を出力する (`dashaclorch.cpp:149-151`)。自動リトライは行われない。
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| タグが ACL rule から参照中 (`m_groups` 非空) | `DashTagMgr::remove()` L84-88 | `task_need_retry`。タグ保持・次ループで再試行 | WARN: `"Prefix tag %s is still in use by ACL rule(s)"` | `dashtagmgr.cpp:84-88` |
+| 未存在タグの DEL | `DashTagMgr::remove()` L78-82 | `task_success` (idempotent) | WARN: `"Prefix tag %s does not exist"` | `dashtagmgr.cpp:78-82` |
+
+### 補足
+
+- **SAI 非経由のため SAI エラーなし**: タグ処理は orchagent 内メモリ (`m_tag_table`) のみを操作し SAI API を呼び出さない。`SAI_STATUS_*` 系エラーパスは存在しない。
+- **STATE_DB / ASIC_DB への書き込みなし**: タグの処理結果は STATE_DB に反映されない。失敗はsyslog (`/var/log/swss/orchagent.log`) の `"Task ... fail"` 行でのみ確認できる。
+- **silent reject の罠**: `ip_version` 不正や protobuf 変換失敗は orchagent の `task_failed` ログのみで、コントローラからは「送ったのに反映されない」状態になる。`DashTagMgr::exists()` で登録確認するか orchagent ログを参照すること。
+
+詳細根拠は `meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md` を参照。
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
