@@ -355,6 +355,83 @@ CONFIG_DB `DPU` テーブルへの runtime subscribe を行うコンシューマ
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dpu-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dpu-platform.md`
+
+`DPU` テーブルは **SmartSwitch NPU ノード** (`is_smartswitch() == True`) にのみ存在する。DPU ノード自身や通常スイッチの CONFIG_DB には書き込まれない。
+
+### プラットフォーム識別ロジック
+
+SONiC は `platform.json` の最上位キーでノード種別を判定する。
+
+| `platform.json` キー | `is_smartswitch()` | `is_dpu()` | `DPU` テーブル存在 |
+|---------------------|-------------------|-----------|-------------------|
+| `DPUS` あり (NPU ノード) | **True** | False | **あり** (minigraph 由来) |
+| `DPU` あり (DPU ノード) | False | **True** | なし |
+| どちらもなし (通常スイッチ) | False | False | なし |
+
+```python
+# sonic_py_common/device_info.py:671-695
+def is_smartswitch():
+    platform_data = get_platform_json_data()
+    return "DPUS" in platform_data if platform_data else False
+
+def is_dpu():
+    platform_data = get_platform_json_data()
+    return 'DPU' in platform_data if platform_data else False
+```
+
+### SmartSwitch NPU の platform.json サンプル
+
+`sonic-buildimage/src/sonic-config-engine/tests/data/smartswitch/sample_switch_platform.json` では `DPUS` セクションのみ持ち、`DPU` テーブルの具体的フィールド (pa_ipv4 / gnmi_port 等) は minigraph パーサが CONFIG_DB へ直接書き込む。
+
+```json
+{
+    "DPUS": {
+        "dpu0": { "midplane_interface": "dpu0" },
+        "dpu1": { "midplane_interface": "dpu1" }
+    }
+}
+```
+
+### DEVICE_METADATA 設定 (SmartSwitch 固有)
+
+`config_samples.py:generate_t1_smartswitch_*` が生成するサンプル設定:
+
+| フィールド | NPU ノード | DPU ノード |
+|----------|-----------|-----------|
+| `subtype` | `SmartSwitch` | `SmartSwitch` |
+| `switch_type` | 未設定 (T1 default) | `dpu` |
+| `type` | `LeafRouter` | `SmartSwitchDPU` |
+
+NPU ノードのみ `MID_PLANE_BRIDGE` / `DHCP_SERVER_IPV4` / `DHCP_SERVER_IPV4_PORT` を持つ。
+
+### Mellanox SmartSwitch 固有実装
+
+Mellanox (`mlnx-platform-api/smart_switch/dpuctl/main.py`) は `DpuCtlPlat` クラスでプラットフォーム API 経由の DPU リセット / パワーオン / パワーオフを実装する。CONFIG_DB `DPU` テーブルを直接参照せず、CHASSIS_STATE_DB `DPU_STATE` テーブルを通じて状態を更新する。
+
+### reboot_smartswitch_helper の DPU テーブル参照
+
+`sonic-utilities/scripts/reboot_smartswitch_helper` はリブート時に以下の順序で CONFIG_DB `DPU` テーブルを参照する:
+
+1. `sonic-db-cli CONFIG_DB keys "DPU|*${DPU_NAME}"` — DPU エントリ検索
+2. `sonic-db-cli CONFIG_DB hget "$k" 'gnmi_port'` — gNMI ポート取得
+3. `DHCP_SERVER_IPV4_PORT|bridge-midplane|${DPU_NAME}` → `ips@` — midplane IP 取得
+4. 取得した IP + gnmi_port で gNMI 接続確認後にリブート実行
+
+### 非 SmartSwitch 環境での挙動
+
+| コンシューマ | 非 SmartSwitch での挙動 |
+|------------|----------------------|
+| `DashEniFwdOrch` | orchdaemon に登録されない (SmartSwitch かつ非 DPU ノードの場合のみ有効) |
+| `caclmgrd` | `subscribe_dpu_table` を登録するが `"dash-ha"` feature がない限り DPU イベントを処理しない |
+| `sonic-gnmi` DPU proxy | SmartSwitch 環境のみで有効。非 SmartSwitch では DPU proxy 自体が起動しない |
+| `reboot_smartswitch_helper` | SmartSwitch 専用スクリプト。非 SmartSwitch では呼び出し自体が発生しない |
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
