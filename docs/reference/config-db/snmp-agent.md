@@ -409,6 +409,55 @@ CLI の `add_snmp_agent_address()` は `os.system("systemctl restart snmp")` の
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-utilities/config/main.py` L4293-4369, `dockers/docker-snmp/snmpd.conf.j2` L32-33, `src/sonic-config-engine/minigraph.py:2314`, `sonic-snmp.yang` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-constants.md`
+
+`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` テーブルに関連して、CONFIG_DB では管理されないハードコード定数の一覧。
+
+### SNMP_AGENT_ADDRESS_CONFIG の定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| フォールバック agentAddress (IPv4) | `udp:161` | テーブルが空の場合に全インターフェース公開 | `snmpd.conf.j2` L32 |
+| フォールバック agentAddress (IPv6) | `udp6:161` | 同上、IPv6 | `snmpd.conf.j2` L33 |
+| minigraph デフォルト port | `'161'` | minigraph 経由で自動生成する際の key の port 部 | `minigraph.py:2314` |
+
+`SNMP_AGENT_ADDRESS_CONFIG` にエントリを 1 件以上登録すると `snmpd.conf.j2` L27-30 が展開され、フォールバックは使われなくなる。listen アドレスを制限したい場合は必ずエントリを明示する。
+
+### SNMP_USER の定数
+
+#### 認証タイプ・暗号化タイプの許容値 (CLI ハードコード)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| 有効 `SNMP_USER_AUTH_TYPE` | `['MD5', 'SHA', 'HMAC-SHA-2']` | CLI `is_valid_auth_type()` でのホワイトリスト | `config/main.py:4294` |
+| 有効 `SNMP_USER_ENCRYPTION_TYPE` | `['DES', 'AES']` | CLI `is_valid_encrypt_type()` でのホワイトリスト | `config/main.py:4302` |
+
+YANG の `SNMP_USER_AUTH_TYPE` は `type string` で明示的な enum 制約を持たないが、CLI が Python レベルで 3 値のみに制限する。`sonic-db-cli` で直接書き込む場合は YANG `must` 制約のみが適用される。
+
+#### パスワード長・文字種制約 (CLI ハードコード)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| パスワード最小長 | `8` 文字 | `SNMP_USER_AUTH_PASSWORD` / `SNMP_USER_ENCRYPTION_PASSWORD` の最小長 (AuthNoPriv/Priv 時) | `config/main.py:4347` |
+| パスワード最大長 | `64` 文字 | 同上の最大長 | `config/main.py:4354` |
+| ユーザ名最大長 | `32` 文字 | ユーザ名（キー）の最大長 | `config/main.py:4329` |
+| 禁止文字 (パスワード/ユーザ名) | `['@', ':']` | CLI レベルの禁止文字リスト | `config/main.py:4328, 4346` |
+
+#### タイプ正規化定数 (CLI)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| ユーザタイプ正規化マップ | `{'noauthnopriv': 'noAuthNoPriv', 'authnopriv': 'AuthNoPriv', 'priv': 'Priv'}` | CLI 入力を大文字小文字正規化して DB に書き込む | `config/main.py:4284` |
+| 権限タイプ正規化 | `upper()` による大文字変換 | `SNMP_USER_PERMISSION` を `RO`/`RW` に正規化 | `config/main.py:4727` |
+
+> **注意**: `MD5` および `DES` は RFC 8573 で非推奨とされている。可能な限り `HMAC-SHA-2` + `AES` の組み合わせを使用すること。
+
+<!-- /constants -->
+
 ---
 
 ## 関連リファレンス
