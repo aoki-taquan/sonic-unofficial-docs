@@ -279,6 +279,41 @@ TUNNEL_DECAP_TERM_TABLE のフィールドで上書きできない、または�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・連鎖変更 (Phase F)
+
+TUNNEL_DECAP_TERM_TABLE エントリの SET / DEL が引き起こす、当該テーブル以外への波及変更。
+
+### SET 成功時
+
+| 副作用 | 対象 | 詳細 | evidence |
+|--------|------|------|----------|
+| SAI term entry 作成 | ASIC_DB → syncd → ASIC | `sai_tunnel_api->create_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L979 |
+| 親トンネル ref_count +1 | `tunnelTable[name].ref_count` (in-memory) | `increaseTunnelRefCount()` — ref_count が 1 以上の間は親トンネル DEL が抑制される | `tunneldecaporch.cpp` L997, `tunneldecaporch.h` L157-160 |
+| in-memory キャッシュ登録 | `tunnel.tunnel_term_info[dst_ip]` | `TunnelTermEntry` 構造体を追加。後続 DEL / 参照管理の根拠データ | `tunneldecaporch.cpp` L990-996 |
+| STATE_DB 書き込み | `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>|<dst_ip>` | `setDecapTunnelTermStatus()` — `term_type`・`src_ip`（非空時）・`subnet_type`（非空時）を書き込む | `tunneldecaporch.cpp` L998, L1539-1561 |
+
+### DEL 成功時
+
+| 副作用 | 対象 | 詳細 | evidence |
+|--------|------|------|----------|
+| SAI term entry 削除 | ASIC_DB → syncd → ASIC | `sai_tunnel_api->remove_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L1248 |
+| 親トンネル ref_count -1 | `tunnelTable[name].ref_count` (in-memory) | `decreaseTunnelRefCount()` | `tunneldecaporch.cpp` L1260, `tunneldecaporch.h` L161-163 |
+| 親トンネルの自動削除（条件付き） | `TUNNEL_DECAP_TABLE` の SAI エントリ | ref_count が 0 になった場合、`RemoveTunnelIfNotReferenced()` → `removeDecapTunnel()` でカスケード削除 | `tunneldecaporch.cpp` L531, L1569-1576 |
+| STATE_DB エントリ削除 | `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>|<dst_ip>` | `removeDecapTunnelTermStatus()` | `tunneldecaporch.cpp` L1261, L1563-1567 |
+
+### 保留キュー経由の連鎖
+
+TERM が先着した場合 (`tunnel_exists == false`)、`unhandledDecapTerms` キューに積まれる。その後 `TUNNEL_DECAP_TABLE` SET 成功時に `processUnhandledDecapTunnelTerms()` が呼ばれ、保留済み TERM の SAI 作成・ref_count 更新・STATE_DB 書き込みが連鎖して発生する (`tunneldecaporch.cpp` L309, L1497-1519)。
+
+### SUBNET_DECAP 更新時の連鎖
+
+`SUBNET_DECAP` フィールド変更 (src_ip / src_ip_v6 の更新) が発生すると、`updateUnhandledDecapTunnelTermsSrcIp()` (L1483-1494) により未処理 TERM の src_ip フィールドが上書き更新される。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-side-effects.md`
+
+<!-- /side-effects -->
+
 ## 購読者
 
 - `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) `create_tunnel_term_table_entry()` / `remove_tunnel_term_table_entry()` を呼び出す
