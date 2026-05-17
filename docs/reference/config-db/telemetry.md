@@ -464,4 +464,61 @@ Saving startup config failed: <err>
 > **Evidence**: `dockers/docker-sonic-telemetry/supervisord.conf:50-62`; `telemetry.sh:83-130`; `gnmi_server/server.go:315-327,400-418,593-649,1054-1061`; `telemetry/telemetry.go:463-470`; 詳細 `meta/_intermediate/cdb-flow/telemetry-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`telemetry` プロセス (`sonic-gnmi`) および `telemetry.sh` 起動スクリプトに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### プロセス起動フラグデフォルト値 (telemetry.go)
+
+| 定数 / フラグ | 値 | 用途 | ソース |
+|--------------|-----|------|--------|
+| `--unix_socket` | `/var/run/gnmi/gnmi.sock` | TLS なしローカル接続用 UNIX ドメインソケットパス | `telemetry.go:175` |
+| `--jwt_refresh_int` | `900` 秒 | JWT トークンのリフレッシュ可能期間（期限の 15 分前から可能） | `telemetry.go:183` |
+| `--jwt_valid_int` | `3600` 秒 | JWT トークン有効期間（1 時間） | `telemetry.go:184` |
+| `--threshold` | `100` | 最大クライアント接続数 | `telemetry.go:187` |
+| `--idle_conn_duration` | `5` 秒 | アイドル接続を閉じるまでの時間 | `telemetry.go:190` |
+| `--crl_expire_duration` | `86400` 秒 | CRL キャッシュ有効期限（24 時間） | `telemetry.go:194` |
+| `--img_dir` | `/tmp/host_tmp` | SetPackage 等で転送されるイメージの一時ディレクトリ | `telemetry.go:195` |
+| `--max_recv_msg_size` | `4 MiB` (4\*1024\*1024) | gRPC 受信メッセージ最大サイズ | `telemetry.go:209` |
+| `--max_send_msg_size` | `4 MiB` (4\*1024\*1024) | gRPC 送信メッセージ最大サイズ | `telemetry.go:210` |
+
+> これらは YANG に定義がなく CONFIG_DB への書き込みも行われない。変更には telemetry.sh の直接編集が必要。
+
+### 証明書シンボリックリンクパス
+
+| フラグ | デフォルトパス | ソース |
+|--------|--------------|--------|
+| `--ca_cert_lnk` | `/keys/ca_cert.lnk` | `telemetry.go:199` |
+| `--server_cert_lnk` | `/keys/server_cert.lnk` | `telemetry.go:200` |
+| `--server_key_lnk` | `/keys/server_key.lnk` | `telemetry.go:201` |
+| `--cert_crl_dir` | `/mtls/crl` | `telemetry.go:203` |
+| `--grpc_meta` | `/keys/grpc-version.json` | `telemetry.go:204` |
+| `--authz_meta` | `/keys/authz-version.json` | `telemetry.go:205` |
+| `--authorization_policy_file` | `/keys/authorization_policy.json` | `telemetry.go:207` |
+
+### TLS ハードコードパラメータ
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| `MinVersion` | `TLS 1.2` | `telemetry.go:482` |
+| `CurvePreferences` | P521, P384, P256（強度順） | `telemetry.go:484` |
+| `CipherSuites` | 6 ECDHE スイート（AES-256-GCM / ChaCha20 / AES-128-GCM） | `telemetry.go:486-492` |
+| `SessionTicketsDisabled` | `true`（前方秘匿性保持） | `telemetry.go:483` |
+| keepalive `MinTime` | `20` 秒（クライアント ping 許容最短間隔） | `telemetry.go:547` |
+| keepalive `PermitWithoutStream` | `true` | `telemetry.go:548` |
+
+### telemetry.sh フォールバック値（CONFIG_DB 非依存）
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| フォールバックポート | `8080` | `TELEMETRY\|gnmi` キーが CONFIG_DB にない場合 | `telemetry.sh:85` |
+| フォールバックログレベル | `2` | `log_level` が非数値または未設定の場合 | `telemetry.sh:104` |
+| フォールバック threshold | `100` | `threshold` が null または未設定の場合 | `telemetry.sh:121` |
+| フォールバック idle_conn_duration | `5` 秒 | `idle_conn_duration` が null または未設定の場合 | `telemetry.sh:134` |
+| GNMI_CLIENT_CERT テーブル名 | `"GNMI_CLIENT_CERT"` | `user_auth=cert` 時に `--config_table_name` へ渡す固定テーブル名 | `telemetry.sh:148` |
+
+> **evidence**: `sonic-gnmi/telemetry/telemetry.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L171-215, L482-549; `sonic-buildimage/dockers/docker-sonic-telemetry/telemetry.sh@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` L85-158
+<!-- /constants -->
+
 <!-- glossary-links-injected: 896d391185a9 -->
