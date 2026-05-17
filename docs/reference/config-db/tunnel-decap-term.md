@@ -194,6 +194,49 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・リトライ・リカバリ (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L338-545, L886-1000, L1131-1262 -->
+
+### SET 失敗経路
+
+| 失敗条件 | ログ / 動作 | リトライ |
+|---------|-----------|--------|
+| キー区切り文字 (`DEFAULT_KEY_SEPARATOR`) が欠落 | `LOG_ERROR("invalid tunnel decap term key")` → `valid=false`、エントリ消費 | なし |
+| `dst_ip_prefix` が不正 IP prefix 文字列 | `LOG_ERROR("invalid destination IP prefix <e.what()>")` → `valid=false`、エントリ消費 | なし |
+| `src_ip` が不正 IP prefix 文字列 | `LOG_ERROR("invalid source IP prefix <src_ip>")` → `valid=false`、エントリ消費 | なし |
+| `term_type` が `P2P`/`P2MP`/`MP2MP` 以外 | `LOG_ERROR("invalid tunnel decap term type <value>")` → `valid=false`、エントリ消費 | なし |
+| `subnet_type` が `vlan`/`vip` 以外 | `LOG_ERROR("invalid subnet type: <value>")` → `valid=false`、エントリ消費 | なし |
+| 未知フィールド名 | `LOG_ERROR("unknown decap term table attribute '<field>'")` → `valid=false`、エントリ消費 | なし |
+| subnet decap tunnel への term が `MP2MP` 以外 | `LOG_ERROR("only MP2MP tunnel decap term is allowed for subnet decap tunnel")` → `valid=false`、エントリ消費 | なし |
+| `subnet_type` あり かつ `term_type` が `MP2MP` 以外 | `LOG_ERROR("only MP2MP is allowed for subnet decap term")` → `valid=false`、エントリ消費 | なし |
+| `term_type==P2P` または `MP2MP`(non-subnet) かつ `src_ip` 未設定 | `LOG_ERROR("no source IP is provided.")` → `valid=false`、エントリ消費 | なし |
+| subnet decap term で `src_ip`(IPv4) が `SUBNET_DECAP` 未設定 | `LOG_ERROR("source IP is not configured for subnet decap term, ignored.")` → エントリ消費（永続スキップ） | なし |
+| subnet decap term で `src_ip_v6` が `SUBNET_DECAP` 未設定 | `LOG_ERROR("source IPv6 is not configured for subnet decap term, ignored.")` → エントリ消費（永続スキップ） | なし |
+| `subnetDecapConfig.enable==false` + subnet term | `LOG_ERROR("subnet decap is disabled, ignored.")` → エントリ消費（永続スキップ） | なし |
+| 親トンネルが未存在 (`tunnel_exists==false`) | `LOG_NOTICE("tunnel doesn't exist, added to unhandled list.")` → `unhandledDecapTerms` に保留、親トンネル作成後に `processUnhandledDecapTunnelTerms()` で自動フラッシュ | **自動リトライ** |
+| `addDecapTunnelTermEntry()` 失敗 (SAI エラー) | `LOG_ERROR("failed to add tunnel decap term to ASIC_DB.")` → エントリ消費 | なし |
+| term entry が既に存在 | `LOG_NOTICE("Tunnel decap term entry <dst_ip> already exists.")` → `true` 返却（重複無視） | — |
+
+### DEL 失敗経路
+
+| 失敗条件 | ログ / 動作 | リトライ |
+|---------|-----------|--------|
+| 親トンネルが存在しない (`tunnel_exists==false`) | `LOG_NOTICE("Tunnel for decap term <key> doesn't exist, removed from unhandled list.")` → `unhandledDecapTerms` から削除。ASIC_DB 操作なし | なし |
+| DEL 対象 term entry が orchagent キャッシュに存在しない | `LOG_ERROR("Tunnel decap term entry <dst_ip> does not exist.")` → `false` 返却、DEL 失敗 | なし |
+| SAI `remove_tunnel_term_table_entry()` 失敗 | `LOG_ERROR("Failed to remove tunnel table entry: <oid>")` → `handleSaiRemoveStatus()` 経由で処理 | 条件次第 |
+
+### 重要な設計上の注意点
+
+- **永続スキップ**: キー/フィールド不正・subnet decap 無効などによる `valid=false` はエントリを消費して再キューイングしない。修正するには正しい値で再 SET が必要。
+- **subnet decap 有効化後の手動再投入**: `SUBNET_DECAP` の `enable` が後から変更されてもスキップ済みエントリは自動再処理されない。SUBNET_DECAP 変更後に term を再 SET すること。
+- **親トンネル不在が唯一の自動リトライ**: 他の失敗条件はすべてエントリ消費（恒久スキップ）。親トンネル不在のみ `unhandledDecapTerms` 経由で自動回復する。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-failure.md`
+
+<!-- /failure -->
+
 ## 購読者
 
 - `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) `create_tunnel_term_table_entry()` / `remove_tunnel_term_table_entry()` を呼び出す
