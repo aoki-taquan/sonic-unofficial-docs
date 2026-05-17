@@ -354,4 +354,44 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 | 6 | 設定不正 → 既存 sshd_config 保持 | sshd -T 検証フォールバック | 無効設定は自動破棄される |
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+`SERIAL_CONSOLE` / `SSH_SERVER` テーブルが処理される際に `hostcfgd` が暗黙的に参照・依存する他テーブルと外部ファイルを示す。
+
+### CONFIG_DB テーブルへの暗黙参照
+
+| 参照先テーブル | 参照元 / 条件 | 依存内容 | 証跡 |
+|--------------|--------------|---------|------|
+| `DEVICE_METADATA\|localhost` | `PamLimitsCfg.update_config_file()` | `DEVICE_METADATA` が存在しない場合 early return — `SSH_SERVER.max_sessions` の PAM limits 設定が適用されない | `hostcfgd:1422,1430` |
+| `SSH_SERVER\|POLICIES` | `PamLimitsCfg.__init__()` | PAM limits 設定のために `get_table('SSH_SERVER')` で `max_sessions` 値を取得。`SERIAL_CONSOLE` とは独立してポーリング | `hostcfgd:1425-1434` |
+
+### システムファイルへの書込（CONFIG_DB 外の副次参照先）
+
+| 参照先ファイル | 操作元 | 条件 | 操作 | 証跡 |
+|--------------|-------|------|------|------|
+| `/etc/ssh/sshd_config` | `SshServer.set_policies()` | `SSH_SERVER` SET 時（常に） | 一時ファイルへコピー → 差分書き換え → `sshd -T` 検証 → `os.rename()` で置換 | `hostcfgd:1112-1160` |
+| `/etc/ssh/sshd_config.tmp` | `SshServer.set_policies()` | SSH_SERVER 変更時の中間ファイル | `sshd -T` 検証失敗時は `os.remove()` で削除し既存設定を保護 | `hostcfgd:1113,1152,1160` |
+| `/etc/pam.d/pam-limits-conf` | `PamLimitsCfg.render_conf_file()` | `max_sessions > 0` | `pam_limits.j2` テンプレートを展開して上書き | `hostcfgd:1460-1466` |
+| `/etc/pam.d/sshd` | `AaaCfg.modify_conf_file()` | AAA login 変更時（SSH_SERVER とは別経路） | `common-auth` / `common-auth-sonic` の `@include` 行を書き換え。SSH_SERVER 処理とは独立した AAA 経路 | `hostcfgd:748-752` |
+| `/etc/pam.d/login` | `AaaCfg.modify_conf_file()` | 同上（AAA 経路） | 同上 | `hostcfgd:749,751` |
+
+### 外部プロセス / サービスへの依存
+
+| 依存対象 | 呼び出し条件 | 操作 | 証跡 |
+|---------|------------|------|------|
+| `sshd -T -f <tmpfile>` | SSH_SERVER SET 時（常に） | 一時 sshd_config の構文検証。失敗時は既存ファイルを保持し変更を破棄 | `hostcfgd:1150-1160` |
+| `service serial-config restart` | `SERIAL_CONSOLE` フィールド変化時のみ | `serial-config.service` を再起動して TMOUT / SysRq を反映。進行中のシリアルセッションが切断される可能性 | `hostcfgd:2032-2038` |
+
+### 暗黙参照マトリクス（サマリ）
+
+| 参照先 | 種別 | 方向 | 直接/間接 | ソース |
+|--------|------|------|-----------|--------|
+| `CONFIG_DB.DEVICE_METADATA\|localhost` | CONFIG テーブル | SSH_SERVER → PAM limits の前提条件 | 直接（`get_table`） | `hostcfgd:1422,1430` |
+| `/etc/ssh/sshd_config` | システムファイル | SSH_SERVER → sshd_config 書き換え | 直接 | `hostcfgd:1112-1160` |
+| `/etc/pam.d/pam-limits-conf` | システムファイル | SSH_SERVER.max_sessions → PAM limits | 直接（j2 テンプレート経由） | `hostcfgd:1460-1466` |
+| `sshd` プロセス（`sshd -T` 検証） | 外部プロセス | SSH_SERVER SET → sshd 構文検証 | 直接（subprocess） | `hostcfgd:1150` |
+| `serial-config.service` | systemd サービス | SERIAL_CONSOLE 変化 → サービス再起動 | 直接（subprocess） | `hostcfgd:2035` |
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
