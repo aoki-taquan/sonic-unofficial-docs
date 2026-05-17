@@ -209,3 +209,37 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 | F8 | REST/gNMI で `/collectors/collector/config` サブツリーへの DELETE | `xfmr_sflow.go:283-284` | `"Delete operation not supported for this xpath"` エラーを返す。`/collectors/collector` レベルで DELETE する必要あり |
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`SFLOW_COLLECTOR` テーブルに関連するハードコード定数を YANG モデルおよびソースコードから抽出した。
+
+> **調査根拠**: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-collector-constants.md`
+
+### YANG 由来の定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `collector_port` デフォルト | `6343` (UDP) | IANA 割当 sFlow UDP ポート。省略時の宛先ポート | `sonic-sflow.yang` L81: `default 6343` |
+| コレクタ最大数 | `2` | YANG `max-elements 2`。3 件目追加は YANG バリデーション拒否 | `sonic-sflow.yang` SFLOW_COLLECTOR_LIST |
+| `collector_vrf` 許容値 | `"mgmt"` または `"default"` | VRF 指定は 2 値のみ (`pattern "mgmt\|default"`) | `sonic-sflow.yang` L91 |
+| コレクタ名最大長 (YANG) | 64 文字 | `length 1..64` で YANG バリデーション | `sonic-sflow.yang` SFLOW_COLLECTOR_LIST.name |
+
+### CLI 由来の定数 (sonic-utilities)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| コレクタ名最大長 (CLI) | **16 文字** | `is_valid_collector_info()` のハードコード上限。YANG (64 文字) より厳しい | `config/main.py:9315` |
+| `collector_port` CLI デフォルト | `6343` | Click `--port` オプションのデフォルト値。YANG と一致 | `config/main.py:9337` |
+| `collector_vrf` CLI デフォルト | `"default"` | Click `--vrf` オプションのデフォルト値 | `config/main.py:9340` |
+| コレクタ最大数 (CLI チェック) | `2` | `len(collector_tbl) == 2` で追加を拒否 | `config/main.py:9354` |
+
+### CLI / YANG 不整合（注意事項）
+
+| 項目 | CLI 上限 | YANG 上限 | 実効値 |
+|------|---------|---------|--------|
+| コレクタ名最大長 | 16 文字 | 64 文字 | CLI 経由は 16 文字制限。直接 ConfigDB 書き込みは 64 文字まで可 |
+
+<!-- /constants -->
