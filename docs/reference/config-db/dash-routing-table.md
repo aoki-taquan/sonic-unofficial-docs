@@ -452,3 +452,65 @@ inbound_routing_attr.value.u32 =
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-constants.md`
 <!-- /constants -->
+
+<!-- side-effects -->
+## 操作の副作用 (Phase F)
+
+`DashRouteOrch` がエントリを処理した際に発生する外部への副作用を網羅する。
+
+### 1. APP_STATE_DB 結果テーブルへの書き戻し
+
+各テーブルの処理結果は APP_STATE_DB 上の同名テーブルへ `writeResultToDB` / `removeResultFromDB` で書き返される。SDN コントローラはこの結果テーブルを読んで操作の成否を確認できる。
+
+| テーブル | 書き込みタイミング | フィールド | コード行 |
+|---|---|---|---|
+| `DASH_ROUTE_TABLE` | SET 成功（pre/post-op） | `result=0` | L342, L403 |
+| `DASH_ROUTE_TABLE` | SET 失敗（post-op） | `result=1` | L401–403 |
+| `DASH_ROUTE_TABLE` | DEL 成功 | エントリ削除 | L410 |
+| `DASH_ROUTE_RULE_TABLE` | SET 成功（pre/post-op） | `result=0` | L644, L705 |
+| `DASH_ROUTE_RULE_TABLE` | SET 失敗（post-op） | `result=1` | L702–705 |
+| `DASH_ROUTE_RULE_TABLE` | DEL 成功 | エントリ削除 | L712 |
+| `DASH_ROUTE_GROUP_TABLE` | SET 成功 / 失敗 | `result=0/1` + `version` | L874 |
+| `DASH_ROUTE_GROUP_TABLE` | DEL 成功 | エントリ削除 | L881 |
+
+!!! note "バインド中グループへの SET の特殊ケース"
+    `addOutboundRouting()` がバインド中グループへのルート追加を `return true` で早期終了した場合も `result=DASH_RESULT_SUCCESS` が結果テーブルに書かれる。SAI への登録は行われていないにもかかわらず成功と報告される点に注意。
+
+### 2. CRM カウンタ更新
+
+SAI API の呼び出し成功後、`gCrmOrch` のリソースカウンタが更新される。IP アドレス族は `destination.isV4()` / `sip.isV4()` で判定する。
+
+| 操作 | カウンタ（IPv4 / IPv6） | コード行 |
+|---|---|---|
+| アウトバウンドルート追加成功 | `CRM_DASH_IPV4_OUTBOUND_ROUTING` / `CRM_DASH_IPV6_OUTBOUND_ROUTING` inc | L220 |
+| アウトバウンドルート削除成功 | 同上 dec | L262 |
+| インバウンドルール追加成功 | `CRM_DASH_IPV4_INBOUND_ROUTING` / `CRM_DASH_IPV6_INBOUND_ROUTING` inc | L507 |
+| インバウンドルール削除成功 | 同上 dec | L546 |
+
+`DASH_ROUTE_GROUP_TABLE` 操作は CRM カウンタを更新しない。
+
+### 3. in-memory マップ更新
+
+| マップ | 更新タイミング | 内容 |
+|---|---|---|
+| `route_group_oid_map_` | `addRouteGroup()` 成功 | `route_group → SAI OID` 挿入 (L745) |
+| `route_group_oid_map_` | `removeRouteGroup()` 成功 | エントリ削除 (L784) |
+| `route_group_bind_count_` | `bindRouteGroup()` / `unbindRouteGroup()` 呼び出し時 | カウンタ増減。呼び出し元は `DashEniFwdOrch`（`DASH_ENI_ROUTE_TABLE` 処理時） |
+
+`DashRouteOrch` 自身のタスクループ内で `route_group_bind_count_` を書き換えることはない。
+
+### 4. SAI API 呼び出し
+
+| 操作 | SAI API | コード行 |
+|---|---|---|
+| ルートグループ作成 | `create_outbound_routing_group()` (即時) | L734 |
+| ルートグループ削除 | `remove_outbound_routing_group()` (即時) | L768 |
+| アウトバウンドルート作成 | `outbound_routing_bulker_.create_entry()` → `flush()` (一括) | L186, L368 |
+| アウトバウンドルート削除 | `outbound_routing_bulker_.remove_entry()` → `flush()` (一括) | L243, L368 |
+| インバウンドルール作成 | `inbound_routing_bulker_.create_entry()` → `flush()` (一括) | L473, L670 |
+| インバウンドルール削除 | `inbound_routing_bulker_.remove_entry()` → `flush()` (一括) | L527, L670 |
+
+ルートグループは `EntityBulker` を使わず即時 SAI 呼び出し。ルートエントリは一括処理でバルクサイズ上限 (`gMaxBulkSize`) まで蓄積してから `flush()` で一括コミットされる。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-side-effects.md`
+<!-- /side-effects -->
