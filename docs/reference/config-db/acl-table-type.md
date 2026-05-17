@@ -165,6 +165,41 @@ CONFIG_DB への同時書き込みであっても、通知到達順によって�
 
 ---
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`ACL_TABLE_TYPE` の処理 (`doAclTableTypeTask()`, `aclorch.cpp:5738-5772`) は
+CONFIG_DB / APPL_DB の他テーブルを**一切参照しない**。フィールド値の検証は C++ 静的ルックアップマップのみで行われ、外部 DB クエリは発生しない。
+
+ただし `AclOrch::doTask()` 冒頭のゲート (`aclorch.cpp:4276-4279`) により、
+`gPortsOrch->allPortsReady()` が false の間は `doAclTableTypeTask()` を含む全処理が skip される。
+
+### このテーブルを参照する側
+
+| 参照元テーブル | 参照フィールド | 参照タイミング | evidence |
+|---|---|---|---|
+| `ACL_TABLE\|*` (CONFIG_DB) の `type` | カスタム型名 | `ACL_TABLE` SET 処理時。`getAclTableType()` が null なら `it++` 待機（無制限） | `aclorch.cpp:5432-5436` |
+| `ACL_TABLE_TABLE\|*` (APPL_DB) の `TYPE` | カスタム型名 | 同一コードパス（CONFIG_DB・APPL_DB 共通ハンドラ） | `aclorch.cpp:4283-4285` |
+| YANG `ACL_TABLE.type` | leafref | YANG バリデーション時 | `sonic-acl.yang.j2:416-418` |
+
+### 静的ルックアップ（DB テーブルではない）
+
+`MATCHES` / `ACTIONS` / `BIND_POINTS` 値の可否判定は C++ コンパイル時定数マップで行われる:
+
+| フィールド | 使用ルックアップ | evidence |
+|---|---|---|
+| `MATCHES` | `aclMatchLookup`, `aclRangeTypeLookup` | `aclorch.cpp:803-825` |
+| `ACTIONS` | `aclL3ActionLookup`, `aclMirrorStageLookup`, `aclDTelActionLookup` | `aclorch.cpp:838-858` |
+| `BIND_POINTS` | `aclBindPointTypeLookup` | `aclorch.cpp:103-107`, `881-895` |
+
+不明な値を含む場合は `AclTableTypeParser::parse()` が `false` を返し、エントリは erase される（retry なし）。
+
+!!! note "SAI オブジェクト非生成"
+    `ACL_TABLE_TYPE` の処理では SAI オブジェクトは一切作成されない。`m_AclTableTypes` メモリマップへの格納のみで、orchagent 再起動時に CONFIG_DB から再構築される。
+<!-- /cross-refs -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)、[`APPL_DB ACL`](appl-acl.md)
