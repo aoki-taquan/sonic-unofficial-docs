@@ -98,6 +98,50 @@ Python レベルの fallback を持ち、完全に一致している。
 SAI 実装の多くは `uniform` をデフォルトとするが SONiC コードではハードコードしていない。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-ordering.md`
+
+### SRV6_MY_LOCATORS が先行必須（bgpcfgd 経路）
+
+`sids_set_handler()` (`managers_srv6.py:62-68`): 対応ロケータが `SRV6_MY_LOCATORS` に存在しない場合、
+bgpcfgd は `deps` 購読を登録して `return False`（処理中断）する。
+ロケータが登録されると `on_deps_change` コールバックで SID エントリが自動的に再処理される。
+**エントリは失われないが、ロケータが登録されるまで FRR への通知が遅延する。**
+
+### SID プレフィックスはロケータのサブネット内であること
+
+`managers_srv6.py:71-75`: `locator_prefix.supernet_of(sid_prefix)` が false の場合は `log_err` を出力して恒久的に失敗する（自動再試行なし）。SID IPv6 プレフィックスが対応ロケータの `prefix + block_len + node_len` ビット範囲内にあることを確認してから投入すること。
+
+### VRF が先行必須（`uDT4` / `uDT6` / `uDT46` 等 VRF 要求行動）
+
+`createUpdateMysidEntry()` (`srv6orch.cpp:1484-1502`): `dt_vrf` が `"default"` 以外の場合、`m_vrfOrch->isVRFexists()` が false だとエラー終了（自動再試行なし）。カスタム VRF を使う場合は `VRF|<name>` を先に登録すること。
+
+### Neighbor (Nexthop) が先行（`end.x` / `ua` 等 Adj 要求行動）
+
+`createUpdateMysidEntry()` (`srv6orch.cpp:1511-1541`): nexthop が未解決の場合、エントリを `m_pendingSRv6MySIDEntries` に追加して保留する。Neighbor ADD イベント受信時 (`srv6orch.cpp:1224-1260`) に自動再インストールされるため、**設定は失われない**。
+
+### SET 操作の推奨順序
+
+```
+SET SRV6_MY_LOCATORS|<locator_name>   prefix=... block_len=... node_len=... func_len=... arg_len=...
+SET VRF|<vrf_name>   ...                          # カスタム VRF を使う場合のみ
+SET SRV6_MY_SIDS|<locator_name>|<ip_prefix>   action=uN
+SET SRV6_MY_SIDS|<locator_name>|<ip_prefix2>  action=uDT46 decap_vrf=<vrf_name>
+```
+
+### DEL 操作の安全順序
+
+```
+DEL SRV6_MY_SIDS|<locator_name>|<ip_prefix>   # SID エントリを先に削除
+DEL SRV6_MY_LOCATORS|<locator_name>            # ロケータは後
+```
+
+`locators_del_handler()` (`managers_srv6.py:106-115`) はロケータ削除時に bgpcfgd の依存購読を解除するが、対応 SID エントリを自動削除しない。ロケータより先に SID を削除しないと孤立エントリが残る。
+
+<!-- /ordering -->
+
 ## 設定例
 
 ```json
