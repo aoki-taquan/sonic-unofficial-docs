@@ -677,6 +677,40 @@ while True:
 > **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:44,95,1147-1173,1198-1231,1464-1531`; `sonic-buildimage` `files/scripts/asic_status.py:21,40-74`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+プラットフォーム依存箇所は 3 点。ASIC 種別 (Broadcom / Mellanox / Marvell 等) や multi-asic 構成による差は存在しない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| `linecard_reboot_timeout` | プラットフォームで変更可能 | `/usr/share/sonic/platform/platform_env.conf` に `linecard_reboot_timeout=<N>` を記述 (chassisd:84,301-307) |
+| `dpu_reboot_timeout` | プラットフォームで変更可能 | `/usr/share/sonic/platform/platform.json` の `"dpu_reboot_timeout"` キー (chassisd:85,721-731) |
+| `init_midplane_switch()` 未実装 | midplane 監視・`CHASSIS_MODULE_REBOOT_INFO_TABLE` 書き込みなし | `try_get()` fallback=`False` → `check_midplane_reachability()` が early return (chassisd:309-311,541-543) |
+| SmartSwitch vs モジュラーチャシス | 書き込みテーブルが異なる | `is_smartswitch()` 分岐 (chassisd:1412-1420) |
+| ASIC 種別 | 影響なし | platform adapter が吸収; `chassisd` 本体に ASIC 条件分岐なし |
+| multi-asic | 影響なし | `is_multi_npu()` 参照なし |
+
+### `linecard_reboot_timeout` の上書き
+
+`ModuleUpdater.__init__` (chassisd:301-307) が起動時に `platform_env.conf` を読み込み、`linecard_reboot_timeout=<N>` が存在すれば 180 秒のデフォルトを上書きする。この値は:
+
+- midplane 喪失検知後 `<N>` 秒以内に復旧しない場合の警告ログトリガ (chassisd:584-586)
+- `CHASSIS_MODULE_REBOOT_INFO_TABLE` のタイムスタンプエントリ削除タイミング (chassisd:529-539)
+
+の両方に影響する。
+
+### `dpu_reboot_timeout` の上書き (SmartSwitch 専用)
+
+`SmartSwitchModuleUpdater.__init__` (chassisd:721-731) が `platform.json` を JSON パースして `"dpu_reboot_timeout"` を取得する。この値は DPU offline → online 遷移時に「直近の再起動原因が前回と同一かどうかを判定する時間窓」として使用され (chassisd:830)、`REBOOT_CAUSE` テーブルへの書き込み内容に影響する。JSON パースエラー時はデフォルト 360 秒を維持。
+
+### `init_midplane_switch()` 未実装プラットフォーム
+
+`try_get(chassis.init_midplane_switch, default=False)` が `False` を返すと `self.midplane_initialized = False` となり、`check_midplane_reachability()` が即 `return` する (chassisd:541-543)。結果として `CHASSIS_MIDPLANE_TABLE` および `CHASSIS_MODULE_REBOOT_INFO_TABLE` はいっさい更新されない。
+
+> **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:84-85,301-311,541-543,721-731,830,1412-1420`
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
