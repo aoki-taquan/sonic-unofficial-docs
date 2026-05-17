@@ -190,6 +190,48 @@ VXLAN_TABLE|<vxlan_name>
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+STATE_DB への書き込みは CONFIG_DB → APPL_DB → SAI の処理完了を受けて行われる。以下は各テーブルの書き込みが確定するために必要な前提条件と、DEL 操作の安全順序。
+
+### TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE
+
+| 順序 | 操作 | 理由 |
+|------|------|------|
+| 1 | `CONFIG_DB TUNNEL` SET | `tunnelmgrd` が APPL_DB `TUNNEL_DECAP_TABLE` を自動生成 |
+| 2 | SAI `create_tunnel()` 成功 | `addDecapTunnel()` 完了後に `setDecapTunnelStatus()` が STATE_DB へ書き込む |
+| 3 | SAI `create_tunnel_term_table_entry()` 成功 | `addDecapTunnelTermEntry()` 完了後に `setDecapTunnelTermStatus()` が STATE_DB へ書き込む |
+
+- **TERM エントリの先行到着**: APPL_DB の TUNNEL_DECAP_TERM_TABLE がトンネル本体より先に届いた場合、orchagent は `unhandledDecapTerms` に蓄積する。STATE_DB への TERM 書き込みは必ずトンネル本体 SAI 作成の後になる[^2][^3]。
+- **ref_count による DEL 抑止**: `removeDecapTunnel()` を呼んでも参照カウントが残る間は `stateTunnelDecapTable->del()` が呼ばれない。MUX_CABLE 等の参照元を先に DEL すること。
+
+### VXLAN_TUNNEL_TABLE
+
+- **書き込みタイミング**: `addRemoveStateTableEntry(add=true)` は `addTunnelUser()` / `createDynamicDIPTunnel()` から呼ばれる。`VXLAN_TUNNEL` エントリの SET 直後ではなく、`VXLAN_TUNNEL_MAP` / EVPN 処理が完了して SAI tunnel が作成されてから書き込まれる[^4]。
+- **Warm boot スキップ**: `WarmStart::INITIALIZED` かつ既存エントリが STATE_DB に存在する場合は書き込みをスキップする（重複防止）。
+
+### VXLAN_TABLE
+
+- **書き込み条件**: `createVxlan()` (vxlanmgr.cpp) の Linux VXLAN netdevice 作成が成功した場合のみ `state=ok` を書き込む。失敗時は STATE_DB エントリが存在しない[^5]。
+
+### DEL 操作の安全順序
+
+```
+# TUNNEL_DECAP_* 系
+DEL APPL_DB TUNNEL_DECAP_TERM_TABLE|<name>|<dst_ip>   # term を先に DEL
+DEL APPL_DB TUNNEL_DECAP_TABLE|<name>                  # ref_count=0 確認後に DEL
+# STATE_DB エントリは orchagent が自動削除
+
+# VXLAN 系
+DEL CONFIG_DB VXLAN_TUNNEL_MAP|*                        # map を先に DEL
+DEL CONFIG_DB VXLAN_TUNNEL|<name>                       # vxlanmgrd が STATE_DB を自動削除
+```
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-ordering.md`
+
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: schema.h 定数定義: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L488-L489>
