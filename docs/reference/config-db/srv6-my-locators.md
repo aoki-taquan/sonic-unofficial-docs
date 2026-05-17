@@ -112,6 +112,41 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`bgpcfgd` の `SRv6Mgr` は `SRV6_MY_LOCATORS` と `SRV6_MY_SIDS` を個別に購読し、SID 処理時にロケータの存在を確認する。このため書き込み順序が SID の通知タイミングに直接影響する。
+
+> 根拠: `bgpcfgd/managers_srv6.py` `sids_set_handler()` L62-76、`locators_del_handler()` L106-115 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-ordering.md`
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `SRV6_MY_LOCATORS` → `SRV6_MY_SIDS` | **先行推奨**（逆順は自動再試行で最終解決） | `on_deps_change` コールバックでロケータ到着時に自動再試行 |
+| 2 | `SRV6_MY_LOCATORS` に `prefix` フィールド必須 | **必須**（欠落時 `KeyError` で処理失敗） | `prefix` を常に含めて書き込む |
+| 3 | ロケータ `prefix` 変更時は SID を先に DEL | **推奨**（変更後の SID 整合性は自動検証されない） | SID DEL → ロケータ更新 → SID 再 SET の順序 |
+| 4 | ロケータ DEL 前に `SRV6_MY_SIDS` を先に DEL | **推奨**（残存 SID は次回 SET まで zombie 状態） | SID DEL → ロケータ DEL の順序 |
+
+### ロケータ先行必須の詳細 (依存 #1)
+
+`sids_set_handler()` (`managers_srv6.py:62-69`) は SID 処理時に
+`self.directory.path_exist(self.db_name, "SRV6_MY_LOCATORS", locator_name)` を確認する。
+ロケータが未登録の場合は `return False` で処理を中断し、
+`self.directory.subscribe([...], self.on_deps_change)` でロケータの到着を待つ。
+ロケータが後から書き込まれると `on_deps_change` コールバックが発火し、保留中の SID が自動再処理される。
+ただしロケータ到着までの間、FRR への SID 通知は遅延する。
+
+### ロケータ DEL 時の注意 (依存 #4)
+
+`locators_del_handler()` (`managers_srv6.py:106-115`) は FRR に `no locator <name>` を送信するが、
+対応する `SRV6_MY_SIDS` エントリの削除は行わない。ロケータが消えた後に SID の SET イベントが来ると
+`path_exist()` チェックで再び `return False` され、SID は FRR へ通知されないまま残存する。
+ロケータを削除する際は先に `SRV6_MY_SIDS` の関連エントリを DEL してから操作すること。
+
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: SRv6 YANG モデル: `sonic-srv6.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-srv6.yang>
