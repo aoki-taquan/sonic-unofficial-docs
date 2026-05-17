@@ -601,3 +601,63 @@ ZMQ 無効時は通常の `ConsumerStateTable`（channel ベース PUBLISH/SUBSC
 
 > **Evidence**: `sonic-swss/orchagent/dash/dashaclorch.h:33` (`ZmqOrch` 継承)、`sonic-swss/orchagent/zmqorch.cpp:8-78` (`ZmqConsumer::execute` / `ZmqOrch::addConsumer`)、`sonic-swss/orchagent/orchdaemon.cpp:1327-1378,1409` (フラグ確認・テーブル登録・addOrchList)、`sonic-swss/lib/orch_zmq_config.h:21` (`ORCH_NORTHBOND_DASH_ZMQ_ENABLED`)；詳細分析 `meta/_intermediate/cdb-flow/dash-acl-pubsub.md`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差・SAI capability (Phase H)
+
+### DPU 専用コンポーネント
+
+`DashAclOrch` / `DashAclGroupMgr` は **`gMySwitchType == "dpu"` の場合にのみ起動する** (`main.cpp:990-994`、`orchdaemon.cpp:1378`)。
+
+| `gMySwitchType` | `DashAclOrch` 動作 |
+|----------------|-------------------|
+| `"dpu"` | 生成される。DASH_ACL_* テーブルを処理 |
+| `"switch"` / `"voq"` / `"fabric"` / `"chassis-packet"` | 生成されない。DASH_ACL_* テーブルは完全に無視される |
+
+SmartSwitch 構成の DPU カード、または DPU 単体動作デバイスのみが対象。通常のスイッチ (`gMySwitchType="switch"`) 環境で DASH_ACL_* テーブルを投入しても orchagent は何も処理しない。
+
+DASH ACL コード内にプラットフォーム文字列照会（`MLNX_PLATFORM_SUBSTRING` 等）は**存在しない**。ベンダー別の動作差は SAI 実装差として ASIC 側に委譲される。
+
+### ステージ上限の固定マッピング
+
+`dashaclgroupmgr.cpp:94-128` — `getSaiStage()` が 20 エントリの静的マップを保持する:
+
+```
+(direction, ip_version, stage) → SAI_ENI_ATTR_*_STAGE{N}_DASH_ACL_GROUP_ID
+```
+
+対応する `<stage>` キー値は `"1"`〜`"5"` のみ。`"6"` 以上を指定すると `lexical_convert()` が `invalid_argument` 例外をスローしてタスク失敗となる。ASIC が 5 未満のステージしか実装していない場合は `set_eni_attribute()` が `SAI_STATUS_NOT_SUPPORTED` 等で失敗する。
+
+### CRM リソース追跡
+
+ACL グループ・ルールの作成削除ごとに CRM カウンタが更新される (`dashaclgroupmgr.cpp:174-176, 213-216, 374-376`):
+
+| 操作 | CRM リソース |
+|------|-------------|
+| ACL グループ作成 (IPv4) | `CRM_DASH_IPV4_ACL_GROUP` inc |
+| ACL グループ作成 (IPv6) | `CRM_DASH_IPV6_ACL_GROUP` inc |
+| ACL グループ削除 | 対応 GROUP dec（配下ルールカウンタも一括 dec） |
+| ACL ルール作成 (IPv4 グループ) | `CRM_DASH_IPV4_ACL_RULE` inc |
+| ACL ルール作成 (IPv6 グループ) | `CRM_DASH_IPV6_ACL_RULE` inc |
+
+グループ・ルール上限は CRM の `threshold` 設定と ASIC SAI 実装の上限（`SAI_STATUS_TABLE_FULL` 等）に依存する。orchagent 側に事前上限チェックはない。
+
+### SAI DASH ACL API 実装依存
+
+`sai_dash_acl_api` ポインタが指す関数は ASIC ベンダー実装次第:
+
+| SAI 関数 | 非対応 ASIC の挙動 |
+|----------|-------------------|
+| `create_dash_acl_group()` | `SAI_STATUS_NOT_IMPLEMENTED` → `handleSaiCreateStatus()` abort/throw |
+| `remove_dash_acl_group()` | 同上 |
+| `create_dash_acl_rule()` | 同上 |
+| `set_eni_attribute()` (bind) | `SAI_STATUS_NOT_SUPPORTED` → `handleSaiSetStatus()` abort/throw |
+
+`sai_dash_acl_api` ポインタ自体が NULL の場合（`sai_dash_acl_api_t` 未実装）はセグメンテーション違反が起きる。VS (仮想スイッチ) プラットフォームではスタブが `SAI_STATUS_SUCCESS` を返す。
+
+### ACL ルール優先度の SAI 照会省略
+
+標準 `AclOrch` は init 時に `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` / `MAXIMUM_PRIORITY` を照会するが、`DashAclGroupMgr` はこの照会を**行わない**。`priority` フィールド (`uint32`) は ASIC にそのまま渡す。優先度が ASIC 上限を超えた場合は `create_dash_acl_rule()` が `SAI_STATUS_INVALID_ATTR_VALUE` を返す。
+
+> **Evidence**: `main.cpp:990-994`（`gMySwitchType` 分岐）、`orchdaemon.cpp:1378`（`DashAclOrch` 生成）、`dashaclgroupmgr.cpp:94-128`（`getSaiStage` 静的マップ）、`dashaclgroupmgr.cpp:174-176, 213-216, 374-376`（CRM カウンタ）、`dashaclorch.cpp:43-70`（ステージ文字列変換）、`crmorch.h:49-52`（CRM リソース型定義）；詳細分析 `meta/_intermediate/cdb-flow/dash-acl-platform.md`
+<!-- /platform -->
