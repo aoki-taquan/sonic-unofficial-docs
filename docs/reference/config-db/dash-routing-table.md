@@ -514,3 +514,65 @@ SAI API の呼び出し成功後、`gCrmOrch` のリソースカウンタが更�
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-side-effects.md`
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## Pub/Sub・通知経路 (Phase G)
+
+### 購読テーブル登録
+
+`orchdaemon.cpp` (L1363–1368) で `DashRouteOrch` を構築する際、購読テーブルを配列で渡す：
+
+```cpp
+vector<string> dash_route_tables = {
+    APP_DASH_ROUTE_TABLE_NAME,       // "DASH_ROUTE_TABLE"
+    APP_DASH_ROUTE_RULE_TABLE_NAME,  // "DASH_ROUTE_RULE_TABLE"
+    APP_DASH_ROUTE_GROUP_TABLE_NAME  // "DASH_ROUTE_GROUP_TABLE"
+};
+DashRouteOrch *dash_route_orch = new DashRouteOrch(
+    m_dpu_appDb, dash_route_tables, dash_orch, m_dpu_appstateDb, dash_zmq_server);
+```
+
+親クラス `ZmqOrch` がこの配列を受け取り、各テーブル名に対して `ZmqConsumerStateTable` を自動登録する。
+
+### ZmqOrch 経由の通知経路
+
+`DashRouteOrch` は `Orch` ではなく `ZmqOrch` を継承するため、通常の Redis keyspace notification ではなく **ZeroMQ (ZMQ)** 経由でメッセージを受信する。SDN コントローラや gNMI が ZMQ ソケット経由でイベントを直接 push し、`ZmqOrch::doTask()` → `DashRouteOrch::doTask()` の呼び出しチェーンで処理される。
+
+### 購読テーブルと処理関数のマッピング
+
+| 購読テーブル名 | 処理関数 | ソース DB |
+|---|---|---|
+| `DASH_ROUTE_TABLE` | `doTaskRouteTable()` | `m_dpu_appDb` |
+| `DASH_ROUTE_RULE_TABLE` | `doTaskRouteRuleTable()` | `m_dpu_appDb` |
+| `DASH_ROUTE_GROUP_TABLE` | `doTaskRouteGroupTable()` | `m_dpu_appDb` |
+
+### 結果通知の書き戻し先 (APP_STATE_DB)
+
+処理結果は `m_dpu_appstateDb` の対応テーブルへ書き戻される（コンストラクタ L56–58）。SDN コントローラはこの APP_STATE_DB の結果テーブルを watch することで SAI プログラム完了を検知できる。
+
+| 結果テーブル | `version` フィールド |
+|---|---|
+| `APP_DASH_ROUTE_TABLE_NAME` (STATE) | なし |
+| `APP_DASH_ROUTE_RULE_TABLE_NAME` (STATE) | なし |
+| `APP_DASH_ROUTE_GROUP_TABLE_NAME` (STATE) | `entry.version()` を第 3 引数で渡す (L874) |
+
+### 外部コンポーネントからの bindRouteGroup / unbindRouteGroup
+
+`route_group_bind_count_` の変更は `DashRouteOrch` 自身のタスクループでは行われない。`DashOrch` が `DASH_ENI_ROUTE_TABLE` の SET / DEL 処理時に `gDirectory` 経由でポインタを取得して呼び出す：
+
+```cpp
+// dashorch.cpp:1192 (ENI バインド時)
+DashRouteOrch *dash_route_orch = gDirectory.get<DashRouteOrch*>();
+dash_route_orch->bindRouteGroup(route_group);
+
+// dashorch.cpp:1272 (ENI アンバインド時)
+dash_route_orch->unbindRouteGroup(route_group);
+```
+
+2 つのオーケストレータ間に直接の pub/sub チャンネルはなく、`gDirectory` 経由のポインタ参照で同期される。この設計により、`DASH_ENI_ROUTE_TABLE` の変更が `isRouteGroupBound()` チェックに間接的に影響する。
+
+!!! note "能動的イベント発行なし"
+    `DashRouteOrch` は SAI 呼び出しと APP_STATE_DB 書き戻し以外に外部コンポーネントへの能動的なイベント発行を行わない。ログ出力 (`SWSS_LOG_*`) は `rsyslog` / `swssloglevel` ツールで観察可能。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-pubsub.md`
+<!-- /pubsub -->
