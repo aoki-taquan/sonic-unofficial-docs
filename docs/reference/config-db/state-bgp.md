@@ -229,3 +229,49 @@ CONFIG_DB BMP|table:
   bgp_rib_in_table   = "true" | "false"
   bgp_rib_out_table  = "true" | "false"
 ```
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+各テーブルの書き込み元デーモンと前提条件を示す。
+
+### BGP_STATE_TABLE — Warm Restart の完了マーカー
+
+`BGP_STATE_TABLE` は **Warm Restart が有効なときのみ** 書き込まれる。書込み順は以下の通り。
+
+1. **クリア**: Warm Restart 開始時に `bgp_eoiu_marker.py` が `BGP_STATE_TABLE|IPv4|eoiu` および `BGP_STATE_TABLE|IPv6|eoiu` を削除 (`clean_bgp_eoiu_marker` — bgp_eoiu_marker.py L91–96)
+2. **`"unknown"` セット**: 各ファミリーの状態を `"unknown"` で初期化。前提: STATE_DB 接続が成立していること。
+3. **`"reached"` セット**: 全 BGP ピアから EOR（End-of-RIB）を受信したときに `set_bgp_eoiu_marker(family, "reached")` を呼ぶ。前提: FRR bgpd が全ネイバーと Established セッションを確立していること (bgp_eoiu_marker.py L141–166)
+4. **`fpmsyncd` による読み取り**: `fpmsyncd` は `eoiuCheckTimer`（デフォルト周期）で `BGP_STATE_TABLE|IPv4|eoiu` / `IPv6|eoiu` の `state` フィールドをポーリングし、両方が `"reached"` になった時点で `DEFAULT_EOIU_HOLD_INTERVAL`（3 秒）待機後に RIB reconciliation を開始する (fpmsyncd.cpp L54–70, L127–131)
+
+`BGP_STATE_TABLE` と APPL_DB `ROUTE_TABLE` への書き込みは独立した経路であり、EOIU マーカーが存在しても reconciliation 開始前は ROUTE_TABLE の再投入は保留される。
+
+### BGP_PEER_CONFIGURED_TABLE — bgpcfgd による FRR 設定投入完了確認
+
+`bgpcfgd` の `BGPPeerMgrBase.update_state_db()` が FRR コンフィグ push 直後に書き込む。前提依存の詳細は [bgp-state.md の Phase B](bgp-state.md) を参照。主な順序制約:
+
+- **SET**: FRR `cfg_mgr.push()` 成功後にのみ HSET。テンプレートレンダリング失敗時は書き込まれない。
+- **DEL**: FRR `no neighbor` 発行後に DELETE。`config reload` 時は全エントリを先に削除してから bgpcfgd が再投入する。
+
+### BGP_NEIGHBOR_TABLE / BGP_RIB_IN_TABLE / BGP_RIB_OUT_TABLE — BMP による収集
+
+BMP（BGP Monitoring Protocol）テーブルは `openbmpd` が FRR bgpd から BMP メッセージ（RFC 7854）を受信するたびに書き込む。書込み前提:
+
+1. CONFIG_DB `BMP.table` に対応するフィールド（`bgp_neighbor_table` / `bgp_rib_in_table` / `bgp_rib_out_table`）が `"true"` に設定されていること
+2. `bmp` コンテナが起動し `openbmpd` が bgpd の BMP ポートに接続していること
+3. bgpd と BMP セッションが確立していること（BGP OPEN メッセージを受信して初めて `BGP_NEIGHBOR_TABLE` にエントリが生成される）
+
+**クリアタイミング**: `bmpcfgd` は BMP コンテナ再起動・FRR 接続切断時に `delete_all_by_pattern` で各テーブルを全削除してから再収集する (bmpcfgd.py L64–65)。
+
+### 書込み順依存サマリ
+
+| テーブル | 書込み元 | 前提条件 | 書込みタイミング |
+|---------|---------|---------|----------------|
+| `BGP_STATE_TABLE` | `bgp_eoiu_marker.py` | Warm Restart 有効、FRR EOR 受信完了 | 全ネイバーの EOR 受信後 |
+| `BGP_PEER_CONFIGURED_TABLE` | `bgpcfgd` | CONFIG_DB ネイバー設定、FRR push 成功 | FRR コンフィグ push 直後 |
+| `BGP_NEIGHBOR_TABLE` | `openbmpd` (BMP) | BMP 有効、bgpd-BMP セッション確立 | BGP OPEN メッセージ受信時 |
+| `BGP_RIB_IN_TABLE` | `openbmpd` (BMP) | BMP 有効、BGP OPEN 完了後 | BGP UPDATE 受信時（RIB-In） |
+| `BGP_RIB_OUT_TABLE` | `openbmpd` (BMP) | BMP 有効、BGP OPEN 完了後 | BGP UPDATE 送信時（RIB-Out） |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-state-ordering.md`
+<!-- /ordering -->
