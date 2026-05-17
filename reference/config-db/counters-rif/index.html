@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23653,6 +23661,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../alarm-table/" class="md-nav__link">
         
   
@@ -25345,7 +25381,450 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-create_router_interface-throw-runtime_error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI create_router_interface 失敗 → throw runtime_error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-remove_router_interface-counters_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI remove_router_interface 失敗 → COUNTERS_DB と SAI の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ref_count-0-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ref_count &gt; 0 による DEL ブロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allportsready-false-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allPortsReady() false → INTERFACE 処理全停止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rif_rateslua-rates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rif_rates.lua ロード失敗 → RATES テーブルが永続的に更新されない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gtraditionalflexcounter-asic_db-vidtorid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gTraditionalFlexCounter モードで ASIC_DB VIDTORID 未到達
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-60" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot 時の 60 秒遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter グループ識別子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポーリング間隔
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー間隔
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter フィールド名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        レートスムージング定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI カウンタ ID 静的配列
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・他 DB への波及 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・他 DB への波及 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rif-addriftoflexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIF 作成時の副作用（addRifToFlexCounter）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rif-removeriffromflexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIF 削除時の副作用（removeRifFromFlexCounter）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch 内部状態への副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ref_count-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ref_count による他 Orch への波及ブロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis_app_db-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ 環境: CHASSIS_APP_DB への副作用（VOQ モード限定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IntfsOrch 初期化時の副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-start 遅延タイマー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gtraditionalflexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gTraditionalFlexCounter モードの非同期待機
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfstat-pull" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfstat の読み出しパス（pull 型）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-vs-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ シャーシ vs 非 VoQ — リモートシステムポートの扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rif-flexcounter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIF タイプ別の FlexCounter 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_router_interface_stat_" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI_ROUTER_INTERFACE_STAT_* の部分サポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gtraditionalflexcounter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gTraditionalFlexCounter モードによる登録タイミング差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback-nat-mpls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LoopBack / NAT / MPLS の特記事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -25356,7 +25835,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28294,6 +28773,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -29674,6 +30209,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -35161,7 +35724,450 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-create_router_interface-throw-runtime_error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI create_router_interface 失敗 → throw runtime_error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-remove_router_interface-counters_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI remove_router_interface 失敗 → COUNTERS_DB と SAI の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ref_count-0-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ref_count &gt; 0 による DEL ブロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allportsready-false-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allPortsReady() false → INTERFACE 処理全停止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rif_rateslua-rates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rif_rates.lua ロード失敗 → RATES テーブルが永続的に更新されない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gtraditionalflexcounter-asic_db-vidtorid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gTraditionalFlexCounter モードで ASIC_DB VIDTORID 未到達
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-60" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot 時の 60 秒遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter グループ識別子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポーリング間隔
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー間隔
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter フィールド名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        レートスムージング定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI カウンタ ID 静的配列
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・他 DB への波及 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・他 DB への波及 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rif-addriftoflexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIF 作成時の副作用（addRifToFlexCounter）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rif-removeriffromflexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIF 削除時の副作用（removeRifFromFlexCounter）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch 内部状態への副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ref_count-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ref_count による他 Orch への波及ブロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis_app_db-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ 環境: CHASSIS_APP_DB への副作用（VOQ モード限定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IntfsOrch 初期化時の副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-start 遅延タイマー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gtraditionalflexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gTraditionalFlexCounter モードの非同期待機
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfstat-pull" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfstat の読み出しパス（pull 型）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-vs-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ シャーシ vs 非 VoQ — リモートシステムポートの扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rif-flexcounter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIF タイプ別の FlexCounter 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_router_interface_stat_" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI_ROUTER_INTERFACE_STAT_* の部分サポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gtraditionalflexcounter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gTraditionalFlexCounter モードによる登録タイミング差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback-nat-mpls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LoopBack / NAT / MPLS の特記事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35172,7 +36178,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35209,7 +36215,7 @@
 
 <h1 id="counters_db-rif">COUNTERS_DB RIF カウンタ<a class="headerlink" href="#counters_db-rif" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-intfsorch">intfsorch</a>（<a href="../../glossary/#term-orchagent">orchagent</a> 内）が <a href="../../glossary/#term-sai">SAI</a> の flex counter 機構を通じて L3 Router Interface (RIF) ごとに取得する統計カウンタ群<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。値は <code>COUNTERS_DB</code> の <code>COUNTERS:&lt;oid&gt;</code> に格納され、<code>intfstat</code> コマンドが読み出す。rate 統計は <code>RATES:&lt;oid&gt;</code> に別途格納される。</p>
+<p><a href="../../glossary/#term-intfsorch">intfsorch</a>（<a href="../../glossary/#term-orchagent">orchagent</a> 内）が <a href="../../glossary/#term-sai">SAI</a> の flex counter 機構を通じて L3 Router Interface (RIF) ごとに取得する統計カウンタ群<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">9</a></sup>。値は <code>COUNTERS_DB</code> の <code>COUNTERS:&lt;oid&gt;</code> に格納され、<code>intfstat</code> コマンドが読み出す。rate 統計は <code>RATES:&lt;oid&gt;</code> に別途格納される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -35253,7 +36259,7 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  value: &lt;float 文字列&gt;
 </span></code></pre></div>
 <h2 id="_5">フィールド一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>以下は <code>intfsorch.cpp</code> の <code>rifStatIds[]</code> に定義されている全 SAI カウンタ ID<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p>以下は <code>intfsorch.cpp</code> の <code>rifStatIds[]</code> に定義されている全 SAI カウンタ ID<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">10</a></sup>。</p>
 <h3 id="rif">RIF カウンタ<a class="headerlink" href="#rif" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -35298,7 +36304,7 @@
 </tbody>
 </table>
 <h2 id="rates">RATES テーブル<a class="headerlink" href="#rates" title="Permanent link">&para;</a></h2>
-<p>syncd が <code>rif_rates.lua</code> を定期実行して計算した派生レートを <code>RATES:&lt;oid&gt;</code> に書く<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<p>syncd が <code>rif_rates.lua</code> を定期実行して計算した派生レートを <code>RATES:&lt;oid&gt;</code> に書く<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">11</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -35362,7 +36368,7 @@
      sonic-buildimage/dockers/docker-orchagent/enable_counters.py -->
 
 <h3 id="_7">ポーリング間隔のコード由来デフォルト<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p><code>FLEX_COUNTER_TABLE|RIF</code> に <code>POLL_INTERVAL</code> が設定されていない場合、intfsorch が <strong>ハードコードした初期値</strong>で syncd に投入する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<p><code>FLEX_COUNTER_TABLE|RIF</code> に <code>POLL_INTERVAL</code> が設定されていない場合、intfsorch が <strong>ハードコードした初期値</strong>で syncd に投入する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">12</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -35401,7 +36407,7 @@
 </tbody>
 </table>
 <h3 id="_8">レートスムージングのデフォルト<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<p><code>rif_rates.lua</code> は COUNTERS_DB の <code>RATES:RIF</code> エントリから <code>RIF_SMOOTH_INTERVAL</code> と <code>RIF_ALPHA</code> を読み取り、指数移動平均 (EMA) でレートを平滑化する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。これらの値は <code>enable_counters.py</code> によって起動時に書き込まれる。</p>
+<p><code>rif_rates.lua</code> は COUNTERS_DB の <code>RATES:RIF</code> エントリから <code>RIF_SMOOTH_INTERVAL</code> と <code>RIF_ALPHA</code> を読み取り、指数移動平均 (EMA) でレートを平滑化する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">13</a></sup>。これらの値は <code>enable_counters.py</code> によって起動時に書き込まれる。</p>
 <table>
 <thead>
 <tr>
@@ -35430,7 +36436,7 @@
 <p><code>rif_rates.lua</code> は <code>RIF_ALPHA</code> が未定義の場合 <code>"Alpha is not defined"</code> をログに残して即 return する（rif_rates.lua:21-23）。<code>enable_counters.py</code> が実行されていない場合はレート計算が一切行われず <code>RATES:&lt;oid&gt;</code> が空のままになる。</p>
 </div>
 <h3 id="enable_counterspy">起動遅延（enable_counters.py）<a class="headerlink" href="#enable_counterspy" title="Permanent link">&para;</a></h3>
-<p><code>enable_counters.py</code> はシステム起動後にデフォルト率設定を書き込む前に意図的に sleep する<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
+<p><code>enable_counters.py</code> はシステム起動後にデフォルト率設定を書き込む前に意図的に sleep する<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">14</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -35459,7 +36465,7 @@
 <!-- ordering -->
 <h2 id="phase-b">処理順序と順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
 <h3 id="orchdaemon">orchdaemon 初期化順序<a class="headerlink" href="#orchdaemon" title="Permanent link">&para;</a></h3>
-<p><code>orchdaemon.cpp</code> における Orch 生成順序は次のとおりで、<code>gIntfsOrch</code> は <code>FlexCounterOrch</code> より前に生成される<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup>。</p>
+<p><code>orchdaemon.cpp</code> における Orch 生成順序は次のとおりで、<code>gIntfsOrch</code> は <code>FlexCounterOrch</code> より前に生成される<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">15</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -35498,7 +36504,7 @@
 </span></code></pre></div>
 <p><code>APP_INTF_TABLE</code> の SET メッセージは Consumer キューに積まれたまま保持され、<code>PortsOrch::allPortsReady()</code> が <code>true</code> を返した後に初めて処理される。したがって <code>INTERFACE</code> エントリに対応する物理ポート（<code>Ethernet0</code>、<code>PortChannel0001</code>、<code>Vlan1000</code> 等）が PortsOrch に登録済みであることが前提になる。</p>
 <h3 id="rif-flexcounter">RIF 作成 → タイマー駆動の非同期 FlexCounter 登録<a class="headerlink" href="#rif-flexcounter" title="Permanent link">&para;</a></h3>
-<p><code>addRouterIntfs()</code> で SAI RIF 作成後、<code>port</code> を <code>m_rifsToAdd</code> リストにキューイングするのみで FlexCounter には即時登録しない。実際の登録は <code>UPDATE_MAPS_SEC = 1 秒</code> 間隔のタイマーが発火して <code>doTask(SelectableTimer)</code> が呼ばれた後になる（<code>intfsorch.cpp:45, 78</code>）<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup>。</p>
+<p><code>addRouterIntfs()</code> で SAI RIF 作成後、<code>port</code> を <code>m_rifsToAdd</code> リストにキューイングするのみで FlexCounter には即時登録しない。実際の登録は <code>UPDATE_MAPS_SEC = 1 秒</code> 間隔のタイマーが発火して <code>doTask(SelectableTimer)</code> が呼ばれた後になる（<code>intfsorch.cpp:45, 78</code>）<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">16</a></sup>。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>APP_INTF_TABLE SET
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  → doTask(Consumer) → addRouterIntfs() → SAI RIF 作成 → m_rifsToAdd 追加
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  最大 1 秒後
@@ -35538,9 +36544,735 @@
 </blockquote>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/intfsorch.cpp (doTask Consumer, doTask SelectableTimer,
+     addRifToFlexCounter, addRouterIntfs),
+     sonic-swss/orchagent/flexcounterorch.cpp (doTask, generateInterfaceMap 呼出し),
+     sonic-swss/orchagent/orchdaemon.cpp (初期化順序) -->
+
+<p><code>IntfsOrch</code> が INTERFACE テーブルを処理して RIF を生成し、COUNTERS_DB に RIF カウンタを登録する際に暗黙的に参照する他テーブルを示す。YANG の leafref として定義されたものはなく、コードのみで表現された依存関係である。</p>
+<table>
+<thead>
+<tr>
+<th>参照元処理</th>
+<th>参照先テーブル</th>
+<th>参照先キー形式</th>
+<th>依存内容</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>doTask(Consumer)</code> の INTERFACE 処理全体</td>
+<td><code>PORT</code></td>
+<td><code>APP_PORT_TABLE\|&lt;port_name&gt;</code></td>
+<td><code>allPortsReady()</code> が false の間は INTERFACE の SET/DEL をすべてブロック。PortsOrch が全ポートの SAI OID 取得完了を宣言するまで RIF 作成も削除も行われない</td>
+<td><code>intfsorch.cpp:665-668</code></td>
+</tr>
+<tr>
+<td><code>doTask(Consumer)</code> の RIF 作成判断</td>
+<td><a href="../vrf/"><code>VRF_TABLE</code></a></td>
+<td><code>VRF_TABLE\|&lt;vrf_name&gt;</code></td>
+<td><code>INTERFACE</code> に <code>vrf_name</code> フィールドがある場合、VRFOrch に当該 VRF が登録済みでないと Consumer キューに留まりリトライ。VRF なし（デフォルト VRF）なら依存なし</td>
+<td><code>intfsorch.cpp:824-831</code></td>
+</tr>
+<tr>
+<td><code>generateInterfaceMap()</code> のトリガ</td>
+<td><a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></td>
+<td><code>FLEX_COUNTER_TABLE\|RIF</code> フィールド <code>FLEX_COUNTER_STATUS</code></td>
+<td><code>enable</code> 受信時に <code>generateInterfaceMap()</code> → タイマーキック → <code>addRifToFlexCounter()</code> の連鎖が起動する。<code>disable</code> のままでも COUNTERS_RIF_NAME_MAP / COUNTERS_RIF_TYPE_MAP への書き込みは行われるが、syncd の SAI ポーリングは開始されず <code>COUNTERS:&lt;oid&gt;</code> は更新されない</td>
+<td><code>flexcounterorch.cpp:283-286</code>, <code>intfsorch.cpp:1576-1578</code></td>
+</tr>
+<tr>
+<td><code>addRifToFlexCounter()</code> の実行条件</td>
+<td><code>ASIC_DB VIDTORID</code></td>
+<td><code>VIDTORID\|&lt;oid&gt;</code></td>
+<td><code>gTraditionalFlexCounter=true</code> の場合、syncd が SAI <code>create_router_interface</code> 応答後に <code>VIDTORID</code> へ OID を書くまで登録を保留（最大 1 秒間隔でリトライ）。新規 FlexCounter モード (<code>false</code>) では即時登録</td>
+<td><code>intfsorch.cpp:1627-1636</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">解決タイミング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>PORT</strong>: <code>allPortsReady()</code> による自動待機。PortsOrch が初期化完了後に IntfsOrch の INTERFACE 処理がアンブロックされる。</li>
+<li><strong>VRF_TABLE</strong>: <code>doTask</code> ループの <code>continue</code> でリトライ。VRF が後から追加されると次の Consumer イベント処理時に解決する。</li>
+<li><strong>FLEX_COUNTER_TABLE</strong>: <code>FlexCounterOrch::doTask()</code> が即時評価。<code>enable</code> 書込み時点でタイマーがキックされ、最大 1 秒後に登録が完了する。</li>
+<li><strong>ASIC_DB VIDTORID</strong>: <code>doTask(SelectableTimer)</code> の 1 秒タイマーでリトライ。通常は RIF 作成後 1 秒以内に syncd が書き込む。</li>
+</ul>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="retry-recovery-phase-d">失敗挙動・retry / recovery (Phase D)<a class="headerlink" href="#retry-recovery-phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/intfsorch.cpp (addRouterIntfs L1297-1305,
+     removeRouterIntfs L1327-1357, doTask Consumer L665-668,
+     doTask SelectableTimer L1604-1636, constructor L86-94);
+     sonic-swss/orchagent/flexcounterorch.cpp (doTask L156-160) -->
+
+<h3 id="sai-create_router_interface-throw-runtime_error">SAI <code>create_router_interface</code> 失敗 → <code>throw runtime_error</code><a class="headerlink" href="#sai-create_router_interface-throw-runtime_error" title="Permanent link">&para;</a></h3>
+<p><code>addRouterIntfs()</code> が SAI API を呼ぶ際、<code>SAI_STATUS_SUCCESS</code> 以外が返ると <code>handleSaiCreateStatus()</code> の結果に応じて動作が分岐する<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">17</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th><code>handleSaiCreateStatus</code> 結果</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_success</code></td>
+<td>ログ (<code>SWSS_LOG_ERROR</code>) のみで続行（<code>m_rifsToAdd</code> への追加は継続）</td>
+</tr>
+<tr>
+<td>それ以外</td>
+<td><code>throw runtime_error</code> → orchdaemon クラッシュ → systemd が再起動</td>
+</tr>
+</tbody>
+</table>
+<p>COUNTERS_DB への書き込みは発生しない（<code>addRifToFlexCounter()</code> は <code>doTask(SelectableTimer)</code> で後続実行されるため）。</p>
+<h3 id="sai-remove_router_interface-counters_db-sai">SAI <code>remove_router_interface</code> 失敗 → COUNTERS_DB と SAI の乖離<a class="headerlink" href="#sai-remove_router_interface-counters_db-sai" title="Permanent link">&para;</a></h3>
+<p><code>removeRouterIntfs()</code> は <code>removeRifFromFlexCounter()</code> を<strong>先</strong>に呼んでから SAI 削除を実行する（<code>intfsorch.cpp:1345-1355</code>）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>removeRifFromFlexCounter()
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  → COUNTERS_RIF_NAME_MAP / COUNTERS_RIF_TYPE_MAP から hdel  ← 先に実行
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  → FLEX_COUNTER_DB の COUNTER_ID_LIST 削除
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>SAI remove_router_interface  ← 後で実行 → 失敗した場合
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  → throw runtime_error → orchdaemon 再起動
+</span></code></pre></div>
+<p>SAI 削除失敗時には COUNTERS_DB から RIF はすでに除去されているが、SAI レイヤーには RIF が残ったままになる。次回 orchdaemon 再起動時の reconcile で収束する。</p>
+<h3 id="ref_count-0-del">ref_count &gt; 0 による DEL ブロック<a class="headerlink" href="#ref_count-0-del" title="Permanent link">&para;</a></h3>
+<p>IP プレフィックスが残っている間は RIF 削除を拒否する（<code>intfsorch.cpp:1327-1332</code>）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>APP_INTF_TABLE DEL → removeIntf() → ref_count &gt; 0 → return false
+</span></code></pre></div>
+<p>Consumer の <code>it</code> は erase されず次回イベントでリトライされる（Consumer 標準 retry 機構）。COUNTERS_DB に変化なし。</p>
+<h3 id="allportsready-false-interface">allPortsReady() false → INTERFACE 処理全停止<a class="headerlink" href="#allportsready-false-interface" title="Permanent link">&para;</a></h3>
+<p>PortsOrch が初期化完了（全ポートの SAI OID 取得）を宣言するまで、<code>APP_INTF_TABLE</code> の全 SET/DEL が Consumer キューで保留される（<code>intfsorch.cpp:665-668</code>）。この間 COUNTERS_DB に変化はなく、ポート初期化完了後に自動的に処理が再開される。</p>
+<h3 id="rif_rateslua-rates"><code>rif_rates.lua</code> ロード失敗 → RATES テーブルが永続的に更新されない<a class="headerlink" href="#rif_rateslua-rates" title="Permanent link">&para;</a></h3>
+<p>コンストラクタでの Lua スクリプトロードが <code>runtime_error</code> をスローした場合、<code>catch</code> ブロックで <code>SWSS_LOG_WARN</code> を出力して続行する（<code>intfsorch.cpp:86-94</code>）<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">18</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rifRateSha</code> が空文字列</td>
+<td>syncd に Lua プラグインが登録されない</td>
+</tr>
+<tr>
+<td>syncd の動作</td>
+<td><code>COUNTERS:&lt;oid&gt;</code> のポーリングは継続するが <code>RATES:&lt;oid&gt;</code> は更新されない</td>
+</tr>
+<tr>
+<td><code>intfstat</code> 表示</td>
+<td>rate 列（RX_BPS / TX_BPS / RX_PPS / TX_PPS）が <code>N/A</code> になる</td>
+</tr>
+<tr>
+<td>回復方法</td>
+<td>orchdaemon 再起動のみ（ファイル復元後も自動再ロードなし）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gtraditionalflexcounter-asic_db-vidtorid"><code>gTraditionalFlexCounter</code> モードで ASIC_DB VIDTORID 未到達<a class="headerlink" href="#gtraditionalflexcounter-asic_db-vidtorid" title="Permanent link">&para;</a></h3>
+<p><code>gTraditionalFlexCounter=true</code> の環境で syncd が <code>VIDTORID</code> を書き込まない場合、<code>m_rifsToAdd</code> に RIF が残り続け、1 秒タイマーの毎発火でリトライするが COUNTERS_DB への登録は完了しない（<code>intfsorch.cpp:1627-1636</code>）。<code>SWSS_LOG_INFO</code> のみで <code>SWSS_LOG_ERROR</code> / <code>SWSS_LOG_WARN</code> は出ないため、監視が困難<sup id="fnref:11"><a class="footnote-ref" href="#fn:11">19</a></sup>。</p>
+<h3 id="warm-reboot-60">warm-reboot 時の 60 秒遅延<a class="headerlink" href="#warm-reboot-60" title="Permanent link">&para;</a></h3>
+<p>warm-reboot 完了前に <code>FLEX_COUNTER_TABLE|RIF = enable</code> が届いても、<code>FlexCounterOrch::doTask()</code> は <code>m_delayTimerExpired = false</code> の間 early return する（<code>flexcounterorch.cpp:156-160</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>warm-reboot 開始〜60 秒後</td>
+<td><code>generateInterfaceMap()</code> が呼ばれない → RIF カウンタ更新なし</td>
+</tr>
+<tr>
+<td>60 秒後</td>
+<td><code>m_delayTimerExpired = true</code> → 自動再開</td>
+</tr>
+</tbody>
+</table>
+<p><strong>永続的な障害ではなく</strong>、最大 60 秒の遅延で自動回復する。</p>
+<h3 id="_11">失敗パス要約<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>ログ</th>
+<th>retry/recovery</th>
+<th>COUNTERS_DB 影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI create 失敗 (throw)</td>
+<td><code>SWSS_LOG_ERROR</code></td>
+<td>orchdaemon 再起動</td>
+<td>書き込みなし</td>
+</tr>
+<tr>
+<td>SAI remove 失敗 (throw)</td>
+<td><code>SWSS_LOG_ERROR</code></td>
+<td>orchdaemon 再起動</td>
+<td>NAME_MAP 削除済み (乖離)</td>
+</tr>
+<tr>
+<td>ref_count &gt; 0 で DEL</td>
+<td><code>SWSS_LOG_NOTICE</code></td>
+<td>Consumer 次イベント</td>
+<td>変化なし</td>
+</tr>
+<tr>
+<td>allPortsReady false</td>
+<td>なし</td>
+<td>起動完了後自動再開</td>
+<td>変化なし</td>
+</tr>
+<tr>
+<td>rif_rates.lua ロード失敗</td>
+<td><code>SWSS_LOG_WARN</code></td>
+<td>再起動のみ</td>
+<td>RATES 永続的に更新なし</td>
+</tr>
+<tr>
+<td>VIDTORID 未書込み</td>
+<td><code>SWSS_LOG_INFO</code> のみ</td>
+<td>1 秒タイマー自動リトライ</td>
+<td>登録保留（永続的な場合あり）</td>
+</tr>
+<tr>
+<td>warm-reboot 60 秒遅延</td>
+<td>なし</td>
+<td>60 秒後自動回復</td>
+<td>最大 60 秒遅延</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/counters-rif-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/intfsorch.cpp (L43-45, L96-100, L1551),
+     sonic-swss/orchagent/intfsorch.h (L19-21),
+     sonic-swss/orchagent/flexcounterorch.cpp (L44),
+     sonic-swss-common/common/schema.h (L302, L330),
+     sonic-buildimage/dockers/docker-orchagent/enable_counters.py (L10-11) -->
+
+<p><code>IntfsOrch</code> と <code>FlexCounterOrch</code> に含まれる、CONFIG_DB / YANG では管理されないハードコード定数の一覧。</p>
+<h3 id="flexcounter">FlexCounter グループ識別子<a class="headerlink" href="#flexcounter" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RIF_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"RIF_STAT_COUNTER"</code></td>
+<td><code>intfsorch.h:19</code></td>
+<td>syncd の FlexCounter グループ名（通常カウンタ）</td>
+</tr>
+<tr>
+<td><code>RIF_RATE_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"RIF_RATE_COUNTER"</code></td>
+<td><code>intfsorch.h:20</code></td>
+<td>syncd の FlexCounter グループ名（レートカウンタ）</td>
+</tr>
+</tbody>
+</table>
+<p>これらの文字列は FLEX_COUNTER_DB のキープレフィックスとして使われる（例: <code>RIF_STAT_COUNTER:&lt;oid&gt;</code>）。</p>
+<h3 id="_12">ポーリング間隔<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RIF_FLEX_STAT_COUNTER_POLL_MSECS</code></td>
+<td><code>"1000"</code> (ms)</td>
+<td><code>intfsorch.h:21</code></td>
+<td>RIF 通常カウンタのポーリング間隔。<code>setFlexCounterGroupParameter()</code> に渡されてデフォルトの poll interval を設定する</td>
+</tr>
+</tbody>
+</table>
+<p><code>counterpoll show</code> でも <code>DEFLT_1_SEC = "default (1000)"</code> がフォールバック値として使われる（<code>counterpoll/main.py:815</code>）。</p>
+<h3 id="_13">タイマー間隔<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UPDATE_MAPS_SEC</code></td>
+<td><code>1</code> (秒)</td>
+<td><code>intfsorch.cpp:45</code></td>
+<td><code>m_updateMapsTimer</code> の発火間隔。<code>doTask(SelectableTimer)</code> がこの間隔で <code>m_rifsToAdd</code> を処理して <code>addRifToFlexCounter()</code> を呼ぶ</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_DELAY_SEC</code></td>
+<td><code>60</code> (秒)</td>
+<td><code>flexcounterorch.cpp:44</code></td>
+<td>Warm-reboot 時に FlexCounterOrch が全処理を遅延させる秒数</td>
+</tr>
+<tr>
+<td><code>intfsorch_pri</code></td>
+<td><code>35</code></td>
+<td><code>intfsorch.cpp:43</code></td>
+<td>IntfsOrch の Orch 優先度（数値が大きいほど高優先）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="flexcounter_1">FlexCounter フィールド名<a class="headerlink" href="#flexcounter_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RIF_COUNTER_ID_LIST</code></td>
+<td><code>"RIF_COUNTER_ID_LIST"</code></td>
+<td><code>schema.h:302</code></td>
+<td>FLEX_COUNTER_DB に書き込む SAI カウンタ ID リストのフィールド名</td>
+</tr>
+<tr>
+<td><code>RIF_PLUGIN_FIELD</code></td>
+<td><code>"RIF_PLUGIN_LIST"</code></td>
+<td><code>schema.h:330</code></td>
+<td>FlexCounter グループに Lua プラグイン (<code>rif_rates.lua</code>) を登録するフィールド名</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_14">レートスムージング定数<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_SMOOTH_INTERVAL</code></td>
+<td><code>"10"</code> (秒)</td>
+<td><code>enable_counters.py:10</code></td>
+<td><code>RATES:RIF</code> に書き込む <code>RIF_SMOOTH_INTERVAL</code> のデフォルト値。EMA ウィンドウ幅</td>
+</tr>
+<tr>
+<td><code>DEFAULT_ALPHA</code></td>
+<td><code>"0.18"</code></td>
+<td><code>enable_counters.py:11</code></td>
+<td><code>RATES:RIF</code> に書き込む <code>RIF_ALPHA</code> のデフォルト値。= 2/(10+1) ≈ 0.1818…（小数点 2 桁丸め）</td>
+</tr>
+</tbody>
+</table>
+<p><code>RIF_ALPHA = 2 / (N + 1)</code> の関係で、<code>N = DEFAULT_SMOOTH_INTERVAL = 10</code> から算出される。ユーザーが <code>config rate smoothing-interval</code> で変更すると、新しい alpha が再計算されて <code>RATES:RIF</code> に上書きされる。</p>
+<h3 id="sai-id">SAI カウンタ ID 静的配列<a class="headerlink" href="#sai-id" title="Permanent link">&para;</a></h3>
+<p><code>intfsorch.cpp:49-59</code> に <code>rifStatIds[]</code> として次の 8 カウンタが列挙されており、<code>addRifToFlexCounter()</code> の実行時に全てが <code>RIF_COUNTER_ID_LIST</code> として FLEX_COUNTER_DB に登録される。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>SAI_ROUTER_INTERFACE_STAT_IN_PACKETS
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>SAI_ROUTER_INTERFACE_STAT_IN_OCTETS
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_PACKETS
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_OCTETS
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS
+</span></code></pre></div>
+<p>この配列は定数であり、実行時や CONFIG_DB 設定で変更できない。ASIC が対応しないカウンタは syncd が SAI エラーを返し、<code>intfstat</code> では <code>N/A</code> として表示される。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副作用・他 DB への波及 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/intfsorch.cpp (L86-100, L1309, L1317, L1327-1330, L1363, L1370, L1537-1551, L1559-1566, L1778),
+     sonic-swss/orchagent/neighorch.cpp (L349,L441,L676,L744),
+     sonic-swss/orchagent/routeorch.cpp (L1362,L1384),
+     sonic-swss/orchagent/nhgorch.cpp (L757,L885),
+     sonic-swss/orchagent/vnetorch.cpp (L211,L235) -->
+
+<p><code>IntfsOrch</code> が RIF を作成・削除するとき、<code>COUNTERS_DB</code> だけでなく複数の DB・オブジェクトに副作用書き込みを行う。</p>
+<h3 id="rif-addriftoflexcounter">RIF 作成時の副作用（addRifToFlexCounter）<a class="headerlink" href="#rif-addriftoflexcounter" title="Permanent link">&para;</a></h3>
+<p><code>addRifToFlexCounter()</code> (intfsorch.cpp:1527-1552) は以下の 3 DB に順次書き込む<sup id="fnref:13"><a class="footnote-ref" href="#fn:13">21</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>キー</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_RIF_NAME_MAP</code></td>
+<td><code>hset "" &lt;rif_name&gt; &lt;oid&gt;</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_RIF_TYPE_MAP</code></td>
+<td><code>hset "" &lt;oid&gt; &lt;type&gt;</code></td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>RIF_STAT_COUNTER:&lt;oid&gt;</code></td>
+<td><code>RIF_COUNTER_ID_LIST = &lt;8 カウンタ ID 列挙&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>3 件の書き込みはトランザクションなしで直列実行される。FLEX_COUNTER_DB への書き込みが完了した時点で syncd が SAI ポーリングを開始し、<code>COUNTERS:&lt;oid&gt;</code> の更新が始まる。</p>
+<h3 id="rif-removeriffromflexcounter">RIF 削除時の副作用（removeRifFromFlexCounter）<a class="headerlink" href="#rif-removeriffromflexcounter" title="Permanent link">&para;</a></h3>
+<p><code>removeRifFromFlexCounter()</code> (intfsorch.cpp:1556-1568) は作成時の逆順で削除する<sup id="fnref:14"><a class="footnote-ref" href="#fn:14">22</a></sup>:</p>
+<ol>
+<li><code>COUNTERS_RIF_NAME_MAP</code> から <code>hdel "" &lt;name&gt;</code></li>
+<li><code>COUNTERS_RIF_TYPE_MAP</code> から <code>hdel "" &lt;oid&gt;</code></li>
+<li>FLEX_COUNTER_DB の <code>RIF_STAT_COUNTER:&lt;oid&gt;</code> を <code>stopFlexCounterPolling()</code> で削除</li>
+</ol>
+<p><code>COUNTERS:&lt;oid&gt;</code> は IntfsOrch が直接削除せず、syncd が FlexCounter 停止後にクリーンアップする。削除後もごく短期間、古い値が COUNTERS_DB に残留する場合がある。</p>
+<h3 id="portsorch">PortsOrch 内部状態への副作用<a class="headerlink" href="#portsorch" title="Permanent link">&para;</a></h3>
+<p>RIF 作成時 (intfsorch.cpp:1309) と削除時 (intfsorch.cpp:1363) に <code>gPortsOrch-&gt;setPort()</code> が呼ばれ、PortsOrch の Port オブジェクトが更新される。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>変化するフィールド</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RIF 作成後</td>
+<td><code>port.m_rif_id</code>, <code>port.m_vr_id</code></td>
+<td>SAI OID</td>
+</tr>
+<tr>
+<td>RIF 削除後</td>
+<td><code>port.m_rif_id</code>, <code>port.m_vr_id</code>, <code>port.m_nat_zone_id</code>, <code>port.m_mpls</code></td>
+<td>0 / false</td>
+</tr>
+</tbody>
+</table>
+<p>この更新は PortsOrch インメモリ状態のみ。APP_DB / STATE_DB への書き込みは発生しない。</p>
+<h3 id="ref_count-orch">ref_count による他 Orch への波及ブロック<a class="headerlink" href="#ref_count-orch" title="Permanent link">&para;</a></h3>
+<p><code>m_syncdIntfses[alias].ref_count</code> は NeighOrch・RouteOrch・NhgOrch・VnetOrch から参照カウントとして操作される:</p>
+<table>
+<thead>
+<tr>
+<th>Orch</th>
+<th>ref_count 増加タイミング</th>
+<th>ref_count 減少タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NeighOrch</td>
+<td>neighbor 追加</td>
+<td>neighbor 削除</td>
+</tr>
+<tr>
+<td>RouteOrch</td>
+<td>nexthop alias を持つルート追加</td>
+<td>ルート削除</td>
+</tr>
+<tr>
+<td>NhgOrch</td>
+<td>nexthop group メンバ追加</td>
+<td>メンバ削除</td>
+</tr>
+<tr>
+<td>VnetOrch</td>
+<td>VNET nexthop 追加</td>
+<td>VNET nexthop 削除</td>
+</tr>
+</tbody>
+</table>
+<p><code>ref_count &gt; 0</code> のとき <code>removeRouterIntfs()</code> は即 <code>false</code> を返す（intfsorch.cpp:1327-1330）。SAI RIF 削除も COUNTERS_DB クリーンアップも行われず、FlexCounter 登録は残ったままになる<sup id="fnref:15"><a class="footnote-ref" href="#fn:15">23</a></sup>。</p>
+<h3 id="voq-chassis_app_db-voq">VoQ 環境: CHASSIS_APP_DB への副作用（VOQ モード限定）<a class="headerlink" href="#voq-chassis_app_db-voq" title="Permanent link">&para;</a></h3>
+<p><code>isChassisDbInUse() == true</code> の場合のみ、以下の副作用書き込みが発生する:</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>対象 DB</th>
+<th>キー</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RIF 作成</td>
+<td>CHASSIS_APP_DB</td>
+<td><code>SYSTEM_INTERFACE_TABLE|&lt;system_alias&gt;</code></td>
+<td><code>oper_status</code> 設定</td>
+</tr>
+<tr>
+<td>RIF 削除</td>
+<td>CHASSIS_APP_DB</td>
+<td><code>SYSTEM_INTERFACE_TABLE|&lt;system_alias&gt;</code></td>
+<td>エントリ削除</td>
+</tr>
+<tr>
+<td>ポート状態変化</td>
+<td>CHASSIS_APP_DB</td>
+<td><code>SYSTEM_INTERFACE_TABLE|&lt;system_alias&gt;</code></td>
+<td><code>oper_status</code> 更新</td>
+</tr>
+</tbody>
+</table>
+<p>リモートシステムポート（<code>SAI_SYSTEM_PORT_TYPE_REMOTE</code>）および他スイッチの LAG は sync 対象外（intfsorch.cpp:1689-1692）<sup id="fnref:16"><a class="footnote-ref" href="#fn:16">24</a></sup>。</p>
+<h3 id="intfsorch">IntfsOrch 初期化時の副作用<a class="headerlink" href="#intfsorch" title="Permanent link">&para;</a></h3>
+<p><code>IntfsOrch::IntfsOrch()</code> コンストラクタ (intfsorch.cpp:86-100) の実行時に以下の副作用が一度だけ発生する:</p>
+<ol>
+<li><code>rif_rates.lua</code> を Redis にロード → COUNTERS_DB に Lua スクリプト SHA が登録される</li>
+<li><code>setFlexCounterGroupParameter()</code> → FLEX_COUNTER_DB の <code>RIF_STAT_COUNTER</code> グループにポーリング間隔・stats モード・Lua プラグイン SHA が書き込まれる</li>
+</ol>
+<p>これらは CONFIG_DB 変化と無関係に、orchagent 起動時に自動実行される。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/counters-rif-side-effects.md</code></p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/counters-rif-pubsub.md</code>
+調査対象: <code>sonic-swss/orchagent/flexcounterorch.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>, <code>sonic-swss/orchagent/orchdaemon.cpp</code>, <code>sonic-utilities/scripts/intfstat</code></p>
+</blockquote>
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<p>RIF カウンタの制御経路は <strong>CONFIG_DB → FlexCounterOrch → IntfsOrch → syncd</strong> という 4 段構成をとる。APPL_DB 中継なし。</p>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>方式</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB → FlexCounterOrch</td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>FLEX_COUNTER_TABLE\|RIF</code> を購読。keyspace notification で変化を検出</td>
+</tr>
+<tr>
+<td>FlexCounterOrch → IntfsOrch</td>
+<td>直接関数呼び出し</td>
+<td><code>gIntfsOrch-&gt;generateInterfaceMap()</code> → <code>m_updateMapsTimer-&gt;start()</code></td>
+</tr>
+<tr>
+<td>IntfsOrch タイマー起動後</td>
+<td><code>SelectableTimer</code> 駆動</td>
+<td><code>doTask(SelectableTimer&amp;)</code> で <code>m_rifsToAdd</code> リストを処理</td>
+</tr>
+<tr>
+<td>IntfsOrch → COUNTERS_DB</td>
+<td>直接書き込み</td>
+<td><code>m_rifNameTable-&gt;set()</code> / <code>m_rifTypeTable-&gt;set()</code></td>
+</tr>
+<tr>
+<td>IntfsOrch → FLEX_COUNTER_DB</td>
+<td><code>startFlexCounterPolling()</code></td>
+<td><code>RIF_STAT_COUNTER:&lt;oid&gt;:COUNTER_ID_LIST</code> を書き込む</td>
+</tr>
+<tr>
+<td>syncd → ASIC</td>
+<td>SAI flex counter ポーリング</td>
+<td>1000 ms 間隔で SAI stat API をポーリング</td>
+</tr>
+<tr>
+<td>syncd → COUNTERS_DB</td>
+<td>直接書き込み</td>
+<td><code>COUNTERS:&lt;oid&gt;</code> Hash に各 SAI フィールドをアトミック更新</td>
+</tr>
+<tr>
+<td>syncd + rif_rates.lua</td>
+<td>Lua プラグイン実行</td>
+<td>ポーリング毎に <code>RATES:&lt;oid&gt;</code> の RX_BPS/TX_BPS/RX_PPS/TX_PPS を指数平滑化計算</td>
+</tr>
+<tr>
+<td>COUNTERS_DB → intfstat</td>
+<td><code>SonicV2Connector.get()</code> 直接読み出し</td>
+<td><code>COUNTERS_RIF_NAME_MAP</code> で名前→OID 解決後、<code>COUNTERS:&lt;oid&gt;</code> を読む（pull 型）</td>
+</tr>
+</tbody>
+</table>
+<p><code>FlexCounterOrch::doTask()</code> における RIF 経路 (flexcounterorch.cpp:283-286):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">if</span><span class="p">(</span><span class="n">gIntfsOrch</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">RIF_KEY</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;enable&quot;</span><span class="p">))</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="p">{</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="n">gIntfsOrch</span><span class="o">-&gt;</span><span class="n">generateInterfaceMap</span><span class="p">();</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="warm-start">warm-start 遅延タイマー<a class="headerlink" href="#warm-start" title="Permanent link">&para;</a></h3>
+<p><code>FlexCounterOrch</code> は cold-start では即座に処理を開始するが、warm-start では <strong>60 秒</strong>のタイマー (<code>FLEX_COUNTER_DELAY_SEC = 60</code>) が期限切れになるまで <code>doTask()</code> 全体をブロックする (flexcounterorch.cpp:127-137, 156-158)。これは syncd の warm-start 完了前に SAI ポーリングを開始しないための設計。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>cold-start: m_delayTimerExpired = true → 即処理可能
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>warm-start: SelectableTimer(60s) 起動 → 60s 間 doTask ブロック
+</span></code></pre></div>
+<h3 id="gtraditionalflexcounter">gTraditionalFlexCounter モードの非同期待機<a class="headerlink" href="#gtraditionalflexcounter" title="Permanent link">&para;</a></h3>
+<p><code>gTraditionalFlexCounter == true</code> の場合、IntfsOrch は <code>m_rifsToAdd</code> に RIF を一旦キューイングし、<code>doTask(SelectableTimer&amp;)</code> のたびに ASIC_DB <code>VIDTORID</code> テーブルに OID が現れるまで待機する (intfsorch.cpp:1627-1636)。<code>gTraditionalFlexCounter == false</code>（新モード）では VIDTORID 未到達でも即時 <code>addRifToFlexCounter()</code> が呼ばれる。</p>
+<h3 id="intfstat-pull">intfstat の読み出しパス（pull 型）<a class="headerlink" href="#intfstat-pull" title="Permanent link">&para;</a></h3>
+<p><code>intfstat</code> は COUNTERS_DB を <strong>直接読み取る</strong>（pull 型）。<code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> / Redis <code>PSUBSCRIBE</code> は使用しない。コマンド実行時点の最新スナップショットを取得する。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># intfstat:81-82</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">SonicV2Connector</span><span class="p">(</span><span class="n">use_unix_socket_path</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">COUNTERS_DB</span><span class="p">)</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># intfstat:123 — 名前→OID 解決</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="n">counter_rif_name_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">COUNTERS_DB</span><span class="p">,</span> <span class="n">COUNTERS_RIF_NAME_MAP</span><span class="p">)</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="c1"># intfstat:96 — SAI カウンタ値取得</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="n">counter_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">COUNTERS_DB</span><span class="p">,</span> <span class="n">full_table_id</span><span class="p">,</span> <span class="n">counter_name</span><span class="p">)</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="c1"># intfstat:109 — RATES テーブル読み出し</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="n">counter_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">COUNTERS_DB</span><span class="p">,</span> <span class="n">rates_table_id</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="_15">データフロー図<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>CONFIG_DB[FLEX_COUNTER_TABLE|RIF]
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  ↓ SubscriberStateTable (keyspace notification)
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>orchdaemon select() loop
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  ↓ FlexCounterOrch::doTask()
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>      [m_delayTimerExpired チェック]
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>      [gPortsOrch-&gt;allPortsReady() チェック]
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>      gIntfsOrch-&gt;generateInterfaceMap() → m_updateMapsTimer-&gt;start()
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>  ↓ IntfsOrch::doTask(SelectableTimer&amp;) → addRifToFlexCounter()
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>      COUNTERS_DB[COUNTERS_RIF_NAME_MAP] / [COUNTERS_RIF_TYPE_MAP]
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>      FLEX_COUNTER_DB[RIF_STAT_COUNTER:&lt;oid&gt;:COUNTER_ID_LIST]
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>  ↓ syncd FlexCounter スレッド (1000ms ポーリング)
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>      sai_router_intfs_api-&gt;get_router_interface_stats()
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>      COUNTERS_DB[COUNTERS:&lt;oid&gt;] ← SAI 統計値 (uint64 文字列)
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>      rif_rates.lua 実行 → COUNTERS_DB[RATES:&lt;oid&gt;] ← 指数平滑 BPS/PPS
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>  ↓ intfstat (pull 型 direct read)
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>APPL_DB 書き込み: なし
+</span><span id="__span-13-18"><a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>STATE_DB 書き込み: なし
+</span><span id="__span-13-19"><a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>NotificationConsumer: なし（カウンタ配信に使用せず）
+</span></code></pre></div>
+<!-- /pubsub -->
+
+<!-- platform:start -->
+
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/counters-rif-platform.md -->
+
+<h3 id="voq-vs-voq">VoQ シャーシ vs 非 VoQ — リモートシステムポートの扱い<a class="headerlink" href="#voq-vs-voq" title="Permanent link">&para;</a></h3>
+<p>VoQ シャーシ環境 (<code>gMySwitchType == "voq"</code> かつ <code>isChassisDbInUse()</code>) では <code>IntfsOrch</code> コンストラクタ起動時に <code>CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME</code> の追加 subscriber が登録される<sup id="fnref:20"><a class="footnote-ref" href="#fn:20">4</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>INTERFACE SET 処理</th>
+<th>COUNTERS_DB エントリ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>非 VoQ</td>
+<td><code>setIntf()</code> → <code>addRouterIntfs()</code> → <code>m_rifsToAdd</code></td>
+<td>作成される</td>
+</tr>
+<tr>
+<td>VoQ ローカルポート</td>
+<td>同上 + <code>voqSyncAddIntf()</code> で CHASSIS_APP_DB にも同期</td>
+<td>作成される</td>
+</tr>
+<tr>
+<td>VoQ リモートシステムポート</td>
+<td>oper_status のみ NeighOrch 通知、RIF 作成なし</td>
+<td><strong>作成されない</strong></td>
+</tr>
+</tbody>
+</table>
+<p>リモートシステムポートは <code>isRemoteSystemPortIntf()</code> (<code>intfsorch.cpp:1640-1650</code>) で判定され、通常の <code>addRouterIntfs()</code> パスに入らない。このため <code>COUNTERS_RIF_NAME_MAP</code> にエントリが存在せず <code>intfstat</code> でカウンタが表示されない<sup id="fnref:21"><a class="footnote-ref" href="#fn:21">5</a></sup>。</p>
+<h3 id="rif-flexcounter_1">RIF タイプ別の FlexCounter 登録<a class="headerlink" href="#rif-flexcounter_1" title="Permanent link">&para;</a></h3>
+<p><code>doTask(SelectableTimer&amp;)</code> 内でポートタイプから RIF タイプ文字列を決定してから <code>addRifToFlexCounter()</code> を呼ぶ<sup id="fnref:22"><a class="footnote-ref" href="#fn:22">6</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th><code>Port::m_type</code></th>
+<th>COUNTERS_RIF_TYPE_MAP の値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PHY / LAG / SYSTEM</td>
+<td><code>"SAI_ROUTER_INTERFACE_TYPE_PORT"</code></td>
+</tr>
+<tr>
+<td>VLAN</td>
+<td><code>"SAI_ROUTER_INTERFACE_TYPE_VLAN"</code></td>
+</tr>
+<tr>
+<td>SUBPORT</td>
+<td><code>"SAI_ROUTER_INTERFACE_TYPE_SUB_PORT"</code></td>
+</tr>
+<tr>
+<td>それ以外</td>
+<td><code>""</code> (エラーログ)</td>
+</tr>
+</tbody>
+</table>
+<p><code>SUBPORT</code>（VLAN サブインタフェース）への統計サポートは ASIC 依存。SAI が <code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code> 統計を未実装の場合 <code>COUNTERS:&lt;oid&gt;</code> フィールドは 0 のまま更新されない。</p>
+<h3 id="sai_router_interface_stat_">SAI_ROUTER_INTERFACE_STAT_* の部分サポート<a class="headerlink" href="#sai_router_interface_stat_" title="Permanent link">&para;</a></h3>
+<p><code>rifStatIds[]</code> に列挙された全フィールドが FLEX_COUNTER_DB に登録されるが (<code>intfsorch.cpp:49-59</code>)<sup id="fnref:23"><a class="footnote-ref" href="#fn:23">7</a></sup>、プラットフォームによっては一部が未サポートとなる:</p>
+<ul>
+<li><code>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_OCTETS</code> / <code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS</code> — 一部 ASIC で非実装</li>
+<li>未サポートフィールドは syncd がポーリング結果を COUNTERS_DB に書かない（または常 0）</li>
+<li><code>intfstat</code> はフィールドが存在しない場合に <code>0</code> と表示し、「未サポート」と「ゼロ値」を区別しない</li>
+</ul>
+<h3 id="gtraditionalflexcounter_1">gTraditionalFlexCounter モードによる登録タイミング差<a class="headerlink" href="#gtraditionalflexcounter_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>モード</th>
+<th>VIDTORID チェック</th>
+<th>登録タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gTraditionalFlexCounter = true</code> (旧)</td>
+<td>ASIC_DB <code>VIDTORID</code> にエントリが揃うまで 1 秒 tick ごと再試行</td>
+<td>syncd が OID を書き込むまで遅延（大規模シャーシで複数 tick）</td>
+</tr>
+<tr>
+<td><code>gTraditionalFlexCounter = false</code> (新)</td>
+<td>スキップ</td>
+<td>SAI RIF 作成後の次 tick（最大 1 秒）で即登録</td>
+</tr>
+</tbody>
+</table>
+<h3 id="loopback-nat-mpls">LoopBack / NAT / MPLS の特記事項<a class="headerlink" href="#loopback-nat-mpls" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>LoopBack インタフェース</strong>: <code>is_lo</code> 判定で <code>addRouterIntfs()</code> が呼ばれず <code>m_rifsToAdd</code> に積まれない。<code>COUNTERS_RIF_NAME_MAP</code> エントリなし・<code>intfstat</code> 非表示はアーキテクチャ設計による（全プラットフォーム共通）。</li>
+<li><strong>NAT ゾーン ID</strong>: <code>gIsNatSupported = false</code> のプラットフォームでは <code>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID</code> が SAI 属性に渡されない。カウンタ収集への直接影響はない。</li>
+<li><strong>MPLS 属性</strong>: MPLS 非対応 ASIC では <code>SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE</code> を含む <code>create_router_interface()</code> がエラーを返す場合があり、RIF 作成失敗 → COUNTERS_DB エントリなしとなる<sup id="fnref:24"><a class="footnote-ref" href="#fn:24">8</a></sup>。</li>
+</ul>
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_16">関連リファレンス<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../flex-counter-table/">CONFIG_DB FLEX_COUNTER_TABLE</a></li>
 <li><a href="../counters-port/">CONFIG_DB COUNTERS_DB PORT カウンタ</a></li>
@@ -35548,33 +37280,81 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_17">引用元<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:17">
+<p>FlexCounterOrch RIF enable ブランチ: <code>sonic-swss/orchagent/flexcounterorch.cpp:283-286</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L283">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L283</a>&#160;<a class="footnote-backref" href="#fnref:17" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:18">
+<p>IntfsOrch doTask(SelectableTimer) / addRifToFlexCounter: <code>sonic-swss/orchagent/intfsorch.cpp:1598-1637</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1598">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1598</a>&#160;<a class="footnote-backref" href="#fnref:18" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:19">
+<p>intfstat COUNTERS_DB 直接読み出し: <code>sonic-utilities/scripts/intfstat:81-82,96,109,123</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bd/scripts/intfstat#L81">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bd/scripts/intfstat#L81</a>&#160;<a class="footnote-backref" href="#fnref:19" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:20">
+<p>VoQ IntfsOrch コンストラクタ subscriber 追加: <code>sonic-swss/orchagent/intfsorch.cpp:102-108</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L102">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L102</a>&#160;<a class="footnote-backref" href="#fnref:20" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:21">
+<p>リモートシステムポート判定 + skip: <code>sonic-swss/orchagent/intfsorch.cpp:881-893,1640-1666</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L881">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L881</a>&#160;<a class="footnote-backref" href="#fnref:21" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:22">
+<p>RIF タイプ文字列決定ロジック: <code>sonic-swss/orchagent/intfsorch.cpp:1608-1626</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1608">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1608</a>&#160;<a class="footnote-backref" href="#fnref:22" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:23">
+<p>rifStatIds 全列挙: <code>sonic-swss/orchagent/intfsorch.cpp:49-59</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:23" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:24">
+<p>MPLS / NAT SAI 属性追加条件: <code>sonic-swss/orchagent/intfsorch.cpp:1278-1294</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1278">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1278</a>&#160;<a class="footnote-backref" href="#fnref:24" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p>intfsorch RIF カウンタ登録: <code>sonic-swss/orchagent/intfsorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>intfsorch RIF カウンタ登録: <code>sonic-swss/orchagent/intfsorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 9 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>rifStatIds[]</code> 全定義: <code>sonic-swss/orchagent/intfsorch.cpp:49-59</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>rifStatIds[]</code> 全定義: <code>sonic-swss/orchagent/intfsorch.cpp:49-59</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 10 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p><code>rif_rates.lua</code> レート計算ロジック: <code>sonic-swss/orchagent/rif_rates.lua</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/rif_rates.lua">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/rif_rates.lua</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p><code>rif_rates.lua</code> レート計算ロジック: <code>sonic-swss/orchagent/rif_rates.lua</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/rif_rates.lua">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/rif_rates.lua</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 11 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p>ポーリング間隔ハードコード: <code>sonic-swss/orchagent/intfsorch.h:21</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L21">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L21</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>ポーリング間隔ハードコード: <code>sonic-swss/orchagent/intfsorch.h:21</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L21">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L21</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 12 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
-<p>RIF_ALPHA/SMOOTH_INTERVAL デフォルト: <code>sonic-buildimage/dockers/docker-orchagent/enable_counters.py:10-11</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L10">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L10</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p>RIF_ALPHA/SMOOTH_INTERVAL デフォルト: <code>sonic-buildimage/dockers/docker-orchagent/enable_counters.py:10-11</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L10">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L10</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 13 in the text">&#8617;</a></p>
 </li>
 <li id="fn:6">
-<p>起動遅延ロジック: <code>sonic-buildimage/dockers/docker-orchagent/enable_counters.py:57-64</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+<p>起動遅延ロジック: <code>sonic-buildimage/dockers/docker-orchagent/enable_counters.py:57-64</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 14 in the text">&#8617;</a></p>
 </li>
 <li id="fn:7">
-<p>orchdaemon 初期化順序: <code>sonic-swss/orchagent/orchdaemon.cpp:232,283,296,625</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+<p>orchdaemon 初期化順序: <code>sonic-swss/orchagent/orchdaemon.cpp:232,283,296,625</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 15 in the text">&#8617;</a></p>
 </li>
 <li id="fn:8">
-<p>UPDATE_MAPS_SEC タイマー: <code>sonic-swss/orchagent/intfsorch.cpp:45</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+<p>UPDATE_MAPS_SEC タイマー: <code>sonic-swss/orchagent/intfsorch.cpp:45</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 16 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9">
+<p>SAI create_router_interface エラーハンドリング: <code>sonic-swss/orchagent/intfsorch.cpp:1297-1305</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1297">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1297</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 17 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10">
+<p>rif_rates.lua ロード失敗の catch: <code>sonic-swss/orchagent/intfsorch.cpp:86-94</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86</a>&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 18 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11">
+<p>gTraditionalFlexCounter モードでの VIDTORID 待機ループ: <code>sonic-swss/orchagent/intfsorch.cpp:1627-1636</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627</a>&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 19 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12">
+<p>FlexCounter グループ識別子定数: <code>sonic-swss/orchagent/intfsorch.h:19-21</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L19">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L19</a>&#160;<a class="footnote-backref" href="#fnref:12" title="Jump back to footnote 20 in the text">&#8617;</a></p>
+</li>
+<li id="fn:13">
+<p>FLEX_COUNTER_DELAY_SEC 定数: <code>sonic-swss/orchagent/flexcounterorch.cpp:44</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44</a>&#160;<a class="footnote-backref" href="#fnref:13" title="Jump back to footnote 21 in the text">&#8617;</a></p>
+</li>
+<li id="fn:14">
+<p>RIF_COUNTER_ID_LIST / RIF_PLUGIN_FIELD 定数: <code>sonic-swss-common/common/schema.h:302,330</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302">https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302</a>&#160;<a class="footnote-backref" href="#fnref:14" title="Jump back to footnote 22 in the text">&#8617;</a></p>
+</li>
+<li id="fn:15">
+<p>ref_count ブロック: <code>sonic-swss/orchagent/intfsorch.cpp:1327-1330</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1327">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1327</a>&#160;<a class="footnote-backref" href="#fnref:15" title="Jump back to footnote 23 in the text">&#8617;</a></p>
+</li>
+<li id="fn:16">
+<p>voqSyncAddIntf / voqSyncDelIntf: <code>sonic-swss/orchagent/intfsorch.cpp:1672-1748</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1672">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1672</a>&#160;<a class="footnote-backref" href="#fnref:16" title="Jump back to footnote 24 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

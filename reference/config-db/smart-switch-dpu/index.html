@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/smart-switch-dpu/">
       
       
-        <link rel="prev" href="../scheduler-orch/">
+        <link rel="prev" href="../sflow-session/">
       
       
         <link rel="next" href="../smart-switch/">
@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23633,6 +23641,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -27906,6 +27942,62 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -28314,7 +28406,507 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序（ビルド時 / 手動設定共通）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ランタイム変更の反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c-cross-table-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — Phase C (cross-table refs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — Phase C (cross-table refs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dpus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE / DPUS の暗黙参照
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MID_PLANE_BRIDGE / DPUS の暗黙参照">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device_metadatalocalhostsubtype-smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA.localhost.subtype — SmartSwitch 判定ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_server_ipv4-dhcp_server_ipv4_port-dpus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV4 / DHCP_SERVER_IPV4_PORT — DPUS から自動生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_ha_global_config_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_HA_GLOBAL_CONFIG の暗黙参照
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DASH_HA_GLOBAL_CONFIG の暗黙参照">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vnet-yang-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET — YANG leafref による強制参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu-remote_dpu-vdpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU / REMOTE_DPU / VDPU の暗黙参照
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DPU / REMOTE_DPU / VDPU の暗黙参照">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassis_module-chassisd-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_MODULE — chassisd による DPU 管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常系・無効入力時の挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="異常系・無効入力時の挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG バリデーション失敗（書き込み拒否）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcpservd-dhcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dhcpservd — ミッドプレーン DHCP の無音失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisd-midplane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd — midplane 初期化失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU offline 遷移時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu-max_dpu_reboot_duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU リブート判定（MAX_DPU_REBOOT_DURATION）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        数値定数・マジックナンバー (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="数値定数・マジックナンバー (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassisd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd 宣言定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_samplespy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config_samples.py ハードコード値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU アドレス計算式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_ha_global_config_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_HA_GLOBAL_CONFIG テスト実例値の由来
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書き込み副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dpus-dhcp_server-dhcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE + DPUS → dhcp_server がミッドプレーン DHCP プールを再構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis_module-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_MODULE 書き込み → DPU ハードウェア電源を非同期制御
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#midplane-cp_state-dp_state-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        midplane 切断 → CP_STATE / DP_STATE が連鎖的に down へ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_ha_global_config-sai-ha-bfd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_HA_GLOBAL_CONFIG → SAI HA 属性更新（BFD セッション再起動の可能性）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用サマリー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producer-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer / Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis_module-chassisd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_MODULE → chassisd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dpus-dhcpservd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE / DPUS → dhcpservd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_ha_global_config-hamgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_HA_GLOBAL_CONFIG → hamgrd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassisd-smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd の SmartSwitch 分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-platformjsondpus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox platform.json[DPUS] の必須性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-get_midplane_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox get_midplane_ip() — アドレス体系
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -28325,7 +28917,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み入り口
@@ -28375,7 +28967,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -28397,7 +28989,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -28408,7 +29000,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29786,6 +30378,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -35302,7 +35922,507 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序（ビルド時 / 手動設定共通）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ランタイム変更の反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c-cross-table-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — Phase C (cross-table refs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — Phase C (cross-table refs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dpus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE / DPUS の暗黙参照
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MID_PLANE_BRIDGE / DPUS の暗黙参照">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device_metadatalocalhostsubtype-smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA.localhost.subtype — SmartSwitch 判定ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_server_ipv4-dhcp_server_ipv4_port-dpus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV4 / DHCP_SERVER_IPV4_PORT — DPUS から自動生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_ha_global_config_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_HA_GLOBAL_CONFIG の暗黙参照
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DASH_HA_GLOBAL_CONFIG の暗黙参照">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vnet-yang-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET — YANG leafref による強制参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu-remote_dpu-vdpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU / REMOTE_DPU / VDPU の暗黙参照
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DPU / REMOTE_DPU / VDPU の暗黙参照">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassis_module-chassisd-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_MODULE — chassisd による DPU 管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        異常系・無効入力時の挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="異常系・無効入力時の挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG バリデーション失敗（書き込み拒否）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcpservd-dhcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dhcpservd — ミッドプレーン DHCP の無音失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisd-midplane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd — midplane 初期化失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU offline 遷移時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu-max_dpu_reboot_duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU リブート判定（MAX_DPU_REBOOT_DURATION）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        数値定数・マジックナンバー (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="数値定数・マジックナンバー (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassisd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd 宣言定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_samplespy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config_samples.py ハードコード値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU アドレス計算式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_ha_global_config_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_HA_GLOBAL_CONFIG テスト実例値の由来
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書き込み副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dpus-dhcp_server-dhcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE + DPUS → dhcp_server がミッドプレーン DHCP プールを再構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis_module-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_MODULE 書き込み → DPU ハードウェア電源を非同期制御
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#midplane-cp_state-dp_state-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        midplane 切断 → CP_STATE / DP_STATE が連鎖的に down へ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_ha_global_config-sai-ha-bfd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_HA_GLOBAL_CONFIG → SAI HA 属性更新（BFD セッション再起動の可能性）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用サマリー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producer-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer / Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis_module-chassisd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_MODULE → chassisd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dpus-dhcpservd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE / DPUS → dhcpservd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_ha_global_config-hamgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_HA_GLOBAL_CONFIG → hamgrd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassisd-smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd の SmartSwitch 分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-platformjsondpus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox platform.json[DPUS] の必須性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-get_midplane_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox get_midplane_ip() — アドレス体系
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -35313,7 +36433,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み入り口
@@ -35363,7 +36483,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -35385,7 +36505,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35396,7 +36516,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35892,7 +37012,670 @@
 </span></code></pre></div>
 <!-- /defaults -->
 
-<h2 id="_10">制約<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>dhcp_cfggen</code> (<code>dhcpservd</code>) は <code>generate()</code> 呼び出しごとに CONFIG_DB を全量読み直してミッドプレーン DHCP 設定を再生成する。このため書き込み順序がミッドプレーンブリッジの DHCP 払い出し動作に直結する。</p>
+<h3 id="_10">他テーブル先行必須<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>先行テーブル / フィールド</th>
+<th>理由</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.subtype = "SmartSwitch"</code></td>
+<td><code>is_smart_switch()</code> チェックで <code>False</code> になると <code>MID_PLANE_BRIDGE</code> / <code>DPUS</code> を完全無視</td>
+<td>ミッドプレーン DHCP 設定が生成されず DPU への IP 払い出し停止（<code>dhcp_cfggen.py:67,76</code>）</td>
+</tr>
+<tr>
+<td><code>MID_PLANE_BRIDGE\|GLOBAL</code> (<code>bridge</code> + <code>ip_prefix</code> 両フィールド)</td>
+<td><code>dhcp_cfggen.py:84</code> で両フィールドの存在を明示チェック。どちらか欠如すると <code>dhcp_interfaces</code> にブリッジが登録されない</td>
+<td><code>DPUS</code> エントリが存在しても処理スキップ。DPU への IP 割当なし</td>
+</tr>
+<tr>
+<td><code>VNET\|&lt;vnet_name&gt;</code> (→ <code>DASH_HA_GLOBAL_CONFIG.dpu_vnet</code>)</td>
+<td>YANG <code>leafref</code> 制約。<code>VNET</code> エントリが先行していないと YANG バリデーション違反</td>
+<td>CLI 経由の書き込みは <code>ctx.fail()</code> で拒否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">推奨書込み順序（ビルド時 / 手動設定共通）<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a># 1. デバイス種別の確定
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>SET DEVICE_METADATA|localhost  subtype=SmartSwitch
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a># 2. ミッドプレーンブリッジの定義
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>SET MID_PLANE_BRIDGE|GLOBAL  bridge=bridge-midplane  ip_prefix=169.254.200.254/24
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a># 3. DPU エントリの登録（複数ある場合は natsorted 順）
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>SET DPUS|dpu0  midplane_interface=dpu0
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>SET DPUS|dpu1  midplane_interface=dpu1
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>...
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a># 4. DHCP サーバー設定（DHCP_SERVER_IPV4 / DHCP_SERVER_IPV4_PORT）
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>SET DHCP_SERVER_IPV4|bridge-midplane  ...
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>SET DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu0  ...
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a># 5. DASH HA 設定（VNET が先行していること）
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=&lt;vnet_name&gt;  ...
+</span></code></pre></div>
+<p><code>config_samples.py:81-151</code> (<code>generate_t1_smartswitch_switch_sample_config</code>) はこの順序を自動保証している。</p>
+<h3 id="_12">ランタイム変更の反映タイミング<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>DPUS</code> の変更は <code>DpusTableEventChecker</code> が無条件にトリガー → dhcpservd 再生成 → kea-dhcp4 SIGHUP（最大 5000 ms ポーリング待ち）</li>
+<li><code>MID_PLANE_BRIDGE</code> の変更は <code>MidPlaneTableEventChecker</code> が <code>bridge</code> フィールドを <code>enabled_dhcp_interfaces</code> と照合してから再生成をトリガー</li>
+<li><code>DPU</code> / <code>REMOTE_DPU</code> / <code>VDPU</code> は dhcpservd の購読対象外。変更は dashhaorch / sonic-gnmi が別途処理する</li>
+</ul>
+<blockquote>
+<p><strong>Evidence</strong>: <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:65-100</code>; <code>common/dhcp_db_monitor.py:349-386</code>; <code>src/sonic-config-engine/config_samples.py:81-151</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/common/utils.py:153-161</code></p>
+</blockquote>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c-cross-table-refs">暗黙参照 — Phase C (cross-table refs)<a class="headerlink" href="#phase-c-cross-table-refs" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>src/sonic-yang-models/yang-models/sonic-smart-switch.yang</code> 全行精読; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:60-100</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/common/utils.py:153-161</code>; <code>src/sonic-config-engine/config_samples.py:80-157</code>; <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd:355,749,1143,1187,1245-1270</code> (2026-05-17)
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-dpu-cross-refs.md</code></p>
+</blockquote>
+<p>各テーブルは YANG leafref の有無とは独立して、実装レベルで以下のテーブルを暗黙参照する。</p>
+<h3 id="mid_plane_bridge-dpus">MID_PLANE_BRIDGE / DPUS の暗黙参照<a class="headerlink" href="#mid_plane_bridge-dpus" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB</th>
+<th>参照方向</th>
+<th>YANG leafref</th>
+<th>実装上の必須度</th>
+<th>証拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code> (<code>subtype</code>)</td>
+<td>CONFIG_DB</td>
+<td>読み取り (<code>is_smart_switch()</code> 判定)</td>
+<td>なし</td>
+<td>必須（<code>"SmartSwitch"</code> でない場合 <code>MID_PLANE_BRIDGE</code>/<code>DPUS</code> を完全スキップ）</td>
+<td><code>dhcp_cfggen.py:65-67</code>; <code>utils.py:153-161</code></td>
+</tr>
+<tr>
+<td><code>DHCP_SERVER_IPV4\|bridge-midplane</code></td>
+<td>CONFIG_DB</td>
+<td>書き込み (初期設定で自動生成)</td>
+<td>なし</td>
+<td>派生（<code>config_samples.py</code> が <code>DPUS</code> エントリから自動生成）</td>
+<td><code>config_samples.py:133-143</code></td>
+</tr>
+<tr>
+<td><code>DHCP_SERVER_IPV4_PORT\|bridge-midplane\|&lt;dpu&gt;</code></td>
+<td>CONFIG_DB</td>
+<td>書き込み (初期設定で自動生成)</td>
+<td>なし</td>
+<td>派生（<code>DPUS</code> の <code>midplane_interface</code> から DPU ごとに生成）</td>
+<td><code>config_samples.py:105-109</code></td>
+</tr>
+<tr>
+<td><code>FEATURE\|dhcp_server</code></td>
+<td>CONFIG_DB</td>
+<td>書き込み (初期設定で有効化)</td>
+<td>なし</td>
+<td>派生（<code>DPUS</code> が存在する場合のみ生成）</td>
+<td><code>config_samples.py:113-131</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="device_metadatalocalhostsubtype-smartswitch">DEVICE_METADATA.localhost.subtype — SmartSwitch 判定ゲート<a class="headerlink" href="#device_metadatalocalhostsubtype-smartswitch" title="Permanent link">&para;</a></h4>
+<p><code>dhcp_cfggen.py:65-67</code> が <code>DEVICE_METADATA|localhost.subtype</code> を読み取り <code>is_smart_switch()</code> を呼ぶ (<code>utils.py:153-161</code>)。<code>subtype != "SmartSwitch"</code> の場合、<code>_parse_dpu()</code> が呼ばれず <code>MID_PLANE_BRIDGE</code> / <code>DPUS</code> テーブルの内容が完全に無視される。DPU への IP 払い出しは発生しない。</p>
+<h4 id="dhcp_server_ipv4-dhcp_server_ipv4_port-dpus">DHCP_SERVER_IPV4 / DHCP_SERVER_IPV4_PORT — DPUS から自動生成<a class="headerlink" href="#dhcp_server_ipv4-dhcp_server_ipv4_port-dpus" title="Permanent link">&para;</a></h4>
+<p><code>config_samples.py:105-143</code> は <code>DPUS</code> 内の各エントリから <code>DHCP_SERVER_IPV4_PORT|bridge-midplane|&lt;midplane_interface&gt;</code> を生成し、<code>DHCP_SERVER_IPV4|bridge-midplane</code> を <code>MODE=PORT</code> で設定する。<code>DPUS</code> が空の場合、これらのテーブルは生成されない。</p>
+<hr />
+<h3 id="dash_ha_global_config_2">DASH_HA_GLOBAL_CONFIG の暗黙参照<a class="headerlink" href="#dash_ha_global_config_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB</th>
+<th>参照方向</th>
+<th>YANG leafref</th>
+<th>実装上の必須度</th>
+<th>証拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VNET\|&lt;name&gt;</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (<code>dpu_vnet</code> / <code>vnet_name</code> の存在確認)</td>
+<td><strong>あり</strong> (<code>leafref</code>)</td>
+<td>条件付き必須（DASH HA 設定時。不在で YANG バリデーション違反）</td>
+<td><code>sonic-smart-switch.yang:292-303</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="vnet-yang-leafref">VNET — YANG leafref による強制参照<a class="headerlink" href="#vnet-yang-leafref" title="Permanent link">&para;</a></h4>
+<p><code>sonic-smart-switch.yang:291-303</code> は <code>DASH_HA_GLOBAL_CONFIG.global.vnet_name</code>（deprecated）と <code>dpu_vnet</code> の両フィールドを <code>VNET</code> テーブルへの <code>leafref</code> として定義する。<code>VNET|&lt;name&gt;</code> エントリが存在しない状態で <code>dpu_vnet</code> を書き込もうとすると、YANG バリデーションエラーが発生し CLI 経由の書き込みは拒否される。</p>
+<hr />
+<h3 id="dpu-remote_dpu-vdpu">DPU / REMOTE_DPU / VDPU の暗黙参照<a class="headerlink" href="#dpu-remote_dpu-vdpu" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB</th>
+<th>参照方向</th>
+<th>YANG leafref</th>
+<th>実装上の必須度</th>
+<th>証拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code> (<code>switch_type = "dpu"</code>)</td>
+<td>CONFIG_DB</td>
+<td>書き込み (DPU 側 config_samples)</td>
+<td>なし</td>
+<td>DPU 専用（DPU デバイスとして識別させる）</td>
+<td><code>config_samples.py:154-157</code></td>
+</tr>
+<tr>
+<td><code>PORT\|*</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (DPU 側 chassisd dataplane state 判定)</td>
+<td>なし</td>
+<td>DPU 側のみ（NPU 側 chassisd は不参照）</td>
+<td><code>chassisd:1265-1272</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_MODULE\|DPU*</code></td>
+<td>CONFIG_DB</td>
+<td>読み書き (chassisd による DPU admin state 制御)</td>
+<td>なし</td>
+<td>必須（DPU モジュール管理）</td>
+<td><code>chassisd:44,355,749</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="chassis_module-chassisd-dpu">CHASSIS_MODULE — chassisd による DPU 管理<a class="headerlink" href="#chassis_module-chassisd-dpu" title="Permanent link">&para;</a></h4>
+<p><code>chassisd</code> は <code>CHASSIS_MODULE</code> テーブル（<code>CHASSIS_CFG_TABLE = "CHASSIS_MODULE"</code>）を唯一の CONFIG_DB 参照先として DPU の admin state を制御する（<code>chassisd:355,749,1143</code>）。<code>DPU</code> / <code>DPUS</code> テーブルを直接参照しない。DPU の物理状態は <code>CHASSIS_STATE_DB.DPU_STATE</code> テーブル経由で管理される。</p>
+<h3 id="sai">SAI 参照<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<p><code>MID_PLANE_BRIDGE</code> / <code>DPUS</code> / <code>DPU</code> / <code>REMOTE_DPU</code> / <code>VDPU</code> はいずれも SAI を直接操作しない。<code>DASH_HA_GLOBAL_CONFIG</code> は <code>dashhaorch</code> (orchagent) 経由で DASH SAI に設定を渡すが、orchagent の SAI 呼び出し詳細は DASH 固有実装に依存する。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">異常系・無効入力時の挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-83,106,718-720,801-840,1075-1105</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:76,84,119</code>; <code>src/sonic-yang-models/yang-models/sonic-smart-switch.yang:65,69,90,98,101,160,295-306</code> (2026-05-17)
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-dpu-failure.md</code></p>
+</blockquote>
+<h3 id="yang">YANG バリデーション失敗（書き込み拒否）<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル / フィールド</th>
+<th>違反条件</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MID_PLANE_BRIDGE.bridge</code></td>
+<td><code>"bridge-midplane"</code> 以外の値</td>
+<td>CLI が書き込み拒否（<code>pattern "bridge-midplane"</code> 制約）</td>
+</tr>
+<tr>
+<td><code>MID_PLANE_BRIDGE</code> (<code>bridge</code> のみ、<code>ip_prefix</code> 欠落)</td>
+<td><code>ip_prefix</code> なしで <code>bridge</code> を設定</td>
+<td>YANG <code>must</code> 制約違反で拒否（<code>must "(current()/../ip_prefix)"</code>)</td>
+</tr>
+<tr>
+<td><code>DPUS.midplane_interface</code></td>
+<td><code>dpu_name</code> と異なる値</td>
+<td>YANG <code>must "(current() = current()/../dpu_name)"</code> 違反</td>
+</tr>
+<tr>
+<td><code>DPU.dpu_id</code></td>
+<td><code>"8"</code> 以上・2桁・負数</td>
+<td><code>pattern [0-7]</code> 違反で書き込み拒否</td>
+</tr>
+<tr>
+<td><code>DASH_HA_GLOBAL_CONFIG.dpu_vnet</code></td>
+<td>存在しない VNET 名を指定</td>
+<td>YANG <code>leafref</code> 解決失敗。CLI が拒否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dhcpservd-dhcp">dhcpservd — ミッドプレーン DHCP の無音失敗<a class="headerlink" href="#dhcpservd-dhcp" title="Permanent link">&para;</a></h3>
+<p>以下の条件が成立するとエラーログなしで DHCP 設定生成がスキップされる。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>コード位置</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA.localhost.subtype != "SmartSwitch"</code></td>
+<td><code>dhcp_cfggen.py:76</code></td>
+<td><code>MID_PLANE_BRIDGE</code> / <code>DPUS</code> テーブルを完全スキップ。DPU への IP 払い出し停止</td>
+</tr>
+<tr>
+<td><code>MID_PLANE_BRIDGE.GLOBAL</code> の <code>bridge</code> または <code>ip_prefix</code> いずれかが欠落</td>
+<td><code>dhcp_cfggen.py:84</code></td>
+<td>ミッドプレーンブリッジが <code>dhcp_interfaces</code> に未登録。<code>DPUS</code> が存在しても IP 払い出し停止</td>
+</tr>
+<tr>
+<td><code>DPUS</code> エントリに <code>midplane_interface</code> フィールドなし</td>
+<td><code>dhcp_cfggen.py:119</code></td>
+<td>当該エントリをフィルタアウト。対応 DPU の IP 払い出しのみ停止</td>
+</tr>
+</tbody>
+</table>
+<p>いずれの場合も <code>dhcpservd</code> はエラーを出力しない。症状（DPU が IP を取得できない）が唯一の手掛かりになる。</p>
+<h3 id="chassisd-midplane">chassisd — midplane 初期化失敗<a class="headerlink" href="#chassisd-midplane" title="Permanent link">&para;</a></h3>
+<p><code>SmartSwitchModuleUpdater.__init__()</code> で <code>chassis.init_midplane_switch()</code> が <code>False</code> または例外を返した場合:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># chassisd:718-720</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">midplane_initialized</span> <span class="o">=</span> <span class="n">try_get</span><span class="p">(</span><span class="n">chassis</span><span class="o">.</span><span class="n">init_midplane_switch</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">midplane_initialized</span><span class="p">:</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="s2">&quot;Chassisd midplane intialization failed&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><code>check_midplane_reachability()</code> の先頭で <code>if not self.midplane_initialized: return</code> となりループ全体をスキップ</li>
+<li><code>CHASSIS_STATE_DB.DPU_STATE</code> の midplane 状態が更新されない</li>
+<li><code>CONFIG_DB</code> は変更されない</li>
+</ul>
+<h3 id="dpu-offline">DPU offline 遷移時の挙動<a class="headerlink" href="#dpu-offline" title="Permanent link">&para;</a></h3>
+<p><code>CHASSIS_MODULE</code> の oper_status が <code>offline</code> に遷移すると chassisd が以下を記録する（<code>DPU</code> / <code>DPUS</code> テーブルは変更しない）:</p>
+<ol>
+<li><code>/host/reboot-cause/module/&lt;dpu&gt;/prev_reboot_time.txt</code> にダウン時刻を記録</li>
+<li><code>/host/reboot-cause/module/&lt;dpu&gt;/history/&lt;time&gt;_reboot_cause.json</code> に原因 JSON を保存（最大 <code>MAX_HISTORY_FILES=10</code> 件でローテーション）</li>
+<li><code>CHASSIS_STATE_DB.REBOOT_CAUSE|&lt;DPU&gt;|&lt;time&gt;</code> に書き込み</li>
+</ol>
+<p>midplane 疎通切断時:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>&quot;Unexpected: Module &lt;DPU&gt; lost midplane connectivity&quot;  # syslog WARNING
+</span></code></pre></div>
+<p><code>CHASSIS_STATE_DB.DPU_STATE|&lt;DPU&gt;</code> の <code>dpu_midplane_link_state</code> / <code>dpu_control_plane_state</code> / <code>dpu_data_plane_state</code> を全て <code>"down"</code> にセット（<code>chassisd:882-884</code>）。CONFIG_DB の DPU 関連テーブルは変更されない。</p>
+<h3 id="dpu-max_dpu_reboot_duration">DPU リブート判定（MAX_DPU_REBOOT_DURATION）<a class="headerlink" href="#dpu-max_dpu_reboot_duration" title="Permanent link">&para;</a></h3>
+<p>DPU が online 復帰したとき、同一のリブート原因で <code>MAX_DPU_REBOOT_DURATION=800</code> 秒以内なら
+<code>is_reboot=True</code> とみなしリブート原因の再書き込みをスキップする（<code>chassisd:830</code>）。
+<code>DEFAULT_DPU_REBOOT_TIMEOUT=360</code> 秒は <code>platform.json</code> の <code>dpu_reboot_timeout</code> で上書き可能（<code>chassisd:727</code>）。</p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">数値定数・マジックナンバー (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-83,89-90,95,106</code>; <code>src/sonic-config-engine/config_samples.py:85-93,103,136</code>; <code>src/sonic-yang-models/yang-models/sonic-smart-switch.yang:65,90,117,160,275</code> (2026-05-17)
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-dpu-constants.md</code></p>
+</blockquote>
+<h3 id="chassisd">chassisd 宣言定数<a class="headerlink" href="#chassisd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>単位</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_DPU_REBOOT_TIMEOUT</code></td>
+<td><code>360</code></td>
+<td>秒</td>
+<td>DPU リブート完了待ちタイムアウト。<code>platform.json</code> の <code>dpu_reboot_timeout</code> キーで上書き可能（<code>chassisd:727</code>）</td>
+</tr>
+<tr>
+<td><code>MAX_DPU_REBOOT_DURATION</code></td>
+<td><code>800</code></td>
+<td>秒</td>
+<td>同一リブート原因の重複判定ウィンドウ。この時間内の online 復帰は新規リブートとみなさない（<code>chassisd:830</code>）</td>
+</tr>
+<tr>
+<td><code>CHASSIS_INFO_UPDATE_PERIOD_SECS</code></td>
+<td><code>10</code></td>
+<td>秒</td>
+<td>chassisd メインループ周期。DPU oper state 更新間隔（<code>chassisd:89</code>）</td>
+</tr>
+<tr>
+<td><code>CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD</code></td>
+<td><code>30</code></td>
+<td>分</td>
+<td>DPU が down 継続時に CHASSIS_STATE_DB 古エントリをクリーンアップするまでの猶予（<code>chassisd:90</code>）</td>
+</tr>
+<tr>
+<td><code>SELECT_TIMEOUT</code></td>
+<td><code>1000</code></td>
+<td>ミリ秒</td>
+<td><code>swsscommon.Select.select()</code> タイムアウト。SIGTERM ハンドリングに影響（<code>chassisd:95</code>）</td>
+</tr>
+<tr>
+<td><code>MAX_HISTORY_FILES</code></td>
+<td><code>10</code></td>
+<td>件</td>
+<td><code>/host/reboot-cause/module/&lt;dpu&gt;/history/</code> に保持する最大リブート原因ファイル数（<code>chassisd:106</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="config_samplespy">config_samples.py ハードコード値<a class="headerlink" href="#config_samplespy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>コード位置</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>'169.254.200'</code></td>
+<td><code>config_samples.py:85</code></td>
+<td>ミッドプレーンブリッジのサブネットプレフィックス (<code>mpbr_prefix</code>)</td>
+</tr>
+<tr>
+<td><code>'169.254.200.254'</code></td>
+<td><code>config_samples.py:86</code></td>
+<td>NPU 側ブリッジ IP (<code>mpbr_address</code>)。計算式: <code>mpbr_prefix + ".254"</code></td>
+</tr>
+<tr>
+<td><code>'bridge-midplane'</code></td>
+<td><code>config_samples.py:88</code></td>
+<td>ブリッジ名 (<code>bridge_name</code>)。YANG <code>pattern "bridge-midplane"</code> と一致</td>
+</tr>
+<tr>
+<td><code>'3600'</code></td>
+<td><code>config_samples.py:136</code></td>
+<td><code>DHCP_SERVER_IPV4.bridge-midplane.lease_time</code>（秒）。1 時間固定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dpu_2">DPU アドレス計算式<a class="headerlink" href="#dpu_2" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># config_samples.py:102-103</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">dpu_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">midplane_interface</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;dpu&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>   <span class="c1"># &quot;dpu0&quot; → 0</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">dhcp_ip</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mpbr_prefix</span><span class="p">,</span> <span class="n">dpu_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>    <span class="c1"># &quot;169.254.200.&lt;dpu_id+1&gt;&quot;</span>
+</span></code></pre></div>
+<p>具体的な割当: <code>dpu0</code>→<code>.1</code>、<code>dpu1</code>→<code>.2</code>、<code>dpu7</code>→<code>.8</code>。NPU ブリッジ IP (<code>.254</code>) との衝突なし（最大 <code>.8</code>）。</p>
+<h3 id="dash_ha_global_config_3">DASH_HA_GLOBAL_CONFIG テスト実例値の由来<a class="headerlink" href="#dash_ha_global_config_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>実例値</th>
+<th>由来</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cp_data_channel_port</code></td>
+<td><code>11362</code></td>
+<td>DASH HA HLD 規定値</td>
+</tr>
+<tr>
+<td><code>dp_channel_dst_port</code></td>
+<td><code>11368</code></td>
+<td>DASH HA HLD 規定値</td>
+</tr>
+<tr>
+<td><code>dp_channel_src_port_min</code></td>
+<td><code>49152</code></td>
+<td>Linux エフェメラルポート開始値（<code>ip_local_port_range</code> 下限）</td>
+</tr>
+<tr>
+<td><code>dp_channel_src_port_max</code></td>
+<td><code>53247</code></td>
+<td><code>49152 + 4095</code>（4096 ポート幅）</td>
+</tr>
+<tr>
+<td><code>dp_channel_probe_interval_ms</code></td>
+<td><code>100</code></td>
+<td>BFD 推奨最小値（RFC 5880 準拠）</td>
+</tr>
+<tr>
+<td><code>dp_channel_probe_fail_threshold</code></td>
+<td><code>3</code></td>
+<td>BFD 標準乗数（<code>DetectMult = 3</code>）</td>
+</tr>
+<tr>
+<td><code>dpu_bfd_probe_interval_in_ms</code></td>
+<td><code>100</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>dpu_bfd_probe_multiplier</code></td>
+<td><code>3</code></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">書き込み副作用 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd:89-90,219-256,315-335,557-562,863-889,1180-1226</code>; <code>src/sonic-config-engine/config_samples.py:96-143</code> (2026-05-17)
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-dpu-side-effects.md</code></p>
+</blockquote>
+<h3 id="mid_plane_bridge-dpus-dhcp_server-dhcp">MID_PLANE_BRIDGE + DPUS → dhcp_server がミッドプレーン DHCP プールを再構成<a class="headerlink" href="#mid_plane_bridge-dpus-dhcp_server-dhcp" title="Permanent link">&para;</a></h3>
+<p><code>MID_PLANE_BRIDGE</code> と <code>DPUS</code> への書き込みは <code>dhcp_server</code> サービスに通知され、<code>bridge-midplane</code> インタフェース上の DHCP プールが構成される。<code>DPUS|dpu*</code> の各エントリに対して <code>169.254.200.(dpu_id+1)</code> の DHCP リース割り当てが開始される。<code>DPUS|dpu*</code> を DEL するとそのエントリの DHCP プールが失効し、DPU のミッドプレーン IP が喪失する（DPU ミッドプレーン接続断）。</p>
+<h3 id="chassis_module-dpu">CHASSIS_MODULE 書き込み → DPU ハードウェア電源を非同期制御<a class="headerlink" href="#chassis_module-dpu" title="Permanent link">&para;</a></h3>
+<p><code>CHASSIS_MODULE|DPU*</code> への SET (admin_status=up/down) は <code>SmartSwitchConfigManagerTask</code> が受け取り、別スレッドで <code>set_admin_state_gracefully()</code> を呼び出す (<code>chassisd:255-256</code>)。CONFIG_DB 書き込み完了直後には STATE_DB の <code>oper_status</code> はまだ変化しない（非同期）。DEL 操作も <code>admin_state = MODULE_ADMIN_DOWN</code> として扱われ DPU がシャットダウンする (<code>chassisd:1224</code>)。</p>
+<h3 id="midplane-cp_state-dp_state-down">midplane 切断 → CP_STATE / DP_STATE が連鎖的に down へ<a class="headerlink" href="#midplane-cp_state-dp_state-down" title="Permanent link">&para;</a></h3>
+<p><code>SmartSwitchModuleUpdater.update_dpu_state()</code> は DPU の midplane 到達性喪失を検知すると、<code>CHASSIS_STATE_DB</code> に <code>dpu_midplane_link_state: "down"</code> を書き込むと同時に <code>CP_STATE = "down"</code> および <code>DP_STATE = "down"</code> も設定する (<code>chassisd:881-884</code>)。midplane 復旧だけでは CP/DP は自動回復せず、個別の復旧チェックが必要。</p>
+<h3 id="dash_ha_global_config-sai-ha-bfd">DASH_HA_GLOBAL_CONFIG → SAI HA 属性更新（BFD セッション再起動の可能性）<a class="headerlink" href="#dash_ha_global_config-sai-ha-bfd" title="Permanent link">&para;</a></h3>
+<p><code>dashhaorch</code> は <code>DASH_HA_GLOBAL_CONFIG</code> 変更を受けると SAI に HA グローバル属性を即時適用する。<code>dp_channel_src_port_min/max</code> や BFD プローブ間隔の変更は既存 BFD セッションを一時中断させる可能性があり、HA フェイルオーバー中の変更は避けること。</p>
+<h3 id="_13">副作用サマリー<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB 操作</th>
+<th>副作用</th>
+<th>波及先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MID_PLANE_BRIDGE</code> SET</td>
+<td>ミッドプレーン DHCP 有効化</td>
+<td><code>dhcp_server</code>、ネットワーク</td>
+</tr>
+<tr>
+<td><code>DPUS\|dpu*</code> SET</td>
+<td>DHCP リース割り当て開始（169.254.200.x）</td>
+<td>DPU ミッドプレーン IP</td>
+</tr>
+<tr>
+<td><code>DPUS\|dpu*</code> DEL</td>
+<td>DHCP プール失効、DPU ミッドプレーン IP 喪失</td>
+<td>DPU 接続断</td>
+</tr>
+<tr>
+<td><code>CHASSIS_MODULE\|DPU*</code> SET admin_status=down</td>
+<td>DPU グレースフルシャットダウン（非同期）</td>
+<td>ハードウェア、<code>CHASSIS_STATE_DB</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_MODULE\|DPU*</code> SET admin_status=up</td>
+<td>DPU 電源投入（非同期）</td>
+<td>ハードウェア、<code>CHASSIS_STATE_DB</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_MODULE\|DPU*</code> DEL</td>
+<td>DPU シャットダウン（DEL = admin_down 扱い）</td>
+<td>ハードウェア</td>
+</tr>
+<tr>
+<td><code>DASH_HA_GLOBAL_CONFIG</code> SET</td>
+<td>SAI HA 属性更新、BFD セッション再起動の可能性</td>
+<td><code>dashhaorch</code>、SAI、HA セッション</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
+
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd:44,95,1147-1175,1180-1226</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:20-80,349-388</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:14,25,130-148</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:23,95-100</code>; <code>SONiC/doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md:100-200</code> (2026-05-17)
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-dpu-pubsub.md</code></p>
+</blockquote>
+<h3 id="producer-consumer">Producer / Consumer ペア<a class="headerlink" href="#producer-consumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB テーブル</th>
+<th>Producer</th>
+<th>Consumer / 購読方式</th>
+<th>select タイムアウト</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CHASSIS_MODULE\|DPU*</code></td>
+<td>sonic-gnmi / CLI</td>
+<td><code>SmartSwitchConfigManagerTask</code> — <code>SubscriberStateTable</code></td>
+<td>1000 ms</td>
+</tr>
+<tr>
+<td><code>MID_PLANE_BRIDGE\|GLOBAL</code></td>
+<td>sonic-cfggen / config_samples.py</td>
+<td><code>dhcpservd</code> — <code>MidPlaneTableEventChecker</code>（<code>SubscriberStateTable</code> 内包）</td>
+<td>5000 ms</td>
+</tr>
+<tr>
+<td><code>DPUS\|dpu*</code></td>
+<td>sonic-cfggen / config_samples.py</td>
+<td><code>dhcpservd</code> — <code>DpusTableEventChecker</code>（<code>SubscriberStateTable</code> 内包）</td>
+<td>5000 ms</td>
+</tr>
+<tr>
+<td><code>DASH_HA_GLOBAL_CONFIG</code></td>
+<td>ネットワークコントローラ (gNMI)</td>
+<td><code>hamgrd</code> — <code>SubscriberStateTable</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>DPU</code>, <code>VDPU</code></td>
+<td>ネットワークコントローラ (gNMI)</td>
+<td>NPU <code>orchagent</code> / <code>hamgrd</code> — <code>SubscriberStateTable</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>REMOTE_DPU</code></td>
+<td>ネットワークコントローラ (gNMI)</td>
+<td><code>hamgrd</code> — <code>SubscriberStateTable</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="chassis_module-chassisd">CHASSIS_MODULE → chassisd<a class="headerlink" href="#chassis_module-chassisd" title="Permanent link">&para;</a></h3>
+<p><code>SmartSwitchConfigManagerTask.task_worker()</code> (<code>chassisd:1180</code>) は <code>swsscommon.SubscriberStateTable(config_db, CHASSIS_CFG_TABLE)</code> を生成し、<code>swsscommon.Select</code> に登録する (<code>chassisd:1198-1201</code>)。<code>SELECT_TIMEOUT = 1000</code> ms (<code>chassisd:95</code>) でポーリングし、イベント受信時は <code>sst.pop()</code> で <code>(key, op, fvp)</code> を取得する。</p>
+<ul>
+<li>op=<code>SET</code> のとき: <code>fvp</code> から <code>admin_status</code> を取得し <code>up</code> なら <code>MODULE_ADMIN_UP</code>、それ以外は <code>MODULE_ADMIN_DOWN</code> として <code>module_config_update()</code> を呼び出す</li>
+<li>op=<code>DEL</code> のとき: 無条件で <code>MODULE_ADMIN_DOWN</code> を渡す（DEL = シャットダウン扱い）</li>
+</ul>
+<p><code>module_config_update()</code> 内では別スレッドで <code>set_admin_state_gracefully()</code> が呼ばれるため、CONFIG_DB 書き込み完了時点では STATE_DB の <code>oper_status</code> はまだ変化しない（完全非同期）。</p>
+<h3 id="mid_plane_bridge-dpus-dhcpservd">MID_PLANE_BRIDGE / DPUS → dhcpservd<a class="headerlink" href="#mid_plane_bridge-dpus-dhcpservd" title="Permanent link">&para;</a></h3>
+<p><code>dhcpservd.py</code> は SmartSwitch モードのとき <code>MidPlaneTableEventChecker</code> と <code>DpusTableEventChecker</code> を <code>sel</code> に追加する (<code>dhcpservd.py:143-144</code>)。両チェッカーはいずれも <code>ConfigDbEventChecker</code> 基底クラスの <code>enable()</code> メソッドで <code>SubscriberStateTable</code> を生成し <code>sel.addSelectable()</code> する (<code>dhcp_db_monitor.py:69-75</code>)。<code>DEFAULT_SELECT_TIMEOUT = 5000</code> ms でポーリング。</p>
+<ul>
+<li><code>MidPlaneTableEventChecker</code>: イベントの <code>bridge</code> フィールドが <code>enabled_dhcp_interfaces</code> に含まれるか、または op=<code>DEL</code> のとき再生成トリガー</li>
+<li><code>DpusTableEventChecker</code>: あらゆるイベントを無条件で再生成トリガーとして扱う（<code>_process_check()</code> が常に <code>True</code> を返す）</li>
+</ul>
+<p>イベント検知後、<code>dhcp_cfggen</code> が DHCP 設定ファイルを再生成し、kea-dhcp-server が再起動されてミッドプレーン DHCP プールが反映される。</p>
+<h3 id="dash_ha_global_config-hamgrd">DASH_HA_GLOBAL_CONFIG → hamgrd<a class="headerlink" href="#dash_ha_global_config-hamgrd" title="Permanent link">&para;</a></h3>
+<p>HLD mermaid 図 (<code>smart-switch-ha-detailed-design.md:175</code>) では <code>NPU_DASH_HA_GLOBAL_CONFIG --&gt; |SubscribeStateTable| NPU_HAMGRD</code> と明示されている。<code>hamgrd</code> はこのイベントを受けて HA グローバル設定を DPU 側の <code>DASH_HA_SET_TABLE</code> / <code>DASH_HA_SCOPE_TABLE</code> へ ZMQ 経由で伝播する。</p>
+<h3 id="_14">データフロー図<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>CONFIG_DB[CHASSIS_MODULE|DPU*]
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>  ↓ SubscriberStateTable (keyspace notification)
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>SmartSwitchConfigManagerTask [SELECT_TIMEOUT=1000ms]
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>  ↓ sst.pop() → op=SET/DEL → module_config_update()
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>set_admin_state_gracefully() [別スレッド・非同期]
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>  → ハードウェア電源制御 → CHASSIS_STATE_DB 更新
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>CONFIG_DB[MID_PLANE_BRIDGE|GLOBAL], CONFIG_DB[DPUS|dpu*]
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>  ↓ SubscriberStateTable (ConfigDbEventChecker 経由)
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>  ↓ MidPlaneTableEventChecker / DpusTableEventChecker
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>  ↓ dhcp_cfggen 設定ファイル再生成
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>kea-dhcp-server 再起動 → ミッドプレーン DHCP 反映
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>CONFIG_DB[DASH_HA_GLOBAL_CONFIG]
+</span><span id="__span-16-16"><a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>  ↓ SubscriberStateTable
+</span><span id="__span-16-17"><a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>hamgrd → ZMQ → DPU側 DASH_HA_SET / DASH_HA_SCOPE_TABLE
+</span><span id="__span-16-18"><a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>
+</span><span id="__span-16-19"><a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>CONFIG_DB[DPU], CONFIG_DB[VDPU]
+</span><span id="__span-16-20"><a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>  ↓ SubscriberStateTable
+</span><span id="__span-16-21"><a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>NPU orchagent (swss) → SAI → ASIC
+</span><span id="__span-16-22"><a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>
+</span><span id="__span-16-23"><a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a>CONFIG_DB[DPU], CONFIG_DB[REMOTE_DPU], CONFIG_DB[VDPU]
+</span><span id="__span-16-24"><a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a>  ↓ SubscriberStateTable
+</span><span id="__span-16-25"><a id="__codelineno-16-25" name="__codelineno-16-25" href="#__codelineno-16-25"></a>hamgrd → ZMQ → DPU 側各テーブル
+</span></code></pre></div>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-85,302-311,717-729,1412-1420,1532-1579</code>; <code>sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/module.py:261-514</code>; <code>sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/device_data.py:32-378</code>; <code>sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/dpuctlplat.py:87-134</code> (2026-05-17)
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-dpu-platform.md</code></p>
+</blockquote>
+<p><strong>Mellanox (NVIDIA) 固有実装あり</strong>。CONFIG_DB テーブル構造はプラットフォーム非依存だが、chassisd と platform API の実装レベルで複数の Mellanox 固有依存が存在する。</p>
+<table>
+<thead>
+<tr>
+<th>差分ポイント</th>
+<th>影響するテーブル</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_midplane_ip()</code> IP 計算式</td>
+<td><code>MID_PLANE_BRIDGE</code>, <code>DPUS</code></td>
+<td>Mellanox 固有: <code>169.254.200.(dpu_id+1)</code>。他ベンダーは異なるアドレス体系を使用する可能性がある</td>
+</tr>
+<tr>
+<td><code>platform.json[DPUS]</code></td>
+<td><code>DPUS</code> 間接</td>
+<td>ミッドプレーンインターフェース名を解決するために必須。欠落時は <code>RuntimeError</code> が送出され midplane 疎通確認が常に <code>False</code> になる</td>
+</tr>
+<tr>
+<td><code>platform.json[dpu_reboot_timeout]</code></td>
+<td><code>CHASSIS_MODULE</code> 間接</td>
+<td>デフォルト <code>360</code> 秒を上書きするキー。プラットフォームごとに設定可能 (<code>chassisd:727</code>)</td>
+</tr>
+<tr>
+<td><code>BootProgEnum.OS_RUN</code> による online 判定</td>
+<td><code>CHASSIS_MODULE</code> 間接</td>
+<td>Mellanox <code>hw-management</code> ドライバが提供する <code>/var/run/hw-management/dpu{N}/system/boot_progress</code> sysfs を読み取り。値 <code>5</code> = <code>OS_RUN</code> = <code>MODULE_STATUS_ONLINE</code></td>
+</tr>
+<tr>
+<td><code>mlxreg</code> Watchdog 判定</td>
+<td><code>CHASSIS_STATE_DB.REBOOT_CAUSE</code> 間接</td>
+<td>Mellanox ハードウェア固有の <code>mlxreg --reg_name MRSI</code> でリブート原因を取得。他ベンダーでは代替手段を使用</td>
+</tr>
+<tr>
+<td><code>DASH_HA_GLOBAL_CONFIG</code> / <code>DPU</code> / SAI 呼び出し</td>
+<td><code>DASH_HA_GLOBAL_CONFIG</code>, <code>DPU</code></td>
+<td>CONFIG_DB テーブル構造は非依存。SAI HA 実装は DASH ハードウェアとベンダー依存</td>
+</tr>
+</tbody>
+</table>
+<h3 id="chassisd-smartswitch">chassisd の SmartSwitch 分岐<a class="headerlink" href="#chassisd-smartswitch" title="Permanent link">&para;</a></h3>
+<p><code>platform_chassis.is_smartswitch()</code> と <code>is_dpu()</code> の戻り値によってデーモンクラスを切り替える (<code>chassisd:1576-1579</code>):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">if</span> <span class="n">chassis</span><span class="o">.</span><span class="n">is_smartswitch</span><span class="p">()</span> <span class="ow">and</span> <span class="n">chassis</span><span class="o">.</span><span class="n">is_dpu</span><span class="p">():</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>    <span class="n">chassisd</span> <span class="o">=</span> <span class="n">DpuChassisdDaemon</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>   <span class="c1"># DPU 側: DPU 状態ポーリング専用</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>    <span class="n">chassisd</span> <span class="o">=</span> <span class="n">ChassisdDaemon</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>      <span class="c1"># NPU 側 / 通常 chassis: SmartSwitchModuleUpdater + SmartSwitchConfigManagerTask</span>
+</span></code></pre></div>
+<p>これらのメソッドは <code>sonic_platform.platform.Platform().get_chassis()</code> が返すオブジェクトのプラットフォーム実装に依存する。SmartSwitch でない場合は <code>SmartSwitchModuleUpdater</code> が使われず、<code>CHASSIS_MODULE|DPU*</code> の購読と DPU 電源制御が行われない。</p>
+<h3 id="mellanox-platformjsondpus">Mellanox <code>platform.json[DPUS]</code> の必須性<a class="headerlink" href="#mellanox-platformjsondpus" title="Permanent link">&para;</a></h3>
+<p>Mellanox 実装では、ミッドプレーンインターフェース名を <code>/usr/share/sonic/platform/platform.json</code> の <code>DPUS</code> セクションから解決する (<code>device_data.py:358-370</code>)。このファイルまたは <code>DPUS</code> セクションが欠落した場合 <code>get_midplane_interface()</code> が <code>RuntimeError</code> を送出し、<code>is_midplane_reachable()</code> が常に <code>False</code> を返す。CONFIG_DB の <code>DPUS</code> テーブルとは別物であることに注意。</p>
+<h3 id="mellanox-get_midplane_ip">Mellanox <code>get_midplane_ip()</code> — アドレス体系<a class="headerlink" href="#mellanox-get_midplane_ip" title="Permanent link">&para;</a></h3>
+<p><code>module.py:490</code> のハードコード式 <code>169.254.200.(dpu_id+1)</code> は CONFIG_DB の <code>MID_PLANE_BRIDGE.ip_prefix=169.254.200.254/24</code> と同一サブネットを前提とする。この対応関係は Mellanox 固有の実装であり、他ベンダーの platform API は異なるアドレス体系を使用する可能性がある。</p>
+<!-- /platform -->
+
+<h2 id="_15">制約<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>MID_PLANE_BRIDGE|GLOBAL</code> の <code>bridge</code> は <code>bridge-midplane</code> 固定。変更不可。</li>
 <li><code>DPUS</code> の <code>dpu_name</code> および <code>midplane_interface</code> は <code>dpu[0-9]+</code> パターン必須。</li>
@@ -35900,11 +37683,11 @@
 <li><code>REMOTE_DPU</code> の <code>dpu_id</code> も同様に <code>[0-7]</code> 制約。</li>
 <li><code>DASH_HA_GLOBAL_CONFIG</code> の <code>vnet_name</code> は deprecated であり、YANG <code>leafref</code> によって <code>VNET</code> テーブル内の既存エントリのみ参照可能。</li>
 </ul>
-<h2 id="_11">書き込み入り口<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_16">書き込み入り口<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <h3 id="sonic-cfggen">sonic-cfggen（ビルド時 / 初期設定）<a class="headerlink" href="#sonic-cfggen" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># config_samples.py:81-106</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># generate_t1_smartswitch_switch_sample_config() が</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1"># MID_PLANE_BRIDGE, DPUS, DHCP_SERVER_IPV4 を生成</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># config_samples.py:81-106</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c1"># generate_t1_smartswitch_switch_sample_config() が</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="c1"># MID_PLANE_BRIDGE, DPUS, DHCP_SERVER_IPV4 を生成</span>
 </span></code></pre></div>
 <ul>
 <li><code>MID_PLANE_BRIDGE|GLOBAL</code>、<code>DPUS|dpu*</code> はビルド時 config_samples.py が生成</li>
@@ -35914,7 +37697,7 @@
 <p><code>DPU</code> テーブルの <code>vip_ipv4</code>, <code>pa_ipv4</code>, <code>dpu_id</code>, <code>vdpu_id</code>, <code>gnmi_port</code>, <code>orchagent_zmq_port</code>, <code>swbus_port</code> は minigraph XML の DPU セクションから読み込まれる。</p>
 <h3 id="config_db-cli-rest">直接操作（CONFIG_DB CLI / REST）<a class="headerlink" href="#config_db-cli-rest" title="Permanent link">&para;</a></h3>
 <p><code>sonic-db-cli CONFIG_DB</code> または <code>config</code> CLI から手動設定も可能だが、通常は自動生成設定を使用する。</p>
-<h2 id="_12">購読者<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_17">購読者<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35953,7 +37736,7 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_13">関連リファレンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_18">関連リファレンス<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <code>sonic-smart-switch</code> (<code>src/sonic-yang-models/yang-models/sonic-smart-switch.yang</code>)</li>
 <li>CONFIG_DB: <a href="../chassis-module/"><code>CHASSIS_MODULE</code></a>（DPU モジュール管理状態）</li>
@@ -35961,7 +37744,7 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_19">引用元<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23633,6 +23641,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -27909,6 +27945,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -29478,7 +29570,579 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-tunnel_decap_term_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 操作の安全順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#orch-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル・Orch とのクロスリファレンス (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="他テーブル・Orch とのクロスリファレンス (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — 参照元 Orch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — 書き込み契機 Orch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE — 独立した書き込みフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — SET 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — DEL 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_term_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TERM_TABLE — 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE — 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        schema.h テーブル名マクロ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キー区切り文字
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE フィールド有効値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_term_table-term_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TERM_TABLE — term_type 有効値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — フィールド値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE — フィールド値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN トンネル名プレフィックス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state_db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書き込みの副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STATE_DB 書き込みの副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE 書き込み後の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TUNNEL_DECAP_TABLE 書き込み後の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#term" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        保留 TERM エントリのフラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ref_count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ref_count 管理との連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_term_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TERM_TABLE 書き込み後の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TUNNEL_DECAP_TERM_TABLE 書き込み後の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#term-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TERM 削除時のトンネル本体 DEL 連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE 書き込み後の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VXLAN_TUNNEL_TABLE 書き込み後の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter 登録との非同期関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch への登録順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#link" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        link ステータス変化による上書き
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE 書き込み後の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VXLAN_TABLE 書き込み後の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linux-netdevice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux netdevice 作成完了の唯一の公開シグナル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pubsub-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム・pub/sub (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム・pub/sub (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込みメカニズム
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-utilities-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読者 — sonic-utilities CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        operstatus 更新の通知フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notificationproducer-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NotificationProducer / SubscriberStateTable 非使用の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table-p2p-dip-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — P2P DIP トンネルの SAI 対応可否
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-overlay-rif-mtu-9100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — overlay RIF MTU ハードコード (9100 バイト)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-sai-create-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — SAI create-only 属性 (全プラットフォーム共通制約)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table-flexcounter-traditional-vs-non-traditional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — FlexCounter 登録方式の差 (Traditional vs Non-Traditional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table-linux-vxlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE — Linux カーネル VXLAN モジュール依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29652,6 +30316,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -35128,7 +35820,579 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-tunnel_decap_term_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 操作の安全順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#orch-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル・Orch とのクロスリファレンス (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="他テーブル・Orch とのクロスリファレンス (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — 参照元 Orch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — 書き込み契機 Orch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE — 独立した書き込みフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — SET 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — DEL 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_term_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TERM_TABLE — 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE — 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        schema.h テーブル名マクロ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キー区切り文字
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE フィールド有効値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_term_table-term_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TERM_TABLE — term_type 有効値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — フィールド値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE — フィールド値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evpn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN トンネル名プレフィックス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state_db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書き込みの副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STATE_DB 書き込みの副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE 書き込み後の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TUNNEL_DECAP_TABLE 書き込み後の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#term" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        保留 TERM エントリのフラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ref_count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ref_count 管理との連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_term_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TERM_TABLE 書き込み後の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TUNNEL_DECAP_TERM_TABLE 書き込み後の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#term-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TERM 削除時のトンネル本体 DEL 連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE 書き込み後の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VXLAN_TUNNEL_TABLE 書き込み後の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter 登録との非同期関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch への登録順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#link" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        link ステータス変化による上書き
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE 書き込み後の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VXLAN_TABLE 書き込み後の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linux-netdevice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux netdevice 作成完了の唯一の公開シグナル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pubsub-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム・pub/sub (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム・pub/sub (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込みメカニズム
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-utilities-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読者 — sonic-utilities CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        operstatus 更新の通知フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notificationproducer-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NotificationProducer / SubscriberStateTable 非使用の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table-p2p-dip-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — P2P DIP トンネルの SAI 対応可否
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-overlay-rif-mtu-9100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — overlay RIF MTU ハードコード (9100 バイト)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_table-sai-create-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE — SAI create-only 属性 (全プラットフォーム共通制約)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_table-flexcounter-traditional-vs-non-traditional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_TABLE — FlexCounter 登録方式の差 (Traditional vs Non-Traditional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_table-linux-vxlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TABLE — Linux カーネル VXLAN モジュール依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35485,7 +36749,809 @@
 </ul>
 <!-- /defaults -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>STATE_DB への書き込みは CONFIG_DB → APPL_DB → SAI の処理完了を受けて行われる。以下は各テーブルの書き込みが確定するために必要な前提条件と、DEL 操作の安全順序。</p>
+<h3 id="tunnel_decap_table-tunnel_decap_term_table">TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE<a class="headerlink" href="#tunnel_decap_table-tunnel_decap_term_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>操作</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>CONFIG_DB TUNNEL</code> SET</td>
+<td><code>tunnelmgrd</code> が APPL_DB <code>TUNNEL_DECAP_TABLE</code> を自動生成</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SAI <code>create_tunnel()</code> 成功</td>
+<td><code>addDecapTunnel()</code> 完了後に <code>setDecapTunnelStatus()</code> が STATE_DB へ書き込む</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SAI <code>create_tunnel_term_table_entry()</code> 成功</td>
+<td><code>addDecapTunnelTermEntry()</code> 完了後に <code>setDecapTunnelTermStatus()</code> が STATE_DB へ書き込む</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>TERM エントリの先行到着</strong>: APPL_DB の TUNNEL_DECAP_TERM_TABLE がトンネル本体より先に届いた場合、orchagent は <code>unhandledDecapTerms</code> に蓄積する。STATE_DB への TERM 書き込みは必ずトンネル本体 SAI 作成の後になる<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</li>
+<li><strong>ref_count による DEL 抑止</strong>: <code>removeDecapTunnel()</code> を呼んでも参照カウントが残る間は <code>stateTunnelDecapTable-&gt;del()</code> が呼ばれない。MUX_CABLE 等の参照元を先に DEL すること。</li>
+</ul>
+<h3 id="vxlan_tunnel_table_2">VXLAN_TUNNEL_TABLE<a class="headerlink" href="#vxlan_tunnel_table_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>書き込みタイミング</strong>: <code>addRemoveStateTableEntry(add=true)</code> は <code>addTunnelUser()</code> / <code>createDynamicDIPTunnel()</code> から呼ばれる。<code>VXLAN_TUNNEL</code> エントリの SET 直後ではなく、<code>VXLAN_TUNNEL_MAP</code> / EVPN 処理が完了して SAI tunnel が作成されてから書き込まれる<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</li>
+<li><strong>Warm boot スキップ</strong>: <code>WarmStart::INITIALIZED</code> かつ既存エントリが STATE_DB に存在する場合は書き込みをスキップする（重複防止）。</li>
+</ul>
+<h3 id="vxlan_table_2">VXLAN_TABLE<a class="headerlink" href="#vxlan_table_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>書き込み条件</strong>: <code>createVxlan()</code> (vxlanmgr.cpp) の Linux VXLAN netdevice 作成が成功した場合のみ <code>state=ok</code> を書き込む。失敗時は STATE_DB エントリが存在しない<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</li>
+</ul>
+<h3 id="del">DEL 操作の安全順序<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a># TUNNEL_DECAP_* 系
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>DEL APPL_DB TUNNEL_DECAP_TERM_TABLE|&lt;name&gt;|&lt;dst_ip&gt;   # term を先に DEL
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>DEL APPL_DB TUNNEL_DECAP_TABLE|&lt;name&gt;                  # ref_count=0 確認後に DEL
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a># STATE_DB エントリは orchagent が自動削除
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a># VXLAN 系
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>DEL CONFIG_DB VXLAN_TUNNEL_MAP|*                        # map を先に DEL
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>DEL CONFIG_DB VXLAN_TUNNEL|&lt;name&gt;                       # vxlanmgrd が STATE_DB を自動削除
+</span></code></pre></div>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-state-ordering.md</code></p>
+</blockquote>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="orch-phase-c">他テーブル・Orch とのクロスリファレンス (Phase C)<a class="headerlink" href="#orch-phase-c" title="Permanent link">&para;</a></h2>
+<p>STATE_DB の TUNNEL 系テーブルは他 Orch からの<strong>直接読み取り対象ではない</strong>。他 Orch はインメモリキャッシュを通じて参照し、STATE_DB はモニタリング向けの読み取り専用ミラーとして機能する。ただし、STATE_DB 書き込みの<strong>契機</strong>となるイベントは複数の Orch にまたがる。</p>
+<h3 id="tunnel_decap_table-orch">TUNNEL_DECAP_TABLE — 参照元 Orch<a class="headerlink" href="#tunnel_decap_table-orch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照元</th>
+<th>呼び出し箇所</th>
+<th>参照内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MuxOrch</code> (muxorch.cpp:2348-2374)</td>
+<td><code>MuxCable::updateTunnelRoute()</code></td>
+<td><code>getDstIpAddresses()</code> / <code>getDscpMode()</code> / <code>getQosMapId()</code> で MUX_TUNNEL の設定値を取得</td>
+</tr>
+<tr>
+<td><code>RouteOrch</code> (routeorch.cpp:2714, 3222, 3245)</td>
+<td>SubnetDecap ルート処理</td>
+<td><code>getSubnetDecapConfig()</code> で decap src_ip・有効フラグを取得</td>
+</tr>
+<tr>
+<td><code>VnetOrch</code> (vnetorch.cpp:1565, 1583)</td>
+<td>VNET ルートフィルタ</td>
+<td><code>getSubnetDecapConfig()</code> で decap 有効フラグを取得</td>
+</tr>
+</tbody>
+</table>
+<p>MuxOrch は <code>TunnelDecapOrch*</code> を直接保持しており、<code>TUNNEL_DECAP_TABLE</code> の STATE_DB エントリが存在しない（トンネル SAI 未作成）状態での <code>MUX_CABLE</code> SET は不整合を引き起こす<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
+<h3 id="vxlan_tunnel_table-orch">VXLAN_TUNNEL_TABLE — 書き込み契機 Orch<a class="headerlink" href="#vxlan_tunnel_table-orch" title="Permanent link">&para;</a></h3>
+<p><code>VxlanTunnelOrch::addRemoveStateTableEntry()</code> は以下の経路から呼ばれる:</p>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>書き込み種別</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EvpnNvoOrch</code> → <code>addTunnelUser()</code> (vxlanorch.cpp:1678)</td>
+<td>EVPN IMR/IP 経由の DIP トンネル作成</td>
+</tr>
+<tr>
+<td><code>EvpnNvoOrch</code> → <code>createDynamicDIPTunnel()</code> (vxlanorch.cpp:1733)</td>
+<td>動的 DIP トンネル作成</td>
+</tr>
+<tr>
+<td><code>PortsOrch::addTunnel()</code> 完了直後 (vxlanorch.cpp:1719-1720)</td>
+<td><code>gPortsOrch</code> へのトンネル登録後に STATE_DB 書き込み</td>
+</tr>
+<tr>
+<td><code>PortsOrch::removeTunnel()</code> 完了直後 (vxlanorch.cpp:1761, 1843)</td>
+<td><code>gPortsOrch</code> からのトンネル削除後に STATE_DB 削除</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vxlan_table_3">VXLAN_TABLE — 独立した書き込みフロー<a class="headerlink" href="#vxlan_table_3" title="Permanent link">&para;</a></h3>
+<p><code>VxlanMgr</code> (cfgmgr) が Linux VXLAN netdevice を作成した際に独立して書き込む。<code>VxlanTunnelOrch</code> や他 Orch との直接的な依存はない。</p>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-state-crossrefs.md</code></p>
+</blockquote>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>tunneldecaporch</code> / <code>VxlanTunnelOrch</code> / <code>VxlanMgr</code> における STATE_DB 書き込みの失敗経路を網羅する。</p>
+<h3 id="tunnel_decap_table-set">TUNNEL_DECAP_TABLE — SET 失敗経路<a class="headerlink" href="#tunnel_decap_table-set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>STATE_DB への影響</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tunnel_type</code> が <code>IPINIP</code> 以外</td>
+<td><code>doDecapTunnelTask()</code></td>
+<td><code>valid=false</code> → 書き込みなし</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:127-131</code></td>
+</tr>
+<tr>
+<td><code>src_ip</code> が無効な IP アドレス文字列</td>
+<td><code>doDecapTunnelTask()</code></td>
+<td><code>valid=false</code> → 書き込みなし</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:142-145</code></td>
+</tr>
+<tr>
+<td><code>src_ip</code> を既存トンネルに変更しようとした場合</td>
+<td><code>doDecapTunnelTask()</code></td>
+<td>エラーログのみ・既存 STATE_DB は変化なし</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:148-150</code></td>
+</tr>
+<tr>
+<td><code>dscp_mode</code> / <code>ecn_mode</code> / <code>ttl_mode</code> が無効値</td>
+<td><code>doDecapTunnelTask()</code></td>
+<td><code>valid=false</code> → 書き込みなし</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:155-207</code></td>
+</tr>
+<tr>
+<td><code>ecn_mode</code> を既存トンネルに SET（create-only SAI 属性）</td>
+<td><code>doDecapTunnelTask()</code></td>
+<td>WARN ログのみ・SAI 変更なし・STATE_DB は更新される（SAI と不一致）</td>
+<td>SWSS_LOG_WARN</td>
+<td><code>tunneldecaporch.cpp:178-182</code></td>
+</tr>
+<tr>
+<td>QoS マップ (<code>decap_dscp_to_tc_map</code> 等) が未解決</td>
+<td><code>doDecapTunnelTask()</code></td>
+<td><code>task_need_retry</code> → m_toSync 保留・書き込みなし（後で再試行）</td>
+<td>SWSS_LOG_NOTICE</td>
+<td><code>tunneldecaporch.cpp:218-266</code></td>
+</tr>
+<tr>
+<td>不明フィールドを SET に含む</td>
+<td><code>doDecapTunnelTask()</code></td>
+<td><code>valid=false</code> → 書き込みなし</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:275-279</code></td>
+</tr>
+<tr>
+<td>SAI <code>create_router_interface</code> 失敗</td>
+<td><code>addDecapTunnel()</code></td>
+<td>トンネル作成中断 → STATE_DB に書かれない</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:754-761</code></td>
+</tr>
+<tr>
+<td>SAI <code>create_tunnel</code> 失敗</td>
+<td><code>addDecapTunnel()</code></td>
+<td>トンネル作成中断 → STATE_DB に書かれない</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:850-857</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunnel_decap_table-del">TUNNEL_DECAP_TABLE — DEL 失敗経路<a class="headerlink" href="#tunnel_decap_table-del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>STATE_DB への影響</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DEL 対象トンネルが未登録</td>
+<td><code>doDecapTunnelTask()</code></td>
+<td>エラーログのみ・STATE_DB 変化なし</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:325-327</code></td>
+</tr>
+<tr>
+<td><code>tunnel_term_info</code> が残存している状態で DEL</td>
+<td><code>removeDecapTunnel()</code></td>
+<td><code>removeDecapTunnelStatus()</code> 未呼び出し → STATE_DB エントリ残存</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:1182-1186</code></td>
+</tr>
+<tr>
+<td><code>ref_count &gt; 0</code> の状態での DEL 要求</td>
+<td><code>RemoveTunnelIfNotReferenced()</code></td>
+<td><code>removeDecapTunnel()</code> スキップ → STATE_DB エントリ残存（ref_count が 0 になるまで保留）</td>
+<td>（ログなし）</td>
+<td><code>tunneldecaporch.cpp:1569-1575</code></td>
+</tr>
+<tr>
+<td>SAI <code>remove_tunnel</code> 失敗</td>
+<td><code>removeDecapTunnel()</code></td>
+<td><code>removeDecapTunnelStatus()</code> 未呼び出し → STATE_DB エントリ残存</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:1188-1196</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunnel_decap_term_table_2">TUNNEL_DECAP_TERM_TABLE — 失敗経路<a class="headerlink" href="#tunnel_decap_term_table_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>STATE_DB への影響</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI <code>create_tunnel_term_table_entry</code> 失敗</td>
+<td><code>addDecapTunnelTermEntry()</code></td>
+<td><code>setDecapTunnelTermStatus()</code> 未呼び出し → STATE_DB に書かれない</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:980-987</code></td>
+</tr>
+<tr>
+<td>Subnet decap が無効 (<code>subnetDecapConfig.enabled=false</code>) の状態で MP2MP term を SET</td>
+<td><code>doDecapTunnelTermTask()</code></td>
+<td>エントリ erase・STATE_DB 書き込みなし</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>tunneldecaporch.cpp:504-509</code></td>
+</tr>
+<tr>
+<td>親トンネルが未作成の状態で term を SET</td>
+<td><code>doDecapTunnelTermTask()</code></td>
+<td><code>unhandledDecapTerms</code> に保留・STATE_DB 書き込みなし（親トンネル作成後に <code>processUnhandledDecapTunnelTerms()</code> で自動処理）</td>
+<td>SWSS_LOG_NOTICE</td>
+<td><code>tunneldecaporch.cpp:519-522</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vxlan_tunnel_table_3">VXLAN_TUNNEL_TABLE — 失敗経路<a class="headerlink" href="#vxlan_tunnel_table_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>STATE_DB への影響</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gPortsOrch-&gt;allPortsReady()</code> が false（全ポート未 ready）</td>
+<td><code>TunnelDecapOrch::doTask()</code></td>
+<td>全タスクスキップ → STATE_DB 書き込みなし（次サイクルで再試行）</td>
+<td>（ログなし）</td>
+<td><code>tunneldecaporch.cpp:55-58</code></td>
+</tr>
+<tr>
+<td>SAI <code>create_tunnel</code> 失敗（vxlanorch）</td>
+<td><code>VxlanTunnel::createTunnel()</code></td>
+<td>例外キャッチ → <code>addRemoveStateTableEntry()</code> 未呼び出し → STATE_DB 書き込みなし</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>vxlanorch.cpp:848</code></td>
+</tr>
+<tr>
+<td>P2P トンネルで <code>dst_ip</code> が 0 (VTEP 用) の場合</td>
+<td><code>VxlanTunnel</code> コンストラクタ</td>
+<td><code>addRemoveStateTableEntry()</code> 未呼び出し → <code>VXLAN_TUNNEL_TABLE</code> に書き込まれない</td>
+<td>（ログなし）</td>
+<td><code>vxlanorch.cpp:529-532</code></td>
+</tr>
+<tr>
+<td>SAI <code>remove_tunnel</code> 失敗（vxlanorch）</td>
+<td><code>VxlanTunnel::deleteTunnel()</code></td>
+<td><code>~VxlanTunnel()</code> が途中で例外キャッチ → <code>del()</code> が呼ばれずエントリ残存</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>vxlanorch.cpp:874</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vxlan_table_4">VXLAN_TABLE — 失敗経路<a class="headerlink" href="#vxlan_table_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>STATE_DB への影響</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vxlanTunnelCache</code> にトンネル未登録</td>
+<td><code>doVxlanCreateTask()</code></td>
+<td>m_toSync 保留・<code>state=ok</code> 書き込みなし（トンネル作成後に自動再試行）</td>
+<td>SWSS_LOG_DEBUG</td>
+<td><code>vxlanmgr.cpp:319-325</code></td>
+</tr>
+<tr>
+<td>VRF が未 ready (<code>isVrfStateOk()</code> false)</td>
+<td><code>doVxlanCreateTask()</code></td>
+<td>保留・STATE_DB 書き込みなし</td>
+<td>SWSS_LOG_DEBUG</td>
+<td><code>vxlanmgr.cpp:328-333</code></td>
+</tr>
+<tr>
+<td>MAC アドレス未設定</td>
+<td><code>doVxlanCreateTask()</code></td>
+<td>保留・STATE_DB 書き込みなし</td>
+<td>SWSS_LOG_DEBUG</td>
+<td><code>vxlanmgr.cpp:336-342</code></td>
+</tr>
+<tr>
+<td><code>createVxlan()</code> 失敗（Linux netdevice 作成エラー）</td>
+<td><code>doVxlanCreateTask()</code></td>
+<td><code>m_stateVxlanTable.set()</code> 未呼び出し → <code>state=ok</code> が書き込まれない</td>
+<td>SWSS_LOG_ERROR</td>
+<td><code>vxlanmgr.cpp:366-370</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-state-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>コードに直書きされており、<code>config_db.json</code> での変更が効かない定数。変更にはコードのリコンパイルが必要。</p>
+<h3 id="schemah">schema.h テーブル名マクロ<a class="headerlink" href="#schemah" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ</th>
+<th>値</th>
+<th>定義場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_TUNNEL_DECAP_TABLE_NAME</code></td>
+<td><code>"TUNNEL_DECAP_TABLE"</code></td>
+<td><code>sonic-swss-common/common/schema.h:488</code></td>
+</tr>
+<tr>
+<td><code>STATE_TUNNEL_DECAP_TERM_TABLE_NAME</code></td>
+<td><code>"TUNNEL_DECAP_TERM_TABLE"</code></td>
+<td><code>sonic-swss-common/common/schema.h:489</code></td>
+</tr>
+<tr>
+<td><code>STATE_VXLAN_TUNNEL_TABLE_NAME</code></td>
+<td><code>"VXLAN_TUNNEL_TABLE"</code></td>
+<td><code>sonic-swss-common/common/schema.h:435</code></td>
+</tr>
+<tr>
+<td><code>STATE_VXLAN_TABLE_NAME</code></td>
+<td><code>"VXLAN_TABLE"</code></td>
+<td><code>sonic-swss-common/common/schema.h:434</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">キー区切り文字<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>定義場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>state_db_key_delimiter</code></td>
+<td><code>'|'</code></td>
+<td><code>orchagent/orch.h:38</code></td>
+<td><code>TUNNEL_DECAP_TERM_TABLE</code> のキーを <code>&lt;tunnel_name&gt;\|&lt;dst_ip&gt;</code> に組み立てる</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunnel_decap_table_2">TUNNEL_DECAP_TABLE フィールド有効値<a class="headerlink" href="#tunnel_decap_table_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>有効値</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tunnel_type</code></td>
+<td><code>"IPINIP"</code></td>
+<td>唯一の有効値。不一致は <code>valid=false</code> でエラー（<code>tunneldecaporch.cpp:127</code>）</td>
+</tr>
+<tr>
+<td><code>dscp_mode</code></td>
+<td><code>"uniform"</code> / <code>"pipe"</code></td>
+<td>いずれか以外はエラー（<code>tunneldecaporch.cpp:155</code>）</td>
+</tr>
+<tr>
+<td><code>ecn_mode</code></td>
+<td><code>"copy_from_outer"</code> / <code>"standard"</code></td>
+<td>いずれか以外はエラー（<code>tunneldecaporch.cpp:171</code>）</td>
+</tr>
+<tr>
+<td><code>encap_ecn_mode</code></td>
+<td><code>"standard"</code></td>
+<td>唯一の有効値（<code>tunneldecaporch.cpp:187-189</code>）</td>
+</tr>
+<tr>
+<td><code>ttl_mode</code></td>
+<td><code>"uniform"</code> / <code>"pipe"</code></td>
+<td>いずれか以外はエラー（<code>tunneldecaporch.cpp:203</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunnel_decap_term_table-term_type">TUNNEL_DECAP_TERM_TABLE — term_type 有効値<a class="headerlink" href="#tunnel_decap_term_table-term_type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>内部 enum</th>
+<th>デフォルト</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"P2P"</code></td>
+<td><code>TUNNEL_TERM_TYPE_P2P</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>"P2MP"</code></td>
+<td><code>TUNNEL_TERM_TYPE_P2MP</code></td>
+<td>○（省略時の変数初期値、<code>tunneldecaporch.cpp:361</code>）</td>
+</tr>
+<tr>
+<td><code>"MP2MP"</code></td>
+<td><code>TUNNEL_TERM_TYPE_MP2MP</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>enum 定義: <code>tunneldecaporch.h:15-17</code></p>
+<h3 id="vxlan_tunnel_table_4">VXLAN_TUNNEL_TABLE — フィールド値定数<a class="headerlink" href="#vxlan_tunnel_table_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>条件</th>
+<th>定義場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>operstatus</code></td>
+<td><code>"down"</code></td>
+<td>トンネル初回作成時（<code>addRemoveStateTableEntry</code>）</td>
+<td><code>vxlanorch.cpp:1942</code></td>
+</tr>
+<tr>
+<td><code>operstatus</code></td>
+<td><code>"up"</code></td>
+<td>ポート link-up イベント発生時（<code>updateDbTunnelOperStatus</code>）</td>
+<td><code>vxlanorch.cpp:1901</code></td>
+</tr>
+<tr>
+<td><code>operstatus</code></td>
+<td><code>"down"</code></td>
+<td>ポート link-down イベント発生時</td>
+<td><code>vxlanorch.cpp:1905</code></td>
+</tr>
+<tr>
+<td><code>tnl_src</code></td>
+<td><code>"CLI"</code></td>
+<td>CONFIG_DB <code>VXLAN_TUNNEL</code> から手動設定されたトンネル</td>
+<td><code>vxlanorch.cpp:1935</code></td>
+</tr>
+<tr>
+<td><code>tnl_src</code></td>
+<td><code>"EVPN"</code></td>
+<td>BGP EVPN 経由で動的に作成されたトンネル</td>
+<td><code>vxlanorch.cpp:1939</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>TNL_CREATION_SRC_CLI</code> / <code>TNL_CREATION_SRC_EVPN</code> enum 定義: <code>vxlanorch.h:53-55</code></p>
+<h3 id="vxlan_table_5">VXLAN_TABLE — フィールド値定数<a class="headerlink" href="#vxlan_table_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>条件</th>
+<th>定義場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>state</code></td>
+<td><code>"ok"</code></td>
+<td><code>createVxlan()</code> 成功時のみ。失敗時は書き込まれない</td>
+<td><code>vxlanmgr.cpp:891</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="evpn">EVPN トンネル名プレフィックス定数<a class="headerlink" href="#evpn" title="Permanent link">&para;</a></h3>
+<p>EVPN 由来の動的トンネルは <code>EVPN_&lt;vtep_ip&gt;</code> 形式で VXLAN_TUNNEL_TABLE に登録される。</p>
+<table>
+<thead>
+<tr>
+<th>マクロ</th>
+<th>値</th>
+<th>定義場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LOCAL_TUNNEL_PORT_PREFIX</code></td>
+<td><code>"Port_SRC_VTEP_"</code></td>
+<td><code>vxlanorch.h:41</code></td>
+</tr>
+<tr>
+<td><code>EVPN_TUNNEL_PORT_PREFIX</code></td>
+<td><code>"Port_EVPN_"</code></td>
+<td><code>vxlanorch.h:42</code></td>
+</tr>
+<tr>
+<td><code>EVPN_TUNNEL_NAME_PREFIX</code></td>
+<td><code>"EVPN_"</code></td>
+<td><code>vxlanorch.h:43</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-state-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="state_db-phase-f">STATE_DB 書き込みの副作用 (Phase F)<a class="headerlink" href="#state_db-phase-f" title="Permanent link">&para;</a></h2>
+<p>STATE_DB への書き込みは単なる状態ミラーにとどまらず、以下の連鎖処理を引き起こす。</p>
+<h3 id="tunnel_decap_table_3">TUNNEL_DECAP_TABLE 書き込み後の副作用<a class="headerlink" href="#tunnel_decap_table_3" title="Permanent link">&para;</a></h3>
+<h4 id="term">保留 TERM エントリのフラッシュ<a class="headerlink" href="#term" title="Permanent link">&para;</a></h4>
+<p><code>addDecapTunnel()</code> が成功してトンネル本体の <code>setDecapTunnelStatus()</code> が STATE_DB に書き込まれた直後、<code>processUnhandledDecapTunnelTerms()</code> が呼ばれ、<code>unhandledDecapTerms</code> に蓄積されていた TERM エントリが一括処理される<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>addDecapTunnel() 成功
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  └─ setDecapTunnelStatus()         # STATE_DB TUNNEL_DECAP_TABLE 書き込み
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  └─ processUnhandledDecapTunnelTerms(key)
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>       └─ addDecapTunnelTermEntry() × n
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>            └─ increaseTunnelRefCount()
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>            └─ setDecapTunnelTermStatus()   # STATE_DB TUNNEL_DECAP_TERM_TABLE 書き込み
+</span></code></pre></div>
+<h4 id="ref_count">ref_count 管理との連動<a class="headerlink" href="#ref_count" title="Permanent link">&para;</a></h4>
+<p>TUNNEL_DECAP_TABLE の STATE_DB 削除は <code>ref_count</code> の管理と連動している。<code>removeDecapTunnel()</code> を呼んでも <code>ref_count &gt; 0</code> の間は STATE_DB エントリが削除されない。ref_count は TERM エントリの追加・削除によって増減するため、<strong>TERM が存在する限りトンネル本体の STATE_DB エントリも残存する</strong><sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup>。</p>
+<h3 id="tunnel_decap_term_table_3">TUNNEL_DECAP_TERM_TABLE 書き込み後の副作用<a class="headerlink" href="#tunnel_decap_term_table_3" title="Permanent link">&para;</a></h3>
+<h4 id="term-del">TERM 削除時のトンネル本体 DEL 連鎖<a class="headerlink" href="#term-del" title="Permanent link">&para;</a></h4>
+<p>TERM エントリを削除すると <code>decreaseTunnelRefCount()</code> が呼ばれ、<code>ref_count</code> が 0 になった場合に <code>RemoveTunnelIfNotReferenced()</code> がトンネル本体を削除し、STATE_DB の <code>TUNNEL_DECAP_TABLE</code> エントリも連鎖的に <code>del()</code> される<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>removeDecapTunnelTermEntry()
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  └─ decreaseTunnelRefCount()
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  └─ RemoveTunnelIfNotReferenced()
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>       └─ ref_count==0 のとき: removeDecapTunnel()
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>                └─ removeDecapTunnelStatus()   # STATE_DB TUNNEL_DECAP_TABLE 削除
+</span></code></pre></div>
+<h3 id="vxlan_tunnel_table_5">VXLAN_TUNNEL_TABLE 書き込み後の副作用<a class="headerlink" href="#vxlan_tunnel_table_5" title="Permanent link">&para;</a></h3>
+<h4 id="flexcounter">FlexCounter 登録との非同期関係<a class="headerlink" href="#flexcounter" title="Permanent link">&para;</a></h4>
+<p>SAI トンネル作成成功時に <code>addTunnelToFlexCounter()</code> が呼ばれ、<code>m_pendingAddToFlexCntr</code> に追加される。1 秒インターバルのタイマー (<code>FLEX_COUNTER_UPD_INTERVAL</code>) が発火すると <code>COUNTERS_DB COUNTERS_TUNNEL_NAME_MAP</code> / <code>COUNTERS_TUNNEL_TYPE_MAP</code> に書き込まれてトンネル統計収集が開始される。<strong>STATE_DB への書き込みと FlexCounter 登録の完了順序は保証されない</strong><sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup>。</p>
+<h4 id="portsorch">PortsOrch への登録順序<a class="headerlink" href="#portsorch" title="Permanent link">&para;</a></h4>
+<p><code>addTunnelUser()</code> 内では <code>gPortsOrch-&gt;addTunnel()</code> → <code>addBridgePort()</code> の後に <code>addRemoveStateTableEntry(add=true)</code> が呼ばれる。STATE_DB への書き込みは PortsOrch 登録が完了した後に確定する<sup id="fnref:11"><a class="footnote-ref" href="#fn:11">11</a></sup>。</p>
+<h4 id="link">link ステータス変化による上書き<a class="headerlink" href="#link" title="Permanent link">&para;</a></h4>
+<p>link-up / link-down イベントが発生すると <code>PortsOrch::updateDbPortOperStatus()</code> → <code>VxlanTunnelOrch::updateDbTunnelOperStatus()</code> の経路で <code>operstatus</code> フィールドが上書きされる。この更新はトンネル作成時の初期書き込みとは独立して発生し、タイミングは SAI 通知に依存する<sup id="fnref:12"><a class="footnote-ref" href="#fn:12">12</a></sup>。</p>
+<h3 id="vxlan_table_6">VXLAN_TABLE 書き込み後の副作用<a class="headerlink" href="#vxlan_table_6" title="Permanent link">&para;</a></h3>
+<h4 id="linux-netdevice">Linux netdevice 作成完了の唯一の公開シグナル<a class="headerlink" href="#linux-netdevice" title="Permanent link">&para;</a></h4>
+<p><code>VXLAN_TABLE|&lt;name&gt;</code> の <code>state=ok</code> は <code>createVxlan()</code> が以下 6 ステップの Linux コマンドを全て成功させた場合にのみ書かれる。外部監視ツールはこのエントリを polling して VXLAN netdevice 作成完了を検出できる。途中で失敗した場合は <code>state=ok</code> が書かれず、先行コマンドのロールバックが試みられる<sup id="fnref:13"><a class="footnote-ref" href="#fn:13">13</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>コマンド相当</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>ip link add ... type vxlan</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>ip link set ... up</code> (VXLAN)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>VxLAN インターフェース作成</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>ip link set ... master</code> (VXLAN → IF)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>VxLAN IF を VNET にアタッチ</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>ip link set ... up</code> (VxLAN IF)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-state-side-effects.md</code></p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="pubsub-phase-g">通信メカニズム・pub/sub (Phase G)<a class="headerlink" href="#pubsub-phase-g" title="Permanent link">&para;</a></h2>
+<p>STATE_DB のトンネル関連テーブルへの書き込みはすべて <code>swsscommon::Table::set()</code> / <code>del()</code> による直接操作であり、<code>NotificationProducer</code> / <code>ConsumerStateTable</code> ベースのチャネル通知は使用しない。</p>
+<h3 id="_10">書き込みメカニズム<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>STATE_DB テーブル</th>
+<th>書き込み API</th>
+<th>書き込み元</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TUNNEL_DECAP_TABLE</code></td>
+<td><code>stateTunnelDecapTable-&gt;set()</code> / <code>-&gt;del()</code></td>
+<td><code>setDecapTunnelStatus()</code> / <code>removeDecapTunnelStatus()</code> (tunneldecaporch.cpp L1531, L1536)</td>
+</tr>
+<tr>
+<td><code>TUNNEL_DECAP_TERM_TABLE</code></td>
+<td><code>stateTunnelDecapTermTable-&gt;set()</code> / <code>-&gt;del()</code></td>
+<td><code>setDecapTunnelTermStatus()</code> / <code>removeDecapTunnelTermStatus()</code> (tunneldecaporch.cpp L1560, L1566)</td>
+</tr>
+<tr>
+<td><code>VXLAN_TUNNEL_TABLE</code></td>
+<td><code>m_stateVxlanTable.set()</code> / <code>.del()</code></td>
+<td><code>addRemoveStateTableEntry()</code> (vxlanorch.cpp L1943, L1953)</td>
+</tr>
+<tr>
+<td><code>VXLAN_TUNNEL_TABLE</code> (<code>operstatus</code> のみ)</td>
+<td><code>m_stateVxlanTable.set()</code></td>
+<td><code>updateDbTunnelOperStatus()</code> (vxlanorch.cpp L1910)</td>
+</tr>
+<tr>
+<td><code>VXLAN_TABLE</code></td>
+<td><code>m_stateVxlanTable.set()</code></td>
+<td><code>VxlanMgr::createVxlan()</code> (vxlanmgr.cpp L890-892)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sonic-utilities-cli">購読者 — sonic-utilities CLI<a class="headerlink" href="#sonic-utilities-cli" title="Permanent link">&para;</a></h3>
+<p><code>show vxlan remotevtep</code> コマンド (sonic-utilities/show/vxlan.py L253-268) が STATE_DB の <code>VXLAN_TUNNEL_TABLE|*</code> を <strong>polling</strong> で読む唯一の CLI 購読者。keyspace 通知ではなく <code>SonicV2Connector.keys()</code> + <code>get_all()</code> を使用する<sup id="fnref:14"><a class="footnote-ref" href="#fn:14">14</a></sup>。</p>
+<p><code>TUNNEL_DECAP_TABLE</code> / <code>TUNNEL_DECAP_TERM_TABLE</code> / <code>VXLAN_TABLE</code> に特化した show コマンドは存在しない（テスト用アサーションは除く）。</p>
+<h3 id="operstatus">operstatus 更新の通知フロー<a class="headerlink" href="#operstatus" title="Permanent link">&para;</a></h3>
+<p><code>VXLAN_TUNNEL_TABLE.operstatus</code> は SAI の port oper-status イベントを起点に更新される<sup id="fnref:15"><a class="footnote-ref" href="#fn:15">15</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>SAI ポートリンク変化通知
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  └─ PortsOrch::updateDbPortOperStatus()        (portsorch.cpp L3920-3924)
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>       └─ port.m_type == Port::TUNNEL のとき
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>            └─ VxlanTunnelOrch::updateDbTunnelOperStatus()   (vxlanorch.cpp L1893-1910)
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>                 └─ m_stateVxlanTable.set(tunnel_name, {operstatus: &quot;up&quot;/&quot;down&quot;})
+</span></code></pre></div>
+<p>外部監視ツールが <code>operstatus</code> 変化を検出するには STATE_DB の polling が必要。</p>
+<h3 id="notificationproducer-subscriberstatetable">NotificationProducer / SubscriberStateTable 非使用の確認<a class="headerlink" href="#notificationproducer-subscriberstatetable" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>tunneldecaporch.cpp</code> L39 の <code>SubscriberStateTable</code> は CONFIG_DB の <code>CFG_SUBNET_DECAP_TABLE_NAME</code> 購読専用であり、STATE_DB 書き込み通知とは無関係</li>
+<li>STATE_DB のいずれのトンネルテーブルも、<code>NotificationProducer</code> / <code>NotificationConsumer</code> による channel 通知パスを持たない</li>
+</ul>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-state-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>orchagent/vxlanorch.cpp</code>, <code>orchagent/tunneldecaporch.cpp</code>, <code>cfgmgr/vxlanmgr.cpp</code>
+調査日: 2026-05-17</p>
+</blockquote>
+<h3 id="vxlan_tunnel_table-p2p-dip-sai">VXLAN_TUNNEL_TABLE — P2P DIP トンネルの SAI 対応可否<a class="headerlink" href="#vxlan_tunnel_table-p2p-dip-sai" title="Permanent link">&para;</a></h3>
+<p><code>VxlanTunnelOrch</code> 起動時に <code>sai_query_attribute_enum_values_capability()</code> で <code>SAI_TUNNEL_ATTR_PEER_MODE</code> の対応値を問い合わせる<sup id="fnref:16"><a class="footnote-ref" href="#fn:16">16</a></sup>。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// vxlanorch.cpp:1256-1274</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_query_attribute_enum_values_capability</span><span class="p">(</span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_OBJECT_TYPE_TUNNEL</span><span class="p">,</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">                                                    </span><span class="n">SAI_TUNNEL_ATTR_PEER_MODE</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">values</span><span class="p">);</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1">// 能力取得失敗時はデフォルトで P2P 対応とみなす</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="n">is_dip_tunnel_supported</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>ASIC 対応状況</th>
+<th><code>is_dip_tunnel_supported</code></th>
+<th>VXLAN_TUNNEL_TABLE への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_TUNNEL_PEER_MODE_P2P</code> 対応</td>
+<td><code>true</code></td>
+<td>EVPN 由来 DIP トンネルが STATE_DB に書かれる</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_PEER_MODE_P2P</code> 非対応</td>
+<td><code>false</code></td>
+<td><code>createDynamicDIPTunnel()</code> が呼ばれず、DIP エントリが STATE_DB に書かれない</td>
+</tr>
+<tr>
+<td>SAI 能力取得 API 未対応</td>
+<td><code>true</code> (デフォルト)</td>
+<td>DIP トンネル作成を試みる</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunnel_decap_table-overlay-rif-mtu-9100">TUNNEL_DECAP_TABLE — overlay RIF MTU ハードコード (9100 バイト)<a class="headerlink" href="#tunnel_decap_table-overlay-rif-mtu-9100" title="Permanent link">&para;</a></h3>
+<p>decap トンネル作成時に overlay Router Interface の MTU を <code>9100</code> にハードコードして SAI に渡す<sup id="fnref:17"><a class="footnote-ref" href="#fn:17">17</a></sup>。ASIC の MTU 上限がこれより低い環境では <code>sai_router_intfs_api-&gt;create_router_interface()</code> が失敗し、STATE_DB <code>TUNNEL_DECAP_TABLE</code> への書き込みが行われない。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// tunneldecaporch.cpp:14 + L749-750</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="cp">#define OVERLAY_RIF_DEFAULT_MTU 9100</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">overlay_intf_attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">u32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OVERLAY_RIF_DEFAULT_MTU</span><span class="p">;</span>
+</span></code></pre></div>
+<p>この値は CONFIG_DB から変更できない（ハードコード）。</p>
+<h3 id="tunnel_decap_table-sai-create-only">TUNNEL_DECAP_TABLE — SAI create-only 属性 (全プラットフォーム共通制約)<a class="headerlink" href="#tunnel_decap_table-sai-create-only" title="Permanent link">&para;</a></h3>
+<p>以下の SAI 属性は <code>sai_tunnel_api-&gt;create_tunnel()</code> 時のみ設定可能であり、既存トンネルへの変更要求は全プラットフォームで黙殺される。</p>
+<table>
+<thead>
+<tr>
+<th>STATE_DB フィールド</th>
+<th>SAI 属性</th>
+<th>変更要求時の動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ecn_mode</code></td>
+<td><code>SAI_TUNNEL_ATTR_DECAP_ECN_MODE</code></td>
+<td>SWSS_LOG_WARN でスキップ。STATE_DB の値はそのまま残るが SAI は変更されない (<code>tunneldecaporch.cpp:179</code>)</td>
+</tr>
+<tr>
+<td><code>encap_ecn_mode</code></td>
+<td><code>SAI_TUNNEL_ATTR_ENCAP_ECN_MODE</code></td>
+<td>SWSS_LOG_NOTICE でスキップ。同様 (<code>tunneldecaporch.cpp:195</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>SAI 仕様上の create-only 属性であるため ASIC ベンダーによらず共通の制約。</p>
+<h3 id="vxlan_tunnel_table-flexcounter-traditional-vs-non-traditional">VXLAN_TUNNEL_TABLE — FlexCounter 登録方式の差 (Traditional vs Non-Traditional)<a class="headerlink" href="#vxlan_tunnel_table-flexcounter-traditional-vs-non-traditional" title="Permanent link">&para;</a></h3>
+<p><code>gTraditionalFlexCounter</code> フラグが <code>true</code> の場合、COUNTERS_DB への書き込みは ASIC_DB <code>VIDTORID</code> に RID が登録された後に行われる。<code>false</code> の場合は SAI 作成完了後すぐに書き込まれる<sup id="fnref:18"><a class="footnote-ref" href="#fn:18">18</a></sup>。<strong>STATE_DB <code>VXLAN_TUNNEL_TABLE</code> への書き込みタイミング自体は本フラグの影響を受けない</strong>（FlexCounter は COUNTERS_DB 専用）。</p>
+<h3 id="vxlan_table-linux-vxlan">VXLAN_TABLE — Linux カーネル VXLAN モジュール依存<a class="headerlink" href="#vxlan_table-linux-vxlan" title="Permanent link">&para;</a></h3>
+<p><code>createVxlan()</code> は Linux カーネルの VXLAN デバイス作成に依存する。カーネルモジュール (<code>vxlan.ko</code>) が未ロードの環境では <code>ip link add ... type vxlan</code> が失敗し、<code>m_stateVxlanTable.set()</code> が呼ばれず <code>state=ok</code> が書き込まれない。VS (virtual switch) 環境ではカーネル VXLAN が利用可能なためテスト動作する。</p>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-state-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
+
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
@@ -35503,6 +37569,45 @@
 </li>
 <li id="fn:5">
 <p><code>createVxlan()</code> 実装: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vxlanmgr.cpp#L890-L892">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vxlanmgr.cpp#L890-L892</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p><code>MuxCable</code> コンストラクタで <code>TunnelDecapOrch*</code> を保持: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/muxorch.cpp#L2183-L2185">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/muxorch.cpp#L2183-L2185</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p><code>processUnhandledDecapTunnelTerms</code> 呼び出し: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L300-L310">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L300-L310</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p><code>RemoveTunnelIfNotReferenced</code> による DEL 抑止: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L1569-L1575">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L1569-L1575</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9">
+<p><code>decreaseTunnelRefCount</code> → <code>RemoveTunnelIfNotReferenced</code> 連鎖: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L1258-L1265">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L1258-L1265</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10">
+<p><code>addTunnelToFlexCounter</code> 実装: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1342-L1344">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1342-L1344</a>&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11">
+<p><code>addTunnelUser</code> → <code>addRemoveStateTableEntry</code> 順序: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1719-L1721">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1719-L1721</a>&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12">
+<p><code>updateDbTunnelOperStatus</code> を <code>PortsOrch</code> が呼び出す: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp#L3916-L3923">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp#L3916-L3923</a>&#160;<a class="footnote-backref" href="#fnref:12" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+<li id="fn:13">
+<p><code>createVxlan</code> → <code>m_stateVxlanTable.set</code>: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vxlanmgr.cpp#L807-L892">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vxlanmgr.cpp#L807-L892</a>&#160;<a class="footnote-backref" href="#fnref:13" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+</li>
+<li id="fn:14">
+<p><code>show vxlan remotevtep</code> が STATE_DB <code>VXLAN_TUNNEL_TABLE</code> を polling: <a href="https://github.com/sonic-net/sonic-utilities/blob/master/show/vxlan.py#L253-L268">https://github.com/sonic-net/sonic-utilities/blob/master/show/vxlan.py#L253-L268</a>&#160;<a class="footnote-backref" href="#fnref:14" title="Jump back to footnote 14 in the text">&#8617;</a></p>
+</li>
+<li id="fn:15">
+<p><code>PortsOrch::updateDbPortOperStatus()</code> → <code>updateDbTunnelOperStatus()</code> 委譲: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp#L3916-L3923">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp#L3916-L3923</a>&#160;<a class="footnote-backref" href="#fnref:15" title="Jump back to footnote 15 in the text">&#8617;</a></p>
+</li>
+<li id="fn:16">
+<p><code>sai_query_attribute_enum_values_capability</code> による P2P 対応判定: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1256-L1274">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1256-L1274</a>&#160;<a class="footnote-backref" href="#fnref:16" title="Jump back to footnote 16 in the text">&#8617;</a></p>
+</li>
+<li id="fn:17">
+<p><code>OVERLAY_RIF_DEFAULT_MTU</code> ハードコード定数: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L14">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L14</a>&#160;<a class="footnote-backref" href="#fnref:17" title="Jump back to footnote 17 in the text">&#8617;</a></p>
+</li>
+<li id="fn:18">
+<p><code>gTraditionalFlexCounter</code> による VIDTORID 使用分岐: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1297-L1318">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1297-L1318</a>&#160;<a class="footnote-backref" href="#fnref:18" title="Jump back to footnote 18 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

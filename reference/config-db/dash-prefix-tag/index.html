@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23653,6 +23661,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../alarm-table/" class="md-nav__link">
         
   
@@ -25196,7 +25232,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        エントリ投入順序・依存関係 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="エントリ投入順序・依存関係 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        投入の必須順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存違反時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除の逆順制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タグ更新時の非リフレッシュ動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot 挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -25218,6 +25326,206 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry パターン概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SET 処理における失敗詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#protobuf-from_pb-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        protobuf デシリアライズ失敗（from_pb() false）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_version-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip_version の変更試行（update 時の不変制約）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DEL 処理における失敗詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acl-rule-m_groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL rule 参照中タグの削除（m_groups 非空）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        存在しないタグへの DEL（冪等）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗後の状態整合性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名定数 (schema.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip-enum-pbutilscpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IP バージョン Enum 値 (pbutils.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl-rule-dashaclgroupmgrcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL Rule 展開時のフォールバック定数 (dashaclgroupmgr.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abort_if_not-assert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ABORT_IF_NOT マクロ（防御的 assert）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スキーマ / YANG 管理済み（ハードコード定数なし）の項目
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -25230,7 +25538,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -25296,7 +25604,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28150,6 +28458,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -29530,6 +29894,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -34784,7 +35176,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        エントリ投入順序・依存関係 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="エントリ投入順序・依存関係 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        投入の必須順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存違反時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除の逆順制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タグ更新時の非リフレッシュ動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot 挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34806,6 +35270,206 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry パターン概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SET 処理における失敗詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#protobuf-from_pb-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        protobuf デシリアライズ失敗（from_pb() false）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_version-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip_version の変更試行（update 時の不変制約）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DEL 処理における失敗詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acl-rule-m_groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL rule 参照中タグの削除（m_groups 非空）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        存在しないタグへの DEL（冪等）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗後の状態整合性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名定数 (schema.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip-enum-pbutilscpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IP バージョン Enum 値 (pbutils.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl-rule-dashaclgroupmgrcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL Rule 展開時のフォールバック定数 (dashaclgroupmgr.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abort_if_not-assert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ABORT_IF_NOT マクロ（防御的 assert）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スキーマ / YANG 管理済み（ハードコード定数なし）の項目
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34818,7 +35482,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -34884,7 +35548,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34999,8 +35663,72 @@
 <li><a href="../dash-acl/"><code>DASH_ACL_IN_TABLE</code></a> / <a href="../dash-acl/"><code>DASH_ACL_OUT_TABLE</code></a>: ACL rule の <code>src_tag</code> / <code>dst_tag</code> フィールドがこのテーブルのタグ名を参照する</li>
 <li><a href="../dash-eni/"><code>DASH_ENI_TABLE</code></a>: ENI への ACL グループバインドの起点</li>
 </ul>
+<!-- ordering -->
+<h2 id="phase-b">エントリ投入順序・依存関係 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>DASH_PREFIX_TAG_TABLE</code> は DASH ACL 依存チェーンの <strong>最上流</strong> に位置する。SDN コントローラはタグを ACL ルールより先に投入しなければならない。</p>
+<h3 id="_6">投入の必須順序<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>[1] DASH_PREFIX_TAG_TABLE          ← このテーブル（タグ登録が起点）
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>         ↓  src_tag / dst_tag でタグ名を参照する ACL rule より先に必要
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>[2] DASH_ACL_GROUP_TABLE
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>         ↓
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>[3] DASH_ACL_RULE_TABLE
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>         ↓
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>[4] DASH_ACL_IN_TABLE / DASH_ACL_OUT_TABLE  ← ENI へのバインド
+</span></code></pre></div>
+<p>コード根拠: <code>dashaclgroupmgr.cpp</code> L395–407 — <code>createRule()</code> 内で <code>src_tag</code> / <code>dst_tag</code> ごとに <code>getDashAclTagMgr().exists(tag_id)</code> を呼び出し、タグが <code>m_tag_table</code> に存在しない場合 <code>task_need_retry</code> を返す。</p>
+<h3 id="_7">依存違反時の挙動<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>違反パターン</th>
+<th>戻り値</th>
+<th>自動回復</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>タグ未登録状態で ACL rule を投入</td>
+<td><code>task_need_retry</code></td>
+<td>タグ登録後に自動解消</td>
+</tr>
+<tr>
+<td>同一タグ ID で重複 create</td>
+<td><code>task_failed</code></td>
+<td>自動回復なし</td>
+</tr>
+<tr>
+<td>未存在タグへの update</td>
+<td><code>task_failed</code></td>
+<td>自動回復なし（先に create が必要）</td>
+</tr>
+<tr>
+<td>グループ参照中のタグ削除</td>
+<td><code>task_need_retry</code></td>
+<td>グループ detach 後に自動解消</td>
+</tr>
+</tbody>
+</table>
+<p><code>task_need_retry</code> のエントリはキューに残り次回ループで自動再試行されるが、<code>task_failed</code> は破棄されるため SDN コントローラ側での正しい投入順序が必要。</p>
+<h3 id="_8">削除の逆順制約<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>[1] DASH_ACL_IN/OUT_TABLE — DEL（バインド解除）
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>         ↓
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>[2] DASH_ACL_RULE_TABLE — DEL
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>         ↓
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>[3] DASH_ACL_GROUP_TABLE — DEL（バインド中は task_need_retry）
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>         ↓
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>[4] DASH_PREFIX_TAG_TABLE — DEL（m_groups 非空なら task_need_retry）
+</span></code></pre></div>
+<h3 id="_9">タグ更新時の非リフレッシュ動作<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p><code>DashTagMgr::update()</code> (<code>dashtagmgr.cpp:46</code>) はメモリ上の <code>m_prefixes</code> を更新するだけで、既にバインド済みのグループ・ルールへの SAI 再 SET を行わない。タグの <code>prefix_list</code> を更新しても実行中 ACL ルールは旧プレフィックスで評価され続ける。新プレフィックスを即時反映するには、グループ解除 → ルール削除 → ルール再作成 → 再バインドの手順が必要。</p>
+<h3 id="warm-reboot">warm-reboot 挙動<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
+<p><code>DashAclOrch</code> は <code>ZmqOrch</code> を継承し <code>m_orchList</code> には登録されない（<code>gDirectory.set()</code> のみ）。<code>warmRestoreAndSyncUp()</code> の 3 イテレーションループは DASH ACL orch を含まないため、<strong>タグエントリを含む DASH ACL 系は warm-reboot の自動リプレイ対象外</strong>となる。リストアは SDN コントローラが gNMI 経由で全エントリを再投入する設計（ステートレス warm-reboot）。</p>
+<ul>
+<li>中間トレース: <code>meta/_intermediate/cdb-flow/dash-prefix-tag-ordering.md</code></li>
+</ul>
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
-<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35070,6 +35798,225 @@
 </div>
 <!-- /cross-refs -->
 
+<!-- failure -->
+<h2 id="retry-recovery-phase-d">失敗挙動・retry / recovery (Phase D)<a class="headerlink" href="#retry-recovery-phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md -->
+
+<h3 id="retry">retry パターン概要<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<p><code>DASH_PREFIX_TAG_TABLE</code> のタスク処理は <code>DashAclOrch::taskUpdateDashPrefixTag</code> / <code>taskRemoveDashPrefixTag</code> で行われ、<code>task_process_status</code> を返す。</p>
+<table>
+<thead>
+<tr>
+<th>パターン</th>
+<th>代表的なトリガー</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>task_need_retry</code></strong></td>
+<td>ACL rule から参照中のタグへの DEL（<code>m_groups</code> 非空）</td>
+<td><code>m_toSync</code> に残し次 <code>doTask()</code> で自動再試行。上限なし</td>
+</tr>
+<tr>
+<td><strong><code>task_failed</code></strong></td>
+<td><code>from_pb()</code> 失敗・<code>ip_version</code> 変更試行・存在しないタグへの UPDATE</td>
+<td>エントリ破棄。自動回復なし</td>
+</tr>
+<tr>
+<td><strong><code>task_success</code></strong></td>
+<td>正常 create/update・存在しないタグへの DEL（冪等）</td>
+<td>エントリ削除</td>
+</tr>
+</tbody>
+</table>
+<h3 id="set">SET 処理における失敗詳細<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<h4 id="protobuf-from_pb-false">protobuf デシリアライズ失敗（<code>from_pb()</code> false）<a class="headerlink" href="#protobuf-from_pb-false" title="Permanent link">&para;</a></h4>
+<p><code>from_pb(data, tag)</code> が <code>false</code> を返すと <code>taskUpdateDashPrefixTag</code> は即 <code>task_failed</code>。<code>m_tag_table</code> への書き込みは行われない。(<code>dashaclorch.cpp:291-294</code>)</p>
+<p>失敗するケース:</p>
+<ol>
+<li><code>ip_version</code> が <code>0</code> (= <code>IP_VERSION_UNSPECIFIED</code> / proto3 デフォルト): <code>to_sai(data.ip_version(), tag.m_ip_version)</code> が <code>false</code> (<code>dashtagmgr.cpp:11-13</code>)</li>
+<li><code>ip_version</code> が <code>1 (IPV4)</code> / <code>2 (IPV6)</code> 以外の不正な enum 値: 同様に <code>to_sai()</code> が <code>false</code></li>
+<li><code>prefix_list</code> 内のプレフィックスパース失敗: <code>to_sai(data.prefix_list(), tag.m_prefixes)</code> が <code>false</code> (<code>dashtagmgr.cpp:16-18</code>)</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">proto3 デフォルト値トラップ</p>
+<p>コントローラが <code>ip_version</code> フィールドを省略すると proto3 デフォルト値 <code>0</code> が送信され、orchagent が無音で拒否する。フィールドを明示しない実装は全エントリが <code>task_failed</code> で破棄される。</p>
+</div>
+<h4 id="ip_version-update"><code>ip_version</code> の変更試行（update 時の不変制約）<a class="headerlink" href="#ip_version-update" title="Permanent link">&para;</a></h4>
+<p>既存タグへの SET で <code>ip_version</code> を変更しようとした場合: <code>SWSS_LOG_WARN "'ip_version' changing is not supported for tag %s"</code> → <code>task_failed</code>。<code>prefix_list</code> も更新されない。(<code>dashtagmgr.cpp:61-65</code>)</p>
+<h3 id="del">DEL 処理における失敗詳細<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<h4 id="acl-rule-m_groups">ACL rule 参照中タグの削除（<code>m_groups</code> 非空）<a class="headerlink" href="#acl-rule-m_groups" title="Permanent link">&para;</a></h4>
+<p>タグが ACL rule から参照されている（<code>m_groups</code> が非空）場合: <code>SWSS_LOG_WARN "Prefix tag %s is still in use by ACL rule(s)"</code> → <code>task_need_retry</code>。全参照 ACL rule が削除されて <code>m_groups</code> が空になると次の <code>doTask()</code> ループで DEL が成功する。(<code>dashtagmgr.cpp:84-88</code>)</p>
+<h4 id="del_1">存在しないタグへの DEL（冪等）<a class="headerlink" href="#del_1" title="Permanent link">&para;</a></h4>
+<p><code>m_tag_table</code> に存在しないタグへの DEL: <code>SWSS_LOG_WARN "Prefix tag %s does not exist"</code> → <code>task_success</code>。(<code>dashtagmgr.cpp:78-81</code>)</p>
+<h3 id="_11">失敗後の状態整合性<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>task_failed</code> でエントリが破棄されると <code>DashAclOrch::doTask()</code> が WARN ログを出力し <code>erase(it)</code> でキューから除去する (<code>dashaclorch.cpp:146-153</code>)</li>
+<li>タグはオーケストレーターメモリにのみ存在し SAI への書き込みがないため、<code>task_failed</code> による部分的な ASIC 汚染は発生しない</li>
+<li>
+<p><code>task_need_retry</code> エントリはキューに残留し上限なく自動再試行される</p>
+</li>
+<li>
+<p>中間トレース: <code>meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md</code></p>
+</li>
+</ul>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>DASH_PREFIX_TAG_TABLE</code> 処理に関わる、YANG / CONFIG_DB スキーマで管理されないハードコード定数の一覧。</p>
+<h3 id="schemah">テーブル名定数 (schema.h)<a class="headerlink" href="#schemah" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_DASH_PREFIX_TAG_TABLE_NAME</code></td>
+<td><code>"DASH_PREFIX_TAG_TABLE"</code></td>
+<td><code>DashAclOrch</code> TaskMap でのテーブル名登録、<code>orchdaemon.cpp</code> Consumer 初期化</td>
+<td><code>sonic-swss-common/common/schema.h:183</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="ip-enum-pbutilscpp">IP バージョン Enum 値 (pbutils.cpp)<a class="headerlink" href="#ip-enum-pbutilscpp" title="Permanent link">&para;</a></h3>
+<p><code>to_sai(IpVersion, ...)</code> が受理する <code>dash::types::IpVersion</code> enum 値。proto3 では フィールド省略時に <code>0</code> が送られるが拒否される。</p>
+<table>
+<thead>
+<tr>
+<th>enum 名</th>
+<th>数値</th>
+<th>SAI 変換先</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IP_VERSION_IPV4</code></td>
+<td><code>1</code></td>
+<td><code>SAI_IP_ADDR_FAMILY_IPV4</code></td>
+<td><code>pbutils.cpp:13-15</code></td>
+</tr>
+<tr>
+<td><code>IP_VERSION_IPV6</code></td>
+<td><code>2</code></td>
+<td><code>SAI_IP_ADDR_FAMILY_IPV6</code></td>
+<td><code>pbutils.cpp:16-18</code></td>
+</tr>
+<tr>
+<td><code>IP_VERSION_UNSPECIFIED</code> (proto3 デフォルト)</td>
+<td><code>0</code></td>
+<td>拒否 (<code>return false</code> → <code>task_failed</code>)</td>
+<td><code>pbutils.cpp:19-21</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="acl-rule-dashaclgroupmgrcpp">ACL Rule 展開時のフォールバック定数 (dashaclgroupmgr.cpp)<a class="headerlink" href="#acl-rule-dashaclgroupmgrcpp" title="Permanent link">&para;</a></h3>
+<p>タグの展開時に <code>src_tag</code> / <code>dst_tag</code> 由来の prefix セットが空だった場合、<code>any_ip</code> ラムダ (L266) が group の ip_version から全アドレス (<code>0.0.0.0/0</code> または <code>::/0</code> 相当) を補完する。</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>all_protocols</code></td>
+<td><code>uint8_t</code> 0〜255 の全値</td>
+<td>ACL rule の <code>protocol</code> 未指定時の全プロトコルマッチ</td>
+<td><code>dashaclgroupmgr.cpp:28</code></td>
+</tr>
+<tr>
+<td><code>all_ports</code></td>
+<td><code>{0, 65535}</code> (uint16 全範囲)</td>
+<td>ACL rule の <code>src_port</code> / <code>dst_port</code> 未指定時の全ポートマッチ</td>
+<td><code>dashaclgroupmgr.cpp:29</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="abort_if_not-assert">ABORT_IF_NOT マクロ（防御的 assert）<a class="headerlink" href="#abort_if_not-assert" title="Permanent link">&para;</a></h3>
+<p><code>DashTagMgr::getPrefixes()</code> / <code>attach()</code> / <code>detach()</code> (<code>dashtagmgr.cpp:107, 117, 131</code>) は、タグが <code>m_tag_table</code> に存在しない場合に <code>ABORT_IF_NOT</code> で <code>runtime_error</code> をスローして <strong>orchagent プロセスを停止</strong>させる。<code>DashAclGroupMgr::createRule()</code> は <code>exists()</code> チェック後に <code>getPrefixes()</code> を呼ぶため通常は到達しないが、実装上のバグや状態不整合時はプロセスクラッシュの原因になる。</p>
+<h3 id="yang">スキーマ / YANG 管理済み（ハードコード定数なし）の項目<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>管理方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip_version</code> 許容値</td>
+<td>protobuf enum <code>IpVersion</code> (proto 定義)</td>
+</tr>
+<tr>
+<td><code>prefix_list</code> サイズ上限</td>
+<td>実装上制限なし（SAI / ASIC 依存）</td>
+</tr>
+<tr>
+<td>タグ名フォーマット</td>
+<td>任意文字列（制限なし）</td>
+</tr>
+<tr>
+<td>refcount (<code>m_groups</code>) 上限</td>
+<td>実装上制限なし</td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/dash-prefix-tag-constants.md</code> を参照。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>DASH_PREFIX_TAG_TABLE</code> の SET / DEL に伴って <code>DashAclOrch</code> / <code>DashTagMgr</code> が副次的に書き込む DB エントリは <strong>存在しない</strong>。タグは orchagent 内の <code>m_tag_table</code> (<code>unordered_map&lt;string, DashTag&gt;</code>) にのみ保持される SAI 非経由オブジェクトであり、DB コネクタを保持しない。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>DashTagMgr</code> 内に <code>swsscommon::Table</code> / <code>ProducerStateTable</code> の write 呼出が 0 件 (<code>dashtagmgr.cpp</code> 全行精読)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>DashAclOrch</code> コンストラクタは <code>app_state_db</code> 引数を受け取るが初期化リストで <code>DashTagMgr</code> へは渡されない (<code>dashaclorch.cpp:77-85</code>)</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td>DASH タグは SAI オブジェクト非作成。カウンタテーブルのエントリも存在しない</td>
+</tr>
+<tr>
+<td>ASIC_DB (via CRM)</td>
+<td>なし</td>
+<td><code>gCrmOrch-&gt;incCrmDashAclUsedCounter()</code> は ACL group / rule 作成時のみ発生 (<code>dashaclgroupmgr.cpp:175-176, 374-376</code>)。タグ SET/DEL では CRM 更新なし</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td>なし</td>
+<td>DASH タグに対応する flex-counter エントリなし</td>
+</tr>
+</tbody>
+</table>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/dash-prefix-tag-side.md</code> を参照。</p>
+<!-- /side-effects -->
+
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <p>YANG / proto3 デフォルト以外の実装由来 fallback。<code>DashTagMgr::from_pb()</code> と <code>to_sai()</code> (dashtagmgr.cpp / pbutils.cpp) から導出。</p>
@@ -35094,7 +36041,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_7">補足<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h3 id="_12">補足<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>ip_version</code> は proto3 の数値 enum <code>0</code> (= <code>IP_VERSION_UNSPECIFIED</code>) をコントローラが送ると orchagent が reject する。<strong>コントローラは必ず <code>IP_VERSION_IPV4 (1)</code> または <code>IP_VERSION_IPV6 (2)</code> を明示しなければならない</strong>。これは proto3 の「フィールド省略 = デフォルト値 0 を使う」という挙動と組み合わさると、省略した場合にエントリが無音で拒否されるというトラップになる。</li>
 <li><code>prefix_list</code> を空で作成した後に ACL rule からタグ参照が先行するケースでは、rule 評価時に空の prefix 集合が渡されるため、実質的にマッチしないルールになる。SAI 実装によっては空集合の扱いが異なる可能性があり注意が必要。</li>
@@ -35120,7 +36067,7 @@
 </ul>
 <!-- /entry-points -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

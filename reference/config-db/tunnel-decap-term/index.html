@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23633,6 +23641,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -27909,6 +27945,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -29155,7 +29247,334 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        先行必須テーブル (SET 時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET / DEL の推奨順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#term" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TERM エントリの更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・リトライ・リカバリ (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・リトライ・リカバリ (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な設計上の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 固定属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#term_type-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        term_type → SAI 列挙マッピング（静的）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI に渡らないフィールド・属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subnet_type_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        有効 subnet_type 値（コードハードコード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・連鎖変更 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・連鎖変更 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 成功時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 成功時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        保留キュー経由の連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subnet_decap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SUBNET_DECAP 更新時の連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producer-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer 側 (APPL_DB へ書き込む)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-tunneldecaporch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumer 側 (tunneldecaporch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-subnet_decap-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB SUBNET_DECAP の購読 (SubscriberStateTable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書き込み (Table 直接)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信経路まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -29166,7 +29585,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み入り口
@@ -29227,7 +29646,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29238,7 +29657,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29552,6 +29971,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -34845,7 +35292,334 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        先行必須テーブル (SET 時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET / DEL の推奨順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#term" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TERM エントリの更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・リトライ・リカバリ (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・リトライ・リカバリ (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な設計上の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 固定属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#term_type-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        term_type → SAI 列挙マッピング（静的）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI に渡らないフィールド・属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subnet_type_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        有効 subnet_type 値（コードハードコード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・連鎖変更 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・連鎖変更 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 成功時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 成功時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        保留キュー経由の連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subnet_decap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SUBNET_DECAP 更新時の連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producer-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer 側 (APPL_DB へ書き込む)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-tunneldecaporch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumer 側 (tunneldecaporch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-subnet_decap-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB SUBNET_DECAP の購読 (SubscriberStateTable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書き込み (Table 直接)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信経路まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34856,7 +35630,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み入り口
@@ -34917,7 +35691,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34928,7 +35702,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35155,28 +35929,594 @@
 </table>
 <!-- /defaults -->
 
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>TUNNEL_DECAP_TERM_TABLE エントリを書き込む際に守るべき順序制約を実装から導出した。</p>
+<h3 id="_5">全体ガード<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><code>TunnelDecapOrch::doTask()</code> の先頭で <code>gPortsOrch-&gt;allPortsReady()</code> が false の場合、TUNNEL_DECAP_TABLE と TUNNEL_DECAP_TERM_TABLE の両方が即 return される。ports 初期化完了前のエントリはキューに留まり、初期化後に自動再処理される (<code>tunneldecaporch.cpp</code> L55-57)。</p>
+<h3 id="set">先行必須テーブル (SET 時)<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>依存テーブル / 条件</th>
+<th>理由</th>
+<th>緩和策</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PortsOrch 初期化完了 (<code>allPortsReady()</code>)</td>
+<td>doTask() 先頭ガード — false なら TERM 処理もスキップ</td>
+<td>なし（自動待機）</td>
+<td><code>tunneldecaporch.cpp</code> L55-57</td>
+</tr>
+<tr>
+<td><code>TUNNEL_DECAP_TABLE:&lt;tunnel_name&gt;</code> SET 済み</td>
+<td><code>tunnel_exists</code> が false の場合 <code>addUnhandledDecapTunnelTerm()</code> に保留。トンネル本体作成成功後に <code>processUnhandledDecapTunnelTerms()</code> で一括再処理</td>
+<td><strong>前後逆でも自動調停</strong></td>
+<td><code>tunneldecaporch.cpp</code> L511-521, L1497-1520</td>
+</tr>
+<tr>
+<td>subnet decap term の場合: <code>SUBNET_DECAP</code> で <code>enable=true</code> + <code>src_ip</code>/<code>src_ip_v6</code> 設定済み</td>
+<td><code>subnetDecapConfig.enable</code> が false だとエントリを消費してスキップ。<code>src_ip</code> 未設定でも消費スキップ</td>
+<td>TUNNEL_DECAP_TERM_TABLE SET 前に SUBNET_DECAP を先に SET する</td>
+<td><code>tunneldecaporch.cpp</code> L501-514</td>
+</tr>
+</tbody>
+</table>
+<h3 id="set-del">SET / DEL の推奨順序<a class="headerlink" href="#set-del" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a># SET 時 (推奨)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>TUNNEL_DECAP_TABLE:&lt;tunnel_name&gt; SET   ← 先
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>TUNNEL_DECAP_TERM_TABLE:&lt;tunnel_name&gt;:&lt;dst_ip&gt; SET
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a># DEL 時 (必須)
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>TUNNEL_DECAP_TERM_TABLE:&lt;tunnel_name&gt;:&lt;dst_ip&gt; DEL   ← 先
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>TUNNEL_DECAP_TABLE:&lt;tunnel_name&gt; DEL
+</span></code></pre></div>
+<p>TERM が先に届いた場合: <code>unhandledDecapTerms</code> キューに積まれ (<code>"tunnel doesn't exist, added to unhandled list."</code> を LOG_NOTICE)、トンネル本体 SET 成功後の <code>processUnhandledDecapTunnelTerms()</code> で自動処理される。機能上の問題はないが、ログにエラーが残る。</p>
+<p>DEL 時: <code>removeDecapTunnel()</code> は TERM エントリを自動削除しない。TERM が残存したままトンネル本体を DEL すると SAI リソースリークのリスクがある。<strong>TERM を先に DEL すること</strong>。</p>
+<h3 id="term">TERM エントリの更新<a class="headerlink" href="#term" title="Permanent link">&para;</a></h3>
+<p><code>TUNNEL_DECAP_TERM_TABLE</code> は既存エントリの更新 (SET on existing key) を明示サポートしない。変更が必要な場合は DEL → SET の順で再作成すること。</p>
+<div class="admonition warning">
+<p class="admonition-title">subnet decap term の書き込み順</p>
+<p>subnet decap 用の TERM (<code>IPINIP_SUBNET</code> / <code>IPINIP_SUBNET_V6</code>) を書き込む場合、
+<code>SUBNET_DECAP</code> テーブルで <code>enable=true</code> かつ <code>src_ip</code>/<code>src_ip_v6</code> が設定済みでないと
+エントリが消費されてスキップされる（リトライなし）。SUBNET_DECAP を先に SET すること。</p>
+</div>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-decap-term-ordering.md</code></p>
+</blockquote>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>tunneldecaporch</code> / <code>routeorch</code> / <code>vnetorch</code> が TUNNEL_DECAP_TERM_TABLE の処理に際してコードレベルで参照・操作するテーブル一覧（YANG leafref 非対象、APPL_DB テーブルのため）。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>方向</th>
+<th>機構</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APPL_DB.TUNNEL_DECAP_TABLE</code></td>
+<td>読み取り</td>
+<td><code>tunnelTable</code> メモリキャッシュで親トンネル存在確認。不在なら <code>unhandledDecapTerms</code> に保留し、親トンネル作成後に <code>processUnhandledDecapTunnelTerms()</code> で自動フラッシュ</td>
+<td>SET/DEL イベント処理毎 (<code>tunneldecaporch.cpp:392, 511-521</code>)</td>
+</tr>
+<tr>
+<td><code>STATE_DB.TUNNEL_DECAP_TERM_TABLE</code></td>
+<td>書き込み</td>
+<td>SAI <code>create_tunnel_term_table_entry()</code> 成功後に <code>setDecapTunnelTermStatus()</code> でミラー書き込み。<code>src_ip</code> / <code>subnet_type</code> は空でない場合のみ書き込む。DEL 時は <code>removeDecapTunnelTermStatus()</code> で削除</td>
+<td>SAI create/remove 成功時 (<code>tunneldecaporch.cpp:998, 1539-1567</code>)</td>
+</tr>
+<tr>
+<td><code>CONFIG_DB.SUBNET_DECAP</code>（<code>subnetDecapConfig</code> 経由）</td>
+<td>読み取り</td>
+<td>subnet decap tunnel 名一致時に <code>subnetDecapConfig.enable</code> / <code>src_ip</code> / <code>src_ip_v6</code> を参照してエントリの採否を決定。<code>enable=false</code> または <code>src_ip</code> 未設定なら永続スキップ</td>
+<td><code>tunnel_name</code> が subnet decap tunnel に一致する term の処理時 (<code>tunneldecaporch.cpp:393-394, 472-509</code>)</td>
+</tr>
+<tr>
+<td><code>APPL_DB.TUNNEL_DECAP_TERM_TABLE</code>（書き込み元: RouteOrch）</td>
+<td>書き込み</td>
+<td>VIP ルート追加時に <code>m_appTunnelDecapTermProducer.set(key, {{"term_type","MP2MP"},{"subnet_type","vip"}})</code> を直接書き込む。<code>getSubnetDecapConfig().enable</code> が false ならスキップ。<code>m_SubnetDecapTermsCreated</code> で重複防止</td>
+<td>VIP subnet decap ルート追加/削除時 (<code>routeorch.cpp:3220-3251</code>)</td>
+</tr>
+<tr>
+<td><code>APPL_DB.TUNNEL_DECAP_TERM_TABLE</code>（書き込み元: VNetRouteOrch）</td>
+<td>書き込み</td>
+<td>VNet VIP ルート追加時に <code>app_tunnel_decap_term_producer_.set(key, {{"term_type","MP2MP"},{"subnet_type","vip"}})</code> を書き込む。RouteOrch と独立した <code>subnet_decap_terms_created_</code> で重複防止</td>
+<td>VNet VIP ルート追加/削除時 (<code>vnetorch.cpp:1563-1594</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">RouteOrch / VNetRouteOrch による自動書き込み</p>
+<p>VIP subnet decap を有効化すると、RouteOrch または VNetRouteOrch が <code>SUBNET_DECAP.enable=true</code> を確認し、VIP prefix のルート追加時に TUNNEL_DECAP_TERM_TABLE へ <code>subnet_type=vip</code> の <code>MP2MP</code> term を自動的に書き込む。これらの term は <code>tunnelmgrd</code> や <code>swssconfig</code> ではなく orchagent 側から生成されるため、APPL_DB を直接監視しない限りトレースが難しい。</p>
+</div>
+<blockquote>
+<p><strong>Evidence</strong>: <code>tunneldecaporch.cpp:35,392-521,998,1539-1567</code>; <code>routeorch.cpp:53,3220-3251</code>; <code>vnetorch.cpp:734,1563-1594</code>
+詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-decap-term-cross-refs.md</code></p>
+</blockquote>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動・リトライ・リカバリ (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L338-545, L886-1000, L1131-1262 -->
+
+<h3 id="set_1">SET 失敗経路<a class="headerlink" href="#set_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>ログ / 動作</th>
+<th>リトライ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>キー区切り文字 (<code>DEFAULT_KEY_SEPARATOR</code>) が欠落</td>
+<td><code>LOG_ERROR("invalid tunnel decap term key")</code> → <code>valid=false</code>、エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>dst_ip_prefix</code> が不正 IP prefix 文字列</td>
+<td><code>LOG_ERROR("invalid destination IP prefix &lt;e.what()&gt;")</code> → <code>valid=false</code>、エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>src_ip</code> が不正 IP prefix 文字列</td>
+<td><code>LOG_ERROR("invalid source IP prefix &lt;src_ip&gt;")</code> → <code>valid=false</code>、エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>term_type</code> が <code>P2P</code>/<code>P2MP</code>/<code>MP2MP</code> 以外</td>
+<td><code>LOG_ERROR("invalid tunnel decap term type &lt;value&gt;")</code> → <code>valid=false</code>、エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>subnet_type</code> が <code>vlan</code>/<code>vip</code> 以外</td>
+<td><code>LOG_ERROR("invalid subnet type: &lt;value&gt;")</code> → <code>valid=false</code>、エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>未知フィールド名</td>
+<td><code>LOG_ERROR("unknown decap term table attribute '&lt;field&gt;'")</code> → <code>valid=false</code>、エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>subnet decap tunnel への term が <code>MP2MP</code> 以外</td>
+<td><code>LOG_ERROR("only MP2MP tunnel decap term is allowed for subnet decap tunnel")</code> → <code>valid=false</code>、エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>subnet_type</code> あり かつ <code>term_type</code> が <code>MP2MP</code> 以外</td>
+<td><code>LOG_ERROR("only MP2MP is allowed for subnet decap term")</code> → <code>valid=false</code>、エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>term_type==P2P</code> または <code>MP2MP</code>(non-subnet) かつ <code>src_ip</code> 未設定</td>
+<td><code>LOG_ERROR("no source IP is provided.")</code> → <code>valid=false</code>、エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>subnet decap term で <code>src_ip</code>(IPv4) が <code>SUBNET_DECAP</code> 未設定</td>
+<td><code>LOG_ERROR("source IP is not configured for subnet decap term, ignored.")</code> → エントリ消費（永続スキップ）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>subnet decap term で <code>src_ip_v6</code> が <code>SUBNET_DECAP</code> 未設定</td>
+<td><code>LOG_ERROR("source IPv6 is not configured for subnet decap term, ignored.")</code> → エントリ消費（永続スキップ）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>subnetDecapConfig.enable==false</code> + subnet term</td>
+<td><code>LOG_ERROR("subnet decap is disabled, ignored.")</code> → エントリ消費（永続スキップ）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>親トンネルが未存在 (<code>tunnel_exists==false</code>)</td>
+<td><code>LOG_NOTICE("tunnel doesn't exist, added to unhandled list.")</code> → <code>unhandledDecapTerms</code> に保留、親トンネル作成後に <code>processUnhandledDecapTunnelTerms()</code> で自動フラッシュ</td>
+<td><strong>自動リトライ</strong></td>
+</tr>
+<tr>
+<td><code>addDecapTunnelTermEntry()</code> 失敗 (SAI エラー)</td>
+<td><code>LOG_ERROR("failed to add tunnel decap term to ASIC_DB.")</code> → エントリ消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>term entry が既に存在</td>
+<td><code>LOG_NOTICE("Tunnel decap term entry &lt;dst_ip&gt; already exists.")</code> → <code>true</code> 返却（重複無視）</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 失敗経路<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>ログ / 動作</th>
+<th>リトライ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>親トンネルが存在しない (<code>tunnel_exists==false</code>)</td>
+<td><code>LOG_NOTICE("Tunnel for decap term &lt;key&gt; doesn't exist, removed from unhandled list.")</code> → <code>unhandledDecapTerms</code> から削除。ASIC_DB 操作なし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>DEL 対象 term entry が orchagent キャッシュに存在しない</td>
+<td><code>LOG_ERROR("Tunnel decap term entry &lt;dst_ip&gt; does not exist.")</code> → <code>false</code> 返却、DEL 失敗</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>SAI <code>remove_tunnel_term_table_entry()</code> 失敗</td>
+<td><code>LOG_ERROR("Failed to remove tunnel table entry: &lt;oid&gt;")</code> → <code>handleSaiRemoveStatus()</code> 経由で処理</td>
+<td>条件次第</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">重要な設計上の注意点<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>永続スキップ</strong>: キー/フィールド不正・subnet decap 無効などによる <code>valid=false</code> はエントリを消費して再キューイングしない。修正するには正しい値で再 SET が必要。</li>
+<li><strong>subnet decap 有効化後の手動再投入</strong>: <code>SUBNET_DECAP</code> の <code>enable</code> が後から変更されてもスキップ済みエントリは自動再処理されない。SUBNET_DECAP 変更後に term を再 SET すること。</li>
+<li><strong>親トンネル不在が唯一の自動リトライ</strong>: 他の失敗条件はすべてエントリ消費（恒久スキップ）。親トンネル不在のみ <code>unhandledDecapTerms</code> 経由で自動回復する。</li>
+</ul>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-decap-term-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>TUNNEL_DECAP_TERM_TABLE のフィールドで上書きできない、またはコードに直書きされていて APPL_DB 値から独立している定数。変更にはコードのリコンパイルが必要。</p>
+<h3 id="sai_1">SAI 固定属性<a class="headerlink" href="#sai_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数 / グローバル変数</th>
+<th>値</th>
+<th>定義場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID</code> → <code>gVirtualRouterId</code></td>
+<td>デフォルト VRF OID（起動時に switch から取得）</td>
+<td><code>tunneldecaporch.cpp</code> L921-923</td>
+<td>全 term entry に強制付与。VRF 選択はフィールドで変更不可</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_TUNNEL_TYPE</code> → <code>SAI_TUNNEL_TYPE_IPINIP</code></td>
+<td>固定 enum 値</td>
+<td><code>tunneldecaporch.cpp</code> L940-942</td>
+<td>トンネルタイプは常に IPINIP。フィールドで変更不可</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_ACTION_TUNNEL_ID</code> → 親トンネル OID</td>
+<td>実行時 OID</td>
+<td><code>tunneldecaporch.cpp</code> L944-946</td>
+<td><code>tunnelTable[tunnel_name].tunnel_id</code> から自動取得。直接指定不可</td>
+</tr>
+</tbody>
+</table>
+<h3 id="term_type-sai">term_type → SAI 列挙マッピング（静的）<a class="headerlink" href="#term_type-sai" title="Permanent link">&para;</a></h3>
+<p><code>DecapTermTypes</code> 静的マップ (L342-345) で文字列→列挙変換し、<code>addDecapTunnelTermEntry()</code> で SAI enum を固定マッピングで設定する。</p>
+<table>
+<thead>
+<tr>
+<th>APPL_DB <code>term_type</code></th>
+<th>SAI 属性値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"P2P"</code></td>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2P</code></td>
+<td><code>tunneldecaporch.cpp</code> L928</td>
+</tr>
+<tr>
+<td><code>"P2MP"</code></td>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP</code></td>
+<td><code>tunneldecaporch.cpp</code> L932</td>
+</tr>
+<tr>
+<td><code>"MP2MP"</code></td>
+<td><code>SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP</code></td>
+<td><code>tunneldecaporch.cpp</code> L936</td>
+</tr>
+</tbody>
+</table>
+<p>これら以外の文字列は <code>LOG_ERROR("invalid tunnel decap term type")</code> → エントリ消費スキップ。</p>
+<h3 id="sai_2">SAI に渡らないフィールド・属性<a class="headerlink" href="#sai_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド / 値</th>
+<th>SAI 渡し条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src_ip</code></td>
+<td><code>P2P</code> または <code>MP2MP</code> の場合のみ <code>SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_SRC_IP</code> に設定。<code>P2MP</code> では設定されない</td>
+<td><code>tunneldecaporch.cpp</code> L948-959</td>
+</tr>
+<tr>
+<td>src_ip マスク部</td>
+<td><code>MP2MP</code> のみ <code>SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_SRC_IP_MASK</code></td>
+<td><code>tunneldecaporch.cpp</code> L968-970</td>
+</tr>
+<tr>
+<td>dst_ip マスク部</td>
+<td><code>MP2MP</code> のみ <code>SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_DST_IP_MASK</code></td>
+<td><code>tunneldecaporch.cpp</code> L972-974</td>
+</tr>
+<tr>
+<td><code>subnet_type</code></td>
+<td>SAI には一切渡さない。orchagent 内部ステートと STATE_DB のみ</td>
+<td><code>tunneldecaporch.cpp</code> L426-434</td>
+</tr>
+</tbody>
+</table>
+<h3 id="subnet_type_1">有効 subnet_type 値（コードハードコード）<a class="headerlink" href="#subnet_type_1" title="Permanent link">&para;</a></h3>
+<p><code>subnet_type</code> の許可値は <code>"vlan"</code> と <code>"vip"</code> のみ (L428-434)。YANG 定義は存在せず、コードに直書きされている。</p>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-decap-term-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">副作用・連鎖変更 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<p>TUNNEL_DECAP_TERM_TABLE エントリの SET / DEL が引き起こす、当該テーブル以外への波及変更。</p>
+<h3 id="set_2">SET 成功時<a class="headerlink" href="#set_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副作用</th>
+<th>対象</th>
+<th>詳細</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI term entry 作成</td>
+<td>ASIC_DB → syncd → ASIC</td>
+<td><code>sai_tunnel_api-&gt;create_tunnel_term_table_entry()</code> 呼び出し</td>
+<td><code>tunneldecaporch.cpp</code> L979</td>
+</tr>
+<tr>
+<td>親トンネル ref_count +1</td>
+<td><code>tunnelTable[name].ref_count</code> (in-memory)</td>
+<td><code>increaseTunnelRefCount()</code> — ref_count が 1 以上の間は親トンネル DEL が抑制される</td>
+<td><code>tunneldecaporch.cpp</code> L997, <code>tunneldecaporch.h</code> L157-160</td>
+</tr>
+<tr>
+<td>in-memory キャッシュ登録</td>
+<td><code>tunnel.tunnel_term_info[dst_ip]</code></td>
+<td><code>TunnelTermEntry</code> 構造体を追加。後続 DEL / 参照管理の根拠データ</td>
+<td><code>tunneldecaporch.cpp</code> L990-996</td>
+</tr>
+<tr>
+<td>STATE_DB 書き込み</td>
+<td><code>STATE_TUNNEL_DECAP_TERM_TABLE:&lt;tunnel_name&gt;|&lt;dst_ip&gt;</code></td>
+<td><code>setDecapTunnelTermStatus()</code> — <code>term_type</code>・<code>src_ip</code>（非空時）・<code>subnet_type</code>（非空時）を書き込む</td>
+<td><code>tunneldecaporch.cpp</code> L998, L1539-1561</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del_1">DEL 成功時<a class="headerlink" href="#del_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副作用</th>
+<th>対象</th>
+<th>詳細</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI term entry 削除</td>
+<td>ASIC_DB → syncd → ASIC</td>
+<td><code>sai_tunnel_api-&gt;remove_tunnel_term_table_entry()</code> 呼び出し</td>
+<td><code>tunneldecaporch.cpp</code> L1248</td>
+</tr>
+<tr>
+<td>親トンネル ref_count -1</td>
+<td><code>tunnelTable[name].ref_count</code> (in-memory)</td>
+<td><code>decreaseTunnelRefCount()</code></td>
+<td><code>tunneldecaporch.cpp</code> L1260, <code>tunneldecaporch.h</code> L161-163</td>
+</tr>
+<tr>
+<td>親トンネルの自動削除（条件付き）</td>
+<td><code>TUNNEL_DECAP_TABLE</code> の SAI エントリ</td>
+<td>ref_count が 0 になった場合、<code>RemoveTunnelIfNotReferenced()</code> → <code>removeDecapTunnel()</code> でカスケード削除</td>
+<td><code>tunneldecaporch.cpp</code> L531, L1569-1576</td>
+</tr>
+<tr>
+<td>STATE_DB エントリ削除</td>
+<td><code>STATE_TUNNEL_DECAP_TERM_TABLE:&lt;tunnel_name&gt;|&lt;dst_ip&gt;</code></td>
+<td><code>removeDecapTunnelTermStatus()</code></td>
+<td><code>tunneldecaporch.cpp</code> L1261, L1563-1567</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">保留キュー経由の連鎖<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>TERM が先着した場合 (<code>tunnel_exists == false</code>)、<code>unhandledDecapTerms</code> キューに積まれる。その後 <code>TUNNEL_DECAP_TABLE</code> SET 成功時に <code>processUnhandledDecapTunnelTerms()</code> が呼ばれ、保留済み TERM の SAI 作成・ref_count 更新・STATE_DB 書き込みが連鎖して発生する (<code>tunneldecaporch.cpp</code> L309, L1497-1519)。</p>
+<h3 id="subnet_decap">SUBNET_DECAP 更新時の連鎖<a class="headerlink" href="#subnet_decap" title="Permanent link">&para;</a></h3>
+<p><code>SUBNET_DECAP</code> フィールド変更 (src_ip / src_ip_v6 の更新) が発生すると、<code>updateUnhandledDecapTunnelTermsSrcIp()</code> (L1483-1494) により未処理 TERM の src_ip フィールドが上書き更新される。</p>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-decap-term-side-effects.md</code></p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p>TUNNEL_DECAP_TERM_TABLE に関わる全 Publisher/Subscriber ペアを実装から導出した。</p>
+<h3 id="producer-appl_db">Producer 側 (APPL_DB へ書き込む)<a class="headerlink" href="#producer-appl_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Producer</th>
+<th>型</th>
+<th>書き込みタイミング</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tunnelmgrd</code> (<code>m_appIpInIpTunnelDecapTermTable</code>)</td>
+<td><code>ProducerStateTable</code></td>
+<td>CONFIG_DB <code>TUNNEL</code> SET/DEL イベント受信後、APPL_DB <code>APP_TUNNEL_DECAP_TABLE</code> と同時に書き込む</td>
+<td><code>tunnelmgr.cpp</code> L111, L276-309</td>
+</tr>
+<tr>
+<td><code>RouteOrch</code> (<code>m_appTunnelDecapTermProducer</code>)</td>
+<td><code>ProducerStateTable</code></td>
+<td>VIP subnet decap ルート追加時に <code>subnet_type=vip</code> の <code>MP2MP</code> term を書き込む</td>
+<td><code>routeorch.cpp</code> L53, L3220-3251</td>
+</tr>
+<tr>
+<td><code>VNetRouteOrch</code> (<code>app_tunnel_decap_term_producer_</code>)</td>
+<td><code>ProducerStateTable</code></td>
+<td>VNet VIP ルート追加時に同様の <code>MP2MP</code> term を書き込む</td>
+<td><code>vnetorch.cpp</code> L734, L1563-1594</td>
+</tr>
+<tr>
+<td><code>swssconfig</code> + <code>ipinip.json.j2</code></td>
+<td>Redis MULTI/EXEC</td>
+<td>起動時にテンプレート展開済み JSON から一括書き込み</td>
+<td><code>sonic-buildimage: dockers/docker-orchagent/ipinip.json.j2</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>ProducerStateTable</code> は Lua スクリプトで <code>SADD KEY_SET</code> + <code>HSET _&lt;table&gt;:&lt;key&gt;</code> + <code>PUBLISH &lt;table&gt;_CHANNEL@0 G</code> をアトミックに実行する。</p>
+<h3 id="consumer-tunneldecaporch">Consumer 側 (tunneldecaporch)<a class="headerlink" href="#consumer-tunneldecaporch" title="Permanent link">&para;</a></h3>
+<p><code>TunnelDecapOrch</code> は <code>Orch(appDb, tableNames)</code> 継承で初期化され、<code>tableNames</code> に <code>APP_TUNNEL_DECAP_TERM_TABLE_NAME</code> が含まれる (<code>tunneldecaporch.cpp</code> L30-35)。</p>
+<p><code>Orch</code> ベースクラスが内部で <code>ConsumerStateTable</code> を生成し、<code>APP_TUNNEL_DECAP_TERM_TABLE_CHANNEL@0</code> を購読する:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>SUBSCRIBE APP_TUNNEL_DECAP_TERM_TABLE_CHANNEL@0
+</span></code></pre></div>
+<p>通知受信 → <code>Select::select()</code> wake-up → <code>consumer_state_table_pops.lua</code> で <code>SPOP KEY_SET</code> + <code>HGETALL _&lt;table&gt;:&lt;key&gt;</code> → <code>TunnelDecapOrch::doTask()</code> → <code>doDecapTunnelTermTask()</code> の順で処理される。</p>
+<h3 id="config_db-subnet_decap-subscriberstatetable">CONFIG_DB SUBNET_DECAP の購読 (SubscriberStateTable)<a class="headerlink" href="#config_db-subnet_decap-subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p>コンストラクタ内 (tunneldecaporch.cpp L39-48) で <code>SUBNET_DECAP</code> を <code>SubscriberStateTable</code> で購読:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">configDb</span><span class="p">,</span><span class="w"> </span><span class="n">CFG_SUBNET_DECAP_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
+</span></code></pre></div>
+<p>Redis keyspace notification (<code>__keyspace@{db_id}__:SUBNET_DECAP|*</code>) を受信し、<code>doSubnetDecapTask()</code> を呼び出す。コンストラクタ内で初期 <code>pops()</code> を実行し、起動前に書き込まれていた <code>SUBNET_DECAP</code> エントリもキャッチアップする。</p>
+<h3 id="state_db-table">STATE_DB への書き込み (Table 直接)<a class="headerlink" href="#state_db-table" title="Permanent link">&para;</a></h3>
+<p><code>stateTunnelDecapTermTable</code> (<code>Table</code> クラス, L34-35) を通じて直接 <code>HSET</code>/<code>HDEL</code> を発行する。keyspace notification は発生するが、リトライ/確認のフィードバックループはなく一方向書き込みのみ。</p>
+<h3 id="_8">通信経路まとめ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>CONFIG_DB:TUNNEL
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ──SubscriberStateTable──→ tunnelmgrd
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>      ──ProducerStateTable──→ APPL_DB:TUNNEL_DECAP_TERM_TABLE
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>                                 ──ConsumerStateTable──→ tunneldecaporch
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>                                                            ──Table.set()──→ STATE_DB:TUNNEL_DECAP_TERM_TABLE
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>CONFIG_DB:SUBNET_DECAP
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  ──SubscriberStateTable──→ tunneldecaporch (subnetDecapConfig 更新)
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>RouteOrch / VNetRouteOrch
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>  ──ProducerStateTable──→ APPL_DB:TUNNEL_DECAP_TERM_TABLE (VIP subnet decap term)
+</span></code></pre></div>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-decap-term-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p>TUNNEL_DECAP_TERM_TABLE エントリを <strong>処理する <code>tunneldecaporch</code></strong> にはプラットフォーム差なし。差異は <strong>書き込み側</strong>（<code>ipinip.json.j2</code> テンプレート）で生じ、<code>switch_type</code>・ASIC ベンダー・デバイスタイプ・ルーティング IF 数の組み合わせによって生成エントリ数が変わる。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switch_type == "dpu"</code></td>
+<td>TERM エントリ生成なし（JSON <code>[]</code>）</td>
+<td><code>ipinip.json.j2</code> L1: DPU では IP-in-IP decap を使用しない設計</td>
+</tr>
+<tr>
+<td>BackEnd デバイスタイプ（<code>storage_device</code> メタデータなし）</td>
+<td>TERM エントリ生成なし</td>
+<td><code>ipinip.json.j2</code> L67-76: <code>BackEndToRRouter</code> / <code>BackEndLeafRouter</code> / <code>BackEndSpineRouter</code> かつ <code>storage_device</code> 未設定時はアドレスリストをリセット</td>
+</tr>
+<tr>
+<td>ルーティング IF 数 &gt; 128</td>
+<td>生成対象を Loopback + VLAN アドレスに限定</td>
+<td><code>ipinip.json.j2</code> L79-83: SAI が <code>TABLE_FULL</code> を返す恐れがあるため制限（コメント明記）</td>
+</tr>
+<tr>
+<td>Broadcom T1 (LeafRouter)</td>
+<td>親 TUNNEL の <code>dscp_mode=pipe</code>。TERM フィールドへの影響なし</td>
+<td><code>ipinip.json.j2</code> L97-108</td>
+</tr>
+<tr>
+<td>Broadcom 非 T1 (ToR / Spine)</td>
+<td>親 TUNNEL の <code>dscp_mode=uniform</code>。TERM フィールドへの影響なし</td>
+<td><code>ipinip.json.j2</code> L100</td>
+</tr>
+<tr>
+<td>非 Broadcom + AZURE QoS マップ</td>
+<td>親 TUNNEL に <code>decap_dscp_to_tc_map=AZURE</code>。TERM フィールドへの影響なし</td>
+<td><code>ipinip.json.j2</code> L104-107</td>
+</tr>
+<tr>
+<td>src_ip / dst_ip IP バージョン不一致（v4/v6 混在）</td>
+<td><code>addDecapTunnelTermEntry()</code> が <code>false</code> を返し SAI 呼び出しスキップ</td>
+<td><code>tunneldecaporch.cpp</code> L950-954: 全 ASIC 共通のソフトウェアチェック</td>
+</tr>
+<tr>
+<td>multi-asic / VOQ chassis</td>
+<td>各 asic-namespace の orchagent が独立処理。ロジック差なし</td>
+<td>orchagent は namespace ごとに分離起動</td>
+</tr>
+<tr>
+<td>Dual-ToR (MuxTunnel0)</td>
+<td>MuxTunnel0 向け term エントリが追加されるが処理ロジックは通常 term と同一</td>
+<td><code>tunneldecaporch.h</code> L21; <code>muxorch.cpp</code> 呼び出し</td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/tunnel-decap-term-platform.md</code> を参照。</p>
+<!-- /platform -->
+
+<h2 id="_9">購読者<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>tunneldecaporch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>): <a href="../../glossary/#term-sai">SAI</a> <code>create_tunnel_term_table_entry()</code> / <code>remove_tunnel_term_table_entry()</code> を呼び出す</li>
 <li><code>STATE_DB</code> 側はモニタリング用ミラー (<code>stateTunnelDecapTermTable</code>)</li>
 </ul>
-<h2 id="_6">書き込み入り口<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_10">書き込み入り口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <h3 id="tunnelmgrd">tunnelmgrd<a class="headerlink" href="#tunnelmgrd" title="Permanent link">&para;</a></h3>
 <p>CONFIG_DB <code>TUNNEL</code> テーブルを購読し、<code>src_ip</code> の有無から自動的に <code>P2P</code>/<code>P2MP</code> を判定して APPL_DB へ書き込む (<code>tunnelmgr.cpp</code> L278-289)。</p>
 <h3 id="swssconfig-ipinipjsonj2">swssconfig (ipinip.json.j2)<a class="headerlink" href="#swssconfig-ipinipjsonj2" title="Permanent link">&para;</a></h3>
 <p>ビルド時テンプレートから生成。典型的な書き込みパターン:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;TUNNEL_DECAP_TERM_TABLE:IPINIP_TUNNEL:10.0.0.1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;term_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P2MP&quot;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;TUNNEL_DECAP_TERM_TABLE:IPINIP_TUNNEL:10.0.0.1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&quot;term_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P2MP&quot;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:192.168.0.0/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;term_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MP2MP&quot;</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;subnet_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vlan&quot;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:192.168.0.0/24&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;term_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MP2MP&quot;</span><span class="p">,</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">&quot;subnet_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vlan&quot;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="db_migrator">db_migrator<a class="headerlink" href="#db_migrator" title="Permanent link">&para;</a></h3>
 <p><code>db_migrator.py</code> に旧 <code>TUNNEL_DECAP_TABLE</code> から <code>TUNNEL_DECAP_TERM_TABLE</code> へのマイグレーションロジックが存在する。</p>
@@ -35188,14 +36528,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../tunnel-decap-table/"><code>TUNNEL_DECAP_TABLE</code></a> — 親トンネルの APPL_DB エントリ</li>
 <li><a href="../tunnel/"><code>TUNNEL</code></a> — CONFIG_DB 側のソーステーブル</li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

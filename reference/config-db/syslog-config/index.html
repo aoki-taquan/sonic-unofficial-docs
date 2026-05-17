@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23633,6 +23641,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -27909,6 +27945,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -29109,6 +29201,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syslog_config-syslog_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSLOG_CONFIG と SYSLOG_SERVER のペア書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#welf_firewall_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        welf_firewall_name の順序制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29193,7 +29324,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#welf_firewall_name" class="md-nav__link">
+  <a href="#welf_firewall_name_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         welf_firewall_name の暗黙ホスト名フォールバック
@@ -29818,6 +29949,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -35205,6 +35364,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syslog_config-syslog_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSLOG_CONFIG と SYSLOG_SERVER のペア書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#welf_firewall_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        welf_firewall_name の順序制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35289,7 +35487,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#welf_firewall_name" class="md-nav__link">
+  <a href="#welf_firewall_name_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         welf_firewall_name の暗黙ホスト名フォールバック
@@ -35663,6 +35861,74 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="syslog_config-syslog_server">SYSLOG_CONFIG と SYSLOG_SERVER のペア書込み<a class="headerlink" href="#syslog_config-syslog_server" title="Permanent link">&para;</a></h3>
+<p><code>rsyslog_handler()</code> は <code>SYSLOG_CONFIG</code> と <code>SYSLOG_SERVER</code> の<strong>両テーブルを毎回まとめて読み直す</strong>。どちらのテーブルへの変更も <code>rsyslog-config</code> サービスの再起動を引き起こす。</p>
+<table>
+<thead>
+<tr>
+<th>操作順序</th>
+<th>rsyslog-config 再起動回数</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SYSLOG_SERVER</code> を先に投入 → <code>SYSLOG_CONFIG</code> を書き込む</td>
+<td><strong>1 回</strong></td>
+<td>推奨パターン</td>
+</tr>
+<tr>
+<td><code>SYSLOG_CONFIG</code> を先に書き込む → <code>SYSLOG_SERVER</code> を後から追加</td>
+<td><strong>2 回</strong></td>
+<td>最終状態は同じだが再起動が増える</td>
+</tr>
+<tr>
+<td>同一値を再書き込み</td>
+<td><strong>0 回</strong></td>
+<td>キャッシュ比較でスキップ (hostcfgd:1725)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>推奨書込み順序</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a># 1. リモートサーバ設定（先に投入）
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>SET SYSLOG_SERVER|&lt;ip&gt;  port=514  ...
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a># 2. グローバル設定（後から書き込む）
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>SET SYSLOG_CONFIG|GLOBAL  format=standard  rate_limit_interval=300  rate_limit_burst=20000
+</span></code></pre></div>
+<h3 id="welf_firewall_name">welf_firewall_name の順序制約<a class="headerlink" href="#welf_firewall_name" title="Permanent link">&para;</a></h3>
+<p>YANG <code>must "(../format != 'standard')"</code> 制約により、<code>welf_firewall_name</code> は <code>format = welf</code> に変更した<strong>後</strong>でなければ書き込めない。</p>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>操作</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>SYSLOG_CONFIG|GLOBAL format=welf</code></td>
+<td>OK</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>SYSLOG_CONFIG|GLOBAL welf_firewall_name=&lt;name&gt;</code></td>
+<td>OK (YANG 制約満足)</td>
+</tr>
+<tr>
+<td>×</td>
+<td><code>format=standard</code> のまま <code>welf_firewall_name</code> を書く</td>
+<td>YANG バリデーションエラーで拒否</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2410-2415, L1725-1726; sonic-syslog.yang must "(../format != 'standard')" -->
+<!-- /ordering -->
+
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
@@ -35763,7 +36029,7 @@
 <p>YANG が <code>default standard</code> を宣言しているため、CLI / sonic-cfggen / YANG-aware 書き込み経路では <code>format</code> 欠落時に <code>standard</code> が自動付与される。<code>rsyslog.conf.j2</code> L51 はこの YANG default をバイパスする経路（直接 redis-cli 書き込み、<code>SYSLOG_CONFIG|GLOBAL</code> 行欠落）に備えた二重防御で、<code>gconf.get('format', 'standard')</code> で <code>'standard'</code> を最終フォールバックとする。</p>
 <h3 id="severity"><code>severity</code> の詳細<a class="headerlink" href="#severity" title="Permanent link">&para;</a></h3>
 <p>YANG default <code>notice</code> は <code>SYSLOG_CONFIG.GLOBAL.severity</code> に対するもの。テンプレート L92 では per-server severity の fallback として <code>gconf.get('severity', '*')</code> を使うため、<code>SYSLOG_CONFIG</code> テーブル自体が CONFIG_DB に存在しない場合は per-server に対して <code>'*'</code>（rsyslog の全 severity 構文）が適用される。これは YANG-実装 discrepancy（YANG 通過時は <code>notice</code>、未通過時は <code>*</code>）として <code>syslog-server</code> 側にも影響する。</p>
-<h3 id="welf_firewall_name"><code>welf_firewall_name</code> の暗黙ホスト名フォールバック<a class="headerlink" href="#welf_firewall_name" title="Permanent link">&para;</a></h3>
+<h3 id="welf_firewall_name_1"><code>welf_firewall_name</code> の暗黙ホスト名フォールバック<a class="headerlink" href="#welf_firewall_name_1" title="Permanent link">&para;</a></h3>
 <p><code>format='welf'</code> で <code>welf_firewall_name</code> を未指定にすると、テンプレート L52 がデバイス hostname（<code>sonic-cfggen</code> が <code>DEVICE_METADATA</code> から注入）を <code>fw="..."</code> として埋め込む。YANG の <code>must "(../format != 'standard')"</code> 制約は <code>format='welf'</code> 時には必須化を強制しないため、welf_firewall_name 欠落 + format=welf という組み合わせは合法だが、実効的にホスト名がそのまま外部 syslog サーバへ送られる。</p>
 <h3 id="syslog_config_feature-local-fallback"><code>SYSLOG_CONFIG_FEATURE</code> への local fallback（コンテナ側）<a class="headerlink" href="#syslog_config_feature-local-fallback" title="Permanent link">&para;</a></h3>
 <p><code>SYSLOG_CONFIG</code> (GLOBAL) はコンテナ内 rsyslog では参照されない（<code>rsyslog-container.conf.j2</code> は <code>SYSLOG_CONFIG_FEATURE</code> のみ参照）。コンテナ側 rate limit のハードコードフォールバックは <code>interval=300</code> / <code>burst=20000</code>（テンプレート L27 の <code>default()</code> フィルタ）。ただし <code>containercfgd.py</code> L143-144 が <code>data.get(..., '0')</code> で空 dict 経由でも <code>'0'</code> を渡すため、ハードコード fallback <code>300/20000</code> が発動するのは sonic-cfggen をスタンドアロン呼び出した特殊ケースに限られる。</p>

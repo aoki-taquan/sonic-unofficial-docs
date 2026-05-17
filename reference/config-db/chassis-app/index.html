@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23653,6 +23661,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../alarm-table/" class="md-nav__link">
         
   
@@ -24775,7 +24811,461 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-switch_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 #1 の詳細 (switch_type ゲート)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-lc-tsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 #5 の詳細 (LC TSA ガード)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassis_app_db-silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_APP_DB 非使用環境での全スキップ (silent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_interface-getport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_INTERFACE: getPort() 失敗 — リトライなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_neigh-encap_index-0-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_NEIGH: encap_index == 0 / SAI 失敗 — リトライなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_lag_table-lag-id-addlag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_LAG_TABLE: LAG ID 枯渇 — addLag 中断
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_device_globalstate-data-none-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_DEVICE_GLOBAL|STATE: data None / キー不在 — False 返却
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        silent skip（設計上の正常動作）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード定数・魔法数値 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード定数・魔法数値 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#db-id-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB ID / Redis インスタンス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schemah411-414" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名文字列定数 (schema.h:411-414)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lag-id-lagidh12-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LAG ID アロケータエラーコード (lagid.h:12-16)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lag-id-lagidslua15-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LAG ID 範囲キー (lagids.lua:15-16)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisd-chassisd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd 動作定数 (chassisd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_device_global-managers_device_globalpy12-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_DEVICE_GLOBAL フィールドのデフォルト値 (managers_device_global.py:12-14)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書き込み副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#system_interface_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_INTERFACE — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_neigh_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_NEIGH — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_lag_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_LAG_TABLE — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_lag_member_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_LAG_MEMBER_TABLE — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_device_globalstate_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_DEVICE_GLOBAL|STATE — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pubsub-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pub/Sub・通知チャネル (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pub/Sub・通知チャネル (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscriberStateTable の keyspace 購読パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumer 登録一覧（orchagent 側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 側の購読登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-pubsubdirectory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 内部 pub/sub（directory 経由）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd の購読スコープ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配信保証と注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム依存挙動 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム依存挙動 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api-sonic_platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム API ロード (sonic_platform プラグイン)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム種別分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム設定ファイル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#midplane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        midplane スイッチ初期化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-chassis_app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム API と CHASSIS_APP_DB の関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム非対応時の終了コード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         キー構造
@@ -24786,7 +25276,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         適用条件 (使用前提)
@@ -24808,7 +25298,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28194,6 +28684,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -29574,6 +30120,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -34939,7 +35513,461 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-switch_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 #1 の詳細 (switch_type ゲート)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-lc-tsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 #5 の詳細 (LC TSA ガード)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassis_app_db-silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CHASSIS_APP_DB 非使用環境での全スキップ (silent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_interface-getport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_INTERFACE: getPort() 失敗 — リトライなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_neigh-encap_index-0-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_NEIGH: encap_index == 0 / SAI 失敗 — リトライなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_lag_table-lag-id-addlag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_LAG_TABLE: LAG ID 枯渇 — addLag 中断
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_device_globalstate-data-none-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_DEVICE_GLOBAL|STATE: data None / キー不在 — False 返却
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        silent skip（設計上の正常動作）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード定数・魔法数値 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード定数・魔法数値 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#db-id-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB ID / Redis インスタンス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schemah411-414" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名文字列定数 (schema.h:411-414)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lag-id-lagidh12-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LAG ID アロケータエラーコード (lagid.h:12-16)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lag-id-lagidslua15-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LAG ID 範囲キー (lagids.lua:15-16)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisd-chassisd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd 動作定数 (chassisd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_device_global-managers_device_globalpy12-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_DEVICE_GLOBAL フィールドのデフォルト値 (managers_device_global.py:12-14)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書き込み副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#system_interface_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_INTERFACE — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_neigh_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_NEIGH — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_lag_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_LAG_TABLE — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_lag_member_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYSTEM_LAG_MEMBER_TABLE — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_device_globalstate_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_DEVICE_GLOBAL|STATE — 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pubsub-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pub/Sub・通知チャネル (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pub/Sub・通知チャネル (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscriberStateTable の keyspace 購読パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumer 登録一覧（orchagent 側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 側の購読登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-pubsubdirectory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 内部 pub/sub（directory 経由）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chassisd の購読スコープ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        配信保証と注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム依存挙動 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム依存挙動 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api-sonic_platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム API ロード (sonic_platform プラグイン)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム種別分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム設定ファイル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#midplane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        midplane スイッチ初期化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-chassis_app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム API と CHASSIS_APP_DB の関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム非対応時の終了コード
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         キー構造
@@ -34950,7 +35978,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         適用条件 (使用前提)
@@ -34972,7 +36000,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35296,7 +36324,746 @@
 <p><code>voqSyncDelIntf()</code> / <code>voqSyncDelLag()</code> / <code>voqSyncDelLagMember()</code> はいずれも参照先の存在チェックなしに <code>del()</code> を実行する。CHASSIS_APP_DB への DEL は依存関係なしで任意のタイミングで発行可能。ただし <code>SYSTEM_LAG_TABLE</code> エントリを DEL すると対応する LAG ID が <code>SYSTEM_LAG_IDS_FREE_LIST</code> に戻り再利用される点に注意。</p>
 <!-- /ordering -->
 
-<h2 id="_4">キー構造<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/chassis-app-cross-refs.md</code></p>
+</blockquote>
+<p>CHASSIS_APP_DB 各テーブルへの書き込みが依存する他テーブル・DB の参照関係を示す。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存方向</th>
+<th>参照元</th>
+<th>参照先テーブル</th>
+<th>依存内容</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>CONFIG_DB → CHASSIS_APP_DB (全体ゲート)</td>
+<td><code>DEVICE_METADATA.localhost.switch_type</code></td>
+<td>CHASSIS_APP_DB 全テーブル</td>
+<td><code>switch_type != "voq"</code> または <code>/etc/sonic/database_config.json</code> に <code>CHASSIS_APP_DB</code> 不在時は書き込み一切なし</td>
+<td><code>main.cpp:694-730</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>CONFIG_DB → SYSTEM_LAG_TABLE</td>
+<td><code>DEVICE_METADATA.localhost.switch_id</code></td>
+<td><code>SYSTEM_LAG_TABLE.switch_id</code> 値</td>
+<td>ローカル LAG か否かの判定 (<code>gVoqMySwitchId</code>) に使用。起動時一度のみ読み取り</td>
+<td><code>main.cpp:305-313</code>, <code>portsorch.cpp:11141-11148</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>APPL_DB → CHASSIS_APP_DB (書き込みトリガ)</td>
+<td><code>APP_SYSTEM_PORT_TABLE</code> (PortInitDone 後)</td>
+<td><code>SYSTEM_INTERFACE</code></td>
+<td>ポートリスト (<code>m_portList</code>) 未完成時は <code>gPortsOrch-&gt;getPort()</code> 失敗 → 書き込みスキップ</td>
+<td><code>portsorch.cpp:10864-10870</code>, <code>intfsorch.cpp:1676-1681</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>CONFIG_DB → CHASSIS_APP_DB (初期化スクリプト経由)</td>
+<td><code>SYSTEM_PORT</code> (暗黙的)</td>
+<td><code>SYSTEM_LAG_ID_START</code> / <code>SYSTEM_LAG_ID_END</code></td>
+<td>LAG ID 割り当て範囲の初期化。未初期化時は <code>lagIdAdd()</code> が <code>LAG_ID_ALLOCATOR_ERROR_TABLE_FULL (-1)</code> を返し addLag 失敗</td>
+<td><code>lagids.lua:15-16</code>, <code>portsorch.cpp:7974-7983</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>CONFIG_DB → CHASSIS_APP_DB (適用ガード)</td>
+<td><code>BGP_DEVICE_GLOBAL.tsa_enabled</code> (LC 側)</td>
+<td><code>BGP_DEVICE_GLOBAL\|STATE</code></td>
+<td>LC 側 TSA が <code>"true"</code> の場合、supervisor からの <code>tsa_enabled</code> 変更を <code>isolate_unisolate_device()</code> に渡さずブロック</td>
+<td><code>managers_chassis_app_db.py:40-44</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>CHASSIS_APP_DB 内 (LAG → LAG_MEMBER)</td>
+<td><code>SYSTEM_LAG_TABLE</code></td>
+<td><code>SYSTEM_LAG_MEMBER_TABLE</code></td>
+<td>LAG が <code>voqSyncAddLag()</code> 完了前は <code>switch_id</code> 未設定 → <code>voqSyncAddLagMember()</code> がスキップ</td>
+<td><code>portsorch.cpp:11179-11193</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>CHASSIS_STATE_DB → CHASSIS_APP_DB (DEL トリガ)</td>
+<td><code>CHASSIS_MODULE_TABLE</code> (oper_status 変化)</td>
+<td>CHASSIS_APP_DB 全テーブル</td>
+<td>モジュール down 検知から 30 分後に <code>_cleanup_chassis_app_db()</code> が Lua スクリプトでパターン削除</td>
+<td><code>chassisd:593-658,89-90</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-switch_type">依存 #1 の詳細 (switch_type ゲート)<a class="headerlink" href="#1-switch_type" title="Permanent link">&para;</a></h3>
+<p>起動時に <code>getCfgSwitchType()</code> が <code>DEVICE_METADATA.localhost.switch_type</code> を読み取り <code>gMySwitchType</code> を決定する。<code>gMySwitchType == "voq"</code> かつ <code>isChassisAppDbPresent()</code> (= <code>/etc/sonic/database_config.json</code> に <code>CHASSIS_APP_DB</code> キーが存在) の両方が成立した場合のみ <code>gMultiAsicVoq = true</code> となり CHASSIS_APP_DB への接続が確立される (<code>main.cpp:725-730</code>)。いずれかが欠如した場合、<code>gMultiAsicVoq</code> は false のままとなりすべての <code>voqSync*()</code> 関数は即時 return する（エラーログなし）。</p>
+<h3 id="5-lc-tsa">依存 #5 の詳細 (LC TSA ガード)<a class="headerlink" href="#5-lc-tsa" title="Permanent link">&para;</a></h3>
+<p><code>ChassisAppDbMgr</code> は初期化時に <code>CONFIG_DB.BGP_DEVICE_GLOBAL.tsa_enabled</code> を <code>subscribe()</code> で監視し <code>self.lc_tsa</code> を更新する (<code>managers_chassis_app_db.py:20</code>)。supervisor が <code>CHASSIS_APP_DB.BGP_DEVICE_GLOBAL|STATE</code> を SET すると <code>set_handler()</code> が呼ばれるが、<code>self.lc_tsa != "false"</code> の場合は <code>isolate_unisolate_device()</code> を呼び出さない。これにより <strong>LC 側の TSA 状態が supervisor の TSA より優先</strong> される。LC 側が TSA 中 (<code>tsa_enabled = "true"</code>) の間はスーパーバイザーからの unisolate 指示を無視する (<code>managers_chassis_app_db.py:41-44</code>)。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/chassis-app-failure.md</code></p>
+</blockquote>
+<h3 id="chassis_app_db-silent">CHASSIS_APP_DB 非使用環境での全スキップ (silent)<a class="headerlink" href="#chassis_app_db-silent" title="Permanent link">&para;</a></h3>
+<p><code>gMultiAsicVoq == false</code> の場合（<code>DEVICE_METADATA.localhost.switch_type != "voq"</code> または <code>database_config.json</code> に <code>CHASSIS_APP_DB</code> キーが不在）、すべての <code>voqSync*()</code> 関数は即時 <code>return</code> する。エラーログなし。</p>
+<table>
+<thead>
+<tr>
+<th>voqSync* 関数</th>
+<th>影響テーブル</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>voqSyncAddIntf</code> / <code>voqSyncDelIntf</code></td>
+<td><code>SYSTEM_INTERFACE</code></td>
+<td>書き込み全スキップ</td>
+</tr>
+<tr>
+<td><code>voqSyncAddNeigh</code> / <code>voqSyncDelNeigh</code></td>
+<td><code>SYSTEM_NEIGH</code></td>
+<td>書き込み全スキップ</td>
+</tr>
+<tr>
+<td><code>voqSyncAddLag</code> / <code>voqSyncDelLag</code></td>
+<td><code>SYSTEM_LAG_TABLE</code></td>
+<td>書き込み全スキップ</td>
+</tr>
+<tr>
+<td><code>voqSyncAddLagMember</code> / <code>voqSyncDelLagMember</code></td>
+<td><code>SYSTEM_LAG_MEMBER_TABLE</code></td>
+<td>書き込み全スキップ</td>
+</tr>
+</tbody>
+</table>
+<p>Evidence: <code>main.cpp:725-730</code>, <code>intfsorch.cpp:1673-1675</code></p>
+<h3 id="system_interface-getport">SYSTEM_INTERFACE: getPort() 失敗 — リトライなし<a class="headerlink" href="#system_interface-getport" title="Permanent link">&para;</a></h3>
+<p><code>voqSyncAddIntf()</code> 内で <code>gPortsOrch-&gt;getPort(alias, port)</code> が失敗した場合（PortInitDone 受信前にインタフェース追加イベントが到達した場合）、エラーログを出力して即 <code>return</code>。<code>task_need_retry</code> を返さないため<strong>永続的に書き込まれない</strong>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>SWSS_LOG_ERROR(&quot;Port does not exist for %s!&quot;, alias.c_str())  // intfsorch.cpp:1679
+</span></code></pre></div>
+<p>Evidence: <code>intfsorch.cpp:1676-1681</code></p>
+<h3 id="system_neigh-encap_index-0-sai">SYSTEM_NEIGH: encap_index == 0 / SAI 失敗 — リトライなし<a class="headerlink" href="#system_neigh-encap_index-0-sai" title="Permanent link">&para;</a></h3>
+<p><code>voqSyncAddNeigh()</code> で SAI <code>get_neighbor_entry_attribute(SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX)</code> が失敗した場合、またはその返り値が <code>0</code>（無効値）の場合、エラーログを出力して <code>return</code>。リトライなし。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログ</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI API 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to get neighbor attribute for %s on %s, rv:%d", ...)</code></td>
+<td><code>neighorch.cpp:2600-2604</code></td>
+</tr>
+<tr>
+<td><code>encap_index == 0</code></td>
+<td><code>SWSS_LOG_ERROR("Invalid neighbor encap_index for %s on %s", ...)</code></td>
+<td><code>neighorch.cpp:2610-2611</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="system_lag_table-lag-id-addlag">SYSTEM_LAG_TABLE: LAG ID 枯渇 — addLag 中断<a class="headerlink" href="#system_lag_table-lag-id-addlag" title="Permanent link">&para;</a></h3>
+<p><code>lagids.lua</code> の Lua スクリプトが <code>SYSTEM_LAG_IDS_FREE_LIST</code> の枯渇を検出すると <code>-1</code>（<code>LAG_ID_ALLOCATOR_ERROR_TABLE_FULL</code>）を返す。<code>portsorch.cpp:7981</code> でエラーログを出力し LAG 作成が中断、SYSTEM_LAG_TABLE への書き込みは行われない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>SWSS_LOG_ERROR(&quot;Failed to allocate unique LAG id for local lag %s rv:%d&quot;, lag_alias.c_str(), spa_id)
+</span></code></pre></div>
+<p><code>SYSTEM_LAG_ID_START</code> / <code>SYSTEM_LAG_ID_END</code> が未初期化（<code>redis get</code> が nil）の場合、Lua の <code>tonumber(nil)</code> が <code>nil</code> を返し数値比較で Lua エラーが発生し、LAG ID 割り当てが全件失敗する。Evidence: <code>lagids.lua:15-16,60-62</code>, <code>portsorch.cpp:7977-7981</code></p>
+<h3 id="bgp_device_globalstate-data-none-false">BGP_DEVICE_GLOBAL|STATE: data None / キー不在 — False 返却<a class="headerlink" href="#bgp_device_globalstate-data-none-false" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>結果</th>
+<th>ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data is None</code></td>
+<td><code>set_handler</code> が <code>False</code> を返す（bgpcfgd が再試行）</td>
+<td><code>log_err("ChassisAppDbMgr:: data is None")</code></td>
+</tr>
+<tr>
+<td><code>"tsa_enabled"</code> キーが <code>data</code> に不在</td>
+<td><code>set_handler</code> が <code>False</code> を返す</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>CHASSIS_APP_DB 接続失敗 (<code>get_chassis_tsa_status</code>)</td>
+<td>fallback <code>"false"</code> を返す</td>
+<td><code>log_err("Got an exception {}")</code></td>
+</tr>
+</tbody>
+</table>
+<p>Evidence: <code>managers_chassis_app_db.py:36-46</code>, <code>managers_device_global.py:244-249</code></p>
+<h3 id="silent-skip">silent skip（設計上の正常動作）<a class="headerlink" href="#silent-skip" title="Permanent link">&para;</a></h3>
+<p>以下の条件では書き込みがスキップされるが、エラーログは出力されない（設計通りの動作）:</p>
+<ul>
+<li>リモートシステムポート (<code>SAI_SYSTEM_PORT_TYPE_REMOTE</code>) に対する <code>voqSyncAddIntf()</code> — <code>intfsorch.cpp:1689-1692</code></li>
+<li>LAG ポートで <code>m_system_lag_info.switch_id != gVoqMySwitchId</code> に対する <code>voqSyncAddNeigh()</code> — <code>neighorch.cpp:2624-2627</code></li>
+<li>ローカル LAG でない (<code>switch_id != gVoqMySwitchId</code>) LAG への <code>voqSyncAddLag()</code> — <code>portsorch.cpp:11145-11148</code></li>
+</ul>
+<p>デバッグ時に書き込みがスキップされていても、エラーログなしで silent になる点に注意。</p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">コード定数・魔法数値 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/chassis-app-constants.md</code>
+調査対象: <code>sonic-swss-common/common/schema.h</code> @ 158de8d3463ff4b841653f6d57190bb142b80d9c, <code>sonic-swss-common/common/database_config.json</code> @ 158de8d3463ff4b841653f6d57190bb142b80d9c, <code>sonic-swss/orchagent/lagid.h</code> @ 4305596, <code>sonic-swss/orchagent/lagids.lua</code> @ 4305596, <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd</code> @ 4ba9612, <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py</code> @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</p>
+</blockquote>
+<h3 id="db-id-redis">DB ID / Redis インスタンス定数<a class="headerlink" href="#db-id-redis" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数 / 設定値</th>
+<th>値</th>
+<th>定義箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CHASSIS_APP_DB</code> (#define)</td>
+<td><code>12</code></td>
+<td><code>schema.h:25</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_STATE_DB</code> (#define)</td>
+<td><code>13</code></td>
+<td><code>schema.h:26</code></td>
+</tr>
+<tr>
+<td>redis_chassis ホスト</td>
+<td><code>redis_chassis.server</code></td>
+<td><code>database_config.json</code></td>
+</tr>
+<tr>
+<td>redis_chassis ポート</td>
+<td><code>6380</code></td>
+<td><code>database_config.json</code></td>
+</tr>
+<tr>
+<td>redis_chassis Unix ソケット</td>
+<td><code>/var/run/redis/redis_chassis.sock</code></td>
+<td><code>database_config.json</code></td>
+</tr>
+<tr>
+<td>CHASSIS_APP_DB キー区切り文字</td>
+<td><code>\|</code> (pipe)</td>
+<td><code>database_config.json</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="schemah411-414">テーブル名文字列定数 (schema.h:411-414)<a class="headerlink" href="#schemah411-414" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#define</th>
+<th>文字列値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME</code></td>
+<td><code>"SYSTEM_INTERFACE"</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME</code></td>
+<td><code>"SYSTEM_NEIGH"</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_APP_LAG_TABLE_NAME</code></td>
+<td><code>"SYSTEM_LAG_TABLE"</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_APP_LAG_MEMBER_TABLE_NAME</code></td>
+<td><code>"SYSTEM_LAG_MEMBER_TABLE"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="lag-id-lagidh12-16">LAG ID アロケータエラーコード (lagid.h:12-16)<a class="headerlink" href="#lag-id-lagidh12-16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#define</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LAG_ID_ALLOCATOR_ERROR_DELETE_ENTRY_NOT_FOUND</code></td>
+<td><code>0</code></td>
+<td>削除対象エントリが存在しない（no-op として処理、エラーログなし）</td>
+</tr>
+<tr>
+<td><code>LAG_ID_ALLOCATOR_ERROR_TABLE_FULL</code></td>
+<td><code>-1</code></td>
+<td>フリーリスト枯渇でこれ以上 LAG ID を払い出せない</td>
+</tr>
+<tr>
+<td><code>LAG_ID_ALLOCATOR_ERROR_GET_ENTRY_NOT_FOUND</code></td>
+<td><code>-2</code></td>
+<td><code>SYSTEM_LAG_ID_TABLE</code> にエントリが存在しない</td>
+</tr>
+<tr>
+<td><code>LAG_ID_ALLOCATOR_ERROR_INVALID_OP</code></td>
+<td><code>-3</code></td>
+<td>Lua スクリプトへの操作コードが不正</td>
+</tr>
+<tr>
+<td><code>LAG_ID_ALLOCATOR_ERROR_DB_ERROR</code></td>
+<td><code>-4</code></td>
+<td>Redis Lua スクリプト実行がエラーを返した</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>DELETE_ENTRY_NOT_FOUND = 0</code> は「正常 no-op」を示す慣習的な 0 値であり、削除失敗を意味しない<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+</blockquote>
+<h3 id="lag-id-lagidslua15-16">LAG ID 範囲キー (<code>lagids.lua:15-16</code>)<a class="headerlink" href="#lag-id-lagidslua15-16" title="Permanent link">&para;</a></h3>
+<p><code>SYSTEM_LAG_ID_START</code> / <code>SYSTEM_LAG_ID_END</code> は string 型 Redis キーとして CHASSIS_APP_DB に書き込まれ、Lua スクリプトが <code>tonumber()</code> で読み取る。値はプラットフォーム固有の初期化スクリプトが設定する（テスト環境での実例: start=<code>1</code>, end=<code>2</code>）。</p>
+<h3 id="chassisd-chassisd">chassisd 動作定数 (chassisd)<a class="headerlink" href="#chassisd-chassisd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD</code></td>
+<td><code>30</code> 分</td>
+<td>ラインカード down 後、CHASSIS_APP_DB エントリをクリーンアップするまでの待機時間</td>
+</tr>
+<tr>
+<td><code>CHASSIS_INFO_UPDATE_PERIOD_SECS</code></td>
+<td><code>10</code> 秒</td>
+<td>chassisd メインループ周期</td>
+</tr>
+<tr>
+<td><code>SELECT_TIMEOUT</code></td>
+<td><code>1000</code> ms</td>
+<td>swsscommon <code>sel.select()</code> タイムアウト</td>
+</tr>
+<tr>
+<td><code>DEFAULT_LINECARD_REBOOT_TIMEOUT</code></td>
+<td><code>180</code> 秒</td>
+<td>ラインカードリブート最大待機</td>
+</tr>
+<tr>
+<td><code>DEFAULT_DPU_REBOOT_TIMEOUT</code></td>
+<td><code>360</code> 秒</td>
+<td>DPU リブート最大待機</td>
+</tr>
+<tr>
+<td><code>CHASSIS_LOAD_ERROR</code></td>
+<td><code>1</code></td>
+<td>chassis プラグインロード失敗時の exit code</td>
+</tr>
+<tr>
+<td><code>CHASSIS_NOT_SUPPORTED</code></td>
+<td><code>2</code></td>
+<td>chassis API 未サポート時の exit code</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgp_device_global-managers_device_globalpy12-14">BGP_DEVICE_GLOBAL フィールドのデフォルト値 (<code>managers_device_global.py:12-14</code>)<a class="headerlink" href="#bgp_device_global-managers_device_globalpy12-14" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>クラス定数</th>
+<th>値</th>
+<th>対応フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TSA_DEFAULTS</code></td>
+<td><code>"false"</code></td>
+<td><code>tsa_enabled</code></td>
+</tr>
+<tr>
+<td><code>WCMP_DEFAULTS</code></td>
+<td><code>"false"</code></td>
+<td><code>wcmp_enabled</code></td>
+</tr>
+<tr>
+<td><code>IDF_DEFAULTS</code></td>
+<td><code>"unisolated"</code></td>
+<td><code>idf_isolation_state</code></td>
+</tr>
+</tbody>
+</table>
+<p>フィールドが存在しない場合のみ <code>DeviceGlobalCfgMgr.__init__()</code> が <code>directory.put()</code> で書き込む（<code>managers_device_global.py:42-49</code>）。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">書き込み副作用 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/chassis-app-side-effects.md</code>
+調査対象: <code>sonic-swss/orchagent/intfsorch.cpp</code> @ 4305596, <code>sonic-swss/orchagent/neighorch.cpp</code> @ 4305596, <code>sonic-swss/orchagent/portsorch.cpp</code> @ 4305596, <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py</code> @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</p>
+</blockquote>
+<p>CHASSIS_APP_DB への書き込みは単なるデータ保存ではない。リモートラインカード側の orchagent および bgpcfgd が各テーブルを <code>SubscriberStateTable</code> で購読しており、SAI プログラミング・STATE_DB 更新・FRR 設定変更などの連鎖処理が発生する。</p>
+<h3 id="system_interface_1">SYSTEM_INTERFACE — 副作用<a class="headerlink" href="#system_interface_1" title="Permanent link">&para;</a></h3>
+<p><strong>書き込み元 (ローカル LC)</strong>: <code>intfsorch.cpp</code> の <code>voqSyncAddIntf()</code> / <code>voqSyncDelIntf()</code> / <code>voqSyncIntfState()</code></p>
+<p><strong>購読側 (リモート LC)</strong>: <code>IntfsOrch</code> が <code>SubscriberStateTable(chassisAppDb, SYSTEM_INTERFACE)</code> を登録 (<code>intfsorch.cpp:106</code>)</p>
+<ul>
+<li>SET イベント受信時、<code>isRemoteSystemPortIntf(alias)</code> が true のエントリのみ処理 (<code>intfsorch.cpp:881-892</code>)</li>
+<li><code>oper_status</code> 変化に応じて <code>gNeighOrch-&gt;ifChangeInformRemoteNextHop(alias, isUp)</code> を呼出し、リモートポートを nexthop とする経路の到達可否を更新する</li>
+<li>ポートが DOWN になると、そのシステムポートへの nexthop が無効化され、routeorch がルートを再評価する</li>
+</ul>
+<h3 id="system_neigh_1">SYSTEM_NEIGH — 副作用<a class="headerlink" href="#system_neigh_1" title="Permanent link">&para;</a></h3>
+<p><strong>書き込み元 (ローカル LC)</strong>: <code>voqSyncAddNeigh()</code> / <code>voqSyncDelNeigh()</code> (<code>neighorch.cpp:2654,2688</code>)</p>
+<p><strong>購読側 (リモート LC)</strong>: <code>NeighOrch</code> が <code>SubscriberStateTable(chassisAppDb, SYSTEM_NEIGH)</code> を登録 (<code>neighorch.cpp:55</code>)。<code>doVoqSystemNeighTask()</code> で処理。</p>
+<p>SET イベント受信時の副作用チェーン:</p>
+<ol>
+<li>Inband ポートが UP であることを確認 (非 VLAN タイプでは admin/oper 両方が UP 必須)</li>
+<li>SAI に remote neighbor を追加 (<code>addNeighbor()</code>)</li>
+<li>成功時、<strong>STATE_DB の <code>SYSTEM_NEIGH</code> テーブル</strong>に <code>neigh</code> (MAC) を書き込む (<code>neighorch.cpp:2223</code>)</li>
+<li>STATE_DB 書き込みをトリガに <code>neighbor-manager</code> がカーネルの neighbor / host-route を追加</li>
+</ol>
+<p>DEL イベント受信時: SAI からのneighbor削除 → STATE_DB エントリ削除 → カーネルエントリ削除<br />
+<code>encap_index</code> 変更時: SAI 上の neighbor を一度削除してから STATE_DB も削除し、再追加する 2 ステップ処理 (<code>neighorch.cpp:2173</code>)</p>
+<h3 id="system_lag_table_1">SYSTEM_LAG_TABLE — 副作用<a class="headerlink" href="#system_lag_table_1" title="Permanent link">&para;</a></h3>
+<p><strong>書き込み元 (ローカル LC)</strong>: <code>voqSyncAddLag()</code> / <code>voqSyncDelLag()</code> (<code>portsorch.cpp:11139,11166</code>)</p>
+<p><strong>購読側 (リモート LC)</strong>: <code>PortsOrch</code> が <code>SubscriberStateTable(chassisAppDb, SYSTEM_LAG_TABLE)</code> を登録 (<code>portsorch.cpp:1086</code>)</p>
+<ul>
+<li><code>switch_id == gVoqMySwitchId</code> のエントリはローカル LC 自身が書いたものとしてスキップ</li>
+<li>リモート LC のエントリは <code>addLag(alias, lag_id, switch_id)</code> で SAI に system LAG を作成 (<code>portsorch.cpp:6116-6140</code>)</li>
+<li>作成後、<code>operation_status</code> / <code>mtu</code> / <code>tpid</code> / <code>learn_mode</code> が存在すれば SAI 属性設定が連鎖する</li>
+</ul>
+<h3 id="system_lag_member_table_1">SYSTEM_LAG_MEMBER_TABLE — 副作用<a class="headerlink" href="#system_lag_member_table_1" title="Permanent link">&para;</a></h3>
+<p><strong>書き込み元 (ローカル LC)</strong>: <code>voqSyncAddLagMember()</code> / <code>voqSyncDelLagMember()</code> (<code>portsorch.cpp:11179,11195</code>)</p>
+<p><strong>購読側 (リモート LC)</strong>: <code>PortsOrch</code> が <code>SubscriberStateTable(chassisAppDb, SYSTEM_LAG_MEMBER_TABLE)</code> を登録 (<code>portsorch.cpp:1091</code>)</p>
+<ul>
+<li><code>switch_id</code> 不一致チェック後、対応リモート LAG にシステムポートをメンバーとして追加し <code>status</code> 属性を SAI に設定 (<code>portsorch.cpp:6297-6355</code>)</li>
+</ul>
+<h3 id="bgp_device_globalstate_1">BGP_DEVICE_GLOBAL|STATE — 副作用<a class="headerlink" href="#bgp_device_globalstate_1" title="Permanent link">&para;</a></h3>
+<p><strong>書き込み元 (スーパーバイザー bgpcfgd)</strong>: <code>managers_device_global.py</code> が CONFIG_DB の <code>BGP_DEVICE_GLOBAL.tsa_enabled</code> 変化を受けて書き込む</p>
+<p><strong>購読側 (ラインカード bgpcfgd)</strong>: <code>ChassisAppDbMgr</code> (<code>managers_chassis_app_db.py</code>) が CHASSIS_APP_DB の変化を受信</p>
+<ul>
+<li><code>lc_tsa == "false"</code> のときのみ <code>DeviceGlobalCfgMgr.isolate_unisolate_device(data["tsa_enabled"])</code> を呼出し (<code>managers_chassis_app_db.py:41-44</code>)</li>
+<li><code>isolate_unisolate_device()</code> は出力 route-map を Jinja2 テンプレートで生成し FRR (vtysh) に push する — これにより全 BGP 出力ルートが TSA (unreachable 相当) または TSB (通常) に切り替わる</li>
+<li><code>lc_tsa == "true"</code> の場合はスーパーバイザーの指示を無視（LC 側 TSA が優先）</li>
+</ul>
+<h3 id="_4">副作用マトリクス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル書き込み</th>
+<th>直接の副作用</th>
+<th>連鎖先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SYSTEM_INTERFACE</code> SET (oper_status)</td>
+<td>リモート LC の nexthop 到達性更新 (<code>ifChangeInformRemoteNextHop</code>)</td>
+<td>routeorch のルート再評価</td>
+</tr>
+<tr>
+<td><code>SYSTEM_NEIGH</code> SET</td>
+<td>リモート LC: SAI neighbor 追加 → STATE_DB <code>SYSTEM_NEIGH</code> 書き込み</td>
+<td>neighbor-manager がカーネル neighbor/host-route を追加</td>
+</tr>
+<tr>
+<td><code>SYSTEM_NEIGH</code> DEL</td>
+<td>リモート LC: SAI neighbor 削除 → STATE_DB エントリ削除</td>
+<td>neighbor-manager がカーネルエントリを削除</td>
+</tr>
+<tr>
+<td><code>SYSTEM_LAG_TABLE</code> SET</td>
+<td>リモート LC: SAI system LAG 作成・属性設定</td>
+<td>LAG メンバー追加待ち</td>
+</tr>
+<tr>
+<td><code>SYSTEM_LAG_TABLE</code> DEL</td>
+<td>リモート LC: SAI system LAG 削除</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>SYSTEM_LAG_MEMBER_TABLE</code> SET</td>
+<td>リモート LC: SAI LAG メンバー追加・status 設定</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>SYSTEM_LAG_MEMBER_TABLE</code> DEL</td>
+<td>リモート LC: SAI LAG メンバー削除</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>BGP_DEVICE_GLOBAL\|STATE</code> SET (tsa_enabled)</td>
+<td>LC bgpcfgd: FRR に TSA/TSB route-map を push</td>
+<td>BGP アドバタイズメント全体が切替</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="pubsub-phase-g">Pub/Sub・通知チャネル (Phase G)<a class="headerlink" href="#pubsub-phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/chassis-app-pubsub.md</code>
+調査対象: <code>sonic-swss/orchagent/intfsorch.cpp</code> @ 4305596, <code>sonic-swss/orchagent/neighorch.cpp</code> @ 4305596, <code>sonic-swss/orchagent/portsorch.cpp</code> @ 4305596, <code>sonic-swss-common/common/subscriberstatetable.cpp</code> @ 158de8d3463ff4b841653f6d57190bb142b80d9c, <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py</code> @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd, <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py</code> @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</p>
+</blockquote>
+<p>CHASSIS_APP_DB (DB 12、<code>redis_chassis</code>) への書き込みは Redis の <strong>keyspace 通知</strong>を通じてリモートラインカード側のプロセスに伝達される。swsscommon の <code>SubscriberStateTable</code> が <code>psubscribe</code> を用いてパターン購読し、orchagent の <code>Orch::addExecutor(Consumer(...))</code> フレームワークに組み込まれる。</p>
+<h3 id="subscriberstatetable-keyspace">SubscriberStateTable の keyspace 購読パターン<a class="headerlink" href="#subscriberstatetable-keyspace" title="Permanent link">&para;</a></h3>
+<p><code>subscriberstatetable.cpp:20-24</code> で以下のパターンが構築・登録される:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>__keyspace@&lt;dbId&gt;__:&lt;tableName&gt;&lt;sep&gt;*
+</span></code></pre></div>
+<p>CHASSIS_APP_DB (dbId=12、sep=<code>|</code>) の場合:</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>keyspace パターン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SYSTEM_INTERFACE</code></td>
+<td><code>__keyspace@12__:SYSTEM_INTERFACE|*</code></td>
+</tr>
+<tr>
+<td><code>SYSTEM_NEIGH</code></td>
+<td><code>__keyspace@12__:SYSTEM_NEIGH|*</code></td>
+</tr>
+<tr>
+<td><code>SYSTEM_LAG_TABLE</code></td>
+<td><code>__keyspace@12__:SYSTEM_LAG_TABLE|*</code></td>
+</tr>
+<tr>
+<td><code>SYSTEM_LAG_MEMBER_TABLE</code></td>
+<td><code>__keyspace@12__:SYSTEM_LAG_MEMBER_TABLE|*</code></td>
+</tr>
+<tr>
+<td><code>BGP_DEVICE_GLOBAL</code></td>
+<td><code>__keyspace@12__:BGP_DEVICE_GLOBAL|*</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="consumer-orchagent">Consumer 登録一覧（orchagent 側）<a class="headerlink" href="#consumer-orchagent" title="Permanent link">&para;</a></h3>
+<p>登録条件: <code>isChassisDbInUse()</code> が <code>true</code> の VoQ チャシス環境のみ。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>購読プロセス</th>
+<th>登録箇所</th>
+<th>バッチサイズ</th>
+<th>優先度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SYSTEM_INTERFACE</code></td>
+<td><code>IntfsOrch</code> (リモート LC orchagent)</td>
+<td><code>intfsorch.cpp:104-106</code></td>
+<td>128 (DEFAULT_POP_BATCH_SIZE)</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>SYSTEM_NEIGH</code></td>
+<td><code>NeighOrch</code> (リモート LC orchagent)</td>
+<td><code>neighorch.cpp:54-55</code></td>
+<td>128</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>SYSTEM_LAG_TABLE</code></td>
+<td><code>PortsOrch</code> (リモート LC orchagent)</td>
+<td><code>portsorch.cpp:1085-1086</code></td>
+<td>128</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>SYSTEM_LAG_MEMBER_TABLE</code></td>
+<td><code>PortsOrch</code> (リモート LC orchagent)</td>
+<td><code>portsorch.cpp:1090-1091</code></td>
+<td>128</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgpcfgd">bgpcfgd 側の購読登録<a class="headerlink" href="#bgpcfgd" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>main.py:112-113</code>: <code>device_info.is_chassis()</code> が <code>True</code> の場合のみ <code>ChassisAppDbMgr(common_objs, "CHASSIS_APP_DB", "BGP_DEVICE_GLOBAL")</code> を登録</li>
+<li><code>runner.py:42-53</code>: CHASSIS_APP_DB への接続は <code>swsscommon.DBConnector(db_name, 0, True, '')</code> (TCP 接続モード) で確立し、<code>SubscriberStateTable(conn, "BGP_DEVICE_GLOBAL")</code> を <code>selector.addSelectable()</code> に追加</li>
+<li>イベントを受信すると <code>ChassisAppDbMgr.handler()</code> → <code>set_handler()</code> / <code>del_handler()</code> が呼び出される</li>
+</ul>
+<h3 id="bgpcfgd-pubsubdirectory">bgpcfgd 内部 pub/sub（directory 経由）<a class="headerlink" href="#bgpcfgd-pubsubdirectory" title="Permanent link">&para;</a></h3>
+<p><code>ChassisAppDbMgr</code> は Redis 通知とは独立に、bgpcfgd 内部の directory オブジェクト経由でも LC 側 TSA 状態を監視する:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># managers_chassis_app_db.py:20</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="p">[(</span><span class="s2">&quot;CONFIG_DB&quot;</span><span class="p">,</span> <span class="n">CFG_BGP_DEVICE_GLOBAL_TABLE_NAME</span><span class="p">,</span> <span class="s2">&quot;tsa_enabled&quot;</span><span class="p">)],</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">on_lc_tsa_status_change</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">)</span>
+</span></code></pre></div>
+<p><code>on_lc_tsa_status_change()</code> は LC ローカルの CONFIG_DB <code>BGP_DEVICE_GLOBAL.tsa_enabled</code> 変化時に呼び出され、<code>self.lc_tsa</code> をキャッシュする。<code>set_handler()</code> がスーパーバイザーの指示を受けたとき、<code>lc_tsa == "false"</code> の場合のみ FRR への設定変更を実行する (<code>managers_chassis_app_db.py:41-44</code>)。</p>
+<h3 id="chassisd_1">chassisd の購読スコープ<a class="headerlink" href="#chassisd_1" title="Permanent link">&para;</a></h3>
+<p>chassisd は CHASSIS_APP_DB を <code>SubscriberStateTable</code> で購読しない。CONFIG_DB の <code>CHASSIS_MODULE</code> テーブルのみを購読し、モジュール admin_state の変化に応じて電源制御を行う (<code>chassisd:1147</code>)。CHASSIS_APP_DB へのアクセスは cleanup 処理時に Lua スクリプト (<code>EVALSHA</code>) を直接実行する形式のみ。</p>
+<h3 id="_5">配信保証と注意点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Redis keyspace 通知は <strong>at-most-once</strong> 配信: 購読側がタイムアウト中に複数の書き込みが発生しても、ポップ時には最終状態のみが参照される</li>
+<li>orchagent の <code>Consumer::pops()</code> はバッチ (<code>popBatchSize=128</code>) で複数イベントをまとめて処理し、<code>Orch::doTask()</code> が各イベントを順次実行する</li>
+<li>CHASSIS_APP_DB は全ラインカードが同一 <code>redis_chassis</code> インスタンスを参照するため、書き込み側と購読側が同一物理 DB を通じて通信する。LC 間の直接 gRPC/RPC は使用されない</li>
+</ul>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム依存挙動 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/chassis-app-platform.md</code>
+調査対象: <code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd</code> @ 4ba9612, <code>sonic-platform-daemons/sonic-chassisd/scripts/chassis_db_init</code> @ 4ba9612, <code>sonic-swss/orchagent/main.cpp</code> @ 4305596, <code>sonic-swss-common/common/dbconnector.h</code> @ 158de8d3463ff4b841653f6d57190bb142b80d9c</p>
+</blockquote>
+<h3 id="api-sonic_platform">プラットフォーム API ロード (sonic_platform プラグイン)<a class="headerlink" href="#api-sonic_platform" title="Permanent link">&para;</a></h3>
+<p>orchagent は <code>sonic_platform</code> パッケージを直接呼び出さない。代わりに起動時に <code>isChassisAppDbPresent()</code> で <code>/var/run/redis/sonic-db/database_config.json</code> を読み取り、<code>CHASSIS_APP_DB</code> キーの存在を確認する (<code>main.cpp:278-287</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>確認内容</th>
+<th>実装</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CHASSIS_APP_DB</code> キーが <code>database_config.json</code> に存在するか</td>
+<td><code>isChassisAppDbPresent()</code> が <code>db_config["DATABASES"].contains("CHASSIS_APP_DB")</code> を確認</td>
+<td><code>main.cpp:283-287</code></td>
+</tr>
+<tr>
+<td><code>database_config.json</code> のデフォルトパス</td>
+<td><code>/var/run/redis/sonic-db/database_config.json</code></td>
+<td><code>dbconnector.h:90</code></td>
+</tr>
+</tbody>
+</table>
+<p>ファイルが存在しない、または <code>CHASSIS_APP_DB</code> キーが不在の場合は <code>isChassisAppDbPresent()</code> が <code>false</code> を返し <code>gMultiAsicVoq</code> は立たない（CHASSIS_APP_DB 未使用として動作）。</p>
+<p>chassisd は起動時に <code>sonic_platform.platform.Platform().get_chassis()</code> でプラットフォームオブジェクトを取得する。パッケージが存在しない、または例外が発生した場合は <code>CHASSIS_LOAD_ERROR=1</code> で即 exit する (<code>chassisd:143-149</code>)。</p>
+<h3 id="_6">プラットフォーム種別分岐<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>使用クラス</th>
+<th>主な違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>chassis.is_smartswitch() == True</code></td>
+<td><code>SmartSwitchModuleUpdater</code></td>
+<td>DPU 向け設定・状態管理、<code>dpu_reboot_timeout</code> を <code>/usr/share/sonic/platform/platform.json</code> から読み取る</td>
+</tr>
+<tr>
+<td><code>chassis.is_smartswitch() == False</code></td>
+<td><code>ModuleUpdater</code></td>
+<td>VoQ ラインカード/スーパーバイザー向け、<code>my_slot</code> / <code>supervisor_slot</code> を <code>get_my_slot()</code> / <code>get_supervisor_slot()</code> で取得</td>
+</tr>
+</tbody>
+</table>
+<p>非 SmartSwitch の場合、<code>my_slot</code> または <code>supervisor_slot</code> が <code>INVALID_SLOT</code> のとき <code>CHASSIS_NOT_SUPPORTED=2</code> で exit する (<code>chassisd:1424-1427</code>)。スーパーバイザーか否かの判定は <code>my_slot == supervisor_slot</code> で行い (<code>chassisd:510-511</code>)、supervisor のみが <code>ConfigManagerTask</code> を起動して CONFIG_DB の <code>CHASSIS_MODULE</code> を購読する。</p>
+<h3 id="_7">プラットフォーム設定ファイル<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ファイルパス</th>
+<th>用途</th>
+<th>読み取りタイミング</th>
+<th>デフォルト値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/usr/share/sonic/platform/platform_env.conf</code></td>
+<td><code>linecard_reboot_timeout</code>（秒）の上書き</td>
+<td><code>ModuleUpdater.__init__()</code> 時に一度だけ</td>
+<td><code>180</code> 秒</td>
+</tr>
+<tr>
+<td><code>/usr/share/sonic/platform/platform.json</code></td>
+<td><code>dpu_reboot_timeout</code>（秒）の上書き (SmartSwitch 用)</td>
+<td><code>SmartSwitchModuleUpdater.__init__()</code> 時に一度だけ</td>
+<td><code>360</code> 秒</td>
+</tr>
+<tr>
+<td><code>/var/run/redis/sonic-db/database_config.json</code></td>
+<td><code>CHASSIS_APP_DB</code> 接続先（host/port/unix-socket）の定義</td>
+<td>orchagent 起動時の <code>isChassisAppDbPresent()</code> で読み取り</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="midplane">midplane スイッチ初期化<a class="headerlink" href="#midplane" title="Permanent link">&para;</a></h3>
+<p>chassisd 起動直後に <code>chassis.init_midplane_switch()</code> を呼び出す。<code>NotImplementedError</code> / <code>TimeoutError</code> 時は <code>try_get</code> が <code>false</code> を返し <code>midplane_initialized=false</code> となる。この場合 <code>check_midplane_reachability()</code> はスキップされるが chassisd は終了しない（エラーログのみ）。</p>
+<p>CHASSIS_APP_DB への書き込み（orchagent 側）はミッドプレーン状態に依存しないが、midplane 未初期化環境ではラインカードが <code>redis_chassis</code> に到達できず <code>gMultiAsicVoq</code> が立たない場合がある（接続タイムアウト次第）。</p>
+<h3 id="api-chassis_app_db">プラットフォーム API と CHASSIS_APP_DB の関係<a class="headerlink" href="#api-chassis_app_db" title="Permanent link">&para;</a></h3>
+<p>chassisd は CHASSIS_APP_DB に直接書き込まない。CHASSIS_APP_DB へのアクセスはモジュール down 時の <code>_cleanup_chassis_app_db()</code> Lua スクリプト実行のみであり、クリーンアップのトリガはプラットフォーム API <code>get_oper_status()</code> が <code>MODULE_STATUS_OFFLINE</code> / <code>MODULE_STATUS_EMPTY</code> を返したことで決まる。</p>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム API</th>
+<th>役割</th>
+<th>CHASSIS_APP_DB との関係</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_module(index).get_oper_status()</code></td>
+<td>モジュール動作状態を取得</td>
+<td>down 検知 → 30 分後に <code>_cleanup_chassis_app_db()</code> でパターン削除</td>
+</tr>
+<tr>
+<td><code>get_module(index).get_name()</code></td>
+<td>モジュール名（例: <code>Linecard0</code>）取得</td>
+<td>クリーンアップ対象キープレフィックスの特定</td>
+</tr>
+<tr>
+<td><code>get_module(index).get_midplane_ip()</code> / <code>is_midplane_reachable()</code></td>
+<td>ミッドプレーン情報</td>
+<td>CHASSIS_STATE_DB のみ更新。CHASSIS_APP_DB とは無関係</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">プラットフォーム非対応時の終了コード<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>exit code</th>
+<th>定数</th>
+<th>発生条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1</code></td>
+<td><code>CHASSIS_LOAD_ERROR</code></td>
+<td><code>sonic_platform.platform.Platform().get_chassis()</code> が例外を送出</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td><code>CHASSIS_NOT_SUPPORTED</code></td>
+<td>非 SmartSwitch 環境で <code>get_my_slot()</code> / <code>get_supervisor_slot()</code> が <code>INVALID_SLOT</code> を返す</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
+<h2 id="_9">キー構造<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35333,7 +37100,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_5">適用条件 (使用前提)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_10">適用条件 (使用前提)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>VoQ チャシス専用</strong> — <code>DEVICE_METADATA.localhost.switch_type = "voq"</code> および <code>isChassisDbInUse()</code> が <code>true</code> の環境のみ有効</li>
 <li><strong>redis_chassis</strong> — 通常の <code>redis</code> (DB4 の CONFIG_DB) とは異なる Redis instance (<code>redis_chassis.server:6380</code>) 上の DB12 を使用</li>
@@ -35348,7 +37115,7 @@
 <li><code>SYSTEM_LAG_TABLE*</code> (host/asic パターン一致)</li>
 <li><code>SYSTEM_LAG_ID_TABLE</code> の対応エントリ + <code>SYSTEM_LAG_ID_SET</code> / <code>SYSTEM_LAG_IDS_FREE_LIST</code> の再整理</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
@@ -35357,6 +37124,9 @@
 </li>
 <li id="fn:2">
 <p><code>sonic-platform-daemons/sonic-chassisd/scripts/chassisd:593-658</code> @ 4ba9612 — <code>_cleanup_chassis_app_db()</code> の実装&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-swss/orchagent/lagid.h:12</code> @ 4305596 — <code>LAG_ID_ALLOCATOR_ERROR_DELETE_ENTRY_NOT_FOUND = 0</code> の定義。<code>lagIdDel()</code> が 0 を返しても削除失敗ではなくエントリ不在の no-op を意味する&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

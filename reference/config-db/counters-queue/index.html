@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23653,6 +23661,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../alarm-table/" class="md-nav__link">
         
   
@@ -25256,6 +25292,427 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retry-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry / failure パターン概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initializequeuesbulk-sai-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        initializeQueuesBulk() — SAI エラーで orchagent クラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getqueuetypeandindex-sai-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getQueueTypeAndIndex() — SAI 一時エラーで該当 Queue をスキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_queue-buffer_pg-silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正な BUFFER_QUEUE / BUFFER_PG キー形式 — silent スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正な FLEX_COUNTER_TABLE グループキー — 即削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allportsready-false-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allPortsReady() が false / Warm-reboot 遅延タイマー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wred-silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WRED 能力チェック — silent 非登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 接続断 — orchagent クラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter グループ名（ソースコードハードコード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポーリング間隔デフォルト値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm-reboot 遅延定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI カウンタ ID 静的配列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB テーブル名定数（schema.h）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#counters_db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB 書き込みの副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="COUNTERS_DB 書き込みの副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counternamemapupdater-hftelorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CounterNameMapUpdater → HFTelOrch 連鎖（高周波テレメトリ有効時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#countercheckorch-port-mcpfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CounterCheckOrch への Port 登録（MC/PFC カウンタ監視）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue_watermark-pg_watermark-read_and_clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QUEUE_WATERMARK / PG_WATERMARK の READ_AND_CLEAR 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wred-state_db-queue_counter_capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WRED 能力チェック → STATE_DB への QUEUE_COUNTER_CAPABILITIES 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounterorch-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounterOrch の SubscriberStateTable 購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watermarkorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WatermarkOrch の二経路通信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lua-counters-watermark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lua スクリプトによる COUNTERS → WATERMARK テーブル転写
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        周期クリアタイマー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム固有挙動 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム固有挙動 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpu-pg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU モード — キュー / PG 初期化を完全スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ モード — カウンタ常時有効・専用テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-nvidia-trim-stat-lua" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox (NVIDIA) — trim stat Lua プラグイン補完
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pfc-watchdog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PFC Watchdog とキュー統計のプラットフォーム別分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wred-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WRED 能力チェックとプラットフォーム透過的 STATE_DB 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -25268,7 +25725,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         カウンタフィールドセットはコードハードコード
@@ -25339,7 +25796,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -25351,7 +25808,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -25362,7 +25819,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤解
@@ -25378,7 +25835,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -25389,7 +25846,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28355,6 +28812,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -29735,6 +30248,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -35161,6 +35702,427 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retry-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry / failure パターン概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initializequeuesbulk-sai-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        initializeQueuesBulk() — SAI エラーで orchagent クラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getqueuetypeandindex-sai-queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getQueueTypeAndIndex() — SAI 一時エラーで該当 Queue をスキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_queue-buffer_pg-silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正な BUFFER_QUEUE / BUFFER_PG キー形式 — silent スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正な FLEX_COUNTER_TABLE グループキー — 即削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allportsready-false-warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allPortsReady() が false / Warm-reboot 遅延タイマー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wred-silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WRED 能力チェック — silent 非登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 接続断 — orchagent クラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter グループ名（ソースコードハードコード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポーリング間隔デフォルト値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm-reboot 遅延定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI カウンタ ID 静的配列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB テーブル名定数（schema.h）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#counters_db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB 書き込みの副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="COUNTERS_DB 書き込みの副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counternamemapupdater-hftelorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CounterNameMapUpdater → HFTelOrch 連鎖（高周波テレメトリ有効時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#countercheckorch-port-mcpfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CounterCheckOrch への Port 登録（MC/PFC カウンタ監視）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue_watermark-pg_watermark-read_and_clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QUEUE_WATERMARK / PG_WATERMARK の READ_AND_CLEAR 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wred-state_db-queue_counter_capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WRED 能力チェック → STATE_DB への QUEUE_COUNTER_CAPABILITIES 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounterorch-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounterOrch の SubscriberStateTable 購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watermarkorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WatermarkOrch の二経路通信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lua-counters-watermark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lua スクリプトによる COUNTERS → WATERMARK テーブル転写
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        周期クリアタイマー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム固有挙動 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム固有挙動 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpu-pg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU モード — キュー / PG 初期化を完全スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ モード — カウンタ常時有効・専用テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-nvidia-trim-stat-lua" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox (NVIDIA) — trim stat Lua プラグイン補完
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pfc-watchdog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PFC Watchdog とキュー統計のプラットフォーム別分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wred-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WRED 能力チェックとプラットフォーム透過的 STATE_DB 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35173,7 +36135,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         カウンタフィールドセットはコードハードコード
@@ -35244,7 +36206,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35256,7 +36218,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35267,7 +36229,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤解
@@ -35283,7 +36245,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35294,7 +36256,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35654,6 +36616,659 @@
 <p><code>BUFFER_QUEUE</code> エントリを DEL すると <code>deletePortBufferQueueCounters()</code> が呼ばれ、<code>COUNTERS_QUEUE_NAME_MAP</code> から該当エントリが削除されて <code>queue_stat_manager.clearCounterIdList()</code> でカウンタ登録が抹消される。この操作は <code>FLEX_COUNTER_TABLE|QUEUE</code> の状態（enable/disable）に依存しない。<code>FLEX_COUNTER_TABLE|QUEUE = disable</code> を先に行う必要はない。</p>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp (createPortBufferQueueCounters,
+     createPortBufferPgCounters, addPortBufferQueueCounters, initializeQueuesBulk),
+     sonic-swss/orchagent/flexcounterorch.cpp (getQueueConfigurations, getPgConfigurations,
+     getQueueCountersState, getPgCountersState, handleDeviceMetadataTable) -->
+
+<p><code>FlexCounterOrch</code> / <code>PortsOrch</code> がキュー・PG カウンタを処理する際に暗黙的に参照する他テーブルを示す。YANG の leafref として定義されたものはなく、コードのみで表現された依存関係である。</p>
+<table>
+<thead>
+<tr>
+<th>参照元処理</th>
+<th>参照先テーブル</th>
+<th>参照先キー形式</th>
+<th>依存内容</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>createPortBufferQueueCounters()</code> の FlexCounter 登録判断</td>
+<td><a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></td>
+<td><code>FLEX_COUNTER_TABLE\|QUEUE</code></td>
+<td><code>getQueueCountersState()=true</code>（<code>FLEX_COUNTER_STATUS=enable</code>）のときのみ SAI カウンタを FLEX_COUNTER_DB に登録。<code>false</code> の場合は COUNTERS_QUEUE_NAME_MAP へのマッピングのみ書込み</td>
+<td><code>portsorch.cpp:8731</code>, <code>flexcounterorch.cpp:453</code></td>
+</tr>
+<tr>
+<td><code>createPortBufferQueueCounters()</code> の Watermark 登録</td>
+<td><a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></td>
+<td><code>FLEX_COUNTER_TABLE\|QUEUE_WATERMARK</code></td>
+<td><code>getQueueWatermarkCountersState()=true</code> の場合のみ Watermark FlexCounter を登録</td>
+<td><code>portsorch.cpp:8736-8738</code></td>
+</tr>
+<tr>
+<td><code>createPortBufferQueueCounters()</code> の WRED 登録</td>
+<td><a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></td>
+<td><code>FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE</code></td>
+<td><code>getWredQueueCountersState()=true</code> の場合のみ WRED FlexCounter を登録</td>
+<td><code>portsorch.cpp:8741-8745</code></td>
+</tr>
+<tr>
+<td><code>createPortBufferPgCounters()</code> の PG_DROP 登録</td>
+<td><a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></td>
+<td><code>FLEX_COUNTER_TABLE\|PG_DROP</code></td>
+<td><code>getPgCountersState()=true</code> の場合のみ PG ドロップカウンタを登録</td>
+<td><code>portsorch.cpp:8925-8927</code></td>
+</tr>
+<tr>
+<td><code>createPortBufferPgCounters()</code> の PG_WATERMARK 登録</td>
+<td><a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></td>
+<td><code>FLEX_COUNTER_TABLE\|PG_WATERMARK</code></td>
+<td><code>getPgWatermarkCountersState()=true</code> の場合のみ PG Watermark カウンタを登録</td>
+<td><code>portsorch.cpp:8930-8933</code></td>
+</tr>
+<tr>
+<td><code>getQueueConfigurations()</code> のキュー範囲決定</td>
+<td><a href="../buffer-queue/"><code>BUFFER_QUEUE</code></a></td>
+<td><code>BUFFER_QUEUE\|&lt;port&gt;:&lt;queue_range&gt;</code></td>
+<td><code>create_only_config_db_buffers=true</code> の場合、非ゼロプロファイルを持つキューのみ FlexCounter 登録対象。<code>false</code>（デフォルト）または VoQ モードでは全キューを対象</td>
+<td><code>flexcounterorch.cpp:545-554</code></td>
+</tr>
+<tr>
+<td><code>getPgConfigurations()</code> の PG 範囲決定</td>
+<td><a href="../buffer-pg/"><code>BUFFER_PG</code></a></td>
+<td><code>BUFFER_PG\|&lt;port&gt;:&lt;pg_range&gt;</code></td>
+<td><code>create_only_config_db_buffers=true</code> の場合、非ゼロプロファイルを持つ PG のみ FlexCounter 登録対象</td>
+<td><code>flexcounterorch.cpp:620-623</code></td>
+</tr>
+<tr>
+<td><code>getQueueConfigurations()</code> / <code>getPgConfigurations()</code> のモード分岐</td>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>DEVICE_METADATA\|localhost</code> フィールド <code>create_only_config_db_buffers</code></td>
+<td>バッファモード切替フラグ。<code>true</code> → BUFFER_QUEUE / BUFFER_PG 限定。<code>false</code>（デフォルト）→ 全対象。実行時変更は <code>handleDeviceMetadataTable()</code> で反映されるが既登録カウンタは変更されない</td>
+<td><code>flexcounterorch.cpp:110-124</code>, <code>flexcounterorch.cpp:508-513</code></td>
+</tr>
+<tr>
+<td><code>generateQueueMap()</code> の前提</td>
+<td><code>PORT</code></td>
+<td><code>APP_PORT_TABLE\|&lt;port_name&gt;</code></td>
+<td><code>allPortsReady()</code> が false の間 <code>FlexCounterOrch::doTask()</code> は即 return。ポートの SAI OID（<code>port.m_queue_ids</code>）が確定しないと <code>generateQueueMap()</code> のループが 0 回で終わる</td>
+<td><code>portsorch.cpp:6583-6598</code>, <code>flexcounterorch.cpp:164-167</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">解決タイミング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>FLEX_COUNTER_TABLE</strong>: <code>FlexCounterOrch::doTask()</code> が即時評価。<code>enable</code> 書込み時点でカウンタ登録処理が実行される（allPortsReady 後）。</li>
+<li><strong>BUFFER_QUEUE / BUFFER_PG</strong>: <code>getQueueConfigurations()</code> / <code>getPgConfigurations()</code> が呼ばれるたびに <code>gBufferOrch-&gt;getBufferObjectsWithNonZeroProfile()</code> で動的に再取得される（<code>create_only_config_db_buffers=true</code> 時のみ）。</li>
+<li><strong>DEVICE_METADATA</strong>: コンストラクタで 1 回読込み + <code>handleDeviceMetadataTable()</code> で動的更新。既登録カウンタへの遡及適用はなく、orchagent 再起動が必要。</li>
+<li><strong>PORT</strong>: <code>allPortsReady()</code> による自動待機。portsorch が全ポート初期化完了後に <code>FlexCounterOrch</code> のキュー処理がアンブロックされる。</li>
+</ul>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="retry-recovery-phase-d">失敗挙動・retry / recovery (Phase D)<a class="headerlink" href="#retry-recovery-phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/counters-queue-failure.md -->
+
+<h3 id="retry-failure">retry / failure パターン概要<a class="headerlink" href="#retry-failure" title="Permanent link">&para;</a></h3>
+<p>キュー / PG カウンタ経路における失敗は「orchagent クラッシュ」「silent スキップ（エントリ欠落）」「保留（自動再開）」の 3 パターンに分類される。</p>
+<table>
+<thead>
+<tr>
+<th>パターン</th>
+<th>代表的なトリガー</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>orchagent クラッシュ</strong></td>
+<td><code>initializeQueuesBulk()</code> SAI エラー、Redis 接続断、未対応 Queue type</td>
+<td>例外 throw → supervisor 再起動</td>
+</tr>
+<tr>
+<td><strong>silent スキップ</strong></td>
+<td>不正 BUFFER_QUEUE / BUFFER_PG キー形式、WRED 能力チェック失敗、<code>getQueueTypeAndIndex()</code> SAI 一時エラー</td>
+<td>当該エントリのみ除外、他処理は継続</td>
+</tr>
+<tr>
+<td><strong>保留（自動再開）</strong></td>
+<td><code>allPortsReady()</code> が false、Warm-reboot 60 秒遅延</td>
+<td>doTask() が即 return し m_toSync を保持、条件成立後に自動処理</td>
+</tr>
+</tbody>
+</table>
+<h3 id="initializequeuesbulk-sai-orchagent"><code>initializeQueuesBulk()</code> — SAI エラーで orchagent クラッシュ<a class="headerlink" href="#initializequeuesbulk-sai-orchagent" title="Permanent link">&para;</a></h3>
+<p>orchagent 起動時の <code>initializeQueuesBulk()</code> (<code>portsorch.cpp:6883</code>, <code>6928</code>) は全ポートの Queue 数・OID リストを SAI から一括取得する。SAI 呼び出しが 1 件でも失敗すると即座に例外を投げる:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>SWSS_LOG_ERROR(&quot;Failed to get number of queues for port %s rv:%d&quot;, ...)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>throw runtime_error(&quot;PortsOrch initialization failure.&quot;)
+</span></code></pre></div>
+<p>supervisor による orchagent 自動再起動後に再試行される。SAI ドライバ / ASIC 側の問題である場合、再起動ループに入る。</p>
+<h3 id="getqueuetypeandindex-sai-queue"><code>getQueueTypeAndIndex()</code> — SAI 一時エラーで該当 Queue をスキップ<a class="headerlink" href="#getqueuetypeandindex-sai-queue" title="Permanent link">&para;</a></h3>
+<p><code>generateQueueMapPerPort()</code> から呼ばれる <code>getQueueTypeAndIndex()</code> (<code>portsorch.cpp:3641</code>) は Queue OID から type・index を取得する。SAI 失敗時は <code>return false</code> を返し、呼び出し元が当該 Queue エントリを <code>COUNTERS_QUEUE_NAME_MAP</code> / <code>COUNTERS_QUEUE_TYPE_MAP</code> / <code>COUNTERS_QUEUE_INDEX_MAP</code> から除外する（エラーログのみ出力、silent 欠落）。不正な Queue type が返った場合は <code>throw runtime_error("Got unsupported queue type")</code> で orchagent クラッシュ (<code>portsorch.cpp:3656</code>)。</p>
+<p><code>generateQueueMap()</code> は <code>m_isQueueMapGenerated</code> フラグで 1 回しか実行されないため、スキップされた Queue の recovery には orchagent 再起動が必要。</p>
+<h3 id="buffer_queue-buffer_pg-silent">不正な BUFFER_QUEUE / BUFFER_PG キー形式 — silent スキップ<a class="headerlink" href="#buffer_queue-buffer_pg-silent" title="Permanent link">&para;</a></h3>
+<p><code>getQueueConfigurations()</code> / <code>getPgConfigurations()</code> は <code>&lt;port&gt;:&lt;queue_range&gt;</code> 形式を期待する (<code>flexcounterorch.cpp:561</code>, <code>630</code>)。コロン区切りが 2 トークンでない場合、または queue/pg インデックスが数値でない / 範囲外の場合は <code>SWSS_LOG_ERROR</code> を出力して当該エントリをスキップする。当該 Queue / PG は FLEX_COUNTER_DB に登録されず、queuestat / pg-drop で列が欠落する。他エントリの処理は継続するため、全体への影響はない。</p>
+<h3 id="flex_counter_table">不正な FLEX_COUNTER_TABLE グループキー — 即削除<a class="headerlink" href="#flex_counter_table" title="Permanent link">&para;</a></h3>
+<p><code>FlexCounterOrch::doTask()</code> (<code>flexcounterorch.cpp:183-188</code>) は未知キーを受信すると <code>SWSS_LOG_NOTICE</code> を出力して即エントリ削除する。<code>FLEX_COUNTER_TABLE|QUEUE</code> のタイポ（例: <code>FLEX_COUNTER_TABLE|QUEUES</code>）は処理されず削除されるため、Queue カウンタが enable にならない。</p>
+<h3 id="allportsready-false-warm-reboot"><code>allPortsReady()</code> が false / Warm-reboot 遅延タイマー<a class="headerlink" href="#allportsready-false-warm-reboot" title="Permanent link">&para;</a></h3>
+<p><code>FlexCounterOrch::doTask()</code> は以下の条件で即 <code>return</code> し、キュー・PG FlexCounter の登録処理をすべて保留する:</p>
+<ul>
+<li><code>gPortsOrch-&gt;allPortsReady()</code> が false（<code>flexcounterorch.cpp:164-167</code>）: portsyncd 異常終了等で PortInitDone が届かない場合、保留状態が永続する。orchagent 再起動が必要。</li>
+<li>Warm-reboot 時の <code>m_delayTimerExpired = false</code>（<code>flexcounterorch.cpp:155-158</code>）: <code>FLEX_COUNTER_DELAY_SEC = 60</code> 秒のタイマー満了まで全処理がブロックされる。起動後 60 秒間はキュー / PG カウンタの更新が停止する。</li>
+</ul>
+<h3 id="wred-silent">WRED 能力チェック — silent 非登録<a class="headerlink" href="#wred-silent" title="Permanent link">&para;</a></h3>
+<p><code>isPortStatSupported()</code> (<code>portsorch.cpp:664-680</code>) が <code>sai_query_stats_capability</code> で WRED stat サポートを確認できない場合（<code>SAI_STATUS_SUCCESS</code> 以外）、<code>return false</code> を返して WRED 統計を silent に非登録にする。エラーログは出力されない。</p>
+<p>ASIC が WRED/ECN 統計をサポートしない環境では <code>FLEX_COUNTER_TABLE|WRED_ECN_QUEUE = enable</code> にしても COUNTERS_DB に WRED フィールドが現れない。<code>counterpoll show</code> の STATUS が enable に見えても実カウンタは常にゼロになる。</p>
+<h3 id="redis-orchagent">Redis 接続断 — orchagent クラッシュ<a class="headerlink" href="#redis-orchagent" title="Permanent link">&para;</a></h3>
+<p><code>queue_stat_manager.setCounterIdList()</code> / <code>pg_stat_manager.setCounterIdList()</code> は FLEX_COUNTER_DB への Redis 書き込みを行う。Redis 接続断等で <code>RedisReply</code> 例外が発生した場合は orchagent 全体がクラッシュする（明示的な catch なし）。全カウンタ収集が停止し、supervisor 再起動後に復旧する。</p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp:83-93,389-434,727-739,866-886,
+     sonic-swss/orchagent/portsorch.h:29-43,
+     sonic-swss/orchagent/flexcounterorch.cpp:34-44,
+     sonic-swss-common/common/schema.h:225-270,528 -->
+
+<h3 id="flexcounter_1">FlexCounter グループ名（ソースコードハードコード）<a class="headerlink" href="#flexcounter_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>文字列値（FLEX_COUNTER_DB キー）</th>
+<th>定義ファイル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"QUEUE_STAT_COUNTER"</code></td>
+<td><code>portsorch.h:34</code></td>
+</tr>
+<tr>
+<td><code>QUEUE_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"QUEUE_WATERMARK_STAT_COUNTER"</code></td>
+<td><code>portsorch.h:35</code></td>
+</tr>
+<tr>
+<td><code>PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"PG_WATERMARK_STAT_COUNTER"</code></td>
+<td><code>portsorch.h:36</code></td>
+</tr>
+<tr>
+<td><code>PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"PG_DROP_STAT_COUNTER"</code></td>
+<td><code>portsorch.h:37</code></td>
+</tr>
+<tr>
+<td><code>WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"WRED_ECN_QUEUE_STAT_COUNTER"</code></td>
+<td><code>portsorch.h:42</code>, <code>flexcounterorch.cpp:42</code></td>
+</tr>
+</tbody>
+</table>
+<p>これらのグループ名は CONFIG_DB / YANG から変更できない。<code>counterpoll show</code> の GROUP 列に表示される文字列と一致する。</p>
+<h3 id="_7">ポーリング間隔デフォルト値<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>値</th>
+<th>対象グループ</th>
+<th>収集モード</th>
+<th>定義</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>10000</code> ms</td>
+<td>QUEUE_STAT_COUNTER</td>
+<td>READ</td>
+<td><code>portsorch.cpp:90</code></td>
+</tr>
+<tr>
+<td><code>QUEUE_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>60000</code> ms</td>
+<td>QUEUE_WATERMARK_STAT_COUNTER</td>
+<td>READ_AND_CLEAR</td>
+<td><code>portsorch.cpp:91</code></td>
+</tr>
+<tr>
+<td><code>PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>60000</code> ms</td>
+<td>PG_WATERMARK_STAT_COUNTER</td>
+<td>READ_AND_CLEAR</td>
+<td><code>portsorch.cpp:92</code></td>
+</tr>
+<tr>
+<td><code>PG_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>10000</code> ms</td>
+<td>PG_DROP_STAT_COUNTER</td>
+<td>READ</td>
+<td><code>portsorch.cpp:93</code></td>
+</tr>
+</tbody>
+</table>
+<p>WRED_ECN_QUEUE グループは <code>QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code>（10000 ms）を共用する（<code>portsorch.cpp:739</code>）。CONFIG_DB の <code>FLEX_COUNTER_TABLE|&lt;GROUP&gt;|POLL_INTERVAL</code> で上書き可能だが、orchagent 起動時の初期値は上記定数から設定される。<code>READ_AND_CLEAR</code> モード（QUEUE_WATERMARK / PG_WATERMARK）では、syncd がポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。</p>
+<h3 id="warm-reboot">Warm-reboot 遅延定数<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>値</th>
+<th>用途</th>
+<th>定義</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_DELAY_SEC</code></td>
+<td><code>60</code> 秒</td>
+<td>Warm-reboot 時に全 FlexCounter 処理をブロックする SelectableTimer の秒数</td>
+<td><code>flexcounterorch.cpp:44</code></td>
+</tr>
+</tbody>
+</table>
+<p>Cold boot では <code>m_delayTimerExpired = true</code> に即初期化され（<code>flexcounterorch.cpp:136</code>）、この遅延は適用されない。</p>
+<h3 id="sai-id">SAI カウンタ ID 静的配列<a class="headerlink" href="#sai-id" title="Permanent link">&para;</a></h3>
+<p>これらの配列はソースコードに固定されており、CONFIG_DB / YANG から変更不可。ハードウェアが非サポートの場合は SAI が <code>0</code> を返すか <code>SAI_STATUS_NOT_SUPPORTED</code> でスキップされる。</p>
+<table>
+<thead>
+<tr>
+<th>配列名</th>
+<th>フィールド（SAI stat ID）</th>
+<th>グループ</th>
+<th>定義行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>queue_stat_ids</code></td>
+<td><code>SAI_QUEUE_STAT_PACKETS</code>, <code>_BYTES</code>, <code>_DROPPED_PACKETS</code>, <code>_DROPPED_BYTES</code>, <code>_TRIM_PACKETS</code>, <code>_DROPPED_TRIM_PACKETS</code>, <code>_TX_TRIM_PACKETS</code></td>
+<td>QUEUE_STAT_COUNTER</td>
+<td><code>portsorch.cpp:389</code></td>
+</tr>
+<tr>
+<td><code>voq_stat_ids</code></td>
+<td><code>SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS</code></td>
+<td>QUEUE_STAT_COUNTER（VoQ 専用）</td>
+<td><code>portsorch.cpp:399</code></td>
+</tr>
+<tr>
+<td><code>queueWatermarkStatIds</code></td>
+<td><code>SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES</code></td>
+<td>QUEUE_WATERMARK_STAT_COUNTER</td>
+<td><code>portsorch.cpp:405</code></td>
+</tr>
+<tr>
+<td><code>ingressPriorityGroupWatermarkStatIds</code></td>
+<td><code>SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES</code>, <code>_SHARED_WATERMARK_BYTES</code></td>
+<td>PG_WATERMARK_STAT_COUNTER</td>
+<td><code>portsorch.cpp:410</code></td>
+</tr>
+<tr>
+<td><code>ingressPriorityGroupDropStatIds</code></td>
+<td><code>SAI_INGRESS_PRIORITY_GROUP_STAT_DROPPED_PACKETS</code></td>
+<td>PG_DROP_STAT_COUNTER</td>
+<td><code>portsorch.cpp:416</code></td>
+</tr>
+<tr>
+<td><code>wred_queue_stat_ids</code></td>
+<td><code>SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS</code>, <code>_MARKED_BYTES</code>, <code>_DROPPED_PACKETS</code>, <code>_DROPPED_BYTES</code></td>
+<td>WRED_ECN_QUEUE_STAT_COUNTER</td>
+<td><code>portsorch.cpp:429</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="counters_db-schemah">COUNTERS_DB テーブル名定数（<code>schema.h</code>）<a class="headerlink" href="#counters_db-schemah" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>文字列値（Redis キー）</th>
+<th>行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_QUEUE_NAME_MAP</code></td>
+<td><code>"COUNTERS_QUEUE_NAME_MAP"</code></td>
+<td>225</td>
+</tr>
+<tr>
+<td><code>COUNTERS_VOQ_NAME_MAP</code></td>
+<td><code>"COUNTERS_VOQ_NAME_MAP"</code></td>
+<td>226</td>
+</tr>
+<tr>
+<td><code>COUNTERS_QUEUE_PORT_MAP</code></td>
+<td><code>"COUNTERS_QUEUE_PORT_MAP"</code></td>
+<td>227</td>
+</tr>
+<tr>
+<td><code>COUNTERS_QUEUE_INDEX_MAP</code></td>
+<td><code>"COUNTERS_QUEUE_INDEX_MAP"</code></td>
+<td>228</td>
+</tr>
+<tr>
+<td><code>COUNTERS_QUEUE_TYPE_MAP</code></td>
+<td><code>"COUNTERS_QUEUE_TYPE_MAP"</code></td>
+<td>229</td>
+</tr>
+<tr>
+<td><code>COUNTERS_PG_NAME_MAP</code></td>
+<td><code>"COUNTERS_PG_NAME_MAP"</code></td>
+<td>230</td>
+</tr>
+<tr>
+<td><code>COUNTERS_PG_PORT_MAP</code></td>
+<td><code>"COUNTERS_PG_PORT_MAP"</code></td>
+<td>231</td>
+</tr>
+<tr>
+<td><code>COUNTERS_PG_INDEX_MAP</code></td>
+<td><code>"COUNTERS_PG_INDEX_MAP"</code></td>
+<td>232</td>
+</tr>
+<tr>
+<td><code>PERIODIC_WATERMARKS_TABLE</code></td>
+<td><code>"PERIODIC_WATERMARKS"</code></td>
+<td>268</td>
+</tr>
+<tr>
+<td><code>PERSISTENT_WATERMARKS_TABLE</code></td>
+<td><code>"PERSISTENT_WATERMARKS"</code></td>
+<td>269</td>
+</tr>
+<tr>
+<td><code>USER_WATERMARKS_TABLE</code></td>
+<td><code>"USER_WATERMARKS"</code></td>
+<td>270</td>
+</tr>
+<tr>
+<td><code>STATE_QUEUE_COUNTER_CAPABILITIES_NAME</code></td>
+<td><code>"QUEUE_COUNTER_CAPABILITIES"</code></td>
+<td>528</td>
+</tr>
+</tbody>
+</table>
+<p><code>PERIODIC_WATERMARKS</code> / <code>PERSISTENT_WATERMARKS</code> / <code>USER_WATERMARKS</code> テーブルへの振り分けは syncd 側の Lua スクリプト（<code>watermark_stat.lua</code>）が処理する。<code>QUEUE_COUNTER_CAPABILITIES</code> は STATE_DB に書き込まれ、WRED/ECN サポート状況を外部公開する。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="counters_db-phase-f">COUNTERS_DB 書き込みの副作用 (Phase F)<a class="headerlink" href="#counters_db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp (generateQueueMap, generateQueueMapPerPort,
+     createPortBufferQueueCounters, deletePortBufferQueueCounters, generatePriorityGroupMap,
+     createPortBufferPgCounters, deletePortBufferPgCounters),
+     sonic-swss/orchagent/high_frequency_telemetry/counternameupdater.cpp,
+     sonic-swss/orchagent/high_frequency_telemetry/hftelorch.cpp (locallyNotify, SUPPORT_COUNTER_TABLES),
+     sonic-swss/orchagent/countercheckorch.cpp (addPort, removePort, mcCounterCheck) -->
+
+<h3 id="counternamemapupdater-hftelorch">CounterNameMapUpdater → HFTelOrch 連鎖（高周波テレメトリ有効時）<a class="headerlink" href="#counternamemapupdater-hftelorch" title="Permanent link">&para;</a></h3>
+<p><code>COUNTERS_QUEUE_NAME_MAP</code> / <code>COUNTERS_PG_NAME_MAP</code> へのキー追加・削除は <code>CounterNameMapUpdater::setCounterNameMap()</code> / <code>delCounterNameMap()</code> 経由で行われる。高周波テレメトリ（HFT）機能が有効な場合（<code>gHFTOrch != null</code>）、Redis への <code>hset</code> の前に <code>HFTelOrch::locallyNotify()</code> が<strong>同期</strong>呼び出しされる<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>generateQueueMap() / createPortBufferQueueCounters()
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  └─ m_queueCounterNameMapUpdater-&gt;setCounterNameMap(queueVector)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>       ├─ gHFTOrch-&gt;locallyNotify(msg)   # HFT 有効時のみ・同期
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>       │    ├─ m_counter_name_cache 更新
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>       │    └─ profile-&gt;tryCommitConfig()  # TAM 設定を syncd 送信
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>       └─ COUNTERS_DB COUNTERS_QUEUE_NAME_MAP hset
+</span></code></pre></div>
+<p><code>HFTelOrch::SUPPORT_COUNTER_TABLES</code> には <code>COUNTERS_QUEUE_NAME_MAP</code> (<code>SAI_OBJECT_TYPE_QUEUE</code>) と <code>COUNTERS_PG_NAME_MAP</code> (<code>SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP</code>) が含まれるため、Queue / PG マッピング変更はすべて HFT プロファイルキャッシュに即時反映される。<code>locallyNotify()</code> は同期処理のため、呼び出しコストが大きい（アクティブな HFT プロファイルが多い）場合は portsorch メインループの遅延要因になる。HFT が無効（デフォルト）の場合この副作用は発生しない。</p>
+<h3 id="countercheckorch-port-mcpfc">CounterCheckOrch への Port 登録（MC/PFC カウンタ監視）<a class="headerlink" href="#countercheckorch-port-mcpfc" title="Permanent link">&para;</a></h3>
+<p>Queue / PG マッピング書き込み関数は COUNTERS_DB 更新と同時に <code>CounterCheckOrch::getInstance().addPort(port)</code> を呼んで当該ポートを MC フレーム監視リストに登録する<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。<code>BUFFER_QUEUE</code> / <code>BUFFER_PG</code> を DEL すると <code>CounterCheckOrch::removePort(port)</code> で監視リストから除外される。</p>
+<p><code>CounterCheckOrch</code> は 5 分間隔のタイマーで <code>mcCounterCheck()</code> と <code>pfcFrameCounterCheck()</code> を実行し、COUNTERS_DB から SAI カウンタを読み取ってロスレスキューへの Multicast フレーム到着や PFC 異常を <code>SWSS_LOG_WARN</code> で報告する。<strong>この監視は <code>FLEX_COUNTER_TABLE</code> の enable/disable 状態とは独立して動作する</strong>（FlexCounter ポーリングではなく orchagent が直接 <code>sai_get_queue_stats</code> を呼ぶ）。</p>
+<h3 id="queue_watermark-pg_watermark-read_and_clear">QUEUE_WATERMARK / PG_WATERMARK の READ_AND_CLEAR 副作用<a class="headerlink" href="#queue_watermark-pg_watermark-read_and_clear" title="Permanent link">&para;</a></h3>
+<p><code>queue_watermark_manager</code> と <code>pg_watermark_manager</code> は <code>StatsMode::READ_AND_CLEAR</code> で初期化される。FlexCounter がウォーターマーク統計をポーリングするたびにハードウェアのウォーターマークレジスタが自動クリアされる。この副作用は <code>FLEX_COUNTER_TABLE|QUEUE_WATERMARK</code> / <code>PG_WATERMARK</code> が enable の間は継続する。</p>
+<p>複数の監視ツールが <code>watermarkstat</code> を同時に実行すると互いのウォーターマーク値をクリアし合う可能性がある。クリアを避けたい場合は <code>USER_WATERMARKS</code> テーブルを使用し、<code>watermarkstat -c</code> で明示的にリセットする運用とする。</p>
+<h3 id="wred-state_db-queue_counter_capabilities">WRED 能力チェック → STATE_DB への QUEUE_COUNTER_CAPABILITIES 書き込み<a class="headerlink" href="#wred-state_db-queue_counter_capabilities" title="Permanent link">&para;</a></h3>
+<p><code>checkWredCapability()</code> が WRED/ECN サポートを確認した後、<code>QUEUE_COUNTER_CAPABILITIES</code> テーブルが STATE_DB に書き込まれ、外部ツール・オーケストレータが WRED サポート状況を参照可能になる。ASIC が WRED をサポートしない場合はこのエントリが存在しない。外部ツールは <code>key not found</code> を「未サポート」として扱う必要がある。</p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp:432-437,620-625,
+     sonic-swss/orchagent/flexcounterorch.cpp:100-167,183-281,
+     sonic-swss/orchagent/watermarkorch.cpp:23-45,144-231,233-281,
+     sonic-utilities/scripts/watermarkstat:325,
+     sonic-swss/orchagent/watermark_queue.lua,
+     sonic-swss/orchagent/watermark_pg.lua;
+     詳細分析 meta/_intermediate/cdb-flow/counters-queue-pubsub.md -->
+
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<p>キュー / PG カウンタ経路は複数の独立した通信メカニズムを組み合わせる。</p>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>方式</th>
+<th>チャンネル / パターン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB → FlexCounterOrch</td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>__keyspace@{config_db_id}__:FLEX_COUNTER_TABLE\|*</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB → WatermarkOrch</td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>__keyspace@{config_db_id}__:WATERMARK_TABLE\|*</code> / <code>FLEX_COUNTER_TABLE\|*</code></td>
+</tr>
+<tr>
+<td>FlexCounterOrch → syncd</td>
+<td>FLEX_COUNTER_DB 直接書き込み</td>
+<td><code>FLEX_COUNTER_DB HSET COUNTER_ID_LIST</code> / <code>POLL_INTERVAL</code></td>
+</tr>
+<tr>
+<td>syncd FlexCounter → SAI</td>
+<td>SAI API 直接呼び出し</td>
+<td><code>sai_get_queue_stats</code> / <code>sai_get_ingress_priority_group_stats</code></td>
+</tr>
+<tr>
+<td>syncd → COUNTERS_DB</td>
+<td>Redis HSET</td>
+<td><code>COUNTERS:&lt;OID&gt;</code></td>
+</tr>
+<tr>
+<td>syncd Lua → COUNTERS_DB</td>
+<td>Redis Lua スクリプト</td>
+<td><code>watermark_queue.lua</code> / <code>watermark_pg.lua</code>（COUNTERS → WATERMARK 転写）</td>
+</tr>
+<tr>
+<td><code>watermarkstat -c</code> → WatermarkOrch</td>
+<td>Redis publish</td>
+<td><code>APPL_DB WATERMARK_CLEAR_REQUEST</code></td>
+</tr>
+<tr>
+<td>WatermarkOrch → COUNTERS_DB</td>
+<td>Redis HSET</td>
+<td><code>PERIODIC_WATERMARKS</code> / <code>PERSISTENT_WATERMARKS</code> / <code>USER_WATERMARKS</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="flexcounterorch-subscriberstatetable">FlexCounterOrch の SubscriberStateTable 購読<a class="headerlink" href="#flexcounterorch-subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:620-625</code> にて <code>FlexCounterOrch</code> は <code>FLEX_COUNTER_TABLE</code> と <code>DEVICE_METADATA</code> の 2 テーブルを <code>SubscriberStateTable</code> で購読する。CONFIG_DB keyspace notification でエントリ変化を検出し、<code>FlexCounterOrch::doTask(Consumer&amp;)</code> (<code>flexcounterorch.cpp:148</code>) が処理する。</p>
+<p><code>FLEX_COUNTER_STATUS = enable</code> が届くと、キーに応じて以下のメソッドを呼び出す（<code>flexcounterorch.cpp:247-281</code>）:</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB キー</th>
+<th>呼び出し先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QUEUE</code></td>
+<td><code>generateQueueMap()</code> + <code>addQueueFlexCounters()</code></td>
+</tr>
+<tr>
+<td><code>QUEUE_WATERMARK</code></td>
+<td><code>generateQueueMap()</code> + <code>addQueueWatermarkFlexCounters()</code></td>
+</tr>
+<tr>
+<td><code>PG_DROP</code></td>
+<td><code>generatePriorityGroupMap()</code> + <code>addPriorityGroupFlexCounters()</code></td>
+</tr>
+<tr>
+<td><code>PG_WATERMARK</code></td>
+<td><code>generatePriorityGroupMap()</code> + <code>addPriorityGroupWatermarkFlexCounters()</code></td>
+</tr>
+<tr>
+<td><code>WRED_ECN_QUEUE</code></td>
+<td><code>generateQueueMap()</code> + <code>addWredQueueFlexCounters()</code></td>
+</tr>
+</tbody>
+</table>
+<p>未知キーは <code>SWSS_LOG_NOTICE</code> を出力して即削除される（<code>flexcounterorch.cpp:183-188</code>）。<code>DEVICE_METADATA</code> テーブルの変化は <code>handleDeviceMetadataTable()</code> へ委譲され、<code>create_only_config_db_buffers</code> フラグを動的更新する。</p>
+<h3 id="watermarkorch">WatermarkOrch の二経路通信<a class="headerlink" href="#watermarkorch" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:432-437</code> にて <code>WatermarkOrch</code> が <code>WATERMARK_TABLE</code> と <code>FLEX_COUNTER_TABLE</code> を購読する（<code>SubscriberStateTable</code>）。さらにコンストラクタ (<code>watermarkorch.cpp:35-38</code>) にて APPL_DB の <code>WATERMARK_CLEAR_REQUEST</code> チャンネルを <code>NotificationConsumer</code> で購読する。</p>
+<p><strong>クリア要求フロー</strong>（<code>watermarkstat -c</code> 実行時）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>watermarkstat -c
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─ db.publish(&#39;APPL_DB&#39;, &#39;WATERMARK_CLEAR_REQUEST&#39;, &#39;&lt;op&gt;:&lt;data&gt;&#39;)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       WatermarkOrch::doTask(NotificationConsumer&amp;)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>         op == &quot;PERSISTENT&quot; → PERSISTENT_WATERMARKS テーブルの該当 OID を 0 クリア
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>         op == &quot;USER&quot;       → USER_WATERMARKS テーブルの該当 OID を 0 クリア
+</span></code></pre></div>
+<p><code>data</code> は <code>PG_HEADROOM</code> / <code>PG_SHARED</code> / <code>Q_SHARED_UNI</code> / <code>Q_SHARED_MULTI</code> / <code>Q_SHARED_ALL</code> のいずれかで、対象テーブルのフィールドと OID セットを決定する（<code>watermarkorch.cpp:184-230</code>）。</p>
+<h3 id="lua-counters-watermark">Lua スクリプトによる COUNTERS → WATERMARK テーブル転写<a class="headerlink" href="#lua-counters-watermark" title="Permanent link">&para;</a></h3>
+<p>syncd が <code>READ_AND_CLEAR</code> モードでウォーターマーク統計をポーリングするたびに <code>watermark_queue.lua</code> / <code>watermark_pg.lua</code> が Redis 内で Lua アトミック実行される:</p>
+<ol>
+<li><code>COUNTERS:&lt;OID&gt;</code> から最新のウォーターマーク値を読み取り</li>
+<li><code>PERIODIC_WATERMARKS:&lt;OID&gt;</code> / <code>PERSISTENT_WATERMARKS:&lt;OID&gt;</code> / <code>USER_WATERMARKS:&lt;OID&gt;</code> の現在値と max 比較</li>
+<li>max 値でウォーターマークテーブルを更新</li>
+</ol>
+<p>この転写処理は orchagent / WatermarkOrch の介在なしに syncd 内で完結する。</p>
+<h3 id="_8">周期クリアタイマー<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><code>WatermarkOrch</code> は <code>SelectableTimer</code>（デフォルト 120 秒、<code>DEFAULT_TELEMETRY_INTERVAL</code>、<code>watermarkorch.cpp:9</code>）を持ち、タイマー満了時に <code>PERIODIC_WATERMARKS</code> テーブルの全 Queue / PG ウォーターマークを 0 クリアする（<code>watermarkorch.cpp:233-281</code>）。インターバルは <code>WATERMARK_TABLE|TELEMETRY_INTERVAL</code> で変更可能。</p>
+<h3 id="_9">データフロー図<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>CONFIG_DB[FLEX_COUNTER_TABLE|QUEUE|FLEX_COUNTER_STATUS=enable]
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓ SubscriberStateTable (keyspace notification)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>FlexCounterOrch::doTask()
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ↓ [m_delayTimerExpired チェック]
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  ↓ [gPortsOrch-&gt;allPortsReady() チェック]
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  ↓ generateQueueMap() → COUNTERS_DB COUNTERS_QUEUE_NAME_MAP / COUNTERS_QUEUE_TYPE_MAP 等
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  ↓ addQueueFlexCounters()
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    ↓ queue_stat_manager.setCounterIdList()
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>      → FLEX_COUNTER_DB[QUEUE_STAT_COUNTER|&lt;OID&gt;|COUNTER_ID_LIST]
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>syncd FlexCounter (polling thread, 10000 ms)
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>  ↓ sai_get_queue_stats(&lt;OID&gt;, queue_stat_ids)
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>  ↓ COUNTERS_DB HSET COUNTERS:&lt;OID&gt; SAI_QUEUE_STAT_PACKETS ...
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>  ↓ watermark_queue.lua (READ_AND_CLEAR ポーリング時)
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    ↓ PERIODIC_WATERMARKS:&lt;OID&gt; / PERSISTENT_WATERMARKS:&lt;OID&gt; / USER_WATERMARKS:&lt;OID&gt; 更新
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>watermarkstat -c (ユーザー操作)
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>  ↓ db.publish(&#39;APPL_DB&#39;, &#39;WATERMARK_CLEAR_REQUEST&#39;, &#39;USER:Q_SHARED_UNI&#39;)
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>WatermarkOrch::doTask(NotificationConsumer&amp;)
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>  ↓ USER_WATERMARKS:&lt;OID&gt; SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES → 0
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>WatermarkOrch SelectableTimer (120 秒)
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>  ↓ PERIODIC_WATERMARKS 全 Queue / PG OID → 0 クリア
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>CLI: queuestat / watermarkstat / pg-drop
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>  └─ COUNTERS_DB 直接読み取り（pub/sub なし）
+</span></code></pre></div>
+<blockquote>
+<p><strong>Evidence</strong>: <code>orchdaemon.cpp:432-437,620-625</code>; <code>flexcounterorch.cpp:100-167,183-281</code>; <code>watermarkorch.cpp:23-45,144-231,233-281</code>; <code>watermarkstat:325</code>; <code>watermark_queue.lua</code>, <code>watermark_pg.lua</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/counters-queue-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム固有挙動 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp:689-704,857-863,1850-1967,6449-6458,6589-6592,8446-8530,
+     sonic-swss/orchagent/orchdaemon.cpp:635-843,
+     sonic-swss/orchagent/orch.h:40-50,
+     sonic-swss/orchagent/nvda_port_trim_drop.lua -->
+
+<p>キュー / PG カウンタの収集挙動はプラットフォーム（<code>platform</code> 環境変数）およびスイッチタイプ（<code>gMySwitchType</code>）によって以下の点が異なる。</p>
+<h3 id="dpu-pg">DPU モード — キュー / PG 初期化を完全スキップ<a class="headerlink" href="#dpu-pg" title="Permanent link">&para;</a></h3>
+<p><code>gMySwitchType == "dpu"</code> の場合、<code>initializePorts()</code> (<code>portsorch.cpp:6589</code>) は <code>initializeQueuesBulk()</code> / <code>initializePriorityGroupsBulk()</code> / <code>initializeSchedulerGroupsBulk()</code> を呼ばない。<code>m_queue_ids</code> が未初期化となるため <code>generateQueueMap()</code> のループが 0 回で終わり、<code>COUNTERS_QUEUE_NAME_MAP</code> / <code>COUNTERS_PG_NAME_MAP</code> は書き込まれない。通常の queuestat / pg-drop / watermarkstat は DPU では機能しない。</p>
+<p>DPU モードで唯一登録されるキューカウンタはホスト TX キューのみ。<code>m_host_tx_queue_configured</code> が true かつ <code>m_queue_ids.size() &gt; m_host_tx_queue</code>（<code>portsorch.cpp:6454-6458</code>）が成立する場合に限り <code>createPortBufferQueueCounters()</code> が呼ばれる。それ以外のキューに対する FlexCounter 登録は行われない。</p>
+<h3 id="voq_1">VoQ モード — カウンタ常時有効・専用テーブル<a class="headerlink" href="#voq_1" title="Permanent link">&para;</a></h3>
+<p>VoQ システム（<code>gMySwitchType == "voq"</code>）では <code>generateQueueMapPerPort()</code> (<code>portsorch.cpp:8446</code>) が以下の特別挙動を持つ:</p>
+<ul>
+<li><code>FLEX_COUNTER_TABLE|QUEUE = disable</code> の設定に関わらず <code>addQueueFlexCountersPerPortPerQueueIndex()</code> を強制呼び出しする（<code>portsorch.cpp:8483-8484</code>：「VoQ カウンタを無効化するメカニズムが存在しない」とコメントあり）</li>
+<li><code>voq_stat_ids</code>（<code>SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS</code> 1 件）を通常 <code>queue_stat_ids</code> に追加して登録</li>
+<li>Queue OID → 名前マッピングを <code>COUNTERS_QUEUE_NAME_MAP</code>（物理ポートのイーグレスキュー）と <code>COUNTERS_VOQ_NAME_MAP</code>（仮想出力キュー）の両方に書き込む (<code>portsorch.cpp:8520</code>)</li>
+</ul>
+<p>VoQ モードでは egress queue カウンタも常時 enable となるため、<code>FLEX_COUNTER_TABLE|QUEUE = disable</code> を書き込んでも VoQ 分のカウンタは停止しない。</p>
+<h3 id="mellanox-nvidia-trim-stat-lua">Mellanox (NVIDIA) — trim stat Lua プラグイン補完<a class="headerlink" href="#mellanox-nvidia-trim-stat-lua" title="Permanent link">&para;</a></h3>
+<p><code>isMlnxPlatform()</code> (<code>portsorch.cpp:689</code>) は環境変数 <code>platform</code> に <code>"mellanox"</code> が含まれる場合に <code>true</code> を返す（<code>orch.h:42</code>）。以下の 4 条件がすべて成立するとき、<code>nvda_port_trim_drop.lua</code> が PORT_STAT FlexCounter グループのプラグインとして登録される (<code>portsorch.cpp:857-863</code>):</p>
+<ol>
+<li><code>isMlnxPlatform()</code> が true</li>
+<li><code>SAI_PORT_STAT_TRIM_PACKETS</code> が SAI でサポートされている</li>
+<li><code>SAI_PORT_STAT_TX_TRIM_PACKETS</code> が SAI でサポートされている</li>
+<li><code>SAI_PORT_STAT_DROPPED_TRIM_PACKETS</code> が SAI で<strong>サポートされていない</strong></li>
+</ol>
+<p>このプラグインは Redis Lua として PORT ポーリング周期ごとに実行され、<code>SAI_PORT_STAT_DROPPED_TRIM_PACKETS = SAI_PORT_STAT_TRIM_PACKETS − SAI_PORT_STAT_TX_TRIM_PACKETS</code> を計算して <code>COUNTERS:&lt;port_oid&gt;</code> に書き込む。ASIC が <code>SAI_PORT_STAT_DROPPED_TRIM_PACKETS</code> を直接サポートする場合（条件 4 が不成立）はプラグインは登録されない。</p>
+<p>Queue 側の trim 統計（<code>SAI_QUEUE_STAT_TRIM_PACKETS</code>、<code>SAI_QUEUE_STAT_DROPPED_TRIM_PACKETS</code>、<code>SAI_QUEUE_STAT_TX_TRIM_PACKETS</code>）は <code>queue_stat_ids</code> に静的に含まれており、Lua プラグイン補完は行われない（<code>portsorch.cpp:389-398</code>）。</p>
+<h3 id="pfc-watchdog">PFC Watchdog とキュー統計のプラットフォーム別分岐<a class="headerlink" href="#pfc-watchdog" title="Permanent link">&para;</a></h3>
+<p>PFC Watchdog（<code>PfcWdSwOrch</code>）は <code>orchdaemon.cpp:635-843</code> にてプラットフォームごとに異なるキュー統計・ハンドラクラスでインスタンス化される。これらは <code>FLEX_COUNTER_TABLE</code> 経路とは独立した専用 FlexCounter グループを使う。</p>
+<table>
+<thead>
+<tr>
+<th><code>platform</code> 値</th>
+<th>PFC port stat に含む追加カウンタ</th>
+<th>Queue stat</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"mellanox"</code> / <code>"vs"</code></td>
+<td><code>PFC_N_RX_PAUSE_DURATION_US</code> (0-7), <code>PFC_N_RX_PKTS</code> (0-7)</td>
+<td><code>PACKETS</code>, <code>CURR_OCCUPANCY_BYTES</code></td>
+<td>ZeroBuffer / Lossy</td>
+</tr>
+<tr>
+<td><code>"broadcom"</code></td>
+<td><code>PFC_N_RX_PKTS</code> (0-7), <code>PFC_N_ON2OFF_RX_PKTS</code> (0-7)</td>
+<td><code>PACKETS</code>, <code>CURR_OCCUPANCY_BYTES</code></td>
+<td>DLR / ACL（<code>PFC_DLR_INIT_ENABLE</code> 環境変数で切替可）</td>
+</tr>
+<tr>
+<td><code>"marvell-teralynx"</code> / <code>"marvell-prestera"</code> / <code>"clounix"</code> / <code>"nephos"</code></td>
+<td><code>PFC_N_RX_PAUSE_DURATION</code> (0-7), <code>PFC_N_RX_PKTS</code> (0-7)</td>
+<td><code>PACKETS</code>, <code>CURR_OCCUPANCY_BYTES</code></td>
+<td>ZeroBuffer / Lossy</td>
+</tr>
+<tr>
+<td><code>"barefoot"</code></td>
+<td><code>PFC_N_RX_PAUSE_DURATION</code> (0-7), <code>PFC_N_RX_PKTS</code> (0-7)</td>
+<td><code>PACKETS</code>, <code>CURR_OCCUPANCY_BYTES</code></td>
+<td>ACL / Lossy</td>
+</tr>
+<tr>
+<td><code>"cisco-8000"</code></td>
+<td><code>PFC_N_RX_PKTS</code> (0-7), <code>PFC_N_TX_PKTS</code> (0-7)</td>
+<td><code>PACKETS</code> のみ</td>
+<td>SaiDlrInit / ActionHandler</td>
+</tr>
+<tr>
+<td>その他 / 未設定</td>
+<td>—</td>
+<td>—</td>
+<td>PfcWd orch インスタンス化なし</td>
+</tr>
+</tbody>
+</table>
+<p>Broadcom の <code>PFC_DLR_INIT_ENABLE</code> 環境変数は <code>gSwitchOrch-&gt;checkPfcDlrInitEnable()</code> 戻り値を上書きできる（<code>"1"</code> で DLR 強制 ON、<code>"0"</code> で OFF）。</p>
+<h3 id="wred-state_db">WRED 能力チェックとプラットフォーム透過的 STATE_DB 書き込み<a class="headerlink" href="#wred-state_db" title="Permanent link">&para;</a></h3>
+<p><code>initCounterCapabilities(gSwitchId)</code> (<code>portsorch.cpp:1107</code>) は orchagent 起動時に 1 回だけ実行される。プラットフォーム種別を問わず同じ API（<code>sai_query_stats_capability</code>）を使うが、WRED/ECN の SAI サポート有無は ASIC ごとに異なる:</p>
+<ul>
+<li><code>SAI_STATUS_BUFFER_OVERFLOW</code> が返った場合はバッファを確保して再呼び出しする 2 段取得方式</li>
+<li>成功時は <code>WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER</code> / <code>_BYTE_COUNTER</code> / <code>WRED_DROPPED_PKT_COUNTER</code> / <code>_BYTE_COUNTER</code> の各フィールドを <code>isSupported: true/false</code> で STATE_DB の <code>QUEUE_COUNTER_CAPABILITIES</code> テーブルに書き込む</li>
+<li>能力問合せ失敗時は全フィールドが <code>isSupported: false</code>（初期化値）のまま残る</li>
+</ul>
+<p>この STATE_DB エントリは外部ツール・オーケストレータが WRED サポート状況を確認するためのものであり、FlexCounter の実際の登録可否は <code>isPortStatSupported()</code> による別経路で判断される。</p>
+<!-- /platform -->
+
 <!-- defaults -->
 <h2 id="phase-a">暗黙デフォルト・コード由来挙動 (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/portsorch.h,
@@ -35661,7 +37276,7 @@
      sonic-utilities/scripts/queuestat, sonic-utilities/scripts/pg-drop,
      sonic-utilities/scripts/watermarkstat -->
 
-<h3 id="_6">カウンタフィールドセットはコードハードコード<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_10">カウンタフィールドセットはコードハードコード<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <p><code>queue_stat_ids</code> / <code>queueWatermarkStatIds</code> / <code>ingressPriorityGroupDropStatIds</code> / <code>ingressPriorityGroupWatermarkStatIds</code> は <code>portsorch.cpp</code> のソースコードに静的配列として定義される。YANG モデル・CONFIG_DB・FLEX_COUNTER_TABLE のいずれからも変更不可。ハードウェアが SAI で当該カウンタをサポートしない場合、syncd が <code>sai_get_*_stats</code> を呼んでも値 <code>0</code> が返るか、<code>SAI_STATUS_NOT_SUPPORTED</code> でスキップされる（COUNTERS: キーに field が存在しないケースあり）。</p>
 <h3 id="wred-sai">WRED カウンタは SAI ケイパビリティチェック必須<a class="headerlink" href="#wred-sai" title="Permanent link">&para;</a></h3>
 <p><code>SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS</code> 等の WRED 統計は <code>checkWredCapability()</code>（portsorch.cpp:1894-1909）が SAI のケイパビリティクエリを実施し、サポートを確認したポートの queue にのみ追加される。未サポートの ASIC では <code>FLEX_COUNTER_TABLE|WRED_ECN_QUEUE</code> を <code>enable</code> にしても <code>COUNTERS:&lt;OID&gt;</code> に WRED フィールドが現れない（silent 非追加）。</p>
@@ -35676,26 +37291,26 @@
 <!-- /defaults -->
 
 <!-- ops-hint -->
-<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># キューカウンタ表示</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>queuestat
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># キュー通常カウンタ + トリミング全カウンタ</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>queuestat<span class="w"> </span>-a
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># PG ドロップカウンタ</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>pg-drop<span class="w"> </span>-c<span class="w"> </span>show
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># キュー・PG ウォーターマーク（ユーザーリセット型）</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>watermarkstat<span class="w"> </span>queue<span class="w"> </span>unicast
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>watermarkstat<span class="w"> </span>priority-group<span class="w"> </span>headroom
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># COUNTERS_DB を直接確認</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span>COUNTERS_QUEUE_NAME_MAP
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;COUNTERS:&lt;OID&gt;&quot;</span>
+<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># キューカウンタ表示</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>queuestat
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># キュー通常カウンタ + トリミング全カウンタ</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>queuestat<span class="w"> </span>-a
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># PG ドロップカウンタ</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>pg-drop<span class="w"> </span>-c<span class="w"> </span>show
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># キュー・PG ウォーターマーク（ユーザーリセット型）</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>watermarkstat<span class="w"> </span>queue<span class="w"> </span>unicast
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>watermarkstat<span class="w"> </span>priority-group<span class="w"> </span>headroom
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1"># COUNTERS_DB を直接確認</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span>COUNTERS_QUEUE_NAME_MAP
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;COUNTERS:&lt;OID&gt;&quot;</span>
 </span></code></pre></div>
-<h3 id="_9">よくある誤解<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_13">よくある誤解<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>FLEX_COUNTER_TABLE|QUEUE</code> を <code>enable</code> にしただけでは BUFFER_QUEUE 設定のないキューのカウンタは収集されない（VoQ システムを除く）</li>
 <li>WRED フィールドが <code>N/A</code> 表示になる場合、ASIC が WRED ケイパビリティを SAI に報告していない可能性がある</li>
@@ -35705,7 +37320,7 @@
 
 <!-- ref-triangle:start -->
 
-<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_14">関連リファレンス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></li>
 <li>CONFIG_DB: <a href="../buffer-queue/"><code>BUFFER_QUEUE</code></a></li>
@@ -35714,7 +37329,7 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_15">引用元<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
@@ -35729,6 +37344,12 @@
 </li>
 <li id="fn:4">
 <p>portsorch.h:34-42 および portsorch.cpp:90-93 — FlexCounter グループ名定数とハードコードポーリング間隔定義。&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>counternameupdater.cpp:21-34 および hftelorch.cpp:106-170 — <code>CounterNameMapUpdater::setCounterNameMap()</code> 内での <code>gHFTOrch-&gt;locallyNotify()</code> 同期呼び出し。<code>SUPPORT_COUNTER_TABLES</code> に <code>COUNTERS_QUEUE_NAME_MAP</code> / <code>COUNTERS_PG_NAME_MAP</code> が含まれる (<code>hftelorch.cpp:25-30</code>)。<a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/high_frequency_telemetry/counternameupdater.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/high_frequency_telemetry/counternameupdater.cpp</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>portsorch.cpp:8525, 8754, 8819, 8886, 8941, 9099 — Queue / PG マッピング書き込み・削除関数での <code>CounterCheckOrch::getInstance().addPort()</code> / <code>removePort()</code> 呼び出し。<code>countercheckorch.cpp:43-50</code> の 5 分タイマーで <code>mcCounterCheck()</code> と <code>pfcFrameCounterCheck()</code> を実行。&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23653,6 +23661,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../alarm-table/" class="md-nav__link">
         
   
@@ -25197,6 +25233,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dash_routing_type_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: DASH_ROUTING_TYPE_TABLE は前提テーブルなし（自己完結）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dash_routing_type_table-dash_vnet_mapping_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: DASH_ROUTING_TYPE_TABLE → DASH_VNET_MAPPING_TABLE（必須先行・自動回復あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-del-vnet-mapping-routing_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: DEL 推奨順序（VNET Mapping → ROUTING_TYPE）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -25303,7 +25389,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#phase-b_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         エントリ投入順序・依存関係 (Phase B)
@@ -25364,7 +25450,373 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dash_routing_type_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_ROUTING_TYPE_TABLE が参照するテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_routing_type_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_ROUTING_TYPE_TABLE を参照するテーブル（被参照・逆方向）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db-app_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結果 DB 書き込み (APP_STATE_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM カウンタ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結果コード定数 (dashorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キー変換ハードコード文字列 (dashorch.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#routing_type-sai-soutboundaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROUTING_TYPE → SAI アクション変換マップ (sOutboundAction)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encap_type-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ENCAP_TYPE → SAI 変換定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG pattern 制約（許容値の全一覧）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時 — DPU_APPL_STATE_DB 結果書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時 — DPU_APPL_STATE_DB エントリ削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込の有無まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zmq-zmqconsumerstatetable-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (ZMQ / ZmqConsumerStateTable) — Phase G
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (ZMQ / ZmqConsumerStateTable) — Phase G">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB persistence と再起動耐性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 無効時のフォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB・チャンネル使用一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差・SAI capability (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差・SAI capability (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_typedpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作条件: switch_type=dpu のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-api-in-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI API 呼び出し: なし（in-memory 格納のみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI capability クエリ: 関与なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -25375,7 +25827,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -25386,7 +25838,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -25409,7 +25861,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -28212,6 +28664,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -29592,6 +30100,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -34791,6 +35327,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dash_routing_type_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: DASH_ROUTING_TYPE_TABLE は前提テーブルなし（自己完結）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dash_routing_type_table-dash_vnet_mapping_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: DASH_ROUTING_TYPE_TABLE → DASH_VNET_MAPPING_TABLE（必須先行・自動回復あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-del-vnet-mapping-routing_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: DEL 推奨順序（VNET Mapping → ROUTING_TYPE）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34897,7 +35483,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#phase-b_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         エントリ投入順序・依存関係 (Phase B)
@@ -34958,7 +35544,373 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dash_routing_type_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_ROUTING_TYPE_TABLE が参照するテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dash_routing_type_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DASH_ROUTING_TYPE_TABLE を参照するテーブル（被参照・逆方向）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db-app_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結果 DB 書き込み (APP_STATE_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM カウンタ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結果コード定数 (dashorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キー変換ハードコード文字列 (dashorch.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#routing_type-sai-soutboundaction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROUTING_TYPE → SAI アクション変換マップ (sOutboundAction)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encap_type-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ENCAP_TYPE → SAI 変換定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG pattern 制約（許容値の全一覧）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時 — DPU_APPL_STATE_DB 結果書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時 — DPU_APPL_STATE_DB エントリ削除
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込の有無まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zmq-zmqconsumerstatetable-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (ZMQ / ZmqConsumerStateTable) — Phase G
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (ZMQ / ZmqConsumerStateTable) — Phase G">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB persistence と再起動耐性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 無効時のフォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB・チャンネル使用一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差・SAI capability (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差・SAI capability (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_typedpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動作条件: switch_type=dpu のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-api-in-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI API 呼び出し: なし（in-memory 格納のみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI capability クエリ: 関与なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34969,7 +35921,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34980,7 +35932,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35003,7 +35955,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -35070,8 +36022,64 @@
 </div>
 <!-- /cdb-mermaid -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/dash/dashorch.cpp addRoutingTypeEntry:441 / getRouteTypeActions:82 / dashvnetorch.cpp addOutboundCaToPa:313 -->
+
+<p><code>DASH_ROUTING_TYPE_TABLE</code> 自体は外部テーブルに依存せず任意のタイミングで SET できる。ただし <code>DASH_VNET_MAPPING_TABLE</code> のプログラミング時に routing type の登録が必須となるため、以下の SET 順序を守ることが重要。</p>
+<h3 id="1-dash_routing_type_table">依存 1: DASH_ROUTING_TYPE_TABLE は前提テーブルなし（自己完結）<a class="headerlink" href="#1-dash_routing_type_table" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DASH_ROUTING_TYPE_TABLE|&lt;routing_type&gt;  SET
+</span></code></pre></div>
+<p><code>addRoutingTypeEntry()</code> (<code>dashorch.cpp:441-455</code>) は外部 orchagent の状態を一切参照しない。受信した protobuf を <code>routing_type_entries_</code> マップに格納するのみ。<code>parsePbMessage()</code> のデシリアライズ失敗時のみ erase してスキップ（再試行なし）。</p>
+<p><strong>違反時</strong>: なし（前提テーブルが存在しない）。</p>
+<h3 id="2-dash_routing_type_table-dash_vnet_mapping_table">依存 2: DASH_ROUTING_TYPE_TABLE → DASH_VNET_MAPPING_TABLE（必須先行・自動回復あり）<a class="headerlink" href="#2-dash_routing_type_table-dash_vnet_mapping_table" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>DASH_ROUTING_TYPE_TABLE|&lt;routing_type&gt;  SET 完了（routing_type_entries_ に格納済み）
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ↓
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>DASH_VNET_MAPPING_TABLE|&lt;vnet&gt;:&lt;ip&gt;  SET
+</span></code></pre></div>
+<p><code>DashVnetOrch::addOutboundCaToPa()</code> (<code>dashvnetorch.cpp:313-319</code>) は <code>getRouteTypeActions()</code> を呼び、該当 routing type が <code>routing_type_entries_</code> に存在しない場合に <code>return false</code> でエントリを保留する。上位 <code>doTask()</code> が <code>it++</code> で ConsumerBase の次の周回まで保留し、ROUTING_TYPE が登録された後に自動再処理される（無限ポーリング）。</p>
+<p><strong>違反時</strong>: <code>DASH_VNET_MAPPING_TABLE</code> のエントリが保留され、<code>DASH_ROUTING_TYPE_TABLE</code> SET 後に自動回復する。</p>
+<h3 id="3-del-vnet-mapping-routing_type">依存 3: DEL 推奨順序（VNET Mapping → ROUTING_TYPE）<a class="headerlink" href="#3-del-vnet-mapping-routing_type" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DASH_VNET_MAPPING_TABLE|&lt;vnet&gt;:&lt;ip&gt;  DEL  先行（推奨）
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>DASH_ROUTING_TYPE_TABLE|&lt;routing_type&gt;  DEL
+</span></code></pre></div>
+<p><code>removeRoutingTypeEntry()</code> (<code>dashorch.cpp:457-471</code>) は即時 <code>routing_type_entries_</code> から削除する。VNET Mapping が残ったまま ROUTING_TYPE を先に削除すると、VNET Mapping の再 SET や orchagent 再起動時の replay で <code>getRouteTypeActions()</code> miss が発生し Mapping が処理待ちになる。</p>
+<p><strong>違反時</strong>: 即時機能影響はないが、VNET Mapping の再設定が必要になる。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>違反時挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>DASH_ROUTING_TYPE_TABLE SET の前提テーブルなし</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ROUTING_TYPE SET → VNET_MAPPING SET</td>
+<td>強制先行（自動再試行・自動回復）</td>
+<td>VNET Mapping 保留、自動回復</td>
+</tr>
+<tr>
+<td>3</td>
+<td>VNET_MAPPING DEL → ROUTING_TYPE DEL</td>
+<td>推奨先行（違反しても即時影響なし）</td>
+<td>VNET Mapping 再設定時に再試行待ち</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DASH_ROUTING_TYPE_TABLE|&lt;routing_type&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>DASH_ROUTING_TYPE_TABLE|&lt;routing_type&gt;
 </span></code></pre></div>
 <ul>
 <li><code>&lt;routing_type&gt;</code>: <code>direct</code> / <code>vnet</code> / <code>vnet_direct</code> / <code>vnet_encap</code> / <code>drop</code> / <code>appliance</code> / <code>privatelink</code> / <code>privatelinknsg</code> / <code>servicetunnel</code> のいずれか（YANG pattern 定義による）</li>
@@ -35212,13 +36220,13 @@
 <!-- /defaults -->
 
 <!-- ordering -->
-<h2 id="phase-b">エントリ投入順序・依存関係 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h2 id="phase-b_1">エントリ投入順序・依存関係 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
 <h3 id="_6">投入の必須順序<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p><code>DASH_ROUTING_TYPE_TABLE</code> は他の DASH テーブルへの先行依存を持たず、任意のタイミングで書き込める。
 ただし、以下のテーブルは routing type が登録済みであることを前提とする。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>[前提なし] DASH_ROUTING_TYPE_TABLE — 最初に書き込み可能
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    ↓
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>[1] DASH_VNET_MAPPING_TABLE  ← getRouteTypeActions() で routing_type_entries_ を参照
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[前提なし] DASH_ROUTING_TYPE_TABLE — 最初に書き込み可能
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    ↓
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>[1] DASH_VNET_MAPPING_TABLE  ← getRouteTypeActions() で routing_type_entries_ を参照
 </span></code></pre></div>
 <p><code>DashVnetOrch::addOutboundCaToPa()</code> (<code>dashvnetorch.cpp:313-319</code>) は <code>DashOrch::getRouteTypeActions()</code> を呼び出し、<code>routing_type_entries_</code> に該当エントリが存在しない場合 <code>false</code> を返してリトライキューに戻す。
 <code>DashRouteOrch</code> が扱う <code>DASH_ROUTE_TABLE</code> / <code>DASH_ROUTE_GROUP_TABLE</code> は静的マップ (<code>sOutboundAction</code>) を使うため <code>routing_type_entries_</code> に依存しない。</p>
@@ -35250,9 +36258,9 @@
 </table>
 <h3 id="_7">削除の逆順制約<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p>削除は投入の逆順で行う必要がある。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>[1] DASH_VNET_MAPPING_TABLE — DEL（参照エントリを先にすべて削除）
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    ↓
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>[2] DASH_ROUTING_TYPE_TABLE — DEL
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>[1] DASH_VNET_MAPPING_TABLE — DEL（参照エントリを先にすべて削除）
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    ↓
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>[2] DASH_ROUTING_TYPE_TABLE — DEL
 </span></code></pre></div>
 <p><code>removeRoutingTypeEntry()</code> (<code>dashorch.cpp:457-469</code>) は <code>routing_type_entries_</code> から即時削除して <code>return true</code> を返す。
 既存 VNET マッピングが SAI / DPU 側にプログラム済みでも orchagent はガードしないため、VNET マッピングを先に削除しないと孤立エントリが残る。</p>
@@ -35302,27 +36310,657 @@
 </ul>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>DASH_ROUTING_TYPE_TABLE</code> は他の DASH テーブルへの暗黙参照を持たない。外部 OID 解決も CRM カウンタ更新も行わない自己完結型テーブルであり、他テーブルから参照される側（被参照）として機能する。</p>
+<h3 id="dash_routing_type_table">DASH_ROUTING_TYPE_TABLE が参照するテーブル<a class="headerlink" href="#dash_routing_type_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>ブロッキング</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>(なし)</em></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><code>DashOrch::addRoutingTypeEntry()</code> (<code>dashorch.cpp:441-455</code>) は外部 orchagent・テーブルを一切参照せず、受信した protobuf を <code>routing_type_entries_</code> in-memory マップに格納するのみ。</p>
+<h3 id="dash_routing_type_table_1">DASH_ROUTING_TYPE_TABLE を参照するテーブル（被参照・逆方向）<a class="headerlink" href="#dash_routing_type_table_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>被参照元テーブル</th>
+<th>参照方法</th>
+<th>参照条件</th>
+<th>未登録時の挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DASH_VNET_MAPPING_TABLE</code></td>
+<td><code>getRouteTypeActions()</code> で <code>routing_type_entries_</code> を検索</td>
+<td>VNET マッピング SET 時・常時</td>
+<td><code>return false</code> → VnetMapping をリトライキューに戻す</td>
+<td><code>dashvnetorch.cpp:313–319</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>DashVnetOrch::addOutboundCaToPa()</code> は <code>gDirectory.get&lt;DashOrch*&gt;()-&gt;getRouteTypeActions(ctxt.metadata.routing_type(), route_type_actions)</code> を呼ぶ。<code>routing_type_entries_</code> に該当エントリがなければ <code>SWSS_LOG_WARN</code> を出して <code>false</code> を返し、上位 <code>doTask()</code> がこのエントリを次の周回まで保留する（自動回復）。</p>
+<h3 id="db-app_state_db">結果 DB 書き込み (APP_STATE_DB)<a class="headerlink" href="#db-app_state_db" title="Permanent link">&para;</a></h3>
+<p>SET 完了後に <code>writeResultToDB(dash_routing_type_result_table_, routing_type_str, DASH_RESULT_SUCCESS)</code> (<code>dashorch.cpp:517</code>) が APP_STATE_DB の <code>DASH_ROUTING_TYPE_TABLE</code> に結果を書き込む。DEL 完了後は <code>removeResultFromDB()</code> (<code>dashorch.cpp:524</code>) で削除する。外部コントローラ（gNMI 等）が SAI プログラム結果を参照するための非同期通知チャネルとして機能する。</p>
+<h3 id="crm">CRM カウンタ<a class="headerlink" href="#crm" title="Permanent link">&para;</a></h3>
+<p>使用なし。<code>DASH_ROUTING_TYPE_TABLE</code> は SAI OID を返さないため CRM リソースカウンタは不使用。</p>
+<ul>
+<li>中間トレース: <code>meta/_intermediate/cdb-flow/dash-routing-types-cross-refs.md</code></li>
+</ul>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/dash/dashorch.cpp doTaskRoutingTypeTable:473 / addRoutingTypeEntry:441 / removeRoutingTypeEntry:457 / dashvnetorch.cpp addOutboundCaToPa:300 -->
+
+<p><code>DASH_ROUTING_TYPE_TABLE</code> の SET/DEL 処理は <code>doTaskRoutingTypeTable()</code> (<code>dashorch.cpp:473</code>) が担当する。SAI API 呼び出しは行わず orchagent メモリへの格納のみのため、SAI 由来の失敗は発生しない。</p>
+<h3 id="set">SET 処理における失敗経路<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>result_table ステータス</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>無効な routing type 名（<code>RoutingType_Parse()</code> 失敗）</td>
+<td><code>doTaskRoutingTypeTable()</code> L490</td>
+<td>WARN ログ → <code>erase(it)</code> → 恒久スキップ</td>
+<td>なし</td>
+<td><code>dashorch.cpp:490-494</code></td>
+</tr>
+<tr>
+<td>protobuf デシリアライズ失敗（<code>parsePbMessage()</code> false）</td>
+<td><code>doTaskRoutingTypeTable()</code> L501</td>
+<td>WARN ログ → <code>erase(it)</code> → 恒久スキップ</td>
+<td>なし</td>
+<td><code>dashorch.cpp:501-505</code></td>
+</tr>
+<tr>
+<td>同一 routing type の二重登録（重複検出）</td>
+<td><code>addRoutingTypeEntry()</code> L445</td>
+<td>WARN ログ → <code>return true</code>（冪等・成功扱い、既存エントリ上書きなし）</td>
+<td><code>DASH_RESULT_SUCCESS</code></td>
+<td><code>dashorch.cpp:445-449</code></td>
+</tr>
+<tr>
+<td><code>addRoutingTypeEntry()</code> が false を返す（拡張点）</td>
+<td><code>doTaskRoutingTypeTable()</code> L508</td>
+<td><code>result = DASH_RESULT_FAILURE</code> → <code>it++</code>（再試行） → <code>writeResultToDB(FAILURE)</code></td>
+<td><code>DASH_RESULT_FAILURE</code></td>
+<td><code>dashorch.cpp:513-517</code></td>
+</tr>
+<tr>
+<td><code>action_type=staticencap</code> かつ <code>encap_type</code> 不正（VXLAN/NVGRE 以外）— VNET マッピング参照時</td>
+<td><code>addOutboundCaToPa()</code> L337（<code>dashvnetorch.cpp</code>）</td>
+<td>ERROR ログ → <code>return true</code>（consumer から erase、VNET マッピング未作成）</td>
+<td>—</td>
+<td><code>dashvnetorch.cpp:337-338</code></td>
+</tr>
+<tr>
+<td><code>getRouteTypeActions()</code> で該当 routing type 未登録 — VNET マッピング参照時</td>
+<td><code>addOutboundCaToPa()</code> L315（<code>dashvnetorch.cpp</code>）</td>
+<td>INFO ログ → <code>return false</code>（VNET マッピング作成保留）</td>
+<td>—</td>
+<td><code>dashvnetorch.cpp:315-318</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 処理における失敗経路<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>result_table ステータス</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存在しない routing type の削除</td>
+<td><code>removeRoutingTypeEntry()</code> L461</td>
+<td>WARN ログ → <code>return true</code>（冪等・成功扱い）</td>
+<td>result エントリ削除</td>
+<td><code>dashorch.cpp:461-464</code></td>
+</tr>
+<tr>
+<td><code>removeRoutingTypeEntry()</code> が false を返す（拡張点）</td>
+<td><code>doTaskRoutingTypeTable()</code> L521</td>
+<td><code>it++</code>（再試行）</td>
+<td>result エントリ残留</td>
+<td><code>dashorch.cpp:526-528</code></td>
+</tr>
+<tr>
+<td>不明な操作コード（SET/DEL 以外）</td>
+<td><code>doTaskRoutingTypeTable()</code> L533</td>
+<td>ERROR ログ → <code>erase(it)</code> → 恒久スキップ</td>
+<td>なし</td>
+<td><code>dashorch.cpp:533-534</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>result_table 書き込み先</strong>: <code>APPL_STATE_DB</code> の <code>APP_DASH_ROUTING_TYPE_TABLE_NAME</code> テーブル（<code>dashorch.cpp:73</code>）。フィールド <code>result</code> に <code>0</code>（SUCCESS）または <code>1</code>（FAILURE）を書き込む（<code>DASH_RESULT_SUCCESS</code> / <code>DASH_RESULT_FAILURE</code>、<code>dashorch.h:35-36</code>）。</li>
+<li><strong>SAI 連携なし</strong>: <code>DASH_ROUTING_TYPE_TABLE</code> エントリ自体は SAI API を呼ばず orchagent メモリ（<code>routing_type_entries_</code>）にのみ格納される。SAI 失敗が発生するのはこの routing type を参照する VNET マッピング・ルートエントリの作成時（<code>dashvnetorch.cpp</code>、<code>dashrouteorch.cpp</code>）。</li>
+<li><strong>依存側の失敗伝播</strong>: VNET マッピングが <code>getRouteTypeActions()</code> で <code>false</code> を返した場合、そのエントリは consumer キューに保留（<code>return false</code> → <code>it++</code> パターン）。routing type が後から登録されると次の tick で自動再処理される。</li>
+<li>
+<p><strong>二重登録の冪等性</strong>: 重複は WARN ログのみで既存エントリは変更されない。更新には DEL → SET が必要（<code>addRoutingTypeEntry()</code> は上書きをサポートしない）。</p>
+</li>
+<li>
+<p>中間トレース: <code>meta/_intermediate/cdb-flow/dash-routing-types-failure.md</code></p>
+</li>
+</ul>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/dash/dashorch.h:29-36 / dashorch.cpp:487-488 / dashrouteorch.cpp:41-47 / dashvnetorch.cpp:322-343 / dashtunnelorch.cpp:289-292 / sonic-dash.yang:356-398 -->
+
+<h3 id="dashorchh">結果コード定数 (dashorch.h)<a class="headerlink" href="#dashorchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DASH_RESULT_SUCCESS</code></td>
+<td><code>0</code></td>
+<td>SET/DEL 成功時に <code>APP_DASH_ROUTING_TYPE_TABLE_NAME</code> の <code>result</code> フィールドに書き込む値</td>
+<td><code>sonic-swss/orchagent/dash/dashorch.h:35</code></td>
+</tr>
+<tr>
+<td><code>DASH_RESULT_FAILURE</code></td>
+<td><code>1</code></td>
+<td><code>addRoutingTypeEntry()</code> が <code>false</code> 返却した場合（protobuf parse 失敗）に result フィールドへ書き込む値</td>
+<td><code>sonic-swss/orchagent/dash/dashorch.h:36</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dashorchcpp">キー変換ハードコード文字列 (dashorch.cpp)<a class="headerlink" href="#dashorchcpp" title="Permanent link">&para;</a></h3>
+<p>APPL_DB キー（小文字）を protobuf enum 名に変換する 2 段変換がハードコードされている。</p>
+<table>
+<thead>
+<tr>
+<th>変換ステップ</th>
+<th>処理内容</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>大文字変換</td>
+<td><code>std::transform(..., ::toupper)</code> でキー全体を大文字化。例: <code>"vnet_encap"</code> → <code>"VNET_ENCAP"</code></td>
+<td><code>sonic-swss/orchagent/dash/dashorch.cpp:487</code></td>
+</tr>
+<tr>
+<td>プレフィックス付加</td>
+<td><code>"ROUTING_TYPE_"</code> を先頭に付加。例: <code>"VNET_ENCAP"</code> → <code>"ROUTING_TYPE_VNET_ENCAP"</code></td>
+<td><code>sonic-swss/orchagent/dash/dashorch.cpp:488</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: 外部コントローラは APPL_DB キーを <strong>プレフィックスなし小文字</strong>（例: <code>vnet_encap</code>）で書き込む必要がある。<code>ROUTING_TYPE_</code> 付きで書き込むと二重付加になり <code>RoutingType_Parse()</code> が失敗する。</p>
+</blockquote>
+<h3 id="routing_type-sai-soutboundaction">ROUTING_TYPE → SAI アクション変換マップ (<code>sOutboundAction</code>)<a class="headerlink" href="#routing_type-sai-soutboundaction" title="Permanent link">&para;</a></h3>
+<p><code>dashrouteorch.cpp:41-47</code> でハードコードされた静的マップ。これに含まれない routing type は <code>DashRouteOrch::addOutboundRouting()</code> での SAI プログラミングが別ブランチ処理またはスキップされる。</p>
+<table>
+<thead>
+<tr>
+<th>RoutingType enum</th>
+<th>対応 SAI アウトバウンドアクション</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ROUTING_TYPE_VNET</code></td>
+<td><code>SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_VNET</code></td>
+<td><code>sonic-swss/orchagent/dash/dashrouteorch.cpp:43</code></td>
+</tr>
+<tr>
+<td><code>ROUTING_TYPE_VNET_DIRECT</code></td>
+<td><code>SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_VNET_DIRECT</code></td>
+<td><code>sonic-swss/orchagent/dash/dashrouteorch.cpp:44</code></td>
+</tr>
+<tr>
+<td><code>ROUTING_TYPE_DIRECT</code></td>
+<td><code>SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_DIRECT</code></td>
+<td><code>sonic-swss/orchagent/dash/dashrouteorch.cpp:45</code></td>
+</tr>
+<tr>
+<td><code>ROUTING_TYPE_DROP</code></td>
+<td><code>SAI_OUTBOUND_ROUTING_ENTRY_ACTION_DROP</code></td>
+<td><code>sonic-swss/orchagent/dash/dashrouteorch.cpp:46</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>ROUTING_TYPE_PRIVATELINK</code> は <code>dashvnetorch.cpp:374</code> に専用ブランチあり（<code>sOutboundAction</code> 外）。<code>ROUTING_TYPE_APPLIANCE</code> / <code>ROUTING_TYPE_PRIVATELINKNSG</code> / <code>ROUTING_TYPE_SERVICETUNNEL</code> は sOutboundAction 未登録。</p>
+<h3 id="encap_type-sai">ENCAP_TYPE → SAI 変換定数<a class="headerlink" href="#encap_type-sai" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>encap_type enum</th>
+<th>対応 SAI encapsulation</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ENCAP_TYPE_VXLAN</code></td>
+<td><code>SAI_DASH_ENCAPSULATION_VXLAN</code></td>
+<td><code>sonic-swss/orchagent/dash/dashvnetorch.cpp:327-329</code>, <code>dashtunnelorch.cpp:289</code></td>
+</tr>
+<tr>
+<td><code>ENCAP_TYPE_NVGRE</code></td>
+<td><code>SAI_DASH_ENCAPSULATION_NVGRE</code></td>
+<td><code>sonic-swss/orchagent/dash/dashvnetorch.cpp:331-333</code>, <code>dashtunnelorch.cpp:292</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-pattern">YANG pattern 制約（許容値の全一覧）<a class="headerlink" href="#yang-pattern" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB / APPL_DB に書き込める値をソースから確認。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG pattern 許容値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> (routing type)</td>
+<td><code>direct</code> / <code>vnet</code> / <code>vnet_direct</code> / <code>vnet_encap</code> / <code>drop</code> / <code>appliance</code> / <code>privatelink</code> / <code>privatelinknsg</code> / <code>servicetunnel</code></td>
+<td><code>sonic-dash.yang:365</code></td>
+</tr>
+<tr>
+<td><code>action_type</code></td>
+<td><code>none</code> / <code>maprouting</code> / <code>direct</code> / <code>staticencap</code> / <code>appliance</code> / <code>4to6</code> / <code>mapdecap</code> / <code>decap</code> / <code>drop</code></td>
+<td><code>sonic-dash.yang:379</code></td>
+</tr>
+<tr>
+<td><code>encap_type</code></td>
+<td><code>vxlan</code> / <code>nvgre</code></td>
+<td><code>sonic-dash.yang:385</code></td>
+</tr>
+<tr>
+<td><code>vni</code></td>
+<td><code>1..16777215</code>（24bit VNI 全有効範囲、RFC 7348）</td>
+<td><code>sonic-dash.yang:392</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>dashorch.h</code> L29-36、<code>dashorch.cpp</code> L45-46,73,487-488、<code>dashrouteorch.cpp</code> L41-47,78-130,326、<code>dashvnetorch.cpp</code> L314-374,771、<code>dashtunnelorch.cpp</code> L289-292、<code>sonic-dash.yang</code> L356-398 読了。定数 2 (result code) + 2 (key transform) + 4 (sOutboundAction) + 2 (encap) + 4 (YANG pattern) = 14 件抽出。中間ファイル: <code>meta/_intermediate/cdb-flow/dash-routing-types-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>詳細証跡: <code>meta/_intermediate/cdb-flow/dash-routing-types-side.md</code></p>
+</blockquote>
+<p><code>DASH_ROUTING_TYPE_TABLE</code> の SET/DEL が引き起こす副次書込は <strong>DPU_APPL_STATE_DB への結果書込のみ</strong>。SAI API 呼び出しは一切発生せず、<code>routing_type_entries_</code> in-memory マップへの格納で処理が完結するため、ASIC_DB・COUNTERS_DB・FLEX_COUNTER_DB への書込もない。</p>
+<h3 id="set-dpu_appl_state_db">SET 時 — DPU_APPL_STATE_DB 結果書込<a class="headerlink" href="#set-dpu_appl_state_db" title="Permanent link">&para;</a></h3>
+<p><code>doTaskRoutingTypeTable()</code> (<code>dashorch.cpp:517</code>) は SET_COMMAND 処理後に必ず <code>writeResultToDB(dash_routing_type_result_table_, routing_type_str, result)</code> を呼ぶ。<code>dash_routing_type_result_table_</code> は <code>DPU_APPL_STATE_DB</code>（<code>DBConnector("DPU_APPL_STATE_DB", 0)</code> — <code>orchdaemon.cpp:993</code>）の <code>DASH_ROUTING_TYPE_TABLE</code> に接続される。</p>
+<table>
+<thead>
+<tr>
+<th>書込先 DB</th>
+<th>テーブル</th>
+<th>キー形式</th>
+<th>フィールド</th>
+<th>値（成功）</th>
+<th>値（失敗）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DPU_APPL_STATE_DB</code></td>
+<td><code>DASH_ROUTING_TYPE_TABLE</code></td>
+<td><code>ROUTING_TYPE_&lt;NAME&gt;</code></td>
+<td><code>result</code></td>
+<td><code>"0"</code></td>
+<td><code>"1"</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>キー変換</strong>: 入力キー（例: <code>vnet_encap</code>）は <code>std::transform(::toupper)</code> → <code>"ROUTING_TYPE_"</code> プレフィックス付加後の文字列（例: <code>ROUTING_TYPE_VNET_ENCAP</code>）で書き込まれる (<code>dashorch.cpp:487-488,517</code>)</li>
+<li><strong>書込タイミング</strong>: <code>addRoutingTypeEntry()</code> の返り値によらず常に書き込まれる（成功・再登録スキップ・失敗のいずれも）</li>
+<li><strong>protobuf デシリアライズ失敗時</strong>: <code>parsePbMessage()</code> が失敗した場合は <code>writeResultToDB</code> が呼ばれず、DPU_APPL_STATE_DB への書込なし (<code>dashorch.cpp:500-505</code>)</li>
+</ul>
+<h3 id="del-dpu_appl_state_db">DEL 時 — DPU_APPL_STATE_DB エントリ削除<a class="headerlink" href="#del-dpu_appl_state_db" title="Permanent link">&para;</a></h3>
+<p><code>removeRoutingTypeEntry()</code> 成功時のみ <code>removeResultFromDB(dash_routing_type_result_table_, routing_type_str)</code> (<code>dashorch.cpp:524</code>) が呼ばれ、対応する result エントリが削除される。DEL が失敗（エントリ不存在）した場合は <code>removeResultFromDB</code> は呼ばれず既存の result エントリが残留する。</p>
+<h3 id="_10">副次書込の有無まとめ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>DB / リソース</th>
+<th>書込発生</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DPU_APPL_STATE_DB</code></td>
+<td>✅ SET/DEL</td>
+<td>外部コントローラへの非同期結果通知</td>
+</tr>
+<tr>
+<td><code>ASIC_DB</code></td>
+<td>❌ なし</td>
+<td>routing type は in-memory のみ。SAI DASH API 呼び出しなし</td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td>❌ なし</td>
+<td>SAI OID を持たないため CRM カウンタ更新なし</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_DB</code></td>
+<td>❌ なし</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>STATE_DB</code></td>
+<td>❌ なし</td>
+<td>DASH 系は DPU_APPL_STATE_DB を使用</td>
+</tr>
+<tr>
+<td><code>CONFIG_DB</code></td>
+<td>❌ なし</td>
+<td>orchagent は CONFIG_DB への書戻しを行わない</td>
+</tr>
+</tbody>
+</table>
+<p><code>DPU_APPL_STATE_DB / DASH_ROUTING_TYPE_TABLE</code> は gNMI 等の外部コントローラが SAI プログラム状態を確認するための非同期通知チャネルとして機能する。外部コントローラは <code>result</code> フィールドをポーリングすることで routing type の登録成否を確認できる。</p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="zmq-zmqconsumerstatetable-phase-g">通信メカニズム (ZMQ / ZmqConsumerStateTable) — Phase G<a class="headerlink" href="#zmq-zmqconsumerstatetable-phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-swss/orchagent/zmqorch.cpp</code>, <code>zmqorch.h</code>, <code>sonic-swss-common/common/zmqserver.h</code>, <code>zmqconsumerstatetable.cpp</code>, <code>orchdaemon.cpp</code> L1322–1351 精読 (2026-05-17)<br />
+詳細証跡: <code>meta/_intermediate/cdb-flow/dash-routing-types-pubsub.md</code></p>
+</blockquote>
+<h3 id="_11">購読方式<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p><code>DASH_ROUTING_TYPE_TABLE</code> の変更通知は <strong>Redis keyspace notification ではなく ZeroMQ (ZMQ) メッセージ</strong> で実装されている。<code>DashOrch</code> は <code>ZmqOrch</code> を継承し (<code>dashorch.cpp:61</code>)、<code>ZmqConsumerStateTable</code> を通じて ZMQ PUSH/PULL パターンで受信する。<code>SubscriberStateTable</code> / <code>NotificationConsumer</code> / Redis PSUBSCRIBE は一切使用しない。</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZMQ エンドポイント</td>
+<td><code>tcp://127.0.0.1:8100</code></td>
+<td><code>zmqserver.h:16</code> (<code>ORCH_ZMQ_PORT=8100</code>)</td>
+</tr>
+<tr>
+<td>フィーチャーフラグ</td>
+<td><code>ORCH_NORTHBOND_DASH_ZMQ_ENABLED</code>（デフォルト <code>true</code>）</td>
+<td><code>orchdaemon.cpp:1329</code></td>
+</tr>
+<tr>
+<td>バッチサイズ</td>
+<td><code>gBatchSize</code>（デフォルト 128）</td>
+<td><code>zmqorch.cpp:66</code></td>
+</tr>
+<tr>
+<td>poll タイムアウト</td>
+<td>1000 ms (<code>MQ_POLL_TIMEOUT</code>)</td>
+<td><code>zmqserver.h:12</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_12">通信シーケンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>[DASH コントローラ / gNMI サービス]
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  gNMI SetRequest → sonic-mgmt-common (Protobuf エンコード)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    └─ ZmqClient(&quot;tcp://127.0.0.1:8100&quot;)
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>         └─ ZmqProducerStateTable::set(routing_type_key, [(&quot;pb&quot;, pb_bytes)])
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>              ├─ ZmqClient::sendMsg() → ZMQ PUSH → orchagent ZmqServer
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>              └─ AsyncDBUpdater → DPU_APPL_DB:DASH_ROUTING_TYPE_TABLE  ← DB persistence (非同期)
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>[orchagent — バックグラウンドスレッド]
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>  ZmqServer::mqPollThread()
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    └─ zmq_recv() + BinarySerializer::deserialize()
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    └─ ZmqConsumerStateTable::handleReceivedData()
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>         ├─ m_receivedOperationQueue.push()
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>         ├─ AsyncDBUpdater::update() → DPU_APPL_DB  ← DB persistence
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>         └─ SelectableEvent::notify()              ← epoll wakeup
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>[orchagent — メインスレッド]
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>  Select::select()
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>    └─ ZmqConsumer::execute()
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>         └─ ZmqConsumerStateTable::pops() → addToSync(entries)
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>    └─ ZmqConsumer::drain()
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>         └─ DashOrch::doTaskRoutingTypeTable()
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>              └─ addRoutingTypeEntry() / removeRoutingTypeEntry() → routing_type_entries_ in-memory
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>              └─ writeResultToDB() → DPU_APPL_STATE_DB:DASH_ROUTING_TYPE_TABLE:&lt;routing_type&gt;
+</span></code></pre></div>
+<h3 id="db-persistence">DB persistence と再起動耐性<a class="headerlink" href="#db-persistence" title="Permanent link">&para;</a></h3>
+<p><code>ZmqConsumerStateTable</code> は <code>dbPersistence=true</code> で初期化されるため、受信データを DPU_APPL_DB の <code>DASH_ROUTING_TYPE_TABLE</code> に非同期書き込みする (<code>AsyncDBUpdater</code>)。orchagent 再起動時は <code>warmRestoreAndSyncUp()</code> → <code>bake()</code> が DPU_APPL_DB の既存エントリを <code>m_toSync</code> に再積み込み、コントローラの再送なしで routing type 設定を再適用する。</p>
+<h3 id="zmq">ZMQ 無効時のフォールバック<a class="headerlink" href="#zmq" title="Permanent link">&para;</a></h3>
+<p><code>ORCH_NORTHBOND_DASH_ZMQ_ENABLED=false</code>（<code>-q</code> オプションなし）時は <code>ConsumerStateTable</code>（Redis SUBSCRIBE）にフォールバックする。DPU 環境ではフラグがデフォルト <code>true</code> のため通常このパスは使われない (<code>zmqorch.cpp:63-72</code>)。</p>
+<h3 id="db">DB・チャンネル使用一覧<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>DB / チャンネル</th>
+<th>使用</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZMQ <code>tcp://127.0.0.1:8100</code></td>
+<td>使用</td>
+<td>コントローラ → orchagent の SET/DEL メッセージ</td>
+</tr>
+<tr>
+<td><code>DPU_APPL_DB:DASH_ROUTING_TYPE_TABLE</code></td>
+<td>使用（非同期書き込み）</td>
+<td>DB persistence（orchagent 再起動時の再生用）</td>
+</tr>
+<tr>
+<td><code>DPU_APPL_STATE_DB:DASH_ROUTING_TYPE_TABLE</code></td>
+<td>使用</td>
+<td>処理結果（<code>DASH_RESULT_SUCCESS</code>/<code>FAILURE</code>）の書き戻し</td>
+</tr>
+<tr>
+<td>Redis keyspace notification</td>
+<td>不使用</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Redis SUBSCRIBE / PSUBSCRIBE</td>
+<td>不使用</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>ProducerStateTable</code> チャンネル</td>
+<td>不使用</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>NotificationConsumer</code></td>
+<td>不使用</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>SubscriberStateTable</code></td>
+<td>不使用</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム差・SAI capability (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-swss/orchagent/main.cpp</code>, <code>orchdaemon.cpp</code>, <code>dashorch.cpp</code> 精読 (2026-05-17)<br />
+詳細証跡: <code>meta/_intermediate/cdb-flow/dash-routing-types-platform.md</code></p>
+</blockquote>
+<h3 id="switch_typedpu">動作条件: switch_type=dpu のみ<a class="headerlink" href="#switch_typedpu" title="Permanent link">&para;</a></h3>
+<p><code>DASH_ROUTING_TYPE_TABLE</code> を処理する <code>DashOrch</code> は <strong><code>switch_type=dpu</code></strong> のノードでのみ起動する。<code>main.cpp:990</code> の <code>gMySwitchType == "dpu"</code> 判定によって <code>DpuOrchDaemon</code> が生成され、その <code>init()</code> (<code>orchdaemon.cpp:1322-1420</code>) 内で <code>DashOrch</code> が <code>APP_DASH_ROUTING_TYPE_TABLE_NAME</code> を含む <code>dash_tables</code> ベクタと共に登録される。</p>
+<table>
+<thead>
+<tr>
+<th>switch_type</th>
+<th>DashOrch 起動</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"dpu"</code></td>
+<td><strong>起動</strong></td>
+<td>SmartSwitch の DPU ロール。<code>DPU_APPL_DB</code> を購読</td>
+</tr>
+<tr>
+<td><code>""</code> / <code>"switch"</code></td>
+<td><strong>不起動</strong></td>
+<td>通常 T0/T1 スイッチ</td>
+</tr>
+<tr>
+<td><code>"voq"</code> / <code>"chassis-packet"</code></td>
+<td><strong>不起動</strong></td>
+<td>VoQ chassis / chassis-packet モード</td>
+</tr>
+<tr>
+<td><code>"fabric"</code></td>
+<td><strong>不起動</strong></td>
+<td>Fabric blade</td>
+</tr>
+</tbody>
+</table>
+<p>SmartSwitch NPU 側（<code>switch_sub_type=SmartSwitch</code>, <code>switch_type=switch</code>）では <code>DashEniFwdOrch</code> が登録されるが、<code>DASH_ROUTING_TYPE_TABLE</code> への関与はない (<code>orchdaemon.cpp:613</code>)。</p>
+<h3 id="sai-api-in-memory">SAI API 呼び出し: なし（in-memory 格納のみ）<a class="headerlink" href="#sai-api-in-memory" title="Permanent link">&para;</a></h3>
+<p><code>DashOrch::addRoutingTypeEntry()</code> / <code>removeRoutingTypeEntry()</code> は SAI API を一切呼び出さず、受信した protobuf を <code>routing_type_entries_</code> in-memory マップに格納するだけで処理が完結する。ASIC ベンダー依存の SAI 呼び出しは存在せず、ベンダー固有の条件分岐もない。</p>
+<p>SAI API が呼び出されるのは、この routing type を参照する <code>DashVnetOrch</code> や <code>DashRouteOrch</code> がマッピング・ルートエントリをプログラムする時点であり、<code>DASH_ROUTING_TYPE_TABLE</code> 処理自体は ASIC 種別に依存しない。</p>
+<h3 id="sai-capability">SAI capability クエリ: 関与なし<a class="headerlink" href="#sai-capability" title="Permanent link">&para;</a></h3>
+<p><code>DashOrch</code> が実行する SAI capability クエリは 2 件存在するが、いずれも routing type 処理とは無関係。</p>
+<table>
+<thead>
+<tr>
+<th>capability クエリ</th>
+<th>対象</th>
+<th>routing type への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_ENI_ATTR_IS_HA_FLOW_OWNER</code> (<code>dashorch.cpp:102-125</code>)</td>
+<td>ENI 作成時の HA flow owner 属性</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>SAI_DASH_APPLIANCE_ATTR_LOCAL_REGION_ID</code> (<code>dashorch.cpp:141-148</code>)</td>
+<td>Appliance 作成時の local_region_id</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<p><code>doTaskRoutingTypeTable()</code> 実行経路内に <code>sai_query_attribute_capability()</code> 呼び出しは存在しない。</p>
+<h3 id="_13">プラットフォーム差サマリ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>動作 switch_type</td>
+<td><code>"dpu"</code> のみ</td>
+<td><code>main.cpp:990</code></td>
+</tr>
+<tr>
+<td>SAI API 呼び出し</td>
+<td>なし（in-memory のみ）</td>
+<td><code>dashorch.cpp:441-471</code></td>
+</tr>
+<tr>
+<td>ASIC 種別依存</td>
+<td>なし</td>
+<td>SAI 抽象化。コード内に ASIC 条件分岐なし</td>
+</tr>
+<tr>
+<td>SAI capability クエリ</td>
+<td>なし（routing type 処理に関与しない）</td>
+<td><code>dashorch.cpp:473-537</code></td>
+</tr>
+<tr>
+<td>multi-asic / namespace</td>
+<td>非対応</td>
+<td>DPU 専用構成</td>
+</tr>
+<tr>
+<td>ZMQ トランスポート</td>
+<td>feature flag <code>ORCH_NORTHBOND_DASH_ZMQ_ENABLED</code> で制御</td>
+<td><code>orchdaemon.cpp:1329</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_14">関連リファレンス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="dash-route-table.md"><code>DASH_ROUTE_TABLE</code></a>（routing_type を leafref 参照）</li>
 <li>CONFIG_DB: <a href="dash-vnet-mapping-table.md"><code>DASH_VNET_MAPPING_TABLE</code></a>（routing_type フィールドで本テーブルを参照）</li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_15">引用元<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_16">運用ヒント<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <h3 id="routing-type">典型的な routing type 設定例<a class="headerlink" href="#routing-type" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># VNET encap (VXLAN) routing type の確認</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DASH_ROUTING_TYPE_TABLE|*&#39;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DASH_ROUTING_TYPE_TABLE|vnet_encap&#39;</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 設定済み routing type の一覧</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DASH_ROUTING_TYPE_TABLE|*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># VNET encap (VXLAN) routing type の確認</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DASH_ROUTING_TYPE_TABLE|*&#39;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DASH_ROUTING_TYPE_TABLE|vnet_encap&#39;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># 設定済み routing type の一覧</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DASH_ROUTING_TYPE_TABLE|*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
 </span></code></pre></div>
-<h3 id="_12">よくある問題<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_17">よくある問題<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>encap_type 未指定でのエラー</strong>: <code>action_type=staticencap</code> を指定しながら <code>encap_type</code> を省略すると orchagent が <code>SWSS_LOG_ERROR</code> を記録し、VNET マッピングのプログラムが失敗する</li>
 <li><strong>routing type 名の大文字小文字</strong>: キー名は小文字で書き込むのが正しい。orchagent が内部で大文字変換するが、YANG pattern は小文字のみ許容</li>

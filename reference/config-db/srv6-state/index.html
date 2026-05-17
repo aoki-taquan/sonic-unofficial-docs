@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23633,6 +23641,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -27909,6 +27945,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -28371,7 +28463,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -28382,7 +28513,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29480,6 +29611,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -34773,7 +34932,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34784,7 +34982,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35007,14 +35205,77 @@ evidence: <code>meta/_intermediate/cdb-flow/srv6-state-defaults.md</code></p>
 <code>arg_len</code> はキー計算に含まれない。</p>
 <!-- /defaults -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>srv6orch.cpp</code> L120-132, L184-210, L251-284, L1591-1601, L1660-1680, L286-313。
+evidence: <code>meta/_intermediate/cdb-flow/srv6-state-ordering.md</code></p>
+</blockquote>
+<p>COUNTERS_DB の <code>COUNTERS_SRV6_NAME_MAP</code> / <code>COUNTERS:&lt;oid&gt;</code> は <code>Srv6Orch</code> が内部的に管理するため、
+ユーザーが直接書き込む必要はない。ただし以下の順序依存・タイミング依存が存在する。</p>
+<h3 id="_7">検出された順序依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SAI 能力チェックは orchagent 起動時一回限り (<code>initializeCounters</code>)</td>
+<td><strong>強制先行</strong>（後変更不可）</td>
+<td>SAI 非対応なら orchagent 再起動しか解消手段なし</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>FLEX_COUNTER_TABLE\|SRV6 enable</code> と <code>SRV6_MY_SID_TABLE</code> エントリの書き込み順序</td>
+<td>どちらが先でも可</td>
+<td>後から書いた側が既存エントリへカウンタを自動付与</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>COUNTERS_SRV6_NAME_MAP</code> 書き込みは即時だが <code>COUNTERS:&lt;oid&gt;</code> 初回値は最大 11 秒遅延</td>
+<td>タイミング依存</td>
+<td>設定直後に空でも正常（最大 1 秒 + 10 秒ポーリング待ち）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>MySID DEL → <code>COUNTERS_SRV6_NAME_MAP</code> 自動クリーンアップ</td>
+<td>自動（ユーザー操作不要）</td>
+<td><code>COUNTERS:&lt;oid&gt;</code> 残留値は <code>sonic-clear srv6stats</code> でリセット</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">主要な制約詳細<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><strong>SAI 能力チェックは起動時一回限り (依存 #1)</strong>:
+<code>initializeCounters()</code> は orchagent 起動時に <code>queryMySidCountersCapability()</code> を一度だけ呼び出し、
+<code>m_mysid_counters_supported</code> フラグを確定する。
+その後 <code>setCountersState()</code> 冒頭で <code>getMySidCountersSupported()</code> が false の場合に即 return するため、
+<strong>実行中に SAI 対応プラットフォームへ切り替えることはできない</strong>（evidence: <code>srv6orch.cpp:120-132</code>, <code>srv6orch.cpp:251-260</code>）。</p>
+<p><strong><code>FLEX_COUNTER_TABLE</code> と MySID エントリの順序自由性 (依存 #2)</strong>:
+<code>setCountersState(true)</code> は <code>srv6_my_sid_table_</code> を走査して既存の全 MySID にカウンタを付与する。
+一方 <code>createUpdateMysidEntry</code> は <code>getMySidCountersEnabled()</code> が true なら MySID 追加時点でカウンタを付与する。
+どちらが先でも最終的に <code>COUNTERS_SRV6_NAME_MAP</code> に反映される（evidence: <code>srv6orch.cpp:268-282</code>, <code>srv6orch.cpp:1591-1601</code>）。</p>
+<p><strong><code>COUNTERS:&lt;oid&gt;</code> 反映の最大 11 秒遅延 (依存 #3)</strong>:
+<code>addMySidCounter()</code> は <code>COUNTERS_SRV6_NAME_MAP</code> に OID を即時書き込むが、
+<code>FLEX_COUNTER_DB</code> への <code>SRV6_COUNTER_ID_LIST</code> 登録は <code>SRV6_FLEX_COUNTER_UPDATE_TIMER = 1</code> 秒のタイマー後。
+syncd がポーリングを開始してから最初の <code>COUNTERS:&lt;oid&gt;</code> 値が書き込まれるまでさらに
+<code>SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000</code> ms 待つ必要がある
+（evidence: <code>srv6orch.cpp:184-210</code>, <code>srv6orch.cpp:26-27</code>）。</p>
+<!-- /ordering -->
+
+<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../srv6-my-sids/"><code>SRV6_MY_SIDS</code></a> — MySID エントリ定義</li>
 <li>CONFIG_DB: <a href="../srv6-my-locators/"><code>SRV6_MY_LOCATORS</code></a> — ロケータ定義</li>
 <li>アーキテクチャ: <a href="../../../routing/srv6-vpn-hld/"><code>SRv6 VPN HLD</code></a></li>
 <li>CLI: <code>show srv6 stats</code> / <code>show srv6 static-sids</code></li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23633,6 +23641,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -27909,6 +27945,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -28130,7 +28222,85 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須先行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルトとハードコード挙動
@@ -28197,10 +28367,392 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルト・乖離サマリー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        無効入力・障害時の挙動 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="無効入力・障害時の挙動 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. YANG バリデーション失敗（書き込み拒否）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dhcpservd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. dhcpservd — サイレント失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dhcpservd-generate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. dhcpservd — 致命的エラー（generate() 全体失敗）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-dhcprelayd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. dhcprelayd — プロセス起動失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-dhcp_lease-lease" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. dhcp_lease — lease ファイル不在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        障害影響まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE — ハードコード値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_server_ipv4_port-dpu-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV4_PORT — DPU IP アドレス計算式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_server_ipv4bridge-midplane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV4|bridge-midplane — 固定パラメータ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_cfggenpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dhcp_cfggen.py — 内部定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG pattern 制約（ハードコード範囲）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込・ファイルシステム副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込・ファイルシステム副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-dhcp_server_ipv4_leasesmartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB: DHCP_SERVER_IPV4_LEASE（SmartSwitch 専用キー形式）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-dhcp_server_ipv4_server_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB: DHCP_SERVER_IPV4_SERVER_IP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etckeakea-dhcp4confsmartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイル: /etc/kea/kea-dhcp4.conf（SmartSwitch 固有の差異）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-feature-minigraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB: FEATURE テーブル（minigraph 投入時の連鎖書き込み）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcrelay-dhcprelayd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dhcrelay プロセス制御（dhcprelayd 経由）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producer-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer / Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dpus-dhcpservd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE / DPUS → dhcpservd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dhcprelayd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE → dhcprelayd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_server_ipv4_port-dhcpservd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV4_PORT → dhcpservd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム依存・ハードウェア固有挙動 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム依存・ハードウェア固有挙動 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-chassisd-is_smartswitch-is_dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. chassisd のデーモン分岐 — is_smartswitch() / is_dpu()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-init_midplane_switch-mid_plane_bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. init_midplane_switch() — MID_PLANE_BRIDGE との分担
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dpu-platformjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DPU 再起動タイムアウト — platform.json による上書き
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-midplane-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. midplane 到達性チェックと STATE_DB 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-chassis_module-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. CHASSIS_MODULE テーブルと DPU 名前制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB を経由しない主なプラットフォーム動作
       
     </span>
   </a>
@@ -28224,7 +28776,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         参照
@@ -29574,6 +30126,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -34878,7 +35458,85 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須先行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルトとハードコード挙動
@@ -34945,10 +35603,392 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルト・乖離サマリー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        無効入力・障害時の挙動 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="無効入力・障害時の挙動 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. YANG バリデーション失敗（書き込み拒否）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dhcpservd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. dhcpservd — サイレント失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dhcpservd-generate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. dhcpservd — 致命的エラー（generate() 全体失敗）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-dhcprelayd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. dhcprelayd — プロセス起動失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-dhcp_lease-lease" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. dhcp_lease — lease ファイル不在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        障害影響まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE — ハードコード値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_server_ipv4_port-dpu-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV4_PORT — DPU IP アドレス計算式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_server_ipv4bridge-midplane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV4|bridge-midplane — 固定パラメータ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_cfggenpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dhcp_cfggen.py — 内部定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG pattern 制約（ハードコード範囲）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込・ファイルシステム副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込・ファイルシステム副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-dhcp_server_ipv4_leasesmartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB: DHCP_SERVER_IPV4_LEASE（SmartSwitch 専用キー形式）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-dhcp_server_ipv4_server_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB: DHCP_SERVER_IPV4_SERVER_IP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etckeakea-dhcp4confsmartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイル: /etc/kea/kea-dhcp4.conf（SmartSwitch 固有の差異）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-feature-minigraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB: FEATURE テーブル（minigraph 投入時の連鎖書き込み）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcrelay-dhcprelayd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dhcrelay プロセス制御（dhcprelayd 経由）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producer-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer / Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dpus-dhcpservd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE / DPUS → dhcpservd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mid_plane_bridge-dhcprelayd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MID_PLANE_BRIDGE → dhcprelayd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcp_server_ipv4_port-dhcpservd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DHCP_SERVER_IPV4_PORT → dhcpservd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム依存・ハードウェア固有挙動 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム依存・ハードウェア固有挙動 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-chassisd-is_smartswitch-is_dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. chassisd のデーモン分岐 — is_smartswitch() / is_dpu()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-init_midplane_switch-mid_plane_bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. init_midplane_switch() — MID_PLANE_BRIDGE との分担
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dpu-platformjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DPU 再起動タイムアウト — platform.json による上書き
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-midplane-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. midplane 到達性チェックと STATE_DB 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-chassis_module-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. CHASSIS_MODULE テーブルと DPU 名前制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB を経由しない主なプラットフォーム動作
       
     </span>
   </a>
@@ -34972,7 +36012,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         参照
@@ -35142,18 +36182,157 @@ DHCP サーバ (<code>dhcp_server</code> feature) が <code>DHCP_SERVER_IPV4_POR
 <li><code>dhcpservd</code> (<code>dhcp_cfggen.py</code>): <code>DHCP_SERVER_IPV4_PORT</code> を <code>_parse_port()</code> で解析し、<code>dhcpd.conf</code> の <code>host</code> 節に展開</li>
 </ul>
 <hr />
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>dhcpservd</code> の <code>generate()</code> と <code>dhcprelayd</code> の <code>refresh_dhcrelay()</code> はイベントごとに CONFIG_DB を全量スナップショットし Kea / dhcrelay 設定を再生成する。このため書き込み順序が初回起動時の設定完全性に影響する。</p>
+<h3 id="_7">検出された順序依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>DEVICE_METADATA\|localhost.subtype = "SmartSwitch"</code> → <code>MID_PLANE_BRIDGE</code> / <code>DHCP_SERVER_IPV4_PORT</code> 処理</td>
+<td>先行必須（欠如時 SmartSwitch 経路が完全スキップ）</td>
+<td><code>MidPlaneTableEventChecker</code> 変更で <code>dhcpservd</code> が再生成トリガー</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>MID_PLANE_BRIDGE\|GLOBAL.bridge</code> と <code>ip_prefix</code> の同時書き込み</td>
+<td>必須（片方欠如で SmartSwitch サブネット生成がスキップ）</td>
+<td>YANG <code>must</code> 制約が CLI 経由の不整合書き込みを拒否</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>DPUS\|&lt;dpu_name&gt;</code> → <code>DHCP_SERVER_IPV4_PORT\|bridge-midplane\|&lt;dpu&gt;</code></td>
+<td>先行必須（YANG leafref 制約）</td>
+<td>CLI / sonic-cfggen は YANG バリデーションで reject</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>MID_PLANE_BRIDGE\|GLOBAL</code> + <code>DHCP_SERVER_IPV4\|bridge-midplane</code> → <code>dhcprelayd</code> midplane 認識</td>
+<td>同時または先行推奨</td>
+<td><code>MidPlaneTableEventChecker</code> で変更後に自動再評価</td>
+</tr>
+<tr>
+<td>5</td>
+<td>全 SmartSwitch テーブル → <code>FEATURE\|dhcp_server.state=enabled</code></td>
+<td>推奨先行（初回起動時の設定欠落回避）</td>
+<td>後から Feature 有効化しても <code>MidPlaneTableEventChecker</code> で自動再生成</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">主要な制約詳細<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><strong>DEVICE_METADATA.subtype 先行必須 (依存 #1)</strong>: <code>dhcp_cfggen.py:65-76</code> の <code>generate()</code> は最初に <code>DEVICE_METADATA</code> を読み <code>is_smart_switch()</code> を評価する。<code>subtype != "SmartSwitch"</code> の場合 <code>_parse_dpu()</code> は呼ばれず <code>MID_PLANE_BRIDGE</code> / <code>DHCP_SERVER_IPV4_PORT</code> / <code>DPUS</code> が存在していても SmartSwitch 用 Kea 設定が生成されない。<code>config_samples.py:83</code> でも <code>subtype</code> 設定を <code>MID_PLANE_BRIDGE</code> より先に行う（evidence: <code>dhcp_cfggen.py:65-76</code>; <code>utils.py:153-161</code>）。</p>
+<p><strong>bridge + ip_prefix の同時書き込み必須 (依存 #2)</strong>: <code>dhcp_cfggen.py:84</code> の条件 <code>"bridge" in mid_plane and "ip_prefix" in mid_plane</code> を両方満たすとき初めて SmartSwitch サブネットが Kea 設定に追加される。YANG <code>must "(current()/../ip_prefix)"</code> 制約も <code>bridge</code> と <code>ip_prefix</code> の同時存在を強制する（evidence: <code>dhcp_cfggen.py:84</code>, <code>sonic-smart-switch.yang:63-74</code>）。</p>
+<p><strong>DPUS 先行必須 (依存 #3)</strong>: <code>DHCP_SERVER_IPV4_PORT.&lt;port&gt;</code> フィールドは <code>DPUS.&lt;dpu_name&gt;.midplane_interface</code> への YANG leafref であるため、<code>DPUS</code> エントリが存在しない状態で <code>DHCP_SERVER_IPV4_PORT</code> を書いても YANG バリデーションで reject される（evidence: <code>sonic-smart-switch.yang:94-103</code>）。</p>
+<p>詳細スキャン手順と依存関係の根拠は <code>meta/_intermediate/cdb-flow/smart-switch-ordering.md</code> を参照。</p>
+<!-- /ordering -->
+
+<hr />
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>MID_PLANE_BRIDGE</code> および <code>DHCP_SERVER_IPV4_PORT</code> は CONFIG_DB の複数テーブルを YANG leafref
+またはコード側の implicit 参照で依存する。</p>
+<table>
+<thead>
+<tr>
+<th>参照元テーブル</th>
+<th>参照元フィールド</th>
+<th>参照先テーブル</th>
+<th>参照先フィールド</th>
+<th>参照種別</th>
+<th>参照箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DHCP_SERVER_IPV4</code></td>
+<td><code>name</code> (SmartSwitch 用値 <code>"bridge-midplane"</code>)</td>
+<td><code>MID_PLANE_BRIDGE\|GLOBAL</code></td>
+<td><code>bridge</code></td>
+<td>YANG leafref</td>
+<td><code>sonic-dhcp-server-ipv4.yang:61-63</code></td>
+</tr>
+<tr>
+<td><code>DHCP_SERVER_IPV4_PORT</code></td>
+<td><code>name</code></td>
+<td><code>DHCP_SERVER_IPV4</code></td>
+<td><code>name</code> (キー)</td>
+<td>YANG leafref</td>
+<td><code>sonic-dhcp-server-ipv4.yang:217-219</code></td>
+</tr>
+<tr>
+<td><code>DHCP_SERVER_IPV4_PORT</code></td>
+<td><code>port</code> (<code>dpu0</code> 等)</td>
+<td><code>DPUS</code></td>
+<td><code>midplane_interface</code></td>
+<td>YANG leafref</td>
+<td><code>sonic-dhcp-server-ipv4.yang:231-233</code></td>
+</tr>
+<tr>
+<td><code>dhcpservd</code> (コード)</td>
+<td>—</td>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>localhost.subtype</code></td>
+<td>暗黙参照</td>
+<td><code>dhcp_cfggen.py:65-67</code></td>
+</tr>
+<tr>
+<td><code>dhcpservd</code> (コード)</td>
+<td>—</td>
+<td><code>DPUS</code></td>
+<td><code>midplane_interface</code></td>
+<td>暗黙参照</td>
+<td><code>dhcp_cfggen.py:74,119</code></td>
+</tr>
+<tr>
+<td><code>dhcprelayd</code> (コード)</td>
+<td>—</td>
+<td><code>DHCP_SERVER_IPV4</code></td>
+<td><code>state</code></td>
+<td>暗黙参照</td>
+<td><code>dhcprelayd.py:82-103</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">解決タイミング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>YANG leafref は CONFIG_DB への書き込み時に <code>sonic-cfggen</code> / CLI の YANG バリデーションで確認される。
+  参照先が存在しない場合は書き込みが reject される。</li>
+<li><code>dhcpservd</code> の暗黙参照は <code>generate()</code> 呼び出し時 (起動時 + テーブル変更イベント時) に評価される。
+  <code>DEVICE_METADATA.subtype</code> が <code>"SmartSwitch"</code> でない場合、<code>MID_PLANE_BRIDGE</code> / <code>DPUS</code> /
+  <code>DHCP_SERVER_IPV4_PORT</code> への参照コードは実行されない。</li>
+</ul>
+<h3 id="_10">必須先行順序<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>DEVICE_METADATA|localhost.subtype = &quot;SmartSwitch&quot;   ← SmartSwitch 経路を有効化
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>DPUS|&lt;dpu_name&gt;                                      ← DHCP_SERVER_IPV4_PORT.port の leafref 源
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>MID_PLANE_BRIDGE|GLOBAL                              ← DHCP_SERVER_IPV4.name の leafref 源
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>DHCP_SERVER_IPV4|bridge-midplane                    ← DHCP_SERVER_IPV4_PORT.name の leafref 源
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>DHCP_SERVER_IPV4_PORT|bridge-midplane|&lt;dpu&gt;         ← 全依存が揃ってから書き込む
+</span></code></pre></div>
+<p>詳細は <code>meta/_intermediate/cdb-flow/smart-switch-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
+<hr />
 <!-- defaults -->
-<h2 id="_7">暗黙デフォルトとハードコード挙動<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_11">暗黙デフォルトとハードコード挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- evidence: meta/_intermediate/cdb-flow/smart-switch-defaults.md -->
 
 <h3 id="1-mid_plane_bridgeglobalbridge-yang-pattern">1. MID_PLANE_BRIDGE|GLOBAL.bridge — YANG pattern で値を固定<a class="headerlink" href="#1-mid_plane_bridgeglobalbridge-yang-pattern" title="Permanent link">&para;</a></h3>
 <p>YANG (<code>sonic-smart-switch.yang:63-69</code>) の定義:</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">bridge</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="k">pattern</span><span class="w"> </span><span class="s2">&quot;bridge-midplane&quot;</span><span class="p">;</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="k">must</span><span class="w"> </span><span class="s2">&quot;(current()/../ip_prefix)&quot;</span><span class="p">;</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
+<div class="language-yang highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">bridge</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">        </span><span class="k">pattern</span><span class="w"> </span><span class="s2">&quot;bridge-midplane&quot;</span><span class="p">;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="k">must</span><span class="w"> </span><span class="s2">&quot;(current()/../ip_prefix)&quot;</span><span class="p">;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <ul>
 <li><code>pattern "bridge-midplane"</code> により設定可能な文字列は <code>"bridge-midplane"</code> のみ。</li>
@@ -35163,33 +36342,33 @@ DHCP サーバ (<code>dhcp_server</code> feature) が <code>DHCP_SERVER_IPV4_POR
 <p>証跡: <code>sonic-smart-switch.yang:63-69</code>、<code>config_samples.py:88</code></p>
 <h3 id="2-mid_plane_bridgeglobalip_prefix-16925420025424">2. MID_PLANE_BRIDGE|GLOBAL.ip_prefix — 事実上のデフォルト <code>169.254.200.254/24</code><a class="headerlink" href="#2-mid_plane_bridgeglobalip_prefix-16925420025424" title="Permanent link">&para;</a></h3>
 <p>YANG に <code>default</code> 宣言なし。ただし SmartSwitch 設定生成コード (<code>config_samples.py:85-94</code>) でハードコードされる:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">mpbr_prefix</span> <span class="o">=</span> <span class="s1">&#39;169.254.200&#39;</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">mpbr_address</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.254&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mpbr_prefix</span><span class="p">)</span>  <span class="c1"># &quot;169.254.200.254&quot;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MID_PLANE_BRIDGE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="s2">&quot;GLOBAL&quot;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>        <span class="s2">&quot;bridge&quot;</span><span class="p">:</span> <span class="n">bridge_name</span><span class="p">,</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>        <span class="s2">&quot;ip_prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;169.254.200.254/24&quot;</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="p">}</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">}</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">mpbr_prefix</span> <span class="o">=</span> <span class="s1">&#39;169.254.200&#39;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">mpbr_address</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.254&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mpbr_prefix</span><span class="p">)</span>  <span class="c1"># &quot;169.254.200.254&quot;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MID_PLANE_BRIDGE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="s2">&quot;GLOBAL&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>        <span class="s2">&quot;bridge&quot;</span><span class="p">:</span> <span class="n">bridge_name</span><span class="p">,</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="s2">&quot;ip_prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;169.254.200.254/24&quot;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="p">}</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>リンクローカル帯 <code>169.254.200.0/24</code> を使用。テスト用 mock データも同値。</p>
 <p>証跡: <code>config_samples.py:85-94</code>、<code>tests/sample_output/t1-smartswitch.json</code></p>
 <h3 id="3-dhcp_server_ipv4_portips-dpu-id">3. DHCP_SERVER_IPV4_PORT.ips — DPU ID から計算されるハードコードルール<a class="headerlink" href="#3-dhcp_server_ipv4_portips-dpu-id" title="Permanent link">&para;</a></h3>
 <p>YANG に <code>default</code> 宣言なし。設定生成コード (<code>config_samples.py:99-103</code>):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">dpu_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">midplane_interface</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;dpu&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">dhcp_server_ports</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">|</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bridge_name</span><span class="p">,</span> <span class="n">midplane_interface</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="s1">&#39;ips&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mpbr_prefix</span><span class="p">,</span> <span class="n">dpu_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">}</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">dpu_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">midplane_interface</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;dpu&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">dhcp_server_ports</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">|</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bridge_name</span><span class="p">,</span> <span class="n">midplane_interface</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="s1">&#39;ips&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mpbr_prefix</span><span class="p">,</span> <span class="n">dpu_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>DPU ごとに <code>169.254.200.&lt;dpu_id+1&gt;</code> が計算・割り当てられる。これは YANG デフォルトではなく
 <code>config_samples.py</code> のコード生成ルール。ユーザが手動設定する際は任意の値を指定可能。</p>
 <p>証跡: <code>config_samples.py:99-103</code></p>
 <h3 id="4-smart_switch">4. smart_switch フラグによるハンドラ分岐<a class="headerlink" href="#4-smart_switch" title="Permanent link">&para;</a></h3>
 <p><code>dhcp_cfggen.py:67, 76, 84</code> および <code>dhcprelayd.py:65, 102</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">smart_switch</span> <span class="o">=</span> <span class="n">is_smart_switch</span><span class="p">(</span><span class="n">device_metadata</span><span class="p">)</span>  <span class="c1"># DEVICE_METADATA.subtype == &quot;SmartSwitch&quot;</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">mid_plane</span><span class="p">,</span> <span class="n">dpus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_dpu</span><span class="p">(</span><span class="o">...</span><span class="p">)</span> <span class="k">if</span> <span class="n">smart_switch</span> <span class="k">else</span> <span class="p">({},</span> <span class="p">{})</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">if</span> <span class="n">smart_switch</span> <span class="ow">and</span> <span class="s2">&quot;bridge&quot;</span> <span class="ow">in</span> <span class="n">mid_plane</span> <span class="ow">and</span> <span class="s2">&quot;ip_prefix&quot;</span> <span class="ow">in</span> <span class="n">mid_plane</span><span class="p">:</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="c1"># MID_PLANE_BRIDGE の処理を実行</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">smart_switch</span> <span class="o">=</span> <span class="n">is_smart_switch</span><span class="p">(</span><span class="n">device_metadata</span><span class="p">)</span>  <span class="c1"># DEVICE_METADATA.subtype == &quot;SmartSwitch&quot;</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">mid_plane</span><span class="p">,</span> <span class="n">dpus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_dpu</span><span class="p">(</span><span class="o">...</span><span class="p">)</span> <span class="k">if</span> <span class="n">smart_switch</span> <span class="k">else</span> <span class="p">({},</span> <span class="p">{})</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">if</span> <span class="n">smart_switch</span> <span class="ow">and</span> <span class="s2">&quot;bridge&quot;</span> <span class="ow">in</span> <span class="n">mid_plane</span> <span class="ow">and</span> <span class="s2">&quot;ip_prefix&quot;</span> <span class="ow">in</span> <span class="n">mid_plane</span><span class="p">:</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="c1"># MID_PLANE_BRIDGE の処理を実行</span>
 </span></code></pre></div>
 <p><code>MID_PLANE_BRIDGE</code> と <code>DHCP_SERVER_IPV4_PORT</code> の SmartSwitch 向け処理は <code>smart_switch</code> フラグが
 <code>True</code> の場合のみ実行される。非 SmartSwitch 環境では両テーブルが存在しても DHCP サーバは
@@ -35197,15 +36376,15 @@ DHCP サーバ (<code>dhcp_server</code> feature) が <code>DHCP_SERVER_IPV4_POR
 <p>証跡: <code>dhcp_cfggen.py:67-90</code>、<code>dhcprelayd.py:84-103</code></p>
 <h3 id="5-dpusmidplane_interface-dpu_name-yang">5. DPUS.midplane_interface — dpu_name と等値の YANG 強制<a class="headerlink" href="#5-dpusmidplane_interface-dpu_name-yang" title="Permanent link">&para;</a></h3>
 <p>YANG (<code>sonic-smart-switch.yang:94-103</code>):</p>
-<div class="language-yang highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">midplane_interface</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">pattern</span><span class="w"> </span><span class="s2">&quot;dpu[0-9]+&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="k">must</span><span class="w"> </span><span class="s2">&quot;(current() = current()/../dpu_name)&quot;</span><span class="p">;</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">}</span>
+<div class="language-yang highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">midplane_interface</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">pattern</span><span class="w"> </span><span class="s2">&quot;dpu[0-9]+&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="k">must</span><span class="w"> </span><span class="s2">&quot;(current() = current()/../dpu_name)&quot;</span><span class="p">;</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="p">}</span>
 </span></code></pre></div>
 <p><code>must</code> 制約により <code>midplane_interface</code> は常に <code>dpu_name</code> と等しい値でなければならない。
 これが <code>DHCP_SERVER_IPV4_PORT</code> の <code>port</code> フィールドへの leafref の根拠となる。</p>
 <p>証跡: <code>sonic-smart-switch.yang:94-103</code></p>
-<h3 id="_8">暗黙デフォルト・乖離サマリー<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_12">暗黙デフォルト・乖離サマリー<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -35271,13 +36450,707 @@ DHCP サーバ (<code>dhcp_server</code> feature) が <code>DHCP_SERVER_IPV4_POR
 <!-- /defaults -->
 
 <hr />
+<!-- failure -->
+<h2 id="phase-e">無効入力・障害時の挙動 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/smart-switch-failure.md -->
+
+<h3 id="1-yang">1. YANG バリデーション失敗（書き込み拒否）<a class="headerlink" href="#1-yang" title="Permanent link">&para;</a></h3>
+<p><strong><code>MID_PLANE_BRIDGE.bridge</code> パターン違反</strong><br />
+<code>sonic-smart-switch.yang:63-69</code> の <code>pattern "bridge-midplane"</code> により、<code>"bridge-midplane"</code> 以外の値は
+CLI 書き込み時に即座に拒否される。<code>must "(current()/../ip_prefix)"</code> 制約により、<code>bridge</code> のみを書いて
+<code>ip_prefix</code> を省略した場合も同様に拒否される。</p>
+<p><strong><code>DHCP_SERVER_IPV4_PORT</code> leafref 解決失敗</strong><br />
+<code>DHCP_SERVER_IPV4|bridge-midplane</code> が存在しない状態で <code>DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu0</code> を
+書き込むと YANG leafref 制約違反で拒否される（<code>sonic-dhcp-server-ipv4.yang:217-219</code>）。
+同様に <code>DPUS|dpu0</code> が存在しない状態での <code>port</code> フィールド参照も拒否される（同:231-233）。</p>
+<h3 id="2-dhcpservd">2. dhcpservd — サイレント失敗<a class="headerlink" href="#2-dhcpservd" title="Permanent link">&para;</a></h3>
+<p>SmartSwitch 向け DHCP 処理の多くは失敗時にエラーログを出さずスキップする。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>コード位置</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA.subtype != "SmartSwitch"</code></td>
+<td><code>dhcp_cfggen.py:67,76</code></td>
+<td><code>_parse_dpu()</code> を呼ばず空辞書返却。<code>MID_PLANE_BRIDGE</code> / <code>DPUS</code> を完全無視</td>
+</tr>
+<tr>
+<td><code>bridge</code> または <code>ip_prefix</code> 欠落</td>
+<td><code>dhcp_cfggen.py:84</code></td>
+<td>midplane が <code>dhcp_interfaces</code> に未登録。DPU への IP 払い出しが停止</td>
+</tr>
+<tr>
+<td><code>DHCP_SERVER_IPV4_PORT</code> のポートが <code>dhcp_members</code> に不在</td>
+<td><code>dhcp_cfggen.py:424-425</code></td>
+<td><code>LOG_WARNING</code> を出力して当該ポートをスキップ。他ポートは処理継続</td>
+</tr>
+<tr>
+<td><code>dhcp_interface</code> に IPv4 アドレスなし</td>
+<td><code>dhcp_cfggen.py:432-433</code></td>
+<td><code>LOG_WARNING</code> を出力してスキップ</td>
+</tr>
+<tr>
+<td><code>ips</code> と <code>ranges</code> の同時指定</td>
+<td><code>dhcp_cfggen.py:418-420</code></td>
+<td><code>LOG_WARNING</code> を出力して当該ポートをスキップ（YANG は通常書き込み時に弾く）</td>
+</tr>
+</tbody>
+</table>
+<p>上記の「サイレント失敗」はいずれも CONFIG_DB を変更せず、他テーブルや他ポートの処理に影響を与えない。</p>
+<h3 id="3-dhcpservd-generate">3. dhcpservd — 致命的エラー（generate() 全体失敗）<a class="headerlink" href="#3-dhcpservd-generate" title="Permanent link">&para;</a></h3>
+<p><strong>hostname 未設定</strong> (<code>dhcp_cfggen.py:171-174</code>):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">if</span> <span class="n">localhost_entry</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s2">&quot;hostname&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">localhost_entry</span><span class="p">:</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">syslog</span><span class="o">.</span><span class="n">syslog</span><span class="p">(</span><span class="n">syslog</span><span class="o">.</span><span class="n">LOG_ERR</span><span class="p">,</span> <span class="s2">&quot;Cannot get hostname&quot;</span><span class="p">)</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot get hostname&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p><code>DEVICE_METADATA|localhost.hostname</code> が存在しない場合、<code>LOG_ERR</code> を出力して例外を送出する。
+<code>generate()</code> 全体が失敗し Kea 設定ファイルが更新されない。</p>
+<h3 id="4-dhcprelayd">4. dhcprelayd — プロセス起動失敗<a class="headerlink" href="#4-dhcprelayd" title="Permanent link">&para;</a></h3>
+<p><strong>dhcrelay ゾンビ起動</strong> (<code>dhcprelayd.py:306-313</code>):<br />
+dhcrelay プロセスが起動直後にゾンビ状態になった場合、<code>LOG_ERR</code> を出力してプロセスを
+強制終了し <code>sys.exit(1)</code> する。<code>dhcprelayd</code> コンテナが再起動する。</p>
+<p><strong>dhcp_server IP タイムアウト</strong> (<code>dhcprelayd.py:375-385</code>):<br />
+STATE_DB の <code>DHCP_SERVER_IPV4_SERVER_IP|eth0.ip</code> を 10 回（合計 100 秒）リトライして
+取得できない場合、<code>LOG_ERR</code> を出力して <code>sys.exit(1)</code> する。コンテナが再起動する。</p>
+<h3 id="5-dhcp_lease-lease">5. dhcp_lease — lease ファイル不在<a class="headerlink" href="#5-dhcp_lease-lease" title="Permanent link">&para;</a></h3>
+<p><strong>lease ファイル不在</strong> (<code>dhcp_lease.py:116-121</code>):<br />
+Kea の lease ファイル（デフォルト <code>/var/lib/kea/kea-lease.csv</code>）が存在しない場合、
+<code>LOG_ERR</code> を出力して例外を再送出する。STATE_DB の <code>DHCP_SERVER_IPV4_LEASE</code> テーブルは更新されない。</p>
+<h3 id="_13">障害影響まとめ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>障害シナリオ</th>
+<th>ログレベル</th>
+<th>CONFIG_DB への影響</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG pattern/must 制約違反</td>
+<td>—</td>
+<td>書き込み拒否</td>
+<td>CLI がエラーを返す</td>
+</tr>
+<tr>
+<td><code>subtype != SmartSwitch</code></td>
+<td>なし</td>
+<td>不変</td>
+<td>サイレント。DHCP 設定不生成</td>
+</tr>
+<tr>
+<td><code>bridge</code>/<code>ip_prefix</code> 片欠落</td>
+<td>なし</td>
+<td>不変</td>
+<td>サイレント。midplane DHCP 停止</td>
+</tr>
+<tr>
+<td>port が dhcp_members に不在</td>
+<td>WARNING</td>
+<td>不変</td>
+<td>当該ポートのみスキップ</td>
+</tr>
+<tr>
+<td>IPv4 アドレスなし dhcp_interface</td>
+<td>WARNING</td>
+<td>不変</td>
+<td>当該インターフェースのみスキップ</td>
+</tr>
+<tr>
+<td><code>ips</code> + <code>ranges</code> 同時指定</td>
+<td>WARNING</td>
+<td>不変</td>
+<td>当該ポートのみスキップ</td>
+</tr>
+<tr>
+<td>hostname 未設定</td>
+<td>ERR</td>
+<td>不変</td>
+<td><code>generate()</code> 全体失敗</td>
+</tr>
+<tr>
+<td>dhcrelay ゾンビ起動</td>
+<td>ERR</td>
+<td>不変</td>
+<td>コンテナ再起動</td>
+</tr>
+<tr>
+<td>dhcp_server IP タイムアウト</td>
+<td>ERR</td>
+<td>不変</td>
+<td>コンテナ再起動</td>
+</tr>
+<tr>
+<td>lease ファイル不在</td>
+<td>ERR</td>
+<td>不変</td>
+<td><code>DHCP_SERVER_IPV4_LEASE</code> 更新停止</td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e_1">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e_1" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>src/sonic-yang-models/yang-models/sonic-smart-switch.yang</code>, <code>src/sonic-config-engine/config_samples.py</code>, <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py</code> (2026-05-17)
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-constants.md</code></p>
+</blockquote>
+<h3 id="mid_plane_bridge_1"><code>MID_PLANE_BRIDGE</code> — ハードコード値<a class="headerlink" href="#mid_plane_bridge_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数 / 値</th>
+<th>コード位置</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"bridge-midplane"</code></td>
+<td><code>config_samples.py:88</code>; YANG <code>pattern</code> (<code>sonic-smart-switch.yang:65</code>)</td>
+<td>ミッドプレーンブリッジ名。YANG pattern 制約により唯一有効な値</td>
+</tr>
+<tr>
+<td><code>"169.254.200.254/24"</code></td>
+<td><code>config_samples.py:93</code></td>
+<td><code>MID_PLANE_BRIDGE.GLOBAL.ip_prefix</code> の実装値。サブネットプレフィックス <code>169.254.200</code> は <code>config_samples.py:85</code> で定数化</td>
+</tr>
+<tr>
+<td><code>"169.254.200.254"</code></td>
+<td><code>config_samples.py:86</code></td>
+<td>NPU 側ブリッジ IP（<code>mpbr_prefix + ".254"</code>）。<code>DHCP_SERVER_IPV4.bridge-midplane.gateway</code> に設定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dhcp_server_ipv4_port-dpu-ip"><code>DHCP_SERVER_IPV4_PORT</code> — DPU IP アドレス計算式<a class="headerlink" href="#dhcp_server_ipv4_port-dpu-ip" title="Permanent link">&para;</a></h3>
+<p>DPU の midplane IP は以下の計算式で自動生成される (<code>config_samples.py:102-103</code>):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">dpu_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">midplane_interface</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;dpu&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>   <span class="c1"># &quot;dpu0&quot; → 0</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">dhcp_ip</span> <span class="o">=</span> <span class="s1">&#39;169.254.200.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dpu_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>        <span class="c1"># &quot;169.254.200.&lt;dpu_id+1&gt;&quot;</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>エントリキー</th>
+<th><code>ips[0]</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bridge-midplane\|dpu0</code></td>
+<td><code>169.254.200.1</code></td>
+</tr>
+<tr>
+<td><code>bridge-midplane\|dpu1</code></td>
+<td><code>169.254.200.2</code></td>
+</tr>
+<tr>
+<td><code>bridge-midplane\|dpu7</code></td>
+<td><code>169.254.200.8</code></td>
+</tr>
+</tbody>
+</table>
+<p>NPU ブリッジ IP (<code>169.254.200.254</code>) は最大値 <code>.8</code>（<code>dpu7</code>）と衝突しない設計。</p>
+<h3 id="dhcp_server_ipv4bridge-midplane"><code>DHCP_SERVER_IPV4|bridge-midplane</code> — 固定パラメータ<a class="headerlink" href="#dhcp_server_ipv4bridge-midplane" title="Permanent link">&para;</a></h3>
+<p><code>config_samples.py:133-141</code> でハードコードされた値がそのまま CONFIG_DB に投入される。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>注記</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mode</code></td>
+<td><code>"PORT"</code></td>
+<td>ポートベース割り当てモード固定</td>
+</tr>
+<tr>
+<td><code>netmask</code></td>
+<td><code>"255.255.255.0"</code></td>
+<td><code>/24</code> サブネット固定</td>
+</tr>
+<tr>
+<td><code>gateway</code></td>
+<td><code>"169.254.200.254"</code></td>
+<td>NPU ブリッジ IP 固定</td>
+</tr>
+<tr>
+<td><code>lease_time</code></td>
+<td><code>"3600"</code> 秒 (1 時間)</td>
+<td>SmartSwitch 固定値（通常モードのデフォルト <code>900</code> 秒と異なる）</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td><code>"enabled"</code></td>
+<td>SmartSwitch では最初から有効化</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dhcp_cfggenpy"><code>dhcp_cfggen.py</code> — 内部定数<a class="headerlink" href="#dhcp_cfggenpy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MID_PLANE_BRIDGE_SUBNET_ID</code></td>
+<td><code>10000</code></td>
+<td>kea-dhcp4 の subnet ID（VLAN 番号転用の代わりに固定値を使用）</td>
+</tr>
+<tr>
+<td><code>SMART_SWITCH_CHECKER</code></td>
+<td><code>["DpusTableEventChecker", "MidPlaneTableEventChecker"]</code></td>
+<td>SmartSwitch 環境で追加購読するイベントチェッカー</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-pattern">YANG pattern 制約（ハードコード範囲）<a class="headerlink" href="#yang-pattern" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>制約</th>
+<th>実質的な意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MID_PLANE_BRIDGE.GLOBAL</code></td>
+<td><code>bridge</code></td>
+<td><code>pattern "bridge-midplane"</code></td>
+<td>1 値のみ。変更不可</td>
+</tr>
+<tr>
+<td><code>DPUS</code></td>
+<td><code>dpu_name</code>, <code>midplane_interface</code></td>
+<td><code>pattern "dpu[0-9]+"</code></td>
+<td><code>dpu</code> プレフィックス + 数字</td>
+</tr>
+<tr>
+<td><code>DPUS</code></td>
+<td><code>midplane_interface</code></td>
+<td><code>must (current() = current()/../dpu_name)</code></td>
+<td>インターフェース名 = DPU 名を強制</td>
+</tr>
+<tr>
+<td><code>DPU</code></td>
+<td><code>dpu_id</code></td>
+<td><code>pattern [0-7]</code></td>
+<td>0〜7 の 1 桁（最大 8 DPU）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>src/sonic-config-engine/config_samples.py:83-103,133-143</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:17-31</code>; <code>src/sonic-yang-models/yang-models/sonic-smart-switch.yang:63-70,88-101,155-162</code></p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込・ファイルシステム副作用 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>dhcpservd.py</code>, <code>dhcp_cfggen.py</code>, <code>dhcp_lease.py</code>, <code>dhcprelayd.py</code>, <code>config_samples.py</code> 全行精読 (2026-05-17)<br />
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-side-effects.md</code></p>
+</blockquote>
+<p><code>MID_PLANE_BRIDGE</code> / <code>DPUS</code> / <code>DHCP_SERVER_IPV4_PORT</code> を CONFIG_DB へ書き込むと、以下の副次書き込みが発生する。</p>
+<h3 id="state_db-dhcp_server_ipv4_leasesmartswitch">STATE_DB: DHCP_SERVER_IPV4_LEASE（SmartSwitch 専用キー形式）<a class="headerlink" href="#state_db-dhcp_server_ipv4_leasesmartswitch" title="Permanent link">&para;</a></h3>
+<p>kea-dhcp4 が DPU へ IP アドレスをリース割り当てするたびに SIGUSR1 で dhcpservd に通知し、<code>KeaDhcp4LeaseHandler</code> が <code>/var/lib/kea/kea-lease.csv</code> を読み取って STATE_DB に書き込む。SmartSwitch では <code>Vlan&lt;id&gt;</code> の代わりに <code>bridge-midplane</code> をプレフィックスに使用する。</p>
+<p><strong>key 形式</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>DHCP_SERVER_IPV4_LEASE|bridge-midplane|&lt;mac_address&gt;
+</span></code></pre></div>
+<p><code>MID_PLANE_BRIDGE.GLOBAL.bridge</code> の値（<code>"bridge-midplane"</code>）が <code>midplane_bridge_name</code> として使われる (<code>dhcp_lease.py:37-39</code>)。</p>
+<p><strong>フィールド</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip</code></td>
+<td>DPU に割り当てた IPv4 アドレス（<code>169.254.200.x</code>）</td>
+</tr>
+<tr>
+<td><code>lease_start</code></td>
+<td>リース開始 UNIX タイムスタンプ（<code>lease_end - valid_lifetime</code> で算出）</td>
+</tr>
+<tr>
+<td><code>lease_end</code></td>
+<td>リース終了 UNIX タイムスタンプ（kea-lease.csv の expire カラム）</td>
+</tr>
+</tbody>
+</table>
+<p>有効リース（<code>lease_start != lease_end</code> かつ <code>now &lt; lease_end</code>）のみ <code>hset</code>。期限切れは <code>state_db.delete</code>。<code>lease_update_interval=2</code> 秒のレートリミットあり。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_lease.py:34-39,108-112,79-93</code></p>
+</blockquote>
+<h3 id="state_db-dhcp_server_ipv4_server_ip">STATE_DB: DHCP_SERVER_IPV4_SERVER_IP<a class="headerlink" href="#state_db-dhcp_server_ipv4_server_ip" title="Permanent link">&para;</a></h3>
+<p>dhcpservd 起動時に 1 回のみ実行。dhcp_server コンテナの <code>eth0</code> IPv4 アドレスを STATE_DB に書き込む。SmartSwitch 環境ではこの IP が DPU → NPU 向け DHCP リレーの参照先となる。</p>
+<p><strong>key 形式</strong>: <code>DHCP_SERVER_IPV4_SERVER_IP|eth0</code><br />
+<strong>フィールド</strong>: <code>ip</code> — eth0 の IPv4 アドレス文字列<br />
+取得失敗時は 5 秒間隔で最大 10 回リトライ。10 回失敗で <code>sys.exit(1)</code>。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:70-87</code></p>
+</blockquote>
+<h3 id="etckeakea-dhcp4confsmartswitch">ファイル: /etc/kea/kea-dhcp4.conf（SmartSwitch 固有の差異）<a class="headerlink" href="#etckeakea-dhcp4confsmartswitch" title="Permanent link">&para;</a></h3>
+<p><code>DpusTableEventChecker</code> / <code>MidPlaneTableEventChecker</code> が変更を検知するたびに <code>dump_dhcp4_config()</code> が <code>/etc/kea/kea-dhcp4.conf</code> を上書きして kea-dhcp4 に SIGHUP を送信する。SmartSwitch 固有の差異:</p>
+<ul>
+<li><code>subnet_id</code> に VLAN 番号の代わり固定値 <code>MID_PLANE_BRIDGE_SUBNET_ID = 10000</code> を使用</li>
+<li><code>bridge-midplane</code> が <code>subnet4</code> の対象ネットワークとして追加される</li>
+</ul>
+<blockquote>
+<p><strong>Evidence</strong>: <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:51-68</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:97-100,251</code></p>
+</blockquote>
+<h3 id="config_db-feature-minigraph">CONFIG_DB: FEATURE テーブル（minigraph 投入時の連鎖書き込み）<a class="headerlink" href="#config_db-feature-minigraph" title="Permanent link">&para;</a></h3>
+<p><code>config_samples.py</code> の <code>generate_t1_smartswitch_switch_sample_config()</code> は <code>DPUS</code> エントリが存在する場合（<code>if dhcp_server_ports:</code>）に限り、<code>FEATURE</code> テーブルへ <code>dhcp_relay</code> / <code>dhcp_server</code> エントリを自動投入する。<code>DPUS</code> が空のとき <code>FEATURE</code> エントリは投入されず dhcp_server コンテナは起動しない。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">data</span><span class="p">[</span><span class="s1">&#39;FEATURE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="s2">&quot;dhcp_relay&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;enabled&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">},</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="s2">&quot;dhcp_server&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;enabled&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">}</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<blockquote>
+<p><strong>Evidence</strong>: <code>src/sonic-config-engine/config_samples.py:105-131</code></p>
+</blockquote>
+<h3 id="dhcrelay-dhcprelayd">dhcrelay プロセス制御（dhcprelayd 経由）<a class="headerlink" href="#dhcrelay-dhcprelayd" title="Permanent link">&para;</a></h3>
+<p><code>dhcprelayd</code> は SmartSwitch の場合、<code>MidPlaneTableEventChecker</code> で <code>MID_PLANE_BRIDGE</code> の変更を購読する。<code>bridge-midplane</code> が <code>DHCP_SERVER_IPV4</code> で <code>state=enabled</code> のとき、midplane ブリッジを対象とした <code>dhcrelay</code> プロセスを起動・再起動する。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:82-113</code></p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:9,16-17,69-75,130-136,220-236,349-388</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:25,96,130-148</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:23,97-100</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:28,84-103,156-158,395</code> (2026-05-17)
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-pubsub.md</code></p>
+</blockquote>
+<h3 id="producer-consumer">Producer / Consumer ペア<a class="headerlink" href="#producer-consumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB テーブル</th>
+<th>Producer</th>
+<th>Consumer / 購読方式</th>
+<th>select タイムアウト</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MID_PLANE_BRIDGE\|GLOBAL</code></td>
+<td>sonic-cfggen / config_samples.py</td>
+<td><code>dhcpservd</code> — <code>MidPlaneTableEventChecker</code>（<code>SubscriberStateTable</code> 内包）</td>
+<td>5000 ms</td>
+</tr>
+<tr>
+<td><code>MID_PLANE_BRIDGE\|GLOBAL</code></td>
+<td>sonic-cfggen / config_samples.py</td>
+<td><code>dhcprelayd</code> — <code>MidPlaneTableEventChecker</code>（<code>SubscriberStateTable</code> 内包）</td>
+<td>5000 ms</td>
+</tr>
+<tr>
+<td><code>DPUS\|dpu*</code></td>
+<td>sonic-cfggen / config_samples.py</td>
+<td><code>dhcpservd</code> — <code>DpusTableEventChecker</code>（<code>SubscriberStateTable</code> 内包）</td>
+<td>5000 ms</td>
+</tr>
+<tr>
+<td><code>DHCP_SERVER_IPV4_PORT\|bridge-midplane\|dpu*</code></td>
+<td>sonic-cfggen / config_samples.py</td>
+<td><code>dhcpservd</code> — <code>DhcpPortTableEventChecker</code>（<code>SubscriberStateTable</code> 内包）</td>
+<td>5000 ms</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mid_plane_bridge-dpus-dhcpservd">MID_PLANE_BRIDGE / DPUS → dhcpservd<a class="headerlink" href="#mid_plane_bridge-dpus-dhcpservd" title="Permanent link">&para;</a></h3>
+<p><code>dhcpservd.py</code> は起動時に <code>MidPlaneTableEventChecker</code> と <code>DpusTableEventChecker</code> を <code>swsscommon.Select</code> に登録するが (<code>dhcpservd.py:143-144</code>)、これらは <strong>SmartSwitch モードのときのみ有効化</strong> される。</p>
+<p>有効化フロー:</p>
+<ol>
+<li><code>dhcp_cfggen.generate()</code> 内で <code>is_smart_switch(device_metadata)</code> が <code>True</code> を返すと <code>SMART_SWITCH_CHECKER = ["DpusTableEventChecker", "MidPlaneTableEventChecker"]</code> が <code>subscribe_table</code> に追加される (<code>dhcp_cfggen.py:23,97-98</code>)</li>
+<li><code>generate()</code> の戻り値 <code>enable_checker</code> を受け取った <code>dump_dhcp4_config()</code> が <code>dhcp_servd_monitor.enable_checkers(enable_checker)</code> を呼び出す</li>
+<li>各チェッカーの <code>enable()</code> メソッドで <code>SubscriberStateTable</code> が生成され <code>sel.addSelectable()</code> で登録される (<code>dhcp_db_monitor.py:69-75</code>)</li>
+</ol>
+<p>非 SmartSwitch 環境では <code>is_smart_switch()</code> が <code>False</code> を返すため、両チェッカーはオブジェクトとして存在するものの <code>enable()</code> されず購読が発生しない。</p>
+<p><strong>トリガー条件</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>チェッカー</th>
+<th>トリガー条件</th>
+<th>コード位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MidPlaneTableEventChecker</code></td>
+<td>op=<code>DEL</code> の場合は常にトリガー。op=<code>SET</code> の場合は <code>bridge</code> フィールドが <code>enabled_dhcp_interfaces</code> に含まれるときのみトリガー</td>
+<td><code>dhcp_db_monitor.py:362-368</code></td>
+</tr>
+<tr>
+<td><code>DpusTableEventChecker</code></td>
+<td>あらゆるイベント（SET/DEL 問わず）を無条件でトリガー（<code>_process_check()</code> が常に <code>True</code> を返す）</td>
+<td><code>dhcp_db_monitor.py:384-385</code></td>
+</tr>
+</tbody>
+</table>
+<p>イベント検知後、<code>DhcpServd.dump_dhcp4_config()</code> が <code>/etc/kea/kea-dhcp4.conf</code> を再生成し kea-dhcp4 に SIGHUP を送信してミッドプレーン DHCP プールが再構成される。</p>
+<h3 id="mid_plane_bridge-dhcprelayd">MID_PLANE_BRIDGE → dhcprelayd<a class="headerlink" href="#mid_plane_bridge-dhcprelayd" title="Permanent link">&para;</a></h3>
+<p><code>dhcprelayd.py</code> も独立して <code>MidPlaneTableEventChecker</code> を <code>sel</code> に登録する (<code>dhcprelayd.py:395</code>)。こちらの有効化は <code>refresh_dhcrelay()</code> 内で決定される:</p>
+<ul>
+<li><code>DHCP_SERVER_IPV4</code> テーブルに <code>bridge-midplane</code> が <code>state=enabled</code> で存在し、かつ <code>self.smart_switch=True</code> のとき <code>MID_PLANE_CHECKER</code> が <code>enabled_checkers</code> に追加される (<code>dhcprelayd.py:102-103</code>)</li>
+<li>イベント検知時 (<code>check_res[MID_PLANE_CHECKER] = True</code>) は <code>_proceed_with_check_res()</code> が <code>refresh_dhcrelay(force_kill=True)</code> を呼び出す (<code>dhcprelayd.py:156-158</code>)</li>
+<li><code>force_kill=True</code> は既存の dhcrelay プロセスを強制終了して再起動することを意味する</li>
+</ul>
+<h3 id="dhcp_server_ipv4_port-dhcpservd">DHCP_SERVER_IPV4_PORT → dhcpservd<a class="headerlink" href="#dhcp_server_ipv4_port-dhcpservd" title="Permanent link">&para;</a></h3>
+<p><code>DhcpPortTableEventChecker</code> は非 SmartSwitch でも常時有効。<code>key.split("|")[0]</code>（dhcp_interface 部分）が <code>enabled_dhcp_interfaces</code> に含まれるときのみ再生成トリガーとなる (<code>dhcp_db_monitor.py:230-236</code>)。SmartSwitch 環境では <code>"bridge-midplane"</code> が <code>enabled_dhcp_interfaces</code> に入るため、<code>DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu*</code> の全エントリ変更がトリガーになる。</p>
+<h3 id="_14">データフロー図<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>CONFIG_DB[MID_PLANE_BRIDGE|GLOBAL]
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>  ↓ SubscriberStateTable (MidPlaneTableEventChecker)
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>  ↓ bridge in enabled_dhcp_interfaces → need_refresh=True
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>  ↓ dump_dhcp4_config(): /etc/kea/kea-dhcp4.conf 上書き
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>kea-dhcp4 (SIGHUP) → ミッドプレーン DHCP サブネット再構成
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>CONFIG_DB[MID_PLANE_BRIDGE|GLOBAL]
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>  ↓ SubscriberStateTable (MidPlaneTableEventChecker)
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>dhcprelayd [DEFAULT_SELECT_TIMEOUT=5000ms]
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>  ↓ check_res[MID_PLANE_CHECKER]=True → refresh_dhcrelay(force_kill=True)
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>dhcrelay プロセス強制再起動 → ミッドプレーン DHCP リレー経路更新
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>CONFIG_DB[DPUS|dpu*]
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>  ↓ SubscriberStateTable (DpusTableEventChecker)
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>  ↓ 全イベント無条件で need_refresh=True → dump_dhcp4_config()
+</span><span id="__span-14-18"><a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>kea-dhcp4 設定再生成
+</span><span id="__span-14-19"><a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>
+</span><span id="__span-14-20"><a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a>CONFIG_DB[DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu*]
+</span><span id="__span-14-21"><a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a>  ↓ SubscriberStateTable (DhcpPortTableEventChecker)
+</span><span id="__span-14-22"><a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a>dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
+</span><span id="__span-14-23"><a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a>  ↓ &quot;bridge-midplane&quot; in enabled_dhcp_interfaces → need_refresh=True
+</span><span id="__span-14-24"><a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a>  ↓ dump_dhcp4_config() → kea-dhcp4 設定再生成
+</span></code></pre></div>
+<!-- /pubsub -->
+
+<hr />
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム依存・ハードウェア固有挙動 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-chassisd/scripts/chassisd:1571-1583,717-731,1074-1110,1180-1228,236-256</code>; <code>sonic_platform_base/chassis_base.py:171-184,317-340</code> (2026-05-17)<br />
+詳細証跡: <code>meta/_intermediate/cdb-flow/smart-switch-platform.md</code></p>
+</blockquote>
+<h3 id="1-chassisd-is_smartswitch-is_dpu">1. chassisd のデーモン分岐 — is_smartswitch() / is_dpu()<a class="headerlink" href="#1-chassisd-is_smartswitch-is_dpu" title="Permanent link">&para;</a></h3>
+<p><code>chassisd</code> の <code>main()</code> は起動時にプラットフォーム API で SmartSwitch / DPU を判定し、3 種類のデーモンに分岐する。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># chassisd:1576-1581</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">if</span> <span class="n">chassis</span><span class="o">.</span><span class="n">is_smartswitch</span><span class="p">()</span> <span class="ow">and</span> <span class="n">chassis</span><span class="o">.</span><span class="n">is_dpu</span><span class="p">():</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="n">chassisd</span> <span class="o">=</span> <span class="n">DpuChassisdDaemon</span><span class="p">(</span><span class="n">SYSLOG_IDENTIFIER</span><span class="p">,</span> <span class="n">chassis</span><span class="p">)</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="n">chassisd</span> <span class="o">=</span> <span class="n">ChassisdDaemon</span><span class="p">(</span><span class="n">SYSLOG_IDENTIFIER</span><span class="p">,</span> <span class="n">chassis</span><span class="p">)</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>デーモンクラス</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>is_smartswitch() and is_dpu()</code></td>
+<td><code>DpuChassisdDaemon</code></td>
+<td>DPU 上で動作。control/data plane 状態を CHASSIS_STATE_DB に更新</td>
+</tr>
+<tr>
+<td><code>is_smartswitch() and not is_dpu()</code></td>
+<td><code>ChassisdDaemon</code>（SmartSwitch モード）</td>
+<td>NPU 上で動作。<code>SmartSwitchModuleUpdater</code> で全 DPU を管理</td>
+</tr>
+<tr>
+<td><code>not is_smartswitch()</code></td>
+<td><code>ChassisdDaemon</code>（通常モード）</td>
+<td>スーパバイザ / ラインカード構成で動作</td>
+</tr>
+</tbody>
+</table>
+<p><code>chassis_base.py:317-325</code> のデフォルト実装は <code>is_smartswitch()</code> が <code>False</code> を返す。SmartSwitch プラットフォームはこのメソッドをオーバーライドして <code>True</code> を返す必要がある。</p>
+<h3 id="2-init_midplane_switch-mid_plane_bridge">2. init_midplane_switch() — MID_PLANE_BRIDGE との分担<a class="headerlink" href="#2-init_midplane_switch-mid_plane_bridge" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の <code>MID_PLANE_BRIDGE|GLOBAL</code> はブリッジ名と IP プレフィックスを保持するが、
+<code>bridge-midplane</code> カーネルインターフェースの実際の初期化はプラットフォーム API で行われる。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># chassis_base.py:171-184</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">init_midplane_switch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="sd">    Initializes the midplane functionality of the modular chassis.</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="sd">    The expectation is that the required kernel modules, ip-address assignment</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="sd">    etc are done before the pmon, database dockers are up.</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>    <span class="k">return</span> <span class="ne">NotImplementedError</span>
+</span></code></pre></div>
+<p><code>SmartSwitchModuleUpdater.__init__()</code> はこのメソッドの戻り値を <code>self.midplane_initialized</code> に保存する。<code>False</code> の場合は <code>LOG_ERR</code> を出力し、<code>check_midplane_reachability()</code> が全面スキップされる（<code>chassisd:1074-1076</code>）。CONFIG_DB は参照しない。</p>
+<h3 id="3-dpu-platformjson">3. DPU 再起動タイムアウト — platform.json による上書き<a class="headerlink" href="#3-dpu-platformjson" title="Permanent link">&para;</a></h3>
+<p><code>SmartSwitchModuleUpdater</code> は DPU 再起動タイムアウトのデフォルト値（<code>DEFAULT_DPU_REBOOT_TIMEOUT = 360</code> 秒）を <code>/usr/share/sonic/platform/platform.json</code> で上書きできる。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># chassisd:721-730</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">dpu_reboot_timeout</span> <span class="o">=</span> <span class="n">DEFAULT_DPU_REBOOT_TIMEOUT</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">PLATFORM_JSON_FILE</span><span class="p">):</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">PLATFORM_JSON_FILE</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>        <span class="n">platform_cfg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">dpu_reboot_timeout</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">platform_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dpu_reboot_timeout&quot;</span><span class="p">,</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>                                                    <span class="n">DEFAULT_DPU_REBOOT_TIMEOUT</span><span class="p">))</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_DPU_REBOOT_TIMEOUT</code></td>
+<td><code>360</code> 秒</td>
+<td>プラットフォーム設定がない場合のデフォルト</td>
+</tr>
+<tr>
+<td><code>MAX_DPU_REBOOT_DURATION</code></td>
+<td><code>800</code> 秒</td>
+<td>再起動判定の有効期間上限</td>
+</tr>
+<tr>
+<td><code>PLATFORM_JSON_FILE</code></td>
+<td><code>/usr/share/sonic/platform/platform.json</code></td>
+<td>プラットフォーム固有設定ファイル</td>
+</tr>
+</tbody>
+</table>
+<p>YANG / CONFIG_DB フィールドではなく、ファイルシステム上のプラットフォーム構成ファイルによる制御。</p>
+<h3 id="4-midplane-state_db">4. midplane 到達性チェックと STATE_DB 書き込み<a class="headerlink" href="#4-midplane-state_db" title="Permanent link">&para;</a></h3>
+<p><code>check_midplane_reachability()</code> が <code>CHASSIS_INFO_UPDATE_PERIOD_SECS = 10</code> 秒周期で呼ばれ、
+プラットフォーム API からの結果を STATE_DB / CHASSIS_STATE_DB に反映する。</p>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム API</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>module.get_midplane_ip()</code></td>
+<td>DPU の midplane IP アドレスを返す</td>
+</tr>
+<tr>
+<td><code>module.is_midplane_reachable()</code></td>
+<td>midplane 到達可能性を返す（ping / ARP 等）</td>
+</tr>
+</tbody>
+</table>
+<p>書き込み先:</p>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>CHASSIS_MIDPLANE_TABLE\|&lt;DPU名&gt;</code></td>
+<td><code>ip_address</code></td>
+<td><code>get_midplane_ip()</code> の戻り値</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>CHASSIS_MIDPLANE_TABLE\|&lt;DPU名&gt;</code></td>
+<td><code>access</code></td>
+<td><code>str(is_midplane_reachable())</code></td>
+</tr>
+<tr>
+<td>CHASSIS_STATE_DB</td>
+<td><code>DPU_STATE\|&lt;DPU名&gt;</code></td>
+<td><code>dpu_midplane_link_state</code></td>
+<td><code>"up"</code> / <code>"down"</code></td>
+</tr>
+<tr>
+<td>CHASSIS_STATE_DB</td>
+<td><code>DPU_STATE\|&lt;DPU名&gt;</code></td>
+<td><code>dpu_midplane_link_time</code></td>
+<td>状態変化時刻</td>
+</tr>
+</tbody>
+</table>
+<p>到達性が <code>True→False</code> に変化した場合、<code>update_dpu_state()</code> は <code>dpu_midplane_link_state</code> を <code>"down"</code> にするとともに <code>dpu_control_plane_state</code> / <code>dpu_data_plane_state</code> も <code>"down"</code> に設定する（<code>chassisd:880-885</code>）。</p>
+<h3 id="5-chassis_module-dpu">5. CHASSIS_MODULE テーブルと DPU 名前制約<a class="headerlink" href="#5-chassis_module-dpu" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の <code>CHASSIS_MODULE</code> テーブルを <code>SmartSwitchConfigManagerTask</code> が <code>SubscriberStateTable</code> で購読し、DPU の管理状態（<code>admin_status</code>）変更を <code>set_admin_state_gracefully()</code> に反映する。</p>
+<p>SmartSwitch 環境では <code>CHASSIS_MODULE</code> のキーは <code>"DPU"</code> プレフィックスで始まる必要がある。それ以外のキーを受信すると <code>LOG_ERR</code> を出力してスキップする（<code>chassisd:236-239</code>）。<code>MODULE_TYPE_DPU = "DPU"</code> は <code>module_base.py:37</code> で定義。</p>
+<h3 id="config_db">CONFIG_DB を経由しない主なプラットフォーム動作<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>動作</th>
+<th>依存先</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ミッドプレーン初期化</td>
+<td><code>chassis.init_midplane_switch()</code></td>
+<td><code>bridge-midplane</code> カーネル IF 作成。CONFIG_DB 非経由</td>
+</tr>
+<tr>
+<td>DPU midplane IP 取得</td>
+<td><code>module.get_midplane_ip()</code></td>
+<td>プラットフォーム実装。CONFIG_DB 非経由</td>
+</tr>
+<tr>
+<td>midplane 到達性確認</td>
+<td><code>module.is_midplane_reachable()</code></td>
+<td>プラットフォーム実装（ping / ARP 等）</td>
+</tr>
+<tr>
+<td>DPU 再起動タイムアウト</td>
+<td><code>/usr/share/sonic/platform/platform.json</code></td>
+<td><code>dpu_reboot_timeout</code> キー（YANG 非経由）</td>
+</tr>
+<tr>
+<td>DPU 再起動原因の永続化</td>
+<td><code>/host/reboot-cause/module/&lt;dpu&gt;/</code></td>
+<td>ファイルシステム直接書き込み</td>
+</tr>
+<tr>
+<td>SmartSwitch / DPU 判定</td>
+<td><code>chassis.is_smartswitch()</code> / <code>chassis.is_dpu()</code></td>
+<td>プラットフォームオーバーライド必須</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
+<hr />
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>DHCP_SERVER_IPV4</code>、<code>DPUS</code>、<code>DPU</code>、<code>DEVICE_METADATA</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-smart-switch</code>、<code>sonic-dhcp-server-ipv4</code></li>
 <li>関連 CLI: SmartSwitch 設定は主に <code>config_samples.py</code> / minigraph 経由で自動投入（手動 CLI は限定的）</li>
 </ul>
-<h2 id="_9">参照<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_15">参照<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/smart-switch-ip-address-assignment/">SmartSwitch IP アドレス割り当て設計</a></li>
 <li><a href="../../../architecture/smart-switch-database-design/">SmartSwitch データベース設計</a></li>

@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23633,6 +23641,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -27909,6 +27945,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -28260,7 +28352,484 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#srv6_my_locators-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SRV6_MY_LOCATORS が先行必須（bgpcfgd 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SID プレフィックスはロケータのサブネット内であること
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-udt4-udt6-udt46-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF が先行必須（uDT4 / uDT6 / uDT46 等 VRF 要求行動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighbor-nexthop-endx-ua-adj" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neighbor (Nexthop) が先行（end.x / ua 等 Adj 要求行動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 操作の推奨順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 操作の安全順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル間参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="テーブル間参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#srv6_my_sids_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読込み元テーブル（SRV6_MY_SIDS が依存するテーブル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み先・副作用テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照カウント管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srv6_my_sids_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逆参照（他テーブルから SRV6_MY_SIDS を参照するもの）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用上の注意：孤立状態
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数・上限値 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="定数・上限値 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード埋め込み定数一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipinip-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPinIP トンネルのハードコード SAI 属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-srv6orch-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd と Srv6Orch の action 受理範囲の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-srv6mgr-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd パス（SRv6Mgr → FRR）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srv6orch-appl_db-sai-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Srv6Orch パス（APPL_DB 経由 → SAI / ASIC）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Srv6Orch パス（APPL_DB 経由 → SAI / ASIC）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        in-memory 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pubsub-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pub/Sub・イベント通知 (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pub/Sub・イベント通知 (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd パス — SubscriberStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srv6orch-consumer-tableconnector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Srv6Orch パス — Consumer (TableConnector)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighorch-observer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NeighOrch Observer パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter タイマー（カウンタ有効時のみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        外部 Redis 通知の有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム制約 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム制約 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ケイパビリティ照会（カウンタ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter-traditional-non-traditional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter モード（Traditional / Non-Traditional）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp-nexthop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP nexthop 非対応（ソフトウェア制限）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipinip-tunnel-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPinIP Tunnel の SAI 対応要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action サポート範囲のプラットフォーム依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム制約まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -28271,7 +28840,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         依存関係
@@ -28282,7 +28851,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連テーブル
@@ -29436,6 +30005,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -34674,7 +35271,484 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#srv6_my_locators-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SRV6_MY_LOCATORS が先行必須（bgpcfgd 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SID プレフィックスはロケータのサブネット内であること
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-udt4-udt6-udt46-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF が先行必須（uDT4 / uDT6 / uDT46 等 VRF 要求行動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighbor-nexthop-endx-ua-adj" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neighbor (Nexthop) が先行（end.x / ua 等 Adj 要求行動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 操作の推奨順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 操作の安全順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル間参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="テーブル間参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#srv6_my_sids_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読込み元テーブル（SRV6_MY_SIDS が依存するテーブル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み先・副作用テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照カウント管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srv6_my_sids_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逆参照（他テーブルから SRV6_MY_SIDS を参照するもの）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用上の注意：孤立状態
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数・上限値 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="定数・上限値 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード埋め込み定数一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipinip-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPinIP トンネルのハードコード SAI 属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-srv6orch-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd と Srv6Orch の action 受理範囲の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-srv6mgr-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd パス（SRv6Mgr → FRR）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srv6orch-appl_db-sai-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Srv6Orch パス（APPL_DB 経由 → SAI / ASIC）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Srv6Orch パス（APPL_DB 経由 → SAI / ASIC）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        in-memory 副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pubsub-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pub/Sub・イベント通知 (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pub/Sub・イベント通知 (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd パス — SubscriberStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srv6orch-consumer-tableconnector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Srv6Orch パス — Consumer (TableConnector)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighorch-observer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NeighOrch Observer パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter タイマー（カウンタ有効時のみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        外部 Redis 通知の有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム制約 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム制約 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ケイパビリティ照会（カウンタ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter-traditional-non-traditional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter モード（Traditional / Non-Traditional）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp-nexthop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP nexthop 非対応（ソフトウェア制限）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipinip-tunnel-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPinIP Tunnel の SAI 対応要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action サポート範囲のプラットフォーム依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム制約まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -34685,7 +35759,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         依存関係
@@ -34696,7 +35770,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連テーブル
@@ -34841,27 +35915,751 @@ Python レベルの fallback を持ち、完全に一致している。
 SAI 実装の多くは <code>uniform</code> をデフォルトとするが SONiC コードではハードコードしていない。</p>
 <!-- /defaults -->
 
-<h2 id="_3">設定例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="nt">&quot;SRV6_MY_SIDS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">&quot;MAIN|FCBB:BBBB:20::/48&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">            </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uN&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="p">},</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="nt">&quot;MAIN|FCBB:BBBB:20:F1::/64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">            </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uDT46&quot;</span><span class="p">,</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">            </span><span class="nt">&quot;decap_vrf&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vrf_Customer1&quot;</span><span class="p">,</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">            </span><span class="nt">&quot;decap_dscp_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uniform&quot;</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">}</span>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>evidence: <code>meta/_intermediate/cdb-flow/srv6-my-sids-ordering.md</code></p>
+</blockquote>
+<h3 id="srv6_my_locators-bgpcfgd">SRV6_MY_LOCATORS が先行必須（bgpcfgd 経路）<a class="headerlink" href="#srv6_my_locators-bgpcfgd" title="Permanent link">&para;</a></h3>
+<p><code>sids_set_handler()</code> (<code>managers_srv6.py:62-68</code>): 対応ロケータが <code>SRV6_MY_LOCATORS</code> に存在しない場合、
+bgpcfgd は <code>deps</code> 購読を登録して <code>return False</code>（処理中断）する。
+ロケータが登録されると <code>on_deps_change</code> コールバックで SID エントリが自動的に再処理される。
+<strong>エントリは失われないが、ロケータが登録されるまで FRR への通知が遅延する。</strong></p>
+<h3 id="sid">SID プレフィックスはロケータのサブネット内であること<a class="headerlink" href="#sid" title="Permanent link">&para;</a></h3>
+<p><code>managers_srv6.py:71-75</code>: <code>locator_prefix.supernet_of(sid_prefix)</code> が false の場合は <code>log_err</code> を出力して恒久的に失敗する（自動再試行なし）。SID IPv6 プレフィックスが対応ロケータの <code>prefix + block_len + node_len</code> ビット範囲内にあることを確認してから投入すること。</p>
+<h3 id="vrf-udt4-udt6-udt46-vrf">VRF が先行必須（<code>uDT4</code> / <code>uDT6</code> / <code>uDT46</code> 等 VRF 要求行動）<a class="headerlink" href="#vrf-udt4-udt6-udt46-vrf" title="Permanent link">&para;</a></h3>
+<p><code>createUpdateMysidEntry()</code> (<code>srv6orch.cpp:1484-1502</code>): <code>dt_vrf</code> が <code>"default"</code> 以外の場合、<code>m_vrfOrch-&gt;isVRFexists()</code> が false だとエラー終了（自動再試行なし）。カスタム VRF を使う場合は <code>VRF|&lt;name&gt;</code> を先に登録すること。</p>
+<h3 id="neighbor-nexthop-endx-ua-adj">Neighbor (Nexthop) が先行（<code>end.x</code> / <code>ua</code> 等 Adj 要求行動）<a class="headerlink" href="#neighbor-nexthop-endx-ua-adj" title="Permanent link">&para;</a></h3>
+<p><code>createUpdateMysidEntry()</code> (<code>srv6orch.cpp:1511-1541</code>): nexthop が未解決の場合、エントリを <code>m_pendingSRv6MySIDEntries</code> に追加して保留する。Neighbor ADD イベント受信時 (<code>srv6orch.cpp:1224-1260</code>) に自動再インストールされるため、<strong>設定は失われない</strong>。</p>
+<h3 id="set">SET 操作の推奨順序<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>SET SRV6_MY_LOCATORS|&lt;locator_name&gt;   prefix=... block_len=... node_len=... func_len=... arg_len=...
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>SET VRF|&lt;vrf_name&gt;   ...                          # カスタム VRF を使う場合のみ
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>SET SRV6_MY_SIDS|&lt;locator_name&gt;|&lt;ip_prefix&gt;   action=uN
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>SET SRV6_MY_SIDS|&lt;locator_name&gt;|&lt;ip_prefix2&gt;  action=uDT46 decap_vrf=&lt;vrf_name&gt;
 </span></code></pre></div>
-<h2 id="_4">依存関係<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="del">DEL 操作の安全順序<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DEL SRV6_MY_SIDS|&lt;locator_name&gt;|&lt;ip_prefix&gt;   # SID エントリを先に削除
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>DEL SRV6_MY_LOCATORS|&lt;locator_name&gt;            # ロケータは後
+</span></code></pre></div>
+<p><code>locators_del_handler()</code> (<code>managers_srv6.py:106-115</code>) はロケータ削除時に bgpcfgd の依存購読を解除するが、対応 SID エントリを自動削除しない。ロケータより先に SID を削除しないと孤立エントリが残る。</p>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">テーブル間参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>evidence: <code>meta/_intermediate/cdb-flow/srv6-my-sids-cross-refs.md</code></p>
+</blockquote>
+<h3 id="srv6_my_sids_2">読込み元テーブル（SRV6_MY_SIDS が依存するテーブル）<a class="headerlink" href="#srv6_my_sids_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照元フィールド</th>
+<th>参照先テーブル</th>
+<th>チェック場所</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>locator_name</code>（key）</td>
+<td><code>SRV6_MY_LOCATORS</code></td>
+<td><code>sonic-srv6.yang:108-110</code> (YANG leafref)</td>
+<td>スキーマ検証で参照整合性を保証</td>
+</tr>
+<tr>
+<td><code>locator_name</code>（key）</td>
+<td><code>SRV6_MY_LOCATORS</code></td>
+<td><code>managers_srv6.py:62-68</code> (bgpcfgd)</td>
+<td>ロケータ未存在時は依存購読を登録して処理を保留（自動再試行あり）</td>
+</tr>
+<tr>
+<td><code>locator_name</code>（key）</td>
+<td><code>SRV6_MY_LOCATORS</code></td>
+<td><code>srv6orch.cpp:331-350</code> (Srv6Orch)</td>
+<td><code>getLocatorCfgFromDb()</code> でロケータの block_len/node_len/func_len/arg_len を取得し MY_SID エントリのビット長フィールドを決定</td>
+</tr>
+<tr>
+<td><code>decap_vrf</code></td>
+<td><code>VRF</code></td>
+<td><code>sonic-srv6.yang:123-125</code> (YANG leafref)</td>
+<td>スキーマ検証で参照整合性を保証</td>
+</tr>
+<tr>
+<td><code>decap_vrf</code></td>
+<td><code>VRF</code> (via VRFOrch)</td>
+<td><code>srv6orch.cpp:1488</code> (Srv6Orch)</td>
+<td><code>isVRFexists()</code> が false の場合はエラーで終了（自動再試行なし）</td>
+</tr>
+<tr>
+<td>adj（<code>end.x</code>/<code>ua</code> 等）</td>
+<td><code>NEIGH_TABLE</code> (via NeighOrch)</td>
+<td><code>srv6orch.cpp:1524</code> (Srv6Orch)</td>
+<td>隣接未解決時は <code>m_pendingSRv6MySIDEntries</code> に保留し、隣接 ADD イベントで自動再インストール</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>decap_vrf = "default"</code> の特例</strong>:
+<code>srv6orch.cpp:1484-1486</code> で <code>dt_vrf == "default"</code> の場合は <code>gVirtualRouterId</code>（グローバル VRF の SAI オブジェクト）に直接解決され、<code>VRF</code> テーブルへの実行時参照は発生しない。</p>
+<h3 id="_3">書込み先・副作用テーブル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>書込み先</th>
+<th>タイミング</th>
+<th>場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FRR <code>segment-routing srv6 static-sids</code></td>
+<td>SET/DEL 処理時</td>
+<td><code>managers_srv6.py:88-94, 127-131</code> (bgpcfgd → vtysh)</td>
+</tr>
+<tr>
+<td><code>APP_SRV6_MY_SID_TABLE</code> (APP_DB)</td>
+<td>Srv6Orch が APP_DB から読み取り SAI へ投入</td>
+<td><code>srv6orch.cpp:104</code> (<code>m_mysidTable</code>)</td>
+</tr>
+<tr>
+<td><code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code></td>
+<td>SET 処理完了時</td>
+<td><code>srv6orch.cpp:1606</code> (<code>create_my_sid_entry</code>)</td>
+</tr>
+<tr>
+<td><code>SAI_OBJECT_TYPE_TUNNEL</code> + TERM_ENTRY</td>
+<td>uDT46 等デカプセル動作時のみ</td>
+<td><code>srv6orch.cpp:1551-1576</code> (<code>createMySidIpInIpTunnel</code>)</td>
+</tr>
+<tr>
+<td><code>COUNTERS_SRV6_NAME_MAP</code> (COUNTERS_DB)</td>
+<td>MySID 作成・削除時（カウンタ有効時のみ）</td>
+<td><code>srv6orch.cpp:199, 223</code></td>
+</tr>
+<tr>
+<td>CRM <code>CRM_SRV6_MY_SID_ENTRY</code></td>
+<td>MySID 作成（inc）・削除（dec）時</td>
+<td><code>srv6orch.cpp:1612, 1675</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_4">参照カウント管理<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が付与される。DEL 操作前に参照側（SID）を先に削除することで、参照先リソースの誤削除を防ぐ。</p>
+<ul>
+<li><strong>VRFOrch refcount</strong>: <code>srv6orch.cpp:1639</code> (SET時 inc) / <code>srv6orch.cpp:1683</code> (DEL時 dec)。refcount が正のうちは VRF の削除がブロックされる。</li>
+<li><strong>NeighOrch refcount</strong>: <code>srv6orch.cpp:1644</code> (SET時 inc) / <code>srv6orch.cpp:1689</code> (DEL時 dec)。<code>end.x</code> / <code>ua</code> 等 nexthop を持つ action に限定。</li>
+</ul>
+<h3 id="srv6_my_sids_3">逆参照（他テーブルから SRV6_MY_SIDS を参照するもの）<a class="headerlink" href="#srv6_my_sids_3" title="Permanent link">&para;</a></h3>
+<p>なし。SRV6_MY_SIDS は末端テーブルであり、他のテーブルから leafref 参照されない。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>evidence: <code>meta/_intermediate/cdb-flow/srv6-my-sids-failure.md</code></p>
+</blockquote>
+<h3 id="set_1">SET 処理における失敗経路<a class="headerlink" href="#set_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ</th>
+<th>自動回復</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ロケータ名が <code>SRV6_MY_LOCATORS</code> に未存在</td>
+<td><code>managers_srv6.py:62-69</code></td>
+<td><code>return False</code>・依存購読登録</td>
+<td><code>log_warn</code></td>
+<td><strong>あり</strong>（ロケータ登録後に自動再試行）</td>
+</tr>
+<tr>
+<td>SID プレフィックスがロケータのサブネット外</td>
+<td><code>managers_srv6.py:74-76</code></td>
+<td><code>return False</code>（恒久失敗）</td>
+<td><code>log_err</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td><code>action</code> フィールド未指定</td>
+<td><code>managers_srv6.py:78-80</code></td>
+<td><code>return False</code></td>
+<td><code>log_err</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td><code>action</code> が <code>uN</code>/<code>uDT46</code> 以外の未サポート値（bgpcfgd）</td>
+<td><code>managers_srv6.py:82-84</code></td>
+<td><code>return False</code></td>
+<td><code>log_err</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td><code>action</code> が <code>end_behavior_map</code> に存在しない（Srv6Orch）</td>
+<td><code>srv6orch.cpp:1369-1376</code></td>
+<td><code>return false</code>（MY_SID 未作成）</td>
+<td><code>SWSS_LOG_ERROR</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td><code>decap_vrf</code> が <code>"default"</code> 以外かつ VRF 未存在</td>
+<td><code>srv6orch.cpp:1498-1502</code></td>
+<td><code>return false</code>（MY_SID 未作成）</td>
+<td><code>SWSS_LOG_ERROR("VRF %s doesn't exist in DB")</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td><code>decap_vrf</code> の SAI OID が <code>SAI_NULL_OBJECT_ID</code></td>
+<td><code>srv6orch.cpp:1492-1496</code></td>
+<td><code>return false</code></td>
+<td><code>SWSS_LOG_ERROR("VRF object not created for DT VRF %s")</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td>nexthop（<code>end.x</code>/<code>ua</code> 等）が未解決</td>
+<td><code>srv6orch.cpp:1524-1543</code></td>
+<td><code>m_pendingSRv6MySIDEntries</code> に保留・<code>return false</code></td>
+<td><code>SWSS_LOG_INFO</code></td>
+<td><strong>あり</strong>（Neighbor ADD 時に自動再インストール）</td>
+</tr>
+<tr>
+<td>ECMP adjacency（カンマ区切り複数 adj）</td>
+<td><code>srv6orch.cpp:1516-1519</code></td>
+<td><code>return false</code>（未サポート）</td>
+<td><code>SWSS_LOG_ERROR("ECMP adjacency not yet supported")</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td><code>decap_dscp_mode</code> に <code>"uniform"</code>/<code>"pipe"</code> 以外の値</td>
+<td><code>srv6orch.cpp:388-392</code></td>
+<td>キャッシュ登録スキップ</td>
+<td><code>SWSS_LOG_ERROR("Invalid MySID %s DSCP mode: %s")</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td>IPinIP トンネル作成失敗（<code>uN</code>/<code>uDT46</code> + <code>decap_dscp_mode</code> 指定時）</td>
+<td><code>srv6orch.cpp:1554-1565</code></td>
+<td><code>return false</code>（MY_SID 未作成）</td>
+<td><code>SWSS_LOG_ERROR("Failed to create … IPinIP tunnel")</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td>SAI <code>create_my_sid_entry</code> 失敗</td>
+<td><code>srv6orch.cpp:1607-1611</code></td>
+<td><code>return false</code></td>
+<td><code>SWSS_LOG_ERROR("Failed to create my_sid entry %s, rv %d")</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td>SAI カウンタ作成失敗（カウンタ有効時）</td>
+<td><code>srv6orch.cpp:1595-1599</code></td>
+<td><code>return false</code>（MY_SID 未作成）</td>
+<td><code>SWSS_LOG_ERROR("Failed to create SAI counter for SRv6 MySID entry")</code></td>
+<td><strong>なし</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del_1">DEL 処理における失敗経路<a class="headerlink" href="#del_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存在しない SID の削除要求</td>
+<td><code>srv6orch.cpp:1660-1663</code></td>
+<td><code>return false</code></td>
+<td><code>SWSS_LOG_ERROR("My_sid_entry doesn't exist for %s")</code></td>
+</tr>
+<tr>
+<td>SAI <code>remove_my_sid_entry</code> 失敗</td>
+<td><code>srv6orch.cpp:1670-1673</code></td>
+<td><code>return false</code>（ASIC に残存）</td>
+<td><code>SWSS_LOG_ERROR("Failed to delete my_sid entry rv %d")</code></td>
+</tr>
+<tr>
+<td>IPinIP Tunnel Term エントリ削除失敗</td>
+<td><code>srv6orch.cpp:1698-1701</code></td>
+<td><code>return false</code>（テーブル未消去）</td>
+<td><code>SWSS_LOG_ERROR("Failed to remove tunnel termination entry for MySID entry")</code></td>
+</tr>
+<tr>
+<td>bgpcfgd 側で未存在 SID の削除</td>
+<td><code>managers_srv6.py:122-124</code></td>
+<td>silent skip</td>
+<td><code>log_warn</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">運用上の注意：孤立状態<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ロケータより先に SID を削除しなかった場合</strong>: <code>locators_del_handler()</code> はロケータ削除時に SID エントリを自動削除しない。SID が bgpcfgd キャッシュに残留し FRR 設定が不整合となる（<code>managers_srv6.py:106-115</code>）。</li>
+<li><strong>VRF 削除前に SID が残存する場合</strong>: VRFOrch refcount が正のまま VRF 削除がブロックされる（<code>srv6orch.cpp:1639, 1683</code>）。</li>
+<li><strong>Neighbor 消失時の自動 ASIC 削除</strong>: nexthop が消えると <code>updateNeighbor()</code> が MY_SID を ASIC から自動削除し <code>m_pendingSRv6MySIDEntries</code> に保留する（<code>srv6orch.cpp:1272-1342</code>）。Neighbor 再出現時に自動復元されるためユーザー介入は不要。</li>
+</ul>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">定数・上限値 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>evidence: <code>meta/_intermediate/cdb-flow/srv6-my-sids-constants.md</code></p>
+</blockquote>
+<h3 id="_6">コード埋め込み定数一覧<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>場所</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OVERLAY_RIF_DEFAULT_MTU</code></td>
+<td><code>9100</code></td>
+<td><code>srv6orch.cpp:20</code></td>
+<td>IPinIP トンネル用オーバーレイ RIF（ループバック型）の固定 MTU（バイト）。設定変更不可</td>
+</tr>
+<tr>
+<td><code>LOCATOR_DEFAULT_BLOCK_LEN</code></td>
+<td><code>"32"</code></td>
+<td><code>srv6orch.cpp:21</code></td>
+<td>ロケータのブロック長デフォルト（ビット）。APPL_DB エントリのビット長未指定時に使用</td>
+</tr>
+<tr>
+<td><code>LOCATOR_DEFAULT_NODE_LEN</code></td>
+<td><code>"16"</code></td>
+<td><code>srv6orch.cpp:22</code></td>
+<td>ロケータのノード長デフォルト（ビット）</td>
+</tr>
+<tr>
+<td><code>LOCATOR_DEFAULT_FUNC_LEN</code></td>
+<td><code>"16"</code></td>
+<td><code>srv6orch.cpp:23</code></td>
+<td>ロケータの関数長デフォルト（ビット）</td>
+</tr>
+<tr>
+<td><code>LOCATOR_DEFAULT_ARG_LEN</code></td>
+<td><code>"0"</code></td>
+<td><code>srv6orch.cpp:24</code></td>
+<td>ロケータの引数長デフォルト（ビット）</td>
+</tr>
+<tr>
+<td><code>SRV6_FLEX_COUNTER_UPDATE_TIMER</code></td>
+<td><code>1</code> (秒)</td>
+<td><code>srv6orch.cpp:26</code></td>
+<td>FlexCounter タイマー間隔。カウンタ有効時の統計更新サイクル</td>
+</tr>
+<tr>
+<td><code>SRV6_STAT_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>10000</code> (ms)</td>
+<td><code>srv6orch.cpp:27</code></td>
+<td>FlexCounter ポーリング間隔（10 秒固定）</td>
+</tr>
+<tr>
+<td><code>ADJ_DELIMITER</code></td>
+<td><code>','</code></td>
+<td><code>srv6orch.cpp:19</code></td>
+<td>adjacency フィールドの区切り文字。ECMP 未サポートのため複数指定は即エラー</td>
+</tr>
+<tr>
+<td><code>MY_SID_KEY_DELIMITER</code></td>
+<td><code>':'</code></td>
+<td><code>srv6orch.h:152</code></td>
+<td>MY_SID の SAI entry key 組み立て区切り文字（<code>block_len:node_len:func_len:arg_len:IPv6</code>）</td>
+</tr>
+<tr>
+<td><code>DEFAULT_VRF</code></td>
+<td><code>"default"</code></td>
+<td><code>managers_srv6.py:11</code></td>
+<td><code>decap_vrf</code> フィールドの比較基準文字列</td>
+</tr>
+<tr>
+<td><code>supported_SRv6_behaviors</code></td>
+<td><code>{'uN', 'uDT46'}</code></td>
+<td><code>managers_srv6.py:6-8</code></td>
+<td>bgpcfgd が受理する action 値集合。それ以外は <code>log_err</code> + <code>return False</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="ipinip-sai">IPinIP トンネルのハードコード SAI 属性<a class="headerlink" href="#ipinip-sai" title="Permanent link">&para;</a></h3>
+<p><code>decap_dscp_mode</code> が設定された SID（<code>uN</code>/<code>uDT46</code> + DSCP mode 指定時）に作成される IPinIP トンネルは、以下の SAI 属性を固定値で設定する（<code>srv6orch.cpp:490-540</code>）:</p>
+<table>
+<thead>
+<tr>
+<th>SAI 属性</th>
+<th>ハードコード値</th>
+<th>設定変更可否</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_TYPE</code></td>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_LOOPBACK</code></td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>SAI_ROUTER_INTERFACE_ATTR_MTU</code></td>
+<td><code>9100</code></td>
+<td>不可（CONFIG_DB フィールドなし）</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_ATTR_TYPE</code></td>
+<td><code>SAI_TUNNEL_TYPE_IPINIP</code></td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_ATTR_PEER_MODE</code></td>
+<td><code>SAI_TUNNEL_PEER_MODE_P2MP</code></td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_ATTR_DECAP_TTL_MODE</code></td>
+<td><code>SAI_TUNNEL_TTL_MODE_PIPE_MODEL</code></td>
+<td><strong>不可</strong>（<code>decap_dscp_mode</code> と異なり TTL は設定フィールドなし）</td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_ATTR_DECAP_DSCP_MODE</code></td>
+<td><code>uniform</code> / <code>pipe</code>（設定値から決定）</td>
+<td><code>decap_dscp_mode</code> フィールドで制御可能</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">TTL モードは pipe 固定</p>
+<p><code>decap_dscp_mode</code> で DSCP は <code>uniform</code>/<code>pipe</code> を選択できるが、TTL は常に <code>PIPE_MODEL</code> にハードコードされている（<code>srv6orch.cpp:534-536</code>）。内部パケットの TTL が外側ヘッダへ伝播しない動作は変更不可。</p>
+</div>
+<h3 id="bgpcfgd-srv6orch-action">bgpcfgd と Srv6Orch の action 受理範囲の乖離<a class="headerlink" href="#bgpcfgd-srv6orch-action" title="Permanent link">&para;</a></h3>
+<p><code>end_behavior_map</code>（<code>srv6orch.cpp:41-62</code>）は 19 種の action を SAI にマップするが、CONFIG_DB 経由の bgpcfgd パスでは <code>supported_SRv6_behaviors = {'uN', 'uDT46'}</code> の 2 種のみが受理される。</p>
+<table>
+<thead>
+<tr>
+<th>action</th>
+<th>bgpcfgd</th>
+<th>Srv6Orch (APPL_DB 直書き)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uN</code> / <code>uDT46</code></td>
+<td><strong>受理</strong></td>
+<td>受理</td>
+</tr>
+<tr>
+<td><code>end</code> / <code>end.x</code> / <code>end.t</code> / <code>end.dt4</code> 等</td>
+<td><strong>拒否</strong>（<code>log_err</code> + <code>return False</code>）</td>
+<td>受理</td>
+</tr>
+<tr>
+<td><code>ua</code> / <code>udx4</code> / <code>udx6</code> 等</td>
+<td><strong>拒否</strong></td>
+<td>受理</td>
+</tr>
+</tbody>
+</table>
+<p>追加の action を使用する場合は fpmsyncd 等を通じた APPL_DB 直接書込みが必要であり、CONFIG_DB の <code>SRV6_MY_SIDS</code> テーブルからの設定では利用できない。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>evidence: <code>meta/_intermediate/cdb-flow/srv6-my-sids-side-effects.md</code></p>
+</blockquote>
+<p><code>SRV6_MY_SIDS</code> テーブルへの書込みは <strong>bgpcfgd パス</strong> と <strong>Srv6Orch パス</strong> の 2 経路で副次書込みを引き起こす。CONFIG_DB への書き戻しは発生しない。</p>
+<h3 id="bgpcfgd-srv6mgr-frr">bgpcfgd パス（SRv6Mgr → FRR）<a class="headerlink" href="#bgpcfgd-srv6mgr-frr" title="Permanent link">&para;</a></h3>
+<p><code>SRv6Mgr::sids_set_handler()</code> (<code>managers_srv6.py:88-94</code>) は FRR への vtysh コマンドを <code>cfg_mgr.push_list()</code> に積む:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>segment-routing
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a> srv6
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  static-sids
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>   sid &lt;ip_prefix&gt; locator &lt;locator_name&gt; behavior &lt;action&gt; [vrf &lt;decap_vrf&gt;]
+</span></code></pre></div>
+<p><code>decap_vrf</code> が <code>"default"</code> の場合 <code>vrf</code> オプションは省略される。
+DEL 時は <code>sids_del_handler()</code> (<code>managers_srv6.py:127-131</code>) が <code>no sid ...</code> コマンドを発行する。</p>
+<h3 id="srv6orch-appl_db-sai-asic">Srv6Orch パス（APPL_DB 経由 → SAI / ASIC）<a class="headerlink" href="#srv6orch-appl_db-sai-asic" title="Permanent link">&para;</a></h3>
+<p><code>Srv6Orch</code> は <code>APP_SRV6_MY_SID_TABLE</code>（APP_DB）をサブスクライブし、<code>createUpdateMysidEntry()</code> / <code>deleteMysidEntry()</code> で処理する。</p>
+<h4 id="set_2">SET 時の副次書込み<a class="headerlink" href="#set_2" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>副次 DB / API</th>
+<th>操作</th>
+<th>条件</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI / <code>sai_srv6_api</code></td>
+<td><code>create_my_sid_entry</code></td>
+<td>新規エントリ</td>
+<td><code>srv6orch.cpp:1606</code></td>
+</tr>
+<tr>
+<td>SAI / <code>sai_srv6_api</code></td>
+<td><code>set_my_sid_entry_attribute</code>（VRF / NH 更新）</td>
+<td>フィールド変更時</td>
+<td><code>srv6orch.cpp:1619, 1628</code></td>
+</tr>
+<tr>
+<td>SAI / <code>sai_router_intfs_api</code></td>
+<td><code>create_router_interface</code>（loopback RIF, MTU=9100）</td>
+<td><code>decap_dscp_mode</code> 指定時のみ</td>
+<td><code>srv6orch.cpp:505</code></td>
+</tr>
+<tr>
+<td>SAI / <code>sai_tunnel_api</code></td>
+<td><code>create_tunnel</code>（IPinIP）+ <code>create_tunnel_term_table_entry</code></td>
+<td><code>decap_dscp_mode</code> 指定時のみ</td>
+<td><code>srv6orch.cpp:538, 1561</code></td>
+</tr>
+<tr>
+<td>CRM</td>
+<td><code>incCrmResUsedCounter(CRM_SRV6_MY_SID_ENTRY)</code></td>
+<td>新規エントリ</td>
+<td><code>srv6orch.cpp:1612</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB / <code>COUNTERS_SRV6_NAME_MAP</code></td>
+<td><code>hset("", sid_key, counter_oid)</code></td>
+<td>カウンタ有効時のみ</td>
+<td><code>srv6orch.cpp:199</code></td>
+</tr>
+</tbody>
+</table>
+<p>IPinIP Tunnel SAI オブジェクトは <code>decap_dscp_mode</code> 値ごとに 1 つ共有（参照カウント管理）。新規 SID のたびに作成されない。</p>
+<h4 id="del_2">DEL 時の副次書込み<a class="headerlink" href="#del_2" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>副次 DB / API</th>
+<th>操作</th>
+<th>条件</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI / <code>sai_srv6_api</code></td>
+<td><code>remove_my_sid_entry</code></td>
+<td>常時</td>
+<td><code>srv6orch.cpp:1669</code></td>
+</tr>
+<tr>
+<td>CRM</td>
+<td><code>decCrmResUsedCounter(CRM_SRV6_MY_SID_ENTRY)</code></td>
+<td>常時</td>
+<td><code>srv6orch.cpp:1675</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB / <code>COUNTERS_SRV6_NAME_MAP</code></td>
+<td><code>hdel("", sid_key)</code></td>
+<td>カウンタ有効時のみ</td>
+<td><code>srv6orch.cpp:223</code></td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>clearCounterIdList(counter_oid)</code></td>
+<td>カウンタ有効かつ VID→RID 解決済み</td>
+<td><code>srv6orch.cpp:229</code></td>
+</tr>
+<tr>
+<td>SAI / <code>sai_tunnel_api</code></td>
+<td><code>remove_tunnel_term_table_entry</code> + <code>remove_tunnel</code></td>
+<td>tunnel_term_entry が存在する場合</td>
+<td><code>srv6orch.cpp:1698-1704</code></td>
+</tr>
+<tr>
+<td>VRFOrch / NeighOrch</td>
+<td>refcount dec</td>
+<td>VRF 要求 / Nexthop 要求 action の場合</td>
+<td><code>srv6orch.cpp:1683, 1689</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="in-memory">in-memory 副作用<a class="headerlink" href="#in-memory" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>srv6_my_sid_table_[key]</code> — SET 時に内部キャッシュへ登録、DEL 時に <code>erase()</code> (<code>srv6orch.cpp:1652, 1711</code>)</li>
+<li><code>m_pendingSRv6MySIDEntries</code> — nexthop 未解決時の保留リスト。Neighbor ADD イベント受信時に自動再インストール (<code>srv6orch.cpp:1224-1260</code>)</li>
+</ul>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="pubsub-phase-g">Pub/Sub・イベント通知 (Phase G)<a class="headerlink" href="#pubsub-phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>evidence: <code>meta/_intermediate/cdb-flow/srv6-my-sids-pubsub.md</code></p>
+</blockquote>
+<p><code>SRV6_MY_SIDS</code> テーブルの変更は <strong>bgpcfgd パス</strong> と <strong>Srv6Orch パス</strong> の 2 経路でそれぞれ異なる購読メカニズムで処理される。</p>
+<h3 id="bgpcfgd-subscriberstatetable">bgpcfgd パス — SubscriberStateTable<a class="headerlink" href="#bgpcfgd-subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p><code>runner.py:49</code>: <code>swsscommon.SubscriberStateTable(conn, "SRV6_MY_SIDS")</code> を生成し <code>swsscommon.Select()</code> セレクタに追加する。<br />
+<code>Runner.run()</code> (<code>runner.py:54-73</code>) が <code>selector.select(timeout=1000ms)</code> で待受け、イベント発生時に <code>subscriber.pop()</code> でドレインして <code>SRv6Mgr.handler()</code> を呼び出す。<br />
+各イテレーション末尾で <code>cfg_manager.commit()</code> が積み上がった FRR vtysh コマンドを一括送信する。</p>
+<p><strong>ロケータ未存在時のインプロセス購読</strong>:<br />
+<code>managers_srv6.py:67-68</code> でロケータが未登録の場合、bgpcfgd 内部 <code>Directory</code> オブジェクトに追加購読を登録する:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">subscribe</span><span class="p">([(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_name</span><span class="p">,</span> <span class="s2">&quot;SRV6_MY_LOCATORS&quot;</span><span class="p">,</span> <span class="n">locator_name</span><span class="p">)],</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_deps_change</span><span class="p">)</span>
+</span></code></pre></div>
+<p>これは Redis Pub/Sub ではなく bgpcfgd プロセス内部のコールバック機構であり、<code>SRV6_MY_LOCATORS</code> エントリが Directory に登録された瞬間に <code>on_deps_change()</code> が呼ばれ保留キューを再処理する。</p>
+<h3 id="srv6orch-consumer-tableconnector">Srv6Orch パス — Consumer (TableConnector)<a class="headerlink" href="#srv6orch-consumer-tableconnector" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:312-324</code> で <code>CFG_SRV6_MY_SID_TABLE_NAME</code>（CONFIG_DB <code>SRV6_MY_SIDS</code>）と <code>APP_SRV6_MY_SID_TABLE_NAME</code>（APP_DB <code>SRV6_MY_SID_TABLE</code>）の 2 テーブルを <code>TableConnector</code> として <code>Srv6Orch</code> に登録する。</p>
+<p><code>doTask(Consumer&amp;)</code> (<code>srv6orch.cpp:2352-2394</code>) がテーブル名でルーティングする:</p>
+<table>
+<thead>
+<tr>
+<th>Consumer テーブル</th>
+<th>ハンドラ</th>
+<th>処理内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CFG_SRV6_MY_SIDS</code>（CONFIG_DB）</td>
+<td><code>doTaskCfgMySidTable()</code></td>
+<td><code>decap_dscp_mode</code> キャッシュへの登録/削除のみ。SAI 操作なし</td>
+</tr>
+<tr>
+<td><code>SRV6_MY_SID_TABLE</code>（APP_DB）</td>
+<td><code>doTaskMySidTable()</code></td>
+<td><code>createUpdateMysidEntry()</code> / <code>deleteMysidEntry()</code> → SAI MY_SID_ENTRY 操作</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">CONFIG_DB Consumer の役割</p>
+<p>Srv6Orch が CONFIG_DB の <code>SRV6_MY_SIDS</code> を直接購読するのは <code>decap_dscp_mode</code> キャッシュ更新のためのみ。<br />
+MY_SID_ENTRY の SAI 書込みは APP_DB <code>SRV6_MY_SID_TABLE</code> 経由（fpmsyncd または bgpcfgd が書いた値）で実行される。</p>
+</div>
+<h3 id="neighorch-observer">NeighOrch Observer パターン<a class="headerlink" href="#neighorch-observer" title="Permanent link">&para;</a></h3>
+<p><code>srv6orch.cpp:110</code>: コンストラクタで <code>m_neighOrch-&gt;attach(this)</code> を呼び Neighbor 変化の Observer として登録する。<br />
+Neighbor ADD/DEL 発生時に NeighOrch が <code>Srv6Orch::update(SUBJECT_TYPE_NEIGH_CHANGE, ...)</code> を直接コールバックする（Redis Pub/Sub ではなく C++ オブジェクト間の同期コールバック）。</p>
+<ul>
+<li><strong>ADD</strong>: <code>updateNeighbor()</code> (<code>srv6orch.cpp:1220-1263</code>) が <code>m_pendingSRv6MySIDEntries</code> を走査し、解決可能になった SID を ASIC に再インストール。</li>
+<li><strong>DEL</strong>: <code>updateNeighbor()</code> (<code>srv6orch.cpp:1265-1342</code>) が nexthop を持つ MY_SID を ASIC から削除し <code>m_pendingSRv6MySIDEntries</code> に移動。</li>
+</ul>
+<h3 id="flexcounter">FlexCounter タイマー（カウンタ有効時のみ）<a class="headerlink" href="#flexcounter" title="Permanent link">&para;</a></h3>
+<p>カウンタ有効時、<code>srv6orch.cpp:138-139</code> で 1 秒周期の <code>SelectableTimer</code> を登録する。<br />
+<code>doTask(SelectableTimer&amp;)</code> (<code>srv6orch.cpp:286-313</code>) がポーリングし、ASIC_DB <code>VIDTORID</code> が解決された pending エントリに対して <code>FlexCounter</code> へカウンタ ID リストを設定する。</p>
+<h3 id="redis">外部 Redis 通知の有無<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p>SRV6_MY_SIDS 変更が直接トリガする Redis Keyspace 通知・Pub/Sub チャンネルへの発信はない。<br />
+副次書込み（<code>COUNTERS_SRV6_NAME_MAP</code> <code>hset</code> / <code>FLEX_COUNTER_DB</code> <code>setCounterIdList</code>）は間接的に他コンポーネントの Select ループに通知されるが、SRV6_MY_SIDS 固有のチャンネルは存在しない。</p>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム制約 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>evidence: <code>meta/_intermediate/cdb-flow/srv6-my-sids-platform.md</code></p>
+</blockquote>
+<h3 id="sai">SAI ケイパビリティ照会（カウンタ）<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<p><code>Srv6Orch::queryMySidCountersCapability()</code> (<code>srv6orch.cpp:144-155</code>) はランタイムで SAI に問い合わせる:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">sai_query_attribute_capability</span><span class="p">(</span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_OBJECT_TYPE_MY_SID_ENTRY</span><span class="p">,</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">                               </span><span class="n">SAI_MY_SID_ENTRY_ATTR_COUNTER_ID</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">capability</span><span class="p">);</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">return</span><span class="w"> </span><span class="n">capability</span><span class="p">.</span><span class="n">set_implemented</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">capability</span><span class="p">.</span><span class="n">create_implemented</span><span class="p">;</span>
+</span></code></pre></div>
+<p><code>set_implemented &amp;&amp; create_implemented</code> の両方が true の場合のみカウンタ機能を有効化する。カウンタ非対応プラットフォームでは <code>initializeCounters()</code> が早期 return し (<code>srv6orch.cpp:123-127</code>):</p>
+<ul>
+<li>カウンタ関連オブジェクト（<code>m_asic_db</code>、<code>m_mysid_counters_table</code>、<code>m_counter_update_timer</code>）は初期化されない</li>
+<li>SID 作成時に <code>SAI_MY_SID_ENTRY_ATTR_COUNTER_ID</code> 属性を SAI に送らない（<code>srv6orch.cpp:1593</code>）</li>
+<li>カウンタ変更要求は無視され <code>SWSS_LOG_WARN("Ignoring SRv6 counters state change as they are not supported on this platform")</code> を出力する（<code>srv6orch.cpp:257</code>）</li>
+</ul>
+<h3 id="flexcounter-traditional-non-traditional">FlexCounter モード（Traditional / Non-Traditional）<a class="headerlink" href="#flexcounter-traditional-non-traditional" title="Permanent link">&para;</a></h3>
+<p><code>gTraditionalFlexCounter</code> フラグ（外部 extern、<code>srv6orch.cpp:39</code>）で 2 つの動作モードが切り替わる:</p>
+<table>
+<thead>
+<tr>
+<th>フラグ</th>
+<th>ASIC_DB <code>VIDTORID</code> 確認</th>
+<th>カウンタ ID 登録タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code>（Traditional）</td>
+<td><code>m_vid_to_rid_table-&gt;hget()</code> が true になるまで保留 (<code>srv6orch.cpp:294</code>)</td>
+<td>VID→RID 解決後に登録</td>
+</tr>
+<tr>
+<td><code>false</code>（Non-Traditional）</td>
+<td>スキップ</td>
+<td>SID 作成直後に即時登録</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ecmp-nexthop">ECMP nexthop 非対応（ソフトウェア制限）<a class="headerlink" href="#ecmp-nexthop" title="Permanent link">&para;</a></h3>
+<p><code>createUpdateMysidEntry()</code> (<code>srv6orch.cpp:1515-1519</code>) で adj フィールドをカンマで分割し、要素数 &gt; 1 の場合は即時エラー:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>SWSS_LOG_ERROR(&quot;Failed to create my_sid entry %s adj %s: ECMP adjacency not yet supported&quot;, ...)
+</span></code></pre></div>
+<p><code>end.x</code> / <code>ua</code> 等 nexthop 要求 action では単一 next-hop のみサポート。複数 next-hop を指定した場合は自動回復なし。</p>
+<h3 id="ipinip-tunnel-sai">IPinIP Tunnel の SAI 対応要件<a class="headerlink" href="#ipinip-tunnel-sai" title="Permanent link">&para;</a></h3>
+<p><code>decap_dscp_mode</code> を指定した <code>uN</code> / <code>uDT46</code> SID では IPinIP Tunnel (<code>SAI_TUNNEL_TYPE_IPINIP</code>) を作成する (<code>srv6orch.cpp:538</code>)。SONiC はトンネル作成前に SAI ケイパビリティを照会しないため、プラットフォームが非対応の場合は <code>create_tunnel</code> 呼び出し時点で <code>SAI_STATUS_NOT_SUPPORTED</code> が返り、SID 作成全体が失敗する。</p>
+<h3 id="action">action サポート範囲のプラットフォーム依存<a class="headerlink" href="#action" title="Permanent link">&para;</a></h3>
+<p><code>end_behavior_map</code> (<code>srv6orch.cpp:41-62</code>) は 19 種の action を SAI にマップするが、各 action の SAI 実装はプラットフォーム依存であり、SONiC は action ごとの事前ケイパビリティ照会を行わない。非対応 action は SAI エラーで初めて判明する。CONFIG_DB 経由（bgpcfgd パス）では <code>supported_SRv6_behaviors = {'uN', 'uDT46'}</code> に絞り込まれるため、この問題が顕在化する可能性は低い。</p>
+<h3 id="_7">プラットフォーム制約まとめ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>機能</th>
+<th>制約</th>
+<th>検出タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MY_SID カウンタ</td>
+<td><code>SAI_MY_SID_ENTRY_ATTR_COUNTER_ID</code> の create/set 実装が必要</td>
+<td>起動時 <code>sai_query_attribute_capability()</code> で判定</td>
+</tr>
+<tr>
+<td>ECMP nexthop</td>
+<td>未サポート（ソフトウェア制限）</td>
+<td>SET 処理時に adj カンマ数で判定</td>
+</tr>
+<tr>
+<td>IPinIP Tunnel</td>
+<td>SAI の <code>SAI_TUNNEL_TYPE_IPINIP</code> 実装が必要</td>
+<td><code>create_tunnel</code> 呼び出し時 SAI エラーで判明</td>
+</tr>
+<tr>
+<td>FlexCounter 方式</td>
+<td>Traditional / Non-Traditional 両対応</td>
+<td><code>gTraditionalFlexCounter</code> フラグで切替</td>
+</tr>
+<tr>
+<td>action 種別</td>
+<td>19 種のうち SAI 実装済みのみ有効</td>
+<td>SAI エラーで初めて判明（事前照会なし）</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
+<h2 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="nt">&quot;SRV6_MY_SIDS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">        </span><span class="nt">&quot;MAIN|FCBB:BBBB:20::/48&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">            </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uN&quot;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">        </span><span class="nt">&quot;MAIN|FCBB:BBBB:20:F1::/64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">            </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uDT46&quot;</span><span class="p">,</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">            </span><span class="nt">&quot;decap_vrf&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Vrf_Customer1&quot;</span><span class="p">,</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">            </span><span class="nt">&quot;decap_dscp_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uniform&quot;</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_9">依存関係<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>SRV6_MY_LOCATORS</code> に <code>&lt;locator_name&gt;</code> が先に存在していること。
   <code>managers_srv6.py:62-68</code> でロケータが未定義の場合、依存関係を登録して処理を保留する。</li>
 <li><code>decap_vrf</code> に custom VRF を指定する場合は <code>VRF</code> テーブルに対象 VRF が存在していること（leafref 制約）。</li>
 </ul>
-<h2 id="_5">関連テーブル<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連テーブル<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>SRV6_MY_LOCATORS</code> — ロケータ定義（SID アドレス空間の分割）</li>
 </ul>

@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -24129,6 +24137,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実際の副作用 (ファイル書き換え・プロセスシグナル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -24461,6 +24497,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -28737,6 +28801,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -30117,6 +30237,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -36068,6 +36216,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実際の副作用 (ファイル書き換え・プロセスシグナル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36836,6 +37012,94 @@
 <h3 id="audisp-tacplus-sighup-accounting">audisp-tacplus SIGHUP 失敗 (accounting への影響)<a class="headerlink" href="#audisp-tacplus-sighup-accounting" title="Permanent link">&para;</a></h3>
 <p><code>notify_audisp_tacplus_reload_config()</code> は audisp-tacplus プロセスに SIGHUP を送信して accounting 設定を再読み込みさせる（<code>hostcfgd L483-493</code>）。PID ファイルが存在しないか <code>os.kill()</code> が失敗した場合は <code>LOG_WARNING: 'Send SIGHUP to audisp-tacplus failed with exception: {}'</code> を出力して継続する。PAM 認証設定自体は更新済みのため <strong>ログイン認証には影響しない</strong> が、TACACS+ accounting ログが古い設定で動作し続ける。audisp-tacplus が起動していない環境では常に発生する。</p>
 <!-- /failure -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB <code>TACPLUS_SERVER</code> / <code>TACPLUS|global</code> テーブルの変更に伴って <code>hostcfgd</code> の <code>AaaCfg</code> ハンドラが副次的に書き込む DB エントリは <strong>存在しない</strong>。副作用はすべて Linux ホスト OS の設定ファイル書き換えおよびプロセスシグナル送信に閉じる。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>AaaCfg</code> クラス内に <code>Producer</code> / <code>Table</code> / <code>hset</code> / <code>Notification</code> の呼び出しが 0 件。<code>modify_conf_file()</code> (hostcfgd:641-870) を <code>Producer</code>/<code>set(</code>/<code>hset</code> で grep して 0 ヒット</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>state_db_conn</code> は <code>FipsCfg</code> (hostcfgd:1792) と <code>RestartWaiter</code> (hostcfgd:2160) のみが保持。<code>AaaCfg</code> は <code>state_db_conn</code> を保持しない</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td><code>hostcfgd</code> 全体に COUNTERS_DB 参照なし。AAA / TACACS+ はコントロールプレーン処理のため統計テーブルも存在しない</td>
+</tr>
+<tr>
+<td>ASIC_DB / FLEX_COUNTER_DB</td>
+<td>なし</td>
+<td>SAI 非経由 (runtime-trace 段階 3 参照)。<code>TACPLUS_SERVER</code> を購読する orchagent は存在しない</td>
+</tr>
+<tr>
+<td>LOGLEVEL_DB</td>
+<td>なし</td>
+<td>hostcfgd 全体に LOGLEVEL_DB 参照なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_18">実際の副作用 (ファイル書き換え・プロセスシグナル)<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><code>TACPLUS_SERVER</code> / <code>TACPLUS|global</code> の変更がトリガーとなって <code>modify_conf_file()</code> が呼ぶ副作用は以下の通り:</p>
+<table>
+<thead>
+<tr>
+<th>副作用</th>
+<th>対象ファイル / 操作</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PAM 認証設定再生成</td>
+<td><code>/etc/pam.d/common-auth-sonic</code> (<code>.tmp</code> → atomic rename)</td>
+<td>常時</td>
+<td><code>hostcfgd:728-731</code></td>
+</tr>
+<tr>
+<td>sshd / login include 書換</td>
+<td><code>/etc/pam.d/sshd</code>, <code>/etc/pam.d/login</code> の <code>@include</code> 行</td>
+<td>常時</td>
+<td><code>hostcfgd:755-783</code></td>
+</tr>
+<tr>
+<td>NSS passwd 行書換</td>
+<td><code>/etc/nsswitch.conf</code> の <code>passwd:</code> 行</td>
+<td><code>tacacs+</code> が <code>login</code> に含まれる場合</td>
+<td><code>hostcfgd:756-783</code></td>
+</tr>
+<tr>
+<td>TACACS+ NSS 設定再生成</td>
+<td><code>/etc/tacplus_nss.conf</code></td>
+<td>常時</td>
+<td><code>hostcfgd:800-815</code></td>
+</tr>
+<tr>
+<td>audisp-tacplus へ SIGHUP</td>
+<td><code>os.kill(pid, SIGHUP)</code> — アカウンティング設定リロード</td>
+<td>常時 (プロセス不在時は LOG_WARNING のみ)</td>
+<td><code>hostcfgd:483-493</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd:354-870</code> を <code>Producer</code>/<code>set(</code>/<code>hset</code>/<code>Notification</code>/<code>state_db</code> でスキャンして 0 ヒット。副作用は Linux ファイルシステム操作と <code>os.kill()</code> のみ (hostcfgd:641-870)。詳細スキャン手順は <code>meta/_intermediate/cdb-flow/tacplus-server-ordering.md</code> を参照。</p>
+</blockquote>
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: e0332a023fdb -->
 

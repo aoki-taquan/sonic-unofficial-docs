@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -24580,6 +24588,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベントフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時スナップショット
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -24688,6 +24746,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -28964,6 +29050,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -30344,6 +30486,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -36522,6 +36692,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベントフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時スナップショット
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37412,6 +37632,89 @@
 <h3 id="sai">SAI 参照<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <p><code>SflowOrch</code> が <code>sai_samplepacket_api</code> および <code>sai_port_api</code> を使用する。<code>SFLOW</code> / <code>SFLOW_SESSION</code> テーブルは間接的に <code>SAI_PORT_ATTR_INGRESS/EGRESS_SAMPLEPACKET_ENABLE</code> 属性に影響する。</p>
 <!-- /cross-refs -->
+
+<!-- pubsub -->
+<h2 id="phase-g_1">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g_1" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p><code>SFLOW</code> / <code>SFLOW_SESSION</code> テーブルへの変更通知は、<code>sflowmgrd</code> が <strong><code>swss::Orch</code></strong> フレームワークの <code>TableConnector</code> + <code>SubscriberStateTable</code> (keyspace 通知) で受信する。<code>APPL_DB</code> への書込は <code>ProducerStateTable</code> (<code>m_appSflowTable</code> / <code>m_appSflowSessionTable</code>) で行い、<code>orchagent</code> の <code>SflowOrch</code> が APPL_DB <code>ConsumerStateTable</code> 経由で受信して SAI API を呼ぶ。</p>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>DB</th>
+<th>購読テーブル</th>
+<th>受信 API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sflowmgrd</code> (<code>SflowMgr</code>)</td>
+<td>CONFIG_DB</td>
+<td><code>SFLOW</code></td>
+<td><code>Orch</code>/<code>SubscriberStateTable</code></td>
+</tr>
+<tr>
+<td><code>sflowmgrd</code> (<code>SflowMgr</code>)</td>
+<td>CONFIG_DB</td>
+<td><code>SFLOW_SESSION</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>sflowmgrd</code> (<code>SflowMgr</code>)</td>
+<td>CONFIG_DB</td>
+<td><code>PORT</code></td>
+<td>同上 (ポート登録追跡)</td>
+</tr>
+<tr>
+<td><code>sflowmgrd</code> (<code>SflowMgr</code>)</td>
+<td>STATE_DB</td>
+<td><code>PORT_TABLE</code></td>
+<td>同上 (<code>oper_speed</code> 変化追跡)</td>
+</tr>
+<tr>
+<td><code>orchagent</code> (<code>SflowOrch</code>)</td>
+<td>APPL_DB</td>
+<td><code>SFLOW_TABLE</code></td>
+<td><code>Orch</code>/<code>ConsumerStateTable</code></td>
+</tr>
+<tr>
+<td><code>orchagent</code> (<code>SflowOrch</code>)</td>
+<td>APPL_DB</td>
+<td><code>SFLOW_SESSION_TABLE</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>orchagent</code> (<code>SflowOrch</code>)</td>
+<td>APPL_DB</td>
+<td><code>SFLOW_SAMPLE_RATE_TABLE</code></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p><code>SFLOW_COLLECTOR</code> は <code>sflowmgrd</code> の購読テーブルに含まれない。<code>hsflowd.conf</code> 生成時に CONFIG_DB から直接スナップショット参照する（イベント駆動ではない）。</p>
+<h3 id="_17">イベントフロー<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>CLI / gNMI / db_migrator
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  ↓ HSET &quot;SFLOW|global&quot; / &quot;SFLOW_SESSION|&lt;port&gt;&quot;
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>CONFIG_DB (keyspace 通知)
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>  ↓ sflowmgrd SflowMgr::doTask()
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>  ↓ ProducerStateTable::set()  →  APPL_DB SFLOW_TABLE / SFLOW_SESSION_TABLE
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>APPL_DB (ConsumerStateTable channel)
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>  ↓ orchagent SflowOrch::doTask()
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>  ↓ sai_samplepacket_api / sai_port_api
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>SAI / ASIC
+</span></code></pre></div>
+<p>STATE_DB → sflowmgrd フロー (<code>oper_speed</code> 変化時のみ):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>PORT oper_speed 変化  →  STATE_DB PORT_TABLE 更新
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  ↓ SflowMgr::sflowProcessOperSpeed()
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>  local_rate_cfg == false のポートにサンプリングレートを自動反映
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  ↓ APPL_DB SFLOW_SESSION_TABLE (上書き)
+</span></code></pre></div>
+<h3 id="_18">起動時スナップショット<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><code>sflowmgrd.cpp:46</code> の <code>sflowmgr.readPortConfig()</code> が Subscribe ループ開始前に CONFIG_DB <code>PORT</code> テーブルを一括スキャンし <code>m_sflowPortConfMap</code> を構築する。これにより起動時のイベント受信順序に依存しない初期状態が保証される。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/sflowmgrd.cpp:31-46</code> (テーブル登録・起動スナップショット)、<code>sonic-swss/cfgmgr/sflowmgr.h:39-40</code> (<code>ProducerStateTable</code> 宣言)、<code>sonic-swss/cfgmgr/sflowmgr.cpp:403-410</code> (<code>doTask</code> テーブル名ルーティング)、<code>sonic-swss/orchagent/orchdaemon.cpp:439-444</code> (<code>SflowOrch</code> 登録)、<code>sonic-swss/orchagent/sfloworch.cpp:359-369</code> (APPL_DB 振り分け); 詳細分析 <code>meta/_intermediate/cdb-flow/sflow-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
 <!-- glossary-links-injected: 8e8594481100 -->
 
 <div class="footnote">

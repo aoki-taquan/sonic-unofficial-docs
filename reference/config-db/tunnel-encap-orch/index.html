@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23633,6 +23641,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -27909,6 +27945,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -29153,6 +29245,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        処理順序・依存関係
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         コード由来デフォルト・暗黙挙動
       
     </span>
@@ -29211,7 +29314,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29222,7 +29325,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29480,6 +29583,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -34715,6 +34846,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        処理順序・依存関係
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         コード由来デフォルト・暗黙挙動
       
     </span>
@@ -34773,7 +34915,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34784,7 +34926,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34914,8 +35056,58 @@
 </tr>
 </tbody>
 </table>
+<!-- ordering -->
+<h2 id="_3">処理順序・依存関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>VXLAN_TUNNEL エントリは CONFIG_DB → vxlanmgr (cfgmgrd) → APPL_DB → orchagent の順に処理される<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<pre class="mermaid"><code>flowchart TD
+  CDB[("CONFIG_DB\nVXLAN_TUNNEL\nVXLAN_TUNNEL_MAP\nVXLAN_EVPN_NVO")]
+  MGR["vxlanmgr (cfgmgrd)\nVxlanMgr::doTask()"]
+  ADB[("APPL_DB\nAPP_VXLAN_TUNNEL_TABLE\nAPP_VXLAN_TUNNEL_MAP_TABLE\nAPP_VXLAN_VRF_TABLE")]
+  VTO["VxlanTunnelOrch\naddOperation()\n(SAI 呼び出しなし)"]
+  VTMO["VxlanTunnelMapOrch\naddOperation()\n(SAI create_tunnel)"]
+  VVMO["VxlanVrfMapOrch\naddOperation()\n(SAI create_tunnel)"]
+  SAI["SAI\nsai_tunnel_api-&gt;create_tunnel()"]
+  CDB --&gt; MGR --&gt; ADB
+  ADB --&gt; VTO
+  ADB --&gt; VTMO
+  ADB --&gt; VVMO
+  VTMO --&gt; SAI
+  VVMO --&gt; SAI</code></pre>
+<p><strong>処理の前提条件</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>依存</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VXLAN_TUNNEL</code> エントリが先に存在すること</td>
+<td><code>VXLAN_TUNNEL_MAP</code> 追加時に <code>findTunnel()</code> を呼ぶ。存在しなければ処理失敗 (<code>vxlanorch.cpp:2030</code>)</td>
+</tr>
+<tr>
+<td><code>gUnderlayIfId</code> が初期化済みであること</td>
+<td>SAI <code>create_tunnel()</code> でアンダーレイ RIF として参照 (<code>main.cpp:967</code>, <code>vxlanorch.cpp:907</code>)</td>
+</tr>
+<tr>
+<td><code>VxlanTunnelOrch</code> が <code>gDirectory</code> に登録済みであること</td>
+<td><code>VxlanTunnelMapOrch</code> / <code>VxlanVrfMapOrch</code> が <code>gDirectory.get&lt;VxlanTunnelOrch*&gt;()</code> で参照 (<code>orchdaemon.cpp:351,353,355</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>orchdaemon 登録順序</strong> (<code>orchdaemon.cpp:350-355</code>):</p>
+<ol>
+<li><code>VxlanTunnelOrch</code> — line 350–351</li>
+<li><code>VxlanTunnelMapOrch</code> — line 352–353</li>
+<li><code>VxlanVrfMapOrch</code> — line 354–355</li>
+</ol>
+<p><strong>SAI トンネル生成は遅延</strong>: <code>VXLAN_TUNNEL</code> エントリ追加時は SAI 呼び出しなし。
+実際の <code>sai_tunnel_api-&gt;create_tunnel()</code> は <code>VXLAN_TUNNEL_MAP</code> または <code>VRF_MAP</code> の追加時に初めて実行される<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<!-- /ordering -->
+
 <!-- defaults -->
-<h2 id="_3">コード由来デフォルト・暗黙挙動<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">コード由来デフォルト・暗黙挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>以下のデフォルト値は DB フィールドとして公開されず、<code>vxlanorch.cpp</code> / <code>vxlanorch.h</code> 内でハードコードまたは暗黙的に設定される<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
@@ -34995,19 +35187,22 @@ CONFIG_DB / YANG に対応フィールドは存在しない。</p>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../vxlan-tunnel/"><code>VXLAN_TUNNEL</code></a></li>
 <li>CONFIG_DB: <a href="../vxlan-tunnel-map/"><code>VXLAN_TUNNEL_MAP</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p>VxlanTunnelOrch 実装: <code>orchagent/vxlanorch.cpp</code>, <code>orchagent/vxlanorch.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>orchdaemon 初期化順序 (<code>orchdaemon.cpp:350-590</code>), VxlanMgr::doTask() (<code>cfgmgr/vxlanmgr.cpp:213-262</code>). <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

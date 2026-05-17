@@ -21321,6 +21321,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -23633,6 +23641,34 @@
     
   
     AAA テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../acl-table-type/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL_TABLE_TYPE テーブル
   
 
     
@@ -27909,6 +27945,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../sflow-collector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_COLLECTOR テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sflow-session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFLOW_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -28561,6 +28653,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28573,7 +28704,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         検出した挙動乖離・注意点
@@ -28600,7 +28731,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29530,6 +29661,34 @@
     
   
     APPL_DB VRF_TABLE (VRFOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrrp-track/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VRRP_TRACK テーブル
   
 
     
@@ -34845,6 +35004,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34857,7 +35055,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         検出した挙動乖離・注意点
@@ -34884,7 +35082,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35127,6 +35325,71 @@
 </tr>
 </tbody>
 </table>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>STATE_DB PORT_TABLE</code> への書き込みは <code>portsyncd</code>（linksync.cpp）と <code>PortsOrch</code>（portsorch.cpp）の 2 プロセスが担う。両者の書き込みタイミングには下記の順序制約がある。</p>
+<h3 id="_5">検出された順序依存<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>APP_DB <code>PORT_TABLE</code> の存在 → <code>portsyncd</code> の STATE_DB 書き込み許可</td>
+<td><strong>強制先行</strong></td>
+<td>orchagent が APP_DB を書くまで STATE_DB エントリは不在</td>
+</tr>
+<tr>
+<td>2</td>
+<td>起動時 <code>ip link set down</code> → RTM_NEWLINK 再受信 → STATE_DB 更新</td>
+<td>起動シーケンス依存</td>
+<td>旧インタフェースからの RTM は無視ガードで除外</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>portsyncd</code> 4 フィールドの atomic set</td>
+<td>同一 RTM_NEWLINK イベント内で原子的</td>
+<td>順序依存なし</td>
+</tr>
+<tr>
+<td>4</td>
+<td>PortsOrch ポート初期化完了 → <code>supported_speeds</code> / <code>supported_fecs</code> 書き込み</td>
+<td><strong>強制先行</strong>（serdes 設定後）</td>
+<td>起動直後は不在。SAI キャッシュ後は変化しない</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SAI admin set 成功 → <code>host_tx_ready = "true"</code></td>
+<td><strong>強制先行</strong>（SAI 成功必須）</td>
+<td>CMIS 環境は SAI コールバック経由</td>
+</tr>
+<tr>
+<td>6</td>
+<td>oper UP → speed / fec 更新</td>
+<td>oper UP 依存（DOWN 時 stale 残留）</td>
+<td>consumer は <code>netdev_oper_status</code> で補正</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>CONFIG_DB PORT.autoneg</code> 変更 → <code>rmt_adv_speeds</code> 書き込み/削除</td>
+<td>CONFIG_DB イベント依存</td>
+<td>autoneg OFF で自動 hdel</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">主要な制約詳細<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><strong>APP_DB 先行必須 (依存 #1)</strong>: <code>LinkSync::onMsg()</code> は RTM_NEWLINK 受信時に <code>m_portTable.get(key, temp)</code> で APP_DB <code>PORT_TABLE</code> にエントリが存在するかを確認する（linksync.cpp:193）。APP_DB に未登録のポート名（起動シーケンス中で orchagent が APP_DB 書き込みを完了していない段階）では STATE_DB 書き込みがスキップされる。consumer が <code>STATE_DB PORT_TABLE|EthernetN</code> を参照する前に、orchagent の初期化完了を待つ必要がある。</p>
+<p><strong>起動時の中間状態 (依存 #2)</strong>: 非 warm-reboot 起動時に <code>LinkSync::LinkSync()</code> は全フロントパネルポートを <code>ip link set Ethernet* down</code> で DOWN させる（linksync.cpp:96-107）。これにより再起動前の古い STATE_DB 値が、最初の RTM_NEWLINK 受信まで上書きされない状態が発生する。旧インタフェースの RTM は <code>m_ifindexOldNameMap</code> によるガード（linksync.cpp:172-177）で無視されるため、STATE_DB の更新は portsyncd が新しい RTM_NEWLINK を受信した時点まで遅延する。</p>
+<p><strong>host_tx_ready の順序 (依存 #5)</strong>: <code>initHostTxReadyState()</code> で <code>"false"</code> を初期書き込み後、<code>setPortAdminStatus()</code> 内で admin UP + SAI set 成功 + Gearbox OK がそろって初めて <code>"true"</code> に更新される（portsorch.cpp:2220-2257）。SAI が失敗している間は <code>"false"</code> のまま。<code>m_cmisModuleAsicSyncSupported = true</code> の CMIS 対応環境では <code>setPortAdminStatus()</code> の直接制御はスキップされ、SAI コールバック <code>on_port_host_tx_ready</code>（portsorch.cpp:977）が代わりに書き込む。</p>
+<p><strong>speed / fec の stale 残留 (依存 #6)</strong>: <code>PortsOrch::refreshPortStatus()</code> はポート oper UP 確認後にのみ <code>updateDbPortOperSpeed()</code> / <code>updateDbPortOperFec()</code> を呼ぶ（portsorch.cpp:9905-9930）。ポートが oper DOWN になっても、speed / fec の STATE_DB フィールドは削除も更新もされないため、最後に UP だった時の値が残留する。speed / fec を参照する際は <code>netdev_oper_status</code> が <code>"up"</code> であることを先に確認すること。</p>
+<!-- /ordering -->
+
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト（Phase A — コード由来）<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <p>YANG/スキーマ定義外の fallback。<code>linksync.cpp</code> および <code>portsorch.cpp</code> の実装から導出。</p>
@@ -35201,7 +35464,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_5">検出した挙動乖離・注意点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_7">検出した挙動乖離・注意点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ol>
 <li>
 <p><strong><code>state</code> は事実上 <code>"ok"</code> の一択</strong>: RTM_NEWLINK で固定値を書くため、ネットワーク障害などでも <code>"ok"</code> から変わらない。リンクアップ/ダウンは <code>netdev_oper_status</code> で確認すること。</p>
@@ -35271,7 +35534,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../port/"><code>PORT</code> テーブル</a> — 物理ポートの設定フィールド</li>
 <li>STATE_DB: <a href="../fec-state/"><code>FEC ステート</code></a> — <code>fec</code> / <code>supported_fecs</code> フィールドの詳細</li>
