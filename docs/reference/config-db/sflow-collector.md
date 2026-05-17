@@ -171,3 +171,41 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 | `sflowmgrd` | 非購読（購読対象外） | SFLOW_COLLECTOR は TableConnector 外 | `sflowmgrd.cpp:36-41` |
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`, `sonic-utilities/config/main.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` 全行精読 (2026-05-17)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-collector-failure.md`
+
+### SET 処理における失敗経路
+
+| ID | 失敗条件 | 検出層 | 結果 | エラーメッセージ |
+|----|---------|-------|------|----------------|
+| F1 | `collector_vrf='mgmt'` + `MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled` が `'true'` でない | YANG `must` 制約 (`sonic-sflow.yang:86-88`) | CONFIG_DB 書き込み拒否 | `"Must condition not satisfied. Try enable Management VRF."` |
+| F2 | コレクタ名が 16 文字超え | CLI `is_valid_collector_info()` (`config/main.py:9316`) | CLI 拒否・CONFIG_DB 書き込みなし (YANG は 64 文字まで許容: CLI/YANG 不整合) | `"Collector name must not exceed 16 characters"` |
+| F3 | 3 件目以降のコレクタ追加 (既存 2 件 + 新規名) | CLI (`config/main.py:9352-9355`) + YANG `max-elements 2` | 書き込み拒否 | `"Only 2 collectors can be configured, please delete one"` |
+| F4 | 無効な IP アドレス | CLI + YANG `inet:ip-address` 型 | CLI 拒否 | `"Invalid IP address"` |
+| F5 | `mgmt`/`default` 以外の VRF 名 | CLI (`config/main.py:9325-9327`) + YANG `pattern "mgmt\|default"` | CLI 拒否 | `"Only 'default' and 'mgmt' VRF are supported"` |
+
+### DEL 処理における失敗経路
+
+| ID | 失敗条件 | 検出層 | 結果 |
+|----|---------|-------|------|
+| F6 | 存在しないコレクタ名を指定した DEL (`ADHOC_VALIDATION=True` 時のみ) | CLI (`config/main.py:9374-9378`) | 警告表示・Redis では存在しないキーへの DEL が silent no-op |
+
+### hsflowd サービス起動失敗
+
+| ID | 失敗条件 | 検出箇所 | 結果 | ログ |
+|----|---------|---------|------|------|
+| F7 | `service hsflowd restart` / `service hsflowd stop` が非ゼロ終了 | `sflowmgr.cpp:67-70` | `SWSS_LOG_ERROR` のみ・例外なし・CONFIG_DB と hsflowd 稼働状態が乖離 | `"Command '%s' failed with rc %d"` |
+
+**重要**: sflowmgrd は SFLOW_COLLECTOR テーブルを購読していない (`sflowmgrd.cpp:36-41`)。コレクタ追加・変更後に hsflowd が自動で再起動されないため、変更はコールド再起動 (`service hsflowd restart`) まで反映されない。F7 はその再起動も失敗するケース。
+
+### REST/gNMI 経由の失敗経路
+
+| ID | 失敗条件 | 検出箇所 | 結果 |
+|----|---------|---------|------|
+| F8 | REST/gNMI で `/collectors/collector/config` サブツリーへの DELETE | `xfmr_sflow.go:283-284` | `"Delete operation not supported for this xpath"` エラーを返す。`/collectors/collector` レベルで DELETE する必要あり |
+
+<!-- /failure -->
