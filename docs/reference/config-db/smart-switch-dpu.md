@@ -559,6 +559,76 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 
 <!-- /side-effects -->
 
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:44,95,1147-1175,1180-1226`; `src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:20-80,349-388`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:14,25,130-148`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:23,95-100`; `SONiC/doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md:100-200` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-pubsub.md`
+
+### Producer / Consumer ペア
+
+| CONFIG_DB テーブル | Producer | Consumer / 購読方式 | select タイムアウト |
+|---|---|---|---|
+| `CHASSIS_MODULE\|DPU*` | sonic-gnmi / CLI | `SmartSwitchConfigManagerTask` — `SubscriberStateTable` | 1000 ms |
+| `MID_PLANE_BRIDGE\|GLOBAL` | sonic-cfggen / config_samples.py | `dhcpservd` — `MidPlaneTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+| `DPUS\|dpu*` | sonic-cfggen / config_samples.py | `dhcpservd` — `DpusTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+| `DASH_HA_GLOBAL_CONFIG` | ネットワークコントローラ (gNMI) | `hamgrd` — `SubscriberStateTable` | — |
+| `DPU`, `VDPU` | ネットワークコントローラ (gNMI) | NPU `orchagent` / `hamgrd` — `SubscriberStateTable` | — |
+| `REMOTE_DPU` | ネットワークコントローラ (gNMI) | `hamgrd` — `SubscriberStateTable` | — |
+
+### CHASSIS_MODULE → chassisd
+
+`SmartSwitchConfigManagerTask.task_worker()` (`chassisd:1180`) は `swsscommon.SubscriberStateTable(config_db, CHASSIS_CFG_TABLE)` を生成し、`swsscommon.Select` に登録する (`chassisd:1198-1201`)。`SELECT_TIMEOUT = 1000` ms (`chassisd:95`) でポーリングし、イベント受信時は `sst.pop()` で `(key, op, fvp)` を取得する。
+
+- op=`SET` のとき: `fvp` から `admin_status` を取得し `up` なら `MODULE_ADMIN_UP`、それ以外は `MODULE_ADMIN_DOWN` として `module_config_update()` を呼び出す
+- op=`DEL` のとき: 無条件で `MODULE_ADMIN_DOWN` を渡す（DEL = シャットダウン扱い）
+
+`module_config_update()` 内では別スレッドで `set_admin_state_gracefully()` が呼ばれるため、CONFIG_DB 書き込み完了時点では STATE_DB の `oper_status` はまだ変化しない（完全非同期）。
+
+### MID_PLANE_BRIDGE / DPUS → dhcpservd
+
+`dhcpservd.py` は SmartSwitch モードのとき `MidPlaneTableEventChecker` と `DpusTableEventChecker` を `sel` に追加する (`dhcpservd.py:143-144`)。両チェッカーはいずれも `ConfigDbEventChecker` 基底クラスの `enable()` メソッドで `SubscriberStateTable` を生成し `sel.addSelectable()` する (`dhcp_db_monitor.py:69-75`)。`DEFAULT_SELECT_TIMEOUT = 5000` ms でポーリング。
+
+- `MidPlaneTableEventChecker`: イベントの `bridge` フィールドが `enabled_dhcp_interfaces` に含まれるか、または op=`DEL` のとき再生成トリガー
+- `DpusTableEventChecker`: あらゆるイベントを無条件で再生成トリガーとして扱う（`_process_check()` が常に `True` を返す）
+
+イベント検知後、`dhcp_cfggen` が DHCP 設定ファイルを再生成し、kea-dhcp-server が再起動されてミッドプレーン DHCP プールが反映される。
+
+### DASH_HA_GLOBAL_CONFIG → hamgrd
+
+HLD mermaid 図 (`smart-switch-ha-detailed-design.md:175`) では `NPU_DASH_HA_GLOBAL_CONFIG --> |SubscribeStateTable| NPU_HAMGRD` と明示されている。`hamgrd` はこのイベントを受けて HA グローバル設定を DPU 側の `DASH_HA_SET_TABLE` / `DASH_HA_SCOPE_TABLE` へ ZMQ 経由で伝播する。
+
+### データフロー図
+
+```
+CONFIG_DB[CHASSIS_MODULE|DPU*]
+  ↓ SubscriberStateTable (keyspace notification)
+SmartSwitchConfigManagerTask [SELECT_TIMEOUT=1000ms]
+  ↓ sst.pop() → op=SET/DEL → module_config_update()
+set_admin_state_gracefully() [別スレッド・非同期]
+  → ハードウェア電源制御 → CHASSIS_STATE_DB 更新
+
+CONFIG_DB[MID_PLANE_BRIDGE|GLOBAL], CONFIG_DB[DPUS|dpu*]
+  ↓ SubscriberStateTable (ConfigDbEventChecker 経由)
+dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
+  ↓ MidPlaneTableEventChecker / DpusTableEventChecker
+  ↓ dhcp_cfggen 設定ファイル再生成
+kea-dhcp-server 再起動 → ミッドプレーン DHCP 反映
+
+CONFIG_DB[DASH_HA_GLOBAL_CONFIG]
+  ↓ SubscriberStateTable
+hamgrd → ZMQ → DPU側 DASH_HA_SET / DASH_HA_SCOPE_TABLE
+
+CONFIG_DB[DPU], CONFIG_DB[VDPU]
+  ↓ SubscriberStateTable
+NPU orchagent (swss) → SAI → ASIC
+
+CONFIG_DB[DPU], CONFIG_DB[REMOTE_DPU], CONFIG_DB[VDPU]
+  ↓ SubscriberStateTable
+hamgrd → ZMQ → DPU 側各テーブル
+```
+
+<!-- /pubsub -->
+
 ## 制約
 
 - `MID_PLANE_BRIDGE|GLOBAL` の `bridge` は `bridge-midplane` 固定。変更不可。
