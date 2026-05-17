@@ -4,7 +4,7 @@ description: "SNMP_AGENT_ADDRESS_CONFIG と SNMP_USER テーブルのフィー�
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-17
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-snmp.yang
@@ -12,11 +12,20 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: dockers/docker-snmp/snmpd.conf.j2
     ref: master
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-snmp/start.sh
+    ref: master
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-snmp/snmp_yml_to_configdb.py
+    ref: master
   - repo: sonic-net/sonic-utilities
     path: config/main.py
     ref: master
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-config-engine/minigraph.py
+    ref: master
+  - repo: sonic-net/sonic-snmpagent
+    path: src/sonic_ax_impl/mibs/__init__.py
     ref: master
 related:
   config_db:
@@ -526,6 +535,65 @@ SONiC の `docker-snmp` コンテナは `/var/lib/snmp/` を永続ボリュー�
 | STATE_DB | なし | — |
 
 <!-- /side-effects -->
+
+---
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`, `sonic_ax_impl/mibs/__init__.py:497-509`, `config/main.py:4188-4209, 4787-4791`, `hostcfgd` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-pubsub.md`
+
+### 購読方式: なし (起動時スナップショット読み取りのみ)
+
+`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` を **リアルタイムで購読するプロセスは存在しない**。
+`docker-snmp/start.sh` が起動時に `sonic-cfggen -d` (CONFIG_DB への一括 HGETALL) を実行して
+`snmpd.conf.j2` を展開・`/etc/snmp/snmpd.conf` を生成する。
+Redis keyspace 通知 (PSUBSCRIBE) / `SubscriberStateTable` / `ConsumerStateTable` はいずれも使用しない。
+
+| コンポーネント | 通信方式 | 対象テーブル | 備考 |
+|---|---|---|---|
+| `docker-snmp` (`start.sh` + `snmpd.conf.j2`) | `sonic-cfggen -d` (起動時一括読み取り) | `SNMP_AGENT_ADDRESS_CONFIG`, `SNMP_USER` | 起動時のみ。実行中の変更は反映しない |
+| `sonic-snmpagent` (`sonic_ax_impl`) | `psubscribe("__keyspace@{db}__:{pattern}")` | COUNTERS_DB / STATE_DB (MIB データ) | `SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` は対象外 |
+| `hostcfgd` | 購読なし | — | SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER を購読しない |
+| `orchagent` | ConsumerStateTable | — | SNMP 系テーブルを処理しない |
+
+### 変更の反映経路
+
+#### SNMP_AGENT_ADDRESS_CONFIG
+
+```
+CLI: config snmp agentaddress add <ip>
+  ↓ config_db.set_entry('SNMP_AGENT_ADDRESS_CONFIG', key, {})
+  ↓ os.system("systemctl restart snmp")      ← config/main.py:4189 (戻り値未検査)
+docker-snmp コンテナ再起動
+  ↓ start.sh: sonic-cfggen -d -t snmpd.conf.j2,/etc/snmp/snmpd.conf
+  ↓ HGETALL で一括読み取り → agentAddress 行を生成 (snmpd.conf.j2 L27–34)
+snmpd 起動 → 新しいアドレス/ポートで listen
+```
+
+#### SNMP_USER
+
+```
+CLI: config snmp user add <user> ...
+  ↓ config_db.set_entry('SNMP_USER', user, {...})
+  ↓ systemctl reset-failed snmp.service      ← config/main.py:4787
+  ↓ systemctl restart snmp.service           ← config/main.py:4788
+docker-snmp コンテナ再起動
+  ↓ start.sh: sonic-cfggen -d -t snmpd.conf.j2,/etc/snmp/snmpd.conf
+  ↓ HGETALL で一括読み取り → CreateUser / rouser / rwuser 行を生成 (snmpd.conf.j2 L66–77)
+snmpd 起動 → SNMPv3 ユーザが有効化
+```
+
+`sonic-db-cli` / `redis-cli HSET` で直接書き込んだ場合は snmpd.conf は更新されない。
+手動で `systemctl restart snmp` が必要。
+
+### APPL_DB / SAI 中継
+
+なし。両テーブルは CONFIG_DB → snmpd.conf（ファイル）で完結し、
+APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。
+
+<!-- /pubsub -->
 
 ---
 
