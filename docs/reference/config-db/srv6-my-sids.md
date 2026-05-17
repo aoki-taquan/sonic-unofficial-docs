@@ -225,6 +225,57 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 
 <!-- /failure -->
 
+<!-- constants -->
+## 定数・上限値 (Phase E)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-constants.md`
+
+### コード埋め込み定数一覧
+
+| 定数 | 値 | 場所 | 意味 |
+|------|-----|------|------|
+| `OVERLAY_RIF_DEFAULT_MTU` | `9100` | `srv6orch.cpp:20` | IPinIP トンネル用オーバーレイ RIF（ループバック型）の固定 MTU（バイト）。設定変更不可 |
+| `LOCATOR_DEFAULT_BLOCK_LEN` | `"32"` | `srv6orch.cpp:21` | ロケータのブロック長デフォルト（ビット）。APPL_DB エントリのビット長未指定時に使用 |
+| `LOCATOR_DEFAULT_NODE_LEN` | `"16"` | `srv6orch.cpp:22` | ロケータのノード長デフォルト（ビット） |
+| `LOCATOR_DEFAULT_FUNC_LEN` | `"16"` | `srv6orch.cpp:23` | ロケータの関数長デフォルト（ビット） |
+| `LOCATOR_DEFAULT_ARG_LEN` | `"0"` | `srv6orch.cpp:24` | ロケータの引数長デフォルト（ビット） |
+| `SRV6_FLEX_COUNTER_UPDATE_TIMER` | `1` (秒) | `srv6orch.cpp:26` | FlexCounter タイマー間隔。カウンタ有効時の統計更新サイクル |
+| `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS` | `10000` (ms) | `srv6orch.cpp:27` | FlexCounter ポーリング間隔（10 秒固定） |
+| `ADJ_DELIMITER` | `','` | `srv6orch.cpp:19` | adjacency フィールドの区切り文字。ECMP 未サポートのため複数指定は即エラー |
+| `MY_SID_KEY_DELIMITER` | `':'` | `srv6orch.h:152` | MY_SID の SAI entry key 組み立て区切り文字（`block_len:node_len:func_len:arg_len:IPv6`） |
+| `DEFAULT_VRF` | `"default"` | `managers_srv6.py:11` | `decap_vrf` フィールドの比較基準文字列 |
+| `supported_SRv6_behaviors` | `{'uN', 'uDT46'}` | `managers_srv6.py:6-8` | bgpcfgd が受理する action 値集合。それ以外は `log_err` + `return False` |
+
+### IPinIP トンネルのハードコード SAI 属性
+
+`decap_dscp_mode` が設定された SID（`uN`/`uDT46` + DSCP mode 指定時）に作成される IPinIP トンネルは、以下の SAI 属性を固定値で設定する（`srv6orch.cpp:490-540`）:
+
+| SAI 属性 | ハードコード値 | 設定変更可否 |
+|---------|--------------|------------|
+| `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK` | 不可 |
+| `SAI_ROUTER_INTERFACE_ATTR_MTU` | `9100` | 不可（CONFIG_DB フィールドなし） |
+| `SAI_TUNNEL_ATTR_TYPE` | `SAI_TUNNEL_TYPE_IPINIP` | 不可 |
+| `SAI_TUNNEL_ATTR_PEER_MODE` | `SAI_TUNNEL_PEER_MODE_P2MP` | 不可 |
+| `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` | `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` | **不可**（`decap_dscp_mode` と異なり TTL は設定フィールドなし） |
+| `SAI_TUNNEL_ATTR_DECAP_DSCP_MODE` | `uniform` / `pipe`（設定値から決定） | `decap_dscp_mode` フィールドで制御可能 |
+
+!!! warning "TTL モードは pipe 固定"
+    `decap_dscp_mode` で DSCP は `uniform`/`pipe` を選択できるが、TTL は常に `PIPE_MODEL` にハードコードされている（`srv6orch.cpp:534-536`）。内部パケットの TTL が外側ヘッダへ伝播しない動作は変更不可。
+
+### bgpcfgd と Srv6Orch の action 受理範囲の乖離
+
+`end_behavior_map`（`srv6orch.cpp:41-62`）は 19 種の action を SAI にマップするが、CONFIG_DB 経由の bgpcfgd パスでは `supported_SRv6_behaviors = {'uN', 'uDT46'}` の 2 種のみが受理される。
+
+| action | bgpcfgd | Srv6Orch (APPL_DB 直書き) |
+|--------|---------|--------------------------|
+| `uN` / `uDT46` | **受理** | 受理 |
+| `end` / `end.x` / `end.t` / `end.dt4` 等 | **拒否**（`log_err` + `return False`） | 受理 |
+| `ua` / `udx4` / `udx6` 等 | **拒否** | 受理 |
+
+追加の action を使用する場合は fpmsyncd 等を通じた APPL_DB 直接書込みが必要であり、CONFIG_DB の `SRV6_MY_SIDS` テーブルからの設定では利用できない。
+
+<!-- /constants -->
+
 ## 設定例
 
 ```json
