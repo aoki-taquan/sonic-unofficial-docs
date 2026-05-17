@@ -82,6 +82,69 @@ VLAN_TABLE|<VlanName>
 - **DEL 時の削除**: CONFIG_DB `VLAN` に DEL 操作が来ると `m_stateVlanTable.del(key)` が呼ばれ、エントリが削除される (vlanmgr.cpp:463)。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+### SET 時の書込み順序
+
+`doVlanTask()` 内での書込み順序は固定であり、STATE_DB `VLAN_TABLE` への書込みは必ず以下の後に行われる:
+
+1. `addHostVlan(vlan_id)` — Linux bridge (`Vlan<N>`) をカーネルに作成
+2. `m_appVlanTableProducer.set()` — APP_DB `VLAN_TABLE` にエントリ書込み
+3. `m_stateVlanTable.set(key, [("state","ok")])` — **STATE_DB `VLAN_TABLE` 書込み**（最後）
+
+STATE_DB を読んで ready を確認した時点で、Linux bridge と APP_DB エントリの両方が存在することが保証される (vlanmgr.cpp:383-443)。
+
+### 上流依存: gMacAddress 確定待ち
+
+`gMacAddress` が未確定（syncd/SAI がスイッチ MAC を確定する前）の間、`doVlanTask()` は全タスクを即 return してキューに留める。STATE_DB 書込みは MAC 確定後まで発生しない。
+
+```cpp
+// vlanmgr.cpp:318-322
+if (!isVlanMacOk())
+{
+    SWSS_LOG_DEBUG("VLAN mac not ready, delaying VLAN task");
+    return;
+}
+```
+
+**影響**: 起動直後（syncd 未完了）に CONFIG_DB へ `VLAN` SET を書いても、STATE_DB `VLAN_TABLE` は MAC 確定まで空のまま。downstream consumers は ready を検出できず全て自動リトライ待機に入る。
+
+### 下流依存: downstream consumers の処理開始条件
+
+以下の consumers は `isVlanStateOk()` で STATE_DB にエントリが存在するかを確認し、存在しない場合は処理をスキップして自動リトライ待機する:
+
+| consumer | 確認箇所 | 待機対象 |
+|---------|---------|---------|
+| `vlanmgrd`（VLAN_MEMBER 処理） | `vlanmgr.cpp:642` | VLAN_MEMBER の追加 |
+| `intfmgrd` | `intfmgr.cpp:655` | VLAN インタフェース（IP アドレス等）の設定 |
+| `nbrmgrd` | `nbrmgr.cpp` | ネイバーエントリの登録 |
+| `stpmgrd` | `stpmgr.cpp:1282` | STP ポート/VLAN 設定 |
+| `natmgrd` | `natmgr.cpp:102` | NAT エントリの設定 |
+| `vxlanmgrd` | `vxlanmgr.cpp:774` | VXLAN tunnel member の設定 |
+
+**影響**: VLAN が STATE_DB に未登録の間、上記の全設定操作は Consumer キュー内に保留される。VLAN の STATE_DB 書込み後、次回 `doTask()` ループで自動的に処理が再開される。
+
+### DEL 時の逆順依存（危険）
+
+```cpp
+// vlanmgr.cpp:456-463
+removeHostVlan(vlan_id);
+m_appVlanTableProducer.del(key);
+m_stateVlanTable.del(key);  // STATE_DB エントリを即削除
+```
+
+VLAN の DEL 処理で STATE_DB エントリが即削除されるため、残存する VLAN_MEMBER タスクが `isVlanStateOk()` チェックで永遠に false を返し、孤立・滞留する。
+
+**推奨 DEL 順序**: `VLAN_MEMBER` を全て DEL してから `VLAN` を DEL。逆順（VLAN 先 DEL）は VLAN_MEMBER タスクを孤立させる (vlanmgr.cpp:456-471, L642)。
+
+### warm-restart: STATE_DB を根拠とした冪等スキップ
+
+warm-restart 時、STATE_DB `VLAN_TABLE` に既存エントリがあり in-memory セット `m_vlans` に未登録の場合、Linux bridge 再作成をスキップして replay エントリを消化する (vlanmgr.cpp:371-378)。
+
+**cold reboot との差異**: コールドリブートでは STATE_DB がクリアされるため全 VLAN の再処理が走る。warm-reboot では Linux bridge がカーネルに残存するため、STATE_DB エントリ存在確認 → 再作成スキップが機能し、トラフィック断を最小化する。
+<!-- /ordering -->
+
 ## 読み取り主体
 
 | プロセス | ファイル | 用途 |
