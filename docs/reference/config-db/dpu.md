@@ -325,6 +325,36 @@ DPU の設定変更（`state` / `pa_ipv4` 等）を orchagent に反映させる
 `swss` コンテナの再起動が必要。`swbus_port` 変更は orchagent 不要、caclmgrd が即時対応する。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G — subscribe 経路)
+
+CONFIG_DB `DPU` テーブルへの runtime subscribe を行うコンシューマは **`caclmgrd` のみ**。他の購読者は起動時の一括読み込みまたは都度参照を行う。
+
+### メカニズム分類
+
+| # | コンシューマ | subscribe API | 購読テーブル | 備考 |
+|---|------------|--------------|------------|------|
+| 1 | `caclmgrd` | `SubscriberStateTable` (Python swsscommon) | CONFIG_DB `DPU` | runtime 購読; `"dash-ha"` feature 有効時のみ副作用あり |
+| 2 | `DashEniFwdOrch` (orchagent) | なし (起動時 `swss::Table` HGETALL のみ) | — | `DPU` テーブルへの subscribe は行わない |
+| 3 | sonic-gnmi DPU proxy | なし (gRPC リクエスト都度 `HGetAll`) | — | subscribe 不使用 |
+
+### caclmgrd — `SubscriberStateTable` 詳細
+
+- **API**: `subscribe_dpu_table = swsscommon.SubscriberStateTable(config_db_connector, "DPU")` / `sel.addSelectable(subscribe_dpu_table)` (`caclmgrd:1163-1164`)
+- **購読方式**: `swsscommon.Select` に登録し 1 秒タイムアウトのポーリングループで受信。内部は Redis keyspace 通知 (`__keyspace@<db>__:DPU|*` の psubscribe に相当)
+- **イベント粒度**: キー単位 (`key` = DPU 名, `op` = `SET`/`DEL`)。フィールド単位の通知は行われない。`fvs` は通知後に内部で HGETALL して取得したフィールドリスト
+- **条件付き実行**: `if "dash-ha" in self.feature_present:` (`caclmgrd:1265`) — dash-ha feature が無効の環境では DPU イベントを受け取っても `update_dash_ha_rules()` を呼ばない
+- **evidence**: `sonic-host-services/scripts/caclmgrd:1163-1164, 1262-1267, 1082-1110`
+
+### DashEniFwdOrch (orchagent) — 起動時一括読み込み
+
+- `DashEniFwdOrch` は `Orch2` フレームワークを通じて **APPL_DB の `APP_DASH_ENI_FORWARD_TABLE`** を購読し、CONFIG_DB `DPU` テーブルへの subscribe は行わない (`orchdaemon.cpp:615`)
+- `DPU` テーブルの参照は `DpuRegistry::populate()` での `swss::Table::hgetall()` 呼び出しのみ（`dashenifwdorch.cpp:225`）。`swss::Table` は subscribe 型 API ではなく点呼型
+- **実行時 DPU 変更の反映**: `swss` (orchagent) コンテナの再起動が必要
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dpu-pubsub.md` を参照。
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
