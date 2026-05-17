@@ -389,6 +389,66 @@ SRV6_MY_SIDS 変更が直接トリガする Redis Keyspace 通知・Pub/Sub チ�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム制約 (Phase H)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-platform.md`
+
+### SAI ケイパビリティ照会（カウンタ）
+
+`Srv6Orch::queryMySidCountersCapability()` (`srv6orch.cpp:144-155`) はランタイムで SAI に問い合わせる:
+
+```cpp
+sai_query_attribute_capability(gSwitchId, SAI_OBJECT_TYPE_MY_SID_ENTRY,
+                               SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, &capability);
+return capability.set_implemented && capability.create_implemented;
+```
+
+`set_implemented && create_implemented` の両方が true の場合のみカウンタ機能を有効化する。カウンタ非対応プラットフォームでは `initializeCounters()` が早期 return し (`srv6orch.cpp:123-127`):
+
+- カウンタ関連オブジェクト（`m_asic_db`、`m_mysid_counters_table`、`m_counter_update_timer`）は初期化されない
+- SID 作成時に `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` 属性を SAI に送らない（`srv6orch.cpp:1593`）
+- カウンタ変更要求は無視され `SWSS_LOG_WARN("Ignoring SRv6 counters state change as they are not supported on this platform")` を出力する（`srv6orch.cpp:257`）
+
+### FlexCounter モード（Traditional / Non-Traditional）
+
+`gTraditionalFlexCounter` フラグ（外部 extern、`srv6orch.cpp:39`）で 2 つの動作モードが切り替わる:
+
+| フラグ | ASIC_DB `VIDTORID` 確認 | カウンタ ID 登録タイミング |
+|-------|----------------------|--------------------------|
+| `true`（Traditional） | `m_vid_to_rid_table->hget()` が true になるまで保留 (`srv6orch.cpp:294`) | VID→RID 解決後に登録 |
+| `false`（Non-Traditional） | スキップ | SID 作成直後に即時登録 |
+
+### ECMP nexthop 非対応（ソフトウェア制限）
+
+`createUpdateMysidEntry()` (`srv6orch.cpp:1515-1519`) で adj フィールドをカンマで分割し、要素数 > 1 の場合は即時エラー:
+
+```
+SWSS_LOG_ERROR("Failed to create my_sid entry %s adj %s: ECMP adjacency not yet supported", ...)
+```
+
+`end.x` / `ua` 等 nexthop 要求 action では単一 next-hop のみサポート。複数 next-hop を指定した場合は自動回復なし。
+
+### IPinIP Tunnel の SAI 対応要件
+
+`decap_dscp_mode` を指定した `uN` / `uDT46` SID では IPinIP Tunnel (`SAI_TUNNEL_TYPE_IPINIP`) を作成する (`srv6orch.cpp:538`)。SONiC はトンネル作成前に SAI ケイパビリティを照会しないため、プラットフォームが非対応の場合は `create_tunnel` 呼び出し時点で `SAI_STATUS_NOT_SUPPORTED` が返り、SID 作成全体が失敗する。
+
+### action サポート範囲のプラットフォーム依存
+
+`end_behavior_map` (`srv6orch.cpp:41-62`) は 19 種の action を SAI にマップするが、各 action の SAI 実装はプラットフォーム依存であり、SONiC は action ごとの事前ケイパビリティ照会を行わない。非対応 action は SAI エラーで初めて判明する。CONFIG_DB 経由（bgpcfgd パス）では `supported_SRv6_behaviors = {'uN', 'uDT46'}` に絞り込まれるため、この問題が顕在化する可能性は低い。
+
+### プラットフォーム制約まとめ
+
+| 機能 | 制約 | 検出タイミング |
+|------|------|--------------|
+| MY_SID カウンタ | `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` の create/set 実装が必要 | 起動時 `sai_query_attribute_capability()` で判定 |
+| ECMP nexthop | 未サポート（ソフトウェア制限） | SET 処理時に adj カンマ数で判定 |
+| IPinIP Tunnel | SAI の `SAI_TUNNEL_TYPE_IPINIP` 実装が必要 | `create_tunnel` 呼び出し時 SAI エラーで判明 |
+| FlexCounter 方式 | Traditional / Non-Traditional 両対応 | `gTraditionalFlexCounter` フラグで切替 |
+| action 種別 | 19 種のうち SAI 実装済みのみ有効 | SAI エラーで初めて判明（事前照会なし） |
+
+<!-- /platform -->
+
 ## 設定例
 
 ```json
