@@ -200,6 +200,51 @@ CONFIG_DB / APPL_DB の他テーブルを**一切参照しない**。フィー�
 
 ---
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査対象: `sonic-swss/orchagent/aclorch.cpp` L752-897, L4912-4948, L5738-5774
+> 調査日: 2026-05-17
+
+### SET 失敗パス
+
+`AclTableTypeParser::parse()` が `false` を返した場合、`doAclTableTypeTask()` は
+`SWSS_LOG_ERROR("Failed to parse ACL table type configuration %s")` を出力し、
+`it = consumer.m_toSync.erase(it)` でエントリを破棄する（`aclorch.cpp:5752-5756`）。
+**retry（`it++`）は存在しない。**
+
+| 失敗ケース | コード根拠 | 動作 |
+|---|---|---|
+| `MATCHES` に未知の match キー | `parseAclTableTypeMatches()` `aclorch.cpp:818` | SWSS_LOG_ERROR → parse() false → erase |
+| `ACTIONS` に未知の action キー | `parseAclTableTypeActions()` `aclorch.cpp:870` | SWSS_LOG_ERROR → parse() false → erase |
+| `BIND_POINTS` に `PORT`/`PORTCHANNEL` 以外の値 | `parseAclTableTypeBindPointTypes()` `aclorch.cpp:887` | SWSS_LOG_ERROR → parse() false → erase |
+| 未知フィールド名（`MATCHES`/`ACTIONS`/`BIND_POINTS` 以外） | `parse()` `aclorch.cpp:788` | SWSS_LOG_ERROR → parse() false → erase |
+| 組み込み型名・既存 type 名と重複した SET | `addAclTableType()` `aclorch.cpp:4924` | SWSS_LOG_ERROR → addAclTableType() false → erase（既存エントリ不変） |
+
+`ACTIONS` フィールドが空文字列 (`""`) の場合は `tokenize()` が空リストを返し、
+`parseAclTableTypeActions()` は成功（エラーにならない）。
+
+### DEL 失敗パス
+
+| 失敗ケース | コード根拠 | 動作 |
+|---|---|---|
+| 未登録 type 名の DEL | `removeAclTableType()` `aclorch.cpp:4941-4944` | SWSS_LOG_ERROR → removeAclTableType() false → erase（m_AclTableTypes 不変） |
+
+### retry / STATE_DB / rollback
+
+`ACL_TABLE_TYPE` 処理には **`it++` retry パターンが存在しない**。
+全失敗ケースで `erase(it)` が実行され、再処理は行われない。
+
+- **STATE_DB**: 書き込みなし（`setAclTableStatus()` は呼ばれない）
+- **ERROR_TABLE**: 書き込みなし
+- **syslog のみ**: `journalctl -u swss | grep "ACL table type"` で確認
+- **SAI 影響**: ゼロ（`ACL_TABLE_TYPE` は SAI オブジェクト非生成）
+- **リカバリ**: `DEL → SET` で同名エントリを再作成すれば即座に復旧可能（CONFIG_DB のエントリは失敗後も残る）
+
+<!-- /failure -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)、[`APPL_DB ACL`](appl-acl.md)
