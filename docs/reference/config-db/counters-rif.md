@@ -314,6 +314,94 @@ FlexCounterOrch::doTask()
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/intfsorch.cpp (addRouterIntfs L1297-1305,
+     removeRouterIntfs L1327-1357, doTask Consumer L665-668,
+     doTask SelectableTimer L1604-1636, constructor L86-94);
+     sonic-swss/orchagent/flexcounterorch.cpp (doTask L156-160) -->
+
+### SAI `create_router_interface` 失敗 → `throw runtime_error`
+
+`addRouterIntfs()` が SAI API を呼ぶ際、`SAI_STATUS_SUCCESS` 以外が返ると `handleSaiCreateStatus()` の結果に応じて動作が分岐する[^9]。
+
+| `handleSaiCreateStatus` 結果 | 動作 |
+|-------------------------------|------|
+| `task_success` | ログ (`SWSS_LOG_ERROR`) のみで続行（`m_rifsToAdd` への追加は継続） |
+| それ以外 | `throw runtime_error` → orchdaemon クラッシュ → systemd が再起動 |
+
+COUNTERS_DB への書き込みは発生しない（`addRifToFlexCounter()` は `doTask(SelectableTimer)` で後続実行されるため）。
+
+### SAI `remove_router_interface` 失敗 → COUNTERS_DB と SAI の乖離
+
+`removeRouterIntfs()` は `removeRifFromFlexCounter()` を**先**に呼んでから SAI 削除を実行する（`intfsorch.cpp:1345-1355`）。
+
+```
+removeRifFromFlexCounter()
+  → COUNTERS_RIF_NAME_MAP / COUNTERS_RIF_TYPE_MAP から hdel  ← 先に実行
+  → FLEX_COUNTER_DB の COUNTER_ID_LIST 削除
+SAI remove_router_interface  ← 後で実行 → 失敗した場合
+  → throw runtime_error → orchdaemon 再起動
+```
+
+SAI 削除失敗時には COUNTERS_DB から RIF はすでに除去されているが、SAI レイヤーには RIF が残ったままになる。次回 orchdaemon 再起動時の reconcile で収束する。
+
+### ref_count > 0 による DEL ブロック
+
+IP プレフィックスが残っている間は RIF 削除を拒否する（`intfsorch.cpp:1327-1332`）。
+
+```
+APP_INTF_TABLE DEL → removeIntf() → ref_count > 0 → return false
+```
+
+Consumer の `it` は erase されず次回イベントでリトライされる（Consumer 標準 retry 機構）。COUNTERS_DB に変化なし。
+
+### allPortsReady() false → INTERFACE 処理全停止
+
+PortsOrch が初期化完了（全ポートの SAI OID 取得）を宣言するまで、`APP_INTF_TABLE` の全 SET/DEL が Consumer キューで保留される（`intfsorch.cpp:665-668`）。この間 COUNTERS_DB に変化はなく、ポート初期化完了後に自動的に処理が再開される。
+
+### `rif_rates.lua` ロード失敗 → RATES テーブルが永続的に更新されない
+
+コンストラクタでの Lua スクリプトロードが `runtime_error` をスローした場合、`catch` ブロックで `SWSS_LOG_WARN` を出力して続行する（`intfsorch.cpp:86-94`）[^10]。
+
+| 状態 | 影響 |
+|------|------|
+| `rifRateSha` が空文字列 | syncd に Lua プラグインが登録されない |
+| syncd の動作 | `COUNTERS:<oid>` のポーリングは継続するが `RATES:<oid>` は更新されない |
+| `intfstat` 表示 | rate 列（RX_BPS / TX_BPS / RX_PPS / TX_PPS）が `N/A` になる |
+| 回復方法 | orchdaemon 再起動のみ（ファイル復元後も自動再ロードなし） |
+
+### `gTraditionalFlexCounter` モードで ASIC_DB VIDTORID 未到達
+
+`gTraditionalFlexCounter=true` の環境で syncd が `VIDTORID` を書き込まない場合、`m_rifsToAdd` に RIF が残り続け、1 秒タイマーの毎発火でリトライするが COUNTERS_DB への登録は完了しない（`intfsorch.cpp:1627-1636`）。`SWSS_LOG_INFO` のみで `SWSS_LOG_ERROR` / `SWSS_LOG_WARN` は出ないため、監視が困難[^11]。
+
+### warm-reboot 時の 60 秒遅延
+
+warm-reboot 完了前に `FLEX_COUNTER_TABLE|RIF = enable` が届いても、`FlexCounterOrch::doTask()` は `m_delayTimerExpired = false` の間 early return する（`flexcounterorch.cpp:156-160`）。
+
+| タイミング | 動作 |
+|-----------|------|
+| warm-reboot 開始〜60 秒後 | `generateInterfaceMap()` が呼ばれない → RIF カウンタ更新なし |
+| 60 秒後 | `m_delayTimerExpired = true` → 自動再開 |
+
+**永続的な障害ではなく**、最大 60 秒の遅延で自動回復する。
+
+### 失敗パス要約
+
+| ケース | ログ | retry/recovery | COUNTERS_DB 影響 |
+|--------|------|----------------|-----------------|
+| SAI create 失敗 (throw) | `SWSS_LOG_ERROR` | orchdaemon 再起動 | 書き込みなし |
+| SAI remove 失敗 (throw) | `SWSS_LOG_ERROR` | orchdaemon 再起動 | NAME_MAP 削除済み (乖離) |
+| ref_count > 0 で DEL | `SWSS_LOG_NOTICE` | Consumer 次イベント | 変化なし |
+| allPortsReady false | なし | 起動完了後自動再開 | 変化なし |
+| rif_rates.lua ロード失敗 | `SWSS_LOG_WARN` | 再起動のみ | RATES 永続的に更新なし |
+| VIDTORID 未書込み | `SWSS_LOG_INFO` のみ | 1 秒タイマー自動リトライ | 登録保留（永続的な場合あり）|
+| warm-reboot 60 秒遅延 | なし | 60 秒後自動回復 | 最大 60 秒遅延 |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/counters-rif-failure.md`
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -334,3 +422,6 @@ FlexCounterOrch::doTask()
 [^6]: 起動遅延ロジック: `sonic-buildimage/dockers/docker-orchagent/enable_counters.py:57-64`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57>
 [^7]: orchdaemon 初期化順序: `sonic-swss/orchagent/orchdaemon.cpp:232,283,296,625`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232>
 [^8]: UPDATE_MAPS_SEC タイマー: `sonic-swss/orchagent/intfsorch.cpp:45`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45>
+[^9]: SAI create_router_interface エラーハンドリング: `sonic-swss/orchagent/intfsorch.cpp:1297-1305`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1297>
+[^10]: rif_rates.lua ロード失敗の catch: `sonic-swss/orchagent/intfsorch.cpp:86-94`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86>
+[^11]: gTraditionalFlexCounter モードでの VIDTORID 待機ループ: `sonic-swss/orchagent/intfsorch.cpp:1627-1636`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627>
