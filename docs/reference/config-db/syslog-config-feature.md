@@ -111,6 +111,28 @@ YANG `default` 文を持たないフィールドについて、`containercfgd` (
 - [CONFIG_DB: SYSLOG_CONFIG](syslog-config.md)
 - [CONFIG_DB: FEATURE](feature.md)
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`containercfgd` (`SyslogHandler`) は `ConfigDBConnector.connect(wait_for_init=True, retry_on=True)` で CONFIG DB 初期化完了を待ってから変更を受信する。CLI 経由の書き込みでは `FEATURE` テーブルの先行存在が強制される。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `FEATURE\|<service>` → `SYSLOG_CONFIG_FEATURE\|<service>` | **先行必須**（CLI が `service_validator` で FEATURE 未登録を拒否） | YANG leafref も同制約。事前に `FEATURE` テーブルへ登録すること |
+| 2 | `SYSLOG_CONFIG\|GLOBAL` → `SYSLOG_CONFIG_FEATURE\|<service>` 適用 | 推奨先行（`sonic-cfggen` テンプレート展開時に参照） | 欠落時は rsyslog 組み込みデフォルトが使用される可能性あり |
+| 3 | `containercfgd` 起動完了 → 変更反映 | 起動順序依存（`wait_for_init=True`） | DB 再接続まで変更は pending。コンテナ再起動後に `init_data_handler` が再適用 |
+
+### 主要な制約詳細
+
+**FEATURE 先行必須 (依存 #1)**: `config syslog rate-limit-container <service>` は `db.cfgdb.get_table(FEATURE_TABLE)` を呼び出し、`service_validator(features, service_name)` で存在チェックを行う。未登録の場合は `ClickException` を raise して書き込みをキャンセルする (`config/syslog.py:476-477`)。YANG `leafref` 制約も同様に未登録 service への書き込みを拒否する。
+
+**SYSLOG_CONFIG|GLOBAL の影響 (依存 #2)**: `containercfgd` は `SYSLOG_CONFIG` テーブルを直接購読しない。テンプレート `rsyslog-container.conf.j2` を `sonic-cfggen -d` で展開する際、DB スナップショットから GLOBAL rate-limit 値が参照される。`SYSLOG_CONFIG|GLOBAL` が未設定の場合、テンプレートはフォールバック値（rsyslog 組み込みデフォルト）を使用するが、`containercfgd` 自体はエラーを返さない (`containercfgd.py:156`)。
+
+<!-- evidence: sonic-utilities/config/syslog.py:476-477, containercfgd/containercfgd.py:48,121,133-135 -->
+<!-- /ordering -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
