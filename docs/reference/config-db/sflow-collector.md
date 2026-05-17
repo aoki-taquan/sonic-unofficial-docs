@@ -341,3 +341,19 @@ sflowmgrd: doTask(CFG_SFLOW_TABLE_NAME)
 
 > **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:15-16,31-41,56-75` (SELECT_TIMEOUT / TableConnector リスト / メインループ)、`sonic-swss/cfgmgr/sflowmgr.cpp:51-78,403-414,456-470` (`sflowHandleService` / doTask テーブル分岐 / admin_state 処理)、`sonic-swss/cfgmgr/sflowmgr.h:31-60` (SflowMgr クラス定義)；詳細分析 `meta/_intermediate/cdb-flow/sflow-collector-pubsub.md`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+**プラットフォーム差なし**: `SFLOW_COLLECTOR` は [SAI](../../reference/glossary.md#term-sai) を経由しない。CONFIG_DB への書き込みと hsflowd 設定ファイル再生成のみで完結するため、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`sfloworch.cpp` に SFLOW_COLLECTOR 参照なし。CONFIG_DB 書き込み → hsflowd conf 再生成のみ |
+| multi-asic (`is_multi_npu` 環境) | 影響なし | `sflowmgrd.cpp:28-31`: `DBConnector("CONFIG_DB", 0)` で host-scope CONFIG_DB のみ接続。asicN namespace を iterate するコードなし |
+| VOQ chassis (supervisor + line cards) | 影響なし | VOQ 固有コードパスなし。chassis 集中コレクタ管理機構は未実装 |
+| `collector_vrf = 'mgmt'` | mgmt VRF 有効化が前提 | kernel routing table のソフトウェア制約。ASIC 非依存。`sonic-utilities/config/main.py:9327-9329` で CLI がチェック |
+| IPv6 コレクタ | CONFIG_DB 経路は同一 | YANG `inet:ip-address` で IPv4/IPv6 両対応。hsflowd 実装依存だが DB 経路は ASIC 非依存 |
+
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:28-41`（DB 接続・TableConnector リスト）、`sonic-swss/orchagent/sfloworch.cpp`（SFLOW_COLLECTOR 参照なし）、`sonic-utilities/config/main.py:9314-9331`（CLI VRF 制約）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`（YANG must / max-elements）；詳細分析 `meta/_intermediate/cdb-flow/sflow-collector-platform.md`
+<!-- /platform -->
