@@ -545,6 +545,72 @@ CLI: queuestat / watermarkstat / pg-drop
 > **Evidence**: `orchdaemon.cpp:432-437,620-625`; `flexcounterorch.cpp:100-167,183-281`; `watermarkorch.cpp:23-45,144-231,233-281`; `watermarkstat:325`; `watermark_queue.lua`, `watermark_pg.lua`; 詳細分析 `meta/_intermediate/cdb-flow/counters-queue-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム固有挙動 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp:689-704,857-863,1850-1967,6449-6458,6589-6592,8446-8530,
+     sonic-swss/orchagent/orchdaemon.cpp:635-843,
+     sonic-swss/orchagent/orch.h:40-50,
+     sonic-swss/orchagent/nvda_port_trim_drop.lua -->
+
+キュー / PG カウンタの収集挙動はプラットフォーム（`platform` 環境変数）およびスイッチタイプ（`gMySwitchType`）によって以下の点が異なる。
+
+### DPU モード — キュー / PG 初期化を完全スキップ
+
+`gMySwitchType == "dpu"` の場合、`initializePorts()` (`portsorch.cpp:6589`) は `initializeQueuesBulk()` / `initializePriorityGroupsBulk()` / `initializeSchedulerGroupsBulk()` を呼ばない。`m_queue_ids` が未初期化となるため `generateQueueMap()` のループが 0 回で終わり、`COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` は書き込まれない。通常の queuestat / pg-drop / watermarkstat は DPU では機能しない。
+
+DPU モードで唯一登録されるキューカウンタはホスト TX キューのみ。`m_host_tx_queue_configured` が true かつ `m_queue_ids.size() > m_host_tx_queue`（`portsorch.cpp:6454-6458`）が成立する場合に限り `createPortBufferQueueCounters()` が呼ばれる。それ以外のキューに対する FlexCounter 登録は行われない。
+
+### VoQ モード — カウンタ常時有効・専用テーブル
+
+VoQ システム（`gMySwitchType == "voq"`）では `generateQueueMapPerPort()` (`portsorch.cpp:8446`) が以下の特別挙動を持つ:
+
+- `FLEX_COUNTER_TABLE|QUEUE = disable` の設定に関わらず `addQueueFlexCountersPerPortPerQueueIndex()` を強制呼び出しする（`portsorch.cpp:8483-8484`：「VoQ カウンタを無効化するメカニズムが存在しない」とコメントあり）
+- `voq_stat_ids`（`SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` 1 件）を通常 `queue_stat_ids` に追加して登録
+- Queue OID → 名前マッピングを `COUNTERS_QUEUE_NAME_MAP`（物理ポートのイーグレスキュー）と `COUNTERS_VOQ_NAME_MAP`（仮想出力キュー）の両方に書き込む (`portsorch.cpp:8520`)
+
+VoQ モードでは egress queue カウンタも常時 enable となるため、`FLEX_COUNTER_TABLE|QUEUE = disable` を書き込んでも VoQ 分のカウンタは停止しない。
+
+### Mellanox (NVIDIA) — trim stat Lua プラグイン補完
+
+`isMlnxPlatform()` (`portsorch.cpp:689`) は環境変数 `platform` に `"mellanox"` が含まれる場合に `true` を返す（`orch.h:42`）。以下の 4 条件がすべて成立するとき、`nvda_port_trim_drop.lua` が PORT_STAT FlexCounter グループのプラグインとして登録される (`portsorch.cpp:857-863`):
+
+1. `isMlnxPlatform()` が true
+2. `SAI_PORT_STAT_TRIM_PACKETS` が SAI でサポートされている
+3. `SAI_PORT_STAT_TX_TRIM_PACKETS` が SAI でサポートされている
+4. `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` が SAI で**サポートされていない**
+
+このプラグインは Redis Lua として PORT ポーリング周期ごとに実行され、`SAI_PORT_STAT_DROPPED_TRIM_PACKETS = SAI_PORT_STAT_TRIM_PACKETS − SAI_PORT_STAT_TX_TRIM_PACKETS` を計算して `COUNTERS:<port_oid>` に書き込む。ASIC が `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` を直接サポートする場合（条件 4 が不成立）はプラグインは登録されない。
+
+Queue 側の trim 統計（`SAI_QUEUE_STAT_TRIM_PACKETS`、`SAI_QUEUE_STAT_DROPPED_TRIM_PACKETS`、`SAI_QUEUE_STAT_TX_TRIM_PACKETS`）は `queue_stat_ids` に静的に含まれており、Lua プラグイン補完は行われない（`portsorch.cpp:389-398`）。
+
+### PFC Watchdog とキュー統計のプラットフォーム別分岐
+
+PFC Watchdog（`PfcWdSwOrch`）は `orchdaemon.cpp:635-843` にてプラットフォームごとに異なるキュー統計・ハンドラクラスでインスタンス化される。これらは `FLEX_COUNTER_TABLE` 経路とは独立した専用 FlexCounter グループを使う。
+
+| `platform` 値 | PFC port stat に含む追加カウンタ | Queue stat | ハンドラ |
+|---|---|---|---|
+| `"mellanox"` / `"vs"` | `PFC_N_RX_PAUSE_DURATION_US` (0-7), `PFC_N_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | ZeroBuffer / Lossy |
+| `"broadcom"` | `PFC_N_RX_PKTS` (0-7), `PFC_N_ON2OFF_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | DLR / ACL（`PFC_DLR_INIT_ENABLE` 環境変数で切替可） |
+| `"marvell-teralynx"` / `"marvell-prestera"` / `"clounix"` / `"nephos"` | `PFC_N_RX_PAUSE_DURATION` (0-7), `PFC_N_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | ZeroBuffer / Lossy |
+| `"barefoot"` | `PFC_N_RX_PAUSE_DURATION` (0-7), `PFC_N_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | ACL / Lossy |
+| `"cisco-8000"` | `PFC_N_RX_PKTS` (0-7), `PFC_N_TX_PKTS` (0-7) | `PACKETS` のみ | SaiDlrInit / ActionHandler |
+| その他 / 未設定 | — | — | PfcWd orch インスタンス化なし |
+
+Broadcom の `PFC_DLR_INIT_ENABLE` 環境変数は `gSwitchOrch->checkPfcDlrInitEnable()` 戻り値を上書きできる（`"1"` で DLR 強制 ON、`"0"` で OFF）。
+
+### WRED 能力チェックとプラットフォーム透過的 STATE_DB 書き込み
+
+`initCounterCapabilities(gSwitchId)` (`portsorch.cpp:1107`) は orchagent 起動時に 1 回だけ実行される。プラットフォーム種別を問わず同じ API（`sai_query_stats_capability`）を使うが、WRED/ECN の SAI サポート有無は ASIC ごとに異なる:
+
+- `SAI_STATUS_BUFFER_OVERFLOW` が返った場合はバッファを確保して再呼び出しする 2 段取得方式
+- 成功時は `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` / `_BYTE_COUNTER` / `WRED_DROPPED_PKT_COUNTER` / `_BYTE_COUNTER` の各フィールドを `isSupported: true/false` で STATE_DB の `QUEUE_COUNTER_CAPABILITIES` テーブルに書き込む
+- 能力問合せ失敗時は全フィールドが `isSupported: false`（初期化値）のまま残る
+
+この STATE_DB エントリは外部ツール・オーケストレータが WRED サポート状況を確認するためのものであり、FlexCounter の実際の登録可否は `isPortStatSupported()` による別経路で判断される。
+
+<!-- /platform -->
+
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
 
