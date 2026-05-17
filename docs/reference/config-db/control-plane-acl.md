@@ -528,6 +528,53 @@ evidence: `caclmgrd:1169-1171`
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-host-services/scripts/caclmgrd:1112-1304 (run メインループ) / caclmgrd:943-993 (check_and_update_control_plane_acls) / caclmgrd:123,959 (UPDATE_DELAY_SECS=0.5) / caclmgrd:1221-1224 (BFD one-shot) -->
+
+`ACL_TABLE (CTRLPLANE)` の主要な実行時 Consumer は **caclmgrd** であり、swsscommon の `SubscriberStateTable` + `Select` による低レベル購読を使用する。orchagent (`AclOrch`) は Orch フレームワークの Consumer として CONFIG_DB を購読するが、CTRLPLANE テーブルは SAI に渡さずに `m_ctrlAclTables` へ記録するのみである。
+
+### 購読テーブル
+
+| 購読元 DB | テーブル | 購読 API | 目的 |
+|-----------|---------|---------|-----|
+| CONFIG_DB | `ACL_TABLE` | `SubscriberStateTable` | CTRLPLANE ACL テーブル定義 SET/DEL の検出 |
+| CONFIG_DB | `ACL_RULE` | `SubscriberStateTable` | CTRLPLANE ACL ルール SET/DEL の検出 |
+| CONFIG_DB | `VXLAN_TUNNEL` | `SubscriberStateTable` | VxLAN トンネル設定変更の検出 |
+| CONFIG_DB | `DPU` | `SubscriberStateTable` | DASH-HA 用 DPU 設定変更の検出 |
+| STATE_DB | `BFD_SESSION_TABLE` | `SubscriberStateTable` (one-shot) | BFD セッション初回 SET の検出後に購読解除 |
+| STATE_DB | `MUX_CABLE_TABLE` | `SubscriberStateTable` | DualToR 時のみ: MUX ケーブル状態変化 |
+| STATE_DB | `DHCP_PACKET_MARK` | `SubscriberStateTable` | DualToR 時のみ: DHCP パケットマーク変化 |
+
+caclmgrd は `swsscommon.Select` に全テーブルを `addSelectable()` で登録し、`sel.select(1000ms)` でブロッキングポーリングを行う。`hostcfgd` が Python ラッパの `ConfigDBConnector.subscribe()` を使うのとは異なり、caclmgrd は swsscommon 低レベル API を直接使用し、マルチ namespace にも対応している。
+
+### 通知受信 → iptables 更新フロー
+
+```
+CONFIG_DB ACL_TABLE / ACL_RULE 変更
+  ↓ SubscriberStateTable.pop() (caclmgrd L1268-1286)
+  ctrl_plane_acl_notification.add(namespace)
+  ↓ lock 取得 → num_changes++ (L1290-1295)
+  threading.Thread → check_and_update_control_plane_acls(namespace)
+    ↓ UPDATE_DELAY_SECS=0.5 秒 デバウンス (L959)
+    update_control_plane_acls(namespace, new_config_db_connector)
+      → CONFIG_DB から ACL_TABLE / ACL_RULE を get_table() で全量スナップショット取得
+      → iptables / ip6tables を全フラッシュ後に再インストール
+```
+
+### デバウンス機構
+
+`check_and_update_control_plane_acls()` (caclmgrd:943-993) は `time.sleep(0.5)` 後に `num_changes[namespace]` を確認し、スリープ中に追加変更通知があれば再スリープする。minigraph.py が ACL_TABLE / ACL_RULE を一括投入する際など、連続 SET/DEL で iptables が複数回フラッシュされるのを防ぐ。
+
+### BFD セッションの one-shot 購読
+
+BFD セッションの最初の SET を検出後、caclmgrd は `sel.removeSelectable(subscribe_bfd_session)` で購読を解除する (caclmgrd:1224)。BFD ルールは `self.bfdAllowed == True` フラグで管理され、以降の iptables 全フラッシュ時に再追加される。
+
+> スキャン証跡: `caclmgrd` 全行読了。購読テーブル 7 件、デバウンス機構、BFD one-shot 購読解除を確認。中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
