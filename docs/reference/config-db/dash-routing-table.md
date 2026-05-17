@@ -4,7 +4,7 @@ description: "DASH_ROUTE_TABLE / DASH_ROUTE_RULE_TABLE / DASH_ROUTE_GROUP_TABLE 
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-17
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/dash/dashrouteorch.cpp
@@ -576,3 +576,98 @@ dash_route_orch->unbindRouteGroup(route_group);
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-pubsub.md`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム固有制約 (Phase H)
+
+`DashRouteOrch` および DASH_ROUTE_* テーブル群が動作する前提条件・プラットフォーム依存挙動を網羅する。
+
+### 1. DPU（SmartSwitch）専用
+
+`DashRouteOrch` は `DpuOrchDaemon` (`orchdaemon.cpp:1313`) 内でのみ構築される。`main.cpp:990` において `gMySwitchType == "dpu"` のときだけ `DPU_APPL_DB` / `DPU_APPL_STATE_DB` が接続され、`DpuOrchDaemon` が起動する。
+
+```cpp
+// main.cpp:990-994
+if (gMySwitchType == "dpu")
+{
+    dpu_app_db = make_shared<DBConnector>("DPU_APPL_DB", 0, true);
+    dpu_app_state_db = make_shared<DBConnector>("DPU_APPL_STATE_DB", 0, true);
+    orchDaemon = make_shared<DpuOrchDaemon>(..., dpu_app_db.get(), dpu_app_state_db.get(), ...);
+}
+```
+
+通常スイッチ (`switch`)・VoQ (`voq`)・ファブリック (`fabric`) モードでは `DashRouteOrch` は起動しない。DASH_ROUTE_* テーブルは SmartSwitch の DPU 側でのみ有効なテーブル群である。
+
+### 2. ZMQ トランスポート（フィーチャーフラグ制御）
+
+`DashRouteOrch` は `ZmqOrch` を継承し、Redis keyspace notification ではなく ZeroMQ 経由でメッセージを受信する。ZMQ の有効化はフィーチャーフラグで制御される。
+
+```cpp
+// orchdaemon.cpp:1329
+if (get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true))
+    dash_zmq_server = m_zmqServer;
+```
+
+| フィーチャーフラグ | デフォルト | 効果 |
+|---|---|---|
+| `orch_northbond_dash_zmq_enabled` | `true` | ZMQ ソケット経由で gNMI / SDN コントローラからイベント受信 |
+| （無効化時） | — | `ZmqServer=nullptr` で構築 → Redis subscribe フォールバック |
+
+フラグ値は STATE_DB の feature テーブルで管理される（`lib/orch_zmq_config.cpp`）。
+
+### 3. バルク処理上限 (`gMaxBulkSize`)
+
+アウトバウンド / インバウンドルートエントリは `EntityBulker` による一括 SAI API 呼び出しで処理される。バルクサイズ上限はグローバル変数 `gMaxBulkSize` で管理される。
+
+```cpp
+// orchdaemon.cpp:81
+#define DEFAULT_MAX_BULK_SIZE 1000
+size_t gMaxBulkSize = DEFAULT_MAX_BULK_SIZE;
+
+// dashrouteorch.cpp:50-51（コンストラクタ）
+outbound_routing_bulker_(sai_dash_outbound_routing_api, gMaxBulkSize),
+inbound_routing_bulker_(sai_dash_inbound_routing_api, gMaxBulkSize),
+```
+
+`orchagent` の `--bulk-size` 起動オプションで変更可能 (`main.cpp:552`)。デフォルトは 1000 エントリ。ルートグループ (`DASH_ROUTE_GROUP_TABLE`) は `EntityBulker` を使用せず即時 SAI 呼び出しとなる点に注意。
+
+### 4. `underlay_sip` は IPv4 のみサポート
+
+`addOutboundRouting()` の `underlay_sip` 設定ブランチは `has_ipv4()` ガードのみ実装されており、IPv6 ブランチは存在しない。
+
+```cpp
+// dashrouteorch.cpp:149-157
+if (ctxt.metadata.has_underlay_sip() && ctxt.metadata.underlay_sip().has_ipv4())
+{
+    outbound_routing_attr.id = SAI_OUTBOUND_ROUTING_ENTRY_ATTR_UNDERLAY_SIP;
+    if (!to_sai(ctxt.metadata.underlay_sip(), outbound_routing_attr.value.ipaddr))
+        return false;
+    outbound_routing_attrs.push_back(outbound_routing_attr);
+}
+```
+
+IPv6 の `underlay_sip` を指定しても SAI 属性は設定されず、無言スキップとなる。`servicetunnel` / `privatelink` 用途で IPv6 アンダーレイを使用する場合は注意が必要。
+
+### 5. IPv4 / IPv6 で別 CRM カウンタ
+
+ルートエントリの IP アドレス族は、SAI エントリのキーフィールド（`destination` / `sip`）の `isV4()` で判定され、CRM カウンタが分岐管理される。
+
+| テーブル | IP 族判定フィールド | IPv4 カウンタ | IPv6 カウンタ |
+|---|---|---|---|
+| `DASH_ROUTE_TABLE` | `ctxt.destination.isV4()` | `CRM_DASH_IPV4_OUTBOUND_ROUTING` | `CRM_DASH_IPV6_OUTBOUND_ROUTING` |
+| `DASH_ROUTE_RULE_TABLE` | `ctxt.sip.isV4()` | `CRM_DASH_IPV4_INBOUND_ROUTING` | `CRM_DASH_IPV6_INBOUND_ROUTING` |
+
+`DASH_ROUTE_GROUP_TABLE` は CRM カウンタを使用しない。
+
+### プラットフォーム制約サマリ
+
+| 制約 | 内容 | ソース |
+|---|---|---|
+| 動作モード | `gMySwitchType == "dpu"` 専用（SmartSwitch DPU のみ） | `main.cpp:990` |
+| トランスポート | ZMQ デフォルト有効（`orch_northbond_dash_zmq_enabled`=true） | `orchdaemon.cpp:1329` |
+| バルクサイズ | デフォルト 1000（`--bulk-size` オプションで変更可） | `orchdaemon.cpp:81` |
+| `underlay_sip` | IPv4 のみ。IPv6 は無言スキップ | `dashrouteorch.cpp:149` |
+| CRM カウンタ | IPv4 / IPv6 別カウンタで管理（グループは対象外） | `dashrouteorch.cpp:220,262,507,546` |
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-platform.md`
+<!-- /platform -->
