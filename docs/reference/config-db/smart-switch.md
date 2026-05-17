@@ -135,6 +135,34 @@ SmartSwitch では `ips` が使用され、各 DPU に `169.254.200.<dpu_id+1>` 
 
 ---
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`dhcpservd` の `generate()` と `dhcprelayd` の `refresh_dhcrelay()` はイベントごとに CONFIG_DB を全量スナップショットし Kea / dhcrelay 設定を再生成する。このため書き込み順序が初回起動時の設定完全性に影響する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `DEVICE_METADATA\|localhost.subtype = "SmartSwitch"` → `MID_PLANE_BRIDGE` / `DHCP_SERVER_IPV4_PORT` 処理 | 先行必須（欠如時 SmartSwitch 経路が完全スキップ） | `MidPlaneTableEventChecker` 変更で `dhcpservd` が再生成トリガー |
+| 2 | `MID_PLANE_BRIDGE\|GLOBAL.bridge` と `ip_prefix` の同時書き込み | 必須（片方欠如で SmartSwitch サブネット生成がスキップ） | YANG `must` 制約が CLI 経由の不整合書き込みを拒否 |
+| 3 | `DPUS\|<dpu_name>` → `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|<dpu>` | 先行必須（YANG leafref 制約） | CLI / sonic-cfggen は YANG バリデーションで reject |
+| 4 | `MID_PLANE_BRIDGE\|GLOBAL` + `DHCP_SERVER_IPV4\|bridge-midplane` → `dhcprelayd` midplane 認識 | 同時または先行推奨 | `MidPlaneTableEventChecker` で変更後に自動再評価 |
+| 5 | 全 SmartSwitch テーブル → `FEATURE\|dhcp_server.state=enabled` | 推奨先行（初回起動時の設定欠落回避） | 後から Feature 有効化しても `MidPlaneTableEventChecker` で自動再生成 |
+
+### 主要な制約詳細
+
+**DEVICE_METADATA.subtype 先行必須 (依存 #1)**: `dhcp_cfggen.py:65-76` の `generate()` は最初に `DEVICE_METADATA` を読み `is_smart_switch()` を評価する。`subtype != "SmartSwitch"` の場合 `_parse_dpu()` は呼ばれず `MID_PLANE_BRIDGE` / `DHCP_SERVER_IPV4_PORT` / `DPUS` が存在していても SmartSwitch 用 Kea 設定が生成されない。`config_samples.py:83` でも `subtype` 設定を `MID_PLANE_BRIDGE` より先に行う（evidence: `dhcp_cfggen.py:65-76`; `utils.py:153-161`）。
+
+**bridge + ip_prefix の同時書き込み必須 (依存 #2)**: `dhcp_cfggen.py:84` の条件 `"bridge" in mid_plane and "ip_prefix" in mid_plane` を両方満たすとき初めて SmartSwitch サブネットが Kea 設定に追加される。YANG `must "(current()/../ip_prefix)"` 制約も `bridge` と `ip_prefix` の同時存在を強制する（evidence: `dhcp_cfggen.py:84`, `sonic-smart-switch.yang:63-74`）。
+
+**DPUS 先行必須 (依存 #3)**: `DHCP_SERVER_IPV4_PORT.<port>` フィールドは `DPUS.<dpu_name>.midplane_interface` への YANG leafref であるため、`DPUS` エントリが存在しない状態で `DHCP_SERVER_IPV4_PORT` を書いても YANG バリデーションで reject される（evidence: `sonic-smart-switch.yang:94-103`）。
+
+詳細スキャン手順と依存関係の根拠は `meta/_intermediate/cdb-flow/smart-switch-ordering.md` を参照。
+<!-- /ordering -->
+
+---
+
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
 
