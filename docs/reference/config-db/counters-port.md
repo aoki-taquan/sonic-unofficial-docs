@@ -361,6 +361,28 @@ COUNTERS_DB:COUNTERS:<oid> フィールドが更新される
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-cross-refs.md`
+
+以下はすべて実装レベルの暗黙参照（YANG leafref なし）。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `APP_DB:PORT_TABLE\|PortInitDone` | 読み取り（存在確認）— 起動ブロック | 常時。`allPortsReady()` が `false` の間 `FlexCounterOrch::doTask()` が全リターンし enable イベントが保留される | `flexcounterorch.cpp:164-166`, `portsorch.cpp:1685-1687` |
+| `STATE_DB:PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_*_DROP_COUNTER` | 書き込み（`portsorch`）/ 読み取り（`portstat.py`） | 起動時に `initCounterCapabilities()` が SAI ケイパビリティを問い合わせ結果を書き込む。`portstat` はここを読んで WRED フィールドを silent skip するか判定 | `portsorch.cpp:1876-1879,1928-1980`, `portstat.py:297-329` |
+| `COUNTERS_DB:COUNTERS_PORT_NAME_MAP` | 書き込み（`portsorch`）/ 読み取り（`portstat.py` / `sonic-db-cli`） | 常時。counterpoll の enable/disable に関係なく、ポート作成時に `<alias>:<OID>` を書き込み、ポート削除時に除去 | `portsorch.cpp:759`, `portsorch.cpp:4312` |
+| `FLEX_COUNTER_DB:PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<OID>:COUNTER_ID_LIST` | 書き込み（`port_stat_manager.setCounterIdList()`） | `FLEX_COUNTER_TABLE\|PORT FLEX_COUNTER_STATUS=enable` 受信後に `generatePortCounterMap()` / ポート追加時の即時登録経由で書き込まれる | `flexcounterorch.cpp:237-241`, `portsorch.cpp:9118-9119`, `portsorch.cpp:4144-4148` |
+
+!!! note "WRED カウンタと STATE_DB の関係"
+    `STATE_DB:PORT_COUNTER_CAPABILITIES` は `portsorch` が起動時に 1 回書き込む。`portstat` はこのテーブルを参照して WRED drop カウンタ (`SAI_PORT_STAT_GREEN/YELLOW/RED/WRED_DROPPED_PACKETS`) を表示するかどうかを判断する。ASIC が WRED drop counter をサポートしない場合は `isSupported=false` が書かれ、`portstat` は当該カウンタを `counter_bucket_dict` から除外する (`portstat.py:297-329`)。`COUNTERS_DB` 自体には当該フィールドが存在しないか 0 のままとなる。
+
+!!! note "COUNTERS_PORT_NAME_MAP とポーリング登録の独立性"
+    `COUNTERS_PORT_NAME_MAP` への書き込み（ポート名 → OID マッピング）はポート作成時に常時行われ、counterpoll 状態に依存しない。syncd への実際のポーリング登録（`FLEX_COUNTER_DB` への `COUNTER_ID_LIST` 書き込み）は `FLEX_COUNTER_TABLE|PORT=enable` 受信後にのみ行われる。この 2 つは独立したパスであり、マップが存在していてもポーリングが始まるまでは `COUNTERS:<OID>` の各フィールドは更新されない。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
