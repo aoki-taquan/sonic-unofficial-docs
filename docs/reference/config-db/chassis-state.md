@@ -394,6 +394,25 @@ supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し
 > **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:265-311,336-345,364-478,541-591,667-680,1303-1320,1364-1405,1408-1456`; `sonic-buildimage` `files/scripts/asic_status.py:40-50`
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`CHASSIS_STATE_DB` テーブル群は以下の DB テーブルをコードレベルで参照・操作する（YANG leafref 非対象、CONFIG_DB ではないため）。
+
+| 参照先 | 方向 | 機構 | 条件 |
+|--------|------|------|------|
+| `CONFIG_DB.CHASSIS_MODULE.admin_status` | 読み取り | `ModuleUpdater.get_module_admin_status()` が `admin_status` を確認し、`'down'` なら ASIC テーブル書き込みをスキップ | oper_status == ONLINE のモジュールを 10 秒ポーリング毎に確認 (chassisd:354-362, 444-457) |
+| `APPL_DB.PORT_TABLE.oper_status` | 読み取り | `DpuStateUpdater._get_data_plane_state_common()` が全ポートの oper_status を走査し、1 つでも `'up'` でなければ DP state = `'down'` | platform API `get_dataplane_state()` が `NotImplementedError` の SmartSwitch DPU のみ (chassisd:1267-1275) |
+| `STATE_DB.SYSTEM_READY\|SYSTEM_STATE.Status` | 読み取り | `DpuStateUpdater._get_control_plane_state_common()` が `'up'` 確認。不在・非 up で CP state = `'down'` | platform API `get_controlplane_state()` が `NotImplementedError` の SmartSwitch DPU のみ (chassisd:1277-1284) |
+| `CHASSIS_APP_DB`（SYSTEM_NEIGH / SYSTEM_INTERFACE / SYSTEM_LAG） | 書き込み削除 | `_cleanup_chassis_app_db()` が Lua スクリプトで該当ラインカードの全エントリを一括削除 | supervisor のみ、モジュール down が 30 分経過後 (chassisd:593-682) |
+| `CHASSIS_STATE_DB.DPU_STATE`（自己購読） | 読み取り | `DpuStateManagerTask` が `swsscommon.Select` で APPL_DB.PORT_TABLE / STATE_DB.SYSTEM_READY / CHASSIS_STATE_DB.DPU_STATE を同時購読し、midplane 変化時に DP/CP state を再評価 | SmartSwitch DPU 上のみ (chassisd:1477-1533) |
+
+!!! note "CONFIG_DB.PORT の空テーブル挙動"
+    `_get_data_plane_state_common()` は `CONFIG_DB.PORT` テーブルのキー一覧をループする。PORT テーブルが空（エントリなし）の場合はループが 0 回実行され `True`（DP up）を返す。意図せず DP state が `'up'` になる可能性がある (chassisd:1270)。
+
+> **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:354-362,444-457,593-682,1241-1243,1267-1284,1477-1533`
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
