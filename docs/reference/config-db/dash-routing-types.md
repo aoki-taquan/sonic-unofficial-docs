@@ -288,6 +288,63 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/dash/dashorch.h:29-36 / dashorch.cpp:487-488 / dashrouteorch.cpp:41-47 / dashvnetorch.cpp:322-343 / dashtunnelorch.cpp:289-292 / sonic-dash.yang:356-398 -->
+
+### 結果コード定数 (dashorch.h)
+
+| 定数名 | 値 | 用途 | evidence |
+|--------|-----|------|---------|
+| `DASH_RESULT_SUCCESS` | `0` | SET/DEL 成功時に `APP_DASH_ROUTING_TYPE_TABLE_NAME` の `result` フィールドに書き込む値 | `sonic-swss/orchagent/dash/dashorch.h:35` |
+| `DASH_RESULT_FAILURE` | `1` | `addRoutingTypeEntry()` が `false` 返却した場合（protobuf parse 失敗）に result フィールドへ書き込む値 | `sonic-swss/orchagent/dash/dashorch.h:36` |
+
+### キー変換ハードコード文字列 (dashorch.cpp)
+
+APPL_DB キー（小文字）を protobuf enum 名に変換する 2 段変換がハードコードされている。
+
+| 変換ステップ | 処理内容 | evidence |
+|-------------|---------|---------|
+| 大文字変換 | `std::transform(..., ::toupper)` でキー全体を大文字化。例: `"vnet_encap"` → `"VNET_ENCAP"` | `sonic-swss/orchagent/dash/dashorch.cpp:487` |
+| プレフィックス付加 | `"ROUTING_TYPE_"` を先頭に付加。例: `"VNET_ENCAP"` → `"ROUTING_TYPE_VNET_ENCAP"` | `sonic-swss/orchagent/dash/dashorch.cpp:488` |
+
+> **注意**: 外部コントローラは APPL_DB キーを **プレフィックスなし小文字**（例: `vnet_encap`）で書き込む必要がある。`ROUTING_TYPE_` 付きで書き込むと二重付加になり `RoutingType_Parse()` が失敗する。
+
+### ROUTING_TYPE → SAI アクション変換マップ (`sOutboundAction`)
+
+`dashrouteorch.cpp:41-47` でハードコードされた静的マップ。これに含まれない routing type は `DashRouteOrch::addOutboundRouting()` での SAI プログラミングが別ブランチ処理またはスキップされる。
+
+| RoutingType enum | 対応 SAI アウトバウンドアクション | evidence |
+|-----------------|--------------------------------|---------|
+| `ROUTING_TYPE_VNET` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_VNET` | `sonic-swss/orchagent/dash/dashrouteorch.cpp:43` |
+| `ROUTING_TYPE_VNET_DIRECT` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_VNET_DIRECT` | `sonic-swss/orchagent/dash/dashrouteorch.cpp:44` |
+| `ROUTING_TYPE_DIRECT` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_DIRECT` | `sonic-swss/orchagent/dash/dashrouteorch.cpp:45` |
+| `ROUTING_TYPE_DROP` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_DROP` | `sonic-swss/orchagent/dash/dashrouteorch.cpp:46` |
+
+`ROUTING_TYPE_PRIVATELINK` は `dashvnetorch.cpp:374` に専用ブランチあり（`sOutboundAction` 外）。`ROUTING_TYPE_APPLIANCE` / `ROUTING_TYPE_PRIVATELINKNSG` / `ROUTING_TYPE_SERVICETUNNEL` は sOutboundAction 未登録。
+
+### ENCAP_TYPE → SAI 変換定数
+
+| encap_type enum | 対応 SAI encapsulation | evidence |
+|----------------|----------------------|---------|
+| `ENCAP_TYPE_VXLAN` | `SAI_DASH_ENCAPSULATION_VXLAN` | `sonic-swss/orchagent/dash/dashvnetorch.cpp:327-329`, `dashtunnelorch.cpp:289` |
+| `ENCAP_TYPE_NVGRE` | `SAI_DASH_ENCAPSULATION_NVGRE` | `sonic-swss/orchagent/dash/dashvnetorch.cpp:331-333`, `dashtunnelorch.cpp:292` |
+
+### YANG pattern 制約（許容値の全一覧）
+
+CONFIG_DB / APPL_DB に書き込める値をソースから確認。
+
+| フィールド | YANG pattern 許容値 | evidence |
+|-----------|---------------------|---------|
+| `name` (routing type) | `direct` / `vnet` / `vnet_direct` / `vnet_encap` / `drop` / `appliance` / `privatelink` / `privatelinknsg` / `servicetunnel` | `sonic-dash.yang:365` |
+| `action_type` | `none` / `maprouting` / `direct` / `staticencap` / `appliance` / `4to6` / `mapdecap` / `decap` / `drop` | `sonic-dash.yang:379` |
+| `encap_type` | `vxlan` / `nvgre` | `sonic-dash.yang:385` |
+| `vni` | `1..16777215`（24bit VNI 全有効範囲、RFC 7348） | `sonic-dash.yang:392` |
+
+> **スキャン証跡**: `dashorch.h` L29-36、`dashorch.cpp` L45-46,73,487-488、`dashrouteorch.cpp` L41-47,78-130,326、`dashvnetorch.cpp` L314-374,771、`dashtunnelorch.cpp` L289-292、`sonic-dash.yang` L356-398 読了。定数 2 (result code) + 2 (key transform) + 4 (sOutboundAction) + 2 (encap) + 4 (YANG pattern) = 14 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/dash-routing-types-constants.md`
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
