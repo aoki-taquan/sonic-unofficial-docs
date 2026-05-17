@@ -403,6 +403,74 @@ STATE_DB・CONFIG_DB への書き込みは一切行われない[^orch]。
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (ZMQ / ZmqConsumerStateTable) — Phase G
+
+> **調査根拠**: `sonic-swss/orchagent/zmqorch.cpp`, `zmqorch.h`, `sonic-swss-common/common/zmqserver.h`, `zmqconsumerstatetable.cpp`, `orchdaemon.cpp` L1322–1420 精読 (2026-05-17)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dash-eni-pubsub.md`
+
+### 購読方式
+
+`DASH_ENI_TABLE` の変更通知は **Redis keyspace notification ではなく ZeroMQ (ZMQ) メッセージ** で実装されている。`DashOrch` は `ZmqOrch` を継承し、`ZmqConsumerStateTable` を通じて ZMQ PUSH/PULL パターンで受信する。`SubscriberStateTable` / `NotificationConsumer` / Redis PSUBSCRIBE は一切使用しない。
+
+| 定数 | 値 | 出典 |
+|------|-----|------|
+| ZMQ エンドポイント | `tcp://127.0.0.1:8100` | `zmqserver.h:16` (`ORCH_ZMQ_PORT=8100`) |
+| フィーチャーフラグ | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED`（デフォルト `true`） | `orchdaemon.cpp:1329` |
+| バッチサイズ | `gBatchSize`（デフォルト 128） | `zmqorch.cpp:66` |
+| poll タイムアウト | 1000 ms (`MQ_POLL_TIMEOUT`) | `zmqserver.h:12` |
+
+### 通信シーケンス
+
+```
+[DASH コントローラ / gNMI サービス]
+  gNMI SetRequest → sonic-mgmt-common (Protobuf エンコード)
+    └─ ZmqClient("tcp://127.0.0.1:8100")
+         └─ ZmqProducerStateTable::set(eni_mac, [("pb", pb_bytes)])
+              ├─ ZmqClient::sendMsg() → ZMQ PUSH → orchagent ZmqServer
+              └─ AsyncDBUpdater → DPU_APPL_DB:DASH_ENI_TABLE  ← DB persistence (非同期)
+
+[orchagent — バックグラウンドスレッド]
+  ZmqServer::mqPollThread()
+    └─ zmq_recv() + BinarySerializer::deserialize()
+    └─ ZmqConsumerStateTable::handleReceivedData()
+         ├─ m_receivedOperationQueue.push()
+         ├─ AsyncDBUpdater::update() → DPU_APPL_DB  ← DB persistence
+         └─ SelectableEvent::notify()              ← epoll wakeup
+
+[orchagent — メインスレッド]
+  Select::select()
+    └─ ZmqConsumer::execute()
+         └─ ZmqConsumerStateTable::pops() → addToSync(entries)
+    └─ ZmqConsumer::drain()
+         └─ DashOrch::doTaskEniTable()
+              └─ addEni() / removeEni() → SAI DASH ENI API
+              └─ writeResultToDB() → APPL_STATE_DB:DASH_ENI_TABLE:<eni_mac>
+```
+
+### DB persistence と再起動耐性
+
+`ZmqConsumerStateTable` は `dbPersistence=true` で初期化されるため、受信データを DPU_APPL_DB の `DASH_ENI_TABLE` に非同期書き込みする (`AsyncDBUpdater`)。orchagent 再起動時は `warmRestoreAndSyncUp()` → `bake()` が DPU_APPL_DB の既存エントリを `m_toSync` に再積み込み、コントローラの再送なしで ENI 設定を再適用する。
+
+### ZMQ 無効時のフォールバック
+
+`ORCH_NORTHBOND_DASH_ZMQ_ENABLED=false`（`-q` オプションなし）時は `ConsumerStateTable`（Redis SUBSCRIBE）にフォールバックする。DPU 環境ではフラグがデフォルト `true` のため通常このパスは使われない (`zmqorch.cpp:63-72`)。
+
+### DB・チャンネル使用一覧
+
+| DB / チャンネル | 使用 | 用途 |
+|----------------|------|------|
+| ZMQ `tcp://127.0.0.1:8100` | 使用 | コントローラ → orchagent の SET/DEL メッセージ |
+| `DPU_APPL_DB:DASH_ENI_TABLE` | 使用（非同期書き込み） | DB persistence（orchagent 再起動時の再生用） |
+| `APPL_STATE_DB:DASH_ENI_TABLE` | 使用 | 処理結果（`DASH_RESULT_SUCCESS`/`FAILURE`）の書き戻し |
+| Redis keyspace notification | 不使用 | — |
+| Redis SUBSCRIBE / PSUBSCRIBE | 不使用 | — |
+| `ProducerStateTable` チャンネル | 不使用 | — |
+| `NotificationConsumer` | 不使用 | — |
+| `SubscriberStateTable` | 不使用 | — |
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/dash/dash-sonic-hld.md` §3.2.3 ENI (DASH_ENI_TABLE スキーマ定義・ENI モード・admin-state ワークフロー). <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md>
