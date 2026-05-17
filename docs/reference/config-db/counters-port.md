@@ -627,6 +627,63 @@ NotificationConsumer: なし（カウンタ配信に使用せず）
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-platform.md`
+
+### WRED drop カウンタの SAI capability ゲート
+
+`initCounterCapabilities()` (`portsorch.cpp:1842-1969`) が orchagent 起動時に 1 回だけ `sai_query_stats_capability(switchId, SAI_OBJECT_TYPE_PORT, ...)` を呼び、WRED drop カウンタの対応有無を `STATE_DB:PORT_COUNTER_CAPABILITIES` に書き込む[^5]。
+
+初期値はすべて `{isSupported: "false"}` で書き込まれ、SAI capability list に含まれた場合のみ `true` に更新される:
+
+| SAI stat | STATE_DB キー |
+|----------|--------------|
+| `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` | `WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` |
+| `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` | `WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` |
+| `SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS` | `WRED_ECN_PORT_WRED_RED_DROP_COUNTER` |
+| `SAI_PORT_STAT_WRED_DROPPED_PACKETS` | `WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER` |
+
+`portstat.py:297-329` はこれらを参照して WRED drop フィールドを `counter_bucket_dict` に含めるか判断する。ASIC 非対応プラットフォームでは **portstat 表示から WRED フィールドが事前除外**され、`N/A` すら表示されない。
+
+### Nvidia / Mellanox 固有: nvda_port_trim_drop.lua
+
+`portsorch.cpp:858-863` — 以下の 3 条件をすべて満たす場合のみ `nvda_port_trim_drop.lua` が `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` のプラグインとして登録される:
+
+1. `isMlnxPlatform()` == true（環境変数 `platform` に `"mellanox"` を含む）
+2. `SAI_PORT_STAT_TRIM_PACKETS` が SAI capability list に存在する
+3. `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` が SAI capability list に**存在しない**
+
+この Lua プラグインは `SAI_PORT_STAT_TRIM_PACKETS - SAI_PORT_STAT_TX_TRIM_PACKETS` を計算して `COUNTERS_DB` の `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` フィールドに書き込む（派生カウンタ）。Nvidia/Mellanox 以外では常にスキップされ、`SAI_PORT_STAT_DROPPED_TRIM_PACKETS` は SAI が直接返す値またはフィールド不在となる。
+
+### Gearbox 有効時: GB_COUNTERS_DB への並行書き込み
+
+`isGearboxEnabled()` が true の場合、`generatePortCounterMap()` (`portsorch.cpp:9120-9126`) はポートの `m_system_side_id` / `m_line_side_id` に対して `gb_port_stat_manager.setCounterIdList()` を呼び、`GB_COUNTERS_DB`（通常の COUNTERS_DB とは別の Redis DB インデックス）にカウンタ ID リストを書き込む。Gearbox 無効環境では、`GB_COUNTERS_DB` への書き込みは発生しない。
+
+Gearbox 有効時は `port_rates.lua` も `GB_COUNTERS_DB` に別途ロードされ、Gearbox ポートの `GB_COUNTERS_DB:RATES:<oid>` にレートカウンタが書き込まれる (`portsorch.cpp:822-835`)。
+
+### DPU (`gMySwitchType == "dpu"`) での制限
+
+DPU モードでは System Port の初期化 (`portsorch.cpp:1043-1056`) や Auto-neg FEC capability query (`portsorch.cpp:987`) が `if (gMySwitchType != "dpu")` でスキップされる。PORT カウンタの `generatePortCounterMap()` 自体は DPU でも実行されるが、収集対象は DPU ローカルの PHY ポートのみとなる（System Port は DPU に存在しない）。
+
+### VoQ chassis での PORT カウンタ
+
+通常 PHY ポートの PORT カウンタ収集は VoQ でも同一。ただし VOQ カウンタ（`SAI_QUEUE_STAT_*` の VOQ 用）は `FLEX_COUNTER_TABLE|QUEUE` の enable/disable に関わらず常時登録される (`portsorch.cpp:8483-8512`)。この常時有効仕様は `FLEX_COUNTER_TABLE|PORT` で制御される PORT カウンタには影響しない。
+
+### VS (virtual switch) での挙動
+
+`sai_query_stats_capability()` がスタブ応答を返すため、WRED drop カウンタはすべて `{isSupported: "false"}` のまま。SAI カウンタ値は 0 の dummy 値。Gearbox は VS では無効。
+
+| 差異 | Broadcom | Mellanox/NVIDIA | VS/VPP | DPU | VoQ chassis |
+|------|----------|-----------------|--------|-----|-------------|
+| WRED drop counter | ASIC 依存 | 典型的に true | false | ASIC 依存 | ASIC 依存 |
+| nvda_port_trim_drop.lua | 無効 | 条件次第で有効 | 無効 | 無効 | 無効 |
+| GB_COUNTERS_DB 書き込み | 環境依存 | 環境依存 | 無効 | 無効 | 環境依存 |
+| VOQ カウンタ常時有効 | N/A | N/A | N/A | N/A | Yes |
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -643,3 +700,4 @@ NotificationConsumer: なし（カウンタ配信に使用せず）
 [^2]: `port_stat_ids[]` 全定義: `sonic-swss/orchagent/portsorch.cpp:242-342`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L242>
 [^3]: ポーリング間隔ハードコード: `sonic-swss/orchagent/portsorch.cpp:87`, `portsorch.h:40-41`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L87>
 [^4]: warm-start 遅延タイマー: `sonic-swss/orchagent/flexcounterorch.cpp:127-137`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L127>
+[^5]: プラットフォーム統計 capability 初期化: `sonic-swss/orchagent/portsorch.cpp:1842-1969`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L1842>
