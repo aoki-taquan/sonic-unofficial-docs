@@ -429,6 +429,49 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 [^yang]: YANG 定義: `sonic-dash.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-dash.yang>
 [^orch]: orchagent 実装: `dashvnetorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/dash/dashvnetorch.cpp>
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`DASH_VNET` / `DASH_VNET_MAPPING_TABLE` の処理は **`switch_type=dpu` のノード専用**であり、伝統的な ASIC ベンダー別分岐（mellanox / broadcom / barefoot 等）は存在しない。
+
+### 動作条件: switch_type=dpu のみ
+
+`main.cpp:990-994` — `gMySwitchType == "dpu"` の場合のみ `DpuOrchDaemon` が生成され、`DashVnetOrch` が登録される。
+
+| switch_type | DashVnetOrch 起動 | 備考 |
+|-------------|-------------------|------|
+| `"dpu"` | **起動** | SmartSwitch の DPU ロール。DPU_APPL_DB に接続 |
+| `""` / `"voq"` / `"fabric"` / `"chassis-packet"` | **不起動** | 通常 T0/T1 / VOQ chassis / fabric blade |
+| SmartSwitch NPU 側 (`switch_sub_type=SmartSwitch` かつ `switch_type != "dpu"`) | **不起動** | NPU 側では DASH orchagent は登録されない (`orchdaemon.cpp:613`) |
+
+`DashVnetOrch` は `DPU_APPL_DB` (`m_dpu_appDb`) を購読し、結果を `DPU_APPL_STATE_DB` に書き戻す。通常の `APPL_DB` とは独立したデータベース接続である (`orchdaemon.cpp:1335-1339`)[^orch]。
+
+### SAI_API_DASH_VNET — ベンダー分岐なし
+
+`saihelper.cpp:253-254` で `sai_api_query((sai_api_t)SAI_API_DASH_VNET, ...)` を一律呼び出す。`dashvnetorch.cpp` の `addVnet()` / `addVnetMap()` / `addOutboundCaToPa()` には環境変数 `platform` / `sub_platform` の参照が一切なく、SAI DASH extension API がベンダー差を抽象化する[^orch]。
+
+### IPv4 / IPv6 の差異
+
+プラットフォーム差ではなくアドレスファミリ差として、CRM カウンタが分岐する:
+
+| 操作 | CRM カウンタ |
+|------|------------|
+| VNET 作成/削除 | `CRM_DASH_VNET` (共通) |
+| Outbound CA-to-PA 作成/削除 | `CRM_DASH_IPV4_OUTBOUND_CA_TO_PA` / `CRM_DASH_IPV6_OUTBOUND_CA_TO_PA` (`ctxt.dip.isV4()` で分岐) |
+| PA Validation 作成/削除 | `CRM_DASH_IPV4_PA_VALIDATION` / `CRM_DASH_IPV6_PA_VALIDATION` (`underlay_ip.has_ipv4()` で分岐) |
+
+ただしこれはネットワークアドレスのアドレスファミリによる区別であり、動作するハードウェア ASIC ベンダーには依存しない (`dashvnetorch.cpp:525, 561, 706`)[^orch]。
+
+!!! note "T0/T1/VOQ chassis 環境"
+    `DASH_VNET` テーブルは `DPU_APPL_DB` にのみ存在する。T0/T1/VOQ chassis の `APPL_DB` には `DASH_VNET_TABLE` エントリが存在せず、`DashVnetOrch` も起動しない。
+
+!!! note "gMaxBulkSize チューニング"
+    `vnet_bulker_` / `outbound_ca_to_pa_bulker_` / `pa_validation_bulker_` が使う `gMaxBulkSize` はコマンドライン引数 `--max-bulk-size` で制御するデプロイ時パラメータ。ASIC ベンダー別のデフォルト差はない。
+
+> **Evidence**: `main.cpp:990-994`（DpuOrchDaemon 起動条件）、`orchdaemon.cpp:613, 1335-1339`（DashVnetOrch 登録）、`saihelper.cpp:253-254`（SAI_API_DASH_VNET 初期化）、`dashvnetorch.cpp:42-51, 525, 561, 706`（コンストラクタ・CRM 分岐）; 詳細分析 `meta/_intermediate/cdb-flow/dash-vnet-platform.md`
+
+<!-- /platform -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
