@@ -554,6 +554,79 @@ SAI 生カウンタからレートを計算して **COUNTERS_DB:RATES:<oid>** �
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-pubsub.md`
+> 調査対象: `sonic-swss/orchagent/flexcounterorch.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-utilities/utilities_common/portstat.py`
+
+### Producer/Consumer ペア
+
+PORT カウンタの制御経路は **CONFIG_DB → FlexCounterOrch → syncd** という 3 段構成をとる。APPL_DB 中継なし。
+
+| 区間 | 方式 | 詳細 |
+|------|------|------|
+| CONFIG_DB → FlexCounterOrch | `SubscriberStateTable` | `FLEX_COUNTER_TABLE|PORT` 等を購読。keyspace notification で変化を検出 |
+| FlexCounterOrch → portsorch | 直接関数呼び出し | `gPortsOrch->generatePortCounterMap()` / `setCounterIdList()` |
+| portsorch → syncd | `FlexCounterTaggedCachedManager` (FLEX_COUNTER_DB) | `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` グループに `COUNTER_ID_LIST` を書き込む |
+| syncd → ASIC | SAI flex counter ポーリング | 1000 ms 間隔で SAI stat API をポーリング |
+| syncd → COUNTERS_DB | 直接書き込み | `COUNTERS:<oid>` Hash に各 SAI フィールドの値をアトミック更新 |
+| COUNTERS_DB → portstat | `Table::get()` 直接読み出し | `COUNTERS_PORT_NAME_MAP` で名前→OID 解決後、`COUNTERS:<oid>` を読む |
+
+### warm-start 遅延タイマー
+
+`FlexCounterOrch` は cold-start では即座に処理を開始するが、warm-start では **60 秒**のタイマー (`FLEX_COUNTER_DELAY_SEC = 60`) が期限切れになるまで `doTask()` 全体をブロックする[^4]。これは syncd の warm-start 完了前に SAI ポーリングを開始しないための設計。
+
+```
+cold-start: m_delayTimerExpired = true → 即処理可能
+warm-start: SelectableTimer(60s) 起動 → 60s 間 doTask ブロック
+            (flexcounterorch.cpp:127-137)
+```
+
+### FLEX_COUNTER_DB への書き込みキー
+
+| FLEX_COUNTER_DB キー | 内容 |
+|----------------------|------|
+| `FLEX_COUNTER_GROUP_TABLE\|PORT` | `POLL_INTERVAL`, `FLEX_COUNTER_STATUS`, `STATS_MODE` |
+| `FLEX_COUNTER_TABLE\|<port_oid>:COUNTER_ID_LIST` | ポーリング対象 SAI カウンタ ID のカンマ区切りリスト |
+
+`port_stat_manager.setCounterIdList()` が呼ばれると上記エントリが書かれ、syncd はこの DB 変化を検知して直ちに SAI ポーリングを開始する。
+
+### portstat.py の読み出しパス（pull 型）
+
+`portstat` / `show interface counters` は COUNTERS_DB を **直接読み取る**（pull 型）。pub/sub 購読は行わず、コマンド実行時点の最新値を取得する。
+
+```python
+# portstat.py:373-378
+counter_port_name_map = self.db.get_all(COUNTERS_DB, COUNTERS_PORT_NAME_MAP)
+# → {Ethernet0: oid:0x1000000000001, ...}
+counter_data = self.db.get(COUNTERS_DB, f"COUNTERS:{oid}", field_name)
+# → "12345678"  (uint64 文字列)
+```
+
+### データフロー図
+
+```text
+CONFIG_DB[FLEX_COUNTER_TABLE|PORT]
+  ↓ SubscriberStateTable (keyspace notification)
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ FlexCounterOrch::doTask()
+      [delayTimerExpired チェック]
+      [gPortsOrch->allPortsReady() チェック]
+      generatePortCounterMap() → port_stat_manager.setCounterIdList()
+FLEX_COUNTER_DB[FLEX_COUNTER_TABLE|<port_oid>:COUNTER_ID_LIST]
+  ↓ syncd FlexCounter スレッド (1000ms ポーリング)
+      sai_port_api->get_port_stats()
+COUNTERS_DB[COUNTERS:<oid>] ← SAI 統計値 (uint64 文字列)
+  ↓ portstat / show interface counters (pull 型 direct read)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationConsumer: なし（カウンタ配信に使用せず）
+```
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -569,3 +642,4 @@ SAI 生カウンタからレートを計算して **COUNTERS_DB:RATES:<oid>** �
 [^1]: portsorch SAI カウンタ ID リスト定義: `sonic-swss/orchagent/portsorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L242>
 [^2]: `port_stat_ids[]` 全定義: `sonic-swss/orchagent/portsorch.cpp:242-342`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L242>
 [^3]: ポーリング間隔ハードコード: `sonic-swss/orchagent/portsorch.cpp:87`, `portsorch.h:40-41`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L87>
+[^4]: warm-start 遅延タイマー: `sonic-swss/orchagent/flexcounterorch.cpp:127-137`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L127>
