@@ -319,3 +319,85 @@ DASH ACL オブジェクトには厳密なコード由来の依存関係があ�
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dash-acl-failure.md -->
+
+### retry パターン概要
+
+DASH ACL タスクは `DashAclOrch::doTask()` が `task_process_status` を返し、`Consumer` ベースのタスクキュー (`m_toSync`) で管理される。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **`task_need_retry`** | 参照先（グループ / ENI / タグ）未作成・グループ削除時のバインド残存 | `m_toSync` に残し次 `doTask()` で自動再試行。上限なし |
+| **`task_failed`** | キーパースエラー・重複作成・グループ更新（不可）・バインド時グループ未作成・ルール 0 件バインド | エントリ破棄。自動回復なし |
+| **`task_success`** | 正常完了・存在しないエントリへの DEL（冪等） | エントリ削除 |
+
+### DASH_ACL_GROUP_TABLE SET の失敗詳細
+
+#### 重複 SET（更新不可）
+
+既に `m_groups_table` に存在するグループ ID への SET: `SWSS_LOG_WARN "Cannot update attributes of ACL group %s"` → `task_failed`。グループ属性の変更は一切できない。変更が必要な場合は DEL → SET 再作成が必要。(`dashaclorch.cpp:231-235`)
+
+#### `ip_version` 不正値
+
+`ip_version` フィールドが UNSPECIFIED または不正値の場合、`from_pb()` が `false` を返し → `task_failed`。SAI 呼び出し前に失敗する。(`dashaclgroupmgr.cpp:84-92`)
+
+#### SAI 作成失敗
+
+SAI `create_dash_acl_group` 失敗時: `SWSS_LOG_ERROR "Failed to create ACL group: %d, %s"` → `handleSaiCreateStatus(SAI_API_DASH_ACL, status)` 経由。(`dashaclgroupmgr.cpp:168-172`)
+
+### DASH_ACL_GROUP_TABLE DEL の失敗詳細
+
+#### バインド中グループの削除
+
+グループが ENI にバインド中（`m_in_tables` または `m_out_tables` が非空）の場合: `SWSS_LOG_ERROR "ACL group %s still has %zu references"` → `task_need_retry`。バインド解除後に自動再試行される。(`dashaclgroupmgr.cpp:234-238`)
+
+存在しないグループ ID への DEL は `task_success`（冪等動作）。(`dashaclgroupmgr.cpp:225-229`)
+
+### DASH_ACL_RULE_TABLE SET の失敗詳細
+
+#### キーパース失敗
+
+キーが `group_id:rule_num` 形式でない場合: `SWSS_LOG_ERROR "Failed to parse key %s"` → `task_failed`。(`dashaclorch.cpp:261-265`)
+
+#### バインド中グループへのルール追加
+
+グループが ENI にバインド中の状態でのルール追加: `SWSS_LOG_INFO "Failed to set dash ACL rule %s:%s, ACL group is bound to the ENI"` → `task_failed`。グループを先にアンバインドしてからルール操作が必要。(`dashaclorch.cpp:274-278`)
+
+#### 参照先未作成による自動リトライ
+
+- グループ未作成: `SWSS_LOG_INFO "ACL group %s doesn't exist, waiting for group creating before creating rule %s"` → `task_need_retry`
+- `src_tag` / `dst_tag` に指定されたタグ未作成: `SWSS_LOG_INFO "ACL tag %s doesn't exist, waiting for tag creating before creating rule %s"` → `task_need_retry`
+
+いずれもキューに残り、依存エントリ作成後に自動再試行される。(`dashaclgroupmgr.cpp:385-408`)
+
+### DASH_ACL_IN/OUT_TABLE SET の失敗詳細
+
+#### キーパースおよびステージ範囲外
+
+キーが `eni:stage` 形式でない、またはステージ番号が `1`〜`5` 範囲外: `SWSS_LOG_ERROR "Invalid key"` / `"Invalid stage"` → `task_failed`。(`dashaclorch.cpp:322-325`, `dashaclorch.cpp:69-72`)
+
+#### バインド時の非対称リトライ特性
+
+| 失敗条件 | 結果 | ソース |
+|---|---|---|
+| 参照グループが `m_groups_table` に未存在 | **`task_failed`**（自動回復なし） | `dashaclgroupmgr.cpp:442-447` |
+| グループのルール件数が 0 件 | **`task_failed`**（自動回復なし） | `dashaclgroupmgr.cpp:451-454` |
+| ENI が `DashOrch` に未登録 | **`task_need_retry`**（ENI 作成後に自動解消） | `dashaclgroupmgr.cpp:457-461` |
+
+!!! warning "グループ未作成バインドは task_failed"
+    ENI 未登録は `task_need_retry` で自動回復するが、グループ未作成・ルール 0 件は `task_failed`（エントリ破棄）。SDN コントローラは必ず「グループ作成 → ルール追加 → バインド」の順を守る必要がある。順序違反時はコントローラ側で再投入が必要。
+
+#### SAI バインド失敗
+
+SAI `set_eni_attribute` 失敗: `SWSS_LOG_ERROR "Failed to bind ACL group to ENI: %d"` → `handleSaiSetStatus(SAI_API_DASH_ENI, …)` 経由。(`dashaclgroupmgr.cpp:431-434`)
+
+### DASH_ACL_IN/OUT_TABLE DEL の失敗詳細
+
+DEL 操作で ACL エントリが `m_dash_acl_in/out_table` に存在しない場合は `task_success`（冪等）: `SWSS_LOG_WARN "ACL %s doesn't exist"`。アンバインド SAI 失敗は `handleSaiSetStatus(SAI_API_DASH_ENI, …)` 経由。(`dashaclorch.cpp:356-359`, `dashaclgroupmgr.cpp:487-490`)
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-failure.md`
+<!-- /failure -->
