@@ -266,6 +266,64 @@ MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+`tunneldecaporch` / `VxlanTunnelOrch` / `VxlanMgr` における STATE_DB 書き込みの失敗経路を網羅する。
+
+### TUNNEL_DECAP_TABLE — SET 失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ | evidence |
+|---|---|---|---|---|
+| `tunnel_type` が `IPINIP` 以外 | `doDecapTunnelTask()` | `valid=false` → 書き込みなし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:127-131` |
+| `src_ip` が無効な IP アドレス文字列 | `doDecapTunnelTask()` | `valid=false` → 書き込みなし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:142-145` |
+| `src_ip` を既存トンネルに変更しようとした場合 | `doDecapTunnelTask()` | エラーログのみ・既存 STATE_DB は変化なし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:148-150` |
+| `dscp_mode` / `ecn_mode` / `ttl_mode` が無効値 | `doDecapTunnelTask()` | `valid=false` → 書き込みなし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:155-207` |
+| `ecn_mode` を既存トンネルに SET（create-only SAI 属性） | `doDecapTunnelTask()` | WARN ログのみ・SAI 変更なし・STATE_DB は更新される（SAI と不一致） | SWSS_LOG_WARN | `tunneldecaporch.cpp:178-182` |
+| QoS マップ (`decap_dscp_to_tc_map` 等) が未解決 | `doDecapTunnelTask()` | `task_need_retry` → m_toSync 保留・書き込みなし（後で再試行） | SWSS_LOG_NOTICE | `tunneldecaporch.cpp:218-266` |
+| 不明フィールドを SET に含む | `doDecapTunnelTask()` | `valid=false` → 書き込みなし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:275-279` |
+| SAI `create_router_interface` 失敗 | `addDecapTunnel()` | トンネル作成中断 → STATE_DB に書かれない | SWSS_LOG_ERROR | `tunneldecaporch.cpp:754-761` |
+| SAI `create_tunnel` 失敗 | `addDecapTunnel()` | トンネル作成中断 → STATE_DB に書かれない | SWSS_LOG_ERROR | `tunneldecaporch.cpp:850-857` |
+
+### TUNNEL_DECAP_TABLE — DEL 失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ | evidence |
+|---|---|---|---|---|
+| DEL 対象トンネルが未登録 | `doDecapTunnelTask()` | エラーログのみ・STATE_DB 変化なし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:325-327` |
+| `tunnel_term_info` が残存している状態で DEL | `removeDecapTunnel()` | `removeDecapTunnelStatus()` 未呼び出し → STATE_DB エントリ残存 | SWSS_LOG_ERROR | `tunneldecaporch.cpp:1182-1186` |
+| `ref_count > 0` の状態での DEL 要求 | `RemoveTunnelIfNotReferenced()` | `removeDecapTunnel()` スキップ → STATE_DB エントリ残存（ref_count が 0 になるまで保留） | （ログなし） | `tunneldecaporch.cpp:1569-1575` |
+| SAI `remove_tunnel` 失敗 | `removeDecapTunnel()` | `removeDecapTunnelStatus()` 未呼び出し → STATE_DB エントリ残存 | SWSS_LOG_ERROR | `tunneldecaporch.cpp:1188-1196` |
+
+### TUNNEL_DECAP_TERM_TABLE — 失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ | evidence |
+|---|---|---|---|---|
+| SAI `create_tunnel_term_table_entry` 失敗 | `addDecapTunnelTermEntry()` | `setDecapTunnelTermStatus()` 未呼び出し → STATE_DB に書かれない | SWSS_LOG_ERROR | `tunneldecaporch.cpp:980-987` |
+| Subnet decap が無効 (`subnetDecapConfig.enabled=false`) の状態で MP2MP term を SET | `doDecapTunnelTermTask()` | エントリ erase・STATE_DB 書き込みなし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:504-509` |
+| 親トンネルが未作成の状態で term を SET | `doDecapTunnelTermTask()` | `unhandledDecapTerms` に保留・STATE_DB 書き込みなし（親トンネル作成後に `processUnhandledDecapTunnelTerms()` で自動処理） | SWSS_LOG_NOTICE | `tunneldecaporch.cpp:519-522` |
+
+### VXLAN_TUNNEL_TABLE — 失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ | evidence |
+|---|---|---|---|---|
+| `gPortsOrch->allPortsReady()` が false（全ポート未 ready） | `TunnelDecapOrch::doTask()` | 全タスクスキップ → STATE_DB 書き込みなし（次サイクルで再試行） | （ログなし） | `tunneldecaporch.cpp:55-58` |
+| SAI `create_tunnel` 失敗（vxlanorch） | `VxlanTunnel::createTunnel()` | 例外キャッチ → `addRemoveStateTableEntry()` 未呼び出し → STATE_DB 書き込みなし | SWSS_LOG_ERROR | `vxlanorch.cpp:848` |
+| P2P トンネルで `dst_ip` が 0 (VTEP 用) の場合 | `VxlanTunnel` コンストラクタ | `addRemoveStateTableEntry()` 未呼び出し → `VXLAN_TUNNEL_TABLE` に書き込まれない | （ログなし） | `vxlanorch.cpp:529-532` |
+| SAI `remove_tunnel` 失敗（vxlanorch） | `VxlanTunnel::deleteTunnel()` | `~VxlanTunnel()` が途中で例外キャッチ → `del()` が呼ばれずエントリ残存 | SWSS_LOG_ERROR | `vxlanorch.cpp:874` |
+
+### VXLAN_TABLE — 失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ | evidence |
+|---|---|---|---|---|
+| `vxlanTunnelCache` にトンネル未登録 | `doVxlanCreateTask()` | m_toSync 保留・`state=ok` 書き込みなし（トンネル作成後に自動再試行） | SWSS_LOG_DEBUG | `vxlanmgr.cpp:319-325` |
+| VRF が未 ready (`isVrfStateOk()` false) | `doVxlanCreateTask()` | 保留・STATE_DB 書き込みなし | SWSS_LOG_DEBUG | `vxlanmgr.cpp:328-333` |
+| MAC アドレス未設定 | `doVxlanCreateTask()` | 保留・STATE_DB 書き込みなし | SWSS_LOG_DEBUG | `vxlanmgr.cpp:336-342` |
+| `createVxlan()` 失敗（Linux netdevice 作成エラー） | `doVxlanCreateTask()` | `m_stateVxlanTable.set()` 未呼び出し → `state=ok` が書き込まれない | SWSS_LOG_ERROR | `vxlanmgr.cpp:366-370` |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-failure.md`
+
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: schema.h 定数定義: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L488-L489>
