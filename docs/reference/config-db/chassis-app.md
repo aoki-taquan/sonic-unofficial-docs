@@ -237,6 +237,75 @@ CHASSIS_APP_DB 各テーブルへの書き込みが依存する他テーブル�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-failure.md`
+
+### CHASSIS_APP_DB 非使用環境での全スキップ (silent)
+
+`gMultiAsicVoq == false` の場合（`DEVICE_METADATA.localhost.switch_type != "voq"` または `database_config.json` に `CHASSIS_APP_DB` キーが不在）、すべての `voqSync*()` 関数は即時 `return` する。エラーログなし。
+
+| voqSync* 関数 | 影響テーブル | 結果 |
+|---|---|---|
+| `voqSyncAddIntf` / `voqSyncDelIntf` | `SYSTEM_INTERFACE` | 書き込み全スキップ |
+| `voqSyncAddNeigh` / `voqSyncDelNeigh` | `SYSTEM_NEIGH` | 書き込み全スキップ |
+| `voqSyncAddLag` / `voqSyncDelLag` | `SYSTEM_LAG_TABLE` | 書き込み全スキップ |
+| `voqSyncAddLagMember` / `voqSyncDelLagMember` | `SYSTEM_LAG_MEMBER_TABLE` | 書き込み全スキップ |
+
+Evidence: `main.cpp:725-730`, `intfsorch.cpp:1673-1675`
+
+### SYSTEM_INTERFACE: getPort() 失敗 — リトライなし
+
+`voqSyncAddIntf()` 内で `gPortsOrch->getPort(alias, port)` が失敗した場合（PortInitDone 受信前にインタフェース追加イベントが到達した場合）、エラーログを出力して即 `return`。`task_need_retry` を返さないため**永続的に書き込まれない**。
+
+```
+SWSS_LOG_ERROR("Port does not exist for %s!", alias.c_str())  // intfsorch.cpp:1679
+```
+
+Evidence: `intfsorch.cpp:1676-1681`
+
+### SYSTEM_NEIGH: encap_index == 0 / SAI 失敗 — リトライなし
+
+`voqSyncAddNeigh()` で SAI `get_neighbor_entry_attribute(SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX)` が失敗した場合、またはその返り値が `0`（無効値）の場合、エラーログを出力して `return`。リトライなし。
+
+| 条件 | ログ | Evidence |
+|------|------|----------|
+| SAI API 失敗 | `SWSS_LOG_ERROR("Failed to get neighbor attribute for %s on %s, rv:%d", ...)` | `neighorch.cpp:2600-2604` |
+| `encap_index == 0` | `SWSS_LOG_ERROR("Invalid neighbor encap_index for %s on %s", ...)` | `neighorch.cpp:2610-2611` |
+
+### SYSTEM_LAG_TABLE: LAG ID 枯渇 — addLag 中断
+
+`lagids.lua` の Lua スクリプトが `SYSTEM_LAG_IDS_FREE_LIST` の枯渇を検出すると `-1`（`LAG_ID_ALLOCATOR_ERROR_TABLE_FULL`）を返す。`portsorch.cpp:7981` でエラーログを出力し LAG 作成が中断、SYSTEM_LAG_TABLE への書き込みは行われない。
+
+```
+SWSS_LOG_ERROR("Failed to allocate unique LAG id for local lag %s rv:%d", lag_alias.c_str(), spa_id)
+```
+
+`SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` が未初期化（`redis get` が nil）の場合、Lua の `tonumber(nil)` が `nil` を返し数値比較で Lua エラーが発生し、LAG ID 割り当てが全件失敗する。Evidence: `lagids.lua:15-16,60-62`, `portsorch.cpp:7977-7981`
+
+### BGP_DEVICE_GLOBAL|STATE: data None / キー不在 — False 返却
+
+| 条件 | 結果 | ログ |
+|------|------|------|
+| `data is None` | `set_handler` が `False` を返す（bgpcfgd が再試行）| `log_err("ChassisAppDbMgr:: data is None")` |
+| `"tsa_enabled"` キーが `data` に不在 | `set_handler` が `False` を返す | なし |
+| CHASSIS_APP_DB 接続失敗 (`get_chassis_tsa_status`) | fallback `"false"` を返す | `log_err("Got an exception {}")` |
+
+Evidence: `managers_chassis_app_db.py:36-46`, `managers_device_global.py:244-249`
+
+### silent skip（設計上の正常動作）
+
+以下の条件では書き込みがスキップされるが、エラーログは出力されない（設計通りの動作）:
+
+- リモートシステムポート (`SAI_SYSTEM_PORT_TYPE_REMOTE`) に対する `voqSyncAddIntf()` — `intfsorch.cpp:1689-1692`
+- LAG ポートで `m_system_lag_info.switch_id != gVoqMySwitchId` に対する `voqSyncAddNeigh()` — `neighorch.cpp:2624-2627`
+- ローカル LAG でない (`switch_id != gVoqMySwitchId`) LAG への `voqSyncAddLag()` — `portsorch.cpp:11145-11148`
+
+デバッグ時に書き込みがスキップされていても、エラーログなしで silent になる点に注意。
+
+<!-- /failure -->
+
 ## キー構造
 
 | テーブル | Redis キー形式 | 例 |
