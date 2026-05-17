@@ -145,6 +145,35 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 | `"frame_lock"` / `"snr_acq"` | rx ステータス中間状態 |
 | LT failure string | SAI failure status 由来 |
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`STATE_DB PORT_TABLE` への書き込みは `portsyncd`（linksync.cpp）と `PortsOrch`（portsorch.cpp）の 2 プロセスが担う。両者の書き込みタイミングには下記の順序制約がある。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | APP_DB `PORT_TABLE` の存在 → `portsyncd` の STATE_DB 書き込み許可 | **強制先行** | orchagent が APP_DB を書くまで STATE_DB エントリは不在 |
+| 2 | 起動時 `ip link set down` → RTM_NEWLINK 再受信 → STATE_DB 更新 | 起動シーケンス依存 | 旧インタフェースからの RTM は無視ガードで除外 |
+| 3 | `portsyncd` 4 フィールドの atomic set | 同一 RTM_NEWLINK イベント内で原子的 | 順序依存なし |
+| 4 | PortsOrch ポート初期化完了 → `supported_speeds` / `supported_fecs` 書き込み | **強制先行**（serdes 設定後） | 起動直後は不在。SAI キャッシュ後は変化しない |
+| 5 | SAI admin set 成功 → `host_tx_ready = "true"` | **強制先行**（SAI 成功必須） | CMIS 環境は SAI コールバック経由 |
+| 6 | oper UP → speed / fec 更新 | oper UP 依存（DOWN 時 stale 残留） | consumer は `netdev_oper_status` で補正 |
+| 7 | `CONFIG_DB PORT.autoneg` 変更 → `rmt_adv_speeds` 書き込み/削除 | CONFIG_DB イベント依存 | autoneg OFF で自動 hdel |
+
+### 主要な制約詳細
+
+**APP_DB 先行必須 (依存 #1)**: `LinkSync::onMsg()` は RTM_NEWLINK 受信時に `m_portTable.get(key, temp)` で APP_DB `PORT_TABLE` にエントリが存在するかを確認する（linksync.cpp:193）。APP_DB に未登録のポート名（起動シーケンス中で orchagent が APP_DB 書き込みを完了していない段階）では STATE_DB 書き込みがスキップされる。consumer が `STATE_DB PORT_TABLE|EthernetN` を参照する前に、orchagent の初期化完了を待つ必要がある。
+
+**起動時の中間状態 (依存 #2)**: 非 warm-reboot 起動時に `LinkSync::LinkSync()` は全フロントパネルポートを `ip link set Ethernet* down` で DOWN させる（linksync.cpp:96-107）。これにより再起動前の古い STATE_DB 値が、最初の RTM_NEWLINK 受信まで上書きされない状態が発生する。旧インタフェースの RTM は `m_ifindexOldNameMap` によるガード（linksync.cpp:172-177）で無視されるため、STATE_DB の更新は portsyncd が新しい RTM_NEWLINK を受信した時点まで遅延する。
+
+**host_tx_ready の順序 (依存 #5)**: `initHostTxReadyState()` で `"false"` を初期書き込み後、`setPortAdminStatus()` 内で admin UP + SAI set 成功 + Gearbox OK がそろって初めて `"true"` に更新される（portsorch.cpp:2220-2257）。SAI が失敗している間は `"false"` のまま。`m_cmisModuleAsicSyncSupported = true` の CMIS 対応環境では `setPortAdminStatus()` の直接制御はスキップされ、SAI コールバック `on_port_host_tx_ready`（portsorch.cpp:977）が代わりに書き込む。
+
+**speed / fec の stale 残留 (依存 #6)**: `PortsOrch::refreshPortStatus()` はポート oper UP 確認後にのみ `updateDbPortOperSpeed()` / `updateDbPortOperFec()` を呼ぶ（portsorch.cpp:9905-9930）。ポートが oper DOWN になっても、speed / fec の STATE_DB フィールドは削除も更新もされないため、最後に UP だった時の値が残留する。speed / fec を参照する際は `netdev_oper_status` が `"up"` であることを先に確認すること。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト（Phase A — コード由来）
 
