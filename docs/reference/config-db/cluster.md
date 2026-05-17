@@ -264,3 +264,53 @@ minigraph XML に `<ClusterName>` タグが存在しない構成では、フィ�
 
 > **Evidence**: `sonic-buildimage` `src/sonic-config-engine/minigraph.py:493,514-515,662-668,2170-2172`
 <!-- /cdb-exceptions -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/cluster-failure.md -->
+<!-- source: sonic-buildimage/src/sonic-config-engine/minigraph.py -->
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | 影響 | ログ |
+|---|------------|------|------|
+| 1 | `devices` dict に hostname 不一致 (自ノード未登録) | `sonic-cfggen` が `IndexError` でクラッシュ → CONFIG_DB 書き込み全失敗 | なし (例外のみ) |
+| 2 | `<ClusterName>` が空タグ (`node.text = None`) | `cluster` フィールド書き込みスキップ (silent) | なし |
+| 3 | `<ClusterName>` に任意文字列 | YANG `type string` が許容 → そのまま書き込まれる | なし |
+| 4 | 空文字列 `""` | `DEVICE_METADATA` には書かれず、`DEVICE_NEIGHBOR_METADATA` には書かれる (非対称) | なし |
+
+### 詳細
+
+#### 1. hostname 不一致 → `IndexError` クラッシュ
+
+`minigraph.py:2170`:
+
+```python
+cluster = [devices[key] for key in devices if key.lower() == hostname.lower()][0].get('cluster', "")
+```
+
+`devices` dict に `hostname` と大文字・小文字を無視して一致するキーが存在しない場合、リスト内包式の結果が空リストとなり `[0]` アクセスで `IndexError` が送出される。`parse_xml()` は例外を補足しないため `sonic-cfggen` が非ゼロ終了コードで終了し、CONFIG_DB への書き込みは一切行われない。ただし `devices` は `PngDec`/`MetadataDeclaration` から構築される際に自ノードが含まれるのが通常であり、実運用での発生条件は minigraph XML の `<Hostname>` と実際のホスト名が不一致のケースに限られる。
+
+#### 2. 空タグ → `None` → silent スキップ
+
+XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.text` は `None`。`parse_device()` は `cluster = None` のまま返す。
+
+- `DEVICE_NEIGHBOR_METADATA`: `if cluster != None:` が `False` → 書き込みスキップ
+- `DEVICE_METADATA`: `if cluster:` が `False` (None は falsy) → 書き込みスキップ
+
+エラーログ・警告は出力されない。
+
+#### 3 & 4. 空文字列の非対称挙動
+
+`<ClusterName>` タグが存在し `node.text = ""` の場合:
+
+- `DEVICE_NEIGHBOR_METADATA` (`minigraph.py:667`): `if cluster != None:` → 空文字列は `None` でないため通過 → `cluster = ""` が DB に書き込まれる
+- `DEVICE_METADATA` (`minigraph.py:2170-2172`): `cluster = devices[...][0].get('cluster', "")` で `""` を取得後、`if cluster:` → 空文字列は falsy → 書き込みスキップ
+
+`cluster` フィールドがランタイムで消費されるデーモンは存在しないため、この非対称性による実害はない (Phase C 調査済み)。
+
+!!! note "ランタイム失敗なし"
+    `cluster` は write-only フィールド。DB への書き込み完了後、orchagent・bgpcfgd・linkmgrd 等はこのフィールドを参照しないため、書き込み後の失敗パスは存在しない。
+
+<!-- /failure -->
