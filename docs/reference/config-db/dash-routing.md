@@ -493,6 +493,87 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+<!-- evidence: dashrouteorch.cpp:56-58 / 220 / 262 / 342 / 354 / 401-403 / 410 / 507 / 546 / 644 / 702-705 / 712 / 745 / 784 / 874 / 881 -->
+
+各テーブル操作が orchagent 内部およびデータベースに与える副作用を網羅する。
+
+### APP_STATE_DB 結果テーブルへの書き戻し
+
+`DashRouteOrch` のコンストラクタで APP_STATE_DB に接続した 3 つの `Table` を初期化し、各操作完了後に `writeResultToDB()` / `removeResultFromDB()` を呼ぶ。
+
+| メンバー変数 | APP_STATE_DB テーブル名 | 対象テーブル |
+|---|---|---|
+| `dash_route_result_table_` | `"DASH_ROUTE_TABLE"` | DASH_ROUTE_TABLE |
+| `dash_route_rule_result_table_` | `"DASH_ROUTE_RULE_TABLE"` | DASH_ROUTE_RULE_TABLE |
+| `dash_route_group_result_table_` | `"DASH_ROUTE_GROUP_TABLE"` | DASH_ROUTE_GROUP_TABLE |
+
+**DASH_ROUTE_TABLE の書き戻しタイミング**:
+
+| タイミング | 書き込み内容 | コード行 |
+|---|---|---|
+| SET 成功 (pre-op erase) | `result=0` | dashrouteorch.cpp:342 |
+| SET 成功 (post-op erase) | `result=0` | L403 |
+| SET 失敗 (post-op 継続) | `result=1` | L401-403 |
+| DEL 成功 (post-op erase) | エントリ削除 | L410 |
+
+**DASH_ROUTE_RULE_TABLE / DASH_ROUTE_GROUP_TABLE** も同パターン。`DASH_ROUTE_GROUP_TABLE` は `version` フィールドも同時に書き込む (`writeResultToDB` 第 4 引数 `entry.version()` — L874)。
+
+!!! note "DASH_ROUTING_TYPE_TABLE の結果書き戻し"
+    `DASH_ROUTING_TYPE_TABLE` は `DashOrch::doTaskRoutingTypeTable()` が管理し、`dash_routing_type_result_table_` (APP_STATE_DB) に同様のパターンで書き戻す (`dashorch.cpp:517, 524`)。
+
+### CRM カウンタ更新
+
+`gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsedCounter()` を SAI API 成功後に呼ぶ。
+
+| 操作 | カウンタ | IP 族判定 | コード行 |
+|---|---|---|---|
+| `addOutboundRoutingPost()` 成功 | `CRM_DASH_IPV4_OUTBOUND_ROUTING` / `CRM_DASH_IPV6_OUTBOUND_ROUTING` | `ctxt.destination.isV4()` | L220 |
+| `removeOutboundRoutingPost()` 成功 | `CRM_DASH_IPV4_OUTBOUND_ROUTING` / `CRM_DASH_IPV6_OUTBOUND_ROUTING` | `ctxt.destination.isV4()` | L262 |
+| `addInboundRoutingPost()` 成功 | `CRM_DASH_IPV4_INBOUND_ROUTING` / `CRM_DASH_IPV6_INBOUND_ROUTING` | `ctxt.sip.isV4()` | L507 |
+| `removeInboundRoutingPost()` 成功 | `CRM_DASH_IPV4_INBOUND_ROUTING` / `CRM_DASH_IPV6_INBOUND_ROUTING` | `ctxt.sip.isV4()` | L546 |
+
+!!! note "DASH_ROUTE_GROUP_TABLE は CRM 非対象"
+    `addRouteGroup()` / `removeRouteGroup()` は CRM カウンタを更新しない。
+
+### in-memory マップ更新
+
+**`route_group_oid_map_`** (DashRouteOrch メンバ):
+
+- `addRouteGroup()` 成功時 → `route_group_oid_map_[route_group] = route_group_oid` で挿入 (L745)
+- `removeRouteGroup()` 成功時 → `route_group_oid_map_.erase(route_group)` で削除 (L784)
+
+**`route_group_bind_count_`** (DashRouteOrch メンバ):
+
+- `bindRouteGroup()` 呼び出し時: カウントインクリメント (L809) — 呼び出し元は `DashEniFwdOrch`
+- `unbindRouteGroup()` 呼び出し時: デクリメント。0 になればエントリ削除 (L824-829)
+- `doTaskRouteTable()` / `doTaskRouteGroupTable()` 内からは直接更新しない
+
+### SAI API 呼び出し一覧
+
+| 操作 | SAI API | 方式 |
+|---|---|---|
+| ルートグループ作成 | `create_outbound_routing_group()` | 即時 (L734) |
+| ルートグループ削除 | `remove_outbound_routing_group()` | 即時 (L768) |
+| アウトバウンドルート作成 | `outbound_routing_bulker_.create_entry()` → `flush()` | バルク (L186, L368) |
+| アウトバウンドルート削除 | `outbound_routing_bulker_.remove_entry()` → `flush()` | バルク (L243, L368) |
+| インバウンドルート作成 | `inbound_routing_bulker_.create_entry()` → `flush()` | バルク (L473, L670) |
+| インバウンドルート削除 | `inbound_routing_bulker_.remove_entry()` → `flush()` | バルク (L527, L670) |
+
+ルートグループのみ即時呼び出し。ルートエントリは `EntityBulker` で蓄積後 `flush()` で一括コミット。
+
+### 副作用が発生しないケース
+
+| 条件 | 副作用なし理由 |
+|---|---|
+| ENI バインド中グループへの SET | `addOutboundRouting()` が `return true` 早期終了 — SAI・CRM 呼び出しなし。結果テーブルには `DASH_RESULT_SUCCESS(0)` が書かれる点に注意 |
+| protobuf パース失敗 | consumer から消費するが SAI / CRM / 結果テーブルへの書き込みなし |
+| リトライ中 (`return false`) | SAI 未呼び出し、CRM 未更新。SET post-op 失敗時のみ結果テーブルに `DASH_RESULT_FAILURE(1)` が書かれる |
+
+<!-- /side-effects -->
+
 ## 関連 CONFIG_DB / APP_DB テーブル
 
 - [`DASH_ENI_TABLE`](dash-eni.md): ENI エントリ。`DASH_ROUTE_RULE_TABLE` の親
