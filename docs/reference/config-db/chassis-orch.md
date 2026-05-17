@@ -340,6 +340,82 @@ const std::string everflow_route = IpPrefix(update.destination.to_string()).to_s
     本テーブルは YANG スキーマが存在しないため、YANG 側に定数定義は一切ない。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・連鎖更新 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-orch-side-effects.md`
+
+`ChassisOrch` が CONFIG_DB `PASS_THROUGH_ROUTE_TABLE` を処理する際に発生する主要な副作用を示す。
+
+### 1. `VNetRouteOrch::attach()` 呼び出し時の即時 APP_DB 書き込み
+
+CONFIG_DB `SET` を `doTask()` が処理すると `m_vNetRouteOrch->attach(this, ip)` が呼ばれる。  
+`attach()` の内部では `VNetRouteOrch::syncd_routes_` から dstAddr を包含するプレフィックスを検索し、**best route が存在する場合はその場で `observer->update()` が同期呼び出しされる**。
+
+```cpp
+// vnetorch.cpp:1895-1905
+auto bestRoute = observerEntry->second.routeTable.rbegin();
+if (bestRoute != observerEntry->second.routeTable.rend())
+{
+    for (auto vnetEntry : bestRoute->second)
+    {
+        VNetNextHopUpdate update = { SET_COMMAND, vnetEntry.first, dstAddr, bestRoute->first, vnetEntry.second };
+        observer->update(SUBJECT_TYPE_NEXTHOP_CHANGE, reinterpret_cast<void*>(&update));
+    }
+}
+```
+
+→ `attach()` の呼び出しが完了する前に ChassisOrch の `update()` → `addRouteToPassThroughRouteTable()` → APP_DB `PASS_THROUGH_ROUTE_TABLE` への `Table::set()` が**同期的に**実行される。
+
+### 2. `VNetRouteOrch::detach()` 呼び出し時の即時 APP_DB 削除
+
+CONFIG_DB `DEL` → `m_vNetRouteOrch->detach(this, ip)`:
+- best route が存在すれば `DEL_COMMAND` で `observer->update()` を同期呼び出し
+- → `deleteRoutePassThroughRouteTable()` → `m_passThroughRouteTable.del(everflow_route)`
+- `next_hop_observers_` から対応エントリも同時に削除される
+
+```cpp
+// vnetorch.cpp:1934-1951
+auto bestRoute = observerEntry->second.routeTable.rbegin();
+if (bestRoute != observerEntry->second.routeTable.rend())
+{
+    VNetNextHopUpdate update = { DEL_COMMAND, ... };
+    observer->update(SUBJECT_TYPE_NEXTHOP_CHANGE, reinterpret_cast<void*>(&update));
+}
+next_hop_observers_.erase(observerEntry);
+```
+
+### 3. VNetRoute 変化による自動追従更新
+
+CONFIG_DB に登録した後、`VNetRouteOrch` 側でルートが追加（`addRoute()`）または削除（`delRoute()`）されると、登録済みオブザーバとして ChassisOrch に通知が届く:
+
+| VNetRouteOrch 操作 | 条件 | ChassisOrch への副作用 |
+|-------------------|------|----------------------|
+| `addRoute()` | 追加ルートが new best route になった場合 | `SET_COMMAND` → APP_DB 上書き更新 |
+| `delRoute()` | 削除ルートが best route で後継あり | `SET_COMMAND` → APP_DB に新 best route で書き換え |
+| `delRoute()` | 削除ルートが best route で後継なし | `DEL_COMMAND` → APP_DB エントリ削除 |
+
+これにより、VNet ルート変化は CONFIG_DB `PASS_THROUGH_ROUTE_TABLE` を経由せず**自動的に** APP_DB `PASS_THROUGH_ROUTE_TABLE` に反映される。
+
+### 4. CONFIG_DB フィールド値は副作用を生じない
+
+`doTask()` は `kfvKey(t)` のみ参照し、`kfvFieldsValues(t)` を読まない。  
+CONFIG_DB エントリのフィールドへの書き込みは ChassisOrch に対して**一切の副作用をもたらさない**。
+
+### 副作用まとめ
+
+| トリガー | 発生主体 | APP_DB 変化 |
+|---------|---------|------------|
+| CONFIG_DB `SET`（best route あり） | `attach()` 内同期 | `PASS_THROUGH_ROUTE_TABLE` エントリ追加/更新 |
+| CONFIG_DB `SET`（best route なし） | なし（遅延） | VNetRoute 解決後に更新 |
+| CONFIG_DB `DEL` | `detach()` 内同期 | `PASS_THROUGH_ROUTE_TABLE` エントリ削除 |
+| VNetRoute `addRoute()` | `VNetRouteOrch` 通知 | APP_DB 上書き更新 |
+| VNetRoute `delRoute()` | `VNetRouteOrch` 通知 | APP_DB エントリ削除（後継なし時） |
+| CONFIG_DB フィールド書き込み | — | 変化なし（無視） |
+
+> **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:14-47`; `sonic-swss/orchagent/vnetorch.cpp:1861-2040`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-side-effects.md`
+<!-- /side-effects -->
+
 ## 制約
 
 - `<IP_prefix>` は `IpPrefix` クラスで正規化される（ホストビットが切り捨てられる）
