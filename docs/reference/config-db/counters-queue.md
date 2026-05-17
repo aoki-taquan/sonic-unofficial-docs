@@ -27,6 +27,15 @@ sources:
   - repo: sonic-net/sonic-utilities
     path: scripts/watermarkstat
     ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/high_frequency_telemetry/counternameupdater.cpp
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/high_frequency_telemetry/hftelorch.cpp
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/countercheckorch.cpp
+    ref: master
 related:
   config_db:
     - FLEX_COUNTER_TABLE
@@ -387,6 +396,49 @@ Cold boot では `m_delayTimerExpired = true` に即初期化され（`flexcount
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## COUNTERS_DB 書き込みの副作用 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp (generateQueueMap, generateQueueMapPerPort,
+     createPortBufferQueueCounters, deletePortBufferQueueCounters, generatePriorityGroupMap,
+     createPortBufferPgCounters, deletePortBufferPgCounters),
+     sonic-swss/orchagent/high_frequency_telemetry/counternameupdater.cpp,
+     sonic-swss/orchagent/high_frequency_telemetry/hftelorch.cpp (locallyNotify, SUPPORT_COUNTER_TABLES),
+     sonic-swss/orchagent/countercheckorch.cpp (addPort, removePort, mcCounterCheck) -->
+
+### CounterNameMapUpdater → HFTelOrch 連鎖（高周波テレメトリ有効時）
+
+`COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` へのキー追加・削除は `CounterNameMapUpdater::setCounterNameMap()` / `delCounterNameMap()` 経由で行われる。高周波テレメトリ（HFT）機能が有効な場合（`gHFTOrch != null`）、Redis への `hset` の前に `HFTelOrch::locallyNotify()` が**同期**呼び出しされる[^5]。
+
+```
+generateQueueMap() / createPortBufferQueueCounters()
+  └─ m_queueCounterNameMapUpdater->setCounterNameMap(queueVector)
+       ├─ gHFTOrch->locallyNotify(msg)   # HFT 有効時のみ・同期
+       │    ├─ m_counter_name_cache 更新
+       │    └─ profile->tryCommitConfig()  # TAM 設定を syncd 送信
+       └─ COUNTERS_DB COUNTERS_QUEUE_NAME_MAP hset
+```
+
+`HFTelOrch::SUPPORT_COUNTER_TABLES` には `COUNTERS_QUEUE_NAME_MAP` (`SAI_OBJECT_TYPE_QUEUE`) と `COUNTERS_PG_NAME_MAP` (`SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP`) が含まれるため、Queue / PG マッピング変更はすべて HFT プロファイルキャッシュに即時反映される。`locallyNotify()` は同期処理のため、呼び出しコストが大きい（アクティブな HFT プロファイルが多い）場合は portsorch メインループの遅延要因になる。HFT が無効（デフォルト）の場合この副作用は発生しない。
+
+### CounterCheckOrch への Port 登録（MC/PFC カウンタ監視）
+
+Queue / PG マッピング書き込み関数は COUNTERS_DB 更新と同時に `CounterCheckOrch::getInstance().addPort(port)` を呼んで当該ポートを MC フレーム監視リストに登録する[^6]。`BUFFER_QUEUE` / `BUFFER_PG` を DEL すると `CounterCheckOrch::removePort(port)` で監視リストから除外される。
+
+`CounterCheckOrch` は 5 分間隔のタイマーで `mcCounterCheck()` と `pfcFrameCounterCheck()` を実行し、COUNTERS_DB から SAI カウンタを読み取ってロスレスキューへの Multicast フレーム到着や PFC 異常を `SWSS_LOG_WARN` で報告する。**この監視は `FLEX_COUNTER_TABLE` の enable/disable 状態とは独立して動作する**（FlexCounter ポーリングではなく orchagent が直接 `sai_get_queue_stats` を呼ぶ）。
+
+### QUEUE_WATERMARK / PG_WATERMARK の READ_AND_CLEAR 副作用
+
+`queue_watermark_manager` と `pg_watermark_manager` は `StatsMode::READ_AND_CLEAR` で初期化される。FlexCounter がウォーターマーク統計をポーリングするたびにハードウェアのウォーターマークレジスタが自動クリアされる。この副作用は `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` / `PG_WATERMARK` が enable の間は継続する。
+
+複数の監視ツールが `watermarkstat` を同時に実行すると互いのウォーターマーク値をクリアし合う可能性がある。クリアを避けたい場合は `USER_WATERMARKS` テーブルを使用し、`watermarkstat -c` で明示的にリセットする運用とする。
+
+### WRED 能力チェック → STATE_DB への QUEUE_COUNTER_CAPABILITIES 書き込み
+
+`checkWredCapability()` が WRED/ECN サポートを確認した後、`QUEUE_COUNTER_CAPABILITIES` テーブルが STATE_DB に書き込まれ、外部ツール・オーケストレータが WRED サポート状況を参照可能になる。ASIC が WRED をサポートしない場合はこのエントリが存在しない。外部ツールは `key not found` を「未サポート」として扱う必要がある。
+
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
 
@@ -472,3 +524,7 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:<OID>"
 [^3]: portsorch.cpp:1894-1909 — `checkWredCapability()` による SAI ケイパビリティ問い合わせ。サポート確認後のみ FlexCounter に WRED 統計を追加。
 
 [^4]: portsorch.h:34-42 および portsorch.cpp:90-93 — FlexCounter グループ名定数とハードコードポーリング間隔定義。
+
+[^5]: counternameupdater.cpp:21-34 および hftelorch.cpp:106-170 — `CounterNameMapUpdater::setCounterNameMap()` 内での `gHFTOrch->locallyNotify()` 同期呼び出し。`SUPPORT_COUNTER_TABLES` に `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` が含まれる (`hftelorch.cpp:25-30`)。<https://github.com/sonic-net/sonic-swss/blob/master/orchagent/high_frequency_telemetry/counternameupdater.cpp>
+
+[^6]: portsorch.cpp:8525, 8754, 8819, 8886, 8941, 9099 — Queue / PG マッピング書き込み・削除関数での `CounterCheckOrch::getInstance().addPort()` / `removePort()` 呼び出し。`countercheckorch.cpp:43-50` の 5 分タイマーで `mcCounterCheck()` と `pfcFrameCounterCheck()` を実行。
