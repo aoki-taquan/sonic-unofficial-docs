@@ -185,6 +185,39 @@ IGMP は PIM sparse-mode が有効な (`mode = "sm"`) インタフェースで�
 詳細スキャン手順は `meta/_intermediate/cdb-flow/pim-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+`frrcfgd` の PIM テーブルハンドラ (`bgp_table_handler_common` → `__update_bgp()`) は **retry キューを持たない**。SET / DEL のいずれも 1 回の `key_map.run_command()` 呼び出しで完結し、失敗時は `LOG_ERR` を出力して `continue`（次イベントへ進む）するだけで **自動 retry は発生しない**。これは BGP の `bgpcfgd` (`set_queue` ベース deps-driven retry) とは異なる設計である。
+
+### SET 処理における失敗経路
+
+| # | 失敗条件 | 検出箇所 | 結果 | ログ出力 | recovery |
+|---|---------|---------|------|---------|---------|
+| 1 | `PIM_INTERFACE` SET に `mode` 欠如 | frrcfgd.py L3787 `if 'mode' in data:` | 全フィールド **silent drop**（LOG も FRR 操作もなし） | なし | 次回 `mode` を含む SET で回復 |
+| 2 | vtysh コマンド失敗（VRF 未存在・インタフェース未存在・pimd 未起動等） | `g_run_command()` L47-62 | LOG_ERR + `continue`（retry なし） | LOG_ERR × 最大 3 系統[^8] | 原因解消後に手動 SET 再送 |
+| 3 | フィールド値域外（`join-prune-interval` < 60 または > 600 等） | `g_run_command()` L47-62 | 該当フィールドのみ未反映 | LOG_ERR | 正しい値で再 SET |
+| 4 | `hello-interval` 不正フォーマット（`"abc"` / `"30,"` 等） | `hdl_set_pim_hello_parms()` → vtysh 失敗 | `hello-interval` のみ未反映、他フィールドは継続 | LOG_ERR | 正しい値で再 SET |
+| 5 | `frr_mgmt_framework_config != "true"` (frrcfgd 未起動) | supervisord.conf.j2 L163-169 | 購読者が存在せず CONFIG_DB 書き込みが完全無視 | なし | `DEVICE_METADATA.localhost.frr_mgmt_framework_config = "true"` 設定後 frrcfgd 起動 |
+
+### DEL 処理における失敗経路
+
+| # | 失敗条件 | 検出箇所 | 結果 | ログ出力 | recovery |
+|---|---------|---------|------|---------|---------|
+| 6 | `mode` OP_DELETE 時に `no ip pim` が vtysh 失敗 | frrcfgd.py L3790-3802 | frrcfgd キャッシュはフラッシュ済、FRR はまだ sparse-mode 有効 | LOG_ERR | `mode` を含む全フィールドを SET 再送 |
+| 7 | VRF 削除後に PIM エントリを DEL | frrcfgd.py L3808（vrf_handler は PIM キャッシュを整合しない） | frrcfgd キャッシュに孤立エントリが残存する可能性 | LOG_ERR（vtysh）| VRF 削除**前**に PIM テーブルエントリを先行 DEL |
+
+### 補足
+
+**silent drop の危険性 (失敗 #1)**: `mode` 欠如によるサイレント落ちはログ出力がないため運用上検知が難しい。`frr_mgmt_framework_config=true` 環境では `show ip pim interface` で FRR 側の状態を確認することで検知できる。
+
+**キャッシュ不整合 (失敗 #2, #6)**: `key_map.run_command()` (frrcfgd.py L777) は vtysh 成功時のみ `data[key].status = STAT_SUCC` を更新する。vtysh 失敗時はキャッシュが未更新となり、次回イベント発生時に OP_NONE（変化なし）と誤判定される可能性がある。
+
+**frrcfgd は値域を検証しない**: フィールド値は frrcfgd を通過してそのまま vtysh に渡される（frrcfgd.py L763）。FRR CLI の値域チェックのみが最終バリアとなる。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-failure.md`
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールドのコード由来デフォルト
 
@@ -310,3 +343,4 @@ CONFIG_DB の `PIM_GLOBALS` / `PIM_INTERFACE` テーブルで管理されず、F
 [^5]: `sonic-frr/pimd/pim_pim.h` L30-32 — `PIM_DEFAULT_HELLO_PERIOD (30)`, `PIM_DEFAULT_DR_PRIORITY (1)`; `pimd/pim_pim.c` L436-440 での初期化
 [^6]: `sonic-frr/pimd/pim_cmd.c` L5360 — `ip pim join-prune-interval (60-600)`; L5443 — `ip pim keep-alive-timer (31-60000)`
 [^7]: `sonic-frr/pimd/pim_upstream.h` L206-207 — `PIM_REGISTER_SUPPRESSION_PERIOD (60)`, `PIM_REGISTER_PROBE_PERIOD (5)`
+[^8]: vtysh 失敗時の LOG_ERR 3 系統: `g_run_command()` L53 "command execution failure", `key_map.run_command()` L763 "failed running FRR command", PIM ハンドラ L3802/L3821 "failed running PIM config command" — `frrcfgd.py`

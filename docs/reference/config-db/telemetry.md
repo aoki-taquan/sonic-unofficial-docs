@@ -521,4 +521,58 @@ Saving startup config failed: <err>
 > **evidence**: `sonic-gnmi/telemetry/telemetry.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L171-215, L482-549; `sonic-buildimage/dockers/docker-sonic-telemetry/telemetry.sh@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` L85-158
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込・副次効果 (Phase F)
+
+<!-- evidence: sonic-gnmi/gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22 L1051-1068 / gnmi_server/gnsi_certz.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22 L925-990 / dockers/docker-sonic-telemetry/telemetry.sh@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd L3-22 -->
+
+### ファイルシステム副次効果 — TLS 証明書シンボリックリンク
+
+`SrvAdvConfig()` は起動時に `TELEMETRY|certs` で指定された証明書パスへのシンボリックリンクを生成する。
+
+| 生成パス | 内容 | 条件 |
+|---------|------|------|
+| `/keys/server_cert.lnk` → `<server_crt>` | サーバ証明書への symlink | `server_crt` + `server_key` が両方設定 |
+| `/keys/server_key.lnk` → `<server_key>` | サーバ秘密鍵への symlink | 同上 |
+| `/keys/ca_cert.lnk` → `<ca_crt>` | CA 証明書への symlink | `ca_crt` が設定されている場合 |
+
+既存の symlink を削除してから新規作成するアトミック更新で実行され、失敗時は旧 symlink を復元する。gRPC の TLS ハンドシェイク時は `tls.LoadX509KeyPair(cfg.SrvCertLnk, cfg.SrvKeyLnk)` で symlink 経由の証明書を参照するため、symlink の差し替えのみで証明書ローテーションが可能。
+
+> evidence: `gnmi_server/gnsi_certz.go:925-990`
+
+### ファイルシステム副次効果 — config_db.json 保存 (save_on_set=true)
+
+`TELEMETRY|gnmi.save_on_set == "true"` の場合、gNMI Set RPC 完了後に `SaveOnSetEnabled()` が dbus 経由で `/etc/sonic/config_db.json` を上書き保存する。失敗時はログ出力のみで Set RPC 自体は成功とみなされる（CONFIG_DB 変更が永続化されないサイレント障害）。
+
+> evidence: `gnmi_server/server.go:1051-1068`
+
+### STATE_DB 副次書込 — chassis_serial_number (watchdog オプション)
+
+環境変数 `TELEMETRY_WATCHDOG_SERIALNUMBER_PROBE_ENABLED=true` が設定されている場合のみ、`telemetry.sh` 起動時に `decode-syseeprom -s` でシリアル番号を取得し、値が異なる場合のみ STATE_DB に書込む。TELEMETRY テーブル内容とは独立した副次効果。
+
+| DB | テーブル | フィールド | 書込条件 |
+|----|---------|-----------|---------|
+| STATE_DB | `DEVICE_METADATA\|localhost` | `chassis_serial_number` | watchdog オプション有効かつシリアル番号変更時 |
+
+> evidence: `dockers/docker-sonic-telemetry/telemetry.sh:3-22`
+
+### APPL_DB / COUNTERS_DB — 書込なし
+
+`gnmi_server` および `telemetry.sh` は APPL_DB / COUNTERS_DB への直接書込を行わない。内部メトリクス（Get/Set/Subscribe カウンタ）はプロセス内共有メモリで管理され DB には書込まれない。
+
+> evidence: `common_utils/context.go:147-180`; `common_utils/shareMem.go`
+
+### 副次効果サマリ
+
+| 種別 | 対象 | 条件 |
+|------|------|------|
+| ファイル書込 (symlink) | `/keys/server_cert.lnk`, `/keys/server_key.lnk`, `/keys/ca_cert.lnk` | TLS 設定あり（起動時一回） |
+| ファイル書込 | `/etc/sonic/config_db.json` | `save_on_set=true` かつ gNMI Set RPC 成功 |
+| STATE_DB 書込 | `DEVICE_METADATA\|localhost.chassis_serial_number` | watchdog オプション有効時のみ |
+| APPL_DB 書込 | なし | — |
+| COUNTERS_DB 書込 | なし | — |
+
+> **詳細**: `meta/_intermediate/cdb-flow/telemetry-side-effects.md`
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 896d391185a9 -->

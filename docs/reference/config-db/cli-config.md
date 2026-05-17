@@ -354,4 +354,80 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 | 6 | 設定不正 → 既存 sshd_config 保持 | sshd -T 検証フォールバック | 無効設定は自動破棄される |
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+`SERIAL_CONSOLE` / `SSH_SERVER` テーブルが処理される際に `hostcfgd` が暗黙的に参照・依存する他テーブルと外部ファイルを示す。
+
+### CONFIG_DB テーブルへの暗黙参照
+
+| 参照先テーブル | 参照元 / 条件 | 依存内容 | 証跡 |
+|--------------|--------------|---------|------|
+| `DEVICE_METADATA\|localhost` | `PamLimitsCfg.update_config_file()` | `DEVICE_METADATA` が存在しない場合 early return — `SSH_SERVER.max_sessions` の PAM limits 設定が適用されない | `hostcfgd:1422,1430` |
+| `SSH_SERVER\|POLICIES` | `PamLimitsCfg.__init__()` | PAM limits 設定のために `get_table('SSH_SERVER')` で `max_sessions` 値を取得。`SERIAL_CONSOLE` とは独立してポーリング | `hostcfgd:1425-1434` |
+
+### システムファイルへの書込（CONFIG_DB 外の副次参照先）
+
+| 参照先ファイル | 操作元 | 条件 | 操作 | 証跡 |
+|--------------|-------|------|------|------|
+| `/etc/ssh/sshd_config` | `SshServer.set_policies()` | `SSH_SERVER` SET 時（常に） | 一時ファイルへコピー → 差分書き換え → `sshd -T` 検証 → `os.rename()` で置換 | `hostcfgd:1112-1160` |
+| `/etc/ssh/sshd_config.tmp` | `SshServer.set_policies()` | SSH_SERVER 変更時の中間ファイル | `sshd -T` 検証失敗時は `os.remove()` で削除し既存設定を保護 | `hostcfgd:1113,1152,1160` |
+| `/etc/pam.d/pam-limits-conf` | `PamLimitsCfg.render_conf_file()` | `max_sessions > 0` | `pam_limits.j2` テンプレートを展開して上書き | `hostcfgd:1460-1466` |
+| `/etc/pam.d/sshd` | `AaaCfg.modify_conf_file()` | AAA login 変更時（SSH_SERVER とは別経路） | `common-auth` / `common-auth-sonic` の `@include` 行を書き換え。SSH_SERVER 処理とは独立した AAA 経路 | `hostcfgd:748-752` |
+| `/etc/pam.d/login` | `AaaCfg.modify_conf_file()` | 同上（AAA 経路） | 同上 | `hostcfgd:749,751` |
+
+### 外部プロセス / サービスへの依存
+
+| 依存対象 | 呼び出し条件 | 操作 | 証跡 |
+|---------|------------|------|------|
+| `sshd -T -f <tmpfile>` | SSH_SERVER SET 時（常に） | 一時 sshd_config の構文検証。失敗時は既存ファイルを保持し変更を破棄 | `hostcfgd:1150-1160` |
+| `service serial-config restart` | `SERIAL_CONSOLE` フィールド変化時のみ | `serial-config.service` を再起動して TMOUT / SysRq を反映。進行中のシリアルセッションが切断される可能性 | `hostcfgd:2032-2038` |
+
+### 暗黙参照マトリクス（サマリ）
+
+| 参照先 | 種別 | 方向 | 直接/間接 | ソース |
+|--------|------|------|-----------|--------|
+| `CONFIG_DB.DEVICE_METADATA\|localhost` | CONFIG テーブル | SSH_SERVER → PAM limits の前提条件 | 直接（`get_table`） | `hostcfgd:1422,1430` |
+| `/etc/ssh/sshd_config` | システムファイル | SSH_SERVER → sshd_config 書き換え | 直接 | `hostcfgd:1112-1160` |
+| `/etc/pam.d/pam-limits-conf` | システムファイル | SSH_SERVER.max_sessions → PAM limits | 直接（j2 テンプレート経由） | `hostcfgd:1460-1466` |
+| `sshd` プロセス（`sshd -T` 検証） | 外部プロセス | SSH_SERVER SET → sshd 構文検証 | 直接（subprocess） | `hostcfgd:1150` |
+| `serial-config.service` | systemd サービス | SERIAL_CONSOLE 変化 → サービス再起動 | 直接（subprocess） | `hostcfgd:2035` |
+<!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗モード・エラー処理 (Phase D)
+
+`SshServer` / `SerialConsoleCfg` / `PamLimitsCfg` が CONFIG_DB 変化を処理する際に発生しうる失敗モードと hostcfgd の対応を示す。
+
+### SSH_SERVER フィールド処理失敗
+
+| # | 失敗箇所 | 検出条件 | ログ (syslog) | 影響 | 回復方法 |
+|---|---------|---------|--------------|------|---------|
+| 1 | `handle_ports_set()` | `ports` 値が 1–65535 外 | `LOG_ERR "Ssh port <N> out of range"` → `"Failed to update sshd config files - wrong port configuration"` | sshd_config 更新中断・既存値保持 | 正値を CONFIG_DB に再設定 |
+| 2 | `set_policies()` 数値検証 | `authentication_retries` / `login_timeout` / `inactivity_timeout` が YANG 範囲外 | `LOG_ERR "Ssh {} {} out of range"` | 当該フィールドのみスキップ（部分適用）、他フィールドは継続 | 正値を CONFIG_DB に再設定 |
+| 3 | `set_policies()` 未知キー | `SSH_CONFIG_NAMES` にも `max_sessions` リストにもないキー | `LOG_ERR "Failed to update sshd config file - wrong key {}"` | 未知キーのみ無視、処理継続 | CONFIG_DB から不正キーを削除 |
+| 4 | `sshd -T` 検証失敗 | 一時 sshd_config が構文不正 | `LOG_ERR "Failed to update sshd config file - sshd -T returned {code} with error {stderr}"` | 一時ファイルを `os.remove()` で削除、既存 `/etc/ssh/sshd_config` 保持 | DB 値を正値に修正 |
+| 5 | `systemctl restart ssh` 失敗 | ssh サービス起動失敗 | `LOG_ERR "Failed to update sshd config file"` | sshd_config は更新済みだが実行中 sshd は旧設定を維持（DB値 vs プロセス不一致） | `systemctl restart ssh` を手動実行 |
+
+!!! warning "失敗 5 の注意"
+    `sshd -T` 検証成功後に `os.rename()` で sshd_config は更新されるが、`systemctl restart ssh` が失敗すると実行中の sshd は旧設定のまま継続する。DB 値と実際の sshd 挙動が一時的に乖離する。次回の `set_policies()` 呼び出し（次の CONFIG_DB 変更時）で再度 restart が試みられる。<!-- evidence: hostcfgd:1152-1157 -->
+
+### SERIAL_CONSOLE フィールド処理失敗
+
+| # | 失敗箇所 | 検出条件 | ログ (syslog) | 影響 | 回復方法 |
+|---|---------|---------|--------------|------|---------|
+| 6 | `update_serial_console_cfg()` | `serial-config.service restart` 失敗 | `LOG_ERR "Failed to update {key} serial-config.service config"` | キャッシュ未更新（`return` が `cache.update()` の前に実行）→ 次回同値変更でも再試行ループ | `service serial-config start` で手動起動 |
+
+!!! note "キャッシュ未更新ループ"
+    `run_cmd` が例外を送出すると `return` が呼ばれ、`self.cache.update({key: data})` (L2040) に到達しない。キャッシュが古いままのため、次回同じ値の SET イベントで再び `cache != data` が True になり `serial-config restart` を再試行する。serial-config.service が恒久的に不在の環境では無限再試行が発生する。<!-- evidence: hostcfgd:2031-2040 -->
+
+### PamLimitsCfg 処理失敗
+
+| # | 失敗箇所 | 検出条件 | ログ (syslog) | 影響 | 回復方法 |
+|---|---------|---------|--------------|------|---------|
+| 7 | `render_conf_file()` | jinja2 展開例外 / ファイル書き込み権限エラー | `LOG_ERR "modify pam_limits config file failed with exception: {}"` | PAM limits ファイル未更新、`max_sessions` 制限が未反映 | hostcfgd 再起動 + テンプレートファイル確認 |
+| 8 | `update_config_file()` | `SSH_SERVER` テーブル不在 (KeyError) | (ログなし — safe early return) | PAM limits 無変更（設計上の正常系） | なし（テーブル追加後に自動反映） |
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: d5320e852f7a -->

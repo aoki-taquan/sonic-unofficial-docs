@@ -332,6 +332,63 @@ IPinIP Tunnel SAI オブジェクトは `decap_dscp_mode` 値ごとに 1 つ共�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Pub/Sub・イベント通知 (Phase G)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-pubsub.md`
+
+`SRV6_MY_SIDS` テーブルの変更は **bgpcfgd パス** と **Srv6Orch パス** の 2 経路でそれぞれ異なる購読メカニズムで処理される。
+
+### bgpcfgd パス — SubscriberStateTable
+
+`runner.py:49`: `swsscommon.SubscriberStateTable(conn, "SRV6_MY_SIDS")` を生成し `swsscommon.Select()` セレクタに追加する。  
+`Runner.run()` (`runner.py:54-73`) が `selector.select(timeout=1000ms)` で待受け、イベント発生時に `subscriber.pop()` でドレインして `SRv6Mgr.handler()` を呼び出す。  
+各イテレーション末尾で `cfg_manager.commit()` が積み上がった FRR vtysh コマンドを一括送信する。
+
+**ロケータ未存在時のインプロセス購読**:  
+`managers_srv6.py:67-68` でロケータが未登録の場合、bgpcfgd 内部 `Directory` オブジェクトに追加購読を登録する:
+
+```python
+self.directory.subscribe([(self.db_name, "SRV6_MY_LOCATORS", locator_name)], self.on_deps_change)
+```
+
+これは Redis Pub/Sub ではなく bgpcfgd プロセス内部のコールバック機構であり、`SRV6_MY_LOCATORS` エントリが Directory に登録された瞬間に `on_deps_change()` が呼ばれ保留キューを再処理する。
+
+### Srv6Orch パス — Consumer (TableConnector)
+
+`orchdaemon.cpp:312-324` で `CFG_SRV6_MY_SID_TABLE_NAME`（CONFIG_DB `SRV6_MY_SIDS`）と `APP_SRV6_MY_SID_TABLE_NAME`（APP_DB `SRV6_MY_SID_TABLE`）の 2 テーブルを `TableConnector` として `Srv6Orch` に登録する。
+
+`doTask(Consumer&)` (`srv6orch.cpp:2352-2394`) がテーブル名でルーティングする:
+
+| Consumer テーブル | ハンドラ | 処理内容 |
+|-----------------|---------|---------|
+| `CFG_SRV6_MY_SIDS`（CONFIG_DB） | `doTaskCfgMySidTable()` | `decap_dscp_mode` キャッシュへの登録/削除のみ。SAI 操作なし |
+| `SRV6_MY_SID_TABLE`（APP_DB） | `doTaskMySidTable()` | `createUpdateMysidEntry()` / `deleteMysidEntry()` → SAI MY_SID_ENTRY 操作 |
+
+!!! note "CONFIG_DB Consumer の役割"
+    Srv6Orch が CONFIG_DB の `SRV6_MY_SIDS` を直接購読するのは `decap_dscp_mode` キャッシュ更新のためのみ。  
+    MY_SID_ENTRY の SAI 書込みは APP_DB `SRV6_MY_SID_TABLE` 経由（fpmsyncd または bgpcfgd が書いた値）で実行される。
+
+### NeighOrch Observer パターン
+
+`srv6orch.cpp:110`: コンストラクタで `m_neighOrch->attach(this)` を呼び Neighbor 変化の Observer として登録する。  
+Neighbor ADD/DEL 発生時に NeighOrch が `Srv6Orch::update(SUBJECT_TYPE_NEIGH_CHANGE, ...)` を直接コールバックする（Redis Pub/Sub ではなく C++ オブジェクト間の同期コールバック）。
+
+- **ADD**: `updateNeighbor()` (`srv6orch.cpp:1220-1263`) が `m_pendingSRv6MySIDEntries` を走査し、解決可能になった SID を ASIC に再インストール。
+- **DEL**: `updateNeighbor()` (`srv6orch.cpp:1265-1342`) が nexthop を持つ MY_SID を ASIC から削除し `m_pendingSRv6MySIDEntries` に移動。
+
+### FlexCounter タイマー（カウンタ有効時のみ）
+
+カウンタ有効時、`srv6orch.cpp:138-139` で 1 秒周期の `SelectableTimer` を登録する。  
+`doTask(SelectableTimer&)` (`srv6orch.cpp:286-313`) がポーリングし、ASIC_DB `VIDTORID` が解決された pending エントリに対して `FlexCounter` へカウンタ ID リストを設定する。
+
+### 外部 Redis 通知の有無
+
+SRV6_MY_SIDS 変更が直接トリガする Redis Keyspace 通知・Pub/Sub チャンネルへの発信はない。  
+副次書込み（`COUNTERS_SRV6_NAME_MAP` `hset` / `FLEX_COUNTER_DB` `setCounterIdList`）は間接的に他コンポーネントの Select ループに通知されるが、SRV6_MY_SIDS 固有のチャンネルは存在しない。
+
+<!-- /pubsub -->
+
 ## 設定例
 
 ```json

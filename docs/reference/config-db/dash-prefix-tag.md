@@ -164,6 +164,59 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md -->
+
+### retry パターン概要
+
+`DASH_PREFIX_TAG_TABLE` のタスク処理は `DashAclOrch::taskUpdateDashPrefixTag` / `taskRemoveDashPrefixTag` で行われ、`task_process_status` を返す。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **`task_need_retry`** | ACL rule から参照中のタグへの DEL（`m_groups` 非空） | `m_toSync` に残し次 `doTask()` で自動再試行。上限なし |
+| **`task_failed`** | `from_pb()` 失敗・`ip_version` 変更試行・存在しないタグへの UPDATE | エントリ破棄。自動回復なし |
+| **`task_success`** | 正常 create/update・存在しないタグへの DEL（冪等） | エントリ削除 |
+
+### SET 処理における失敗詳細
+
+#### protobuf デシリアライズ失敗（`from_pb()` false）
+
+`from_pb(data, tag)` が `false` を返すと `taskUpdateDashPrefixTag` は即 `task_failed`。`m_tag_table` への書き込みは行われない。(`dashaclorch.cpp:291-294`)
+
+失敗するケース:
+
+1. `ip_version` が `0` (= `IP_VERSION_UNSPECIFIED` / proto3 デフォルト): `to_sai(data.ip_version(), tag.m_ip_version)` が `false` (`dashtagmgr.cpp:11-13`)
+2. `ip_version` が `1 (IPV4)` / `2 (IPV6)` 以外の不正な enum 値: 同様に `to_sai()` が `false`
+3. `prefix_list` 内のプレフィックスパース失敗: `to_sai(data.prefix_list(), tag.m_prefixes)` が `false` (`dashtagmgr.cpp:16-18`)
+
+!!! warning "proto3 デフォルト値トラップ"
+    コントローラが `ip_version` フィールドを省略すると proto3 デフォルト値 `0` が送信され、orchagent が無音で拒否する。フィールドを明示しない実装は全エントリが `task_failed` で破棄される。
+
+#### `ip_version` の変更試行（update 時の不変制約）
+
+既存タグへの SET で `ip_version` を変更しようとした場合: `SWSS_LOG_WARN "'ip_version' changing is not supported for tag %s"` → `task_failed`。`prefix_list` も更新されない。(`dashtagmgr.cpp:61-65`)
+
+### DEL 処理における失敗詳細
+
+#### ACL rule 参照中タグの削除（`m_groups` 非空）
+
+タグが ACL rule から参照されている（`m_groups` が非空）場合: `SWSS_LOG_WARN "Prefix tag %s is still in use by ACL rule(s)"` → `task_need_retry`。全参照 ACL rule が削除されて `m_groups` が空になると次の `doTask()` ループで DEL が成功する。(`dashtagmgr.cpp:84-88`)
+
+#### 存在しないタグへの DEL（冪等）
+
+`m_tag_table` に存在しないタグへの DEL: `SWSS_LOG_WARN "Prefix tag %s does not exist"` → `task_success`。(`dashtagmgr.cpp:78-81`)
+
+### 失敗後の状態整合性
+
+- `task_failed` でエントリが破棄されると `DashAclOrch::doTask()` が WARN ログを出力し `erase(it)` でキューから除去する (`dashaclorch.cpp:146-153`)
+- タグはオーケストレーターメモリにのみ存在し SAI への書き込みがないため、`task_failed` による部分的な ASIC 汚染は発生しない
+- `task_need_retry` エントリはキューに残留し上限なく自動再試行される
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md`
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
