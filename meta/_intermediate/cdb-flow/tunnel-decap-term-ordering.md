@@ -1,4 +1,4 @@
-# TUNNEL_DECAP_TERM_TABLE — Phase B 書込み順依存調査
+# TUNNEL_DECAP_TERM_TABLE — Phase B 処理順・依存順調査
 
 調査日: 2026-05-17
 対象ファイル:
@@ -7,48 +7,44 @@
 
 ---
 
-## 全体 doTask ガード
+## 前提条件 (doTask ゲート)
 
-`TunnelDecapOrch::doTask()` の先頭で `gPortsOrch->allPortsReady()` が false の場合は
-TUNNEL_DECAP_TABLE・TUNNEL_DECAP_TERM_TABLE ともに即 return される (L55-57)。
-ports 初期化完了前に届いたエントリはキューに留まり、初期化後に自動再処理される。
+`tunneldecaporch` の `doTask()` (L51-79) は最初に `gPortsOrch->allPortsReady()` を確認する。
+ポートが未初期化の場合は即座にリターンし、`TUNNEL_DECAP_TERM_TABLE` イベントを処理しない。
 
-## TUNNEL_DECAP_TERM_TABLE SET の先行必須
+## 処理分岐
 
-| 依存 | 理由 | 緩和策 | evidence |
-|---|---|---|---|
-| PortsOrch 初期化完了 (`allPortsReady()`) | doTask() 先頭ガード — false なら TERM 処理もスキップ | なし（自動待機） | `tunneldecaporch.cpp` L55-57 |
-| `TUNNEL_DECAP_TABLE:<tunnel_name>` SET 済み | `tunnel_exists` が false の場合 `addUnhandledDecapTunnelTerm()` に保留。トンネル本体作成成功後に `processUnhandledDecapTunnelTerms()` で一括再処理 | **前後逆でも自動調停** | `tunneldecaporch.cpp` L511-521 |
-| subnet decap term の場合: `SUBNET_DECAP` で `enable=true` + `src_ip`/`src_ip_v6` 設定済み | `subnetDecapConfig.enable` が false だとエントリ消費してスキップ。`src_ip` 未設定でも消費 | なし — 先に SUBNET_DECAP を SET | `tunneldecaporch.cpp` L501-514 |
+`doTask()` 内でテーブル名を確認し、`APP_TUNNEL_DECAP_TERM_TABLE_NAME` の場合は `doDecapTunnelTermTask()` (L338-551) へ委譲する。
 
-## SET / DEL の推奨順序
+## 親トンネルとの依存順
 
-```
-# SET 時
-TUNNEL_DECAP_TABLE:<tunnel_name> SET   (先)
-TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip> SET
+`doDecapTunnelTermTask()` (L392) では `tunnelTable.find(tunnel_name)` で親トンネル (TUNNEL_DECAP_TABLE) の存在を確認する。
 
-# DEL 時
-TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip> DEL  (先)
-TUNNEL_DECAP_TABLE:<tunnel_name> DEL
-```
+- **tunnel_exists == true**: `addDecapTunnelTermEntry()` を即座に呼び出して SAI に反映する (L513)
+- **tunnel_exists == false**: `addUnhandledDecapTunnelTerm()` でキュー (`unhandledDecapTerms`) に登録する (L521)
 
-TERM が先に届いた場合: `unhandledDecapTerms` キューに積まれ、
-トンネル本体 SET 成功後の `processUnhandledDecapTunnelTerms()` で処理される (L309, L1497-1520)。
-エラーログ `"tunnel doesn't exist, added to unhandled list."` が残る点を除き機能上の問題はない。
+これにより APPL_DB の書き込み順序は問わない設計になっている。`TUNNEL_DECAP_TABLE` エントリが後から来ても、`addDecapTunnel()` 成功後に `processUnhandledDecapTunnelTerms()` (L309, L1497-1519) が保留済みの term エントリを一括処理する。
 
-DEL 時: トンネル本体の `removeDecapTunnel()` は TERM を自動削除しない。
-TERM を先に削除しないままトンネル本体を DEL すると SAI リソースリークの恐れがある。
+## subnet decap term の追加制約
 
-## 変更時の制約
+subnet decap tunnel (`subnetDecapConfig.tunnel` / `subnetDecapConfig.tunnel_v6`) に属する term は、`subnetDecapConfig.enable == true` かつ対応する `src_ip` / `src_ip_v6` が設定済みでなければ処理されない (L472-508)。
+`SUBNET_DECAP` の `doSubnetDecapTask()` が先に呼ばれて設定を反映していることが必要である。
 
-`TUNNEL_DECAP_TERM_TABLE` は更新 (SET on existing entry) を明示サポートしない。
-orchagent 内部では `tunnel_exists && entry_exists` の場合に `addDecapTunnelTermEntry()` を再呼び出しするが、
-重複エントリのハンドリングは SAI 実装依存。変更が必要な場合は DEL → SET が推奨される。
+## warm-start 時の順序保証
 
-## ソース参照
+`tunnelmgrd` は warm-start 時、既存の CONFIG_DB TUNNEL キーを `m_tunnelReplay` に登録し、処理済みになるまで `finalizeWarmReboot()` を遅延させる (tunnelmgr.cpp L133-146)。
+orchagent 側は既存の APPL_DB エントリを `allPortsReady()` 後に再消費する通常フローで対応する。
 
-- `tunneldecaporch.cpp` L55-57: allPortsReady ガード
-- `tunneldecaporch.cpp` L392, L511-521: tunnel_exists チェックと unhandledDecapTerms 保留
-- `tunneldecaporch.cpp` L309, L1497-1520: processUnhandledDecapTunnelTerms
-- `tunneldecaporch.cpp` L525-541: DEL ハンドリング
+## 処理完了後の STATE_DB 書き込み
+
+`addDecapTunnelTermEntry()` 成功後、`setDecapTunnelTermStatus()` (L1539) が呼ばれて STATE_DB へミラーされる。
+STATE_DB 書き込みは SAI 呼び出しの *後* に行われる。
+
+## 削除順序
+
+DEL_COMMAND (L525-542) では:
+1. `tunnel_exists` を確認
+2. `removeDecapTunnelTermEntry()` で SAI エントリを削除
+3. `RemoveTunnelIfNotReferenced()` で参照カウントが 0 になった場合に親トンネルも削除
+
+親トンネルの削除より先に term エントリを削除する必要がある。逆順では参照カウント不整合になる。
