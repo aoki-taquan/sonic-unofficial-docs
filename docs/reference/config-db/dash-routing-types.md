@@ -252,6 +252,42 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/dash/dashorch.cpp doTaskRoutingTypeTable:473 / addRoutingTypeEntry:441 / removeRoutingTypeEntry:457 / dashvnetorch.cpp addOutboundCaToPa:300 -->
+
+`DASH_ROUTING_TYPE_TABLE` の SET/DEL 処理は `doTaskRoutingTypeTable()` (`dashorch.cpp:473`) が担当する。SAI API 呼び出しは行わず orchagent メモリへの格納のみのため、SAI 由来の失敗は発生しない。
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | result_table ステータス | evidence |
+|---|---|---|---|---|
+| 無効な routing type 名（`RoutingType_Parse()` 失敗） | `doTaskRoutingTypeTable()` L490 | WARN ログ → `erase(it)` → 恒久スキップ | なし | `dashorch.cpp:490-494` |
+| protobuf デシリアライズ失敗（`parsePbMessage()` false） | `doTaskRoutingTypeTable()` L501 | WARN ログ → `erase(it)` → 恒久スキップ | なし | `dashorch.cpp:501-505` |
+| 同一 routing type の二重登録（重複検出） | `addRoutingTypeEntry()` L445 | WARN ログ → `return true`（冪等・成功扱い、既存エントリ上書きなし） | `DASH_RESULT_SUCCESS` | `dashorch.cpp:445-449` |
+| `addRoutingTypeEntry()` が false を返す（拡張点） | `doTaskRoutingTypeTable()` L508 | `result = DASH_RESULT_FAILURE` → `it++`（再試行） → `writeResultToDB(FAILURE)` | `DASH_RESULT_FAILURE` | `dashorch.cpp:513-517` |
+| `action_type=staticencap` かつ `encap_type` 不正（VXLAN/NVGRE 以外）— VNET マッピング参照時 | `addOutboundCaToPa()` L337（`dashvnetorch.cpp`） | ERROR ログ → `return true`（consumer から erase、VNET マッピング未作成） | — | `dashvnetorch.cpp:337-338` |
+| `getRouteTypeActions()` で該当 routing type 未登録 — VNET マッピング参照時 | `addOutboundCaToPa()` L315（`dashvnetorch.cpp`） | INFO ログ → `return false`（VNET マッピング作成保留） | — | `dashvnetorch.cpp:315-318` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | result_table ステータス | evidence |
+|---|---|---|---|---|
+| 存在しない routing type の削除 | `removeRoutingTypeEntry()` L461 | WARN ログ → `return true`（冪等・成功扱い） | result エントリ削除 | `dashorch.cpp:461-464` |
+| `removeRoutingTypeEntry()` が false を返す（拡張点） | `doTaskRoutingTypeTable()` L521 | `it++`（再試行） | result エントリ残留 | `dashorch.cpp:526-528` |
+| 不明な操作コード（SET/DEL 以外） | `doTaskRoutingTypeTable()` L533 | ERROR ログ → `erase(it)` → 恒久スキップ | なし | `dashorch.cpp:533-534` |
+
+### 補足
+
+- **result_table 書き込み先**: `APPL_STATE_DB` の `APP_DASH_ROUTING_TYPE_TABLE_NAME` テーブル（`dashorch.cpp:73`）。フィールド `result` に `0`（SUCCESS）または `1`（FAILURE）を書き込む（`DASH_RESULT_SUCCESS` / `DASH_RESULT_FAILURE`、`dashorch.h:35-36`）。
+- **SAI 連携なし**: `DASH_ROUTING_TYPE_TABLE` エントリ自体は SAI API を呼ばず orchagent メモリ（`routing_type_entries_`）にのみ格納される。SAI 失敗が発生するのはこの routing type を参照する VNET マッピング・ルートエントリの作成時（`dashvnetorch.cpp`、`dashrouteorch.cpp`）。
+- **依存側の失敗伝播**: VNET マッピングが `getRouteTypeActions()` で `false` を返した場合、そのエントリは consumer キューに保留（`return false` → `it++` パターン）。routing type が後から登録されると次の tick で自動再処理される。
+- **二重登録の冪等性**: 重複は WARN ログのみで既存エントリは変更されない。更新には DEL → SET が必要（`addRoutingTypeEntry()` は上書きをサポートしない）。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-failure.md`
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
