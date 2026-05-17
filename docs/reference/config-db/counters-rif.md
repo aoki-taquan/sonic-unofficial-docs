@@ -3,7 +3,7 @@ title: COUNTERS_DB RIF カウンタ
 description: "COUNTERS_DB における RIF (Router Interface) カウンタ関連エントリ — intfsorch が SAI flex counter 経由で収集し COUNTERS_DB に格納する L3 インタフェース統計フィールドの構造・デフォルト・書き込み経路の解説。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-17
 hard: 0
 sources:
   - repo: sonic-net/sonic-swss
@@ -27,6 +27,18 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: dockers/docker-orchagent/enable_counters.py
     ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/neighorch.cpp
+    ref: 4305596156d7
+  - repo: sonic-net/sonic-swss
+    path: orchagent/routeorch.cpp
+    ref: 4305596156d7
+  - repo: sonic-net/sonic-swss
+    path: orchagent/nhgorch.cpp
+    ref: 4305596156d7
+  - repo: sonic-net/sonic-swss
+    path: orchagent/vnetorch.cpp
+    ref: 4305596156d7
 related:
   config_db:
     - FLEX_COUNTER_TABLE
@@ -473,6 +485,87 @@ SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・他 DB への波及 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/intfsorch.cpp (L86-100, L1309, L1317, L1327-1330, L1363, L1370, L1537-1551, L1559-1566, L1778),
+     sonic-swss/orchagent/neighorch.cpp (L349,L441,L676,L744),
+     sonic-swss/orchagent/routeorch.cpp (L1362,L1384),
+     sonic-swss/orchagent/nhgorch.cpp (L757,L885),
+     sonic-swss/orchagent/vnetorch.cpp (L211,L235) -->
+
+`IntfsOrch` が RIF を作成・削除するとき、`COUNTERS_DB` だけでなく複数の DB・オブジェクトに副作用書き込みを行う。
+
+### RIF 作成時の副作用（addRifToFlexCounter）
+
+`addRifToFlexCounter()` (intfsorch.cpp:1527-1552) は以下の 3 DB に順次書き込む[^13]:
+
+| DB | キー | 内容 |
+|----|------|------|
+| COUNTERS_DB | `COUNTERS_RIF_NAME_MAP` | `hset "" <rif_name> <oid>` |
+| COUNTERS_DB | `COUNTERS_RIF_TYPE_MAP` | `hset "" <oid> <type>` |
+| FLEX_COUNTER_DB | `RIF_STAT_COUNTER:<oid>` | `RIF_COUNTER_ID_LIST = <8 カウンタ ID 列挙>` |
+
+3 件の書き込みはトランザクションなしで直列実行される。FLEX_COUNTER_DB への書き込みが完了した時点で syncd が SAI ポーリングを開始し、`COUNTERS:<oid>` の更新が始まる。
+
+### RIF 削除時の副作用（removeRifFromFlexCounter）
+
+`removeRifFromFlexCounter()` (intfsorch.cpp:1556-1568) は作成時の逆順で削除する[^14]:
+
+1. `COUNTERS_RIF_NAME_MAP` から `hdel "" <name>`
+2. `COUNTERS_RIF_TYPE_MAP` から `hdel "" <oid>`
+3. FLEX_COUNTER_DB の `RIF_STAT_COUNTER:<oid>` を `stopFlexCounterPolling()` で削除
+
+`COUNTERS:<oid>` は IntfsOrch が直接削除せず、syncd が FlexCounter 停止後にクリーンアップする。削除後もごく短期間、古い値が COUNTERS_DB に残留する場合がある。
+
+### PortsOrch 内部状態への副作用
+
+RIF 作成時 (intfsorch.cpp:1309) と削除時 (intfsorch.cpp:1363) に `gPortsOrch->setPort()` が呼ばれ、PortsOrch の Port オブジェクトが更新される。
+
+| 操作 | 変化するフィールド | 値 |
+|------|-----------------|-----|
+| RIF 作成後 | `port.m_rif_id`, `port.m_vr_id` | SAI OID |
+| RIF 削除後 | `port.m_rif_id`, `port.m_vr_id`, `port.m_nat_zone_id`, `port.m_mpls` | 0 / false |
+
+この更新は PortsOrch インメモリ状態のみ。APP_DB / STATE_DB への書き込みは発生しない。
+
+### ref_count による他 Orch への波及ブロック
+
+`m_syncdIntfses[alias].ref_count` は NeighOrch・RouteOrch・NhgOrch・VnetOrch から参照カウントとして操作される:
+
+| Orch | ref_count 増加タイミング | ref_count 減少タイミング |
+|------|----------------------|----------------------|
+| NeighOrch | neighbor 追加 | neighbor 削除 |
+| RouteOrch | nexthop alias を持つルート追加 | ルート削除 |
+| NhgOrch | nexthop group メンバ追加 | メンバ削除 |
+| VnetOrch | VNET nexthop 追加 | VNET nexthop 削除 |
+
+`ref_count > 0` のとき `removeRouterIntfs()` は即 `false` を返す（intfsorch.cpp:1327-1330）。SAI RIF 削除も COUNTERS_DB クリーンアップも行われず、FlexCounter 登録は残ったままになる[^15]。
+
+### VoQ 環境: CHASSIS_APP_DB への副作用（VOQ モード限定）
+
+`isChassisDbInUse() == true` の場合のみ、以下の副作用書き込みが発生する:
+
+| 操作 | 対象 DB | キー | 内容 |
+|------|---------|------|------|
+| RIF 作成 | CHASSIS_APP_DB | `SYSTEM_INTERFACE_TABLE|<system_alias>` | `oper_status` 設定 |
+| RIF 削除 | CHASSIS_APP_DB | `SYSTEM_INTERFACE_TABLE|<system_alias>` | エントリ削除 |
+| ポート状態変化 | CHASSIS_APP_DB | `SYSTEM_INTERFACE_TABLE|<system_alias>` | `oper_status` 更新 |
+
+リモートシステムポート（`SAI_SYSTEM_PORT_TYPE_REMOTE`）および他スイッチの LAG は sync 対象外（intfsorch.cpp:1689-1692）[^16]。
+
+### IntfsOrch 初期化時の副作用
+
+`IntfsOrch::IntfsOrch()` コンストラクタ (intfsorch.cpp:86-100) の実行時に以下の副作用が一度だけ発生する:
+
+1. `rif_rates.lua` を Redis にロード → COUNTERS_DB に Lua スクリプト SHA が登録される
+2. `setFlexCounterGroupParameter()` → FLEX_COUNTER_DB の `RIF_STAT_COUNTER` グループにポーリング間隔・stats モード・Lua プラグイン SHA が書き込まれる
+
+これらは CONFIG_DB 変化と無関係に、orchagent 起動時に自動実行される。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/counters-rif-side-effects.md`
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -497,5 +590,9 @@ SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS
 [^10]: rif_rates.lua ロード失敗の catch: `sonic-swss/orchagent/intfsorch.cpp:86-94`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86>
 [^11]: gTraditionalFlexCounter モードでの VIDTORID 待機ループ: `sonic-swss/orchagent/intfsorch.cpp:1627-1636`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627>
 [^12]: FlexCounter グループ識別子定数: `sonic-swss/orchagent/intfsorch.h:19-21`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L19>
+[^13]: addRifToFlexCounter 3 DB 書き込み: `sonic-swss/orchagent/intfsorch.cpp:1537-1551`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1537>
+[^14]: removeRifFromFlexCounter 削除シーケンス: `sonic-swss/orchagent/intfsorch.cpp:1559-1566`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1559>
+[^15]: ref_count ブロック: `sonic-swss/orchagent/intfsorch.cpp:1327-1330`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1327>
+[^16]: voqSyncAddIntf / voqSyncDelIntf: `sonic-swss/orchagent/intfsorch.cpp:1672-1748`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1672>
 [^13]: FLEX_COUNTER_DELAY_SEC 定数: `sonic-swss/orchagent/flexcounterorch.cpp:44`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44>
 [^14]: RIF_COUNTER_ID_LIST / RIF_PLUGIN_FIELD 定数: `sonic-swss-common/common/schema.h:302,330`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302>
