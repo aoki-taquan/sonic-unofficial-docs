@@ -3,7 +3,7 @@ title: COUNTERS_DB バッファ / ウォーターマーク カウンタ
 description: "COUNTERS_DB における QUEUE / PG / BUFFER_POOL ウォーターマーク・バッファドロップカウンタ — portsorch / bufferorch / watermarkorch が SAI flex counter 経由で収集し COUNTERS_DB に格納するバッファ関連統計フィールドの構造・デフォルト・書き込み経路の解説。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-17
 hard: 0
 sources:
   - repo: sonic-net/sonic-swss
@@ -756,6 +756,48 @@ TTL なし・永続コネクション・fan-out なしの 1:1 通知。HLD へ�
 > **Evidence**: `watermarkorch.cpp:23-44` (コンストラクタ)、`watermarkorch.cpp:52-92` (doTask Consumer)、`watermarkorch.cpp:116-142` (handleFcConfigUpdate)、`watermarkorch.cpp:144-231` (doTask NotificationConsumer)、`watermarkorch.cpp:233-281` (doTask SelectableTimer)、`flexcounterorch.cpp:225-295` (FLEX_COUNTER_STATUS ハンドラ)、`orchdaemon.cpp:432-437` (WatermarkOrch 初期化)、`watermarkstat:323-325` (CLI 送信側); 詳細分析 `meta/_intermediate/cdb-flow/counter-buffer-pubsub.md`
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-platform.md -->
+
+### VoQ (Virtual Output Queue) システム
+
+| 観点 | 非 VoQ 環境 | VoQ システム |
+|------|-----------|------------|
+| カウンタ ID リスト | `queue_stat_ids` のみ | `queue_stat_ids` + `voq_stat_ids` (`SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS`) を追加登録 (`portsorch.cpp:8603-8607`) |
+| counterpoll による無効化 | 可能 | **不可能**: `gMySwitchType == "voq"` 判定で `FlexCounterQueueStates` フィルタをバイパス。egress Queue も常時有効 (`portsorch.cpp:8483-8499`) |
+| BUFFER_QUEUE キー形式 | `<port>:<queue_index>` (2 トークン) | `<switch>:<asic>:<port>:<queue_index>` (4 トークン) (`bufferorch.cpp:916`) |
+| `getQueueConfigurations()` の対象 | `create_only_config_db_buffers=true` の場合 BUFFER_QUEUE 記載分のみ | 常に全 Queue を対象 (`createAllAvailableBuffersStr` を返す) (`flexcounterorch.cpp:544-550`) |
+| bufferorch.doTask() の待機条件 | `isConfigDone()` (全物理ポート SAI create_port 後) | `isInitDone()` (PortInitDone 通知受信後、より遅い) (`bufferorch.cpp:2079-2090`) |
+| ref counter 管理 | Queue プロファイル適用時に `increasePortRefCount()` を呼ぶ | System port は動的増減しないためスキップ (`bufferorch.cpp:1168`) |
+| COUNTERS_VOQ_NAME_MAP | 存在しない | `COUNTERS_DB / COUNTERS_VOQ_NAME_MAP` に VoQ OID → 名前マップを書き込む (`portsorch.cpp:779`) |
+
+### DPU (Data Processing Unit) 環境
+
+`bufferorch.cpp:64-67` で `gMySwitchType != "dpu"` のガードがあり、DPU では `initBufferConstants()` (xoff / shared headroom 計算) がスキップされる。結果として DPU に不要な xoff バッファ定数は SAI へ投入されない。`portsorch.cpp:987,1043,1056` にも DPU 環境でスキップされる初期化フローが複数存在する。
+
+### Fabric ポート環境 (シャーシ)
+
+`FlexCounterOrch::doTask()` (flexcounterorch.cpp:169-172) は `FabricPortsOrch` が全 Fabric ポートの ready を完了するまでブロックする。バッファカウンタグループ (QUEUE_WATERMARK / PG_WATERMARK / BUFFER_POOL_WATERMARK / PORT_BUFFER_DROP 等) の有効化はすべて同関数内で行われるため、Fabric ポート初期化遅延がバッファカウンタ全体の有効化遅延に波及する。
+
+### WRED カウンタの ASIC 種別依存
+
+WRED 統計 (`SAI_QUEUE_STAT_WRED_*`) は `sai_query_stats_capability()` (portsorch.cpp:1882-1909) で ASIC の対応を確認してから登録される。WRED 非対応 ASIC では全 WRED フィールドがスキップされ `COUNTERS_DB` に格納されない。ASIC 種別ごとの対応は SAI 実装に依存する。
+
+### `create_only_config_db_buffers` (Dynamic Buffer Model)
+
+`DEVICE_METADATA|localhost` の `create_only_config_db_buffers: "true"` が設定された Dynamic Buffer Model 環境 (mlnx 等) では:
+
+- Queue カウンタ: BUFFER_QUEUE テーブルに記載された (port, queue index) のみ登録される
+- PG カウンタ: BUFFER_PG テーブルに記載された (port, pg index) のみ登録される
+- `false` または VoQ システムの場合は全 Queue / 全 PG が対象
+
+この設定は runtime の `DEVICE_METADATA` テーブル変更で更新可能だが (flexcounterorch.cpp:508-520)、既登録のカウンタ ID リストは自動再構成されない。
+
+> **Evidence**: `portsorch.cpp:399-402` (voq_stat_ids), `portsorch.cpp:8483-8614` (generateQueueMapPerPort/addQueueFlexCountersPerPortPerQueueIndex), `bufferorch.cpp:64-67,116-140,916,1049-1075,1136-1168,2075-2092`, `flexcounterorch.cpp:44,169-172,291-295,508-520,540-555`; 詳細分析 `meta/_intermediate/cdb-flow/counter-buffer-platform.md`
+<!-- /platform -->
 
 <!-- ref-triangle:start -->
 
