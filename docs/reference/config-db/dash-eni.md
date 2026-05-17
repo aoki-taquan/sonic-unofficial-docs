@@ -222,6 +222,34 @@ Warm start 時 `warmRestoreAndSyncUp()` は全 Orch の `bake()` で APP_DB の�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
+
+### DASH_ENI_TABLE が参照するテーブル
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | ブロッキング | 参照元 evidence |
+|--------------------------|---------|------|------------|----------------|
+| `DASH_VNET_TABLE` (`vnet` フィールド) | 存在確認 + SAI OID 解決 | `vnet` 指定時（必須フィールド） | あり（未登録 → リトライ） | `dashorch.cpp` L570–576, L614 |
+| `DASH_APPLIANCE_TABLE` (`vm_vni` 取得) | 存在確認 + 値読み取り | 常時（全 ENI 作成） | あり（エントリなし → リトライ） | `dashorch.cpp` L578–582, L651–653 |
+| `DASH_METER_POLICY_TABLE` (`v4/v6_meter_policy_id`) | SAI OID 解決 | `v4/v6_meter_policy_id` 指定時 | あり（未登録 → リトライ） | `dashorch.cpp` L584–607, L670–677 |
+| `DASH_QOS_TABLE` (`qos` フィールド) | 存在確認 + 値読み取り | `qos` 指定時 | なし（未登録でも ENI 作成続行） | `dashorch.cpp` L617–631 |
+
+!!! note "QoS は非ブロッキング参照"
+    `qos` フィールドが指定されても `DASH_QOS_TABLE` にエントリがなければ `has_qos = false` として QoS 属性を SAI に設定せず ENI 作成を続行する。後から QoS エントリが追加されても ENI に自動適用されないため、QoS を使用する場合は ENI 作成前に `DASH_QOS_TABLE` を登録することを推奨。
+
+### DASH_ENI_TABLE が参照される側
+
+| 参照元テーブル / Orch | 参照内容 | ENI 未存在時の挙動 | 参照元 evidence |
+|--------------------|---------|-----------------|----------------|
+| `DASH_ENI_ROUTE_TABLE` (`DashOrch::setEniRoute()`) | ENI OID 取得（`eni_entries_` 検索） | `false` → リトライ | `dashorch.cpp` L1186 |
+| `DASH_ACL_IN/OUT_TABLE` (`DashAclGroupMgr::bind()`) | ENI の `eni_id` (SAI OID) 取得 | nullptr → バインド失敗 | `dashaclgroupmgr.cpp` L457, L506 |
+| `DASH_INBOUND_ROUTING_TABLE` (`DashRouteOrch`) | ENI の `eni_id` 取得（Inbound routing entry 作成） | nullptr → リトライ | `dashrouteorch.cpp` L425, L439, L521 |
+| `DASH_HA_SET/SCOPE_TABLE` (`DashHaOrch`) | ENI エントリの存在確認・全テーブル参照 | nullptr チェック | `dashhaorch.cpp` L651, L662 |
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/dash/dash-sonic-hld.md` §3.2.3 ENI (DASH_ENI_TABLE スキーマ定義・ENI モード・admin-state ワークフロー). <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md>
