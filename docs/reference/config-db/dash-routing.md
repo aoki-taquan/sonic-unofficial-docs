@@ -427,6 +427,72 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`dashorch.cpp` / `dashrouteorch.cpp` に存在するハードコード定数を網羅する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/dash-routing-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/dash-routing-constants.md)。
+
+### APP_DB テーブル名文字列定数 (`schema.h`)
+
+| 定数名 | 値 |
+|---|---|
+| `APP_DASH_ROUTING_TYPE_TABLE_NAME` | `"DASH_ROUTING_TYPE_TABLE"` |
+| `APP_DASH_ROUTE_TABLE_NAME` | `"DASH_ROUTE_TABLE"` |
+| `APP_DASH_ROUTE_RULE_TABLE_NAME` | `"DASH_ROUTE_RULE_TABLE"` |
+| `APP_DASH_ROUTE_GROUP_TABLE_NAME` | `"DASH_ROUTE_GROUP_TABLE"` |
+| `APP_DASH_ENI_ROUTE_TABLE_NAME` | `"DASH_ENI_ROUTE_TABLE"` |
+
+### 結果コード定数 (`dashorch.h:35-36`)
+
+| 定数名 | 値 | 意味 |
+|---|---|---|
+| `DASH_RESULT_SUCCESS` | `0` | SET/DEL 操作成功。APP_STATE_DB 結果テーブルに `"result"="0"` を書き込む |
+| `DASH_RESULT_FAILURE` | `1` | SAI API 失敗。APP_STATE_DB 結果テーブルに `"result"="1"` を書き込む |
+
+### キー正規化処理 (`dashorch.cpp:487-488`)
+
+`DASH_ROUTING_TYPE_TABLE` のキーは以下の変換後に protobuf enum へパースされる:
+
+1. 全文字を大文字化 (`::toupper`)
+2. プレフィックス `"ROUTING_TYPE_"` を先頭に付与
+
+例: APP_DB キー `"vnet"` → `"ROUTING_TYPE_VNET"` → `RoutingType::ROUTING_TYPE_VNET`。変換失敗時は `SWSS_LOG_WARN` 出力後エントリを廃棄（retry なし）。
+
+### `sOutboundAction` 静的マップ (`dashrouteorch.cpp:41-47`)
+
+| protobuf RoutingType | SAI outbound routing action |
+|---|---|
+| `ROUTING_TYPE_VNET` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_VNET` |
+| `ROUTING_TYPE_VNET_DIRECT` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_VNET_DIRECT` |
+| `ROUTING_TYPE_DIRECT` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_ROUTE_DIRECT` |
+| `ROUTING_TYPE_DROP` | `SAI_OUTBOUND_ROUTING_ENTRY_ACTION_DROP` |
+
+`ROUTING_TYPE_UNSPECIFIED` はこのマップに含まれないため、`find()` が `end()` を返し `task_failed` となる。
+
+### SAI 属性 ID 定数 — アウトバウンドルート (`dashrouteorch.cpp`)
+
+| SAI 属性 ID | 対応フィールド |
+|---|---|
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_ACTION` | `routing_type` → `sOutboundAction` 変換値 |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_DST_VNET_ID` | `vnet` (vnet / vnet_direct 両方) |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_OVERLAY_IP` | `overlay_ip` (vnet_direct のみ) |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_UNDERLAY_SIP` | `underlay_sip` |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_OR` | `metering_class_or` |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_AND` | `metering_class_and` |
+| `SAI_OUTBOUND_ROUTING_ENTRY_ATTR_DASH_TUNNEL_ID` | `tunnel` |
+
+### SAI 属性 ID 定数 — インバウンドルート (`dashrouteorch.cpp`)
+
+| SAI 属性 ID | 対応フィールド / 値 |
+|---|---|
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_ACTION` | `pa_validation` → `TUNNEL_DECAP_PA_VALIDATE` / `TUNNEL_DECAP` |
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_SRC_VNET_ID` | `vnet` |
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_OR` | `metering_class_or` |
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_AND` | `metering_class_and` |
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-constants.md`
+<!-- /constants -->
+
 ## 関連 CONFIG_DB / APP_DB テーブル
 
 - [`DASH_ENI_TABLE`](dash-eni.md): ENI エントリ。`DASH_ROUTE_RULE_TABLE` の親
