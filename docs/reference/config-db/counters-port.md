@@ -487,6 +487,73 @@ FLEX_COUNTER_DB でのグループキーとして使われる文字列定数。
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・他テーブルへの波及 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-side-effects.md`
+
+`FLEX_COUNTER_TABLE|PORT` の enable/disable は COUNTERS_DB の更新だけでなく、以下の DB・テーブルにも波及する。
+
+### FLEX_COUNTER_DB への COUNTER_ID_LIST 書き込み
+
+`FLEX_COUNTER_TABLE|PORT FLEX_COUNTER_STATUS=enable` を受信すると `flexcounterorch.cpp:239` が
+`generatePortCounterMap()` を呼び、各 PHY ポートに対して `port_stat_manager.setCounterIdList()` を実行する。
+書き込み先は COUNTERS_DB ではなく **FLEX_COUNTER_DB**（Redis DB index 5）:
+
+```text
+FLEX_COUNTER_DB:PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>:COUNTER_ID_LIST
+  = "SAI_PORT_STAT_IF_IN_OCTETS,SAI_PORT_STAT_IF_OUT_OCTETS,..."
+```
+
+syncd がこのエントリを監視し、リストを受け取って SAI ポーリングを開始する。
+`disable` 時または物理ポート削除時は `port_stat_manager.clearCounterIdList()` でエントリが即削除される
+（`portsorch.cpp:3954`、`portsorch.cpp:4280`）。
+
+!!! warning "disable 後も COUNTERS_DB 値は残留"
+    FLEX_COUNTER_DB の COUNTER_ID_LIST が削除されてもポーリング停止するだけで、
+    `COUNTERS_DB:COUNTERS:<oid>` のハッシュ自体は削除されない。最後のポーリング値が stale として残る。
+
+### STATE_DB:PORT_COUNTER_CAPABILITIES の書き込み（起動時一回）
+
+orchagent 起動時の `initCounterCapabilities()` が ASIC の SAI ケイパビリティを問い合わせ、
+`PORT カウンタ enable/disable とは独立して` 以下を **STATE_DB** に書き込む:
+
+| STATE_DB キー | 値 |
+|---|---|
+| `PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` | `{isSupported: "true"\|"false"}` |
+| `PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` | 同上 |
+| `PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_RED_DROP_COUNTER` | 同上 |
+| `PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER` | 同上 |
+
+`portstat.py` はこの値を参照して WRED drop カウンタフィールドを `counter_bucket_dict` に含めるか判断する
+（`portstat.py:297-329`）。ASIC が未サポートの場合、`portstat` 表示から WRED フィールドが事前除外される。
+evidence: `portsorch.cpp:1842-1980`
+
+### COUNTERS_DB:RATES:<oid> への Lua プラグイン書き込み
+
+orsorch コンストラクタで `port_rates.lua` と `port_flr.lua` を Redis にロードし、
+`PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` に Lua プラグインとして登録する
+（`portsorch.cpp:879-882`）。syncd が 1 s ごとのポーリングサイクルで Lua を実行し、
+SAI 生カウンタからレートを計算して **COUNTERS_DB:RATES:<oid>** に書き込む:
+
+| フィールド（RATES:<oid>） | 計算内容 |
+|---|---|
+| `RX_BPS` / `TX_BPS` | 受信 / 送信ビットレート |
+| `RX_PPS` / `TX_PPS` | 受信 / 送信パケットレート |
+| `RX_UTIL` / `TX_UTIL` | ポート利用率 (%) |
+| `FEC_PRE_BER` / `FEC_POST_BER` / `FEC_FLR` 等 | FEC 由来派生値 |
+
+`FLEX_COUNTER_TABLE|PORT=disable` 後は Lua 実行が停止し、`RATES:<oid>` の値が stale のまま残る。
+
+### プラットフォーム固有の副作用
+
+| 条件 | 追加副作用 | 証跡 |
+|---|---|---|
+| `isMlnxPlatform()` かつ `TRIM_PACKETS` サポート / `DROPPED_TRIM_PACKETS` 非サポート | `nvda_port_trim_drop.lua` が `portStatPlugins` に追加され、Trimming 派生カウンタを COUNTERS_DB に書き込む | `portsorch.cpp:862-870` |
+| Gearbox 有効 (`m_gearboxEnabled=true`) | `GB_COUNTERS_DB` に Gearbox system/line-side の COUNTER_ID_LIST を書き込み、独立した DB インデックスで Gearbox ポートカウンタを収集する | `portsorch.cpp:9121-9126`, `portsorch.cpp:10392-10393` |
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
