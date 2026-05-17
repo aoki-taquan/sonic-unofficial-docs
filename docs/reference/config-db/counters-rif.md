@@ -288,6 +288,32 @@ FlexCounterOrch::doTask()
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-swss/orchagent/intfsorch.cpp (doTask Consumer, doTask SelectableTimer,
+     addRifToFlexCounter, addRouterIntfs),
+     sonic-swss/orchagent/flexcounterorch.cpp (doTask, generateInterfaceMap 呼出し),
+     sonic-swss/orchagent/orchdaemon.cpp (初期化順序) -->
+
+`IntfsOrch` が INTERFACE テーブルを処理して RIF を生成し、COUNTERS_DB に RIF カウンタを登録する際に暗黙的に参照する他テーブルを示す。YANG の leafref として定義されたものはなく、コードのみで表現された依存関係である。
+
+| 参照元処理 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---|---|---|---|---|
+| `doTask(Consumer)` の INTERFACE 処理全体 | `PORT` | `APP_PORT_TABLE\|<port_name>` | `allPortsReady()` が false の間は INTERFACE の SET/DEL をすべてブロック。PortsOrch が全ポートの SAI OID 取得完了を宣言するまで RIF 作成も削除も行われない | `intfsorch.cpp:665-668` |
+| `doTask(Consumer)` の RIF 作成判断 | [`VRF_TABLE`](vrf.md) | `VRF_TABLE\|<vrf_name>` | `INTERFACE` に `vrf_name` フィールドがある場合、VRFOrch に当該 VRF が登録済みでないと Consumer キューに留まりリトライ。VRF なし（デフォルト VRF）なら依存なし | `intfsorch.cpp:824-831` |
+| `generateInterfaceMap()` のトリガ | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|RIF` フィールド `FLEX_COUNTER_STATUS` | `enable` 受信時に `generateInterfaceMap()` → タイマーキック → `addRifToFlexCounter()` の連鎖が起動する。`disable` のままでも COUNTERS_RIF_NAME_MAP / COUNTERS_RIF_TYPE_MAP への書き込みは行われるが、syncd の SAI ポーリングは開始されず `COUNTERS:<oid>` は更新されない | `flexcounterorch.cpp:283-286`, `intfsorch.cpp:1576-1578` |
+| `addRifToFlexCounter()` の実行条件 | `ASIC_DB VIDTORID` | `VIDTORID\|<oid>` | `gTraditionalFlexCounter=true` の場合、syncd が SAI `create_router_interface` 応答後に `VIDTORID` へ OID を書くまで登録を保留（最大 1 秒間隔でリトライ）。新規 FlexCounter モード (`false`) では即時登録 | `intfsorch.cpp:1627-1636` |
+
+### 解決タイミング
+
+- **PORT**: `allPortsReady()` による自動待機。PortsOrch が初期化完了後に IntfsOrch の INTERFACE 処理がアンブロックされる。
+- **VRF_TABLE**: `doTask` ループの `continue` でリトライ。VRF が後から追加されると次の Consumer イベント処理時に解決する。
+- **FLEX_COUNTER_TABLE**: `FlexCounterOrch::doTask()` が即時評価。`enable` 書込み時点でタイマーがキックされ、最大 1 秒後に登録が完了する。
+- **ASIC_DB VIDTORID**: `doTask(SelectableTimer)` の 1 秒タイマーでリトライ。通常は RIF 作成後 1 秒以内に syncd が書き込む。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
