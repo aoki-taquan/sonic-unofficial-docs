@@ -172,6 +172,46 @@ MySID エントリを追加してから OID が FlexCounter に登録される�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 根拠: `srv6orch.cpp` L120-132, L184-210, L251-284, L1591-1601, L1660-1680, L286-313。
+> evidence: `meta/_intermediate/cdb-flow/srv6-state-ordering.md`
+
+COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が内部的に管理するため、
+ユーザーが直接書き込む必要はない。ただし以下の順序依存・タイミング依存が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | SAI 能力チェックは orchagent 起動時一回限り (`initializeCounters`) | **強制先行**（後変更不可） | SAI 非対応なら orchagent 再起動しか解消手段なし |
+| 2 | `FLEX_COUNTER_TABLE\|SRV6 enable` と `SRV6_MY_SID_TABLE` エントリの書き込み順序 | どちらが先でも可 | 後から書いた側が既存エントリへカウンタを自動付与 |
+| 3 | `COUNTERS_SRV6_NAME_MAP` 書き込みは即時だが `COUNTERS:<oid>` 初回値は最大 11 秒遅延 | タイミング依存 | 設定直後に空でも正常（最大 1 秒 + 10 秒ポーリング待ち） |
+| 4 | MySID DEL → `COUNTERS_SRV6_NAME_MAP` 自動クリーンアップ | 自動（ユーザー操作不要） | `COUNTERS:<oid>` 残留値は `sonic-clear srv6stats` でリセット |
+
+### 主要な制約詳細
+
+**SAI 能力チェックは起動時一回限り (依存 #1)**:
+`initializeCounters()` は orchagent 起動時に `queryMySidCountersCapability()` を一度だけ呼び出し、
+`m_mysid_counters_supported` フラグを確定する。
+その後 `setCountersState()` 冒頭で `getMySidCountersSupported()` が false の場合に即 return するため、
+**実行中に SAI 対応プラットフォームへ切り替えることはできない**（evidence: `srv6orch.cpp:120-132`, `srv6orch.cpp:251-260`）。
+
+**`FLEX_COUNTER_TABLE` と MySID エントリの順序自由性 (依存 #2)**:
+`setCountersState(true)` は `srv6_my_sid_table_` を走査して既存の全 MySID にカウンタを付与する。
+一方 `createUpdateMysidEntry` は `getMySidCountersEnabled()` が true なら MySID 追加時点でカウンタを付与する。
+どちらが先でも最終的に `COUNTERS_SRV6_NAME_MAP` に反映される（evidence: `srv6orch.cpp:268-282`, `srv6orch.cpp:1591-1601`）。
+
+**`COUNTERS:<oid>` 反映の最大 11 秒遅延 (依存 #3)**:
+`addMySidCounter()` は `COUNTERS_SRV6_NAME_MAP` に OID を即時書き込むが、
+`FLEX_COUNTER_DB` への `SRV6_COUNTER_ID_LIST` 登録は `SRV6_FLEX_COUNTER_UPDATE_TIMER = 1` 秒のタイマー後。
+syncd がポーリングを開始してから最初の `COUNTERS:<oid>` 値が書き込まれるまでさらに
+`SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000` ms 待つ必要がある
+（evidence: `srv6orch.cpp:184-210`, `srv6orch.cpp:26-27`）。
+
+<!-- /ordering -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`SRV6_MY_SIDS`](srv6-my-sids.md) — MySID エントリ定義
