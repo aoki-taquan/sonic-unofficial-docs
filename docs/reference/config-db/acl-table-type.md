@@ -457,6 +457,83 @@ vector<TableConnector> acl_table_connectors = {
 
 ---
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`ACL_TABLE_TYPE` のプラットフォーム依存性は 2 つの経路で顕在化する: (1) `initDefaultTableTypes()` による **組み込み型の定義差**、(2) SAI capability クエリによる **アクション有効/無効の差**。ユーザー定義型（CONFIG_DB に書き込む型）は `AclTableTypeParser` が解析するが、記述できる match/action の有効性は実行時の ASIC capability に委ねられる。
+
+### プラットフォーム識別文字列 (orch.h:40-50)
+
+| 定数 | 値 | プラットフォーム例 |
+|------|----|--------------------|
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` | Broadcom XGS (非 DNX) |
+| `BRCM_DNX_PLATFORM_SUBSTRING` | `"broadcom-dnx"` | Broadcom DNX/Jericho (`sub_platform`) |
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | Mellanox Spectrum |
+| `BFN_PLATFORM_SUBSTRING` | `"barefoot"` | Intel Tofino (Barefoot) |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | Virtual Switch (テスト用) |
+| `NPS_PLATFORM_SUBSTRING` | `"nephos"` | Nephos |
+| `CISCO_8000_PLATFORM_SUBSTRING` | `"cisco-8000"` | Cisco Silicon One |
+| `XS_PLATFORM_SUBSTRING` | `"xsight"` | xsight |
+| `CLX_PLATFORM_SUBSTRING` | `"clounix"` | Clounix |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` | Marvell Prestera |
+| `MRVL_TL_PLATFORM_SUBSTRING` | `"marvell-teralynx"` | Marvell Teralynx |
+
+### 組み込み型の platform 分岐 (`initDefaultTableTypes()`)
+
+組み込み `ACL_TABLE_TYPE` は `AclOrch::init()` 末尾 (aclorch.cpp:3717) → `initDefaultTableTypes(platform, sub_platform)` (aclorch.cpp:3724) で `m_AclTableTypes` に直接登録される。CONFIG_DB には現れないが、同名キーを `ACL_TABLE_TYPE|<name>` として SET すると `doAclTableTypeTask()` が上書きする。
+
+#### TABLE_TYPE_PFCWD のみプラットフォーム分岐あり (aclorch.cpp:3811-3830)
+
+| 条件 | `BIND_POINT_TYPES` | `MATCHES` |
+|------|--------------------|-----------|
+| `platform == "broadcom"` **かつ** `sub_platform == "broadcom-dnx"` | `PORT_TYPE_SWITCH` | `TC`, `OUT_PORT` |
+| その他すべて | `PORT_TYPE_PORT` | `TC` |
+
+broadcom-dnx では PFCWD テーブルが switch 単位バインドになり、CONFIG_DB の `ports` フィールドが無視される。ユーザー定義型で `PFCWD` 相当の type を書く場合、この差に注意が必要。
+
+!!! note "他の組み込み型はプラットフォーム不問"
+    `L3` / `L3V6` / `L3V4V6` / `MIRROR` / `MIRRORV6` / `MIRROR_DSCP` / `MCLAG` / `MUX` / `DROP` / `MARK_META` / `MARK_META_V6` / `EGR_SET_DSCP` は platform 引数によらず固定の match/action で登録される (`aclorch.cpp:3730-3898`)。
+
+### SAI アクション capability によるユーザー定義型への影響
+
+ユーザー定義 `ACL_TABLE_TYPE` の `ACTIONS` はパース時点では制限されない。ただし以下の状況で実行時にアクション有効性が決まる:
+
+| capability | クエリ方法 | 失敗時の挙動 |
+|------------|-----------|-------------|
+| ingress/egress action list | `SAI_SWITCH_ATTR_ACL_STAGE_INGRESS` / `..._EGRESS` の `aclcapability` | `initDefaultAclActionCapabilities(stage)` が組み込みデフォルト値を使用 |
+| `is_action_list_mandatory` | 同上 | false 扱い（mandatory action 自動付与なし） |
+| META_DATA 系 | `sai_query_attribute_capability()` (VS のみ固定 true) | 未実装 → `ACL_TABLE_TYPE` の `META_DATA` match / action が SAI に反映されない可能性あり |
+
+capability 結果は `STATE_DB` の `ACL_STAGE_CAPABILITY_TABLE|{INGRESS,EGRESS}` に記録される (`aclorch.cpp:4056-4101`)。
+
+### プラットフォーム別 ACL_TABLE_TYPE への影響サマリ
+
+| プラットフォーム | PFCWD 組み込み型の変化 | META_DATA capability | L3V4V6 (ACL_TABLE で有効か) |
+|----------------|----------------------|----------------------|-----------------------------|
+| broadcom (非 DNX) | なし | SAI 動的照会 | no |
+| **broadcom-dnx** | **SWITCH bind / TC+OUT_PORT** | SAI 動的照会 | no |
+| mellanox | なし | SAI 動的照会 | no |
+| barefoot | なし | SAI 動的照会 | no |
+| cisco-8000 | なし | SAI 動的照会 | no |
+| marvell-prestera | なし | SAI 動的照会 | yes |
+| marvell-teralynx | なし | SAI 動的照会 | yes |
+| nephos | なし | SAI 動的照会 | no |
+| xsight | なし | SAI 動的照会 | no |
+| clounix | なし | SAI 動的照会 | no |
+| vs (virtual) | なし | **強制 true** (固定 range 1–7) | yes |
+| 未知 | なし | SAI 動的照会 | no |
+
+!!! warning "ユーザー定義 ACL_TABLE_TYPE の match/action の安全確認"
+    CONFIG_DB に `ACL_TABLE_TYPE` を書き込む際、ASIC がサポートしない match (`ACL_USER_META` 等) や action を `MATCHES` / `ACTIONS` に列挙しても `AclTableTypeParser` はエラーを返さない。実際の SAI 適用可否は `ACL_TABLE` を作成するときの `AclTable::createToDb()` 段で判明する。`STATE_DB ACL_STAGE_CAPABILITY_TABLE|INGRESS` の `action_list` で使用可能なアクションを事前確認すること。
+
+!!! note "range match の上限 (mellanox / clounix)"
+    mellanox: `MLNX_MAX_RANGES_COUNT = 16`、clounix: `CLNX_MAX_RANGES_COUNT = 16` (`aclorch.h:109-110`)。`ACL_TABLE_TYPE` 定義で range match (`L4_SRC_PORT_RANGE` / `L4_DST_PORT_RANGE`) を含む型を作っても、配下 ACL_RULE での range オブジェクト累計が上限を超えると SAI エラーになる。ACL_TABLE_TYPE 段では検出されない。
+
+> **スキャン証跡**: `AclOrch::init()` L3480-3720 / `initDefaultTableTypes()` L3724-3830 / `AclTableTypeParser::parseAclTableTypeActions()` L831-879 / `AclTableTypeParser::parseAclTableTypeMatches()` L796-829 / `queryAclActionCapabilities()` L3969-4053 / `putAclActionCapabilityInDB()` L4056-4101 / `orch.h:40-50` / `aclorch.h:109-110` 全行精読。中間ファイル: `meta/_intermediate/cdb-flow/acl-table-type-platform.md`
+<!-- /platform -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)、[`APPL_DB ACL`](appl-acl.md)
