@@ -327,6 +327,59 @@ CONFIG_DB の `PIM_GLOBALS` / `PIM_INTERFACE` テーブルで管理されず、F
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 設定変更の副作用
+
+### PIM_INTERFACE.mode の変更
+
+**sparse-mode 有効化 (`mode = "sm"`) 時の副作用**
+
+`ip pim` コマンドが vtysh 経由で FRR pimd に到達すると、pimd は以下をカスケード実行する:
+
+1. **カーネル VIF 登録** — `pim_mroute_add_vif()` が `setsockopt(fd, IPPROTO_IP, MRT_ADD_VIF, &vifctl, ...)` を呼び出し、カーネルのマルチキャストルーティングテーブルにバーチャルインタフェース (VIF) を追加する。VIF インデックス (`mroute_vif_index`) は MAXVIFS (= 32) まで。[^9]
+2. **PIM Hello 即時送信** — インタフェースに有効な IPv4 アドレスが存在する場合、`pim_hello_restart_now(ifp)` が呼ばれ、PIM Hello を 224.0.0.13 (ALL-PIM-ROUTERS) へブロードキャストする。Hello タイマー (デフォルト 30 秒) もリスタートされる。[^10]
+3. **RP 到達性再評価** — `pim_rp_setup()` および `pim_rp_check_on_if_add()` がトリガーされ、設定済み RP への RPF ルックアップを再実行する。[^10]
+
+```
+CONFIG_DB PIM_INTERFACE write
+  → frrcfgd vtysh "ip pim"
+    → pimd pim_if_new()
+      → pim_if_add_vif() → MRT_ADD_VIF (kernel)
+      → pim_hello_restart_now() → Hello 送信 (224.0.0.13)
+      → pim_rp_setup() → RPF 再評価
+```
+
+**sparse-mode 無効化 (`mode` OP_DELETE) 時の副作用**
+
+1. **frrcfgd キャッシュフラッシュ** — `data.items()` をイテレートして全フィールドを `STAT_SUCC + OP_DELETE` に設定し、再有効化時の完全再プログラムを保証する。[^1]
+2. **カーネル VIF 削除** — `no ip pim` 受信後、pimd は `pim_if_del_vif()` → `pim_mroute_del_vif()` → `setsockopt(fd, IPPROTO_IP, MRT_DEL_VIF, ...)` を発行する。[^9]
+3. **PIM 隣接情報削除** — `pim_neighbor_delete_all()` で全 PIM 隣接テーブルをクリア。
+
+!!! warning "VIF スロットの枯渇"
+    カーネルの VIF スロットは最大 32 (MAXVIFS)。PIM 有効インタフェースが 32 を超えると `MRT_ADD_VIF` が失敗し、そのインタフェースではマルチキャスト転送が行われない。pimd は `LOG_WARN` を出力するがフォールバックはない。[^9]
+
+### PIM_INTERFACE.bfd-enabled の変更
+
+`bfd-enabled = "true"` 設定時、pimd は `pim_bfd_reg_dereg_all_nbr(ifp, ZEBRA_BFD_DEST_REGISTER)` を実行し、現在の全 PIM 隣接に対して **BFD セッション登録要求** をゼブラ経由で `bfdd` プロセスに送信する。BFD セッションはゼブラ (`zebra`) を介して `bfdd` が管理し、隣接喪失 (BFD down) を pimd にコールバックする。[^11]
+
+`bfd-enabled = "false"` (OP_DELETE) 時は `ZEBRA_BFD_DEST_DEREGISTER` を送信して全セッションを解除する。
+
+### PIM_GLOBALS.ssm-ranges の変更
+
+`ip pim ssm prefix-list <name>` 発行後、pimd は `pim_ssm_range_reevaluate()` を実行する。SSM レンジが変化した場合、**既存の (S,G) エントリの Register 状態が再評価**される — ASM から SSM に移行したグループの `(*,G)` エントリは削除トリガーがかかる。[^12]
+
+### PIM_GLOBALS.join-prune-interval / keep-alive-timer の変更
+
+- **`join-prune-interval`**: `router->t_periodic` が更新され、次回の JP タイマー起動から新しい間隔が適用される。実行中のタイマーは次の expiry まで旧値で動作する。
+- **`keep-alive-timer`**: 変更後に新規作成された (S,G) エントリに適用される。既存エントリのタイマーは expiry まで旧 KAT のまま動作する。
+
+### PIM_GLOBALS.ecmp-enabled / ecmp-rebalance-enabled の変更
+
+`pim->ecmp_enable` フラグ変更は即時だが、ECMP 経路の再選択は次回 RPF lookup (Join/Prune タイマーまたはトポロジ変化) 時に発生する。`ecmp-rebalance-enabled` を有効化しても、設定変更直後のリバランスは行われない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-side-effects.md`
+<!-- /side-effects -->
+
 ## 購読者
 
 - `frrcfgd` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`): `PIM_GLOBALS` および `PIM_INTERFACE` を購読し、FRR pimd に `vtysh` 経由でコマンドを注入する[^1]
@@ -344,3 +397,7 @@ CONFIG_DB の `PIM_GLOBALS` / `PIM_INTERFACE` テーブルで管理されず、F
 [^6]: `sonic-frr/pimd/pim_cmd.c` L5360 — `ip pim join-prune-interval (60-600)`; L5443 — `ip pim keep-alive-timer (31-60000)`
 [^7]: `sonic-frr/pimd/pim_upstream.h` L206-207 — `PIM_REGISTER_SUPPRESSION_PERIOD (60)`, `PIM_REGISTER_PROBE_PERIOD (5)`
 [^8]: vtysh 失敗時の LOG_ERR 3 系統: `g_run_command()` L53 "command execution failure", `key_map.run_command()` L763 "failed running FRR command", PIM ハンドラ L3802/L3821 "failed running PIM config command" — `frrcfgd.py`
+[^9]: `sonic-frr/pimd/pim_mroute.c` L811-864 — `pim_mroute_add_vif()`: `setsockopt(IPPROTO_IP, MRT_ADD_VIF)`; L866-892 — `pim_mroute_del_vif()`: `setsockopt(IPPROTO_IP, MRT_DEL_VIF)`. MAXVIFS 上限は `pim_iface.c` L961-966
+[^10]: `sonic-frr/pimd/pim_iface.c` L286 — `pim_hello_restart_now(ifp)` (sparse-mode 有効化時); L769-770 — `pim_rp_setup()` / `pim_rp_check_on_if_add()` (インタフェース追加後の RP 再評価)
+[^11]: `sonic-frr/pimd/pim_bfd.c` L109-176 — `pim_bfd_reg_dereg_nbr()` / `pim_bfd_reg_dereg_all_nbr()`: `bfd_peer_sendmsg(ZEBRA_BFD_DEST_REGISTER/DEREGISTER)` によるゼブラ経由 BFD セッション管理
+[^12]: `sonic-frr/pimd/pim_ssm.c` L33-66 — `pim_ssm_range_reevaluate()` / `pim_ssm_prefix_list_update()`: SSM レンジ変更時の (S,G) エントリ再評価
