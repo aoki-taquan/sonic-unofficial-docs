@@ -140,6 +140,41 @@ show syslog
 ```
 <!-- /ops-hint -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### SYSLOG_CONFIG と SYSLOG_SERVER のペア書込み
+
+`rsyslog_handler()` は `SYSLOG_CONFIG` と `SYSLOG_SERVER` の**両テーブルを毎回まとめて読み直す**。どちらのテーブルへの変更も `rsyslog-config` サービスの再起動を引き起こす。
+
+| 操作順序 | rsyslog-config 再起動回数 | 備考 |
+|----------|--------------------------|------|
+| `SYSLOG_SERVER` を先に投入 → `SYSLOG_CONFIG` を書き込む | **1 回** | 推奨パターン |
+| `SYSLOG_CONFIG` を先に書き込む → `SYSLOG_SERVER` を後から追加 | **2 回** | 最終状態は同じだが再起動が増える |
+| 同一値を再書き込み | **0 回** | キャッシュ比較でスキップ (hostcfgd:1725) |
+
+**推奨書込み順序**:
+
+```
+# 1. リモートサーバ設定（先に投入）
+SET SYSLOG_SERVER|<ip>  port=514  ...
+
+# 2. グローバル設定（後から書き込む）
+SET SYSLOG_CONFIG|GLOBAL  format=standard  rate_limit_interval=300  rate_limit_burst=20000
+```
+
+### welf_firewall_name の順序制約
+
+YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` は `format = welf` に変更した**後**でなければ書き込めない。
+
+| ステップ | 操作 | 結果 |
+|---------|------|------|
+| 1 | `SYSLOG_CONFIG|GLOBAL format=welf` | OK |
+| 2 | `SYSLOG_CONFIG|GLOBAL welf_firewall_name=<name>` | OK (YANG 制約満足) |
+| × | `format=standard` のまま `welf_firewall_name` を書く | YANG バリデーションエラーで拒否 |
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2410-2415, L1725-1726; sonic-syslog.yang must "(../format != 'standard')" -->
+<!-- /ordering -->
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
