@@ -629,6 +629,46 @@ hamgrd → ZMQ → DPU 側各テーブル
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-85,302-311,717-729,1412-1420,1532-1579`; `sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/module.py:261-514`; `sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/device_data.py:32-378`; `sonic-buildimage/platform/mellanox/mlnx-platform-api/sonic_platform/dpuctlplat.py:87-134` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-platform.md`
+
+**Mellanox (NVIDIA) 固有実装あり**。CONFIG_DB テーブル構造はプラットフォーム非依存だが、chassisd と platform API の実装レベルで複数の Mellanox 固有依存が存在する。
+
+| 差分ポイント | 影響するテーブル | 内容 |
+|---|---|---|
+| `get_midplane_ip()` IP 計算式 | `MID_PLANE_BRIDGE`, `DPUS` | Mellanox 固有: `169.254.200.(dpu_id+1)`。他ベンダーは異なるアドレス体系を使用する可能性がある |
+| `platform.json[DPUS]` | `DPUS` 間接 | ミッドプレーンインターフェース名を解決するために必須。欠落時は `RuntimeError` が送出され midplane 疎通確認が常に `False` になる |
+| `platform.json[dpu_reboot_timeout]` | `CHASSIS_MODULE` 間接 | デフォルト `360` 秒を上書きするキー。プラットフォームごとに設定可能 (`chassisd:727`) |
+| `BootProgEnum.OS_RUN` による online 判定 | `CHASSIS_MODULE` 間接 | Mellanox `hw-management` ドライバが提供する `/var/run/hw-management/dpu{N}/system/boot_progress` sysfs を読み取り。値 `5` = `OS_RUN` = `MODULE_STATUS_ONLINE` |
+| `mlxreg` Watchdog 判定 | `CHASSIS_STATE_DB.REBOOT_CAUSE` 間接 | Mellanox ハードウェア固有の `mlxreg --reg_name MRSI` でリブート原因を取得。他ベンダーでは代替手段を使用 |
+| `DASH_HA_GLOBAL_CONFIG` / `DPU` / SAI 呼び出し | `DASH_HA_GLOBAL_CONFIG`, `DPU` | CONFIG_DB テーブル構造は非依存。SAI HA 実装は DASH ハードウェアとベンダー依存 |
+
+### chassisd の SmartSwitch 分岐
+
+`platform_chassis.is_smartswitch()` と `is_dpu()` の戻り値によってデーモンクラスを切り替える (`chassisd:1576-1579`):
+
+```python
+if chassis.is_smartswitch() and chassis.is_dpu():
+    chassisd = DpuChassisdDaemon(...)   # DPU 側: DPU 状態ポーリング専用
+else:
+    chassisd = ChassisdDaemon(...)      # NPU 側 / 通常 chassis: SmartSwitchModuleUpdater + SmartSwitchConfigManagerTask
+```
+
+これらのメソッドは `sonic_platform.platform.Platform().get_chassis()` が返すオブジェクトのプラットフォーム実装に依存する。SmartSwitch でない場合は `SmartSwitchModuleUpdater` が使われず、`CHASSIS_MODULE|DPU*` の購読と DPU 電源制御が行われない。
+
+### Mellanox `platform.json[DPUS]` の必須性
+
+Mellanox 実装では、ミッドプレーンインターフェース名を `/usr/share/sonic/platform/platform.json` の `DPUS` セクションから解決する (`device_data.py:358-370`)。このファイルまたは `DPUS` セクションが欠落した場合 `get_midplane_interface()` が `RuntimeError` を送出し、`is_midplane_reachable()` が常に `False` を返す。CONFIG_DB の `DPUS` テーブルとは別物であることに注意。
+
+### Mellanox `get_midplane_ip()` — アドレス体系
+
+`module.py:490` のハードコード式 `169.254.200.(dpu_id+1)` は CONFIG_DB の `MID_PLANE_BRIDGE.ip_prefix=169.254.200.254/24` と同一サブネットを前提とする。この対応関係は Mellanox 固有の実装であり、他ベンダーの platform API は異なるアドレス体系を使用する可能性がある。
+
+<!-- /platform -->
+
 ## 制約
 
 - `MID_PLANE_BRIDGE|GLOBAL` の `bridge` は `bridge-midplane` 固定。変更不可。
