@@ -518,6 +518,67 @@ chassisd は CHASSIS_APP_DB を `SubscriberStateTable` で購読しない。CONF
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム依存挙動 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-platform.md`
+> 調査対象: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` @ 4ba9612, `sonic-platform-daemons/sonic-chassisd/scripts/chassis_db_init` @ 4ba9612, `sonic-swss/orchagent/main.cpp` @ 4305596, `sonic-swss-common/common/dbconnector.h` @ 158de8d3463ff4b841653f6d57190bb142b80d9c
+
+### プラットフォーム API ロード (sonic_platform プラグイン)
+
+orchagent は `sonic_platform` パッケージを直接呼び出さない。代わりに起動時に `isChassisAppDbPresent()` で `/var/run/redis/sonic-db/database_config.json` を読み取り、`CHASSIS_APP_DB` キーの存在を確認する (`main.cpp:278-287`)。
+
+| 確認内容 | 実装 | 証跡 |
+|---------|------|------|
+| `CHASSIS_APP_DB` キーが `database_config.json` に存在するか | `isChassisAppDbPresent()` が `db_config["DATABASES"].contains("CHASSIS_APP_DB")` を確認 | `main.cpp:283-287` |
+| `database_config.json` のデフォルトパス | `/var/run/redis/sonic-db/database_config.json` | `dbconnector.h:90` |
+
+ファイルが存在しない、または `CHASSIS_APP_DB` キーが不在の場合は `isChassisAppDbPresent()` が `false` を返し `gMultiAsicVoq` は立たない（CHASSIS_APP_DB 未使用として動作）。
+
+chassisd は起動時に `sonic_platform.platform.Platform().get_chassis()` でプラットフォームオブジェクトを取得する。パッケージが存在しない、または例外が発生した場合は `CHASSIS_LOAD_ERROR=1` で即 exit する (`chassisd:143-149`)。
+
+### プラットフォーム種別分岐
+
+| 条件 | 使用クラス | 主な違い |
+|-----|-----------|---------|
+| `chassis.is_smartswitch() == True` | `SmartSwitchModuleUpdater` | DPU 向け設定・状態管理、`dpu_reboot_timeout` を `/usr/share/sonic/platform/platform.json` から読み取る |
+| `chassis.is_smartswitch() == False` | `ModuleUpdater` | VoQ ラインカード/スーパーバイザー向け、`my_slot` / `supervisor_slot` を `get_my_slot()` / `get_supervisor_slot()` で取得 |
+
+非 SmartSwitch の場合、`my_slot` または `supervisor_slot` が `INVALID_SLOT` のとき `CHASSIS_NOT_SUPPORTED=2` で exit する (`chassisd:1424-1427`)。スーパーバイザーか否かの判定は `my_slot == supervisor_slot` で行い (`chassisd:510-511`)、supervisor のみが `ConfigManagerTask` を起動して CONFIG_DB の `CHASSIS_MODULE` を購読する。
+
+### プラットフォーム設定ファイル
+
+| ファイルパス | 用途 | 読み取りタイミング | デフォルト値 |
+|------------|------|----------------|------------|
+| `/usr/share/sonic/platform/platform_env.conf` | `linecard_reboot_timeout`（秒）の上書き | `ModuleUpdater.__init__()` 時に一度だけ | `180` 秒 |
+| `/usr/share/sonic/platform/platform.json` | `dpu_reboot_timeout`（秒）の上書き (SmartSwitch 用) | `SmartSwitchModuleUpdater.__init__()` 時に一度だけ | `360` 秒 |
+| `/var/run/redis/sonic-db/database_config.json` | `CHASSIS_APP_DB` 接続先（host/port/unix-socket）の定義 | orchagent 起動時の `isChassisAppDbPresent()` で読み取り | — |
+
+### midplane スイッチ初期化
+
+chassisd 起動直後に `chassis.init_midplane_switch()` を呼び出す。`NotImplementedError` / `TimeoutError` 時は `try_get` が `false` を返し `midplane_initialized=false` となる。この場合 `check_midplane_reachability()` はスキップされるが chassisd は終了しない（エラーログのみ）。
+
+CHASSIS_APP_DB への書き込み（orchagent 側）はミッドプレーン状態に依存しないが、midplane 未初期化環境ではラインカードが `redis_chassis` に到達できず `gMultiAsicVoq` が立たない場合がある（接続タイムアウト次第）。
+
+### プラットフォーム API と CHASSIS_APP_DB の関係
+
+chassisd は CHASSIS_APP_DB に直接書き込まない。CHASSIS_APP_DB へのアクセスはモジュール down 時の `_cleanup_chassis_app_db()` Lua スクリプト実行のみであり、クリーンアップのトリガはプラットフォーム API `get_oper_status()` が `MODULE_STATUS_OFFLINE` / `MODULE_STATUS_EMPTY` を返したことで決まる。
+
+| プラットフォーム API | 役割 | CHASSIS_APP_DB との関係 |
+|-------------------|------|----------------------|
+| `get_module(index).get_oper_status()` | モジュール動作状態を取得 | down 検知 → 30 分後に `_cleanup_chassis_app_db()` でパターン削除 |
+| `get_module(index).get_name()` | モジュール名（例: `Linecard0`）取得 | クリーンアップ対象キープレフィックスの特定 |
+| `get_module(index).get_midplane_ip()` / `is_midplane_reachable()` | ミッドプレーン情報 | CHASSIS_STATE_DB のみ更新。CHASSIS_APP_DB とは無関係 |
+
+### プラットフォーム非対応時の終了コード
+
+| exit code | 定数 | 発生条件 |
+|-----------|------|---------|
+| `1` | `CHASSIS_LOAD_ERROR` | `sonic_platform.platform.Platform().get_chassis()` が例外を送出 |
+| `2` | `CHASSIS_NOT_SUPPORTED` | 非 SmartSwitch 環境で `get_my_slot()` / `get_supervisor_slot()` が `INVALID_SLOT` を返す |
+
+<!-- /platform -->
+
 ## キー構造
 
 | テーブル | Redis キー形式 | 例 |
