@@ -295,6 +295,51 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DashVnetOrch` は SAI (ASIC_DB) へのバルク書き込みに加えて、以下の DB 副次書込を行う[^orch]。
+
+### DASH_VNET SET
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| `writeResultToDB(..., DASH_RESULT_SUCCESS)` | APPL_STATE_DB / `DASH_VNET_TABLE` | `<vnet_name>` | SET が consumer から除去される時点（成功時） |
+| `writeResultToDB(..., DASH_RESULT_FAILURE)` | APPL_STATE_DB / `DASH_VNET_TABLE` | `<vnet_name>` | `addVnetPost()` が `false` を返した時点 |
+| `gCrmOrch->incCrmResUsedCounter(CRM_DASH_VNET)` | CRM 内部カウンタ | — | SAI `create_entry` が `SAI_NULL_OBJECT_ID` 以外を返した場合 |
+
+### DASH_VNET DEL
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| `removeResultFromDB(...)` | APPL_STATE_DB / `DASH_VNET_TABLE` | `<vnet_name>` | DEL が consumer から除去される時点（成功時） |
+| `gCrmOrch->decCrmResUsedCounter(CRM_DASH_VNET)` | CRM 内部カウンタ | — | SAI remove が `SAI_STATUS_SUCCESS` を返した場合 |
+
+### DASH_VNET_MAPPING_TABLE SET / DEL
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| `writeResultToDB(..., DASH_RESULT_SUCCESS/FAILURE)` | APPL_STATE_DB / `DASH_VNET_MAPPING_TABLE` | `<vnet_name>:<dip>` | SET 成功/失敗時 |
+| `removeResultFromDB(...)` | APPL_STATE_DB / `DASH_VNET_MAPPING_TABLE` | `<vnet_name>:<dip>` | DEL 成功時 |
+| `gCrmOrch->inc/decCrmResUsedCounter(CRM_DASH_IPV4/IPV6_OUTBOUND_CA_TO_PA)` | CRM 内部カウンタ | — | CA to PA SAI 作成/削除成功時（`dip.isV4()` で IPv4/IPv6 分岐） |
+| `gCrmOrch->inc/decCrmResUsedCounter(CRM_DASH_IPV4/IPV6_PA_VALIDATION)` | CRM 内部カウンタ | — | PA validation SAI 作成/削除成功時 |
+
+### グローバルマップへの副次書込
+
+`gVnetNameToId`（プロセスメモリ上のグローバルマップ `unordered_map<string, sai_object_id_t>`）は DB ではないが、
+`DASH_VNET_MAPPING_TABLE` の処理がこれを参照するため実質的な副次状態として機能する[^orch]。
+
+| 操作 | タイミング | evidence |
+|------|-----------|----------|
+| `gVnetNameToId[vnet_name] = id` （追記） | `addVnetPost()` SAI 成功時 | `dashvnetorch.cpp:101` |
+| `gVnetNameToId.erase(vnet_name)` （消去） | `removeVnetPost()` SAI 成功時 | `dashvnetorch.cpp:167` |
+
+### 副次書込が行われない DB
+
+STATE_DB・CONFIG_DB・FLEX_COUNTER_DB・COUNTERS_DB への書き込みは一切行われない[^orch]。
+
+<!-- /side-effects -->
+
 ## 設定例
 
 ```json
