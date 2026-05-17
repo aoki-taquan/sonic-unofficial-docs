@@ -243,3 +243,50 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 | コレクタ名最大長 | 16 文字 | 64 文字 | CLI 経由は 16 文字制限。直接 ConfigDB 書き込みは 64 文字まで可 |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副作用・波及変更 (Phase F)
+
+`SFLOW_COLLECTOR` テーブルへの書き込み・削除が引き起こす downstream への副作用を実装コードから導出した。
+
+> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sflowmgrd.cpp`, `sonic-utilities/config/main.py`, `sonic-utilities/show/sflow.py`, `sonic-mgmt-common/translib/transformer/xfmr_sflow.go` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-collector-side-effects.md`
+
+### SE1: 直接副作用 — CONFIG_DB 書き込みのみ（即時・非同期なし）
+
+`config sflow collector add` は `config_db.mod_entry('SFLOW_COLLECTOR', name, {...})` を呼ぶだけで、CONFIG_DB へのエントリ書き込み以外の即時副作用はない (`config/main.py:9358-9363`)。`sflowmgrd` は `SFLOW_COLLECTOR` テーブルを購読していないため (`sflowmgrd.cpp:36-41`)、書き込み直後に downstream プロセスは何も起動しない。
+
+### SE2: 間接副作用 — hsflowd 設定ファイル再生成 + プロセス再起動（遅延）
+
+SFLOW_COLLECTOR の変更が hsflowd に届くまでの経路:
+
+```
+SFLOW_COLLECTOR|<name> SET/DEL  →  (sflowmgrd 非購読 → 即時反映なし)
+   ↓ 後続操作が必要
+SFLOW|global admin_state トグル (down→up)
+   ↓  sflowmgr.cpp:456-459
+sflowHandleService(enable=true)
+   ↓
+service hsflowd restart  →  /etc/hsflowd.conf 再読込み  →  新コレクタ設定が有効化
+```
+
+`sflowmgr.cpp:60` の `cmd << "service hsflowd restart"` がトリガーとなる唯一の経路であり、SFLOW_COLLECTOR の変更単体ではトリガーされない。
+
+### SE3: APPL_DB への波及なし
+
+SFLOW_COLLECTOR テーブルのエントリは APPL_DB に複製されない。APPL_DB への sFlow 書き込みは `SFLOW|global` および `SFLOW_SESSION` の変化時に `m_appSflowTable.set()` / `m_appSflowSessionTable.set()` を通じて発生するが、SFLOW_COLLECTOR は対象外 (`sflowmgr.cpp:468` の `m_appSflowTable.set` は `CFG_SFLOW_TABLE_NAME` ハンドラのみ)。
+
+### SE4: gNMI/REST 経由の制約
+
+`xfmr_sflow.go:282-285`: REST/gNMI で `/collectors/collector/config` サブパスへの DELETE は拒否される。`/collectors/collector` レベルでの DELETE のみ許容。また、gNMI 経由で書き込む際のキー形式は `<ip>_<port>_<vrf>` の自動生成であり (`makeColKey()`)、CLI の任意 `name` とは異なる。
+
+### 副作用マトリクス
+
+| 操作 | CONFIG_DB | APPL_DB | hsflowd プロセス | 備考 |
+|------|-----------|---------|-----------------|------|
+| SET (CLI / gNMI) | 書き込み | 変化なし | 変化なし | hsflowd 再起動まで未反映 |
+| DEL (CLI / gNMI `/collector`) | 削除 | 変化なし | 変化なし | hsflowd 再起動まで未反映 |
+| DEL (gNMI `/collector/config`) | エラー返却 | 変化なし | 変化なし | `"Delete operation not supported"` |
+| `SFLOW\|global` admin_state up (後続) | 変化なし | `SFLOW_TABLE` 更新 | restart → conf 再読込 | SE2 のトリガー |
+
+<!-- /side-effects -->
