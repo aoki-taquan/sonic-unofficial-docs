@@ -320,6 +320,28 @@ warm-reboot 時は caclmgrd が systemd によって再起動され、起動直�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`ACL_TABLE (CTRLPLANE)` は `orchagent` 側では SAI に投入されず参照テーブルが最小限に留まる。
+実際の CPU 宛ルール生成は `caclmgrd` が行い、複数の CONFIG_DB / STATE_DB テーブルを暗黙参照する。
+
+| 参照元 (caclmgrd) | 参照先テーブル | 参照先フィールド | 用途 | evidence |
+|---|---|---|---|---|
+| `get_acl_rules_and_translate_to_iptables_commands()` | `ACL_RULE` | `PRIORITY`, `PACKET_ACTION`, `SRC_IP`, `IP_PROTOCOL` 等 | iptables ルール本体の生成 | `caclmgrd L729-730` |
+| `__init__()` | `DEVICE_METADATA` | `localhost.subtype`, `localhost.platform` | DualToR 判定・プラットフォーム判定 | `caclmgrd L165` |
+| `main()` VxLAN subscribe | `VXLAN_TUNNEL` | `src_ip` | VxLAN UDP 4789 ACCEPT ルール生成条件 | `caclmgrd L1160` |
+| `main()` BFD subscribe | `STATE_DB/BFD_SESSION_TABLE` | セッション存在有無 | BFD UDP 3784/4784 ACCEPT ルール生成条件 | `caclmgrd L1157` |
+| `generate_block_ip2me_traffic_iptables_commands()` | `LOOPBACK_INTERFACE`, `VLAN_INTERFACE`, `INTERFACE`, `PORTCHANNEL_INTERFACE` | 各 IP prefix | ip2me DROP ルール生成 | `caclmgrd L286-330` |
+
+### orchagent 側の参照
+
+`AclOrch` は CTRLPLANE テーブルを `m_ctrlAclTables` に登録するのみ。SAI / APPL_DB への書き込みなし。他テーブルへの暗黙参照もない。
+
+> **スキャン証跡**: `sonic-host-services/scripts/caclmgrd` 全行読了。`caclmgrd L77-91` (定数定義), `L165,L286-330,L729-730,L1157,L1160` (テーブル参照箇所) を確認。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
