@@ -237,6 +237,48 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+TUNNEL_DECAP_TERM_TABLE のフィールドで上書きできない、またはコードに直書きされていて APPL_DB 値から独立している定数。変更にはコードのリコンパイルが必要。
+
+### SAI 固定属性
+
+| 定数 / グローバル変数 | 値 | 定義場所 | 用途 |
+|---|---|---|---|
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID` → `gVirtualRouterId` | デフォルト VRF OID（起動時に switch から取得） | `tunneldecaporch.cpp` L921-923 | 全 term entry に強制付与。VRF 選択はフィールドで変更不可 |
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_TUNNEL_TYPE` → `SAI_TUNNEL_TYPE_IPINIP` | 固定 enum 値 | `tunneldecaporch.cpp` L940-942 | トンネルタイプは常に IPINIP。フィールドで変更不可 |
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_ACTION_TUNNEL_ID` → 親トンネル OID | 実行時 OID | `tunneldecaporch.cpp` L944-946 | `tunnelTable[tunnel_name].tunnel_id` から自動取得。直接指定不可 |
+
+### term_type → SAI 列挙マッピング（静的）
+
+`DecapTermTypes` 静的マップ (L342-345) で文字列→列挙変換し、`addDecapTunnelTermEntry()` で SAI enum を固定マッピングで設定する。
+
+| APPL_DB `term_type` | SAI 属性値 | evidence |
+|---|---|---|
+| `"P2P"` | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2P` | `tunneldecaporch.cpp` L928 |
+| `"P2MP"` | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP` | `tunneldecaporch.cpp` L932 |
+| `"MP2MP"` | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP` | `tunneldecaporch.cpp` L936 |
+
+これら以外の文字列は `LOG_ERROR("invalid tunnel decap term type")` → エントリ消費スキップ。
+
+### SAI に渡らないフィールド・属性
+
+| フィールド / 値 | SAI 渡し条件 | evidence |
+|---|---|---|
+| `src_ip` | `P2P` または `MP2MP` の場合のみ `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_SRC_IP` に設定。`P2MP` では設定されない | `tunneldecaporch.cpp` L948-959 |
+| src_ip マスク部 | `MP2MP` のみ `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_SRC_IP_MASK` | `tunneldecaporch.cpp` L968-970 |
+| dst_ip マスク部 | `MP2MP` のみ `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_DST_IP_MASK` | `tunneldecaporch.cpp` L972-974 |
+| `subnet_type` | SAI には一切渡さない。orchagent 内部ステートと STATE_DB のみ | `tunneldecaporch.cpp` L426-434 |
+
+### 有効 subnet_type 値（コードハードコード）
+
+`subnet_type` の許可値は `"vlan"` と `"vip"` のみ (L428-434)。YANG 定義は存在せず、コードに直書きされている。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-constants.md`
+
+<!-- /constants -->
+
 ## 購読者
 
 - `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) `create_tunnel_term_table_entry()` / `remove_tunnel_term_table_entry()` を呼び出す
