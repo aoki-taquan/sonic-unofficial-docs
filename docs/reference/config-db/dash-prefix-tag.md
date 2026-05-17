@@ -217,6 +217,54 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+実装コードに直接定義されている定数・enum 値を一覧化する。CONFIG_DB フィールド名やステータス値を正確に把握するための参照用。
+
+### テーブル名定数
+
+| マクロ名 | 値 | ソース |
+|---|---|---|
+| `APP_DASH_PREFIX_TAG_TABLE_NAME` | `"DASH_PREFIX_TAG_TABLE"` | `sonic-swss-common/common/schema.h:183` |
+
+このマクロは `dashaclorch.cpp:111-112` の `PbWorker<PrefixTag>::makeMemberTask()` と `orchdaemon.cpp:1372` の `dash_acl_tables` 初期化リストで参照される。
+
+### IpVersion enum 定数 (protobuf / pbutils.cpp)
+
+| Protobuf 定数 | 数値 | SAI マッピング | ソース |
+|---|---|---|---|
+| `dash::types::IP_VERSION_IPV4` | `1` | `SAI_IP_ADDR_FAMILY_IPV4` | `pbutils.cpp:13-14` |
+| `dash::types::IP_VERSION_IPV6` | `2` | `SAI_IP_ADDR_FAMILY_IPV6` | `pbutils.cpp:16-17` |
+| *(proto3 デフォルト / `IP_VERSION_UNSPECIFIED`)* | `0` | 対応なし (拒否) | `pbutils.cpp:19-20` |
+
+proto3 のルール上 `ip_version` フィールドを省略すると数値 `0` が送信される。orchagent は `0` を受理しないため、コントローラは必ず `IP_VERSION_IPV4 (1)` または `IP_VERSION_IPV6 (2)` を明示しなければならない。
+
+### DashTag 内部構造体フィールド (dashtagmgr.h)
+
+| フィールド名 | 型 | 意味 |
+|---|---|---|
+| `m_ip_version` | `sai_ip_addr_family_t` | `SAI_IP_ADDR_FAMILY_IPV4` / `SAI_IP_ADDR_FAMILY_IPV6`。作成後は不変 |
+| `m_prefixes` | `std::vector<sai_ip_prefix_t>` | プレフィックス集合。空ベクタを許容。update で全置換 |
+| `m_groups` | `std::unordered_set<std::string>` | このタグを参照中の ACL group ID 集合。`m_groups` が非空の間は remove が `task_need_retry` |
+
+`DashTag` は SAI オブジェクトへのマッピングを持たず、orchagent 内の `m_tag_table` (`unordered_map<string, DashTag>`) にのみ保持される。
+
+### orchdaemon 購読テーブルリスト
+
+`orchdaemon.cpp:1371-1378` で `DashAclOrch` が購読するテーブル群 (先頭から列挙):
+
+```
+APP_DASH_PREFIX_TAG_TABLE_NAME   ← このテーブル（1 番目）
+APP_DASH_ACL_IN_TABLE_NAME
+APP_DASH_ACL_OUT_TABLE_NAME
+APP_DASH_ACL_GROUP_TABLE_NAME
+APP_DASH_ACL_RULE_TABLE_NAME
+```
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-constants.md`
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
