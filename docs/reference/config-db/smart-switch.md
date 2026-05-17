@@ -599,6 +599,114 @@ dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
 
 ---
 
+<!-- platform -->
+## プラットフォーム依存・ハードウェア固有挙動 (Phase H)
+
+> **調査根拠**: `sonic-chassisd/scripts/chassisd:1571-1583,717-731,1074-1110,1180-1228,236-256`; `sonic_platform_base/chassis_base.py:171-184,317-340` (2026-05-17)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-platform.md`
+
+### 1. chassisd のデーモン分岐 — is_smartswitch() / is_dpu()
+
+`chassisd` の `main()` は起動時にプラットフォーム API で SmartSwitch / DPU を判定し、3 種類のデーモンに分岐する。
+
+```python
+# chassisd:1576-1581
+if chassis.is_smartswitch() and chassis.is_dpu():
+    chassisd = DpuChassisdDaemon(SYSLOG_IDENTIFIER, chassis)
+else:
+    chassisd = ChassisdDaemon(SYSLOG_IDENTIFIER, chassis)
+```
+
+| 条件 | デーモンクラス | 役割 |
+|---|---|---|
+| `is_smartswitch() and is_dpu()` | `DpuChassisdDaemon` | DPU 上で動作。control/data plane 状態を CHASSIS_STATE_DB に更新 |
+| `is_smartswitch() and not is_dpu()` | `ChassisdDaemon`（SmartSwitch モード） | NPU 上で動作。`SmartSwitchModuleUpdater` で全 DPU を管理 |
+| `not is_smartswitch()` | `ChassisdDaemon`（通常モード） | スーパバイザ / ラインカード構成で動作 |
+
+`chassis_base.py:317-325` のデフォルト実装は `is_smartswitch()` が `False` を返す。SmartSwitch プラットフォームはこのメソッドをオーバーライドして `True` を返す必要がある。
+
+### 2. init_midplane_switch() — MID_PLANE_BRIDGE との分担
+
+CONFIG_DB の `MID_PLANE_BRIDGE|GLOBAL` はブリッジ名と IP プレフィックスを保持するが、
+`bridge-midplane` カーネルインターフェースの実際の初期化はプラットフォーム API で行われる。
+
+```python
+# chassis_base.py:171-184
+def init_midplane_switch(self):
+    """
+    Initializes the midplane functionality of the modular chassis.
+    The expectation is that the required kernel modules, ip-address assignment
+    etc are done before the pmon, database dockers are up.
+    """
+    return NotImplementedError
+```
+
+`SmartSwitchModuleUpdater.__init__()` はこのメソッドの戻り値を `self.midplane_initialized` に保存する。`False` の場合は `LOG_ERR` を出力し、`check_midplane_reachability()` が全面スキップされる（`chassisd:1074-1076`）。CONFIG_DB は参照しない。
+
+### 3. DPU 再起動タイムアウト — platform.json による上書き
+
+`SmartSwitchModuleUpdater` は DPU 再起動タイムアウトのデフォルト値（`DEFAULT_DPU_REBOOT_TIMEOUT = 360` 秒）を `/usr/share/sonic/platform/platform.json` で上書きできる。
+
+```python
+# chassisd:721-730
+self.dpu_reboot_timeout = DEFAULT_DPU_REBOOT_TIMEOUT
+if os.path.isfile(PLATFORM_JSON_FILE):
+    with open(PLATFORM_JSON_FILE, 'r') as f:
+        platform_cfg = json.load(f)
+    self.dpu_reboot_timeout = int(platform_cfg.get("dpu_reboot_timeout",
+                                                    DEFAULT_DPU_REBOOT_TIMEOUT))
+```
+
+| 定数 | 値 | 意味 |
+|---|---|---|
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | プラットフォーム設定がない場合のデフォルト |
+| `MAX_DPU_REBOOT_DURATION` | `800` 秒 | 再起動判定の有効期間上限 |
+| `PLATFORM_JSON_FILE` | `/usr/share/sonic/platform/platform.json` | プラットフォーム固有設定ファイル |
+
+YANG / CONFIG_DB フィールドではなく、ファイルシステム上のプラットフォーム構成ファイルによる制御。
+
+### 4. midplane 到達性チェックと STATE_DB 書き込み
+
+`check_midplane_reachability()` が `CHASSIS_INFO_UPDATE_PERIOD_SECS = 10` 秒周期で呼ばれ、
+プラットフォーム API からの結果を STATE_DB / CHASSIS_STATE_DB に反映する。
+
+| プラットフォーム API | 役割 |
+|---|---|
+| `module.get_midplane_ip()` | DPU の midplane IP アドレスを返す |
+| `module.is_midplane_reachable()` | midplane 到達可能性を返す（ping / ARP 等） |
+
+書き込み先:
+
+| DB | テーブル | フィールド | 内容 |
+|---|---|---|---|
+| STATE_DB | `CHASSIS_MIDPLANE_TABLE\|<DPU名>` | `ip_address` | `get_midplane_ip()` の戻り値 |
+| STATE_DB | `CHASSIS_MIDPLANE_TABLE\|<DPU名>` | `access` | `str(is_midplane_reachable())` |
+| CHASSIS_STATE_DB | `DPU_STATE\|<DPU名>` | `dpu_midplane_link_state` | `"up"` / `"down"` |
+| CHASSIS_STATE_DB | `DPU_STATE\|<DPU名>` | `dpu_midplane_link_time` | 状態変化時刻 |
+
+到達性が `True→False` に変化した場合、`update_dpu_state()` は `dpu_midplane_link_state` を `"down"` にするとともに `dpu_control_plane_state` / `dpu_data_plane_state` も `"down"` に設定する（`chassisd:880-885`）。
+
+### 5. CHASSIS_MODULE テーブルと DPU 名前制約
+
+CONFIG_DB の `CHASSIS_MODULE` テーブルを `SmartSwitchConfigManagerTask` が `SubscriberStateTable` で購読し、DPU の管理状態（`admin_status`）変更を `set_admin_state_gracefully()` に反映する。
+
+SmartSwitch 環境では `CHASSIS_MODULE` のキーは `"DPU"` プレフィックスで始まる必要がある。それ以外のキーを受信すると `LOG_ERR` を出力してスキップする（`chassisd:236-239`）。`MODULE_TYPE_DPU = "DPU"` は `module_base.py:37` で定義。
+
+### CONFIG_DB を経由しない主なプラットフォーム動作
+
+| 動作 | 依存先 | 説明 |
+|---|---|---|
+| ミッドプレーン初期化 | `chassis.init_midplane_switch()` | `bridge-midplane` カーネル IF 作成。CONFIG_DB 非経由 |
+| DPU midplane IP 取得 | `module.get_midplane_ip()` | プラットフォーム実装。CONFIG_DB 非経由 |
+| midplane 到達性確認 | `module.is_midplane_reachable()` | プラットフォーム実装（ping / ARP 等） |
+| DPU 再起動タイムアウト | `/usr/share/sonic/platform/platform.json` | `dpu_reboot_timeout` キー（YANG 非経由） |
+| DPU 再起動原因の永続化 | `/host/reboot-cause/module/<dpu>/` | ファイルシステム直接書き込み |
+| SmartSwitch / DPU 判定 | `chassis.is_smartswitch()` / `chassis.is_dpu()` | プラットフォームオーバーライド必須 |
+
+<!-- /platform -->
+
+---
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DHCP_SERVER_IPV4`、`DPUS`、`DPU`、`DEVICE_METADATA`
