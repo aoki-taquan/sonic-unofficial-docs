@@ -318,6 +318,59 @@ PolicerOrch::handlePortStormControlTable()
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照（テーブル間依存）
+
+`PORT_STORM_CONTROL` テーブルを処理する `PolicerOrch::handlePortStormControlTable()` が実行時に参照する他テーブル・Orch 内状態。YANG の leafref 定義は PORT への参照のみで、それ以外は実装レベルの暗黙依存である。コード調査の詳細は `meta/_intermediate/cdb-flow/storm-control-cross-refs.md` に記録した。
+
+### 1. PORT（キーポート名の OID 解決 — 必須依存）
+
+- **参照先**: CONFIG_DB `PORT` / PortsOrch
+- **方向**: 読み取り (`gPortsOrch->getPort(interface_name, port)`)
+- **参照元**: `policerorch.cpp:138`（PORT OID 解決）、`policerorch.cpp:206-214`（`SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID` 設定）
+- **意味**: キーの `<interface_name>` を PortsOrch で解決し、SAI ポート属性に policer OID をアタッチ / デタッチする。解決失敗時は `task_success` 返却で `m_toSync` から erase（**リトライなし**）。
+- **YANG leafref**: `sonic-storm-control.yang` の `ifname` leaf は `PORT_LIST/name` への leafref を持つ（実装は orchagent 側実行時確認）。
+
+### 2. `m_syncdPolicers`（Orch 内 policer OID キャッシュ）
+
+- **参照先**: `PolicerOrch::m_syncdPolicers`（`unordered_map<string, sai_object_id_t>`）
+- **方向**: 読み取り / 書き込み（Orch 内部状態）
+- **参照元**: `policerorch.cpp:151`（update 判定）、`policerorch.cpp:239`（create 後登録）、`policerorch.cpp:245`（update 時 OID 取得）、`policerorch.cpp:309, 368`（delete 時消去）
+- **意味**: 作成済み policer の OID を `<ifname>|<storm_type>` キーで保持し、update / delete 時に再利用する。Orch 再起動時はリセットされるため、warm-reboot 等でのリカバリはこのキャッシュに依存しない（SAI 再プログラムで復元）。
+
+### 3. STATE_DB `BUM_STORM_CAPABILITY`（CLI のみ参照 — orchagent は非参照）
+
+- **参照先**: `STATE_DB:BUM_STORM_CAPABILITY|<storm_type>` の `supported` フィールド
+- **方向**: CLI (`config/main.py:806-813`) が書き込み前に確認
+- **参照元**: `is_storm_control_supported()` in `config/main.py:806-813`
+- **意味**: CLI が storm control 設定前に ASIC の BUM storm control サポートを確認する。orchagent 側には同等チェックが存在せず、DB に直接書き込んだ場合は SAI 呼び出しが試みられ、非対応時は SAI エラーで記録される（silent な SAI failure）。
+- **非対称性**: CLI → STATE_DB 確認 → スキップ可能。orchagent → 非確認 → SAI fail-through。
+
+### 4. ASIC_DB / SAI（policer と port 属性の書き込み先）
+
+`handlePortStormControlTable()` が呼び出す SAI API と ASIC_DB への波及:
+
+| SAI API | 操作 | コード箇所 |
+|---------|------|----------|
+| `sai_policer_api->create_policer()` | policer オブジェクト作成 | `policerorch.cpp:197-236` |
+| `sai_policer_api->set_policer_attribute()` | CIR 値更新（update 時のみ） | `policerorch.cpp:250-263` |
+| `sai_port_api->set_port_attribute()` | ポートへの policer OID アタッチ / NULL デタッチ | `policerorch.cpp:206-214, 283-286, 326-347` |
+| `sai_policer_api->remove_policer()` | policer オブジェクト削除 | `policerorch.cpp:293-304, 349-361` |
+
+いずれも syncd 経由で ASIC_DB に反映され、物理 ASIC へのプログラムが行われる。
+
+### 参照関係サマリ
+
+```
+PORT_STORM_CONTROL テーブル
+  |- [必須]  PORT (ifname → port OID → SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID)
+  |- [内部]  m_syncdPolicers (Orch 内 policer OID キャッシュ)
+  |- [CLI側] STATE_DB:BUM_STORM_CAPABILITY (orchagent は非参照 — SAI fail-through)
+  `- [出力]  ASIC_DB (SAI create/set/remove_policer, set_port_attribute)
+```
+
+<!-- /cross-refs -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
