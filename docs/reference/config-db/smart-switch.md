@@ -385,6 +385,68 @@ Kea の lease ファイル（デフォルト `/var/lib/kea/kea-lease.csv`）が�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `src/sonic-yang-models/yang-models/sonic-smart-switch.yang`, `src/sonic-config-engine/config_samples.py`, `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-constants.md`
+
+### `MID_PLANE_BRIDGE` — ハードコード値
+
+| 定数 / 値 | コード位置 | 意味 |
+|---|---|---|
+| `"bridge-midplane"` | `config_samples.py:88`; YANG `pattern` (`sonic-smart-switch.yang:65`) | ミッドプレーンブリッジ名。YANG pattern 制約により唯一有効な値 |
+| `"169.254.200.254/24"` | `config_samples.py:93` | `MID_PLANE_BRIDGE.GLOBAL.ip_prefix` の実装値。サブネットプレフィックス `169.254.200` は `config_samples.py:85` で定数化 |
+| `"169.254.200.254"` | `config_samples.py:86` | NPU 側ブリッジ IP（`mpbr_prefix + ".254"`）。`DHCP_SERVER_IPV4.bridge-midplane.gateway` に設定 |
+
+### `DHCP_SERVER_IPV4_PORT` — DPU IP アドレス計算式
+
+DPU の midplane IP は以下の計算式で自動生成される (`config_samples.py:102-103`):
+
+```python
+dpu_id = int(midplane_interface.replace('dpu', ''))   # "dpu0" → 0
+dhcp_ip = '169.254.200.{}'.format(dpu_id + 1)        # "169.254.200.<dpu_id+1>"
+```
+
+| エントリキー | `ips[0]` |
+|---|---|
+| `bridge-midplane\|dpu0` | `169.254.200.1` |
+| `bridge-midplane\|dpu1` | `169.254.200.2` |
+| `bridge-midplane\|dpu7` | `169.254.200.8` |
+
+NPU ブリッジ IP (`169.254.200.254`) は最大値 `.8`（`dpu7`）と衝突しない設計。
+
+### `DHCP_SERVER_IPV4|bridge-midplane` — 固定パラメータ
+
+`config_samples.py:133-141` でハードコードされた値がそのまま CONFIG_DB に投入される。
+
+| フィールド | 値 | 注記 |
+|---|---|---|
+| `mode` | `"PORT"` | ポートベース割り当てモード固定 |
+| `netmask` | `"255.255.255.0"` | `/24` サブネット固定 |
+| `gateway` | `"169.254.200.254"` | NPU ブリッジ IP 固定 |
+| `lease_time` | `"3600"` 秒 (1 時間) | SmartSwitch 固定値（通常モードのデフォルト `900` 秒と異なる） |
+| `state` | `"enabled"` | SmartSwitch では最初から有効化 |
+
+### `dhcp_cfggen.py` — 内部定数
+
+| 定数名 | 値 | 意味 |
+|---|---|---|
+| `MID_PLANE_BRIDGE_SUBNET_ID` | `10000` | kea-dhcp4 の subnet ID（VLAN 番号転用の代わりに固定値を使用） |
+| `SMART_SWITCH_CHECKER` | `["DpusTableEventChecker", "MidPlaneTableEventChecker"]` | SmartSwitch 環境で追加購読するイベントチェッカー |
+
+### YANG pattern 制約（ハードコード範囲）
+
+| テーブル | フィールド | 制約 | 実質的な意味 |
+|---|---|---|---|
+| `MID_PLANE_BRIDGE.GLOBAL` | `bridge` | `pattern "bridge-midplane"` | 1 値のみ。変更不可 |
+| `DPUS` | `dpu_name`, `midplane_interface` | `pattern "dpu[0-9]+"` | `dpu` プレフィックス + 数字 |
+| `DPUS` | `midplane_interface` | `must (current() = current()/../dpu_name)` | インターフェース名 = DPU 名を強制 |
+| `DPU` | `dpu_id` | `pattern [0-7]` | 0〜7 の 1 桁（最大 8 DPU） |
+
+> **Evidence**: `src/sonic-config-engine/config_samples.py:83-103,133-143`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:17-31`; `src/sonic-yang-models/yang-models/sonic-smart-switch.yang:63-70,88-101,155-162`
+<!-- /constants -->
+
 ---
 
 ## 関連 CONFIG_DB / YANG / CLI
