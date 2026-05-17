@@ -314,6 +314,79 @@ ASIC が WRED/ECN 統計をサポートしない環境では `FLEX_COUNTER_TABLE
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp:83-93,389-434,727-739,866-886,
+     sonic-swss/orchagent/portsorch.h:29-43,
+     sonic-swss/orchagent/flexcounterorch.cpp:34-44,
+     sonic-swss-common/common/schema.h:225-270,528 -->
+
+### FlexCounter グループ名（ソースコードハードコード）
+
+| マクロ名 | 文字列値（FLEX_COUNTER_DB キー） | 定義ファイル |
+|---------|-------------------------------|------------|
+| `QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"QUEUE_STAT_COUNTER"` | `portsorch.h:34` |
+| `QUEUE_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"QUEUE_WATERMARK_STAT_COUNTER"` | `portsorch.h:35` |
+| `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_WATERMARK_STAT_COUNTER"` | `portsorch.h:36` |
+| `PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_DROP_STAT_COUNTER"` | `portsorch.h:37` |
+| `WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"WRED_ECN_QUEUE_STAT_COUNTER"` | `portsorch.h:42`, `flexcounterorch.cpp:42` |
+
+これらのグループ名は CONFIG_DB / YANG から変更できない。`counterpoll show` の GROUP 列に表示される文字列と一致する。
+
+### ポーリング間隔デフォルト値
+
+| マクロ名 | 値 | 対象グループ | 収集モード | 定義 |
+|---------|-----|------------|---------|------|
+| `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | QUEUE_STAT_COUNTER | READ | `portsorch.cpp:90` |
+| `QUEUE_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | QUEUE_WATERMARK_STAT_COUNTER | READ_AND_CLEAR | `portsorch.cpp:91` |
+| `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | PG_WATERMARK_STAT_COUNTER | READ_AND_CLEAR | `portsorch.cpp:92` |
+| `PG_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | PG_DROP_STAT_COUNTER | READ | `portsorch.cpp:93` |
+
+WRED_ECN_QUEUE グループは `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS`（10000 ms）を共用する（`portsorch.cpp:739`）。CONFIG_DB の `FLEX_COUNTER_TABLE|<GROUP>|POLL_INTERVAL` で上書き可能だが、orchagent 起動時の初期値は上記定数から設定される。`READ_AND_CLEAR` モード（QUEUE_WATERMARK / PG_WATERMARK）では、syncd がポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。
+
+### Warm-reboot 遅延定数
+
+| マクロ名 | 値 | 用途 | 定義 |
+|---------|-----|------|------|
+| `FLEX_COUNTER_DELAY_SEC` | `60` 秒 | Warm-reboot 時に全 FlexCounter 処理をブロックする SelectableTimer の秒数 | `flexcounterorch.cpp:44` |
+
+Cold boot では `m_delayTimerExpired = true` に即初期化され（`flexcounterorch.cpp:136`）、この遅延は適用されない。
+
+### SAI カウンタ ID 静的配列
+
+これらの配列はソースコードに固定されており、CONFIG_DB / YANG から変更不可。ハードウェアが非サポートの場合は SAI が `0` を返すか `SAI_STATUS_NOT_SUPPORTED` でスキップされる。
+
+| 配列名 | フィールド（SAI stat ID） | グループ | 定義行 |
+|------|------------------------|---------|------|
+| `queue_stat_ids` | `SAI_QUEUE_STAT_PACKETS`, `_BYTES`, `_DROPPED_PACKETS`, `_DROPPED_BYTES`, `_TRIM_PACKETS`, `_DROPPED_TRIM_PACKETS`, `_TX_TRIM_PACKETS` | QUEUE_STAT_COUNTER | `portsorch.cpp:389` |
+| `voq_stat_ids` | `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` | QUEUE_STAT_COUNTER（VoQ 専用） | `portsorch.cpp:399` |
+| `queueWatermarkStatIds` | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` | QUEUE_WATERMARK_STAT_COUNTER | `portsorch.cpp:405` |
+| `ingressPriorityGroupWatermarkStatIds` | `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES`, `_SHARED_WATERMARK_BYTES` | PG_WATERMARK_STAT_COUNTER | `portsorch.cpp:410` |
+| `ingressPriorityGroupDropStatIds` | `SAI_INGRESS_PRIORITY_GROUP_STAT_DROPPED_PACKETS` | PG_DROP_STAT_COUNTER | `portsorch.cpp:416` |
+| `wred_queue_stat_ids` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS`, `_MARKED_BYTES`, `_DROPPED_PACKETS`, `_DROPPED_BYTES` | WRED_ECN_QUEUE_STAT_COUNTER | `portsorch.cpp:429` |
+
+### COUNTERS_DB テーブル名定数（`schema.h`）
+
+| マクロ名 | 文字列値（Redis キー） | 行 |
+|---------|---------------------|-----|
+| `COUNTERS_QUEUE_NAME_MAP` | `"COUNTERS_QUEUE_NAME_MAP"` | 225 |
+| `COUNTERS_VOQ_NAME_MAP` | `"COUNTERS_VOQ_NAME_MAP"` | 226 |
+| `COUNTERS_QUEUE_PORT_MAP` | `"COUNTERS_QUEUE_PORT_MAP"` | 227 |
+| `COUNTERS_QUEUE_INDEX_MAP` | `"COUNTERS_QUEUE_INDEX_MAP"` | 228 |
+| `COUNTERS_QUEUE_TYPE_MAP` | `"COUNTERS_QUEUE_TYPE_MAP"` | 229 |
+| `COUNTERS_PG_NAME_MAP` | `"COUNTERS_PG_NAME_MAP"` | 230 |
+| `COUNTERS_PG_PORT_MAP` | `"COUNTERS_PG_PORT_MAP"` | 231 |
+| `COUNTERS_PG_INDEX_MAP` | `"COUNTERS_PG_INDEX_MAP"` | 232 |
+| `PERIODIC_WATERMARKS_TABLE` | `"PERIODIC_WATERMARKS"` | 268 |
+| `PERSISTENT_WATERMARKS_TABLE` | `"PERSISTENT_WATERMARKS"` | 269 |
+| `USER_WATERMARKS_TABLE` | `"USER_WATERMARKS"` | 270 |
+| `STATE_QUEUE_COUNTER_CAPABILITIES_NAME` | `"QUEUE_COUNTER_CAPABILITIES"` | 528 |
+
+`PERIODIC_WATERMARKS` / `PERSISTENT_WATERMARKS` / `USER_WATERMARKS` テーブルへの振り分けは syncd 側の Lua スクリプト（`watermark_stat.lua`）が処理する。`QUEUE_COUNTER_CAPABILITIES` は STATE_DB に書き込まれ、WRED/ECN サポート状況を外部公開する。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
 
