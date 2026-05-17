@@ -439,6 +439,112 @@ Queue / PG マッピング書き込み関数は COUNTERS_DB 更新と同時に `
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp:432-437,620-625,
+     sonic-swss/orchagent/flexcounterorch.cpp:100-167,183-281,
+     sonic-swss/orchagent/watermarkorch.cpp:23-45,144-231,233-281,
+     sonic-utilities/scripts/watermarkstat:325,
+     sonic-swss/orchagent/watermark_queue.lua,
+     sonic-swss/orchagent/watermark_pg.lua;
+     詳細分析 meta/_intermediate/cdb-flow/counters-queue-pubsub.md -->
+
+### Producer/Consumer ペア
+
+キュー / PG カウンタ経路は複数の独立した通信メカニズムを組み合わせる。
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|--------------------|
+| CONFIG_DB → FlexCounterOrch | `SubscriberStateTable` | `__keyspace@{config_db_id}__:FLEX_COUNTER_TABLE\|*` |
+| CONFIG_DB → WatermarkOrch | `SubscriberStateTable` | `__keyspace@{config_db_id}__:WATERMARK_TABLE\|*` / `FLEX_COUNTER_TABLE\|*` |
+| FlexCounterOrch → syncd | FLEX_COUNTER_DB 直接書き込み | `FLEX_COUNTER_DB HSET COUNTER_ID_LIST` / `POLL_INTERVAL` |
+| syncd FlexCounter → SAI | SAI API 直接呼び出し | `sai_get_queue_stats` / `sai_get_ingress_priority_group_stats` |
+| syncd → COUNTERS_DB | Redis HSET | `COUNTERS:<OID>` |
+| syncd Lua → COUNTERS_DB | Redis Lua スクリプト | `watermark_queue.lua` / `watermark_pg.lua`（COUNTERS → WATERMARK 転写） |
+| `watermarkstat -c` → WatermarkOrch | Redis publish | `APPL_DB WATERMARK_CLEAR_REQUEST` |
+| WatermarkOrch → COUNTERS_DB | Redis HSET | `PERIODIC_WATERMARKS` / `PERSISTENT_WATERMARKS` / `USER_WATERMARKS` |
+
+### FlexCounterOrch の SubscriberStateTable 購読
+
+`orchdaemon.cpp:620-625` にて `FlexCounterOrch` は `FLEX_COUNTER_TABLE` と `DEVICE_METADATA` の 2 テーブルを `SubscriberStateTable` で購読する。CONFIG_DB keyspace notification でエントリ変化を検出し、`FlexCounterOrch::doTask(Consumer&)` (`flexcounterorch.cpp:148`) が処理する。
+
+`FLEX_COUNTER_STATUS = enable` が届くと、キーに応じて以下のメソッドを呼び出す（`flexcounterorch.cpp:247-281`）:
+
+| CONFIG_DB キー | 呼び出し先 |
+|----------------|-----------|
+| `QUEUE` | `generateQueueMap()` + `addQueueFlexCounters()` |
+| `QUEUE_WATERMARK` | `generateQueueMap()` + `addQueueWatermarkFlexCounters()` |
+| `PG_DROP` | `generatePriorityGroupMap()` + `addPriorityGroupFlexCounters()` |
+| `PG_WATERMARK` | `generatePriorityGroupMap()` + `addPriorityGroupWatermarkFlexCounters()` |
+| `WRED_ECN_QUEUE` | `generateQueueMap()` + `addWredQueueFlexCounters()` |
+
+未知キーは `SWSS_LOG_NOTICE` を出力して即削除される（`flexcounterorch.cpp:183-188`）。`DEVICE_METADATA` テーブルの変化は `handleDeviceMetadataTable()` へ委譲され、`create_only_config_db_buffers` フラグを動的更新する。
+
+### WatermarkOrch の二経路通信
+
+`orchdaemon.cpp:432-437` にて `WatermarkOrch` が `WATERMARK_TABLE` と `FLEX_COUNTER_TABLE` を購読する（`SubscriberStateTable`）。さらにコンストラクタ (`watermarkorch.cpp:35-38`) にて APPL_DB の `WATERMARK_CLEAR_REQUEST` チャンネルを `NotificationConsumer` で購読する。
+
+**クリア要求フロー**（`watermarkstat -c` 実行時）:
+
+```
+watermarkstat -c
+  └─ db.publish('APPL_DB', 'WATERMARK_CLEAR_REQUEST', '<op>:<data>')
+       WatermarkOrch::doTask(NotificationConsumer&)
+         op == "PERSISTENT" → PERSISTENT_WATERMARKS テーブルの該当 OID を 0 クリア
+         op == "USER"       → USER_WATERMARKS テーブルの該当 OID を 0 クリア
+```
+
+`data` は `PG_HEADROOM` / `PG_SHARED` / `Q_SHARED_UNI` / `Q_SHARED_MULTI` / `Q_SHARED_ALL` のいずれかで、対象テーブルのフィールドと OID セットを決定する（`watermarkorch.cpp:184-230`）。
+
+### Lua スクリプトによる COUNTERS → WATERMARK テーブル転写
+
+syncd が `READ_AND_CLEAR` モードでウォーターマーク統計をポーリングするたびに `watermark_queue.lua` / `watermark_pg.lua` が Redis 内で Lua アトミック実行される:
+
+1. `COUNTERS:<OID>` から最新のウォーターマーク値を読み取り
+2. `PERIODIC_WATERMARKS:<OID>` / `PERSISTENT_WATERMARKS:<OID>` / `USER_WATERMARKS:<OID>` の現在値と max 比較
+3. max 値でウォーターマークテーブルを更新
+
+この転写処理は orchagent / WatermarkOrch の介在なしに syncd 内で完結する。
+
+### 周期クリアタイマー
+
+`WatermarkOrch` は `SelectableTimer`（デフォルト 120 秒、`DEFAULT_TELEMETRY_INTERVAL`、`watermarkorch.cpp:9`）を持ち、タイマー満了時に `PERIODIC_WATERMARKS` テーブルの全 Queue / PG ウォーターマークを 0 クリアする（`watermarkorch.cpp:233-281`）。インターバルは `WATERMARK_TABLE|TELEMETRY_INTERVAL` で変更可能。
+
+### データフロー図
+
+```
+CONFIG_DB[FLEX_COUNTER_TABLE|QUEUE|FLEX_COUNTER_STATUS=enable]
+  ↓ SubscriberStateTable (keyspace notification)
+FlexCounterOrch::doTask()
+  ↓ [m_delayTimerExpired チェック]
+  ↓ [gPortsOrch->allPortsReady() チェック]
+  ↓ generateQueueMap() → COUNTERS_DB COUNTERS_QUEUE_NAME_MAP / COUNTERS_QUEUE_TYPE_MAP 等
+  ↓ addQueueFlexCounters()
+    ↓ queue_stat_manager.setCounterIdList()
+      → FLEX_COUNTER_DB[QUEUE_STAT_COUNTER|<OID>|COUNTER_ID_LIST]
+
+syncd FlexCounter (polling thread, 10000 ms)
+  ↓ sai_get_queue_stats(<OID>, queue_stat_ids)
+  ↓ COUNTERS_DB HSET COUNTERS:<OID> SAI_QUEUE_STAT_PACKETS ...
+  ↓ watermark_queue.lua (READ_AND_CLEAR ポーリング時)
+    ↓ PERIODIC_WATERMARKS:<OID> / PERSISTENT_WATERMARKS:<OID> / USER_WATERMARKS:<OID> 更新
+
+watermarkstat -c (ユーザー操作)
+  ↓ db.publish('APPL_DB', 'WATERMARK_CLEAR_REQUEST', 'USER:Q_SHARED_UNI')
+WatermarkOrch::doTask(NotificationConsumer&)
+  ↓ USER_WATERMARKS:<OID> SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES → 0
+
+WatermarkOrch SelectableTimer (120 秒)
+  ↓ PERIODIC_WATERMARKS 全 Queue / PG OID → 0 クリア
+
+CLI: queuestat / watermarkstat / pg-drop
+  └─ COUNTERS_DB 直接読み取り（pub/sub なし）
+```
+
+> **Evidence**: `orchdaemon.cpp:432-437,620-625`; `flexcounterorch.cpp:100-167,183-281`; `watermarkorch.cpp:23-45,144-231,233-281`; `watermarkstat:325`; `watermark_queue.lua`, `watermark_pg.lua`; 詳細分析 `meta/_intermediate/cdb-flow/counters-queue-pubsub.md`
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
 
