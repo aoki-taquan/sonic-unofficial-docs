@@ -575,4 +575,44 @@ Saving startup config failed: <err>
 > **詳細**: `meta/_intermediate/cdb-flow/telemetry-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`TELEMETRY` テーブルに対する **継続的な Redis pub/sub 購読は存在しない**。`hostcfgd` / `swsscommon.SubscriberStateTable` / `ConfigDBConnector.subscribe()` / `listen()` は一切使用しない。
+
+`telemetry` コンテナは起動時に `sonic-cfggen -d -t telemetry_vars.j2` を一回実行して `TELEMETRY|certs` / `TELEMETRY|gnmi` を JSON でスナップショット取得し、その値を `telemetry` バイナリへのコマンドライン引数に変換して起動する。起動後は CONFIG_DB を参照しない。
+
+| テーブル | 購読方式 | 購読者 | タイミング |
+|---------|---------|--------|-----------|
+| `TELEMETRY` | **なし**（起動時スナップショットのみ） | `telemetry.sh` (sonic-cfggen) | コンテナ起動時 1 回 |
+| `GNMI_CLIENT_CERT` | ポイント読み取り (HGETALL) | `gnmi_server` (認証時) | gNMI 接続ごと |
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+`TELEMETRY` テーブルには keyspace 通知ハンドラが登録されていないため、以下のような event-driven な流れは**存在しない**。
+
+```
+# TELEMETRY テーブルへの変更は telemetry コンテナに自動通知されない
+HSET "TELEMETRY|gnmi" port 50052
+→ (keyspace 通知発行されるが telemetry は購読しない)
+→ 実行中の gNMI サーバには反映されない
+```
+
+変更を反映するには `systemctl restart telemetry` によるコンテナ再起動が必要。
+
+### 例外: TLS 証明書ファイルの inotify 監視
+
+**CONFIG_DB テーブルではなく証明書ファイルの変更**のみ例外で、`iNotifyCertMonitoring()` が `TELEMETRY|certs.server_crt` で指定されたディレクトリを `fsnotify.Watcher` で監視する。`.cert` / `.crt` / `.cer` / `.pem` / `.key` ファイルの `CloseWrite` / `MovedTo` / `Create` イベントを検出すると `serverControlSignal <- ServerStart` でサーバを自動再起動する。
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `TELEMETRY|gnmi` / `|certs` フィールド変更 | **自動反映なし**。コンテナ再起動が必要 | `telemetry.sh:40-43` (起動時スナップショット) |
+| TLS 証明書ファイルの内容更新 | inotify で自動再起動 | `telemetry/telemetry.go:340-404` (`iNotifyCertMonitoring`) |
+| GNMI_CLIENT_CERT テーブル変更 | 次回接続認証から即時反映 | `gnmi_server/server.go:792` (接続ごとに HGETALL) |
+
+> **Evidence**: `sonic-buildimage/dockers/docker-sonic-telemetry/telemetry.sh@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` L40-43; `sonic-gnmi/telemetry/telemetry.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L111,L340-404; `gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L792; 詳細 `meta/_intermediate/cdb-flow/telemetry-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 896d391185a9 -->
