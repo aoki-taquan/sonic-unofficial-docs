@@ -518,6 +518,85 @@ data['FEATURE'] = {
 > **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:82-113`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:9,16-17,69-75,130-136,220-236,349-388`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:25,96,130-148`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:23,97-100`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:28,84-103,156-158,395` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-pubsub.md`
+
+### Producer / Consumer ペア
+
+| CONFIG_DB テーブル | Producer | Consumer / 購読方式 | select タイムアウト |
+|---|---|---|---|
+| `MID_PLANE_BRIDGE\|GLOBAL` | sonic-cfggen / config_samples.py | `dhcpservd` — `MidPlaneTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+| `MID_PLANE_BRIDGE\|GLOBAL` | sonic-cfggen / config_samples.py | `dhcprelayd` — `MidPlaneTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+| `DPUS\|dpu*` | sonic-cfggen / config_samples.py | `dhcpservd` — `DpusTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+| `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|dpu*` | sonic-cfggen / config_samples.py | `dhcpservd` — `DhcpPortTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+
+### MID_PLANE_BRIDGE / DPUS → dhcpservd
+
+`dhcpservd.py` は起動時に `MidPlaneTableEventChecker` と `DpusTableEventChecker` を `swsscommon.Select` に登録するが (`dhcpservd.py:143-144`)、これらは **SmartSwitch モードのときのみ有効化** される。
+
+有効化フロー:
+
+1. `dhcp_cfggen.generate()` 内で `is_smart_switch(device_metadata)` が `True` を返すと `SMART_SWITCH_CHECKER = ["DpusTableEventChecker", "MidPlaneTableEventChecker"]` が `subscribe_table` に追加される (`dhcp_cfggen.py:23,97-98`)
+2. `generate()` の戻り値 `enable_checker` を受け取った `dump_dhcp4_config()` が `dhcp_servd_monitor.enable_checkers(enable_checker)` を呼び出す
+3. 各チェッカーの `enable()` メソッドで `SubscriberStateTable` が生成され `sel.addSelectable()` で登録される (`dhcp_db_monitor.py:69-75`)
+
+非 SmartSwitch 環境では `is_smart_switch()` が `False` を返すため、両チェッカーはオブジェクトとして存在するものの `enable()` されず購読が発生しない。
+
+**トリガー条件**:
+
+| チェッカー | トリガー条件 | コード位置 |
+|---|---|---|
+| `MidPlaneTableEventChecker` | op=`DEL` の場合は常にトリガー。op=`SET` の場合は `bridge` フィールドが `enabled_dhcp_interfaces` に含まれるときのみトリガー | `dhcp_db_monitor.py:362-368` |
+| `DpusTableEventChecker` | あらゆるイベント（SET/DEL 問わず）を無条件でトリガー（`_process_check()` が常に `True` を返す） | `dhcp_db_monitor.py:384-385` |
+
+イベント検知後、`DhcpServd.dump_dhcp4_config()` が `/etc/kea/kea-dhcp4.conf` を再生成し kea-dhcp4 に SIGHUP を送信してミッドプレーン DHCP プールが再構成される。
+
+### MID_PLANE_BRIDGE → dhcprelayd
+
+`dhcprelayd.py` も独立して `MidPlaneTableEventChecker` を `sel` に登録する (`dhcprelayd.py:395`)。こちらの有効化は `refresh_dhcrelay()` 内で決定される:
+
+- `DHCP_SERVER_IPV4` テーブルに `bridge-midplane` が `state=enabled` で存在し、かつ `self.smart_switch=True` のとき `MID_PLANE_CHECKER` が `enabled_checkers` に追加される (`dhcprelayd.py:102-103`)
+- イベント検知時 (`check_res[MID_PLANE_CHECKER] = True`) は `_proceed_with_check_res()` が `refresh_dhcrelay(force_kill=True)` を呼び出す (`dhcprelayd.py:156-158`)
+- `force_kill=True` は既存の dhcrelay プロセスを強制終了して再起動することを意味する
+
+### DHCP_SERVER_IPV4_PORT → dhcpservd
+
+`DhcpPortTableEventChecker` は非 SmartSwitch でも常時有効。`key.split("|")[0]`（dhcp_interface 部分）が `enabled_dhcp_interfaces` に含まれるときのみ再生成トリガーとなる (`dhcp_db_monitor.py:230-236`)。SmartSwitch 環境では `"bridge-midplane"` が `enabled_dhcp_interfaces` に入るため、`DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu*` の全エントリ変更がトリガーになる。
+
+### データフロー図
+
+```
+CONFIG_DB[MID_PLANE_BRIDGE|GLOBAL]
+  ↓ SubscriberStateTable (MidPlaneTableEventChecker)
+dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
+  ↓ bridge in enabled_dhcp_interfaces → need_refresh=True
+  ↓ dump_dhcp4_config(): /etc/kea/kea-dhcp4.conf 上書き
+kea-dhcp4 (SIGHUP) → ミッドプレーン DHCP サブネット再構成
+
+CONFIG_DB[MID_PLANE_BRIDGE|GLOBAL]
+  ↓ SubscriberStateTable (MidPlaneTableEventChecker)
+dhcprelayd [DEFAULT_SELECT_TIMEOUT=5000ms]
+  ↓ check_res[MID_PLANE_CHECKER]=True → refresh_dhcrelay(force_kill=True)
+dhcrelay プロセス強制再起動 → ミッドプレーン DHCP リレー経路更新
+
+CONFIG_DB[DPUS|dpu*]
+  ↓ SubscriberStateTable (DpusTableEventChecker)
+dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
+  ↓ 全イベント無条件で need_refresh=True → dump_dhcp4_config()
+kea-dhcp4 設定再生成
+
+CONFIG_DB[DHCP_SERVER_IPV4_PORT|bridge-midplane|dpu*]
+  ↓ SubscriberStateTable (DhcpPortTableEventChecker)
+dhcpservd [DEFAULT_SELECT_TIMEOUT=5000ms]
+  ↓ "bridge-midplane" in enabled_dhcp_interfaces → need_refresh=True
+  ↓ dump_dhcp4_config() → kea-dhcp4 設定再生成
+```
+
+<!-- /pubsub -->
+
 ---
 
 ## 関連 CONFIG_DB / YANG / CLI
