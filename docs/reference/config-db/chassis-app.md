@@ -372,6 +372,83 @@ Evidence: `managers_chassis_app_db.py:36-46`, `managers_device_global.py:244-249
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 書き込み副作用 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-side-effects.md`
+> 調査対象: `sonic-swss/orchagent/intfsorch.cpp` @ 4305596, `sonic-swss/orchagent/neighorch.cpp` @ 4305596, `sonic-swss/orchagent/portsorch.cpp` @ 4305596, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py` @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+
+CHASSIS_APP_DB への書き込みは単なるデータ保存ではない。リモートラインカード側の orchagent および bgpcfgd が各テーブルを `SubscriberStateTable` で購読しており、SAI プログラミング・STATE_DB 更新・FRR 設定変更などの連鎖処理が発生する。
+
+### SYSTEM_INTERFACE — 副作用
+
+**書き込み元 (ローカル LC)**: `intfsorch.cpp` の `voqSyncAddIntf()` / `voqSyncDelIntf()` / `voqSyncIntfState()`
+
+**購読側 (リモート LC)**: `IntfsOrch` が `SubscriberStateTable(chassisAppDb, SYSTEM_INTERFACE)` を登録 (`intfsorch.cpp:106`)
+
+- SET イベント受信時、`isRemoteSystemPortIntf(alias)` が true のエントリのみ処理 (`intfsorch.cpp:881-892`)
+- `oper_status` 変化に応じて `gNeighOrch->ifChangeInformRemoteNextHop(alias, isUp)` を呼出し、リモートポートを nexthop とする経路の到達可否を更新する
+- ポートが DOWN になると、そのシステムポートへの nexthop が無効化され、routeorch がルートを再評価する
+
+### SYSTEM_NEIGH — 副作用
+
+**書き込み元 (ローカル LC)**: `voqSyncAddNeigh()` / `voqSyncDelNeigh()` (`neighorch.cpp:2654,2688`)
+
+**購読側 (リモート LC)**: `NeighOrch` が `SubscriberStateTable(chassisAppDb, SYSTEM_NEIGH)` を登録 (`neighorch.cpp:55`)。`doVoqSystemNeighTask()` で処理。
+
+SET イベント受信時の副作用チェーン:
+
+1. Inband ポートが UP であることを確認 (非 VLAN タイプでは admin/oper 両方が UP 必須)
+2. SAI に remote neighbor を追加 (`addNeighbor()`)
+3. 成功時、**STATE_DB の `SYSTEM_NEIGH` テーブル**に `neigh` (MAC) を書き込む (`neighorch.cpp:2223`)
+4. STATE_DB 書き込みをトリガに `neighbor-manager` がカーネルの neighbor / host-route を追加
+
+DEL イベント受信時: SAI からのneighbor削除 → STATE_DB エントリ削除 → カーネルエントリ削除  
+`encap_index` 変更時: SAI 上の neighbor を一度削除してから STATE_DB も削除し、再追加する 2 ステップ処理 (`neighorch.cpp:2173`)
+
+### SYSTEM_LAG_TABLE — 副作用
+
+**書き込み元 (ローカル LC)**: `voqSyncAddLag()` / `voqSyncDelLag()` (`portsorch.cpp:11139,11166`)
+
+**購読側 (リモート LC)**: `PortsOrch` が `SubscriberStateTable(chassisAppDb, SYSTEM_LAG_TABLE)` を登録 (`portsorch.cpp:1086`)
+
+- `switch_id == gVoqMySwitchId` のエントリはローカル LC 自身が書いたものとしてスキップ
+- リモート LC のエントリは `addLag(alias, lag_id, switch_id)` で SAI に system LAG を作成 (`portsorch.cpp:6116-6140`)
+- 作成後、`operation_status` / `mtu` / `tpid` / `learn_mode` が存在すれば SAI 属性設定が連鎖する
+
+### SYSTEM_LAG_MEMBER_TABLE — 副作用
+
+**書き込み元 (ローカル LC)**: `voqSyncAddLagMember()` / `voqSyncDelLagMember()` (`portsorch.cpp:11179,11195`)
+
+**購読側 (リモート LC)**: `PortsOrch` が `SubscriberStateTable(chassisAppDb, SYSTEM_LAG_MEMBER_TABLE)` を登録 (`portsorch.cpp:1091`)
+
+- `switch_id` 不一致チェック後、対応リモート LAG にシステムポートをメンバーとして追加し `status` 属性を SAI に設定 (`portsorch.cpp:6297-6355`)
+
+### BGP_DEVICE_GLOBAL|STATE — 副作用
+
+**書き込み元 (スーパーバイザー bgpcfgd)**: `managers_device_global.py` が CONFIG_DB の `BGP_DEVICE_GLOBAL.tsa_enabled` 変化を受けて書き込む
+
+**購読側 (ラインカード bgpcfgd)**: `ChassisAppDbMgr` (`managers_chassis_app_db.py`) が CHASSIS_APP_DB の変化を受信
+
+- `lc_tsa == "false"` のときのみ `DeviceGlobalCfgMgr.isolate_unisolate_device(data["tsa_enabled"])` を呼出し (`managers_chassis_app_db.py:41-44`)
+- `isolate_unisolate_device()` は出力 route-map を Jinja2 テンプレートで生成し FRR (vtysh) に push する — これにより全 BGP 出力ルートが TSA (unreachable 相当) または TSB (通常) に切り替わる
+- `lc_tsa == "true"` の場合はスーパーバイザーの指示を無視（LC 側 TSA が優先）
+
+### 副作用マトリクス
+
+| テーブル書き込み | 直接の副作用 | 連鎖先 |
+|----------------|-------------|--------|
+| `SYSTEM_INTERFACE` SET (oper_status) | リモート LC の nexthop 到達性更新 (`ifChangeInformRemoteNextHop`) | routeorch のルート再評価 |
+| `SYSTEM_NEIGH` SET | リモート LC: SAI neighbor 追加 → STATE_DB `SYSTEM_NEIGH` 書き込み | neighbor-manager がカーネル neighbor/host-route を追加 |
+| `SYSTEM_NEIGH` DEL | リモート LC: SAI neighbor 削除 → STATE_DB エントリ削除 | neighbor-manager がカーネルエントリを削除 |
+| `SYSTEM_LAG_TABLE` SET | リモート LC: SAI system LAG 作成・属性設定 | LAG メンバー追加待ち |
+| `SYSTEM_LAG_TABLE` DEL | リモート LC: SAI system LAG 削除 | — |
+| `SYSTEM_LAG_MEMBER_TABLE` SET | リモート LC: SAI LAG メンバー追加・status 設定 | — |
+| `SYSTEM_LAG_MEMBER_TABLE` DEL | リモート LC: SAI LAG メンバー削除 | — |
+| `BGP_DEVICE_GLOBAL\|STATE` SET (tsa_enabled) | LC bgpcfgd: FRR に TSA/TSB route-map を push | BGP アドバタイズメント全体が切替 |
+
+<!-- /side-effects -->
+
 ## キー構造
 
 | テーブル | Redis キー形式 | 例 |
