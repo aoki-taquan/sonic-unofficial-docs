@@ -246,6 +246,54 @@ if 'mode' in data:
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+CONFIG_DB の `PIM_GLOBALS` / `PIM_INTERFACE` テーブルで管理されず、FRR `pimd` またはフレームワーク `frrcfgd` のコードに直書きされた定数。変更には FRR / sonic-buildimage のリコンパイルが必要。
+
+### FRR タイマーデフォルト (pim_pim.h / pim_upstream.h)
+
+| 定数名 | 値 | RFC 対応 | 定義場所 |
+|--------|----|---------|---------|
+| `PIM_DEFAULT_HELLO_PERIOD` | `30` 秒 | RFC 4601 §4.11 Hello Period | `pimd/pim_pim.h` L30[^5] |
+| `PIM_DEFAULT_TRIGGERED_HELLO_DELAY` | `5` 秒 | RFC 4601 §4.11 Triggered_Hello_Delay | `pimd/pim_pim.h` L31 |
+| `PIM_DEFAULT_DR_PRIORITY` | `1` | RFC 4601 §4.3.1 | `pimd/pim_pim.h` L32[^5] |
+| `PIM_DEFAULT_PROPAGATION_DELAY_MSEC` | `500` ms | RFC 4601 §4.11 Propagation_Delay | `pimd/pim_pim.h` L33 |
+| `PIM_DEFAULT_OVERRIDE_INTERVAL_MSEC` | `2500` ms | RFC 4601 §4.11 Override_Interval | `pimd/pim_pim.h` L34 |
+| `PIM_DEFAULT_T_PERIODIC` | `60` 秒 | RFC 4601 §4.11 t_periodic | `pimd/pim_pim.h` L36[^6] |
+| `PIM_REGISTER_SUPPRESSION_PERIOD` | `60` 秒 | Register 抑制タイマー (RST) デフォルト | `pimd/pim_upstream.h` L206[^7] |
+| `PIM_REGISTER_PROBE_PERIOD` | `5` 秒 | Register Probe タイマーデフォルト | `pimd/pim_upstream.h` L207[^7] |
+| `PIM_KEEPALIVE_PERIOD` | `210` 秒 | KAT(S,G) デフォルト | `pimd/pim_upstream.h` L213[^3] |
+
+### CONFIG_DB で変更できない定数
+
+以下の定数は CONFIG_DB に対応フィールドがない。`config_db.json` で変更しても効果はなく、コードのリコンパイルが必要:
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `PIM_DEFAULT_TRIGGERED_HELLO_DELAY` | `5` 秒 | 隣接変化時のトリガ Hello 送出遅延 |
+| `PIM_DEFAULT_PROPAGATION_DELAY_MSEC` | `500` ms | LAN prune delay の propagation_delay |
+| `PIM_DEFAULT_OVERRIDE_INTERVAL_MSEC` | `2500` ms | LAN prune delay の override_interval |
+| `PIM_PIM_BUFSIZE_READ` | `20000` bytes | PIM ソケット受信バッファ (`pimd/pim_pim.h` L27) |
+| `PIM_PIM_BUFSIZE_WRITE` | `20000` bytes | PIM ソケット送信バッファ (`pimd/pim_pim.h` L28) |
+| `PIM_REGISTER_SUPPRESSION_PERIOD` | `60` 秒 | Register 抑制タイマーデフォルト |
+| `PIM_REGISTER_PROBE_PERIOD` | `5` 秒 | Register Probe タイマーデフォルト |
+
+### FRR vtysh が受け付ける値域 (frrcfgd は検証しない)
+
+`frrcfgd` は CONFIG_DB のフィールド値を検証せずそのまま vtysh に渡す。FRR CLI が値域エラーを返した場合は `LOG_ERR` を出力して継続する (`frrcfgd.py` L3817-3818)。
+
+| CONFIG_DB フィールド | vtysh コマンド | FRR 値域 | ソース |
+|----------------------|---------------|---------|-------|
+| `join-prune-interval` | `ip pim join-prune-interval <N>` | `60`〜`600` 秒 | `pim_cmd.c` L5360[^6] |
+| `keep-alive-timer` | `ip pim keep-alive-timer <N>` | `31`〜`60000` 秒 | `pim_cmd.c` L5443 |
+| `hello-interval` (interval 部) | `ip pim hello <N>` | `1`〜`180` 秒 | `pim_cmd.c` L6997 |
+| `hello-interval` (hold-time 部) | `ip pim hello <interval> <hold>` | `1`〜`180` 秒 | `pim_cmd.c` L6997 |
+| `dr-priority` | `ip pim drpriority <N>` | `1`〜`4294967295` | `pim_cmd.c` L6458 |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-constants.md`
+<!-- /constants -->
+
 ## 購読者
 
 - `frrcfgd` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`): `PIM_GLOBALS` および `PIM_INTERFACE` を購読し、FRR pimd に `vtysh` 経由でコマンドを注入する[^1]
@@ -260,3 +308,5 @@ if 'mode' in data:
 [^3]: `sonic-frr/pimd/pim_upstream.h` L213 — `#define PIM_KEEPALIVE_PERIOD (210)`
 [^4]: `sonic-frr/pimd/pim_instance.c` L81-82 — `pim->ecmp_enable = false; pim->ecmp_rebalance_enable = false`
 [^5]: `sonic-frr/pimd/pim_pim.h` L30-32 — `PIM_DEFAULT_HELLO_PERIOD (30)`, `PIM_DEFAULT_DR_PRIORITY (1)`; `pimd/pim_pim.c` L436-440 での初期化
+[^6]: `sonic-frr/pimd/pim_cmd.c` L5360 — `ip pim join-prune-interval (60-600)`; L5443 — `ip pim keep-alive-timer (31-60000)`
+[^7]: `sonic-frr/pimd/pim_upstream.h` L206-207 — `PIM_REGISTER_SUPPRESSION_PERIOD (60)`, `PIM_REGISTER_PROBE_PERIOD (5)`
