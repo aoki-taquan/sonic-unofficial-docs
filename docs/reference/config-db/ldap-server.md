@@ -395,4 +395,70 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 
 <!-- /failure -->
 
+<!-- constants -->
+## 実装定数一覧 (Phase E)
+
+> **調査根拠**: `sonic-host-services/scripts/ldap.py` 全行精読, `sonic-host-services/scripts/hostcfgd` L.40-43, L.106-107, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-ldap.yang`, `sonic-host-services/data/templates/nslcd.conf.j2`  
+> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-constants.md`
+
+### LdapCfg クラス定数 (`ldap.py`)
+
+`hostcfgd` は `nslcd.conf` / `ldap.conf` 生成時に `ldap.LdapCfg` を Jinja2 テンプレートへ渡す (`hostcfgd` L.855, L.863)。CONFIG_DB に値が存在しないフィールドはこれらの定数で補完される。
+
+| 定数 | 値 | フィールド対応 | 備考 |
+|------|----|----------------|------|
+| `LdapCfg.BASE` | `'ou=users,dc=example,dc=com'` | `base_dn` | 未設定時 fallback。`is_ldap_config_complete()` が False を返すため実際には起動しない |
+| `LdapCfg.BIND` | `''` (空文字) | `bind_dn` | 未設定時 fallback |
+| `LdapCfg.BINDPW` | `""` (空文字) | `bind_password` | 未設定時 fallback |
+| `LdapCfg.VERSION` | `'3'` | `version` | YANG default `3` と一致 |
+| `LdapCfg.TIMEOUT_SEARCH` | `5` (秒) | `timeout` | YANG フィールド名 `timeout`、LdapCfg は `'search_timeout'` キーで引く |
+| `LdapCfg.TIMEOUT_BIND` | `5` (秒) | `bind_timeout` | YANG default `5` と一致 |
+| `LdapCfg.PORT` | `389` | `port` | YANG default `389` と一致 |
+| `LdapCfg.SCOPE` | `"sub"` | — | CONFIG_DB 非対応。nslcd.conf 常時固定 |
+| `LdapCfg.HOST` | `""` | — | サーバ未登録時の URI 文字列 |
+| `LdapCfg.IPV6` | `6` | — | `ipaddress.ip_address(ip).version == 6` 判定値 |
+
+モジュールレベル定数 (`ldap.py` L.3-4):
+
+| 定数 | 値 | 備考 |
+|------|----|----|
+| `TLS1_2` | `"SECURE128:SECURE192:SECURE256:-VERS-TLS1.0:-VERS-DTLS1.0:-VERS-TLS1.1:-SHA1"` | GnuTLS プライオリティ文字列 (TLS 1.2)。現行テンプレートでは未使用 |
+| `TLS1_3` | `"SECURE128:SECURE192:SECURE256:-VERS-TLS-ALL:-VERS-DTLS-ALL:+VERS-TLS1.3"` | GnuTLS プライオリティ文字列 (TLS 1.3)。現行テンプレートでは未使用 |
+
+### hostcfgd モジュールレベル定数 (LDAP 関連)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `LDAP_CONF_TEMPLATE` | `"/usr/share/sonic/templates/ldap.conf.j2"` | `ldap.conf` 生成テンプレートパス (`hostcfgd` L.40) |
+| `LDAP_CONF` | `"/etc/ldap/ldap.conf"` | 出力先 `ldap.conf` パス (`hostcfgd` L.41) |
+| `NSLCD_CONF_TEMPLATE` | `"/usr/share/sonic/templates/nslcd.conf.j2"` | `nslcd.conf` 生成テンプレートパス (`hostcfgd` L.42) |
+| `NSLCD_CONF` | `"/etc/nslcd.conf"` | 出力先 `nslcd.conf` パス (`hostcfgd` L.43) |
+| `NSS_CONF` | `"/etc/nsswitch.conf"` | nsswitch.conf パス。`ldap` エントリの追加/削除に使用 (`hostcfgd` L.39) |
+
+### YANG 制約定数
+
+| 制約 | 値 | YANG 宣言 |
+|------|----|-----------|
+| `LDAP_SERVER_LIST` 最大エントリ数 | **8** | `max-elements 8` |
+| `priority` 有効範囲 | 1..8 | `range "1..8"` |
+| `bind_timeout` 有効範囲 | 1..120 秒 | `range "1..120"` |
+| `version` 有効範囲 | 1..3 | `range "1..3"` |
+| `port` 型 | `inet:port-number` (0..65535) | IETF YANG 型 |
+| `timeout` 有効範囲 | 1..60 秒 | `range "1..60"` |
+| `bind_dn` / `base_dn` / `bind_password` 長さ | 1..65 文字 | `length "1..65"` |
+| `bind_password` 使用禁止文字 | SPACE / `#` / `,` | `pattern "[^ #,]*"` |
+
+### nslcd.conf テンプレート固定値
+
+`nslcd.conf.j2` が CONFIG_DB 値に関わらず常時出力する静的フィールド:
+
+| フィールド | 固定値 | 説明 |
+|-----------|--------|------|
+| `uid` / `gid` | `nslcd` | nslcd デーモンの実行ユーザ/グループ |
+| `tls_cacertfile` | `/etc/ssl/certs/ca-certificates.crt` | TLS CA 証明書バンドル |
+| `nss_initgroups_ignoreusers` | `ALLLOCAL` | ローカルユーザの initgroups スキップ |
+| `nss_min_uid` | `1000` | LDAP 経由で見えるユーザの最小 UID (システムアカウント除外) |
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 32758c44ab11 -->
