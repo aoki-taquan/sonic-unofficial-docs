@@ -385,3 +385,55 @@ journalctl -u macsecmgrd | grep -iE "fail|warn|Cannot"
 
 詳細調査: [`meta/_intermediate/cdb-flow/macsec-port-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-failure.md)
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp L27-49,L853 / sonic-swss/orchagent/macsecorch.cpp L24-42 -->
+
+### macsecmgr.cpp — プロセス起動パス定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `WPA_SUPPLICANT_CMD` | `"/sbin/wpa_supplicant"` | `startWPASupplicant()` で fork/exec する wpa_supplicant のフルパス | `macsecmgr.cpp:27` |
+| `WPA_CLI_CMD` | `"/sbin/wpa_cli"` | `wpa_cli_exec()` / `wpa_cli_exec_and_check()` で呼び出す wpa_cli のフルパス | `macsecmgr.cpp:28` |
+| `WPA_CONF` | `"/etc/wpa_supplicant.conf"` | wpa_supplicant 設定ファイルパス (起動引数として使用) | `macsecmgr.cpp:29` |
+| `SOCK_DIR` | `"/var/run/"` | wpa_supplicant ソケットディレクトリ。`SOCK_DIR + port_name` でパスを構成 | `macsecmgr.cpp:30` |
+
+### macsecmgr.cpp — wpa_supplicant 接続ポーリング定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `RETRY_TIME` | `30` (回) | wpa_supplicant ソケット接続の最大ポーリング回数。0 でタイムアウト判定 → `stopWPASupplicant()` | `macsecmgr.cpp:32` |
+| `RETRY_INTERVAL` | `100` ms | 各ポーリング間の待機時間。合計最大待機 = 30 × 100 = **3000 ms** | `macsecmgr.cpp:35` |
+| `MAX_INTERFACE_REMOVE_RETRIES` | `3` (回) | `unconfigureMACsec()` での wpa_cli `interface_remove` タイムアウト時のリトライ上限。各リトライ間は 10 秒待機。FAIL 応答は即時成功扱い | `macsecmgr.cpp:853` |
+
+### macsecmgr.cpp — AES キー長検証定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `AES_LEN_128_BYTE` | `66` bytes | AES-128 CAK エンコード済み文字列長。先頭 2 bytes = magic salt index、残り 64 bytes = 32 byte CAK エンコード | `macsecmgr.cpp:48` |
+| `AES_LEN_256_BYTE` | `130` bytes | AES-256 CAK エンコード済み文字列長。先頭 2 bytes = magic salt index、残り 128 bytes = 32 byte CAK エンコード | `macsecmgr.cpp:49` |
+
+### macsecorch.cpp — SAI MACsec オブジェクト初期値
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `DEFAULT_ENABLE_ENCRYPT` | `true` | MACsec Port 作成時の暗号化有効フラグ初期値 (`SAI_MACSEC_PORT_ATTR_ENABLE_ENCRYPT`) | `macsecorch.cpp:40,1424` |
+| `DEFAULT_SCI_IN_SECTAG` | `false` | SecTAG 内 SCI 包含フラグの初期値 | `macsecorch.cpp:41,1425` |
+| `DEFAULT_CIPHER_SUITE` | `SAI_MACSEC_CIPHER_SUITE_GCM_AES_128` | MACsec オブジェクト作成時のデフォルト暗号スイート。`MACSEC_PROFILE.cipher_suite` で上書きされる | `macsecorch.cpp:42,1426` |
+| `m_max_sa_per_sc` SAI fallback | `4` | `SAI_MACSEC_ATTR_MAX_SECURE_ASSOCIATIONS_PER_SC` 非対応 SAI 向けフォールバック値 | `macsecorch.cpp:1330-1331` |
+
+### macsecorch.cpp — ACL / Ethertype / 統計ポーリング定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `AVAILABLE_ACL_PRIORITIES_LIMITATION` | `32` | MACsec ポートに割り当て可能な ACL 優先度エントリの最大数 | `macsecorch.cpp:24` |
+| `EAPOL_ETHER_TYPE` | `0x888e` | EAPOL フレームの Ethertype。MKA ネゴシエーションパケット識別 | `macsecorch.cpp:25` |
+| `PAUSE_ETHER_TYPE` | `0x8808` | PAUSE フレームの Ethertype。PFC バイパス/暗号化制御で参照 | `macsecorch.cpp:26` |
+| `MACSEC_STAT_XPN_POLLING_INTERVAL_MS` | `1000` ms (1 秒) | XPN カウンタのポーリング間隔。ロールオーバー検出のため短めに設定 | `macsecorch.cpp:27` |
+| `MACSEC_STAT_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | 通常 MACsec 統計カウンタのポーリング間隔 | `macsecorch.cpp:28` |
+| `PFC_MODE_DEFAULT` | `"bypass"` | PFC モード未指定時のデフォルト。MACsec Port 有効化後も PFC フレームは暗号化せずバイパスする | `macsecorch.cpp:32,2714` |
+
+> **スキャン証跡**: `macsecmgr.cpp` L27-49, L853 精読。`macsecorch.cpp` L24-42, L646-669, L1330-1331, L1424-1426, L2714 精読。`macsecorch.h` L24 精読。定数 4 (パス) + 3 (ポーリング) + 2 (AES) + 4 (SAI) + 6 (ACL/Ethertype/stat) = 19 件抽出。中間ファイル: [`meta/_intermediate/cdb-flow/macsec-port-constants.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-constants.md)
+<!-- /constants -->
