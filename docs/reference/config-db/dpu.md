@@ -184,6 +184,44 @@ YANG `leafref` による明示的な参照は持たないが、orchagent / chass
   `DPU`・`REMOTE_DPU`・`VDPU` が揃っていない状態での HA 初期化は `WARN` ログを伴う不完全な状態になる。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/dash/dashenifwdorch.cpp`, `dashenifwdorch.h`,
+`sonic-net/sonic-host-services/scripts/caclmgrd`, `sonic-net/sonic-gnmi/pkg/interceptors/dpuproxy/resolver.go`
+
+### SET / 初期化における失敗経路
+
+| # | 失敗条件 | コンポーネント | 結果 | ログレベル | evidence |
+|---|----------|--------------|------|-----------|---------|
+| 1 | `state` / `pa_ipv4` のいずれかが欠如した `DPU` エントリ書き込み | `orchagent` (`DashEniFwdOrch`) | request reject、ENI フォワーディングルール未生成 | (Orch2 フレームワーク内部) | `dashenifwdorch.h:129-137` |
+| 2 | `DPU.state = "down"` | `orchagent` (`DpuRegistry`) | DpuRegistry に未登録、ENI→DPU 名前解決不可 | INFO (`"Skipping LOCAL DPU %s as its state is down"`) | `dashenifwdorch.cpp:244-251` |
+| 3 | 個別エントリ parse 例外 | `orchagent` (`DpuRegistry`) | 当該エントリをスキップ・orchagent 処理は継続 | ERROR (`"Failed to parse key:%s in the %s"`) | `dashenifwdorch.cpp:262-265` |
+| 4 | `VDPU.main_dpu_ids` に不正な DPU 名 | `orchagent` (`DpuRegistry`) | ENI→VDPU→DPU 解決失敗、WARN 出力、orchagent 継続 | WARN (`"Invalid DPU ID: %s, not found in DPU/REMOTE_DPU table"`) | `dashenifwdorch.cpp:338` |
+| 5 | `VIP_TABLE` エントリ不在（DPU フォワーディング初期化時） | `orchagent` | `SWSS_LOG_THROW` → orchagent クラッシュ + supervisord 再起動 | CRIT (THROW) | `dashenifwdorch.cpp:502` |
+| 6 | `swbus_port` フィールド欠如 | `caclmgrd` | iptables ルール未生成、DPU-to-DPU swbus 通信が DROP される可能性 | INFO (`"Received DPU configuration without swbus_port. Ignore it."`) | `caclmgrd:1096-1100` |
+| 7 | iptables コマンド実行失敗 | `caclmgrd` | 部分的なルール未適用、処理は継続（再試行なし） | ERROR (`"Error running command"`) | `caclmgrd:221, 226-238` |
+| 8 | DPU が `CHASSIS_MIDPLANE_TABLE` (STATE_DB) に不在 | `sonic-gnmi` DPU proxy | gNMI request が `NotFound` エラー | (gRPC ERROR) | `resolver.go:74-76` |
+| 9 | STATE_DB に `ip_address` フィールドなし | `sonic-gnmi` DPU proxy | gNMI request が `NotFound` エラー | (gRPC ERROR) | `resolver.go:80-83` |
+| 10 | `gnmi_port` フィールド欠如 (CONFIG_DB) | `sonic-gnmi` DPU proxy | `DefaultGNMIPort = "50052"` を使用（非エラー）; ポート不一致時のみ接続失敗 | なし | `resolver.go:97-100` |
+
+### DEL における挙動
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|----------|----------|------|---------|
+| `DPU` エントリ DEL — `caclmgrd` 側 | `update_dash_ha_rules()` `op == "DEL"` | `dashHaPortMap` にエントリがあれば `remove_dash_ha_rules()` で iptables ルール削除。なければ即 return | `caclmgrd:1083-1090` |
+| `DPU` エントリ DEL — orchagent 側 | `DpuRegistry` は起動時一括読み込みのみ | runtime の DEL イベントは orchagent に購読されていない。orchagent は再起動時のみ DPU テーブルを再読込 | `dashenifwdorch.cpp:212-220` |
+
+### 補足
+
+- **required_attributes (依存 #1)**: `dpu_table_desc` の `required_attributes` リスト `{ DashEniFwd::STATE, DashEniFwd::PA_V4 }` (`dashenifwdorch.h:136`) により、これらのフィールドが欠如した SET は Orch2 フレームワークが reject する。reject されたエントリは pending state に留まらず、単純に処理されない。フィールドを補完した後に SET を再送することで解消できる。
+- **state=down の影響範囲 (依存 #2)**: `DpuRegistry::processDpuTable()` は起動時の一括処理であるため、runtime 中の `state` フィールド更新は orchagent の内部マップには反映されない。`state = "up"` に修正した場合、orchagent の再起動または HA 再初期化が必要。
+- **VIP_TABLE 依存 (依存 #5)**: `VIP_TABLE` は `DPU` テーブルとは独立したテーブルだが、`DashEniFwdOrch` の ENI 処理経路で参照される。SmartSwitch では `platform.json` 経由で VIP が事前設定されることが期待されており、欠如は設定ミスを意味する。
+- **iptables 部分失敗 (依存 #7)**: `run_commands()` は失敗したコマンドのエラーをログ出力して次コマンドに進むため、iptables / ip6tables のどちらか片方のみルールが適用される部分的な状態が起こりうる。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/dpu-failure.md` を参照。
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
