@@ -389,3 +389,77 @@ evidence: sfloworch.cpp:119–150 (`sflowAddPort`), sfloworch.cpp:161–195 (`sf
 [^4]: 副次書込調査: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`SFLOW_SESSION` テーブルを中心とした購読・通知 API を `sflowmgrd.cpp`, `sflowmgr.h`, `sfloworch.cpp`, `orchdaemon.cpp` から導出した。
+
+> **調査根拠**: `sonic-swss/cfgmgr/sflowmgrd.cpp`, `sflowmgr.h`, `orchagent/sfloworch.cpp`, `orchagent/orchdaemon.cpp` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-pubsub.md`
+
+### CONFIG_DB → sflowmgrd（SubscriberStateTable）
+
+`sflowmgrd.cpp:31-34` で `TableConnector` を 4 本生成して `SflowMgr(Orch)` に渡す。
+
+```cpp
+TableConnector conf_port_table(&cfgDb, CFG_PORT_TABLE_NAME);
+TableConnector state_port_table(&stateDb, STATE_PORT_TABLE_NAME);
+TableConnector conf_sflow_table(&cfgDb, CFG_SFLOW_TABLE_NAME);
+TableConnector conf_sflow_session_table(&cfgDb, CFG_SFLOW_SESSION_TABLE_NAME);
+```
+
+`Orch` フレームワークが各 `TableConnector` を **`SubscriberStateTable`**（Redis keyspace 通知ベース）に変換し `swss::Select` ループで多重化する。CONFIG_DB の `SFLOW_SESSION|*` に HSET / DEL が発生すると Redis keyspace 通知が届き、`SflowMgr::doTask()` が呼ばれる。書き込み側（CLI / sonic-cfggen）は `HSET` のみ実行し、明示的な `PUBLISH` は行わない。
+
+### STATE_DB → sflowmgrd（oper_speed 変化追跡）
+
+`sflowmgrd.cpp:32`：`STATE_PORT_TABLE_NAME`（STATE_DB）も `SubscriberStateTable` で購読する。ポートの `oper_speed` フィールド変化を検知すると `sflowProcessOperSpeed()` が呼ばれ、`sample_rate` 未指定ポートの `APPL_SFLOW_SESSION_TABLE` エントリが自動更新される。**sflowmgrd は STATE_DB への書き込みを行わない**（一方向読み取り）。
+
+### sflowmgrd → APPL_DB（ProducerStateTable）
+
+`sflowmgr.h:39-40`：
+```cpp
+ProducerStateTable  m_appSflowTable;
+ProducerStateTable  m_appSflowSessionTable;
+```
+
+`m_appSflowSessionTable.set()` / `.del()` が APPL_DB `SFLOW_SESSION_TABLE` に書き込む。`ProducerStateTable` は内部で Redis Stream (`XADD`) と通知チャネルへの `PUBLISH` を自動実行する。
+
+### APPL_DB → SflowOrch（ConsumerStateTable）
+
+`orchdaemon.cpp:439-444`：
+
+```cpp
+vector<string> sflow_tables = {
+    APP_SFLOW_TABLE_NAME,
+    APP_SFLOW_SESSION_TABLE_NAME,
+    APP_SFLOW_SAMPLE_RATE_TABLE_NAME
+};
+SflowOrch *sflow_orch = new SflowOrch(m_applDb, sflow_tables);
+```
+
+`SflowOrch` は `Orch` 基底クラス経由で 3 テーブルを **`ConsumerStateTable`** として登録し、APPL_DB の通知チャネルを待ち受ける。`SFLOW_SESSION_TABLE` への変更を受信して `SflowOrch::doTask()` を呼び出す。
+
+### show sflow interface の APPL_DB 直接参照
+
+`show/sflow.py:51-52`：
+```python
+intf_key = 'SFLOW_SESSION_TABLE:' + pname
+sess_info = sess_db.get_all(sess_db.APPL_DB, intf_key)
+```
+
+`show sflow interface` は CONFIG_DB ではなく APPL_DB の `SFLOW_SESSION_TABLE` を HGETALL して表示する（pub/sub 非使用、read-through パターン）。
+
+### 通信メカニズム サマリ
+
+| 方向 | 送信側 | API | 受信側 | DB / テーブル |
+|------|-------|-----|-------|-------------|
+| CONFIG_DB → mgrd | CONFIG_DB (HSET/DEL) | Redis keyspace 通知 → `SubscriberStateTable` | sflowmgrd | `CONFIG_DB SFLOW_SESSION` |
+| STATE_DB → mgrd | STATE_DB (oper_speed) | Redis keyspace 通知 → `SubscriberStateTable` | sflowmgrd | `STATE_DB PORT_TABLE` |
+| mgrd → APPL_DB | sflowmgrd | `ProducerStateTable.set()` / `.del()` | SflowOrch | `APPL_DB SFLOW_SESSION_TABLE` |
+| APPL_DB → orch | APPL_DB (Stream + PUBLISH) | `ConsumerStateTable` | SflowOrch | `APPL_DB SFLOW_SESSION_TABLE` |
+| show CLI | show sflow interface | Redis HGETALL (read-through) | — | `APPL_DB SFLOW_SESSION_TABLE` |
+
+`NotificationProducer` / `NotificationConsumer` は SFLOW_SESSION の経路では一切使用しない。
+
+<!-- /pubsub -->

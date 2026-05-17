@@ -185,6 +185,46 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-sids-failure.md`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ | 自動回復 |
+|---------|---------|------|------|---------|
+| ロケータ名が `SRV6_MY_LOCATORS` に未存在 | `managers_srv6.py:62-69` | `return False`・依存購読登録 | `log_warn` | **あり**（ロケータ登録後に自動再試行） |
+| SID プレフィックスがロケータのサブネット外 | `managers_srv6.py:74-76` | `return False`（恒久失敗） | `log_err` | **なし** |
+| `action` フィールド未指定 | `managers_srv6.py:78-80` | `return False` | `log_err` | **なし** |
+| `action` が `uN`/`uDT46` 以外の未サポート値（bgpcfgd） | `managers_srv6.py:82-84` | `return False` | `log_err` | **なし** |
+| `action` が `end_behavior_map` に存在しない（Srv6Orch） | `srv6orch.cpp:1369-1376` | `return false`（MY_SID 未作成） | `SWSS_LOG_ERROR` | **なし** |
+| `decap_vrf` が `"default"` 以外かつ VRF 未存在 | `srv6orch.cpp:1498-1502` | `return false`（MY_SID 未作成） | `SWSS_LOG_ERROR("VRF %s doesn't exist in DB")` | **なし** |
+| `decap_vrf` の SAI OID が `SAI_NULL_OBJECT_ID` | `srv6orch.cpp:1492-1496` | `return false` | `SWSS_LOG_ERROR("VRF object not created for DT VRF %s")` | **なし** |
+| nexthop（`end.x`/`ua` 等）が未解決 | `srv6orch.cpp:1524-1543` | `m_pendingSRv6MySIDEntries` に保留・`return false` | `SWSS_LOG_INFO` | **あり**（Neighbor ADD 時に自動再インストール） |
+| ECMP adjacency（カンマ区切り複数 adj） | `srv6orch.cpp:1516-1519` | `return false`（未サポート） | `SWSS_LOG_ERROR("ECMP adjacency not yet supported")` | **なし** |
+| `decap_dscp_mode` に `"uniform"`/`"pipe"` 以外の値 | `srv6orch.cpp:388-392` | キャッシュ登録スキップ | `SWSS_LOG_ERROR("Invalid MySID %s DSCP mode: %s")` | **なし** |
+| IPinIP トンネル作成失敗（`uN`/`uDT46` + `decap_dscp_mode` 指定時） | `srv6orch.cpp:1554-1565` | `return false`（MY_SID 未作成） | `SWSS_LOG_ERROR("Failed to create … IPinIP tunnel")` | **なし** |
+| SAI `create_my_sid_entry` 失敗 | `srv6orch.cpp:1607-1611` | `return false` | `SWSS_LOG_ERROR("Failed to create my_sid entry %s, rv %d")` | **なし** |
+| SAI カウンタ作成失敗（カウンタ有効時） | `srv6orch.cpp:1595-1599` | `return false`（MY_SID 未作成） | `SWSS_LOG_ERROR("Failed to create SAI counter for SRv6 MySID entry")` | **なし** |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ |
+|---------|---------|------|------|
+| 存在しない SID の削除要求 | `srv6orch.cpp:1660-1663` | `return false` | `SWSS_LOG_ERROR("My_sid_entry doesn't exist for %s")` |
+| SAI `remove_my_sid_entry` 失敗 | `srv6orch.cpp:1670-1673` | `return false`（ASIC に残存） | `SWSS_LOG_ERROR("Failed to delete my_sid entry rv %d")` |
+| IPinIP Tunnel Term エントリ削除失敗 | `srv6orch.cpp:1698-1701` | `return false`（テーブル未消去） | `SWSS_LOG_ERROR("Failed to remove tunnel termination entry for MySID entry")` |
+| bgpcfgd 側で未存在 SID の削除 | `managers_srv6.py:122-124` | silent skip | `log_warn` |
+
+### 運用上の注意：孤立状態
+
+- **ロケータより先に SID を削除しなかった場合**: `locators_del_handler()` はロケータ削除時に SID エントリを自動削除しない。SID が bgpcfgd キャッシュに残留し FRR 設定が不整合となる（`managers_srv6.py:106-115`）。
+- **VRF 削除前に SID が残存する場合**: VRFOrch refcount が正のまま VRF 削除がブロックされる（`srv6orch.cpp:1639, 1683`）。
+- **Neighbor 消失時の自動 ASIC 削除**: nexthop が消えると `updateNeighbor()` が MY_SID を ASIC から自動削除し `m_pendingSRv6MySIDEntries` に保留する（`srv6orch.cpp:1272-1342`）。Neighbor 再出現時に自動復元されるためユーザー介入は不要。
+
+<!-- /failure -->
+
 ## 設定例
 
 ```json
