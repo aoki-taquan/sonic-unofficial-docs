@@ -149,6 +149,32 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashTagMgr::from_
 
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### SET 時: 外部テーブル先行不要
+
+`taskUpdateDashPrefixTag()` は受信した protobuf を `DashTagMgr::create()` / `update()` に渡すだけで、他テーブルの先行存在確認・ポート初期化待ち (allPortsReady 相当) は一切行わない。orchagent 起動直後から処理可能。<!-- evidence: dashaclorch.cpp L283–311, dashtagmgr.cpp L30–70 -->
+
+### SET 時: ACL rule より PREFIX_TAG を先に送信すること
+
+`DashAclGroupMgr::createRule()` は `src_tag` / `dst_tag` の各タグ名について `DashTagMgr::exists()` を確認し、タグが未存在なら `task_need_retry` を返す。コントローラは ACL rule を送信するより前に対応する PREFIX_TAG を作成しなければならない。タグが後から到着した場合は次のイベントループで rule が自動再処理される。<!-- evidence: dashaclgroupmgr.cpp L393–409 -->
+
+### DEL 時: ACL rule / group → PREFIX_TAG の順で削除すること
+
+`DashTagMgr::remove()` はタグの `m_groups` が非空（ACL group から参照中）の間 `task_need_retry` を返す。DEL の推奨順序は `DASH_ACL_RULE_TABLE` → `DASH_ACL_GROUP_TABLE` → `DASH_PREFIX_TAG_TABLE`。逆順に送ると PREFIX_TAG の DEL が無限 retry になる。<!-- evidence: dashtagmgr.cpp L84–88 -->
+
+### 順序依存サマリ
+
+| # | 依存関係 | 対象フロー | 違反時の挙動 |
+|---|----------|-----------|------------|
+| 1 | 外部テーブル依存なし | SET | 制約なし、即処理可 |
+| 2 | `DASH_PREFIX_TAG_TABLE` を ACL rule より先に SET | SET (コントローラ送信順) | ACL rule が `task_need_retry` で待機 → タグ作成後に自動再処理 |
+| 3 | ACL rule / group を先に DEL してから PREFIX_TAG を DEL | DEL (コントローラ送信順) | `m_groups` 非空 → PREFIX_TAG の DEL が `task_need_retry` (無限 retry) |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/dash-prefix-tag-ordering.md`
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/dash/dashtagmgr.cpp` — `from_pb`, `DashTagMgr::create/update/remove/attach/detach` 実装。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/dash/dashtagmgr.cpp>
