@@ -128,6 +128,52 @@ STATE_DB:  TUNNEL_DECAP_TERM_TABLE|<tunnel_name>|<dst_ip_prefix>
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+TUNNEL_DECAP_TERM_TABLE エントリを書き込む際に守るべき順序制約を実装から導出した。
+
+### 全体ガード
+
+`TunnelDecapOrch::doTask()` の先頭で `gPortsOrch->allPortsReady()` が false の場合、TUNNEL_DECAP_TABLE と TUNNEL_DECAP_TERM_TABLE の両方が即 return される。ports 初期化完了前のエントリはキューに留まり、初期化後に自動再処理される (`tunneldecaporch.cpp` L55-57)。
+
+### 先行必須テーブル (SET 時)
+
+| 依存テーブル / 条件 | 理由 | 緩和策 | evidence |
+|---|---|---|---|
+| PortsOrch 初期化完了 (`allPortsReady()`) | doTask() 先頭ガード — false なら TERM 処理もスキップ | なし（自動待機） | `tunneldecaporch.cpp` L55-57 |
+| `TUNNEL_DECAP_TABLE:<tunnel_name>` SET 済み | `tunnel_exists` が false の場合 `addUnhandledDecapTunnelTerm()` に保留。トンネル本体作成成功後に `processUnhandledDecapTunnelTerms()` で一括再処理 | **前後逆でも自動調停** | `tunneldecaporch.cpp` L511-521, L1497-1520 |
+| subnet decap term の場合: `SUBNET_DECAP` で `enable=true` + `src_ip`/`src_ip_v6` 設定済み | `subnetDecapConfig.enable` が false だとエントリを消費してスキップ。`src_ip` 未設定でも消費スキップ | TUNNEL_DECAP_TERM_TABLE SET 前に SUBNET_DECAP を先に SET する | `tunneldecaporch.cpp` L501-514 |
+
+### SET / DEL の推奨順序
+
+```
+# SET 時 (推奨)
+TUNNEL_DECAP_TABLE:<tunnel_name> SET   ← 先
+TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip> SET
+
+# DEL 時 (必須)
+TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip> DEL   ← 先
+TUNNEL_DECAP_TABLE:<tunnel_name> DEL
+```
+
+TERM が先に届いた場合: `unhandledDecapTerms` キューに積まれ (`"tunnel doesn't exist, added to unhandled list."` を LOG_NOTICE)、トンネル本体 SET 成功後の `processUnhandledDecapTunnelTerms()` で自動処理される。機能上の問題はないが、ログにエラーが残る。
+
+DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。TERM が残存したままトンネル本体を DEL すると SAI リソースリークのリスクがある。**TERM を先に DEL すること**。
+
+### TERM エントリの更新
+
+`TUNNEL_DECAP_TERM_TABLE` は既存エントリの更新 (SET on existing key) を明示サポートしない。変更が必要な場合は DEL → SET の順で再作成すること。
+
+!!! warning "subnet decap term の書き込み順"
+    subnet decap 用の TERM (`IPINIP_SUBNET` / `IPINIP_SUBNET_V6`) を書き込む場合、
+    `SUBNET_DECAP` テーブルで `enable=true` かつ `src_ip`/`src_ip_v6` が設定済みでないと
+    エントリが消費されてスキップされる（リトライなし）。SUBNET_DECAP を先に SET すること。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-ordering.md`
+
+<!-- /ordering -->
+
 ## 購読者
 
 - `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) `create_tunnel_term_table_entry()` / `remove_tunnel_term_table_entry()` を呼び出す
