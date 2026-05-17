@@ -102,6 +102,47 @@ DASH_VNET|<name>
 
 <!-- /value-behavior -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`DashVnetOrch` (`dashvnetorch.cpp`) は SET/DEL 操作の処理中に複数の外部テーブル存在チェックを行う。
+これらが失敗すると当該エントリを消費キューに残してリトライ待ちとなる。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `DASH_APPLIANCE` SET → `DASH_VNET` SET | **必須先行**（欠如時 `addVnet()` がリトライ待ち・SAI 反映なし） | `DASH_APPLIANCE` 追加後の次イベントループで自動解消 |
+| 2 | `DASH_VNET` SAI 反映完了 → `DASH_VNET_MAPPING_TABLE` SET | **必須先行**（`gVnetNameToId` 未登録の間は `addVnetMap()` がリトライ待ち） | VNET 作成後の次イベントループで自動解消 |
+| 3 | `DASH_ROUTE_TYPE` SET → `DASH_VNET_MAPPING_TABLE` SET | **必須先行**（`routing_type` 未解決の間は `addOutboundCaToPa()` がリトライ待ち） | ROUTE_TYPE 追加後の次イベントループで自動解消 |
+| 4 | `DASH_TUNNEL` / `DASH_PORT_MAP` SET → `DASH_VNET_MAPPING_TABLE` SET (PRIVATELINK) | **必須先行**（OID 未解決の間は `addOutboundCaToPa()` がリトライ待ち） | 依存リソース追加後の次イベントループで自動解消 |
+| 5 | `DASH_VNET_MAPPING_TABLE` DEL → `DASH_VNET` DEL | **推奨先行**（VNET 先行 DEL は `underlay_ips` 参照不整合のリスク） | 逆順でも SAI 側参照カウントで部分的に保護される |
+
+### 主要な制約詳細
+
+**DASH_APPLIANCE 先行必須 (依存 #1)**: `addVnet()` (dashvnetorch.cpp:63-68) は
+`DashOrch::hasApplianceEntry()` が `false` の場合、即 `return false` して消費キューに残す。
+`DASH_VNET` を書く前に必ず `DASH_APPLIANCE` エントリを先に作成すること。
+後から `DASH_APPLIANCE` を追加した場合は次イベントループで自動的に VNET 処理が再試行される。
+
+**VNET_MAPPING の VNET 依存 (依存 #2)**: `addVnetMap()` (dashvnetorch.cpp:489-494) はグローバル
+マップ `gVnetNameToId` を参照する。このマップには `addVnetPost()` (L101) で VNET の SAI 作成成功後に
+エントリが追加される。`DASH_VNET_MAPPING_TABLE` の SET は VNET の SAI 反映完了後に行うこと。
+
+**推奨 SET 順序**:
+
+```
+DASH_APPLIANCE → DASH_ROUTE_TYPE [→ DASH_TUNNEL / DASH_PORT_MAP] → DASH_VNET → DASH_VNET_MAPPING_TABLE
+```
+
+**推奨 DEL 順序**:
+
+```
+DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
+```
+
+<!-- /ordering -->
+
 ## 設定例
 
 ```json
