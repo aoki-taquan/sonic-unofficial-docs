@@ -268,3 +268,45 @@ DEL DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<pfx>:<prio>
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-ordering.md`
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DashRouteOrch` はエントリ処理時に複数の外部テーブル / in-memory マップを暗黙的に参照する。YANG 定義がないため制約はコードのみで表現されている。
+
+### DASH_ROUTE_TABLE (アウトバウンド LPM ルート)
+
+| 参照元フィールド | 参照先テーブル | 参照方法 | 参照条件 | 参照箇所 |
+|---|---|---|---|---|
+| キー先頭 `<group_id>` | `DASH_ROUTE_GROUP_TABLE` | `route_group_oid_map_` 内 OID 解決 | 常時（`SAI_NULL_OBJECT_ID` → リトライ） | `dashrouteorch.cpp:70–74` |
+| `vnet` フィールド | `DASH_VNET_TABLE` | `gVnetNameToId` グローバルマップ | `routing_type=vnet` かつ `has_vnet()` | `dashrouteorch.cpp:78–84` |
+| `vnet_direct.vnet` | `DASH_VNET_TABLE` | `gVnetNameToId` グローバルマップ | `routing_type=vnet_direct` かつ `has_vnet_direct()` | `dashrouteorch.cpp:86–93` |
+| `tunnel` フィールド | `DASH_TUNNEL_TABLE` | `DashTunnelOrch::getTunnelOid()` | `has_tunnel()` が true | `dashrouteorch.cpp:171–183` |
+
+### DASH_ROUTE_RULE_TABLE (インバウンドルートルール)
+
+| 参照元フィールド | 参照先テーブル | 参照方法 | 参照条件 | 参照箇所 |
+|---|---|---|---|---|
+| キー先頭 `<eni>` | `DASH_ENI_TABLE` | `DashOrch::getEni()` | 常時（nullptr → リトライ） | `dashrouteorch.cpp:425–428` |
+| `vnet` フィールド | `DASH_VNET_TABLE` | `gVnetNameToId` グローバルマップ | `has_vnet()` が true | `dashrouteorch.cpp:430–433` |
+
+### DASH_ROUTE_GROUP_TABLE (ルートグループ)
+
+| 参照先 | 参照方向 | 内容 |
+|---|---|---|
+| `DASH_ENI_ROUTE_TABLE` | **被参照**（逆方向） | `DashEniFwdOrch` が `DASH_ENI_ROUTE_TABLE` SET 時に `bindRouteGroup()` を呼ぶ。DEL 時に `unbindRouteGroup()` を呼ぶ |
+| `DASH_ROUTE_TABLE` | **被参照**（逆方向） | ルートは `route_group_oid_map_` を通じてグループ OID を取得する |
+
+### CRM リソースカウンタ
+
+| テーブル / 操作 | カウンタ | 参照箇所 |
+|---|---|---|
+| `DASH_ROUTE_TABLE` 追加成功 | `CRM_DASH_IPV4/IPV6_OUTBOUND_ROUTING` inc | `dashrouteorch.cpp:220` |
+| `DASH_ROUTE_TABLE` 削除成功 | `CRM_DASH_IPV4/IPV6_OUTBOUND_ROUTING` dec | `dashrouteorch.cpp:262` |
+| `DASH_ROUTE_RULE_TABLE` 追加成功 | `CRM_DASH_IPV4/IPV6_INBOUND_ROUTING` inc | `dashrouteorch.cpp:507` |
+| `DASH_ROUTE_RULE_TABLE` 削除成功 | `CRM_DASH_IPV4/IPV6_INBOUND_ROUTING` dec | `dashrouteorch.cpp:546` |
+
+`DASH_ROUTE_GROUP_TABLE` は CRM カウンタ未使用。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-cross-refs.md`
+<!-- /cross-refs -->
