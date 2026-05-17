@@ -310,3 +310,66 @@ DEL DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<pfx>:<prio>
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+`DashRouteOrch` (`dashrouteorch.cpp`) の各テーブルハンドラにおける失敗分岐を網羅する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/dash-routing-table-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/dash-routing-table-failure.md)。
+
+### DASH_ROUTE_TABLE — SET 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| protobuf パース失敗 | `doTaskRouteTable()` L320-324 | `erase(it)` 永続消費 | なし |
+| ルートグループ未登録 | `addOutboundRouting()` L70-74 | `return false` → `it++` → 自動再試行 | グループ作成まで無制限 |
+| ルートグループがバインド中（SET） | `addOutboundRouting()` L65-69 | `return true`（成功扱い erase）+ WARN。SAI 未登録のまま result DB に SUCCESS | なし（静かに無視） |
+| VNET 未登録（routing_type=vnet / vnet_direct） | `addOutboundRouting()` L78-93 | `return false` → `it++` → 自動再試行 | VNET 登録まで無制限 |
+| routing_type が sOutboundAction マップ外 | `addOutboundRouting()` L103-108 | `return false` + WARN → 永続残留（解消不可） | 事実上無制限 |
+| 必須属性欠落（vnet 空 / overlay_ip 欠落） | `addOutboundRouting()` L142-147 | `return false` + WARN → 永続残留 | 解消不可 |
+| tunnel 未登録（has_tunnel() = true） | `addOutboundRouting()` L171-178 | `return false` → `it++` → 自動再試行 | トンネル作成まで無制限 |
+| IP 変換失敗（`to_sai()` 失敗） | `addOutboundRouting()` L136-139, L152-156 | `return false` → 永続残留 | 解消不可 |
+| SAI create 失敗（`ITEM_ALREADY_EXISTS`） | `addOutboundRoutingPost()` L206-209 | `return false` → bulker 再実行 | 無制限 |
+| SAI create 失敗（その他） | `addOutboundRoutingPost()` L212-217 | `SWSS_LOG_ERROR` + `handleSaiCreateStatus()` | SAI API 依存 |
+
+### DASH_ROUTE_TABLE — DEL 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| ルートグループがバインド中（DEL） | `removeOutboundRouting()` L231-235 | `return false` + WARN → **永続再試行ループ** | ENI バインド解除まで無制限 |
+| SAI remove 失敗（`NOT_EXECUTED`） | `removeOutboundRoutingPost()` L266-269 | `return false` → 自動再試行 | 無制限 |
+| SAI remove 失敗（その他） | `removeOutboundRoutingPost()` L271-276 | `SWSS_LOG_ERROR` + `handleSaiRemoveStatus()` | SAI API 依存 |
+
+### DASH_ROUTE_RULE_TABLE 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| protobuf パース失敗 | `doTaskRouteRuleTable()` L631-635 | `erase(it)` 永続消費 | なし |
+| ENI 未登録（`getEni()` = nullptr） | `addInboundRouting()` L425-429 | `return false` → 自動再試行 | ENI 作成まで無制限 |
+| VNET 未登録（`gVnetNameToId` miss） | `addInboundRouting()` L430-434 | `return false` → 自動再試行 | VNET 登録まで無制限 |
+| SAI create 失敗（`ITEM_ALREADY_EXISTS`） | `addInboundRoutingPost()` L493-496 | `return false` → bulker 再実行 | 無制限 |
+| SAI create 失敗（その他） | `addInboundRoutingPost()` L499-504 | `SWSS_LOG_ERROR` + `handleSaiCreateStatus()` | SAI API 依存 |
+| SAI remove 失敗（`NOT_EXECUTED`） | `removeInboundRoutingPost()` L550-553 | `return false` → 自動再試行 | 無制限 |
+| SAI remove 失敗（その他） | `removeInboundRoutingPost()` L555-559 | `SWSS_LOG_ERROR` + `handleSaiRemoveStatus()` | SAI API 依存 |
+
+### DASH_ROUTE_GROUP_TABLE 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| protobuf パース失敗 | `doTaskRouteGroupTable()` L858-862 | `erase(it)` 永続消費 | なし |
+| グループ既存（idempotent SET） | `addRouteGroup()` L727-731 | `return true` + WARN（再作成しない）| なし |
+| SAI create 失敗 | `addRouteGroup()` L735-742 | `SWSS_LOG_ERROR` + result=FAILURE 書き込み | SAI API 依存 |
+| バインド中グループ削除 | `removeRouteGroup()` L755-758 | `return false` + WARN → **永続再試行ループ** | ENI バインド解除まで無制限 |
+| グループ既存せず（idempotent DEL） | `removeRouteGroup()` L762-766 | `return true`（idempotent）| なし |
+| SAI remove 失敗（`OBJECT_IN_USE`） | `removeRouteGroup()` L772-774 | `return false` → 再試行ループ | SAI 側 in-use 解消まで無制限 |
+| SAI remove 失敗（その他） | `removeRouteGroup()` L776-780 | `SWSS_LOG_ERROR` + `handleSaiRemoveStatus()` | SAI API 依存 |
+
+### 非対称挙動の注意点
+
+!!! warning "バインド中ルートグループへの SET は成功扱いで無視される"
+    `addOutboundRouting()` はバインド中グループへのルート追加を `return true`（成功）で処理し、result DB にも `DASH_RESULT_SUCCESS` を書き込む。しかし SAI への登録は行われない。SDN コントローラ側からは成功に見えるが実態は未設定という乖離が生じる。
+
+!!! warning "バインド中ルートグループからの DEL は永続ループ"
+    `removeOutboundRouting()` はバインド中グループからのルート削除を `return false` で処理し永続再試行する。`DASH_ENI_ROUTE_TABLE` DEL でバインドを解除するまで orchagent の m_toSync に残留し続ける。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-failure.md`
+<!-- /failure -->
