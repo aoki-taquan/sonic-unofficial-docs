@@ -419,6 +419,69 @@ buffer pool
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-failure.md -->
+
+### retry パターン概要
+
+バッファカウンタに関係するタスクは `BufferOrch::processBufferPool()` / `processBufferProfile()` が `task_process_status` を返し、`Consumer` ベースのタスクキュー (`m_toSync`) で管理される。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **`task_need_retry`** | プール/プロファイル参照先未作成・削除対象が参照中・SAI 一時失敗 | `m_toSync` に残し次 `doTask()` で自動再試行。上限なし |
+| **`task_invalid_entry`** | `type`/`mode` フィールド値不正・malformed key | エントリ削除。retry なし |
+| **`task_failed`** | 参照解決内部エラー・パース失敗・不整合な構成値 | エントリ削除。retry なし |
+| **`task_ignore`** | SAI `set_buffer_pool_attribute` で `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` | silent skip。エラー扱いなし |
+
+### BUFFER_POOL SET / DEL の失敗詳細
+
+#### type / mode フィールド不正
+
+- `type` が `ingress`/`egress` 以外: `SWSS_LOG_ERROR "Unknown pool type specified: ..."` → `task_invalid_entry`。(`bufferorch.cpp:457-458`)
+- `mode` が `static`/`dynamic`/`fallback` 以外: `SWSS_LOG_ERROR "Unknown pool mode specified: ..."` → `task_invalid_entry`。(`bufferorch.cpp:484-485`)
+
+#### SAI SET 失敗
+
+SAI `set_buffer_pool_attribute` が `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` を返した場合は `task_ignore`（`SWSS_LOG_NOTICE`）。それ以外のエラーは `handleSaiSetStatus(SAI_API_BUFFER, sai_status)` 経由で通常 `task_need_retry` になる。(`bufferorch.cpp:505-517`)
+
+#### SAI CREATE 失敗
+
+SAI `create_buffer_pool` 失敗時は `handleSaiCreateStatus(SAI_API_BUFFER, sai_status)` 経由で通常 `task_need_retry`。`SWSS_LOG_ERROR "Failed to create buffer pool ... rv:%d"` を出力。(`bufferorch.cpp:528-534`)
+
+#### DEL — 参照中プールの pending remove
+
+プールが `BUFFER_PROFILE` 等から参照中の場合、`isObjectBeingReferenced()` が `true` を返し `m_pendingRemove = true` にセットして `task_need_retry` を返す。参照が解除された後の次 `doTask()` で実際の `remove_buffer_pool` が実行される。(`bufferorch.cpp:561-567`)
+
+### BUFFER_PROFILE SET の失敗詳細
+
+#### プール参照未解決
+
+`buffer_pool_field_name` の参照先がまだ作成されていない (`not_resolved`): `SWSS_LOG_INFO "Missing or invalid pool reference specified"` → `task_need_retry`。`BUFFER_POOL` エントリ作成後に自動再試行される。(`bufferorch.cpp:648-651`)
+
+#### フィールドパース失敗 / mode 不正
+
+- `size`/`xon`/`xoff`/`xon_offset` 等の数値パース失敗: `SWSS_LOG_ERROR "Failed to parse buffer profile ... invalid value ..."` → `task_failed`。(`bufferorch.cpp:740-743`)
+- `mode` 不正値: `SWSS_LOG_ERROR "Failed to process buffer profile ... unknown mode ..."` → `task_failed`。(`bufferorch.cpp:759-763`)
+
+### watermarkorch の失敗挙動
+
+`WatermarkOrch` は設定更新の DEL 操作を **サポートしない**（警告ログのみで無視）。`interval` 以外の未知フィールドを受信した場合も `SWSS_LOG_WARN "Unsupported key: ..."` で無視する。ウォーターマーク clear request で不明な op/data を受信した場合も警告のみでクリア実行なし。(`watermarkorch.cpp:83-87, 110, 180, 228`)
+
+### Lua plugin ロード失敗の無音継続
+
+`initFlexCounterGroupTable()` で `watermark_bufferpool.lua` のロードが `runtime_error` を投げた場合、catch して `SWSS_LOG_ERROR` を出力し処理を継続する。この場合 Lua による `max()` 集計は機能せず、`PERIODIC/PERSISTENT/USER_WATERMARKS` テーブルへの書き込みが行われない。`COUNTERS:<oid>` への直値書き込みも syncd が行わないため、実質的にバッファプールウォーターマークが収集されなくなる。(`bufferorch.cpp:235-244`)
+
+!!! warning "Lua plugin 未登録時の無音継続"
+    `initFlexCounterGroupTable()` は `runtime_error` を catch して処理継続するため、Lua 登録失敗はログのみで orchagent はクラッシュしない。運用上、ウォーターマークが取れない場合は `orchagent.err` の `SWSS_LOG_ERROR "Buffer pool watermark lua script ... not set successfully"` を確認すること。
+
+### Buffer Pool クリア能力の差異による単調増加
+
+`generateBufferPoolWatermarkCounterIdList()` 内でプールごとに `sai_buffer_api->clear_buffer_pool_stats()` を試行し、`SAI_STATUS_NOT_SUPPORTED` / `SAI_STATUS_NOT_IMPLEMENTED` が返ったプールはクリアフラグをオフにする。全プールでクリア未対応の場合はグループ全体が `READ` モードとなり、ウォーターマーク値は**単調増加し続ける**。(`bufferorch.cpp:318-356`)
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
