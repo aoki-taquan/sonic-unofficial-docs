@@ -202,3 +202,69 @@ sai_status_t status = sai_dash_outbound_routing_api->create_outbound_routing_gro
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-defaults.md`
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+`DashRouteOrch` (`dashrouteorch.cpp`) は依存オブジェクトが未作成の場合に `return false` でリトライキューに戻す設計になっている。以下の依存関係に従ってエントリを投入すること。
+
+### 1. DASH_ROUTE_GROUP_TABLE が DASH_ROUTE_TABLE より先行必須
+
+`addOutboundRouting()` は最初に `getRouteGroupOid(route_group)` を呼び出し、`SAI_NULL_OBJECT_ID` が返ると自動リトライとなる。`DASH_ROUTE_GROUP_TABLE|<group_id>` の SAI 作成完了前に `DASH_ROUTE_TABLE` エントリを投入するとキューに残留し続ける。
+
+> コード根拠: `dashrouteorch.cpp:70–74`
+
+### 2. DASH_ENI_TABLE が DASH_ROUTE_RULE_TABLE より先行必須
+
+`addInboundRouting()` は `dash_orch_->getEni(eni)` が nullptr を返すと自動リトライ。`DASH_ENI_TABLE|<eni>` の SAI 作成完了後に `DASH_ROUTE_RULE_TABLE` を投入すること。
+
+> コード根拠: `dashrouteorch.cpp:425–428`
+
+### 3. DASH_VNET_TABLE が DASH_ROUTE_TABLE / DASH_ROUTE_RULE_TABLE より先行必須
+
+`routing_type=vnet` / `vnet_direct` のアウトバウンドルート、および `vnet` フィールドを持つインバウンドルールは `gVnetNameToId` にエントリが存在しないと自動リトライ。`DashVnetOrch` が `DASH_VNET_TABLE` 処理時に同マップへ登録する。
+
+> コード根拠: `dashrouteorch.cpp:78–92`（Outbound）、`dashrouteorch.cpp:429–433`（Inbound）
+
+### 4. DASH_TUNNEL_TABLE が DASH_ROUTE_TABLE (tunnel フィールド付き) より先行必須
+
+`routing_type=direct` でトンネル転送を使う場合、`getTunnelOid(tunnel)` が `SAI_NULL_OBJECT_ID` を返すと自動リトライ。対応する `DASH_TUNNEL_TABLE` エントリを先に作成すること。
+
+> コード根拠: `dashrouteorch.cpp:173–178`
+
+### 5. ルートグループが ENI にバインド中は変更・削除が不可（自動リトライなし）
+
+`isRouteGroupBound()` が true のとき `addOutboundRouting()` / `removeOutboundRouting()` / `removeRouteGroup()` はいずれも `SWSS_LOG_WARN` を出力して `return false` を返す。このケースは自動リトライではなくエラー扱いのため、`DASH_ENI_ROUTE_TABLE` DEL でバインドを解除してから操作すること。
+
+> コード根拠: `dashrouteorch.cpp:65–68, 231–236, 751–758`
+
+### 推奨 SET 順序
+
+```
+DASH_ROUTE_GROUP_TABLE|<group_id>              # グループ先行作成
+DASH_ROUTE_TABLE|<group_id>:<prefix>           # アウトバウンドルート（VNET / TUNNEL 登録後）
+DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<pfx>:<prio> # インバウンドルール（ENI / VNET 登録後）
+```
+
+### 推奨 DEL 順序
+
+```
+DEL DASH_ENI_ROUTE_TABLE|<eni>                    # ENI バインド解除（先行）
+DEL DASH_ROUTE_TABLE|<group>:<prefix>             # バインド解除後にルート削除
+DEL DASH_ROUTE_GROUP_TABLE|<group_id>             # ルート全削除後にグループ削除
+DEL DASH_ROUTE_RULE_TABLE|<eni>:<vni>:<pfx>:<prio>
+```
+
+### 順序依存サマリ
+
+| # | 先行テーブル / 操作 | 後続テーブル / 操作 | 緩和策 |
+|---|-------------------|-------------------|--------|
+| 1 | `DASH_ROUTE_GROUP_TABLE` SAI 完了 | `DASH_ROUTE_TABLE` SET | OID null → 自動リトライ |
+| 2 | `DASH_ENI_TABLE` SAI 完了 | `DASH_ROUTE_RULE_TABLE` SET | ENI null → 自動リトライ |
+| 3 | `DASH_VNET_TABLE` SAI 完了 | `DASH_ROUTE_TABLE` / `DASH_ROUTE_RULE_TABLE` (vnet) SET | `gVnetNameToId` miss → 自動リトライ |
+| 4 | `DASH_TUNNEL_TABLE` SAI 完了 | `DASH_ROUTE_TABLE` (tunnel) SET | OID null → 自動リトライ |
+| 5 | `DASH_ENI_ROUTE_TABLE` DEL | ルートグループ内の ROUTE 変更・削除 | バインド中は WARN のみ・自動リトライなし |
+| 6 | `DASH_ROUTE_TABLE` 全削除 | `DASH_ROUTE_GROUP_TABLE` DEL | バインドカウントで管理 |
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-ordering.md`
+<!-- /ordering -->
