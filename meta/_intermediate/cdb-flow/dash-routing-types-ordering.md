@@ -1,82 +1,102 @@
-# DASH_ROUTING_TYPE_TABLE — Phase B 書込み順依存スキャンノート
+# DASH_ROUTING_TYPE — Phase B 書込み順依存スキャンノート
 
-対象テーブル: `DASH_ROUTING_TYPE_TABLE`
-Consumer: `DashOrch` (`sonic-swss/orchagent/dash/dashorch.cpp`)
-参照元: `DashVnetOrch::addOutboundCaToPa()` (`dashvnetorch.cpp:300-410`)
-スキャン範囲: `doTaskRoutingTypeTable()`, `addRoutingTypeEntry()`, `removeRoutingTypeEntry()`, `getRouteTypeActions()`, `DashVnetOrch::addOutboundCaToPa()` 全行精読
+調査日: 2026-05-17
+対象テーブル: APPL_DB `DASH_ROUTING_TYPE_TABLE` (YANG: CONFIG_DB `DASH_ROUTING_TYPE`)
+Consumer: `DashOrch::doTaskRoutingTypeTable()` (`sonic-swss/orchagent/dash/dashorch.cpp`)
+スキャン範囲: dashorch.cpp L82-94, L441-537, L1346; dashvnetorch.cpp L300-410, L771
 
 ---
 
 ## 検出した順序依存・タイミング依存
 
-### 1. DASH_ROUTING_TYPE_TABLE が DASH_VNET_MAPPING_TABLE より先行必須
+### 1. DASH_ROUTING_TYPE は外部テーブル依存なし（自己完結）
 
-`DashVnetOrch::addOutboundCaToPa()` (`dashvnetorch.cpp:313-319`) は冒頭で `DashOrch::getRouteTypeActions()` を呼び出す。
-この関数は `routing_type_entries_` マップを参照し、該当エントリが存在しない場合 `false` を返す。
-呼び出し元は `return false` を受けてリトライキューに戻す設計（implicit retry）。
+`addRoutingTypeEntry()` (`dashorch.cpp:441-455`) は外部 orchagent の状態を一切参照しない。
+受信した protobuf を `routing_type_entries_` マップに格納するのみ。
 
-**順序依存**: `DASH_VNET_MAPPING_TABLE` エントリを書き込む前に、参照先の routing type が `DASH_ROUTING_TYPE_TABLE` 経由で `routing_type_entries_` に登録されている必要がある。
-登録がない場合、VNET マッピングは consumer キューに残り次の doTask() ループで自動再試行される。
+- `parsePbMessage()` によるデシリアライズ失敗時のみエントリを erase してスキップ（再試行なし）
+- 既存エントリへの上書きを WARN + `return true` でサイレントスキップ（再試行なし）
+- `doTaskRoutingTypeTable()` は DASH_APPLIANCE / DASH_VNET 等の前後に関係なく処理できる
 
-> コード根拠: `dashvnetorch.cpp:313–319`
+**順序依存**: DASH_ROUTING_TYPE_TABLE の SET 自体は前提テーブルなし。
 
-### 2. DASH_ROUTING_TYPE_TABLE は他のテーブルに依存しない（自立登録）
+---
 
-`addRoutingTypeEntry()` (`dashorch.cpp:441-455`) は `routing_type_entries_` マップへの単純な挿入のみを行う。
-他の DASH テーブル (`DASH_APPLIANCE_TABLE`, `DASH_ENI_TABLE`, `DASH_VNET_TABLE` 等) の存在を確認しない。
-つまり **DASH_ROUTING_TYPE_TABLE は最初に書き込める**テーブルであり、他テーブルへの先行依存はない。
+### 2. DASH_VNET_MAPPING_TABLE は DASH_ROUTING_TYPE の先行設定を必須とする（逆依存）
 
-> コード根拠: `dashorch.cpp:441–455`
+`DashVnetOrch::addOutboundCaToPa()` (`dashvnetorch.cpp:313-317`):
 
-### 3. DashRouteOrch のアウトバウンドルーティングは routing_type_entries_ を参照しない
-
-`DashRouteOrch::addOutboundRoutingEntry()` (`dashrouteorch.cpp:70-160`) は `sOutboundAction` という静的マップ（コンパイル時定数）でルーティング型を SAI アクションに変換する。`DashOrch::getRouteTypeActions()` を呼ばないため、`DASH_ROUTE_TABLE` / `DASH_ROUTE_RULE_TABLE` / `DASH_ROUTE_GROUP_TABLE` は `routing_type_entries_` の存在に依存しない。
-
-> コード根拠: `dashrouteorch.cpp:42–46, 103–106`
-
-### 4. 既存エントリへの上書き不可（DEL → SET が必要）
-
-`addRoutingTypeEntry()` は `routing_type_entries_.find()` で既存チェックを行い、存在する場合は `SWSS_LOG_WARN` を出して `return true` でサイレントスキップする (`dashorch.cpp:445-449`)。
-Consumer キューからは削除されるため、orchagent 視点では「成功」として扱われるが、実際には**更新が反映されない**。
-
-**運用上の順序依存**: routing type の変更が必要な場合、`DEL` を先に投入して `routing_type_entries_` から削除してから `SET` を再投入する必要がある。
-DEL 後に即座に SET を投入しても、ZMQ Consumer のキュー処理順序上 DEL → SET の順が保証されていれば問題ない。
-
-> コード根拠: `dashorch.cpp:445–449`, `dashorch.cpp:457–469`
-
-### 5. 削除時の参照カスケード問題（実装上の注意）
-
-`removeRoutingTypeEntry()` (`dashorch.cpp:457-469`) は `routing_type_entries_` からエントリを即時削除して `return true` を返す。
-`DASH_VNET_MAPPING_TABLE` がその routing type を参照している場合でも、SAI レベルでのチェックはなく orchagent 側ではガードされない。
-
-削除後に新たな `DASH_VNET_MAPPING_TABLE` 書き込みが来ると `getRouteTypeActions()` が `false` を返してリトライとなるが、既存のプログラム済み VNET マッピングは SAI / DPU ハードウェア側に残る（孤立エントリ）。
-
-**推奨削除順序**:
-```
-[1] DASH_VNET_MAPPING_TABLE — DEL（全参照エントリを先に削除）
-    ↓
-[2] DASH_ROUTING_TYPE_TABLE — DEL
+```cpp
+DashOrch* dash_orch = gDirectory.get<DashOrch*>();
+dash::route_type::RouteType route_type_actions;
+if (!dash_orch->getRouteTypeActions(ctxt.metadata.routing_type(), route_type_actions))
+{
+    SWSS_LOG_INFO("Failed to get route type actions for %s", key.c_str());
+    return false;  // 呼び出し元が it++ で再試行
+}
 ```
 
-> コード根拠: `dashorch.cpp:457–469`, `dashvnetorch.cpp:313–319`
+`getRouteTypeActions()` (`dashorch.cpp:82-94`) は `routing_type_entries_` に該当エントリが
+存在しない場合 `SWSS_LOG_WARN` + `return false` を返す。
+`addOutboundCaToPa()` が `false` を返すと上位の `doTask()` が `it++` で
+エントリを保留し次の ConsumerBase 周回で自動再試行する（無限ポーリング）。
 
-### 6. warm-reboot 時の再適用順序
+**順序依存**:
+```
+DASH_ROUTING_TYPE_TABLE|<routing_type>  SET 完了（routing_type_entries_ に格納済み）
+  ↓
+DASH_VNET_MAPPING_TABLE|<vnet>:<ip>  SET
+```
 
-`DashOrch` は `addOrchList` に登録されており (`orchdaemon.cpp:1414`)、`warmRestoreAndSyncUp()` の doTask() 3 イテレーションの対象となる。
-`m_orchList` の登録順序は `DashAclOrch → DashVnetOrch → DashRouteOrch → DashOrch → ...` であり (`orchdaemon.cpp:1412-1420`)、`DashOrch` は **DashVnetOrch より後に処理される**。
+**違反時**: `DASH_VNET_MAPPING_TABLE` の SET は保留され、`DASH_ROUTING_TYPE_TABLE` が
+登録されると自動的に処理再開される（無限ポーリングで自動回復）。
 
-warm-reboot 後のリプレイ時、SDN コントローラが再送する順序は `DASH_ROUTING_TYPE_TABLE` → `DASH_VNET_MAPPING_TABLE` の順であることが望ましい。
-orchagent 側の `addOrchList` 登録順で `DashVnetOrch` が `DashOrch` より先に処理されるため、`DASH_VNET_MAPPING_TABLE` エントリが先にキューに積まれると `getRouteTypeActions()` miss でリトライが発生するが、次のイテレーションで `DashOrch` が `routing_type_entries_` を補充するため、3 イテレーション以内に解消する設計となっている。
+---
 
-> コード根拠: `orchdaemon.cpp:1412–1420`
+### 3. DEL 時の逆順推奨（参照先を先に削除しない）
+
+`removeRoutingTypeEntry()` (`dashorch.cpp:457-471`) は `routing_type_entries_` から即時削除する。
+`DASH_VNET_MAPPING_TABLE` のエントリが残ったまま参照先の ROUTING_TYPE を削除すると、
+当該 VNET Mapping の再 SET または orchagent 再起動時に `getRouteTypeActions()` が `false` を返し
+VNET Mapping が反映されなくなる。
+
+**推奨 DEL 順序**:
+```
+DASH_VNET_MAPPING_TABLE|<vnet>:<ip>  DEL  先行（推奨）
+  ↓
+DASH_ROUTING_TYPE_TABLE|<routing_type>  DEL
+```
+
+**違反時**: 機能的には ROUTING_TYPE のみの削除は SAI に即時影響しない（orchagent はメモリから除去するだけ）。
+ただし VNET Mapping の再設定時に ROUTING_TYPE が存在しない状態になり Mapping が再試行待ちになる。
+
+---
+
+### 4. DASH_ROUTE_TABLE との依存関係（依存なし）
+
+`dashrouteorch.cpp:43-46` で `routing_type` を SAI アクション (`SAI_OUTBOUND_ROUTING_ENTRY_ACTION_*`)
+に変換するための静的 map が定義されているが、`getRouteTypeActions()` を呼ぶのではなく
+enum 値を直接 map lookup するため、`routing_type_entries_` には依存しない。
+
+**順序依存**: DASH_ROUTE_TABLE と DASH_ROUTING_TYPE_TABLE の間に先行依存関係はない。
 
 ---
 
 ## 順序依存サマリ
 
-| # | 先行テーブル / 操作 | 後続テーブル / 操作 | 緩和策 |
-|---|-------------------|-------------------|--------|
-| 1 | `DASH_ROUTING_TYPE_TABLE` 登録 | `DASH_VNET_MAPPING_TABLE` 書込 | routing type 未登録 → VnetMap がリトライキューに残る |
-| 2 | なし（先行依存なし） | `DASH_ROUTING_TYPE_TABLE` | 他テーブルへの依存ゼロ・任意のタイミングで書込可 |
-| 3 | `DASH_ROUTING_TYPE_TABLE` DEL | `DASH_ROUTING_TYPE_TABLE` SET（変更時） | DEL 後に SET を再投入（DEL→SET 順守） |
-| 4 | `DASH_VNET_MAPPING_TABLE` DEL | `DASH_ROUTING_TYPE_TABLE` DEL | 先に参照元 VNET マッピングを削除しないと孤立エントリが残る |
+| # | 依存関係 | 方向 | 違反時挙動 |
+|---|----------|------|-----------|
+| 1 | DASH_ROUTING_TYPE_TABLE SET 自体に前提テーブルなし | — | — |
+| 2 | DASH_ROUTING_TYPE_TABLE SET → DASH_VNET_MAPPING_TABLE SET | 強制先行（自動再試行で自動回復） | VNET Mapping が保留され自動回復 |
+| 3 | DASH_VNET_MAPPING_TABLE DEL → DASH_ROUTING_TYPE_TABLE DEL | 推奨先行（違反しても即時影響なし） | VNET Mapping 再設定時に再試行待ち |
+| 4 | DASH_ROUTE_TABLE との依存なし | — | — |
+
+---
+
+## evidence
+
+- `dashorch.cpp:441-455` — `addRoutingTypeEntry()` 外部依存なし
+- `dashorch.cpp:82-94` — `getRouteTypeActions()` miss 時 false
+- `dashorch.cpp:473-537` — `doTaskRoutingTypeTable()` erase/skip パス
+- `dashvnetorch.cpp:313-319` — `addOutboundCaToPa()` での getRouteTypeActions 呼び出し
+- `dashrouteorch.cpp:43-46` — routing_type の静的 map (getRouteTypeActions 非依存)
