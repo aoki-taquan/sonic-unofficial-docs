@@ -163,6 +163,44 @@ SmartSwitch では `ips` が使用され、各 DPU に `169.254.200.<dpu_id+1>` 
 
 ---
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`MID_PLANE_BRIDGE` および `DHCP_SERVER_IPV4_PORT` は CONFIG_DB の複数テーブルを YANG leafref
+またはコード側の implicit 参照で依存する。
+
+| 参照元テーブル | 参照元フィールド | 参照先テーブル | 参照先フィールド | 参照種別 | 参照箇所 |
+|---|---|---|---|---|---|
+| `DHCP_SERVER_IPV4` | `name` (SmartSwitch 用値 `"bridge-midplane"`) | `MID_PLANE_BRIDGE\|GLOBAL` | `bridge` | YANG leafref | `sonic-dhcp-server-ipv4.yang:61-63` |
+| `DHCP_SERVER_IPV4_PORT` | `name` | `DHCP_SERVER_IPV4` | `name` (キー) | YANG leafref | `sonic-dhcp-server-ipv4.yang:217-219` |
+| `DHCP_SERVER_IPV4_PORT` | `port` (`dpu0` 等) | `DPUS` | `midplane_interface` | YANG leafref | `sonic-dhcp-server-ipv4.yang:231-233` |
+| `dhcpservd` (コード) | — | `DEVICE_METADATA` | `localhost.subtype` | 暗黙参照 | `dhcp_cfggen.py:65-67` |
+| `dhcpservd` (コード) | — | `DPUS` | `midplane_interface` | 暗黙参照 | `dhcp_cfggen.py:74,119` |
+| `dhcprelayd` (コード) | — | `DHCP_SERVER_IPV4` | `state` | 暗黙参照 | `dhcprelayd.py:82-103` |
+
+### 解決タイミング
+
+- YANG leafref は CONFIG_DB への書き込み時に `sonic-cfggen` / CLI の YANG バリデーションで確認される。
+  参照先が存在しない場合は書き込みが reject される。
+- `dhcpservd` の暗黙参照は `generate()` 呼び出し時 (起動時 + テーブル変更イベント時) に評価される。
+  `DEVICE_METADATA.subtype` が `"SmartSwitch"` でない場合、`MID_PLANE_BRIDGE` / `DPUS` /
+  `DHCP_SERVER_IPV4_PORT` への参照コードは実行されない。
+
+### 必須先行順序
+
+```text
+DEVICE_METADATA|localhost.subtype = "SmartSwitch"   ← SmartSwitch 経路を有効化
+DPUS|<dpu_name>                                      ← DHCP_SERVER_IPV4_PORT.port の leafref 源
+MID_PLANE_BRIDGE|GLOBAL                              ← DHCP_SERVER_IPV4.name の leafref 源
+DHCP_SERVER_IPV4|bridge-midplane                    ← DHCP_SERVER_IPV4_PORT.name の leafref 源
+DHCP_SERVER_IPV4_PORT|bridge-midplane|<dpu>         ← 全依存が揃ってから書き込む
+```
+
+詳細は `meta/_intermediate/cdb-flow/smart-switch-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
+---
+
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
 
