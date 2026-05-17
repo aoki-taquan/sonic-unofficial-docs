@@ -133,6 +133,38 @@ YANG `default` 文を持たないフィールドについて、`containercfgd` (
 <!-- evidence: sonic-utilities/config/syslog.py:476-477, containercfgd/containercfgd.py:48,121,133-135 -->
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `containercfgd.py`・`feature.py`・`rsyslog-container.conf.j2` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-feature-cross-refs.md`
+
+`SYSLOG_CONFIG_FEATURE` テーブルは実行時に以下のテーブルを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `FEATURE\|<service>` | CONFIG_DB | 読み取り (leafref + CLI バリデーション) | あり | **必須** | `sonic-syslog.yang` leafref / `config/syslog.py:476-477` |
+| `SYSLOG_CONFIG\|GLOBAL` | CONFIG_DB | 読み取り (フォールバック値) | なし | 推奨 | `rsyslog-container.conf.j2` `\|default('300')` / `\|default('20000')` |
+| `FEATURE\|<service>.support_syslog_rate_limit` | CONFIG_DB | 読み取り (登録可否ガード) | なし | 任意 | `feature.py:register_syslog_config()` 呼び出し条件 |
+
+### FEATURE テーブル — 必須先行条件
+
+YANG `sonic-syslog.yang` の `leaf service` が `FEATURE_LIST.name` を `leafref` 参照するため、`FEATURE` テーブルへの登録が YANG レベルで必須。CLI `config syslog rate-limit-container <service>` は `service_validator(features, service_name)` で `FEATURE` テーブルを照合し、未登録 service は `ClickException` で拒否する (`config/syslog.py:476-477`)[^cross-cli]。`containercfgd` の `handle_config()` も `key != service_name` の early return により自コンテナのエントリのみを処理し、他コンテナのエントリを無視する構造になっている。
+
+### SYSLOG_CONFIG|GLOBAL — フォールバック値の提供元
+
+`containercfgd` は `sonic-cfggen -d -t rsyslog-container.conf.j2` を実行して各コンテナの `/etc/rsyslog.conf` を再生成する (`containercfgd.py:156`)。テンプレートでは `SYSLOG_CONFIG_FEATURE[container_name].rate_limit_interval` が未定義の場合に `|default('300')`、`rate_limit_burst` には `|default('20000')` が適用される[^cross-j2]。`SYSLOG_CONFIG|GLOBAL` 自体は `containercfgd` が直接購読しないが、`sonic-cfggen -d` が渡す DB スナップショットに含まれる。
+
+### FEATURE.support_syslog_rate_limit — パッケージ登録連動
+
+`sonic_package_manager` の `FeatureRegistry.register()` は manifest の `syslog.support-rate-limit` フラグが `true` のときのみ `SYSLOG_CONFIG_FEATURE|<service>` にデフォルト値 (`rate_limit_interval=300`, `rate_limit_burst=20000`) を書き込む (`feature.py:register_syslog_config()`)[^cross-pkg]。Feature 削除時 (`deregister()`) は対応する `SYSLOG_CONFIG_FEATURE` エントリを同時削除する。ビルド時は `init_cfg.json.j2` が全対象 feature の `SYSLOG_CONFIG_FEATURE` エントリを生成する。
+
+[^cross-cli]: `sonic-utilities/config/syslog.py` (`service_validator` 呼び出し, L476-477). <https://github.com/sonic-net/sonic-utilities/blob/master/config/syslog.py>
+[^cross-j2]: `sonic-buildimage/files/image_config/rsyslog/rsyslog-container.conf.j2` (`default` フィルタ). <https://github.com/sonic-net/sonic-buildimage/blob/master/files/image_config/rsyslog/rsyslog-container.conf.j2>
+[^cross-pkg]: `sonic-utilities/sonic_package_manager/service_creator/feature.py` (`register_syslog_config`). <https://github.com/sonic-net/sonic-utilities/blob/master/sonic_package_manager/service_creator/feature.py>
+
+<!-- /cross-refs -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
