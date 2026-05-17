@@ -269,6 +269,51 @@ CONFIG_DB の VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO テーブルから読み込ま�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`PortsOrch::addTunnel()` / `addBridgePort()` / `VxlanTunnelOrch` がトンネルポート生成・削除時に引き起こす副次的な DB 書込とシステム副作用。
+
+| 副次 DB | テーブル / キー | トリガ | タイミング |
+|---------|--------------|--------|----------|
+| STATE_DB | `VXLAN_TUNNEL_TABLE\|<tunnel_name>` (`operstatus`: `up`/`down`) | SAI ポートステータス変化イベント → `updateDbTunnelOperStatus()` (vxlanorch.cpp:1893) | トンネルポート生成後、アンダーレイ経路確立時に非同期 |
+| COUNTERS_DB | `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` | `doTask(SelectableTimer)` → `m_tunnelNameTable->set()` / `m_tunnelTypeTable->set()` (vxlanorch.cpp:1322–1335) | `addTunnelToFlexCounter()` 登録後、最大 1 秒遅延 (SelectableTimer 発火まで) |
+| ASIC_DB (SAI) | `SAI_OBJECT_TYPE_BRIDGE_PORT:<oid>` | `sai_bridge_api->create_bridge_port()` via `addBridgePort()` (portsorch.cpp:7258) | `addBridgePort()` 呼出と同期 |
+| APPL_DB | なし | `VxlanTunnelOrch` / `PortsOrch` の `addTunnel()` / `addBridgePort()` に APPL_DB 書込なし | — |
+| CONFIG_DB | なし | 読取専用。書戻しなし | — |
+
+### 詳細: STATE_DB 書込シーケンス
+
+`addTunnel()` / `addBridgePort()` 自体は STATE_DB を触らない。STATE_DB への `operstatus` 書込は下記の経路で非同期に発生する:
+
+```
+SAI ポートステータス変化イベント
+  → VxlanTunnelOrch::updateDbTunnelOperStatus(tunnel_portname, status)
+  → getTunnelNameFromPort(tunnel_portname, tunnel_name)  ← Port_EVPN_* → EVPN_* へ変換
+  → m_stateVxlanTable.set(tunnel_name, [{"operstatus", "up"|"down"}])
+  → STATE_DB::VXLAN_TUNNEL_TABLE|<tunnel_name>
+```
+
+トンネルポート生成直後は常に `SAI_PORT_OPER_STATUS_DOWN` 初期値（`portsorch.cpp:8373`）で始まり、アンダーレイの BGP/IGP ルートが到達可能になった時点で `up` に遷移する[^1]。
+
+### 詳細: COUNTERS_DB 書込と FlexCounter
+
+`addTunnelToFlexCounter(oid, name)` (vxlanorch.cpp:1342) は `m_pendingAddToFlexCntr[oid] = name` に追加するのみ。実際の COUNTERS_DB 書込は `doTask(SelectableTimer)` が `FLEX_COUNTER_UPD_INTERVAL` (1 秒) ごとに発火した際に行われる:
+
+- `COUNTERS_DB::COUNTERS_TUNNEL_NAME_MAP`: `{tunnel_name → sai_oid}` マッピング追加
+- `COUNTERS_DB::COUNTERS_TUNNEL_TYPE_MAP`: `{sai_oid → "SAI_TUNNEL_TYPE_VXLAN"}` 追加
+- `tunnel_stat_manager->setCounterIdList(oid, CounterType::TUNNEL, stats)`: FLEX_COUNTER_DB 登録
+
+対象は **VxlanTunnel SAI オブジェクト OID** (tunnel_id) であり、Port::TUNNEL ブリッジポート OID (bridge_port_id) ではない。
+
+### 詳細: Observer 通知
+
+`addBridgePort()` 終端 (portsorch.cpp:7280–7281) が `SUBJECT_TYPE_BRIDGE_PORT_CHANGE` 通知を発行する。購読者は `IsolationGroupOrch` のみ (isolationgrouporch.cpp:233)。`IsolationGroupOrch` は Port::TUNNEL 型を特別扱いしないため、通知は到達するが実質的な副作用は発生しない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-side.md`
+
+<!-- /side-effects -->
+
 ## 例外条件・特殊挙動
 
 - **二重生成の防止**: `getTunnelPort()` が既存エントリを発見した場合 `addTunnel()` を呼ばない。ポートは 1 remote VTEP につき 1 つのみ存在する (`vxlanorch.cpp:1715`)。
