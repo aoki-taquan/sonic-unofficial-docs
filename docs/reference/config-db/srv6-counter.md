@@ -534,4 +534,61 @@ NotificationConsumer: なし  /  ConsumerStateTable: なし  /  TTL/expire: な�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム依存挙動 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/srv6orch.cpp:120-155,251-259,1595
+               sonic-swss/orchagent/main.cpp:84,529-532 -->
+
+### SAI 能力クエリ（起動時一回限り）
+
+`Srv6Orch::initializeCounters()` は `queryMySidCountersCapability()` (`srv6orch.cpp:144-155`) を呼び出し、`sai_query_attribute_capability()` で以下の 2 条件を確認する[^ph1]:
+
+| 確認項目 | SAI 属性 |
+|---------|---------|
+| MySID エントリへのカウンタ属性セット可否 | `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` の `set_implemented` |
+| MySID エントリ作成時のカウンタ属性指定可否 | `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` の `create_implemented` |
+
+両方 true かつクエリ成功 → `m_mysid_counters_supported = true`（カウンタ機能全体が有効化）。
+それ以外 → `m_mysid_counters_supported = false`（`SWSS_LOG_INFO("SRv6 counters are not supported on this platform")`）。
+
+**このフラグは再起動なしに変更不可**（起動時一回のみ評価）。
+
+### m_mysid_counters_supported が false の場合の挙動
+
+| コードパス | 挙動 |
+|-----------|------|
+| `setCountersState(enable)` | `SWSS_LOG_WARN("Ignoring SRv6 counters state change as they are not supported on this platform")` → 即 return。CONFIG_DB の `enable` 書き込みは silent drop |
+| `doTaskMySidTable()` (MySID 追加時) | `m_mysid_counters_enabled && m_mysid_counters_supported` が false → `addMySidCounter()` を呼ばない |
+| `initializeCounters()` | `m_asic_db` / `m_counter_db` / `m_counter_update_timer` の初期化をスキップ |
+
+### gTraditionalFlexCounter モード差異
+
+`orchagent -c traditional` 起動オプション (`main.cpp:529-532`) で `gTraditionalFlexCounter = true`（デフォルト `false`）[^ph2]。
+
+| フラグ | `initializeCounters()` | `doTask(SelectableTimer)` の OID 登録 |
+|--------|------------------------|--------------------------------------|
+| `false`（デフォルト・現行 master） | `m_vid_to_rid_table` を初期化しない | `m_pending_counters` の全 OID を即座に `setCounterIdList()` で登録 |
+| `true`（旧互換） | `m_vid_to_rid_table = Table(ASIC_DB, "VIDTORID")` を初期化 | ASIC_DB `VIDTORID` に OID が現れるまで登録を保留（タイマー次回 tick に再試行） |
+
+`gTraditionalFlexCounter = true` は syncd の SAI redis 通信モードが "traditional" のレガシー構成のみ使用。現行 SONiC master ではデフォルト `false`。
+
+### 確認方法
+
+```bash
+# SAI 能力クエリ結果を orchagent ログで確認
+journalctl -u swss --no-pager | grep -i "SRv6 counters"
+# → "SRv6 counters are not supported on this platform" が出れば非対応プラットフォーム
+
+# FlexCounter モード確認
+ps aux | grep orchagent | grep -o -- '-c [a-z]*'
+# → "-c traditional" が出れば gTraditionalFlexCounter = true
+```
+
+[^ph1]: `Srv6Orch::queryMySidCountersCapability()` — `sai_query_attribute_capability(gSwitchId, SAI_OBJECT_TYPE_MY_SID_ENTRY, SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, &capability)` の結果で `capability.set_implemented && capability.create_implemented` を返す。`sonic-swss/orchagent/srv6orch.cpp:144-155`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/srv6orch.cpp>
+
+[^ph2]: `gTraditionalFlexCounter` — `orchagent/main.cpp:84`（デフォルト `false`）、`main.cpp:529-532`（`-c traditional` 引数で `true`）。`sonic-swss/orchagent/main.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/main.cpp>
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: srv6-counter-page -->
