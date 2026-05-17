@@ -143,6 +143,40 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DASH_VNET` 自体は他テーブルへの YANG leafref を持たない（参照元ではなく**参照先**）。
+他テーブルから `DASH_VNET|<name>` への YANG leafref と、実装レベルの暗黙依存を以下に示す。
+
+### YANG leafref（DASH_VNET を参照する側）
+
+| 参照元テーブル | leafref フィールド | 参照条件 | YANG evidence |
+|--------------|-------------------|---------|----------------|
+| `DASH_ENI` | `vnet` | 常時（ENI が所属する VNET） | `sonic-dash.yang:153-155` |
+| `DASH_VNET_MAPPING_TABLE` | `vnet` (key) | 常時（マッピング対象 VNET） | `sonic-dash.yang:482-484` |
+| `DASH_ROUTE_TABLE` | `vnet` | `action_type = 'vnet'` or `'vnet_direct'` のとき | `sonic-dash.yang:428-430` |
+
+これらの leafref により、CLI 経由での `DASH_ENI` / `DASH_VNET_MAPPING_TABLE` / `DASH_ROUTE_TABLE`
+書き込み時に、対応する `DASH_VNET` エントリが存在しない場合は YANG バリデーションで reject される。
+
+### 実装レベルの暗黙参照
+
+| 参照先リソース | 参照方向 | 条件 | evidence |
+|--------------|---------|------|----------|
+| `DASH_APPLIANCE`（`DashOrch::hasApplianceEntry()`） | 存在確認（ハードブロック） | `DASH_VNET` SET 時に常時チェック。`false` なら `addVnet()` がリトライ待ち | `dashvnetorch.cpp:63-68` |
+| `gVnetNameToId` グローバルマップ | 書き込み（VNET 作成時）/ 消去（VNET 削除時） | `addVnetPost()` 成功時に登録。`DASH_VNET_MAPPING_TABLE` の `addVnetMap()` が同マップを参照 | `dashvnetorch.cpp:101, 167` |
+| `CrmOrch` (`CRM_DASH_VNET` カウンタ) | refcount 更新 | VNET SAI 作成成功時 `inc`、削除成功時 `dec` | `dashvnetorch.cpp:103, 164` |
+
+!!! note "DASH_VNET_MAPPING_TABLE の追加参照"
+    `DASH_VNET_MAPPING_TABLE` のオーケストレーションは以下も参照する（DASH_VNET の間接依存）:
+
+    - `DASH_ROUTE_TYPE` — `getRouteTypeActions()` で routing_type を解決 (`dashvnetorch.cpp:314-319`)
+    - `DASH_TUNNEL` — `DashTunnelOrch::getTunnelOid()` でトンネル OID を解決 (`dashvnetorch.cpp:354-365`、`has_tunnel()` が true のとき)
+    - `DASH_PORT_MAP` — `DashPortMapOrch::getPortMapOid()` でポートマップ OID を解決 (`dashvnetorch.cpp:409-422`、PRIVATELINK + `has_port_map()` が true のとき)
+
+<!-- /cross-refs -->
+
 ## 設定例
 
 ```json
