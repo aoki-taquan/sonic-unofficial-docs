@@ -324,6 +324,78 @@ MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+コードに直書きされており、`config_db.json` での変更が効かない定数。変更にはコードのリコンパイルが必要。
+
+### schema.h テーブル名マクロ
+
+| マクロ | 値 | 定義場所 |
+|--------|----|---------|
+| `STATE_TUNNEL_DECAP_TABLE_NAME` | `"TUNNEL_DECAP_TABLE"` | `sonic-swss-common/common/schema.h:488` |
+| `STATE_TUNNEL_DECAP_TERM_TABLE_NAME` | `"TUNNEL_DECAP_TERM_TABLE"` | `sonic-swss-common/common/schema.h:489` |
+| `STATE_VXLAN_TUNNEL_TABLE_NAME` | `"VXLAN_TUNNEL_TABLE"` | `sonic-swss-common/common/schema.h:435` |
+| `STATE_VXLAN_TABLE_NAME` | `"VXLAN_TABLE"` | `sonic-swss-common/common/schema.h:434` |
+
+### キー区切り文字
+
+| 定数 | 値 | 定義場所 | 用途 |
+|------|----|---------|------|
+| `state_db_key_delimiter` | `'|'` | `orchagent/orch.h:38` | `TUNNEL_DECAP_TERM_TABLE` のキーを `<tunnel_name>\|<dst_ip>` に組み立てる |
+
+### TUNNEL_DECAP_TABLE フィールド有効値
+
+| フィールド | 有効値 | 備考 |
+|-----------|--------|------|
+| `tunnel_type` | `"IPINIP"` | 唯一の有効値。不一致は `valid=false` でエラー（`tunneldecaporch.cpp:127`） |
+| `dscp_mode` | `"uniform"` / `"pipe"` | いずれか以外はエラー（`tunneldecaporch.cpp:155`） |
+| `ecn_mode` | `"copy_from_outer"` / `"standard"` | いずれか以外はエラー（`tunneldecaporch.cpp:171`） |
+| `encap_ecn_mode` | `"standard"` | 唯一の有効値（`tunneldecaporch.cpp:187-189`） |
+| `ttl_mode` | `"uniform"` / `"pipe"` | いずれか以外はエラー（`tunneldecaporch.cpp:203`） |
+
+### TUNNEL_DECAP_TERM_TABLE — term_type 有効値
+
+| 値 | 内部 enum | デフォルト |
+|----|-----------|-----------|
+| `"P2P"` | `TUNNEL_TERM_TYPE_P2P` | — |
+| `"P2MP"` | `TUNNEL_TERM_TYPE_P2MP` | ○（省略時の変数初期値、`tunneldecaporch.cpp:361`） |
+| `"MP2MP"` | `TUNNEL_TERM_TYPE_MP2MP` | — |
+
+enum 定義: `tunneldecaporch.h:15-17`
+
+### VXLAN_TUNNEL_TABLE — フィールド値定数
+
+| フィールド | 値 | 条件 | 定義場所 |
+|-----------|-----|------|---------|
+| `operstatus` | `"down"` | トンネル初回作成時（`addRemoveStateTableEntry`） | `vxlanorch.cpp:1942` |
+| `operstatus` | `"up"` | ポート link-up イベント発生時（`updateDbTunnelOperStatus`） | `vxlanorch.cpp:1901` |
+| `operstatus` | `"down"` | ポート link-down イベント発生時 | `vxlanorch.cpp:1905` |
+| `tnl_src` | `"CLI"` | CONFIG_DB `VXLAN_TUNNEL` から手動設定されたトンネル | `vxlanorch.cpp:1935` |
+| `tnl_src` | `"EVPN"` | BGP EVPN 経由で動的に作成されたトンネル | `vxlanorch.cpp:1939` |
+
+`TNL_CREATION_SRC_CLI` / `TNL_CREATION_SRC_EVPN` enum 定義: `vxlanorch.h:53-55`
+
+### VXLAN_TABLE — フィールド値定数
+
+| フィールド | 値 | 条件 | 定義場所 |
+|-----------|-----|------|---------|
+| `state` | `"ok"` | `createVxlan()` 成功時のみ。失敗時は書き込まれない | `vxlanmgr.cpp:891` |
+
+### EVPN トンネル名プレフィックス定数
+
+EVPN 由来の動的トンネルは `EVPN_<vtep_ip>` 形式で VXLAN_TUNNEL_TABLE に登録される。
+
+| マクロ | 値 | 定義場所 |
+|--------|----|---------|
+| `LOCAL_TUNNEL_PORT_PREFIX` | `"Port_SRC_VTEP_"` | `vxlanorch.h:41` |
+| `EVPN_TUNNEL_PORT_PREFIX` | `"Port_EVPN_"` | `vxlanorch.h:42` |
+| `EVPN_TUNNEL_NAME_PREFIX` | `"EVPN_"` | `vxlanorch.h:43` |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-constants.md`
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: schema.h 定数定義: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L488-L489>
