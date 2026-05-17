@@ -218,6 +218,57 @@ VXLAN トンネルポートオブジェクト (`Port::TUNNEL`) は CONFIG_DB テ
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+CONFIG_DB の VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO テーブルから読み込まれず、コードに直書きされている定数。`config_db.json` での設定変更は効果なく、変更にはコードのリコンパイルが必要。
+
+### ポート名プレフィックス
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|----|---------|------|
+| `LOCAL_TUNNEL_PORT_PREFIX` | `"Port_SRC_VTEP_"` | `vxlanorch.h:41` | Local SRC VTEP ポート名の先頭文字列。`getTunnelPortName(vtep, local=true)` が vtep IP と連結して `"Port_SRC_VTEP_<vtep_ip>"` を生成 |
+| `EVPN_TUNNEL_PORT_PREFIX` | `"Port_EVPN_"` | `vxlanorch.h:42` | EVPN DIP トンネルポート名の先頭文字列。`getTunnelPortName(vtep, local=false)` が vtep IP と連結 |
+| `EVPN_TUNNEL_NAME_PREFIX` | `"EVPN_"` | `vxlanorch.h:43` | EVPN DIP トンネルオブジェクト (`VxlanTunnel` インスタンス) の名前プレフィックス。ポート名 (`Port_EVPN_*`) とは別オブジェクト |
+
+### VNI / VLAN 検証境界値
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|----|---------|------|
+| `MIN_VLAN_ID` | `1` | `vxlanorch.h:45` | VLAN ID 下限。`to_uint<sai_vlan_id_t>()` の範囲チェックで使用 |
+| `MAX_VLAN_ID` | `4095` | `vxlanorch.h:46` | VLAN ID 上限。超過は parse 時にエラー |
+| `MAX_VNI_ID` | `16777215` | `vxlanorch.h:48` | VNI 上限 (2^24 − 1)。`vni_id >= MAX_VNI_ID` の場合 `SWSS_LOG_ERROR` を出力し `return true`（恒久エラー）でリトライされない |
+
+### encap TTL・FlexCounter
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|----|---------|------|
+| `DEFAULT_TUNNEL_ENCAP_TTL` | `255` | `vxlanorch.h:49` | VXLAN encap パケットの TTL デフォルト値。YANG / CONFIG_DB に対応フィールドなし |
+| `TUNNEL_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"TUNNEL_STAT_COUNTER"` | `vxlanorch.h:39` | FlexCounterManager に登録するカウンタグループ名 |
+| `TUNNEL_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | `vxlanorch.h:40` | FlexCounter のポーリング間隔 (ms)。10 秒固定。CONFIG_DB から変更不可 |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` | `vxlanorch.cpp:36` | FlexCounter 更新タイマーの秒数 |
+
+### SAI 属性のハードコード値
+
+`PortsOrch::addTunnel()` / `PortsOrch::addBridgePort()` 内に直書きされた SAI 属性値。CONFIG_DB フィールドに対応しない。
+
+| SAI 属性 | 値 | 定義箇所 |
+|----------|----|---------|
+| `SAI_BRIDGE_PORT_ATTR_TYPE` | `SAI_BRIDGE_PORT_TYPE_TUNNEL` | `portsorch.cpp:7230` |
+| `SAI_BRIDGE_PORT_ATTR_BRIDGE_ID` | `m_default1QBridge` (デフォルト 1Q ブリッジ固定) | `portsorch.cpp:7238` |
+| `SAI_BRIDGE_PORT_ATTR_ADMIN_STATE` | `true` (UP) | `portsorch.cpp:7250` |
+| `SAI_BRIDGE_PORT_ATTR_FDB_LEARNING_MODE` | `SAI_BRIDGE_PORT_FDB_LEARNING_MODE_DISABLE` (`hwlearning=false` 固定) | `portsorch.cpp:8370` |
+| `m_oper_status` 初期値 | `SAI_PORT_OPER_STATUS_DOWN` | `portsorch.cpp:8373` |
+
+!!! warning "MAX_VNI_ID 超過は恒久エラー"
+    `vni_id >= MAX_VNI_ID` (≥ 2^24) のエントリは `VxlanTunnelMapOrch::addOperation()` が
+    `return true` を返すため、Orch の再試行キューに戻されない。
+    設定値の誤りは再起動してエントリを修正するまで回復しない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-constants.md`
+
+<!-- /constants -->
+
 ## 例外条件・特殊挙動
 
 - **二重生成の防止**: `getTunnelPort()` が既存エントリを発見した場合 `addTunnel()` を呼ばない。ポートは 1 remote VTEP につき 1 つのみ存在する (`vxlanorch.cpp:1715`)。
