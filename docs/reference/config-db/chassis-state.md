@@ -523,6 +523,62 @@ DP/CP 側フィールド名（`DP_STATE`、`CP_STATE`、`DP_UPDATE_TIME`、`CP_U
 > **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:36-111,876-884`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 / 外部影響 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-state-side-effects.md`
+
+`CHASSIS_STATE_DB` は `chassisd` が**書き込む先**のデータベースである。副次影響は「CHASSIS_STATE_DB への書き込みを受け取って下流が何を行うか」として整理する。
+
+### CHASSIS_FABRIC_ASIC_TABLE → asic_status.py によるサービス起動制御
+
+supervisor 上の `asic_status.py` が `SubscriberStateTable` で `CHASSIS_FABRIC_ASIC_TABLE` を購読する。chassisd がファブリック ASIC エントリを書き込むと supervisor のデータプレーンサービス（syncd / orchagent）の起動が許可される。エントリが存在しない限り、`asic_status.py` は起動待機ループを継続する。
+
+| CHASSIS_STATE_DB の状態 | asic_status.py の動作 |
+|------------------------|----------------------|
+| `CHASSIS_FABRIC_ASIC_TABLE` にエントリなし | サービス起動待機ループを継続 |
+| 全 ASIC エントリ SET | サービス起動を許可 |
+| ASIC エントリ DEL（モジュール offline） | DEL イベントを受け取るが サービス停止は行わない |
+
+`asic_status.py:40-44`
+
+### CHASSIS_FABRIC_ASIC_TABLE → `config chassis_modules` による systemd 制御
+
+`config chassis_modules shutdown/startup FABRIC-CARD*` (`sonic-utilities/config/chassis_modules.py:83-131`) が `CHASSIS_FABRIC_ASIC_TABLE` を走査して対象 ASIC リストを取得し、`swss@<asic>.service` を制御する。
+
+| `admin_status` | systemctl 操作 |
+|---------------|---------------|
+| `down` | `stop swss@<asic>` → `reset-failed + start` | 
+| `up` | `start swss@<asic>` |
+
+`CHASSIS_FABRIC_ASIC_TABLE` にエントリが存在しない（chassisd 未起動時など）と ASIC リストが空になり systemd 制御は実行されない。
+
+### DPU_STATE → DpuStateManagerTask による CP/DP 状態の自己更新
+
+`DpuStateManagerTask.task_worker()` (chassisd:1477-1529) が `CHASSIS_STATE_DB DPU_STATE` テーブルを購読し、midplane state の変化を検知すると `DpuStateUpdater.update_state()` を呼び出して `dpu_data_plane_state` / `dpu_control_plane_state` を更新する。同一状態なら書き込みなし。他 DPU の変化はスキップ (chassisd:1509-1510)。
+
+### CHASSIS_MODULE_TABLE (hostname_table) → CHASSIS_APP_DB クリーンアップ
+
+supervisor の `module_down_chassis_db_cleanup()` (chassisd:667-680) がモジュール offline から 30 分後に `CHASSIS_MODULE_TABLE` のホスト名と ASIC 数を読み取り、CHASSIS_APP_DB (DB ID=12, redis_chassis.server:6380) の下記テーブルエントリを Lua スクリプトで一括削除する:
+
+- `SYSTEM_NEIGH*`、`SYSTEM_INTERFACE*`、`SYSTEM_LAG_MEMBER_TABLE*`
+- `SYSTEM_LAG_TABLE*` + `SYSTEM_LAG_ID_TABLE` + `SYSTEM_LAG_ID_SET` (LAG ID 返却)
+
+ホスト名が空文字列の場合はクリーンアップをスキップ (chassisd:641-643)。
+
+### 副次影響まとめ
+
+| 影響先 | トリガー | 内容 |
+|--------|---------|------|
+| supervisor サービス起動 (asic_status.py) | `CHASSIS_FABRIC_ASIC_TABLE` エントリ SET | syncd / orchagent 等の起動許可 |
+| systemd `swss@<asic>` | `config chassis_modules shutdown/startup FABRIC-CARD*` | サービス stop / start / reset-failed |
+| `DPU_STATE` CP/DP (自己更新) | midplane state 変化 → `DpuStateManagerTask` 検知 | CP/DP state 更新書き込み |
+| CHASSIS_APP_DB (DB#12) | モジュール offline 30 分後 | SYSTEM_NEIGH / INTERFACE / LAG エントリ削除 |
+| syslog | midplane 喪失検知 | `REBOOT_INFO_TABLE.reboot == "expected"` に応じて WARNING 内容が変化 |
+
+> **Evidence**: `chassisd:541-591,593-680,1289-1320,1477-1529`; `asic_status.py:40-44`; `chassis_modules.py:83-131`
+<!-- /side-effects -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
