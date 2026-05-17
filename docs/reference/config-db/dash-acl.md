@@ -401,3 +401,64 @@ DEL 操作で ACL エントリが `m_dash_acl_in/out_table` に存在しない�
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-failure.md`
 <!-- /failure -->
+
+<!-- constants -->
+## コード由来の固定定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dash-acl-constants.md -->
+
+### ファイルスコープ静的定数
+
+`dashaclgroupmgr.cpp:28-29` に定義されたプロセス起動時に一度だけ初期化される静的定数。
+
+| 定数名 | 型 | 値 | 用途 |
+|--------|----|----|------|
+| `all_protocols` | `vector<uint8_t>` (256 要素) | `[0, 1, ..., 255]` | `protocol` 省略時の全プロトコル展開 |
+| `all_ports` | `vector<sai_u16_range_t>` (1 要素) | `{{0, 65535}}` | `src_port` / `dst_port` 省略時の全ポート展開 |
+
+`boost::counting_iterator` による連続整数生成でコンパイル時ではなく起動時に初期化される。
+
+### ステージ番号・方向 enum
+
+| enum | 定義場所 | 有効値 |
+|------|---------|--------|
+| `DashAclStage` | `dashaclgroupmgr.h:19` | `STAGE1`〜`STAGE5`（文字列 `"1"`〜`"5"` からのみ変換可） |
+| `DashAclDirection` | `dashaclgroupmgr.h:28` | `IN` / `OUT` |
+| `DashAclRule::Action` | `dashaclgroupmgr.h:37` | `ALLOW` / `DENY` |
+
+`lexical_convert` (`dashaclorch.cpp:43-73`) が `"1"`〜`"5"` を `DashAclStage` に変換。範囲外の文字列は `invalid_argument` をスロー → `task_failed`。
+
+### SAI ステージマップ
+
+`getSaiStage()` (`dashaclgroupmgr.cpp:96-118`) 内の静的 `map<tuple<DashAclDirection, sai_ip_addr_family_t, DashAclStage>, sai_attr_id_t>` が 20 エントリ。`{方向, IP ファミリ, ステージ番号}` の 3 次元キーを SAI ENI 属性 ID に 1:1 マッピングする。
+
+### DashAclGroup 初期値
+
+| フィールド | 型 | 初期値 | 意味 |
+|-----------|-----|--------|------|
+| `m_dash_acl_group_id` | `sai_object_id_t` | `SAI_NULL_OBJECT_ID` | SAI 作成前の未割り当て状態 |
+| `m_rule_count` | `int` | `0` | ルール追加で increment。`== 0` でのバインドは `task_failed` |
+
+### CRM リソースタイプの対応
+
+| `ip_version` | グループ CRM タイプ | ルール CRM タイプ |
+|---|---|---|
+| `SAI_IP_ADDR_FAMILY_IPV4` | `CRM_DASH_IPV4_ACL_GROUP` | `CRM_DASH_IPV4_ACL_RULE` |
+| `SAI_IP_ADDR_FAMILY_IPV6` | `CRM_DASH_IPV6_ACL_GROUP` | `CRM_DASH_IPV6_ACL_RULE` |
+
+グループ削除時の `decCrmDashAclUsedCounter` はグループ配下のルールカウンタも一括リセットするため、ルール個別の decrement は呼ばれない（`dashaclgroupmgr.cpp:215`）。
+
+### APP_DB テーブル名定数
+
+`doTask()` の TaskMap が参照するテーブル名マクロ（swss-common `schema.h` 由来）:
+
+| マクロ定数 | テーブル名 |
+|-----------|-----------|
+| `APP_DASH_ACL_IN_TABLE_NAME` | `DASH_ACL_IN_TABLE` |
+| `APP_DASH_ACL_OUT_TABLE_NAME` | `DASH_ACL_OUT_TABLE` |
+| `APP_DASH_ACL_GROUP_TABLE_NAME` | `DASH_ACL_GROUP_TABLE` |
+| `APP_DASH_ACL_RULE_TABLE_NAME` | `DASH_ACL_RULE_TABLE` |
+| `APP_DASH_PREFIX_TAG_TABLE_NAME` | `DASH_PREFIX_TAG_TABLE` |
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-constants.md`
+<!-- /constants -->
