@@ -377,4 +377,45 @@ CLI の `add_snmp_agent_address()` / `del_snmp_agent_address()` はともに `os
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `snmpd.conf.j2` L19-34, `minigraph.py:2314`, `sonic-snmp.yang` L178-196, `config/main.py:4137-4186` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-constants.md`
+
+`SNMP_AGENT_ADDRESS_CONFIG` テーブルおよび `docker-snmp` コンテナに存在する、CONFIG_DB で管理されないハードコード定数の一覧。
+
+### agentAddress フォールバック
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| フォールバック agentAddress (IPv4) | `udp:161` | `SNMP_AGENT_ADDRESS_CONFIG` テーブルが空のとき全インタフェースでリッスン | `snmpd.conf.j2` L32 |
+| フォールバック agentAddress (IPv6) | `udp6:161` | `SNMP_AGENT_ADDRESS_CONFIG` テーブルが空のとき全インタフェースでリッスン (IPv6) | `snmpd.conf.j2` L33 |
+
+YANG に `default` ステートメントなし — テンプレート固有のハードコード。セキュリティ要件がある場合は `SNMP_AGENT_ADDRESS_CONFIG` に明示的なエントリを登録して全インタフェース公開を回避すること。
+
+### minigraph 自動生成時のポートハードコード
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| minigraph 生成ポート | `'161'` | minigraph 経由の自動生成で key の port 部に埋め込まれる固定値 | `minigraph.py:2314` |
+| minigraph 生成 vrf_name | `''` (空文字) | minigraph 経由の自動生成で key の vrf 部を空文字に固定 (default VRF) | `minigraph.py:2321` |
+
+`sonic-cfggen -m <minigraph>` による初期設定では、管理 IP / Loopback0 IP を `<ip>|161|` 形式の key で登録する。
+
+### CLI 省略時の暗黙定数
+
+| オプション | CLI 省略時の値 | snmpd.conf.j2 での展開 |
+|-----------|---------------|----------------------|
+| `-p / --port` (省略) | `''` (空文字) | `{% if port %}:{{ port }}{% endif %}` が false → ポートサフィックス省略 → snmpd デフォルト 161 を使用 |
+| `-v / --vrf` (省略) | `''` (空文字) | `{% if vrf %}@{{ vrf }}{% endif %}` が false → VRF サフィックス省略 → default VRF |
+
+これらは YANG `default` ステートメントではなく union 型の `pattern ''`（空文字許容）により実現される。
+
+### プロトコル自動判定ロジック
+
+`snmpd.conf.j2` L19-25 の `protocol()` マクロは `agent_ip` が IPv6 かどうかを判定して `udp6` / `udp` を自動選択する。フォールバック時も含め、プロトコル種別は CONFIG_DB フィールドではなくテンプレート内でハードコードされる。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 59acbdd0f2b6 -->
