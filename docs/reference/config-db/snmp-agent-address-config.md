@@ -345,4 +345,36 @@ multi-asic 環境 (`is_multi_asic() == True`) では両テーブルを解析せ�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/snmp-agent-address-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-failure.md`
+
+### key フォーマット不正 → テンプレートレンダリング失敗
+
+`snmpd.conf.j2` L28 は `{% for (agentip, port, vrf) in SNMP_AGENT_ADDRESS_CONFIG %}` で 3 要素タプルをアンパックする。CONFIG_DB の key が `<ip>|<port>|<vrf>` の正規形でない場合（例: `<ip>|<port>` の 2 要素 key が直接書き込まれた場合）、`sonic-cfggen` がテンプレート展開中に ValueError を送出し `/etc/snmp/snmpd.conf` が生成されない。`start.sh` が non-zero で終了するため supervisord が snmpd を起動しない。[^3]
+
+### VRF 実在確認なし → サイレント bind 失敗
+
+`vrf_name` に `mgmt` / `Vrf<name>` を設定しても VRF がカーネルに存在しない場合、snmpd は起動後に該当 agentAddress のバインドに失敗する。YANG に VRF 実在チェックはなく CONFIG_DB への書き込みは成功するため、CONFIG_DB レベルでは検知されない。他の agentAddress でのリッスンは継続する（部分的なサイレント失敗）。[^2]
+
+### systemctl restart snmp の戻り値を無視
+
+CLI の `add_snmp_agent_address()` / `del_snmp_agent_address()` はともに `os.system("systemctl restart snmp")` の戻り値をチェックしない（`config/main.py:4189,4209`）。再起動に失敗した場合でも CLI はエラーを報告せず、snmpd.conf は更新されないまま処理を終える（サイレント失敗）。[^1]
+
+### UNIQUE 制約違反 → YANG SET 拒否
+
+`sonic-snmp.yang` L172 の `unique "agent_ip port"` 制約により、同一 `(ip, port)` を異なる `vrf_name` で重複登録しようとすると YANG バリデーションが SET を拒否する。CLI は `get_keys()` で事前チェックするが、`sonic-db-cli` 直接書き込みの場合は YANG エラーが返却される。[^1]
+
+### 失敗の可観測性
+
+| 確認項目 | コマンド |
+|---------|---------|
+| snmpd.conf 生成内容確認 | `docker exec snmp cat /etc/snmp/snmpd.conf` |
+| snmpd 起動ログ | `docker logs snmp 2>&1 \| grep -iE 'error\|fail'` |
+| agentAddress バインド状態 | `docker exec snmp netstat -ulnp \| grep snmpd` |
+| CONFIG_DB エントリ確認 | `sonic-db-cli CONFIG_DB keys 'SNMP_AGENT_ADDRESS_CONFIG\|*'` |
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 59acbdd0f2b6 -->
