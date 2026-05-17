@@ -384,6 +384,78 @@ warm-reboot 時は caclmgrd が systemd によって再起動され、起動直�
 
 <!-- /failure -->
 
+<!-- constants -->
+## コード定数カタログ (Phase E)
+
+CTRLPLANE ACL に関係するコード定数を `acltable.h`、`aclorch.h`、`caclmgrd` から抽出する。
+
+### acltable.h: フィールド名マクロ
+
+CONFIG_DB フィールド名と C++ マクロ名の対応。
+
+| C++ マクロ | CONFIG_DB フィールド名 | evidence |
+|---|---|---|
+| `ACL_TABLE_DESCRIPTION` | `POLICY_DESC` | `acltable.h:12` |
+| `ACL_TABLE_STAGE` | `STAGE` | `acltable.h:13` |
+| `ACL_TABLE_TYPE` | `TYPE` | `acltable.h:14` |
+| `ACL_TABLE_PORTS` | `PORTS` | `acltable.h:15` |
+| `ACL_TABLE_SERVICES` | `SERVICES` | `acltable.h:16` |
+
+### acltable.h: TYPE 値マクロ
+
+`type` フィールドに設定できる全 TYPE 値。`TABLE_TYPE_CTRLPLANE` のみが SAI テーブルを生成しない特殊扱い。
+
+| C++ マクロ | 文字列値 | SAI テーブル生成 |
+|---|---|---|
+| `TABLE_TYPE_CTRLPLANE` | `"CTRLPLANE"` | **なし** (`m_ctrlAclTables` 登録のみ) |
+| `TABLE_TYPE_L3` | `"L3"` | あり |
+| `TABLE_TYPE_L3V6` | `"L3V6"` | あり |
+| `TABLE_TYPE_MIRROR` | `"MIRROR"` | あり |
+| その他 11 種 | `"PFCWD"` 等 | あり |
+
+> evidence: `acltable.h:26-42`
+
+### caclmgrd: ACL_SERVICES 定数テーブル
+
+`services` フィールドに設定できる有効値は以下 5 種のみ。それ以外は `log_warning` 後スキップ。
+
+| services 値 | プロトコル | 宛先ポート | multi-ASIC NAT転送 | evidence |
+|---|---|---|---|---|
+| `NTP` | udp | 123 | False | `caclmgrd:96-100` |
+| `SNMP` | tcp, udp | 161 | True | `caclmgrd:101-105` |
+| `SSH` | tcp | 22 | True | `caclmgrd:106-110` |
+| `EXTERNAL_CLIENT` | tcp | ACL_RULE から取得 (`L4_DST_PORT` / `L4_DST_PORT_RANGE`) | False | `caclmgrd:111-114` |
+| `ANY` | any | `0` (全ポート) | False | `caclmgrd:115-119` |
+
+`dst_ports: ["0"]` は内部フラグで「ポートフィルタなし」を意味する。iptables コマンド生成時に `dst_port != "0"` のチェックで `--dport` を省略する (`caclmgrd:859`)。
+
+### caclmgrd: その他の数値定数
+
+| 定数名 | 値 | 用途 | evidence |
+|---|---|---|---|
+| `UPDATE_DELAY_SECS` | `0.5` | ACL 更新デバウンス間隔 (秒) | `caclmgrd:123` |
+| `smartswitch_midplane_bridge_ip` | `"169.254.200.254"` | SmartSwitch midplane bridge IP (ConfigDB から取得できない場合のフォールバック) | `caclmgrd:121` |
+| BGP ポート | `179` | iptables ACCEPT ルール (ハードコード) | `caclmgrd:720-721` |
+| DHCP v4 ポート | `67:68` | iptables ACCEPT ルール (ハードコード) | `caclmgrd:711-712` |
+| DHCP v6 ポート | `546:547` | iptables ACCEPT ルール (ハードコード) | `caclmgrd:715-716` |
+| traceroute ポート範囲 | `1025:65535` | TTL<2 パケットの ACCEPT 範囲 | `caclmgrd:891-894` |
+
+### PACKET_ACTION 値と iptables 互換性
+
+caclmgrd は `ACL_RULE.PACKET_ACTION` を `iptables -j <値>` に **そのまま** 渡す (`caclmgrd:873`)。
+
+| 値 | iptables 解釈 | 結果 |
+|---|---|---|
+| `ACCEPT` | `-j ACCEPT` | パケット許可 |
+| `DROP` | `-j DROP` | パケット破棄 |
+| `FORWARD` / `REDIRECT` 等 | iptables 未定義ターゲット | コマンド失敗 → `log_error()` のみ、後続ルール継続 |
+
+> **注意**: orchagent 側の `PACKET_ACTION_FORWARD` 等のマクロ (`aclorch.h:83-88`) は CTRLPLANE では参照されない。caclmgrd が直接文字列を iptables に渡すため、`ACCEPT` / `DROP` 以外は iptables コマンド失敗になる。
+
+> スキャン証跡: `acltable.h` 全行、`aclorch.h:83-88`、`caclmgrd:77-123,859,873` 確認。定数 10 カテゴリ抽出。中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-constants.md`
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
