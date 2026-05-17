@@ -292,6 +292,54 @@ for (auto route : syncd_routes_)
 > **Evidence**: `vnetorch.cpp:1861-1905`（`attach()` 実装）; `chassisorch.cpp:14-27`（`update()` 実装）; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-orch-constants.md`
+
+### テーブル名定数 (`schema.h`)
+
+`PASS_THROUGH_ROUTE_TABLE` は CONFIG_DB 側と APP_DB 側で同一の文字列を使用する。
+
+| 定数名 | 値 | 行 |
+|--------|-----|-----|
+| `CFG_PASS_THROUGH_ROUTE_TABLE_NAME` | `"PASS_THROUGH_ROUTE_TABLE"` | `schema.h:371` |
+| `APP_PASS_THROUGH_ROUTE_TABLE_NAME` | `"PASS_THROUGH_ROUTE_TABLE"` | `schema.h:93` |
+
+両者が同一文字列のため、CONFIG_DB と APP_DB で同名テーブルが存在する点に注意。
+
+### APP_DB フィールド値固定定数 (`chassisorch.cpp`)
+
+`addRouteToPassThroughRouteTable()` がリテラル文字列として直接 `emplace_back()` に渡す固定値:
+
+```cpp
+// orchagent/chassisorch.cpp:34,38
+fvVector.emplace_back("redistribute", "true");
+fvVector.emplace_back("source", "CHASSIS_ORCH");
+```
+
+| フィールド | 固定値 | 行 | 備考 |
+|-----------|-------|----|------|
+| `redistribute` | `"true"` | `chassisorch.cpp:34` | ユーザー設定不可・YANG 未定義 |
+| `source` | `"CHASSIS_ORCH"` | `chassisorch.cpp:38` | 書き込み主体の識別子 |
+
+`chassisorch.h` にフィールド名文字列定数は定義されておらず、すべてリテラルとしてソースに直書きされている。
+
+### key 正規化定数
+
+key（IP プレフィックス）は `IpPrefix::to_string()` で正規化される:
+
+```cpp
+// chassisorch.cpp:39,46
+const std::string everflow_route = IpPrefix(update.destination.to_string()).to_string();
+```
+
+ホストビットが切り捨てられる（例: `10.1.0.1/16` → `10.1.0.0/16`）。この正規化は `IpPrefix` クラス（`sonic-swss-common`）が担い、ChassisOrch 側に数値定数は存在しない。
+
+!!! note "YANG 未定義"
+    本テーブルは YANG スキーマが存在しないため、YANG 側に定数定義は一切ない。
+<!-- /constants -->
+
 ## 制約
 
 - `<IP_prefix>` は `IpPrefix` クラスで正規化される（ホストビットが切り捨てられる）
