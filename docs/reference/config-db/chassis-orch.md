@@ -526,6 +526,64 @@ orchdaemon select ループ (epoll)
 > **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:4-26`; `sonic-swss/orchagent/observer.h:9-55`; `sonic-swss/orchagent/vnetorch.cpp:1861-2040`; `sonic-swss/orchagent/vnetorch.h:400-418`; `orchdaemon.cpp:290-293`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-orch-platform.md`
+
+`ChassisOrch` の生成有無は `DEVICE_METADATA|localhost.switch_type` によって決定される。
+`OrchDaemon::init()` 内に switch_type ガードは存在せず、`OrchDaemon` を使用するすべての switch_type で ChassisOrch が生成される。
+
+### switch_type 別の orchagent クラス選択
+
+```cpp
+// main.cpp:990-1009
+if (gMySwitchType == "dpu")
+    orchDaemon = make_shared<DpuOrchDaemon>(...);
+else if (gMySwitchType != "fabric")
+    orchDaemon = make_shared<OrchDaemon>(...);      // switch / voq / chassis-packet
+else
+    orchDaemon = make_shared<FabricOrchDaemon>(...);
+```
+
+### ChassisOrch の switch_type 別挙動
+
+`OrchDaemon::init()` 内の ChassisOrch 生成コードには `gMySwitchType` による条件分岐が存在しない（`orchdaemon.cpp:290-294`）。
+
+| `switch_type` | ChassisOrch 生成 | 実質的挙動 |
+|--------------|-----------------|-----------|
+| `"voq"` | ○ | 設計用途。VNet パススルールート転送が機能する |
+| `"switch"` | ○ | Silent standby。`PASS_THROUGH_ROUTE_TABLE` 書き込みなし |
+| `"chassis-packet"` | ○ | VoQ 準拠構成。VNet 設定次第で機能する |
+| `"dpu"` | ○ | `DpuOrchDaemon` が `OrchDaemon::init()` を super 呼び出しするため生成される。DPU では VNet パススルー未使用のため silent standby |
+| `"fabric"` | **✗** | `FabricOrchDaemon::init()` が `OrchDaemon::init()` を呼び出さないため生成されない |
+
+### `"fabric"` での非生成
+
+`FabricOrchDaemon::init()` (`orchdaemon.cpp:1292-1310`) は `OrchDaemon::init()` を呼び出さず、
+独自の `FabricPortsOrch` + `FlexCounterOrch` のみを登録する。ChassisOrch は生成されず、
+CONFIG_DB `PASS_THROUGH_ROUTE_TABLE` の購読者が存在しない。
+
+### `"dpu"` での super 呼び出し
+
+```cpp
+// orchdaemon.cpp:1322-1325
+bool DpuOrchDaemon::init()
+{
+    OrchDaemon::init();  // ChassisOrch を含む OrchDaemon 全体を初期化
+    // DPU 固有の DASH Orch を追加 ...
+```
+
+DPU 環境では ChassisOrch が生成されるが、`PASS_THROUGH_ROUTE_TABLE` へのエントリ書き込みは想定されない。
+
+### ハードウェアプラットフォーム変数
+
+`OrchDaemon::init()` の冒頭（`orchdaemon.cpp:190`）で `getenv("platform")` を読み取るが、
+ChassisOrch の生成にこの値は使用されない。ハードウェアベンダー（プラットフォーム ASV 文字列）による分岐は存在しない。
+
+> **Evidence**: `sonic-swss/orchagent/main.cpp:990-1009`（daemon 選択）; `sonic-swss/orchagent/orchdaemon.cpp:290-294`（ChassisOrch 生成）; `orchdaemon.cpp:1292-1325`（FabricOrchDaemon / DpuOrchDaemon init）; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-platform.md`
+<!-- /platform -->
+
 ## 制約
 
 - `<IP_prefix>` は `IpPrefix` クラスで正規化される（ホストビットが切り捨てられる）
