@@ -402,6 +402,77 @@ warm-reboot 完了前に `FLEX_COUNTER_TABLE|RIF = enable` が届いても、`Fl
 > 中間調査詳細: `meta/_intermediate/cdb-flow/counters-rif-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/intfsorch.cpp (L43-45, L96-100, L1551),
+     sonic-swss/orchagent/intfsorch.h (L19-21),
+     sonic-swss/orchagent/flexcounterorch.cpp (L44),
+     sonic-swss-common/common/schema.h (L302, L330),
+     sonic-buildimage/dockers/docker-orchagent/enable_counters.py (L10-11) -->
+
+`IntfsOrch` と `FlexCounterOrch` に含まれる、CONFIG_DB / YANG では管理されないハードコード定数の一覧。
+
+### FlexCounter グループ識別子
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|--------|-----|---------|------|
+| `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"RIF_STAT_COUNTER"` | `intfsorch.h:19` | syncd の FlexCounter グループ名（通常カウンタ） |
+| `RIF_RATE_COUNTER_FLEX_COUNTER_GROUP` | `"RIF_RATE_COUNTER"` | `intfsorch.h:20` | syncd の FlexCounter グループ名（レートカウンタ） |
+
+これらの文字列は FLEX_COUNTER_DB のキープレフィックスとして使われる（例: `RIF_STAT_COUNTER:<oid>`）。
+
+### ポーリング間隔
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|--------|-----|---------|------|
+| `RIF_FLEX_STAT_COUNTER_POLL_MSECS` | `"1000"` (ms) | `intfsorch.h:21` | RIF 通常カウンタのポーリング間隔。`setFlexCounterGroupParameter()` に渡されてデフォルトの poll interval を設定する |
+
+`counterpoll show` でも `DEFLT_1_SEC = "default (1000)"` がフォールバック値として使われる（`counterpoll/main.py:815`）。
+
+### タイマー間隔
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|--------|-----|---------|------|
+| `UPDATE_MAPS_SEC` | `1` (秒) | `intfsorch.cpp:45` | `m_updateMapsTimer` の発火間隔。`doTask(SelectableTimer)` がこの間隔で `m_rifsToAdd` を処理して `addRifToFlexCounter()` を呼ぶ |
+| `FLEX_COUNTER_DELAY_SEC` | `60` (秒) | `flexcounterorch.cpp:44` | Warm-reboot 時に FlexCounterOrch が全処理を遅延させる秒数 |
+| `intfsorch_pri` | `35` | `intfsorch.cpp:43` | IntfsOrch の Orch 優先度（数値が大きいほど高優先） |
+
+### FlexCounter フィールド名
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|--------|-----|---------|------|
+| `RIF_COUNTER_ID_LIST` | `"RIF_COUNTER_ID_LIST"` | `schema.h:302` | FLEX_COUNTER_DB に書き込む SAI カウンタ ID リストのフィールド名 |
+| `RIF_PLUGIN_FIELD` | `"RIF_PLUGIN_LIST"` | `schema.h:330` | FlexCounter グループに Lua プラグイン (`rif_rates.lua`) を登録するフィールド名 |
+
+### レートスムージング定数
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|--------|-----|---------|------|
+| `DEFAULT_SMOOTH_INTERVAL` | `"10"` (秒) | `enable_counters.py:10` | `RATES:RIF` に書き込む `RIF_SMOOTH_INTERVAL` のデフォルト値。EMA ウィンドウ幅 |
+| `DEFAULT_ALPHA` | `"0.18"` | `enable_counters.py:11` | `RATES:RIF` に書き込む `RIF_ALPHA` のデフォルト値。= 2/(10+1) ≈ 0.1818…（小数点 2 桁丸め） |
+
+`RIF_ALPHA = 2 / (N + 1)` の関係で、`N = DEFAULT_SMOOTH_INTERVAL = 10` から算出される。ユーザーが `config rate smoothing-interval` で変更すると、新しい alpha が再計算されて `RATES:RIF` に上書きされる。
+
+### SAI カウンタ ID 静的配列
+
+`intfsorch.cpp:49-59` に `rifStatIds[]` として次の 8 カウンタが列挙されており、`addRifToFlexCounter()` の実行時に全てが `RIF_COUNTER_ID_LIST` として FLEX_COUNTER_DB に登録される。
+
+```text
+SAI_ROUTER_INTERFACE_STAT_IN_PACKETS
+SAI_ROUTER_INTERFACE_STAT_IN_OCTETS
+SAI_ROUTER_INTERFACE_STAT_IN_ERROR_PACKETS
+SAI_ROUTER_INTERFACE_STAT_IN_ERROR_OCTETS
+SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS
+SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS
+SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS
+SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS
+```
+
+この配列は定数であり、実行時や CONFIG_DB 設定で変更できない。ASIC が対応しないカウンタは syncd が SAI エラーを返し、`intfstat` では `N/A` として表示される。
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -425,3 +496,6 @@ warm-reboot 完了前に `FLEX_COUNTER_TABLE|RIF = enable` が届いても、`Fl
 [^9]: SAI create_router_interface エラーハンドリング: `sonic-swss/orchagent/intfsorch.cpp:1297-1305`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1297>
 [^10]: rif_rates.lua ロード失敗の catch: `sonic-swss/orchagent/intfsorch.cpp:86-94`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86>
 [^11]: gTraditionalFlexCounter モードでの VIDTORID 待機ループ: `sonic-swss/orchagent/intfsorch.cpp:1627-1636`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627>
+[^12]: FlexCounter グループ識別子定数: `sonic-swss/orchagent/intfsorch.h:19-21`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L19>
+[^13]: FLEX_COUNTER_DELAY_SEC 定数: `sonic-swss/orchagent/flexcounterorch.cpp:44`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44>
+[^14]: RIF_COUNTER_ID_LIST / RIF_PLUGIN_FIELD 定数: `sonic-swss-common/common/schema.h:302,330`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302>
