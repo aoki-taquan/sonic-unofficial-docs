@@ -471,6 +471,58 @@ supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し
 > **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:125-141,193-212,237-253,302-311,486-495,563-564,728-731,772-774,890-891,905-906,1018-1019,1046-1072,1159-1160,1318-1320,1400-1401`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-state-constants.md`
+
+### テーブル名定数
+
+| 定数名 | 値 | 接続先 DB | 行 |
+|--------|-----|-----------|-----|
+| `CHASSIS_CFG_TABLE` | `'CHASSIS_MODULE'` | CONFIG_DB（読み取り専用） | `chassisd:44` |
+| `CHASSIS_INFO_TABLE` | `'CHASSIS_TABLE'` | STATE_DB | `chassisd:46` |
+| `CHASSIS_MODULE_INFO_TABLE` | `'CHASSIS_MODULE_TABLE'` | STATE_DB | `chassisd:50` |
+| `CHASSIS_ASIC_INFO_TABLE` | `'CHASSIS_ASIC_TABLE'` | CHASSIS_STATE_DB | `chassisd:63` |
+| `CHASSIS_FABRIC_ASIC_INFO_TABLE` | `'CHASSIS_FABRIC_ASIC_TABLE'` | CHASSIS_STATE_DB | `chassisd:64` |
+| `CHASSIS_MIDPLANE_INFO_TABLE` | `'CHASSIS_MIDPLANE_TABLE'` | STATE_DB | `chassisd:69` |
+| `CHASSIS_MODULE_HOSTNAME_TABLE` | `'CHASSIS_MODULE_TABLE'` | CHASSIS_STATE_DB | `chassisd:75` |
+| `CHASSIS_MODULE_REBOOT_INFO_TABLE` | `'CHASSIS_MODULE_REBOOT_INFO_TABLE'` | CHASSIS_STATE_DB | `chassisd:78` |
+| `PHYSICAL_ENTITY_INFO_TABLE` | `'PHYSICAL_ENTITY_INFO'` | STATE_DB | `chassisd:87` |
+
+!!! warning "`CHASSIS_MODULE_TABLE` 重複"
+    `CHASSIS_MODULE_INFO_TABLE`（STATE_DB）と `CHASSIS_MODULE_HOSTNAME_TABLE`（CHASSIS_STATE_DB）は同一の文字列 `'CHASSIS_MODULE_TABLE'` を値として持つ。接続先 DB が異なるため別テーブルとして扱われるが、名前だけで判断すると混同しやすい。
+
+### タイムアウト・ポーリング間隔定数
+
+| 定数名 | 値 | 上書き手段 | 行 |
+|--------|-----|-----------|-----|
+| `CHASSIS_INFO_UPDATE_PERIOD_SECS` | `10` 秒 | ハードコード（上書き不可） | `chassisd:89` |
+| `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD` | `30` 分 | ハードコード（上書き不可） | `chassisd:90` |
+| `DEFAULT_LINECARD_REBOOT_TIMEOUT` | `180` 秒 | `platform_env.conf` の `linecard_reboot_timeout=<N>` | `chassisd:81` |
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | `platform.json` の `"dpu_reboot_timeout"` キー | `chassisd:82` |
+| `MAX_DPU_REBOOT_DURATION` | `800` 秒 | ハードコード（上書き不可） | `chassisd:83` |
+| `SELECT_TIMEOUT` | `1000` ms | ハードコード（上書き不可） | `chassisd:95` |
+| `MAX_HISTORY_FILES` | `10` 件 | ハードコード（上書き不可） | `chassisd:106` |
+
+### フォールバック値・ファイルパス定数
+
+| 定数名 | 値 | 行 |
+|--------|-----|-----|
+| `NOT_AVAILABLE` | `'N/A'` | `chassisd:97` |
+| `INVALID_SLOT` | `ModuleBase.MODULE_INVALID_SLOT` (= `-1`) | `chassisd:98` |
+| `INVALID_IP` | `'0.0.0.0'` | `chassisd:100` |
+| `PLATFORM_ENV_CONF_FILE` | `"/usr/share/sonic/platform/platform_env.conf"` | `chassisd:84` |
+| `PLATFORM_JSON_FILE` | `"/usr/share/sonic/platform/platform.json"` | `chassisd:85` |
+| `MODULE_REBOOT_CAUSE_DIR` | `"/host/reboot-cause/module/"` | `chassisd:105` |
+
+### midplane フィールド名の非対称性
+
+DP/CP 側フィールド名（`DP_STATE`、`CP_STATE`、`DP_UPDATE_TIME`、`CP_UPDATE_TIME`）はモジュールレベル定数として定義されているが、midplane 側フィールド名（`dpu_midplane_link_state`、`dpu_midplane_link_reason`、`dpu_midplane_link_time`）は `update_dpu_state()` 内でリテラルとして直書きされており定数化されていない（chassisd:876-884）。
+
+> **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:36-111,876-884`
+<!-- /constants -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
