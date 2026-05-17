@@ -472,6 +472,57 @@ DPU が online 復帰したとき、同一のリブート原因で `MAX_DPU_REBO
 
 <!-- /failure -->
 
+<!-- constants -->
+## 数値定数・マジックナンバー (Phase E)
+
+> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:82-83,89-90,95,106`; `src/sonic-config-engine/config_samples.py:85-93,103,136`; `src/sonic-yang-models/yang-models/sonic-smart-switch.yang:65,90,117,160,275` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-constants.md`
+
+### chassisd 宣言定数
+
+| 定数名 | 値 | 単位 | 用途 |
+|---|---|---|---|
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` | 秒 | DPU リブート完了待ちタイムアウト。`platform.json` の `dpu_reboot_timeout` キーで上書き可能（`chassisd:727`） |
+| `MAX_DPU_REBOOT_DURATION` | `800` | 秒 | 同一リブート原因の重複判定ウィンドウ。この時間内の online 復帰は新規リブートとみなさない（`chassisd:830`） |
+| `CHASSIS_INFO_UPDATE_PERIOD_SECS` | `10` | 秒 | chassisd メインループ周期。DPU oper state 更新間隔（`chassisd:89`） |
+| `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD` | `30` | 分 | DPU が down 継続時に CHASSIS_STATE_DB 古エントリをクリーンアップするまでの猶予（`chassisd:90`） |
+| `SELECT_TIMEOUT` | `1000` | ミリ秒 | `swsscommon.Select.select()` タイムアウト。SIGTERM ハンドリングに影響（`chassisd:95`） |
+| `MAX_HISTORY_FILES` | `10` | 件 | `/host/reboot-cause/module/<dpu>/history/` に保持する最大リブート原因ファイル数（`chassisd:106`） |
+
+### config_samples.py ハードコード値
+
+| 値 | コード位置 | 意味 |
+|---|---|---|
+| `'169.254.200'` | `config_samples.py:85` | ミッドプレーンブリッジのサブネットプレフィックス (`mpbr_prefix`) |
+| `'169.254.200.254'` | `config_samples.py:86` | NPU 側ブリッジ IP (`mpbr_address`)。計算式: `mpbr_prefix + ".254"` |
+| `'bridge-midplane'` | `config_samples.py:88` | ブリッジ名 (`bridge_name`)。YANG `pattern "bridge-midplane"` と一致 |
+| `'3600'` | `config_samples.py:136` | `DHCP_SERVER_IPV4.bridge-midplane.lease_time`（秒）。1 時間固定 |
+
+### DPU アドレス計算式
+
+```python
+# config_samples.py:102-103
+dpu_id = int(midplane_interface.replace('dpu', ''))   # "dpu0" → 0
+dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
+```
+
+具体的な割当: `dpu0`→`.1`、`dpu1`→`.2`、`dpu7`→`.8`。NPU ブリッジ IP (`.254`) との衝突なし（最大 `.8`）。
+
+### DASH_HA_GLOBAL_CONFIG テスト実例値の由来
+
+| フィールド | 実例値 | 由来 |
+|---|---|---|
+| `cp_data_channel_port` | `11362` | DASH HA HLD 規定値 |
+| `dp_channel_dst_port` | `11368` | DASH HA HLD 規定値 |
+| `dp_channel_src_port_min` | `49152` | Linux エフェメラルポート開始値（`ip_local_port_range` 下限） |
+| `dp_channel_src_port_max` | `53247` | `49152 + 4095`（4096 ポート幅） |
+| `dp_channel_probe_interval_ms` | `100` | BFD 推奨最小値（RFC 5880 準拠） |
+| `dp_channel_probe_fail_threshold` | `3` | BFD 標準乗数（`DetectMult = 3`） |
+| `dpu_bfd_probe_interval_in_ms` | `100` | 同上 |
+| `dpu_bfd_probe_multiplier` | `3` | 同上 |
+
+<!-- /constants -->
+
 ## 制約
 
 - `MID_PLANE_BRIDGE|GLOBAL` の `bridge` は `bridge-midplane` 固定。変更不可。
