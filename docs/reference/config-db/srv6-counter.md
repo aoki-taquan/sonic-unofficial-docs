@@ -442,4 +442,96 @@ STATE_DB・APPL_DB・CONFIG_DB（書き戻し）への書込みはいずれの�
 <!-- 証跡: sonic-swss/orchagent/srv6orch.cpp, sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/saihelper.cpp -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`FLEX_COUNTER_TABLE|SRV6` (CONFIG_DB) は orchagent 内の `FlexCounterOrch` が単一スレッドで消費する。変更検出は **Redis keyspace notification (PSUBSCRIBE)** 経由の `SubscriberStateTable` 経路。`ConsumerStateTable` / `NotificationConsumer` は CONFIG_DB 側では**使用しない**。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / 仕組み |
+|------|------|-------------------|
+| CLI/CONFIG_DB → orchagent | `SubscriberStateTable` | `__keyspace@{config_db_id}__:FLEX_COUNTER_TABLE\|*` |
+| Srv6Orch 内部 (MySID 追加後) | `SelectableTimer` (1 秒) | `SRV6_FLEX_COUNTER_UPDATE_TIMER` (`srv6orch.cpp:26,138-141`) |
+| orchagent → syncd | `ProducerTable` または SAI redis switch attr 直書き | FLEX_COUNTER_DB `FLEX_COUNTER_GROUP_TABLE\|SRV6_STAT_COUNTER` |
+| syncd → COUNTERS_DB | SAI generic counter polling | `COUNTERS:<oid>` (HSET) |
+
+### SubscriberStateTable の動作
+
+`FlexCounterOrch` (`orchdaemon.cpp:620-628`) は `Orch(db, tableNames)` 基底経由で `Orch::addConsumer()` を呼ぶ (`orch.cpp:1186-1196`)。db が CONFIG_DB のため `SubscriberStateTable` ブランチが選択される:
+
+```
+PSUBSCRIBE __keyspace@{config_db_id}__:FLEX_COUNTER_TABLE|*
+PSUBSCRIBE __keyspace@{config_db_id}__:DEVICE_METADATA|*    ← FlexCounterOrch が同居
+```
+
+keyspace 通知のペイロードは Redis 操作名 (`hset` / `del` 等) のみ。フィールド値は通知後に `HGETALL` で別途取得する (`subscriberstatetable.cpp:17-43`)。
+
+### 起動時スナップショット
+
+`SubscriberStateTable` ctor は PSUBSCRIBE 直後に `getKeys()` + `get()` で既存全エントリを `SET_COMMAND` として buffer に充填する。orchagent 起動時に `FLEX_COUNTER_TABLE|SRV6` が CONFIG_DB に存在すれば、PSUBSCRIBE 待ちなしで即座に `doTask` に流れる。
+
+### Warm restart 遅延
+
+`FlexCounterOrch` のみ warm start 時に 60 秒の `FLEX_COUNTER_DELAY_SEC` タイマー (`flexcounterorch.cpp:44, 127-137`) が走り、満了まで `doTask(Consumer&)` は即 return する (`flexcounterorch.cpp:156-159`)。コールド起動時は遅延なし。
+
+### doTask の SRV6 ブランチ
+
+`FlexCounterOrch::doTask()` (`flexcounterorch.cpp:337-340`) の SRV6 キー処理:
+
+| フィールド | 処理 | 呼び出し先 |
+|---|---|---|
+| `FLEX_COUNTER_STATUS = enable/disable` | `gSrv6Orch->setCountersState(enable)` + `setFlexCounterGroupOperation()` | `srv6orch.cpp:251-283`, `saihelper.cpp:918-962` |
+| `POLL_INTERVAL` | `setFlexCounterGroupPollInterval(SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP, value)` | `flexcounterorch.cpp:202` |
+
+`gSrv6Orch` が null の場合は silent drop。`SRV6_KEY = "SRV6"` (`flexcounterorch.cpp:64`)。
+
+### Srv6Orch 内部 1 秒タイマー
+
+MySID 追加後、SAI カウンタ OID は `m_pending_counters` に積まれ `SRV6_FLEX_COUNTER_UPDATE_TIMER`（1 秒）ごとに `doTask(SelectableTimer&)` が ASIC_DB `VIDTORID` 解決を確認してから `m_counter_manager.setCounterIdList()` 経由で FLEX_COUNTER_DB に登録する (`srv6orch.cpp:286-313`)。`m_pending_counters` が空になるとタイマーが自動停止。
+
+### 書き込み元 (Publisher 側)
+
+CONFIG_DB への書き込みは **直接 Redis HSET** (`ConfigDBConnector`) で行われ、`ProducerStateTable` は通らない:
+
+| 書き込み元 | 経路 |
+|---|---|
+| `counterpoll srv6 {enable\|disable\|interval}` | `counterpoll/main.py` → ConfigDBConnector.mod_entry → HSET |
+| `config_db.json` 初期投入 | sonic-cfggen による一括 HSET |
+
+### データフロー図
+
+```
+admin (counterpoll srv6 enable)
+  ↓ ConfigDBConnector.mod_entry()
+CONFIG_DB[FLEX_COUNTER_TABLE|SRV6]
+  ↓ HSET + keyspace PUBLISH
+  ↓   channel: __keyspace@{config_db_id}__:FLEX_COUNTER_TABLE|SRV6
+  ↓   message: "hset"
+orchagent select() ループ
+  ↓ SubscriberStateTable.pops() → HGETALL "FLEX_COUNTER_TABLE|SRV6"
+FlexCounterOrch::doTask(Consumer&)
+  ├─ flexCounterGroupMap["SRV6"] → SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP
+  ├─ gSrv6Orch->setCountersState(true)
+  │    └─ (全 MY_SID に) addMySidCounter() → COUNTERS_DB COUNTERS_SRV6_NAME_MAP
+  │    └─ setMySidEntryCounter() → SAI set_my_sid_entry_attribute
+  │    └─ m_pending_counters 積み
+  └─ setFlexCounterGroupOperation(SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP, "enable")
+       └─ ProducerTable / SAI redis switch attr
+FLEX_COUNTER_DB[FLEX_COUNTER_GROUP_TABLE|SRV6_STAT_COUNTER]
+  ↓ syncd FlexCounter スレッドが受信
+syncd → 10 秒間隔で SAI get_counter_stats → COUNTERS_DB[COUNTERS:<oid>]
+
+MySID 追加時 (enable 状態で APP_DB に MY_SID SET):
+  Srv6Orch::doTask(Consumer) → addMySidCounter() → m_pending_counters
+    ↓ SRV6_FLEX_COUNTER_UPDATE_TIMER (1 秒)
+  Srv6Orch::doTask(SelectableTimer) → setCounterIdList() → FLEX_COUNTER_DB
+
+NotificationConsumer: なし  /  ConsumerStateTable: なし  /  TTL/expire: なし
+```
+
+詳細な PSUBSCRIBE パターン・競合解析は中間メモを参照: `meta/_intermediate/cdb-flow/srv6-counter-pubsub.md`。
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: srv6-counter-page -->
