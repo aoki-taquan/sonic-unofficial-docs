@@ -456,6 +456,78 @@ caclmgrd は `ACL_RULE.PACKET_ACTION` を `iptables -j <値>` に **そのまま
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 書き込み副作用カタログ (Phase F)
+
+ACL_TABLE (CTRLPLANE) が SET/DEL されたとき、複数の担い手がカーネルや DB に副作用を生じる。
+
+### orchagent (AclOrch) の副作用
+
+| 副作用 | 書き込み先 | 条件 | evidence |
+|-------|-----------|------|---------|
+| `status = "active"` を書き込む | `STATE_DB / ACL_TABLE_TABLE` | CTRLPLANE SET 成功時 (addAclTable が true を返すと doAclTableTask が setAclTableStatus を呼ぶ) | `aclorch.cpp:4680-4684, 5474-5477, 6088-6093` |
+| SAI への書き込み | なし | CTRLPLANE では addAclTable が SAI API を呼ばずに即 return | `aclorch.cpp:4680-4684` |
+| APPL_DB への書き込み | なし | AclOrch は APPL_DB に書き込まない | — |
+| ACL_RULE の STATE_DB 書き込み | なし | CTRLPLANE ルールは erase されるため setAclRuleStatus は呼ばれない | `aclorch.cpp:5556-5560` |
+
+> **補足**: `AclOrch::init()` は起動時に全 ACL テーブル・ルールのステータスを STATE_DB からクリア (`removeAllAclTableStatus()` / `removeAllAclRuleStatus()`) する。CTRLPLANE テーブルが ACL_TABLE_TABLE に `active` として書き込まれても、次の orchagent 再起動時にはクリアされ、CONFIG_DB からの再読み込みで再び `active` に戻る。`aclorch.cpp:3479-3481`
+
+### caclmgrd の副作用
+
+CONFIG_DB の `ACL_TABLE` / `ACL_RULE` が変更されると、caclmgrd は **カーネルの iptables/ip6tables を全フラッシュして再インストール**する。
+
+#### iptables / ip6tables INPUT チェーン (全プラットフォーム共通)
+
+| 副作用 | 対象 | 条件 |
+|-------|------|------|
+| `INPUT / FORWARD / OUTPUT` デフォルトポリシーを `ACCEPT` に変更 | iptables + ip6tables | 常時（フラッシュ前の暫定設定） |
+| 全チェーンのルールをフラッシュ (`-F`) | iptables | 常時（DualToR 時は DHCP チェーンを保持） |
+| 非デフォルトチェーンを削除 (`-X`) | iptables + ip6tables | 常時 |
+| loopback / BFD / VxLAN / DASH-HA / ICMP / DHCP / BGP ルールを再追加 | iptables + ip6tables | 常時（各機能の有効状態に依存） |
+| CONFIG_DB ACL_RULE を `iptables -A INPUT` として追加 | iptables または ip6tables | CTRLPLANE ACL_RULE が存在する場合 |
+| ip2me DROP ルールを追加 | iptables + ip6tables | LOOPBACK/VLAN/PORTCHANNEL/INTERFACE の IP 数だけ |
+| デフォルト DROP (`-A INPUT -j DROP`) を追加 | iptables + ip6tables | `num_ctrl_plane_acl_rules > 0` の場合のみ |
+| ip6tables raw テーブルに ICMPv6 NOTRACK を追加 | ip6tables raw | 常時 |
+
+evidence: `caclmgrd:625-901` (`get_acl_rules_and_translate_to_iptables_commands()` 全体)
+
+#### iptables nat テーブル (multi-ASIC 専用)
+
+multi-ASIC 環境では各 ASIC 名前空間の nat テーブルも書き換わる。
+
+| 副作用 | 対象サービス | 書き込み |
+|-------|-------------|---------|
+| nat チェーン全削除・フラッシュ | — | `iptables/ip6tables -t nat -X / -F` |
+| DNAT: フロントパネル着信 → host mgmt IP | SNMP, SSH (`multi_asic_ns_to_host_fwd=True`) | `iptables -t nat -A PREROUTING ... -j DNAT` |
+| SNAT: host → namespace docker IP | SNMP, SSH | `iptables -t nat -A POSTROUTING ... -j SNAT` |
+
+evidence: `caclmgrd:476-516` (`generate_fwd_traffic_from_namespace_to_host_commands()`)
+
+#### iptables 副作用 (DualToR 専用)
+
+| 副作用 | 書き込み |
+|-------|---------|
+| SOC 向け SNAT (Loopback3 ソース IP) | `iptables -t nat -A POSTROUTING --destination <soc_ip> -j SNAT` |
+| BGP Loopback1 宛パケット DROP | `iptables -I INPUT 1 -d <loopback1> -p tcp --dport 179 -j DROP` |
+
+evidence: `caclmgrd:429-473, 401-427`
+
+#### スレッド生成
+
+ACL_TABLE/ACL_RULE 変更通知受信のたびに `threading.Thread` を起動し、0.5 秒デバウンス後に `update_control_plane_acls()` を実行する。スレッドは完了後に自動クリーンアップ。
+
+evidence: `caclmgrd:1299-1303`
+
+#### 起動時の副作用
+
+caclmgrd 起動時、全 namespace に対して無条件で `update_control_plane_acls()` を実行する。これにより既存の iptables ルールが一度フラッシュ・再インストールされる。
+
+evidence: `caclmgrd:1169-1171`
+
+> スキャン証跡: `caclmgrd` 全行読了。`aclorch.cpp:4680-4684, 5474-5477, 6088-6093, 3479-3481` 確認。副作用 7 カテゴリ抽出。中間トレース: `meta/_intermediate/cdb-flow/control-plane-acl-side-effects.md`
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
