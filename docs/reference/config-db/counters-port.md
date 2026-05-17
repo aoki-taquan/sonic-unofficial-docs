@@ -447,6 +447,46 @@ SAI が特定の counter stat を返せない場合（ASIC 実装なし等）、
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`portsorch` / `flexcounterorch` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### ポーリング間隔定数
+
+| 定数名 | 値 | 対象グループ | ソース |
+|--------|----|------------|--------|
+| `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | **1000 ms** | `PORT_STAT_COUNTER` / `WRED_ECN_PORT_STAT_COUNTER` | portsorch.cpp:87 |
+| `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS` | **60000 ms** | `PORT_BUFFER_DROP_STAT` | portsorch.cpp:88 |
+| `PORT_PHY_ATTR_FLEX_COUNTER_POLLING_INTERVAL_MS` | **10000 ms** | `PORT_PHY_ATTR` | portsorch.cpp:89 |
+| `PORT_RATE_FLEX_COUNTER_POLLING_INTERVAL_MS` | **"1000" ms**（文字列） | `PORT_RATE_COUNTER` | portsorch.h:41 |
+| `FLEX_COUNTER_DELAY_SEC` | **60 秒** | warm-reboot 時の全グループ処理遅延タイマー | flexcounterorch.cpp:44 |
+
+`FLEX_COUNTER_TABLE|<group>|POLL_INTERVAL` が CONFIG_DB で指定されない場合、これらの値が syncd へのデフォルトとして投入される。`counterpoll show` で表示される「default」値とは概念上独立しており、コード側のハードコードが実効値となる。
+
+### flex counter グループ名定数
+
+FLEX_COUNTER_DB でのグループキーとして使われる文字列定数。
+
+| 定数名 | 値 | ソース |
+|--------|----|--------|
+| `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PORT_STAT_COUNTER"` | portsorch.h:29 |
+| `PORT_RATE_COUNTER_FLEX_COUNTER_GROUP` | `"PORT_RATE_COUNTER"` | portsorch.h:30 |
+| `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP` | `"PORT_BUFFER_DROP_STAT"` | portsorch.h:31 |
+| `WRED_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"WRED_ECN_PORT_STAT_COUNTER"` | portsorch.h:43 |
+
+### FLEX_COUNTER_TABLE キー定数
+
+`FLEX_COUNTER_TABLE|<key>` の `<key>` 部分に対応するハードコード定数。
+
+| 定数名 | 値 | ソース |
+|--------|-----|--------|
+| `PORT_KEY` | `"PORT"` | flexcounterorch.cpp:47 |
+| `PORT_BUFFER_DROP_KEY` | `"PORT_BUFFER_DROP"` | flexcounterorch.cpp:50 |
+| `WRED_PORT_KEY` | `"WRED_ECN_PORT"` | flexcounterorch.cpp:63 |
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
