@@ -210,6 +210,33 @@ WarmStart::isWarmStart() == true
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-cross-refs.md`
+
+CHASSIS_APP_DB 各テーブルへの書き込みが依存する他テーブル・DB の参照関係を示す。
+
+| # | 依存方向 | 参照元 | 参照先テーブル | 依存内容 | 証跡 |
+|---|----------|--------|--------------|---------|------|
+| 1 | CONFIG_DB → CHASSIS_APP_DB (全体ゲート) | `DEVICE_METADATA.localhost.switch_type` | CHASSIS_APP_DB 全テーブル | `switch_type != "voq"` または `/etc/sonic/database_config.json` に `CHASSIS_APP_DB` 不在時は書き込み一切なし | `main.cpp:694-730` |
+| 2 | CONFIG_DB → SYSTEM_LAG_TABLE | `DEVICE_METADATA.localhost.switch_id` | `SYSTEM_LAG_TABLE.switch_id` 値 | ローカル LAG か否かの判定 (`gVoqMySwitchId`) に使用。起動時一度のみ読み取り | `main.cpp:305-313`, `portsorch.cpp:11141-11148` |
+| 3 | APPL_DB → CHASSIS_APP_DB (書き込みトリガ) | `APP_SYSTEM_PORT_TABLE` (PortInitDone 後) | `SYSTEM_INTERFACE` | ポートリスト (`m_portList`) 未完成時は `gPortsOrch->getPort()` 失敗 → 書き込みスキップ | `portsorch.cpp:10864-10870`, `intfsorch.cpp:1676-1681` |
+| 4 | CONFIG_DB → CHASSIS_APP_DB (初期化スクリプト経由) | `SYSTEM_PORT` (暗黙的) | `SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` | LAG ID 割り当て範囲の初期化。未初期化時は `lagIdAdd()` が `LAG_ID_ALLOCATOR_ERROR_TABLE_FULL (-1)` を返し addLag 失敗 | `lagids.lua:15-16`, `portsorch.cpp:7974-7983` |
+| 5 | CONFIG_DB → CHASSIS_APP_DB (適用ガード) | `BGP_DEVICE_GLOBAL.tsa_enabled` (LC 側) | `BGP_DEVICE_GLOBAL\|STATE` | LC 側 TSA が `"true"` の場合、supervisor からの `tsa_enabled` 変更を `isolate_unisolate_device()` に渡さずブロック | `managers_chassis_app_db.py:40-44` |
+| 6 | CHASSIS_APP_DB 内 (LAG → LAG_MEMBER) | `SYSTEM_LAG_TABLE` | `SYSTEM_LAG_MEMBER_TABLE` | LAG が `voqSyncAddLag()` 完了前は `switch_id` 未設定 → `voqSyncAddLagMember()` がスキップ | `portsorch.cpp:11179-11193` |
+| 7 | CHASSIS_STATE_DB → CHASSIS_APP_DB (DEL トリガ) | `CHASSIS_MODULE_TABLE` (oper_status 変化) | CHASSIS_APP_DB 全テーブル | モジュール down 検知から 30 分後に `_cleanup_chassis_app_db()` が Lua スクリプトでパターン削除 | `chassisd:593-658,89-90` |
+
+### 依存 #1 の詳細 (switch_type ゲート)
+
+起動時に `getCfgSwitchType()` が `DEVICE_METADATA.localhost.switch_type` を読み取り `gMySwitchType` を決定する。`gMySwitchType == "voq"` かつ `isChassisAppDbPresent()` (= `/etc/sonic/database_config.json` に `CHASSIS_APP_DB` キーが存在) の両方が成立した場合のみ `gMultiAsicVoq = true` となり CHASSIS_APP_DB への接続が確立される (`main.cpp:725-730`)。いずれかが欠如した場合、`gMultiAsicVoq` は false のままとなりすべての `voqSync*()` 関数は即時 return する（エラーログなし）。
+
+### 依存 #5 の詳細 (LC TSA ガード)
+
+`ChassisAppDbMgr` は初期化時に `CONFIG_DB.BGP_DEVICE_GLOBAL.tsa_enabled` を `subscribe()` で監視し `self.lc_tsa` を更新する (`managers_chassis_app_db.py:20`)。supervisor が `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL|STATE` を SET すると `set_handler()` が呼ばれるが、`self.lc_tsa != "false"` の場合は `isolate_unisolate_device()` を呼び出さない。これにより **LC 側の TSA 状態が supervisor の TSA より優先** される。LC 側が TSA 中 (`tsa_enabled = "true"`) の間はスーパーバイザーからの unisolate 指示を無視する (`managers_chassis_app_db.py:41-44`)。
+
+<!-- /cross-refs -->
+
 ## キー構造
 
 | テーブル | Redis キー形式 | 例 |
