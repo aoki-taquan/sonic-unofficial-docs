@@ -279,4 +279,25 @@ MySID 追加後、SAI カウンタ OID は `m_pending_counters` キューに積�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-counter-cross-refs.md`
+> 根拠: `sonic-swss/orchagent/srv6orch.cpp` L120–142, L199, L223, L251–283, L286–313, L300, `sonic-swss/orchagent/flexcounterorch.cpp` L337–340, `sonic-swss-common/common/schema.h` L257, L313
+
+YANG `sonic-flex_counter.yang` の `SRV6` container には leafref 定義が存在しない。以下はすべて実装レベルの暗黙参照。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `SRV6_MY_SIDS`（APPL_DB `APP_SRV6_MY_SID_TABLE` / CONFIG_DB `CFG_SRV6_MY_SID_TABLE`） | 走査・OID 管理（カウンタ生成/削除トリガー） | `FLEX_COUNTER_STATUS` が `enable` / `disable` に切り替わるとき。`srv6_my_sid_table_` を全走査し `addMySidCounter()` / `removeMySidCounter()` を呼び出す | `srv6orch.cpp` L251–283 (`setCountersState()`) |
+| `COUNTERS_DB` の `COUNTERS_SRV6_NAME_MAP` | 書き込み（SID 文字列 → counter OID マッピング追加/削除） | MySID カウンタ追加時 / 削除時。CLI (`show srv6` / `sonic-clear srv6`) がこのマッピングを参照してカウンタ値を表示・クリアする | `srv6orch.cpp` L199 (`m_mysid_counters_table->set()`), L223 (`->hdel()`) |
+| `FLEX_COUNTER_DB` の `FLEX_COUNTER_TABLE\|SRV6_STAT_COUNTER\|<oid>`（`SRV6_COUNTER_ID_LIST`） | 書き込み（syncd 向け counter OID リスト登録/削除） | ペンディング OID が ASIC_DB に登録済みと確認できた時点（1 秒タイマー処理時）。syncd の `FlexCounter` がこのリストで SAI bulk counter API を周期呼び出し | `srv6orch.cpp` L300 (`m_counter_manager.setCounterIdList()`), L229 (`clearCounterIdList()`) |
+| `ASIC_DB` の `VIDTORID` | 読み取り（VID → RID 変換確認） | `gTraditionalFlexCounter == true` かつ `doTask(SelectableTimer)` 処理時のみ。OID が未登録なら次回タイマーで再試行 | `srv6orch.cpp` L134–136, L294 (`m_vid_to_rid_table->hget()`) |
+| SAI `sai_counter_api`（`SAI_OBJECT_TYPE_COUNTER`） | SAI API 呼び出し（create / remove / attribute set） | `addMySidCounter()` / `removeMySidCounter()` / `setMySidEntryCounter()` 呼び出し時。プラットフォームが `queryMySidCountersCapability()` 非対応の場合は呼び出し自体が発生しない | `srv6orch.cpp` — `addMySidCounter()` / `removeMySidCounter()` 内の SAI API 呼び出し群 |
+
+!!! note "leafref がない理由"
+    `FLEX_COUNTER_TABLE|SRV6` は `SRV6_MY_SIDS` や `COUNTERS_DB` への参照を YANG モデル上では宣言しない。カウンタ対象 MySID の存在確認は orchagent 内部の `srv6_my_sid_table_` マップ（メモリ上）に対して行われるため、CONFIG_DB 経由の leafref 依存を必要としない。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: srv6-counter-page -->
