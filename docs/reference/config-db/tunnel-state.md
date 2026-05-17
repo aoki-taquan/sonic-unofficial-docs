@@ -396,6 +396,77 @@ EVPN 由来の動的トンネルは `EVPN_<vtep_ip>` 形式で VXLAN_TUNNEL_TABL
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## STATE_DB 書き込みの副作用 (Phase F)
+
+STATE_DB への書き込みは単なる状態ミラーにとどまらず、以下の連鎖処理を引き起こす。
+
+### TUNNEL_DECAP_TABLE 書き込み後の副作用
+
+#### 保留 TERM エントリのフラッシュ
+
+`addDecapTunnel()` が成功してトンネル本体の `setDecapTunnelStatus()` が STATE_DB に書き込まれた直後、`processUnhandledDecapTunnelTerms()` が呼ばれ、`unhandledDecapTerms` に蓄積されていた TERM エントリが一括処理される[^7]。
+
+```
+addDecapTunnel() 成功
+  └─ setDecapTunnelStatus()         # STATE_DB TUNNEL_DECAP_TABLE 書き込み
+  └─ processUnhandledDecapTunnelTerms(key)
+       └─ addDecapTunnelTermEntry() × n
+            └─ increaseTunnelRefCount()
+            └─ setDecapTunnelTermStatus()   # STATE_DB TUNNEL_DECAP_TERM_TABLE 書き込み
+```
+
+#### ref_count 管理との連動
+
+TUNNEL_DECAP_TABLE の STATE_DB 削除は `ref_count` の管理と連動している。`removeDecapTunnel()` を呼んでも `ref_count > 0` の間は STATE_DB エントリが削除されない。ref_count は TERM エントリの追加・削除によって増減するため、**TERM が存在する限りトンネル本体の STATE_DB エントリも残存する**[^8]。
+
+### TUNNEL_DECAP_TERM_TABLE 書き込み後の副作用
+
+#### TERM 削除時のトンネル本体 DEL 連鎖
+
+TERM エントリを削除すると `decreaseTunnelRefCount()` が呼ばれ、`ref_count` が 0 になった場合に `RemoveTunnelIfNotReferenced()` がトンネル本体を削除し、STATE_DB の `TUNNEL_DECAP_TABLE` エントリも連鎖的に `del()` される[^9]。
+
+```
+removeDecapTunnelTermEntry()
+  └─ decreaseTunnelRefCount()
+  └─ RemoveTunnelIfNotReferenced()
+       └─ ref_count==0 のとき: removeDecapTunnel()
+                └─ removeDecapTunnelStatus()   # STATE_DB TUNNEL_DECAP_TABLE 削除
+```
+
+### VXLAN_TUNNEL_TABLE 書き込み後の副作用
+
+#### FlexCounter 登録との非同期関係
+
+SAI トンネル作成成功時に `addTunnelToFlexCounter()` が呼ばれ、`m_pendingAddToFlexCntr` に追加される。1 秒インターバルのタイマー (`FLEX_COUNTER_UPD_INTERVAL`) が発火すると `COUNTERS_DB COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` に書き込まれてトンネル統計収集が開始される。**STATE_DB への書き込みと FlexCounter 登録の完了順序は保証されない**[^10]。
+
+#### PortsOrch への登録順序
+
+`addTunnelUser()` 内では `gPortsOrch->addTunnel()` → `addBridgePort()` の後に `addRemoveStateTableEntry(add=true)` が呼ばれる。STATE_DB への書き込みは PortsOrch 登録が完了した後に確定する[^11]。
+
+#### link ステータス変化による上書き
+
+link-up / link-down イベントが発生すると `PortsOrch::updateDbPortOperStatus()` → `VxlanTunnelOrch::updateDbTunnelOperStatus()` の経路で `operstatus` フィールドが上書きされる。この更新はトンネル作成時の初期書き込みとは独立して発生し、タイミングは SAI 通知に依存する[^12]。
+
+### VXLAN_TABLE 書き込み後の副作用
+
+#### Linux netdevice 作成完了の唯一の公開シグナル
+
+`VXLAN_TABLE|<name>` の `state=ok` は `createVxlan()` が以下 6 ステップの Linux コマンドを全て成功させた場合にのみ書かれる。外部監視ツールはこのエントリを polling して VXLAN netdevice 作成完了を検出できる。途中で失敗した場合は `state=ok` が書かれず、先行コマンドのロールバックが試みられる[^13]。
+
+| ステップ | コマンド相当 |
+|---------|------------|
+| 1 | `ip link add ... type vxlan` |
+| 2 | `ip link set ... up` (VXLAN) |
+| 3 | VxLAN インターフェース作成 |
+| 4 | `ip link set ... master` (VXLAN → IF) |
+| 5 | VxLAN IF を VNET にアタッチ |
+| 6 | `ip link set ... up` (VxLAN IF) |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-side-effects.md`
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: schema.h 定数定義: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L488-L489>
@@ -409,3 +480,17 @@ EVPN 由来の動的トンネルは `EVPN_<vtep_ip>` 形式で VXLAN_TUNNEL_TABL
 [^5]: `createVxlan()` 実装: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vxlanmgr.cpp#L890-L892>
 
 [^6]: `MuxCable` コンストラクタで `TunnelDecapOrch*` を保持: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/muxorch.cpp#L2183-L2185>
+
+[^7]: `processUnhandledDecapTunnelTerms` 呼び出し: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L300-L310>
+
+[^8]: `RemoveTunnelIfNotReferenced` による DEL 抑止: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L1569-L1575>
+
+[^9]: `decreaseTunnelRefCount` → `RemoveTunnelIfNotReferenced` 連鎖: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L1258-L1265>
+
+[^10]: `addTunnelToFlexCounter` 実装: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1342-L1344>
+
+[^11]: `addTunnelUser` → `addRemoveStateTableEntry` 順序: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1719-L1721>
+
+[^12]: `updateDbTunnelOperStatus` を `PortsOrch` が呼び出す: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp#L3916-L3923>
+
+[^13]: `createVxlan` → `m_stateVxlanTable.set`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vxlanmgr.cpp#L807-L892>
