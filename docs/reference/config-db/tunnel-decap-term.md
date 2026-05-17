@@ -314,6 +314,68 @@ TERM が先着した場合 (`tunnel_exists == false`)、`unhandledDecapTerms` �
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+TUNNEL_DECAP_TERM_TABLE に関わる全 Publisher/Subscriber ペアを実装から導出した。
+
+### Producer 側 (APPL_DB へ書き込む)
+
+| Producer | 型 | 書き込みタイミング | evidence |
+|----------|----|--------------------|----------|
+| `tunnelmgrd` (`m_appIpInIpTunnelDecapTermTable`) | `ProducerStateTable` | CONFIG_DB `TUNNEL` SET/DEL イベント受信後、APPL_DB `APP_TUNNEL_DECAP_TABLE` と同時に書き込む | `tunnelmgr.cpp` L111, L276-309 |
+| `RouteOrch` (`m_appTunnelDecapTermProducer`) | `ProducerStateTable` | VIP subnet decap ルート追加時に `subnet_type=vip` の `MP2MP` term を書き込む | `routeorch.cpp` L53, L3220-3251 |
+| `VNetRouteOrch` (`app_tunnel_decap_term_producer_`) | `ProducerStateTable` | VNet VIP ルート追加時に同様の `MP2MP` term を書き込む | `vnetorch.cpp` L734, L1563-1594 |
+| `swssconfig` + `ipinip.json.j2` | Redis MULTI/EXEC | 起動時にテンプレート展開済み JSON から一括書き込み | `sonic-buildimage: dockers/docker-orchagent/ipinip.json.j2` |
+
+`ProducerStateTable` は Lua スクリプトで `SADD KEY_SET` + `HSET _<table>:<key>` + `PUBLISH <table>_CHANNEL@0 G` をアトミックに実行する。
+
+### Consumer 側 (tunneldecaporch)
+
+`TunnelDecapOrch` は `Orch(appDb, tableNames)` 継承で初期化され、`tableNames` に `APP_TUNNEL_DECAP_TERM_TABLE_NAME` が含まれる (`tunneldecaporch.cpp` L30-35)。
+
+`Orch` ベースクラスが内部で `ConsumerStateTable` を生成し、`APP_TUNNEL_DECAP_TERM_TABLE_CHANNEL@0` を購読する:
+
+```
+SUBSCRIBE APP_TUNNEL_DECAP_TERM_TABLE_CHANNEL@0
+```
+
+通知受信 → `Select::select()` wake-up → `consumer_state_table_pops.lua` で `SPOP KEY_SET` + `HGETALL _<table>:<key>` → `TunnelDecapOrch::doTask()` → `doDecapTunnelTermTask()` の順で処理される。
+
+### CONFIG_DB SUBNET_DECAP の購読 (SubscriberStateTable)
+
+コンストラクタ内 (tunneldecaporch.cpp L39-48) で `SUBNET_DECAP` を `SubscriberStateTable` で購読:
+
+```cpp
+new SubscriberStateTable(configDb, CFG_SUBNET_DECAP_TABLE_NAME, ...)
+```
+
+Redis keyspace notification (`__keyspace@{db_id}__:SUBNET_DECAP|*`) を受信し、`doSubnetDecapTask()` を呼び出す。コンストラクタ内で初期 `pops()` を実行し、起動前に書き込まれていた `SUBNET_DECAP` エントリもキャッチアップする。
+
+### STATE_DB への書き込み (Table 直接)
+
+`stateTunnelDecapTermTable` (`Table` クラス, L34-35) を通じて直接 `HSET`/`HDEL` を発行する。keyspace notification は発生するが、リトライ/確認のフィードバックループはなく一方向書き込みのみ。
+
+### 通信経路まとめ
+
+```
+CONFIG_DB:TUNNEL
+  ──SubscriberStateTable──→ tunnelmgrd
+      ──ProducerStateTable──→ APPL_DB:TUNNEL_DECAP_TERM_TABLE
+                                 ──ConsumerStateTable──→ tunneldecaporch
+                                                            ──Table.set()──→ STATE_DB:TUNNEL_DECAP_TERM_TABLE
+
+CONFIG_DB:SUBNET_DECAP
+  ──SubscriberStateTable──→ tunneldecaporch (subnetDecapConfig 更新)
+
+RouteOrch / VNetRouteOrch
+  ──ProducerStateTable──→ APPL_DB:TUNNEL_DECAP_TERM_TABLE (VIP subnet decap term)
+```
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-pubsub.md`
+
+<!-- /pubsub -->
+
 ## 購読者
 
 - `tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)): [SAI](../../reference/glossary.md#term-sai) `create_tunnel_term_table_entry()` / `remove_tunnel_term_table_entry()` を呼び出す
