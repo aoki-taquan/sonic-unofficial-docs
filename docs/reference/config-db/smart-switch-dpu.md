@@ -349,6 +349,62 @@ SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=<vnet_name>  ...
 > **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:65-100`; `common/dhcp_db_monitor.py:349-386`; `src/sonic-config-engine/config_samples.py:81-151`; `src/sonic-dhcp-utilities/dhcp_utilities/common/utils.py:153-161`
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `src/sonic-yang-models/yang-models/sonic-smart-switch.yang` 全行精読; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:60-100`; `src/sonic-dhcp-utilities/dhcp_utilities/common/utils.py:153-161`; `src/sonic-config-engine/config_samples.py:80-157`; `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:355,749,1143,1187,1245-1270` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-cross-refs.md`
+
+各テーブルは YANG leafref の有無とは独立して、実装レベルで以下のテーブルを暗黙参照する。
+
+### MID_PLANE_BRIDGE / DPUS の暗黙参照
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `DEVICE_METADATA\|localhost` (`subtype`) | CONFIG_DB | 読み取り (`is_smart_switch()` 判定) | なし | 必須（`"SmartSwitch"` でない場合 `MID_PLANE_BRIDGE`/`DPUS` を完全スキップ）| `dhcp_cfggen.py:65-67`; `utils.py:153-161` |
+| `DHCP_SERVER_IPV4\|bridge-midplane` | CONFIG_DB | 書き込み (初期設定で自動生成) | なし | 派生（`config_samples.py` が `DPUS` エントリから自動生成）| `config_samples.py:133-143` |
+| `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|<dpu>` | CONFIG_DB | 書き込み (初期設定で自動生成) | なし | 派生（`DPUS` の `midplane_interface` から DPU ごとに生成）| `config_samples.py:105-109` |
+| `FEATURE\|dhcp_server` | CONFIG_DB | 書き込み (初期設定で有効化) | なし | 派生（`DPUS` が存在する場合のみ生成）| `config_samples.py:113-131` |
+
+#### DEVICE_METADATA.localhost.subtype — SmartSwitch 判定ゲート
+
+`dhcp_cfggen.py:65-67` が `DEVICE_METADATA|localhost.subtype` を読み取り `is_smart_switch()` を呼ぶ (`utils.py:153-161`)。`subtype != "SmartSwitch"` の場合、`_parse_dpu()` が呼ばれず `MID_PLANE_BRIDGE` / `DPUS` テーブルの内容が完全に無視される。DPU への IP 払い出しは発生しない。
+
+#### DHCP_SERVER_IPV4 / DHCP_SERVER_IPV4_PORT — DPUS から自動生成
+
+`config_samples.py:105-143` は `DPUS` 内の各エントリから `DHCP_SERVER_IPV4_PORT|bridge-midplane|<midplane_interface>` を生成し、`DHCP_SERVER_IPV4|bridge-midplane` を `MODE=PORT` で設定する。`DPUS` が空の場合、これらのテーブルは生成されない。
+
+---
+
+### DASH_HA_GLOBAL_CONFIG の暗黙参照
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `VNET\|<name>` | CONFIG_DB | 読み取り (`dpu_vnet` / `vnet_name` の存在確認) | **あり** (`leafref`) | 条件付き必須（DASH HA 設定時。不在で YANG バリデーション違反）| `sonic-smart-switch.yang:292-303` |
+
+#### VNET — YANG leafref による強制参照
+
+`sonic-smart-switch.yang:291-303` は `DASH_HA_GLOBAL_CONFIG.global.vnet_name`（deprecated）と `dpu_vnet` の両フィールドを `VNET` テーブルへの `leafref` として定義する。`VNET|<name>` エントリが存在しない状態で `dpu_vnet` を書き込もうとすると、YANG バリデーションエラーが発生し CLI 経由の書き込みは拒否される。
+
+---
+
+### DPU / REMOTE_DPU / VDPU の暗黙参照
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `DEVICE_METADATA\|localhost` (`switch_type = "dpu"`) | CONFIG_DB | 書き込み (DPU 側 config_samples) | なし | DPU 専用（DPU デバイスとして識別させる）| `config_samples.py:154-157` |
+| `PORT\|*` | CONFIG_DB | 読み取り (DPU 側 chassisd dataplane state 判定) | なし | DPU 側のみ（NPU 側 chassisd は不参照）| `chassisd:1265-1272` |
+| `CHASSIS_MODULE\|DPU*` | CONFIG_DB | 読み書き (chassisd による DPU admin state 制御) | なし | 必須（DPU モジュール管理）| `chassisd:44,355,749` |
+
+#### CHASSIS_MODULE — chassisd による DPU 管理
+
+`chassisd` は `CHASSIS_MODULE` テーブル（`CHASSIS_CFG_TABLE = "CHASSIS_MODULE"`）を唯一の CONFIG_DB 参照先として DPU の admin state を制御する（`chassisd:355,749,1143`）。`DPU` / `DPUS` テーブルを直接参照しない。DPU の物理状態は `CHASSIS_STATE_DB.DPU_STATE` テーブル経由で管理される。
+
+### SAI 参照
+
+`MID_PLANE_BRIDGE` / `DPUS` / `DPU` / `REMOTE_DPU` / `VDPU` はいずれも SAI を直接操作しない。`DASH_HA_GLOBAL_CONFIG` は `dashhaorch` (orchagent) 経由で DASH SAI に設定を渡すが、orchagent の SAI 呼び出し詳細は DASH 固有実装に依存する。
+<!-- /cross-refs -->
+
 ## 制約
 
 - `MID_PLANE_BRIDGE|GLOBAL` の `bridge` は `bridge-midplane` 固定。変更不可。
