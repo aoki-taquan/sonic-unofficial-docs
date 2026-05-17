@@ -523,6 +523,42 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 書き込み副作用 (Phase F)
+
+> **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:89-90,219-256,315-335,557-562,863-889,1180-1226`; `src/sonic-config-engine/config_samples.py:96-143` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/smart-switch-dpu-side-effects.md`
+
+### MID_PLANE_BRIDGE + DPUS → dhcp_server がミッドプレーン DHCP プールを再構成
+
+`MID_PLANE_BRIDGE` と `DPUS` への書き込みは `dhcp_server` サービスに通知され、`bridge-midplane` インタフェース上の DHCP プールが構成される。`DPUS|dpu*` の各エントリに対して `169.254.200.(dpu_id+1)` の DHCP リース割り当てが開始される。`DPUS|dpu*` を DEL するとそのエントリの DHCP プールが失効し、DPU のミッドプレーン IP が喪失する（DPU ミッドプレーン接続断）。
+
+### CHASSIS_MODULE 書き込み → DPU ハードウェア電源を非同期制御
+
+`CHASSIS_MODULE|DPU*` への SET (admin_status=up/down) は `SmartSwitchConfigManagerTask` が受け取り、別スレッドで `set_admin_state_gracefully()` を呼び出す (`chassisd:255-256`)。CONFIG_DB 書き込み完了直後には STATE_DB の `oper_status` はまだ変化しない（非同期）。DEL 操作も `admin_state = MODULE_ADMIN_DOWN` として扱われ DPU がシャットダウンする (`chassisd:1224`)。
+
+### midplane 切断 → CP_STATE / DP_STATE が連鎖的に down へ
+
+`SmartSwitchModuleUpdater.update_dpu_state()` は DPU の midplane 到達性喪失を検知すると、`CHASSIS_STATE_DB` に `dpu_midplane_link_state: "down"` を書き込むと同時に `CP_STATE = "down"` および `DP_STATE = "down"` も設定する (`chassisd:881-884`)。midplane 復旧だけでは CP/DP は自動回復せず、個別の復旧チェックが必要。
+
+### DASH_HA_GLOBAL_CONFIG → SAI HA 属性更新（BFD セッション再起動の可能性）
+
+`dashhaorch` は `DASH_HA_GLOBAL_CONFIG` 変更を受けると SAI に HA グローバル属性を即時適用する。`dp_channel_src_port_min/max` や BFD プローブ間隔の変更は既存 BFD セッションを一時中断させる可能性があり、HA フェイルオーバー中の変更は避けること。
+
+### 副作用サマリー
+
+| CONFIG_DB 操作 | 副作用 | 波及先 |
+|---|---|---|
+| `MID_PLANE_BRIDGE` SET | ミッドプレーン DHCP 有効化 | `dhcp_server`、ネットワーク |
+| `DPUS\|dpu*` SET | DHCP リース割り当て開始（169.254.200.x） | DPU ミッドプレーン IP |
+| `DPUS\|dpu*` DEL | DHCP プール失効、DPU ミッドプレーン IP 喪失 | DPU 接続断 |
+| `CHASSIS_MODULE\|DPU*` SET admin_status=down | DPU グレースフルシャットダウン（非同期） | ハードウェア、`CHASSIS_STATE_DB` |
+| `CHASSIS_MODULE\|DPU*` SET admin_status=up | DPU 電源投入（非同期） | ハードウェア、`CHASSIS_STATE_DB` |
+| `CHASSIS_MODULE\|DPU*` DEL | DPU シャットダウン（DEL = admin_down 扱い） | ハードウェア |
+| `DASH_HA_GLOBAL_CONFIG` SET | SAI HA 属性更新、BFD セッション再起動の可能性 | `dashhaorch`、SAI、HA セッション |
+
+<!-- /side-effects -->
+
 ## 制約
 
 - `MID_PLANE_BRIDGE|GLOBAL` の `bridge` は `bridge-midplane` 固定。変更不可。
