@@ -4,7 +4,7 @@ description: "PASS_THROUGH_ROUTE_TABLE テーブル — VoQ チャシスのフ�
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-17
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/chassisorch.cpp
@@ -14,6 +14,15 @@ sources:
     ref: master
   - repo: sonic-net/sonic-swss
     path: orchagent/orchdaemon.cpp
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/observer.h
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/vnetorch.h
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/vnetorch.cpp
     ref: master
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
@@ -416,6 +425,107 @@ CONFIG_DB エントリのフィールドへの書き込みは ChassisOrch に対
 > **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:14-47`; `sonic-swss/orchagent/vnetorch.cpp:1861-2040`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-orch-pubsub.md`
+
+`ChassisOrch` は 2 層の通信メカニズムを使用する。(1) CONFIG_DB 変化を `Orch` 基底 Consumer 経由で受け取り、(2) `VNetRouteOrch` の Observer として VNet nextHop 変化通知を受け取る。
+
+### 1. CONFIG_DB 購読（Orch Consumer）
+
+`ChassisOrch` は `Orch(cfgDb, tableNames)` コンストラクタ呼び出しにより CONFIG_DB `PASS_THROUGH_ROUTE_TABLE` を購読する。`orchdaemon` の `epoll` ベース select ループがテーブル変化を検出すると `doTask(Consumer&)` が同期呼び出しされる。
+
+```cpp
+// chassisorch.cpp:4-13
+ChassisOrch::ChassisOrch(...) :
+    Orch(cfgDb, tableNames),   // CONFIG_DB Consumer として登録
+    m_passThroughRouteTable(applDb, APP_PASS_THROUGH_ROUTE_TABLE_NAME),
+    m_vNetRouteOrch(vNetRouteOrch)
+```
+
+登録テーブル名定数: `CFG_PASS_THROUGH_ROUTE_TABLE_NAME = "PASS_THROUGH_ROUTE_TABLE"` (`schema.h:371`)
+
+### 2. Observer パターン（VNetRouteOrch Subject）
+
+`ChassisOrch` は `Observer` インタフェースを実装し、IP プレフィックスごとに `VNetRouteOrch` の `next_hop_observers_` マップへ登録・解除される。
+
+```cpp
+// observer.h:9-33 (抜粋)
+enum SubjectType {
+    SUBJECT_TYPE_NEXTHOP_CHANGE,   // ChassisOrch が受け取る種別
+    ...
+};
+class Observer {
+    virtual void update(SubjectType, void *) = 0;
+};
+```
+
+`VNetRouteOrch` は `Subject` を継承し、ルート変化時に全登録オブザーバへ `SUBJECT_TYPE_NEXTHOP_CHANGE` を通知する:
+
+| 通知タイミング | 関数 | op | ソース行 |
+|--------------|------|----|---------|
+| `attach()` 完了時（best route あり） | `VNetRouteOrch::attach()` | SET | `vnetorch.cpp:1905` |
+| `detach()` 呼び出し時（best route あり） | `VNetRouteOrch::detach()` | DEL | `vnetorch.cpp:1946` |
+| VNet ルート追加（new best route） | `VNetRouteOrch::addRoute()` | SET | `vnetorch.cpp:1985` |
+| VNet ルート削除（後継あり） | `VNetRouteOrch::delRoute()` | SET | `vnetorch.cpp:2032` |
+| VNet ルート削除（後継なし） | `VNetRouteOrch::delRoute()` | DEL | `vnetorch.cpp:2032` |
+
+通知データ (`VNetNextHopUpdate`) には `op`, `vnet`, `destination`, `prefix`, `nexthop` が含まれ、ChassisOrch の `update()` が受信する:
+
+```cpp
+// chassisorch.cpp:15-26
+void ChassisOrch::update(SubjectType type, void* ctx)
+{
+    VNetNextHopUpdate* updateInfo = reinterpret_cast<VNetNextHopUpdate*>(ctx);
+    if (updateInfo->op == SET_COMMAND)
+        addRouteToPassThroughRouteTable(*updateInfo);
+    else
+        deleteRoutePassThroughRouteTable(*updateInfo);
+}
+```
+
+### 3. APP_DB 書き込み（swsscommon::Table）
+
+通知受信後、`swsscommon::Table` を使用して APP_DB `PASS_THROUGH_ROUTE_TABLE` に直接書き込む（`ProducerStateTable` ではなく `Table`）。
+
+```cpp
+// chassisorch.cpp:10
+m_passThroughRouteTable(applDb, APP_PASS_THROUGH_ROUTE_TABLE_NAME),
+// APP_PASS_THROUGH_ROUTE_TABLE_NAME = "PASS_THROUGH_ROUTE_TABLE" (schema.h:93)
+```
+
+### 4. 通信フロー全体
+
+```
+orchdaemon select ループ (epoll)
+  → CONFIG_DB PASS_THROUGH_ROUTE_TABLE 変化
+  → ChassisOrch::doTask()
+      SET → VNetRouteOrch::attach(this, ip)
+      DEL → VNetRouteOrch::detach(this, ip)
+            ↓ (インプロセス同期呼び出し)
+          VNetRouteOrch が SUBJECT_TYPE_NEXTHOP_CHANGE を通知
+            ↓
+          ChassisOrch::update()
+            ↓
+          APP_DB PASS_THROUGH_ROUTE_TABLE
+          (Table::set() / Table::del())
+```
+
+全段階が**同プロセス内の同期呼び出し**であり、Redis Pub/Sub やメッセージキューは介在しない。CONFIG_DB 変化から APP_DB 書き込み完了まで同一イベントループイテレーション内で完結する。
+
+### 5. タイミング特性
+
+| 段階 | 遅延 | メカニズム |
+|------|------|-----------|
+| CONFIG_DB → `doTask()` | epoll 即時 (ms オーダー) | Orch Consumer |
+| `doTask()` → `attach()`/`detach()` | 同期 (0 ms) | 直接関数呼び出し |
+| `attach()` → `ChassisOrch::update()` | 同期 (0 ms) | `Observer::update()` 直接呼び出し |
+| `update()` → APP_DB 書き込み | 同期 (0 ms) | `swsscommon::Table::set()` |
+
+> **Evidence**: `sonic-swss/orchagent/chassisorch.cpp:4-26`; `sonic-swss/orchagent/observer.h:9-55`; `sonic-swss/orchagent/vnetorch.cpp:1861-2040`; `sonic-swss/orchagent/vnetorch.h:400-418`; `orchdaemon.cpp:290-293`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-orch-pubsub.md`
+<!-- /pubsub -->
+
 ## 制約
 
 - `<IP_prefix>` は `IpPrefix` クラスで正規化される（ホストビットが切り捨てられる）
@@ -446,6 +556,9 @@ CONFIG_DB エントリのフィールドへの書き込みは ChassisOrch に対
 - ソース: [`sonic-swss/orchagent/chassisorch.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/chassisorch.cpp)
 - ソース: [`sonic-swss/orchagent/chassisorch.h`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/chassisorch.h)
 - ソース: [`sonic-swss/orchagent/orchdaemon.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp)
+- ソース: [`sonic-swss/orchagent/observer.h`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/observer.h)
+- ソース: [`sonic-swss/orchagent/vnetorch.h`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vnetorch.h)
+- ソース: [`sonic-swss/orchagent/vnetorch.cpp`](https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vnetorch.cpp)
 - スキーマ定数: [`sonic-swss-common/common/schema.h`](https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h)
 
 <!-- ref-triangle:end -->
