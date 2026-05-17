@@ -449,6 +449,75 @@ DEL イベント受信時: SAI からのneighbor削除 → STATE_DB エントリ
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Pub/Sub・通知チャネル (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-pubsub.md`
+> 調査対象: `sonic-swss/orchagent/intfsorch.cpp` @ 4305596, `sonic-swss/orchagent/neighorch.cpp` @ 4305596, `sonic-swss/orchagent/portsorch.cpp` @ 4305596, `sonic-swss-common/common/subscriberstatetable.cpp` @ 158de8d3463ff4b841653f6d57190bb142b80d9c, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py` @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py` @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+
+CHASSIS_APP_DB (DB 12、`redis_chassis`) への書き込みは Redis の **keyspace 通知**を通じてリモートラインカード側のプロセスに伝達される。swsscommon の `SubscriberStateTable` が `psubscribe` を用いてパターン購読し、orchagent の `Orch::addExecutor(Consumer(...))` フレームワークに組み込まれる。
+
+### SubscriberStateTable の keyspace 購読パターン
+
+`subscriberstatetable.cpp:20-24` で以下のパターンが構築・登録される:
+
+```
+__keyspace@<dbId>__:<tableName><sep>*
+```
+
+CHASSIS_APP_DB (dbId=12、sep=`|`) の場合:
+
+| テーブル | keyspace パターン |
+|---------|----------------|
+| `SYSTEM_INTERFACE` | `__keyspace@12__:SYSTEM_INTERFACE|*` |
+| `SYSTEM_NEIGH` | `__keyspace@12__:SYSTEM_NEIGH|*` |
+| `SYSTEM_LAG_TABLE` | `__keyspace@12__:SYSTEM_LAG_TABLE|*` |
+| `SYSTEM_LAG_MEMBER_TABLE` | `__keyspace@12__:SYSTEM_LAG_MEMBER_TABLE|*` |
+| `BGP_DEVICE_GLOBAL` | `__keyspace@12__:BGP_DEVICE_GLOBAL|*` |
+
+### Consumer 登録一覧（orchagent 側）
+
+登録条件: `isChassisDbInUse()` が `true` の VoQ チャシス環境のみ。
+
+| テーブル | 購読プロセス | 登録箇所 | バッチサイズ | 優先度 |
+|---------|------------|---------|------------|--------|
+| `SYSTEM_INTERFACE` | `IntfsOrch` (リモート LC orchagent) | `intfsorch.cpp:104-106` | 128 (DEFAULT_POP_BATCH_SIZE) | 0 |
+| `SYSTEM_NEIGH` | `NeighOrch` (リモート LC orchagent) | `neighorch.cpp:54-55` | 128 | 0 |
+| `SYSTEM_LAG_TABLE` | `PortsOrch` (リモート LC orchagent) | `portsorch.cpp:1085-1086` | 128 | 0 |
+| `SYSTEM_LAG_MEMBER_TABLE` | `PortsOrch` (リモート LC orchagent) | `portsorch.cpp:1090-1091` | 128 | 0 |
+
+### bgpcfgd 側の購読登録
+
+- `main.py:112-113`: `device_info.is_chassis()` が `True` の場合のみ `ChassisAppDbMgr(common_objs, "CHASSIS_APP_DB", "BGP_DEVICE_GLOBAL")` を登録
+- `runner.py:42-53`: CHASSIS_APP_DB への接続は `swsscommon.DBConnector(db_name, 0, True, '')` (TCP 接続モード) で確立し、`SubscriberStateTable(conn, "BGP_DEVICE_GLOBAL")` を `selector.addSelectable()` に追加
+- イベントを受信すると `ChassisAppDbMgr.handler()` → `set_handler()` / `del_handler()` が呼び出される
+
+### bgpcfgd 内部 pub/sub（directory 経由）
+
+`ChassisAppDbMgr` は Redis 通知とは独立に、bgpcfgd 内部の directory オブジェクト経由でも LC 側 TSA 状態を監視する:
+
+```python
+# managers_chassis_app_db.py:20
+self.directory.subscribe(
+    [("CONFIG_DB", CFG_BGP_DEVICE_GLOBAL_TABLE_NAME, "tsa_enabled")],
+    self.on_lc_tsa_status_change
+)
+```
+
+`on_lc_tsa_status_change()` は LC ローカルの CONFIG_DB `BGP_DEVICE_GLOBAL.tsa_enabled` 変化時に呼び出され、`self.lc_tsa` をキャッシュする。`set_handler()` がスーパーバイザーの指示を受けたとき、`lc_tsa == "false"` の場合のみ FRR への設定変更を実行する (`managers_chassis_app_db.py:41-44`)。
+
+### chassisd の購読スコープ
+
+chassisd は CHASSIS_APP_DB を `SubscriberStateTable` で購読しない。CONFIG_DB の `CHASSIS_MODULE` テーブルのみを購読し、モジュール admin_state の変化に応じて電源制御を行う (`chassisd:1147`)。CHASSIS_APP_DB へのアクセスは cleanup 処理時に Lua スクリプト (`EVALSHA`) を直接実行する形式のみ。
+
+### 配信保証と注意点
+
+- Redis keyspace 通知は **at-most-once** 配信: 購読側がタイムアウト中に複数の書き込みが発生しても、ポップ時には最終状態のみが参照される
+- orchagent の `Consumer::pops()` はバッチ (`popBatchSize=128`) で複数イベントをまとめて処理し、`Orch::doTask()` が各イベントを順次実行する
+- CHASSIS_APP_DB は全ラインカードが同一 `redis_chassis` インスタンスを参照するため、書き込み側と購読側が同一物理 DB を通じて通信する。LC 間の直接 gRPC/RPC は使用されない
+
+<!-- /pubsub -->
+
 ## キー構造
 
 | テーブル | Redis キー形式 | 例 |
