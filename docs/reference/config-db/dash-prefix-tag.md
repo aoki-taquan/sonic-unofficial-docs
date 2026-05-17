@@ -81,6 +81,59 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 - [`DASH_ACL_IN_TABLE`](dash-acl.md) / [`DASH_ACL_OUT_TABLE`](dash-acl.md): ACL rule の `src_tag` / `dst_tag` フィールドがこのテーブルのタグ名を参照する
 - [`DASH_ENI_TABLE`](dash-eni.md): ENI への ACL グループバインドの起点
 
+<!-- ordering -->
+## エントリ投入順序・依存関係 (Phase B)
+
+`DASH_PREFIX_TAG_TABLE` は DASH ACL 依存チェーンの **最上流** に位置する。SDN コントローラはタグを ACL ルールより先に投入しなければならない。
+
+### 投入の必須順序
+
+```
+[1] DASH_PREFIX_TAG_TABLE          ← このテーブル（タグ登録が起点）
+         ↓  src_tag / dst_tag でタグ名を参照する ACL rule より先に必要
+[2] DASH_ACL_GROUP_TABLE
+         ↓
+[3] DASH_ACL_RULE_TABLE
+         ↓
+[4] DASH_ACL_IN_TABLE / DASH_ACL_OUT_TABLE  ← ENI へのバインド
+```
+
+コード根拠: `dashaclgroupmgr.cpp` L395–407 — `createRule()` 内で `src_tag` / `dst_tag` ごとに `getDashAclTagMgr().exists(tag_id)` を呼び出し、タグが `m_tag_table` に存在しない場合 `task_need_retry` を返す。
+
+### 依存違反時の挙動
+
+| 違反パターン | 戻り値 | 自動回復 |
+|---|---|---|
+| タグ未登録状態で ACL rule を投入 | `task_need_retry` | タグ登録後に自動解消 |
+| 同一タグ ID で重複 create | `task_failed` | 自動回復なし |
+| 未存在タグへの update | `task_failed` | 自動回復なし（先に create が必要）|
+| グループ参照中のタグ削除 | `task_need_retry` | グループ detach 後に自動解消 |
+
+`task_need_retry` のエントリはキューに残り次回ループで自動再試行されるが、`task_failed` は破棄されるため SDN コントローラ側での正しい投入順序が必要。
+
+### 削除の逆順制約
+
+```
+[1] DASH_ACL_IN/OUT_TABLE — DEL（バインド解除）
+         ↓
+[2] DASH_ACL_RULE_TABLE — DEL
+         ↓
+[3] DASH_ACL_GROUP_TABLE — DEL（バインド中は task_need_retry）
+         ↓
+[4] DASH_PREFIX_TAG_TABLE — DEL（m_groups 非空なら task_need_retry）
+```
+
+### タグ更新時の非リフレッシュ動作
+
+`DashTagMgr::update()` (`dashtagmgr.cpp:46`) はメモリ上の `m_prefixes` を更新するだけで、既にバインド済みのグループ・ルールへの SAI 再 SET を行わない。タグの `prefix_list` を更新しても実行中 ACL ルールは旧プレフィックスで評価され続ける。新プレフィックスを即時反映するには、グループ解除 → ルール削除 → ルール再作成 → 再バインドの手順が必要。
+
+### warm-reboot 挙動
+
+`DashAclOrch` は `ZmqOrch` を継承し `m_orchList` には登録されない（`gDirectory.set()` のみ）。`warmRestoreAndSyncUp()` の 3 イテレーションループは DASH ACL orch を含まないため、**タグエントリを含む DASH ACL 系は warm-reboot の自動リプレイ対象外**となる。リストアは SDN コントローラが gNMI 経由で全エントリを再投入する設計（ステートレス warm-reboot）。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-ordering.md`
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
