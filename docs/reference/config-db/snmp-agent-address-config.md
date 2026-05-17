@@ -418,4 +418,37 @@ YANG に `default` ステートメントなし — テンプレート固有の�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+> **調査根拠**: `sonic-buildimage/dockers/docker-snmp/start.sh`, `supervisord.conf.j2`, `base_image_files/monit_snmp`, `sonic-utilities/config/main.py:4189,4209` (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-agent-address-config-side-effects.md`
+
+### docker-snmp コンテナ全体の再起動
+
+CLI の `config snmp agentaddress add/del` は CONFIG_DB 書き込み直後に `os.system("systemctl restart snmp")` を呼び出す（`config/main.py:4189, 4209`）。これにより `docker-snmp` コンテナが丸ごと再起動され、snmpd だけでなく `snmp-subagent` も含むすべてのプロセスが停止・再起動する。再起動中の数秒間、**既存の SNMP セッションがすべて切断**される。`systemctl restart snmp` の戻り値はチェックされないため、失敗してもエラーは報告されない（サイレント失敗）。
+
+### /etc/snmp/snmpd.conf の完全再生成
+
+`start.sh` が `sonic-cfggen -d -t snmpd.conf.j2,/etc/snmp/snmpd.conf` を実行し、`SNMP_AGENT_ADDRESS_CONFIG` だけでなく `SNMP`・`SNMP_COMMUNITY`・`SNMP_USER`・`SNMP_TRAP_CONFIG` の最新値を一括でレンダリングする。コンテナ外から手動で `/etc/snmp/snmpd.conf` を編集しても次回再起動時に上書きされる。
+
+### snmp-subagent の再起動と MIB ポーリング中断
+
+`supervisord.conf.j2` の依存起動チェーン (`rsyslogd:running` → `start:exited` → `snmpd:running` → `snmp-subagent:running`) により、コンテナ再起動時に snmp-subagent も再起動される。SONiC MIB への SNMP ポーリングは snmp-subagent が再起動するまで中断する。
+
+### 他テーブル・他プロセスへの波及なし
+
+CONFIG_DB → APPL_DB / STATE_DB / ASIC_DB / COUNTER_DB への伝播なし。SAI / ファーワードプレーンへの影響もない。変更はコントロールプレーンの snmpd プロセスと snmpd.conf のみで完結する。
+
+### 副作用まとめ
+
+| 副作用 | トリガー | 影響範囲 | 自動回復 |
+|--------|---------|---------|---------|
+| snmpd コンテナ再起動 | `systemctl restart snmp`（CLI 自動呼出し） | docker-snmp コンテナ全体 | 数秒で自動回復 |
+| 既存 SNMP セッション切断 | snmpd プロセス停止 | 全 SNMP クライアント | 再接続で回復 |
+| `/etc/snmp/snmpd.conf` 上書き | start.sh の sonic-cfggen | 全 SNMP 設定（一括） | 次回再起動時に再生成 |
+| snmp-subagent 再起動 | supervisord 依存起動チェーン | MIB ポーリング一時中断 | snmpd 起動後に自動回復 |
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 59acbdd0f2b6 -->
