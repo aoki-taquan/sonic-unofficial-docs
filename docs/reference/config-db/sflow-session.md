@@ -252,3 +252,67 @@ PORT|<port>  SET  →  m_sflowPortConfMap 登録  →  SFLOW_SESSION|<port>  SET
 | `sflowDestroySession()` が SAI エラーで false（ref_count が 0 時） | `m_sflowRateSampleMap.erase()` をスキップ。SAI 上のセッションが残存 | `sfloworch.cpp:349-354` |
 
 <!-- /failure -->
+
+<!-- constants -->
+## 定数・マジックナンバー (Phase E)
+
+`sflowmgrd` および `SflowOrch` が使用するハードコード定数・センチネル値・YANG 制約を実装コードから導出した。
+
+> **調査根拠**: `sonic-swss/cfgmgr/sflowmgr.h`, `sflowmgr.cpp`, `orchagent/sfloworch.cpp`, `sonic-sflow.yang` 全行精読 (2026-05-17)
+> 詳細証跡: `meta/_intermediate/cdb-flow/sflow-session-constants.md`
+
+### マクロ定数 (sflowmgr.h)
+
+| 定数名 | 値 | 用途 |
+|-------|----|------|
+| `ERROR_SPEED` | `"error"` | ポートが `m_sflowPortConfMap` に未登録の場合に `findSamplingRate()` が返すセンチネル。APP_DB に `sample_rate=error` として書き込まれ、SflowOrch 側で `rate=0` と解釈されてスキップされる (`sfloworch.cpp:275-281`)。 |
+| `NA_SPEED` | `"N/A"` | oper_speed が STATE_DB から未到着の状態を示すセンチネル。`oper_speed == NA_SPEED` の間は cfg_speed (PORT テーブルの speed) をサンプリングレートとして使用する (`sflowmgr.cpp:396-400`)。 |
+
+### コンストラクタ初期値 (sflowmgr.cpp)
+
+| 変数 | 初期値 | コード箇所 | 意味 |
+|------|--------|-----------|------|
+| `m_intfAllConf` | `true` | `sflowmgr.cpp:18` | 全ポートデフォルト有効フラグ。起動直後から `SFLOW_SESSION\|all` が有効扱いとなる |
+| `m_gEnable` | `false` | `sflowmgr.cpp:19` | グローバル admin_state。`SFLOW\|global` の SET で `admin_state=up` になるまで false |
+| `m_gDirection` | `"rx"` | `sflowmgr.cpp:20` | グローバルサンプリング方向デフォルト。YANG の `sample_direction default "rx"` と一致 |
+| `m_intfAllDir` | `"rx"` | `sflowmgr.cpp:21` | `SFLOW_SESSION\|all` のデフォルト方向。per-port の方向フォールバックとして使用 |
+
+### SflowOrch コンストラクタ初期値 (sfloworch.cpp)
+
+| 変数 | 初期値 | コード箇所 | 意味 |
+|------|--------|-----------|------|
+| `m_sflowStatus` | `false` | `sfloworch.cpp:17` | 起動時は sFlow 無効。`APP_SFLOW_TABLE` の SET イベントで `true` に変わるまで SESSION 処理をスキップ |
+
+### フォールバックリテラル (sflowmgr.cpp 処理中)
+
+| 関数 | 箇所 | 値 | 適用条件 |
+|------|------|----|---------|
+| `sflowCheckAndFillValues()` | `sflowmgr.cpp:365` | `"up"` | `admin_state` 未指定ポートへの注入値 |
+| `sflowCheckAndFillValues()` | `sflowmgr.cpp:377` | `m_gDirection`（デフォルト `"rx"`） | `sample_direction` 未指定ポートへのフォールバック |
+| `sflowGetGlobalInfo()` | `sflowmgr.cpp:277` | `"up"` | グローバル設定から APP_DB へ書く際の admin_state ハードコード |
+| `doTask()` (CFG_SFLOW) | `sflowmgr.cpp:435` | `"rx"` | SFLOW グローバル処理時の direction ローカル変数初期値 |
+
+### YANG 制約 (sonic-sflow.yang)
+
+| フィールド | 制約 | コード箇所 |
+|-----------|------|----------|
+| `sample_rate` | `uint32` 範囲 `[256..8388608]` | `sonic-sflow.yang:127-130` |
+| `sample_rate` | `must "../port != 'all'"` — `SFLOW_SESSION\|all` には定義不可 | `sonic-sflow.yang:126` |
+| `admin_state` (SFLOW_SESSION) | `default up` | `sonic-sflow.yang:121` |
+| `sample_direction` (SFLOW_SESSION) | `default "rx"` | `sonic-sflow.yang:137` |
+| `SFLOW_COLLECTOR` | `max-elements 2` — コレクタ最大 2 個 | `sonic-sflow.yang:62` |
+| `collector_port` | `default 6343` — sFlow 標準ポート | `sonic-sflow.yang:81` |
+
+### ERROR_SPEED センチネルの伝播パス
+
+```
+findSamplingRate() がポート未登録を検出
+  → ERROR_SPEED ("error") を返す                    # sflowmgr.cpp:392
+  → APP_SFLOW_SESSION_TABLE に sample_rate="error" を書き込む
+  → SflowOrch::sflowExtractInfo() が "error" を検出  # sfloworch.cpp:275-281
+  → rate = 0 に変換
+  → if (rate == 0) { it++; continue } でスキップ    # sfloworch.cpp:410-415
+  → SAI 設定まで到達しない
+```
+
+<!-- /constants -->
