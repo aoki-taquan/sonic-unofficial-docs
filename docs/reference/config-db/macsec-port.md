@@ -349,3 +349,39 @@ APPL_DB 経由で `MACsecOrch` が SAI オブジェクトを生成する順序�
 |--------|---------|------|----------|
 | `COUNTERS_DB` `COUNTERS_MACSEC_NAME_MAP` / `COUNTERS_MACSEC_SA_GROUP` 等 | 書き込み (MACsecOrch) | MACsec SA 有効化後にフレックスカウンタを登録 | `macsecorch.cpp:639-667` |
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp enableMACsec(), disableMACsec(), startWPASupplicant() -->
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | `MACSEC_PROFILE` 未ロード | `enableMACsec()`: `m_profiles.find()` 失敗 | `SWSS_LOG_DEBUG` + `task_need_retry` | 無制限 |
+| 2 | PORT が STATE_DB で未 ready (`state != "ok"` または `netdev_oper_status != "up"`) | `enableMACsec()`: `isPortStateOk()` 失敗 | `SWSS_LOG_DEBUG` + `task_need_retry` | 無制限 |
+| 3 | `wpa_supplicant` fork 失敗 (`fork()` < 0) | `startWPASupplicant()` | `SWSS_LOG_WARN("Cannot start the wpa_supplicant of the port '%s' : %s")` + `m_macsec_ports.erase()` + `task_need_retry` | なし |
+| 4 | `wpa_supplicant` execl 失敗 (pid = 0) | `startWPASupplicant()` | `SWSS_LOG_WARN` + `m_macsec_ports.erase()` + `task_failed` | なし |
+| 5 | `wpa_supplicant` ソケット接続タイムアウト (RETRY_TIME 回失敗) | `startWPASupplicant()` ポーリングループ | `stopWPASupplicant()` → pid=0 として上位へ → `task_failed` | なし |
+| 6 | `configureMACsec()` 失敗 (wpa_cli コマンド応答エラー) | `enableMACsec()` | `SWSS_LOG_WARN("The MACsec profile '%s' on the port '%s' loading fail")` + `disableMACsec()` でロールバック | なし |
+| 7 | `unconfigureMACsec()` 失敗 (wpa_cli コマンド失敗) | `disableMACsec()` | `SWSS_LOG_WARN("Cannot stop MKA session on the port '%s'")` + `task_failed` | なし |
+| 8 | `stopWPASupplicant()` 失敗 | `disableMACsec()` | `SWSS_LOG_WARN("Cannot stop WPA_SUPPLICANT process of the port '%s'")` + `task_failed`。プロセス残留の可能性あり | なし |
+
+### task_failed 後の挙動
+
+- `task_failed` 返却後、Consumer はエントリを破棄する。CONFIG_DB の `PORT|<ifname>.macsec` フィールドは残ったままになり、MACsec は無効状態で継続する。
+- 失敗の記録先は syslog（`SWSS_LOG_WARN`）のみ。STATE_DB には `PORT.macsec` 固有の失敗エントリは書かれない。
+
+### プロファイル変更時のロールバック
+
+既存プロファイルから別プロファイルへ切り替える場合、`disableMACsec()` を先に呼ぶ。`disableMACsec()` が `task_failed` を返した場合は新プロファイルの `enableMACsec()` には進まず、`task_failed` をそのまま上位へ返す。
+証跡: `cfgmgr/macsecmgr.cpp:519-530`
+
+```bash
+# syslog で失敗ログを確認
+journalctl -u macsecmgrd | grep -iE "fail|warn|Cannot"
+```
+
+詳細調査: [`meta/_intermediate/cdb-flow/macsec-port-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-failure.md)
+<!-- /failure -->
