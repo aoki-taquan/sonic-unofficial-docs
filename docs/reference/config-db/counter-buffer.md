@@ -482,6 +482,128 @@ SAI `create_buffer_pool` 失敗時は `handleSaiCreateStatus(SAI_API_BUFFER, sai
 
 <!-- /failure -->
 
+<!-- constants -->
+## 定数・マジックナンバー (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-constants.md -->
+
+### FlexCounter グループ名文字列
+
+各バッファカウンタグループは `portsorch.h` / `bufferorch.h` で文字列定数として定義されており、FLEX_COUNTER_DB のキースペースと FLEX_COUNTER_TABLE の `FLEX_COUNTER_STATUS` エントリ名として使われる[^13]。
+
+| マクロ定数 | 文字列値（グループ名） | 定義ファイル |
+|-----------|-------------------|------------|
+| `QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"QUEUE_STAT_COUNTER"` | portsorch.h:34 |
+| `QUEUE_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"QUEUE_WATERMARK_STAT_COUNTER"` | portsorch.h:35 |
+| `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_WATERMARK_STAT_COUNTER"` | portsorch.h:36 |
+| `PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_DROP_STAT_COUNTER"` | portsorch.h:37 |
+| `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP` | `"PORT_BUFFER_DROP_STAT"` | portsorch.h:31 |
+| `WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"WRED_ECN_QUEUE_STAT_COUNTER"` | portsorch.h:42 |
+| `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"BUFFER_POOL_WATERMARK_STAT_COUNTER"` | bufferorch.h:15 |
+
+### ポーリング間隔マクロの二重定義
+
+各グループのポーリング間隔は **int 型マクロ**（`FlexCounterManager` コンストラクタ引数）と **文字列型マクロ**（`setFlexCounterGroupParameter` 引数）の 2 種類が存在する[^14]。
+
+| グループ | int 型マクロ (portsorch.cpp) | 文字列型マクロ (portsorch.h / bufferorch.h) | 値 |
+|---------|--------------------------|------------------------------------------|----|
+| Queue Stat | `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | — | **10000** ms |
+| Queue WM | `QUEUE_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `QUEUE_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | **60000** ms |
+| PG WM | `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `PG_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | **60000** ms |
+| PG Drop | `PG_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `PG_DROP_FLEX_STAT_COUNTER_POLL_MSECS` | **10000** ms |
+| Port Buffer Drop | `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS` | — | **60000** ms |
+| Buffer Pool WM | — | `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | **60000** ms |
+
+!!! note "二重定義の意図"
+    int 型マクロは `FlexCounterManager(group, mode, interval, ...)` の第 3 引数として初期化時に 1 回だけ使われる。文字列型マクロは起動後に `setFlexCounterGroupParameter()` で FLEX_COUNTER_GROUP_TABLE を上書きするために使われる。Queue WM・PG WM・PG Drop は両方のパスが存在するため**同じ値を 2 か所に記述**している。
+
+### FLEX_COUNTER_DELAY_SEC
+
+`flexcounterorch.cpp:44` で `FLEX_COUNTER_DELAY_SEC = 60`（秒）が定義されており、orchdaemon 起動から 60 秒間は `FlexCounterOrch::doTask()` が `m_delayTimerExpired == false` チェックで早期 return する[^15]。
+
+この 60 秒ウィンドウにより、起動直後の ASIC 設定が安定する前にポーリングが始まらないよう設計されている。バッファカウンタ登録 (`FLEX_COUNTER_STATUS=enable`) は 60 秒後まで保留されるため、起動直後に `COUNTERS_DB` のバッファカウンタが空でも正常動作である。
+
+### FLEX_COUNTER_TABLE キー文字列定数
+
+`FLEX_COUNTER_TABLE` の操作に使われるキー文字列は `flexcounterorch.cpp` でマクロ定義されている[^16]。
+
+| マクロ | `FLEX_COUNTER_TABLE` キー | onsonic CLI 上の名称 |
+|-------|--------------------------|-------------------|
+| `BUFFER_POOL_WATERMARK_KEY` | `"BUFFER_POOL_WATERMARK"` | `counterpoll buffer-pool-watermark` |
+| `PORT_BUFFER_DROP_KEY` | `"PORT_BUFFER_DROP"` | `counterpoll port-buffer-drop` |
+| `QUEUE_KEY` | `"QUEUE"` | `counterpoll queue` |
+| `QUEUE_WATERMARK` | `"QUEUE_WATERMARK"` | `counterpoll queue-watermark` |
+| `PG_WATERMARK_KEY` | `"PG_WATERMARK"` | `counterpoll pg-watermark` |
+| `PG_DROP_KEY` | `"PG_DROP"` | `counterpoll pg-drop` |
+| `WRED_QUEUE_KEY` | `"WRED_ECN_QUEUE"` | `counterpoll wred-ecn-queue` |
+
+### COUNTERS_DB フィールド名定数 (schema.h)
+
+FLEX_COUNTER_DB への書き込みに使われるフィールド名文字列[^17]:
+
+| マクロ | 文字列値 | 意味 |
+|-------|---------|------|
+| `QUEUE_COUNTER_ID_LIST` | `"QUEUE_COUNTER_ID_LIST"` | Queue SAI 統計 ID リスト |
+| `PG_COUNTER_ID_LIST` | `"PG_COUNTER_ID_LIST"` | PG SAI 統計 ID リスト |
+| `BUFFER_POOL_COUNTER_ID_LIST` | `"BUFFER_POOL_COUNTER_ID_LIST"` | Buffer Pool SAI 統計 ID リスト |
+| `QUEUE_PLUGIN_FIELD` | `"QUEUE_PLUGIN_LIST"` | Queue Lua プラグイン登録フィールド |
+| `PG_PLUGIN_FIELD` | `"PG_PLUGIN_LIST"` | PG Lua プラグイン登録フィールド |
+| `BUFFER_POOL_PLUGIN_FIELD` | `"BUFFER_POOL_PLUGIN_LIST"` | Buffer Pool Lua プラグイン登録フィールド |
+
+!!! note "COUNTERS_DB マップキー名"
+    `COUNTERS_QUEUE_NAME_MAP`（schema.h:225）と `COUNTERS_PG_NAME_MAP`（schema.h:230）は COUNTERS_DB に書き込まれるハッシュ名であり、`FLEX_COUNTER_DB` のキー名とは異なる。`show queue counters` / `show priority-group` 系 CLI はこれらマップを参照して名前→OID 解決を行う。
+
+### ウォーターマーククリアリクエスト文字列定数
+
+`WATERMARK_CLEAR_REQUEST` 通知の op 文字列 (`watermarkorch.cpp:11-17`):
+
+| マクロ | 文字列値 | クリア対象 |
+|-------|---------|-----------|
+| `CLEAR_PG_HEADROOM_REQUEST` | `"PG_HEADROOM"` | PG ヘッドルーム WM (PERSISTENT + USER) |
+| `CLEAR_PG_SHARED_REQUEST` | `"PG_SHARED"` | PG 共有 WM |
+| `CLEAR_QUEUE_SHARED_UNI_REQUEST` | `"Q_SHARED_UNI"` | ユニキャスト Queue WM |
+| `CLEAR_QUEUE_SHARED_MULTI_REQUEST` | `"Q_SHARED_MULTI"` | マルチキャスト Queue WM |
+| `CLEAR_QUEUE_SHARED_ALL_REQUEST` | `"Q_SHARED_ALL"` | 全 Queue WM |
+| `CLEAR_BUFFER_POOL_REQUEST` | `"BUFFER_POOL"` | Buffer Pool WM |
+| `CLEAR_HEADROOM_POOL_REQUEST` | `"HEADROOM_POOL"` | ヘッドルームプール WM |
+
+`sonic-clear priority-group headroom-watermark` 等の CLI は最終的にこれらの文字列を op として `WATERMARK_CLEAR_REQUEST` 通知を送信し、`WatermarkOrch::handleWatermarkClearRequest()` が受信して各ウォーターマークテーブルを `"0"` でリセットする。
+
+### Buffer Pool WM SAI 統計 ID 配列
+
+`bufferorch.cpp:29-32` に定義された静的定数配列がそのまま `BUFFER_POOL_COUNTER_ID_LIST` の内容になる:
+
+```cpp
+static const vector<sai_buffer_pool_stat_t> bufferPoolWatermarkStatIds = {
+    SAI_BUFFER_POOL_STAT_WATERMARK_BYTES,
+    SAI_BUFFER_POOL_STAT_XOFF_ROOM_WATERMARK_BYTES
+};
+```
+
+この 2 要素がすべてのプール OID に対して `startFlexCounterPolling()` 経由で FLEX_COUNTER_DB に書き込まれる。新しい SAI 統計を追加するにはこの配列の変更が必要であり、configurable ではない。
+
+### bufferorch.h フィールド名文字列定数
+
+CONFIG_DB の BUFFER_POOL / BUFFER_PROFILE テーブルのフィールド名として使用される文字列定数[^18]:
+
+| 定数名 | 文字列値 |
+|-------|---------|
+| `buffer_pool_type_field_name` | `"type"` |
+| `buffer_pool_mode_field_name` | `"mode"` |
+| `buffer_pool_field_name` | `"pool"` |
+| `buffer_pool_mode_dynamic_value` | `"dynamic"` |
+| `buffer_pool_mode_static_value` | `"static"` |
+| `buffer_xon_field_name` | `"xon"` |
+| `buffer_xon_offset_field_name` | `"xon_offset"` |
+| `buffer_xoff_field_name` | `"xoff"` |
+| `buffer_dynamic_th_field_name` | `"dynamic_th"` |
+| `buffer_static_th_field_name` | `"static_th"` |
+| `buffer_headroom_type_field_name` | `"headroom_type"` |
+
+これらは `bufferorch.cpp` の `processBufferPool()` / `processBufferProfile()` 内で `fvField()` 比較に使われる。YANG で定義された名前と 1:1 対応しているが、**コード側で独立定義**されており、YANG 変更がコードに自動反映されない。
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -509,3 +631,9 @@ SAI `create_buffer_pool` 失敗時は `handleSaiCreateStatus(SAI_API_BUFFER, sai
 [^10]: orchdaemon 初期化順序: `sonic-swss/orchagent/orchdaemon.cpp:232,394,437,625`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232>
 [^11]: BufferOrch::doTask 処理順: `sonic-swss/orchagent/bufferorch.cpp:2040-2073`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L2040>
 [^12]: getPgConfigurations と BufferOrch 連携: `sonic-swss/orchagent/flexcounterorch.cpp:621-624`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L621>
+[^13]: FlexCounter グループ名定数: `sonic-swss/orchagent/portsorch.h:29-43`, `bufferorch.h:15`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.h#L29>
+[^14]: ポーリング間隔二重定義: `sonic-swss/orchagent/portsorch.cpp:88-93`, `portsorch.h:38-41`, `bufferorch.h:16`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L88>
+[^15]: FLEX_COUNTER_DELAY_SEC: `sonic-swss/orchagent/flexcounterorch.cpp:44`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44>
+[^16]: FLEX_COUNTER_TABLE キー定数: `sonic-swss/orchagent/flexcounterorch.cpp:46-64`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L46>
+[^17]: COUNTERS_DB フィールド名定数: `sonic-swss-common/common/schema.h:225-333`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h#L225>
+[^18]: bufferorch.h フィールド名文字列: `sonic-swss/orchagent/bufferorch.h:18-35`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.h#L18>
