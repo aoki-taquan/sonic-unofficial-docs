@@ -342,6 +342,48 @@ warm-reboot 時は caclmgrd が systemd によって再起動され、起動直�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: sonic-host-services/scripts/caclmgrd L226-238 (run_commands), L748-821 (get_acl_rules_and_translate), L943-993 (check_and_update), L1200-1201 (SIGKILL), aclorch.cpp:5554-5566 (CTRLPLANE erase) -->
+
+### caclmgrd 側の SET 処理失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | 自動回復 |
+|---|---|---|---|
+| `type != CTRLPLANE` | `caclmgrd:743` | そのテーブルをスキップ（iptables ルール未生成） | なし（type 訂正 + ACL 変更イベント待ち） |
+| `acl_service` が `ACL_SERVICES` 外（未知サービス名） | `caclmgrd:748` | `log_warning()` → そのサービスをスキップ | なし（有効サービス名に書き直すこと） |
+| `rule_props` が空 / None | `caclmgrd:769` | `log_warning()` → `continue`（ルールスキップ） | なし（ACL_RULE 再 SET が必要） |
+| `PRIORITY` キー欠落 | `caclmgrd:774` | `log_error()` → `continue`（ルールスキップ） | なし（ACL_RULE 再 SET が必要） |
+| ACL_RULE に SRC_IP / SRC_IPV6 / DST_IP / DST_IPV6 が全て空 | `caclmgrd:812` | `log_warning()` → テーブル全スキップ | あり（IP 付きルール追加後の次回更新で回復） |
+| `dst_ports` が空（EXTERNAL_CLIENT でポートが解決できない） | `caclmgrd:818` | `log_warning()` → テーブルスキップ | あり（`L4_DST_PORT` 追加後の次回更新で回復） |
+| iptables コマンド実行失敗（非ゼロ exit） | `caclmgrd:236` | `log_error()` → 後続コマンドは継続（部分未設定が残る） | なし（ルール抜け穴が生じる可能性あり） |
+| IPv4 テーブルに IPv6 ルール混在（ip_version 矛盾） | `caclmgrd:801` | `log_error()` → 混在ルールを `acl_rules` から除去 | なし（矛盾ルールは恒久スキップ） |
+| 子スレッドで未捕捉例外発生 | `caclmgrd:981` | `thread_exceptions[ns]` に記録 → メインループが `os.kill(SIGKILL)` | systemd `Restart=always` で自動再起動 |
+
+### caclmgrd 側の DEL 処理
+
+| 失敗条件 | 検出箇所 | 結果 | 自動回復 |
+|---|---|---|---|
+| ACL_TABLE DEL イベント受信 | `caclmgrd:1268` | 変更フラグを立て `update_control_plane_acls()` を実行（iptables 全フラッシュ＆再生成） | あり（次回更新でそのテーブルが除外される） |
+| ACL_RULE DEL イベント受信 | `caclmgrd:1268` | 変更フラグを立て `update_control_plane_acls()` を実行 | あり（次回更新でそのルールが生成されなくなる） |
+
+### orchagent (AclOrch) 側の CTRLPLANE 専用分岐
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| `ACL_TABLE` type=CTRLPLANE の SET | `aclorch.cpp:4276` | `m_ctrlAclTables` に登録のみ。SAI API 呼び出しなし（失敗概念なし） |
+| `ACL_RULE` 対応テーブルが `m_ctrlAclTables` 内に存在 | `aclorch.cpp:5554` | INFO ログ → `erase(it)` → 恒久スキップ |
+| `ACL_RULE` 到着時 ACL_TABLE 未登録 | `aclorch.cpp:5563` | `it++` → 次 tick で再試行（TABLE 登録後に CTRLPLANE erase） |
+
+!!! note "caclmgrd の失敗は iptables 部分未設定で継続"
+    `run_commands()` は各コマンドを順番に実行し、失敗コマンドは `log_error()` を出すが後続コマンドは継続する。1 ルールの iptables 登録失敗が全体をブロックしない一方、ACL 抜け穴が生じる可能性がある（`caclmgrd:226-238`）。
+
+!!! warning "子スレッド例外はメインプロセスごと SIGKILL"
+    `check_and_update_control_plane_acls()` 内で未捕捉例外が発生すると、メインループの次サイクルで `os.kill(os.getpid(), signal.SIGKILL)` が実行される（`caclmgrd:1200-1201`）。systemd `Restart=always` により自動再起動されるが、再起動中は iptables ルールが一時的にフラッシュされる。
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
