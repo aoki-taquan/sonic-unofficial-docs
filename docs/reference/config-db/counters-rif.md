@@ -656,6 +656,66 @@ NotificationConsumer: なし（カウンタ配信に使用せず）
 [^19]: intfstat COUNTERS_DB 直接読み出し: `sonic-utilities/scripts/intfstat:81-82,96,109,123`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bd/scripts/intfstat#L81>
 <!-- /pubsub -->
 
+<!-- platform:start -->
+
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counters-rif-platform.md -->
+
+### VoQ シャーシ vs 非 VoQ — リモートシステムポートの扱い
+
+VoQ シャーシ環境 (`gMySwitchType == "voq"` かつ `isChassisDbInUse()`) では `IntfsOrch` コンストラクタ起動時に `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` の追加 subscriber が登録される[^20]。
+
+| 環境 | INTERFACE SET 処理 | COUNTERS_DB エントリ |
+|------|--------------------|----------------------|
+| 非 VoQ | `setIntf()` → `addRouterIntfs()` → `m_rifsToAdd` | 作成される |
+| VoQ ローカルポート | 同上 + `voqSyncAddIntf()` で CHASSIS_APP_DB にも同期 | 作成される |
+| VoQ リモートシステムポート | oper_status のみ NeighOrch 通知、RIF 作成なし | **作成されない** |
+
+リモートシステムポートは `isRemoteSystemPortIntf()` (`intfsorch.cpp:1640-1650`) で判定され、通常の `addRouterIntfs()` パスに入らない。このため `COUNTERS_RIF_NAME_MAP` にエントリが存在せず `intfstat` でカウンタが表示されない[^21]。
+
+### RIF タイプ別の FlexCounter 登録
+
+`doTask(SelectableTimer&)` 内でポートタイプから RIF タイプ文字列を決定してから `addRifToFlexCounter()` を呼ぶ[^22]:
+
+| `Port::m_type` | COUNTERS_RIF_TYPE_MAP の値 |
+|----------------|---------------------------|
+| PHY / LAG / SYSTEM | `"SAI_ROUTER_INTERFACE_TYPE_PORT"` |
+| VLAN | `"SAI_ROUTER_INTERFACE_TYPE_VLAN"` |
+| SUBPORT | `"SAI_ROUTER_INTERFACE_TYPE_SUB_PORT"` |
+| それ以外 | `""` (エラーログ) |
+
+`SUBPORT`（VLAN サブインタフェース）への統計サポートは ASIC 依存。SAI が `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` 統計を未実装の場合 `COUNTERS:<oid>` フィールドは 0 のまま更新されない。
+
+### SAI_ROUTER_INTERFACE_STAT_* の部分サポート
+
+`rifStatIds[]` に列挙された全フィールドが FLEX_COUNTER_DB に登録されるが (`intfsorch.cpp:49-59`)[^23]、プラットフォームによっては一部が未サポートとなる:
+
+- `SAI_ROUTER_INTERFACE_STAT_IN_ERROR_OCTETS` / `SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS` — 一部 ASIC で非実装
+- 未サポートフィールドは syncd がポーリング結果を COUNTERS_DB に書かない（または常 0）
+- `intfstat` はフィールドが存在しない場合に `0` と表示し、「未サポート」と「ゼロ値」を区別しない
+
+### gTraditionalFlexCounter モードによる登録タイミング差
+
+| モード | VIDTORID チェック | 登録タイミング |
+|--------|------------------|----------------|
+| `gTraditionalFlexCounter = true` (旧) | ASIC_DB `VIDTORID` にエントリが揃うまで 1 秒 tick ごと再試行 | syncd が OID を書き込むまで遅延（大規模シャーシで複数 tick） |
+| `gTraditionalFlexCounter = false` (新) | スキップ | SAI RIF 作成後の次 tick（最大 1 秒）で即登録 |
+
+### LoopBack / NAT / MPLS の特記事項
+
+- **LoopBack インタフェース**: `is_lo` 判定で `addRouterIntfs()` が呼ばれず `m_rifsToAdd` に積まれない。`COUNTERS_RIF_NAME_MAP` エントリなし・`intfstat` 非表示はアーキテクチャ設計による（全プラットフォーム共通）。
+- **NAT ゾーン ID**: `gIsNatSupported = false` のプラットフォームでは `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` が SAI 属性に渡されない。カウンタ収集への直接影響はない。
+- **MPLS 属性**: MPLS 非対応 ASIC では `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` を含む `create_router_interface()` がエラーを返す場合があり、RIF 作成失敗 → COUNTERS_DB エントリなしとなる[^24]。
+
+[^20]: VoQ IntfsOrch コンストラクタ subscriber 追加: `sonic-swss/orchagent/intfsorch.cpp:102-108`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L102>
+[^21]: リモートシステムポート判定 + skip: `sonic-swss/orchagent/intfsorch.cpp:881-893,1640-1666`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L881>
+[^22]: RIF タイプ文字列決定ロジック: `sonic-swss/orchagent/intfsorch.cpp:1608-1626`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1608>
+[^23]: rifStatIds 全列挙: `sonic-swss/orchagent/intfsorch.cpp:49-59`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49>
+[^24]: MPLS / NAT SAI 属性追加条件: `sonic-swss/orchagent/intfsorch.cpp:1278-1294`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1278>
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
