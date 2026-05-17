@@ -189,6 +189,45 @@ CABLE_LENGTH テーブルへの書き込みが発生するコード経路。
 
 <!-- /entry-points -->
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/cable-length-derivation.md`
+
+### Phase 6: 値による他フィールド自動派生
+
+`length` 値の変化が引き金となり、`BUFFER_PROFILE` / `BUFFER_PG` が自動生成・更新・削除される。
+
+**static モード (`buffermgr`)**
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| `length != "None"` かつ値が変化 | CONFIG_DB `BUFFER_PROFILE` に `pg_lossless_<speed>_<cable>_profile` を set | buffermgr.cpp:274 |
+| lossless PG が未設定ポート | CONFIG_DB `BUFFER_PG.<port>\|<pg>.profile` をプロファイル名に set | buffermgr.cpp:305 |
+| `length == "0m"` | `doSpeedUpdateTask` が early return → BUFFER_PROFILE / BUFFER_PG への書込みなし | buffermgr.cpp:159-163 |
+
+**dynamic モード (`buffermgrdyn`)**
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| speed・mtu が揃い `PORT_READY` / `PORT_INITIALIZING` | APPL_DB `BUFFER_PROFILE_TABLE` に `pg_lossless_<speed>_<cable>_<mtu>_profile` を set | buffermgrdyn.cpp:919 |
+| 上記と同条件 | STATE_DB `BUFFER_PROFILE_TABLE` に同名プロファイルを set (二重書込み) | buffermgrdyn.cpp:920 |
+| 上記と同条件 | APPL_DB `BUFFER_PG_TABLE.<port>\|<pg>.profile` を新プロファイル名に set | buffermgrdyn.cpp:1568 |
+| `length == "0m"` かつ lossless PG が存在 | APPL_DB `BUFFER_PG_TABLE.<port>\|<pg>` を del | buffermgrdyn.cpp:1505 |
+| 旧プロファイルの参照ポートがゼロになった | APPL_DB / STATE_DB `BUFFER_PROFILE_TABLE` から旧プロファイルを del | buffermgrdyn.cpp:1047-1049 |
+| `PORT_INITIALIZING` → 初回 cable_length 設定 | ポート状態を `PORT_READY` に遷移 | buffermgrdyn.cpp:2184 |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| `DEVICE_METADATA.buffer_model == "dynamic"` | `BufferMgrDynamic` が CABLE_LENGTH を `m_bufferTableHandlerMap` に登録 | buffermgrdyn.cpp:450 |
+| `buffer_model != "dynamic"` (static モード) | `BufferMgr` が CABLE_LENGTH を `m_cfgCableLenTable` で購読 | buffermgr.cpp:24 |
+
+どちらか一方のみが起動し、両者が同時に CABLE_LENGTH を購読することはない。`buffer_model` の値は `DEVICE_METADATA|localhost` で決定される。
+
+<!-- /derivation -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
