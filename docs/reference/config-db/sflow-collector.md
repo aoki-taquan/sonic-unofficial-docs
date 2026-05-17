@@ -290,3 +290,54 @@ SFLOW_COLLECTOR テーブルのエントリは APPL_DB に複製されない。A
 | `SFLOW\|global` admin_state up (後続) | 変化なし | `SFLOW_TABLE` 更新 | restart → conf 再読込 | SE2 のトリガー |
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`SFLOW_COLLECTOR` テーブルを購読するプロセスは **存在しない**。`sflowmgrd.cpp:31-41` の `TableConnector` リストは `PORT`（CONFIG_DB）・`PORT_TABLE`（STATE_DB）・`SFLOW`・`SFLOW_SESSION` の 4 テーブルのみで、`SFLOW_COLLECTOR` は含まれない。
+
+| TableConnector | DB | 購読 API | 通知方式 |
+|---------------|----|---------|---------|
+| `CFG_PORT_TABLE_NAME` | CONFIG_DB | `swss::SubscriberStateTable` | keyspace 通知 `__keyspace@4__:PORT\|*` |
+| `STATE_PORT_TABLE_NAME` | STATE_DB | `swss::SubscriberStateTable` | keyspace 通知 `__keyspace@6__:PORT_TABLE\|*` |
+| `CFG_SFLOW_TABLE_NAME` | CONFIG_DB | `swss::SubscriberStateTable` | keyspace 通知 `__keyspace@4__:SFLOW\|*` |
+| `CFG_SFLOW_SESSION_TABLE_NAME` | CONFIG_DB | `swss::SubscriberStateTable` | keyspace 通知 `__keyspace@4__:SFLOW_SESSION\|*` |
+| `SFLOW_COLLECTOR` | (未登録) | **なし** | **購読なし** |
+
+購読されている 4 テーブルは `Orch::addConsumer()` が CONFIG_DB / STATE_DB では `SubscriberStateTable`（Redis keyspace 通知 `PSUBSCRIBE __keyspace@<dbId>__:<TABLE>|*`）を使い、通知受信後に `HGETALL` で値を再取得する。APPL_DB 側は `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）を使うが、SFLOW_COLLECTOR には APPL_DB コピーも存在しない。CONFIG_DB は永続前提のため TTL は設定されない。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+`sflowmgrd` のメインループ (`sflowmgrd.cpp:56-71`) は SELECT_TIMEOUT = 1000 ms でポーリングし、keyspace 通知到着で即座に wake up して `Consumer::execute()` を呼ぶ。`doTask(Consumer&)` はテーブル名で分岐する:
+
+```
+SFLOW_COLLECTOR|<name> SET/DEL (CLI / gNMI 書き込み)
+  ↓ CONFIG_DB: HSET / DEL (keyspace 通知発生)
+  ↓ ★ sflowmgrd は SFLOW_COLLECTOR を購読していないため通知を受信しない
+  → hsflowd は直ちに何も検知しない
+  
+後続: SFLOW|global admin_state 変化
+  ↓ keyspace 通知 "__keyspace@4__:SFLOW|global" "hset"
+sflowmgrd: doTask(CFG_SFLOW_TABLE_NAME)
+  ↓ admin_state 変化検出 → sflowHandleService(enable=true)
+     (sflowmgr.cpp:456-459)
+  ↓ swss::exec("service hsflowd restart")
+     (sflowmgr.cpp:60)
+  ↓ hsflowd 起動 → /etc/hsflowd.conf 再読込み → 新コレクタ設定が有効化
+```
+
+- `service hsflowd restart` が失敗した場合 `SWSS_LOG_ERROR("Command '%s' failed with rc %d", ...)` のみ。例外送出なし (`sflowmgr.cpp:67-71`)。
+- hsflowd は起動時に CONFIG_DB の SFLOW_COLLECTOR エントリを `/etc/hsflowd.conf` として生成し読み込む。稼働中の hsflowd は SFLOW_COLLECTOR の変更を検知しない。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `SFLOW\|global.admin_state` が `down→up` に変化 | `service hsflowd restart` | `sflowmgr.cpp:456-460` |
+| `SFLOW\|global.admin_state` が `up→down` に変化 | `service hsflowd stop` | `sflowmgr.cpp:456-460` |
+| `SFLOW_COLLECTOR` の SET / DEL のみ | **なし（再起動されない）** | `sflowmgrd.cpp:36-41` |
+
+> **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:15-16,31-41,56-75` (SELECT_TIMEOUT / TableConnector リスト / メインループ)、`sonic-swss/cfgmgr/sflowmgr.cpp:51-78,403-414,456-470` (`sflowHandleService` / doTask テーブル分岐 / admin_state 処理)、`sonic-swss/cfgmgr/sflowmgr.h:31-60` (SflowMgr クラス定義)；詳細分析 `meta/_intermediate/cdb-flow/sflow-collector-pubsub.md`
+<!-- /pubsub -->
