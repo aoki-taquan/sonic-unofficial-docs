@@ -255,6 +255,65 @@ Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイ�
 - **PORT**: `allPortsReady()` による自動待機。portsorch が全ポート初期化完了後に `FlexCounterOrch` のキュー処理がアンブロックされる。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counters-queue-failure.md -->
+
+### retry / failure パターン概要
+
+キュー / PG カウンタ経路における失敗は「orchagent クラッシュ」「silent スキップ（エントリ欠落）」「保留（自動再開）」の 3 パターンに分類される。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **orchagent クラッシュ** | `initializeQueuesBulk()` SAI エラー、Redis 接続断、未対応 Queue type | 例外 throw → supervisor 再起動 |
+| **silent スキップ** | 不正 BUFFER_QUEUE / BUFFER_PG キー形式、WRED 能力チェック失敗、`getQueueTypeAndIndex()` SAI 一時エラー | 当該エントリのみ除外、他処理は継続 |
+| **保留（自動再開）** | `allPortsReady()` が false、Warm-reboot 60 秒遅延 | doTask() が即 return し m_toSync を保持、条件成立後に自動処理 |
+
+### `initializeQueuesBulk()` — SAI エラーで orchagent クラッシュ
+
+orchagent 起動時の `initializeQueuesBulk()` (`portsorch.cpp:6883`, `6928`) は全ポートの Queue 数・OID リストを SAI から一括取得する。SAI 呼び出しが 1 件でも失敗すると即座に例外を投げる:
+
+```
+SWSS_LOG_ERROR("Failed to get number of queues for port %s rv:%d", ...)
+throw runtime_error("PortsOrch initialization failure.")
+```
+
+supervisor による orchagent 自動再起動後に再試行される。SAI ドライバ / ASIC 側の問題である場合、再起動ループに入る。
+
+### `getQueueTypeAndIndex()` — SAI 一時エラーで該当 Queue をスキップ
+
+`generateQueueMapPerPort()` から呼ばれる `getQueueTypeAndIndex()` (`portsorch.cpp:3641`) は Queue OID から type・index を取得する。SAI 失敗時は `return false` を返し、呼び出し元が当該 Queue エントリを `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_QUEUE_TYPE_MAP` / `COUNTERS_QUEUE_INDEX_MAP` から除外する（エラーログのみ出力、silent 欠落）。不正な Queue type が返った場合は `throw runtime_error("Got unsupported queue type")` で orchagent クラッシュ (`portsorch.cpp:3656`)。
+
+`generateQueueMap()` は `m_isQueueMapGenerated` フラグで 1 回しか実行されないため、スキップされた Queue の recovery には orchagent 再起動が必要。
+
+### 不正な BUFFER_QUEUE / BUFFER_PG キー形式 — silent スキップ
+
+`getQueueConfigurations()` / `getPgConfigurations()` は `<port>:<queue_range>` 形式を期待する (`flexcounterorch.cpp:561`, `630`)。コロン区切りが 2 トークンでない場合、または queue/pg インデックスが数値でない / 範囲外の場合は `SWSS_LOG_ERROR` を出力して当該エントリをスキップする。当該 Queue / PG は FLEX_COUNTER_DB に登録されず、queuestat / pg-drop で列が欠落する。他エントリの処理は継続するため、全体への影響はない。
+
+### 不正な FLEX_COUNTER_TABLE グループキー — 即削除
+
+`FlexCounterOrch::doTask()` (`flexcounterorch.cpp:183-188`) は未知キーを受信すると `SWSS_LOG_NOTICE` を出力して即エントリ削除する。`FLEX_COUNTER_TABLE|QUEUE` のタイポ（例: `FLEX_COUNTER_TABLE|QUEUES`）は処理されず削除されるため、Queue カウンタが enable にならない。
+
+### `allPortsReady()` が false / Warm-reboot 遅延タイマー
+
+`FlexCounterOrch::doTask()` は以下の条件で即 `return` し、キュー・PG FlexCounter の登録処理をすべて保留する:
+
+- `gPortsOrch->allPortsReady()` が false（`flexcounterorch.cpp:164-167`）: portsyncd 異常終了等で PortInitDone が届かない場合、保留状態が永続する。orchagent 再起動が必要。
+- Warm-reboot 時の `m_delayTimerExpired = false`（`flexcounterorch.cpp:155-158`）: `FLEX_COUNTER_DELAY_SEC = 60` 秒のタイマー満了まで全処理がブロックされる。起動後 60 秒間はキュー / PG カウンタの更新が停止する。
+
+### WRED 能力チェック — silent 非登録
+
+`isPortStatSupported()` (`portsorch.cpp:664-680`) が `sai_query_stats_capability` で WRED stat サポートを確認できない場合（`SAI_STATUS_SUCCESS` 以外）、`return false` を返して WRED 統計を silent に非登録にする。エラーログは出力されない。
+
+ASIC が WRED/ECN 統計をサポートしない環境では `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE = enable` にしても COUNTERS_DB に WRED フィールドが現れない。`counterpoll show` の STATUS が enable に見えても実カウンタは常にゼロになる。
+
+### Redis 接続断 — orchagent クラッシュ
+
+`queue_stat_manager.setCounterIdList()` / `pg_stat_manager.setCounterIdList()` は FLEX_COUNTER_DB への Redis 書き込みを行う。Redis 接続断等で `RedisReply` 例外が発生した場合は orchagent 全体がクラッシュする（明示的な catch なし）。全カウンタ収集が停止し、supervisor 再起動後に復旧する。
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
 
