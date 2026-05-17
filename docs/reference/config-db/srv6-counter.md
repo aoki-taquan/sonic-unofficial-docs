@@ -254,4 +254,29 @@ MySID 追加後、SAI カウンタ OID は `m_pending_counters` キューに積�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> evidence: `meta/_intermediate/cdb-flow/srv6-counter-ordering.md`
+> 根拠: `sonic-swss/orchagent/srv6orch.cpp` L251-283, L120-142, `sonic-swss/orchagent/flexcounterorch.cpp` L337-340
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `SRV6_MY_SID_TABLE` の SAI 登録完了 → `FLEX_COUNTER_STATUS = enable` | 推奨先行 | 逆順可だが SID 追加後に最大 1 秒の遅延が SID ごとに発生 |
+| 2 | `queryMySidCountersCapability()` 成功（起動時一回）→ enable 有効 | 起動時一回・変更不可 | プラットフォーム非対応なら enable は silent drop |
+| 3 | `gSrv6Orch` 初期化完了 → `FLEX_COUNTER_TABLE\|SRV6` 書き込み | orchagent 起動後なら保証済み | 起動前の CONFIG_DB 書き込みは orchagent 起動時に再読み込み |
+| 4 | `counterpoll srv6 interval <ms>` → `counterpoll srv6 enable` | 推奨先行 | 逆順でも次回ポーリングから反映（初回のみデフォルト 10000 ms が使われる） |
+
+### 主要な制約詳細
+
+**SID 先行推奨 (依存 #1)**: `setCountersState(true)` (srv6orch.cpp:251–283) は `srv6_my_sid_table_` を全走査し、既存の MySID エントリに対して `addMySidCounter()` + `setMySidEntryCounter()` を呼び出す。`SRV6_MY_SIDS` が空の状態で `enable` を書いても `COUNTERS_SRV6_NAME_MAP` へのエントリは追加されない（走査リストが空）。逆順（先に `enable` → 後から SID 追加）でも機能するが、各 SID 追加時に `addMySidCounter()` が個別に呼ばれるため、カウンタ有効化タイミングが SID ごとに最大 `SRV6_FLEX_COUNTER_UPDATE_TIMER = 1` 秒ずれる。
+
+**プラットフォーム能力チェック (依存 #2)**: `initializeCounters()` → `queryMySidCountersCapability()` は起動時 1 度だけ `sai_query_attribute_capability()` を実行する (srv6orch.cpp:122)。`m_mysid_counters_supported = false` になると、以降の `enable` 書き込みは `"Ignoring SRv6 counters state change as they are not supported"` ログでスキップされる。再起動なしに状態を変える手段はない。
+
+**`gSrv6Orch` null チェック (依存 #3)**: `flexcounterorch.cpp:337` で `gSrv6Orch != nullptr` を確認してから `setCountersState()` を呼ぶ。orchagent の初期化順序上、通常のデプロイでは orchagent 起動後に CONFIG_DB を書き込むため問題は発生しない。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: srv6-counter-page -->
