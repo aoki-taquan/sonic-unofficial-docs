@@ -467,6 +467,84 @@ reasoning: STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route への起動時 1 回書
 -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+`FLOW_COUNTER_ROUTE_PATTERN` テーブルは CONFIG_DB → SAI の **直接経路**をとる。APPL_DB への中継は行わない。
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|----------------------|
+| CONFIG_DB → FlowCounterRouteOrch | `SubscriberStateTable` | `__keyspace@4__:FLOW_COUNTER_ROUTE_PATTERN\|*` |
+| FlowCounterRouteOrch → SAI | SAI API 直接呼び出し | `sai_generic_counter_api` (FlowCounterHandler) |
+| CONFIG_DB 書き込み側 | `sonic-utilities` CLI | `config flow_counters route add/del` |
+
+### SubscriberStateTable の動作
+
+`FlowCounterRouteOrch` は `Orch(db, tableNames)` 基底クラスのコンストラクタ経由で `addConsumer()` を呼び出し、CONFIG_DB の `FLOW_COUNTER_ROUTE_PATTERN` テーブルに対して `SubscriberStateTable` を生成する (`orch.cpp:1188-1190`)[^4]。
+
+CONFIG_DB（DB ID = 4）の keyspace notification (`PSUBSCRIBE __keyspace@4__:FLOW_COUNTER_ROUTE_PATTERN|*`) でエントリ変化を検出し、`pops()` で現在値を読み出す。`doTask(Consumer &consumer)` が通知ごとに呼ばれ、SET / DEL を処理する。
+
+### select() ループと doTask 実行順序
+
+`orchdaemon` の主ループは `Select::select()` を `SELECT_TIMEOUT = 1000 ms` タイムアウトで実行する (`orchdaemon.cpp:23, 959`)[^4]。イベント受信時は `Consumer::drain()` → `FlowCounterRouteOrch::doTask(Consumer&)` が呼ばれる。
+
+`doTask(Consumer&)` の冒頭では `!gRouteOrch || !mRouteFlowCounterSupported` チェックがあり、`RouteOrch` が未初期化またはプラットフォーム非対応の場合はパターン変更を**無視**する[^1]:
+
+```cpp
+// flowcounterrouteorch.cpp:58-61
+if (!gRouteOrch || !mRouteFlowCounterSupported)
+{
+    return;
+}
+```
+
+### タイマーコールバック (SelectableTimer)
+
+バインド成功した counter OID の FlexCounter DB 登録は、`doTask(Consumer&)` から即時ではなく `mPendingAddToFlexCntr` キューに積まれ、`FLEX_COUNTER_UPD_INTERVAL = 1 秒`周期の `SelectableTimer` コールバック (`doTask(SelectableTimer&)`) でバッチ処理される[^1]:
+
+```cpp
+// flowcounterrouteorch.cpp:21, 44
+#define FLEX_COUNTER_UPD_INTERVAL   1          // 秒
+auto intervT = timespec { .tv_sec = FLEX_COUNTER_UPD_INTERVAL, .tv_nsec = 0 };
+mFlexCounterUpdTimer = new SelectableTimer(intervT);
+```
+
+pending キューが空になるとタイマーは `stop()` され、次の追加が発生したとき再起動する。
+
+### retry メカニズム
+
+`FLOW_COUNTER_ROUTE_PATTERN` の SET / DEL に明示的な retry は存在しない。エントリは `m_toSync` から即時 `erase()` されるため、`addRoutePattern()` / `removeRoutePattern()` が内部で失敗してもキューに残留しない。counter 生成失敗時は `bindFlowCounter()` が `false` を返し、そのパターンの枠だけスキップされる[^1]。
+
+### データフロー図
+
+```
+sonic-utilities[config flow_counters route add <prefix>]
+  ↓ SonicDBConfig.get_table() → hset FLOW_COUNTER_ROUTE_PATTERN|<prefix>
+  ↓
+CONFIG_DB[FLOW_COUNTER_ROUTE_PATTERN|<prefix>]
+  ↓ SubscriberStateTable (keyspace notification)
+  ↓ PSUBSCRIBE __keyspace@4__:FLOW_COUNTER_ROUTE_PATTERN|*
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → FlowCounterRouteOrch::doTask(Consumer&)
+  ↓   [gRouteOrch && mRouteFlowCounterSupported チェック]
+  ↓ addRoutePattern(key, maxMatchCount)
+  ↓   bindFlowCounter() → FlowCounterHandler::createGenericCounter()
+  ↓     pendingUpdateFlexDb() → mPendingAddToFlexCntr キュー
+  ↓
+SelectableTimer (1秒周期) → doTask(SelectableTimer&)
+  ↓ ASIC_DB VIDTORID 解決
+  ↓ mRouteFlowCounterMgr.setCounterIdList()
+    ↓ FLEX_COUNTER_DB 書き込み
+      ↓ syncd が ASIC からカウンター値を読み COUNTERS_DB に書き込む
+
+APPL_DB 書き込み: なし
+NotificationConsumer: なし
+```
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
