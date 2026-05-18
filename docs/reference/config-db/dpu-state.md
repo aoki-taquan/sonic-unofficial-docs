@@ -174,6 +174,78 @@ else:                   oper_status = "Partial Online"
 | 3 フィールド全て `'up'` | `Online` |
 | midplane `'up'` で CP/DP いずれか `'down'` | `Partial Online` |
 <!-- /defaults -->
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd SmartSwitchModuleUpdater.update_dpu_state:864 / DpuStateUpdater.update_state:1303 / DpuStateManagerTask.task_worker:1482 / DpuChassisdDaemon.run:1537 -->
+
+`DPU_STATE` は CHASSIS_STATE_DB への **push 型** 書き込みテーブルであり、CONFIG_DB テーブルとは異なる書込み順制約を持つ。以下の依存関係を守ること。
+
+### 依存関係サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `set_initial_dpu_admin_state` → ポーリング開始 | **必須先行** (初期化前にポーリングすると競合) | なし |
+| 2 | `update_dpu_state('up')` → `DpuStateUpdater.update_state()` | **順序推奨** (midplane up 後に CP/DP 評価) | 違反時は CP/DP が `down` のまま残る |
+| 3 | `SmartSwitchModuleUpdater.update_dpu_state('down')` → CP/DP 上書き禁止 | **上書き禁止** (`'down'` SET は CP/DP を同時に `down` にする) | なし |
+| 4 | `DpuStateUpdater.deinit()` → `SmartSwitchModuleUpdater.deinit()` | **推奨先行** (CP/DP を `down` にしてから midplane 状態を変更) | 逆順でも実害なしだが論理上 midplane down 後に CP/DP down が正しい |
+
+### 詳細
+
+**依存 1: 起動時初期化が先行 (必須)**
+
+```
+set_initial_dpu_admin_state()  ← oper_status → DPU_STATE 初期値設定
+  ↓
+ポーリングループ: module_updater.check_midplane_reachability()
+  ↓
+DpuChassisdDaemon: dpu_updater.update_state()  ← 繰り返しポーリング
+```
+
+`DpuChassisdDaemon.run()` (`chassisd:1537`) は `set_initial_dpu_admin_state()` (`chassisd:1432`) が完了した後にポーリングループへ入る。ポーリング開始前に DB が未初期化の場合、`hget` が `None` を返すため CP/DP 状態が正しく評価されない。
+
+**違反時**: 初期化前にポーリングが動いた場合、`dpu_midplane_link_state` が未設定のまま `DpuStateUpdater` が `None` との比較を行い、意図しない状態遷移ログが出力される。
+
+**依存 2: midplane up 後に CP/DP を評価 (推奨順序)**
+
+```
+SmartSwitchModuleUpdater.update_dpu_state(key, 'up')
+  ↓ midplane リンク UP を CHASSIS_STATE_DB に書き込む
+DpuStateUpdater.update_state()  ← CP/DP 状態を評価して書き込む
+```
+
+`update_dpu_state(key, 'up')` (`chassisd:864-891`) は `dpu_midplane_link_state` のみを更新し、CP/DP フィールドは変更しない。CP/DP の `up` 評価は `DpuStateUpdater.update_state()` (`chassisd:1303-1316`) が platform API または SYSTEM_READY / PORT oper_status を参照して行う。
+
+midplane が `up` になる前に `DpuStateUpdater` が評価を実行すると、platform API が midplane 経由の RPC で `NotImplementedError` を返す可能性があり、fallback ロジック（STATE_DB / CONFIG_DB ポート参照）に切り替わる。
+
+**違反時**: 自動回復する。次の `update_state()` ポーリングまたは `DpuStateManagerTask` の再評価イベントで正しい状態に収束する。
+
+**依存 3: `'down'` 書込みは CP/DP を同時にリセット (上書き禁止)**
+
+```
+SmartSwitchModuleUpdater.update_dpu_state(key, 'down')
+  ↓ dpu_midplane_link_state, dpu_control_plane_state, dpu_data_plane_state を同時に 'down' に設定
+（DpuStateUpdater による後続書き込みは競合する）
+```
+
+`update_dpu_state(key, 'down')` (`chassisd:882-884`) は CP/DP フィールドを `'down'` に強制設定する。その直後に `DpuStateUpdater.update_state()` が `up` を書き込むと状態が不整合になる。
+
+`DpuStateManagerTask.task_worker()` (`chassisd:1517-1526`) は `DPU_STATE` 変化を検知して `update_required` フラグを立てるが、CP/DP の前回値と現在値が同一なら DB 書き込みをスキップする（`chassisd:1523-1525`）。
+
+**違反時**: midplane `'down'` 後に CP/DP が誤って `'up'` に上書きされると、`show dpu` が `Partial Online` または `Online` を表示する誤表示が発生する。
+
+**依存 4: 終了時は CP/DP deinit → midplane deinit の順を推奨**
+
+```
+DpuStateUpdater.deinit()  ← dpu_data_plane_state, dpu_control_plane_state を 'down' に
+  ↓
+（SmartSwitchModuleUpdater が midplane 状態を最後にクリア）
+```
+
+`DpuStateUpdater.deinit()` (`chassisd:1318-1320`) は CP/DP を `'down'` にするが midplane は変更しない。論理的には「CP/DP が落ちた後に midplane が切れる」の順序が正しいが、`DpuChassisdDaemon.run()` (`chassisd:1558-1559`) では `dpu_state_mng.task_stop()` → `dpu_updater.deinit()` の順で CP/DP deinit が実行される。midplane の `'down'` 設定は `DpuStateManagerTask` の `SubscriberStateTable` 経由でトリガーされる。
+
+**違反時**: 逆順でも機能上の問題は発生しないが、`show dpu` が終了処理中に瞬間的に `Partial Online` を表示する可能性がある。
+<!-- /ordering -->
 
 ## 購読者
 
