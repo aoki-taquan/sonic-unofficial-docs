@@ -619,6 +619,79 @@ orchagent が STATE_DB へ書き込む 5 テーブルのテーブル名・フィ
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/orchagent-state-pubsub.md`
+
+本ページが扱う STATE_DB 5 テーブル（`WARM_RESTART_TABLE` / `PORT_TABLE` / `FDB_TABLE` / `VRF_OBJECT_TABLE` / `FIPS_MACSEC_POST_TABLE`）はすべて、書込み主体が `swss::Table` (素の HSET / HDEL / DEL) で書き込む。`ProducerStateTable` や `NotificationProducer` は一切使用されず、PUBLISH 通知は発行されない。consumer 側はいずれも keyspace 通知を購読せず、CLI/管理プロセス起動契機の **オンデマンド polling** で読み出す。
+
+### Producer/Consumer ペア
+
+| 区間 | 書込み API | PUBLISH 発行 |
+|------|-----------|-------------|
+| `WarmStart` → `WARM_RESTART_TABLE` | `swss::Table::hset` (`warm_restart.cpp:113, 125, 133, 227, 247`) | なし |
+| `PortsOrch` → `PORT_TABLE` (STATE_DB) | `swss::Table::set/hset/hdel` (`portsorch.cpp:3172, 3320, 4862, 4907, 5200, 9857, 9870`) | なし |
+| `FdbOrch` → `FDB_TABLE` | `swss::Table::set/del` (`fdborch.cpp:135, 170, 1582, 1592`) | なし |
+| `VrfOrch` → `VRF_OBJECT_TABLE` | `swss::Table::set/del` (`vrforch.cpp:120, 150, 193`) | なし |
+| `MaCSECPost` → `FIPS_MACSEC_POST_TABLE` | `swss::Table::set` (`macsecpost.cpp:9-24`) | なし |
+| `show warm_restart` ← `WARM_RESTART_TABLE` | `db.keys()` + `db.get_all()` polling | — |
+| `vrfmgrd` ← `VRF_OBJECT_TABLE` | `Table::get()` polling（VRF 削除時の同期待ち） | — |
+
+### 書込み API: 素の `swss::Table` (Pub/Sub 非対応)
+
+各 producer のテーブル宣言は以下のとおり:
+
+- `WARM_RESTART_TABLE`: `unique_ptr<Table>(new Table(..., STATE_WARM_RESTART_TABLE_NAME))` — `warm_restart.cpp:55-56`
+- `PORT_TABLE`: `Table m_portStateTable;` — `portsorch.h:320`、初期化 `portsorch.cpp:725-726`
+- `FDB_TABLE`: `Table m_fdbStateTable;` — `fdborch.h:114`
+- `VRF_OBJECT_TABLE` / `FIPS_MACSEC_POST_TABLE`: `swss::Table` (vrforch.cpp / macsecpost.cpp 内で直接構築)
+
+いずれも `ProducerStateTable` のような `_KEY_SET` チャンネルへの `PUBLISH` や `NotificationProducer` 経由の ad-hoc PUBLISH は行わない。
+
+### 通知チャンネル
+
+| 経路 | 状態 |
+|------|------|
+| `<TABLE>_CHANNEL` への PUBLISH | **発行されない** (ProducerStateTable 非使用) |
+| `NotificationProducer` (ad-hoc PUBLISH) | **なし** |
+| `__keyspace@<dbId>__:...` keyspace 通知 | Redis `notify-keyspace-events` 設定次第で発火しうるが、正規 consumer はいずれも購読しない |
+
+### 購読側はすべて polling
+
+正規 consumer は keyspace 通知を購読せず、必要時に HGETALL ベースで読み出す:
+
+- `show warm_restart` (`sonic-utilities/show/warm_restart.py:48-62`): `db.keys(STATE_DB, 'WARM_RESTART_TABLE|*')` + `db.get_all()` — CLI 起動毎 1 回
+- `show interfaces status`: APPL_DB `PORT_TABLE` を主参照。STATE_DB `PORT_TABLE` は `sonic-db-cli` 等で直接確認
+- `show mac`: APPL_DB の MAC テーブルを参照。STATE_DB `FDB_TABLE` は内部同期用
+- `vrfmgrd` (`sonic-swss/cfgmgr/vrfmgrd.cpp`): VRF 削除時に `VRF_OBJECT_TABLE` を `get()` でポーリング確認して同期制御
+
+### event_publish (sonic-events フレームワーク)
+
+`portsorch` はポート UP/DOWN 変化時に `event_publish(g_events_handle, "if-state", &params)` を呼ぶ (`portsorch.cpp:3798, 7101`)。これは Redis DB への直接書込みではなく `sonic-events` フレームワーク経由のイベント送出であり、STATE_DB `PORT_TABLE` の更新とは独立した経路。consumer が `if-state` イベントを受信する場合は `sonic-events` のサブスクライバとして別途登録が必要。
+
+### データフロー図
+
+```
+書込み主体 (orchagent / warm_restart.cpp)
+  ↓ swss::Table::set / hset / del (HSET / HDEL / DEL のみ)
+STATE_DB[WARM_RESTART_TABLE / PORT_TABLE / FDB_TABLE / VRF_OBJECT_TABLE / FIPS_MACSEC_POST_TABLE]
+  × PUBLISH <TABLE>_CHANNEL なし
+  × NotificationProducer なし
+
+consumer 側 (on-demand polling)
+  show warm_restart / vrfmgrd / sonic-db-cli
+    → SonicV2Connector.get_all() / Table::get()  ← HGETALL
+    (keyspace 通知購読なし)
+
+別経路 (sonic-events フレームワーク)
+  portsorch → event_publish("if-state")  [DB 書込みとは無関係]
+```
+
+> **Evidence**: `sonic-swss-common/common/warm_restart.cpp` L49-56（`swss::Table` 宣言）、L113-247（`hset` 書込み）。`sonic-swss/orchagent/portsorch.h` L320（`Table m_portStateTable`）、`portsorch.cpp` L725-726（初期化）、L3172, 3320, 4862, 4907, 5200, 9857, 9870, 11338, 11380（書込み呼び出し）、L3798, 7101（`event_publish`）。`sonic-swss/orchagent/fdborch.h` L114（`Table m_fdbStateTable`）、`fdborch.cpp` L135, 170, 1582, 1592（書込み）。`sonic-swss/orchagent/vrforch.cpp` L120, 150, 193（`state ok` / del）。`sonic-swss/orchagent/macsecpost.cpp` L9-24（`post_state` / `last_update_time` 書込み）。`sonic-utilities/show/warm_restart.py` L48-62（polling consumer）。詳細解析は `meta/_intermediate/cdb-flow/orchagent-state-pubsub.md` を参照。
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: `sonic-swss-common/common/warm_restart.cpp` (L9-17 warmStartStateNameMap, L109-137 checkWarmStart, L223-234 setWarmStartState, L237-254 setDataCheckState). <https://github.com/sonic-net/sonic-swss-common/blob/master/common/warm_restart.cpp>
