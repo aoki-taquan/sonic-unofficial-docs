@@ -160,6 +160,35 @@ intent_attrs_copy.insert(intent_attrs_copy.begin(), err_str);
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 証跡: `meta/_intermediate/cdb-flow/route-state-ordering.md`
+
+STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みは `RouteOrch` が SAI 操作を完了させた後に行われる。以下に強制先行条件と推奨順序を示す。
+
+### 強制先行条件
+
+| 順序 | 先行リソース | 後続 | 違反時の挙動 | evidence |
+|------|-------------|------|-------------|---------|
+| 1 | `PORT` 初期化完了（`allPortsReady()`） | STATE_DB / APPL_STATE_DB への動的書き込み | `RouteOrch::doTask()` が即 `return`。APPL_DB の ROUTE_TABLE イベントを処理しないため書き込みも発生しない | `routeorch.cpp:609-611` |
+| 2 | SAI `create_route_entry()` 成功 | `STATE_DB ROUTE_TABLE` への `state=ok` 書き込み | SAI 失敗時は `updateDefRouteState()` が呼ばれず STATE_DB が未更新のまま。デフォルト経路のみが対象 | `routeorch.cpp:2700-2703` |
+
+### 推奨先行条件
+
+| 順序 | 先行リソース | 後続 | 理由 | evidence |
+|------|-------------|------|------|---------|
+| 3 | SAI バルク操作完了 | `APPL_STATE_DB ROUTE_TABLE` への `err_str`/`protocol` 書き込み | `publishRouteState()` はバルク応答処理後に呼ばれる。SAI 失敗時も `err_str` が書き込まれる点が STATE_DB と異なる | `routeorch.cpp:920-923, 2729, 2970` |
+
+### 特殊シーケンス
+
+| 操作 | タイミング | 根拠 |
+|------|---------|------|
+| `STATE_DB ROUTE_TABLE\|0.0.0.0/0 state=na` の初期書き込み | `RouteOrch` コンストラクタ実行時（`allPortsReady()` 不要） | orchagent 起動直後から `state=na` が存在する。ポート初期化前でも確認可能 | <!-- evidence: routeorch.cpp:126-130, 155-156 --> |
+| `STATE_DB state=na` 書き込み（DEL パス） | SAI `set_route_entry` で packet_action を DROP に変更成功後 | DEL 失敗時は `state=na` にならず `state=ok` のまま残る | <!-- evidence: routeorch.cpp:2856 --> |
+
+<!-- /ordering -->
+
 ---
 
 ## APPL_STATE_DB ROUTE_TABLE
