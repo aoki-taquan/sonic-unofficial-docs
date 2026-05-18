@@ -372,6 +372,28 @@ VRFOrch: STATE_DB VRF_OBJECT_TABLE|<name> DEL
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査日 2026-05-18。ソース: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vxlanmgr.cpp`, `sonic-swss/cfgmgr/vrfmgr.cpp`
+> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-side-effects.md`
+
+`VRF_TABLE` / `VRF_OBJECT_TABLE` への書込は、他プロセスが次の doTask() イテレーションでポーリング（`get()` 成否判定）し、条件が満たされた場合に下流 DB へ書き込む。書込の瞬間に同期的な副次書込は発生しない。
+
+| トリガー操作 | 副次書込先 | 書込プロセス | 書込条件 |
+|---|---|---|---|
+| `VRF_TABLE\|<name>` SET | `APPL_DB INTF_TABLE\|<intf>:<prefix>` SET | `intfmgrd` | CONFIG_DB の `INTERFACE` に VRF バインドされたエントリが存在し、かつ当該 VRF の `VRF_TABLE` が gate として機能していた場合 (`intfmgr.cpp:677-684`) |
+| `VRF_TABLE\|<name>` SET | `APPL_DB VXLAN_VRF_TABLE\|<tunnel>:evpn_map_*` SET | `vxlanmgr` | CONFIG_DB に VXLAN VRF マッピング設定が存在し、`isVrfStateOk()` の結果が true に変わった場合 (`vxlanmgr.cpp:744`) |
+| `VRF_OBJECT_TABLE\|<name>` DEL | `APPL_DB APP_VRF_TABLE\|<name>` DEL + `STATE_DB VRF_TABLE\|<name>` DEL | `vrfmgrd` | VRF 削除処理の待機ループが `isVrfObjExist()` = false で解除されたとき (`vrfmgr.cpp:331-346`) |
+
+### 副次書込なし（直接）
+
+- **ASIC_DB**: VRF_TABLE / VRF_OBJECT_TABLE への書込自体は ASIC_DB に直接書かない。ASIC_DB への書込は `VRFOrch` が APP_DB `APP_VRF_TABLE_NAME` を受信して SAI 経由で行うもので、STATE_DB の書込とは独立した経路。
+- **COUNTERS_DB / FLEX_COUNTER_DB**: VRF は SAI VR オブジェクトとして管理されるが、VR 単体の flex counter は存在しない。
+- **STATE_DB（自テーブル以外）**: `vrfmgrd` / `VRFOrch` は VRF_TABLE / VRF_OBJECT_TABLE 以外の STATE_DB テーブルへの書込を行わない。
+
+<!-- /side-effects -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
