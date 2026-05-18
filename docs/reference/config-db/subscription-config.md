@@ -303,6 +303,47 @@ Global エントリが省略された構成では収束トリガーが発生し�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/subscription-config-cross-refs.md`
+
+`DialOutRun()` が CONFIG_DB の `TELEMETRY_CLIENT` を購読・処理する際に暗黙的に参照するリソースを以下に示す。
+
+### TELEMETRY_CLIENT が参照する下流テーブル / リソース
+
+| 参照先 | 参照機構 | 条件 | evidence |
+|--------|---------|------|---------|
+| `/var/run/redis/sonic-db/database_config.json` | `sdcfg.GetDbId/GetDbSock/GetDbTcpAddr` — CONFIG_DB 接続確立に必須 | 常時 | `sonic_db_config/db_config.go:14`, `dialout_client.go:650-674` |
+| `path_target` 指定の Redis DB (`APPL_DB` / `CONFIG_DB` / `COUNTERS_DB` / `STATE_DB` 等) | `sdc.NewDbClient` → `database_config.json` 経由でDB接続 | `Subscription_<name>` に有効な `path_target` が設定されている場合 | `dialout_client.go:199-200`, `sonic_data_client/db_client.go:186-207` |
+| `paths` フィールドで指定するテーブルの実データ | `populateAllDbtablePath` が `paths` を実 Redis テーブルキーへ展開 | Subscription が接続済みかつ `paths` 非空の場合 | `sonic_data_client/db_client.go:204` |
+| 外部 gRPC コレクタ (`dst_addr` の `host:port`) | TCP/gRPC ネットワーク接続 | `DestinationGroup_<name>` に有効な `dst_addr` が設定されている場合 | `dialout_client.go:531-543` |
+
+### path_target による暗黙参照 DB の選択
+
+`Subscription_<name>` の `path_target` フィールドにより、`NewInstance()` が選択するクライアントが変わる (`dialout_client.go:193-201`):
+
+| `path_target` 値 | 使用クライアント | 暗黙参照 DB |
+|-----------------|----------------|------------|
+| `"OTHERS"` | `sdc.NewNonDbClient` | Redis DB 非経由（ファイルシステム等） |
+| `"OC_YANG"` | `sdc.NewTranslClient` | `database_config.json` 経由で適切な DB |
+| `APPL_DB` / `CONFIG_DB` / `COUNTERS_DB` / `STATE_DB` | `sdc.NewDbClient` | `database_config.json` で対応する Redis DB |
+
+YANG (`sonic-telemetry_client.yang`) は `path_target` を enum として定義 (`APPL_DB` / `CONFIG_DB` / `COUNTERS_DB` / `STATE_DB` / `OTHERS`) しているが、
+実装は任意の文字列を `NewDbClient` に渡すため、未定義の DB 名を指定すると `GetRedisClientsForDb` でエラーになる。
+
+### TELEMETRY_CLIENT を参照する上流コンポーネント
+
+| 参照元 | 参照機構 | 効果 |
+|--------|---------|------|
+| `dialout_client.go` (`DialOutRun`) | `PSubscribe("__keyspace@N__:TELEMETRY_CLIENT|*")` で CONFIG_DB キースペース通知を購読 | `hset` / `hdel` 発生時に `processTelemetryClientConfig` が呼ばれ、クライアント起動・停止・更新が行われる |
+| `sonic-mgmt-framework` (gNMI/REST) | YANG `sonic-telemetry_client` モジュール経由でフィールド書き込み | CONFIG_DB への HSET が `DialOutRun` イベントループで拾われる |
+
+!!! note "TELEMETRY テーブルとの関係"
+    `TELEMETRY` テーブル（dial-in gnmi-server 設定）と `TELEMETRY_CLIENT` テーブル（dial-out）は同一 CONFIG_DB に存在するが、`dialout_client.go` は `TELEMETRY` テーブルを直接読まない。両者は設計上の姉妹テーブルであり、接続方向（in/out）のみが異なる。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
