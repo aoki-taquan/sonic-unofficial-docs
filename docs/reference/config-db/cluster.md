@@ -314,3 +314,35 @@ XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.
     `cluster` は write-only フィールド。DB への書き込み完了後、orchagent・bgpcfgd・linkmgrd 等はこのフィールドを参照しないため、書き込み後の失敗パスは存在しない。
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 根拠: `minigraph.py` 全行精読。evidence: `meta/_intermediate/cdb-flow/cluster-constants.md`
+
+`cluster` フィールドに関して minigraph.py にハードコードされている定数・判定パターンの一覧。ランタイム消費デーモンが存在しないため、定数は書き込み側 (`sonic-cfggen` / `minigraph.py`) にのみ存在する。
+
+### minigraph.py 内ハードコード定数
+
+| 定数 / パターン | 値 | 用途 | ソース |
+|----------------|-----|------|--------|
+| XML タグ名 | `"ClusterName"` | minigraph XML からクラスタ名を読み出すタグ名。リテラルとして埋め込み | `minigraph.py:514` |
+| CONFIG_DB フィールドキー | `"cluster"` | DEVICE_METADATA / DEVICE_NEIGHBOR_METADATA の両テーブルで共通のフィールド名 | `minigraph.py:668, 811, 2172` |
+| `parse_device()` 初期値 | `None` | cluster 変数を `None` で初期化。XML タグが存在しない場合はこのまま返却 | `minigraph.py:493` |
+| `get()` フォールバック | `""` (空文字列) | `devices[...].get('cluster', "")` の第 2 引数。DEVICE_METADATA 書き込み前の展開値 | `minigraph.py:2170` |
+
+### 書き込み判定条件の非対称性（暗黙の仕様定数）
+
+| テーブル | 条件式 | 効果 | ソース |
+|---------|--------|------|--------|
+| `DEVICE_METADATA\|localhost` | `if cluster:` (truthy) | 空文字列 `""` と `None` を書き込まない | `minigraph.py:2171` |
+| `DEVICE_NEIGHBOR_METADATA\|<device>` | `if cluster != None:` | 空文字列 `""` は書き込む。`None` のみ除外 | `minigraph.py:667, 810` |
+
+### YANG / ランタイム側のハードコードなし
+
+- YANG モデル (`sonic-device_metadata.yang`, `sonic-device_neighbor_metadata.yang`) に `default` 値なし
+- `type string` のみで値制約なし
+- ランタイム消費デーモン (orchagent / bgpcfgd / hostcfgd 等) は `cluster` フィールドを参照しないため、ランタイム側のハードコード定数は存在しない
+
+<!-- /constants -->
+
