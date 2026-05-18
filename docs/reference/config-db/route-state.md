@@ -246,6 +246,75 @@ routeResponseChannel = std::make_unique<NotificationConsumer>(&applStateDb, rout
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗時の挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-failure.md -->
+
+`RouteOrch` が SAI 操作に失敗した場合、STATE_DB と APPL_STATE_DB への書き込みは異なる挙動を示す。
+
+### STATE_DB `ROUTE_TABLE` — 失敗時は未更新
+
+SAI `create_route_entry()` 失敗（ADD パス）:
+
+```cpp
+// routeorch.cpp:2472-2526
+if (status != SAI_STATUS_SUCCESS)
+{
+    task_process_status handle_status = handleSaiCreateStatus(SAI_API_ROUTE, status);
+    if (handle_status != task_success)
+    {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+}
+// updateDefRouteState() は成功パスにのみ存在する (routeorch.cpp:2700-2703)
+```
+
+SAI `set_route_entry` 失敗（DEL パス、デフォルト経路のみ）:
+
+```cpp
+// routeorch.cpp:2833-2856
+if (status != SAI_STATUS_SUCCESS)
+{
+    return parseHandleSaiStatusFailure(handle_status);
+}
+// ...成功後にのみ:
+updateDefRouteState(ipPrefix.to_string());  // state=na
+```
+
+| 失敗シナリオ | STATE_DB の結果 |
+|------------|----------------|
+| SAI create 失敗 → リトライ | `state` 未更新（古い値残留） |
+| SAI create 失敗 → 恒久エラー | `state` 未更新のまま破棄 |
+| SAI set(DEL) 失敗 | `state=ok` のまま残留 |
+
+### APPL_STATE_DB `ROUTE_TABLE` — SAI 成功時のみ書き込む（通常パス）
+
+通常パスでは `publishRouteState()` は SAI バルク操作完了後にのみ呼ばれる。SAI 失敗時に `return false`（リトライ）が返された場合は `publishRouteState()` は呼ばれず、APPL_STATE_DB への書き込みは発生しない:
+
+| シナリオ | APPL_STATE_DB の結果 |
+|---------|---------------------|
+| SAI 成功 | `protocol` + `err_str=SWSS_RC_SUCCESS` を書き込む |
+| SAI 失敗 → `return false` (リトライ) | 書き込まれない（前回エントリが残留） |
+| SAI 失敗 → `task_failed` (恒久エラー) | 書き込まれない（エントリ破棄） |
+| 特殊パス (loopback / duplicate SET) | SAI 呼ばず直接 `publishRouteState()` を呼ぶ[^d1] |
+
+### リトライ機構
+
+```
+parseHandleSaiStatusFailure(task_need_retry) → return false
+  → エントリが m_toSync に残る
+  → 次の doTask() サイクルで再処理
+
+parseHandleSaiStatusFailure(task_failed) → return true
+  → エントリを m_toSync から破棄
+  → STATE_DB / APPL_STATE_DB は古い状態のまま
+```
+
+[^d1]: loopback インタフェース向け経路・重複 SET・fullmask subnet 経路: `orchagent/routeorch.cpp:923, 1050, 1090`.
+
+<!-- /failure -->
+
 ---
 
 ## APPL_STATE_DB ROUTE_TABLE
