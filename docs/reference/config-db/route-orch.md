@@ -285,6 +285,67 @@ pending キューが空になると `mFlexCounterUpdTimer->stop()` でタイマ�
 詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/route-orch-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 設計上の特徴: task_failed / task_need_retry を使わない
+
+`FlowCounterRouteOrch::doTask()` は Orch フレームワーク標準の `task_failed` / `task_need_retry` を**一切使用しない**。
+`m_toSync` のイテレート末尾で常に `consumer.m_toSync.erase(it++)` を実行し、
+成功・失敗にかかわらずエントリをキューから除去する[^1]:
+
+```cpp
+// flowcounterrouteorch.cpp (doTask 末尾)
+consumer.m_toSync.erase(it++);
+```
+
+失敗は `syslog`（`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`）に記録されるのみ。
+CONFIG_DB エントリは失敗後も残り続ける。`STATE_DB` / `ERROR_TABLE` への失敗フィードバックはない。
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | `gRouteOrch = null` またはプラットフォーム非対応 | `doTask()` ガード | 全エントリを無視（ログなし） | なし |
+| 2 | パターン重複・包含関係 | `validateRoutePattern()` | ERROR ログ。パターン登録拒否 | なし |
+| 3 | VRF/VNET 名が未解決 | `parseRouteKeyForRoutePattern()` | NOTICE ログ。`vrf_id = SAI_NULL_OBJECT_ID` で登録継続（デフォルト VRF と混同リスク） | なし |
+| 4 | SAI generic counter 作成失敗 | `bindFlowCounter()` | ERROR ログ。当該ルートへのバインドをスキップ | なし |
+| 5 | SAI `set_route_entry_attribute` 失敗（bind） | `bindFlowCounter()` | WARN ログ。作成済み counter を即クリーンアップ | なし |
+| 6 | SAI `set_route_entry_attribute` 失敗（unbind） | `unbindFlowCounter()` | WARN ログ。`removeGenericCounter` は実行。SAI 側と不整合のリスク | なし |
+| 7 | DEL 対象パターンが未登録 | `removeRoutePattern()` | ERROR ログ。no-op | なし |
+| 8 | `max_match_count = 0` | `doTask()` SET ハンドラ | WARN ログ。`30` にフォールバックして続行 | — |
+
+### パターン重複時の挙動詳細
+
+`addRoutePattern()` → `validateRoutePattern()` が既存パターンとの IP 範囲重複を検出した場合[^1]:
+
+```cpp
+// flowcounterrouteorch.cpp:582-583
+SWSS_LOG_ERROR("Configured route pattern %s is conflict with existing one %s", ...);
+return false;
+```
+
+`mRoutePatternSet` からイテレータを削除して即 return。CONFIG_DB エントリは残存する。
+recovery: 競合する既存パターンを DEL してから再登録する。
+
+### SAI counter unbind 失敗時のリスク
+
+`unbindFlowCounter()` では SAI が失敗しても `FlowCounterHandler::removeGenericCounter(counter_oid)` は**必ず実行**される[^1]。
+SAI 側に counter が残ったまま orchagent 内部状態は解放済みとなり、SAI と orchagent の間で不整合が生じる可能性がある。
+
+### STATE_DB / syslog 確認方法
+
+COPP などと異なり `STATE_DB` への失敗記録はない。障害確認は syslog のみ:
+
+```bash
+journalctl -u swss | grep -i "flow counter\|route pattern"
+# または
+sudo tail -f /var/log/syslog | grep -i flowcounter
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/route-orch-failure.md`
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
