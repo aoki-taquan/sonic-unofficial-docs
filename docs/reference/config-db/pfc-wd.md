@@ -257,6 +257,55 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/pfc-wd-ordering.md`
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | ソース |
+|---|---|---|
+| `PORT` (allPortsReady 済み) | `doTask()` 冒頭で `gPortsOrch->allPortsReady()` をチェック。未完了の場合は即時リターン（全 PFC_WD エントリがキューに残留） | `pfcwdorch.cpp:68-71` |
+| `PORT` (エントリ存在) | `createEntry()` で `gPortsOrch->getPort(key, port)` が失敗すると `task_invalid_entry`（リトライなし、恒久スキップ） | `pfcwdorch.cpp:193-197` |
+| `PFC_WD\|GLOBAL` (POLL_INTERVAL がある場合) | YANG `must` 制約: `detection_time` および `restoration_time` は `POLL_INTERVAL` 以上でなければ reject。GLOBAL エントリを先に書かないと per-port エントリが YANG バリデーションで失敗する | `sonic-pfcwd.yang:61-73` |
+
+!!! warning "PORT 未初期化は全エントリ保留"
+    `allPortsReady()` が `false` の間、`doTask()` は早期リターンするため PFC_WD の全エントリが未処理のままキューに蓄積される。`portsyncd` が PortInitDone を発行するまで投入を延期するか、swss サービス起動順序（portsyncd → orchagent）に依存すること。
+
+!!! warning "PORT エントリ欠如は恒久スキップ"
+    `allPortsReady()` が `true` でも対象ポート名が PORT テーブルに存在しない場合は `task_invalid_entry` となり、リトライキューに残らない。存在しないポート名を指定した PFC_WD エントリは永続的に無視される。
+
+### GLOBAL → per-port 書込み順序
+
+`PFC_WD|GLOBAL` の `POLL_INTERVAL` は per-port エントリと独立したパスで処理されるが、YANG `must` 制約により **GLOBAL エントリを先に書き** `POLL_INTERVAL` を確定させてから per-port エントリを投入することを推奨する。逆順の場合、`detection_time` / `restoration_time` と `POLL_INTERVAL` の大小関係が YANG validate 時に評価され reject される可能性がある。
+
+### ウォームリブート時の順序制約
+
+ウォームリブート時、進行中の PFC storm が存在する場合は以下の順序で Executor を drain する（`pfcwdorch.cpp:862-875`）:
+
+```
+CONFIG_DB PFC_WD (CFG_PFC_WD_TABLE_NAME) → drain 先
+  ↓
+APPL_DB PFC_WD_INSTORM (APP_PFC_WD_TABLE_NAME) → drain 後
+```
+
+コールドブート時は `APP_PFC_WD_TABLE_NAME` が空のため、順序制約は発生しない。
+
+### 起動時シーケンス
+
+```
+portsyncd → PortConfigDone → PortInitDone
+  ↓
+allPortsReady() = true → PfcWdOrch アンブロック
+  ↓
+PFC_WD|GLOBAL (POLL_INTERVAL) 投入 → flex counter ポーリング間隔設定
+  ↓
+PFC_WD|<port> 投入 → SAI queue/port 属性設定 + flex counter 登録
+```
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
