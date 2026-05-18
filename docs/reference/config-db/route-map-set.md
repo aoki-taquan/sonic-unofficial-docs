@@ -98,6 +98,33 @@ YANG に定義されているフィールドは `name`（key）のみ。デー�
 `db_migrator.py` に ROUTE_MAP_SET の参照なし（grep 確認済み）。バージョン移行での自動補完なし。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`ROUTE_MAP_SET` テーブルは frrcfgd・bgpcfgd・orchagent のいずれも購読しないため、
+**FRR への反映という観点での書込み順序制約は存在しない**。
+
+ただし gNMI / NETCONF 等の YANG 検証が有効なパスでは、以下のテーブルのフィールドが
+`ROUTE_MAP_SET_LIST/name` を leafref で参照しているため、**参照元エントリを書く前に
+`ROUTE_MAP_SET|<name>` エントリが存在しなければ leafref 検証失敗**となる。
+
+| 参照元テーブル | 参照フィールド | 根拠 |
+|---------------|---------------|------|
+| `ROUTE_MAP` | `call_route_map` | `sonic-route-map.yang:269-273` |
+| `BGP_NEIGHBOR_AF` / `BGP_PEER_GROUP_AF` | `default_rmap` | `sonic-bgp-common.yang:354-358` |
+| `BGP_NEIGHBOR_AF` / `BGP_PEER_GROUP_AF` | `route_map_in` | `sonic-bgp-common.yang:385-392` |
+| `BGP_NEIGHBOR_AF` / `BGP_PEER_GROUP_AF` | `route_map_out` | `sonic-bgp-common.yang:394-401` |
+| `BGP_NEIGHBOR_AF` / `BGP_PEER_GROUP_AF` | `unsuppress_map_name` | `sonic-bgp-common.yang:408-413` |
+| `BGP_GLOBALS_AF` | 各 route-map フィールド | `sonic-bgp-global.yang:373,380,502,532` |
+| `ROUTE_REDISTRIBUTE` | `route_map` | `sonic-route-common.yang:60-66` |
+
+`sonic-db-cli` 直接投入は YANG 検証をバイパスするため、この順序制約は実質適用されない。
+DEL 時も同様で、`sonic-db-cli` であれば参照中の `ROUTE_MAP_SET` エントリを先に削除することは可能だが、
+gNMI/NETCONF では参照元の解除が先行必須となる。
+
+> **スキャン証跡**: `sonic-route-map.yang:125-134,269-273`、`sonic-bgp-common.yang:354-413`、`sonic-bgp-global.yang:373,380,502,532`、`sonic-route-common.yang:60-66`。詳細は `meta/_intermediate/cdb-flow/route-map-set-ordering.md` を参照。
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
