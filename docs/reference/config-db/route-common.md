@@ -95,6 +95,40 @@ route_redist_key_map = [
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+> YANG leafref として静的に強制される参照と、`frrcfgd` が処理時に参照するランタイム依存を網羅する。
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-redistribute-ordering.md`
+
+### ROUTE_REDISTRIBUTE が参照する下流テーブル / リソース
+
+| 対象 | 参照機構 | 効果 |
+|---|---|---|
+| `VRF` (`vrf_name`) | YANG leafref (`sonic-vrf/VRF/VRF_LIST/name`) | `default` 以外の `vrf_name` に対し存在しない VRF 名は config-load で reject される[^1] |
+| `ROUTE_MAP_SET` (`route_map`) | YANG leafref (`sonic-route-map/ROUTE_MAP_SET/ROUTE_MAP_SET_LIST/name`) | `route_map` フィールドに存在しない ROUTE_MAP 名を指定すると config-load で reject される[^1] |
+| `BGP_GLOBALS` (`local_asn`) | runtime ゲート (`frrcfgd` `__get_vrf_asn`) | VRF に対応する `BGP_GLOBALS.local_asn` が未設定の場合、ROUTE_REDISTRIBUTE イベントは silent drop される（evidence: `frrcfgd.py:2658-2661`）[^2] |
+
+### ROUTE_REDISTRIBUTE を参照する上流コンポーネント
+
+| 参照元 | 参照機構 | 効果 |
+|---|---|---|
+| `frrcfgd` (`BGPConfigDaemon`) | `subscribe` + `bgp_table_handler_common` | ROUTE_REDISTRIBUTE の SET/DEL を購読し `vtysh redistribute` コマンドを FRR bgpd へ発行する[^2] |
+| `frrcfgd` `__apply_dep_vrf_table` | `BGP_GLOBALS.local_asn` SET 後に自動再適用 | `BGP_GLOBALS.local_asn` が設定されると、当該 VRF の全 ROUTE_REDISTRIBUTE エントリをキューに再送して FRR に反映する（evidence: `frrcfgd.py:2703-2704`）[^2] |
+
+### 参照関係サマリ
+
+```
+ROUTE_REDISTRIBUTE
+  |- [YANG leafref]  VRF.name                  (vrf_name が non-default の場合)
+  |- [YANG leafref]  ROUTE_MAP_SET.name         (route_map フィールド、任意)
+  |- [runtime gate]  BGP_GLOBALS.local_asn      (local_asn 未設定時 silent drop)
+  |
+  <- [subscribe]  frrcfgd BGPConfigDaemon       (vtysh redistribute コマンドへ変換)
+```
+
+<!-- /cross-refs -->
+
 ## key 構造
 
 ```text
