@@ -493,6 +493,44 @@ attr.value.u64 = (stoul(value) * 1000 / 8);
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/storm-control-side-effects.md`
+> ソース: `sonic-swss/orchagent/policerorch.cpp`
+
+`PolicerOrch::handlePortStormControlTable()` は CONFIG_DB `PORT_STORM_CONTROL` の SET / DEL を処理するが、**STATE_DB・APPL_DB・COUNTERS_DB への明示的な書込みは一切存在しない**。副次変化は ASIC_DB（SAI API 経由）と PolicerOrch 内部状態の 2 系統のみ。
+
+### ASIC_DB（SAI API 経由）
+
+| フロー | SAI API | 影響リソース | evidence |
+|--------|---------|-------------|----------|
+| SET（新規） | `sai_policer_api->create_policer()` | ASIC policer オブジェクト生成 | `policerorch.cpp:227-238` |
+| SET（新規） | `sai_port_api->set_port_attribute(policer_id)` | `SAI_PORT_ATTR_{BROADCAST\|FLOOD\|MULTICAST}_STORM_CONTROL_POLICER_ID` | `policerorch.cpp:278-286` |
+| SET（更新）| `sai_port_api->set_port_attribute(SAI_NULL_OBJECT_ID)` | 既存 policer を一時デタッチ（storm control 一時解除） | `policerorch.cpp:278-286` |
+| SET（更新）| `sai_policer_api->set_policer_attribute(SAI_POLICER_ATTR_CIR)` | CIR 値更新のみ（METER_TYPE / MODE / RED_ACTION は更新不可） | `policerorch.cpp:257-263` |
+| SET（更新）| `sai_port_api->set_port_attribute(policer_id)` | 更新後 policer を再アタッチ | `policerorch.cpp:278-286` |
+| DEL | `sai_port_api->set_port_attribute(SAI_NULL_OBJECT_ID)` | ポートから policer をデタッチ | `policerorch.cpp:344-347` |
+| DEL | `sai_policer_api->remove_policer()` | SAI policer オブジェクト削除 | `policerorch.cpp:349-361` |
+
+### PolicerOrch 内部 map（プロセス内状態）
+
+STATE_DB ではなく PolicerOrch プロセス内の map が更新される。他の Orch や外部ツールから直接観測不可。
+
+| map | 操作 | タイミング |
+|-----|------|-----------|
+| `m_syncdPolicers[_<interface>_<storm_type>]` | SET: policer OID 登録 | `create_policer()` 成功後（L239） |
+| `m_policerRefCounts[_<interface>_<storm_type>]` | SET: 0 で初期化 | 同上（L240） |
+| `m_syncdPolicers[...]` | erase | `remove_policer()` 成功後（L368） |
+| `m_policerRefCounts[...]` | erase | 同上（L369） |
+
+storm control 専用 policer の参照カウントは常に `0` で固定される（`POLICER` テーブル経由の共用 policer と異なり、`decrementRefCount` / `incrementRefCount` は storm control パスでは呼ばれない）。
+
+!!! note "STATE_DB 書込なし"
+    storm control の適用結果は `show interface storm-control` で確認できるが、これは SAI ポート属性の読み戻しであり STATE_DB には書き込まれない。STATE_DB `BUM_STORM_CAPABILITY` は CLI 側読み取り専用であり、orchagent は書き込まない。
+
+<!-- /side-effects -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
