@@ -195,6 +195,34 @@ PORTCHANNEL を先に削除した場合、LAG_TABLE エントリが残存した�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+> 調査対象: `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/tlm_teamd/main.cpp`, `sonic-swss/tlm_teamd/values_store.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/vlanmgr.cpp`, `sonic-swss/cfgmgr/stpmgr.cpp`, `sonic-swss/cfgmgr/nbrmgr.cpp`, `sonic-swss/cfgmgr/natmgr.cpp`
+> 調査日: 2026-05-18
+> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-cross-refs.md`
+
+YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。STATE_DB テーブルであるため「何が書き込むか」と「何が読むか」の両方向を示す。
+
+| 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
+|--------|-----------|------|------|-----------|
+| Linux netlink (`RTM_NEWLINK` / `RTM_DELLINK`) | カーネル | READ | LAG netdev の追加・削除イベントを受信し `addLag()` / `removeLag()` を呼び出す。netlink イベントがなければ LAG_TABLE は書かれない | `teamsync.cpp:101-143` |
+| `teamdctl` JSON dump（UNIX socket） | プロセス間 | READ | `TeamPortSync::readData()` が `teamdctl_connect()` で teamd プロセスソケットに接続し JSON dump を取得。`ValuesStore::update()` が `setup.*` / `runner.*` / `team_device.*` フィールドを LAG_TABLE に書き込む | `teamsync.cpp:317-348`, `values_store.cpp:352-380` |
+| `STATE_DB::LAG_TABLE`（自己購読） | STATE_DB | READ | `tlm_teamd` が `SubscriberStateTable` で `LAG_TABLE` を購読し、`state=ok` 書き込みをトリガーに teamdctl 接続を開始する（循環構造） | `tlm_teamd/main.cpp:98-106` |
+| `intfmgrd` — `isIntfStateOk()` | STATE_DB | READ by consumer | `PORTCHANNEL_INTERFACE` SET 処理前に `m_stateLagTable.get(alias)` でエントリ存在を確認。エントリなしは処理保留・retry | `intfmgr.cpp:38,663-668,833` |
+| `teammgrd` — `isLagStateOk()` | STATE_DB | READ by consumer | `PORTCHANNEL_MEMBER` enslave 前に `m_stateLagTable.get(alias)` で確認。エントリなしは保留 | `teammgr.cpp:38,89-103,357` |
+| `vlanmgrd` — `isMemberStateOk()` | STATE_DB | READ by consumer | `VLAN_MEMBER` への LAG 追加前に `m_stateLagTable.get(alias)` で確認。エントリなしは保留 | `vlanmgr.cpp:30,497` |
+| `stpmgrd` — `isLagStateOk()` | STATE_DB | READ by consumer | STP ポート処理前に `m_stateLagTable.get(alias)` で確認。エントリなしは保留 | `stpmgr.cpp:32,1296` |
+| `nbrmgrd` | STATE_DB | READ by consumer | 隣接エントリ処理前に LAG 状態を確認する | `nbrmgr.cpp:47` |
+| `natmgrd` — NAT ポートマッピング | STATE_DB | READ by consumer | NAT インタフェースとして LAG を使用する場合に `m_stateLagTable.get(port)` で確認 | `natmgr.cpp:38,111` |
+
+!!! note "補足"
+    - **書き込みは teamsyncd と tlm_teamd のみ**。orchagent / portsorch は APP_DB の `APP_LAG_TABLE` を購読して SAI に反映するため、STATE_DB の LAG_TABLE を直接読まない。
+    - **tlm_teamd の自己購読**は teamsyncd が先に `state=ok` を書くことを前提とした依存関係であり、teamsyncd が書かないと tlm_teamd は teamdctl 接続を開始しない。
+    - **values_store.cpp の LAG_TABLE 削除回避**（L284-291）: tlm_teamd は LAG_TABLE のエントリ本体を削除しない。LAG 削除は teamsyncd の `RTM_DELLINK` 処理のみが担う。
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: `sonic-swss/teamsyncd/teamsync.cpp` (L26-30 コンストラクタ, L101-143 onMsg, L146-226 addLag, L228-259 removeLag). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
