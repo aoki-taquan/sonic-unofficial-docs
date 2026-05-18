@@ -405,6 +405,68 @@ sudo tail -f /var/log/syslog | grep -i flowcounter
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/route-orch-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用テーブル書き込み (Phase F)
+
+`FlowCounterRouteOrch` が `FLOW_COUNTER_ROUTE_PATTERN` への SET / DEL を処理するとき、CONFIG_DB 以外の複数のテーブルへ副作用として書き込む。以下はその一覧である。
+
+### 書き込み先テーブル一覧
+
+| # | DB | テーブル / キー | トリガー | 書き込み内容 | evidence |
+|---|----|----|---------|------------|---------|
+| 1 | STATE_DB | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | orchagent **起動時に 1 回** | `support = "true"` / `"false"` — プラットフォームの route flow counter サポート状況 | `flowcounterrouteorch.cpp:174-178` |
+| 2 | COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | バインド成功時（`doTask(SelectableTimer)` 内） | `<vrf:prefix>` → `<counter_oid>` のマッピングをハッシュに追記 | `flowcounterrouteorch.cpp:152` |
+| 3 | COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | バインド成功時（`doTask(SelectableTimer)` 内） | `<vrf:prefix>` → `<pattern_prefix>` の逆引きマッピングをハッシュに追記 | `flowcounterrouteorch.cpp:157` |
+| 4 | COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | アンバインド時（`removeRouteFlowCounterFromDB()`） | 対象プレフィックスエントリを `hdel` で削除 | `flowcounterrouteorch.cpp:921-922` |
+| 5 | COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | アンバインド時（同上） | 対象プレフィックスエントリを `hdel` で削除 | `flowcounterrouteorch.cpp:920` |
+| 6 | FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|<counter_oid>` | バインド成功時（`FlexCounterManager::setCounterIdList()`） | カウンター OID に対するポーリング対象 stat ID リストを登録 | `flex_counter_manager.cpp:225` |
+| 7 | FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|<counter_oid>` | アンバインド時（`FlexCounterManager::clearCounterIdList()`） | 対象 OID のポーリングエントリを削除 | `flex_counter_manager.cpp:235-260` |
+
+### 書き込みタイミングの詳細
+
+**STATE_DB 書き込み（テーブル #1）**: `initRouteFlowCounterCapability()` は `FlowCounterRouteOrch` **コンストラクタ**から呼ばれる。orchagent プロセス起動時に 1 度だけ実行される。プラットフォームが非対応の場合も `"false"` として必ず書き込まれる[^1]:
+
+```cpp
+// flowcounterrouteorch.cpp:174-178
+swss::DBConnector state_db("STATE_DB", 0);
+swss::Table capability_table(&state_db, STATE_FLOW_COUNTER_CAPABILITY_TABLE_NAME);
+std::vector<FieldValueTuple> fvs;
+fvs.emplace_back(FLOW_COUNTER_SUPPORT_FIELD, mRouteFlowCounterSupported ? "true" : "false");
+capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
+```
+
+**COUNTERS_DB 書き込み（テーブル #2, #3）**: `doTask(SelectableTimer &timer)` の 1 秒周期タイマーコールバックで、`mPendingAddToFlexCntr` キューから VID 解決済みのエントリをバッチ処理し、`mPrefixToCounterTable->set("", prefixToCounterMap)` および `mPrefixToPatternTable->set("", prefixToPatternMap)` でまとめて書き込む[^1]。タイマーは pending キューが空になると `stop()` される。
+
+**FLEX_COUNTER_DB 書き込み（テーブル #6, #7）**: `FlexCounterManager` 経由で `FLEX_COUNTER_DB` に書き込む。`show flow_counters route` が参照する実カウンター値は syncd が FLEX_COUNTER_DB の登録エントリをもとに ASIC から読み取り COUNTERS_DB に書き込む。
+
+### 副作用の読み取り側
+
+| DB | テーブル | 読み取り側 | 用途 |
+|----|---------|-----------|------|
+| STATE_DB | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | `acl-loader`, `sonic-mgmt-common (translib)`, CLI `show flow_counters route` | プラットフォームのサポート状況確認 |
+| COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | `show flow_counters route`（sonic-utilities） | prefix → counter OID 解決 |
+| COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | `show flow_counters route`（sonic-utilities） | counter → パターン逆引き表示 |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|*` | `syncd` | 実 ASIC カウンター値のポーリング対象登録 |
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp#L31-34 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  mCounterDb(std::shared_ptr<DBConnector>(new DBConnector("COUNTERS_DB", 0))),
+  mPrefixToCounterTable(std::unique_ptr<Table>(new Table(mCounterDb.get(), COUNTERS_ROUTE_NAME_MAP))),
+  mPrefixToPatternTable(std::unique_ptr<Table>(new Table(mCounterDb.get(), COUNTERS_ROUTE_TO_PATTERN_MAP))),
+reasoning: COUNTERS_DB への書き込みは mPrefixToCounterTable / mPrefixToPatternTable を通じて行われる。
+-->
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp#L174-178 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  swss::DBConnector state_db("STATE_DB", 0);
+  swss::Table capability_table(&state_db, STATE_FLOW_COUNTER_CAPABILITY_TABLE_NAME);
+  fvs.emplace_back(FLOW_COUNTER_SUPPORT_FIELD, mRouteFlowCounterSupported ? "true" : "false");
+  capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
+reasoning: STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route への起動時 1 回書き込みを確認。
+-->
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
