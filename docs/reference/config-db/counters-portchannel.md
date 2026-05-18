@@ -348,6 +348,73 @@ RIF が `m_rifsToAdd` にキューイング後、タイマーループ（`intfso
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-ordering.md`
+
+`portsorch` / `intfsorch` が `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` を書き込む際に、
+CONFIG_DB とは別の DB（FLEX_COUNTER_DB / COUNTERS_DB 内の他テーブル）に以下を副次的に書き込む。
+
+### COUNTERS_RIF_TYPE_MAP（同時書き込み）
+
+`addRifToFlexCounter()` は `COUNTERS_RIF_NAME_MAP` と**同一関数内で連続して** `COUNTERS_RIF_TYPE_MAP` にも書き込む (`intfsorch.cpp:1535-1538`)。
+
+| タイミング | テーブル | フィールド | 値 |
+|---|---|---|---|
+| RIF 作成 (`addRifToFlexCounter`) | `COUNTERS_RIF_TYPE_MAP` | `<rif_oid>` | `"SAI_ROUTER_INTERFACE_TYPE_PORT"` (LAG/PHY) / `"SAI_ROUTER_INTERFACE_TYPE_VLAN"` / `"SAI_ROUTER_INTERFACE_TYPE_SUB_PORT"` |
+| RIF 削除 (`removeRifFromFlexCounter`) | `COUNTERS_RIF_TYPE_MAP` | `<rif_oid>` | `hdel` で削除 |
+
+`COUNTERS_RIF_NAME_MAP` と `COUNTERS_RIF_TYPE_MAP` は常にアトミックに同期する（どちらか一方のみが残存する状態は発生しない）。
+
+確認コマンド:
+
+```bash
+sonic-db-cli COUNTERS_DB hgetall COUNTERS_RIF_TYPE_MAP
+```
+
+### FLEX_COUNTER_DB（RIF ポーリング登録）
+
+`addRifToFlexCounter()` の末尾で `startFlexCounterPolling()` が呼ばれ、`FLEX_COUNTER_DB` の `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP` グループにエントリを書き込む (`intfsorch.cpp:1541-1551`, `saihelper.cpp:1033-1050`)。
+
+| タイミング | DB | キー | フィールド | 値 |
+|---|---|---|---|---|
+| RIF 作成（gTraditionalFlexCounter=true 時） | `FLEX_COUNTER_DB` | `RIF_STAT_COUNTER:<rif_oid>` | `RIF_COUNTER_ID_LIST` | 8 統計 ID の comma 区切り文字列 |
+| RIF 作成（gTraditionalFlexCounter=true 時） | `FLEX_COUNTER_DB` | `RIF_STAT_COUNTER:<rif_oid>` | `STATS_MODE` | `"STATS_MODE_READ"` |
+| RIF 削除 | `FLEX_COUNTER_DB` | `RIF_STAT_COUNTER:<rif_oid>` | — | エントリ削除 (`stopFlexCounterPolling`) |
+
+`gTraditionalFlexCounter=false`（非 traditional モード）の場合は `FLEX_COUNTER_DB` に書かず SAI API を直接呼ぶ (`saihelper.cpp:1052-1063`)。
+
+### COUNTERS_DB COUNTERS:\<rif_oid\>（FlexCounter 経由）
+
+`FLEX_COUNTER_DB` にエントリが登録されると `syncd` の FlexCounter が定期的に SAI から統計を収集し、`COUNTERS_DB` の `COUNTERS:<rif_oid>` ハッシュを更新する。
+
+| 誰が書くか | テーブル | タイミング |
+|---|---|---|
+| `syncd` FlexCounter | `COUNTERS:<rif_oid>` | RIF 登録後、`POLL_INTERVAL`（デフォルト 1000 ms）ごとに更新 |
+
+### COUNTERS_DB RATES:\<rif_oid\>（rif_rates.lua 経由）
+
+`intfsorch` コンストラクタが `rif_rates.lua` を Redis に登録し、FlexCounter プラグインとして定期実行する。プラグインは `COUNTERS:<rif_oid>` の差分から BPS/PPS を計算して `RATES:<rif_oid>` に書き込む。
+
+| 前提条件 | テーブル | フィールド | 値 |
+|---|---|---|---|
+| `RATES:RIF:RIF_ALPHA` が設定済み | `RATES:<rif_oid>` | `RX_BPS`, `TX_BPS`, `RX_PPS`, `TX_PPS` | EWMA 平滑化後の float 値 |
+| `RATES:RIF:RIF_ALPHA` が未設定 | — | — | プラグインが早期 return → フィールドが N/A のまま |
+
+### 副次書込み一覧
+
+| 操作 | 副次書込み先 | 内容 |
+|---|---|---|
+| LAG 作成 (`addLag`) | `COUNTERS_DB COUNTERS_LAG_NAME_MAP` | LAG OID 登録（主テーブル） |
+| RIF 作成 (`addRifToFlexCounter`) | `COUNTERS_DB COUNTERS_RIF_NAME_MAP` | RIF OID 登録（主テーブル） |
+| RIF 作成 (`addRifToFlexCounter`) | `COUNTERS_DB COUNTERS_RIF_TYPE_MAP` | RIF タイプ文字列登録（副次） |
+| RIF 作成 (`startFlexCounterPolling`) | `FLEX_COUNTER_DB RIF_STAT_COUNTER:<rif_oid>` | ポーリング対象登録（副次） |
+| FlexCounter ループ | `COUNTERS_DB COUNTERS:<rif_oid>` | SAI 統計値（副次・定期更新） |
+| rif_rates.lua プラグイン | `COUNTERS_DB RATES:<rif_oid>` | BPS/PPS レート値（副次・定期更新） |
+
+<!-- /side-effects -->
+
 ## 運用ヒント
 
 ```bash
