@@ -529,6 +529,41 @@ __keyspace@<CONFIG_DB_ID>__:TELEMETRY_CLIENT|*
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-platform.md -->
+
+### プラットフォーム固有分岐の有無
+
+`dialout_client.go` 全 746 行において `HWSKU`・`is_multi_npu`・`platform`・`asic_id` 等のプラットフォーム固有分岐は**存在しない**。全プラットフォームで同一コードパスを実行する。
+
+### multi-ASIC 構成での挙動
+
+`dialout_client.go` は namespace を解決する際に常に `sdcfg.GetDbDefaultNamespace()` を使用し、常にホスト/グローバル namespace の CONFIG_DB のみを参照する (`dialout_client.go:465, 649`)。
+
+```go
+ns, _ := sdcfg.GetDbDefaultNamespace()  // 常に "" (デフォルト namespace) を返す
+```
+
+このため multi-ASIC 構成でも:
+
+| 観点 | 挙動 |
+|------|------|
+| 参照 CONFIG_DB | ホスト global namespace の `TELEMETRY_CLIENT` のみ |
+| per-ASIC namespace の `TELEMETRY_CLIENT` | 無視される（`dialout_client` には届かない） |
+| `TELEMETRY_CLIENT` 設定の単位 | 全 ASIC 共通で 1 つの設定セット |
+
+### ビルドフラグ
+
+`rules/config:160`: デフォルト `INCLUDE_SYSTEM_GNMI = y`。`platform/*/` 全 `.mk` でこのフラグを `n` に上書きするプラットフォームは存在しない。**全プラットフォームで `docker-sonic-gnmi` はビルド・インストール対象**となる。
+
+### Chassis 構成
+
+Supervisor Card 上のホスト CONFIG_DB の `TELEMETRY_CLIENT` のみが有効。Linecard 個別の namespace に `TELEMETRY_CLIENT` を書いても `dialout_client` はそれを参照しない。
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
