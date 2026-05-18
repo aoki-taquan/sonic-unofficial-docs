@@ -290,6 +290,49 @@ show copp config
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
+### allPortsReady() ゲート
+
+`CoppOrch::doTask()` の先頭 (`copporch.cpp:885-888`) に次のガードが存在する:
+
+```cpp
+if (!gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+**全物理ポートが ready になるまで、genetlink フィールドを含む `COPP_GROUP` の全処理がブロックされる。**
+起動時に CONFIG_DB へ `COPP_GROUP|queue2_group1` を書き込んでも、`PortsOrch` の初期化完了前は `m_toSync` キューに蓄積されるのみで SAI HostIf 作成は実行されない。`allPortsReady()` が true になった後に順次処理される。<!-- evidence: copporch.cpp L885-888 -->
+
+### orchdaemon.cpp における初期化順序
+
+`OrchDaemon::init()` での生成順序:
+
+```
+L232: gPortsOrch = new PortsOrch(...)   # 最初に生成 (gPortsOrch が確定)
+...
+L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に生成
+```
+
+`CoppOrch` コンストラクタ内で `initDefaultHostIntfTable()` / `initDefaultTrapGroup()` / `initDefaultTrapIds()` が実行されるが、これらは `allPortsReady()` ガードに依存しない（SAI 初期状態で直接実行）。genetlink HostIf の作成は `doTask()` 経由のため、ポート初期化完了後となる。<!-- evidence: orchdaemon.cpp L232, L341; copporch.cpp L191-213 -->
+
+### CONFIG_DB 書込み順序（運用）
+
+| 操作 | 推奨順序 | 違反時の結果 |
+|------|---------|------------|
+| 起動時 genetlink HostIf 作成 | `allPortsReady()` が true になるまで自動遅延 | `m_toSync` に蓄積。PortsOrch 初期化完了後に自動処理（問題なし） |
+| 新規 `COPP_GROUP` (genetlink フィールド付き) 書込み | PortsOrch 初期化後が理想だが事前書込みも可 | `allPortsReady()` 前は処理スキップ、次回 `doTask()` で再試行 |
+| `COPP_GROUP` DEL (genetlink フィールドあり) | 順序制約なし | `allPortsReady()` 前は DEL も遅延（自動再試行） |
+
+### coppmgr 側の TRAP → GROUP 順序
+
+`coppmgr` コンストラクタ (`coppmgr.cpp:334, L372`) は `COPP_TRAP` を先にマージしてから `COPP_GROUP` をマージする。genetlink フィールドを持つ `queue2_group1` を APPL_DB に書き込む際、`sample_packet` を担当する COPP_TRAP エントリが先に処理されていれば `trap_ids` が正しく付与される。直接 APPL_DB を操作する場合は `COPP_TRAP` エントリを先に書き込むこと。<!-- evidence: coppmgr.cpp L334, L372 -->
+
+<!-- /ordering -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
 ### `allPortsReady()` ゲート
 
 `CoppOrch::doTask()` の先頭で `gPortsOrch->allPortsReady()` を確認する（`copporch.cpp:885-888`）。全ポートの SAI 初期化が完了するまで `COPP_GROUP`（genetlink フィールド含む）の処理はスキップされ、`m_toSync` キューに蓄積される。`allPortsReady()` が true になった後に順次処理される。
