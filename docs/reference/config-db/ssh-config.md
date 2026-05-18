@@ -466,4 +466,47 @@ CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServ
 > 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ssh-config-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:SSH_SERVER|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`SshServer` + `PamLimitsCfg` 経由) | `ConfigDBConnector.subscribe()` | `SSH_SERVER` | `ssh_handler` → `policies_update` + `update_config_file` |
+
+`hostcfgd` 以外で `SSH_SERVER` テーブルを購読するプロセスは存在しない。`show ssh-server policies` (sonic-utilities) は CONFIG_DB を `HGETALL` で直接読むのみで Redis keyspace 通知を購読しない。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config ssh-server set authentication-retries 5
+  ↓ HSET "SSH_SERVER|POLICIES" authentication_retries "5"
+Redis keyspace PUBLISH "__keyspace@4__:SSH_SERVER|POLICIES"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ HGETALL "SSH_SERVER|POLICIES"  ← 通知後に全フィールドを再取得
+ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
+  ↓ SshServer.policies_update() → set_policies()
+  ↓ /etc/ssh/sshd_config 更新 → systemctl restart ssh
+  ↓ PamLimitsCfg.update_config_file() → /etc/security/limits.conf 更新
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `HGETALL` で取得する。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `sshscfg.load()` が `init_data['SSH_SERVER']` を一括スナップショットで適用する。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `SSH_SERVER|POLICIES` SET 時 (`set_policies()` 成功) | `systemctl restart ssh` | hostcfgd:L1154 |
+| `SSH_SERVER|POLICIES` SET 時 (`max_sessions` 含む) | `/etc/security/limits.conf` 書換 (ssh 再起動なし) | hostcfgd:L1473 (`PamLimitsCfg`) |
+| `SSH_SERVER|POLICIES` DEL 時 | `len(ssh_policies) == 0` → `set_policies()` 未呼出 → ssh 再起動なし | hostcfgd:L1053-1055 |
+
+> **Evidence**: `hostcfgd:2478` (`subscribe('SSH_SERVER', ...)`)、`hostcfgd:2528` (`config_db.listen(init_data_handler=self.load)`)、`hostcfgd:2245,2265` (`sshscfg.load(ssh_server)`)、`hostcfgd:2297-2299` (`ssh_handler`)、`hostcfgd:2454-2466` (`make_callback` 定義); 詳細証跡 `meta/_intermediate/cdb-flow/ssh-config-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
