@@ -191,6 +191,64 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームと�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> **調査根拠**: `sonic-swss/orchagent/portsorch.cpp` @ master 全行精読  
+> 詳細証跡: `meta/_intermediate/cdb-flow/queue-state-failure.md`
+
+### SAI クエリ失敗（`sai_query_stats_capability` エラー）
+
+```cpp
+// portsorch.cpp:1882-1921
+sai_status_t status = sai_query_stats_capability(switchId, SAI_OBJECT_TYPE_QUEUE, &queue_stats_capability);
+if (status == SAI_STATUS_BUFFER_OVERFLOW)
+{
+    qstat_cap_list.resize(queue_stats_capability.count, stat_initializer);
+    queue_stats_capability.list = qstat_cap_list.data();
+    status = sai_query_stats_capability(switchId, SAI_OBJECT_TYPE_QUEUE, &queue_stats_capability);
+}
+if (status == SAI_STATUS_SUCCESS) { /* isSupported = "true" 上書き */ }
+else
+{
+    SWSS_LOG_NOTICE("Queue stat capability get failed: WRED queue stats can not be enabled, rv:%d", status);
+}
+```
+
+**挙動**: 最終的に `status != SAI_STATUS_SUCCESS` となった場合、`SWSS_LOG_NOTICE` を出力して全 4 キーを `"false"` のまま確定する。自動リトライはなく orchagent 再起動まで状態が変化しない。
+
+### SAI_STATUS_BUFFER_OVERFLOW — リトライパス
+
+`sai_query_stats_capability()` が `SAI_STATUS_BUFFER_OVERFLOW` を返した場合、`queue_stats_capability.count` に返却されたエントリ数を用いてリストをリサイズし、同一関数を **1 回だけ再呼び出し** する（`portsorch.cpp:1883-1888`）。
+
+- 再クエリが成功 → 通常と同じ `isSupported = "true"` 上書きフロー
+- 再クエリも失敗 → `SWSS_LOG_NOTICE` を出力し全フラグが `"false"` のまま確定（2 回目以降のリトライなし）
+
+### orchagent 起動完了前の consumer アクセス
+
+`initCounterCapabilities()` は `PortsOrch` コンストラクタの末尾（`portsorch.cpp:1107`）で 1 回実行されるため、orchagent が完全に起動するまで STATE_DB にキーが存在しない。
+
+| consumer | 挙動 |
+|---------|------|
+| `wredstat` | `state_db.get()` が `None` → `counter_data is None` → `STATUS_NA` 表示。再実行で解消 |
+| `portstat.py` | `isSupported` が `None` → `!= "true"` 判定成立 → 対応 SAI 統計を `counter_bucket_dict` から除外 |
+
+### FlexCounter 未登録による COUNTERS_DB 欠落
+
+`isSupported = "false"` のキャパビリティキーに対応するキューカウンタは `FlexCounterOrch::addWredQueueFlexCounters()` で `setCounterIdList()` の対象外となる。結果として COUNTERS_DB に `SAI_QUEUE_STAT_WRED_*` フィールドが現れず、`wredstat` は常に N/A を表示する。`counterpoll wred-queue enable` を設定しても変化しない（SAI ケイパビリティと FLEX_COUNTER 設定は独立）。
+
+### 失敗挙動サマリ
+
+| 条件 | ログ | STATE_DB への影響 | リカバー |
+|------|------|------------------|---------|
+| SAI クエリ初回失敗（BUFFER_OVERFLOW 以外） | `SWSS_LOG_NOTICE` | 全 4 キーが `"false"` のまま確定 | orchagent 再起動 |
+| SAI クエリ BUFFER_OVERFLOW → リトライ失敗 | `SWSS_LOG_NOTICE` | 全 4 キーが `"false"` のまま確定 | orchagent 再起動 |
+| orchagent 起動完了前に consumer が参照 | なし（consumer 側で N/A） | STATE_DB にキーが存在しない | orchagent 起動完了後に再実行 |
+| 一部キーのみ SAI 未サポート（部分的） | なし（正常フロー） | 未サポートキーは `"false"`、サポートキーは `"true"` | N/A（仕様通り） |
+| FlexCounter 未登録（isSupported が false） | なし | COUNTERS_DB に対応カウンタが出現しない | プラットフォームの SAI 実装変更が必要 |
+
+<!-- /failure -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md) — WRED_ECN_QUEUE グループの enable/disable 設定
