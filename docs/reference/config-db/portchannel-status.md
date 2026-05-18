@@ -294,6 +294,108 @@ CONFIG_DB `PORTCHANNEL` の SET が入力だが、`setLagMtu()` は LAG 本体�
 [^se3]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp>
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 書き込み側の通信構造
+
+APPL_DB `LAG_TABLE` への書き込みは **teamsyncd** と **teammgrd** の 2 プロセスが担い、それぞれ異なるトリガーで `ProducerStateTable` を使用する。
+
+#### カーネル netlink → teamsyncd → APPL_DB
+
+`teamsyncd` はカーネルから `RTM_NEWLINK` / `RTM_DELLINK` イベントを受け取り、内部で `ProducerStateTable m_lagTable` (`teamsync.h:74`) を用いて APPL_DB `LAG_TABLE` に書き込む。
+
+書き込みごとに Redis 側で以下の操作がアトミックに行われる (`ProducerStateTable::set()` 内部 Lua スクリプト):
+
+```
+EVALSHA <lua_sha> → SADD LAG_TABLE_KEY_SET <lag_name>
+                    HSET _LAG_TABLE:<lag_name> <field> <value>
+                    PUBLISH LAG_TABLE_CHANNEL@0 G
+```
+
+STATE_DB への書き込みは `Table m_stateLagTable` (`teamsync.h:75` は通常の `Table` クラス) を通じた `HSET` であり、keyspace notification が有効であれば自動的に CONFIG_DB 側購読者へ伝達される。
+
+#### CONFIG_DB → teammgrd → APPL_DB
+
+`teammgrd` は起動時に以下のテーブルを `TableConnector` 経由で `SubscriberStateTable` として購読し、keyspace notification を待ち受ける (`teammgrd.cpp:55-63`):
+
+| 購読元 | DB | テーブル | 用途 |
+|--------|----|---------|------|
+| CONFIG_DB | 4 | `PORTCHANNEL` (`CFG_LAG_TABLE_NAME`) | LAG の作成・削除・属性変更 |
+| CONFIG_DB | 4 | `PORTCHANNEL_MEMBER` (`CFG_LAG_MEMBER_TABLE_NAME`) | LAG メンバーポートの追加・削除 |
+| STATE_DB | 6 | `PORT_TABLE` (`STATE_PORT_TABLE_NAME`) | 物理ポートの状態変化 (admin_status 等) |
+
+処理完了後、`ProducerStateTable m_appLagTable` (`teammgr.h:33`) で APPL_DB `LAG_TABLE` に書き込む。
+
+`teammgrd` のメインループはタイムアウト 1000 ms で `Select::select()` を呼び、タイムアウト時には `doTask()` で未処理タスクを再試行する (`teammgrd.cpp:80-90`):
+
+```cpp
+while (!received_sigterm) {
+    ret = s.select(&sel, SELECT_TIMEOUT);  // 1000 ms
+    if (ret == TIMEOUT) { teammgr.doTask(); continue; }
+    ((Executor *)sel)->execute();
+}
+```
+
+### 消費側 orchagent (PortsOrch) の通信構造
+
+`orchdaemon` は `PortsOrch` に対して `APP_LAG_TABLE_NAME` を priority 44 (`portsorch_base_pri + 4`) で登録する (`orchdaemon.cpp:222`)。`PortsOrch` 内部では `ConsumerStateTable` が `LAG_TABLE_CHANNEL@0` を購読し、Lua スクリプトでキーを一括取得する:
+
+```
+SUBSCRIBE LAG_TABLE_CHANNEL@0
+→ consumer_state_table_pops.lua:
+    SPOP LAG_TABLE_KEY_SET
+    HGETALL _LAG_TABLE:<lag_name>
+→ PortsOrch::doTask() → doLagTask() → sai_lag_api->create_lag()
+```
+
+`orchdaemon` のメインループは SELECT_TIMEOUT = 1000 ms (`orchdaemon.cpp:23`) で動作し、`PortsOrch::doTask()` が `APP_PORT_TABLE` → `APP_LAG_TABLE` → `APP_LAG_MEMBER_TABLE` → `APP_VLAN_TABLE` → `APP_VLAN_MEMBER_TABLE` の順に処理する (`portsorch.cpp:6466-6489`)。
+
+### orchagent 内部 Observer 通知
+
+`PortsOrch::addLag()` / `removeLag()` は SAI 操作成功後に `notify(SUBJECT_TYPE_PORT_CHANGE, ...)` を呼ぶ。これは Redis チャネルではなく orchagent プロセス内の **Observer パターン** による同期通知である (`observer.h:18`):
+
+| Observer | 動作 |
+|----------|------|
+| `AclOrch::update()` | LAG をバインドポートとして ACL テーブルの SAI bind port リストを更新 (`aclorch.cpp:2866`) |
+| `DebugCounterOrch::update()` | デバッグカウンター用ポートリストを更新 (`debugcounterorch.cpp:71`) |
+| `DTelOrch::update()` | DTEL ポートバインド対象リストを更新 (`dtelorch.cpp:410`) |
+| `MirrorOrch::update()` | LAG メンバー変化を監視 (`mirrororch.cpp:185`, `SUBJECT_TYPE_LAG_MEMBER_CHANGE`) |
+
+### 通信フロー全体図
+
+```
+kernel netlink (RTM_NEWLINK/DELLINK)
+  │  teamsyncd::addLag()/delLag()
+  │  ProducerStateTable::set/del
+  │  EVALSHA → SADD LAG_TABLE_KEY_SET + HSET _LAG_TABLE:<key>
+  │            + PUBLISH LAG_TABLE_CHANNEL@0 G
+  ▼
+APPL_DB[LAG_TABLE:<lag_name>]
+  │  ConsumerStateTable (orchagent)
+  │  SUBSCRIBE LAG_TABLE_CHANNEL@0
+  │  consumer_state_table_pops.lua → SPOP + HGETALL
+  ▼
+PortsOrch::doLagTask() → sai_lag_api->create_lag()
+  │  notify(SUBJECT_TYPE_PORT_CHANGE)  [プロセス内 Observer]
+  └→ AclOrch / DebugCounterOrch / DTelOrch
+
+CONFIG_DB[PORTCHANNEL|<lag_name>]
+  │  keyspace notification (PSUBSCRIBE __keyspace@4__:PORTCHANNEL|*)
+  ▼
+teammgrd::doLagTask()
+  │  ProducerStateTable m_appLagTable::set/del
+  └→ APPL_DB[LAG_TABLE:<lag_name>]
+
+teamsyncd::addLag() → Table::set (通常 HSET)
+  └→ STATE_DB[LAG_TABLE|<lag_name>]  state: "ok"
+      │  keyspace notification
+      └→ intfmgrd (STATE_LAG_TABLE 購読)
+```
+
+> **Evidence**: `teamsync.h:74-75` (ProducerStateTable 型宣言)、`teamsync.cpp:157,175,203,241,255` (set/del 呼び出し)、`teammgrd.cpp:55-63,80-90` (SubscriberStateTable セットアップ・selectループ)、`teammgr.h:33` (m_appLagTable)、`orchdaemon.cpp:215-224` (ports_tables 優先度定義)、`portsorch.cpp:6464-6489` (doTask 処理順)、`portsorch.cpp:8017,8093` (SUBJECT_TYPE_PORT_CHANGE notify)
+<!-- /pubsub -->
+
 ## APPL_DB LAG_TABLE と STATE_DB LAG_TABLE の区別
 
 | 側面 | APPL_DB LAG_TABLE | STATE_DB LAG_TABLE |
