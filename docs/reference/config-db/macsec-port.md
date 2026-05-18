@@ -532,3 +532,47 @@ ASIC_DB "NOTIFICATIONS" チャンネル
 
 詳細調査: [`meta/_intermediate/cdb-flow/macsec-port-pubsub.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-pubsub.md)
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`MACsecOrch` が SAI MACsec オブジェクトを生成する際のバックエンドは、ポートに **Gearbox PHY** が割り当てられているか、かつその PHY が MACsec をサポートするか (`macsec_supported`) によって 2 経路に分岐する。`macsecmgrd` 側 (cfgmgr) にはプラットフォーム分岐なし。
+
+### バックエンド分岐ロジック
+
+`MACsecOrchContext::get_port_id()` (L351–381) が採用する port_id:
+
+| 構成 | `force_npu` | 使用する port_id | 使用する switch_id |
+|------|-----------|----------------|-----------------|
+| Gearbox PHY あり + `macsec_supported=true` | `false` | `port->m_line_side_id` (PHY ライン側) | `port->m_switch_id` (PHY スイッチ) |
+| Gearbox PHY あり + `macsec_supported=false` | `true` | `port->m_port_id` (NPU) | `gSwitchId` (グローバル NPU) |
+| Gearbox PHY なし | `true` | `port->m_port_id` (NPU) | `gSwitchId` (グローバル NPU) |
+
+`macsec_supported=false` 時は `SWSS_LOG_NOTICE "backend=NPU (phy marked unsupported)"` が出力される (`macsecorch.cpp:374`)。
+
+### Gearbox PHY 有効時のみ実行される処理
+
+`createMACsecPort()` 内の PHY 専用コードパス (`macsecorch.cpp:1505–1527`):
+
+| 処理 | 条件 | 内容 |
+|------|------|------|
+| PFC フォワード有効化 | `phy != nullptr` | `setPFCForward(port_id, true)` — PHY 経由でパケットが流れるため PFC フォワードが必要 |
+| Port IPG 退避 + MACsec IPG 設定 | `phy != nullptr && phy->macsec_ipg != 0` | MACsec オーバーヘッド分の Inter-Packet Gap を PHY 仕様に合わせて変更 |
+| PFC フォワード無効化 + IPG 復元 | `phy != nullptr` (削除時) | `deleteMACsecPort()` でロールバック (`macsecorch.cpp:1774–1785`) |
+
+NPU バックエンド (Gearbox なし) では PFC フォワード変更・IPG 変更は**発生しない**。
+
+### FlexCounter バックエンドの分岐
+
+SA / フロー統計の収集先は `phy->macsec_supported` で切り替わる (`macsecorch.cpp:2536–2566`):
+
+| 条件 | FlexCounter グループ |
+|------|-------------------|
+| `phy != nullptr && phy->macsec_supported` | `m_gb_macsec_*_manager` (Gearbox 側 COUNTERS_DB) |
+| それ以外 | `m_macsec_*_manager` (NPU 側 COUNTERS_DB) |
+
+!!! note "プラットフォーム識別は Gearbox 設定依存"
+    MACsec のプラットフォーム分岐は `DEVICE_METADATA.platform` 文字列ではなく、`GEARBOX` テーブルの `phy` 定義 (`getGearboxPhy()`) と `macsec_supported` フラグで決まる。Gearbox 非搭載の環境（大多数の NPU 直結ポート）では分岐は発生せず NPU パスのみ。
+
+詳細調査: [`meta/_intermediate/cdb-flow/macsec-port-platform.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-platform.md)
+<!-- /platform -->
