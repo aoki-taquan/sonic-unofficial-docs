@@ -150,6 +150,45 @@ P4RT controller が単一 WriteRequest でこれらを混在させた場合で�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`NextHopManager` (`next_hop_manager.cpp`) は失敗を即時 P4RT gRPC レスポンスに返す。自動リトライ機構はなく、失敗エントリは `Consumer::m_toSync` に残留しない。
+
+### SET 失敗マトリクス
+
+| 失敗条件 | 検出箇所 | エラーコード | evidence |
+|---------|---------|-------------|----------|
+| `action` が 4 値以外 | `validateAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `next_hop_manager.cpp:49-55` |
+| `set_p2p_tunnel_encap_nexthop` で `param/router_interface_id` 指定 | `validateAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `next_hop_manager.cpp:86-93` |
+| `set_p2p_tunnel_encap_nexthop` で `param/neighbor_id` 指定 | `validateAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `next_hop_manager.cpp:94-98` |
+| `param/tunnel_id` 欠如 | `validateAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `next_hop_manager.cpp:85-98` |
+| 未知フィールド (`controller_metadata` 以外) | フィールドパース時 | `SWSS_RC_INVALID_PARAM` | `next_hop_manager.cpp:482` |
+| `FIXED_TUNNEL_TABLE` エントリ不在 (GreTunnelManager) | 依存チェック | `SWSS_RC_NOT_FOUND` | `next_hop_manager.cpp:126-131` |
+| GRE トンネル OID が P4OidMapper に未登録 | 依存チェック | `SWSS_RC_NOT_FOUND` | `next_hop_manager.cpp:133-139` |
+| Neighbor エントリ不在 (`encap_dst_ip` 由来) | 依存チェック | `SWSS_RC_NOT_FOUND` | `next_hop_manager.cpp:163-169` |
+| SAI `create_next_hops()` 失敗 | `createNextHops()` Bulk SAI | `SWSS_RC_NOT_EXECUTED` (publisher publish) | `next_hop_manager.cpp:570-574` |
+| 既存エントリへの SET (UPDATE) | drain ループ | `SWSS_RC_UNIMPLEMENTED` → `SWSS_RC_NOT_EXECUTED` publish | `next_hop_manager.cpp:373-381` |
+
+### DEL 失敗マトリクス
+
+| 失敗条件 | 検出箇所 | エラーコード | evidence |
+|---------|---------|-------------|----------|
+| エントリ不在 | `validateAppDbEntry()` DEL 分岐 | `SWSS_RC_NOT_FOUND` | `next_hop_manager.cpp:173-177` |
+| `ref_count > 0`（下流 WCMP / Route が参照中） | `validateAppDbEntry()` DEL 分岐 | `SWSS_RC_INVALID_PARAM` | `next_hop_manager.cpp:188-194` |
+| SAI `remove_next_hops()` 失敗 | `removeNextHops()` Bulk SAI | `SWSS_RC_NOT_EXECUTED` (publisher publish) | `next_hop_manager.cpp:603-609` |
+
+### Bulk SAI エラー伝搬
+
+`createNextHops()` / `removeNextHops()` は `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` を使用する。バッチ内で 1 件が SAI レベルで失敗すると**後続エントリがすべてキャンセル**され、各エントリのステータスが `SWSS_RC_NOT_EXECUTED` として P4RT gRPC レスポンスに返される (`next_hop_manager.cpp:529, 605`)。
+
+!!! warning "自動リトライなし"
+    P4Orch は失敗エントリを `Consumer::m_toSync` に残さない。P4RT controller 側で再試行を実装する必要がある。依存先 (`FIXED_TUNNEL_TABLE` / Neighbor) が未作成の状態でエントリを書いた場合は、依存先の作成後に controller が nexthop を再 SET しなければならない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-failure.md`
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来デフォルト・暗黙挙動
 
