@@ -117,6 +117,67 @@ else
 - 省略時の動作がテーブルによって逆。STATIC_NAT を省略 → DNAT、NAT_BINDINGS を省略 → SNAT。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 前提 1: NAT_GLOBAL.admin_mode が enabled 必須
+
+`addStaticNatEntry()` (`natmgr.cpp:1557`) と `addStaticSingleNatEntry()` (`natmgr.cpp:2003`) の先頭で `isNatEnabled()` を呼ぶ。`isNatEnabled()` は `natAdminMode == ENABLED` のみ true (`natmgr.cpp:150-157`)。
+
+`NAT_GLOBAL.admin_mode` がデフォルト `disabled` のままでは `addStaticNatEntry()` が即 return し、APPL_DB への書込みが行われない。STATIC_NAT エントリはキャッシュ (`m_staticNatEntry`) に保持され、`doNatGlobalTask()` で `admin_mode → enabled` に変わると `addStaticNatEntries()` が全キャッシュを再処理する。**エントリは失われないが APPL_DB 反映は遅延する**。
+
+### 前提 2: DNAT エントリはインタフェース IP 設定が先行必須
+
+`addStaticNatEntry()` (`natmgr.cpp:1564`) で `nat_type == DNAT` の場合のみ `getIpEnabledIntf()` を呼ぶ:
+
+```cpp
+// natmgr.cpp:1564-1569
+if ((m_staticNatEntry[key].nat_type == DNAT_NAT_TYPE) and (!getIpEnabledIntf(key, interface)))
+{
+    SWSS_LOG_INFO("L3 Interface is not yet enabled for %s, skipping NAT entry addition to APPL_DB", key.c_str());
+    return;
+}
+```
+
+`getIpEnabledIntf()` は `m_natIpInterfaceInfo` を検索し、`global_ip` がいずれかのインタフェースのサブネット内に含まれるか確認する (`natmgr.cpp:236-254`)。`m_natIpInterfaceInfo` は `doNatIpInterfaceTask()` が `INTERFACE|<port>|<ip/prefix>` を受信し、かつ `STATE_DB:STATE_INTERFACE_TABLE:<key>` の ready チェックをパスした後に更新される (`natmgr.cpp:7593`)。インタフェースが ready になると `addStaticNatEntries()` がリアクティブに呼ばれキャッシュを再処理する (`natmgr.cpp:7640`)。
+
+**SNAT エントリ** (`nat_type = snat`) は `getIpEnabledIntf()` チェックをスキップするため、インタフェース設定なしで APPL_DB に反映される。
+
+### 安全な書込み順序
+
+**DNAT エントリの場合**:
+
+```
+SET NAT_GLOBAL|Values               admin_mode=enabled        # NAT 有効化 (必須)
+SET INTERFACE|Ethernet0|<global_ip>/24                        # インタフェース IP 割当 (DNAT 必須)
+# STATE_DB:STATE_INTERFACE_TABLE:<Ethernet0> ready を待つ
+SET STATIC_NAT|<global_ip>          local_ip=<local_ip> nat_type=dnat
+```
+
+**SNAT エントリの場合** (インタフェース設定不要):
+
+```
+SET NAT_GLOBAL|Values               admin_mode=enabled
+SET STATIC_NAT|<global_ip>          local_ip=<local_ip> nat_type=snat
+```
+
+### 安全な DEL 順序
+
+```
+DEL STATIC_NAT|<global_ip>     # APPL_DB からも除去
+# インタフェース削除は任意の順
+```
+
+| 依存関係 | 方向 | 緩和策 |
+|----------|------|--------|
+| `NAT_GLOBAL.admin_mode=enabled` → STATIC_NAT APPL_DB 書込み | 必須 | キャッシュ保持 → admin_mode 有効化で自動再処理 |
+| `INTERFACE\|<port>\|<prefix>` + STATE_DB ready → DNAT APPL_DB 書込み | 必須 (DNAT のみ) | キャッシュ保持 → インタフェース ready で自動再処理 |
+| SNAT エントリ → インタフェース設定 | 不要 | `getIpEnabledIntf()` チェックなし |
+| STATIC_NAPT との global_ip 重複排除 | 論理制約 | 重複時は後着がスキップ (APPL_DB 反映なし) |
+
+> **スキャン証跡**: `addStaticNatEntry()` L1548-1590、`isNatEnabled()` L150-157、`getIpEnabledIntf()` L236-254、`doNatIpInterfaceTask()` L7377-7640、`addStaticSingleNatEntry()` L1992-2064 精読。
+<!-- /ordering -->
+
 ## silent drop / discrepancy
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doStaticNatTask L5810-6136 / sonic-utilities/config/nat.py add_basic L240-329 / sonic-nat.yang L117-155 -->
