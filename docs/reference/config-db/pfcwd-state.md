@@ -166,6 +166,65 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/pfcwd-state-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`pfcwdorch` の `doTask()` はタスクステータスを `task_success` / `task_need_retry` / `task_invalid_entry` の 3 値で管理し、失敗時の挙動が種別ごとに異なる。
+
+<!-- evidence: sonic-swss/orchagent/pfcwdorch.cpp -->
+
+### タスク処理ステータスと対応挙動
+
+| ステータス | 発生条件 | doTask の動作 | retry |
+|-----------|---------|--------------|-------|
+| `task_success` | `startWdOnPort()` / `stopWdOnPort()` 成功 | `consumer.m_toSync.erase(it++)` でキューから除去 | なし |
+| `task_need_retry` | `startWdOnPort()` が `false` を返した（FlexCounter グループ未初期化等） | `++it` でキューに残留（次回 `doTask()` で再試行） | あり（自動） |
+| `task_invalid_entry` | 下記バリデーション失敗 | `consumer.m_toSync.erase(it++)` でキューから除去 | なし（永久破棄） |
+| `task_failed` | `stopWdOnPort()` が `false` を返した（DEL 操作のみ） | `consumer.m_toSync.erase(it++)` でキューから除去 | なし |
+
+### `task_invalid_entry` を返す失敗パス (`createEntry()`)
+
+| # | 条件 | ログ | 行番号 |
+|---|------|------|--------|
+| 1 | `gPortsOrch->getPort()` が失敗（存在しないポート名） | `SWSS_LOG_ERROR("Invalid port interface %s")` | `pfcwdorch.cpp:195-196` |
+| 2 | ポートが物理ポートでない（LAG / VLAN 等） | `SWSS_LOG_ERROR("Interface %s is not physical port")` | `pfcwdorch.cpp:201-202` |
+| 3 | `action` フィールドが `drop` / `forward` / `alert` 以外 | `SWSS_LOG_ERROR("Invalid PFC Watchdog action %s")` | `pfcwdorch.cpp:230-231` |
+| 4 | Cisco 8000 プラットフォームで `forward` アクションを指定 | `SWSS_LOG_ERROR("Unsupported action %s for platform %s")` | `pfcwdorch.cpp:234-235` |
+| 5 | Broadcom プラットフォームで DLR INIT 有効かつ既存ポートと `action` が不一致 | `SWSS_LOG_ERROR("Invalid PFC Watchdog action %s as switch level action %s is set")` | `pfcwdorch.cpp:260-262` |
+| 6 | Broadcom + DLR + `set_switch_attribute` が SAI エラーを返した | `SWSS_LOG_ERROR("Failed to set switch level PFC DLR packet action rv : %d")` | `pfcwdorch.cpp:250-251` |
+| 7 | 不明なフィールド名が CONFIG_DB に含まれる | `SWSS_LOG_ERROR("Failed to parse PFC Watchdog %s configuration. Unknown attribute %s.")` | `pfcwdorch.cpp:273-277` |
+| 8 | フィールド値パース時に例外発生（範囲外整数等） | `SWSS_LOG_ERROR("Failed to parse PFC Watchdog %s attribute %s error: %s.")` | `pfcwdorch.cpp:282-287` |
+| 9 | `detection_time` フィールドが存在しない（`detectionTime == 0`） | `SWSS_LOG_ERROR("%s missing")` | `pfcwdorch.cpp:302-303` |
+| 10 | `pfc_stat_history` が `enable` / `disable` 以外 | `SWSS_LOG_ERROR("%s is invalid value for %s")` | `pfcwdorch.cpp:307-308` |
+
+### `task_need_retry` を返す失敗パス
+
+`startWdOnPort()` が `false` を返した場合（`pfcwdorch.cpp:313-314`）:
+
+- `startWdOnPort()` は内部で `registerInWdDb()` を呼び出し、PFC マスク未取得など一時的な条件が揃っていない場合に `false` を返す。
+- この場合、エントリはキューに残留して次回 `doTask()` で自動再試行される。
+- `allPortsReady()` が `false` の場合は `doTask()` 全体が即時 return されるため、ポート初期化完了まで処理が延期される（`pfcwdorch.cpp:66-69`）。
+
+### `task_failed` を返す失敗パス (`deleteEntry()`)
+
+`stopWdOnPort()` が `false` を返した場合（`pfcwdorch.cpp:332-333`）:
+
+- `stopWdOnPort()` が SAI 操作でエラーを返した場合に発生する。
+- `task_failed` はキューから除去されるため再試行は行われない。
+- COUNTERS_DB の残留フィールドはそのままになる（クリーンアップ不完全の可能性あり）。
+
+### STATE_DB / ERROR_TABLE へのフィードバックなし
+
+`pfcwdorch` は失敗を `syslog` に記録するのみで、STATE_DB / ERROR_TABLE への書き込みを行わない。失敗確認は以下のログで行う:
+
+```bash
+journalctl -u swss | grep -i "pfc watchdog\|pfcwd"
+# または
+sudo grep -i "pfc watchdog\|pfcwd" /var/log/syslog
+```
+
+<!-- /failure -->
+
 ## 確認コマンド
 
 ```bash
