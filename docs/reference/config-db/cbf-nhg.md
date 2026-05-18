@@ -217,6 +217,51 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 `OrchDaemon` の `m_orchList` は `NhgMapOrch` → `NhgOrch` → `CbfNhgOrch` の順に配置されている。この順序により、同一タスクループ内で依存 Orch が先に処理を完了するため、CBF NHG の sync 前提条件が揃いやすい設計となっている（`orchdaemon.cpp:500` 付近）。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`CbfNhgOrch::doTask(Consumer&)` (`sonic-swss/orchagent/cbf/cbfnhgorch.cpp`) を全行精読した結果、以下の失敗分岐・retry 挙動を検出した。
+
+### SET 操作の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| `gPortsOrch->allPortsReady()` が false | `doTask()` L42-44 | 早期 return。全タスクが `m_toSync` に滞留 | Port 準備完了まで暗黙 retry（erase なし・ログなし） |
+| `members` が空文字列 | `getMembers()` L223-227 | `SWSS_LOG_ERROR` 出力 + `m_toSync.erase` で**破棄** | なし（再投入が必要） |
+| `members` に重複エントリ | `getMembers()` L231-235 | `SWSS_LOG_ERROR` 出力 + `m_toSync.erase` で**破棄** | なし（再投入が必要） |
+| NHG 上限到達（新規作成時） | `doTask()` L100-103 | `SWSS_LOG_WARN` 出力 + `success=false` → `it++`（保留） | NHG 削除により上限が下がるまで無制限 retry |
+| `selection_map` が `NhgMapOrch` に未登録 | `CbfNhg::sync()` L319-325 | `SWSS_LOG_ERROR` + `sync()` が `false` 返却 → `success=false` → `it++`（保留） | `FC_TO_NHG_INDEX_MAP_TABLE` 登録まで無制限 retry |
+| `selection_map` の最大 NH index >= members 数 | `CbfNhg::sync()` L327-331 | `SWSS_LOG_ERROR` + `sync()` が `false` 返却 → `success=false` → `it++`（保留） | 再設定（members 追加 or selection_map 修正）まで無制限 retry |
+| SAI `create_next_hop_group` 失敗 | `CbfNhg::sync()` L341-345 | `SWSS_LOG_ERROR` + `sync()` が `false` 返却 → `success=false` → `it++`（保留） | SAI エラー解消まで無制限 retry |
+| メンバー NHG が未 sync（一時 NHG） | `CbfNhg::syncMembers()` L637-638 | `SWSS_LOG_WARN` + `syncMembers()` が `false` 返却 → `sync()` も `false` → NHG は `m_syncdNextHopGroups` に登録されるが `success=false` → `it++`（保留） | メンバー NHG が sync 完了するまで毎ループ再評価 |
+| sync 成功後も一時 NHG が残る | `doTask()` L116-119 | NHG は登録済みだが `success=false` → `it++`（保留）— 次ループで `update()` 経路に切替わり一時 NHG 昇格を確認 | 一時 NHG の昇格まで無制限 retry |
+| 更新時の `update()` 失敗（members / selection_map 変更） | `doTask()` L130 → `CbfNhg::update()` | `success=false` → `it++`（保留） | エラー原因解消まで無制限 retry |
+
+### DEL 操作の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| 同一 key に後続 SET がある（DEL + SET の連続投入） | `doTask()` L152-155 | DEL をスキップして `success=true` → erase。後続 SET が update として処理される | 不要（自動調停） |
+| 存在しない CBF NHG を DEL | `doTask()` L157-163 | `SWSS_LOG_WARN` + `success=true` → erase（冪等成功） | なし |
+| 参照カウント > 0 の CBF NHG を DEL | `doTask()` L165-170 | `SWSS_LOG_WARN("Skipping removal ... which is still referenced")` + `success=false` → `it++`（保留） | 参照解除（参照元 Orch のエントリ削除）まで無制限 retry |
+| SAI `remove_next_hop_group` / メンバー削除失敗 | `CbfNhg::remove()` / `removeMembers()` | `success=false` → `it++`（保留） | SAI エラー解消まで無制限 retry |
+| 不明 op type | `doTask()` L183-187 | `SWSS_LOG_WARN` + `success=true` → erase（消費） | なし |
+
+### ログ・ERROR_TABLE
+
+- すべてのエラーは `SWSS_LOG_ERROR` / `SWSS_LOG_WARN` で syslog (`/var/log/swss/swss.rec` または `orchagent.log`) に出力される。
+- `ERROR_TABLE` (STATE_DB) への書き込みは **行われない**。CBF NHG は STATE_DB ステータスを持たないため、失敗の可視化は syslog のみで行う。
+- `sonic-db-cli APPL_DB hgetall 'CLASS_BASED_NEXT_HOP_GROUP_TABLE:<name>'` でエントリの残存確認は可能だが、sync 状態の確認コマンドは標準では提供されていない。
+
+### retry 停止・回復手順
+
+- **`members` / `selection_map` 不正**で erase された場合は再 SET が必要（タスクは消滅している）。
+- **保留（`it++`）系**は自動 retry のため、依存リソース（NHG / FC_TO_NHG_INDEX_MAP / SAI リソース）を解消すれば次ループで自然に回復する。
+- **参照カウントガード**で DEL が詰まった場合は、参照元エントリ（例: RouteOrch が参照する CBF NHG）を先に削除してから再度 DEL を投入する。
+
+> **証跡**: `CbfNhgOrch::doTask()` L38-200、`CbfNhgOrch::getMembers()` L212-237、`CbfNhg::sync()` L287-375、`CbfNhg::update()` L453-593、`CbfNhg::syncMembers()` L603-703、`CbfNhg::remove()` (`sonic-swss/orchagent/nhg.h` 基底クラス)。
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
