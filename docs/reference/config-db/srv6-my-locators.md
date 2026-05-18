@@ -250,6 +250,46 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・他テーブルへの波及 (Phase F)
+
+> 根拠: `bgpcfgd/managers_srv6.py` L41-53, L64-68, L106-115 および `frrcfgd/frrcfgd.py` L121, L2335, L2732-2742 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-side-effects.md`
+
+`SRV6_MY_LOCATORS` の SET / DEL は CONFIG_DB の単一テーブル操作に留まらず、bgpcfgd・frrcfgd・Srv6Orch の 3 コンポーネントにわたる副作用を持つ。
+
+### SET 時の副作用
+
+| # | 副作用 | 対象コンポーネント |
+|---|--------|-----------------|
+| 1 | FRR に `locator <name> prefix ...` コマンドを送信 | FRR zebra (bgpcfgd 経由) |
+| 2 | pending 状態の `SRV6_MY_SIDS` エントリが自動再試行される | bgpcfgd `on_deps_change` コールバック |
+| 3 | FRR に同等コマンドを重複送信（冪等、実害なし） | FRR zebra (frrcfgd 経由) |
+
+**SID 自動再試行の詳細 (副作用 #2)**:
+ロケータ未登録のため保留されていた `SRV6_MY_SIDS` エントリは、ロケータ SET によって
+`directory.subscribe()` の `on_deps_change` コールバックが発火し、FRR への SID 通知が自動再試行される
+(`managers_srv6.py:64-68`)。ロケータを SET するだけで依存 SID の通知遅延が解消する。
+
+**frrcfgd の二重送信 (副作用 #3)**:
+`frrcfgd.py` も `SRV6_MY_LOCATORS` を購読し (`frrcfgd.py:2335`、`SRV6_MY_LOCATORS: ['zebra']`)、
+bgpcfgd と独立して同一の vtysh コマンドを発行する (`frrcfgd.py:2732-2742`)。
+FRR 設定は冪等なため実害はないが、2 つの異なるプロセスが同一コマンドを発行する点に注意。
+
+### DEL 時の副作用
+
+| # | 副作用 | 対象コンポーネント |
+|---|--------|-----------------|
+| 4 | FRR に `no locator <name>` を送信 | FRR zebra (bgpcfgd 経由) |
+| 5 | bgpcfgd 内の in-memory directory からロケータを削除 → 以後の `SRV6_MY_SIDS` SET が全て保留に移行 | bgpcfgd directory |
+| 6 | 次回 APPL_DB MySID 処理で Srv6Orch が `getLocatorCfgFromDb()` 失敗 → SAI 転送スキップ | Srv6Orch / SAI |
+
+ロケータを DEL すると当該ロケータに属する全 SID の FRR 通知経路が即座に無効化される（副作用 #5）。
+FRR 側では `no locator <name>` によりロケータ設定が削除されるが、`SRV6_MY_SIDS` CONFIG_DB エントリは
+そのまま残存するため、オペレーターが手動で SID エントリを DEL するまで zombie 状態が続く。
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: SRv6 YANG モデル: `sonic-srv6.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-srv6.yang>
