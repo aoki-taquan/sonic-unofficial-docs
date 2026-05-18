@@ -347,6 +347,23 @@ DashAclOrch::doTask(ConsumerBase&)
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+**DPU (SmartSwitch) 専用**: `DashAclOrch` および内包する `DashTagMgr` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される (`main.cpp:990`, `orchdaemon.cpp:1378`)。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブルは存在しない。`DashTagMgr` は SAI API を一切呼び出さずタグを orchagent 内メモリのみに保持するため、ASIC 種別による挙動差異はない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 無関係 | `DashTagMgr` は SAI 非呼び出し。タグはメモリ保持のみ (`dashtagmgr.cpp`) |
+| DPU (SmartSwitch) 専用 | 通常スイッチでは無効 | `gMySwitchType == "dpu"` のみ `DpuOrchDaemon` → `DashAclOrch` を生成 (`main.cpp:990`, `orchdaemon.cpp:1378`) |
+| multi-asic | 非対応 | DPU 専用構成のため namespace iterate なし |
+| VOQ chassis / Fabric | 無効 | `DashAclOrch` は DPU モード限定 |
+| ZMQ transport | feature flag `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` で制御 | デフォルト有効。無効化で Redis fallback (`orchdaemon.cpp:1329`) |
+| IPv4 / IPv6 | orchagent メモリ属性のみ、ASIC 非依存 | `to_sai(IpVersion)` が `0` を拒否。SAI 呼び出しなし (`dashtagmgr.cpp:11-14`) |
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-platform.md`
+<!-- /platform -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
