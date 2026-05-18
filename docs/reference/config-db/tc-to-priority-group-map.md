@@ -337,6 +337,52 @@ PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/tc-to-priority-group-map-constants.md -->
+
+`TC_TO_PRIORITY_GROUP_MAP` の処理でコード内に固定された定数の一覧。
+
+### フィールド名文字列定数 (`qosorch.h`)
+
+| 定数名 | 値 | 用途 | 行 |
+|---|---|---|---|
+| `tc_to_pg_map_field_name` | `"tc_to_pg_map"` | `PORT_QOS_MAP` での参照フィールド名 | `qosorch.h:18` |
+| `decap_tc_to_pg_field_name` | `"decap_tc_to_pg_map"` | `TUNNEL_DECAP_TABLE` での参照フィールド名 | `qosorch.h:35` |
+
+### SAI 属性 ID 定数
+
+| 定数名 | 用途 | ソース |
+|---|---|---|
+| `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` | map 作成時の type 指定（`SAI_QOS_MAP_ATTR_TYPE`） | `qosorch.cpp:912-913` |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | TC→PG エントリリストの属性 ID | `qosorch.cpp:897`, `qosorch.cpp:915` |
+| `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` | ポートへのマップ適用属性 ID（`PORT_QOS_MAP` 経由） | `qosorch.cpp:67` |
+
+### `tc` / `pg` の型キャスト定数
+
+`convertFieldValuesToAttributes` (qosorch.cpp:894-895) は `stoi()` の返り値を `(uint8_t)` へ明示キャストする。値の範囲検査はコード上存在しない。
+
+| フィールド | 宣言型 | 実効制約 |
+|---|---|---|
+| `tc` (key の第2トークン) | `uint8_t` | YANG: `uint8 0..15`（`tc_type`）。実用 0..7 |
+| `pg` (value) | `uint8_t` | YANG: pattern `[0-7]?`。`stoi()` 後 `uint8_t` キャスト |
+
+### ビルド時デフォルト値 (`qos_config.j2`)
+
+`config qos reload` が展開する `AZURE` マップのデフォルト TC→PG 対応:
+
+| TC | PG | 備考 |
+|---|---|---|
+| 0, 1, 2, 5, 6 | 0 | Best-effort |
+| 3 | 3 | Lossless（PFC 対象） |
+| 4 | 4 | Lossless（PFC 対象） |
+| 7 | 7 | High-priority control |
+
+`PORT_DPC` 有効環境では追加マップ `"AZURE_DPC"` も生成される（TC7→PG7、他は PG0）。これらのマップ名・値はコード外の Jinja2 テンプレートで決定されるため、プラットフォームが `generate_tc_to_pg_map_per_sku()` を定義する場合は SKU 固有値が優先される。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
