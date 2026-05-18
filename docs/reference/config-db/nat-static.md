@@ -289,6 +289,35 @@ STATIC_NAT 自体のフィールドではないが、`addStaticSingleNatEntry()`
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`natmgrd` が CONFIG_DB `STATIC_NAT` エントリを処理する際、[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みに加え、以下の副次的な書き込み・OS 操作が発生する。下流の `NatOrch` による [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書き込みも含む。
+
+| 副次先 | テーブル / キー | 書込フィールド | 発火条件 | evidence |
+|--------|----------------|--------------|----------|---------|
+| APPL_DB | `NAT_TABLE\|<global_ip>` (DNAT) + `NAT_TABLE\|<local_ip>` (SNAT) | `translated_ip`, `nat_type`, `entry_type=static` | `addStaticSingleNatEntry()` 成功時 (NAT enabled + L3 interface up)。`STATIC_NAT` 1 件から 2 件の NAT_TABLE エントリが同時生成される | `natmgr.cpp:2052-2053` |
+| APPL_DB | `NAT_DNAT_POOL_TABLE\|<dnat_ip>` | なし (NULL:NULL フラグ) | DNAT エントリ追加時に `addDnatPoolEntry()` を呼ぶ。参照カウンタ (`m_natDnatPoolInfo`) で管理し、refcount が 0 になるまで DEL しない | `natmgr.cpp:2031-2033, 1502-1524` |
+| kernel conntrack | 仮 conntrack エントリ (UDP, timeout=432000 秒) | — | `addConntrackStaticSingleNatEntry()` が `/usr/sbin/conntrack -I` を実行。static NAT セッションを conntrack テーブルに事前登録し dynamic セッションとの競合を防ぐ | `natmgr.cpp:2058, 457-489` |
+| kernel iptables | `nat` テーブル PREROUTING / POSTROUTING ルール | — | `setStaticNatIptablesRules(INSERT, ...)` が iptables コマンドを直接実行。DNAT / SNAT ルールを mark ベースで挿入 | `natmgr.cpp:2060-2068, 956-1000` |
+| COUNTERS_DB | `COUNTERS_NAT\|<global_ip>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` (0 初期化) | NatOrch が `addHwNatEntry()` 完了直後に `updateNatCounters(ip, 0, 0)` を呼ぶ | `natorch.cpp:789, 4049-4061` |
+| COUNTERS_DB | `COUNTERS_GLOBAL_NAT\|Values` | `STATIC_NAT_ENTRIES` (int) | NatOrch が static NAT エントリ追加/削除後に `updateStaticNatCounters(count)` を呼ぶ | `natorch.cpp:796, 4481-4490` |
+
+### DNAT Pool の参照カウンタ管理
+
+`addDnatPoolEntry()` (`natmgr.cpp:1502-1524`) は `m_natDnatPoolInfo[destIp]` をインクリメントし、初回追加時のみ `NAT_DNAT_POOL_TABLE` に SET を送る。複数の `STATIC_NAT` / `STATIC_NAPT` / `NAT_BINDINGS` が同一 DNAT IP を共有している場合、refcount が 0 になるまで APPL_DB の DEL は発行されない。
+
+### kernel への直接書き込み
+
+iptables / conntrack への書き込みは `swss::exec()` による OS コマンド直接実行 (`/usr/sbin/conntrack`、`iptables`) であり、Redis DB を経由しない。`natmgrd` 再起動後も kernel iptables / conntrack は残存するため、`natmgrd` はエントリ再追加前に既存ルールを確認・再同期する。
+
+### 検出されなかった書込み
+
+STATE_DB、FLEX_COUNTER_DB、LOGLEVEL_DB、CONFIG_DB への書き戻しは確認されなかった。
+
+> **Evidence**: `sonic-swss/cfgmgr/natmgr.cpp` `addStaticSingleNatEntry()` L1992-2069, `removeStaticSingleNatEntry()` L2650-2719, `addDnatPoolEntry()` L1502-1524, `addConntrackStaticSingleNatEntry()` L457-489, `setStaticNatIptablesRules()` L930-1000; `sonic-swss/orchagent/natorch.cpp` `updateNatCounters()` L4049-4061, `updateStaticNatCounters()` L4481-4490; 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-static-side-effects.md` を参照。
+<!-- /side-effects -->
+
 ## silent drop / discrepancy
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doStaticNatTask L5810-6136 / sonic-utilities/config/nat.py add_basic L240-329 / sonic-nat.yang L117-155 -->
