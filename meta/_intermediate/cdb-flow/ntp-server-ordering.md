@@ -1,4 +1,4 @@
-# NTP_SERVER テーブル — Phase B 書込み順依存 中間ファイル
+# NTP_SERVER テーブル — Phase B 書込み順依存 + Phase C 暗黙参照 中間ファイル
 
 > 生成日: 2026-05-18
 > ソース: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang`,
