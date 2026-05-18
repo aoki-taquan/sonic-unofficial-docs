@@ -292,6 +292,56 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 - ウォームブート実行前に VRRP を無効化（全インスタンス削除）する必要がある
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` テーブルおよび `macvlanmgrd` / `vrrpsyncd` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-constants.md)。
+
+### スケール上限リテラル (config/main.py)
+
+| 定数 / リテラル | 値 | 対象テーブル | ソース |
+|---|---|---|---|
+| システム全体 VRRP / VRRP6 インスタンス上限 | `254` | `VRRP` / `VRRP6` | `config/main.py:6915, 7231, 7333` |
+| インタフェースあたり VRRP / VRRP6 インスタンス上限 | `16` | `VRRP` / `VRRP6` | `config/main.py:6924, 7240, 7342` |
+| インスタンスあたり VIP 上限 (IPv4 / IPv6) | `4` | `VRRP` / `VRRP6` | `config/main.py:6908, 7327` |
+| インスタンスあたりトラックインタフェース上限 | `8` | `VRRP_TRACK` | `config/main.py:7038` |
+
+!!! note "YANG `max-elements` との乖離"
+    `sonic-vrrp.yang` の `VRRP_LIST` / `VRRP6_LIST` には `max-elements 128` が宣言されているが、CLI 側の上限は `254`。CLI 検査が先に発火するため YANG の `128` 上限は実効的に到達しない。
+
+### フィールドデフォルト (YANG スキーマ由来)
+
+| フィールド | YANG default | 対象テーブル | ソース |
+|---|---|---|---|
+| `priority` | `100` | `VRRP` / `VRRP6` | `sonic-vrrp.yang` L106, L224 |
+| `adv_interval` | `1` (秒) | `VRRP` / `VRRP6` | `sonic-vrrp.yang` L112, L230 |
+
+### プロトコル RFC 定数 (DB 管理外)
+
+`macvlanmgrd` / FRR `vrrpd` が内部でハードコードする RFC 5798 由来の定数。CONFIG_DB には現れない。
+
+| 定数 | 値 | 説明 | ソース |
+|---|---|---|---|
+| IPv4 仮想 MAC プレフィクス | `00:00:5e:00:01:<vrid>` | VRID ごとに VMAC を一意に決定 (RFC 5798) | HLD L169 |
+| IPv6 仮想 MAC プレフィクス | `00:00:5e:00:02:<vrid>` | IPv6 VRID 用 VMAC | HLD L171 |
+| VRRP IPv4 マルチキャストアドレス | `224.0.0.18` | Advertisement パケットの宛先 | HLD L177 |
+| VRRP IPv6 マルチキャストアドレス | `ff02::12` | IPv6 Advertisement の宛先 | HLD L177 |
+| IP プロトコル番号 | `112` | VRRP パケットの IP プロトコル TYPE (IANA) | HLD L177 |
+| Linux カーネル最小バージョン | `5.1` | macvlan protodown サポート要件 | HLD L199-200 |
+
+### macvlan デバイス命名規則 (macvlanmgrd 由来)
+
+`macvlanmgrd` が Linux カーネルに作成する macvlan デバイスの名前規則。CONFIG_DB には記録されない。
+
+| 規則 | 値 | 説明 | ソース |
+|---|---|---|---|
+| IPv4 macvlan 名プレフィクス | `Vrrp4-` | `ip link add Vrrp4-<intf>-<vrid> type macvlan mode bridge` | HLD Container セクション |
+| IPv6 macvlan 名プレフィクス | `Vrrp6-` | `ip link add Vrrp6-<intf>-<vrid> type macvlan mode bridge` | HLD Container セクション |
+| macvlan タイプ | `bridge` | macvlan デバイスの mode | HLD L117 |
+| macvlan addrgenmode | `random` | link local 生成を MAC ではなくランダムにする | HLD L117 |
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: VRRP Adaptation HLD: `sonic-net/SONiC`, `doc/vrrp/VRRP_Adaptation_HLD.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/vrrp/VRRP_Adaptation_HLD.md>
