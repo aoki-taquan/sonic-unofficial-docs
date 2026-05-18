@@ -300,6 +300,41 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`NAT_RESTORE_TABLE` / `COUNTERS_DB:COUNTERS_NAT*` の動作を支配する、CONFIG_DB・YANG の外側に存在するコードレベルのハードコード定数一覧。出典は `sonic-swss/orchagent/natorch.h` および `sonic-swss/cfgmgr/natmgr.h`。
+
+### カウンタポーリング周期
+
+| 定数名 | 値 | 用途 | ソース |
+|-------|----|------|--------|
+| `NAT_HITBIT_N_CNTRS_QUERY_PERIOD` | `5` 秒 | `m_natQueryTimer` の発火周期。`queryCounters()` が 5 秒ごとに `COUNTERS_NAT*` を更新する | `natorch.h:37` |
+| `NAT_HITBIT_QUERY_MULTIPLE` | `6` | hit bit クエリ (`queryHitBits()`) の実行間隔は `5 × 6 = 30 秒`。カウンタ更新 (5 秒) と hit bit 確認 (30 秒) は別周期 | `natorch.h:39` |
+| `NAT_CONNTRACK_TIMEOUT_PERIOD` | `86400` 秒 (1 日) | `m_natTimeoutTimer` の発火周期。conntrack エントリのタイムアウトチェック周期 | `natorch.h:38` |
+
+### タイムアウト定数 (CONFIG_DB との対応)
+
+以下の定数は CONFIG_DB の `NAT_GLOBAL` テーブルで設定可能な値の範囲と起動時デフォルトを定義する。`natmgr.h` で定義され、`natmgr.cpp` コンストラクタおよび `NatOrch::NatOrch()` でそのまま使用される。
+
+| 定数名 | 値 | CONFIG_DB フィールド | ソース |
+|-------|----|-------------------|--------|
+| `NAT_TIMEOUT_DEFAULT` | `600` 秒 | `NAT_GLOBAL.nat_timeout` のデフォルト | `natmgr.h:64` |
+| `NAT_TIMEOUT_MIN` | `300` 秒 | `nat_timeout` の許容下限 | `natmgr.h:62` |
+| `NAT_TIMEOUT_MAX` | `432000` 秒 (5 日) | `nat_timeout` の許容上限 | `natmgr.h:63` |
+| `NAT_TCP_TIMEOUT_DEFAULT` | `86400` 秒 (1 日) | `NAT_GLOBAL.nat_tcp_timeout` のデフォルト | `natmgr.h:69` |
+| `NAT_TCP_TIMEOUT_MIN` | `300` 秒 | `nat_tcp_timeout` の許容下限 | `natmgr.h:67` |
+| `NAT_TCP_TIMEOUT_MAX` | `432000` 秒 (5 日) | `nat_tcp_timeout` の許容上限 | `natmgr.h:68` |
+| `NAT_UDP_TIMEOUT_DEFAULT` | `300` 秒 | `NAT_GLOBAL.nat_udp_timeout` のデフォルト | `natmgr.h:73` |
+| `NAT_UDP_TIMEOUT_MIN` | `120` 秒 | `nat_udp_timeout` の許容下限 | `natmgr.h:71` |
+| `NAT_UDP_TIMEOUT_MAX` | `600` 秒 | `nat_udp_timeout` の許容上限 | `natmgr.h:72` |
+| `NAT_ENTRY_REFRESH_PERIOD` | `86400` 秒 (1 日) | dynamic NAT エントリの conntrack リフレッシュ周期 | `natmgr.h:125` |
+
+!!! note "COUNTERS_GLOBAL_NAT への書き込みと定数の関係"
+    `NatOrch::NatOrch()` は起動時に `NAT_TIMEOUT_DEFAULT` (`600`)、`NAT_UDP_TIMEOUT_DEFAULT` (`300`)、`NAT_TCP_TIMEOUT_DEFAULT` (`86400`) をそのまま `COUNTERS_GLOBAL_NAT|Values` の `TIMEOUT`/`UDP_TIMEOUT`/`TCP_TIMEOUT` フィールドに書き込む (`natorch.cpp:128-130`)。その後 CONFIG_DB の `NAT_GLOBAL` が変更されても `COUNTERS_GLOBAL_NAT` のこれらフィールドは更新されない（`natmgr.cpp` の `enableNatFeature()` 経由で `APPL_DB:NAT_GLOBAL_TABLE` には書かれるが、`COUNTERS_GLOBAL_NAT` は別テーブル）。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
