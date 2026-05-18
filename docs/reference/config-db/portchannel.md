@@ -754,7 +754,7 @@ PORTCHANNEL テーブルへの SET/DEL は CONFIG_DB 内に留まらず、複数
 <!-- /constants -->
 
 <!-- platform -->
-## プラットフォーム差・SAI capability 分岐
+## プラットフォーム差・SAI capability 分岐 (Phase H)
 
 > 調査証跡: `meta/_intermediate/cdb-flow/portchannel-platform.md`
 
