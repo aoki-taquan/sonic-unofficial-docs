@@ -392,3 +392,47 @@ CLI / gNMI 経由の CONFIG_DB 書き込み時に YANG スキーマが検証さ�
 
 詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-failure.md`。
 <!-- /failure-behavior -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`NTP_KEY` テーブルの処理に関わるコード中のハードコード定数。CONFIG_DB / YANG で管理されない固定値のみを対象とする。出典は `sonic-host-services/scripts/hostcfgd`、`sonic-buildimage/files/image_config/chrony/` 以下のスクリプト・テンプレート群、および `sonic-ntp.yang`。
+
+### systemd ユニット名
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `NtpCfg.CHRONY_RESTART` | `['systemctl', 'restart', 'chrony']` | `NTP_KEY` / `NTP_SERVER` / `NTP` 変更時に呼ばれる chrony 再起動コマンド。リスト形式で `run_cmd()` に渡される | `hostcfgd:1280` |
+
+### chrony.keys ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| chrony.keys 出力先 | `/etc/chrony/chrony.keys` | `chrony-config.sh` が `sonic-cfggen` で展開する鍵ファイルの固定パス | `chrony-config.sh:10` |
+| chrony.keys テンプレートパス | `/usr/share/sonic/templates/chrony.keys.j2` | `sonic-cfggen -d -t <このパス>` で DB から生成 | `chrony-config.sh:10` |
+| chmod 値 | `o-r` (others から read 権を除去) | 鍵ファイルへのアクセスを chrony ユーザに限定するための固定権限設定 | `chrony-config.sh:11` |
+| keyfile パス (chrony.conf 中) | `/etc/chrony/chrony.keys` | `global.authentication == 'enabled'` のとき `chrony.conf` に `keyfile /etc/chrony/chrony.keys` を固定出力。chrony はこのパスからのみ鍵を読み込む | `chrony.conf.j2:127` |
+
+### YANG スキーマ定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `key-id` の range | `1..65535` | `NTP_KEY.id` の有効範囲。0 および 65536 以上は YANG が `error-message "Failed NTP key ID"` で拒否 | `sonic-ntp.yang` typedef `key-id` |
+| `key-type` enum | `md5` / `sha1` / `sha256` / `sha384` / `sha512` | `NTP_KEY.type` の有効値セット (YANG default: `md5`) | `sonic-ntp.yang` typedef `key-type` |
+| `value` の length | `1..64` | `NTP_KEY.value` の有効文字列長。空文字列と 65 文字以上は拒否 | `sonic-ntp.yang` leaf `value` |
+
+### chrony.keys.j2 テンプレート固定値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| value デコード方式 | `b64decode` フィルタ | `NTP_KEY.value` は base64 エンコード済み前提。`\| b64decode` でデコードして keyfile に書き出す | `chrony.keys.j2:16` |
+| type 正規化フィルタ | `\| upper` | `md5` → `MD5`、`sha256` → `SHA256` のように大文字変換 (chrony がアルゴリズム名に大文字を要求) | `chrony.keys.j2:17` |
+
+!!! note "NTP_KEY 個数上限の YANG 制約なし"
+    `NTP_SERVER_LIST` は `max-elements 10` を持つが、`NTP_KEY_LIST` には `max-elements` 制約がなく、chrony / ntpd の内部制限のみが上限となる。
+
+!!! note "value の base64 デコードはテンプレートに固定"
+    `NTP_KEY.value` が base64 以外の形式で格納された場合、Jinja2 の `b64decode` フィルタがエラーを発生させ `chrony.keys` 生成が失敗する。YANG スキーマは `length 1..64` のみ検証し、エンコード形式は検証しない。
+
+詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-constants.md`。
+<!-- /constants -->
