@@ -322,6 +322,81 @@ orchagent が STATE_DB へ書き込む各テーブルは、以下の上流 DB・
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+orchagent が STATE_DB へ書き込む各テーブルは、SAI 失敗・初期化ガード・warm restart バリデーション失敗の 3 種の障害経路で異なる挙動を示す。**STATE_DB には「失敗」フィールドが書かれない——書き込みそのものがスキップされる**のが基本パターンである。
+
+### PORT_TABLE 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | 書き込み結果 |
+|---|---|---|---|
+| SAI `get_port_attribute(supported_speeds)` 失敗 | `getPortSupportedSpeeds()` — `portsorch.cpp:3127-3155` | `supported_speeds.clear()` → `initPortSupportedSpeeds()` は空リストのまま `m_portStateTable.set(alias, v)` を呼ぶ | `STATE_DB PORT_TABLE|<alias>.supported_speeds = ""` (空文字) |
+| SAI `get_port_attribute(supported_fecs)` 非サポート | `initPortSupportedFecModes()` — `portsorch.cpp:3279-3284` | `return;` — フィールドを書かない | `STATE_DB PORT_TABLE|<alias>` に `supported_fecs` キーが存在しない |
+| `PortInitDone` 未着 | `postPortInit()` 呼出し前 | `initPortSupportedSpeeds()` / `initPortSupportedFecModes()` 自体が呼ばれない | PORT_TABLE に全フィールド不在 |
+| `host_tx_ready` SAI set 失敗 | `portsorch.cpp:981` | `SWSS_LOG_ERROR` のみ、`host_tx_ready` フィールドは既存値または `"false"` のまま | フィールドは変化しない |
+
+### FDB_TABLE 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | 書き込み結果 |
+|---|---|---|---|
+| `allPortsReady() == false` | `FdbOrch::doTask(Consumer&)` L711 / `doTask(NotificationConsumer&)` L927 | 即 `return` | `FDB_TABLE` への書き込みなし、`m_toSync` に滞留して暗黙 retry |
+| SAI `create_fdb_entry` 失敗 | `fdborch.cpp:479, 524` | `SWSS_LOG_ERROR` + `it++`（retry 保留） | `FDB_TABLE` に当該エントリなし、次回 iteration で再試行 |
+| 不明 VLAN (bridge ID → VLAN 変換失敗) | `fdborch.cpp:680` | `return false` → consumer にエントリ残留 | `FDB_TABLE` に書き込まれない |
+| 不明ポート (bridge port ID 変換失敗) | `fdborch.cpp:700` | `return false` → consumer にエントリ残留 | `FDB_TABLE` に書き込まれない |
+
+### VRF_OBJECT_TABLE 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | 書き込み結果 |
+|---|---|---|---|
+| SAI `create_virtual_router` 失敗 | `vrforch.cpp:99-104` | `handleSaiCreateStatus()` → `parseHandleSaiStatusFailure()` でリターン。`m_stateVrfObjectTable.hset()` は呼ばれない | `VRF_OBJECT_TABLE|<vrf_name>` にエントリなし |
+| SAI `set_virtual_router_attribute` 失敗（既存 VRF 更新時） | `vrforch.cpp:134-138` | 同上。`m_stateVrfObjectTable.hset()` は呼ばれない | `VRF_OBJECT_TABLE|<vrf_name>.state` は変化しない |
+| VNI マップ更新失敗 (`updateVrfVNIMap()` false) | `vrforch.cpp:115-118` | `return false`。SAI 成功後でも `hset()` より前に失敗した場合、エントリなし | `VRF_OBJECT_TABLE|<vrf_name>` にエントリなし |
+
+`vrfmgrd` は VRF 削除時に `VRF_OBJECT_TABLE|<vrf_name>` の消失を監視する（`vrfmgr.cpp:208, 326-333`）。VRF_OBJECT_TABLE にエントリが存在しない状態で削除が要求された場合、`vrfmgrd` は削除を即時完了扱いにする（`isVrfObjExist()` が `false` → ガードスキップ）。
+
+### WARM_RESTART_TABLE 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | 書き込み結果 |
+|---|---|---|---|
+| warm restore 中に pending task が残存 | `warmRestoreValidation()` — `orchdaemon.cpp:1193-1205` | `ts.empty()` が `false` → `SWSS_LOG_NOTICE` でペンディングタスクをログ出力。`state = "restored"` は**それでも書き込まれる**（L1204） | `WARM_RESTART_TABLE|orchagent.state = "restored"` だが return 値は `false` → `warmRestoreAndSyncUp()` が false を返す |
+| warm restart 無効 (cold start) | - | `WARM_RESTART_TABLE|orchagent.state = "initialized"` が書かれるのみ。`restored` / `reconciled` への遷移は発生しない | `state` は `"initialized"` で固定 |
+
+!!! warning "warm restore バリデーション失敗は `state=restored` が書かれる"
+    `warmRestoreValidation()` が `false` を返しても `state = "restored"` は書き込まれる（`orchdaemon.cpp:1204` は `ts.empty()` に関わらず実行）。ただし `warmRestoreAndSyncUp()` は `false` を返し、呼び出し側 (`main.cpp`) がこれを検知して orchagent を終了させる。
+
+### FIPS_MACSEC_POST_TABLE 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | 書き込み結果 |
+|---|---|---|---|
+| SAI MACsec 非対応 (`MACSEC_SUPPORTED` == false) | `main.cpp:789-793` | `macsec_post_state = "disabled"` → `setMacsecPostState()` で書き込み | `FIPS_MACSEC_POST_TABLE|sai.post_state = "disabled"` |
+| `SAI_MACSEC_ATTR_ENABLE_POST` 非サポート (POST capability クエリ失敗) | `main.cpp:927-931` | `setMacsecPostState(&state_db, "disabled")` + `SWSS_LOG_ERROR` | `FIPS_MACSEC_POST_TABLE|sai.post_state = "disabled"` |
+| SAI MACsec POST コールバックで `FAIL` | `macsecorch.cpp:710, 791` | `post_state = "fail"` を書き込み。エントリは消えない | `FIPS_MACSEC_POST_TABLE|sai.post_state = "fail"` |
+
+FIPS_MACSEC_POST_TABLE では「失敗」は明示的な値 (`"fail"`) として書き込まれる点が他テーブルと異なる。エントリが消えることはなく、orchagent が起動している限り常に何らかの `post_state` 値が存在する。
+
+### エラーの観測方法
+
+```bash
+# warm restart 失敗: state が "initialized" のままか確認
+sonic-db-cli STATE_DB hget 'WARM_RESTART_TABLE|orchagent' state
+
+# PORT_TABLE: supported_speeds が空の場合はフィールド値確認
+sonic-db-cli STATE_DB hget 'PORT_TABLE|Ethernet0' supported_speeds
+sonic-db-cli STATE_DB hget 'PORT_TABLE|Ethernet0' supported_fecs  # 存在しない場合は SAI 非サポート
+
+# VRF_OBJECT_TABLE: エントリなし = SAI 失敗
+sonic-db-cli STATE_DB exists 'VRF_OBJECT_TABLE|Vrf-red'
+
+# FIPS_MACSEC_POST_TABLE: fail 状態確認
+sonic-db-cli STATE_DB hget 'FIPS_MACSEC_POST_TABLE|sai' post_state
+```
+
+エラーは `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` で syslog に出力される。`ERROR_TABLE` への書き込みはいずれのテーブルでも行われない。
+
+> **証跡**: `portsorch.cpp:3127-3172`（supported_speeds/fecs 取得失敗）、`portsorch.cpp:2181-2205`（initHostTxReadyState）、`fdborch.cpp:711, 927`（allPortsReady ガード）、`fdborch.cpp:479, 524`（SAI FDB 失敗）、`vrforch.cpp:93-120`（create_virtual_router 失敗パス）、`vrforch.cpp:134-150`（set_virtual_router_attribute 失敗）、`vrfmgr.cpp:204-214, 326-333`（VRF_OBJECT_TABLE 消失監視）、`orchdaemon.cpp:1193-1205`（warmRestoreValidation）、`main.cpp:789-793, 924-932`（FIPS_MACSEC_POST_TABLE disabled/fail パス）、`macsecorch.cpp:705-791`（POST コールバック）。
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
