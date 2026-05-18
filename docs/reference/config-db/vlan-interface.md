@@ -260,7 +260,7 @@ std::copy(intfList.begin(), intfList.end(), std::inserter(m_pendingReplayIntfLis
 
 <!-- /ordering -->
 
-<!-- phase-d:start -->
+<!-- failure -->
 ## 失敗挙動 (Phase D)
 
 > コード精読（`intfmgr.cpp` / `intfsorch.cpp`）から導出した失敗モード一覧。  
@@ -303,7 +303,9 @@ std::copy(intfList.begin(), intfList.end(), std::inserter(m_pendingReplayIntfLis
 [^pd1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 [^pd2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
 
-<!-- phase-d:end -->
+詳細調査ノートは `meta/_intermediate/cdb-flow/vlan-interface-failure.md` 参照。
+
+<!-- /failure -->
 
 <!-- ref-triangle:start -->
 
