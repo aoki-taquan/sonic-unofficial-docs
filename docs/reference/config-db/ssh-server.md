@@ -322,3 +322,40 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 
 > **Evidence**: `sonic-host-services/scripts/hostcfgd` L1422-1430 (PamLimitsCfg → DEVICE_METADATA); L744-751 (AaaCfg → /etc/pam.d/sshd); L596-606 (get_interface_ip → MGMT_INTERFACE); 詳細分析 `meta/_intermediate/cdb-flow/ssh-server-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` — `SshServer.set_policies()` (L1119-1168)、`PamLimitsCfg.update_config_file()` (L1420-1436)
+
+### set_policies() 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---------|---------|------|
+| `ports` が空リスト | `handle_ports_set()` L1091-1093 | `LOG_ERR` + `return False` → `set_policies()` は即時 `return`。sshd_config.tmp を /etc/ssh/sshd_config へ反映しない |
+| `port_num` が整数型（str でない） | `handle_ports_set()` L1095-1097 | `LOG_ERR` + `return False` → `set_policies()` 即時 `return` |
+| ポート番号が範囲外（< 1 または > 65535） | `handle_ports_set()` L1098-1100 | `LOG_ERR` + `return False` → `set_policies()` 即時 `return` |
+| 整数フィールドが YANG 定義範囲外 | `set_policies()` L1130-1131 | `LOG_ERR` + `continue`。当該フィールドをスキップし他フィールドは sshd_config.tmp への適用を継続（**部分適用**） |
+| 不明キー（`SSH_CONFIG_NAMES` 外かつ `max_sessions` 以外） | `set_policies()` L1148-1149 | `LOG_ERR` + 暗黙スキップ |
+| `sshd -T -f <tmp>` 検証失敗（returncode != 0） | `set_policies()` L1160-1163 | `LOG_ERR` + `os.remove(SSH_CONFG_TMP)`。sshd_config.tmp を削除して変更を破棄。/etc/ssh/sshd_config は旧値維持 |
+| `systemctl restart ssh` 失敗 | `run_cmd()` L123-131 | `LOG_ERR`。sshd_config は更新済みだが sshd プロセスは旧設定のまま稼働する不整合状態になる。手動 `systemctl restart ssh` が必要 |
+| `/etc/ssh/sshd_config` → tmp コピー失敗 | `copy2()` L1151 | `try/except` なし。Python 例外が hostcfgd プロセス全体に伝播 |
+
+### PamLimitsCfg.update_config_file() 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---------|---------|------|
+| `SSH_SERVER` テーブル未存在 | `update_config_file()` L1422-1426 | `KeyError` を catch し `ssh_server_policies = {}` で処理継続。PAM limits は `max_sessions` 未設定扱いで評価される |
+| `DEVICE_METADATA|localhost` と `SSH_SERVER|POLICIES` 両方不在 | `update_config_file()` L1430 | `return`（early return）。PAM limits ファイルを更新しない |
+| `render_conf_file()` 書き込み失敗 | `render_conf_file()` | `try/except` なし。Python 例外が hostcfgd に伝播 |
+
+### 範囲外フィールドの部分適用
+
+`authentication_retries` / `login_timeout` / `inactivity_timeout` が範囲外の場合、当該フィールドは `continue` でスキップされ、残りのフィールドは sshd_config.tmp に適用される。sshd 検証 (`sshd -T`) が通過すればそのまま /etc/ssh/sshd_config に反映されるため、**一部フィールドは意図した値が設定されない部分適用**が発生する。
+
+### ports 設定失敗時のファイル状態
+
+`handle_ports_set()` が `return False` を返すと `set_policies()` は直ちに `return` し、`sshd -T` は実行されない。sshd_config.tmp には `Port` 行を削除した状態が残るが、`os.rename(SSH_CONFG_TMP, SSH_CONFG)` が実行されないため /etc/ssh/sshd_config は変更されない。ただし `os.remove(SSH_CONFG_TMP)` も呼ばれないため sshd_config.tmp が残留する可能性がある。
+
+詳細根拠は `meta/_intermediate/cdb-flow/ssh-server-failure.md` を参照。
+<!-- /failure -->
