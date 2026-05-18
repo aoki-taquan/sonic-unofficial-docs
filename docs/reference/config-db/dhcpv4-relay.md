@@ -150,6 +150,54 @@ SET DHCPV4_RELAY|<vlan>  dhcpv4_servers=<ip,...>  [server_vrf=<vrf>]  [source_in
 > **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay_mgr.cpp:57-86,135-157,195-283,371-459,479-541,619-714,822-861`
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `sonic-dhcpv4-relay` が読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`dhcp4relay_mgr` スレッドは `DHCPV4_RELAY` 単体ではなく、9 テーブル + STATE_DB 2 テーブルを同時購読し (`SubscriberStateTable`)、さらに処理中に `VLAN_INTERFACE` / `VLAN` / `MID_PLANE_BRIDGE` を direct read (`Table::hget`) する。relay の正常動作には以下の依存テーブルが先行して存在する必要がある。
+
+### CONFIG_DB — subscribe (SubscriberStateTable) で常時監視
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| `VLAN` | subscribe + direct read | DHCPV4_RELAY SET 処理時に `vlanid` フィールドで VLAN 存在を確認。未登録 VLAN の relay config は skip | dhcp4relay_mgr.cpp:64,735-796 |
+| `VLAN_MEMBER` | subscribe | VLAN メンバ変化 → `prepare_vlan_sockets()` / `prepare_relay_interface_config()` を再実行。client_sock を再生成 | dhcp4relay_mgr.cpp:62,163 |
+| `DEVICE_METADATA` | subscribe | `subtype` (DualToR / SmartSwitch) / `hostname` / `mac` / `deployment_id` の変化を監視。DualToR 判定は link_selection / source_interface 強制上書きに直結 | dhcp4relay_mgr.cpp:61,159 |
+| `FEATURE` | subscribe | `dhcp_server.state = enabled` になると `DHCPV4_RELAY` watch を停止して `delete_all_relay_configs()` を呼ぶ。以降の DHCPV4_RELAY 変更は全て無視 | dhcp4relay_mgr.cpp:63,169,495-539 |
+| `INTERFACE` | subscribe | 物理ポート / SVI の IP イベント → `prepare_relay_interface_config()` で giaddr / src IP を更新 | dhcp4relay_mgr.cpp:58,140 |
+| `LOOPBACK_INTERFACE` | subscribe | Loopback IP イベント → `source_interface` が Loopback のとき src IP 解決に使用 | dhcp4relay_mgr.cpp:59,143 |
+| `PORTCHANNEL_INTERFACE` | subscribe | PortChannel IP イベント → src IP 解決 | dhcp4relay_mgr.cpp:60,145 |
+| `DHCP_SERVER_IPV4` | subscribe (条件付き) | `dhcp_server` 機能 ON 時のみ購読。relay 転送先 IP を STATE_DB 経由で取得 | dhcp4relay_mgr.cpp:65,150-155 |
+| `DPUS` | subscribe | SmartSwitch: DPU 構成変化 → midplane socket を再設定 | dhcp4relay_mgr.cpp:68,178 |
+| `PORT` | subscribe | PortChannel メンバの物理ポート更新 → relay socket / interface mapping を更新 | dhcp4relay_mgr.cpp:67,175 |
+
+### CONFIG_DB — direct read (Table::hget) でイベント処理中に参照
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| `VLAN_INTERFACE` | DHCPV4_RELAY SET 処理時・VLAN_MEMBER UPDATE 時 | `server_vrf` 未設定なら `VLAN_INTERFACE[vlan].vrf_name` を読んで `relay_msg->vrf` を決定。空なら `"default"` を使用 | dhcp4relay_mgr.cpp:424-430, dhcp4relay.cpp:888-892 |
+| `DHCPV4_RELAY` | VLAN_INTERFACE_UPDATE 受信時 | `SERVER_VRF_FIELD` を self-read して `server_vrf` が空の場合のみ VRF ソケットを更新 | dhcp4relay.cpp:1378-1390 |
+| `MID_PLANE_BRIDGE` | DEVICE_METADATA subtype=SmartSwitch のとき | `GLOBAL.bridge` フィールドで midplane bridge 名を取得 | dhcp4relay_mgr.cpp:201,244 |
+
+### STATE_DB — subscribe で監視
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| `DHCP_SERVER_IPV4_SERVER_IP` | `dhcp_server` モード有効時のみ | dhcp_server コンテナが STATE_DB に公開したサーバ IP を relay の転送先として使用 | dhcp4relay_mgr.cpp:66,763 |
+| `INTERFACE_TABLE` | socket bind 失敗時の再試行 | IP アドレスの active 状態を監視してソケット bind を再試行 | dhcp4relay_mgr.cpp:69 |
+
+### 依存サマリ
+
+| # | 依存テーブル | 先行必須度 | 理由 |
+|---|---|---|---|
+| 1 | `VLAN` | **必須** | 未登録 VLAN の relay config は skip（silent drop） |
+| 2 | `VLAN_INTERFACE` | **推奨** | `server_vrf` 未設定時の VRF fallback。欠如時は `"default"` VRF ソケットが生成される |
+| 3 | `DEVICE_METADATA` | 起動時自動ロード | DualToR / SmartSwitch 判定。start-up 時 subscribe で初回通知が届く |
+| 4 | `FEATURE` | 排他制御 | `dhcp_server = enabled` は DHCPV4_RELAY 設定を全消去する副作用を持つ |
+| 5 | `VLAN_MEMBER` | 推奨 | メンバ未登録時は client_sock が未生成でパケット受信不可 |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dhcpv4-relay-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
