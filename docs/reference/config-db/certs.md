@@ -347,6 +347,22 @@ OnChange 通知受信後、`DbToYang_grpc_server_xfmr` (`xfmr_system.go:540-590`
 詳細スキャン結果は `meta/_intermediate/cdb-flow/certs-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: `CREDENTIALS|CERT` は gNSI Certz が STATE_DB へ直接 HSet するテーブルであり、ASIC 種別・multi-asic・VOQ chassis・ベンダー固有設定のいずれにも依存しない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `CREDENTIALS|CERT` は SAI 非経由。`gnsi_certz.go` は gRPC → STATE_DB の直接書き込みのみ。`gnsi_certz.go` 内に ASIC 種別分岐 0 ヒット |
+| multi-asic (`is_multi_npu`) | 影響なし | `writeCredentialsMetadataToDB()` は global STATE_DB (`dbName="STATE_DB"`) を直接 HSet。namespace iteration なし (`gnsi_certz.go:1037-1058`) |
+| VOQ chassis (supervisor + line cards) | 影響なし | gNSI Certz は host 単位の gRPC サービス。chassis 集中管理機構を持たず、各 host の `telemetry` プロセスが独立に稼働 |
+| ベンダー固有実装 | なし | community master の `sonic-gnmi` は標準 Go TLS / gRPC のみ使用。`gnsi_certz.go` / `telemetry.go` にベンダー条件分岐なし |
+| CRL ディレクトリパス (`--cert_crl_dir`) | 実行時設定依存 | デフォルト `/mtls/crl` は platform 条件分岐ではなく CLI フラグで変更可能。platform 固有の自動切替はない |
+
+詳細根拠は `meta/_intermediate/cdb-flow/certs-platform.md` を参照。
+<!-- /platform -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
