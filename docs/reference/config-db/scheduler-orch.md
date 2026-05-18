@@ -184,6 +184,29 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`SCHEDULER` エントリが処理される際に `QosOrch` が暗黙的に関与する他テーブルの依存関係を示す。
+
+| 依存方向 | 参照元フィールド / 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|------------------------|--------------|--------------|---------|------|
+| 逆参照（被参照） | `QUEUE.<port>\|<idx>.scheduler` | `SCHEDULER`（本テーブル） | `SCHEDULER\|<name>` | `handleQueueTable()` が `resolveFieldRefValue()` で SCHEDULER SAI オブジェクトを解決。SCHEDULER 未登録の場合は `task_need_retry` を返し QUEUE の SAI バインドを保留。YANG `sonic-queue.yang` でも `leafref path "...SCHEDULER_LIST/name"` として宣言 | `qosorch.cpp:1822-1852`, `sonic-queue.yang:84-87`, `sonic-queue.yang:132-135` |
+| 逆参照（削除ガード） | `QUEUE.*` が参照中 | `SCHEDULER`（本テーブル） | `SCHEDULER\|<name>` | SCHEDULER DEL 時に `isObjectBeingReferenced()` で確認。QUEUE から参照中の場合は `m_pendingRemove = true` をセットして `task_need_retry`。参照解除後に自動 DEL が実行される | `qosorch.cpp:1483-1491` |
+| 起動ガード | `PortsOrch::allPortsReady()` | PORT テーブル（PortsOrch 管理） | `PORT\|<port_name>` | `QosOrch::doTask(Consumer&)` 冒頭で `gPortsOrch->allPortsReady()` が偽の間は全 QoS タスク（SCHEDULER 含む）が処理されない。PortsOrch による全ポート初期化完了まで SAI オブジェクトは生成されない | `qosorch.cpp:2258-2261` |
+| 実行時依存（QUEUE 経由） | `handleQueueTable()` → `applySchedulerToQueueSchedulerGroup()` | SCHEDULER_GROUP（SAI 管理） | SAI OID（DB なし） | QUEUE に SCHEDULER が紐付く際、`getSchedulerGroup()` でキュー→スケジューラグループ ID を検索し `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` をセット。SAI 内部のスケジューラグループツリーに依存（DB テーブルなし） | `qosorch.cpp:1630-1710` |
+
+### 解決タイミング
+
+- **QUEUE → SCHEDULER 参照**: `handleQueueTable()` の SET 処理時に `resolveFieldRefValue()` で即座に確認。未解決（`not_resolved`）は `task_need_retry` で `m_toSync` に残留し、SCHEDULER の SAI 登録後の次回 `doTask()` で再評価される（`qosorch.cpp:1828-1833`）。
+- **SCHEDULER DEL ガード**: DEL 処理時に `isObjectBeingReferenced()` でリアルタイム確認。参照カウンタがゼロになった次の `task_need_retry` サイクルで自動 DEL が実行される（`qosorch.cpp:1483-1491`）。
+- **PortsOrch ガード**: PortsOrch の `allPortsReady()` フラグが立つまで全 QoS 処理は doorbell 待ち。この間は SCHEDULER エントリが CONFIG_DB に存在しても SAI には送信されない（`qosorch.cpp:2258-2261`）。
+
+!!! note "SCHEDULER は「被参照専用」テーブル"
+    SCHEDULER エントリ自体は他の CONFIG_DB テーブルを参照しない（leafref なし）。依存の方向は常に外部テーブル → SCHEDULER であり、SCHEDULER を先に投入してから参照側テーブルを投入するのが正しい順序である。
+
+<!-- /cross-refs -->
+
 ## YANG-実装 Discrepancy まとめ
 
 | フィールド | YANG 定義 | qosorch 実装 | 分類 |
