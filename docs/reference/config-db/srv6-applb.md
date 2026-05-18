@@ -205,6 +205,43 @@ Neighbor ADD 通知が `updateNeighbor()` に届くと、対応する pending �
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数・上限値 (Phase E)
+
+> 根拠: `srv6orch.cpp` L19-27 (#define 群)、`createUpdateMysidEntry()` L1515-1519、`createMySidIpInIpTunnel()` L502、`getLocatorCfgFromDb()` L347-350 精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-applb-constants.md`
+
+| 定数名 | 値 | 利用箇所 | 設定変更可否 |
+|--------|-----|---------|------------|
+| `ADJ_DELIMITER` | `','` | `adj` フィールドのトークン化 | 不可（コード変更必須） |
+| `OVERLAY_RIF_DEFAULT_MTU` | `9100` bytes | IP-in-IP トンネル用オーバーレイ RIF の MTU | 不可（コード変更必須） |
+| `LOCATOR_DEFAULT_BLOCK_LEN` | `"32"` | `SRV6_MY_LOCATORS` 欠落時フォールバック | `SRV6_MY_LOCATORS` で上書き可 |
+| `LOCATOR_DEFAULT_NODE_LEN` | `"16"` | `SRV6_MY_LOCATORS` 欠落時フォールバック | `SRV6_MY_LOCATORS` で上書き可 |
+| `LOCATOR_DEFAULT_FUNC_LEN` | `"16"` | `SRV6_MY_LOCATORS` 欠落時フォールバック | `SRV6_MY_LOCATORS` で上書き可 |
+| `LOCATOR_DEFAULT_ARG_LEN` | `"0"` | `SRV6_MY_LOCATORS` 欠落時フォールバック | `SRV6_MY_LOCATORS` で上書き可 |
+
+### ADJ_DELIMITER と ECMP 非対応制約
+
+`ADJ_DELIMITER = ','` (`srv6orch.cpp:19`) は `adj` フィールドをカンマ区切りでトークン化するために使用される。
+`createUpdateMysidEntry()` (`srv6orch.cpp:1515-1519`) はトークン数が 2 以上（ECMP 隣接）の場合、
+`"ECMP adjacency not yet supported"` エラーを記録して SAI 登録を失敗させる。
+現バージョンでは `adj` には単一 IP アドレスのみ指定可能。
+
+### OVERLAY_RIF_DEFAULT_MTU = 9100
+
+DSCP モード設定を必要とする MySID エントリに対して `createMySidIpInIpTunnel()` がオーバーレイ RIF を作成する際、
+MTU は `OVERLAY_RIF_DEFAULT_MTU = 9100` bytes に固定される (`srv6orch.cpp:502`)。
+この値は CONFIG_DB / APPL_DB のいずれからも取得されず、実行時に変更する手段はない。
+
+### ロケータビット長フォールバック
+
+`getLocatorCfgFromDb()` (`srv6orch.cpp:347-350`) は `SRV6_MY_LOCATORS` のビット長フィールドが欠落している場合、
+`LOCATOR_DEFAULT_{BLOCK,NODE,FUNC,ARG}_LEN` (`32`, `16`, `16`, `0`) をデフォルトとして使用する。
+これらは `SRV6_MY_LOCATORS` テーブルのフィールドに明示的な値を設定することで上書きできる。
+このデフォルト合計（32+16+16+0=64 ビット）は COUNTERS_DB のカウンタキープレフィックス長にも波及する。
+
+<!-- /constants -->
+
 ### サポート action 値
 
 `end_behavior_map`（`srv6orch.cpp:41-62`）に定義:
