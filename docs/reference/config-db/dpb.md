@@ -371,6 +371,51 @@ DPB シーケンスで `PORT` テーブルが変更されると、`portmgrd` が
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-platform.md -->
+
+DPB の利用可否は ASIC ではなく **プラットフォームのポート設定ファイル形式** によって決まる。`platform.json` + `hwsku.json` を持つプラットフォームのみ DPB が有効であり、旧形式の `port_config.ini` プラットフォームでは `config interface breakout` 自体が実行不能となる。
+
+### プラットフォームファイル形式と DPB 有効性
+
+`main.py:5468-5471` が `platform.json` の存在を明示的にチェックする:
+
+```python
+breakout_cfg_file = device_info.get_path_to_port_config_file()
+if not os.path.isfile(breakout_cfg_file) or not breakout_cfg_file.endswith('.json'):
+    click.secho("[ERROR] Breakout feature is not available without platform.json file", fg='red')
+    raise click.Abort()
+```
+
+`portconfig.py:452-465` の `get_breakout_mode()` も `.json` 以外は `return None` で DPB を無効化する。
+
+| プラットフォームファイル形式 | DPB 有効 | `BREAKOUT_CFG` 書込み | エラー |
+|--------------------------|---------|---------------------|--------|
+| `platform.json` + `hwsku.json`（新形式） | **有効** | 起動時 `sonic-cfggen` が自動生成 | なし |
+| `port_config.ini`（旧形式） | **無効** | 書き込まれない | `[ERROR] Breakout feature is not available without platform.json file` |
+| `platform.json` 不在 | **無効** | 書き込まれない | 同上 |
+
+> sonic-buildimage の `device/` ディレクトリには `port_config.ini` を使う旧プラットフォームが 413 件（`platform.json` は 167 件）あり、多数の既存プラットフォームが DPB 非対応。
+
+### breakout_modes のプラットフォーム差異
+
+`platform.json` を持つプラットフォームでも、各ポートが対応する `breakout_modes` はハードウェアのレーン構成によって異なる。
+
+| 世代 / 代表プラットフォーム | 典型ポート速度 | 代表的 breakout モード |
+|--------------------------|------------|----------------------|
+| 10G/25G 世代（Arista 7050CX3-32S, Trident3） | 100G × 32 ポート | `4x25G[10G]`, `2x50G`, `1x100G[50G,40G,25G,10G]` |
+| 100G 世代（Tomahawk / Mellanox Spectrum） | 400G QSFP-DD 等 | `1x400G`, `2x200G`, `4x100G` |
+| 800G 世代 | 800G | `1x800G`, `2x400G`, `8x100G` 等 |
+
+### SAI Capability と DPB
+
+DPB は SAI ポート削除・作成 API（`sai_port_api->remove_port()` / `create_port()`）に依存する。SAI プロバイダが DPB 非対応の場合（シミュレーター等）は ASIC_DB へのポート OID 変化が生じず、`_verifyAsicDB()` が 60 秒タイムアウトとなる。現行コードに SAI capability クエリによる事前チェックはなく、実行時タイムアウトでのみ失敗が検出される。
+
+> **Evidence**: `sonic-buildimage/src/sonic-config-engine/portconfig.py:452-465`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; `sonic-utilities/config/main.py:5467-5471`（SHA `39732bceb8bdefe706518ab40623bbbba6ff33b9`）; `sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/platform.json:211-228`; 詳細は `meta/_intermediate/cdb-flow/dpb-platform.md` を参照。
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
