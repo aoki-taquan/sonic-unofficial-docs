@@ -377,6 +377,53 @@ DEL 成功時は当該エントリが APPL_STATE_DB から削除される。
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+`FIXED_TUNNEL_TABLE` は P4RT gRPC サービスを持つプラットフォームでのみ機能する。`gre_tunnel_manager.cpp` にはプラットフォーム分岐コード（`getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等）は存在せず、差異は SAI 実装レベルで生じる。
+
+### BRCM SAI 固有要件 — neighbor 事前生成
+
+```cpp
+// gre_tunnel_manager.h:42-44
+// neighbor_id is required to be equal to encap_dst_ip by BRCM. And the
+// neighbor entry needs to be created before GRE tunnel object
+swss::IpAddress neighbor_id;
+```
+
+`neighbor_id = encap_dst_ip` の拘束はコード内に BRCM SAI 要件として明記されている[^6]。他のベンダー SAI では本制約が不要な場合があるが、`GreTunnelManager` はすべてのプラットフォームで同一ロジックを適用する。
+
+### `SAI_TUNNEL_ATTR_OVERLAY_INTERFACE` — 暫定ワークアラウンド
+
+`SAI_TUNNEL_ATTR_OVERLAY_INTERFACE` は SAI 仕様上必須属性だが、P4RT GRE encap トンネルには専用の overlay RIF は存在しない。`createGreTunnels()` はグローバルループバック RIF (`gUnderlayIfId`) を代用する:
+
+```cpp
+// gre_tunnel_manager.cpp:417-420
+// TODO: Remove when SAI_TUNNEL_ATTR_OVERLAY_INTERFACE is not mandatory
+// Use gUnderlayIfId, a shared global loopback rif, for encap tunnels
+entries[i].overlay_if_oid = gUnderlayIfId;
+```
+
+将来 SAI 仕様変更でこの属性が任意になれば本ワークアラウンドは削除される予定[^4]。
+
+### SAI GRE Tunnel 対応の ASIC 依存性
+
+`SAI_TUNNEL_TYPE_IPINIP_GRE` の実装状況はベンダー SAI によって異なる:
+
+| プラットフォーム | 状況 |
+|----------------|------|
+| Broadcom (BRCM SAI) | 対応（`neighbor_id = encap_dst_ip` の事前生成が必要） |
+| VS / VPP (libsaivs / libsaivpp) | create_tunnels が `SAI_STATUS_SUCCESS` を返すがハードウェア転送なし。CI / テスト専用 |
+| その他 ASIC | SAI 実装次第。`SAI_STATUS_NOT_SUPPORTED` 返却時は `SWSS_LOG_ERROR` のみでロールバック不可 |
+
+### SAI Bulk モード固定
+
+`create_tunnels` / `remove_tunnels` は `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` 固定で呼ばれる（`gre_tunnel_manager.cpp:431, 493`）。部分成功モードは使用されない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-platform.md`
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
