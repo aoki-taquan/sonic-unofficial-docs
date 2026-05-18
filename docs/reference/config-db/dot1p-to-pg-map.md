@@ -217,6 +217,67 @@ type_map QosOrch::m_qos_maps = {
 `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` / `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` の `set_port_attribute` 失敗は `handleSaiSetStatus()` を経由して retry / 永続失敗に分岐する。複数属性を順番に適用するため途中での失敗は**部分適用**が残る。rollback なし。QosOrch は STATE_DB / ERROR_TABLE への失敗記録を行わないため、反映状況の確認は `sonic-db-cli ASIC_DB hgetall` が必要。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-pg-map-ordering.md`
+
+`DOT1P_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を構成するハードコード定数を記述する。出典は `qosorch.h`、`qosorch.cpp`、および各 YANG モジュール。
+
+### CONFIG_DB フィールド名定数 (qosorch.h)
+
+`PORT_QOS_MAP` テーブルのフィールド名は `qosorch.h` に `const string` としてハードコードされている。
+
+| 定数名 | 値 | 用途 | ソース |
+|-------|----|------|--------|
+| `dot1p_to_tc_field_name` | `"dot1p_to_tc_map"` | `PORT_QOS_MAP.<port>.dot1p_to_tc_map` フィールド名。`DOT1P_TO_TC_MAP` へのリファレンス | qosorch.h L13 |
+| `tc_to_pg_map_field_name` | `"tc_to_pg_map"` | `PORT_QOS_MAP.<port>.tc_to_pg_map` フィールド名。`TC_TO_PRIORITY_GROUP_MAP` へのリファレンス | qosorch.h L18 |
+
+### SAI QOS マップタイプ定数
+
+各ハンドラが SAI オブジェクト作成時に `qos_map_attr.value` にセットするハードコード定数。
+
+| SAI 定数 | 使用箇所 | 意味 |
+|----------|---------|------|
+| `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` | `qosorch.cpp:406` | dot1p → Traffic Class マップの SAI タイプ |
+| `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` | `qosorch.cpp:913` | TC → Priority Group マップの SAI タイプ |
+
+> **重要**: `SAI_QOS_MAP_TYPE_DOT1P_TO_PRIORITY_GROUP` は SAI 仕様に存在しない。これが `DOT1P_TO_PG_MAP` テーブルが SONiC に存在しない根本理由の一つである。
+
+### SAI ポート属性定数
+
+`PORT_QOS_MAP` を SAI ポートオブジェクトに適用する際の属性 ID。
+
+| SAI 定数 | 対応フィールド | ソース |
+|----------|-------------|--------|
+| `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` | `dot1p_to_tc_map` | qosorch.cpp:63 |
+| `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` | `tc_to_pg_map` | qosorch.cpp:67 |
+
+### YANG 値域制約（ハードコードパターン）
+
+YANG バリデーションで強制される値域はコードではなく YANG ファイルにハードコードされている。
+
+#### DOT1P_TO_TC_MAP の値域制約
+
+| フィールド | YANG パターン / 型 | 許容値 | ソース |
+|-----------|-----------------|--------|--------|
+| `name` | `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` | 英数字始まり、英数字・ハイフン・アンダースコア、最大 32 文字 | sonic-dot1p-tc-map.yang L41-44 |
+| `dot1p` (key) | `"[0-7]?"` | `0`〜`7` の整数文字列のみ（空文字も YANG 上は許容） | sonic-dot1p-tc-map.yang L57-62 |
+| `tc` (value) | `stypes:tc_type` (`uint8` range `0..15`) | `0`〜`15` | sonic-types.yang.j2 L338-345 |
+
+#### TC_TO_PRIORITY_GROUP_MAP の値域制約
+
+| フィールド | YANG パターン / 型 | 許容値 | ソース |
+|-----------|-----------------|--------|--------|
+| `name` | `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` | 英数字始まり、最大 32 文字 | sonic-tc-priority-group-map.yang |
+| `tc` (key) | `stypes:tc_type` (`uint8` range `0..15`) | `0`〜`15` | sonic-types.yang.j2 L338-345 |
+| `pg` (value) | `"[0-7]?"` | `0`〜`7` または空文字 | sonic-tc-priority-group-map.yang |
+
+> **注意**: `dot1p` と `pg` のパターン `[0-7]?` は空文字を許容するが、`qosorch.cpp` の `stoi()` 呼び出しは例外処理なしのため空文字列を与えると `std::invalid_argument` が送出され `task_failed` となる（`qosorch.cpp:377-382`, `qosorch.cpp:895`）。
+
+> **Evidence**: `qosorch.h:13,18`; `qosorch.cpp:63,67,406,913`; `sonic-dot1p-tc-map.yang:41-67`; `sonic-types.yang.j2:338-345`
+<!-- /constants -->
+
 ## 制約
 
 - `DOT1P_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
