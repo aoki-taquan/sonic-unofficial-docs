@@ -453,6 +453,105 @@ orchagent が STATE_DB へ書き込む各テーブルのコード由来デフォ
 - `FIPS_MACSEC_POST_TABLE` は FIPS モード有効かつ SAI が MACsec POST に対応している場合のみ実質的に利用される。
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+orchagent が STATE_DB へ書き込む 5 テーブルのテーブル名・フィールド名・状態文字列はすべてソースコード内の `#define` マクロまたは静的マップで固定されている。動的に変わるのはキー部分（ポート名・MAC・VRF 名）のみ。
+
+### STATE_DB テーブル名（`sonic-swss-common/common/schema.h`）
+
+| マクロ | 値 | evidence |
+|--------|----|----------|
+| `STATE_WARM_RESTART_TABLE_NAME` | `"WARM_RESTART_TABLE"` | `schema.h:427` |
+| `STATE_PORT_TABLE_NAME` | `"PORT_TABLE"` | `schema.h:420` |
+| `STATE_FDB_TABLE_NAME` | `"FDB_TABLE"` | `schema.h:426` |
+| `STATE_VRF_OBJECT_TABLE_NAME` | `"VRF_OBJECT_TABLE"` | `schema.h:430` |
+| `STATE_FIPS_MACSEC_POST_TABLE_NAME` | `"FIPS_MACSEC_POST_TABLE"` | `schema.h:471` |
+
+これらのマクロは `orchdaemon.cpp` のコンストラクタ・`vrforch.cpp` コンストラクタ・`macsecpost.cpp` 内で直接 `Table` / `hset` に渡されるため、テーブル名は実行時に変わらない。
+
+### WARM_RESTART_TABLE — 状態文字列（`sonic-swss-common/common/warm_restart.cpp`）
+
+`warmStartStateNameMap`（`warm_restart.cpp:9-16`）で定義された静的マップ:
+
+| enum 値 | 書込み文字列 |
+|---------|--------------|
+| `WarmStart::INITIALIZED` | `"initialized"` |
+| `WarmStart::RESTORED` | `"restored"` |
+| `WarmStart::REPLAYED` | `"replayed"` |
+| `WarmStart::RECONCILED` | `"reconciled"` |
+| `WarmStart::WSDISABLED` | `"disabled"` |
+
+`restore_check` / `shutdown_check` フィールドは `dataCheckStateNameMap`（`warm_restart.cpp:19-23`）:
+
+| enum 値 | 書込み文字列 |
+|---------|--------------|
+| `CHECK_IGNORED` | `"ignored"` |
+| `CHECK_PASSED` | `"passed"` |
+| `CHECK_FAILED` | `"failed"` |
+
+フィールド名 `"restore_count"` / `"restore_check"` / `"shutdown_check"` / `"state"` はすべて `warm_restart.cpp` 内のリテラル文字列で固定（`warm_restart.cpp:113, 125, 133, 229, 241-249`）。
+
+### PORT_TABLE — フィールド名（`sonic-swss/orchagent/portsorch.cpp`）
+
+| フィールド名文字列 | 書込み箇所 |
+|--------------------|-----------|
+| `"supported_speeds"` | `portsorch.cpp:3171` |
+| `"supported_fecs"` | `portsorch.cpp:3318` |
+| `"host_tx_ready"` | `portsorch.cpp:2193, 2274` |
+| `"speed"` | `portsorch.cpp:9856` |
+| `"fec"` | `portsorch.cpp:9869` |
+| `"link_training_status"` | `portsorch.cpp:4907, 11380` |
+| `"rmt_adv_speeds"` | `portsorch.cpp:11338` |
+| `"phy_ctrl_unreliable_los"` | `portsorch.cpp:5200` |
+
+`"phy_ctrl_unreliable_los"` の値は三項演算 `p.m_unreliable_los ? "true" : "false"` で書かれるため、小文字固定。`"host_tx_ready"` も同様に `"true"` / `"false"` 小文字。
+
+### FDB_TABLE — フィールド名・型文字列（`sonic-swss/orchagent/fdborch.cpp`）
+
+| フィールド名文字列 | 書込み値例 | evidence |
+|--------------------|-----------|----------|
+| `"port"` | ポート名文字列（動的） | `fdborch.cpp:133` |
+| `"type"` | `"dynamic"` または `"static"` | `fdborch.cpp:134, 288, 446, 448` |
+
+`"dynamic_local"` は内部 `FDB_ORIGIN_LEARN` 由来のエントリ型で、STATE_DB への書込み前に `"dynamic"` に正規化される（`fdborch.cpp:1578-1582`）。
+
+### VRF_OBJECT_TABLE — フィールド名・値（`sonic-swss/orchagent/vrforch.cpp`）
+
+| フィールド名文字列 | 書込み値 | evidence |
+|--------------------|---------|----------|
+| `"state"` | `"ok"` | `vrforch.cpp:120, 150` |
+
+`"state"` フィールドには `"ok"` のみが書き込まれ、それ以外の値は出現しない。失敗時はエントリ自体が書かれない。
+
+### FIPS_MACSEC_POST_TABLE — フィールド名・状態文字列（`orchagent/macsecpost.cpp`, `main.cpp`, `macsecorch.cpp`）
+
+フィールド名（`macsecpost.cpp:13, 20`）:
+
+| フィールド名文字列 | evidence |
+|--------------------|----------|
+| `"post_state"` | `macsecpost.cpp:13` |
+| `"last_update_time"` | `macsecpost.cpp:20` |
+
+固定キー文字列: `"sai"`（`main.cpp:793` の `setMacsecPostState()` 呼び出しコンテキスト, `macsecpost.cpp:10`）
+
+`post_state` の値一覧（すべてリテラル文字列、enum マップなし）:
+
+| 書込み文字列 | 書込み箇所 |
+|-------------|-----------|
+| `"disabled"` | `main.cpp:791, 930` |
+| `"switch-level-post-in-progress"` | `main.cpp:775` |
+| `"macsec-level-post-in-progress"` | `main.cpp:924` |
+| `"pass"` | `macsecorch.cpp:705, 786, 840` |
+| `"fail"` | `macsecorch.cpp:710, 791, 856` |
+
+`"last_update_time"` は `strftime` で `"%a %b %d %H:%M:%S %Y"` フォーマット（`macsecpost.cpp:16-20`）。フォーマット文字列はハードコード。
+
+!!! note "FIPS_MACSEC_POST_TABLE の固定キー `sai`"
+    `setMacsecPostState()` (`macsecpost.cpp:9-24`) は常に第 2 引数として渡されたキーを使うが、すべての呼び出しサイトで `"sai"` のみが渡される。`"sai"` 以外のキーが使われることは現状ない。
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: `sonic-swss-common/common/warm_restart.cpp` (L9-17 warmStartStateNameMap, L109-137 checkWarmStart, L223-234 setWarmStartState, L237-254 setDataCheckState). <https://github.com/sonic-net/sonic-swss-common/blob/master/common/warm_restart.cpp>

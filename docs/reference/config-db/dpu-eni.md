@@ -334,6 +334,33 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
+`DashEniFwdOrch` は `APPL_DB:DASH_ENI_FORWARD_TABLE` の最初のエントリ受信時に `lazyInit()` を呼び出し、CONFIG_DB の `DPU` / `REMOTE_DPU` / `VDPU` テーブルをまとめて読み込む。この **遅延初期化 (lazy init)** 設計により、テーブル群は ENI エントリ到着前にすべて確定している必要がある。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `CONFIG_DB:DPU` / `REMOTE_DPU` 投入 → `APPL_DB:DASH_ENI_FORWARD_TABLE` 到着 | **強制先行** | ENI 到着前に DPU 系テーブルが確定していないと `DpuRegistry` に登録されず、ACL ルールが生成されない |
+| 2 | `CONFIG_DB:DPU` / `REMOTE_DPU` 処理完了 → `CONFIG_DB:VDPU` 投入 | **強制先行** | `processVdpuTable()` は `dpus_name_map_` を参照するため、DPU/REMOTE_DPU が先に処理されていなければ `SWSS_LOG_WARN("Invalid DPU ID")` でスキップ |
+| 3 | `NeighOrch` が LOCAL DPU の Neighbor を解決 → ENI ACL ルールのインストール | **強制先行** (LOCAL の場合) | Neighbor 未解決時は ACL ルール未生成のまま保留。`NeighborUpdate` を受信後に再試行 |
+| 4 | `CONFIG_DB:VIP_TABLE` 投入 → ENI ACL テーブル生成 | **強制先行** | `EniFwdCtxBase::getVip()` は `keys()` が空の場合 `SWSS_LOG_THROW` → orchagent クラッシュ |
+| 5 | `VNetOrch` への VNET 登録 → CLUSTER ENI ACL ルール生成 | **強制先行** (CLUSTER の場合) | `findVnetVni()` / `findVnetTunnel()` が失敗すると CLUSTER ENI の redirect 先 (tunnel+VNI) が決定できない |
+| 6 | `gMySwitchSubType == "SmartSwitch"` 設定 → `DashEniFwdOrch` 生成 | **前提条件** | `orchdaemon.cpp:613` の条件分岐。SmartSwitch サブタイプでなければ Orch 自体が起動しない |
+
+### 主要な制約詳細
+
+**DPU → VDPU の強制先行順序 (依存 #2)**: `DpuRegistry::populate()` は内部で `processDpuTable()` → `processRemoteDpuTable()` → `processVdpuTable()` の固定順で実行される (`dashenifwdorch.cpp:218-221`)。`processVdpuTable()` が `dpus_name_map_` (DPU/REMOTE_DPU 処理時に構築) を参照するため、`populate()` 呼び出し時点で DPU/REMOTE_DPU が CONFIG_DB に存在しなければ VDPU は空の状態で確定する。`populate()` は `lazyInit()` 内で 1 回のみ呼ばれ再読み込みは行われない (`dashenifwdorch.cpp:131-146`)。
+
+**VIP_TABLE の先行必須 (依存 #4)**: `EniFwdCtxBase::addAclTable()` は `getVip()` を呼び出し、`VIP_TABLE` のキーを先頭要素として `IpPrefix` へ変換する。`VIP_TABLE` が空の場合 `SWSS_LOG_THROW("Invalid Config: VIP info not populated")` が発生し orchagent プロセスが終了する (`dashenifwdorch.cpp:502-505`)。
+
+**Neighbor 解決待ちの保留 (依存 #3)**: LOCAL DPU の場合、`initLocalEndpoints()` が `NeighOrch::resolveNeighbor()` を呼んで Neighbor 解決をトリガーする。Neighbor が未解決のまま ENI が到着した場合は ACL ルールが生成されず、`NeighborUpdate` (Neighbor Up 通知) を受信後に `handleNeighUpdate()` → ENI の再評価で ACL ルールがインストールされる (`dashenifwdorch.cpp:48-76`, `dashenifwdorch.h:227-237`)。
+
+**lazyInit の一回性 (依存 #1)**: `ctx_initialized_` フラグにより `lazyInit()` は初回 ENI 到着時にのみ実行される。それ以降に CONFIG_DB の DPU/REMOTE_DPU/VDPU を変更しても `DpuRegistry` には反映されない。SmartSwitch の DPU 構成変更は orchagent の再起動が必要。
+<!-- /ordering -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
 `DashEniFwdOrch` は CONFIG_DB の `DPU` / `REMOTE_DPU` / `VDPU` と APPL_DB の `DASH_ENI_FORWARD_TABLE` を組み合わせて ACL ルールを生成する。テーブル間の処理順序と Neighbor 解決状態が ACL 生成タイミングを支配する。
 
 ### 検出された順序依存

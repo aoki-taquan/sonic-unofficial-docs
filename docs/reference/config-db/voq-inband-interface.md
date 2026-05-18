@@ -343,57 +343,56 @@ journalctl -u swss | grep -i "inband"
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用・連鎖更新 (Phase F)
+## 副次 DB 書込 (Phase F)
 
-> 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/orchagent/neighorch.cpp`, `sonic-swss/cfgmgr/nbrmgr.cpp`
+`VOQ_INBAND_INTERFACE` テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みを示す。
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_intf.py`, `sonic-swss/cfgmgr/nbrmgr.cpp`
 > 調査日: 2026-05-18
 
-`VOQ_INBAND_INTERFACE` への書き込みが連鎖して起動する他テーブル書き込み・SAI 操作・カーネル副作用を示す。
+### SET — インタフェースロウ (`VOQ_INBAND_INTERFACE|<name>`)
 
-### 連鎖一覧
+`intfmgrd` は VOQ_INBAND_INTERFACE の `keys.size() == 1` (インタフェース行) を検出すると、通常の `doIntfGeneralTask()` を経由せず即座に中継する専用パスを通る (`intfmgr.cpp:1195-1205`)。
 
-| # | トリガー条件 | 副作用先 | 内容 | コード根拠 |
-|---|------------|---------|------|-----------|
-| 1 | 単一キー SET（属性ロウ）`inband_type` フィールドあり | `portsorch` in-process メモリ `m_inbandPortName` | `setVoqInbandIntf()` が `m_inbandPortName = alias` を代入。以降 `isInbandPort()` 呼び出しがすべてこの名前で判定される | `portsorch.cpp:11134` |
-| 2 | RIF 作成成功（`addRouterIntfs()`）かつ `isChassisDbInUse() == true` | `CHASSIS_APP_DB SYSTEM_INTERFACE_TABLE` | `voqSyncAddIntf()` がローカル inband ポートのシステムポートエイリアスをキーとして `oper_status` を書き込む。他 ASIC のラインカードがこのエントリを読んでリモート RIF を構築する | `intfsorch.cpp:1314-1318`, `intfsorch.cpp:1672-1714` |
-| 3 | RIF 削除（`removeRouterIntfs()`）かつ `isChassisDbInUse() == true` | `CHASSIS_APP_DB SYSTEM_INTERFACE_TABLE` | `voqSyncDelIntf()` が当該キーを DEL する。他 ASIC がリモート RIF を削除するトリガーになる | `intfsorch.cpp:1367-1371`, `intfsorch.cpp:1717-1747` |
-| 4 | IP プレフィクスロウ SET かつ `gMySwitchType == "voq"` かつ `isInbandPort(alias) == true` | SAI `sai_neighbor_api->create_neighbor_entry` + `CHASSIS_APP_DB SYSTEM_NEIGH_TABLE` | `addInbandNeighbor()` が SAI にネイバーエントリ（`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE = true`）を作成し、`voqSyncAddNeigh()` で `CHASSIS_APP_DB` へ同期。他ラインカードがリモートネイバーを解決するために参照する | `intfsorch.cpp:586-592`, `neighorch.cpp:2281-2350` |
-| 5 | IP プレフィクスロウ DEL かつ VOQ 環境 | SAI ネイバー削除 + `CHASSIS_APP_DB SYSTEM_NEIGH_TABLE` DEL | `delInbandNeighbor()` が SAI ネイバーを削除し `voqSyncDelNeigh()` で `CHASSIS_APP_DB` からも削除 | `neighorch.cpp:2353-2405` |
-| 6 | `nbrmgrd` が `STATE_DB SYSTEM_NEIGH_TABLE` を購読 → SET 受信時 | カーネルネイバー (`ip neigh add`) + カーネルルート (`ip route add`) | `doStateSystemNeighTask()` が `getVoqInbandInterfaceName()` でこのテーブルを読んで inband IF 名を取得し、カーネルネイバーとスタティックルートを登録。IPv6 は `metric 256` 付きで追加 | `nbrmgr.cpp:414`, `nbrmgr.cpp:524-549`, `nbrmgr.cpp:552-575` |
+| 操作 | 対象 DB / テーブル | キー / フィールド | コード根拠 |
+|------|------------------|-----------------|-----------|
+| `INTF_TABLE.set(<name>, data)` | APPL_DB / `INTF_TABLE` | `<name>` | `intfmgr.cpp:1199` — `m_appIntfTableProducer.set` |
+| `INTERFACE_TABLE.hset(<name>, "vrf", "")` | STATE_DB / `INTERFACE_TABLE` | `<name>` field=`vrf` 空文字 | `intfmgr.cpp:1200` — VOQ inband は常に global VRF |
 
-### 副作用の伝播図
+`bgpcfgd` の `InterfaceMgr` もこのテーブルを購読しており、SET 時に `Directory` の `LOCAL/interfaces` および `LOCAL/local_addresses` を更新し、BGP ピア解決に使用する (`managers_intf.py:38-40`)。
 
-```
-VOQ_INBAND_INTERFACE (CONFIG_DB)
-  │
-  ├─[単一キー SET]──→ intfmgrd → APPL_DB INTF_TABLE
-  │                                    │
-  │                              IntfsOrch::doTask()
-  │                                    │
-  │                    portsorch m_inbandPortName ←─────── [副作用 #1]
-  │                                    │
-  │                         addRouterIntfs() (RIF 作成)
-  │                                    │
-  │                   CHASSIS_APP_DB SYSTEM_INTERFACE_TABLE ←─ [副作用 #2]
-  │
-  └─[IP プレフィクス SET]──→ doIntfAddrTask()
-                                    │
-                          addInbandNeighbor() (VOQ のみ)
-                                    │
-                          ├─ SAI create_neighbor_entry ←─── [副作用 #4]
-                          └─ CHASSIS_APP_DB SYSTEM_NEIGH_TABLE ←─ [副作用 #4]
-                                    │
-                          nbrmgrd::doStateSystemNeighTask()
-                                    │
-                          ├─ ip neigh add <addr> dev <inband-if> ←─ [副作用 #6]
-                          └─ ip route add <addr> dev <inband-if> metric 256 ←─ [副作用 #6]
-```
+### SET — IP プレフィクスロウ (`VOQ_INBAND_INTERFACE|<name>|<ip-prefix>`)
 
-!!! warning "CHASSIS_APP_DB 書き込みは VOQ chassis 環境専用"
-    副作用 #2/#3/#4/#5 は `isChassisDbInUse()` または `gMySwitchType == "voq"` が true の場合のみ発生する。単体スイッチ・非 VOQ 環境ではこれらの副作用はすべてスキップされる。
+`keys.size() == 2` の場合は `doIntfAddrTask()` に委譲される。インタフェース行が STATE_DB に登録済みであることが前提 (`intfmgr.cpp:1115`)。
 
-!!! note "inband ネイバーの `NO_HOST_ROUTE`"
-    副作用 #4 で SAI に作成されるネイバーエントリは `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE = true` で登録される。これにより inband IP アドレス宛てのパケットがルーティングループを起こさないようにホストルートが抑制される（`neighorch.cpp:2314-2316`）。
+| 操作 | 対象 DB / テーブル | キー / フィールド | コード根拠 |
+|------|------------------|-----------------|-----------|
+| `INTF_TABLE.set(<name>:<ip-prefix>, {scope,family})` | APPL_DB / `INTF_TABLE` | `<name>:<ip-prefix>` | `intfmgr.cpp:1134` — IPv4 link-local 以外のみ |
+| `INTERFACE_TABLE.hset("<name>&#124;<ip-prefix>", "state", "ok")` | STATE_DB / `INTERFACE_TABLE` | `<name>|<ip-prefix>` | `intfmgr.cpp:1138` — IPv4 link-local 以外のみ |
+
+`bgpcfgd` は IP プレフィクスロウの SET で `LOCAL/local_addresses/<ip>` にエントリを追加し、BGP ネクストホップ解決のローカルアドレス候補として使用する (`managers_intf.py:28-40`)。
+
+### DEL — インタフェースロウ
+
+`keys.size() == 1` の DEL は通常の `doIntfGeneralTask()` DEL パスを通る。
+
+| 操作 | 対象 DB / テーブル | キー | コード根拠 |
+|------|------------------|------|-----------|
+| `INTF_TABLE.del(<name>)` | APPL_DB / `INTF_TABLE` | `<name>` | `intfmgr.cpp:1089` |
+| `INTERFACE_TABLE.del(<name>)` | STATE_DB / `INTERFACE_TABLE` | `<name>` | `intfmgr.cpp:1089` |
+
+`bgpcfgd` は DEL で `LOCAL/interfaces` および `LOCAL/local_addresses` からエントリを除去する (`managers_intf.py:43-56`)。
+
+### DEL — IP プレフィクスロウ
+
+| 操作 | 対象 DB / テーブル | キー | コード根拠 |
+|------|------------------|------|-----------|
+| `INTF_TABLE.del(<name>:<ip-prefix>)` | APPL_DB / `INTF_TABLE` | `<name>:<ip-prefix>` | `intfmgr.cpp:1162` — IPv4 link-local 以外のみ |
+| `INTERFACE_TABLE.del("<name>&#124;<ip-prefix>")` | STATE_DB / `INTERFACE_TABLE` | `<name>|<ip-prefix>` | `intfmgr.cpp:1162` — IPv4 link-local 以外のみ |
+
+### nbrmgr による間接参照
+
+`nbrmgr` は VOQ モード (`switch_type == "voq"`) 時に `VOQ_INBAND_INTERFACE` テーブルを**参照専用**で保持する (`nbrmgr.cpp:82`)。STATE_SYSTEM_NEIGH イベント処理 (`doStateSystemNeighTask`) のたびに `getVoqInbandInterfaceName()` でテーブルを読み出し、リモート neighbor 用のカーネルルート (`ip route add`) 追加先デバイス名と `inband_type` を取得する (`nbrmgr.cpp:523-547`)。本テーブルへの SET/DEL は直接 DB 書込みを引き起こさないが、**nbrmgr のカーネルルート注入動作の前提条件**となる。
 
 <!-- /side-effects -->
 
