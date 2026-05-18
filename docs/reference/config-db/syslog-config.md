@@ -310,6 +310,49 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/syslog-config-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`SYSLOG_CONFIG` への変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`RSyslogCfg` 経由) | `ConfigDBConnector.subscribe()` | `SYSLOG_CONFIG` | `rsyslog_config_handler` → `rsyslog_handler` → `RSyslogCfg.update_rsyslog_config` |
+| `hostcfgd` | 同上 | `SYSLOG_SERVER` | `rsyslog_server_handler` → `rsyslog_handler` → `RSyslogCfg.update_rsyslog_config` |
+
+`hostcfgd` 以外で `SYSLOG_CONFIG` テーブルを購読するプロセスは存在しない。`rsyslogd` 自体は CONFIG_DB を直接購読せず、`hostcfgd` が生成した設定ファイル (`/etc/rsyslog.conf`) を読み込んで動作する。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config syslog rate-limit-host --interval 300 --burst 20000
+  ↓ HSET "SYSLOG_CONFIG|GLOBAL" rate_limit_interval "300" rate_limit_burst "20000"
+Redis keyspace PUBLISH "__keyspace@4__:SYSLOG_CONFIG|GLOBAL"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ rsyslog_config_handler(key="GLOBAL", op=SET, data={...})
+  ↓ rsyslog_handler()  ← SYSLOG_CONFIG と SYSLOG_SERVER の両テーブルを再取得
+  ↓ RSyslogCfg.update_rsyslog_config(rsyslog_config, rsyslog_servers)
+  ↓ キャッシュ比較: 変更あり → systemctl restart rsyslog-config
+  ↓ rsyslog-config.service: Jinja2 テンプレートで /etc/rsyslog.conf 再生成 + rsyslogd 再起動
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は内部で `get_table()` により再取得する。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd L2528) により、Subscribe ループ開始前に `RSyslogCfg.load()` が `init_data['SYSLOG_CONFIG']` / `init_data['SYSLOG_SERVER']` を一括スナップショットで適用する。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `SYSLOG_CONFIG` または `SYSLOG_SERVER` 変更 (キャッシュ差分あり) | `systemctl reset-failed rsyslog-config rsyslog` + `systemctl restart rsyslog-config` | `RSyslogCfg.update_rsyslog_config` — hostcfgd L1731-1735 |
+| 変更なし (キャッシュ一致) | ノーオペレーション（再起動スキップ） | `RSyslogCfg.update_rsyslog_config` — hostcfgd L1725-1726 |
+| `rsyslog-config` 再起動失敗 | キャッシュ更新をスキップ、LOG_ERR のみ | `RSyslogCfg.update_rsyslog_config` — hostcfgd L1736-1739 |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L2499-2503 (subscribe)、L2410-2423 (rsyslog_handler/rsyslog_config_handler/rsyslog_server_handler)、L1695-1743 (RSyslogCfg クラス)、L2528 (listen/init_data_handler); 詳細分析 `meta/_intermediate/cdb-flow/syslog-config-pubsub.md`
+<!-- /pubsub -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
