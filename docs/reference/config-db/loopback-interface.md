@@ -344,6 +344,30 @@ IP プレフィクスロウ（`doIntfAddrTask()` SET パス）は属性ロウの
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。
+
+| 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
+|--------|-----------|------|------|-----------|
+| `STATE_VRF_TABLE` | STATE_DB | READ | `vrf_name` 指定時の readiness ガード。未登録なら処理をキューに戻してリトライ | `intfmgr.cpp` L839–842 |
+| `STATE_INTF_TABLE` | STATE_DB | READ | VRF 変更禁止チェック (`isIntfChangeVrf`)。既登録 VRF と異なる `vrf_name` 指定時に ERROR で拒否 | `intfmgr.cpp` L846–849 |
+| `STATE_INTERFACE_TABLE` | STATE_DB | READ | IP プレフィクスロウ処理の前提確認 (`isIntfCreated`)。属性ロウ SET 完了前は IP アドレス設定をスキップしてリトライ | `intfmgr.cpp` L1115 |
+| `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | READ (起動時 1 回) | VOQ 判定。`voq` のとき IPv6 アドレス付与に `metric 256` を付与。起動後の変更は反映されない | `intfmgr.cpp` L70–75 |
+| `VRF` (VrfOrch 内部マップ経由) | orchagent memory | READ | orchagent 側 VRF 存在確認。`m_vrfOrch->isVRFexists(vrf_name)` が false なら SET をリトライ | `intfsorch.cpp` L826–831 |
+| `DEVICE_METADATA\|localhost.mac` → `gMacAddress` | CONFIG_DB (起動時) | READ | `mac_addr` 省略時の SAI `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` フォールバック値 | `intfsorch.cpp` L1205 |
+| `NAT_GLOBAL` → `gIsNatSupported` | CONFIG_DB (起動時) | READ | `nat_zone` 指定時の NAT 有効判定。`gIsNatSupported==false` のとき SAI NAT zone 属性未設定 | `intfsorch.cpp` L1287–1294 |
+
+!!! note "補足"
+    - **`STATE_*TABLE` 依存** は YANG leafref には現れない実行時 readiness ガード。VRF が未 ready なら Consumer がエントリを保持して自動再試行する。
+    - **`DEVICE_METADATA.switch_type` 依存** は起動時 1 回読みのため、intfmgrd 起動後に `switch_type` を変更しても反映されない。
+    - VRF バインド・IP 削除ガードの詳細は `<!-- implicit-refs -->` セクション参照。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-cross-refs.md` 参照。
+
+<!-- /cross-refs -->
+
 <!-- implicit-refs -->
 ## 暗黙参照 — VRF テーブルへの依存
 
