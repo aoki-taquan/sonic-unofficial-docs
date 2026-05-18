@@ -287,6 +287,64 @@ evidence: `rsyslog-container.conf.j2:63` / `meta/_intermediate/cdb-flow/syslog-c
 <!-- evidence: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py L137-161 -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `containercfgd/containercfgd.py` 全行精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-feature-pubsub.md`
+
+### Redis 購読方式
+
+`SYSLOG_CONFIG_FEATURE` テーブルは **`containercfgd` (`SyslogHandler`) が `ConfigDBConnector.subscribe()` + `listen()` で常駐購読** する。`hostcfgd` は本テーブルを購読しない (`sonic-host-services/` 全体で `SYSLOG_CONFIG_FEATURE` の grep 0 hit)。
+
+| 消費者 | 起動方式 | DB アクセス API | Redis primitive |
+|--------|---------|----------------|-----------------|
+| `containercfgd` (`SyslogHandler`) | 常駐 daemon（各コンテナ内で `supervisord` 経由起動） | `ConfigDBConnector.subscribe()` + `listen()` | `psubscribe __keyevent@<dbId>__:*` → `HGETALL` |
+| `hostcfgd` | 常駐 daemon | — | **購読しない** |
+
+### トリガ経路
+
+```
+CLI: config syslog rate-limit-container <service> --interval N --burst M
+  ↓  sonic-utilities/config/syslog.py
+  ↓  cfgdb.mod_entry("SYSLOG_CONFIG_FEATURE", service_name, {...})
+     → Redis HSET SYSLOG_CONFIG_FEATURE|<service> rate_limit_interval N rate_limit_burst M
+
+CONFIG_DB (Redis)
+  └── keyspace notification ──▶ containercfgd (SyslogHandler.handle_config)
+        ├─ key == service_name? → 自コンテナのエントリのみ通過（他は早期 return）
+        ├─ update_syslog_config(data)
+        │    ├─ new_interval / new_burst を data から取得（欠落時 '0'）
+        │    ├─ 変更なし → LOG_NOTICE + return (no-op)
+        │    ├─ sonic-cfggen -d -t rsyslog-container.conf.j2 → /tmp/rsyslog.conf
+        │    ├─ cp /tmp/rsyslog.conf /etc/rsyslog.conf
+        │    └─ supervisorctl restart rsyslogd
+        └─ current_interval, current_burst を更新
+```
+
+### 起動時初期化 (init_data_handler)
+
+```
+containercfgd 起動
+  ↓  RestartWaiter.waitAdvancedBootDone()        ← advanced boot 完了待ち
+  ↓  ConfigDBConnector.connect(wait_for_init=True, retry_on=True)
+  ↓  subscribe(SYSLOG_CONFIG_FEATURE_TABLE, handle_config)
+  ↓  listen(init_data_handler=init_data_handler) ← 全エントリスナップショット受信
+       ↓  SyslogHandler.handle_init_data(init_data)
+            ├─ SYSLOG_CONFIG_FEATURE テーブルに自 service_name のエントリがあれば
+            └─ update_syslog_config() → rsyslogd 再起動（初期設定適用）
+```
+
+### 重要な特性
+
+- **常駐 daemon による即時反映**: CLI 書き込み後、コンテナ内 `containercfgd` が keyspace 通知を受信して数百ミリ秒以内に rsyslog を再設定する（ポーリング不要）。
+- **per-container 分離**: 各コンテナが独立した `containercfgd` インスタンスを保持し、`key != service_name` で他コンテナ向けエントリを無視。同一 Redis の変更通知を全コンテナが受信しても、自コンテナ分のみ処理する。
+- **APPL_DB / STATE_DB 非使用**: CONFIG_DB のみ。pub/sub チャンネル (`PUBLISH`/`SUBSCRIBE`) や `NotificationProducer`/`NotificationConsumer` は不使用。
+- **冪等性の欠如**: `current_interval` / `current_burst` キャッシュが成功時のみ更新されるため、失敗後の再適用には意図的に値を変えてから戻す操作が必要（Phase D 参照）。
+
+<!-- evidence: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py L44-61,112-135 -->
+<!-- /pubsub -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
