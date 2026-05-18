@@ -332,6 +332,53 @@ DEL NAT_POOL|<name>        # pool を後に削除
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`NatMgr::doNatPoolTask(Consumer&)` (`sonic-swss/cfgmgr/natmgr.cpp` L6482–6866) を全行調査した。すべての失敗ケースは `consumer.m_toSync.erase(it)` でエントリを**即座に破棄**する設計（保留/retry なし）。
+
+### SET 操作の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| key セグメント数 != 1 (`\|` 区切りで複数) | `doNatPoolTask()` L6504-6508 | `SWSS_LOG_ERROR` + erase → **破棄** | なし（再投入が必要） |
+| `nat_ip` フィールド欠落 または複数 | `doNatPoolTask()` L6539-6543 | `SWSS_LOG_ERROR("Invalid nat_ip values")` + erase → **破棄** | なし |
+| `nat_port` フィールドが複数 | `doNatPoolTask()` L6547-6551 | `SWSS_LOG_ERROR("Invalid key values")` + erase → **破棄** | なし |
+| 未知フィールド (`nat_ip` / `nat_port` 以外) | `doNatPoolTask()` L6555-6559 | `SWSS_LOG_ERROR("Invalid value")` + erase → **破棄** | なし |
+| pool 名が 32 文字超 | `doNatPoolTask()` L6563-6567 | `SWSS_LOG_ERROR("Invalid pool name length")` + erase → **破棄** | なし |
+| `nat_ip` が空または `"NULL"` | `doNatPoolTask()` L6571-6575 | `SWSS_LOG_ERROR("Invalid nat_ip")` + erase → **破棄** | なし |
+| `nat_ip` 範囲 token 数 > 2 | `doNatPoolTask()` L6588-6592 | `SWSS_LOG_ERROR("Invalid nat ip range size")` + erase → **破棄** | なし |
+| `nat_ip` high/low の IP 形式不正 | `doNatPoolTask()` L6599-6604, L6617-6622 | `SWSS_LOG_ERROR("Invalid ip address format")` + erase → **破棄** | なし |
+| `nat_ip` に 0.0.0.0 / ブロードキャスト / ループバック / マルチキャスト / 予約済みアドレス | `doNatPoolTask()` L6608-6613, L6626-6631, L6656-6661 | `SWSS_LOG_ERROR("Invalid ip address")` + erase → **破棄** | なし |
+| `nat_ip` 範囲で low >= high | `doNatPoolTask()` L6635-6639 | `SWSS_LOG_ERROR("NAT pool ip range ... is not valid")` + erase → **破棄** | なし |
+| `nat_port` range token 数 > 2 | `doNatPoolTask()` L6673-6677 | `SWSS_LOG_ERROR("Invalid nat port range size")` + erase → **破棄** | なし |
+| `nat_port` が整数に変換不可 | `doNatPoolTask()` L6682-6690, L6701-6709, L6731-6739 | `SWSS_LOG_ERROR("Invalid port")` + erase → **破棄** | なし |
+| `nat_port` 値が 1〜65535 の範囲外 (0 含む) | `doNatPoolTask()` L6694-6698, L6714-6718, L6743-6747 | `SWSS_LOG_ERROR("Invalid port value")` + erase → **破棄** | なし |
+| `nat_port` 範囲で low >= high | `doNatPoolTask()` L6721-6725 | `SWSS_LOG_ERROR("Invalid nat port range")` + erase → **破棄** | なし |
+| `nat_ip` 範囲が `STATIC_NAT` の global IP と重複 | `doNatPoolTask()` L6771-6775 | `SWSS_LOG_ERROR("Pool Ip address is overlaps with static NAT entry")` + erase → **破棄** | なし |
+| 同一 key・同一値の重複 SET | `doNatPoolTask()` L6786-6788 | `SWSS_LOG_ERROR("Duplicate Pool and it's values")` + erase → **破棄** | なし |
+
+### DEL 操作の挙動
+
+| ケース | 発生箇所 | 挙動 |
+|--------|---------|------|
+| キャッシュに存在する pool を DEL | `doNatPoolTask()` L6838-6851 | `isPoolMappedtoBinding()` で binding を確認 → binding があれば `removeDynamicNatRule()` → `m_natPoolInfo.erase()` → erase（正常完了） |
+| キャッシュに存在しない pool を DEL | `doNatPoolTask()` L6853-6855 | `SWSS_LOG_ERROR("Invalid NAT Pool ... do nothing")` + erase（no-op 成功扱い） |
+| 不明 op type | `doNatPoolTask()` L6860-6863 | `SWSS_LOG_ERROR("Unknown operation type")` + erase（消費） |
+
+### ログ・ERROR_TABLE
+
+- すべてのエラーは `SWSS_LOG_ERROR` で syslog (`/var/log/swss/natmgr.log`) に出力される。
+- STATE_DB / `ERROR_TABLE` への書き込みは**行われない**。NAT_POOL の処理失敗は syslog のみで確認可能。
+- `sonic-db-cli CONFIG_DB hgetall 'NAT_POOL|<name>'` でエントリ残存の確認は可能だが、natmgrd キャッシュ (`m_natPoolInfo`) の状態は外部から確認するコマンドがない。
+
+### retry 挙動
+
+`doNatPoolTask()` は失敗時に**一切保留しない**。iptables / APPL_DB / SAI 設定スキップ（NAT 無効・インタフェース未準備）の場合のみ erase せず次のイベントで自然に再処理されるが、バリデーション失敗は全件 erase 破棄となる。再適用するには `config nat add pool` でエントリを再投入する必要がある。
+
+> **証跡**: `NatMgr::doNatPoolTask()` L6482–6866 (`sonic-swss/cfgmgr/natmgr.cpp`).
+<!-- /failure -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
