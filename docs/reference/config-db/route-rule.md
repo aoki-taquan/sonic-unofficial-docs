@@ -127,4 +127,36 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashRouteOrch::ad
 - **`region` フィールド**: HLD にスキーマとして定義されているが、`dashrouteorch.cpp` に `region` を読み込む `has_region()` パターンは確認できない。SAI への反映なし。HLD と実装の乖離 (discrepancy) として記録する。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/route-rule-ordering.md`
+
+### SET 時の先行必須テーブル
+
+| # | 先行テーブル | 条件 | 理由 | 失敗時の挙動 |
+|---|------------|------|------|------------|
+| 1 | `DASH_ENI_TABLE` | 常時 | `addInboundRouting()` が `dash_orch_->getEni(ctxt.eni)` で ENI 存在を確認。`nullptr` を返すとリトライ | `return false` → ループ `it++` で自動リトライ |
+| 2 | `DASH_VNET_TABLE` | `vnet` フィールドが protobuf に存在する場合のみ | `gVnetNameToId.find(ctxt.metadata.vnet())` が miss するとリトライ | `return false` → ループ `it++` で自動リトライ |
+
+どちらも `task_need_retry` 相当（`return false` + ループ継続）の自動リトライ。
+`DASH_ENI_TABLE` が登録され、かつ `vnet` 指定時は `DASH_VNET_TABLE` も登録されて初めて SAI に反映される。
+
+### DEL 時の順序制約
+
+`removeInboundRouting()` は依存テーブルの存在チェックを行わず SAI entry を直接削除する。
+`DASH_ENI_TABLE` / `DASH_VNET_TABLE` の削除順序は問わない（逆参照エラーなし）。
+
+### 起動時シーケンス
+
+```
+DashOrch が DASH_ENI_TABLE を処理 → ENI 登録完了
+  ↓
+（vnet フィールドあり時）DashVnetOrch が DASH_VNET_TABLE を処理 → gVnetNameToId に登録
+  ↓
+DashRouteOrch が DASH_ROUTE_RULE_TABLE エントリを処理 → SAI 反映
+```
+
+<!-- /ordering -->
+
 [^1]: sonic-net/SONiC `doc/dash/dash-sonic-hld.md` §3.2.10 "ROUTE RULE TABLE - INBOUND" (ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
