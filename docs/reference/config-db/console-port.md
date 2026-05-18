@@ -173,6 +173,43 @@ CONSOLE_SWITCH|console_mgmt
 **`STATE_DB.CONSOLE_PORT` (双方向)**: `consutil connect` が接続を確立すると `ConsolePortState.__init__()` (lib.py:374) が `STATE_DB|CONSOLE_PORT|<line_num>` に `state`・`pid`・`start_time` の 3 フィールドを書き込む。接続終了時には同 key を削除する。一方、`show console` 実行時は `_get_all_ports()` (lib.py:120) が同 key を読み取り、現在接続中のライン・PID・開始時刻を表示する。CONFIG_DB と STATE_DB の同名テーブルが対になって機能する構成である。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-utilities/config/console.py`、`sonic-utilities/consutil/main.py`、`sonic-utilities/consutil/lib.py`
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/console-port-failure.md`
+
+### CLI 書き込み時の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `config console add <line>` で linenum が既に存在する | `add_console_setting()` | `ctx.fail("Trying to add console port setting, which is already exists.")` | `config/console.py:114-115` |
+| `config console add --devicename` で同名 `remote_device` が既存 | `isExistingSameDevice()` | `ctx.fail("Given device name ... has been used.")` | `config/console.py:120-123` |
+| `config console add` で YANG バリデーション失敗 (`baud_rate` 型不正等) | `ValidatedConfigDBConnector.set_entry()` | `ctx.fail("Invalid ConfigDB. Error: ...")` | `config/console.py:128-131` |
+| `config console del <line>` で linenum が存在しない | `remove_console_setting()` | `ctx.fail("Trying to delete console port setting, which is not present.")` | `config/console.py:147-154` |
+| `config console del` で YANG patch conflict | `ValidatedConfigDBConnector.set_entry()` | `ctx.fail("Invalid ConfigDB. Error: ...")` | `config/console.py:151-152` |
+| `config console baud/flow_control/escape/remote_device <line>` で linenum が存在しない | 各コマンド末尾 | `ctx.fail("Trying to update console port setting, which is not present.")` | `config/console.py:193-194,224-225,256-257,288-289` |
+
+### consutil 実行時の失敗経路
+
+| 失敗条件 | エラーコード | 出力メッセージ | evidence |
+|---|---|---|---|
+| `CONSOLE_SWITCH.enabled` が `"no"` または未設定 | `ERR_DISABLE (1)` | `"Console switch feature is disabled"` | `consutil/main.py:26-29` |
+| 指定ライン / デバイスが CONFIG_DB に存在しない (`LineNotFoundError`) | `ERR_DEV (3)` | `"Cannot connect: target [X] does not exist"` | `consutil/main.py:131-134` |
+| 対象ラインが接続中 (`LineBusyError`) | `ERR_BUSY (5)` | `"Cannot connect: line [X] is busy"` | `consutil/main.py:141-143` |
+| `baud_rate` フィールドが DB に存在しない (`InvalidConfigurationError`) | `ERR_CFG (4)` | `"Cannot connect: line [X] has no baud rate"` | `consutil/lib.py:197-199` |
+| `CONSOLE_SWITCH.default_escape_char` が大文字 (`[A-Z]`) | 例外伝播 (初期化失敗) | `"default console escape character is not valid"` | `consutil/lib.py:99-103` |
+| picocom が起動失敗 (デバイスファイル不在等) (`ConnectionFailedError`) | `ERR_DEV (3)` | `"Cannot connect: unable to open picocom process"` | `consutil/main.py:147-149` |
+| `consutil clear` で root 権限なし | `ERR_CMD (2)` | `"Root privileges are required for this operation"` | `consutil/main.py:102-104` |
+
+### 補足
+
+- **CLI ガード vs 実行時ガード**: CLI コマンドは書き込み前に linenum 存在確認・device 名重複確認・YANG バリデーションを行う。`sonic-db-cli` で直接書き込んだ場合はこれらのガードを迂回するが、`consutil connect` の実行時チェック (`baud_rate` 必須・busy チェック) は迂回できない。
+- **`LineBusyError` の回復**: `consutil clear <line>` で既存セッションを終了してから再接続する。
+- **YANG バリデーション回避**: `ValidatedConfigDBConnector` 経由の書き込みのみ YANG チェックが走る。`escape_char` に `[a-z]` 外の文字が `sonic-db-cli` で書き込まれた場合、接続時の `InvalidConfigurationError` でのみ発覚する。
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
