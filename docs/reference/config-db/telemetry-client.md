@@ -242,6 +242,56 @@ fv, err := redisDb.HGetAll(context.Background(), tableKey).Result()
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+ソース: `sonic-net/sonic-gnmi/dialout/dialout_client/dialout_client.go` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-pubsub.md)
+
+### 購読 API
+
+`DialOutRun()` は `swsscommon.ConfigDBConnector` を経由せず、`go-redis` クライアントの `PSubscribe` を直接呼び出して CONFIG_DB の keyspace 通知を購読する。
+
+```go
+// dialout_client.go:L686-690
+pattern := "__keyspace@" + strconv.Itoa(int(dbn)) + "__:TELEMETRY_CLIENT" + separator
+pattern += "*"
+pubsub := redisDb.PSubscribe(context.Background(), pattern)
+```
+
+- `separator` は `sdc.GetTableKeySeparator("CONFIG_DB")` で取得（通常 `|`）。
+- DB 番号は `sdc.GetDbNum("CONFIG_DB")` で動的取得（通常 `4`）。
+- `ConsumerStateTable`（channel ベース）および `NotificationProducer` は使用しない。
+
+### 起動時スナップショット
+
+`PSubscribe` 確立後、`redis.Keys()` で `TELEMETRY_CLIENT|*` の全キーを一括取得して `processTelemetryClientConfig()` に渡す（evidence: `dialout_client.go:L705-715`）。pubsub 購読を先に確立してから Keys を呼ぶため、購読確立後に届く通知はイベントループで捕捉される。
+
+### イベントループ受信
+
+`ReceiveTimeout(1000 ms)` でポーリング（evidence: `dialout_client.go:L718`）。payload の値に応じてハンドラを振り分ける:
+
+- `"hset"` → SET 操作として処理（`HGetAll` で最新値を再取得）
+- `"del"` / `"hdel"` → DEL 操作として処理
+- その他（`"expire"` 等）→ `log.V(2)` のみでスキップ
+
+### keyspace 通知パターン
+
+| Redis 通知 channel | payload | 処理 |
+|-------------------|---------|------|
+| `__keyspace@4__:TELEMETRY_CLIENT\|Global` | `hset` | `processTelemetryClientConfig("Global", "hset")` → 全 DestinationGroup の gRPC セッション再起動 |
+| `__keyspace@4__:TELEMETRY_CLIENT\|Global` | `del` / `hdel` | `"Invalid delete operation"` を返してスキップ |
+| `__keyspace@4__:TELEMETRY_CLIENT\|DestinationGroup_<n>` | `hset` | `dst_addr` 更新 → `setupDestGroupClients()` で gRPC セッション再確立 |
+| `__keyspace@4__:TELEMETRY_CLIENT\|DestinationGroup_<n>` | `del` | DestinationGroup 削除（Subscription 参照中は `"is being used"` で拒否） |
+| `__keyspace@4__:TELEMETRY_CLIENT\|Subscription_<n>` | `hset` | Subscription 更新 → `cs.NewInstance()` で gRPC goroutine 再起動 |
+| `__keyspace@4__:TELEMETRY_CLIENT\|Subscription_<n>` | `del` | Subscription 削除 → `cs.Close()` / `cs.cancel()` でgoroutine 停止 |
+
+### 書き込み側（Producer）
+
+書き込みは通常の `HSET` 操作（`sonic-db-cli`、`init_cfg.json` ロード、`minigraph.py` 生成等）。明示的な `PUBLISH` はなく、Redis keyspace notification 機能が `HSET` / `DEL` を自動的に上記チャネルへ通知する。
+
+<!-- /pubsub -->
+
 ## 制約
 
 - `ipv4-port` typedef で `dst_addr` は IPv4:port のカンマ区切りに制約 (IPv6 リテラルは現状不可)[^1]
