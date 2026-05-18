@@ -241,6 +241,54 @@ NAT パスには STATE_DB へのステータス書き込みはない。orchagent
 > **証跡**: `natmgr.cpp:doStaticNatTask` L5813-6136、`addStaticNatEntry()` L1548-1590、`addStaticSingleNatEntry()` L1992-2064、`natorch.cpp:doNatTableTask` L2617-2681、`addNatEntry()` L1866-1937、`addHwDnatEntry()` L738-800、`addHwSnatEntry()` L1271-1330。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/nat-static-constants.md -->
+
+`STATIC_NAT` エントリの処理に関与する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-swss/cfgmgr/natmgr.h`。
+
+### バリデーション定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `STATIC_NAT_KEY_SIZE` | `1` | キーセグメント数。`keys.size() != 1` の場合 SWSS_LOG_ERROR + erase | `natmgr.h:33` |
+| `TWICE_NAT_ID_MIN` | `1` | `twice_nat_id` の下限値。YANG `range "1..9999"` と一致 | `natmgr.h:40` |
+| `TWICE_NAT_ID_MAX` | `9999` | `twice_nat_id` の上限値。YANG `range "1..9999"` と一致 | `natmgr.h:41` |
+| `DNAT_NAT_TYPE` | `"dnat"` | `nat_type` 省略時のデフォルト文字列 | `natmgr.h:38` |
+| `SNAT_NAT_TYPE` | `"snat"` | SNAT を示す文字列リテラル | `natmgr.h:37` |
+| `EMPTY_STRING` | `""` | `twice_nat_id` 省略時の初期値 | `natmgr.h:113` |
+| `NONE_STRING` | `"None"` | エントリ登録直後のインタフェース初期値 (`m_staticNatEntry[key].interface`) | `natmgr.h:114` |
+
+### アドレス検証マクロ
+
+`doStaticNatTask()` が `global_ip` および `local_ip` の有効性を検証するために使用する bit マスクマクロ。
+
+| マクロ | ビット定義 | 用途 |
+|--------|-----------|------|
+| `IS_ZERO_ADDR(ipaddr)` | `ipaddr == 0` | ゼロアドレス拒否 (`natmgr.cpp:5855`) |
+| `IS_BROADCAST_ADDR(ipaddr)` | `ipaddr == 0xFFFFFFFF` | ブロードキャスト拒否 |
+| `IS_LOOPBACK_ADDR(ipaddr)` | `(ipaddr & 0xFF000000) == 0x7F000000` | 127.x.x.x 拒否 |
+| `IS_MULTICAST_ADDR(ipaddr)` | `0xE0000000 <= ipaddr <= 0xEFFFFFFF` | マルチキャスト拒否 |
+| `IS_RESERVED_ADDR(ipaddr)` | `ipaddr >= 0xF0000000` | 240.x.x.x 以上の予約アドレス拒否 |
+
+これら 5 条件は `global_ip` (L5855-5861) と `local_ip` (L5944-5950) の両方で同じ順序で適用される。
+
+### タイムアウト定数 (NAT_GLOBAL 連動)
+
+STATIC_NAT 自体のフィールドではないが、`addStaticSingleNatEntry()` が APPL_DB に書き込む際、`natmgrd` の内部状態として保持されるタイムアウト値がデフォルトで使用される。
+
+| 定数 | 値 | 説明 | ソース |
+|------|----|------|--------|
+| `NAT_TIMEOUT_DEFAULT` | `600` 秒 | 非 TCP/UDP NAT エントリのアイドルタイムアウト | `natmgr.h:64` |
+| `NAT_TCP_TIMEOUT_DEFAULT` | `86400` 秒 | TCP NAT タイムアウト (1 日) | `natmgr.h:69` |
+| `NAT_UDP_TIMEOUT_DEFAULT` | `300` 秒 | UDP NAT タイムアウト | `natmgr.h:73` |
+| `NAT_ENTRY_REFRESH_PERIOD` | `86400` 秒 | dynamic NAT エントリ refresh タイマー周期 (1 日) | `natmgr.h:125` |
+
+> **YANG との対応**: `TWICE_NAT_ID_MIN/MAX` は YANG `sonic-nat.yang` の `range "1..9999"` と完全に一致しており、コードと YANG の二重バリデーションが機能している。タイムアウト定数は `NAT_GLOBAL` テーブルのデフォルト値として YANG にも対応する定義があるが、`STATIC_NAT` エントリ自体のフィールドではない。
+
+<!-- /constants -->
+
 ## silent drop / discrepancy
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doStaticNatTask L5810-6136 / sonic-utilities/config/nat.py add_basic L240-329 / sonic-nat.yang L117-155 -->
