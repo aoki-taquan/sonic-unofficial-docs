@@ -232,6 +232,44 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `NEIGH` テーブルの変更に伴う副次的 DB 書込みは、処理経路によって異なる。
+
+### 経路 1: CONFIG_DB NEIGH → nbrmgrd（Netlink 直送）
+
+`nbrmgrd` は DB への書込みを一切行わない。副作用は Linux カーネルの neighbor テーブル変更に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `reconcileNeighResolveTable()` は `NEIGH_RESOLVE_TABLE` を読み取るのみ（`getKeys`/`hget`）。`nbrmgrd` 内に Producer/Table の書込み呼出なし |
+| STATE_DB | なし | `isIntfStateOk()` / `isNeighRestoreDone()` は読取のみ。`m_stateIntfTable` / `m_stateNeighRestoreTable` への SET/DEL 呼出なし |
+| COUNTERS_DB / ASIC_DB / FLEX_COUNTER_DB | なし | `nbrmgr.cpp` 全体に COUNTERS_DB / ASIC_DB 参照なし |
+
+カーネルへの副作用:
+- `RTM_NEWNEIGH` (`NUD_PERMANENT`): スタティック neighbor をカーネル neighbor テーブルへ直接書込み
+- `RTM_NEWNEIGH` (`NUD_DELAY + NTF_USE`): `neigh` MAC 省略時にカーネルへ ARP/NDP 解決を要求。ネットワーク上に ARP Request / ICMPv6 Neighbor Solicitation が送出される
+
+### 経路 2: APPL_DB NEIGH_TABLE → NeighOrch（orchagent 経由・SAI プログラミング）
+
+CONFIG_DB `NEIGH` → `nbrmgrd` → カーネル → `neighsyncd` → APPL_DB `NEIGH_TABLE` → `NeighOrch` の下流経路で、以下の副次 DB 書込みが発生する。
+
+| 副次 DB | テーブル | 操作 | 条件 | evidence |
+|---|---|---|---|---|
+| APPL_DB | `NEIGH_RESOLVE_TABLE` | SET（解決要求発行） | MAC がゼロ（未解決）の neighbor が SET で来たとき。`resolveNeighborEntry()` が書込み | `neighorch.cpp:121` |
+| APPL_DB | `NEIGH_RESOLVE_TABLE` | DEL（解決完了後削除） | MAC 確定後の `addNeighbor` 成功時。`clearResolvedNeighborEntry()` が削除 | `neighorch.cpp:140` |
+| STATE_DB | `STATE_SYSTEM_NEIGH_TABLE` | SET / DEL | **VoQ 環境のみ** (`switch_type == "voq"`)。リモートシステム neighbor のステータスを反映 | `neighorch.cpp:2223, 2173, 2260` |
+| CHASSIS_APP_DB | `CHASSIS_APP_SYSTEM_NEIGH_TABLE` | SET / DEL | **VoQ 環境のみ**。シャーシ共有 system neighbor テーブルへ書込み | `neighorch.cpp:2654, 2688` |
+| COUNTERS_DB | CRM カウンタ（`CRM_IPV4/IPV6_NEIGHBOR` / `CRM_IPV4/IPV6_NEXTHOP` / `CRM_IPV4/IPV6_ROUTE`）| inc / dec | `gCrmOrch->incCrmResUsedCounter` / `decCrmResUsedCounter` 経由。SAI 作成・削除成否に連動 | `neighorch.cpp:1361, 1365, 1387, 1391, 359, 363, 1148, 1152` |
+
+!!! note "CONFIG_DB NEIGH の直接副作用"
+    CONFIG_DB `NEIGH` エントリの SET は `nbrmgrd` → カーネル Netlink のみ。APPL_DB `NEIGH_RESOLVE_TABLE` への書込みは `NeighOrch` が行うものであり、CONFIG_DB `NEIGH` 書込みから直接発生するわけではない。  
+    ただし `nbrmgrd` が MAC なしで `NUD_DELAY+NTF_USE` を発行してカーネルが ARP 解決を行うと、`neighsyncd` がその結果を APPL_DB `NEIGH_TABLE` に書き込み、間接的に上記ネストした副作用が発生する。
+
+詳細スキャン手順は `meta/_intermediate/cdb-flow/neigh-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- cross-refs -->
 ## 暗黙参照 — `NeighOrch` が依存する関連テーブル (Phase C)
 
