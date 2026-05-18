@@ -280,6 +280,62 @@ DEL イベントは `L2_NONE` であっても即座に消費される（適用�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照（テーブル間依存）
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-port-cross-refs.md -->
+
+`doStpPortTask()` / `processStpPortAttr()` (`stpmgr.cpp`) が `STP_PORT` SET を処理する際に暗黙的に参照するテーブル・Orch 内状態。
+
+### 1. STP|GLOBAL — stpGlobalTask フラグ + l2ProtoEnabled（必須依存）
+
+- **参照先**: CONFIG_DB `STP|GLOBAL` / stpmgrd 内部フラグ `stpGlobalTask`・`l2ProtoEnabled`
+- **方向**: 読み取り（内部フラグ経由）
+- **参照元**: `stpmgr.cpp:630-634`
+- **意味**: `doStpPortTask()` の先頭で `stpGlobalTask == false` なら即 `return`。`STP|GLOBAL.mode` が未受信のうちは `l2ProtoEnabled == L2_NONE` のため SET がすべて defer される。
+
+### 2. m_lagMap — PortChannel メンバー存在確認（暗黙 silent drop）
+
+- **参照先**: stpmgrd 内部 `m_lagMap`（`doLagMemUpdateTask()` が `PORTCHANNEL_MEMBER` 変更を受信するたびに更新）
+- **方向**: 読み取り（内部 map）
+- **参照元**: `stpmgr.cpp:648-653`, `isLagEmpty()` (`stpmgr.cpp:1306-1325`)
+- **意味**: キーが `PortChannel` を含む場合に `m_lagMap` にエントリがなければ（LAG にメンバーがいない）SET を **即消去**（silent drop、エラーなし）。PortChannel にメンバーが追加された際に `doLagMemUpdateTask()` が STP_PORT 設定を再プッシュする仕組み。
+
+### 3. STATE_DB:STATE_VLAN_MEMBER_TABLE — ポート所属 VLAN 列挙
+
+- **参照先**: `STATE_VLAN_MEMBER_TABLE`（`vlanmgrd` が VLAN メンバー状態を書き込む）
+- **方向**: 読み取り（`m_stateVlanMemberTable` 接続）
+- **参照元**: `getAllPortVlan()` (`stpmgr.cpp:978-1025`) ← `processStpPortAttr()` (`stpmgr.cpp:527`) から呼ばれる
+- **意味**: SET 処理時にインタフェースが所属する VLAN 一覧を取得し `STP_PORT_CONFIG` IPC メッセージの `vlan_list` に付加する。STATE_VLAN_MEMBER_TABLE にエントリがなければ VLAN リストが空のメッセージが stpd に送信される。
+
+### 4. CONFIG_DB:VLAN_MEMBER — tagging_mode 取得
+
+- **参照先**: CONFIG_DB `VLAN_MEMBER` テーブルの `tagging_mode` フィールド
+- **方向**: 読み取り（`m_cfgVlanMemberTable` 接続）
+- **参照元**: `getVlanMemMode()` (`stpmgr.cpp:1361-1379`) ← `getAllPortVlan()` から呼ばれる
+- **意味**: `TAGGED_MODE` / `UNTAGGED_MODE` を判定し IPC メッセージの `vlan.mode` に設定。`tagging_mode` が存在しない場合 `SWSS_LOG_ERROR` 後に `INVALID_MODE` (-1) を返し、該当 VLAN はリストから除外。
+
+### 5. m_vlanInstMap — STP インスタンス割当状態（内部配列）
+
+- **参照先**: stpmgrd 内部配列 `m_vlanInstMap[MAX_VLANS]`（`doStpVlanTask()` が stpd の `allocL2Instance()` 呼び出し後に更新）
+- **方向**: 読み取り（内部配列）
+- **参照元**: `getAllPortVlan()` (`stpmgr.cpp:1002-1010`)
+- **意味**: `m_vlanInstMap[vlan_id] == INVALID_INSTANCE` の VLAN は VLAN リストに含まれない。STP_VLAN 処理が完了していない VLAN は自動的に除外される。
+
+### 参照関係サマリ
+
+```
+STP_PORT テーブル処理
+  |- [必須フラグ]  STP|GLOBAL → stpGlobalTask + l2ProtoEnabled (欠如時 silent defer)
+  |- [暗黙 drop]   m_lagMap (PortChannel メンバー未存在時 silent drop → 再プッシュ待ち)
+  |- [VLAN 列挙]   STATE_DB:STATE_VLAN_MEMBER_TABLE (ポート所属 VLAN 一覧)
+  |- [タグ確認]    CONFIG_DB:VLAN_MEMBER.tagging_mode (TAGGED / UNTAGGED 判定)
+  |- [インスタンス] m_vlanInstMap[] (STP_VLAN 処理後に有効化される内部状態)
+  `- [出力]        stpd IPC socket (STP_PORT_CONFIG メッセージ)
+```
+
+<!-- /cross-refs -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | フィールド | 内容 |
