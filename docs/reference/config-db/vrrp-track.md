@@ -155,6 +155,73 @@ VRRP_TRACK への書き込みは直接 APPL_DB / ASIC_DB には流れない。FR
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/gNMI 直書き経路で異なる失敗分岐を持つ。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-failure.md)。
+
+### CLI 経路 — add_track_interface() の失敗パターン
+
+#### エイリアスモード
+
+| 失敗ケース | 失敗箇所 | 挙動 | retry |
+|---|---|---|---|
+| `interface_name` のエイリアス解決失敗 | `config/main.py:7000-7001` | `ctx.fail("'interface_name' is None!")` で永続拒絶 | なし |
+| `track_interface` のエイリアス解決失敗 | `config/main.py:7002-7003` | `ctx.fail("'track_interface' is None!")` で永続拒絶 | なし |
+
+#### ベースインタフェース検証
+
+| 失敗ケース | 失敗箇所 | 挙動 | retry |
+|---|---|---|---|
+| `interface_name` が Loopback 系または無効名 | `config/main.py:7006-7007` | `ctx.fail("'interface_name' is not valid. Valid names [Ethernet/PortChannel/Vlan]")` | なし |
+| `interface_name` が CONFIG_DB (INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INTERFACE) に未存在 | `config/main.py:7008-7009` | `ctx.fail("Router Interface '{}' not found")` で永続拒絶 | なし |
+
+#### 追跡インタフェース検証
+
+| 失敗ケース | 失敗箇所 | 挙動 | retry |
+|---|---|---|---|
+| `track_interface` が Loopback 系または無効名 | `config/main.py:7012-7013` | `ctx.fail("'track_interface' is not valid. Valid names [Ethernet/PortChannel/Vlan]")` | なし |
+| `track_interface` が CONFIG_DB に未存在 | `config/main.py:7014-7015` | `ctx.fail("Router Interface '{}' not found")` で永続拒絶 | なし |
+
+#### 親インスタンス・スケール検証
+
+| 失敗ケース | 失敗箇所 | 挙動 | retry |
+|---|---|---|---|
+| 親 VRRP インスタンス (`VRRP\|<intf>\|<vrid>`) が未存在 | `config/main.py:7017-7019` | `ctx.fail("vrrp instance {} not found on interface {}")` で永続拒絶 | なし |
+| 同インスタンスに既に 8 トラックインタフェースが設定済み | `config/main.py:7037-7038` | `ctx.fail("The Vrrpv instance {} has already configured 8 track interfaces")` | なし |
+| `priority_increment` が 10–50 の範囲外 | Click `IntRange(10, 50)` コマンド解析時 | 解析段階で即時拒絶。DB 書き込みなし | なし |
+
+!!! note "冪等動作"
+    既存の VRRP_TRACK エントリに `add` を再実行した場合、CLI は `ctx.fail()` せず `priority_increment` のみ上書きする (`config/main.py:7021-7026`)。
+
+### CLI 経路 — remove_track_interface() の失敗パターン
+
+| 失敗ケース | 失敗箇所 | 挙動 |
+|---|---|---|
+| `interface_name` / `track_interface` のエイリアス解決失敗 | `config/main.py:7055-7058` | `ctx.fail("'interface_name'/'track_interface' is None!")` |
+| `interface_name` が Loopback 系または無効名 | `config/main.py:7061-7062` | `ctx.fail("'interface_name' is not valid.")` |
+| `interface_name` が CONFIG_DB に未存在 | `config/main.py:7063-7064` | `ctx.fail("Router Interface '{}' not found")` |
+| `track_interface` が Loopback 系または無効名 | `config/main.py:7067-7068` | `ctx.fail("'track_interface' is not valid.")` |
+| 親 VRRP インスタンスが未存在 (インスタンス先削除時) | `config/main.py:7070-7072` | `ctx.fail("vrrp instance {} not found on interface {}")` |
+| 対象 VRRP_TRACK エントリが未存在 | `config/main.py:7074-7076` | `ctx.fail("{} is not configured on the vrrp instance {}!")` |
+
+### YANG/gNMI 直書き経路の失敗
+
+| 失敗ケース | 挙動 |
+|---|---|
+| `priority_increment` が uint8 範囲外 | YANG 型バリデーションで reject |
+| `baseifname` leafref 解決失敗 (親 VRRP インスタンス未存在) | `sonic-yang-mgmt` が leafref エラーを返す |
+| `trackifname` leafref 解決失敗 (PORT / PORTCHANNEL / VLAN 未存在) | `sonic-yang-mgmt` が leafref エラーを返す |
+
+### FRR vrrpd / zebra の失敗挙動
+
+| 条件 | 挙動 | 備考 |
+|---|---|---|
+| VRRP_TRACK 書き込み直後に FRR が未読み込みの場合 | インタフェース Up/Down 通知が来ても priority 計算が欠落する (一過性) | HLD Uplink interface tracking L481-492 |
+| zebra プロセス障害 | インタフェース状態変化通知が vrrpd に届かず priority 更新が停止 | DB への副次書き込みなし。STATE_DB 更新なし |
+
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: `sonic-utilities/config/main.py` (`add_track_interface()` L6993-7040, `remove_track_interface()` L7045-7077); `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` (CONFIG_DB changes L308-315, Uplink interface tracking L481-492); `SONiC/doc/vrrp/sonic-vrrp.yang` (VRRP_TRACK container L136-177). <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
