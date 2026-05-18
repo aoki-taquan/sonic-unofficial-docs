@@ -380,6 +380,72 @@ CONFIG_DB PIM_INTERFACE write
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+`PIM_GLOBALS` および `PIM_INTERFACE` テーブルを CONFIG_DB から購読するのは `frrcfgd` のみである。swss orchagent・bgpcfgd 等の他デーモンによる購読は確認されていない[^1]。
+
+### frrcfgd — ExtConfigDBConnector + keyspace イベント
+
+`BGPConfigDaemon` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用する。`listen()` が Redis keyspace イベント全体を `psubscribe` で監視し、変更イベントを `sub_msg_handler` でテーブル名ごとにルーティングする[^1]。
+
+```python
+# frrcfgd.py L1538-1539
+sub_key_space = "__keyspace@{}__:*".format(self.get_dbid(self.db_name))
+self.pubsub.psubscribe(sub_key_space)
+```
+
+`subscribe_all()` (frrcfgd.py L2359-2361) が起動時に PIM テーブルをハンドラに登録する:
+
+```python
+('PIM_GLOBALS',  self.bgp_table_handler_common),   # frrcfgd.py L2331
+('PIM_INTERFACE', self.bgp_table_handler_common),  # frrcfgd.py L2332
+```
+
+### イベント処理フロー
+
+```
+CONFIG_DB HSET/HDEL (PIM_GLOBALS / PIM_INTERFACE)
+  → Redis keyspace "__keyspace@N__:PIM_GLOBALS|<vrf>|<af>"
+  → ExtConfigDBConnector.sub_msg_handler()
+      → client.hgetall(key) → raw_to_typed() → data
+      → bgp_table_handler_common(table, key, data)
+          → bgp_message.put((key, del_table, table, data))
+          → __update_bgp()
+              → PIM_GLOBALS / PIM_INTERFACE 分岐
+              → key_map.run_command()
+                  → vtysh → pimd
+```
+
+### 対象デーモン (daemon_table_map)
+
+frrcfgd の `daemon_table_map` (frrcfgd.py L117-120) により、PIM テーブルの vtysh コマンドは `pimd` にのみ送信される:
+
+```python
+'PIM_GLOBALS':   ['pimd'],
+'PIM_INTERFACE': ['pimd'],
+```
+
+frrcfgd から pimd への経路は単方向であり、pimd から CONFIG_DB への逆方向書き込みは行われない。STATE_DB 連携もない。
+
+### 起動時の config replay
+
+`config_mode == "unified"` の場合、frrcfgd 起動時（frrcfgd.py L2344-2352）に全購読テーブルの既存エントリを `config_db.get_table()` で一括取得し、`bgp_message` キューに投入する。これにより frrcfgd の再起動後も CONFIG_DB の PIM 設定が pimd に再注入（replay）される[^1]。
+
+### 購読サマリ
+
+| 観点 | 内容 |
+|------|------|
+| 購読デーモン | `frrcfgd` のみ |
+| 購読方式 | Redis keyspace イベント (`psubscribe "__keyspace@N__:*"`) |
+| イベント処理 | `bgp_table_handler_common` → `bgp_message` queue → `__update_bgp()` |
+| 最終到達 | `vtysh` → `pimd`（単方向） |
+| 起動時 replay | `get_table()` → queue 投入（unified config mode） |
+| STATE_DB 連携 | なし |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-pubsub.md`
+<!-- /pubsub -->
+
 ## 購読者
 
 - `frrcfgd` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`): `PIM_GLOBALS` および `PIM_INTERFACE` を購読し、FRR pimd に `vtysh` 経由でコマンドを注入する[^1]
