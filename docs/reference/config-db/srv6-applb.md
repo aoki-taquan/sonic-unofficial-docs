@@ -242,6 +242,42 @@ MTU は `OVERLAY_RIF_DEFAULT_MTU = 9100` bytes に固定される (`srv6orch.cpp
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用マトリクス (Phase F)
+
+> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1589-1654、`deleteMysidEntry()` L1656-1710、`addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`deleteSidList()` L1119-1143 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-applb-side-effects.md`
+
+### SRV6_MY_SID_TABLE の副作用
+
+| 操作 | 副作用 | 条件 |
+|------|--------|------|
+| SET（新規） | `COUNTERS_DB.COUNTERS_SRV6_NAME_MAP` にエントリ追加 | SAI `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` 対応時のみ |
+| SET（新規） | CRM `CRM_SRV6_MY_SID_ENTRY` カウンタ +1 | SAI create_my_sid_entry 成功後（`srv6orch.cpp:1612`） |
+| SET（新規） | VrfOrch 参照カウント +1（`increaseVrfRefCount`） | `end.dt4`/`end.dt6`/`end.dt46`/`udt*` 行動で VRF 解決成功時（`srv6orch.cpp:1639`） |
+| SET（新規） | NeighOrch nexthop 参照カウント +1（`increaseNextHopRefCount`） | `end.x`/`end.dx4`/`end.dx6`/`ua`/`udx4`/`udx6` 行動で Neighbor 解決成功時（`srv6orch.cpp:1644`） |
+| SET（新規） | SAI IP-in-IP トンネル + TermEntry 作成 | DSCP モード設定が必要な行動のみ（`mySidTunnelRequired()`、`srv6orch.cpp:1554-1568`） |
+| DEL | `COUNTERS_DB.COUNTERS_SRV6_NAME_MAP` からエントリ削除、SAI カウンタ削除 | カウンタが存在する場合（`removeMySidCounter()`） |
+| DEL | CRM `CRM_SRV6_MY_SID_ENTRY` カウンタ -1 | SAI remove_my_sid_entry 前（`srv6orch.cpp:1675`） |
+| DEL | VrfOrch 参照カウント -1（`decreaseVrfRefCount`） | `end.dt*`/`udt*` 行動で VRF を保持していた場合（`srv6orch.cpp:1683`） |
+| DEL | NeighOrch nexthop 参照カウント -1（`decreaseNextHopRefCount`） | `adj` 依存行動で Neighbor を参照していた場合（`srv6orch.cpp:1689`） |
+| DEL | SAI IP-in-IP トンネル + TermEntry 削除 | DSCP モードのトンネルが存在した場合（`srv6orch.cpp:1698-1704`） |
+
+!!! note "COUNTERS_DB への書き込みは条件付き"
+    `addMySidCounter()` は `getMySidCountersSupported() && getMySidCountersEnabled()` の両方が真の場合のみ実行される。SAI が `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` を未サポートのプラットフォームでは COUNTERS_DB への副作用は発生しない。
+
+!!! note "VRF / Neighbor 参照カウントの重要性"
+    MySID エントリが VRF または Neighbor を参照している間は、VrfOrch / NeighOrch の参照カウントが保持される。この間は参照先の削除がガードされる。MySID を先に DEL してから VRF/Neighbor を DEL しないと、VRF 削除が拒否される場合がある。
+
+### SRV6_SID_LIST_TABLE の副作用
+
+`SRV6_SID_LIST_TABLE` の SET/DEL は SAI `srv6_sidlist` オブジェクトの作成・削除のみを行い、COUNTERS_DB や CRM カウンタへの副作用は発生しない。
+
+DEL 操作では `sid_table_[sid_name].nexthops.size()` が 0 でない限り SAI 削除を実行せず `task_need_retry` を返す。
+SRv6 nexthop が SID リストを参照している間は DEL が保留される。SID リスト DEL は参照 nexthop を全て DEL した後でのみ完了する。
+
+<!-- /side-effects -->
+
 ### サポート action 値
 
 `end_behavior_map`（`srv6orch.cpp:41-62`）に定義:
