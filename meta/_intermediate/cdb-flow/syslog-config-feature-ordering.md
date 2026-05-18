@@ -1,53 +1,62 @@
-# SYSLOG_CONFIG_FEATURE — 書込み順依存 (Phase B)
+# SYSLOG_CONFIG_FEATURE — Phase B 書込み順依存 調査メモ
 
-slug: syslog-config-feature
-phase: B (ordering)
-generated: 2026-05-17
+調査日: 2026-05-18
+調査者: Claude batch #6 (agent)
 
-## 調査対象
+## 調査対象ソース
 
-- `sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py`
-- `sonic-utilities/config/syslog.py`
-- `sonic-utilities/syslog_util/common.py`
+- `sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py` (ContainerConfigDaemon, SyslogHandler)
+- `sonic-host-services/scripts/hostcfgd` (RSyslogCfg, subscribe 登録部 L2499-2503)
+- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-syslog.yang` (leafref 制約)
 
-## 順序依存の検出
+## 検出された順序依存
 
-### CLI 経由書き込み
+### 1. FEATURE → SYSLOG_CONFIG_FEATURE (YANG leafref 制約)
 
-`config syslog rate-limit-container <service> -i <interval> -b <burst>` が実行されると:
+`sonic-syslog.yang` の `SYSLOG_CONFIG_FEATURE_LIST` の `leaf service` は
+`/feature:sonic-feature/feature:FEATURE/feature:FEATURE_LIST/feature:name` への leafref。
+`FEATURE` テーブルに未登録の service 名を key とした書込みは YANG バリデーション違反で拒否される。
 
-1. `syslog_common.rate_limit_validator(interval, burst)` で値域検証
-2. `db.cfgdb.get_table(syslog_common.FEATURE_TABLE)` で `FEATURE` テーブルを先読み
-3. `syslog_common.service_validator(features, service_name)` で feature 名存在チェック
-4. 検証通過後に `SYSLOG_CONFIG_FEATURE|<service>` を書き込む
+**強制先行**: `FEATURE|<service>` が CONFIG_DB に存在していなければ
+`SYSLOG_CONFIG_FEATURE|<service>` は書き込めない。
 
-→ **`FEATURE` テーブルに service 名が登録済みであることが前提**。未登録の場合は CLI が `ClickException` を返して書き込みを拒否する。
+### 2. containercfgd の init 時スナップショット読込
 
-### Runtime 側: containercfgd の受信
+`ContainerConfigDaemon.run()` は `config_db.connect(wait_for_init=True)` → `config_db.listen(init_data_handler=...)` を呼ぶ。
+`init_data_handler` 内で全ハンドラの `handle_init_data(init_data)` を一括実行し、
+`SyslogHandler.handle_init_data` が `init_data[SYSLOG_CONFIG_FEATURE_TABLE][service_name]` を取り出して `update_syslog_config` を呼ぶ。
 
-containercfgd は `ConfigDBConnector.connect(wait_for_init=True, retry_on=True)` で初期化完了を待機してから `subscribe` する。
+**含意**: containercfgd 起動時点で `SYSLOG_CONFIG_FEATURE|<service>` がまだ書かれていない場合、
+初期スナップショットにエントリが存在せず init 処理はスキップされる。
+その後 CLI 等で書込みが発生すると `handle_config` が非同期で呼ばれ、rsyslogd が再起動される。
+つまり **containercfgd 起動より後に SYSLOG_CONFIG_FEATURE が書かれても問題なく反映される**。
 
-初期化時は `init_data_handler` → `handle_init_data` の順で `SYSLOG_CONFIG_FEATURE` の current key を自コンテナ名でフィルタして適用。
+### 3. key ≠ service_name の早期 return
 
-Runtime 変更は `handle_config` callback → `update_syslog_config` → `sonic-cfggen` + `supervisorctl restart rsyslogd` の順。
+`handle_config` は `if key != service_name: return` で他コンテナ向けエントリを無視する。
+複数コンテナが同一 CONFIG_DB を購読しているが、各 containercfgd インスタンスは自分の service_name のエントリのみ処理する。
+書込み順やバースト配信の順序は、各コンテナにとって独立であり、相互干渉なし。
 
-### `SYSLOG_CONFIG` (GLOBAL) との関係
+### 4. SYSLOG_CONFIG (グローバル) との関係
 
-`containercfgd` は `SYSLOG_CONFIG` テーブルを **直接購読しない**。
-グローバル rate-limit は `rsyslog-container.conf.j2` テンプレート内で `sonic-cfggen -d` 経由で展開される際に参照される。
-すなわち `SYSLOG_CONFIG|GLOBAL` の値が先に書かれている必要があるが、`containercfgd` レイヤでは明示的な待機/依存チェックはなく、テンプレート生成時の DB スナップショットで値が取得される。
+- `hostcfgd` が `SYSLOG_CONFIG` を購読し、グローバル rsyslog 設定を `/etc/rsyslog.d/` に書き込む
+- `containercfgd` 内 `SyslogHandler` が `SYSLOG_CONFIG_FEATURE` を購読し、コンテナ内 `/etc/rsyslog.conf` を書き込む
+- 両テーブルは**独立した購読チェーン**で処理される。`SYSLOG_CONFIG` 変更が `SYSLOG_CONFIG_FEATURE` 処理を直接トリガしない
+- ただし、per-feature エントリが**存在しない**場合のみ hostcfgd が生成したグローバル設定が有効（上位層でのフォールバック）
 
-## 順序依存まとめ
+### 5. 削除順序
 
-| # | 依存関係 | 方向 | 緩和策 |
-|---|----------|------|--------|
-| 1 | `FEATURE|<service>` → `SYSLOG_CONFIG_FEATURE|<service>` | **先行必須**（CLI が FEATURE 未登録を拒否） | YANG leafref も同様の制約 |
-| 2 | `SYSLOG_CONFIG|GLOBAL` → `SYSLOG_CONFIG_FEATURE|<service>` 適用 | 推奨先行（テンプレート生成時に参照） | 欠落時は rsyslog デフォルト値が使用される可能性 |
-| 3 | `containercfgd` 起動完了 → 変更反映 | 起動順序依存（`wait_for_init=True`） | containercfgd が DB に再接続するまで pending |
+`SYSLOG_CONFIG_FEATURE|<service>` が DEL された場合:
+- `handle_config` が `data={}` (空dict) で呼ばれる
+- `new_interval = '0'`, `new_burst = '0'` となり rsyslogd が rate-limit 0 設定で再起動
+- `FEATURE` エントリ削除より先に `SYSLOG_CONFIG_FEATURE` を削除することが推奨（逆順だと YANG leafref 状態は壊れないが CONFIG_DB 上に孤立エントリが残る）
 
-## 証跡
+## 結論
 
-- `sonic-utilities/config/syslog.py:476-477` — `get_table(FEATURE_TABLE)` → `service_validator`
-- `containercfgd/containercfgd.py:48` — `connect(wait_for_init=True, retry_on=True)`
-- `containercfgd/containercfgd.py:133-135` — `init_data_handler` で自コンテナのみ処理
-- `containercfgd/containercfgd.py:121` — `key != service_name` early return
+| # | 依存関係 | 方向 | 強度 |
+|---|----------|------|------|
+| 1 | `FEATURE|<service>` → `SYSLOG_CONFIG_FEATURE|<service>` | YANG leafref 強制先行 | 強（書込み拒否） |
+| 2 | `SYSLOG_CONFIG_FEATURE|<service>` → containercfgd `init_data_handler` | 起動前存在推奨 | 弱（後書き可） |
+| 3 | 各コンテナの containercfgd は独立 | 順序無関係 | N/A |
+| 4 | `SYSLOG_CONFIG` と `SYSLOG_CONFIG_FEATURE` は独立チェーン | 直接依存なし | N/A |
+| 5 | 削除時: `SYSLOG_CONFIG_FEATURE` → `FEATURE` | 推奨先行 | 弱（強制なし） |

@@ -321,4 +321,43 @@ db_migrator.py での SYSLOG_CONFIG_FEATURE マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`SYSLOG_CONFIG_FEATURE` は per-container の syslog rate-limit 設定テーブルで、
+`containercfgd` (`sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py`) が購読する。
+APPL_DB / SAI は経由しないため、書込み順依存はコントロールプレーン内の CONFIG_DB 購読チェーンに限定される。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 強度 | 根拠 |
+|---|----------|------|------|------|
+| 1 | `FEATURE\|<service>` → `SYSLOG_CONFIG_FEATURE\|<service>` | YANG leafref 強制先行 | **強**（書込み拒否） | `sonic-syslog.yang` `leaf service` leafref |
+| 2 | containercfgd 起動 → `init_data_handler` で初期スナップショット適用 | 起動前存在が推奨 | **弱**（後書きでも `handle_config` で反映） | `containercfgd.py` L52-61 |
+| 3 | 削除時: `SYSLOG_CONFIG_FEATURE\|<service>` DEL → `FEATURE\|<service>` DEL | 先行推奨 | **弱**（強制なし） | YANG leafref は DEL 後に解消 |
+| 4 | `SYSLOG_CONFIG` と `SYSLOG_CONFIG_FEATURE` は独立購読チェーン | 直接依存なし | N/A | hostcfgd vs containercfgd |
+
+### 主要な制約詳細
+
+**FEATURE leafref 制約 (依存 #1)**: `sonic-syslog.yang` の `SYSLOG_CONFIG_FEATURE_LIST` の `leaf service` は
+`/feature:sonic-feature/feature:FEATURE/feature:FEATURE_LIST/feature:name` への leafref である。
+`FEATURE` テーブルに未登録の docker 名を key にした書込みは YANG バリデーション層で拒否されるため、
+`FEATURE|<service>` の登録は `SYSLOG_CONFIG_FEATURE|<service>` の書込みより**必ず先行**しなければならない。
+
+**containercfgd init スナップショット (依存 #2)**: `ContainerConfigDaemon.run()` は `wait_for_init=True` で
+CONFIG_DB に接続し、`listen(init_data_handler=self.init_data_handler)` を呼ぶ。
+`SyslogHandler.handle_init_data` は `init_data[SYSLOG_CONFIG_FEATURE_TABLE].get(service_name)` を参照し、
+エントリが存在すれば `update_syslog_config()` → rsyslogd 再起動を行う。
+起動後に書き込まれた変更は `handle_config` コールバックで逐次処理されるため、
+**containercfgd 起動後に SYSLOG_CONFIG_FEATURE を書き込んでも適切に反映される**（中断なし）。
+
+**コンテナ間独立 (依存 #4)**: `handle_config` の冒頭で `if key != service_name: return` による早期 return があり、
+各コンテナの `containercfgd` は自コンテナの `service_name` に一致するエントリのみ処理する。
+複数コンテナへの `SYSLOG_CONFIG_FEATURE` 同時書込みは相互に干渉しない。
+
+<!-- evidence: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py L44-61,112-135 -->
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-syslog.yang (leaf service leafref) -->
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 9dae6d74c08e -->
