@@ -292,6 +292,58 @@ PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/tc-to-priority-group-map-failure.md -->
+
+### retry パターン概要
+
+`TC_TO_PRIORITY_GROUP_MAP` の SET/DEL 処理は `TcToPgHandler::processWorkItem` (基底クラス `QosMapHandler::processWorkItem`) が `task_process_status` を返し、`Consumer` ベースのタスクキュー (`m_toSync`) で管理される。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **`task_need_retry`** | pending remove 中の SET、参照中エントリへの DEL | `m_toSync` に残し次 `doTask()` で再試行。上限なし |
+| **`task_invalid_entry`** | 存在しないエントリへの DEL、未知の op | エントリ削除。retry なし |
+| **`task_failed`** | SAI create / modify / remove 失敗 | エントリ削除。retry なし |
+
+### SET 失敗詳細
+
+#### pending remove 中の SET
+DEL が pending（`m_pendingRemove = true`）の状態で同名エントリへ SET が来た場合: `SWSS_LOG_NOTICE "Entry TC_TO_PRIORITY_GROUP_MAP <name> is pending remove, need retry"` → `task_need_retry`。参照が解放されて DEL が完了した後の次回イテレーションで SET が処理される。(`qosorch.cpp:136-140`)
+
+#### `pg` / `tc` フィールドの型変換失敗
+`TcToPgHandler::convertFieldValuesToAttributes` は `stoi()` で `tc`（キー）と `pg`（値）を `uint8_t` に変換する。空文字列または非数値文字列の場合 `stoi()` が例外をスロー。例外は `convertFieldValuesToAttributes` 内では捕捉されず、呼び出し元 `processWorkItem` の `!convertFieldValuesToAttributes()` 判定で `task_invalid_entry` を返す。YANG の `pg` フィールドは `pattern "[0-7]?"` で空文字列を構文上許容するため、YANG バリデーション通過後に silent drop となる。(`qosorch.cpp:884-901`, `qosorch.cpp:145-148`)
+
+#### SAI create_qos_map 失敗（新規エントリ）
+`sai_qos_map_api->create_qos_map()` が `SAI_STATUS_SUCCESS` 以外を返す場合: `SWSS_LOG_ERROR "Failed to create tc_to_pg map. status:%d"` → `SAI_NULL_OBJECT_ID` 返却 → 上位で `SWSS_LOG_ERROR "Failed to create [TC_TO_PRIORITY_GROUP_MAP:<name>]"` → `task_failed`。(`qosorch.cpp:920-924`, `qosorch.cpp:162-166`)
+
+#### SAI set_qos_map_attribute 失敗（既存エントリ更新）
+既存マップへの SET で `sai_qos_map_api->set_qos_map_attribute()` が失敗: `SWSS_LOG_ERROR "Failed to modify map. status:%d"` → 上位で `SWSS_LOG_ERROR "Failed to set [TC_TO_PRIORITY_GROUP_MAP:<name>]"` → `task_failed`。旧値が SAI に残ったまま rollback なし。(`qosorch.cpp:204-213`, `qosorch.cpp:151-155`)
+
+### DEL 失敗詳細
+
+#### 存在しないエントリへの DEL
+`m_qos_maps["TC_TO_PRIORITY_GROUP_MAP"]` に該当名が存在しない場合: `SWSS_LOG_ERROR "Object with name:<name> not found."` → `task_invalid_entry`。(`qosorch.cpp:176-179`)
+
+#### 参照中エントリの DEL
+`PORT_QOS_MAP` または `TUNNEL_DECAP_TABLE` が本マップを参照している場合: `SWSS_LOG_NOTICE "Can't remove object <name> due to being referenced (<hint>)"` → `m_pendingRemove = true` → `task_need_retry`。参照側テーブルのエントリが削除されると自動的に DEL が進む。(`qosorch.cpp:181-186`)
+
+#### SAI remove_qos_map 失敗
+`sai_qos_map_api->remove_qos_map()` が失敗した場合: `SWSS_LOG_ERROR "Failed to remove QoS map. db name:<name> sai object:<oid>"` → `task_failed`。(`qosorch.cpp:188-191`)
+
+### 部分適用の注意
+
+`convertFieldValuesToAttributes` は全 TC→PG エントリを一括で SAI map list に変換し、1 回の `create_qos_map` / `set_qos_map_attribute` で適用する。個別エントリの部分失敗は発生しない（全件成功か全件失敗）。
+
+既存マップ更新時に `modifyQosItem` が失敗した場合、旧値が SAI に残る（rollback なし）。
+
+### STATE_DB / ERROR_TABLE への記録
+
+なし。`QosOrch` は `TC_TO_PRIORITY_GROUP_MAP` の処理結果を STATE_DB や ERROR_TABLE に書き出さない。失敗の確認は orchagent ログ (`/var/log/syslog`) または `sonic-db-cli ASIC_DB` での直接確認が必要。
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
