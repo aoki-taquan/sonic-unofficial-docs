@@ -374,6 +374,45 @@ EvpnNvoOrch* evpn_nvo_orch =
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差・SAI capability 分岐 (Phase H)
+
+### isDipTunnelsSupported() — P2P peer mode capability 分岐
+
+`VxlanTunnelOrch` コンストラクタ (vxlanorch.cpp:1256–1278) が orchagent 起動時に SAI capability query を実行する[^5]。
+
+```cpp
+sai_query_attribute_enum_values_capability(
+    gSwitchId, SAI_OBJECT_TYPE_TUNNEL,
+    SAI_TUNNEL_ATTR_PEER_MODE, &values);
+```
+
+この結果により `is_dip_tunnel_supported` フラグが確定し、EVPN トンネルアーキテクチャ全体が変化する。
+
+| 条件 | `isDipTunnelsSupported()` | EVPN DIP トンネルポート (`Port_EVPN_*`) | SRC VTEP ポート (`Port_SRC_VTEP_*`) |
+|-----|--------------------------|----------------------------------------|--------------------------------------|
+| SAI が `SAI_TUNNEL_PEER_MODE_P2P` を返す | `true` | リモート VTEP ごとに個別生成 | 生成されない |
+| SAI が P2P を返さない (P2MP のみ対応) | `false` | 生成されない | `VXLAN_TUNNEL_MAP` 追加時に 1 つだけ生成、全リモート VTEP を共用 |
+| SAI query 自体が失敗 | `true` (フォールバック) | リモート VTEP ごとに個別生成 | 生成されない |
+
+!!! warning "P2P 非対応プラットフォームの制約"
+    `isDipTunnelsSupported() == false` の環境では EVPN DIP トンネルが機能せず、
+    単一の `Port_SRC_VTEP_*` ポートがすべてのリモート VTEP を共用する縮退モードで動作する。
+    各リモート VTEP に独立した QoS / カウンタ管理ができなくなる点に注意。
+
+### encap TTL / decap TTL モード — SAI プラットフォームデフォルト依存
+
+フィールド省略時に SAI 属性を渡さないケースがあり、実際の動作はベンダー SAI 実装依存となる (vxlanorch.cpp:372–393)[^1]。
+
+| 省略ケース | SAI 属性 | 実挙動 |
+|-----------|---------|-------|
+| `encap_ttl == 0` | `SAI_TUNNEL_ATTR_ENCAP_TTL_MODE` を未設定 | SAI プラットフォームデフォルト（ベンダー依存） |
+| `ttl_mode == NOT_SET` | `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` を未設定 | SAI プラットフォームデフォルト（ベンダー依存） |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-platform.md`
+
+<!-- /platform -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VXLAN_TUNNEL`](vxlan-tunnel.md)、[`VXLAN_TUNNEL_MAP`](vxlan-tunnel-map.md)
@@ -395,3 +434,4 @@ EvpnNvoOrch* evpn_nvo_orch =
 [^2]: orchdaemon 初期化順序 (`orchdaemon.cpp:350-590`), VxlanMgr::doTask() (`cfgmgr/vxlanmgr.cpp:213-262`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
 [^3]: VxlanTunnel::createTunnelHw() ロールバック (`vxlanorch.cpp:895-940`), VxlanTunnelMapOrch::addOperation() 依存チェック (`vxlanorch.cpp:2012-2090`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L895>
 [^4]: VxlanTunnel ctor/dtor/addRemoveStateTableEntry (`vxlanorch.cpp:537,545,1913`), addTunnelToFlexCounter (`vxlanorch.cpp:911,1342`), addVlanMappedToVni (`vxlanorch.cpp:2120`, `vxlanorch.h:354`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
+[^5]: `VxlanTunnelOrch` コンストラクタ SAI capability query (`vxlanorch.cpp:1256–1278`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1256>

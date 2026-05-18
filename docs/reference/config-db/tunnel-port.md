@@ -314,6 +314,30 @@ SAI ポートステータス変化イベント
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`Port::TUNNEL` は CONFIG_DB / APPL_DB テーブルを直接購読しない。親テーブル (`VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO`) の処理結果として動的生成されるオブジェクトであり、pubsub の観点では「PortsOrch が内部 API 経由で生成し、STATE_DB / COUNTERS_DB を書く」構造である[^1]。
+
+### 書き込みパス
+
+| 宛先 DB / API | 経路 | タイプ | タイミング |
+|--------------|------|--------|----------|
+| STATE_DB `VXLAN_TUNNEL_TABLE\|<name>` (`operstatus`) | SAI ポートイベント → `updateDbTunnelOperStatus()` (vxlanorch.cpp:1893) → `Table::set()` | Redis `HSET` 直接発行（ProducerStateTable ではない） | アンダーレイルート確立後、非同期 |
+| COUNTERS_DB `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` | `addTunnelToFlexCounter()` → `SelectableTimer` 発火 (vxlanorch.cpp:1322–1335) | `Table::set()` | 最大 1 秒遅延 (タイマー発火まで) |
+| ASIC_DB (SAI) | `create_bridge_port()` 直接呼び出し via `addBridgePort()` (portsorch.cpp:7258) | SAI API 同期呼び出し | `addBridgePort()` と同期 |
+
+### in-process Observer 通知
+
+`PortsOrch::addBridgePort()` / `removeBridgePort()` 末尾 (portsorch.cpp:7280–7281) が `SUBJECT_TYPE_BRIDGE_PORT_CHANGE` を in-process Observer パターンで発行する。購読者は `IsolationGroupOrch` のみ (isolationgrouporch.cpp:233)。`Port::TUNNEL` 型に対する特別処理はなく、実質的な副作用は発生しない。この通知は Redis Pub/Sub チャンネルではなく、`m_observers` 経由のプロセス内通知である。
+
+!!! note "Redis Pub/Sub は使用しない"
+    `Port::TUNNEL` の生成・削除は `ProducerStateTable` / `ConsumerStateTable` 型の Redis Pub/Sub を介さない。STATE_DB / COUNTERS_DB への書込は `Table` 型 (`HSET` 直接発行) であり、外部プロセスへの通知チャンネルは発生しない。VXLAN_TUNNEL_TABLE の変化を知るためには STATE_DB をポーリングするか keyspace notification を利用する必要がある。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-pubsub.md`
+
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 - **二重生成の防止**: `getTunnelPort()` が既存エントリを発見した場合 `addTunnel()` を呼ばない。ポートは 1 remote VTEP につき 1 つのみ存在する (`vxlanorch.cpp:1715`)。

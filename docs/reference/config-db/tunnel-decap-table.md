@@ -551,4 +551,34 @@ SAI `create_tunnel()` / `create_tunnel_term_table_entry()` 成功後、`stateTun
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差・SAI capability 分岐 (Phase H)
+
+### SAI create-only 属性の更新スキップ — 全プラットフォーム共通
+
+`SAI_TUNNEL_ATTR_DECAP_ECN_MODE` / `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` は SAI 仕様上 create-only 属性であり、既存トンネルへの更新試行は自動スキップされる[^1]。
+
+| 属性 | create-only の影響 | ログ |
+|-----|------------------|------|
+| `SAI_TUNNEL_ATTR_DECAP_ECN_MODE` (`ecn_mode`) | 更新 SET をスキップ。作成時の値が永続する | `SWSS_LOG_WARN("Skip setting ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_DECAP_ECN_MODE is create only")` |
+| `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` (`encap_ecn_mode`) | 更新 SET をスキップ | `SWSS_LOG_NOTICE("Skip setting encap_ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_ENCAP_ECN_MODE is create only")` |
+
+この挙動は SAI 仕様準拠の共通動作であり、特定ベンダーに依存しない。`ecn_mode` を変更する場合は TUNNEL_DECAP_TABLE エントリを一度削除して再作成する必要がある。
+
+### OVERLAY_RIF_DEFAULT_MTU = 9100 — プラットフォーム非依存ハードコード
+
+オーバーレイ loopback RIF の MTU が `OVERLAY_RIF_DEFAULT_MTU = 9100` でハードコードされている (tunneldecaporch.cpp:14)。SAI プラットフォームのデフォルト MTU（通常 1500）に依存せず、VXLAN / IP-in-IP カプセルパケットの断片化を防ぐための固定値。プラットフォームを問わず適用される。
+
+### subnet decap — ハードコードトンネル名制約
+
+`TUNNEL_DECAP_TABLE` で subnet decap を有効にするには `"IPINIP_SUBNET"` (IPv4) / `"IPINIP_SUBNET_V6"` (IPv6) という名前でトンネルを作成する必要がある。これらの名前は `SubnetDecapConfig` にハードコードされており、プラットフォームや構成に関わらず変更不可。別名のトンネルへ subnet decap term を設定しようとすると `"subnet decap is disabled, ignored."` を LOG_ERROR してスキップされる。
+
+### SAI capability query なし
+
+`tunneldecaporch` は orchagent 起動時に `sai_query_attribute_enum_values_capability()` を呼ばない。プラットフォーム capability による動作分岐は存在せず、すべてのプラットフォームで同一の SAI 属性セットを使用する。特定の SAI 属性が非サポートの場合はエラーログのみで継続する。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-table-platform.md`
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->
