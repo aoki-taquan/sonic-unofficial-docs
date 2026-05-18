@@ -523,3 +523,42 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 > **Evidence**: `orchdaemon.cpp:367-384` (QosOrch 生成・qos_tables 登録); `orch.cpp:1186-1196` (SubscriberStateTable 生成); `qosorch.cpp:1317-1345` (initTableHandlers / handleExpToFcTable 登録); `qosorch.cpp:2231-2300` (doTask drain 順序)
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/exp-to-fc-map-platform.md -->
+
+### FC サポート有無（最大のプラットフォーム差）
+
+`EXP_TO_FC_MAP` の動作はスイッチが CBF / MPLS EXP → FC マッピングを SAI レベルでサポートするかに依存する。`NhgMapOrch::getMaxNumFcs()` が `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` をクエリし、結果をキャッシュする（`nhgmaporch.cpp:299-325`）。
+
+| SAI クエリ結果 | `max_num_fcs` 値 | EXP_TO_FC_MAP SET 時の挙動 |
+|---------------|----------------|--------------------------|
+| 成功（FC サポートあり） | スイッチ返値（例: テスト環境では 63） | `fc` 値が `[0, max_num_fcs)` の範囲なら受理 |
+| 失敗（FC 未サポートスイッチ） | `0`（固定） | 全 `fc` 値が `task_invalid_entry` で reject。`SWSS_LOG_WARN("Switch does not support FCs")` のみ出力 |
+
+FC 未サポートの ASIC では `EXP_TO_FC_MAP` エントリを CONFIG_DB に書いても SAI/ASIC に一切反映されない（silent drop）。
+
+### VoQ / DPU / SmartSwitch
+
+`handleExpToFcTable()` 実装には `gMySwitchType` によるプラットフォーム分岐が存在しない。
+
+| 環境 | 影響 | 根拠 |
+|------|------|------|
+| VoQ システム | 差異なし — VoQ 分岐（`qosorch.cpp:1637,1715,1772`）は QUEUE ハンドラ専用 | EXP_TO_FC_MAP パスに VoQ 分岐なし |
+| DPU / SmartSwitch | 差異なし — 実装ガードなし（MPLS CBF は DPU 環境では非使用） | — |
+| multi-asic | 各 ASIC の orchagent が独立して CONFIG_DB を購読（標準動作） | `SubscriberStateTable` |
+
+### qos_config.j2 テンプレート（初期値なし）
+
+汎用 `qos_config.j2`（`sonic-buildimage/files/build_templates/qos_config.j2`）に `EXP_TO_FC_MAP` セクションは存在しない。MPLS CBF は MPLS 環境固有のためデフォルト定義がなく、プラットフォーム固有の j2 テンプレートで必要に応じて定義される。
+
+### YANG 制約 vs 実装上限（プラットフォーム依存）
+
+| フィールド | YANG パターン | 実装上限 | 差異の原因 |
+|-----------|--------------|---------|-----------|
+| `fc` (value) | `"[0-7]?"` (最大 7) | `max_num_fcs - 1`（SAI クエリ依存） | FC 数がスイッチ能力依存。YANG の `7` より広い場合も狭い場合もある |
+
+> **Evidence**: `nhgmaporch.cpp:299-325` (`NhgMapOrch::getMaxNumFcs()`); `qosorch.cpp:1637,1715,1772` (VoQ 分岐は QUEUE 専用); `sonic-buildimage/files/build_templates/qos_config.j2` (EXP_TO_FC_MAP セクションなし)
+<!-- /platform -->
