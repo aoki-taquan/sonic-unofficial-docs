@@ -331,3 +331,29 @@ MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定�
 - **`oper_status = "unknown"` の意味**: `mgmt_oper_status.py` が例外で終了した場合にのみ設定される値。通常の `up`/`down` と区別して監視することを推奨する。
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mgmt_port.yang / sonic-buildimage/files/image_config/monit/mgmt_oper_status.py / sonic-buildimage/files/image_config/config-setup/config-setup.conf / sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py / sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2 -->
+
+| 定数名 | 値 | 型 | 定義場所 | 説明 |
+|--------|----|----|---------|------|
+| `speed` 許容値 | `10`/`100`/`1000` | YANG `range` 制約 | `sonic-mgmt_port.yang:39` | 管理ポート速度の有効値。Mbps 単位。この 3 値以外は YANG バリデーションで拒否される。 |
+| `mtu` デフォルト | `1500` | YANG `default` | `sonic-mgmt_port.yang:68` | MTU のデフォルト値。`mtu` フィールド省略時に YANG が返す値。ただし実際の eth0 MTU への反映コードは未実装（dead write）。 |
+| `mtu` 許容範囲 | `1500..9216` | YANG `range` 制約 | `sonic-mgmt_port.yang:66` | MTU の最小・最大値。1500 未満または 9216 超は YANG バリデーションで拒否。 |
+| `admin_status` デフォルト | `"up"` | YANG `default` | `sonic-mgmt_port.yang:74` | 管理状態のデフォルト値。`admin_status` 省略時は `up` として扱われる。minigraph も常時 `"up"` をハードコードで注入する（`minigraph.py:2294`）。 |
+| `autoneg` 許容値 | `"on"`/`"off"` | YANG `pattern` 制約 | `sonic-mgmt_port.yang:46-51` | `on` または `off` のみ有効。それ以外は YANG バリデーションで拒否。コンシューマが存在しないため設定しても eth0 の autoneg は変化しない（dead field）。 |
+| インターフェース名パターン | `eth([1-3][0-9]{3}\|[1-9][0-9]{2}\|[1-9][0-9]\|[0-9])` | YANG `pattern` 制約 | `sonic-mgmt_port.yang:32-36` | 管理 IF 名の正規表現制約。`eth0`–`eth3999` の範囲を許可。不正名は YANG バリデーションで拒否。 |
+| STATE_DB キープレフィックス | `"MGMT_PORT_TABLE\|"` | 文字列定数 | `mgmt_oper_status.py:25` | STATE_DB への同期先テーブル名。`"MGMT_PORT_TABLE\|{port}"` の形式でフィールドを書き込む。 |
+| `KEEP_BASIC_TABLES` | `["MGMT_PORT", "MGMT_INTERFACE", "MGMT_VRF_CONFIG", "PASSW_HARDENING"]` | JSON 配列定数 | `config-setup.conf:4` | factory reset / config erase 時も保持するテーブルリスト。MGMT_PORT はこのリストに含まれるため、設定初期化後も管理ポート設定が残存する。 |
+| SNMP `alias` フォールバック | `if_name`（例: `"eth0"`）| 文字列フォールバック | `sonic_ax_impl/mibs/__init__.py:270` | SNMP MIB が `alias` フィールドを取得する際、フィールド省略時は `if_name` をフォールバック値として返す。`if_entry.get('alias', if_name)` で実装。 |
+| LLDP ポート ID タイプフォールバック | `mgmt_if.port_name`（`eth0`）| 文字列フォールバック | `lldpd.conf.j2:20` | `MGMT_PORT.alias` が存在しない場合、LLDP の `configure ports eth0 lldp portidsubtype local` に `mgmt_if.port_name`（= `eth0`）をフォールバック使用。 |
+
+### 補足
+
+- `mtu=1500` は YANG デフォルトとして定義されているが、`interfaces.j2` テンプレートや hostcfgd の MGMT_PORT コンシューマが MTU を eth0 に適用するコードは存在しない。実際の eth0 MTU はカーネルのデフォルト（通常 1500）または platform 固有の設定に依存する。
+- `speed` / `autoneg` フィールドは YANG 定義があり YANG バリデーションは通過するが、これらを参照して ethtool を実行するコンシューマが存在しないため **dead write** である（Phase A 調査で確認済み）。
+- `KEEP_BASIC_TABLES` に MGMT_PORT が含まれることで、`config erase` 後も eth0 の基本設定が保持され管理アクセスが維持される設計になっている。
+
+<!-- /constants -->
