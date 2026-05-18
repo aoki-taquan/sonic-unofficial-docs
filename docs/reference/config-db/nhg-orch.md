@@ -366,6 +366,46 @@ STATE_DB / APPL_STATE_DB への直接書込み・`ResponsePublisher` の使用�
 詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`NhgOrch` / `CbfNhgOrch` / `NhgMapOrch` は純粋な Consumer であり、`NotificationConsumer` / `ResponsePublisher` は使用しない。Producer → APPL_DB → Consumer (orchagent) という一方向 Pub/Sub 経路のみで動作する。
+
+### Producer 側
+
+| テーブル | Producer | 機構 |
+|---------|---------|------|
+| `NEXTHOP_GROUP_TABLE` | `fpmsyncd` (RouteSync) | `ProducerStateTable` — FRR/Zebra から kernel netlink で受信した ECMP ルートを `updateNextHopGroupDb()` → `m_nexthop_groupTable.set/del()` で書き込む (`routesync.cpp:157`, `routesync.cpp:3400-3419`, `routesync.cpp:3370`) |
+| `CLASS_BASED_NEXT_HOP_GROUP_TABLE` | 上位制御プレーン (BGP ソフトウェア等) | `ProducerStateTable` — sonic-swss 本体での書き込みデーモンは未実装。テストは `test_nhg.py:216` で ProducerStateTable を直接使用 |
+| `FC_TO_NHG_INDEX_MAP_TABLE` | 上位制御プレーン | 同上 |
+
+`ProducerStateTable::set/del` は `<TABLE>_CHANNEL@0` に Redis PUBLISH を発行する。
+
+### Consumer 側 (orchagent)
+
+3 オーケストレータはいずれも `Orch(db, tableName)` 基底クラスが生成する `ConsumerStateTable` で APPL_DB を購読する。
+
+| オーケストレータ | 購読テーブル | 構築箇所 |
+|----------------|------------|---------|
+| `NhgOrch` | `NEXTHOP_GROUP_TABLE` | `orchdaemon.cpp:338` |
+| `CbfNhgOrch` | `CLASS_BASED_NEXT_HOP_GROUP_TABLE` | `orchdaemon.cpp:339` |
+| `NhgMapOrch` | `FC_TO_NHG_INDEX_MAP_TABLE` | `orchdaemon.cpp:490` |
+
+orchagent の `Select::select` タイムアウトは **1000 ms** (`orchdaemon.cpp:23`)。`orchList` の処理順は `NhgMapOrch` → `NhgOrch` → `CbfNhgOrch` であり、同一サイクル内で FC_TO_NHG_INDEX_MAP → NEXTHOP_GROUP → CLASS_BASED_NEXT_HOP_GROUP の順に消費が試みられる (`orchdaemon.cpp:500`)。
+
+### 通信経路サマリ
+
+| 経路 | チャンネル | 書き込み元 | 消費者 |
+|------|----------|-----------|--------|
+| FRR/Zebra → fpmsyncd | kernel netlink | FRR zebra | fpmsyncd RouteSync |
+| fpmsyncd → APPL_DB | `NEXTHOP_GROUP_TABLE_CHANNEL@0` | ProducerStateTable | NhgOrch |
+| 上位制御プレーン → APPL_DB | `CLASS_BASED_NEXT_HOP_GROUP_TABLE_CHANNEL@0` | ProducerStateTable | CbfNhgOrch |
+| 上位制御プレーン → APPL_DB | `FC_TO_NHG_INDEX_MAP_TABLE_CHANNEL@0` | ProducerStateTable | NhgMapOrch |
+| NhgOrch → SAI | `sai_next_hop_group_api` (syncd 経由) | orchagent | ASIC |
+
+詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-pubsub.md`
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
