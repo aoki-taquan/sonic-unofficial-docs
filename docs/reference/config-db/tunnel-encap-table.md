@@ -167,6 +167,27 @@ GRE tunnel は warm-reboot 後に P4RT controller が APPL_DB に再書き込み
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`GreTunnelManager` が `FIXED_TUNNEL_TABLE` エントリを SET / DEL する際、APPL_DB フィールドには現れないが処理上で参照・更新されるテーブル・リソースを列挙する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 不在時の挙動 | evidence |
+|--------------------------|---------|------|------------|----------|
+| `FIXED_ROUTER_INTERFACE_TABLE` (`param/router_interface_id`) | **先行必須** (P4OidMapper `getOID(ROUTER_INTERFACE, ...)`) | SET 操作時に常時チェック。`router_interface_id` 省略時も `INVALID_PARAM` で拒否される | `SWSS_RC_NOT_FOUND` → SET 全体失敗 | `gre_tunnel_manager.cpp:129-134` |
+| Neighbor エントリ (`encap_dst_ip` + `router_interface_id`) | **先行必須** (P4OidMapper `existsOID(NEIGHBOR_ENTRY, ...)`) | SET 操作時。 `neighbor_key = {router_interface_id}:{encap_dst_ip}` で照合 (BRCM SAI 要件) | `SWSS_RC_NOT_FOUND` → SET 全体失敗 | `gre_tunnel_manager.cpp:139-149` |
+| `FIXED_NEXTHOP_TABLE` — `set_p2p_tunnel_encap_nexthop` で参照するエントリ (下流) | **DEL ブロック** (P4OidMapper `getRefCount(TUNNEL, ...)`) | DEL 操作時に `ref_count > 0` を確認。nexthop が本トンネルを参照中は DEL 不可 | `SWSS_RC_INVALID_PARAM` → DEL 失敗。nexthop を先に DEL すること | `gre_tunnel_manager.cpp:162-169` |
+| P4OidMapper (`SAI_OBJECT_TYPE_ROUTER_INTERFACE` ref_count) | **副作用** — SET 成功時にインクリメント / DEL 成功時にデクリメント | 常時 | - (内部管理) | `gre_tunnel_manager.cpp:445-446, 505-506` |
+| P4OidMapper (`SAI_OBJECT_TYPE_NEIGHBOR_ENTRY` ref_count) | **副作用** — SET 成功時にインクリメント / DEL 成功時にデクリメント | 常時 | - (内部管理) | `gre_tunnel_manager.cpp:448-452, 508-511` |
+
+!!! note "RIF / Neighbor の P4Orch 内処理優先順"
+    `m_p4ManagerAddPrecedence` により RouterInterfaceManager (2位) → NeighborManager (3位) → GreTunnelManager (4位) の順に処理される。P4RT controller が同一 WriteRequest でこれらを混在させた場合でも、P4Orch が自動的に正しい順序で処理する。
+
+!!! warning "DEL 逆順制約"
+    下流の `FIXED_NEXTHOP_TABLE` エントリが本トンネルを参照している間は `FIXED_TUNNEL_TABLE` を削除できない。削除順は必ず **(nexthop など上流参照) → FIXED_TUNNEL_TABLE → Neighbor → RIF** の順にすること。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
