@@ -136,6 +136,31 @@ if ((!nat_zone.empty()) and (port.m_nat_zone_id != nat_zone_id))
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`nat_zone` フィールドの設定は、2 つのデーモン (`natmgrd` / `orchagent`) が独立して処理する。それぞれに異なる前提条件があり、条件未達の場合は自動再試行 (`it++; continue`) される。
+
+### 検出された順序依存
+
+| # | 先行必須条件 | 処理系 | 方向 | 緩和策 |
+|---|------------|--------|------|--------|
+| 1 | `PortsOrch::allPortsReady()` が true | orchagent (IntfsOrch) | **強制先行** | 全ポート初期化完了まで SAI 書き込みを全スキップ。完了後 `doTask()` が自動再実行 |
+| 2 | `isPortStateOk(port)` が true（非 Loopback ゾーンエントリ） | natmgrd | **強制先行** | STATE_PORT / LAG / VLAN テーブルにエントリが現れるまで再キュー |
+| 3 | `isIntfStateOk(key)` が true（IP プレフィックス付きエントリ） | natmgrd | **強制先行** | STATE_INTERFACE_TABLE にエントリが現れるまで再キュー |
+| 4 | 旧 Static / Dynamic NAT ルール削除が先行（ゾーン変更時） | natmgrd | **内部順序（副作用）** | 削除 → 更新 → 再追加の順が固定。この間 NAT ルールが一時消失する |
+| 5 | `gIsNatSupported == true`（SAI capability クエリ） | orchagent (IntfsOrch) | **強制先行** | false の場合は SAI 書き込みを silent skip（`SWSS_LOG_NOTICE` のみ） |
+
+### 主要な制約詳細
+
+**PortsOrch 初期化完了ガード（依存 #1）**: `IntfsOrch::doTask()` の冒頭（`intfsorch.cpp:665-668`）で `gPortsOrch->allPortsReady()` が false なら即 return する。これは全 PORT_TABLE エントリが orchagent 内部で処理完了するまで、すべての INTERFACE テーブルイベント（`nat_zone` 含む）の SAI 反映をブロックする。ブロック中は `m_toSync` にイベントが蓄積され、`allPortsReady()` が true になった後の次回 `doTask()` で一括処理される。
+
+**ポート STATE_DB ガード（依存 #2）**: `doNatZoneIntfTask` のゾーン単位エントリ（key サイズ 1）SET 処理時、Loopback 以外のインタフェースは `isPortStateOk(port)` が false なら `it++; continue` でキューに残す（`natmgr.cpp:7483-7487`）。`isPortStateOk()` は STATE_PORT_TABLE / STATE_LAG_TABLE / STATE_VLAN_TABLE を順番に参照し、対応エントリの存在を確認する。Loopback はこのガードを経由しない（iptables mangle も設定しない）。
+
+**ゾーン変更時の NAT ルール再構築順序（依存 #4）**: 既存の `nat_zone` と異なる値を受信した場合、natmgrd は内部で次の順序で処理する（`natmgr.cpp:7534-7566`）。①旧 mangle iptables ルールを DELETE → ②`removeStaticNatIptables()` / `removeStaticNaptIptables()` / `removeDynamicNatRules()` で旧 NAT ルールを削除 → ③`m_natZoneInterfaceInfo[port]` を新値に更新 → ④新 mangle iptables ルールを ADD → ⑤新 NAT ルールを追加。②〜④の間は NAT 変換が一時停止する。
+
+<!-- /ordering -->
+
 ## 制約
 
 - 有効範囲: **0〜3**（`sonic-interface.yang` の `range "0..3"`）。範囲外は YANG バリデーションで拒否。
