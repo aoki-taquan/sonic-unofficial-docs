@@ -317,3 +317,50 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 `QosOrch::doTask()` は `EXP_TO_FC_MAP` 等の参照先マップを先に drain し、`PORT_QOS_MAP` を後から drain する（`qosorch.cpp:2231-2260`）。同一イベントループ内で `EXP_TO_FC_MAP` SET → `PORT_QOS_MAP` SET の順に投入されていれば、`task_need_retry` は発生せずに 1 イテレーションで解決される。
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-failure.md`
+
+対象テーブル: `EXP_TO_FC_MAP`。Consumer: `QosOrch::handleExpToFcTable()` / `QosOrch::doTask()` (`orchagent/qosorch.cpp`)。
+
+### 起動ガード
+
+`QosOrch::doTask()` 冒頭で `gPortsOrch->allPortsReady()` を確認する (`qosorch.cpp:2258-2261`)。ポート構成完了前は即時 `return` し、`Consumer::m_toSync` のエントリが滞留したまま暗黙 retry される（ログなし・CONFIG_DB 変更なし）。
+
+### SET 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| `allPortsReady() == false` | `doTask()` L2258-2261 | 早期 return、`m_toSync` 滞留 | ポート準備完了まで暗黙 retry |
+| EXP 値が負数 | `convertFieldValuesToAttributes()` L1152-1155 | `SWSS_LOG_ERROR` → `task_invalid_entry` → erase | なし（silent drop） |
+| EXP 値 > 7 (`EXP_MAX_VAL`) | `convertFieldValuesToAttributes()` L1157-1161 | `SWSS_LOG_ERROR` → `task_invalid_entry` → erase | なし |
+| EXP 値が非整数 / 空文字列 | `convertFieldValuesToAttributes()` L1181-1185 | `stoi()` 例外 catch → `task_invalid_entry` → erase | なし |
+| FC 値が負数 or `>= max_num_fcs` | `convertFieldValuesToAttributes()` L1166-1170 | `SWSS_LOG_ERROR` → `task_invalid_entry` → erase | なし |
+| FC 未サポートスイッチ (`max_num_fcs=0`) | `NhgMapOrch::getMaxNumFcs()` L308-321 | 全 FC 値が `task_invalid_entry` → erase | なし |
+| SAI `create_qos_map` 失敗 | `addQosItem()` L1206-1210 | `SWSS_LOG_ERROR("Failed to create exp_to_fc map")` → `task_failed` → erase + `return` | なし (後続エントリもブロック) |
+| SAI `set_qos_map_attribute` 失敗 (modify) | `modifyQosItem()` | `SWSS_LOG_ERROR` → `task_failed` → erase + `return` | なし |
+| `m_pendingRemove == true` (DEL pending 中に SET) | `processWorkItem()` L136-140 | `SWSS_LOG_NOTICE` → `task_need_retry` → `it++` | PORT_QOS_MAP 参照解除後に自動解消 |
+
+### DEL 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| エントリ未登録 (SAI oid なし) | `processWorkItem()` L177-181 | `SWSS_LOG_ERROR("Object with name:%s not found")` → `task_invalid_entry` → erase | なし |
+| `PORT_QOS_MAP` から参照中 | `isObjectBeingReferenced()` L182-187 | `m_pendingRemove=true` + `task_need_retry` → `it++` | PORT_QOS_MAP 参照解除まで無制限 retry |
+| SAI `remove_qos_map` 失敗 | `removeQosItem()` | `SWSS_LOG_ERROR` → `task_failed` → erase + `return` | なし |
+
+### `task_failed` 時の特殊挙動
+
+`doTask()` は `task_failed` で該当エントリを erase した後 `return` するため、同一 Consumer キュー内の**後続エントリも当該イテレーションでは未処理**となる (`qosorch.cpp:2284-2288`)。次の orchagent イベントループで再試行される。
+
+### エラー通知先
+
+- `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` → syslog のみ
+- `ERROR_TABLE` への書き込みなし
+- STATE_DB への反映なし（`EXP_TO_FC_MAP` 自体は STATE_DB を持たない）
+- CONFIG_DB のエントリは失敗後も残存（`task_invalid_entry` の erase はメモリ上の `m_toSync` のみ）
+
+> **Evidence**: `qosorch.cpp:2253-2300` (`QosOrch::doTask()`); `qosorch.cpp:124-201` (`QosMapHandler::processWorkItem()`); `qosorch.cpp:1132-1213` (`ExpToFcMapHandler::convertFieldValuesToAttributes()`, `addQosItem()`); `nhgmaporch.cpp:299-325` (`NhgMapOrch::getMaxNumFcs()`)
+<!-- /failure -->
