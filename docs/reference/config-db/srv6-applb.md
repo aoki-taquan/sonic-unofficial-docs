@@ -141,6 +141,33 @@ Neighbor ADD 通知が `updateNeighbor()` に届くと、対応する pending �
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1480-1547、`deleteMysidEntry()` L1651-1700、`createUpdateSidList()` L1020-1117、コンストラクタ L98-115 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-applb-cross-refs.md`
+
+| 参照元 | 参照先 | 種別 | 必須条件 |
+|--------|--------|------|----------|
+| `SRV6_MY_SID_TABLE.vrf` | `CONFIG_DB VRF.name` (VrfOrch) | OID 解決 | VRF が先に CONFIG_DB に存在すること。`end.dt*`/`udt*` 行動のみ必須 |
+| `SRV6_MY_SID_TABLE.adj` | Neighbor (NeighOrch) | OID 解決 | Neighbor 未解決は自動 pending。`end.x`/`ua` 等の行動のみ必須 |
+| `SRV6_MY_SID_TABLE` key | `CONFIG_DB SRV6_MY_LOCATORS` | 直接 HGET (ビット長取得) | ロケータが CONFIG_DB に存在すること |
+| SRv6 nexthop | `SRV6_SID_LIST_TABLE` | orch 内部参照カウント | SID リスト DEL 前に参照 nexthop を DEL すること |
+
+### SRV6_MY_SID_TABLE.vrf → VRF の OID 解決
+
+`mySidVrfRequired(end_behavior)` が true の行動 (`end.dt4`, `end.dt6`, `end.dt46`, `udt4`, `udt6`, `udt46`) では `vrf` フィールドを VrfOrch で解決する (`srv6orch.cpp:1480-1502`)。`vrf == "default"` は `gVirtualRouterId` を直接使用する。非デフォルト VRF の場合は `m_vrfOrch->isVRFexists()` → `getVRFid()` で OID を取得し、未存在の場合はエントリ登録を拒否する。MySID 登録成功後 `m_vrfOrch->increaseVrfRefCount()` で参照カウントが増加し、DEL 時に `decreaseVrfRefCount()` で解放される (`srv6orch.cpp:1639`, `1683`)。
+
+### SRV6_MY_SID_TABLE.adj → Neighbor の OID 解決
+
+`mySidNextHopRequired(end_behavior)` が true の行動 (`end.x`, `end.dx4`, `end.dx6`, `ua`, `udx4`, `udx6` 等) では `adj` フィールドを NeighOrch で解決する (`srv6orch.cpp:1511-1543`)。Neighbor が未確立の場合はエントリを `m_pendingSRv6MySIDEntries[nexthop]` に保留し、Neighbor ADD 通知 (`updateNeighbor()`) を受けて自動再処理する。登録成功後 `m_neighOrch->increaseNextHopRefCount()` で参照カウントが増加する (`srv6orch.cpp:1644`)。
+
+### SRV6_SID_LIST_TABLE の DEL 順序
+
+`deleteSidList()` (`srv6orch.cpp:1129-1133`) は `sid_table_[sid_name].nexthops.size() > 0` を確認し、nexthop が残存する場合 `task_need_retry` を返して削除を拒否する。SID リストを削除するには先に参照している SRv6 nexthop を DEL する必要がある。
+
+<!-- /cross-refs -->
+
 ### サポート action 値
 
 `end_behavior_map`（`srv6orch.cpp:41-62`）に定義:
