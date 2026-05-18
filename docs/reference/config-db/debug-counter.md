@@ -366,4 +366,60 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss/orchagent/debug_counter/debug_counter.h` L15-24, L27-30; `debug_counter.cpp` L25-44; `debugcounterorch.h` L19-21; `debugcounterorch.cpp` L18-22 精読 (2026-05-18)
+
+### フィールド名定数 (debug_counter.h)
+
+| CONFIG_DB フィールド | C++ マクロ名 | 定数値 |
+|---|---|---|
+| `type` | `COUNTER_TYPE` | `"type"` |
+| `alias` | `COUNTER_ALIAS` | `"alias"` |
+| `desc` | `COUNTER_DESCRIPTION` | `"desc"` |
+| `group` | `COUNTER_GROUP` | `"group"` |
+| `drop_monitor_status` | `DROP_MONITOR_STATUS` | `"drop_monitor_status"` |
+| `drop_count_threshold` | `DROP_MONITOR_DROP_COUNT_THRESHOLD` | `"drop_count_threshold"` |
+| `incident_count_threshold` | `DROP_MONITOR_INCIDENT_COUNT_THRESHOLD` | `"incident_count_threshold"` |
+| `window` | `DROP_MONITOR_WINDOW` | `"window"` |
+
+`drop_count_threshold` / `incident_count_threshold` / `window` は `DEBUG_DROP_MONITOR|CONFIG` テーブル専用フィールド。通常の `DEBUG_COUNTER` エントリでは参照されない。
+
+### counter_type 値 → SAI マッピング (debug_counter.cpp:38-44)
+
+| CONFIG_DB `type` 値 | SAI debug counter type |
+|---|---|
+| `"PORT_INGRESS_DROPS"` | `SAI_DEBUG_COUNTER_TYPE_PORT_IN_DROP_REASONS` |
+| `"PORT_EGRESS_DROPS"` | `SAI_DEBUG_COUNTER_TYPE_PORT_OUT_DROP_REASONS` |
+| `"SWITCH_INGRESS_DROPS"` | `SAI_DEBUG_COUNTER_TYPE_SWITCH_IN_DROP_REASONS` |
+| `"SWITCH_EGRESS_DROPS"` | `SAI_DEBUG_COUNTER_TYPE_SWITCH_OUT_DROP_REASONS` |
+
+4 値のみ。それ以外は `supported_counter_types` に含まれず `SWSS_LOG_ERROR("Specified counter type '%s' is not supported.")` → `task_failed`。
+
+### FlexCounter グループ定数 (debugcounterorch.h:19-21)
+
+| 定数名 | 値 | 用途 |
+|---|---|---|
+| `DEBUG_COUNTER_FLEX_COUNTER_GROUP` | `"DEBUG_COUNTER"` | 通常 debug counter の FLEX_COUNTER_DB グループ名 |
+| `DEBUG_DROP_MONITOR_FLEX_COUNTER_GROUP` | `"DEBUG_MONITOR_COUNTER"` | drop monitor 用グループ名 |
+| `DEBUG_DROP_MONITOR_FLEX_COUNTER_POLLING_INTERVAL_MS` | `"60000"` | drop monitor ポーリング間隔固定値 (60 秒) |
+
+通常 `DEBUG_COUNTER` のポーリング間隔は `orchdaemon.cpp` が渡す `poll_interval` 引数に依存し固定値ではない。drop monitor のみ 60000 ms に固定。
+
+### flex_counter_type_lookup (debugcounterorch.cpp:18-22)
+
+| `type` 値 | `CounterType` enum |
+|---|---|
+| `"PORT_INGRESS_DROPS"` / `"PORT_EGRESS_DROPS"` | `CounterType::PORT_DEBUG` |
+| `"SWITCH_INGRESS_DROPS"` / `"SWITCH_EGRESS_DROPS"` | `CounterType::SWITCH_DEBUG` |
+
+`PORT_DEBUG` 型は各ポート ID ごとに FlexCounter エントリを作成。`SWITCH_DEBUG` 型はスイッチオブジェクト単位で登録。
+
+### DROP_REASON キー区切り文字
+
+`DEBUG_COUNTER_DROP_REASON` テーブルのキー形式: `<counter_name>|<reason>`。`parseDropReasonKey()` 内で `|` を delimiter として分割する（`debugcounterorch.cpp:620-636`）。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: d2c490dcfe8c -->
