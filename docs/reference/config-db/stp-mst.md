@@ -1,6 +1,6 @@
 ---
 title: STP_MST_INST / STP_MST_PORT テーブル
-description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・discrepancy を詳細解説。Phase A+B+C+D 分析。"
+description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・ハードコード定数・discrepancy を詳細解説。Phase A+B+C+D+E 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -464,6 +464,84 @@ CONFIG_DB に蓄積され再起動後に一括再処理される。
     `STP_MST_INST` テーブルに無効なインスタンス ID 文字列を直接書き込むと（CLI 外からの直接 DB 操作等）、`stpmgrd` がクラッシュする。CLI 経由では整数バリデーション済みのため通常発生しない。
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-constants.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.h ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+`stpmgrd` デーモンの内部実装に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### デーモン内部定数 (stpmgr.h)
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MAX_VLANS` | `4096` | `m_vlanInstMap[]` 配列サイズ。VLAN ID の最大数上限 |
+| `L2_INSTANCE_MAX` | `4096` (`= MAX_VLANS`) | `l2InstPool` bitset のサイズ。PVST での最大インスタンスプール |
+| `STP_DEFAULT_MAX_INSTANCES` | `255` | STATE_DB 取得失敗時のフォールバック最大インスタンス数 |
+| `INVALID_INSTANCE` | `-1` | `m_vlanInstMap[]` の未割り当てセンチネル値 |
+| `STPMGRD_SOCK_NAME` | `"/var/run/stpmgrd.sock"` | stpmgrd が bind する Unix ドメインソケットパス |
+| `STPD_SOCK_NAME` | `"/var/run/stpipc.sock"` | STP デーモン (stpd) との IPC 通信ソケットパス |
+| `STP_SET_COMMAND` | `1` | stpd IPC メッセージの SET オペコード |
+| `STP_DEL_COMMAND` | `0` | stpd IPC メッセージの DEL オペコード |
+
+証跡: `stpmgr.h:28-108`
+
+### 起動ループ定数 (stpmgrd.cpp)
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `SELECT_TIMEOUT` | `1000` ms | `Select::select()` タイムアウト。保留イベントのリトライ間隔でもある |
+
+証跡: `stpmgrd.cpp:17`
+
+### STATE_DB ポーリングタイムアウト
+
+`getStpMaxInstances()` (`stpmgr.cpp:1381`) は STATE_STP_TABLE の `GLOBAL.max_stp_inst` を
+最大 **60 秒** (60 回 × `sleep(1)`) ポーリングする:
+
+```cpp
+uint16_t max_delay = 60;
+while (max_delay) {
+    if (m_stateStpTable.get("GLOBAL", vmEntry)) { break; }
+    sleep(1);
+    max_delay--;
+}
+if (max_stp_instances == 0)
+    max_stp_instances = STP_DEFAULT_MAX_INSTANCES;  // = 255
+```
+
+取得成功時は STATE_DB 値を使用し、タイムアウトまたは値が `0` の場合は `255` にフォールバックする。
+フォールバック値 `255` はコードにハードコードされており、YANG / CONFIG_DB では設定不可。
+
+証跡: `stpmgr.cpp:1381-1414`
+
+### キープレフィックス長マジックナンバー
+
+テーブルキーのプレフィックス除去にマジックナンバーを使用している:
+
+| ハンドラ | 除去文字数 | 除去対象プレフィックス | ソース |
+|---|---|---|---|
+| `doStpMstInstTask` | `13` | `"MST_INSTANCE\|"` | `stpmgr.cpp:1044` |
+| `doStpMstInstPortTask` | `9` | `"INSTANCE\|"` 相当 | `stpmgr.cpp:1174` |
+
+これらはキー形式がハードコードされたマジックナンバーであり、キー形式変更時に誤動作する。
+
+### MST グローバル設定メッセージの name フィールド長
+
+`STP_MST_GLOBAL_CONFIG_MSG.name` は固定長 32 バイト配列であり、有効な最大リージョン名は 31 文字:
+
+```cpp
+char name[32];  // stpmgr.h:205
+strncpy(msg.name, fvValue(i).c_str(), sizeof(msg.name) - 1);
+```
+
+CLI (`config/stp.py:763`) も最大 31 文字でバリデーションしており整合している。
+
+<!-- /constants -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
