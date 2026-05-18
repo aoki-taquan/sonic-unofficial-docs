@@ -331,4 +331,39 @@ minigraph.py が生成するエントリは常に `{'name': <隣接ホスト名>
 > **Evidence**: `sonic-buildimage` `src/sonic-config-engine/minigraph.py:649,2631-2641`; `dockers/docker-lldp/lldpmgrd:12-14`; `sonic-utilities` `pfcwd/main.py:413-416`; `show/interfaces/__init__.py:316-360`; `scripts/ecnconfig:282-287`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:219-224`; `sonic-mgmt-common` `cvl/testdata/schema/sonic-device-neighbor.yang`
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2631-2641`; `sonic-utilities/pfcwd/main.py:98-108,413-416`; `sonic-utilities/scripts/ecnconfig:282-287`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:219-223`; `sonic-utilities/show/interfaces/__init__.py:316-319`; `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_neighbor.yang:52-56`
+
+### SET / 生成における失敗経路
+
+| # | 失敗条件 | コンポーネント | 結果 | ログ / メッセージ | evidence |
+|---|----------|--------------|------|-----------------|---------|
+| 1 | `local_port` に `PORT_LIST.name` に存在しないポート名を指定 | YANG バリデーション | SET reject（YANG leafref 違反） | pyang / sonic-cfggen エラー | `sonic-device_neighbor.yang:52-56` |
+| 2 | minigraph.xml に `port_config.ini` に存在しないインターフェイスが隣接情報として含まれる | `minigraph.py` parse_xml | 当該エントリを `del neighbors[nghbr]` で削除（silent skip）、DB に書き込まれない | stderr `"Warning: ignore interface '%s' in DEVICE_NEIGHBOR as it is not in the port_config.ini"` | `minigraph.py:2631-2636` |
+| 3 | `name` フィールドが `DEVICE_NEIGHBOR_METADATA` に未登録 | `bgpcfgd` (`managers_bgp.py`) | BGP ピア追加を `return False` で中断（silent failure）、BGP セッション未確立 | `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor...")` | `managers_bgp.py:221-223` |
+
+### テーブル空（空テーブル）の場合の影響
+
+| # | 失敗条件 | コンポーネント | 結果 | ログ / メッセージ | evidence |
+|---|----------|--------------|------|-----------------|---------|
+| 4 | DEVICE_NEIGHBOR テーブルが空で `ecnconfig` を実行 | `ecnconfig` | `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise し処理中断 | Exception | `ecnconfig:286-287` |
+| 5 | DEVICE_NEIGHBOR テーブルが空で `pfcwd start_default` を実行 | `pfcwd` | `external_ports = []` となりバックプレーンポートのみが対象に（外部ポート未設定の silent misconfiguration） | なし | `pfcwd/main.py:413-416` |
+| 6 | DEVICE_NEIGHBOR テーブルが `None`（DB 接続問題等）で `show interfaces expected` を実行 | `show interfaces` | `"DEVICE_NEIGHBOR information is not present."` を表示して return（エラーにはならない） | console output | `show/interfaces/__init__.py:316-319` |
+
+### DEL 操作の影響
+
+| # | 失敗条件 / 操作 | コンポーネント | 結果 | evidence |
+|---|----------------|--------------|------|---------|
+| 7 | DEVICE_NEIGHBOR エントリを DEL → `pfcwd start_default` 再実行 | `pfcwd` | 削除済みエントリが外部ポート一覧から除外され、次回 `pfcwd start_default` で PFC Watchdog が有効化されない | `pfcwd/main.py:413` |
+| 8 | DEVICE_NEIGHBOR エントリを DEL → bgpcfgd への影響 | `bgpcfgd` | bgpcfgd は DEVICE_NEIGHBOR を直接 subscribe しない。BGP セッションは DEVICE_NEIGHBOR_METADATA を参照するため、DEVICE_NEIGHBOR 削除単体では即時影響なし | `managers_bgp.py:219-224` |
+
+### 補足
+
+- **leafref reject (依存 #1)**: `sonic-cfggen` や `sonic-yang` 経由でのバリデーション実行時のみ発生。Redis 直接書き込み (`redis-cli hset`) の場合は leafref チェックが行われないため通過する。本番環境では `sonic-cfggen` 経由での投入が標準。
+- **silent misconfiguration (依存 #5)**: `pfcwd start_default` は DEVICE_NEIGHBOR が空でも Exception を出さずに継続する（ecnconfig と異なり非 fatal）。結果として外部ポートに対する PFC Watchdog が無効化された状態が構成される。`show pfcwd config` で確認しないと検出できない。
+- **bgpcfgd の check_neig_meta フラグ (依存 #3)**: `check_neig_meta = True` の場合のみ DEVICE_NEIGHBOR_METADATA の存在チェックを行う。フラグの初期値は `True`（通常構成）。`return False` 後は bgpcfgd が次のイベントループで再試行するため、DEVICE_NEIGHBOR_METADATA が後から書き込まれれば自動復旧する。
+<!-- /failure -->
+
 <!-- glossary-links-injected: 2c4f81fa98e5 -->
