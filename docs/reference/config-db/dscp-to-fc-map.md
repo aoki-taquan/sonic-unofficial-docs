@@ -452,4 +452,64 @@ DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセ
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-pubsub.md -->
+
+### Producer/Consumer ペア
+
+`DSCP_TO_FC_MAP` は CONFIG_DB → SAI の **直接経路**をとる。APPL_DB / STATE_DB への書き込みは行わない。
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|----------------------|
+| CONFIG_DB → QosOrch | `SubscriberStateTable` | `__keyspace@{config_db_id}__:DSCP_TO_FC_MAP\|*` |
+| QosOrch → SAI | SAI API 直接呼び出し | `sai_qos_map_api->create_qos_map` / `set_qos_map_attribute` / `remove_qos_map` |
+
+### SubscriberStateTable の動作
+
+`QosOrch` は `Orch(db, tableNames)` 基底クラスの `addConsumer()` を通じて `CFG_DSCP_TO_FC_MAP_TABLE_NAME` に対する `SubscriberStateTable` を生成する (`qosorch.cpp:1337`)。CONFIG_DB の keyspace notification (`PSUBSCRIBE __keyspace@db__:DSCP_TO_FC_MAP|*`) でエントリ変化を検出し `pops()` で現在値を読み出す。orchagent 起動直後は `getKeys()` で既存エントリを先読みし、起動前の設定を取りこぼさない。
+
+### doTask 実行順序
+
+`QosOrch::doTask()` (`qosorch.cpp:2231`) はカスタム実行順序を実装する:
+
+1. `PORT_QOS_MAP` と `QUEUE` 以外の全テーブル（`DSCP_TO_FC_MAP` を含む）を先に drain
+2. `PORT_QOS_MAP` を drain
+3. 最後に `QUEUE` を drain
+
+これにより `DSCP_TO_FC_MAP` の SAI object が `PORT_QOS_MAP` の参照解決前に確実に作成される。
+
+### retry メカニズム
+
+| 戻り値 | 意味 | エントリの扱い |
+|--------|------|----------------|
+| `task_success` | 正常完了 | `m_toSync` から erase |
+| `task_need_retry` | 一時的失敗（pendingRemove 中など） | `m_toSync` に残留、次サイクルで再試行 |
+| `task_failed` | 永続的失敗（SAI エラーなど） | erase + エラーログのみ (silent drop) |
+| `task_invalid_entry` | バリデーション失敗 | erase + エラーログのみ (silent drop) |
+
+### データフロー図
+
+```
+CONFIG_DB[DSCP_TO_FC_MAP|<name>|<dscp>]
+  ↓ SubscriberStateTable (keyspace notification)
+  ↓ PSUBSCRIBE __keyspace@config_db_id__:DSCP_TO_FC_MAP|*
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → QosOrch::doTask()
+  ↓   [allPortsReady() チェック]
+  ↓   [実行順序: マップ系テーブル → PORT_QOS_MAP → QUEUE]
+  ↓ handleDscpToFcTable() → DscpToFcMapHandler::processWorkItem()
+    ↓ convertFieldValuesToAttributes() — NhgMapOrch::getMaxNumFcs() で FC 上限確認
+    ↓ addQosItem() / modifyQosItem() / removeQosItem()
+    ↓ sai_qos_map_api->create_qos_map / set_qos_map_attribute / remove_qos_map
+ASIC (sairedis → ASIC_DB 経由)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationConsumer / Producer: なし
+```
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: dscp-to-fc-map-2026-05-14 -->
