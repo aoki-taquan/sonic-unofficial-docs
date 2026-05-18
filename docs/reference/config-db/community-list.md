@@ -256,6 +256,51 @@ YANG leafref および実装スキャンにより確認した参照関係。詳�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`SNMP_COMMUNITY` テーブルの処理に直接影響するコード内リテラル固定値。CONFIG_DB エントリでは制御できない。詳細スキャン証跡は `meta/_intermediate/cdb-flow/community-list-constants.md` を参照。
+
+### YANG 制約固定値（name フィールド）
+
+| 制約 | 値 | 出典 |
+|------|----|------|
+| `name` 最小長 | `4` 文字 | `sonic-snmp.yang L61: length "4..32"` |
+| `name` 最大長 | `32` 文字 | `sonic-snmp.yang L61: length "4..32"` |
+| `name` YANG 禁止文字 | SPACE / `'` / `@` / `,` / `\` | `sonic-snmp.yang L62: pattern` |
+| `TYPE` 有効値 | `RO` / `RW`（大文字 2 値のみ） | `sonic-snmp.yang L71-74` |
+
+### CLI 追加制約固定値（snmp_community_secret_check）
+
+| 定数 | 値 | 出典 |
+|------|----|------|
+| CLI 追加禁止文字 | `['@', ':']` | `config/main.py L4310` |
+| CLI 最大長 | `32` 文字 | `config/main.py L4311` |
+
+> **YANG との非対称性**: YANG は `,` / `\` を禁止するが CLI リストにはない。CLI は `:` を禁止するが YANG には存在しない。direct DB 書き込みでは YANG 制約のみ適用。
+
+### テンプレートレベル固定値（snmpd.conf.j2）
+
+| 定数 | 値 | 用途 | 出典 |
+|------|----|------|------|
+| SNMP デフォルト待受ポート（IPv4/IPv6） | `161` | `SNMP_AGENT_ADDRESS_CONFIG` 未設定時の fallback | `snmpd.conf.j2 L32-33` |
+| AgentX ソケット | `tcp:localhost:3161` | docker-fpm-frr SNMP subagent との IPC | `snmpd.conf.j2 L207` |
+| AgentX タイムアウト | `5` 秒 | `agentXTimeout 5` 固定 | `snmpd.conf.j2 L197` |
+| AgentX リトライ | `4` 回 | `agentXRetries 4` 固定 | `snmpd.conf.j2 L198` |
+| sysLocation fallback | `public` | `SNMP.LOCATION` 未設定時 | `snmpd.conf.j2 L91` |
+| sysContact fallback | `Azure Cloud Switch vteam <linuxnetdev@microsoft.com>` | `SNMP.CONTACT` 未設定時 | `snmpd.conf.j2 L93` |
+| TYPE 比較文字列 | `'RO'` / `'RW'` | community 行生成条件（大文字厳格比較） | `snmpd.conf.j2 L50, L59` |
+
+### snmp_yml_to_configdb.py 固定値
+
+| 定数 | 値 | 出典 |
+|------|----|------|
+| 注入対象キー一覧（固定順） | `['snmp_rocommunity', 'snmp_rocommunities', 'snmp_rwcommunity', 'snmp_rwcommunities']` | `snmp_yml_to_configdb.py L23` |
+| RO/RW TYPE 書込み値 | `"RO"` / `"RW"`（大文字固定） | `snmp_yml_to_configdb.py L37, L41, L45, L49` |
+| snmp.yml パス | `/etc/sonic/snmp.yml` | `snmp_yml_to_configdb.py L25` |
+
+<!-- /constants -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
