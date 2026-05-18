@@ -371,6 +371,69 @@ DPB シーケンスで `PORT` テーブルが変更されると、`portmgrd` が
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-platform.md -->
+
+`BREAKOUT_CFG` テーブルとその書込みシーケンスは、プラットフォームが提供するファイル形式と ASIC 構成に強く依存する。
+
+### platform.json / port_config.ini 二分岐
+
+`get_path_to_port_config_file()` (`device_info.py:445`) はプラットフォームディレクトリを走査し、以下の優先順位で設定ファイルを返す:
+
+| 優先 | 条件 | 返却ファイル | DPB 可否 |
+|------|------|------------|---------|
+| 1 | `hwsku.json` + `platform.json` が存在し `interfaces` キーが空でない | `platform.json` | **可** |
+| 2 | 上記以外 | `port_config.ini`（`asic` 指定時は `hwsku/<asic>/port_config.ini`） | **不可** |
+
+`breakout()` CLI (`main.py:5467-5471`) は戻り値が `.json` 拡張子でない場合は即 Abort する。`port_config.ini` 環境では `get_breakout_mode()` が `None` を返し、`BREAKOUT_CFG` テーブル自体が `sonic-cfggen` によって生成されない (`portconfig.py:464-465`)。
+
+### multi-ASIC 対応状況
+
+`get_path_to_port_config_file()` は `asic` 引数で ASIC 個別の `port_config.ini` を参照できるが、`breakout()` CLI はこの引数を渡さず呼び出す。そのため **multi-ASIC 環境での ASIC 個別 DPB は CLI レベルで現状未対応**。
+
+`portconfig.py` の `get_port_config(asic_name=...)` は `get_asic_id_from_name()` で ASIC ID を解決し `hwsku/<asic_id>/port_config.ini` を参照するが、DPB CLI フローはこの経路を使用しない (`portconfig.py:188-193`)。
+
+### hwsku.json の default_brkout_mode — プラットフォーム定義値
+
+`BREAKOUT_CFG` の起動時初期値は `hwsku.json` の各ポートの `default_brkout_mode` フィールドに完全依存する。ベンダーごとに提供値が異なる:
+
+| プラットフォーム例 | `default_brkout_mode` 例 |
+|---|---|
+| Arista 7060DX5-64S (8-lane/400G) | `1x400G[200G,100G,50G,40G,25G,10G]` |
+| Arista 7050CX3-32C (4-lane/100G) | `1x100G[50G,40G,25G,10G]` |
+
+`default_brkout_mode` が `hwsku.json` の `interfaces.<port>` に存在しないポートは `parse_breakout_mode()` でスキップされ、BREAKOUT_CFG エントリが生成されない (`portconfig.py:425-432`)。
+
+### breakout_modes — platform.json が許可モード一覧を定義
+
+利用可能な `brkout_mode` 値は `platform.json` の `interfaces.<port>.breakout_modes` で定義される:
+
+```json
+"Ethernet1/1": {
+    "breakout_modes": {
+        "1x100G[50G,40G,25G,10G]": ["Ethernet1/1"],
+        "2x50G[40G,25G,10G]":       ["Ethernet1/1", "Ethernet1/3"],
+        "4x25G[10G]":               ["Ethernet1/1", "Ethernet1/2", "Ethernet1/3", "Ethernet1/4"]
+    }
+}
+```
+
+`_validate_interface_mode()` は指定 mode が `breakout_modes` キーに含まれるかを確認し、含まれない場合は Abort する (`main.py:5208`)。ASIC が物理的に対応しないモードは `platform.json` 側に記載されないため自動排除される。
+
+### portsorch での ASIC lane バリデーション
+
+portsorch は DPB 後に追加されたポートの `lanes` が `m_portListLaneMap`（SAI 初期化時に ASIC から取得した物理 lane マップ）に存在するかを確認する (`portsorch.cpp:4026-4032`)。`platform.json` の lane 定義と ASIC 物理 lane が不一致な場合ここで失敗し、ポートが SAI に登録されない。
+
+`isMlnxPlatform()` による DPB 専用の特殊処理はなく、Mellanox/Nvidia 固有分岐は Trim Stat 計算のみに限定される (`portsorch.cpp:858-863`)。
+
+### Virtual Switch (VS) プラットフォーム
+
+SONiC-VS (`kvmx86_64-kvm_x86_64-r0`) は `port_config.ini` ベースのため DPB が無効。`platform.json` / `hwsku.json` が提供されないため `BREAKOUT_CFG` テーブル自体が初期化されない。
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
