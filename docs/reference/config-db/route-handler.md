@@ -585,6 +585,133 @@ warm-restart 終了時 (`onWarmStartEnd()`) には `markRoutesOffloaded()` が `
 <!-- evidence: sonic-net/sonic-swss/fpmsyncd/routesync.cpp:3174-3177L (onRouteResponse suppression check) -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-swss/fpmsyncd/routesync.cpp:154-158,1001-1055`; `sonic-swss/fpmsyncd/fpmsyncd.cpp:78-143`; `sonic-swss/orchagent/routeorch.cpp:40-44`; `sonic-swss/orchagent/orchdaemon.cpp:329-337`; `sonic-swss/orchagent/zmqorch.cpp:59-68` (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-pubsub.md`
+
+### Producer / Consumer ペア
+
+`fpmsyncd` が APPL_DB に書き込む際の通信方式は `DEVICE_METADATA|localhost.orch_northbond_route_zmq_enabled` フィールドにより **2 パス** に分岐する。
+
+| パス | Producer (fpmsyncd 側) | Consumer (orchagent 側) | 条件 |
+|-----|----------------------|------------------------|------|
+| 通常 Redis パス | `ProducerStateTable` | `ConsumerStateTable` | ZMQ 無効（デフォルト） |
+| ZMQ パス | `ZmqProducerStateTable` | `ZmqConsumerStateTable` | ZMQ 有効 |
+
+#### 通常 Redis パス
+
+`RouteSync` コンストラクタ (`routesync.cpp:154-158`) が `m_routeTable` を `ProducerStateTable` として生成:
+
+```cpp
+m_routeTable(createProducerStateTable(pipeline, APP_ROUTE_TABLE_NAME, true, m_zmqClient)),
+```
+
+書き込みは Lua EVALSHA でアトミック実行:
+
+```
+SADD ROUTE_TABLE_KEY_SET <key>
+HSET _ROUTE_TABLE:<key> <fields>
+PUBLISH ROUTE_TABLE_CHANNEL@0 G
+```
+
+orchagent 側 `RouteOrch` は `ConsumerStateTable` が `ROUTE_TABLE_CHANNEL@0` を `SUBSCRIBE` して `consumer_state_table_pops.lua` でバッチ取得する。
+
+#### ZMQ パス
+
+`ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` が `true` の場合、`ZmqProducerStateTable` が ZMQ TCP ソケット (`tcp://localhost:8100`) 経由で orchagent の `ZmqConsumerStateTable` に直接送信する。ZMQ パスでも APPL_DB への永続化 (`dbPersistence=true`) は維持される。
+
+`orchdaemon.cpp:334-337`:
+
+```cpp
+auto enable_route_zmq = get_feature_status(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false);
+auto route_zmq_sever = enable_route_zmq ? m_zmqServer : nullptr;
+gRouteOrch = new RouteOrch(m_applDb, route_tables, ..., route_zmq_sever);
+```
+
+### 入力イベント — FPM ソケット
+
+`fpmsyncd` は FRR (`zebra`) と **FPM (Forwarding Plane Manager) プロトコル** で接続する。FPM は TCP ソケット上の netlink メッセージストリームであり、Redis の keyspace 通知や PUBLISH/SUBSCRIBE は使用しない。
+
+```
+FRR zebra --[FPM/netlink socket (TCP)]--> fpmsyncd FpmLink::accept()
+  ↓ onMsg() / onMsgRaw()  ←  RTM_NEWROUTE / RTM_DELROUTE / RTM_NEWNEXTHOP 等
+RouteSync::setRouteWithWarmRestart()
+  ↓ ProducerStateTable::set() または ZmqProducerStateTable::set()
+APPL_DB ROUTE_TABLE
+```
+
+FPM 接続が確立するまで `FpmLink.accept()` でブロックするため、zebra 起動前に `fpmsyncd` が先行していても問題ない。逆に zebra が先行した場合は fpmsyncd 起動後に接続が成立してメッセージが流れる。
+
+### 応答チャネル — APPL_STATE_DB RESPONSE_CHANNEL
+
+route suppression が有効 (`suppress-fib-pending = enabled`) な場合、`fpmsyncd` は以下のチャネルを追加購読する:
+
+```
+APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL
+```
+
+`fpmsyncd.cpp:78-121`:
+
+```cpp
+const auto routeResponseChannelName =
+    std::string("APPL_DB_") + APP_ROUTE_TABLE_NAME + "_RESPONSE_CHANNEL";
+// ...
+if (suppressionEnabledStr == "enabled")
+{
+    routeResponseChannel = std::make_unique<NotificationConsumer>(
+        &applStateDb, routeResponseChannelName);
+    sync.setSuppressionEnabled(true);
+}
+```
+
+| チャネル | 方向 | 購読者 | 発行者 | 条件 |
+|---------|------|--------|--------|------|
+| `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | orchagent → fpmsyncd | `fpmsyncd` (`NotificationConsumer`) | `orchagent` (`ResponsePublisher`) | route suppression 有効時のみ |
+
+orchagent は SAI 操作完了後に `ResponsePublisher::publish()` でチャネルに通知を発行し、fpmsyncd は `onRouteResponse()` で受信して FRR zebra に RTM_F_OFFLOAD を送り返す。
+
+### フィールド送信の ZMQ/Redis 差異
+
+| パス | 空フィールドの扱い |
+|-----|-----------------|
+| 通常 Redis パス | 空文字列フィールドは APPL_DB に書き込まない（フィールド不在 = デフォルト値として消費） |
+| ZMQ パス | 全フィールドを常に送信（フィールド不在が発生しない） |
+
+`routesync.cpp:1003-1007` コメント:
+
+```cpp
+// If Northbound ZMQ is enabled, simply send all the fields even if the value is
+// empty. The duplication of code between ZMQ and non-ZMQ is deliberate.
+```
+
+### 通信フロー全体図
+
+```
+FRR (zebra) ──[FPM/netlink]──▶ fpmsyncd (RouteSync)
+  │ [通常 Redis] ProducerStateTable::set/del
+  │   EVALSHA → APPL_DB ROUTE_TABLE + PUBLISH ROUTE_TABLE_CHANNEL@0
+  │ [ZMQ] ZmqProducerStateTable::set/del
+  │   ZMQ PUSH → tcp://localhost:8100 + APPL_DB 永続化
+  ▼
+APPL_DB [ROUTE_TABLE|<prefix>]
+  │ [通常] ConsumerStateTable (SUBSCRIBE ROUTE_TABLE_CHANNEL@0)
+  │ [ZMQ]  ZmqConsumerStateTable (ZMQ PULL)
+  ▼
+RouteOrch::doTask()
+  │ SAI sai_route_api (create / remove / set route entry)
+  │ ResponsePublisher::publish() → APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL (suppression 有効時)
+  ▼
+ASIC / APPL_STATE_DB ROUTE_TABLE
+```
+
+<!-- evidence: sonic-net/sonic-swss/fpmsyncd/routesync.cpp:154-158L (ProducerStateTable 生成) -->
+<!-- evidence: sonic-net/sonic-swss/fpmsyncd/fpmsyncd.cpp:78-143L (FPM ソケット + RESPONSE_CHANNEL 購読) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:329-337L (RouteOrch + ZMQ 設定) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/zmqorch.cpp:59-68L (ZmqConsumerStateTable 登録) -->
+<!-- /pubsub -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` を同時に持つ経路は orchagent がエラー棄却（`m_toSync` から削除）。
