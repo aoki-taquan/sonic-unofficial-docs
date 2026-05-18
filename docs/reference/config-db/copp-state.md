@@ -430,6 +430,71 @@ orchagent が APPL_DB を処理
 > **スキャン証跡**: `copporch.cpp` L35-37, L193-215, L520-532, L935-965, L1375-1530 読了。副次書き込み先は COUNTERS_DB (`COUNTERS_TRAP_NAME_MAP`) と FLEX_COUNTER_DB (`HOSTIF_TRAP_FLOW_COUNTER|*`, `FLEX_COUNTER_GROUP_TABLE|HOSTIF_TRAP_FLOW_COUNTER`) の 3 テーブルのみ。詳細は `meta/_intermediate/cdb-flow/copp-state-side.md` 参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+STATE_DB の COPP 3 テーブルは、CONFIG_DB → coppmgrd → APPL_DB → CoppOrch → STATE_DB という多段 Producer/Consumer パイプラインの終端に位置する。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|--------------------|
+| CONFIG_DB (`COPP_TRAP`, `COPP_GROUP`, `FEATURE`) → `CoppMgr` | `SubscriberStateTable` | keyspace notification (`__keyspace@{cfg_db_id}__:COPP_TRAP\|*` 等) |
+| `CoppMgr` → APPL_DB (`COPP_TABLE`) | `ProducerStateTable` | Redis Streams (`COPP_TABLE`) |
+| APPL_DB (`COPP_TABLE`) → `CoppOrch` | `Consumer`（`Orch` 基底） | keyspace notification (`__keyspace@{appl_db_id}__:COPP_TABLE\|*`) |
+| `CoppOrch` → STATE_DB (`COPP_GROUP_TABLE`, `COPP_TRAP_TABLE`, `COPP_TRAP_CAPABILITY_TABLE`) | `Table::set()` / `Table::del()` (直接書き込み) | 通知なし |
+
+### SubscriberStateTable の動作
+
+`CoppMgr` は `Orch(cfgDb, {CFG_COPP_TRAP_TABLE_NAME, CFG_COPP_GROUP_TABLE_NAME, CFG_FEATURE_TABLE_NAME})` 基底を通じて 3 テーブルの `SubscriberStateTable` を生成する (`coppmgrd.cpp:28-31`)。CONFIG_DB の keyspace notification でエントリ変化を検出し、`pops()` で現在値を読み出す。起動時は既存エントリを先読み (`getKeys()`) して起動前の設定を取りこぼさない。
+
+`CoppOrch` は `Orch(applDb, APP_COPP_TABLE_NAME)` 基底を通じて APPL_DB の `APP_COPP_TABLE` の `Consumer` を生成し、`coppmgrd` が `ProducerStateTable::set()` で書き込んだエントリを受信する (`orchdaemon.cpp:341`)。
+
+### select() ループと doTask 実行順序
+
+`coppmgrd` と `orchagent` はそれぞれ独立した `Select::select()` ループ（タイムアウト 1000 ms）を持つ。
+
+- `coppmgrd`: `CoppMgr::doTask()` を呼び出し、`doCoppTrapTask()` / `doCoppGroupTask()` / `setFeatureTrapIdsStatus()` で CONFIG_DB 変更を APPL_DB に反映、その後 STATE_DB の `COPP_GROUP_TABLE` / `COPP_TRAP_TABLE` に `state=ok` を書き込む (`coppmgr.cpp:424-451`)
+- `orchagent`: `CoppOrch::doTask(Consumer&)` の冒頭で `gPortsOrch->allPortsReady()` をチェックし、全ポート初期化完了まで APPL_DB イベントを保留する (`copporch.cpp:885-888`)
+
+### COPP_TRAP_CAPABILITY_TABLE の特殊経路
+
+`COPP_TRAP_CAPABILITY_TABLE` は上記パイプラインとは独立して、`CoppOrch` コンストラクタ内の `publishTrapIdsCapability()` が **orchagent 起動時に 1 回だけ**直接書き込む。CONFIG_DB / APPL_DB 変化には依存しない (`copporch.cpp:208-215`)。
+
+### STATE_DB の読み出し側（subscriber）
+
+STATE_DB の COPP テーブルを読み出すコンポーネント:
+
+| コンポーネント | 読み出し方式 | 用途 |
+|---------------|-------------|------|
+| `sonic-utilities` `show copp policer` (`show/copp.py:21`) | `db.get_all(STATE_DB, "COPP_TRAP_TABLE\|{trap_id}")` | トラップの hw_status を CLI 表示 |
+| `sonic-utilities` `dump copp` プラグイン (`dump/plugins/copp.py:109-113`) | `MatchRequest(db="STATE_DB", table="COPP_TRAP_TABLE")` 等 | デバッグ用 DB エントリ集約 |
+
+STATE_DB の COPP テーブルを `SubscriberStateTable` で非同期購読するデーモンは存在しない（poll/snapshot 読み出しのみ）。
+
+### データフロー図
+
+```
+CONFIG_DB[COPP_TRAP|*, COPP_GROUP|*, FEATURE|*]
+  ↓ SubscriberStateTable (keyspace notification)
+coppmgrd: CoppMgr::doTask()
+  ↓ doCoppTrapTask() / doCoppGroupTask() / setFeatureTrapIdsStatus()
+  ↓ ProducerStateTable::set()/del()
+APPL_DB[COPP_TABLE|<group-name>]
+  ↓ Consumer (keyspace notification)
+orchagent: CoppOrch::doTask()
+  ↓   [allPortsReady() チェック — PortsOrch 完了まで保留]
+  ↓ processCoppRule()
+  ↓   → sai_hostif_api (SAI create/remove)
+  ↓ Table::set() (直接書き込み)
+STATE_DB[COPP_GROUP_TABLE|*, COPP_TRAP_TABLE|*, COPP_TRAP_CAPABILITY_TABLE|traps]
+  ↓ snapshot read (poll)
+sonic-utilities (show copp / dump copp)
+```
+
+> **スキャン証跡**: `coppmgrd.cpp` L21-65 全行読了。`coppmgr.cpp` L71, L296-310, L424-451 読了。`copporch.cpp` L191-215, L880-892 読了。`orchdaemon.cpp` L341, L500 読了。`show/copp.py` L21 読了。`dump/plugins/copp.py` L109-113 読了。
+<!-- /pubsub -->
+
 ## 確認コマンド
 
 ```bash
