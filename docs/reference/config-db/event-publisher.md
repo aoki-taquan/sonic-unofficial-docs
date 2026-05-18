@@ -107,6 +107,44 @@ flowchart LR
 - 直接の CONFIG_DB テーブルなし (ファイル設定のみ)
 - 関連 HLD: `SONiC/doc/event-alarm-framework/event-alarm-framework.md`、`events-producer.md`
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`init_cfg.json` はファイルベース設定であり、通常の CONFIG_DB テーブルとは異なる読み込みメカニズムを持つ。
+`get_config(key)` (`events_common.cpp:74-83`) は lazy 初期化パターンを採用しており、
+最初の `get_config()` 呼び出し時に `read_init_config(INIT_CFG_PATH)` を一度だけ実行する。
+
+### `eventd` 内部起動順序
+
+`run_eventd_service()` (`eventd.cpp:656-`) は以下の順序で初期化する:
+
+1. `zmq_ctx_new()` — ZMQ コンテキスト生成
+2. `get_config_data(CACHE_MAX_CNT, MAX_CACHE_SIZE)` — **ここで `init_cfg.json` を初読み** (`eventd.cpp:674`)
+3. `proxy->init()` — XSUB(:5570)/XPUB(:5571)/CAPTURE(:5573) ソケット bind (`eventd.cpp:680`)
+4. `service.init_server(zctx)` — REQ_REP(:5572) ソケット bind (`eventd.cpp:682`)
+5. `stats_instance.start()` — stats collector スレッド起動 (`eventd.cpp:684`)
+6. `capture->set_control(START_CAPTURE)` — イベントキャッシュ開始 (`eventd.cpp:700`)
+7. `sleep(200ms)` — stats スレッド初期化完了待ち (`eventd.cpp:703`)
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|---------|------|--------|
+| 1 | `init_cfg.json ["events"]` → `eventd` コンテナ起動 | **先行必須** | 起動後の `init_cfg.json` 変更は `eventd` を再起動するまで無効。`cfg_data` は lazy 初期化後は再読込しない (`events_common.cpp:77`) |
+| 2 | `eventd` ZMQ proxy bind 完了 → パブリッシャーのメッセージ送信 | **先行推奨** | ZMQ の `zmq_connect()` 自体は lazy で失敗しないが、proxy が bind する前に publish されたメッセージは消失する |
+| 3 | `eventd` 全サービス起動（`sleep(200ms)` 後） → telemetry コンテナ起動 | **推奨** | telemetry が `EVENT_CACHE_READ` を送る前に `capture_service` が `START_CAPTURE` 状態でなければキャッシュが空になる |
+| 4 | ZMQ エンドポイント変更 → 全パブリッシャー・サブスクライバー再起動 | **全コンテナ再起動必須** | `init_cfg.json` の `xsub_path` / `xpub_path` 変更後は `eventd` + 全クライアントコンテナの再起動が必要 |
+
+### 主要な制約詳細
+
+**`init_cfg.json` の先行書き込み (依存 #1)**: `eventd` が起動すると `run_eventd_service()` の最初の `get_config_data()` 呼び出しで `cfg_data` が確定し、以後変更できない。`docker restart eventd` でのみ再読み込みされる。SONiC の `config reload` は `init_cfg.json` の再書き込みを含まないため、手動で `init_cfg.json` を編集した後は `systemctl restart eventd` が必要。
+
+**ZMQ メッセージ消失リスク (依存 #2)**: `zmq_connect()` は ZMQ 設計上 lazy であり、eventd bind 完了前でも呼び出し自体はエラーにならない。しかし `eventd_proxy` が XSUB にバインドされるまでに publish されたメッセージは ZMQ の内部キューに保持されず消失する。`docker-eventd` は他コンテナより先に起動するよう systemd の After= 依存関係で制御される。
+
+**telemetry キャッシュハンドシェイク (依存 #3)**: `capture_service` は `eventd` 起動直後に `START_CAPTURE` 状態になり、telemetry コンテナが `event_service` REQ/REP (:5572) 経由で `EVENT_CACHE_STOP_SUBCRIBER` を送るまでイベントを蓄積する。telemetry コンテナが eventd より先に起動した場合は接続待ちとなり、キャッシュ収集が遅延する可能性がある。
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
