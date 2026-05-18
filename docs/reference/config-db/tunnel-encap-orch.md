@@ -311,6 +311,69 @@ SAI `create_tunnel()` 成功 (`vxlanorch.cpp:911`) → `addTunnelToFlexCounter(o
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Consumer 登録経路 — 二段階パイプライン
+
+`VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO` の変更は **vxlanmgrd → orchagent** の 2 段階で処理される。
+
+```cpp
+// vxlanmgrd.cpp:44-58
+vector<std::string> cfg_vnet_tables = {
+    CFG_VXLAN_TUNNEL_TABLE_NAME,      // "VXLAN_TUNNEL"
+    CFG_VXLAN_TUNNEL_MAP_TABLE_NAME,  // "VXLAN_TUNNEL_MAP"
+    CFG_VXLAN_EVPN_NVO_TABLE_NAME,   // "VXLAN_EVPN_NVO"
+};
+VxlanMgr vxlanmgr(&cfgDb, &appDb, &stateDb, cfg_vnet_tables);
+
+// orchdaemon.cpp:350-358
+VxlanTunnelOrch *vxlan_tunnel_orch =
+    new VxlanTunnelOrch(m_stateDb, m_applDb, APP_VXLAN_TUNNEL_TABLE_NAME);
+VxlanTunnelMapOrch *vxlan_tunnel_map_orch =
+    new VxlanTunnelMapOrch(m_applDb, APP_VXLAN_TUNNEL_MAP_TABLE_NAME);
+VxlanVrfMapOrch *vxlan_vrf_orch =
+    new VxlanVrfMapOrch(m_applDb, APP_VXLAN_VRF_TABLE_NAME);
+EvpnNvoOrch* evpn_nvo_orch =
+    new EvpnNvoOrch(m_applDb, APP_VXLAN_EVPN_NVO_TABLE_NAME);
+```
+
+`vxlanmgrd` は `SubscriberStateTable`（Redis keyspace notification ベース）で CONFIG_DB を購読する。`orchagent` 側の各 Orch は `ConsumerStateTable`（Redis PUBLISH/SUBSCRIBE channel ベース）で APPL_DB を購読する。
+
+### 購読テーブルと API 種別
+
+| 購読者プロセス | 購読 API | 購読テーブル (DB) | ハンドラ |
+|--------------|---------|-------------------|---------|
+| `vxlanmgrd` (`VxlanMgr`) | `SubscriberStateTable` | `VXLAN_TUNNEL` (CONFIG_DB) | `doVxlanTunnelCreateTask()` / `doVxlanTunnelDeleteTask()` |
+| `vxlanmgrd` (`VxlanMgr`) | `SubscriberStateTable` | `VXLAN_TUNNEL_MAP` (CONFIG_DB) | `doVxlanTunnelMapCreateTask()` / `doVxlanTunnelMapDeleteTask()` |
+| `vxlanmgrd` (`VxlanMgr`) | `SubscriberStateTable` | `VXLAN_EVPN_NVO` (CONFIG_DB) | `doVxlanEvpnNvoCreateTask()` / `doVxlanEvpnNvoDeleteTask()` |
+| `orchagent` (`VxlanTunnelOrch`) | `ConsumerStateTable` | `VXLAN_TUNNEL_TABLE` (APPL_DB) | `addOperation()` / `delOperation()` |
+| `orchagent` (`VxlanTunnelMapOrch`) | `ConsumerStateTable` | `VXLAN_TUNNEL_MAP_TABLE` (APPL_DB) | `addOperation()` / `delOperation()` |
+| `orchagent` (`VxlanVrfMapOrch`) | `ConsumerStateTable` | `VXLAN_VRF_TABLE` (APPL_DB) | `addOperation()` / `delOperation()` |
+| `orchagent` (`EvpnNvoOrch`) | `ConsumerStateTable` | `VXLAN_EVPN_NVO_TABLE` (APPL_DB) | `addOperation()` / `delOperation()` |
+
+### gDirectory を介した Observer 連携
+
+`VxlanTunnelOrch` は伝統的な Observer インタフェース（`attach()`/`notify()`）を持たず、`gDirectory` グローバルレジストリ経由で他の Orch が直接参照を取得する。
+
+| 呼び出し元 | 呼び出し先 | 契機 | evidence |
+|-----------|-----------|------|---------|
+| `VxlanTunnelOrch` | `EvpnNvoOrch` | `addTunnelUser()` / `delTunnelUser()` 時にリモート VTEP エンドポイント処理 | `vxlanorch.cpp:1678,1733,1795` |
+| `VxlanTunnelMapOrch` | `VxlanTunnelOrch` | `addOperation()` 時にトンネル存在確認 + tunnel OID 取得 | `vxlanorch.cpp:2046` |
+| `VxlanVrfMapOrch` | `VxlanTunnelOrch` + `VxlanTunnelMapOrch` | VRF-VNI マッピング生成時 | `vxlanorch.cpp:2260-2261` |
+
+### FlexCounter タイマー（非通知パス）
+
+`VxlanTunnelOrch` コンストラクタで `SelectableTimer`（`FLEX_COUNTER_UPD_INTERVAL=1` 秒）を登録し、COUNTERS_DB の `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` を更新する。これは CONFIG_DB 通知経路とは独立した周期ポーリングパスである（`vxlanorch.cpp:1303-1340`）。
+
+### STATE_DB 書き戻し（Observer 逆方向）
+
+`m_stateVxlanTable`（`STATE_DB:VXLAN_TUNNEL_TABLE`）への書き込みは `Table` 型（非 ProducerStateTable）のため Redis `hset`/`del` を直接発行する。NotificationProducer / Consumer 型のチャンネル通知は使用しない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-pubsub.md`
+
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VXLAN_TUNNEL`](vxlan-tunnel.md)、[`VXLAN_TUNNEL_MAP`](vxlan-tunnel-map.md)
