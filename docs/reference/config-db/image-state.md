@@ -144,6 +144,30 @@ Built by: johnar@jenkins-worker-8
 - YANG schema、CONFIG_DB エントリ、STATE_DB エントリは存在しない。バージョン情報は専らファイルシステムから参照される。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`/etc/sonic/sonic_version.yml` はビルド時に生成される静的ファイルであり、CONFIG_DB / STATE_DB への書込みは行わない。ただし、ビルドパイプライン内の変数確定順序と、ランタイムでの読込みキャッシュ挙動に順序依存が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 違反時の挙動 |
+|---|----------|------|------------|
+| 1 | 環境変数エクスポート → `j2` レンダリング (`build_debian.sh`) | **強制先行（同スクリプト内逐次実行）** | 必須フィールドが空、またはガード対象フィールドが省略される |
+| 2 | CI による `BUILD_NUMBER` 設定 → `build_debian.sh` 実行 | **推奨先行** | `BUILD_NUMBER` 未設定時は `functions.sh:60` の `${BUILD_NUMBER:-0}` フォールバックで `build_number: 0` が刻まれる |
+| 3 | SONiC イメージインストール（ファイル配置完了） → `get_sonic_version_info()` 呼び出し | **強制先行** | ファイル不在時は `os.path.isfile()` チェックで `None` を返す（`device_info.py:512-513`）。`show version` / gNMI が version なし表示になる |
+| 4 | 初回 `get_sonic_version_info()` 呼び出し → 以降の同プロセス参照 | **プロセスライフタイム固定（キャッシュ）** | `global sonic_ver_info` に結果を保持し、2 回目以降はファイルを再読しない（`device_info.py:515-517`）。ファイルを書き換えてもプロセス再起動なしでは反映されない |
+
+### 主要な制約詳細
+
+**ビルド時の変数先行 (依存 #1)**: `build_debian.sh:642-654` は `BUILD_VERSION`・`DEBIAN_VERSION`・`KERNEL_VERSION` 等の環境変数をエクスポートしてから `j2 <template>` を呼び出す。これらは同一 Bash スクリプト内で逐次実行されるため、通常は問題が生じない。ただし `asic_subtype`（`TARGET_MACHINE` 変数が空なら省略）や `asan`（`ENABLE_ASAN != "y"` なら省略）は Jinja2 `{% if %}` ガードで条件付き出力となる（`sonic_version.yml.j2:10-12, 29-31`）。
+
+**`BUILD_NUMBER` フォールバック (依存 #2)**: `functions.sh:60` の `BUILD_NUMBER=${BUILD_NUMBER:-0}` により、CI 環境変数が未設定のローカルビルドでは常に `build_number: 0` が埋め込まれる。`build_version` 文字列も `<branch>.0-<commit_sha>` 形式になるため、同一コミットの複数ローカルビルドを `build_version` で区別できない。
+
+**プロセスキャッシュと hot-reload 不可 (依存 #4)**: `device_info.get_sonic_version_info()` は `sonic_ver_info` グローバル変数でキャッシュするため、`show version` CLI や gNMI telemetry サービスが起動してから `/etc/sonic/sonic_version.yml` を手動書き換えしても、**該当プロセスを再起動するまで旧バージョン情報が返り続ける**。sonic-py-common を使う全デーモン（`telemetry`・`sonic-utilities`）が影響を受ける。
+
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: `sonic-buildimage/build_debian.sh` L642-654 — sonic_version.yml 生成処理。<https://github.com/sonic-net/sonic-buildimage/blob/master/build_debian.sh>
