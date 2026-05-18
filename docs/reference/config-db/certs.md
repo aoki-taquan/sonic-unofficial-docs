@@ -301,6 +301,52 @@ Rotate 成功後に gnmi サーバを再起動しなくても新証明書が有�
 詳細スキャン結果は `meta/_intermediate/cdb-flow/certs-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+`CREDENTIALS|CERT` は `gnsi_certz.go` が **直接 HSET** で STATE_DB に書き込むテーブルである。Redis pub/sub チャンネルへの明示的な PUBLISH は行わず、Redis keyspace notification 経由で consumer に変更が伝播する。
+
+### 書き込み側: gnsi_certz.go → STATE_DB (直接 HSet)
+
+`writeCredentialsMetadataToDB()` (`gnsi_certz.go:1036-1058`) は `common_utils.GetRedisDBClient()` で STATE_DB に接続し、各 freshness フィールドを `sc.HSet()` で直接書き込む。書き込みは `writeEntityFreshness()` から per-entity に呼ばれ、1 回の `Rotate` Finalize で最大 8 フィールド (4 エンティティ × version + created_on) が逐次書き込まれる。
+
+### 購読側: sonic-mgmt-common — gNMI OnChange 購読
+
+`Subscribe_grpc_server_xfmr` (`xfmr_system.go:426-466`) が gNMI Subscribe RPC を受け取ったときの購読先を定義する:
+
+| 購読先 | DB | テーブル | キー | 購読モード |
+|--------|----|---------|------|-----------|
+| STATE_DB | 6 | `CREDENTIALS` | `CERT\|gnxi` | **OnChange** |
+| STATE_DB | 6 | `CREDENTIALS` | `PATHZ_POLICY\|ACTIVE` | OnChange |
+
+購読対象キーは **`CERT|gnxi` のみ** (`GNXI_ID = "gnxi"` ハードコード)。
+`gnxi` 以外のプロファイル ID は gNMI 経由では購読されない。
+
+### データ変換: DbToYang_grpc_server_xfmr
+
+OnChange 通知受信後、`DbToYang_grpc_server_xfmr` (`xfmr_system.go:540-590`) が `GetEntry()` で全フィールドを取得し OpenConfig YANG に変換する:
+
+| STATE_DB フィールド | 変換先 OpenConfig パス |
+|------------------|--------------------|
+| `certificate_version` | `gnsi-certz:certificate-version` |
+| `ca_trust_bundle_version` | `gnsi-certz:ca-trust-bundle-version` |
+| `certificate_revocation_list_bundle_version` | `gnsi-certz:certificate-revocation-list-bundle-version` |
+| `authentication_policy_version` | `gnsi-certz:authentication-policy-version` |
+| `*_created_on` (文字列) | 対応 `gnsi-certz:*-created-on` (uint64 変換) |
+
+`created_on` フィールドは `strconv.ParseUint()` で文字列 → uint64 変換される。変換失敗時はログのみで処理継続する (`xfmr_system.go:569-582`)。
+
+### 通信メカニズム サマリ
+
+| 区間 | 方式 | 備考 |
+|------|------|------|
+| `gnsi_certz.go` → STATE_DB | 直接 `HSET` | 明示的 PUBLISH なし |
+| STATE_DB → translib | Redis keyspace notification (`__keyspace@6__`) | SONiC デフォルト設定で有効 |
+| translib → gNMI クライアント | gNMI `SubscribeResponse` (OnChange) | 変更検出ごとにプッシュ |
+
+詳細スキャン結果は `meta/_intermediate/cdb-flow/certs-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
