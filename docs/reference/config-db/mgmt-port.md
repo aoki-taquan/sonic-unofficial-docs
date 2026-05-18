@@ -300,3 +300,34 @@ MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定�
     STATE_DB の同期（`mgmt_oper_status.py`）が遅延している場合でも、SNMP の `alias` 返却は CONFIG_DB から即座に取得されるため影響を受けない。
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: sonic-buildimage/files/image_config/monit/mgmt_oper_status.py / sonic-host-services/scripts/hostcfgd MgmtIfaceCfg -->
+
+`MGMT_PORT` は orchagent / SAI を経由しないため、失敗経路は `mgmt_oper_status.py`（monit）と `hostcfgd`（MgmtIfaceCfg）の 2 系統に限定される。
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| CONFIG_DB に `MGMT_PORT|*` キーが存在しない | `mgmt_oper_status.py:17` | STATE_DB 更新なし・`sys.exit(0)` で正常終了扱い | `LOG_DEBUG "No management interface found"` | `mgmt_oper_status.py:17-19` |
+| `mgmt_oper_status.py` 内でその他例外発生 | `mgmt_oper_status.py:49` | `STATE_DB MGMT_PORT_TABLE|<port>.oper_status = "unknown"` に上書き後 `sys.exit(1)` | `LOG_ERR "mgmt_oper_status exception : <e>"` | `mgmt_oper_status.py:49-51` |
+| `MGMT_INTERFACE` 変更後の `systemctl restart interfaces-config` 失敗 | `hostcfgd MgmtIfaceCfg.update_mgmt_iface():1638` | 早期 return。`self.iface_config_data` キャッシュ未更新。`/etc/network/interfaces` 再生成されず eth0 設定が古いまま残る | `LOG_ERR "Failed to restart management interface services"` | `hostcfgd:1638-1641` |
+| `MGMT_VRF_CONFIG` 変更後の VRF サービス再起動失敗（`chrony` stop / `interfaces-config` restart / `chrony` start）| `hostcfgd MgmtIfaceCfg.update_mgmt_vrf():1663` | 早期 return。`self.mgmt_vrf_enabled` キャッシュ未更新。VRF 状態が不整合のまま残る | `LOG_ERR "Failed to restart management vrf services"` | `hostcfgd:1663-1666` |
+| `mgmt_oper_status.py` が `/sys/class/net/<port>/operstate` を読めない (`subprocess` エラー) | `mgmt_oper_status.py:42-44` | 例外経路に fallback → `oper_status = "unknown"` が STATE_DB に書き込まれ `sys.exit(1)` | `LOG_ERR "mgmt_oper_status exception : ..."` | `mgmt_oper_status.py:49-51` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| MGMT_PORT エントリ DEL 後に `mgmt_oper_status.py` が実行された場合 | `db.keys(CONFIG_DB, 'MGMT_PORT|*')` が空 → STATE_DB 更新なし。古い `MGMT_PORT_TABLE` エントリが STATE_DB に残存する可能性あり | `mgmt_oper_status.py:16-19` |
+
+### 補足
+
+- **monit 定期実行**: `mgmt_oper_status.py` は `monit` が定期的に呼び出すスクリプトであり、失敗時 (`sys.exit(1)`) は monit がアラートを生成する。
+- **SAI 非経由のため rollback 機構なし**: MGMT_PORT はデータポート (`PORT`) と異なり orchagent の retry キューに入らない。`interfaces-config` restart 失敗は手動介入（`systemctl restart interfaces-config`）で復旧が必要。
+- **`oper_status = "unknown"` の意味**: `mgmt_oper_status.py` が例外で終了した場合にのみ設定される値。通常の `up`/`down` と区別して監視することを推奨する。
+
+<!-- /failure -->
