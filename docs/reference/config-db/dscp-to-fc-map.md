@@ -512,4 +512,33 @@ NotificationConsumer / Producer: なし
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-platform.md -->
+<!-- source: sonic-swss/orchagent/qosorch.cpp:1039-1094 / orchagent/cbf/nhgmaporch.cpp:299-324 -->
+<!-- date: 2026-05-18 -->
+
+`DscpToFcMapHandler` はプラットフォーム固有の分岐コード（`getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` / `gMySwitchType`）を**一切持たない**。唯一の実装差は SAI capability query 経由で生じる。
+
+### SAI capability — FC 非対応 ASIC での全エントリ reject
+
+`NhgMapOrch::getMaxNumFcs()` (`nhgmaporch.cpp:299-324`) が初回呼び出し時に `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を SAI に照会する。
+
+| SAI 戻り値 | `max_num_fcs` | `DSCP_TO_FC_MAP` への影響 |
+|---|---|---|
+| `SAI_STATUS_SUCCESS` | `attr.value.u8`（通常 8〜64） | FC 0..`max_num_fcs-1` が有効 |
+| NOT_SUPPORTED / 取得失敗 | **0** | 全 FC 値が `fc >= 0` 条件で reject → `task_invalid_entry` |
+
+FC 非対応 ASIC では DSCP_TO_FC_MAP の全エントリが SAI map を作成できず silent drop となる（ERROR ログは出力）。
+
+### cbf_config.j2 — CBF マップはプラットフォーム共通テンプレート
+
+`sonic-buildimage/files/build_templates/cbf_config.j2` の AZURE マップは全 ASIC 共通で 64 エントリを定義する。プラットフォーム固有 `cbf.json.j2` による上書きは可能だが、community master 公開分では ASIC ベンダー固有の `cbf.json.j2` は存在しない。
+
+!!! note "DSCP_TO_TC_MAP との対比"
+    隣接テーブル `DSCP_TO_TC_MAP` では Mellanox 向け `AZURE_UPLINK` マップ / Broadcom 向け db_migrator 自動生成など複数のプラットフォーム差がある（`qosorch.cpp:1955-1975` / `db_migrator.py:700-715`）。`DSCP_TO_FC_MAP` はこれらに相当する分岐を持たず、SAI capability の有無のみが差異となる。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: dscp-to-fc-map-2026-05-14 -->
