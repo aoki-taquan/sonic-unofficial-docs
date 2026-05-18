@@ -390,3 +390,50 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 
 > **Evidence**: `qosorch.cpp:2253-2300` (`QosOrch::doTask()`); `qosorch.cpp:124-201` (`QosMapHandler::processWorkItem()`); `qosorch.cpp:1132-1213` (`ExpToFcMapHandler::convertFieldValuesToAttributes()`, `addQosItem()`); `nhgmaporch.cpp:299-325` (`NhgMapOrch::getMaxNumFcs()`)
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-constants.md`
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`、`sonic-swss/orchagent/cbf/nhgmaporch.cpp`
+
+### EXP 値上限
+
+| 定数 | 値 | 箇所 |
+|------|----|------|
+| `EXP_MAX_VAL` | `7` | `qosorch.cpp:120` — `#define EXP_MAX_VAL 7` |
+
+EXP 値は 0..7 の範囲のみ有効。`convertFieldValuesToAttributes()` L1150–1161 で `value < 0` または `value > EXP_MAX_VAL` を検出し `false` を返す（エントリ全体が `task_invalid_entry` で reject）。
+
+### FC 値上限（実行時取得）
+
+| 取得方法 | 箇所 | 備考 |
+|----------|------|------|
+| `NhgMapOrch::getMaxNumFcs()` — `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を SAI 問い合わせ | `nhgmaporch.cpp:299-325` | 初回呼び出しで取得後キャッシュ (`static int max_num_fcs = -1`) |
+| スイッチ FC 未サポート時 | `nhgmaporch.cpp:319` | `max_num_fcs = 0` → 全 FC 値が reject。`SWSS_LOG_WARN("Switch does not support FCs")` |
+| テスト環境実績値 | `test_qos_map.py:314` | `max_num_fcs = 63` で動作確認済み |
+
+### SAI 属性定数
+
+| 定数 | 箇所 |
+|------|------|
+| `SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS` | `addQosItem()` にハードコード (`qosorch.cpp:1189-1213`) |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `convertFieldValuesToAttributes()` L1140 |
+| `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` | PORT_QOS_MAP バインド時 (`qosorch.cpp:72`) |
+
+### フィールド名・テーブル名定数
+
+| 定数 | 値 | 箇所 |
+|------|----|------|
+| `exp_to_fc_field_name` | `"exp_to_fc_map"` | `qosorch.h:33` — PORT_QOS_MAP フィールド名 |
+| `CFG_EXP_TO_FC_MAP_TABLE_NAME` | `"EXP_TO_FC_MAP"` | CONFIG_DB テーブル名 (`qosorch.cpp:93,112,1338`) |
+
+### YANG パターン vs 実装上限の乖離
+
+| フィールド | YANG パターン | 実装上限 |
+|-----------|--------------|---------|
+| `exp` (key) | `"[0-7]?"` | `EXP_MAX_VAL=7`（YANG と一致） |
+| `fc` (value) | `"[0-7]?"` | `max_num_fcs-1`（SAI 問い合わせ依存。YANG の 7 より広い場合も狭い場合もある） |
+
+<!-- /constants -->
