@@ -461,6 +461,30 @@ const (
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-side.md -->
+
+CONFIG_DB `TELEMETRY_CLIENT` テーブルの変更に伴って `dialout_client.go` が副次的に書き込む DB エントリは **存在しない**。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `redisDb.HGetAll` / `PSubscribe` / `Keys` 以外の Redis 操作なし (`dialout_client.go` 全行走査) |
+| STATE_DB | なし | `dialout_client.go` に `STATE_DB` 接続・参照なし |
+| COUNTERS_DB | なし | `dialout_client.go` に `COUNTERS_DB` 参照なし。テレメトリ統計は外部コレクタ側で集計 |
+| ASIC_DB / FLEX_COUNTER_DB | なし | dialout は SAI 非経由。orchagent との連携なし |
+
+`dialout_client.go` が CONFIG_DB に行う操作は以下の読み取りのみ (`dialout_client.go:471,690,707`):
+
+- `redisDb.HGetAll(...)` — `TELEMETRY_CLIENT` エントリのフィールド読み取り
+- `redisDb.PSubscribe(...)` — キースペース通知の購読（読み取り専用）
+- `redisDb.Keys(...)` — `TELEMETRY_CLIENT|*` キーの列挙
+
+外部への副作用は `dst_addr` に指定した gRPC コレクタへのテレメトリデータ送信（ネットワーク I/O）のみであり、Redis DB への書き込みには当たらない。
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
