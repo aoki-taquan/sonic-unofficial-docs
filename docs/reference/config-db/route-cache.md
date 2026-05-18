@@ -1,6 +1,6 @@
 ---
 title: APPL_STATE_DB ROUTE_TABLE (route offload cache)
-description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御を含む Phase A+B+C+D 分析。"
+description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数を含む Phase A+B+C+D+E 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -449,6 +449,107 @@ SAI 失敗経路は FRR zebra への offload 通知が行われず、FRR 側で 
 | SAI remove 失敗 | エントリ削除なし | `err_str=[SAI]...` 送信 | erase（消費） |
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-constants.md -->
+
+`orchagent/routeorch.cpp`・`orchagent/response_publisher.cpp`・`fpmsyncd/fpmsyncd.cpp`・`fpmsyncd/routesync.cpp`・`common/schema.h` から抽出した APPL_STATE_DB `ROUTE_TABLE` 経路オフロードキャッシュに関わる主要ハードコード定数。
+
+### ECMP 上限デフォルト（`routeorch.cpp`）
+
+| マクロ | 値 | 行 | 用途 |
+|--------|-----|-----|------|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | `routeorch.cpp:37` | `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` 取得失敗時の `m_maxNextHopGroupCount` フォールバック値 |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | `routeorch.cpp:38` | Mellanox プラットフォーム補正の除数（SAI 戻り値をこの値で割って実効 ECMP グループ数を算出） |
+
+算出値は STATE_DB `SWITCH_CAPABILITY` の `MAX_NEXTHOP_GROUP_COUNT` として公開される（`routeorch.cpp:90`）。
+
+### ResponsePublisher 動作フラグ（`routeorch.cpp`）
+
+```cpp
+// routeorch.cpp:57-58
+m_publisher.setBuffered(true);
+m_publisher.m_directDbWrite = true;
+```
+
+| フラグ | 値 | 効果 |
+|--------|-----|------|
+| `setBuffered(true)` | `true` | APPL_STATE_DB 書き込みと RESPONSE_CHANNEL 通知を `doTask()` 末尾の `flush()` まで Redis パイプラインにバッファリングする |
+| `m_directDbWrite` | `true` | 既存エントリとのマージや NULL フィルタリングをスキップして `applStateTable.set()` を直接実行（フルオーバーライト） |
+
+### エラー文字列プレフィクス（`response_publisher.cpp`）
+
+```cpp
+// response_publisher.cpp:18-19
+constexpr char *kOrchagentComponent = "[OrchAgent] ";
+constexpr char *kSaiComponent = "[SAI] ";
+```
+
+通知チャネルの `err_str` フィールドの値形式:
+
+| SAI 結果 | `err_str` 値 | 定義元 |
+|----------|-------------|--------|
+| 成功 | `"SWSS_RC_SUCCESS"` | `ReturnCode` デフォルト message | 
+| SAI 由来エラー | `"[SAI] " + status.message()` | `response_publisher.cpp:19` |
+| Orchagent 由来エラー | `"[OrchAgent] " + status.message()` | `response_publisher.cpp:18` |
+
+### fpmsyncd タイマー・フロー制御定数（`fpmsyncd.cpp`）
+
+| 定数 | 値 | 単位 | 行 | 用途 |
+|------|-----|------|-----|------|
+| `FLUSH_TIMEOUT` | `500` | ミリ秒 | `fpmsyncd.cpp:25` | FPM 受信後のバッファフラッシュ待機上限。idle 時間がこの値を超えるとフラッシュ実行 |
+| `SMALL_TRAFFIC` | `500` | メッセージ数 | `fpmsyncd.cpp:28` | フラッシュ判定閾値。pending が `500` 件以下なら idle >= FLUSH_TIMEOUT 待ちを適用 |
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` | 秒 | `fpmsyncd.cpp:46` | warm restart タイマーのデフォルトインターバル（DEVICE_METADATA 設定がない場合） |
+| `DEFAULT_EOIU_HOLD_INTERVAL` | `3` | 秒 | `fpmsyncd.cpp:51` | EOIU（End of Initial Update）受信後の hold インターバル |
+
+### テーブル名・チャネル名定数（`schema.h` + `fpmsyncd.cpp`）
+
+```cpp
+// schema.h:47
+#define APP_ROUTE_TABLE_NAME  "ROUTE_TABLE"
+
+// fpmsyncd.cpp:78 — ランタイム文字列結合
+const auto routeResponseChannelName =
+    std::string("APPL_DB_") + APP_ROUTE_TABLE_NAME + "_RESPONSE_CHANNEL";
+// → "APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL"
+```
+
+RESPONSE_CHANNEL 名はマクロ直書きではなくランタイム結合で生成される。チャネル名変更時は `fpmsyncd.cpp:78` の生成ロジックと `schema.h:47` の両方を変更する必要がある。
+
+### Warm Restart ハンドラ固定値（`routesync.cpp`）
+
+```cpp
+// routesync.cpp:162
+m_warmStartHelper(pipeline, m_routeTable.get(), APP_ROUTE_TABLE_NAME, "bgp", "bgp")
+```
+
+Warm Start Helper の reconcileOp パラメータは `"bgp"` 固定（第 4・第 5 引数）。Warm restart 時の reconcile 判定に使用される。
+
+```cpp
+// routesync.cpp:3285
+fieldValues.emplace_back("err_str", "SWSS_RC_SUCCESS");
+```
+
+`markRoutesOffloaded()` が RESPONSE_CHANNEL に注入する `err_str` は `"SWSS_RC_SUCCESS"` リテラル固定。
+
+### 定数まとめ
+
+| 定数 | 値 | ファイル:行 | 種別 |
+|------|-----|------------|------|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | `routeorch.cpp:37` | `#define` マクロ |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | `routeorch.cpp:38` | `#define` マクロ |
+| `m_directDbWrite` | `true` | `routeorch.cpp:58` | インスタンス設定フラグ |
+| `FLUSH_TIMEOUT` | `500 ms` | `fpmsyncd.cpp:25` | `#define` マクロ |
+| `SMALL_TRAFFIC` | `500` | `fpmsyncd.cpp:28` | `#define` マクロ |
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | `120 s` | `fpmsyncd.cpp:46` | `const uint32_t` |
+| `DEFAULT_EOIU_HOLD_INTERVAL` | `3 s` | `fpmsyncd.cpp:51` | `const uint32_t` |
+| `kSaiComponent` | `"[SAI] "` | `response_publisher.cpp:19` | `constexpr char*` |
+| `kOrchagentComponent` | `"[OrchAgent] "` | `response_publisher.cpp:18` | `constexpr char*` |
+| `APP_ROUTE_TABLE_NAME` | `"ROUTE_TABLE"` | `schema.h:47` | `#define` マクロ |
+
+<!-- /constants -->
 
 ## 確認コマンド
 
