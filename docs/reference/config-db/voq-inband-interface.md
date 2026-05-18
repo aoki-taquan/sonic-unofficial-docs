@@ -283,4 +283,42 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+対象: `intfmgrd` (`sonic-swss/cfgmgr/intfmgr.cpp`) および `orchagent` の `IntfsOrch` / `PortsOrch` (`sonic-swss/orchagent/intfsorch.cpp`, `portsorch.cpp`)。
+
+`VOQ_INBAND_INTERFACE` の処理は **単一キー SET**（属性ロウ `|<name>`）と **2-key SET**（IP プレフィクスロウ `|<name>|<ip-prefix>`）で挙動が異なる。
+
+### 単一キー SET — intfmgr 側は失敗分岐なし
+
+`intfmgr.cpp:1195-1204` は `doIntfGeneralTask()` を一切呼ばず、`m_appIntfTableProducer.set()` と `m_stateIntfTable.hset()` を直接実行してから `erase()` する。Redis 書き込みは通常失敗しないため、**intfmgr 側では失敗ケースが存在しない**。
+
+### 2-key SET — isIntfCreated() 待ち
+
+IP プレフィクスロウ (`doIntfAddrTask()`) は `isIntfStateOk()` + `isIntfCreated()` を両方チェックする（`intfmgr.cpp:1115`）。単一キー SET が先行して `STATE_INTF_TABLE` に `vrf=""` を書くまで `isIntfCreated()` が false を返し、タスクを `m_toSync` に残留させて次回ループで再試行する（silent retry、エラーログなし）。
+
+### orchagent 側 (portsorch.cpp:11110-11134)
+
+APPL_DB `INTF_TABLE` を受け取った `IntfsOrch::doTask()` は `setVoqInbandIntf()` を呼び、次の 2 条件で `false` を返す。
+
+| # | 失敗条件 | ログ | orchagent 挙動 | 解消条件 |
+|---|---------|------|---------------|---------|
+| 1 | `getPort(alias, port)` が false — portsorch の内部マップにポート未登録 | `SWSS_LOG_ERROR("Port/Vlan configured for inband intf %s is not ready!", ...)` | `it++; continue;` → `m_toSync` に残留、次回ループで再試行 | `portsyncd` が APPL_DB `PORT_TABLE` を書き → `portsorch` がポートを登録した時点 |
+| 2 | `type == "port"` かつ `port.m_hif_id == 0` — host interface 未作成 | `SWSS_LOG_ERROR("Host interface is not available for port %s", ...)` | 同上 | `portsorch` が `sai_create_hostif` を完了した時点 |
+
+同名インターフェースが既登録の場合は `SWSS_LOG_NOTICE` を出力して `true` を返す（idempotent）。
+
+### STATE_DB への障害記録
+
+VOQ 系には ACL/QoS のような `STATE_DB` ステータスエントリがない。失敗時は `syslog`（swss プロセス）へのエラーログのみ。
+
+```bash
+# 失敗ログ確認
+journalctl -u swss | grep -i "inband"
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/voq-inband-interface-failure.md`
+<!-- /failure -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
