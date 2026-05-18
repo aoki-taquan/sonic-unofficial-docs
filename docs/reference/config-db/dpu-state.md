@@ -453,6 +453,65 @@ DPU_STATE エントリは DPU down 状態でも CHASSIS_STATE_DB に残り続け
 > **スキャン証跡**: `chassisd` `DpuStateUpdater` クラス全行 (L1234-1320)、`DpuStateManagerTask` 全行 (L1464-1557)、`SmartSwitchModuleUpdater.module_down_chassis_db_cleanup` (L1113-1130) 読了。副次書き込みは `CHASSIS_STATE_DB:DPU_STATE` への自己フィードバック 1 件のみ。詳細は `meta/_intermediate/cdb-flow/dpu-state-side.md` 参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd DpuStateManagerTask:1464-1530 / DpuChassisdDaemon.run:1537-1557 / SELECT_TIMEOUT:95 -->
+
+### 書き込み側 — swsscommon.Table による直接 hset
+
+`DPU_STATE` への書き込みは **ProducerStateTable ではなく** `swsscommon.Table.hset()` を使用する。これは CHASSIS_STATE_DB が CONFIG_DB / APPL_DB の producer/consumer パターンではなく、デーモン直接書き込みの state DB であるため。
+
+| 書き込み元 | 書き込みメソッド | キー例 |
+|-----------|---------------|--------|
+| `SmartSwitchModuleUpdater.update_dpu_state()` (chassisd:864-891) | `chassis_state_db.hset(key, field, value)` | `DPU_STATE\|DPU0` |
+| `DpuStateUpdater._update_dp_dpu_state()` (chassisd:1290-1291) | `dpu_state_table.hset(name, DP_STATE, state)` | `DPU_STATE\|DPU0` |
+| `DpuStateUpdater._update_cp_dpu_state()` (chassisd:1294-1295) | `dpu_state_table.hset(name, CP_STATE, state)` | `DPU_STATE\|DPU0` |
+
+`swsscommon.Table.hset()` は内部で Redis keyspace notification (`__keyspace@13__:DPU_STATE|DPU<N>`) を PUBLISH するため、`SubscriberStateTable` で購読している側がイベントを受け取る。
+
+### 読み取り側 — SubscriberStateTable + select ループ
+
+`DpuStateManagerTask.task_worker()` (chassisd:1464-1530) は 3 テーブルを `SubscriberStateTable` で購読し、`SELECT_TIMEOUT = 1000` ms で永続ブロックする:
+
+```python
+# chassisd:95
+SELECT_TIMEOUT = 1000  # ms
+
+# chassisd:1479-1482
+selectable = [
+    swsscommon.SubscriberStateTable(self.app_db, 'PORT_TABLE'),         # APP_DB (DB ID=0)
+    swsscommon.SubscriberStateTable(self.state_db, 'SYSTEM_READY'),     # STATE_DB (DB ID=6)
+    swsscommon.SubscriberStateTable(self.chassis_state_db, 'DPU_STATE') # CHASSIS_STATE_DB (DB ID=13)
+]
+```
+
+| DB | DB ID | テーブル | keyspace チャネル | 用途 |
+|----|-------|---------|----------------|------|
+| CHASSIS_STATE_DB | 13 | `DPU_STATE` | `__keyspace@13__:DPU_STATE\|DPU<N>` | CP/DP state 変化の自己フィードバック検知 |
+| APP_DB | 0 | `PORT_TABLE` | `__keyspace@0__:PORT_TABLE\|*` | platform API 非実装時の DP state fallback ソース |
+| STATE_DB | 6 | `SYSTEM_READY` | `__keyspace@6__:SYSTEM_READY\|*` | platform API 非実装時の CP state fallback ソース |
+
+`TIMEOUT` 時は `continue` (何もしない)。`OBJECT` 検出時にのみ `DpuStateUpdater.update_state()` を呼んで CP/DP state を再評価・再書き込みする。
+
+### show dpu CLI — on-demand 読み取り (非購読)
+
+`sonic-utilities/show/system_health.py:show_dpu_state()` (L172-222) は `swsscommon.Table` で CHASSIS_STATE_DB を直接読み取る (購読なし)。コマンド実行時のみ on-demand でフィールドを取得し `oper_status` を算出する。
+
+### poll_dpu_state フラグによる通知方式の切り替え
+
+`DpuChassisdDaemon.run()` (chassisd:1537-1557) は platform API の実装有無に応じて通知方式を切り替える:
+
+| `poll_dpu_state` | 条件 | 通知方式 | `DpuStateManagerTask` |
+|-----------------|------|---------|----------------------|
+| `True` | `get_dataplane_state()` / `get_controlplane_state()` が実装済み | ポーリング (loop_interval 秒ごとに `update_state()`) | **起動しない** |
+| `False` | 両 API が `NotImplementedError` | subscribe ベース (`PORT_TABLE` / `SYSTEM_READY` / `DPU_STATE` イベント駆動) | **起動する** |
+
+`poll_dpu_state = True` の場合は DPU_STATE 変化の keyspace notification は使用されない。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/dpu-state-pubsub.md`
+<!-- /pubsub -->
+
 ## 購読者
 
 - `chassisd` (`SmartSwitchModuleUpdater` / `DpuStateUpdater`) — 書き込み元
