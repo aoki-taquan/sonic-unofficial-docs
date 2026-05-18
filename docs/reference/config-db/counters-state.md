@@ -386,6 +386,61 @@ YANG に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで�
 
 ---
 
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-side.md`
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp:9476-9494,
+     sonic-swss/orchagent/flexcounterorch.cpp:271-279,
+     sonic-utilities/utilities_common/portstat.py:295-331 -->
+
+これらの STATE_DB テーブルは orchagent コンストラクタが **SAI 問い合わせ結果を起動時 1 回限りで書き込む**ものであり、通常の CONFIG_DB SET/DEL に連動する副作用とは性質が異なる。書き込み後の値を consumer が参照した際に下流で何が変化するかを以下に示す。
+
+### 1. COUNTERS_DB ポーリング対象の変化（portstat.py）
+
+`portstat.py` は起動時（またはカウンタポーリング実行前）に `PORT_COUNTER_CAPABILITIES` を参照し、WRED カウンタを `counter_bucket_dict` に含めるか除外するかを決定する[^10]。
+
+| `isSupported` の値 | portstat.py の挙動 | portstat CLI 表示 |
+|-------------------|------------------|-----------------|
+| `"true"` | `SAI_PORT_STAT_*_WRED_*` を COUNTERS_DB ポーリング対象に保持 | WRED カラムに数値が表示される |
+| `"false"` または キー不存在 | 対応 SAI カウンタを `counter_bucket_dict` から削除 | WRED カラムが `N/A` になる |
+
+!!! warning "WRED カウンタ N/A の真因"
+    `portstat` で WRED カラムが `N/A` になる場合、原因は 2 つある。(1) プラットフォームが SAI WRED 統計を未サポート（`isSupported="false"` が正常動作）、(2) orchagent 起動直後の false 初期化ウィンドウ中に portstat が実行された（transient 現象）。`sonic-db-cli STATE_DB hgetall 'PORT_COUNTER_CAPABILITIES|WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER'` で判別できる。
+
+### 2. DEBUG_COUNTER_CAPABILITIES → show debug-counter capabilities 出力
+
+`DEBUG_COUNTER_CAPABILITIES` テーブルの有無が `show debug-counter capabilities` コマンドの出力を直接決定する。
+
+| テーブル状態 | show debug-counter capabilities 出力 | 後続 CLI 操作への影響 |
+|------------|-------------------------------------|-------------------|
+| エントリあり（`count` ≥ 1 かつ `reasons` に値） | counter_type ごとの件数・drop reason 一覧 | `config debug-counter install <type>` が意味を持つ |
+| テーブルが空（プラットフォーム非サポート） | 出力が空 | debug counter のインストールは SAI レベルで失敗する可能性が高い |
+
+### 3. FLEX_COUNTER_DB（WRED ポーリング）への間接的非影響
+
+`FlexCounterOrch` が `FLEX_COUNTER_TABLE|WRED_ECN_PORT` を `enable` にすると `gPortsOrch->generateWredPortCounterMap()` が呼ばれ、全 PHY ポートに `wred_port_stat_ids` を `FLEX_COUNTER_DB` に登録する（flexcounterorch.cpp:273, portsorch.cpp:9491）。この処理は `PORT_COUNTER_CAPABILITIES` テーブルを**参照しない**。
+
+結果として SAI 側の WRED カウンタ収集と portstat の N/A 表示が**独立して動作**する可能性がある:
+
+| 状態 | SAI ポーリング | portstat 表示 |
+|------|-------------|-------------|
+| SAI サポートあり（`isSupported="true"`） | FLEX_COUNTER_DB 登録あり → COUNTERS_DB に値 | 数値表示 |
+| SAI サポートなし（`isSupported="false"`） | FLEX_COUNTER_DB 登録あり（能力チェックなし）→ COUNTERS_DB に 0 または欠損 | N/A 表示 |
+
+### 副作用サマリ
+
+| 副作用 | 対象コンポーネント | トリガー | 可逆性 |
+|--------|----------------|---------|--------|
+| WRED カウンタポーリング対象の追加/除外 | portstat.py / COUNTERS_DB | 起動時 STATE_DB 書込み後の portstat 実行 | orchagent 再起動で再評価 |
+| show debug-counter capabilities 出力の有無 | dropconfig CLI | 同上 | orchagent 再起動で再評価 |
+| portstat WRED カラム N/A | portstat CLI 表示 | `isSupported="false"` | プラットフォーム依存（変更不可） |
+
+<!-- /side-effects -->
+
+---
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -407,3 +462,4 @@ YANG に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで�
 [^7]: portsorch.cpp:1850-1968。`initCounterCapabilities()` は portsorch コンストラクタ末尾 (portsorch.cpp:1107) で呼ばれる
 [^8]: orchdaemon.cpp:232 (PortsOrch), orchdaemon.cpp:452 (DebugCounterOrch)。debugcounterorch.cpp:37 で `publishDropCounterCapabilities()` が `gPortsOrch->attach(this)` より前に実行される
 [^9]: portsorch.cpp:9102-9129 (`generatePortCounterMap`)。FLEX_COUNTER_DB への登録のみで STATE_DB への読み書きなし
+[^10]: portstat.py:295-331。`wred_green_pkt_stat_capable` 等のグローバル変数に `STATE_DB HGET` 結果を格納し、`!= "true"` の場合に `counter_bucket_dict` から該当 SAI カウンタを削除する
