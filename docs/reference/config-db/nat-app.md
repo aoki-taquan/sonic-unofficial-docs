@@ -162,6 +162,28 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`NatOrch` が APPL_DB NAT テーブル群を消費する際、YANG leafref 定義を超えて実装上で参照するテーブル・リソース・Orch を示す。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `NAT_GLOBAL_TABLE\|Values.admin_mode` (APPL_DB) | 読み取り (SAI ガード) | 常時。`isNatEnabled() == false` の間は全テーブルエントリが SAI に降りずキャッシュ保持のみ | `natorch.cpp` L1907–1913, L2009–2015, L2137–2143, L2294–2300, L2345–2355 |
+| `NeighOrch` 内部隣接キャッシュ | 問い合わせ (NH 解決) | `gNhTrackingSupported == true` かつ `nat_type=dnat` エントリ処理時。`m_neighOrch->getNeighborEntry(translatedIp, ...)` で隣接を確認 | `natorch.cpp` L390–430, L407–414 |
+| `RouteOrch` next-hop Observer | Observer 登録 → 非同期通知 | `gNhTrackingSupported == true` かつ 隣接未解決時。`m_routeOrch->attach(this, translatedIp)` で NH 解決を待機し `update()` コールバックで SAI 投入 | `natorch.cpp` L414, L200–260, L308–388 |
+| `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` (SAI capability) | 起動時 1 回クエリ | 常時。`maxAllowedSNatEntries` を決定し、dynamic SNAT エントリ追加時の上限チェックに使用。SAI クエリ失敗時は 0 (無制限扱い) | `natorch.cpp` L109–125, L1882–1893, L1996–2000 |
+| `COUNTERS_DB:COUNTERS_GLOBAL_NAT_TABLE:Values` | 書き出し (カウンタ更新) | SNAT/DNAT エントリ追加/削除ごとに `updateSnatCounters()` / `updateDnatCounters()` が `SNAT_ENTRIES` / `DNAT_ENTRIES` を更新 | `natorch.cpp` L56, L127–135, L1412–1413 |
+| `platform` 環境変数 (BRCM 判定) | 読み取り (起動時 1 回) | `getenv("platform")` に `"broadcom"` が含まれる場合のみ `gNhTrackingSupported = true`。非 BRCM では NH トラッキングなし → DNAT エントリは NH 解決後即時 SAI 投入 | `natorch.cpp` L144–149 |
+
+!!! note "YANG leafref 非対応の参照"
+    上記参照はいずれも YANG `sonic-nat` の leafref として定義されていない。`NeighOrch` / `RouteOrch` / SAI capability / `platform` 環境変数への依存は `natorch.cpp` の実装コードによってのみ強制される暗黙の前提条件である。
+
+!!! note "NH トラッキング非対応プラットフォームの動作"
+    `gNhTrackingSupported == false` (非 BRCM) のプラットフォームでは、DNAT エントリは `addHwDnatEntry()` を即時呼び出す直接経路を使う。`NeighOrch` / `RouteOrch` への observer 登録は行われないため、NH が未解決でも SAI 投入を試みる。
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
