@@ -96,6 +96,35 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`hostcfgd` (`PasswHardening`) の `passw_policies_update()` はイベントごとに PAM ファイル (`/etc/pam.d/common-password`) と `/etc/login.defs` を**丸ごと再生成**する。このため書き込み順序が中間状態の整合性に直結する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `PASSW_HARDENING` は `wait_till_system_init_done()` 完了後に読み込まれる | 強制後行（PAM subsystem 確認後のみ） | hostcfgd が自動的に待機するため、オペレータ操作は不要 |
+| 2 | CLI で `state` → 他フィールドの順に個別更新すると中間状態が発生する | 推奨順序あり（`state=enabled` を最後に設定） | `state=disabled` の間は PAM hardening が適用されないため、中間状態でも管理アクセスは維持される |
+| 3 | `expiration=0` を書く前に `state=enabled` を設定すると、次回のパスワード変更まで即時失効が強制される | 副作用に注意 | 変更前に `state=disabled` にしてから `expiration` を更新し、最後に `state=enabled` を設定すること |
+| 4 | `PASSW_HARDENING` と `AAA` は独立したクラスで別の PAM ファイルを管理 (`common-password` vs `common-auth`) | 相互依存なし | 順序制約なし |
+
+### 主要な制約詳細
+
+**推奨書き込み順 (ポリシー一括変更時)**:
+1. `state=disabled` を先に設定して hardening を一時停止
+2. `expiration` / `expiration_warning` / `history_cnt` / `len_min` / クラス要件フィールドを更新
+3. `state=enabled` を最後に設定
+
+各フィールド更新のたびに `modify_passw_conf_file()` が呼ばれ、PAM ファイルが即時書き換えられる。CLI で 1 フィールドずつ設定すると中間状態のファイルが生成されるが、`state=disabled` の間は hardening が適用されないためユーザへの影響は最小化される（evidence: `hostcfgd:887-912`）。
+
+**hostcfgd 起動時の順序保証**: `load()` は `HostConfigDaemon.load()` から呼ばれ、`wait_till_system_init_done()` (`systemctl is-system-running --wait`) の完了後に実行される。PAM サブシステムが安定してから `PasswHardening.load()` が走るため、起動時の PAM ファイル書き換えは安全に行われる（evidence: `hostcfgd:2229-2270`）。
+
+**login.defs の冪等性**: `is_passwd_aging_expire_update()` が `/etc/login.defs` の現在値と比較し、差分がある場合のみ `sed` / `chage` を実行する。冗長な SET イベントによる副作用は発生しない（evidence: `hostcfgd:988-1010`）。
+
+<!-- /ordering -->
+
 ## 購読者
 
 - `hostcfgd` (`host-services` パッケージ)。`PasswHardening.load()` が `PASSW_HARDENING` テーブルを読み込み、Jinja2 テンプレート (`common-password.j2`) を展開して `/etc/pam.d/common-password` を書き換え、`/etc/login.defs` の `PASS_MAX_DAYS` / `PASS_WARN_AGE` を `sed` で更新する
