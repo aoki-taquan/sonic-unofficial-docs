@@ -430,4 +430,63 @@ lldp ネイバー情報の STATE_DB への書込は `lldp-syncd` が担当する
 
 <!-- /constants -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `dockers/docker-lldp/lldpmgrd` 全行精読 (2026-05-18)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/lldp-port-pubsub.md`
+
+`LLDP_PORT` テーブルは **`lldpmgrd` に直接購読されていない**。lldpmgrd が購読するのは `APPL_DB PORT_TABLE`・`CONFIG_DB MGMT_INTERFACE`・`CONFIG_DB DEVICE_METADATA` の 3 テーブルのみであり、`LLDP_PORT` への書き込みは lldpmgrd のイベントループに到達しない。
+
+### 購読メカニズム一覧
+
+| Consumer | メカニズム | 対象テーブル | タイミング |
+|----------|-----------|-------------|----------|
+| `lldpmgrd` | `swsscommon.SubscriberStateTable` (Redis pub/sub ラッパー) | `APPL_DB: PORT_TABLE` | ランタイム常時購読。`PortInitDone` / `PortConfigDone` + ポート `oper_status` イベントを検知して `lldpcli` コマンドをキューから発行 |
+| `lldpmgrd` | `swsscommon.SubscriberStateTable` | `CONFIG_DB: DEVICE_METADATA` | ランタイム常時購読。`localhost.hostname` / `chassis_hostname` 変化を検知して `lldpcli configure system hostname` を発行 |
+| `lldpmgrd` | `swsscommon.SubscriberStateTable` | `CONFIG_DB: MGMT_INTERFACE` | ランタイム常時購読。管理 IP 変化を検知して `lldpcli configure system ip management pattern` を更新 |
+| `lldpd.conf.j2` | `sonic-cfggen -d`（one-shot 一括読み取り） | `DEVICE_METADATA`, `MGMT_INTERFACE`, `MGMT_PORT` | コンテナ起動時のみ。lldpd の初期設定ファイルを生成 |
+
+### `LLDP_PORT` テーブルが購読されない理由
+
+```python
+# lldpmgrd:298-311
+sel = swsscommon.Select()
+
+# APPL_DB PORT_TABLE（ポート oper_status + PortInitDone/PortConfigDone）
+sst_appdb = swsscommon.SubscriberStateTable(self.appl_db, swsscommon.APP_PORT_TABLE_NAME)
+sel.addSelectable(sst_appdb)
+
+# CONFIG_DB MGMT_INTERFACE（管理 IP）
+sst_mgmt_ip_confdb = swsscommon.SubscriberStateTable(self.config_db, swsscommon.CFG_MGMT_INTERFACE_TABLE_NAME)
+sel.addSelectable(sst_mgmt_ip_confdb)
+
+# CONFIG_DB DEVICE_METADATA（hostname）
+sst_device_confdb = swsscommon.SubscriberStateTable(self.config_db, swsscommon.CFG_DEVICE_METADATA_TABLE_NAME)
+sel.addSelectable(sst_device_confdb)
+# ← LLDP_PORT / LLDP テーブルは登録されていない
+```
+
+`LLDP_PORT` への `CONFIG_DB` 書き込みは、lldpmgrd の `Select()` ループに到達しない。`enabled` / `mode` フィールドは **dead field**（詳細は `<!-- constants -->` ブロック参照）。
+
+### ポート alias / description の実際の設定経路
+
+`LLDP_PORT` フィールドではなく、以下の非直感的な経路でポート設定が lldpd に反映される:
+
+1. `portsyncd` / `orchagent` が `APPL_DB PORT_TABLE` に `oper_status=up` を書き込む
+2. `lldpmgrd` が `sst_appdb` 経由でイベントを受信 → `lldp_process_port_table_event()` が呼ばれる
+3. lldpmgrd が `CONFIG_DB PORT.alias` / `PORT.description` を読み取り `lldpcli configure ports <ifname> lldp portidsubtype local <alias>` を生成
+4. ポートが up であれば即時発行、down であれば `pending_cmds` にキューイングして 10 秒後に再試行
+
+### Redis Pub/Sub 使用状況
+
+| メカニズム | 使用有無 | 備考 |
+|-----------|---------|------|
+| `swsscommon.SubscriberStateTable` | 使用（3 テーブル） | APPL_DB PORT, CONFIG_DB DEVICE_METADATA, MGMT_INTERFACE |
+| Redis native keyspace notification (`psubscribe __keyspace@*__:*`) | 不使用 | lldpmgrd は swsscommon ラッパー経由のみ |
+| `LLDP_PORT` keyspace 購読 | なし | 設計上未購読。書き込んでも lldpd に反映されない |
+| `LLDP\|GLOBAL` keyspace 購読 | なし | 同上 |
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 1c2f663967b9 -->
