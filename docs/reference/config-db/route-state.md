@@ -482,6 +482,57 @@ sync.onRouteResponse(key, fieldValues);
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-platform.md -->
+
+STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みロジック自体はプラットフォーム非依存だが、RouteOrch の初期化時とフロウカウンタ機能でプラットフォーム固有の挙動が存在する。
+
+### Mellanox — ECMP グループ最大数の補正
+
+`RouteOrch` コンストラクタ (`routeorch.cpp:78-87`) で Mellanox プラットフォームのみ `m_maxNextHopGroupCount` を補正する[^1]:
+
+```cpp
+char *platform = getenv("platform");
+if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))  // "mellanox"
+{
+    m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;   // ÷ 32
+}
+```
+
+SAI が `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として返す値は「ECMP サイズ 1 のときの最大値」であるため、実際の最大 ECMP グループ数（サイズ 32 前提）に補正している。STATE_DB / APPL_STATE_DB への書き込みパスに直接影響はないが、ECMP 収容上限の低下により大規模環境での経路プログラミング失敗率が変化しうる。
+
+### VoQ Chassis — ECMP メンバー上限 128 固定
+
+`routeorch.cpp:108-118` で `gMySwitchType == "voq"` のとき SAI の ECMP メンバー上限を 128 に制限する[^1]。VoQ 分散スイッチでの ECMP 不均衡を防ぐための対策で、STATE_DB / APPL_STATE_DB 書き込みロジックには差分なし。
+
+### Route Flow Counter — SAI 能力のプラットフォーム依存
+
+`FlowCounterRouteOrch::initRouteFlowCounterCapability()` (`flowcounterrouteorch.cpp:166-180`) が orchagent 起動時に SAI へ `sai_object_type_get_availability(SAI_OBJECT_TYPE_COUNTER, ...)` を問い合わせ、結果を STATE_DB に書き込む:
+
+| SAI 応答 | `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE\|route` | 副次書き込みへの影響 |
+|---------|-----------------------------------------------|---------------------|
+| サポートあり | `support=true` | `COUNTERS_ROUTE_NAME_MAP` 等への書き込み **発生** |
+| サポートなし | `support=false` | 書き込み **発生しない** |
+
+`support=false` のプラットフォーム（ソフトウェア ASIC、一部ハードウェア ASIC）では、route-state.md の副作用セクションで述べた `COUNTERS_ROUTE_NAME_MAP` / `COUNTERS_ROUTE_TO_PATTERN_MAP` への副次書き込みが完全にスキップされる。
+
+### SmartSwitch DPU / その他
+
+`updateDefRouteState()` および `publishRouteState()` は `gMySwitchType` を参照しない。DPU / T2 / 標準 NPU のいずれも同一コードパスで STATE_DB / APPL_STATE_DB を更新する。
+
+### プラットフォーム差分サマリ
+
+| プラットフォーム | 差分内容 | STATE_DB / APPL_STATE_DB への直接影響 |
+|-----------------|---------|--------------------------------------|
+| Mellanox | ECMP グループ最大数を 1/32 に補正 | なし（間接的に SAI 失敗率に影響する可能性） |
+| VoQ Chassis | ECMP メンバー上限 128 固定 | なし（同上） |
+| Flow Counter 非対応 ASIC | `FLOW_COUNTER_CAPABILITY_TABLE\|route support=false` | `COUNTERS_ROUTE_*_MAP` への副次書き込みが発生しない |
+| SmartSwitch DPU / 標準 NPU | 差分なし | なし |
+
+<!-- /platform -->
+
 ---
 
 ## APPL_STATE_DB ROUTE_TABLE
