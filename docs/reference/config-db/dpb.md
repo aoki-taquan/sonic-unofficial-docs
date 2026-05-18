@@ -332,6 +332,45 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_PORT:*'
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-pubsub.md -->
+
+`BREAKOUT_CFG` テーブル自体を Redis keyspace notification で購読するデーモンは **存在しない**。DPB フローにおける通知の核心は `PORT` テーブルへの書込みであり、`portmgrd` がそれを受け取って `APPL_DB` へ伝播する。
+
+### BREAKOUT_CFG の購読状況
+
+`BREAKOUT_CFG` を `SubscriberStateTable` / PSUBSCRIBE で購読するサービスは sonic-swss・sonic-buildimage・sonic-utilities 全域で確認されなかった。
+
+CLI（`config/main.py`・`show/interfaces/__init__.py`）は `ConfigDBConnector.get_table('BREAKOUT_CFG')` による **点時間ポーリング** のみを使用する。これは Redis `HGETALL` の一括取得であり、継続的な pub/sub ではない。
+
+### CONFIG_DB → portmgrd の通知フロー
+
+`portmgrd` は以下のテーブルを `Orch` フレームワーク経由の `ConsumerStateTable`（内部的には `__keyspace@4__:*` の PSUBSCRIBE）で購読する:
+
+| 購読テーブル | DB | メカニズム | 購読箇所 |
+|------------|-----|----------|---------|
+| `PORT`（CFG_PORT_TABLE_NAME） | CONFIG_DB (DB 4) | `ConsumerStateTable` (PSUBSCRIBE) | `portmgrd.cpp:27-29` |
+| `SEND_TO_INGRESS_PORT_TABLE` | CONFIG_DB | 同上 | `portmgrd.cpp:29` |
+
+`portmgrd` の select タイムアウトは `SELECT_TIMEOUT = 1000` ms（`portmgrd.cpp:16`）。タイムアウト時は `portmgr.doTask()` で保留タスクを再試行する。
+
+### portmgrd → APPL_DB 伝播
+
+DPB シーケンスで `PORT` テーブルが変更されると、`portmgrd` が受け取って `APPL_DB PORT_TABLE` に伝播する:
+
+| CONFIG_DB 操作 | portmgrd の処理 | APPL_DB 結果 | ソース |
+|---------------|----------------|-------------|--------|
+| `PORT\|<port>` SET | `writeConfigToAppDb()` → `m_appPortTable.set()` | `PORT_TABLE\|<port>` 更新 | `portmgr.cpp:213` |
+| `PORT\|<port>` DEL | `m_appPortTable.del(alias)` | `PORT_TABLE\|<port>` 削除 | `portmgr.cpp:244` |
+
+### BREAKOUT_CFG 更新後の通知不在
+
+`main.py:5554` の `config_db.set_entry("BREAKOUT_CFG", ...)` は Redis `HSET` を発行し keyspace notification を生成するが、**これを購読するデーモンは存在しない**。`BREAKOUT_CFG.brkout_mode` の変更は他サービスに自動通知されず、次回 CLI 実行時に `get_table('BREAKOUT_CFG')` で読み直されることで参照される。
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>

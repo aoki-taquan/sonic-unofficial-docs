@@ -1,6 +1,6 @@
 ---
 title: STP / ICCP 連携 — コード由来デフォルト詳細
-description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase E 分析。"
+description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -29,6 +29,9 @@ sources:
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-buildimage
     path: src/iccpd/src/scheduler.c
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/src/iccp_netlink.c
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-swss
     path: mclagsyncd/mclagsyncd.cpp
@@ -531,6 +534,31 @@ iccpd の STP/ICCP 連携に関係するハードコード定数を列挙する�
 証跡: `scheduler.h:40-44`, `iccp_csm.h:53`, `iccp_csm.c:126`, `msg_format.h:103`, `mlacp_link_handler.c:3116-3120`, `sonic-mclag.yang:81,91`
 
 <!-- /hardcoded-constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/stp-iccp-side-effects.md`
+
+STP/ICCP 連携では CONFIG_DB への書き戻しは行われない。`iccpd` がロール決定・セッション状態を `mclagsyncd` へ通知し、`mclagsyncd` が **STATE_DB** へ書き込む。
+
+### STATE_DB 書込の対応表
+
+| 書込み契機 | iccpd メッセージ型 | mclagsyncd 関数 | STATE_DB テーブル / フィールド |
+|---|---|---|---|
+| ICCP セッション確立/切断 | `MCLAG_MSG_TYPE_SET_ICCP_STATE` | `mclagsyncdSetIccpState()` | `STATE_MCLAG_TABLE\|{mlag_id}`.`oper_status`: `"up"` / `"down"` |
+| STP ロール確定 | `MCLAG_MSG_TYPE_SET_ICCP_ROLE` | `mclagsyncdSetIccpRole()` | `STATE_MCLAG_TABLE\|{mlag_id}`.`role`: `"active"` / `"standby"` + `system_mac`（Active のみ） |
+| system_id 同期 | `MCLAG_MSG_TYPE_SET_ICCP_SYSTEM_ID` | `mclagsyncdSetSystemId()` | `STATE_MCLAG_TABLE\|{mlag_id}`.`system_mac` |
+| peer system_mac 更新 | `MCLAG_MSG_TYPE_SET_ICCP_PEER_SYSTEM_ID` | `mclagsyncdSetPeerSystemId()` | `STATE_MCLAG_TABLE\|{mlag_id}`.`remote_system_mac` |
+| ICCP セッション削除 | `MCLAG_MSG_TYPE_DEL_ICCP_INFO` | `mclagsyncdDelIccpInfo()` | `STATE_MCLAG_TABLE\|{mlag_id}` エントリ全削除 |
+
+### カーネル直接書込み（DB 外）
+
+Standby ロール確定時に `mlacp_fix_bridge_mac(csm)` が実行され、Linux カーネルの PortChannel ハードウェアアドレスを Active ノードの MAC (`system_id`) へ直接書き換える (`iccp_netlink_if_hwaddr_set()`、`iccp_netlink.c:643-676`)。この変更は STATE_DB / CONFIG_DB には反映されない。
+
+証跡: `mclaglink.cpp:1319-1420`, `mclaglink.cpp:1486-1508`, `mclaglink.cpp:1696-1740`, `iccp_netlink.c:643-676`
+
+<!-- /side-effects -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
