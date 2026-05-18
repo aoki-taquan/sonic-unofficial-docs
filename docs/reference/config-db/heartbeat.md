@@ -204,6 +204,35 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 **副作用**: heartbeat interval 変更は障害検知の速度に影響。閾値変更は誤検知/検知遅延に影響する可能性がある。
 <!-- /runtime-trace -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`HEARTBEAT` テーブルは `supervisor-proc-exit-listener`（Python 版・Rust 版）が起動時に一括読み込みする。エントリ間の順序依存はないが、フィールド書込みタイミングと daemon 起動タイミングに関して以下の制約がある。
+
+### 依存関係サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | CONFIG_DB への `HEARTBEAT\|<name>` 書込み → daemon 起動 | **推奨先行** | daemon は起動時に `load_heartbeat_alert_interval()` で一括読み込む。起動後は動的再読しない |
+| 2 | `heartbeat_interval` + `alert_interval` の同一 SET | **推奨** | 片方のみ SET すると中間状態で `alert_interval < heartbeat_interval` になりえる |
+| 3 | 複数 `HEARTBEAT\|<name>` エントリ間 | 独立 | 相互依存なし。任意の順序で書込み可 |
+
+### 詳細
+
+**起動前書込み推奨 (依存 #1)**
+
+`supervisor-proc-exit-listener` は起動時に `load_heartbeat_alert_interval()` / `load_heartbeat_alert_interval(config_db)` を呼び、`HEARTBEAT` テーブル全体を一括でメモリに読み込む（Python: `supervisor-proc-exit-listener:124-135`、Rust: `proc_exit_listener.rs:212-234`）。起動後は CONFIG_DB の変更を subscribe しないため、**daemon 起動前に全エントリを書き込んでおくことが推奨される**。起動後に追加したエントリは、次回 daemon 再起動まで反映されない。
+
+**フィールド同時書込み推奨 (依存 #2)**
+
+`heartbeat_interval` と `alert_interval` は同一 `HEARTBEAT|<name>` エントリのフィールドである。Redis `HSET` で片方ずつ書き込むと中間状態が発生し、`alert_interval` がデフォルト (`60000` ms) のまま `heartbeat_interval` だけ短縮された状態になりえる。`HSET HEARTBEAT|<name> heartbeat_interval <v1> alert_interval <v2>` のように単一コマンドで両フィールドを同時に書くことで回避できる。
+
+**エントリ間の独立性 (依存 #3)**
+
+複数プロセス分の `HEARTBEAT|pmon`、`HEARTBEAT|swss` 等は互いに独立したエントリであり、書込み順序の制約はない。
+
+<!-- /ordering -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
