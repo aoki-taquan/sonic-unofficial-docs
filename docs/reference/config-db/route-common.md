@@ -129,6 +129,35 @@ ROUTE_REDISTRIBUTE
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-buildimage` `src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
+証跡: `meta/_intermediate/cdb-flow/route-common-failure.md`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | 自動回復 |
+|---|---|---|---|---|
+| `BGP_GLOBALS.local_asn` 未設定で SET | `__update_bgp` L2658-2661 | silent drop — FRR bgpd へコマンド未発行 | `LOG_DEBUG` のみ | `BGP_GLOBALS.local_asn` SET 後に `__apply_dep_vrf_table` が全エントリを再投入 |
+| `dst_protocol != 'bgp'` | `bgp_table_handler_common` L3156-3159 | `continue` — FRR 未反映、エントリは CONFIG_DB に残存 | `LOG_ERR: 'only bgp could be used as dst protocol, but X was given'` | なし（`dst_protocol` を `bgp` に修正した SET が必要） |
+| vtysh コマンド実行失敗（FRR bgpd 応答異常等） | `bgp_table_handler_common` L3165-3168 | `continue` — CONFIG_DB と FRR の状態が乖離 | `LOG_ERR: 'failed running BGP route redistribute config command'` | なし（`frrcfgd` reload / FRR 再起動で再適用） |
+
+### SET 時の冪等性保証（先行 DEL）
+
+`hdl_route_redist_set()` は UPDATE 処理の前に `no redistribute <src_proto>` を **blindly** 先行実行する。metric / route_map を変更する場合も古い設定を残さない実装になっている（`frrcfgd.py:1333-1338`）[^2]。先行 DEL が vtysh レベルで失敗しても後続の SET コマンドは実行される（`ignore_fail` 相当の動作）。
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | 自動回復 |
+|---|---|---|---|---|
+| `BGP_GLOBALS.local_asn` 未設定で DEL | `__update_bgp` L2658-2661 | silent drop — FRR bgpd に `no redistribute` 未発行 | `LOG_DEBUG` のみ | なし |
+| `BGP_GLOBALS.local_asn` を先行 DEL した後 `ROUTE_REDISTRIBUTE` DEL | `__delete_vrf_asn` + `__update_bgp` | `bgp_asn[vrf]` が消去済みのため silent drop — FRR bgpd に `redistribute <src>` 設定が**残存** | `LOG_DEBUG` のみ | なし（FRR 再起動まで残存） |
+
+**推奨削除順序**: `ROUTE_REDISTRIBUTE` 全エントリを DEL → `BGP_GLOBALS.local_asn` を DEL（`frrcfgd.py:2449-2465`）[^2]。
+
+<!-- /failure -->
+
 ## key 構造
 
 ```text
