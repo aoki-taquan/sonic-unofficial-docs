@@ -276,6 +276,64 @@ if(nbZmqEnabled) {
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 前提プロセス・コンポーネントの先行必須
+
+| 先行コンポーネント | 理由 | 違反時の挙動 |
+|---|---|---|
+| FRR (`zebra`) FPM クライアント接続 | `fpmsyncd` は `FpmLink.accept()` でブロックし、FPM 接続が確立するまでメッセージを受信しない | 接続待機のまま APPL_DB への書き込みなし (`fpmsyncd.cpp:139-143`) |
+| netlink RTNLGRP_LINK イベント (インタフェース作成) | `onMsg()` が `RTM_NEWLINK` 受信時に `nl_cache_refill()` を実行して link cache を更新する。link cache が空だと `rtnl_link_get()` が NULL を返し、VRF/VNET 経路の master デバイス名判定が機能しない | master=NULL → `onRouteMsg()` にフォールバック (VRF/VNET 分岐が発動しない) (`routesync.cpp:2076-2103`) |
+| VNET インタフェース (名前 `Vnet*`) の作成 | `onMsg()` の master デバイス名が `Vnet` で始まる場合のみ `onVnetRouteMsg()` → `VNET_ROUTE_TABLE` へ書き込まれる | master 未確立の場合は通常の ROUTE_TABLE に書き込まれる恐れ |
+| VRF インタフェース (名前 `Vrf*`) の作成 | VRF スコープ経路 (`<vrf_name>:<prefix>`) は VRF インタフェースが存在してはじめて FRR から通知される | VRF 未作成時は FRR からも経路が来ない |
+
+### CONFIG_DB 設定の先行必須
+
+| CONFIG_DB エントリ | 読取タイミング | 反映タイミング |
+|---|---|---|
+| `DEVICE_METADATA\|localhost suppress-fib-pending` | fpmsyncd **起動時に 1 回のみ** 読む | 変更後は fpmsyncd を再起動しないと有効にならない (`fpmsyncd.cpp:112-121`) |
+
+### warm-restart 時の書込み順
+
+warm-restart が有効な場合 (`checkAndStart()` が `true`)、fpmsyncd は FPM から受信した経路を **直接 APPL_DB に書かず** `WarmStartHelper::insertRefMap()` にキャッシュする:
+
+```
+FPM message 受信
+  → setRouteWithWarmRestart()
+  → warm-restart 進行中? YES → insertRefMap(key, fvVector)  # APPL_DB 書込みなし
+                             NO  → ProducerStateTable::set()   # 通常書込み
+```
+
+EOIU (End of Initial Updates) タイムアウト (デフォルト 5 秒待機 + hold 3 秒) 後に reconciliation を実行し、refMap と既存 APPL_DB を比較して差分のみ書き込む。
+
+**warm-restart 時の順序**:
+```
+1. fpmsyncd 起動 → WarmStartHelper.checkAndStart() → warm-restart モード ON
+2. FPM 接続 → 経路受信 → refMap キャッシュ (APPL_DB 書込みなし)
+3. EOIU タイムアウト OR warm-restart タイマー (デフォルト 120 秒) 満了
+4. reconciliation: 変更分のみ APPL_DB に書込み (存続経路はそのまま)
+5. orchagent RouteOrch が APPL_DB 変化を処理
+```
+
+evidence: `fpmsyncd/routesync.cpp:172-200`; `fpmsyncd/fpmsyncd.cpp:148-220`
+
+### 書込み順の推奨
+
+```
+# 通常フロー (非 warm-restart)
+1. systemd: frr.service 起動 (zebra が FPM クライアントとして待機)
+2. systemd: fpmsyncd.service 起動 → FpmLink.accept() で zebra と接続
+3. zebra が FRR 内の経路を FPM メッセージとして送信
+4. RouteSync が APPL_DB ROUTE_TABLE へ書込み → orchagent RouteOrch が処理
+
+# mgmt VRF 経路はスキップされる (APPL_DB に書かれない)
+# eth0 / docker0 / eth1-midplane 単体 nexthop 経路は DEL に変換されて送信
+```
+
+> **Evidence**: `fpmsyncd/fpmsyncd.cpp:76-143` (起動・FPM 接続); `fpmsyncd/routesync.cpp:2053-2136` (onMsg/onRouteMsg 分岐・mgmt スキップ); `fpmsyncd/fpmsyncd.cpp:112-121` (suppress-fib-pending 読取)
+<!-- /ordering -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` を同時に持つ経路は orchagent がエラー棄却（`m_toSync` から削除）。
