@@ -122,6 +122,42 @@ SAG 機能は `VLAN_INTERFACE` テーブルに `static_anycast_gateway` フィ�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) + `sonic-swss-common/common/schema.h` (sha=158de8d)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/sag-cross-refs.md`
+
+`SAG|GLOBAL` エントリを処理する `intfmgrd` / `IntfsOrch` は、以下のテーブルを明示的な設定フィールドとしてではなく実行時のトリガー条件・参照先として暗黙的に参照する。
+
+| 参照先テーブル / リソース | 参照種別 | 条件 | 詳細 |
+|--------------------------|---------|------|------|
+| `VLAN_INTERFACE\|<n>.static_anycast_gateway` (CONFIG_DB) | 読み取り（トリガー） | 常時。`static_anycast_gateway=true` のインターフェースすべてに `gateway_mac` を適用 | `intfmgrd` が `VLAN_INTERFACE` テーブルの SET イベントで `static_anycast_gateway` フィールドを読み取り、SAG 適用対象として登録する[^1] |
+| `SAG_TABLE\|GLOBAL` (APPL_DB) | 書込み先 | `SAG\|GLOBAL` の SET/DEL 時 | `intfmgrd` が CONFIG_DB の `SAG|GLOBAL.gateway_mac` を `APPL_DB:SAG_TABLE|GLOBAL.gateway_mac` へ転送する。キー構造はシングルトン（`GLOBAL` 1 エントリ固定）[^1] |
+| `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` (SAI RIF 属性) | 書込み先（SAI 経由） | `static_anycast_gateway=true` の VLAN インターフェースが存在する場合 | `IntfsOrch` が APPL_DB の `SAG_TABLE|GLOBAL` を消費し、対象 VLAN インターフェースの RIF の MAC アドレスを `gateway_mac` に差し替える。既存の SAI 属性を流用（SAI API 変更なし）[^1] |
+| `VLAN_INTERFACE\|<n>.vrf_name` (CONFIG_DB) | 読み取り（コンテキスト） | VRF が設定されている場合 | VRF が存在する場合、`gateway_mac` は該当 VRF の RIF コンテキストで適用される[^1] |
+
+### 依存関係サマリ
+
+```
+CONFIG_DB: SAG|GLOBAL.gateway_mac (SET)
+  └─ intfmgrd が VLAN_INTERFACE.static_anycast_gateway=true のインターフェースを検索
+       └─ APPL_DB: SAG_TABLE|GLOBAL.gateway_mac に転送
+
+APPL_DB: SAG_TABLE|GLOBAL (SET)
+  └─ IntfsOrch が対象 VLAN RIF の SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS を更新
+       └─ RouteOrch: MAC 変更時に IPv6 link-local to-me route を del → add で再追加（副次処理）
+```
+
+!!! note "SAI API 変更なし"
+    HLD §SAI API: "There are no changes to SAI headers/implementation to support this feature."  
+    `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` は既存 SAI 属性を流用。新規 SAI 属性の追加は不要。
+
+!!! warning "コード未確認"
+    現行 sonic-swss master に `sagmgr.cpp` / `sagorch.cpp` 等の独立 SAG 実装が確認できないため、上記は HLD 記載の設計に基づく。実装の有無は `verification: hld-only` のまま。
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: SAG HLD: `SONiC/doc/sag/sag-HLD.md`. <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sag/sag-HLD.md>
