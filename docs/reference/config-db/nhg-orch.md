@@ -406,6 +406,62 @@ orchagent の `Select::select` タイムアウトは **1000 ms** (`orchdaemon.cp
 詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+`NhgOrch` / `CbfNhgOrch` / `NhgMapOrch` の動作は、プラットフォームが提供する SAI Capability によって以下の軸で分岐する。
+
+### ECMP グループ上限: Mellanox のみ補正
+
+`RouteOrch` コンストラクタ (`routeorch.cpp:61-89`) が `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` で取得した値を `gRouteOrch->getMaxNhgCount()` として公開する。Mellanox プラットフォーム（`getenv("platform")` に `"mellanox"` が含まれる場合）のみ、この値を `DEFAULT_MAX_ECMP_GROUP_SIZE = 32` で除算して補正する:
+
+```cpp
+// orchagent/routeorch.cpp:83-87
+char *platform = getenv("platform");
+if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))
+{
+    m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;
+}
+```
+
+`NhgOrch::doTask()` (`nhgorch.cpp:252`, `nhgorch.cpp:320`) および `CbfNhgOrch::doTask()` (`cbfnhgorch.cpp:100`) はこの補正後の値を参照して NHG 上限判定を行う。Broadcom / Marvell / VS / VPP 等は SAI 戻り値をそのまま使用する。算出された上限値は `STATE_DB SWITCH_CAPABILITY|switch:MAX_NEXTHOP_GROUP_COUNT` に公開される (`routeorch.cpp:90`)。
+
+### CBF フォワーディングクラス数: SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES
+
+`NhgMapOrch::getMaxNumFcs()` (`nhgmaporch.cpp:299-325`) は初回呼出し時に `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を取得する。
+
+| 状況 | 結果 |
+|------|------|
+| SAI 対応 ASIC | `max_num_fcs = attr.value.u8`（ASIC 依存値） |
+| SAI 非対応 ASIC | `SWSS_LOG_WARN("Switch does not support FCs")` + `max_num_fcs = 0` → 以降の FC MAP SET が全て範囲外エラーで破棄される |
+
+`CbfNhg::sync()` はメンバー数が `getMaxNumFcs()` を超えると `SWSS_LOG_WARN` を出力するが処理は継続する (`cbfnhgorch.cpp:311-312`)。
+
+### NHG Map 収容数: sai_object_type_get_availability
+
+`NhgMapOrch` コンストラクタ (`nhgmaporch.cpp:26-34`) で `sai_object_type_get_availability(SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP)` を呼び出し、非対応 ASIC は `m_max_nhg_map_count = 0` のまま。以降 `FC_TO_NHG_INDEX_MAP_TABLE` への全 SET が `SWSS_LOG_WARN` + `success=false` となり、`CLASS_BASED_NEXT_HOP_GROUP_TABLE` の `selection_map` 解決に失敗し続ける。
+
+```cpp
+// orchagent/cbf/nhgmaporch.cpp:26-34
+if (sai_object_type_get_availability(gSwitchId, SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP,
+                                     0, nullptr, &m_max_nhg_map_count) != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_WARN("Switch does not support NHG maps");
+    m_max_nhg_map_count = 0;
+}
+```
+
+### SRv6 NHG: temp NHG 非対応
+
+NHG 上限到達時、`nhg_key.is_srv6_nexthop()` が真のエントリは temp NHG を作成せず `continue` でスキップする (`nhgorch.cpp:256-261`)。通常 ECMP は temp NHG にフォールバックして 1 メンバーで仮登録されるが、SRv6 NHG はリソースが回復するまで未登録のまま待機し続ける。SRv6 自体のサポートは ASIC ベンダー実装依存（VS / VPP はスタブで SAI SUCCESS を返すが実転送なし）。
+
+### VS / multi-asic
+
+VS プラットフォームでは SAI シムが ECMP / CBF / NHG Map の create を SUCCESS で返すが実 ASIC 転送はない。CRM 統計もダミー値。multi-asic 環境では NhgOrch は名前空間ごとに独立して起動し、NHG インデックス空間は ASIC 間で交わらない。
+
+詳細根拠: `meta/_intermediate/cdb-flow/nhg-orch-platform.md`
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
