@@ -122,6 +122,55 @@ SONiC は Redis を複数データベースに分割して使用し、その構�
 | `BMP_STATE_DB` | `20` | `"|"` | `redis_bmp` |
 <!-- /defaults -->
 
+<!-- ordering -->
+## 初期化順序依存 (Phase B)
+
+`database_config.json` は CONFIG_DB テーブルではなく、Redis インスタンスと DB ID マッピングを定義するインフラ層ファイルである。ここでの「書込み順依存」は、ファイル生成 → Redis 起動 → アプリ接続 の厳密なシーケンスに関するものである。
+
+### 起動シーケンス
+
+```
+docker-database コンテナ起動
+  │
+  ├─ docker-database-init.sh 実行
+  │   ├─ /etc/sonic/database_config.json が存在? → コピー
+  │   ├─ /etc/sonic/enable_multidb が存在? → multi_database_config.json.j2 でレンダリング
+  │   └─ それ以外 → database_config.json.j2 でレンダリング
+  │       └─ 出力: /var/run/redis/sonic-db/database_config.json
+  │
+  ├─ supervisord が Redis インスタンス起動 (database_config.json のインスタンス定義に基づく)
+  │
+  └─ 各アプリ (swss / syncd / mgmt 等) が起動
+      └─ 最初の DB API 呼び出し時に SonicDBConfig::initialize() が自動実行
+          └─ /var/run/redis/sonic-db/database_config.json を読み込む
+```
+
+### 検出された順序依存
+
+| # | 依存関係 | 強度 | 根拠 |
+|---|----------|------|------|
+| 1 | `database_config.json` 生成 → Redis プロセス起動 | **強制先行** | supervisord は `database_config.json` をもとに起動するインスタンスを決定する (`docker-database-init.sh` 全体) |
+| 2 | `initialize()` の一度限り実行 → 以降の全 DB API | **強制先行** | `m_init` フラグで二重初期化を防ぐ。再初期化には `reset()` が必要 (`dbconnector.cpp:193-194`) |
+| 3 | `initializeGlobalConfig()` → namespace 指定 API | **強制先行** | `validateNamespace()` が `m_global_init` を確認し、未初期化の場合は `SWSS_LOG_THROW` (`dbconnector.cpp:228-231`) |
+| 4 | `initialize()` 遅延自動実行 | なし（自動緩和） | `getDbInfo()` / `getDbId()` 等が `m_init == false` のとき自動的に `initialize(DEFAULT_SONIC_DB_CONFIG_FILE)` を呼ぶ (`dbconnector.cpp:253`) |
+| 5 | namespace 対応 API: `initializeGlobalConfig()` 要求 | **強制先行** | namespace 非空のとき `m_global_init` が false なら `SWSS_LOG_THROW` で即クラッシュ (`dbconnector.cpp:259`) |
+| 6 | VoQ Chassis: `update_chassisdb_config` 実行 → supervisord 設定生成 | **強制先行** | chassis_db を含む/除外した tmp ファイルを経由して supervisord.conf を生成 (`docker-database-init.sh` L67-80) |
+
+### 主要制約詳細
+
+**二重初期化禁止 (依存 #2)**: `SonicDBConfig::initialize()` は `m_init` が真のとき `runtime_error("SonicDBConfig already initialized")` を投げる。アプリがカスタムパスで初期化した後にデフォルト自動初期化が走ることはない（evidence: `dbconnector.cpp:193-194`）。
+
+**グローバル設定未初期化でのクラッシュ (依存 #5)**: マルチ ASIC / SmartSwitch 環境で namespace を指定した API (`getDbId(..., netns)` 等) を `initializeGlobalConfig()` 前に呼ぶと、`SWSS_LOG_THROW` で即座にプロセスが終了する。これはプログラミングエラーを早期に露出させる設計判断（evidence: `dbconnector.cpp:259-261`）。
+
+**database_config.json 生成後の変更は非対応**: `SonicDBConfig` は起動時に一度ファイルを読み込んだあとは再読み込みを行わない。Redis ポートや DB ID を変更する場合はコンテナ再起動が必要（`reset()` + `initialize()` の明示的な再実行、または再起動）。
+
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L182-204 (initialize()) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L89-180 (initializeGlobalConfig()) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L220-260 (getDbInfo 自動初期化) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh (全体: 生成ロジック) -->
+
+<!-- /ordering -->
+
 ## separator の役割
 
 `separator` はキー文字列でテーブル名と行キーを区切る文字:
