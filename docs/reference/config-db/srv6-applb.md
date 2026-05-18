@@ -112,6 +112,35 @@ key 内の各長さフィールドはロケータのビット長を示し、`Srv
 | `end.x`, `end.dx4`, `end.dx6`, `ua`, `udx4`, `udx6` | **必須** | 隣接未解決の場合 pending エントリへ移動 |
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1511-1543、`updateNeighbor()` L1212-1341、`doTaskSidTable()` L1146-1186 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-applb-ordering.md`
+
+APPL_DB `SRV6_MY_SID_TABLE` と `SRV6_SID_LIST_TABLE` はそれぞれ独立した Consumer (`m_mysidTable` / `m_sidTable`) で処理されるが、`adj` フィールドを持つ MySID エントリには隣接 (Neighbor) 解決の順序依存がある。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `adj` 依存行動の MySID — Neighbor 先行推奨 | **先行推奨**（逆順は pending 自動解決） | `updateNeighbor()` ADD 通知で自動再処理 |
+| 2 | Neighbor DEL 時、対応 MySID が SAI から自動削除 → pending 再登録 | **自動**（意図しない削除に注意） | MySID DEL → Neighbor DEL の順序を推奨 |
+| 3 | `SRV6_SID_LIST_TABLE` vs `SRV6_MY_SID_TABLE` | 順序依存なし | — |
+
+### adj 依存 MySID のペンディング挙動 (依存 #1)
+
+`mySidNextHopRequired(end_behavior)` が true の行動 (`end.x`, `ua`, `udx4`, `udx6` 等) では
+`adj` で指定した IP アドレスを `m_neighOrch->hasNextHop()` で解決する (`srv6orch.cpp:1524`)。
+Neighbor が未確立の場合はエントリを `m_pendingSRv6MySIDEntries[nexthop]` に追加して処理を保留する (`srv6orch.cpp:1533-1534`)。
+Neighbor ADD 通知が `updateNeighbor()` に届くと、対応する pending エントリが自動再処理されて SAI に登録される (`srv6orch.cpp:1224-1259`)。
+
+### Neighbor DEL 時の自動ロールバック (依存 #2)
+
+`updateNeighbor()` の DEL パス (`srv6orch.cpp:1266-1341`) は隣接 DELETE 通知を受け取ると、その adj を参照する全 MySID エントリを SAI から削除し、`m_pendingSRv6MySIDEntries` に再登録する。Neighbor が再確立された際に自動再 install される。意図しない MySID 削除を防ぐには MySID DEL → Neighbor DEL の順序を推奨する。
+
+<!-- /ordering -->
+
 ### サポート action 値
 
 `end_behavior_map`（`srv6orch.cpp:41-62`）に定義:
