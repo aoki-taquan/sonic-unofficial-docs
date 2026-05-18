@@ -373,6 +373,93 @@ evidence: `fpmsyncd/routesync.cpp:172-200`; `fpmsyncd/fpmsyncd.cpp:148-220`
 Evidence: `routesync.cpp:156-164` (ProducerStateTable 初期化); `fpmsyncd.cpp:78-118` (suppress-fib-pending 読取・チャネル設定); 詳細スキャン手順は `meta/_intermediate/cdb-flow/route-handler-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> **調査根拠**: `fpmsyncd/routesync.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d` 全行精読  
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-handler-failure.md`
+
+### onMsgRaw() — netlink メッセージサイズ不正
+
+```cpp
+if (len < 0)
+{
+    SWSS_LOG_ERROR("%s: Message received from netlink is of a broken size ...");
+    return;
+}
+```
+
+**挙動**: `SWSS_LOG_ERROR` を出力して即座に `return`。APPL_DB への書き込みなし。メッセージはサイレントに破棄される。FRR が次の経路変化を通知した時点で自然解消。(`routesync.cpp:2005-2010`)
+
+### onRouteMsg() — VRF ifindex → 名前変換失敗
+
+| 条件 | ログ | 挙動 |
+|---|---|---|
+| `rtnl_link_get(m_link_cache, vrf_index)` が NULL | `SWSS_LOG_ERROR "Fail to get the VRF name (ifindex %u)"` | `return` — 経路は APPL_DB に書き込まれない。`RTM_NEWLINK` が先に届いて link cache が更新されるまで後続の VRF 経路も失われる (`routesync.cpp:821`) |
+| VRF 名が `Vrf` プレフィクスでも `mgmt` でもない | `SWSS_LOG_ERROR "Invalid VRF name %s"` | `return` — 経路ドロップ。リカバーなし (`routesync.cpp:2127`) |
+| VRF 名が `mgmt` で始まる | `SWSS_LOG_INFO "Skip routes for Mgmt VRF name ..."` | **意図的スキップ** — 管理 VRF は設計上 APPL_DB に書かない (`routesync.cpp:2131-2136`) |
+
+### onRouteMsg() — kernel NHG 未登録
+
+```cpp
+const auto itg = m_nh_groups.find(nhg_id);
+if (itg == m_nh_groups.end())
+{
+    SWSS_LOG_ERROR("NextHop group id %d not found. Dropping the route %s", nhg_id, destipprefix);
+    return;
+}
+```
+
+`RTM_NEWNEXTHOP` より前に `RTM_NEWROUTE` が到着した場合に発生。**自動リトライなし**。FRR が再送するか FPM 再接続時に再配信されるまで経路は APPL_DB に存在しない。(`routesync.cpp:2207-2210`)
+
+### nexthop group count が MAX_MULTIPATH_NUM 超過
+
+```cpp
+if (grp_count > MAX_MULTIPATH_NUM)
+{
+    SWSS_LOG_ERROR("Nexthop group count (%d) exceeds the maximum allowed (%d). Clamping to maximum.", ...);
+    grp_count = MAX_MULTIPATH_NUM;
+}
+```
+
+**挙動**: エラーログを出力するが **クランプして処理を継続**。APPL_DB には最大 `MAX_MULTIPATH_NUM` 個のメンバーのみ書き込まれ、超過分は**永続的に欠落**する。(`routesync.cpp:2354-2357`)
+
+### MPLS 経路 — RTN_BLACKHOLE / RTN_UNREACHABLE / RTN_PROHIBIT
+
+```cpp
+case RTN_UNREACHABLE:
+case RTN_PROHIBIT:
+{
+    SWSS_LOG_ERROR("RTN_BLACKHOLE route not expected (%s)", destipprefix);
+    return;
+}
+```
+
+`onLabelRouteMsg()` 内でのみ発生 (`routesync.cpp:878`)。MPLS 経路での blackhole は未サポート。通常の IPv4/IPv6 経路 (`onRouteMsg()`) では RTN_BLACKHOLE は正常処理 (`blackhole="true"` を書き込む) される点に注意。
+
+### suppress-fib-pending — offload 応答送信失敗
+
+suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL 経由で通知を受け取り FRR へ `RTM_F_OFFLOAD` フラグ付き netlink 応答を返す。この送信が失敗した場合:
+
+| 条件 | ログ | 挙動 |
+|---|---|---|
+| FPM インタフェース未接続 (`!m_fpmInterface`) | `SWSS_LOG_ERROR "Cannot send offload reply to zebra: FPM is disconnected"` | `false` 返却。FRR は offload 確認不可のまま経路を保持。BGP 広告は継続するためデータプレーン未書込みの経路が広告される恐れ (`routesync.cpp:3119`) |
+| `m_fpmInterface->send()` 失敗 | `SWSS_LOG_ERROR "Failed to send reply to zebra"` | 同上。FPM 再接続・warm-restart で解消 (`routesync.cpp:3126`) |
+
+### 失敗挙動サマリ
+
+| 条件 | ログ | APPL_DB への影響 | リカバー |
+|---|---|---|---|
+| netlink メッセージサイズ不正 | ERROR | 書込みなし | FRR 再送で自然解消 |
+| VRF ifindex 変換失敗 | ERROR | 書込みなし | link cache 更新後は以降の経路は正常（ドロップ分のリカバーなし） |
+| VRF 名形式不正 | ERROR | 書込みなし | なし |
+| 管理 VRF 経路 | INFO | 書込みなし (意図的) | N/A |
+| kernel NHG 未登録 | ERROR | 書込みなし | FRR 再送 or FPM 再接続 |
+| MPLS RTN_BLACKHOLE | ERROR | 書込みなし | なし (未サポート) |
+| NHG count 超過 | ERROR | 超過分を切り捨てて書込み | 超過分は永続的に欠落 |
+| offload 応答送信失敗 | ERROR | APPL_DB には影響なし | FPM 再接続・warm-restart |
+<!-- /failure -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` を同時に持つ経路は orchagent がエラー棄却（`m_toSync` から削除）。
