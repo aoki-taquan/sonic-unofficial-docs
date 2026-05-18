@@ -326,3 +326,55 @@ BMP（BGP Monitoring Protocol）テーブルは `openbmpd` が FRR bgpd から B
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/state-bgp-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py,
+     sonic-swss/fpmsyncd/bgp_eoiu_marker.py,
+     sonic-swss/fpmsyncd/fpmsyncd.cpp -->
+
+### BGP_STATE_TABLE — bgp_eoiu_marker.py の失敗パス
+
+| # | トリガー | 結果 | retry |
+|---|---------|------|-------|
+| 1 | Warm Restart 無効 | サービス全体がスキップされ `BGP_STATE_TABLE` への書き込みは**発生しない** | なし |
+| 2 | bgpd から EOR が届かずタイムアウト | `wait_for_bgp_eoiu()` が例外 → `sys.exit(1)`。`"reached"` は書かれない。`fpmsyncd` は `DEFAULT_ROUTING_RESTART_INTERVAL`（120 秒）の warm_restart タイマー満了後に reconciliation を開始する (fpmsyncd.cpp L168-180) | なし |
+| 3 | STATE_DB 接続失敗 | `set_bgp_eoiu_marker()` 内の DB 操作が例外でスクリプト終了。`fpmsyncd` は EOIU を検出できず warm_restart タイマー頼りになる | なし |
+
+### BGP_PEER_CONFIGURED_TABLE — bgpcfgd の失敗パス
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | FRR push 非同期失敗 | `apply_op()` L494-508 — `cfg_mgr.push()` は常に `True` を返す | STATE_DB に書き込みあり（FRR 未反映でも書かれる）。FRR 側と STATE_DB の整合性は保証されない | なし |
+| 2 | Jinja2 テンプレートレンダリング例外（add） | `add_peer()` L229-234 — 早期 `return True` | FRR 未投入・STATE_DB 未書き込み・`self.peers` 未登録 | なし（subscriber が entry を erase） |
+| 3 | テンプレート戻り値 `None`（add） | `add_peer()` L235-242 — `if cmd is not None` ブロックをスキップ | FRR 未投入・STATE_DB 未書き込み。`self.peers` 未登録のため次の SET でも `add_peer` を呼ぶ | 実質なし（明示的 retry 機構なし） |
+| 4 | STATE_DB 書き込み例外（add） | `update_state_db()` L302-304 — 戻り値を `add_peer` は無視 | FRR 投入済み・STATE_DB 未書き込み・`self.peers` 登録済み。コントローラは設定完了を検知できない | なし |
+| 5 | DEL 時に `self.peers` 未登録 | `del_handler()` L453-455 — 警告ログのみで早期 `return` | FRR 未投入。過去に書き込まれた `BGP_PEER_CONFIGURED_TABLE` エントリが残存するリスク | なし |
+| 6 | DEL 時に `update_state_db` 例外 | `del_handler()` L487-492 — `peers.remove` 到達せず | FRR 投入済み・STATE_DB 未削除・`self.peers` に key 残存。次の DEL で FRR 二重削除リスク | なし |
+| 7 | `admin_status` FRR 非同期失敗 | `apply_admin_status()` L351-356 — `apply_op` 常時 `True` のため STATE_DB は**常に更新**される | FRR 側との admin_status 乖離（自動補正・retry なし） | なし |
+
+### BGP_NEIGHBOR_TABLE / RIB テーブル — BMP 無効・切断時
+
+| # | トリガー | 結果 | retry |
+|---|---------|------|-------|
+| 1 | `BMP.table` フィールド `= "false"` に設定 | `bmpcfgd` が `delete_all_by_pattern` で対象テーブルを全削除 (bmpcfgd.py L82-86) | なし |
+| 2 | `openbmpd` と bgpd の BMP 接続切断 | `bmpcfgd` がテーブルを全削除。接続回復後に `openbmpd` が自動再収集 | 自動（BMP 再接続） |
+
+### STATE_DB / ERROR_TABLE への記録
+
+いずれの失敗パスでも `STATE_DB` への障害記録（ERROR_TABLE 等）はない。失敗は `syslog`（`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`）への出力のみ。CONFIG_DB のエントリは失敗後も残留する。
+
+```bash
+# bgpcfgd ログ確認
+journalctl -u bgpcfgd | grep -i "error\|warn"
+
+# bgp_eoiu_marker ログ確認
+journalctl -u bgp_eoiu_marker | grep -i "error\|warn"
+```
+
+!!! warning "apply_op が常に True を返す設計"
+    `bgpcfgd` の `apply_op()` は FRR への設定コマンドをキューに**追加するのみ**で投入結果を確認しない（managers_bgp.py L494-508）。FRR が設定を拒否した場合でも `BGP_PEER_CONFIGURED_TABLE` への書き込みが行われるため、STATE_DB と FRR の実態が乖離しうる。障害時の自動 reconciliation 機構は存在せず、デーモン再起動時に `load_peers()` が FRR 現状を読み直すのみ。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-failure.md`
+<!-- /failure -->
