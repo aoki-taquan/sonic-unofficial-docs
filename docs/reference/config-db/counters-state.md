@@ -441,6 +441,58 @@ YANG に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで�
 
 ---
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-pubsub.md`
+
+これらの STATE_DB テーブルは CONFIG_DB テーブルとは根本的に異なる通信パターンを持つ。書き込み側は `Table::set()` による **スナップショット書き込み** (起動時 1 回限り) であり、読み取り側は `db.get()` / `db.get_all()` による **on-demand polling** である。keyspace 通知や `SubscriberStateTable` は使用しない。
+
+### 書き込みパス（Producer 側）
+
+| 要素 | 詳細 |
+|------|------|
+| 書き込みクラス | `Table` (生 `HSET`。`ProducerStateTable` / `NotificationProducer` は不使用) |
+| 書き込みタイミング | orchagent コンストラクタ呼び出し時の **1 回限り** |
+| トリガー | `PortsOrch::initCounterCapabilities(gSwitchId)` (portsorch.cpp:1107) / `DebugCounterOrch::publishDropCounterCapabilities()` (debugcounterorch.cpp:37) |
+| APPL_DB 中継 | なし |
+| 再書き込み | orchagent 再起動時のみ（オンライン変更不可） |
+
+### 読み取りパス（Consumer 側）
+
+keyspace 通知を購読する実装は SONiC ソース内に存在しない。CLI ツールが実行時に直接 HGET/HGETALL でスナップショット取得する。
+
+| 読み取り元 | 対象テーブル | Redis 操作 | コード |
+|-----------|------------|-----------|--------|
+| `portstat.py` | `PORT_COUNTER_CAPABILITIES\|<key>` | `db.get(STATE_DB, key, "isSupported")` | portstat.py:299-311 |
+| `dropconfig` | `DEBUG_COUNTER_CAPABILITIES\|*` | `db.keys(STATE_DB, ...)` + `db.get_all()` | dropconfig:423-431 |
+| `dropconfig` (個別) | `DEBUG_COUNTER_CAPABILITIES\|<counter_type>` | `db.get_all(STATE_DB, key)` | dropconfig:444-455 |
+
+`QUEUE_COUNTER_CAPABILITIES` を参照する CLI ツールは SONiC ソース内に確認できない（orchagent が書くが読者不在）。
+
+### データフロー
+
+```
+SAI / ASIC
+  │ sai_query_stats_capability() / sai_query_attribute_enum_values_capability()
+  ▼
+orchagent (PortsOrch::initCounterCapabilities / DebugCounterOrch::publishDropCounterCapabilities)
+  │ Table::set() → Redis HSET（起動時 1 回）
+  ▼
+STATE_DB
+  ├─ PORT_COUNTER_CAPABILITIES|<key>        {isSupported: "true"/"false"}
+  ├─ QUEUE_COUNTER_CAPABILITIES|<key>       {isSupported: "true"/"false"}
+  └─ DEBUG_COUNTER_CAPABILITIES|<type>      {count: "<N>", reasons: "[...]"}
+
+読み取り経路（on-demand polling、keyspace 通知なし）:
+  portstat.py → db.get(STATE_DB, "PORT_COUNTER_CAPABILITIES|...", "isSupported")
+  dropconfig  → db.get_all(STATE_DB, "DEBUG_COUNTER_CAPABILITIES|...")
+```
+
+<!-- /pubsub -->
+
+---
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
