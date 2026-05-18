@@ -246,6 +246,32 @@ REST/gNMI 書き込み経路なし。
 
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`TC_TO_PRIORITY_GROUP_MAP` は `PORT_QOS_MAP` および `TUNNEL_DECAP_TABLE` の両方から参照される。`QosOrch` と `TunnelDecapOrch` はそれぞれ参照先マップの存在を確認してから SAI 適用を行い、未登録の場合は `task_need_retry` で自動待機する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `TC_TO_PRIORITY_GROUP_MAP` SAI 登録 → `PORT_QOS_MAP.tc_to_pg_map` 適用 | **強制先行** | PORT_QOS_MAP は `task_need_retry` で自動待機、マップ登録後に自動解消 |
+| 2 | `TC_TO_PRIORITY_GROUP_MAP` SAI 登録 → `TUNNEL_DECAP_TABLE.decap_tc_to_pg_map` 適用 | **強制先行** | TunnelDecapOrch は `task_need_retry` で自動待機 |
+| 3 | PORT_QOS_MAP / TUNNEL_DECAP_TABLE 参照解除 → `TC_TO_PRIORITY_GROUP_MAP` DEL | **強制先行** | 参照中は `m_pendingRemove=true` で SAI remove をブロック |
+| 4 | マップ DEL 完了 → 同名マップへの SET | 強制先行 | `m_pendingRemove` 中の SET は `task_need_retry` |
+
+### 主要な制約詳細
+
+**PORT_QOS_MAP との順序依存 (依存 #1)**: `handlePortQosMapTable` は `PORT_QOS_MAP|<port>.tc_to_pg_map` の値を `resolveFieldRefValue` で解決する際、`m_qos_maps[CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAME]` にマップが未登録なら `task_need_retry` を返す (qosorch.cpp:2124-2130)。CONFIG_DB へ同時書き込みしても orchagent の処理順により `PORT_QOS_MAP` が先に処理された場合、自動的に retry が発生し `TC_TO_PRIORITY_GROUP_MAP` 登録後に解消される。
+
+**TUNNEL_DECAP_TABLE との順序依存 (依存 #2)**: `TunnelDecapOrch::doTask` は `decap_tc_to_pg_map` フィールドを `gQosOrch->resolveTunnelQosMap()` で解決する。`SAI_NULL_OBJECT_ID` が返った場合 `"QoS map decap_tc_to_pg_map is not ready yet"` を LOG_NOTICE して `task_need_retry` を返す (tunneldecaporch.cpp:232-237)。マップが後から登録されると次のイテレーションで自動的にトンネルエントリが処理される。
+
+**参照中の DEL はブロック (依存 #3)**: `processWorkItem` の DEL ハンドラは `isObjectBeingReferenced()` で PORT_QOS_MAP または TUNNEL_DECAP_TABLE からの参照を確認し、参照が残る場合は `m_pendingRemove = true` をセットして `task_need_retry` を返す。SAI `remove_qos_map()` は参照が解放されるまで呼ばれない。参照解放後も orchagent の次回イテレーションまで DEL は pending のままとなる。
+
+> **Evidence**: `sonic-swss` `orchagent/qosorch.cpp:124-201` (processWorkItem DEL ブロック); `qosorch.cpp:2118-2134` (PORT_QOS_MAP resolveFieldRefValue); `orchagent/tunneldecaporch.cpp:230-243` (decap_tc_to_pg_map 未解決時の retry)
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
