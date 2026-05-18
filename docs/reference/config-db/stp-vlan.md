@@ -1,6 +1,6 @@
 ---
 title: STP_VLAN / STP_VLAN_PORT テーブル
-description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値を詳細解説。Phase A+B+C 分析。"
+description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動を詳細解説。Phase A+B+C+D 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -425,6 +425,149 @@ STP_VLAN / STP_VLAN_PORT
 ```
 
 <!-- /cross-refs -->
+
+---
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-failure.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+`stpmgrd` は orchagent の `task_need_retry` / `task_failed` 戻り値機構を持たない。
+代わりに「エントリを `m_toSync` に残す（保留）」か「`m_toSync.erase()` する（消費）」かで
+リトライ有無が決まる。`SELECT_TIMEOUT = 1000ms` で次のループ実行まで最大 1 秒待機する。
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | ハンドラ | 処置 | リトライ |
+|---|---|---|---|---|
+| 1 | 起動ガード未満足 (`stpGlobalTask` / `stpPortTask` 未到達) | `doStpVlanTask` | `return`（保留） | あり（1秒後ループ） |
+| 2 | `l2ProtoEnabled == L2_NONE`（モード未確定）| `doStpVlanTask` SET | `it++`（保留） | あり |
+| 3 | `isVlanStateOk()` 失敗（STATE_VLAN 未書込み） | `doStpVlanTask` SET | `it++`（保留） | あり |
+| 4 | `allocL2Instance()` 失敗（インスタンス枯渇） | `doStpVlanTask` SET | `SWSS_LOG_ERROR` + `erase` | なし |
+| 5 | `calloc` 失敗（SET `STP_VLAN_CONFIG_MSG`） | `doStpVlanTask` | `SWSS_LOG_ERROR`, `return`（保留） | あり |
+| 6 | `calloc` 失敗（DEL `STP_VLAN_CONFIG_MSG`） | `doStpVlanTask` | `SWSS_LOG_ERROR`, `return`（保留） | あり |
+| 7 | `sendMsgStpd` calloc 失敗 | `sendMsgStpd` 共通 | `SWSS_LOG_ERROR`, `return -1`（呼び元無視） | なし（エントリ消費済み） |
+| 8 | `sendMsgStpd` `sendto` 失敗 | `sendMsgStpd` 共通 | `SWSS_LOG_ERROR`, `return -1`（呼び元無視） | なし（エントリ消費済み） |
+| 9 | 起動ガード未満足（全 3 フラグ未到達） | `doStpVlanPortTask` | `return`（保留） | あり |
+| 10 | 無効キー形式（`Vlan<vid>\|<intf>` セパレータなし） | `doStpVlanPortTask` | `SWSS_LOG_ERROR` + `erase` | なし |
+| 11 | SET: `l2ProtoEnabled == L2_NONE` または `m_vlanInstMap[vid] == INVALID_INSTANCE` | `doStpVlanPortTask` | `it++`（保留） | あり |
+| 12 | DEL: `l2ProtoEnabled == L2_NONE` または `m_vlanInstMap[vid] == INVALID_INSTANCE` | `doStpVlanPortTask` | `erase`（ログなし） | なし |
+| 13 | `isLagEmpty()` = true（LAG メンバーなし） | `doStpVlanPortTask` | `erase`（ログなし） | なし |
+| 14 | `stoi` 例外（不正 vlan_id 文字列） | `doStpVlanTask` | 未キャッチ → `stpmgrd` プロセス終了 | なし（プロセス再起動要） |
+
+### 詳細
+
+#### 1〜3. 保留パターン（自動リトライ）
+
+```cpp
+// doStpVlanTask — stpmgr.cpp:183-185
+if (stpGlobalTask == false || (stpPortTask == false && !isStpPortEmpty()))
+    return;  // キューに残り 1 秒後に再試行
+
+// stpmgr.cpp:210
+if (l2ProtoEnabled == L2_NONE || !isVlanStateOk(key))
+{
+    it++;    // イテレータ進め、次の SELECT で再試行
+    continue;
+}
+```
+
+`stpGlobalTask` / `stpPortTask` が立つか、STP モード確定・VLAN STATE 登録が行われるまで
+エントリが蓄積され続ける（エラーログなし）。
+
+#### 4. インスタンス枯渇 → エントリ破棄
+
+PVST モードで VLAN STP 有効化時、空き STP インスタンス (`allocL2Instance()`) が存在しない場合:
+
+```cpp
+// stpmgr.cpp:263-269
+instId = allocL2Instance(vlan_id);
+if (instId == -1)
+{
+    SWSS_LOG_ERROR("Couldnt allocate instance to VLAN %d", vlan_id);
+    it = consumer.m_toSync.erase(it);  // エントリを破棄
+    continue;
+}
+```
+
+`IS_INST_ID_AVAILABLE()` が `false` の場合（最大 255 インスタンス到達）に発生する。
+リトライされないため、該当 VLAN の STP は有効化されないまま残る。
+
+#### 5〜6. calloc 失敗 → キュー保留（全エントリ影響）
+
+`STP_VLAN_CONFIG_MSG` の `calloc` 失敗は SET / DEL 両方で `return` するため、
+失敗した時点でキューの残りエントリも処理されずに保留される。
+
+```cpp
+// stpmgr.cpp:278-283
+msg = (STP_VLAN_CONFIG_MSG *)calloc(1, len);
+if (!msg)
+{
+    SWSS_LOG_ERROR("mem failed for vlan %d", vlan_id);
+    return;  // 処理途中で全エントリが保留
+}
+```
+
+#### 7〜8. sendMsgStpd 失敗 → サイレントドロップ
+
+`sendMsgStpd()` の戻り値はすべての呼び出し元でチェックされない。
+calloc / `sendto` 失敗でも呼び元は `m_toSync.erase(it)` でエントリを破棄する。
+IPC 送信失敗はサイレントに失われ、stpd への通知が届かない。
+
+```cpp
+// stpmgr.cpp:333-336 (典型パターン)
+sendMsgStpd(STP_VLAN_CONFIG, len, (void *)msg);
+if (msg)
+    free(msg);
+it = consumer.m_toSync.erase(it);  // 戻り値チェックなし
+```
+
+#### 11〜12. STP_VLAN_PORT — l2ProtoEnabled / m_vlanInstMap ガード
+
+SET の場合はキュー保留（自動リトライ）、DEL の場合はサイレントドロップで非対称な挙動:
+
+```cpp
+// stpmgr.cpp:483-503
+if (op == SET_COMMAND)
+{
+    if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
+    {
+        it++;   // SET: 保留
+        continue;
+    }
+}
+else
+{
+    if (l2ProtoEnabled == L2_NONE || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
+    {
+        it = consumer.m_toSync.erase(it);  // DEL: 破棄
+        continue;
+    }
+}
+```
+
+#### 13. LAG メンバーなし → サイレントドロップ
+
+`isLagEmpty(intfName)` が `true` の場合（PortChannel に物理ポートが参加していない）、
+`STP_VLAN_PORT` SET/DEL のエントリはログなしで `erase` される。
+LAG にメンバーが追加された時点で `doVlanMemUpdateTask()` が stpd への再送を担当する設計。
+
+#### 14. stoi 例外 → stpmgrd プロセス終了
+
+`doStpVlanTask()` (`stpmgr.cpp:205`) で `vlanKey` に非数値文字列が含まれる場合、
+`stoi(vlanKey.c_str())` が `std::invalid_argument` / `std::out_of_range` をスローする。
+stpmgr.cpp 内では例外がキャッチされないため、`stpmgrd.cpp:119` のトップレベル catch まで
+伝播し `stpmgrd` プロセスが終了する。systemd により自動再起動されるが、
+再起動まで STP 設定変更は一切処理されない。CLI 経由ではキー形式が `Vlan<vid>` に強制
+されるため通常は発生しない。
+
+!!! warning "直接 DB 操作による stpmgrd クラッシュ"
+    `STP_VLAN` テーブルのキーを CLI 外から不正な形式（`Vlan` プレフィックスなし等）で
+    書き込むと `stpmgrd` がクラッシュする。CLI 経由の操作では発生しない。
+
+<!-- /failure -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
