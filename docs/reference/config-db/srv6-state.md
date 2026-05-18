@@ -241,6 +241,32 @@ return mysid_addr + "/" + to_string(block_len + node_len + func_len)
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 根拠: `srv6orch.cpp` `initializeCounters()` L120-142、`queryMySidCountersCapability()` L144-155、`addMySidCounter()` L184-210、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`createUpdateMysidEntry()` L1589-1614 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-state-failure.md`
+
+COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が自動管理するため、ユーザーが直接失敗操作を行うテーブルではない。ただし以下のエラー経路がある。
+
+### 失敗経路一覧
+
+| 失敗条件 | 検出箇所 | 結果 | 自動回復 | ログ出力 |
+|----------|----------|------|----------|----------|
+| SAI が `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` 未対応 | `queryMySidCountersCapability()` `srv6orch.cpp:144-155` | カウンタ機能全体が無効化（起動時一回限り確定） | orchagent 再起動のみ | `SWSS_LOG_INFO("SRv6 counters are not supported on this platform")` |
+| `sai_query_attribute_capability()` 呼び出し自体が非 SUCCESS | `queryMySidCountersCapability()` `srv6orch.cpp:147-151` | 同上 | orchagent 再起動のみ | `SWSS_LOG_WARN("Could not query SRv6 MySID entry attribute SAI_MY_SID_ENTRY_ATTR_COUNTER_ID %d")` |
+| SAI generic counter 作成失敗 | `addMySidCounter()` `srv6orch.cpp:188-192` | `addMySidCounter` が false → **MySID エントリ自体が ASIC 未作成** | なし | `SWSS_LOG_ERROR("Failed to create SAI counter for SRv6 MySID entry")` |
+| `setMySidEntryCounter()` での SAI セット失敗 | `setMySidEntryCounter()` `srv6orch.cpp:244-248` | `COUNTERS_SRV6_NAME_MAP` 書き込み済みだが SAI エントリへのカウンタ紐付けが失敗状態 | なし（ロールバックなし） | `SWSS_LOG_ERROR("Failed to set my_sid entry counter oid to %s, rc: %s")` |
+| SAI platform が disable 時の `set_my_sid_entry_attribute` 失敗 | `setCountersState(false)` `srv6orch.cpp:278-280` | エラーログのみ。`removeMySidCounter()` は続行され `COUNTERS_SRV6_NAME_MAP` から削除される | なし | `SWSS_LOG_ERROR` (setMySidEntryCounter 経由) |
+
+!!! warning "SAI カウンタ作成失敗は MySID エントリ未作成に波及"
+    `createUpdateMysidEntry()` はカウンタ有効化状態で `addMySidCounter()` が false を返すと、`create_my_sid_entry()` を呼ばずに即 return false する（`srv6orch.cpp:1595-1599`）。つまり **SAI generic counter の枯渇や SAI API エラーは MySID エントリ自体の ASIC 登録失敗を引き起こす**。カウンタ機能を無効化（`FLEX_COUNTER_TABLE|SRV6 disable`）してから再投入することで回避できる。
+
+!!! note "setMySidEntryCounter 失敗時のカウンタ孤立"
+    `setMySidEntryCounter()` が SAI セット失敗しても `COUNTERS_SRV6_NAME_MAP` への書き込みはすでに完了している。カウンタ OID は存在するが SAI MySID エントリへの紐付けがないため、`COUNTERS:<oid>` の値は更新されない孤立状態になる。`show srv6 stats` はキー一覧を表示するが、値が 0 のままとなる。
+
+<!-- /failure -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`SRV6_MY_SIDS`](srv6-my-sids.md) — MySID エントリ定義
