@@ -203,6 +203,47 @@ dst_ip のルートが存在しない場合、セッションは永久に `inact
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照・共依存テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/erspan-cross-refs.md`
+
+`MIRROR_SESSION` (ERSPAN 種別) は YANG leafref を持たないが、実装レベルで以下の外部テーブル・コンポーネントへの依存が存在する。
+
+| 参照先テーブル / コンポーネント | YANG leafref | 参照種別 | 非充足時の挙動 | evidence |
+|---|:---:|---|---|---|
+| `PORT` (PortsOrch `allPortsReady()`) | ✗ | 起動順序ガード（常時） | false の間は全 MIRROR_SESSION 処理がブロック。CONFIG_DB エントリは Consumer キューに滞留し、全ポート初期化完了後に一括処理される | `mirrororch.cpp:1571` |
+| RouteOrch (`m_routeOrch->attach(dst_ip)`) | ✗ | 非同期 nexthop 解決（ERSPAN 常時） | dst_ip のルートが未確定の間は `activateSession()` が実行されず、セッションは `inactive` のまま。RouteOrch callback を受信後に初めて SAI create が実行される | `mirrororch.cpp:517, 557` |
+| NeighOrch (`getNeighborEntry()`) | ✗ | nexthop neighbor MAC/port 解決（ERSPAN 常時） | ARP/ND が未解決の場合 `getNeighborInfo()` が false を返し `activateSession()` がスキップされる。解決後に FdbOrch / NeighOrch callback 経由で再実行 | `mirrororch.cpp:656-664` |
+| `POLICER` (PolicerOrch `getPolicerOid()`) | ✗ | policer OID 解決（`policer` フィールド指定時のみ） | POLICER エントリ未登録なら `getPolicerOid()` が false → `activateSession()` return false → セッション `inactive` のまま | `mirrororch.cpp:1052-1060` |
+| `PORT` / `LAG` (PortsOrch `getPort()`) | ✗ | src_port ポートオブジェクト解決（`src_port` 指定時のみ） | ポート未登録なら `task_invalid_entry`（LAG メンバが src_port の別 LAG と重複する場合もエラー） | `mirrororch.cpp:316, 892` |
+| FdbOrch | ✗ | FDB 変化通知受信（起動時 attach、常時） | FDB エントリ変化で `updateSession()` callback → nexthop MAC 更新 → `activateSession()` 再実行 | `mirrororch.cpp:95` |
+| `STATE_DB MIRROR_SESSION_TABLE` | ✗ | 書き込み先（producer only） | `activateSession()` / `deactivateSession()` 成功後に `status`, `monitor_port`, `dst_mac`, `route_prefix` 等を書き込む | `mirrororch.cpp:579-637` |
+| SAI Switch (`SAI_SWITCH_ATTR_QOS_MAX_NUMBER_OF_TRAFFIC_CLASSES`) | ✗ | queue 値上限の SAI 問い合わせ（初期化時 1 回） | 取得失敗時は `m_maxNumTC = 255`（`MIRROR_SESSION_DEFAULT_NUM_TC`）でフォールバック。queue バリデーションが実質無効化 | `mirrororch.cpp:100-109` |
+| SAI Mirror Session resource count | ✗ | HW リソース残量確認（SET 時毎回） | `isHwResourcesAvailable()` が false なら `task_failed`（`"HW resources are not available"`） | `mirrororch.cpp:360-370` |
+
+### YANG leafref 非存在の補足
+
+`sonic-mirror-session.yang` では `policer` フィールドに POLICER テーブルへの leafref がなく、`src_port` にも PORT/LAG への leafref がない。参照整合性は実装レベル（`getPolicerOid()` の戻り値チェック・`getPort()` の失敗処理）のみで担保される。
+
+### 活性化コールバックチェーン
+
+```
+MIRROR_SESSION SET
+  → createEntry() → m_routeOrch->attach(this, dst_ip)  # RouteOrch observer 登録
+       ↓（非同期: RouteOrch が nexthop 解決後）
+  MirrorOrch::updateNextHop() → updateSession() → activateSession()
+       ↓（NeighOrch がARP/ND 解決後）
+  getNeighborInfo() 成功 → sai_mirror_api->create_mirror_session()
+       ↓
+  STATE_DB MIRROR_SESSION_TABLE.<name>.status = "active"
+```
+
+`dst_ip` 経路が存在しない場合は RouteOrch callback が発生せず、セッションは永久に `inactive` のまま滞留する（ログ・エラー通知なし）。
+
+> **Evidence**: `mirrororch.cpp:80-95` (コンストラクタ・observer attach); `mirrororch.cpp:517` (routeOrch attach); `mirrororch.cpp:647-670` (getNeighborInfo); `mirrororch.cpp:1052-1060` (policer 解決); `mirrororch.cpp:1571` (allPortsReady ガード)
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## ERSPAN 固有の例外条件
 
