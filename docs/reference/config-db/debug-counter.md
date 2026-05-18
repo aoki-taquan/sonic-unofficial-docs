@@ -422,4 +422,36 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## SET/DEL 副次 DB 書込み (Phase F)
+
+`CONFIG_DB DEBUG_COUNTER` エントリの SET / DEL が引き起こす他 DB への書込み一覧。
+
+### debugcounterorch による書込み
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 | evidence |
+|------|-----------------|-----------------|------|----------|
+| SET (counter 作成) | `COUNTERS_DB / COUNTERS_DEBUG_NAME_PORT_STAT_MAP` | フィールド: `<counter_name>` → 値: SAI stat 名 | `type` が `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` のとき | `debugcounterorch.cpp:774` |
+| SET (counter 作成) | `COUNTERS_DB / COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP` | フィールド: `<counter_name>` → 値: SAI stat 名 | `type` が `SWITCH_INGRESS_DROPS` / `SWITCH_EGRESS_DROPS` のとき | `debugcounterorch.cpp:778` |
+| DEL (counter 削除) | `COUNTERS_DB / COUNTERS_DEBUG_NAME_PORT_STAT_MAP` | `hdel("", counter_name)` — フィールド削除 | PORT_DEBUG 型カウンタ削除時 | `debugcounterorch.cpp:427` |
+| DEL (counter 削除) | `COUNTERS_DB / COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP` | `hdel("", counter_name)` — フィールド削除 | SWITCH_DEBUG 型カウンタ削除時 | `debugcounterorch.cpp:431` |
+| DEL (counter 削除) | `COUNTERS_DB / DEBUG_DROP_MONITOR_STATS\|<name>\|<port>` | `del()` — キー削除 | PORT_DEBUG 型カウンタ削除時、各 PHY ポートのモニタ統計を削除 | `debugcounterorch.cpp:706,718` |
+| SET / DEL | `FLEX_COUNTER_DB / FLEX_COUNTER_TABLE` (`DEBUG_COUNTER` グループ) | ポート OID または gSwitchId をキーとして stat 名を追加/削除 | `FlexCounterManager::addFlexCounterStat()` / `removeFlexCounterStat()` 経由 | `debugcounterorch.cpp:625,644,678,701` |
+| SET (`drop_monitor_status=enabled`) | `FLEX_COUNTER_DB / FLEX_COUNTER_TABLE` (`DEBUG_MONITOR_COUNTER` グループ) | 各 PHY ポートの OID をキーとして Lua ポーリング開始 (`startFlexCounterPolling`) | `debug_monitor_enabled=true` かつ PHY ポートが存在する場合 | `debugcounterorch.cpp:649-654,710-712` |
+
+### SAI (ASIC_DB) への書込み
+
+| 操作 | SAI API | 条件 |
+|------|---------|------|
+| counter 作成 | `sai_debug_counter_api->create_debug_counter()` — `ASIC_DB ASIC_STATE:SAI_OBJECT_TYPE_DEBUG_COUNTER:<oid>` に書き込まれる | drop_reason が 1 件以上揃った時点で SAI オブジェクトを作成 |
+| counter 削除 | `sai_debug_counter_api->remove_debug_counter()` — ASIC_DB から対応エントリを削除 | `uninstallDebugCounter()` 実行時 |
+| drop_reason 追加/削除 | `sai_debug_counter_api->set_debug_counter_attribute()` — `SAI_DEBUG_COUNTER_ATTR_IN/OUT_DROP_REASON_LIST` を更新 | `addDropReason()` / `removeDropReason()` 成功時 |
+
+!!! note "COUNTERS_DB マップの役割"
+    `COUNTERS_DEBUG_NAME_PORT_STAT_MAP` / `COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP` は counter 名から SAI stat 名への逆引きマップ。
+    `show dropcounters` コマンドと `drop_monitor.lua` Lua スクリプトがこのマップを参照して集計値を取得する。
+    counter が `free_drop_counters` 状態（SAI 未作成）の間はマップに書き込まれず、SAI counter 作成時に初めて書き込まれる。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: d2c490dcfe8c -->
