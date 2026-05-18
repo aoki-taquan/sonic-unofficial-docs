@@ -188,6 +188,58 @@ CONFIG_DB VLAN|VlanN  →  vlanmgrd doVlanTask()  →  STATE_DB VLAN_TABLE|VlanN
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vlan-state-failure.md -->
+<!-- source: sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
+
+`VLAN_TABLE` への書き込みは `doVlanTask()` の最終ステップであるため、それ以前の失敗は STATE_DB に痕跡を残さない。失敗時は `"error"` 値を書き込む実装は存在せず、エントリ未存在が失敗を間接的に示す。
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | STATE_DB 書込み | リトライ | プロセス影響 |
+|---|------------|----------------|---------|------------|
+| 1 | キー形式不正（`Vlan` プレフィックス欠如） | なし | なし（即廃棄） | なし |
+| 2 | VLAN ID が数値でない | なし | なし（即廃棄） | なし |
+| 3 | `addHostVlan()` で Linux bridge 作成コマンドが例外 | なし | なし（vlanmgrd 再起動後に再処理） | vlanmgrd 再起動 |
+| 4 | `gMacAddress` 未確定（syncd 未完了） | なし | 自動（次回 doTask() ループ） | なし |
+| 5 | DEL: VLAN が内部セット `m_vlans` に未登録 | 削除なし（既存なし） | なし | なし |
+| 6 | VLAN DEL 後に VLAN_MEMBER タスクが残留 | なし（読み取り側が永久 false） | なし（永久滞留） | VLAN_MEMBER 設定停止 |
+
+### 詳細
+
+#### 1 & 2. キー形式不正 → 即廃棄
+
+`doVlanTask()` L334, L346 が `SWSS_LOG_ERROR` を出力して `m_toSync.erase(it)` で消化する。STATE_DB への書き込みはなく、リトライも行われない。
+
+#### 3. `addHostVlan()` — Linux bridge 作成失敗
+
+`addHostVlan()` は `EXEC_WITH_ERROR_THROW` マクロ (L136) を使用する。`/sbin/bridge vlan add` または `/sbin/ip link add` が失敗した場合、`std::runtime_error` が throw される。`doVlanTask()` の呼び出し側でこの例外を catch するコードは存在しないため、プロセスが終了し systemd によって再起動される。STATE_DB `VLAN_TABLE` への書き込みは最終ステップのため発生しない。再起動後に CONFIG_DB の replay で再処理される。
+
+#### 4. `gMacAddress` 未確定 — 全タスク保留
+
+```cpp
+// vlanmgr.cpp:318-322
+if (!isVlanMacOk())
+{
+    SWSS_LOG_DEBUG("VLAN mac not ready, delaying VLAN task");
+    return;
+}
+```
+
+syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保留する。STATE_DB 書き込みが発生しないため、下流の consumers（intfmgrd / stpmgrd / natmgrd / vxlanmgrd）は VLAN readiness を得られず、それぞれの処理も保留状態となる。
+
+#### 5 & 6. DEL 関連の注意点
+
+- **DEL: VLAN 未登録**: `m_vlans` に未登録のキーへの DEL は `SWSS_LOG_ERROR` のみで実害なし (vlanmgr.cpp:467)。
+- **VLAN_MEMBER 孤立**: VLAN DEL 時に `m_stateVlanTable.del(key)` が即実行される (vlanmgr.cpp:463)。その後に VLAN_MEMBER の SET タスクが処理されると `isVlanStateOk()` が永遠に false を返し、タスクがキューに永久滞留する。VLAN を先に DEL する場合は VLAN_MEMBER を全て先に削除すること。
+
+!!! warning "VLAN_MEMBER の孤立滞留"
+    VLAN を先に DEL すると、未処理の VLAN_MEMBER SET タスクが `isVlanStateOk()` チェックで永久に false となり、タスクキューに残留し続ける。`m_toSync` の滞留は `show system-health detail` 等では可視化されず、サイレントに機能停止する。VLAN_MEMBER を全て削除してから VLAN を削除すること。
+
+<!-- /failure -->
+
 ## 読み取り主体
 
 | プロセス | ファイル | 用途 |
