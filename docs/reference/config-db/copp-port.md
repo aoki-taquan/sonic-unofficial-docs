@@ -314,3 +314,24 @@ L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に CoppOrch を生
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`COPP_GROUP` の genetlink フィールド (`genetlink_name` / `genetlink_mcgrp_name`) が処理される際に
+`coppmgr` / `CoppOrch` が暗黙的に参照する他テーブル・内部マップの依存関係を示す。
+
+| 依存方向 | 参照元 | 参照先テーブル / マップ | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|-------|----------------------|--------------|---------|------|
+| 間接依存（sflow feature 経由） | `queue2_group1` の genetlink HostIf 有効性 | `FEATURE` | `FEATURE\|sflow` | sflow feature `state=disabled` の場合、`sample_packet` trap が APPL_DB から除外される。genetlink HostIf / HostIfTable は SAI に作成されるが、trap が届かないため実質無効。feature enabled 時に `doCoppTrapTask()` が trap_ids を再評価して APPL_DB を更新 | `coppmgr.cpp:173-191`, `coppmgr.cpp:928-965` |
+| 内部マップ依存（HostIfTable 作成時） | `createGenetlinkHostIfTable()` | `m_syncdTrapIds` (内部マップ) | trap_type → {trap_group_obj, trap_obj} | genetlink HostIfTable の `SAI_HOSTIF_TABLE_ENTRY_ATTR_TRAP_ID` は `m_syncdTrapIds[trap_id].trap_obj` から取得する。`trap_id_list` 内の trap が `m_syncdTrapIds` に未登録の場合、`SAI_HOSTIF_TABLE_ENTRY_ATTR_TRAP_ID` に無効 OID が渡り、SAI 操作が失敗する可能性がある | `copporch.cpp:429,442` |
+| 内部マップ依存（HostIf OID 参照） | `createGenetlinkHostIfTable()` | `m_trap_group_hostif_map` (内部マップ) | trap_group_id → hostif_oid | `SAI_HOSTIF_TABLE_ENTRY_ATTR_HOST_IF` を設定するために `m_trap_group_hostif_map` から genetlink HostIf の OID を取得する。`createGenetlinkHostIf()` が先に完了していない場合、`hostif_map == end()` となり HostIfTable エントリが未作成のままスキップされる | `copporch.cpp:430-431,466` |
+| ビルド時依存 | `queue2_group1` の `genetlink_name` / `genetlink_mcgrp_name` 初期値 | `/etc/sonic/copp_cfg.json` (= `copp_cfg.j2` 展開物) | — | `genetlink_name="psample"` / `genetlink_mcgrp_name="packets"` は `copp_cfg.j2` でハードコードされ、起動時に `coppmgrd` が初期値として読み込む。ユーザーが DEL しても init cfg に同名キーがあれば自動復元される | `copp_cfg.j2:76-88`, `coppmgr.cpp:898-921` |
+| 初期化順序依存 | genetlink HostIfTable (`CHANNEL_TYPE_GENETLINK`) | `initDefaultHostIntfTable()` が作成する wildcard エントリ | — | `initDefaultHostIntfTable()` は起動時に `SAI_HOSTIF_TABLE_ENTRY_TYPE_WILDCARD` / `CHANNEL_TYPE_NETDEV_PHYSICAL_PORT` のデフォルトエントリを作成する。genetlink trap_id の `HOSTIF_TABLE_ENTRY` はこのデフォルトエントリより優先されるが、先にデフォルトエントリが存在することで「genetlink HostIfTable 未登録の trap は NETDEV_PHYSICAL_PORT チャネルで処理」という fallback が保証される | `copporch.cpp:209,211,302-330,419-468` |
+
+### 解決タイミング
+
+- **FEATURE → sflow 有効性**: `doFeatureTask()` が `FEATURE` テーブルの変化を購読し、state 変更時に `setFeatureTrapIdsStatus()` 経由で `sample_packet` trap の APPL_DB 登録状態を再評価する。genetlink HostIf / HostIfTable 自体は feature state に関わらず SAI に残留する。
+- **m_syncdTrapIds 依存**: `trapGroupProcessTrapIdChange()` が `processCoppRule()` 内で呼ばれ、trap_ids を `m_syncdTrapIds` に同期した後に `createGenetlinkHostIfTable()` が呼ばれる。同一 `processCoppRule()` 呼び出し内で順序が保証される（`copporch.cpp:848-855`）。
+- **m_trap_group_hostif_map 依存**: `createGenetlinkHostIf()` → `createGenetlinkHostIfTable()` の呼び出し順序は `processCoppRule()` 内でハードコードされており（`copporch.cpp:844,848`）、HostIf OID が `m_trap_group_hostif_map` に登録された後に HostIfTable が作成される。
+<!-- /cross-refs -->
+
