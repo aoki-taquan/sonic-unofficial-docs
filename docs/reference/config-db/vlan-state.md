@@ -270,6 +270,41 @@ syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保�
 
 <!-- /hardcoded-constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vlan-state-side-effects.md -->
+<!-- source: sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
+
+`VLAN_TABLE` への SET/DEL 処理に伴い `vlanmgrd` が書き込む副次 DB エントリ。`vlanmgrd` は cfgmgr 層のデーモンであり SAI を直接呼ばないため、ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない。
+
+| 副次 DB | テーブル/キー | 書込内容 | 根拠 |
+|---|---|---|---|
+| APPL_DB | `VLAN_TABLE\|<VlanN>` | SET 時: `admin_status`, `mtu`, `mac`, `host_ifname` を書き込む。DEL 時: エントリ削除 | `vlanmgr.cpp:437` `m_appVlanTableProducer.set(key, fvVector)` — STATE_DB 書込みの直前に同一タスク内で実行される |
+| STATE_DB | `VLAN_TABLE\|<VlanN>` | 主作用（本ページ対象） | `vlanmgr.cpp:443` |
+
+その他 (STATE_DB VLAN_MEMBER_TABLE, APPL_DB VLAN_MEMBER_TABLE) は VLAN_MEMBER 処理の主作用であり、VLAN_TABLE の副次 DB 書込みではない。
+
+### APP_DB VLAN_TABLE の書込み順序と意味
+
+`m_appVlanTableProducer.set()` は `m_stateVlanTable.set()` の直前に実行される (vlanmgr.cpp:437-443)。orchagent の `portsorch` が APP_DB `VLAN_TABLE` を購読しており、SAI VLAN オブジェクトの作成・更新を担う。STATE_DB `VLAN_TABLE` (本ページ) は APP_DB 通知後に書かれ、orchagent の SAI 処理とは**非同期**に進む。したがって STATE_DB にエントリが現れた時点では orchagent が SAI VLAN を作成済みとは限らない点に注意。
+
+```
+vlanmgrd doVlanTask()
+  ├─ addHostVlan()           → Linux kernel bridge 作成
+  ├─ m_appVlanTableProducer.set()  → APPL_DB VLAN_TABLE (orchagent へ通知)
+  └─ m_stateVlanTable.set()        → STATE_DB VLAN_TABLE (readiness guard 公開)
+```
+
+DEL 時も同順:
+```
+vlanmgrd doVlanTask()
+  ├─ removeHostVlan()
+  ├─ m_appVlanTableProducer.del()  → APPL_DB VLAN_TABLE 削除
+  └─ m_stateVlanTable.del()        → STATE_DB VLAN_TABLE 削除 (readiness guard 消去)
+```
+<!-- /side-effects -->
+
 ## 読み取り主体
 
 | プロセス | ファイル | 用途 |
