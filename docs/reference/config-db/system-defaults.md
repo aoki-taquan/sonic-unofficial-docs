@@ -345,4 +345,51 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 > Evidence: `sonic-swss/orchagent/muxorch.cpp:1388-1390`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:117-119`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:160-188`; `sonic-buildimage/files/build_templates/swss_vars.j2:9,14`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:8,37-42`; SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` / `4305596156d70e9797e8a881b3d19b46de0bce0d`。詳細分析 `meta/_intermediate/cdb-flow/system-defaults-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`SYSTEM_DEFAULTS` テーブルを参照・生成するコード内に存在する、CONFIG_DB / YANG で管理されないハードコード文字列・数値の一覧。出典は `sonic-buildimage` および `sonic-swss` の各ファイル。
+
+### YANG 制約定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `name` 最大長 | `32` 文字 | `SYSTEM_DEFAULTS_LIST.name` leaf の `length 1..32` 制約 | `sonic-system-defaults.yang` L27-29 |
+| `status` 許容値 | `"enabled"` / `"disabled"` | `admin_mode` typedef の enum 定義。この 2 値以外は YANG バリデーション層でブロック | `sonic-types.yang` L113-118 |
+
+### swss_vars.j2 内の文字列リテラル
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `dscp_remapping` 値 (enabled 側) | `"enable"` | `SYSTEM_DEFAULTS.tunnel_qos_remap.status == "enabled"` のとき orchagent に渡す値 (YANG の `enabled` と末尾 `d` の有無が異なる) | `swss_vars.j2:14` |
+| `dscp_remapping` 値 (disabled 側) | `"disable"` | それ以外 (エントリ不在含む) のとき orchagent に渡す値 | `swss_vars.j2:14` |
+
+### config_samples.py 内の文字列リテラル
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| キー名 | `"polaris"` | Pensando hwsku (`'pensando' in hwsku.lower()`) のみ `SYSTEM_DEFAULTS = {"polaris": {"status": "enabled"}}` を設定する固定キー | `config_samples.py:181` |
+| キー名 | `"software_bfd"` | SmartSwitch DPU プロファイル生成時に `SYSTEM_DEFAULTS["software_bfd"] = {"status": "enabled"}` を無条件注入する固定キー | `config_samples.py:186` |
+| 注入値 | `"enabled"` | 上記 2 キーへの固定注入値 | `config_samples.py:182, 187` |
+
+### docker-fpm-frr supervisord.conf.j2 内のリテラル
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| bfdmon バイナリパス | `/usr/local/bin/bfdmon` | `software_bfd.status == "enabled"` のとき supervisord が起動する bfdmon プロセスの実行ファイルパス (固定) | `supervisord.conf.j2:215` |
+
+### muxorch.cpp 内の文字列リテラル
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| hget キー | `"mux_tunnel_egress_acl"` | `SYSTEM_DEFAULTS` テーブルから読み取る際の固定エントリ名 | `muxorch.cpp:1389` |
+| 比較値 | `"enabled"` | `value != "enabled"` で `is_ingress_acl_` フラグを決定するハードコード比較文字列 | `muxorch.cpp:1390` |
+| ACL テーブル名 (ingress) | `"IngressTableDrop"` (`INGRESS_TABLE_DROP` = `MUX_ACL_TABLE_NAME`) | `mux_tunnel_egress_acl` が `enabled` 以外のとき（通常 Broadcom）使用する mux drop ACL テーブル名 | `aclorch.h:111`, `muxorch.cpp:48, 1393` |
+| ACL テーブル名 (egress) | `"EgressTableDrop"` (`EGRESS_TABLE_DROP`) | `mux_tunnel_egress_acl == "enabled"` のとき（Mellanox）使用する mux drop ACL テーブル名 | `aclorch.h:112`, `muxorch.cpp:1393` |
+
+> **注意**: `swss_vars.j2` が orchagent.sh に渡す `dscp_remapping` 値は `"enable"`/`"disable"` (末尾 d なし) であり、CONFIG_DB の `status` フィールド値 `"enabled"`/`"disabled"` とスペルが異なる。これはビルド時テンプレートと orchagent 引数の慣例差によるもので、混同しないよう注意が必要。
+
+> **Evidence**: `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `src/sonic-config-engine/config_samples.py:179-188`; `dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213-220`; `sonic-swss/orchagent/muxorch.cpp:1388-1393`; `sonic-swss/orchagent/aclorch.h:111-112`; `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-defaults.yang:27-35`; SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` (buildimage) / `4305596156d70e9797e8a881b3d19b46de0bce0d` (swss)。詳細は `meta/_intermediate/cdb-flow/system-defaults-constants.md` を参照。
+<!-- /constants -->
+
 <!-- glossary-links-injected: 90fa20b1e615 -->
