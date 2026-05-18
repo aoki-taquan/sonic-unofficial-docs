@@ -291,3 +291,31 @@ YANG 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode �
 `COUNTERS_GLOBAL_NAT|Values` の `TIMEOUT` / `TCP_TIMEOUT` / `UDP_TIMEOUT` フィールドは NatOrch 起動時に一度だけ書き込まれ、その後 CONFIG_DB の `NAT_GLOBAL.nat_timeout` が変更されても**更新されない**。実際のタイムアウト値は `show nat config globalvalues` で確認すること。
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`NatOrch` が COUNTERS_DB の 5 つのカウンタテーブルを書き込む際の順序依存を示す。書き込みは「コンストラクタ初期化 → エントリ追加時のゼロ初期化 → タイマー周期ポーリング」という 3 段階で行われ、各段階の前提条件が成立しない場合にカウンタが更新されない状態が発生する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | コンストラクタ SAI クエリ → `COUNTERS_GLOBAL_NAT\|Values` 初期化 | 強制先行（`enableNatFeature()` / エントリ追加より前） | 起動直後に `MAX_NAT_ENTRIES` が確定。SAI クエリ失敗時は `"0"` → NAT 機能全体が無効化 |
+| 2 | `gIsNatSupported=false` → カウンタ更新タイマー不起動 | **ブロック**（永続） | `enableNatFeature()` が即 return → `m_natQueryTimer->start()` 未到達 → `COUNTERS_NAT*` は 0 のまま継続 |
+| 3 | `NAT_GLOBAL.admin_mode=enabled` → タイマー起動 → 周期更新開始 | 強制先行（admin_mode SET が先） | タイマー起動前に追加済みのエントリは次のタイマー周期 (最大 5 秒後) まで非ゼロ値を持たない |
+| 4 | SAI エントリ作成成功 → `update*Counters(0,0)` (ゼロ初期化) → 5 秒後に実カウンタ反映 | **2 段階**（即時 0 → 遅延更新） | エントリ追加直後は常に `PKTs=0, BYTES=0`。非ゼロ値は最初の `queryCounters()` 呼び出し後に出現 |
+| 5 | SAI エントリ削除 → `delete*Counters()` (即時キー削除) | 即時 | 削除後は該当 COUNTERS_DB キーが消滅。タイマー周期との競合は「空振り」のみで実害なし |
+| 6 | `APP_NAT_GLOBAL_TABLE_NAME` の処理優先度が最低 (50) | 後処理 | エントリ系テーブル (51–55) が先にキューを消化し、admin_mode は最後に評価される |
+
+### 主要な制約詳細
+
+**コンストラクタ → COUNTERS_GLOBAL_NAT の強制先行 (依存 #1)**: `NatOrch::NatOrch()` 末尾で `sai_switch_api->get_switch_attribute(SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY)` を実行し、結果を `maxAllowedSNatEntries` に格納した後 `m_countersGlobalNatTable.set("Values", values)` で `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` を一括書き込む。この書き込みは orchagent 初期化フェーズで 1 回だけ行われ、以後の CONFIG_DB 変更では更新されない (`natorch.cpp:111-134`)。
+
+**NAT 未サポートプラットフォームでのカウンタ停止 (依存 #2)**: `gIsNatSupported` は `switchorch.cpp` が SAI switch 属性 `SAI_SWITCH_ATTR_NAT_ZONE_COUNTER_OBJECT_SUPPORT` を確認して設定するグローバル変数。`false` の場合 `enableNatFeature()` が冒頭で return し (`natorch.cpp:2541-2543`)、タイマーが起動しない。結果として `COUNTERS_NAT` 等のテーブルはエントリ追加時の `update*Counters(0,0)` のみで書かれ、以後 5 秒周期更新を受けない。
+
+**2 段階カウンタ出現 (依存 #4)**: `addNatEntry()` が SAI `create_nat_entry` 成功後に `updateNatCounters(ip_address, 0, 0)` を呼んでカウンタキーを `0,0` で作成する (`natorch.cpp:789`)。`addNaptEntry()` も同様 (`natorch.cpp:873`)。実際のパケット・バイト数は次の `queryCounters()` → `getNatCounters()` → `update*Counters(pkts, bytes)` が実行されて初めて書き込まれる (最大 5 秒後)。監視ツールがエントリ追加直後にカウンタを読んだ場合、常に `0` を観測する。
+
+**タイマー多重化 (依存 #3 補足)**: `doTask(SelectableTimer)` は 2 種のタイマーを区別する。`m_natQueryTimer` (5 秒周期) が `queryHitBits()` + `queryCounters()` を駆動し、`m_natTimeoutTimer` (1 日周期) が conntrack エントリ更新を行う。カウンタ更新に関係するのは前者のみ (`natorch.cpp:3099-3122`)。
+
+<!-- /ordering -->
