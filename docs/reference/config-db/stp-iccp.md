@@ -1,6 +1,6 @@
 ---
 title: STP / ICCP 連携 — コード由来デフォルト詳細
-description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A 分析。"
+description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -27,6 +27,15 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-mclag.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/src/scheduler.c
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclagsyncd.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclaglink.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - STP
@@ -56,6 +65,73 @@ STP との連携は主に以下の 2 つの側面で存在する:
 !!! note "CONFIG_DB テーブル構成"
     STP/ICCP 連携専用の CONFIG_DB テーブルは存在しない。
     連携は `MCLAG_DOMAIN` テーブルの `source_ip` / `peer_ip` フィールドを入力として iccpd 内部で処理される。
+
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
+
+### ICCP セッション確立と STP ロール決定の順序
+
+STP ロール (`STP_ROLE_ACTIVE` / `STP_ROLE_STANDBY`) は ICCP セッション確立のタイミングで 1 回だけ決定される。
+以下の前提条件がすべて満たされた後に初めてロールが確定する。
+
+#### 設定前提条件（ICCP 接続拒否を防ぐ）
+
+1. **`MCLAG_DOMAIN.source_ip` と `peer_ip` が CONFIG_DB に書かれていること**
+   - `scheduler_check_csm_config()` (`scheduler.c:780-784`) が両フィールドの空文字をチェックし、いずれかが空なら `MCLAG_ERROR` を返して ICCP 接続を拒否する。
+   - iccpd は接続拒否中は STP ロール決定処理に到達しない。
+
+2. **`MCLAG_DOMAIN.peer_link` に指定したインターフェースが Linux カーネルに存在すること**
+   - `peer_itf_name` が設定されているのにインターフェースが未存在 (`local_if_find_by_name()` = NULL) の場合も接続拒否 (`scheduler.c:791-798`)。
+   - PortChannel を peer_link とする場合は PortChannel の作成が先行必須。
+
+3. **mclagsyncd が iccpd と接続済みであること (`sync_fd > 0`)**
+   - `mlacp_link_set_iccp_role()` は `sys->sync_fd <= 0` のときロール通知をサイレントスキップする (`mlacp_link_handler.c:654-660`)。
+   - mclagsyncd は起動後に iccpd のサーバーソケットに接続し、完了してから `mclagsyncdFetchMclagConfigFromConfigdb()` を実行する (`mclagsyncd.cpp:51-58`)。
+
+#### 起動・処理順序
+
+| ステップ | 処理 | 依存 |
+|---------|------|------|
+| 1 | iccpd 起動・サーバーソケット listen | なし |
+| 2 | mclagsyncd 起動 → iccpd ソケット接続 (`sync_fd` 確立) | iccpd が先に起動していること |
+| 3 | mclagsyncd が CONFIG_DB から `MCLAG_DOMAIN` をフェッチして iccpd へ送信 | `sync_fd` 確立済み |
+| 4 | iccpd が `source_ip` / `peer_ip` を CSM に格納 | ステップ 3 完了 |
+| 5 | ICCP セッション確立 (TCP connect / accept) | `source_ip`, `peer_ip`, `peer_link` IF が揃っていること |
+| 6 | `scheduler_check_csm_config()` → `iccp_csm_stp_role_count()` でロール決定 (1 回のみ) | ステップ 5 完了 |
+| 7 | `mlacp_link_set_iccp_role()` → mclagsyncd へ `MCLAG_MSG_TYPE_SET_ICCP_ROLE` 送信 | `sync_fd > 0` (ステップ 2 完了) |
+
+#### TCP クライアント/サーバー役の決定
+
+ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値大小で決まる:
+
+| 条件 | 役割 | 動作 |
+|------|------|------|
+| `source_ip` < `peer_ip` | TCP クライアント | `session_client_conn_handler()` で相手に connect |
+| `source_ip` > `peer_ip` | TCP サーバー | `accept()` で待機 |
+| `source_ip` == `peer_ip` | 異常 | WARN ログのみ・セッション未確立 |
+
+`scheduler_prepare_session()` (`scheduler.c:682-700`) でこの判定を行う。TCP クライアント側ノードが接続を開始するため、**小さい IP のノードが先にセッション確立を試みる**。
+
+#### 再起動時の注意点
+
+- `iccp_csm_stp_role_count()` は `role_type == STP_ROLE_NONE` のときのみ実行される (1 回ガード, `iccp_csm.c:846`)。
+- iccpd の**プロセス再起動**なしにセッションが切断・再接続しても `role_type` はリセットされない。
+- `MCLAG_DOMAIN.source_ip` を変更してもプロセス再起動なしにはロールが更新されない。
+
+#### 順序依存サマリ
+
+| # | 依存関係 | 強制度 | 備考 |
+|---|----------|--------|------|
+| 1 | `MCLAG_DOMAIN.source_ip` / `peer_ip` が存在 → ICCP 接続許可 | 必須 | 空だと接続拒否 |
+| 2 | `peer_link` IF が Linux に存在 → ICCP 接続許可 | 必須 | PortChannel 作成が先行必要 |
+| 3 | iccpd 起動 → mclagsyncd 起動 | 実質必須 | mclagsyncd の accept() 先行順序 |
+| 4 | `sync_fd` 確立 → STP ロール通知到達 | 必須 | sync_fd=0 ではロール通知スキップ |
+| 5 | ICCP セッション確立 → STP ロール決定 | 必須 | セッション確立時に 1 回のみ |
+| 6 | `source_ip` < `peer_ip` ノード → TCP connect 発信 | 実装固定 | 変更不可 |
+
+<!-- /ordering -->
 
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
