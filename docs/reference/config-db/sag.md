@@ -158,6 +158,53 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) アーキテクチャ記述 + `sonic-swss-common/common/schema.h:127,393` 定数確認 (2026-05-18)。sonic-swss master に SAG 専用実装ファイル (`sagmgr.cpp` / `sagorch.cpp`) は存在しないため、本節は HLD 記載設計 + intfmgrd / IntfsOrch の SONiC 共通失敗挙動モデルに基づく推定。  
+> 詳細証跡: `meta/_intermediate/cdb-flow/sag-failure.md`
+
+!!! warning "HLD-only 推定"
+    現行 sonic-swss master への SAG 実装コードが確認できないため、以下はアーキテクチャ設計に基づく推定。SAI 失敗時の retry/恒久スキップ分岐などコードレベルの詳細は未確認。
+
+### A. CLI 段階バリデーション失敗
+
+| 失敗条件 | 挙動 | 証跡 |
+|---|---|---|
+| `gateway_mac` に不正 MAC 形式を指定 | YANG `type yang:mac-address` 制約でバリデーションエラー → CONFIG_DB に書かれない | HLD §YANG model, `sonic-static-anycast-gateway.yang` |
+| `gateway_mac` が既設定の状態で `mac_address add` を実行 | CLI が即時 reject ("MAC address already configured, delete first") → CONFIG_DB 変更なし | HLD §CLI: "It doesn't allow to change SAG MAC via this command" |
+
+### B. intfmgrd → APPL_DB 転送段階
+
+| 失敗条件 | 挙動 | 証跡 |
+|---|---|---|
+| `SAG\|GLOBAL.gateway_mac` 未設定時に `VLAN_INTERFACE.static_anycast_gateway=true` を受信 | `gateway_mac` を取得できないため、APPL_DB への転送を省略またはシステム MAC を使用。`SAG\|GLOBAL` 追加後に runtime 再評価で最終収束 | HLD §Architecture |
+| Redis (CONFIG_DB / APPL_DB) 切断中に SubscriberStateTable / ProducerStateTable の IO が失敗 | Redis 例外が `intfmgrd` プロセスへ伝播 → プロセス abort → swss コンテナが `critical_processes` 登録に従って再起動。再起動後 CONFIG_DB 再投入で再収束 | SONiC cfgmgr 共通パターン |
+
+### C. IntfsOrch → SAI 設定段階
+
+| 失敗条件 | 挙動 | 証跡 |
+|---|---|---|
+| `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` set_attribute 失敗 | `SWSS_LOG_ERROR` ログ出力。retry 有無および恒久スキップ分岐はコード未確認。APPL_DB のエントリは残存するため、orchagent 再起動後に再試行が走る | HLD §sonic-swss (推定) |
+| 対象 VLAN インターフェースの RIF が未作成状態で `SAG_TABLE\|GLOBAL` を受信 | RIF が存在しないため SAI 設定不可。`VLAN_INTERFACE` が作成・RIF が確立された後に再評価 | HLD §Architecture (ordering dependency) |
+
+### D. MAC 変更 (del → add) 中の過渡状態
+
+| フェーズ | 挙動 |
+|---|---|
+| `SAG\|GLOBAL` DEL 直後 | IntfsOrch が RIF の MAC をシステム CPU MAC に差し戻す。この間、SAG を使用する全 VLAN インターフェースで MAC が変化 |
+| 新 MAC で `SAG\|GLOBAL` SET 前 | VLAN インターフェースはシステム MAC で動作。ホストが旧 MAC へ向けたトラフィックは drop される可能性 |
+| `SAG\|GLOBAL` SET 後 | IntfsOrch が全対象 VLAN RIF に新 MAC を再設定。IPv6 link-local route も RouteOrch 経由で del → add が実行され、切替期間中は IPv6 link-local 通信断が生じうる |
+
+### 自己回復まとめ
+
+- **CLI バリデーション失敗**: DB への到達なし。ユーザーが修正して再実行。
+- **GLOBAL 欠如での partial 設定**: runtime 再評価により最終収束。サービス断なし (システム MAC を使用)。
+- **Redis 例外**: swss コンテナ再起動 → CONFIG_DB 再投入 → 再収束。再起動中は SAG 設定が一時停止。
+- **SAI 失敗**: orchagent 再起動後に再試行。失敗中は対象 VLAN RIF に SAG MAC が未反映のまま。
+
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: SAG HLD: `SONiC/doc/sag/sag-HLD.md`. <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sag/sag-HLD.md>
