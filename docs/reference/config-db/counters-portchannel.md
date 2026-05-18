@@ -229,6 +229,35 @@ FlexCounter (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP)  → COUNTERS:<rif_oid>
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-cross-refs.md`
+
+`portsorch` / `intfsorch` が `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` を書き込む際に
+YANG leafref として宣言されていない以下の DB / テーブルを暗黙的に参照する。
+
+| 参照先 | DB | 参照タイミング | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `gPortsOrch` (`m_portList` / `allPortsReady()`) | APP_DB (LAG/PORT テーブル) | `intfsorch::doTask()` 冒頭・`PORTCHANNEL_INTERFACE` SET 処理時 | なし | `allPortsReady() = false` → doTask 早期 return。LAG が `m_portList` 未登録 → `getPort()` 失敗 → retry | `intfsorch.cpp:665`, `intfsorch.cpp:905` |
+| `ASIC_DB VIDTORID` | ASIC_DB | タイマーループ内（gTraditionalFlexCounter 時のみ） | なし | VID→RID 確定前は `addRifToFlexCounter()` を呼ばない。約 1 s 周期で再試行 | `intfsorch.cpp:68,75,1627` |
+| `COUNTERS_DB COUNTERS_RIF_TYPE_MAP` | COUNTERS_DB | `addRifToFlexCounter()` 内 | なし | `COUNTERS_RIF_NAME_MAP` と同時書き込み。削除も同時 (`removeRifFromFlexCounter`) | `intfsorch.cpp:71,1535-1538,1561` |
+| `FLEX_COUNTER_DB RIF_STAT グループ` | FLEX_COUNTER_DB | `addRifToFlexCounter()` の末尾 | なし | `startFlexCounterPolling()` で `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<rif_oid>` に `RIF_COUNTER_ID_LIST` を書き込む。FlexCounter が実際の SAI 収集を担う | `intfsorch.cpp:1540-1551` |
+
+### 参照関係の解決タイミング
+
+- **gPortsOrch 依存**: `intfsorch::doTask()` 冒頭の `allPortsReady()` チェックおよび `getPort()` で即座に解決。失敗時は当該イテレーションをスキップし、次のサイクルで自動再試行。
+- **ASIC_DB VIDTORID 依存**: `gTraditionalFlexCounter = true` 環境でのみ有効。タイマー（約 1 s 間隔）ループで `hget` 成功後に `addRifToFlexCounter()` を呼び出す。VIDTORID エントリが存在しない間は `COUNTERS_RIF_NAME_MAP` に登録されない。
+- **COUNTERS_RIF_TYPE_MAP**: `COUNTERS_RIF_NAME_MAP` と常にアトミックに同期。どちらか一方のみが残存する状態は発生しない（同一関数内で連続書き込み）。
+- **FLEX_COUNTER_DB**: COUNTERS_RIF_NAME_MAP への書き込み直後に `startFlexCounterPolling()` を呼ぶ。FLEX_COUNTER_DB エントリがない場合、FlexCounter は RIF カウンタを収集せず `COUNTERS:<rif_oid>` フィールドが存在しない。
+
+!!! note "YANG 非定義の暗黙制約"
+    上記いずれの参照も `sonic-portchannel.yang` / `sonic-flex_counter.yang` に leafref として記述されていない。
+    `show interfaces counters rif` でカウンタが表示されない場合は `COUNTERS_RIF_NAME_MAP` の存在確認（RIF 未登録）、
+    `allPortsReady()` の完了状態、ASIC_DB VIDTORID の確定状態を順番に確認すること。
+
+<!-- /cross-refs -->
+
 ## 運用ヒント
 
 ```bash
