@@ -221,6 +221,31 @@ YANG schema が存在しないため、すべてのデフォルトはコード�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+STATE_DB `FEATURE` テーブルは `featured` と `sonic-ctrmgrd` が書き手であり、書き込み内容の決定に以下のテーブル・リソースを参照する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `FEATURE\|<name>` (CONFIG_DB) | 購読トリガ + フィールド読込 | 常時。`featured` が SubscriberStateTable で購読し、SET/DEL イベントを受け取ると `state` フィールドを STATE_DB に書き込む | `featured:601,617-623,644-648`; `container_startup.py:57-62` |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | 読込のみ | 起動時 1 回。`type` フィールドから device_type（SpineRouter 等）を判定し、syncd/gbsyncd の `auto_restart` 上書き可否を決定する | `featured:617`; `featured:374` |
+| `PORT_TABLE\|PortInitDone` (APPL_DB) | 購読トリガ | `delayed=True` な feature のみ。`PortInitDone` SET イベントを受け取ると `enable_delayed_services()` が実行され、STATE_DB への `state=enabled` 書込みが初めて発生する | `featured:647-649`; `featured:182-184` |
+| `FEATURE\|<name>` (STATE_DB — 自己参照) | 読込のみ | `container_startup.py` が `read_data()` で同じ STATE_DB エントリを読み込み、`current_owner` / `container_version` / `remote_state` の現在値を確認してから書き込む | `container_startup.py:64-68`; `container_startup.py:164-186` |
+| `KUBE_LABELS\|SET` (STATE_DB) | 読込 + 書込 | `set_owner=kube` 時のみ。`container_startup.py` が `check_version_blocked()` でバージョンブロックを確認し、`drop_label()` でバージョンラベルを書き込む。`ctrmgrd.py` が kube API から取得したラベルを同テーブルに反映する | `container_startup.py:90-106`; `ctrmgrd.py:305-307` |
+| `KUBERNETES_MASTER\|SERVER` (CONFIG_DB / STATE_DB) | 読込 (CONFIG_DB) + 書込 (STATE_DB) | Kubernetes 連携時のみ。`ctrmgrd.py` が CONFIG_DB の接続先情報を読み込み、接続状態を STATE_DB `KUBERNETES_MASTER` に書き込む。STATE_DB `FEATURE` の `remote_state` 書込みは k8s 連携成立後に行われる | `ctrmgrd.py:29,334-342` |
+| `IMAGE_VERSION` 環境変数 | プロセス環境変数読込 | コンテナ起動時。`container_startup.py` が `container_version` フィールドの値として `os.environ.get('IMAGE_VERSION', '0.0.0')` を使用する | `container_startup.py:50,176` |
+| `RestartWaiter` (STATE_DB 内部機構) | 状態読込 | warm/fast boot 時のみ。`featured` 起動時に `isAdvancedBootInProgress()` が STATE_DB の boot 完了フラグを確認し、`waitAdvancedBootDone()` が完了するまで全 FEATURE 処理を保留する | `featured:607-609` |
+
+!!! note "STATE_DB FEATURE は「書き出し専用」レジスタではない"
+    `container_startup.py` は STATE_DB `FEATURE` エントリを読み込んでから書き込む（read-modify-write）。
+    `featured` の `handler()` が `_del()` でエントリを削除した直後に `container_startup.py` が書き込もうとすると、エントリが再生成される可能性がある（`featured:190`; `container_startup.py:113-115`）。
+
+!!! note "namespace STATE_DB への伝搬"
+    multi-asic 環境では `featured` が `set_feature_state()` 内でホスト DB への書込み後、`ns_feature_state_tbl` に登録した各 namespace の STATE_DB にも同じ `state` 値を書き込む（`featured:588-590`）。各 namespace DB は独立した Redis インスタンスであり、書込みは逐次ループで処理される。
+
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
