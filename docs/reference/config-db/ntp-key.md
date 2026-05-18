@@ -358,3 +358,37 @@ YANG default `md5` により、CONFIG_DB に正規化された値は常に non-e
 
 詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-ordering.md`。
 <!-- /ordering -->
+
+<!-- failure-behavior -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
+
+### chrony 再起動失敗
+
+`hostcfgd` の `ntp_srv_key_update()` (`hostcfgd:1396-1406`) は `systemctl restart chrony` を `run_cmd()` で実行する。失敗した場合:
+
+| 条件 | 挙動 | ログ |
+|------|------|------|
+| `systemctl restart chrony` が非ゼロ終了 | `return` で即時終了。chrony 設定は古いまま維持 | `syslog.LOG_ERR: 'NtpCfg: Failed to restart chrony service'` (`hostcfgd:1400-1402`) |
+| キャッシュ未更新（失敗時） | `self.cache['keys']` が更新されない → 次回 DB イベントで再実行される | `hostcfgd:1405-1406` に到達しないため |
+
+> **自動復旧動作**: `chrony` 再起動失敗時はキャッシュが更新されないため、次回 `NTP_KEY` または `NTP_SERVER` の DB 変更イベントが発生した際に `ntp_srv_key_update()` が再度呼ばれ自動的にリトライする（`hostcfgd:1383-1384` のキャッシュ比較が不一致を検出）。
+
+### YANG バリデーション失敗（書き込み拒否）
+
+CLI / gNMI 経由の CONFIG_DB 書き込み時に YANG スキーマが検証される。失敗した場合は DB に変更が届かず hostcfgd は通知を受けない。
+
+| 制約 | 違反値 | 挙動 |
+|------|--------|------|
+| `key-id` の range 制約 | 0 または 65536 以上 | 書き込み拒否、`error-message "Failed NTP key ID"` が返却される (`sonic-ntp.yang` typedef `key-id`) |
+| `type` の enum 制約 | `md5`/`sha1`/`sha256`/`sha384`/`sha512` 以外 | 書き込み拒否 |
+| `value` の length 制約 | 空文字または 65 文字以上 | 書き込み拒否 (`sonic-ntp.yang` `length 1..64`) |
+| leafref 整合性 | `NTP_SERVER.key=<id>` 参照中に `NTP_KEY|<id>` DEL | DEL 拒否（dangling leafref 防止） |
+
+### テンプレート生成の silent skip
+
+`chrony.keys.j2` は `NTP_KEY[keyid].type` または `NTP_KEY[keyid].value` が falsy の場合、その鍵エントリを keyfile から**無警告で除外**する。エラーは発生せず、次回 DB 変更で再生成されるまで chrony は当該鍵 ID を未登録として扱う。
+
+詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-failure.md`。
+<!-- /failure-behavior -->
