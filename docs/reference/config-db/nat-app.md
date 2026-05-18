@@ -382,6 +382,65 @@ STATE_DB, FLEX_COUNTER_DB, CONFIG_DB, LOGLEVEL_DB への書込みは確認され
 > **Evidence**: `sonic-swss/orchagent/natorch.cpp` (COUNTERS_DB 初期化 L51-56, per-entry counters L4049-4134, global counters L4481-4588, enableNatFeature L2534-2562, SETTIMEOUTNAT L137/1888/2002/2118/2287/3336-3501, routeOrch attach L408-560); `sonic-swss-common/common/schema.h:260-264` (COUNTERS_NAT* table defines); 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-app-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`orchagent / NatOrch` は APPL_DB の 6 つの NAT テーブル（`NAT_TABLE`、`NAPT_TABLE`、`NAT_TWICE_TABLE`、`NAPT_TWICE_TABLE`、`NAT_GLOBAL_TABLE`、`NAT_DNAT_POOL_TABLE`）を **`swss::ConsumerStateTable`** (channel ベース PUBLISH/SUBSCRIBE) で購読する。`Orch::addConsumer()` が DB ID で分岐し、APPL_DB (DB ID ≠ CONFIG_DB / STATE_DB / CHASSIS_APP_DB) には `ConsumerStateTable` を割り当てる (`orch.cpp:1186-1196`)。
+
+```cpp
+// orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName, ..., pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+| 購読者 | 購読 API | 購読テーブル | 優先度 |
+|--------|---------|--------------|--------|
+| `orchagent` (`NatOrch`) | `swss::ConsumerStateTable` | `NAT_DNAT_POOL_TABLE` | 55 (最高) |
+| `orchagent` (`NatOrch`) | 同上 | `NAT_TABLE` | 54 |
+| `orchagent` (`NatOrch`) | 同上 | `NAPT_TABLE` | 53 |
+| `orchagent` (`NatOrch`) | 同上 | `NAT_TWICE_TABLE` | 52 |
+| `orchagent` (`NatOrch`) | 同上 | `NAPT_TWICE_TABLE` | 51 |
+| `orchagent` (`NatOrch`) | 同上 | `NAT_GLOBAL_TABLE` | 50 (最低) |
+
+`gBatchSize` は `orchagent/main.cpp:459` で `DEFAULT_BATCH_SIZE = 128` に初期化され、`orchagent -b <n>` オプション (`main.cpp:478`) で上書き可能。書き込み側の `natmgrd` (`natmgr.cpp`) / `natsyncd` (`natsync.cpp`) はいずれも `swss::ProducerStateTable::set()` / `del()` で書き込み、内部で `<TABLE>_CHANNEL@<dbId>` への `PUBLISH` を発行する。
+
+### channel PUBLISH → ハンドラ呼び出しの流れ
+
+```
+natmgrd (NatMgr) / natsyncd (NatSync)
+  ↓ ProducerStateTable::set(key, fvs) or del(key)
+APPL_DB: HSET/DEL "_NAT_TABLE:<ip>" <fields>
+  ↓ Redis PUBLISH "NAT_TABLE_CHANNEL@0" "G"
+OrchDaemon main loop: m_select->select(&s, 1000ms)  ← SELECT_TIMEOUT
+  ↓ Consumer::execute() → ConsumerStateTable::pops()
+NatOrch::doTask(consumer)  (natorch.cpp:3041-3084)
+  ↓ table_name で分岐
+doNatTableTask() / doNaptTableTask() / doTwiceNatTableTask() /
+doTwiceNaptTableTask() / doNatGlobalTableTask() / doDnatPoolTableTask()
+  ↓ isNatEnabled() チェック後に SAI sai_nat_api 操作
+```
+
+- `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:22-23`)。channel に PUBLISH があれば即座に wake up。
+- テーブル間の優先度は `natorch_base_pri` 基点の整数差で制御される。`NAT_DNAT_POOL_TABLE` が最優先（55）、`NAT_GLOBAL_TABLE` が最後（50）。`doTask` ディスパッチ (`natorch.cpp:3041-3084`) は `table_name` によって各 `doXxxTask()` に振り分ける。
+
+### SETTIMEOUTNAT 通知チャネル
+
+`NatOrch` はエージングループ内で `NotificationProducer(appDb, "SETTIMEOUTNAT")` を使って aging 通知を送信する (`natorch.cpp:137`)。`natmgrd` 側は `NotificationConsumer(&appDb, "SETTIMEOUTNAT")` (`natmgrd.cpp:149`) で受信し、conntrack エントリ削除 → APPL_DB DEL の間接ループを形成する。この通知は `keyspace` 通知ではなく `PUBLISH` を直接使う Pub/Sub チャネルである。
+
+### サービス再起動トリガー
+
+なし。`NatOrch` は orchagent 内のハンドラであり、APPL_DB への SET/DEL は SAI `sai_nat_api` へのライブ操作のみで反映され、プロセス再起動を伴わない。`admin_mode` の `enabled` → `disabled` 変化は `disableNatFeature()` によるタイマー停止・SAI_SWITCH_ATTR_NAT_ENABLE=false で完結する。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:454-465` (NatOrch 生成・テーブル優先度); `sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐); `sonic-swss/orchagent/natorch.cpp:137` (SETTIMEOUTNAT NotificationProducer), `natorch.cpp:3041-3084` (`doTask` ディスパッチ); `sonic-swss/cfgmgr/natmgrd.cpp:149-150` (SETTIMEOUTNAT NotificationConsumer); `sonic-swss/orchagent/main.cpp:459,478` (`DEFAULT_BATCH_SIZE = 128`); `sonic-swss/orchagent/orchdaemon.cpp:22-23` (SELECT_TIMEOUT)
+<!-- /pubsub -->
+
 ## 制約
 
 - `NAT_TABLE` key: 1 セグメント (`<ip>`)。他は ERROR + erase。
