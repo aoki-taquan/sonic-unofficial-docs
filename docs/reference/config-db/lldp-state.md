@@ -321,6 +321,48 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 根拠: `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`, `sonic-mgmt-common/translib/lldp_app.go`
+
+### 構造的前提
+
+`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` は **lldp-syncd** が唯一の書き手。外部 (CLI / REST / gNMI) からの書き込みは設計上不可能。失敗経路は (1) lldp-syncd の書き込み失敗、(2) 下流 Consumer (sonic-snmpagent / lldp_app.go) の読み取り時エラーの 2 種類に分類される。
+
+### SET 処理（lldp-syncd 書き込み）における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB 記録 | evidence |
+|---------|---------|------|--------------|---------|
+| lldp-syncd プロセス停止 | supervisord | supervisord が自動再起動。再起動後 lldpctl 全スキャンで再書き込み | なし | `supervisord.conf.j2: autostart=true` |
+| lldpd ソケット未応答 | lldp-syncd 起動時 `waitfor_lldp_ready.sh` | lldp-syncd 起動待機（UNIX ソケット ready まで待機）。タイムアウト時は supervisord が lldp-syncd を停止 | なし | `supervisord.conf.j2: dependent_startup_wait_for=lldp-ready:exited` |
+| APPL_DB 接続失敗 | lldp-syncd 起動時 | lldp-syncd が起動失敗 → supervisord が再起動 | なし | sonic-swss-common DB 接続例外 |
+| TTL 超過による隣接エントリ消滅 | lldpd TTL タイマー | lldpd が lldp-syncd に削除通知。lldp-syncd が `APPL_DB:LLDP_ENTRY_TABLE|<ifname>` を `DEL`。SNMP walk から当該エントリが消える | なし | lldpd 内部ロジック (hold time = hello × multiplier) |
+| ポートリンクダウン | lldpd イベント | lldpd が隣接エントリを削除 → lldp-syncd が APPL_DB から削除。`show lldp table` から消える | なし | lldpd リンク変化イベント |
+
+### GET 処理（Consumer 読み取り）における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB 記録 | evidence |
+|---------|---------|------|--------------|---------|
+| `lldp_rem_man_addr` が空文字列 | `LLDPRemManAddrUpdater.update_rem_if_mgmt()` | `return` して early exit。当該ポートの Management Address SNMP MIB エントリが欠落 | なし | `ieee802_1ab.py:523-525` |
+| `lldp_rem_man_addr` フィールド欠落 | `update_rem_if_mgmt()` | `'lldp_rem_man_addr' not in lldp_kvs` チェック → `return`。SNMP Management Address テーブルからエントリが消える | なし | `ieee802_1ab.py:517` |
+| `lldp_rem_index` / `lldp_rem_sys_cap_*` フィールド欠落 | `LLDPRemTableUpdater.update_data()` | `KeyError`/`AttributeError` をキャッチし WARNING ログを出力して `continue`。当該インタフェースの lldpRemTable SNMP MIB エントリ全体が欠落 | なし | `ieee802_1ab.py:461-463` |
+| `lldp_table_lookup()` でフィールド欠落 | `lldp_table_lookup()` | WARNING ログ (`0 - b'LLDP_ENTRY_TABLE' missing attribute '...'`) → `return None`。SNMP 応答の当該フィールドが欠落 | なし | `ieee802_1ab.py:490` |
+| `lldp_rem_time_mark` が非整数文字列 | `update_rem_if_mgmt()` の `int()` 変換 | `ValueError` → `except KeyError, AttributeError` 範囲外の場合は例外が伝播し当該エントリ処理がスキップ | なし | `ieee802_1ab.py:528` |
+| lldp_app.go `GetTable` 失敗 | `lldp_app.go: getLldpInfoFromDB()` | `log.Info("Can't get lldp table")` → 空レスポンスを返す。REST / gNMI クライアントは空の LLDP neighbor リストを受け取る | なし | `lldp_app.go: getLldpInfoFromDB` |
+| lldp_app.go `GetEntry` 失敗 | `lldp_app.go: getLldpInfoFromDB()` | `log.Info("can't access neighbor table for key: ...")` → 当該エントリをスキップ。他エントリは正常に返す | なし | `lldp_app.go: getLldpInfoFromDB` |
+
+### retry / recovery まとめ
+
+| 失敗種別 | retry | 上限 | 間隔 | recovery 条件 |
+|---------|-------|------|------|--------------|
+| lldp-syncd プロセス停止 | supervisord 自動再起動 | supervisord 設定依存 | — | プロセス再起動後に全エントリ再書き込み |
+| SNMP フィールド欠落 | なし（エントリスキップ） | — | — | lldp-syncd が次回 lldpctl 差分で上書き |
+| lldp_app.go GetTable 失敗 | なし（空レスポンス） | — | — | 次回 REST/gNMI リクエスト時に再 GetTable |
+| TTL 超過エントリ削除 | なし | — | — | 隣接ノードが LLDPDU を再送するまでエントリ復活しない |
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルトと dead field
 
