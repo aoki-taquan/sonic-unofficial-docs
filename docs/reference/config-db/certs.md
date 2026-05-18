@@ -219,6 +219,61 @@ CREDENTIALS|CERT|<profileID>
 詳細根拠は `meta/_intermediate/cdb-flow/certs-failure.md` を参照。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`gnsi_certz.go` および `common_utils/notification_producer.go` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### STATE_DB テーブル識別定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `credentialsTbl` | `"CREDENTIALS"` | STATE_DB キーの第 1 要素 (`CREDENTIALS|CERT|<profileID>`) | `gnsi_certz.go:48` |
+| `certTbl` | `"CERT"` | STATE_DB キーの第 2 要素 | `gnsi_certz.go:32` |
+| `dbName` | `"STATE_DB"` | `GetRedisDBClient()` が接続するデータベース名 | `common_utils/notification_producer.go:16` |
+
+### フィールド名定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `certId` | `"certificate"` | サーバ証明書フィールド prefix | `gnsi_certz.go:33` |
+| `tbId` | `"ca_trust_bundle"` | CA トラストバンドルフィールド prefix | `gnsi_certz.go:34` |
+| `crlId` | `"certificate_revocation_list_bundle"` | CRL バンドルフィールド prefix | `gnsi_certz.go:35` |
+| `authId` | `"authentication_policy"` | 認証ポリシーフィールド prefix | `gnsi_certz.go:36` |
+| `versionFld` | `"_version"` | フィールド suffix (例: `certificate_version`) | `gnsi_certz.go:39` |
+| `createdFld` | `"_created_on"` | フィールド suffix (例: `certificate_created_on`) | `gnsi_certz.go:40` |
+
+### ファイルシステム定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `defaultProfile` | `"gnxi"` | 起動時に自動生成されるデフォルト SSL プロファイル名 | `gnsi_certz.go:30` |
+| `crlDefault` | `"crl"` | CRL ディレクトリ内のデフォルトサブディレクトリ名 | `gnsi_certz.go:43` |
+| `crlFlush` | `"_flush"` | CRL flush ディレクトリのサフィックス (`crl_flush/`) | `gnsi_certz.go:44` |
+| `crlTmpDir` | `"tmp"` | CRL 一時処理ディレクトリ名 | `gnsi_certz.go:45` |
+| `backupExt` | `".bak"` | AuthPolicy バックアップファイルの拡張子 | `gnsi_certz.go:47` |
+| `integrityManifestFile` | `"/mbm/boot_manifest.cbor"` | インテグリティマニフェストファイルのデフォルトパス (`--integrity_manifest_file` 未設定時) | `gnsi_certz.go:54` |
+| `csrPrefix` | `[]byte("CSR1_")` | CSR ファイルの先頭バイト列 (CSR v1 フォーマット識別) | `gnsi_certz.go:53` |
+
+### CLI フラグデフォルト（参考）
+
+以下は `telemetry` バイナリの起動フラグデフォルトであり定数ではないが、実行環境で固定値として機能する。
+
+| フラグ | デフォルト値 | ソース |
+|--------|------------|--------|
+| `--grpc_meta` | `/keys/grpc-version.json` | `telemetry/telemetry.go:204` |
+| `--cert_crl_dir` | `/mtls/crl` | `telemetry/telemetry.go:202` |
+| `--ca_cert_lnk` | `/keys/ca_cert.lnk` | `telemetry/telemetry.go:199` |
+| `--server_cert_lnk` | `/keys/server_cert.lnk` | `telemetry/telemetry.go:200` |
+| `--server_key_lnk` | `/keys/server_key.lnk` | `telemetry/telemetry.go:201` |
+
+<!-- evidence:
+  sonic-gnmi/gnmi_server/gnsi_certz.go:29-57 — const/var ブロック (全定数・グローバル変数)
+  sonic-gnmi/common_utils/notification_producer.go:15-16 — dbName="STATE_DB"
+  sonic-gnmi/telemetry/telemetry.go:196-204 — CLI フラグデフォルト値
+-->
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
