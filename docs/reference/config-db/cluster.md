@@ -376,3 +376,42 @@ Phase C (cross-refs) 調査でコードベース全体を grep した結果、�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-buildimage/src/sonic-config-engine/minigraph.py`、`sonic-swss/cfgmgr/buffermgr.cpp`、`sonic-swss/cfgmgr/buffermgrdyn.cpp`、`sonic-swss` orchagent 全体 grep
+> 調査日: 2026-05-18; 詳細分析 `meta/_intermediate/cdb-flow/cluster-pubsub.md`
+
+`cluster` フィールドの通信構造は **Producer 1 名・Consumer 0 名** という極めてシンプルな形態。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|-------------------|
+| `sonic-cfggen` / `minigraph.py` → CONFIG_DB[DEVICE_METADATA\|localhost] | Redis `HSET` 直接書き込み（起動時 1 回） | — |
+| `sonic-cfggen` / `minigraph.py` → CONFIG_DB[DEVICE_NEIGHBOR_METADATA\|<dev>] | Redis `HSET` 直接書き込み（起動時 1 回） | — |
+| CONFIG_DB[DEVICE_METADATA] → ランタイムデーモン | **なし** | — |
+| CONFIG_DB[DEVICE_NEIGHBOR_METADATA] → ランタイムデーモン | **なし** | — |
+
+`DEVICE_METADATA` を `SubscriberStateTable` 経由で購読するデーモン (`BufferMgr` 等) は存在するが、参照フィールドはそれぞれ異なる内部フィールド (`buffer_model`, `platform` 等) のみであり、`cluster` フィールドへの反応は一切実装されていない。
+
+### Producer 詳細: sonic-cfggen / minigraph.py
+
+`minigraph.py` は minigraph XML を解析し、起動時に Redis `HSET` で CONFIG_DB へ直接書き込む。`ProducerStateTable` を経由しないため、対応する `ConsumerStateTable` も存在しない。
+
+```
+minigraph XML (<ClusterName>) → minigraph.py parse_device()
+  → CONFIG_DB[DEVICE_NEIGHBOR_METADATA|<dev>].cluster  (HSET, 起動時)
+  → CONFIG_DB[DEVICE_METADATA|localhost].cluster        (HSET, 起動時)
+```
+
+### 購読なし（write-only フィールド）の理由
+
+`cluster` はデータセンター内のネットワーク論理グループ識別子であり、SONiC ランタイムの転送・バッファ・ACL 処理には影響しない。SONiC のデーモン群は自ノードの `cluster` 名を参照して動作を変える設計を持たないため、`SubscriberStateTable` / `ConsumerStateTable` によるリアルタイム通知チャンネルが存在しない。
+
+!!! note "keyspace 通知は発火するが受信者なし"
+    `sonic-cfggen` が `HSET "DEVICE_METADATA|localhost" cluster <name>` を実行すると Redis keyspace 通知 (`__keyspace@4__:DEVICE_METADATA|localhost`) は発火する。しかし、この通知を `cluster` フィールドとして処理するデーモンが存在しないため、通知は実質的に無効。
+
+> **Evidence**: `minigraph.py:2170-2172, 662-668, 806-811` (書き込み); `buffermgr.cpp:373-408` (`doBufferMetaTask` — `buffer_model` のみ参照、`cluster` は無視); `buffermgrdyn.cpp:87` (`hget platform` のみ); sonic-swss 全体 grep 結果: `"cluster"` ヒット 1 件はコメント行のみ
+<!-- /pubsub -->
+
