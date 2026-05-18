@@ -485,6 +485,22 @@ processHostapdConfigGlobalTblEvent()
 > **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.h:137-147`; `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:80-133`; `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr_main.cpp:65`; `sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.h:81-84`; `sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.cpp:69-100`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: PAC / DOT1X は SAI 非経由のホスト内認証フレームワークであり、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `pacmgrd` / `hostapdmgrd` は SAI 非経由。`authmgr*()` ライブラリ関数および `wpa_ctrl` ソケット経由でホスト上の `hostapd` を制御するのみ (`pacmgr.cpp:62-68`; `hostapdmgr.cpp` を `sai_` でgrep → 0 ヒット) |
+| multi-asic (`is_multi_npu()`) | 影響なし | `pacmgr.cpp:62-68` の DB 接続は `configDb` / `stateDb` / `appDb` の 3 本のみ。namespace 引数なし。`asicN` namespace への接続・iterate をしない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立動作 | PAC テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card ホストで `pacmgrd` が独立に処理する |
+| ベンダー固有 PAC モジュール | なし | community master の `sonic-pac` に hook ポイント存在せず。`device/` 配下に PAC 固有設定ファイルなし (`device/` を `dot1x|PAC_PORT|hostapd` でgrep → 0 ヒット) |
+| プラットフォーム別 j2 テンプレート | なし | `files/build_templates/` / `files/image_config/` に PAC 関連テンプレートなし |
+
+詳細根拠は `meta/_intermediate/cdb-flow/dot1x-platform.md` を参照。
+<!-- /platform -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
