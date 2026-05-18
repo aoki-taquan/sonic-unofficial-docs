@@ -168,6 +168,62 @@ flowchart LR
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 障害時挙動 (Phase D)
+
+`eventd` の障害パスは「起動時致命的失敗」と「ループ内ソフト失敗」の 2 種類に分類される。
+いずれも `RET_ON_ERR` マクロ (`events_common.h:47-54`) が中心機構であり、
+条件が偽になると `SWSS_LOG_INFO` でログを出力した後 `goto out` にジャンプして関数から返る。
+
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp run_eventd_service() L656-832 / events_common.h RET_ON_ERR L47-54 -->
+
+### 起動時致命的失敗 — `goto out` → プロセス終了
+
+`run_eventd_service()` 内の以下のいずれかが失敗すると `out:` ラベルへジャンプし、
+リソースを解放してサービスが終了する。再起動は systemd または supervisord が担う。
+
+| 失敗箇所 | 原因 | コード証跡 |
+|---------|------|----------|
+| `zmq_ctx_new()` が NULL | ZMQ コンテキスト生成失敗 | `eventd.cpp:672` |
+| `cache_max <= 0` | `cache_max_cnt` に 0 以下の値が設定された | `eventd.cpp:675` |
+| `proxy->init()` 失敗 | XSUB/XPUB/CAPTURE ソケットの bind 失敗（ポート競合等） | `eventd.cpp:680` |
+| `service.init_server()` 失敗 | REQ/REP (:5572) ソケットの bind 失敗 | `eventd.cpp:682` |
+| `stats_instance.start()` 失敗 | COUNTERS_DB 接続失敗 (`exception` キャッチ → NULL チェック) | `eventd.cpp:684` |
+| `capture->set_control(START_CAPTURE)` 失敗 | capture スレッド起動失敗 | `eventd.cpp:700` |
+| `stats_instance.is_running()` が偽 | stats スレッドが 200 ms 以内に立ち上がらなかった | `eventd.cpp:704` |
+
+`out:` ラベル以降でリソースが解放される: `service.close_service()` → `stats_instance.stop()` → `zmq_ctx_term(zctx)` → `delete proxy`。
+
+### capture service 初期化失敗 — ソフト縮退動作
+
+`INIT_CAPTURE` が失敗した場合は致命的とはみなされず、`skip_caching = true` フラグが立ち、
+capture サービスが NULL のままサービスが継続する (`eventd.cpp:696`)。
+
+| リクエスト | capture が NULL/skip 時の挙動 |
+|-----------|------------------------------|
+| `EVENT_CACHE_INIT` | 新規 `capture_service` を再生成して試行（ソフトリトライ） |
+| `EVENT_CACHE_START` | `SWSS_LOG_WARN` + `resp = -1` でエラー応答 |
+| `EVENT_CACHE_STOP` | `SWSS_LOG_WARN` + `resp = -1` でエラー応答 |
+| `EVENT_CACHE_READ` | `skip_caching` が真なら `SWSS_LOG_WARN` + `resp = -1`。capture 未停止なら `SWSS_LOG_ERROR` + `resp = -1` |
+
+### ループ内致命的失敗 — `goto out` → サービス終了
+
+メインループ内の以下が失敗すると `goto out` でサービスが終了する。
+
+| 失敗箇所 | 原因 | コード証跡 |
+|---------|------|----------|
+| `service.channel_read()` 失敗 | ZMQ REQ/REP ソケットの受信失敗 | `eventd.cpp:710-711` |
+| `service.channel_write()` 失敗 | ZMQ REQ/REP ソケットへの送信失敗 | `eventd.cpp:819` |
+
+### ERR_MESSAGE_INVALID と stats 受信ループ
+
+`stats_collector` 内部の ZMQ 受信ループ (`eventd.cpp:265-275`) は `ERR_MESSAGE_INVALID` (`events_common.h:27`, 値 `-2`) を受け取った場合のみ `RET_ON_ERR` でループを抜ける。
+`EAGAIN`（タイムアウト）は正常扱いでループ継続、それ以外の受信エラーは `SWSS_LOG_ERROR` + `goto out`。
+キャッシュオーバーフロー時 (`VEC_SIZE(m_events) >= m_cache_max`) は `SWSS_LOG_ERROR` を出力して
+`cap_state = CAP_STATE_LAST` に遷移し、各 runtime_id の最終イベントのみ保持して古いものを破棄する。
+
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
