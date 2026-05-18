@@ -323,6 +323,30 @@ for field, value in updates.items():
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+このページが対象とする各フィールドのデフォルト値算出パスで参照される外部テーブル / リソースの一覧。
+`DPU_STATE` は CHASSIS_STATE_DB への書き出し専用テーブルであり、他テーブルから **読み取り** を行う側となる。
+
+| 参照先テーブル / リソース | 参照方向 | 対象フィールド | 条件 | evidence |
+|--------------------------|---------|--------------|------|----------|
+| `APPL_DB PORT_TABLE\|<port>.oper_status` | 読み取り | `dpu_data_plane_state` | platform API `get_dataplane_state()` が `NotImplementedError` の場合の fallback。全ポートが `'up'` なら DP state = `'up'` | `chassisd:1267-1275` (`_get_data_plane_state_common`) |
+| `STATE_DB SYSTEM_READY\|SYSTEM_STATE.Status` | 読み取り | `dpu_control_plane_state` | platform API `get_controlplane_state()` が `NotImplementedError` の場合の fallback。値が `'up'` なら CP state = `'up'` | `chassisd:1277-1284` (`_get_control_plane_state_common`) |
+| `CONFIG_DB PORT\|<port>` | キー列挙 | `dpu_data_plane_state` | `_get_data_plane_state_common()` が CONFIG_DB の `PORT` テーブルを走査してポート一覧を取得 | `chassisd:1268` (`self.config_db.get_table('PORT')`) |
+| Platform API `chassis.get_dataplane_state()` | platform 呼び出し | `dpu_data_plane_state` | 実装されている場合に優先。`NotImplementedError` 時は `APPL_DB PORT_TABLE` fallback へ | `chassisd:1249-1253` |
+| Platform API `chassis.get_controlplane_state()` | platform 呼び出し | `dpu_control_plane_state` | 実装されている場合に優先。`NotImplementedError` 時は `STATE_DB SYSTEM_READY` fallback へ | `chassisd:1254-1258` |
+| Platform API `chassis.get_module().get_oper_status()` | platform 呼び出し | `dpu_midplane_link_state` | 起動時 `set_initial_dpu_admin_state()` で `dpu_midplane_link_state` 初期値を決定 | `chassisd:1377` |
+| `CHASSIS_STATE_DB DPU_STATE\|DPU<N>` (自己参照) | 前回値読み取り | `dpu_control_plane_state` / `dpu_data_plane_state` | `DpuStateUpdater.update_state()` が前回 CP/DP state と比較して変化した場合のみ書き込む | `chassisd:1306,1312` |
+
+!!! note "midplane フィールドの参照先"
+    `dpu_midplane_link_state` / `dpu_midplane_link_reason` / `dpu_midplane_link_time` の値は `SmartSwitchModuleUpdater` が platform API `is_midplane_reachable()` を呼び出して決定する。platform API が `NotImplementedError` を返した場合は `try_get()` のデフォルト値 `False` が使われ、`dpu_midplane_link_state = 'down'` になる (`chassisd:1102-1105`)。
+
+!!! note "platform API 実装有無でロジックが切り替わる"
+    `DpuStateUpdater.__init__()` (`chassisd:1246-1258`) で `get_dataplane_state()` / `get_controlplane_state()` の実装有無を確認し、`NotImplementedError` であれば fallback 関数を使用する。同じ CP/DP state フィールドでも **platform 実装あり** の場合と **fallback (DB 参照)** の場合で参照先テーブルが異なる。
+
+<!-- /cross-refs -->
+
 ---
 
 ## 関連ページ
