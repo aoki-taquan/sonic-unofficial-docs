@@ -15,6 +15,12 @@ sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/response_publisher.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/orchdaemon.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: fpmsyncd/fpmsyncd.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - ROUTE_TABLE
@@ -319,6 +325,97 @@ NextHopUpdate update = { vrf_id, entry.first.second, prefix, nexthops };
 
 ---
 
+<!-- ordering -->
+## 書込み順・初期化順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-ordering.md -->
+
+RouteOrch の通知機構（ResponsePublisher / NextHopObserver）は以下の 2 軸で順序依存が存在する。
+
+### ResponsePublisher — suppress-fib-pending 設定が先行必須
+
+`fpmsyncd` が `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を購読するのは、
+`CONFIG_DB DEVICE_METADATA|localhost` に `suppress-fib-pending = "enabled"` が設定されているときのみ
+(fpmsyncd.cpp L78–120)[^4]:
+
+```cpp
+deviceMetadataTable.hget("localhost", "suppress-fib-pending", suppressionEnabledStr);
+if (suppressionEnabledStr == "enabled")
+{
+    routeResponseChannel = std::make_unique<NotificationConsumer>(
+        &applStateDb, routeResponseChannelName);
+    sync.setSuppressionEnabled(true);
+}
+```
+
+Redis の Pub/Sub は通知をバッファしないため、この設定が未有効の状態で fpmsyncd が起動すると
+`publishRouteState()` が送出する通知はすべて消失する。
+
+**必要な順序**:
+```
+CONFIG_DB|DEVICE_METADATA|localhost  suppress-fib-pending = enabled
+  → fpmsyncd 起動（または再起動）
+  → APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL を購読開始
+  → orchagent RouteOrch からの通知が有効利用される
+```
+
+### ResponsePublisher — `flush()` は `doTask()` 末尾まで遅延
+
+RouteOrch コンストラクタで `m_publisher.setBuffered(true)` が設定され、
+個別ルートごとではなくバッチ処理完了後に一括 flush される (routeorch.cpp L57, L1231)[^1]:
+
+```cpp
+// コンストラクタ
+m_publisher.setBuffered(true);
+
+// doTask() 末尾
+m_publisher.flush();
+```
+
+同一バッチ内で複数のルートが処理されても、RESPONSE_CHANNEL 通知は `doTask()` が完了するまで発火しない。
+
+### NextHopObserver — `attach()` タイミングと即時通知
+
+Observer が `attach()` した時点でルートが存在すれば即時通知が発火する (routeorch.cpp L308–350)[^1]:
+
+```cpp
+auto route = observerEntry->second.routeTable.rbegin();
+if (route != observerEntry->second.routeTable.rend())
+{
+    NextHopUpdate update = { vrf_id, dstAddr, route->first, route->second.nhg_key };
+    observer->update(SUBJECT_TYPE_NEXTHOP_CHANGE, static_cast<void *>(&update));
+}
+```
+
+| `attach()` のタイミング | 初回 `NextHopUpdate` |
+|-------------------------|----------------------|
+| デフォルトルート SAI 書き込み **前** | 通知なし（テーブルが空） |
+| デフォルトルート SAI 書き込み **後** | 即時通知（`0.0.0.0/0` or `::/0`） |
+
+### `m_orchList` による `doTask()` 呼び出し順 (orchdaemon.cpp L500)[^5]
+
+```
+gNeighOrch → gNhgOrch → gCbfNhgOrch → gFgNhgOrch → gRouteOrch
+```
+
+同一バッチサイクルで NeighOrch・NhgOrch が先に `doTask()` を完了するため、
+RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時点で
+同バッチのエントリが登録済みになっている。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 影響 |
+|---|----------|------|------|
+| 1 | `suppress-fib-pending = enabled` → fpmsyncd 起動 | 設定先行必須 | 未設定では RESPONSE_CHANNEL 通知が消失 |
+| 2 | RouteOrch `doTask()` 完了 → RESPONSE_CHANNEL 通知発火 | `flush()` 依存 | バッチ完了まで通知はバッファされる |
+| 3 | RouteOrch 生成 → Observer `attach()` | Observer は RouteOrch 後に初期化 | MirrorOrch・NatOrch はセッション設定時に `attach()` |
+| 4 | デフォルトルート SAI 書き込み後 → Observer `attach()` | 即時通知の有無が変わる | `attach()` 前にルートがない場合、初回通知は次のルート変化まで遅延 |
+| 5 | NeighOrch / NhgOrch `doTask()` → RouteOrch `doTask()` | `m_orchList` 順で担保 | 同バッチ内で nexthop 登録 → 経路 SAI プログラミングが完結 |
+
+<!-- /ordering -->
+
+---
+
 ## 制約
 
 - `publishRouteState()` は SET 操作時のみ `protocol` を送信する。DEL 操作時は `fvs` が空のため APPL_STATE_DB からエントリが削除される。
@@ -354,6 +451,8 @@ NextHopUpdate update = { vrf_id, entry.first.second, prefix, nexthops };
 [^1]: RouteOrch 実装: `orchagent/routeorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
 [^2]: RouteOrch ヘッダ: `orchagent/routeorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.h>
 [^3]: ResponsePublisher 実装: `orchagent/response_publisher.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp>
+[^4]: fpmsyncd 実装: `fpmsyncd/fpmsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp>
+[^5]: orchdaemon 初期化: `orchagent/orchdaemon.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
 
 <!-- ops-hint -->
 ## 運用ヒント
