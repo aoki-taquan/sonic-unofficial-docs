@@ -274,6 +274,32 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`NAT_RESTORE_TABLE` と `COUNTERS_DB:COUNTERS_NAT*` にまたがる失敗パターンを以下に示す。
+
+### 失敗パターン一覧
+
+| 失敗ケース | 発生箇所 | 挙動 | COUNTERS/STATE への影響 | retry |
+|---|---|---|---|---|
+| `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` 取得失敗 | `NatOrch::NatOrch()` L114-118 | `SWSS_LOG_NOTICE` 出力、`maxAllowedSNatEntries=0` のまま `COUNTERS_GLOBAL_NAT\|Values.MAX_NAT_ENTRIES="0"` を書き込む | `gIsNatSupported` は呼び出し側で `MAX_NAT_ENTRIES==0` の場合に `false` となり NAT 機能全体が無効化される | なし（起動時 1 回限り） |
+| `sai_nat_api->create_nat_entry()` 失敗 (SNAT/DNAT) | `addDNatEntry()` L773-783 / `addSNatEntry()` L1307-1315 など | `SWSS_LOG_ERROR` + `parseHandleSaiStatusFailure()` 呼び出し; `addedToHw=false` のまま | SAI 登録直後に書かれるはずの `COUNTERS_NAT\|<ip>` / `COUNTERS_NAPT\|<proto:ip:port>` 初期値 `"0"` が書かれない | `task_need_retry` 返却時は Consumer 再キュー; `task_failed` 時は erase |
+| `enableNatFeature()` の `SAI_SWITCH_ATTR_NAT_ENABLE` set 失敗 | `enableNatFeature()` L2557-2562 | `SWSS_LOG_ERROR` + `handleSaiSetStatus()` 呼び出し。処理は続行し `m_natQueryTimer->start()` は実行される | COUNTERS_NAT タイマーは起動するが実際の NAT 転送が HW でできない状態になる | なし（エラーログのみ） |
+| `restore_nat_entries.py` が conntrack 復元中に例外発生 | `main()` の `try/except` ブロック L88-91 | `logger.log_error()` 出力後 `sys.exit(1)` でスクリプト終了 | `set_statedb_nat_restore_done()` が呼ばれないため `STATE_DB:NAT_RESTORE_TABLE\|Flags.restored` がセットされない。`natsyncd` は warm reboot 時に `isNatRestoreDone()` が `false` を返し続け reconciliation を開始できない | なし（スクリプト再起動は supervisord 依存） |
+| `gIsNatSupported == false` で `enableNatFeature()` 呼び出し | `enableNatFeature()` L2541-2545 | `SWSS_LOG_NOTICE("NAT Feature is not supported in this Platform")` + 即時 `return` | `admin_mode = "enabled"` がセットされず、`m_natQueryTimer` が起動しないため `COUNTERS_NAT*` は更新されない | なし |
+| `disableNatFeature()` の `SAI_SWITCH_ATTR_NAT_ENABLE` set 失敗 | `disableNatFeature()` L2594-2599 | `SWSS_LOG_ERROR` + `handleSaiSetStatus()` 呼び出し。処理は続行し `m_natQueryTimer->stop()` は実行される | タイマー停止により以降のカウンタ更新は停止する | なし（エラーログのみ） |
+
+### 主要な制約詳細
+
+**`restore_nat_entries.py` 例外時の reconciliation 停止 (warm reboot 失敗の代表ケース)**: スクリプトが `nat_entries.dump` ファイルを開けない・`conntrack` コマンドが失敗するなどの例外をキャッチすると `sys.exit(1)` で終了する（evidence: `restore_nat_entries.py:88-91`）。この場合 `set_statedb_nat_restore_done()` が呼ばれないため `STATE_DB:NAT_RESTORE_TABLE|Flags.restored` は書き込まれない。`natsyncd` の `isNatRestoreDone()` (`natsync.cpp:96-108`) は `"true"` を返さないため、warm reboot 中に reconciliation フェーズへ進めず APPL_DB と conntrack の差分更新が実行されない。supervisord がスクリプトを再起動しない限り、フラグは永遠にセットされない。
+
+**SAI `create_nat_entry` 失敗時のカウンタ欠落**: `addDNatEntry()` / `addSNatEntry()` 等の SAI エントリ作成関数が失敗した場合、成功パスの直後にある `updateNatCounters(ip_address, 0, 0)` (`natorch.cpp:789`) が実行されないため `COUNTERS_NAT|<ip>` エントリが `COUNTERS_DB` に作成されない。`show nat statistics` で当該 IP のカウンタが表示されない状態が続く。`parseHandleSaiStatusFailure` が `task_need_retry` を返した場合は Consumer により再キューされ、次のイテレーションで再試行される（evidence: `natorch.cpp:773-789`, `natorch.cpp:1307-1322`）。
+
+**`MAX_NAT_ENTRIES=0` による機能全無効化**: NatOrch コンストラクタで `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` の取得に失敗または 0 を返した場合、`maxAllowedSNatEntries=0` のまま `COUNTERS_GLOBAL_NAT|Values.MAX_NAT_ENTRIES="0"` が書き込まれる。後続で `enableNatFeature()` が呼ばれると `gIsNatSupported==false` を確認して即時 return し、SAI NAT 有効化・タイマー起動・エントリ追加のいずれも行われない。COUNTERS_NAT テーブル自体は書き込み先として存在するが、タイマーが起動しないため 5 秒周期の hit count 更新も発生しない（evidence: `natorch.cpp:107-135`, `natorch.cpp:2541-2545`）。
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
