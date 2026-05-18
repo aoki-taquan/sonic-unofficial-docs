@@ -210,3 +210,50 @@ sonic-db-cli CONFIG_DB hgetall 'TAM_INT_IFA_FLOW_TABLE|flow1'
 | `ipv6` | `192.0.2.1` | エラー（`ipaddress-type-mismatch`） |
 
 <!-- /value-behavior -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-ordering.md`
+
+### 1. TAM_COLLECTOR_TABLE → TAM_INT_IFA_FLOW_TABLE
+
+`TAM_INT_IFA_FLOW_TABLE` の `collector-name` フィールドは YANG 上 string 型だが、
+CVL（sonic-mgmt-common）が `TAM_COLLECTOR_TABLE` のエントリ存在を検証する
+（`cvl_leafref_test.go` 参照）。
+コレクタ名が `TAM_COLLECTOR_TABLE` に存在しない状態で IFA フローを書き込むと
+CVL バリデーションが失敗する。
+
+```
+TAM_COLLECTOR_TABLE|<name>  →  書く  →  TAM_INT_IFA_FLOW_TABLE|<name> (collector-name フィールドあり)
+```
+
+### 2. ACL_TABLE / ACL_RULE → TAM_INT_IFA_FLOW_TABLE
+
+`TAM_INT_IFA_FLOW_TABLE` の `acl-table-name` は `leafref → ACL_TABLE.aclname`、
+`acl-rule-name` は `leafref → ACL_RULE.rulename` と YANG で明示的に定義されている。
+CVL は leafref 解決を行うため、対応する ACL エントリが先に CONFIG_DB に存在していなければならない。
+
+```
+ACL_TABLE|<aclname>  →  書く  →  TAM_INT_IFA_FLOW_TABLE|<name> (acl-table-name / acl-rule-name フィールドあり)
+```
+
+### 3. TAM_DEVICE_TABLE / TAM_INT_IFA_FEATURE_TABLE は依存なし
+
+どちらも singleton で他テーブルへの leafref 参照を持たない。任意の順序で書ける。
+
+### 4. DEL 時の逆順
+
+ADD と逆順で削除する。`TAM_INT_IFA_FLOW_TABLE` のエントリを削除してから
+`TAM_COLLECTOR_TABLE` や `ACL_RULE` を削除する。
+参照が残った状態での DEL は CVL が拒否する（leafref / string 参照チェック）。
+
+### 5. orchagent 側の挙動
+
+コミュニティ版 orchagent には `TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` /
+`TAM_INT_IFA_*` を直接購読するハンドラが存在しない。
+上記の順序制約は主に Management フレームワーク（GNMI/REST）経由での CVL 検証で発生する。
+`sonic-db-cli` で直接書き込む場合は YANG 制約チェックが走らないため、
+順序違反してもリジェクトされない（ただし IFA 機能は orchagent 非実装のため SAI 反映もなし）。
+
+<!-- /ordering -->
