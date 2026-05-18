@@ -401,6 +401,39 @@ hostapd 起動後の PID ファイル (`/etc/hostapd/hostapdPid`) 存在確認�
 > **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.h:35-55`; `pacmgr.cpp:59,166-170,431-442,705,775,884,955`; `hostapdmgr/hostapdmgr.cpp:37-38,935,975-985,1261-1274`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1x-side-effects.md`
+
+`pacmgrd` および `hostapdmgrd` は CONFIG_DB `PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE` の変更を受け取り、**APPL_DB / STATE_DB / COUNTERS_DB への書き込みは行わない**。副作用は authmgr ライブラリ API 呼び出しおよびファイルシステム操作（hostapd conf 生成/削除）に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `pacmgr.cpp` に `ProducerStateTable`/`ProducerTable` のインスタンス化なし |
+| STATE_DB | なし | `m_stateDb` は constructor で受け取るが `processPacPortConfTblEvent` 内では read-only 参照なし |
+| COUNTERS_DB | なし | `pacmgr.cpp` / `hostapdmgr.cpp` に COUNTERS_DB 接続コードなし |
+| ASIC_DB | なし | SAI 非経由。authmgr ライブラリが FDB / VLAN 操作を別経路で行う |
+
+### 設定変更時の実行時副作用（非 DB）
+
+| トリガー | Consumer | 副作用 |
+|---------|---------|--------|
+| `dot1x_system_auth_control=true` | hostapdmgrd | `capabilities=authenticator` かつ `control_mode=auto` かつ `link_status=true` かつ RADIUS 設定済みなポート全件の hostapd conf ファイルを即時生成し `informHostapd("new", ...)` で hostapd へ通知 (`hostapdmgr.cpp:285-307`) |
+| `dot1x_system_auth_control=false` | pacmgrd | `authmgrPortClientAuthStatusUpdate(ALL_INTERFACES, AUTHMGR_METHOD_8021X, AUTHMGR_METHOD_CHANGE, {enableStatus=FALSE})` により**全ポートの 802.1x セッションを即時終了** (`pacmgr.cpp:1172-1176`) |
+| `dot1x_system_auth_control=false` | hostapdmgrd | `config_created=true` なポートの hostapd conf を全削除し `informHostapd("deleted", ...)` で hostapd へ通知 (`hostapdmgr.cpp:312-335`) |
+| `port_control_mode` 変更 | pacmgrd | `authmgrPortControlModeSet()` でポートの認証状態マシンを即時更新。`force-unauthorized` への変更は認証済みクライアントのトラフィックをブロック (`pacmgr.cpp:452-460`) |
+| `port_pae_role=none` に変更 | pacmgrd | `authmgrDot1xCapabilitiesUpdate()` で EAPoL 送受信を無効化。実行中の EAPoL セッションが中断される (`pacmgr.cpp:551-563`) |
+
+!!! warning "`dot1x_system_auth_control=false` は全セッション即時切断"
+    `HOSTAPD_GLOBAL_CONFIG_TABLE|global` の `dot1x_system_auth_control` を `false` に設定すると、
+    `pacmgrd` が `authmgrPortClientAuthStatusUpdate(ALL_INTERFACES, ...)` を呼び出し、
+    スイッチ上のすべての 802.1x 認証セッションが即座に終了する。
+    メンテナンス作業中に誤って設定変更を行うと全クライアントの通信が瞬断するため注意が必要。
+
+> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:63-89,1160-1177`; `sonic-pac/hostapdmgr/hostapdmgr.cpp:260-346`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-side-effects.md`
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
