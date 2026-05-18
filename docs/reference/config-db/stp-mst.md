@@ -1,6 +1,6 @@
 ---
 title: STP_MST_INST / STP_MST_PORT テーブル
-description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・ハードコード定数・discrepancy を詳細解説。Phase A+B+C+D+E 分析。"
+description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・ハードコード定数・副次 DB 書込・discrepancy を詳細解説。Phase A+B+C+D+E+F 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -542,6 +542,92 @@ strncpy(msg.name, fvValue(i).c_str(), sizeof(msg.name) - 1);
 CLI (`config/stp.py:763`) も最大 31 文字でバリデーションしており整合している。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-side-effects.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+`stpmgrd` は `STP_MST_INST` / `STP_MST_PORT` のイベントを処理する際、STATE_DB / APPL_DB / ASIC_DB への直接書き込みを行わない。副次効果は Unix ドメインソケット経由の stpd IPC 送信と、プロセスメモリ上の `m_vlanInstMap[]` 更新のみである。
+
+### STP_MST_INST SET/DEL の副次効果
+
+#### stpd IPC 送信 (`STP_MST_INST_CONFIG`)
+
+`doStpMstInstTask()` (`stpmgr.cpp:1108`):
+
+```cpp
+sendMsgStpd(STP_MST_INST_CONFIG, len, (void *)msg);
+```
+
+| メッセージ型 | 宛先ソケット | 送信タイミング |
+|---|---|---|
+| `STP_MST_INST_CONFIG` | `/var/run/stpipc.sock` | SET/DEL の calloc 成功後 |
+
+`sendMsgStpd()` の戻り値は呼び元でチェックされない。`sendto` 失敗時もエントリは消費される（Phase D 参照）。
+
+#### `m_vlanInstMap[]` 更新（インメモリ）
+
+`STP_MST_INST` イベント処理時に `updateVlanInstanceMap()` (`stpmgr.cpp:1454`) がプロセスメモリ内の VLAN-インスタンス対応表を更新する:
+
+| 操作 | 更新内容 |
+|---|---|
+| SET (`vlan_list` フィールドあり) | 新リストの各 `vlan_id` に `m_vlanInstMap[vlan_id] = instance_id` をセット。旧リストから外れた VLAN は `0`（デフォルトインスタンス）にリセット |
+| DEL | 当該インスタンスにマップされていた全 VLAN ID を `0` にリセット |
+
+このマップは **stpmgrd プロセス再起動で揮発する**。再起動後は CONFIG_DB の再処理で再構築される。
+
+#### `m_vlanInstMap` 変化による STATE_VLAN_MEMBER 処理への連鎖
+
+`doVlanMemUpdateTask()` (`stpmgr.cpp:711`) は `m_vlanInstMap[vlan_id]` を参照して stpd への `STP_VLAN_MEM_CONFIG` 送信を判定する:
+
+```cpp
+if (m_vlanInstMap[vlan_id] != INVALID_INSTANCE && !isLagEmpty(intfName))
+{
+    sendMsgStpd(STP_VLAN_MEM_CONFIG, sizeof(msg), (void *)&msg);
+}
+```
+
+`STP_MST_INST` の SET/DEL で `m_vlanInstMap` が変化すると、それ以降の `STATE_VLAN_MEMBER` イベント処理で stpd への通知対象 VLAN が変わる。ただし処理済みの `STATE_VLAN_MEMBER` イベントは遡及再処理されない。
+
+### STP_MST_PORT SET/DEL の副次効果
+
+#### stpd IPC 送信 (`STP_MST_INST_PORT_CONFIG`)
+
+`processStpMstInstPortAttr()` (`stpmgr.cpp:1152`):
+
+```cpp
+sendMsgStpd(STP_MST_INST_PORT_CONFIG, sizeof(msg), (void *)&msg);
+```
+
+`STP_MST_PORT` 処理は `m_vlanInstMap[]` を更新しない。per-port の `path_cost` / `priority` を stpd へ転送するのみ。
+
+### STATE_DB との関係（読み取り専用）
+
+`stpmgrd` は STATE_DB を **読み取り専用** で参照する:
+
+| STATE_DB テーブル | 参照目的 | ソース |
+|---|---|---|
+| `STATE_VLAN_TABLE` | `isVlanStateOk()` — VLAN ready 判定 | `stpmgr.cpp:1282` |
+| `STATE_LAG_TABLE` | `isLagStateOk()` — LAG ready 判定 | `stpmgr.cpp:1296` |
+| `STATE_STP_TABLE` | `getStpMaxInstances()` — MST 最大インスタンス数取得 (60秒ポーリング) | `stpmgr.cpp:1391` |
+| `STATE_VLAN_MEMBER_TABLE` | `isLagEmpty()` / `doVlanMemUpdateTask()` — メンバ情報参照 | `stpmgr.cpp:938, 984` |
+
+`set()` / `del()` 呼び出しはなく、STATE_DB への書き込みは一切発生しない。
+
+### 副次効果サマリー
+
+| 副次効果 | 種別 | 備考 |
+|---|---|---|
+| stpd IPC (`STP_MST_INST_CONFIG`) | Unix ドメインソケット送信 | ベストエフォート。失敗時エントリ消費済み |
+| stpd IPC (`STP_MST_INST_PORT_CONFIG`) | Unix ドメインソケット送信 | 同上 |
+| `m_vlanInstMap[]` 更新 | インメモリ（揮発） | stpmgrd 再起動で失われる |
+| `STP_VLAN_MEM_CONFIG` 連鎖送信 | Unix ドメインソケット送信（間接） | 以降の STATE_VLAN_MEMBER イベントに影響 |
+
+CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への書き込みは発生しない。
+
+<!-- /side-effects -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
