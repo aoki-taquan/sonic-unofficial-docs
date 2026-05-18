@@ -297,4 +297,23 @@ frrcfgd init (L2227-2245) は `PREFIX_SET` → `PREFIX` の順でテーブルを
 > 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-ordering.md` を参照
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref および frrcfgd 実装スキャンにより確認した参照先・被参照テーブル一覧。詳細は `meta/_intermediate/cdb-flow/prefix-set-cross-refs.md` を参照。
+
+| 参照先テーブル / リソース | 参照方向 | 参照フィールド | 条件・備考 |
+|--------------------------|---------|--------------|-----------|
+| `PREFIX` (`PREFIX_LIST` / `PREFIX_NOSEQ_LIST`) | leafref ターゲット（被参照） | `set_name` | PREFIX_SET が先行必須。未作成時 YANG バリデーションでロード拒否 |
+| [`ROUTE_MAP`](route-map.md) | 逆参照（ROUTE_MAP が PREFIX_SET を leafref） | `match_prefix_set`, `match_next_hop_set` | PREFIX_SET 未作成時 frrcfgd が AF 解決失敗 → FRR コマンド未発行（silent drop）。`frrcfgd.py:2669-2676` |
+| [`ROUTE_MAP`](route-map.md) | 逆参照（YANG のみ、実装なし） | `match_ipv6_prefix_set` | sonic-route-map.yang には leafref あり、frrcfgd の `route_map_key_map` に未実装 → dead field |
+| [`BGP_NEIGHBOR_AF`](bgp-neighbor-af.md) | 逆参照（BGP ネイバーが PREFIX_SET を leafref） | `prefix_list_in`, `prefix_list_out` | frrcfgd が `neighbor {} prefix-list {} in/out` として [FRR](../../reference/glossary.md#term-frr) に発行。`frrcfgd.py:1918-1919` |
+| [`BGP_PEER_GROUP_AF`](bgp-peer-group-af.md) | 逆参照（BGP peer group が PREFIX_SET を leafref） | `prefix_list_in`, `prefix_list_out` | BGP_NEIGHBOR_AF と同一 handler 経路 |
+
+!!! note "match_ipv6_prefix_set は dead field"
+    `sonic-route-map.yang` では `match_ipv6_prefix_set` に `PREFIX_SET` への leafref が定義されているが、frrcfgd の `route_map_key_map`（`frrcfgd.py:1928-1929`）には `match_prefix_set|ipv4` / `match_prefix_set|ipv6` のエントリのみ存在し `match_ipv6_prefix_set` のエントリはない。CONFIG_DB に書いても frrcfgd が処理せず FRR に反映されない。
+
+> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-cross-refs.md` を参照
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 88e792f23f63 -->
