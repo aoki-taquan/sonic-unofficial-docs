@@ -246,6 +246,41 @@ enum 等なし（uint8 数値のみ）。
 
 <!-- /runtime-trace -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatZoneIntfTask L7380-7640 / sonic-swss/orchagent/intfsorch.cpp doTask L660-990 -->
+
+`nat_zone` フィールドへの変更は CONFIG_DB への書き込み直後には SAI / iptables に反映されない場合がある。以下の先行条件が必要。
+
+### 先行必須条件
+
+| # | 先行必須条件 | 処理系 | 方向 | 緩和策 |
+|---|------------|--------|------|--------|
+| 1 | `PortsOrch::allPortsReady()` が true | orchagent (IntfsOrch) | 強制先行 (全ポート初期化待ち) | 全ポート初期化完了まで SAI 書き込みをスキップ、完了後 `doTask()` が自動再実行 (`intfsorch.cpp:665-668`) |
+| 2 | `isPortStateOk(port)` が true (zone エントリ・非 Loopback) | natmgrd | 強制先行 | ポート ready になると自動再試行 (`natmgr.cpp:7493-7499`) |
+| 3 | `isIntfStateOk(key)` が true (IP プレフィックス付きエントリ) | natmgrd | 強制先行 | インタフェース IP 有効化後に自動再試行 (`natmgr.cpp:7595-7601`) |
+| 4 | `gIsNatSupported == true` (SAI capability クエリ結果) | orchagent (IntfsOrch) | 強制先行 (プラットフォーム制約) | false の場合は SAI 書き込みを silent skip、iptables は正常設定 (`intfsorch.cpp:977-985`) |
+
+### ゾーン変更時の内部順序 (副作用)
+
+`nat_zone` の値が既存値から変化した場合、natmgrd は以下の順序で処理する (`natmgr.cpp:7534-7566`)。
+
+1. 既存の Static NAT iptables ルール削除 (`removeStaticNatIptables()`)
+2. 既存の Static NAPT iptables ルール削除 (`removeStaticNaptIptables()`)
+3. 既存の Dynamic NAT iptables ルール削除 (`removeDynamicNatRules()`)
+4. キャッシュ更新 (`m_natZoneInterfaceInfo[port] = nat_zone`)
+5. 新しいゾーン値で mangle iptables MARK ルール設定 (`setMangleIptablesRules(ADD)`)
+6. Static / Dynamic NAT iptables ルール再構築 (`addStaticNatIptables()` 等)
+
+この間 (数 ms〜数百 ms) は NAT ルールが一時的に消失する。
+
+### Loopback の特殊性
+
+Loopback インタフェースは `isPortStateOk()` チェック対象外であり (`natmgr.cpp:7493-7498`)、かつ `setMangleIptablesRules()` が呼ばれない。Loopback の `nat_zone` は SAI zone_id のみに影響し、iptables mangle mark には影響しないため、設定順序は non-Loopback とは独立。
+
+<!-- /ordering -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
