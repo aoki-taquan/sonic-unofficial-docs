@@ -205,6 +205,44 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss-common/common/schema.h:127,393` 定数確認 + `SONiC/doc/sag/sag-HLD.md` §DB / §YANG 精読 (2026-05-18)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/sag-constants.md`
+
+!!! warning "HLD-only 推定"
+    sonic-swss master に SAG 専用実装ファイル (`sagmgr.cpp` / `sagorch.cpp`) が確認できないため、コードレベルの定数は `schema.h` の 2 定数のみ確認済み。以下の一部は HLD 記載設計に基づく。
+
+### スキーマキー定数 (`schema.h`)
+
+| 定数名 | 値 | 定義箇所 |
+|--------|----|---------|
+| `CFG_SAG_TABLE_NAME` | `"SAG"` | `sonic-swss-common/common/schema.h:393` |
+| `APP_SAG_TABLE_NAME` | `"SAG_TABLE"` | `sonic-swss-common/common/schema.h:127` |
+
+### シングルトンキー
+
+| 項目 | 値 | 備考 |
+|-----|-----|------|
+| CONFIG_DB キー | `SAG\|GLOBAL` | `CFG_SAG_TABLE_NAME + "|GLOBAL"` の組み合わせ。`"GLOBAL"` は HLD §DB に直接文字列リテラルとして記載 |
+| APPL_DB キー | `SAG_TABLE\|GLOBAL` | `APP_SAG_TABLE_NAME + "|GLOBAL"` |
+
+### YANG デフォルト値
+
+| フィールド | テーブル | YANG デフォルト | ソース |
+|-----------|---------|---------------|--------|
+| `gateway_mac` | `SAG` | なし（必須） | `sonic-static-anycast-gateway.yang`: `type yang:mac-address;`（default 節なし） |
+| `static_anycast_gateway` | `VLAN_INTERFACE` | `false` | `sonic-vlan.yang` VLAN_INTERFACE_LIST: `default false;` |
+
+### SAI 属性（既存流用・新規追加なし）
+
+| 属性名 | 備考 |
+|-------|------|
+| `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` | 既存 SAI RIF 属性を流用。HLD §SAI API: "There are no changes to SAI headers/implementation to support this feature." |
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: SAG HLD: `SONiC/doc/sag/sag-HLD.md`. <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sag/sag-HLD.md>
