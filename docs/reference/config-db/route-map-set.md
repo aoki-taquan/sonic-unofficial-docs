@@ -172,6 +172,26 @@ ROUTE_MAP_SET への SET/DEL の成否は CONFIG_DB に書き戻されない。Y
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-route-map.yang:269-273 (call_route_map leafref) -->
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-route-map.yang:125-134`; `frrcfgd.py` 全文 grep (ROUTE_MAP_SET 出現なし); `db_migrator.py` 全文 grep (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-constants.md`
+
+ROUTE_MAP_SET テーブルは frrcfgd・bgpcfgd・orchagent のいずれも購読しないため、**ランタイムのハードコード定数は存在しない**。実装コードがこのテーブルを処理しないことを `frrcfgd.py` 全文 grep（`ROUTE_MAP_SET` 出現なし）および `db_migrator.py` grep で確認した。
+
+### YANG 定義上の制約（定数相当）
+
+| 制約 | 値 / 内容 | ソース |
+|------|----------|--------|
+| `name` 型 | `string`（長さ制約なし、YANG デフォルト） | `sonic-route-map.yang:129` |
+| フィールド数 | key (`name`) のみ。データフィールドなし | `sonic-route-map.yang:126-133` |
+
+YANG の `string` 型にはデフォルトの長さ上限はなく、`sonic-route-map.yang` に `length` 制約も定義されていない。`sonic-db-cli` 直接投入では YANG 検証もバイパスされるため、name 文字列長の実質的な上限は Redis のキー長制限（512 MB）のみとなる。
+
+<!-- evidence: sonic-route-map.yang:125-134; frrcfgd.py table_handler_list L2293-2338 (ROUTE_MAP_SET 出現なし) -->
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
