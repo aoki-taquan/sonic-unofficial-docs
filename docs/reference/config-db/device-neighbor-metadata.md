@@ -90,6 +90,30 @@ DEVICE_NEIGHBOR_METADATA|<name>
 - 同名の `DEVICE_NEIGHBOR_LIST.name` と運用上揃える前提（[YANG](../../reference/glossary.md#term-yang) では leafref 化されていない）
 - 各 IP 系 leaf は `union` でアドレス／プレフィクス両形式を許容
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`DEVICE_NEIGHBOR_METADATA` は `sonic-cfggen -m <minigraph.xml>` の実行時に一括生成される。生成後は複数の consumer が直接参照するが、以下の順序依存が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `DEVICE_NEIGHBOR_METADATA` ロード → BGP ピア `set_handler` 実行許可（`use_neighbors_meta=True` 時） | **強制先行** | bgpcfgd の directory メカニズムがテーブル到着後に自動再試行 |
+| 2 | 個別 `DEVICE_NEIGHBOR_METADATA` エントリ存在 → 対応 BGP ピア設定の適用 | **強制先行** | `return False` で再キュー、エントリ到着後に再処理 |
+| 3 | `DEVICE_NEIGHBOR` ロード → `DEVICE_NEIGHBOR_METADATA` 参照（pfcwd） | 実質的直列（同一 `sonic-cfggen` 実行内） | 欠落時は `VLAN_MEMBER` フォールバック |
+| 4 | single / multi-ASIC 環境差 → 収録エントリ集合の違い | 環境依存（書込み前提条件） | multi-ASIC では間接隣接デバイスのメタが欠落する前提で consumer を設計 |
+
+### 主要な制約詳細
+
+**bgpcfgd 全件ブロック (依存 #1)**: `BGPPeerMgrBase.__init__()` (`managers_bgp.py:128-140`) は `constants.bgp.use_neighbors_meta == True` の場合のみ `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を `deps` に追加する。directory メカニズムはこの宣言を元に「DEVICE_NEIGHBOR_METADATA が到着するまで BGP ピア `set_handler` を実行しない」制御を行う。minigraph 書込み完了前に bgpcfgd が起動している環境では、BGP セッションは DEVICE_NEIGHBOR_METADATA 到着まで**全件ブロック**される（evidence: `managers_bgp.py:128-131,138-140`）。
+
+**個別エントリ不在での延期 (依存 #2)**: `BGPPeerMgrBase.set_handler()` (`managers_bgp.py:218-224`) は `data['name']` が `neigmeta` に存在しない場合に `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")` を出力して `return False`（再試行待ち）を返す。BGP_NEIGHBOR エントリが先に CONFIG_DB に書き込まれても、対応する DEVICE_NEIGHBOR_METADATA エントリが存在しない限り BGP セッション設定は適用されない（evidence: `managers_bgp.py:218-224`）。
+
+**pfcwd の直列参照 (依存 #3)**: `get_server_facing_ports()` (`pfcwd/main.py:97-108`) は DEVICE_NEIGHBOR の各エントリの `name` を使って DEVICE_NEIGHBOR_METADATA の `type` を参照する。DEVICE_NEIGHBOR_METADATA 側に対応エントリがない場合、サーバー向けポートとして列挙されず、VLAN_MEMBER フォールバックに移行する。minigraph は両テーブルを同一実行内で生成するため通常は同時到着するが、テーブル単位の書込み順は `hset` 操作順に依存する（evidence: `pfcwd/main.py:97-108`）。
+
+<!-- /ordering -->
+
 ## 購読者
 
 - minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): minigraph から生成
