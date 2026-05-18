@@ -164,6 +164,61 @@ CREDENTIALS|CERT|<profileID>
 詳細根拠は `meta/_intermediate/cdb-flow/certs-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-gnmi/gnmi_server/gnsi_certz.go`
+
+### Rotate RPC における失敗経路
+
+| 失敗条件 | 検出箇所 | gRPC エラーコード | 結果 |
+|---------|---------|-----------------|------|
+| 並行 `certz.Rotate` RPC を試行 | `certzMu.TryLock()` (L233) | `codes.Aborted` | "concurrent certz.Rotate RPCs are not allowed" を即時返却。STATE_DB 変更なし |
+| Finalize なしで接続が切断 (io.EOF) | `stream.Recv()` (L244) | `codes.Aborted` | `revertProfile()` で前回 Finalize 済みの値を STATE_DB に書き戻す |
+| ストリーム受信エラー | `stream.Recv()` (L250) | `codes.Aborted` | `revertProfile()` 実行 |
+| 不正な `ssl_profile_id` で Rotate 要求 | `processRotateRequest()` (L288) | `codes.InvalidArgument` | "Rotate requested with invalid ssl_profile_id: \<id\>"。revert なし（profile 不在） |
+| UploadRequest 処理失敗 | `processRotateRequest()` (L274) | `codes.Aborted` | `revertProfile()` 後 "Process err: \<err\>" を返却 |
+| ストリーム送信エラー (UploadResponse) | `stream.Send()` (L280) | `codes.Aborted` | `revertProfile()` 実行 |
+| `finalizeProfile()` 内で `saveCertzMetadata()` 失敗 | `finalizeProfile()` (L260) | `codes.Unknown` | "Failed to remove the old credentials: \<err\>"。ファイル・DB の整合性崩壊の可能性（再起動で回復） |
+| 不正な `ssl_profile_id` で Finalize 要求 | `finalizeProfile()` (L650) | `codes.InvalidArgument` | "Finalize requested with invalid ssl_profile_id: \<id\>" |
+
+### UploadRequest バリデーション失敗
+
+| 失敗条件 | gRPC エラーコード | evidence |
+|---------|-----------------|----------|
+| `entities[]` が空 | `codes.InvalidArgument: "entity cannot be empty"` | `gnsi_certz.go:385-387` |
+| `created_on == 0` | `codes.InvalidArgument: "created_on cannot be empty"` | `gnsi_certz.go:389-391` |
+| `version == ""` | `codes.InvalidArgument: "version cannot be empty"` | `gnsi_certz.go:392-394` |
+| CRL エンティティだが `--cert_crl_dir` 未設定 | `codes.Aborted: "CRL not configured"` | `gnsi_certz.go:404-407` |
+| 認識不能なエンティティ型 | `codes.Internal: "failed to find entity type: ..."` | `gnsi_certz.go:413-414` |
+| エンティティファイル保存失敗 | `codes.Aborted: "Entity save err: ..."` | `gnsi_certz.go:422-423` |
+| エンティティ有効化失敗 | `codes.Aborted: "Entity activate err: ..."` | `gnsi_certz.go:425-426` |
+| CA トラストバンドルが X.509 以外 / PEM 以外 / 空 | `codes.InvalidArgument` | `gnsi_certz.go:521-533` |
+| 証明書が欠如 / X.509 以外 / PEM 以外 / データ空 | `codes.InvalidArgument` | `gnsi_certz.go:557-567` |
+| CSR 鍵生成失敗 / 非対応アルゴリズム | `codes.Internal` / `codes.InvalidArgument` | `gnsi_certz.go:333-363` |
+
+### STATE_DB への書き込み失敗
+
+| 失敗条件 | 結果 | evidence |
+|---------|------|----------|
+| Redis 接続失敗 (`GetRedisDBClient` エラー) | エラーログのみ。STATE_DB 未更新（証明書ファイルは更新済みの可能性あり） | `gnsi_certz.go:1041-1044` |
+| `sc.HSet()` 失敗 | エラーログ ("Cannot write credentials metadata to the DB.") のみ。処理継続 | `gnsi_certz.go:1051-1055` |
+| 起動時 `loadCertzMetadata()` 失敗 | ログのみ。`bootstrapDefaultProfile()` で初期値を生成してフォールバック | `gnsi_certz.go:126-131` |
+
+### revertProfile による STATE_DB 復元
+
+`revertProfile()` は失敗した Rotate のロールバックとして `Cert → TrustBundle → CrlBundle → AuthPolicy` の順に処理する。  
+各エンティティについて物理ファイルを復元してから `writeEntityFreshness()` で STATE_DB を前回 Finalize 済みの値に戻す。  
+物理ファイル復元 (`atomicSetSrvCertKeyPair()` 等) が失敗した場合はログのみで処理継続するため、  
+ファイルと STATE_DB の整合性が崩れる可能性がある（`gnsi_certz.go:608-612`）。
+
+### 未実装メソッド
+
+`AddProfile` / `DeleteProfile` / `GetProfileList` はすべて `codes.Unimplemented` を返す（`gnsi_certz.go:163-169`）。
+
+詳細根拠は `meta/_intermediate/cdb-flow/certs-failure.md` を参照。
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
