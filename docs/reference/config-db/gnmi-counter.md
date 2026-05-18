@@ -170,6 +170,41 @@ flowchart LR
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 根拠: `sonic-buildimage/dockers/docker-sonic-telemetry/supervisord.conf`, `sonic-gnmi/gnmi_server/server.go`, `sonic-gnmi/common_utils/context.go`, `sonic-gnmi/common_utils/shareMem.go`, `sonic-gnmi/gnmi_dump/gnmi_dump.go`
+
+### 起動シーケンス（supervisord）
+
+```
+rsyslogd 起動 (priority=1)
+  └─► start.sh 実行 (priority=2, rsyslogd:running 待機)
+        └─► telemetry 起動 (priority=3, start:exited 待機)
+              └─► NewServer() 呼び出し
+                    └─► InitCounters() → 全32カウンタ を uint64(0) で共有メモリへ書込み
+                          └─► gRPC サーバー起動 (Serve())
+                                └─► IncCounter() がリクエストごとに共有メモリを更新
+dialout 起動 (priority=4, telemetry:running 待機)
+```
+
+### 順序依存ルール
+
+| # | 依存関係 | 方向 | 影響 |
+|---|----------|------|------|
+| 1 | `start.sh` 完了 → `telemetry` プロセス起動 | **強制先行**（supervisord `dependent_startup_wait_for`） | `start.sh` が終了するまで `telemetryd` は起動しない |
+| 2 | `NewServer()` 内 `InitCounters()` → gRPC `Serve()` | **強制先行**（同一関数内の逐次呼び出し、`server.go:528`） | 共有メモリが初期化される前に gRPC リクエストが来ることはない |
+| 3 | `telemetry:running` → `dialout` 起動 | **強制先行**（supervisord `dependent_startup_wait_for`） | dialout は telemetry が起動していないと開始しない |
+| 4 | `gnmi_dump` 実行 → 有効カウンタ値の読み取り | **条件付き**（SysV shm が存在しないと `shmget` がエラーを返す） | `telemetryd` 起動前に `gnmi_dump` を実行すると「`Fail to read counters`」エラーになる |
+
+### 重要な制約
+
+- **再起動ごとに全カウンタがリセット**: `telemetryd` が再起動するたびに `NewServer()` → `InitCounters()` が走り、共有メモリの全32カウンタが 0 にリセットされる。これは warm-reboot でも同様（telemetry コンテナが再起動するため）。
+- **gnmi_dump は telemetry と独立して実行可能**: `gnmi_dump` は SysV 共有メモリ（key=7749）に直接アクセスするため、gRPC セッションや CONFIG_DB への接続は不要。ただし共有メモリが存在しない場合（telemetryd 未起動）はエラーとなる。
+- **dialout と counters の関係**: `dialout` プロセスは telemetry が起動してから開始するが、dialout の処理自体は `IncCounter` を呼ばない。カウンタは gRPC RPC 受信と DBus 操作のみで増分される。
+
+<!-- /ordering -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
