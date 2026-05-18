@@ -343,6 +343,29 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`NhgOrch` / `CbfNhgOrch` / `NhgMapOrch` が APPL_DB テーブルを処理する際に、SAI 操作の成否に応じて以下の副次 DB エントリを書き込む。ASIC_DB への書込みは sai_next_hop_group_api 経由 (syncd) で行われる主作用のため本表から除外する。
+
+| 副次 DB | テーブル/カウンタ | 書込内容 | 根拠 |
+|---------|----------------|---------|------|
+| COUNTERS_DB | `CRM:STATS` `crm_stats_nexthop_group_used` | NHG SAI 作成成功時 +1、削除成功時 -1 | `nhgbase.h:795` `NhgBase::sync()` / `nhgbase.h:277` `NhgBase::remove()` — `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` / `decCrmResUsedCounter` |
+| COUNTERS_DB | `CRM:STATS` `crm_stats_nexthop_group_used` (CBF) | CBF NHG SAI 作成成功時 +1、削除成功時 -1 | `cbfnhgorch.cpp:358` `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` |
+| COUNTERS_DB | `CRM:STATS` `crm_stats_nexthop_group_member_used` | 各 NHG メンバー SAI エントリ作成時 +1、削除時 -1 | `nhgbase.h:132` `NhgMemberBase::sync()` / `nhgbase.h:151` `NhgMemberBase::remove()` |
+| COUNTERS_DB | `CRM:STATS` `crm_stats_nexthop_group_map_used` | FC_TO_NHG_INDEX_MAP SAI 作成成功時 +1、削除成功時 -1 | `nhgmaporch.cpp:146` / `nhgmaporch.cpp:211` `gCrmOrch->inc/decCrmResUsedCounter(CRM_NEXTHOP_GROUP_MAP)` |
+
+### ref_count による副次動作
+
+`RouteOrch` がルートエントリに NHG を紐づける際に `incNhgRefCount()` / `decNhgRefCount()` を呼び出す (`routeorch.cpp:2546, 2646, 2672, 2900`)。ref_count > 0 の NHG は `NhgOrch::doTask()` 内の DEL 処理でスキップされる (`nhgorch.cpp:414`)。これは DB への書込みではなくオーケストレータ内部のメモリ上カウンタであり、DB エントリの削除抑制という副次動作をもたらす。
+
+### 不在確認
+
+STATE_DB / APPL_STATE_DB への直接書込み・`ResponsePublisher` の使用・FLEX_COUNTER_DB への書込みは、3 オーケストレータのいずれでも検出されなかった。
+
+詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-side-effects.md`
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
