@@ -210,6 +210,49 @@ CONSOLE_SWITCH|console_mgmt
 - **YANG バリデーション回避**: `ValidatedConfigDBConnector` 経由の書き込みのみ YANG チェックが走る。`escape_char` に `[a-z]` 外の文字が `sonic-db-cli` で書き込まれた場合、接続時の `InvalidConfigurationError` でのみ発覚する。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`consutil/lib.py` および `config/console.py` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/console-port-constants.md`
+
+### エラーコード定数 (consutil/lib.py L17–21)
+
+| 定数名 | 値 | 用途 |
+|-------|----|------|
+| `ERR_DISABLE` | `1` | console switch 機能無効時の終了コード |
+| `ERR_CMD` | `2` | コマンドエラー (root 権限不足等) |
+| `ERR_DEV` | `3` | デバイス / ライン不在エラー |
+| `ERR_CFG` | `4` | 設定エラー (`baud_rate` 未設定等) |
+| `ERR_BUSY` | `5` | ラインが接続中 (busy) 時の終了コード |
+
+### デバイスパスデフォルト (consutil/lib.py L297)
+
+| 定数名 | 値 | 用途 |
+|-------|----|------|
+| `SysInfoProvider.DEVICE_PREFIX` | `/dev/ttyUSB` | シリアルデバイスパスのプレフィックス (デフォルト)。プラットフォームの `udevprefix.conf` が存在する場合に上書き可能 |
+| `UDEV_PREFIX_CONF_FILENAME` | `"udevprefix.conf"` | プラットフォーム固有プレフィックス設定ファイル名 |
+
+### picocom 動作定数 (consutil/lib.py L47–52)
+
+| 定数名 | 値 | 用途 |
+|-------|----|------|
+| `PICOCOM_READY` | `"Terminal ready"` | picocom 起動成功の判定文字列 |
+| `PICOCOM_BUSY` | `"Resource temporarily unavailable"` | picocom がデバイスを取れなかった判定文字列 |
+| `TIMEOUT_SEC` | `0.2` 秒 | picocom 起動待機タイムアウト。低速 USB-serial アダプタではこの値で false negative (接続失敗誤報) が起こりうる |
+
+### STATE_DB フィールド名定数 (consutil/lib.py L39–44)
+
+| 定数名 | 値 | 用途 |
+|-------|----|------|
+| `STATE_KEY` | `"state"` | STATE_DB の接続状態フィールド名 |
+| `PID_KEY` | `"pid"` | STATE_DB の接続プロセス PID フィールド名 |
+| `START_TIME_KEY` | `"start_time"` | STATE_DB の接続開始時刻フィールド名 |
+| `BUSY_FLAG` | `"busy"` | STATE_DB `state` フィールドの "接続中" 値 |
+| `IDLE_FLAG` | `"idle"` | STATE_DB `state` フィールドの "待機" 値 |
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
