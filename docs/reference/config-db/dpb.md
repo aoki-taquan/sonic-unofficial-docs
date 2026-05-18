@@ -280,6 +280,58 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-side-effects.md -->
+
+`config interface breakout` コマンドが `BREAKOUT_CFG` を更新する際、CONFIG_DB の複数テーブルおよび APPL_DB / ASIC_DB に以下の副次書込みが発生する。
+
+### CONFIG_DB 副次書込みシーケンス
+
+`breakOutPort()` (`config_mgmt.py:414`) は `BREAKOUT_CFG` を直接書き込む前に以下を順次実行する:
+
+| # | 操作 | 対象テーブル / キー | タイミング | ソース |
+|---|------|-------------------|-----------|--------|
+| 1 | 削除予定ポートを `admin_status=down` でシャットダウン | `PORT\|<port>` (`admin_status`) | `_deletePorts()` 前 | `config_mgmt.py:602–608` (`_shutdownIntf`) |
+| 2 | YANG 依存エントリを一括削除（force 時） | `VLAN_MEMBER`, `PORTCHANNEL_MEMBER`, `INTERFACE`, `BUFFER_PG`, `BUFFER_QUEUE`, `PORT_QOS_MAP`, `QUEUE` 等 | ポート削除前 | `config_mgmt.py:480–500` (`_deletePorts`) |
+| 3 | 旧ポートエントリを CONFIG_DB から削除 | `PORT\|<Ethernet*>` | `_verifyAsicDB()` 前 | `config_mgmt.py:456` |
+| 4 | 新ポートエントリと デフォルト設定を CONFIG_DB へ追加 | `PORT\|<Ethernet*>`、`BUFFER_PG`, `BUFFER_QUEUE`, `PORT_QOS_MAP`, `QUEUE`（`loadDefConfig=True` 時） | ASIC_DB 確認後 | `config_mgmt.py:460` |
+| 5 | `BREAKOUT_CFG` の `brkout_mode` を最終更新 | `BREAKOUT_CFG\|<port>` | ポート追加完了後 | `main.py:5547` |
+
+ステップ 2 の依存テーブルは YANG モデルで PORT へ leafref / must 参照を持つもの全て。`--force-remove-dependencies / -f` オプション不使用の場合、依存が存在すれば `breakOutPort()` は `deps` を返して中断する（`config_mgmt.py:434–436`）。
+
+### APPL_DB への伝播（portmgrd 経由）
+
+`PORT` テーブルへの CONFIG_DB 変更を `portmgrd` が購読し、`APPL_DB PORT_TABLE` に伝播する:
+
+| CONFIG_DB 操作 | portmgrd の動作 | APPL_DB 結果 |
+|--------------|----------------|-------------|
+| `PORT\|<port>` DEL | `m_appPortTable.del(alias)` | `PORT_TABLE\|<port>` 削除 |
+| `PORT\|<port>` SET | `writeConfigToAppDb(alias, field_values)` → `m_appPortTable.set(alias, fvs)` | `PORT_TABLE\|<port>` 更新 |
+
+証跡: `portmgr.cpp:244`（DEL 分岐）、`portmgr.cpp:257,264`（SET 分岐）
+
+### ASIC_DB ポーリング
+
+`_verifyAsicDB()` (`config_mgmt.py:377`) は削除ポートの SAI OID (`ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x<oid>`) が ASIC_DB から消えるまで 1 秒間隔で最大 `MAX_WAIT=60` 秒ポーリングする。タイムアウト時は `Exception` を raise して新ポート追加をブロックする。
+
+### 確認コマンド
+
+```bash
+# CONFIG_DB — ポート削除後の依存エントリ残存確認
+sonic-db-cli CONFIG_DB keys 'VLAN_MEMBER|*' | grep Ethernet0
+sonic-db-cli CONFIG_DB hgetall 'BREAKOUT_CFG|Ethernet0'
+
+# APPL_DB — portmgrd 経由の PORT_TABLE 伝播確認
+sonic-db-cli APPL_DB keys 'PORT_TABLE|*'
+
+# ASIC_DB — ポート OID 消滅確認
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_PORT:*'
+```
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
