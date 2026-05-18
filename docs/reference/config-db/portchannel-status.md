@@ -183,6 +183,33 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+APPL_DB `LAG_TABLE` の書き込み経路（teamsyncd / teammgrd）と orchagent (PortsOrch) の消費経路それぞれで、以下の失敗パスが存在する。
+
+### 失敗パスまとめ
+
+| 失敗ケース | 発生箇所 | APPL_DB 影響 | STATE_DB 影響 | retry |
+|-----------|---------|-------------|--------------|-------|
+| teamd 起動コマンド失敗 (`exec` 失敗) | `teammgr.cpp:640-644` | なし | なし | 無制限 (`task_need_retry`) |
+| teamd LAG member 追加失敗（port admin UP 競合） | `teammgr.cpp:779-781` | なし | なし | 無制限 (`task_need_retry`) |
+| teamd LAG member 追加失敗（port admin DOWN のまま） | `teammgr.cpp:785-787` | なし | なし | なし (`task_failed`、ログ ERROR のみ) |
+| `isPortStateOk` / `isLagStateOk` 未 ready | `teammgr.cpp:357` | なし | なし | 暗黙 retry（STATE_DB ready まで `it++; continue`） |
+| `team_init()` 失敗（EADDRNOTAVAIL 等） | `teamsync.cpp:208-213` | APPL_DB にエントリ残留 | 書かれない | 次の RTM_NEWLINK で自動復旧 |
+| SAI `create_lag` 失敗 | `portsorch.cpp:7994-8005` | なし | なし | 無制限 |
+| SAI `remove_lag` 拒否（ref_count > 0） | `portsorch.cpp:8047-8052` | APPL_DB エントリ残留 | なし | 参照解放まで無制限 retry |
+
+### 主要な失敗詳細
+
+**teamd 起動失敗 → cleanup retry (依存 #1)**: `teammgrd` の `doLagTask()` は `addLag(alias, ...)` が `task_need_retry` を返した場合、すぐに `removeLag(alias)` を呼んで残留 teamd プロセスをクリーンアップし、`it++; continue` で次のイベントループに持ち越す (`teammgr.cpp:303-307`)。この間 APPL_DB `LAG_TABLE` にはエントリが書かれず、STATE_DB も書かれない。
+
+**team_init() 失敗の中間状態**: teamsyncd `addLag()` は RTM_NEWLINK 受信時に `m_lagTable.set()` で APPL_DB を先に書き込み (`teamsync.cpp:157`)、その後 `TeamPortSync` オブジェクト生成を試みる。`team_init()` が `EADDRNOTAVAIL`（ifindex 不正）等で `std::system_error` をスローした場合、catch ブロックに入って `m_stateLagTable.set()` には到達しない (`teamsync.cpp:194-213`)。この結果、**APPL_DB に LAG_TABLE エントリが存在するが STATE_DB にはエントリが存在しない**中間状態が発生する。コードコメントに明示: "STATE_DB is written only after the team instance is successfully created to prevent dependent services (e.g. intfmgrd) from acting on a LAG that teamd has not yet finished setting up"。teamd がデバイスを再作成して次の RTM_NEWLINK が発火されると自動復旧する。
+
+**orchagent SAI remove_lag 拒否**: `PortsOrch::removeLag()` は LAG を参照する他テーブル（INTF_TABLE / VLAN_MEMBER_TABLE 等）の SAI 登録が残っている間は SAI `remove_lag()` を呼ばない。`doLagTask()` の DEL 処理で `removeLag()` が `false` を返すと `it++` で再試行 (`portsorch.cpp:6225-6228`)。APPL_DB `LAG_TABLE` のエントリはこの間削除されない。
+
+<!-- /failure -->
+
 ## APPL_DB LAG_TABLE と STATE_DB LAG_TABLE の区別
 
 | 側面 | APPL_DB LAG_TABLE | STATE_DB LAG_TABLE |
