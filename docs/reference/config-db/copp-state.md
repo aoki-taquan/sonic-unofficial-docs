@@ -376,6 +376,60 @@ orchagent が APPL_DB を処理
 > **スキャン証跡**: `copporch.cpp` L37, L106-151, L184-215, L296-299, L350-360, L499-532, L1185-1195, L1385-1395, L1413 読了。`copporch.h` L23-46 読了。`coppmgr.cpp` L424-451 読了。定数 5 種別 13 件を確認。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`CoppOrch` (`copporch.cpp`) が STATE_DB 3 テーブルへの書き込みと並行して行う、COUNTERS_DB および FLEX_COUNTER_DB への副次書き込みを整理する。`coppmgrd` が書く APPL_DB は本ページのテーブルの直接の生成トリガ（Phase B 参照）であるため除外する。
+
+### SAI トラップ作成成功時 — COUNTERS_DB 書き込み
+
+`applyAttributesToTrapIds()` 内で `create_hostif_trap()` が成功し、`bindTrapCounter()` が呼ばれた場合、以下が書き込まれる。
+
+| 副次 DB | テーブル / キー | フィールド | 書込内容 | 根拠 |
+|---------|---------------|---------|---------|------|
+| COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | `<trap-name>` | SAI generic counter OID 文字列 | `copporch.cpp` L1452-1456 (`bindTrapCounter`) |
+
+書き込みは `FlexCounterOrch::getHostIfTrapCounterState()` が `true` を返す場合のみ実行される。FlexCounter 機能が無効な場合は `bindTrapCounter()` が即 `return false` し COUNTERS_DB への書き込みは発生しない。<!-- evidence: copporch.cpp L1420-1425 -->
+
+### SAI トラップ作成成功後 — FLEX_COUNTER_DB 書き込み（タイマー非同期）
+
+`bindTrapCounter()` は counter_id を `m_pendingAddToFlexCntr` に積み、`SelectableTimer`（1 秒周期）を起動する。タイマー発火時の `doTask(SelectableTimer&)` が FLEX_COUNTER_DB へ書き込む。
+
+| 副次 DB | テーブル / キー | 書込内容 | 書込タイミング | 根拠 |
+|---------|---------------|---------|--------------|------|
+| FLEX_COUNTER_DB | `HOSTIF_TRAP_FLOW_COUNTER\|<counter_oid>` | `HOSTIF_TRAP_STAT_PACKETS` カウンタ ID リスト | タイマー発火時（≤1 秒後）。`gTraditionalFlexCounter` が true の場合は VID→RID マップ確認後に書き込み | `copporch.cpp` L944-951 (`doTask` timer), `L1463` (timer start) |
+
+`gTraditionalFlexCounter` が false（デフォルト: SONiC 4.x 以降）の場合は VID 確認なしで即書き込み。true の場合は `VIDTORID` テーブルで対応 RID が確認できるまでペンディングされ続ける。<!-- evidence: copporch.cpp L944-951 -->
+
+また、`initTrapRatePlugin()` が初回のみ呼ばれ、FlexCounter グループにカスタム Lua スクリプト SHA を設定する:
+
+| 副次 DB | テーブル / キー | 書込内容 | 根拠 |
+|---------|---------------|---------|------|
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|HOSTIF_TRAP_FLOW_COUNTER` | `FLOW_COUNTER_PLUGIN_FIELD` = Lua スクリプト SHA | `copporch.cpp` L1389-1396 (`setFlexCounterGroupParameter`) |
+
+### SAI トラップ削除時 — COUNTERS_DB / FLEX_COUNTER_DB クリーンアップ
+
+`removeTrap()` → `unbindTrapCounter()` が呼ばれると以下が削除される。
+
+| 副次 DB | テーブル / キー | 操作 | 根拠 |
+|---------|---------------|------|------|
+| COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | `hdel(<trap-name>)` で当該トラップ OID マッピングを削除 | `copporch.cpp` L1494-1495 |
+| FLEX_COUNTER_DB | `HOSTIF_TRAP_FLOW_COUNTER\|<counter_oid>` | `clearCounterIdList(counter_id)` でカウンタ ID リストをクリア | `copporch.cpp` L1487 |
+
+`m_pendingAddToFlexCntr` にまだ pending 中の場合は FLEX_COUNTER_DB への書き込みをキャンセルし `clearCounterIdList` をスキップする（二重クリーンアップ防止）。<!-- evidence: copporch.cpp L1484-1491 -->
+
+### 副次書き込みが発生しないケース
+
+| ケース | 理由 |
+|--------|------|
+| FlexCounter 無効時 (`getHostIfTrapCounterState() = false`) | `bindTrapCounter()` が即 `return false`。COUNTERS_DB / FLEX_COUNTER_DB への書き込みなし |
+| SAI `create_hostif_trap` 失敗時 | `applyAttributesToTrapIds()` が `hw_status` 書き込みもスキップするため `bindTrapCounter()` は呼ばれない (`copporch.cpp` L515-526) |
+| APPL_DB / CONFIG_DB | `CoppOrch` は CONFIG_DB / APPL_DB への書き戻しを行わない |
+| STATE_DB 以外の STATE 系 | APPL_STATE_DB への `ResponsePublisher` 書き込みは COPP テーブルには存在しない |
+
+> **スキャン証跡**: `copporch.cpp` L35-37, L193-215, L520-532, L935-965, L1375-1530 読了。副次書き込み先は COUNTERS_DB (`COUNTERS_TRAP_NAME_MAP`) と FLEX_COUNTER_DB (`HOSTIF_TRAP_FLOW_COUNTER|*`, `FLEX_COUNTER_GROUP_TABLE|HOSTIF_TRAP_FLOW_COUNTER`) の 3 テーブルのみ。詳細は `meta/_intermediate/cdb-flow/copp-state-side.md` 参照。
+<!-- /side-effects -->
+
 ## 確認コマンド
 
 ```bash
