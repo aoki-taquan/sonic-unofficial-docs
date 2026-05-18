@@ -125,6 +125,26 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`PasswHardening` クラスは `config_db` インスタンスを保持せず（コンストラクタ引数なし）、CONFIG_DB の他テーブルへの暗黙参照は一切存在しない。YANG `sonic-passwh.yang` にも `must` / `when` / `leafref` 条件での他テーブル参照は定義されていない。
+
+`PasswHardening` が暗黙的に依存するのは OS ファイルシステム上のリソースのみである。
+
+| 参照先リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------|---------|------|----------------|
+| `/etc/login.defs` | 読み取り（冪等性確認）→ `sed` 書き込み | `PASSW_HARDENING\|POLICIES` の SET / DEL 時、常時。現在値と DB 値を比較し差分がある場合のみ書き換え | `hostcfgd:988-1010` (`is_passwd_aging_expire_update`), `hostcfgd:955-958` |
+| `/etc/passwd` (via `getent passwd`) + `UID_MIN`/`UID_MAX` | 読み取り | `state=enabled` かつ expiration 値変更時。`chage` 対象の通常ユーザアカウント一覧を取得するために参照 | `hostcfgd:1014-1049` (`get_normal_accounts`) |
+| `/usr/share/sonic/templates/common-password.j2` (Jinja2 テンプレート) | 読み取り | 常時（PAM ファイルレンダリング）。`passw_policies` の内容を展開して `/etc/pam.d/common-password` を生成 | `hostcfgd:917-920` (`set_passw_hardening_policies`) |
+| `/etc/pam.d/common-password` | atomic 書き込み (`.tmp` → rename) | 常時。PAM パスワードポリシー設定ファイルを更新 | `hostcfgd:921-929` |
+
+!!! note "CONFIG_DB 他テーブルとの相互参照なし"
+    `PASSW_HARDENING` は `AAA` / `DEVICE_METADATA` / `MGMT_INTERFACE` 等の他 CONFIG_DB テーブルと相互参照しない。
+    `PasswHardening` と `AaaCfg` は独立したクラスで、管理する PAM ファイルも異なる (`common-password` vs `common-auth`)。
+
+<!-- /cross-refs -->
+
 ## 購読者
 
 - `hostcfgd` (`host-services` パッケージ)。`PasswHardening.load()` が `PASSW_HARDENING` テーブルを読み込み、Jinja2 テンプレート (`common-password.j2`) を展開して `/etc/pam.d/common-password` を書き換え、`/etc/login.defs` の `PASS_MAX_DAYS` / `PASS_WARN_AGE` を `sed` で更新する
