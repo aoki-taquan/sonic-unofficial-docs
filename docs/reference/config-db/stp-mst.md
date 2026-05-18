@@ -1,6 +1,6 @@
 ---
 title: STP_MST_INST / STP_MST_PORT テーブル
-description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・ハードコード定数・discrepancy を詳細解説。Phase A+B+C+D+E 分析。"
+description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・ハードコード定数・副次DB書込・discrepancy を詳細解説。Phase A+B+C+D+E+F 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -542,6 +542,40 @@ strncpy(msg.name, fvValue(i).c_str(), sizeof(msg.name) - 1);
 CLI (`config/stp.py:763`) も最大 31 文字でバリデーションしており整合している。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-side-effects.md -->
+
+`stpmgrd` の `STP_MST_INST` / `STP_MST_PORT` ハンドラが CONFIG_DB 以外の DB へ副次的に書き込む内容を調査した。
+
+### 副次 DB 書込スキャン結果
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `stpmgr.h` に `ProducerStateTable` メンバー変数が 0 件。`isPortInitDone()` での `APP_PORT_TABLE` 読み取りのみ (`stpmgr.cpp:1263`) |
+| STATE_DB | なし | `m_stateStpTable` / `m_stateVlanMemberTable` 等は読み取り専用 `Table` オブジェクト。SET/DEL 処理経路に書き込みコードなし |
+| COUNTERS_DB | なし | `stpmgr.cpp` / `stpmgr.h` 全体に COUNTERS_DB 参照なし |
+| FLEX_COUNTER_DB | なし | `stpmgr.cpp` / `stpmgr.h` 全体に FLEX_COUNTER_DB 参照なし |
+| ASIC_DB | なし | `stpmgrd` は orchagent を経由しない。SAI API 呼出なし |
+
+### IPC — Unix Domain Socket 経由の stpd 通知（DB 外）
+
+`stpmgrd` の副次処理はすべて Unix Domain Socket (`STPD_SOCK_NAME`) 経由でユーザースペースデーモン `stpd` へのメッセージ送信で完結する。
+
+| ハンドラ | 送信メッセージ型 | 発動条件 | evidence |
+|---|---|---|---|
+| `doStpMstInstTask()` | `STP_MST_INST_CONFIG` | `STP_MST_INST` の SET / DEL イベント受信時 | `stpmgr.cpp:1108` |
+| `doStpMstInstPortTask()` → `processStpMstInstPortAttr()` | `STP_MST_INST_PORT_CONFIG` | `STP_MST_PORT` の SET / DEL イベント受信時 | `stpmgr.cpp:1152` |
+
+`sendMsgStpd()` (`stpmgr.cpp:1218-1246`) は `sendto(stpd_fd, ...)` で AF_UNIX ソケットへ送信するのみで、いかなる DB API も呼び出さない。
+
+### STATE_STP の参照タイミング
+
+`m_stateStpTable.get("GLOBAL", vmEntry)` は `getStpMaxInstances()` (`stpmgr.cpp:1381-1410`) からのみ呼ばれ、起動時の `STP_INIT_READY` メッセージ生成に使われる。`STP_MST_INST` / `STP_MST_PORT` の個別イベント処理経路では呼ばれない。
+
+<!-- /side-effects -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
