@@ -210,6 +210,32 @@ APPL_DB `LAG_TABLE` の書き込み経路（teamsyncd / teammgrd）と orchagent
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+以下の定数は `sonic-swss/cfgmgr/portmgr.h`、`sonic-swss/cfgmgr/shellcmd.h`、`sonic-swss/cfgmgr/teammgr.cpp`、`sonic-swss/teamsyncd/teamsync.h` から検出したマジックナンバー・パス・閾値。
+
+| 定数 / マクロ名 | 値 | 定義ファイル | 意味・影響 |
+|---|---|---|---|
+| `DEFAULT_ADMIN_STATUS_STR` | `"down"` | `portmgr.h:14` | teammgrd が `doLagTask()` で `admin_status` 変数を初期化するデフォルト値。CONFIG_DB `PORTCHANNEL` に `admin_status` フィールドがない場合、APPL_DB に `"down"` が書き込まれる |
+| `DEFAULT_MTU_STR` | `"9100"` | `portmgr.h:15` | teammgrd が `doLagTask()` で `mtu` 変数を初期化するデフォルト値。CONFIG_DB `PORTCHANNEL` に `mtu` フィールドがない場合、APPL_DB に `"9100"` が書き込まれる |
+| `TEAMD_CMD` | `"/usr/bin/teamd"` | `shellcmd.h:13` | LAG 作成時 (`addLag()`) に teamd プロセスを起動するコマンドのフルパス。このパスが存在しない場合、`exec()` が失敗して `task_need_retry` が返される |
+| `TEAMDCTL_CMD` | `"/usr/bin/teamdctl"` | `shellcmd.h:14` | LACP key 生成 (`generateLacpKey()`) で `teamdctl ... state dump` を実行するコマンドのフルパス |
+| `DEFAULT_WR_PENDING_TIMEOUT` | `70` 秒 | `teamsync.h:16` | warm reboot 時に teamsyncd が RTM_NEWLINK イベントを `temp_view` に集積する最大待機秒数。タイマー満了後 `apply_temp_view()` で APPL_DB へ一括反映される。WarmStart YANG で上書き可能 |
+| `TEAMSYNCD_APP_NAME` | `"teamsyncd"` | `teamsync.h:14` | `WarmStart::initialize()` / `WarmStart::checkWarmStart()` に渡すアプリケーション名。warm reboot タイマー設定のキー |
+| LAG warmboot dump パス | `"/var/warmboot/teamd/"` | `teammgr.cpp:573` | warmboot 時に teamd 状態ファイルを保存するディレクトリパス。このパス以下にある per-LAG バイナリから partner MAC (`partner_system_id_offset=40` bytes) を読み取ってウォームスタート後の LAG MAC を復元する |
+| `partner_system_id_offset` | `40` バイト | `teammgr.cpp:581` | warmboot dump ファイル内で LACP partner system ID (MAC アドレス) を読む固定バイトオフセット。LACP PDU のフォーマットに基づく値 |
+| teamd runner 名 | `"lacp"` | `teammgr.cpp:609` | teamd 設定 JSON に固定埋め込みされる runner 名。SONiC の LAG は常に LACP runner のみをサポートし、static LAG 等の他 runner は設定不可 |
+| teamd `active: true` | `true` | `teammgr.cpp:608` | LACP runner の active/passive モード設定。SONiC は常に active モードで teamd を起動する |
+
+!!! note "DEFAULT_MTU_STR 9100 の出処"
+    `DEFAULT_MTU_STR "9100"` は SONiC 全体で統一されたデフォルト MTU 値。`portmgr.h` で定義された同一マクロが portmgrd (物理ポート) と teammgrd (LAG) の両方で使用される。Jumbo Frame 標準 (9000 bytes payload + 100 bytes overhead) に由来するが、公式 HLD には明記なし。
+
+!!! note "LACP-only 制約"
+    teamd runner が `"lacp"` 固定であるため、SONiC CONFIG_DB `PORTCHANNEL` で `static_member` オプションを設定しても、実際には teamd は常に LACP ネゴシエーションを実行する。static LAG を実現するには別途カーネル bonding ドライバを使用する必要がある（SONiC master では未サポート）。
+
+<!-- /constants -->
+
 ## APPL_DB LAG_TABLE と STATE_DB LAG_TABLE の区別
 
 | 側面 | APPL_DB LAG_TABLE | STATE_DB LAG_TABLE |
