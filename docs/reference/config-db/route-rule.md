@@ -195,4 +195,72 @@ SIP アドレスファミリ（IPv4 / IPv6）に応じて異なる CRM カウン
 Evidence: `dashrouteorch.cpp` 全体スキャン; 詳細スキャンノートは `meta/_intermediate/cdb-flow/route-rule-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-rule-failure.md -->
+
+`DASH_ROUTE_RULE_TABLE` の処理は 2 フェーズ bulker パターンを採用している。`addInboundRouting()` (pre-op) で SAI エントリを bulker にエンキューし、`inbound_routing_bulker_.flush()` 後に `addInboundRoutingPost()` (post-op) で結果を評価する。
+
+### SET 操作の失敗パス
+
+#### 1. 依存テーブル未登録 — 自動リトライ
+
+`addInboundRouting()` (`dashrouteorch.cpp:421-477`) で依存テーブル未登録を検出した場合は `return false` を返す。`doTaskRouteRuleTable()` のループは `it++` でイベントを `m_toSync` に残し、次の orchagent タスクループで再処理する。
+
+| 条件 | 理由 | 挙動 |
+|---|---|---|
+| `DASH_ENI_TABLE` に ENI 未登録 | `dash_orch_->getEni(ctxt.eni) == nullptr` | `return false` → リトライ |
+| `DASH_VNET_TABLE` に vnet 未登録 | `gVnetNameToId.find()` miss | `return false` → リトライ |
+
+#### 2. protobuf パース失敗 — ドロップ（リトライなし）
+
+`parsePbMessage()` が失敗した場合はエントリを `consumer.m_toSync.erase(it)` で消費して処理を終了する (`dashrouteorch.cpp:635-640`)。イベントはドロップされ、リトライは行われない。
+
+```
+SWSS_LOG_WARN("Requires protobuff at InboundRouting :%s", key.c_str());
+it = consumer.m_toSync.erase(it);
+```
+
+#### 3. SAI create 失敗 — `handleSaiCreateStatus` による振り分け
+
+`addInboundRoutingPost()` (`dashrouteorch.cpp:479-515`) で SAI バルク結果を評価する。
+
+| SAI ステータス | 処置 |
+|---|---|
+| `SAI_STATUS_SUCCESS` | CRM カウンタをインクリメントして `return true`（成功） |
+| `SAI_STATUS_ITEM_ALREADY_EXISTS` | `return false`（bulker 再試行） |
+| その他エラー | `handleSaiCreateStatus()` → `parseHandleSaiStatusFailure()` で task_need_retry / task_failed を判定 |
+
+`task_failed` 判定時は `parseHandleSaiStatusFailure()` がエラーログを出力し `true` を返す（erase）。`task_need_retry` の場合は `false` を返してリトライ。
+
+### DEL 操作の失敗パス
+
+#### 4. SAI remove 失敗
+
+`removeInboundRoutingPost()` (`dashrouteorch.cpp:535-563`) で SAI 削除結果を評価する。
+
+| SAI ステータス | 処置 |
+|---|---|
+| `SAI_STATUS_SUCCESS` | CRM カウンタをデクリメントして `return true`（成功） |
+| `SAI_STATUS_NOT_EXECUTED` | `return false`（bulker 再試行） |
+| その他エラー | `handleSaiRemoveStatus()` → `parseHandleSaiStatusFailure()` で判定 |
+
+### 結果テーブルへの書き込み失敗
+
+`writeResultToDB()` は SET 成功後に呼ばれる (`dashrouteorch.cpp:644`)。SAI 失敗時は呼ばれないため `DASH_ROUTE_RULE_TABLE` (result) には成功エントリのみ書き込まれる。DEL 成功後は `removeResultFromDB()` でエントリを削除する (`dashrouteorch.cpp:656`)。
+
+### 失敗パスまとめ
+
+| 失敗シナリオ | イベント消費 | result テーブル | リトライ |
+|---|---|---|---|
+| ENI 未登録 (pre-op) | m_toSync に残留 | 書き込みなし | 自動リトライ |
+| vnet 未登録 (pre-op) | m_toSync に残留 | 書き込みなし | 自動リトライ |
+| protobuf パース失敗 | erase（ドロップ） | 書き込みなし | なし |
+| SAI_STATUS_ITEM_ALREADY_EXISTS | m_toSync に残留 | 書き込みなし | bulker 再試行 |
+| SAI create 失敗 (task_need_retry) | m_toSync に残留 | 書き込みなし | 自動リトライ |
+| SAI create 失敗 (task_failed) | erase（ドロップ） | 書き込みなし | なし |
+| SAI remove 失敗 (NOT_EXECUTED) | m_toSync に残留 | 削除されない | bulker 再試行 |
+<!-- /failure -->
+
 [^1]: sonic-net/SONiC `doc/dash/dash-sonic-hld.md` §3.2.10 "ROUTE RULE TABLE - INBOUND" (ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
