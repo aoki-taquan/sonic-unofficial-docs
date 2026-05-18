@@ -452,6 +452,66 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 | `APP_PORT_TABLE_NAME` | APPL_DB | `PortInitDone` / `PortConfigDone` イベントを購読 |
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 根拠: `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py` (L75-108, L173, L237-255, L503-573), `sonic-mgmt-common/translib/lldp_app.go` (L141-147), `sonic-buildimage/dockers/docker-lldp/lldpmgrd` (L277-325)
+
+### Redis 購読方式
+
+`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` (APPL_DB) に対する Consumer の購読方式を整理する。
+
+| Consumer | 購読 API | 購読パターン / DB | 用途 |
+|---------|---------|----------------|------|
+| `sonic-snmpagent` `LocPortUpdater` | Redis keyspace `psubscribe` | `__keyspace@{APPL_DB}__:LLDP_ENTRY_TABLE:*` | インタフェース設定変化を検知してローカルポートキャッシュを更新 |
+| `sonic-snmpagent` `LLDPRemManAddrUpdater` | 同上 (keyspace psubscribe) | `__keyspace@{APPL_DB}__:LLDP_ENTRY_TABLE:*` | 管理アドレス (`lldp_rem_man_addr`) の変化を検知して SNMP OID キャッシュを更新 |
+| `sonic-snmpagent` `LLDPRemTableUpdater` | **ポーリング** (`update_data()`) | `LLDP_ENTRY_TABLE:*` (hgetall) | SNMP walk ごとに全エントリを再取得。リアルタイム購読ではない |
+| `sonic-snmpagent` `LLDPLocalSystemDataUpdater` | **ポーリング** (`reinit_data()`) | `LLDP_LOC_CHASSIS` (dbs_get_all) | 1 分ごとに `reinit_data()` で再取得。ローカル chassis 情報はほぼ静的のため polling で十分 |
+| `sonic-mgmt-common` `lldp_app.go` | **直接 GET** (`GetTable`) | `LLDP_ENTRY_TABLE` (全件) | REST / gNMI 要求のたびに `GetTable` で全エントリを取得。**購読なし** |
+| `lldpmgrd` | `swsscommon.SubscriberStateTable` | `APP_PORT_TABLE` (APPL_DB), `CFG_MGMT_INTERFACE_TABLE`, `CFG_DEVICE_METADATA_TABLE` (CONFIG_DB) | `LLDP_ENTRY_TABLE` への直接購読ではなく、lldpd へのコマンド注入トリガとして使用 |
+
+### keyspace 通知の流れ
+
+`sonic-snmpagent` の `LocPortUpdater` / `LLDPRemManAddrUpdater` は Redis keyspace 通知 (`__keyspace@<dbId>__:LLDP_ENTRY_TABLE:*`) を `psubscribe` でパターン購読する。
+
+```python
+# mibs/__init__.py:497-501
+def get_redis_pubsub(db_conn, db_name, pattern):
+    redis_client = db_conn.get_redis_client(db_name)
+    db = db_conn.get_dbid(db_name)
+    pubsub = redis_client.pubsub()
+    pubsub.psubscribe("__keyspace@{}__:{}".format(db, pattern))
+    return pubsub
+
+# ieee802_1ab.py:252-254 (LocPortUpdater.update_data)
+if not self.pubsub[i]:
+    pattern = mibs.lldp_entry_table('*')  # → "LLDP_ENTRY_TABLE:*"
+    self.pubsub[i] = mibs.get_redis_pubsub(...)
+```
+
+通知メッセージの `channel` フィールドからインタフェース名を取り出し (`msg["channel"].split(":")[-1]`)、`data` フィールドに `"set"` / `"del"` が含まれるかで SET / DEL を判別する (`poll_lldp_entry_updates()` L75-97)。
+
+### lldp_app.go の gNMI Subscribe 非対応
+
+`sonic-mgmt-common/translib/lldp_app.go` は `translateSubscribe()` が `emptySubscribeResponse(req.path)` を返し、`processSubscribe()` が `tlerr.New("not implemented")` を返す（L141-147）。**gNMI Subscribe は実装されていない**。gNMI クライアントが LLDP ネイバー情報への Subscribe を要求した場合はエラーが返る。
+
+### lldpmgrd の間接購読
+
+`lldpmgrd` は `LLDP_ENTRY_TABLE` を直接購読しない。代わりに以下のテーブルを `swsscommon.SubscriberStateTable` + `swsscommon.Select` で購読し (`lldpmgrd:298-313`)、変化を検知した場合は `lldpcli` コマンドを発行して lldpd を更新する。この結果が lldpd 経由で lldp-syncd に伝わり、最終的に `LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` の内容に間接影響する。
+
+```
+lldpmgrd (swsscommon.Select, timeout=10000ms)
+  ├── sst_appdb       → APP_PORT_TABLE (APPL_DB)      PortInitDone / PortConfigDone
+  ├── sst_mgmt_ip     → CFG_MGMT_INTERFACE (CONFIG_DB) 管理 IP 変更
+  └── sst_device_meta → CFG_DEVICE_METADATA (CONFIG_DB) hostname 変更
+```
+
+### サービス再起動トリガー
+
+LLDP テーブルへの書き込み自体はサービス再起動を伴わない。lldp-syncd は lldpd との UNIX ソケット通信で差分を受け取り APPL_DB を更新する。Consumer (sonic-snmpagent / lldp_app.go) は次回の `update_data()` / GET で変化を取得するため、プロセス再起動なしで反映される。
+
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルトと dead field
 
