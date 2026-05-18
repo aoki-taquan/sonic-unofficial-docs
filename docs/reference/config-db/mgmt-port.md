@@ -357,3 +357,42 @@ MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定�
 - `KEEP_BASIC_TABLES` に MGMT_PORT が含まれることで、`config erase` 後も eth0 の基本設定が保持され管理アクセスが維持される設計になっている。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-buildimage/files/image_config/monit/mgmt_oper_status.py / sonic-host-services/scripts/hostcfgd MgmtIfaceCfg / sonic-swss/cfgmgr/portmgrd.cpp -->
+
+`MGMT_PORT` エントリの SET/DEL に起因してコードが副次的に書き込む DB は **STATE_DB の `MGMT_PORT_TABLE`** のみ。APPL_DB・ASIC_DB・COUNTERS_DB・FLEX_COUNTER_DB への書込みは一切存在しない。
+
+| 副次 DB | テーブル | 書込条件 | ソース |
+|---------|---------|---------|--------|
+| STATE_DB | `MGMT_PORT_TABLE\|<port>` | `mgmt_oper_status.py` が monit 定期実行される都度（CONFIG_DB に `MGMT_PORT|*` エントリが存在する場合） | `mgmt_oper_status.py:30-34, 39-44` |
+| APPL_DB | なし | — | `MgmtIfaceCfg.update_mgmt_iface()` は `systemctl restart interfaces-config` のみ発行 |
+| ASIC_DB | なし | — | `portmgrd.cpp:28` は `CFG_PORT_TABLE_NAME`（= `"PORT"`）のみ購読。MGMT_PORT は SAI 非経由 |
+| COUNTERS_DB | なし | — | — |
+| FLEX_COUNTER_DB | なし | — | — |
+
+### STATE_DB への書込み詳細
+
+`mgmt_oper_status.py` が monit によって定期的に呼び出されると、以下の処理が実行される。
+
+1. CONFIG_DB `MGMT_PORT|*` のキーを列挙。エントリ不在なら `LOG_DEBUG` を出力して `sys.exit(0)`（STATE_DB 書込なし）。
+2. 存在する各ポートについて CONFIG_DB フィールドを STATE_DB `MGMT_PORT_TABLE|<port>` へ差分コピー（`oper_status` フィールドを除く）。
+3. `/sys/class/net/<port>/operstate` を読み取り、前回値と異なれば `STATE_DB MGMT_PORT_TABLE|<port>.oper_status` を更新。
+
+```
+STATE_DB MGMT_PORT_TABLE|eth0
+  alias        ← CONFIG_DB MGMT_PORT|eth0.alias
+  admin_status ← CONFIG_DB MGMT_PORT|eth0.admin_status
+  speed        ← CONFIG_DB MGMT_PORT|eth0.speed (設定時のみ)
+  oper_status  ← /sys/class/net/eth0/operstate の実測値
+```
+
+### DEL 時の残存動作
+
+`MGMT_PORT|eth0` が DEL されると `mgmt_oper_status.py` は CONFIG_DB のキーを空と判定して STATE_DB を更新せず終了する。既存の `STATE_DB MGMT_PORT_TABLE|eth0` エントリは削除されず残存する（ゴースト状態）。monit の次回実行でも CONFIG_DB が空のままであれば同様にスキップされるため、手動削除が必要になる（`sonic-db-cli STATE_DB del 'MGMT_PORT_TABLE|eth0'`）。
+
+詳細 grep スキャン結果は `meta/_intermediate/cdb-flow/mgmt-port-side-effects.md` を参照。
+
+<!-- /side-effects -->
