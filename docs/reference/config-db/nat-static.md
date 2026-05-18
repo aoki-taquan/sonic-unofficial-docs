@@ -178,6 +178,26 @@ DEL STATIC_NAT|<global_ip>     # APPL_DB からも除去
 > **スキャン証跡**: `addStaticNatEntry()` L1548-1590、`isNatEnabled()` L150-157、`getIpEnabledIntf()` L236-254、`doNatIpInterfaceTask()` L7377-7640、`addStaticSingleNatEntry()` L1992-2064 精読。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`doStaticNatTask()` → `addStaticNatEntry()` の処理において、YANG の leafref 定義を超えて実装上で参照される他テーブル・内部キャッシュを示す。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `NAT_GLOBAL\|Values.admin_mode` (CONFIG_DB) | 読み取り (ガード) | 常時。`natAdminMode == ENABLED` でなければ `addStaticNatEntry()` が即 return し APPL_DB に反映しない | `natmgr.cpp` L150–157 (`isNatEnabled()`), L1557–1560 |
+| `STATE_INTERFACE_TABLE\|<port>\|<ip/prefix>` (STATE_DB) | 読み取り (ガード) | `doNatIpInterfaceTask()` が `INTERFACE` の IP prefix エントリを受信する際に `isIntfStateOk()` を呼ぶ。ready でなければリトライキュー (it++) に戻る | `natmgr.cpp` L135–147 (`isIntfStateOk()`), L7593–7597 |
+| `INTERFACE\|<port>\|<ip/prefix>` (CONFIG_DB) → `m_natIpInterfaceInfo` | 読み取り (ガード, DNAT のみ) | `getIpEnabledIntf()` が `m_natIpInterfaceInfo` を走査し、`global_ip` がいずれかのサブネットに含まれるか確認。含まれなければ APPL_DB 反映を保留 | `natmgr.cpp` L236–254 (`getIpEnabledIntf()`), L1564–1568 |
+| `STATIC_NAPT\|<global_ip>\|<proto>\|<port>` (CONFIG_DB) → `m_staticNaptEntry` | 存在確認 (論理排他) | `addStaticNatEntry()` 内で `isMatchesWithStaticNapt()` を呼ぶ。同 `global_ip` の NAPT エントリが存在する場合は APPL_DB 反映を中断 (return) | `natmgr.cpp` L200–233 (`isMatchesWithStaticNapt()`), L1571–1575 |
+| `NAT_POOL\|<pool_name>.ip_range` (CONFIG_DB) → `m_natPoolInfo` | 存在確認 (重複排除) | `doStaticNatTask()` の SET パス内で `m_natPoolInfo` 全体を走査し、`global_ip` が Dynamic Pool の IP 範囲と重複しないか確認。重複時はエントリを erase (DROP) | `natmgr.cpp` L6021–6056 |
+| `STATIC_NAT\|<other_key>` (CONFIG_DB) → `m_staticNatEntry` | 読み取り (Twice NAT ペア探索) | `twice_nat_id` 非空の場合に `addStaticTwiceNatEntry()` が `m_staticNatEntry` 全体を走査し、同一 `twice_nat_id` で逆方向 (`nat_type` が異なる) エントリを探して APPL_DB に Twice NAT エントリを書く。ペアが揃うまで両エントリとも APPL_DB 未反映 | `natmgr.cpp` L2083–2168 (`addStaticTwiceNatEntry()`), L2100–2119 |
+| `NAT_BINDINGS\|<name>` + `NAT_POOL\|<name>` → `m_natBindingInfo` + `m_natPoolInfo` | 読み取り (Twice NAT バインディング) | `addStaticTwiceNatEntry()` で STATIC_NAT 同士のペアが見つからない場合、`m_natBindingInfo` と対応する `m_natPoolInfo` を走査してダイナミック SNAT バインディングとの Twice NAT 接続を試みる | `natmgr.cpp` L2210–2263 |
+
+!!! note "YANG leafref 非対応の参照"
+    上記参照はいずれも YANG `sonic-nat` の leafref として定義されていない。`NAT_GLOBAL`・`INTERFACE`・`STATIC_NAPT`・`NAT_POOL` への依存は natmgr.cpp の実装コードによってのみ強制される暗黙の前提条件である。
+
+<!-- /cross-refs -->
+
 ## silent drop / discrepancy
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doStaticNatTask L5810-6136 / sonic-utilities/config/nat.py add_basic L240-329 / sonic-nat.yang L117-155 -->
