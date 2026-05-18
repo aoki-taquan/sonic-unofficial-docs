@@ -517,4 +517,42 @@ PortsOrch.attach(DebugCounterOrch):
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`DEBUG_COUNTER` はプラットフォーム識別文字列（`BRCM_PLATFORM_SUBSTRING` 等）による静的分岐を**一切持たない**。
+すべての制約を **SAI capability クエリ（起動時動的照会）** で解決する。
+
+### SAI クエリによる能力判定
+
+| クエリ | SAI API | 判定結果 | 失敗時の挙動 |
+|--------|---------|---------|-------------|
+| サポートカウンタ種別 | `sai_query_attribute_enum_values_capability(SAI_DEBUG_COUNTER_ATTR_TYPE)` | `supported_counter_types` に格納 | 空集合 → 全 counter が `task_failed` | <!-- evidence: drop_counter.cpp:376-384 --> |
+| サポート ingress drop reason | `sai_query_attribute_enum_values_capability(SAI_DEBUG_COUNTER_ATTR_IN_DROP_REASON_LIST)` | `supported_ingress_drop_reasons` に格納 | 空集合 → INGRESS 系 drop reason を全拒否 | <!-- evidence: drop_counter.cpp:305-312 --> |
+| サポート egress drop reason | `sai_query_attribute_enum_values_capability(SAI_DEBUG_COUNTER_ATTR_OUT_DROP_REASON_LIST)` | `supported_egress_drop_reasons` に格納 | 空集合 → EGRESS 系 drop reason を全拒否 | <!-- evidence: drop_counter.cpp:305-312 --> |
+| 利用可能カウンタ数 | `sai_object_type_get_availability(SAI_OBJECT_TYPE_DEBUG_COUNTER)` | `STATE_DB DEBUG_COUNTER_CAPABILITIES.count` に記録 | 0 を返す → STATE_DB では count=0 として公開 | <!-- evidence: drop_counter.cpp:432-445 --> |
+
+### プラットフォーム別の実質的な差異
+
+| 制約 | 詳細 | evidence |
+|------|------|---------|
+| SAI `sai_query_attribute_enum_values_capability` 未実装 ASIC | `getSupportedCounterTypes()` が空集合を返し、すべての `installDebugCounter()` が `task_failed`。`DEBUG_COUNTER_CAPABILITIES` には type エントリが書き込まれない | `drop_counter.cpp:380-384` |
+| ハードウェアリソース共有 | 一部の ASIC では debug counter が ACL entry 等と hardware resource を共有するため、`sai_object_type_get_availability` の返り値がシステム負荷で動的に変動する。SAI create 失敗時は `task_failed` | `drop_counter.cpp:425-428` |
+| PORT_DEBUG 型 — PHY ポートのみ | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` の FlexCounter エントリは `Port::Type::PHY` のポートのみ対象。LAG・VLAN・CPU ポートは silent skip（コード固定、プラットフォーム非依存） | `debugcounterorch.cpp:629-648` |
+| VS (Virtual Switch) 環境 | SAI stub が capability クエリを実装していない場合は全 counter 作成不可。ただし swss テスト (`test_virtual_chassis.py`) では SAI stub に debug counter サポートが注入される | `drop_counter.cpp:380-384`; `tests/test_virtual_chassis.py:1306` |
+
+### STATE_DB DEBUG_COUNTER_CAPABILITIES によるプラットフォーム差の公開
+
+起動時に `publishDropCounterCapabilities()` が SAI クエリ結果を `STATE_DB DEBUG_COUNTER_CAPABILITIES` テーブルに書き出す。
+各 counter type をキーとして `count`（利用可能数）と `reasons`（サポート drop reason リスト）を記録する。
+管理者・上位ツール・`show dropcounters capabilities` コマンドはこのテーブルを参照することでプラットフォームの実際のサポート状況を確認できる。<!-- evidence: debugcounterorch.cpp:314-360 -->
+
+!!! note "プラットフォーム差の調査方法"
+    `sonic-db-cli STATE_DB hgetall 'DEBUG_COUNTER_CAPABILITIES|PORT_INGRESS_DROPS'` で `count` と `reasons` を確認する。
+    `count=0` または当該 key が存在しない場合は ASIC が対応していない。
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/debug-counter-platform.md` を参照。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: d2c490dcfe8c -->
