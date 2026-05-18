@@ -290,6 +290,48 @@ FRR 側では `no locator <name>` によりロケータ設定が削除される�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+> 根拠: `bgpcfgd/runner.py` L27,L49-51, L54-73、`bgpcfgd/main.py` L109、`managers_srv6.py` L67-68、`frrcfgd/frrcfgd.py` L121,L2335、`srv6orch.cpp` L107,L331-338、`subscriberstatetable.cpp` L17-43 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-pubsub.md`
+
+### 購読者一覧
+
+| 購読者 | 購読方式 | Redis primitive | PSUBSCRIBE パターン |
+|--------|---------|-----------------|-------------------|
+| bgpcfgd `SRv6Mgr` | `SubscriberStateTable` | keyspace PSUBSCRIBE | `__keyspace@4__:SRV6_MY_LOCATORS|*` |
+| frrcfgd | `SubscriberStateTable` | keyspace PSUBSCRIBE | `__keyspace@4__:SRV6_MY_LOCATORS|*` |
+| Srv6Orch | `Table.get()` のみ | 直接 HGET（イベント購読なし） | — |
+
+### bgpcfgd パス
+
+`Runner.add_manager()` (`runner.py:49-51`) が `swsscommon.SubscriberStateTable(conn, "SRV6_MY_LOCATORS")` を生成して `swsscommon.Select()` セレクタに登録する。`runner.py:54-73` の主ループは 1000 ms タイムアウトの `selector.select()` でイベントを待受け、受信時に `subscriber.pop()` でキュードレインして `SRv6Mgr.locators_set_handler()` / `SRv6Mgr.locators_del_handler()` を呼び出す。ループ末尾の `cfg_mgr.commit()` で積み上がった FRR vtysh コマンドを一括送信する。
+
+`SRV6_MY_LOCATORS|<locator_name>` への HSET / HDEL 操作が走ると、Redis が `__keyspace@4__:SRV6_MY_LOCATORS|<locator_name>` チャネルへ keyspace notification を自動 PUBLISH する。`SubscriberStateTable.pops()` はフィールド値を通知ペイロードではなく **HGETALL で別途取得**するため、通知→取得の間に更新があれば最新値が読まれる（lost-update 耐性あり）。
+
+bgpcfgd 起動時は `SubscriberStateTable` ctor (`subscriberstatetable.cpp:26-42`) が PSUBSCRIBE 直後に既存全エントリを HGETALL してバッファに積むため、起動順序に関わらず既存ロケータが即座に処理される。
+
+### frrcfgd パス（並立、二重送信）
+
+`frrcfgd.py:121` のマッピング `'SRV6_MY_LOCATORS': ['zebra']` に基づき、frrcfgd も独立して `SRV6_MY_LOCATORS` を SubscriberStateTable で購読する (`frrcfgd.py:2335`)。`bgp_table_handler_common()` が bgpcfgd と同等の vtysh コマンドを zebra に送信するため、実質的に 2 つのプロセスが同一コマンドを発行する。FRR 設定は冪等なため実害はない。
+
+### インプロセス Directory 購読（bgpcfgd 内部）
+
+ロケータ未登録時に `sids_set_handler()` が追加登録する内部サブスクリプション (`managers_srv6.py:67-68`):
+
+```python
+self.directory.subscribe([(self.db_name, "SRV6_MY_LOCATORS", locator_name)], self.on_deps_change)
+```
+
+これは Redis Pub/Sub ではなく bgpcfgd インプロセスの Directory オブジェクト内通知機構。ロケータが Directory に登録されると `on_deps_change()` が発火し、保留中の `SRV6_MY_SIDS` エントリが自動再処理される。外部プロセスには見えない。
+
+### Srv6Orch の直接 GET（Consumer 購読なし）
+
+`Srv6Orch` は `m_locatorCfgTable`（`srv6orch.cpp:107`）として `SRV6_MY_LOCATORS` を `Table` 型（GET 専用）で保持する。`getLocatorCfgFromDb()` が APPL_DB MySID イベント処理時に必要に応じてその場で HGET する。`SRV6_MY_LOCATORS` の変更イベントを Srv6Orch が受け取ることはなく、Consumer / SubscriberStateTable は使用しない。
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: SRv6 YANG モデル: `sonic-srv6.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-srv6.yang>
