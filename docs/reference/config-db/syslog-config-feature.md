@@ -345,6 +345,42 @@ containercfgd 起動
 <!-- evidence: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py L44-61,112-135 -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`SYSLOG_CONFIG_FEATURE` は `containercfgd` が CONFIG_DB のみを参照し SAI を経由しないため、ASIC ベンダー差異は存在しない。multi-asic 環境では CLI と `containercfgd` の連携に固有の挙動がある。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 差異なし | SAI 非経由。`containercfgd.py` を `platform\|vendor\|broadcom` でスキャンして 0 ヒット |
+| multi-asic (`is_multi_asic() == True`) | CLI が namespace 分散書込み、`containercfgd` が `NAMESPACE_ID` で service_name を正規化 | `containercfgd.py:190-195`、`syslog_util/common.py:92-104`、`config/syslog.py:469-501` |
+| VOQ chassis (supervisor + line card) | 各 host で独立動作 | `containercfgd.py` に `chassisdb` / `REDIS_CHASSIS_SERVER` 参照なし |
+| namespace (asic0..asicN) | 各 asic namespace の `containercfgd` インスタンスが独立して CONFIG_DB を購読 | `ConfigDBConnector` は host ローカル Redis のみ接続 |
+| SmartSwitch DPU | 差異なし | `containercfgd.py` に `DPU` / `smartswitch` 分岐なし |
+
+### multi-asic 環境の挙動詳細
+
+**containercfgd 側 (`NAMESPACE_ID` strip)**:
+各コンテナは `NAMESPACE_ID` 環境変数に namespace 識別子 (`"0"`, `"1"` 等) を持つ。
+`containercfgd/main()` は `container_name.rstrip(namespace_id)` でコンテナ名末尾の識別子を除去し、
+CONFIG_DB キー名 (`service_name`) を生成する (`containercfgd.py:190-195`)。
+例: `container_name="swss0"`, `NAMESPACE_ID="0"` → `service_name="swss"`。
+CONFIG_DB に書き込む際も `SYSLOG_CONFIG_FEATURE|swss` 形式（asic suffix なし）を使用する。
+
+**CLI 側 (`--namespace` オプション)**:
+`config syslog rate-limit-container <service> --namespace <ns>` で書込み先 namespace を選択できる。
+`syslog_util/common.py:extract_feature_data()` が `FEATURE` テーブルの `has_global_scope` / `has_per_asic_scope` フラグを参照し、feature ごとに書込み先 namespace を振り分ける (`syslog_util/common.py:92-104`)。
+- `has_global_scope=True` の feature → 全 namespace の CONFIG_DB に書込み
+- `has_per_asic_scope=True` の feature → 各 asic namespace の CONFIG_DB のみに書込み
+
+!!! warning "`rstrip` による予期しない除去"
+    Python の `str.rstrip(chars)` は引数を **文字集合**として扱うため、`NAMESPACE_ID="10"` のとき `"syncd10".rstrip("10")` は `"syncd"` ではなく `"sync"` になる場合がある（末尾の `'1'` と `'0'` を個別に除去）。これはコード上の既知の制約であり、実運用では単一数字の namespace id (`0`..`9`) が前提となっている。
+
+詳細調査ログは `meta/_intermediate/cdb-flow/syslog-config-feature-platform.md` を参照。
+
+<!-- evidence: containercfgd/containercfgd.py:190-195, syslog_util/common.py:92-104, config/syslog.py:469-501 -->
+<!-- /platform -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
