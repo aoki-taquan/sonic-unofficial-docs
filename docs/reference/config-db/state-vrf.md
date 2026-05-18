@@ -335,6 +335,43 @@ VRFOrch: STATE_DB VRF_OBJECT_TABLE|<name> DEL
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査日 2026-05-18。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`
+> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-constants.md`
+
+`vrfmgrd` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### ルーティングテーブル ID 管理定数 (vrfmgr.cpp)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `VRF_TABLE_START` | `1001` | VRF に割り当てるルーティングテーブル ID の開始値。Linux カーネルの `ip rule` / `ip route table` で使用される | `vrfmgr.cpp:12` |
+| `VRF_TABLE_END` | `5097` | ルーティングテーブル ID の終端値（exclusive）。VRF に割り当て可能な最大数は `5097 - 1001 = 4096` 個 | `vrfmgr.cpp:13` |
+| `TABLE_LOCAL_PREF` | `1001` | `ip rule` の `local` テーブルを優先度 0 から 1001 に移動させるための定数。`vrfmgrd` 起動時に `ip rule add pref 1001 table local && ip rule del pref 0` を実行することで l3mdev-table が先にルックアップされるよう設定する | `vrfmgr.cpp:14, 103-104` |
+| `MGMT_VRF_TABLE_ID` | `6000` | mgmt VRF に固定割り当てするテーブル ID。通常の VRF ID 管理（`m_freeTables`）の外にあり、常に固定値 | `vrfmgr.cpp:15, 180` |
+| `MGMT_VRF` | `"mgmt"` | mgmt VRF を識別する固定文字列。`CFG_MGMT_VRF_CONFIG_TABLE_NAME` 経由で受信した設定エントリはこの名称を vrfName として使用する | `vrfmgr.cpp:16` |
+
+### STATE_DB テーブル名定数 (schema.h)
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| `STATE_VRF_TABLE_NAME` | `"VRF_TABLE"` | `sonic-swss-common/common/schema.h` |
+| `STATE_VRF_OBJECT_TABLE_NAME` | `"VRF_OBJECT_TABLE"` | `sonic-swss-common/common/schema.h` |
+
+これらの定数は `vrfmgr.cpp` コンストラクタの引数として使用される。YANG や CONFIG_DB で変更する手段はない。
+
+!!! note "最大 VRF 数はコードで固定"
+    `VRF_TABLE_END - VRF_TABLE_START = 4096` が同時に作成できる VRF の絶対上限。
+    ID が枯渇した場合 (`getFreeTable()` が `0` を返す)、`vrfmgrd` は `SWSS_LOG_ERROR` を出力して処理を継続するが、Linux VRF デバイスは作成されない。枯渇閾値を変更するにはソースコードの再コンパイルが必要。
+
+!!! note "mgmt VRF テーブル ID はユーザー変更不可"
+    `MGMT_VRF_TABLE_ID = 6000` はコードにハードコードされており、`m_freeTables` の管理範囲（1001–5096）とは独立している。
+    mgmt VRF が有効な場合でも通常 VRF の ID 割り当て数は影響を受けない。
+
+<!-- /constants -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
