@@ -456,6 +456,48 @@ CONFIG_DB の `FLEX_COUNTER_TABLE|<group>` キー名と、FLEX_COUNTER_DB で使
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-side-effects.md -->
+<!-- source: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/portsorch.cpp,
+     sonic-swss/orchagent/intfsorch.cpp (ref: master) -->
+
+`FLEX_COUNTER_TABLE|<group>` への `FLEX_COUNTER_STATUS = enable/disable` 処理に伴い
+`FlexCounterOrch::doTask()` が各 Orch の `generateXxxMap()` を呼び出す際に生じる副次 DB 書き込み。
+
+| 副次 DB | テーブル / キー | 書込内容 | 根拠 |
+|--------|--------------|---------|------|
+| `FLEX_COUNTER_DB` | `FLEX_COUNTER_TABLE:<group>:<oid>` | `PORT` / `QUEUE` / `PG` 等 per-OID カウンタ ID リスト（本ページの主作用） | `portsorch.cpp:9118` `port_stat_manager.setCounterIdList()` |
+| `COUNTERS_DB` | `COUNTERS_PORT_NAME_MAP` | `<alias>` → `<oid>` のエイリアスマップ。`PORT` enable 時に更新 | `portsorch.cpp:4118` `m_counterNameMapUpdater->setCounterNameMap()` |
+| `COUNTERS_DB` | `COUNTERS_QUEUE_NAME_MAP` | `<Ethernet0:0>` → `<oid>` のキューエイリアスマップ。`QUEUE` / `QUEUE_WATERMARK` / `WRED_ECN_QUEUE` enable 時に更新 | `portsorch.cpp:8524,8749` |
+| `COUNTERS_DB` | `COUNTERS_PG_NAME_MAP` | `<Ethernet0:0>` → `<oid>` の PG エイリアスマップ。`PG_DROP` / `PG_WATERMARK` enable 時に更新 | `portsorch.cpp:8882,8937` |
+| `COUNTERS_DB` | `COUNTERS_RIF_NAME_MAP` / `COUNTERS_RIF_TYPE_MAP` | `<alias>` → `<oid>` / `<oid>` → `<type>` の RIF エイリアス・タイプマップ。`RIF` enable 時にタイマー経由で更新 | `intfsorch.cpp:1527-1545` `addRifToFlexCounter()` |
+
+### FLEX_COUNTER_DB フラッシュ（`flushCounters()`）
+
+`FLEX_COUNTER_STATUS` フィールドを処理した直後、`gPortsOrch->flushCounters()` が呼ばれ
+（`flexcounterorch.cpp:375-378`）、`counter_managers` 全体に対して `flush()` を実行する。
+バッファ済みの FLEX_COUNTER_DB 書き込みが即時 Redis へ送信されるため、enable / disable
+後の FLEX_COUNTER_DB は中間状態にならない。
+
+### 各 Orch への連鎖呼び出し
+
+`FLEX_COUNTER_STATUS` の enable / disable は対応する Orch の生成・削除関数を直接呼ぶ。
+
+| グループキー | enable 時の連鎖 | disable 時の連鎖 |
+|-----------|--------------|--------------|
+| `FLOW_CNT_TRAP` | `gCoppOrch->generateHostIfTrapCounterIdList()` → FLEX_COUNTER_DB に `FLOW_COUNTER_ID_LIST` 書込 | `gCoppOrch->clearHostIfTrapCounterIdList()` → FLEX_COUNTER_DB から削除 |
+| `FLOW_CNT_ROUTE` | `gFlowCounterRouteOrch->generateRouteFlowStats()` → ルート flow カウンタ書込 | `gFlowCounterRouteOrch->clearRouteFlowStats()` → 削除 |
+| `SRV6` | `gSrv6Orch->setCountersState(true)` → SRV6_COUNTER_ID_LIST 書込 | `setCountersState(false)` → 削除 |
+| `SWITCH` | `gSwitchOrch->generateSwitchCounterIdList()` → SWITCH_COUNTER_ID_LIST 書込 | — (disable 処理なし) |
+| `BUFFER_POOL_WATERMARK` | `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` → バッファプール OID を FLEX_COUNTER_DB 書込 | — |
+| `ENI` / `DASH_METER` / `HA_SET` | `dash_orch->handleFCStatusUpdate(true)` 等 → DASH 系カウンタ書込 | `handleFCStatusUpdate(false)` → 削除 |
+
+evidence: `flexcounterorch.cpp:287-340`
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/portsorch.cpp` `port_stat_ids[]` (line 242), `queue_stat_ids[]` (line 389), `wred_port_stat_ids[]` (line 421), `wred_queue_stat_ids[]` (line 429). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
