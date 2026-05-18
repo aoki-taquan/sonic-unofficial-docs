@@ -386,3 +386,75 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 !!! note "VIP_TABLE は唯一の THROW 発生源"
     `VIP_TABLE` が空の場合のみ `SWSS_LOG_THROW` が実行される。他の参照（VNET 未登録・Neighbor 未解決など）はいずれも処理を PENDING 状態で保留し、後続イベントで自動再評価される仕組みになっている。
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/dash/dashenifwdorch.cpp / dashenifwdinfo.cpp -->
+
+`DashEniFwdOrch` と `EniInfo` / `EniAclRule` は `task_need_retry` / `task_failed` のような orchagent 標準リトライ機構を持たず、**独自の内部状態機械** (`rule_state_t`) でリトライ・保留・失敗を管理する。
+
+### failure / recovery パターン概要
+
+| パターン | トリガー | 挙動 | state | recovery |
+|---------|---------|------|-------|----------|
+| **`vdpu_ids` / `primary_vdpu` 欠如** | `EniInfo::create()` で必須フィールド不在 | `SWSS_LOG_ERROR` を出力し `create()` が `false` を返す。ACL ルールは生成されない | — (オブジェクト未作成) | 再投入（DEL → SET）のみ |
+| **`primary_vdpu` が DpuRegistry 未登録** | `EniAclRule::processUpdate()` の `dpu_info.getType()` が失敗 | `SWSS_LOG_ERROR("No primary id ... in DPU Table")` → `update_type_t::INVALID` → `rule_state_t::FAILED` に遷移 | `FAILED` | orchagent 再起動 + DPU テーブル修正 (lazyInit は 1 度のみ) |
+| **LOCAL DPU の Neighbor 未解決** | `LocalEniNH::resolve()` で `isNeighborResolved()` が `false` | ACL ルールを書かず `rule_state_t::PENDING` に遷移。`NeighOrch` への `resolveNeighbor()` 要求は発行される | `PENDING` | Neighbor Up イベント (`handleNeighUpdate()`) で自動 `fireAllRules()` |
+| **CLUSTER ENI の VNET トンネル未登録** | `RemoteEniNH::resolve()` で `findVnetTunnel()` が `false` | `SWSS_LOG_ERROR("Couldn't find tunnel name")` → `UNRESOLVED` → `PENDING` | `PENDING` | VNET エントリ登録後に次の ENI SET イベントで再評価（自動再評価なし） |
+| **CLUSTER ENI の VNI 未登録** | `RemoteEniNH::resolve()` で `findVnetVni()` が `false` | `SWSS_LOG_ERROR("Couldn't find VNI")` → `UNRESOLVED` → `PENDING` | `PENDING` | VNET エントリ登録後に次の ENI SET イベントで再評価（自動再評価なし） |
+| **`VIP_TABLE` 空 (CLUSTER ENI のみ)** | `EniAclRule::fire()` 内の `ctx->getVip()` | `SWSS_LOG_THROW` で orchagent プロセスを abort。supervisord が再起動 | — (プロセス終了) | orchestration レベルで VIP_TABLE を先に投入する必要あり |
+| **Neighbor DEL (LOCAL ENI)** | `NeighborUpdate.add == false` | `EniInfo::update(NeighborUpdate)` は DEL を**無視** (`// Neighbor Delete handling not supported yet`)。ACL ルールは削除されず残留 | `INSTALLED` (古い状態) | 設計上未対応。orchagent 再起動による再評価が回避策 |
+| **ENI UPDATE で `primary_vdpu` なし** | `EniInfo::update(Request)` で `itr_primary_id == updates.end()` | `throw logic_error("Invalid ... update: No primary idx")` が投げられ orchagent がクラッシュ | — (プロセス終了) | APPL_DB の書き手 (HaMgrd) が必ず `primary_vdpu` を含める必要あり |
+| **TUNNEL_TERM ルールの LOCAL EP 欠如** | `EniAclRule::processUpdate()` で `findLocalEp()` が `false` | `SWSS_LOG_ERROR("No Local endpoint found")` → `update_type_t::INVALID` → `rule_state_t::FAILED` | `FAILED` | primary を LOCAL DPU 持ちの VDPU に変更して再送 |
+
+### rule_state_t の遷移図
+
+```
+                   ┌──────────────────────┐
+                   │   (ENI SET 受信)      │
+                   ▼                      │
+             UNINSTALLED ─── PRIMARY_UPDATE ───┐
+                   │                           │
+          Neighbor未解決 / VNET未登録           │ 解決済み
+                   │                           │
+                   ▼                           ▼
+               PENDING ←── Neigh Up ──── createAclRule()
+                                               │
+                                               ▼
+                                          INSTALLED
+                   │
+            INVALID / throw
+                   │
+                   ▼
+                FAILED
+```
+
+### retry 機構の不在と設計上の意図
+
+`DashEniFwdOrch` は `Orch2` を継承しているが、`addOperation()` / `delOperation()` は常に `true` を返すため、**タスクは m_toSync から即 erase** される。
+
+```cpp
+// dashenifwdorch.cpp:181
+return true;  // addOperation 常時 true
+
+// dashenifwdorch.cpp:208
+return true;  // delOperation 常時 true
+```
+
+このため `Consumer::m_toSync` への再キューは行われない。リトライが必要なケース（Neighbor 未解決・VNET 未登録）は `EniAclRule` オブジェクトが `PENDING` 状態を保持し、外部イベント（Neighbor Up / 次の SET）を受信した時点で `fireAllRules()` が再評価する。CLUSTER 型で VNET が後から登録された場合は **自動再評価されない**（ENI の再 SET が必要）。
+
+### VIP_TABLE 欠如による abort の重大性
+
+`EniFwdCtxBase::getVip()` (`dashenifwdorch.cpp:492-517`) は VIP_TABLE が空のとき `SWSS_LOG_THROW` を実行し orchagent プロセスを終了させる。これは SmartSwitch 起動シーケンスで `VIP_TABLE` が `DASH_ENI_FORWARD_TABLE` より先に CONFIG_DB に存在しなければならないことを強制する設計上の invariant である。
+
+```cpp
+// dashenifwdorch.cpp:501-503
+if (keys.empty())
+{
+    SWSS_LOG_THROW("Invalid Config: VIP info not populated");
+}
+```
+
+supervisord が orchagent を再起動した後も `VIP_TABLE` が空のままであれば abort が繰り返されるため、SmartSwitch プラットフォームの起動前に `VIP_TABLE` の投入を保証するシステム設計が必要である。
+<!-- /failure -->
