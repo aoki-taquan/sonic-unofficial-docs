@@ -406,4 +406,52 @@ vtysh -c 'show ipv6 prefix-list'
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+frrcfgd が `PREFIX_SET` / `PREFIX` テーブル処理でハードコードしている定数一覧。詳細は `meta/_intermediate/cdb-flow/prefix-set-constants.md` を参照。
+
+### TABLE_DAEMON ディスパッチ定数 (frrcfgd.py:83)
+
+| テーブル | 対象 FRR デーモン |
+|---------|----------------|
+| `PREFIX_SET` | `bgpd` のみ |
+| `PREFIX` | `zebra`, `bgpd`, `ospfd`, `pimd`（4 プロセス同時） |
+
+`PREFIX_SET` の変更は bgpd にのみ反映されるが、`PREFIX` メンバの追加・削除は OSPF / PIM を含む全ルーティングデーモンに波及する。`PREFIX` DEL 操作は ルーティングポリシー全体への影響が広いため注意が必要。
+
+### masklength_range 変換定数
+
+```python
+class MatchPrefix:
+    IPV4_MAXLEN = 32   # frrcfgd.py:1606
+    IPV6_MAXLEN = 128  # frrcfgd.py:1607
+```
+
+`masklength_range` の上限値がアドレスファミリの最大マスク長（IPv4: 32、IPv6: 128）に一致する場合、FRR コマンドの `le` 修飾子を省略する（FRR デフォルトと等価なため冗長修飾を避ける）。
+
+**具体例**: `masklength_range = "0..32"` を IPv4 PREFIX に設定すると、`show ip prefix-list` の出力では `ge 0` のみ表示され `le 32` は現れない。CONFIG_DB の値と FRR の表示が一見異なるが正常動作。
+
+### mode 文字列 正規化
+
+`PREFIX_SET.mode` フィールドの YANG enum 値は大文字（`IPv4` / `IPv6`）だが、frrcfgd は `bgp_table_handler_common` (L2904) で `.lower()` 変換してから内部処理する（内部値: `'ipv4'` / `'ipv6'`）。YANG 経路以外の直接書き込みで大文字以外の variant を渡しても frrcfgd が正規化する。
+
+### FRR コマンドテンプレート（ハードコード）
+
+frrcfgd が発行する FRR コマンド文字列（frrcfgd.py:2945, 2960, 2977, 2991）:
+
+| 操作 | FRR コマンドテンプレート |
+|-----|----------------------|
+| PREFIX ADD (IPv4) | `ip prefix-list <name> <seq> <action> <prefix> [ge X] [le Y]` |
+| PREFIX ADD (IPv6) | `ipv6 prefix-list <name> <seq> <action> <prefix> [ge X] [le Y]` |
+| PREFIX DEL (IPv4) | `no ip prefix-list <name> <entry>` |
+| PREFIX DEL (IPv6) | `no ipv6 prefix-list <name> <entry>` |
+| PREFIX_SET DEL (IPv4) | `no ip prefix-list <name>` |
+| PREFIX_SET DEL (IPv6) | `no ipv6 prefix-list <name>` |
+
+<!-- evidence: frrcfgd.py:83,1606-1607,1665,2904,2945,2960,2977,2991 -->
+
+> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-constants.md` を参照
+<!-- /constants -->
+
 <!-- glossary-links-injected: 88e792f23f63 -->
