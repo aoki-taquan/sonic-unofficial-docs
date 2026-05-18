@@ -314,6 +314,48 @@ MySID 追加から `COUNTERS:<oid>` 初回値が出現するまでの最大待�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`doTask(SelectableTimer)` L286-313、`createUpdateMysidEntry()` L1589-1614 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-state-side-effects.md`
+
+COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが直接書き込むテーブルではない。`Srv6Orch` が `SRV6_MY_SIDS` (CONFIG_DB) および `FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER` の変化を受けて、以下の副次書込みを実行する。
+
+### SRV6_MY_SIDS SET → COUNTERS_DB 書込み
+
+`createUpdateMysidEntry()` は `getMySidCountersSupported() && getMySidCountersEnabled()` が両方真の場合に `addMySidCounter()` を呼び出す（`srv6orch.cpp:1591-1599`）。
+
+| 副次 DB / API | キー / 操作 | タイミング | ソース |
+|-------------|-----------|-----------|--------|
+| COUNTERS_DB / `COUNTERS_SRV6_NAME_MAP` | `hset("", sid_prefix, counter_oid)` — MySID ごとのカウンタ OID を登録 | 即時 | `srv6orch.cpp:196-199` |
+| FLEX_COUNTER_DB / `SRV6_STAT_COUNTER:<oid>` | `setCounterIdList` — 1 秒タイマー後に FLEX_COUNTER_DB 登録 | 最大 1 秒遅延 | `srv6orch.cpp:300` |
+| SAI / `sai_srv6_api` | `set_my_sid_entry_attribute(SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, counter_oid)` — ASIC カウンタ紐付け | SAI 呼び出し直後 | `srv6orch.cpp:244` |
+
+`gTraditionalFlexCounter=true` の場合、FLEX_COUNTER_DB への登録は ASIC_DB `VIDTORID` の VID→RID 解決確認後に行われる（`srv6orch.cpp:293-295`）。
+
+### SRV6_MY_SIDS DEL → COUNTERS_DB クリーンアップ
+
+`deleteMysidEntry()` が `removeMySidCounter()` を呼び出す（`srv6orch.cpp:1666-1670`）。
+
+| 副次 DB / API | キー / 操作 | ソース |
+|-------------|-----------|--------|
+| COUNTERS_DB / `COUNTERS_SRV6_NAME_MAP` | `hdel("", sid_prefix)` — OID マッピング削除 | `srv6orch.cpp:223` |
+| FLEX_COUNTER_DB / `SRV6_STAT_COUNTER:<oid>` | `clearCounterIdList` — pending に未登録の場合のみ削除 | `srv6orch.cpp:229` |
+| SAI / `sai_counter_api` | `remove_counter(counter_oid)` — ASIC generic counter 解放 | `srv6orch.cpp:231` |
+
+### FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER enable / disable → 一括書込み
+
+`setCountersState(true)` は `srv6_my_sid_table_` の全 MySID を走査して `addMySidCounter()` を一括呼び出しし、`COUNTERS_SRV6_NAME_MAP` への一括登録を行う。`setCountersState(false)` は逆方向（`hdel` + ASIC カウンタ切離し）を一括実行する（`srv6orch.cpp:261-283`）。
+
+!!! note "副次書込みが発生しない条件"
+    `queryMySidCountersCapability()` が false（プラットフォーム非対応）の場合、`setCountersState()` は冒頭で early-return し、一切の副次書込みを行わない（`srv6orch.cpp:256-260`）。また `getMySidCountersEnabled()` が false（FlexCounter 無効）の場合も `addMySidCounter()` は呼ばれない。
+
+!!! note "STATE_DB / APPL_DB / CONFIG_DB への書き戻しなし"
+    このページ（COUNTERS_DB）の書込みは `Srv6Orch` 内で完結する。STATE_DB・APPL_DB・CONFIG_DB への書き戻しはいずれのケースでも発生しない。
+
+<!-- /side-effects -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`SRV6_MY_SIDS`](srv6-my-sids.md) — MySID エントリ定義
