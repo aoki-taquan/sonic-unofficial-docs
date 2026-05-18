@@ -231,6 +231,36 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+STATE_DB `PORT_TABLE` は `portsyncd/linksync` と `PortsOrch` が**書き手**として書き込む。本セクションではこれらの書込み処理が依存する入力テーブル・読み取り先テーブルを列挙する。
+
+| 依存方向 | 参照元 / 参照元フィールド | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|------------------------|--------------|--------------|---------|------|
+| 書込みトリガ（linksync） | `portsyncd/linksync` RTM_NEWLINK イベント | Linux Kernel netdev (`m_ifindexOidMap`) | `Ethernet<N>` | `m_ifindexOidMap` でポート名を解決してから `m_statePortTable.set()` を呼ぶ。マップに存在しないインタフェースは無視される | `linksync.cpp:147-160, 193-208` |
+| 書込みトリガ（PortsOrch） | `PortsOrch` SAI oper-status 通知 / init | `APPL_DB PORT_TABLE` (PortConfigDone / PortInitDone フラグ) | `PORT_TABLE:PortConfigDone`, `PORT_TABLE:PortInitDone` | warm start 判定のため `m_portTable->hget("PortConfigDone", "count")` と `m_portTable->get("PortInitDone")` を確認。両フラグが揃わないと既存データ再読込を行い、欠落時は `cleanPortTable()` で cold start へフォールバック | `portsorch.cpp:4345-4386` |
+| 読み出し（portmgrd） | `PortMgr::isPortStateOk()` | STATE_DB `PORT_TABLE` （本テーブル） | `PORT_TABLE\|<alias>` | `m_statePortTable.get(alias, temp)` で `state` フィールドの存在を確認。`state` がなければ netdev 設定操作（admin_status / mtu 設定）を次周回に延期する | `portmgr.cpp:86-100` |
+| 読み出し（teammgrd） | `TeamMgr::isPortStateOk()` | STATE_DB `PORT_TABLE` （本テーブル） | `PORT_TABLE\|<alias>` | LAG メンバー追加前に各メンバーポートの `state` フィールドを確認。`"ok"` でなければ `doPortChannelMemberTask()` の SET 処理を中断する | `teammgr.cpp:67-80, 357` |
+| 読み出し（intfmgrd） | `IntfMgr::isPortStateOk()` (STATE_PORT_TABLE_NAME 購読) | STATE_DB `PORT_TABLE` （本テーブル） | `PORT_TABLE\|<alias>` | L3 インタフェース設定（IP アドレス付与 / VRF 割当）前に `state` フィールドを確認。intfmgrd は STATE_PORT_TABLE_NAME も subscribe し、`state="ok"` 通知を受信してから設定を適用する | `intfmgr.cpp:37,46-47,686-695` |
+| 逆参照（PortsOrch → APP_DB） | `PortsOrch::updateDbPortOperStatus()` | `APPL_DB PORT_TABLE` | `PORT_TABLE:<alias>` | SAI oper-status 変化時に `oper_status` フィールドを **APPL_DB** に書き込む（STATE_DB ではない）。STATE_DB `PORT_TABLE` の `netdev_oper_status` とは独立した別フィールド | `portsorch.cpp:3916-3930` |
+
+### 読み出し側の依存まとめ
+
+STATE_DB `PORT_TABLE` は以下の 3 つのデーモンが `state` フィールドを **読んでから**自身の設定を適用する「起動同期シグナル」として機能する:
+
+```text
+portsyncd  →  RTM_NEWLINK 受信  →  STATE_DB PORT_TABLE.state = "ok"
+                                             ↓
+                    portmgrd  ──  isPortStateOk() == true  → admin_status / mtu 設定適用
+                    teammgrd  ──  isPortStateOk() == true  → LAG メンバー追加
+                    intfmgrd  ──  STATE_PORT_TABLE_NAME 購読 → IP / VRF 設定適用
+```
+
+`RTM_DELLINK` 受信時は `m_statePortTable.del(key)` でエントリ全体を削除するため、各デーモンの `isPortStateOk()` が false を返して設定適用が自動的にブロックされる。
+
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
