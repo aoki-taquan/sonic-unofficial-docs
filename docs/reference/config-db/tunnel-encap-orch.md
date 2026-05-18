@@ -196,6 +196,29 @@ CLI (`config vxlan add`) で作成されたトンネルは `TNL_CREATION_SRC_CLI
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗時の挙動 (Phase D)
+
+| 失敗ケース | 挙動 | リトライ | evidence |
+|-----------|------|---------|----------|
+| `sai_tunnel_api->create_tunnel()` 失敗 | `deleteMapperHw()` で mapper をロールバック後 `active_=false`、`createTunnelHw()` が `false` 返却 → `VxlanTunnelMapOrch::addOperation` が `return false` してキュー保留 | 自動リトライ | `vxlanorch.cpp:908-920` |
+| `create_tunnel_termination()` 失敗 (`with_term=true`) | `remove_tunnel()` + `deleteMapperHw()` で完全ロールバック後 `active_=false` | 自動リトライ | `vxlanorch.cpp:925-934` |
+| `VXLAN_TUNNEL_MAP` 追加時に対象 VLAN が未存在 | `SWSS_LOG_WARN` + `return false` → キュー保留。VLAN 作成後に自動収束 | 自動リトライ | `vxlanorch.cpp:2030-2033` |
+| `VXLAN_TUNNEL_MAP` 追加時に `VXLAN_TUNNEL` 未存在 | `SWSS_LOG_WARN` + `return false` → キュー保留。`VXLAN_TUNNEL` 投入後に自動収束 | 自動リトライ | `vxlanorch.cpp:2047-2050` |
+| `del_tnl_hw_pending` フラグが立っている間の操作 | `SWSS_LOG_WARN` + `return false` → 保留。HW 削除完了後に自動収束 | 自動リトライ | `vxlanorch.cpp:2057-2060` |
+
+!!! warning "SAI 失敗時のロールバック"
+    `create_tunnel()` が失敗した場合、直前に作成した mapper オブジェクト (`createMapperHw`) が
+    自動的にロールバックされる。部分的な SAI オブジェクトが残存しないよう設計されている
+    (`vxlanorch.cpp:913-920`)。
+
+!!! note "return false = リトライ"
+    swss の Consumer フレームワークでは `addOperation` / `delOperation` が `false` を返すと
+    エントリがキューに残り、次の doTask() サイクルで再処理される。依存リソース（VLAN / TUNNEL）が
+    後から投入されれば自動的に収束する。
+
+<!-- /failure -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VXLAN_TUNNEL`](vxlan-tunnel.md)、[`VXLAN_TUNNEL_MAP`](vxlan-tunnel-map.md)
@@ -215,3 +238,4 @@ CLI (`config vxlan add`) で作成されたトンネルは `TNL_CREATION_SRC_CLI
 
 [^1]: VxlanTunnelOrch 実装: `orchagent/vxlanorch.cpp`, `orchagent/vxlanorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
 [^2]: orchdaemon 初期化順序 (`orchdaemon.cpp:350-590`), VxlanMgr::doTask() (`cfgmgr/vxlanmgr.cpp:213-262`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
+[^3]: VxlanTunnel::createTunnelHw() ロールバック (`vxlanorch.cpp:895-940`), VxlanTunnelMapOrch::addOperation() 依存チェック (`vxlanorch.cpp:2012-2090`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L895>
