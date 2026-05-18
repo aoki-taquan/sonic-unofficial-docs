@@ -322,6 +322,56 @@ orchagent が STATE_DB へ書き込む各テーブルは、以下の上流 DB・
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+orchagent が STATE_DB へ書き込む各テーブルでは、SAI 呼び出し失敗・前提条件未成立・warm restart 検証異常に応じた固有の失敗挙動が実装されている。
+
+### WARM_RESTART_TABLE
+
+| 失敗ケース | 発生箇所 | 挙動 | STATE_DB 状態 | retry |
+|---|---|---|---|---|
+| warm start 復元後に pending task あり | `orchdaemon.cpp:1192-1201` `warmRestoreValidation()` | `SWSS_LOG_NOTICE` で pending task を列挙し `WarmStart::RESTORED` を書き込む。`ts.empty() == false` のまま呼び出し元へ `false` を返す | `state="restored"` は書き込まれる（タスク滞留に関わらず） | 呼び出し元の `warmRestoreAndSyncUp()` が返り値を無視して継続するため自動解消なし |
+| `checkWarmStart()` で `restore_count` の stoul 変換失敗 | `warm_restart.cpp:123` | std::exception がスローされ orchagent プロセスが `main.cpp` の catch ブロックで捕捉・`SWSS_LOG_ERROR` 後 abort | STATE_DB 更新なし | プロセス再起動のみ |
+| `setWarmStartState()` で DB 接続失敗 | `warm_restart.cpp:223-234` | 例外が伝播し orchagent を停止させる | 遷移先 state は書き込まれない | プロセス再起動 |
+
+### PORT_TABLE
+
+| 失敗ケース | 発生箇所 | 挙動 | STATE_DB 状態 | retry |
+|---|---|---|---|---|
+| `getPortSupportedSpeeds()` — SAI `SAI_STATUS_BUFFER_OVERFLOW` (2 回バッファ拡張後も失敗) | `portsorch.cpp:3118-3140` | `SWSS_LOG_ERROR` を出力し `supported_speeds` を空ベクタで返す | `PORT_TABLE|<alias>.supported_speeds` は空文字列で書き込まれる（フィールドは存在する） | なし（initPortSupportedSpeeds は 1 回のみ呼ばれキャッシュされる） |
+| `getPortSupportedSpeeds()` — `SAI_STATUS_NOT_SUPPORTED` / `NOT_IMPLEMENTED` | `portsorch.cpp:3143-3148` | `SWSS_LOG_WARN` を出力し空リターン | `supported_speeds` フィールドは空文字列で書き込まれる | なし |
+| `initPortCapFec()` — SAI が FEC モード取得非サポート | `portsorch.cpp:3280-3285` | `SWSS_LOG_INFO` を出力し **`supported_fecs` フィールドを STATE_DB に書かない** | `supported_fecs` フィールド自体が存在しない | なし |
+| SAI `get_port_attribute` での `host_tx_ready` 取得失敗 | `portsorch.cpp:6717` | `SWSS_LOG_ERROR` を出力。`host_tx_ready` フィールドは前回値を保持（上書きしない） | 変化なし | なし（次の SAI 通知まで古い値が残る） |
+| `PortInitDone` が APPL_DB に来ない | `portsorch.cpp:4350-4357` | `m_initDone` が `false` のままで `initPortSupportedSpeeds/Fec/HostTxReady` が呼ばれない | `PORT_TABLE` フィールドは一切書き込まれない | `PortInitDone` 受信まで無制限に待機 |
+
+### FDB_TABLE
+
+| 失敗ケース | 発生箇所 | 挙動 | STATE_DB 状態 | retry |
+|---|---|---|---|---|
+| `allPortsReady() == false` (PortInitDone 未受信) | `fdborch.cpp:711, 927` | `doTask()` 冒頭で即 `return`。`Consumer::m_toSync` にタスクを保持 | FDB エントリは STATE_DB に書き込まれない | PortInitDone 受信後に暗黙 retry（タスクは消費されていない） |
+| SAI `create_fdb_entry` 失敗 (`task_need_retry`) | `fdborch.cpp:1515, 1540` | `parseHandleSaiStatusFailure()` が `task_need_retry` を返し `it++`（retry ループ継続） | 対象 MAC のエントリは STATE_DB に書き込まれない | Consumer に残留し次サイクルで再試行 |
+| SAI `remove_fdb_entry` 失敗 (`task_need_retry`) | `fdborch.cpp:1709` | 同上 | 既存エントリが STATE_DB に残存 | 次サイクルで再試行 |
+| bridge port ID 解決失敗 | `fdborch.cpp:309, 700` | `SWSS_LOG_ERROR` を出力し処理スキップ | STATE_DB への書き込みなし | なし（タスクを erase する） |
+
+### VRF_OBJECT_TABLE
+
+| 失敗ケース | 発生箇所 | 挙動 | STATE_DB 状態 | retry |
+|---|---|---|---|---|
+| SAI `create_virtual_router` 失敗 | `vrforch.cpp:97-103` | `handleSaiCreateStatus()` が `task_need_retry` を返した場合 `parseHandleSaiStatusFailure()` → `it++`。`task_failed` なら erase | `VRF_OBJECT_TABLE` にエントリは書き込まれない | `task_need_retry` 時は次サイクルで再試行、`task_failed` 時はなし |
+| SAI `set_virtual_router_attribute` 失敗 | `vrforch.cpp:132-138` | 同上パターン | `state="ok"` は書き込まれない（CREATE の場合）/ 既存エントリを更新しない（UPDATE の場合） | `task_need_retry` 時は次サイクルで再試行 |
+| VRF 名が未登録の状態で remove | `vrforch.cpp:165` | `SWSS_LOG_ERROR` を出力し `return false` | STATE_DB VRF_OBJECT_TABLE は変化なし（`del()` は実行されない） | なし |
+
+### FIPS_MACSEC_POST_TABLE
+
+| 失敗ケース | 発生箇所 | 挙動 | STATE_DB 状態 | retry |
+|---|---|---|---|---|
+| SAI `SAI_MACSEC_ATTR_ENABLE_POST` 取得失敗（`!= SAI_STATUS_SUCCESS`） | `main.cpp:919-930` | `SWSS_LOG_ERROR("MACSec POST is not supported by SAI")` を出力し `post_state="disabled"` を書き込む | `FIPS_MACSEC_POST_TABLE|sai.post_state = "disabled"` | なし（起動時 1 回のみ判定） |
+| SAI MACsec POST コールバックで `SAI_SWITCH_MACSEC_POST_STATUS_FAIL` 受信 | `macsecorch.cpp:710, 791` | `setMacsecPostState(&state_db, "fail")` を呼び出して STATE_DB を更新 | `post_state = "fail"` | なし（再起動まで `fail` 状態が維持される） |
+| `setMacsecPostState()` 内の DB 書き込み例外 | `macsecpost.cpp:11-22` | `Table::set()` 例外が伝播し orchagent プロセスが停止 | 最後の書き込み値が不確定 | プロセス再起動 |
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
