@@ -587,6 +587,87 @@ VRF が未登録のままだと `m_toSync` に積まれ VRF 登録後にリト�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラー処理 (Phase D)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`、`sonic-swss/orchagent/intfsorch.cpp`  
+> 調査日: 2026-05-18  
+> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-interface-failure.md`
+
+### intfmgrd 側の失敗シナリオ
+
+#### 前提チェック失敗 → サイレントリトライ
+
+| 失敗条件 | ログ | 自動リトライ | コード根拠 |
+|---------|------|------------|-----------|
+| VLAN が STATE_VLAN_TABLE に未登録（`isIntfStateOk()` false） | `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` | あり（VLAN ready 後） | `intfmgr.cpp:833-836` |
+| `vrf_name` 指定時に STATE_VRF_TABLE に VRF 未登録 | `SWSS_LOG_DEBUG("VRF is not ready, skipping %s")` | あり（VRF ready 後） | `intfmgr.cpp:839-842` |
+| VRF 直接変更（既バインド VRF から別 VRF への変更） | `SWSS_LOG_ERROR("%s can not change to %s directly, skipping")` | **なし**（イベント消費・拒否） | `intfmgr.cpp:846-849` |
+| 属性ロウ未処理で IP プレフィクスロウを投入 | `SWSS_LOG_DEBUG` | あり（`isIntfCreated()` が true になった後） | `intfmgr.cpp:1115-1118` |
+
+#### フィールド値不正 → ERROR ログ（リトライなし）
+
+| フィールド | 不正値 | ログ | 備考 |
+|-----------|--------|------|------|
+| `mpls` | `"enable"` / `"disable"` 以外 | `SWSS_LOG_ERROR("MPLS state is invalid: \"%s\"")` | sysctl 未設定のまま。次サイクルでも同エラーが繰り返される |
+| `grat_arp` | `"enabled"` / `"disabled"` 以外 | `SWSS_LOG_ERROR("GARP state is invalid: \"%s\"")` | `/proc/sys/.../arp_accept` 未変更 |
+| `proxy_arp` | `"enabled"` / `"disabled"` 以外 | `SWSS_LOG_ERROR("Proxy ARP state is invalid: \"%s\"")` | `/proc/sys/.../proxy_arp` 未変更 |
+
+#### カーネルコマンド失敗
+
+`setIntfGratArp()` / `setIntfProxyArp()` 内部の `/proc/sys/net/ipv4/conf/<IF>/` への書込みが失敗した場合、`EXEC_WITH_ERROR_THROW` が例外を throw し ERROR ログが出る（`intfmgr.cpp:130`）。
+
+#### IP アドレス追加失敗
+
+`setIntfIp(alias, "add", ip_prefix)` 内の `ip address add` コマンド失敗は `SWSS_LOG_ERROR` 後 `return false`。次の Select タイムアウト（1000 ms）で再試行される。
+
+### orchagent IntfsOrch 側の失敗シナリオ
+
+#### SAI RIF 作成失敗
+
+```cpp
+// intfsorch.cpp:1297-1304
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to create router interface %s, rv:%d", ...);
+    if (handleSaiCreateStatus(SAI_API_ROUTER_INTERFACE, status) != task_success)
+        throw runtime_error("Failed to create router interface.");
+}
+```
+
+`throw runtime_error` はフレームワークが catch してタスクをリトライキューに戻す（リトライあり）。
+
+#### SAI RIF 削除失敗（参照カウント非 0）
+
+`removeRouterIntfs()` で `m_syncdIntfses[alias].ref_count > 0`（ネクストホップ等が RIF 参照中）の場合は `return false` → リトライ保留。ログは `SWSS_LOG_NOTICE` のみでエラーではない（`intfsorch.cpp:1327-1330`）。
+
+#### SAI 属性 SET 失敗
+
+`setIntfMtu()` / `setIntfMac()` / `setIntfNatZoneId()` / `setIntfLoopbackAction()` 等で SAI SET が失敗した場合、`SWSS_LOG_ERROR` + `handleSaiSetStatus()` を呼ぶ。`task_need_retry` 判定されるとタスクがキューに残り再試行される。
+
+### 失敗シナリオ全体まとめ
+
+| 障害シナリオ | コンポーネント | ログレベル | 自動リトライ | 主な副作用 |
+|------------|--------------|-----------|------------|-----------|
+| VLAN 未 ready | intfmgrd | DEBUG | あり | サイレントキュー保留。VLAN 処理後に自動再試行 |
+| VRF 未 ready | intfmgrd | DEBUG | あり | サイレントキュー保留 |
+| VRF 直接変更 | intfmgrd | ERROR | **なし** | イベント消費・拒否。CONFIG_DB 値は変わるが実態は旧 VRF のまま |
+| `mpls` / `grat_arp` / `proxy_arp` 不正値 | intfmgrd | ERROR | **なし** | 設定適用されず繰り返しエラー |
+| `ip address add` 失敗 | intfmgrd | ERROR | あり | STATE_DB 未書込み。orchagent への通知なし |
+| 属性ロウ未処理で IP ロウ投入 | intfmgrd | DEBUG | あり | `isIntfCreated()` false → キュー保留 |
+| SAI `create_router_interface` 失敗 | orchagent IntfsOrch | ERROR | あり（framework） | `throw runtime_error` → フレームワークリトライ |
+| SAI RIF 削除時 ref_count > 0 | orchagent IntfsOrch | NOTICE | あり | 参照解放まで DEL 保留 |
+| SAI `remove_router_interface` 失敗 | orchagent IntfsOrch | ERROR | あり（framework） | `throw runtime_error` → フレームワークリトライ |
+| SAI SET 失敗 (MTU/MAC/NAT zone 等) | orchagent IntfsOrch | ERROR | 条件付き | `handleSaiSetStatus()` 判定による |
+
+!!! warning "VRF 直接変更の罠"
+    `config interface vrf bind <Vlan...> <new-VRF>` を既存バインド IF に直接実行すると ERROR ログが出るだけで実態は変わらない。**`vrf unbind` → `vrf bind` の 2 ステップが必須**（`intfmgr.cpp:846-849`）。
+
+!!! note "DEL 保留はサイレント"
+    VLAN_INTERFACE 属性ロウの DEL 時に IP アドレスが残っている場合、`getIntfIpCount(alias) > 0` で `return false` されるがログは出ない。IP プレフィクスロウをすべて DEL してから属性ロウを DEL する必要がある。
+
+<!-- /failure -->
+
 <!-- secondary-db-writes -->
 ## 副次 DB 書込み (Phase F)
 
