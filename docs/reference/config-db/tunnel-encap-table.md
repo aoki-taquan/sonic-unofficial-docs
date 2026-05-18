@@ -188,6 +188,46 @@ GRE tunnel は warm-reboot 後に P4RT controller が APPL_DB に再書き込み
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`GreTunnelManager` (`gre_tunnel_manager.cpp`) は失敗を即時 P4RT gRPC レスポンスに返す。自動リトライ機構はなく、失敗エントリは `Consumer::m_toSync` に残留しない。
+
+### SET 失敗マトリクス
+
+| 失敗条件 | 検出箇所 | エラーコード | evidence |
+|---------|---------|-------------|----------|
+| JSON キー (`match/tunnel_id`) パース失敗 | `deserializeP4GreTunnelAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `gre_tunnel_manager.cpp:336` |
+| `param/encap_src_ip` / `param/encap_dst_ip` 不正 IP | `deserializeP4GreTunnelAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `gre_tunnel_manager.cpp:355-369` |
+| 未知フィールド (`controller_metadata` を除く) | `deserializeP4GreTunnelAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `gre_tunnel_manager.cpp:377-379` |
+| `action` が `mark_for_p2p_tunnel_encap` 以外 | `validateGreTunnelAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `gre_tunnel_manager.cpp:83-87` |
+| `param/router_interface_id` 欠如 | `validateGreTunnelAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `gre_tunnel_manager.cpp:88-92` |
+| `param/encap_src_ip` / `param/encap_dst_ip` がゼロ IP | `validateGreTunnelAppDbEntry()` | `SWSS_RC_INVALID_PARAM` | `gre_tunnel_manager.cpp:93-102` |
+| `router_interface_id` が P4OidMapper に未登録 | `validateGreTunnelAppDbEntry()` SET 分岐 | `SWSS_RC_NOT_FOUND` | `gre_tunnel_manager.cpp:129-135` |
+| Neighbor (`router_interface_id` + `encap_dst_ip`) が未登録 | `validateGreTunnelAppDbEntry()` SET 分岐 | `SWSS_RC_NOT_FOUND` | `gre_tunnel_manager.cpp:139-149` |
+| 既存エントリへの SET (UPDATE) | drain ループ | `SWSS_RC_UNIMPLEMENTED` | `gre_tunnel_manager.cpp:279-281` |
+| バッチ内先行エントリ失敗による後続キャンセル | drain ループ | `SWSS_RC_NOT_EXECUTED` | `gre_tunnel_manager.cpp:269-275` |
+| `sai_tunnel_api->create_tunnels()` SAI 失敗 | `createGreTunnels()` | SAI status ラップ | `gre_tunnel_manager.cpp:461-465` |
+
+### DEL 失敗マトリクス
+
+| 失敗条件 | 検出箇所 | エラーコード | evidence |
+|---------|---------|-------------|----------|
+| 対象トンネルが未登録 | `validateGreTunnelAppDbEntry()` DEL 分岐 | `SWSS_RC_NOT_FOUND` | `gre_tunnel_manager.cpp:153-158` |
+| `ref_count > 0`（nexthop 等が参照中） | `validateGreTunnelAppDbEntry()` DEL 分岐 | `SWSS_RC_INVALID_PARAM` | `gre_tunnel_manager.cpp:168-172` |
+| `sai_tunnel_api->remove_tunnels()` SAI 失敗 | `removeGreTunnels()` | SAI status ラップ | `gre_tunnel_manager.cpp:518-522` |
+
+### Bulk SAI エラー伝搬
+
+`createGreTunnels()` / `removeGreTunnels()` は `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` で動作する。バッチ内で 1 件が SAI レベルで失敗すると**後続エントリがすべてキャンセル**される (`gre_tunnel_manager.cpp:429-432`, `491-493`)。
+
+!!! warning "自動リトライなし"
+    P4Orch は失敗エントリを `Consumer::m_toSync` に残さない。P4RT controller 側で再試行を実装する必要がある。RIF / Neighbor が未登録の状態でエントリを書いた場合は、依存先を作成した後に controller が GRE tunnel を再 SET しなければならない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-failure.md`
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
