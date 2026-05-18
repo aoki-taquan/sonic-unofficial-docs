@@ -396,4 +396,60 @@ journalctl -u swss | grep -i "inband"
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / ConsumerStateTable) (Phase G)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgrd.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
+> 調査日: 2026-05-18
+
+### 購読方式
+
+`VOQ_INBAND_INTERFACE` テーブルの変更通知は **Redis PUBLISH/SUBSCRIBE** を使った `swss::ConsumerStateTable` で伝達される。`intfmgrd` は `Orch(cfgDb, tableNames)` コンストラクタ経由で `CFG_VOQ_INBAND_INTERFACE_TABLE_NAME` を購読テーブルリストに登録する (`intfmgrd.cpp:34`)。
+
+### ProducerStateTable → ConsumerStateTable フロー
+
+```text
+CLI / minigraph.py
+  └─ CONFIG_DB HSET VOQ_INBAND_INTERFACE|Ethernet-IB0 inband_type port
+       └─ ConsumerStateTable (CFG_VOQ_INBAND_INTERFACE_TABLE_NAME_CHANNEL@<cfgDbId>)
+            └─ SADD キーセット "Ethernet-IB0"
+            └─ HSET _VOQ_INBAND_INTERFACE|Ethernet-IB0 <fields>
+            └─ PUBLISH CFG_VOQ_INBAND_INTERFACE_TABLE_NAME_CHANNEL@<cfgDbId> "G"
+
+intfmgrd (swss::Select, timeout=1000ms)
+  └─ ConsumerStateTable::pops()  (Orch::doTask(Consumer&) へ dispatch)
+       └─ doTask(consumer) → table_name == CFG_VOQ_INBAND_INTERFACE_TABLE_NAME
+
+単一キー SET パス (keys.size() == 1, op == SET_COMMAND):
+  └─ m_appIntfTableProducer.set(keys[0], data)   ← APPL_DB APP_INTF_TABLE に ProducerStateTable 経由で書込み
+  └─ m_stateIntfTable.hset(keys[0], "vrf", "")   ← STATE_DB INTERFACE_TABLE に直接 hset
+
+IP プレフィクスロウ SET パス (keys.size() == 2):
+  └─ doIntfAddrTask() → isIntfStateOk() + isIntfCreated() を確認
+  └─ m_appIntfTableProducer.set(<name>:<ip-prefix>, {scope, family})
+  └─ m_stateIntfTable.hset(<name>|<ip-prefix>, "state", "ok")
+```
+
+### チャンネル / キー名
+
+| 名前 | 値 |
+|------|----|
+| intfmgrd 受信チャンネル | `CFG_VOQ_INBAND_INTERFACE_TABLE_NAME_CHANNEL@<cfgDbId>` |
+| orchagent 受信チャンネル | `APP_INTF_TABLE_CHANNEL@<appDbId>` (ProducerStateTable 経由) |
+| PUBLISH ペイロード | `"G"` (固定) |
+| 一時ステートハッシュ (cfgDb 側) | `_VOQ_INBAND_INTERFACE|<key>` |
+
+### Select ループと retry
+
+- タイムアウト `1000` ms (`SELECT_TIMEOUT`, `intfmgrd.cpp:17`)
+- TIMEOUT 時は `intfmgr.doTask()` を呼び、`m_toSync` に残留している保留タスクを再試行
+- IP プレフィクスロウが `isIntfCreated()` = false のとき `it++`（スキップ）で silent retry
+
+### STATE_DB への通知（逆方向）
+
+- `intfmgrd` は `SubscriberStateTable(stateDb, STATE_PORT_TABLE_NAME)` および `SubscriberStateTable(stateDb, STATE_LAG_TABLE_NAME)` を登録 (`intfmgr.cpp:45-53`)。
+- STATE_DB `PORT_TABLE` に `state=ok` が書かれると `intfmgrd` の `doPortTableTask()` が呼ばれ、pending の interface タスクを再実行するトリガーになる。
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
