@@ -371,6 +371,56 @@ PORT_STORM_CONTROL テーブル
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/storm-control-failure.md -->
+<!-- source: sonic-swss/orchagent/policerorch.cpp -->
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | `task_` 戻り値 | 再試行 | SAI 影響 |
+|---|------------|--------------|--------|---------|
+| 1 | `kbps` フィールド欠如 | `task_failed` | なし | SAI 変更なし |
+| 2 | 不明 `storm_type` (SET / DEL 共通) | `task_failed` | なし | SAI 変更なし |
+| 3 | `sai_policer_api->create_policer()` SAI エラー | `task_need_retry` | あり | SAI 変更なし |
+| 4 | `sai_port_api->set_port_attribute()` アタッチ失敗 | `task_need_retry` | あり | 孤立 policer リーク可能性 |
+| 5 | DEL: `m_syncdPolicers` に policer 未登録 | `task_success` | なし | SAI 変更なし |
+| 6 | DEL: `set_port_attribute` NULL デタッチ失敗 | `task_need_retry` | あり | SAI デタッチ失敗 |
+| 7 | DEL: `sai_policer_api->remove_policer()` 失敗 | `task_need_retry` | あり | SAI 孤立 policer 残存 |
+
+### 詳細
+
+#### 1 & 2. kbps 欠如 / 不明 storm_type → `task_failed` (リトライなし)
+
+`policerorch.cpp:194-200, 217-220, 337-340` が `task_failed` を返す。`doTask()` は `task_failed` を `task_success` と同様に `consumer.m_toSync.erase(it)` で処理するため (`policerorch.cpp:398-401`)、エントリは破棄されリトライしない。syslog `ERROR` のみが出力される。
+
+有効な `storm_type` は YANG の enum が `"broadcast"` / `"unknown-unicast"` / `"unknown-multicast"` のみを許可する。ただし orchagent は YANG バリデーションを経由しないため、直接 CONFIG_DB に書き込んだ場合はこの check が実装側で行われる。
+
+#### 3. `create_policer` SAI 失敗 → `task_need_retry`
+
+`policerorch.cpp:226-236`: SAI が失敗した場合 `handleSaiCreateStatus()` が判定し、`task_need_retry` を返す。次回 `doTask()` 呼び出しで `m_toSync` から再処理される。`m_syncdPolicers` への登録は `create_policer` 成功後に行われるため (`policerorch.cpp:239`)、失敗時のキャッシュ汚染はない。
+
+#### 4. `set_port_attribute` アタッチ失敗 → 孤立 policer リスク
+
+`policerorch.cpp:291-312`: ポートへの policer アタッチが SAI で失敗した際、orchagent は作成済み policer の `remove_policer` を試みる。この `remove_policer` が**さらに失敗**した場合、syslog ERROR のみで続行する（`TODO: Just doing a syslog.` コメント残存）。
+
+- `m_syncdPolicers` / `m_policerRefCounts` は `erase` されるが SAI 側に孤立 policer が残る可能性がある
+- 最終的に `task_need_retry` を返すため次回に再試行されるが、キャッシュがクリアされているため次回は「新規 create」扱いとなり重複 policer が作成されるリスクがある
+
+#### 5. DEL: policer 未登録 → `task_success` (冪等)
+
+`policerorch.cpp:317-320`: `m_syncdPolicers` に該当 policer が存在しない場合、`task_success` で erase。syslog `ERROR` は出力されるがリトライしない。存在しない storm control の DEL は冪等に扱われる。
+
+#### 6 & 7. DEL: SAI remove 失敗 → `task_need_retry`
+
+DEL パスでは `set_port_attribute(NULL)` でデタッチ後、`remove_policer` でオブジェクトを削除する。いずれかが SAI エラーで `task_need_retry` を返した場合は次回リトライする。最終的に `handleSaiRemoveStatus` が `task_success` を返すと `m_syncdPolicers.erase()` が呼ばれるが、SAI 側で実際に削除できていない場合は孤立 policer が残存する。
+
+!!! warning "孤立 policer リーク"
+    `set_port_attribute` によるポートアタッチ / デタッチ失敗 + 後続 `remove_policer` の二重失敗が重なった場合、SAI 側に孤立した policer オブジェクトが残存する可能性がある。この状態は再起動するまで解消されない。`policerorch.cpp:297-304` の `TODO` コメントが未解決のまま残っている。
+
+<!-- /failure -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
