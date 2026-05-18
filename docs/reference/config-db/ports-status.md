@@ -210,6 +210,27 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B — コード由来)
+
+`portsyncd/linksync` と `PortsOrch` が STATE_DB `PORT_TABLE` に書き込む際の順序依存・タイミング依存をコード精読で検出した。詳細スキャンノート: [`meta/_intermediate/cdb-flow/ports-status-ordering.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ports-status-ordering.md)。
+
+| # | 依存関係 | 方向 | 緩和策 / 備考 |
+|---|----------|------|--------------|
+| 1 | `portsyncd` PortInitDone publish → `PortsOrch` 書込み開始 | **強制先行** | `PortsOrch::doPortTask()` は `m_initDone=false` の間すべての設定処理をスキップ。`portsorch.cpp:4613-4622` |
+| 2 | `linksync` RTM_NEWLINK → `state="ok"` 書込み → portmgrd / teammgrd / intfmgrd アンロック | **強制先行** | 各デーモンの `isPortStateOk()` が `state` フィールドの存在を確認してから netdev 操作・IP 設定・LAG メンバー追加を実行。`portmgr.cpp:86-100`, `teammgr.cpp:67-80`, `intfmgr.cpp:686-695` |
+| 3 | SAI `create_port` 成功 → `supported_speeds` / `host_tx_ready` 書込み | **強制先行** | `initPortSupportedSpeeds()` と `initHostTxReadyState()` はポート作成直後に 1 回だけ呼ばれる。SAI 失敗時は書込み自体が発生しない。`portsorch.cpp:3090`, `portsorch.cpp:2181-2207` |
+| 4 | `gBufferOrch::isPortReady()` が true → `allPortsReady()` = true | **強制先行** | バッファプロファイル未適用ポートは `m_pendingPortSet` に留まり `allPortsReady()` が false を返し続けるため、VLAN / LAG タスクも待機する。`portsorch.cpp:4779-4788` |
+| 5 | warm start: PortConfigDone **かつ** PortInitDone 双方存在 → 既存データ再読込 | 原子条件 | 一方でも欠けると `cleanPortTable()` で APP_DB を全削除して cold start にフォールバックする。`portsorch.cpp:4357` |
+
+### 主要な制約詳細
+
+**`state="ok"` が書かれるまでの中間状態 (依存 #2)**: `portsyncd` が `PortInitDone` を publish しても、linksync の RTM_NEWLINK 受信と `state="ok"` の書込みは非同期で進む。PortsOrch が `PortInitDone` を受信して処理を開始した時点では、個別ポートの STATE_DB エントリがまだ存在しない場合がある。portmgrd は `isPortStateOk()` が false の間イベントをスキップし次周回で自動再試行するため、この中間状態はユーザーが意識する必要はないが、ログに `Port Ethernet0 is not ready` が一時的に現れることがある。
+
+**`supported_speeds` の 1 回限り書込み (依存 #3)**: `initPortSupportedSpeeds()` はキャッシュマップ `m_portSupportedSpeeds` を確認し、エントリが存在する場合は SAI を再クエリせず早期 return する（`portsorch.cpp:3161-3163`）。トランシーバ換装後も orchagent 再起動まで STATE_DB の `supported_speeds` が更新されない理由がここにある。
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
