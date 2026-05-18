@@ -251,4 +251,77 @@ YANG に `default` 節が存在しないため、フィールド未設定時の�
 fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用がある。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 順序依存 (Phase B)
+
+### CONFIG_DB 読み取りタイミング
+
+`WARM_RESTART` テーブルの値はすべて**各プロセスの起動時一回読み**であり、`SubscriberStateTable` による動的購読は行わない。`WarmStart::initialize()` → `WarmStart::checkWarmStart()` → `WarmStart::getWarmStartTimer()` の順序で同期的に実行される。
+
+```
+プロセス起動
+  ├─ WarmStart::initialize(app_name, docker_name)
+  │    CONFIG_DB コネクタ生成 + CFG_WARM_RESTART_TABLE_NAME テーブル接続
+  │    warm_restart.cpp L35-62
+  ├─ WarmStart::checkWarmStart(app_name, docker_name)
+  │    STATE_DB WARM_RESTART_ENABLE_TABLE["system"]["enable"] 確認
+  │    STATE_DB WARM_RESTART_ENABLE_TABLE[docker_name]["enable"] 確認
+  │    STATE_DB WARM_RESTART_TABLE[app_name]["restore_count"] 確認
+  │    warm_restart.cpp L86-147
+  └─ WarmStart::getWarmStartTimer(app_name, docker_name)   ← warm start のときのみ
+       CONFIG_DB WARM_RESTART[docker_name][app_name+"_timer"] 読み取り
+       warm_restart.cpp L149-172
+```
+
+### モジュール別 CONFIG_DB 読み取り順序
+
+`WARM_RESTART` テーブルの `<app>_timer` フィールドは各プロセスが個別に読み取る。呼び出し元と参照フィールドの対応:
+
+| プロセス | docker_name | 参照フィールド | evidence |
+|---------|-------------|--------------|---------|
+| `orchagent` | `swss` | ─ (timer は参照しない) | `sonic-swss/orchagent/main.cpp:433-434` |
+| `teamsyncd` | `teamd` | `teamsyncd_timer` | `sonic-swss/teamsyncd/teamsync.cpp:32-39` |
+| `fpmsyncd` | `bgp` | `eoiu_hold_timer` (bgp_eoiu_marker からは bgp_timer) | `sonic-swss/fpmsyncd/fpmsyncd.cpp:226` |
+| `fdbsyncd` | `bgp` | `bgp_timer` (LAG reconcile 待ち参照) | `sonic-swss/fdbsyncd/fdbsyncd.cpp:115` |
+| `portsyncd` | `swss` | ─ | `sonic-swss/portsyncd/portsyncd.cpp:80-81` |
+| `vlanmgrd` | `swss` | ─ | `sonic-swss/cfgmgr/vlanmgrd.cpp:48-49` |
+| `intfmgrd` | `swss` | ─ | `sonic-swss/cfgmgr/intfmgrd.cpp:41-42` |
+| `nbrmgrd` | `swss` | ─ | `sonic-swss/cfgmgr/nbrmgrd.cpp:42-43` |
+| `buffermgrd` | `swss` | ─ | `sonic-swss/cfgmgr/buffermgrd.cpp:169-170` |
+
+`getWarmStartTimer()` は `warm start` が有効な場合のみ呼ばれる。有効でない場合は `checkWarmStart()` が `false` を返した時点でタイマー読み取りをスキップする。
+
+### orchagent warm start 内部実行順序
+
+`WarmStart::isWarmStart()` が `true` の場合、`OrchDaemon::init()` の末尾で `warmRestoreAndSyncUp()` が実行される。内部順序 (`orchdaemon.cpp L1092-1170`):
+
+```
+1. WarmStart::setWarmStartState("orchagent", INITIALIZED)
+2. 全 Orch に対して o->bake()       ← APP_DB/CONFIG_DB の既存データをキャッシュ
+3. gMuxOrch->enableCachingNeighborUpdate()
+4. 全 Orch に対して o->doTask() × 3 回イテレーション
+   第1回: SwitchOrch + PortsOrch (port init/hostif) + BufferOrch
+   第2回: port speed/mtu/fec_mode 等 + 残 Orch
+   第3回: 順序外れデータの消化
+5. gMuxOrch->updateCachedNeighbors() / disableCachingNeighborUpdate()
+6. gMirrorOrch->doTask() + gAclOrch->doTask()   ← 最後に実行（他 Orch に依存するため）
+7. warmRestoreValidation()   → 未処理タスクがあれば NOTICE ログ
+8. syncd_apply_view()
+9. 全 Orch に対して o->onWarmBootEnd()
+10. WarmStart::setWarmStartState("orchagent", RECONCILED)
+```
+
+> **ポイント**: `gMirrorOrch` は他 Orch がすべて処理を終えた後に初めて doTask() される (`orchdaemon.cpp:1140-1145`)。warm start 中に MirrorOrch を早期実行すると、依存する route/neighbor が未確立のまま ACL ルールが適用される危険があるため。
+
+### STATE_DB 経由の enable フラグ依存
+
+`checkWarmStart()` が参照する `STATE_DB WARM_RESTART_ENABLE_TABLE` は `CONFIG_DB WARM_RESTART` テーブルとは別の DB。enable フラグ (`config warm_restart enable system/bgp/teamd/swss`) は CONFIG_DB でなく **STATE_DB** に書き込まれる。そのため:
+
+1. `STATE_DB` が先に起動していること（`redis-server` と `sonic-db-daemon` の起動完了）が前提
+2. `CONFIG_DB` の `WARM_RESTART` テーブル (`bgp_timer` 等タイマー値) は STATE_DB の enable フラグが true になった後に初めて意味を持つ
+3. タイマー値を変更しても、enable フラグが false であれば `getWarmStartTimer()` は呼ばれずコールドスタートになる
+
+<!-- evidence: warm_restart.cpp L86-95 (checkWarmStart), L149-172 (getWarmStartTimer), orchdaemon.cpp L1099-1170 (warmRestoreAndSyncUp) -->
+<!-- /ordering -->
+
 <!-- glossary-links-injected: ddc022697593 -->
