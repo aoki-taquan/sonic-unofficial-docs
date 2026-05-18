@@ -105,6 +105,28 @@ db_hmset(ConfigDB, "HARDWARE|ACCESS_LIST", {
 - 関連 CLI: なし（コマンドは確認されていない）
 - 関連 YANG: なし（YANG 未定義）
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+community sonic-swss/orchagent は `HARDWARE` テーブルを**購読しない**（dead consumer）。
+`orchagent/`・`cfgmgr/`・`fpmsyncd/` 全体で `COUNTER_MODE` / `LOOKUP_MODE` / `TCAM_SHARING` / `ACCESS_LIST` の参照は 0 件であり、書込み順依存は community コードパスでは発生しない。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `HARDWARE\|ACCESS_LIST` 書込み → AclOrch への反映 | **依存なし（dead consumer）** | community orchagent は無視。SAI / ASIC への影響なし |
+| 2 | `HARDWARE_TABLE\|ACCESS_LIST`（アンダースコア版）書込み | **依存なし** | こちらも community では未消費。testdata でのみ観測 |
+| 3 | `ACL_TABLE` / `ACL_RULE` との書込み前後関係 | **無関係** | `HARDWARE\|ACCESS_LIST` は `AclOrch` に到達しないため前後依存は存在しない |
+
+!!! note "ベンダー実装（Dell translib 等）での順序依存"
+    Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` transformer 層）では
+    `HARDWARE|ACCESS_LIST` を READ/WRITE するとされる。当該コードは community リポジトリ外のため
+    書込み順序の詳細は本ページの対象外。
+
+詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-ordering.md`
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
