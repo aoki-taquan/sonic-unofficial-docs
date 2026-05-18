@@ -552,6 +552,73 @@ orchagent が STATE_DB へ書き込む 5 テーブルのテーブル名・フィ
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/orchagent-state-side.md`
+> ソース: `sonic-swss/orchagent/portsorch.cpp`, `fdborch.cpp`
+
+本ページが扱う STATE_DB 5 テーブル（`WARM_RESTART_TABLE` / `PORT_TABLE` / `FDB_TABLE` / `VRF_OBJECT_TABLE` / `FIPS_MACSEC_POST_TABLE`）の書込み主体のうち、**`portsorch`** と **`fdborch`** は STATE_DB 以外の DB にも副次的な書込みを行う。`vrforch` / `macsecpost` に副次 DB 書込みはない。
+
+### APPL_DB (APP_PORT_TABLE)
+
+`portsorch` は SAI ポート状態変化ノーティフィケーション受信時に、STATE_DB `PORT_TABLE` と**同時に** APPL_DB `APP_PORT_TABLE` へも書き込む。
+
+| フィールド | 書込み値 | トリガ | evidence |
+|-----------|---------|--------|----------|
+| `oper_status` | `"up"` / `"down"` | SAI ポート状態変化 (`doPortStatusTask()`) | `portsorch.cpp:3930`, `6643` |
+| `flap_count` | インクリメント後の整数文字列 | ポートフラップ検出 (`updateDbPortFlapCount()`) | `portsorch.cpp:3890`, `6656` |
+| `last_up_time` | UTC 時刻文字列 | ポートが UP 遷移したとき | `portsorch.cpp:3890` |
+| `last_down_time` | UTC 時刻文字列 | ポートが DOWN 遷移したとき | `portsorch.cpp:3890` |
+| `system_oper_status` / `line_oper_status` | `"up"` / `"down"` | Gearbox ポートのシステム/ラインサイド状態変化 | `portsorch.cpp:11244, 11259` (`updateGearboxPortOperStatus()`) |
+
+ポート削除時は `m_portTable->del(key)` でエントリを削除する (`portsorch.cpp:4403`)。
+
+### COUNTERS_DB
+
+`portsorch` はポート / LAG / Queue / PG 追加・削除時に COUNTERS_DB 内の OID マップを更新する。
+
+| COUNTERS_DB テーブル | 操作 | タイミング |
+|---------------------|------|-----------|
+| `COUNTERS_PORT_NAME_MAP` | `alias → port_id` 登録 / 削除 | ポート追加 (L4118) / 削除 (L4312) |
+| `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | `serdes_id → port_id` 登録 | ポート追加時 (L4140-4143) |
+| `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_QUEUE_PORT_MAP` / `COUNTERS_QUEUE_INDEX_MAP` / `COUNTERS_QUEUE_TYPE_MAP` | Queue OID マップ | Queue 初期化時 |
+| `COUNTERS_PG_NAME_MAP` / `COUNTERS_PG_PORT_MAP` / `COUNTERS_PG_INDEX_MAP` | PG OID マップ | PG 初期化時 |
+| `COUNTERS_LAG_NAME_MAP` | LAG OID マップ | LAG 追加 / 削除時 |
+
+### FLEX_COUNTER_DB
+
+`portsorch` は `FlexCounterManager` 経由でポート・Queue・PG の統計カウンタ登録/解除を行う。
+
+| FlexCounter グループ | 対象 | 操作 | タイミング |
+|---------------------|------|------|-----------|
+| `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` | ポート SAI OID | `setCounterIdList` / `clearCounterIdList` | ポート追加 (L4147) / 削除 (L3954) |
+| `PORT_PHY_ATTR_FLEX_COUNTER_GROUP` | ポート物理属性 | `setCounterIdList` / `clearCounterIdList` | PHY 属性サポート確認後 (L4165) |
+| `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP` | バッファドロップ統計 | `setCounterIdList` / `clearCounterIdList` | FlexCounter 有効時 (L4189) |
+| `WRED_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` | WRED ポート統計 | `setCounterIdList` / `clearCounterIdList` | FlexCounter 有効時 (L4195) |
+| `QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | Queue 統計 | `setCounterIdList` / `clearCounterIdList` | Queue 初期化時 (L8614) |
+| `PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP` | PG ドロップ統計 | `setCounterIdList` / `clearCounterIdList` | PG 初期化時 (L8995) |
+| `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | PG watermark | `setCounterIdList` / `clearCounterIdList` | PG 初期化時 (L9051) |
+
+### STATE_DB MCLAG_REMOTE_FDB_TABLE (fdborch)
+
+`fdborch` は MCLAG remote MAC → local MAC 移動時に、本ページ対象外の STATE_DB テーブル `MCLAG_REMOTE_FDB_TABLE` に対して `del` を実行する。
+
+| 操作 | 条件 | evidence |
+|------|------|----------|
+| `m_mclagFdbStateTable.del(key)` | MCLAG remote FDB エントリが local に移動したとき | `fdborch.cpp:129, 163, 877, 904` |
+
+`MCLAG_REMOTE_FDB_TABLE` は `mclagsyncd` が書込み主体であり、`fdborch` は MAC 移動検知時のクリーンアップ専用で del のみを行う。
+
+### sonic events (event_publish)
+
+`portsorch` はインタフェース UP/DOWN 変化時に `event_publish(g_events_handle, "if-state", &params)` でイベントを発行する (`portsorch.cpp:3798, 7101`)。これは Redis DB への直接書込みではなく `sonic-events` フレームワーク経由の pub/sub イベント送出であり、DB テーブルは変化しない。
+
+!!! note "STATE_DB PORT_TABLE と APPL_DB APP_PORT_TABLE の二重書込み"
+    `portsorch` は `oper_status` / `flap_count` 等を STATE_DB `PORT_TABLE` と APPL_DB `APP_PORT_TABLE` の**両方**に書き込む。`portmgrd` や `intfmgrd` がこれらを参照して CONFIG_DB の設定を適用する。
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `sonic-swss-common/common/warm_restart.cpp` (L9-17 warmStartStateNameMap, L109-137 checkWarmStart, L223-234 setWarmStartState, L237-254 setDataCheckState). <https://github.com/sonic-net/sonic-swss-common/blob/master/common/warm_restart.cpp>
