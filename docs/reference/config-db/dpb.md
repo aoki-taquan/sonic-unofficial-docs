@@ -148,6 +148,43 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-ordering.md -->
+
+`BREAKOUT_CFG` テーブルは `config interface breakout` CLI → `ConfigMgmtDPB.breakOutPort()` の多段シーケンスによって書き込まれる。各ステップに厳密な先行条件が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `BREAKOUT_CFG` エントリ存在 → breakout コマンド実行 | **先行必須** | 起動時 `sonic-cfggen` が自動生成。手動投入時は `BREAKOUT_CFG` を先に書く |
+| 2 | 依存テーブル（VLAN_MEMBER / ACL / BUFFER 等）DEL → ポート shutdown → CONFIG_DB 削除 | **強制順序** (`ConfigMgmtDPB`) | `--force-remove-dependencies` で自動処理。手動時は依存テーブルを先に DEL |
+| 3 | ASIC_DB ポート削除確認 → 新ポート CONFIG_DB 追加 | **強制先行**（最大 60 秒待機） | タイムアウト時は処理中断。syncd / orchagent の応答性に依存 |
+| 4 | `CABLE_LENGTH` / `BUFFER_PG` / `BUFFER_QUEUE` DEL → `PORT` DEL | 推奨先行（YANG 依存チェック） | `--force` で自動削除。なければ YANG バリデーションエラー |
+| 5 | PORT 再構成 + ASIC_DB 確認 → `BREAKOUT_CFG.brkout_mode` 更新 | **強制後続**（成功時のみ更新） | 失敗時は旧モード保持のまま。再実行可能 |
+
+### 主要制約詳細
+
+**BREAKOUT_CFG 先行必須（依存 #1）**: `breakout()` (main.py:5479) は実行直後に `config_db.get_table('BREAKOUT_CFG')` を呼んでテーブルの存在を確認する。空の場合は即 Abort（`[ERROR] BREAKOUT_CFG table is NOT present in CONFIG DB`）。`BREAKOUT_CFG` エントリは通常 `sonic-cfggen` が起動時に `hwsku.json` の `default_brkout_mode` から自動生成するため、通常運用では問題にならないが、手動 DB 操作や環境初期化直後は注意が必要（evidence: `main.py:5479-5486`）。
+
+**ConfigMgmtDPB 内部シーケンス（依存 #2, #3）**: `breakOutPort()` (config_mgmt.py:450-460) は以下の厳密なシーケンスで実行される:
+
+```
+1. _deletePorts()    — Yang ツリーで依存テーブル検出・削除（メモリ操作のみ）
+2. _shutdownIntf()   — PORT を admin_status=down に設定（CONFIG_DB 書込み）
+3. writeConfigDB()   — 依存+ポートを CONFIG_DB から一括削除
+4. _verifyAsicDB()   — ASIC_DB でポート消滅を確認（最大 60 秒ポーリング）
+5. writeConfigDB()   — 新ポートを CONFIG_DB に追加
+```
+
+ステップ 4 は syncd/orchagent が SAI 経由でポートを ASIC から削除し ASIC_DB を更新するまでブロックする。タイムアウト（60 秒）すると例外を投げて新ポート追加は行われない（evidence: `config_mgmt.py:377-412,450-460`）。
+
+**BREAKOUT_CFG 更新は最後（依存 #5）**: `breakout()` (main.py:5548-5554) は `breakout_Ports()` が成功した後にのみ `BREAKOUT_CFG.brkout_mode` を新モードに更新する。途中失敗時は旧モードが残り、次回コマンド実行の起点となる。
+
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
