@@ -304,6 +304,50 @@ RIF が `m_rifsToAdd` にキューイング後、タイマーループ（`intfso
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-ordering.md`
+
+`portsorch` / `intfsorch` が COUNTERS_DB に書き込む際に使用する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### FlexCounter グループパラメータ (RIF カウンタ)
+
+| 定数名 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"RIF_STAT_COUNTER"` | FlexCounter グループ名。`FLEX_COUNTER_DB` のキーに使用 | `intfsorch.h:19` |
+| `RIF_FLEX_STAT_COUNTER_POLL_MSECS` | `"1000"` ms | RIF カウンタのポーリング間隔デフォルト値（1 秒）。CONFIG_DB `FLEX_COUNTER_TABLE|RIF` の `POLL_INTERVAL` で上書き可能 | `intfsorch.h:21` |
+| `STATS_MODE_READ` | `"STATS_MODE_READ"` | カウンタ収集モード。RIF はリードオンリー（クリアなし）で固定 | `intfsorch.cpp:98`, `swss-common/schema.h:323` |
+| `RIF_COUNTER_ID_LIST` | `"RIF_COUNTER_ID_LIST"` | FlexCounter に登録する際のフィールドキー名 | `swss-common/schema.h:302` |
+
+### `rifStatIds` — FlexCounter に登録する SAI 統計 ID
+
+`intfsorch.cpp:49-58` に `static const vector<sai_router_interface_stat_t>` としてハードコードされた 8 統計。CONFIG_DB / YANG での変更は不可。
+
+| 位置 | 統計 ID |
+|---|---|
+| `[0]` | `SAI_ROUTER_INTERFACE_STAT_IN_PACKETS` |
+| `[1]` | `SAI_ROUTER_INTERFACE_STAT_IN_OCTETS` |
+| `[2]` | `SAI_ROUTER_INTERFACE_STAT_IN_ERROR_PACKETS` |
+| `[3]` | `SAI_ROUTER_INTERFACE_STAT_IN_ERROR_OCTETS` |
+| `[4]` | `SAI_ROUTER_INTERFACE_STAT_OUT_PACKETS` |
+| `[5]` | `SAI_ROUTER_INTERFACE_STAT_OUT_OCTETS` |
+| `[6]` | `SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS` |
+| `[7]` | `SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS` |
+
+### `rif_rates.lua` — RATES テーブル計算の埋め込み定数
+
+| 定数 | 用途 | ソース |
+|---|---|---|
+| `"RIF_ALPHA"` キー | EWMA 平滑化係数。`RATES:RIF:RIF_ALPHA` を `HGET` して取得。未設定（nil）時は Lua スクリプトが即 return → RATES フィールドが永遠に書かれない | `rif_rates.lua:20-22` |
+| `"INIT_DONE"` / `"COUNTERS_LAST"` / `"DONE"` | RATES 計算の初期化状態フラグ。初回 poll は `"COUNTERS_LAST"` を書いてスキップし、2 回目以降から差分計算を実施 | `rif_rates.lua:31,44,79,82` |
+| `"RX_BPS"`, `"TX_BPS"`, `"RX_PPS"`, `"TX_PPS"` | `RATES:<rif_oid>` に書き込むフィールド名（固定文字列） | `rif_rates.lua:69-72` |
+
+!!! warning "RIF_ALPHA 未設定時の永続 N/A"
+    `RATES:RIF:RIF_ALPHA` が設定されていない場合、`rif_rates.lua` は `alpha` を `nil` として EWMA を計算できず即 return する。その結果、`RATES:<rif_oid>` の `RX_BPS` 等は**再起動しても N/A のまま**となる。`intfstat` コマンドが BPS/PPS を表示しない場合は `sonic-db-cli COUNTERS_DB hget RATES:RIF RIF_ALPHA` で確認すること。
+
+<!-- /constants -->
+
 ## 運用ヒント
 
 ```bash
