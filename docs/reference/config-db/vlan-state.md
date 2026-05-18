@@ -305,6 +305,52 @@ vlanmgrd doVlanTask()
 ```
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## PUBSUB / Keyspace 通知メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vlan-state-pubsub.md -->
+<!-- source: sonic-swss/cfgmgr/vlanmgr.h; sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d); sonic-swss/cfgmgr/intfmgr.cpp -->
+
+### 書き込みメカニズム: swss::Table（直接書き込み）
+
+`STATE_DB VLAN_TABLE` への書き込みは `swss::Table` を通じた直接 Redis HSET であり、`ProducerStateTable` は使用しない (vlanmgr.h:26)。
+
+```cpp
+// vlanmgr.h:26
+Table m_stateVlanTable, m_stateVlanMemberTable;
+```
+
+| 操作 | Redis コマンド | チャンネル通知 |
+|------|-------------|--------------|
+| SET (VLAN 作成完了) | `HSET STATE_DB VLAN_TABLE\|VlanN state ok` | なし（PUBLISH 発生しない） |
+| DEL (VLAN 削除) | `DEL STATE_DB VLAN_TABLE\|VlanN` | なし |
+
+`ProducerStateTable` 方式（EVALSHA + PUBLISH）を使わないため、`VLAN_TABLE_CHANNEL@6` のような swss チャンネルは存在しない。Redis の keyspace notification (`__keyspace@6__:VLAN_TABLE|*`) は生成されうるが、swss の標準デーモンはこれを購読していない。
+
+### 読み取りメカニズム: Table::get() によるポーリング
+
+各 consumer は `swss::Table m_stateVlanTable(stateDb, STATE_VLAN_TABLE_NAME)` をコンストラクタで保持し、タスク処理ループ (`doTask()`) 内で `Table::get()` を呼んで readiness を確認する。`SubscriberStateTable` や `ConsumerStateTable` は使用しない。
+
+| consumer | 確認メソッド | 呼び出し箇所 |
+|---------|------------|------------|
+| `vlanmgrd`（VLAN_MEMBER 処理） | `isVlanStateOk()` → `m_stateVlanTable.get()` | `vlanmgr.cpp:523, 642` |
+| `intfmgrd` | `isIntfStateOk()` → `m_stateVlanTable.get()` | `intfmgr.cpp:655` |
+| `stpmgrd` | `isVlanStateOk()` → `m_stateVlanTable.get()` | `stpmgr.cpp:1282` |
+| `natmgrd` | `isPortStateOk()` → `m_stateVlanTable.get()` | `natmgr.cpp:102` |
+| `vxlanmgrd` | `isVlanStateOk()` → `m_stateVlanTable.get()` | `vxlanmgr.cpp:774` |
+
+poll のタイミングは、各 consumer が自身の（CONFIG_DB 等の）イベントを受信して `doTask()` を実行した際に限られる。`VLAN_TABLE` の変化を外部から通知するメカニズムは存在しないため、VLAN 作成完了後に consumer の次回タスク処理が走るまで readiness ガードは更新されない。
+
+### intfmgrd の SubscriberStateTable は PORT / LAG のみ
+
+`intfmgr.cpp:45-55` で `SubscriberStateTable` を登録しているのは `STATE_PORT_TABLE_NAME` および `STATE_LAG_TABLE_NAME` のみ。`STATE_VLAN_TABLE_NAME` の `SubscriberStateTable` は存在せず、VLAN readiness は `doVlanIntfTask()` 内で直接ポーリングされる。
+
+### 使用していない方式
+
+`NotificationConsumer` / TTL / keyspace expire 通知はいずれも使用しない。
+
+<!-- /pubsub -->
+
 ## 読み取り主体
 
 | プロセス | ファイル | 用途 |
