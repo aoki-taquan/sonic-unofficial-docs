@@ -692,6 +692,48 @@ consumer 側 (on-demand polling)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/orchagent-state-platform.md`
+
+### WARM_RESTART_TABLE — プラットフォーム差なし
+
+`WarmStart` は `sonic-swss-common/common/warm_restart.cpp` に実装されており、ASIC 種別・`switch_type`・multi-asic 構成に一切依存しない。全プラットフォームで同じフィールド・値・遷移が書き込まれる。
+
+### PORT_TABLE — ベンダー SAI capability 依存
+
+| フィールド | プラットフォーム差 | 根拠 |
+|-----------|----------------|------|
+| `supported_fecs` | ベンダー SAI が `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` を非対応とした場合は**フィールドが書かれない** | `portsorch.cpp:3281-3283` |
+| `supported_fecs` 末尾の `"auto"` | `SAI_SWITCH_ATTR_SUPPORTED_EXTENDED_OBJECT_TYPES` でサポートが確認できる ASIC のみ付加 | `portsorch.cpp:3310-3318` |
+| `host_tx_ready` | Gearbox 搭載構成では PHY 経由で取得。**フィールド名・値は同一**、取得経路のみ異なる | `portsorch.cpp:2240-2252` |
+| その他 (`speed`, `fec`, `link_training_status` 等) | 差なし（SAI GET 成功を前提に書込み） | — |
+
+`isMlnxPlatform()` チェック (`portsorch.cpp:858`) は Flex Counter trim stat プラグインの登録可否にのみ使われ、STATE_DB `PORT_TABLE` のフィールド書込みには影響しない。
+
+### FDB_TABLE — プラットフォーム差なし
+
+ASIC 種別・`switch_type` に依存する分岐なし。フィールド (`port` / `type`) の書込み経路に `gMySwitchType` / `platform` 参照なし。VXLAN / MCLAG FDB は機能フラグによる origin 判定であり ASIC 種別ではない。
+
+### VRF_OBJECT_TABLE — プラットフォーム差なし
+
+`vrforch.cpp` に `gMySwitchType` / `platform` 参照なし。SAI `create_virtual_router` の成否に基づく `state="ok"` 書込みは全プラットフォーム共通。
+
+### FIPS_MACSEC_POST_TABLE — switch_type 依存
+
+| switch_type | post_state 挙動 |
+|-------------|----------------|
+| `"fabric"` (FabricOrchDaemon) | `post_state = "disabled"` で**固定**。MACsec POST は有効化されない (`main.cpp:773`) |
+| `"switch"` / `"voq"` / `"chassis-packet"` / `"dpu"` | SAI MACsec POST 対応かつ FIPS モード有効時のみ POST フローが走る |
+| SAI MACsec POST 非対応 ASIC | `SAI_SWITCH_ATTR_MACSEC_ENABLE_POST` が非対応の場合、`post_state = "disabled"` のまま変化しない (`main.cpp:791-793`) |
+
+### multi-asic / VOQ chassis
+
+各 asic instance の orchagent が独立に STATE_DB へ書き込む（namespace 分離）。VOQ chassis では supervisor が `switch_type="fabric"` の FabricOrchDaemon を使うため `FIPS_MACSEC_POST_TABLE.post_state = "disabled"` 固定となり、linecard asic の orchagent のみが通常の PORT_TABLE / FDB_TABLE / VRF_OBJECT_TABLE を書き込む。
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `sonic-swss-common/common/warm_restart.cpp` (L9-17 warmStartStateNameMap, L109-137 checkWarmStart, L223-234 setWarmStartState, L237-254 setDataCheckState). <https://github.com/sonic-net/sonic-swss-common/blob/master/common/warm_restart.cpp>
