@@ -134,6 +134,67 @@ STATE_DB `LAG_TABLE` に対応する YANG schema は存在しない。すべて�
 - YANG schema が存在しないため、フィールドの型・範囲はすべてコードレベルで実施される。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vlanmgr.cpp`, `sonic-swss/cfgmgr/stpmgr.cpp`
+> 調査日: 2026-05-18
+> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-ordering.md`
+
+このテーブルは STATE_DB の **書き込み専用**（teamsyncd / tlm_teamd のみが書き込む）であり、ユーザーが直接操作するものではない。`state=ok` エントリの有無が複数デーモンの readiness ガードとして機能するため、書き込み・削除の順序が後続処理の可否を決定する。
+
+### teamsyncd が LAG_TABLE に書き込むまでの事前条件
+
+LAG_TABLE への書き込みは以下の連鎖が完了することで発生する:
+
+| ステップ | 条件 | 担当 | コード根拠 |
+|---------|------|------|-----------|
+| 1 | CONFIG_DB `PORTCHANNEL` エントリが SET される | CLI / minigraph | — |
+| 2 | `TeamMgr::doLagTask()` が PORTCHANNEL エントリを受信する | teammgrd | `teammgr.cpp:L157-` |
+| 3 | `TeamMgr::addLag()` が teamd プロセスを起動する | teammgrd | `teammgr.cpp:L564-` |
+| 4 | teamd が Linux に LAG netdev を作成し `RTM_NEWLINK` が発行される | Linux カーネル | — |
+| 5 | `TeamSync::addLag()` が `m_stateLagTable.set(lagName, ...)` で `state=ok` を書き込む | teamsyncd | `teamsync.cpp:L175, L203, L223` |
+
+ステップ 3 (`exec()` 失敗) は `task_need_retry` を返し STATE_DB への書き込みをせずリトライ (`teammgr.cpp:L640-644`)。ステップ 5 の `teamdctl` 接続失敗は `SWSS_LOG_ERROR` を記録し STATE_DB 書き込みをスキップして次の `RTM_NEWLINK` を待つ (`teamsync.cpp:L208-213`)。
+
+### warm-restart 時の書き込み遅延
+
+warm-restart 中 (`m_warmstart == true`) は `addLag()` が `m_stateLagTablePreserved` に一時保存し、`applyState()` がタイムアウト（デフォルト: `DEFAULT_WR_PENDING_TIMEOUT`）後に一括で `m_stateLagTable.set()` を呼ぶ (`teamsync.cpp:L84-98`)。この間、`state=ok` は STATE_DB に存在しないため後続デーモンは保留状態が長引く。
+
+### LAG_TABLE を readiness ガードとして使用するデーモン
+
+`state=ok` エントリが存在するまで以下の処理がブロックされる:
+
+| デーモン | 関数 | 保留する処理 | コード根拠 |
+|---------|------|-------------|-----------|
+| `intfmgrd` | `IntfMgr::isIntfStateOk(alias)` | `PORTCHANNEL_INTERFACE` / サブ IF の SET 処理 | `intfmgr.cpp:L661-668, L833` |
+| `teammgrd` | `TeamMgr::isLagStateOk(alias)` | `PORTCHANNEL_MEMBER` の teamd enslave 処理 | `teammgr.cpp:L89-103, L357` |
+| `vlanmgrd` | `VlanMgr::isMemberStateOk(alias)` | LAG を VLAN_MEMBER として追加する処理 | `vlanmgr.cpp:L490-510` |
+| `stpmgrd` | `StpMgr::isLagStateOk(alias)` | STP ポート処理 | `stpmgr.cpp:L1292-1304` |
+
+各デーモンは `m_stateLagTable.get(alias, temp)` で LAG_TABLE エントリを確認し、存在しない場合はタスクをキューに残してリトライする（エントリが存在するまで自動リトライ）。
+
+### DEL 時の連鎖的影響
+
+teamsyncd が `RTM_DELLINK` を受信すると `m_stateLagTable.del(lagName)` でエントリを削除する (`teamsync.cpp:L255`)。この削除により、`isIntfStateOk()` / `isLagStateOk()` を呼ぶすべてのデーモンが対象 LAG に対する処理を停止する。
+
+DEL 順序の推奨:
+
+```
+# 推奨削除順序
+DEL PORTCHANNEL_MEMBER|PortChannelN|*   # 全メンバを先に削除
+DEL PORTCHANNEL_INTERFACE|PortChannelN|* # IP プレフィクスを先に削除
+DEL PORTCHANNEL_INTERFACE|PortChannelN   # L3 IF 属性ロウ削除
+DEL PORTCHANNEL|PortChannelN             # PORTCHANNEL を削除
+                                          # → teammgrd が teamd を停止
+                                          # → カーネルが RTM_DELLINK を発行
+                                          # → teamsyncd が LAG_TABLE エントリを削除
+```
+
+PORTCHANNEL を先に削除した場合、LAG_TABLE エントリが残存したまま teamd プロセスが停止し得る。teamsyncd は RTM_DELLINK を確認して LAG_TABLE を削除するが、タイミング次第で孤立エントリが残る可能性がある。
+
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: `sonic-swss/teamsyncd/teamsync.cpp` (L26-30 コンストラクタ, L101-143 onMsg, L146-226 addLag, L228-259 removeLag). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
