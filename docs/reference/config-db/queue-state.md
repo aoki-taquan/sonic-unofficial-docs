@@ -147,6 +147,30 @@ YANG schema は存在しない。すべてのデフォルトは `portsorch.cpp` 
 
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`QUEUE_COUNTER_CAPABILITIES` テーブルへの書込みは `PortsOrch::initCounterCapabilities(gSwitchId)` が PortsOrch 初期化処理の末尾（`portsorch.cpp:1107`）で 1 回のみ実行する。書込みは以下の固定順序で行われ、この順序は変更不可能。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | 全 4 キーへの `isSupported = "false"` 初期化 → SAI クエリ | **強制先行** — 初期化が必ず先に実行される | orchagent 起動直後の一瞬、すべてのキーが `"false"` の中間状態になる |
+| 2 | SAI クエリ成功 → 対応キーへの `isSupported = "true"` 上書き | **SAI 応答後**（初期化完了後のみ） | SAI クエリ失敗時は上書きされず全キーが `"false"` のまま確定 |
+| 3 | `SAI_STATUS_BUFFER_OVERFLOW` 発生 → リスト拡張 → 再クエリ | 最大 1 回リトライ | 再クエリも失敗した場合は上書きされない（初期化値 `"false"` が確定） |
+| 4 | `QUEUE_COUNTER_CAPABILITIES` 書込み完了 → `wredstat` / `portstat.py` の参照 | **orchagent 初期化完了後に参照すること** | 初期化前に参照すると STATE_DB にキーが存在せず `None` が返る |
+
+### 主要な制約詳細
+
+**初期化 → SAI クエリの強制先行順序 (依存 #1, #2)**: `initCounterCapabilities()` は冒頭でテーブルの 4 キー全てに `isSupported = "false"` を書き込んだ後に `sai_query_stats_capability()` を呼ぶ（`portsorch.cpp:1871-1882`）。SAI クエリが成功した場合のみ、対応する統計を含む行を `isSupported = "true"` で上書きする（`portsorch.cpp:1889-1915`）。この 2 ステップの間に consumer が参照した場合、全フラグが `"false"` の中間状態を観測しうる。ただし `initCounterCapabilities()` は orchagent の起動シーケンス中のみ実行され、通常の動作状態での更新は発生しない。
+
+**PORT_COUNTER_CAPABILITIES との非依存関係**: 同じ `initCounterCapabilities()` 内で `PORT_COUNTER_CAPABILITIES` テーブルも同様のパターンで書き込まれるが（`portsorch.cpp:1876-1879`, `portsorch.cpp:1928-1970`）、2 つのテーブル間に相互依存はない。QUEUE 側が成功し PORT 側が失敗した場合もそれぞれ独立した結果となる。
+
+**FlexCounterOrch との関係**: `QUEUE_COUNTER_CAPABILITIES` の書込みは FlexCounterOrch の動作に依存しない。ただし、`counterpoll wred-queue enable` により `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` が設定されても、`isSupported = "false"` のキーに対応するカウンタは COUNTERS_DB に現れない（`wredstat` は N/A 表示）。consumer は FLEX_COUNTER 設定と `QUEUE_COUNTER_CAPABILITIES` の両方を確認する必要がある。
+
+<!-- /ordering -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md) — WRED_ECN_QUEUE グループの enable/disable 設定
