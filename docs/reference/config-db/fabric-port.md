@@ -155,6 +155,31 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-fabric-port`、`sonic-fabric-monitor`
 - 関連 CLI: `config fabric`、`show fabric`
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`FABRIC_PORT` テーブルの変更が SAI に反映されるまでには、CONFIG_DB → fabricmgrd → APPL_DB → FabricPortsOrch → SAI という多段パイプラインを通過し、各段に順序依存が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | SAI `getFabricPortList()` 完了 → ポート状態更新・デバッグカウンタ収集 | **強制先行** | `m_getFabricPortListDone` フラグが false の間、`updateFabricPortState()` / `updateFabricDebugCounters()` は全てスキップ（`fabricportsorch.cpp:1568-1576`, `1594-1598`） |
+| 2 | `APPL_DB APP_FABRIC_MONITOR_DATA` の `monState=enable` → `doFabricPortTask()` の実行 | **強制先行（機能 ON/OFF）** | `checkFabricPortMonState()` が false を返すと `doFabricPortTask()` が early return し、CONFIG_DB の `isolateStatus` 変更は SAI に反映されない（`fabricportsorch.cpp:1396-1399`） |
+| 3 | `STATE_DB FABRIC_PORT_TABLE|PORT<lane>` エントリ存在 → `forceUnisolateStatus` 差分比較 | 条件付き先行 | STATE_DB エントリ不在の場合は `FORCE_UN_ISOLATE` を 0 扱いで比較するため、`forceUnisolateStatus=0` の config では force unisolate がスキップされる（`fabricportsorch.cpp:1499-1516`） |
+| 4 | `alias` + `lanes` + `isolateStatus` の 3 フィールド揃い → isolate 処理実行 | **強制先行（データ完全性）** | いずれか 1 つでも空の場合は APPL_DB から `hget` で補完を試み、それでも欠落なら `m_toSync` から erase して silent drop（`fabricportsorch.cpp:1436-1484`） |
+| 5 | CONFIG_DB 変更 → fabricmgrd が APPL_DB `APP_FABRIC_MONITOR_PORT_TABLE` に書き込み → `doFabricPortTask()` 実行 | 非同期パイプライン | fabricmgrd のポーリング間隔分の遅延が発生する。CONFIG_DB を変更しても即座に SAI 状態は変わらない |
+
+### 主要な制約詳細
+
+**SAI 初期化完了待ち (依存 #1)**: `getFabricPortList()` はコンストラクタで 1 回呼ばれるが、SAI `get_switch_attribute(SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS)` が失敗した場合は `m_getFabricPortListDone = false` のままとなる。その後のポーリングタイマー (`FABRIC_POLL`) が発火するたびに再試行され、成功時点で `m_getFabricPortListDone = true` となりポート状態更新が開始される。それまでの間、STATE_DB への書き込みは一切行われない（evidence: `fabricportsorch.cpp:1562-1576`）。
+
+**monState ゲート (依存 #2)**: `doFabricPortTask()` の冒頭で `checkFabricPortMonState()` を呼び、`APPL_DB FABRIC_MONITOR_DATA|FABRIC_MONITOR_DATA.monState == "enable"` でなければ即座に return する。このため、CONFIG_DB の `FABRIC_PORT` エントリがいくら更新されても、`FABRIC_MONITOR` の `monState` が `enable` になるまで SAI への isolate/unisolate 操作は実行されない。`monState` を後から `enable` に変更しても、pending 中だった CONFIG_DB 変更が自動再適用される保証はない（evidence: `fabricportsorch.cpp:1394-1399`）。
+
+**3 フィールド完全性チェック (依存 #4)**: partial update（一部フィールドのみの UPDATE）を受け取った場合、欠落フィールドは `m_applTable->hget()` で APPL_DB から補完される。APPL_DB にもそのフィールドが存在しない場合は `SWSS_LOG_INFO("hget failed")` を出してから `m_toSync.erase(it)` で消去される。このため、`alias` / `lanes` / `isolateStatus` のうち 1 つでも APPL_DB 未登録の状態で CONFIG_DB を SET しても、**一切の SAI 操作が実行されず、かつエラーログも INFO レベルにとどまる**（evidence: `fabricportsorch.cpp:1436-1484`）。
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
