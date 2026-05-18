@@ -240,6 +240,36 @@ syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保�
 
 <!-- /failure -->
 
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vlan-state-constants.md -->
+<!-- source: sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
+
+`vlanmgrd` が VLAN_TABLE を書き込む際に利用するハードコード定数。いずれも CONFIG_DB / YANG では設定不可。
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|----|---------|------|
+| `DOT1Q_BRIDGE_NAME` | `"Bridge"` | `vlanmgr.cpp:15` | Linux dot1q ブリッジデバイス名。全 VLAN が所属する単一ブリッジ。変更不可 |
+| `VLAN_PREFIX` | `"Vlan"` | `vlanmgr.cpp:16` | Linux VLAN インタフェース名のプレフィックス（例: `Vlan100`）。STATE_DB キーと同一形式 |
+| `DEFAULT_VLAN_ID` | `"1"` | `vlanmgr.cpp:18` | ブリッジ作成直後に除去する PVID。`bridge vlan del vid 1 dev Bridge self` を実行し VLAN 1 へのフォールスルーを防止 |
+| `DEFAULT_MTU_STR` | `"9100"` | `vlanmgr.cpp:19` | ブリッジ作成時の初期 MTU (bytes)。`ip link set Bridge mtu 9100` にハードコード |
+| `VLAN_HLEN` | `4` | `vlanmgr.cpp:20` | VLAN ヘッダ長 (bytes)。定義のみで STATE_DB 書き込みに直接は関与しない |
+
+### STATE_DB 書き込みリテラル
+
+`m_stateVlanTable.set(key, {{"state","ok"}})` (vlanmgr.cpp:443) — フィールド名 `"state"` と値 `"ok"` の両方が C++ コードのリテラル。YANG 定義は存在せず、フィールド名・値ともに YANG スキーマによる検証外。
+
+### DEFAULT_MTU_STR = 9100 の影響範囲
+
+`addHostVlan()` 内でブリッジ自体に MTU 9100 を設定するが、個々の `Vlan<N>` インタフェースの MTU は CONFIG_DB `PORT.mtu` → orchagent → SAI → カーネルの別経路で設定される。STATE_DB `VLAN_TABLE` の書き込み内容には影響しない。
+
+### VLAN ID 範囲の暗黙制約
+
+`doVlanTask()` は `stoi(key.substr(4))` で VLAN ID を抽出するが、2–4094 の範囲検証はコードに存在しない。範囲外の VLAN ID（0, 1, 4095 等）は Linux カーネルの dot1q が拒否するため `addHostVlan()` が例外を throw し vlanmgrd が再起動する。結果として **STATE_DB `VLAN_TABLE` には VLAN ID 2–4094 のキーのみ現れる**。
+
+<!-- /hardcoded-constants -->
+
 ## 読み取り主体
 
 | プロセス | ファイル | 用途 |
