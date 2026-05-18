@@ -107,6 +107,32 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`pfcwdorch` が `pfcwd start <port>` を処理して COUNTERS_DB へフィールドを書き込む際、内部で複数ステップに分かれており、consumer が中間状態を観測しうる。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-ordering.md -->
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | PortsOrch による PFC マスク解決 → `registerInWdDb()` 実行 | **強制先行** | PFC マスク未解決または lossless TC 空のポートはフィールド書込みが一切行われない |
+| 2 | config フィールド書込み (`DETECTION_TIME` 等) → `initWdCounters()` (`PFC_WD_STATUS`) | 先行（同一関数内） | 2 ステップ間の中間観測で `PFC_WD_STATUS` が未存在の状態が生じうる |
+| 3 | `pfcwd stop` での status フィールド DEL → カウンタフィールド残留 | 非対称（status のみ削除） | `pfcwd start` 再実行後は旧カウンタ値を引き継いで継続カウント |
+| 4 | storm 検知 → `PFC_WD_STATUS=stormed` + `DEADLOCK_DETECTED++` → storm 解消 → `PFC_WD_STATUS=operational` + `DEADLOCK_RESTORED++` | 2 段階遷移 | 遷移中間で `stormed` と古いカウンタが共存する一時状態あり |
+
+### 主要な制約詳細
+
+**PFC マスク前提 (依存 #1)**: `registerInWdDb()` (`pfcwdorch.cpp:536-553`) は冒頭で `gPortsOrch->getPortPfcWatchdogStatus()` を呼び出し、PFC が有効な lossless TC 集合を構築する。この集合が空の場合（ポートに lossless TC が未設定）は即座に `return false` となり、COUNTERS_DB への書き込みはスキップされる。`pfcwd start` コマンドが成功しても COUNTERS_DB エントリが存在しない場合はこの条件を確認すること。
+
+**config フィールド先行書込み (依存 #2)**: per-queue ループ内で `countersTable->set(queueIdStr, {DETECTION_TIME, RESTORATION_TIME, ACTION, STAT_HISTORY})` を実行してから、続いて `PfcWdActionHandler::initWdCounters()` が `{DEADLOCK_DETECTED, DEADLOCK_RESTORED, PFC_WD_STATUS}` を書き込む（`pfcwdorch.cpp:569-601`）。両 `set()` 呼び出しの間に consumer が読み出すと、Lua プラグインが参照する config フィールドは存在するが `PFC_WD_STATUS` がまだない状態となる。
+
+**非対称削除 (依存 #3)**: `stopWdOnPort()` (`pfcwdorch.cpp:669`) が `hdel` で削除するのは `{PFC_WD_DETECTION_TIME, PFC_WD_RESTORATION_TIME, PFC_WD_ACTION, PFC_WD_STATUS}` のみ。`DEADLOCK_DETECTED` / `DEADLOCK_RESTORED` / `TX_PACKETS` 等カウンタ系フィールドはハッシュに残留する。次回 `pfcwd start` 時に `getQueueStats()` (`pfcactionhandler.cpp:119`) が既存値を読み出して継続するため、再起動をまたいでもカウンタは蓄積し続ける。
+
+<!-- /ordering -->
+
 ## 確認コマンド
 
 ```bash
