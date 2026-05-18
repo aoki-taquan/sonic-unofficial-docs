@@ -342,6 +342,59 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`VRRP` / `VRRP6` テーブルへの SET/DEL が起点となり、`macvlanmgrd` → `vrrpsyncd` → `intforch (vrrporch)` の 3 段チェーンで CONFIG_DB 以外のリソースへ書き込む。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-side-effects.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-side-effects.md)。
+
+### macvlanmgrd — Linux カーネルへの書込 (CONFIG_DB → kernel)
+
+`macvlanmgrd` は CONFIG_DB.VRRP / VRRP6 の変更を受けて以下を実行する。DB への直接書込ではなく Linux カーネルへのネットリンク操作。
+
+| 操作 | 内容 | トリガ | evidence |
+|------|------|--------|---------|
+| macvlan デバイス作成 | `ip link add Vrrp4-<intf>-<vrid> link <intf> addrgenmode random type macvlan mode bridge` | VRRP SET | HLD L117, L221 |
+| 仮想 MAC 設定 | `ip link set Vrrp4-<intf>-<vrid> address 00:00:5e:00:01:<vrid>` | VRRP SET | HLD L221 |
+| VIP 付与 | `ip addr add <vip>/32 dev Vrrp4-<intf>-<vrid>` | VRRP VIP SET | HLD L222 |
+| macvlan デバイス削除 | `ip link del Vrrp4-<intf>-<vrid>` | VRRP DEL | HLD L221 |
+| IPv6 macvlan 作成 | `ip link add Vrrp6-<intf>-<vrid> link <intf> addrgenmode random type macvlan mode bridge` | VRRP6 SET | HLD L122, L221 |
+
+さらに、`vtysh` コマンド経由で FRR `vrrpd` にインスタンス設定を投入する（DB 書込なし）。
+
+### vrrpsyncd — APPL_DB.VRRP_TABLE への書込 (kernel → APPL_DB)
+
+`vrrpsyncd` は Linux macvlan デバイスの protodown 状態変化（Master 昇格 = protodown off）を netlink で監視し、APPL_DB に書き込む。
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | トリガ | evidence |
+|------|------------------|-----------------|--------|---------|
+| SET | APPL_DB / `VRRP_TABLE` | `VRRP_TABLE:<intf>\|<vip>/32` field=`vmac:<00:00:5e:00:01:<vrid>>` | macvlan デバイスへの IP 追加 (Master 昇格) | HLD L231 |
+| DEL | APPL_DB / `VRRP_TABLE` | `VRRP_TABLE:<intf>\|<vip>/32` | macvlan デバイスからの IP 削除 (Master 降格) | HLD L232 |
+| SET (IPv6) | APPL_DB / `VRRP_TABLE` | `VRRP_TABLE:<intf>\|<vip>/128` field=`vmac:<00:00:5e:00:02:<vrid>>` | IPv6 Master 昇格 | HLD L231 |
+
+`type` フィールド (IPv4 / IPv6) もキーに含まれる: `VRRP_TABLE:<interface_name>:<vip>:<type>`。
+
+### intforch (vrrporch) — ASIC_DB への書込 (APPL_DB → ASIC_DB)
+
+`vrrporch` は APPL_DB.VRRP_TABLE を購読し、SAI API 経由で ASIC_DB に仮想 RIF と VIP ルートを書き込む。
+
+| 操作 | 対象 DB / テーブル | 内容 | トリガ | evidence |
+|------|------------------|------|--------|---------|
+| 仮想 RIF 作成 | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:<oid>` | `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL=true`, `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS=<vmac>` | APPL_DB.VRRP_TABLE SET | HLD L438-459, SAI API セクション |
+| VIP ルート追加 | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY` | VIP の /32 or /128 ルートを CPU trap / 仮想 RIF に向ける | APPL_DB.VRRP_TABLE SET | HLD L235 |
+| 仮想 RIF 削除 | ASIC_DB | RIF OID を削除 | APPL_DB.VRRP_TABLE DEL | HLD L235 |
+
+### VRRP_TRACK の副次書込
+
+`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの SET/DEL は DB への副次書込を発生させない。FRR `vrrpd` が CONFIG_DB から直接読み込んだ追跡設定をメモリ内で保持し、`zebra` 経由のインタフェース状態変化通知に応じて priority を再計算する。DB への書込は行われず VRRP Advertisement パケットのみに反映される（HLD L486-491）。
+
+### 副次書込なし
+
+- **STATE_DB**: VRRP 状態は STATE_DB に記録されない。Master/Backup 状態は APPL_DB.VRRP_TABLE の有無と macvlan デバイスの protodown 状態で管理。
+- **FLEX_COUNTER_DB**: VRRP インスタンスに対する FlexCounter 登録はなし。
+- **COUNTERS_DB**: VRRP 専用カウンタマップの登録はなし（ACL/RIF カウンタとは独立）。
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: VRRP Adaptation HLD: `sonic-net/SONiC`, `doc/vrrp/VRRP_Adaptation_HLD.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/vrrp/VRRP_Adaptation_HLD.md>
