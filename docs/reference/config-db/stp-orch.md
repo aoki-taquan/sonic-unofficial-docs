@@ -417,6 +417,68 @@ if (it_map != m_vlanAliasToStpInstanceMap.end())
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・リトライ・リカバリ (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-failure.md -->
+
+### 即時破棄 (fail-silent / no retry)
+
+| テーブル | 条件 | 挙動 |
+|---------|------|------|
+| `STP_FASTAGEING_FLUSH_TABLE` SET | VLAN が PortsOrch に未登録 | `stpVlanFdbFlush()` が false を返すが戻り値未チェック。エントリは即 `erase()`。エラーログなし。FDB フラッシュ機会を消失 |
+| `STP_INST_PORT_FLUSH_TABLE` SET | `m_vlanAliasToStpInstanceMap` にインスタンス未登録 | フラッシュなしで即 `erase()`。エラーログなし |
+
+### 遅延リトライ (`it++` 残置)
+
+以下の条件ではエントリを `m_toSync` に残し、次ポーリングサイクルで自動再試行する。
+
+| テーブル | 条件 | ログ |
+|---------|------|------|
+| `STP_VLAN_INSTANCE_TABLE` SET | `stp_instance` フィールド欠落 | `SWSS_LOG_ERROR("Failed to parse STP instance from SET message for Vlan %s")` |
+| `STP_VLAN_INSTANCE_TABLE` SET | VLAN が PortsOrch に未登録 | `addVlanToStpInstance()` → false (evidence: stporch.cpp:123-126) |
+| `STP_VLAN_INSTANCE_TABLE` SET | `sai_stp_api->create_stp` 失敗 | `SWSS_LOG_ERROR("Failed to create STP instance for Vlan %s rv:%d")` |
+| `STP_VLAN_INSTANCE_TABLE` SET | `SAI_VLAN_ATTR_STP_INSTANCE` セット失敗 | `SWSS_LOG_ERROR("Failed to set SAI_VLAN_ATTR_STP_INSTANCE for Vlan %s rv:%d")` |
+| `STP_VLAN_INSTANCE_TABLE` DEL | VLAN が PortsOrch に未登録 | `removeVlanFromStpInstance()` → false → `it++` |
+| `STP_PORT_STATE_TABLE` SET | `addBridgePort()` 失敗 | `SWSS_LOG_ERROR("Failed to add STP port %s invalid bridge port id")` → SAI_NULL_OBJECT_ID → `updateStpPortState()` false → `it++` |
+| `STP_PORT_STATE_TABLE` SET | `create_stp_port` 失敗 | `SWSS_LOG_ERROR("Failed to create STP port %s for STP instance %d rv:%d")` → SAI_NULL_OBJECT_ID → `it++` |
+| `STP_PORT_STATE_TABLE` SET | `set_stp_port_attribute` 失敗 | `SWSS_LOG_ERROR("Failed to set STP port state for %s rv:%d")` → false → `it++` |
+
+### コンシューマ全体ブロック (`return`)
+
+`STP_PORT_STATE_TABLE` SET/DEL でポートが PortsOrch に未登録の場合、`doStpPortStateTask()` が **`return`** で抜ける。`it++` と異なり同一コンシューマの後続エントリも全てブロックされる。PortsOrch へのポート登録後に自動再開する。
+
+```cpp
+// stporch.cpp:449-453
+if (!gPortsOrch->getPort(port_alias, port))
+{
+    SWSS_LOG_ERROR("Failed to get port for STP port state entry %s", key.c_str());
+    return;
+}
+```
+
+### コンストラクタ SAI クエリ失敗 (silent failure)
+
+`StpOrch::StpOrch()` (stporch.cpp:17-43) で `SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID` / `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` の取得に失敗した場合、`SWSS_LOG_WARN` のみで `m_defaultStpId` と `m_maxStpInstance` が未初期化のまま動作を継続する。この状態では VLAN 削除時に `SAI_VLAN_ATTR_STP_INSTANCE` を誤った OID に戻す可能性がある。STATE_DB への `max_stp_inst` 書き込みも行われない。
+
+### Warm Restart
+
+StpOrch には専用の Warm Restart reconciliation 機構が実装されていない。`doTask()` は `allPortsReady()` ガードのみ持ち、再起動後は stpd/stpmgrd からの再投入に依存する。
+
+### 回復シナリオまとめ
+
+| 失敗ケース | 回復方法 | 自動か手動か |
+|-----------|---------|------------|
+| SAI STP 操作失敗 (create/set) | 次ポーリングサイクルで自動再試行 | 自動 |
+| `stp_instance` フィールド欠落 | stpmgrd が正しい SET を再送後に自動再試行 | 自動（stpmgrd 依存） |
+| ポート未登録 (`STP_PORT_STATE_TABLE`) | PortsOrch へのポート登録後に自動再開 | 自動 |
+| VLAN 未登録 (`STP_VLAN_INSTANCE_TABLE`) | PortsOrch への VLAN 登録後に自動再試行 | 自動 |
+| Bridge port 作成失敗 | 次ポーリングサイクルで自動再試行 | 自動 |
+| FASTAGEING_FLUSH / INST_PORT_FLUSH の fail-silent | フラッシュ機会を消失。stpd が再送する場合のみ回復 | stpd 依存 |
+| コンストラクタ SAI クエリ失敗 | orchagent 再起動のみ | 手動 |
+
+<!-- /failure -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象テーブル / フィールド | 内容 |
