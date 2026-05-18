@@ -145,6 +145,39 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `key != 'POLICIES'` の SET イベント | `passw_policies_update()` L905 | `self.passw_policies` 更新されず・`modify_passw_conf_file()` は呼ばれる（既存 policies でファイル再生成） | なし | `hostcfgd:905-909` |
+| boolean フィールドに `'True'`/`'False'` 以外の値 (`'yes'`/`'1'` 等) | `is_true()` L156 | `False` 扱い・"Failed to get bool value" を syslog ERR 出力 | LOG_ERR | `hostcfgd:156-162` |
+| Jinja2 テンプレートファイル (`common-password.j2`) が存在しない | `set_passw_hardening_policies()` L921 | `jinja2.TemplateNotFound` 例外伝播・PAM ファイル未更新 | スタックトレース (未捕捉) | `hostcfgd:918-921` |
+| PAM 設定ファイル書き込み時 `open()` が `OSError` (`/etc/pam.d/common-password.tmp`) | `set_passw_hardening_policies()` L927-928 | 例外伝播・PAM ファイル未更新 | スタックトレース (未捕捉) | `hostcfgd:927-930` |
+| `os.rename()` 失敗 (`.tmp` → `common-password`) | `set_passw_hardening_policies()` L930 | 例外伝播・`.tmp` ファイル残存・PAM ファイル未更新 | スタックトレース (未捕捉) | `hostcfgd:930` |
+| `/etc/login.defs` が存在しない | `is_passwd_aging_expire_update()` L984 | `days_num=None` → `curr_expiration != None` が True → `passwd_aging_expire_modify()` 実行・`modify_single_file_inplace()` は `/etc/login.defs` がなければ no-op | なし | `hostcfgd:984-997` |
+| `/etc/login.defs` に `UID_MAX`/`UID_MIN` がない | `get_normal_accounts()` L1024-1026 | `False` を返す → `passwd_aging_expire_modify()` が "failed, no UID_MAX/UID_MIN" をログして即 return・`chage` は実行されない | LOG_ERR | `hostcfgd:1024-1026` |
+| `getent passwd` コマンド失敗 | `get_normal_accounts()` L1003-1005 | `CalledProcessError` を捕捉して `False` を返す → `chage` は実行されない | LOG_ERR | `hostcfgd:1003-1005` |
+| `chage` コマンドが非ゼロ終了 | `passwd_aging_expire_modify()` L970-971 | `chage_p_m.poll()` != 0 → LOG_ERR のみ・次ユーザへ続行（当該ユーザの有効期限未更新） | LOG_ERR ("failed: return code - {}") | `hostcfgd:970-971` |
+| `chage` コマンドが `CalledProcessError` | `passwd_aging_expire_modify()` L973-974 | 例外捕捉・LOG_ERR のみ・次ユーザへ続行 | LOG_ERR | `hostcfgd:973-974` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `PASSW_HARDENING\|POLICIES` DEL → `data == {}` | `passw_policies_update()` L891-892 | `self.passw_policies = {}` にリセット → `modify_passw_conf_file()` が PAM を Linux デフォルトで再生成・expiration も `LINUX_DEFAULT_*` にリセット | `hostcfgd:891-909` |
+
+### 補足
+
+- **PAM atomic 書き込み**: `.tmp` → `os.rename()` でアトミック置換。`open()` または `os.rename()` 失敗時は `.tmp` が残存し PAM 設定は変化しない。次回 SET イベントで再試行される。
+- **`chage` エラーの非停止設計**: `chage` が失敗しても例外は re-raise されず、ループは続行する。このため一部ユーザの有効期限のみ未更新となる中間状態が成立しうる。
+- **login.defs 冪等性**: `is_passwd_aging_expire_update()` が現在値と比較し差分がない場合は `passwd_aging_expire_modify()` を呼ばない。冗長な SET イベントでも `chage` は再実行されない（`hostcfgd:976-997`）。
+<!-- /failure -->
+
 ## 購読者
 
 - `hostcfgd` (`host-services` パッケージ)。`PasswHardening.load()` が `PASSW_HARDENING` テーブルを読み込み、Jinja2 テンプレート (`common-password.j2`) を展開して `/etc/pam.d/common-password` を書き換え、`/etc/login.defs` の `PASS_MAX_DAYS` / `PASS_WARN_AGE` を `sed` で更新する
