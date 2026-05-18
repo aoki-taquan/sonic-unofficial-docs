@@ -168,6 +168,43 @@ Neighbor ADD 通知が `updateNeighbor()` に届くと、対応する pending �
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1473-1576、`doTaskMySidTable()` L2228-2234、`createUpdateSidList()` L1044-1117、`deleteSidList()` L1119-1143、`doTaskSidTable()` L1146-1186 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-applb-failure.md`
+
+### SRV6_MY_SID_TABLE の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | 自動回復 | ログ出力 |
+|----------|----------|------|----------|----------|
+| 不正な `action` 値（`end_behavior_map` 未登録） | `sidEntryEndpointBehavior()` `srv6orch.cpp:1473` | SAI 登録失敗・エントリ破棄 | なし | `SWSS_LOG_ERROR("Invalid my_sid action %s")` |
+| `end.dt*`/`udt*` 行動で VRF が CONFIG_DB に未存在 | `createUpdateMysidEntry()` `srv6orch.cpp:1498-1502` | SAI 登録失敗・エントリ破棄 | なし | `SWSS_LOG_ERROR("VRF %s doesn't exist in DB")` |
+| VRF が CONFIG_DB に存在するが OID が `SAI_NULL_OBJECT_ID` | `createUpdateMysidEntry()` `srv6orch.cpp:1492-1495` | SAI 登録失敗・エントリ破棄 | なし | `SWSS_LOG_ERROR("VRF object not created for DT VRF %s")` |
+| `adj` Neighbor 未解決（対象行動のみ） | `createUpdateMysidEntry()` `srv6orch.cpp:1532-1542` | `m_pendingSRv6MySIDEntries` に保留 | あり — Neighbor ADD 通知で自動再処理 | `SWSS_LOG_INFO("Nexthop for adjacency %s doesn't exist in DB yet")` |
+| `adj` にカンマ区切りの ECMP 隣接を指定 | `createUpdateMysidEntry()` `srv6orch.cpp:1516-1519` | SAI 登録失敗・エントリ破棄 | なし | `SWSS_LOG_ERROR("ECMP adjacency not yet supported")` |
+
+!!! warning "VRF 欠落は自動回復なし"
+    `SRV6_MY_SID_TABLE` の `vrf` フィールドに指定した VRF が CONFIG_DB に存在しない場合、`Srv6Orch` はエントリを retry キューに入れず即時破棄する。VRF を後から作成しても APPL_DB イベントの再発火はなく、fpmsyncd が再 SET を行うまで MySID は ASIC に登録されない。
+
+!!! note "adj 未解決は自動回復あり"
+    `adj` フィールドの Neighbor が未解決の場合は `m_pendingSRv6MySIDEntries` に保留され、Neighbor が確立されると `updateNeighbor()` ADD 通知経由で自動再処理される。ログは INFO レベルのみ（silent に近い）。
+
+### SRV6_SID_LIST_TABLE の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | 自動回復 | ログ出力 |
+|----------|----------|------|----------|----------|
+| `path` が空文字列（セグメント数 0） | `createUpdateSidList()` `srv6orch.cpp:1052-1055` | SAI オブジェクト未作成・`task_success` 扱い（サイレントスキップ） | なし | `SWSS_LOG_ERROR("segment list count is zero, skip")` ※ task 失敗扱いにならない |
+| SAI `create_srv6_sidlist()` 失敗 | `createUpdateSidList()` `srv6orch.cpp:1091-1095` | `task_failed` 返却・エントリ破棄 | なし | `SWSS_LOG_ERROR("Failed to create srv6 sidlist object, rv %d")` |
+| SAI `set_srv6_sidlist_attribute()` 更新失敗 | `createUpdateSidList()` `srv6orch.cpp:1108-1113` | `task_failed` 返却・エントリ破棄 | なし | `SWSS_LOG_ERROR("Failed to set srv6 sidlist object with new segments, rv %d")` |
+| DEL 時に nexthop 参照が残存 | `deleteSidList()` `srv6orch.cpp:1129-1133` | `task_need_retry` — Consumer ループで保留 | あり — nexthop DEL 後に自動再試行 | `SWSS_LOG_NOTICE("segment object %s referenced by other nexthops: count %zu, not deleting")` |
+| DEL 対象の `sid_name` が内部テーブルに存在しない | `deleteSidList()` `srv6orch.cpp:1123-1126` | `task_failed` 返却 | なし | `SWSS_LOG_ERROR("segment name %s doesn't exist")` |
+
+!!! warning "path 空文字列はサイレントスキップ"
+    `SRV6_SID_LIST_TABLE` の `path` が空文字列の場合、`SWSS_LOG_ERROR` が出力されるにもかかわらず `doTaskSidTable()` は `task_success` を返す。SAI への SID リスト作成は行われないが、タスクはエラーとして扱われない。ログを監視しない限り検知が困難な落とし穴。
+
+<!-- /failure -->
+
 ### サポート action 値
 
 `end_behavior_map`（`srv6orch.cpp:41-62`）に定義:
