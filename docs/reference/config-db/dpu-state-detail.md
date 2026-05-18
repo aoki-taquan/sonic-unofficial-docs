@@ -283,6 +283,48 @@ else:                   oper_status = "Partial Online"
 
 ---
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`CHASSIS_STATE_DB` の `DPU_STATE` テーブルへの書込みは 2 つの独立したパスから行われ、フィールド間に観測可能な中間状態が生じる。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | midplane フィールド書込み → CP/DP フィールド書込み (down 時) | **強制先行** (`update_dpu_state` 内 `for` ループ順) | down パスでは midplane → CP → DP の順で個別 `hset` が発行されるため、中間状態で CP のみ `down`・DP がまだ前の値という状態が一瞬発生する |
+| 2 | `DpuStateUpdater.update_state()` — DP 評価 → CP 評価 | **順序固定** (コード上 DP が先) | 両方が変化した際、DP の hset が先に確定し、その後 CP の hset が続く。`show dpu` がこの間に読むと CP/DP が混在したステータスを返しうる |
+| 3 | `set_initial_dpu_admin_state()` → ポーリングループ開始 | **強制先行** | SmartSwitch デーモン起動時、初期書込みが完了してから main loop が始まる。ただし DpuChassisdDaemon では初期書込みなしで main loop に入る |
+| 4 | `deinit()` — DP down 書込み → CP down 書込み | **強制先行** | シャットダウン時も DP が先に `down` になり、その後 CP が `down` になる |
+| 5 | midplane up パス — midplane のみ更新、CP/DP は更新なし | **非対称** | `update_dpu_state(key, 'up')` は midplane 3 フィールドのみ書く。CP/DP state は `DpuStateUpdater` の独立ポーリングで後から更新される |
+
+### 主要な制約詳細
+
+**midplane down → CP/DP の原子性なし (依存 #1)**: `update_dpu_state()` の down パスは以下の順で個別 `hset` を発行する (`chassisd:887-888`):
+
+```python
+# 順番は Python dict の挿入順 (Python 3.7+):
+# 1. dpu_midplane_link_state = "down"
+# 2. dpu_midplane_link_reason = ""
+# 3. dpu_midplane_link_time = <now>
+# 4. dpu_control_plane_state = "down"   (CP_STATE)
+# 5. dpu_data_plane_state = "down"      (DP_STATE)
+for field, value in updates.items():
+    self.chassis_state_db.hset(key, field, value)
+```
+
+3 つのフィールドは個別 `hset` で発行されるため、外部から読んだ場合に midplane が `down` になっているのに CP が古い値のままという瞬間が観測可能。
+
+**up パスの非対称性 (依存 #5)**: `update_dpu_state(key, 'up')` は midplane 3 フィールドのみ更新し、CP/DP は変更しない (`chassisd:876-879`)。midplane が up になっても CP/DP state は `DpuStateUpdater` の次のポーリングサイクルまで前の値が残る。`show dpu` は `up_cnt` に基づいて `Partial Online` を一時的に返しうる。
+
+**DpuStateUpdater の DP→CP 順序 (依存 #2)**: `update_state()` は `get_dp_state()` → `hset(DP)` → `get_cp_state()` → `hset(CP)` の順で実行される (`chassisd:1303-1316`)。CP/DP が同タイミングで up→down や down→up に変化した場合でも、Redis への書込みは DP が常に先行する。
+
+**deinit の DP→CP 順序 (依存 #4)**: `deinit()` (`chassisd:1318-1320`) は `_update_dp_dpu_state('down')` を先に発行し、時刻フィールドも DP side が先に書き込まれる。シャットダウンウィンドウ中に `dpu_data_plane_state='down'` / `dpu_control_plane_state` が旧値という中間状態が生じる。
+
+<!-- /ordering -->
+
+---
+
 ## 関連ページ
 
 - [`DPU_STATE テーブル`](dpu-state.md) — テーブル概要・key 構造・書き込み元クラス説明
