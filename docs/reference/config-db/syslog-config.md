@@ -237,6 +237,57 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`SYSLOG_CONFIG` の処理に関与する `hostcfgd` および rsyslog Jinja2 テンプレートに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-constants.md`
+
+### rsyslog.conf.j2 — テンプレートフォールバック値
+
+| 定数 / フォールバック | 値 | 用途 | ソース |
+|---|---|---|---|
+| `format` フォールバック | `'standard'` | `gconf.get('format', 'standard')` — SYSLOG_CONFIG\|GLOBAL 欠落・`format` 未設定時の最終フォールバック（YANG default と二重防御） | `rsyslog.conf.j2` L51 |
+| `welf_firewall_name` フォールバック | `hostname` (DEVICE_METADATA 由来) | `gconf.get('welf_firewall_name', hostname)` — `format=welf` かつ `welf_firewall_name` 未設定時にデバイスホスト名を WELF `fw=` フィールドへ埋め込む | `rsyslog.conf.j2` L52 |
+| `severity` フォールバック (per-server) | `'*'` (全 severity) | `conf.get('severity', gconf.get('severity', '*'))` — per-server および GLOBAL severity ともに未設定の場合 | `rsyslog.conf.j2` L92 |
+| `port` フォールバック (per-server) | `514` | SYSLOG_SERVER エントリの `port` 未設定時のデフォルト転送ポート | `rsyslog.conf.j2` L89 |
+| `protocol` フォールバック (per-server) | `'udp'` | SYSLOG_SERVER エントリの `protocol` 未設定時 | `rsyslog.conf.j2` L90 |
+| `vrf` フォールバック (per-server) | `'default'` | SYSLOG_SERVER エントリの `vrf` 未設定時 | `rsyslog.conf.j2` L91 |
+
+### rsyslog.conf.j2 — ハードコードポート・パーミッション
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| UDP 受信ポート | `514` | `input(type="imudp" ... port="514")` — ホスト rsyslog の UDP 受信ポート（コンテナからの imudp 転送先） | `rsyslog.conf.j2` L31, L33 |
+| RELP 受信ポート | `2514` | `input(type="imrelp" ... port="2514")` — コンテナ rsyslog からの RELP 受信ポート | `rsyslog.conf.j2` L42, L44 |
+| omfwd キュータイプ | `LinkedList` | `queue.type="LinkedList"` — 転送アクションの非同期キュー種別 | `rsyslog.conf.j2` L124 |
+| omfwd キューサイズ | `20000` | `queue.size="20000"` — 転送キューの最大エントリ数 | `rsyslog.conf.j2` L124 |
+| omfwd リトライ回数 | `60` | `action.resumeRetryCount="60"` — 転送失敗時の最大リトライ数 | `rsyslog.conf.j2` L124 |
+| スプールディレクトリ | `/var/spool/rsyslog` | `$WorkDirectory` — キューのディスクスプール先 | `rsyslog.conf.j2` L144 |
+| インクルードディレクトリ | `/etc/rsyslog.d/*.conf` | `$IncludeConfig` — 追加設定ファイルのインクルードパターン | `rsyslog.conf.j2` L149 |
+| ファイルパーミッション | `0640` / `0755` | `$FileCreateMode` / `$DirCreateMode` | `rsyslog.conf.j2` L136-L137 |
+| 重複抑制 | `on` | `$RepeatedMsgReduction on` — 重複ログの "message repeated N times" 集約 | `rsyslog.conf.j2` L154 |
+
+### rsyslog-container.conf.j2 — コンテナ側デフォルト
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `rate_limit_interval` デフォルト (コンテナ) | `'300'` 秒 | `rate_limit_interval\|default('300')` — `SYSLOG_CONFIG_FEATURE` 未設定コンテナへの imuxsock rate limit デフォルト | `rsyslog-container.conf.j2` L27 |
+| `rate_limit_burst` デフォルト (コンテナ) | `'20000'` 件 | `rate_limit_burst\|default('20000')` — 同上 | `rsyslog-container.conf.j2` L27 |
+| RELP 転送先ポート (コンテナ→ホスト) | `2514` | `port="2514"` — ホスト rsyslog の RELP 受信ポートへの omrelp 転送 | `rsyslog-container.conf.j2` L63 |
+
+### hostcfgd — systemd サービス名
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| config 反映サービス | `'rsyslog-config'` | `systemctl reset-failed rsyslog-config` / `restart rsyslog-config` — Jinja2 テンプレート展開 + rsyslogd 再起動を行うサービス | `hostcfgd` L1732-1734 |
+| rsyslog デーモン名 | `'rsyslog'` | `systemctl reset-failed rsyslog` — failed 状態クリア対象 | `hostcfgd` L1732-1733 |
+
+!!! note "コンテナ側デフォルト値は SYSLOG_CONFIG|GLOBAL と独立"
+    `rsyslog-container.conf.j2` の `rate_limit_interval/burst` デフォルト (`300/20000`) は `SYSLOG_CONFIG_FEATURE` が参照するものであり、`SYSLOG_CONFIG|GLOBAL` の rate limit 設定はコンテナ側 rsyslog には伝播しない。
+
+<!-- /constants -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
