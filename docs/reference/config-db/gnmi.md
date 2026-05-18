@@ -249,5 +249,34 @@ GNMI_CLIENT_CERT|<cname>
 -->
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`gnmi-native.sh` はコンテナ起動時に **一度だけ** CONFIG_DB を読み込み、`telemetry` バイナリへの引数を構築して `exec` する。このため順序制約のほとんどは「コンテナ起動前に設定完了していること」に集中する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 違反時の挙動 |
+|---|----------|------|------------|
+| 1 | `GNMI\|certs` (または `DEVICE_METADATA\|localhost.x509`) → telemetry 起動 | **先行必須** | `--noTLS` フォールバックで TLS 無効起動 |
+| 2 | `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled = true` → telemetry 起動 | **先行必須** | `--vrf mgmt` 付与なし。VRF バインドに失敗して管理 VRF 経由の接続不可 |
+| 3 | `GNMI_CLIENT_CERT\|<CN>` エントリ群 → `GNMI\|gnmi.user_auth = cert` 有効化 | **先行推奨** | エントリ不在時は全クライアントが `codes.Unauthenticated` で接続拒否 |
+| 4 | `GNMI\|gnmi` / `GNMI\|certs` 変更 → `systemctl restart gnmi` | **必須後続** | 変更は既存 telemetry プロセスに反映されない |
+
+### 主要な制約詳細
+
+**TLS 証明書先行必須 (依存 #1)**: `gnmi-native.sh` は `CERTS`（`GNMI|certs` テーブル由来）→ `X509`（`DEVICE_METADATA|localhost.x509` 由来）→ `--noTLS` の三段階フォールバックで TLS 設定を解決する（`gnmi-native.sh:32-61`）。コンテナ起動前に証明書パスを設定していない場合は TLS なしで起動し、後から `GNMI|certs` を設定してもコンテナ再起動まで反映されない。
+
+**管理 VRF 先行必須 (依存 #2)**: `gnmi-native.sh:95-98` で `sonic-db-cli CONFIG_DB hget "MGMT_VRF_CONFIG|vrf_global" "mgmtVrfEnabled"` を実行してから `--vrf mgmt` を付与する。`MGMT_VRF_CONFIG` は telemetry コンテナ起動より前（`config vrf add mgmt` 完了後）に設定されている必要がある。
+
+**GNMI_CLIENT_CERT 事前登録 (依存 #3)**: `user_auth = cert` モードでは各クライアント接続時に `clientCertAuth.go:PopulateAuthStructByCommonName()` が `GNMI_CLIENT_CERT|<CN>` を検索する。先に `GNMI|gnmi` を `user_auth=cert` で設定しても `GNMI_CLIENT_CERT` エントリが揃っていなければ即時に全クライアント拒否が発生する。安全な順序は `GNMI_CLIENT_CERT` エントリを先書きしてから `GNMI|gnmi` を有効化すること。
+
+<!-- evidence:
+  gnmi-native.sh:32-61 — CERTS/X509/noTLS フォールバック
+  gnmi-native.sh:89-98 — SmartSwitch ZMQ + mgmt VRF 分岐
+  clientCertAuth.go:254-284 — PopulateAuthStructByCommonName による GNMI_CLIENT_CERT 参照
+-->
+<!-- /ordering -->
+
 [^1]: `sonic-buildimage` `dockers/docker-sonic-gnmi/gnmi-native.sh` — ConfigDB → telemetry 引数変換ロジック全体
 [^2]: `sonic-gnmi` `gnmi_server/clientCertAuth.go:254-284` — `PopulateAuthStructByCommonName()` による GNMI_CLIENT_CERT 参照
