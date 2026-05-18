@@ -1,6 +1,6 @@
 ---
 title: STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細
-description: "CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A 分析。"
+description: "CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A–C 分析（暗黙参照テーブル含む）。"
 area: reference
 hard: 0
 verification: code-verified
@@ -14,6 +14,9 @@ sources:
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: cfgmgr/stpmgr.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/stpmgrd.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
@@ -400,6 +403,34 @@ stpmgrd 自身の warm-reboot reconcile フェーズは **事実上スタブ** �
 証跡: `stpmgrd.cpp:39-40`, `stpmgr.cpp`（setWarmStartState 呼び出しなし）
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`stpmgrd` が CONFIG_DB の STP テーブル群を購読・処理する際に参照する外部テーブルを示す。
+これらは CONFIG_DB への書き込み有無に関わらず、**ガード条件・フィールド値解決・処理可否判定**に影響する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-cross-refs.md -->
+
+| 参照先テーブル / リソース | DB | 参照方向 | 条件 | 参照元 evidence |
+|---|---|---|---|---|
+| `APP_PORT_TABLE\|PortInitDone` | APPL_DB | 起動ガード（存在確認） | 常時。stpmgrd 起動直後に 1 秒ポーリング。`portsyncd`/`orchagent` が書き込むまで全 STP 処理が停止 | `stpmgr.cpp:1257-1273`, `stpmgrd.cpp:72` |
+| `STATE_VLAN_TABLE\|<vlan>` | STATE_DB | 存在確認 → SET/スキップ判定 | `STP_VLAN` の各 SET 前に `isVlanStateOk()` で参照。エントリなしなら silent skip | `stpmgr.cpp:210, 1276-1290` |
+| `STATE_LAG_TABLE\|<lag>` | STATE_DB | 存在確認 → SET/スキップ判定 | `STP_PORT` / `STP_VLAN_PORT` でキーが PortChannel の場合に `isLagStateOk()` で参照 | `stpmgr.cpp:1291-1305` |
+| `STATE_STP_TABLE\|<key>` | STATE_DB | 既存エントリ確認 | `doStpVlanPortTask()` 内でポート STP 状態確認 | `stpmgr.cpp:1391` |
+| `VLAN_MEMBER\|<vlan>\|<port>` | CONFIG_DB | VLAN メンバーシップ解決 | `doStpVlanPortTask()` での VLAN メンバー確認。未所属ポートは設定遅延 | `stpmgr.cpp:1366` |
+| `LAG_MEMBER\|<lag>\|<port>` | CONFIG_DB | LAG メンバー数管理 | `doLagMemUpdateTask()` が `m_lagMap` を更新。メンバーなし LAG は STP_PORT SET がスキップ | `stpmgr.cpp:648-653, doLagMemUpdateTask()` |
+| `STP_MST` / `STP_MST_INST` / `STP_MST_PORT` | CONFIG_DB | MST モード時の主購読 | `mode = "mst"` 時のみ使用。PVST 時はこれらのテーブルが処理されない | `stpmgrd.cpp:47-54`, `stpmgr.cpp:1023-1031, 1155-1160` |
+
+!!! note "STATE_DB 参照は silent skip のトリガ"
+    `isVlanStateOk()` / `isLagStateOk()` が `false` を返した場合、stpmgrd はエラーログを出力せずイベントをキューに残す。
+    `vlanmgrd` や `teamd` が STATE_DB にエントリを書き込んだ後、次回 SELECT ループで再処理される。
+
+!!! note "CONFIG_DB と STATE_DB の両方に依存"
+    STP は CONFIG_DB の書き込み内容だけで動作が決まらず、STATE_DB（`STATE_VLAN_TABLE` / `STATE_LAG_TABLE`）の状態が揃うまで適用が遅延する。
+    この依存は YANG モデルには記述されていない暗黙の前提条件である。
+
+<!-- /cross-refs -->
 
 ## 関連ページ
 
