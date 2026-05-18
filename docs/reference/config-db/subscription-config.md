@@ -485,6 +485,50 @@ CONFIG_DB `TELEMETRY_CLIENT` テーブルの変更に伴って `dialout_client.g
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-pubsub.md -->
+
+`DialOutRun()` は swss-common の `SubscriberStateTable` を使わず、Go の `go-redis` クライアントが CONFIG_DB を **直接 PSUBSCRIBE** する独自実装である[^2]。
+
+### PSUBSCRIBE パターン
+
+```
+__keyspace@<CONFIG_DB_ID>__:TELEMETRY_CLIENT|*
+```
+
+`CONFIG_DB_ID` は `sdcfg.GetDbId("CONFIG_DB", ns)` で実行時に解決（通常 `4`）。セパレータ `|` は `sdc.GetTableKeySeparator()` で解決。ワイルドカード `*` により `Global`・`DestinationGroup_*`・`Subscription_*` の全エントリを一括購読する（`dialout_client.go:682-690`）。
+
+### 2 フェーズ初期化 → イベントループ
+
+| フェーズ | 処理 | 実装箇所 |
+|---------|------|---------|
+| 1. ブルスキャン | `redisDb.Keys(ctx, "TELEMETRY_CLIENT\|*")` で既存エントリを全取得し各キーに `processTelemetryClientConfig(..., "hset")` を適用 | `dialout_client.go:707-715` |
+| 2. イベントループ | `pubsub.ReceiveTimeout(ctx, 1000ms)` で常時ポーリング。ペイロード `"hset"` / `"del"` / `"hdel"` でそれぞれ更新・削除処理を実行 | `dialout_client.go:718-745` |
+
+タイムアウト（1 秒）は `net.Error.Timeout()` で判定し `continue`（エラー扱いしない）。Redis からのプッシュがあれば最大 1 秒以内に処理される。明示的な sleep は存在しない。
+
+### 受信後の処理分岐
+
+受信キーのサフィックスにより 3 経路に分岐する（`dialout_client.go:482-643`）:
+
+| キープレフィックス | 処理 |
+|------------------|------|
+| `Global` | グローバル設定 (`clientCfg`) を更新し、既存 gRPC 接続を全て `closeDestGroupClient()` + `setupDestGroupClients()` で再接続。`hdel` は不正操作として拒否 |
+| `DestinationGroup_<name>` | `destGrpNameMap` にデスティネーションを登録し `setupDestGroupClients()` で gRPC 接続確立 |
+| `Subscription_<name>` | `ClientSubscriptionNameMap` に `clientSubscription` を登録し `cs.NewInstance(ctx)` でデータ送信ゴルーチンを起動 |
+
+### 購読テーブルまとめ
+
+| DB | DB ID | テーブル | PSUBSCRIBE パターン |
+|----|-------|---------|-------------------|
+| CONFIG_DB | 動的取得 (通常 4) | `TELEMETRY_CLIENT\|*` | `__keyspace@<ID>__:TELEMETRY_CLIENT\|*` |
+
+他の DB（APPL_DB / STATE_DB / COUNTERS_DB）への通知購読は存在しない。
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
