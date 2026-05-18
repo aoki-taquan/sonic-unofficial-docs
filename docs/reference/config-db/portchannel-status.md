@@ -236,6 +236,64 @@ APPL_DB `LAG_TABLE` の書き込み経路（teamsyncd / teammgrd）と orchagent
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## SET/DEL 副次 DB 書込み (Phase F)
+
+`APPL_DB LAG_TABLE` エントリの SET / DEL が引き起こす他 DB・他テーブル・カーネルへの副次書込み一覧。
+
+### teamsyncd による STATE_DB 書込み (teamsyncd/teamsync.cpp)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET: `m_stateLagTable.set(lagName, [{state, ok}])` | STATE_DB / `LAG_TABLE` | `<lag_name>` | `TeamPortSync` 生成成功時のみ[^se1] |
+| DEL: `m_stateLagTable.del(lagName)` | STATE_DB / `LAG_TABLE` | `<lag_name>` | RTM_DELLINK 受信時（`delLag()` 内）[^se1] |
+
+**ポイント**: `addLag()` は APPL_DB 書込み後に `TeamPortSync` オブジェクトの生成を試みる。team_init() が失敗した場合は APPL_DB のみ書かれ STATE_DB は書かれない。コードコメント (`teamsync.cpp:191-192`): "STATE_DB is written only after the team instance is successfully created to prevent dependent services (e.g. intfmgrd) from acting on a LAG that teamd has not yet finished setting up"。
+
+### teammgrd による APPL_DB 副次書込み (cfgmgr/teammgr.cpp)
+
+CONFIG_DB `PORTCHANNEL` の SET が入力だが、`setLagMtu()` は LAG 本体に加えてメンバーポートにも波及する。
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET: `m_appLagTable.set(alias, [{mtu, <val>}])` | APPL_DB / `LAG_TABLE` | `<lag_name>` | MTU 変更時[^se2] |
+| SET: `m_appPortTable.set(member, [{mtu, <val>}])` | APPL_DB / `PORT_TABLE` | `<member_port>` | MTU 変更時・現在の LAG メンバー全ポートに伝播[^se2] |
+
+`setLagMtu()` (`teammgr.cpp:511-535`) は `m_cfgLagMemberTable.getKeys()` で現在の LAG メンバーを取得し、メンバーポートの `PORT_TABLE` にも同じ MTU を書き込む。LAG の MTU 変更はメンバーポートの APPL_DB エントリを即時書き換える副次効果を持つ。
+
+### orchagent (PortsOrch::addLag / removeLag) による COUNTERS_DB 書込み (orchagent/portsorch.cpp)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET: `m_counterLagTable->set("", [{<lag_alias>, <sai_oid>}])` | COUNTERS_DB / `COUNTERS_LAG_NAME_MAP` | `""` (ハッシュフィールドで管理) | `addLag()` SAI 成功時[^se3] |
+| DEL: `m_counterLagTable->hdel("", lag.m_alias)` | COUNTERS_DB / `COUNTERS_LAG_NAME_MAP` | `""` (フィールド削除) | `removeLag()` SAI 成功時[^se3] |
+
+`COUNTERS_LAG_NAME_MAP` はハッシュ形式で `<lag_alias>` → `<sai_object_id>` のマッピングを保持する。flexcounter がこのマッピングを参照して LAG ポートの統計カウンターを収集する。
+
+### orchagent (PortsOrch::addLag) による内部通知
+
+`addLag()` は SAI 成功後に `notify(SUBJECT_TYPE_PORT_CHANGE, &update)` を呼ぶ (`portsorch.cpp:8015-8017`)。これにより orchagent 内の以下の Observer が連動する:
+
+| Observer | 動作 |
+|----------|------|
+| `AclTable::onUpdate()` | ACL バインドポートとして LAG が追加された場合、ACL テーブルの SAI bind port リストを更新 (`aclorch.cpp:2866`) |
+| `DebugCounterOrch::update()` | デバッグカウンター用ポートリストを更新 (`debugcounterorch.cpp:71`) |
+| `DtelOrch::update()` | DTEL (Data Plane Telemetry) のポートバインド対象リストを更新 (`dtelorch.cpp:410`) |
+
+### カーネル操作 (DB 外・teammgrd)
+
+| 操作 | カーネルコマンド | 条件 |
+|------|----------------|------|
+| LAG 作成 | `/usr/bin/teamd -r -t <lag_name> -c <conf_json> -L /var/warmboot/teamd/ -g -d` | `addLag()` 時[^se2] |
+| admin_status 変更 | `ip link set dev <lag_name> up/down` | `setLagAdminStatus()` 時[^se2] |
+| MTU 変更 | `ip link set dev <lag_name> mtu <val>` | `setLagMtu()` 時[^se2] |
+| LAG 削除 | `teamdctl <lag_name> state dump` → teamd 停止 | `delLag()` (doLagTask DEL パス) 時[^se2] |
+
+[^se1]: `sonic-swss/teamsyncd/teamsync.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
+[^se2]: `sonic-swss/cfgmgr/teammgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/teammgr.cpp>
+[^se3]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp>
+<!-- /side-effects -->
+
 ## APPL_DB LAG_TABLE と STATE_DB LAG_TABLE の区別
 
 | 側面 | APPL_DB LAG_TABLE | STATE_DB LAG_TABLE |
