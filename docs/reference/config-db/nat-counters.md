@@ -354,3 +354,61 @@ YANG 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode �
 > **証跡**: `natorch.cpp:774-783` (addHwDnatEntry SAI 失敗)、`natorch.cpp:3546-3574` (getNatCounters SAI 失敗 → 0 上書き)、`natorch.cpp:3609-3623` (getTwiceNatCounters SAI 失敗)、`natorch.cpp:3517-3521` (addedToHw ガード)、`natorch.cpp:3125-3128` (clock_gettime 失敗)、`natorch.cpp:2541-2544` (gIsNatSupported ガード)、`natorch.cpp:115-135` (コンストラクタ SAI クエリ)、`main.cpp:940-948` (gIsNatSupported 設定)。
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`NatOrch` が COUNTERS_DB NAT カウンタテーブル群を書き込む際に使用する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/natorch.h` および `sonic-swss/orchagent/natorch.cpp`。
+
+### カウンタ更新タイマー周期定数
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `NAT_HITBIT_N_CNTRS_QUERY_PERIOD` | `5` 秒 | NAT エントリのパケット・バイトカウンタおよびヒットビットを SAI から定期取得する周期。COUNTERS_NAT\* テーブルの更新間隔を決定する | `natorch.h:37` |
+| `NAT_CONNTRACK_TIMEOUT_PERIOD` | `86400` 秒 (1 日) | conntrack エントリの老化チェック通知タイマー周期。カウンタ更新には関与しない | `natorch.h:38` |
+| `NAT_HITBIT_QUERY_MULTIPLE` | `6` | ヒットビットクエリ周期の倍率。カウンタは 5 秒周期で更新されるが、ヒットビット (エントリのアクティブ判定) は `5 × 6 = 30` 秒周期でのみ問い合わせる | `natorch.h:39` |
+
+### NatOrch コンストラクタ ハードコードデフォルト (COUNTERS_GLOBAL_NAT への初期書込値)
+
+| フィールド名 | 値 | ソース変数 | ソース |
+|-------------|-----|-----------|--------|
+| `TIMEOUT` | `600` 秒 | `timeout = 600` | `natorch.cpp:67` |
+| `TCP_TIMEOUT` | `86400` 秒 (1 日) | `tcp_timeout = 86400` | `natorch.cpp:70` |
+| `UDP_TIMEOUT` | `300` 秒 | `udp_timeout = 300` | `natorch.cpp:73` |
+
+これらは NatOrch コンストラクタで 1 回だけ `COUNTERS_GLOBAL_NAT|Values` に書き込まれ、以後 CONFIG_DB の `NAT_GLOBAL.nat_timeout` 等が変更されても更新されない。YANG default (`sonic-nat`) と同値のため、YANG バリデーション迂回が起きた場合でも同一値が初期化される。
+
+### テーブル名定数 (schema.h)
+
+| 定数名 | 値 | ソース |
+|--------|-----|--------|
+| `COUNTERS_NAT_TABLE` | `"COUNTERS_NAT"` | `schema.h:260` |
+| `COUNTERS_NAPT_TABLE` | `"COUNTERS_NAPT"` | `schema.h:261` |
+| `COUNTERS_TWICE_NAT_TABLE` | `"COUNTERS_TWICE_NAT"` | `schema.h:262` |
+| `COUNTERS_TWICE_NAPT_TABLE` | `"COUNTERS_TWICE_NAPT"` | `schema.h:263` |
+| `COUNTERS_GLOBAL_NAT_TABLE` | `"COUNTERS_GLOBAL_NAT"` | `schema.h:264` |
+
+### APPL_DB コンシューマ優先度定数
+
+NatOrch が消費する APPL_DB テーブルの優先度（小さい値 = 高優先）。COUNTERS_DB への書き込み順に影響する。
+
+| テーブル名 | 優先度 | ソース |
+|-----------|--------|--------|
+| `APP_NAT_DNAT_POOL_TABLE_NAME` | `55` (`natorch_base_pri + 5`) | `orchdaemon.cpp:457` |
+| `APP_NAT_TABLE_NAME` | `54` | `orchdaemon.cpp:458` |
+| `APP_NAPT_TABLE_NAME` | `53` | `orchdaemon.cpp:459` |
+| `APP_NAT_TWICE_TABLE_NAME` | `52` | `orchdaemon.cpp:460` |
+| `APP_NAPT_TWICE_TABLE_NAME` | `51` | `orchdaemon.cpp:461` |
+| `APP_NAT_GLOBAL_TABLE_NAME` | `50` (最低) | `orchdaemon.cpp:462` |
+
+`APP_NAT_GLOBAL_TABLE_NAME` の優先度が最低のため、`admin_mode` の変更はエントリ系テーブルの処理完了後に評価される。
+
+### プラットフォーム依存定数
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` | `getenv("platform")` の部分一致チェック。Broadcom プラットフォームでのみ `gNhTrackingSupported = true` を設定し DNAT ネクストホップ追跡を有効化 | `orch.h:43`、`natorch.cpp:145-148` |
+
+`gNhTrackingSupported` が `false` (非 Broadcom) の場合、DNAT エントリのネクストホップ解決待ちが行われず、`addedToHw=false` のままとなる可能性がある。これはカウンタ SAI クエリのガード条件 (`natorch.cpp:3517-3521`) に影響し、`COUNTERS_NAT` の更新がスキップされうる。
+
+<!-- /constants -->
