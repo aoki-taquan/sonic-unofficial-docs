@@ -446,6 +446,26 @@ frrcfgd から pimd への経路は単方向であり、pimd から CONFIG_DB �
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+PIM_GLOBALS / PIM_INTERFACE の処理は FRR `pimd` + `frrcfgd` の純粋な制御プレーン実装であり、SAI / ASIC 非経由のため ASIC 種別によるプラットフォーム差はない。ただし起動制御フラグと multi-asic 構成には制約がある。詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-platform.md`。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco / vs 等) | 影響なし | PIM は SAI 非経由。pimd がカーネル mroute API (`MRT_INIT` / `MRT_ADD_VIF`) を直接使用。`frrcfgd.py` の PIM ハンドラにプラットフォーム分岐コードなし |
+| `DEVICE_METADATA.frr_mgmt_framework_config` | **必須前提** | `"true"` 以外の場合 pimd / frrcfgd が supervisord に登録されず起動しない。`PIM_GLOBALS` / `PIM_INTERFACE` の CONFIG_DB エントリはサイレントに無視される (`supervisord.conf.j2:120-148`, `critical_processes.j2:5-9`) |
+| multi-asic (`asicN` namespace) | 非対応（実用上単一 ASIC 前提） | `frrcfgd.py` は `multi_asic` / namespace を import しない (grep 0 ヒット)。複数 pimd が同一 VRF の mroute socket を競合するシナリオは非サポート |
+| VOQ chassis (supervisor / line cards) | 不明 / 非推奨 | コミュニティ PIM HLD に chassis サポートの記載なし |
+| MAXVIFS インタフェース上限 | **255**（全プラットフォーム共通） | カーネル `MRT_ADD_VIF` API 由来。`pimd/pim_mroute.h:47-48` で `MAXVIFS=256`、`pim_oil.h:52` で `PIM_MAX_USABLE_VIFS = MAXVIFS-1 = 255` |
+| テンプレート内プラットフォーム分岐 | なし | `frr.conf.j2` に pim テンプレートブロックなし。`supervisord.conf.j2` の分岐は `frr_mgmt_framework_config` フラグのみ |
+
+!!! note "frr_mgmt_framework_config の設定"
+    `DEVICE_METADATA|localhost` に `frr_mgmt_framework_config = "true"` を設定しないと pimd が起動しない。
+    pimd が起動しない状態で CONFIG_DB に `PIM_GLOBALS` / `PIM_INTERFACE` を書いても frrcfgd の接続先ソケット `/run/frr/pimd.vty` が存在せず、frrcfgd 全体の起動もブロックされる (`frrcfgd.py:192-199`)。
+
+<!-- /platform -->
+
 ## 購読者
 
 - `frrcfgd` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`): `PIM_GLOBALS` および `PIM_INTERFACE` を購読し、FRR pimd に `vtysh` 経由でコマンドを注入する[^1]
