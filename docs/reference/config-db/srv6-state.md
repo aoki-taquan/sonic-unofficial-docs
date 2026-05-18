@@ -212,6 +212,35 @@ syncd がポーリングを開始してから最初の `COUNTERS:<oid>` 値が�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## テーブル間クロスリファレンス (Phase C)
+
+> 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L218-232、`getMySidCounterKey()` L177-182、`setCountersState()` L251-283、`schema.h` L257,313、`srv6stat.py` 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-state-cross-refs.md`
+
+| 参照元 | 参照先 | 種別 | 必須条件 |
+|--------|--------|------|----------|
+| `COUNTERS_SRV6_NAME_MAP` キー | `CONFIG_DB SRV6_MY_LOCATORS` の `block_len`/`node_len`/`func_len` | ビット長計算 (直接 GET) | ロケータが CONFIG_DB に存在すること（欠落でキー計算失敗） |
+| `COUNTERS:<oid>` | `FLEX_COUNTER_DB SRV6_COUNTER_ID_LIST` | FlexCounter 間接トリガー | SAI 対応プラットフォームかつ enable 状態であること |
+| `COUNTERS_SRV6_NAME_MAP` (一括) | `FLEX_COUNTER_TABLE\|SRV6` enable/disable | orch 内部連動 | `setCountersState()` 呼び出し |
+| `show srv6 stats` CLI | `COUNTERS_DB COUNTERS_SRV6_NAME_MAP` + `COUNTERS:<oid>` | 直接読取 | カウンタ初期化後、最大 11 秒待ちで初回値が出現 |
+
+### COUNTERS_SRV6_NAME_MAP キーと SRV6_MY_LOCATORS の関係
+
+`getMySidCounterKey()` (`srv6orch.cpp:177-182`) は COUNTERS_DB に書き込むキーを以下で生成する:
+
+```cpp
+return mysid_addr + "/" + to_string(block_len + node_len + func_len)
+```
+
+`block_len` / `node_len` / `func_len` は `getLocatorCfgFromDb()` が CONFIG_DB `SRV6_MY_LOCATORS` から取得する。ロケータを後から変更した場合、既存の `COUNTERS_SRV6_NAME_MAP` エントリのキーが旧プレフィックス長のまま残存し、`show srv6 stats` に孤立エントリが出現する可能性がある。`sonic-clear srv6stats` でキャッシュをクリアして `Srv6Orch` が MySID を再作成するまで解消されない。
+
+### FLEX_COUNTER_TABLE|SRV6 と カウンタの一括制御
+
+`setCountersState(true)` (`srv6orch.cpp:261-283`) は `FLEX_COUNTER_TABLE|SRV6` が enable になったとき既存の全 MySID を `m_mysid_counters_table` (COUNTERS_SRV6_NAME_MAP) に一括登録する。`setCountersState(false)` は逆に全エントリを `hdel` で削除する。`COUNTERS:<oid>` の実値は FlexCounter が次のポーリング（最大 10 秒後）まで更新されない。
+
+<!-- /cross-refs -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`SRV6_MY_SIDS`](srv6-my-sids.md) — MySID エントリ定義
