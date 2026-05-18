@@ -296,19 +296,29 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照マップ (Phase C)
+## 暗黙参照テーブル (Phase C)
 
-| 参照方向 | このテーブル | 相手テーブル / ページ | 条件 |
-|---------|------------|---------------------|------|
-| LLDP_ENTRY_TABLE ← | lldp-syncd 書き込み元 | lldpd (open-lldp) | lldp-syncd が `lldpctl -f json` をポーリングして PDU 受信データを APPL_DB に HSET する。lldpd が書き込み元であり、CONFIG_DB を直接参照しない |
-| LLDP_ENTRY_TABLE → (間接) | `lldp_rem_*` フィールド生成 | [`LLDP`](./lldp.md) / [`LLDP_PORT`](./lldp-port.md) | CONFIG_DB `LLDP|GLOBAL` / `LLDP_PORT|<ifname>` を lldpmgrd が lldpd に設定（`lldpcli configure lldp ...`）し、自ノードの LLDPDU の内容（portidsubtype 等）を制御する。対向ノードが受信した LLDPDU が `LLDP_ENTRY_TABLE` の内容に反映される（間接的な書き込み経路） |
-| LLDP_ENTRY_TABLE → | SNMP MIB 提供 (ieee802_1ab.py) | `PORT_TABLE` (APPL_DB) | `LLDPLocalSystemDataUpdater._get_if_entry()` が `APPL_DB:PORT_TABLE:<ifname>` を読み、LLDP-MIB の `lldpLocPortTable` (自ポート記述) を構成する。LLDP_ENTRY_TABLE の隣接情報 OID 解決に ifIndex ↔ ifname マップも同一 updater が管理する |
-| LLDP_ENTRY_TABLE → | REST / gNMI 提供 (lldp_app.go) | OpenConfig LLDP YANG | `sonic-mgmt-common lldp_app.go` が `APPL_DB:LLDP_ENTRY_TABLE` を `GetTable(neighTs)` で読み OpenConfig LLDP YANG モデル (`openconfig-lldp:lldp/interfaces/...`) にマッピング。CONFIG_DB は参照しない |
-| LLDP_ENTRY_TABLE → | SNMP LLDP-MIB 提供 (ieee802_1ab.py) | `MGMT_PORT|*` (CONFIG_DB) | `_get_if_entry()` が管理ポート (`eth0` 等) の場合は CONFIG_DB の `MGMT_PORT|<name>` を参照。データプレーンポートは APPL_DB `PORT_TABLE`、管理ポートは CONFIG_DB を切り替えて参照する |
-| CLI | `show lldp neighbors` / `show lldp table` | [`show lldp`](../cli/show-lldp.md) | APPL_DB `LLDP_ENTRY_TABLE` の読み取り CLI。書き込みは不可 |
-| YANG | スキーマ定義なし (APPL_DB) | [`sonic-lldp`](../yang/sonic-lldp.md) | CONFIG_DB 側の LLDP/LLDP_PORT テーブルを定義する。APPL_DB の LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS に対応する YANG モデルは存在しない |
+`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` (APPL_DB) の書き手・読み手が参照する他テーブルおよびリソースを整理する。
+本テーブルは lldp-syncd が **producer only** として書き込み、sonic-snmpagent / sonic-mgmt-common (lldp_app.go) が読み手として参照する。
 
-> **Evidence**: `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py` L192-213 (PORT_TABLE / CONFIG_DB 切り替え); `sonic-mgmt-common/translib/lldp_app.go` L82 (`neighTs = LLDP_ENTRY_TABLE`), L327 (GetTable); `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py` L155-160 (lldp_entry_table), L168 (if_entry_table)
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `PORT_TABLE` (APPL_DB) | 読み取り: OID→IF マッピング構築 | 常時。`LLDPRemTableUpdater.reinit_data()` が `init_sync_d_interface_tables()` 経由で参照。OID マップ不在ポートの LLDP エントリは SNMP walk に現れない | `ieee802_1ab.py:416-423`, `mibs/__init__.py:276-333` |
+| `MGMT_PORT_TABLE` (CONFIG_DB) | 読み取り: 管理ポートの alias 取得 | 管理ポート (`eth0` 等) のみ。データプレーンポートは APPL_DB `PORT_TABLE` 経由 | `ieee802_1ab.py:206-215` |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | 間接: lldpmgrd → lldpcli → LLDPDU TLV | 常時。`hostname` / `chassis_hostname` 変更時に `lldpcli configure system hostname` を実行。対向ノードの `lldp_rem_sys_name` に伝播 | `lldpmgrd:247-256, 308-310` |
+| `MGMT_INTERFACE` (CONFIG_DB) | 間接: lldpmgrd → lldpcli → LLDPDU TLV | 常時。管理 IP 変更時に `lldpcli configure system ip management pattern` を実行。対向ノードの `lldp_rem_man_addr` に伝播 | `lldpmgrd:228-245, 304-306` |
+| `PORT_TABLE.alias` (APPL_DB) | 間接: lldpmgrd → lldpcli → LLDPDU TLV | ポート up 時。alias / description を `lldpcli configure ports` で lldpd に設定。対向ノードの `lldp_rem_port_id` に伝播。alias 未設定時はポート名を使用 | `lldpmgrd:136-166, 300-325` |
+| `LLDP_LOC_CHASSIS` (APPL_DB) | 直接読み取り: SNMP lldpLocalSystemData | 常時。`LLDPLocalSystemDataUpdater` が `dbs_get_all` で全フィールドを取得して SNMP MIB に返す | `ieee802_1ab.py:114-146, 302-345` |
+
+!!! note "lldp_app.go の参照範囲"
+    `sonic-mgmt-common/translib/lldp_app.go` は `LLDP_ENTRY_TABLE` のみを参照する（`neighTs = &db.TableSpec{Name: "LLDP_ENTRY_TABLE"}`）。
+    `LLDP_LOC_CHASSIS` は参照せず、OpenConfig LLDP の local chassis 情報はスコープ外。
+
+!!! note "lldpmgrd の間接影響"
+    `lldpmgrd` は `LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` への直接書き込みを行わないが、
+    `DEVICE_METADATA` / `MGMT_INTERFACE` / `PORT_TABLE` の変化を lldpd に伝達することで
+    lldpd が送出する LLDPDU 内容を制御し、**対向ノードの** APPL_DB に書かれる値を間接的に決定する。
+
 <!-- /cross-refs -->
 
 <!-- defaults -->
