@@ -337,6 +337,45 @@ orchagent が APPL_DB を処理
 > **スキャン証跡**: `copporch.cpp` L208-215, L240-300, L315-390, L499-532, L880-934 読了。`coppmgr.cpp` L424-451, L531-815 読了。失敗分岐 4 系統（SAI init / doTask status / SAI trap create / coppmgrd skip）を確認。詳細は `meta/_intermediate/cdb-flow/copp-state-failure.md` 参照。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`CoppOrch` (`copporch.cpp` / `copporch.h`) および `CoppMgr` (`coppmgr.cpp`) 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。これらの値は STATE_DB テーブルの書き込みタイミング・フィールド値・capability 公開内容に直接影響する。
+
+### FlexCounter / タイマー定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | `SelectableTimer` の更新周期。FlexCounter グループパラメータ設定タイミングに影響 | `copporch.cpp` L37 |
+| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | ホストインタフェーストラップカウンタの FlexCounter ポーリング間隔 | `copporch.cpp` L189 |
+| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | COUNTERS_DB FlexCounter グループ名。`bindTrapCounter()` / `unbindTrapCounter()` 経由で `COUNTERS_TRAP_NAME_MAP` への書き込みを制御 | `copporch.h` L23 |
+
+### STATE_DB フィールド値定数
+
+| 定数 / リテラル | 値 | 用途 | ソース |
+|---------------|----|------|--------|
+| `hw_status` 値 ("installed") | `"installed"` | `create_hostif_trap()` 成功後に `COPP_TRAP_TABLE.<trap-name>.hw_status` へ書き込む文字列。ハードコード | `copporch.cpp` L526 |
+| `hw_status` 値 ("not-installed") | `"not-installed"` | `remove_hostif_trap()` 成功後に書き込む文字列。ハードコード | `copporch.cpp` L1413 |
+| `state` 値 ("ok") | `"ok"` | `setCoppGroupStateOk()` / `setCoppTrapStateOk()` が書き込む固定値。COPP_GROUP_TABLE / COPP_TRAP_TABLE の `state` フィールドはこの 1 値のみ取る | `coppmgr.cpp` L426, L441 |
+| `COPP_TRAP_CAPABILITY_TABLE` key | `"traps"` | `publishTrapIdsCapability()` が書き込む固定 key。1 エントリのみ存在し、フィールド名は `"trap_ids"` | `copporch.cpp` L298-299 |
+
+### デフォルトトラップグループ / トラップ ID
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `default_trap_group` | `"default"` | orchagent 起動時に `initDefaultTrapGroup()` で取得するデフォルトトラップグループ名 | `copporch.cpp` L184 |
+| `default_trap_ids` | `{SAI_HOSTIF_TRAP_TYPE_TTL_ERROR}` (1 種) | `initDefaultTrapIds()` で初期適用される固定トラップ ID。TTL エラーのみ | `copporch.cpp` L185-187 |
+| `default_supported_trap_ids` フォールバックリスト | 44 エントリ (`stp`～`bfdv6_micro`、`neighbor_miss` **除外**) | SAI capability クエリ失敗時に `COPP_TRAP_CAPABILITY_TABLE|traps.trap_ids` へ書き込まれるリスト。`neighbor_miss` は意図的に除外（コメント: "This list is intended to remain static and should not be updated with new traps."）| `copporch.cpp` L106-151 |
+
+### プラットフォーム環境変数分岐
+
+| 定数 / 検査値 | 用途 | ソース |
+|--------------|------|--------|
+| `getenv("platform")` 文字列比較 | `"x86_64-mlnx_msn*"` (Mellanox) または `"arm64-marvell_*"` パターンで trap priority 設定をスキップ。SAI create_hostif_trap の attrib リストに `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` を含めない | `copporch.cpp` L353-354, L1188-1189 |
+
+> **スキャン証跡**: `copporch.cpp` L37, L106-151, L184-215, L296-299, L350-360, L499-532, L1185-1195, L1385-1395, L1413 読了。`copporch.h` L23-46 読了。`coppmgr.cpp` L424-451 読了。定数 5 種別 13 件を確認。
+<!-- /constants -->
+
 ## 確認コマンド
 
 ```bash
