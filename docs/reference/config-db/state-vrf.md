@@ -299,6 +299,42 @@ VRFOrch: STATE_DB VRF_OBJECT_TABLE|<name> DEL
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`
+中間調査: `meta/_intermediate/cdb-flow/state-vrf-failure.md`
+
+### `VRF_TABLE` — 書込み失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `setLink()` が `false` を返す（ルーティングテーブル ID 枯渇） | `doTask()` SET 処理内 | `m_stateVrfTable.set()` は依然実行される — `VRF_TABLE\|<name>` に `state=ok` が書かれるが Linux VRF デバイスは存在しない | `SWSS_LOG_ERROR("Failed to create vrf netdev %s")` | `vrfmgr.cpp:281-289` |
+| `setLink()` で `ip link add` が例外 (`EXEC_WITH_ERROR_THROW`) | `setLink()` 内 | 例外が上位に伝播し `m_stateVrfTable.set()` に到達しない。`VRF_TABLE` エントリなし | systemd に例外ログ | `vrfmgr.cpp:191-194` |
+
+`setLink()` 失敗の 2 経路（`false` 戻りと例外）では STATE_DB への影響が異なる点に注意。ID 枯渇時は `false` を返して `doTask()` が継続するため `VRF_TABLE` に誤った `state=ok` が書き込まれる。
+
+### `VRF_OBJECT_TABLE` — 書込み失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ出力 | evidence |
+|---|---|---|---|---|
+| SAI `create_virtual_router()` 失敗 | `addOperation()` | `hset` に到達しない。`VRF_OBJECT_TABLE` エントリが書かれない | `SWSS_LOG_ERROR("Failed to create virtual router name: %s, rv: %d")` | `vrforch.cpp:99-103` |
+| SAI `remove_virtual_router()` 失敗 | `delOperation()` | `m_stateVrfObjectTable.del()` に到達しない。`VRF_OBJECT_TABLE` エントリが残留 → vrfmgrd の削除待機ループが無限に継続 | `SWSS_LOG_ERROR("Failed to remove virtual router name: %s, rv:%d")` | `vrforch.cpp:175-180` |
+| `ref_count` 非ゼロ（VRF が Route/Nexthop に参照されている） | `delOperation()` L169-170 | `VRF_OBJECT_TABLE` 変化なし。vrfmgrd は削除待機を継続 | なし（次の doTask() で再試行） | `vrforch.cpp:169-170` |
+| orchagent クラッシュ（SAI remove 成功後・del() 実行前） | orchagent 終了 | `VRF_OBJECT_TABLE` エントリが残留（stale） — warm start なし再起動で解消 | なし | `vrforch.cpp:193` |
+
+### 失敗時の STATE_DB 状態まとめ
+
+| 失敗シナリオ | `VRF_TABLE` | `VRF_OBJECT_TABLE` | vrfmgrd への影響 |
+|---|---|---|---|
+| ID 枯渇による `setLink()` false | `state=ok` 書込み済み（Linux VRF なし） | 存在しない | `intfmgrd`/`vxlanmgr` が VRF 存在と誤認識する恐れあり |
+| SAI create 失敗 | `state=ok` 書込み済み（vrfmgrd が先行） | 存在しない（正常） | 削除時に vrfmgrd のループはブロックされない |
+| SAI remove 失敗 | 削除待機中 | 残留（stale） | 削除待機ループが無限継続 — 手動介入が必要 |
+| orchagent クラッシュ | 削除待機中 | 残留（stale） | orchagent warm start なし再起動で解消 |
+| ref_count 非ゼロ | 削除待機中 | 残留（設計上の保留） | 参照数がゼロになれば次の doTask() で自動解消 |
+
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
