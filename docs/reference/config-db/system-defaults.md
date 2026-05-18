@@ -392,4 +392,22 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 > **Evidence**: `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `src/sonic-config-engine/config_samples.py:179-188`; `dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213-220`; `sonic-swss/orchagent/muxorch.cpp:1388-1393`; `sonic-swss/orchagent/aclorch.h:111-112`; `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-defaults.yang:27-35`; SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` (buildimage) / `4305596156d70e9797e8a881b3d19b46de0bce0d` (swss)。詳細は `meta/_intermediate/cdb-flow/system-defaults-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`SYSTEM_DEFAULTS` はイベント駆動ハンドラを持たず、`ConsumerStateTable` / `SubscriberStateTable` による pub/sub 購読を行わない。そのため CONFIG_DB の `SYSTEM_DEFAULTS` 変更に直接反応して副次 DB を書き込む処理は存在しない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `orchagent.sh` / `muxorch` / `bgpcfgd` いずれも SYSTEM_DEFAULTS への反応として APPL_DB 書込を行わない |
+| STATE_DB | なし（間接的あり） | `BfdMgr` は `software_bfd=enabled` のとき起動時に STATE_DB `BFD_SESSION_TABLE` を管理するが、これは SYSTEM_DEFAULTS 変更への動的反応ではなく起動時の条件付き有効化 (`bgpcfgd/main.py:117-121`) |
+| ASIC_DB | 間接的あり | `MuxAclHandler::MuxAclHandler()` が `mux_tunnel_egress_acl` を読み取って ACL テーブル / ルールを SAI API 経由で生成する (`muxorch.cpp:1388-1416`)。ただし CONFIG_DB には書き込まない |
+| COUNTERS_DB / FLEX_COUNTER_DB | なし | SYSTEM_DEFAULTS を参照するコードに COUNTERS_DB 書込なし |
+| CONFIG_DB（自己書込） | なし | SYSTEM_DEFAULTS は init_cfg.json / sonic-cfggen によって初期化されるのみ。実行時に自己更新はしない |
+
+主な副作用は DB ではなくコンテナ起動引数（`orchagent.sh` が `swss_vars.j2` をレンダリングして `dscp_remapping` を `-s` フラグ等として orchagent に渡す）と、[MuxPort](../../reference/glossary.md#term-mux) 初期化時の SAI ACL オブジェクト生成に閉じる。
+
+> **Evidence**: `sonic-swss/orchagent/muxorch.cpp:1388-1416`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:117-121`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:8-42`; 詳細スキャン結果は `meta/_intermediate/cdb-flow/system-defaults-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 90fa20b1e615 -->
