@@ -1,6 +1,6 @@
 ---
 title: STP / ICCP 連携 — コード由来デフォルト詳細
-description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F 分析。"
+description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -54,7 +54,7 @@ related:
 # STP / ICCP 連携 — コード由来デフォルト詳細
 
 !!! info "ページの位置付け"
-    このページは MCLAG 環境における **STP (Spanning Tree Protocol) と ICCP (Inter-Chassis Control Protocol) の連携** を詳述する Phase A 分析ページ。
+    このページは MCLAG 環境における **STP (Spanning Tree Protocol) と ICCP (Inter-Chassis Control Protocol) の連携** を詳述する Phase A–G 分析ページ。
     `iccpd` (`docker-iccpd`) が担うロール決定アルゴリズム・CONFIG_DB フィールドとの対応・ICCP STP TLV の実装状況を解説する。
 
 ## 概要
@@ -560,6 +560,68 @@ Standby ロール確定時に `mlacp_fix_bridge_mac(csm)` が実行され、Linu
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-pubsub.md -->
+
+STP/ICCP 連携における CONFIG_DB → iccpd → STATE_DB の通知経路を整理する。
+
+### iccpd は Redis を直接 subscribe しない
+
+`iccpd` は Redis keyspace notification を直接購読しない。CONFIG_DB の変更は **`mclagsyncd` 経由**で IPC として届く。
+
+```
+CONFIG_DB (keyspace @4) ──PSUBSCRIBE──► mclagsyncd
+   mclagsyncd ──Unix socket (port 2626)──► iccpd (sync_fd)
+      iccpd ──iccp_mclagsyncd_msg_handler()──► scheduler_check_csm_config()
+         └──► iccp_csm_stp_role_count()  ← STP ロール決定
+```
+
+`mclagsyncd` が購読する CONFIG_DB テーブル:
+
+| テーブル | PSUBSCRIBE パターン | 実装位置 |
+|---------|-------------------|---------|
+| `MCLAG` (MCLAG_DOMAIN) | `__keyspace@4__:MCLAG\|*` | `mclagsyncd.cpp:41` |
+| `MCLAG_INTERFACE` | `__keyspace@4__:MCLAG_INTERFACE\|*` | `mclaglink.cpp:912-921` |
+| `MCLAG_UNIQUE_IP` | `__keyspace@4__:MCLAG_UNIQUE_IP\|*` | `mclaglink.cpp:912-921` |
+
+### iccpd メインループ — epoll_wait + 100 ms タイムアウト
+
+`scheduler_loop()` (`scheduler.c:462`) は `epoll_wait(EPOLL_TIMEOUT_MSEC = 100 ms)` でブロック待機し、
+以下のイベント源を処理する (`scheduler.h:44`, `iccp_netlink.c:2182`):
+
+| イベント源 | fd | 処理 |
+|-----------|----|----|
+| mclagsyncd IPC | `sys->sync_fd` | `iccp_mclagsyncd_msg_handler()` — CONFIG_DB 変更を受信 |
+| ICCP peer TCP | `csm->sock_fd` | `scheduler_csm_read_callback()` — ICCP TLV 処理 |
+| netlink socket | カーネル | ネットワーク IF 変化検知 |
+| シグナルパイプ | `sys->sig_pipe_r` | graceful shutdown |
+
+### STP ロール確定後の通知 (iccpd → mclagsyncd → STATE_DB)
+
+ロール決定後に `mlacp_link_set_iccp_role()` が **iccpd → mclagsyncd IPC** でロールを通知し、
+`mclagsyncd` が `ProducerStateTable` 経由で `STATE_DB` に書き込む（Redis 直接書き込みなし）:
+
+| iccpd メッセージ型 | mclagsyncd 関数 | STATE_DB テーブル / フィールド |
+|---|---|---|
+| `MCLAG_MSG_TYPE_SET_ICCP_ROLE` | `mclagsyncdSetIccpRole()` | `STATE_MCLAG_TABLE\|{mlag_id}`.`role`: `"active"` / `"standby"` |
+| `MCLAG_MSG_TYPE_SET_ICCP_STATE` | `mclagsyncdSetIccpState()` | `STATE_MCLAG_TABLE\|{mlag_id}`.`oper_status`: `"up"` / `"down"` |
+
+iccpd は `sync_fd <= 0`（mclagsyncd 未接続）の場合にロール通知を**サイレントスキップ**する (`mlacp_link_handler.c:654-660`)。
+
+### ハートビートタイマー
+
+ICCP セッション生存確認は TCP keepalive ではなく iccpd 独自タイマーで行う:
+
+- `scheduler.c:82`: `time(NULL) - csm->heartbeat_update_time > csm->session_timeout` でタイムアウト検出
+- タイムアウト時は `scheduler_session_disconnect_handler()` → `role_type = STP_ROLE_NONE` リセット
+- `session_timeout` は CONFIG_DB `MCLAG_DOMAIN.session_timeout` から受け取る（YANG デフォルト `30` 秒）
+- CSM 初期化時は `HEARTBEAT_TIMEOUT_SEC = 15` 秒で初期化され、CONFIG_DB 受信後に上書きされる
+
+証跡: `scheduler.c:462-488`, `iccp_netlink.c:2182`, `scheduler.h:44`, `mlacp_link_handler.c:654-660`, `mclagsyncd.cpp:41`, `mclaglink.cpp:912-921`, `mclaglink.cpp:1357-1420`
+<!-- /pubsub -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
@@ -580,6 +642,8 @@ Standby ロール確定時に `mlacp_fix_bridge_mac(csm)` が実行され、Linu
 [^5]: ICCP メッセージフォーマット: `msg_format.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/msg_format.h>
 [^6]: STP YANG モデル: `sonic-spanning-tree.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-spanning-tree.yang>
 [^7]: MCLAG YANG モデル: `sonic-mclag.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang>
+[^8]: mclagsyncd メインループ: `mclagsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclagsyncd.cpp>
+[^9]: mclagsyncd リンク実装: `mclaglink.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp>
 
 ## 関連ページ
 
