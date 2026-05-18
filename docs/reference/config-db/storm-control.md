@@ -421,6 +421,78 @@ DEL パスでは `set_port_attribute(NULL)` でデタッチ後、`remove_policer
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/storm-control-constants.md`
+
+### フィールド名文字列定数 (`policerorch.cpp:29-32`)
+
+storm control エントリ処理で使用されるフィールド名・storm_type 文字列定数:
+
+| 変数名 | 値 | 用途 |
+|--------|-----|------|
+| `storm_control_kbps` | `"KBPS"` | CONFIG_DB フィールド名。`to_upper(fvField)` との比較で kbps を識別 |
+| `storm_broadcast` | `"broadcast"` | key の storm_type → `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` に対応 |
+| `storm_unknown_unicast` | `"unknown-unicast"` | key の storm_type → `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` に対応 |
+| `storm_unknown_mcast` | `"unknown-multicast"` | key の storm_type → `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` に対応 |
+
+`"KBPS"` 以外のフィールドは `SWSS_LOG_ERROR("Unknown storm control attribute %s specified", ...)` を出力して `continue`（無視）される (`policerorch.cpp:188-191`)。`storm_type` が上記 3 値以外の場合は `task_failed` となる (`policerorch.cpp:217-219`)。
+
+### Ethernet プレフィックス定数 (`policerorch.cpp:16`)
+
+```cpp
+#define ETHERNET_PREFIX "Ethernet"
+```
+
+`strncmp(interface_name.c_str(), ETHERNET_PREFIX, strlen(ETHERNET_PREFIX))` で非 Ethernet インターフェースを検出し、`SWSS_LOG_ERROR` 後 `task_success` で即時スキップする (`policerorch.cpp:132-136`)。LAG / VLAN / PortChannel 等には storm control を適用できない。
+
+### policer 名生成パターン (`policerorch.cpp:146`)
+
+```cpp
+const auto storm_policer_name = "_" + interface_name + "_" + storm_type;
+// 例: "_Ethernet0_broadcast"
+```
+
+先頭の `"_"` は POLICER テーブルのユーザー定義 policer 名との衝突を避ける命名規則。`m_syncdPolicers` マップのキーとして使用される。
+
+### kbps → CIR 変換定数 (`policerorch.cpp:182`)
+
+```cpp
+attr.value.u64 = (stoul(value) * 1000 / 8);
+```
+
+| 変換係数 | 値 | 意味 |
+|----------|-----|------|
+| `1000` | Kilo 倍率 | kbps → bps 変換 |
+| `8` | bits per byte | bps → bytes/s 変換 |
+
+整数演算のため `kbps % 8 != 0` の場合に **切り捨て**が発生する（Phase A に記載）。
+
+### ハードコード SAI 属性値 (`policerorch.cpp:157-168`)
+
+| SAI 属性 ID | ハードコード値 | 変更可否 |
+|-------------|--------------|---------|
+| `SAI_POLICER_ATTR_METER_TYPE` | `SAI_METER_TYPE_BYTES` (`"BYTES"`) | 不可 |
+| `SAI_POLICER_ATTR_MODE` | `SAI_POLICER_MODE_STORM_CONTROL` (`"STORM_CONTROL"`) | 不可 |
+| `SAI_POLICER_ATTR_RED_PACKET_ACTION` | `SAI_PACKET_ACTION_DROP` (`"DROP"`) | 不可 |
+
+これらは CONFIG_DB / YANG / CLI から一切変更できない。詳細は Phase A の §2 を参照。
+
+### テーブル名定数
+
+| マクロ / 変数 | 値 | 定義元 |
+|--------------|-----|--------|
+| `CFG_PORT_STORM_CONTROL_TABLE_NAME` | `"PORT_STORM_CONTROL"` | `sonic-swss-common` (schema) |
+| `STORM_TABLE_NAME` (CLI 側) | `"PORT_STORM_CONTROL"` | `sonic-utilities/scripts/storm_control.py:30` |
+| `SELECT_TIMEOUT` | `1000` (ms) | `orchdaemon.cpp:23` — PolicerOrch を含む全 Orch の select ループタイムアウト |
+
+### key 区切り文字
+
+`policerorch.cpp:126` で `tokenize(storm_key, config_db_key_delimiter)` を使用。`config_db_key_delimiter` は `orch.h` で `'|'` と定義されており、`PORT_STORM_CONTROL|<interface>|<storm_type>` を `tokens[0]=<interface>` / `tokens[1]=<storm_type>` に分割する。
+
+<!-- /constants -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
