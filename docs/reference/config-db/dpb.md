@@ -371,6 +371,31 @@ DPB シーケンスで `PORT` テーブルが変更されると、`portmgrd` が
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-platform.md -->
+
+`BREAKOUT_CFG` / DPB フローにはプラットフォーム依存の制約が 3 件存在する。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| `platform.json` 非対応環境（`port_config.ini` 形式） | **DPB 完全無効** — CLI が冒頭で即 Abort。`BREAKOUT_CFG` テーブル自体が `sonic-cfggen` によって生成されない | `portconfig.py:464` (`return None`), `main.py:5468–5471` |
+| Broadcom ハードウェアプロファイル | SAI `create_port` / `remove_port` が動作するために `portmap_N=<lane>:<speed>[:<speed>:i]` 形式のハードウェアプロファイル事前設定が必要。未設定の場合 `_verifyAsicDB()` がタイムアウトする | HLD L1090 |
+| multi-asic / VOQ chassis 環境 | `breakout` コマンドは **namespace iteration を行わない**。`ctx.obj['config_db']`（デフォルト namespace 単一 CONFIG_DB）のみを対象とする。他の CLI コマンド（`config mirror`・`config cbf reload` 等）が全 namespace を iterate するのと対照的 | `main.py:5460–5560`（`namespace` / `multi_asic` ヒット 0） |
+| 非対称 breakout モードの ASIC 制限 | 利用可能モードは `platform.json` の `breakout_modes` に列挙されたもののみ。ASIC 固有の制限は `platform.json` で表現され、未定義モードは `_validate_interface_mode()` が即拒否 | HLD L206, `main.py:5208–5209` |
+| YANG モデルのプラットフォーム分岐 | **なし** — `sonic-breakout_cfg.yang` はプラットフォーム条件を含まない | `sonic-breakout_cfg.yang` |
+
+### `platform.json` 非対応プラットフォームの詳細
+
+`port_config.ini` 形式しか提供しないプラットフォームでは DPB 機能が利用できない。これは `sonic-cfggen` が起動時に `BREAKOUT_CFG` テーブルを生成しないことに加え、CLI 実行時にも `[ERROR] Breakout feature is not available without platform.json file` を返して即終了するためである。HLD は *"To support the breakout feature, the json files will be required"* と明記している[^2]。
+
+### multi-asic 環境での運用注意
+
+multi-asic 構成では、対象ポートが属する ASIC の namespace に対して `config interface breakout` を手動で namespace 指定する必要がある可能性がある（community master には自動 iteration が存在しないため）。breakout 操作後は当該 ASIC の CONFIG_DB の `PORT` テーブルと `BREAKOUT_CFG` テーブルのみが更新され、他の ASIC namespace には影響しない。
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
