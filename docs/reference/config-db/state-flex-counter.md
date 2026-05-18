@@ -348,6 +348,77 @@ SAI 失敗は `SWSS_LOG_ERROR` または `SWSS_LOG_WARN` で syslog に出力さ
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp,
+     sonic-swss/orchagent/portsorch.h,
+     sonic-swss-common/common/schema.h -->
+
+FLEX_COUNTER_DB の GROUP_TABLE / COUNTER_TABLE で使われるフィールド名・グループ名・タイムアウト値はすべてコード内定数で決まる。YANG スキーマや CONFIG_DB のキー名とは独立しており、ユーザーが直接変更することはできない。
+
+### FLEX_COUNTER_GROUP_TABLE フィールド名定数 (`sonic-swss-common/common/schema.h`)
+
+| 定数名 | 文字列値 | 行 |
+|---|---|---|
+| `POLL_INTERVAL_FIELD` | `"POLL_INTERVAL"` | `schema.h:320` |
+| `STATS_MODE_FIELD` | `"STATS_MODE"` | `schema.h:322` |
+| `STATS_MODE_READ` | `"STATS_MODE_READ"` | `schema.h:323` |
+| `STATS_MODE_READ_AND_CLEAR` | `"STATS_MODE_READ_AND_CLEAR"` | `schema.h:324` |
+| `FLEX_COUNTER_STATUS_FIELD` | `"FLEX_COUNTER_STATUS"` | `schema.h:335` |
+| `FLEX_COUNTER_GROUP_TABLE` | `"FLEX_COUNTER_GROUP_TABLE"` | `schema.h:336` |
+| `BULK_CHUNK_SIZE_FIELD` | `"BULK_CHUNK_SIZE"` | `schema.h:318` |
+| `BULK_CHUNK_SIZE_PER_PREFIX_FIELD` | `"BULK_CHUNK_SIZE_PER_PREFIX"` | `schema.h:319` |
+
+### CONFIG_DB キー → FLEX_COUNTER グループ名マッピング (`flexcounterorch.cpp:68-83`)
+
+`flexCounterGroupMap` は CONFIG_DB の `FLEX_COUNTER_TABLE` キー文字列から FLEX_COUNTER_DB グループ名への変換テーブル。
+
+| CONFIG_DB キー (`#define`) | 値 | FLEX_COUNTER_GROUP 名 |
+|---|---|---|
+| `PORT_KEY` | `"PORT"` | `"PORT_STAT_COUNTER"` |
+| `PORT_BUFFER_DROP_KEY` | `"PORT_BUFFER_DROP"` | `"PORT_BUFFER_DROP_STAT"` |
+| `PORT_PHY_ATTR_KEY` | `"PORT_PHY_ATTR"` | `"PORT_PHY_ATTR"` |
+| `PORT_PHY_SERDES_ATTR_KEY` | `"PORT_PHY_SERDES_ATTR"` | `"PORT_PHY_SERDES_ATTR"` |
+| `QUEUE_KEY` | `"QUEUE"` | `"QUEUE_STAT_COUNTER"` |
+| `QUEUE_WATERMARK` | `"QUEUE_WATERMARK"` | `"QUEUE_WATERMARK_STAT_COUNTER"` |
+| `PG_WATERMARK_KEY` | `"PG_WATERMARK"` | `"PG_WATERMARK_STAT_COUNTER"` |
+| `PG_DROP_KEY` | `"PG_DROP"` | `"PG_DROP_STAT_COUNTER"` |
+| `WRED_QUEUE_KEY` | `"WRED_ECN_QUEUE"` | `"WRED_ECN_QUEUE_STAT_COUNTER"` |
+| `WRED_PORT_KEY` | `"WRED_ECN_PORT"` | `"WRED_ECN_PORT_STAT_COUNTER"` |
+| `RIF_KEY` | `"RIF"` | `"RIF_STAT_COUNTER"` |
+| `TUNNEL_KEY` | `"TUNNEL"` | `"TUNNEL_STAT_COUNTER"` |
+| `FLOW_CNT_TRAP_KEY` | `"FLOW_CNT_TRAP"` | `"HOSTIF_TRAP_COUNTER"` |
+| `FLOW_CNT_ROUTE_KEY` | `"FLOW_CNT_ROUTE"` | `"FLOW_CNT_ROUTE"` |
+| `SWITCH_KEY` | `"SWITCH"` | `"SWITCH_STAT_COUNTER"` |
+| `SRV6_KEY` | `"SRV6"` | `"SRV6_STAT_COUNTER"` |
+
+### warm-reboot 遅延タイムアウト定数 (`flexcounterorch.cpp:44`)
+
+```cpp
+#define FLEX_COUNTER_DELAY_SEC 60
+```
+
+warm-reboot 時に FlexCounterOrch が FLEX_COUNTER_DB への書き込みを遅延させる秒数。変更には orchagent のリビルドが必要。この値は YANG モデルも CONFIG_DB も参照しない純粋なコード定数。
+
+### portsorch.cpp ハードコード初期ポーリング間隔定数 (`portsorch.cpp:87-93`, `portsorch.h:29-43`)
+
+PortsOrch コンストラクタが `FlexCounterManager` 初期化時に直接渡すポーリング間隔。CONFIG_DB の `FLEX_COUNTER_TABLE.<group>.POLL_INTERVAL` 値で後から上書き可能だが、orchagent 起動直後はこれらの定数値が FLEX_COUNTER_DB に書き込まれる。
+
+| 定数名 | 値 | 対応グループ |
+|---|---|---|
+| `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | 1000 ms | `PORT_STAT_COUNTER`, `WRED_ECN_PORT_STAT_COUNTER` |
+| `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS` | 60000 ms | `PORT_BUFFER_DROP_STAT` |
+| `PORT_PHY_ATTR_FLEX_COUNTER_POLLING_INTERVAL_MS` | 10000 ms | `PORT_PHY_ATTR`, `PORT_PHY_SERDES_ATTR` |
+| `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | 10000 ms | `QUEUE_STAT_COUNTER`, `WRED_ECN_QUEUE_STAT_COUNTER` |
+| `QUEUE_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | 60000 ms | `QUEUE_WATERMARK_STAT_COUNTER` |
+| `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | 60000 ms | `PG_WATERMARK_STAT_COUNTER` |
+| `PG_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | 10000 ms | `PG_DROP_STAT_COUNTER` |
+
+**YANG との乖離**: YANG の `poll_interval` typedef は `range 100..4294967295`。orsorch のコード定数は YANG バリデーション対象外で、60000 ms 等は YANG の最大値制約に収まるが YANG モデルから検証する手段はない。
+
+<!-- /constants -->
+
 ## 確認コマンド
 
 ```bash
