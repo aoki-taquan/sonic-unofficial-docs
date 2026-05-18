@@ -129,6 +129,32 @@ YANG 上は親子 list 構造 (`EXP_TO_FC_MAP_LIST` / `EXP_TO_FC_MAP`)。Redis �
 > **重要**: `max_num_fcs` はプラットフォーム依存（YANG の `[0-7]` 制約より広い場合も狭い場合もある）。スイッチが FC を未サポートの場合は `max_num_fcs=0` となり、`fc` 値 0 を含む全エントリが reject される。
 <!-- /value-behavior -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`QosOrch` (`ExpToFcMapHandler`) は CONFIG_DB の `EXP_TO_FC_MAP` を直接購読し、SAI QoS map を生成する。生成された SAI oid は内部キャッシュ `m_qos_maps[CFG_EXP_TO_FC_MAP_TABLE_NAME]` に保持され、`PORT_QOS_MAP` ハンドラからの参照解決に使われる。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `EXP_TO_FC_MAP|<name>` SAI 登録 → `PORT_QOS_MAP.exp_to_fc_map` 適用 | **強制先行** | マップが未登録の場合 `handlePortQosMapTable` は `task_need_retry` を返し、次イテレーションで再試行される |
+| 2 | `PORT_QOS_MAP` 参照解除 → `EXP_TO_FC_MAP` DEL | **強制先行** | DEL 時に `isObjectBeingReferenced` が真なら `m_pendingRemove=true` + `task_need_retry` で削除を defer |
+| 3 | `EXP_TO_FC_MAP` DEL 完了 → 同名エントリへの SET | **先行必須** | DEL 保留中 (`m_pendingRemove=true`) に同名 SET が来ると `task_need_retry` で defer される |
+
+### 主要な制約詳細
+
+**EXP_TO_FC_MAP → PORT_QOS_MAP 先行制約 (依存 #1)**:
+`handlePortQosMapTable` は `kfvFieldsValues` をイテレーションし、`exp_to_fc_map` フィールドを見つけると `resolveFieldRefValue(m_qos_maps, CFG_EXP_TO_FC_MAP_TABLE_NAME, ...)` を呼ぶ。`m_qos_maps` にエントリが存在しない場合 `ref_resolve_status::not_resolved` が返り、即座に `task_need_retry` を返す。このため、CONFIG_DB に `PORT_QOS_MAP` と `EXP_TO_FC_MAP` を同時に投入しても、オーケストレーション上は `EXP_TO_FC_MAP` の SAI 登録が先に完了するまで `PORT_QOS_MAP` への SAI 反映は行われない（evidence: `qosorch.cpp:2120-2131`）。
+
+**参照保護による DEL defer (依存 #2)**:
+`QosMapHandler::processWorkItem` の DEL パスで `gQosOrch->isObjectBeingReferenced(QosOrch::getTypeMap(), CFG_EXP_TO_FC_MAP_TABLE_NAME, qos_object_name)` を評価し、真なら `m_pendingRemove=true` にセットして `task_need_retry` を返す。`PORT_QOS_MAP` で `exp_to_fc_map` を参照している限りマップは削除されない。PORT_QOS_MAP から参照が外れた後の次イテレーションで削除が実行される（evidence: `qosorch.cpp:181-186`）。
+
+**pendingRemove 中の SET defer (依存 #3)**:
+SET コマンド処理の冒頭で `m_pendingRemove` フラグを確認し、真であれば `task_need_retry` を返す。これにより「DEL → 即 SET（rename 相当）」は DEL 完了まで SET が defer され、中間状態で旧名と新名が SAI 上で共存しない（evidence: `qosorch.cpp:136-139`）。
+
+<!-- /ordering -->
+
 ## 購読者
 
 - `qosorch` (`ExpToFcMapHandler`): [SAI](../../reference/glossary.md#term-sai) QoS map 生成 (`sai_create_qos_map` / `sai_remove_qos_map`)
