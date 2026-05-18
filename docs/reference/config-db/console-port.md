@@ -253,6 +253,30 @@ CONSOLE_SWITCH|console_mgmt
 | `IDLE_FLAG` | `"idle"` | STATE_DB `state` フィールドの "待機" 値 |
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`CONSOLE_PORT` / `CONSOLE_SWITCH` テーブルの変更に伴って `consutil` が副次的に書き込む DB エントリを示す。
+
+| 副次 DB | テーブル | key | フィールド | タイミング |
+|---|---|---|---|---|
+| STATE_DB | `CONSOLE_PORT` | `<line_num>` | `state` (`"busy"` / `"idle"`) | `consutil connect` 実行時および `show console status` 実行時（refresh=True） |
+| STATE_DB | `CONSOLE_PORT` | `<line_num>` | `pid` | picocom 接続確立時に PID を書込み、切断時に `""` でクリア |
+| STATE_DB | `CONSOLE_PORT` | `<line_num>` | `start_time` | picocom 接続確立時に開始日時を書込み、切断時に `""` でクリア |
+
+### 詳細
+
+**STATE_DB 書込のトリガ**:
+
+1. `ConsolePortProvider._init_all(refresh=True)` (consutil/lib.py:108-121): `show console status` 等の呼び出し時に全ポートの現在状態を STATE_DB へ一括書込する。アクティブな picocom プロセスを `SysInfoProvider.list_active_console_processes()` でスキャンし、存在すれば `state=busy/pid=<pid>/start_time=<date>`、なければ `state=idle/pid=""/start_time=""` を書き込む。
+2. `ConsolePortInfo.refresh()` (consutil/lib.py:245-267): 個別ポートのセッション状態変化時に STATE_DB を更新する。接続中 picocom プロセスの存否に応じて busy / idle を書き分ける。
+3. `ConsolePortInfo.connect()` (consutil/lib.py:189-224): 接続確立前後で `refresh()` を呼び STATE_DB を更新する。
+
+**APPL_DB / その他 DB への書込**: なし。`config/console.py` は CONFIG_DB にのみ書き込み、APPL_DB / ASIC_DB / COUNTERS_DB への書込は発生しない（SAI 非経由）。
+
+> 詳細スキャン結果は `meta/_intermediate/cdb-flow/console-port-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
