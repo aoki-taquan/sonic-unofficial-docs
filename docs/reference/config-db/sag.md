@@ -286,6 +286,62 @@ HLD §Testing: *"Verify that VLAN interface can be created with SAG MAC address 
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) §sonic-swss / §DB + `sonic-swss/cfgmgr/intfmgrd.cpp` / `intfmgr.cpp` / `orchagent/intfsorch.cpp` 実コード確認 (2026-05-18)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/sag-pubsub.md`
+
+!!! warning "HLD-only 推定 — 実装未マージ"
+    sonic-swss master の `intfmgrd.cpp` に `CFG_SAG_TABLE_NAME` の登録がなく、`intfmgr.cpp` / `intfsorch.cpp` にも SAG/SAG_TABLE への参照は存在しない。以下は HLD §sonic-swss に記載された **設計上の** pubsub 経路であり、実際の動作は `verification: hld-only`。
+
+### 設計上の Redis 購読方式
+
+`SAG|GLOBAL` の変更通知は、HLD 設計では `IntfMgr` が他の interface テーブルと同様に **`SubscriberStateTable` (CONFIG_DB keyspace notification)** で購読する予定。`NotificationConsumer` / `ConsumerStateTable` は使用しない。
+
+### 1. CONFIG_DB → intfmgrd (SubscriberStateTable)
+
+```
+PSUBSCRIBE __keyspace@4__:SAG|*
+```
+
+CLI が `HSET "SAG|GLOBAL" gateway_mac 00:11:22:33:44:0f` を書き込むと Redis が
+`PUBLISH __keyspace@4__:SAG|GLOBAL hset` を発行する。`SubscriberStateTable::pops()` がキーを取り出し `HGETALL SAG|GLOBAL` で現在値を取得して `KeyOpFieldsValuesTuple` に変換。`IntfMgr` の SAG ハンドラが呼ばれ APPL_DB へ転送する（HLD 設計）。
+
+### 2. intfmgrd → APPL_DB (ProducerStateTable)
+
+HLD 設計では `IntfMgr` が `APP_SAG_TABLE_NAME`（`"SAG_TABLE"`）へ `ProducerStateTable` 経由で書き込む。VLAN_INTERFACE テーブルと同様の Lua スクリプトアトミック実行パターン（参照: `docs/reference/config-db/vlan-interface.md` Phase G）：
+
+```
+EVALSHA <luaSet>
+  SADD SAG_TABLE_KEY_SET "GLOBAL"
+  HSET _SAG_TABLE|GLOBAL gateway_mac <mac>
+  PUBLISH SAG_TABLE_CHANNEL@0 "G"
+```
+
+PUBLISH ペイロードは固定文字列 `"G"`（SONiC ProducerStateTable 共通仕様）。
+
+### 3. APPL_DB → orchagent/IntfsOrch (ConsumerStateTable)
+
+HLD 設計では `IntfsOrch` が APPL_DB `SAG_TABLE` を `ConsumerStateTable` で購読し、`SAG_TABLE_CHANNEL@0` を `SUBSCRIBE`。`consumer_state_table_pops.lua` が `SPOP SAG_TABLE_KEY_SET` → `HGETALL _SAG_TABLE|GLOBAL` をアトミック実行し、`IntfsOrch` の SAG ハンドラが `static_anycast_gateway=true` な全 VLAN RIF の `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` を更新する。
+
+### 特性まとめ
+
+| 特性 | 内容（HLD 設計） |
+|------|----------------|
+| CONFIG_DB → intfmgrd | Redis PSUBSCRIBE (keyspace notification) |
+| keyspace pattern | `__keyspace@4__:SAG\|*` |
+| intfmgrd → APPL_DB | Redis PUBLISH/SUBSCRIBE (ProducerStateTable channel ベース) |
+| Publish チャンネル | `SAG_TABLE_CHANNEL@0`、ペイロード固定 `"G"` |
+| APPL_DB → orchagent | ConsumerStateTable + `SUBSCRIBE` |
+| NotificationConsumer | **不使用** |
+| TTL / keyevent expire | **不使用** |
+| 実装状態 | **sonic-swss master に未マージ**（schema.h 定数のみ存在） |
+
+> **schema.h 確認**: `CFG_SAG_TABLE_NAME = "SAG"` (schema.h:393)、`APP_SAG_TABLE_NAME = "SAG_TABLE"` (schema.h:127) は存在確認済み。intfmgrd / IntfMgr / IntfsOrch の SAG ハンドラは未確認。
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: SAG HLD: `SONiC/doc/sag/sag-HLD.md`. <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sag/sag-HLD.md>
