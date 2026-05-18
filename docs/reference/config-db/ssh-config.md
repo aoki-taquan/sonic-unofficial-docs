@@ -383,4 +383,61 @@ self.pamLimitsCfg.update_config_file()
 - **`SshServer` 成功 + `PamLimitsCfg` 失敗の不整合**: `ssh_handler` は両者をトランザクションなしで逐次呼び出す。sshd_config 更新成功後に PAM limits 更新が失敗した場合、`sshd_config` の `max_sessions` は `PamLimitsCfg` が処理しないため sshd_config 側への影響はなく PAM 側のみ古い値が残る。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`hostcfgd` (`SshServer` / `PamLimitsCfg` クラス) および `sonic-host-services/scripts/hostcfgd` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### SSH 設定ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `SSH_CONFG` | `/etc/ssh/sshd_config` | SSH デーモン設定ファイル本番パス | hostcfgd:L32 |
+| `SSH_CONFG_TMP` | `/etc/ssh/sshd_config.tmp` | 設定更新時の一時ファイルパス (`copy2` → 書換 → `sshd -T` 検証 → `rename`) | hostcfgd:L33 |
+
+### PAM / limits 設定ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PAM_LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/pam_limits.j2` | PAM limits Jinja2 テンプレート | hostcfgd:L81 |
+| `LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/limits.conf.j2` | `/etc/security/limits.conf` 用 Jinja2 テンプレート | hostcfgd:L82 |
+| `PAM_LIMITS_CONF` | `/etc/pam.d/pam-limits-conf` | PAM limits モジュール設定 (出力先) | hostcfgd:L83 |
+| `LIMITS_CONF` | `/etc/security/limits.conf` | Linux PAM limits 設定 (`maxsyslogins` を書込む) | hostcfgd:L84 |
+
+### フィールド値域定数 (hostcfgd 独自検証)
+
+YANG バリデーション通過後に `hostcfgd` が追加で適用する実効値域。YANG 定義と差異があるフィールドに注意。
+
+| フィールド | hostcfgd 最小値 | hostcfgd 最大値 | YANG との差異 |
+|-----------|----------------|----------------|--------------|
+| `authentication_retries` | `3` | `100` | YANG min=`1`。値 `1` または `2` は YANG を通過するが hostcfgd が ERR ログでスキップ |
+| `login_timeout` | `1` | `600` | YANG と一致 |
+| `ports` | `1` | `65535` | YANG と一致 |
+| `inactivity_timeout` | `0` | `35000` | YANG と一致 (0 で無効) |
+| `max_sessions` | `0` | `100` | YANG と一致 (0 で無制限) |
+
+ソース: `hostcfgd:L61-66` (`SSH_INT_VALUES`, `SSH_MIN_VALUES`, `SSH_MAX_VALUES`)
+
+### sshd_config キーマッピング定数 (SSH_CONFIG_NAMES)
+
+CONFIG_DB フィールド名から sshd_config ディレクティブ名へのマッピング。
+
+| CONFIG_DB フィールド | sshd_config ディレクティブ |
+|---------------------|--------------------------|
+| `authentication_retries` | `MaxAuthTries` |
+| `login_timeout` | `LoginGraceTime` |
+| `ports` | `Port` |
+| `inactivity_timeout` | `ClientAliveInterval` |
+| `permit_root_login` | `PermitRootLogin` |
+| `password_authentication` | `PasswordAuthentication` |
+| `ciphers` | `Ciphers` |
+| `kex_algorithms` | `KexAlgorithms` |
+| `macs` | `MACs` |
+
+ソース: `hostcfgd:L67-75` (`SSH_CONFIG_NAMES` dict)
+
+> **注意**: `max_sessions` は `SSH_CONFIG_NAMES` に含まれない。`set_policies()` 内で `continue` によりスキップされ、`PamLimitsCfg.update_config_file()` が `LIMITS_CONF` (`/etc/security/limits.conf`) の `maxsyslogins` 行として別経路で処理する (`hostcfgd:L1144-1146`)。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
