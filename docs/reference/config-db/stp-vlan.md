@@ -1,6 +1,6 @@
 ---
 title: STP_VLAN / STP_VLAN_PORT テーブル
-description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数を詳細解説。Phase A+B+C+D+E 分析。"
+description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用を詳細解説。Phase A+B+C+D+E+F 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -677,6 +677,128 @@ stpmgrd のメインループが `s.select(&sel, SELECT_TIMEOUT)` で最大 1000
 | `SELECT_TIMEOUT` | 1000 ms | `stpmgrd.cpp:17` | swssdk Select ループタイムアウト |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副作用・波及挙動 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-side-effects.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+`stpmgrd` は CONFIG_DB への書き込みをトリガーとして、stpmgrd 内部状態（`m_vlanInstMap[]`）の更新と
+stpd プロセスへの IPC 送信を行う。APPL_DB / ASIC_DB への直接書き込みはなく、ASIC 反映は stpd 経由となる。
+
+### 1. STP_VLAN SET (PVST 初回有効化) — m_vlanInstMap へのインスタンス割当
+
+PVST モードで `STP_VLAN.enabled=true` の SET が処理され、`m_vlanInstMap[vlan_id] == INVALID_INSTANCE`
+の場合、`allocL2Instance(vlan_id)` が呼ばれてインスタンス ID が確定する:
+
+```cpp
+// stpmgr.cpp:263-269
+instId = allocL2Instance(vlan_id);
+// → GET_FIRST_FREE_INST_ID(idx); m_vlanInstMap[vlan_id] = idx;
+```
+
+この副作用として、`STP_VLAN_PORT` の silent skip ガード (`m_vlanInstMap[vlan_id] == INVALID_INSTANCE`)
+が解除され、同 VLAN の `STP_VLAN_PORT` SET が次の SELECT ループで処理可能になる。
+
+証跡: `stpmgr.cpp:257-269`, `stpmgr.cpp:486-495`
+
+---
+
+### 2. STP_VLAN SET — stpd への STP_VLAN_CONFIG IPC 送信
+
+```cpp
+// stpmgr.cpp:332
+sendMsgStpd(STP_VLAN_CONFIG, len, (void *)msg);
+```
+
+`STP_VLAN_CONFIG_MSG` を Unix Domain Socket 経由で stpd に送信する。主なフィールド:
+
+| フィールド | 内容 |
+|---|---|
+| `opcode` | SET=1 / DEL=0 |
+| `vlan_id` | VLAN ID |
+| `newInstance` | 初回割当時=1、更新時=0 |
+| `inst_id` | 割当済み STP インスタンス ID |
+| `forward_delay`, `hello_time`, `max_age`, `priority` | CONFIG_DB フィールドの値 |
+| `count`, `port_list[]` | PVST 初回時のみ: VLAN メンバーポート一覧 |
+
+CONFIG_DB → stpd → ASIC という経路で ASIC_DB には直接書き込まれない。
+
+証跡: `stpmgr.cpp:278-336`
+
+---
+
+### 3. STP_VLAN SET (PVST 初回) — STATE_VLAN_MEMBER_TABLE 読み取りとポート一覧付加
+
+PVST 初回割当時（`newInstance=1`）、`getAllVlanMem()` (`stpmgr.cpp:933-973`) が
+`STATE_DB:STATE_VLAN_MEMBER_TABLE` から当該 VLAN の全メンバーポートを取得し、
+`STP_VLAN_CONFIG_MSG.port_list[]` に付加して stpd へ送信する:
+
+```cpp
+// stpmgr.cpp:259-266
+if (l2ProtoEnabled == L2_PVSTP)
+{
+    newInstance = 1;
+    instId = allocL2Instance(vlan_id);
+    portCnt = getAllVlanMem(key, port_list);  // STATE_VLAN_MEMBER_TABLE を参照
+}
+```
+
+`STP_VLAN` の変更が `STATE_VLAN_MEMBER_TABLE` の読み取りを引き起こす（MST モードでは発生しない）。
+
+証跡: `stpmgr.cpp:253-266`, `stpmgr.cpp:933-973`
+
+---
+
+### 4. STP_VLAN DEL — m_vlanInstMap リセット（インスタンス解放）
+
+DEL 処理時は `deallocL2Instance(vlan_id)` でインスタンスが解放され、`m_vlanInstMap[vlan_id]`
+が `INVALID_INSTANCE(-1)` に戻る:
+
+```cpp
+// stpmgr.cpp:913-928
+void StpMgr::deallocL2Instance(uint32_t vlan_id) {
+    idx = m_vlanInstMap[vlan_id];
+    FREE_INST_ID(idx);                   // インスタンスビットマップを更新
+    m_vlanInstMap[vlan_id] = INVALID_INSTANCE;
+}
+```
+
+この結果、同 VLAN の `STP_VLAN_PORT` SET は再び silent skip されるようになる。
+DEL と同時に stpd へ `STP_DEL_COMMAND` の `STP_VLAN_CONFIG` IPC が送信され、stpd が ASIC のポート状態を初期化する。
+
+証跡: `stpmgr.cpp:311-333`, `stpmgr.cpp:913-928`
+
+---
+
+### 5. STATE_VLAN_MEMBER_TABLE 変化 — STP_VLAN_PORT 値の stpd 再送（間接副作用）
+
+ポートの VLAN 参加/離脱 (`STATE_VLAN_MEMBER_TABLE` 変化) を `doVlanMemUpdateTask()`
+(`stpmgr.cpp:679-757`) が検知した際:
+
+1. `m_cfgStpVlanPortTable.get(key, ...)` で `STP_VLAN_PORT` の既存 `path_cost` / `priority` を取得
+2. `STP_VLAN_MEM_CONFIG_MSG` に含めて `sendMsgStpd(STP_VLAN_MEM_CONFIG, ...)` を送信
+
+`STP_VLAN_PORT` テーブルを直接変更していなくても、ポートが VLAN に参加/離脱するたびに
+`STP_VLAN_PORT` の設定値が stpd に再送される。
+
+証跡: `stpmgr.cpp:727-753`
+
+---
+
+### 副作用サマリー
+
+| # | トリガー | 副作用 | 対象 |
+|---|---------|-------|------|
+| 1 | `STP_VLAN` SET (enabled=true, PVST 初回) | `m_vlanInstMap[vlan_id]` にインスタンス割当 → `STP_VLAN_PORT` SET ブロック解除 | stpmgrd 内部状態 |
+| 2 | `STP_VLAN` SET | `STP_VLAN_CONFIG` IPC を stpd に送信 | stpd (ASIC へ波及) |
+| 3 | `STP_VLAN` SET (PVST 初回) | `STATE_VLAN_MEMBER_TABLE` を参照し全メンバーポート一覧を IPC に付加 | STATE_DB 読み取り |
+| 4 | `STP_VLAN` DEL | `m_vlanInstMap[vlan_id]` を INVALID_INSTANCE に解放 → `STP_VLAN_PORT` SET が再ブロック | stpmgrd 内部状態 |
+| 5 | `STP_VLAN` DEL | `STP_VLAN_CONFIG` DEL IPC を stpd に送信 → ASIC ポート状態初期化 | stpd (ASIC へ波及) |
+| 6 | `STATE_VLAN_MEMBER_TABLE` 変化 | `STP_VLAN_PORT` 設定値を stpd に再送 (`STP_VLAN_MEM_CONFIG`) | stpd (VLAN_PORT 未変更でも発生) |
+
+<!-- /side-effects -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
