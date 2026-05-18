@@ -234,6 +234,64 @@ YANG バリデーションとは独立して CLI が `get_table()` で存在確�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/gNMI 直書き経路で異なる失敗分岐を持つ。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-failure.md)。
+
+### CLI 経路の失敗パターン
+
+#### VIP 追加 / インスタンス新規作成 (`add_vrrp_ip`)
+
+| 失敗ケース | 失敗箇所 | 挙動 | retry |
+|---|---|---|---|
+| インタフェース名が Loopback 系 | `config/main.py:6884-6886` | `ctx.fail("'interface_name' is not valid.")` で永続拒絶 | なし |
+| `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` 未存在 | `config/main.py:6887-6890` | `ctx.fail("Router Interface '{}' not found")` で永続拒絶 | なし |
+| VIP アドレス形式不正 | `config/main.py:6892-6893` | `ctx.abort()` で即時終了 | なし |
+| VIP が別インスタンスで使用中 | `config/main.py:6894-6895` | `ctx.abort()` で即時終了（`check_vrrp_ip_exist` による重複確認） | なし |
+| VIP に CIDR prefix がない | `config/main.py:6897-6898` | `ctx.fail("IP address {} is missing a mask.")` | なし |
+| 同インスタンスが既に 4 VIP 設定済み | `config/main.py:6906-6909` | `ctx.fail("...already configured 4 IP addresses")` | なし |
+| システム全体 254 インスタンス上限超過 | `config/main.py:6914-6916` | `ctx.fail("Has already configured 254 vrrp instances")` | なし |
+| 同 VRID が別インタフェースで既存 | `config/main.py:6919-6920` | `ctx.fail("The vrrp instance {} has already configured!")` | なし |
+| 同インタフェースで 16 インスタンス上限超過 | `config/main.py:6922-6924` | `ctx.fail("{} has already configured 16 vrrp instances!")` | なし |
+
+#### パラメータ変更コマンド (`priority` / `adv_interval` / `pre_empt` / `version`)
+
+各コマンドは共通して以下の順でバリデーションを行う:
+
+| 失敗ケース | 挙動 |
+|---|---|
+| インタフェース名が無効 / Loopback 系 | `ctx.fail("'interface_name' is not valid.")` |
+| `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` 未存在 | `ctx.fail("Router Interface '{}' not found")` |
+| VRRP インスタンス未存在 | `ctx.fail("vrrp instance {} not found on interface {}")` |
+| パラメータ値が範囲外 | Click `IntRange` / `Choice` でコマンド解析時に即時拒絶（DB 書き込みなし） |
+
+#### トラックインタフェース追加 (`add_track_interface`)
+
+| 失敗ケース | 失敗箇所 | 挙動 |
+|---|---|---|
+| ベースインタフェース未存在 | `config/main.py:7000-7006` | `ctx.fail("Router Interface '{}' not found")` |
+| 追跡インタフェース未存在 | `config/main.py:7007-7014` | `ctx.fail("Router Interface '{}' not found")` |
+| 親 VRRP インスタンス未存在 | `config/main.py:7017-7019` | `ctx.fail("vrrp instance {} not found on interface {}")` |
+| 同インスタンスに 8 トラック既存 | `config/main.py:7028-7038` | `ctx.fail("The Vrrpv instance {} has already configured 8 track interfaces")` |
+
+### macvlanmgrd / vrrpsyncd の失敗挙動
+
+| 条件 | 挙動 | 備考 |
+|---|---|---|
+| macvlanmgrd 未起動時の CONFIG_DB 書き込み | エントリは購読キューに滞留し、macvlanmgrd 起動後にリプレイされて macvlan デバイスが作成される | HLD `Modules Design and Flows` セクション |
+| Linux カーネルが 5.1 未満 | macvlan デバイスの protodown がサポートされないため VRRP 状態機械が正常動作しない | HLD `Operating environment` (L199-200) |
+| vtysh コマンド失敗 (FRR 側) | macvlanmgrd の vtysh 投入失敗時の明示的ロールバック仕様は HLD に記述なし。CONFIG_DB / APPL_DB は書き込み済みのまま | HLD 記述範囲外 |
+
+### Warmboot 非対応
+
+HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
+
+- VRRP は **Warm boot 非対応**。VRRPv2 / VRRPv3 の RFC ではウォームブートの維持方法が定義されていないため
+- VRRP が有効な状態でウォームブートを実行しようとするとエラーメッセージが表示される
+- ウォームブート実行前に VRRP を無効化（全インスタンス削除）する必要がある
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: VRRP Adaptation HLD: `sonic-net/SONiC`, `doc/vrrp/VRRP_Adaptation_HLD.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/vrrp/VRRP_Adaptation_HLD.md>
