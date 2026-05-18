@@ -315,6 +315,57 @@ parseHandleSaiStatusFailure(task_failed) → return true
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-constants.md -->
+
+STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みで使用される定数はすべてソースコードにハードコードされており、設定ファイル・環境変数・`DEVICE_METADATA` 等での上書き手段は提供されていない。
+
+### テーブル名定数
+
+| 定数名 | 値 | 定義箇所 |
+|--------|----|---------| 
+| `STATE_ROUTE_TABLE_NAME` | `"ROUTE_TABLE"` | `common/schema.h:494`[^3] |
+| `APP_ROUTE_TABLE_NAME` | `"ROUTE_TABLE"` | `common/schema.h:47`[^3] |
+
+STATE_DB と APPL_STATE_DB のテーブル名はいずれも `"ROUTE_TABLE"` で固定。
+
+### `state` フィールド値リテラル
+
+ソース: `orchagent/routeorch.cpp:290-291`[^1]
+
+```cpp
+string state = add ? "ok" : "na";
+FieldValueTuple tuple("state", state);
+```
+
+| 値 | 意味 |
+|----|------|
+| `"ok"` | デフォルト経路が SAI に登録済み |
+| `"na"` | デフォルト経路が SAI から削除済み（または未プログラム） |
+
+`"ok"` / `"na"` はソースコード直書きリテラルで、外部から変更不可。
+
+### `err_str` フィールドのプレフィックス定数
+
+ソース: `orchagent/response_publisher.cpp:18-19`[^2]
+
+```cpp
+constexpr char *kOrchagentComponent = "[OrchAgent] ";
+constexpr char *kSaiComponent = "[SAI] ";
+```
+
+| 状況 | `err_str` の形式 |
+|------|----------------|
+| SAI 操作成功 | `"SWSS_RC_SUCCESS"` (プレフィックスなし) |
+| SAI エラー | `"[SAI] "` + SAI エラーメッセージ |
+| OrchAgent 内部エラー | `"[OrchAgent] "` + エラーメッセージ |
+
+`"[SAI] "` / `"[OrchAgent] "` はいずれも `constexpr` で固定。バイナリの再ビルドなしに変更できない。
+
+<!-- /constants -->
+
 ---
 
 ## APPL_STATE_DB ROUTE_TABLE
