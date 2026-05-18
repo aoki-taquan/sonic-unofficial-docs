@@ -366,6 +366,49 @@ constexpr char *kSaiComponent = "[SAI] ";
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-side.md -->
+
+STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みは、以下のコンポーネントに連鎖的な副作用をもたらす。
+
+### APPL_STATE_DB 書き込み → FIB suppression フィードバック（fpmsyncd）
+
+`publishRouteState()` が APPL_STATE_DB `ROUTE_TABLE` に書き込む際、`ResponsePublisher` が同時に `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` へ通知を送出する。`fpmsyncd` は `suppress-fib-pending=enabled` 設定時にこのチャンネルを購読し、SAI プログラミング結果を FRR の BGP FIB suppression 機能へフィードバックする[^4]。
+
+```
+APPL_STATE_DB ROUTE_TABLE 書込み (err_str=SWSS_RC_SUCCESS)
+  → APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL 通知
+    → fpmsyncd: FRR への suppress 解除
+```
+
+- SAI 成功時: `err_str=SWSS_RC_SUCCESS` → FRR が経路を BGP ピアにアドバタイズ可能になる
+- SAI 失敗時: `err_str=[SAI] <エラー>` → FRR は経路を suppress 状態のまま保持し続ける
+
+この動作は `CONFIG_DB DEVICE_METADATA|localhost suppress-fib-pending=enabled` が設定されている場合のみ有効。
+
+### APPL_STATE_DB 書き込みスキップ → route_check.py アラート
+
+orchagent が SAI 操作失敗等で APPL_STATE_DB への書き込みをスキップした場合、`route_check.py` が APPL_DB と APPL_STATE_DB の不整合を `missed_ROUTE_TABLE_routes` としてアラートを記録する[^4]。
+
+### STATE_DB `state` 書き込みのタイミングと NextHop Observer 通知
+
+デフォルト経路の SAI 登録/削除成功後、`notifyNextHopChangeObservers()` が呼ばれた直後に `updateDefRouteState()` が STATE_DB を更新する（`routeorch.cpp:2703, 2726`）。このため MirrorOrch / NatOrch 等の Observer はデフォルト経路変更を STATE_DB 書き込みより前に受け取る。
+
+### レスポンス通知のバッチ遅延
+
+RouteOrch は 1 回の `doTask()` イテレーションで複数 ROUTE_TABLE エントリをバルク処理し、全 SAI 操作完了後に `m_publisher.flush()` する（`routeorch.cpp:1227` コメント参照）。APPL_STATE_DB への書き込みとレスポンスチャンネル通知はイテレーション単位で遅延するため、短時間に大量の経路を書き込んだ場合は通知が数百ミリ秒単位で遅れることがある。
+
+| 副作用 | トリガー | 有効条件 |
+|--------|----------|---------|
+| RESPONSE_CHANNEL 通知 → fpmsyncd FIB suppression アンロック | APPL_STATE_DB SET | `suppress-fib-pending=enabled` 時のみ |
+| route_check.py `missed_ROUTE_TABLE_routes` アラート | APPL_STATE_DB 書き込みスキップ | 常時（route_check.py 実行時） |
+| NextHop Observer 通知（MirrorOrch / NatOrch 等） | updateDefRouteState() 直前 | デフォルト経路変更時のみ |
+| APPL_STATE_DB 通知のバッチ遅延 | doTask バルク flush | 常時 |
+
+<!-- /side-effects -->
+
 ---
 
 ## APPL_STATE_DB ROUTE_TABLE
@@ -406,6 +449,7 @@ APPL_DB の `ROUTE_TABLE` と同一キー空間。orchagent が SAI プログラ
 [^1]: RouteOrch STATE/APPL_STATE 書込み実装: `orchagent/routeorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp#L287>
 [^2]: ResponsePublisher err_str 付与: `orchagent/response_publisher.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L102>
 [^3]: STATE_ROUTE_TABLE_NAME 定数: `common/schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L494>
+[^4]: fpmsyncd FIB suppression / route_check.py: `fpmsyncd/fpmsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78>
 
 <!-- ops-hint -->
 ## 運用ヒント
