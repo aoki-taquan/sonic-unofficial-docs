@@ -306,6 +306,30 @@ Loopback インタフェースは `isPortStateOk()` チェック対象外であ�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`nat_zone` フィールドが処理される際に `natmgrd` / `orchagent (IntfsOrch)` が暗黙的に依存する他テーブルの関係を示す。
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp isPortStateOk L96-131 / isIntfStateOk L135-145 / doNatZoneIntfTask L7493-7628 / sonic-swss/orchagent/intfsorch.cpp doTask L665-668 L978-985 -->
+
+| 依存方向 | 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|--------|--------------|--------------|---------|------|
+| natmgrd → STATE_DB | `isPortStateOk()` | `STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` | `<port_name>` | Ethernet / PortChannel / Vlan の `nat_zone` 設定前にポートが STATE_DB に登録されている必要あり。未登録の場合 `it++; continue` で再キューされ自動再試行 | `natmgr.cpp:96-131`, `natmgr.cpp:7493-7499` |
+| natmgrd → STATE_DB | `isIntfStateOk()` | `STATE_INTERFACE_TABLE` | `<intf>\|<ip>/<prefix>` | IP プレフィックス付きエントリ（key サイズ 2）処理前にインタフェースが STATE_DB に登録されている必要あり。未登録の場合再キューして自動再試行 | `natmgr.cpp:135-145`, `natmgr.cpp:7595-7601` |
+| natmgrd 内部 | `doNatZoneIntfTask` | `m_natIpInterfaceInfo` 内部キャッシュ | `port → set<ip_prefix>` | ゾーン変更時に IP インタフェースキャッシュの有無で Static / Dynamic NAT iptables ルール再構築の要否を判定。IP プレフィックスエントリ（key サイズ 2）が先に処理され `m_natIpInterfaceInfo` に登録されている場合のみ NAT ルールが再構築される | `natmgr.cpp:7532-7568` |
+| orchagent → PortsOrch | `allPortsReady()` | PortsOrch 内部フラグ (PORT_TABLE 処理完了) | — | 全ポート初期化完了前は `nat_zone` を含む全 INTERFACE テーブルイベントの SAI 反映がスキップされ、`m_toSync` に蓄積。`allPortsReady()` が true になった後の次回 `doTask()` で一括処理される | `intfsorch.cpp:665-668` |
+| orchagent → SAI switch | `gIsNatSupported` | SAI `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` | — | `SNAT_ENTRY` capability が 0 のプラットフォームでは `nat_zone` の SAI `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` 設定が silent skip される（`SWSS_LOG_NOTICE` のみ出力） | `intfsorch.cpp:978-985` |
+
+### 解決タイミング
+
+- **STATE_PORT / LAG / VLAN 依存**: portsyncd / teamd / vlanmgrd が各ポートを STATE_DB に登録した後、natmgrd の次回 `doTask()` ループで自動再処理される。
+- **STATE_INTERFACE 依存**: intfmgrd が IP プレフィックスエントリを STATE_INTERFACE_TABLE に書き込んだ後、natmgrd が自動再処理。
+- **`m_natIpInterfaceInfo` 依存**: 同一 `doNatZoneIntfTask` 内で IP プレフィックスエントリ（key サイズ 2）が先に処理されていれば NAT ルール再構築が即時実行される。ゾーン単位エントリ（key サイズ 1）が先に処理された場合、IP プレフィックスエントリ登録時（IP インタフェース追加時）に `addStaticNatIptables()` 等が呼ばれる。
+- **`allPortsReady()` 依存**: `orchdaemon` の起動シーケンスで PortsOrch 初期化完了後に自動解消。通常はシステム起動後数秒以内。
+
+<!-- /cross-refs -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
