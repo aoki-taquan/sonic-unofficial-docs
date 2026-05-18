@@ -181,6 +181,31 @@ DEL TC_TO_PRIORITY_GROUP_MAP|<pg_name>  # 参照がなくなってから削除
 > **スキャン証跡**: `QosOrch::doTask()` L2254-2299、`handlePortQosMapTable()` L2046-2134、汎用マップハンドラ L130-196 参照。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DSCP_TO_PG_MAP` テーブルは存在しないため、2 段マッピングを構成する実在テーブルへの参照関係を示す。
+
+> 証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-cross-refs.md`
+
+### DSCP_TO_TC_MAP を参照する側（段階 1 マップの消費元）
+
+| 参照元テーブル | YANG leafref | 参照フィールド | 未解決時の挙動 | 参照元 evidence |
+|---------------|:------------:|--------------|--------------|----------------|
+| `PORT_QOS_MAP` (CONFIG_DB) | ✅ | `dscp_to_tc_map` | `resolveFieldRefValue()` 失敗 → `task_need_retry`、マップ作成後に自動再試行 | `qosorch.cpp:100,2021-2026,2124-2129` |
+| `TUNNEL_DECAP_TABLE` (APPL_DB) | ✗ | `decap_dscp_to_tc_map` | `resolveTunnelQosMap()` 失敗 → `task_need_retry` | `tunneldecaporch.cpp:213-220` |
+
+### TC_TO_PRIORITY_GROUP_MAP を参照する側（段階 2 マップの消費元）
+
+| 参照元テーブル | YANG leafref | 参照フィールド | 未解決時の挙動 | 参照元 evidence |
+|---------------|:------------:|--------------|--------------|----------------|
+| `PORT_QOS_MAP` (CONFIG_DB) | ✅ | `tc_to_pg_map` | `resolveFieldRefValue()` 失敗 → `task_need_retry`、マップ作成後に自動再試行 | `qosorch.cpp:106,2124-2129` |
+| `TUNNEL_DECAP_TABLE` (APPL_DB) | ✗ | `decap_tc_to_pg_map` | `resolveTunnelQosMap()` 失敗 → `task_need_retry` | `tunneldecaporch.cpp:230-235` |
+
+!!! note "DSCP_TO_PG_MAP は存在しないため参照元は持たない"
+    `DSCP_TO_PG_MAP` というキーで CONFIG_DB に書いても `qosorch` はハンドラを持たず完全に無視する。上記の参照関係はすべて 2 段パイプラインの構成要素（`DSCP_TO_TC_MAP` および `TC_TO_PRIORITY_GROUP_MAP`）に対するものである。
+<!-- /cross-refs -->
+
 ## 制約
 
 - `DSCP_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
