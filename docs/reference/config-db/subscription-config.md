@@ -344,6 +344,59 @@ YANG (`sonic-telemetry_client.yang`) は `path_target` を enum として定義 
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-failure.md -->
+
+ソース: `sonic-net/sonic-gnmi/dialout/dialout_client/dialout_client.go`
+
+### SET 処理における失敗経路
+
+#### Global エントリ
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `retry_interval` が ParseUint 不能な文字列 | `processTelemetryClientConfig()` | `continue` でスキップ。`clientCfg.RetryInterval` はゼロ値のまま → 次接続試行で即タイムアウト | `log.V(2)` ("Invalid retry_interval...") | `dialout_client.go:495-498` |
+| Global の DEL 操作 | L484-486 | エラー `"Invalid delete operation for <key>"` を返し処理中断。削除不可 | `log.V(2)` | `dialout_client.go:484-487` |
+| `encoding` に `JSON_IETF` 以外の値を設定 | L500-502 | コメント "Flexible encoding Not supported yet" — 常に `JSON_IETF` を強制。エラー・ログなし（silent ignore） | なし | `dialout_client.go:500-502` |
+| `unidirectional = false` を設定 | L503-505 | コメント "No PublishResponse supported yet" — 常に `true` を強制。エラー・ログなし（silent ignore） | なし | `dialout_client.go:503-505` |
+
+#### DestinationGroup エントリ
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `dst_addr` に無効な `host:port` 値 | `dst.Validate()` | エラー `"Invalid destination address <addrs>"` を返す。DestinationGroup 全体が登録されない | `log.V(2)` | `dialout_client.go:538-543` |
+| `dst_addr` 以外の未知フィールド | `switch field` の `default` | エラー `"Invalid DestinationGroup value <value>"` を返す。エントリ全体が登録されない | `log.V(2)` | `dialout_client.go:544-547` |
+| DEL — Subscription から参照中 | L522-526 | エラー `"<name> is being used"` を返す。DEL が拒否されエントリは残存する | `log.V(1)` | `dialout_client.go:522-526` |
+
+#### Subscription エントリ
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `paths` に解析不能なパス文字列 | `ygot.StringToPath()` | エラー `"Invalid paths <value>"` を返す。Subscription 全体が登録されない | `log.V(2)` | `dialout_client.go:607-613` |
+| 未知フィールド名 | `switch field` の `default` | エラー `"Invalid field <field> value <value>"` を返す。Subscription 全体が登録されない | `log.V(2)` | `dialout_client.go:616-618` |
+| `dst_group` 省略（空文字列） | L622-625 | エラーなしで `return nil`。Subscription はメモリ登録もされない（サイレント無効化） | なし | `dialout_client.go:622-625` |
+| `dst_group` に存在しない DestinationGroup 名 | `NewInstance()` L181-185 | エラー `"Destination group <name> doesn't exist"`。接続は開始されない | `log.V(2)` | `dialout_client.go:181-185` |
+| `path_target` 省略（空文字列） | `NewInstance()` L187-190 | エラー `"Empty target data not supported yet"`。接続は開始されない | なし | `dialout_client.go:187-190` |
+
+### 接続・ストリーム層の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `retry_interval = 0`（ゼロ値）での gRPC dial | `context.WithTimeout(ctx, 0)` | `DialContext` が即タイムアウト → `goto restart` で無限高速リトライループ（CPU 高負荷） | `log.V(1)` ("Dialout connection ... failed") | `dialout_client.go:260-261, 314-317` |
+| gRPC `DialContext` 失敗（コレクタ到達不能） | `publishRun()` L314-317 | `goto restart` でラウンドロビン次 `dst_addr` を試みる。全 addr 消化後も同サイクル反復 | `log.V(1)` | `dialout_client.go:306, 314-317` |
+| `Publish()` RPC 失敗 | `publishRun()` L321-326 | `c.Close()` → `cs.Close()` → `goto restart` で再接続 | `log.V(1)` ("Publish ... failed, retrying") | `dialout_client.go:321-326` |
+| Periodic モードの DB データ読み出しエラー | `cs.dc.Get()` L344-348 | `continue` でスキップ。インターバル後に再試行。ストリームは維持される（永続断でも終了しない） | `log.V(2)` ("Data read error") | `dialout_client.go:344-348` |
+
+### retry / 復旧挙動補足
+
+- **gRPC 再接続は上限なし**: `goto restart` ループに回数上限なし。`retry_interval` を必ず正値で設定すること
+- **複数 `dst_addr` のフォールオーバー**: `publishRun` は `destIdx = (destIdx+1) % destNum` でラウンドロビン。1 台障害は次 addr への自動フォールオーバーで吸収
+- **未知フィールドはエラー扱い（Global と異なる）**: `DestinationGroup` / `Subscription` エントリに未知フィールドがあるとエントリ全体が登録されない。`Global` は未知フィールドを静かに無視する点と対照的
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
