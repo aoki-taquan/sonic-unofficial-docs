@@ -234,6 +234,36 @@ NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_K
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`hostcfgd` の `NtpCfg` クラスは `NTP_GLOBAL` / `NTP_SERVER` / `NTP_KEY` / `LOOPBACK_INTERFACE` を独立に購読し、それぞれのハンドラが `chrony` を再起動する。書込み順は chrony の中間状態（空サーバリスト等）と YANG must 制約の可否に影響する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `NTP_SERVER` / `NTP_KEY` → `NTP_GLOBAL` | 推奨先行 | 後追い設定でも `ntp_srv_key_handler` が再トリガされ自動復旧 |
+| 2 | `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled = "true"` → `NTP_GLOBAL\|global.vrf = "mgmt"` | **必須先行**（YANG must 制約） | CLI 発行時に YANG バリデーション失敗で reject。redis 直書きでは制約がバイパスされる |
+| 3 | `LOOPBACK_INTERFACE` 存在 → `NTP_GLOBAL.src_intf` 有効化 | 推奨先行 | `NTP_SERVER` が空のとき `handle_ntp_source_intf_chg()` は early return (hostcfgd:1315) |
+| 4 | `NTP_GLOBAL.src_intf` の名前 ∈ `LOOPBACK_INTERFACE` キー | 推奨先行 | 登録前に loopback が追加されても名前一致しない限り chrony restart はスキップ |
+
+### 主要な制約詳細
+
+**MGMT_VRF_CONFIG 先行必須 (依存 #2)**: `sonic-ntp.yang` の `must` 制約
+```
+(current() != 'mgmt') or (/mvrf:sonic-mgmt_vrf/.../mgmtVrfEnabled = 'true')
+```
+により、`NTP_GLOBAL.vrf = "mgmt"` は `MGMT_VRF_CONFIG` で mgmt VRF が有効化されていないと CLI が reject する。`MGMT_VRF_CONFIG` を先に `mgmtVrfEnabled = true` で書いてから `NTP_GLOBAL.vrf` を設定すること（evidence: `sonic-ntp.yang must` 制約, `hostcfgd:1331-1365`）。
+
+**NTP_SERVER 先行推奨 (依存 #1)**: `NTP_GLOBAL` だけ先に書いて `NTP_SERVER` を後から追加した場合、`ntp_global_update()` (hostcfgd:1331) 呼び出し時点では chrony がサーバリスト空で再起動される。その後 `NTP_SERVER` 追加イベントで `ntp_srv_key_handler` → `ntp_srv_key_update()` が再度トリガされ正常な chrony 設定で再起動されるため、最終的には収束する（evidence: `hostcfgd:2389-2391, 1383-1406`）。
+
+**diff 検知による冪等性**: `ntp_global_update()` (hostcfgd:1344) はキャッシュと同一データなら no-op。`ntp_srv_key_update()` (hostcfgd:1383-1386) も同様。イベント到着順が逆でも最終状態は収束するが、中間状態で空サーバリストの chrony が一時的に動作する点に注意。
+
+調査メモ: `meta/_intermediate/cdb-flow/ntp-global-ordering.md`
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <!-- derivation -->
