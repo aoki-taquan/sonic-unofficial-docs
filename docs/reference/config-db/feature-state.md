@@ -375,6 +375,55 @@ STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `con
 | COUNTERS_DB / FLEX_COUNTER_DB | 書込なし | `featured` 全行の grep で `COUNTERS_DB` / `FLEX_COUNTER_DB` への参照・書き込み 0 件 |
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`STATE_DB FEATURE` テーブルへの書込み元 (`featured` / `container_startup.py` / `ctrmgrd.py`) はいずれも **直接 `swsscommon.Table.set()` / `_del()`** で STATE_DB を更新する。`ConsumerStateTable` や keyspace 通知 (PSUBSCRIBE) は使用しない。
+
+consumer 側の `featured` は CONFIG_DB `FEATURE` テーブルを **`swsscommon.SubscriberStateTable` + `swsscommon.Select()`** で購読する（`featured:626-634`）。これは Redis Streams ベースのチャネル購読であり、`ConfigDBConnector.subscribe()`（keyspace 通知）とは異なる。
+
+| ロール | 購読 API | 購読元 DB / テーブル | 書込先 DB / テーブル |
+|--------|---------|---------------------|---------------------|
+| `featured` | `swsscommon.SubscriberStateTable` + `Select` | CONFIG_DB `FEATURE` | STATE_DB `FEATURE` (`state` のみ) |
+| `featured` | `swsscommon.SubscriberStateTable` + `Select` | APPL_DB `PORT_TABLE` | STATE_DB `FEATURE` (間接: `delayed` 機能の解除トリガー) |
+| `container_startup.py` | なし (ワンショット) | CONFIG_DB `FEATURE` (直接 `HGETALL`) | STATE_DB `FEATURE` (`current_owner` / `container_id` 等) |
+| `ctrmgrd.py` | (独自ループ) | STATE_DB `FEATURE` / Kubernetes API | STATE_DB `FEATURE` (`container_stable_version` / `remote_state` 等) |
+| `show feature status` | なし (ポーリング) | STATE_DB `FEATURE` (`HGETALL`) | なし (読み取り専用) |
+
+### SubscriberStateTable による CONFIG_DB → STATE_DB 伝播フロー
+
+```
+CONFIG_DB FEATURE テーブル変更 (sonic-cfggen / sonic-mgmt / CLI)
+  ↓ Redis Streams チャネル書込み
+swsscommon.SubscriberStateTable (featured:644-646)
+  ↓ swsscommon.Select.select() がイベントを捕捉 (featured:656)
+subscriber.pop() → (key, op, fvs) 取得 (featured:674)
+  ↓ callbacks[FEATURE_TBL] → feature_handler.handler()
+  ↓ update_feature_state() → enable_feature() / disable_feature()
+  ↓ systemctl start/stop 完了後
+set_feature_state() → Table(state_db, FEATURE).set(name, [('state', val)])
+```
+
+### APPL_DB PORT_TABLE → delayed 機能解除フロー
+
+`has_timer` / `delayed=true` 設定の機能はポート初期化完了まで起動を保留する:
+
+```
+APPL_DB PORT_TABLE|PortInitDone (portsorch が SET)
+  ↓ SubscriberStateTable (featured:647-648)
+port_listener(key='PortInitDone', op='SET')
+  ↓ enable_delayed_services()
+  ↓ 保留中の delayed=true 機能を enable_feature() / disable_feature() で起動
+STATE_DB FEATURE|<name>.state = 'enabled' / 'disabled' / 'failed'
+```
+
+高度ブート (warm/fast boot) 時は `RestartWaiter.waitAdvancedBootDone()` (featured:609) 完了後、`handle_adv_boot()` → `enable_delayed_services()` が PORT_TABLE を待たずに delayed 機能を起動する。
+
+> **Evidence**: `sonic-host-services/scripts/featured:601-603,610-612,626-634,644-648,656,674` (DBConnector/Select/SubscriberStateTable)、`featured:585-590` (`set_feature_state`)、`featured:607-609` (`RestartWaiter`)、`featured:169-184` (`handle_adv_boot`/`port_listener`)、`sonic-utilities/show/feature.py:58-80` (`HGETALL` によるポーリング読み出し)
+<!-- /pubsub -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
