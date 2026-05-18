@@ -418,6 +418,67 @@ TC→PG マッピングは PFC の動作に直結する。`BUFFER_PG|<port>|<pg>
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L1342 -->
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L2231-2252 -->
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp L2254-2261 -->
+
+### Producer/Consumer ペア
+
+TC_TO_PRIORITY_GROUP_MAP テーブルは CONFIG_DB → SAI の **直接経路**をとる。APPL_DB への中継は行わない。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|--------------------|
+| CONFIG_DB → QosOrch | `SubscriberStateTable` | `__keyspace@{config_db_id}__:TC_TO_PRIORITY_GROUP_MAP\|*` |
+| QosOrch → SAI | SAI API 直接呼び出し | `sai_qos_map_api` (`SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP`) |
+
+### SubscriberStateTable の動作
+
+`QosOrch` は `Orch(db, tableNames)` 基底クラスの `addConsumer()` を通じて `CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAME` に対する `SubscriberStateTable` を生成する（`qosorch.cpp:1342`）。CONFIG_DB の keyspace notification でエントリ変化を検出し `pops()` で現在値を読み出す。初回起動時は既存エントリを先読みして起動前設定を取りこぼさない。
+
+### select() ループと doTask 実行順序
+
+orchdaemon は `Select::select()` を 1000 ms タイムアウトで実行する。イベント受信時は `Consumer::drain()` → `QosOrch::doTask()` が呼ばれる。
+
+`QosOrch::doTask()` （`qosorch.cpp:2231`）はカスタム実行順序を実装する:
+
+1. `PORT_QOS_MAP` / `QUEUE` **以外**の全テーブル（TC_TO_PRIORITY_GROUP_MAP を含む）を先に drain
+2. `PORT_QOS_MAP` を drain（マップ登録済みを前提にポート適用）
+3. 最後に `QUEUE` を drain
+
+TC_TO_PRIORITY_GROUP_MAP は **step 1** で処理されるため、同一イベントループ内で本テーブルが登録された後、直ちに PORT_QOS_MAP / QUEUE の処理が続く。`task_need_retry` を最小化する設計。
+
+`doTask(Consumer&)` 冒頭では `gPortsOrch->allPortsReady()` チェックがあり、全ポート初期化完了まで処理を保留する（`qosorch.cpp:2258`）。
+
+### retry メカニズム
+
+`PORT_QOS_MAP.tc_to_pg_map` や `TUNNEL_DECAP_TABLE.decap_tc_to_pg_map` から本テーブルへの参照が未解決の場合は `task_need_retry` が返り、エントリは `m_toSync` に残留する。本テーブルの登録イベントが来ると doTask の実行順序制御により直ちに参照側の再試行が実行される。
+
+### データフロー図
+
+```
+CONFIG_DB[TC_TO_PRIORITY_GROUP_MAP|<name>|<tc>]
+  ↓ SubscriberStateTable (keyspace notification)
+  ↓ PSUBSCRIBE __keyspace@config_db_id__:TC_TO_PRIORITY_GROUP_MAP|*
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → QosOrch::doTask()
+  ↓   [allPortsReady() チェック]
+  ↓   [実行順序: TC_TO_PRIORITY_GROUP_MAP → PORT_QOS_MAP → QUEUE]
+  ↓ handleTcToPgTable() → TcToPgHandler::processWorkItem()
+    ↓ addQosItem() / modifyQosItem() / removeQosItem()
+    ↓   → sai_qos_map_api
+    ↓     SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP
+ASIC (sairedis → ASIC_DB 経由)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationConsumer: なし
+```
+
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
