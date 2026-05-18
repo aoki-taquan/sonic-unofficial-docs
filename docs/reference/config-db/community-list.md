@@ -200,6 +200,33 @@ CONFIG_DB への SET/DEL は即時反映されず、`docker-snmp` コンテナ�
 | 4 | snmp_yml_to_configdb.py 注入順序は固定（RO 単→複, RW 単→複） | **実装固定** | 重複 community は冪等スキップ（順序変更で上書き不可） |
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref および実装スキャンにより確認した参照関係。詳細スキャン証跡は `meta/_intermediate/cdb-flow/community-list-cross-refs.md` を参照。
+
+### YANG レベル参照: なし
+
+`sonic-snmp.yang` の `SNMP_COMMUNITY_LIST` は `leafref` / `augment` ステートメントを持たない。他テーブルへの YANG 依存なし、他テーブルからの leafref による被参照なし。
+
+### テンプレートレベル協調依存（弱い依存）
+
+`snmpd.conf.j2` は同一テンプレートレンダリングコンテキストで以下のテーブルを同時読み取りするが、YANG 制約なし。
+
+| テーブル | 参照箇所 | 用途 | 欠如時の影響 |
+|---------|---------|------|------------|
+| [`SNMP_AGENT_ADDRESS_CONFIG`](snmp-agent-address-config.md) | `snmpd.conf.j2 L27-44` | agentAddress / agentPort 行生成 | `SNMP_AGENT_ADDRESS_CONFIG` なしでも SNMP_COMMUNITY 行は独立生成される |
+| [`SNMP`](snmp.md) (CONTACT / LOCATION) | `snmpd.conf.j2 L88-95` | sysContact / sysLocation 行生成 | 同上（独立） |
+| `SNMP_USER` | `snmpd.conf.j2 L66-76` | SNMPv3 rouser / rwuser 行生成 | 同上（独立） |
+
+これらのテーブルは各自の `{% if <TABLE> is defined %}` ガードで独立して評価される。`SNMP_COMMUNITY` の有無が他テーブルの生成に影響することはなく、逆も然り。
+
+### 被参照（逆参照）: なし
+
+他テーブルから `SNMP_COMMUNITY` の key（community 名）を leafref で参照するテーブルは YANG スキャンで確認されない。
+
+<!-- /cross-refs -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
