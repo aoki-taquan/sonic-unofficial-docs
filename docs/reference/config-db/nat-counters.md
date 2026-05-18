@@ -239,6 +239,27 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`COUNTERS_DB` NAT カウンタテーブル群は `NatOrch` が**書き手専用 (producer only)** として書き込む。カウンタエントリの生成・更新・削除は以下の CONFIG_DB / APPL_DB / SAI リソースへの依存によって決まる。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `NAT_GLOBAL_TABLE\|Values.admin_mode` (APPL_DB) | トリガ：`"enabled"` 時に `enableNatFeature()` → SAI 一括登録 → カウンタ初期化 | 常時。`admin_mode="disabled"` の間は `COUNTERS_NAT*` エントリが存在しない | `natorch.cpp:2534-2582` (`enableNatFeature`), `natorch.cpp:2617-2680` (`doNatGlobalTableTask`) |
+| `APP_NAT_TABLE\|<global_ip>` / `APP_NAPT_TABLE\|<proto>:<ip>:<port>` (APPL_DB) | SET → `addHwSnatEntry()` / `addHwDnatEntry()` 成功 → `updateNatCounters(…,0,0)` | SAI 登録成功時のみカウンタエントリ生成 | `natorch.cpp:789` (`addSnatEntry`), `natorch.cpp:873` (`addNaptEntry`), `natorch.cpp:4049-4061` (`updateNatCounters`) |
+| `APP_NAT_TWICE_TABLE\|<src_ip>:<dst_ip>` / `APP_NAPT_TWICE_TABLE\|…` (APPL_DB) | SET → `addHwTwiceNatEntry()` 成功 → `updateTwiceNatCounters(…,0,0)` | SAI 登録成功時のみ `COUNTERS_TWICE_NAT*` エントリ生成 | `natorch.cpp:1343-1430` (`addHwTwiceNatEntry`), `natorch.cpp:4108-4135` (`updateTwiceNatCounters`) |
+| `FLUSHNATSTATISTICS` 通知 (APPL_DB) | 受信 → SAI `reset_nat_entry_attribute` → カウンタ 0 リセット | `sonic-clear nat statistics` 発行時 | `natorch.cpp:3271-3303` (`clearCounters`), コンストラクタ `NotificationConsumer("FLUSHNATSTATISTICS")` |
+| `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` | SAI クエリ → `MAX_NAT_ENTRIES` 書込み | NatOrch コンストラクタで 1 回のみ。失敗時は `"0"` → `gIsNatSupported=false` | `natorch.cpp:115-130` |
+| `SAI NAT カウンタ API` (`get_nat_entry_attribute`) | 5 秒周期タイマ → `queryCounters()` → COUNTERS_NAT* 更新 | `admin_mode="enabled"` かつ タイマ起動中 | `natorch.cpp:3118-3177` (`queryCounters`), `natorch.cpp:3095-3117` (`doTask(SelectableTimer)`) |
+| `RouteOrch` (DNAT 用 NH 解決) | `attach/detach` コールバック → DNAT エントリ追加可否 | NH が解決されるまで `addHwDnatEntry()` は呼ばれず、カウンタも不在 | `natorch.cpp:155-202` (`update`), `natorch.cpp:390-432` (`addDnatToNhCache`) |
+
+!!! note "COUNTERS_DB NAT テーブルは「書き出し専用」のランタイムステータスレジスタ"
+    `NatOrch` 以外の書き手は存在しない。`show nat statistics` / `show nat translations` は読み手のみ。
+    `COUNTERS_GLOBAL_NAT|Values` のエントリ数フィールド (`SNAT_ENTRIES` 等) は `addHwSnatEntry()` / `removeHwSnatEntry()` 成功のたびにリアルタイム更新される (`natorch.cpp:4574`)。
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
