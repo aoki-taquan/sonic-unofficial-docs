@@ -286,6 +286,57 @@ orchagent が APPL_DB を処理
 > **スキャン証跡**: coppmgr.cpp L296-411, L531-985 全行読了。copporch.cpp L32-36, L191-215, L240-300, L392-420, L880-960, L1370-1492 読了。cross-refs 8 件検出。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`COPP_GROUP_TABLE` / `COPP_TRAP_TABLE` / `COPP_TRAP_CAPABILITY_TABLE` への書き手は `coppmgrd` と `CoppOrch`（orchagent）の 2 プロセス。両プロセスとも STATE_DB への書き込みは `swss::Table::set/del`（void 戻り値）で行うため、**Redis 書き込み失敗はアプリ層では検出できず**、例外伝播によるプロセス abort → systemd 再起動が唯一の回復経路となる。以下では各プロセスの失敗分岐と STATE_DB への影響を整理する。
+
+### A. `CoppOrch` 初期化失敗（orchagent 起動時）
+
+| 失敗箇所 | 失敗条件 | 致死性 | STATE_DB への影響 |
+|---|---|---|---|
+| `publishTrapIdsCapability()` — SAI capability クエリ | `sai_query_attribute_enum_values_capability()` 失敗 | **非致死** (フォールバック) | `COPP_TRAP_CAPABILITY_TABLE|traps` に `default_supported_trap_ids`（42 種、`neighbor_miss` 除く）で書き込み。orchagent は継続 |
+| `initDefaultHostIntfTable()` — デフォルト hostif テーブル作成 | `sai_hostif_api->create_hostif_table_entry()` 失敗 | **致死** | `throw "CoppOrch initialization failure"` → orchagent abort → systemd 再起動。`COPP_TRAP_CAPABILITY_TABLE` は直前に書き込み済み |
+| `initDefaultTrapGroup()` — デフォルトトラップグループ取得 | `sai_switch_api->get_switch_attribute()` 失敗 | **致死** | 同上 |
+| `initDefaultTrapIds()` — デフォルトトラップ ID 適用 | `applyAttributesToTrapIds()` 失敗 | **致死** | 同上 |
+
+<!-- evidence: copporch.cpp L208-215, L262-299, L318-326, L361-365, L377-385 -->
+
+### B. `CoppOrch::doTask()` — `processCoppRule` の失敗分岐
+
+**起動ガード（`allPortsReady()` false）**: `doTask()` 冒頭で全ポート未 ready を検出した場合、即 `return` して全 APPL_DB アイテムを保留。`COPP_TRAP_TABLE.hw_status` は一切書き込まれない。ポートが ready になれば次サイクルで自動再開する。<!-- evidence: copporch.cpp L885-888 -->
+
+| `task_status` | 発生条件 | `doTask()` の動作 | STATE_DB 影響 |
+|---|---|---|---|
+| `task_success` / `task_ignore` | 正常完了 / 無視可能 | `m_toSync.erase(it)` → 次アイテムへ | 正常書き込み |
+| `task_need_retry` | SAI 一時失敗（transient error） | `it++` でアイテム保留 → 次サイクルで再試行 | `hw_status` 未書き込み（次回再試行） |
+| `task_failed` | SAI 致命的失敗（ポリサー作成失敗、genetlink 重複等） | `m_toSync.erase(it)` → **`return`（残アイテム処理停止）** | `hw_status` 未書き込み。orchagent は生存するが次イテレーションまで他グループも処理されない |
+| `task_invalid_entry` | 例外（`out_of_range` / `std::exception`）または未知 op | `m_toSync.erase(it)` → 次アイテムへ（永久スキップ） | `hw_status` 未書き込み。当該エントリは再試行されない |
+
+<!-- evidence: copporch.cpp L896-932 -->
+
+**`create_hostif_trap` SAI 失敗 → `hw_status` 未書き込み**: `applyAttributesToTrapIds()` 内で SAI 操作が失敗した場合、`updateTrapOperStatus()` の呼び出しがスキップされ `COPP_TRAP_TABLE.hw_status` は書き込まれない。`handleSaiCreateStatus()` が返す status に応じて `task_need_retry` または `task_failed` として伝播する。<!-- evidence: copporch.cpp L515-526 -->
+
+**Genetlink 重複作成 — `task_failed` 即時**:  `m_trap_group_hostif_map` に既存エントリが存在する状態で再度 genetlink trap group を作成しようとすると `task_failed` が即時返却される。当該グループへの `hw_status` 書き込みはスキップされ、`doTask()` が `return` して後続グループの処理も停止する。<!-- evidence: copporch.cpp L835-840 -->
+
+### C. `coppmgrd` — STATE_DB 書き込みの失敗挙動
+
+**`setCoppGroupStateOk()` / `setCoppTrapStateOk()` の戻り値なし**: `swss::Table::set()` は void。Redis I/O エラーは例外として伝播し coppmgrd プロセス abort → systemd 再起動で自己回復する。STATE_DB の書き込み失敗が永続する設計は存在しない。
+
+**`trap_group` / `trap_ids` 欠落によるサイレントスキップ**: `doCoppTrapTask()` で `trap_group.empty() || trap_ids.empty()` の場合、エラーログなしで `m_toSync.erase(it)` し永久スキップする。`setCoppTrapStateOk()` は呼ばれず `COPP_TRAP_TABLE.state` は書き込まれない。<!-- evidence: coppmgr.cpp L609-613 -->
+
+### D. STATE_DB 不整合が発生しうる中間状態
+
+| 状態 | 原因 | 挙動 |
+|---|---|---|
+| `state=ok` あり、`hw_status` なし | coppmgrd 書き込み完了、orchagent の SAI 処理未完了 | 正常な起動中間状態。SAI 成功後に `hw_status=installed` が追記される |
+| `hw_status=installed` あり、`state` なし | coppmgrd が DEL した後、orchagent の `remove_hostif_trap` が未実行 | 短時間の過渡状態。次サイクルで `hw_status=not-installed` に更新される |
+| `hw_status` 未書き込み（永続） | SAI `create_hostif_trap` の `task_invalid_entry` 系失敗 | 当該エントリは永久スキップ。orchagent 再起動後に再処理 |
+| `COPP_TRAP_TABLE.state` 未書き込み | `trap_group` / `trap_ids` 欠落による coppmgrd サイレントスキップ | CONFIG_DB の当該 COPP_TRAP エントリを修正して再投入するまで回復しない |
+
+> **スキャン証跡**: `copporch.cpp` L208-215, L240-300, L315-390, L499-532, L880-934 読了。`coppmgr.cpp` L424-451, L531-815 読了。失敗分岐 4 系統（SAI init / doTask status / SAI trap create / coppmgrd skip）を確認。詳細は `meta/_intermediate/cdb-flow/copp-state-failure.md` 参照。
+<!-- /failure -->
+
 ## 確認コマンド
 
 ```bash
