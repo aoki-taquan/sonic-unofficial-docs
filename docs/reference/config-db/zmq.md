@@ -88,6 +88,31 @@ ZMQ 関連フィールドはいずれも YANG `default` 文を持たず、コー
 `sonic-swss-common/common/zmqserver.h:16` にハードコードされている[^zmq_port]。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+ZMQ 関連フィールドは orchagent **起動時の一回のみ** 読まれる。以下の順序依存が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 備考 |
+|---|----------|------|------|
+| 1 | `orch_northbond_*_zmq_enabled` の CONFIG_DB 書き込み → orchagent 再起動 | **起動前必須** | runtime 変更は無効。orchdaemon コンストラクタ内で一度だけ読まれる |
+| 2 | 全 ZmqConsumerStateTable ハンドラ登録 → `ZmqServer::bind()` | 強制先行（lazy bind で自動保証） | bind 前に送信側が接続しても `ECONNREFUSED` |
+| 3 | orchagent の `bind()` 完了 → fpmsyncd / gnmi の ZmqClient 接続 | orchagent 先行 | fpmsyncd は `routesync.cpp:155` で ZmqClient を起動時に固定 |
+| 4 | `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` 読み取り → `RouteOrch` 生成 | 1 回限り（init 内） | 変更には orchagent 再起動が必要。以後の runtime 書き換えは無視 |
+| 5 | DASH ZMQ 有効 → DashXxxOrch 群を同一 `zmq_server` 共有で直列生成 | `DpuOrchDaemon::init()` 内で直列 | 全 DASH orch は同一 ZmqServer インスタンスを参照 |
+
+### 主要な制約詳細
+
+**CONFIG_DB 読み取りは起動時の一回のみ (依存 #1, #4)**: `get_feature_status()` (`orch_zmq_config.cpp:81-104`) は orchagent 起動時に `DEVICE_METADATA|localhost` から直接 `hget` してフラグを決定する。`OrchDaemon` コンストラクタ内 (`orchdaemon.cpp:334`, `1329`) で呼ばれ、以降はテーブル変更を購読しない。そのため `orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` を runtime に書き換えても、orchagent を再起動しない限り反映されない。
+
+**lazy bind による「ハンドラ登録 → bind」順序保証 (依存 #2)**: `create_zmq_server()` (`orch_zmq_config.cpp:64-79`) は lazy bind モード (`lazy=true`) で `ZmqServer` を生成し、`main.cpp:1036` で全ハンドラ登録完了後に初めて `bind()` を呼ぶ。これにより「ハンドラ未登録状態で ZMQ メッセージを受信してドロップする」競合を防ぐ。起動シーケンスは固定: `create_zmq_server()` → `orchDaemon->init()` (全ハンドラ登録) → `zmq_server->bind()` → `orchDaemon->start()` の順（evidence: `main.cpp:646-654`, `main.cpp:1032-1040`）。
+
+**ZmqConsumer の ordered キューと順序保証 (依存 #5)**: `ZmqOrch::addConsumer()` (`zmqorch.cpp:59-78`) は `orderedQueue=true` のとき `ZmqConsumerStateTable` を ordered モードで生成する。ordered モードでは `execute()` がエントリを `m_queue` に蓄積し、`drain()` で `doTask()` を呼ぶことで同一テーブル内の SET/DEL 順序が保たれる。非 ordered モードは従来の `m_toSync` を使う（evidence: `zmqorch.cpp:8-33`）。
+
+<!-- /ordering -->
+
 ---
 
 ## DEVICE_METADATA|localhost の ZMQ フィールド
