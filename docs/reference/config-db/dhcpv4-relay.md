@@ -63,6 +63,45 @@ DHCPV4_RELAY|<name>
 | `agent_relay_mode` | `relay-agent-mode` | - | `forward_untouched` (YANG) / discard (実装) | 既存 Option82 を持つパケットの処理モード。**注意**: YANG default `"forward_untouched"` はコードで認識されず discard になる |
 | `max_hop_count` | uint8 (1..16) | - | `4` (YANG) / `16` (C++ struct) | ホップ数上限。YANG-実装間で default 値が乖離 |
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`sonic-dhcpv4-relay` (`DHCPMgr`) は CONFIG_DB の複数テーブルを同時購読する。`DHCPV4_RELAY` の SET イベント受信時点でこれらが揃っていないと、設定の欠落や誤った VRF での中間状態が発生する。
+
+### 他テーブル先行必須
+
+| 先行テーブル | 理由 | 違反時の挙動 |
+|---|---|---|
+| `VLAN\|<name>` | `process_dhcp_server_ipv4_notification()` が `vlan_tbl.hget(vlan, "vlanid", ...)` で VLAN 存在チェックを行い、VLAN が未登録ならイベントを破棄（`dhcp4relay_mgr.cpp:793-800`） | `DHCP_SERVER_IPV4` 経由の relay 設定が silent drop され relay が有効にならない |
+| `VLAN_INTERFACE\|<name>` | `server_vrf` 未指定時に `vlan_intf_tbl->hget(vlan, VRF_NAME_FIELD, ...)` で VLAN_INTERFACE の vrf_name を取得。未設定なら `"default"` VRF を使用（`dhcp4relay_mgr.cpp:421-431`） | `VLAN_INTERFACE` が後から追加されると `VLAN_INTERFACE_UPDATE` イベントで修正されるが、起動直後の packet は誤 VRF のソケットに流れる |
+| `DEVICE_METADATA\|localhost\|has_sonic_dhcpv4_relay` | `true` でなければ旧 `dhcrelay` が `DHCPV4_RELAY` を無視し、新 `sonic-dhcpv4-relay` が起動しない | relay が全く動作しない |
+| `FEATURE\|dhcp_server` | `dhcp_server.state = "enabled"` のとき `DHCPMgr` が `DHCPV4_RELAY` の watch を停止し `DHCP_SERVER_IPV4` を watch し始める（`dhcp4relay_mgr.cpp:468-600`）。先に `FEATURE.dhcp_server` の state を確定しておかないと、起動中に watch 対象が切り替わり一部イベントが欠落する | relay/dhcp-server 切り替え直後の SET イベントが取りこぼされる可能性 |
+
+### 推奨書込み順序
+
+```
+# 1. VLAN 本体
+SET VLAN|<name>  vlanid=<id>
+
+# 2. VLAN L3 インタフェース（VRF 割当が必要な場合）
+SET VLAN_INTERFACE|<name>  vrf_name=<vrf>
+
+# 3. DEVICE_METADATA 有効化（初回のみ）
+SET DEVICE_METADATA|localhost  has_sonic_dhcpv4_relay=true
+
+# 4. DHCPV4_RELAY エントリ投入
+SET DHCPV4_RELAY|<Vlan_name>  dhcpv4_servers=<ip,...>  ...
+```
+
+### SET 後 DEL の順序依存
+
+| シナリオ | 問題 | 安全な手順 |
+|---|---|---|
+| DHCPV4_RELAY DEL 後に VLAN を削除 | `config vlan del` が `DHCPV4_RELAY` 参照を検出して `ctx.fail()` で拒否（`config/vlan.py:243`） | 先に `DHCPV4_RELAY` エントリを DEL してから VLAN を削除 |
+| VRF 削除前に DHCPV4_RELAY の `server_vrf` が残存 | `config main` が VRF 削除を拒否（`config/main.py:1699-1706`） | `server_vrf` フィールドを除いた SET で上書きするか DHCPV4_RELAY 自体を DEL してから VRF を削除 |
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルトと挙動の罠
 

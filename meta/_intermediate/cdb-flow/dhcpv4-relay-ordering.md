@@ -1,21 +1,28 @@
-# DHCPV4_RELAY — 書込み順依存調査メモ (Phase B)
+# DHCPV4_RELAY — Phase B ordering analysis
 
-調査日: 2026-05-18
-調査者: Claude (batch368)
-調査対象: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay_mgr.cpp`
+## 対象ページ
+`docs/reference/config-db/dhcpv4-relay.md`
 
-## 判明した順序依存
+## 調査ソース
+- `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay_mgr.cpp`
+  - `initialize_config_listener()` L55-130: 購読テーブル一覧
+  - `process_relay_notification()` L371-460: SET 時の server_vrf fallback
+  - `process_dhcp_server_ipv4_notification()` L725-810: VLAN 存在チェック
 
-1. **VLAN / VLAN_INTERFACE 先行必須**: `process_relay_notification()` が DHCPV4_RELAY SET 処理時に `VLAN_INTERFACE` を同期読み込みして `server_vrf` fallback を決定する。VLAN_INTERFACE 未登録だと `vrf = "default"` ソケットが作られる。
-2. **VLAN_MEMBER 先行必須**: ポートが VLAN_MEMBER に登録されていないと relay 対象外と判定される。
-3. **DEVICE_METADATA 先行推奨**: `is_dualTor` フラグが設定されていないと DualToR 環境で Link Selection 強制 enable が動作しない。
-4. **FEATURE|dhcp_server との排他**: `state=enabled` になると DHCPV4_RELAY watch が停止し `vlans_copy` がクリアされる。DHCPV4_RELAY 書込みは FEATURE SET 前に完了させること。
+## 検出した順序依存
 
-## コード証拠
+### VLAN 先行必須
+`process_dhcp_server_ipv4_notification()` は `vlan_tbl.hget(vlan, "vlanid", value)` が false を返す場合（VLAN 未存在）イベントを破棄する（L793-800）。DHCP_SERVER_IPV4 経由の relay 設定が silent drop される。
 
-- `dhcp4relay_mgr.cpp:57-86`: handle_swss_notification() — Subscribe テーブル一覧
-- `dhcp4relay_mgr.cpp:135-157`: feature_dhcp_server_enabled フラグによる watch 切替え
-- `dhcp4relay_mgr.cpp:371-459`: process_relay_notification() — VLAN_INTERFACE 同期読み
-- `dhcp4relay_mgr.cpp:479-541`: process_feature_notification() — vlans_copy クリア
-- `dhcp4relay_mgr.cpp:619-663`: process_vlan_member_notification()
-- `dhcp4relay_mgr.cpp:822-861`: process_vlan_notification()
+### VLAN_INTERFACE 先行推奨
+`server_vrf` 未指定時に `vlan_intf_tbl->hget(vlan, VRF_NAME_FIELD, value)` で取得。VLAN_INTERFACE 未設定なら `"default"` VRF を採用（L421-431）。VLAN_INTERFACE_UPDATE イベントで後追い修正されるが起動時の一時的誤 VRF が発生。
+
+### DEVICE_METADATA.has_sonic_dhcpv4_relay 先行必須
+新 `sonic-dhcpv4-relay` が起動する条件。true でなければ旧 dhcrelay が使われ DHCPV4_RELAY を無視する。
+
+### FEATURE.dhcp_server 先行確定
+enabled/disabled により watch 対象テーブルが切り替わる（L468-600）。起動中に切り替わると一部イベントが欠落する可能性がある。
+
+## DEL 順序依存
+- DHCPV4_RELAY 参照中 VLAN を削除しようとすると `ctx.fail()` で拒否（vlan.py:243）
+- DHCPV4_RELAY.server_vrf が残存する VRF は削除を拒否（config/main.py:1699-1706）
