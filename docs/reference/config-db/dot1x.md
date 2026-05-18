@@ -298,6 +298,54 @@ CONFIG_DB の購読は step 4 以降にのみ有効となるため、`PAC_PORT_C
 > **Evidence**: `sonic-pac/pacmgr/pacmgr.cpp:63-89,103-127,172,684-754`; `sonic-pac/hostapdmgr/hostapdmgr.cpp:43-70,145-170,285-300`; `sonic-pac/mabmgr/mabmgr.cpp:35`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`pacmgrd` (`sonic-pac docker`) が `PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE` のイベントを処理する際に発生しうる失敗パスを示す。
+
+### 失敗パス一覧 — PAC_PORT_CONFIG_TABLE (pacmgrd)
+
+| # | 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---------|---------|------|---------|
+| 1 | ポートキーに `E` プレフィックスなし | `processPacPortConfTblEvent()` L166 | `continue` でスキップ（DB エントリ無視） | `SWSS_LOG_NOTICE "Invalid key format..."` |
+| 2 | `fpGetIntIfNumFromHostIfName()` 失敗（インタフェース未存在等） | `processPacPortConfTblEvent()` L172 | `continue` でスキップ（設定未反映） | `SWSS_LOG_NOTICE "Unable to get the internal interface number..."` |
+| 3 | `port_control_mode` に無効値 | `doPacPortTableSetTask()` L227 | `WARN` ログのみ → DEF 値 (`force-authorized`) で処理継続 | `SWSS_LOG_WARN "Invalid port control mode received: ..."` |
+| 4 | `host_control_mode` に無効値 | `doPacPortTableSetTask()` L240 | `WARN` ログのみ → DEF 値 (`multi-host`) で処理継続 | `SWSS_LOG_WARN "Invalid host control mode received: ..."` |
+| 5 | `reauth_enable` に `true`/`false` 以外 | `doPacPortTableSetTask()` L251 | `WARN` ログのみ → DEF 値 (`false`) で処理継続 | `SWSS_LOG_WARN "Invalid value received for reauth enable: ..."` |
+| 6 | `port_pae_role` に無効値 | `doPacPortTableSetTask()` L291 | `WARN` ログのみ → DEF 値 (`none`) で処理継続 | `SWSS_LOG_WARN "Invalid option received for port pae role: ..."` |
+| 7 | `priority_list` / `method_list` に無効値 | `doPacPortTableSetTask()` L314,340 | `WARN` ログのみ → DEF 値で処理継続 | `SWSS_LOG_WARN "Invalid option received for priority list/method list: ..."` |
+| 8 | `authmgrPortControlModeSet()` が FAIL（新規エントリ時） | `doPacPortTableSetTask()` L358 | 内部キャッシュを DEF に戻して `return false` | `SWSS_LOG_ERROR "Unable to set the authentication port control mode."` |
+| 9 | `authmgrHostControlModeSet()` が FAIL（新規エントリ時） | `doPacPortTableSetTask()` L365 | DEF に戻して `return false` | `SWSS_LOG_ERROR "Unable to set the authentication host control mode."` |
+| 10 | `authmgrPortReAuthEnabledSet()` が FAIL（新規エントリ時） | `doPacPortTableSetTask()` L372 | DEF に戻して `return false` | `SWSS_LOG_ERROR "Unable to set the authentication reauth enable."` |
+| 11 | 各 `authmgr*Set()` が FAIL（既存エントリ更新時） | `doPacPortTableSetTask()` L458,474,490,514,530,546,562 | `return false` | 対応する `SWSS_LOG_ERROR` |
+
+### 失敗パス一覧 — HOSTAPD_GLOBAL_CONFIG_TABLE (pacmgrd)
+
+| # | 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---|---------|---------|------|---------|
+| 12 | DEL 操作 | `processPacHostapdConfGlobalTblEvent()` L1182 | `continue` で無視（DEL は非サポート） | `SWSS_LOG_WARN "Unexpected DEL operation on HOSTAPD_GLOBAL_CONFIG_TABLE, ignoring"` |
+| 13 | `authmgrPortInfoReset()` が FAIL（DEL 時） | `doPacPortTableDeleteTask()` L616 | キャッシュがリセットされない（ポート設定が残存）。`return true` のままなのでエラー非伝播 | なし |
+
+### `return false` 後の連鎖挙動
+
+`doPacPortTableSetTask()` が `false` を返すと `processPacPortConfTblEvent()` が即 `return false` し、同一バッチ内の後続エントリ処理が中断される。`pacmgr_main.cpp` の main ループは戻り値を評価しないため **pacmgrd プロセス自体は継続** する。ただし失敗エントリ以降の SET は処理されず、次のイベント到着まで保留状態になる。
+
+### 無効値の silent fallback 挙動
+
+フィールド値が無効な場合（上記 #3–#7）、pacmgrd は `WARN` ログを出力するが処理を継続し、当該フィールドは `AUTHMGR_*_DEF` マクロのデフォルト値を authmgr へ渡す。CONFIG_DB 上のエントリは残存するが、実際に適用される設定はデフォルトとなる（書き込み vs 実行時乖離）。
+
+### STATE_DB / ERROR_TABLE への記録
+
+失敗情報の STATE_DB への書き込みはなし。障害情報は syslog のみに出力される。
+
+```bash
+# pac コンテナ内のログ確認
+docker logs pac 2>&1 | grep -E "ERROR|WARN" | grep -i authmgr
+```
+
+> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:140-200,218-345,355-415,444-565,613-665`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-failure.md`
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
