@@ -241,6 +241,68 @@ sonic-db-cli CONFIG_DB hgetall 'TELEMETRY_CLIENT|Global'
 docker logs gnmi 2>&1 | grep -i "subscription\|dialout\|clientSubscription"
 ```
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-ordering.md -->
+
+`DialOutRun()` / `processTelemetryClientConfig()` (`sonic-gnmi/dialout/dialout_client/dialout_client.go`) における
+CONFIG_DB エントリ処理の順序依存を以下に示す。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `DestinationGroup_<name>` → `Subscription_<name>` | **強制先行**（逆順は `NewInstance` 失敗） | Global 変更または Subscription 再設定で収束 |
+| 2 | `Global` 変更 → 全 DestinationGroup / Subscription 再起動 | 即時（全接続リセット） | 運用開始前に Global を確定する |
+| 3 | `DestinationGroup` 変更 → 参照 Subscription 再接続 | 即時（切断 → 自動再接続） | 変更中はテレメトリ送信が停止 |
+| 4 | `Subscription_<name>` DEL → `DestinationGroup_<name>` DEL | **強制先行**（逆順は DestGrp DEL 失敗） | Subscription を先に DEL する |
+| 5 | 初期ロード key 列挙順の非決定性 | startup 時のみ | `Global` エントリが存在すれば `setupDestGroupClients()` 呼び出しで自動収束 |
+
+### 主要な制約詳細
+
+**DestinationGroup → Subscription 先行必須 (依存 #1)**:
+`processTelemetryClientConfig()` が `Subscription_<name>` を処理する際、
+`cs.destGroupName` に指定した DestinationGroup が `destGrpNameMap` に未登録の場合、
+`NewInstance()` は即座に失敗する (`dialout_client.go:181-184`)。
+
+```go
+dests, ok := destGrpNameMap[cs.destGroupName]
+if !ok {
+    return fmt.Errorf("Destination group %v doesn't exist", cs.destGroupName)
+}
+```
+
+このため `TELEMETRY_CLIENT|DestinationGroup_<name>` は必ず `TELEMETRY_CLIENT|Subscription_<name>` より
+先に CONFIG_DB に存在している必要がある。
+
+**Global 変更による全接続リセット (依存 #2)**:
+`Global` の任意フィールドを変更すると、`processTelemetryClientConfig()` は `destGrpNameMap` の
+全グループに対して `closeDestGroupClient()` → `setupDestGroupClients()` を実行し、
+全 Subscription のダイアルアウト接続を一時切断・再起動する (`dialout_client.go:509-512`)。
+送信途中のテレメトリメッセージは破棄される可能性がある。
+
+**DEL 順序の強制 (依存 #4)**:
+`DestGrp2ClientSubMap[destGroupName]` に参照中の Subscription が存在する間は
+DestinationGroup の DEL が以下エラーで拒否される (`dialout_client.go:523-525`)。
+
+```go
+if _, ok := DestGrp2ClientSubMap[destGroupName]; ok {
+    return fmt.Errorf("%v is being used: %v", destGroupName, DestGrp2ClientSubMap)
+}
+```
+
+参照している `Subscription_<name>` エントリを全て削除してから `DestinationGroup_<name>` を削除する。
+
+**startup 時の非決定的処理順 (依存 #5)**:
+`DialOutRun()` 初期ロード時に `redisDb.Keys()` が返すキー順序は保証されない。
+`Subscription_<name>` が `DestinationGroup_<name>` より先に処理された場合、
+`NewInstance()` がエラーを返し Subscription が接続されない中間状態になる。
+`Global` エントリが存在すれば Global 処理完了時に `setupDestGroupClients()` が呼ばれ自動収束するが、
+Global エントリが省略された構成では収束トリガーが発生しないため注意が必要。
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
