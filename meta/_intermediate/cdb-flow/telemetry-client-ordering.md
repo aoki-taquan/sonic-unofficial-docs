@@ -1,47 +1,35 @@
 # TELEMETRY_CLIENT — Phase B 書込み順依存スキャンノート
 
 対象テーブル: `TELEMETRY_CLIENT`
-Consumer: `dialout_client_cli` / `dialout/dialout_client/dialout_client.go` (`sonic-gnmi`)
-スキャン範囲: `dialout_client.go` 全行精読、`supervisord.conf` 全行、`dialout.sh` 全行、`gnmi.service.j2` 全行
-スキャン日: 2026-05-16
+Consumer: `sonic-gnmi` (`dialout/dialout_client/dialout_client.go`) の `processTelemetryClientConfig()` / `DialOutRun()`
+スキャン範囲: `DialOutRun()` 全行、`processTelemetryClientConfig()` 全行、`setupDestGroupClients()` / `closeDestGroupClient()` 精読
+スキャン日: 2026-05-18
 
 ---
 
 ## 検出した順序依存・タイミング依存
 
-### 1. DestinationGroup → Subscription 先行必須
+### 1. DestinationGroup → Subscription 先行必須（書き込み順）
 
-- `processTelemetryClientConfig()` (`dialout_client.go:552-641`) が `Subscription_*` キーを処理する際、`cs.destGroupName` が空文字列の場合は `return nil` で**サイレントスキップ**する (`dialout_client.go:622-625`)。
-- 起動時の一括読み込み (`DialOutRun` L706-715) は Redis `KEYS` コマンドの返却順序に依存する。`KEYS` は辞書順でも挿入順でもなくランダム順で返すため、`DestinationGroup_*` より先に `Subscription_*` が処理された場合は gRPC セッションが確立されない。
-- **順序依存**: `TELEMETRY_CLIENT|DestinationGroup_<name>` を先に書き込み、その後 `TELEMETRY_CLIENT|Subscription_<name>` を書き込むこと。起動後のオンライン変更では keyspace notification 経由で再投入されるため問題ない。
-- evidence: `dialout_client.go:552-641, 706-715`
+- 起動時の一括読み込み (`DialOutRun` L705-714) は Redis `KEYS` コマンドの返却順序に依存する。`KEYS` はランダム順で返すため、`DestinationGroup_*` より先に `Subscription_*` が処理された場合、`destGrpNameMap[destGroupName]` が未登録のため `setupDestGroupClients()` で接続が確立されない中間状態が生じる。
+- 最終的には `DestinationGroup_` が処理された時点で接続が確立されるが、起動直後に接続確立が遅れる可能性がある。
+- オンライン変更時は keyspace notification 経由で 1 キーずつ通知されるため順序は制御可能。
+- **推奨順**: `DestinationGroup_<name>` を先に書き込んでから `Subscription_<name>` を書き込む。
+- evidence: `dialout_client.go` L705-714 (Keys iteration), L514-551 (DestinationGroup 処理), L552-641 (Subscription 処理)
 
-### 2. gnmi-native (gNMI サーバ) 先行必須 — supervisord dependent_startup
+### 2. Subscription DEL → DestinationGroup DEL（削除順序）
 
-- `supervisord.conf:58-68`: `dialout` プロセス (`dialout_client_cli`) は `dependent_startup_wait_for=gnmi-native:running` が設定されている。
-- gnmi-native (gNMI サーバ) が `running` 状態になるまで dialout プロセスは起動しない。
-- **順序依存**: `TELEMETRY_CLIENT` を読み込む `dialout_client_cli` は gNMI サーバ起動後にのみ実行される。gNMI サーバ起動前に CONFIG_DB に書き込んでおけば、dialout 起動時に一括読み込みで反映される。
-- evidence: `supervisord.conf:68` (`dependent_startup_wait_for=gnmi-native:running`)
+- `DestinationGroup_<name>` を DEL しようとした際、`DestGrp2ClientSubMap[destGroupName]` にエントリが残っている場合は `"%v is being used"` エラーで拒否される (L523-526)。
+- `Subscription_<name>` の DEL 処理では `DestGrp2ClientSubMap` から自身を除去する (L566-573)。
+- **強制順序**: Subscription を全て DEL してから DestinationGroup を DEL する。逆順は拒否される。
+- evidence: `dialout_client.go` L522-528, L566-573
 
-### 3. database.service → gnmi.service (systemd)
+### 3. Global 変更 → 全DestinationGroup クライアント再起動
 
-- `gnmi.service.j2:3-4`: `Requires=database.service`、`After=database.service swss.service syncd.service`。
-- gnmi コンテナは Redis (CONFIG_DB) が起動してから開始する。`TELEMETRY_CLIENT` 読み込みは必ず Redis 起動後になる。
-- **順序依存**: Redis 未起動時に `TELEMETRY_CLIENT` が参照されることはない（systemd After= による強制）。
-- evidence: `gnmi.service.j2:3-4`
-
-### 4. Global 設定変更時は全 DestinationGroup クライアントが再起動
-
-- `processTelemetryClientConfig()` L508-512: `Global` キーを hset すると、`destGrpNameMap` の全グループに対して `closeDestGroupClient()` + `setupDestGroupClients()` を実行する。
-- これにより `Global` の `src_ip` / `retry_interval` 変更が既存セッションに即時反映される（セッション再確立コスト発生）。
-- **順序依存**: `Global` → `DestinationGroup` の順で書くと DestinationGroup 処理時に Global 設定が適用済みのため安全。逆順（DestinationGroup → Global）でも動作はするが、Global 変更時に全セッションが一度再起動される。
-- evidence: `dialout_client.go:508-512`
-
-### 5. `dialout_client_cli` は CVL スキーマを起動前に必要とする
-
-- `dialout.sh:4`: `export CVL_SCHEMA_PATH=/usr/sbin/schema`。
-- YANG CVL スキーマが `/usr/sbin/schema` にない場合、ConfigDBConnector の YANG バリデーションが失敗する可能性がある（ただし `dialout_client_cli` は直接 Redis に接続するため影響は限定的）。
-- evidence: `dialout.sh:4`
+- `Global` キーへの HSET 処理末尾で `destGrpNameMap` の全グループに対して `closeDestGroupClient()` → `setupDestGroupClients()` を実行する (L509-512)。
+- すべての gRPC dial-out 接続が一時断してから再確立される。
+- **推奨順**: `Global` の `src_ip` / `retry_interval` は `DestinationGroup_` / `Subscription_` を投入する前に書いておくことで接続再起動を回避できる。起動後に `Global` を変更すると全接続が一斉再起動される。
+- evidence: `dialout_client.go` L483-513
 
 ---
 
@@ -49,8 +37,6 @@ Consumer: `dialout_client_cli` / `dialout/dialout_client/dialout_client.go` (`so
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | `TELEMETRY_CLIENT\|DestinationGroup_<name>` → `TELEMETRY_CLIENT\|Subscription_<name>` | 先行推奨（逆順では Subscription がサイレントスキップ） | オンライン変更時は keyspace notification 再投入で自動回復 |
-| 2 | `gnmi-native:running` → `dialout_client_cli` 起動 | supervisord dependent_startup 強制 | CONFIG_DB への書き込みは gnmi-native 起動前でも可（一括読み込みで反映） |
-| 3 | `database.service` → `gnmi.service` 起動 | systemd After= 強制 | Redis 未起動で dialout が起動することはない |
-| 4 | `Global` → `DestinationGroup` 書き込み推奨 | 推奨先行（逆順では Global 変更時に全セッション再起動コスト） | 機能上は逆順でも動作する |
-| 5 | CVL スキーマ配置 (`/usr/sbin/schema`) → `dialout.sh` 起動 | コンテナビルド時に保証済み | 通常は自動 |
+| 1 | `TELEMETRY_CLIENT\|DestinationGroup_<name>` → `TELEMETRY_CLIENT\|Subscription_<name>` | **推奨先行**（起動時は KEYS 順不定のため逆順では中間状態あり） | 最終的には自動回復。オンライン変更は通知順を制御可能 |
+| 2 | `Subscription_` DEL → `DestinationGroup_` DEL | **強制先行**（逆順は `is being used` エラーで拒否） | Subscription を全 DEL してから DestinationGroup を DEL |
+| 3 | `Global` 先書き → `DestinationGroup_` / `Subscription_` 書き込み | **推奨先行**（逆順では Global 変更時に全接続再起動コスト発生） | 機能上は逆順でも最終的に動作する |

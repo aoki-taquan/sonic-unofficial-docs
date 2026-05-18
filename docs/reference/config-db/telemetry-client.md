@@ -176,6 +176,45 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`sonic-gnmi/dialout/dialout_client/dialout_client.go` に埋め込まれた数値・文字列定数で、CONFIG_DB の値では上書きできないもの。
+
+### タイマー・サイズ定数
+
+| 定数 | 値 | 適用箇所 | evidence |
+|------|----|---------|----------|
+| `interval` デフォルト | `5000` ms | `Subscription_*` 処理時の `cs.interval` 初期値。`report_interval` 未設定時はこの値で `time.Sleep` | `dialout_client.go:582` |
+| keyspace notification ReceiveTimeout | `1000` ms (`time.Millisecond*1000`) | `DialOutRun()` イベントループ内 `pubsub.ReceiveTimeout()` のタイムアウト。1 秒ごとに poll してコンテキストキャンセルを確認 | `dialout_client.go:718` |
+| Stream モード StreamRun wait | `100` ms (`100 * time.Millisecond`) | `Stream` reportType 時に `cs.dc.StreamRun()` 起動直後に挿入される固定 sleep。データ収集の安定待ち | `dialout_client.go:392` |
+| 優先キューサイズ | `1`、`false` (non-blocking) | `queue.NewPriorityQueue(1, false)` — Subscription ごとの内部送信キュー容量。溢れた更新はドロップ | `dialout_client.go:298` |
+
+### エンコーディング・プロトコル固定値
+
+| 定数 | 値 | 適用箇所 | evidence |
+|------|----|---------|----------|
+| `clientCfg.Encoding` | `gpb.Encoding_JSON_IETF` (= `0`) | `Global.encoding` フィールドを無視し常に `JSON_IETF` を代入。"Flexible encoding Not supported yet" | `dialout_client.go:500-502` |
+| `clientCfg.Unidirectional` | `true` | `Global.unidirectional` フィールドを無視し常に `true` を代入。"No PublishResponse supported yet" | `dialout_client.go:503-505` |
+
+### reportType 文字列マッピング (静的 map)
+
+`typeConst` / `typeString` で固定:
+
+| 文字列 | 内部 enum |
+|--------|-----------|
+| `"unknown"` | `Unknown` (= 0) |
+| `"once"` | `Once` |
+| `"periodic"` | `Periodic` |
+| `"stream"` | `Stream` |
+
+`report_type` に上記以外の値を設定すると `NewReportType()` が `Unknown` を返し、`publishRun()` が `"Unsupported report type"` をログして goroutine が終了する。
+
+!!! note "定数は外部設定不可"
+    上記の全定数はソースコードにハードコードされており、CONFIG_DB・環境変数・コマンドライン引数でオーバーライドする手段は現時点でない。`report_interval` のみ CONFIG_DB 値 (`report_interval` フィールド) で上書き可能。
+
+<!-- /constants -->
+
 ## 制約
 
 - `ipv4-port` typedef で `dst_addr` は IPv4:port のカンマ区切りに制約 (IPv6 リテラルは現状不可)[^1]
