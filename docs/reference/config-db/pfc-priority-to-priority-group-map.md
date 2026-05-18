@@ -9,6 +9,12 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-pfc-priority-priority-group-map.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: files/build_templates/qos_config.j2
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/qosorch.cpp
+    ref: master
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
     ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
@@ -505,3 +511,52 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 > **Evidence**: `orchdaemon.cpp:367-384`; `orch.cpp:1186-1196`; `qosorch.cpp:984,1343,2231-2295`; `table.h:164`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差・SAI capability 分岐 (Phase H)
+
+> 調査対象: `sonic-buildimage/files/build_templates/qos_config.j2`, `sonic-swss/orchagent/qosorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
+> 調査日: 2026-05-18
+
+### ASIC 限定生成 — Mellanox / Barefoot のみ
+
+`qos_config.j2:163` で対応 ASIC を限定している:
+
+```jinja
+{%- set pfc_to_pg_map_supported_asics = ['mellanox', 'barefoot'] -%}
+```
+
+`config qos reload` 実行時、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブルが CONFIG_DB に投入されるのは **Mellanox (NVIDIA) と Barefoot (Intel Tofino) プラットフォームのみ** (`qos_config.j2:395-410`)。Broadcom / Marvell / Cisco-8000 / VS では本テーブルが生成されない。
+
+| ASIC / プラットフォーム | テーブル生成 | デフォルトマップ名 |
+|------------------------|------------|-----------------|
+| Mellanox (NVIDIA) | あり | `AZURE` |
+| Barefoot (Intel Tofino) | あり | `AZURE` |
+| Broadcom | なし | — |
+| Marvell (Prestera) | なし | — |
+| Cisco-8000 | なし | — |
+| VS (virtual switch) | なし | — |
+
+### PORT_QOS_MAP の `pfc_to_pg_map` も同様に制限
+
+`qos_config.j2:456-461` で `PORT_QOS_MAP` の `pfc_to_pg_map` フィールドも上記 ASIC でのみ設定される。他 ASIC では `PORT_QOS_MAP` にこのフィールドが存在しないため、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブル自体も参照されない。
+
+### DualToR 向け AZURE_DUALTOR マップ (Mellanox 限定)
+
+Mellanox DualToR 構成 (`port_names_list_extra_queues` が非空) では `AZURE` に加えて `AZURE_DUALTOR` マップが追加生成される (`qos_config.j2:397-403`):
+
+| マップ名 | PFC priority → PG | 用途 |
+|---------|-------------------|------|
+| `AZURE` | 3→3, 4→4 | 通常構成 (lossless TC 2 本) |
+| `AZURE_DUALTOR` | 2→2, 3→3, 4→4, 6→6 | DualToR 構成 (lossless TC 4 本) |
+
+### QosOrch 登録はプラットフォーム非依存
+
+`orchdaemon.cpp:377` で `CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME` は platform 条件なしに無条件登録される。テーブルが存在するプラットフォームでのみ実際に処理が走る設計。
+
+### PfcPrioToPgHandler — ベンダー固有分岐なし
+
+`qosorch.cpp:957-988` の `PfcPrioToPgHandler::addQosItem()` および `handlePfcPrioToPgTable()` にベンダー固有分岐はない。SAI `sai_qos_map_api->create_qos_map()` を直接呼ぶだけで、ASIC capability クエリも行わない。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-platform.md -->
+<!-- /platform -->
