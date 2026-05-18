@@ -247,6 +247,92 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`COUNTERS_DB` QUEUE カウンタ書き込み経路（`portsorch` + `flexcounterorch`）における失敗は、(A) SAI 初期化段階で orchagent abort に至る致命的失敗、(B) FlexCounter グループ設定の非致命的エラー（ログのみ・継続）、(C) `BUFFER_QUEUE` キー解析エラー（silent skip）、(D) WRED ケイパビリティクエリ失敗（フォールバック）、(E) warm-reboot 遅延中の受信（設計上の猶予処理）の 5 系統に分類される。
+
+中間調査: `meta/_intermediate/cdb-flow/queue-counter-failure.md`
+
+### A. SAI Queue OID フェッチ失敗 → orchagent abort（致命的）
+
+`initializeQueuesBulk()` (`portsorch.cpp:6854-6935`) は 2 段バルク GET:
+
+| フェーズ | SAI 属性 | 失敗時の挙動 |
+|---|---|---|
+| フェーズ 1 | `SAI_PORT_ATTR_QOS_NUMBER_OF_QUEUES` | `handleSaiGetStatus(SAI_API_PORT, status)` → `throw runtime_error("PortsOrch initialization failure.")` |
+| フェーズ 2 | `SAI_PORT_ATTR_QOS_QUEUE_LIST` | 同上 |
+
+`runtime_error` は `PortsOrch` コンストラクタを超えて伝播し orchagent プロセスが abort する。systemd が自動再起動するまで `COUNTERS_QUEUE_NAME_MAP` 等の初期化マッピングは書き込まれず、`queuestat` / `wredstat` はキューを表示できない状態になる（evidence: `portsorch.cpp:6878-6890, 6922-6934`）。
+
+!!! warning "例外: キュー数 0 のポートはスキップ"
+    `port.m_queue_ids.size() == 0` のポートはフェーズ 2 の bulk GET 対象から除外され継続する。Queue OID 取得失敗が問題ポートのみで発生する場合でも、そのポートのキューは `COUNTERS_QUEUE_NAME_MAP` に登録されない。
+
+### B. FlexCounter グループ初期化の runtime_error（継続）
+
+`PortsOrch` コンストラクタ (`portsorch.cpp:820-840`) の try-catch:
+
+```
+try {
+    // FlexCounter グループ setFlexCounterGroupPollInterval 等
+}
+catch (const runtime_error& e) {
+    SWSS_LOG_ERROR("Port flex counter groups were not set successfully: %s", e.what());
+}
+```
+
+例外を **飲み込んで継続**。FlexCounter グループが不完全な状態で起動した場合、`COUNTERS:<oid>` の更新が一部のグループで停止する可能性があるが、orchagent プロセスは落ちない（evidence: `portsorch.cpp:820-840`）。
+
+### C. `BUFFER_QUEUE` キー / インデックス解析失敗（silent skip）
+
+`FlexCounterOrch::getQueueConfigurations()` (`flexcounterorch.cpp:544-606`) でのエラー:
+
+| 失敗条件 | 挙動 | COUNTERS_DB への影響 |
+|---|---|---|
+| `BUFFER_QUEUE` キーのトークン数が 2 以外 | `SWSS_LOG_ERROR("Invalid BUFFER_QUEUE key: [%s]")` → `continue` | 当該キーのカウンタが未登録（silent skip） |
+| キューインデックスが範囲外または非数値 | `std::invalid_argument` を catch → `SWSS_LOG_ERROR("Invalid queue index [%s] for port [%s]")` → `continue` | 当該ポートの対象キューが未登録（silent skip） |
+
+どちらも orchagent は継続するが、無効キーに対応するキューの `COUNTER_ID_LIST` が syncd に投入されず `COUNTERS:<oid>` が更新されない。`queuestat` で該当キューが N/A または欠落表示になる（evidence: `flexcounterorch.cpp:555-605`）。
+
+### D. WRED ケイパビリティクエリ失敗（フォールバック）
+
+`initCounterCapabilities()` (`portsorch.cpp:1882-1921`):
+
+| 失敗条件 | 挙動 | STATE_DB / COUNTERS_DB への影響 |
+|---|---|---|
+| `sai_query_stats_capability()` → `SAI_STATUS_BUFFER_OVERFLOW` → リサイズ後再クエリも失敗 | `SWSS_LOG_NOTICE("Queue stat capability get failed: ...")` | `QUEUE_COUNTER_CAPABILITIES|WRED_*` 全フラグが `"false"` のまま。WRED フィールドは `COUNTERS:<oid>` に追加されない |
+| `sai_query_stats_capability()` が `SUCCESS` 以外 (初回) | 同上 | 同上 |
+| `sai_query_stats_capability()` 成功だが WRED 統計がリストに含まれない | `SWSS_LOG_INFO("WRED queue stats is_capable: ...")` (各フラグ false) | 対応フラグのみ `"false"` のまま（部分サポートあり） |
+
+WRED カウンタ失敗は **non-fatal**。orchagent は継続し、WRED 以外のキューカウンタ（通常 Packets/Bytes/Drops）は正常に収集される（evidence: `portsorch.cpp:1882-1921`）。
+
+### E. `create_only_config_db_buffers` 読み込み失敗（フォールバック）
+
+`FlexCounterOrch` コンストラクタ (`flexcounterorch.cpp:120-125`):
+
+```cpp
+catch(const std::system_error& e) {
+    SWSS_LOG_ERROR("System error reading create_only_config_db_buffers: %s", e.what());
+}
+```
+
+フォールバック: `m_createOnlyConfigDbBuffers` は初期値 `false`（全キュー対象）のまま。読み込み失敗でも orchagent は継続し、全キューのカウンタが有効化される（evidence: `flexcounterorch.cpp:120-125`）。
+
+### 失敗時の COUNTERS_DB 状態まとめ
+
+| 失敗シナリオ | `COUNTERS_QUEUE_NAME_MAP` 等 | `COUNTERS:<oid>` 更新 | orchagent 状態 |
+|---|---|---|---|
+| SAI Queue OID フェッチ失敗 | 未書き込み（初期化未完了） | 停止 | abort → systemd 再起動 |
+| FlexCounter グループ初期化 runtime_error | 書き込み済み（マップは完了後） | 一部グループが停止する可能性 | 継続（ログのみ） |
+| BUFFER_QUEUE キー解析失敗 | 正常書き込み済み | 問題キューの `COUNTER_ID_LIST` 未登録 | 継続（ログのみ） |
+| WRED capability クエリ失敗 | 正常書き込み済み | WRED フィールドのみ追加されない | 継続（NOTICE ログ） |
+| `create_only_config_db_buffers` 読み込み失敗 | 正常書き込み済み | 全キュー対象（フォールバック） | 継続（ログのみ） |
+| warm-reboot delay 中 enable 受信 | タイマー満了後に書き込み（最大 60 秒猶予） | タイマー満了後に開始 | 正常（設計上の遅延） |
+
+> **証跡**: `initializeQueuesBulk()` `portsorch.cpp:6854-6935`、FlexCounter グループ try-catch `portsorch.cpp:820-840`、`getQueueConfigurations()` `flexcounterorch.cpp:544-606`、`initCounterCapabilities()` `portsorch.cpp:1850-1942`、warm-reboot delay `flexcounterorch.cpp:127-136,156-158`。詳細は `meta/_intermediate/cdb-flow/queue-counter-failure.md` を参照。
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
