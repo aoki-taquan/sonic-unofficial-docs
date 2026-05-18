@@ -129,6 +129,66 @@ ROUTE_REDISTRIBUTE
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-common-failure.md -->
+
+`frrcfgd`（`BGPConfigDaemon`）が `ROUTE_REDISTRIBUTE` イベントを処理する際の失敗は、(A) `BGP_GLOBALS.local_asn` 未設定による silent drop、(B) `dst_protocol` 不正による LOG_ERR + 恒久スキップ、(C) vtysh コマンド送出失敗による FRR 未反映の 3 系統に分類される。いずれの場合も CONFIG_DB エントリは変更されず、FRR running-config との乖離が生じる。
+
+### A. BGP_GLOBALS.local_asn 未設定 → silent drop
+
+`ROUTE_REDISTRIBUTE` イベントの先頭で `__get_vrf_asn(vrf)` を呼び出し、`BGP_GLOBALS.local_asn` が未設定の場合は DEBUG ログのみで `continue`（silent drop）する（evidence: `frrcfgd.py:2658-2661`）[^2]。
+
+```python
+local_asn = self.__get_vrf_asn(vrf)
+if local_asn is None and (table != 'BGP_GLOBALS' or 'local_asn' not in data):
+    syslog.syslog(LOG_DEBUG, 'ignore table {} update because local_asn for VRF {} was not configured')
+    continue
+```
+
+| 条件 | FRR 状態 | ログ | 自動回復 |
+|------|----------|------|---------|
+| `BGP_GLOBALS.local_asn` 未設定 | `redistribute` 未発行 | DEBUG のみ（ERROR なし） | `BGP_GLOBALS.local_asn` SET 後に `__apply_dep_vrf_table` で自動再適用 |
+
+!!! note "自動リカバー経路"
+    `BGP_GLOBALS.local_asn` が後から設定されると、`__apply_dep_vrf_table(vrf, 'ROUTE_REDISTRIBUTE')` が呼ばれ当該 VRF の全 `ROUTE_REDISTRIBUTE` エントリが再処理される。最終的には FRR に反映されるが、アトミックではない（evidence: `frrcfgd.py:2703-2704`）[^2]。
+
+### B. dst_protocol != 'bgp' → LOG_ERR + 恒久スキップ
+
+`dst_protocol` が `bgp` 以外の場合、LOG_ERR を出力して `continue`。リトライなし・自動回復なし（evidence: `frrcfgd.py:3156-3158`）[^2]。
+
+```python
+if dst_proto != 'bgp':
+    syslog.syslog(syslog.LOG_ERR, 'only bgp could be used as dst protocol, but {} was given'.format(dst_proto))
+    continue
+```
+
+YANG バリデーションは `dst_protocol` の値を制約しないため、不正値のエントリが CONFIG_DB に存在し続けると、イベント再発行のたびに同エラーが出力され続ける。FRR への反映はゼロ。
+
+### C. vtysh コマンド送出失敗 → LOG_ERR + FRR 未反映
+
+`key_map.run_command()` が `False` を返した場合（FRR bgpd への接続失敗・vtysh エラー等）、LOG_ERR を記録して `continue`（evidence: `frrcfgd.py:3165-3168`）[^2]。
+
+```python
+ret_val = key_map.run_command(self, table, data, cmd_prefix)
+if not ret_val:
+    syslog.syslog(syslog.LOG_ERR, 'failed running BGP route redistribute config command')
+    continue
+```
+
+FRR bgpd が未起動の場合や socket 切断時に発生する。CONFIG_DB のエントリは残存するが FRR running-config は更新されない。自動リトライなし。frrcfgd または FRR 再起動後に手動での再トリガーが必要。
+
+### 失敗時の状態まとめ
+
+| 失敗シナリオ | FRR 状態 | ログレベル | 自動回復 |
+|---|---|---|---|
+| `BGP_GLOBALS.local_asn` 未設定（silent drop） | 未反映 | DEBUG | あり（BGP_GLOBALS.local_asn SET 後に自動再適用） |
+| `dst_protocol != 'bgp'`（不正値） | 未反映 | ERR | なし（CONFIG_DB から不正エントリを削除するまで繰り返し drop） |
+| vtysh コマンド送出失敗（FRR 未接続等） | 未反映 | ERR | なし（frrcfgd / FRR 再起動後に手動 re-trigger 必要） |
+
+<!-- /failure -->
+
 ## key 構造
 
 ```text
