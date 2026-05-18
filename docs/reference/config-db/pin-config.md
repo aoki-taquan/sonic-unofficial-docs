@@ -333,4 +333,23 @@ P4RT テーブルには専用 YANG モデルが存在しない。全デフォル
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+P4RT テーブルには専用 YANG モデルが存在しないため leafref は一切なし。以下はすべてスクリプトレベルの暗黙参照。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-cross-refs.md -->
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `DEVICE_METADATA\|localhost\|x509` | 読み取り（TLS 代替設定） | `P4RT\|certs` が CONFIG_DB に存在しない場合のみ。`P4RT\|certs` が存在すれば完全に無視される | `p4rt_vars.j2:L4`, `p4rt.sh:L38–56` |
+| ファイルシステム（証明書・ソケットパス） | ランタイム参照（パス解決） | 各 string フィールドに設定されたパスをバイナリ起動引数に変換。存在チェックなし（`p4rt_unix_socket` のディレクトリのみ `mkdir -p` 自動作成） | `p4rt.sh:L21–97` |
+
+!!! note "orch レベルの参照なし"
+    `p4rt` コンテナは orchagent (`sonic-swss`) とは独立して動作し、APP_DB / STATE_DB の生成・購読を行わない。
+    `sonic-swss/orchagent/p4orch/` の各コンポーネントは APPL_DB の `P4RT_*` テーブルを参照するが、
+    CONFIG_DB の `P4RT` テーブルを直接参照する経路は存在しない。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected -->
