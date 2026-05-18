@@ -258,6 +258,52 @@ YANG leafref として宣言されていない以下の DB / テーブルを暗�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 障害挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-failure.md`
+
+### SAI LAG 作成失敗（`addLag`）
+
+`sai_lag_api->create_lag()` が失敗した場合、`handleSaiCreateStatus()` + `parseHandleSaiStatusFailure()` で以下に分岐する（`portsorch.cpp:7994-8003`）。
+
+| SAI 失敗種別 | `parseHandleSaiStatusFailure` 返値 | `doLagTask` の処理 | COUNTERS_LAG_NAME_MAP |
+|---|---|---|---|
+| `task_need_retry` | `false` | `it++` で `m_toSync` に残し次サイクル retry | 書き込まれない |
+| `task_failed` | `true` | エントリ破棄（`erase`） | 書き込まれない |
+
+どちらの場合も **COUNTERS_LAG_NAME_MAP への書き込みは発生しない**。LAG の再設定（DEL → SET）が回復策。
+
+### SAI LAG 削除失敗（`removeLag`）
+
+`sai_lag_api->remove_lag()` が `task_failed` を返した場合、`m_counterLagTable->hdel()` に到達しない（`portsorch.cpp:8074-8095`）。
+
+- **COUNTERS_LAG_NAME_MAP に stale OID が残存する**。
+- HW 上の LAG は存在しないが COUNTERS_DB 上のマップエントリは残り、`intfstat` / FlexCounter が無効 OID を参照し続ける。
+
+`m_port_ref_count > 0` / `m_members.size() > 0` / VLAN 残存でのガード失敗は SAI を呼ばず `return false` するため、COUNTERS_LAG_NAME_MAP は変化しない（consumer.m_toSync で retry）。
+
+### RIF 作成失敗（`setIntf` / `intfsorch`）
+
+`create_router_interface()` 失敗時は `throw runtime_error` で即座に例外終了する（`intfsorch.cpp:1296-1303`）。`m_rifsToAdd.push_back()` に到達しないため **COUNTERS_RIF_NAME_MAP への書き込みが発生しない**。PORTCHANNEL_INTERFACE エントリの再設定が必要。
+
+### FlexCounter 登録遅延（VID→RID 未確定）
+
+RIF が `m_rifsToAdd` にキューイング後、タイマーループ（`intfsorch.cpp:1598-1637`）で `ASIC_DB VIDTORID` の確定を待つ間は `addRifToFlexCounter()` が呼ばれない。約 1 秒周期で自動再試行されるため、通常は起動後数秒以内に自動回復する。`gTraditionalFlexCounter = false` の環境ではこの待機なしで即座に登録される。
+
+### 障害パターン一覧
+
+| 障害パターン | COUNTERS_LAG_NAME_MAP | COUNTERS_RIF_NAME_MAP | 回復経路 |
+|---|---|---|---|
+| SAI create_lag 失敗（need_retry） | 書き込まれない | — | 次サイクル自動 retry |
+| SAI create_lag 失敗（task_failed） | 書き込まれない | — | LAG 再設定（DEL→SET）が必要 |
+| SAI remove_lag 失敗（task_failed） | **stale OID 残存** | 変化なし | SAI リセット / LAG 再設定が必要 |
+| LAG メンバ/VLAN 残存での remove 試行 | 変化なし | 変化なし | 依存解消後に自動 retry |
+| create_router_interface 失敗 | 変化なし | 書き込まれない | INTF エントリ再設定が必要 |
+| VID→RID 未確定（gTraditionalFlexCounter） | 変化なし | 遅延（自動回復） | タイマーループが約 1 s 周期で再試行 |
+
+<!-- /failure -->
+
 ## 運用ヒント
 
 ```bash
