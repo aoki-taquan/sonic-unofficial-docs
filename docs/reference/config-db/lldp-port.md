@@ -489,4 +489,62 @@ sel.addSelectable(sst_device_confdb)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `lldpd.conf.j2`, `supervisord.conf.j2`  
+> 詳細根拠: `meta/_intermediate/cdb-flow/lldp-port-platform.md`
+
+### ASIC 種別による影響
+
+`LLDP_PORT` の処理は `lldpmgrd`（Python）+ `lldpd`（open-lldp フォーク）のユーザー空間スタックで完結し、SAI を経由しない。ASIC 種別（Broadcom / Mellanox / Marvell / Innovium 等）は `LLDP_PORT` の挙動に影響を与えない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | LLDP は SAI 非経由。`lldpmgrd` / `lldpd` は ASIC を直接操作しない |
+| multi-asic (namespace あり) | **挙動差あり** | `supervisord.conf.j2` / `lldpd.conf.j2` に `namespace_id` 分岐が存在（下記参照） |
+| VOQ chassis | 部分的差異あり | `DEVICE_METADATA.chassis_hostname` 優先解決（System Name TLV のみ影響、LLDP_PORT 処理には非影響） |
+| SmartSwitch | 調査対象外 | community master に SmartSwitch 固有 LLDP_PORT 分岐なし |
+
+### multi-asic (namespace) における挙動差
+
+`supervisord.conf.j2` で `namespace_id` の有無により `lldpd` の起動コマンドが変わる:
+
+```jinja2
+{% if namespace_id is defined and namespace_id|length %}
+command=/usr/sbin/lldpd -d -I Ethernet[0-9]* -C Ethernet[0-9]*
+{% else %}
+command=/usr/sbin/lldpd -d -I Ethernet[0-9]*,eth0 -C eth0
+{% endif %}
+```
+
+- **通常構成（`namespace_id` 未設定）**: eth0（management port）を含む全インタフェースが LLDP 対象。
+- **multi-asic / namespace あり**: eth0 を除外。各 namespace（asic0/asic1…）の `lldpd` インスタンスがフロントエンドポートのみを管理する。
+
+`LLDP_PORT|<Ethernet*>` への書き込みに対する `lldpmgrd` の処理ロジック（`generate_pending_lldp_config_cmd_for_port` / `process_pending_cmds`）は namespace の有無によらず同一。ただし multi-asic 構成では `LLDP_PORT` エントリは該当 namespace の CONFIG_DB インスタンスに書く必要がある。
+
+`lldpd.conf.j2` にも同様の分岐があり、namespace 内では eth0 の portidsubtype 設定がスキップされる:
+
+```jinja2
+{% if not (namespace_id is defined and namespace_id|length) %}
+configure ports eth0 lldp portidsubtype local {{ mgmt_if.port_name }}
+{% endif %}
+```
+
+### backplane / inband / recirc インターフェース
+
+`lldpmgrd` は `LLDP_PORT` に書かれていても以下の prefix を持つポートはスキップする（プラットフォーム非依存の共通ロジック）:
+
+```python
+# lldpmgrd:141-142
+if any([port_name.startswith(inband_prefix()),
+        port_name.startswith(recirc_prefix()),
+        port_name.startswith(backplane_prefix())]):
+    return
+```
+
+これらの prefix は `sonic_py_common.interface` が返すプラットフォーム共通値であり、ASIC 種別によらず同一の除外ロジックが適用される。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 1c2f663967b9 -->
