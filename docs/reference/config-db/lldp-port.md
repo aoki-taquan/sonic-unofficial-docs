@@ -313,4 +313,29 @@ APPL_DB: PORT_TABLE PortInitDone + PortConfigDone
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 根拠: `dockers/docker-lldp/lldpmgrd`, `src/sonic-yang-models/yang-models/sonic-lldp.yang`
+
+`LLDP_PORT` エントリが処理される際に lldpmgrd が暗黙的に参照する他テーブルの依存関係を示す。
+
+| 依存方向 | 参照元フィールド / 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|------------------------|--------------|--------------|---------|------|
+| 順参照（YANG leafref） | `LLDP_PORT.ifname` | `CONFIG_DB: PORT` | `PORT\|<ifname>` | mgmt-framework 経由バリデーション有効時、`PORT` に存在しないインターフェース名は SET 拒否。直接 redis-cli 書き込みはスキップ可だが後続 lldpcli が失敗する | `sonic-lldp.yang:107-110` |
+| runtime 読み取り | lldpmgrd 内部 | `CONFIG_DB: PORT` | `PORT\|<ifname>` | `PORT.alias` → lldpcli `portidsubtype local <alias>`、`PORT.description` → lldpcli `description <desc>` に変換。`LLDP_PORT` 自体のフィールドは読まれない | `lldpmgrd:75,140-162` |
+| runtime 読み取り（up ゲート） | lldpmgrd `is_port_up()` | `STATE_DB: PORT_TABLE` | `PORT_TABLE\|<ifname>` | `netdev_oper_status=up` になるまで lldpcli configure ports をスキップ（10 秒ループ）。up 後に自動適用 | `lldpmgrd:78,116-134` |
+| subscribe + 読み取り | lldpmgrd `lldp_process_port_table_event()` | `APPL_DB: PORT_TABLE` | `PORT_TABLE\|PortInitDone`, `PORT_TABLE\|PortConfigDone` | 両イベント受信まで `lldpcli resume` を保留。resume 前は LLDP PDU が送出されない（最大 300 秒待機） | `lldpmgrd:77,301,259-273` |
+| subscribe（間接） | lldpmgrd `lldp_process_device_table_event()` | `CONFIG_DB: DEVICE_METADATA` | `DEVICE_METADATA\|localhost` | `hostname` / `chassis_hostname` → lldpcli system hostname。LLDP_PORT 処理の直接依存ではないが同一デーモン内で管理 | `lldpmgrd:73,319-320` |
+| subscribe（間接） | lldpmgrd `lldp_process_mgmt_info_change()` | `CONFIG_DB: MGMT_INTERFACE` | `MGMT_INTERFACE\|<ifname>\|<prefix>` | mgmt IP → lldpcli Management Address TLV 設定。LLDP_PORT 処理の直接依存ではないが同一 event ループで処理 | `lldpmgrd:74,317-318` |
+
+### 解決タイミング
+
+- **PORT leafref 確認**: mgmt-framework 経由 SET 時に即座に確認。直接 redis-cli 書き込み時はスキップされ lldpcli 失敗で検知される。
+- **PORT.alias / PORT.description 読み取り**: APPL_DB PORT_TABLE から `oper_status=up` イベントを受信した時点で CONFIG_DB PORT エントリを読み取り、lldpcli コマンドを生成する。
+- **STATE_DB oper_status ゲート**: 10 秒ポーリングで `netdev_oper_status` を再確認。up になると自動で pending_cmds から lldpcli を発行（RETRY_LIMIT=5 超過で silent drop）。
+- **PortInitDone / PortConfigDone**: lldpd 起動後に orchagent / portsyncd が APPL_DB へ書き込むセンチネルキー。受信後に `lldpcli resume` が発行され LLDP PDU 送出が開始される。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 1c2f663967b9 -->
