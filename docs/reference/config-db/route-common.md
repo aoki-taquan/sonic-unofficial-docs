@@ -71,6 +71,30 @@ route_redist_key_map = [
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`frrcfgd`（`BGPConfigDaemon`）が `ROUTE_REDISTRIBUTE` イベントを処理する前に `BGP_GLOBALS.local_asn` を参照し、未設定の場合は **silent drop** する。また削除順序の逆転により FRR 側に設定が残存するリスクがある。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 影響 | 緩和策 |
+|---|----------|------|------|--------|
+| 1 | `BGP_GLOBALS.local_asn` 設定 → `ROUTE_REDISTRIBUTE` 書き込み | ハード先行必須 | local_asn 未設定の場合は silent drop | `BGP_GLOBALS` を先に設定すること |
+| 2 | `BGP_GLOBALS.local_asn` SET 後 → `ROUTE_REDISTRIBUTE` 自動再適用 | 自動リカバー | 順序逆でも BGP_GLOBALS SET 後に自動的に反映される | 本番では正順を守る |
+| 3 | unified モード: `BGP_GLOBALS` が `ROUTE_REDISTRIBUTE` より先に処理 | 起動時保証 | unified モードでは正常 | 通常の SONiC unified モードで保証 |
+| 4 | `ROUTE_REDISTRIBUTE` DEL → `BGP_GLOBALS` DEL | 推奨削除順序 | BGP_GLOBALS 先削除時は FRR に redistribute 設定が残存 | `ROUTE_REDISTRIBUTE` を全削除してから `BGP_GLOBALS` を削除 |
+
+### 主要な制約詳細
+
+**BGP_GLOBALS.local_asn ゲート（依存 #1）**: `frrcfgd.py` の `bgp_table_handler_common` はすべての VRF テーブルイベントの先頭で `__get_vrf_asn(vrf)` を呼び出す。`ROUTE_REDISTRIBUTE` は `vrf_tables`（L2138）に含まれるため、VRF に対応する `BGP_GLOBALS.local_asn` が CONFIG_DB に未設定だと `local_asn is None` となり、イベントは DEBUG ログのみで静かに捨てられる。エラーログも出ないため運用上の検出が困難（evidence: `frrcfgd.py:2658-2661`, `frrcfgd.py:2442-2447`）[^2]。
+
+**BGP_GLOBALS 設定後の自動再適用（依存 #2）**: `BGP_GLOBALS.local_asn` の SET が成功した直後、`frrcfgd` は `__apply_dep_vrf_table(vrf, 'ROUTE_REDISTRIBUTE')` を呼び出し、すでに CONFIG_DB に存在する当該 VRF の全 `ROUTE_REDISTRIBUTE` エントリをキューに再送する。このため逆順で書いた場合も最終的には FRR に反映される。ただし再適用はアトミックでなく、中間状態で他のテーブル更新が割り込む可能性がある（evidence: `frrcfgd.py:2703-2704`, `frrcfgd.py:2530-2545`）[^2]。
+
+**DEL 順序のリスク（依存 #4）**: `BGP_GLOBALS.local_asn` を先に削除すると `bgp_asn[vrf]` が消去され、その後の `ROUTE_REDISTRIBUTE` DEL イベントが silent drop される。結果として FRR bgpd 側に `redistribute <src>` 設定が残存する。**推奨削除順序: `ROUTE_REDISTRIBUTE` 全エントリを DEL → `BGP_GLOBALS.local_asn` を DEL**（evidence: `frrcfgd.py:2449-2465`）[^2]。
+
+<!-- /ordering -->
+
 ## key 構造
 
 ```text
