@@ -133,6 +133,47 @@ else
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`FdbOrch::doTask(Consumer&)` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。中間ノート: `meta/_intermediate/cdb-flow/vxlan-fdb-ordering.md`。
+
+### 他テーブル先行必須
+
+| 先行条件 | 理由 | 違反時の挙動 |
+|---|---|---|
+| PortsOrch `allPortsReady()` | `doTask()` 冒頭のグローバルガード | 全 PORT の SAI 作成完了まで `APP_VXLAN_FDB_TABLE` のイベントは一切処理されず `m_toSync` に滞留する（`fdborch.cpp:710-713`） |
+| `VLAN|<name>` (PortsOrch に `Vlan<id>` 登録済み) | `doTask()` が `m_portsOrch->getPort(keys[0], vlan)` で VLAN OID を解決する | SET は `it++` で次周回再試行（自動ポーリング）、DEL は `deleteFdbEntryFromSavedFDB()` を呼んで erase（破棄）（`fdborch.cpp:736-754`） |
+| `VXLAN_TUNNEL` / VxlanTunnelOrch の tunnel 作成完了 (`isDipTunnelsSupported() == true` 時) | `tunnel_orch->getTunnelPortName(remote_ip)` でトンネルポート名を解決する | `remote_ip` が空ならば `m_toSync.erase` で**再試行なし破棄**（`fdborch.cpp:834-841`） |
+| `VXLAN_EVPN_NVO` / EvpnNvoOrch の source VTEP 作成完了 (`isDipTunnelsSupported() == false` 時) | `evpn_nvo_orch->getEVPNVtep()` で source VTEP を解決する | 戻り値が `NULL` なら `m_toSync.erase` で**再試行なし破棄**（`fdborch.cpp:847-854`） |
+
+**推奨書込み順序**:
+
+```text
+# 1. PortsOrch 初期化完了（orchagent 起動時に自然満足）
+# 2. VXLAN_TUNNEL — VxlanTunnelOrch がトンネルポートを作成
+SET CONFIG_DB VXLAN_TUNNEL|vtep1  src_ip=10.0.0.1
+# 3. (DIP サポートなし時のみ) VXLAN_EVPN_NVO — EvpnNvoOrch が source VTEP を登録
+SET CONFIG_DB VXLAN_EVPN_NVO|nvo1  source_vtep=vtep1
+# 4. VLAN
+SET CONFIG_DB VLAN|Vlan200  vlanid=200
+# 5. VXLAN_FDB_TABLE エントリ（fdbsyncd が netlink から書き込む）
+SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type=dynamic  vni=10000
+```
+
+### retry / 自動調停の仕組み
+
+- **VLAN 未解決の SET**: `m_toSync` に残り続け、`Orch::doTask()` の次回スケジュールで再評価（無限ポーリング）。
+- **VXLAN tunnel 未解決 / `remote_vtep` 不正**: `m_toSync.erase` で即破棄。**自動救済なし**。再投入が必要。
+- **EVPN NVO の source VTEP が NULL**: 同上、即破棄。
+
+### `remote_vtep` バリデーション (fail-fast)
+
+`IpAddress(remote_ip)` のコンストラクタで例外が発生した場合（不正 IP 文字列）、`remote_ip = ""`
+にセットされたうえで `m_toSync.erase` により破棄される。`fdbsyncd` 経由では正常な IPv4 アドレスのみが書き込まれるため通常は問題にならないが、外部から直接 APP_DB に書き込む場合は妥当な IPv4 形式であることを保証すること（`fdborch.cpp:795-808`）。
+
+<!-- /ordering -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
