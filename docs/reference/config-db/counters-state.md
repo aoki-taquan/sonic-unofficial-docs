@@ -322,6 +322,70 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 
 ---
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-constants.md`
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp:421-435,1866-1879,
+     sonic-swss/orchagent/debugcounterorch.cpp:357-358,
+     sonic-swss/orchagent/debug_counter/debug_counter.h:27-30,
+     sonic-swss/orchagent/debug_counter/drop_counter.cpp:17-18,86,
+     sonic-swss-common/common/schema.h:438,528-529 -->
+
+### STATE_DB テーブル名定数
+
+| 定数名 | 値 | 定義箇所 |
+|--------|-----|---------|
+| `STATE_PORT_COUNTER_CAPABILITIES_NAME` | `"PORT_COUNTER_CAPABILITIES"` | `schema.h:529` |
+| `STATE_QUEUE_COUNTER_CAPABILITIES_NAME` | `"QUEUE_COUNTER_CAPABILITIES"` | `schema.h:528` |
+| `STATE_DEBUG_COUNTER_CAPABILITIES_NAME` | `"DEBUG_COUNTER_CAPABILITIES"` | `schema.h:438` |
+
+これら 3 定数は `sonic-swss-common/common/schema.h` の `#define` で一元管理される。portsorch / debugcounterorch は `Table()` コンストラクタにこれらを渡す。
+
+### PORT_COUNTER_CAPABILITIES / QUEUE_COUNTER_CAPABILITIES の固定 key 名
+
+YANG に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで管理される。
+
+| key 名 | テーブル | 対応 SAI enum |
+|--------|---------|--------------|
+| `"WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER"` | `QUEUE_COUNTER_CAPABILITIES` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` |
+| `"WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER"` | `QUEUE_COUNTER_CAPABILITIES` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` |
+| `"WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER"` | `QUEUE_COUNTER_CAPABILITIES` | `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` |
+| `"WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER"` | `QUEUE_COUNTER_CAPABILITIES` | `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` |
+| `"WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER"` | `PORT_COUNTER_CAPABILITIES` | `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` |
+| `"WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER"` | `PORT_COUNTER_CAPABILITIES` | `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` |
+| `"WRED_ECN_PORT_WRED_RED_DROP_COUNTER"` | `PORT_COUNTER_CAPABILITIES` | `SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS` |
+| `"WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER"` | `PORT_COUNTER_CAPABILITIES` | `SAI_PORT_STAT_WRED_DROPPED_PACKETS` |
+
+フィールド名 `"isSupported"` / 値 `"true"` / `"false"` も YANG 未定義のソースリテラル (portsorch.cpp:1866-1869)。
+
+### DEBUG_COUNTER_CAPABILITIES の固定定数
+
+| 種別 | 定数 / リテラル | 値 | evidence |
+|------|---------------|-----|---------|
+| counter_type key | `PORT_INGRESS_DROPS` | `"PORT_INGRESS_DROPS"` | `debug_counter.h:27` |
+| counter_type key | `PORT_EGRESS_DROPS` | `"PORT_EGRESS_DROPS"` | `debug_counter.h:28` |
+| counter_type key | `SWITCH_INGRESS_DROPS` | `"SWITCH_INGRESS_DROPS"` | `debug_counter.h:29` |
+| counter_type key | `SWITCH_EGRESS_DROPS` | `"SWITCH_EGRESS_DROPS"` | `debug_counter.h:30` |
+| フィールド名 | `"count"` リテラル | `"count"` | `debugcounterorch.cpp:357` |
+| フィールド名 | `"reasons"` リテラル | `"reasons"` | `debugcounterorch.cpp:358` |
+
+### drop_counter.cpp の SAI 問い合わせバッファ定数
+
+| 定数 | 値 | 用途 |
+|-----|-----|------|
+| `maxDropReasons` | `100` | `sai_query_attribute_enum_values_capability()` に渡す drop reason バッファサイズ上限。コードコメント "gives us plenty of space for both ingress and egress drop reasons" (drop_counter.cpp:84-86) |
+| `INGRESS_DROP_REASON_PREFIX_LENGTH` | `19` | `"SAI_IN_DROP_REASON_"` の文字数。SAI enum 文字列からプレフィクスを除去し短縮 key を生成する際に使用 (drop_counter.cpp:17) |
+| `EGRESS_DROP_REASON_PREFIX_LENGTH` | `20` | `"SAI_OUT_DROP_REASON_"` の文字数。同上 (drop_counter.cpp:18) |
+
+!!! note "YANG 未定義の影響"
+    上記 key 名・フィールド名はすべて YANG スキーマに定義されておらず、バリデーションなしでコードが直接 STATE_DB に書き込む。名称変更にはソースコードと参照側 (`portstat.py`、`dropconfig` 等) の両方の修正が必要。
+
+<!-- /constants -->
+
+---
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
