@@ -487,6 +487,95 @@ RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-failure.md -->
+
+`RouteOrch` の通知経路（ResponsePublisher + NextHopObserver）における失敗は、(A) SAI バルク操作失敗による APPL_STATE_DB 非更新、(B) 事前失敗パスでの SUCCESS 扱い publish、(C) `addRoutePost()` false 返却によるリトライ、(D) SAI DEL 失敗時の矛盾した状態遷移の 4 系統に分類される。
+
+### A. SAI ADD 失敗 → APPL_STATE_DB 非更新 + RESPONSE_CHANNEL 通知なし
+
+`addRoutePost()` は SAI バルク結果 (`ctx.object_statuses`) を確認し、失敗時は `publishRouteState()` を呼ばずに `false` を返す（evidence: `routeorch.cpp:2462-2476`, `routeorch.cpp:2726-2729`）:
+
+```cpp
+// addRoutePost(): SAI 失敗なら publishRouteState() に到達しない
+if (*it_status++ != SAI_STATUS_SUCCESS) {
+    SWSS_LOG_ERROR("Failed to create route %s ...", ...);
+    return false;   // publishRouteState() は呼ばれない
+}
+// ...成功経路...
+publishRouteState(ctx);  // L2729: 成功時のみ
+```
+
+`ResponsePublisher::publish()` の DB 書き込み条件 (`response_publisher.cpp:126-133`):
+
+```cpp
+// SET 操作で status が失敗 → state_attrs が空 → writeToDB() 呼ばれない
+if (status.ok()) { state_attrs = intent_attrs; }
+```
+
+| 失敗条件 | APPL_STATE_DB | RESPONSE_CHANNEL |
+|----------|---------------|-----------------|
+| SAI ADD 失敗 (`*it_status != SUCCESS`) | 更新なし（旧値維持または未作成） | 通知なし |
+| `object_statuses` 空（バルク前の早期失敗） | 更新なし | 通知なし |
+
+### B. 事前スキップパス — SUCCESS 扱いで publishRouteState() が発火する
+
+`doTask()` 内の一部パスでは SAI バルク実行前に `publishRouteState()` が呼ばれる（evidence: `routeorch.cpp:923, 1050, 1090`）。これらは SAI 操作が不要なケースであり失敗ではないが、挙動上は注意が必要:
+
+| 行番号 | 状況 | APPL_STATE_DB への影響 |
+|--------|------|-----------------------|
+| L923 | loopback 除外ルートの DEL 後 publish | `err_str: SWSS_RC_SUCCESS` で更新 |
+| L1050 | 既存エントリと完全一致（再 publish） | `err_str: SWSS_RC_SUCCESS` で再書き込み |
+| L1090 | 重複追加スキップ | `err_str: SWSS_RC_SUCCESS` で通知 |
+
+### C. addRoutePost() false 返却 → リトライ（APPL_STATE_DB 非更新）
+
+以下の条件では `addRoutePost()` が `false` を返し、`m_toSync` にエントリが残留して次サイクルで再試行される。この間 APPL_STATE_DB は更新されず、`suppress-fib-pending` 使用時は FRR へのプログラミング完了通知が遅延する:
+
+| 失敗条件 | 行番号 | リトライ先行 |
+|----------|--------|-------------|
+| VRF が `m_syncdRoutes` に未登録 | L2396–2401 | VRF 登録後に自動再処理 |
+| NhgOrch / CbfNhgOrch に NHG 未登録 | L2411–2415 | NHG 登録後に自動再処理 |
+| 単一 NH の RIF が `SAI_NULL_OBJECT_ID` | L2431–2436 | IntfsOrch RIF 作成後に再処理 |
+| `hasNextHop()` = false | L2440–2445 | NeighOrch 登録後に再処理 |
+| ECMP NHG 未登録（tmp_next_hop フォールバック後） | L2451–2458 | NHG 生成後に再処理 |
+
+### D. SAI DEL 失敗 → APPL_STATE_DB から先に削除される矛盾
+
+`removeRoutePost()` (routeorch.cpp:L2808–) は SAI DEL 失敗でも `handleSaiRemoveStatus()` が `task_success` を返す場合に処理を継続し、`publishRouteState()` (L2970) が呼ばれて APPL_STATE_DB からエントリが削除される:
+
+```cpp
+if (status != SAI_STATUS_SUCCESS) {
+    task_process_status handle_status = handleSaiRemoveStatus(SAI_API_ROUTE, status);
+    if (handle_status != task_success) {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+    // task_success の場合は fall-through して publishRouteState() に到達
+}
+// ...
+publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
+```
+
+| 条件 | APPL_STATE_DB | 実際の ASIC |
+|------|---------------|------------|
+| SAI DEL 失敗かつ `task_success` 扱い | エントリ削除（矛盾） | ルート残存 |
+| SAI DEL 失敗かつ `task_not_processed` など | 更新なし・リトライ | ルート残存 |
+
+`route_check.py` は APPL_DB と APPL_STATE_DB の整合を確認するが、SAI 上の実際の経路有無は確認しないため、このケースで誤検知が発生しない点に注意（evidence: `routeorch.cpp:2808-2970`）。
+
+### 失敗時の状態まとめ
+
+| 失敗シナリオ | APPL_STATE_DB | RESPONSE_CHANNEL | orchagent |
+|---|---|---|---|
+| SAI ADD 失敗（`addRoutePost` false） | 更新なし | 通知なし | 継続・次サイクルでリトライ |
+| VRF / NH / NHG 未登録 | 更新なし | 通知なし | 継続・自動リトライ |
+| SAI DEL 失敗（task_success 扱い） | エントリ削除（ASIC と矛盾） | DEL 通知送出 | 継続 |
+| SAI DEL 失敗（task_not_processed） | 更新なし | 通知なし | 継続・リトライ |
+
+<!-- /failure -->
+
 ---
 
 ## 制約
