@@ -576,6 +576,71 @@ publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
 
 <!-- /failure -->
 
+<!-- constants -->
+## 埋め込み定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-constants.md -->
+
+`RouteOrch` の通知機構（ResponsePublisher + NextHopObserver）に直接影響する埋め込み定数を以下に示す。
+
+### routeorch.cpp — ECMP グループ数フォールバック
+
+```cpp
+// routeorch.cpp L37–38
+#define DEFAULT_NUMBER_OF_ECMP_GROUPS   128
+#define DEFAULT_MAX_ECMP_GROUP_SIZE     32
+```
+
+| 定数 | 値 | 適用条件 |
+|------|-----|---------|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | SAI `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` の取得失敗時にフォールバックとして使用 |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | Mellanox プラットフォーム (`MLNX_PLATFORM_SUBSTRING`) でのみ、SAI 取得値を `/ 32` して再計算する際の除数 |
+
+これらは ECMP グループ上限 `m_maxNextHopGroupCount` を決定し、上限超過時に `addRoute()` が ECMP NHG の作成を拒否するため、間接的に `publishRouteState()` が呼ばれない（リトライに入る）条件に影響する（evidence: `routeorch.cpp:60-88`）。
+
+VoQ 環境では追加の上限が適用される:
+
+```cpp
+// routeorch.cpp L109-114
+if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
+{
+    maxEcmpGroupSize = 128;  // VoQ 用ハードコード上限
+    // SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT を 128 に設定
+}
+```
+
+### orchdaemon.cpp — Consumer 優先度とバルクサイズ
+
+```cpp
+// orchdaemon.cpp L23, L81–82, L327
+#define SELECT_TIMEOUT      1000   // ms
+#define DEFAULT_MAX_BULK_SIZE 1000
+size_t gMaxBulkSize = DEFAULT_MAX_BULK_SIZE;
+
+const int routeorch_pri = 5;
+{ APP_ROUTE_TABLE_NAME,        routeorch_pri },
+{ APP_LABEL_ROUTE_TABLE_NAME,  routeorch_pri }
+```
+
+| 定数 | 値 | 影響 |
+|------|-----|-----|
+| `routeorch_pri` | `5` | RouteOrch Consumer の優先度。`portsorch_base_pri=40`・`fgnhgorch_pri=15` より低く、高負荷時に ROUTE_TABLE 処理が後回しになる |
+| `SELECT_TIMEOUT` | `1000 ms` | OrchDaemon セレクトループのタイムアウト。`doTask()` が呼ばれない場合の最大追加遅延（通常は `doTask()` 内 `flush()` で解消） |
+| `DEFAULT_MAX_BULK_SIZE` | `1000` | `gRouteBulker` の最大エントリ数。1 バッチで最大 1000 経路を SAI へ一括コミットし、その後 `publishRouteState()` を発火する |
+
+### fpmsyncd.cpp — RESPONSE_CHANNEL 名
+
+```cpp
+// fpmsyncd.cpp L78
+const auto routeResponseChannelName =
+    std::string("APPL_DB_") + APP_ROUTE_TABLE_NAME + "_RESPONSE_CHANNEL";
+// → "APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL"
+```
+
+このチャンネル名はコードで動的生成されるが実質固定値。`suppress-fib-pending = enabled` 時のみ fpmsyncd が購読し、orchagent の `publishRouteState()` 通知を受け取る（evidence: `fpmsyncd.cpp:78, 116`）。
+
+<!-- /constants -->
+
 ---
 
 ## 制約
