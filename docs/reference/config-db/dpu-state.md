@@ -358,6 +358,56 @@ except Exception as e:
 初期化漏れが発生した DPU は `check_midplane_reachability()` の次回ポーリングで midplane 到達性に基づいて補完される。ただし CP/DP state (`dpu_control_plane_state` / `dpu_data_plane_state`) は `DpuStateUpdater`(DPU 側 chassisd) が評価するため、DPU 側デーモンが正常起動するまでは未書き込みのままとなる。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dpu-state-constants.md`
+
+`chassisd` は `DPU_STATE` テーブルのフィールド名・タイムスタンプ形式・ポーリング間隔をモジュール先頭の定数で管理する。
+
+### フィールド名定数 (`chassisd:108-111`)
+
+| 定数名 | 値 (CONFIG_DB フィールド名) |
+|--------|--------------------------|
+| `DP_STATE` | `'dpu_data_plane_state'` |
+| `DP_UPDATE_TIME` | `'dpu_data_plane_time'` |
+| `CP_STATE` | `'dpu_control_plane_state'` |
+| `CP_UPDATE_TIME` | `'dpu_control_plane_time'` |
+
+midplane 側 3 フィールド (`dpu_midplane_link_state` / `dpu_midplane_link_reason` / `dpu_midplane_link_time`) は `update_dpu_state()` 内でリテラル文字列として直接使用される（定数化なし）。
+
+### タイムスタンプフォーマット (`chassisd:159`)
+
+```python
+"%a %b %d %I:%M:%S %p UTC %Y"
+# 例: "Mon May 18 10:30:45 AM UTC 2026"
+```
+
+`get_formatted_time()` がすべての `*_time` フィールドで共通使用される。12 時間制 (`%I`) + `%p` (AM/PM) を UTC で表記することに注意。
+
+### タイマー・タイムアウト定数
+
+| 定数名 | 値 | 単位 | 用途 |
+|--------|-----|------|------|
+| `CHASSIS_INFO_UPDATE_PERIOD_SECS` | `10` | 秒 | メインループの `stop.wait()` 間隔 (`chassisd:89`)。midplane ポーリング周期と DPU_STATE 書き込み周期を決定する |
+| `SELECT_TIMEOUT` | `1000` | ms | `DpuStateManagerTask` の `sel.select()` タイムアウト (`chassisd:95`)。イベント駆動モードでの待機上限 |
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` | 秒 | DPU reboot タイムアウト初期値 (`chassisd:82`)。`platform_env.conf` の `dpu_reboot_timeout` で上書き可能 |
+| `MAX_DPU_REBOOT_DURATION` | `800` | 秒 | DPU reboot 最長待機時間のハードリミット (`chassisd:83`)。設定で変更不可 |
+| `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD` | `30` | 分 | モジュール down 検出後、`DPU_STATE` 以外の CHASSIS_STATE_DB エントリを削除するまでの猶予期間 (`chassisd:90`) |
+
+### DB クリーンアップ対象外
+
+`module_down_chassis_db_cleanup()` (`chassisd:1113-1130`) はモジュールが down 状態になった後 30 分経過で CHASSIS_STATE_DB エントリを削除するが、`DPU_STATE` と `REBOOT_CAUSE` キーは **削除対象外** として明示的に除外される:
+
+```python
+# chassisd:1124
+if not "DPU_STATE" in key and not "REBOOT_CAUSE" in key:
+    self.chassis_state_db.delete(key)
+```
+
+`DPU_STATE` は DPU 再起動後も参照されるため、down 状態でも保持し続ける設計となっている。
+<!-- /constants -->
+
 ## 購読者
 
 - `chassisd` (`SmartSwitchModuleUpdater` / `DpuStateUpdater`) — 書き込み元

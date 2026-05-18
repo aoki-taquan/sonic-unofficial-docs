@@ -423,27 +423,33 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-> 調査証跡: `meta/_intermediate/cdb-flow/lldp-state-side-effects.md`
+> 調査証跡: `meta/_intermediate/cdb-flow/lldp-state-side-effects.md`  
+> ソース: `sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2`, `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`, `sonic-mgmt-common/translib/lldp_app.go`
 
-`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` (APPL_DB) の書き手・読み手は、APPL_DB 以外への副次 DB 書き込みを一切行わない。
+### 副次書込の有無
 
-| 副次 DB | 書込有無 | 根拠 |
-|---------|---------|------|
-| APPL_DB (自テーブル以外) | なし | lldp-syncd は `LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` にのみ書き込む。他 APPL_DB テーブルへの書き込みコードなし |
-| STATE_DB | なし | lldpmgrd / lldp-syncd / sonic-snmpagent のいずれも `StateTable` への書き込みを行わない |
-| COUNTERS_DB | なし | 本テーブル群に連動する COUNTERS_DB 書き込みパスは存在しない |
-| ASIC_DB | なし | LLDP は SAI 非経由。lldpd が直接 netdev を操作するため ASIC_DB に対するオペレーションは発生しない |
+`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` (APPL_DB) は **lldp-syncd が唯一の書き手**であり、これらテーブルへの書き込みに起因する他 DB への副次書込は存在しない。
 
-### 設定変更時の実行時副作用（非 DB）
+| 副次書込先 | 有無 | 根拠 |
+|-----------|-----|------|
+| STATE_DB | なし | `lldpmgrd` は STATE_DB `PORT_TABLE` を読み取るのみ（`is_port_up()` 経由）。Consumer (snmpagent / lldp_app.go) は書き込みなし |
+| COUNTERS_DB | なし | lldp 系コンポーネント全体で COUNTERS_DB 書込コードなし。障害ログは syslog (`SWSS_LOG_*`) のみ |
+| FLEX_COUNTER_DB | なし | lldp は SAI / orchagent とは独立した経路 (lldpd ← lldpcli) であり、flex-counter 機構を使用しない |
+| ASIC_DB | なし | lldp は SAI 非経由。lldpd が OS netdev / lldpcli を直接操作するため ASIC_DB に書き込まない |
+| CONFIG_DB | なし | `lldp-syncd` / `lldpmgrd` は CONFIG_DB を読み取るのみ。書き込みパスは設計上存在しない |
+| EVENT_DB | なし | eventd との連携なし |
 
-| トリガー | Consumer | 副作用 |
-|---------|---------|--------|
-| LLDP PDU 受信 (lldpd) | lldp-syncd | `LLDP_ENTRY_TABLE\|<ifname>` を `HSET` で書き込み / TTL 切れ時は `DEL` を実行 (APPL_DB 内に閉じる) |
-| `LLDP_ENTRY_TABLE` 更新 | sonic-snmpagent | LLDP-MIB (lldpRemTable) の SNMP walk 応答に即時反映。STATE_DB への書き込みは伴わない |
-| `LLDP_ENTRY_TABLE` 更新 | sonic-mgmt-common lldp_app.go | REST / gNMI の OpenConfig LLDP `GET` 応答に反映。CREATE/UPDATE/DELETE はすべて `ErrNotSupported` を返す stub 実装であり書き込みは発生しない |
-| ポートリンクダウン / TTL 超過 | lldp-syncd | 対応エントリを `DEL` する。`show lldp table` から消え、SNMP walk から当該エントリが消える。他 DB への連鎖は発生しない |
+### lldpmgrd の外部副作用
 
-> **Evidence**: `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py` (DB 書き込み API なし); `sonic-mgmt-common/translib/lldp_app.go` (processCreate/Update/Replace/Delete は ErrNotSupported); `sonic-buildimage/dockers/docker-lldp/lldpmgrd` (Redis 書き込みなし)
+`lldpmgrd` は DB への書込みを行わず、**`lldpcli` サブプロセス呼び出し**（lldpd プロセスへのコマンド注入）のみを副作用として持つ。これは DB 書込ではなく OS プロセス間通信である。
+
+| アクセス対象 | DB | 用途 |
+|---|---|---|
+| `STATE_PORT_TABLE_NAME` | STATE_DB | `is_port_up()` — ポートの `netdev_oper_status` を読取 |
+| `CFG_DEVICE_METADATA_TABLE_NAME` | CONFIG_DB | `hostname` / `chassis_hostname` を読取 |
+| `CFG_PORT_TABLE_NAME` | CONFIG_DB | ポートの `alias` / `description` を読取 |
+| `CFG_MGMT_INTERFACE_TABLE_NAME` | CONFIG_DB | 管理 IP を読取 |
+| `APP_PORT_TABLE_NAME` | APPL_DB | `PortInitDone` / `PortConfigDone` イベントを購読 |
 <!-- /side-effects -->
 
 <!-- defaults -->
