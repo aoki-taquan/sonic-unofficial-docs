@@ -244,6 +244,61 @@ MIRROR_SESSION SET
 > **Evidence**: `mirrororch.cpp:80-95` (コンストラクタ・observer attach); `mirrororch.cpp:517` (routeOrch attach); `mirrororch.cpp:647-670` (getNeighborInfo); `mirrororch.cpp:1052-1060` (policer 解決); `mirrororch.cpp:1571` (allPortsReady ガード)
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/erspan-failure.md`
+
+### SET 処理 (createEntry) における失敗経路
+
+| 失敗条件 | 結果 | ログ出力 | evidence |
+|---|---|---|---|
+| セッション名が既に存在 | `task_duplicated`（処理なし） | NOTICE "Failed to create session %s: object already exists" | `mirrororch.cpp:391-392` |
+| `queue` 値が `m_maxNumTC` 以上 | `task_invalid_entry` | ERROR "Failed to get valid queue %s" | `mirrororch.cpp:428-429` |
+| `policer` 名が PolicerOrch に未登録 | `task_need_retry`（POLICER 追加後に自動再試行） | ERROR "Failed to get policer %s" | `mirrororch.cpp:436-438` |
+| `src_port` にポートが存在しない / PHY・LAG 以外 | `task_invalid_entry` | ERROR "Failed to locate Port/LAG %s" / "Not supported port type %d" | `mirrororch.cpp:447-449` |
+| `dst_port` が存在しない / PHY 以外 | `task_invalid_entry` | ERROR "Not supported port %s type %d" | `mirrororch.cpp:455-458` |
+| `direction` が RX/TX/BOTH 以外 | `task_invalid_entry` | ERROR "Failed to get valid direction %s" | `mirrororch.cpp:466-468` |
+| 不明フィールド名 | `task_invalid_entry` | ERROR "Failed to parse session %s configuration. Unknown attribute %s" | `mirrororch.cpp:477-479` |
+| フィールド値数値変換で `std::exception` | `task_invalid_entry` | ERROR "Failed to parse session %s attribute %s error: %s." | `mirrororch.cpp:483-485` |
+| フィールド値数値変換で不明例外 (`...`) | `task_failed` | ERROR "Failed to parse session %s attribute %s. Unknown error has been occurred" | `mirrororch.cpp:488-490` |
+| `src_ip`/`dst_ip` のアドレスファミリ不一致 | `task_invalid_entry` | ERROR "Address family of source and destination IPs is different" | `mirrororch.cpp:494-497` |
+| `isHwResourcesAvailable()` が false（HW リソース枯渇） | `task_failed` | ERROR "Failed to create session %s: HW resources are not available" | `mirrororch.cpp:500-503` |
+
+### DEL 処理 (deleteEntry) における失敗経路
+
+| 失敗条件 | 結果 | ログ出力 | evidence |
+|---|---|---|---|
+| 存在しないセッション名を DEL | `task_invalid_entry` | ERROR "Failed to remove non-existent mirror session %s" | `mirrororch.cpp:532-534` |
+| `refCount > 0`（ACL_RULE 等から参照中） | `task_need_retry`（参照解除後に自動再試行） | WARN "Failed to remove still referenced mirror session %s, retry..." | `mirrororch.cpp:541-543` |
+| `deactivateSession()` が false（SAI remove 失敗） | `task_failed` | ERROR "Failed to remove mirror session %s" | `mirrororch.cpp:549-551` |
+
+### activateSession における失敗経路（ERSPAN 固有）
+
+| 失敗条件 | 結果 | ログ出力 | evidence |
+|---|---|---|---|
+| `getNeighborInfo()` が false（ARP/ND 未解決） | `false` 返却 → INACTIVE 維持（非同期回復） | — | `mirrororch.cpp:656-664` |
+| VoQ スイッチで recirc ポート取得失敗 | `false` 返却 → INACTIVE 維持 | ERROR "Failed to get recirc port" | `mirrororch.cpp:966-967` |
+| policer OID 取得失敗 | `false` 返却 → INACTIVE 維持 | ERROR "Failed to get policer %s" | `mirrororch.cpp:1052-1060` |
+| `sai_mirror_api->create_mirror_session()` エラー | `session.status = false` → INACTIVE | ERROR "Failed to activate mirroring session %s" | `mirrororch.cpp:1070-1077` |
+
+### 失敗パターン分類
+
+| 分類 | doTask 後の挙動 | 自動回復 |
+|---|---|---|
+| `task_duplicated` | キューから除去・処理なし | — |
+| `task_invalid_entry` | キューから除去（永続的失敗） | なし |
+| `task_need_retry` | キューに残し次イベントで再試行 | POLICER 追加 / refCount 減少後に自動回復 |
+| `task_failed` | キューから除去 | なし（HW リソース増加は不可） |
+| `false`（activateSession） | INACTIVE 状態維持 | RouteOrch/NeighOrch 等の変化による非同期回復 |
+
+!!! note "allPortsReady guard — silent 待機"
+    `doTask()` 冒頭（`mirrororch.cpp:1571-1574`）で `gPortsOrch->allPortsReady()` が false の間は全エントリを処理せず早期 return する。エラーログは出ず silent 待機となる。
+
+!!! note "task_need_retry の再試行タイミング"
+    `mirrororch.cpp:1599-1604` にて `task_need_retry` のエントリだけキューに残す。再試行は次回 `doTask()` 実行時（Consumer イベント受信時）に自動で行われる。POLICER 未登録の場合は POLICER の SET イベントが MirrorOrch の Consumer をウェイクアップしないため、手動でミラーセッションを再 SET するか swss を再起動する必要がある点に注意。
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## ERSPAN 固有の例外条件
 
