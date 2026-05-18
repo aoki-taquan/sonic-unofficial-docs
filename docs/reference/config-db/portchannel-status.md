@@ -160,6 +160,29 @@ APPL_DB `LAG_TABLE` への書き込みは **teamsyncd** (カーネル RTM_NEWLIN
 **warm reboot 時の一括適用**: teamsyncd は warm reboot 中に `m_lagTable.create_temp_view()` を利用し RTM_NEWLINK イベントを集積する。タイマー満了後 `apply_temp_view()` で APPL_DB に一括反映し、STATE_DB は reconcile 完了後にまとめて書き込まれる (`teamsync.cpp:41-43, 88-89`)。warm reboot 期間中は APPL_DB が古い値のまま STATE_DB が更新されない中間状態が続く。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。
+
+| 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
+|--------|-----------|------|------|-----------|
+| `PORTCHANNEL` | CONFIG_DB | READ | `teammgrd` が `CFG_LAG_TABLE_NAME` を購読し SET/DEL イベントを受信するたびに `APP_LAG_TABLE_NAME` へ書き込む。`PORTCHANNEL` が CONFIG_DB に存在しない場合は APPL_DB `LAG_TABLE` への書き込みも発生しない | `teammgr.cpp:33, 157` |
+| `PORTCHANNEL_MEMBER` | CONFIG_DB | READ | `teammgrd` が `CFG_LAG_MEMBER_TABLE_NAME` を購読し、`isLagStateOk()` チェック後にメンバーポートを teamd プロセスに追加する。APPL_DB `LAG_TABLE` への書き込みとは独立したテーブルだが、同一 `TeamMgr` インスタンスが管理する | `teammgr.cpp:34, 421, 518` |
+| `LAG_TABLE` | STATE_DB | WRITE（副産物） | `teamsyncd` の `addLag()` が APPL_DB 書き込み成功後に `m_stateLagTable.set()` で `state: "ok"` を STATE_DB に書き込む。STATE_DB の `LAG_TABLE` は APPL_DB `LAG_TABLE` と同名だが別 DB の別テーブル | `teamsync.cpp:175, 203` |
+| `LAG_TABLE` (STATE_DB) | STATE_DB | READ | `intfmgrd` が `STATE_LAG_TABLE_NAME` を `Consumer` として購読し、LAG の `state: ok` を確認してからインタフェース設定を適用する。STATE_DB キーが存在しない場合 `intfmgrd` は LAG インタフェースを処理しない | `intfmgr.cpp:51-52, 1183` |
+| `COUNTERS_LAG_NAME_MAP` | COUNTERS_DB | WRITE | `portsorch` の `addLag()` が LAG SAI オブジェクト作成成功時に `m_counterLagTable->set()` で `<lag_alias>` → `<sai_oid>` マッピングを書き込む。`removeLag()` で `hdel` により削除 | `portsorch.cpp:762, 8022, 8095` |
+| IntfsOrch（内部）— RIF MTU 伝播 | orchagent 内部 | CALL | `doLagTask()` が `mtu` フィールドを更新した際、LAG に RIF (Router Interface) が存在する場合は `gIntfsOrch->setRouterIntfsMtu(l)` を呼んで RIF の MTU も連動更新する。LAG の MTU 変更は L3 転送側にも波及する | `portsorch.cpp:6163` |
+| `CHASSIS_APP_LAG_TABLE` | CHASSIS_APP_DB | WRITE (VoQ のみ) | VoQ モード (`gMySwitchType == "voq"`) では `addLag()` / `removeLag()` がそれぞれ `voqSyncAddLag()` / `voqSyncDelLag()` を呼び、CHASSIS_APP_DB の `CHASSIS_APP_LAG_TABLE_NAME` へ同期書き込みする。非 VoQ 環境では発生しない | `portsorch.cpp:8037-8039, 8114-8116` |
+| SUBJECT_TYPE_PORT_CHANGE 通知 | orchagent 内部 | NOTIFY | `addLag()` / `removeLag()` は `notify(SUBJECT_TYPE_PORT_CHANGE, ...)` で orchagent 内の subscriber Orch（VXLAN Orch 等）に LAG の追加/削除を通知する。通知はメモリ内イベントバスを通じて伝達される（DB 書き込みなし） | `portsorch.cpp:8024-8025, 8090-8091` |
+
+### 補足
+
+- **STATE_DB LAG_TABLE との非対称性**: APPL_DB `LAG_TABLE` はフィールド `admin_status` / `oper_status` / `mtu` / `tpid` / `learn_mode` を持つが、STATE_DB `LAG_TABLE` は `admin_status` / `oper_status` / `mtu` / `state` を持つ。`state: ok` フィールドは APPL_DB には書かれない（STATE_DB 専用）。
+- **`m_port_ref_count` による削除制御**: `removeLag()` は `m_port_ref_count[lag.m_alias] > 0` の場合に削除を拒否する。この ref_count は `INTF_TABLE` や VLAN メンバーなど、LAG を参照する他テーブルの SAI 登録数を追跡しており、参照が全解除されるまで SAI `remove_lag()` は呼ばれない（`portsorch.cpp:8047-8052`）。
+
+<!-- /cross-refs -->
+
 ## APPL_DB LAG_TABLE と STATE_DB LAG_TABLE の区別
 
 | 側面 | APPL_DB LAG_TABLE | STATE_DB LAG_TABLE |
