@@ -374,6 +374,43 @@ PORTCHANNEL_INTERFACE (intfmgr SET処理)
 
 <!-- /implicit-ref -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/portchannel-interface-cross-refs.md`
+
+### PORTCHANNEL_INTERFACE が参照するテーブル（→ 方向）
+
+#### YANG leafref 制約
+
+| 参照先テーブル | YANG パス | 意味 |
+|---|---|---|
+| `PORTCHANNEL` (CONFIG_DB) | `PORTCHANNEL_INTERFACE_LIST.name` → `PORTCHANNEL_LIST.name` | key の LAG 名は PORTCHANNEL テーブルに存在しなければならない (`sonic-portchannel.yang:170-172`) |
+| `PORTCHANNEL` (CONFIG_DB) | `PORTCHANNEL_INTERFACE_IPPREFIX_LIST.name` → 同上 | IP プレフィクスロウの LAG 名も同条件 (`sonic-portchannel.yang:227-229`) |
+| `VRF` (CONFIG_DB) | `PORTCHANNEL_INTERFACE_LIST.vrf_name` → `VRF_LIST.name` | `vrf_name` フィールドは VRF テーブルの既存エントリを参照しなければならない (`sonic-portchannel.yang:177-179`) |
+
+#### ランタイム依存 (intfmgrd)
+
+`intfmgr.cpp` の `isIntfStateOk()` が SET 処理前に STATE_DB を確認する:
+
+| 確認先 DB / テーブル | 参照箇所 | 未登録時の動作 |
+|---|---|---|
+| `STATE_DB::LAG_TABLE` | `m_stateLagTable.get(alias, temp)` (`intfmgr.cpp:351-360`) | teamd が LAG を STATE_DB に登録するまで silent retry |
+| `STATE_DB::VRF_TABLE` | `m_stateVrfTable.get(vrf_name, temp)` (`intfmgr.cpp:677-684`) | vrfmgrd が VRF を STATE_DB に登録するまで `"VRF is not ready, skipping"` ログ出力して retry |
+
+### PORTCHANNEL_INTERFACE を参照するテーブル（← 方向）
+
+| 参照元コンポーネント | 参照箇所 | 用途 |
+|---|---|---|
+| `natmgr.cpp` | `CFG_LAG_INTF_TABLE_NAME` を `doNatIpInterfaceTask()` で購読 (`natmgr.cpp:8178`) | NAT が PortChannel インタフェースの IP アドレスを取得して NAT テーブルを構築 |
+| `neighsync.cpp` | `m_cfgLagInterfaceTable.get(port, values)` (`neighsync.cpp:207`) | PortChannel 上の neighbor を IPv6 link-local 判定で参照 |
+
+### orchagent ref_count ガード
+
+`IntfsOrch` は RIF（Router Interface）を生成した後、内部 ref_count でその参照を管理する。`PORTCHANNEL_INTERFACE` を DEL しようとしても RIF がネイバー / ルートから参照されている場合は `Failed to remove ref count %d LAG %s` エラーを返して処理を拒否する。YANG には逆 leafref 制約は存在しない。
+
+<!-- /cross-refs -->
+
 <!-- failure -->
 ## 失敗挙動・エラーハンドリング (Phase D)
 
