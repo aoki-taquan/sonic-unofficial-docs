@@ -591,6 +591,78 @@ VOQ システム (`gIsVoqSystemEnabled` = true) かつローカル IF の場合�
 <!-- 証跡: sonic-swss/cfgmgr/intfmgr.cpp, sonic-swss/orchagent/intfsorch.cpp -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Redis Pub/Sub)
+
+> 調査根拠: `intfmgrd.cpp`、`intfmgr.cpp`、`intfsorch.cpp`、`orch.cpp` 全行精読 (2026-05-18)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-sub-interface-pubsub.md`
+
+VLAN_SUB_INTERFACE テーブルは **3 段の異なる購読方式** で CONFIG_DB → SAI まで伝搬する。
+
+### CONFIG_DB → intfmgrd (SubscriberStateTable / keyspace notification)
+
+`intfmgrd.cpp:28-35` の `cfg_intf_tables` ベクタに `CFG_VLAN_SUB_INTF_TABLE_NAME`（`"VLAN_SUB_INTERFACE"`）が含まれる。`Orch(cfgDb, tableNames)` コンストラクタ内で `addConsumer()` が CONFIG_DB (db_id=4) を検出すると `SubscriberStateTable` を生成し、以下の PSUBSCRIBE を発行する[^ps1][^ps2]。
+
+```
+PSUBSCRIBE __keyspace@4__:VLAN_SUB_INTERFACE|*
+```
+
+- `notify-keyspace-events = "KEA"` が有効なため、CLI / minigraph 等が `HSET VLAN_SUB_INTERFACE|Ethernet0.100 …` を書き込むと Redis が自動で `PUBLISH __keyspace@4__:VLAN_SUB_INTERFACE|Ethernet0.100 hset` を発行する
+- `SubscriberStateTable::pops()` がイベントチャンネルからキーを取り出し、`HGETALL VLAN_SUB_INTERFACE|Ethernet0.100` で現在値を取得して `KeyOpFieldsValuesTuple` に変換する
+- `op = "hset"` → `SET_COMMAND`、`op = "del"` → `DEL_COMMAND`
+
+**追加購読 — 親ポート状態変化の検知**: `intfmgr.cpp:45-53` で STATE_DB の `STATE_PORT_TABLE` と `STATE_LAG_TABLE` も別途 `SubscriberStateTable` で購読する。親ポートの admin_status / MTU 変化を sub-interface へ伝播するために必要。
+
+### intfmgrd → APPL_DB (ProducerStateTable / channel PUBLISH)
+
+`IntfMgr` は `ProducerStateTable m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)` を保持する[^ps1]。書き込み時は Lua スクリプトをアトミック実行する：
+
+```
+EVALSHA <luaSet>
+  SADD APP_INTF_TABLE_KEY_SET "Ethernet0.100"
+  HSET _APP_INTF_TABLE|Ethernet0.100 field1 val1 …
+  PUBLISH APP_INTF_TABLE_CHANNEL@0 "G"
+```
+
+PUBLISH ペイロードは固定文字列 `"G"`。IP prefix 行（`doIntfAddrTask`）も同じ Producer を使い `APP_INTF_TABLE|<alias>|<prefix>` キーで書き込む（`intfmgr.cpp:1137`）。
+
+### APPL_DB → orchagent (ConsumerStateTable / channel SUBSCRIBE)
+
+`orchagent` の `IntfsOrch` は APPL_DB (db_id=0) に対して `ConsumerStateTable` を使用し `APP_INTF_TABLE_CHANNEL@0` を `SUBSCRIBE` する[^ps2][^ps3]。`consumer_state_table_pops.lua` が `SPOP KEY_SET` → `HGETALL _APP_INTF_TABLE:<alias>` → 本体ハッシュへコピーをアトミック実行し、`IntfsOrch::doTask()` へ渡す。
+
+### STATE_DB への書き戻し
+
+`intfmgrd` は処理完了後に STATE_DB `STATE_INTERFACE_TABLE` へ TTL なしで書き込む：
+
+| タイミング | 操作 |
+|-----------|------|
+| sub-IF 属性設定完了 | `hset(alias, "vrf", vrf_name)` |
+| IP アドレス追加完了 | `hset(alias+"\|"+pfx, "state", "ok")` |
+| IP / IF 削除 | `del(...)` |
+
+`setSubIntfStateOk(alias)` / `removeSubIntfState(alias)`（`intfmgr.cpp:542-567`）が STATE_DB 操作を担当。`isIntfCreated(alias)` は `m_stateIntfTable.get(alias, ...)` で STATE_DB エントリの有無を確認し、IP アドレス設定前の前提条件チェックに用いる。
+
+### 特性まとめ
+
+| 特性 | 内容 |
+|------|------|
+| CONFIG_DB → intfmgrd | Redis PSUBSCRIBE (keyspace notification) |
+| keyspace pattern | `__keyspace@4__:VLAN_SUB_INTERFACE\|*` |
+| 追加購読 | `STATE_PORT_TABLE`、`STATE_LAG_TABLE`（親ポート状態変化検知） |
+| intfmgrd → APPL_DB | ProducerStateTable / channel PUBLISH |
+| Publish チャンネル | `APP_INTF_TABLE_CHANNEL@0`、ペイロード固定 `"G"` |
+| APPL_DB → orchagent | ConsumerStateTable + `SUBSCRIBE` |
+| NotificationConsumer | **不使用** |
+| TTL / keyevent expire | **不使用** |
+| Select タイムアウト | 1000ms → `intfmgr.doTask()` で未処理タスクを再試行 |
+| warm-restart | `buildIntfReplayList()` で起動時に既存 STATE_DB をスキャン |
+
+[^ps1]: `sonic-swss/cfgmgr/intfmgr.cpp` / `intfmgrd.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^ps2]: `sonic-swss/orchagent/orch.cpp` (`Orch::addConsumer`) <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orch.cpp>
+[^ps3]: `sonic-swss/orchagent/orchdaemon.cpp` / `intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>
+
+<!-- /pubsub -->
+
 <!-- platform-diff -->
 ## プラットフォーム差異 (Phase H)
 
