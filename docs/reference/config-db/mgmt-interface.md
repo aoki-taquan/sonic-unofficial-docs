@@ -516,6 +516,52 @@ XML `ManagementIPInterfaces` に記載されたインターフェース名に関
 
 <!-- /constants-phaseE -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L495-525,1626-1643,2345-2350; sonic-buildimage/files/image_config/interfaces/interfaces-config.sh; sonic-swss/cfgmgr/intfmgrd.cpp:28-35 -->
+
+`MGMT_INTERFACE` エントリの SET/DEL が CONFIG_DB に書き込まれると、`hostcfgd` の `mgmt_intf_handler` が 3 系統の副次処理を連鎖させる。APPL_DB / STATE_DB / ASIC_DB への直接書き込みは一切発生しない（eth0 は `intfmgrd` 非対象）。
+
+### 副次書込先サマリ
+
+| 副次書込先 | テーブル / ファイル | 書込者 | 条件 |
+|---|---|---|---|
+| ファイルシステム | `/etc/network/interfaces` | `sonic-cfggen` (interfaces-config.sh) | 設定変化時 |
+| カーネル netlink | routing table / addr table | `ifupdown2` | 常時 |
+| RADIUS PAM conf | `/etc/pam_radius_auth.d/` | `AaaCfg.modify_conf_file()` | RADIUS の `src_intf` または暗黙 NAS IP が eth0 を参照するとき |
+| APPL_DB | なし | — | eth0 は `intfmgrd` 非対象 |
+| STATE_DB | なし | — | eth0 は `intfmgrd` 非対象 |
+| ASIC_DB | なし | — | SAI 非経由 |
+
+### RADIUS PAM 設定ファイル再生成
+
+`mgmt_intf_handler` (`hostcfgd:2345-2350`) は IP 変化のたびに `AaaCfg` の 2 メソッドを呼び出す。
+
+- `handle_radius_source_intf_ip_chg` (`L495`): `RADIUS_GLOBAL.src_intf` または `RADIUS_SERVER.<addr>.src_intf` が変更されたインターフェースを参照していた場合、`modify_conf_file()` で `/etc/pam_radius_auth.d/<server>` を再生成する
+- `handle_radius_nas_ip_chg` (`L512`): NAS IP が明示設定されていない場合（mgmt IP を暗黙使用するケース）、IP 変化時に `/etc/pam_radius_auth.d/` 全体を再生成する
+
+RADIUS 設定を保持しない環境では上記 2 メソッドはいずれも即 `return` するため副作用は発生しない。
+
+### カーネル netlink 書込
+
+`ifupdown2` が `/etc/network/interfaces` を解釈し、カーネルへ netlink メッセージを発行する。
+
+| netlink 操作 | 条件 |
+|---|---|
+| `RTM_NEWADDR` / `RTM_DELADDR` (`ip addr add/del <ip_prefix> dev eth0`) | 常時 |
+| `RTM_NEWROUTE metric 201` (`ip route add default via <gw> dev eth0`) | `gwaddr` が有効な場合 |
+| `RTM_NEWROUTE table mgmt` | `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` |
+| `RTM_NEWROUTE` (forced routes) | `forced_mgmt_routes` 非空 |
+
+### SSH 切断リスク
+
+eth0 の IP アドレスが変更される場合、`interfaces-config` サービス再起動中に eth0 の IP が一時的に解除される。SSH セッションが eth0 経由であれば接続が切断される点に注意。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/mgmt-interface-side-effects.md` 参照。
+
+<!-- /side-effects -->
+
 <!-- phase-f -->
 ## 副次 DB 書込 (Phase F)
 
