@@ -454,4 +454,67 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+`DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` / `DEBUG_DROP_MONITOR` は CONFIG_DB → SAI の **直接経路**をとる。APPL_DB への中継は行わない。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|--------------------|
+| CONFIG_DB → DebugCounterOrch | `SubscriberStateTable` (Orch 基底クラス経由) | `__keyspace@{config_db_id}__:DEBUG_COUNTER\|*` 等 |
+| PortsOrch → DebugCounterOrch | Subject/Observer (`attach`/`update`) | `SUBJECT_TYPE_PORT_CHANGE` イベント |
+| DebugCounterOrch → SAI | SAI API 直接呼び出し | `sai_debug_counter_api->create/remove/set_debug_counter()` |
+| DebugCounterOrch → STATE_DB | `Table::set()` | `DEBUG_COUNTER_CAPABILITIES` テーブル（起動時 1 回） |
+| DebugCounterOrch → COUNTERS_DB | `Table::set()` / `Table::hdel()` | `COUNTERS_DEBUG_NAME_PORT_STAT_MAP`, `COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP` |
+| DebugCounterOrch → FLEX_COUNTER_DB | `FlexCounterManager` 経由 | `FLEX_COUNTER_TABLE`（`DEBUG_COUNTER` / `DEBUG_MONITOR_COUNTER` グループ） |
+
+### SubscriberStateTable の動作
+
+`DebugCounterOrch` は `Orch(m_configDb, debug_counter_tables, poll_interval=1000)` 基底クラスの `addConsumer()` を通じて 3 テーブル (`DEBUG_COUNTER`, `DEBUG_COUNTER_DROP_REASON`, `DEBUG_DROP_MONITOR`) に対する `SubscriberStateTable` を生成する。CONFIG_DB の keyspace notification (`PSUBSCRIBE __keyspace@db__:DEBUG_COUNTER|*`) でエントリの変化を検出し、`pops()` で現在値を読み出す。初回起動時は `getKeys()` で既存エントリを先読みし、起動前の設定を取りこぼさない。<!-- evidence: orchdaemon.cpp:446-452 -->
+
+### PortsOrch Observer パターン
+
+コンストラクタ内で `gPortsOrch->attach(this)` を呼び、`DebugCounterOrch` を `PortsOrch` の Observer として登録する。ポート追加/削除時は `DebugCounterOrch::update(SUBJECT_TYPE_PORT_CHANGE, &portUpdate)` が呼ばれ、`PORT_DEBUG` 型カウンタの FlexCounter エントリを動的に追加/削除する。これにより CONFIG_DB エントリを変更せずともポート変化がカウンタに自動反映される。<!-- evidence: debugcounterorch.cpp:39,67-110 -->
+
+### select() ループと doTask 実行順序
+
+orchdaemon は `Select::select()` を SELECT_TIMEOUT=1000 ms で実行する。イベント受信時は `Consumer::drain()` → `DebugCounterOrch::doTask(Consumer&)` が呼ばれる。
+
+`doTask()` 冒頭で `gPortsOrch->allPortsReady()` チェックがあり、全ポート初期化完了まで処理を保留する。`task_need_retry` は**一切返さない**。代わりに `free_drop_counters` / `free_drop_reasons` の pending キューで到着順序の差を吸収し、`reconcileFreeDropCounters()` で揃った時点に SAI オブジェクトを作成する。<!-- evidence: debugcounterorch.cpp:136-139, 579-594 -->
+
+### NotificationConsumer / NotificationProducer
+
+使用なし。DEBUG_COUNTER は CONFIG_DB keyspace notification のみで駆動される。STATE_DB / COUNTERS_DB への書き込みは `debugcounterorch` が同期的に実行し、非同期通知チャンネルは経由しない。
+
+### データフロー図
+
+```
+CONFIG_DB[DEBUG_COUNTER|<name>]
+CONFIG_DB[DEBUG_COUNTER_DROP_REASON|<name>|<reason>]
+CONFIG_DB[DEBUG_DROP_MONITOR|CONFIG]
+  ↓ SubscriberStateTable (keyspace notification × 3テーブル)
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → DebugCounterOrch::doTask()
+  ↓   [allPortsReady() チェック — false なら保留]
+  ↓   [table_name dispatch: DEBUG_COUNTER / DEBUG_COUNTER_DROP_REASON / DEBUG_DROP_MONITOR]
+  ↓ installDebugCounter() / addDropReason() / DEBUG_DROP_MONITOR 更新
+    ↓ reconcileFreeDropCounters() — counter + reason が揃ったら SAI 作成
+    ↓ sai_debug_counter_api->create_debug_counter()
+    ↓ sai_debug_counter_api->set_debug_counter_attribute() (drop reason list)
+ASIC (sairedis → ASIC_DB 経由)
+
+STATE_DB[DEBUG_COUNTER_CAPABILITIES]: 起動時 1 回書き込み
+COUNTERS_DB[COUNTERS_DEBUG_NAME_PORT_STAT_MAP]: counter 作成/削除時
+COUNTERS_DB[COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP]: counter 作成/削除時
+FLEX_COUNTER_DB[FLEX_COUNTER_TABLE|DEBUG_COUNTER|<port_oid>]: FlexCounterManager 経由
+
+PortsOrch.attach(DebugCounterOrch):
+  PORT_CHANGE イベント → DebugCounterOrch::update()
+    → PORT_DEBUG 型の FlexCounter エントリを動的追加/削除
+```
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: d2c490dcfe8c -->
