@@ -527,38 +527,36 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
-<!-- evidence: meta/_intermediate/cdb-flow/exp-to-fc-map-platform.md -->
+> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-platform.md`
 
-### FC サポート有無（最大のプラットフォーム差）
+`EXP_TO_FC_MAP` は MPLS EXP ビット→Forwarding Class の分類テーブルであり、ASIC の MPLS/CBF サポート状況によって動作が大きく異なる。
 
-`EXP_TO_FC_MAP` の動作はスイッチが CBF / MPLS EXP → FC マッピングを SAI レベルでサポートするかに依存する。`NhgMapOrch::getMaxNumFcs()` が `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` をクエリし、結果をキャッシュする（`nhgmaporch.cpp:299-325`）。
+### FC 上限のプラットフォーム依存
 
-| SAI クエリ結果 | `max_num_fcs` 値 | EXP_TO_FC_MAP SET 時の挙動 |
-|---------------|----------------|--------------------------|
-| 成功（FC サポートあり） | スイッチ返値（例: テスト環境では 63） | `fc` 値が `[0, max_num_fcs)` の範囲なら受理 |
-| 失敗（FC 未サポートスイッチ） | `0`（固定） | 全 `fc` 値が `task_invalid_entry` で reject。`SWSS_LOG_WARN("Switch does not support FCs")` のみ出力 |
+`NhgMapOrch::getMaxNumFcs()` が orchagent 初回エントリ処理時に `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を SAI 問い合わせし、結果を静的変数にキャッシュする (`nhgmaporch.cpp:299-325`)。
 
-FC 未サポートの ASIC では `EXP_TO_FC_MAP` エントリを CONFIG_DB に書いても SAI/ASIC に一切反映されない（silent drop）。
+| プラットフォーム状況 | `max_num_fcs` | 影響 |
+|---|---|---|
+| MPLS/CBF 非サポート ASIC | `0`（SAI エラー時の fallback） | 全 FC 値 (0 含む) が invalid → 全エントリが `task_invalid_entry` で reject。`SWSS_LOG_WARN("Switch does not support FCs")` のみ出力 |
+| CBF サポート ASIC（テスト参考値） | `63`（`test_qos_map.py:314` 実績） | FC `0`..`62` が有効 |
+| YANG 定義上限 | `7`（`pattern "[0-7]?"`) | YANG は実装より保守的。ASIC が 63 まで許容しても YANG で書けるのは 0..7 のみ |
 
-### VoQ / DPU / SmartSwitch
+> `max_num_fcs` は起動後に 1 度のみ取得してキャッシュされるため、SAI 初期化前に取得した場合は `max_num_fcs = 0` で固定されてしまう。ただし `allPortsReady()` ガードにより実際の EXP_TO_FC_MAP 処理はポート構成完了後まで defer されるため、通常は問題にならない。
 
-`handleExpToFcTable()` 実装には `gMySwitchType` によるプラットフォーム分岐が存在しない。
+### MPLS サポート自体のプラットフォーム差
 
-| 環境 | 影響 | 根拠 |
-|------|------|------|
-| VoQ システム | 差異なし — VoQ 分岐（`qosorch.cpp:1637,1715,1772`）は QUEUE ハンドラ専用 | EXP_TO_FC_MAP パスに VoQ 分岐なし |
-| DPU / SmartSwitch | 差異なし — 実装ガードなし（MPLS CBF は DPU 環境では非使用） | — |
-| multi-asic | 各 ASIC の orchagent が独立して CONFIG_DB を購読（標準動作） | `SubscriberStateTable` |
+`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS` は MPLS 対応 ASIC 専用の SAI 定数。MPLS を非サポートの ASIC では `sai_qos_map_api->create_qos_map()` が `SAI_STATUS_NOT_SUPPORTED` を返し、`addQosItem()` は `SAI_NULL_OBJECT_ID` を返して `task_failed` になる (`qosorch.cpp:1206-1210`)。
 
-### qos_config.j2 テンプレート（初期値なし）
+### デフォルトマップ投入のプラットフォーム差
 
-汎用 `qos_config.j2`（`sonic-buildimage/files/build_templates/qos_config.j2`）に `EXP_TO_FC_MAP` セクションは存在しない。MPLS CBF は MPLS 環境固有のためデフォルト定義がなく、プラットフォーム固有の j2 テンプレートで必要に応じて定義される。
+| プラットフォーム | デフォルト投入 | 経路 |
+|---|---|---|
+| CBF 有効プラットフォーム | `AZURE`（EXP 0→FC 0、1→1、…、7→7）が `cbf_config.j2` 経由で投入 | `sonic-buildimage/files/build_templates/cbf_config.j2:70-80` |
+| 非 MPLS / 非 CBF プラットフォーム | `EXP_TO_FC_MAP` に何もエントリなし | 設定不要 |
 
-### YANG 制約 vs 実装上限（プラットフォーム依存）
+### ポート初期化タイミングのプラットフォーム差
 
-| フィールド | YANG パターン | 実装上限 | 差異の原因 |
-|-----------|--------------|---------|-----------|
-| `fc` (value) | `"[0-7]?"` (最大 7) | `max_num_fcs - 1`（SAI クエリ依存） | FC 数がスイッチ能力依存。YANG の `7` より広い場合も狭い場合もある |
+`QosOrch::doTask()` は `gPortsOrch->allPortsReady()` が false の間 即 return する (`qosorch.cpp:2258-2261`)。プラットフォームごとのポート初期化時間の差（数十 ms〜数秒）が `EXP_TO_FC_MAP` エントリの SAI 反映タイミングに影響する。高速起動プラットフォームでは startup config の投入直後に処理されるが、低速プラットフォームではイベントループを複数回経てから処理される。
 
-> **Evidence**: `nhgmaporch.cpp:299-325` (`NhgMapOrch::getMaxNumFcs()`); `qosorch.cpp:1637,1715,1772` (VoQ 分岐は QUEUE 専用); `sonic-buildimage/files/build_templates/qos_config.j2` (EXP_TO_FC_MAP セクションなし)
+> **Evidence**: `nhgmaporch.cpp:299-325` (`NhgMapOrch::getMaxNumFcs()`); `qosorch.cpp:1189-1213` (`addQosItem()`); `cbf_config.j2:70-80` (AZURE デフォルト); `test_qos_map.py:314` (max_num_fcs=63 テスト実績); `qosorch.cpp:2258-2261` (allPortsReady ガード)
 <!-- /platform -->

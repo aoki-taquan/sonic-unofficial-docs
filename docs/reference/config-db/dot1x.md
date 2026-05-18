@@ -434,6 +434,57 @@ hostapd 起動後の PID ファイル (`/etc/hostapd/hostapdPid`) 存在確認�
 > **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:63-89,1160-1177`; `sonic-pac/hostapdmgr/hostapdmgr.cpp:260-346`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1x-pubsub.md`
+
+### Redis 購読方式
+
+`PAC_PORT_CONFIG_TABLE` および `HOSTAPD_GLOBAL_CONFIG_TABLE` への変更通知は **`SubscriberStateTable` (keyspace PSUBSCRIBE)** で配信される。`ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。
+
+| 購読者 | 購読 API | 購読テーブル | 用途 |
+|--------|---------|-------------|------|
+| `pacmgrd` | `SubscriberStateTable` | `PAC_PORT_CONFIG_TABLE` | ポートごとの認証モード・ホストモード・再認証設定を authmgr へ反映 |
+| `pacmgrd` | `SubscriberStateTable` | `HOSTAPD_GLOBAL_CONFIG_TABLE` | グローバル 802.1x 有効/無効を authmgr へ反映 |
+| `pacmgrd` | `SubscriberStateTable` | `VLAN` / `VLAN_MEMBER` (CONFIG_DB) | VLAN 設定変化を authmgr へ通知 |
+| `pacmgrd` | `SubscriberStateTable` | `VLAN_TABLE` / `VLAN_MEMBER_TABLE` (STATE_DB) | VLAN 状態変化を authmgr へ通知 |
+| `hostapdmgrd` | `SubscriberStateTable` | `PAC_PORT_CONFIG_TABLE` | ポート認証設定変化から hostapd conf を生成/削除 |
+| `hostapdmgrd` | `SubscriberStateTable` | `HOSTAPD_GLOBAL_CONFIG_TABLE` | 802.1x グローバル有効/無効で hostapd を起動/停止 |
+| `hostapdmgrd` | `SubscriberStateTable` | `RADIUS_SERVER` | RADIUS サーバ変化を hostapd conf に反映 |
+| `hostapdmgrd` | `SubscriberStateTable` | `RADIUS` | RADIUS グローバル設定変化を hostapd conf に反映 |
+
+### イベントフロー (pacmgrd)
+
+```
+CONFIG_DB HSET "PAC_PORT_CONFIG_TABLE|Ethernet0" port_control_mode auto
+  ↓ keyspace PUBLISH "__keyspace@<dbId>__:PAC_PORT_CONFIG_TABLE|Ethernet0" "hset"
+pacmgrd SubscriberStateTable.pops()
+  ↓ HGETALL "PAC_PORT_CONFIG_TABLE|Ethernet0"
+processPacPortConfTblEvent()
+  ↓ fpGetIntIfNumFromHostIfName("Ethernet0", &intIfNum)
+  ↓ authmgrPortControlModeSet(intIfNum, AUTHMGR_PORT_AUTO)
+```
+
+### イベントフロー (hostapdmgrd)
+
+```
+CONFIG_DB HSET "HOSTAPD_GLOBAL_CONFIG_TABLE|global" dot1x_system_auth_control true
+  ↓ keyspace PUBLISH "__keyspace@<dbId>__:HOSTAPD_GLOBAL_CONFIG_TABLE|global" "hset"
+hostapdmgrd SubscriberStateTable.pops()
+  ↓ HGETALL "HOSTAPD_GLOBAL_CONFIG_TABLE|global"
+processHostapdConfigGlobalTblEvent()
+  ↓ enable_auth=true → m_radiusServerInUse が設定済みなポートの hostapd conf を生成
+  ↓ informHostapd("new", ...) で hostapd プロセスへ通知
+```
+
+- `pacmgrd` は pac ソケットからの非同期メッセージ (`pacqueue`) も同一 `swss::Select` で多重化する (`pacmgr_main.cpp:65`)。
+- keyspace 通知のペイロードは操作名 (`hset`/`del`) のみ。フィールド値は HGETALL で別途取得する。
+- ポーリング間隔: swss::Select のデフォルトタイムアウト (通常 1000 ms)。
+
+> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.h:137-147`; `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:80-133`; `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr_main.cpp:65`; `sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.h:81-84`; `sonic-buildimage/src/sonic-pac/hostapdmgr/hostapdmgr.cpp:69-100`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-pubsub.md`
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 

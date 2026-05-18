@@ -1,63 +1,40 @@
-# EXP_TO_FC_MAP — Phase H プラットフォーム差異調査
+# exp-to-fc-map — Phase H: プラットフォーム差異調査
 
 ## 調査対象
 
-- `orchagent/qosorch.cpp` (sonic-swss@4305596156d70e9797e8a881b3d19b46de0bce0d)
-- `orchagent/cbf/nhgmaporch.cpp`
-- `sonic-buildimage/files/build_templates/qos_config.j2`
-- CBF HLD: `SONiC/doc/cbf/cbf_hld.md`
+`EXP_TO_FC_MAP` テーブル。Consumer: `QosOrch::handleExpToFcTable()` / `ExpToFcMapHandler` / `NhgMapOrch::getMaxNumFcs()`.
 
-## FC サポート有無（最大のプラットフォーム差）
+## 主要な証跡
 
-`EXP_TO_FC_MAP` の動作はスイッチが CBF (Class-Based Forwarding) / MPLS EXP → FC マッピングを
-SAI レベルでサポートするかどうかに依存する。
+- `sonic-swss/orchagent/qosorch.cpp:1132-1213` — `ExpToFcMapHandler` の `convertFieldValuesToAttributes()` / `addQosItem()`
+- `sonic-swss/orchagent/cbf/nhgmaporch.cpp:299-325` — `NhgMapOrch::getMaxNumFcs()` + `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES`
+- `sonic-buildimage/files/build_templates/cbf_config.j2` — AZURE デフォルトマップ（EXP 0..7 → FC 0..7）
+- `sonic-swss/tests/test_qos_map.py:314` — テスト環境 `max_num_fcs = 63`
 
-### SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES
+## プラットフォーム依存ポイント
 
-`NhgMapOrch::getMaxNumFcs()` が初回呼び出し時に
-`sai_switch_api->get_switch_attribute(gSwitchId, 1, SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES)`
-で取得する（`nhgmaporch.cpp:299-325`）。
+### 1. FC 上限 (`SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES`)
 
-| 結果 | max_num_fcs 値 | EXP_TO_FC_MAP SET 時の挙動 |
-|------|---------------|--------------------------|
-| SAI クエリ成功 (`SAI_STATUS_SUCCESS`) | スイッチ返値（例: テスト環境 = 63） | `fc` 値が `[0, max_num_fcs)` の範囲なら受理 |
-| SAI クエリ失敗（FC 未サポートスイッチ） | `0` (固定) | 全 `fc` 値が `task_invalid_entry` で reject。`SWSS_LOG_WARN("Switch does not support FCs")` のみ出力 |
+`NhgMapOrch::getMaxNumFcs()` が orchagent 起動後の初回 EXP_TO_FC_MAP エントリ処理時に SAI スイッチ属性を問い合わせる（静的変数キャッシュ）。
 
-**影響**: FC 未サポートの ASIC（= `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` 未定義）では、
-`EXP_TO_FC_MAP` エントリを CONFIG_DB に書いても SAI/ASIC に一切反映されない（silent drop）。
+| プラットフォーム状況 | `max_num_fcs` | 影響 |
+|---|---|---|
+| MPLS EXP→FC 非サポート | `0`（SAI error 時の fallback） | 全 FC 値が invalid → 全エントリが `task_invalid_entry` で reject |
+| CBF サポート ASIC（テスト参考値） | `63`（`test_qos_map.py:314`） | FC 0..62 が有効 |
+| YANG 定義上限 | `7`（`pattern "[0-7]?"`) | YANG は実装より保守的。ASIC が 63 まで許容しても YANG で書けるのは 0..7 のみ |
 
-## VoQ / DPU / SmartSwitch の影響
+### 2. MPLS サポート自体のプラットフォーム差
 
-`handleExpToFcTable()` 実装には `gMySwitchType` のガードが存在しない。
+`EXP_TO_FC_MAP` は MPLS EXP ビットを FC に変換する CBF 専用テーブル。MPLS EXP 分類は `SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS` で表現され、ASIC が MPLS パケット処理をサポートしない場合、SAI の `create_qos_map` が `SAI_STATUS_NOT_SUPPORTED` を返して `task_failed` になる。
 
-| 環境 | 影響 | 根拠 |
-|------|------|------|
-| 通常（non-VoQ）NPU | 差異なし | 標準パス |
-| VoQ システム | `QosOrch::doTask()` 内の VoQ 分岐（`gMySwitchType == "voq"`, `qosorch.cpp:1637,1715,1772`）は QUEUE ハンドラのみ対象。EXP_TO_FC_MAP パスに VoQ 分岐なし | 差異なし |
-| DPU (SmartSwitch) | `handleExpToFcTable` には DPU ガードなし。ただし DPU では MPLS が通常使用されない | MPLS CBF は DPU 環境では事実上不使用 |
+### 3. デフォルトマップ投入の差
 
-## qos_config.j2 テンプレート
+`cbf_config.j2` は CBF 機能を有効化する際の初期投入テンプレート。CBF を使用しないプラットフォームは `cbf_config.j2` を適用しないため `EXP_TO_FC_MAP` にエントリが存在しない。非 MPLS プラットフォームでは設定自体が不要。
 
-汎用 `qos_config.j2` (`sonic-buildimage/files/build_templates/qos_config.j2`) に
-`EXP_TO_FC_MAP` セクションは存在しない（CBF は MPLS 環境固有のためデフォルト定義なし）。
+### 4. `allPortsReady()` 依存
 
-| プラットフォーム | EXP_TO_FC_MAP の初期値 |
-|----------------|----------------------|
-| 汎用 AZURE QoS | なし（`qos_config.j2` に定義なし） |
-| MPLS 対応ベンダー固有プラットフォーム | プラットフォーム固有の j2 テンプレートに定義される場合あり |
+ポート初期化完了前は `QosOrch::doTask()` が即 return するため、CONFIG_DB への `EXP_TO_FC_MAP` 書き込みがプラットフォーム初期化シーケンスより先行した場合、ポート ready 後に一括処理される。プラットフォームごとのポート初期化時間の差がエントリ適用タイミングに影響する。
 
-## YANG 制約との乖離（プラットフォーム依存部分）
+## 結論
 
-| フィールド | YANG パターン | 実装上限 | 差異の原因 |
-|-----------|--------------|---------|-----------|
-| `fc` | `"[0-7]?"` (最大 7) | `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` 返値（例: 63） | SAI query 結果がプラットフォーム依存 |
-
-## サマリ
-
-| 観点 | 結果 | 根拠 |
-|------|------|------|
-| FC サポート有無 | **プラットフォーム依存** — `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` クエリ結果で確定 | `nhgmaporch.cpp:299-325` |
-| VoQ | 差異なし（EXP_TO_FC_MAP パスに VoQ 分岐なし） | `qosorch.cpp:1637,1715,1772` は QUEUE 専用 |
-| DPU / SmartSwitch | 差異なし（実装ガードなし）、MPLS CBF は DPU では非使用 | — |
-| multi-asic | 各 ASIC の orchagent が独立して CONFIG_DB を購読 | 標準 SubscriberStateTable 動作 |
-| qos_config.j2 初期値 | なし（MPLS CBF は汎用デフォルトなし） | `sonic-buildimage/files/build_templates/qos_config.j2` |
+プラットフォーム差のうち運用上最重要なのは `max_num_fcs` の値。MPLS/CBF 未サポートの ASIC では `EXP_TO_FC_MAP` を設定しても全エントリが reject される。

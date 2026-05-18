@@ -443,4 +443,46 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 > **Evidence**: `sonic-swss/orchagent/muxorch.cpp:1388-1390`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）; `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; 詳細は `meta/_intermediate/cdb-flow/system-defaults-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/system-defaults-platform.md -->
+
+`SYSTEM_DEFAULTS` はビルド時テンプレート (`init_cfg.json.j2`) とランタイムコード (`muxorch.cpp`) の両方でプラットフォーム分岐を持つ。YANG スキーマ自体はプラットフォーム非依存だが、エントリの有無・値の初期値がプラットフォームによって異なる。
+
+### mux_tunnel_egress_acl — ASIC プラットフォームによる初期値差異
+
+`init_cfg.json.j2` L191-195 (`sonic_asic_platform` 分岐):
+
+| プラットフォーム | `mux_tunnel_egress_acl.status` 初期値 | ACL 適用方向 | 使用 ACL テーブル名 |
+|---|---|---|---|
+| Mellanox | `"enabled"` | egress | `EgressTableDrop` (`EGRESS_TABLE_DROP`) |
+| Broadcom / その他 | `"disabled"` | ingress | `IngressTableDrop` (`MUX_ACL_TABLE_NAME`) |
+| 非 Dual-ToR ビルド (`include_mux == "n"`) | エントリなし | — (Dual-ToR 無効) | — |
+
+> `muxorch.cpp:1390`: `is_ingress_acl_ = value != "enabled"` — エントリ不在時 (`value == ""`) は ingress フォールバックとなる。
+
+### tunnel_qos_remap — デバイス種別と冗長化タイプの組み合わせ
+
+`minigraph.py` L2202-2215 が以下の条件でのみ `tunnel_qos_remap.status = "enabled"` を生成する:
+
+| デバイス種別 | 冗長化タイプ | tunnel_qos_remap |
+|---|---|---|
+| LeafRouter (T1) | Gemini または Libra | `enabled` |
+| ToRRouter (T0) | Gemini または Libra | `enabled` |
+| KVM プラットフォーム | 任意 | **強制除外** (不在) |
+| その他種別・非 Gemini/Libra | — | エントリなし (不在 = disabled) |
+
+### platform 別 SYSTEM_DEFAULTS エントリ一覧
+
+| エントリキー | Mellanox | Broadcom | KVM/VS | SmartSwitch DPU (Pensando hwsku) |
+|---|---|---|---|---|
+| `mux_tunnel_egress_acl` | `enabled` | `disabled` | Dual-ToR ビルド次第 | Dual-ToR ビルド次第 |
+| `tunnel_qos_remap` | Gemini/Libra 構成時 `enabled`、それ以外不在 | 同左 | **常に不在** | — |
+| `software_bfd` | 通常不在 | 通常不在 | 通常不在 | **`enabled` 強制注入** (`config_samples.py:186`) |
+| `polaris` | 不在 | 不在 | 不在 | **`enabled` 強制注入** (hwsku に `"pensando"` 含む時) |
+
+> **Evidence**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:188-197`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; `sonic-buildimage/src/sonic-config-engine/minigraph.py:2202-2215`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:179-188`; `sonic-swss/orchagent/muxorch.cpp:1389-1393`; `sonic-swss/orchagent/aclorch.h:111-112`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）。詳細は `meta/_intermediate/cdb-flow/system-defaults-platform.md` を参照。
+<!-- /platform -->
+
 <!-- glossary-links-injected: 90fa20b1e615 -->
