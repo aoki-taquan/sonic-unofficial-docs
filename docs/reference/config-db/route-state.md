@@ -189,6 +189,63 @@ STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みは `RouteOrch` が SA
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 他コンポーネントとの参照関係 (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-cross-refs.md -->
+
+STATE_DB / APPL_STATE_DB の `ROUTE_TABLE` は **書き込み専用**（`RouteOrch` のみが書き込む）。読み取り側は以下の通り。
+
+### STATE_DB `ROUTE_TABLE` の読み取り主体
+
+#### sonic-linkmgrd (DbInterface)
+
+`sonic-linkmgrd/src/DbInterface.cpp:1835` にて `SubscriberStateTable` でデフォルト経路の有無を購読する[^cr1]:
+
+```cpp
+swss::SubscriberStateTable stateDbRouteTable(stateDbPtr.get(), STATE_ROUTE_TABLE_NAME);
+```
+
+`processDefaultRouteStateNotification()` が `0.0.0.0/0` / `::/0` の `state` フィールドを取り出し、`MuxManager::addOrUpdateDefaultRouteState()` へ渡す。
+
+| `state` 値 | リンクプローバーへの影響 |
+|-----------|----------------------|
+| `"ok"` | リンクプローバーを再起動 |
+| `"na"` | リンクプローバーを停止 |
+
+デュアルTOR (MUX) 環境でのみ意味を持つ。非 MUX 環境では subscriberは存在するが実際の状態遷移は発生しない[^cr1]。
+
+### APPL_STATE_DB `ROUTE_TABLE` の読み取り主体
+
+#### fpmsyncd (RouteSync::onRouteResponse)
+
+`fpmsyncd.cpp:78` で `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を `NotificationConsumer` で購読し、`RouteSync::onRouteResponse()` を呼び出す[^cr2]:
+
+```cpp
+const auto routeResponseChannelName = std::string("APPL_DB_") + APP_ROUTE_TABLE_NAME + "_RESPONSE_CHANNEL";
+routeResponseChannel = std::make_unique<NotificationConsumer>(&applStateDb, routeResponseChannelName);
+```
+
+受信した通知の `err_str=SWSS_RC_SUCCESS` かつ `protocol` フィールドあり（SET 操作）の場合、FRR zebra へ netlink `RTM_F_OFFLOAD` フラグを送信する[^cr2]。この動作は **BGP suppress feature** (`isSuppressionEnabled()`) が有効な場合のみ実際の経路制御に影響する。
+
+#### route_check.py (自動修復)
+
+`route_check.py:767-773` が APPL_STATE_DB 未反映経路を検出した際、`NotificationProducer` で同チャンネルへ `SWSS_RC_SUCCESS` 応答を強制注入する[^cr3]。これにより orchagent が応答を送れなかった場合でも FRR zebra へ offload フラグが届く自動修復が行われる。
+
+### 参照関係サマリ
+
+| DB / テーブル | 書込み主体 | 読み取り主体 | 用途 |
+|-------------|----------|------------|------|
+| STATE_DB `ROUTE_TABLE` | `RouteOrch` | `sonic-linkmgrd` | デュアルTOR リンクプローバー制御 |
+| APPL_STATE_DB `ROUTE_TABLE` (RESPONSE_CHANNEL) | `RouteOrch` (via `ResponsePublisher`) | `fpmsyncd` | FRR へ RTM_F_OFFLOAD 通知 |
+| APPL_STATE_DB `ROUTE_TABLE` (RESPONSE_CHANNEL) | `route_check.py` (注入) | `fpmsyncd` | 自動修復時の offload 強制送信 |
+
+[^cr1]: sonic-linkmgrd DbInterface: `src/DbInterface.cpp`. <https://github.com/sonic-net/sonic-linkmgrd/blob/master/src/DbInterface.cpp#L1835>
+[^cr2]: fpmsyncd RouteSync: `fpmsyncd/fpmsyncd.cpp`, `fpmsyncd/routesync.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78>
+[^cr3]: route_check.py 自動修復: `scripts/route_check.py`. <https://github.com/sonic-net/sonic-utilities/blob/master/scripts/route_check.py#L767>
+
+<!-- /cross-refs -->
+
 ---
 
 ## APPL_STATE_DB ROUTE_TABLE
