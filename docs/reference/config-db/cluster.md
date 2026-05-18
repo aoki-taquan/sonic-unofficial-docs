@@ -346,3 +346,33 @@ XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/cluster-side.md -->
+
+`cluster` フィールドは minigraph XML から CONFIG_DB への**一方向書き込みのみ**を目的としており、SET/DEL に伴い他の DB エントリへの書き込みが発生することはない。
+
+### 調査結果サマリ
+
+| 対象 DB | 副次書き込みの有無 | 根拠 |
+|---------|-----------------|------|
+| APPL_DB | **なし** | portmgrd / neighsyncd / bgpcfgd は `cluster` フィールドを参照しない |
+| STATE_DB | **なし** | `cluster` 値に依存する STATE_DB 書き込み経路が存在しない |
+| COUNTERS_DB | **なし** | SAI と無関係なフィールドのため |
+| FLEX_COUNTER_DB | **なし** | 同上 |
+| ASIC_DB | **なし** | 同上 |
+
+### 根拠詳細
+
+`DEVICE_NEIGHBOR_METADATA` テーブルを subscribe するデーモン (`bgpcfgd` / `buffers_config.j2` / `qos_config.j2`) はいずれも **`type` フィールドのみ**を参照し、`cluster` フィールドを読み出さない（`buffers_config.j2:83,209-210`、`qos_config.j2:107-116,150-151`、`managers_bgp.py:140,220-222`）。
+
+`portmgrd` は CONFIG_DB `DEVICE_METADATA` を参照する際も `cluster` フィールドには触れない。
+
+Phase C (cross-refs) 調査でコードベース全体を grep した結果、ランタイムで `cluster` フィールドを読み出すコンポーネントが存在しないことが確認されており、副次書き込みのトリガとなる経路は存在しない。
+
+!!! note "write-only フィールド"
+    `cluster` は `sonic-cfggen` / `minigraph.py` による起動時一括書き込み後、どのデーモンも参照しない write-only フィールド。SET/DEL 後の副次 DB 書き込みは発生しない。
+
+<!-- /side-effects -->
+
