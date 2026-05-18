@@ -312,6 +312,71 @@ GRE Tunnel を SET すると RIF / Neighbor の ref_count が増加し、Tunnel 
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読方式 — ZMQ ベース
+
+`P4Orch` は標準 `Orch` サブクラスではなく **`ZmqOrch`** サブクラスとして実装される。`FIXED_TUNNEL_TABLE` を含む `P4RT_TABLE` の書き込みは P4RT gRPC サーバが **ZMQ IPC** 経由で orchagent に送信する（Redis ProducerStateTable channel や keyspace 通知は使わない）。
+
+```cpp
+// orchdaemon.cpp:847-849
+vector<string> p4rt_tables = {APP_P4RT_TABLE_NAME};
+m_p4OrchZmqServer = new swss::ZmqServer(m_p4OrchZmqServerEp, "", false, true);
+gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOrch);
+
+// orchdaemon.h:121
+const std::string m_p4OrchZmqServerEp = "ipc:///zmq_swss/p4orch_zmq_swss_ep";
+```
+
+P4RT gRPC サーバ（`p4rt` コンテナ内）は `ipc:///zmq_swss/p4orch_zmq_swss_ep` の ZMQ socket に WriteRequest を送り、orchagent 内の `ZmqConsumerStateTable` がこれを受信して `GreTunnelManager::drain()` に渡す[^5]。
+
+| 購読者 | 購読 API | 書き込み元 | ZMQ Endpoint |
+|--------|---------|-----------|--------------|
+| `P4Orch` / `GreTunnelManager` | `ZmqConsumerStateTable` | P4RT gRPC サーバ | `ipc:///zmq_swss/p4orch_zmq_swss_ep` |
+
+### 応答 publish の流れ
+
+各エントリの処理完了後、`m_publisher->publish(APP_P4RT_TABLE_NAME, key, fvs, status)` が呼ばれる（`gre_tunnel_manager.cpp:230-284, 551`）。`ResponsePublisher::publish()` は以下を順に実行する:
+
+| # | 宛先 | 内容 | 条件 |
+|---|------|------|------|
+| 1 | ZMQ 応答 (`ZmqServer::sendMsg`) | gRPC WriteResponse として P4RT サーバに返却 | 常時（`m_zmqServer != nullptr`） |
+| 2 | Redis Notification Channel | `APPL_DB_P4RT_TABLE_RESPONSE_CHANNEL` に `PUBLISH` | 常時 (`NotificationProducer::send()`) |
+| 3 | `APPL_STATE_DB:P4RT_TABLE:FIXED_TUNNEL_TABLE:<key>` | SET 成功時: intent フィールドを state として書き込み。DEL 成功時: エントリ削除 | `status.ok()` 時のみ |
+
+```
+response_channel = "APPL_DB_P4RT_TABLE_RESPONSE_CHANNEL"
+                  // response_publisher.cpp:104
+```
+
+### APPL_STATE_DB エントリ形式
+
+SET 成功時に書き込まれるエントリの例:
+
+```
+APPL_STATE_DB: P4RT_TABLE:FIXED_TUNNEL_TABLE:{"match/tunnel_id":"tunnel-1"}
+  action                    = "mark_for_p2p_tunnel_encap"
+  param/router_interface_id = "<rif_id>"
+  param/encap_src_ip        = "<src_ip>"
+  param/encap_dst_ip        = "<dst_ip>"
+  err_str                   = ""
+```
+
+DEL 成功時は当該エントリが APPL_STATE_DB から削除される。
+
+### COUNTERS_DB / FLEX_COUNTER_DB
+
+`gre_tunnel_manager.cpp` は `crmorch.h` をインクルードするが `gCrmOrch->incCrmResUsedCounter()` を呼び出していない。GRE tunnel エントリは **CRM カウンタ・COUNTERS_DB・FLEX_COUNTER_DB のいずれにも書き込まない**。
+
+### サービス再起動トリガー
+
+なし。`GreTunnelManager` は orchagent プロセス内のハンドラであり、エントリの追加/削除は SAI GRE トンネルオブジェクトのライブ操作のみで反映され、プロセス再起動を伴わない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
