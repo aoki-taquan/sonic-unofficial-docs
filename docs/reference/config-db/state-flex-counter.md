@@ -3,7 +3,7 @@ title: FLEX_COUNTER_DB — ランタイム状態フィールド
 description: "FLEX_COUNTER_DB（DB 5）のランタイム状態フィールド — syncd の FlexCounter モジュールが管理する per-group ポーリング状態とコード由来デフォルト。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-17
+last_verified: 2026-05-18
 hard: 0
 sources:
   - repo: sonic-net/sonic-sairedis
@@ -418,6 +418,47 @@ PortsOrch コンストラクタが `FlexCounterManager` 初期化時に直接渡
 **YANG との乖離**: YANG の `poll_interval` typedef は `range 100..4294967295`。orsorch のコード定数は YANG バリデーション対象外で、60000 ms 等は YANG の最大値制約に収まるが YANG モデルから検証する手段はない。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `sonic-sairedis/syncd/FlexCounter.cpp`、`sonic-swss-common/common/schema.h`
+
+`FLEX_COUNTER_DB` のエントリが設定・削除されると、syncd 内 `FlexCounter` スレッドを通じて以下の DB への副次書き込みが発生する。
+
+### SET 時（ポーリング起動後） → COUNTERS_DB 書込み
+
+| 対象 DB / テーブル | キー / フィールド | 書込内容 | トリガー |
+|------------------|-----------------|---------|---------|
+| `COUNTERS_DB` / `COUNTERS:<oid>` | `SAI_*_STAT_*` | SAI から取得した統計カウンタ値（uint64 文字列） | ポーリング条件 3 つが揃って `collectCounters()` が実行されたとき（`FlexCounter.cpp:3543`） |
+| `COUNTERS_DB` / `PORT_PHY_ATTR:<oid>` | 各 PHY 属性フィールド | ポート PHY 属性（SerDes パラメータ等） | `PORT_PHY_ATTR` グループのポーリング（`FlexCounter.cpp:1984-2005`） |
+| `COUNTERS_DB` / `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | `<serdes_oid>` → `<port_oid>` | Serdes OID → Port OID マッピング | `PORT_PHY_SERDES_ATTR` グループの初期登録（`FlexCounter.cpp:2251-2260`） |
+
+**ポーリング書込みタイミング**: `FlexCounter::flexCounterThreadRunFunction()`（`FlexCounter.cpp:3526`）が `m_pollInterval` ms ごとに `collectCounters()` を呼び出し、`COUNTERS_TABLE`（= `COUNTERS:`）への書込みを Redis パイプライン経由でフラッシュする。書込みは各ポーリング周期の終わりにまとめて行われ（`pipeline.flush()`）、周期中の中間状態は COUNTERS_DB に現れない。
+
+**Lua プラグインの追加書込み**: `runPlugins()` が各カウンタコンテキストの登録プラグインを実行する。プラグインは COUNTERS_DB に対して任意の追加書き込みを行う可能性がある（例: `RATES:<oid>` への書き込みは Lua レートプラグインが担当する）。
+
+### DEL 時（OID 削除） → COUNTERS_DB 削除
+
+| 操作 | 対象テーブル | 削除キー |
+|------|------------|---------|
+| ポート / RIF / Queue 等の OID 削除 | `COUNTERS_DB:COUNTERS` | `<vid>` のエントリ全体 |
+| RIF OID 削除 | `COUNTERS_DB:RATES` | `<vid>` / `<vid>:RIF` |
+| Trap OID 削除 | `COUNTERS_DB:RATES` | `<vid>` / `<vid>:TRAP` |
+
+`FlexCounter::removeDataFromCountersDB()` (`FlexCounter.cpp:3116-3133`) が `COUNTERS:<vid>` を del し、`ratePrefix` が指定された場合は `RATES:<vid>` / `RATES:<vid>:<prefix>` も del する。
+
+### FLEX_COUNTER_DB 書込みが COUNTERS_DB に影響しない条件
+
+| 条件 | 理由 |
+|------|------|
+| `m_enable == false` かつ OID リスト空 | ポーリングスレッドが `waitPoll()` でブロックされる（ポーリング 3 条件未充足） |
+| SAI `getStats()` / `bulkGetStats()` 失敗 | 当該 OID の書込みをスキップ（stale 残留）。`COUNTERS_DB` の旧値は上書きされない |
+| グループ `FLEX_COUNTER_STATUS = disable` | `m_enable = false` となりポーリングが停止。`COUNTERS_DB` は最後に書かれた値が残留（削除されない） |
+
+> **参照ソース**: `FlexCounter.cpp:3526-3569`（`flexCounterThreadRunFunction`）、`FlexCounter.cpp:3495-3507`（`collectCounters`）、`FlexCounter.cpp:3116-3133`（`removeDataFromCountersDB`）、`schema.h:223`（`COUNTERS_TABLE`）、`schema.h:272`（`RATES_TABLE`）
+
+<!-- /side-effects -->
 
 ## 確認コマンド
 
