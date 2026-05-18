@@ -171,6 +171,27 @@ DEVICE_NEIGHBOR テーブルは **consumer が起動時に一括読み出し（`
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-287`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-150,219-224`
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+DEVICE_NEIGHBOR は **consumer が `get_table` で一括読み出しする**参照テーブルであり、複数の CONFIG_DB テーブルを横断的に参照する。以下は DEVICE_NEIGHBOR の consumer が暗黙的に依存するテーブル・リソースの一覧である。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `DEVICE_NEIGHBOR_METADATA\|<name>` (CONFIG_DB) | key 転写 + フィールド参照 | 常時。pfcwd は `candidates[port]['name']` をキーとして DEVICE_NEIGHBOR_METADATA の `type` を照合。bgpcfgd は `data['name']` が DEVICE_NEIGHBOR_METADATA に存在するかチェック | `pfcwd/main.py:98-104`, `managers_bgp.py:220-224` |
+| `VLAN_MEMBER` (CONFIG_DB) | フォールバック参照 | `pfcwd get_server_facing_ports` でサーバー向けポートが 0 件の場合にのみ参照。DEVICE_NEIGHBOR がすべて非 `server` 型か空の場合に適用 | `pfcwd/main.py:106-107` |
+| `PORT` (CONFIG_DB) | バックプレーンポート列挙 | `pfcwd start_default` が `get_bp_ports()` を通じて `PORT` テーブルを読み、`role='Int'` かつ `admin_status='up'` のポートを `active_ports` に追加 | `pfcwd/main.py:111-119,413-416` |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | フィールド参照 | `pfcwd start_default` が `default_pfcwd_status` フィールドを読み、`'enable'` でない場合は `pfcwd start_default` が即 return（DEVICE_NEIGHBOR を読んでも PFC WD を設定しない） | `pfcwd/main.py:408-419` |
+
+!!! note "DEVICE_NEIGHBOR は「ポート集合の源泉」"
+    各 consumer は DEVICE_NEIGHBOR のキー集合（= 外部ポート名一覧）を取得した後、そのポート名を使って他テーブル（DEVICE_NEIGHBOR_METADATA・PORT）を参照する。DEVICE_NEIGHBOR 自体のフィールド（`name` 以外）を直接利用する consumer はほとんどなく、キーのみを利用するパターンが支配的。
+
+!!! note "VLAN_MEMBER 参照は非自明なフォールバック"
+    `pfcwd get_server_facing_ports()` は DEVICE_NEIGHBOR + DEVICE_NEIGHBOR_METADATA を組み合わせてサーバー向けポートを決定しようとするが、該当ポートが 0 件の場合にのみ VLAN_MEMBER をフォールバックとして使う。このため VLAN 設定が pfcwd のポートスコープに予期せず影響することがある（evidence: `pfcwd/main.py:106-107`）。
+
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:97-119,405-424`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-154,219-224`
+<!-- /cross-refs -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
