@@ -304,4 +304,33 @@ P4RT テーブルには専用 YANG モデルが存在しない。全デフォル
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`p4rt` コンテナは起動時に `sonic-cfggen -d -t p4rt_vars.j2` で CONFIG_DB を**一度だけ**読み込む。
+このため `P4RT|certs` / `P4RT|p4rt_app` の書込み順と存在タイミングがコンテナの TLS モード・機能設定を確定させる。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-ordering.md -->
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | CONFIG_DB への書込み → `p4rt` コンテナ起動 | **強制先行** | 起動後の DB 変更は `systemctl restart p4rt` まで無効 |
+| 2 | `P4RT\|certs` 存否 → `DEVICE_METADATA\|localhost\|x509` フォールバック参照 | 条件分岐（先行優先） | `P4RT\|certs` が存在する場合、`x509` は参照されない |
+| 3 | `server_crt` + `server_key` の同時存在 → TLS 有効化 | **同時必須** | 片方のみ書込み時に起動すると平文 gRPC になる |
+| 4 | `ca_crt` 存在 → `cert_crl_dir` が有効化 | **先行必須** | `ca_crt` なしで `cert_crl_dir` を設定しても CRL チェックは機能しない |
+
+### 主要な制約詳細
+
+**起動時単回読込み (依存 #1)**: `p4rt.sh` L13 の `sonic-cfggen -d -t ${P4RT_VARS_FILE}` は**コンテナ起動時に 1 回だけ**実行される。`p4rt` プロセスは DB 変更を watch しない。したがって `P4RT|certs` や `P4RT|p4rt_app` の変更は `systemctl restart p4rt` によるコンテナ再起動後にのみ反映される。証明書の更新・ポート変更・設定追加を行った場合は必ず再起動が必要（evidence: `p4rt.sh:L13`）。
+
+**`P4RT|certs` → `DEVICE_METADATA|x509` フォールバック順序 (依存 #2)**: `p4rt_vars.j2` L2–4 は `P4RT["certs"]` を先に評価し、存在しない場合のみ `DEVICE_METADATA["x509"]` を代替として `p4rt.sh` に渡す。`p4rt.sh` L21–57 も同様の条件分岐で `${CERTS}` 非空を優先する。`P4RT|certs` が CONFIG_DB に存在する限り、`DEVICE_METADATA|localhost|x509` の内容は完全に無視される（evidence: `p4rt_vars.j2:L2–4`, `p4rt.sh:L21–57`）。
+
+**`server_crt` / `server_key` のアトミック書込み (依存 #3)**: `p4rt.sh` L24–25 は `server_crt` と `server_key` の**両方**が非空かどうかをチェックし、いずれか一方でも空の場合は `--use_insecure_server_credentials` を付与する（エラーにはならない）。TLS を有効化するには、2 つのフィールドを**同一トランザクションで書き込んだ後**にコンテナを起動する必要がある（evidence: `p4rt.sh:L22–28`）。
+
+**`ca_crt` → `cert_crl_dir` の階層依存 (依存 #4)**: CRL チェックを有効にする `--cert_crl_dir` 引数は `p4rt.sh` L33–36 の `ca_crt` 存在ブロック内でのみ評価される。`ca_crt` が未設定の場合、`cert_crl_dir` をどれだけ設定しても CRL チェックは起動せず、引数も付与されない（evidence: `p4rt.sh:L30–37`）。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected -->

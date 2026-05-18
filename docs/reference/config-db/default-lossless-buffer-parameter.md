@@ -220,6 +220,30 @@ show buffer profile
 
 > **スキャン証跡**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のハンドラパス L1894-2010 全行読了。3 件分岐抽出。
 <!-- /handler-branching -->
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`buffermgrdyn` は `DEFAULT_LOSSLESS_BUFFER_PARAMETER` を受信した際、内部ルックアップテーブルの準備状況を確認してから処理する。以下の順序制約が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `BUFFER_POOL|ingress_lossless_pool` が `m_bufferPoolLookup` に登録済み → `DEFAULT_LOSSLESS_BUFFER_PARAMETER` SET 処理 | **強制先行** | pool 未登録時は `task_need_retry` を返して再キュー |
+| 2 | `DEFAULT_LOSSLESS_BUFFER_PARAMETER` の `default_dynamic_th` 設定 → lossless `BUFFER_PROFILE` の命名（`_th<value>` サフィックス）確定 | **強制先行** | `m_defaultThreshold` が空のまま他ポートのバッファ計算が走ると、後から設定時にプロファイル名スキームが変わりキャッシュと乖離 |
+| 3 | `over_subscribe_ratio` 非ゼロ書込み + `m_portInitDone=true` → SAI への SHP 有効化確認（`isSharedHeadroomPoolEnabledInSai`） | **強制先行** | SAI 反映前に ratio を設定しようとすると `task_need_retry` |
+| 4 | `DEFAULT_LOSSLESS_BUFFER_PARAMETER` DEL → `over_subscribe_ratio` を空にリセット → `refreshSharedHeadroomPool` 呼び出し | DEL 受信時即時（過去値は破棄） | 削除後に再設定する場合は再度 SET が必要 |
+
+### 主要な制約詳細
+
+**`ingress_lossless_pool` 先行制約（依存 #1)**: `handleDefaultLossLessBufferParam()` は SET 処理の冒頭で `m_bufferPoolLookup.find(INGRESS_LOSSLESS_PG_POOL_NAME)` を実行し、pool が見つからない場合は `task_need_retry` を返す。このため、`DEFAULT_LOSSLESS_BUFFER_PARAMETER` を CONFIG_DB に書いても、`BUFFER_POOL|ingress_lossless_pool` が `handleBufferPoolTable()` 経由でキャッシュに登録されるまで実際の処理は保留される（evidence: `buffermgrdyn.cpp:1985-1988`）。
+
+**`m_defaultThreshold` 空状態での命名競合（依存 #2)**: `m_defaultThreshold` が未設定（空文字列）の状態で lossless BUFFER_PROFILE を生成すると、プロファイル名に `_th<value>` サフィックスが付加される命名パスを辿る。後から `DEFAULT_LOSSLESS_BUFFER_PARAMETER` の `default_dynamic_th` が設定されると、`m_defaultThreshold` の値次第でプロファイル名が変わり、既存の APPL_DB エントリと内部キャッシュ `m_bufferProfileLookup` の名前が一致しなくなる可能性がある（evidence: `buffermgrdyn.cpp:494-496`）。
+
+**SHP 有効化の SAI 確認（依存 #3)**: ポート初期化完了後（`m_portInitDone=true`）に SHP を無効→有効へ遷移させる場合（`over_subscribe_ratio` を 0 から非ゼロに変更）、`isSharedHeadroomPoolEnabledInSai()` が `APPL_DB` の `BUFFER_POOL_TABLE|ingress_lossless_pool` の `xoff` フィールドを確認する。SAI への反映が完了していなければ `task_need_retry` を返す（evidence: `buffermgrdyn.cpp:2019-2025`, `buffermgrdyn.cpp:2035-2046`）。
+
+> **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2046 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`buffermgrdyn.cpp` L494-496 読了。4 件依存抽出。
+<!-- /ordering -->
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 

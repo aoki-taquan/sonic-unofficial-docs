@@ -399,3 +399,54 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 
 > **Evidence**: `sonic-swss/orchagent/pfcwdorch.cpp:68-71,193-203,533-555,688,998-1058`; `orchagent/qosorch.cpp:2136-2155,2224`; `orchagent/portsorch.cpp:2482-2514`; `sonic-pfcwd.yang:37-38`; `pfcwd/main.py:409,415`; スキャンノート: `meta/_intermediate/cdb-flow/pfc-wd-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 根拠: `pfcwdorch.cpp` L64-338 全行精読。evidence: `meta/_intermediate/cdb-flow/pfc-wd-failure.md`
+
+### タスク処理ループの返値マッピング (doTask, pfcwdorch.cpp:99-113)
+
+| 返値 | ログレベル | 挙動 |
+|------|-----------|------|
+| `task_success` | — | `erase(it++)` 正常完了 |
+| `task_need_retry` | INFO | `++it` 保留・次サイクルで自動再試行 |
+| `task_invalid_entry` | ERROR | `erase(it++)` 恒久スキップ（再投入しない限り処理されない） |
+| `task_failed` (default) | ERROR | `erase(it++)` 恒久スキップ |
+
+### SET (createEntry) 失敗
+
+| ケース | コード箇所 | ログメッセージ | 返値 |
+|--------|-----------|--------------|------|
+| ポート名不正 (`getPort` 失敗) | `pfcwdorch.cpp:193-196` | `"Invalid port interface %s"` | `task_invalid_entry` |
+| 非物理ポート (`port.m_type != PHY`) | `pfcwdorch.cpp:199-202` | `"Interface %s is not physical port"` | `task_invalid_entry` |
+| 不明 `action` 文字列 | `pfcwdorch.cpp:228-231` | `"Invalid PFC Watchdog action %s"` | `task_invalid_entry` |
+| Cisco-8000 で `action=forward` | `pfcwdorch.cpp:233-235` | `"Unsupported action %s for platform %s"` | `task_invalid_entry` |
+| BRCM DLR: SAI switch attr 設定失敗 (最初の port) | `pfcwdorch.cpp:250-251` | `"Failed to set switch level PFC DLR packet action rv : %d"` | `task_invalid_entry` |
+| BRCM DLR: 後続 port の action 不一致 | `pfcwdorch.cpp:260-262` | `"Invalid PFC Watchdog action %s as switch level action %s is set"` | `task_invalid_entry` |
+| 未知フィールド名 | `pfcwdorch.cpp:273-277` | `"Failed to parse PFC Watchdog %s configuration. Unknown attribute %s."` | `task_invalid_entry` |
+| フィールド解析例外 (`std::exception`) | `pfcwdorch.cpp:280-287` | `"Failed to parse PFC Watchdog %s attribute %s error: %s."` | `task_invalid_entry` |
+| フィールド解析例外 (不明) | `pfcwdorch.cpp:291-295` | `"Failed to parse PFC Watchdog %s attribute %s. Unknown error has been occurred"` | `task_invalid_entry` |
+| `detection_time` 欠如 (値 0) | `pfcwdorch.cpp:302-303` | `"PFC_WD_DETECTION_TIME missing"` | `task_invalid_entry` |
+| `pfc_stat_history` 値不正 | `pfcwdorch.cpp:307-308` | `"%s is invalid value for %s"` | `task_invalid_entry` |
+| `startWdOnPort()` 失敗（PFC mask 取得失敗 / lossless TC なし） | `pfcwdorch.cpp:311-314` | `"Failed to start PFC Watchdog on port %s"` | `task_need_retry` |
+
+!!! warning "`task_invalid_entry` は再試行されない"
+    上記の `task_invalid_entry` 返値はすべて `erase(it++)` されエントリがキューから消える。設定誤りを修正するには CONFIG_DB エントリを DEL して正しい値で再投入する必要がある。
+
+!!! note "`startWdOnPort` 失敗は自動再試行"
+    `registerInWdDb()` 内で `getPortPfcWatchdogStatus()` 失敗または lossless TC が空 (PFC 未有効化) の場合、`false` が返り `task_need_retry` となる。`PORT_QOS_MAP` の PFC 設定完了後に次のイベントで自動的に再処理される。
+
+### DEL (deleteEntry) 失敗
+
+| ケース | コード箇所 | ログメッセージ | 返値 |
+|--------|-----------|--------------|------|
+| `stopWdOnPort()` 失敗 | `pfcwdorch.cpp:330-333` | `"Failed to stop PFC Watchdog on port %s"` | `task_failed` → `erase(it++)` |
+
+`deleteEntry` の `task_failed` は `doTask` の `default` 節に落ちるため `erase(it++)` される。`m_pfcwd_ports` へのクリーンアップは行われないため、SAI 側で WD が停止しないまま内部状態が残る可能性がある。
+
+### 全ポート未初期化時の早期リターン
+
+`doTask()` 冒頭 (`pfcwdorch.cpp:68-71`) で `gPortsOrch->allPortsReady()` が `false` なら即 `return`。Consumer キューにある全タスクが保留され、次の orchagent select ループで再到達した際に自動再試行される。エラーログは出力されない。
+
+<!-- /failure -->

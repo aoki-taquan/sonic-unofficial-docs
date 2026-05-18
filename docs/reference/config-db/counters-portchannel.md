@@ -458,6 +458,40 @@ COUNTERS_DB COUNTERS:<rif_oid>  ← SAI 収集値が書き込まれる
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-platform.md`
+
+`COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` の書き込み自体はプラットフォームを問わず同じコードパスを通るが、以下のプラットフォーム固有の差異が存在する。
+
+### VoQ スイッチ — リモート LAG OID が COUNTERS_LAG_NAME_MAP に混在
+
+`gMySwitchType == "voq"` 環境では `portsorch::addLag()` が `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` を付与して `create_lag()` を呼ぶ (`portsorch.cpp:7962-7991`)。さらに `doVoqSystemLagTask()` が CHASSIS_APP_DB から届くリモートシステム LAG エントリに対しても `addLag()` を呼ぶため、**ローカル PortChannel の OID とリモートシステム LAG の OID が COUNTERS_LAG_NAME_MAP に共存する**。キー名はローカルが `PortChannelXXXX`、リモートが `<hostname>|<asic>|PortChannelXXXX` で区別できる。
+
+| スイッチ種別 | COUNTERS_LAG_NAME_MAP に登録されるキー |
+|---|---|
+| 通常スイッチ | `PortChannelXXXX` のみ |
+| VoQ スイッチ (multi-asic) | ローカル `PortChannelXXXX` ＋ リモート `<host>\|<asic>\|PortChannelXXXX` |
+
+### Mellanox — LAG メンバ有効/無効の操作順序が異なる（COUNTERS_DB への影響なし）
+
+Mellanox SAI は collection=false かつ distribution=true の「distribution-only 中間状態」をサポートしないため、`setCollectionOnLagMember()` / `setDistributionOnLagMember()` の呼び出し順が通常とは逆になる (`portsorch.cpp:6361-6382`、コメントに明記)。ただしこれは `SAI_LAG_MEMBER_ATTR_INGRESS_DISABLE` / `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE` のみの問題であり、`COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` の書き込みには影響しない。
+
+### `gTraditionalFlexCounter` による RIF カウンタ登録タイミング差
+
+`gTraditionalFlexCounter = true` 環境（一部旧構成・VS デフォルト）では `intfsorch` がタイマーループで `ASIC_DB VIDTORID` の確定を待ってから `COUNTERS_RIF_NAME_MAP` を書き込む (`intfsorch.cpp:1627`)。`gTraditionalFlexCounter = false` の環境では即座に書き込まれる。前者ではポートチャンネル RIF 作成後、`COUNTERS_RIF_NAME_MAP` への反映まで最大数秒の遅延がある。
+
+### VS（Virtual Switch）— RIF カウンタ値は 0 固定
+
+Virtual Switch SAI（`sonic-sairedis/vslib`）は `SAI_OBJECT_TYPE_ROUTER_INTERFACE` 統計を stub 応答するため、`COUNTERS:<rif_oid>` の IN/OUT パケット・バイト数は常に 0。`RATES:<rif_oid>` の BPS/PPS も計算上 0 となる。`intfstat` は動作するが実トラフィックを反映しない。
+
+### RIF stat セット — プラットフォーム共通
+
+`rifStatIds`（`intfsorch.cpp:49-58`）の 8 統計はすべてのプラットフォームで共通であり、プラットフォームごとに変化しない。SAI が特定の stat に対して `SAI_STATUS_NOT_SUPPORTED` を返した場合、FlexCounter はその stat を 0 で書き込む（エラーをログして継続）。個別 stat の capability チェックはコード中に存在しない。
+
+<!-- /platform -->
+
 ## 運用ヒント
 
 ```bash

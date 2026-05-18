@@ -559,6 +559,7 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
 > **調査根拠**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:44,95,1147-1175,1180-1226`; `src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:20-80,349-388`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:14,25,130-148`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:23,95-100`; `SONiC/doc/smart-switch/high-availability/smart-switch-ha-detailed-design.md:100-200` (2026-05-17)
