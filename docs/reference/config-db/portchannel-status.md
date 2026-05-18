@@ -134,6 +134,32 @@ LAG_TABLE:<lag_name>
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+APPL_DB `LAG_TABLE` への書き込みは **teamsyncd** (カーネル RTM_NEWLINK 駆動) と **teammgrd** (CONFIG_DB PORTCHANNEL 変更駆動) の 2 プロセスが担う。両者の間と orchagent (consumer) 側に以下の順序依存がある。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `APPL_DB LAG_TABLE` 書込み → `STATE_DB LAG_TABLE` 書込み | **強制先行** (teamsyncd 内) | team instance 生成成功後のみ STATE_DB に書かれる |
+| 2 | `PortConfigDone` / `allPortsReady()` → orchagent LAG 処理開始 | **強制先行** | portsyncd ready まで orchagent は LAG_TABLE を処理しない |
+| 3 | `STATE_DB LAG_TABLE` ready → `PORTCHANNEL_MEMBER` SET 処理 | **強制先行** | teammgrd が `isLagStateOk()` チェックで自動リトライ待機 |
+| 4 | `LAG_MEMBER_TABLE` 全 DEL → `LAG_TABLE` DEL | 推奨先行 | 逆順では orchagent が non-empty LAG エラーを返す |
+| 5 | `INTF_TABLE` / `VLAN_MEMBER` DEL → `LAG_TABLE` DEL | **強制先行** (ref_count / VLAN 制約) | 参照解放まで SAI DEL が拒否される |
+
+### 主要な制約詳細
+
+**APPL_DB → STATE_DB 書込み順 (依存 #1)**: teamsyncd `addLag()` は RTM_NEWLINK 受信時にまず `m_lagTable.set(lagName, fvVector)` で APPL_DB を書き込み、その後 `TeamPortSync` オブジェクトの生成に成功した場合のみ `m_stateLagTable.set(lagName, fvVector)` で STATE_DB を書き込む (`teamsync.cpp:157, 175, 203`)。コードコメントに明示: "STATE_DB is written only after the team instance is successfully created to prevent dependent services (e.g. intfmgrd) from acting on a LAG that teamd has not yet finished setting up"。team_init() が EADDRNOTAVAIL で失敗した場合、APPL_DB は書かれても STATE_DB は書かれない中間状態が発生し、次の RTM_NEWLINK で再試行される。
+
+**teammgrd フィールド適用順 (依存 #1 補足)**: `doLagTask()` (`teammgr.cpp:303-323`) のフィールド適用順は (1) `addLag()` → teamd プロセス起動、(2) `setLagAdminStatus()` → `ip link set` でカーネル状態変更（RTM_NEWLINK 経由で teamsyncd が APPL_DB を更新）、(3) `setLagMtu()` → `ip link set mtu` 後に `m_appLagTable.set()` で APPL_DB の `mtu` を直接書込み (`teammgr.cpp:512-515`)、(4) `setLagLearnMode()` / `setLagTpid()` → APPL_DB に直接書込み。`addLag()` が `task_need_retry` を返した場合、後続フィールドは一切処理されない。
+
+**orchagent LAG 処理ブロック (依存 #2)**: orchagent は `allPortsReady()` が true になるまで APPL_DB LAG_TABLE の処理を開始しない (`portsorch.cpp:6513-6517`)。portsyncd が CONFIG_DB|PORT を全件読んで `PortConfigDone` → `PortInitDone` を発行するまで、APPL_DB に LAG_TABLE エントリが書かれても orchagent は SAI `create_lag()` を呼ばない。
+
+**warm reboot 時の一括適用**: teamsyncd は warm reboot 中に `m_lagTable.create_temp_view()` を利用し RTM_NEWLINK イベントを集積する。タイマー満了後 `apply_temp_view()` で APPL_DB に一括反映し、STATE_DB は reconcile 完了後にまとめて書き込まれる (`teamsync.cpp:41-43, 88-89`)。warm reboot 期間中は APPL_DB が古い値のまま STATE_DB が更新されない中間状態が続く。
+<!-- /ordering -->
+
 ## APPL_DB LAG_TABLE と STATE_DB LAG_TABLE の区別
 
 | 側面 | APPL_DB LAG_TABLE | STATE_DB LAG_TABLE |
