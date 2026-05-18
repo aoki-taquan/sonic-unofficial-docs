@@ -267,6 +267,53 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数・上限値 (Phase E)
+
+> 根拠: `srv6orch.cpp` L19-27 (#define 群)、`srv6orch.h` L30、`schema.h` L257,313、`srv6orch.cpp` L108,138,201-210 精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-state-constants.md`
+
+| 定数名 | 値 | 利用箇所 | 設定変更可否 |
+|--------|-----|---------|------------|
+| `SRV6_FLEX_COUNTER_UPDATE_TIMER` | `1` 秒 | MySID 追加後 OID を `FLEX_COUNTER_DB` へ登録するまでの遅延タイマー | 不可（コード変更必須） |
+| `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | FlexCounter が SAI からカウンタをポーリングする間隔 | 不可（コード変更必須） |
+| `SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"SRV6_STAT_COUNTER"` | `FLEX_COUNTER_TABLE` のグループキー | 不可（コード変更必須） |
+| `LOCATOR_DEFAULT_BLOCK_LEN` | `"32"` | ロケータ未登録時のカウンタキープレフィックス長計算フォールバック | `SRV6_MY_LOCATORS` で上書き可 |
+| `LOCATOR_DEFAULT_NODE_LEN` | `"16"` | 同上 | `SRV6_MY_LOCATORS` で上書き可 |
+| `LOCATOR_DEFAULT_FUNC_LEN` | `"16"` | 同上 | `SRV6_MY_LOCATORS` で上書き可 |
+| `LOCATOR_DEFAULT_ARG_LEN` | `"0"` | 同上（カウンタキー計算には含まれない） | `SRV6_MY_LOCATORS` で上書き可 |
+
+### COUNTERS_DB への反映遅延 (最大 11 秒)
+
+```cpp
+// srv6orch.cpp L26-27
+#define SRV6_FLEX_COUNTER_UPDATE_TIMER 1            // OID 登録遅延タイマー（秒）
+#define SRV6_STAT_COUNTER_POLLING_INTERVAL_MS 10000 // FlexCounter ポーリング間隔（ミリ秒）
+```
+
+MySID エントリが ASIC に追加されると `addMySidCounter()` が `m_pending_counters` にカウンタ OID を積む
+（`srv6orch.cpp:201-202`）。その後 `SRV6_FLEX_COUNTER_UPDATE_TIMER = 1` 秒のタイマーで
+`FLEX_COUNTER_DB SRV6_COUNTER_ID_LIST` に OID が書き込まれ、
+syncd FlexCounter が `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000` ms 周期で SAI をポーリングして
+`COUNTERS:<oid>` を書き込む。
+MySID 追加から `COUNTERS:<oid>` 初回値が出現するまでの最大待機時間は **1 + 10 = 11 秒**（`srv6orch.cpp:108,138`）。
+
+### FLEX_COUNTER_TABLE キー固定
+
+`SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP = "SRV6_STAT_COUNTER"` (`srv6orch.h:30`) は
+`FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER` の enable/disable で FlexCounter を一括制御するキーである。
+`flexcounterorch.cpp:64` の `SRV6_KEY = "SRV6"` が `CounterCheckOrch` に渡す識別子であり、
+これを変更することはできない。
+
+### ロケータビット長デフォルトとカウンタキー
+
+`getMySidCounterKey()` (`srv6orch.cpp:177-182`) は `block_len + node_len + func_len` の合計を
+カウンタキーの `/N` プレフィックス長として使用する。
+`SRV6_MY_LOCATORS` にロケータが未登録の場合、デフォルト合計 `32 + 16 + 16 = /64` が使われる。
+`LOCATOR_DEFAULT_ARG_LEN = 0` はキー計算には加算されない（設計上の選択）。
+
+<!-- /constants -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`SRV6_MY_SIDS`](srv6-my-sids.md) — MySID エントリ定義
