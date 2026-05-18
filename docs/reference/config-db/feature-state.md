@@ -462,6 +462,39 @@ APPL_DB PORT_TABLE|* 変更 (port ready)
 | `container_startup.py` | 起動時に `Table.get()` で確認 | コンテナ起動前の状態チェック |
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+### `state` フィールド — FEATURE_EXCLUSION_LIST による例外
+
+`featured` には `FEATURE_EXCLUSION_LIST = {"telemetry", "frr_bmp"}` という除外リストが存在する (`featured:135`)。このリストに含まれる feature は `enable_feature()` / `disable_feature()` をスキップするため、STATE_DB `FEATURE|<name>.state` が **変化しない**。これはプラットフォーム依存ではなく feature 名依存の特殊動作だが、実装上 `is_feature_in_exclusion_list()` が `handler()` の前段チェックとして機能するため、EXCLUSION に含まれる feature はすべてのプラットフォームで STATE_DB 書込みが抑制される。
+
+| feature | STATE_DB `state` 書込み | 根拠 |
+|---------|----------------------|------|
+| `telemetry` | **スキップ** | `FEATURE_EXCLUSION_LIST` — `featured:135,466` |
+| `frr_bmp` | **スキップ** | 同上 |
+| その他すべて | 通常通り `enabled` / `disabled` / `failed` | `enable_feature()` / `disable_feature()` を経由 |
+
+### SpineRouter — systemd auto_restart のみに影響、STATE_DB は変化なし
+
+`device_type == 'SpineRouter'` かつ `feature_name in ['syncd', 'gbsyncd']` の場合、`update_systemd_config()` が `Restart=no` を強制書き込みする (`featured:376-379`)。しかし STATE_DB `FEATURE.state` は依然として `set_feature_state()` により `enabled` / `disabled` / `failed` に設定される。SpineRouter 固有のロジックは **systemd unit ファイルの Restart 設定のみ**に影響し、STATE_DB フィールドには直接の影響を与えない。
+
+### Multi-ASIC — 各 namespace の STATE_DB に同一内容を書込み
+
+multi-ASIC 構成 (`is_multi_npu == True`) では、`FeatureHandler.__init__()` が `device_info.get_namespaces()` で各 namespace を取得し、それぞれの STATE_DB に独立した `Table` オブジェクトを生成する (`featured:151-161`)。`set_feature_state()` は主 STATE_DB への書込みの直後に、各 namespace の `ns_feature_state_tbl` に対しても同一の `('state', state)` を書き込む (`featured:588-590`)。フィールド・値の内容は全 namespace で同一。
+
+### Kubernetes 管理 — `ctrmgrd.py` / `container_startup.py` が追加フィールドを書込み
+
+`set_owner = kube` を設定した feature では、`featured` が `state` を書き込んだ後に `container_startup.py` および `ctrmgrd.py` が追加フィールド (`current_owner` / `remote_state` / `container_stable_version` 等) を書き込む。これらの追加フィールドは Kubernetes クラスタ (`KUBERNETES_MASTER`) と接続できる環境でのみ使用される。ローカル管理 (`set_owner = local`) では `container_startup.py` / `ctrmgrd.py` がこれらのフィールドを書き込まない（デフォルト値のまま）。
+
+| 構成 | `state` | `current_owner` | `remote_state` | `container_stable_version` |
+|------|---------|----------------|----------------|--------------------------|
+| `set_owner = local` | `featured` が書込み | `"local"` (container_startup.py) | `"none"` (初期値のみ) | `""` (書込なし) |
+| `set_owner = kube` | `featured` が書込み | `"kube"` (container_startup.py) | `"pending"` → `"running"` → `"ready"` | `ctrmgrd.py` が書込み |
+
+> **Evidence**: `sonic-host-services/scripts/featured:135` (`FEATURE_EXCLUSION_LIST`)、`featured:466` (`is_feature_in_exclusion_list`)、`featured:376-379` (SpineRouter `Restart=no`)、`featured:142,151-161` (multi-ASIC namespace 初期化)、`featured:585-590` (`set_feature_state` + namespace 書込み)。`sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py:164-186` (`update_state`)、`ctrmgrd.py:593-612` (`do_tag_latest`)
+<!-- /platform -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
