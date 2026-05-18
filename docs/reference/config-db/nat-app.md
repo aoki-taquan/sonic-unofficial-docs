@@ -235,6 +235,59 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`natorch.h` / `natmgr.h` に定義されたマジックナンバー・列挙値で、APPL_DB NAT テーブル群の処理挙動に直接影響する。
+
+### natorch.h — orchagent 側定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `NAT_HITBIT_N_CNTRS_QUERY_PERIOD` | `5` 秒 | NAT カウンタおよびヒットビット問い合わせタイマ周期。`SelectableTimer` の interval に設定 | `natorch.h:37` |
+| `NAT_CONNTRACK_TIMEOUT_PERIOD` | `86400` 秒 (1 日) | conntrack タイムアウト通知タイマ周期。`m_natTimeoutTimer` に設定 | `natorch.h:38` |
+| `NAT_HITBIT_QUERY_MULTIPLE` | `6` | ヒットビット問い合わせ頻度の倍率。`5 秒 × 6 = 30 秒` ごとにヒットビットを SAI から取得 | `natorch.h:39` |
+| `VALUES` | `"Values"` | `NAT_GLOBAL_TABLE` の固定キー文字列。他のキーは ERROR + erase | `natorch.h:36` |
+
+### natmgr.h — cfgmgrd 側タイムアウト境界値
+
+`NAT_GLOBAL_TABLE` フィールドとして APPL_DB に書き込まれるタイムアウト値の有効範囲・デフォルト値定数。
+
+| 定数 | 値 | 対応フィールド | 備考 |
+|-----|-----|-------------|------|
+| `NAT_TIMEOUT_DEFAULT` | `600` 秒 | `nat_timeout` デフォルト | 非 TCP/UDP NAT セッション |
+| `NAT_TIMEOUT_MIN` | `300` 秒 | `nat_timeout` 下限 | CLI バリデーション |
+| `NAT_TIMEOUT_MAX` | `432000` 秒 (5 日) | `nat_timeout` 上限 | CLI バリデーション |
+| `NAT_TCP_TIMEOUT_DEFAULT` | `86400` 秒 (1 日) | `nat_tcp_timeout` デフォルト | TCP NAT セッション |
+| `NAT_TCP_TIMEOUT_MIN` | `300` 秒 | `nat_tcp_timeout` 下限 | CLI バリデーション |
+| `NAT_TCP_TIMEOUT_MAX` | `432000` 秒 (5 日) | `nat_tcp_timeout` 上限 | CLI バリデーション |
+| `NAT_UDP_TIMEOUT_DEFAULT` | `300` 秒 | `nat_udp_timeout` デフォルト | UDP NAT セッション |
+| `NAT_UDP_TIMEOUT_MIN` | `120` 秒 | `nat_udp_timeout` 下限 | CLI バリデーション |
+| `NAT_UDP_TIMEOUT_MAX` | `600` 秒 (10 分) | `nat_udp_timeout` 上限 | CLI バリデーション |
+
+### natmgr.h — エントリ構造定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `TWICE_NAT_ID_MIN` | `1` | `twice_nat_id` 最小値 (YANG `range "1..9999"` と一致) | `natmgr.h:40` |
+| `TWICE_NAT_ID_MAX` | `9999` | `twice_nat_id` 最大値 | `natmgr.h:41` |
+| `L4_PORT_MIN` | `1` | L4 ポート番号最小値。NAPT_TABLE / NAPT_TWICE_TABLE の port フィールドに適用 | `natmgr.h:110` |
+| `L4_PORT_MAX` | `65535` | L4 ポート番号最大値 | `natmgr.h:111` |
+| `NAT_ENTRY_REFRESH_PERIOD` | `86400` 秒 (1 日) | `natsyncd` が conntrack エントリをリフレッシュする通知周期。dynamic エントリの有効性維持に使用 | `natmgr.h:125` |
+
+### プロトコル番号定数
+
+`natmgr.h` に定義されるプロトコル番号リテラル。NAPT_TABLE / NAPT_TWICE_TABLE キーの `<proto>` セグメントのバリデーションに対応。
+
+| 定数 | 値 | 対応プロトコル |
+|-----|-----|--------------|
+| `MATCH_IP_PROTOCOL_ICMP` | `1` | ICMP (NAT テーブルでは NAPT 非対象) |
+| `MATCH_IP_PROTOCOL_TCP` | `6` | TCP (NAPT_TABLE キーの `TCP`) |
+| `MATCH_IP_PROTOCOL_UDP` | `17` | UDP (NAPT_TABLE キーの `UDP`) |
+
+> **スキャン証跡**: `natorch.h` 全行、`natmgr.h` L33-127 読了。定数 20 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/nat-app-constants.md`
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
