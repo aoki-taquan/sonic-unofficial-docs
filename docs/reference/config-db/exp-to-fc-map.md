@@ -437,3 +437,43 @@ EXP 値は 0..7 の範囲のみ有効。`convertFieldValuesToAttributes()` L1150
 | `fc` (value) | `"[0-7]?"` | `max_num_fcs-1`（SAI 問い合わせ依存。YANG の 7 より広い場合も狭い場合もある） |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/exp-to-fc-map-side-effects.md -->
+
+### MAP SET/DEL の直接副作用
+
+| 副作用 | トリガー | ソース |
+|--------|---------|--------|
+| SAI QoS map オブジェクト生成 (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) | SET (新規) | `qosorch.cpp:1189-1213` |
+| SAI QoS map 属性更新 (`set_qos_map_attribute`) | SET (既存) | `qosorch.cpp:204-214` |
+| 参照ポートの MPLS EXP→FC 分類を即時変更 | SET (既存 in-place 更新) | ASIC に伝播 (`qosorch.cpp:151-157`) |
+| SAI QoS map 削除 (`remove_qos_map`) | DEL かつ参照なし | `qosorch.cpp:188-194` |
+| `getTypeMap()` への OID 登録 | SET 新規成功 | `qosorch.cpp:168` |
+| 同上エントリの erase | DEL 成功 | `qosorch.cpp:194` |
+| `m_pendingRemove = true` — 後続 SET を `task_need_retry` に | DEL 時に参照が残っている | `qosorch.cpp:185` |
+
+- **STATE_DB への書き込みなし** — `QosOrch` は `EXP_TO_FC_MAP` の処理で STATE_DB / APPL_DB へ書き込まない。CONFIG_DB → SAI 直結。
+- **APPL_DB への書き込みなし** — CONFIG_DB を直接購読。APPL_DB 中継なし。
+- **in-place 更新の即時伝播** — マップを `modifyQosItem()` で上書きすると、参照しているポート全体の MPLS EXP→FC 分類がポート側の操作なしで即座に変更される。
+
+### PORT_QOS_MAP 経由の間接副作用
+
+MAP OID 解決後、`PORT_QOS_MAP` の `handlePortQosMapTable` が自動再実行されて以下が生じる:
+
+| 副作用 | API | ソース |
+|--------|-----|--------|
+| ポートへの `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` 適用 | `sai_port_api->set_port_attribute()` | `qosorch.cpp:2124-2133` |
+
+MAP が未作成の間は `PORT_QOS_MAP` の処理が `task_need_retry` で保留され (`qosorch.cpp:2124-2129`)、
+MAP 作成完了後の `doTask()` サイクルで自動再処理される。
+
+### m_pendingRemove 連鎖
+
+DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセットされ、
+その後この MAP 名への SET 操作も即 `task_need_retry` を返す (`qosorch.cpp:136-139`)。
+参照側 (`PORT_QOS_MAP.exp_to_fc_map`) の解除後に DEL が再実行されて連鎖が解消する。
+
+<!-- /side-effects -->
