@@ -356,6 +356,49 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通信メカニズム (Phase G)
+
+> 根拠: `orchdaemon.cpp` L312-324、`orch.cpp` L1186-1196、`flexcounterorch.cpp` L64,96,337-339、`srv6orch.cpp` L98-113,261-283,286-312 精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-state-pubsub.md`
+
+`COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` (COUNTERS_DB) は `Srv6Orch` と syncd が書き手となる。
+それぞれの書き込みがどの Redis 通信メカニズムで駆動されるかを以下に示す。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|--------------------|
+| `fpmsyncd` → APPL_DB `SRV6_MY_SID_TABLE` | `ProducerStateTable`（SET/DEL） | `SRV6_MY_SID_TABLE_CHANNEL@0` |
+| APPL_DB `SRV6_MY_SID_TABLE` → `Srv6Orch` | **`ConsumerStateTable`** (LPOP) | `SRV6_MY_SID_TABLE_CHANNEL@0` |
+| CONFIG_DB `SRV6_MY_SIDS` → `Srv6Orch` | **`SubscriberStateTable`** (PSUBSCRIBE) | `__keyspace@4__:SRV6_MY_SIDS\|*` |
+| `FLEX_COUNTER_TABLE\|SRV6` → `Srv6Orch` | `FlexCounterOrch` コールバック (`setCountersState`) | — |
+| `Srv6Orch` → FLEX_COUNTER_DB | `FlexCounterManager::setCounterIdList`（1 秒タイマー後） | `SRV6_STAT_COUNTER:<oid>` |
+| FLEX_COUNTER_DB → syncd | `SubscriberStateTable` (syncd 内部) | — |
+| syncd → COUNTERS_DB `COUNTERS:<oid>` | SAI ポーリング (`HSET`、直接書込み) | — |
+
+### APPL_DB 消費方式: ConsumerStateTable
+
+`Orch::addConsumer()` (`orch.cpp:1186-1195`) は DB 番号で通信方式を切り替える。APPL_DB (db_id=0) は `ConsumerStateTable` ブランチを選択し、fpmsyncd が書き込んだ `ProducerStateTable` イベントを LPOP で取得する。`SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE` / `PIC_CONTEXT_TABLE` の 3 テーブルがこの経路を使用する（evidence: `orchdaemon.cpp:312-324`）。
+
+### CONFIG_DB 消費方式: SubscriberStateTable
+
+`SRV6_MY_SIDS` (CONFIG_DB, db_id=4) は `SubscriberStateTable` ブランチが選択される。`SubscriberStateTable` は Redis keyspace notification を `PSUBSCRIBE __keyspace@4__:SRV6_MY_SIDS|*` で購読し、`hset` / `del` 操作を検出する。フィールド値は通知後に `HGETALL` で取得する。起動時には既存全エントリが `SET_COMMAND` として buffer に積まれ、`doTask` が初回コールされる（evidence: `orch.cpp:1186-1190`）。
+
+### FLEX_COUNTER_TABLE enable/disable: コールバック方式
+
+`FlexCounterOrch::doTask()` が `FLEX_COUNTER_TABLE|SRV6` エントリを処理すると `gSrv6Orch->setCountersState(enable)` を直接呼び出す（`flexcounterorch.cpp:337-339`）。`Srv6Orch` は `FLEX_COUNTER_TABLE` を直接購読しない受動型構造である。`setCountersState(true)` は `srv6_my_sid_table_` 内の全 MySID に対して `addMySidCounter()` を一括実行し `COUNTERS_SRV6_NAME_MAP` を書き込む（evidence: `flexcounterorch.cpp:64,96`）。
+
+### SelectableTimer 経由の FLEX_COUNTER_DB 登録
+
+`addMySidCounter()` は `COUNTERS_SRV6_NAME_MAP` に OID を即時書込みした後、`m_counter_update_timer`（`SRV6_FLEX_COUNTER_UPDATE_TIMER = 1` 秒）を start する。1 秒後に `doTask(SelectableTimer&)` が呼ばれ `m_counter_manager.setCounterIdList()` で FLEX_COUNTER_DB に OID を登録する。syncd は FLEX_COUNTER_DB を購読して `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000` ms ごとに SAI からポーリングし `COUNTERS|<oid>` を書き込む（evidence: `srv6orch.cpp:286-312`）。
+
+### COUNTERS_DB への書き込みは ProducerStateTable 非経由
+
+`Srv6Orch` は `COUNTERS_SRV6_NAME_MAP` を `Table::set()` / `Table::hdel()` で直接書き込む（`m_mysid_counters_table` は `Table` 型）。syncd も `COUNTERS|<oid>` を SAI ポーリング後 `HSET` で直接書き込む。どちらも `ProducerStateTable` / チャンネル PUBLISH を使用しないため、COUNTERS_DB の変更は Redis keyspace notification のみで追跡可能（pub/sub チャンネルは存在しない）。
+
+<!-- /pubsub -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`SRV6_MY_SIDS`](srv6-my-sids.md) — MySID エントリ定義
