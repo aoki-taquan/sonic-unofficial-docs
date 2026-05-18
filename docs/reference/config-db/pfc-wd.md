@@ -450,3 +450,64 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 `doTask()` 冒頭 (`pfcwdorch.cpp:68-71`) で `gPortsOrch->allPortsReady()` が `false` なら即 `return`。Consumer キューにある全タスクが保留され、次の orchagent select ループで再到達した際に自動再試行される。エラーログは出力されない。
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`PfcWdOrch` および `orchdaemon` が使用するフィールド名・数値・テーブル名はほぼすべて `#define` または静的マップで固定されている。CONFIG_DB 入力で変動するのは `<port-name>` の動的部分と `POLL_INTERVAL` / `detection_time` / `restoration_time` の数値のみ。
+
+> evidence: `meta/_intermediate/cdb-flow/pfc-wd-constants.md`
+
+### フィールド名マクロ（`sonic-swss/orchagent/pfcwdorch.cpp:14-20`）
+
+| マクロ | 値 | 用途 |
+|--------|----|------|
+| `PFC_WD_GLOBAL` | `"GLOBAL"` | グローバルキー文字列 |
+| `PFC_WD_ACTION` | `"action"` | action フィールド名 |
+| `PFC_WD_DETECTION_TIME` | `"detection_time"` | 検出時間フィールド名 |
+| `PFC_WD_RESTORATION_TIME` | `"restoration_time"` | 復帰時間フィールド名 |
+| `PFC_STAT_HISTORY` | `"pfc_stat_history"` | 統計履歴フィールド名 |
+| `BIG_RED_SWITCH_FIELD` | `"BIG_RED_SWITCH"` | BRS フィールド名（YANG 外） |
+| `PFC_WD_IN_STORM` | `"storm"` | APPL_DB ストーム状態値 |
+
+### 数値定数（`pfcwdorch.cpp:22-29`）
+
+| マクロ | 値 | 用途 |
+|--------|----|------|
+| `PFC_WD_DETECTION_TIME_MAX` | `5000` ms | `detection_time` 上限（YANG range と一致） |
+| `PFC_WD_DETECTION_TIME_MIN` | `100` ms | `detection_time` 下限 |
+| `PFC_WD_RESTORATION_TIME_MAX` | `60000` ms | `restoration_time` 上限 |
+| `PFC_WD_RESTORATION_TIME_MIN` | `100` ms | `restoration_time` 下限 |
+| `PFC_WD_POLL_TIMEOUT` | `5000` ms | Consumer ポーリングタイムアウト |
+| `PFC_WD_TC_MAX` | `8` | サポート最大 TC 数 |
+| `COUNTER_CHECK_POLL_TIMEOUT_SEC` | `1` 秒 | カウンタチェック周期 |
+
+### ポーリング初期値（`orchdaemon.cpp:24` / `schema.h:284`）
+
+| マクロ | 値 | 用途 |
+|--------|----|------|
+| `PFC_WD_POLL_MSECS` | `100` ms | orchagent 起動時デフォルトポーリング間隔。`PFC_WD\|GLOBAL` の `POLL_INTERVAL` 書込みで上書きされる |
+| `POLL_INTERVAL_FIELD` | `"POLL_INTERVAL"` | GLOBAL キーのポーリング間隔フィールド名（`schema.h:320`） |
+
+### テーブル名マクロ（`sonic-swss-common/common/schema.h`）
+
+| マクロ | 値 | evidence |
+|--------|----|----------|
+| `APP_PFC_WD_TABLE_NAME` | `"PFC_WD_TABLE"` | `schema.h:53` |
+| `PFC_WD_STATE_TABLE` | `"PFC_WD_STATE_TABLE"` | `schema.h:296` |
+| `PFC_WD_PORT_COUNTER_ID_LIST` | `"PORT_COUNTER_ID_LIST"` | `schema.h:297` |
+| `PFC_WD_QUEUE_COUNTER_ID_LIST` | `"QUEUE_COUNTER_ID_LIST"` | `schema.h:298` |
+| `PFC_WD_QUEUE_ATTR_ID_LIST` | `"QUEUE_ATTR_ID_LIST"` | `schema.h:299` |
+
+### `action` 文字列マッピング（`pfcwdorch.cpp:147-169`）
+
+`pfcStrToAction` / `pfcActionToStr` の静的マップで固定。これら以外の文字列は `task_invalid_entry` となる。
+
+| CONFIG_DB 値 | enum | 逆変換文字列 |
+|--------------|------|--------------|
+| `"forward"` | `PFC_WD_ACTION_FORWARD` | `"forward"` |
+| `"drop"` | `PFC_WD_ACTION_DROP` | `"drop"` |
+| `"alert"` | `PFC_WD_ACTION_ALERT` | `"alert"` |
+| その他 | `PFC_WD_ACTION_UNKNOWN` | — (task_invalid_entry) |
+
+<!-- /constants -->
