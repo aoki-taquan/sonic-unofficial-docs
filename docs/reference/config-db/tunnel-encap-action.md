@@ -121,6 +121,35 @@ P4RT controller が単一 WriteRequest でこれらを混在させた場合で�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`set_p2p_tunnel_encap_nexthop` エントリが APPL_DB に書かれると `NextHopManager` が以下のテーブル・リソースを暗黙的に参照する。YANG 未定義テーブルのため、すべての依存はコードのみに現れる。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 不在時の挙動 | evidence |
+|--------------------------|---------|------|------------|----------|
+| `FIXED_TUNNEL_TABLE` (`param/tunnel_id`) | 先行必須 (GRE Tunnel Manager + P4OidMapper) | 常時。`gre_tunnel_id` が空でない場合に即時存在チェック | `SWSS_RC_NOT_FOUND` → SET 全体失敗 | `next_hop_manager.cpp` L124-137 |
+| Router Interface (RIF) | 間接参照 (GRE Tunnel から自動取得) | GRE Tunnel エントリが保持する `router_interface_id` を自動コピー。コントローラは明示不可 (禁止フィールド) | GRE Tunnel が正常に作成されていれば問題なし | `next_hop_manager.cpp` L142-143 |
+| Neighbor Entry (`encap_dst_ip` 由来) | P4OidMapper 照合 (必須) | GRE Tunnel の `neighbor_id`（= `encap_dst_ip`）で Neighbor を検索。BRCM SAI 要件から nexthop 作成前に存在が必要 | `SWSS_RC_NOT_FOUND` → SET 全体失敗 | `next_hop_manager.cpp` L147-168 |
+| SAI Tunnel OID (P4OidMapper) | OID 解決 (`getOID`) | `prepareSaiAttrs()` 内で `SAI_NEXT_HOP_ATTR_TUNNEL_ID` に設定するため OID を取得 | GRE Tunnel 作成済みであれば自動解決 | `next_hop_manager.cpp` L210-221 |
+| WCMP / Route (下流) — DEL 時 | ref_count ガード | nexthop の `ref_count > 0` 中は DEL 不可 | `SWSS_RC_INVALID_PARAM` → DEL 失敗。下流を先に DEL してから nexthop DEL | `next_hop_manager.cpp` L181-195 |
+
+!!! note "GRE Tunnel 先行作成が前提"
+    `FIXED_NEXTHOP_TABLE` のエントリは `FIXED_TUNNEL_TABLE` エントリなしでは常に失敗する。
+    GRE Tunnel 作成が完了した後でなければ nexthop を書いてはならない。
+    P4Orch 内部の優先順（GRE Tunnel 4位 → NextHop 5位）により、同一バッチ内でも自動的に
+    GRE Tunnel が先処理される。
+
+!!! warning "Neighbor の事前存在 (BRCM SAI 要件)"
+    `encap_dst_ip` に対応する Neighbor エントリが P4OidMapper に登録されていない場合、
+    nexthop の SAI 作成は BRCM SAI エラーとなる。
+    GRE Tunnel 作成が正常に完了しているならば Neighbor も存在するはずだが、
+    手動で APPL_DB を操作する場合は注意が必要。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-cross-refs.md`
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来デフォルト・暗黙挙動
 
