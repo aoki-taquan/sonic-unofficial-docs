@@ -155,6 +155,24 @@ CONSOLE_SWITCH|console_mgmt
 | 5 | `baud_rate` 欠如 → 接続拒否 | 必須フィールド | CLI では required で防御済み |
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+`CONSOLE_PORT` テーブルが直接・間接的に参照するテーブルと参照方向の一覧。
+
+| 参照方向 | 起点 | 相手テーブル | 条件 |
+|---------|------|-------------|------|
+| CONSOLE_PORT → | `consutil connect` 実行時 | `CONSOLE_SWITCH\|console_mgmt` | `enabled` フラグと `default_escape_char` を参照。disabled の場合は接続を拒否 (consutil/lib.py:91-98) |
+| CONSOLE_PORT → STATE_DB | 接続確立時 (write) | `STATE_DB\|CONSOLE_PORT\|<line>` | `ConsolePortState` が `state` / `pid` / `start_time` を STATE_DB へ書き込む (consutil/lib.py:374-380) |
+| CONSOLE_PORT ← STATE_DB | `show console` 実行時 (read) | `STATE_DB\|CONSOLE_PORT\|<line>` | `LinksDb._get_all_ports()` が STATE_DB から接続状態を読み取り、表示に利用 (consutil/lib.py:120) |
+
+### 詳細
+
+**`CONSOLE_SWITCH|console_mgmt` (先行必須)**: `consutil connect` は内部で `LinksDb._get_all_ports()` を呼び出し、最初に `CONSOLE_SWITCH|console_mgmt.enabled` の値を確認する。`enabled = "no"` またはエントリ不在の場合、`CONSOLE_PORT` の設定が存在しても接続を拒否し `default_escape_char` も `None` に固定される (consutil/lib.py:91-98)。`CONSOLE_PORT` は実質的に `CONSOLE_SWITCH` の有効化を前提とした従属テーブルである。
+
+**`STATE_DB.CONSOLE_PORT` (双方向)**: `consutil connect` が接続を確立すると `ConsolePortState.__init__()` (lib.py:374) が `STATE_DB|CONSOLE_PORT|<line_num>` に `state`・`pid`・`start_time` の 3 フィールドを書き込む。接続終了時には同 key を削除する。一方、`show console` 実行時は `_get_all_ports()` (lib.py:120) が同 key を読み取り、現在接続中のライン・PID・開始時刻を表示する。CONFIG_DB と STATE_DB の同名テーブルが対になって機能する構成である。
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
