@@ -171,6 +171,43 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 | `sonic-events-bgp` | BGP イベント |
 | `sonic-events-dhcp-relay` | DHCP relay イベント |
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`eventd` は起動時に複数のサービスを順序付きで初期化し、その後イベントキャプチャのライフサイクルを厳格な状態遷移で管理する。誤った順序での操作はエラーまたはデータロスを招く。
+
+### 起動時の初期化順序
+
+| # | ステップ | 必須順序 | 根拠 |
+|---|---------|---------|------|
+| 1 | ZMQ コンテキスト生成 (`zmq_ctx_new`) | **最先行** | 以降の全サービスが zctx に依存する |
+| 2 | `eventd_proxy::init()` — XSUB/XPUB/CAPTURE ソケットのバインド | proxy init 完了を待つ (`m_init_done` ポーリング) | publisher/subscriber が接続を試みる前に XSUB/XPUB エンドポイントが Listen 状態でなければならない (`eventd.cpp:680`) |
+| 3 | `event_service::init_server` — 制御チャネル初期化 | proxy init 完了後 | 制御チャネルはプロキシのバックエンドを利用する |
+| 4 | `stats_collector::start()` — COUNTERS_DB 接続 + collector/writer スレッド起動 | proxy init 完了後 | collector スレッドが subscriber を作成してすべてのイベントを受信し始める |
+| 5 | `capture_service` 作成 + `INIT_CAPTURE` — SUB ソケット接続 | stats 起動後 | capture サービスは stats_instance を参照してカウンタをインクリメントする (`eventd.cpp:694`) |
+| 6 | `START_CAPTURE` — キャプチャ開始 | `INIT_CAPTURE` 完了確認後 (`m_cap_run` ポーリング) | NEED_INIT → INIT_CAPTURE → START_CAPTURE の単方向遷移のみ許可; `(ctrl - m_ctrl) == 1` のアサーションで強制 (`eventd.cpp:557`) |
+
+### キャプチャライフサイクルの順序制約
+
+`capture_control_t` は `NEED_INIT(0) → INIT_CAPTURE(1) → START_CAPTURE(2) → STOP_CAPTURE(3)` の単調増加で管理される。**逆順・スキップは不可**。
+
+| 操作 | 前提状態 | 後続制約 |
+|------|---------|---------|
+| `EVENT_CACHE_INIT` | キャプチャ不問 (既存を reset してから再作成) | `EVENT_CACHE_START` が必要 |
+| `EVENT_CACHE_START` | `INIT_CAPTURE` 完了済み (`capture != NULL`) | heartbeat を pause (`heartbeat_ctrl(true)`) する |
+| `EVENT_CACHE_STOP` | `START_CAPTURE` 済み | `STOP_CAPTURE` は `CACHE_DRAIN_IN_MILLISECS` 待機後に join → capture を reset; その後 heartbeat を再開 (`heartbeat_ctrl()`) |
+| `EVENT_CACHE_READ` | `capture == NULL`（STOP 完了後のみ） | STOP 前に READ を呼ぶとエラー (`"Cache is not stopped yet."`) |
+
+### ハートビートと caching の排他
+
+`stats_collector::run_collector()` のハートビート発行ループは `m_pause_heartbeat` フラグで制御される。`EVENT_CACHE_START` 受信時に pause され、`EVENT_CACHE_STOP` 完了時に resume される。これにより**キャプチャ中はハートビートイベントがカウンタに混入しない** (`eventd.cpp:736, 757`)。
+
+### `evprofile` 読み込みと event 処理の依存
+
+`/etc/evprofile/default.json` はプロセス起動時に `static_event_map` として読み込まれる。この読み込みが完了する前に `event_publish()` が呼ばれると、イベントプロファイルが未登録のまま処理が走る可能性がある。ファイルが存在しない場合はイベントプロファイルなしで動作し、すべてのイベントが `enable=true` 扱いとなる（HLD section 3.1.2 による）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
