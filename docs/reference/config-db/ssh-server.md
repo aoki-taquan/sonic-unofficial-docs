@@ -359,3 +359,63 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 
 詳細根拠は `meta/_intermediate/cdb-flow/ssh-server-failure.md` を参照。
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`SSH_SERVER` テーブルの処理に関わる、CONFIG_DB / YANG で管理されない実装定数の一覧。出典は `sonic-host-services/scripts/hostcfgd`。
+
+### sshd_config ファイルパス
+
+| 定数名 | 値 | 用途 |
+|--------|----|------|
+| `SSH_CONFG` | `/etc/ssh/sshd_config` | sshd 本番設定ファイル (読込元・最終出力先) |
+| `SSH_CONFG_TMP` | `/etc/ssh/sshd_config.tmp` | 編集作業用一時ファイル (`sshd -T` 検証後に `os.rename()` で置換) |
+
+ソース: `hostcfgd` L32-33
+
+### フィールド → sshd_config ディレクティブ名マッピング (`SSH_CONFIG_NAMES`)
+
+| CONFIG_DB フィールド | sshd_config ディレクティブ |
+|--------------------|--------------------------|
+| `authentication_retries` | `MaxAuthTries` |
+| `login_timeout` | `LoginGraceTime` |
+| `ports` | `Port` |
+| `inactivity_timeout` | `ClientAliveInterval` |
+| `permit_root_login` | `PermitRootLogin` |
+| `password_authentication` | `PasswordAuthentication` |
+| `ciphers` | `Ciphers` |
+| `kex_algorithms` | `KexAlgorithms` |
+| `macs` | `MACs` |
+
+ソース: `hostcfgd` L67-76。`max_sessions` はこのマッピングに含まれず、PAM limits (`/etc/security/limits.conf`) 経由で制御される。
+
+### 整数フィールドの実装上の範囲チェック (`SSH_MIN_VALUES` / `SSH_MAX_VALUES`)
+
+| フィールド | 実装最小値 | 実装最大値 | YANG range | 備考 |
+|-----------|----------|----------|-----------|------|
+| `authentication_retries` | **3** | 100 | `1..100` | 実装最小値は YANG より厳しい（OpenSSH 推奨下限） |
+| `login_timeout` | 1 | 600 | `1..600` | YANG と一致 |
+| `ports` | 1 | 65535 | `1..65535` | YANG と一致 |
+| `inactivity_timeout` | 0 | 35000 | `0..35000` | YANG と一致 |
+| `max_sessions` | 0 | 100 | `0..100` | YANG と一致 |
+
+ソース: `hostcfgd` L62-66。範囲外の整数フィールドは `LOG_ERR` + `continue` でスキップされ、残りのフィールドのみ sshd_config.tmp に適用される（部分適用）。
+
+### PAM limits 設定ファイルパス
+
+| 定数名 | 値 | 用途 |
+|--------|----|------|
+| `PAM_LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/pam_limits.j2` | PAM pam-limits 設定生成テンプレート |
+| `LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/limits.conf.j2` | `/etc/security/limits.conf` 生成テンプレート |
+| `PAM_LIMITS_CONF` | `/etc/pam.d/pam-limits-conf` | PAM pam-limits モジュール設定出力先 |
+| `LIMITS_CONF` | `/etc/security/limits.conf` | リソース制限設定出力先 |
+
+ソース: `hostcfgd` L81-84。`max_sessions = 0` の場合は `self.max_sessions = None` がセットされ、テンプレートで制限なし扱いになる (`hostcfgd` L1439-1440)。
+
+詳細根拠は `meta/_intermediate/cdb-flow/ssh-server-constants.md` を参照。
+<!-- evidence: sonic-host-services/scripts/hostcfgd L32-33 (SSH_CONFG, SSH_CONFG_TMP) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L61-76 (SSH_INT_VALUES, SSH_MIN_VALUES, SSH_MAX_VALUES, SSH_CONFIG_NAMES) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L81-84 (PAM_LIMITS_CONF_TEMPLATE, LIMITS_CONF_TEMPLATE, PAM_LIMITS_CONF, LIMITS_CONF) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1439-1440 (max_sessions=0 → None) -->
+<!-- /constants -->
