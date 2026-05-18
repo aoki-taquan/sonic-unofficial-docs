@@ -568,4 +568,20 @@ ssh_handler("POLICIES", SET, {inactivity_timeout:"20"})
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:2478,2481` (subscribe)、`hostcfgd:2528` (listen)、`hostcfgd:2297-2300` (`ssh_handler`)、`hostcfgd:2438-2440` (`serial_console_config_handler`)、`hostcfgd:2454-2466` (`make_callback`); 詳細分析は `meta/_intermediate/cdb-flow/cli-config-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: SERIAL_CONSOLE / SSH_SERVER は host 単位で適用される host-only 設定であり、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SSH / シリアルコンソール設定は SAI 非経由。`hostcfgd` が Linux `sshd_config` / PAM limits / `sysctl` ファイルを直接書き換えるのみ |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `SshServer` / `SerialConsoleCfg` はいずれも host CONFIG_DB (`ConfigDBConnector()` 引数なし) のみを購読。`asicN` namespace を iterate しない (`hostcfgd:2182` で `is_multi_npu` 取得するが SSH/シリアル経路に渡されない) |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `SSH_SERVER` / `SERIAL_CONSOLE` テーブルは host scope。chassis 全体での集中適用機構はなく、各 host の `hostcfgd` が独立に `sshd_config` / PAM を再生成する |
+| ベンダー固有モジュール | なし | community master の SSH スタックは OpenSSH (Debian 標準)。`files/image_config/cli_sessions/` にプラットフォーム別差し替え機構なし |
+| テンプレート内分岐 | プラットフォーム条件なし | `tmout-env.sh.j2` / `sysrq-sysctl.conf.j2` を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット。分岐は `SERIAL_CONSOLE.POLICIES` フィールド値のみ |
+
+詳細根拠は `meta/_intermediate/cdb-flow/cli-config-platform.md` を参照。
+<!-- /platform -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
