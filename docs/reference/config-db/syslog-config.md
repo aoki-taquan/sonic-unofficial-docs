@@ -353,6 +353,26 @@ make_callback() で (key, op, data) を生成
 > **Evidence**: `sonic-host-services/scripts/hostcfgd` L2499-2503 (subscribe)、L2410-2423 (rsyslog_handler/rsyslog_config_handler/rsyslog_server_handler)、L1695-1743 (RSyslogCfg クラス)、L2528 (listen/init_data_handler); 詳細分析 `meta/_intermediate/cdb-flow/syslog-config-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: `SYSLOG_CONFIG|GLOBAL` の各フィールド (`format` / `severity` / `rate_limit_interval` / `rate_limit_burst` / `welf_firewall_name`) の処理ロジックに ASIC 種別・multi-asic 構成・chassis 構成・ベンダー固有の分岐はない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `SYSLOG_CONFIG` は SAI 非経由。`hostcfgd RSyslogCfg` クラス (L1695-1743) 全体に `platform` / `asic` / `vendor` 参照なし |
+| multi-asic (`NUM_ASIC > 1`) | 受信 IP のみ変化、設定処理は同一 | `rsyslog-config.sh` が Multi-ASIC で `docker0` IP を選択するが、`SYSLOG_CONFIG|GLOBAL` フィールドの処理経路 (`RSyslogCfg.update_rsyslog_config`) には影響しない。`is_multi_npu` フラグは `HostConfigDaemon.__init__` で設定されるが `RSyslogCfg` には渡されない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `SYSLOG_CONFIG` は host scope。各 line card host の `hostcfgd` が独立に `rsyslog.conf` を再生成 |
+| SmartSwitch / DPU | 影響なし | `hostcfgd` / `rsyslog.conf.j2` / `rsyslog-config.sh` のいずれにも SmartSwitch / DPU 固有の分岐なし |
+| テンプレート内分岐 (`rsyslog.conf.j2`) | プラットフォーム条件なし | L51-52 (`format` / `welf_firewall_name`) / L92 (`severity`) に `platform` / `chassis` / `namespace` 条件なし |
+
+**補足 — Multi-ASIC での受信 IP 変化について**:
+
+Multi-ASIC 構成では `rsyslog-config.sh` が `udp_server_ip` に `docker0` の IP を採用する（シングル NPU では `lo` アドレス）。この変化は rsyslog の**受信側**設定（どの IP でコンテナからのログを受け取るか）であり、`SYSLOG_CONFIG|GLOBAL` の `format` / `severity` / `rate_limit_*` を処理する経路とは独立している。
+
+詳細根拠は `meta/_intermediate/cdb-flow/syslog-config-platform.md` を参照。
+<!-- /platform -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
