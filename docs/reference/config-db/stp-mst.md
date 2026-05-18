@@ -1,6 +1,6 @@
 ---
 title: STP_MST_INST / STP_MST_PORT テーブル
-description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B 分析。"
+description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B+C 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -269,6 +269,74 @@ STP|GLOBAL (stpGlobalTask=true)
 PVST 系との差異: `STP_MST_INST` は `stpVlanTask` を必要としない。MST はインスタンスベースであり VLAN 単位のシーケンスに依存しない。
 
 <!-- /ordering -->
+
+---
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-cross-refs.md -->
+
+`stpmgrd` が `STP_MST_INST` / `STP_MST_PORT` のイベントを処理する際、以下のテーブルを暗黙的に参照・依存する。
+
+### STP_MST_INST が依存するテーブル
+
+| 参照テーブル | DB | 参照方法 | 目的 | evidence |
+|---|---|---|---|---|
+| `STP\|GLOBAL` | CONFIG_DB | `stpGlobalTask` フラグ | 起動ガード — GLOBAL 受信前は全イベントを保留 | `stpmgr.cpp:1027-1028` |
+| `STP_PORT` | CONFIG_DB | `stpPortTask` フラグ / `isStpPortEmpty()` | STP_PORT が存在する場合はその受信完了を待機 | `stpmgr.cpp:1027-1028, 1326-1339` |
+
+`isStpPortEmpty()` は `m_cfgStpPortTable.getKeys()` で CONFIG_DB の `STP_PORT` キー一覧を取得し、
+空なら即時通過、存在すれば `stpPortTask = true` まで保留する:
+
+```cpp
+// stpmgr.cpp:1326-1339
+bool StpMgr::isStpPortEmpty()
+{
+    vector<string> portKeys;
+    m_cfgStpPortTable.getKeys(portKeys);
+    if (portKeys.empty())
+        return true;
+    return false;
+}
+```
+
+### STP_MST_PORT が依存するテーブル
+
+| 参照テーブル | DB | 参照方法 | 目的 | evidence |
+|---|---|---|---|---|
+| `STP\|GLOBAL` | CONFIG_DB | `stpGlobalTask` フラグ | 起動ガード — GLOBAL 受信前は保留 | `stpmgr.cpp:1160` |
+| `STP_MST_INST` | CONFIG_DB | `stpMstInstTask` フラグ | MST_INST の最初の処理完了後のみ動作 | `stpmgr.cpp:1160` |
+| `STP_PORT` | CONFIG_DB | `stpPortTask` フラグ | STP_PORT 受信完了後のみ動作 | `stpmgr.cpp:1160` |
+
+```cpp
+// stpmgr.cpp:1160-1161
+if (stpGlobalTask == false || stpMstInstTask == false || stpPortTask == false)
+    return;
+```
+
+### 内部マップ (DB テーブルではない)
+
+`m_vlanInstMap[MAX_VLANS]` は VLAN ID → MST インスタンス ID を保持するインメモリ配列。
+`STP_MST_INST` の SET/DEL 処理時に `updateVlanInstanceMap()` で更新される。
+このマップは PVST 側の `STP_VLAN` 処理 (`doStpVlanTask`) でも参照されるが、
+DB テーブルへの直接読み出しは発生しない。
+
+| マップ | 更新タイミング | 参照タイミング |
+|---|---|---|
+| `m_vlanInstMap[vlan_id]` | `STP_MST_INST` SET/DEL | `STP_VLAN` SET/DEL, `STATE_VLAN_MEMBER` SET/DEL |
+
+証跡: `stpmgr.cpp:1067, 1105, 1454-1470`
+
+### このテーブルを参照する側
+
+| 参照元 | 参照フィールド / 用途 | evidence |
+|---|---|---|
+| `STP_VLAN` 処理 | `m_vlanInstMap[vlan_id]` — インスタンス ID 解決 | `stpmgr.cpp:257-288` |
+| `STATE_VLAN_MEMBER` 処理 | `m_vlanInstMap[vlan_id]` — メンバ変更通知 | `stpmgr.cpp:711, 746` |
+| `STP_MST_PORT` | `stpMstInstTask` フラグ — 起動ガード | `stpmgr.cpp:1160` |
+
+<!-- /cross-refs -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
