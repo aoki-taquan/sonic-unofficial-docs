@@ -370,4 +370,44 @@ APPL_DB: PORT_TABLE PortInitDone + PortConfigDone
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 証跡: `meta/_intermediate/cdb-flow/lldp-port-constants.md`  
+> ソース: `dockers/docker-lldp/lldpmgrd`, `dockers/docker-lldp/lldpd.conf.j2`, `src/sonic-yang-models/yang-models/sonic-lldp.yang`
+
+### lldpmgrd Python 定数（LLDP_PORT の retry / timeout 制御）
+
+| 定数名 | 値 | ファイル:行 | 用途 |
+|-------|----|-----------|------|
+| `PORT_INIT_TIMEOUT` | `300` 秒 | `lldpmgrd:33` | PortInitDone / PortConfigDone 待機上限。超過すると強制 `lldpcli resume` を実行し、未設定ポートの誤 portid 広告リスクがある |
+| `FAILED_CMD_TIMEOUT` | `6` 秒 | `lldpmgrd:34` | lldpcli 失敗時の再試行インターバル |
+| `RETRY_LIMIT` | `5` 回 | `lldpmgrd:35` | per-port lldpcli の最大再試行回数。超過すると当該ポートの alias/description が lldpd に未反映のまま継続（silent drop） |
+| `SELECT_TIMEOUT_MS` | `10000` ms | `lldpmgrd:291` | Redis select ループのタイムアウト。`process_pending_cmds()` の実行周期（約 10 秒）を兼ねる |
+| `REDIS_TIMEOUT_MS` | `0` | `lldpmgrd:50` | DBConnector タイムアウト（0 = ブロッキング） |
+
+### lldpd.conf.j2 — per-port portidsubtype ハードコード
+
+コンテナ起動時に `sonic-cfggen` が展開する Jinja2 テンプレートの固定値。
+
+| 設定内容 | 固定値 | ソース行 | 説明 |
+|---------|-------|---------|------|
+| グローバル portidsubtype 初期値 | `ifname` | `lldpd.conf.j2:31` | 起動時に全フロントエンドポートへ適用。lldpmgrd が後で per-port `local <alias>` に上書きする二段構成 |
+| lldpd 起動状態 | `pause` | `lldpd.conf.j2:33` | コンテナ起動直後は LLDP PDU 送出を停止。lldpmgrd の `lldpcli resume` まで継続 |
+| eth0 portidsubtype | `local <MGMT_PORT.alias>` / `local eth0` | `lldpd.conf.j2:17-20` | MGMT_PORT に alias が存在する場合は alias を使用、なければポート名 `eth0`。`CONFIG_DB LLDP_PORT` は参照しない |
+
+### YANG default 値（LLDP_PORT フィールド）
+
+`sonic-lldp.yang` の `lldp_mode_config` grouping に定義されているが、`lldpmgrd` は `LLDP_PORT` テーブルを直接購読しないため、これらの YANG default は CONFIG_DB バリデーション上の意味しか持たない。
+
+| フィールド | YANG default | lldpmgrd 読み取り | 実効 |
+|-----------|-------------|-----------------|------|
+| `enabled` | `true` | 読まれない（dead field） | YANG バリデーション時のみ参照。lldpd の実動作はポート oper_status で間接制御 |
+| `mode` | なし（`RECEIVE` / `TRANSMIT` の 2 値のみ） | 読まれない（dead field） | lldpd 組み込みデフォルト（双方向 rx+tx）が有効 |
+
+!!! warning "RETRY_LIMIT 超過は silent drop"
+    `lldpcli configure ports <ifname>` が `RETRY_LIMIT=5` 回超えて失敗すると、当該ポートの `portidsubtype` / `description` が lldpd に反映されないまま継続する（`lldpmgrd:193-196`）。ポートの再設定は次回 APPL_DB から oper_status イベントが届くまで再試行されない。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 1c2f663967b9 -->
