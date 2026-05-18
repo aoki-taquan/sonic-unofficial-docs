@@ -255,6 +255,38 @@ evidence: `rsyslog-container.conf.j2:63` / `meta/_intermediate/cdb-flow/syslog-c
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `containercfgd.py` 全行精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-feature-side-effects.md`
+
+`containercfgd` (`SyslogHandler`) は `SYSLOG_CONFIG_FEATURE` を **CONFIG_DB からの読取専用**で使用し、いかなる DB へも書き戻さない。副次書込はファイルシステムおよびプロセス管理に閉じる。
+
+### 副次 DB 書込一覧
+
+| 経路 | 操作 | 対象 DB / テーブル | トリガ条件 | evidence |
+|------|------|--------------------|-----------|---------|
+| — | なし | CONFIG_DB | — | `containercfgd.py` に `set`/`hset`/`publish` 呼び出しなし |
+| — | なし | APPL_DB / STATE_DB / その他 | — | DB 接続自体が存在しない |
+
+### ファイルシステム・プロセスへの副次作用
+
+| 操作 | 対象 | 条件 | evidence |
+|------|------|------|---------|
+| 書込 (新規/上書き) | `/tmp/rsyslog.conf` (一時ファイル) | `rate_limit_interval` / `rate_limit_burst` 変更検知時 | `containercfgd.py:152-158` |
+| コピー | `/tmp/rsyslog.conf` → `/etc/rsyslog.conf` | 同上 | `containercfgd.py:158` |
+| プロセス再起動 | `supervisorctl restart rsyslogd` | 同上 | `containercfgd.py:159` |
+| 削除 | `/tmp/rsyslog.conf` | 次回 `update_syslog_config()` 呼出の冒頭 | `containercfgd.py:152-153` |
+
+### ノーオペレーション条件
+
+値が変化しない場合 (`new_interval == current_interval` かつ `new_burst == current_burst`) は
+`"Syslog rate limit configuration does not change, ignore it"` を LOG_NOTICE してファイル書込もプロセス再起動も行わない (`containercfgd.py:146-148`)。
+
+<!-- evidence: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py L137-161 -->
+<!-- /side-effects -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
