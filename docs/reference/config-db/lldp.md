@@ -434,4 +434,40 @@ CONFIG_DB から制御できないが、SONiC の YANG `default` 文と偶然一
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/lldp-side-effects.md`  
+> ソース: `dockers/docker-lldp/lldpmgrd`, `dockers/docker-lldp/supervisord.conf.j2`
+
+### lldpmgrd の DB 書込パス
+
+`lldpmgrd` は **DB への書込みを一切行わない**。以下はすべて読み取り専用アクセスである。
+
+| アクセス対象 | DB | 用途 | evidence |
+|---|---|---|---|
+| `STATE_PORT_TABLE_NAME` | STATE_DB | `is_port_up()` — ポートの `netdev_oper_status` を読取 | `lldpmgrd:78,122-134` |
+| `CFG_DEVICE_METADATA_TABLE_NAME` | CONFIG_DB | `hostname` / `chassis_hostname` を読取 | `lldpmgrd:74,253` |
+| `CFG_PORT_TABLE_NAME` | CONFIG_DB | ポートの `alias` / `description` を読取 | `lldpmgrd:75,148-164` |
+| `CFG_MGMT_INTERFACE_TABLE_NAME` | CONFIG_DB | 管理 IP を読取 | `lldpmgrd:76,206-226` |
+| `APP_PORT_TABLE_NAME` | APPL_DB | `PortInitDone` / `PortConfigDone` イベントを購読 | `lldpmgrd:77,301,259-273` |
+
+lldpmgrd が行う唯一の外部副作用は **`lldpcli` サブプロセス呼び出し**（lldpd プロセスへのコマンド注入）。CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB への書込みはゼロ。
+
+### lldp-syncd による APPL_DB 書込
+
+`docker-lldp` コンテナには `lldp-syncd` (`python3 -m lldp_syncd`) が常時稼働しており、lldpd の Unix ソケットをポーリングして **LLDP ネイバー情報を APPL_DB に反映する**（`supervisord.conf.j2` の依存起動順: lldpd → lldp-syncd → lldpmgrd）。
+
+| 書込先 | テーブル | 内容 | evidence |
+|--------|---------|------|---------|
+| APPL_DB | `LLDP_ENTRY_TABLE\|<ifname>` | ネイバーの `lldp_rem_chassis_id` / `lldp_rem_port_id` / `lldp_rem_sys_name` 等 | `sonic_ax_impl/mibs/__init__.py:160`, `ieee802_1ab.py:254` |
+
+`show lldp neighbors` / `show lldp table` はこの APPL_DB テーブルを参照する。
+
+### STATE_DB / COUNTERS_DB
+
+いずれのコンポーネントも STATE_DB や COUNTERS_DB への**書込みを行わない**。lldpmgrd は STATE_DB を読み取るのみ。LLDP 障害情報は syslog (`SWSS_LOG_ERROR` / `WARNING`) にのみ出力される。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 9d2a20a8f03b -->
