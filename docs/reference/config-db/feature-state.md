@@ -375,6 +375,93 @@ STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `con
 | COUNTERS_DB / FLEX_COUNTER_DB | 書込なし | `featured` 全行の grep で `COUNTERS_DB` / `FLEX_COUNTER_DB` への参照・書き込み 0 件 |
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/feature-state-pubsub.md`
+
+### 書き込み側 — swsscommon.Table による直接 set
+
+`STATE_DB FEATURE` への書き込みは **ProducerStateTable ではなく** `swsscommon.Table.set()` を使用する。`featured` はオペレーション状態をデーモン直書きで STATE_DB に反映するため。
+
+```python
+# featured:620
+feature_state_table = Table(self.state_db_conn, FEATURE_TBL)
+
+# featured:585-590
+def set_feature_state(self, feature, state):
+    self._feature_state_table.set(feature.name, [('state', state)])
+    # Multi-ASIC: 各名前空間の STATE_DB にも同一内容を書き込み
+    for ns, tbl in self.ns_feature_state_tbl.items():
+        tbl.set(feature.name, [('state', state)])
+```
+
+`swsscommon.Table.set()` は内部で Redis `HSET` + keyspace notification (`__keyspace@6__:FEATURE|<name>`) を発行する。
+
+### 読み取り側 — SubscriberStateTable による subscribe ループ
+
+`FeatureDaemon` は **CONFIG_DB** と **APPL_DB** の変更を `SubscriberStateTable` で受信し、STATE_DB へ書き込む。STATE_DB FEATURE テーブル自体は `featured` が書き手であり、外部プロセスからの subscribe によって書き込みがトリガーされるわけではない。
+
+```python
+# FeatureDaemon.register_callbacks() featured:638-648
+self.subscribe(self.cfg_db_conn, FEATURE_TBL,           # CONFIG_DB FEATURE
+               make_callback(self.feature_handler.handler), HOSTCFGD_MAX_PRI)
+
+self.subscribe(self.appl_db_conn, PORT_TBL,             # APPL_DB PORT_TABLE
+               make_callback(self.feature_handler.port_listener), HOSTCFGD_MAX_PRI-1)
+```
+
+| DB | DB ID | テーブル | keyspace チャネル | 用途 |
+|----|-------|---------|----------------|------|
+| CONFIG_DB | 4 | `FEATURE` | `__keyspace@4__:FEATURE\|<name>` | feature の `state` 変更通知受信 → `set_feature_state()` で STATE_DB を更新 |
+| APPL_DB | 0 | `PORT_TABLE` | `__keyspace@0__:PORT_TABLE\|*` | delayed feature のポート Ready 検知 → `port_listener()` で delayed feature を有効化 |
+
+### select ループ
+
+```python
+# FeatureDaemon.start() featured:655-678
+DEFAULT_SELECT_TIMEOUT = 1000  # ms (featured:23)
+
+while True:
+    state, selectable_ = self.selector.select(DEFAULT_SELECT_TIMEOUT)
+    if state == selector.TIMEOUT:
+        if elapsed > PORT_INIT_TIMEOUT_SEC:  # 180 秒
+            self.feature_handler.handle_port_table_timeout()
+        continue
+    # OBJECT 受信時: subscriber.pop() → callback 呼び出し
+```
+
+| select 戻り値 | 処理 |
+|-------------|------|
+| `TIMEOUT` (1000 ms) | PORT 初期化タイムアウト（180 秒）到達時のみ delayed feature を強制 enable |
+| `OBJECT` | `subscriber.pop()` で `(key, op, fvs)` を取得し登録済み callback を呼び出す |
+| `ERROR` | ログ出力のみで継続 |
+
+### 通知連鎖の全体像
+
+```
+CONFIG_DB FEATURE|<name> state 変更
+  → __keyspace@4__:FEATURE|<name> 通知
+  → SubscriberStateTable (featured)
+  → FeatureHandler.handler()
+  → set_feature_state() → STATE_DB FEATURE|<name> state=<state>
+
+APPL_DB PORT_TABLE|* 変更 (port ready)
+  → __keyspace@0__:PORT_TABLE|* 通知
+  → SubscriberStateTable (featured)
+  → FeatureHandler.port_listener()
+  → set_feature_state() → STATE_DB FEATURE|<name> state=enabled  (delayed feature のみ)
+```
+
+### STATE_DB FEATURE テーブルの consumer
+
+| consumer | 読み取り方法 | 用途 |
+|----------|------------|------|
+| `show feature status` (sonic-utilities) | `swsscommon.Table.get()` (on-demand) | feature の現在状態表示 |
+| `ctrmgrd.py` | CONFIG_DB FEATURE を SubscriberStateTable で監視（STATE_DB は直接購読せず） | Kubernetes との feature 状態同期 |
+| `container_startup.py` | 起動時に `Table.get()` で確認 | コンテナ起動前の状態チェック |
+<!-- /pubsub -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
