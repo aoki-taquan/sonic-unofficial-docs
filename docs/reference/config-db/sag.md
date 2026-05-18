@@ -243,6 +243,49 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次処理 (Phase F)
+
+> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) §High-Level Design + §Testing System Test Cases 精読 (2026-05-18)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/sag-side-effects.md`
+
+!!! warning "HLD-only 推定"
+    sonic-swss master に SAG 専用実装ファイル (`sagmgr.cpp` / `sagorch.cpp`) が確認できないため、以下は HLD 記載設計に基づく。`IntfsOrch` / `IntfMgr` 内で SAG ハンドラが統合される設計。
+
+`SAG|GLOBAL.gateway_mac` の SET / DEL 操作は、SAG 自身の設定領域を超えて以下のリソースに副次的影響を与える。
+
+### A. IPv6 link-local to-me route の再設定（RouteOrch 経由）
+
+| トリガー | 副次処理 | 影響 |
+|---------|---------|------|
+| `SAG\|GLOBAL.gateway_mac` SET（SAG 有効化）| `IntfsOrch` が `RouteOrch` API 経由で、システム CPU MAC 由来の IPv6 link-local to-me route を削除し、SAG MAC 由来の新 route を追加 | 切替期間中は当該 VLAN インターフェース宛ての IPv6 link-local 通信が一時断 |
+| `SAG\|GLOBAL.gateway_mac` DEL（SAG 無効化）| 逆順：SAG MAC 由来 route を削除し、CPU MAC 由来 route を再追加 | 同様に一時的な IPv6 link-local 通信断 |
+
+HLD §High-Level Design に明示: *"we need to call RouteOrch's API to delete old MAC generated IPv6 link-local to me route and then add new MAC generated IPv6 link-local to me route."*[^1]
+
+### B. ASIC RIF の MAC 変更（SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS）
+
+| トリガー | 副次処理 |
+|---------|---------|
+| `SAG_TABLE\|GLOBAL.gateway_mac` SET | `IntfsOrch` が `static_anycast_gateway=true` な全 VLAN インターフェースの SAI RIF に対して `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` を SAG MAC に更新。既存 SAI 属性の流用であり新規 SAI API 不要 |
+| `SAG_TABLE\|GLOBAL` DEL | 全対象 VLAN RIF の MAC をシステム CPU MAC に差し戻す |
+
+### C. カーネル VLAN インターフェース MAC 変更
+
+SAG enable/disable に連動して、Linux カーネル上の VLAN インターフェース MAC アドレスが SAG MAC / CPU MAC 間で切り替わる。ホスト側の ARP / NDP テーブルが旧 MAC をキャッシュしている場合、再解決が完了するまでの間パケットロスが生じる。
+
+HLD §Testing: *"Verify that VLAN interface can be created with SAG MAC address in kernel"* / *"Verify the VLAN interface's MAC change to CPU MAC address in kernel"*[^1]
+
+### 副次処理サマリ
+
+| 副次処理 | 対象リソース | 可逆性 |
+|---------|------------|--------|
+| IPv6 link-local to-me route del → add (RouteOrch 経由) | APPL_DB `ROUTE_TABLE` / ASIC route テーブル | 可逆（SAG 無効化で元に戻る） |
+| SAI RIF の `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` 変更 | ASIC RIF エントリ（全対象 VLAN） | 可逆 |
+| カーネル VLAN インターフェース MAC 変更 | Linux netdev 状態 | 可逆 |
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: SAG HLD: `SONiC/doc/sag/sag-HLD.md`. <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sag/sag-HLD.md>
