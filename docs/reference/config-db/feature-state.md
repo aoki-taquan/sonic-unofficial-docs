@@ -348,32 +348,23 @@ STATE_DB エントリが存在しない場合に `read_data()` が使用する�
 
 > 詳細証跡: `meta/_intermediate/cdb-flow/feature-state-side-effects.md`
 
-`featured` / `container_startup.py` / `ctrmgrd.py` が STATE_DB `FEATURE` テーブルを書き込む際に副次的に発生する他 DB への書き込みを示す。
+STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `container_startup.py` / `ctrmgrd.py`) が FEATURE テーブル以外へ副次的に書き込む先を示す。
 
-### CONFIG_DB FEATURE — フィードバック書込
-
-`featured` は 2 つの条件で CONFIG_DB `FEATURE` テーブルに逆方向の書き込み (フィードバック) を行う:
-
-| 対象フィールド | 書込関数 | 書込条件 | ソース |
+| 副次書込み先 | 書込み元 | 条件 | evidence |
 |---|---|---|---|
-| `state` | `resync_feature_state()` | `feature.state` が `"always_enabled"` または `"always_disabled"` (immutable)、またはDB上の現在値がテンプレート文字列のとき | `featured:560-571` |
-| `delayed` | `sync_feature_delay_state()` | `feature.delayed` の算出値が CONFIG_DB 上の値と異なるとき | `featured:574-581` |
+| `CONFIG_DB FEATURE\|<name>` の `has_global_scope` / `has_per_asic_scope` | `featured` | `sync_feature_scope()` により、scope フィールドが実際に変化した場合のみ上書き。Multi-ASIC では名前空間ごとの CONFIG_DB にも伝播 | `featured:290-355` |
+| `CONFIG_DB FEATURE\|<name>` の `state` | `featured` | `resync_feature_state()` — feature の state が immutable (`always_enabled` / `always_disabled`) またはテンプレート文字列の場合のみ CONFIG_DB を書き戻す。通常の `enabled` / `disabled` 変更では書き戻さない | `featured:550-572` |
+| `STATE_DB KUBE_LABELS\|SET` (`<feat>_local_version`) | `container_startup.py` | `owner == "local"` のコンテナ起動時に `drop_label()` が書き込む。Kubernetes が同バージョンの再デプロイを抑止するためのラベル | `container_startup.py:99-106,179-181` |
+| `STATE_DB KUBE_LABELS\|SET` (`<feat>_enabled`) | `ctrmgrd.py` | CONFIG_DB `set_owner` の変化を検知した `handle_update()` が `"true"` / `"false"` を書き込む。`KubeLabelStats` がこのテーブルを監視して kube API Server へ同期する | `ctrmgrd.py:505-506,638-654` |
 
-multi-ASIC 環境では host と全 namespace の CONFIG_DB に同時書き込みが行われる。これは STATE_DB 書き込みの副作用ではなく、起動時の `sync_state_field()` → `resync_feature_state()` / `sync_feature_delay_state()` 呼び出し経路でも独立して実行される。
+### DB 以外の副次作用
 
-### STATE_DB — multi-ASIC 全 namespace への伝播
+`featured` は DB への書き込み以外に、ファイルシステムへの副次作用も持つ:
 
-`set_feature_state()` は host の STATE_DB だけでなく、全 namespace の STATE_DB にも同一の `state` を書き込む:
-
-```python
-# featured:585-590
-def set_feature_state(self, feature, state):
-    self._feature_state_table.set(feature.name, [('state', state)])
-    for ns, tbl in self.ns_feature_state_tbl.items():
-        tbl.set(feature.name, [('state', state)])
-```
-
-シングル ASIC 環境では `ns_feature_state_tbl` は空のため追加書き込みは発生しない。
+- **systemd override ファイル生成**: `update_systemd_config()` が
+  `/etc/systemd/system/<feature>.service.d/` に `Restart=always` または `Restart=no` を書き込み、
+  その後 `systemctl daemon-reload` を実行する (`featured:357-406`)。
+  CONFIG_DB `FEATURE.auto_restart` フィールドが変化した場合にトリガーされる。
 
 ### APPL_DB / ASIC_DB / COUNTERS_DB — 書込なし
 
@@ -382,7 +373,6 @@ def set_feature_state(self, feature, state):
 | APPL_DB | 書込なし | `featured` は `APPL_DB PORT_TABLE` を Subscribe 専用で開く (`featured:603,647`)。書き込み呼び出しなし |
 | ASIC_DB | 書込なし | `featured` / `container_startup.py` / `ctrmgrd.py` はすべて SAI 非経由。`ASIC_DB` 参照なし |
 | COUNTERS_DB / FLEX_COUNTER_DB | 書込なし | `featured` 全行の grep で `COUNTERS_DB` / `FLEX_COUNTER_DB` への参照・書き込み 0 件 |
-
 <!-- /side-effects -->
 
 <!-- ops-hint -->

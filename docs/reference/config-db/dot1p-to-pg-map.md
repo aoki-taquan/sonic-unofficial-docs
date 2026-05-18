@@ -176,6 +176,47 @@ type_map QosOrch::m_qos_maps = {
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dot1p-to-pg-map-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dot1p-to-pg-map-failure.md -->
+
+### DOT1P_TO_PG_MAP 自体への書き込み — 無視
+
+`DOT1P_TO_PG_MAP` テーブルは `m_qos_maps` 初期化リストに登録されていないため、このキー名で CONFIG_DB に書き込んでも `qosorch` はイベントを受信せず無視する。エラーログは発生しない。
+
+### retry パターン概要
+
+2 段マッピング経路 (`DOT1P_TO_TC_MAP` + `TC_TO_PRIORITY_GROUP_MAP`) の失敗挙動は `task_process_status` パターンで管理される。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **`task_need_retry`** | `dot1p_to_tc_map` / `tc_to_pg_map` 参照先マップ未作成、`pending_remove` 中の SET | `m_toSync` に残し次 doTask() で再試行。上限なし |
+| **`task_failed`** | SAI `create_qos_map` / `set_port_attribute` 失敗、`resolveFieldRefValue` 内部エラー、`dot1p` 非数値文字列 | エントリ削除。retry なし |
+
+### フィールド別 failure 詳細
+
+#### `dot1p` 値の変換失敗
+
+`Dot1pToTcMapHandler::addQosItem()` は `stoi()` で dot1p 文字列を変換する際に例外処理ガードがない。非数値文字列を書くと `std::invalid_argument` 例外が伝播し `task_failed` となる。(`qosorch.cpp:360-427`)
+
+#### DEL 時の参照ロック (`pending_remove`)
+
+`PORT_QOS_MAP.<port>.dot1p_to_tc_map` から参照されている間は `DOT1P_TO_TC_MAP` の DEL がブロックされ `task_need_retry` が返る。推奨 DEL 順序: `PORT_QOS_MAP` の参照フィールドを先に除去 → `DOT1P_TO_TC_MAP` を DEL。`pending_remove` フラグが立っている間は同エントリへの SET も `task_need_retry` でブロックされる。(`qosorch.cpp:136-139`, `181-191` 相当)
+
+#### `resolveFieldRefValue` 失敗 (PORT_QOS_MAP 経路)
+
+`dot1p_to_tc_map` / `tc_to_pg_map` フィールドの参照解決で `not_resolved`（マップ未作成）の場合は `task_need_retry`、その他内部エラーの場合は `SWSS_LOG_ERROR "Failed to resolve field ..."` → `task_failed`。(`qosorch.cpp:2077-2083`, `qosorch.cpp:2122-2126`)
+
+#### 存在しないポート名
+
+`handlePortQosMapTable()` は未登録ポートを `SWSS_LOG_ERROR "Port with alias: ... not found"` を出力して `continue` でスキップし、エントリ全体は `task_success` 扱いとなる。(`qosorch.cpp:2068`)
+
+#### SAI `set_port_attribute` 失敗
+
+`SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` / `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` の `set_port_attribute` 失敗は `handleSaiSetStatus()` を経由して retry / 永続失敗に分岐する。複数属性を順番に適用するため途中での失敗は**部分適用**が残る。rollback なし。QosOrch は STATE_DB / ERROR_TABLE への失敗記録を行わないため、反映状況の確認は `sonic-db-cli ASIC_DB hgetall` が必要。
+<!-- /failure -->
+
 ## 制約
 
 - `DOT1P_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
