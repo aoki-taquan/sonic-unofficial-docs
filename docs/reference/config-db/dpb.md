@@ -332,6 +332,41 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_PORT:*'
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-pubsub.md -->
+
+`BREAKOUT_CFG` は `ProducerStateTable` / `ConsumerStateTable` / `SubscriberStateTable` を使用しない。
+書き込みは `ConfigDBConnector.set_entry()` による直接 HSET であり、pub/sub チャネルへの通知は発火しない。
+読み取り側（CLI・portmgrd）も `get_table()` による同期スナップショット読み取りのみ。
+
+### 通信方式まとめ
+
+| 読み取り元 | 通信方式 | タイミング | 購読 |
+|-----------|---------|----------|------|
+| `config interface breakout` CLI (`main.py:5479`) | `ConfigDBConnector.get_table('BREAKOUT_CFG')` — 同期 HGETALL | コマンド実行時のみ | **なし** |
+| `show interfaces breakout` CLI (`show/interfaces/__init__.py:210`) | `ConfigDBConnector.get_table('BREAKOUT_CFG')` — 同期 HGETALL | コマンド実行時のみ | **なし** |
+
+### pub/sub チャネル
+
+| チャネル | DB | 使用有無 | 理由 |
+|---------|----|---------|------|
+| `BREAKOUT_CFG_CHANNEL@4` (ProducerStateTable) | CONFIG_DB (db 4) | **使用なし** | `set_entry()` は ProducerStateTable を経由しない |
+| `__keyspace@4__:BREAKOUT_CFG\|*` (keyspace notification) | CONFIG_DB (db 4) | **使用なし** | どのプロセスも PSUBSCRIBE していない |
+
+### 間接フロー（BREAKOUT_CFG → PORT → portmgrd）
+
+`BREAKOUT_CFG` の変更自体はイベントを発火しないが、`config interface breakout` は `PORT` テーブルを `ConfigMgmtDPB.writeConfigDB()` で再構成する（`config_mgmt.py:456,460`）。`portmgrd` は `CFG_PORT_TABLE_NAME`（`PORT`）を購読しており、PORT テーブルの SET / DEL イベントを受信して `APPL_DB PORT_TABLE` に伝播する（`portmgrd.cpp:28`）。
+
+```
+BREAKOUT_CFG  →（直接 pub なし）
+PORT (SET/DEL)  →  portmgrd (SubscriberStateTable)  →  APPL_DB PORT_TABLE
+```
+
+> **Evidence**: `sonic-utilities/config/main.py:5479,5549-5554`（SHA `39732bceb8bdefe706518ab40623bbbba6ff33b9`）; `sonic-utilities/show/interfaces/__init__.py:210,275`; `sonic-utilities/config/config_mgmt.py:456,460`; `sonic-buildimage/src/sonic-config-engine/sonic-cfggen:404`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; `sonic-swss/cfgmgr/portmgrd.cpp:28`; 詳細は `meta/_intermediate/cdb-flow/dpb-pubsub.md` を参照。
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
