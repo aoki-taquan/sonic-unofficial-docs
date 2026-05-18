@@ -209,6 +209,42 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗時の挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-failure.md -->
+
+`config interface breakout` が途中で失敗した場合、CONFIG_DB / `BREAKOUT_CFG` への影響はシーケンスのどの段階で失敗したかによって大きく異なる。
+
+### 失敗シナリオ一覧
+
+| # | 失敗箇所 | CONFIG_DB への影響 | BREAKOUT_CFG | リカバリ |
+|---|---------|------------------|--------------|---------|
+| 1 | `BREAKOUT_CFG` テーブル不在 | 変更なし | 変更なし | `sonic-cfggen` 再実行 or 手動作成 |
+| 2 | 対象ポートが `BREAKOUT_CFG` に不在 | 変更なし | 変更なし | `config_db.set_entry("BREAKOUT_CFG", port, ...)` で手動追加 |
+| 3 | 依存テーブルが存在（`--force` なし） | 変更なし | 変更なし | 依存テーブルを手動削除後に再実行、または `--force-remove-dependencies` オプション使用 |
+| 4 | `_deletePorts()` / YANG ツリー例外 | 変更なし（書込み前） | 変更なし | コマンド再実行 |
+| 5 | `_verifyAsicDB()` タイムアウト（60 秒） | **部分不整合**: 旧ポート削除済み・新ポート未追加 | 旧モードのまま | 手動リカバリ必須 (`config reload` 等) |
+| 6 | `_addPorts()` 失敗（`_shutdownIntf` 前） | 変更なし | 変更なし | コマンド再実行 |
+| 7 | `BREAKOUT_CFG.set_entry()` で `ValueError` | PORT 再構成完了済み | 旧モード保持（不整合） | `config_db.set_entry("BREAKOUT_CFG", port, {'brkout_mode': new_mode})` で手動修正 |
+
+### 重大シナリオの詳細
+
+**シナリオ 5 — `_verifyAsicDB` タイムアウト（最大の危険）**: `breakOutPort()` (config_mgmt.py:450-460) は以下の順で CONFIG_DB を変更する:
+
+```
+①  _shutdownIntf(delPorts)    → PORT.admin_status=down を書込み
+②  writeConfigDB(delConfigToLoad) → 旧ポート + 依存テーブルを削除
+③  _verifyAsicDB(...)          → ASIC_DB でポート消滅を 60 秒待機 ← ここでタイムアウト
+④  writeConfigDB(addConfigtoLoad) → ← 未実行
+```
+
+タイムアウト後は `Exception("Ports are present in ASIC DB after 60 secs")` を raise し `breakOutPort()` は `return None, False` する。①②は完了済みのため **旧ポートが CONFIG_DB から消えた状態で新ポートが存在しない半断絶状態**が残る。`BREAKOUT_CFG.brkout_mode` は旧モードを指したままとなり、実際の CONFIG_DB 状態と乖離する（evidence: `config_mgmt.py:377-412,450-460`）。
+
+**シナリオ 7 — `set_entry` ValueError**: `breakout_Ports()` 成功後（PORT 再構成完了）に `config_db.set_entry("BREAKOUT_CFG", interface_name, {'brkout_mode': target_brkout_mode})` で `ValueError` が発生した場合、PORT テーブルは新モードになっているが `BREAKOUT_CFG` は旧モードを表示し続ける。次回の `config interface breakout` は `BREAKOUT_CFG` の旧モードを起点に `del_ports` を計算するため、想定外のポート削除が発生しうる（evidence: `main.py:5548-5556`）。
+
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
