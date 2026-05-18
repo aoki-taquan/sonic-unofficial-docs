@@ -253,4 +253,26 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 - 起動時に `sonic-cfggen` や `platform_env.conf` スクリプトが実行環境情報 (platform name, HW SKU 等) を注入する。YANG モデルなし・スキーマレス
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`DEVICE_RUNTIME_METADATA` は `sonic-cfggen` / `sysmonitor.py` が起動時にオンデマンドで構築するインメモリ辞書であり、CONFIG_DB への永続書き込みは行われない。そのため通常の SET/DEL シーケンス依存は存在しないが、以下の**呼び出し内部の順序制約**が成立する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | プラットフォームファイル読み取り (`/etc/sonic/platform_env.conf`, `port_config.ini`) → `get_device_runtime_metadata()` 構築 | 強制先行 | ファイル未存在時は `MACSEC_SUPPORTED=False` / `ETHERNET_PORTS_PRESENT=False` にフォールバック |
+| 2 | `get_device_runtime_metadata()` 返却 → `init_cfg.json.j2` / `sysmonitor.py` による FEATURE 状態評価 | **強制先行** | 関数が戻るまで呼び出し側は FEATURE の `state` 値を確定できない |
+| 3 | `DEVICE_METADATA` テーブル取得 → `DEVICE_RUNTIME_METADATA` 辞書と合算 (`sysmonitor.py` L219-220) | 強制先行 | `config_db.get_table('DEVICE_METADATA')` が先に呼ばれ、その後 `get_device_runtime_metadata()` が結合される |
+| 4 | `chassis_metadata` / `port_metadata` / `macsec_support_metadata` の順で `runtime_metadata.update()` | 決定論的（後勝ち） | 同一キーが複数サブ辞書に存在する場合は後の update が勝つ。現時点でキー重複なし |
+
+### 主要な制約詳細
+
+**プラットフォームファイル先行 (依存 #1)**: `get_device_runtime_metadata()` は `is_chassis()` → `is_supervisor()` → `get_path_to_port_config_file()` → `is_macsec_supported()` の順に呼び出しを行い、それぞれがシステムファイルや platform API に依存する。これらのファイルが存在しない場合（コンテナ初回起動直後など）は各フィールドが `False` に設定されたうえで辞書が返される。呼び出し側は返り値を信頼してよいが、ファイルが後から配置された場合は再呼び出しが必要（evidence: `device_info.py:735-747`）。
+
+**FEATURE 状態評価との依存 (依存 #2)**: `sysmonitor.py` は `config_db.get_table("FEATURE")` でテーブルを取得後、各エントリの `state` フィールドが Jinja テンプレート式 (`"{% if ... %}enabled{% else %}disabled{% endif %}"`) である場合に `get_render_value_for_field()` でレンダリングする。このレンダリングに `DEVICE_RUNTIME_METADATA` の値が参照されるため、`get_device_runtime_metadata()` の完了が必須となる。FEATURE テーブルが未準備の場合は最大 3 回リトライする設計になっている（evidence: `sysmonitor.py:210-237`）。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: e33fec70e206 -->
