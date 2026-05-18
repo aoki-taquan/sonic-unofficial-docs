@@ -454,6 +454,51 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
 
 ---
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dpu-state-detail-side-effects.md`
+
+`DPU_STATE` (`CHASSIS_STATE_DB`) は `chassisd` が書き込む**状態専用テーブル**である。このテーブルへの書き込みが副次的に引き起こす動作を以下に示す。
+
+### 副次 DB 書込み一覧
+
+| トリガー | 副次動作 | 書込み先 DB | 条件 |
+|----------|---------|------------|------|
+| `DPU_STATE` 変化 (`SubscriberStateTable` 受信) | `DpuStateUpdater.update_state()` 再実行 → CP/DP state 再書込み | `CHASSIS_STATE_DB DPU_STATE` (自己) | `poll_dpu_state=False` モード限定、かつ状態変化時のみ |
+| `show dpu` CLI 呼び出し | なし (read-only 参照) | — | CLI 呼び出し時 |
+
+community SONiC において `DPU_STATE` の変化を受けて CONFIG_DB / STATE_DB / APPL_DB / COUNTERS_DB に新たなエントリを書き込む副次動作は確認されない。
+
+### `DpuStateManagerTask` 自己フィードバックループ
+
+`DpuChassisdDaemon` で `poll_dpu_state=False` 時（platform API が CP/DP state を提供しない場合）、`DpuStateManagerTask` は `CHASSIS_STATE_DB DPU_STATE` を `SubscriberStateTable` で購読する (`chassisd:1480-1483`):
+
+```python
+selectable = [
+    swsscommon.SubscriberStateTable(self.app_db, 'PORT_TABLE'),
+    swsscommon.SubscriberStateTable(self.state_db, 'SYSTEM_READY'),
+    swsscommon.SubscriberStateTable(self.chassis_state_db, 'DPU_STATE')  # 自己参照
+]
+```
+
+`DPU_STATE` に変化が届くと `task_worker()` が `update_state()` を再実行して CP/DP state を再評価・再書込みする (`chassisd:1525-1526`)。ただし、受信した CP/DP state が既存値と同じ場合はスキップされる (`chassisd:1515-1518`)。
+
+### クリーンアップ時の `DPU_STATE` 保護
+
+`module_down_chassis_db_cleanup()` (`chassisd:1112-1126`) はモジュールの `admin_status` が `'up'` 以外の場合に `CHASSIS_STATE_DB` 内の関連キーを削除するが、`DPU_STATE` キーは明示的に除外される:
+
+```python
+if not "DPU_STATE" in key and not "REBOOT_CAUSE" in key:
+    self.chassis_state_db.delete(key)
+```
+
+このため、DPU が admin down 状態になっても `DPU_STATE` エントリは自動削除されない。直前の状態値が残存し、次の書き込みまで参照可能な状態が維持される。
+
+<!-- /side-effects -->
+
+---
+
 ## 関連ページ
 
 - [`DPU_STATE テーブル`](dpu-state.md) — テーブル概要・key 構造・書き込み元クラス説明
