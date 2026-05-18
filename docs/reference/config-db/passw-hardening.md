@@ -178,6 +178,51 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 - **login.defs 冪等性**: `is_passwd_aging_expire_update()` が現在値と比較し差分がない場合は `passwd_aging_expire_modify()` を呼ばない。冗長な SET イベントでも `chage` は再実行されない（`hostcfgd:976-997`）。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/passw-hardening-constants.md -->
+
+`PASSW_HARDENING` テーブルを処理する `hostcfgd` (`PasswHardening` クラス) が持つ、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd`。
+
+### Linux パスワードエージングデフォルト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `LINUX_DEFAULT_PASS_MAX_DAYS` | `99999` | `state=disabled` 時または `passw_policies` が空の場合に `/etc/login.defs` の `PASS_MAX_DAYS` にリストアする値 (Debian 標準値) | hostcfgd L57 |
+| `LINUX_DEFAULT_PASS_WARN_AGE` | `7` | 同上、`PASS_WARN_AGE` のリストア値 (日数) | hostcfgd L58 |
+
+> **動作ロジック**: `set_passw_hardening_policies()` の冒頭で `curr_expiration = LINUX_DEFAULT_PASS_MAX_DAYS`、`curr_expiration_warning = LINUX_DEFAULT_PASS_WARN_AGE` が設定される。`state=enabled` の場合のみ `passw_policies` の値で上書きされ、それ以外は常にこのデフォルト値が `/etc/login.defs` に書き込まれる (hostcfgd L934-935)。
+
+### PAM / テンプレートファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PAM_PASSWORD_CONF` | `/etc/pam.d/common-password` | パスワードポリシー PAM 設定ファイル (atomic 書き換え対象) | hostcfgd L30 |
+| `PAM_PASSWORD_CONF_TEMPLATE` | `/usr/share/sonic/templates/common-password.j2` | `common-password` 生成用 Jinja2 テンプレート | hostcfgd L31 |
+| `ETC_LOGIN_DEF` | `/etc/login.defs` | Linux パスワードエージング設定ファイル (`sed` による行置換対象) | hostcfgd L52 |
+
+### login.defs パース用辞書 `AGE_DICT`
+
+`AGE_DICT` は `is_passwd_aging_expire_update()` および `passwd_aging_expire_modify()` 内で参照される。正規表現で現在値を読み取り、差分がある場合のみ `modify_single_file_inplace()` / `chage` を実行することで冗長な書き換えを防ぐ。
+
+| キー | REGEX_DAYS | CHAGE_FLAG | ソース |
+|------|------------|------------|--------|
+| `MAX_DAYS` | `r'^PASS_MAX_DAYS[ \t]*(?P<max_days>-?\d*)'` | `'-M '` | hostcfgd L78 |
+| `WARN_DAYS` | `r'^PASS_WARN_AGE[ \t]*(?P<warn_days>-?\d*)'` | `'-W '` | hostcfgd L79 |
+
+### UID フィルタ正規表現
+
+`get_normal_accounts()` は `/etc/login.defs` から `UID_MAX` / `UID_MIN` を取得してシステムアカウントを除外し、通常ユーザのみに `chage` を適用する。
+
+| 正規表現 | 用途 | ソース |
+|---------|------|--------|
+| `r'^UID_MAX[ \t]*(?P<uid_max>\d*)'` | `/etc/login.defs` から UID 上限を取得 | hostcfgd L1008 |
+| `r'^UID_MIN[ \t]*(?P<uid_min>\d*)'` | `/etc/login.defs` から UID 下限を取得 | hostcfgd L1009 |
+
+> `UID_MAX` または `UID_MIN` がファイルに存在しない場合、`get_normal_accounts()` は `False` を返し、`chage` は一切実行されない (hostcfgd L1024-1026)。
+<!-- /constants -->
+
 ## 購読者
 
 - `hostcfgd` (`host-services` パッケージ)。`PasswHardening.load()` が `PASSW_HARDENING` テーブルを読み込み、Jinja2 テンプレート (`common-password.j2`) を展開して `/etc/pam.d/common-password` を書き換え、`/etc/login.defs` の `PASS_MAX_DAYS` / `PASS_WARN_AGE` を `sed` で更新する
