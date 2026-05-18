@@ -615,4 +615,20 @@ HSET "TELEMETRY|gnmi" port 50052
 > **Evidence**: `sonic-buildimage/dockers/docker-sonic-telemetry/telemetry.sh@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` L40-43; `sonic-gnmi/telemetry/telemetry.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L111,L340-404; `gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22` L792; 詳細 `meta/_intermediate/cdb-flow/telemetry-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: `TELEMETRY` テーブルの設定・処理において、ASIC 種別・multi-asic・VOQ chassis 構成・ベンダー固有挙動は検出されなかった。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `gnmi_server` は SAI / ASIC_DB に直接アクセスしない。CONFIG_DB / STATE_DB / DATA_DB / COUNTERS_DB を Redis プロトコルで読み取るのみ (`telemetry.sh`, `server.go` に ASIC 種別参照なし) |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `TELEMETRY` テーブルは host namespace CONFIG_DB (db 4) の 1 エントリ。ASIC namespace 数に依存しない。gNMI クライアントが購読するデータパスは namespace 指定で各 ASIC を参照できるが、`TELEMETRY` 設定内容は変わらない (`server.go` に namespace 参照なし) |
+| VOQ chassis (supervisor + line cards) | 各ラインカードで独立適用 | `TELEMETRY` テーブルはラインカードごとの host CONFIG_DB に独立して存在する。`telemetry.sh` / `server.go` に VOQ 固有コードなし |
+| ベンダー固有設定 | なし | `docker-sonic-telemetry/Dockerfile.j2` に platform 条件分岐なし。`telemetry_vars.j2` は `TELEMETRY` / `DEVICE_METADATA` のみ参照 |
+| k8s 起動 (launch_by=k8s) | hwsku シンボリックリンク生成のみ | `docker-telemetry-entry.sh` Part 1 は `/usr/share/sonic/platform` symlink を生成するが `TELEMETRY` テーブル処理とは無関係 |
+
+詳細根拠は `meta/_intermediate/cdb-flow/telemetry-platform.md` を参照。
+<!-- /platform -->
+
 <!-- glossary-links-injected: 896d391185a9 -->

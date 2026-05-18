@@ -1,66 +1,77 @@
 # TELEMETRY — Phase B 書込み順依存スキャンノート
 
 対象テーブル: `TELEMETRY`
-Consumer: `telemetry.sh` / `gnmi_server/server.go` (`sonic-gnmi`)
-スキャン範囲: `telemetry.sh` 全行精読、`gnmi_server/server.go` L492-654、`supervisord.conf` 全行、`docker-telemetry-entry.sh` 全行、`telemetry.service.j2` 全行
+Consumer: `telemetry` / `gnmi` (`docker-sonic-telemetry` / `docker-gnmi`)
+スキャン範囲: `telemetry.sh`、`docker-telemetry-entry.sh`、`supervisord.conf`、`telemetry.service`、`telemetry.go`、`server.go` 全行精読
 
 ---
 
 ## 検出した順序依存・タイミング依存
 
-### 1. FEATURE テーブル先行必須 — telemetry コンテナ起動前提条件
+### 1. `FEATURE|telemetry` が STATE_DB に存在・`enabled` でないとコンテナが起動しない
 
-- `docker-telemetry-entry.sh` L39-48: コンテナ起動直後に `redis-cli -n 4 HGET "FEATURE|telemetry" state` をポーリングし、`state == "enabled"` になるまで 10 秒ごとに待機する。
-- `FEATURE|telemetry` エントリが CONFIG_DB (DB index 4) に存在しない、または `state != "enabled"` の場合、supervisord は起動せず `telemetry.sh` も実行されない。
-- **順序依存**: `TELEMETRY` テーブルを設定する前に `FEATURE|telemetry.state = "enabled"` が CONFIG_DB に書かれていること。minigraph.py による自動生成（通常の起動フロー）ではこの順序が保証される。
-- evidence: `docker-telemetry-entry.sh:39-48`
+`docker-telemetry-entry.sh` (L39-48) は `redis-cli -n 4 HGET "FEATURE|telemetry" state` の値が
+`"enabled"` になるまで 10 秒ごとにポーリングして待機する。`CONFIG_DB` への `TELEMETRY` 書き込みが
+完了していても、`STATE_DB` の `FEATURE|telemetry.state` が `"enabled"` でなければコンテナはアイドル状態を維持する。
 
-### 2. systemd サービス依存順 — database.service / swss.service が先行必須
+- evidence: `docker-sonic-telemetry/docker-telemetry-entry.sh` L39-48
 
-- `telemetry.service.j2` L3-4: `Requires=database.service`、`After=database.service swss.service syncd.service`。
-- telemetry サービスは `database.service` (Redis / CONFIG_DB) が起動し、さらに `swss.service` と `syncd.service` が起動してから開始する。
-- `sonic.target` 達成後にも `After=sonic.target` で制約が追加される。
-- **順序依存**: TELEMETRY テーブルの読み込みは `database.service` が完全に Ready になった後。Redis が起動前に telemetry が CONFIG_DB を読もうとすることはない。
-- evidence: `telemetry.service.j2:3-4`, `gnmi.service.j2:3-4`
+### 2. `TELEMETRY` は起動時の一括読み込みのみ — CONFIG_DB に事前存在が必須
 
-### 3. supervisord 内部起動順 — start:exited 待ちで telemetry.sh が実行される
+`telemetry.sh` (L40) は `sonic-cfggen -d -t telemetry_vars.j2` を一度だけ実行して
+`TELEMETRY|certs` / `TELEMETRY|gnmi` / `DEVICE_METADATA|x509` の値を取得し、
+コマンドライン引数として `/usr/sbin/telemetry` プロセスに渡す。
 
-- `supervisord.conf` 内プロセス起動順:
-  1. `rsyslogd` (priority=1、autostart=false、`dependent_startup=true`)
-  2. `start` = `/usr/bin/start.sh` (priority=2、`dependent_startup_wait_for=rsyslogd:running`)
-  3. `telemetry` = `/usr/bin/telemetry.sh` (priority=3、`dependent_startup_wait_for=start:exited`)
-  4. `dialout` (priority=4、`dependent_startup_wait_for=telemetry:running`)
-- `telemetry.sh` は `start.sh` の正常終了後に起動される。`start.sh` は `container_startup.py` を呼んで FEATURE フラグ確認・バージョン整合チェックを行う。
-- `dialout.sh` は `telemetry` プロセスが `running` 状態になってから起動する。dialout (gRPC dial-out) を有効にする場合は、先に gNMI サーバが listenしている必要がある。
-- **順序依存**: `telemetry.sh` 実行前に `start.sh` が終了していること（FEATURE チェック完了が前提）。
-- evidence: `supervisord.conf:31-68`
+これは**起動時の一括読み込み**であり、実行中の CONFIG_DB 変更はプロセス再起動なしには反映されない。
+`TELEMETRY|gnmi` エントリが CONFIG_DB に存在しない場合、`telemetry.sh` は `port` にデフォルト値
+`8080` を使用して起動する（L83-91 のフォールバック処理）。
 
-### 4. CONFIG_DB 読み込みは起動時一括 — runtime 変更は再起動まで無効
+- **順序依存**: `TELEMETRY|gnmi` / `TELEMETRY|certs` は telemetry コンテナ起動**前**に CONFIG_DB に
+  書き込んでおく必要がある。起動後の変更はコンテナ再起動（`systemctl restart telemetry`）まで無視される。
+- evidence: `docker-sonic-telemetry/telemetry.sh` L40, L83-91
 
-- `telemetry.sh` L40: `sonic-cfggen -d -t $TELEMETRY_VARS_FILE` により CONFIG_DB から `TELEMETRY|certs` / `TELEMETRY|gnmi` を一括読み込みする。これは `telemetry.sh` プロセス起動時に **1 回だけ** 実行される。
-- `telemetry_vars.j2` はテンプレートベースで `TELEMETRY["certs"]` / `TELEMETRY["gnmi"]` / `DEVICE_METADATA["x509"]` を参照する。
-- **順序依存**: `TELEMETRY` テーブルの内容は `telemetry.sh` の実行時点で確定している必要がある。実行後に CONFIG_DB を変更しても `gnmi_server` プロセスには反映されない（`systemctl restart telemetry` が必要）。
-- evidence: `telemetry.sh:40-43`
+### 3. `TELEMETRY|certs` の証明書ファイルが先行存在必須
 
-### 5. TLS 証明書ファイルは server.go 起動前に存在必須
+`server.go` `SrvAdvConfig()` (L381-425) は起動時に TLS 証明書を検証する。
+`server_crt` / `server_key` のいずれかが設定されているが対応するファイルが存在しない場合、
+`"server certificate or key file path is empty"` または stat エラーを返してサーバが起動しない。
 
-- `gnmi_server/server.go` `SrvAdvConfig()` L398-418: `os.Stat(cfg.CaCertFile)` / `os.Stat(cfg.SrvCertFile)` / `os.Stat(cfg.SrvKeyFile)` で証明書ファイルの存在を確認する。ファイルが存在しない場合は即エラーを返してサーバが起動しない。
-- `telemetry.sh` L54-65: `server_crt` / `server_key` が空の場合は `--insecure` フラグで起動（TLS 無効化）。
-- **順序依存**: TLS 有効で起動する場合、`TELEMETRY|certs` に設定されたパスの証明書ファイルが **telemetry.sh 実行時点** でファイルシステム上に存在していること。`minigraph.py` は `server_crt=/etc/sonic/telemetry/streamingtelemetryserver.cer` 等のデフォルトパスを書き込むが、そのファイルは事前にプロビジョニングされていなければならない。
-- evidence: `gnmi_server/server.go:398-418`, `telemetry.sh:54-65`
+`client_auth=true` を設定する場合は `ca_crt` に指定したファイルも事前に存在している必要がある。
 
-### 6. GNMI_CLIENT_CERT テーブル — cert 認証時の先行必須テーブル
+- **順序依存**: 証明書ファイルを filesystem に配置した**後**に `TELEMETRY|certs` を書き込み、
+  その**後**に telemetry コンテナを起動する。
+- evidence: `sonic-gnmi/gnmi_server/server.go` L395-414
 
-- `telemetry.sh` L148: `user_auth=cert` の場合、`--config_table_name GNMI_CLIENT_CERT` フラグを付与してサーバを起動する。
-- gnmi_server は起動後に `GNMI_CLIENT_CERT` テーブルを参照してクライアント証明書の fingerprint チェックを行う。
-- **順序依存**: `user_auth=cert` を設定する場合、`GNMI_CLIENT_CERT` エントリが CONFIG_DB に存在しないと接続時に認証失敗となる。`TELEMETRY|gnmi.user_auth=cert` を設定する前に `GNMI_CLIENT_CERT` エントリを書いておくことを推奨。
-- evidence: `telemetry.sh:146-149`
+### 4. `GNMI_CLIENT_CERT` テーブルがランタイムに参照される — 先行不要だが注意
 
-### 7. DEVICE_METADATA|x509 フォールバック — legacy 証明書経路
+`user_auth=cert` 設定時、`telemetry.sh` (L147-148) は `--config_table_name GNMI_CLIENT_CERT` を
+引数に追加する。`server.go` `ClientCertAuthenAndAuthor()` (L792) は接続ごとに CONFIG_DB から
+`GNMI_CLIENT_CERT` テーブルを参照してクライアント証明書の CN とロールを検証する。
 
-- `telemetry_vars.j2` L4: `DEVICE_METADATA["x509"]` を参照する。`TELEMETRY["certs"]` が未設定の場合、`telemetry.sh` は `x509` フォールバック経路（L66-80）で `DEVICE_METADATA|x509.server_crt` / `server_key` / `ca_crt` を使用する。
-- **順序依存**: `TELEMETRY|certs` が CONFIG_DB にない場合、`DEVICE_METADATA|x509` が書かれていること。どちらも未設定の場合は `--noTLS` フラグで起動（平文）。これはデグレードではなく設計上の動作。
-- evidence: `telemetry_vars.j2:2-4`, `telemetry.sh:66-80`
+`GNMI_CLIENT_CERT` はランタイムに都度読まれるため、telemetry 起動前に存在する必要はないが、
+クライアントが接続する前には存在している必要がある。
+
+- **順序依存**: `TELEMETRY|gnmi.user_auth=cert` 設定時は、クライアントの接続前までに
+  `GNMI_CLIENT_CERT|<common-name>` エントリを CONFIG_DB に書いておく必要がある。
+- evidence: `sonic-gnmi/gnmi_server/server.go` L792, L797
+
+### 5. systemd サービスレベルの順序制約
+
+`telemetry.service` は `Requires=database.service`、`After=database.service swss.service syncd.service`
+を宣言している（sidecar 版）。これにより `database` コンテナ（redis）および `swss`/`syncd` が
+起動している状態でのみ telemetry が起動する。
+
+- evidence: `docker-telemetry-sidecar/systemd_scripts/telemetry.service` L3-4
+
+### 6. コンテナ内の supervisord 起動順序
+
+コンテナ内では `supervisord_dependent_startup` プラグインにより以下の順序が強制される:
+
+1. `rsyslogd` → 2. `start` (container_startup.py) → 3. `telemetry` → 4. `dialout`
+
+`dialout` プロセス（dial-out クライアント）は `telemetry:running` 状態を待ってから起動する。
+
+- evidence: `docker-sonic-telemetry/supervisord.conf` L56, L68
 
 ---
 
@@ -68,10 +79,9 @@ Consumer: `telemetry.sh` / `gnmi_server/server.go` (`sonic-gnmi`)
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | `FEATURE\|telemetry.state=enabled` → telemetry コンテナ起動 | 先行必須（未設定は 10s ポーリング待機） | minigraph 生成フローでは自動保証 |
-| 2 | `database.service` → telemetry.service 起動 | systemd After= 強制 | Redis 未起動で起動することはない |
-| 3 | `start.sh:exited` → `telemetry.sh` 実行 | supervisord dependent_startup 強制 | FEATURE チェック完了が保証される |
-| 4 | CONFIG_DB 書き込み完了 → `telemetry.sh` 起動（一括読み込み） | 起動時一括読み込みのため先行必須 | runtime 変更は `systemctl restart telemetry` で反映 |
-| 5 | TLS 証明書ファイル配置 → `server_crt`/`server_key`/`ca_crt` 設定 | ファイル存在確認が先行必須 | 空の場合は `--insecure` フォールバック |
-| 6 | `GNMI_CLIENT_CERT` エントリ → `user_auth=cert` 設定 | 推奨先行（欠如時は接続認証失敗） | サーバ再起動必須 |
-| 7 | `DEVICE_METADATA\|x509` → `TELEMETRY\|certs` 未設定時の legacy フォールバック | どちらも未設定なら `--noTLS` 起動 | 設計上の縮退動作 |
+| 1 | `STATE_DB FEATURE|telemetry.state == "enabled"` → コンテナ起動 | **強制先行**（ポーリング待機） | `featmgrd` が FEATURE テーブルを管理するため通常は自動保証 |
+| 2 | `TELEMETRY|gnmi` / `TELEMETRY|certs` → コンテナ起動 | **推奨先行**（起動時一括読み込み） | 欠如時は `port=8080`/`noTLS` でフォールバック起動 |
+| 3 | 証明書ファイル (`server_crt`/`server_key`/`ca_crt`) → コンテナ起動 | **強制先行**（ファイル不在でサーバ不起動） | ファイル不在時の回復はコンテナ再起動が必要 |
+| 4 | `GNMI_CLIENT_CERT|<cn>` → クライアント接続 (`user_auth=cert` 時) | 接続前に必要（ランタイム都度参照） | 接続前に追加可能、削除は即時効果 |
+| 5 | `database.service` + `swss.service` + `syncd.service` → `telemetry.service` | systemd 依存（自動保証） | systemd が順序を管理 |
+| 6 | `telemetry` プロセス起動 → `dialout` プロセス起動 | コンテナ内 supervisord で強制 | `telemetry:running` を supervisord が待機 |
