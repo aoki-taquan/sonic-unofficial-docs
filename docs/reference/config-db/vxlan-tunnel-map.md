@@ -269,6 +269,34 @@ HW にマッピング実体が存在しない状態となる。後続の `delOpe
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・連動更新 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-side.md; sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vxlanorch.cpp -->
+
+`VXLAN_TUNNEL_MAP` への SET / DEL は CONFIG_DB 外の複数のコンポーネントに副作用を及ぼす。
+
+### SET 時
+
+| 副作用 | 対象 | 詳細 | evidence |
+|--------|------|------|---------|
+| カーネル VXLAN net device 作成 | Linux kernel | `<tunnel>-<vlan_id>` デバイスを `ip link add ... type vxlan` で作成し、`Bridge` に参加させて UP | `vxlanmgr.cpp:1003-1051` |
+| `STATE_NEIGH_SUPPRESS_VLAN_TABLE` 書込み | STATE_DB | `Vlan<id>` key に `netdev=<tunnel>-<vlan_id>` を書込み。vlanmgrd が ARP/ND Suppression フラグ更新のためにこのエントリを参照する | `vxlanmgr.cpp:613-618` |
+| APP_DB エントリ書込み | APP_DB | `APP_VXLAN_TUNNEL_MAP_TABLE` にエントリを転記し、orchagent が SAI 操作を実行するトリガとなる | `vxlanmgr.cpp:592` |
+| SAI トンネルオブジェクト一括生成（初回のみ） | SAI / HW | 初回 MAP エントリ受信時に `createTunnelHw()` が呼ばれ、encap/decap マッパー・SAI トンネル・トンネル終端エントリが一括生成される。**2 枚目以降の MAP エントリ追加では SAI トンネル再作成は発生しない** | `vxlanorch.cpp:2063-2087` |
+| orchagent 内部マップ更新 | orchagent memory | `vxlan_vni_vlan_map_table_[vni] = vlan_id` が更新され、EVPN 動的 DIP トンネル処理時に参照される | `vxlanorch.cpp:2120`, `vxlanorch.h:354-357` |
+
+### DEL 時
+
+| 副作用 | 対象 | 詳細 | evidence |
+|--------|------|------|---------|
+| カーネル VXLAN net device 削除 | Linux kernel | `ip link set dev <tunnel>-<vlan_id> down` → `ip link del dev <tunnel>-<vlan_id>` を実行 | `vxlanmgr.cpp:655-656`, `vxlanmgr.cpp:1065-1069` |
+| `STATE_NEIGH_SUPPRESS_VLAN_TABLE` 削除 | STATE_DB | `Vlan<id>` エントリを削除し、ARP/ND suppression 設定が解除される | `vxlanmgr.cpp:668` |
+| 最終エントリ削除時: SAI トンネルオブジェクト削除 | SAI / HW | `vlan_vrf_vni_count == 0` で `deleteTunnelHw()` が呼ばれ SAI マッパー・トンネル・終端が削除される。DIP トンネルが残存する場合は `del_tnl_hw_pending = true` で遅延削除される | `vxlanorch.cpp:2180-2226` |
+| EVPN MAC/IP ルート連動削除 | FDB / ルートテーブル | VXLAN MAP 削除に伴い、対応する EVPN type-2/3 経路と紐付いた MAC/IP エントリが自動削除される | `vxlanorch.cpp` (EVPN ルート管理経路) |
+
+<!-- /side-effects -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
