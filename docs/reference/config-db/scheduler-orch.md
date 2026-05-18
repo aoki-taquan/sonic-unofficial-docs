@@ -153,6 +153,37 @@ QUEUE 等から参照中の SCHEDULER を削除しようとすると `task_need_
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### ADD 時: SCHEDULER → QUEUE の順が必須
+
+`QUEUE` エントリの `scheduler` フィールドを書き込む前に、参照先の `SCHEDULER|<name>` エントリが CONFIG_DB に存在していなければならない。`handleQueueTable()`（`qosorch.cpp`）は `resolveFieldRefValue()` で参照先オブジェクトを解決し、SCHEDULER が未登録の場合は `task_need_retry` を返す。SCHEDULER SAI オブジェクトが生成されるまで QUEUE の SAI バインドは保留される[^3]。
+
+```
+SCHEDULER|<name>  ──SET──>  QUEUE|<port>|<idx>  (scheduler: <name>)
+```
+
+### DEL 時: QUEUE 参照解除 → SCHEDULER 削除の順が必須
+
+`handleSchedulerTable()` の DEL ハンドラは、削除前に `isObjectBeingReferenced()` でその SCHEDULER を参照している QUEUE が存在しないかを確認する。参照が残っている場合は `m_pendingRemove = true` をセットして `task_need_retry` を返す。SAI scheduler profile は参照が解除されるまで削除されない[^3]。
+
+```
+QUEUE|<port>|<idx> の scheduler 参照を解除  ──DEL──>  SCHEDULER|<name>
+```
+
+### 再設定時: pending 状態に注意
+
+DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、SET も `task_need_retry` で保留される。QUEUE 参照の解除 → DEL の完了（SAI destroy 成功）を待ってから SET を発行すること[^3]。
+
+### `config qos reload` では自動担保
+
+`config qos reload` が使用する `qos_config.j2` テンプレートは SCHEDULER ブロック（`scheduler` セクション）を QUEUE ブロック（`queue` セクション）より先に展開するため、CLI 経由の一括適用では順序問題は発生しない。個別エントリを `sonic-db-cli` 等で直接投入する場合のみ上記の順序制約を意識する必要がある[^3]。
+
+[^3]: QosOrch 実装 `handleSchedulerTable()` / `handleQueueTable()` / `isObjectBeingReferenced()`: `sonic-swss/orchagent/qosorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/qosorch.cpp>
+
+<!-- /ordering -->
+
 ## YANG-実装 Discrepancy まとめ
 
 | フィールド | YANG 定義 | qosorch 実装 | 分類 |
