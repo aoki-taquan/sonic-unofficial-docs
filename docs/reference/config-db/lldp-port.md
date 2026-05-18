@@ -370,6 +370,26 @@ APPL_DB: PORT_TABLE PortInitDone + PortConfigDone
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 根拠: `dockers/docker-lldp/lldpmgrd` (全行 grep: `set(` / `hset` / `Producer` / `Notification` / `Table`)
+
+`lldpmgrd` が `LLDP_PORT` に関連する処理で副次的に書き込む DB エントリは **存在しない**。副作用はすべて `lldpcli` コマンド呼び出し（lldpd デーモンへの設定注入）に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `lldpmgrd` の APPL_DB 接続は `self.appl_db = swsscommon.DBConnector("APPL_DB", ...)` の読み取り専用。`APP_PORT_TABLE` の `SubscriberStateTable` で購読するのみで、Producer / Table.set() を呼ぶコードなし (`lldpmgrd:60-63,77,301`) |
+| STATE_DB | なし | `self.state_db` は `is_port_up()` 内の `self.state_port_table.get()` で読み取りのみ。STATE_DB への書込メソッドなし (`lldpmgrd:66-68,78,116-134`) |
+| COUNTERS_DB | なし | `lldpmgrd` 全体に COUNTERS_DB 参照なし |
+| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由。lldpmgrd は ASIC_DB を一切参照しない |
+
+`LLDP_PORT` テーブルを処理する際の唯一の副作用は `subprocess.Popen(["lldpcli", "configure", "ports", ...])` コマンドの発行で、lldpd プロセス内部の設定状態（portidsubtype / description）が更新される。この変更は `STATE_DB` にも `APPL_DB` にも記録されない。
+
+lldp ネイバー情報の STATE_DB への書込は `lldp-syncd` が担当する（`APPL_DB: LLDP_ENTRY_TABLE` 経由）が、これは `LLDP_PORT` の書き込みイベントとは独立した別経路であり、本テーブルの SET に連鎖して発生するものではない。
+
+<!-- /side-effects -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
