@@ -437,3 +437,41 @@ EXP 値は 0..7 の範囲のみ有効。`convertFieldValuesToAttributes()` L1150
 | `fc` (value) | `"[0-7]?"` | `max_num_fcs-1`（SAI 問い合わせ依存。YANG の 7 より広い場合も狭い場合もある） |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/exp-to-fc-map-side-effects.md -->
+
+### MAP SET/DEL の直接副作用
+
+| 副作用 | トリガー | ソース |
+|--------|---------|--------|
+| SAI QoS map オブジェクト生成 (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) | SET (新規) | `qosorch.cpp:1189-1213` |
+| SAI QoS map 属性 in-place 更新 (`set_qos_map_attribute`) | SET (既存) | `qosorch.cpp:151-155`, `qosorch.cpp:204-211` |
+| SAI QoS map 削除 (`remove_qos_map`) | DEL かつ参照なし | `qosorch.cpp:188-198` |
+| `getTypeMap()` への OID 登録 | SET 新規成功 | `qosorch.cpp:168-172` |
+| 同上エントリの erase | DEL 成功 | `qosorch.cpp:194-198` |
+| `m_pendingRemove = true` — 後続 SET を `task_need_retry` に defer | DEL 時に `PORT_QOS_MAP` 参照が残っている | `qosorch.cpp:181-186` |
+
+**既存マップの in-place 更新**:  SET 時にエントリが既に SAI 登録済みの場合 (`sai_object != SAI_NULL_OBJECT_ID`)、`modifyQosItem()` が `sai_qos_map_api->set_qos_map_attribute()` で同一 SAI oid を直接更新する。この SAI oid を参照している全ポート (`SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP`) に変更が即時反映され、PORT_QOS_MAP の再設定は不要。
+
+**STATE_DB / APPL_DB への書き込みなし**: `QosOrch` は `EXP_TO_FC_MAP` 処理で STATE_DB / APPL_DB へ書き込まない。CONFIG_DB → SAI 直結。
+
+### PORT_QOS_MAP 経由の間接副作用
+
+| 副作用 | API | ソース |
+|--------|-----|--------|
+| ポートへの `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` 適用 | `sai_port_api->set_port_attribute()` | `qosorch.cpp:2193` |
+
+MAP OID が確定したことで `PORT_QOS_MAP.exp_to_fc_map` の参照解決が完了し、`handlePortQosMapTable` が各ポートに適用する。MAP 未作成の間は `task_need_retry` で保留され、MAP 作成完了後の `doTask()` サイクルで自動再処理される (`qosorch.cpp:2124-2133`)。
+
+### m_pendingRemove 連鎖
+
+DEL 試行時に `PORT_QOS_MAP` で `exp_to_fc_map` が参照中の場合、`m_pendingRemove = true` がセットされ、その後同名への SET 操作も即 `task_need_retry` を返す (`qosorch.cpp:136-139`)。参照側の解除後に DEL が再実行されて連鎖が解消する。
+
+### CBF / NHG への副作用
+
+なし。`EXP_TO_FC_MAP` の変更は `NhgMapOrch` / CBF テーブルへの直接副作用はない。`NhgMapOrch::getMaxNumFcs()` は FC 値の検証時のみ参照される。
+
+<!-- /side-effects -->
