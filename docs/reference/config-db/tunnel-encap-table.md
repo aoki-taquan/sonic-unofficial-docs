@@ -274,6 +274,44 @@ GRE tunnel は warm-reboot 後に P4RT controller が APPL_DB に再書き込み
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・他オブジェクトへの波及 (Phase F)
+
+`GreTunnelManager` が `FIXED_TUNNEL_TABLE` エントリを **SET / DEL** した際に、GRE tunnel 本体の SAI 操作以外で変化するシステム状態を記す。
+
+### SET 成功時の副作用
+
+| 副作用 | 対象 | 変化 | evidence |
+|--------|------|------|----------|
+| P4OidMapper — RIF の ref_count インクリメント | `SAI_OBJECT_TYPE_ROUTER_INTERFACE` | `increaseRefCount(ROUTER_INTERFACE, router_interface_key)` → RIF DEL が `SWSS_RC_INVALID_PARAM` でブロックされる | `gre_tunnel_manager.cpp:445-447` |
+| P4OidMapper — Neighbor の ref_count インクリメント | `SAI_OBJECT_TYPE_NEIGHBOR_ENTRY` | `increaseRefCount(NEIGHBOR_ENTRY, {router_interface_id}:{encap_dst_ip})` → Neighbor DEL がブロックされる | `gre_tunnel_manager.cpp:449-452` |
+| P4OidMapper — GRE Tunnel OID 登録 | `SAI_OBJECT_TYPE_TUNNEL` | `setOID(TUNNEL, tunnel_key, oid)` → 下流 NextHopManager が `getOID(TUNNEL, ...)` で OID を参照可能になる | `gre_tunnel_manager.cpp:458-459` |
+| 内部テーブル `m_greTunnelTable` への登録 | orchagent 内部 | `emplace(tunnel_key, entry)` → NextHopManager の `getConstGreTunnelEntry()` が tunnel 情報を返せるようになる | `gre_tunnel_manager.cpp:456` |
+
+### DEL 成功時の副作用
+
+| 副作用 | 対象 | 変化 | evidence |
+|--------|------|------|----------|
+| P4OidMapper — RIF の ref_count デクリメント | `SAI_OBJECT_TYPE_ROUTER_INTERFACE` | `decreaseRefCount(ROUTER_INTERFACE, ...)` → ref_count が 0 になれば RIF DEL が可能になる | `gre_tunnel_manager.cpp:504-506` |
+| P4OidMapper — Neighbor の ref_count デクリメント | `SAI_OBJECT_TYPE_NEIGHBOR_ENTRY` | `decreaseRefCount(NEIGHBOR_ENTRY, neighbor_key)` → ref_count が 0 になれば Neighbor DEL が可能になる | `gre_tunnel_manager.cpp:508-511` |
+| P4OidMapper — GRE Tunnel OID 削除 | `SAI_OBJECT_TYPE_TUNNEL` | `eraseOID(TUNNEL, tunnel_key)` → 下流 NextHopManager からの OID 参照が無効化される | `gre_tunnel_manager.cpp:514` |
+| 内部テーブル `m_greTunnelTable` からの削除 | orchagent 内部 | `erase(tunnel_key)` → NextHopManager の `getConstGreTunnelEntry()` が nullptr を返す | `gre_tunnel_manager.cpp:517` |
+
+### 副作用の連鎖
+
+GRE Tunnel を SET すると RIF / Neighbor の ref_count が増加し、Tunnel を DEL するまでこれらを削除できない。また、Tunnel が存在する間は NextHopManager が tunnel 情報を参照可能となり、nexthop エントリの作成が可能になる。その nexthop が Tunnel の ref_count を増加させるため、削除の逆順制約は以下の通り:
+
+```
+削除順: (WCMP / Route) → FIXED_NEXTHOP_TABLE → FIXED_TUNNEL_TABLE → Neighbor → RIF
+```
+
+!!! note "CRM カウンタは非対象"
+    `gre_tunnel_manager.cpp` は `crmorch.h` をインクルードし `extern CrmOrch *gCrmOrch` を宣言するが、実際には `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsedCounter()` を呼び出していない。GRE tunnel オブジェクトは CRM カウンタの対象外であり、COUNTERS_DB / FLEX_COUNTER_DB への書込みは一切発生しない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-side.md`
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
