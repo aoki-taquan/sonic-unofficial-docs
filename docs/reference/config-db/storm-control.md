@@ -572,6 +572,54 @@ SAI API → syncd → ASIC_DB
 > **Evidence**: `orchdaemon.cpp:395-402` (PolicerOrch 生成・TableConnector 登録)、`policerorch.cpp:374-382` (doTask + allPortsReady ガード)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/storm-control-platform.md`
+> ソース: `sonic-utilities/config/main.py:806-814`, `sonic-swss/orchagent/orchdaemon.cpp:401`, `sonic-swss/orchagent/policerorch.cpp:156-240`
+
+### ASIC 種別依存
+
+`PolicerOrch::handlePortStormControlTable()` の実装にはプラットフォーム識別文字列による条件分岐が存在しない。SAI policer の以下の固定属性は **ASIC ベンダーの SAI 実装に委ねられる**:
+
+| SAI 属性 | 固定値 (orchagent) | ASIC 依存性 |
+|---|---|---|
+| `SAI_POLICER_ATTR_METER_TYPE` | `BYTES` | ASIC によっては `PACKETS` 不可 — orchagent はそもそも設定しない |
+| `SAI_POLICER_ATTR_MODE` | `STORM_CONTROL` | 一部 ASIC は storm control モードを SAI でサポートしない (SAI create_policer エラー) |
+| `SAI_POLICER_ATTR_RED_PACKET_ACTION` | `DROP` | ASIC 依存。DROP 以外の action を要求する ASIC では SAI エラーとなる可能性あり |
+| `SAI_POLICER_ATTR_CBS` / Green / Yellow packet action / Color source | 未設定 → SAI/HW デフォルト | **プラットフォームにより挙動が異なる**。一部 ASIC では BYTES + STORM_CONTROL の組み合わせ自体を未サポートの場合がある |
+
+storm control の SAI 対応有無は ASIC ベンダーに依存する。SAI create_policer が失敗した場合、orchagent は `task_need_retry` で再試行し続けるか `SWSS_LOG_ERROR` を出力するが、機能が利用可能かどうかの事前チェックは行わない。
+
+### BUM_STORM_CAPABILITY — プラットフォーム対応能力の非対称な参照
+
+`STATE_DB:BUM_STORM_CAPABILITY|<storm_type>` の `supported` フィールドはプラットフォーム固有デーモン（ベンダー提供）が書き込む。orchdaemon.cpp L401 では `TableConnector stateDbStorm(m_stateDb, "BUM_STORM_CAPABILITY")` を生成しているが、このコネクタは `PolicerOrch` コンストラクタに渡されず **実質的に未使用** (dead code)。
+
+```cpp
+// orchdaemon.cpp:401 — stateDbStorm は生成されるが PolicerOrch に渡されない
+TableConnector stateDbStorm(m_stateDb, "BUM_STORM_CAPABILITY");
+gPolicerOrch = new PolicerOrch(policer_tables, gPortsOrch);  // stateDbStorm を使わない
+```
+
+| 参照者 | 挙動 |
+|--------|------|
+| CLI (`config/main.py:is_storm_control_supported()`) | `STATE_DB:BUM_STORM_CAPABILITY|<storm_type>` の `supported` を確認し、0 なら設定をスキップ |
+| `PolicerOrch` (orchagent) | `BUM_STORM_CAPABILITY` を参照しない。SAI `create_policer` の成否のみで動作 |
+
+`BUM_STORM_CAPABILITY` が STATE_DB に存在しないプラットフォームでは `is_storm_control_supported()` が `None` を返し、CLI は `"Storm-control is not supported on this namespace"` を表示して設定を中断する。一方 `sonic-db-cli` 等で直接 CONFIG_DB に書き込んだ場合、orchagent は capability チェックなしで SAI を呼び出す。
+
+### multi-asic
+
+storm control の CONFIG_DB 参照は `namespace` 単位で独立している。`is_storm_control_supported()` (`config/main.py:807`) は `multi_asic.get_asic_index_from_namespace(namespace)` で対象 asic を特定し、各 asic の `STATE_DB` にある `BUM_STORM_CAPABILITY` を確認する。multi-asic 環境では asic ごとに capability が異なる場合があり、`PORT_STORM_CONTROL` も各 asic の CONFIG_DB に独立して書き込まれる。
+
+| 観点 | 結果 |
+|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | SAI の storm control / policer 実装に依存。orchagent に ASIC 固有分岐なし |
+| BUM_STORM_CAPABILITY | プラットフォームデーモン書き込み。CLI のみ参照、orchagent は非参照 |
+| multi-asic | 各 namespace/asic で独立。`namespace` パラメータで asic を特定 |
+
+<!-- /platform -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
