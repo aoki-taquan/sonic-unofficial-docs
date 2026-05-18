@@ -299,6 +299,50 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/nhg-orch-constants.md -->
+
+`NhgOrch` / `CbfNhgOrch` / `NhgMapOrch` に存在する、CONFIG\_DB / YANG で管理されないハードコード定数・ランタイム取得上限の一覧。
+
+### SAI bulk 処理上限
+
+| 定数 | デフォルト値 | 用途 | ソース |
+|------|------------|------|--------|
+| `DEFAULT_MAX_BULK_SIZE` | `1000` | `ObjectBulker` の flush 単位上限。`syncMembers()` でのメンバー一括 SAI 呼び出し件数を制限 | `orchdaemon.cpp` L81–82 |
+
+`gMaxBulkSize` は `orchagent` 起動オプション `-k <bulk_size>` で上書き可能。`nhgorch.cpp:913`・`cbfnhgorch.cpp:619–621` で参照。
+
+### SAI グループ型 (固定値)
+
+これらの値は CONFIG\_DB フィールドとしては存在せず、各オーケストレータがハードコードして SAI に渡す。
+
+| オーケストレータ | SAI 属性 | 固定値 | ソース |
+|---|---|---|---|
+| `NhgOrch` (通常 NHG) | `SAI_NEXT_HOP_GROUP_ATTR_TYPE` | `SAI_NEXT_HOP_GROUP_TYPE_ECMP` | `nhgorch.cpp` L772 |
+| `CbfNhgOrch` | `SAI_NEXT_HOP_GROUP_ATTR_TYPE` | `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` | `cbfnhgorch.cpp` L302 |
+| `NhgMapOrch` | `SAI_NEXT_HOP_GROUP_MAP_ATTR_TYPE` | `SAI_NEXT_HOP_GROUP_MAP_TYPE_FORWARDING_CLASS_TO_INDEX` | `nhgmaporch.cpp` L119 |
+
+### NhgMapOrch — NHG マップ数上限 (ランタイム取得)
+
+| 変数 | 初期値 | 取得方法 | フォールバック |
+|------|--------|----------|--------------|
+| `m_max_nhg_map_count` | `0` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP` の `sai_object_type_get_availability()` で起動時取得 | SAI 非対応時は `0` のまま — 以降の登録は全件ブロック |
+
+ソース: `nhgmaporch.cpp` L10, L26–34, L105。
+
+### NhgMapOrch — FC 値有効範囲 (ランタイム取得)
+
+| 変数 | 初期値 | 取得方法 | フォールバック |
+|------|--------|----------|--------------|
+| `max_num_fcs` (static) | `-1`（未取得を示す番兵値） | `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を `getMaxNumFcs()` 初回呼び出し時に SAI から取得 | 取得失敗時は `0` — すべての FC 値が範囲外として拒否される |
+
+有効な FC 値は `[0, max_num_fcs)` 範囲のみ受け付ける (`nhgmaporch.cpp` L356–362)。
+
+詳細証跡: `meta/_intermediate/cdb-flow/nhg-orch-constants.md`
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

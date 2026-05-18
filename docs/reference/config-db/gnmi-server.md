@@ -315,6 +315,31 @@ gnmi-native.sh は [CONFIG_DB](../../reference/glossary.md#term-config_db) か�
 
 ---
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+gNMI サブシステムの CONFIG_DB 参照は **起動時スナップショット** (dial-in サーバ) と **keyspace notification 購読** (dial-out クライアント) の 2 モデルに分かれる。それぞれに書込み順依存がある。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `GNMI\|certs` (`server_crt`, `server_key`) → `GNMI\|gnmi` → コンテナ起動 | **強制先行** (TLS モード) | 起動時のみ。両エントリ揃えてからコンテナ起動すること |
+| 2 | `DEVICE_METADATA\|localhost` / `MGMT_VRF_CONFIG\|vrf_global` → gnmi コンテナ起動 | 強制先行 | 通常は初期プロビジョニング時に設定済み |
+| 3 | `TELEMETRY_CLIENT\|DestinationGroup_<n>` → `TELEMETRY_CLIENT\|Subscription_<n>` | **先行推奨** (silent no-op 回避) | ランタイム。逆順でも DB エラーにならないが送信が開始されない。DestGroup 追加後は自動回復 |
+| 4 | `TELEMETRY_CLIENT\|Global` → `DestinationGroup_*` → `Subscription_*` | 推奨 (接続フラップ回避) | ランタイム。Global 後追い更新時は全接続が一時切断→再接続 |
+
+### 主要な制約詳細
+
+**TLS 証明書先行必須 (依存 #1)**: `gnmi-native.sh` は起動時に 1 回だけ `sonic-cfggen -d -t telemetry_vars.j2` で CONFIG_DB をスナップショット読み取りし、`telemetry` プロセスを `exec` で起動する。その後は CONFIG_DB を監視しないため、設定変更の反映にはコンテナ再起動が必要。TLS モード (`noTLS=false` かつ `--insecure` 未使用) では、`GNMI|certs` に `server_crt` / `server_key` が存在しない状態でコンテナを起動すると `telemetry.go:252-258` でエラー終了する。`GNMI|certs` を書いてから `GNMI|gnmi` を書き、コンテナを起動すること（evidence: `gnmi-native.sh:32-61`, `telemetry.go:252-258`）。
+
+**DestinationGroup → Subscription の順序 (依存 #3)**: `processTelemetryClientConfig()` は Subscription エントリ処理時に `cs.destGroupName == ""` チェックを行い、`dst_group` 未設定の場合は silent no-op で返る。`dst_group` が設定されていても参照先 `DestinationGroup_<n>` が `destGrpNameMap` に未登録の場合は `DestGrp2ClientSubMap[cs.destGroupName]` が空のままとなり、接続インスタンスが生成されない。後から `DestinationGroup_<n>` が keyspace 通知で到着すると `setupDestGroupClients()` が呼ばれ自動回復するが、その間テレメトリ送信は発生しない（evidence: `dialout_client.go:622-625`, `dialout_client.go:514-543`）。
+
+**Global 後追い更新による全接続フラップ (依存 #4)**: `processTelemetryClientConfig()` の `Global` 処理では `clientCfg` を更新した後、全 DestinationGroup に対して `closeDestGroupClient(grpName)` → `setupDestGroupClients(ctx, grpName)` を実行する。`Global` エントリを DestGroup / Subscription より後に書くと、既存接続が全て一時切断・再接続される（evidence: `dialout_client.go:507-513`）。
+
+詳細根拠は `meta/_intermediate/cdb-flow/gnmi-server-ordering.md` を参照。
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

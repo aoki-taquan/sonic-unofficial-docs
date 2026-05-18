@@ -180,6 +180,29 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`FABRIC_PORT` テーブルの処理において `FabricPortsOrch` が暗黙的に参照する他テーブル・外部情報源を示す。YANG 定義に leafref は存在しないが、実装レベルで以下の依存がある。
+
+| 参照元 | 参照先テーブル / 情報源 | 参照フィールド | 意味 | 参照箇所 |
+|--------|----------------------|--------------|------|---------|
+| `doFabricPortTask()` ゲート | `APPL_DB FABRIC_MONITOR_TABLE` | `monState` | `"enable"` でなければ isolate/unisolate 操作を全スキップ | `fabricportsorch.cpp:135-157,1394-1399` |
+| `updateFabricDebugCounters()` | `APPL_DB FABRIC_MONITOR_TABLE` | `monErrThreshCrcCells`, `monErrThreshRxCells`, `monPollThreshIsolation`, `monPollThreshRecovery` | 自動 isolate/unisolate の閾値。欠落時はハードコードデフォルト使用 | `fabricportsorch.cpp:444-483` |
+| `doFabricPortTask()` force unisolate | `STATE_DB FABRIC_PORT_TABLE` | `FORCE_UN_ISOLATE` | `forceUnisolateStatus` との差分比較。エントリ不在時は 0 扱い | `fabricportsorch.cpp:1496-1542` |
+| `updateFabricDebugCounters()` | `COUNTERS_DB COUNTERS_TABLE` | `SAI_PORT_STAT_IF_IN_ERRORS`, `SAI_PORT_STAT_IF_IN_FABRIC_DATA_UNITS`, `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES` | CRC / FEC エラー率計算。データ欠損時はエラーなし扱い | `fabricportsorch.cpp:500-520` |
+| `getFabricPortList()` | SAI `SAI_SWITCH_ATTR_FABRIC_PORT_LIST` | — | m_fabricLanePortMap（lane→OID）を構築。失敗すると全ポーリング処理がスキップ | `fabricportsorch.cpp:159-228` |
+| コンストラクタ | `gMySwitchType` (`DEVICE_METADATA.switch_type`) | `"voq"` / `"fabric"` | スイッチ種別に応じて switch drop counter 収集の有無を決定 | `fabricportsorch.cpp:104-110` |
+
+### 解決タイミング
+
+- `monState` は `doFabricPortTask()` 呼び出しのたびに毎回評価される（キャッシュなし）。`FABRIC_MONITOR.monState` を `disable` → `enable` に変更しても、その間に届いた `FABRIC_PORT` の CONFIG_DB 変更は `m_toSync` から erase 済みのため**自動再適用されない**。
+- `FORCE_UN_ISOLATE` は STATE_DB エントリが存在しない場合、デフォルト 0 として比較される。`forceUnisolateStatus=0` の SET は差分なし（0==0）となり force unisolate が実行されない。
+- SAI `getFabricPortList()` 失敗時は 30 秒ポーリングで再試行される。成功まで COUNTERS_DB への FlexCounter 登録と STATE_DB への状態書き込みは行われない。
+
+> **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:80-228,420-520,1394-1542`、`cfgmgr/fabricmgr.cpp:14-124`、`sonic-swss-common/common/schema.h` (`APP_FABRIC_PORT_TABLE_NAME`, `COUNTERS_FABRIC_PORT_NAME_MAP`)、`orchdaemon.cpp:26-27` (`APP_FABRIC_MONITOR_PORT_TABLE_NAME`, `APP_FABRIC_MONITOR_DATA_TABLE_NAME`)
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -195,6 +195,46 @@ void RouteSync::markRoutesOffloaded(swss::DBConnector& db)
 
 APPL_STATE_DB の全 ROUTE_TABLE エントリを読み取り、zebra に offload 通知を一括送信する。これにより warm restart 後に FRR が持つ経路の offload フラグが復元される。
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-ordering.md -->
+
+`RouteOrch::publishRouteState()` が `ResponsePublisher` 経由で APPL_STATE_DB ROUTE_TABLE へ書き込む際の順序依存を示す。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | APPL_DB ROUTE_TABLE → SAI 成功 → APPL_STATE_DB 書き込み | 強制先行（SAI 失敗時はエントリ不在） | SAI 失敗経路は APPL_STATE_DB に存在しない点に注意 |
+| 2 | VRF SAI 登録 → VRF 経路の APPL_STATE_DB 書き込み | 強制先行（isVRFexists false → 後回し） | VRF を先に作成 |
+| 3 | doTask() flush() → APPL_STATE_DB 書き込みのまとめ到着 | バッチ境界（同サイクル内変更はまとめて送出） | consumer は同一バッチ変更の個別到着順を仮定しないこと |
+| 4 | suppress-fib-pending 有効 → fpmsyncd が RESPONSE_CHANNEL 購読 | 機能有効時のみ | 無効時は APPL_STATE_DB 書き込みは発生するが offload 通知は行われない |
+| 5 | Warm Restart: APPL_STATE_DB 既存 → onWarmStartEnd → offload 通知 | 後払い（通常フローとは逆順） | warm restart 完了後に offload フラグ復元が自動実行される |
+
+### 主要な制約詳細
+
+**SAI 成功ゲート（依存 #1）**: APPL_STATE_DB エントリは `addRoutePost()`（routeorch.cpp:L2729）または `removeRoutePost()`（routeorch.cpp:L2970）末尾の `publishRouteState()` 呼び出しから `ResponsePublisher::publish()` を経由して書き込まれる。`response_publisher.cpp:L129-148` の条件ガードにより、SAI 失敗（`status.ok()` が false）かつ SET 操作の場合は APPL_STATE_DB への書き込みがスキップされる。このため APPL_STATE_DB と APPL_DB の経路数差分は SAI プログラミング失敗経路の指標となる:
+
+```cpp
+// response_publisher.cpp:129-133
+if (m_enable_db_write_and_notify &&
+     ((intent_attrs.size() && state_attrs.size()) ||
+     (status.ok() && !intent_attrs.size()))) {
+        writeToDB(table, key, state_attrs, ...);
+}
+```
+
+**VRF 経路の先行制約（依存 #2）**: key が `Vrf<name>:<prefix>` 形式の場合、RouteOrch は `m_vrfOrch->isVRFexists(vrf_name)` を確認し、VRF SAI オブジェクトが未登録の間は処理を `it++; continue` で後回しにする（routeorch.cpp:L711-714）。VRF が存在しなければ SAI プログラミング自体が行われず、APPL_STATE_DB への書き込みも発生しない。
+
+**バッファリングと flush（依存 #3）**: `RouteOrch` は `m_publisher.setBuffered(true)` で RESPONSE_CHANNEL + APPL_STATE_DB 書き込みをバッファリングし、`doTask()` 末尾の `m_publisher.flush()` で一括送出する（routeorch.cpp:L57, L1231）。同一 `doTask()` サイクル内で処理された複数経路の状態変更は、flush 時にまとめて Redis パイプラインに投入される。consumer は同一バッチ内の書き込みが個別到着順を保証しないことを前提とする必要がある。
+
+**suppression 有効時のみ fpmsyncd が購読（依存 #4）**: APPL_STATE_DB への書き込みは `suppress-fib-pending` 設定に関わらず発生するが、fpmsyncd がその結果を `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 経由で受け取って FRR zebra へ offload 通知を送るのは `suppress-fib-pending = enabled` の場合のみ。suppression 無効時は APPL_STATE_DB への書き込みが発生しても FRR の offload フラグは更新されない（fpmsyncd.cpp:L113-118、routesync.cpp:L3174）。
+
+**Warm Restart の後払い offload（依存 #5）**: Warm restart 完了時には `onWarmStartEnd()` が APPL_STATE_DB の全 ROUTE_TABLE エントリを走査して FRR zebra に RTM_NEWROUTE を一括送信する。この経路では通常フローと逆に APPL_STATE_DB が先に存在しており、それを読んで offload 通知を送出する（routesync.cpp:L3298-3310）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールドのコード由来デフォルト (Phase A)
 
