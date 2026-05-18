@@ -260,6 +260,56 @@ ERROR_DB は SAI の操作**結果**（失敗通知）を格納するデータ�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3.1–3.3.3、Section 6 (Warm Boot)  
+> **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下は HLD 設計に基づく記述である。
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | ERROR_DB への影響 | アプリ通知 | 備考 |
+|---|------------|-----------------|-----------|------|
+| 1 | SAI CREATE / SET 失敗 → OrchAgent 受信 | エントリ追加（既存なら上書き） | `publish` で ErrorListener に通知 | 単一チャネルによる順序保証あり |
+| 2 | SAI DELETE 失敗 → OrchAgent 受信 | エントリ除去 + `publish` | ErrorListener に通知（削除通知） | HLD Section 3.3.1 Table |
+| 3 | 同一オブジェクトが複数回失敗 | 最新エラーで上書き（accumulate しない） | 各回個別通知 | HLD 1.1.7: last-known error policy |
+| 4 | SAI CREATE 成功（失敗後に成功） | DB エントリ削除 + `publish` | 成功通知（`ERR_NOTIFY_POSITIVE_ACK` 登録時のみ） | HLD Section 3.3.1 |
+| 5 | OrchAgent 未起動 / 停止中 | ERROR_DB に何も書かれない | 通知なし | OrchAgent が唯一の producer |
+| 6 | `sonic-clear error-database` 実行 | DB エントリを直接削除 | **アプリへの通知なし** | HLD Section 3.3.3 |
+| 7 | warm reboot | ERROR_DB の全エントリ消滅 | 通知なし | HLD Section 6: 非永続設計 |
+
+### 詳細
+
+#### 1 & 3. SAI 失敗時の last-known error 上書き
+
+OrchAgent は SAI 操作失敗通知を受け取るたびに `HSET ERROR_ROUTE_TABLE|<prefix>` または `HSET ERROR_NEIGH_TABLE|<intf>|<prefix>` を実行する。**同一オブジェクトが複数回失敗した場合でも、DB エントリは 1 件のみ保持され、最新エラーコードで上書きされる**（HLD 1.1.7）。各失敗はそれぞれ `publish` で通知されるため、ErrorListener は複数回コールバックされる。
+
+```text
+# HLD Section 3.3.1 イベント処理シーケンス (失敗時)
+1. Syncd が ASIC_DB 通知チャネルに失敗イベントを送信
+2. OrchAgent が受信 → SAI 型を SWSS_RC_* に翻訳
+3. HSET ERROR_ROUTE_TABLE|<prefix> opcode=<op> rc=<SWSS_RC_*> ...
+4. PUBLISH ERROR_DB → ErrorListener のコールバック起動
+```
+
+#### 2. SAI DELETE 失敗
+
+`DELETE` 操作が SAI で失敗した場合、OrchAgent は DB エントリを**削除**してから `publish` する（HLD Section 3.3.1 Table: "Create failure → Delete failure: Remove the entry from database and notify"）。これは `DELETE` 失敗後もオブジェクトが論理的に「削除試行済み」として扱われることを意味し、DB に失敗エントリが残留しない設計である。
+
+#### 5. OrchAgent 停止中の失敗
+
+syncd はエラーを ASIC_DB 通知チャネルに送るが、OrchAgent が受信できなければ ERROR_DB への書き込みも ErrorListener へのコールバックも発生しない。orchagent は唯一の producer であるため（HLD Section 3.1）、OrchAgent 停止中は全 SAI 失敗がサイレントに消失する。
+
+#### 6. `sonic-clear error-database` — 通知なしの強制削除
+
+CLI の clear コマンドは OrchAgent に通知チャネル経由でクリア要求を送り、OrchAgent が直接 `DEL` で ERROR_DB エントリを削除する。**この操作は registered applications への `publish` を行わない**（HLD Section 3.3.3）。そのため fpmsyncd などの ErrorListener は clear 後も古い「失敗あり」状態を保持する可能性がある。
+
+#### 7. warm reboot による非永続化
+
+ERROR_DB は Redis のインメモリ DB として設計されており、warm reboot 後に内容は消去される（HLD Section 6）。warm reboot をまたいだ失敗エントリの引き継ぎは**サポートしない**。再起動後に同じ SAI 失敗が再発した場合のみ、再度エントリが書き込まれる。
+
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
