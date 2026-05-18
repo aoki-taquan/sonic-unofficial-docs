@@ -105,6 +105,51 @@ EVPN DIP トンネルの `VxlanTunnel` コンストラクタ呼び出し (`vxlan
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+EVPN DIP トンネルは CONFIG_DB の直接エントリを持たないが、APP_DB 経由の動的生成フローにおいて
+複数の「先行条件が満たされなければ処理が進まない」強制順序依存が存在する。
+
+### 検出された順序依存
+
+| # | 先行条件 | 後続操作 | 強制度 | 根拠 |
+|---|----------|----------|--------|------|
+| 1 | `VXLAN_EVPN_NVO` 処理済み (`getEVPNVtep()` 非 NULL) | DIP トンネル生成 | **強制先行** | `vxlanorch.cpp:1685-1692` |
+| 2 | `VXLAN_TUNNEL` (VTEP) が active (`isActive()` = true) | DIP トンネル生成 | **強制先行** | `vxlanorch.cpp:1694-1699` |
+| 3 | `VXLAN_TUNNEL_MAP` でローカル VNI-VLAN マップが存在 | `EVPN_REMOTE_VNI_TABLE` 処理 | **強制先行** | `vxlanorch.cpp:2490-2494` |
+| 4 | 対象 VLAN が存在 (`getVlanByVlanId()` 成功) | `EVPN_REMOTE_VNI_TABLE` 処理 | **強制先行** | `vxlanorch.cpp:2483-2487` |
+| 5 | 全 DIP トンネルの参照カウント = 0 (`del_tnl_hw_pending` = false) | `VXLAN_EVPN_NVO` 削除 | **強制先行** | `vxlanorch.cpp:2803-2807` |
+
+### 主要な制約詳細
+
+**EVPN VTEP 未設定 / 未 active の場合の silent drop (依存 #1, #2)**:
+`VxlanTunnelOrch::addTunnelUser()` は冒頭で `evpn_orch->getEVPNVtep()` を呼ぶ。
+VTEP ポインタが NULL の場合（`VXLAN_EVPN_NVO` 未設定）は `SWSS_LOG_WARN("Unable to find EVPN VTEP")` を
+出力して即 `false` を返す。VTEP ポインタが非 NULL でも `isActive()` が false の場合は
+`SWSS_LOG_WARN("VTEP not yet active")` を出力して `false` を返す。
+どちらの場合もリクエストは **再エンキューされない**。再試行は上位呼び出し元（`EvpnRemoteVnip2pOrch::addOperation()`
+が `return false` を返した場合に orchagent のイベントループが次の消費サイクルで再処理する）
+に依存する（`vxlanorch.cpp:1687-1699`）。
+
+**VXLAN_TUNNEL_MAP が先に必要 (依存 #3)**:
+`EvpnRemoteVnip2pOrch::addOperation()` は
+`vxlan_tun_map_orch->isVniVlanMapExists(vni_id, ...)` を呼び、ローカル VNI マップが
+存在しない場合は `SWSS_LOG_WARN("Vxlan tunnel map is not created for vni:%d")` を出力し
+`return false` で処理を中断する。`VXLAN_TUNNEL_MAP` で VNI-VLAN ペアを事前登録してから
+BGP EVPN がリモート VTEP を学習する順序が必要
+（`vxlanorch.cpp:2489-2494`、コメント `"Remote end point can be added only after local VLAN to VNI map gets created"`）。
+
+**NVO 削除が DIP トンネル完全削除まで待機 (依存 #5)**:
+`EvpnNvoOrch::delOperation()` は `source_vtep_ptr->del_tnl_hw_pending` が true の場合に
+`SWSS_LOG_WARN("NVO not deleted as hw delete is pending")` を出力して `return false` を返す。
+`del_tnl_hw_pending` は DIP トンネルが HW 削除ペンディング状態の間 true を保持し、
+`deletePendingSIPTunnel()` が全 DIP トンネルの参照カウント = 0 を確認してから `false` に戻す。
+`config vxlan evpn_nvo del` を実行しても、既存リモート VTEP への DIP トンネルが残存していると
+CONFIG_DB 削除が SAI に反映されない（`vxlanorch.cpp:2803-2807`, `vxlanorch.cpp:952-964`）。
+
+<!-- /ordering -->
+
 ## 例外条件・特殊挙動
 
 - **isDipTunnelsSupported() = false の場合**: DIP トンネルは作成されず、リモート VTEP の
