@@ -251,6 +251,29 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`STATE_DB:NAT_RESTORE_TABLE` は `restore_nat_entries.py` が唯一の書き手であり、`natsyncd` は読み手として warm reboot 時のみ参照する。`COUNTERS_DB:COUNTERS_NAT*` は `NatOrch` が唯一の書き手であり、`show nat statistics` / `config nat` CLI が読み手となる。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `NAT_GLOBAL_TABLE` (APPL_DB) `.admin_mode` | SET トリガ → `enableNatFeature()` / `disableNatFeature()` 呼び出し | 常時。`admin_mode=enabled` のとき `m_natQueryTimer` が開始され `COUNTERS_NAT*` の 5 秒周期更新が開始される | `natorch.cpp` L3061–3064, L2534–2567 (`enableNatFeature`), L2590–2602 (`disableNatFeature`) |
+| `NAT_TABLE` / `NAPT_TABLE` / `NAT_TWICE_TABLE` / `NAPT_TWICE_TABLE` (APPL_DB) | キー転写 + SAI 登録トリガ | SAI 登録成功直後。APPL_DB エントリのキー (IP / プロトコル:IP:ポート) が `COUNTERS_NAT\|<ip>` / `COUNTERS_NAPT\|<proto:ip:port>` キーに転写され、初期値 `"0"` が書かれる | `natorch.cpp` L789 (`updateNatCounters(ipAddr, 0, 0)`), L1322 |
+| SAI Switch attribute `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` | SAI クエリ → `COUNTERS_GLOBAL_NAT\|Values.MAX_NAT_ENTRIES` 書込み | 起動時 1 回。クエリ失敗 / 0 返却時は `gIsNatSupported=false` → NAT 機能完全無効化 | `natorch.cpp` L108–130 (NatOrch コンストラクタ) |
+| `restore_nat_entries.py` (sonic-buildimage) | 書き手 → `STATE_DB:NAT_RESTORE_TABLE\|Flags.restored = "true"` | warm reboot 時のみ。`/var/warmboot/nat/nat_entries.dump` からの conntrack 復元完了後にフラグ書込み | `restore_nat_entries.py` L49–52 |
+| `natsyncd` (`isNatRestoreDone()`) | 読み手 → `STATE_DB:NAT_RESTORE_TABLE\|Flags.restored` | warm start 進行中のみ。`"true"` を確認してから APPL_DB reconciliation 開始 | `natsync.cpp` L96–108, `natsyncd.cpp` L48 |
+| `scripts/natshow` (sonic-utilities) | 読み手 → `COUNTERS_GLOBAL_NAT:Values` / `COUNTERS_NAT:<ip>` | `show nat statistics` / `show nat translations` コマンド実行時 | `natshow` L93–95, L217–234 |
+| `config/nat.py` (sonic-utilities) | 読み手 → `COUNTERS_GLOBAL_NAT:Values.SNAT_ENTRIES` / `MAX_NAT_ENTRIES` | `config nat add static` 等の CLI でエントリ数上限チェックと統計表示に使用 | `nat.py` L290–295, L382–387, L475–480 |
+
+!!! note "STATE_DB / COUNTERS_DB の書き手は単一プロセス"
+    `STATE_DB:NAT_RESTORE_TABLE` の書き手は `restore_nat_entries.py` のみ。`COUNTERS_DB:COUNTERS_NAT*` の書き手は `NatOrch` のみ。他プロセスから書き込まれることはなく、`show nat` 系 CLI はすべて読み取り専用。
+
+!!! note "`COUNTERS_GLOBAL_NAT|Values` の静的フィールドと動的フィールド"
+    `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` の 4 フィールドは NatOrch 起動時に 1 回だけ書かれ、以降は更新されない（`natorch.cpp:108-134`）。`SNAT_ENTRIES` / `DNAT_ENTRIES` は SAI へのエントリ追加/削除のたびに `updateSnatCounters()` / `updateDnatCounters()` で随時更新される。
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
