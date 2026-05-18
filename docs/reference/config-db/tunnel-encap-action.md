@@ -407,6 +407,49 @@ GRE トンネル ID を変更する UPDATE は禁止されている。`validateA
 
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+`FIXED_NEXTHOP_TABLE` の `set_p2p_tunnel_encap_nexthop` アクションは P4RT gRPC サービスを持つプラットフォームでのみ機能する。`next_hop_manager.cpp` にはプラットフォーム分岐コード（`getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等）は存在せず、差異は SAI 実装レベルで生じる。
+
+### BRCM SAI 固有要件 — neighbor 事前生成
+
+```cpp
+// next_hop_manager.cpp:144, 515
+// BRCM requires neighbor object to be created before GRE tunnel,
+// referring to the one in GRE tunnel object when creating
+// next_hop_entry_with setTunnelAction
+```
+
+`set_p2p_tunnel_encap_nexthop` 時、`NextHopManager` は `GreTunnelManager` から `neighbor_id`（= `encap_dst_ip`）を取得し、centralized mapper で neighbor エントリの存在を確認してから SAI nexthop を作成する。この順序制約は BRCM SAI 要件としてコードに明記されている[^1]。
+
+### CRM カウンタ更新 (プラットフォーム非依存)
+
+SET 成功時に `gCrmOrch->incCrmResUsedCounter()` が呼ばれる（`next_hop_manager.cpp:558-561`）:
+
+- IPv4 nexthop: `CRM_IPV4_NEXTHOP` インクリメント
+- IPv6 nexthop: `CRM_IPV6_NEXTHOP` インクリメント
+
+`GreTunnelManager` が CRM カウンタを更新しないのと対照的。
+
+### SAI next hop 対応の ASIC 依存性
+
+`SAI_OBJECT_TYPE_NEXT_HOP` (TUNNEL_ENCAP タイプ) の実装状況はベンダー SAI によって異なる:
+
+| プラットフォーム | 状況 |
+|----------------|------|
+| Broadcom (BRCM SAI) | 対応（neighbor 事前生成が必須要件） |
+| VS / VPP (libsaivs / libsaivpp) | `create_next_hops` は `SAI_STATUS_SUCCESS` を返すがハードウェア転送なし。CI / テスト専用 |
+| その他 ASIC | SAI 実装次第。`SAI_STATUS_NOT_SUPPORTED` 返却時は `SWSS_LOG_ERROR` のみ |
+
+### SAI Bulk モード固定
+
+`create_next_hops` / `remove_next_hops` は `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` 固定で呼ばれる（`next_hop_manager.cpp:527-530`）。部分成功モードは使用されない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-platform.md`
+
+<!-- /platform -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`TUNNEL_ENCAP_TABLE`](tunnel-encap-table.md)（GRE トンネルオブジェクト本体）
