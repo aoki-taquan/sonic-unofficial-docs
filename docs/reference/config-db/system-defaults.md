@@ -308,4 +308,41 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 > **Evidence**: `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `buffers_config.j2:208`; `qos_config.j2:143`; `sonic-buildimage/src/sonic-config-engine/minigraph.py:2212-2215`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:179-188`; `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213`; `sonic-swss/orchagent/muxorch.cpp:1388-1390`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:188-197`; 詳細分析 `meta/_intermediate/cdb-flow/system-defaults-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+`SYSTEM_DEFAULTS` はイベント駆動のハンドラを持たず、起動時に読み取られるだけのテーブルである。そのため「書き込みに失敗する」より「読み取り側が不正値・エントリ不在を受け取ったとき」の挙動が主要な障害パターンとなる。
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `status` に `enabled`/`disabled` 以外を書き込もうとする | YANG バリデーション層 (`admin_mode` typedef) | CONFIG_DB への書き込みをブロック。DB には不正値が残らない | YANG エラー | `sonic-system-defaults.yang` `admin_mode` typedef |
+| `tunnel_qos_remap.status=enabled` を orchagent 起動後に書き込む | `muxorch.cpp` L1388（`hget` 1 回限り参照） | orchagent 再起動まで変更が反映されない。ランタイム中の書き込みは silent ignore | なし（コード側 warning なし） | `muxorch.cpp:1388-1390` |
+| `mux_tunnel_egress_acl.status` がエントリ不在 | `muxorch.cpp` L1389-1390 — `hget` が false を返す | `value` が空文字列 → `is_ingress_acl_ = value != "enabled"` が `true`（ingress [ACL](../../reference/glossary.md#term-acl) として処理） | なし | `muxorch.cpp:1390` |
+| `software_bfd.status` が `"enabled"` 以外または不在 | `bgpcfgd/main.py` L118 | `BfdMgr` を登録しない。BFD ソフトウェアセッション管理が無効のまま起動 | なし | `bgpcfgd/main.py:118` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| エントリ DEL 後に読み取り側 daemon が起動 | 各 daemon の `hget` / `get_table` | エントリ不在を `disabled` として扱う (safe fallback)。`KeyError` は発生しない | `config_samples.py:160-161`、`muxorch.cpp:1390` |
+| テーブル全体が不在で orchagent が起動 | `config_samples.py` L160-161 | 空 dict を補完してテーブル不在を回避。各機能は disabled 扱いで起動 | `config_samples.py:160-161` |
+
+### swss_vars.j2 / orchagent.sh の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `SYSTEM_DEFAULTS.tunnel_qos_remap` 不在時に `swss_vars.j2` を展開 | `swss_vars.j2` L14 — Jinja2 `is defined` ガード | `dscp_remapping` が `"disable"` になる（フォールバック正常動作） | `swss_vars.j2:14` |
+| `sonic-cfggen -d -t swss_vars.j2` 実行時に CONFIG_DB 接続失敗 | `orchagent.sh` L8 — `\|\| exit 1` | orchagent.sh が exit 1 で終了 → supervisord がコンテナを再起動 | `orchagent.sh:8` |
+
+### 補足
+
+- **`SYSTEM_DEFAULTS` はイベント駆動ではない**: `ConsumerStateTable` / `SubscriberStateTable` 等の pub/sub 機構を使用しないため、値変更の失敗（pub 失敗）は概念として存在しない。
+- **YANG バリデーション層のブロック**: `status` フィールドへの不正値書き込みは YANG で拒否されるため、不正値が CONFIG_DB に残存するシナリオは正規経路では発生しない。
+- **`polaris` / `software_bfd`**: `config_samples.py` が SmartSwitch DPU プロファイル生成時に無条件で上書き注入する (L179-188)。不在時はコード参照先が存在しないため、影響なし。
+
+> Evidence: `sonic-swss/orchagent/muxorch.cpp:1388-1390`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:117-119`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:160-188`; `sonic-buildimage/files/build_templates/swss_vars.j2:9,14`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:8,37-42`; SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` / `4305596156d70e9797e8a881b3d19b46de0bce0d`。詳細分析 `meta/_intermediate/cdb-flow/system-defaults-failure.md`
+<!-- /failure -->
+
 <!-- glossary-links-injected: 90fa20b1e615 -->
