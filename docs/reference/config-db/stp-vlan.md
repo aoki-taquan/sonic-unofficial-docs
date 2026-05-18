@@ -1,6 +1,6 @@
 ---
 title: STP_VLAN / STP_VLAN_PORT テーブル
-description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズムを詳細解説。Phase A+B+C+D+E+F+G 分析。"
+description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズム・プラットフォーム差異を詳細解説。Phase A+B+C+D+E+F+G+H 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -14,6 +14,9 @@ sources:
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: cfgmgr/stpmgr.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/stporch.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
@@ -881,6 +884,80 @@ TTL は設定されない（CONFIG_DB は永続ストレージ前提）。
 
 <!-- /pubsub -->
 
+<!-- platform-diff -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-platform.md -->
+
+`STP_VLAN` / `STP_VLAN_PORT` テーブルの処理に ASIC ベンダー固有の条件分岐は存在しない。`stpmgrd` は SAI を直接呼ばず Unix Domain Socket 経由で `stpd` に IPC を送信する設計で、ASIC 差異は `stpd` 内部で吸収される。ただし以下 3 点でプラットフォームに依存した挙動が観測される。
+
+### A. STP プロトコルモード (PVST vs MSTP)
+
+`STP_VLAN` / `STP_VLAN_PORT` は **PVST モード (`L2_PVSTP`) 専用** のテーブルである。
+
+```cpp
+// stpmgr.cpp:260
+if (l2ProtoEnabled == L2_PVSTP)
+{
+    newInstance = 1;
+    instId = allocL2Instance(vlan_id);
+}
+```
+
+| モード | `STP_VLAN` SET 処理 | per-VLAN インスタンス割当 |
+|--------|--------------------|-----------------------|
+| `L2_PVSTP` | `allocL2Instance()` → IPC 送信 | 実行 |
+| `L2_MSTP` | IPC 送信するが `newInstance = 0` (割当なし) | スキップ。`STP_MST_INST` が担う |
+| `L2_NONE` | ガード条件で skip / erase のみ | 実行せず |
+
+`l2ProtoEnabled` は ASIC ではなく CLI で設定する `STP|GLOBAL.mode`（`"pvst"` / `"mst"`）で決まる[^2]。
+
+### B. ASIC ごとの最大 STP インスタンス数
+
+`stporch` 起動時に SAI 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を照会して `STATE_STP|GLOBAL.max_stp_inst` に書き込む[^4]。`stpmgrd` はこの値を読み取って `max_stp_instances` に設定し、超過 VLAN は silent truncation する (Phase E 参照)。
+
+```cpp
+// stporch.cpp:32-38
+attr.id = SAI_SWITCH_ATTR_MAX_STP_INSTANCE;
+status = sai_switch_api->get_switch_attribute(gSwitchId, ...);
+if (status == SAI_STATUS_SUCCESS)
+    m_maxStpInstance = (sai_uint16_t)max_stp_instances - 1;
+    m_stpTable->set("GLOBAL", {{"max_stp_inst", to_string(m_maxStpInstance)}});
+```
+
+| プラットフォーム | SAI 照会結果 | `max_stp_instances` 実効値 |
+|-----------------|-------------|--------------------------|
+| Broadcom 等物理 ASIC | 成功 (255 以上が多い) | `SAI 値 - 1` (デフォルト STP インスタンスを除く) |
+| 一部 Marvell / 低グレード ASIC | 成功 (値が少ない) | `SAI 値 - 1`。STP_VLAN 有効化数が制限される |
+| VS (仮想スイッチ) | 失敗または 0 返却 | `STP_DEFAULT_MAX_INSTANCES` = 255 (フォールバック)[^2] |
+
+### C. ebtables PVST マルチキャストフィルタ
+
+PVST モード有効化時に `stpmgr` は Cisco PVST+ マルチキャストアドレス (`01:00:0c:cc:cc:cd`) をブロックする ebtables ルールをカーネルに挿入する[^2]。
+
+```cpp
+// stpmgr.cpp:113-117 (PVST 有効化時)
+"ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP"
+// stpmgr.cpp:161-165 (STP 無効化時)
+"ebtables -D FORWARD -d 01:00:0c:cc:cc:cd -j DROP"
+```
+
+- **物理 ASIC (Broadcom / Mellanox 等)**: ebtables が有効なため PVST マルチキャストが適切に遮断される。
+- **VS (仮想スイッチ)**: `ebtables` バイナリが存在しない場合は `system()` が失敗し `SWSS_LOG_DEBUG` のみ出力される。PVST マルチキャストの遮断は機能しないが、VS 環境ではハードウェアフラッディングがないため実害なし。
+- **SmartSwitch DPU**: DPU 側では `stpmgrd` は通常起動しないため非適用。
+
+### プラットフォーム差異要約
+
+| 観点 | 物理 ASIC (PVST モード) | 物理 ASIC (MSTP モード) | VS / コンテナ | SmartSwitch DPU |
+|------|------------------------|------------------------|--------------|-----------------|
+| `STP_VLAN` per-VLAN 割当 | `allocL2Instance` 実行 | スキップ (`newInstance=0`) | 実行 | N/A (非起動) |
+| `max_stp_instances` 上限 | SAI 照会値 − 1 | N/A | 255 (フォールバック) | N/A |
+| ebtables PVST フィルタ | 有効 | STP 無効化時に削除 | no-op (バイナリ非存在時) | N/A |
+
+[^4]: `sonic-swss/orchagent/stporch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp>
+
+<!-- /platform-diff -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
@@ -902,6 +979,7 @@ TTL は設定されない（CONFIG_DB は永続ストレージ前提）。
 [^1]: STP CLI 実装: `config/stp.py`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py>
 [^2]: STP Manager 実装: `stpmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp>
 [^3]: STP Manager ヘッダ: `stpmgr.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h>
+[^4]: STP Orch 実装: `stporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp>
 
 ## 関連ページ
 
