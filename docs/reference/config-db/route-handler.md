@@ -512,6 +512,79 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・連鎖変更 (Phase F)
+
+> **調査根拠**: `sonic-swss/fpmsyncd/routesync.cpp:156,172-189,198-206,3100-3131,3165-3269,3291-3295`; `sonic-swss/orchagent/routeorch.cpp:126-127,287-295,3185-3201` (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-handler-side-effects.md`
+
+`RouteSync` がハンドラ分岐を経て `APPL_DB:ROUTE_TABLE` へ書き込む動作は、orchagent 側で複数の連鎖変更を引き起こす。また fpmsyncd 自身も zebra へのオフロード応答という外向き副作用を持つ。
+
+### 連鎖変更マップ
+
+```
+FRR (zebra) ──FPM/netlink──▶ fpmsyncd (RouteSync)
+  ├─▶ APPL_DB:ROUTE_TABLE  (ProducerStateTable, SET/DEL)
+  │     └─▶ orchagent (RouteOrch::doTask)
+  │           ├─▶ SAI API → ASIC FIB エントリ追加 / 削除
+  │           ├─▶ APPL_STATE_DB:ROUTE_TABLE  (ResponsePublisher, SET/DEL)
+  │           └─▶ STATE_DB:ROUTE_TABLE  (デフォルト経路 0.0.0.0/0 と ::/0 のみ, state=ok/na)
+  └─▶ FPM (RTM_NEWROUTE + RTM_F_OFFLOAD)  ← zebra へのオフロード確認応答
+```
+
+### 1. APPL_DB:ROUTE_TABLE への書き込み
+
+`RouteSync::setRouteWithWarmRestart()` (`routesync.cpp:172-189`) が通常時 `ProducerStateTable::set()` を呼んで `APPL_DB:ROUTE_TABLE` を更新する。warm-restart 中は `m_warmStartHelper.insertRefreshMap()` に経路を積み、実際の書き込みは reconcile 後に行われる (`routesync.cpp:183-188`)。
+
+### 2. orchagent → APPL_STATE_DB:ROUTE_TABLE
+
+`RouteOrch::publishRouteState()` (`routeorch.cpp:3185-3201`) が `ResponsePublisher::publish()` を呼んで `APPL_STATE_DB:ROUTE_TABLE` を更新する。
+
+- SET 時: `fvs = [("protocol", ctx.protocol)]` を書き込む
+- DEL 時: `fvs` が空のため `ResponsePublisher` がエントリを削除する
+
+`publishRouteState()` は `addRoute()` 成功時 (`routeorch.cpp:2729`)、`removeRoute()` 成功時 (`routeorch.cpp:2970`)、重複エントリ受信時 (`routeorch.cpp:1050,1090`) に呼ばれる。
+
+### 3. orchagent → STATE_DB:ROUTE_TABLE (デフォルト経路のみ)
+
+`RouteOrch::updateDefRouteState()` (`routeorch.cpp:287-295`) が `STATE_DB:ROUTE_TABLE` へ `state=ok` (追加時) / `state=na` (削除時) を書き込む。対象は **デフォルト経路** `0.0.0.0/0` および `::/0` のみ (`routeorch.cpp:2703,2856`)。
+
+```cpp
+// routeorch.cpp:287-295
+void RouteOrch::updateDefRouteState(string ip, bool add)
+{
+    vector<FieldValueTuple> tuples;
+    string state = add ? "ok" : "na";
+    FieldValueTuple tuple("state", state);
+    tuples.push_back(tuple);
+    m_stateDefaultRouteTb->set(ip, tuples);
+}
+```
+
+### 4. fpmsyncd → FPM (オフロード確認応答)
+
+`RouteSync::sendOffloadReply()` (`routesync.cpp:3100-3131`) は `RTM_NEWROUTE` に `RTM_F_OFFLOAD` フラグを付加して zebra へ FPM メッセージを送り返す。これにより zebra は経路が ASIC にオフロードされたことを認識する。
+
+route suppression (`isSuppressionEnabled()`) が有効な場合のみ `onRouteResponse()` がオフロード応答を生成する。無効時は `onRouteResponse()` が即 return し、オフロード応答は送出されない (`routesync.cpp:3174-3177`)。
+
+warm-restart 終了時 (`onWarmStartEnd()`) には `markRoutesOffloaded()` が `APPL_STATE_DB:ROUTE_TABLE` の全エントリに `err_str=SWSS_RC_SUCCESS` を付加して `onRouteResponse()` を呼び出し、一括オフロード応答を zebra に送出する (`routesync.cpp:3291-3295`)。
+
+### 副作用サマリ
+
+| 副作用先 | トリガ | 書き手 | 条件 |
+|---------|-------|--------|------|
+| `APPL_DB:ROUTE_TABLE` | FPM/netlink 受信 | fpmsyncd (RouteSync) | 常時 (warm-restart 中は遅延) |
+| `APPL_STATE_DB:ROUTE_TABLE` | `addRoute` / `removeRoute` 成功 | orchagent (RouteOrch) | 常時 |
+| `STATE_DB:ROUTE_TABLE` | デフォルト経路 SET/DEL 成功 | orchagent (RouteOrch) | 経路が `0.0.0.0/0` または `::/0` のとき |
+| FPM (RTM_F_OFFLOAD) | `APPL_STATE_DB` からの応答 | fpmsyncd (RouteSync) | route suppression 有効時のみ |
+
+<!-- evidence: sonic-net/sonic-swss/fpmsyncd/routesync.cpp:172-189L (setRouteWithWarmRestart) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:3185-3201L (publishRouteState → APPL_STATE_DB) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:287-295L (updateDefRouteState → STATE_DB:ROUTE_TABLE) -->
+<!-- evidence: sonic-net/sonic-swss/fpmsyncd/routesync.cpp:3100-3131L (sendOffloadReply → FPM) -->
+<!-- evidence: sonic-net/sonic-swss/fpmsyncd/routesync.cpp:3174-3177L (onRouteResponse suppression check) -->
+<!-- /side-effects -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` を同時に持つ経路は orchagent がエラー棄却（`m_toSync` から削除）。
