@@ -316,4 +316,94 @@ YANG leafref および frrcfgd 実装スキャンにより確認した参照先�
 > 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-cross-refs.md` を参照
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+frrcfgd は PREFIX_SET / PREFIX の変換失敗をすべて **syslog LOG_ERR + `continue`** で処理する。retry・rollback（DEL 失敗時のみ例外）・STATE_DB 記録はない。
+
+### 1. `mode` フィールド欠落 → LOG_ERR + silent drop
+
+`PREFIX_SET|<name>` SET イベントに `mode` がない場合:
+
+```
+LOG_ERR: 'no mode given for prefix-set <name>'
+```
+
+`prefix_set_list` へのキャッシュ登録もされないため、後続の `PREFIX|<name>|*` SET イベントも全て DROP される（ガード #3 に該当）。**YANG 経路では YANG default `"IPv4"` が補完されるためこの問題は発生しない。`redis-cli hset` 等の直接書き込みでのみ発生する。**
+
+### 2. 既存 PREFIX_SET への重複 SET → 無言スキップ
+
+既存エントリへの SET 時は LOG_DEBUG のみ出力し更新をスキップする（`frrcfgd.py:2896-2900`）。
+`mode` 変更は実行時に**反映されない**。変更には DEL → SET のシーケンスが必要（Phase B 参照）。
+
+### 3. PREFIX_SET 未登録状態で PREFIX エントリが届く → LOG_ERR + DROP
+
+対応 PREFIX_SET がキャッシュに存在しない状態で `PREFIX|<name>|*` SET イベントが届いた場合:
+
+```
+LOG_ERR: 'could not find prefix-set <name> from cache'
+```
+
+vtysh コマンド未発行。PREFIX エントリは CONFIG_DB に残るが FRR には反映されない。
+
+### 4. PREFIX メンバ vtysh DEL 失敗 → LOG_ERR + キャッシュ不整合
+
+`no ip prefix-list` コマンドが失敗した場合:
+
+```
+LOG_ERR: 'failed to delete prefix <ip> with range <range> from set <name>'
+```
+
+frrcfgd はキャッシュからの削除を行わず `continue`。**FRR に旧エントリが残存し、frrcfgd 内部キャッシュとの不整合が発生する。retry なし。**
+
+### 5. PREFIX メンバ vtysh ADD 失敗 → LOG_ERR + キャッシュ revert + continue
+
+ADD vtysh コマンドが失敗した場合:
+
+```
+LOG_ERR: 'failed to add prefix <ip> with range <range> to set <name>'
+```
+
+frrcfgd は内部キャッシュから追加済みエントリを **revert** する（DEL 失敗時は revert なし）。自動 retry はない。
+
+### 6. ip_prefix 不正フォーマット → ValueError + LOG_ERR + continue
+
+`MatchPrefixList.add_prefix()` が解析失敗すると `ValueError` を送出し:
+
+```
+LOG_ERR: 'failed to update prefix-set <name> in cache with prefix <ip> range <range>'
+```
+
+FRR には未登録。YANG バリデーション経路では事前に拒否されるため直接書き込み時のみ発生。
+
+### 7. 起動時 FRR デーモン接続失敗 → 最大 100 回 retry → プロセス終了
+
+frrcfgd 起動時に FRR Unix socket (`/run/frr/<daemon>.vty`) への接続を **2 秒間隔・最大 100 回（約 200 秒）** リトライ。超過時は `re-tried too many times, give up` LOG_ERR でプロセス終了。再起動後は CONFIG_DB の全エントリを再読み込みして再適用する。
+
+### 失敗パターンサマリ
+
+| ケース | テーブル | LOG_ERR | FRR 反映 | retry | 備考 |
+|--------|---------|---------|---------|-------|------|
+| `mode` 欠落 | PREFIX_SET | あり | なし | なし | 後続 PREFIX も全 DROP |
+| 既存エントリ重複 SET | PREFIX_SET | なし (LOG_DEBUG) | なし | なし | mode 変更は無視 |
+| PREFIX_SET 未登録で PREFIX 到着 | PREFIX | あり | なし | なし | SET 前に PREFIX_SET が必要 |
+| vtysh DEL 失敗 | PREFIX | あり | なし | なし | FRR ゴーストエントリ残存 |
+| vtysh ADD 失敗 | PREFIX | あり | なし | なし | キャッシュ revert あり |
+| ip_prefix 不正 | PREFIX | あり | なし | なし | YANG 経路では事前拒否 |
+| 起動時接続失敗 | 全般 | あり | なし | 最大 100 回 | 超過でプロセス終了 |
+
+### STATE_DB / ERROR_TABLE
+
+frrcfgd は PREFIX_SET / PREFIX の失敗を STATE_DB や ERROR_TABLE に**記録しない**。障害検知は syslog のみ。
+
+```bash
+journalctl -u frr-mgmt-framework | grep -E 'prefix-set|prefix-list'
+vtysh -c 'show ip prefix-list'
+vtysh -c 'show ipv6 prefix-list'
+```
+
+> **スキャン証跡**: `frrcfgd.py` L2894-2910 (PREFIX_SET ハンドラ), L2911-2997 (PREFIX ハンドラ), L181-218 (接続 retry)。詳細は `meta/_intermediate/cdb-flow/prefix-set-failure.md` を参照。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 88e792f23f63 -->
