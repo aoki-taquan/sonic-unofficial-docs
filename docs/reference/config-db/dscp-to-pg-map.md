@@ -181,6 +181,47 @@ DEL TC_TO_PRIORITY_GROUP_MAP|<pg_name>  # 参照がなくなってから削除
 > **スキャン証跡**: `QosOrch::doTask()` L2254-2299、`handlePortQosMapTable()` L2046-2134、汎用マップハンドラ L130-196 参照。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照・共依存テーブル (Phase C)
+
+`DSCP_TO_PG_MAP` テーブルは存在しないため、DSCP → PG マッピング機能を実現する 2 段構成の各テーブル間の参照関係を記述する。
+
+| 参照先テーブル / コンポーネント | YANG leafref | 参照種別 | 非充足時の挙動 | evidence |
+|---|:---:|---|---|---|
+| `PORT_QOS_MAP.dscp_to_tc_map` | ✅ | **被参照**（PORT_QOS_MAP が DSCP_TO_TC_MAP の名前を leafref で参照） | `DSCP_TO_TC_MAP` 未作成時に `PORT_QOS_MAP` SET は `task_need_retry`（自動リトライ） | `qosorch.cpp:2124`, `sonic-port-qos-map.yang:129-135` |
+| `PORT_QOS_MAP.tc_to_pg_map` | ✅ | **被参照**（PORT_QOS_MAP が TC_TO_PRIORITY_GROUP_MAP の名前を leafref で参照） | `TC_TO_PRIORITY_GROUP_MAP` 未作成時に `PORT_QOS_MAP` SET は `task_need_retry`（自動リトライ） | `qosorch.cpp:2124`, `sonic-port-qos-map.yang:85-91` |
+| `PortsOrch::allPortsReady()` | ✗ | 起動順序ガード | `false` の間は `QosOrch::doTask()` が即 return し、`DSCP_TO_TC_MAP`・`TC_TO_PRIORITY_GROUP_MAP`・`PORT_QOS_MAP` すべての処理がブロック | `qosorch.cpp:2258-2261` |
+
+### YANG leafref の意味
+
+`sonic-port-qos-map.yang` において:
+
+- `PORT_QOS_MAP.dscp_to_tc_map` は `sonic-dscp-tc-map.yang` の `DSCP_TO_TC_MAP_LIST.name` への **leafref** を持つ（`sonic-port-qos-map.yang:129-135`）
+- `PORT_QOS_MAP.tc_to_pg_map` は `sonic-tc-priority-group-map.yang` の `TC_TO_PRIORITY_GROUP_MAP_LIST.name` への **leafref** を持つ（`sonic-port-qos-map.yang:85-91`）
+
+一方 `DSCP_TO_PG_MAP` はテーブルとして存在しないため、leafref を持つ YANG モジュール自体が存在しない。
+
+### 参照カウンタの独立管理
+
+`qosorch.cpp:80-96` の `m_qos_maps` では `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` がそれぞれ独立した `object_reference_map` を持つ。一方のマップが PORT_QOS_MAP から参照されていても、もう一方の DEL には影響しない（参照カウンタは独立）。
+
+```
+DSCP_TO_TC_MAP
+  ├─ [被参照]  PORT_QOS_MAP.dscp_to_tc_map  (YANG leafref, 参照中は DEL 保留)
+  └─ [共用]    QosOrch::m_qos_maps (resolveFieldRefValue / isObjectBeingReferenced)
+
+TC_TO_PRIORITY_GROUP_MAP
+  ├─ [被参照]  PORT_QOS_MAP.tc_to_pg_map    (YANG leafref, 参照中は DEL 保留)
+  └─ [共用]    QosOrch::m_qos_maps
+
+PORT_QOS_MAP
+  ├─ [参照元]  DSCP_TO_TC_MAP    (dscp_to_tc_map フィールド)
+  └─ [参照元]  TC_TO_PRIORITY_GROUP_MAP  (tc_to_pg_map フィールド)
+```
+
+> **スキャン証跡**: `qosorch.cpp:80-96` (m_qos_maps 初期化), `qosorch.cpp:99-116` (qos_to_ref_table_map), `qosorch.cpp:2124-2133` (resolveFieldRefValue in handlePortQosMapTable), `qosorch.cpp:2258-2261` (allPortsReady ガード), `sonic-port-qos-map.yang:85-91,129-135` (leafref 定義)。
+<!-- /cross-refs -->
+
 ## 制約
 
 - `DSCP_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
