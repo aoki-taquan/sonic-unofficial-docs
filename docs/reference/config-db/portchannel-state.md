@@ -223,6 +223,60 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査対象: `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
+> 調査日: 2026-05-18
+> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-failure.md`
+
+STATE_DB `LAG_TABLE` への書き込みは teamsyncd と teammgrd の正常完了に依存するため、各ステップで失敗が発生すると `state=ok` エントリが書かれず後続デーモンが保留状態になる。
+
+### teamsyncd — TeamPortSync 初期化失敗 (`teamsync.cpp:L208-213, L280-365`)
+
+`TeamSync::addLag()` は `TeamPortSync` コンストラクタを `try-catch` で保護している。コンストラクタ内では最大 3 回リトライ (`max_retries = 3`) を `sleep(1)` 間隔で実施し、すべて失敗すると `system_error` をリスローする。
+
+| 失敗原因 | errno | 挙動 |
+|---------|-------|------|
+| `team_alloc()` 失敗 | `EADDRNOTAVAIL` | `system_error` スロー → リトライ |
+| `team_init()` 失敗 | `EADDRNOTAVAIL` | `system_error` スロー → リトライ。コンテナ再起動直後に多発（旧 ifindex が無効になるため） |
+| `teamdctl_alloc()` 失敗 | `EADDRNOTAVAIL` | `system_error` スロー → リトライ |
+| `teamdctl_connect()` 失敗 | `ECONNREFUSED` | `system_error` スロー → リトライ（teamd がまだ起動中の場合） |
+| `teamdctl_config_get_raw_direct()` 失敗 | `EIO` | `system_error` スロー → リトライ |
+| 3 回リトライ後も失敗 | 上記いずれか | `SWSS_LOG_ERROR` → STATE_DB 書き込みスキップ → 次の `RTM_NEWLINK` を待つ |
+
+3 回失敗後は `addLag()` の外側 catch が `SWSS_LOG_ERROR("addLag: Failed to initialize team handler for LAG %s ...")` を記録し、STATE_DB への書き込みをせずに return する。次の `RTM_NEWLINK` イベント（teamd が LAG netdev を再作成した際に発行）で再試行される。
+
+### teammgrd — teamd 起動失敗 (`teammgr.cpp:L640-644`)
+
+`TeamMgr::addLag()` が `exec("teamd -r ...")` の戻り値が非ゼロのとき `task_need_retry` を返す。Consumer ループがタスクをキューに残し自動リトライする。teamd が起動しなければ Linux に LAG netdev が作成されず `RTM_NEWLINK` が発行されないため、STATE_DB には `state=ok` が書かれない。
+
+```
+exec(teamd_cmd) != 0
+  → SWSS_LOG_INFO("Failed to start port channel %s with teamd, retry...")
+  → return task_need_retry
+  → Consumer がキューにタスクを保持・自動リトライ
+```
+
+### warm-restart 時の遅延書き込み (`teamsync.cpp:L84-98, L197-203`)
+
+warm-restart 中 (`m_warmstart == true`) は `addLag()` が STATE_DB に直接書かず `m_stateLagTablePreserved` に保存する。`applyState()` がタイムアウト（`WarmStart::getWarmStartTimer()` または `DEFAULT_WR_PENDING_TIMEOUT`）後に一括書き込みを実施する。タイムアウトまでの間、後続デーモンは保留状態になる。
+
+### 後続デーモンへの影響
+
+`state=ok` エントリが LAG_TABLE に書かれるまで以下の処理がすべて保留される:
+
+| デーモン | 保留される処理 |
+|---------|-------------|
+| `intfmgrd` | `PORTCHANNEL_INTERFACE` の IP アドレス付与・IPv6 有効化 |
+| `teammgrd` | `PORTCHANNEL_MEMBER` の teamd enslave |
+| `vlanmgrd` | VLAN_MEMBER への LAG 追加 |
+| `stpmgrd` | STP ポート処理 |
+
+いずれも `m_stateLagTable.get(alias)` 失敗時にタスクをキューに残してリトライするため、LAG_TABLE に `state=ok` が書かれた瞬間に自動的に解消される。
+
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: `sonic-swss/teamsyncd/teamsync.cpp` (L26-30 コンストラクタ, L101-143 onMsg, L146-226 addLag, L228-259 removeLag). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
