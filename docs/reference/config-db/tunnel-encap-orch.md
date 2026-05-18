@@ -123,6 +123,35 @@ flowchart TD
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`VxlanTunnelOrch` / `VxlanTunnelMapOrch` / `VxlanVrfMapOrch` が処理を行う際に
+CONFIG_DB フィールドとして公開されずコード内で暗黙的に参照されるリソース・テーブル。
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `gUnderlayIfId`（グローバル underlay RIF） | 読み取り（`SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE`） | `VXLAN_TUNNEL_MAP` または `VRF_MAP` 追加時の `createTunnelHw()` 呼び出し。`main.cpp:967` で初期化されていない場合は SAI create_tunnel 失敗 | `vxlanorch.cpp:907` |
+| `VxlanTunnelOrch`（via `gDirectory`） | 読み取り（`findTunnel()` / `getDecapMapId()` 等） | `VxlanTunnelMapOrch::addOperation` / `VxlanVrfMapOrch::addOperation` が親トンネルオブジェクトを取得するとき。`VXLAN_TUNNEL` が先に存在しない場合は処理失敗 | `vxlanorch.cpp:2046, 2260` |
+| `VRFOrch`（via `gDirectory`） | 読み取り（`isL3VniVlan(vni_id)`） | `VxlanTunnelMapOrch::addOperation` で L3VNI 判定時。VRF が存在しない場合は `isL3Vni = false` として処理される（エラーではなく条件分岐） | `vxlanorch.cpp:2095` |
+| `EvpnNvoOrch`（via `gDirectory`） | 読み取り・通知 | `addTunnelUser()` / `delTunnelUser()` / `deleteTunnelPort()` が EVPN DIP トンネルを操作するとき | `vxlanorch.cpp:1678, 1733, 1795` |
+| `STATE_VXLAN_TUNNEL_TABLE`（STATE_DB） | 書き込み | トンネル作成時（`operstatus=down`, `src_ip`, `dst_ip`, `tnl_src`）および oper-status 変化時 | `vxlanorch.cpp:1910, 1943, 1953` |
+
+!!! note "orchdaemon 登録順序が前提"
+    `VxlanTunnelMapOrch` / `VxlanVrfMapOrch` は `gDirectory.get<VxlanTunnelOrch*>()` で
+    `VxlanTunnelOrch` を取得する。`orchdaemon.cpp:350-355` での登録順序
+    （`VxlanTunnelOrch` → `VxlanTunnelMapOrch` → `VxlanVrfMapOrch`）が
+    正しくないと `gDirectory` からの取得に失敗して実行時エラーとなる。
+
+!!! note "VXLAN_TUNNEL エントリの事前存在が必須"
+    `VxlanTunnelMapOrch::addOperation`（line 2030）は `findTunnel()` で対応する
+    `VXLAN_TUNNEL` エントリを検索する。エントリが存在しない場合は処理失敗となる。
+    `VXLAN_TUNNEL` → `VXLAN_TUNNEL_MAP` の順序で投入すること。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-cross-refs.md`
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来デフォルト・暗黙挙動
 
