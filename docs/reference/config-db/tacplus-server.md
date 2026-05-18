@@ -549,4 +549,42 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:2471-2472` (subscribe 登録)、`hostcfgd:2458-2466` (make_callback)、`hostcfgd:2303-2315` (tacacs_server_handler / tacacs_global_handler)、`hostcfgd:473-481` (tacacs_server_update)、`hostcfgd:399-417` (AaaCfg.load 起動時スナップショット)、`hostcfgd:2528` (listen)、`hostcfgd:641-870` (modify_conf_file); 詳細分析 `meta/_intermediate/cdb-flow/tacplus-server-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`, `sonic-net/sonic-host-services/data/templates/tacplus_nss.conf.j2`, `sonic-net/sonic-buildimage/files/build_templates/sonic_debian_extension.j2`
+
+### 結論
+
+**プラットフォーム差なし**。TACPLUS_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU・ベンダー固有 PAM モジュールに依存しない。
+
+### 根拠
+
+#### 1. multi-asic: `is_multi_npu` は AaaCfg に渡されない
+
+`hostcfgd` 行 2182 で `self.is_multi_npu = device_info.is_multi_npu()` を取得するが、行 2185 の `AaaCfg(self.config_db)` コンストラクタには渡されない。`AaaCfg.__init__` は `ConfigDBConnector` 1 個のみを保持し、`asic0..N` namespace への接続や iteration を一切しない。`TACPLUS_SERVER` / `TACPLUS|global` テーブルは host CONFIG_DB のみに置かれ、`asicN` namespace の CONFIG_DB には存在しない。
+
+#### 2. VOQ chassis / line card
+
+`hostcfgd` ソース全体を `chassis`, `supervisor`, `linecard` で検索してもゼロヒット。VOQ chassis の各 line card / supervisor は独立した host `hostcfgd` を持ち、それぞれが自身の host CONFIG_DB の `TACPLUS_SERVER` テーブルを処理する。chassis 全体での集中適用機構は存在しない。オペレータが各 host に同一の TACACS+ サーバ設定を流す運用が前提。
+
+#### 3. SmartSwitch / DPU
+
+`AaaCfg` クラスに `has_per_dpu_scope` や `num_dpus` を参照する箇所はない。`DEVICE_METADATA.localhost.subtype` は `AaaCfg` の処理で参照されない。SmartSwitch 固有の TACACS+ 処理分岐は存在しない。
+
+#### 4. ビルド時インストールにプラットフォーム固有条件なし
+
+`sonic_debian_extension.j2` 行 317–335 の TACACS+ インストールブロックに `{% if sonic_asic_platform == ... %}` 等の条件ブロックなし。`libpam-tacplus`, `libnss-tacplus`, `bash-tacplus`, `audisp-tacplus` は全プラットフォーム共通でインストールされ、デフォルトで PAM auth-update から除外 (`pam-auth-update --remove tacplus ldap`) される。
+
+#### 5. テンプレートにプラットフォーム分岐なし
+
+`tacplus_nss.conf.j2` を `platform|asic|chassis|namespace|vendor` で検索してもヒットなし。条件分岐は `debug`, `local_accounting`, `tacacs_accounting`, `local_authorization`, `tacacs_authorization` ブールフラグおよび `servers[]` リストのみ。`common-auth-sonic.j2` にも platform キーワードはなく、条件分岐は `AAA.authentication.login` 文字列・`failthrough` / `debug` / `trace` ブールのみ。
+
+#### 6. 管理 VRF の注意点（構成差ではなく運用上の注意）
+
+`TACPLUS_SERVER.vrf` フィールドに `mgmt` を設定すると、テンプレートで PAM 行に `vrf=mgmt` が挿入される。管理 VRF 自体の有効/無効は `MGMT_VRF_CONFIG.mgmtVrfEnabled` で制御されるが、`AaaCfg` はこの値を読まない。管理 VRF が未有効の状態で `vrf=mgmt` を設定すると `pam_tacplus` が mgmt VRF ルーティングテーブルを参照し認証失敗する。これはプラットフォーム差ではなく運用上の設定整合性の問題。
+
+> **Evidence**: `hostcfgd:2182-2185` (is_multi_npu / AaaCfg 初期化)、`hostcfgd:641-816` (modify_conf_file)、`sonic_debian_extension.j2:317-335` (インストールブロック)、`tacplus_nss.conf.j2` (テンプレート全行)、`common-auth-sonic.j2` (テンプレート全行); 詳細分析 `meta/_intermediate/cdb-flow/tacplus-server-platform.md`
+<!-- /platform -->
+
 <!-- glossary-links-injected: e0332a023fdb -->
