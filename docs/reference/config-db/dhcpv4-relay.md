@@ -241,6 +241,73 @@ CONFIG_DB・環境変数・設定ファイルから変更不可。
 `max_hop_count` のみ `DHCPV4_RELAY` テーブルフィールド経由で上書き可能（YANG uint8 1..16）。
 <!-- /constants -->
 
+<!-- failure -->
+## 失敗挙動・リトライ・リカバリ (Phase D)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.cpp` および `dhcp4relay_mgr.cpp` 全行精読 (2026-05-18)
+
+### 起動時 — fatal exit (exit(EXIT_FAILURE))
+
+以下の条件では `loop_relay()` が `exit(EXIT_FAILURE)` を呼び、プロセスが即終了する。supervisor が `docker-dhcp-relay` コンテナを再起動する。
+
+| 条件 | ログ | evidence |
+|------|------|----------|
+| `event_base_new()` 失敗 (libevent 初期化) | `"libevent: Failed to create event base"` | dhcp4relay.cpp:1517-1519 |
+| `pipe()` 失敗 (スレッド間 IPC パイプ生成) | `"Failed to create config update pipe"` | dhcp4relay.cpp:1533-1535 |
+| `event_new()` 失敗 (config pipe libevent 作成) | `"Failed to create event for config pipe"` | dhcp4relay.cpp:1545-1547 |
+| `sock_open()` 失敗 (raw DHCP パケットソケット生成) | `"Failed to create client listen socket"` | dhcp4relay.cpp:1565-1567 |
+| `event_new()` 失敗 (packet listen libevent 作成) | `"libevent: Failed to create client listen event"` | dhcp4relay.cpp:1560-1562 |
+| config_pipe sync-barrier 書込み失敗 (起動時 pre-drain) | `"Failed to write sync barrier to config pipe: ...; exiting to avoid startup hang"` | dhcp4relay_mgr.cpp:112-117 |
+
+### VLAN ソケット生成失敗 — 自動リトライ
+
+`prepare_vlan_sockets()` は VLAN インタフェースに IPv4 アドレスが未付与の場合 `-1` を返す。この失敗はプロセスを停止させず、次の設定イベントで再試行される。
+
+| 条件 | ログ | リトライ契機 |
+|------|------|------------|
+| VLAN インタフェースに primary IPv4 なし | `"No IPv4 address on interface %s, deferring socket creation"` | 次の config イベント（VLAN_INTERFACE update 等） |
+| `SO_BINDTODEVICE` 失敗 | `"failed to bind client_sock to vlan %s, error: %s"` | 次の config イベント |
+| `bind()` 失敗 | `"bind: Failed to bind socket to IPv4 address on interface %s: %s"` | 次の config イベント |
+
+VLAN_INTERFACE_UPDATE 受信時に `prepare_vlan_sockets()` が再実行されるため、VLAN に IP が付与されると自動的にソケットが生成される (`dhcp4relay.cpp:1355-1357, 1378-1380`)。
+
+### relay 設定処理中のエラー — silent skip
+
+relay config イベント処理 (`process_relay_notification()`) では以下のエラーはログのみで処理を継続（skip）する。
+
+| 条件 | ログ | 挙動 |
+|------|------|------|
+| `dhcpv4_servers` が空 | `"No servers found for VLAN %s, skipping configuration."` (WARNING) | イベントを skip、vlans_copy は更新されない |
+| `new relay_config` のメモリ確保失敗 | `"Memory allocation failed: %s"` (ERR) | イベントを skip |
+| `stoi()` によるフィールド変換失敗 (`max_hop_count` 等) | `"Invalid max_hop_count value '%s' for VLAN %s: %s"` (WARNING) | フィールドのみスキップ、struct 値 (16) のまま継続 |
+| config_pipe への `write()` 失敗 | `"Failed to write to config update pipe: %s"` (ERR) | relay_msg を delete して skip |
+
+### サーバ応答パスのドロップ — ログのみ
+
+サーバから戻りパケットを受信した際、VLAN ソケットが未作成（IPv4 未付与）の場合はパケットをドロップする。プロセスは継続する。
+
+```
+// dhcp4relay.cpp:806
+syslog(LOG_WARNING, "[DHCPV4_RELAY] Dropping server reply for %s: VLAN socket not ready (no IPv4 address)\n", ...)
+```
+
+### Select ループエラー — continue (再試行)
+
+`initialize_config_listener()` のメインループで `Select::ERROR` が返された場合は `syslog(LOG_ERR, ...)` のみで `continue` し、ループを継続する (`dhcp4relay_mgr.cpp:125-127`)。処理が止まることはない。
+
+### 回復シナリオまとめ
+
+| 失敗ケース | 回復方法 | 自動か手動か |
+|-----------|---------|------------|
+| libevent / pipe 初期化失敗 | supervisor によるコンテナ再起動 | 自動（コンテナ再起動） |
+| VLAN に IPv4 未付与でソケット生成失敗 | VLAN_INTERFACE に IP 付与後、次 config イベントで自動ソケット生成 | 自動 |
+| `dhcpv4_servers` 空で config skip | 正しいサーバ IP を SET して再投入 | 手動 |
+| `max_hop_count` 変換失敗 | 正しい uint8 値を SET して再投入 | 手動 |
+| config_pipe write 失敗 | コンテナ再起動 | 手動（異常な状況） |
+
+> **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.cpp:372-450, 806, 1355-1380, 1515-1568`; `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay_mgr.cpp:112-117, 125-127, 377-459`
+<!-- /failure -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
