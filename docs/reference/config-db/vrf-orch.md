@@ -170,6 +170,56 @@ VRFOrch は VRF 作成/更新成功後に `STATE_VRF_OBJECT_TABLE|<vrf_name>` �
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`vrfmgrd` (`sonic-swss/cfgmgr/vrfmgr.cpp`) および `VRFOrch::addOperation` / `VRFOrch::delOperation` (`sonic-swss/orchagent/vrforch.cpp`) を精読した結果、以下の順序依存・タイミング依存を検出した。
+
+### SET（VRF 追加）の先行必須条件
+
+| # | 先行条件 | 方向 | 違反時の挙動 |
+|---|----------|------|-------------|
+| 1 | Linux VRF デバイス作成（vrfmgrd `setLink()`） | **強制先行** | VRF プールが空 (`getFreeTable()` → `0`) の場合 `ip link add` が失敗しエントリが APPL_DB に書かれない (`vrfmgr.cpp:185-188`) |
+| 2 | EVPN VTEP（`VXLAN_EVPN_NVO` テーブル）— `vni` フィールドが非ゼロの VRF のみ | **強制先行** | `updateVrfVNIMap()` が `evpn_orch->getEVPNVtep()` null を検出して `false` を返し、`addOperation` が `false` でリターン → Consumer がエントリを `m_toSync` に残して次ループで再試行 (`vrforch.cpp:225-230`) |
+| 3 | APPL_DB VRF_TABLE エントリ到着（VRFOrch の前提）— vrfmgrd が先に書いていること | 自然順（vrfmgrd → APPL_DB → VRFOrch） | `VRFOrch::addOperation` は APPL_DB の Consumer イベントで駆動されるため、vrfmgrd が `m_appVrfTableProducer.set()` を呼ぶまで SAI 作成は発生しない (`vrfmgr.cpp:303`) |
+
+**推奨書込み順序（VNI 付き VRF の場合）**:
+
+```text
+# 1. VXLAN NVO/VTEP を先に作成
+SET CONFIG_DB VXLAN_EVPN_NVO|nvo1  ...
+# 2. VRF を追加（vrfmgrd が Linux link 作成 → APPL_DB 書込み → VRFOrch が SAI VR 作成）
+SET CONFIG_DB VRF|VrfRed  vni=10000
+# 3. VRFOrch が STATE_VRF_OBJECT_TABLE|VrfRed  state=ok を書く
+```
+
+VNI なし VRF は手順 1 が不要。
+
+### DEL（VRF 削除）の先行必須条件
+
+| # | 先行条件 | 方向 | 違反時の挙動 |
+|---|----------|------|-------------|
+| 1 | VRF を参照する INTERFACE / ROUTE の削除 | **強制先行** | `VRFOrch::delOperation` は `vrf_table_[vrf_name].ref_count != 0` を検出して `false` をリターン → Consumer が再キューし、参照カウントが 0 になるまで無限ポーリング (`vrforch.cpp:169-170`) |
+| 2 | VRFOrch による `STATE_VRF_OBJECT_TABLE` エントリ削除 | **強制先行** | vrfmgrd DEL ハンドラは `isVrfObjExist()` が真の間、`it++; continue` で DEL を保留し続ける。VRFOrch が SAI `remove_virtual_router()` 成功後に `m_stateVrfObjectTable.del()` を呼んだ後にのみ `ip link del` が実行される (`vrfmgr.cpp:331-346`, `vrforch.cpp:193`) |
+
+**安全な削除手順**:
+
+```text
+# 1. VRF 配下の全 INTERFACE を削除（ref_count のデクリメント）
+DEL CONFIG_DB INTERFACE|Ethernet0|10.0.0.1/31  (VRFOrch が decreaseVrfRefCount を呼ぶまで待機)
+# 2. VRF を削除
+DEL CONFIG_DB VRF|VrfRed
+# → vrfmgrd が APPL_DB DEL → VRFOrch が SAI DEL → STATE_VRF_OBJECT_TABLE クリア → vrfmgrd が ip link del
+```
+
+### 自動調停の仕組み
+
+- **VNI 解決待ち（doTask 再試行）**: `addOperation` が `false` を返すと `Orch2::doTask()` が `m_toSync` にエントリを残したまま次ループへ。EVPN VTEP 作成後の次スケジュールで自動再評価される。
+- **ref_count ガード（delOperation 再試行）**: `delOperation` が `false` を返した場合も同様。参照 Orch（RouteOrch / IntfsOrch 等）が `decreaseVrfRefCount()` を呼び ref_count が 0 になるまでポーリングを繰り返す。
+- **VNI マップ整合性**: VNI 変更 (SET) 時は `updateVrfVNIMap()` が新旧 VNI を比較し差分のみ更新するため、同一 VNI での再投入は冪等 (`vrforch.cpp:212`)。
+
+<!-- /ordering -->
+
 ## 例外条件・特殊挙動
 
 - **VRF 削除タイミング**: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は `ip link del` を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は `ref_count` が非ゼロで `delOperation` が `false` を返して再キュー。
