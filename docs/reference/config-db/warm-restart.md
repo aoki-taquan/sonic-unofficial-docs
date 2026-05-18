@@ -324,4 +324,23 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 <!-- evidence: warm_restart.cpp L86-95 (checkWarmStart), L149-172 (getWarmStartTimer), orchdaemon.cpp L1099-1170 (warmRestoreAndSyncUp) -->
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+`WARM_RESTART` テーブルは YANG 内で他テーブルへの leafref を持たないが、ランタイムコードに以下の暗黙参照が存在する。
+
+| 参照方向 | このテーブル | 相手テーブル / リソース | 条件 | evidence |
+|---------|------------|----------------------|------|---------|
+| WARM_RESTART → | `bgp_timer` / `bgp_eoiu` (`module=bgp`) | `STATE_DB WARM_RESTART_ENABLE_TABLE\|bgp` (enable フラグ) | `WarmStart::checkWarmStart()` が STATE_DB enable=true + restore_count>0 を確認した場合のみ `getWarmStartTimer()` で CONFIG_DB から値を読む | `warm_restart.cpp:86-147,149-172` |
+| WARM_RESTART → | `teamsyncd_timer` (`module=teamd`) | `STATE_DB WARM_RESTART_ENABLE_TABLE\|teamd` | 同上。enable フラグが false なら `teamsyncd_timer` は参照されない | `warm_restart.cpp:86-147` |
+| WARM_RESTART → | `neighsyncd_timer` (`module=swss`) | `STATE_DB WARM_RESTART_ENABLE_TABLE\|swss` | 同上。enable フラグが false なら `neighsyncd_timer` は参照されない | `warm_restart.cpp:86-147` |
+| WARM_RESTART → | `bgp_eoiu=true` | `supervisord.conf.j2` (`bgp_eoiu_marker` プロセス登録) | `bgp_eoiu=true` の場合のみ `bgp_eoiu_marker` supervisord エントリが生成される。false または未設定では登録なし | `docker-fpm-frr/.../supervisord.conf.j2:239` |
+| → WARM_RESTART | `finalize-warmboot.sh` (fast-reboot 完了時) | `WARM_RESTART\|teamd` (DEL) | `finalize_fast_reboot()` が `CONFIG_DB DEL "WARM_RESTART\|teamd"` を実行する。fast-reboot 後に `teamsyncd_timer` エントリが消失する副作用 | `finalize-warmboot.sh:175` |
+
+!!! note "STATE_DB との分離"
+    `WARM_RESTART` テーブル（CONFIG_DB）と `WARM_RESTART_ENABLE_TABLE` / `WARM_RESTART_TABLE`（STATE_DB）は別 DB のため、CONFIG_DB の timer 値は STATE_DB の enable フラグが true になって初めて意味を持つ。enable フラグの設定順序が先行必須となる。
+
+<!-- evidence: warm_restart.cpp L86-147 (checkWarmStart), L149-172 (getWarmStartTimer); bgp.sh L9-27 (check_warm_boot); finalize-warmboot.sh L175 (fast-reboot DEL); docker-fpm-frr supervisord.conf.j2 L239 (bgp_eoiu_marker) -->
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: ddc022697593 -->
