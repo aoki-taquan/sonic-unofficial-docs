@@ -319,3 +319,38 @@ YANG 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode �
 **タイマー多重化 (依存 #3 補足)**: `doTask(SelectableTimer)` は 2 種のタイマーを区別する。`m_natQueryTimer` (5 秒周期) が `queryHitBits()` + `queryCounters()` を駆動し、`m_natTimeoutTimer` (1 日周期) が conntrack エントリ更新を行う。カウンタ更新に関係するのは前者のみ (`natorch.cpp:3099-3122`)。
 
 <!-- /ordering -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`NatOrch` が COUNTERS_DB の NAT カウンタテーブルを書き込む際の失敗経路を示す。基本パターンは「SAI エントリ登録失敗 → カウンタエントリ不在」「SAI カウンタ取得失敗 → 0 上書き」の 2 種類。
+
+### COUNTERS_NAT / COUNTERS_NAPT / COUNTERS_TWICE_NAT / COUNTERS_TWICE_NAPT 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | 書き込み結果 |
+|---|---|---|---|
+| SAI `create_nat_entry` 失敗 | `addHwDnatEntry()` / `addHwSnatEntry()` 等 — `natorch.cpp:774-783, 856-865, 1307-1316` | `parseHandleSaiStatusFailure()` で return。`updateNatCounters()` 未到達 | 該当キーが COUNTERS_DB に存在しない |
+| 5 秒ポーリング中に SAI `get_nat_entry_attribute` 失敗 | `getNatCounters()` — `natorch.cpp:3546-3574` | `nat_translations_pkts=0, bytes=0` のまま `updateNatCounters(0,0)` を呼ぶ | `COUNTERS_NAT\|<ip>.NAT_TRANSLATIONS_PKTS/BYTES` が `"0"` に上書きされ前回値が失われる |
+| 5 秒ポーリング中に Twice NAT SAI クエリ失敗 | `getTwiceNatCounters()` — `natorch.cpp:3609-3623` | 同上、`updateTwiceNatCounters(0,0)` を呼ぶ | `COUNTERS_TWICE_NAT*\|<key>` が `"0"` に上書き |
+| `addedToHw=false` (NH 未解決 or NAT 無効) | `getNatCounters()` 先頭ガード — `natorch.cpp:3517-3521` | SAI クエリをスキップ。`updateNatCounters()` 未呼び出し | COUNTERS_DB の値は前回値 (またはゼロ初期化値) のまま |
+| `clock_gettime` 失敗 | `queryCounters()` — `natorch.cpp:3125-3128` | 即 return。当該周期のカウンタ更新全スキップ | COUNTERS_DB 全エントリが更新されない (次周期で自動リトライ) |
+| `FLUSHNATSTATISTICS` 受信後の SAI reset 失敗 | `clearCounters()` — `natorch.cpp:3271-3303` | `SWSS_LOG_ERROR` 出力のみ、処理継続 | COUNTERS_DB の値は前回値のまま (0 リセット失敗) |
+
+### COUNTERS_GLOBAL_NAT 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | 書き込み結果 |
+|---|---|---|---|
+| `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` クエリ失敗 | NatOrch コンストラクタ — `natorch.cpp:115-135` | `maxAllowedSNatEntries=0` のまま `COUNTERS_GLOBAL_NAT\|Values` を書き込み | `MAX_NAT_ENTRIES="0"` → `gIsNatSupported=false` → NAT 機能全体が無効化 |
+| `gIsNatSupported=false` → タイマー未起動 | `enableNatFeature()` — `natorch.cpp:2541-2544` | `m_natQueryTimer->start()` 未到達 → `queryCounters()` が永遠に呼ばれない | `COUNTERS_NAT*` エントリのカウンタは 0 初期化値のまま更新されない |
+
+### 主要な制約詳細
+
+**SAI カウンタ取得失敗時の 0 上書き問題 (ポーリング失敗)**: `getNatCounters()` (`natorch.cpp:3507`) は `nat_translations_pkts / bytes` を 0 で初期化し、SAI `get_nat_entry_attribute` が失敗した場合はこの 0 のまま `updateNatCounters(ipAddr, 0, 0)` を呼ぶ (`natorch.cpp:3573-3574`)。これはカウンタが前回値ではなく `"0"` に上書きされることを意味する。SAI 一時障害（ASIC リセット中など）でポーリングが 1 回失敗するだけで統計が消える。`show nat statistics` で突然カウンタがゼロになった場合、SAI ポーリング失敗の疑いがある。
+
+**SAI 登録失敗のカウンタ不在 vs ポーリング失敗の 0**: SAI `create_nat_entry` が失敗した場合は COUNTERS_DB にキー自体が作成されない（エントリ不在）。一方、SAI `get_nat_entry_attribute` の 5 秒ポーリングが失敗した場合はキーが存在しながら `"0"` が書かれる。どちらも `show nat statistics` では 0 と表示されるため、区別には `sonic-db-cli COUNTERS_DB exists 'COUNTERS_NAT|<ip>'` でキーの存在を確認する必要がある。
+
+**MAX_NAT_ENTRIES=0 による NAT 全体無効**: `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` クエリが失敗 (`natorch.cpp:115-117`) するか 0 を返した場合 (`main.cpp:945-948`)、`gIsNatSupported=false` が設定される。この状態では `enableNatFeature()` が即 return し NAT エントリの SAI 登録が一切行われない。`COUNTERS_GLOBAL_NAT|Values.MAX_NAT_ENTRIES="0"` が診断の手がかりとなる。
+
+> **証跡**: `natorch.cpp:774-783` (addHwDnatEntry SAI 失敗)、`natorch.cpp:3546-3574` (getNatCounters SAI 失敗 → 0 上書き)、`natorch.cpp:3609-3623` (getTwiceNatCounters SAI 失敗)、`natorch.cpp:3517-3521` (addedToHw ガード)、`natorch.cpp:3125-3128` (clock_gettime 失敗)、`natorch.cpp:2541-2544` (gIsNatSupported ガード)、`natorch.cpp:115-135` (コンストラクタ SAI クエリ)、`main.cpp:940-948` (gIsNatSupported 設定)。
+
+<!-- /failure -->
