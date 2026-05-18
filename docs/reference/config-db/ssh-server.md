@@ -449,3 +449,48 @@ CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServ
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1164-1172 (os.rename + systemctl restart ssh) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1434-1441 (render_conf_file — PAM limits ファイル出力) -->
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:SSH_SERVER|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`SshServer` 経由) | `ConfigDBConnector.subscribe()` | `SSH_SERVER` | `ssh_handler` → `sshscfg.policies_update` + `pamLimitsCfg.update_config_file` |
+
+`hostcfgd` 以外で `SSH_SERVER` テーブルを購読するプロセスは存在しない（`sonic-swss`・`sonic-gnmi`・`sonic-sairedis` に `SSH_SERVER` 向け Consumer / Subscriber なし）。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config ssh-server policies inactivity-timeout 10
+  ↓ HSET "SSH_SERVER|POLICIES" inactivity_timeout "10"
+Redis keyspace PUBLISH "__keyspace@4__:SSH_SERVER|POLICIES"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ HGETALL "SSH_SERVER|POLICIES"  ← 通知後に値を再取得
+ssh_handler(key="POLICIES", op=SET, data={inactivity_timeout:"10", ...})
+  ↓ sshscfg.policies_update() → set_policies() → sshd_config 更新 + systemctl restart ssh
+  ↓ pamLimitsCfg.update_config_file()  ← max_sessions を PAM limits に反映
+```
+
+- keyspace 通知のペイロードは操作名（`hset`/`del` 等）のみ。フィールド値は `HGETALL` で取得する。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別は区別しない。
+- `SSH_SERVER` はシングルトンテーブル（key = `POLICIES` 固定）のため、`key` に `POLICIES` 以外が届くことはない。
+
+### 起動時スナップショット
+
+`config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) の `init_data_handler` として `HostConfigDaemon.load()` が呼ばれ、Subscribe ループ開始前に `init_data['SSH_SERVER']` で `SSH_SERVER` テーブル全体を一括スナップショット取得し `sshscfg.load(ssh_server)` を適用する（hostcfgd:2265）。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `SSH_SERVER` フィールド変更（`inactivity_timeout` 等） | `sshd -T` 検証後 `systemctl restart ssh` | `SshServer.set_policies()` — hostcfgd:1150-1172 |
+| `max_sessions` 変更 | `/etc/security/limits.conf` 再生成（sshd 再起動なし） | `PamLimitsCfg.render_conf_file()` — hostcfgd:1456-1476 |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2454-2466` (make_callback)、`hostcfgd:2478` (subscribe SSH_SERVER)、`hostcfgd:2528` (listen)、`hostcfgd:2297-2300` (ssh_handler)、`hostcfgd:2265` (sshscfg.load); 詳細分析 `meta/_intermediate/cdb-flow/ssh-server-pubsub.md`
+<!-- /pubsub -->
