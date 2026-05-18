@@ -215,6 +215,33 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ソース: `sonic-net/sonic-gnmi/dialout/dialout_client/dialout_client.go` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+詳細スキャンノート: `meta/_intermediate/cdb-flow/telemetry-client-side-effects.md`
+
+`dialout_client.go` を全行スキャンした結果、**副次 DB 書込は存在しない**。
+
+| 副次 DB | テーブル/キー | 書込内容 | 根拠 |
+|---|---|---|---|
+| なし | — | — | — |
+
+### 根拠
+
+`DialOutRun()` および `processTelemetryClientConfig()` は CONFIG_DB に対して読み取り操作 (`PSubscribe`, `Keys`, `HGetAll`) のみを行う。`Set` / `HSet` / `Del` 系の Redis 書込呼び出しは存在しない。設定変更時の副作用はネットワーク層 (gRPC dial-out ストリームの再起動・再接続) であり、Redis DB 上には現れない。
+
+```go
+// 読み取り専用操作のみ
+pubsub := redisDb.PSubscribe(context.Background(), pattern)
+dbkeys, err = redisDb.Keys(context.Background(), dbkey_prefix+"*").Result()
+fv, err := redisDb.HGetAll(context.Background(), tableKey).Result()
+```
+
+`STATE_DB`、`APPL_DB`、`COUNTERS_DB` 等への書込は検出されなかった。
+
+<!-- /side-effects -->
+
 ## 制約
 
 - `ipv4-port` typedef で `dst_addr` は IPv4:port のカンマ区切りに制約 (IPv6 リテラルは現状不可)[^1]
