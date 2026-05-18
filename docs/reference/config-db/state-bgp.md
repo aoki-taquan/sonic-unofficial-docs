@@ -275,3 +275,54 @@ BMP（BGP Monitoring Protocol）テーブルは `openbmpd` が FRR bgpd から B
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-state-ordering.md`
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+各テーブルの書き込みデーモンが暗黙的に参照する CONFIG_DB テーブルおよび外部コンポーネントを示す。
+
+### BGP_STATE_TABLE の前提参照
+
+| 参照先テーブル / コンポーネント | 参照方向 | 条件 | evidence |
+|--------------------------------|---------|------|---------|
+| `WARM_RESTART` (CONFIG_DB, `CFG_WARM_RESTART_TABLE_NAME`) | `WarmStart::checkWarmStart("bgp", "bgp", false)` 経由で読み出し | `isWarmStart()` が false の場合、`bgp_eoiu_marker` サービス全体がスキップされ `BGP_STATE_TABLE` への書き込みは **発生しない** | bgp_eoiu_marker.py L191–197 |
+| FRR bgpd (ネイバー EOR 確認) | `bgp_eoiu_marker.py` が bgpd の EOR 状態をポーリング | 全ネイバーの EOR 到達確認が完了するまで `wait_for_bgp_eoiu()` が待機。bgpd が応答しない間は STATE_DB に `"reached"` が書かれない | bgp_eoiu_marker.py L141–166 |
+| `DEVICE_METADATA` (CONFIG_DB, `CFG_DEVICE_METADATA_TABLE_NAME`) | `fpmsyncd` が `SubscriberStateTable` として購読。`routing_mode` 等を参照 | `BGP_STATE_TABLE` を読む fpmsyncd 側の依存として存在 | fpmsyncd.cpp L81–83 |
+
+### BGP_PEER_CONFIGURED_TABLE の前提参照
+
+`bgpcfgd` (`BGPPeerMgrBase`) は以下の CONFIG_DB テーブルへの SET/DEL イベントを購読し、内容を `BGP_PEER_CONFIGURED_TABLE` へ転写する（`main.py` L87–92）。
+
+| 購読テーブル (転写元) | peer_type | evidence |
+|---|---|---|
+| `BGP_NEIGHBOR` (`CFG_BGP_NEIGHBOR_TABLE_NAME`) | `"general"` (外部 eBGP ピア) | main.py:87 |
+| `BGP_INTERNAL_NEIGHBOR` (`CFG_BGP_INTERNAL_NEIGHBOR_TABLE_NAME`) | `"internal"` (iBGP ピア) | main.py:88 |
+| `BGP_MONITORS` | `"monitors"` | main.py:89 |
+| `BGP_PEER_RANGE` | `"dynamic"` (listen range 動的ピア) | main.py:90 |
+| `BGP_VOQ_CHASSIS_NEIGHBOR` | `"voq_chassis"` (VOQ シャーシ間 iBGP) | main.py:91 |
+| `BGP_SENTINELS` | `"sentinels"` | main.py:92 |
+
+上記テーブルのエントリが処理されるためには、以下の前提依存テーブル (`deps` リスト) がすべて到着している必要がある（未到着時はピア追加処理がブロックされる）。
+
+| 前提依存テーブル | キー / フィールド | 用途 | evidence |
+|---|---|---|---|
+| `DEVICE_METADATA` | `localhost/bgp_asn` | `router bgp <ASN>` コマンド生成に使用 | managers_bgp.py:119, 192 |
+| `DEVICE_METADATA` | `localhost/type` | デバイスロール判定（spine / leaf 等） | managers_bgp.py:120 |
+| `LOOPBACK_INTERFACE` | `Loopback0` | ルータ ID の IPv4 アドレス取得 | managers_bgp.py:121, 186 |
+| `BGP_DEVICE_GLOBAL` | `tsa_enabled` | TSA ルートマップ適用判定 | managers_bgp.py:122 |
+| `BGP_DEVICE_GLOBAL` | `idf_isolation_state` | IDF isolation ルートマップ判定 | managers_bgp.py:123 |
+| `DEVICE_NEIGHBOR_METADATA` | — | `use_neighbors_meta = true` のとき条件付きで追加 | managers_bgp.py:140 |
+
+!!! note "FRR push 成功が必須条件"
+    `BGP_PEER_CONFIGURED_TABLE` への書き込みは `cfg_mgr.push()` (FRR への `vtysh -f` 設定投入) が成功した後にのみ実行される（managers_bgp.py:239, 353, 444）。FRR bgpd が応答不能の場合、STATE_DB への反映も遅延・欠落する。
+
+### BGP_NEIGHBOR_TABLE / BGP_RIB_IN_TABLE / BGP_RIB_OUT_TABLE の前提参照
+
+| 参照先テーブル / コンポーネント | 参照方向 | 条件 | evidence |
+|--------------------------------|---------|------|---------|
+| `BMP` (CONFIG_DB, `BMP_TABLE`) | `bmpcfgd` が `config_db.subscribe(BMP_TABLE, ...)` で購読。各フィールド (`bgp_neighbor_table` / `bgp_rib_in_table` / `bgp_rib_out_table`) が `"false"` の場合は `delete_all_by_pattern` でテーブルを全削除する | 常時 | bmpcfgd.py:82–86 |
+| FRR bgpd BMP ソケット | `openbmpd` が bgpd の BMP ポートに TCP 接続。BGP OPEN メッセージ受信後にのみ `BGP_NEIGHBOR_TABLE` エントリが生成される | bgpd との接続が確立しない間はエントリが生成されない | SONiC/doc/bmp/bmp.md L141–166 |
+| FRR bgpd UPDATE メッセージ | `openbmpd` が BGP UPDATE を解析して `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` を書く | BGP OPEN 完了後に受信・送信する UPDATE のみ対象 | SONiC/doc/bmp/bmp.md L286–306 |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/state-bgp-cross-refs.md`
+<!-- /cross-refs -->
