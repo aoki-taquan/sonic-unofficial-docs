@@ -500,4 +500,53 @@ CONFIG_DB `TACPLUS_SERVER` / `TACPLUS|global` テーブルの変更に伴って 
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:354-870` を `Producer`/`set(`/`hset`/`Notification`/`state_db` でスキャンして 0 ヒット。副作用は Linux ファイルシステム操作と `os.kill()` のみ (hostcfgd:641-870)。詳細スキャン手順は `meta/_intermediate/cdb-flow/tacplus-server-ordering.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`TACPLUS_SERVER` および `TACPLUS`（global）テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`AaaCfg` 経由) | `ConfigDBConnector.subscribe()` | `TACPLUS_SERVER` | `tacacs_server_handler` → `tacacs_server_update` |
+| `hostcfgd` (`AaaCfg` 経由) | 同上 | `TACPLUS` | `tacacs_global_handler` → `tacacs_global_update` |
+
+`hostcfgd` 以外で `TACPLUS_SERVER` を CONFIG_DB から購読するプロセスは存在しない（orchagent / syncd / bgpd 等で `TACPLUS_SERVER` を grep して 0 ヒット）。PAM モジュール（`pam_tacplus`）は Redis を購読せず、`/etc/pam.d/common-auth-sonic` を認証時にファイルから読む。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config tacacs add <ip> ...
+  ↓ HSET "TACPLUS_SERVER|<ip>" priority "1" auth_type "pap" ...
+Redis keyspace PUBLISH "__keyspace@4__:TACPLUS_SERVER|<ip>"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
+  ↓ tacacs_server_handler(key, op="SET", data={...})  [hostcfgd:2303-2308]
+     → AaaCfg.tacacs_server_update(key, data)         [hostcfgd:473-481]
+          → self.tacplus_servers[key] = data
+          → modify_conf_file()                         [hostcfgd:641-870]
+               → TACPLUS_SERVER × TACPLUS|global マージ + priority ソート
+               → common-auth-sonic.j2 展開 → /etc/pam.d/common-auth-sonic (atomic rename)
+               → tacplus_nss.conf.j2 展開 → /etc/tacplus_nss.conf
+               → /etc/nsswitch.conf の passwd 行書換
+               → notify_audisp_tacplus_reload_config() → audisp-tacplus へ SIGHUP
+```
+
+- keyspace 通知のペイロードは操作名（`hset`/`del` 等）のみ。フィールド値は `HGETALL` で取得する。
+- `op` は `data is None ? DEL : SET` の 2 値判定（`make_callback()` — hostcfgd:2458-2466）。`HDEL`/`HSET` の Redis 操作種別自体は区別しない。
+- DEL 時は `data={}` が渡るため `tacacs_server_update()` の `data == {}` 分岐でサーバーエントリを削除する（hostcfgd:474-476）。
+
+### 起動時スナップショット
+
+`config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、subscribe ループ開始前に `HostConfigDaemon.load()` → `load_independent_config()` が呼ばれ、`AaaCfg.load(aaa, tac_global_conf, tacplus_conf, ...)` (hostcfgd:399-417) が `init_data['TACPLUS_SERVER']` / `init_data['TACPLUS']` を一括スナップショットで適用する。各エントリは `tacacs_server_update(row, data, modify_conf=False)` でメモリに反映され、最後に `modify_conf_file()` を 1 回呼ぶ（hostcfgd:417）。
+
+### 非同期性・タイミング
+
+- 設定変更から PAM ファイル反映まで数十ミリ秒〜数秒のラグが生じる場合がある（poll ループの実行タイミングに依存）。
+- PAM ファイルが書き換わった直後から新規 SSH セッション / console ログインに反映される。既存セッションは影響を受けない。
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2471-2472` (subscribe 登録)、`hostcfgd:2458-2466` (make_callback)、`hostcfgd:2303-2315` (tacacs_server_handler / tacacs_global_handler)、`hostcfgd:473-481` (tacacs_server_update)、`hostcfgd:399-417` (AaaCfg.load 起動時スナップショット)、`hostcfgd:2528` (listen)、`hostcfgd:641-870` (modify_conf_file); 詳細分析 `meta/_intermediate/cdb-flow/tacplus-server-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: e0332a023fdb -->
