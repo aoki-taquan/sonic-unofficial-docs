@@ -200,6 +200,42 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 > 中間調査詳細: `meta/_intermediate/cdb-flow/state-db-port-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`STATE_DB PORT_TABLE` への書き込みは `portsyncd` と `PortsOrch` の 2 プロセスが担い、それぞれ独立した失敗経路を持つ。本テーブルは STATUS テーブルではないため、フィールドへの書き込み失敗は**サイレント（フィールド不在または旧値残留）**になる場合が多い。`ERROR_TABLE` への書き込みはどちらのプロセスも行わない。
+
+### portsyncd (linksync.cpp) の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|-----------|---------|------|-------|
+| RTM_NEWLINK 受信時に APP_DB `PORT_TABLE` にポートが未登録 | linksync.cpp:193 (`m_portTable.get(key, temp)` が false) | STATE_DB への書き込み全体をスキップ。`SWSS_LOG_NOTICE("Cannot find %s in port table")` のみ | なし。次の RTM_NEWLINK まで STATE_DB エントリ不在 |
+| RTM_NEWLINK が旧インタフェースの ifindex で届いた | linksync.cpp:172-177 (`m_ifindexOldNameMap` チェック) | 処理全体を無視。STATE_DB の更新なし。エラーログなし | なし |
+| RTM_DELLINK 受信 → `m_statePortTable.del(key)` | linksync.cpp:184 | STATE_DB エントリ全体を削除。フィールド単位の partial delete は行わない | なし |
+
+**起動時の書き込み空白期間**: 非 warm-reboot 起動時、portsyncd は既存フロントパネルポートを `ip link set Ethernet* down` し、新しい RTM_NEWLINK を待つ。この間に consumer が STATE_DB を参照すると古い値を読むか（DB が残留）エントリが不在（DB がリセットされた場合）となる。warm-reboot の場合はこの down / up サイクルが発生しないため STATE_DB の空白期間はない（linksync.cpp:45, 74-77）。
+
+### PortsOrch (portsorch.cpp) の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|-----------|---------|------|-------|
+| `allPortsReady() == false` 時に port_state_change 通知を受信 | portsorch.cpp:9617-9621 | 通知全体をドロップ。`speed` / `fec` / `link_training_status` の更新なし。通知は消費されキューに残らない | なし。`refreshPortStatus()` によるポーリングで補完される場合あり |
+| `getPortOperStatus()` が SAI 失敗を返す | portsorch.cpp:9898-9901 | `throw runtime_error("PortsOrch get port oper status failure")` — orchagent プロセスがクラッシュ。STATE_DB への書き込みが全停止する | プロセス再起動後に復旧 |
+| `getPortSupportedSpeeds()` で SAI が `NOT_SUPPORTED` / `NOT_IMPLEMENTED` | portsorch.cpp:3145-3156 | `supported_speeds` に空文字列を書き込む（フィールド不在とは区別）| なし |
+| `getPortOperFec()` 成功だが `fecToStr()` が未知 FEC 値を受けた | portsorch.cpp:9920-9928 | `SWSS_LOG_ERROR` 出力 + `fec = "N/A"` で書き込み。フォールバックのため STATE_DB は必ず更新される | なし |
+| `initHostTxReadyState()` → SAI または Gearbox 失敗 | portsorch.cpp:2219-2274 | `host_tx_ready = "false"` が残留。"true" への更新は発生しない | なし（再 admin up 操作で再評価） |
+| `setPortSerdesAttribute()` が失敗 | portsorch.cpp:5191-5200 | `m_unreliable_los = false` のまま `phy_ctrl_unreliable_los = "false"` を書き込む。SAI エラーはログのみ | なし |
+| `rmt_adv_speeds` — autoneg OFF 時に `hdel` | portsorch.cpp:4862 | フィールドを削除。autoneg が再度 ON になれば書き戻される | 自動 |
+
+### 不在・stale 残留のまとめ
+
+- **フィールド不在**: ポートが APP_DB に未登録のうちは STATE_DB エントリそのものが不在。SAI が `NOT_SUPPORTED` を返した場合 `supported_fecs` はフィールド不在のまま。
+- **stale 残留**: `speed` / `fec` はポート oper DOWN 時に削除・更新されない。`netdev_oper_status != "up"` 時に参照すると前回 UP 時の値が返る。
+- **ERROR_TABLE**: linksync.cpp / portsorch.cpp いずれも失敗時に `ERROR_TABLE` へ書き込まない。失敗検知は syslog (`journalctl -u swss`) の `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` のみ。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/state-db-port-failure.md`
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト（Phase A — コード由来）
 
