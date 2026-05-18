@@ -378,3 +378,41 @@ journalctl -u bgp_eoiu_marker | grep -i "error\|warn"
 
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-failure.md`
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+CONFIG_DB / YANG で管理されず、コード中に直書きされた定数の一覧。
+
+### fpmsyncd.cpp — Warm Restart タイマー定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` 秒 | Warm Restart 全体タイムアウト。EOIU が検出されない場合のフォールバックとして reconciliation を開始する | fpmsyncd.cpp L46 |
+| `DEFAULT_EOIU_HOLD_INTERVAL` | `3` 秒 | IPv4・IPv6 の両 EOIU フラグが `"reached"` になった後、reconciliation を開始するまでのホールド待機時間。`WarmStart::getWarmStartTimer("eoiu_hold", "bgp")` にユーザー設定値があればそちらが優先される | fpmsyncd.cpp L51; L226–230 |
+| `FLUSH_TIMEOUT` | `500` ms | ルートエントリのバッチフラッシュ間隔 | fpmsyncd.cpp L25–26 |
+| `SMALL_TRAFFIC` | `500` | フラッシュ判定の残キュー閾値。残エントリ数がこれ未満 かつ idle 時間が `FLUSH_TIMEOUT` を超えたらフラッシュする | fpmsyncd.cpp L28, L350 |
+
+### bgp_eoiu_marker.py — EOR 待機タイマー定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `BgpStateCheck.DEF_TIME_OUT` | `120` 秒 | `wait_for_bgp_eoiu()` ループのタイムアウト上限。全ネイバーの EOR 受信完了を待つ最大時間。`fpmsyncd` の `DEFAULT_ROUTING_RESTART_INTERVAL` と意図的に同値に揃えてある | bgp_eoiu_marker.py L33 |
+| `BgpStateCheck.CHECK_INTERVAL` | `1` 秒 | ネイバー EOR 状態のポーリング間隔 | bgp_eoiu_marker.py L36 |
+
+### schema.h — DB 番号・テーブル名定数
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| `BMP_STATE_DB` | `20`（Redis DB ID） | schema.h L33 |
+| `STATE_BGP_TABLE_NAME` | `"BGP_STATE_TABLE"` | schema.h L437 |
+| `STATE_BGP_PEER_CONFIGURED_TABLE_NAME` | `"BGP_PEER_CONFIGURED_TABLE"` | schema.h L511 |
+| `BMP_STATE_BGP_NEIGHBOR_TABLE` | `"BGP_NEIGHBOR_TABLE"` | schema.h L557 |
+| `BMP_STATE_BGP_RIB_IN_TABLE` | `"BGP_RIB_IN_TABLE"` | schema.h L558 |
+| `BMP_STATE_BGP_RIB_OUT_TABLE` | `"BGP_RIB_OUT_TABLE"` | schema.h L559 |
+
+!!! note "120 秒は意図的な同値設計"
+    `DEFAULT_ROUTING_RESTART_INTERVAL`（fpmsyncd）と `BgpStateCheck.DEF_TIME_OUT`（bgp_eoiu_marker）はいずれも 120 秒であり、コメントで「consistent with the default timeout for bgp warm restart set in fpmsyncd」と明記されている（bgp_eoiu_marker.py L30–31）。どちらのタイムアウトが先に発火しても reconciliation がトリガーされる設計。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-constants.md`
+<!-- /constants -->
