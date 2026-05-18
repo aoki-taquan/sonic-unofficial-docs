@@ -310,6 +310,41 @@ YANG definition が存在しないため、デフォルト値はすべて `event
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`eventd` が `init_cfg.json` の `"events"` 設定を読み込んで ZMQ フレームワークを起動する際の副次 DB 書込みを示す。
+
+| 副次 DB / リソース | 書込有無 | 根拠 |
+|---|---|---|
+| `COUNTERS_DB COUNTERS_EVENTS` | **あり（定期書込）** | `stats_collector::run_writer()` が `stats_upd_secs` 間隔で `COUNTERS_EVENTS_TABLE` (`"COUNTERS_EVENTS"`) に 3 カウンタを `set()` する。キーは `"published"` / `"missed_to_cache"` / 内部カウンタ (`eventd.cpp:50-52, 205-210`) |
+| `CONFIG_DB` | なし | `eventd` は `init_cfg.json` をファイル直接読みする。CONFIG_DB へのアクセスなし |
+| `APPL_DB` | なし | `eventd` は APPL_DB への書き込みパスを持たない |
+| `STATE_DB` | なし | `eventd` は STATE_DB への書き込みパスを持たない |
+| `ASIC_DB` | なし | SAI 非経由のため ASIC_DB 書込なし |
+| `FLEX_COUNTER_DB` | なし | Flex カウンタ設定は存在しない |
+
+### COUNTERS_DB への書込詳細
+
+`stats_collector` は 2 スレッド構成で動作する:
+
+1. **`run_collector` スレッド**: ZMQ XPUB (:5571) からイベントを受信し、インメモリカウンタ (`m_lst_counters[]`) を更新する。受信ごとに `m_updated` フラグをセットする。
+2. **`run_writer` スレッド**: `m_updated` フラグが真の場合、以下の 3 エントリを `COUNTERS_DB COUNTERS_EVENTS` テーブルに書き込む (`eventd.cpp:198-210`):
+
+| キー (`COUNTERS_EVENTS|<key>`) | フィールド | 意味 |
+|---|---|---|
+| `published` | `"value"` | `eventd` 起動以降の累計受信・発行イベント数 |
+| `missed_to_cache` | `"value"` | キャッシュ上限 (`cache_max_cnt`) 超過により破棄されたイベント数 |
+| *(内部カウンタ)* | `"value"` | `COUNTERS_EVENTS_TOTAL` 分だけ順次書込み |
+
+書込み周期は `stats_upd_secs`（デフォルト: 5 秒）ではなく、`run_writer` 内部の `sleep_for(10ms)` ループで `m_updated` を確認する設計であり、実際の書込み遅延は最大 10 ms である (`eventd.cpp:215-221`)。`stats_upd_secs` はハートビート間隔 (`STATS_HEARTBEAT_MIN`) と組み合わせた設計意図を持つが、現実装では `run_writer` の書込みタイミングとは独立している。
+
+### ZMQ ハートビートの副次作用
+
+`stats_collector::run_collector()` は `events_init_publisher(EVENTD_PUBLISHER_SOURCE)` でハートビートパブリッシャーを作成し、`sonic-events-eventd:heartbeat` イベントを `xsub_path`(:5570) 経由で発行する (`eventd.cpp:240-296`)。このイベントはすべての ZMQ サブスクライバー（`xpub_path` :5571 に接続する telemetry コンテナ等）に配信される。ハートビート自体は DB への書込みではなく ZMQ ブロードキャストである。
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
