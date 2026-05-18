@@ -415,3 +415,43 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 > **Evidence**: `minigraph.py:2170-2172, 662-668, 806-811` (書き込み); `buffermgr.cpp:373-408` (`doBufferMetaTask` — `buffer_model` のみ参照、`cluster` は無視); `buffermgrdyn.cpp:87` (`hget platform` のみ); sonic-swss 全体 grep 結果: `"cluster"` ヒット 1 件はコメント行のみ
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 根拠: `sonic-buildimage/src/sonic-config-engine/minigraph.py` 全行精査; 詳細 `meta/_intermediate/cdb-flow/cluster-platform.md`
+
+### SAI 非経由フィールド
+
+`cluster` は CONFIG_DB (`DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA`) にのみ書き込まれ、SAI・ASIC を経由しない。ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium 等) による差異はない。
+
+### シングル ASIC vs マルチ ASIC
+
+`cluster` フィールドの書き込みは 2 つのコードパスで実施される。
+
+| 構成 | 呼び出し関数 | 書き込み先 | ロジック差異 |
+|------|------------|-----------|------------|
+| シングル ASIC / 非チャーシス | `parse_png()` | `DEVICE_NEIGHBOR_METADATA\|<dev>` | `if cluster != None:` のみ |
+| マルチ ASIC / チャーシス | `parse_asic_png()` | 各 ASIC namespace の `DEVICE_NEIGHBOR_METADATA\|<dev>` | `if cluster != None:` のみ（同一） |
+| 全構成共通 | `parse_xml()` (L2170) | `DEVICE_METADATA\|localhost` | `if cluster:` (truthy check) |
+
+マルチ ASIC 環境では ASIC-scope minigraph ごとに `parse_asic_png` が呼ばれ、各 namespace の `DEVICE_NEIGHBOR_METADATA` に書き込む。書き込み条件はシングル ASIC 版と同一であり、プラットフォーム固有の差異はない。
+
+### VOQ / switch_type 依存
+
+`cluster` フィールドの処理パスに `gMySwitchType` / `is_voq_mode()` / `is_chassis_device()` 等の switch_type 条件分岐は存在しない。VOQ chassis 構成でも各 host が独立して `DEVICE_METADATA|localhost` に自ノードの cluster 名を書き込む。
+
+### supervisor / linecard 構成
+
+チャーシス構成 (supervisor + line cards) では各 line card host が独立して `minigraph.py` / `sonic-cfggen` を実行する。`cluster` フィールドは host スコープであり、supervisor から line card への集中書き込み機構は存在しない。
+
+### まとめ
+
+| 観点 | 差異 |
+|------|------|
+| ASIC ベンダー | なし（SAI 非経由） |
+| シングル vs マルチ ASIC | ロジック同一。書き込み関数が異なるが条件・値は変わらない |
+| VOQ chassis | なし（`switch_type` 条件分岐なし） |
+| supervisor / linecard | host 単位で独立適用 |
+
+<!-- /platform -->
+
