@@ -364,6 +364,22 @@ CLI 経由では DB 書き込み後に `systemctl restart snmp.service` が自�
 > **Evidence**: `start.sh L17-26`（`snmp_yml_to_configdb.py` 実行 → `sonic-cfggen` テンプレート展開）、`supervisord.conf.j2 L42-51`（snmpd は start:exited 後に起動）、`config/main.py L4397-4401`（CLI が `systemctl restart snmp.service` 発行）
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: `SNMP_COMMUNITY` は ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。`docker-snmp` コンテナが host CONFIG_DB を一括読み取りするのみで、SAI 経由操作が存在しないため ASIC 差異が入り込む余地がない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SNMP_COMMUNITY は SAI 非経由。`snmpd.conf.j2` の community 処理ブロック (L48-64) にプラットフォーム条件なし (`platform`/`asic`/`vendor` grep 0 ヒット) |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `snmp_yml_to_configdb.py` は `ConfigDBConnector()` 引数なし（host CONFIG_DB のみ接続）。`asicN` namespace を iterate しない。SNMP_COMMUNITY は host 単位で一元管理 |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `docker-snmp` は per-host コンテナ。SNMP_COMMUNITY テーブルは各 host の CONFIG_DB に独立して存在し、chassis 全体を統一する集中管理機構はない |
+| ベンダー固有 hook | なし | `snmpd.conf.j2` にベンダー分岐なし。`sonic-snmp.yang` にもプラットフォーム条件なし |
+| テンプレート内分岐 | プラットフォーム条件なし | `snmpd.conf.j2` 全体を `platform\|asic\|chassis\|namespace\|vendor` で grep して SNMP_COMMUNITY ブロックへの影響は 0 ヒット。agentAddress のみ `SNMP_AGENT_ADDRESS_CONFIG` に応じて差異があるが SNMP_COMMUNITY 自体には波及しない |
+
+詳細根拠は `meta/_intermediate/cdb-flow/community-list-platform.md` を参照。
+<!-- /platform -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
