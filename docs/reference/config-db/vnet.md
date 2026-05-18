@@ -479,4 +479,36 @@ CONFIG_DB の変更を消費するダウンストリーム側のテーブル名�
 > **スキャン証跡**: `sonic-swss/orchagent/vnetorch.h:20-28`（マクロ定数全件）、`sonic-swss/orchagent/vnetorch.cpp:513,773,786`（定数使用箇所）、`sonic-swss-common/common/schema.h:81-83,133,369,495,500`（テーブル名定数）、`sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2:321-328`（`vnid_type` 型定義）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang:75-92`（scope/guid 制約）
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `VNET` / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルの変更に伴って `VNetOrch` / `VNetRouteOrch` が副次的に書き込む DB エントリを示す。
+
+| 副次 DB | 書込有無 | 対象テーブル / 根拠 |
+|---|---|---|
+| STATE_DB | **あり** | `VNET_ROUTE_TUNNEL_TABLE` — トンネルルート active 化時に `active_endpoints` + `state` を書込 (`vnetorch.cpp:2572`) |
+| STATE_DB | **あり** | `ADVERTISE_NETWORK_TABLE` — `advertise_prefix: true` かつルート active 化時に prefix を書込、BGP コンテナが広告経路として参照 (`vnetorch.cpp:2645`) |
+| APP_DB | **あり** | `VNET_MONITOR_TABLE` — `monitoring` フィールド付き `VNET_ROUTE_TUNNEL` 追加時にモニタリングセッションを書込 (`vnetorch.cpp:2247`) |
+| APP_DB | **あり** | `BFD_SESSION_TABLE` — `monitoring: bfd` / `ping` 指定時に `createBfdSession()` が BFD セッションを書込 (`vnetorch.cpp:2046-2115`) |
+| ASIC_DB (SAI 経由) | **あり** | `sai_virtual_router_api->create_virtual_router()` によって VRF オブジェクトが ASIC_DB に間接書込。VNET 削除時には `remove_virtual_router()` + `gFlowCounterRouteOrch->onRemoveVR()` が呼ばれる (`vnetorch.cpp:91-108`, `345-362`) |
+| COUNTERS_DB | なし | `vnetorch.cpp` 全体で COUNTERS_DB への書込コード 0 件 |
+| FLEX_COUNTER_DB / LOGLEVEL_DB | なし | `vnetorch.cpp` 内に参照 0 件 |
+
+### STATE_DB 書込の対応表
+
+| 書込関数 | STATE_DB テーブル | 操作 | 用途 |
+|---|---|---|---|
+| `updateTunnelRouteStatus()` | `VNET_ROUTE_TUNNEL_TABLE` | `set(<vnet>\|<prefix>, active_endpoints, state)` | ECMP エンドポイント alive 状態の公開 |
+| `addRouteAdvertisement()` | `ADVERTISE_NETWORK_TABLE` | `set(<prefix>, profile)` | BGP コンテナへの経路広告指示 |
+| `removeRouteAdvertisement()` | `ADVERTISE_NETWORK_TABLE` | `del(<prefix>)` | 広告撤回 |
+
+### 副次作用の連鎖
+
+- `VNET_ROUTE_TUNNEL_TABLE` への書込は `monitoring` 有効時の BFD 状態変化 (`SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE`) を `updateVnetTunnel()` で受けて行われる (`vnetorch.cpp:2654-2665`)。
+- `advertise_prefix: true` かつトンネルルートが active 化すると `addRouteAdvertisement()` → `ADVERTISE_NETWORK_TABLE` 書込 → BGP コンテナが prefix を広告、という連鎖が発生する (`vnetorch.cpp:2590-2600`)。
+- BFD セッション削除 (`removeBfdSession()`) は `bfd_session_producer_.del()` で `BFD_SESSION_TABLE` エントリを消し、BfdOrch 側のセッションが破棄される (`vnetorch.cpp:2117`)。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/vnet-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: f94986e6b96c -->
