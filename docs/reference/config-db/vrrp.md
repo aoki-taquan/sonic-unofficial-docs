@@ -395,6 +395,63 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`VRRP` / `VRRP6` テーブルへの書き込みは 3 段の非同期チェーンで処理される。macvlanmgrd が CONFIG_DB を購読し、vrrpsyncd が Linux カーネルの netlink イベントを購読し、vrrporch が APPL_DB を購読する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-pubsub.md)。
+
+### 購読方式一覧
+
+| コンポーネント | コンテナ | 購読元 | 購読 API | 書き込み先 |
+|---|---|---|---|---|
+| `macvlanmgrd` | BGP | CONFIG_DB `VRRP` / `VRRP6` / `VRRP_TRACK` | `SubscriberStateTable` (keyspace) | Linux カーネル (netlink) / APPL_DB (vtysh) |
+| `vrrpsyncd` | SWSS | Linux macvlan デバイス (netlink) | netlink socket | APPL_DB `VRRP_TABLE` (`ProducerStateTable`) |
+| `vrrporch` | SWSS (orchagent) | APPL_DB `VRRP_TABLE` | `ConsumerStateTable` | ASIC_DB (SAI API) |
+
+### 通知フロー
+
+```
+CLI / YANG → CONFIG_DB HSET "VRRP|<intf>|<vrid>"
+  ↓ Redis keyspace PUBLISH "__keyspace@4__:VRRP|<intf>|<vrid>" "hset"
+macvlanmgrd SubscriberStateTable 受信
+  ↓ ip link add Vrrp4-<intf>-<vrid> type macvlan mode bridge (netlink)
+  ↓ vtysh 経由で vrrpd に設定投入 (DB 書込なし)
+vrrpd が VRRP 状態機械を実行 → Master 昇格時に macvlan protodown=off
+  ↓ vrrpsyncd が netlink で macvlan デバイスへの IP add を検出
+vrrpsyncd → APPL_DB VRRP_TABLE ProducerStateTable SET
+  ↓ PUBLISH "VRRP_TABLE_CHANNEL@0"
+vrrporch ConsumerStateTable 受信 → SAI API → syncd → ASIC_DB
+```
+
+### macvlanmgrd — CONFIG_DB SubscriberStateTable
+
+`macvlanmgrd` は BGP コンテナ内で動作し、CONFIG_DB の以下テーブルを `SubscriberStateTable` で購読する。keyspace notification の PSUBSCRIBE パターンはテーブルごとに `__keyspace@4__:<TABLE>|*` となる。
+
+| 購読テーブル | PSUBSCRIBE パターン |
+|---|---|
+| `VRRP` | `__keyspace@4__:VRRP\|*` |
+| `VRRP6` | `__keyspace@4__:VRRP6\|*` |
+| `VRRP_TRACK` | `__keyspace@4__:VRRP_TRACK\|*` |
+| `VRRP6_TRACK` | `__keyspace@4__:VRRP6_TRACK\|*` |
+
+起動時には CONFIG_DB の既存エントリをリプレイして macvlan デバイスと vrrpd 設定を再現する（HLD `Modules Design and Flows` セクション）。
+
+### vrrpsyncd — netlink 購読 (DB 購読ではない)
+
+`vrrpsyncd` は SWSS コンテナ内で動作し、Redis keyspace notification ではなく **Linux netlink** で macvlan デバイスの IP add/del イベントを監視する。macvlanmgrd が `ip addr add <vip> dev Vrrp4-<intf>-<vrid>` を実行すると netlink 通知が発火し、vrrpsyncd が APPL_DB の `VRRP_TABLE` に書き込む（HLD L229-232）。
+
+| イベント | 書き込み操作 | APPL_DB キー |
+|---|---|---|
+| macvlan デバイスへの IP add (Master 昇格) | `VRRP_TABLE` SET `vmac=<00:00:5e:00:01:<vrid>>` | `VRRP_TABLE:<intf>:<vip>/32:<type>` |
+| macvlan デバイスからの IP del (Master 降格) | `VRRP_TABLE` DEL | `VRRP_TABLE:<intf>:<vip>/32:<type>` |
+
+### vrrporch — APPL_DB ConsumerStateTable
+
+`vrrporch` (orchagent 内) は APPL_DB `VRRP_TABLE` を `ConsumerStateTable` で購読する。orchagent の標準 select ループ (`SELECT_TIMEOUT = 1000` ms) で駆動され、`VRRP_TABLE_CHANNEL@0` への PUBLISH を受信すると SAI API 経由で ASIC_DB に仮想 RIF と VIP ルートを書き込む（HLD L234-235, ASIC_DB Changes セクション L438-459）。
+
+> **Evidence**: HLD L219-235 (Container セクション)、HLD L460-492 (Modules Design and Flows)、HLD L407-436 (APPL_DB Changes)
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: VRRP Adaptation HLD: `sonic-net/SONiC`, `doc/vrrp/VRRP_Adaptation_HLD.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/vrrp/VRRP_Adaptation_HLD.md>
