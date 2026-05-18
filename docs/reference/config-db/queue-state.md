@@ -171,6 +171,26 @@ YANG schema は存在しない。すべてのデフォルトは `portsorch.cpp` 
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref を超えた他テーブル・他 DB・プラットフォームとの実装上の依存関係。`QUEUE_COUNTER_CAPABILITIES` は `portsorch` が**書き手専用**のテーブルであり、consumer 側（`wredstat` / `portstat.py`）は参照のみ行う。
+
+| 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
+|--------|-----------|------|------|-----------|
+| SAI `sai_query_stats_capability(gSwitchId, SAI_OBJECT_TYPE_QUEUE, ...)` | SAI / プラットフォーム | READ | `initCounterCapabilities()` が orchagent 初期化時に 1 回呼び出す。返却された統計ケイパビリティリストに基づいて 4 キーの `isSupported` フラグを確定する。クエリ失敗時は全フラグが `"false"` のまま固定される | `portsorch.cpp:1882-1916` |
+| `PORT_COUNTER_CAPABILITIES` | STATE_DB | WRITE（兄弟テーブル） | 同じ `initCounterCapabilities()` 内で `SAI_OBJECT_TYPE_PORT` ケイパビリティを問い合わせ、`WRED_ECN_PORT_*` キーを書き込む。QUEUE 側の 4 キーと PORT 側の 4 キーは独立して成否が決まり、相互依存はない | `portsorch.cpp:1927-1970` |
+| `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` | CONFIG_DB | READ（間接） | `counterpoll wred-queue enable` により `FLEX_COUNTER_STATUS = enable` が書かれると `FlexCounterOrch` が `addWredQueueFlexCounters()` を呼ぶ。`isSupported = "false"` のポートのキューカウンタは `wred_queue_stat_manager.setCounterIdList()` に渡されないため COUNTERS_DB に出現しない | `flexcounterorch.cpp:276-281`, `portsorch.cpp:9574-9593` |
+| `COUNTERS_DB COUNTERS:<queue_oid>` | COUNTERS_DB | READ（downstream consumer） | `wredstat` スクリプトが COUNTERS_DB から WRED/ECN カウンタ値を取得する際、`QUEUE_COUNTER_CAPABILITIES.isSupported = "false"` のキューは FlexCounter に登録されていないため `None` が返り `STATUS_NA` が表示される | `wredstat:198-204` |
+
+### 補足
+
+- **書き手は `portsorch` のみ**: `QUEUE_COUNTER_CAPABILITIES` に書き込むのは `initCounterCapabilities()` 1 関数だけで、動的な更新（フィールドの追加・変更）は orchagent 再起動以外では発生しない。
+- **`FLEX_COUNTER_TABLE` との関係は間接的**: `QUEUE_COUNTER_CAPABILITIES` 自体は `FLEX_COUNTER_TABLE` を参照しない。FlexCounter の enable/disable が `addWredQueueFlexCounters()` 呼び出し可否を制御し、その内部で syncd 側の登録対象（`setCounterIdList()`）が変わることで COUNTERS_DB の出現可否に影響する。
+- **SAI プラットフォーム依存**: `sai_query_stats_capability` の結果はプラットフォーム実装に依存する。`SAI_STATUS_NOT_SUPPORTED` を返す SAI 実装では常に全フラグ `"false"` となる。
+
+<!-- /cross-refs -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md) — WRED_ECN_QUEUE グループの enable/disable 設定
