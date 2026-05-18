@@ -455,6 +455,28 @@ if (status != SAI_STATUS_SUCCESS)
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp setMangleIptablesRules L894-924 / doNatZoneIntfTask L7493-7628 / orchagent/intfsorch.cpp setRouterIntfsNatZoneId L272-303 -->
+
+`nat_zone` フィールドへの SET/DEL を受信した際に、主購読者 `natmgrd`（`NatMgr`）および `orchagent`（`IntfsOrch`）が生じさせる副次書込みを示す。
+
+| 副次対象 | 種別 | 書込内容 | 条件 | 根拠 |
+|---------|------|---------|------|------|
+| kernel iptables mangle テーブル | 非 DB（カーネルルール） | `PREROUTING -i <port> -j MARK --set-mark <zone+1>` / `POSTROUTING -o <port> -j MARK --set-mark <zone+1>` を ADD / DEL | Loopback 以外の Ethernet / PortChannel / Vlan インタフェース、かつ `isPortStateOk()` が true | `natmgr.cpp:910-921` `setMangleIptablesRules()` |
+| kernel iptables nat テーブル (Static NAT) | 非 DB（カーネルルール） | ゾーン変更時のみ: 既存の Static NAT / NAPT iptables ルールを DELETE してから新ゾーン値で再 INSERT | `m_natIpInterfaceInfo` にポートが登録されている場合かつゾーン値が変化した場合 | `natmgr.cpp:7534-7568` `removeStaticNatIptables()` → `addStaticNatIptables()` |
+| kernel iptables nat テーブル (Dynamic NAT) | 非 DB（カーネルルール） | ゾーン変更時のみ: Dynamic NAT iptables ルールを DELETE してから新ゾーン値で再構築 | 同上（ゾーン変更 + IP インタフェース登録済み） | `natmgr.cpp:7543-7568` `removeDynamicNatRules()` → `addDynamicNatRules()` |
+| ASIC_DB (SAI RIF 属性) | 非 Redis 書込（SAI 経由） | `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID = <zone_id>` を `set_router_interface_attribute()` で設定 | `gIsNatSupported == true` かつ `nat_zone` フィールドが空でなく現在値と異なる場合 | `intfsorch.cpp:974-985` `setRouterIntfsNatZoneId()` |
+
+### 副次書込みに関する注意事項
+
+- **APPL_DB / STATE_DB / FLEX_COUNTER_DB への書込みなし**: `doNatZoneIntfTask` の処理パスでは Redis 系 DB への副次書込みは行われない。kernel iptables と SAI（ASIC_DB 経由）のみが影響を受ける。
+- **ゾーン変更中の一時的 NAT 停止**: iptables 再構築の DELETE→ADD シーケンス中（数 ms〜数百 ms）は、当該インタフェースの Static / Dynamic NAT ルールが消失する。既存の conntrack セッションは削除されないが、新規接続の NAT 変換は一時的にスキップされる。
+- **iptables 副次書込みと ASIC_DB 書込みは独立**: `natmgrd` と `orchagent` は独立したプロセスとして並列に CONFIG_DB を購読する。iptables mangle ルール（natmgrd 担当）と SAI RIF zone_id（orchagent 担当）は同一の `nat_zone` 変更イベントに対して独立して更新される。両者の適用タイミングにずれが生じる可能性があるが、SAI は通常 iptables より先に完了する。
+
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
