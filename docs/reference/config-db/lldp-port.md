@@ -338,4 +338,36 @@ APPL_DB: PORT_TABLE PortInitDone + PortConfigDone
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 根拠: `dockers/docker-lldp/lldpmgrd` (`process_pending_cmds`, `run`)
+
+### 構造的前提
+
+`lldpmgrd` は `LLDP_PORT` テーブルを**直接購読しない**。`LLDP_PORT.enabled` / `LLDP_PORT.mode` は lldpcli に変換されず、CONFIG_DB に書いても lldpd に一切到達しない（構造的 no-op）。lldpmgrd が `lldpcli configure ports <ifname>` を発行するのは `APPL_DB PORT_TABLE` の oper_status イベントを契機として、`CONFIG_DB PORT` テーブルから `alias` / `description` を読んだ場合のみ。
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB 記録 | evidence |
+|---------|---------|------|--------------|---------|
+| `LLDP_PORT\|<ifname>` への SET（直接） | — | lldpmgrd はイベントを受信しない（構造的 no-op）。CONFIG_DB には書けるが lldpd に反映されない | なし | `lldpmgrd:300-325` |
+| ポートが `netdev_oper_status != up` の状態で PORT oper_status イベント受信 | `process_pending_cmds()` | INFO ログ → コマンドをキューに残し 10 秒後に再チェック | なし | `lldpmgrd:176-179` |
+| `lldpcli configure ports <ifname> lldp portidsubtype ...` 失敗（retry 中） | `process_pending_cmds()` | INFO ログ → `failed_count++`、6 秒後に再試行（最大 5 回） | なし | `lldpmgrd:197-200` |
+| `lldpcli configure ports <ifname>` 失敗（RETRY_LIMIT=5 回超過） | `process_pending_cmds()` | **ERROR ログ → silent drop**。当該ポートの `portidsubtype` / `description` が lldpd に未反映のまま継続。ポートの alias が LLDPDU に広告されない | なし | `lldpmgrd:193-196` |
+| 存在しないポート名で `LLDP_PORT` エントリを投入 | lldpcli 内部 | linux netdev が存在しないため lldpcli がエラー → RETRY_LIMIT 超過で silent drop。CONFIG_DB にはエントリが残存し続ける | なし | `lldpmgrd:168-204` |
+| inband / recirc / backplane prefix を持つポートで `LLDP_PORT` 投入 | `generate_pending_lldp_config_cmd_for_port()` | `return`（lldpcli 未発行）。エラーログなし | なし | `lldpmgrd:141-142` |
+| `PORT_INIT_TIMEOUT`（300 秒）超過（フロントエンドポートあり） | `check_timeout()` | **ERROR ログ → 強制 `lldpcli resume`**。pending_cmds 未解決のポートは誤 portid を広告する可能性あり | なし | `lldpmgrd:363-368` |
+
+### retry / recovery まとめ
+
+| 失敗種別 | retry | 上限 | 間隔 | recovery 条件 |
+|---------|-------|------|------|--------------|
+| portidsubtype lldpcli 失敗 | あり | 5 回 | 6 秒 | 5 回超過で silent drop |
+| ポート down 待機 | 自動 | なし | 10 秒ループ | `STATE_DB netdev_oper_status=up` 検知 |
+| LLDP_PORT 書き込み（enabled/mode） | 構造的 no-op | — | — | なし（lldpmgrd 未購読、設計上 dead field） |
+| 存在しないポートへの設定 | 5 回まで | 5 回 | 6 秒 | ポート追加 + 再 PORT oper_status イベント |
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 1c2f663967b9 -->
