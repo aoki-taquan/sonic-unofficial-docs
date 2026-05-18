@@ -185,6 +185,30 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-cross-refs.md -->
+
+`BREAKOUT_CFG` テーブルは単独で機能せず、`config interface breakout` CLI および `show interfaces breakout` コマンドがプラットフォームファイルと複数の CONFIG_DB テーブルを暗黙的に参照する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | evidence |
+|--------------------------|---------|------|----------|
+| `platform.json`（ファイルシステム） | 読込（モード検証・子ポート計算） | 常時必須。ファイル不在時は即 Abort | `config/main.py:5467-5471`, `main.py:5496,5507` |
+| `hwsku.json`（ファイルシステム） | 読込（`default_brkout_mode` 初期値の源泉） | 起動時 `sonic-cfggen` が参照 | `portconfig.py:37-38,475-478` |
+| `PORT`（CONFIG_DB） | 読込（子ポート名バリデーション・速度取得） | breakout 変更時。`interface_name_is_valid()` で各削除ポートを確認 | `main.py:5517-5519` |
+| `VLAN_MEMBER` / `ACL_TABLE` / `BUFFER_PG` / `BUFFER_QUEUE` / `INTERFACE` / `CABLE_LENGTH` 等（CONFIG_DB） | 読込（依存テーブル列挙）→ DEL（`--force` 時） | `_deletePorts()` 内で YANG ツリーから動的解決。`--force-remove-dependencies` 時は自動削除 | `config_mgmt.py:488-514` |
+| YANG モデル群（`/usr/local/yang-models/`） | 読込（依存テーブル解析） | `ConfigMgmtDPB` 初期化時に全 YANG ロード | `config_mgmt.py:70-72` |
+| `ASIC_STATE:SAI_OBJECT_TYPE_PORT:*`（ASIC_DB） | 読込（ポート削除完了確認） | PORT 削除後、最大 60 秒ポーリング。新ポート追加の先行条件 | `config_mgmt.py:318,377-412,458-459` |
+
+!!! note "platform.json / hwsku.json は CONFIG_DB ではなくファイルシステム上のプラットフォームファイル"
+    これら 2 ファイルが存在しない（または `.json` 形式でない）場合、`config interface breakout` は実行不能となり `BREAKOUT_CFG` テーブルへの書き込みは一切行われない（`main.py:5467-5471`）。
+
+!!! note "YANG モデルが解決する依存テーブルはプラットフォーム設定に依存"
+    `_deletePorts()` が YANG ツリーをトラバースして列挙する依存テーブルは、対象ポートに付随する設定（VLAN メンバーシップ・バッファ設定・ACL バインド等）の存在状況によって変動する。固定の「必須前提テーブル」は存在しないが、YANG バリデーション上の依存は `--force-remove-dependencies` なしでは DEL 操作をブロックする。
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
