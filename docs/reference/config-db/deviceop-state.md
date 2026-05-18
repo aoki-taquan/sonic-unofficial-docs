@@ -145,6 +145,32 @@ bgpcfgd (`managers_bgp.py:139-140,219-224`) は DEVICE_NEIGHBOR 本体ではな�
 - BGP neighbor の `set_handler` で `data['name']` が DEVICE_NEIGHBOR_METADATA に不在の場合 → `return False`（延期）
 - テーブル到着後に directory メカニズムが自動再処理
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+DEVICE_NEIGHBOR テーブルは **consumer が起動時に一括読み出し（`get_table`）する**参照テーブルであり、常時 subscribe する daemon は存在しない（lldpmgrd は TODO 状態で未実装）。このため、書込み順依存は「consumer の起動タイミング vs. DEVICE_NEIGHBOR の書込みタイミング」という起動順序の問題として現れる。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | DEVICE_NEIGHBOR 書込み → `pfcwd start_default` 実行 | **強制先行**（起動時スナップショット） | pfcwd は起動時に `get_table` でスナップショット取得。後から追加されたエントリは反映されない |
+| 2 | DEVICE_NEIGHBOR 書込み → `ecnconfig` 起動 | **強制先行**（起動時スナップショット） | 空テーブル状態で ecnconfig が起動すると Exception が発生し、操作が不可能になる |
+| 3 | DEVICE_NEIGHBOR 書込み → DEVICE_NEIGHBOR_METADATA 書込み → `bgpcfgd` BGP peer 処理 | **2 段前提**（check_neig_meta 有効時） | bgpcfgd は `data['name']` が DEVICE_NEIGHBOR_METADATA に存在するまで `return False` でハンドラを延期し続ける（managers_bgp.py:219-224） |
+| 4 | DEVICE_NEIGHBOR_METADATA `type='server'` 書込み → `pfcwd get_server_facing_ports` 実行 | **強制先行** | DEVICE_NEIGHBOR に行が存在しても DEVICE_NEIGHBOR_METADATA に `type='server'` がなければ VLAN_MEMBER フォールバックへ移行する |
+| 5 | DEVICE_NEIGHBOR 書込み → `show interfaces neighbor expected` 実行 | 任意（表示のみ） | テーブルが None の場合は "not present" を表示して即 return。runtime への影響なし |
+
+### 主要な制約詳細
+
+**pfcwd の起動時スナップショット (依存 #1)**: `pfcwd start_default` (`pfcwd/main.py:405-416`) は `self.config_db.get_table('DEVICE_NEIGHBOR')` を呼び出した時点のスナップショットで `external_ports` を確定する。DEVICE_NEIGHBOR に後から行を追加しても、既に起動済みの pfcwd ポートスコープには反映されない。`pfcwd start_default` を再実行するまで古いスコープが維持される。
+
+**ecnconfig の起動前条件 (依存 #2)**: `ecnconfig` (`scripts/ecnconfig:282-287`) は DEVICE_NEIGHBOR が空の場合に `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise して停止する。このため、DEVICE_NEIGHBOR の書込みが完了する前に ecnconfig コマンドを実行すると、コマンド自体が失敗する。multi-ASIC 環境では `SYSTEM_PORT_TABLE` を代替として使用するためこの制約は生じない。
+
+**bgpcfgd の 2 段前提 (依存 #3)**: bgpcfgd の `BGPPeerMgrBase` は `check_neig_meta` が有効な場合、`deps` に `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を追加する。BGP neighbor の `set_handler` 内で `data['name']`（= DEVICE_NEIGHBOR の `name` フィールド値）が DEVICE_NEIGHBOR_METADATA に存在しない場合、`return False` を返してハンドラを延期する。DEVICE_NEIGHBOR_METADATA が書き込まれるまで BGP セッション確立処理が進まない。DEVICE_NEIGHBOR 書込み → DEVICE_NEIGHBOR_METADATA 書込み の 2 段順序が必要（evidence: `managers_bgp.py:118-150,219-224`）。
+
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-287`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-150,219-224`
+<!-- /ordering -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
