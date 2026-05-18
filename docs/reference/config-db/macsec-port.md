@@ -437,3 +437,43 @@ journalctl -u macsecmgrd | grep -iE "fail|warn|Cannot"
 
 > **スキャン証跡**: `macsecmgr.cpp` L27-49, L853 精読。`macsecorch.cpp` L24-42, L646-669, L1330-1331, L1424-1426, L2714 精読。`macsecorch.h` L24 精読。定数 4 (パス) + 3 (ポーリング) + 2 (AES) + 4 (SAI) + 6 (ACL/Ethertype/stat) = 19 件抽出。中間ファイル: [`meta/_intermediate/cdb-flow/macsec-port-constants.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-constants.md)
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/macsecorch.cpp createMACsecPort:1532-1535 / deleteMACsecPort:1792 / createMACsecSC:2039-2043 / deleteMACsecSC:2161-2165 / createMACsecSA:2371-2376 / deleteMACsecSA:2433-2437 / installCounter:2584-2593 / uninstallCounter:2613-2622 -->
+
+`PORT.macsec` 設定を起点に `macsecmgrd` が `wpa_supplicant` 経由で MKA ネゴシエーションを完了すると、`MACsecOrch` が APPL_DB の MACsec テーブルを処理し以下の副次 DB 書込みを行う。主作用 (ASIC_DB への SAI MACsec オブジェクト書込み) を除く。
+
+### STATE_DB — MACsec Port / SC / SA ステータス
+
+`MACsecOrch::createMACsecPort()` は SAI MACsec Port 作成成功後に `STATE_MACSEC_PORT_TABLE_NAME` へ `max_sa_per_sc` / `state=ok` を書き込む (`macsecorch.cpp:1535`)。削除時は同エントリを削除 (`macsecorch.cpp:1792`)。
+
+SC (Security Channel) / SA (Security Association) の作成・削除でも同様に STATE_DB へのエントリが書かれる:
+
+| STATE_DB テーブル | キー | 書込タイミング |
+|---|---|---|
+| `STATE_MACSEC_PORT_TABLE_NAME` | `<port>` | SAI MACsec Port 作成/削除 (`macsecorch.cpp:1535, 1792`) |
+| `STATE_MACSEC_EGRESS_SC_TABLE_NAME` | `<port>\|<sci>` | Egress SC 作成/削除 (`macsecorch.cpp:2039, 2161`) |
+| `STATE_MACSEC_INGRESS_SC_TABLE_NAME` | `<port>\|<sci>` | Ingress SC 作成/削除 (`macsecorch.cpp:2043, 2165`) |
+| `STATE_MACSEC_EGRESS_SA_TABLE_NAME` | `<port>\|<sci>\|<an>` | Egress SA 作成/削除 (`macsecorch.cpp:2371, 2433`) |
+| `STATE_MACSEC_INGRESS_SA_TABLE_NAME` | `<port>\|<sci>\|<an>` | Ingress SA 作成/削除 (`macsecorch.cpp:2376, 2437`) |
+
+### COUNTERS_DB / GB_COUNTERS_DB — COUNTERS_MACSEC_NAME_MAP
+
+`installCounter()` (`macsecorch.cpp:2589`) は SAI MACsec SA / Flow オブジェクト登録時に `COUNTERS_DB` の `COUNTERS_MACSEC_NAME_MAP` テーブルへ `<obj_name>` → `<sai_object_id>` マッピングを `hset` で書き込む。削除時 (`macsecorch.cpp:2618`) は `hdel`。Gearbox が存在する場合は `GB_COUNTERS_DB` の同テーブルにも同様に書き込む (`macsecorch.cpp:2560-2568`)。
+
+### FLEX_COUNTER_DB — SA / Flow 統計グループ
+
+`installCounter()` は `FlexCounterManager` 経由で FLEX_COUNTER_DB に次の 3 グループを登録する:
+
+| グループ | ポーリング間隔 | 用途 |
+|---|---|---|
+| `COUNTERS_MACSEC_SA_ATTR_GROUP` | 1000 ms | XPN カウンタ (ロールオーバー検出のため短周期) |
+| `COUNTERS_MACSEC_SA_GROUP` | 10000 ms | SA 統計カウンタ (パケット数/バイト数) |
+| `COUNTERS_MACSEC_FLOW_GROUP` | 10000 ms | Flow 統計カウンタ |
+
+`setCounterIdList()` (`macsecorch.cpp:2584-2593`) で SA/Flow の SAI OID と統計属性リストを登録。削除時は `clearCounterIdList()` (`macsecorch.cpp:2613-2622`) で解除。
+
+> **Evidence**: `sonic-swss/orchagent/macsecorch.cpp` L1535 (`m_state_macsec_port.set`), L1792 (`m_state_macsec_port.del`), L2039-2043 (SC set), L2161-2165 (SC del), L2371-2376 (SA set), L2433-2437 (SA del), L2560-2622 (counter 登録/削除)。中間ファイル: [`meta/_intermediate/cdb-flow/macsec-port-side-effects.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-side-effects.md)
+<!-- /side-effects -->
