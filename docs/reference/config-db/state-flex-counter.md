@@ -279,6 +279,75 @@ CONFIG_DB:FLEX_COUNTER_TABLE
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/state-flex-counter-failure.md -->
+
+FLEX_COUNTER_DB への書き込みと syncd 内 `FlexCounter` ポーリングの各障害経路を示す。**COUNTERS_DB への影響**に着目することが重要で、失敗時には「書き込まれない」か「stale 値が残留する」かのどちらかになる。
+
+### FlexCounterOrch 側の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | FLEX_COUNTER_DB への影響 |
+|---|---|---|---|
+| `gPortsOrch->allPortsReady()` が `false` | `flexcounterorch.cpp:164-167` | `doTask()` が即 `return`。CONFIG_DB イベントは `m_toSync` に残留 | FLEX_COUNTER_DB への書き込みなし。準備完了後に一括処理 |
+| `gFabricPortsOrch->allPortsReady()` が `false` | `flexcounterorch.cpp:169-172` | 同上 | 同上 |
+| warm-reboot 遅延中 (`m_delayTimerExpired == false`) の CONFIG_DB 更新 | `flexcounterorch.cpp:155-158` | 60 秒間 `doTask()` を全スキップ | FLEX_COUNTER_DB 未更新。タイマー満了後に `m_toSync` を一括処理 |
+| `generate*Map()` が空のポートリストを返す | `flexcounterorch.cpp:237-295` (各 generate* 関数) | OID リストが空のまま `FLEX_COUNTER_TABLE` に書き込まれる | `allIdsEmpty()=true` のためポーリング起動しない（3 条件未充足） |
+| CONFIG_DB `BUFFER_QUEUE` / `BUFFER_PG` キー形式不正 | `flexcounterorch.cpp:561, 630` | `SWSS_LOG_ERROR`、該当エントリをスキップ | 不正キーに対応する OID は FLEX_COUNTER_TABLE に登録されない |
+
+### FlexCounter（syncd 側）の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | COUNTERS_DB への影響 |
+|---|---|---|---|
+| `FLEX_COUNTER_STATUS` に `"enable"` / `"disable"` 以外の値 | `FlexCounter.cpp:3074-3084` | `SWSS_LOG_WARN`、`m_enable` 変更なし | ポーリング状態は変化しない。不正値は FLEX_COUNTER_DB に残留 |
+| `BULK_CHUNK_SIZE` に数値変換不能な値 | `FlexCounter.cpp:3176-3183` | `catch(...)` で捕捉、`SWSS_LOG_ERROR`、`bulkChunkSize` は変更しない | 既存の chunk size 設定が継続、ポーリングは継続 |
+| 未知フィールドが FLEX_COUNTER_GROUP_TABLE に到着 | `FlexCounter.cpp:3230-3236` | `SWSS_LOG_ERROR("Field is not supported %s")`、無視 | FLEX_COUNTER_DB・COUNTERS_DB への影響なし |
+| SAI 単体 `getStats()` 失敗（非 `SAI_STATUS_SUCCESS`） | `FlexCounter.cpp:1249-1258` | `return false`、当該 OID をスキップ | COUNTERS_DB の当該 OID エントリは更新されず **stale 値が残留** |
+| SAI `clearStats()` 失敗（`STATS_MODE_READ_AND_CLEAR` 時） | `FlexCounter.cpp:1261-1282` | `return false`、`SWSS_LOG_ERROR` | COUNTERS_DB は getStats 成功分を書いた後でクリアされない（値は更新済みだがカウンタは非リセット） |
+| SAI `bulkGetStats()` 呼び出し失敗（ステータス非 SUCCESS） | `FlexCounter.cpp:1339-1344` | `SWSS_LOG_WARN`、`current += bulk_chunk_size` で処理継続 | 失敗チャンク内の OID は `object_statuses[i]` が非 SUCCESS → COUNTERS_DB 書き込みをスキップ（`continue`、`FlexCounter.cpp:1363`）。stale 値残留 |
+| `removeCounterContext()` で存在しないコンテキスト名 | `FlexCounter.cpp:3484` | `SWSS_LOG_ERROR`、処理継続 | COUNTERS_DB・FLEX_COUNTER_DB は変化しない |
+
+### 失敗時の COUNTERS_DB エントリ挙動
+
+```
+SAI getStats 単体失敗
+  → COUNTERS_DB|<oid>.<stat_id>  … 前回値が stale として残存
+
+SAI bulkGetStats チャンク失敗
+  → 失敗 OID は COUNTERS_DB 書き込みをスキップ（stale 残留）
+  → 成功 OID は正常に書き込まれる（同一チャンク内で混在）
+
+allPortsReady 未達 / m_delayTimerExpired=false
+  → FLEX_COUNTER_TABLE に OID が登録されない
+  → allIdsEmpty()=true のままポーリング自体が起動しない
+  → COUNTERS_DB には何も書かれない（エントリなし）
+```
+
+### エラーの観測方法
+
+```bash
+# STATUS 設定の確認（不正値の検出）
+sonic-db-cli FLEX_COUNTER_DB hget 'FLEX_COUNTER_GROUP_TABLE|PORT' FLEX_COUNTER_STATUS
+
+# OID リストが空かを確認（allIdsEmpty 状態）
+sonic-db-cli FLEX_COUNTER_DB keys 'FLEX_COUNTER_TABLE|PORT|*' | wc -l
+# 0 の場合はポーリング無効（PORT グループの例）
+
+# COUNTERS_DB エントリの stale 確認（タイムスタンプ比較）
+sonic-db-cli COUNTERS_DB hget 'COUNTERS:0x<oid>' SAI_PORT_STAT_IF_IN_OCTETS
+
+# syslog でエラー確認
+journalctl -u syncd | grep "Failed to get stats"
+journalctl -u swss | grep "flexcounterorch\|FlexCounter"
+```
+
+SAI 失敗は `SWSS_LOG_ERROR` または `SWSS_LOG_WARN` で syslog に出力される。`ERROR_TABLE` への書き込みはいずれの失敗経路でも行われない。
+
+> **証跡**: `flexcounterorch.cpp:155-172`（doTask ガード）、`flexcounterorch.cpp:44,127-136`（warm-reboot 遅延）、`flexcounterorch.cpp:561, 630`（バッファキー不正）、`FlexCounter.cpp:3074-3084`（STATUS 不正値）、`FlexCounter.cpp:3176-3183`（BULK_CHUNK_SIZE 不正）、`FlexCounter.cpp:3230-3236`（未知フィールド）、`FlexCounter.cpp:1249-1282`（getStats / clearStats 失敗）、`FlexCounter.cpp:1339-1363`（bulkGetStats 失敗）、`FlexCounter.cpp:3484`（removeCounterContext 不在）。
+
+<!-- /failure -->
+
 ## 確認コマンド
 
 ```bash
