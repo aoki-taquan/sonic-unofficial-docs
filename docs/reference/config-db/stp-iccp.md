@@ -1,6 +1,6 @@
 ---
 title: STP / ICCP 連携 — コード由来デフォルト詳細
-description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B 分析。"
+description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -132,6 +132,83 @@ ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値�
 | 6 | `source_ip` < `peer_ip` ノード → TCP connect 発信 | 実装固定 | 変更不可 |
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## テーブル間・DB 間参照 (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-cross-refs.md -->
+
+### CONFIG_DB 内テーブル依存
+
+#### MCLAG_DOMAIN → STP ロール決定
+
+`MCLAG_DOMAIN.source_ip` / `peer_ip` フィールドが iccpd 内部の STP ロール決定アルゴリズムの
+直接入力となる。CONFIG_DB から直接的な leafref はないが、機能上の依存関係が存在する:
+
+| 参照元 | 参照先 | 依存の性質 |
+|--------|--------|----------|
+| `MCLAG_DOMAIN.source_ip` | iccpd `csm->sender_ip` | ICCP セッション確立 + STP ロール比較の左辺 |
+| `MCLAG_DOMAIN.peer_ip` | iccpd `csm->peer_ip` | ICCP セッション確立 + STP ロール比較の右辺 |
+| `MCLAG_DOMAIN.peer_link` | Linux IF (`local_if_find_by_name()`) | ICCP 接続許可の前提 |
+
+証跡: `scheduler.c:768-807`, `iccp_csm.c:845-871`
+
+#### STP YANG 内 leafref（STP テーブル間）
+
+`sonic-spanning-tree.yang` で定義される CONFIG_DB テーブル間の leafref:
+
+| 参照元テーブル | フィールド | 参照先テーブル | YANG 行 |
+|---|---|---|---|
+| `STP_VLAN_PORT` | `vlan-name` | `STP_VLAN.name` | L216 |
+| `STP_VLAN_PORT` | `ifname` | `STP_PORT.ifname` | L224 |
+| `STP_MST_PORT` | `ifname` | `STP_PORT.ifname` | L491 |
+
+`STP_VLAN_PORT` エントリを作成するには `STP_VLAN` と `STP_PORT` が先行して存在する必要がある。
+
+#### STP mode must 制約（STP → STP_PORT）
+
+`STP.mode` の値が `STP_PORT` 内フィールドの must 制約に影響する:
+
+| フィールド | 制約 | エラーメッセージ |
+|---|---|---|
+| `STP_PORT.portfast` | `STP.mode == 'pvst'` が必須 | "Mode must be PVST, and PortFast must be enabled..." |
+| `STP_PORT.edge_port` | `STP.mode == 'mst'` が必須 | "Mode must be MST, and EdgePort must be enabled..." |
+| `STP_PORT.link_type` | `STP.mode == 'mst'` が必須 | "Configuration allowed in MST mode only" |
+| `STP_MST_LIST.*` | `STP.mode == 'mst'` が必須 (全フィールド) | `sonic-spanning-tree.yang:362-426` |
+
+証跡: `sonic-spanning-tree.yang:289-304, 327, 362-426`
+
+### APPL_DB 参照
+
+`stpmgrd` (STP マネージャ) が CONFIG_DB の STP テーブルを読んで以下の APPL_DB テーブルに書き込み、
+`stporch` が消費して SAI へ設定する:
+
+| APPL_DB テーブル | 書き込み元 | 消費者 |
+|---|---|---|
+| `STP_VLAN_INSTANCE_TABLE` | `stpmgrd` | `StpOrch::updateVlanToStpInstance()` |
+| `STP_PORT_STATE_TABLE` | `stpmgrd` | `StpOrch::updateStpPortState()` |
+| `STP_FASTAGEING_FLUSH_TABLE` | `stpmgrd` | `StpOrch` (高速エージング flush) |
+| `STP_INST_PORT_FLUSH_TABLE` | `stpmgrd` | `StpOrch` (インスタンスポート flush) |
+
+証跡: `sonic-swss/orchagent/stporch.cpp:584-597`, `sonic-swss-common/common/schema.h:111-124`
+
+### STATE_DB 参照
+
+| 書き込み元 | STATE_DB テーブル | 参照者 |
+|---|---|---|
+| `stporch` | `STATE_STP_TABLE` | `show spanning_tree` CLI |
+| `mclagsyncd` | `STATE_MCLAG_TABLE` (role / system_mac) | `show mclag brief` CLI |
+
+証跡: `stporch.cpp:26` (`STATE_STP_TABLE_NAME`), `mclaglink.cpp:1412`
+
+### iccpd ↔ STP デーモン間の直接インタフェース
+
+iccpd は `stpmgrd` と **直接通信しない**。ICCP プロトコルに定義される STP TLV
+(`TLV_T_MLACP_STP_INFO = 0x1037`) は現在の実装で未サポート（`mlacp_fsm.c:729-733`）。
+ピア間の STP 設定一貫性はユーザーが手動で維持する必要がある。
+
+証跡: `msg_format.h:103`, `mlacp_fsm.c:729-733`
+<!-- /cross-refs -->
 
 <!-- defaults -->
 ## 暗黙デフォルトとハードコード挙動
