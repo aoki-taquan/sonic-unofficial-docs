@@ -498,6 +498,69 @@ evidence: `flexcounterorch.cpp:287-340`
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-pubsub.md -->
+<!-- source: sonic-swss/orchagent/saihelper.cpp (ref: master),
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp (ref: master),
+     sonic-sairedis/syncd/Syncd.cpp (ref: master),
+     sonic-sairedis/syncd/FlexCounter.cpp (ref: master) -->
+
+### orchagent → FLEX_COUNTER_DB 書き込み方式
+
+`FlexCounterManager` が per-OID カウンタ ID リストを FLEX_COUNTER_DB へ書き込む経路は
+起動オプション `--traditional-flexcounter` の有無で 2 系統に分かれる。
+
+| モード | 書き込み API | 通知方式 |
+|--------|------------|---------|
+| Traditional (`gTraditionalFlexCounter = true`) | `ProducerTable::set()` (`saihelper.cpp:1047`) | `_KEY_SET` + `PUBLISH FLEX_COUNTER_TABLE_CHANNEL` で syncd が即時起床 |
+| 非 Traditional（デフォルト） | `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER` 属性経由 (`saihelper.cpp:1055-1063`) | ASIC チャンネル経由で syncd へ伝達。FLEX_COUNTER_DB への直接 PUBLISH は行わない |
+
+!!! note "Traditional モードと FLEX_COUNTER_TABLE の可視性"
+    Traditional モードでは `gFlexCounterTable = ProducerTable(FLEX_COUNTER_DB, FLEX_COUNTER_TABLE)` が使われ (`saihelper.cpp:324`)、per-OID エントリが FLEX_COUNTER_DB 上で可視になる。非 Traditional モードでは FLEX_COUNTER_DB にエントリが書き込まれないため、`redis-cli -n 5 HGETALL "FLEX_COUNTER_TABLE:PORT_STAT_COUNTER:oid:..."` で確認できない。
+
+### syncd — FLEX_COUNTER_DB の購読
+
+`Syncd.cpp:209`:
+
+```cpp
+m_flexCounter = std::make_shared<swss::ConsumerTable>(m_dbFlexCounter.get(), FLEX_COUNTER_TABLE);
+```
+
+`syncd` は `ConsumerTable` (`Syncd.cpp:5855`) を SELECT ループに登録し、Traditional モードで
+orchagent が書き込んだ SET/DEL イベントを `processFlexCounterEvent()` (`Syncd.cpp:5982`) で処理する。
+非 Traditional モードでは `REDIS_FLEX_COUNTER_COMMAND_START_POLL` / `STOP_POLL` コマンドが
+ASIC チャンネルから届き同様に処理される。
+
+### syncd FlexCounter → COUNTERS_DB 書き込み（polling スレッド）
+
+`FlexCounter.cpp:3123`:
+
+```cpp
+swss::Table countersTable(&pipeline, COUNTERS_TABLE, false);
+```
+
+`FlexCounter` の定期ポーリングスレッドは SAI bulk counter API でカウンタを収集し、
+`swss::Table::set()` で直接 `COUNTERS_DB:COUNTERS` へ書き込む。
+**`ProducerStateTable` を使用しないため `COUNTERS_TABLE_CHANNEL` への PUBLISH は発行されない**。
+consumer 側はすべて on-demand polling で読み出す必要がある。
+
+### Producer / Consumer ペアサマリ
+
+| 区間 | 方式 | チャンネル |
+|------|------|-----------|
+| orchagent → FLEX_COUNTER_DB (traditional) | `ProducerTable` | `FLEX_COUNTER_TABLE_CHANNEL`（`syncd` が消費） |
+| orchagent → syncd (非 traditional) | SAI Redis Attribute / ASIC channel | — |
+| syncd FlexCounter → COUNTERS_DB | `swss::Table::set()` (plain HSET) | **なし（PUBLISH 非発行）** |
+| CLI / SNMP / gNMI ← COUNTERS_DB | on-demand polling (`HGETALL`) / gNMI STREAM subscription | — |
+
+!!! warning "COUNTERS_DB は push 通知なし"
+    COUNTERS_DB へのカウンタ書き込みは通知なし（plain HSET）のため、`counterpoll show` で STATUS が `enable` に見えても、ポーリング間隔が経過するまで COUNTERS_DB の値は更新されない。
+    `show interfaces counters` 等は実行時点の snapshot を表示する。
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/portsorch.cpp` `port_stat_ids[]` (line 242), `queue_stat_ids[]` (line 389), `wred_port_stat_ids[]` (line 421), `wred_queue_stat_ids[]` (line 429). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
