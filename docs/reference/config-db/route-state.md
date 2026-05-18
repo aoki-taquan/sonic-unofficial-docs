@@ -409,6 +409,79 @@ RouteOrch は 1 回の `doTask()` イテレーションで複数 ROUTE_TABLE エ
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-pubsub.md -->
+
+STATE_DB / APPL_STATE_DB の `ROUTE_TABLE` への書き込みには、それぞれ異なる通知経路が用いられる。
+
+### APPL_STATE_DB — ResponsePublisher と RESPONSE_CHANNEL
+
+`publishRouteState()` → `ResponsePublisher::publish()` は APPL_STATE_DB への書き込みと同時に通知チャンネルへ送出する[^2]:
+
+```cpp
+// response_publisher.cpp:104, 118-120
+std::string response_channel = "APPL_DB_" + table + "_RESPONSE_CHANNEL";
+swss::NotificationProducer notificationProducer{
+    m_ntf_pipe.get(), response_channel, m_buffered};
+notificationProducer.send(status.codeStr(), key, intent_attrs_copy);
+```
+
+| 項目 | 値 |
+|------|-----|
+| チャンネル名 | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` |
+| DB | APPL_STATE_DB |
+| ペイロード (SET) | `{err_str, protocol}` |
+| ペイロード (DEL) | `{err_str}` のみ |
+| バッファリング | `m_publisher.setBuffered(true)` (`routeorch.cpp:57`) で有効化。`doTask()` 末尾の `m_publisher.flush()` (`routeorch.cpp:1231`) で一括送出 |
+
+> バッファなし送出では OrchDaemon 周期フラッシュ（最大 1 秒）まで通知が遅延するため、明示的な `flush()` が必要（`routeorch.cpp:1228` コメント参照）。
+
+### STATE_DB — Table::set() + keyspace notification
+
+STATE_DB の `ROUTE_TABLE` は `ResponsePublisher` を経由せず `swss::Table::set()` で直接書き込む (`routeorch.cpp:294`)。アプリケーションレベルの通知チャンネルは存在せず、Redis の keyspace notification 機能（`__keyspace@6__:ROUTE_TABLE|<ip>`）を利用した `SubscriberStateTable` で購読される。
+
+### fpmsyncd による RESPONSE_CHANNEL 購読
+
+`fpmsyncd` は `suppress-fib-pending=enabled` の場合のみ `NotificationConsumer` でチャンネルを購読し、主ループで受信する[^p1]:
+
+```cpp
+// fpmsyncd.cpp:78, 116, 307-317
+const auto routeResponseChannelName = std::string("APPL_DB_") + APP_ROUTE_TABLE_NAME + "_RESPONSE_CHANNEL";
+routeResponseChannel = std::make_unique<NotificationConsumer>(&applStateDb, routeResponseChannelName);
+// ...受信後:
+routeResponseChannel->pops(notifications);
+sync.onRouteResponse(key, fieldValues);
+```
+
+`RouteSync::onRouteResponse()` (`routesync.cpp:3165`) の処理条件:
+
+| 条件 | 動作 |
+|------|------|
+| `err_str == "SWSS_RC_SUCCESS"` かつ `protocol` フィールドあり (SET) | `sendOffloadReply()` → FRR zebra へ `RTM_F_OFFLOAD` 付き netlink 送信 |
+| DEL 操作 (`protocol` フィールドなし) | 無視（suppress 継続には影響しない） |
+| SAI 失敗 (`err_str != "SWSS_RC_SUCCESS"`) | 無視（経路は suppress 状態を維持） |
+| `protocol` が空文字列 | 無視（FRR 管轄外の経路） |
+
+### suppress-fib-pending の動的切り替え
+
+`CONFIG_DB DEVICE_METADATA|localhost suppress-fib-pending` が実行時に変更された場合、`fpmsyncd` は `SubscriberStateTable` でこれを検知し即時対応する (`fpmsyncd.cpp:285-302`):
+
+- `enabled` に変更 → `NotificationConsumer` を生成し `s.addSelectable()` で登録
+- 無効化 → 既存 suppress 経路を一括 offloaded にマーク後、`routeResponseChannel.reset()` で購読解除
+
+### 購読方式サマリ
+
+| チャンネル / テーブル | 購読方式 | 購読主体 | 有効条件 |
+|---------------------|---------|---------|---------|
+| `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | `NotificationConsumer` | `fpmsyncd` | `suppress-fib-pending=enabled` 時のみ |
+| `STATE_DB ROUTE_TABLE` (keyspace) | `SubscriberStateTable` | `sonic-linkmgrd` | 常時（MUX 環境） |
+
+[^p1]: fpmsyncd RESPONSE_CHANNEL 購読: `fpmsyncd/fpmsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78>
+
+<!-- /pubsub -->
+
 ---
 
 ## APPL_STATE_DB ROUTE_TABLE
