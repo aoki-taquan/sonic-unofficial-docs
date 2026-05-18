@@ -342,4 +342,59 @@ journalctl -u swss | grep -i "inband"
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・連鎖更新 (Phase F)
+
+> 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/orchagent/neighorch.cpp`, `sonic-swss/cfgmgr/nbrmgr.cpp`
+> 調査日: 2026-05-18
+
+`VOQ_INBAND_INTERFACE` への書き込みが連鎖して起動する他テーブル書き込み・SAI 操作・カーネル副作用を示す。
+
+### 連鎖一覧
+
+| # | トリガー条件 | 副作用先 | 内容 | コード根拠 |
+|---|------------|---------|------|-----------|
+| 1 | 単一キー SET（属性ロウ）`inband_type` フィールドあり | `portsorch` in-process メモリ `m_inbandPortName` | `setVoqInbandIntf()` が `m_inbandPortName = alias` を代入。以降 `isInbandPort()` 呼び出しがすべてこの名前で判定される | `portsorch.cpp:11134` |
+| 2 | RIF 作成成功（`addRouterIntfs()`）かつ `isChassisDbInUse() == true` | `CHASSIS_APP_DB SYSTEM_INTERFACE_TABLE` | `voqSyncAddIntf()` がローカル inband ポートのシステムポートエイリアスをキーとして `oper_status` を書き込む。他 ASIC のラインカードがこのエントリを読んでリモート RIF を構築する | `intfsorch.cpp:1314-1318`, `intfsorch.cpp:1672-1714` |
+| 3 | RIF 削除（`removeRouterIntfs()`）かつ `isChassisDbInUse() == true` | `CHASSIS_APP_DB SYSTEM_INTERFACE_TABLE` | `voqSyncDelIntf()` が当該キーを DEL する。他 ASIC がリモート RIF を削除するトリガーになる | `intfsorch.cpp:1367-1371`, `intfsorch.cpp:1717-1747` |
+| 4 | IP プレフィクスロウ SET かつ `gMySwitchType == "voq"` かつ `isInbandPort(alias) == true` | SAI `sai_neighbor_api->create_neighbor_entry` + `CHASSIS_APP_DB SYSTEM_NEIGH_TABLE` | `addInbandNeighbor()` が SAI にネイバーエントリ（`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE = true`）を作成し、`voqSyncAddNeigh()` で `CHASSIS_APP_DB` へ同期。他ラインカードがリモートネイバーを解決するために参照する | `intfsorch.cpp:586-592`, `neighorch.cpp:2281-2350` |
+| 5 | IP プレフィクスロウ DEL かつ VOQ 環境 | SAI ネイバー削除 + `CHASSIS_APP_DB SYSTEM_NEIGH_TABLE` DEL | `delInbandNeighbor()` が SAI ネイバーを削除し `voqSyncDelNeigh()` で `CHASSIS_APP_DB` からも削除 | `neighorch.cpp:2353-2405` |
+| 6 | `nbrmgrd` が `STATE_DB SYSTEM_NEIGH_TABLE` を購読 → SET 受信時 | カーネルネイバー (`ip neigh add`) + カーネルルート (`ip route add`) | `doStateSystemNeighTask()` が `getVoqInbandInterfaceName()` でこのテーブルを読んで inband IF 名を取得し、カーネルネイバーとスタティックルートを登録。IPv6 は `metric 256` 付きで追加 | `nbrmgr.cpp:414`, `nbrmgr.cpp:524-549`, `nbrmgr.cpp:552-575` |
+
+### 副作用の伝播図
+
+```
+VOQ_INBAND_INTERFACE (CONFIG_DB)
+  │
+  ├─[単一キー SET]──→ intfmgrd → APPL_DB INTF_TABLE
+  │                                    │
+  │                              IntfsOrch::doTask()
+  │                                    │
+  │                    portsorch m_inbandPortName ←─────── [副作用 #1]
+  │                                    │
+  │                         addRouterIntfs() (RIF 作成)
+  │                                    │
+  │                   CHASSIS_APP_DB SYSTEM_INTERFACE_TABLE ←─ [副作用 #2]
+  │
+  └─[IP プレフィクス SET]──→ doIntfAddrTask()
+                                    │
+                          addInbandNeighbor() (VOQ のみ)
+                                    │
+                          ├─ SAI create_neighbor_entry ←─── [副作用 #4]
+                          └─ CHASSIS_APP_DB SYSTEM_NEIGH_TABLE ←─ [副作用 #4]
+                                    │
+                          nbrmgrd::doStateSystemNeighTask()
+                                    │
+                          ├─ ip neigh add <addr> dev <inband-if> ←─ [副作用 #6]
+                          └─ ip route add <addr> dev <inband-if> metric 256 ←─ [副作用 #6]
+```
+
+!!! warning "CHASSIS_APP_DB 書き込みは VOQ chassis 環境専用"
+    副作用 #2/#3/#4/#5 は `isChassisDbInUse()` または `gMySwitchType == "voq"` が true の場合のみ発生する。単体スイッチ・非 VOQ 環境ではこれらの副作用はすべてスキップされる。
+
+!!! note "inband ネイバーの `NO_HOST_ROUTE`"
+    副作用 #4 で SAI に作成されるネイバーエントリは `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE = true` で登録される。これにより inband IP アドレス宛てのパケットがルーティングループを起こさないようにホストルートが抑制される（`neighorch.cpp:2314-2316`）。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
