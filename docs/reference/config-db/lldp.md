@@ -559,4 +559,57 @@ sel.addSelectable(sst_device_confdb)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `lldpd.conf.j2`, `supervisord.conf.j2`
+> 詳細根拠: `meta/_intermediate/cdb-flow/lldp-platform.md`
+
+### ASIC 種別による影響
+
+LLDP は SAI 非経由（`lldpd` ユーザー空間デーモン）で動作するため、ASIC 種別（Broadcom / Mellanox / Marvell / Innovium 等）は **影響なし**。`sai.profile` や SAI capability query を参照するコードパスは存在しない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | LLDP は SAI 非経由。`lldpmgrd` / `lldpd` は ASIC を直接操作しない |
+| multi-asic (namespace あり) | **挙動差あり** | `supervisord.conf.j2` / `lldpd.conf.j2` に `namespace_id` 分岐が存在（下記参照） |
+| VOQ chassis | 部分的差異あり | `DEVICE_METADATA.chassis_hostname` 優先解決（下記参照） |
+| SmartSwitch | 調査対象外 | community master に SmartSwitch 固有 LLDP 分岐なし |
+
+### multi-asic (namespace) における挙動差
+
+`supervisord.conf.j2` で `namespace_id` の有無により `lldpd` の起動コマンドが変わる:
+
+```jinja2
+{% if namespace_id is defined and namespace_id|length %}
+command=/usr/sbin/lldpd -d -I Ethernet[0-9]* -C Ethernet[0-9]*
+{% else %}
+command=/usr/sbin/lldpd -d -I Ethernet[0-9]*,eth0 -C eth0
+{% endif %}
+```
+
+- **通常構成 (`namespace_id` 未設定)**: eth0 (management port) を含む全インタフェースが LLDP 対象。`eth0` が chassis ID 源泉として使われ、Management Address TLV も送出される。
+- **multi-asic / namespace あり**: eth0 を除外。各 namespace (asic0/asic1…) の `lldpd` インスタンスがフロントエンドポートのみを管理する。`MGMT_INTERFACE` が namespace スコープに見えないため **Management Address TLV は送出されない**。
+
+`lldpd.conf.j2` にも同様の分岐があり、namespace 内では eth0 の portidsubtype 設定がスキップされる:
+
+```jinja2
+{% if not (namespace_id is defined and namespace_id|length) %}
+configure ports eth0 lldp portidsubtype local {{ mgmt_if.port_name }}
+{% endif %}
+```
+
+### VOQ chassis における hostname 解決
+
+`lldpmgrd` は hostname 設定時に `chassis_hostname` を優先する:
+
+```python
+# lldpmgrd:253
+hostname = device_dict.get("chassis_hostname") or device_dict.get("hostname")
+```
+
+VOQ chassis 構成では `DEVICE_METADATA|localhost.chassis_hostname` が設定され、line card ホスト名ではなくシャーシ全体名が LLDP System Name TLV に載る。`hostname` のみの通常構成では `chassis_hostname` キーが存在しないため、この分岐は実質的に無効。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 9d2a20a8f03b -->
