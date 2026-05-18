@@ -499,6 +499,85 @@ if not "DPU_STATE" in key and not "REBOOT_CAUSE" in key:
 
 ---
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dpu-state-detail-pubsub.md`
+
+### Producer/Consumer ペア
+
+`DPU_STATE` (`CHASSIS_STATE_DB`) は `chassisd` が直接書き込む状態専用テーブルである。APPL_DB / STATE_DB への中継は行わない。
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|----------------------|
+| chassisd → CHASSIS_STATE_DB | `Table.hset()` / `DBConnector.hset()` 直接書き込み | CHASSIS_STATE_DB (DB ID=13) `DPU_STATE\|<dpu_name>` |
+| CHASSIS_STATE_DB → DpuStateManagerTask | `SubscriberStateTable` keyspace notification | `__keyspace@13__:DPU_STATE\|*` |
+| CHASSIS_STATE_DB → show dpu CLI | `SonicV2Connector.get_all()` ポーリング | `DPU_STATE\|*` (read-only snapshot) |
+| 外部コンポーネントへの通知 | なし | — |
+
+### Producer: chassisd → CHASSIS_STATE_DB
+
+`chassisd` は `swsscommon.Table` / `DBConnector.hset()` を使って `CHASSIS_STATE_DB DPU_STATE|<dpu_name>` に直接書き込む。keyspace notification の発行は Redis 側の自動動作（`notify-keyspace-events` 設定次第）であり、chassisd は明示的に `NotificationProducer` を使用しない。
+
+2 つの書き込みパスが存在する:
+
+- **SmartSwitchModuleUpdater** (`chassisd:864-891`): `DBConnector.hset()` でミッドプレーン state と CP/DP state を直接書き込む
+- **DpuStateUpdater** (`chassisd:1289-1295`): `Table.hset()` で CP/DP state と更新時刻を書き込む
+
+### Consumer 1: DpuStateManagerTask (自己フィードバック)
+
+`poll_dpu_state=False` モード（platform API が CP/DP state を提供しない場合）で動作するとき、`DpuStateManagerTask.task_worker()` は以下の 3 テーブルを `SubscriberStateTable` で購読する (`chassisd:1478-1483`):
+
+```python
+selectable = [
+    swsscommon.SubscriberStateTable(self.app_db, 'PORT_TABLE'),
+    swsscommon.SubscriberStateTable(self.state_db, 'SYSTEM_READY'),
+    swsscommon.SubscriberStateTable(self.chassis_state_db, 'DPU_STATE')  # 自己フィードバック
+]
+```
+
+`DPU_STATE` の変化（chassisd 自身が書き込んだもの含む）を受けると `update_state()` を再実行して CP/DP state を再評価する。ただし、受信した CP/DP state が前回値と同一の場合は再書き込みをスキップする安全機構がある (`chassisd:1515-1518`)。
+
+### Consumer 2: show dpu CLI (ポーリング)
+
+`show dpu` / `show system-health dpu` は `SonicV2Connector` を使ってコマンド実行時点のスナップショットを読み取る (`system_health.py:173-188`)。
+
+```python
+chassis_state_db = SonicV2Connector(host=CHASSIS_SERVER, port=CHASSIS_SERVER_PORT)
+chassis_state_db.connect(chassis_state_db.CHASSIS_STATE_DB)
+keys = chassis_state_db.keys(chassis_state_db.CHASSIS_STATE_DB, 'DPU_STATE|')
+state_info = chassis_state_db.get_all(chassis_state_db.CHASSIS_STATE_DB, dbkey)
+```
+
+購読ではなく都度 `keys` + `get_all` のポーリングであるため、中間状態の変化は観測されない。
+
+### データフロー図
+
+```
+chassisd (SmartSwitchModuleUpdater / DpuStateUpdater)
+  ↓ DBConnector.hset() / Table.hset()  [直接書き込み]
+CHASSIS_STATE_DB (DB ID=13)
+  DPU_STATE|<dpu_name>
+    ├── dpu_midplane_link_state / dpu_midplane_link_reason / dpu_midplane_link_time
+    ├── dpu_control_plane_state / dpu_control_plane_time
+    └── dpu_data_plane_state / dpu_data_plane_time
+  ↓ keyspace notification (__keyspace@13__:DPU_STATE|*)
+  ↓   [poll_dpu_state=False モードのみ]
+DpuStateManagerTask.task_worker()
+  └── DpuStateUpdater.update_state()  → CP/DP state 再評価 → 再書き込み
+
+show dpu CLI
+  └── SonicV2Connector.get_all()  → ポーリング read (書き込みなし)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationProducer: なし
+```
+
+<!-- /pubsub -->
+
+---
+
 ## 関連ページ
 
 - [`DPU_STATE テーブル`](dpu-state.md) — テーブル概要・key 構造・書き込み元クラス説明
