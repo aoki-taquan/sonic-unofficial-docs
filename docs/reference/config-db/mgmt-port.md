@@ -253,3 +253,25 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 - **`mtu` / `speed` / `autoneg` の書き込み→読み取り非対称**: CONFIG_DB に書き込んでも eth0 の物理設定に反映するコードが存在しない。YANG バリデーションは通過するが実効性がない (silent accept / dead write)。
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`MGMT_PORT` は orchagent / SAI を経由しない。Consumer は `mgmt_oper_status.py`（monit スクリプト）と `lldpd.conf.j2` のみであり、書込み順依存は CONFIG_DB → STATE_DB の一方向で完結する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | CONFIG_DB 起動完了 → MGMT_PORT 書込み | 強制先行 | minigraph / 手動投入は CONFIG_DB 起動後のみ実行される |
+| 2 | MGMT_PORT エントリ存在 → STATE_DB `MGMT_PORT_TABLE` 更新 | **強制先行** | エントリが存在しない場合 `mgmt_oper_status.py` は STATE_DB を更新せず `LOG_DEBUG` で終了 (`mgmt_oper_status.py:17-19`) |
+| 3 | MGMT_PORT と MGMT_INTERFACE の同時書込み (minigraph 経由) | 同一関数内で同期 | REST/gNMI は MGMT_PORT を書き込まないため、非 minigraph 経路では各テーブルが個別に書き込まれる可能性がある |
+| 4 | orchagent / SAI 依存 | **なし** | `portmgrd.cpp:28` は `CFG_PORT_TABLE_NAME`（= `"PORT"`）のみ購読。MGMT_PORT は SAI 経由なし |
+
+### 主要な制約詳細
+
+**MGMT_PORT エントリ不在時の STATE_DB 非更新 (依存 #2)**: `mgmt_oper_status.py` は冒頭で `db.keys(db.CONFIG_DB, 'MGMT_PORT|*')` を確認し、キーが存在しない場合は `syslog LOG_DEBUG` を出力して即座に `sys.exit(0)` する。このため CONFIG_DB に MGMT_PORT エントリが投入される前は `STATE_DB MGMT_PORT_TABLE` が空のままとなり、`show management_interface address` や SNMP MIB が旧ステータスを返す可能性がある (evidence: `mgmt_oper_status.py:16-19`)。
+
+**minigraph による MGMT_PORT + MGMT_INTERFACE のアトミック書込み (依存 #3)**: `minigraph.py:2281-2308` では `results['MGMT_PORT']`・`results['MGMT_INTERFACE']`・`results['MGMT_VRF_CONFIG']` を同一関数 `parse_device_desc_xml()` 内で生成し、`sonic-cfggen` が CONFIG_DB へ一括書込みする。この経路では 3 テーブルの書込み順はほぼ同時であり実用上の問題は生じない。一方、REST/gNMI 経路では MGMT_PORT トランスフォーマーが未実装であるため (`sonic-mgmt-common`)、MGMT_PORT への書込みは minigraph または手動 CLI のみとなっている。
+
+<!-- /ordering -->
