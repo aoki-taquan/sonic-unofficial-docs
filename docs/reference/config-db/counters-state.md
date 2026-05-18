@@ -493,6 +493,57 @@ STATE_DB
 
 ---
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-platform.md`
+
+これらの STATE_DB テーブルの内容は CONFIG_DB 設定ではなく **ASIC が SAI を通じて公開する能力** によって決まる。プラットフォームによって書き込まれる値が根本的に異なる。
+
+### WRED カウンタ能力 — ASIC 依存
+
+`PORT_COUNTER_CAPABILITIES` / `QUEUE_COUNTER_CAPABILITIES` の `isSupported` は `sai_query_stats_capability()` の返却 enum リストに対応する統計が含まれるかどうかで決まる[^3][^4]。
+
+| プラットフォーム状況 | 挙動 |
+|---------------------|------|
+| WRED をハードウェア実装した ASIC (Broadcom Tomahawk 系・Mellanox Spectrum 系等) | 対応する WRED 統計 enum が返却 → 該当フィールドが `isSupported="true"` に更新 |
+| WRED サポートなし ASIC / VS (virtual switch) | `SAI_STATUS_SUCCESS` でも対象 enum が含まれない → 全フィールドが `"false"` のまま残る |
+| SAI query 自体が失敗 (`SAI_STATUS_NOT_IMPLEMENTED` 等) | `SWSS_LOG_NOTICE` を出力して続行。全フィールドが初期値 `"false"` のまま |
+
+`sai_query_stats_capability()` は 2 段階クエリを採用する: 最初に `count=0 / list=nullptr` で呼び出し、`SAI_STATUS_BUFFER_OVERFLOW` が返った場合に返却 count 分のバッファを確保して再クエリ (portsorch.cpp:1883-1895, 1930-1942)。`BUFFER_OVERFLOW` でも `SUCCESS` でもない戻り値 (`NOT_IMPLEMENTED` 等) の場合は再クエリせず全フィールドが `"false"` のまま。
+
+### DEBUG_COUNTER_CAPABILITIES — debug counter 未サポート ASIC
+
+`sai_query_attribute_enum_values_capability(SAI_OBJECT_TYPE_DEBUG_COUNTER, ...)` が失敗した場合、`getSupportedDropReasons()` および `getSupportedCounterTypes()` が空集合を返す。この場合 `DEBUG_COUNTER_CAPABILITIES` テーブルにエントリが一切書き込まれない (drop_counter.cpp:305-315, 376-391)。
+
+```
+getSupportedDropReasons() の失敗パス:
+  sai_query_attribute_enum_values_capability(SAI_OBJECT_TYPE_DEBUG_COUNTER,
+                                             SAI_DEBUG_COUNTER_ATTR_IN_DROP_REASON_LIST) != SUCCESS
+  → SWSS_LOG_NOTICE("This device does not support querying drop reasons")
+  → return {}  ⇒ DEBUG_COUNTER_CAPABILITIES 書き込みゼロ
+
+getSupportedCounterTypes() の失敗パス:
+  sai_query_attribute_enum_values_capability(SAI_OBJECT_TYPE_DEBUG_COUNTER,
+                                             SAI_DEBUG_COUNTER_ATTR_TYPE) != SUCCESS
+  → SWSS_LOG_NOTICE("This device does not support querying drop counters")
+  → return {}  ⇒ DEBUG_COUNTER_CAPABILITIES 書き込みゼロ
+```
+
+| プラットフォーム状況 | DEBUG_COUNTER_CAPABILITIES |
+|---------------------|---------------------------|
+| SAI debug counter サポートあり ASIC | counter_type ごとにエントリが書き込まれる (count, reasons フィールド) |
+| SAI debug counter 未サポート ASIC | テーブルが空のまま。`show debug-counter capabilities` の出力も空 |
+| VS (virtual switch) | SAI stub 実装により通常 debug counter サポートなし → テーブル空 |
+
+### portstat.py の列数とプラットフォームの関係
+
+`portstat.py` は起動時に `PORT_COUNTER_CAPABILITIES` を参照し、`isSupported != "true"` のカウンタを `counter_bucket_dict` から除外する[^10]。WRED をサポートしない ASIC では `portstat` の出力から WRED 関連列が N/A として表示される（または非表示）。これは設定変更では制御できない ASIC 固有の制約である。
+
+<!-- /platform -->
+
+---
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
