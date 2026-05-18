@@ -412,3 +412,32 @@ NatOrch が消費する APPL_DB テーブルの優先度（小さい値 = 高優
 `gNhTrackingSupported` が `false` (非 Broadcom) の場合、DNAT エントリのネクストホップ解決待ちが行われず、`addedToHw=false` のままとなる可能性がある。これはカウンタ SAI クエリのガード条件 (`natorch.cpp:3517-3521`) に影響し、`COUNTERS_NAT` の更新がスキップされうる。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副作用・波及挙動 (Phase F)
+
+`NatOrch` が 5 秒タイマーで `COUNTERS_DB` を更新する処理には、カウンタ書き込み以外の副次的な挙動が含まれる。以下はコードから確認できる主要な副作用。
+
+### 副作用一覧
+
+| # | 副作用 | トリガ | 対象 DB / システム | 可逆性 |
+|---|--------|--------|-------------------|--------|
+| 1 | 動的 NAT エントリのエージアウト → `COUNTERS_NAT*` キー削除 | 30 秒ポーリング + ヒットビット = 0 + タイムアウト超過 | APPL_DB (`SETTIMEOUTNAT`), COUNTERS_DB | 再フロー時に新エントリ追加で復元 |
+| 2 | SAI ヒットビットのクリア (read-and-clear) | 30 秒ごとの `checkIfNatEntryIsActive()` 呼び出し | SAI 内部状態 | 次のフロー通過で SAI がビットをセット |
+| 3 | conntrack タイムアウトリセット通知 | 1 日周期タイマー (`m_natTimeoutTimer`) | カーネル conntrack テーブル | 周期的動作 |
+| 4 | `SNAT_ENTRIES` / `DNAT_ENTRIES` リアルタイム更新 | SAI エントリ追加/削除成功 | `COUNTERS_GLOBAL_NAT\|Values` | 状態反映（即時） |
+| 5 | `COUNTERS_NAT*` 全エントリ一括削除 | natorch docker 停止 (`NAT_DB_CLEANUP_NOTIFICATION`) | COUNTERS_DB | docker 再起動 + `admin_mode=enabled` で復元 |
+
+### 副作用の詳細
+
+**カウンタポーリングがエージアウトを駆動 (副作用 #1)**: `doTask(SelectableTimer)` は 5 秒ごとに `natTimerTickCntr++` を評価し、`% 6 == 0`（30 秒に 1 度）のときだけ `queryHitBits()` を呼ぶ (`natorch.cpp:3101-3104`)。`queryHitBits()` は SAI から `HIT_BIT` を取得し、ヒットビット = 0 かつ `now - activeTime >= timeout` を満たす動的 SNAT エントリに対して `setTimeoutNotifier->send("AGEOUT-SINGLE-NAT", key, ...)` を `SETTIMEOUTNAT` チャンネルへ送信する (`natorch.cpp:3316-3338`)。natsyncd がこれを受信して APPL_DB エントリを削除し、最終的に `deleteNatCounters()` で COUNTERS_DB のカウンタエントリが消滅する。**カウンタを参照するタイミングと同期して COUNTERS_DB からキーが削除されうる**ことに注意。
+
+**ヒットビット取得は read-and-clear 操作 (副作用 #2)**: `checkIfNatEntryIsActive()` (`natorch.cpp:4166-4171`) は SAI 属性 `SAI_NAT_ENTRY_ATTR_HIT_BIT` と `SAI_NAT_ENTRY_ATTR_HIT_BIT_COR=1` を同時に要求する。これは「取得しながら同時にクリアする」操作であり、NatOrch 以外が SAI を直接参照した場合、30 秒ポーリング後はヒットビットがゼロになっている。
+
+**conntrack タイムアウトリセット通知 (副作用 #3)**: `m_natTimeoutTimer`（86400 秒 = 1 日周期）が起動すると `updateAllConntrackEntries()` を呼ぶ (`natorch.cpp:3107-3111`)。この関数は HW 登録済みの全動的 SNAT / NAPT / Twice NAT エントリに対して `setTimeoutNotifier->send("SET-SINGLE-NAT" / "SET-SINGLE-NAPT" / ...)` を送信し、カーネル conntrack エントリのタイムアウトをリセットする。COUNTERS_DB への書き込みは行われないが、同じ SelectableTimer dispatch からトリガされる (`natorch.cpp:3443-3505`)。
+
+**docker 停止時の全カウンタ削除 (副作用 #5)**: natorch docker 停止シグナルを受けた際、APPL_DB の `NAT_DB_CLEANUP_NOTIFICATION` チャンネルに通知が届く。`doTask(NotificationConsumer)` がこれを受信して `cleanupAppDbEntries()` を呼び (`natorch.cpp:4474-4478`)、全 NAT エントリを APPL_DB から削除するとともに `removeNatEntry()` → `deleteNatCounters()` で COUNTERS_DB の `COUNTERS_NAT*` 全エントリを消去する。docker 再起動後は `admin_mode=enabled` の処理で `addAllNatEntries()` が呼ばれるまでカウンタエントリが存在しない状態になる。
+
+> **証跡**: `natorch.cpp:3101-3104` (ヒットビット/カウンタタイマー多重化), `natorch.cpp:3316-3338` (AGEOUT通知送信), `natorch.cpp:4166-4170` (HIT_BIT_COR=1), `natorch.cpp:3107-3111` (1日タイマー分岐), `natorch.cpp:3443-3505` (updateAllConntrackEntries), `natorch.cpp:4063-4075` (deleteNatCounters), `natorch.cpp:4474-4478` (NAT_DB_CLEANUP_NOTIFICATION), `natorch.cpp:2457-2532` (cleanupAppDbEntries), `natorch.cpp:4569-4589` (updateSnat/DnatCounters).
+
+<!-- /side-effects -->
