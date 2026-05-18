@@ -174,6 +174,38 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+> 根拠: `bgpcfgd/managers_srv6.py` L62-76, L106-115, L136-142 および `srv6orch.cpp` L331-338, L455-468 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-failure.md`
+
+| # | 失敗条件 | 検出箇所 | 結果 | 自動回復 | ログ種別 |
+|---|----------|----------|------|----------|----------|
+| 1 | `prefix` フィールド欠落 | `Locator.__init__():142` | bgpcfgd `KeyError` / ロケータ FRR 通知失敗 | なし | `log_err` / Python traceback |
+| 2 | SID 処理時ロケータ未登録 | `sids_set_handler():62-69` | SID FRR 通知保留 | あり (`on_deps_change`) | `log_warn` |
+| 3 | SID prefix がロケータ配下外 | `sids_set_handler():74-76` | SID 即時拒否・retry なし | なし | `log_err` |
+| 4 | MySID 処理時ロケータ未登録 (Srv6Orch) | `getLocatorCfgFromDb():331-338` | MySID SAI 転送失敗 | なし | `SWSS_LOG_ERROR` |
+| 5 | DSCP ロケータ逆引き失敗 (Srv6Orch) | `getMySidEntryDscpMode():468` | DSCP モード未設定 | なし | `SWSS_LOG_ERROR` |
+
+### prefix フィールド欠落 (失敗 #1)
+
+`Locator.__init__()` (`managers_srv6.py:142`) は `data['prefix']` に直接アクセスするため、`prefix` が CONFIG_DB に存在しない場合は Python `KeyError` が発生して `locators_set_handler()` が失敗する。bgpcfgd は FRR へのロケータ通知を行わず、自動回復もない。正しい `prefix` フィールドを付けてエントリを再 SET することで解消する。
+
+### SID 処理時ロケータ未登録 (失敗 #2)
+
+`sids_set_handler()` (`managers_srv6.py:62-69`) はロケータ存在を `directory.path_exist()` で確認し、未登録なら `return False` で保留する。ロケータが後から CONFIG_DB に書き込まれると `on_deps_change` コールバックが発火し、pending SID が自動再処理される。ただしロケータ到着までの間 SID は FRR へ通知されない。
+
+### SID prefix 整合性エラー (失敗 #3)
+
+`sids_set_handler()` (`managers_srv6.py:74-76`) は `IPv6Network.supernet_of()` で SID prefix がロケータ配下に収まるか検証する。不一致の場合は `return False` で即時拒否し、pending キューにも登録しない。SID エントリを修正して再 SET が必要。
+
+### Srv6Orch ロケータ未登録エラー (失敗 #4・#5)
+
+`Srv6Orch::getLocatorCfgFromDb()` (`srv6orch.cpp:331-338`) は CONFIG_DB の `SRV6_MY_LOCATORS` を直接 GET する。ロケータが存在しない場合 `SWSS_LOG_ERROR` を出力して `false` を返す。Orch 側に retry 機構はなく、APPL_DB イベントが再発火するか設定が修正されるまで MySID は SAI へ転送されない。DSCP ロケータ逆引き失敗 (`srv6orch.cpp:468`) も同様に自動回復なし。
+
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: SRv6 YANG モデル: `sonic-srv6.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-srv6.yang>
