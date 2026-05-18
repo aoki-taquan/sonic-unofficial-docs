@@ -155,6 +155,34 @@ show radius
 [^2]: [hostcfgd](../../reference/glossary.md#term-hostcfgd) 実装: `sonic-host-services/scripts/hostcfgd`. <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
 
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`hostcfgd` (`AaaCfg`) は `load()` フェーズで `AAA` → `TACPLUS` / `TACPLUS_SERVER` → `RADIUS` / `RADIUS_SERVER` → `LDAP` / `LDAP_SERVER` の順に全テーブルを読み込み、最後に 1 回だけ `modify_conf_file()` を呼ぶ。runtime (subscribe) フェーズでは各テーブルのイベントごとに即時 `modify_conf_file()` が呼ばれる。このため書き込み順序が中間状態の整合性に直結する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `RADIUS_SERVER` 先行 → `RADIUS\|global` 書き込み | 推奨（中間状態最小化） | runtime は subscribe 後追い自動更新 |
+| 2 | `RADIUS_SERVER.src_intf` 参照インタフェース IP が `MGMT_INTERFACE` / `INTERFACE` に存在 → 先行必須 | 推奨先行 | 後追い `handle_radius_source_intf_ip_chg()` で自動更新 |
+| 3 | `eth0` の IP (`get_interface_ip("eth0")`) → `nas_ip` 自動補完 | load 時 1 回解決 | `nas_ip` を明示指定すれば `eth0` IP 変化の影響を受けない |
+| 4 | `DEVICE_METADATA.hostname` → `nas_id` 自動補完 | load 時 1 回解決 | runtime 追加時は hostname 設定済みであること |
+| 5 | `AAA.authentication.login` に `radius` 追加 → NSS/PAM が RADIUS サーバを参照し始める | `AAA` は **後書き推奨**（サーバ登録完了後） | `AAA` 先書き時は設定反映タイムラグで一時 `local` 相当動作 |
+| 6 | `RADIUS\|global` 以外の key（`global` 以外） → サイレントスキップ | — | key は常に `global` のみ |
+
+### 主要な制約詳細
+
+**RADIUS_SERVER 先行推奨 (依存 #1)**: `RADIUS|global` を先に書いて `RADIUS_SERVER` を後から追加する場合、`RADIUS|global` 書き込み時点では `radius_servers` が空のため `pam_radius_auth.conf` はサーバなしで生成される（実質 RADIUS 無効）。`RADIUS_SERVER` 追加後に再度 `modify_conf_file()` が呼ばれて正しい設定になる。管理接続中の設定変更では影響に留意すること（evidence: `hostcfgd:399-417`, `hostcfgd:535-545`）。
+
+**src_intf IP 解決の順序 (依存 #2)**: `RADIUS_SERVER` / `RADIUS|global` に `src_intf` を指定した場合、`modify_conf_file()` は `get_interface_ip(src_intf)` で該当インタフェースの IP を引く。インタフェースが未設定 / IP なしの場合 `pam_radius_auth.conf` の `src_ip` 行が省略される。後から `MGMT_INTERFACE` / `INTERFACE` が設定されると `handle_radius_source_intf_ip_chg()` が自動的に `modify_conf_file()` を再呼び出しして補完するため、インタフェース設定が後追いでも最終的には整合する（evidence: `hostcfgd:495-510`）。
+
+**nas_ip / nas_id の load 時単回解決 (依存 #3, #4)**: `modify_conf_file()` は `'nas_ip' not in radius_global` の場合に `get_interface_ip("eth0")` を呼んで eth0 の IP を nas_ip とする。`'nas_id' not in radius_global` の場合は `get_hostname()` で hostname を取得する。これらは `modify_conf_file()` 呼び出しごとに再評価されるため、runtime での `MGMT_INTERFACE` / `DEVICE_METADATA` 変更は次回の `RADIUS` イベント時に自動的に反映されるが、`RADIUS|global` に `nas_ip` / `nas_id` を明示指定すれば環境依存を排除できる（evidence: `hostcfgd:667-678`）。
+
+**AAA 後書き推奨 (依存 #5)**: `AAA.authentication.login = "radius"` を書く前に `RADIUS_SERVER` エントリを揃えること。`AAA` を先に書くと `modify_conf_file()` が RADIUS サーバなしで PAM 設定を再生成し、RADIUS サーバ追加 (`RADIUS_SERVER` 書き込み) まで既存ログインは local フォールバックで処理される（evidence: `hostcfgd:752-780`）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・Fallback
 
