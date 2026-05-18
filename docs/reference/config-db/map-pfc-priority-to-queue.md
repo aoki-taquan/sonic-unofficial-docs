@@ -246,6 +246,30 @@ platform が `generate_pfc_to_queue_map` を定義している場合はそちら
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`QosOrch` (`sonic-swss/orchagent/qosorch.cpp`) が `MAP_PFC_PRIORITY_TO_QUEUE` を処理する際の順序依存。`PORT_QOS_MAP` が PFC→Queue マップ名を参照するため、**マップエントリは参照元より先に作成する必要がある**。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `MAP_PFC_PRIORITY_TO_QUEUE\|<name>` 作成 → `PORT_QOS_MAP\|<port>.pfc_to_queue_map` SET | **強制先行**（自動 retry） | `resolveFieldRefValue()` 失敗で `task_need_retry`、自動再試行 |
+| 2 | `PORT_QOS_MAP` / tunnel の参照解除 → `MAP_PFC_PRIORITY_TO_QUEUE\|<name>` DEL | **強制先行**（pending_remove ロック） | `isObjectBeingReferenced()` が true の間 DEL は保留 |
+| 3 | 他マップハンドラ (`TC_TO_QUEUE_MAP` 等) の drain → `PORT_QOS_MAP` の drain | `QosOrch::doTask()` 内部順序 | 操作者が意識する必要はないが、orchagent 再起動時に全マップ再登録が PORT_QOS_MAP より先行 |
+| 4 | `MAP_PFC_PRIORITY_TO_QUEUE` pending_remove 解消 → 同名 SET 実行 | **強制先行**（ロック） | DEL 参照解除が完了するまで同名 SET も実行不可 |
+
+### 主要な制約詳細
+
+**PORT_QOS_MAP への参照先行要件 (依存 #1)**: `handlePortQosMapTable()` (`qosorch.cpp:2124-2129`) は `resolveFieldRefValue()` で `MAP_PFC_PRIORITY_TO_QUEUE` 内の対象マップ名が SAI オブジェクトとして登録済みか確認し、未登録なら `task_need_retry` を返す。CONFIG_DB に `PORT_QOS_MAP|<port>` の `pfc_to_queue_map: <name>` を書いた時点で `MAP_PFC_PRIORITY_TO_QUEUE|<name>` が未作成の場合、`PORT_QOS_MAP` の処理は自動的に次の orch ループまで持ち越される。**推奨順序**: `MAP_PFC_PRIORITY_TO_QUEUE|<name>` を先に書き込み、その後 `PORT_QOS_MAP|<port>` で参照する（evidence: `qosorch.cpp:2124-2129`）。
+
+**DEL 時の pending_remove ロック (依存 #2)**: `PfcToQueueHandler::processWorkItem()` (`qosorch.cpp:181-186`) は DEL コマンド時に `isObjectBeingReferenced()` をチェックし、`PORT_QOS_MAP` などから参照中であれば `m_pendingRemove = true` を立てて `task_need_retry` を返す。pending_remove 中は同名の SET も `task_need_retry` で即返却される (`qosorch.cpp:136-139`)。**推奨 DEL 順序**: すべての `PORT_QOS_MAP` エントリから `pfc_to_queue_map` 参照を先に除去してから `MAP_PFC_PRIORITY_TO_QUEUE|<name>` を DEL する（evidence: `qosorch.cpp:136-139`, `181-191`）。
+
+**QosOrch 内部ドレイン順序 (依存 #3)**: `QosOrch::doTask()` (`qosorch.cpp:2231-2251`) は `PORT_QOS_MAP` と `QUEUE` を除く全マップハンドラを先にドレインし、その後 `PORT_QOS_MAP`、最後に `QUEUE` をドレインする。これにより起動時・再起動時も `MAP_PFC_PRIORITY_TO_QUEUE` エントリが `PORT_QOS_MAP` より先に SAI へ反映される（evidence: `qosorch.cpp:2238-2251`）。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: d2191ccfe0bd -->
 
 <!-- derivation -->
