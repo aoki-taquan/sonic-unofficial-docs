@@ -278,6 +278,50 @@ SRv6 nexthop が SID リストを参照している間は DEL が保留される
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通信メカニズム (Phase G)
+
+> 根拠: `orchdaemon.cpp` L312-324、`orch.cpp` L1186-1196、`srv6orch.cpp` L98-113、`fpmsyncd/routesync.cpp` L1169-1182、L1396-1410 精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-applb-pubsub.md`
+
+### Consumer 構成
+
+`Srv6Orch` は `orchdaemon.cpp:312-324` で以下の 4 テーブルを受け取りコンシューマを登録する。
+
+| テーブル | DB | コンシューマ種別 | 選択根拠 |
+|---------|-----|----------------|---------|
+| `SRV6_SID_LIST_TABLE` | APPL_DB (db_id=0) | `ConsumerStateTable` (LPOP) | `orch.cpp:1194` — db_id != CONFIG_DB ブランチ |
+| `SRV6_MY_SID_TABLE` | APPL_DB (db_id=0) | `ConsumerStateTable` (LPOP) | 同上 |
+| `PIC_CONTEXT_TABLE` | APPL_DB (db_id=0) | `ConsumerStateTable` (LPOP) | 同上 |
+| `SRV6_MY_SID_TABLE` (CFG側) | CONFIG_DB (db_id=4) | `SubscriberStateTable` (keyspace notification) | `orch.cpp:1190` — db_id == CONFIG_DB ブランチ |
+
+### APPL_DB 経路: ProducerStateTable → ConsumerStateTable
+
+`fpmsyncd` は `ProducerStateTable::set()` / `del()` を使用して `SRV6_MY_SID_TABLE` / `SRV6_SID_LIST_TABLE` に書き込む。`Srv6Orch` は LPOP (`ConsumerStateTable`) でエントリを取得し、`doTask(Consumer&)` → `doTaskMySidTable()` / `doTaskSidTable()` で処理する。
+
+```
+fpmsyncd (routesync.cpp)
+  → ProducerStateTable::set("SRV6_MY_SID_TABLE|<key>", ...)
+  → APPL_DB (Redis, db_id=0)
+  → ConsumerStateTable LPOP
+  → Srv6Orch::doTaskMySidTable()
+  → SAI
+```
+
+### CONFIG_DB 経路: SubscriberStateTable (keyspace notification)
+
+CONFIG_DB `SRV6_MY_SID_TABLE` (db_id=4) は `SubscriberStateTable` ブランチが選択される。`SubscriberStateTable` は Redis keyspace notification を `PSUBSCRIBE __keyspace@4__:SRV6_MY_SID_TABLE|*` で購読し、`hset` / `del` 操作を検出後 `HGETALL` でフィールド値を取得する。orchagent 起動時には既存全エントリが `SET_COMMAND` として buffer に積まれ、`doTaskCfgMySidTable()` が初回コールされる。
+
+### Neighbor 通知: Observer パターン (Redis 非使用)
+
+`Srv6Orch` は `m_neighOrch->attach(this)` で NeighOrch の Observer リストに登録する (`srv6orch.cpp:110`)。Neighbor ADD/DEL イベントは Redis チャンネルを経由せず、C++ Observer パターンの直接コールバック `updateNeighbor()` (`srv6orch.cpp:1212`) で受信する。`adj` 依存 MySID の pending/install は全てこのコールバック内で処理される。
+
+### APPL_DB への書き戻しなし
+
+`doTaskMySidTable()` / `doTaskSidTable()` は APPL_DB への書き戻しを一切行わない。処理後は SAI のみに作用し、APPL_DB 側のテーブルへフィールドを書き戻す実装は存在しない。
+
+<!-- /pubsub -->
+
 ### サポート action 値
 
 `end_behavior_map`（`srv6orch.cpp:41-62`）に定義:
