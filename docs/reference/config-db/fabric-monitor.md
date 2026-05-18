@@ -118,6 +118,34 @@ FABRIC_MONITOR|FABRIC_MONITOR_DATA
 - `monCapacityThreshWarn` は 5..100 (%)
 - `monState` は `enable` または `disable`
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 1. `fabricmgrd` の APPL_DB 書込み → `FabricPortsOrch` コンストラクタ実行
+
+`FabricPortsOrch` コンストラクタ（`fabricportsorch.cpp:127`）は初期化時に `checkFabricPortMonState()` を呼び、`APPL_DB.APP_FABRIC_MONITOR_DATA_TABLE` の `monState` フィールドを参照する。`fabricmgrd` が APPL_DB に書き込む前に orchagent が起動した場合、`monState=enable` が CONFIG_DB に設定済みでも `setCfgVal=false` となりデバッグタイマーが起動しない（監視無効状態で初期化完了）。この場合は orchagent 再起動が必要になる。
+
+### 2. `monState=enable` 設定後はデバッグタイマー起動に最大 30 秒の遅延
+
+`monState=enable` を設定すると `fabricmgrd` は直ちに APPL_DB を更新するが、orchagent 内のデバッグタイマーは次の `FABRIC_POLL` タイマー発火時（デフォルト 30 秒間隔）の `checkFabricPortMonState()` 判定後に初めて `m_debugTimer->start()` が呼ばれる（`fabricportsorch.cpp:1582-1585`）。即時反映は orchagent 再起動のみ保証される。
+
+### 3. 複数フィールドの同時変更は APPL_DB 側が逐次更新（中間状態あり）
+
+`FabricMgr::doTask()` はフィールドを 1 件ずつ `writeConfigToAppDb()` に渡す（`fabricmgr.cpp:50-100`）。`updateFabricDebugCounters()` は毎ポーリングで APPL_DB を一括読み込みするため、複数フィールドを同時変更した場合にポーリングタイミングが重なると新旧混在値で監視計算が実行される可能性がある。
+
+### 4. SAI によるファブリックポートリスト取得完了が監視処理の前提
+
+`getFabricPortList()` が完了（`m_getFabricPortListDone=true`）するまで、`updateFabricDebugCounters()` / `updateFabricPortState()` はすべてスキップされる（`fabricportsorch.cpp:262,329,420`）。SAI がポートリストを返さない間は FABRIC_MONITOR の設定が有効でも監視処理は実行されない。
+
+| # | 依存関係 | 方向 | 違反時の挙動 |
+|---|----------|------|------------|
+| 1 | `fabricmgrd` APPL_DB 書込み → `FabricPortsOrch` init | **推奨先行** | デバッグタイマー未起動（監視無効で初期化完了） |
+| 2 | `monState=enable` 設定 → デバッグタイマー有効化 | **遅延あり（最大 30 秒）** | 次回 FABRIC_POLL まで監視開始されない |
+| 3 | 複数フィールド同時更新 | **逐次書込み（中間状態あり）** | ポーリング次第で新旧混在値で監視計算 |
+| 4 | `getFabricPortList()` 完了（SAI 応答） → 監視処理実行 | **強制先行** | SAI 応答遅延中はすべての監視処理スキップ |
+
+<!-- /ordering -->
+
 ## 購読者
 
 - ファブリックモニタ daemon（プラットフォーム / [orchagent](../../reference/glossary.md#term-orchagent) の FabricPortOrch 拡張）
