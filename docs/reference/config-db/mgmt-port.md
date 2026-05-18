@@ -396,3 +396,74 @@ STATE_DB MGMT_PORT_TABLE|eth0
 詳細 grep スキャン結果は `meta/_intermediate/cdb-flow/mgmt-port-side-effects.md` を参照。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## Phase G: CONFIG_DB Subscribe 機構 (通信メカニズム)
+
+`MGMT_PORT` テーブルに対する CONFIG_DB の通信メカニズムを整理する。結論を先に述べると、**event-driven な subscribe consumer は存在しない**。唯一の変化検知は monit による定期 polling である。
+
+### hostcfgd — MGMT_PORT は購読対象外
+
+`hostcfgd` (`sonic-host-services/scripts/hostcfgd`) は起動時に複数テーブルを `ConfigDBConnector.subscribe()` で購読するが、`MGMT_PORT` は対象に含まれない。
+
+```python
+# hostcfgd L2485 — MGMT_INTERFACE は購読する
+self.config_db.subscribe('MGMT_INTERFACE', make_callback(self.mgmt_intf_handler))
+
+# hostcfgd L2496-2497 — MGMT_VRF_CONFIG は購読する
+self.config_db.subscribe(swsscommon.CFG_MGMT_VRF_CONFIG_TABLE_NAME,
+                         make_callback(self.mgmt_vrf_handler))
+
+# MGMT_PORT への subscribe() 呼び出しは存在しない
+```
+
+`MGMT_PORT` フィールドのほとんど（`speed`, `autoneg`, `mtu`, `description`）が Phase A 調査で確認した dead write であり、即時コールバックが不要なため、event-driven な購読は実装されていない。
+
+### mgmt_oper_status.py — monit による polling 読み取り
+
+`MGMT_PORT` テーブルへの唯一の実効的な読み取り処理は `mgmt_oper_status.py` が行うが、これは subscribe ではなく**one-shot polling** モデルである。
+
+```python
+# sonic-buildimage/files/image_config/monit/mgmt_oper_status.py:12-17
+db = SonicV2Connector(use_unix_socket_path=True)
+db.connect('CONFIG_DB')
+db.connect('STATE_DB')
+mgmt_ports_keys = db.keys(db.CONFIG_DB, 'MGMT_PORT|*')
+```
+
+- `listen()` / `subscribe()` を呼ばず、**単発の key スキャン + get_all() で完結**する。
+- monit デーモンが定期的にスクリプトを起動する（polling 間隔は monit 設定依存）。
+- 処理内容: CONFIG_DB `MGMT_PORT|<port>` フィールドを STATE_DB `MGMT_PORT_TABLE|<port>` へ差分コピーし、`/sys/class/net/<port>/operstate` を読んで `oper_status` を更新する。
+
+### その他のコンシューマ — 静的・オンデマンド読み取り
+
+| コンポーネント | 機構 | 対象フィールド | タイミング |
+|---|---|---|---|
+| `lldpd.conf.j2` | 起動時テンプレート展開（sonic-cfggen） | `alias` | docker lldp 起動時のみ |
+| `sonic-snmpagent` | SNMP GET 要求時の on-demand 読み取り | `alias` | SNMP polling 要求時 |
+| `mgmt_oper_status.py` | monit による定期 one-shot polling | 全フィールド → STATE_DB | monit 定期実行（数十秒間隔） |
+
+### 通信フロー全体図
+
+```
+CONFIG_DB MGMT_PORT|eth0 (SET/DEL)
+  │
+  ├─ [event-driven subscribe: なし]
+  │    hostcfgd は MGMT_PORT を購読しない
+  │
+  ├─ [polling] monit → mgmt_oper_status.py (定期実行)
+  │    SonicV2Connector.keys('MGMT_PORT|*')
+  │    → get_all(CONFIG_DB, 'MGMT_PORT|eth0')
+  │    → STATE_DB MGMT_PORT_TABLE|eth0 へ差分コピー
+  │    → /sys/class/net/eth0/operstate → STATE_DB oper_status 更新
+  │
+  ├─ [静的] docker lldp 起動時
+  │    sonic-cfggen + lldpd.conf.j2 → alias フィールド参照
+  │
+  └─ [on-demand] sonic-snmpagent SNMP GET 要求時
+       alias フィールド参照 (get('alias', if_name) でフォールバック)
+```
+
+> **注**: `MGMT_PORT` は CONFIG_DB に書き込まれても即時の event-driven コールバックを持つ consumer がいない。変化の伝搬は次回 monit 実行まで遅延する（最大 monit チェック間隔）。`admin_status` / `speed` / `autoneg` / `mtu` を変更しても、eth0 の物理設定への即時反映はない（Phase A の dead write 確認と整合）。
+
+<!-- /pubsub -->
