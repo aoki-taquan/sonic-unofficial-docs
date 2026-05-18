@@ -216,6 +216,35 @@ HLD および `eventd.cpp` の定数から導出する[^1][^3]。
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`eventd` は起動時に以下の順序で初期化を実行し、それぞれのステップが完了するまで次に進まない。設定ファイルやリソースの読込み順序と、EVENT_DB への書込み開始タイミングが隠れた順序依存を形成する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `/etc/sonic/init_cfg.json` 読込み → ZMQ エンドポイント bind | 強制先行（設定先読み） | ファイル不在時はデフォルト値 (`tcp://127.0.0.1:5570〜5573`) にフォールバック。起動時 1 回のみ |
+| 2 | ZMQ XPUB/XSUB proxy bind 完了 (`m_init_done = true`) → `event_service.init_server()` | **強制先行** | `eventd_proxy::init()` は `m_init_done` が true になるまでポーリング待ちし、失敗時は `run_eventd_service()` が `goto out` で終了 |
+| 3 | `/etc/evprofile/default.json` 読込み (`static_event_map` 構築) → EVENT_DB への書込み開始 | 強制先行 | プロファイル未読込み状態でイベントを受信しても `enable` 判定できず処理不可 |
+| 4 | `capture_service::INIT_CAPTURE` → `START_CAPTURE` → 任意の `EVENT_CACHE_INIT` 要求 | 状態遷移 (1 ステップずつ) | `set_control()` は `(ctrl - m_ctrl) == 1` を検証し、ステップ飛ばしは `goto out` でエラー |
+| 5 | `EVENT_CACHE_STOP` (+ `read_cache()`) → `EVENT_CACHE_READ` | **強制先行** | `capture != NULL` の間は `EVENT_CACHE_READ` が `resp=-1` を返す。telemetry が `CACHE_STOP` を送らない限りキャッシュが読めない |
+| 6 | `stats_collector::start()` → COUNTERS_DB への統計書込み | 強制先行 | writer スレッドが `COUNTERS_DB` に接続してから初めて `COUNTERS_EVENTS_TABLE` へ書込みが始まる。接続失敗時は `run_eventd_service()` が終了 |
+| 7 | イベント受信 (heartbeat 以外) → `hb_cntr` リセット | 即時 | イベント受信があると heartbeat カウンタがリセットされ、ハートビート発行間隔が延長する。heartbeat と通常イベントの到着順は非決定的 |
+
+### 主要な制約詳細
+
+**ZMQ proxy bind 完了待ち (依存 #2)**: `eventd_proxy::run()` は XSUB (`tcp://127.0.0.1:5570`) → XPUB (`tcp://127.0.0.1:5571`) → capture PUB (`tcp://127.0.0.1:5573`) の順に `zmq_bind()` を呼び、全成功後に `m_init_result = 0; m_init_done = true` を設定する。`init()` は 10ms ポーリングで `m_init_done` 待ちする (`eventd.cpp:64-68`)。**いずれかの bind が失敗するとプロセス全体が終了する**ため、ポート競合があると eventd が起動できない。
+
+**キャプチャサービスの 1 ステップ制約 (依存 #4)**: `set_control()` は `RET_ON_ERR((ctrl - m_ctrl) == 1, ...)` で 1 ステップ超の遷移を拒否する (`eventd.cpp:557`)。`NEED_INIT(0) → INIT_CAPTURE(1) → START_CAPTURE(2) → STOP_CAPTURE(3)` の順を厳守しなければならない。`INIT_CAPTURE` 失敗時は `skip_caching = true` となり、以降の `EVENT_CACHE_READ` 要求は全て `resp=-1` を返す (`eventd.cpp:695-701, 762-765`)。
+
+**telemetry との順序 (依存 #5)**: telemetry (gnmi_server) は起動時に `EVENT_CACHE_INIT` → `EVENT_CACHE_START` を送り、準備完了後に `EVENT_CACHE_STOP` → 複数回の `EVENT_CACHE_READ` を送る。`capture != NULL` (キャプチャ停止前) に `EVENT_CACHE_READ` が届いても中身が返らないため、**telemetry が `EVENT_CACHE_STOP` を送るまでキャッシュデータは取得不可**。eventd は `CACHE_DRAIN_IN_MILLISECS` だけ待ってからキャプチャスレッドを join する (`eventd.cpp:598`)。
+
+**evprofile 読込みと ZMQ subscribe の順序 (依存 #3)**: HLD section 3.1.2 に明記: `"On initialization, event consumer reads /etc/evprofile/default.json and builds an internal map of events, called static_event_map. It then subscribes to zmqproxy for events."` プロファイル読込みが ZMQ subscribe より先に完了しなければ、最初のイベント到着時に severity/enable の判定に使う `static_event_map` が未構築の状態になる可能性がある。
+
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. section 3.1.5 (Event Profile), 3.1.7 (Event Table and Alarm Table). <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
