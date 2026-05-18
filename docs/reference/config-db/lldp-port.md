@@ -277,4 +277,40 @@ inband / recirc / backplane prefix を持つポートは `LLDP_PORT` エント�
 - なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase F)
+
+> 根拠: `dockers/docker-lldp/lldpmgrd`, `src/sonic-yang-models/yang-models/sonic-lldp.yang`
+
+### 依存関係マップ
+
+```
+PORT|<ifname>
+  └─► LLDP_PORT|<ifname>          （leafref: YANG バリデーション有効時は先行必須）
+
+STATE_DB: PORT_TABLE|<ifname>.netdev_oper_status = "up"
+  └─► lldpcli configure ports <ifname> 発行
+          （up になるまで pending_cmds にキューイング）
+
+APPL_DB: PORT_TABLE PortInitDone + PortConfigDone
+  └─► lldpcli resume              （LLDP PDU 送出開始のゲート）
+```
+
+### 書込み順序ルール
+
+| 優先度 | ルール | 根拠 |
+|--------|--------|------|
+| 必須 | `PORT\|<ifname>` を先に書いてから `LLDP_PORT\|<ifname>` を書く | `sonic-lldp.yang` leafref 制約。lldpcli は存在しない linux netdev に対して失敗する |
+| 必須 | ポートの `netdev_oper_status=up` になるまで lldpcli configure ports は発行されない | `lldpmgrd.is_port_up()` が STATE_DB を確認し、down の場合はスキップして 10 秒後に再チェック |
+| 注意 | lldpcli が RETRY_LIMIT=5 回失敗するとポートが pending_cmds から除去される | 再度 APPL_DB から PORT イベントが届くまで再設定されない |
+| 情報 | `LLDP_PORT.enabled` / `LLDP_PORT.mode` は lldpcli に変換されない | lldpmgrd は `LLDP_PORT` テーブルを直接購読しておらず、これらは dead field |
+
+### タイミング制約
+
+- **`LLDP_PORT` への書き込みは CONFIG_DB に即座に蓄積される**が、lldpd に反映されるのはポートが up になった後。
+- **`PortInitDone` + `PortConfigDone` が APPL_DB に届くまで（最大 300 秒）LLDP PDU は送出されない**。lldpd は起動直後から `pause` 状態。
+- **lldpmgrd は LLDP_PORT テーブルを購読しない**。`enabled` / `mode` フィールドを CONFIG_DB に書いても lldpcli コマンドは発行されず、lldpd に反映されない（構造的 no-op）。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 1c2f663967b9 -->
