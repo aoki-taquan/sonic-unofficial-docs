@@ -255,6 +255,85 @@ sudo grep -i "pfc watchdog\|pfcwd" /var/log/syslog
 
 <!-- /hardcoded-constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`pfcwdorch` / `pfcactionhandler` は CONFIG_DB `PFC_WD` の SET/DEL 処理と storm イベント処理の結果として、COUNTERS_DB 以外の複数の場所へ書き込む。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-side-effects.md -->
+
+### APPL_DB — `PFC_WD_INSTORM|<port>` (storm 状態の永続化)
+
+| トリガ | 操作 | フィールド | 値 | evidence |
+|--------|------|-----------|-----|----------|
+| storm 検知 (`action=drop/alert/forward`) | `hset` | `<queue_index>` | `"storm"` | `pfcwdorch.cpp:998,1017,1034` |
+| storm 復旧 | `hdel` | `<queue_index>` | — | `pfcwdorch.cpp:1056-1058` |
+
+warm-reboot 後に `bake()` が `APPL_DB:PFC_WD_INSTORM` を再読み込みして storm 状態を COUNTERS_DB に反映する (`pfcwdorch.cpp:1108`)。この書き込みがない状態で warm-reboot を行うと、storm が解消されたものとして扱われる。
+
+### SAI 経由のポート PFC マスク変更 (LossyHandler)
+
+`action=drop` または `action=alert` 時、storm 検知で `PfcWdLossyHandler` コンストラクタ (`pfcactionhandler.cpp:541-568`) が実行される:
+
+1. `gPortsOrch->getPortPfc(port, &pfcMask)` で現在の PFC マスクを取得
+2. `pfcMask &= ~(1 << queueId)` でストームキューの PFC ビットをクリア
+3. `gPortsOrch->setPortPfc(port, pfcMask)` → SAI `set_port_attribute()` でハードウェアに反映（PFC 一時無効化）
+
+storm 復旧時 (`~PfcWdLossyHandler()`) は逆順に `pfcMask |= (1 << queueId)` で PFC を再有効化する。
+
+!!! note "プラットフォーム例外"
+    Cisco 8000 および Broadcom + DLR INIT 有効環境ではこのマスク変更をスキップ (`pfcactionhandler.cpp:549-552`)。
+
+### SAI 経由の `SAI_QUEUE_ATTR_PFC_DLR_INIT` 設定 (DLR ハンドラ)
+
+Broadcom プラットフォームで DLR が有効な場合、`PfcWdDlrHandler` / `PfcWdSaiDlrInitHandler` が使用される:
+
+| タイミング | SAI 操作 | 値 | evidence |
+|-----------|----------|-----|----------|
+| storm 検知 (コンストラクタ) | `sai_queue_api->set_queue_attribute(queue, SAI_QUEUE_ATTR_PFC_DLR_INIT)` | `true` | `pfcactionhandler.cpp:234,277` |
+| storm 復旧 (デストラクタ) | `sai_queue_api->set_queue_attribute(queue, SAI_QUEUE_ATTR_PFC_DLR_INIT)` | `false` | `pfcactionhandler.cpp:257,300` |
+
+### SAI スイッチレベル属性設定 (Broadcom + DLR 初回登録時のみ)
+
+Broadcom + PFC DLR INIT 有効環境で最初のポートを `pfcwd start` する際 (`pfcwdorch.cpp:244-251`):
+
+```
+sai_switch_api->set_switch_attribute(gSwitchId, SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION=<action>)
+```
+
+スイッチ全体のDLR パケットアクションを設定する。2 ポート目以降は新しい `action` が最初のポートと一致しない場合に `task_invalid_entry` を返すのみで SAI への書き込みは行わない。
+
+### FLEX_COUNTER_DB — `PFC_WD` グループへの counter ID 登録
+
+`registerInWdDb()` (`pfcwdorch.cpp:558-595`) が `FlexCounterTaggedCachedManager` 経由で書き込む:
+
+| 操作 | 対象 | 内容 | evidence |
+|------|------|------|----------|
+| SET (pfcwd start) | port OID | `PFC_WD` グループの PORT stat ID リスト | `pfcwdorch.cpp:560` |
+| SET (pfcwd start) | queue OID | `PFC_WD` グループの QUEUE stat / attr ID リスト | `pfcwdorch.cpp:587,593` |
+| DEL (pfcwd stop) | port / queue OID | counter ID リストを削除 (`clearCounterIdList`) | `pfcwdorch.cpp:652,657` |
+
+`syncd` はこの登録に従って PFC 統計を COUNTERS_DB へ書き込む。登録削除後は Lua プラグインによる storm 検知が機能しなくなる。
+
+### SONiC events framework — `pfc-storm` イベント発行
+
+storm 検知時に `report_pfc_storm()` (`pfcwdorch.cpp:965`) が SONiC events framework 経由でイベントを発行する:
+
+```cpp
+event_publish(g_events_handle, "pfc-storm", &params);
+// params: port-id, queue-index, additional_info
+```
+
+gNMI / event-driven telemetry 向けのサイドチャンネルであり、COUNTERS_DB / APPL_DB へは書き込まない。
+
+### 副次書込なし
+
+- **STATE_DB**: `pfcwdorch` / `pfcactionhandler` は STATE_DB に書き込まない。
+- **ERROR_TABLE**: 失敗時もエラーフィードバックテーブルへの書込なし。syslog のみ。
+- **ASIC_DB**: SAI 経由で `syncd` が書き込む（orchagent の直接書込なし）。
+
+<!-- /side-effects -->
+
 ## 確認コマンド
 
 ```bash
