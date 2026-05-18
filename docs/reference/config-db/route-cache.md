@@ -1,10 +1,10 @@
 ---
 title: APPL_STATE_DB ROUTE_TABLE (route offload cache)
-description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。fpmsyncd が購読し FRR zebra に offload 結果をフィードバックする。"
+description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御を含む Phase A+B+C+D 分析。"
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-18
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/routeorch.cpp
@@ -365,6 +365,90 @@ if (status.ok())
 | `err_str` | `"SWSS_RC_SUCCESS"` (成功時) | 通知チャネルのみ | 全 SET / DEL 操作で送信 |
 
 <!-- /defaults -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-failure.md -->
+
+APPL_STATE_DB `ROUTE_TABLE` への書き込みは `publishRouteState()` → `ResponsePublisher::publish()` 経由で行われる。SAI 操作の成否によって APPL_STATE_DB への書き込みが制御される。
+
+### SET 操作の失敗パス
+
+#### 1. SAI create / set 失敗 — APPL_STATE_DB への書き込みなし
+
+`addRoutePost()` (routeorch.cpp:2509-2527, 2572-2589) で SAI が失敗すると `false` を返し、
+`doTask()` の呼び出し側は `it++` でイベントを `m_toSync` に残す。
+`publishRouteState()` は呼ばれず、APPL_STATE_DB への書き込みも通知チャネルへの送信も発生しない。
+
+| 失敗ステータス | 処置 |
+|---|---|
+| `handleSaiCreateStatus` → `task_need_retry` | m_toSync に残留してリトライ |
+| `handleSaiCreateStatus` → `task_success` | erase（SAI が成功扱いと判断した場合） |
+| `SAI_STATUS_ITEM_NOT_FOUND` | 内部キャッシュをクリアして `false` を返す（`routeorch.cpp:2575-2581`） |
+
+#### 2. ResponsePublisher の SET 失敗ガード
+
+`publishRouteState()` が呼ばれた場合（重複エントリや ip2me 経路）でも、SAI 失敗時は APPL_STATE_DB への書き込みがスキップされる[^respub]:
+
+```cpp
+// response_publisher.cpp:129-133
+if (m_enable_db_write_and_notify &&
+     ((intent_attrs.size() && state_attrs.size()) ||
+     (status.ok() && !intent_attrs.size()))) {
+        writeToDB(table, key, state_attrs, ...);
+}
+```
+
+SAI 失敗時は `state_attrs` が空（`response_publisher.cpp:143-148` の `if (status.ok())` 分岐が実行されない）のため、条件 `intent_attrs.size() && state_attrs.size()` が false となり `writeToDB` がスキップされる。通知チャネルへは失敗情報が送信される:
+
+```
+err_str = "[SAI] " + status.message()
+```
+
+#### 3. バリデーション失敗 — イベントを消費してドロップ
+
+`doTask()` でフォーマット不正（`router_mac` / `vni_label` 不一致等）を検出した場合はエラーログを出力してイベントを `erase` する。`publishRouteState()` は呼ばれず、APPL_STATE_DB への書き込みも通知チャネルへの送信も発生しない。
+
+### DEL 操作の失敗パス
+
+#### 4. SAI remove 失敗 — 通知チャネルには送信するが APPL_STATE_DB は削除しない
+
+`removeRoutePost()` (routeorch.cpp:2874) で SAI 削除が失敗しても、
+`publishRouteState(ctx)` は直後 (routeorch.cpp:2970) で呼ばれる。
+ただし DEL 操作では `fvs` が空配列で SAI が失敗しているため:
+
+- `status.ok()` が false かつ `intent_attrs.size()` が 0 → `writeToDB` 条件が false → APPL_STATE_DB のエントリは削除されない
+- 通知チャネルへは `err_str=[SAI]...` が送信される
+
+!!! note "SAI 削除失敗時の APPL_STATE_DB 残留"
+    SAI 削除に失敗すると APPL_STATE_DB に古いエントリが残留する。
+    APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL フローの遅延として現れる可能性がある。
+    `route_check.py` は整合を検出し RESPONSE_CHANNEL への recovery 注入で回復を試みる。
+
+### fpmsyncd の失敗受け取り
+
+`fpmsyncd` は通知チャネルで失敗通知を受け取った場合、`err_str != "SWSS_RC_SUCCESS"` により offload 通知をスキップする[^fpmsyncd]:
+
+```cpp
+// routesync.cpp:3195-3206
+if (field == "err_str")
+    isSuccessReply = (value == "SWSS_RC_SUCCESS");
+```
+
+SAI 失敗経路は FRR zebra への offload 通知が行われず、FRR 側で offload フラグが立たない。
+
+### 失敗パスまとめ
+
+| 失敗シナリオ | APPL_STATE_DB | 通知チャネル | イベント消費 |
+|---|---|---|---|
+| SAI create 失敗 (task_need_retry) | 書き込みなし | 送信なし | m_toSync に残留（リトライ） |
+| SAI set 失敗 | 書き込みなし | 送信なし | m_toSync に残留（リトライ） |
+| SAI_STATUS_ITEM_NOT_FOUND | 書き込みなし | 送信なし | m_toSync に残留（リトライ） |
+| バリデーション失敗 | 書き込みなし | 送信なし | erase（消費・ドロップ） |
+| SAI remove 失敗 | エントリ削除なし | `err_str=[SAI]...` 送信 | erase（消費） |
+
+<!-- /failure -->
 
 ## 確認コマンド
 
