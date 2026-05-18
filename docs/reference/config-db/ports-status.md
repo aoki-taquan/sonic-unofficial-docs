@@ -261,6 +261,40 @@ portsyncd  →  RTM_NEWLINK 受信  →  STATE_DB PORT_TABLE.state = "ok"
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+STATE_DB `PORT_TABLE` への書込みは `portsyncd/linksync` と `PortsOrch` の 2 経路に分かれる。各経路の失敗パスをコード精読で列挙する。
+
+### 失敗パス一覧
+
+| # | 書込み主体 | トリガー / 失敗条件 | 結果 | retry |
+|---|-----------|-------------------|------|-------|
+| 1 | `portsyncd/linksync` | APP_DB `PORT_TABLE` に `<name>` が存在しない（非フロントパネル IF: eth0 / lo 等） | `m_statePortTable.set()` 呼び出しなし。WARN ログのみ (`Cannot find <name> in port table`) | — |
+| 2 | `portsyncd/linksync` | `m_ifindexOldNameMap` に ifindex が存在する（swss restart 直後の古い netlink メッセージ） | RTM_NEWLINK を無視。STATE_DB は更新されない。INFO ログ出力 | — |
+| 3 | `portsyncd/linksync` | RTM_DELLINK かつポートに bridge/LAG master あり | DEL 処理をスキップ。エントリは削除されない | — |
+| 4 | `PortsOrch` `initPortSupportedSpeeds()` | SAI `get_port_attribute(SAI_PORT_ATTR_PORT_POOL_LIST)` で `BUFFER_OVERFLOW` | エラーログ。`supported_speeds` に空文字列を書く（STATE_DB には空値が残る） | — |
+| 5 | `PortsOrch` `initPortSupportedSpeeds()` | SAI 属性非サポート (`SAI_STATUS_IS_ATTR_NOT_SUPPORTED`) | WARN ログのみ。`supported_speeds` に空文字列を書く | — |
+| 6 | `PortsOrch` `updateDbPortOperSpeed()` | `getPortOperSpeed()` が失敗（SAI エラー / speed=0） | `speed` フィールドに `"N/A"` を書く（エラー時は書込みなし → stale 値残留）。`speed=0` 時は WARN ログ | — |
+| 7 | `PortsOrch` oper-status 通知 | `getPortOperFec()` が失敗（SAI NOTICE レベル） | `fec` フィールドに `"N/A"` を書く。NOTICE ログ | — |
+| 8 | `PortsOrch` host_tx_ready SAI クエリ | `sai_port_api->get_port_attribute(SAI_PORT_ATTR_HOST_TX_READY_STATUS)` 失敗 | ERROR ログ。`hostTxReady = false` のまま `"false"` を書く | — |
+| 9 | `PortsOrch` `initHostTxReadyState()` | SAI `get_port_attribute` が失敗（行 `6716-6718`） | `host_tx_ready = "false"` を書き込む（失敗デフォルト） | — |
+
+### 失敗後のエントリ状態
+
+`portsyncd/linksync` と `PortsOrch` のいずれも `task_failed` / `task_need_retry` を返す仕組みを持たない。書込みは **best-effort** であり、失敗時はデフォルト値（`"N/A"`, `"false"`, 空文字列）を書き込むか、書込みそのものをスキップする。**orchagent のクラッシュや Consumer 停止は発生しない**。
+
+```bash
+# STATE_DB の現在値確認（失敗フィールドは "N/A" / "" / "false" で残留する）
+sonic-db-cli STATE_DB hgetall 'PORT_TABLE|Ethernet0'
+
+# PortsOrch エラーログ確認
+sudo grep -iE "host_tx_ready|supported_speed|oper speed|oper fec" /var/log/swss/orchagent.log | tail -20
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/ports-status-failure.md`
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
