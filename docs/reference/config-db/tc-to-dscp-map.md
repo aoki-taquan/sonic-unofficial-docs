@@ -289,3 +289,46 @@ config qos reload
 ```
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照 — `QosOrch` が TC_TO_DSCP_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)
+
+`QosOrch` は `TC_TO_DSCP_MAP` を `SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP` として SAI 登録した後、
+`PORT_QOS_MAP` および `TUNNEL` ハンドラを通じてポート/トンネルに bind する。
+`qos_to_ref_table_map` (qosorch.cpp:L100-116) と `m_qos_maps` 参照カウンタ管理 (qosorch.cpp:L81-96)
+により、以下のテーブルとの連鎖参照が発生する。
+
+### 上流参照元 (TC_TO_DSCP_MAP を参照するテーブル)
+
+| テーブル | フィールド | 参照タイミング | 用途 | evidence |
+|---|---|---|---|---|
+| [`PORT_QOS_MAP`](port-qos-map.md) | `tc_to_dscp_map` | SET 処理時 `resolveFieldRefValue()` | ポートに bind する TC→DSCP マップ名を解決。未作成なら `task_need_retry` | qosorch.cpp:L105,L2077-2133 |
+| `TUNNEL` | `encap_tc_to_dscp_map` | SET 処理時 `gQosOrch->resolveTunnelQosMap()` | トンネル encap 時の DSCP 書換えマップを OID 解決。未解決なら `task_need_retry` | tunneldecaporch.cpp:L245-250; qosorch.cpp:L115 |
+
+`PORT_QOS_MAP` が `tc_to_dscp_map` フィールドで `TC_TO_DSCP_MAP` の名前を参照し、`QosOrch` が OID を解決して
+`SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` をポートにセットする（qosorch.cpp:L66）。
+`TUNNEL` の `encap_tc_to_dscp_map` は `tunneldecaporch` が `resolveTunnelQosMap()` 経由で同じ `TC_TO_DSCP_MAP` テーブルの OID を参照し、`tunnelTable[key].encap_tc_to_dscp_map_id` に格納する（tunneldecaporch.cpp:L257）。
+
+いずれも `TC_TO_DSCP_MAP` が未作成の場合は `task_need_retry` でキューに戻される。
+
+### パイプライン上流 (TC を生成する先行テーブル)
+
+| テーブル | 役割 | TC_TO_DSCP_MAP との関係 | evidence |
+|---|---|---|---|
+| [`DSCP_TO_TC_MAP`](dscp-to-tc-map.md) | ingress DSCP → TC 変換 | 受信パケットの DSCP を TC に変換するパイプライン前段。変換後の TC を egress 時に TC_TO_DSCP_MAP が DSCP に再マップする | qosorch.cpp:L61,L81,L100 |
+| [`DOT1P_TO_TC_MAP`](dot1p-to-tc-map.md) | 802.1p PCP → TC 変換 | L2 フレームの TC 源泉。egress では TC_TO_DSCP_MAP が DSCP rewrite に使用される | qosorch.cpp:L62,L101 |
+
+### 参照カウンタ連動 (DEL 保留メカニズム)
+
+`QosOrch::m_qos_maps` の `object_reference_map`（qosorch.cpp:L95）が `TC_TO_DSCP_MAP` への参照を追跡する。
+`PORT_QOS_MAP` または `TUNNEL` がマップを参照している間は `TC_TO_DSCP_MAP` の DEL は `m_pendingRemove=true` で保留され、
+参照解放まで SAI `remove_qos_map()` は呼ばれない（qosorch.cpp:L181-186）。
+
+### 範囲外 (誤解されやすい隣接テーブル)
+
+- `TC_TO_QUEUE_MAP`: egress queue 方向のマップで、TC_TO_DSCP_MAP ハンドラからの直接参照はない。別ハンドラ (`handleTcToQueueTable`) が独立に処理する。
+- `WRED_PROFILE`: DROP profile。TC_TO_DSCP_MAP ハンドラからの参照なし。
+- `DSCP_TO_FC_MAP` / `EXP_TO_FC_MAP`: Forwarding Class 系は別系統で TC_TO_DSCP_MAP と直接連鎖しない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/tc-to-dscp-map-cross-refs.md` を参照。
+<!-- /cross-refs -->
