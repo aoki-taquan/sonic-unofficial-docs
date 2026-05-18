@@ -219,6 +219,50 @@ CLI (`config vxlan add`) で作成されたトンネルは `TNL_CREATION_SRC_CLI
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+CONFIG_DB フィールドとして公開されず `vxlanorch.h` / `vxlanorch.cpp` にハードコードされている定数。`config_db.json` での設定変更は効果なく、変更にはコードのリコンパイルが必要。
+
+### SAI トンネル属性のハードコード値
+
+| 定数 / 値 | SAI 属性 | 定義場所 | 備考 |
+|-----------|---------|---------|------|
+| `SAI_TUNNEL_TYPE_VXLAN` | `SAI_TUNNEL_ATTR_TYPE` | `vxlanorch.cpp:304` | トンネルタイプは常に VXLAN 固定。IP-in-IP 等への変更不可 |
+| `SAI_TUNNEL_PEER_MODE_P2MP` | `SAI_TUNNEL_ATTR_PEER_MODE` | `vxlanorch.cpp:368` | CLI 作成 (`TNL_CREATION_SRC_CLI`) のトンネルは常に P2MP。`dst_ip` を指定しても変わらない |
+| `SAI_TUNNEL_PEER_MODE_P2P` | `SAI_TUNNEL_ATTR_PEER_MODE` | `vxlanorch.cpp:359` | EVPN DIP トンネル (`TNL_CREATION_SRC_EVPN`) のみ P2P |
+| `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` | `SAI_TUNNEL_ATTR_ENCAP_TTL_MODE` | `vxlanorch.cpp:388` | `encap_ttl != 0` 時に自動設定。フィールドで選択不可 |
+| `gUnderlayIfId` | `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` | `vxlanorch.cpp:307-309` | orchagent 起動時に `main.cpp` で設定されるグローバル RIF を固定使用 |
+
+### encap TTL・VNI 境界値
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|----|---------|------|
+| `DEFAULT_TUNNEL_ENCAP_TTL` | `255` | `vxlanorch.h:49` | `createTunnelHw()` のデフォルト引数。YANG / CONFIG_DB に対応フィールドなし |
+| `MAX_VNI_ID` | `16777215` | `vxlanorch.h:48` | VNI 上限 (2^24 − 1)。超過は `SWSS_LOG_ERROR` + `return true` で恒久エラー（リトライなし） |
+
+### FlexCounter 関連定数
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|----|---------|------|
+| `TUNNEL_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"TUNNEL_STAT_COUNTER"` | `vxlanorch.h:39` | FlexCounterManager に登録するカウンタグループ名 |
+| `TUNNEL_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | `vxlanorch.h:40` | FlexCounter ポーリング間隔 (ms)。10 秒固定。CONFIG_DB から変更不可 |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` | `vxlanorch.cpp:36` | FlexCounter 更新タイマー秒数（1 秒固定） |
+
+### mapper モード定数
+
+`tunnel_map_use_t` 列挙型の値はコードに固定されており、CONFIG_DB フィールドで選択できない。
+
+| 値 | 割り当て条件 | evidence |
+|----|------------|---------|
+| `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP` | L3VNI / Bridge VNI の MAP 追加時 | `vxlanorch.cpp:2067` |
+| `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | EVPN DIP トンネル (`addTunnelUser`) | `vxlanorch.cpp:1169` |
+| `TUNNEL_MAP_USE_DECAP_ONLY` | VLAN MAP で L3VNI フラグなし（decap のみ許可） | `vxlanorch.cpp:2060-2066` のコメント |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-ordering.md`
+
+<!-- /constants -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VXLAN_TUNNEL`](vxlan-tunnel.md)、[`VXLAN_TUNNEL_MAP`](vxlan-tunnel-map.md)
