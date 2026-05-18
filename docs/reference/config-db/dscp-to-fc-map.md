@@ -233,6 +233,49 @@ config cbf clear
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-cross-refs.md -->
+
+`DSCP_TO_FC_MAP` 自身の YANG leafref は `PORT_QOS_MAP.dscp_to_fc_map` から被参照されるが、実装上の処理経路では以下のリソースを暗黙参照している。
+
+### 1. PORT_QOS_MAP (CONFIG_DB)
+
+- **参照方向**: 被参照（`PORT_QOS_MAP.dscp_to_fc_map` フィールドが本テーブルを leafref）
+- **条件**: `PORT_QOS_MAP` の `dscp_to_fc_map` フィールド SET 時
+- **参照元**: `qosorch.cpp:111` — `qos_to_ref_table_map` にて `dscp_to_fc_field_name → CFG_DSCP_TO_FC_MAP_TABLE_NAME` のマッピング登録
+- **意味**: 参照が存在する間は DEL が保留される（`m_pendingRemove=true`）。`PORT_QOS_MAP` 側の参照を先に解除しなければ `DSCP_TO_FC_MAP` エントリを削除できない
+
+### 2. SAI switch — `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES`
+
+- **参照方向**: SAI query（実行時依存）
+- **条件**: `DscpToFcMapHandler::convertFieldValuesToAttributes()` が呼ばれるたびに `NhgMapOrch::getMaxNumFcs()` を呼び出し（内部は static キャッシュ — 初回のみ実際の SAI query を発行）
+- **参照元**: `qosorch.cpp:1043`; `nhgmaporch.cpp:299-325`
+- **意味**: FC 上限値をランタイムで SAI から取得。FC 非対応 ASIC では `max_num_fcs=0` → 全 FC 値が reject され SAI map 未作成となる。初回クエリ後は orchagent 再起動まで固定
+
+### 3. EXP_TO_FC_MAP (CONFIG_DB)
+
+- **参照方向**: 同族テーブル（共通 `m_qos_maps` 参照カウンタマップを共有）
+- **条件**: 常時（`QosOrch` 初期化時に `m_qos_maps` に両テーブルを登録）
+- **参照元**: `qosorch.cpp:93` — `m_qos_maps[CFG_EXP_TO_FC_MAP_TABLE_NAME]`
+- **意味**: DSCP_TO_FC_MAP と EXP_TO_FC_MAP は同じ `processWorkItem()` フレームワークを共有し、`PORT_QOS_MAP` から互いに独立して参照される。参照カウンタは各テーブルで独立管理
+
+### 参照関係サマリ
+
+```
+DSCP_TO_FC_MAP
+  ├─ [被参照]          PORT_QOS_MAP.dscp_to_fc_map  (参照中は DEL 保留)
+  ├─ [SAI runtime]    SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES  (FC 上限取得・static キャッシュ)
+  └─ [同族/独立]       EXP_TO_FC_MAP  (共通フレームワーク共有、参照カウンタは独立)
+```
+
+!!! note "CONFIG_DB 直接 → SAI 経路"
+    `qosorch` は `DSCP_TO_FC_MAP` を CONFIG_DB から直接購読し SAI へ反映する。APPL_DB / STATE_DB への暗黙参照はない。FLEX_COUNTER_DB への書き込みも発生しない。
+
+> **スキャン証跡**: `qosorch.cpp:80-93, 111, 1039-1094, 1337` 読了 / `nhgmaporch.cpp:299-325` 読了。
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・制約
 
