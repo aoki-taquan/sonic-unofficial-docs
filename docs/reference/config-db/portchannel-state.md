@@ -361,6 +361,81 @@ STATE_DB `LAG_TABLE` への書き込みをトリガーとして、他テーブ�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+> 調査対象: `sonic-swss/tlm_teamd/main.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss-common/common/subscriberstatetable.cpp`
+> 調査日: 2026-05-18
+> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-pubsub.md`
+
+### SubscriberStateTable の仕組み（共通基盤）
+
+`SubscriberStateTable` はコンストラクタ内で Redis keyspace notification を PSUBSCRIBE し、テーブル変化を push 通知として受け取る (`subscriberstatetable.cpp:L20-24`)。`LAG_TABLE` に対するパターン:
+
+```
+__keyspace@6__:LAG_TABLE|*
+```
+
+(STATE_DB の db_id = 6 — `database_config.json`)
+
+起動時には既存キーをすべて `m_buffer` に積んで初期同期を行う (`subscriberstatetable.cpp:L26-42`)。
+
+### tlm_teamd — 主要購読者
+
+`tlm_teamd` (`main.cpp:L98-99`) は STATE_DB の `LAG_TABLE` を `SubscriberStateTable` で購読する唯一のプロセス:
+
+```cpp
+swss::SubscriberStateTable sst_lag(&db, STATE_LAG_TABLE_NAME);
+s.addSelectable(&sst_lag);
+```
+
+| `s.select()` 戻り値 | 処理 | select タイムアウト |
+|--------------------|------|-------------------|
+| `OBJECT` | `update_interfaces()` → `values_store.update(get_dumps(false))` | — (即時) |
+| `TIMEOUT` | `process_add_queue()` + `values_store.update(get_dumps(true))` | **1000 ms** (`main.cpp:L68`) |
+
+- `SET` イベント受信 → `mgr.add_lag(lag_name)` → 次の select で teamdctl dump を取得し `setup.*` / `runner.*` / `team_device.*` フィールドを STATE_DB に追記
+- `DEL` イベント受信 → `mgr.remove_lag(lag_name)` → teamdctl 接続を即時解除
+- サブインタフェース (`VLAN_SUB_INTERFACE_SEPARATOR` を含むキー) は `update_interfaces()` 内でスキップ (`main.cpp:L34-37`)
+
+### intfmgrd — 副次購読者（サブインタフェース管理）
+
+`intfmgrd` (`intfmgr.cpp:L50-53`) も `STATE_LAG_TABLE_NAME` を `SubscriberStateTable` で購読する（priority=200）:
+
+```cpp
+auto subscriberStateLagTable = new swss::SubscriberStateTable(stateDb,
+        STATE_LAG_TABLE_NAME, DEFAULT_POP_BATCH_SIZE, 200);
+```
+
+`STATE_LAG_TABLE_NAME` の SET/DEL イベントを受信すると `doPortTableTask()` を呼び出し、親 LAG の `admin_status` / `mtu` 変化をサブインタフェース (`PortChannelN.VID`) の APP_DB `INTF_TABLE` にカスケード更新する (`intfmgr.cpp:L1183-1186`)。
+
+### vlanmgrd / stpmgrd / nbrmgrd — ポーリング方式（非購読）
+
+`vlanmgrd` / `stpmgrd` / `nbrmgrd` は `SubscriberStateTable` による push 通知ではなく、各自タスクループ内で `m_stateLagTable.get(alias, temp)` を呼び出すポーリング方式。LAG_TABLE の変化通知は受け取らず、それぞれのトリガーイベント（VLAN_MEMBER SET・STP ポート追加等）発生時に現在値を参照する。
+
+### 通知フロー
+
+```
+teamsyncd: m_stateLagTable.set(lagName, fvVector)  [teamsync.cpp:L203]
+  │
+  └─ Redis keyspace notification: __keyspace@6__:LAG_TABLE|<lag>
+       │
+       ├─→ [tlm_teamd] select OBJECT → update_interfaces() → values_store.update()
+       │     → STATE_DB LAG_TABLE に setup.*/runner.*/team_device.* 追記 (最大 1 秒遅延)
+       │     → STATE_DB LAG_MEMBER_TABLE に各メンバフィールド書込み
+       │
+       └─→ [intfmgrd] stateLagConsumer → doPortTableTask()
+             → APP_DB INTF_TABLE|PortChannelN.VID にカスケード更新
+
+teamsyncd: m_stateLagTable.del(lagName)  [teamsync.cpp:L255]
+  └─ Redis keyspace notification: DEL event
+       ├─→ [tlm_teamd] mgr.remove_lag() → teamdctl 接続解除
+       └─→ [intfmgrd] DEL イベント → サブインタフェース状態クリーンアップ
+```
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/portchannel-state-pubsub.md`
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: `sonic-swss/teamsyncd/teamsync.cpp` (L26-30 コンストラクタ, L101-143 onMsg, L146-226 addLag, L228-259 removeLag). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
