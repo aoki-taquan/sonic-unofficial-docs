@@ -148,6 +148,49 @@ hostcfgd 起動
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-cross-refs.md`
+
+`SSH_SERVER|POLICIES` テーブルは YANG leafref を持たない。ただし `hostcfgd` の `SshServer` クラスおよび `PamLimitsCfg` クラスが以下の暗黙参照を持つ。
+
+| 参照先 | 方向 | 条件 | 根拠 |
+|-------|------|------|------|
+| `CONFIG_DB DEVICE_METADATA\|localhost` | 読み取り | PAM limits early-return ガード | `hostcfgd` L1430 |
+| `/etc/ssh/sshd_config` | 読み取り + 書き込み | `set_policies()` 実行時 (常時) | `hostcfgd` L1113, L1142 |
+| `/etc/security/limits.conf` | 書き込み | `update_config_file()` が early-return しないとき | `hostcfgd` L1468–1475 |
+| `/etc/pam.d/pam-limits-conf` | 書き込み | 同上 | `hostcfgd` L1460–1466 |
+| `systemd ssh.service` | `systemctl restart` | `sshd -T` 検証成功後 | `hostcfgd` L1152–1155 |
+| `/usr/sbin/sshd` バイナリ | 外部実行 | `sshd -T -f <tmp>` 検証 | `hostcfgd` L1150–1160 |
+
+### `DEVICE_METADATA|localhost` — PAM limits ガード
+
+`PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両方が不在の場合のみ early-return する（どちらか一方が存在すれば続行）。通常の SONiC デプロイでは `DEVICE_METADATA|localhost` は必ず存在する。
+
+```python
+# hostcfgd L1430
+if "localhost" not in device_metadata and "POLICIES" not in ssh_server_policies:
+    return
+```
+
+### sshd_config — 読み書き両方向
+
+`set_policies()` は既存の `/etc/ssh/sshd_config` を一時ファイルにコピーし、フィールドごとに `modify_single_file_inplace` で行内置換/追記した後、`sshd -T` で検証してから rename する。ファイルが存在しない場合はコピー失敗で例外が発生し、ERR ログのみ記録されて sshd は再起動されない。
+
+### PAM limits ファイル — max_sessions の最終書き込み先
+
+`max_sessions` は `SSH_CONFIG_NAMES` に含まれず `sshd_config` には反映されない。`PamLimitsCfg.render_conf_file()` が Jinja2 テンプレート（`limits.conf.j2`）経由で `/etc/security/limits.conf` に書き込む。書き込み先が存在しない場合は例外をキャッチして ERR ログのみ記録。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1113 (copy2 sshd_config) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1142 (modify_single_file_inplace) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1150-1160 (sshd -T 検証ゲート) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1152-1155 (systemctl restart ssh) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1430 (DEVICE_METADATA early-return) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1460-1475 (render_conf_file PAM) -->
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
