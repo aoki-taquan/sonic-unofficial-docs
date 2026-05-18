@@ -309,6 +309,58 @@ warm-restart 中 (`m_warmstart == true`) は `addLag()` が STATE_DB に直接�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査対象: `sonic-swss/tlm_teamd/values_store.h`, `sonic-swss/tlm_teamd/values_store.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
+> 調査日: 2026-05-18
+> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-ordering.md`
+
+STATE_DB `LAG_TABLE` への書き込みをトリガーとして、他テーブル・他 DB へのカスケード書き込みが発生する。
+
+### 1. STATE_DB `LAG_MEMBER_TABLE` への追記 (tlm_teamd)
+
+`tlm_teamd` は `SubscriberStateTable` で `LAG_TABLE` の変化を受信すると (`main.cpp:L98-107`)、`teamdctl` の JSON dump (`teamdctl_mgr.get_dumps()`) を取得し `ValuesStore::update()` → `extract_values()` を呼び出す。このとき JSON dump に含まれる各メンバポートに対して **`STATE_DB::LAG_MEMBER_TABLE|<lag_name>|<port>`** エントリを生成・更新する (`values_store.cpp:L170-184`)。
+
+書き込まれるフィールドは `m_member_paths` (`values_store.h:L60-75`) で定義されている:
+
+| フィールド (JSON パス) | 型 | 説明 |
+|-----------------------|----|------|
+| `ifinfo.dev_addr` | string | メンバポートの MAC アドレス |
+| `ifinfo.ifindex` | integer string | メンバポートの ifindex |
+| `link.up` | boolean string | リンクが物理的に UP かどうか |
+| `link_watches.list.link_watch_0.up` | boolean string | link watch の状態 |
+| `runner.actor_lacpdu_info.port` | integer string | LACP actor ポート番号 |
+| `runner.actor_lacpdu_info.state` | integer string | LACP actor 状態フラグ |
+| `runner.actor_lacpdu_info.system` | string | LACP actor システム MAC |
+| `runner.partner_lacpdu_info.port` | integer string | LACP partner ポート番号 |
+| `runner.partner_lacpdu_info.state` | integer string | LACP partner 状態フラグ |
+| `runner.partner_lacpdu_info.system` | string | LACP partner システム MAC |
+| `runner.aggregator.id` | integer string | aggregator ID |
+| `runner.aggregator.selected` | boolean string | aggregator が選択されているか |
+| `runner.selected` | boolean string | ポートが集約に選択されているか |
+| `runner.state` | string | LACP runner 状態 (`"defaulted"`, `"expired"` 等) |
+
+!!! note "LAG_TABLE エントリは削除しない"
+    `ValuesStore::remove_keys_db()` (`values_store.cpp:L284-293`) は teamdctl dump 取得失敗時に古いキーを削除する際、`table_name == "LAG_TABLE"` のエントリをスキップする。`LAG_TABLE` の削除は teamsyncd の `RTM_DELLINK` 処理のみが担う設計。
+
+### 2. APP_DB `INTF_TABLE` への連鎖書き込み (intfmgrd — サブインタフェース)
+
+`intfmgrd` は `doPortTableTask()` (`intfmgr.cpp:L1244-1270`) で `LAG_TABLE` の変化を受信し、対象 LAG にサブインタフェース（`PortChannelN.VID` 形式）が存在する場合、以下の副次書き込みを行う:
+
+| フィールド変化 | 副次処理 | 書き込み先 |
+|-------------|---------|-----------|
+| `admin_status` 変化 | `updateSubIntfAdminStatus()` → `m_appIntfTableProducer.set(subIntf, ...)` | APP_DB `INTF_TABLE|PortChannelN.VID` |
+| `mtu` 変化 | `updateSubIntfMtu()` → `m_appIntfTableProducer.set(subIntf, ...)` | APP_DB `INTF_TABLE|PortChannelN.VID` |
+
+これにより親 LAG の `admin_status` / `mtu` 変化がサブインタフェースに自動継承される (`intfmgr.cpp:L464-489, L407-461`)。
+
+### 3. STATE_DB `LAG_TABLE` へのサブインタフェース用書き込み (intfmgrd)
+
+サブインタフェース (`PortChannelN.VID`) が正常に設定されると、`IntfMgr::setSubIntfStateOk()` (`intfmgr.cpp:L543-549`) が `m_stateLagTable.set(subIntfAlias, {{"state", "ok"}})` を呼ぶ。これにより **`LAG_TABLE|PortChannelN.VID`** エントリが STATE_DB に書かれ、さらに下流処理（nbrmgrd 等）の readiness ガードとして機能する。
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `sonic-swss/teamsyncd/teamsync.cpp` (L26-30 コンストラクタ, L101-143 onMsg, L146-226 addLag, L228-259 removeLag). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
