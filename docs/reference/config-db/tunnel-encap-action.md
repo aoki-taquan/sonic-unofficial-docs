@@ -189,6 +189,64 @@ P4RT controller が単一 WriteRequest でこれらを混在させた場合で�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`FIXED_NEXTHOP_TABLE` の処理に使われる、DB フィールドではなくコード中にハードコードされた文字列定数・SAI 定数の一覧。
+
+### アクション文字列定数 (`p4orch_util.h`)
+
+| 定数名 | 値 | 用途 |
+|--------|----|------|
+| `kSetTunnelNexthop` | `"set_p2p_tunnel_encap_nexthop"` | 本ページ対象のアクション名。`validateAppDbEntry()` で比較 |
+| `kSetIpNexthop` | `"set_ip_nexthop"` | 同テーブルの他アクション（許容値） |
+| `kSetIpNexthopAndDisableRewrites` | `"set_ip_nexthop_and_disable_rewrites"` | 同テーブルの他アクション（許容値） |
+| `kSetNexthop` | `"set_nexthop"` | 同テーブルの他アクション（許容値） |
+
+`validateAppDbEntry()` はこの 4 値以外の `action` フィールドを即座に `SWSS_RC_INVALID_PARAM` で拒否する (`next_hop_manager.cpp:49-55`)。
+
+### フィールド名定数 (`p4orch_util.h`)
+
+| 定数名 | 値 | 役割 |
+|--------|----|------|
+| `kNexthopId` | `"nexthop_id"` | match フィールド名 |
+| `kTunnelId` | `"tunnel_id"` | `param/tunnel_id` の末尾部分 |
+| `kRouterInterfaceId` | `"router_interface_id"` | 禁止フィールド名（`set_p2p_tunnel_encap_nexthop` では拒否） |
+| `kNeighborId` | `"neighbor_id"` | 禁止フィールド名（`set_p2p_tunnel_encap_nexthop` では拒否） |
+| `kControllerMetadata` | `"controller_metadata"` | ホワイトリスト外だが例外的に無視 |
+| `kMatchPrefix` | `"match"` | フィールド名プレフィックス（`match/nexthop_id` の `match` 部） |
+| `kActionParamPrefix` | `"param"` | フィールド名プレフィックス（`param/tunnel_id` の `param` 部） |
+| `kFieldDelimiter` | `'/'` | `match/`・`param/` のデリミタ文字 |
+
+### テーブル名定数 (`schema.h`)
+
+| 定数名 | 値 |
+|--------|----|
+| `APP_P4RT_TABLE_NAME` | `"P4RT_TABLE"` |
+| `APP_P4RT_NEXTHOP_TABLE_NAME` | `"FIXED_NEXTHOP_TABLE"` |
+
+完全な APPL_DB キーは `P4RT_TABLE:FIXED_NEXTHOP_TABLE:<json_key>` (`schema.h` L59, L63)[^2]。
+
+### SAI 定数 (`next_hop_manager.cpp`, `next_hop_manager.h`)
+
+| 定数 / 属性 | 値 | 根拠 |
+|------------|-----|------|
+| `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP` | SAI enum (ハードコード) | `set_p2p_tunnel_encap_nexthop` 時にのみ設定 (`next_hop_manager.cpp:215-216`) |
+| `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` | SAI enum | `createNextHops()` / `removeNextHops()` のバルク操作モード (`next_hop_manager.cpp:529, 605`) |
+| `P4NextHopEntry::disable_decrement_ttl` デフォルト | `false` | 構造体メンバー初期値 (`next_hop_manager.h:38`) |
+| `P4NextHopEntry::disable_src_mac_rewrite` デフォルト | `false` | 同上 (`next_hop_manager.h:39`) |
+| `P4NextHopEntry::disable_dst_mac_rewrite` デフォルト | `false` | 同上 (`next_hop_manager.h:40`) |
+| `P4NextHopEntry::disable_vlan_rewrite` デフォルト | `false` | 同上 (`next_hop_manager.h:41`) |
+
+!!! note "disable_* 属性は set_p2p_tunnel_encap_nexthop では非適用"
+    `SAI_NEXT_HOP_ATTR_DISABLE_*` 属性 4 種は `prepareSaiAttrs()` の `gre_tunnel_id` 非空分岐では SAI に送出されない。
+    これらは `set_ip_nexthop` / `set_ip_nexthop_and_disable_rewrites` / `set_nexthop` アクション専用定数であり、
+    `set_p2p_tunnel_encap_nexthop` の SAI 属性リストには含まれない (`next_hop_manager.cpp:206-260`)。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-constants.md`
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来デフォルト・暗黙挙動
 
