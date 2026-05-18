@@ -135,6 +135,7 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
 ## 書込み順依存 (Phase B)
 
 `VRRP` / `VRRP6` テーブルはインターフェース存在・インスタンス存在・YANG leafref という 3 系統の順序依存を持つ。`sonic-utilities/config/main.py` の VRRP サブコマンド全行精読と `sonic-vrrp.yang` の leafref 確認で抽出。
@@ -182,7 +183,7 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 | 5 | VIP 重複禁止 | 非順序制約 | `check_vrrp_ip_exist` で事前確認 |
 | 6 | macvlanmgrd 起動 → macvlan 反映 | 一過性 (起動後リプレイ) | 運用上無視可 |
 
-<!-- /ordering (Phase B) -->
+<!-- /ordering -->
 
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
