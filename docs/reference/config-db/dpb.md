@@ -245,6 +245,41 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpb-constants.md -->
+
+`BREAKOUT_CFG` テーブルおよびその書込みシーケンスに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `config/config_mgmt.py` および `src/sonic-config-engine/portconfig.py`。
+
+### ASIC DB ポーリングタイムアウト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MAX_WAIT` | `60` 秒 | `_verifyAsicDB()` のポーリングタイムアウト。1 秒 sleep × 60 回でポート消滅を確認し、超過時は `Exception` を raise して新ポート追加をブロック | `config_mgmt.py:429` |
+
+`MAX_WAIT` は `breakOutPort()` のローカル定数であり、CLI オプションや設定ファイルで変更する手段は存在しない。syncd / orchagent の応答が遅延する環境（高負荷・デバッグビルド等）ではタイムアウトに達しやすい。
+
+### portconfig.py 文字列定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PORT_STR` | `"Ethernet"` | 子ポート名生成のプレフィックス。ポート名が `Ethernet<N>` 形式であることをハードコードで仮定 | `portconfig.py:36` |
+| `BRKOUT_MODE` | `"default_brkout_mode"` | `hwsku.json` から `default_brkout_mode` フィールドを取り出すキー名 | `portconfig.py:37` |
+| `CUR_BRKOUT_MODE` | `"brkout_mode"` | `BREAKOUT_CFG` に書き込むフィールド名 | `portconfig.py:38` |
+| `INTF_KEY` | `"interfaces"` | `hwsku.json` のインタフェースエントリを参照するキー名 | `portconfig.py:39` |
+| `BRKOUT_PATTERN` | `r'(\d{1,6})x(\d{1,6}G?)(\[(\d{1,6}G?,?)*\])?(\((\d{1,6})\))?'` | breakout mode 文字列のパース正規表現。各数値フィールドは最大 6 桁 | `portconfig.py:42` |
+| `BRKOUT_PATTERN_GROUPS` | `6` | 正規表現マッチグループ数の整合性検証用定数 | `portconfig.py:43` |
+
+### YANG 制約値（設定可能範囲の上限）
+
+| フィールド | YANG 制約 | 用途 | ソース |
+|-----------|----------|------|--------|
+| `port-name`（key） | `length 1..255` | 親ポート名の最大長 | `sonic-breakout_cfg.yang:34` |
+| `brkout_mode` | `length 1..64` | breakout mode 文字列の最大長 | `sonic-breakout_cfg.yang:41` |
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
