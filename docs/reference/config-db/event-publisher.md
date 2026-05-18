@@ -262,6 +262,54 @@ YANG definition が存在しないため、デフォルト値はすべて `event
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`eventd` および `events_common` に存在する、`init_cfg.json` / YANG では管理されないハードコード定数の一覧。
+出典は `sonic-buildimage/src/sonic-eventd/src/eventd.cpp`、`eventd.h`、`events_common.h`。
+
+### キャッシュ・バッファサイズ定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MB(N)` | `(N) * 1024 * 1024` | バイト換算マクロ | `eventd.cpp:30` |
+| `EVT_SIZE_AVG` | `150` バイト | キャッシュサイズ計算用イベント平均サイズ | `eventd.cpp:31` |
+| `MAX_CACHE_SIZE` | `MB(100) / EVT_SIZE_AVG` = **699050** 件 | `cache_max_cnt` 空文字列時のフォールバック上限 | `eventd.cpp:33` |
+| `READ_SET_SIZE` | `100` 件 | `EVENT_CACHE_READ` 1 回あたりの返却件数上限 | `eventd.cpp:36` |
+| `MAX_PUBLISHERS_COUNT` | `1000` | runtime-ID キャッシュ上限（同時パブリッシャー最大数） | `events_common.h:45` |
+
+### タイムアウト・インターバル定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `LINGER_TIMEOUT` | `100` ms | ZMQ ソケット linger タイムアウト（close 後の送信バッファ保持時間） | `events_common.h:54` |
+| `CAPTURE_SOCK_TIMEOUT` | `800` ms | capture SUB ソケットの `zmq_recv` タイムアウト（制御シグナル検知のためのポーリング周期） | `eventd.cpp:41` |
+| `CACHE_DRAIN_IN_MILLISECS` | `1000` ms | capture stop 時の ZMQ ドレイン待機時間 | `events_common.h:470` |
+| `HEARTBEAT_INTERVAL_SECS` | `2` 秒 | `stats_collector` が発行するハートビート間隔のデフォルト値 | `eventd.cpp:43` |
+| `STATS_HEARTBEAT_MIN` | `300` ms | ハートビートカウント最小分解能（内部ポーリング周期）。`set_heartbeat_interval(2)` は `(2000 + 299) / 300 = 7` カウント → **2100 ms** が実効値 | `eventd.h:24` |
+
+### キャプチャサービス・ポーリング定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `CAPTURE_SERVICE_POLLING_DURATION` | `10` ms | キャプチャループ初期ポーリング間隔 | `eventd.h:25` |
+| `CAPTURE_SERVICE_POLLING_INCREMENT` | `10` ms | ポーリング間隔の増分（バックオフ） | `eventd.h:26` |
+| `CAPTURE_SERVICE_POLLING_MAX_DURATION` | `100` ms | ポーリング間隔の上限 | `eventd.h:27` |
+| `CAPTURE_SERVICE_POLLING_RETRIES` | `100` 回 | キャプチャ停止待ちの最大リトライ回数 | `eventd.h:28` |
+
+### イベント識別子定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `EVENTD_PUBLISHER_SOURCE` | `"sonic-events-eventd"` | `eventd` 自身が発行するハートビートイベントのソース名 | `eventd.cpp:46` |
+| `EVENTD_HEARTBEAT_TAG` | `"heartbeat"` | ハートビートイベントのタグ名（`sonic-events-eventd:heartbeat` として発行） | `eventd.cpp:47` |
+| `INIT_CFG_PATH` | `"/etc/sonic/init_cfg.json"` | `read_init_config()` が参照する設定ファイルパス（変更不可） | `events_common.h:129` |
+| `CFG_EVENTS_KEY` | `"events"` | `init_cfg.json` 内の eventd 設定セクションキー名 | `events_common.h:130` |
+
+> **注意**: `HEARTBEAT_INTERVAL_SECS = 2` はデフォルト値だが、`event_service` REQ/REP (:5572) 経由の `EVENT_OPTIONS` リクエストで動的に変更可能。最小分解能 `STATS_HEARTBEAT_MIN = 300 ms` により、実際の発行間隔は `ceil(設定秒 * 1000 / 300) * 300` ms に丸められる。
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
