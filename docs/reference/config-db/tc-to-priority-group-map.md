@@ -272,6 +272,37 @@ REST/gNMI 書き込み経路なし。
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照・共依存テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-priority-group-map-cross-refs.md`
+
+`TC_TO_PRIORITY_GROUP_MAP` は YANG 上は自己完結したテーブルだが、実装レベルで `PORT_QOS_MAP` と `TUNNEL_DECAP_TABLE` の両方から参照される。
+
+| 参照先テーブル / コンポーネント | YANG leafref | 参照種別 | 非充足時の挙動 | evidence |
+|---|:---:|---|---|---|
+| `PORT_QOS_MAP.tc_to_pg_map` | ✅ | **被参照**（PORT_QOS_MAP が OID を名前解決） | マップ未登録時に `PORT_QOS_MAP` SET は `task_need_retry`（自動再試行） | `qosorch.cpp:106`, `qosorch.cpp:2120-2131` |
+| `TUNNEL_DECAP_TABLE.decap_tc_to_pg_map` | ✗ | **被参照**（TunnelDecapOrch が名前解決） | マップ未登録時にトンネル SET は `task_need_retry`（自動再試行） | `tunneldecaporch.cpp:230-242`, `qosorch.cpp:114` |
+| `PortsOrch::allPortsReady()` | ✗ | 起動順序ガード | `false` の間は全 QoS テーブル処理がブロック | `qosorch.cpp:2253-2258` |
+
+### PORT_QOS_MAP leafref（YANG 制約あり）
+
+`sonic-port-qos-map.yang` の `PORT_QOS_MAP_LIST.tc_to_pg_map` は `TC_TO_PRIORITY_GROUP_MAP_LIST.name` への leafref が定義されている。YANG バリデーション時点で `TC_TO_PRIORITY_GROUP_MAP` に存在しないマップ名を `PORT_QOS_MAP` に書くと YANG エラーになる。
+
+### TUNNEL_DECAP_TABLE — leafref なし
+
+`sonic-tunnel.yang` の `TUNNEL_DECAP_TABLE.decap_tc_to_pg_map` は `type string`（leafref なし）。YANG レベルで制約されず、実装レベル（`TunnelDecapOrch::doTask` での `resolveTunnelQosMap()` 呼び出し）のみで参照整合性を担保する。
+
+### doTask() 実行順序による自然解決
+
+`QosOrch::doTask()` は `PORT_QOS_MAP` executor を最後に drain し、`TC_TO_PRIORITY_GROUP_MAP` を含む全 QoS マップを先に drain する（`qosorch.cpp:2231-2252`）。同一イベントループで `TC_TO_PRIORITY_GROUP_MAP` SET → `PORT_QOS_MAP` SET の順に投入されていれば `task_need_retry` なしで 1 イテレーションで解決される。
+
+### BUFFER_PG / PFC_PRIORITY_TO_PRIORITY_GROUP_MAP との間接関係
+
+TC_TO_PRIORITY_GROUP_MAP が TC → PG を定義し、`BUFFER_PG` が PG に対するバッファプロファイルを定義する。lossless フロー（PFC 対象）には両方が揃って初めて正常動作する。ただし orchagent 内での直接依存（`task_need_retry` 連鎖）はなく、SAI レベルで独立した操作として扱われる。
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
