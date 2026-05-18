@@ -270,6 +270,94 @@ DpuStateUpdater.deinit()  ← dpu_data_plane_state, dpu_control_plane_state を 
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd update_dpu_state:864-891 / try_get:125-139 / set_initial_dpu_admin_state:1364-1405 / DpuChassisdDaemon.run:1408-1461 -->
+
+`DPU_STATE` は `chassisd` が **push 型** で書き込む CHASSIS_STATE_DB テーブルであり、orchagent の `task_need_retry` / `task_failed` 機構とは異なる failure/recovery モデルを持つ。
+
+### failure パターン概要
+
+| パターン | トリガー | 挙動 | recovery |
+|---------|---------|------|----------|
+| **platform API `NotImplementedError`** | `get_oper_status()` / `get_dataplane_state()` / `get_controlplane_state()` が未実装 | `try_get()` がデフォルト値 (`MODULE_STATUS_OFFLINE` / `False`) を返す。例外はログなし | fallback ロジック (DB 参照) に自動切り替え |
+| **DB 接続エラー (`update_dpu_state`)** | `daemon_base.db_connect()` / `hset()` が例外 | `except Exception as e: log_error(...)` でログのみ。DB への書き込みは失敗し **retry なし** | 次のポーリングサイクル (10 秒後) で再試行 |
+| **`midplane_initialized = False`** | `chassis.init_midplane_switch()` が `False` を返す | `check_midplane_reachability()` が即 `return` し midplane 状態を更新しない | midplane スイッチ初期化成功まで永続的にスキップ |
+| **`set_initial_dpu_admin_state` 単一 DPU 例外** | `get_module()` / `get_oper_status()` 等で例外 | `except Exception as e: log_error(...)` でログ。当該 DPU の `DPU_STATE` は未初期化のまま残る | 次のポーリングで `check_midplane_reachability()` が補完 |
+| **`DpuStateUpdater.update_state` での評価エラー** | `_get_dp_state()` / `_get_cp_state()` 内で例外 | 例外は上位のポーリングループに伝搬。`DpuChassisdDaemon.run()` がキャッチしない場合は supervisord が再起動 | supervisord がプロセス再起動 (非ゼロ exit) |
+
+### try_get による platform API 失敗の吸収
+
+`try_get()` (`chassisd:125-139`) は platform API 呼び出しを安全にラップし、`NotImplementedError` または任意の例外時に `default` 値を返す:
+
+```python
+# chassisd:125-139
+def try_get(callback, *args, **kwargs):
+    try:
+        ret = callback(*args)
+    except NotImplementedError:
+        default = kwargs.get('default', NOT_AVAILABLE)
+        ret = default
+    except Exception:
+        default = kwargs.get('default', NOT_AVAILABLE)
+        ret = default
+    return ret
+```
+
+`try_get` を経由する代表的な呼び出しと fallback 値:
+
+| 呼び出し | default | 影響 |
+|---------|---------|------|
+| `chassis.init_midplane_switch()` | `False` | `midplane_initialized = False` → `check_midplane_reachability` が無効化 |
+| `module.get_oper_status()` | `MODULE_STATUS_OFFLINE` | 起動時に全 DPU が `op_state = 'down'` で初期化される |
+| `module.get_name()` | `'MODULE {index}'` | DPU_STATE キーが `DPU_STATE|MODULE 0` 等になる |
+| `module.get_midplane_ip()` | `'0.0.0.0'` | CHASSIS_MIDPLANE_TABLE への IP が無効値になる |
+| `module.is_midplane_reachable()` | `False` | 全 DPU が midplane 到達不可として処理される |
+
+### DB 書き込み失敗時の retry なし設計
+
+`SmartSwitchModuleUpdater.update_dpu_state()` (`chassisd:864-891`) は DB 書き込みエラー時に `log_error` のみでリターンし、**retry キューには積まない**:
+
+```python
+# chassisd:864-891
+def update_dpu_state(self, key, state):
+    try:
+        ...
+        for field, value in updates.items():
+            self.chassis_state_db.hset(key, field, value)
+    except Exception as e:
+        self.log_error(f"Unexpected error: {e}")
+```
+
+この設計の意図: `DPU_STATE` は **volatile な状態テーブル** であり、次のポーリングサイクル (`CHASSIS_INFO_UPDATE_PERIOD_SECS = 10` 秒) で再評価・再書き込みされるため、単一サイクルの書き込み失敗は自己修復する。
+
+### supervisord による自動再起動
+
+`chassisd` は `supervisord` 管理下で動作し、非ゼロ exit code で終了した場合に自動再起動される (`chassisd:114-116`):
+
+```python
+# chassisd:114-116
+# This daemon should return non-zero exit code so that supervisord will
+# restart it automatically.
+exit_code = 0
+```
+
+`SIGINT` / `SIGTERM` 受信時は `exit_code = 128 + sig` を設定して終了するため、supervisord が再起動をトリガーする。再起動後は `set_initial_dpu_admin_state()` から再実行され、DPU_STATE が再初期化される。
+
+### 部分初期化が残るケース
+
+`set_initial_dpu_admin_state()` (`chassisd:1364-1405`) はモジュールごとに `try/except` を持つが、**ループ全体は例外でも継続**する。特定 DPU の初期化が失敗した場合、当該 `DPU<N>` の `DPU_STATE` フィールドが書き込まれないまま残る可能性がある。
+
+```python
+# chassisd:1400-1401
+except Exception as e:
+    self.log_error(f"Error in run: {str(e)}", exc_info=True)
+```
+
+初期化漏れが発生した DPU は `check_midplane_reachability()` の次回ポーリングで midplane 到達性に基づいて補完される。ただし CP/DP state (`dpu_control_plane_state` / `dpu_data_plane_state`) は `DpuStateUpdater`(DPU 側 chassisd) が評価するため、DPU 側デーモンが正常起動するまでは未書き込みのままとなる。
+<!-- /failure -->
+
 ## 購読者
 
 - `chassisd` (`SmartSwitchModuleUpdater` / `DpuStateUpdater`) — 書き込み元
