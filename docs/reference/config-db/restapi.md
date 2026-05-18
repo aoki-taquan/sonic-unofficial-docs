@@ -254,4 +254,49 @@ REST/gNMI 書き込み経路なし
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> **調査根拠**: `supervisord.conf`, `rest-server.sh`, `mgmt_vars.j2`, `minigraph.py` L2689–2702, `db_migrator.py` L608–619 精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/restapi-ordering.md`
+
+### コンテナ起動時シーケンス
+
+`docker-sonic-mgmt-framework` コンテナは supervisord が以下の優先順序でプロセスを制御する:
+
+```
+1. rsyslogd 起動 (priority=1)
+2. start.sh 実行 (priority=2, wait_for=rsyslogd:running)
+3. rest-server.sh 実行 (priority=3, wait_for=start:exited)
+   ├─ sonic-cfggen -d -t mgmt_vars.j2 → REST_SERVER / x509 を CONFIG_DB から一括取得
+   ├─ RESTAPI|config.client_auth / log_level / port 読込み
+   ├─ RESTAPI|certs (server_crt / server_key / ca_crt) 読込み
+   ├─ 未設定の場合は DEVICE_METADATA|x509 をフォールバック参照
+   └─ 証明書も未設定の場合は /tmp/ に自己署名証明書を自動生成して起動
+```
+
+`rest-server.sh` は `start:exited` 待機後に起動するため、CONFIG_DB への書込みが必ず先行する。
+
+### テーブル間の書込み順依存
+
+| # | 依存関係 | 強制度 | 備考 |
+|---|----------|--------|------|
+| 1 | `RESTAPI|certs` 書込み → `rest-server.sh` 起動 | **起動時保証済み** | supervisord `wait_for=start:exited` が順序を保証 |
+| 2 | `DEVICE_METADATA\|localhost.x509` 先行書込み | **任意 (フォールバック)** | `RESTAPI|certs` が未設定の場合のみ参照。minigraph.py が両者を同一パスで生成するため通常は問題なし |
+| 3 | `db_migrator` による `RESTAPI` 移植 | **既存エントリ優先** | `config_db.get_entry('RESTAPI', 'config')` が空の場合のみ書込む。既存エントリは上書きしない (`db_migrator.py` L614–619) |
+| 4 | `minigraph.py` が `RESTAPI` を生成 | **minigraph 内部** | `FEATURE` テーブルと同一の minigraph 解析パスで生成される (`minigraph.py` L2689-2702) |
+| 5 | `RESTAPI|config` / `RESTAPI|certs` 変更 → `docker-sonic-mgmt-framework` 再起動 | **必須後続** | hot reload 未対応。変更反映にはコンテナ再起動が必要 |
+
+### certs の解決優先順位
+
+`rest-server.sh` が証明書パスを決定する順序:
+
+1. `RESTAPI|certs` (CONFIG_DB の `REST_SERVER` テーブル) に `server_crt` / `server_key` / `ca_crt` が設定されている場合はそれを使用
+2. 上記が未設定かつ `DEVICE_METADATA|localhost.x509` にパスが設定されている場合はフォールバック参照
+3. どちらも未設定の場合は `generate_cert --host="localhost,127.0.0.1"` で `/tmp/cert.pem` / `/tmp/key.pem` を自動生成
+
+本番環境では `RESTAPI|certs` を明示的に設定しないと自己署名証明書が使用される点に注意。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
