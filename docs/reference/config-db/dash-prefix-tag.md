@@ -279,6 +279,74 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dash-prefix-tag-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis / ZMQ 購読方式
+
+`DashAclOrch` は `ZmqOrch` を継承する (`dashaclorch.h:33`)。`ZmqOrch::addConsumer()` は DB が `DPU_APPL_DB` の場合、`ZmqServer` の有無によって二系統の Executor を切り替える。
+
+| 系統 | 条件 | Executor 型 | 購読 API |
+|------|------|------------|---------|
+| ZMQ 有効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = true`（デフォルト） | `ZmqConsumer`（`ZmqConsumerStateTable` ベース） | ZMQ PUSH/PULL ソケット受信 |
+| ZMQ 無効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = false` | `Consumer`（`ConsumerStateTable` ベース） | Redis channel PUBLISH/SUBSCRIBE |
+
+**購読テーブル** (`orchdaemon.cpp:1371-1377`):
+
+`DASH_PREFIX_TAG_TABLE` は `DashAclOrch` が購読する 5 テーブルのひとつ。
+
+| テーブル | DB |
+|----------|----|
+| `DASH_PREFIX_TAG_TABLE` | DPU_APPL_DB |
+| `DASH_ACL_IN_TABLE` | DPU_APPL_DB |
+| `DASH_ACL_OUT_TABLE` | DPU_APPL_DB |
+| `DASH_ACL_GROUP_TABLE` | DPU_APPL_DB |
+| `DASH_ACL_RULE_TABLE` | DPU_APPL_DB |
+
+### ZMQ 有効化フラグ
+
+`DEVICE_METADATA|localhost` の `orch_northbond_dash_zmq_enabled` フィールドで制御。未設定時はデフォルト `true` (ZMQ 有効)。
+
+### ZMQ 有効時のデータフロー
+
+```
+gNMI / SDN コントローラ
+  ↓ ZmqProducerStateTable (DPU_APPL_DB, tcp://localhost:<port>)
+ZMQ チャネル (PUSH/PULL)
+  ↓
+ZmqServer (orchagent 内)
+  ↓ ZmqConsumerStateTable.pops()
+ZmqConsumer.execute() → addToSync(entries) → drain()
+  ↓
+DashAclOrch::doTask(ConsumerBase&)  ← テーブル名で分岐
+  └─ DASH_PREFIX_TAG_TABLE → taskUpdateDashPrefixTag / taskRemoveDashPrefixTag
+       ↓
+     DashTagMgr::create / update / remove (m_tag_table)
+```
+
+`ZmqConsumer` はソケットイベント駆動で即時 wake up する（SELECT_TIMEOUT なし）。`ordered_queue = false`（デフォルト）のため FIFO 保証なし。
+
+### ZMQ 無効時のデータフロー
+
+```
+gNMI / SDN コントローラ
+  ↓ ProducerStateTable → Redis PUBLISH (DPU_APPL_DB channel)
+ConsumerStateTable.pops() (SELECT ループ)
+  ↓
+DashAclOrch::doTask(ConsumerBase&)
+  └─ DASH_PREFIX_TAG_TABLE → taskUpdateDashPrefixTag / taskRemoveDashPrefixTag
+```
+
+### STATE_DB / 応答 publish の有無
+
+`DashTagMgr` は処理結果を STATE_DB / APPL_DB へ publish しない。タグはメモリ内 `m_tag_table` にのみ保持され、orchagent 外部からは直接観測できない。SDN コントローラはタグ到達確認に STATE_DB 応答を利用できず、ZMQ 経由の処理成功を前提に次ステップ (ACL rule 投入) へ進む設計となっている。
+
+!!! note "タグ参照時の非同期確認"
+    `DASH_ACL_RULE_TABLE` の rule 投入が `task_need_retry` でキューに残った場合、ACL rule が STATE_DB に出現することでタグ投入の成功を間接的に確認できる。タグ単体の STATE_DB エントリは作成されない。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-pubsub.md`
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
