@@ -366,6 +366,67 @@ EVPN 経由で学習した `FDB_ORIGIN_VXLAN_TUNNEL` origin の FDB エントリ
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`FdbOrch::doTask()` (`fdborch.cpp:707`) と `addFdbEntry()` / `removeFdbEntry()` のコード精読から、以下の失敗パターンを確認した。
+
+### SET 時の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 挙動 | retry | ログレベル |
+|---|-----------|---------|------|-------|-----------|
+| 1 | VLAN 未解決（VLAN OID 取得失敗） | `doTask:739` | `it++`（無制限待機ループ） | 無制限 | INFO |
+| 2 | VXLAN DIP トンネルポート未作成 | `doTask:836` | erase（silently drop） | なし | — |
+| 3 | VXLAN SIP VTEP 未取得（`getEVPNVtep()` NULL） | `doTask:847` | erase（silently drop） | なし | — |
+| 4 | `addFdbEntry()` が `false` を返した | `doTask:870` | `it++`（無制限 retry） | 無制限 | INFO/ERROR |
+| 5 | SAI `create_fdb_entry()` 失敗 | `addFdbEntry:1532` | SWSS_LOG_ERROR → `handleSaiCreateStatus` 判定 | 条件次第 | ERROR |
+| 6 | SAI `set_fdb_entry_attribute()` 失敗（MAC update） | `addFdbEntry:1508` | SWSS_LOG_ERROR → `handleSaiSetStatus` 判定 | 条件次第 | ERROR |
+| 7 | `type` フィールドが有効値以外 | `doTask:830` | `assert()` → orchagent クラッシュ（SIGABRT） | 再起動後 | — |
+
+### DEL 時の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 挙動 | retry | ログレベル |
+|---|-----------|---------|------|-------|-----------|
+| 8 | origin 不一致（`fdbData.origin != origin`） | `removeFdbEntry:1654` | erase（silently ignore、`saved_fdb` クリーンアップのみ） | なし | INFO |
+| 9 | SAI `remove_fdb_entry()` 失敗 | `removeFdbEntry:1702` | SWSS_LOG_ERROR → `handleSaiRemoveStatus` 判定 → `it++` | 無制限 | ERROR |
+| 10 | エントリが orchagent キャッシュ（`m_entries`）に不在 | `removeFdbEntry:1649` | `deleteFdbEntryFromSavedFDB()` → `return true`（成功扱い） | なし | INFO |
+
+### 代表的な失敗コード
+
+**SAI create 失敗（Pattern 5）**:
+```cpp
+// fdborch.cpp:1532-1541
+status = sai_fdb_api->create_fdb_entry(&fdb_entry, (uint32_t)attrs.size(), attrs.data());
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to create %s FDB %s in %s on %s, rv:%d",
+            fdbData.type.c_str(), entry.mac.to_string().c_str(),
+            vlan.m_alias.c_str(), port_name.c_str(), status);
+    task_process_status handle_status = handleSaiCreateStatus(SAI_API_FDB, status);
+    if (handle_status != task_success)
+    {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+}
+```
+
+**assert クラッシュ（Pattern 7）**:
+```cpp
+// fdborch.cpp:830
+assert(type == "dynamic" || type == "dynamic_local" || type == "static");
+```
+
+有効値以外の `type` 値が CONFIG_DB `FDB` に書き込まれると orchagent プロセスが SIGABRT でクラッシュする。orchagent 再起動後、CONFIG_DB にエントリが残存しているため再処理される。
+
+### STATE_DB・ERROR_TABLE への影響
+
+- **STATE_DB `FDB_TABLE`**: `storeFdbEntryState()` は `addFdbEntry()` が SAI 成功後にのみ呼ばれる。SAI 失敗時は書き込まれない。
+- **ERROR_TABLE**: 書き込みなし。
+- **CONFIG_DB `FDB` エントリ**: 失敗後も残存する（orchagent は書き戻さない）。
+
+> **証跡**: `FdbOrch::doTask(Consumer&)` L707-921 精読、`addFdbEntry()` L1277-1582、`removeFdbEntry()` L1631-1715。中間ファイル: `meta/_intermediate/cdb-flow/fdb-failure.md`
+<!-- /failure -->
+
 <!-- side-effects -->
 ## 副次 DB 書込（Phase F）
 
