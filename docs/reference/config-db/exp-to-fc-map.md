@@ -477,3 +477,49 @@ DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセ
 参照側 (`PORT_QOS_MAP.exp_to_fc_map`) の解除後に DEL が再実行されて連鎖が解消する。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-pubsub.md`
+> ソース: `sonic-swss/orchagent/orchdaemon.cpp:367-384`, `orch.cpp:1186-1196`, `qosorch.cpp:1317-1345,2231-2300`
+
+### 購読方式
+
+`QosOrch` は `orchdaemon.cpp:367-384` で `qos_tables` ベクタの一員として `CFG_EXP_TO_FC_MAP_TABLE_NAME` を指定され、`new QosOrch(m_configDb, qos_tables)` に渡される。基底 `Orch(db, tableNames)` が `Orch::addConsumer()` を呼び、CONFIG_DB ID の分岐により **`swss::SubscriberStateTable`** が選択される（`orch.cpp:1186-1196`）。
+
+`SubscriberStateTable` は Redis keyspace 通知 `__keyspace@<dbId>__:EXP_TO_FC_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、固定）。
+
+### ハンドラ登録とディスパッチ
+
+```
+orchdaemon.cpp:367-384  qos_tables に CFG_EXP_TO_FC_MAP_TABLE_NAME を追加
+qosorch.cpp:1338        initTableHandlers() で m_qos_handler_map[CFG_EXP_TO_FC_MAP_TABLE_NAME]
+                         = &QosOrch::handleExpToFcTable を登録
+qosorch.cpp:2231-2252   QosOrch::doTask() が PORT_QOS_MAP / QUEUE より先に全 QoS map を drain
+                         （EXP_TO_FC_MAP の先行処理を保証）
+qosorch.cpp:2253-2300   QosOrch::doTask(Consumer&) がハンドラ関数ポインタ経由でディスパッチ
+```
+
+`handleExpToFcTable()` → `ExpToFcMapHandler::processWorkItem()` → `ExpToFcMapHandler::convertFieldValuesToAttributes()` → `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()`。
+
+### select タイムアウト・リトライ
+
+select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`）。keyspace 通知到着時は即時 wake up。リトライキャッシュは未使用で `m_toSync` 残留方式（`task_need_retry` 時はエントリを保持し次回 drain で再処理）。
+
+| 観点 | 内容 |
+|---|---|
+| 購読方式 | `SubscriberStateTable`（keyspace `PSUBSCRIBE` + `HGETALL`） |
+| バッチサイズ | 128（`DEFAULT_POP_BATCH_SIZE`、固定） |
+| select タイムアウト | 1000 ms |
+| SAI 呼び出し | `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()` |
+| リトライ方式 | `m_toSync` 残留（キャッシュなし） |
+| channel PUBLISH | 使わない |
+| TTL | 未使用（CONFIG_DB 永続） |
+
+### 起動時スナップショット
+
+`Orch` 基底クラスは SELECT ループ開始前に `getContent()` で既存エントリをスナップショット取得して `m_toSync` に積む。`allPortsReady()` が false の間は `doTask()` が即 return するため、スナップショット分は全ポート ready 後に一括処理される（silent defer）。
+
+> **Evidence**: `orchdaemon.cpp:367-384` (QosOrch 生成・qos_tables 登録); `orch.cpp:1186-1196` (SubscriberStateTable 生成); `qosorch.cpp:1317-1345` (initTableHandlers / handleExpToFcTable 登録); `qosorch.cpp:2231-2300` (doTask drain 順序)
+<!-- /pubsub -->
