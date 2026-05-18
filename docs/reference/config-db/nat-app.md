@@ -135,6 +135,33 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 
 フィールドなし (`NULL: NULL`)。key の IP アドレスが DNAT pool に登録されたことを示すフラグテーブル。1 セグメント以外のキーは ERROR + erase (`natorch.cpp:2983-2987`)。
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`NatOrch` は `NAT_GLOBAL_TABLE.admin_mode` が `"enabled"` になるまで NAT/NAPT エントリを SAI に降ろさず内部キャッシュに保持する。APPL_DB への書き込み順序によって SAI 操作のタイミングが変わる。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `NAT_GLOBAL_TABLE.admin_mode = "enabled"` → NAT_TABLE / NAPT_TABLE エントリ SAI 反映 | **強制先行**（enable 前エントリはキャッシュ保持のみ） | `enableNatFeature()` 内 `addAllNatEntries()` が既存キャッシュを一括 SAI 投入 |
+| 2 | `NAT_DNAT_POOL_TABLE` → DNAT SAI エントリ登録 | enable 後に先行推奨 | `enableNatFeature()` 内 `addAllDnatPoolEntries()` が既存 pool を一括投入 |
+| 3 | `NAT_DNAT_POOL_TABLE` 書込み → `NAT_TABLE (nat_type=dnat)` / `NAPT_TABLE (nat_type=dnat)` 書込み | 順序任意（NatOrch が独立管理） | pool と NAT エントリは別テーブル・別 `doTask` で処理され依存なし |
+| 4 | `natmgrd` CONFIG_DB → APPL_DB 変換 → `NatOrch` 消費 | 非同期パイプライン | `natmgrd` は `isNatEnabled() == false` 時タイムアウト変更を APPL_DB に書かない |
+| 5 | `NAT_GLOBAL_TABLE.admin_mode = "disabled"` → 全 NAT エントリ SAI 削除 | 即時（`disableNatFeature()` で全削除） | re-enable 時は `enableNatFeature()` でキャッシュから再投入 |
+| 6 | 動的エントリ (natsyncd) 書込み → `NAT_GLOBAL_TABLE.admin_mode = "enabled"` 後 | 任意（キャッシュに積まれ enable 時一括投入） | disabled 状態で書かれたエントリは `m_natEntries` に保持、enable で SAI へ |
+| 7 | NH 解決 (NeighOrch / RouteOrch) → DNAT エントリ SAI 反映 | 非同期（NH 解決待ち） | `gNhTrackingSupported == true` 時は `addDnatToNhCache()` 経由で NH 解決後に SAI 投入 |
+
+### 主要な制約詳細
+
+**NAT_GLOBAL_TABLE 先行必須 (依存 #1)**: `addNatEntry()` は `isNatEnabled() == false` の場合 WARN ログを出して `return true` する（エントリは `m_natEntries` に保持）。SAI API は呼ばれない。`doNatGlobalTableTask()` が `admin_mode = "enabled"` を受信すると `enableNatFeature()` が呼ばれ、内部で `addAllNatEntries()` が既存キャッシュ全エントリを順次 SAI に投入する。このため NAT_TABLE エントリを先に書いても、`NAT_GLOBAL_TABLE.admin_mode = "enabled"` が書かれるまで SAI エントリは存在しない（evidence: `natorch.cpp:1907-1913`, `natorch.cpp:2534-2582`, `natorch.cpp:3178-3260`）。
+
+**DNAT Pool と DNAT エントリの独立性 (依存 #3)**: `doDnatPoolTableTask()` と `doNatTableTask()` は独立した consumer handler として動作し、相互にブロックしない。NAT_TABLE の DNAT エントリは Pool エントリの存在に依存せず SAI `sai_nat_api` に投入される。Pool は `addHwDnatPoolEntry()` で別途 SAI に登録される。どちらを先に書いても NatOrch は両者を独立して処理する（evidence: `natorch.cpp:2968-3040`, `natorch.cpp:1866-1937`）。
+
+**NH 解決依存の DNAT (依存 #7)**: `gNhTrackingSupported == true` のプラットフォームでは、DNAT エントリを処理する際に `addDnatToNhCache()` が `m_neighOrch->getNeighborEntry()` で隣接解決を試みる。未解決の場合は `m_routeOrch->attach(this, translatedIp)` で RouteOrch に observer 登録し、NextHop 解決通知を受けて `addHwDnatEntry()` を遅延実行する。この間 DNAT エントリは内部キャッシュに留まり SAI に降りない（evidence: `natorch.cpp:391-430`, `natorch.cpp:407-414`）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
