@@ -347,6 +347,65 @@ YANG バリデーションで強制される値域はコードではなく YANG 
 > **Evidence**: `qosorch.h:11,18,34-35`; `qosorch.cpp:61,67,245-246,265,894-895,913`; `sonic-dscp-tc-map.yang:40-66`; `sonic-tc-priority-group-map.yang:40-65`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書き込み・連鎖副作用 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-side-effects.md`
+
+`DSCP_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DSCP_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) の CONFIG_DB 書き込みが引き起こす副次的な DB 変更および連鎖動作を記述する。CONFIG_DB → QosOrch 直結であり、cfgmgr ステージ / APPL_DB ステージは存在しない。
+
+### DSCP_TO_TC_MAP (段階 1) の副次書き込み
+
+| 操作 | 副次書き込み先 DB / テーブル | フィールド | 条件 |
+|------|--------------------------|----------|------|
+| SET (新規) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` 新規 | `create_qos_map(SAI_QOS_MAP_TYPE_DSCP_TO_TC, ...)` (qosorch.cpp:265-276) |
+| SET (更新) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `set_qos_map_attribute(...)` in-place 更新; 全参照ポートに即時反映 (qosorch.cpp:207) |
+| DEL | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` 削除 | 非参照時のみ (qosorch.cpp:284-295) |
+
+**in-place 更新の重要特性**: `set_qos_map_attribute` は SAI オブジェクト OID を変えずにマップ内容を書き換えるため、`PORT_QOS_MAP` や `TUNNEL_DECAP_TABLE` が持つバインドはそのまま有効となり、**参照中の全ポート・全トンネルに即時反映**される（PORT_QOS_MAP の再適用不要）。
+
+### PORT_QOS_MAP バインド時の連鎖副次書き込み
+
+`PORT_QOS_MAP` SET は `dscp_to_tc_map` / `tc_to_pg_map` フィールドだけでなく、同一トランザクションで PFC ビットマスクも処理し、ポート SAI オブジェクトを複数属性にわたって変更する。
+
+| 操作 | 副次書き込み先 DB / テーブル | フィールド | 条件 |
+|------|--------------------------|----------|------|
+| PORT_QOS_MAP SET (dscp_to_tc_map) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | 指定ポート全対象 (qosorch.cpp:2086, 2193) |
+| PORT_QOS_MAP SET (tc_to_pg_map) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` | 指定ポート全対象 (qosorch.cpp:2086, 2193) |
+| PORT_QOS_MAP SET (pfc_enable) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` | pfc_enable != 0 または旧値 != 0 時 (qosorch.cpp:2208-2216) |
+| PORT_QOS_MAP SET (pfcwd_sw_enable) | PortsOrch 内部 `m_port.m_pfcwd_sw_bitmap` (メモリのみ) | — | 無条件; STATE_DB への書き込みなし (qosorch.cpp:2224) |
+| PORT_QOS_MAP DEL | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` = `SAI_NULL_OBJECT_ID` および `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` = `SAI_NULL_OBJECT_ID` | DEL 時に全マップ属性をクリア (qosorch.cpp:2086) |
+| PORT_QOS_MAP DEL (PFC) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` = 0 | DEL 時に PFC 強制無効化 (qosorch.cpp:2100) |
+
+### PORT_QOS_MAP|global — スイッチレベル副次書き込み
+
+キーが `global` の場合、ポートではなくスイッチ全体へ DSCP→TC マップを適用する。
+
+| 操作 | 副次書き込み先 DB / テーブル | フィールド | 条件 |
+|------|--------------------------|----------|------|
+| PORT_QOS_MAP\|global SET | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | SAI capability あり (qosorch.cpp:1956-1975) |
+| PORT_QOS_MAP\|global DEL | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` = `SAI_NULL_OBJECT_ID` | dscp_to_tc_map フィールド存在時 (qosorch.cpp:1993) |
+
+### TunnelDecapOrch からの連鎖参照
+
+`TUNNEL_DECAP_TABLE` の `decap_dscp_to_tc_map` / `decap_tc_to_pg_map` フィールドが `DSCP_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` を参照する場合、トンネル SAI オブジェクト作成時に同マップ OID が適用される（`tunneldecaporch.cpp:832-843`）。参照中のマップを DEL しようとすると `m_pendingRemove=true` + `task_need_retry` でブロックされる（参照カウンタは `APP_TUNNEL_DECAP_TABLE_NAME` エントリとして `m_qos_maps` に登録）。
+
+### 副次書き込みサマリ
+
+| DB | 副次書き込みテーブル | SET 時 | DEL 時 |
+|----|---------------------|--------|--------|
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | create / set_attribute (syncd 経由) | remove (syncd 経由) |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP`, `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP`, `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` | 各属性を SAI_NULL_OBJECT_ID / 0 にクリア |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` (global キーのみ) | SAI_NULL_OBJECT_ID |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL` | decap QoS 属性 (tunneldecaporch 経由) | — |
+| PortsOrch 内部 | `m_port.m_pfcwd_sw_bitmap` (メモリ) | setPortPfcWatchdogStatus 呼び出し | — |
+| APPL_DB | — | なし | なし |
+| STATE_DB | — | なし | なし |
+| COUNTERS_DB | — | なし | なし |
+
+> **Evidence**: `qosorch.cpp:61,67,181-186,207,265-276,913-925,1956-1993,2086,2100,2193,2208-2224`; `tunneldecaporch.cpp:832-843`
+<!-- /side-effects -->
+
 ## 制約
 
 - `DSCP_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
