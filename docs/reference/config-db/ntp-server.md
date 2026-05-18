@@ -140,6 +140,46 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-server-failure.md`
+
+### hostcfgd ntp_srv_key_update の失敗経路
+
+`NTP_SERVER` の変更は `ntp_srv_key_handler` → `ntp_srv_key_update` 経由で処理される。
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `systemctl restart chrony` 失敗 | `hostcfgd:1397-1402` | `LOG_ERR: "NtpCfg: Failed to restart chrony service"` → `return`（キャッシュ更新なし） | `hostcfgd:1399-1402` |
+| サーバ・鍵ともに前回キャッシュと同一値 | `hostcfgd:1383-1386` | `LOG_NOTICE: "NtpCfg: Nothing to update"` → `return`（no-op、正常扱い） | `hostcfgd:1383-1386` |
+
+#### キャッシュ更新省略による再処理保証
+
+`ntp_srv_key_update` は `systemctl restart chrony` 失敗時にキャッシュ (`self.cache['servers']` / `self.cache['keys']`) を更新しない（`run_cmd` 失敗時に `return` し `self.cache['servers'] = ntp_servers` の行 `hostcfgd:1403` に到達しない）。<!-- evidence: hostcfgd:1397-1403 -->
+
+これにより次回の `NTP_SERVER` / `NTP_KEY` 変更イベント時にキャッシュ差分が残るため、再処理が保証される（意図的な再試行設計）。`ntp_global_update` の失敗時とは異なり、キャッシュ不整合が「再試行保証」として機能する点が特徴的。
+
+### chrony.conf.j2 テンプレートの NTP_SERVER 固有失敗経路
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `admin_state == 'disabled'` | そのサーバを生成ループから除外（サイレント除去） | `chrony.conf.j2:20` |
+| `config.iburst == 'off'`（文字列、非空） | Jinja2 truthy 判定で `iburst` オプションが付与される（`iburst=off` が無効化されない潜在バグ） | `chrony.conf.j2:37` |
+| `NTP.authentication != 'enabled'` かつ `NTP_SERVER.key` 設定済み | `key <id>` オプションが生成されない（サイレントドロップ） | `chrony.conf.j2:30-34` |
+| `trusted == 'yes'` かつ `resolve_as` 未設定 | `trusted_str` に追加されない（サイレントドロップ） | `chrony.keys.j2:8-10` |
+| `association_type == 'pool'` かつ `resolve_as` にカスタム値を設定 | `resolve_as = server`（テーブル key のアドレス）に強制上書き | `chrony.conf.j2:49-51` |
+
+### 失敗の可観測性
+
+`NTP_SERVER` 処理は CONFIG_DB → テンプレート → `systemctl restart chrony` で完結し、**STATE_DB / APPL_DB への書き込みは一切行われない**。失敗検知は以下のみ:
+
+- `journalctl -u chrony` — chrony サービスの起動失敗ログ
+- `/var/log/syslog` の `NtpCfg: Failed to restart chrony service` — hostcfgd の LOG_ERR
+- `chronyc sources` / `chronyc tracking` — 実際の同期状態確認
+
+<!-- /failure -->
+
 ## 関連サブテーブル
 
 - `NTP|global` (container, single-instance):
