@@ -505,3 +505,50 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 > **Evidence**: `orchdaemon.cpp:367-384`; `orch.cpp:1186-1196`; `qosorch.cpp:984,1343,2231-2295`; `table.h:164`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-platform.md -->
+
+### テーブル生成の ASIC 制限
+
+`qos_config.j2:163` に以下が定義されている:
+
+```jinja
+{%- set pfc_to_pg_map_supported_asics = ['mellanox', 'barefoot'] -%}
+```
+
+`config qos reload` 実行時、`asic_type` がこのリストに含まれる場合のみ `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブルが CONFIG_DB へ書き込まれる (`qos_config.j2:395`)。
+
+| asic_type | テーブル生成 | 投入される map 名 |
+|-----------|------------|-----------------|
+| `mellanox` | **あり** | `AZURE` (lossless TC 3,4)、dualtor 時は `AZURE_DUALTOR` も追加 |
+| `barefoot` (Intel Tofino) | **あり** | 同上 |
+| `broadcom` / `broadcom-dnx` | **なし** | — |
+| `cisco-8000` | **なし** | — |
+| `marvell-prestera` / `marvell-teralynx` | **なし** | — |
+| `vs` (Virtual Switch) | **なし** | — |
+| その他 | **なし** | — |
+
+### QosOrch 側の platform 分岐
+
+`QosOrch::handlePfcPrioToPgTable()` と `PfcPrioToPgHandler::addQosItem()` はプラットフォーム識別文字列 (`platform` 環境変数) を一切参照しない。テーブルが CONFIG_DB に存在すれば ASIC 種別に関わらず同一コードパスで `SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP` を作成する。
+
+`orchdaemon.cpp` の QosOrch 登録部 (L366-384) も `platform` 変数による条件分岐なし — `CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME` は無条件で `qos_tables` リストに含まれる。
+
+### ASIC capability 動的照会
+
+`PfcPrioToPgHandler::addQosItem()` は `sai_qos_map_api->create_qos_map()` を直接呼び出し、`querySwitchCapability()` による事前 capability チェックを行わない。サポート有無は SAI 応答値によってのみ判定される。
+
+### multi-asic / VOQ chassis
+
+- **multi-asic**: `QosOrch` は namespace ごとに独立起動するが、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` 購読コードに namespace 固有の分岐はない。mellanox/barefoot 以外の namespace では qos_config.j2 がテーブルを生成しない。
+- **VOQ chassis**: `PfcPrioToPgHandler` に VOQ 分岐なし。マップオブジェクト作成コードは VOQ/非 VOQ で同一。
+
+!!! warning "Broadcom / Cisco / Marvell / VS 環境"
+    `asic_type` が `mellanox` / `barefoot` 以外の環境では `config qos reload` を実行しても `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブルは生成されない (`qos_config.j2:163,395`)。デバイス固有の `qos.json.j2` にも本テーブルの記述は確認されていない。手動で Redis に書き込めば QosOrch は処理するが、公式サポート対象外。
+
+> **スキャン証跡**: `qos_config.j2:163,395-407` / `qosorch.cpp:984-988,957-982,366-384` 精読。中間ファイル: `meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-platform.md`
+
+<!-- /platform -->
