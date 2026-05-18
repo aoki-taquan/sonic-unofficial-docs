@@ -246,6 +246,27 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-cross-refs.md`
+
+### YANG 明示 leafref
+
+`sonic-hash.yang` の `SWITCH_HASH.GLOBAL` コンテナには他テーブルへの `leafref` が存在しない。フィールドはすべて自己完結した `hash-field` enum / `hash-algorithm` enum で定義される。
+
+### 暗黙参照
+
+| 参照元 | 参照先 | 種別 | 参照箇所 |
+|--------|--------|------|---------|
+| `SwitchOrch` コンストラクタ | SAI `SAI_SWITCH_ATTR_ECMP_HASH` / `SAI_SWITCH_ATTR_LAG_HASH` OID | ASIC 内部 OID（CONFIG_DB テーブルではない） | `switchorch.cpp:2030-2043` (`querySwitchHashDefaults`) |
+
+### CONFIG_DB 他テーブルへの参照: なし
+
+`doCfgSwitchHashTableTask()` は Consumer からフィールドを読み取り、`parseSwHash()` → `setSwitchHash()` を呼ぶだけで、`PORT` / `PORTCHANNEL` / `VRF` / `INTERFACE` / `FG_NHG` など他 CONFIG_DB テーブルを参照しない。Fine-Grained ECMP (`FG_NHG`) は `FgNhgOrch` が独立して管理し、`SwitchOrch` とは別経路で SAI に設定される。
+
+<!-- /cross-refs -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
