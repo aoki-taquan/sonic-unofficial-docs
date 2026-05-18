@@ -1,49 +1,86 @@
-# portchannel-state ordering 調査ノート
+# portchannel-state — Phase B 書込み順依存 調査メモ
 
 ## 調査対象
-- `sonic-swss/teamsyncd/teamsync.cpp` (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d)
-- `sonic-swss/cfgmgr/teammgr.cpp`
-- `sonic-swss/cfgmgr/intfmgr.cpp`
-- `sonic-swss/cfgmgr/vlanmgr.cpp`
-- `sonic-swss/cfgmgr/stpmgr.cpp`
 
-## 調査日
-2026-05-18
+`STATE_DB LAG_TABLE` の書込み順依存を `teamsyncd/teamsync.cpp` と `cfgmgr/teammgr.cpp` から導出する。
 
-## 概要
+## 主要コードパス
 
-STATE_DB `LAG_TABLE` は **teamsyncd** が書き込む（CONFIG_DB → teamd → カーネル → teamsyncd → STATE_DB の流れ）。
-複数のデーモンがこのテーブルを readiness ガードとして参照し、`state=ok` が存在するまで後続処理を保留する。
+### 書込みまでの必須ステップ
 
-## 書き込みシーケンス（teamsyncd が LAG_TABLE を書く前に必要な事前条件）
+```
+CONFIG_DB PORTCHANNEL SET
+  → teammgrd::doLagTask()          (teammgr.cpp:234)
+      → addLag()                   (teammgr.cpp:564)
+          → teamd -r -t <alias> ... (exec: teamd デーモン起動)
+          ← teamd 起動成功
+      → setLagAdminStatus / setLagMtu
+  ↓
+  Linux カーネルが RTM_NEWLINK (type=team) を emit
+  ↓
+teamsyncd::onMsg()                  (teamsync.cpp:101)
+  → addLag(lagName, ifindex, ...)   (teamsync.cpp:146)
+      → m_lagTable.set(lagName, fvVector)    # APP_LAG_TABLE 書込み
+      → TeamPortSync::TeamPortSync()         # team_init(ifindex) — teamsync.cpp:299
+          ← team_init 成功
+      → m_stateLagTable.set(lagName, fvVector)  # STATE_DB LAG_TABLE 書込み
+```
 
-1. **CONFIG_DB `PORTCHANNEL` エントリが存在すること**
-   - `TeamMgr::doLagTask()` (`teammgr.cpp:L157-`) が `PORTCHANNEL` SET を受信
-2. **`teammgrd` が `addLag()` を実行して teamd プロセスを起動すること**
-   - `TeamMgr::addLag()` (`teammgr.cpp:L564-`) が `teamd` を `exec()` で起動
-   - 失敗時は `task_need_retry` → STATE_DB 未書き込みのまま
-3. **Linux カーネルが `RTM_NEWLINK` を発行すること**
-   - teamd が `/sys/class/net/PortChannelN` を作成するとカーネルが RTM_NEWLINK を送信
-4. **`teamsyncd` が `RTM_NEWLINK` を受信すること**
-   - `TeamSync::onMsg()` → `addLag()` → `m_stateLagTable.set(lagName, fvVector)` で `state=ok` を書き込む
+### 依存 #1: teamd 起動 → kernel RTM_NEWLINK → STATE_DB 書込み (強制先行)
 
-## warm-restart 時の特例
+teammgr.cpp:640 で exec(teamd cmd) が失敗すると task_need_retry を返し、
+LAG_TABLE には何も書かれない。
+teamd 起動成功後に Linux カーネルが RTM_NEWLINK を emit し、
+teamsyncd がこれを受信して初めて LAG_TABLE への書込みが開始される。
 
-- `m_warmstart == true` の場合、`m_stateLagTable.set()` を直接呼ばず `m_stateLagTablePreserved` に一時保存
-- `applyState()` (`teamsync.cpp:L84-98`) が設定済みタイムアウト経過後に一括書き込み
-- warm-restart 中は `state=ok` が遅延して書き込まれるため、読み取り側デーモンはより長く待機することになる
+### 依存 #2: team_init() 成功 → STATE_DB 書込み (強制先行)
 
-## 読み取り側デーモン一覧（LAG_TABLE を readiness ガードとして使用）
+teamsync.cpp:L191-193 コメント:
+"STATE_DB is written only after the team instance is successfully created
+ to prevent dependent services (e.g. intfmgrd) from acting on a LAG that
+ teamd has not yet finished setting up."
 
-| デーモン | 関数 | 参照箇所 | 用途 |
-|---------|------|---------|------|
-| `intfmgrd` | `IntfMgr::isIntfStateOk(alias)` | `intfmgr.cpp:L661-668` | `PORTCHANNEL_INTERFACE` / `LAG_INTERFACE` SET 前に LAG readiness 確認 |
-| `teammgrd` | `TeamMgr::isLagStateOk(alias)` | `teammgr.cpp:L89-103` | `PORTCHANNEL_MEMBER` SET 前に LAG readiness 確認 |
-| `vlanmgrd` | `VlanMgr::isMemberStateOk(alias)` | `vlanmgr.cpp:L490-510` | VLAN_MEMBER に LAG を追加する前に readiness 確認 |
-| `stpmgrd` | `StpMgr::isLagStateOk(alias)` | `stpmgr.cpp:L1292-1304` | STP ポート処理前に LAG readiness 確認 |
+team_init(ifindex) が EADDRNOTAVAIL で失敗すると system_error が throw され
+catch ブロック (L208-213) で捕捉、LAG_TABLE には書かれない。
+次の RTM_NEWLINK イベントで再試行する。
 
-## DEL の連鎖
+### 依存 #3: LAG_TABLE エントリ存在 → メンバ追加 (強制先行)
 
-teamsyncd が `RTM_DELLINK` を受信すると `removeLag()` を呼び `m_stateLagTable.del(lagName)` でエントリを削除する (`teamsync.cpp:L228-255`)。
-その後、`isIntfStateOk()` / `isLagStateOk()` を呼ぶすべてのデーモンが依存処理を停止する。
-`PORTCHANNEL_INTERFACE` や `VLAN_MEMBER` に対応するエントリが残存している場合、該当デーモンは SET を永続的にキューに積んだままとなる（手動再設定が必要）。
+teammgr.cpp:357:
+  if (!isPortStateOk(member) || !isLagStateOk(lag))
+      { it++; continue; }  // retry
+isLagStateOk() は m_stateLagTable.get(alias, temp) で LAG_TABLE エントリを確認。
+LAG_TABLE エントリが存在しない限り PORTCHANNEL_MEMBER は処理されず m_toSync に残留する。
+
+### 依存 #4: LAG_TABLE エントリ存在 → intfmgrd / vlanmgrd / nbrmgrd / stpmgrd 処理 (強制先行)
+
+各 daemon が LAG インタフェースを扱う前に isLagStateOk() または
+m_stateLagTable.get() で LAG_TABLE を確認する:
+- intfmgr.cpp:663 — PortChannel prefix の INTERFACE 設定前
+- vlanmgr.cpp:497 — LAG を VLAN メンバに追加する前
+- nbrmgr.cpp:47 — LAG の隣接エントリ処理前
+- stpmgr.cpp:1296 — STP ポート処理前
+
+### 依存 #5: warm restart 時の書込み遅延
+
+teamsync.cpp:L197-203:
+warm restart モード (m_warmstart==true) の場合、
+m_stateLagTable.set() の代わりに m_stateLagTablePreserved[lagName] = fvVector に一時保存。
+applyState() が m_pending_timeout 秒後に呼ばれるまで LAG_TABLE には書かれない。
+この間 intfmgrd 等は LAG_TABLE を見つけられず再試行し続ける。
+
+### 依存 #6: tlm_teamd フィールド追記は teamsync 書込みと非同期
+
+tlm_teamd は teamdctl JSON dump を定期ポーリングで解析し LAG_TABLE を SET で追記する。
+teamsync.cpp が書いたベースフィールド (admin_status, oper_status, mtu, state) の後、
+setup.* / runner.* / team_device.* フィールドは tlm_teamd の次ポーリング周期まで遅延する。
+観測者は state=ok エントリを見た後も tlm_teamd フィールドが空の中間状態を観測しうる。
+
+## 証拠コード
+
+- teamsync.cpp:L146-225 — addLag() 全体。team_init 成功後のみ STATE_DB 書込み
+- teamsync.cpp:L84-98 — applyState() warm restart 後の一括書込み
+- teamsync.cpp:L191-213 — STATE_DB 書込みガードとコメント
+- teammgr.cpp:L67-101 — isPortStateOk() / isLagStateOk()
+- teammgr.cpp:L357 — メンバ追加前の LAG readiness ガード
+- teammgr.cpp:L564-644 — addLag() で teamd 起動
