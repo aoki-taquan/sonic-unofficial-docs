@@ -285,6 +285,73 @@ STATIC_ROUTE テーブル変更時に `bgpcfgd` が自動生成する FRR コマ
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・連鎖変更 (Phase F)
+
+> **調査根拠**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168,1330-1341,1979-1980`; `sonic-swss/fpmsyncd/routesync.cpp:156,1433`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py:220-248` (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-redistribute-side-effects.md`
+
+`ROUTE_REDISTRIBUTE` の SET / DEL は frrcfgd → FRR bgpd → zebra → fpmsyncd → APPL_DB → orchagent という連鎖を引き起こす。frrcfgd 自身は CONFIG_DB 以外の DB に書き込まない。
+
+### 連鎖変更マップ
+
+```
+CONFIG_DB:ROUTE_REDISTRIBUTE
+  └─(frrcfgd:subscribe)─▶ vtysh: router bgp / address-family / redistribute <src>
+       └─(bgpd 内部)─▶ BGP RIB に src_proto 経路を取り込み
+            ├─(BGP UPDATE)─▶ 確立済み BGP ピアへ NLRI 広告 / WITHDRAW
+            └─(zebra IPC)─▶ カーネル routing table に経路追加 / 削除
+                 └─(FPM)─▶ fpmsyncd → APPL_DB:ROUTE_TABLE (ProducerStateTable)
+                      └─(orchagent)─▶ SAI API → ASIC FIB エントリ追加 / 削除
+```
+
+### 1. FRR bgpd — BGP RIB へのルート取り込み
+
+`frrcfgd` が vtysh 経由で `redistribute <src_proto>` を送出すると、bgpd は該当ソースプロトコルの経路を BGP RIB に取り込む (`frrcfgd.py:3161-3165`)。
+
+| 副作用 | 詳細 |
+|--------|------|
+| BGP RIB 更新 | `src_proto` 経路が best-path 計算対象になる |
+| `route-map` 適用 | フィールド指定時は attribute 書き換え / フィルタリング |
+| `metric` → MED | フィールド指定時は BGP MED として付与 |
+| SET 前 WITHDRAW | `hdl_route_redist_set` が `no redistribute <src>` を先行発行するため、metric / route-map 変更時も一時的な経路撤回が発生 (`frrcfgd.py:1334-1336`) |
+
+### 2. BGP ピアへの UPDATE / WITHDRAW
+
+bgpd が redistribution で新規経路を学習すると、確立済みの BGP ピアへ UPDATE を送出する。`no redistribute <src>` (DEL) 時は WITHDRAW が送出される。この動作は frrcfgd の管理外（FRR bgpd 内部）。
+
+### 3. zebra → カーネル routing table
+
+bgpd が best-path 選択した経路を zebra に通知し、zebra がカーネルの routing table に経路を追加 / 削除する（`ip route` / `ip -6 route`）。この動作も frrcfgd の管理外（FRR 内部）。
+
+### 4. fpmsyncd → APPL_DB:ROUTE_TABLE
+
+zebra は FPM プロトコルで経路変化を fpmsyncd に通知する。fpmsyncd は `ProducerStateTable` 経由で `APPL_DB:ROUTE_TABLE` に経路を書き込む。
+
+```
+zebra (FPM) → fpmsyncd → APPL_DB:ROUTE_TABLE (ProducerStateTable)
+```
+
+evidence: `routesync.cpp:156` (`m_routeTable = createProducerStateTable(APP_ROUTE_TABLE_NAME)`)、`routesync.cpp:1433`
+
+### 5. orchagent → SAI/ASIC FIB
+
+orchagent は `APPL_DB:ROUTE_TABLE` を購読し、SAI API 経由で ASIC の FIB エントリを更新する。ROUTE_REDISTRIBUTE の変更は最終的にデータプレーン転送経路の追加 / 削除につながる。
+
+### 6. bgpcfgd の STATIC_ROUTE 自動 redistribute（独立経路）
+
+`bgpcfgd` は `ROUTE_REDISTRIBUTE` を直接購読しない。`STATIC_ROUTE` テーブルを購読し、静的経路追加時に `redistribute static route-map STATIC_ROUTE_FILTER` を自動生成する。この自動コマンドは CONFIG_DB の ROUTE_REDISTRIBUTE エントリとは独立して発行される (`managers_static_rt.py:220-248`)。
+
+### frrcfgd が書き込まない DB
+
+frrcfgd は処理結果を CONFIG_DB 以外のいかなる DB にも書き込まない。エラー発生時は syslog (LOG_ERR) のみで通知される。STATE_DB へのステータス書き込みなし。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168L (ROUTE_REDISTRIBUTE ハンドラ) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1330-1341L (hdl_route_redist_set, no-prefix 先行) -->
+<!-- evidence: sonic-net/sonic-swss/fpmsyncd/routesync.cpp:156L (APPL_DB ROUTE_TABLE ProducerStateTable) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py:220-248L (enable/disable_redistribution_command) -->
+<!-- /side-effects -->
+
 <!-- failure -->
 ## 失敗挙動・エラーパス (Phase D)
 
