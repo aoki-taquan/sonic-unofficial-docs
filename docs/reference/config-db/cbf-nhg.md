@@ -299,6 +299,47 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 | ref_count DEL ブロック条件 | `cbf_nhg_it->second.ref_count > 0` | 参照カウントが 0 より大きい場合 DEL を保留して `it++` | `cbfnhgorch.cpp:165-171` |
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`CLASS_BASED_NEXT_HOP_GROUP_TABLE` エントリ処理に伴う直接 DB 副次書込は存在しない。副次効果はインメモリカウンタ更新と SAI 経由の間接書込に限られる。
+
+| 副次 DB / リソース | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB (他テーブル) | なし | `CbfNhgOrch` は `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を読むのみ。他 APPL_DB テーブルへの直接書込なし |
+| STATE_DB | なし | `cbfnhgorch.cpp` に `state_db` / `StateDBConnector` の参照なし。CBF NHG はステータスエントリを持たない |
+| ASIC_DB | SAI 経由で間接書込 | `sai_next_hop_group_api->create_next_hop_group()` / `create_next_hop_group_member()` が SAI Redis 実装を通じて ASIC_DB を更新する |
+| COUNTERS_DB | CRM 経由で間接反映 | `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` (`cbfnhgorch.cpp:358`) が `CRM_NEXTHOP_GROUP` インメモリカウンタを更新し、CrmOrch が定期的に `COUNTERS_DB COUNTERS:CRM_STATS` へ反映する |
+| FLEX_COUNTER_DB | なし | CBF NHG に対する Flex カウンタ設定は存在しない |
+
+### NhgMapOrch 参照カウント更新
+
+`FC_TO_NHG_INDEX_MAP_TABLE` エントリの参照カウント (`NhgMapEntry::ref_count`) が副次的に変化する。
+
+| 操作 | 発生箇所 | 効果 |
+|------|---------|------|
+| CBF NHG 作成成功 | `CbfNhg::sync()` L354 | `gNhgMapOrch->incRefCount(selection_map)` — `ref_count` を +1 |
+| CBF NHG 削除成功 | `CbfNhg::remove()` L396 | `gNhgMapOrch->decRefCount(selection_map)` — `ref_count` を -1 |
+| `selection_map` 変更 | `CbfNhg::update()` L587-589 | 旧マップ `decRefCount` → 新マップ `incRefCount` |
+
+`NhgMapOrch` は `ref_count > 0` の場合 `FC_TO_NHG_INDEX_MAP_TABLE` エントリの DEL をブロックする (`nhgmaporch.cpp:199`)。CBF NHG が存在する間は参照先マップは削除できない。
+
+### NhgOrch メンバー NHG 参照カウント更新
+
+各メンバー NHG の参照カウントが副次的に変化する。
+
+| 操作 | 発生箇所 | 効果 |
+|------|---------|------|
+| CBF NHG member 作成成功 | `CbfNhgMember::sync()` L758 | `gNhgOrch->incNhgRefCount(member_key)` — メンバー NHG の ref_count を +1 |
+| CBF NHG member 削除 | `CbfNhgMember::remove()` L808 | `gNhgOrch->decNhgRefCount(member_key)` — メンバー NHG の ref_count を -1 |
+
+`NhgOrch` は `ref_count > 0` の NHG の削除をブロックする。CBF NHG のメンバーに含まれる NHG は自動的に削除ガードされる。
+
+### NhgBase 静的カウンタ更新
+
+`NhgBase::m_syncdCount`（static メンバ）が副次的に変化する。CBF NHG sync 成功時に `incSyncedCount()` (`cbfnhgorch.cpp:359`)、削除時に `decSyncedCount()` (`nhgbase.h:278`) が呼ばれる。この値は新規 NHG 作成時の上限チェック `gRouteOrch->getNhgCount() + NhgBase::getSyncedCount() >= gRouteOrch->getMaxNhgCount()` で参照される (`cbfnhgorch.cpp:100`)。
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
