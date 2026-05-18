@@ -429,6 +429,32 @@ FLEX_COUNTER_STATUS → enable/disable アクション + setFlexCounterGroupOper
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/orchdaemon.cpp,
+     sonic-swss/orchagent/saihelper.cpp, sonic-swss/orchagent/portsorch.cpp;
+     詳細調査: meta/_intermediate/cdb-flow/flex-counter-table-cross-refs.md -->
+
+`FlexCounterOrch` が `FLEX_COUNTER_TABLE` を処理する際に暗黙的に参照・書き込む他テーブルを示す。YANG leafref として明示されない依存も含む。
+
+| 参照先テーブル | DB | 方向 | 条件 | evidence |
+|--------------|-----|------|------|---------|
+| `DEVICE_METADATA\|localhost` (`create_only_config_db_buffers`) | CONFIG_DB | 読み（起動時 + 購読） | 常時。`create_only_config_db_buffers` フラグを取得し QUEUE/PG カウンタ対象を決定 | `flexcounterorch.cpp:107-124,488-537`; `orchdaemon.cpp:622` |
+| `BUFFER_QUEUE` | APPL_DB | 読み（QUEUE/PG enable 時） | `create_only_config_db_buffers=true` かつ非 VOQ シャーシ。非ゼロ profile のエントリのみをカウンタ対象に登録 | `flexcounterorch.cpp:544-620` |
+| `BUFFER_PG` | APPL_DB | 読み（PG enable 時） | `create_only_config_db_buffers=true`。非ゼロ profile の PG エントリのみを対象に | `flexcounterorch.cpp:623-670` |
+| `FLEX_COUNTER_GROUP_TABLE\|<group>` | FLEX_COUNTER_DB | 書き | STATUS/INTERVAL/BULK_CHUNK_SIZE 変化のたびに更新。`gTraditionalFlexCounter=true` 時は ProducerTable 直接書込、`false` 時は SAI Redis 属性経由 | `saihelper.cpp:884` |
+| `FLEX_COUNTER_TABLE\|<group>:<oid>` | FLEX_COUNTER_DB | 書き (enable) / 削除 (disable) | 初回 enable 後の `generateXxxMap()` が per-OID エントリ (`PORT_COUNTER_ID_LIST` 等) を書込。disable / オブジェクト削除時に DEL | `saihelper.cpp:1047,1075` |
+| `COUNTERS_PORT_NAME_MAP` 等 | COUNTERS_DB | 書き | `generatePortCounterMap()` / `generateQueueMap()` / `generatePriorityGroupMap()` が初回 enable 時に名前→SAI OID マッピングを書込。counterpoll / テレメトリが参照する | `portsorch.cpp:9102` |
+
+!!! note "BUFFER_QUEUE / BUFFER_PG 参照の VOQ 例外"
+    `gMySwitchType == "voq"` の VOQ シャーシでは `getQueueConfigurations()` が BUFFER_QUEUE を参照せず全ポート・全キューを一括登録する (`flexcounterorch.cpp:549`)。非 VOQ かつ `create_only_config_db_buffers=false` の場合も同様に全キュー対象となり BUFFER_QUEUE 参照は行われない。
+
+!!! note "DEVICE_METADATA の二重参照"
+    `FlexCounterOrch` は起動時に CONFIG_DB から `DEVICE_METADATA|localhost` をスナップショット読み込みし、さらに実行時購読も設定する。minigraph 適用等で `create_only_config_db_buffers` が変化すると `handleDeviceMetadataTable()` が `m_createOnlyConfigDbBuffers` を動的に更新する。
+
+<!-- /cross-refs -->
+
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
