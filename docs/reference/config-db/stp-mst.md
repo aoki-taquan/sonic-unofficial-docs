@@ -1,10 +1,10 @@
 ---
 title: STP_MST_INST / STP_MST_PORT テーブル
-description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B+C 分析。"
+description: "CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・discrepancy を詳細解説。Phase A+B+C+D 分析。"
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-18
 sources:
   - repo: sonic-net/sonic-utilities
     path: config/stp.py
@@ -337,6 +337,133 @@ DB テーブルへの直接読み出しは発生しない。
 | `STP_MST_PORT` | `stpMstInstTask` フラグ — 起動ガード | `stpmgr.cpp:1160` |
 
 <!-- /cross-refs -->
+
+---
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-failure.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+`stpmgrd` は orchagent と異なり `task_need_retry` / `task_failed` の明示的な戻り値を持たない。
+代わりに「エントリを `m_toSync` に残す（保留）」か「`m_toSync.erase()` する（消費）」かで
+リトライ有無が決まる。
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | ハンドラ | 処置 | リトライ |
+|---|---|---|---|---|
+| 1 | 起動ガード未満足 (`stpGlobalTask` 等) | 全 MST ハンドラ共通 | `return`（保留） | あり（1秒後ループ） |
+| 2 | 不明フィールド (`name`/`revision` 以外) | `doStpMstGlobalTask` | `SWSS_LOG_ERROR` のみ・0値送信 | なし |
+| 3 | `sendMsgStpd` calloc 失敗 | `sendMsgStpd` 共通 | `SWSS_LOG_ERROR`, `return -1`（呼び元無視） | なし（エントリ消費済み） |
+| 4 | `sendMsgStpd` `sendto` 失敗 | `sendMsgStpd` 共通 | `SWSS_LOG_ERROR`, `return -1`（呼び元無視） | なし（エントリ消費済み） |
+| 5 | `calloc` 失敗（`STP_MST_INST_CONFIG_MSG`） | `doStpMstInstTask` | `SWSS_LOG_ERROR`, `return`（保留） | あり（ただし m_vlanInstMap 不整合リスク） |
+| 6 | 無効キー形式（セパレータ `\|` なし） | `doStpMstInstPortTask` | `SWSS_LOG_ERROR`, `erase` | なし |
+| 7 | DEL: `l2ProtoEnabled == L2_NONE` または インスタンス未マップ | `doStpMstInstPortTask` | `erase`（ログなし） | なし |
+| 8 | SET: `l2ProtoEnabled == L2_NONE` | `doStpMstInstPortTask` | 保留（`it++`） | あり |
+| 9 | `stoi` 例外（不正インスタンス ID 文字列） | `doStpMstInstTask` | 未キャッチ → `stpmgrd` プロセス終了 | なし（プロセス再起動要） |
+
+### 詳細
+
+#### 1. 起動ガード保留（共通パターン）
+
+すべての MST ハンドラは先行テーブル受信フラグを確認する。未満足の場合は即 `return` し、
+`m_toSync` のエントリはそのまま残る。`stpmgrd.cpp` の `SELECT_TIMEOUT = 1000ms` で
+次のタイムアウト後に `doTask()` が再呼び出しされ自動的にリトライされる。
+
+```cpp
+// doStpMstGlobalTask — stpmgr.cpp:344
+if (stpGlobalTask == false)
+    return;
+
+// doStpMstInstTask — stpmgr.cpp:1027
+if (stpGlobalTask == false || (stpPortTask == false && !isStpPortEmpty()))
+    return;
+
+// doStpMstInstPortTask — stpmgr.cpp:1160
+if (stpGlobalTask == false || stpMstInstTask == false || stpPortTask == false)
+    return;
+```
+
+#### 2. 不明フィールド → 0値送信（サイレント）
+
+`doStpMstGlobalTask` では `name` / `revision` / `forward_delay` / `hello_time` / `max_age` / `max_hops` 以外のフィールドが来た場合、`SWSS_LOG_ERROR` を出力して処理を続行する（`break` しない）。
+結果として `memset(&msg, 0, sizeof(msg))` で初期化されたメッセージが `sendMsgStpd` で送信される。
+
+```cpp
+// stpmgr.cpp:391-394
+else
+{
+    SWSS_LOG_ERROR("Invalid field: %s", fvField(i).c_str());
+}
+```
+
+#### 3 & 4. sendMsgStpd 失敗 → 呼び元で無視
+
+`sendMsgStpd()` (`stpmgr.cpp:1218`) の戻り値はすべての呼び出し元でチェックされない。
+calloc 失敗（`-1` 返却後 return）や Unix ドメインソケット `sendto` 失敗の場合も、
+呼び元は `m_toSync.erase(it)` でエントリを破棄する。イベントはサイレントに失われる。
+
+```cpp
+// 呼び出し元の典型パターン (stpmgr.cpp:402-404)
+sendMsgStpd(STP_MST_GLOBAL_CONFIG, sizeof(msg), (void *)&msg);
+it = consumer.m_toSync.erase(it);  // 戻り値チェックなし
+```
+
+#### 5. STP_MST_INST calloc 失敗 → m_vlanInstMap 不整合
+
+SET パスでは `updateVlanInstanceMap()` が `calloc` より先に呼ばれる（`stpmgr.cpp:1067`）。
+`calloc` が失敗して `return` した場合、`m_vlanInstMap` はすでに更新済みだが
+stpd へのメッセージは送信されていない。次回リトライで再送されるが、
+インメモリマップと stpd 内部状態が一時的に乖離する。
+
+```cpp
+// stpmgr.cpp:1067 — calloc より前
+updateVlanInstanceMap(instance_id, vlan_ids, true);
+
+// stpmgr.cpp:1073-1078 — calloc がここで失敗
+msg = (STP_MST_INST_CONFIG_MSG *)calloc(1, len);
+if (!msg)
+{
+    SWSS_LOG_ERROR("Memory allocation failed for STP_MST_INST_CONFIG_MSG");
+    return;  // m_vlanInstMap は更新済み、stpd へは未送信
+}
+```
+
+#### 6. 無効キー形式 → サイレントドロップ
+
+`doStpMstInstPortTask` は `key.substr(9)` (`"INSTANCE"` = 8文字 + セパレータ) でプレフィックスを
+除去後、`mstKey.find(CONFIGDB_KEY_SEPARATOR)` でインスタンス ID とインタフェース名を分割する。
+セパレータが見つからない場合は `erase` して永続的に破棄する（リトライなし）。
+
+#### 7. DEL でのサイレントドロップ
+
+MST が無効化済み (`l2ProtoEnabled == L2_NONE`) または該当インスタンスが `m_vlanInstMap` に
+存在しない場合、DEL イベントはログなしで `erase` される（冪等扱い）。
+
+```cpp
+// stpmgr.cpp:1204-1207
+if (l2ProtoEnabled == L2_NONE || !(isInstanceMapped(mst_id)))
+{
+    it = consumer.m_toSync.erase(it);
+    continue;
+}
+```
+
+#### 9. stoi 例外 → stpmgrd プロセス終了
+
+`doStpMstInstTask` は `key.substr(13)` で取得した文字列に対して `stoi()` を呼ぶ
+（`stpmgr.cpp:1045`）。DB に不正な数値文字列（`""` や英字等）が書き込まれた場合、
+`std::invalid_argument` または `std::out_of_range` 例外が発生する。
+stpmgr.cpp 内部では例外がキャッチされないため、`stpmgrd.cpp:119-122` のトップレベル catch まで
+伝播し `stpmgrd` プロセスが終了する。systemd により再起動されるが、その間 MST 設定変更は
+CONFIG_DB に蓄積され再起動後に一括再処理される。
+
+!!! warning "stoi 例外によるプロセス終了"
+    `STP_MST_INST` テーブルに無効なインスタンス ID 文字列を直接書き込むと（CLI 外からの直接 DB 操作等）、`stpmgrd` がクラッシュする。CLI 経由では整数バリデーション済みのため通常発生しない。
+
+<!-- /failure -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
