@@ -221,6 +221,32 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。
+
+| 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
+|--------|-----------|------|------|-----------|
+| `FLEX_COUNTER_TABLE\|QUEUE` | CONFIG_DB | READ | `FLEX_COUNTER_STATUS = enable` を受信した時点で `addQueueFlexCounters()` を呼び SAI カウンタ登録を開始。`disable` で `clearQueueFlexCounters()` を呼びカウンタ登録を解除 | `flexcounterorch.cpp:247-252` |
+| `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` | CONFIG_DB | READ | `enable` 受信時に `addQueueWatermarkFlexCounters()` を呼び `QUEUE_WATERMARK_STAT_COUNTER` グループを開始。`disable` で解除 | `flexcounterorch.cpp:258-264` |
+| `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` | CONFIG_DB | READ | `enable` 受信時に `addWredQueueFlexCounters(getQueueConfigurations())` を呼び WRED カウンタ登録を開始。SAI ケイパビリティ未サポートポートは silent にスキップ | `flexcounterorch.cpp:276-281` |
+| `BUFFER_QUEUE` | CONFIG_DB | READ | `create_only_config_db_buffers = true` の場合、`getQueueConfigurations()` が `BUFFER_QUEUE` に非ゼロプロファイルが設定されたキューのみを対象にする。`false`（デフォルト）では全キューを対象 | `flexcounterorch.cpp:544-554` |
+| `DEVICE_METADATA\|localhost` | CONFIG_DB | READ | 起動時に `create_only_config_db_buffers` を 1 回読み込み `m_createOnlyConfigDbBuffers` にキャッシュ。`handleDeviceMetadataTable()` が動的更新を購読 | `flexcounterorch.cpp:106-124, 488-521` |
+| `COUNTERS_QUEUE_NAME_MAP` | COUNTERS_DB | WRITE | `generateQueueMap()` が `<port_alias>:<queue_index>` → SAI OID マッピングを書き込む。`m_isQueueMapGenerated` フラグで冪等保護（初回のみ） | `portsorch.cpp:8391-8443` |
+| `COUNTERS_QUEUE_PORT_MAP` | COUNTERS_DB | WRITE | `<queue_oid>` → `<port_oid>` の逆引きマップ。`generateQueueMapPerPort()` で書き込まれ、`queuestat` がキューをポートに紐付ける際に参照 | `portsorch.cpp:778-782` |
+| `COUNTERS_QUEUE_INDEX_MAP` | COUNTERS_DB | WRITE | `<queue_oid>` → `<queue_index>` の逆引きマップ。`generateQueueMapPerPort()` で書き込まれ、`queuestat` が表示列の並べ替えに使用 | `portsorch.cpp:780-781` |
+| `COUNTERS_QUEUE_TYPE_MAP` | COUNTERS_DB | WRITE | `<queue_oid>` → `SAI_QUEUE_TYPE_*` の逆引きマップ。UC / MC / ALL / VOQ の判別に使用 | `portsorch.cpp:781-782` |
+| SAI `SAI_PORT_ATTR_QOS_QUEUE_LIST` | SAI（ハードウェア） | READ | `initializeQueuesBulk()` が各ポートの Queue OID リストを SAI から取得して `port.m_queue_ids` へキャッシュ。このフェッチが完了するまで `generateQueueMap()` はマッピングを書き込まない | `portsorch.cpp:6583-6598` |
+
+### 補足
+
+- **`FLEX_COUNTER_TABLE` との依存は双方向**: `COUNTERS_DB` の `COUNTERS:<oid>` は `FLEX_COUNTER_TABLE` の enable/disable 状態が `true` の間のみ syncd がポーリングして更新する。disable にするとポーリングは停止するが、`COUNTERS_QUEUE_NAME_MAP` 等のマッピングテーブルは削除されない。
+- **`BUFFER_QUEUE` との依存は条件付き**: `create_only_config_db_buffers = false`（デフォルト）では `BUFFER_QUEUE` の設定内容に関係なく全キューのカウンタが有効化される。この場合 `BUFFER_QUEUE` の書込み順序はカウンタ有効化の最終状態に影響しない（Phase B 依存 #3 参照）。
+- **VoQ モード固有**: `gMySwitchType == "voq"` の場合、`FLEX_COUNTER_TABLE|QUEUE` の enable 状態に関係なく `generateQueueMapPerPort()` が直接 `addQueueFlexCountersPerPortPerQueueIndex()` を呼ぶため、VoQ 環境では上記 `FLEX_COUNTER_TABLE` 依存の一部が無効化される（`portsorch.cpp:8499-8514`）。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
