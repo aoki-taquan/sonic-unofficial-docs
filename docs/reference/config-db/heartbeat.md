@@ -233,6 +233,29 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`HEARTBEAT` テーブルは YANG `sonic-heartbeat.yang` に leafref を持たず、他の CONFIG_DB テーブルへの外部キー参照はゼロである。また、他テーブルから `HEARTBEAT|<name>` への被参照も存在しない。
+
+<!-- evidence: meta/_intermediate/cdb-flow/heartbeat-cross-refs.md -->
+
+| 参照方向 | 参照元フィールド / 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|------------------------|--------------|--------------|---------|------|
+| なし（外部参照ゼロ） | — | — | — | `HEARTBEAT_LIST` は `leafref` を持たない。`name` / `heartbeat_interval` / `alert_interval` のみ | `sonic-heartbeat.yang` 全文 |
+| 被参照なし | — | `HEARTBEAT` | — | 他の CONFIG_DB テーブルから `HEARTBEAT\|<name>` への leafref または外部キー参照は存在しない | 全 YANG 検索結果 |
+
+### 補足: consumer 側の関連テーブル
+
+`supervisor-proc-exit-listener` は同一スクリプト内で `FEATURE` テーブルも読むが (`get_autorestart_state()`)、これは auto-restart 判定用の別パスであり HEARTBEAT フィールドの値とは無関係である（`supervisor-proc-exit-listener:100-122`）。
+
+`eventd` は `GLOBAL_OPTION_HEARTBEAT` という ZeroMQ RPC 経由でのみ heartbeat interval を受け取り、CONFIG_DB の `HEARTBEAT` テーブルを直接購読しない。両者はスキーマ単位（ms vs 秒）も異なる別系統（`eventd.cpp:638-646`）。
+
+!!! note "HEARTBEAT は「孤立テーブル」"
+    外部からの依存も、外部への依存もないため、HEARTBEAT エントリは他テーブルとの投入順序に縛られず任意の順序で書き込める。
+
+<!-- /cross-refs -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
