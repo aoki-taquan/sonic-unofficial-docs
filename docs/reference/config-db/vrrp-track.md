@@ -116,6 +116,45 @@ VRRP_TRACK|<interface_name>|<vrid>|<track_interface>
 削除時は逆順 (VRRP_TRACK → VRRP → インタフェース) で実施する。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`VRRP_TRACK` テーブルは YANG leafref と CLI 実行時チェックの 2 系統で外部テーブルを参照する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-cross-refs.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-cross-refs.md)。
+
+### YANG leafref (VRRP_TRACK_LIST)
+
+`sonic-vrrp.yang` の `VRRP_TRACK` コンテナ (L135–183) に定義された leafref。`sonic-yang-mgmt` / gNMI 経路でバリデーションされる。
+
+| フィールド | 参照先テーブル | 説明 | evidence |
+|---|---|---|---|
+| `baseifname` | `VRRP/VRRP_LIST/ifname` | 親 VRRP インスタンスの `ifname` を参照 | `sonic-vrrp.yang` L144–146 |
+| `idkey` | `VRRP/VRRP_LIST/idkey` | 親 VRRP インスタンスの `idkey` (vrid) を参照 | `sonic-vrrp.yang` L150–152 |
+| `trackifname` (PORT) | `PORT/PORT_LIST/ifname` | 物理ポートを追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L158–160 |
+| `trackifname` (PortChannel) | `PORTCHANNEL/PORTCHANNEL_LIST/name` | PortChannel を追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L161–163 |
+| `trackifname` (VLAN) | `VLAN/VLAN_LIST/name` | VLAN インタフェースを追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L164–166 |
+| `trackifname` (Sub-IF) | `VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/id` | サブインタフェースを追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L167–169 |
+
+### CLI 実行時存在確認 (config/main.py)
+
+YANG バリデーションとは独立して `add_track_interface()` が実行する `get_table()` 存在確認。
+
+| 確認対象テーブル | 確認タイミング | 失敗時の挙動 | evidence |
+|---|---|---|---|
+| `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` (ベース) | VRRP_TRACK 追加時 | `ctx.fail("Router Interface '{}' not found")` で永続拒絶 | `config/main.py:7000–7006` |
+| `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` (追跡) | VRRP_TRACK 追加時 | `ctx.fail("Router Interface '{}' not found")` で永続拒絶 | `config/main.py:7007–7015` |
+| `VRRP` (親インスタンス) | VRRP_TRACK 追加時 | `ctx.fail("vrrp instance {} not found on interface {}")` で永続拒絶 | `config/main.py:7017–7019` |
+
+### データ流出先
+
+VRRP_TRACK への書き込みは直接 APPL_DB / ASIC_DB には流れない。FRR `vrrpd` が CONFIG_DB.VRRP_TRACK を読み込み、`zebra` 経由のインタフェース状態変化通知と組み合わせて priority を再計算する。
+
+| 流出先 | 経路 |
+|---|---|
+| FRR `vrrpd` 内部メモリ (priority 計算) | CONFIG_DB.VRRP_TRACK → vrrpd track 設定読み込み |
+| VRRP Advertisement パケット (priority フィールド更新) | vrrpd priority 再計算 → パケット送出 (DB 書き込みなし) |
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: `sonic-utilities/config/main.py` (`add_track_interface()` L6993-7040, `remove_track_interface()` L7045-7077); `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` (CONFIG_DB changes L308-315, Uplink interface tracking L481-492); `SONiC/doc/vrrp/sonic-vrrp.yang` (VRRP_TRACK container L136-177). <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
