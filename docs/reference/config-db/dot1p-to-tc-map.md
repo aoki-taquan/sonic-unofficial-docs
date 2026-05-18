@@ -274,4 +274,23 @@ show qos map dot1p-tc
 > **Evidence**: `qosorch.cpp:124-201` (QosMapHandler::processWorkItem); `qosorch.cpp:2046-2134` (handlePortQosMapTable); `qosorch.cpp:422-427` (handleDot1pToTcTable); `qosorch.cpp:360-397` (Dot1pToTcMapHandler::convertFieldValuesToAttributes)
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+`DOT1P_TO_TC_MAP` が関わる CONFIG_DB テーブル間の暗黙参照を `qosorch.cpp` / `qosorch.h` から抽出した。
+
+| 参照方向 | 参照元テーブル | フィールド | SAI 属性 | evidence |
+|---------|-------------|-----------|---------|---------|
+| 被参照 (referenced by) | `PORT_QOS_MAP` | `dot1p_to_tc_map` | `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` | `qosorch.h:13`, `qosorch.cpp:63` |
+| 参照管理 | `handlePortQosMapTable` | SET 時 object_id 解決 / DEL 時参照解除 | — | `qosorch.cpp:2046,2077,2108,2133` |
+| SWITCH レベル適用 | なし | DOT1P マップは SWITCH 直接適用なし | — | `qosorch.cpp:1956`（DSCP_TO_TC_MAP のみ対象） |
+
+- `qos_to_ref_table_map`（`qosorch.cpp:99-102`）が `dot1p_to_tc_field_name` → `CFG_DOT1P_TO_TC_MAP_TABLE_NAME` と対応付けており、`PORT_QOS_MAP` SET 時の `resolveFieldRefValue()` で本マップが参照される。
+- `PORT_QOS_MAP.dot1p_to_tc_map` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留。
+- SWITCH レベルへの直接適用（`PORT_QOS_MAP|global` 経路）は `DSCP_TO_TC_MAP` のみ。`DOT1P_TO_TC_MAP` は SWITCH 直接適用なし（`querySwitchCapability` 判定対象外）。
+
+> 詳細: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-cross-refs.md`
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: b1003b21c66f -->
