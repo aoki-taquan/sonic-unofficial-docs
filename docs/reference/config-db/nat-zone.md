@@ -330,6 +330,69 @@ Loopback インタフェースは `isPortStateOk()` チェック対象外であ�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp setMangleIptablesRules L894-924 / doNatIpInterfaceTask L7499-7585 / sonic-swss/orchagent/intfsorch.cpp setRouterIntfsNatZoneId L272-303 -->
+
+### iptables mangle コマンド失敗 → キャッシュ更新は進むが反映なし
+
+`setMangleIptablesRules()` が `swss::exec()` を呼び出し、戻り値が非 0 の場合 `SWSS_LOG_ERROR` をログして `false` を返す (`natmgr.cpp:917-921`)。
+
+```cpp
+// natmgr.cpp:915-921
+ret = swss::exec(cmds, res);
+if (ret)
+{
+    SWSS_LOG_ERROR("Command '%s' failed with rc %d", cmds.c_str(), ret);
+    return false;
+}
+```
+
+**重要**: 呼び出し元 (`doNatIpInterfaceTask` の SET 処理) は `setMangleIptablesRules()` の戻り値を確認せず処理を継続する。つまり iptables 設定が失敗しても `m_natZoneInterfaceInfo[port]` は新しいゾーン値に更新される (`natmgr.cpp:7546,7578`)。その結果、**キャッシュの値と kernel iptables のゾーン MARK が乖離した状態**になる。natmgrd の次回処理では「同一 nat_zone」として扱われ自動再試行は行われない。
+
+| 障害 | ログ | キャッシュ更新 | iptables 反映 | 自動回復 |
+|------|------|------------|--------------|---------|
+| `setMangleIptablesRules(ADD)` 失敗 | `SWSS_LOG_ERROR "Command '...' failed with rc %d"` | される (新値) | されない | なし (手動再設定必要) |
+| `setMangleIptablesRules(DELETE)` 失敗 | `SWSS_LOG_ERROR "Command '...' failed with rc %d"` | 後続で新値に更新 | 旧ルールが残存 | なし |
+
+### SAI `set_router_interface_attribute` 失敗 → `handleSaiSetStatus` に委譲
+
+`intfsorch.cpp:setRouterIntfsNatZoneId()` は SAI 設定失敗時に `handleSaiSetStatus(SAI_API_ROUTER_INTERFACE, status)` を呼び、戻り値が `task_success` でなければ `parseHandleSaiStatusFailure()` を返す (`intfsorch.cpp:290-298`)。
+
+```cpp
+// intfsorch.cpp:290-298 (setRouterIntfsNatZoneId)
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to set router interface %s NAT Zone Id to %u, rv:%d",
+                   port.m_alias.c_str(), port.m_nat_zone_id, status);
+    task_process_status handle_status = handleSaiSetStatus(SAI_API_ROUTER_INTERFACE, status);
+    if (handle_status != task_success)
+    {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+}
+```
+
+`handleSaiSetStatus` の結果により retry / abort が決定される。SAI 設定失敗時でも Port の `m_nat_zone_id` フィールドは更新済みのため、次回 `doTask()` では「変更なし」として扱われ再試行が行われない可能性がある。
+
+### RIF が存在しない場合 → silent return
+
+`setRouterIntfsNatZoneId()` は呼ばれる前に `port.m_rif_id == 0` の場合を `SWSS_LOG_WARN "Router interface is not exists on %s"` としてログし `true` を返す (`intfsorch.cpp:277-281`)。SAI 設定は行われないが、エラーとは扱われない。
+
+### 失敗挙動サマリ
+
+| # | 条件 | コンポーネント | ログ | retry | STATE_DB 記録 |
+|---|------|------------|------|-------|--------------|
+| 1 | iptables mangle ADD 失敗 | natmgrd | `SWSS_LOG_ERROR "Command '...' failed"` | なし | なし |
+| 2 | iptables mangle DELETE 失敗 | natmgrd | `SWSS_LOG_ERROR "Command '...' failed"` | なし | なし |
+| 3 | SAI RIF zone_id set 失敗 | IntfsOrch | `SWSS_LOG_ERROR "Failed to set router interface ... NAT Zone Id"` | SAI 依存 | なし |
+| 4 | RIF 未存在で zone_id 設定 | IntfsOrch | `SWSS_LOG_WARN "Router interface is not exists"` | なし (silent skip) | なし |
+| 5 | 非整数値の nat_zone | natmgrd | `SWSS_LOG_ERROR "Invalid nat_zone ..., skipping"` | なし (erase) | なし |
+| 6 | 非整数値の nat_zone | IntfsOrch | `SWSS_LOG_ERROR "Invalid argument ... for nat zone"` | なし (continue) | なし |
+
+<!-- /failure -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
