@@ -301,6 +301,48 @@ STATE_DB `FEATURE` テーブルは `featured` と `sonic-ctrmgrd` が書き手�
 > **Evidence**: `sonic-host-services/scripts/featured:187-191,200-217,269-271,405-406,419,470,507-511,518,541-545`; `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py:155-162,201-275`; `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:593-612`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`featured` / `container_startup.py` / `ctrmgrd.py` に埋め込まれた CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### featured — タイムアウト・状態定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PORT_INIT_TIMEOUT_SEC` | `180` 秒 | `delayed=True` feature の強制 enable タイムアウト。APPL_DB `PORT_TABLE` の `PortInitDone` イベントが届かない場合、180 秒経過後に `enable_delayed_services()` を強制実行 | `featured:24` |
+| `DEFAULT_SELECT_TIMEOUT` | `1000` ms | メインループの Redis select タイムアウト (1 秒) | `featured:23` |
+| `FEATURE_STATE_ENABLED` | `"enabled"` | STATE_DB `state` フィールドへの書き込み値 (systemctl 成功時) | `featured:132` |
+| `FEATURE_STATE_DISABLED` | `"disabled"` | STATE_DB `state` フィールドへの書き込み値 (停止成功時) | `featured:133` |
+| `FEATURE_STATE_FAILED` | `"failed"` | STATE_DB `state` フィールドへの書き込み値 (systemctl 失敗時) | `featured:134` |
+| `FEATURE_EXCLUSION_LIST` | `{"telemetry", "frr_bmp"}` | enable/disable をスキップする feature 集合。STATE_DB への `state` 書き込みも行われない | `featured:135` |
+| `WAIT_FOR_STABLE_TIMEOUT` | `60` 秒 | `systemctl stop` 前に service が `activating` を離れるまでの最大待機時間。超過時は警告のみで stop を続行（ExecStop が実行されず Docker コンテナが孤立するリスク） | `featured:426` |
+| `WAIT_FOR_STABLE_POLL_INTERVAL` | `1` 秒 | `wait_for_service_stable()` のポーリング間隔 | `featured:427` |
+
+### container_startup.py — フィールド初期値
+
+STATE_DB エントリが存在しない場合に `read_data()` が使用するデフォルト値:
+
+| フィールド | 初期値 | ソース |
+|-----------|--------|--------|
+| `current_owner` | `"none"` | `container_startup.py:46` |
+| `update_time` | `""` | `container_startup.py:47` |
+| `container_id` | `""` | `container_startup.py:48` |
+| `remote_state` | `"none"` | `container_startup.py:49` |
+| `container_version` | `"0.0.0"` | `container_startup.py:50`（`os.environ.get('IMAGE_VERSION', '0.0.0')` の fallback） |
+| `system_state` | `""` | `container_startup.py:51` |
+
+!!! note "`container_version` の二元 fallback"
+    `container_startup.py` は `"0.0.0"` を fallback として使用するが、`ctrmgrd.py` の `dflt_st_feat` では `""` (L96)。ctrmgrd が STATE_DB エントリを初期化する場合のみ `""` になる。同一フィールドに 2 種類の fallback が存在する。
+
+### CONFIG_DB/YANG 外の暗黙ルール
+
+- **`FEATURE_EXCLUSION_LIST` はコード専有**: `telemetry` / `frr_bmp` の除外は CONFIG_DB にも YANG にも設定パスがなく、ソースコード変更なしに追加・削除できない。
+- **delayed feature の 180 秒タイムアウト**: PORT 初期化が 180 秒を超えた場合、タイムアウトで強制 enable されるため、コンテナが不完全な状態で起動しうる。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/feature-state-constants.md`
+<!-- /constants -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
