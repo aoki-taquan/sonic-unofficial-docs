@@ -383,6 +383,41 @@ PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・波及効果 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-priority-group-map-side.md`
+
+`TC_TO_PRIORITY_GROUP_MAP` の SET/DEL が引き起こす ASIC・他テーブルへの波及効果。
+
+### ASIC 側の副作用
+
+| # | 副作用 | トリガー | evidence |
+|---|--------|---------|---------|
+| 1 | ASIC に SAI QoS map オブジェクト生成（`SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP`） | SET（新規） | `qosorch.cpp:904-928` |
+| 2 | ポートの ingress TC→PG マッピング変更（`SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP`） | `PORT_QOS_MAP|<port>.tc_to_pg_map` 参照時に適用 | `qosorch.cpp:2060-2175` |
+| 3 | トンネル decap の TC→PG マッピング変更（`SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP`） | `TUNNEL_DECAP_TABLE|<name>.decap_tc_to_pg_map` 参照時に適用 | `tunneldecaporch.cpp:230-243` |
+| 4 | 参照中ポート・トンネルへの即時反映（`set_qos_map_attribute()`） | SET（既存マップ上書き） | `qosorch.cpp:204-213` |
+| 5 | SAI QoS map オブジェクト削除（`remove_qos_map()`） | DEL（参照解放後） | `qosorch.cpp:188-195` |
+
+### PFC・lossless バッファへの波及
+
+TC→PG マッピングは PFC の動作に直結する。`BUFFER_PG|<port>|<pg>` で lossless プロファイルが割り当てられた PG（通常 PG3, PG4）に対し、TC→PG マッピングが一致しなくなると **lossless パスが無効化**される。
+
+- lossless PG（3, 4）に割り当てる TC を変更する場合、`BUFFER_PG` の lossless profile 設定との整合を確認すること。
+- 上書き（modify）は参照中のポート・トンネルに**即時反映**されるため、稼働中トラフィックの ingress バッファ割り当てが変化する。
+
+### STATE_DB / 通知チャネルへの副作用
+
+| 副作用先 | 内容 |
+|---------|------|
+| STATE_DB | **書き込みなし**。`TC_TO_PRIORITY_GROUP_MAP` は STATE_DB テーブルを持たない |
+| APPL_DB | **書き込みなし**。CONFIG_DB → SAI ダイレクトルートであり APPL_DB は経由しない |
+| ERROR_TABLE | なし |
+| 通知チャネル | なし（syslog のみ） |
+
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
