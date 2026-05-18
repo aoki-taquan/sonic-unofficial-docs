@@ -416,3 +416,42 @@ CONFIG_DB / YANG で管理されず、コード中に直書きされた定数の
 
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-constants.md`
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+STATE_DB / BMP_STATE_DB への書込みが引き起こす、他 DB への副次的書込みと連鎖動作を示す。
+
+### BGP_STATE_TABLE — fpmsyncd RIB reconciliation のトリガー
+
+`BGP_STATE_TABLE` は **読み取り専用のシグナルテーブル** であり、書き込みを行うのは `bgp_eoiu_marker.py` のみ。ただし `state = "reached"` への遷移は `fpmsyncd` の動作に連鎖的な副次効果をもたらす。
+
+| # | 副次効果 | 対象 DB / テーブル | 発生条件 | evidence |
+|---|---------|-----------------|---------|---------|
+| 1 | **RIB reconciliation 開始** — `fpmsyncd` が `WarmStartHelper::runRestoration()` を呼び出し、Warm Restart 前に APPL_DB に積まれていた ROUTE_TABLE エントリを FRR から再受信した経路で上書き・削除する | APPL_DB / `ROUTE_TABLE` | IPv4 + IPv6 の両 EOIU が `"reached"` かつ `DEFAULT_EOIU_HOLD_INTERVAL`（3 秒）経過後。または warm_restart タイマー（120 秒）満了後のフォールバック | fpmsyncd.cpp L196–215, L201–218; routesync.cpp L162 |
+| 2 | **APPL_DB ROUTE_TABLE への経路再投入** — reconciliation 完了後、FRR から受信した BGP 経路が `ProducerStateTable` 経由で APPL_DB `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` に書き込まれる | APPL_DB / `ROUTE_TABLE`, `LABEL_ROUTE_TABLE` | reconciliation が `isReconciled()` = true になった後の通常ルート受信時 | fpmsyncd.cpp L320; routesync.cpp L1433, L156–158 |
+
+`BGP_STATE_TABLE` を **直接購読する他デーモン** は存在しない（`fpmsyncd` がポーリングするのみ）。STATE_DB の当テーブルを起点とした ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB への書込みは発生しない。
+
+### BGP_PEER_CONFIGURED_TABLE — 副次 DB 書込なし
+
+`BGP_PEER_CONFIGURED_TABLE` は SDN コントローラや `sonic-utilities`（`show bgp neighbors`）が **読み取るのみ** で、このテーブルへの書込みを契機に他 DB へ書き込むデーモンは存在しない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---------|---------|------|
+| APPL_DB | なし | bgpcfgd の SET/DEL 操作は FRR vtysh への設定投入と STATE_DB 書込みのみ。APPL_DB Producer 呼び出しなし |
+| ASIC_DB | なし | bgpcfgd は SAI 非経由 |
+| COUNTERS_DB / FLEX_COUNTER_DB | なし | BGP ピア管理は FlexCounter 対象外 |
+
+### BGP_NEIGHBOR_TABLE / BGP_RIB_IN_TABLE / BGP_RIB_OUT_TABLE — 副次 DB 書込なし
+
+BMP_STATE_DB テーブルは `openbmpd` が **書き込み専用** で管理し、`show bmp` コマンド（sonic-utilities）が読み取るのみ。これらテーブルへの書込みを契機に他 DB が更新されることはない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---------|---------|------|
+| STATE_DB | なし | `bmpcfgd` の副作用は BMP_STATE_DB テーブルの全削除のみ（bmpcfgd.py L64–65） |
+| APPL_DB | なし | openbmpd は BMP_STATE_DB にのみ書き込む |
+| COUNTERS_DB / FLEX_COUNTER_DB | なし | BMP テーブルはモニタリング専用。FlexCounter 対象外 |
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-side-effects.md`
+<!-- /side-effects -->
