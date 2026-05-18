@@ -284,6 +284,69 @@ PORT_QOS_MAP
 > **Evidence**: `qosorch.cpp:124-201` (QosMapHandler::processWorkItem); `qosorch.cpp:235-296` (DscpToTcMapHandler); `qosorch.cpp:884-934` (TcToPgHandler); `qosorch.cpp:2253-2300` (QosOrch::doTask)
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-constants.md`
+
+`DSCP_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DSCP_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を構成するハードコード定数を記述する。出典は `qosorch.h`、`qosorch.cpp`、および各 YANG モジュール。
+
+### CONFIG_DB フィールド名定数 (qosorch.h)
+
+`PORT_QOS_MAP` テーブルのフィールド名は `qosorch.h` に `const string` としてハードコードされている。
+
+| 定数名 | 値 | 用途 | ソース |
+|-------|----|------|--------|
+| `dscp_to_tc_field_name` | `"dscp_to_tc_map"` | `PORT_QOS_MAP.<port>.dscp_to_tc_map` フィールド名。`DSCP_TO_TC_MAP` へのリファレンス | qosorch.h L11 |
+| `tc_to_pg_map_field_name` | `"tc_to_pg_map"` | `PORT_QOS_MAP.<port>.tc_to_pg_map` フィールド名。`TC_TO_PRIORITY_GROUP_MAP` へのリファレンス | qosorch.h L18 |
+| `decap_dscp_to_tc_field_name` | `"decap_dscp_to_tc_map"` | トンネル decap 側 DSCP→TC フィールド名 | qosorch.h L34 |
+| `decap_tc_to_pg_field_name` | `"decap_tc_to_pg_map"` | トンネル decap 側 TC→PG フィールド名 | qosorch.h L35 |
+
+### SAI QOS マップタイプ定数
+
+各ハンドラが SAI オブジェクト作成時に `qos_map_attr.value` にセットするハードコード定数。
+
+| SAI 定数 | 使用箇所 | 意味 |
+|----------|---------|------|
+| `SAI_QOS_MAP_TYPE_DSCP_TO_TC` | `qosorch.cpp:265` | DSCP → Traffic Class マップの SAI タイプ |
+| `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` | `qosorch.cpp:913` | TC → Priority Group マップの SAI タイプ |
+
+> **重要**: `SAI_QOS_MAP_TYPE_DSCP_TO_PRIORITY_GROUP` は SAI 仕様に存在しない。これが `DSCP_TO_PG_MAP` テーブルが SONiC に存在しない根本理由の一つである。
+
+### SAI ポート属性定数
+
+`PORT_QOS_MAP` を SAI ポートオブジェクトに適用する際の属性 ID。
+
+| SAI 定数 | 対応フィールド | ソース |
+|----------|-------------|--------|
+| `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | `dscp_to_tc_map` | qosorch.cpp:61 |
+| `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` | `tc_to_pg_map` | qosorch.cpp:67 |
+
+### YANG 値域制約（ハードコードパターン）
+
+YANG バリデーションで強制される値域はコードではなく YANG ファイルにハードコードされている。
+
+#### DSCP_TO_TC_MAP の値域制約
+
+| フィールド | YANG パターン / 型 | 許容値 | ソース |
+|-----------|-----------------|--------|--------|
+| `name` | `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` | 英数字始まり、英数字・ハイフン・アンダースコア、最大 32 文字 | sonic-dscp-tc-map.yang L40-41 |
+| `dscp` (key) | `"6[0-3]\|[1-5][0-9]?\|[0-9]?"` | `0`〜`63` の整数文字列のみ | sonic-dscp-tc-map.yang L57-62 |
+| `tc` (value) | `stypes:tc_type` (`uint8` range `0..15`) | `0`〜`15` | sonic-types.yang (stypes) |
+
+#### TC_TO_PRIORITY_GROUP_MAP の値域制約
+
+| フィールド | YANG パターン / 型 | 許容値 | ソース |
+|-----------|-----------------|--------|--------|
+| `name` | `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` | 英数字始まり、最大 32 文字 | sonic-tc-priority-group-map.yang L40-41 |
+| `tc` (key) | `stypes:tc_type` (`uint8` range `0..15`) | `0`〜`15` | sonic-types.yang (stypes) |
+| `pg` (value) | `"[0-7]?"` | `0`〜`7` または空文字 | sonic-tc-priority-group-map.yang L62-65 |
+
+> **注意**: `pg` パターン `[0-7]?` は空文字を許容するが、`qosorch.cpp:895` の `stoi()` は空文字で `std::invalid_argument` を送出してクラッシュする（`stoi("")` の例外処理なし）。
+
+> **Evidence**: `qosorch.h:11,18,34-35`; `qosorch.cpp:61,67,245-246,265,894-895,913`; `sonic-dscp-tc-map.yang:40-66`; `sonic-tc-priority-group-map.yang:40-65`
+<!-- /constants -->
+
 ## 制約
 
 - `DSCP_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
