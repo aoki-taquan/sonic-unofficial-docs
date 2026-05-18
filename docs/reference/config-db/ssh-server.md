@@ -494,3 +494,52 @@ ssh_handler(key="POLICIES", op=SET, data={inactivity_timeout:"10", ...})
 
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:2454-2466` (make_callback)、`hostcfgd:2478` (subscribe SSH_SERVER)、`hostcfgd:2528` (listen)、`hostcfgd:2297-2300` (ssh_handler)、`hostcfgd:2265` (sshscfg.load); 詳細分析 `meta/_intermediate/cdb-flow/ssh-server-pubsub.md`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` 全行精読 (FipsCfg, PamLimitsCfg)、`sonic-buildimage/rules/sonic-fips.mk`、`data/templates/limits.conf.j2`、`sonic-ssh-server.yang` L77–132 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/ssh-server-platform.md`
+
+### 差異 1: FIPS モード — `ssh` サービス強制再起動
+
+`FipsCfg` (`hostcfgd:1759-1840`) は FIPS 有効化・無効化時に `DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']` (hostcfgd:103) に列挙されたサービスを再起動する。
+
+| FIPS 状態 | `ssh` 再起動 | 条件 |
+|----------|------------|------|
+| FIPS 有効化・無効化 (カーネル非強制環境) | あり (`systemctl restart ssh`) | `sonic_fips=1` / `fips=1` がカーネルコマンドラインに**ない**場合 |
+| FIPS 強制環境 (`sonic_fips=1` / `fips=1`) | スキップ | `cur_enforced = True` → `FipsCfg.restart()` は即時 `return` |
+
+この再起動は `SSH_SERVER` テーブルへの変更とは無関係に発生する。FIPS テーブル変更ハンドラ (`fips_handler`) が `ssh_handler` を経由せずに sshd を再起動するため、その時点で有効な `SSH_SERVER` 設定が sshd に再読み込みされる。
+
+### 差異 2: FIPS-OpenSSH ビルド — 暗号スイートの実質的制限
+
+FIPS モードが有効なビルドでは `sonic-buildimage/rules/sonic-fips.mk` で定義される `FIPS_OPENSSH_SERVER` パッケージが使用される。FIPS-OpenSSH は弱い暗号アルゴリズムをサポートしないため、以下の YANG enum 値を `SSH_SERVER.ciphers` / `kex_algorithms` / `macs` に設定すると `sshd -T` 検証が失敗し、`set_policies()` は変更をロールバックして現行設定が維持される。
+
+| フィールド | FIPS 環境で実質無効になる値 |
+|----------|--------------------------|
+| `ciphers` | `3des-cbc`, `aes128-cbc`, `aes192-cbc`, `aes256-cbc` (CBC モード), `chacha20-poly1305@openssh.com` (FIPS 非準拠) |
+| `kex_algorithms` | `diffie-hellman-group1-sha1`, `diffie-hellman-group14-sha1` (SHA-1 ベース DH) |
+| `macs` | `hmac-md5`, `hmac-md5-96`, `hmac-md5-etm@openssh.com`, `hmac-md5-96-etm@openssh.com` (MD5 ベース) |
+
+非 FIPS ビルドではこれらの値は YANG スキーマ通りに設定可能。
+
+### 差異 3: `PamLimitsCfg` の hwsku / type 参照 — SSH への実質的影響なし
+
+`PamLimitsCfg.read_localhost_config()` (hostcfgd:1445-1451) は `DEVICE_METADATA|localhost` から `hwsku` と `type` を読み取り Jinja2 テンプレート変数として渡すが、`data/templates/limits.conf.j2` のSSH 制限ロジックは `max_sessions` のみを参照する。**hwsku / type によって `max_sessions` の動作が変わることはない**。
+
+### 差異 4: VS (Virtual Switch) / multi-ASIC — 差異なし
+
+| 構成 | 動作 |
+|------|------|
+| ベアメタル | 標準 |
+| VS (Virtual Switch) | 同一。`SshServer` / `PamLimitsCfg` に VS 固有ブランチなし |
+| multi-ASIC | 同一。hostcfgd は CONFIG_DB 接続 1 本のみ使用。namespace 分割なし |
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd:101-103 (DEFAULT_FIPS_RESTART_SERVICES) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd:1808-1840 (FipsCfg.restart — cur_enforced ガード) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd:1445-1451 (PamLimitsCfg.read_localhost_config — hwsku/type) -->
+<!-- evidence: sonic-host-services/data/templates/limits.conf.j2 (max_sessions のみ参照) -->
+<!-- evidence: sonic-buildimage/rules/sonic-fips.mk:55-59 (FIPS_OPENSSH_SERVER パッケージ定義) -->
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang:77-132 (cipher/kex/mac enum) -->
+<!-- /platform -->
