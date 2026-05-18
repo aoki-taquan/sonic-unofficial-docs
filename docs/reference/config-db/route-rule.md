@@ -159,4 +159,40 @@ DashRouteOrch が DASH_ROUTE_RULE_TABLE エントリを処理 → SAI 反映
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DashRouteOrch` は `DASH_ROUTE_RULE_TABLE` の処理時に以下の参照テーブル・リソースを読み書きする。
+
+### 入力参照（DashRouteOrch が読み取るテーブル）
+
+| テーブル / リソース | DB | 参照タイミング | 条件 | evidence |
+|---|---|---|---|---|
+| `DASH_ENI_TABLE` | APPL_DB (ZMQ) | `addInboundRouting()` 呼び出し時 | **常時必須** — ENI 未登録なら `return false` でリトライ | `dashrouteorch.cpp:425-428` |
+| `DASH_VNET_TABLE` (`gVnetNameToId`) | APPL_DB (ZMQ) | `addInboundRouting()` 呼び出し時 | `vnet` フィールドが protobuf に存在する場合のみ — 未登録なら `return false` でリトライ | `dashrouteorch.cpp:430-433` |
+
+**`DASH_ENI_TABLE` の補足**: `dash_orch_->getEni(ctxt.eni)` は `DashOrch` が管理する ENI マップを内部参照する。`addInboundRoutingPost()` でも `eni_id` を再取得し `sai_inbound_routing_entry_t.eni_id` に代入する (`dashrouteorch.cpp:521`)。
+
+**`DASH_VNET_TABLE` の補足**: グローバル変数 `gVnetNameToId` は `DashVnetOrch` が `DASH_VNET_TABLE` エントリを処理した時点で登録される。`vnet` フィールドを持つルールは `DASH_VNET_TABLE` の処理完了後でないと SAI に反映されない。
+
+### 出力参照（DashRouteOrch が書き込むテーブル）
+
+| テーブル | DB | 書き込みタイミング | フィールド | evidence |
+|---|---|---|---|---|
+| `DASH_ROUTE_RULE_TABLE` (result) | APPL_STATE_DB | SAI 成功/失敗後 | `result`, `err_str` | `dashrouteorch.cpp:644,705` |
+
+`dash_route_rule_result_table_` (`app_state_db` 上の `DASH_ROUTE_RULE_TABLE`) に SAI プログラミング結果を書き戻す。コントローラ側や DPU HA コンポーネントがプログラミング完了を確認するために使用する。SET 成功 → `writeResultToDB`、DEL 成功 → `removeResultFromDB` が呼ばれる (`dashrouteorch.cpp:644,656,705,712`)。
+
+### 副作用: CRM リソースカウンタ
+
+| カウンタ | 操作 | タイミング | evidence |
+|---|---|---|---|
+| `CRM_DASH_IPV4_INBOUND_ROUTING` | inc / dec | `addInboundRoutingPost()` 成功 / `removeInboundRoutingPost()` 成功 | `dashrouteorch.cpp:507,546` |
+| `CRM_DASH_IPV6_INBOUND_ROUTING` | inc / dec | 同上 (`sip.isV4()` が false の場合) | `dashrouteorch.cpp:507,546` |
+
+SIP アドレスファミリ（IPv4 / IPv6）に応じて異なる CRM カウンタを更新する。`CrmOrch` がリソース上限監視に使用する。
+
+Evidence: `dashrouteorch.cpp` 全体スキャン; 詳細スキャンノートは `meta/_intermediate/cdb-flow/route-rule-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 [^1]: sonic-net/SONiC `doc/dash/dash-sonic-hld.md` §3.2.10 "ROUTE RULE TABLE - INBOUND" (ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
