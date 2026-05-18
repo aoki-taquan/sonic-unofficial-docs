@@ -533,6 +533,64 @@ SAI sub-port の属性として `SAI_ROUTER_INTERFACE_ATTR_PORT_ID`（親ポー�
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次効果 (Phase F)
+
+> コード精読（`intfmgr.cpp` / `intfsorch.cpp`）から導出した CONFIG_DB 以外への書込みと SAI 副作用。  
+> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-sub-interface-side-effects.md`
+
+### SET — 属性ロウ (`VLAN_SUB_INTERFACE|<alias>`)
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `INTF_TABLE.set(<alias>, {mtu, admin_status, mac_addr, ...})` | APPL_DB / `INTF_TABLE` | `<alias>` | 常時 (`intfmgrd`) |
+| `STATE_INTERFACE_TABLE.hset(<alias>, "vrf", vrf_name)` | STATE_DB / `STATE_INTERFACE_TABLE` | `<alias>` field=`vrf` | 常時 (`intfmgrd`) |
+| `STATE_PORT_TABLE.set(<alias>, {state:ok})` | STATE_DB / `STATE_PORT_TABLE` | `<alias>` | Ethernet 系 sub-IF (`intfmgrd:553`) |
+| `STATE_LAG_TABLE.set(<alias>, {state:ok})` | STATE_DB / `STATE_LAG_TABLE` | `<alias>` | PortChannel 系 sub-IF (`intfmgrd:548`) |
+| `COUNTERS_RIF_NAME_MAP.set("", {<alias>:<oid>})` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | `""` field=`<alias>` | RIF 作成後タイマーで (`IntfsOrch:1537`) |
+| `COUNTERS_RIF_TYPE_MAP.set("", {<oid>:SUB_PORT})` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | `""` field=`<oid>` | RIF 作成後タイマーで (`IntfsOrch:1538`) |
+| FlexCounter エントリ登録 | FLEX_COUNTER_DB / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 作成後 (`IntfsOrch`) |
+
+SAI 呼び出し (`ASIC_DB` に反映):
+
+- `sai_router_intfs_api->create_router_interface(TYPE=SUB_PORT, PORT_ID=<親OID>, OUTER_VLAN_ID=<vid>)` — sub-port RIF OID 生成 (`intfsorch.cpp:1296`)
+- `set_router_interface_attribute(LOOPBACK_PACKET_ACTION)` — `loopback_action` 設定時のみ (`intfsorch.cpp:1187-1195`)
+
+### SET — IP プレフィクスロウ (`VLAN_SUB_INTERFACE|<alias>|<ip-prefix>`)
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `INTF_TABLE.set(<alias>:<ip-prefix>, {scope, family})` | APPL_DB / `INTF_TABLE` | `<alias>:<ip-prefix>` | IPv4 link-local 以外 (`intfmgr.cpp:1137`) |
+| `STATE_INTERFACE_TABLE.hset(<alias>\|<ip-prefix>, "state", "ok")` | STATE_DB / `STATE_INTERFACE_TABLE` | `<alias>\|<ip-prefix>` | IPv4 link-local 以外 (`intfmgr.cpp:1138`) |
+
+SAI 呼び出し:
+
+- `sai_route_api->create_route_entry(...)` — IP2me ルート (CPU trap) 追加
+- `sai_neighbor_api->create_neighbor_entry(broadcast)` — IPv4 /30 以上で Directed Broadcast 追加 (サブネットによる条件付き)
+
+### DEL — 属性ロウ (`VLAN_SUB_INTERFACE|<alias>`)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|------------------|------|------|
+| `INTF_TABLE.del(<alias>)` | APPL_DB / `INTF_TABLE` | `<alias>` | 常時 (`intfmgr.cpp:1088`) |
+| `STATE_INTERFACE_TABLE.del(<alias>)` | STATE_DB / `STATE_INTERFACE_TABLE` | `<alias>` | 常時 (`intfmgr.cpp:1089`) |
+| `STATE_PORT_TABLE.del(<alias>)` | STATE_DB / `STATE_PORT_TABLE` | `<alias>` | Ethernet 系 sub-IF (`intfmgr.cpp:566`) |
+| `STATE_LAG_TABLE.del(<alias>)` | STATE_DB / `STATE_LAG_TABLE` | `<alias>` | PortChannel 系 sub-IF (`intfmgr.cpp:561`) |
+| `COUNTERS_RIF_NAME_MAP.hdel("", <alias>)` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | — | RIF 削除時 (`intfsorch.cpp:1560`) |
+| `COUNTERS_RIF_TYPE_MAP.hdel("", <oid>)` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | — | RIF 削除時 (`intfsorch.cpp:1561`) |
+| FlexCounter エントリ削除 | FLEX_COUNTER_DB / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 削除時 (`intfsorch.cpp:1563`) |
+
+SAI 呼び出し:
+
+- `sai_router_intfs_api->remove_router_interface(...)` — sub-port RIF 削除 (`intfsorch.cpp:1346`)
+
+### VOQ 専用副次効果
+
+VOQ システム (`gIsVoqSystemEnabled` = true) かつローカル IF の場合、`voqSyncAddIntf()` / `voqSyncDelIntf()` (intfsorch.cpp:1672-1749) が `CHASSIS_APP_DB` の `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` に同期する。ただし VLAN_SUB_INTERFACE (`Port::SUBPORT`) を VOQ system_port 上に直接重ねることはサポートされないため、通常の VLAN_SUB_INTERFACE 設定では VOQ 同期パスに到達しない。
+
+<!-- 証跡: sonic-swss/cfgmgr/intfmgr.cpp, sonic-swss/orchagent/intfsorch.cpp -->
+<!-- /side-effects -->
+
 <!-- platform-diff -->
 ## プラットフォーム差異 (Phase H)
 
