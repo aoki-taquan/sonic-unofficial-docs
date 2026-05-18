@@ -343,6 +343,30 @@ STATE_DB エントリが存在しない場合に `read_data()` が使用する�
 > 中間調査詳細: `meta/_intermediate/cdb-flow/feature-state-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `container_startup.py` / `ctrmgrd.py`) が FEATURE テーブル以外へ副次的に書き込む先を示す。
+
+| 副次書込み先 | 書込み元 | 条件 | evidence |
+|---|---|---|---|
+| `CONFIG_DB FEATURE\|<name>` の `has_global_scope` / `has_per_asic_scope` | `featured` | `sync_feature_scope()` により、scope フィールドが実際に変化した場合のみ上書き。Multi-ASIC では名前空間ごとの CONFIG_DB にも伝播 | `featured:290-355` |
+| `CONFIG_DB FEATURE\|<name>` の `state` | `featured` | `resync_feature_state()` — feature の state が immutable (`always_enabled` / `always_disabled`) またはテンプレート文字列の場合のみ CONFIG_DB を書き戻す。通常の `enabled` / `disabled` 変更では書き戻さない | `featured:550-572` |
+| `STATE_DB KUBE_LABELS\|SET` (`<feat>_local_version`) | `container_startup.py` | `owner == "local"` のコンテナ起動時に `drop_label()` が書き込む。Kubernetes が同バージョンの再デプロイを抑止するためのラベル | `container_startup.py:99-106,179-181` |
+| `STATE_DB KUBE_LABELS\|SET` (`<feat>_enabled`) | `ctrmgrd.py` | CONFIG_DB `set_owner` の変化を検知した `handle_update()` が `"true"` / `"false"` を書き込む。`KubeLabelStats` がこのテーブルを監視して kube API Server へ同期する | `ctrmgrd.py:505-506,638-654` |
+
+### DB 以外の副次作用
+
+`featured` は DB への書き込み以外に、ファイルシステムへの副次作用も持つ:
+
+- **systemd override ファイル生成**: `update_systemd_config()` が
+  `/etc/systemd/system/<feature>.service.d/` に `Restart=always` または `Restart=no` を書き込み、
+  その後 `systemctl daemon-reload` を実行する (`featured:357-406`)。
+  CONFIG_DB `FEATURE.auto_restart` フィールドが変化した場合にトリガーされる。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/feature-state-side-effects.md`
+<!-- /side-effects -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
