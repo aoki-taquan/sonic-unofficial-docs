@@ -352,4 +352,30 @@ P4RT テーブルには専用 YANG モデルが存在しないため leafref は
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh` (コミット `9ea932ec`)
+
+`p4rt` テーブルは orchagent ではなく `p4rt.sh` スクリプトが起動時単回読込みするため、失敗は「サイレントフォールバック」または「起動中断」の二択になる。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-failure.md -->
+
+### 失敗挙動マトリクス
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `p4rt_vars.j2` テンプレートファイル不在 | `p4rt.sh:L6–9` | `exit 1` — gRPC サーバ起動せず (`systemctl failed`) | `"P4rt vars template file not found"` を stdout | `p4rt.sh:L8` |
+| `server_crt` または `server_key` が空 | `p4rt.sh:L24–25` | `--use_insecure_server_credentials` で平文 gRPC 起動（エラーなし） | なし | `p4rt.sh:L25` |
+| `P4RT\|certs` も `DEVICE_METADATA\|localhost\|x509` も不在 | `p4rt.sh:L55–57` | `--use_insecure_server_credentials` で平文 gRPC 起動（エラーなし） | なし | `p4rt.sh:L56` |
+| `ca_crt` なしで `cert_crl_dir` のみ設定 | `p4rt.sh:L30–37` | `cert_crl_dir` が無視され CRL チェックなしで TLS 起動 | なし | `p4rt.sh:L30–37` |
+| `p4rt_unix_socket` ディレクトリ不在 | `p4rt.sh:L92–96` | `mkdir -p` で自動作成（権限不足時は p4rt バイナリが socket bind エラー） | なし（mkdir 失敗時はバイナリ側でエラー） | `p4rt.sh:L94–95` |
+| 未知フィールド / typo フィールド | 各 `jq -r '.field // empty'` | 該当引数なしで起動（サイレント無視）— YANG モデルなしのため CLI 事前バリデーションもなし | なし | `p4rt.sh:L60–97` |
+
+### 補足
+
+**テンプレートファイル不在のみが `exit 1` となる唯一の hard failure**。それ以外の設定誤り（証明書欠如・フィールド typo）はすべてサイレントフォールバックであり、`p4rt` コンテナ自体は起動してしまう。意図しない平文 gRPC 起動を検知するには `systemctl status p4rt` の起動引数を確認するか、`p4rt` プロセスの `/proc/<pid>/cmdline` で `--use_insecure_server_credentials` の有無を確認する必要がある。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected -->
