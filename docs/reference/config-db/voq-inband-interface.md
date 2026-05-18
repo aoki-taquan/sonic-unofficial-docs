@@ -321,4 +321,25 @@ journalctl -u swss | grep -i "inband"
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/voq-inband-interface-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+以下の定数は `sonic-swss/cfgmgr/intfmgr.cpp`、`sonic-swss/cfgmgr/intfmgrd.cpp`、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang` から検出したマジックナンバー・閾値。
+
+| 定数 / マジック値 | 値 | 定義場所 | 意味・影響 |
+|------------------|-----|----------|-----------|
+| IPv6 metric (VOQ 専用) | `256` | `intfmgr.cpp:105` | `switch_type == "voq"` のとき IPv6 アドレス追加コマンドに `metric 256` を付与。カーネルのデフォルト connected route metric (256) と揃えることで、eBGP / iBGP 経路と inband 接続ルートを同一 ECMP グループに収める |
+| IPv6 broadcast 付与閾値 | prefixLen `< 127` | `intfmgr.cpp:108` | `/127` 以上 (`/127`, `/128`) では broadcast オプションなしで `ip -6 address add` を実行。Linux カーネルの仕様に準拠 |
+| `SELECT_TIMEOUT` | `1000` ms | `intfmgrd.cpp:17` | `intfmgrd` メインループの `s.select()` タイムアウト値。設定変更が反映されるまでの最大遅延 |
+| `name` パターン | `"Ethernet-IB[0-9]+"` | `sonic-voq-inband-interface.yang:32` | インバンド IF 名の YANG pattern 制約。違反すると YANG バリデーションで reject される |
+| `inband_type` パターン | `"port\|Port"` | `sonic-voq-inband-interface.yang:38` | インバンドタイプの許容値。この 2 値以外は YANG バリデーションで reject |
+| `inband_type` デフォルト | `"port"` | `sonic-voq-inband-interface.yang` | YANG `default "port"` 指定値。省略時に補完される |
+
+!!! note "metric 256 の意味"
+    VOQ chassis では、inband ポート経由の eBGP / iBGP 学習経路と直接接続ルートが競合したとき、カーネルの connected route metric (デフォルト 256) に合わせて IPv6 アドレスを `metric 256` で追加することで両者を同一 ECMP グループに統合できる。IPv4 ではカーネルの connected / static 両 metric がデフォルト 0 のため明示指定不要 (`intfmgr.cpp:101-102` コメント参照)。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/voq-inband-interface-constants.md`
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 6981be1a469d -->

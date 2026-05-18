@@ -511,4 +511,62 @@ CONFIG_DB `VNET` / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルの変更に�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/vnet-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+CONFIG_DB の `VNET` / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルは `vxlanmgrd` (`VxlanMgr`) が直接購読し、`orchagent` の `VNetOrch` / `VNetRouteOrch` は APPL_DB 経由で消費する。
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|----------------------|
+| CONFIG_DB[VNET] → vxlanmgrd | `Orch::addConsumer()` による `Selectable` 登録、`select()` ループで受信 | `CFG_VNET_TABLE_NAME` キースペース通知 |
+| CONFIG_DB[VXLAN_TUNNEL] → vxlanmgrd | 同上 | `CFG_VXLAN_TUNNEL_TABLE_NAME` キースペース通知 |
+| vxlanmgrd → APPL_DB[VNET_TABLE] | `ProducerStateTable::set()` (`m_appVxlanTunnelTable` 等) | APPL_DB pub/sub チャンネル |
+| APPL_DB[VNET_TABLE] → VNetOrch | `Orch2(db, APP_VNET_TABLE_NAME, ...)` → `ConsumerStateTable` で受信 | `__keyspace@1__:VNET_TABLE\|*` |
+| APPL_DB[VNET_RT_TABLE / VNET_RT_TUNNEL_TABLE] → VNetRouteOrch | `Orch2(db, tableNames, ...)` → `ConsumerStateTable` | `__keyspace@1__:VNET_ROUTE_TABLE\|*` 他 |
+
+### vxlanmgrd の Consumer ロール
+
+`vxlanmgrd` (`cfgmgr/vxlanmgrd.cpp:46-53`) は起動時に以下 4 テーブルを購読する:
+
+```
+CFG_VNET_TABLE_NAME
+CFG_VXLAN_TUNNEL_TABLE_NAME
+CFG_VXLAN_TUNNEL_MAP_TABLE_NAME
+CFG_VXLAN_EVPN_NVO_TABLE_NAME
+```
+
+`doVxlanCreateTask()` が `CFG_VNET_TABLE_NAME` SET イベントを受けて、`vxlan_tunnel` + `vni` の完備を確認してから APP_DB へ転記する。不完全なメッセージは `return true` (破棄)、依存オブジェクト未作成は `return false` (再キュー) で処理される (`vxlanmgr.cpp:307-342`)。
+
+### orchagent の Consumer ロール
+
+`orchdaemon.cpp:276` で `VNetOrch` が `APPL_DB` + `APP_VNET_TABLE_NAME` を渡して構築される。`Orch2` の `ConsumerStateTable` が APPL_DB の keyspace 変化を `Select::select()` ループで捕捉し、`addOperation()` / `delOperation()` を呼び出す。
+
+`VNetRouteOrch` (`orchdaemon.cpp:265-269`) は `APP_VNET_RT_TABLE_NAME` と `APP_VNET_RT_TUNNEL_TABLE_NAME` の 2 テーブルを同一 `Orch2` インスタンスで購読し、`handler_map_` によって `handleRoutes()` / `handleTunnel()` にディスパッチする (`vnetorch.cpp:738-739`)。
+
+### データフロー概要
+
+```
+operator / REST
+  ↓ sonic-db-cli / config vxlan
+  CONFIG_DB[VNET|<name>]  ← SET/DEL
+        ↓ keyspace通知
+vxlanmgrd (cfgmgr/vxlanmgr.cpp)
+  doVxlanCreateTask():
+    - vxlan_tunnel + vni 完備チェック (L307-313)
+    - m_vxlanTunnelCache 存在チェック (L318-323)
+    - isVrfStateOk() チェック (L328-333)
+    - MAC アドレス取得 (L334-342)
+    → (成功時) APPL_DB[VNET_TABLE|<name>] ProducerStateTable::set()
+        ↓ ConsumerStateTable keyspace通知
+orchagent / VNetOrch (orchagent/vnetorch.cpp L377)
+  addOperation():
+    - VxlanTunnelOrch::isTunnelExists() (L499-502)
+    - createObject<VNetVrfObject>() → SAI create_virtual_router()
+    → APPL_DB[VNET_TABLE] 状態反映完了
+```
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: f94986e6b96c -->

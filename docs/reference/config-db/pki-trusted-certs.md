@@ -205,6 +205,42 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 -->
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 他テーブル・コンポーネントとの参照関係 (Phase C)
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/pki-trusted-certs-cross-refs.md` を参照。
+
+### SECURITY_PROFILES が参照する / される先
+
+| 参照元 | 参照先 | 参照種別 | ソース |
+|--------|--------|----------|--------|
+| `SECURITY_GLOBAL\|global.security_profile` | `SECURITY_PROFILES\|<profile-name>` | YANG leafref (CVL バリデーション) | `sonic-security-global.yang:29-35` |
+
+### gNSI Certz が書き込む STATE_DB テーブル
+
+| テーブル | キー形式 | 書込みタイミング | ソース |
+|---------|---------|----------------|--------|
+| `CREDENTIALS\|CERT\|<profileID>` (STATE_DB) | `CREDENTIALS\|CERT\|<profileID>` | gNSI Certz 起動時・Rotate RPC 処理時 | `gnsi_certz.go:1036-1059` |
+
+`writeCredentialsMetadataToDB()` は `common_utils.GetRedisDBClient()` 経由で STATE_DB (DB 番号 6) に接続し、`certTbl="CERT"` / `credentialsTbl="CREDENTIALS"` 定数から `GetKey()` でパスを構築する (`gnsi_certz.go:46-48`, `notification_producer.go:16`)。
+
+### GNMI_CLIENT_CERT (CONFIG_DB) — 独立した関連テーブル
+
+`GNMI_CLIENT_CERT` テーブルはクライアント証明書の CN ↔ gNMI ロールマッピングを格納する独立テーブルであり、`SECURITY_PROFILES` との直接的な依存関係はない。`clientCertAuth.go:259-263` が `ConfigDBConnector.Get_entry("GNMI_CLIENT_CERT", certCommonName)` を呼び出してロール解決を行う。
+
+### community master での非連携
+
+`SECURITY_PROFILES` を直接参照する production ハンドラ (orchagent / translib / certmgr) は community master では確認されていない。gNSI Certz のプロファイル管理は `/keys/grpc-version.json` (CertzMetaFile) とファイルシステムシンボリックリンクで独立して行われる。
+
+<!-- evidence:
+  sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:29-35 — security_profile leafref → SECURITY_PROFILES
+  sonic-gnmi/gnmi_server/gnsi_certz.go:46-48 — certTbl="CERT", credentialsTbl="CREDENTIALS" 定数
+  sonic-gnmi/gnmi_server/gnsi_certz.go:1036-1059 — writeCredentialsMetadataToDB (STATE_DB 書込み)
+  sonic-gnmi/common_utils/notification_producer.go:16 — dbName="STATE_DB"
+  sonic-gnmi/gnmi_server/clientCertAuth.go:259-263 — ConfigDB GNMI_CLIENT_CERT 参照 (CN→ロール解決)
+-->
+<!-- /cross-refs -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)

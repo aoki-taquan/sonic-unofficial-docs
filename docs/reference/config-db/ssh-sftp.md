@@ -157,6 +157,24 @@ hostcfgd 起動
 <!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES に Subsystem キーなし) -->
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`SSH_SFTP` テーブルは存在しないため、SFTP サブシステム固有の CONFIG_DB 参照関係はない。ただし `SSH_SERVER|POLICIES` の各フィールドは sshd_config 経由で SFTP セッションにも間接的に影響する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | SFTP への影響 |
+|--------------------------|---------|------|--------------|
+| `SSH_SERVER\|POLICIES` (CONFIG_DB) | 間接制御（sshd_config 経由） | `ciphers` / `kex_algorithms` / `macs` / `password_authentication` / `ports` 設定時 | 暗号スイート・認証方式・接続ポートが SFTP セッションにも適用される |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | `PamLimitsCfg` の early-return 条件 | `PamLimitsCfg.update_config_file()` L1430: 両テーブルが存在しない場合は PAM limits 未更新 | `max_sessions` 経由でセッション上限に影響 |
+| `openssh-server` パッケージ（OS） | SFTP バイナリ提供 | デプロイ時固定。`/usr/lib/openssh/sftp-server` の存在に依存 | `Subsystem sftp` 行の実体（CONFIG_DB 外） |
+
+!!! note "直接制御経路なし"
+    `Subsystem sftp` 行の有効/無効を CONFIG_DB から操作する手段は現状存在しない。上記の参照はすべて間接的・派生的なものであり、SFTP サブシステムそのものの状態は OS パッケージと sshd_config テンプレートに依存する。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES — Subsystem キーなし、他フィールドは SFTP セッションに共通適用) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1425-1435 (PamLimitsCfg.update_config_file — DEVICE_METADATA|localhost early-return 条件) -->
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

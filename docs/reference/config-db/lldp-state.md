@@ -420,6 +420,39 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/lldp-state-side-effects.md`  
+> ソース: `sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2`, `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`, `sonic-mgmt-common/translib/lldp_app.go`
+
+### 副次書込の有無
+
+`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` (APPL_DB) は **lldp-syncd が唯一の書き手**であり、これらテーブルへの書き込みに起因する他 DB への副次書込は存在しない。
+
+| 副次書込先 | 有無 | 根拠 |
+|-----------|-----|------|
+| STATE_DB | なし | `lldpmgrd` は STATE_DB `PORT_TABLE` を読み取るのみ（`is_port_up()` 経由）。Consumer (snmpagent / lldp_app.go) は書き込みなし |
+| COUNTERS_DB | なし | lldp 系コンポーネント全体で COUNTERS_DB 書込コードなし。障害ログは syslog (`SWSS_LOG_*`) のみ |
+| FLEX_COUNTER_DB | なし | lldp は SAI / orchagent とは独立した経路 (lldpd ← lldpcli) であり、flex-counter 機構を使用しない |
+| ASIC_DB | なし | lldp は SAI 非経由。lldpd が OS netdev / lldpcli を直接操作するため ASIC_DB に書き込まない |
+| CONFIG_DB | なし | `lldp-syncd` / `lldpmgrd` は CONFIG_DB を読み取るのみ。書き込みパスは設計上存在しない |
+| EVENT_DB | なし | eventd との連携なし |
+
+### lldpmgrd の外部副作用
+
+`lldpmgrd` は DB への書込みを行わず、**`lldpcli` サブプロセス呼び出し**（lldpd プロセスへのコマンド注入）のみを副作用として持つ。これは DB 書込ではなく OS プロセス間通信である。
+
+| アクセス対象 | DB | 用途 |
+|---|---|---|
+| `STATE_PORT_TABLE_NAME` | STATE_DB | `is_port_up()` — ポートの `netdev_oper_status` を読取 |
+| `CFG_DEVICE_METADATA_TABLE_NAME` | CONFIG_DB | `hostname` / `chassis_hostname` を読取 |
+| `CFG_PORT_TABLE_NAME` | CONFIG_DB | ポートの `alias` / `description` を読取 |
+| `CFG_MGMT_INTERFACE_TABLE_NAME` | CONFIG_DB | 管理 IP を読取 |
+| `APP_PORT_TABLE_NAME` | APPL_DB | `PortInitDone` / `PortConfigDone` イベントを購読 |
+
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルトと dead field
 

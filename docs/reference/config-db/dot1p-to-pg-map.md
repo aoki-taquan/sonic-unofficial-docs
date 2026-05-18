@@ -153,6 +153,29 @@ type_map QosOrch::m_qos_maps = {
 **2 段マッピングの SAI 適用はまとめて実行 (依存 #3)**: `handlePortQosMapTable()` は全フィールドの参照解決が揃った後、`update_list` に `<sai_port_attr_t, sai_object_id_t>` ペアを積み、`sai_port_api->set_port_attribute()` を順番に呼ぶ。`DOT1P_TO_TC_MAP` 由来の `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` 由来の `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` は同一 `PORT_QOS_MAP` エントリの処理内でそれぞれ独立して `set_port_attribute` される（evidence: `qosorch.cpp:2132-2156`）。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `qosorch` / `handlePortQosMapTable` が読み出す関連テーブル (Phase C)
+
+`DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路 (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を処理する `qosorch` が参照する CONFIG_DB テーブルおよび外部リソースは以下のとおり。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | evidence |
+|--------------------------|---------|------|---------|
+| `DOT1P_TO_TC_MAP\|<name>` (CONFIG_DB) | 被参照 (`resolveFieldRefValue`) | `PORT_QOS_MAP` エントリ SET 時に `dot1p_to_tc_map` フィールドが存在する場合。未解決なら `task_need_retry` | `qosorch.cpp:102`, `qosorch.cpp:2124` |
+| `TC_TO_PRIORITY_GROUP_MAP\|<name>` (CONFIG_DB) | 被参照 (`resolveFieldRefValue`) | `PORT_QOS_MAP` エントリ SET 時に `tc_to_pg_map` フィールドが存在する場合。未解決なら `task_need_retry` | `qosorch.cpp:106`, `qosorch.cpp:2124` |
+| `PORT_QOS_MAP\|<port_name>` (CONFIG_DB) | 参照元（2 段マップの最終適用対象） | 常時。`dot1p_to_tc_map` / `tc_to_pg_map` フィールドを通じて 2 つのマップを取り込み、SAI に適用 | `qosorch.cpp:2046-2156` |
+| `PORT` (PortsOrch `gPortsOrch->getPort()`) | ポート存在チェック | `PORT_QOS_MAP` の key が `global` でない場合。未登録ポートはエラーログ + `continue` でスキップ | `qosorch.cpp:28`, `qosorch.cpp:2068` |
+
+!!! note "SWITCH レベル direct 適用は DSCP_TO_TC のみ"
+    `handleGlobalQosMap()` 経路 (`PORT_QOS_MAP|global`) で SWITCH に直接適用されるのは `DSCP_TO_TC_MAP` のみ (`qosorch.cpp:1956`)。
+    `dot1p_to_tc_map` / `tc_to_pg_map` は `PORT_QOS_MAP|global` 経由の SWITCH 直接設定には対応しておらず、常にポート単位の `set_port_attribute` 経由で適用される。
+
+!!! note "`BUFFER_PG` / `DEVICE_METADATA` は非参照"
+    `qosorch.cpp` の `handlePortQosMapTable()` は `BUFFER_PG`、`BUFFER_QUEUE`、`DEVICE_METADATA` を直接参照しない。
+    PG バッファ割り当ては `BufferOrch` が担当し、`TC_TO_PRIORITY_GROUP_MAP` の SAI 適用後に独立して処理される。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dot1p-to-pg-map-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 制約
 
 - `DOT1P_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
