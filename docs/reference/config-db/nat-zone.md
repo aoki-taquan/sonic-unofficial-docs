@@ -77,6 +77,54 @@ LOOPBACK_INTERFACE|<loopback_name>
 |-----------|----|--------|------|
 | `nat_zone` | uint8 (0..3) | `0` | インタフェースの NAT ゾーン ID。`0` = inside、`1` = outside (典型) |
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`nat_zone` フィールドは `natmgrd` (NatMgr) と `orchagent` (IntfsOrch) の 2 プロセスが独立して購読する。各プロセスは処理前に前提条件を満たすまで `m_toSync` にエントリを残して再試行する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | Port / LAG / VLAN の状態確立 → iptables mangle MARK 適用 | **強制先行**（Loopback 除く） | `isPortStateOk()` 失敗時は `it++` で自動再試行 |
+| 2 | SAI RIF 作成完了 → SAI `NAT_ZONE_ID` 属性設定 | **強制先行** | `doIntfTask()` 内で `m_toSync` 再周回 |
+| 3 | 旧 NAT ルール全削除 → ゾーン更新 → 新 NAT ルール追加 | **強制内部順序**（ゾーン変更時） | natmgrd 単一スレッドで順次実行 |
+| 4 | NatMgr (iptables 側) と IntfsOrch (SAI 側) の処理 | 独立（並行） | 互いを待たない |
+
+### 主要な制約詳細
+
+**ポート状態先行必須 — natmgrd 側 (依存 #1)**:
+`NatMgr::doNatZoneIntfTask()` は key サイズ 1 のエントリ（`nat_zone` フィールドが付くパス）を処理するとき、Loopback 以外では `isPortStateOk(port)` が true になるまで `it++; continue;` でリトライする (`natmgr.cpp:7484–7490`)。確認先は `STATE_PORT_TABLE` (Ethernet) / `STATE_VLAN_TABLE` (Vlan) / `STATE_LAG_TABLE` (PortChannel) である。ポートが未確立の場合 iptables mangle MARK ルールは設定されず、`m_natZoneInterfaceInfo` にも登録されない。
+
+```cpp
+// natmgr.cpp:7484-7490
+if ((strncmp(keys[0].c_str(), LOOPBACK_PREFIX, strlen(LOOPBACK_PREFIX))) and
+    (!isPortStateOk(port)))
+{
+    SWSS_LOG_INFO("Port is not ready, skipping %s", port.c_str());
+    it++;
+    continue;
+}
+```
+
+**SAI RIF 先行必須 — IntfsOrch 側 (依存 #2)**:
+`IntfsOrch::doIntfTask()` は SAI RIF の作成 (`setIntf()`) が完了するまで `nat_zone` の SAI 属性設定 (`setRouterIntfsNatZoneId()`) に到達しない (`intfsorch.cpp:974–986`)。RIF 未作成の場合、`doIntfTask()` 自体が `m_toSync` に残したまま `it++; continue;` で再周回する。
+
+**ゾーン変更時の強制内部順序 (依存 #3)**:
+`nat_zone` 値が変化した場合、natmgrd は以下の順序で操作を実行する (`natmgr.cpp:7525–7566`)。
+
+1. 旧ゾーンの iptables mangle ルールを削除 (`DELETE`)
+2. Static NAT / NAPT iptables ルールを削除
+3. Dynamic NAT ルールを削除
+4. 内部キャッシュ `m_natZoneInterfaceInfo[port]` を新ゾーンで更新
+5. 新ゾーンの iptables mangle ルールを追加 (`ADD`)
+6. Static NAT / NAPT iptables ルールを再追加
+7. Dynamic NAT ルールを再追加
+
+この間（手順 1–4 完了後、手順 5 開始前）は NAT 変換が一時的に中断する。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
