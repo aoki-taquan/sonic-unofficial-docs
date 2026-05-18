@@ -545,6 +545,70 @@ NotificationConsumer: なし
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`FLOW_COUNTER_ROUTE_PATTERN` テーブルへの応答動作はプラットフォームによって大きく異なる。差の起点は `FlowCounterRouteOrch::initRouteFlowCounterCapability()` が orchagent 起動時に実行する **SAI 動的照会** の成否である。
+
+### プラットフォームサポートの判定メカニズム
+
+```cpp
+// flow_counter_handler.cpp:51-62
+bool FlowCounterHandler::queryRouteFlowCounterCapability()
+{
+    sai_attr_capability_t capability;
+    sai_status_t status = sai_query_attribute_capability(
+        gSwitchId,
+        SAI_OBJECT_TYPE_ROUTE_ENTRY,
+        SAI_ROUTE_ENTRY_ATTR_COUNTER_ID,
+        &capability);
+    if (status != SAI_STATUS_SUCCESS)
+    {
+        SWSS_LOG_WARN("Could not query route entry attribute SAI_ROUTE_ENTRY_ATTR_COUNTER_ID %d", status);
+        return false;
+    }
+    return capability.set_implemented;
+}
+```
+
+**aclorch.cpp とは異なり**、`platform` / `sub_platform` 環境変数の文字列比較は一切使用しない。判定は純粋に SAI の `sai_query_attribute_capability()` が `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` に対して `set_implemented = true` を返すかどうかのみで決まる。フォールバック値もなく、照会が失敗した場合は**無条件で非対応**とみなす。
+
+### プラットフォーム別の動作差
+
+| プラットフォーム | `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` 対応 | `mRouteFlowCounterSupported` | CONFIG_DB パターン処理 | STATE_DB 書込み値 |
+|----------------|----------------------------------------|-----------------------------|-----------------------|-------------------|
+| broadcom (ASIC SDK ≥ 6.5 相当) | `set_implemented = true` | `true` | 有効（パターン登録・counter bind）| `"true"` |
+| mellanox (MLNX SAI 対応版) | `set_implemented = true` | `true` | 有効 | `"true"` |
+| marvell-prestera / teralynx (対応 SDK) | SAI 実装依存 | SAI 戻り値次第 | SAI 次第 | SAI 次第 |
+| vs (virtual switch) | `set_implemented = false` または status ≠ SUCCESS | `false` | **全スキップ** | `"false"` |
+| 未知 platform / SAI 照会失敗 | status ≠ SUCCESS | `false` | **全スキップ** | `"false"` |
+
+!!! note "VS 環境での注意"
+    VS SAI は `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` の set capability を実装していないため、`mRouteFlowCounterSupported = false` となる。`doTask(Consumer&)` はパターン変更を即時 `return` で無視し、STATE_DB には `support = "false"` が書かれる。`show flow_counters route` の出力は空になる。
+
+### プラットフォームサポートと STATE_DB 書込み
+
+プラットフォームサポートの有無に関わらず、STATE_DB `FLOW_COUNTER_CAPABILITY_TABLE|route` へは**必ず 1 回**書込みが行われる (`flowcounterrouteorch.cpp:174-178`):
+
+```cpp
+// flowcounterrouteorch.cpp:174-178
+swss::DBConnector state_db("STATE_DB", 0);
+swss::Table capability_table(&state_db, STATE_FLOW_COUNTER_CAPABILITY_TABLE_NAME);
+fvs.emplace_back(FLOW_COUNTER_SUPPORT_FIELD, mRouteFlowCounterSupported ? "true" : "false");
+capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
+```
+
+`support = "false"` の場合、`FlowCounterRouteOrch` の全メソッド（`handleRouteAdd`, `handleRouteRemove`, `onAddVR`, `onRemoveVR` 等）が `mRouteFlowCounterSupported` のチェックで即 `return` するため、SAI への counter 操作は**一切行われない**。
+
+### multi-asic / SmartSwitch 環境
+
+- multi-asic 構成では namespace ごとに `FlowCounterRouteOrch` が独立して起動し、各 ASIC SAI の capability をそれぞれ照会する。
+- 異種 ASIC が混在する SmartSwitch 環境では namespace 間で `mRouteFlowCounterSupported` の値が異なる場合があり、一部 namespace のみルートフローカウンターが有効になることがある。
+- `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route` は namespace ごとに独立するため、参照側（CLI / monitoring）は対象 namespace を明示する必要がある。
+
+> **スキャン証跡**: `flow_counter_handler.cpp:51-62` (`queryRouteFlowCounterCapability`) / `flowcounterrouteorch.cpp:166-179` (`initRouteFlowCounterCapability`) / `flowcounterrouteorch.cpp:55-61` (doTask guard) / `flowcounterrouteorch.cpp:305-366` (`onAddMiscRouteEntry`/`onRemoveMiscRouteEntry` guards) / `flowcounterrouteorch.cpp:401-451` (`onAddVR`/`onRemoveVR` guards)。中間ファイル: `meta/_intermediate/cdb-flow/route-orch-platform.md`
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
