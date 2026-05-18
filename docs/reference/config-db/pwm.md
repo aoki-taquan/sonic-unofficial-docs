@@ -198,6 +198,45 @@ DEL 後もタイマーは直前の周期（またはデフォルト 120 秒）�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 (2026-05-18)
+
+### タイマー定数 (watermarkorch.cpp)
+
+| 定数 | 値 | 証拠 | 意味 |
+|-----|-----|------|------|
+| `DEFAULT_TELEMETRY_INTERVAL` | `120` 秒 | `watermarkorch.cpp:9` | `#define` で定義された periodic watermark クリア周期のデフォルト値。`WATERMARK_TABLE|TELEMETRY_INTERVAL` エントリが CONFIG_DB に存在しない場合に使用される |
+
+### クリア要求文字列定数 (watermarkorch.cpp)
+
+APPL_DB の `WATERMARK_CLEAR_REQUEST` 通知チャネルで使用される `data` 文字列はハードコードされており、`watermarkcfg` CLI が固定文字列を送信する。
+
+| 定数マクロ | 値 | 証拠 | 対象 WM テーブル |
+|-----------|-----|------|----------------|
+| `CLEAR_PG_HEADROOM_REQUEST` | `"PG_HEADROOM"` | `watermarkorch.cpp:11` | `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` |
+| `CLEAR_PG_SHARED_REQUEST` | `"PG_SHARED"` | `watermarkorch.cpp:12` | `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` |
+| `CLEAR_QUEUE_SHARED_UNI_REQUEST` | `"Q_SHARED_UNI"` | `watermarkorch.cpp:13` | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES`（ユニキャストキュー） |
+| `CLEAR_QUEUE_SHARED_MULTI_REQUEST` | `"Q_SHARED_MULTI"` | `watermarkorch.cpp:14` | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES`（マルチキャストキュー） |
+| `CLEAR_QUEUE_SHARED_ALL_REQUEST` | `"Q_SHARED_ALL"` | `watermarkorch.cpp:15` | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES`（全キュー） |
+| `CLEAR_BUFFER_POOL_REQUEST` | `"BUFFER_POOL"` | `watermarkorch.cpp:16` | `SAI_BUFFER_POOL_STAT_WATERMARK_BYTES` |
+| `CLEAR_HEADROOM_POOL_REQUEST` | `"HEADROOM_POOL"` | `watermarkorch.cpp:17` | `SAI_BUFFER_POOL_STAT_XOFF_ROOM_WATERMARK_BYTES` |
+
+### FLEX_COUNTER グループ名定数
+
+`handleFcConfigUpdate()` (`watermarkorch.cpp:120`) は `FLEX_COUNTER_TABLE` のキーとして `"QUEUE_WATERMARK"` と `"PG_WATERMARK"` を固定文字列で比較する。これ以外のキーが届いても `m_wmStatus` は更新されない（無視される）。
+
+### 定数の外部変更可否
+
+| 定数 | 変更方法 | 備考 |
+|------|---------|------|
+| `DEFAULT_TELEMETRY_INTERVAL` (120 秒) | `WATERMARK_TABLE\|TELEMETRY_INTERVAL\|interval` フィールドで上書き可能 | CONFIG_DB 書込みで実行時変更可能 |
+| クリア要求文字列 | 変更不可（コードと CLI が同期） | `watermarkcfg` が生成する文字列と `watermarkorch.cpp` のマクロが対応 |
+| FLEX_COUNTER グループ名 | 変更不可（コードハードコード） | `schema.h` 等の定義変更が必要 |
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
