@@ -277,6 +277,52 @@ CONSOLE_SWITCH|console_mgmt
 > 詳細スキャン結果は `meta/_intermediate/cdb-flow/console-port-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`CONSOLE_PORT` および `CONSOLE_SWITCH` テーブルを **Redis Subscribe / keyspace 通知 (PSUBSCRIBE) で購読する常駐デーモンは存在しない**。
+
+| 購読者 | 購読 API | 購読テーブル | 備考 |
+|--------|---------|------------|------|
+| `hostcfgd` | `subscribe()` | `SERIAL_CONSOLE` のみ | `CONSOLE_PORT` / `CONSOLE_SWITCH` は非購読 |
+| `consutil` (CLI) | `get_entry()` / `get_keys()` (ポーリング) | `CONSOLE_PORT`, `CONSOLE_SWITCH` | 呼び出し都度 CONFIG_DB を直接読取 |
+
+`hostcfgd` は `SERIAL_CONSOLE` テーブル（別テーブル）のみを subscribe する (`hostcfgd:2481`)。`CONSOLE_PORT` / `CONSOLE_SWITCH` に対するデーモン常駐リスニングはコード全体にわたって確認されていない。
+
+### consutil のポーリングモデル
+
+`consutil` は CLI 呼び出しのたびに以下の順序で CONFIG_DB を直接読み取る（Subscribe ループなし）:
+
+```
+consutil コマンド実行
+  │
+  ├─ main.py:26 — get_entry(CONSOLE_SWITCH_TABLE, "console_mgmt")
+  │   enabled フラグ確認。"no" なら ERR_DISABLE (exit 1) で即終了。
+  │
+  └─ ConsolePortProvider._init_all()  (lib.py:86-)
+      ├─ get_entry(CONSOLE_SWITCH_TABLE, "console_mgmt")  # L91
+      │   default_escape_char を取得
+      └─ get_keys(CONSOLE_PORT_TABLE)  # L106
+          └─ get_entry(CONSOLE_PORT_TABLE, k) [ポートごと]  # L111
+```
+
+CONFIG_DB 変更は次回の `consutil` 呼び出し時にのみ反映される（リアルタイム反映なし）。
+
+### STATE_DB 書込方式
+
+`consutil` が STATE_DB に書き込む際は `swsscommon.Table.set()` 経由の直接書き込みのみ。`NotificationProducer` / `NotificationConsumer` は使用しない。
+
+| 書込先 | API | 備考 |
+|--------|-----|------|
+| STATE_DB `CONSOLE_PORT\|<line_num>` | `_state_db.set(STATE_DB, key, field, value)` | `state` / `pid` / `start_time` の 3 フィールドを直接書込 |
+
+CONFIG_DB エントリに TTL 設定はない（永続エントリ）。
+
+> 詳細スキャン結果: `meta/_intermediate/cdb-flow/console-port-pubsub.md`
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
