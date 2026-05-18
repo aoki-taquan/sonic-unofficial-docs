@@ -189,6 +189,30 @@ FRR bgpd が未起動の場合や socket 切断時に発生する。CONFIG_DB �
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-net/sonic-buildimage` `src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
+証跡: `meta/_intermediate/cdb-flow/route-common-constants.md`
+
+| 定数 / リテラル | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `ip_type` | `'unicast'` | `frrcfgd.py:3153` | `address-family <af> unicast` の ip_type 固定値。`multicast`・`vpn` は未サポート |
+| ospf3→ospf6 変換条件 | `af == 'ipv6' and src_proto == 'ospf3'` | `frrcfgd.py:3151-3152` | CONFIG_DB の `ospf3` を FRR コマンドの `ospf6` へ変換するハードコードマッピング |
+| 許容 `dst_protocol` | `'bgp'` | `frrcfgd.py:3156` | YANG に enum 制約なし。実行時に `frrcfgd` が `'bgp'` のみを許容するリテラル検証 |
+| ROUTE_REDISTRIBUTE ターゲットデーモン | `['bgpd']` | `frrcfgd.py:97` | vtysh コマンドを `bgpd` のみへ送信。`zebra`・`staticd` は含まない |
+| `route_map` 最大要素数 | `1` | `sonic-route-common.yang max-elements` | leaf-list 型だが YANG で要素数上限を 1 に固定 |
+
+### 補足
+
+**ip_type 固定**: `ROUTE_REDISTRIBUTE` イベント処理（`frrcfgd.py:3153`）では `ip_type = 'unicast'` を文字列リテラルとして代入し、`address-family <af> unicast` を生成する。CONFIG_DB フィールドには対応する設定項目がなく、`unicast` 以外を指定する手段がない[^2]。
+
+**ospf3→ospf6 変換**: FRR bgpd は `redistribute ospf3` コマンドを認識しないため、`frrcfgd` が `src_proto == 'ospf3'` かつ `af == 'ipv6'` の組み合わせを検出した際に `ospf6` へ内部変換する。`addr_family=ipv4` の場合は変換されない（OSPFv3 は IPv6 専用のため IPv4 × ospf3 の組み合わせは実運用上発生しない）[^2]。
+
+**YANG 非制約 + 実行時制約**: `dst_protocol` は YANG 上で `type string` のみ定義されており enum 値のリストはない。`frrcfgd` の実行時検証が唯一の制約であるため、YANG 検証ツールは不正な `dst_protocol` を通過させる可能性がある[^1][^2]。
+
+<!-- /constants -->
+
 ## key 構造
 
 ```text
