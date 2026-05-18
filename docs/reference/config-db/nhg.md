@@ -121,6 +121,34 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/nhg-ordering.md -->
+
+`NhgOrch` は APPL\_DB の `NEXTHOP_GROUP_TABLE` を `ConsumerStateTable` で購読し、`doTask()` で SAI next hop group の作成・更新・削除を行う。エントリの処理順序は複数の前提条件に依存しており、consumer から観測できる中間状態がいくつか存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | メンバー NHG 登録 → 親（再帰）NHG の完全解決 | **強制先行** | 部分解決で即時適用（partial NHG）、残りはメンバー登録後に自動昇格 |
+| 2 | `NEXTHOP_GROUP_TABLE` 書込み → `ROUTE_TABLE` `nexthop_group` 参照 | 推奨先行 | 逆転時は `RouteOrch` が NHG 解決まで待機して自動解消 |
+| 3 | `ROUTE_TABLE` 参照クリア → `NEXTHOP_GROUP_TABLE` DEL | **強制先行** | `ref_count > 0` の間 DEL はブロック・自動 retry |
+| 4 | DEL と後続 SET が競合 → DEL をスキップ | 自動調停 | `m_toSync` キューで DEL を skip して最終 SET を適用 |
+| 5 | `NeighOrch` ARP/NDP 解決 → `NhgOrch` SAI メンバー追加 | 非同期（イベント駆動） | `invalidateNextHop` / `validateNextHop` で自動的に同期 |
+| 6 | NHG 数上限 → temporary NHG → full ECMP 昇格 | 非同期（リソース依存） | リソース解放後の次 `doTask()` 呼び出し時に自動昇格 |
+
+### 主要な制約詳細
+
+**再帰 NHG のメンバー先行登録（依存 #1）**: 再帰 NHG (`nexthop_group` フィールドあり) を処理する際、`doTask()` は各メンバー NHG が `m_syncdNextHopGroups` に存在するかを確認する (`nhgorch.cpp:L130`)。全メンバーが未登録の場合は `++it` で silent retry となる。一部のメンバーのみ登録済みの場合は、存在するメンバーのみで **partial NHG** を即時作成して SAI に登録し (`nhgorch.cpp:L160-164, L296-302`)、残りのメンバーは登録後に自動昇格する (`nhgorch.cpp:L362-391`)。consumer から見ると再帰 NHG が「縮退した ECMP → 完全 ECMP」に非同期で変化する。
+
+**DEL 前の参照クリア（依存 #3）**: `NEXTHOP_GROUP_TABLE` の DEL_COMMAND は `nhg_it->second.ref_count > 0` の間 `success = false` でブロックされ、`m_toSync` に残留する (`nhgorch.cpp:L413-417`)。`ROUTE_TABLE` からの参照が残っている限り NHG は削除されない。`fpmsyncd` は `ROUTE_TABLE` の `nexthop_group` 参照を解消してから `NEXTHOP_GROUP_TABLE` の DEL を送信する必要がある。参照が解消された次の `doTask()` イテレーションで自動的に削除される。
+
+**NeighOrch 連動による SAI メンバー追加（依存 #5）**: `NEXTHOP_GROUP_TABLE` に NHG エントリが書き込まれた時点では SAI メンバーは追加されていない場合がある。`NeighOrch` が ARP/NDP 解決を通知して `NhgOrch::validateNextHop()` が呼ばれた時点で SAI `create_next_hop_group_member()` が実行される (`nhgorch.cpp:L466-487`)。逆にインタフェース DOWN 等で `invalidateNextHop()` が呼ばれると SAI メンバーが削除されるが NHG オブジェクト自体は保持される。
+
+<!-- /ordering -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
