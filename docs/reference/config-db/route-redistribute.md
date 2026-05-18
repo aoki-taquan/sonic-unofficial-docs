@@ -285,6 +285,57 @@ STATIC_ROUTE テーブル変更時に `bgpcfgd` が自動生成する FRR コマ
 
 <!-- /constants -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> **調査根拠**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` 精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-redistribute-failure.md`
+
+`frrcfgd` は `ConfigDBConnector.subscribe()` / keyspace 通知モデルを採用する。`bgpcfgd` (Manager.set_handler の `False` リトライ) とは異なり、**エラー時は `continue` でそのイベントを廃棄する。自動リトライ機構はない。**
+
+### SET 失敗マトリクス
+
+| 条件 | 動作 | リトライ | ログ |
+|------|------|---------|------|
+| `local_asn is None` (BGP_GLOBALS 未設定) | `continue` — FRR への `redistribute` 未送出 | なし (BGP_GLOBALS SET 後に `__apply_dep_vrf_table` で再適用試行) | `LOG_DEBUG "ignore table ... because local_asn not configured"` (`frrcfgd.py:2660`) |
+| `dst_proto != 'bgp'` | `continue` | なし | `LOG_ERR "only bgp could be used as dst protocol"` (`frrcfgd.py:3157`) |
+| key フォーマット不正 (`split('|')` 要素数不足) | Python ValueError 例外 → スキップ | なし | スタックトレース (未捕捉) |
+| `key_map.run_command()` が False (vtysh 実行失敗) | `continue` | なし | `LOG_ERR "failed running BGP route redistribute config command"` (`frrcfgd.py:3167`) |
+| vtysh `returncode != 0` (bgpd 未起動 / FRR 文法エラー) | `g_run_command` が False → `run_command` が False → `continue` | なし | `LOG_ERR "command execution returned <code>"` (`frrcfgd.py:60`) |
+| `bgpd_client` ソケット切断 (bgpd 再起動) | `bgpd_client.run_vtysh_command()` が False → `continue` | なし (frrcfgd 再起動が必要) | `LOG_ERR "command execution failure"` (`frrcfgd.py:53`) |
+| `af` が `ipv4` / `ipv6` 以外 | vtysh が `address-family <invalid> unicast` を拒否 → returncode != 0 → `continue` | なし | 同上 |
+| `src_proto` が FRR 非認識プロトコル | vtysh が `redistribute <unknown>` を拒否 → `continue` | なし | 同上 |
+| `ospf3` + `ipv4` の組み合わせ | `ospf6` 変換なし → `redistribute ospf3` → bgpd 拒否 → `continue` | なし | 同上 |
+
+### DEL 失敗マトリクス
+
+| 条件 | 動作 | 結果 |
+|------|------|------|
+| `local_asn is None` | `continue` (silent drop) | FRR に `no redistribute` 未送出 → redistribute 設定が FRR に残存 |
+| vtysh 実行失敗 | `continue` | 同上 — redistribute 設定が FRR に残存 |
+
+`hdl_route_redist_set` は SET 前に必ず `no redistribute <src>` を先行発行して冪等性を確保する (`frrcfgd.py:1334-1336`)。DEL 時は `OP_DELETE` が `get_command_cmn` に渡り `no redistribute <src>` を生成するが、vtysh 失敗時は `continue` で廃棄される。
+
+### BgpdClientMgr 接続失敗
+
+`BgpdClientMgr.__create_frr_client` は起動時に最大 100 回 (間隔 2 秒) bgpd への Unix ドメインソケット接続を試みる (`frrcfgd.py:186-199`)。ただし runtime 中の再接続は自動では行われない。bgpd が再起動した場合は frrcfgd の再起動が必要。
+
+### `__apply_dep_vrf_table` — BGP_GLOBALS 設定後のリカバー
+
+`local_asn` の SET 成功後、`__apply_dep_vrf_table(vrf, 'ROUTE_REDISTRIBUTE')` が呼ばれる (`frrcfgd.py:2703-2704`)。これにより保留中の ROUTE_REDISTRIBUTE エントリが BGP キューへ再送される。ただし信頼性は保証されないため、正順 (BGP_GLOBALS → ROUTE_REDISTRIBUTE) が推奨。
+
+### CONFIG_DB へのエラーステータス書き込み
+
+なし。`frrcfgd` は CONFIG_DB のエントリに対して成否ステータスを書き戻さない。FRR への反映失敗は syslog (LOG_ERR) のみで通知される。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168L (ROUTE_REDISTRIBUTE ハンドラ) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2658-2662L (local_asn ゲート) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:47-63L (g_run_command) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1330-1340L (hdl_route_redist_set, no-prefix先行) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:186-199L (BgpdClientMgr 接続リトライ) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2703-2704L (__apply_dep_vrf_table) -->
+<!-- /failure -->
+
 <!-- cross-refs -->
 ## 暗黙参照 (Phase C)
 
