@@ -284,6 +284,36 @@ orchagent が warm reboot で再起動すると `initAsicSdkHealthEventNotificat
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-cross-refs.md`
+
+`SUPPRESS_ASIC_SDK_HEALTH_EVENT` の処理において、SwitchOrch が参照・生成する他テーブル / リソースを網羅した。
+このテーブルは APPL_DB 中継なしで CONFIG_DB → SAI の直接経路を取る点が特徴である。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `STATE_DB SWITCH_CAPABILITY\|switch.ASIC_SDK_HEALTH_EVENT` | 書き (SwitchOrch → STATE_DB) | orchagent 起動時 1 回。health event 通知サポート可否を `true`/`false` で記録 | `switchorch.cpp:231, 246` |
+| `STATE_DB SWITCH_CAPABILITY\|switch.REG_{FATAL,WARNING,NOTICE}_ASIC_SDK_HEALTH_CATEGORY` | 書き | 各 severity の SAI capability 確認結果を記録 | `switchorch.cpp:265-269` |
+| `STATE_DB ASIC_SDK_HEALTH_EVENT_TABLE` | 書き (SAI コールバック経由) | `onSwitchAsicSdkHealthEvent()` が SAI から受け取ったイベントを書き込む。SUPPRESS 設定が SAI フィルタを決定し書き込み数を制御する | `switchorch.cpp:1661` |
+| SAI `SAI_SWITCH_ATTR_SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY` capability | 読み (SAI クエリ) | 起動時。非対応なら全 severity の初期登録をスキップ | `switchorch.cpp:220` |
+| SAI `SAI_SWITCH_ATTR_REG_{FATAL,WARNING,NOTICE}_SWITCH_ASIC_SDK_HEALTH_CATEGORY` | 書き (SAI set_switch_attribute) | SET/DEL ごとに `registerAsicSdkHealthEventCategories()` から呼ばれる | `switchorch.cpp:1366-1408` |
+| CONFIG_DB `SUPPRESS_ASIC_SDK_HEALTH_EVENT` (起動時直接 `hget`) | 読み (起動時スナップショット) | `initAsicSdkHealthEventNotification()` が Consumer 非経由で直接読み取る唯一の経路 | `switchorch.cpp:240-274` |
+
+!!! note "SWITCH_CAPABILITY への書き込みは起動時 1 回"
+    `ASIC_SDK_HEALTH_EVENT` および `REG_*_ASIC_SDK_HEALTH_CATEGORY` フィールドは
+    orchagent 起動時の `initAsicSdkHealthEventNotification()` 内でのみ書かれ、実行中に変化しない。
+    `show event-driven-telemetry` / `show asic-sdk-health-event` (sonic-utilities/show/main.py:2803, 2849) が
+    この値を読んでプラットフォームサポート有無を判断する。
+
+!!! note "STATE_DB ASIC_SDK_HEALTH_EVENT_TABLE は SUPPRESS 設定の間接的な出力"
+    `SUPPRESS_ASIC_SDK_HEALTH_EVENT` の設定が SAI に登録するカテゴリフィルタを決定する。
+    結果として SAI から届く health event の数・種別が変わり、STATE_DB への書き込みも制御される。
+    CONFIG_DB エントリが存在しない severity は全カテゴリを購読（= 抑制なし）。
+
+<!-- /cross-refs -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
