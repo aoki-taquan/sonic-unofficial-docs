@@ -248,6 +248,46 @@ orchdaemon.cpp:452  gDebugCounterOrch = new DebugCounterOrch(...)
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-cross-refs.md`
+
+`PORT_COUNTER_CAPABILITIES` / `QUEUE_COUNTER_CAPABILITIES` / `DEBUG_COUNTER_CAPABILITIES` はいずれも YANG 未モデル化のオペレーショナルテーブルであり、orchagent が **書き手 (producer only)** として書き込む。ここでの暗黙参照は、生成側（portsorch / debugcounterorch）が依存する SAI / DB リソースと、消費側（portstat / dropconfig）が参照するテーブルを指す。
+
+### 生成側 (producer) の暗黙依存
+
+| 参照先リソース | 依存 orchagent | 条件 | 依存種別 | evidence |
+|---|---|---|---|---|
+| SAI `sai_query_stats_capability(SAI_OBJECT_TYPE_QUEUE, ...)` | `portsorch::initCounterCapabilities` | orchagent 起動直後（コンストラクタ内） | SAI 接続確立 + `gSwitchId` 確定が前提。失敗時は全フィールドが `"false"` のまま残存 | `portsorch.cpp:1882-1921` |
+| SAI `sai_query_stats_capability(SAI_OBJECT_TYPE_PORT, ...)` | `portsorch::initCounterCapabilities` | 同上 | SAI query 失敗時 `SWSS_LOG_NOTICE` のみ。エラー終了なし | `portsorch.cpp:1929-1967` |
+| SAI `sai_query_attribute_enum_values_capability(...)` | `debugcounterorch::publishDropCounterCapabilities` | debugcounterorch コンストラクタ内 | `getSupportedDropReasons()` が空返却 → テーブル書き込みなし | `debugcounterorch.cpp:315-363` |
+| `STATE_DB` 接続（`m_state_db`） | `portsorch` / `debugcounterorch` | 起動時 | 接続失敗時は `Table` 生成例外 → orchagent クラッシュ | `portsorch.cpp:793-794`, `debugcounterorch.cpp:31` |
+
+### 消費側 (consumer) の暗黙参照
+
+| 参照元 | 参照テーブル | 参照フィールド | 参照タイミング | 挙動（不在時） | evidence |
+|---|---|---|---|---|---|
+| `portstat.py`（sonic-utilities） | `PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_*_DROP_COUNTER` | `isSupported` | ポーリング実行前（毎回 HGET） | `"true"` 以外 → 対応 SAI カウンタをポーリング対象から silent 除外 → `N/A` 表示 | `portstat.py:297-329` |
+| `scripts/dropconfig`（sonic-utilities） | `DEBUG_COUNTER_CAPABILITIES\|<counter_type>` | `count`, `reasons` | `show debug-counter capabilities` 実行時 | テーブルが空 → 出力が空（エラーなし） | `dropconfig:423-455` |
+
+### YANG 非定義による暗黙制約
+
+上記いずれの参照も CONFIG_DB / YANG に leafref として記述されていない。WRED カウンタが `N/A` になる場合は以下のコマンドで STATE_DB を直接確認すること:
+
+```bash
+# PORT_COUNTER_CAPABILITIES 確認
+sonic-db-cli STATE_DB hgetall 'PORT_COUNTER_CAPABILITIES|WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER'
+
+# QUEUE_COUNTER_CAPABILITIES 確認
+sonic-db-cli STATE_DB keys 'QUEUE_COUNTER_CAPABILITIES|*'
+
+# DEBUG_COUNTER_CAPABILITIES 確認
+sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
+```
+
+<!-- /cross-refs -->
+
 ---
 
 <!-- ref-triangle:start -->
