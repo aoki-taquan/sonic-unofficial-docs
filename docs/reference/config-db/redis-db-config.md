@@ -170,6 +170,30 @@ docker-database コンテナ起動
 <!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh (全体: 生成ロジック) -->
 
 <!-- /ordering -->
+<!-- cross-refs -->
+## 暗黙参照リソース (Phase C)
+
+`database_config.json` は CONFIG_DB テーブルではなくインフラ層ファイルであるため、
+他 CONFIG_DB テーブルへの leafref は存在しない。
+ただし `docker-database-init.sh` の起動ロジックおよび `SonicDBConfig` の初期化 API は
+以下のファイル・設定を暗黙的に参照する。
+
+| 参照先リソース | 参照タイミング | 依存内容 | 証跡 |
+|--------------|--------------|---------|------|
+| `/etc/sonic/database_config.json` (オーバーライドファイル) | `docker-database` コンテナ起動時 | 存在する場合はテンプレートレンダリングをスキップしてそのままコピー。存在しない場合のみ `database_config.json.j2` を使用 | `docker-database-init.sh:55-61` |
+| `/etc/sonic/enable_multidb` (フラグファイル) | `docker-database` コンテナ起動時 | 存在すると `multi_database_config.json.j2` を使用。複数 ASIC / SmartSwitch 構成を切り替えるスイッチ | `docker-database-init.sh:58-61` |
+| `/usr/share/sonic/platform/chassisdb.conf` | `docker-database` コンテナ起動時 | `source` で読み込み、`start_chassis_db` / `chassis_db_address` / `chassis_db_port` を取得。`start_chassis_db=1` 時のみ `CHASSIS_APP_DB` エントリを最終設定に含める | `docker-database-init.sh:77-78`, `docker-database-init.sh:124-127` |
+| `/var/run/redis/sonic-db/database_global.json` | `SonicDBConfig::initializeGlobalConfig()` 呼び出し時 | マルチ ASIC / SmartSwitch 環境で namespace 付き API 使用前に必須。未初期化で namespace 付き API を呼ぶと `SWSS_LOG_THROW` で即クラッシュ | `dbconnector.cpp:228-231` |
+| `/etc/sonic/database_global.json` (グローバルオーバーライド) | `docker-database` コンテナ起動時 (マルチ ASIC / SmartSwitch のみ) | 存在する場合はテンプレートレンダリングをスキップしてそのままコピー | `docker-database-init.sh:106-109` |
+| `NAMESPACE_COUNT` / `NUM_DPU` 環境変数 | `docker-database` コンテナ起動時 | `NAMESPACE_COUNT > 1` または `NUM_DPU > 1` の場合のみ `database_global.json` を生成 | `docker-database-init.sh:104-110` |
+
+### CONFIG_DB テーブルとの間接依存
+
+`database_config.json` 自体は CONFIG_DB に格納されない。ただし `SonicDBConfig` によって
+定義された DB ID / インスタンス情報は SONiC の全デーモン (`swss`, `syncd`, `mgmt`, `snmp` 等)
+が起動時に依存する基盤層であり、間接的にすべての CONFIG_DB テーブル操作の前提条件となる。
+
+<!-- /cross-refs -->
 
 ## separator の役割
 
