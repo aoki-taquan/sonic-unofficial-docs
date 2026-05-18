@@ -536,4 +536,71 @@ journalctl -u swss | grep -i copp
 - `default` グループは `CoppOrch` 側でも削除を `task_ignore` で拒否する二重防護
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書き込み (Phase F)
+
+> 証跡: `meta/_intermediate/cdb-flow/copp-group-side.md`
+
+`COPP_GROUP` の SET/DEL 処理は CONFIG_DB 以外の以下 DB・テーブルへも書き込みを行う。
+
+### APPL_DB — COPP_TABLE
+
+| テーブル | キー形式 | 主要フィールド | 書き込み元 | タイミング |
+|---|---|---|---|---|
+| `COPP_TABLE` | `COPP_TABLE\|<group>` | `trap_ids`, `trap_action`, `trap_priority`, `queue`, `cir`, `cbs` 等 | `CoppMgr::doCoppGroupTask()` (coppmgr.cpp:874) | COPP_GROUP SET 処理完了後（pending でない場合） |
+| `COPP_TABLE` | `COPP_TABLE\|<group>` | — (削除) | `CoppMgr::doCoppGroupTask()` (coppmgr.cpp:891) | COPP_GROUP DEL 時かつ init_cfg に同名キーなし |
+
+init_cfg に同名キーがある場合は DEL 後も `m_appCoppTable.set()` で init 値にリセットされる（実質「DEL = init リセット」, coppmgr.cpp:914）。
+
+### STATE_DB — COPP_GROUP_TABLE
+
+| テーブル | キー形式 | フィールド | 値 | 書き込み元 | タイミング |
+|---|---|---|---|---|---|
+| `COPP_GROUP_TABLE` | `COPP_GROUP_TABLE\|<group>` | `state` | `ok` | `CoppMgr::setCoppGroupStateOk()` (coppmgr.cpp:875, 915) | APPL_DB 書き込み成功後 |
+| `COPP_GROUP_TABLE` | `COPP_GROUP_TABLE\|<group>` | `state` | (削除) | `CoppMgr::delCoppGroupStateOk()` (coppmgr.cpp:892) | COPP_GROUP DEL 処理後 |
+
+### SAI — HOSTIF_TRAP_GROUP
+
+`CoppOrch` が APPL_DB `COPP_TABLE` の変化を受けて SAI に作用する:
+
+| 操作 | SAI API 呼び出し | 証跡 |
+|------|----------------|------|
+| SET (新規) | `sai_hostif_api->create_hostif_trap_group()` | copporch.cpp:780 |
+| DEL | `sai_hostif_api->remove_hostif_trap_group()` | copporch.cpp:1138 |
+
+### SAI — POLICER (cir/cbs/meter_type/mode/color フィールドがある場合)
+
+| 操作 | SAI API 呼び出し | 証跡 |
+|------|----------------|------|
+| SET (policer あり) | `sai_policer_api->create_policer()` + trap group への bind | copporch.cpp:604, 621 |
+| DEL または policer フィールド削除 | `sai_policer_api->remove_policer()` (unbind 後) | copporch.cpp:550, 563 |
+
+### SAI — Genetlink HOSTIF (genetlink_name/genetlink_mcgrp_name フィールドがある場合)
+
+`queue2_group1`（sflow/`sample_packet`）など genetlink 型グループに限り、カーネル Netlink ソケットが作成される。
+
+| 操作 | SAI API 呼び出し | 証跡 |
+|------|----------------|------|
+| SET (genetlink あり) | `sai_hostif_api->create_hostif()` + `create_hostif_table_entry()` | copporch.cpp:664, 453 |
+| DEL | `remove_hostif_table_entry()` + `remove_hostif()` | copporch.cpp:481, 698 |
+
+### STATE_DB — COPP_TRAP_TABLE (hw_status — 連動)
+
+COPP_GROUP DEL 時に属するトラップが削除・default グループへリセットされ、
+`CoppOrch::updateTrapOperStatus()` が各トラップの `hw_status` を `not-installed` に更新する（copporch.cpp:1413）。
+
+### COUNTERS_DB — COUNTERS_TRAP_NAME_MAP (間接)
+
+COPP_GROUP DEL で属するトラップが `removeTrap()` → `unbindTrapCounter()` を経由し、
+`COUNTERS_TRAP_NAME_MAP` から trap エントリが削除され FlexCounter カウンタが解放される（copporch.cpp:1487-1495）。
+
+```bash
+# 確認コマンド
+sonic-db-cli APPL_DB hgetall 'COPP_TABLE|queue4_group1'
+sonic-db-cli STATE_DB hgetall 'COPP_GROUP_TABLE|queue4_group1'
+sonic-db-cli STATE_DB hgetall 'COPP_TRAP_TABLE|bgp'
+sonic-db-cli COUNTERS_DB hgetall COUNTERS_TRAP_NAME_MAP
+```
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 87fa713c3c5e -->
