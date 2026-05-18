@@ -346,6 +346,65 @@ sudo tail -f /var/log/syslog | grep -i flowcounter
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/route-orch-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`FlowCounterRouteOrch` および `RouteOrch` には CONFIG_DB から変更できないハードコード定数が複数存在する。
+
+### flowcounterrouteorch.cpp / .h の定数
+
+| 定数名 | 値 | 意味 | CONFIG_DB 変更可否 |
+|--------|----|------|--------------------|
+| `ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT` | `30` | パターン 1 件あたりのフローカウンター最大付与数のデフォルト。`max_match_count` フィールドで上書き可能だが、`0` 設定時のフォールバック値としても使用される | × (フォールバック値としてハードコード) |
+| `ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS` | `10000`（ms） | FlexCounter グループのポーリング間隔（10 秒）。`FlowCounterRouteOrch` コンストラクタで直接渡され、CONFIG_DB による変更手段はない | × |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1`（秒） | バインド保留キュー（`mPendingAddToFlexCntr`）を再試行する `SelectableTimer` の周期。VID 解決待ちエントリを 1 秒ごとにスキャンする | × |
+| `ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP` | `"ROUTE_FLOW_COUNTER"` | FlexCounter グループ ID 文字列。FLEX_COUNTER_TABLE のキープレフィックスとして使用される | × |
+| `FLOW_COUNTER_ROUTE_KEY` | `"route"` | `FLOW_COUNTER_CAPABILITY_TABLE` のエントリキー | × |
+| `FLOW_COUNTER_SUPPORT_FIELD` | `"support"` | STATE_DB 書き込み時のフィールド名 | × |
+
+```cpp
+// orchagent/flex_counter/flowcounterrouteorch.cpp (L21-26)
+#define FLEX_COUNTER_UPD_INTERVAL                   1
+#define FLOW_COUNTER_ROUTE_KEY                      "route"
+#define FLOW_COUNTER_SUPPORT_FIELD                  "support"
+#define ROUTE_PATTERN_MAX_MATCH_COUNT_FIELD         "max_match_count"
+#define ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT       30
+#define ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS      10000
+
+// orchagent/flex_counter/flowcounterrouteorch.h (L13)
+#define ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP "ROUTE_FLOW_COUNTER"
+```
+
+### routeorch.cpp / .h の定数
+
+`RouteOrch` 本体（CONFIG_DB を直接購読しない）にも SAI 初期値として使われるハードコード定数がある。
+
+| 定数名 | 値 | 意味 | 備考 |
+|--------|----|------|------|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | SAI が ECMP グループ数上限を返さなかった場合のデフォルト上限 | SAI capability で上書きされる場合あり |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | ECMP グループあたりの最大ネクストホップ数デフォルト | 同上 |
+| `NHGRP_MAX_SIZE` | `128` | ネクストホップグループサイズの上限（`routeorch.h`） | × |
+| `EUI64_INTF_ID_LEN` | `8` | EUI-64 インターフェース ID バイト長 | × |
+
+```cpp
+// orchagent/routeorch.cpp (L37-38)
+#define DEFAULT_NUMBER_OF_ECMP_GROUPS   128
+#define DEFAULT_MAX_ECMP_GROUP_SIZE     32
+
+// orchagent/routeorch.h (L24-28)
+#define NHGRP_MAX_SIZE 128
+#define EUI64_INTF_ID_LEN 8
+```
+
+### まとめ
+
+- `max_match_count` フィールド（CONFIG_DB）を省略または `0` にした場合のみ `30` が適用される。フィールドに正の整数を設定すれば `ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT` は使われない。
+- `ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS`（10 秒）と `FLEX_COUNTER_UPD_INTERVAL`（1 秒）は変更手段が存在しない。ポーリング遅延が問題になる環境ではソース修正が必要。
+- `DEFAULT_NUMBER_OF_ECMP_GROUPS` / `DEFAULT_MAX_ECMP_GROUP_SIZE` は SAI `sai_switch_api->get_switch_attribute` の応答で上書きされるため、プラットフォームによっては実効値が異なる。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/route-orch-constants.md`
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
