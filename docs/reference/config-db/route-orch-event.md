@@ -21,6 +21,15 @@ sources:
   - repo: sonic-net/sonic-swss
     path: fpmsyncd/fpmsyncd.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: fpmsyncd/routesync.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/mirrororch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/natorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - ROUTE_TABLE
@@ -416,6 +425,37 @@ RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時
 
 ---
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-cross-refs.md -->
+
+全依存が実装レベルの暗黙参照（YANG 未定義テーブル）。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `CONFIG_DB DEVICE_METADATA\|localhost.suppress-fib-pending` | 読み取り（起動時 + 動的変更 Subscribe） | fpmsyncd 起動時・DEVICE_METADATA 変更通知受信時 | `fpmsyncd.cpp` L113–117, L278–302 |
+| `APPL_STATE_DB ROUTE_TABLE` | 書き込み先（SAI SET 成功時） | `publishRouteState()` が `protocol` / `err_str` を書き込む | `response_publisher.cpp` L93–148 |
+| `fpmsyncd` (`APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 消費) | Pub/Sub 通知送信先 | `suppress-fib-pending = enabled` かつ fpmsyncd 稼働中のみ | `fpmsyncd.cpp` L78, L116; `routesync.cpp` L3156–3190 |
+| `CONFIG_DB MIRROR_SESSION` | 間接参照（MirrorOrch が `attach()`/`detach()` のトリガ） | MirrorOrch がセッションエントリを処理するとき | `mirrororch.cpp` L517 (`attach`), L557 (`detach`) |
+| `CONFIG_DB NAT_ENTRY` / `NAT_TWICE_ENTRY` | 間接参照（NatOrch が `attach()`/`detach()` のトリガ） | NatOrch が DNAT / 双方向 NAT エントリを処理するとき | `natorch.cpp` L414, L458, L504, L591 (`attach`); L558, L646, L688, L732 (`detach`) |
+| `APPL_DB ROUTE_TABLE` → `m_syncdRoutes`（RouteOrch 内部テーブル） | 内部依存（最長プレフィックスマッチの計算源） | `notifyNextHopChangeObservers()` が最長マッチを求めるとき | `routeorch.cpp` L1270–1340 |
+
+!!! note "`suppress-fib-pending` が欠如した場合の挙動"
+    `CONFIG_DB DEVICE_METADATA|localhost` に `suppress-fib-pending = enabled` が設定されていない場合、
+    fpmsyncd は `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を一切購読しない。
+    Redis の Pub/Sub はメッセージをバッファしないため、orchagent が `publishRouteState()` で送出した通知は消失する。
+    `route_check.py` は `APPL_STATE_DB ROUTE_TABLE` の `err_str` を直接 GET するため、この設定に関係なく動作する。
+
+!!! note "NextHopObserver の登録者"
+    `RouteOrch::attach()` を呼ぶ Orch は MirrorOrch と NatOrch のみ（ソース精読で確認済み）。
+    NeighOrch は `routeorch.h` の `Subject` 継承を通じて別経路で通知を受け取るが、
+    `attach(IpAddress)` 経由の NextHopObserver 登録は行わない。
+
+<!-- /cross-refs -->
+
+---
+
 ## 制約
 
 - `publishRouteState()` は SET 操作時のみ `protocol` を送信する。DEL 操作時は `fvs` が空のため APPL_STATE_DB からエントリが削除される。
@@ -453,6 +493,9 @@ RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時
 [^3]: ResponsePublisher 実装: `orchagent/response_publisher.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp>
 [^4]: fpmsyncd 実装: `fpmsyncd/fpmsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp>
 [^5]: orchdaemon 初期化: `orchagent/orchdaemon.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
+[^6]: routesync 実装: `fpmsyncd/routesync.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp>
+[^7]: MirrorOrch 実装: `orchagent/mirrororch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp>
+[^8]: NatOrch 実装: `orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/natorch.cpp>
 
 <!-- ops-hint -->
 ## 運用ヒント
