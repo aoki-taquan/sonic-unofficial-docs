@@ -213,6 +213,32 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 
 <!-- /value-behavior -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`NatOrch` は SAI エントリ登録成功後にカウンタを 0 で初期化し、その後 5 秒周期のタイマで SAI から実値を取得して COUNTERS_DB を更新する。この 2 段階構造により、エントリ追加直後とカウンタ更新開始後で COUNTERS_DB の内容が変化する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | SAI NAT エントリ登録成功 → `COUNTERS_NAT*\|<key>` 初期値 (`0`) 書込み | **強制先行**（SAI 登録失敗時はカウンタエントリ不在） | `addHwSnatEntry()` / `addHwDnatEntry()` 末尾で `updateNatCounters(…,0,0)` を呼ぶ |
+| 2 | `NAT_GLOBAL_TABLE.admin_mode = "enabled"` → SAI NAT エントリ登録 → カウンタ初期化 | **強制先行**（enable 前は SAI 操作なし、カウンタ不在） | `isNatEnabled() == false` 時は `addNatEntry()` がキャッシュ保持のみで SAI 呼ばず、カウンタも書かない |
+| 3 | `COUNTERS_GLOBAL_NAT\|Values` 初期書込み → orchagent 起動完了 | **起動時 1 回限り**（コンストラクタ内） | 以降の CONFIG_DB 変更では `TIMEOUT` / `TCP_TIMEOUT` / `UDP_TIMEOUT` フィールドは更新されない |
+| 4 | カウンタ初期値書込み (`0`) → 5 秒タイマ起動 → SAI ポーリング → 実値反映 | 非同期（最大 5 秒遅延） | エントリ追加直後に `COUNTERS_NAT*` を参照しても `"0"` のままの場合がある |
+| 5 | `clearAllNatEntries()` / `disableNatFeature()` → `deleteNatCounters()` → カウンタエントリ削除 | 即時（disable と同一タスク内） | `admin_mode = "disabled"` でカウンタエントリが削除される。re-enable で再登録 |
+| 6 | `FLUSHNATSTATISTICS` 通知 → SAI `reset_nat_entry_attribute` → カウンタ 0 リセット → 次回タイマで再取得 | 通知受信後即時（SAI 呼び出し） | `sonic-clear nat statistics` が内部でこの通知を送信。次の 5 秒周期まで COUNTERS_DB は `"0"` |
+
+### 主要な制約詳細
+
+**SAI 登録成功後のみカウンタ初期化 (依存 #1)**: `addHwSnatEntry()` (`natorch.cpp:758-803`) は `sai_nat_api->create_nat_entry()` 成功後に `updateNatCounters(ip_address, 0, 0)` を呼び、COUNTERS_NAT エントリを `"0"` で書き込む。SAI 登録失敗時は `parseHandleSaiStatusFailure()` で早期 return し、カウンタは書き込まれない。したがって COUNTERS_NAT に存在するエントリは「SAI に登録済み」を意味し、エントリの不在は SAI 未登録 (NAT 無効または HW 容量超過) を示す (`natorch.cpp:789`, `natorch.cpp:789-792`)。
+
+**NAT_GLOBAL_TABLE enable 前はカウンタ不在 (依存 #2)**: `addNatEntry()` (`natorch.cpp:1907-1913`) は `isNatEnabled() == false` の場合 WARN ログを出して return し、`addHwSnatEntry()` / `addHwDnatEntry()` は呼ばれない。したがって `NAT_GLOBAL_TABLE.admin_mode` が `"enabled"` になるまでは COUNTERS_NAT / COUNTERS_NAPT エントリは COUNTERS_DB に存在しない。`enableNatFeature()` → `addAllNatEntries()` で一括 SAI 投入されカウンタも一括初期化される (`natorch.cpp:2577-2582`)。
+
+**COUNTERS_GLOBAL_NAT の TIMEOUT 系フィールドは起動時固定 (依存 #3)**: `TIMEOUT` / `TCP_TIMEOUT` / `UDP_TIMEOUT` フィールドは NatOrch コンストラクタ (`natorch.cpp:128-130`) で一度だけ書き込まれる。`config nat set timeout` で CONFIG_DB を変更しても COUNTERS_DB への書き戻しは行われない。SNAT_ENTRIES / DNAT_ENTRIES 等のエントリ数フィールドは各 SAI 操作時にリアルタイム更新される (`natorch.cpp:4486-4585`)。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
