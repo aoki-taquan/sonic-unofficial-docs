@@ -668,6 +668,60 @@ if (status != SAI_STATUS_SUCCESS)
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込み・SAI 呼出し (Phase F)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`、`sonic-swss/orchagent/intfsorch.cpp`  
+> 調査日: 2026-05-18  
+> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-interface-side-effects.md`
+
+### SET — 属性ロウ (`VLAN_INTERFACE|Vlan<N>`)
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `INTF_TABLE.set(Vlan<N>, data)` | APPL_DB / `INTF_TABLE` | `Vlan<N>` | 常時 (`intfmgrd`, `intfmgr.cpp:1053`) |
+| `STATE_INTERFACE_TABLE.hset(Vlan<N>, "vrf", vrf_name)` | STATE_DB / `STATE_INTERFACE_TABLE` | `Vlan<N>` | 常時 (`intfmgrd`, `intfmgr.cpp:1054`) |
+| `sai_router_intfs_api->create_router_interface(...)` | ASIC_DB (SAI) | RIF OID | 常時 (`IntfsOrch`, `intfsorch.cpp:1296`) |
+| `COUNTERS_RIF_NAME_MAP.hset("", {alias: oid})` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | `""` | RIF 作成後タイマーで (`addRifToFlexCounter()`) |
+| `COUNTERS_RIF_TYPE_MAP.hset("", {oid: type})` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | `""` | 同上 (type=`SAI_ROUTER_INTERFACE_TYPE_VLAN`) |
+| FlexCounter エントリ登録 | FLEX_COUNTER_DB / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 作成時 (`startFlexCounterPolling()`) |
+| `SYSTEM_INTERFACE_TABLE.set(<sys_alias>, {oper_status})` | CHASSIS_APP_DB / `SYSTEM_INTERFACE_TABLE` | `<alias>` | VOQ chassis かつ Local IF (`intfsorch.cpp:1314-1317`) |
+
+### SET — IP プレフィクスロウ (`VLAN_INTERFACE|Vlan<N>|<ip_prefix>`)
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `INTF_TABLE.set(Vlan<N>:<ip_prefix>, {scope,family})` | APPL_DB / `INTF_TABLE` | `Vlan<N>:<ip_prefix>` | IPv4 link-local 以外 (`intfmgr.cpp:1137`) |
+| `STATE_INTERFACE_TABLE.hset("Vlan<N>\|<ip_prefix>", "state", "ok")` | STATE_DB / `STATE_INTERFACE_TABLE` | `Vlan<N>\|<ip_prefix>` | IPv4 link-local 以外 (`intfmgr.cpp:1138`) |
+| `sai_route_api->create_route_entry(...)` (IP2me) | ASIC_DB (SAI) | — | 常時 (`addIp2MeRoute()`) |
+| `sai_neighbor_api->create_neighbor_entry(broadcast)` | ASIC_DB (SAI) | — | VLAN IF への IPv4 prefix 付与時 (`addDirectedBroadcast()`, `intfsorch.cpp:595-597`) |
+| CRM カウンタ increment | COUNTERS_DB / CRM | — | 常時 |
+| `gNeighOrch->addInbandNeighbor(alias, ip)` | 他 ASIC へのネイバー伝播 | — | VOQ chassis かつ inband port (`intfsorch.cpp:586-592`) |
+
+### DEL — 属性ロウ (`VLAN_INTERFACE|Vlan<N>`)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|------------------|------|------|
+| `INTF_TABLE.del(Vlan<N>)` | APPL_DB / `INTF_TABLE` | `Vlan<N>` | IP prefix ロウ全削除後 (`intfmgr.cpp:1088`) |
+| `STATE_INTERFACE_TABLE.del(Vlan<N>)` | STATE_DB / `STATE_INTERFACE_TABLE` | `Vlan<N>` | 同上 (`intfmgr.cpp:1089`) |
+| `sai_router_intfs_api->remove_router_interface(...)` | ASIC_DB (SAI) | RIF OID | `ref_count == 0` 時 (`IntfsOrch`) |
+| `COUNTERS_RIF_NAME_MAP.hdel("", alias)` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | — | RIF 削除時 (`removeRifFromFlexCounter()`) |
+| `COUNTERS_RIF_TYPE_MAP.hdel("", oid)` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | — | 同上 |
+| FlexCounter エントリ削除 | FLEX_COUNTER_DB | `<oid>` | RIF 削除時 (`stopFlexCounterPolling()`, `intfsorch.cpp:1346`) |
+| `SYSTEM_INTERFACE_TABLE.del(<sys_alias>)` | CHASSIS_APP_DB / `SYSTEM_INTERFACE_TABLE` | `<alias>` | VOQ chassis かつ Local IF (`intfsorch.cpp:1367-1370`) |
+
+### DEL — IP プレフィクスロウ (`VLAN_INTERFACE|Vlan<N>|<ip_prefix>`)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|------------------|------|------|
+| `INTF_TABLE.del(Vlan<N>:<ip_prefix>)` | APPL_DB / `INTF_TABLE` | `Vlan<N>:<ip_prefix>` | IPv4 link-local 以外 (`intfmgr.cpp:1163`) |
+| `STATE_INTERFACE_TABLE.del("Vlan<N>\|<ip_prefix>")` | STATE_DB / `STATE_INTERFACE_TABLE` | `Vlan<N>\|<ip_prefix>` | 同上 (`intfmgr.cpp:1162`) |
+| `sai_route_api->remove_route_entry(...)` (IP2me) | ASIC_DB (SAI) | — | 常時 (`removeIp2MeRoute()`) |
+| `sai_neighbor_api->remove_neighbor_entry(broadcast)` | ASIC_DB (SAI) | — | VLAN IF の IPv4 Directed Broadcast エントリ削除 (`intfsorch.cpp:626-628`) |
+| CRM カウンタ decrement | COUNTERS_DB / CRM | — | 常時 |
+
+<!-- /side-effects -->
+
 <!-- secondary-db-writes -->
 ## 副次 DB 書込み (Phase F)
 
