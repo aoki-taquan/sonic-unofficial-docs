@@ -454,4 +454,47 @@ frrcfgd が発行する FRR コマンド文字列（frrcfgd.py:2945, 2960, 2977,
 > 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-constants.md` を参照
 <!-- /constants -->
 
+<!-- side-effects -->
+## 変更波及 / 副作用 (Phase F)
+
+PREFIX_SET / PREFIX の変更は frrcfgd 経由で FRR に即時反映され、ルーティングポリシー・BGP・OSPF・PIM に連鎖的な影響を及ぼす。CONFIG_DB 内の他テーブルへの直接書き込みはない。
+
+### 1. PREFIX_SET DEL → FRR prefix-list 全削除 → route-map 即時無効化
+
+`PREFIX_SET|<name>` DEL 時、frrcfgd は `no ip prefix-list <name>`（または `no ipv6 prefix-list <name>`）を vtysh で発行し、FRR から prefix-list を完全削除する（frrcfgd.py:2976-2981）。その結果、当該 prefix-list を `match ip address prefix-list <name>` で参照するすべての route-map statement が **条件未一致（= deny）として即時動作**する。
+
+!!! warning "意図せぬ全ルート拒否のリスク"
+    PREFIX_SET を DEL する前に ROUTE_MAP / BGP_NEIGHBOR_AF / BGP_PEER_GROUP_AF 側の参照を先に削除しないと、参照先不明の prefix-list は FRR に `deny` として評価されるため、フィルタリング対象ルートが全拒否になる。
+
+### 2. PREFIX メンバ変更 → 複数 FRR デーモンへ同時発行
+
+`PREFIX_LIST` / `PREFIX_NOSEQ_LIST` の ADD / DEL は TABLE_DAEMON 定義（frrcfgd.py:87）に従い **bgpd / zebra / ospfd / pimd の 4 デーモンすべて**に vtysh コマンドを発行する。
+
+| FRR デーモン | 影響 |
+|------------|------|
+| `bgpd` | BGP ルーティングポリシー再評価 |
+| `zebra` | カーネル経路フィルタ再適用 |
+| `ospfd` | OSPF redistribute フィルタ再評価 |
+| `pimd` | PIM SSM グループレンジ変更（`ip pim ssm prefix-list` 参照時） |
+
+PREFIX_SET 本体の変更は `bgpd` のみへの通知（frrcfgd.py:83）であり、PREFIX メンバの方が影響範囲が広い。
+
+### 3. BGP ピアへの自動 soft-reconfiguration
+
+frrcfgd は FRR への prefix-list 変更後に明示的な `clear ip bgp` コマンドを発行しない。FRR bgpd が変更を検知して対象ピアへ **自動で soft-reconfiguration** を実行する:
+
+- 許可 → 拒否 に変わった経路: BGP WITHDRAW 送出
+- 拒否 → 許可 に変わった経路: BGP UPDATE 送出
+
+通知は FRR 内部の非同期処理のためミリ秒〜秒単位の遅延がある。
+
+### 4. CONFIG_DB / STATE_DB / APPL_DB への副作用なし
+
+PREFIX_SET / PREFIX の変更は CONFIG_DB 内他テーブル・APPL_DB・STATE_DB・COUNTERS_DB を直接書き換えない。すべての副作用は FRR vtysh コマンド経由の FRR 内部状態変更のみ。
+
+<!-- evidence: frrcfgd.py:83,87,2931,2945,2960,2974-2981 -->
+
+> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-side-effects.md` を参照
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 88e792f23f63 -->
