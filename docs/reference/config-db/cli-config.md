@@ -523,4 +523,49 @@ CONFIG_DB `SERIAL_CONSOLE` / `SSH_SERVER` テーブルの変更に伴って `hos
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/cli-config-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`SERIAL_CONSOLE` および `SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:<TABLE>|*`) によって配信される。`swsscommon.SubscriberStateTable` や channel ベースの `ConsumerStateTable` (PUBLISH/SUBSCRIBE) は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` | `ConfigDBConnector.subscribe()` | `SSH_SERVER` | `ssh_handler` → `SshServer.policies_update()` + `PamLimitsCfg.update_config_file()` |
+| `hostcfgd` | `ConfigDBConnector.subscribe()` | `SERIAL_CONSOLE` | `serial_console_config_handler` → `SerialConsoleCfg.update_serial_console_cfg()` |
+
+`hostcfgd` 以外で `SSH_SERVER` / `SERIAL_CONSOLE` テーブルを購読するプロセスは存在しない (sshd / serial-config.service は設定ファイルを起動時に読むのみで Redis を購読しない)。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config ssh inactivity-timeout 20
+  ↓ HSET "SSH_SERVER|POLICIES" inactivity_timeout "20"
+Redis keyspace PUBLISH "__keyspace@4__:SSH_SERVER|POLICIES"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key="POLICIES", op=SET, data={inactivity_timeout:"20"}) を生成
+  ↓ HGETALL "SSH_SERVER|POLICIES" ← 通知後に値を再取得
+ssh_handler("POLICIES", SET, {inactivity_timeout:"20"})
+  ↓ SshServer.policies_update() → modify_conf_file() → set_policies()
+  ↓ /etc/ssh/sshd_config に "ClientAliveInterval 1200" を書き込み (20分×60秒)
+  ↓ sshd -T -f 検証 → systemctl restart ssh
+  ↓ PamLimitsCfg.update_config_file() → PAM limits 再確認
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は HGETALL で取得する。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HSET` / `HDEL` の Redis 操作種別自体は区別しない。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `HostConfigDaemon.load()` が `init_data['SSH_SERVER']` / `init_data.get('SERIAL_CONSOLE', {})` を一括スナップショットで適用する。`wait_till_system_init_done()` (hostcfgd:2237) 完了後に処理される (hostcfgd:2265, 2273)。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `SSH_SERVER\|POLICIES` 変化 (sshd -T 検証成功) | `systemctl restart ssh` | hostcfgd:1154 |
+| `SSH_SERVER\|POLICIES.max_sessions` 変化 | `/etc/security/limits.d/` PAM limits 更新 | hostcfgd:1418-1441 |
+| `SERIAL_CONSOLE\|POLICIES` 変化 (キャッシュ差分時) | `service serial-config restart` | hostcfgd:2035 |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2478,2481` (subscribe)、`hostcfgd:2528` (listen)、`hostcfgd:2297-2300` (`ssh_handler`)、`hostcfgd:2438-2440` (`serial_console_config_handler`)、`hostcfgd:2454-2466` (`make_callback`); 詳細分析は `meta/_intermediate/cdb-flow/cli-config-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
