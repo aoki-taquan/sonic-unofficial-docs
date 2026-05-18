@@ -226,6 +226,65 @@ stateDiagram-v2
     fail --> macsec_post_in_progress : orchagent 再起動
 ```
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+orchagent が STATE_DB へ書き込む 5 テーブルはそれぞれ異なる初期化フェーズで出現する。下記は orchagent 起動シーケンスにおける書込み順と、テーブル間の強制先行関係をまとめたものである。
+
+### 起動シーケンス上の書込み順序
+
+```
+[orchagent 起動]
+    │
+    ├─① FIPS_MACSEC_POST_TABLE|sai  (main.cpp:791-793, 924)
+    │     post_state = "disabled" または "macsec-level-post-in-progress"
+    │     ※ main() 内の SAI 初期化直後・イベントループ前に書込み
+    │
+    ├─② WARM_RESTART_TABLE|orchagent  state = "initialized"
+    │     (OrchDaemon::warmRestoreAndSyncUp():1099 または OrchDaemon::run():1099)
+    │
+    ├─③ PORT_TABLE|<port_alias>  (PortInitDone 受信後)
+    │     portsyncd が APP_DB に PortInitDone を書いてから、
+    │     portsorch が postPortInit() → initPortSupportedSpeeds/Fec() で書込み
+    │     initHostTxReadyState() は「既存値なし」の場合のみ host_tx_ready="false" を書込み
+    │
+    ├─④ FDB_TABLE|<bridge>:<mac>  (allPortsReady() ガード後)
+    │     FdbOrch::doTask() は allPortsReady() が false の間リターンする。
+    │     ∴ PORT_TABLE の全ポート初期化完了 (PortInitDone 処理) より前には書込まれない。
+    │
+    ├─⑤ VRF_OBJECT_TABLE|<vrf_name>  (SAI create_virtual_router 成功後)
+    │     vrforch が APP_VRF_TABLE エントリを処理して SAI 呼出しが成功した直後に
+    │     m_stateVrfObjectTable.hset(vrf_name, "state", "ok") を書込む。
+    │     (vrforch.cpp:120, 150)
+    │
+    └─⑥ WARM_RESTART_TABLE|orchagent  state = "restored" / "reconciled"  [warm start のみ]
+          warmRestoreValidation() 成功 → state = "restored" (orchdaemon.cpp:1204)
+          その後 WarmStart::RECONCILED が書込まれる (orchdaemon.cpp:1170)
+```
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 根拠コード |
+|---|----------|------|-----------|
+| 1 | FIPS_MACSEC_POST_TABLE → 全テーブル | 強制先行 | `main.cpp:791-793, 924` — イベントループ前に確定 |
+| 2 | `PortInitDone` 受信 → PORT_TABLE `supported_speeds/fecs` 書込み | 強制先行 | `postPortInit()` → `portsorch.cpp:6460-6461` |
+| 3 | PORT_TABLE `allPortsReady()` = true → FDB_TABLE 書込み開始 | **強制先行** | `fdborch.cpp:711, 927` — allPortsReady() が false なら即リターン |
+| 4 | SAI `create_virtual_router` 成功 → VRF_OBJECT_TABLE `state="ok"` | 強制先行 | `vrforch.cpp:120, 150` |
+| 5 | `WARM_RESTART_TABLE state="initialized"` → 全オーケストレーション処理 | 強制先行（warm start 時） | `orchdaemon.cpp:1099` |
+| 6 | warm restore 3-pass 完了 → `state="restored"` → `state="reconciled"` | 逐次 | `orchdaemon.cpp:1204, 1170` |
+
+### 主要な制約詳細
+
+**FDB_TABLE は PORT_TABLE の後 (依存 #3)**: `FdbOrch::doTask(Consumer&)` および `FdbOrch::doTask(NotificationConsumer&)` はともに冒頭で `m_portsOrch->allPortsReady()` を確認し、`false` の場合は即 `return` する。このため portsyncd が `APP_DB:PORT_TABLE|PortInitDone` を書き込んで `portsorch` が `m_initDone = true` かつ `m_pendingPortSet.empty()` になるまで、`FDB_TABLE` への STATE_DB 書込みは発生しない（evidence: `fdborch.cpp:711`、`fdborch.cpp:927`、`portsorch.cpp:1685-1688`）。
+
+**PORT_TABLE は SAI 応答待ちで遅延 (依存 #2)**: `initPortSupportedSpeeds` / `initPortSupportedFecModes` は SAI `get_port_attribute` の成功を前提に書き込む。SAI 応答が来るまでフィールドは STATE_DB に存在しない。warm restart 時、`host_tx_ready` は既存値があれば保持される（`initHostTxReadyState()` の `hostTxReady.empty()` ガード）。
+
+**VRF_OBJECT_TABLE は SAI 成功時のみ (依存 #4)**: SAI `create_virtual_router` が失敗した場合、`VRF_OBJECT_TABLE` へは書き込まれない。`vrfmgrd` は VRF 削除時に `VRF_OBJECT_TABLE` から `state="ok"` が消えることを監視して削除完了を判定する（vrforch.cpp:193 の `m_stateVrfObjectTable.del(vrf_name)`）。
+
+**WARM_RESTART_TABLE の状態遷移順 (依存 #5, #6)**: cold start では `state="initialized"` が 1 回書かれるのみ。warm start では `initialized` → （3-pass 完了後）`restored` → `reconciled` の順で遷移する。`restored` は `warmRestoreValidation()` が pending task なし = `ts.empty()` を確認した後にのみ設定される（orchdaemon.cpp:1201-1204）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
