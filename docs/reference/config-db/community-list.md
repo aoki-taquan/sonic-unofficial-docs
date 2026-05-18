@@ -301,6 +301,35 @@ YANG leafref および実装スキャンにより確認した参照関係。詳�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込・外部副作用 (Phase F)
+
+`SNMP_COMMUNITY` テーブルへの書き込みが発生したとき、CONFIG_DB 以外に変化が生じるリソースを網羅的に調査した結果。詳細スキャン証跡は `meta/_intermediate/cdb-flow/community-list-side.md` を参照。
+
+### `/etc/snmp/snmpd.conf` の再生成（コンテナ起動時）
+
+`snmpd.conf.j2` テンプレートが `docker-snmp` コンテナ起動時に `SNMP_COMMUNITY` テーブルを一括読み取りして `/etc/snmp/snmpd.conf` を生成する。CONFIG_DB への書き込みは `snmpd.conf` を即時変更しない（バッチ生成）。<!-- evidence: snmpd.conf.j2 L48-64 -->
+
+### `snmp.service` の自動再起動（CLI 経由のみ）
+
+CLI (`config snmp community add/del/replace`) は DB 書き込み完了直後に `systemctl reset-failed snmp.service` + `systemctl restart snmp.service` を発行する。これによりコンテナが再起動し、`snmpd.conf` が新しい `SNMP_COMMUNITY` を反映した状態で再生成される。direct DB 書き込み（`sonic-db-cli` / `config load`）では自動再起動は発生しない。<!-- evidence: config/main.py L4397-4401, L4425-4430, L4456-4461 -->
+
+### snmpd セッション影響（再起動後）
+
+`snmp.service` 再起動後、既存の SNMPv1/v2c セッションは切断される。削除した community を使用していた NMS（ネットワーク管理システム）は以降のポーリングが失敗する。追加した community は再起動後から有効になる。
+
+### 副次書込みサマリ
+
+| 副次先 | 操作 | 内容 | evidence |
+|--------|------|------|----------|
+| `/etc/snmp/snmpd.conf` | 再生成（コンテナ起動時） | `rocommunity` / `rwcommunity` / `rocommunity6` / `rwcommunity6` 行更新 | `snmpd.conf.j2 L48-64` |
+| `snmp.service` | 再起動（CLI 経由のみ） | 古い community 無効化・新規 community 有効化 | `config/main.py L4397-4401` |
+| STATE_DB | なし | — | スキャン 0 件 |
+| APPL_DB | なし | — | スキャン 0 件 |
+| SAI / kernel FIB | なし | — | SNMP は統計読み取りのみ |
+
+<!-- /side-effects -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
