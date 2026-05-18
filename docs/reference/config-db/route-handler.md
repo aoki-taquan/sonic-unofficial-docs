@@ -334,6 +334,45 @@ evidence: `fpmsyncd/routesync.cpp:172-200`; `fpmsyncd/fpmsyncd.cpp:148-220`
 > **Evidence**: `fpmsyncd/fpmsyncd.cpp:76-143` (起動・FPM 接続); `fpmsyncd/routesync.cpp:2053-2136` (onMsg/onRouteMsg 分岐・mgmt スキップ); `fpmsyncd/fpmsyncd.cpp:112-121` (suppress-fib-pending 読取)
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`RouteSync` は **書き手 (producer)** として複数の APPL_DB テーブルに書き込む一方、
+起動設定・warm-restart 状態・suppress-fib-pending 応答の 3 系統を**入力参照**として持つ。
+
+### 入力参照（RouteSync が読み取るテーブル）
+
+| テーブル / チャネル | DB | 参照タイミング | フィールド | evidence |
+|---|---|---|---|---|
+| `DEVICE_METADATA\|localhost` | CONFIG_DB | **起動時 1 回のみ** | `suppress-fib-pending` | `fpmsyncd.cpp:113` |
+| `BGP_STATE_TABLE\|IPv4\|eoiu` | STATE_DB | warm-restart 中のポーリング | `state` | `fpmsyncd.cpp:58` |
+| `BGP_STATE_TABLE\|IPv6\|eoiu` | STATE_DB | warm-restart 中のポーリング | `state` | `fpmsyncd.cpp:64` |
+| `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | APPL_STATE_DB | suppress-fib-pending 有効時のみ | `err_str`, `protocol` | `fpmsyncd.cpp:307-317` |
+
+**`suppress-fib-pending` の注意点**: 起動後に CONFIG_DB の値を変更しても fpmsyncd を再起動するまで有効にならない。`SubscriberStateTable` が変更イベントを受信するパスは `fpmsyncd.cpp:278` にあるが、suppress モードの動的切り替えは実装上サポートされていない[^1]。
+
+**EOIU ポーリングは warm-restart 時のみ**: 通常起動では `bgpStateTable` は参照されない。warm-restart が有効な場合、`eoiuCheckTimer`（デフォルト 1 秒周期）で `eoiuFlagsSet()` を呼び出し、IPv4/IPv6 両方の state が `"reached"` になるまで reconciliation を遅延する[^1]。
+
+**RESPONSE_CHANNEL**: orchagent が SAI プログラミング結果を `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 経由で通知し、RouteSync が `err_str=SWSS_RC_SUCCESS` を確認して FRR へ `RTM_F_OFFLOAD` フラグ付き netlink 応答を送信する。suppress-fib-pending が無効（デフォルト）の場合、このチャネルは使用されない[^1]。
+
+### 出力テーブル（RouteSync が書き込む APPL_DB テーブル）
+
+| APPL_DB テーブル | マクロ | ハンドラ |
+|---|---|---|
+| `ROUTE_TABLE` | `APP_ROUTE_TABLE_NAME` | `onRouteMsg()` / `onEvpnRouteMsg()` / `onSrv6SteerRouteMsg()` / `onSrv6VpnRouteMsg()` |
+| `NEXTHOP_GROUP_TABLE` | `APP_NEXTHOP_GROUP_TABLE_NAME` | `onNextHopMsg()` |
+| `LABEL_ROUTE_TABLE` | `APP_LABEL_ROUTE_TABLE_NAME` | `onLabelRouteMsg()` |
+| `VNET_ROUTE_TABLE` | `APP_VNET_RT_TABLE_NAME` | `onVnetRouteMsg()` (通常 VNET 経路) |
+| `VNET_ROUTE_TUNNEL_TABLE` | `APP_VNET_RT_TUNNEL_TABLE_NAME` | `onVnetRouteMsg()` (VXLAN tunnel 経路) |
+| `SRV6_MY_SID_TABLE` | `APP_SRV6_MY_SID_TABLE_NAME` | `onSrv6MySidMsg()` |
+| `SRV6_SID_LIST_TABLE` | `APP_SRV6_SID_LIST_TABLE_NAME` | `onSrv6RouteMsg()` 内 SID list 登録 |
+| `PIC_CONTEXT_TABLE` | `APP_PIC_CONTEXT_TABLE_NAME` | `onPicContextMsg()` |
+
+`ROUTE_TABLE` が主要出力であり、8 つのハンドラのうち 4 つがこのテーブルに書き込む。残りの 7 テーブルは専用ハンドラが 1 対 1 で担当する。
+
+Evidence: `routesync.cpp:156-164` (ProducerStateTable 初期化); `fpmsyncd.cpp:78-118` (suppress-fib-pending 読取・チャネル設定); 詳細スキャン手順は `meta/_intermediate/cdb-flow/route-handler-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` を同時に持つ経路は orchagent がエラー棄却（`m_toSync` から削除）。
