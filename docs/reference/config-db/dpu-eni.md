@@ -358,3 +358,31 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 **acl_rule_count_ による ACL table 参照カウント (依存 #5, #6)**: `EniFwdCtxBase` は `acl_rule_count_` で ACL table の存在を管理する。最初の `createAclRule()` で table と table_type を APPL_DB に書き込み (`addAclTable()`)、最後の `deleteAclRule()` で両方を削除する (`deleteAclTable()`)。rule より table が先に書かれ、table より rule が先に消えることが内部カウンタで保証される (`dashenifwdorch.cpp:576-601`, `dashenifwdorch.cpp:603-650`)。
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DashEniFwdOrch` は CONFIG_DB の複数テーブルと他 orchagent を横断して参照する。以下はコード (`dashenifwdorch.h` / `dashenifwdorch.cpp` / `dashenifwdinfo.cpp`) から抽出した暗黙参照の一覧。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `CONFIG_DB:DPU\|<name>` | 読み取り（スナップショット） | 起動後最初の ENI ADD 時。`lazyInit()` → `DpuRegistry::populate()` | `dashenifwdorch.cpp:212-266` `processDpuTable()` |
+| `CONFIG_DB:REMOTE_DPU\|<name>` | 読み取り（スナップショット） | 起動後最初の ENI ADD 時。`lazyInit()` → `DpuRegistry::populate()` | `dashenifwdorch.cpp:269-306` `processRemoteDpuTable()` |
+| `CONFIG_DB:VDPU\|<name>` | 読み取り（スナップショット）+ `dpus_name_map_` 参照 | DPU / REMOTE_DPU populate 後に処理。未登録 DPU ID はスキップ | `dashenifwdorch.cpp:308-347` `processVdpuTable()` |
+| `CONFIG_DB:VIP_TABLE\|<prefix>` | 読み取り（lazy、1回限り） | CLUSTER 型 ENI の ACL ルール生成時に `getVip()` が呼ばれる。テーブルが空の場合 `SWSS_LOG_THROW` で orchagent abort | `dashenifwdorch.cpp:492-517` `EniFwdCtxBase::getVip()` |
+| `CONFIG_DB:PORT\|<name>` (`port_tbl_`) | 読み取り（PORT_ROLE フィールド） | ACL テーブル作成時の `getBindPoints()` で `role=DPC` のポートを internal として除外 | `dashenifwdorch.cpp:414-431` `findInternalPorts()` |
+| `NeighOrch` (Neighbor テーブル) | OID 解決 + Observer subscribe | LOCAL DPU の `pa_ipv4` に対して Neighbor 解決。未解決時は ACL ルール未インストール。`NeighOrch::attach(this)` で Up/Down 通知を受信 | `dashenifwdorch.cpp:17-21`, `dashenifwdorch.cpp:78-103` |
+| `IntfsOrch` (INTERFACE テーブル) | エイリアス参照 | LOCAL DPU の `pa_ipv4` に対応するルーターインタフェースのエイリアスを取得 (`getRouterIntfsAlias()`) | `dashenifwdorch.cpp:544-547` |
+| `VNetOrch` (VNET テーブル) | VNI + トンネル名参照 | CLUSTER 型 ENI の vnet_name から VNI とトンネル名を取得 (`findVnetVni()`, `findVnetTunnel()`)。VNET 未登録時は resolve 失敗 | `dashenifwdorch.cpp:549-567` |
+| `VxlanTunnelOrch` (VXLAN_TUNNEL テーブル) | トンネル OID 参照 | CLUSTER 型 ENI の ACL ルール redirect 先となる `<npu_ipv4>@<tunnel>,<vni>` を構築するためにトンネルを解決 | `dashenifwdorch.h:393` `vxlanorch_` |
+| `PortsOrch` (PORT テーブル) | PHY / LAG ポート一覧取得 | ACL テーブル作成時の bind points 列挙 (`getAllPorts()`)。LAG member ポートは除外 | `dashenifwdorch.cpp:433-473` `getBindPoints()` |
+| `APPL_DB:ACL_TABLE_TYPE_TABLE\|ENI_REDIRECT` | 書き込み（自動管理） | 最初の ENI ACL ルール作成時に `addAclTable()` が自動生成。最後のルール削除時に自動削除 | `dashenifwdorch.cpp:603-644` `addAclTable()` |
+| `APPL_DB:ACL_TABLE_TABLE\|ENI` | 書き込み（自動管理） | `addAclTable()` / `deleteAclTable()` で生成・削除。bind points は PHY / LAG ポート（DPC ロール除く）を列挙 | `dashenifwdorch.cpp:636-643` |
+| `APPL_DB:ACL_RULE_TABLE\|ENI:*` | 書き込み | ENI ADD/UPDATE/DEL に応じてルールを生成。`acl_rule_count_` で参照カウント | `dashenifwdorch.cpp:574-601` `createAclRule()`, `deleteAclRule()` |
+
+!!! note "VNET テーブルの暗黙依存"
+    CLUSTER 型 ENI の ACL ルールを生成するには、`DASH_ENI_FORWARD_TABLE` に含まれる `vnet_name` キーに対応する `VNET` エントリが VNetOrch に登録済みである必要がある。`findVnetVni()` / `findVnetTunnel()` が false を返すと ACL ルールは生成されず、ENI は PENDING 状態のまま残る。
+
+!!! note "VIP_TABLE は唯一の THROW 発生源"
+    `VIP_TABLE` が空の場合のみ `SWSS_LOG_THROW` が実行される。他の参照（VNET 未登録・Neighbor 未解決など）はいずれも処理を PENDING 状態で保留し、後続イベントで自動再評価される仕組みになっている。
+<!-- /cross-refs -->
