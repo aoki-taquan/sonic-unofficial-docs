@@ -471,3 +471,51 @@ attr.value.chardata[size - 1] = '\0';
 > **スキャン証跡**: `copporch.h` 全行、`copporch.cpp` L37,189,1265-1286 精読。定数 7 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`COPP_GROUP` の `genetlink_name` / `genetlink_mcgrp_name` を SET/DEL したときに CONFIG_DB 以外の DB へ書き込まれるエントリを示す。
+
+### APPL_DB 書込
+
+| 操作 | テーブル | キー | フィールド | タイミング | evidence |
+|---|---|---|---|---|---|
+| `set` | `COPP_TABLE` | `COPP_TABLE\|<group-name>` | `genetlink_name`, `genetlink_mcgrp_name` 他全フィールド | CONFIG_DB 変化を `coppmgrd` が検知後 | `coppmgr.cpp:152,511,526` |
+| `del` | `COPP_TABLE` | `COPP_TABLE\|<group-name>` | (全削除) | グループ pending / DEL 時 | `coppmgr.cpp:126,288,891` |
+
+### STATE_DB 書込
+
+`genetlink_name` フィールド自体は STATE_DB への書込を追加しない。ただし同一 `COPP_GROUP` エントリに `trap_ids` が含まれる場合、`applyAttributesToTrapIds()` 内で `updateTrapOperStatus()` が呼ばれ、STATE_DB に副次書込が発生する。
+
+| 操作 | テーブル | キー | フィールド | タイミング | evidence |
+|---|---|---|---|---|---|
+| `set` | `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<trap-name>` | `hw_status="installed"` | SAI `create_hostif_trap()` 成功後 | `copporch.cpp:526, 222-236` |
+| `set` | `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<trap-name>` | `hw_status="not-installed"` | SAI trap 削除時 | `copporch.cpp:1413` |
+
+### COUNTERS_DB / FLEX_COUNTER_DB 書込
+
+trap_ids 追加に伴い `bindTrapCounter()` が呼ばれ、カウンタ登録が行われる。
+
+| 操作 | DB | テーブル | キー | フィールド | evidence |
+|---|---|---|---|---|---|
+| `set` | COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | `""` (hash) | `<trap_name>=<counter_oid>` | `copporch.cpp:1452-1456` |
+| `hdel` | COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | `""` (hash) | `<trap_name>` | `copporch.cpp:1494-1495` |
+| `setCounterIdList` | FLEX_COUNTER_DB | `HOSTIF_TRAP_FLOW_COUNTER` | `<counter_oid>` | 統計 ID リスト | `copporch.cpp:950` |
+| `clearCounterIdList` | FLEX_COUNTER_DB | `HOSTIF_TRAP_FLOW_COUNTER` | `<counter_oid>` | (クリア) | `copporch.cpp:1487` |
+
+FLEX_COUNTER_DB 登録は `FLEX_COUNTER_UPD_TIMER`（1 秒間隔）経由で非同期に実行される。
+
+### ASIC_DB 副次書込 (syncd 経由)
+
+`CoppOrch` は ASIC_DB に直接書き込まない。SAI API 呼び出しを受けた `syncd` が ASIC_DB `VIDTORID` に OID を記録する。`genetlink_name` が設定されると以下の SAI 呼び出しが追加で発生する:
+
+| SAI API | 条件 | evidence |
+|---|---|---|
+| `sai_hostif_api->create_hostif()` (TYPE_GENETLINK) | `genetlink_attribs` 非空 | `copporch.cpp:680` |
+| `sai_hostif_api->create_hostif_table_entry()` (CHANNEL_TYPE_GENETLINK) | 当該グループ内の各 trap_id に対して | `copporch.cpp:453-466` |
+| `sai_hostif_api->remove_hostif()` | DEL または既存 hostif 検知時 | `copporch.cpp:702` |
+| `sai_hostif_api->remove_hostif_table_entry()` | trap_id 除去時 | `copporch.cpp:481-487` |
+
+> **スキャン証跡**: `copporch.cpp` L126-152 (coppmgrd APPL_DB 書込)、L222-236 (updateTrapOperStatus)、L419-493 (genetlink hostif table create/remove)、L499-533 (applyAttributesToTrapIds + bindTrapCounter)、L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf)、L833-851 (processCoppRule genetlink 分岐)、L1418-1495 (bindTrapCounter/unbindTrapCounter)。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-side-effects.md`
+<!-- /side-effects -->
+
