@@ -290,6 +290,38 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 
 ---
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-state-failure.md`
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp:1850-1968,
+     sonic-swss/orchagent/debugcounterorch.cpp:315-363,
+     sonic-swss/orchagent/debug_counter/drop_counter.cpp:298-446 -->
+
+これらの STATE_DB テーブルは orchagent 起動直後にコンストラクタ内で書き込まれる。SAI query 失敗はすべて **silent 継続** であり orchagent を停止させない。ユーザーへの影響はカウンタが `N/A` になるか、`show debug-counter capabilities` が空になるかのいずれかである。
+
+| # | 失敗箇所 | ログレベル | orchagent 継続 | STATE_DB への影響 | 診断コマンド |
+|---|---------|-----------|--------------|-----------------|------------|
+| 1 | `sai_query_stats_capability(SAI_OBJECT_TYPE_QUEUE, ...)` 失敗 | `SWSS_LOG_NOTICE` | 継続 | `QUEUE_COUNTER_CAPABILITIES` 全フィールドが `"false"` のまま残存 | `sonic-db-cli STATE_DB hgetall 'QUEUE_COUNTER_CAPABILITIES\|WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER'` |
+| 2 | `sai_query_stats_capability(SAI_OBJECT_TYPE_PORT, ...)` 失敗 | `SWSS_LOG_NOTICE` | 継続 | `PORT_COUNTER_CAPABILITIES` 全フィールドが `"false"` のまま残存 | `sonic-db-cli STATE_DB hgetall 'PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER'` |
+| 3 | `getSupportedDropReasons()` SAI query 失敗 | `SWSS_LOG_NOTICE` | 継続 | `DEBUG_COUNTER_CAPABILITIES` テーブルが空（エントリ書き込みなし） | `sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES\|*'` |
+| 4 | `getSupportedCounterTypes()` SAI query 失敗 または SAI メタデータ null | `SWSS_LOG_NOTICE` / `SWSS_LOG_ERROR` | 継続 | 同上 | 同上 |
+| 5 | `getSupportedDebugCounterAmounts()` が 0 返却（query 失敗またはリソース枯渇） | `SWSS_LOG_NOTICE` | 継続 | 対応 counter_type のエントリが欠落（count=0 は書き込みスキップ） | 同上 |
+| 6 | `STATE_DB` 接続失敗 (`DBConnector` / `Table` コンストラクタ例外) | 例外スロー | クラッシュ（orchagent 再起動） | 書き込みなし | `systemctl status swss` |
+
+### SAI_STATUS_BUFFER_OVERFLOW の特殊処理
+
+`sai_query_stats_capability()` が `SAI_STATUS_BUFFER_OVERFLOW` を返した場合、portsorch は必要なバッファを確保して **自動リトライ** する (portsorch.cpp:1883-1888, 1930-1934)。リトライ後も失敗した場合にのみ `SWSS_LOG_NOTICE` が出力される。リトライ自体は透過的に処理され、ユーザーへの影響はない。
+
+### DEBUG_COUNTER_CAPABILITIES のリソース枯渇警告
+
+コードコメント (drop_counter.cpp:425-431) によると、プラットフォームの debug counter リソースは ASIC の他オブジェクト（ACL 等）とハードウェアリソースを共有する場合がある。`getSupportedDebugCounterAmounts()` が返す count は起動時以降に変化する可能性があるが、STATE_DB への再書き込みは行われない（コンストラクタ呼び出し時のスナップショットのみ）。
+
+<!-- /failure -->
+
+---
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
