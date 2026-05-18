@@ -511,3 +511,77 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 | その他 | `PFC_WD_ACTION_UNKNOWN` | — (task_invalid_entry) |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/pfc-wd-side-effects.md`
+
+`PFC_WD` エントリの SET/DEL および storm 検出イベントが引き起こす CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。
+
+### PFC_WD SET (per-port エントリ) — COUNTERS_DB / COUNTERS:\<queue_oid\>
+
+`startWdOnPort()` → `registerInWdDb()` (pfcwdorch.cpp:563-603) および `initWdCounters()` (pfcactionhandler.cpp:182-195) が lossless TC ごとに書き込む:
+
+| フィールド | 書込値 | 書込箇所 |
+|-----------|--------|---------|
+| `PFC_WD_DETECTION_TIME` | `detection_time × 1000` (µs 単位) | `pfcwdorch.cpp:570` |
+| `PFC_WD_RESTORATION_TIME` | `restoration_time × 1000` (0 時は空文字列) | `pfcwdorch.cpp:572-575` |
+| `PFC_WD_ACTION` | `"drop"` / `"forward"` / `"alert"` | `pfcwdorch.cpp:576` |
+| `PFC_STAT_HISTORY` | `"enable"` / `"disable"` | `pfcwdorch.cpp:577` |
+| `PFC_WD_QUEUE_STATS_DEADLOCK_DETECTED` | `"0"` (累積保持) | `pfcactionhandler.cpp:190` |
+| `PFC_WD_QUEUE_STATS_DEADLOCK_RESTORED` | `"0"` (累積保持) | `pfcactionhandler.cpp:191` |
+| `PFC_WD_QUEUE_STATUS` | `"operational"` | `pfcactionhandler.cpp:192` |
+
+### PFC_WD SET (per-port) — FLEX_COUNTER_DB PFC_WD グループ登録
+
+`m_pfcwdFlexCounterManager->setCounterIdList()` で syncd への PFC ポーリング指示を投入する:
+
+| 対象オブジェクト | 登録内容 | 書込箇所 |
+|----------------|---------|---------|
+| PORT OID | PFC ポートカウンタ ID リスト (`SAI_PORT_STAT_PFC_*_PAUSE_DURATION_US` 等) | `pfcwdorch.cpp:560` |
+| QUEUE OID | SAI キューカウンタ ID リスト (`c_queueStatIds`) | `pfcwdorch.cpp:587` |
+| QUEUE OID (attr) | SAI キュー属性 ID リスト (`c_queueAttrIds`) | `pfcwdorch.cpp:593` |
+
+### PFC_WD SET — SAI / ASIC_DB (BRCM + DLR のみ)
+
+Broadcom プラットフォームで `checkPfcDlrInitEnable()` が true の場合、**最初の per-port エントリ登録時のみ** スイッチレベル SAI 属性を書き込む:
+
+| SAI API | 属性 | 書込箇所 |
+|---------|------|---------|
+| `sai_switch_api->set_switch_attribute()` | `SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION` (action 値) | `pfcwdorch.cpp:247` |
+
+### GLOBAL POLL_INTERVAL 変更 — FLEX_COUNTER_DB グループ間隔更新
+
+`PFC_WD|GLOBAL` の `POLL_INTERVAL` 変更受信時:
+
+| 副次効果 | 書込箇所 |
+|---------|---------|
+| `m_pfcwdFlexCounterManager->updateGroupPollingInterval()` — FLEX_COUNTER_DB PFC_WD グループのポーリング間隔を更新 | `pfcwdorch.cpp:356` |
+
+### storm 検出時 — APPL_DB / COUNTERS_DB ランタイム書込
+
+`m_pollTimer` ループで storm イベントを検出した際 (pfcwdorch.cpp:984-1041):
+
+| DB | テーブル / キー | 書込内容 | 書込箇所 |
+|----|---------------|---------|---------|
+| APPL_DB | `PFC_WD_TABLE_INSTORM\|<port-alias>` | `hset <queue_index> "storm"` (warm-reboot 用 storm 状態記録) | `pfcwdorch.cpp:1000,1017,1034` |
+| COUNTERS_DB | `COUNTERS:<queue_oid>` | デッドロック検出カウンタ・状態フラグ更新 | `pfcwdorch.cpp:996,1013,1030` |
+
+storm 復帰時 (pfcwdorch.cpp:1043-1059):
+
+| DB | テーブル / キー | 操作 | 書込箇所 |
+|----|---------------|------|---------|
+| APPL_DB | `PFC_WD_TABLE_INSTORM\|<port-alias>` | `hdel <queue_index>` (storm フラグ削除) | `pfcwdorch.cpp:1058` |
+
+### PFC_WD DEL (per-port) — FLEX_COUNTER_DB / COUNTERS_DB クリーンアップ
+
+`stopWdOnPort()` (pfcwdorch.cpp:643-671):
+
+| 対象 DB / テーブル | 操作 | 書込箇所 |
+|-----------------|------|---------|
+| FLEX_COUNTER_DB PORT OID | `clearCounterIdList` | `pfcwdorch.cpp:652` |
+| FLEX_COUNTER_DB QUEUE OID × lossless TC 数 | `clearCounterIdList` | `pfcwdorch.cpp:657` |
+| COUNTERS_DB `COUNTERS:<queue_oid>` | `hdel` (PFC_WD 設定フィールド群を削除) | `pfcwdorch.cpp:668` |
+
+<!-- /side-effects -->
