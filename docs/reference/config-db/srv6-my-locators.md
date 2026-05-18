@@ -206,6 +206,50 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数・上限値 (Phase E)
+
+> 根拠: `srv6orch.cpp` L19-24, L331-350 および `managers_srv6.py` L6-12, L37-53, L135-142 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-constants.md`
+
+### srv6orch.cpp — ロケータ長フォールバック定数
+
+`getLocatorCfgFromDb()` (`srv6orch.cpp:331-350`) が CONFIG_DB のロケータエントリを読み取る際、各フィールドが省略されている場合に `get_value_or()` の引数として使われる固定値。
+
+| 定数名 | 値 | 意味 |
+|--------|-----|------|
+| `LOCATOR_DEFAULT_BLOCK_LEN` | `"32"` | `block_len` フィールド省略時のフォールバック（ビット）。YANG default・Python Locator クラスの値と一致 |
+| `LOCATOR_DEFAULT_NODE_LEN` | `"16"` | `node_len` フィールド省略時のフォールバック（ビット） |
+| `LOCATOR_DEFAULT_FUNC_LEN` | `"16"` | `func_len` フィールド省略時のフォールバック（ビット） |
+| `LOCATOR_DEFAULT_ARG_LEN` | `"0"` | `arg_len` フィールド省略時のフォールバック（ビット） |
+
+上記 4 定数は YANG `default` 値・Python `Locator.__init__()` のフォールバック値（`managers_srv6.py:138-141`）と完全一致しており、bgpcfgd / Srv6Orch の双方が同一のデフォルト挙動を持つ。
+
+### FRR コマンドへのハードコード埋め込み
+
+`locators_set_handler()` (`managers_srv6.py:37-53`) が生成する FRR vtysh コマンドには 2 つのハードコード要素が存在する:
+
+| 項目 | ハードコード値 | 意味 |
+|------|--------------|------|
+| `behavior` フラグ | `"usid"` | 全ロケータに無条件付与 (`managers_srv6.py:47`)。uSID（micro-SID, RFC 9252）動作を強制。CONFIG_DB フィールドでは変更不可 |
+| プレフィックス長計算 | `block_len + node_len` のみ | FRR に送るプレフィックスは `/<block+node>` に固定 (`managers_srv6.py:142`)。`func_len` / `arg_len` は含まれない |
+
+例: デフォルト値使用時 → `prefix fcbb:bbbb:20::/48 block-len 32 node-len 16 func-bits 16 behavior usid`
+
+### ビット長の有効範囲（YANG 制約）
+
+コード側でビット長の範囲チェックは行わず、YANG バリデーション層に委ねている。
+
+| フィールド | YANG 型 | 有効範囲 |
+|-----------|---------|---------|
+| `block_len` | `uint8` | 1–128 |
+| `node_len` | `uint8` | 1–128 |
+| `func_len` | `uint8` | 0–128 |
+| `arg_len` | `uint8` | 0–128 |
+| 合計制約 | `must` | `block_len + node_len + func_len + arg_len <= 128` |
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: SRv6 YANG モデル: `sonic-srv6.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-srv6.yang>
