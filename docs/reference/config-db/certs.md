@@ -139,6 +139,31 @@ CREDENTIALS|CERT|<profileID>
 **CRL の前提条件 (依存 #7)**: telemetry バイナリの起動引数 `--cert_crl_dir` が未設定 (`""`) の場合、CRL エンティティを含む Rotate RPC は `codes.Aborted: "CRL not configured"` で即時拒否される (gnsi_certz.go:405-407)。デフォルト値は `/mtls/crl` であり、ディレクトリが存在しない場合は起動時に `os.MkdirAll()` で自動作成される (gnsi_certz.go:143-149)。CONFIG_DB を介した動的変更はできず、再起動が必要 (evidence: `gnsi_certz.go:404-408`, `gnsi_certz.go:143-149`, `telemetry/telemetry.go:202`)。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`CREDENTIALS|CERT` は **STATE_DB への書き出し専用**テーブルであり、`gnsi_certz.go` が CONFIG_DB テーブルを直接読み込むことは **ゼロ**である。外部参照はすべてファイルシステムまたは systemd 起動順序依存となる。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | evidence |
+|--------------------------|---------|------|----------|
+| `STATE_DB` (Redis インスタンス) | 書き出し専用 (`HSET`) | 常時 — `writeCredentialsMetadataToDB()` がすべての freshness フィールドを書き込む | `common_utils/notification_producer.go:16`; `gnsi_certz.go:1037-1058` |
+| `database.service` (systemd) | 起動順序依存 (先行必須) | gnmi.service 起動前に STATE_DB (Redis) が必要。未起動なら `writeEntityFreshness()` でエラー | `gnmi.service.j2:3-4` (`After=database.service`) |
+| ファイルシステム — `CertzMetaFile` (`/keys/grpc-version.json`) | 読み取り (JSON プロファイル永続化) | 起動時 `loadCertzMetadata()` でプロファイルを読み込む。ファイル不在時は `bootstrapDefaultProfile()` でゼロ初期化 | `gnsi_certz.go:126,727` |
+| ファイルシステム — `CertCRLConfig` ディレクトリ (`/mtls/crl`) | 読み書き (CRL バンドルファイル) | CRL Rotate 時に `activateEntity()` がファイルを書き込む。未設定時は Rotate が `codes.Aborted` を返す | `gnsi_certz.go:144-151,204,405-407` |
+| TLS シンボリックリンク (`SrvCertLnk` / `CaCertLnk` 等) | 書き出し (Rotate 確定時に更新) | `finalizeProfile()` が証明書シンボリックリンクを新パスへ切り替える。gnmi サーバの TLS 再ロードに影響 | `gnmi_server/server.go:429,452` |
+| `GNMI` / `TELEMETRY` (CONFIG_DB) | 間接参照のみ (gnmi サーバ設定) | gnmi サーバ全体の設定を保持するが `gnsi_certz.go` は直接読まない。証明書パスは CLI フラグ経由 | `telemetry/telemetry.go:196-204` |
+
+### 詳細
+
+**CONFIG_DB 参照なし**: `writeCredentialsMetadataToDB()` は `common_utils.GetRedisDBClient()` (dbName=`"STATE_DB"`) で STATE_DB に直接接続し、`sc.HSet()` で書き込む (`notification_producer.go:16,95`)。CONFIG_DB への読み取りは一切発生しない。
+
+**ファイルシステムが真の外部依存**: 証明書パス (`SrvCertLnk` / `CaCertLnk` / `SrvKeyLnk`) は telemetry バイナリの CLI フラグで指定され、gnmi コンテナ起動時に確定する。CONFIG_DB を介した動的変更は不可能であり、変更には再起動が必要。
+
+**`GNMI|certs` 設定との分離**: `GNMI` テーブルは gnmi サーバのリスニングポート・VRF・証明書パス等を保持するが、`gnsi_certz.go` は `GNMI` テーブルを読まない。Certz Rotate で証明書ファイルを更新しても gnmi サーバが TLS 証明書を再ロードするタイミングは `server.go` の実装依存であり、`GNMI` テーブルへの書き戻しは発生しない。
+
+詳細根拠は `meta/_intermediate/cdb-flow/certs-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
