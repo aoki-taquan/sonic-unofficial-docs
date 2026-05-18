@@ -257,4 +257,30 @@ if((table_name == CFG_VOQ_INBAND_INTERFACE_TABLE_NAME) &&
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/nbrmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang`
+> 調査日: 2026-05-18
+> 調査証跡: `meta/_intermediate/cdb-flow/voq-inband-interface-cross-refs.md`
+
+YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。
+
+| # | 参照先 | DB / 場所 | 方向 | 依存内容 | 根拠コード |
+|---|--------|-----------|------|---------|-----------|
+| 1 | `DEVICE_METADATA.localhost.switch_type` | CONFIG_DB | READ | `switch_type != "voq"` のとき VoQ 系処理全体がスキップされ VOQ_INBAND_INTERFACE は事実上無効 | `intfmgr.cpp:71-75`, `main.cpp` |
+| 2 | `APP_INTF_TABLE` | APPL_DB | WRITE | 単一キー SET は `doIntfGeneralTask()` をバイパスし `m_appIntfTableProducer.set()` で即時 relay | `intfmgr.cpp:1198-1199` |
+| 3 | `STATE_INTF_TABLE` | STATE_DB | WRITE/READ | `intfmgrd` が `vrf=""` を書き込み、IP プレフィクスロウ (2-key) の `isIntfCreated()` チェック成立に必要 | `intfmgr.cpp:1200`, `intfmgr.cpp:1115` |
+| 4 | `portsorch` 内部ポートマップ (`getPort()`) | orchagent (in-process) | READ | `setVoqInbandIntf()` が `getPort()` で対象ポートの存在を確認。未登録ならリトライキュー戻し | `portsorch.cpp:11121-11131` |
+| 5 | `VOQ_INBAND_INTERFACE` (READ by nbrmgr) | CONFIG_DB | READ | `nbrmgrd` が VOQ 環境でリモートネイバーのカーネルルート追加時に `inband_type` を参照 | `nbrmgr.cpp:82,524-549` |
+| 6 | `VOQ_INBAND_INTERFACE_LIST.name` (YANG leafref) | CONFIG_DB | READ | IP プレフィクスロウの `name` キーは属性ロウへの leafref。対応属性行なしで YANG バリデーション reject | `sonic-voq-inband-interface.yang:48` |
+
+!!! note "依存 #1 (switch_type ゲート)"
+    `switch_type == "voq"` かつ VOQ chassis 環境が成立しない限り、VOQ_INBAND_INTERFACE を CONFIG_DB に書いても orchagent / intfmgrd ともに処理をスキップする（エラーログなし）。単体スイッチでは設定が無視される。
+
+!!! note "依存 #3 (2-key IP プレフィクスロウの前提)"
+    属性ロウ（単一キー `VOQ_INBAND_INTERFACE|<name>`）の SET が先行し `STATE_INTF_TABLE` に `vrf=""` が書かれた後でなければ、IP プレフィクスロウ（2-key `VOQ_INBAND_INTERFACE|<name>|<ip-prefix>`）が `doIntfAddrTask()` で処理されない（`isIntfCreated()` が false を返す）。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
