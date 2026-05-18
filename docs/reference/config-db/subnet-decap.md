@@ -329,6 +329,44 @@ routeorch / vnetorch が **ランタイムで動的生成** する。
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `tunneldecaporch.cpp`, `tunneldecaporch.h`, `routeorch.cpp`, `vnetorch.cpp`, `ipinip.json.j2` 全行精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/subnet-decap-ordering.md`
+
+`SUBNET_DECAP` テーブルは直接の YANG leafref をほとんど持たないが、実行時に以下のテーブルを暗黙的に参照・連動する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `TUNNEL_DECAP_TABLE:IPINIP_SUBNET` | APP_DB | 読み取り (tunnel オブジェクト存在確認) | なし | **実質必須** (ブート時 `ipinip.json.j2` が生成) | `tunneldecaporch.cpp:392` |
+| `TUNNEL_DECAP_TABLE:IPINIP_SUBNET_V6` | APP_DB | 読み取り (IPv6 tunnel オブジェクト存在確認) | なし | **実質必須** | `tunneldecaporch.cpp:393` |
+| `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:*` | APP_DB | 読み取り (MP2MP vlan/vip term) | なし | 必須 | `tunneldecaporch.cpp:350-540` |
+| `LOOPBACK_INTERFACE` | CONFIG_DB | 読み取り (`ipinip.json.j2` がビルド時参照) | なし | 実質必須 | `ipinip.json.j2:28-32` |
+| `VLAN_INTERFACE` | CONFIG_DB | 読み取り (`ipinip.json.j2` が vlan term 生成に使用) | なし | VLAN subnet decap 必須 | `ipinip.json.j2:47-51` |
+| `DEVICE_METADATA.localhost.switch_type` | CONFIG_DB | 読み取り (`ipinip.json.j2` が DPU で全設定をスキップ) | なし | platform 依存 | `ipinip.json.j2:1` |
+| `DEVICE_METADATA.localhost.type` | CONFIG_DB | 読み取り (Broadcom T1 判定で dscp_mode 切り替え) | なし | platform 依存 | `ipinip.json.j2:13-14` |
+| `STATE_TUNNEL_DECAP_TABLE` | STATE_DB | 書き込み (tunnel 状態を STATE_DB へ記録) | なし | 情報提供 | `tunneldecaporch.cpp:34, 287` |
+| `STATE_TUNNEL_DECAP_TERM_TABLE` | STATE_DB | 書き込み (term 状態を STATE_DB へ記録) | なし | 情報提供 | `tunneldecaporch.cpp:35` |
+
+### TUNNEL_DECAP_TABLE:IPINIP_SUBNET — 実質的な必須前提条件
+
+`TunnelDecapOrch::doTunnelDecapTermTask()` は `tunnel_exists = (tunnelTable.find(tunnel_name) != tunnelTable.end())` でトンネルオブジェクトの存在を確認する。`IPINIP_SUBNET` が APP_DB に存在しない場合、subnet decap term は `unhandledDecapTerms` キューに積まれ SAI に反映されない。このトンネルは `ipinip.json.j2` がブート時に `SUBNET_DECAP[*].status == enable` を確認した場合のみ生成するため、**ブート前に `status=enable` が CONFIG_DB に存在すること**が実質的な必須条件となる（`tunneldecaporch.cpp:392-394, 516-521`）。
+
+### RouteOrch / VNetRouteOrch — VIP ルート連動
+
+`RouteOrch::addRoute()` および `VNetRouteOrch` は VIP ルート追加・削除時に `gTunneldecapOrch->getSubnetDecapConfig()` を参照する。`subnetDecapConfig.enable == true` の場合、VIP prefix に対する MP2MP tunnel term (`subnet_type: vip`) を動的に APP_DB へ書き込む。`SUBNET_DECAP` が disable / 未設定の場合は VIP ルートに対する decap term が生成されない（`routeorch.cpp:2714-2717, 3220-3251`; `vnetorch.cpp:1563-1594`）。
+
+### VLAN_INTERFACE — ビルド時 vlan term 生成の前提
+
+`ipinip.json.j2` は `VLAN_INTERFACE` から IPv4/IPv6 プレフィックスを取得し `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<prefix>` (MP2MP, vlan) を APP_DB へ注入する。VLAN_INTERFACE が存在しなければ vlan 型の decap term が生成されず、VLAN サブネット内からの IPinIP トラフィックが decap されない（`ipinip.json.j2:47-51`）。
+
+### ASIC_VENDOR / DSCP_TO_TC_MAP — dscp_mode 自動決定
+
+`ipinip.json.j2` が `ASIC_VENDOR` および `DEVICE_METADATA.localhost.type` を参照して `dscp_mode` (`pipe`/`uniform`) を決定する。また `DSCP_TO_TC_MAP.AZURE` が存在する場合は `decap_dscp_to_tc_map: AZURE` を付加する。CONFIG_DB の `SUBNET_DECAP` フィールドではなくビルド時テンプレートが決定するため、CONFIG_DB 側からの変更は不可（`ipinip.json.j2:8-25`）。
+
+<!-- /cross-refs -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
