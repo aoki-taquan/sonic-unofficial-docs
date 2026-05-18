@@ -399,6 +399,53 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+> 根拠: `srv6orch.cpp` `initializeCounters()` L120-142、`queryMySidCountersCapability()` L144-155、`doTask(SelectableTimer&)` L286-313、`main.cpp` L84,529-531 精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-state-platform.md`
+
+`COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` への書き込みが発生するかどうかは、プラットフォームの SAI 実装と起動構成によって決まる。
+
+### 差異 1: SAI カウンタ capability 非対応（最大の分岐）
+
+`queryMySidCountersCapability()` (`srv6orch.cpp:144-155`) は orchagent 起動時に `sai_query_attribute_capability()` を呼び出し、`SAI_OBJECT_TYPE_MY_SID_ENTRY` の `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` 属性が `set_implemented && create_implemented` かを確認する。
+
+| 条件 | `m_mysid_counters_supported` | COUNTERS_DB への影響 |
+|------|------------------------------|---------------------|
+| SAI が両方 true を返す | `true` | `COUNTERS_SRV6_NAME_MAP` が MySID 追加時に書かれる |
+| SAI が非 SUCCESS / どちらか false | `false` | `COUNTERS_SRV6_NAME_MAP` は一切書かれない。`show srv6 stats` は空 |
+
+このフラグは起動時一回限り確定し、実行中の変更手段はない（orchagent 再起動が必要）。
+
+### 差異 2: gTraditionalFlexCounter モード（ASIC_DB 経由 VID 解決）
+
+orchagent 起動引数 `-c traditional` (`main.cpp:529-531`) で `gTraditionalFlexCounter = true` になる。デフォルトは `false`。
+
+| モード | FLEX_COUNTER_DB 登録タイミング |
+|--------|-------------------------------|
+| デフォルト (`false`) | MySID 追加から 1 秒後（タイマー発火で即登録） |
+| traditional (`true`) | タイマー発火時に ASIC_DB `VIDTORID` で VID→RID 変換が確認できるまで待機。RID 未確定の場合はポーリングが繰り返されるため `COUNTERS:<oid>` 初回値の出現がさらに遅延する（evidence: `srv6orch.cpp:293-295`） |
+
+traditional モードは古い Broadcom SDK 系 ASIC などで使用されることがある。
+
+### 差異 3: VS / SAI 未実装プラットフォーム
+
+VS (Virtual Switch) など `sai_query_attribute_capability()` 自体が `SAI_STATUS_NOT_IMPLEMENTED` を返す SAI 実装では、`queryMySidCountersCapability()` が false を返して `COUNTERS_SRV6_NAME_MAP` への書き込みは発生しない。
+
+### プラットフォーム別まとめ
+
+| プラットフォーム例 | SAI capability | gTraditionalFlexCounter | COUNTERS_SRV6_NAME_MAP |
+|-------------------|----------------|------------------------|------------------------|
+| HW ASIC（対応 SAI）+ デフォルト | `true` | `false` | MySID 追加後 ~1 秒で出現 |
+| HW ASIC（対応 SAI）+ traditional | `true` | `true` | VIDTORID 確定後に出現（追加遅延あり） |
+| HW ASIC（非対応 SAI） | `false` | — | 常に空 |
+| VS / ソフトウェア SAI | `false`（多くの場合） | `false` | 常に空 |
+
+`COUNTERS:<oid>` の値は FlexCounter 登録完了後、`SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000 ms` ごとに syncd が更新する。この間隔はプラットフォーム間で変わらない（コード固定値）。
+
+<!-- /platform -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`SRV6_MY_SIDS`](srv6-my-sids.md) — MySID エントリ定義
