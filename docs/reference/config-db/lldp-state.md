@@ -363,6 +363,63 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`lldpmgrd` / `lldpd.conf.j2` / `supervisord.conf.j2` / `sonic-snmpagent` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+出典は `sonic-buildimage/dockers/docker-lldp/lldpmgrd`、`lldpd.conf.j2`、`supervisord.conf.j2`、`sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`。
+
+### lldpmgrd タイムアウト / リトライ定数
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `PORT_INIT_TIMEOUT` | `300` 秒 | PortInitDone / PortConfigDone を受信しないまま経過した場合に lldpd を強制 resume するタイムアウト (lldpmgrd L33) |
+| `FAILED_CMD_TIMEOUT` | `6` 秒 | lldpcli コマンド失敗後の次回リトライまでのバックオフ最小間隔 (lldpmgrd L34) |
+| `RETRY_LIMIT` | `5` 回 | lldpcli コマンド失敗時の最大リトライ回数。超過すると当該ポートの LLDP 設定を断念 (lldpmgrd L35) |
+| `SELECT_TIMEOUT_MS` | `10000` ms | Redis Pub/Sub select() のポーリング間隔。CONFIG_DB / APPL_DB 変化を 10 秒以内に検出 (lldpmgrd L291) |
+
+### lldpd.conf.j2 のハードコード設定
+
+| 設定 | 値 | 用途 |
+|------|----|------|
+| `configure lldp portidsubtype ifname` | `ifname` (グローバル) | 全ポートのデフォルト portid を MAC アドレスではなくインタフェース名に固定。後続 lldpmgrd が `portidsubtype local` (alias) で上書きするまでの初期値 (lldpd.conf.j2 L31) |
+| `pause` | — | 起動直後は LLDPDU 送出を停止。lldpmgrd が PortInitDone + PortConfigDone 受信後に `lldpcli resume` するまで LLDPDU は送出されない (lldpd.conf.j2 L33) |
+
+### supervisord.conf.j2 — プロセス起動順序
+
+| プログラム | priority | 起動待機条件 |
+|-----------|---------|------------|
+| `rsyslogd` | 1 | (なし) |
+| `start` | 2 | `rsyslogd:running` |
+| `lldpd` | 3 | `start:exited` |
+| `waitfor_lldp_ready` | 3 | `lldpd:running` |
+| `lldp-syncd` | 4 | `waitfor_lldp_ready:exited` |
+| `lldpmgrd` | 5 | `lldp-syncd:running` |
+
+priority 値は supervisord の dependent_startup 起動順序制御に使用。lldp-syncd は lldpd UNIX ソケットが ready になるまで開始しないため、`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` への書き込みは lldpd 起動完了後にのみ開始する。
+
+### lldpmgrd のポート処理ハードコード動作
+
+| 定数 / 動作 | 値 | 用途 |
+|------------|-----|------|
+| `portidsubtype local` (lldpcli コマンド) | `"local"` | ポート up 時、lldpcli に `configure ports <port_name> lldp portidsubtype local <alias>` を発行。alias 未設定時はポート名を alias として使用 (lldpmgrd L156) |
+| inband / recirc / backplane ポートをスキップ | `inband_prefix()` / `recirc_prefix()` / `backplane_prefix()` | これらプレフィックスで始まるポートは LLDP 設定対象外 (lldpmgrd L144-145) |
+| `hostname` 優先順位 | `chassis_hostname` > `hostname` | `DEVICE_METADATA\|localhost` の `chassis_hostname` が存在すれば優先使用。不在時は `hostname` (lldpmgrd L253) |
+
+### sonic-snmpagent OID インデックス定数
+
+| 定数 / 動作 | 値 | 用途 |
+|------------|-----|------|
+| `time_mark` (SNMP OID インデックス要素) | `0` (ハードコード) | lldpRemTable の OID インデックスは `(timeMark, ifIndex, remIndex)` の 3 要素構成。Multi-ASIC 環境で同一 ifIndex が複数 timeMark で重複するのを避けるため、timeMark を常に `0` として OID を構築する。`lldp_rem_time_mark` フィールドの実際値は OID 計算に使用されない (ieee802_1ab.py L453) |
+
+!!! note "PORT_INIT_TIMEOUT の強制 resume"
+    300 秒 (5 分) を経過すると `port_init_done` / `port_config_done` が強制的に `True` に設定され、`lldpcli resume` が実行される。ポートが未初期化でも LLDPDU を送出し始めるため、不完全な TLV (alias 未設定 port ID 等) が対向ノードに伝達される可能性がある。
+
+!!! note "portidsubtype の 2 段階設定"
+    `lldpd.conf.j2` でグローバルに `ifname` を設定し、その後 lldpmgrd がポートごとに `local` (alias) で上書きする。ポートが up になるまで lldpcli コマンドが実行されないため、リンクアップ前は `ifname` ベースの portid が LLDPDU に含まれる。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルトと dead field
 
