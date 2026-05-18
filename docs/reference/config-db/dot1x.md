@@ -346,6 +346,61 @@ docker logs pac 2>&1 | grep -E "ERROR|WARN" | grep -i authmgr
 > **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.cpp:140-200,218-345,355-415,444-565,613-665`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1x-constants.md`
+
+### インタフェース名プレフィックス定数
+
+`pacmgrd` / `hostapdmgrd` は `PAC_PORT_CONFIG_TABLE` のキー（ポート名）が `"E"` で始まるかを文字列比較でチェックする。
+
+| 定数 | 値 | ソース | 用途 |
+|------|----|--------|------|
+| `INTFS_PREFIX` | `"E"` | `pacmgr.cpp:59`, `hostapdmgr.cpp:37` | ポートキー先頭チェック。非 Ethernet ポートをスキップ |
+| `VLAN_PREFIX` | `"Vlan"` (swss 定義) | `pacmgr.cpp:705,775,884,955` | STATE_VLAN テーブルキーの先頭 4 文字を `strncmp` で検証 |
+
+`"E"` で始まらないキーは `SWSS_LOG_NOTICE("Invalid key format. No 'E' prefix: ...")` を出力して `continue` でスキップされる（`pacmgr.cpp:166-170`）。
+
+### method_list / priority_list の最大要素数
+
+```cpp
+#define PRIORITY_METHOD_MAX 2   // pacmgr.h:40
+#define INDEX_0             0   // pacmgr.h:38
+#define INDEX_1             1   // pacmgr.h:39
+```
+
+`method_list` / `priority_list` は要素 [0] と [1] の **2 要素固定**。CONFIG_DB に 3 要素以上を書き込んでも [2] 以降は参照されない（`pacmgr.cpp:431-442`）。
+
+### バッファ・名前長定数
+
+| 定数 | 値 | ソース | 用途 |
+|------|----|--------|------|
+| `MAX_PACKET_SIZE` | `8192` | `pacmgr.h:36` | 内部パケットバッファ上限 |
+| `PACMGR_IFNAME_SIZE` | `60` | `pacmgr.h:55` (= `NIM_IFNAME_SIZE`) | インタフェース名の最大文字長。`fpGetIntIfNumFromHostIfName()` 内部バッファに影響 |
+| `STATEDB_KEY_SEPARATOR` | `"\|"` | `pacmgr.h:35` | STATE_DB キーセパレータ（SONiC 共通 `"\|"` と同一） |
+
+### hostapdmgr — hostapd 起動待機定数
+
+```cpp
+// waitForHostapdInit() — hostapdmgr.cpp:1261,1267
+int count = 10;
+usleep(100 * 1000);  // 100ms 間隔
+```
+
+hostapd 起動後の PID ファイル (`/etc/hostapd/hostapdPid`) 存在確認を **10 回 × 100ms = 最大 1 秒** 待機する。超過時は `return -1`（起動失敗判定）となり、`waitForHostapdInit()` 呼び出し元の `hostapdmgr.cpp:935` で `SWSS_LOG_NOTICE("hostapd could not be initialized ...")` が記録される。
+
+### hostapdmgr — JSON ファイルパスと削除待機定数
+
+| 定数 / リテラル | 値 | ソース | 用途 |
+|---------------|----|--------|------|
+| `HOSTAPD_PID_FILE` | `"/etc/hostapd/hostapdPid"` | `hostapdmgr.cpp:38` | hostapd PID ファイルパス。ハードコードで変更不可 |
+| hostapd_config.json パス | `"/etc/hostapd/hostapd_config.json"` | `hostapdmgr.cpp:977` | hostapd 再起動時に渡す設定 JSON のパス |
+| JSON 削除待機 | `cnt=10`, `sleep(1)` | `hostapdmgr.cpp:975,985` | 旧 JSON ファイルが消えるまで最大 **10 秒** 待機。タイムアウト時はシグナル送信をスキップ |
+
+> **Evidence**: `sonic-buildimage/src/sonic-pac/pacmgr/pacmgr.h:35-55`; `pacmgr.cpp:59,166-170,431-442,705,775,884,955`; `hostapdmgr/hostapdmgr.cpp:37-38,935,975-985,1261-1274`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-constants.md`
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
