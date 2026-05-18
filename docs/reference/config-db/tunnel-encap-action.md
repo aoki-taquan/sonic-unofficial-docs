@@ -284,6 +284,77 @@ nexthop DEL が成功するまで、CRM カウンタは nexthop 1 件分の消�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読方式 — ZMQ ベース
+
+`NextHopManager` は `P4Orch`（`ZmqOrch` サブクラス）に属するマネージャ。`FIXED_NEXTHOP_TABLE` を含む `P4RT_TABLE` への書き込みは P4RT gRPC サーバが **ZMQ IPC** 経由で orchagent に送信する（Redis ProducerStateTable channel や keyspace 通知は使わない）。
+
+```cpp
+// orchdaemon.cpp:847-849
+vector<string> p4rt_tables = {APP_P4RT_TABLE_NAME};
+m_p4OrchZmqServer = new swss::ZmqServer(m_p4OrchZmqServerEp, "", false, true);
+gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOrch);
+
+// orchdaemon.h:121
+const std::string m_p4OrchZmqServerEp = "ipc:///zmq_swss/p4orch_zmq_swss_ep";
+```
+
+| 購読者 | 購読 API | 書き込み元 | ZMQ Endpoint |
+|--------|---------|-----------|--------------|
+| `P4Orch` / `NextHopManager` | `ZmqConsumerStateTable` | P4RT gRPC サーバ | `ipc:///zmq_swss/p4orch_zmq_swss_ep` |
+
+### 応答 publish の流れ
+
+各エントリの処理完了後、`m_publisher->publish(APP_P4RT_TABLE_NAME, key, fvs, status, /*replace=*/true)` が呼ばれる（`next_hop_manager.cpp:324, 342, 364, 378, 678`）。`ResponsePublisher::publish()` は以下を順に実行する:
+
+| # | 宛先 | 内容 | 条件 |
+|---|------|------|------|
+| 1 | ZMQ 応答 (`ZmqServer::sendMsg`) | gRPC WriteResponse として P4RT サーバに返却 | 常時（`m_zmqServer != nullptr`） |
+| 2 | Redis Notification Channel | `APPL_DB_P4RT_TABLE_RESPONSE_CHANNEL` に `PUBLISH` | 常時 (`NotificationProducer::send()`) |
+| 3 | `APPL_STATE_DB:P4RT_TABLE:FIXED_NEXTHOP_TABLE:<key>` | SET 成功時: intent フィールドを state として書き込み。DEL 成功時: エントリ削除 | `status.ok()` 時のみ |
+
+```
+response_channel = "APPL_DB_P4RT_TABLE_RESPONSE_CHANNEL"
+                  // response_publisher.cpp:104
+```
+
+### publish タイミング
+
+| タイミング | コード箇所 | ステータス |
+|-----------|-----------|-----------|
+| deserialize 失敗 | `next_hop_manager.cpp:324-326` | エラーコード |
+| `validateAppDbEntry` 失敗 | `next_hop_manager.cpp:342-344` | エラーコード |
+| バッチ内先行失敗によるキャンセル | `next_hop_manager.cpp:364-367` | `SWSS_RC_NOT_EXECUTED` |
+| UPDATE 試行（既存エントリへの SET） | `next_hop_manager.cpp:378-380` | `SWSS_RC_UNIMPLEMENTED` |
+| Bulk SAI 処理完了後（SET / DEL） | `next_hop_manager.cpp:678-680` | 成功/失敗とも |
+
+### APPL_STATE_DB エントリ形式
+
+SET 成功時に書き込まれるエントリの例:
+
+```
+APPL_STATE_DB: P4RT_TABLE:FIXED_NEXTHOP_TABLE:{"match/nexthop_id":"nh-1"}
+  action          = "set_p2p_tunnel_encap_nexthop"
+  param/tunnel_id = "<tunnel_id>"
+  err_str         = ""
+```
+
+DEL 成功時は当該エントリが APPL_STATE_DB から削除される。
+
+### COUNTERS_DB / FLEX_COUNTER_DB
+
+`next_hop_manager.cpp` は `gCrmOrch->incCrmResUsedCounter(CRM_IPV4_NEXTHOP)` / `decCrmResUsedCounter(CRM_IPV6_NEXTHOP)` を呼び出す（`:559-561, :637-639`）。これは CRM 内部使用量カウンタへの反映であり、**COUNTERS_DB・FLEX_COUNTER_DB への書き込みは発生しない**。
+
+### サービス再起動トリガー
+
+なし。`NextHopManager` は orchagent プロセス内のハンドラであり、エントリの追加/削除は SAI nexthop オブジェクトのライブ操作のみで反映され、プロセス再起動を伴わない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## コード由来デフォルト・暗黙挙動
 

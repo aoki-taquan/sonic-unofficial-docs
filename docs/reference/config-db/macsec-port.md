@@ -477,3 +477,58 @@ SC (Security Channel) / SA (Security Association) の作成・削除でも同様
 
 > **Evidence**: `sonic-swss/orchagent/macsecorch.cpp` L1535 (`m_state_macsec_port.set`), L1792 (`m_state_macsec_port.del`), L2039-2043 (SC set), L2161-2165 (SC del), L2371-2376 (SA set), L2433-2437 (SA del), L2560-2622 (counter 登録/削除)。中間ファイル: [`meta/_intermediate/cdb-flow/macsec-port-side-effects.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-side-effects.md)
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## Pub/Sub チャンネル (Phase G)
+
+<!-- evidence: sonic-swss/cfgmgr/macsecmgrd.cpp L62-70,L80-105 / sonic-swss/cfgmgr/macsecmgr.cpp L289-349 / sonic-swss/orchagent/macsecorch.cpp L688-691 / sonic-swss/orchagent/orchdaemon.cpp L480-488 -->
+
+`PORT.macsec` の設定変更は **3 層の pub/sub チャンネル** を経由してハードウェアへ伝達される。
+
+### 層 1 — CONFIG_DB → macsecmgrd (SubscriberStateTable)
+
+`macsecmgrd` は起動時に `MACsecMgr` へ次の 2 テーブルを `SubscriberStateTable` (Keyspace 通知ベース) として登録し、`Select` ループで受信する:
+
+| 購読テーブル (CONFIG_DB) | SET ハンドラ | DEL ハンドラ | evidence |
+|--------------------------|------------|------------|---------|
+| `MACSEC_PROFILE` | `loadProfile()` — メモリキャッシュへ格納 | `removeProfile()` — キャッシュ削除 | `macsecmgr.cpp:296-297` |
+| `PORT` | `enableMACsec()` — wpa_supplicant 起動・MKA セッション確立 | `disableMACsec()` — wpa_supplicant 停止 | `macsecmgr.cpp:298-299` |
+
+**POST ゲート**: `macsecmgrd` は STATE_DB の MACsec POST 状態が `"pass"` または `"disabled"` になるまで `sleep(1); continue;` で CONFIG_DB イベントを全て無視する。ゲート通過後に初めて購読イベントが処理される。(`macsecmgrd.cpp:80-96`)
+
+### 層 2 — APPL_DB → MACsecOrch (SubscriberStateTable)
+
+`macsecmgrd` が wpa_supplicant 経由で MKA ネゴシエーション完了後に APPL_DB へ書き込み、`MACsecOrch` が購読する:
+
+| 購読テーブル (APPL_DB) | 用途 | evidence |
+|-----------------------|------|---------|
+| `MACSEC_PORT_TABLE` | MACsec Port SAI オブジェクト作成/削除 | `orchdaemon.cpp:481` |
+| `MACSEC_EGRESS_SC_TABLE` | Egress Secure Channel 管理 | `orchdaemon.cpp:482` |
+| `MACSEC_INGRESS_SC_TABLE` | Ingress Secure Channel 管理 | `orchdaemon.cpp:483` |
+| `MACSEC_EGRESS_SA_TABLE` | Egress Security Association 管理 | `orchdaemon.cpp:484` |
+| `MACSEC_INGRESS_SA_TABLE` | Ingress Security Association 管理 | `orchdaemon.cpp:485` |
+
+### 層 3 — ASIC_DB Notification → MACsecOrch (NotificationConsumer)
+
+SAI MACsec POST (Power-On Self Test) 完了通知専用のチャンネル。ASIC_DB の `"NOTIFICATIONS"` チャンネルを `NotificationConsumer` で購読し、`"switch_macsec_post_status"` イベントを受信する:
+
+```
+ASIC_DB "NOTIFICATIONS" チャンネル
+  └─ op == "switch_macsec_post_status"
+       ├─ SAI_SWITCH_MACSEC_POST_STATUS_PASS → STATE_DB POST 状態 = "pass"
+       └─ SAI_SWITCH_MACSEC_POST_STATUS_FAIL → STATE_DB POST 状態 = "fail"
+```
+
+(`macsecorch.cpp:688-691, 778-793`)
+
+### 書き込みチャンネルまとめ
+
+| 書き込み元 | 書き込み先 | チャンネル種別 |
+|-----------|-----------|-------------|
+| `macsecmgrd` | APPL_DB MACsec テーブル群 | `ProducerStateTable` |
+| `MACsecOrch` | ASIC_DB (SAI) | `sai_macsec_api` 直接呼び出し |
+| `MACsecOrch` | STATE_DB MACsec 状態テーブル | `Table::set()` / `Table::del()` |
+| `MACsecOrch` | COUNTERS_DB / FLEX_COUNTER_DB | `FlexCounterManager` |
+
+詳細調査: [`meta/_intermediate/cdb-flow/macsec-port-pubsub.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-pubsub.md)
+<!-- /pubsub -->

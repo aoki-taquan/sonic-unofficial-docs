@@ -277,6 +277,27 @@ CONFIG_DB の購読は step 4 以降にのみ有効となるため、`PAC_PORT_C
 <!-- evidence: sonic-buildimage/src/sonic-pac/pacmgr/pacmgr_main.cpp:44-65; pacmgr.cpp:63-89,142-190,684-752; hostapdmgr/hostapdmgr_main.cpp:25-99; hostapdmgr/hostapdmgr.cpp:260-310,1136-1190 -->
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+`pacmgrd` / `hostapdmgrd` / `mabmgrd` が `PAC_PORT_CONFIG_TABLE` および `HOSTAPD_GLOBAL_CONFIG_TABLE` を処理する際に、暗黙的に参照・依存する CONFIG_DB / STATE_DB テーブルを示す。
+
+| 参照方向 | このテーブル | 相手テーブル / ページ | 条件 |
+|---------|------------|---------------------|------|
+| pacmgrd → | `PAC_PORT_CONFIG_TABLE` | `VLAN_TABLE` (CONFIG_DB) | VLAN 設定変化時に `authmgrVlanConfChangeCallback()` で authmgr へ通知 (`pacmgr.cpp:67,111`) |
+| pacmgrd → | `PAC_PORT_CONFIG_TABLE` | `VLAN_MEMBER_TABLE` (CONFIG_DB) | VLAN メンバー変化時に authmgr へポート add/remove を通知 (`pacmgr.cpp:68,115`) |
+| pacmgrd → | `PAC_PORT_CONFIG_TABLE` | `VLAN_TABLE` (STATE_DB) | STATE_DB VLAN 作成/削除イベントを `authmgrVlanChangeCallback()` で authmgr へ転送 (`pacmgr.cpp:69,103`) |
+| pacmgrd → | `PAC_PORT_CONFIG_TABLE` | `VLAN_MEMBER_TABLE` (STATE_DB) | STATE_DB VLAN メンバー add/remove を authmgr へ通知 (`pacmgr.cpp:70,107`) |
+| hostapdmgrd → | `HOSTAPD_GLOBAL_CONFIG_TABLE` | [`RADIUS_SERVER`](./radius-server.md) | `m_radiusServerInUse != ""` 確認後でないと hostapd が起動しない。RADIUS_SERVER 空なら `createConfFile()` は呼ばれない (`hostapdmgr.cpp:293`) |
+| hostapdmgrd → | `HOSTAPD_GLOBAL_CONFIG_TABLE` | [`RADIUS`](./radius.md) | global key / NAS 設定を hostapd.conf に統合 (`hostapdmgr.cpp:46`) |
+| hostapdmgrd → | `PAC_PORT_CONFIG_TABLE` | (自テーブル) | global enable 時に全ポートの `capabilities`/`control_mode`/`link_status` を参照して conf 生成可否を判断 (`hostapdmgr.cpp:169,199,293`) |
+| mabmgrd → | — | `MAB_PORT_CONFIG_TABLE` | MAB 有効化・認証タイプは mabmgrd が独立管理。PAC_PORT_CONFIG_TABLE とは別プロセス (`mabmgr.cpp:35`) |
+| fpinfra 依存 | `PAC_PORT_CONFIG_TABLE` | (プラットフォームインタフェース) | `fpGetIntIfNumFromHostIfName()` が失敗すると設定エントリがスキップされる。インタフェース存在がハードな前提条件 (`pacmgr.cpp:172`) |
+| YANG | — | — | SONiC YANG モデル未定義のため REST/gNMI 経路なし |
+
+> **Evidence**: `sonic-pac/pacmgr/pacmgr.cpp:63-89,103-127,172,684-754`; `sonic-pac/hostapdmgr/hostapdmgr.cpp:43-70,145-170,285-300`; `sonic-pac/mabmgr/mabmgr.cpp:35`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-cross-refs.md`
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 

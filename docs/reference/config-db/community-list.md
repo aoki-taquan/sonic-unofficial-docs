@@ -330,6 +330,40 @@ CLI (`config snmp community add/del/replace`) は DB 書き込み完了直後に
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/community-list-pubsub.md`
+> ソース: `sonic-buildimage/dockers/docker-snmp/start.sh`, `snmpd.conf.j2`, `snmp_yml_to_configdb.py`
+
+### Redis 購読方式
+
+`SNMP_COMMUNITY` テーブルへの変更を**イベントドリブンで受け取るデーモンは存在しない**。`swsscommon.SubscriberStateTable` / `ConfigDBConnector.subscribe()` / `ConsumerStateTable` のいずれも使用していない。唯一の消費経路は `docker-snmp` コンテナ起動時に `sonic-cfggen -d` が `SNMP_COMMUNITY` テーブルを HGETALL で一括読み取りし、`snmpd.conf.j2` テンプレートを展開して `/etc/snmp/snmpd.conf` を生成するバッチフローである。
+
+| 消費者 | 消費 API | タイミング | evidence |
+|--------|----------|-----------|----------|
+| `snmpd.conf.j2` (`sonic-cfggen`) | `sonic-cfggen -d`（HGETALL 一括） | `docker-snmp` コンテナ起動時のみ | `start.sh L23-26` |
+| `show snmp community` | `db.cfgdb.get_table('SNMP_COMMUNITY')` | CLI 実行時のみ | `show/main.py L1966` |
+| `config snmp community` | `config_db.get_table()` / `set_entry()` | CLI 実行時のみ | `config/main.py L4384,4412,4440` |
+
+### 設定変更の反映フロー
+
+```
+config snmp community add <name> <RO|RW>
+  ↓ HSET "SNMP_COMMUNITY|<name>" TYPE "<RO|RW>"    (Redis keyspace 通知発火)
+    ※ 受け取るデーモンなし
+  ↓ systemctl reset-failed snmp.service             (config/main.py:4397-4401)
+  ↓ systemctl restart snmp.service
+      → docker-snmp コンテナ再起動
+      → start.sh: snmp_yml_to_configdb.py → sonic-cfggen → snmpd.conf 再生成
+      → snmpd 起動 → 新 community 有効化
+```
+
+CLI 経由では DB 書き込み後に `systemctl restart snmp.service` が自動発行されるため即時反映される。`sonic-db-cli` / `config load` 等の direct DB 書き込みでは自動再起動なし（次回コンテナ起動まで snmpd.conf は更新されない）。
+
+> **Evidence**: `start.sh L17-26`（`snmp_yml_to_configdb.py` 実行 → `sonic-cfggen` テンプレート展開）、`supervisord.conf.j2 L42-51`（snmpd は start:exited 後に起動）、`config/main.py L4397-4401`（CLI が `systemctl restart snmp.service` 発行）
+<!-- /pubsub -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 

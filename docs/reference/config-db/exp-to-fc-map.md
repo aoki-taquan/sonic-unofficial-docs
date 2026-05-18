@@ -296,23 +296,24 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙参照 (Phase C)
+## 暗黙参照・共依存テーブル (Phase C)
 
 > 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-cross-refs.md`
 
-`EXP_TO_FC_MAP` が関わる CONFIG_DB テーブル間の暗黙参照を `qosorch.cpp` から抽出した。
+`EXP_TO_FC_MAP` は YANG leafref を持たない自己完結テーブルだが、実装レベルで以下の外部依存が存在する。
 
-| 参照方向 | 参照元テーブル | フィールド | SAI 属性 | evidence |
-|---------|-------------|-----------|---------|---------|
-| 被参照 (referenced by) | `PORT_QOS_MAP` | `exp_to_fc_map` | `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` | `qosorch.cpp:72, 112` |
-| 参照管理 | `handlePortQosMapTable` | SET 時 object_id 解決 / DEL 時参照解除 | — | `qosorch.cpp:2046, 2124-2134` |
-| SWITCH レベル適用 | なし | EXP_TO_FC は SWITCH 直接適用なし | — | `qosorch.cpp:2011-2013` |
-| FC 値上限検証 | `NhgMapOrch::getMaxNumFcs()` | `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` から取得した上限と照合 | — | `nhgmaporch.cpp:299-325` |
+| 参照先テーブル / コンポーネント | YANG leafref | 参照種別 | 非充足時の挙動 | evidence |
+|---|:---:|---|---|---|
+| `PORT_QOS_MAP.exp_to_fc_map` | ✗ | **被参照**（`PORT_QOS_MAP` が OID を名前解決） | `EXP_TO_FC_MAP` 未登録時に `PORT_QOS_MAP` SET は `task_need_retry`（自動再試行） | `qosorch.cpp:112`, `qosorch.cpp:2124-2131` |
+| `NhgMapOrch::getMaxNumFcs()` | ✗ | FC 値上限の動的クエリ（SAI 経由） | 未初期化 (`max_num_fcs=-1`) または FC 未サポート (`max_num_fcs=0`) の場合、全 FC 値が `task_invalid_entry` で reject | `nhgmaporch.cpp:299-325`, `nhgmaporch.cpp:346-370` |
+| `PortsOrch::allPortsReady()` | ✗ | 起動順序ガード | `false` の間は orchagent で全 QoS テーブル処理がブロック（`EXP_TO_FC_MAP` SET も未処理のまま待機） | `qosorch.cpp:2253-2258` |
 
-- `PORT_QOS_MAP.<port>.exp_to_fc_map` にマップ名を設定すると、`QosOrch` が `EXP_TO_FC_MAP` の SAI オブジェクト ID を `resolveFieldRefValue()` で解決しポートへ適用する (`SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP`)。
-- `PORT_QOS_MAP` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留（`m_pendingRemove=true`）。
-- `SWITCH` (`PORT_QOS_MAP|global`) への直接適用は `DSCP_TO_TC_MAP` のみ対象。`handleGlobalQosMap` は `exp_to_fc_map` フィールドを `LOG_WARN("Qos map type %s is not supported at global level")` として無視する（`qosorch.cpp:2011-2013`）。
-- FC 値の有効範囲は `NhgMapOrch::getMaxNumFcs()` が `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を SAI から取得して決定する。スイッチが FC 未サポートの場合 `max_num_fcs=0` となり全 FC 値が `task_invalid_entry` で reject される。
-- TUNNEL_DECAP_TABLE や他のオーケストレータからの参照はない（MPLS EXP は Port QoS レイヤのみ）。
+### YANG leafref 非存在の補足
+
+`sonic-port-qos-map.yang` の `PORT_QOS_MAP_LIST` において、他の QoS マップフィールド（`tc_to_pg_map`, `tc_to_queue_map`, `dscp_to_tc_map` 等）は各 YANG モジュールへ leafref が定義されているが、**`exp_to_fc_map` フィールドは leafref なし**（YANG モジュール不在のため）。参照整合性は実装レベル（`resolveFieldRefValue()` + `m_pendingRemove` ロック）のみで担保される。
+
+### doTask() 実行順序による自然解決
+
+`QosOrch::doTask()` は `EXP_TO_FC_MAP` 等の参照先マップを先に drain し、`PORT_QOS_MAP` を後から drain する（`qosorch.cpp:2231-2260`）。同一イベントループ内で `EXP_TO_FC_MAP` SET → `PORT_QOS_MAP` SET の順に投入されていれば、`task_need_retry` は発生せずに 1 イテレーションで解決される。
 
 <!-- /cross-refs -->
