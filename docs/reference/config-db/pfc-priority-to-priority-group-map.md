@@ -464,3 +464,44 @@ DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセ
 参照側 (`PORT_QOS_MAP.pfc_to_pg_map`) の解除後に DEL が再実行されて連鎖が解消する。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-pubsub.md -->
+
+### 購読方式
+
+CONFIG_DB の `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` は `orchdaemon.cpp:367-384` の `qos_tables` ベクタの一員として `CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME` を指定され、`new QosOrch(m_configDb, qos_tables)` に渡される。基底 `Orch::addConsumer()` が CONFIG_DB ID を検出し **`swss::SubscriberStateTable`** を選択する（`orch.cpp:1186-1196`）。
+
+`SubscriberStateTable` は Redis keyspace 通知 `__keyspace@<dbId>__:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード、`orchagent -b` 影響なし）。
+
+### ハンドラ登録とディスパッチ
+
+```
+orchdaemon.cpp:377     qos_tables に CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME を追加
+qosorch.cpp:1343       initTableHandlers() で
+                        m_qos_handler_map[CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME]
+                        = &QosOrch::handlePfcPrioToPgTable を登録
+qosorch.cpp:2231-2252  QosOrch::doTask() が PORT_QOS_MAP / QUEUE より先に本テーブルを drain
+qosorch.cpp:2254-2295  ハンドラ関数ポインタ経由でディスパッチ
+```
+
+`handlePfcPrioToPgTable()` → `PfcPrioToPgHandler::processWorkItem()` → `PfcPrioToPgHandler::createAttributeList()` → `sai_qos_map_api->create_qos_map()` \[`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP`\] / `set_qos_map_attribute()` / `remove_qos_map()`。
+
+### select タイムアウト・リトライ
+
+select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`）。keyspace 通知到着時は即時 wake up。`task_need_retry` 時は `m_toSync` にエントリを残置し次サイクルで再処理。サービス再起動トリガーなし（SAI ライブ操作のみで完結）。
+
+| 観点 | 値 |
+|---|---|
+| 購読方式 | `SubscriberStateTable`（keyspace `PSUBSCRIBE` + `HGETALL`） |
+| バッチサイズ | 128（`DEFAULT_POP_BATCH_SIZE`、固定） |
+| select タイムアウト | 1000 ms |
+| ハンドラ | `QosOrch::handlePfcPrioToPgTable()` → `PfcPrioToPgHandler` |
+| SAI API | `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()` |
+| channel PUBLISH | 使わない |
+| TTL | 未使用（CONFIG_DB 永続） |
+
+> **Evidence**: `orchdaemon.cpp:367-384`; `orch.cpp:1186-1196`; `qosorch.cpp:984,1343,2231-2295`; `table.h:164`
+<!-- /pubsub -->
