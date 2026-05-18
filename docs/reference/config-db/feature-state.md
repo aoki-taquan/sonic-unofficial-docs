@@ -260,6 +260,47 @@ STATE_DB `FEATURE` テーブルは `featured` と `sonic-ctrmgrd` が書き手�
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-host-services/scripts/featured`; `sonic-net/sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py`
+
+### `featured` — SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `feature_cfg` が空 (DEL イベント) | `handler()` L187 | `_feature_state_table._del(feature_name)` → STATE_DB エントリ全削除 | LOG_INFO "Deregistering feature..." | `featured:187-191` |
+| `enable_feature()` 内で `systemctl start/enable` が例外 | `enable_feature()` L507-511 | `set_feature_state(FEATURE_STATE_FAILED)` → `state="failed"` を STATE_DB に書込 | LOG_ERR "Feature '{}.{}' failed to be enabled and started..." | `featured:507-511` |
+| `disable_feature()` 内で `systemctl stop/disable` が例外 | `disable_feature()` L541-545 | `set_feature_state(FEATURE_STATE_FAILED)` → `state="failed"` を STATE_DB に書込 | LOG_ERR "Feature '{}.{}' failed to be stopped and disabled..." | `featured:541-545` |
+| `update_systemd_config()` で `systemctl daemon-reload` が例外 | `update_systemd_config()` L403-406 | STATE_DB 変化なし。Unit ファイル更新が失敗した状態で処理継続 | LOG_ERR "Failed to reload systemd configuration files!" | `featured:405-406` |
+| `feature.state` が想定外の値 (`enabled`/`disabled`/`always_*` 以外) | `update_feature_state()` L269-271 | STATE_DB 変化なし。`return False` で処理中断 | LOG_ERR "Unexpected state value '{}' for feature {}" | `featured:269-271` |
+| `feature.name` が systemd に存在しないサービス | `enable_feature()` L419 | STATE_DB 変化なし → サービス unavailable として処理中断 | LOG_ERR "Feature '{}' service not available..." | `featured:419` |
+| `FEATURE_EXCLUSION_LIST` に含まれる feature を enable/disable しようとした | `enable_feature()` L470, `disable_feature()` L518 | STATE_DB 変化なし (スキップ) | LOG_INFO "ExclusionList: skip enabling/disabling '{}'" | `featured:470,518` |
+| `resync_feature_state()` で `update_systemd_config()` 中に `auto_restart` 同期失敗後の再同期中断 | `handler()` L283-285 | キャッシュが更新されずに前回の状態が残る。次の CONFIG_DB 変化時に再試行 | なし (上流の LOG_ERR のみ) | `featured:283-285` |
+
+### `container_startup.py` — 失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `system_state == ""` (ctrmgrd 未稼働) | `container_up()` L223-224 | STATE_DB 書き込みなし。`current_owner` / `container_id` 等は初期値のまま | なし (即 return) | `container_startup.py:223-224` |
+| `set_owner == "local"` なのに kube コンテナで起動 | `container_up()` L233-235 | `do_freeze()` で無限 sleep。STATE_DB への書き込みなし | LOG_ERR "Blocking .... feat:{} docker_id:{} msg:bail out as set_owner is local" | `container_startup.py:233-235` |
+| `is_active()` が False (`system_state != "up"`) | `container_up()` L237-239 | `do_freeze()` で無限 sleep。STATE_DB への書き込みなし | LOG_ERR "Blocking .... feat:{} msg:bail out as system state not active" | `container_startup.py:237-239` |
+| `check_version_blocked()` でバージョンがブロック済み | `container_up()` L241-243 | `do_freeze()` で無限 sleep。STATE_DB への書き込みなし | LOG_ERR "Blocking .... msg:This version is marked disabled. Exiting ..." | `container_startup.py:241-243` |
+| kube 管理中に別インスタンスが DB バージョンを上書き | `container_up()` L262-271 | `do_freeze()` で無限 sleep。STATE_DB への書き込みなし | LOG_ERR "Blocking .... msg:bail out as current deploy version=... is different than ..." | `container_startup.py:262-271` |
+
+### `ctrmgrd.py` — 失敗経路
+
+| 失敗条件 | 検出箇所 | STATE_DB への影響 | evidence |
+|---|---|---|---|
+| `do_tag_latest()` でイメージのタグ付け失敗 | `ctrmgrd.py` | `container_stable_version` / `container_last_version` は更新されない。リトライタイマー登録 | `ctrmgrd.py:593-612` |
+
+### `state="failed"` の後処理
+
+`state="failed"` が STATE_DB に書き込まれた後、`CONFIG_DB FEATURE.auto_restart` が `enabled` であれば systemd が自動的にコンテナの再起動を試みる。再起動成功時に `featured` が再び `state="enabled"` を書き込む。`auto_restart=disabled` の場合は `state="failed"` が残り続けるため、手動介入が必要となる。`featured` の `handler()` はサービス failed 検出前に `auto_restart` の systemd 反映を先行させる (`featured:200-209`) ことで、failed → auto_restart enabled の連続シーケンスが確実に機能するよう設計されている。
+
+> **Evidence**: `sonic-host-services/scripts/featured:187-191,200-217,269-271,405-406,419,470,507-511,518,541-545`; `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py:155-162,201-275`; `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:593-612`
+<!-- /failure -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
