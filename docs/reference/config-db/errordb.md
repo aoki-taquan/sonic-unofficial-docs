@@ -227,6 +227,39 @@ ERROR_DB は warm reboot をまたいで永続しない（HLD Section 6）。Orc
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3–3.4、`doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md` Section 3.7  
+> 詳細証跡: `meta/_intermediate/cdb-flow/errordb-cross-refs.md`
+
+ERROR_DB (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE) は独立した Redis データベースだが、以下のテーブルを実行時に暗黙参照する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `ASIC_DB` 通知チャネル (syncd → OrchAgent) | ASIC_DB | 読み取り（通知受信） | なし | **必須**（producer 経路） | HLD Section 3.3.1 |
+| `INTF_TABLE\|<name>` / `VLAN_INTF_TABLE\|<name>` / `LAG_INTF_TABLE\|<name>` | APPL_DB | key 参照（`ERROR_NEIGH_TABLE` の `intf` フィールド） | なし | 実質必須（intf 解決） | HLD Section 3.4.3.3 |
+| `BGP_NEIGHBOR\|<addr>` | CONFIG_DB | 読み取り（fpmsyncd が ERROR_ROUTE_TABLE を購読） | なし | 任意（bgp error-handling 有効時） | BGP HLD Section 3.7.1 |
+| `BGP_GLOBALS\|default` (`bgp_error_handling` フィールド) | CONFIG_DB | 有効化スイッチ（fpmsyncd の購読を制御） | なし | 条件必須 | BGP HLD Section 3.7.1 |
+
+### ASIC_DB 通知チャネル — 唯一の producer 経路
+
+ERROR_DB への書き込みは OrchAgent のみが行う。OrchAgent は syncd が `ASIC_DB` の通知チャネルに送る SAI 操作失敗イベントを受信し、SAI 型 → `SWSS_RC_*` 文字列に翻訳してから `ERROR_ROUTE_TABLE` または `ERROR_NEIGH_TABLE` に `HSET` する。**ASIC_DB 通知チャネルが存在しない・停止している場合、ERROR_DB には何も書き込まれない**（evidence: HLD Section 3.3.1）。
+
+### INTF_TABLE / VLAN_INTF_TABLE / LAG_INTF_TABLE — ERROR_NEIGH_TABLE の intf key
+
+`ERROR_NEIGH_TABLE|<intf>|<prefix>` の `<intf>` は `INTF_TABLE.name` / `VLAN_INTF_TABLE.name` / `LAG_INTF_TABLE.name` のいずれかに対応する（HLD Section 3.4.3.3）。YANG leafref は定義されていないが、OrchAgent が隣接エントリを ERROR_DB に書き込む際には APPL_DB の対応インタフェーステーブルにエントリが存在している必要がある。インタフェースが削除された後も ERROR_NEIGH_TABLE に古いエントリが残留する場合がある（warm reboot で非永続化されるまで）。
+
+### BGP_GLOBALS.bgp_error_handling — fpmsyncd の購読制御
+
+fpmsyncd は `BGP_GLOBALS|default` の `bgp_error_handling` フィールドを参照し、有効な場合のみ `ERROR_ROUTE_TABLE` を購読して BGP ルートインストール失敗の通知を受け取る（BGP HLD Section 3.7.1）。このフィールドが `false` または未設定の場合、fpmsyncd は `ErrorListener` を登録しないため `ERROR_ROUTE_TABLE` の更新は bgpcfgd / fpmsyncd に届かない。
+
+### SAI 参照
+
+ERROR_DB は SAI の操作**結果**（失敗通知）を格納するデータベースであり、ERROR_DB からの書き込みが SAI に届くことはない。単方向（SAI → OrchAgent → ERROR_DB）のフローである。
+
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
