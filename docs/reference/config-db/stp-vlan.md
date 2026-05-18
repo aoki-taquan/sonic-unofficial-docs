@@ -1,6 +1,6 @@
 ---
 title: STP_VLAN / STP_VLAN_PORT テーブル
-description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用を詳細解説。Phase A+B+C+D+E+F 分析。"
+description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズムを詳細解説。Phase A+B+C+D+E+F+G 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -799,6 +799,87 @@ DEL と同時に stpd へ `STP_DEL_COMMAND` の `STP_VLAN_CONFIG` IPC が送信�
 | 6 | `STATE_VLAN_MEMBER_TABLE` 変化 | `STP_VLAN_PORT` 設定値を stpd に再送 (`STP_VLAN_MEM_CONFIG`) | stpd (VLAN_PORT 未変更でも発生) |
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-pubsub.md -->
+
+### 購読方式: TableConnector + ConsumerStateTable
+
+`stpmgrd` は swsscommon の `Orch` + `TableConnector` フレームワークを使用する。
+`TableConnector` は内部で `ConsumerStateTable` (PUBLISH/SUBSCRIBE チャネルベース) を使い、
+各テーブルへの書き込みを keyspace 通知ではなく専用チャネル (`<TABLE>_KEY_CHANNEL@<db>`) 経由で受け取る。
+
+### 購読テーブル一覧 (stpmgrd.cpp:43–65)
+
+| 購読者 | DB | テーブル名 | スキーマ定数 |
+|--------|----|-----------|-------------|
+| `stpmgrd` | CONFIG_DB | `STP` | `CFG_STP_GLOBAL_TABLE_NAME` |
+| `stpmgrd` | CONFIG_DB | `STP_VLAN` | `CFG_STP_VLAN_TABLE_NAME` |
+| `stpmgrd` | CONFIG_DB | `STP_VLAN_PORT` | `CFG_STP_VLAN_PORT_TABLE_NAME` |
+| `stpmgrd` | CONFIG_DB | `STP_PORT` | `CFG_STP_PORT_TABLE_NAME` |
+| `stpmgrd` | CONFIG_DB | `LAG_MEMBER` | `CFG_LAG_MEMBER_TABLE_NAME` |
+| `stpmgrd` | STATE_DB | `VLAN_MEMBER_TABLE` | `STATE_VLAN_MEMBER_TABLE_NAME` |
+| `stpmgrd` | CONFIG_DB | `STP_MST` / `STP_MST_INST` / `STP_MST_PORT` | (直書き文字列) |
+
+`STP_VLAN` を購読するプロセスは `stpmgrd` のみ。
+`stporch` (`orchagent`) は `STP_VLAN` を CONFIG_DB から直接読まず、
+`stpmgrd` → `stpd` → `stporch` の IPC 経路を介して情報を受け取る。
+
+### イベントループ (stpmgrd.cpp:92–117)
+
+```cpp
+while (true)
+{
+    int ret = s.select(&sel, SELECT_TIMEOUT);  // SELECT_TIMEOUT = 1000 ms
+    if (ret == Select::TIMEOUT)
+    {
+        stpmgr.doTask();  // タイムアウト時: pending キューを再スキャン
+        continue;
+    }
+    auto *c = (Executor *)sel;
+    c->execute();
+}
+```
+
+`SELECT_TIMEOUT = 1000 ms` (`stpmgrd.cpp:17`)。タイムアウトごとに `doTask()` が呼ばれ、
+silent defer されたエントリが最大 1 秒以内に再試行される。
+
+### stpmgrd が参照する STATE_DB テーブル（読み取り専用）
+
+| STATE_DB テーブル | スキーマ定数 | 用途 |
+|-----------------|------------|------|
+| `VLAN_TABLE` | `STATE_VLAN_TABLE_NAME` | `isVlanStateOk()` — VLAN の ASIC 適用確認 |
+| `VLAN_MEMBER_TABLE` | `STATE_VLAN_MEMBER_TABLE_NAME` | ポート VLAN 参加/離脱イベント受信 |
+| `LAG_TABLE` | `STATE_LAG_TABLE_NAME` | LAG 状態確認 |
+| `STP_TABLE` | `STATE_STP_TABLE_NAME` | 起動時の `max_stp_instances` 取得 |
+
+!!! note "stpmgrd は STATE_DB に書き込まない"
+    `stpmgrd` は STATE_DB を読み取り専用で使用する。`STATE_STP_TABLE` (`STP_TABLE`) は
+    `stporch` (`orchagent/stporch.cpp:26`) が書き込み、stpmgrd は起動時のスナップショット取得のみ利用する。
+    CONFIG_DB 変更の最終反映は `stpmgrd` → Unix Domain Socket → `stpd` → `stporch` → ASIC_DB の経路を辿る。
+
+### 通知フロー（STP_VLAN 変更の場合）
+
+```
+config spanning-tree vlan enable <vid>
+  ↓ db.set_entry('STP_VLAN', 'Vlan<vid>', {...})
+CONFIG_DB: HSET STP_VLAN|Vlan<vid> ...
+  ↓ ConsumerStateTable チャネル PUBLISH
+stpmgrd の s.select() がイベント検知
+  ↓ c->execute() → StpMgr::doTask(consumer)
+doStpVlanTask(consumer) — ガード条件チェック後 IPC メッセージ送信
+  ↓ sendMsgStpd(STP_VLAN_CONFIG, ...)
+stpd が Unix Domain Socket (/var/run/stpipc.sock) でメッセージ受信
+  ↓ stpd → stporch → ASIC_DB → SAI
+```
+
+TTL は設定されない（CONFIG_DB は永続ストレージ前提）。
+
+証跡: `stpmgrd.cpp:17, 43-65, 92-117`, `stpmgr.cpp:22-48`, `stpmgr.h:28, 49`, `schema.h:374-377, 423-424, 445`
+
+<!-- /pubsub -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
