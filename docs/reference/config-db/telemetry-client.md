@@ -131,6 +131,51 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+ソース: `sonic-net/sonic-gnmi/dialout/dialout_client/dialout_client.go` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-failure.md)
+
+### SET 処理における失敗経路
+
+#### `TELEMETRY_CLIENT|Global`
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `op == "hdel"` — Global への DEL 操作 | `processTelemetryClientConfig()` | `"Invalid delete operation for TELEMETRY_CLIENT|Global"` を返す。既存設定は維持 | `log.V(2)` | L484-486 |
+| `retry_interval` が uint64 に変換不可 | `processTelemetryClientConfig()` | `"Invalid retry_interval <value>"` をログして当該フィールドをスキップ (`continue`)。旧値を維持 | `log.V(2)` | L494-499 |
+| Global 変更後 `setupDestGroupClients()` 内で gRPC 接続タイムアウト | `newClient()` L260-272 | `goto restart` で無限再試行。`processTelemetryClientConfig()` はエラーを返さない | `log.V(1)` | L306-317 |
+
+#### `TELEMETRY_CLIENT|DestinationGroup_<name>`
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 空の DestinationGroup 名 (`DestinationGroup_` のみ) | L516-518 | `"Empty Destination Group name <key>"` を返す | なし | L516-518 |
+| DEL 対象が Subscription から参照中 | L522-525 | `"<name> is being used: <map>"` を返して DEL 拒否。先に Subscription を削除が必要 | `log.V(1)` | L522-525 |
+| `dst_addr` アドレス検証失敗 (`Destination.Validate()`) | L538-541 | `"Invalid destination address <addrs>"` を返す。`destGrpNameMap` は更新されない | `log.V(2)` | L538-541 |
+| `dst_addr` 以外の未知フィールド | L544-546 | `"Invalid DestinationGroup value <value>"` を返す。`destGrpNameMap` は更新されない | `log.V(2)` | L544-546 |
+| gRPC 接続失敗 (コレクタ到達不能) | `newClient()` L260-272 | `goto restart` で無限再試行。コンテキストキャンセルまで継続 | `log.V(1)` | L314-316 |
+
+#### `TELEMETRY_CLIENT|Subscription_<name>`
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 空の Subscription 名 (`Subscription_` のみ) | L554-556 | `"Empty Subscription_ name <key>"` を返す | なし | L554-556 |
+| `report_interval` が uint64 に変換不可 | L593-597 | `"Invalid report_interval <value>"` をログして `continue`。デフォルト 5000 ms を維持 | `log.V(2)` | L593-597 |
+| `paths` が ygot StringToPath でパース失敗 | L607-611 | `"Invalid paths <value>"` を返す。Subscription は登録されない | `log.V(2)` | L607-611 |
+| 未知フィールドが含まれる | L616-618 | `"Invalid field <field> value <value>"` を返す | `log.V(2)` | L616-618 |
+| `dst_group` が未設定 (空文字列) | L622-624 | サイレントリターン (`return nil`)。エラーなしで Subscription が登録されない | なし | L622-624 |
+
+### retry / 復旧挙動補足
+
+- **gRPC 接続失敗の無限 retry**: `publishRun()` は `goto restart` でコンテキストキャンセルまで無限再試行。コレクタが一時的に到達不能でも自動復旧する。
+- **Periodic モードのデータ読み取りエラー**: `cs.dc.Get()` が失敗しても `continue` でスキップし次のポーリング周期を待つ。エラーログ (`log.V(2)`) のみ出力。
+- **Stream モードの Send 失敗**: `cs.Close()` → `cs.w.Wait()` → `time.Sleep(clientCfg.RetryInterval)` → `goto restart`。`RetryInterval == 0` の場合は即再試行でCPUスピン状態になりえる。
+- **processTelemetryClientConfig() のエラーは非致命的**: エラーを返しても `DialOutRun()` のイベントループは継続する。設定変更失敗が上位ループに伝播しない点に注意。
+
+<!-- /failure -->
+
 ## 制約
 
 - `ipv4-port` typedef で `dst_addr` は IPv4:port のカンマ区切りに制約 (IPv6 リテラルは現状不可)[^1]
