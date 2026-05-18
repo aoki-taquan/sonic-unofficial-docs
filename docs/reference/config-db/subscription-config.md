@@ -397,6 +397,70 @@ YANG (`sonic-telemetry_client.yang`) は `path_target` を enum として定義 
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subscription-config-constants.md -->
+
+`dialout_client.go` (`sonic-gnmi/dialout/dialout_client/`) に埋め込まれた、CONFIG_DB フィールドでは制御できない固定値を以下に示す。
+
+| 定数 | 値 | 制御方法 | 影響 |
+|------|----|---------|------|
+| `report_interval` デフォルト | `5000` ms | CONFIG_DB `report_interval` で上書き可 | 未設定時の報告周期 |
+| Stream モード起動待ち | `100` ms | 変更不可（ハードコード） | `StreamRun` goroutine の収束待ち (`dialout_client.go:392`) |
+| pubsub ReceiveTimeout | `1000` ms | 変更不可（ハードコード） | CONFIG_DB 変更への最悪応答遅延 (`dialout_client.go:718`) |
+| PriorityQueue 容量 | `1` | 変更不可（ハードコード） | 送信キューが 1 エントリ超過すると以降のデータは破棄 (`dialout_client.go:298`) |
+| gRPC DialTimeout | `0` | 変更不可（ハードコード） | 実接続タイムアウトは `RetryInterval` に依存 (`dialout_client.go:666,678`) |
+| `Unknown` reportType | `0` (iota) | YANG `report_type` フィールドで制御 | 空・未知値は `Unknown` → `publishRun` で動作未定義 |
+
+### 主要定数の詳細
+
+**`report_interval` デフォルト 5000 ms** (`dialout_client.go:582`):
+
+```go
+cs := clientSubscription{
+    interval: 5000, // default to 5000 milliseconds
+    name:     name,
+    cancel:   cancel,
+}
+```
+
+YANG `default 5000` と一致するため、YANG-実装 discrepancy はない。
+
+**PriorityQueue 容量 1** (`dialout_client.go:298`):
+
+```go
+cs.q = queue.NewPriorityQueue(1, false)
+```
+
+`blocking=false` 設定のため、キュー満杯時に新データは即座に破棄される。
+高頻度 Subscription（`report_interval` が短い場合）で送信遅延が生じると、データロストが発生する可能性がある。
+
+**pubsub ReceiveTimeout 1000 ms** (`dialout_client.go:718`):
+
+```go
+msgi, err := pubsub.ReceiveTimeout(context.Background(), time.Millisecond*1000)
+```
+
+`DialOutRun()` のメインループが Redis keyspace 通知を待機する最大時間。
+CONFIG_DB に変更を書き込んでから `dialout_client` が変更を検知するまで最大 **1 秒の遅延**が生じる。
+
+**reportType 定数マッピング** (`dialout_client.go:27-35`):
+
+```go
+const (
+    Unknown  reportType = iota  // 0 — 空文字列・未知値のフォールバック
+    Once                        // 1
+    Periodic                    // 2
+    Stream                      // 3
+)
+```
+
+`report_type` フィールドに `""` (空文字) または定義外の文字列を渡した場合、`NewReportType()` は `Unknown (0)` を返す。
+`publishRun()` の `switch cs.reportType` に `Unknown` のケースは存在しないため、動作は未定義となる。
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
