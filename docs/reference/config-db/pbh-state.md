@@ -263,6 +263,38 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-failure.md -->
+
+`PBH_CAPABILITIES` は `PbhCapabilities` コンストラクタが起動時 1 回のみ書き込む STATE_DB テーブルである。
+書き込み経路は `parsePbhAsicVendor()` → `initPbhVendorCapabilities()` → `writePbhVendorCapabilitiesToDb()` の 3 段。
+
+### 書き込み側の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `ASIC_VENDOR` 環境変数が未設定 | `parsePbhAsicVendor()` L314–317 | `WARN` 出力後 `asicVendor = GENERIC` に silent fallback。STATE_DB には Generic 向け値が書かれる | `SWSS_LOG_WARN("Failed to parse ASIC vendor: fallback to %s platform")` | `pbhcap.cpp:295–298` |
+| `ASIC_VENDOR` が `"mellanox"` 以外の未知ベンダー文字列 | `parsePbhAsicVendor()` L323–329 | `"mellanox"` の else ブランチで `GENERIC` 扱い。unknown ベンダーは Generic として動作 | なし（分岐なし） | `pbhcap.cpp:323–329` |
+| `initPbhVendorCapabilities()` で `fieldCap` が `nullptr`（将来 unknown vendor 追加時） | `initPbhVendorCapabilities()` L356–359 | `SWSS_LOG_ERROR` 出力後 `return`。`this->table` 等が `nullptr` のまま → `writePbhVendorCapabilitiesToDb()` 内で `nullptr` deref = `PBH_CAPABILITIES` が STATE_DB に**書かれない** | `SWSS_LOG_ERROR("Failed to initialize PBH capabilities: unknown ASIC vendor")` | `pbhcap.cpp:356–359` |
+| `Table::set()` (Redis `HSET`) が失敗（Redis ACL 等） | `writePbhEntityCapabilitiesToDb()` L381 / L405 / L420 / L437 | 戻り値 void のため silent drop。`SWSS_LOG_NOTICE` はエントリ書き込み後に出力されるが、失敗は未検出 | なし | `pbhcap.cpp:381,405,420,437` |
+| `STATE_DB` (static `DBConnector`, timeout=0) 接続失敗 | static member 初期化時 | `swsscommon` 内部で例外発生 → orchagent プロセスが起動失敗 (crash)。systemd により自動再起動 | スタックトレース (未捕捉) | `pbhcap.cpp:288–289` |
+
+### 消費側 (`config pbh`) の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| orchagent 未起動 / `PBH_CAPABILITIES` キー欠如 | `pbh_capabilities_query()` | 空 dict を返す → 各 `config pbh` サブコマンドが「操作拒否」エラーを出力 | `pbh.py:670–679, 781, 1090, 1351` |
+| `PBH_CAPABILITIES\|<subkey>` に対象フィールドが存在しない | `pbh_capabilities_query()` | `hgetall` 結果に該当フィールドなし → 空文字列として扱われ「capability 不明 = 操作拒否」と判定 | `pbh.py:670–679` |
+
+### 補足
+
+- **write-once の冪等性**: コンストラクタで 1 回のみ書くため、Redis の `HSET` は既存値を上書きする動作になる。orchagent が再起動しても同じ値が再書き込みされる（冪等）。
+- **`nullptr` deref の実際のリスク**: 現行コードの分岐は `GENERIC` / `MELLANOX` のみで `default` で `fieldCap` が nullptr になるパスは `nullptr` 状態をチェックして早期 return しているため (L356–359)、実際に deref は発生しない。ただし `writePbhVendorCapabilitiesToDb()` が呼ばれた後にメンバポインタが `nullptr` ならシグナル SIGSEGV が発生するため、`initPbhVendorCapabilities()` の `return` が実質的なガードとして機能している。
+
+<!-- /failure -->
+
 ## 関連 CONFIG_DB / CLI
 
 - 設定元: [`PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD`](pbh.md) (CONFIG_DB)
