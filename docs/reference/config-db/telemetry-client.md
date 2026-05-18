@@ -292,6 +292,25 @@ pubsub := redisDb.PSubscribe(context.Background(), pattern)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-platform.md)
+
+**プラットフォーム差なし。** `TELEMETRY_CLIENT` テーブルを消費する dial-out クライアントは全プラットフォームで同一動作する。
+
+### 根拠
+
+| 確認観点 | 結果 | ソース |
+|---------|------|--------|
+| ビルドフラグ `INCLUDE_SYSTEM_GNMI` | `rules/config:160` でデフォルト `y`。`platform/**/*.mk` による上書き **0 ヒット** | `sonic-buildimage/rules/config:160` |
+| `dialout_client.go` のプラットフォーム分岐 | `platform` / `DEVICE_METADATA` / `ASIC` / `namespace` / `multi_npu` への参照が全 746 行で **0 ヒット** | `sonic-gnmi/dialout/dialout_client/dialout_client.go` 全行 |
+| `Dockerfile.j2` のプラットフォーム条件 | プラットフォーム固有の `{% if %}` 分岐なし。ベースは `docker-config-engine-bookworm` のみ | `dockers/docker-sonic-gnmi/Dockerfile.j2` |
+| SAI / ASIC SDK 依存 | dial-out は TCP/gRPC レベルのアプリケーション。SAI 非経由 | アーキテクチャ上自明 |
+| multi-ASIC / namespace | `dialout_client.go` は `asicN` namespace への接続切り替えを実装しない。host CONFIG_DB の `TELEMETRY_CLIENT` のみ購読 | `dialout_client.go` 全行、`db_client.go:524`（dial-in 側の実装） |
+
+<!-- /platform -->
+
 ## 制約
 
 - `ipv4-port` typedef で `dst_addr` は IPv4:port のカンマ区切りに制約 (IPv6 リテラルは現状不可)[^1]
