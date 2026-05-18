@@ -296,4 +296,47 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> **調査根拠**: `sonic_py_common/device_info.py` L228-748 全行精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-failure.md`
+
+`DEVICE_RUNTIME_METADATA` は CONFIG_DB に永続化されない仮想テーブルであり、`get_device_runtime_metadata()` が起動時に構築する。失敗はすべて「フィールドがフォールバック値（`False`）に設定される」か「未キャッチ例外が呼び出し元に伝播する」の 2 種類に分類できる。
+
+### プラットフォームファイル不在によるサイレントフォールバック
+
+| 失敗条件 | 影響フィールド | フォールバック値 | evidence |
+|---|---|---|---|
+| `platform_env.conf` が `CONTAINER_PLATFORM_PATH` / `HOST_DEVICE_PATH/<platform>/` 両方に不在 | `MACSEC_SUPPORTED`、chassis 環境の `module_type` | `MACSEC_SUPPORTED=False`、`module_type='linecard'` | `device_info.py:700-702` (`is_supervisor`), `device_info.py:720-721` (`is_macsec_supported`) |
+| `chassisdb.conf` が不在 → `is_chassis_config_absent()=True` | `CHASSIS_METADATA` キー自体が生成されない | キーなし（`is_chassis()=False`） | `device_info.py:622-634` |
+| `port_config.ini` / `platform.json` が hwsku ディレクトリに不在 | `ETHERNET_PORTS_PRESENT` | `False` (`bool(None)=False`) | `device_info.py:741` |
+
+いずれの条件も例外 raise・syslog なし（サイレント）。呼び出し元は戻り値を正常値として受け取るが、FEATURE 状態評価で `bgp`/`teamd`/`macsec` が `disabled` に倒れる副作用が生じる。
+
+### `get_platform_info()` CONFIG_DB 接続失敗
+
+`get_platform_info()` は `ConfigDBConnector().connect()` / `config_db.get_table('DEVICE_METADATA')["localhost"]` を `try…except Exception: pass` でラップする (`device_info.py:557-568`)。接続失敗時は `hw_info_dict['switch_type']` が設定されず、`get_platform_info().get('switch_type')` が `None` を返す。
+
+- **結果**: `is_voq_chassis()=False`、`is_packet_chassis()=False` → `is_chassis()=False` → `CHASSIS_METADATA` キー生成されない。
+- **ログ**: なし（`except: pass` でサイレント握り潰し）。
+
+### `hw_info_dict` グローバルキャッシュによる古い値の固定
+
+`get_platform_info()` は `hw_info_dict` グローバル変数にキャッシュを持つ (`device_info.py:539-542`)。一度キャッシュされると同プロセス内での再読み込みは行われない。
+
+- **結果**: デーモン再起動なしに CONFIG_DB の `DEVICE_METADATA.switch_type` を変更しても、`CHASSIS_METADATA.chassis_type` / `ETHERNET_PORTS_PRESENT` の再評価は起きない。
+- **回避策**: `get_device_runtime_metadata()` を呼び出すプロセス（`sonic-cfggen` / `sysmonitor.py`）の再起動が必要。
+
+### `is_macsec_supported()` の `int()` 変換失敗（未キャッチ）
+
+`platform_env.conf` に `macsec_enabled=<非整数文字列>` が記述されていると、`int(supported)` で `ValueError` が発生する (`device_info.py:732`)。この例外は `get_device_runtime_metadata()` 内でキャッチされないため、呼び出し元に伝播する。
+
+!!! warning "`ValueError` は未キャッチで伝播"
+    `is_macsec_supported()` が `ValueError` を raise すると `get_device_runtime_metadata()` の返り値が得られない。
+    `sonic-cfggen` では設定生成が失敗し、FEATURE テーブル生成が不完全になる可能性がある。
+    `platform_env.conf` の `macsec_enabled` 値は整数（`0` または `1`）のみ許容される。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: e33fec70e206 -->
