@@ -420,6 +420,32 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/lldp-state-side-effects.md`
+
+`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` (APPL_DB) の書き手・読み手は、APPL_DB 以外への副次 DB 書き込みを一切行わない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---------|---------|------|
+| APPL_DB (自テーブル以外) | なし | lldp-syncd は `LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` にのみ書き込む。他 APPL_DB テーブルへの書き込みコードなし |
+| STATE_DB | なし | lldpmgrd / lldp-syncd / sonic-snmpagent のいずれも `StateTable` への書き込みを行わない |
+| COUNTERS_DB | なし | 本テーブル群に連動する COUNTERS_DB 書き込みパスは存在しない |
+| ASIC_DB | なし | LLDP は SAI 非経由。lldpd が直接 netdev を操作するため ASIC_DB に対するオペレーションは発生しない |
+
+### 設定変更時の実行時副作用（非 DB）
+
+| トリガー | Consumer | 副作用 |
+|---------|---------|--------|
+| LLDP PDU 受信 (lldpd) | lldp-syncd | `LLDP_ENTRY_TABLE\|<ifname>` を `HSET` で書き込み / TTL 切れ時は `DEL` を実行 (APPL_DB 内に閉じる) |
+| `LLDP_ENTRY_TABLE` 更新 | sonic-snmpagent | LLDP-MIB (lldpRemTable) の SNMP walk 応答に即時反映。STATE_DB への書き込みは伴わない |
+| `LLDP_ENTRY_TABLE` 更新 | sonic-mgmt-common lldp_app.go | REST / gNMI の OpenConfig LLDP `GET` 応答に反映。CREATE/UPDATE/DELETE はすべて `ErrNotSupported` を返す stub 実装であり書き込みは発生しない |
+| ポートリンクダウン / TTL 超過 | lldp-syncd | 対応エントリを `DEL` する。`show lldp table` から消え、SNMP walk から当該エントリが消える。他 DB への連鎖は発生しない |
+
+> **Evidence**: `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py` (DB 書き込み API なし); `sonic-mgmt-common/translib/lldp_app.go` (processCreate/Update/Replace/Delete は ErrNotSupported); `sonic-buildimage/dockers/docker-lldp/lldpmgrd` (Redis 書き込みなし)
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルトと dead field
 
