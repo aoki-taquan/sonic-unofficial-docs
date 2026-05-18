@@ -326,6 +326,47 @@ sonic-db-cli CONFIG_DB hgetall 'DSCP_TO_FC_MAP|AZURE'
 > **証跡**: `QosMapHandler::processWorkItem()` qosorch.cpp:124-210 全行精読; `DscpToFcMapHandler::convertFieldValuesToAttributes()` qosorch.cpp:1039-1094; `DscpToFcMapHandler::addQosItem()` qosorch.cpp:1095-1124; `NhgMapOrch::getMaxNumFcs()` nhgmaporch.cpp:299-325。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`DSCP_TO_FC_MAP` の処理で使われる、CONFIG_DB / YANG に現れないハードコード定数の一覧。出典は `sonic-swss/orchagent/qosorch.cpp` と `sonic-swss/orchagent/cbf/nhgmaporch.cpp`。
+
+<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-constants.md -->
+
+### バリデーション境界値
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|----|---------|------|
+| `DSCP_MAX_VAL` | `63` | `qosorch.cpp:119` (`#define`) | DSCP キー上限。`dscp > 63` で `task_invalid_entry` |
+| `max_num_fcs` フォールバック | `0` | `nhgmaporch.cpp:320` (runtime) | FC 非対応 ASIC 時の値。全 FC 値が `value >= 0` で reject |
+| `max_num_fcs` テスト mock 値 | `63` | `test_qos_map.py:314` | テスト用固定値。本番は SAI capability から動的取得 |
+
+`DSCP_MAX_VAL = 63` は YANG の `range "0..63"` と一致しており、定数化・YANG 定義の両方で境界が明示されている。
+
+### `max_num_fcs` の取得ロジック
+
+`NhgMapOrch::getMaxNumFcs()` (`nhgmaporch.cpp:299-325`) は `static int max_num_fcs = -1` を静的変数で保持し、**初回呼び出し時のみ** SAI を照会する:
+
+```
+SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES → attr.value.u8
+  成功時: そのまま max_num_fcs に代入 (uint8_t; 最大 255)
+  失敗時: max_num_fcs = 0 (WARN ログ: "Switch does not support FCs")
+```
+
+orchagent 再起動なしにはキャッシュが更新されない。FC 非対応 ASIC では `max_num_fcs = 0` となり、`value >= max_num_fcs` が `value >= 0` と等価になるため全 FC 値が reject される。
+
+### SAI 内部定数（ユーザ非操作）
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `SAI_QOS_MAP_TYPE_DSCP_TO_FORWARDING_CLASS` | SAI enum | `create_qos_map()` 呼び出し時の map タイプ指定 (`qosorch.cpp:1104`) |
+| `SAI_PORT_ATTR_QOS_DSCP_TO_FORWARDING_CLASS_MAP` | SAI enum | ポートへの `set_port_attribute()` 呼び出し時の属性指定 (`qosorch.cpp:71`) |
+
+これらは SAI API 内部定数であり、CONFIG_DB / YANG / CLI には露出しない。
+
+> **証跡**: `qosorch.cpp:119` (DSCP_MAX_VAL); `qosorch.cpp:71, 1104` (SAI 定数); `nhgmaporch.cpp:299-325` (getMaxNumFcs); `test_qos_map.py:314` (テスト mock 値)。
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・制約
 
