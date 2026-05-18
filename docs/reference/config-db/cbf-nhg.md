@@ -193,6 +193,30 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 `OrchDaemon::warmRestoreAndSyncUp()` は全 Orch を 3 回ループして `doTask()` を呼び出す (`orchdaemon.cpp:1095-1170`)。`CbfNhgOrch` 固有の warm-reboot フック（`bake` / `onWarmBootEnd` のオーバーライド）は存在しない。依存 Orch (`NhgMapOrch`, `NhgOrch`) が orchList 上で先行するため、ループ 1 回目で selection_map とメンバー NHG が復元され、2 回目以降で CBF NHG が正常に sync される。pending タスクが残る場合、3 回目のループで解消される設計となっている。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`CLASS_BASED_NEXT_HOP_GROUP_TABLE` エントリが処理される際に `CbfNhgOrch` が暗黙的に参照・依存する他テーブル / グローバルリソースを示す。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `APPL_DB NEXT_HOP_GROUP_TABLE\|<name>` (members として参照) | 必須前提参照（読取り） | `members` に列挙した各 NHG キーが `NhgOrch` 内で synced であること。未 sync の場合 `syncMembers()` が `false` を返してタスクを保留する。メンバー変更時に `incNhgRefCount` / `decNhgRefCount` で参照カウントを管理する | `cbfnhgorch.cpp:644-662`, `cbfnhgorch.cpp:758`, `cbfnhgorch.cpp:808` |
+| `APPL_DB FC_TO_NHG_INDEX_MAP_TABLE\|<name>` (selection_map として参照) | 必須前提参照（読取り） | `selection_map` フィールドで指定したキーが `NhgMapOrch` に登録済みであること。`getMapId()` が `SAI_NULL_OBJECT_ID` を返す場合、`CbfNhg::sync()` は即 `false` を返してタスクを保留する。sync 成功後に `incRefCount()` / `decRefCount()` で参照カウントを管理する | `cbfnhgorch.cpp:319-325`, `cbfnhgorch.cpp:354`, `cbfnhgorch.cpp:396` |
+| `RouteOrch::getMaxNhgCount()` / `getNhgCount()` (NHG 上限管理) | グローバルカウンタ参照（読取り） | 新規作成時に `getNhgCount() + NhgBase::getSyncedCount() >= getMaxNhgCount()` が真の場合、作成を保留して次タスクループへ回す。CbfNhgOrch は RouteOrch のカウンタ値を参照するが RouteOrch エントリを直接書き換えない | `cbfnhgorch.cpp:100-103` |
+| `CrmOrch` (`CRM_NEXTHOP_GROUP`) | CRM カウンタ更新（書込み） | SAI NHG 作成成功後に `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼ぶ。DEL 時の `decCrmResUsedCounter` は `NhgBase` 基底クラスが担当する | `cbfnhgorch.cpp:358` |
+| `CLASS_BASED_NEXT_HOP_GROUP_TABLE` ← 逆参照（被参照は現状なし） | 逆参照なし | 本テーブルのエントリを他 Orch が leafref / 参照カウント経由で依存するケースは現時点でコードに存在しない。削除時の参照ガードは `refCount` 管理を介して実装されているが、参照元は外部 Orch ではなく内部テーブル管理のみ | — |
+
+### 解決タイミング
+
+- **NEXT_HOP_GROUP_TABLE 依存**: `syncMembers()` が各メンバーの `NhgOrch::hasNhg()` および `NhgBase::isSynced()` を確認する。未解決のメンバーがある場合は `false` を返し、次の doTask 呼び出し時に再評価される（`cbfnhgorch.cpp:644-662`）。
+- **FC_TO_NHG_INDEX_MAP_TABLE 依存**: `CbfNhg::sync()` が `gNhgMapOrch->getMapId()` を即時確認する。未解決の場合は `sync()` が `false` を返してタスクが `m_toSync` に残留し、NhgMapOrch が selection_map を登録した後の次ループで再評価される（`cbfnhgorch.cpp:319-325`）。
+- **CRM カウンタ更新**: SAI `create_next_hop_group` 成功直後に同期更新される（`cbfnhgorch.cpp:358`）。
+
+### orchList 上の依存 Orch との相対位置
+
+`OrchDaemon` の `m_orchList` は `NhgMapOrch` → `NhgOrch` → `CbfNhgOrch` の順に配置されている。この順序により、同一タスクループ内で依存 Orch が先に処理を完了するため、CBF NHG の sync 前提条件が揃いやすい設計となっている（`orchdaemon.cpp:500` 付近）。
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
