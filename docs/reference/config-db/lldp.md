@@ -91,6 +91,45 @@ grouping `lldp_mode_config` を `uses`:
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-lldp`、`sonic-port`
 - 関連 CLI: `config lldp`、`show lldp`
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 根拠: `dockers/docker-lldp/lldpmgrd` (L74-78, L301-310, L148-164, L122-134, L206-226), `dockers/docker-lldp/lldpd.conf.j2`
+> 詳細: `meta/_intermediate/cdb-flow/lldp-cross-refs.md`
+
+`LLDP` / `LLDP_PORT` テーブル自体は `lldpmgrd` に**購読されない**（構造的 no-op）。実際の LLDP 動作は以下の暗黙参照テーブルによって制御される。
+
+### lldpmgrd — ランタイム購読 (SubscriberStateTable)
+
+| 参照先テーブル | DB | handler | 用途 | evidence |
+|--------------|-----|---------|------|---------|
+| `PORT_TABLE` | APPL_DB | `lldp_process_port_table_event()` | `oper_status=up` 検知で `lldpcli configure ports <ifname>` 発行。`PortInitDone` / `PortConfigDone` キーで `lldpcli resume` を制御 | `lldpmgrd:301, 323-325` |
+| `MGMT_INTERFACE` | CONFIG_DB | `lldp_process_mgmt_info_change()` | 管理 IP (IPv4 優先、次点 IPv6) 変化を検知して `lldpcli configure system ip management pattern <ip>` を更新 | `lldpmgrd:305, 317-319` |
+| `DEVICE_METADATA` | CONFIG_DB | `lldp_process_device_table_event()` | `localhost` キーの `chassis_hostname` / `hostname` を読み `lldpcli configure system hostname <name>` を更新 | `lldpmgrd:308, 320-322` |
+
+### lldpmgrd — ランタイム読み出し (Table.get / getKeys)
+
+| 参照先テーブル | DB | フィールド | 用途 | evidence |
+|--------------|-----|----------|------|---------|
+| `PORT` | CONFIG_DB | `alias`, `description` | ポート ID (`portidsubtype local <alias>`) とポート説明を `lldpcli configure ports` コマンドに埋め込む | `lldpmgrd:75, 148-164` |
+| `PORT_TABLE` | STATE_DB | `netdev_oper_status` | `up` になるまで `lldpcli configure ports` をキューイング。`is_port_up()` が参照 | `lldpmgrd:78, 122-134` |
+| `MGMT_INTERFACE` | CONFIG_DB | key (`<ifname>\|<prefix>`) | DEL イベント時に残存する管理 IP を再スキャンして最優先 IP を選択 | `lldpmgrd:76, 206-226` |
+
+### lldpd.conf.j2 — コンテナ起動時テンプレート参照
+
+`sonic-cfggen` が Docker 起動前に展開する Jinja2 テンプレートが読み取る CONFIG_DB テーブル。
+
+| 参照先テーブル | フィールド | 生成される lldpd 設定 | evidence |
+|--------------|----------|---------------------|---------|
+| `MGMT_INTERFACE` | `<ifname>\|<prefix>` (key) | `configure system ip management pattern <ip>` | `lldpd.conf.j2:2-13` |
+| `MGMT_PORT` | `alias` | eth0 の `configure ports eth0 lldp portidsubtype local <alias\|port_name>` | `lldpd.conf.j2:17-21` |
+| `DEVICE_METADATA` | `localhost.hostname` | `configure system hostname <name>` (起動時 1 回) | `lldpd.conf.j2:29` |
+
+!!! note "LLDP / LLDP_PORT テーブルは暗黙参照の**終点ではなく起点にもならない**"
+    `lldpmgrd` は `LLDP` / `LLDP_PORT` を一切購読しない。LLDP 動作に影響を与えたい場合は `DEVICE_METADATA` / `MGMT_INTERFACE` / `PORT` を変更するか、`lldpcli` を直接操作する必要がある。
+
+<!-- /cross-refs -->
+
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
