@@ -111,6 +111,26 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 - 依存 #4 は操作コストの話であり機能上は逆順でも動作する。ただしカットオーバー時のセッション再起動ウィンドウを最小化するため、Global を最初に確定しておくことを推奨。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+`TELEMETRY_CLIENT` テーブルは `dialout_client.go` が直接購読するが、`dialout` プロセスの起動は `gnmi-native` プロセス経由で以下のテーブルに間接依存する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-cross-refs.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-cross-refs.md)。
+
+| 参照先テーブル | 参照フィールド | 方向 | 直接/間接 | 証跡 |
+|--------------|-------------|------|-----------|------|
+| `CONFIG_DB.TELEMETRY\|gnmi` / `TELEMETRY\|certs` | `port`, `server_crt`, `server_key`, `ca_crt` | TELEMETRY_CLIENT → TELEMETRY | 間接（`supervisord.conf` の `dependent_startup_wait_for=gnmi-native:running` により `dialout` は gnmi-native 起動後に起動） | `gnmi-native.sh:L18`, `supervisord.conf:L70` |
+| `CONFIG_DB.DEVICE_METADATA\|x509` | `server_crt`, `server_key`, `ca_crt` | TELEMETRY_CLIENT → DEVICE_METADATA | 間接（gnmi-native.sh が `TELEMETRY\|certs` 非設定時のフォールバックとして使用） | `telemetry_vars.j2:L4`, `gnmi-native.sh:L44-55` |
+| `CONFIG_DB.DEVICE_METADATA\|localhost` | `subtype` | TELEMETRY_CLIENT → DEVICE_METADATA | 間接（gnmi-native.sh が SmartSwitch 判定 → ZMQ ポート追加） | `gnmi-native.sh:L88-90` |
+| `CONFIG_DB.MGMT_VRF_CONFIG\|vrf_global` | `mgmtVrfEnabled` | TELEMETRY_CLIENT → MGMT_VRF_CONFIG | 間接（gnmi-native.sh が管理 VRF バインド → dial-out も mgmt VRF 経由になる） | `gnmi-native.sh:L93-96` |
+
+### 補足
+
+- `dialout_client.go` 自体は `TELEMETRY_CLIENT` 以外の CONFIG_DB テーブルを直接読み取らない。上記の間接参照はすべて `gnmi-native.sh` 経由のコンテナ起動時処理。
+- `TELEMETRY` テーブルの `certs` または `DEVICE_METADATA.x509` が未設定の場合、`gnmi-native.sh` は `--noTLS` モードで gNMI サーバを起動する。この場合、dial-out コレクタへの接続も非 TLS になる。
+- 管理 VRF が有効な環境では `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` を先に設定しないと、gnmi-native が mgmt VRF 外でバインドされ dial-out が期待する送信元 VRF と乖離する可能性がある。
+
+<!-- /cross-refs -->
+
 ## 制約
 
 - `ipv4-port` typedef で `dst_addr` は IPv4:port のカンマ区切りに制約 (IPv6 リテラルは現状不可)[^1]
