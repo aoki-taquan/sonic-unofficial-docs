@@ -401,6 +401,59 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
 
 ---
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`chassisd` に埋め込まれた、CONFIG_DB / YANG で管理されない定数の一覧。
+出典は `sonic-platform-daemons/sonic-chassisd/scripts/chassisd`。
+
+### タイマー・インターバル定数
+
+| 定数名 | 値 | 用途 | ソース行 |
+|-------|----|------|---------|
+| `SELECT_TIMEOUT` | `1000` ms | `swsscommon.Select.select()` のタイムアウト (CONFIG_DB 変更待ち) | chassisd:95 |
+| `CHASSIS_INFO_UPDATE_PERIOD_SECS` | `10` 秒 | メインループのポーリング間隔 (`DpuChassisdDaemon` で midplane 状態をポーリングする場合) | chassisd:89 |
+| `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD` | `30` 分 | モジュールが DOWN になった後に DB をクリーンアップするまでの猶予時間 | chassisd:90 |
+
+### リブート関連定数
+
+| 定数名 | 値 | 用途 | ソース行 |
+|-------|----|------|---------|
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | DPU リブートのデフォルトタイムアウト (`platform.json` で上書き可能) | chassisd:82 |
+| `MAX_DPU_REBOOT_DURATION` | `800` 秒 | 同一リブート原因の重複検知ウィンドウ上限 | chassisd:83 |
+| `DEFAULT_LINECARD_REBOOT_TIMEOUT` | `180` 秒 | ラインカードリブートのデフォルトタイムアウト | chassisd:81 |
+| `MAX_HISTORY_FILES` | `10` | リブート原因ファイルの保持上限数 (`/host/reboot-cause/module/` 以下) | chassisd:106 |
+
+### フィールド名定数
+
+| 定数名 | 値 | 用途 | ソース行 |
+|-------|----|------|---------|
+| `DP_STATE` | `'dpu_data_plane_state'` | `DPU_STATE` テーブルのフィールド名 | chassisd:108 |
+| `DP_UPDATE_TIME` | `'dpu_data_plane_time'` | `DPU_STATE` テーブルのフィールド名 | chassisd:109 |
+| `CP_STATE` | `'dpu_control_plane_state'` | `DPU_STATE` テーブルのフィールド名 | chassisd:110 |
+| `CP_UPDATE_TIME` | `'dpu_control_plane_time'` | `DPU_STATE` テーブルのフィールド名 | chassisd:111 |
+
+### 時刻フォーマット定数
+
+`get_formatted_time()` が使用するデフォルトフォーマット (chassisd:159):
+
+```
+"%a %b %d %I:%M:%S %p UTC %Y"
+例: "Thu May 15 10:30:45 AM UTC 2026"
+```
+
+`dpu_midplane_link_time` および `dpu_control_plane_time` / `dpu_data_plane_time` に書き込まれる時刻文字列はこの形式に固定される。
+
+### ファイルパス定数
+
+| 定数名 | 値 | 用途 | ソース行 |
+|-------|----|------|---------|
+| `PLATFORM_JSON_FILE` | `/usr/share/sonic/platform/platform.json` | DPU リブートタイムアウト上書き設定の読み取り先 | chassisd:85 |
+| `MODULE_REBOOT_CAUSE_DIR` | `/host/reboot-cause/module/` | DPU ごとのリブート原因ファイルを格納するディレクトリ | chassisd:105 |
+<!-- /constants -->
+
+---
+
 ## 関連ページ
 
 - [`DPU_STATE テーブル`](dpu-state.md) — テーブル概要・key 構造・書き込み元クラス説明
