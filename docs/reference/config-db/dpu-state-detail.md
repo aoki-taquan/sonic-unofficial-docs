@@ -349,6 +349,58 @@ for field, value in updates.items():
 
 ---
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`DPU_STATE` テーブルへの書き込みは `chassisd` 内 2 クラスで行われる。各クラスの失敗分岐を以下にまとめる。
+
+### SmartSwitchModuleUpdater — `update_dpu_state()` 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | DPU_STATE への影響 | recovery |
+|---|---|---|---|---|
+| `CHASSIS_STATE_DB` 接続失敗 (`db_connect` 例外) | `chassisd:870-872` | `except Exception` で `log_error` 出力、関数終了 | 書き込みなし（前の値が残存） | 次のポーリングサイクルで再接続・再書き込み |
+| `hset` 例外（Redis 障害等） | `chassisd:888` の `for` ループ | `except Exception` で `log_error` 出力 | **部分書き込みの可能性あり**（ループ途中で失敗した場合、先行フィールドのみ更新済み） | 次のポーリングサイクルで上書き |
+| `midplane_initialized == False` (midplane 初期化失敗) | `chassisd:717-719` | `log_error` 出力後、処理継続（`check_midplane_reachability()` は空振り） | midplane フィールド更新されず — `dpu_midplane_link_state` が起動時デフォルト `'down'` のまま | platform `init_midplane_switch()` が成功するまで復旧しない |
+| `is_midplane_reachable()` が `NotImplementedError` | `chassisd:1060-1062`（`try_get` 内） | `try_get` が default `False` を返す | `update_dpu_state(key, 'down')` が呼ばれる（安全側フォールバック） | platform API 実装後にデーモン再起動で解消 |
+| `get_dpu_midplane_state()` 例外 | `chassisd:898-905` | `except Exception` で `log_error`、`None` 返却 | `dpu_mp_state != 'up'` かつ `!= 'down'` → `midplane_access=False` 時に `update_dpu_state('down')` が呼ばれる | 次サイクルで再読み取り |
+
+### DpuStateUpdater — `update_state()` 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | DPU_STATE への影響 | recovery |
+|---|---|---|---|---|
+| `get_controlplane_state()` / `get_dataplane_state()` 例外（`NotImplementedError` 以外） | `chassisd:1246-1258` (init) または `update_state()` | 例外がキャッチされずデーモンクラッシュの可能性 | 書き込みなし | デーモン再起動 |
+| `APPL_DB PORT_TABLE` へのアクセス失敗 | `_get_data_plane_state_common()` L1267-1275 | 例外が `update_state()` に伝播、キャッチなし | DP state 書き込みスキップ | 次サイクルで再試行 |
+| `STATE_DB SYSTEM_READY` へのアクセス失敗 | `_get_control_plane_state_common()` L1277-1284 | 例外が伝播 | CP state 書き込みスキップ | 次サイクルで再試行 |
+| `dpu_state_table.hget()` 失敗（前回値取得失敗） | `chassisd:1306,1312` | `dp_prev_state` / `cp_prev_state` が空文字列 → 差分ありと判定 → 書き込み実行 | 不要な書き込みが発生するが状態は正しく更新される | — |
+| `hset` 例外（Redis 障害） | `chassisd:1289-1295` | 例外が伝播、`update_state()` クラッシュ | 書き込みなし | 次サイクルで再試行（状態の一時的な不整合あり） |
+
+### DpuStateManagerTask — イベント駆動パスの失敗パターン
+
+`DpuChassisdDaemon` で `poll_dpu_state=False` 時（platform API が CP/DP state を提供しない場合）は `DpuStateManagerTask` が `PORT_TABLE` / `SYSTEM_READY` / `DPU_STATE` の変更を `SubscriberStateTable` で受信して `update_state()` を呼び出す。
+
+| 失敗ケース | 挙動 |
+|---|---|
+| `sel.select()` タイムアウト | `SELECT_TIMEOUT` 後に再ループ（正常動作）。状態変化が無い限り書き込みなし |
+| `sel.select()` が `OBJECT` 以外を返す | ループ継続（スキップ）、`log_warning` なし |
+| `pop()` 結果が `None` | `continue` でスキップ、`update_required = False` のまま |
+| `update_state()` 内部例外 | 例外がタスクスレッドに伝播、`DpuStateManagerTask.task_worker()` がクラッシュ → `task_stop()` で回収されない限り、以後イベント駆動更新が止まる |
+
+### syslog 出力とエラー確認
+
+失敗時はすべて `SWSS_LOG_ERROR` 相当（Python `log_error`）で syslog に出力される。`DPU_STATE` への書き込みなし・部分書き込みのいずれも **syslog のみ** で通知され、`ERROR_DB` / `STATE_DB` への障害フラグ書き込みはない。
+
+```bash
+# chassisd ログ確認
+journalctl -u sonic-chassisd --no-pager -n 50
+# DPU_STATE 現在値確認
+sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
+```
+
+> **証跡**: `update_dpu_state()` L864-891、`get_dpu_midplane_state()` L895-906、`SmartSwitchModuleUpdater.__init__()` L710-731、`check_midplane_reachability()` L1070-1111、`DpuStateUpdater.update_state()` L1300-1316、`DpuStateManagerTask.task_worker()` L1477-1524。
+<!-- /failure -->
+
+---
+
 ## 関連ページ
 
 - [`DPU_STATE テーブル`](dpu-state.md) — テーブル概要・key 構造・書き込み元クラス説明
