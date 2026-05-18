@@ -183,6 +183,44 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順序依存・タイミング依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp (ref:4305596156d7),
+     sonic-swss/orchagent/flexcounterorch.cpp (ref:4305596156d7) -->
+
+### 1. SAI OID フェッチが先行必須
+
+`PortsOrch::initializePorts()`（`portsorch.cpp:6583-6598`）が `initializeQueuesBulk()` で SAI から各ポートの Queue OID リスト（`SAI_PORT_ATTR_QOS_QUEUE_LIST`）を取得して `port.m_queue_ids` へキャッシュするまで、`generateQueueMap()` / `generateQueueMapPerPort()` は OID が空のまま動作してマッピングを書き込まない[^5]。`FlexCounterOrch::doTask()` は `gPortsOrch->allPortsReady()` が `false` の間 `return` する（`flexcounterorch.cpp:164-167`）ため、`FLEX_COUNTER_TABLE|QUEUE = enable` を orchagent 起動前に書き込んでいても、全ポート ready 後まで `generateQueueMap()` 呼び出しは自動的に遅延する。
+
+### 2. Warm-reboot 時の 60 秒遅延
+
+`FlexCounterOrch` コンストラクタ（`flexcounterorch.cpp:127-136`）は warm-reboot 時に `FLEX_COUNTER_DELAY_SEC = 60` 秒のタイマーを設定し、`doTask()` 先頭の `if (!m_delayTimerExpired) return;`（`flexcounterorch.cpp:156-158`）で全 FlexCounter 処理をブロックする。cold boot では即 `m_delayTimerExpired = true` になり遅延なし。warm-reboot 中に `FLEX_COUNTER_TABLE|QUEUE = enable` を書き込んでも最大 60 秒間 `COUNTERS:<oid>` の更新が停止する[^5]。
+
+### 3. `BUFFER_QUEUE` と `FLEX_COUNTER_TABLE|QUEUE = enable` の順序
+
+`BUFFER_QUEUE` SET が届いたときに `createPortBufferQueueCounters()`（`portsorch.cpp:8700-8755`）が `flexCounterOrch->getQueueCountersState()` を確認し、`false`（= `FLEX_COUNTER_TABLE|QUEUE` が disable）ならカウンタ登録をスキップする。`BUFFER_QUEUE` を先に書いた後に `enable` を書くと、`enable` 処理時に `addQueueFlexCounters(getQueueConfigurations())` が実行され、その時点で非ゼロプロファイルを持つ `BUFFER_QUEUE` エントリが一括登録される[^5]。逆順（`enable` 先・`BUFFER_QUEUE` 後）でも即時登録されるため、**どちらの順序でも最終状態は同じ**。
+
+### 4. `m_isQueueMapGenerated` — `generateQueueMap()` は一度だけ実行
+
+`generateQueueMap()`（`portsorch.cpp:8391-8396`）は `m_isQueueMapGenerated` フラグで保護されており、初回のみ実行される。`FLEX_COUNTER_TABLE|QUEUE` と `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` の enable 順序に関係なく最初の enable で一度だけ走る。`m_isQueueMapGenerated` がセット済みの状態で新規ポートが追加された場合は `createPortBufferQueueCounters()` 経由でマッピングが生成される[^5]。
+
+### 5. `isCreateOnlyConfigDbBuffers` の事後変更は限定的
+
+`FlexCounterOrch` は起動時に `DEVICE_METADATA|localhost|create_only_config_db_buffers` を読み込み `m_createOnlyConfigDbBuffers` にキャッシュする。`true` の場合、`getQueueConfigurations()` は `BUFFER_QUEUE` に非ゼロプロファイルが設定されたキューのみ対象にする（デフォルト `false` = 全キュー）。起動後に値を変更しても、既に `m_isQueueMapGenerated = true` でガードされている場合は以後の `getQueueConfigurations()` 呼び出しにのみ影響し、既登録カウンタは変更されない。既存カウンタを変更するには orchagent 再起動が必要[^5]。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | SAI OID フェッチ (`initializeQueuesBulk`) → `generateQueueMap()` | 先行必須 | `allPortsReady()` チェックで自動待機 |
+| 2 | Warm-reboot 時 60 秒 delay timer | 強制遅延 | 定数 `FLEX_COUNTER_DELAY_SEC=60`。60 秒後に自動再開 |
+| 3 | `BUFFER_QUEUE` SET と `FLEX_COUNTER_TABLE\|QUEUE = enable` の順序 | どちらが先でも最終状態は同じ | enable 後に `addQueueFlexCounters()` で追加 |
+| 4 | `m_isQueueMapGenerated` ガード | 冪等保護（順序非依存） | 新規ポートは `createPortBufferQueueCounters()` 経由 |
+| 5 | `DEVICE_METADATA.create_only_config_db_buffers` 事後変更 | 以後の呼び出しにのみ影響 | 既存カウンタ変更には orchagent 再起動が必要 |
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -203,3 +241,5 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 [^3]: portsorch.cpp:1894-1909 — `checkWredCapability()` による SAI ケイパビリティ問い合わせ。サポート確認後のみ FlexCounter に WRED 統計を追加。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L1894>
 
 [^4]: portsorch.h:34-42 および portsorch.cpp:90-91 — FlexCounter グループ名定数とハードコードポーリング間隔定義。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.h#L34>
+
+[^5]: `sonic-swss/orchagent/portsorch.cpp:6583-6598,8391-8443,8700-8755` / `sonic-swss/orchagent/flexcounterorch.cpp:127-136,156-167,247-252,544-554` — 書込み順序依存・タイミング依存の実装根拠。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp>
