@@ -168,6 +168,33 @@ Built by: johnar@jenkins-worker-8
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照・共依存コンポーネント (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/image-state-cross-refs.md`
+
+`/etc/sonic/sonic_version.yml` は Redis テーブルではないため YANG leafref による参照整合性保証は存在しない。しかし複数のコンポーネントがこのファイルを直接読み込んでおり、ファイル不在またはフィールド欠落時の影響は広範囲に及ぶ。
+
+| コンポーネント | 依存フィールド | ファイル不在時の挙動 | フィールド欠落時の挙動 | evidence |
+|---|---|---|---|---|
+| `show version` (sonic-utilities) | `build_version`・`asic_type` 等 | `get_sonic_version_info()` が `None` を返す → 各フィールド `.get(key, 'N/A')` で graceful fallback | `N/A` 表示 | `show/main.py:1718-1733` |
+| gNMI telemetry (sonic-gnmi) | `build_version` | `SonicVersionInfo.Error` にエラー文字列、`build_version=""` として返却 | 同上 | `non_db_client.go:42-58` |
+| `db_migrator.py` | `asic_type` | `version_info.get('asic_type')` が `None` → asic 固有 migration が mellanox 向け等でスキップ | mellanox 向け migrate_xxx が実行されない | `db_migrator.py:96-98` |
+| `field_operation_validators.py` (gcu) | `asic_type` | `device_info.get_sonic_version_info()['asic_type']` の直接キーアクセスで **`KeyError`** → gcu フィールド操作が失敗 | `None` 比較で asic 固有ルールが不適用 | `field_operation_validators.py:33` |
+| `sonic_package_manager` | version_info dict 全体 | `None` アクセスでクラッシュの可能性 | パッケージバージョン検証の欠落 | `manager.py:323` |
+| show プラグイン (mlnx / barefoot / cisco-8000) | `asic_type` | `None` 参照エラー → プラットフォーム固有 show コマンドが失敗 | プラグイン固有処理がスキップ | `show/plugins/*.py:157,48,22` |
+
+### キャッシュによる共通制約
+
+- **sonic-py-common** (`get_sonic_version_info()`): `global sonic_ver_info` にプロセスライフタイム固定でキャッシュ。ファイルを書き換えてもプロセス再起動なしでは反映されない (`device_info.py:515-517`)
+- **sonic-gnmi**: `sync.Once` で 1 回のみ読み込む。telemetry サービス再起動まで更新されない。`InvalidateVersionFileStash()` API が存在するがテスト用途のみ (`non_db_client.go:55-58`)
+
+### `asic_type` フィールドの重要性
+
+`asic_type` は最も多くのコンポーネントが参照するフィールドであり、`db_migrator`・`gcu`・mirrororch (`gre_type` プラットフォーム分岐)・各 show プラグインが `asic_type` に基づいて動作を切り替える。ビルド時には必ず `sonic_asic_platform` 変数から設定される必須フィールドだが、テスト環境・VS 環境では `asic_type: vs` が入る。
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: `sonic-buildimage/build_debian.sh` L642-654 — sonic_version.yml 生成処理。<https://github.com/sonic-net/sonic-buildimage/blob/master/build_debian.sh>
