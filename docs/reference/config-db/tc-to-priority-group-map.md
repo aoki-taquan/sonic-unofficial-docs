@@ -272,6 +272,26 @@ REST/gNMI 書き込み経路なし。
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`TC_TO_PRIORITY_GROUP_MAP` は**被参照側**テーブルであり、本テーブル自身が他テーブルへ leafref を持つ構造ではない。`PORT_QOS_MAP` および `TUNNEL_DECAP_TABLE` が本テーブルのマップ名を参照し、`QosOrch` の参照カウント機構（`object_reference_map`）で追跡される。
+
+| 依存方向 | 参照元フィールド | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|----------------|--------------|--------------|---------|------|
+| 逆参照（被参照） | `PORT_QOS_MAP\|<port>.tc_to_pg_map` | `TC_TO_PRIORITY_GROUP_MAP`（本テーブル） | `TC_TO_PRIORITY_GROUP_MAP\|<name>` | `handlePortQosMapTable` が `resolveFieldRefValue` でマップ OID を解決。未登録なら `task_need_retry`。参照中は本テーブルの DEL が `m_pendingRemove=true` でブロックされる | `qosorch.cpp:2118-2134`, `qosorch.cpp:181-186` |
+| 逆参照（被参照） | `TUNNEL_DECAP_TABLE\|<name>.decap_tc_to_pg_map` (APPL_DB) | `TC_TO_PRIORITY_GROUP_MAP`（本テーブル） | `TC_TO_PRIORITY_GROUP_MAP\|<name>` | `TunnelDecapOrch::doTask` が `gQosOrch->resolveTunnelQosMap()` で OID を解決。`SAI_NULL_OBJECT_ID` 返却時は `"QoS map decap_tc_to_pg_map is not ready yet"` を LOG_NOTICE して `task_need_retry` | `tunneldecaporch.cpp:230-237` |
+
+### 参照カウント機構
+
+`QosOrch::m_qos_maps` の `object_reference_map` は参照元テーブル・キー・フィールド名をキーとして参照カウントを保持する。`setObjectReference()` で参照を記録し、`removeMeFromObjsReferencedByMe()` で解放。`isObjectBeingReferenced()` が DEL 時の参照有無を判定する (qosorch.cpp:181)。
+
+PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る限り、本テーブルのマップは SAI から削除されない（`m_pendingRemove = true` で保留）。両参照が解放された後の次回 orchagent イテレーションで `remove_qos_map()` が呼ばれる。
+
+> **詳細証跡**: `meta/_intermediate/cdb-flow/tc-to-priority-group-map-cross-refs.md`
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
