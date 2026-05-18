@@ -207,6 +207,41 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+`handleSchedulerTable()`（`sonic-swss/orchagent/qosorch.cpp`）における SET / DEL 失敗条件と結果を網羅する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/scheduler-orch-failure.md -->
+
+### SET 失敗マトリクス（新規作成 / 既存更新）
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 既存オブジェクトが `m_pendingRemove == true` の状態で SET | `qosorch.cpp:1366-1369` | `task_need_retry` — `m_toSync` に残留し次回再試行 | `"Entry %s %s is pending remove, need retry"` (NOTICE) | `qosorch.cpp:1368` |
+| `type` に未知値（`DWRR`/`WRR`/`STRICT` 以外） | `qosorch.cpp:1393-1396` | `task_invalid_entry` — **エントリ全体が SAI 未反映** | `"Unknown scheduler type value:%s"` (ERROR) | `qosorch.cpp:1394` |
+| `meter_type` に未知値（`packets`/`bytes` 以外） | `qosorch.cpp:1407` | `std::out_of_range` 例外 → **orchagent クラッシュ**（例外未キャッチ） | なし（シグナル終了） | `qosorch.cpp:1407` |
+| `priority` フィールドを含む SET | `qosorch.cpp:1436-1438` | `task_invalid_entry` — **エントリ全体が SAI 未反映** | `"Unknown field:priority"` (ERROR) | `qosorch.cpp:1437` |
+| その他の未知フィールド | `qosorch.cpp:1436-1438` | `task_invalid_entry` — **エントリ全体が SAI 未反映** | `"Unknown field:%s"` (ERROR) | `qosorch.cpp:1437` |
+| SAI `create_scheduler()` 失敗（新規作成時） | `qosorch.cpp:1460-1469` | `handleSaiCreateStatus()` に委ねる（`task_failed` または `task_need_retry`） | `"Failed to create scheduler profile [%s:%s], rv:%d"` (ERROR) | `qosorch.cpp:1463` |
+| SAI `set_scheduler_attribute()` 失敗（既存更新時） | `qosorch.cpp:1447-1454` | `handleSaiSetStatus()` に委ねる（`task_failed` または `task_need_retry`） | `"fail to set scheduler attribute, id:%d"` (ERROR) | `qosorch.cpp:1449` |
+
+### DEL 失敗マトリクス
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 存在しないオブジェクトへの DEL | `qosorch.cpp:1478-1481` | `task_invalid_entry` — ノーオペレーション | `"Object with name:%s not found."` (ERROR) | `qosorch.cpp:1480` |
+| QUEUE から参照中の SCHEDULER を DEL | `qosorch.cpp:1483-1488` | `m_pendingRemove = true` + `task_need_retry` — 参照解除後に自動 DEL | `"Can't remove object %s due to being referenced (%s)"` (NOTICE) | `qosorch.cpp:1486-1488` |
+| SAI `remove_scheduler()` 失敗 | `qosorch.cpp:1491-1498` | `handleSaiRemoveStatus()` に委ねる（`task_failed` または `task_need_retry`） | `"Failed to remove scheduler profile. db name:%s ..."` (ERROR) | `qosorch.cpp:1492` |
+
+### 補足
+
+- **`task_invalid_entry`** はエントリを `m_toSync` から破棄し再試行しない。CONFIG_DB への SET は成功しているが SAI 反映はゼロとなる。`priority` フィールドによる誤投入は特に気づきにくい。
+- **`task_need_retry`** はエントリを `m_toSync` に残留させ次の `doTask()` で再評価する。自動回復するが完了タイミングは不確定。
+- **`meter_type` クラッシュ**は YANG enum バリデーションが機能している通常経路では発生しない。`sonic-db-cli` 等で直接投入する場合のみリスクがある（Phase A 参照）。
+
+<!-- /failure -->
+
 ## YANG-実装 Discrepancy まとめ
 
 | フィールド | YANG 定義 | qosorch 実装 | 分類 |
