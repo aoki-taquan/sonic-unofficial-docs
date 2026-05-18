@@ -190,6 +190,71 @@ YANG `sonic-syslog.yang` の `leaf service` が `FEATURE_LIST.name` を `leafref
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`containercfgd` (`SyslogHandler`) および `rsyslog-container.conf.j2` テンプレートに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### ファイルパス定数
+
+| 定数名 | 値 | 用途 |
+|-------|----|------|
+| `SYSLOG_CONF_PATH` | `/etc/rsyslog.conf` | コンテナ内 rsyslog 設定ファイル（`sonic-cfggen` 出力で上書きする対象）|
+| `TMP_SYSLOG_CONF_PATH` | `/tmp/rsyslog.conf` | `sonic-cfggen` の出力先一時ファイル（上書き後に `cp` で本番パスへ移動）|
+
+evidence: `containercfgd.py:101,103`
+
+### 既存 conf 解析用正規表現
+
+| 定数名 | 値 | 用途 |
+|-------|----|------|
+| `INTERVAL_PATTERN` | `r'.*SysSock.RateLimit.Interval="(\d+)".*'` | 起動時に `/etc/rsyslog.conf` から現在の interval を抽出してキャッシュ |
+| `BURST_PATTERN` | `r'.*SysSock.RateLimit.Burst="(\d+)".*'` | 起動時に `/etc/rsyslog.conf` から現在の burst を抽出してキャッシュ |
+
+evidence: `containercfgd.py:106-107`
+
+### Jinja2 テンプレートデフォルト値
+
+`rsyslog-container.conf.j2` の `|default()` フィルタで定義される DB 欠落時フォールバック値。
+
+| フィールド | テンプレートデフォルト | 適用条件 |
+|-----------|---------------------|---------|
+| `rate_limit_interval` | **`300`** 秒 | `SYSLOG_CONFIG_FEATURE[container_name]` にキーが存在しない場合 |
+| `rate_limit_burst` | **`20000`** 件 | 同上 |
+
+evidence: `rsyslog-container.conf.j2:27`:
+```
+module(load="imuxsock" SysSock.RateLimit.Interval="{{ rate_limit_interval|default('300') }}" SysSock.RateLimit.Burst="{{ rate_limit_burst|default('20000') }}")
+```
+
+!!! warning "DB エントリ「なし」と値「`0`」の違い"
+    `containercfgd.update_syslog_config()` は DB エントリが空の場合に `new_interval='0'`、`new_burst='0'` を採用するが (`containercfgd.py:143-144`)、これはコード内部のキャッシュ比較に使われる値であり、実際に rsyslog.conf を生成する `sonic-cfggen -d` は DB を直接参照する。**DB にキーが存在しない状態**では Jinja2 の `|default()` が `300` / `20000` を採用し、DB に **`rate_limit_interval=0`** が明示的に設定されている場合は `0` が書き込まれる。「エントリなし」と「エントリあり・値 `0`」では rsyslog の動作が異なる点に注意。
+
+### sonic-cfggen 呼び出し（固定引数）
+
+| 項目 | 固定値 |
+|------|--------|
+| テンプレートパス | `/usr/share/sonic/templates/rsyslog-container.conf.j2` |
+| JSON 変数 | `{"container_name": "<service_name>"}` |
+| 再起動コマンド | `supervisorctl restart rsyslogd` |
+
+evidence: `containercfgd.py:155-159`
+
+### OMRELP リモート転送固定値
+
+コンテナ内の rsyslog がリモートに転送する際の固定 rsyslog オプション（CONFIG_DB フィールドなし・変更不可）。
+
+| rsyslog オプション | 固定値 | 意味 |
+|-------------------|--------|------|
+| `action.resumeRetryCount` | `"60"` | 接続失敗時の再試行上限 |
+| `queue.type` | `"LinkedList"` | 転送キュータイプ |
+| `queue.size` | `"20000"` | 転送キューサイズ（メッセージ数） |
+| OMRELP ポート | `"2514"` | `$SYSLOG_TARGET_IP` 宛転送ポート |
+
+evidence: `rsyslog-container.conf.j2:63` / `meta/_intermediate/cdb-flow/syslog-config-feature-constants.md`
+
+<!-- /constants -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
