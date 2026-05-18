@@ -385,4 +385,46 @@ CONFIG_DB: VNET
 > **スキャン証跡**: `vnetorch.cpp` L40, L392-428, L497-503, L738-748、`vxlanmgr.cpp` L183-213, L738-806、`orchdaemon.cpp` L265-285, L350-358、`sonic-vnet.yang` L57-58, L120-157
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vnetorch.cpp -->
+
+`VNET` / `VNET_ROUTE` テーブルの処理失敗は `vxlanmgrd`（CONFIG_DB 前段）と `VNetOrch`（APPL_DB → SAI 後段）の二層で発生する。失敗時の共通パターンは `doTask()` が `false` を返してエントリを `m_toSync` に残し、次イテレーションで再試行することだが、**サイレントドロップ**（return true で永久 erase）が 1 ケース存在する点に注意。
+
+### 主要失敗ケース
+
+**フィールド不完全によるサイレントドロップ (失敗 #2)**: `vxlan_tunnel` または `vni` フィールドが欠落した VNET エントリは `SWSS_LOG_DEBUG("Vnet %s information is incomplete")` のみ記録して `return true`（`m_toSync` から erase）される (`vxlanmgr.cpp:308-317`)。エラーや WARN は出力されず、CLI や `show vnet` にも表示されない。**不完全な JSON 投入は永久に無視される**。
+
+**VXLAN トンネル未作成によるサスペンド (失敗 #1)**: `m_vxlanTunnelCache` に参照先 VXLAN_TUNNEL が存在しない場合 `return false` で再キュー (`vxlanmgr.cpp:322-326`)。VXLAN_TUNNEL エントリが後から追加されれば自動的に処理再開する。
+
+**VRF STATE_DB 未 ready (失敗 #3)**: `isVrfStateOk()` が `STATE_VRF_TABLE` で VRF 未登録を検出した場合 `return false` で再キュー (`vxlanmgr.cpp:328-332`)。起動シーケンス中に一時的に発生し、VRF 作成完了後に自然解消する。
+
+**SAI VR 作成失敗 → runtime_error 捕捉 (失敗 #6)**: `sai_virtual_router_api->create_virtual_router()` が失敗すると `std::runtime_error` が throw され、`VNetOrch::addOperation()` の `catch` ブロックが `SWSS_LOG_ERROR("VNET add operation error for %s: error %s")` を記録して `return false` (`vnetorch.cpp:550-553`)。SAI リソース枯渇の場合は再試行しても継続失敗する。
+
+**VNET 削除時のルート残存 (失敗 #9)**: `vrf_obj->getRouteCount() > 0` の場合 `SWSS_LOG_ERROR("VNET '%s': Routes are still present")` + `return false` (`vnetorch.cpp:584-585`)。VNET_ROUTE / VNET_ROUTE_TUNNEL を先に全削除しないと VNET 本体の削除が永続ブロックされる（強制削除順序制約）。
+
+**NextHop group 上限超過 (失敗 #13)**: ASIC の NHG 上限に達した場合 `SWSS_LOG_ERROR("Reached maximum number of next hop groups.")` + `return false` (`vnetorch.cpp:773-774`)。新規 VNET_ROUTE_TUNNEL の ECMP グループが作成できず、該当ルートのみ再試行キューに残る。既存ルートへの影響はない。
+
+### 失敗挙動サマリ
+
+| # | 失敗条件 | ログレベル | 再試行 | 分類 |
+|---|----------|-----------|--------|------|
+| 1 | `VXLAN_TUNNEL` 未作成（vxlanmgrd） | DEBUG | ✅ 自動再試行 | 順序依存 suspend |
+| 2 | `vxlan_tunnel`/`vni` フィールド欠落 | DEBUG | ❌ **永久 erase** | サイレントドロップ |
+| 3 | VRF STATE_DB 未 ready | DEBUG | ✅ 自動再試行 | 起動シーケンス待ち |
+| 4 | ルータ MAC 未設定 | DEBUG | ✅ 自動再試行 | 起動シーケンス待ち |
+| 5 | netdevice 作成失敗 | ERROR | ✅ 自動再試行 | カーネル操作失敗 |
+| 6 | SAI VR 作成失敗 | ERROR | ✅ 自動再試行 | SAI エラー |
+| 7 | VXLAN tunnel map 作成失敗 | ERROR | ✅ 自動再試行 | SAI リソース |
+| 8 | orchagent 側 tunnel 未存在 | WARN | ✅ 自動再試行 | 順序依存 suspend |
+| 9 | 削除時にルートが残存 | ERROR | ✅ 再試行（先に Route 削除要） | 削除順序依存 |
+| 10 | 削除時 tunnel map 解除失敗 | ERROR | ✅ 自動再試行 | SAI エラー |
+| 11 | VR 属性更新失敗 | ERROR | 呼び出し元依存 | SAI エラー |
+| 12 | VNET_ROUTE SAI 失敗 | ERROR | ✅ 自動再試行 | SAI エラー |
+| 13 | NextHop group 上限超過 | ERROR | ✅ 自動再試行（上限解消まで） | リソース枯渇 |
+
+> **スキャン証跡**: `vxlanmgr.cpp:doVxlanCreateTask()` L287-376、`vxlanmgr.cpp:doVxlanDeleteTask()` L437-476、`vnetorch.cpp:VNetVrfObject::createObj()` L91-108、`vnetorch.cpp:VNetOrch::addOperation()` L489-558、`vnetorch.cpp:VNetOrch::delOperation()` L560-600、`vnetorch.cpp:addRoute()/delRoute()` L645-730、`vnetorch.cpp:createNextHopGroup()` L773-774; 詳細分析 `meta/_intermediate/cdb-flow/vnet-failure.md`
+<!-- /failure -->
+
 <!-- glossary-links-injected: f94986e6b96c -->
