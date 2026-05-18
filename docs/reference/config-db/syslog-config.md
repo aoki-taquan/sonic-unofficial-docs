@@ -288,6 +288,28 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`SYSLOG_CONFIG` テーブルの変更に伴って `hostcfgd` の `RSyslogCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル再生成と `rsyslogd` 再起動に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `RSyslogCfg` クラス内 (hostcfgd:1695-1743) に `ProducerStateTable` / `Table.set()` / `hset` の呼び出しが 0 件 |
+| STATE_DB | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (L1759-1821) と起動時 `RestartWaiter` のみ。`RSyslogCfg` は `state_db_conn` を保持しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。syslog はコントロールプレーンのロギング機能で統計テーブルも存在しない |
+| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由。rsyslog の設定変更は ASIC に影響しない |
+| LOGLEVEL_DB | なし | `hostcfgd` が LOGLEVEL_DB を書くのは起動時の自身のログレベル登録のみ |
+
+**DB 外の副作用** (OS レベル):
+
+- `rsyslog-config.service` が Jinja2 テンプレートを展開して `/etc/rsyslog.conf` を再生成する
+- `rsyslogd` が再起動される（再起動中の数秒間、ホストとコンテナ間の RELP/UDP 転送が途絶する可能性がある）
+- 各 docker の rsyslog は RELP または UDP でホスト rsyslog に転送しているため、ホスト rsyslog 再起動中のログが欠落する可能性がある
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/syslog-config-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
