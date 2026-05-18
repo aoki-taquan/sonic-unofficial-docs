@@ -335,3 +335,61 @@ L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に CoppOrch を生
 - **m_trap_group_hostif_map 依存**: `createGenetlinkHostIf()` → `createGenetlinkHostIfTable()` の呼び出し順序は `processCoppRule()` 内でハードコードされており（`copporch.cpp:844,848`）、HostIf OID が `m_trap_group_hostif_map` に登録された後に HostIfTable が作成される。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`COPP_GROUP` の genetlink フィールド (`genetlink_name` / `genetlink_mcgrp_name`) を処理する `CoppOrch::processCoppRule()` と `doTask()` の失敗分岐を整理する。
+
+### A. `allPortsReady()` ガード — 全処理保留
+
+`doTask()` 冒頭の `allPortsReady()` チェック (`copporch.cpp:885-888`) が false の場合、即 `return` して全エントリを `m_toSync` に保留する。genetlink HostIf / HostIfTable は一切作成されず、PortsOrch 初期化完了後に次サイクルで自動再処理される。
+
+### B. Genetlink HostIf 二重作成 → `task_failed` → 後続処理停止
+
+`copporch.cpp:835-840`:
+
+```cpp
+if (m_trap_group_hostif_map.find(m_trap_group_map[trap_group_name]) !=
+        m_trap_group_hostif_map.end())
+{
+    SWSS_LOG_ERROR("Genetlink hostif exists for the trap group %s", ...);
+    return task_process_status::task_failed;
+}
+```
+
+同一 trap_group に genetlink フィールドを持つエントリが重複 SET された場合（orchagent 再起動なしに CONFIG_DB を再書き込みした場合など）、`processCoppRule()` が `task_failed` を返す。`doTask()` は当該エントリを erase して `return` し、**後続の全 pending エントリの処理も停止する**（`copporch.cpp:920-923`）。
+
+### C. `create_hostif()` SAI 失敗 → `task_failed`
+
+`createGenetlinkHostIf()` 内で `sai_hostif_api->create_hostif()` が `SAI_STATUS_SUCCESS` 以外を返した場合、`handleSaiCreateStatus()` + `parseHandleSaiStatusFailure()` により `false` が返り、`processCoppRule()` が `task_failed` に変換する（`copporch.cpp:667-675`, `L844-846`）。
+
+### D. `create_hostif_table_entry()` SAI 失敗 → `task_failed`
+
+`createGenetlinkHostIfTable()` 内で trap_id ごとに `create_hostif_table_entry()` を呼び出す。失敗すると `false` 返却 → `processCoppRule()` が `task_failed`（`copporch.cpp:457-464`, `L848-850`）。
+
+### E. `trapGroupProcessTrapIdChange()` 失敗 → `task_failed`
+
+genetlink HostIf / HostIfTable を SAI に作成済みの後に呼ばれる `trapGroupProcessTrapIdChange()` が失敗した場合も `task_failed` となる（`copporch.cpp:853-856`）。genetlink HostIf は SAI に残存するが trap_id への適用が不完全な状態となる。
+
+### F. DEL — `default_trap_group` → `task_ignore`
+
+`COPP_GROUP|default_trap_group` の DEL は `task_ignore` として扱われ、erase 後に次アイテムへ進む（`copporch.cpp:861-865`）。
+
+### G. 例外 → `task_invalid_entry` → erase & continue
+
+`processCoppRule()` が `out_of_range` / `std::exception` を送出した場合、`doTask()` が `task_invalid_entry` として当該エントリを erase して後続処理を継続する（`copporch.cpp:900-909`）。当該エントリは永久スキップとなり、orchagent 再起動後に再処理される。
+
+### `task_status` 処理まとめ
+
+| task_status | 主な発生条件 | `doTask()` 動作 |
+|---|---|---|
+| `task_success` / `task_ignore` | 正常完了 / `default_trap_group` DEL | erase → 次アイテム |
+| `task_invalid_entry` | 例外、未知 op | erase → 次アイテム（永久スキップ） |
+| `task_failed` | SAI 失敗、二重作成、`trapGroupProcessTrapIdChange` 失敗 | erase → **return**（後続処理停止） |
+| `task_need_retry` | SAI 一時失敗（transient error） | `it++` → 次サイクルで再試行 |
+
+`task_failed` 時は SWSS_LOG_ERROR が記録される。orchagent はプロセス終了せず生存するが、次回 `doTask()` 呼び出しまで他 COPP グループの処理も停止する点に注意。
+
+> **スキャン証跡**: `copporch.cpp` L419-471 (createGenetlinkHostIfTable)、L657-680 (createGenetlinkHostIf)、L833-856 (processCoppRule genetlink 分岐)、L880-933 (doTask)。失敗分岐 6 系統確認。詳細は `meta/_intermediate/cdb-flow/copp-port-failure.md` 参照。
+<!-- /failure -->
+
