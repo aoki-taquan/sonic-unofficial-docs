@@ -235,6 +235,61 @@ if (m_enable_db_write_and_notify &&
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-cross-refs.md -->
+
+APPL_STATE_DB `ROUTE_TABLE` は YANG 未定義のオペレーショナルテーブルで、`RouteOrch` が**書き手 (producer)**、`fpmsyncd` と `route_check.py` が**読み手 (consumer)** となる。以下は `ResponsePublisher`・`routeorch.cpp`・`fpmsyncd.cpp`・`routesync.cpp`・`route_check.py` を横断したコード調査で検出した暗黙参照の一覧。
+
+### 1. APPL_DB ROUTE_TABLE（書き込みトリガ兼キー源泉）
+
+- **参照先**: APPL_DB `ROUTE_TABLE`
+- **方向**: 読み取り（`ConsumerStateTable` 購読） → APPL_STATE_DB `ROUTE_TABLE` への書き込みトリガ
+- **参照元**: `routeorch.cpp:192`（`createRetryCache(APP_ROUTE_TABLE_NAME)`）、`routeorch.cpp:622`（dispatch: `APP_ROUTE_TABLE_NAME`）
+- **意味**: APPL_DB `ROUTE_TABLE` に経路が SET されると `RouteOrch::doTask()` が起動し、SAI プログラミング成功後に APPL_STATE_DB `ROUTE_TABLE` の同一キーに `protocol` フィールドを書き込む。DEL 時は APPL_STATE_DB の同一キーエントリを削除する。APPL_STATE_DB のキー構造は APPL_DB と同一（`ROUTE_TABLE:<prefix>` または `ROUTE_TABLE:<vrf>:<prefix>`）。
+
+### 2. CONFIG_DB VRF（VRF 経路の先行依存）
+
+- **参照先**: CONFIG_DB `VRF` テーブル（`VRFOrch` 管理）
+- **方向**: 読み取り（`m_vrfOrch->isVRFexists(vrf_name)`）
+- **参照元**: `routeorch.cpp:706-716`（`Vrf<name>:` プレフィックスキーの解決）
+- **意味**: key が `Vrf<name>:<prefix>` 形式の VRF 経路を処理する際、VRF SAI オブジェクトが未登録の場合は `it++; continue` で後回しになり APPL_STATE_DB への書き込みは行われない。VRF が存在しない間は当該 VRF の経路エントリは APPL_STATE_DB に出現しない。
+- **ブロッキング**: VRF SAI 未登録時は対象 VRF 経路の APPL_STATE_DB エントリが書かれない。VRF を先に CONFIG_DB で作成・処理完了させること。
+
+### 3. CONFIG_DB DEVICE_METADATA|localhost.suppress-fib-pending（suppression 機能スイッチ）
+
+- **参照先**: CONFIG_DB `DEVICE_METADATA|localhost` の `suppress-fib-pending` フィールド
+- **方向**: 読み取り（起動時）＋動的変更監視（`SubscriberStateTable` 購読）
+- **参照元**: `fpmsyncd.cpp:82-83`（`deviceMetadataTable`）、`fpmsyncd.cpp:113`（起動時読み取り）、`fpmsyncd.cpp:278-297`（動的変更追従）
+- **意味**: fpmsyncd が `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を購読して FRR zebra へ offload 通知を送るかどうかを制御する。`"enabled"` の場合のみ `NotificationConsumer` を生成し suppression を有効化する。APPL_STATE_DB への書き込み自体は suppression 設定に関わらず RouteOrch が行う。runtime に無効化された場合は `markRoutesOffloaded()` で全経路の offload フラグを一括復元する。
+
+### 4. fpmsyncd / RouteSync（RESPONSE_CHANNEL 購読 consumer）
+
+- **参照先**: `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL`（通知チャネル）、`APPL_STATE_DB ROUTE_TABLE`（Warm Restart 時読み出し）
+- **方向**: 読み取り（購読）
+- **参照元**: `fpmsyncd.cpp:78`（チャネル名定義）、`routesync.cpp:3165-3265`（`onRouteResponse()`）、`routesync.cpp:3290-3310`（`markRoutesOffloaded()`）
+- **意味**: fpmsyncd は RESPONSE_CHANNEL 経由で SAI プログラミング結果を受け取り、成功した経路について FRR zebra に RTM_NEWROUTE（offload フラグ付き）を送信する。Warm Restart 完了時（`onWarmStartEnd()`）は APPL_STATE_DB ROUTE_TABLE の全エントリを走査して一括 offload 通知を送る。
+
+### 5. route_check.py（APPL_STATE_DB 読み出し + RESPONSE_CHANNEL 注入）
+
+- **参照先**: `APPL_STATE_DB`、`APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL`
+- **方向**: 読み取り（整合確認）＋書き込み（RESPONSE_CHANNEL へ recovery 注入）
+- **参照元**: `scripts/route_check.py:767-771`（`mitigate_installed_not_offloaded_frr_routes()`）
+- **意味**: `route_check.py` は FRR に存在するが offload フラグが立っていない経路を検出した場合、`NotificationProducer` で `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` に `SWSS_RC_SUCCESS` を注入して fpmsyncd に offload 通知を再送させる。APPL_STATE_DB を直接書き換えるのではなくチャネル経由でフローを再起動する点が特徴。
+
+### 参照関係サマリ
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `APPL_DB ROUTE_TABLE` | 読み取り（書き込みトリガ） | 常時 | `routeorch.cpp:192, 622` |
+| `CONFIG_DB VRF` | 読み取り（VRF SAI OID 解決） | VRF 経路（`Vrf<name>:` プレフィックス）のみ | `routeorch.cpp:706-716` |
+| `CONFIG_DB DEVICE_METADATA\|localhost.suppress-fib-pending` | 読み取り + 動的監視 | fpmsyncd 起動時・runtime 変更時 | `fpmsyncd.cpp:82-118, 278-297` |
+| `fpmsyncd RouteSync`（RESPONSE_CHANNEL 購読） | 読み取り（offload 通知先） | suppression 有効時 + Warm Restart | `routesync.cpp:3165-3310` |
+| `route_check.py`（RESPONSE_CHANNEL 注入） | 読み取り + 注入 | 整合チェック実行時 | `route_check.py:767-771` |
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールドのコード由来デフォルト (Phase A)
 
