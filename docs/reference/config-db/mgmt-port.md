@@ -467,3 +467,44 @@ CONFIG_DB MGMT_PORT|eth0 (SET/DEL)
 > **注**: `MGMT_PORT` は CONFIG_DB に書き込まれても即時の event-driven コールバックを持つ consumer がいない。変化の伝搬は次回 monit 実行まで遅延する（最大 monit チェック間隔）。`admin_status` / `speed` / `autoneg` / `mtu` を変更しても、eth0 の物理設定への即時反映はない（Phase A の dead write 確認と整合）。
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`MGMT_PORT` の処理は SAI を一切経由しないため、ASIC 種別によるプラットフォーム差はない。ただし `speed` フィールドの有無は **HwSku（platform）依存** であり、以下に示す観点でプラットフォーム間に動作差が生じる。詳細根拠は [`meta/_intermediate/cdb-flow/mgmt-port-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/mgmt-port-platform.md) を参照。
+
+### A. speed フィールドの有無 — HwSku 依存
+
+`minigraph.py:parse_deviceinfo()` (L1675–1711) が minigraph XML の `<DeviceInfo><ManagementInterfaces><ManagementInterface><Speed>` 要素を読み込み、`port_speeds_default[alias]` に格納する。この値が存在する場合のみ `speed` フィールドが `MGMT_PORT` エントリに挿入される。
+
+```python
+# minigraph.py:2295-2296
+if alias in port_speeds_default:
+    results['MGMT_PORT'][name]['speed'] = port_speeds_default[alias]
+```
+
+| 状況 | `speed` フィールド | 典型例 |
+|---|---|---|
+| HwSku の ManagementInterface に Speed 定義あり | 挿入される（例: `"1000"`） | 多くの T0/T1 プラットフォーム |
+| HwSku の ManagementInterface に Speed 定義なし | フィールド省略（CONFIG_DB に存在しない） | chassis linecard 等 (`test_chassis_cfggen.py:116` — `speed` なしを確認) |
+
+### B. ASIC 種別 — 影響なし
+
+| 観点 | 結果 | 根拠 |
+|---|---|---|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | MGMT_PORT は SAI 非経由。eth0 は Linux netdev であり ASIC と独立 |
+| `portmgrd` の購読対象 | MGMT_PORT を**購読しない** | `portmgrd.cpp:28` — `CFG_PORT_TABLE_NAME`（= `"PORT"`）のみ購読 |
+
+### C. multi-asic 構成 — host-scoped で影響なし
+
+`MGMT_PORT` は host 側 CONFIG_DB (namespace = `""`) に置かれ、`asic0..N` namespace には存在しない。`mgmt_oper_status.py` も host CONFIG_DB の `MGMT_PORT|*` のみを参照し asic namespace を iterate しない（`mgmt_oper_status.py:16–22`）。
+
+### D. VOQ chassis (supervisor / line card) — 各 host 独立
+
+VOQ chassis 構成でも supervisor と各 line card が独立した eth0 を持ち、それぞれの host CONFIG_DB に MGMT_PORT エントリが置かれる。chassis 集中管理機構はなく、`admin_status="up"` のハードコード注入も各 host で同じ動作。
+
+### E. SmartSwitch DPU — MGMT_PORT 自体は通常通り
+
+`interfaces.j2` の DPU 条件分岐（DHCP フォールバック抑制）は `MGMT_INTERFACE` テーブルが空のときの話であり、`MGMT_PORT` テーブル自体の処理には影響しない。SmartSwitch DPU でも minigraph 由来の `MGMT_PORT` エントリは通常通り CONFIG_DB に投入される。
+
+<!-- /platform -->
