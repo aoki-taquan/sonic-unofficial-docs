@@ -28139,6 +28139,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンテナ起動時シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル間の書込み順依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        certs の解決優先順位
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35568,6 +35618,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンテナ起動時シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル間の書込み順依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        certs の解決優先順位
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35932,6 +36032,77 @@
 <p><strong>スキャン証跡</strong>: <code>sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh</code> の起動スクリプトより抽出。YANG <code>sonic-restapi.yang</code> には <code>default</code> 文なし。コード由来デフォルトのみ。</p>
 </blockquote>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>supervisord.conf</code>, <code>rest-server.sh</code>, <code>mgmt_vars.j2</code>, <code>minigraph.py</code> L2689–2702, <code>db_migrator.py</code> L608–619 精読 (2026-05-18)
+詳細証跡: <code>meta/_intermediate/cdb-flow/restapi-ordering.md</code></p>
+</blockquote>
+<h3 id="_17">コンテナ起動時シーケンス<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><code>docker-sonic-mgmt-framework</code> コンテナは supervisord が以下の優先順序でプロセスを制御する:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>1. rsyslogd 起動 (priority=1)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>2. start.sh 実行 (priority=2, wait_for=rsyslogd:running)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>3. rest-server.sh 実行 (priority=3, wait_for=start:exited)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>   ├─ sonic-cfggen -d -t mgmt_vars.j2 → REST_SERVER / x509 を CONFIG_DB から一括取得
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>   ├─ RESTAPI|config.client_auth / log_level / port 読込み
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>   ├─ RESTAPI|certs (server_crt / server_key / ca_crt) 読込み
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>   ├─ 未設定の場合は DEVICE_METADATA|x509 をフォールバック参照
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>   └─ 証明書も未設定の場合は /tmp/ に自己署名証明書を自動生成して起動
+</span></code></pre></div>
+<p><code>rest-server.sh</code> は <code>start:exited</code> 待機後に起動するため、CONFIG_DB への書込みが必ず先行する。</p>
+<h3 id="_18">テーブル間の書込み順依存<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>強制度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>RESTAPI|certs</code> 書込み → <code>rest-server.sh</code> 起動</td>
+<td><strong>起動時保証済み</strong></td>
+<td>supervisord <code>wait_for=start:exited</code> が順序を保証</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DEVICE_METADATA\|localhost.x509</code> 先行書込み</td>
+<td><strong>任意 (フォールバック)</strong></td>
+<td><code>RESTAPI|certs</code> が未設定の場合のみ参照。minigraph.py が両者を同一パスで生成するため通常は問題なし</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>db_migrator</code> による <code>RESTAPI</code> 移植</td>
+<td><strong>既存エントリ優先</strong></td>
+<td><code>config_db.get_entry('RESTAPI', 'config')</code> が空の場合のみ書込む。既存エントリは上書きしない (<code>db_migrator.py</code> L614–619)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>minigraph.py</code> が <code>RESTAPI</code> を生成</td>
+<td><strong>minigraph 内部</strong></td>
+<td><code>FEATURE</code> テーブルと同一の minigraph 解析パスで生成される (<code>minigraph.py</code> L2689-2702)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>RESTAPI|config</code> / <code>RESTAPI|certs</code> 変更 → <code>docker-sonic-mgmt-framework</code> 再起動</td>
+<td><strong>必須後続</strong></td>
+<td>hot reload 未対応。変更反映にはコンテナ再起動が必要</td>
+</tr>
+</tbody>
+</table>
+<h3 id="certs">certs の解決優先順位<a class="headerlink" href="#certs" title="Permanent link">&para;</a></h3>
+<p><code>rest-server.sh</code> が証明書パスを決定する順序:</p>
+<ol>
+<li><code>RESTAPI|certs</code> (CONFIG_DB の <code>REST_SERVER</code> テーブル) に <code>server_crt</code> / <code>server_key</code> / <code>ca_crt</code> が設定されている場合はそれを使用</li>
+<li>上記が未設定かつ <code>DEVICE_METADATA|localhost.x509</code> にパスが設定されている場合はフォールバック参照</li>
+<li>どちらも未設定の場合は <code>generate_cert --host="localhost,127.0.0.1"</code> で <code>/tmp/cert.pem</code> / <code>/tmp/key.pem</code> を自動生成</li>
+</ol>
+<p>本番環境では <code>RESTAPI|certs</code> を明示的に設定しないと自己署名証明書が使用される点に注意。</p>
+<!-- /ordering -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
 

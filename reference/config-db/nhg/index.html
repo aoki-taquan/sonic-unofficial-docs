@@ -23840,6 +23840,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP グループ数上限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部キー区切り文字
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム識別子
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35202,6 +35252,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP グループ数上限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部キー区切り文字
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム識別子
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35674,6 +35774,94 @@
 <li><code>validateNextHop</code> / <code>invalidateNextHop</code> の失敗時は即 <code>return false</code> で後続 NHG への適用を中断する（<code>nhgorch.cpp:477-483, 513-519</code>）。</li>
 </ul>
 <!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/nhg-constants.md -->
+
+<p><code>NEXTHOP_GROUP_TABLE</code> / <code>NhgOrch</code> / <code>RouteOrch</code> に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は <code>sonic-swss/orchagent/routeorch.cpp</code>、<code>nexthopkey.h</code>、<code>orch.h</code>。</p>
+<h3 id="ecmp_1">ECMP グループ数上限<a class="headerlink" href="#ecmp_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_NUMBER_OF_ECMP_GROUPS</code></td>
+<td><code>128</code></td>
+<td><code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> の取得に失敗した場合のフォールバック上限値</td>
+<td><code>routeorch.cpp</code> L37</td>
+</tr>
+<tr>
+<td><code>DEFAULT_MAX_ECMP_GROUP_SIZE</code></td>
+<td><code>32</code></td>
+<td>Mellanox プラットフォームで <code>m_maxNextHopGroupCount</code> を除算するサイズ。Mellanox の SAI は ECMP group size=1 前提の最大数を返すため除算が必要</td>
+<td><code>routeorch.cpp</code> L38, L86</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>動作ロジック</strong>: <code>RouteOrch</code> 初期化時に <code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> を ASIC から取得する。取得失敗時は <code>128</code> をフォールバックとして使用。Mellanox プラットフォーム (<code>platform</code> 環境変数に <code>"mellanox"</code> を含む場合) では取得値を <code>32</code> で除算する。最終値は <code>SWITCH_TABLE:switch:MAX_NEXTHOP_GROUP_COUNT</code> として STATE_DB に書き込まれる。</p>
+</blockquote>
+<h3 id="_12">内部キー区切り文字<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NHG_DELIMITER</code></td>
+<td><code>','</code> (コンマ)</td>
+<td><code>nexthop</code>/<code>ifname</code>/<code>weight</code> 等の comma-separated フィールドの区切り。<code>NextHopGroupKey</code> の内部文字列表現にも使用</td>
+<td><code>nexthopkey.h</code> L19</td>
+</tr>
+<tr>
+<td><code>NH_DELIMITER</code></td>
+<td><code>'@'</code></td>
+<td><code>NextHopKey</code> の IP アドレスとインタフェース名の区切り (例: <code>10.0.0.1@Ethernet0</code>)</td>
+<td><code>nexthopkey.h</code> L18</td>
+</tr>
+<tr>
+<td><code>LABELSTACK_DELIMITER</code></td>
+<td><code>'+'</code></td>
+<td>MPLS ラベルスタック内のラベル区切り (例: <code>100+200</code>)</td>
+<td><code>nexthopkey.h</code> L17</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_13">プラットフォーム識別子<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MLNX_PLATFORM_SUBSTRING</code></td>
+<td><code>"mellanox"</code></td>
+<td>環境変数 <code>platform</code> 内に含まれるかを検索して Mellanox プラットフォームを識別。Mellanox 専用の ECMP グループ数再計算ロジックを有効化</td>
+<td><code>orch.h</code> L42</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: <code>NHG_DELIMITER</code>/<code>NH_DELIMITER</code>/<code>LABELSTACK_DELIMITER</code> は APPL_DB フィールド値 (comma-separated 文字列) のパース専用の内部定数であり、CONFIG_DB には露出しない。</p>
+</blockquote>
+<!-- /constants -->
 
 <!-- glossary-links-injected: nhg-2026-0515 -->
 

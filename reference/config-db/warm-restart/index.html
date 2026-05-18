@@ -29982,6 +29982,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 読み取りタイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        モジュール別 CONFIG_DB 読み取り順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-warm-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent warm start 内部実行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-enable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 経由の enable フラグ依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35390,6 +35451,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 読み取りタイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        モジュール別 CONFIG_DB 読み取り順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-warm-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent warm start 内部実行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-enable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 経由の enable フラグ依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35729,6 +35851,121 @@
 <p><code>finalize-warmboot.sh</code> の <code>finalize_fast_reboot()</code> は <code>CONFIG_DB DEL "WARM_RESTART|teamd"</code> を実行する。
 fast-reboot 後に <code>teamsyncd_timer</code> エントリが削除される副作用がある。</p>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="config_db">CONFIG_DB 読み取りタイミング<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>WARM_RESTART</code> テーブルの値はすべて<strong>各プロセスの起動時一回読み</strong>であり、<code>SubscriberStateTable</code> による動的購読は行わない。<code>WarmStart::initialize()</code> → <code>WarmStart::checkWarmStart()</code> → <code>WarmStart::getWarmStartTimer()</code> の順序で同期的に実行される。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>プロセス起動
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ├─ WarmStart::initialize(app_name, docker_name)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  │    CONFIG_DB コネクタ生成 + CFG_WARM_RESTART_TABLE_NAME テーブル接続
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  │    warm_restart.cpp L35-62
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  ├─ WarmStart::checkWarmStart(app_name, docker_name)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  │    STATE_DB WARM_RESTART_ENABLE_TABLE[&quot;system&quot;][&quot;enable&quot;] 確認
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  │    STATE_DB WARM_RESTART_ENABLE_TABLE[docker_name][&quot;enable&quot;] 確認
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  │    STATE_DB WARM_RESTART_TABLE[app_name][&quot;restore_count&quot;] 確認
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  │    warm_restart.cpp L86-147
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  └─ WarmStart::getWarmStartTimer(app_name, docker_name)   ← warm start のときのみ
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>       CONFIG_DB WARM_RESTART[docker_name][app_name+&quot;_timer&quot;] 読み取り
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>       warm_restart.cpp L149-172
+</span></code></pre></div>
+<h3 id="config_db_1">モジュール別 CONFIG_DB 読み取り順序<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
+<p><code>WARM_RESTART</code> テーブルの <code>&lt;app&gt;_timer</code> フィールドは各プロセスが個別に読み取る。呼び出し元と参照フィールドの対応:</p>
+<table>
+<thead>
+<tr>
+<th>プロセス</th>
+<th>docker_name</th>
+<th>参照フィールド</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orchagent</code></td>
+<td><code>swss</code></td>
+<td>─ (timer は参照しない)</td>
+<td><code>sonic-swss/orchagent/main.cpp:433-434</code></td>
+</tr>
+<tr>
+<td><code>teamsyncd</code></td>
+<td><code>teamd</code></td>
+<td><code>teamsyncd_timer</code></td>
+<td><code>sonic-swss/teamsyncd/teamsync.cpp:32-39</code></td>
+</tr>
+<tr>
+<td><code>fpmsyncd</code></td>
+<td><code>bgp</code></td>
+<td><code>eoiu_hold_timer</code> (bgp_eoiu_marker からは bgp_timer)</td>
+<td><code>sonic-swss/fpmsyncd/fpmsyncd.cpp:226</code></td>
+</tr>
+<tr>
+<td><code>fdbsyncd</code></td>
+<td><code>bgp</code></td>
+<td><code>bgp_timer</code> (LAG reconcile 待ち参照)</td>
+<td><code>sonic-swss/fdbsyncd/fdbsyncd.cpp:115</code></td>
+</tr>
+<tr>
+<td><code>portsyncd</code></td>
+<td><code>swss</code></td>
+<td>─</td>
+<td><code>sonic-swss/portsyncd/portsyncd.cpp:80-81</code></td>
+</tr>
+<tr>
+<td><code>vlanmgrd</code></td>
+<td><code>swss</code></td>
+<td>─</td>
+<td><code>sonic-swss/cfgmgr/vlanmgrd.cpp:48-49</code></td>
+</tr>
+<tr>
+<td><code>intfmgrd</code></td>
+<td><code>swss</code></td>
+<td>─</td>
+<td><code>sonic-swss/cfgmgr/intfmgrd.cpp:41-42</code></td>
+</tr>
+<tr>
+<td><code>nbrmgrd</code></td>
+<td><code>swss</code></td>
+<td>─</td>
+<td><code>sonic-swss/cfgmgr/nbrmgrd.cpp:42-43</code></td>
+</tr>
+<tr>
+<td><code>buffermgrd</code></td>
+<td><code>swss</code></td>
+<td>─</td>
+<td><code>sonic-swss/cfgmgr/buffermgrd.cpp:169-170</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>getWarmStartTimer()</code> は <code>warm start</code> が有効な場合のみ呼ばれる。有効でない場合は <code>checkWarmStart()</code> が <code>false</code> を返した時点でタイマー読み取りをスキップする。</p>
+<h3 id="orchagent-warm-start">orchagent warm start 内部実行順序<a class="headerlink" href="#orchagent-warm-start" title="Permanent link">&para;</a></h3>
+<p><code>WarmStart::isWarmStart()</code> が <code>true</code> の場合、<code>OrchDaemon::init()</code> の末尾で <code>warmRestoreAndSyncUp()</code> が実行される。内部順序 (<code>orchdaemon.cpp L1092-1170</code>):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>1. WarmStart::setWarmStartState(&quot;orchagent&quot;, INITIALIZED)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>2. 全 Orch に対して o-&gt;bake()       ← APP_DB/CONFIG_DB の既存データをキャッシュ
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>3. gMuxOrch-&gt;enableCachingNeighborUpdate()
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>4. 全 Orch に対して o-&gt;doTask() × 3 回イテレーション
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>   第1回: SwitchOrch + PortsOrch (port init/hostif) + BufferOrch
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>   第2回: port speed/mtu/fec_mode 等 + 残 Orch
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>   第3回: 順序外れデータの消化
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>5. gMuxOrch-&gt;updateCachedNeighbors() / disableCachingNeighborUpdate()
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>6. gMirrorOrch-&gt;doTask() + gAclOrch-&gt;doTask()   ← 最後に実行（他 Orch に依存するため）
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>7. warmRestoreValidation()   → 未処理タスクがあれば NOTICE ログ
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>8. syncd_apply_view()
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>9. 全 Orch に対して o-&gt;onWarmBootEnd()
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>10. WarmStart::setWarmStartState(&quot;orchagent&quot;, RECONCILED)
+</span></code></pre></div>
+<blockquote>
+<p><strong>ポイント</strong>: <code>gMirrorOrch</code> は他 Orch がすべて処理を終えた後に初めて doTask() される (<code>orchdaemon.cpp:1140-1145</code>)。warm start 中に MirrorOrch を早期実行すると、依存する route/neighbor が未確立のまま ACL ルールが適用される危険があるため。</p>
+</blockquote>
+<h3 id="state_db-enable">STATE_DB 経由の enable フラグ依存<a class="headerlink" href="#state_db-enable" title="Permanent link">&para;</a></h3>
+<p><code>checkWarmStart()</code> が参照する <code>STATE_DB WARM_RESTART_ENABLE_TABLE</code> は <code>CONFIG_DB WARM_RESTART</code> テーブルとは別の DB。enable フラグ (<code>config warm_restart enable system/bgp/teamd/swss</code>) は CONFIG_DB でなく <strong>STATE_DB</strong> に書き込まれる。そのため:</p>
+<ol>
+<li><code>STATE_DB</code> が先に起動していること（<code>redis-server</code> と <code>sonic-db-daemon</code> の起動完了）が前提</li>
+<li><code>CONFIG_DB</code> の <code>WARM_RESTART</code> テーブル (<code>bgp_timer</code> 等タイマー値) は STATE_DB の enable フラグが true になった後に初めて意味を持つ</li>
+<li>タイマー値を変更しても、enable フラグが false であれば <code>getWarmStartTimer()</code> は呼ばれずコールドスタートになる</li>
+</ol>
+<!-- evidence: warm_restart.cpp L86-95 (checkWarmStart), L149-172 (getWarmStartTimer), orchdaemon.cpp L1099-1170 (warmRestoreAndSyncUp) -->
+<!-- /ordering -->
 
 <!-- glossary-links-injected: ddc022697593 -->
 

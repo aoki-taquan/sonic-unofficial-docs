@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A+B 分析。">
+        <meta name="description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズムを詳細解説。Phase A+B+C+D+E+F+G 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP_VLAN / STP_VLAN_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A+B 分析。" />
+<meta property="og:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズムを詳細解説。Phase A+B+C+D+E+F+G 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-vlan.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-vlan/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP_VLAN / STP_VLAN_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A+B 分析。" />
+<meta property="twitter:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズムを詳細解説。Phase A+B+C+D+E+F+G 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-vlan.png" />
 </head>
   
@@ -29010,6 +29010,471 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照（テーブル間依存）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照（テーブル間依存）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stpglobal-l2protoenabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STP|GLOBAL — l2ProtoEnabled フラグ源（必須依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stp_port-stpporttask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STP_PORT — stpPortTask フラグ源（条件付き必須）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-state_dbstate_vlan_table-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STATE_DB:STATE_VLAN_TABLE — VLAN 準備確認（必須依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-state_dbstate_vlan_member_table-pvst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. STATE_DB:STATE_VLAN_MEMBER_TABLE — PVST インスタンス割当時のポートメンバー参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-stpmgrd-m_vlaninstmap-stp_vlan_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. stpmgrd 内部 m_vlanInstMap[] — STP_VLAN_PORT への暗黙連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-stp_vlan_port-cfg-vlanmember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. STP_VLAN_PORT (cfg) — VlanMember 変化時の遅延再送
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-stpd-ipc-socket-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. stpd IPC socket — STP デーモンへの通知（出力）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照関係サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1〜3. 保留パターン（自動リトライ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. インスタンス枯渇 → エントリ破棄
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-calloc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5〜6. calloc 失敗 → キュー保留（全エントリ影響）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#78-sendmsgstpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7〜8. sendMsgStpd 失敗 → サイレントドロップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1112-stp_vlan_port-l2protoenabled-m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11〜12. STP_VLAN_PORT — l2ProtoEnabled / m_vlanInstMap ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-lag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. LAG メンバーなし → サイレントドロップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-stoi-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. stoi 例外 → stpmgrd プロセス終了
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. VLAN・インスタンス上限定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-m_vlaninstmap-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. m_vlanInstMap — VLAN→インスタンスマッピング配列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ソケットパス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. VLAN タグモード定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-select_timeout-swssdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SELECT_TIMEOUT — swssdk ループタイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数一覧サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・波及挙動 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・波及挙動 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stp_vlan-set-pvst-m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STP_VLAN SET (PVST 初回有効化) — m_vlanInstMap へのインスタンス割当
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stp_vlan-set-stpd-stp_vlan_config-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STP_VLAN SET — stpd への STP_VLAN_CONFIG IPC 送信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stp_vlan-set-pvst-state_vlan_member_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STP_VLAN SET (PVST 初回) — STATE_VLAN_MEMBER_TABLE 読み取りとポート一覧付加
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-stp_vlan-del-m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. STP_VLAN DEL — m_vlanInstMap リセット（インスタンス解放）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-state_vlan_member_table-stp_vlan_port-stpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. STATE_VLAN_MEMBER_TABLE 変化 — STP_VLAN_PORT 値の stpd 再送（間接副作用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用サマリー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tableconnector-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: TableConnector + ConsumerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrdcpp4365" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読テーブル一覧 (stpmgrd.cpp:43–65)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrdcpp92117" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベントループ (stpmgrd.cpp:92–117)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrd-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpmgrd が参照する STATE_DB テーブル（読み取り専用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知フロー（STP_VLAN 変更の場合）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29021,7 +29486,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29032,7 +29497,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35158,6 +35623,471 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照（テーブル間依存）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照（テーブル間依存）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stpglobal-l2protoenabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STP|GLOBAL — l2ProtoEnabled フラグ源（必須依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stp_port-stpporttask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STP_PORT — stpPortTask フラグ源（条件付き必須）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-state_dbstate_vlan_table-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STATE_DB:STATE_VLAN_TABLE — VLAN 準備確認（必須依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-state_dbstate_vlan_member_table-pvst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. STATE_DB:STATE_VLAN_MEMBER_TABLE — PVST インスタンス割当時のポートメンバー参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-stpmgrd-m_vlaninstmap-stp_vlan_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. stpmgrd 内部 m_vlanInstMap[] — STP_VLAN_PORT への暗黙連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-stp_vlan_port-cfg-vlanmember" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. STP_VLAN_PORT (cfg) — VlanMember 変化時の遅延再送
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-stpd-ipc-socket-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. stpd IPC socket — STP デーモンへの通知（出力）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照関係サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1〜3. 保留パターン（自動リトライ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. インスタンス枯渇 → エントリ破棄
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-calloc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5〜6. calloc 失敗 → キュー保留（全エントリ影響）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#78-sendmsgstpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7〜8. sendMsgStpd 失敗 → サイレントドロップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1112-stp_vlan_port-l2protoenabled-m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11〜12. STP_VLAN_PORT — l2ProtoEnabled / m_vlanInstMap ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-lag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. LAG メンバーなし → サイレントドロップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-stoi-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. stoi 例外 → stpmgrd プロセス終了
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. VLAN・インスタンス上限定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-m_vlaninstmap-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. m_vlanInstMap — VLAN→インスタンスマッピング配列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ソケットパス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. VLAN タグモード定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-select_timeout-swssdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SELECT_TIMEOUT — swssdk ループタイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数一覧サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・波及挙動 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・波及挙動 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stp_vlan-set-pvst-m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STP_VLAN SET (PVST 初回有効化) — m_vlanInstMap へのインスタンス割当
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stp_vlan-set-stpd-stp_vlan_config-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. STP_VLAN SET — stpd への STP_VLAN_CONFIG IPC 送信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stp_vlan-set-pvst-state_vlan_member_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STP_VLAN SET (PVST 初回) — STATE_VLAN_MEMBER_TABLE 読み取りとポート一覧付加
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-stp_vlan-del-m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. STP_VLAN DEL — m_vlanInstMap リセット（インスタンス解放）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-state_vlan_member_table-stp_vlan_port-stpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. STATE_VLAN_MEMBER_TABLE 変化 — STP_VLAN_PORT 値の stpd 再送（間接副作用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用サマリー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tableconnector-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: TableConnector + ConsumerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrdcpp4365" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読テーブル一覧 (stpmgrd.cpp:43–65)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrdcpp92117" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベントループ (stpmgrd.cpp:92–117)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrd-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpmgrd が参照する STATE_DB テーブル（読み取り専用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知フロー（STP_VLAN 変更の場合）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35169,7 +36099,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35180,7 +36110,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35535,6 +36465,708 @@ PVST 有効化・VLAN 有効化のいずれの処理でも <code>STP_VLAN_PORT</
 </table>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="_4">暗黙参照（テーブル間依存）<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-cross-refs.md -->
+
+<p><code>STP_VLAN</code> / <code>STP_VLAN_PORT</code> テーブルを処理する <code>StpMgr::doStpVlanTask()</code> / <code>doStpVlanPortTask()</code> が実行時に参照する他テーブル・Orch 内状態。YANG の leafref 定義は VLAN への参照のみで、それ以外は実装レベルの暗黙依存である。コード調査の詳細は <code>meta/_intermediate/cdb-flow/stp-vlan-cross-refs.md</code> に記録した。</p>
+<h3 id="1-stpglobal-l2protoenabled">1. <code>STP|GLOBAL</code> — l2ProtoEnabled フラグ源（必須依存）<a class="headerlink" href="#1-stpglobal-l2protoenabled" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先</strong>: CONFIG_DB <code>STP|GLOBAL</code> → stpmgrd 内部変数 <code>l2ProtoEnabled</code></li>
+<li><strong>方向</strong>: 読み取り（<code>stpmgr.cpp:210</code>）</li>
+<li><strong>意味</strong>: <code>doStpGlobalTask()</code> が <code>STP|GLOBAL.mode</code> (<code>pvst</code> / <code>mst</code>) を受信し <code>l2ProtoEnabled</code> を <code>L2_PVSTP</code> / <code>L2_MSTP</code> に設定する。<code>l2ProtoEnabled == L2_NONE</code> のまま <code>STP_VLAN</code> SET が届いた場合はイテレータを進めて silent skip される。</li>
+<li><strong>非対称性</strong>: <code>STP|GLOBAL</code> 受信前に書き込んだ <code>STP_VLAN</code> エントリはキューに残りモードが確定後のループで自動処理される。</li>
+</ul>
+<h3 id="2-stp_port-stpporttask">2. <code>STP_PORT</code> — stpPortTask フラグ源（条件付き必須）<a class="headerlink" href="#2-stp_port-stpporttask" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先</strong>: CONFIG_DB <code>STP_PORT</code> → stpmgrd 内部フラグ <code>stpPortTask</code></li>
+<li><strong>方向</strong>: 読み取り（<code>stpmgr.cpp:183-185</code>）</li>
+<li><strong>意味</strong>: <code>doStpPortTask()</code> が <code>STP_PORT</code> の最初の SET を受け取ると <code>stpPortTask = true</code> に設定する。ポートが存在しない場合（<code>isStpPortEmpty()</code> = true、<code>m_cfgStpPortTable.getKeys()</code> が空）はフラグなしで通過可能。</li>
+<li><strong>参照コード</strong>:
+  <div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">stpPortTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isStpPortEmpty</span><span class="p">()))</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span></code></pre></div>
+  <code>stpmgr.cpp:1326-1335</code></li>
+</ul>
+<h3 id="3-state_dbstate_vlan_table-vlan">3. <code>STATE_DB:STATE_VLAN_TABLE</code> — VLAN 準備確認（必須依存）<a class="headerlink" href="#3-state_dbstate_vlan_table-vlan" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先</strong>: STATE_DB <code>STATE_VLAN_TABLE|Vlan&lt;vid&gt;</code> (vlanmgrd が書き込む)</li>
+<li><strong>方向</strong>: 読み取り（<code>stpmgr.cpp:1276-1290</code>、<code>isVlanStateOk()</code>）</li>
+<li><strong>意味</strong>: <code>doStpVlanTask()</code> SET ハンドラ内 (<code>stpmgr.cpp:210</code>) で <code>isVlanStateOk(key)</code> を確認する。対象 VLAN が STATE_VLAN_TABLE に存在しない場合 SET はイテレータを進めて持ち越し（silent skip）。<code>vlanmgrd</code> が ASIC 適用後に STATE_VLAN_TABLE を書き込むまで繰り返される。</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">vlanmgrd との順序依存</p>
+<p><code>config spanning-tree enable pvst</code> 直後など、対象 VLAN の <code>STATE_VLAN_TABLE</code> エントリが未書込の状態で <code>STP_VLAN</code> SET が到達しても処理されない。エラーログは出力されず、次の SELECT ループで自動リトライされる。</p>
+</div>
+<h3 id="4-state_dbstate_vlan_member_table-pvst">4. <code>STATE_DB:STATE_VLAN_MEMBER_TABLE</code> — PVST インスタンス割当時のポートメンバー参照<a class="headerlink" href="#4-state_dbstate_vlan_member_table-pvst" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先</strong>: STATE_DB <code>STATE_VLAN_MEMBER_TABLE</code> (vlanmgrd が管理)</li>
+<li><strong>方向</strong>: 読み取り（<code>stpmgr.cpp:938</code>、<code>getAllVlanMem()</code>）</li>
+<li><strong>意味</strong>: PVST 新規 VLAN インスタンス割当時 (<code>newInstance = 1</code>、<code>m_vlanInstMap[vlan_id] == INVALID_INSTANCE</code>)、<code>getAllVlanMem()</code> が <code>STATE_VLAN_MEMBER_TABLE</code> から当該 VLAN の全メンバーポートを取得し <code>STP_VLAN_CONFIG</code> IPC メッセージに付加する。MST モードでは参照されない。</li>
+</ul>
+<h3 id="5-stpmgrd-m_vlaninstmap-stp_vlan_port">5. stpmgrd 内部 <code>m_vlanInstMap[]</code> — <code>STP_VLAN_PORT</code> への暗黙連鎖<a class="headerlink" href="#5-stpmgrd-m_vlaninstmap-stp_vlan_port" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先</strong>: stpmgrd 内部配列 <code>m_vlanInstMap[MAX_VLANS]</code></li>
+<li><strong>方向</strong>: <code>STP_VLAN</code> 処理時に書き込み → <code>STP_VLAN_PORT</code> 処理時に読み取り</li>
+<li><strong>意味</strong>: <code>allocL2Instance(vlan_id)</code> / <code>deallocL2Instance(vlan_id)</code> が <code>m_vlanInstMap[vlan_id]</code> を設定する。<code>doStpVlanPortTask()</code> は <code>m_vlanInstMap[vlan_id] == INVALID_INSTANCE</code> の間、同 VLAN の全 SET を silent skip する。</li>
+<li><strong>参照コード</strong> (<code>stpmgr.cpp:486-495</code>):
+  <div class="language-cpp highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">l2ProtoEnabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">L2_NONE</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_vlanInstMap</span><span class="p">[</span><span class="n">vlan_id</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">INVALID_INSTANCE</span><span class="p">))</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="p">{</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">    </span><span class="n">it</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="p">}</span>
+</span></code></pre></div></li>
+</ul>
+<h3 id="6-stp_vlan_port-cfg-vlanmember">6. <code>STP_VLAN_PORT</code> (cfg) — VlanMember 変化時の遅延再送<a class="headerlink" href="#6-stp_vlan_port-cfg-vlanmember" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先</strong>: CONFIG_DB <code>STP_VLAN_PORT</code> (m_cfgStpVlanPortTable)</li>
+<li><strong>方向</strong>: 読み取り（<code>stpmgr.cpp:732, 844</code>）</li>
+<li><strong>意味</strong>: <code>doVlanMemUpdateTask()</code> が <code>STATE_VLAN_MEMBER_TABLE</code> 変化（ポートの VLAN 参加/離脱）を検知した際、既存の <code>STP_VLAN_PORT</code> エントリを参照して path_cost / priority の設定済み値を stpd へ再送する。</li>
+</ul>
+<h3 id="7-stpd-ipc-socket-stp">7. stpd IPC socket — STP デーモンへの通知（出力）<a class="headerlink" href="#7-stpd-ipc-socket-stp" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>参照先</strong>: Unix Domain Socket <code>/var/run/stpipc.sock</code> (stpd が待ち受け)</li>
+<li><strong>方向</strong>: 書き込み（<code>stpmgr.cpp:332</code>、<code>sendMsgStpd(STP_VLAN_CONFIG, ...)</code>）</li>
+<li><strong>意味</strong>: <code>STP_VLAN</code> SET 処理後に <code>STP_VLAN_CONFIG</code> IPC メッセージを stpd に送信する。<code>STP_VLAN_PORT</code> は <code>STP_VLAN_PORT_CONFIG</code> として送信される。CONFIG_DB から APPL_DB / ASIC_DB への書き込みは行わず、IPC 経由で stpd が直接 ASIC を制御する構成になっている。</li>
+</ul>
+<h3 id="_5">参照関係サマリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>STP_VLAN / STP_VLAN_PORT
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>  |- [必須フラグ]  STP|GLOBAL → l2ProtoEnabled (stpmgrd 内部; 欠如時 silent skip)
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>  |- [条件必須]    STP_PORT → stpPortTask (stpmgrd 内部; ポートなし時は不要)
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>  |- [必須状態]    STATE_DB:STATE_VLAN_TABLE|Vlan&lt;vid&gt; (vlanmgrd が書込; 欠如時 silent skip)
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>  |- [PVST限定]    STATE_DB:STATE_VLAN_MEMBER_TABLE (インスタンス初回割当時のみ参照)
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>  |- [内部連鎖]    m_vlanInstMap[] (STP_VLAN 処理後 → STP_VLAN_PORT の silent skip 解除)
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>  |- [遅延再送]    STP_VLAN_PORT cfg (VlanMem 変化時の path_cost/priority 再送)
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>  `- [出力先]      stpd IPC socket (CONFIG_DB→ASIC 経路は IPC のみ; APPL_DB 書込なし)
+</span></code></pre></div>
+<!-- /cross-refs -->
+
+<hr />
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-failure.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+<p><code>stpmgrd</code> は orchagent の <code>task_need_retry</code> / <code>task_failed</code> 戻り値機構を持たない。
+代わりに「エントリを <code>m_toSync</code> に残す（保留）」か「<code>m_toSync.erase()</code> する（消費）」かで
+リトライ有無が決まる。<code>SELECT_TIMEOUT = 1000ms</code> で次のループ実行まで最大 1 秒待機する。</p>
+<h3 id="_6">失敗パス一覧<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗トリガー</th>
+<th>ハンドラ</th>
+<th>処置</th>
+<th>リトライ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>起動ガード未満足 (<code>stpGlobalTask</code> / <code>stpPortTask</code> 未到達)</td>
+<td><code>doStpVlanTask</code></td>
+<td><code>return</code>（保留）</td>
+<td>あり（1秒後ループ）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>l2ProtoEnabled == L2_NONE</code>（モード未確定）</td>
+<td><code>doStpVlanTask</code> SET</td>
+<td><code>it++</code>（保留）</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>isVlanStateOk()</code> 失敗（STATE_VLAN 未書込み）</td>
+<td><code>doStpVlanTask</code> SET</td>
+<td><code>it++</code>（保留）</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>allocL2Instance()</code> 失敗（インスタンス枯渇）</td>
+<td><code>doStpVlanTask</code> SET</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>erase</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>calloc</code> 失敗（SET <code>STP_VLAN_CONFIG_MSG</code>）</td>
+<td><code>doStpVlanTask</code></td>
+<td><code>SWSS_LOG_ERROR</code>, <code>return</code>（保留）</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>calloc</code> 失敗（DEL <code>STP_VLAN_CONFIG_MSG</code>）</td>
+<td><code>doStpVlanTask</code></td>
+<td><code>SWSS_LOG_ERROR</code>, <code>return</code>（保留）</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>sendMsgStpd</code> calloc 失敗</td>
+<td><code>sendMsgStpd</code> 共通</td>
+<td><code>SWSS_LOG_ERROR</code>, <code>return -1</code>（呼び元無視）</td>
+<td>なし（エントリ消費済み）</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>sendMsgStpd</code> <code>sendto</code> 失敗</td>
+<td><code>sendMsgStpd</code> 共通</td>
+<td><code>SWSS_LOG_ERROR</code>, <code>return -1</code>（呼び元無視）</td>
+<td>なし（エントリ消費済み）</td>
+</tr>
+<tr>
+<td>9</td>
+<td>起動ガード未満足（全 3 フラグ未到達）</td>
+<td><code>doStpVlanPortTask</code></td>
+<td><code>return</code>（保留）</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>10</td>
+<td>無効キー形式（<code>Vlan&lt;vid&gt;\|&lt;intf&gt;</code> セパレータなし）</td>
+<td><code>doStpVlanPortTask</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>erase</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>11</td>
+<td>SET: <code>l2ProtoEnabled == L2_NONE</code> または <code>m_vlanInstMap[vid] == INVALID_INSTANCE</code></td>
+<td><code>doStpVlanPortTask</code></td>
+<td><code>it++</code>（保留）</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>12</td>
+<td>DEL: <code>l2ProtoEnabled == L2_NONE</code> または <code>m_vlanInstMap[vid] == INVALID_INSTANCE</code></td>
+<td><code>doStpVlanPortTask</code></td>
+<td><code>erase</code>（ログなし）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>isLagEmpty()</code> = true（LAG メンバーなし）</td>
+<td><code>doStpVlanPortTask</code></td>
+<td><code>erase</code>（ログなし）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>14</td>
+<td><code>stoi</code> 例外（不正 vlan_id 文字列）</td>
+<td><code>doStpVlanTask</code></td>
+<td>未キャッチ → <code>stpmgrd</code> プロセス終了</td>
+<td>なし（プロセス再起動要）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">詳細<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h4 id="13">1〜3. 保留パターン（自動リトライ）<a class="headerlink" href="#13" title="Permanent link">&para;</a></h4>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1">// doStpVlanTask — stpmgr.cpp:183-185</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">stpPortTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isStpPortEmpty</span><span class="p">()))</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span><span class="w">  </span><span class="c1">// キューに残り 1 秒後に再試行</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1">// stpmgr.cpp:210</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">l2ProtoEnabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">L2_NONE</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">isVlanStateOk</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="p">{</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">    </span><span class="n">it</span><span class="o">++</span><span class="p">;</span><span class="w">    </span><span class="c1">// イテレータ進め、次の SELECT で再試行</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>stpGlobalTask</code> / <code>stpPortTask</code> が立つか、STP モード確定・VLAN STATE 登録が行われるまで
+エントリが蓄積され続ける（エラーログなし）。</p>
+<h4 id="4">4. インスタンス枯渇 → エントリ破棄<a class="headerlink" href="#4" title="Permanent link">&para;</a></h4>
+<p>PVST モードで VLAN STP 有効化時、空き STP インスタンス (<code>allocL2Instance()</code>) が存在しない場合:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">// stpmgr.cpp:263-269</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">instId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocL2Instance</span><span class="p">(</span><span class="n">vlan_id</span><span class="p">);</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">instId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="p">{</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Couldnt allocate instance to VLAN %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">vlan_id</span><span class="p">);</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="p">.</span><span class="n">m_toSync</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span><span class="w">  </span><span class="c1">// エントリを破棄</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>IS_INST_ID_AVAILABLE()</code> が <code>false</code> の場合（最大 255 インスタンス到達）に発生する。
+リトライされないため、該当 VLAN の STP は有効化されないまま残る。</p>
+<h4 id="56-calloc">5〜6. calloc 失敗 → キュー保留（全エントリ影響）<a class="headerlink" href="#56-calloc" title="Permanent link">&para;</a></h4>
+<p><code>STP_VLAN_CONFIG_MSG</code> の <code>calloc</code> 失敗は SET / DEL 両方で <code>return</code> するため、
+失敗した時点でキューの残りエントリも処理されずに保留される。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1">// stpmgr.cpp:278-283</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">STP_VLAN_CONFIG_MSG</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">calloc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">);</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="p">{</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;mem failed for vlan %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">vlan_id</span><span class="p">);</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span><span class="w">  </span><span class="c1">// 処理途中で全エントリが保留</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="78-sendmsgstpd">7〜8. sendMsgStpd 失敗 → サイレントドロップ<a class="headerlink" href="#78-sendmsgstpd" title="Permanent link">&para;</a></h4>
+<p><code>sendMsgStpd()</code> の戻り値はすべての呼び出し元でチェックされない。
+calloc / <code>sendto</code> 失敗でも呼び元は <code>m_toSync.erase(it)</code> でエントリを破棄する。
+IPC 送信失敗はサイレントに失われ、stpd への通知が届かない。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1">// stpmgr.cpp:333-336 (典型パターン)</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">sendMsgStpd</span><span class="p">(</span><span class="n">STP_VLAN_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">msg</span><span class="p">);</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="p">.</span><span class="n">m_toSync</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span><span class="w">  </span><span class="c1">// 戻り値チェックなし</span>
+</span></code></pre></div>
+<h4 id="1112-stp_vlan_port-l2protoenabled-m_vlaninstmap">11〜12. STP_VLAN_PORT — l2ProtoEnabled / m_vlanInstMap ガード<a class="headerlink" href="#1112-stp_vlan_port-l2protoenabled-m_vlaninstmap" title="Permanent link">&para;</a></h4>
+<p>SET の場合はキュー保留（自動リトライ）、DEL の場合はサイレントドロップで非対称な挙動:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">// stpmgr.cpp:483-503</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">op</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SET_COMMAND</span><span class="p">)</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="p">{</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">l2ProtoEnabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">L2_NONE</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_vlanInstMap</span><span class="p">[</span><span class="n">vlan_id</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">INVALID_INSTANCE</span><span class="p">))</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">        </span><span class="n">it</span><span class="o">++</span><span class="p">;</span><span class="w">   </span><span class="c1">// SET: 保留</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">        </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="p">}</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="k">else</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="p">{</span>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">l2ProtoEnabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">L2_NONE</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_vlanInstMap</span><span class="p">[</span><span class="n">vlan_id</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">INVALID_INSTANCE</span><span class="p">))</span>
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="w">        </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="p">.</span><span class="n">m_toSync</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span><span class="w">  </span><span class="c1">// DEL: 破棄</span>
+</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="w">        </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-20-16"><a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-20-17"><a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="13-lag">13. LAG メンバーなし → サイレントドロップ<a class="headerlink" href="#13-lag" title="Permanent link">&para;</a></h4>
+<p><code>isLagEmpty(intfName)</code> が <code>true</code> の場合（PortChannel に物理ポートが参加していない）、
+<code>STP_VLAN_PORT</code> SET/DEL のエントリはログなしで <code>erase</code> される。
+LAG にメンバーが追加された時点で <code>doVlanMemUpdateTask()</code> が stpd への再送を担当する設計。</p>
+<h4 id="14-stoi-stpmgrd">14. stoi 例外 → stpmgrd プロセス終了<a class="headerlink" href="#14-stoi-stpmgrd" title="Permanent link">&para;</a></h4>
+<p><code>doStpVlanTask()</code> (<code>stpmgr.cpp:205</code>) で <code>vlanKey</code> に非数値文字列が含まれる場合、
+<code>stoi(vlanKey.c_str())</code> が <code>std::invalid_argument</code> / <code>std::out_of_range</code> をスローする。
+stpmgr.cpp 内では例外がキャッチされないため、<code>stpmgrd.cpp:119</code> のトップレベル catch まで
+伝播し <code>stpmgrd</code> プロセスが終了する。systemd により自動再起動されるが、
+再起動まで STP 設定変更は一切処理されない。CLI 経由ではキー形式が <code>Vlan&lt;vid&gt;</code> に強制
+されるため通常は発生しない。</p>
+<div class="admonition warning">
+<p class="admonition-title">直接 DB 操作による stpmgrd クラッシュ</p>
+<p><code>STP_VLAN</code> テーブルのキーを CLI 外から不正な形式（<code>Vlan</code> プレフィックスなし等）で
+書き込むと <code>stpmgrd</code> がクラッシュする。CLI 経由の操作では発生しない。</p>
+</div>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-constants.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.h ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+<p><code>stpmgr.h</code> と <code>stpmgrd.cpp</code> にハードコードされた定数の一覧。YANG 定義や CONFIG_DB スキーマには現れないが、挙動境界値として実装に埋め込まれている。</p>
+<h3 id="1-vlan">1. VLAN・インスタンス上限定数<a class="headerlink" href="#1-vlan" title="Permanent link">&para;</a></h3>
+<p><code>stpmgr.h:34–39</code>:</p>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="cp">#define MAX_VLANS               4096   </span><span class="c1">// VLAN ID 最大数 / m_vlanInstMap 配列サイズ</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="cp">#define L2_INSTANCE_MAX         MAX_VLANS  </span><span class="c1">// L2 インスタンスプール論理上限 = 4096</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="cp">#define STP_DEFAULT_MAX_INSTANCES  255  </span><span class="c1">// STP 有効 VLAN 上限のデフォルト値</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="cp">#define INVALID_INSTANCE        -1     </span><span class="c1">// m_vlanInstMap 未割当マーカー</span>
+</span></code></pre></div>
+<p><code>STP_DEFAULT_MAX_INSTANCES = 255</code> は DB (<code>max_stp_instances</code>) から読み取れない場合のフォールバック値として <code>stpmgr.cpp:1409</code> で使用される:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">max_stp_instances</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="p">{</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="w">    </span><span class="n">max_stp_instances</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STP_DEFAULT_MAX_INSTANCES</span><span class="p">;</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="w">    </span><span class="n">SWSS_LOG_NOTICE</span><span class="p">(</span><span class="s">&quot;set default max stp instance %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">max_stp_instances</span><span class="p">);</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>証跡: <code>stpmgr.h:34-39</code>, <code>stpmgr.cpp:1409</code></p>
+<hr />
+<h3 id="2-m_vlaninstmap-vlan">2. m_vlanInstMap — VLAN→インスタンスマッピング配列<a class="headerlink" href="#2-m_vlaninstmap-vlan" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1">// stpmgr.h:261</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">m_vlanInstMap</span><span class="p">[</span><span class="n">MAX_VLANS</span><span class="p">];</span><span class="w">  </span><span class="c1">// サイズ 4096 の固定長配列</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1">// stpmgr.cpp:45 (コンストラクタ)</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="n">fill_n</span><span class="p">(</span><span class="n">m_vlanInstMap</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_VLANS</span><span class="p">,</span><span class="w"> </span><span class="n">INVALID_INSTANCE</span><span class="p">);</span><span class="w">  </span><span class="c1">// 起動時に全要素を -1 で初期化</span>
+</span></code></pre></div>
+<p><code>m_vlanInstMap[vlan_id]</code> が <code>INVALID_INSTANCE (-1)</code> のまま <code>STP_VLAN_PORT</code> SET が届いても silent skip される（Phase B / C で記載）。
+配列は 4096 要素固定で動的拡張は不可。VLAN ID が範囲外の場合の境界チェックはコード上では行われない。</p>
+<p>証跡: <code>stpmgr.h:261</code>, <code>stpmgr.cpp:45</code></p>
+<hr />
+<h3 id="3">3. ソケットパス定数<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="cp">#define STPMGRD_SOCK_NAME  &quot;/var/run/stpmgrd.sock&quot;  </span><span class="c1">// stpmgrd 制御ソケット</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="cp">#define STPD_SOCK_NAME     &quot;/var/run/stpipc.sock&quot;   </span><span class="c1">// stpd IPC ソケット</span>
+</span></code></pre></div>
+<p>どちらもコンパイル時固定。実行時の変更・環境変数での上書きは不可。</p>
+<p>証跡: <code>stpmgr.h:28, 49</code></p>
+<hr />
+<h3 id="4-vlan">4. VLAN タグモード定数<a class="headerlink" href="#4-vlan" title="Permanent link">&para;</a></h3>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="cp">#define TAGGED_MODE    1</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="cp">#define UNTAGGED_MODE  0</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="cp">#define INVALID_MODE  -1</span>
+</span></code></pre></div>
+<p><code>doVlanMemUpdateTask()</code> (<code>stpmgr.cpp:687-689</code>) でポートの VLAN メンバーシップモード (<code>tagged</code> / <code>untagged</code>) を整数に変換するために使用。CONFIG_DB の文字列フィールドとコードレベルの整数定数の対応関係。</p>
+<p>証跡: <code>stpmgr.h:30-32</code></p>
+<hr />
+<h3 id="5-select_timeout-swssdk">5. SELECT_TIMEOUT — swssdk ループタイムアウト<a class="headerlink" href="#5-select_timeout-swssdk" title="Permanent link">&para;</a></h3>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1">// stpmgrd.cpp:17</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="cp">#define SELECT_TIMEOUT 1000  </span><span class="c1">// ミリ秒</span>
+</span></code></pre></div>
+<p>stpmgrd のメインループが <code>s.select(&amp;sel, SELECT_TIMEOUT)</code> で最大 1000 ms 待機する。
+「保留エントリ（silent defer）」は最大 1 秒後の次ループで再試行される（Phase D 参照）。</p>
+<p>証跡: <code>stpmgrd.cpp:17, 103</code></p>
+<hr />
+<h3 id="_8">定数一覧サマリ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>定義場所</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAX_VLANS</code></td>
+<td>4096</td>
+<td><code>stpmgr.h:34</code></td>
+<td>VLAN ID 最大数・配列サイズ</td>
+</tr>
+<tr>
+<td><code>L2_INSTANCE_MAX</code></td>
+<td>4096</td>
+<td><code>stpmgr.h:37</code></td>
+<td>L2 インスタンスプール上限</td>
+</tr>
+<tr>
+<td><code>STP_DEFAULT_MAX_INSTANCES</code></td>
+<td>255</td>
+<td><code>stpmgr.h:38</code></td>
+<td>STP 有効 VLAN 上限デフォルト</td>
+</tr>
+<tr>
+<td><code>INVALID_INSTANCE</code></td>
+<td>-1</td>
+<td><code>stpmgr.h:39</code></td>
+<td>m_vlanInstMap 未割当マーカー</td>
+</tr>
+<tr>
+<td><code>STPMGRD_SOCK_NAME</code></td>
+<td><code>/var/run/stpmgrd.sock</code></td>
+<td><code>stpmgr.h:28</code></td>
+<td>stpmgrd 制御ソケット</td>
+</tr>
+<tr>
+<td><code>STPD_SOCK_NAME</code></td>
+<td><code>/var/run/stpipc.sock</code></td>
+<td><code>stpmgr.h:49</code></td>
+<td>stpd IPC ソケット</td>
+</tr>
+<tr>
+<td><code>TAGGED_MODE</code></td>
+<td>1</td>
+<td><code>stpmgr.h:30</code></td>
+<td>VLAN タグ付きモード</td>
+</tr>
+<tr>
+<td><code>UNTAGGED_MODE</code></td>
+<td>0</td>
+<td><code>stpmgr.h:31</code></td>
+<td>VLAN タグなしモード</td>
+</tr>
+<tr>
+<td><code>INVALID_MODE</code></td>
+<td>-1</td>
+<td><code>stpmgr.h:32</code></td>
+<td>不正タグモードマーカー</td>
+</tr>
+<tr>
+<td><code>SELECT_TIMEOUT</code></td>
+<td>1000 ms</td>
+<td><code>stpmgrd.cpp:17</code></td>
+<td>swssdk Select ループタイムアウト</td>
+</tr>
+</tbody>
+</table>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">副作用・波及挙動 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-side-effects.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+<p><code>stpmgrd</code> は CONFIG_DB への書き込みをトリガーとして、stpmgrd 内部状態（<code>m_vlanInstMap[]</code>）の更新と
+stpd プロセスへの IPC 送信を行う。APPL_DB / ASIC_DB への直接書き込みはなく、ASIC 反映は stpd 経由となる。</p>
+<h3 id="1-stp_vlan-set-pvst-m_vlaninstmap">1. STP_VLAN SET (PVST 初回有効化) — m_vlanInstMap へのインスタンス割当<a class="headerlink" href="#1-stp_vlan-set-pvst-m_vlaninstmap" title="Permanent link">&para;</a></h3>
+<p>PVST モードで <code>STP_VLAN.enabled=true</code> の SET が処理され、<code>m_vlanInstMap[vlan_id] == INVALID_INSTANCE</code>
+の場合、<code>allocL2Instance(vlan_id)</code> が呼ばれてインスタンス ID が確定する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1">// stpmgr.cpp:263-269</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="n">instId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocL2Instance</span><span class="p">(</span><span class="n">vlan_id</span><span class="p">);</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="c1">// → GET_FIRST_FREE_INST_ID(idx); m_vlanInstMap[vlan_id] = idx;</span>
+</span></code></pre></div>
+<p>この副作用として、<code>STP_VLAN_PORT</code> の silent skip ガード (<code>m_vlanInstMap[vlan_id] == INVALID_INSTANCE</code>)
+が解除され、同 VLAN の <code>STP_VLAN_PORT</code> SET が次の SELECT ループで処理可能になる。</p>
+<p>証跡: <code>stpmgr.cpp:257-269</code>, <code>stpmgr.cpp:486-495</code></p>
+<hr />
+<h3 id="2-stp_vlan-set-stpd-stp_vlan_config-ipc">2. STP_VLAN SET — stpd への STP_VLAN_CONFIG IPC 送信<a class="headerlink" href="#2-stp_vlan-set-stpd-stp_vlan_config-ipc" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1">// stpmgr.cpp:332</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="n">sendMsgStpd</span><span class="p">(</span><span class="n">STP_VLAN_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">msg</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>STP_VLAN_CONFIG_MSG</code> を Unix Domain Socket 経由で stpd に送信する。主なフィールド:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>opcode</code></td>
+<td>SET=1 / DEL=0</td>
+</tr>
+<tr>
+<td><code>vlan_id</code></td>
+<td>VLAN ID</td>
+</tr>
+<tr>
+<td><code>newInstance</code></td>
+<td>初回割当時=1、更新時=0</td>
+</tr>
+<tr>
+<td><code>inst_id</code></td>
+<td>割当済み STP インスタンス ID</td>
+</tr>
+<tr>
+<td><code>forward_delay</code>, <code>hello_time</code>, <code>max_age</code>, <code>priority</code></td>
+<td>CONFIG_DB フィールドの値</td>
+</tr>
+<tr>
+<td><code>count</code>, <code>port_list[]</code></td>
+<td>PVST 初回時のみ: VLAN メンバーポート一覧</td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB → stpd → ASIC という経路で ASIC_DB には直接書き込まれない。</p>
+<p>証跡: <code>stpmgr.cpp:278-336</code></p>
+<hr />
+<h3 id="3-stp_vlan-set-pvst-state_vlan_member_table">3. STP_VLAN SET (PVST 初回) — STATE_VLAN_MEMBER_TABLE 読み取りとポート一覧付加<a class="headerlink" href="#3-stp_vlan-set-pvst-state_vlan_member_table" title="Permanent link">&para;</a></h3>
+<p>PVST 初回割当時（<code>newInstance=1</code>）、<code>getAllVlanMem()</code> (<code>stpmgr.cpp:933-973</code>) が
+<code>STATE_DB:STATE_VLAN_MEMBER_TABLE</code> から当該 VLAN の全メンバーポートを取得し、
+<code>STP_VLAN_CONFIG_MSG.port_list[]</code> に付加して stpd へ送信する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1">// stpmgr.cpp:259-266</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">l2ProtoEnabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">L2_PVSTP</span><span class="p">)</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="p">{</span>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="w">    </span><span class="n">newInstance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="w">    </span><span class="n">instId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocL2Instance</span><span class="p">(</span><span class="n">vlan_id</span><span class="p">);</span>
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="w">    </span><span class="n">portCnt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getAllVlanMem</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">port_list</span><span class="p">);</span><span class="w">  </span><span class="c1">// STATE_VLAN_MEMBER_TABLE を参照</span>
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>STP_VLAN</code> の変更が <code>STATE_VLAN_MEMBER_TABLE</code> の読み取りを引き起こす（MST モードでは発生しない）。</p>
+<p>証跡: <code>stpmgr.cpp:253-266</code>, <code>stpmgr.cpp:933-973</code></p>
+<hr />
+<h3 id="4-stp_vlan-del-m_vlaninstmap">4. STP_VLAN DEL — m_vlanInstMap リセット（インスタンス解放）<a class="headerlink" href="#4-stp_vlan-del-m_vlaninstmap" title="Permanent link">&para;</a></h3>
+<p>DEL 処理時は <code>deallocL2Instance(vlan_id)</code> でインスタンスが解放され、<code>m_vlanInstMap[vlan_id]</code>
+が <code>INVALID_INSTANCE(-1)</code> に戻る:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1">// stpmgr.cpp:913-928</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">StpMgr::deallocL2Instance</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">vlan_id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="w">    </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_vlanInstMap</span><span class="p">[</span><span class="n">vlan_id</span><span class="p">];</span>
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="w">    </span><span class="n">FREE_INST_ID</span><span class="p">(</span><span class="n">idx</span><span class="p">);</span><span class="w">                   </span><span class="c1">// インスタンスビットマップを更新</span>
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="w">    </span><span class="n">m_vlanInstMap</span><span class="p">[</span><span class="n">vlan_id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">INVALID_INSTANCE</span><span class="p">;</span>
+</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>この結果、同 VLAN の <code>STP_VLAN_PORT</code> SET は再び silent skip されるようになる。
+DEL と同時に stpd へ <code>STP_DEL_COMMAND</code> の <code>STP_VLAN_CONFIG</code> IPC が送信され、stpd が ASIC のポート状態を初期化する。</p>
+<p>証跡: <code>stpmgr.cpp:311-333</code>, <code>stpmgr.cpp:913-928</code></p>
+<hr />
+<h3 id="5-state_vlan_member_table-stp_vlan_port-stpd">5. STATE_VLAN_MEMBER_TABLE 変化 — STP_VLAN_PORT 値の stpd 再送（間接副作用）<a class="headerlink" href="#5-state_vlan_member_table-stp_vlan_port-stpd" title="Permanent link">&para;</a></h3>
+<p>ポートの VLAN 参加/離脱 (<code>STATE_VLAN_MEMBER_TABLE</code> 変化) を <code>doVlanMemUpdateTask()</code>
+(<code>stpmgr.cpp:679-757</code>) が検知した際:</p>
+<ol>
+<li><code>m_cfgStpVlanPortTable.get(key, ...)</code> で <code>STP_VLAN_PORT</code> の既存 <code>path_cost</code> / <code>priority</code> を取得</li>
+<li><code>STP_VLAN_MEM_CONFIG_MSG</code> に含めて <code>sendMsgStpd(STP_VLAN_MEM_CONFIG, ...)</code> を送信</li>
+</ol>
+<p><code>STP_VLAN_PORT</code> テーブルを直接変更していなくても、ポートが VLAN に参加/離脱するたびに
+<code>STP_VLAN_PORT</code> の設定値が stpd に再送される。</p>
+<p>証跡: <code>stpmgr.cpp:727-753</code></p>
+<hr />
+<h3 id="_9">副作用サマリー<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>トリガー</th>
+<th>副作用</th>
+<th>対象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>STP_VLAN</code> SET (enabled=true, PVST 初回)</td>
+<td><code>m_vlanInstMap[vlan_id]</code> にインスタンス割当 → <code>STP_VLAN_PORT</code> SET ブロック解除</td>
+<td>stpmgrd 内部状態</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>STP_VLAN</code> SET</td>
+<td><code>STP_VLAN_CONFIG</code> IPC を stpd に送信</td>
+<td>stpd (ASIC へ波及)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>STP_VLAN</code> SET (PVST 初回)</td>
+<td><code>STATE_VLAN_MEMBER_TABLE</code> を参照し全メンバーポート一覧を IPC に付加</td>
+<td>STATE_DB 読み取り</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>STP_VLAN</code> DEL</td>
+<td><code>m_vlanInstMap[vlan_id]</code> を INVALID_INSTANCE に解放 → <code>STP_VLAN_PORT</code> SET が再ブロック</td>
+<td>stpmgrd 内部状態</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>STP_VLAN</code> DEL</td>
+<td><code>STP_VLAN_CONFIG</code> DEL IPC を stpd に送信 → ASIC ポート状態初期化</td>
+<td>stpd (ASIC へ波及)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>STATE_VLAN_MEMBER_TABLE</code> 変化</td>
+<td><code>STP_VLAN_PORT</code> 設定値を stpd に再送 (<code>STP_VLAN_MEM_CONFIG</code>)</td>
+<td>stpd (VLAN_PORT 未変更でも発生)</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-pubsub.md -->
+
+<h3 id="tableconnector-consumerstatetable">購読方式: TableConnector + ConsumerStateTable<a class="headerlink" href="#tableconnector-consumerstatetable" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd</code> は swsscommon の <code>Orch</code> + <code>TableConnector</code> フレームワークを使用する。
+<code>TableConnector</code> は内部で <code>ConsumerStateTable</code> (PUBLISH/SUBSCRIBE チャネルベース) を使い、
+各テーブルへの書き込みを keyspace 通知ではなく専用チャネル (<code>&lt;TABLE&gt;_KEY_CHANNEL@&lt;db&gt;</code>) 経由で受け取る。</p>
+<h3 id="stpmgrdcpp4365">購読テーブル一覧 (stpmgrd.cpp:43–65)<a class="headerlink" href="#stpmgrdcpp4365" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>DB</th>
+<th>テーブル名</th>
+<th>スキーマ定数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stpmgrd</code></td>
+<td>CONFIG_DB</td>
+<td><code>STP</code></td>
+<td><code>CFG_STP_GLOBAL_TABLE_NAME</code></td>
+</tr>
+<tr>
+<td><code>stpmgrd</code></td>
+<td>CONFIG_DB</td>
+<td><code>STP_VLAN</code></td>
+<td><code>CFG_STP_VLAN_TABLE_NAME</code></td>
+</tr>
+<tr>
+<td><code>stpmgrd</code></td>
+<td>CONFIG_DB</td>
+<td><code>STP_VLAN_PORT</code></td>
+<td><code>CFG_STP_VLAN_PORT_TABLE_NAME</code></td>
+</tr>
+<tr>
+<td><code>stpmgrd</code></td>
+<td>CONFIG_DB</td>
+<td><code>STP_PORT</code></td>
+<td><code>CFG_STP_PORT_TABLE_NAME</code></td>
+</tr>
+<tr>
+<td><code>stpmgrd</code></td>
+<td>CONFIG_DB</td>
+<td><code>LAG_MEMBER</code></td>
+<td><code>CFG_LAG_MEMBER_TABLE_NAME</code></td>
+</tr>
+<tr>
+<td><code>stpmgrd</code></td>
+<td>STATE_DB</td>
+<td><code>VLAN_MEMBER_TABLE</code></td>
+<td><code>STATE_VLAN_MEMBER_TABLE_NAME</code></td>
+</tr>
+<tr>
+<td><code>stpmgrd</code></td>
+<td>CONFIG_DB</td>
+<td><code>STP_MST</code> / <code>STP_MST_INST</code> / <code>STP_MST_PORT</code></td>
+<td>(直書き文字列)</td>
+</tr>
+</tbody>
+</table>
+<p><code>STP_VLAN</code> を購読するプロセスは <code>stpmgrd</code> のみ。
+<code>stporch</code> (<code>orchagent</code>) は <code>STP_VLAN</code> を CONFIG_DB から直接読まず、
+<code>stpmgrd</code> → <code>stpd</code> → <code>stporch</code> の IPC 経路を介して情報を受け取る。</p>
+<h3 id="stpmgrdcpp92117">イベントループ (stpmgrd.cpp:92–117)<a class="headerlink" href="#stpmgrdcpp92117" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="p">{</span>
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sel</span><span class="p">,</span><span class="w"> </span><span class="n">SELECT_TIMEOUT</span><span class="p">);</span><span class="w">  </span><span class="c1">// SELECT_TIMEOUT = 1000 ms</span>
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ret</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Select</span><span class="o">::</span><span class="n">TIMEOUT</span><span class="p">)</span>
+</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-31-6"><a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="w">        </span><span class="n">stpmgr</span><span class="p">.</span><span class="n">doTask</span><span class="p">();</span><span class="w">  </span><span class="c1">// タイムアウト時: pending キューを再スキャン</span>
+</span><span id="__span-31-7"><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a><span class="w">        </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-31-8"><a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-31-9"><a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="o">*</span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Executor</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">sel</span><span class="p">;</span>
+</span><span id="__span-31-10"><a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a><span class="w">    </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">execute</span><span class="p">();</span>
+</span><span id="__span-31-11"><a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>SELECT_TIMEOUT = 1000 ms</code> (<code>stpmgrd.cpp:17</code>)。タイムアウトごとに <code>doTask()</code> が呼ばれ、
+silent defer されたエントリが最大 1 秒以内に再試行される。</p>
+<h3 id="stpmgrd-state_db">stpmgrd が参照する STATE_DB テーブル（読み取り専用）<a class="headerlink" href="#stpmgrd-state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>STATE_DB テーブル</th>
+<th>スキーマ定数</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VLAN_TABLE</code></td>
+<td><code>STATE_VLAN_TABLE_NAME</code></td>
+<td><code>isVlanStateOk()</code> — VLAN の ASIC 適用確認</td>
+</tr>
+<tr>
+<td><code>VLAN_MEMBER_TABLE</code></td>
+<td><code>STATE_VLAN_MEMBER_TABLE_NAME</code></td>
+<td>ポート VLAN 参加/離脱イベント受信</td>
+</tr>
+<tr>
+<td><code>LAG_TABLE</code></td>
+<td><code>STATE_LAG_TABLE_NAME</code></td>
+<td>LAG 状態確認</td>
+</tr>
+<tr>
+<td><code>STP_TABLE</code></td>
+<td><code>STATE_STP_TABLE_NAME</code></td>
+<td>起動時の <code>max_stp_instances</code> 取得</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">stpmgrd は STATE_DB に書き込まない</p>
+<p><code>stpmgrd</code> は STATE_DB を読み取り専用で使用する。<code>STATE_STP_TABLE</code> (<code>STP_TABLE</code>) は
+<code>stporch</code> (<code>orchagent/stporch.cpp:26</code>) が書き込み、stpmgrd は起動時のスナップショット取得のみ利用する。
+CONFIG_DB 変更の最終反映は <code>stpmgrd</code> → Unix Domain Socket → <code>stpd</code> → <code>stporch</code> → ASIC_DB の経路を辿る。</p>
+</div>
+<h3 id="stp_vlan">通知フロー（STP_VLAN 変更の場合）<a class="headerlink" href="#stp_vlan" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>config spanning-tree vlan enable &lt;vid&gt;
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>  ↓ db.set_entry(&#39;STP_VLAN&#39;, &#39;Vlan&lt;vid&gt;&#39;, {...})
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>CONFIG_DB: HSET STP_VLAN|Vlan&lt;vid&gt; ...
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>  ↓ ConsumerStateTable チャネル PUBLISH
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>stpmgrd の s.select() がイベント検知
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a>  ↓ c-&gt;execute() → StpMgr::doTask(consumer)
+</span><span id="__span-32-7"><a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a>doStpVlanTask(consumer) — ガード条件チェック後 IPC メッセージ送信
+</span><span id="__span-32-8"><a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a>  ↓ sendMsgStpd(STP_VLAN_CONFIG, ...)
+</span><span id="__span-32-9"><a id="__codelineno-32-9" name="__codelineno-32-9" href="#__codelineno-32-9"></a>stpd が Unix Domain Socket (/var/run/stpipc.sock) でメッセージ受信
+</span><span id="__span-32-10"><a id="__codelineno-32-10" name="__codelineno-32-10" href="#__codelineno-32-10"></a>  ↓ stpd → stporch → ASIC_DB → SAI
+</span></code></pre></div>
+<p>TTL は設定されない（CONFIG_DB は永続ストレージ前提）。</p>
+<p>証跡: <code>stpmgrd.cpp:17, 43-65, 92-117</code>, <code>stpmgr.cpp:22-48</code>, <code>stpmgr.h:28, 49</code>, <code>schema.h:374-377, 423-424, 445</code></p>
+<!-- /pubsub -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35614,8 +37246,8 @@ PVST 有効化・VLAN 有効化のいずれの処理でも <code>STP_VLAN_PORT</
 </tr>
 </tbody>
 </table>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP</a></li>
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>

@@ -26189,7 +26189,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supervisord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動シーケンス（supervisord）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -26201,7 +26251,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         読み出しコマンド
@@ -26212,7 +26262,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤解
@@ -26228,7 +26278,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34965,7 +35015,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supervisord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動シーケンス（supervisord）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34977,7 +35077,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         読み出しコマンド
@@ -34988,7 +35088,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤解
@@ -35004,7 +35104,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35454,26 +35554,86 @@
 </table>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>sonic-buildimage/dockers/docker-sonic-telemetry/supervisord.conf</code>, <code>sonic-gnmi/gnmi_server/server.go</code>, <code>sonic-gnmi/common_utils/context.go</code>, <code>sonic-gnmi/common_utils/shareMem.go</code>, <code>sonic-gnmi/gnmi_dump/gnmi_dump.go</code></p>
+</blockquote>
+<h3 id="supervisord">起動シーケンス（supervisord）<a class="headerlink" href="#supervisord" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>rsyslogd 起動 (priority=1)
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  └─► start.sh 実行 (priority=2, rsyslogd:running 待機)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        └─► telemetry 起動 (priority=3, start:exited 待機)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>              └─► NewServer() 呼び出し
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                    └─► InitCounters() → 全32カウンタ を uint64(0) で共有メモリへ書込み
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                          └─► gRPC サーバー起動 (Serve())
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                                └─► IncCounter() がリクエストごとに共有メモリを更新
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>dialout 起動 (priority=4, telemetry:running 待機)
+</span></code></pre></div>
+<h3 id="_8">順序依存ルール<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>start.sh</code> 完了 → <code>telemetry</code> プロセス起動</td>
+<td><strong>強制先行</strong>（supervisord <code>dependent_startup_wait_for</code>）</td>
+<td><code>start.sh</code> が終了するまで <code>telemetryd</code> は起動しない</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>NewServer()</code> 内 <code>InitCounters()</code> → gRPC <code>Serve()</code></td>
+<td><strong>強制先行</strong>（同一関数内の逐次呼び出し、<code>server.go:528</code>）</td>
+<td>共有メモリが初期化される前に gRPC リクエストが来ることはない</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>telemetry:running</code> → <code>dialout</code> 起動</td>
+<td><strong>強制先行</strong>（supervisord <code>dependent_startup_wait_for</code>）</td>
+<td>dialout は telemetry が起動していないと開始しない</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>gnmi_dump</code> 実行 → 有効カウンタ値の読み取り</td>
+<td><strong>条件付き</strong>（SysV shm が存在しないと <code>shmget</code> がエラーを返す）</td>
+<td><code>telemetryd</code> 起動前に <code>gnmi_dump</code> を実行すると「<code>Fail to read counters</code>」エラーになる</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">重要な制約<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>再起動ごとに全カウンタがリセット</strong>: <code>telemetryd</code> が再起動するたびに <code>NewServer()</code> → <code>InitCounters()</code> が走り、共有メモリの全32カウンタが 0 にリセットされる。これは warm-reboot でも同様（telemetry コンテナが再起動するため）。</li>
+<li><strong>gnmi_dump は telemetry と独立して実行可能</strong>: <code>gnmi_dump</code> は SysV 共有メモリ（key=7749）に直接アクセスするため、gRPC セッションや CONFIG_DB への接続は不要。ただし共有メモリが存在しない場合（telemetryd 未起動）はエラーとなる。</li>
+<li><strong>dialout と counters の関係</strong>: <code>dialout</code> プロセスは telemetry が起動してから開始するが、dialout の処理自体は <code>IncCounter</code> を呼ばない。カウンタは gRPC RPC 受信と DBus 操作のみで増分される。</li>
+</ul>
+<!-- /ordering -->
+
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">読み出しコマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># telemetryd コンテナ内で実行</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>gnmi_dump
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">読み出しコマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># telemetryd コンテナ内で実行</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>gnmi_dump
 </span></code></pre></div>
 <p>出力例:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Dump GNMI counters
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>GNMI get---42
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>GNMI get fail---3
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>GNMI set---10
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>GNMI set fail---0
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>GNMI set bypass---0
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>GNOI reboot---0
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>...
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>DBUS---5
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>DBUS fail---0
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>...
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Dump GNMI counters
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>GNMI get---42
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>GNMI get fail---3
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>GNMI set---10
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>GNMI set fail---0
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>GNMI set bypass---0
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>GNOI reboot---0
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>...
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>DBUS---5
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>DBUS fail---0
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>...
 </span></code></pre></div></p>
-<h3 id="_10">よくある誤解<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤解<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>GNOI reboot</code> が 0 のままでも Reboot RPC は受け付けている（dead counter のため）</li>
 <li><code>GNMI_GET</code> が増えていても実際の応答成功率は <code>1 - (GNMI_GET_FAIL / GNMI_GET)</code> で計算する必要がある</li>
@@ -35481,7 +35641,7 @@
 </ul>
 <!-- /ops-hint -->
 
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

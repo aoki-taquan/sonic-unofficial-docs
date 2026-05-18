@@ -25476,6 +25476,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36122,6 +36183,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37329,6 +37451,127 @@
 </table>
 <p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/cli-config-side.md</code> を参照。</p>
 <!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p><code>SERIAL_CONSOLE</code> および <code>SSH_SERVER</code> テーブルへの変更通知は、<code>hostcfgd</code> が <strong><code>ConfigDBConnector.subscribe()</code> + <code>listen()</code></strong> で登録する <strong>Redis keyspace 通知</strong> (<code>PSUBSCRIBE __keyspace@&lt;dbId&gt;__:&lt;TABLE&gt;|*</code>) によって配信される。<code>swsscommon.SubscriberStateTable</code> や channel ベースの <code>ConsumerStateTable</code> (PUBLISH/SUBSCRIBE) は<strong>使用しない</strong>。CONFIG_DB は永続前提のため TTL は設定されない。</p>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読 API</th>
+<th>購読テーブル</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>ConfigDBConnector.subscribe()</code></td>
+<td><code>SSH_SERVER</code></td>
+<td><code>ssh_handler</code> → <code>SshServer.policies_update()</code> + <code>PamLimitsCfg.update_config_file()</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>ConfigDBConnector.subscribe()</code></td>
+<td><code>SERIAL_CONSOLE</code></td>
+<td><code>serial_console_config_handler</code> → <code>SerialConsoleCfg.update_serial_console_cfg()</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>hostcfgd</code> 以外で <code>SSH_SERVER</code> / <code>SERIAL_CONSOLE</code> テーブルを購読するプロセスは存在しない (sshd / serial-config.service は設定ファイルを起動時に読むのみで Redis を購読しない)。</p>
+<h3 id="keyspace">keyspace 通知 → ハンドラ呼び出しの流れ<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config ssh inactivity-timeout 20
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓ HSET &quot;SSH_SERVER|POLICIES&quot; inactivity_timeout &quot;20&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Redis keyspace PUBLISH &quot;__keyspace@4__:SSH_SERVER|POLICIES&quot;  &quot;hset&quot;
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  ↓ ConfigDBConnector.listen() がパターンマッチ
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>make_callback() で (key=&quot;POLICIES&quot;, op=SET, data={inactivity_timeout:&quot;20&quot;}) を生成
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  ↓ HGETALL &quot;SSH_SERVER|POLICIES&quot; ← 通知後に値を再取得
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>ssh_handler(&quot;POLICIES&quot;, SET, {inactivity_timeout:&quot;20&quot;})
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  ↓ SshServer.policies_update() → modify_conf_file() → set_policies()
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  ↓ /etc/ssh/sshd_config に &quot;ClientAliveInterval 1200&quot; を書き込み (20分×60秒)
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  ↓ sshd -T -f 検証 → systemctl restart ssh
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>  ↓ PamLimitsCfg.update_config_file() → PAM limits 再確認
+</span></code></pre></div>
+<ul>
+<li>keyspace 通知のペイロードは操作名 (<code>hset</code>/<code>del</code> 等) のみ。フィールド値は HGETALL で取得する。</li>
+<li><code>op</code> は <code>data is None ? DEL : SET</code> で 2 値判定。<code>HSET</code> / <code>HDEL</code> の Redis 操作種別自体は区別しない。</li>
+<li>起動時は <code>config_db.listen(init_data_handler=self.load)</code> (hostcfgd:2528) により、Subscribe ループ開始前に <code>HostConfigDaemon.load()</code> が <code>init_data['SSH_SERVER']</code> / <code>init_data.get('SERIAL_CONSOLE', {})</code> を一括スナップショットで適用する。<code>wait_till_system_init_done()</code> (hostcfgd:2237) 完了後に処理される (hostcfgd:2265, 2273)。</li>
+</ul>
+<h3 id="_20">サービス再起動トリガー<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>契機</th>
+<th>操作</th>
+<th>コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SSH_SERVER\|POLICIES</code> 変化 (sshd -T 検証成功)</td>
+<td><code>systemctl restart ssh</code></td>
+<td>hostcfgd:1154</td>
+</tr>
+<tr>
+<td><code>SSH_SERVER\|POLICIES.max_sessions</code> 変化</td>
+<td><code>/etc/security/limits.d/</code> PAM limits 更新</td>
+<td>hostcfgd:1418-1441</td>
+</tr>
+<tr>
+<td><code>SERIAL_CONSOLE\|POLICIES</code> 変化 (キャッシュ差分時)</td>
+<td><code>service serial-config restart</code></td>
+<td>hostcfgd:2035</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd:2478,2481</code> (subscribe)、<code>hostcfgd:2528</code> (listen)、<code>hostcfgd:2297-2300</code> (<code>ssh_handler</code>)、<code>hostcfgd:2438-2440</code> (<code>serial_console_config_handler</code>)、<code>hostcfgd:2454-2466</code> (<code>make_callback</code>); 詳細分析は <code>meta/_intermediate/cdb-flow/cli-config-pubsub.md</code> を参照。</p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>プラットフォーム差なし</strong>: SERIAL_CONSOLE / SSH_SERVER は host 単位で適用される host-only 設定であり、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等)</td>
+<td>影響なし</td>
+<td>SSH / シリアルコンソール設定は SAI 非経由。<code>hostcfgd</code> が Linux <code>sshd_config</code> / PAM limits / <code>sysctl</code> ファイルを直接書き換えるのみ</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu() == True</code>)</td>
+<td>影響なし</td>
+<td><code>SshServer</code> / <code>SerialConsoleCfg</code> はいずれも host CONFIG_DB (<code>ConfigDBConnector()</code> 引数なし) のみを購読。<code>asicN</code> namespace を iterate しない (<code>hostcfgd:2182</code> で <code>is_multi_npu</code> 取得するが SSH/シリアル経路に渡されない)</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各 host で独立適用</td>
+<td><code>SSH_SERVER</code> / <code>SERIAL_CONSOLE</code> テーブルは host scope。chassis 全体での集中適用機構はなく、各 host の <code>hostcfgd</code> が独立に <code>sshd_config</code> / PAM を再生成する</td>
+</tr>
+<tr>
+<td>ベンダー固有モジュール</td>
+<td>なし</td>
+<td>community master の SSH スタックは OpenSSH (Debian 標準)。<code>files/image_config/cli_sessions/</code> にプラットフォーム別差し替え機構なし</td>
+</tr>
+<tr>
+<td>テンプレート内分岐</td>
+<td>プラットフォーム条件なし</td>
+<td><code>tmout-env.sh.j2</code> / <code>sysrq-sysctl.conf.j2</code> を <code>platform\|asic\|chassis\|namespace\|vendor</code> で grep して 0 ヒット。分岐は <code>SERIAL_CONSOLE.POLICIES</code> フィールド値のみ</td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/cli-config-platform.md</code> を参照。</p>
+<!-- /platform -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
 

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B 分析。">
+        <meta name="description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・discrepancy を詳細解説。Phase A+B+C+D 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP_MST_INST / STP_MST_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B 分析。" />
+<meta property="og:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・discrepancy を詳細解説。Phase A+B+C+D 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-mst.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-mst/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP_MST_INST / STP_MST_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・discrepancy を詳細解説。Phase A+B 分析。" />
+<meta property="twitter:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・discrepancy を詳細解説。Phase A+B+C+D 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-mst.png" />
 </head>
   
@@ -28832,6 +28832,189 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_inst_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_INST が依存するテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_port_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_PORT が依存するテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部マップ (DB テーブルではない)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このテーブルを参照する側
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 起動ガード保留（共通パターン）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 不明フィールド → 0値送信（サイレント）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-4-sendmsgstpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 &amp; 4. sendMsgStpd 失敗 → 呼び元で無視
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-stp_mst_inst-calloc-m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. STP_MST_INST calloc 失敗 → m_vlanInstMap 不整合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 無効キー形式 → サイレントドロップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. DEL でのサイレントドロップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-stoi-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. stoi 例外 → stpmgrd プロセス終了
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28843,7 +29026,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28854,7 +29037,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34970,6 +35153,189 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_inst_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_INST が依存するテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_port_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_PORT が依存するテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部マップ (DB テーブルではない)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        このテーブルを参照する側
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 起動ガード保留（共通パターン）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 不明フィールド → 0値送信（サイレント）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-4-sendmsgstpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 &amp; 4. sendMsgStpd 失敗 → 呼び元で無視
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-stp_mst_inst-calloc-m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. STP_MST_INST calloc 失敗 → m_vlanInstMap 不整合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 無効キー形式 → サイレントドロップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. DEL でのサイレントドロップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-stoi-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. stoi 例外 → stpmgrd プロセス終了
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34981,7 +35347,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34992,7 +35358,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35363,6 +35729,305 @@ MST 有効化時に書き込まれるキー <code>MST_INSTANCE:INSTANCE0</code>�
 <p>PVST 系との差異: <code>STP_MST_INST</code> は <code>stpVlanTask</code> を必要としない。MST はインスタンスベースであり VLAN 単位のシーケンスに依存しない。</p>
 <!-- /ordering -->
 
+<hr />
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-cross-refs.md -->
+
+<p><code>stpmgrd</code> が <code>STP_MST_INST</code> / <code>STP_MST_PORT</code> のイベントを処理する際、以下のテーブルを暗黙的に参照・依存する。</p>
+<h3 id="stp_mst_inst_1">STP_MST_INST が依存するテーブル<a class="headerlink" href="#stp_mst_inst_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照テーブル</th>
+<th>DB</th>
+<th>参照方法</th>
+<th>目的</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP\|GLOBAL</code></td>
+<td>CONFIG_DB</td>
+<td><code>stpGlobalTask</code> フラグ</td>
+<td>起動ガード — GLOBAL 受信前は全イベントを保留</td>
+<td><code>stpmgr.cpp:1027-1028</code></td>
+</tr>
+<tr>
+<td><code>STP_PORT</code></td>
+<td>CONFIG_DB</td>
+<td><code>stpPortTask</code> フラグ / <code>isStpPortEmpty()</code></td>
+<td>STP_PORT が存在する場合はその受信完了を待機</td>
+<td><code>stpmgr.cpp:1027-1028, 1326-1339</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>isStpPortEmpty()</code> は <code>m_cfgStpPortTable.getKeys()</code> で CONFIG_DB の <code>STP_PORT</code> キー一覧を取得し、
+空なら即時通過、存在すれば <code>stpPortTask = true</code> まで保留する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">// stpmgr.cpp:1326-1339</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">StpMgr::isStpPortEmpty</span><span class="p">()</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="p">{</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">portKeys</span><span class="p">;</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="n">m_cfgStpPortTable</span><span class="p">.</span><span class="n">getKeys</span><span class="p">(</span><span class="n">portKeys</span><span class="p">);</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">portKeys</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="stp_mst_port_1">STP_MST_PORT が依存するテーブル<a class="headerlink" href="#stp_mst_port_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照テーブル</th>
+<th>DB</th>
+<th>参照方法</th>
+<th>目的</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP\|GLOBAL</code></td>
+<td>CONFIG_DB</td>
+<td><code>stpGlobalTask</code> フラグ</td>
+<td>起動ガード — GLOBAL 受信前は保留</td>
+<td><code>stpmgr.cpp:1160</code></td>
+</tr>
+<tr>
+<td><code>STP_MST_INST</code></td>
+<td>CONFIG_DB</td>
+<td><code>stpMstInstTask</code> フラグ</td>
+<td>MST_INST の最初の処理完了後のみ動作</td>
+<td><code>stpmgr.cpp:1160</code></td>
+</tr>
+<tr>
+<td><code>STP_PORT</code></td>
+<td>CONFIG_DB</td>
+<td><code>stpPortTask</code> フラグ</td>
+<td>STP_PORT 受信完了後のみ動作</td>
+<td><code>stpmgr.cpp:1160</code></td>
+</tr>
+</tbody>
+</table>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// stpmgr.cpp:1160-1161</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">stpMstInstTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">stpPortTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span></code></pre></div>
+<h3 id="db">内部マップ (DB テーブルではない)<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
+<p><code>m_vlanInstMap[MAX_VLANS]</code> は VLAN ID → MST インスタンス ID を保持するインメモリ配列。
+<code>STP_MST_INST</code> の SET/DEL 処理時に <code>updateVlanInstanceMap()</code> で更新される。
+このマップは PVST 側の <code>STP_VLAN</code> 処理 (<code>doStpVlanTask</code>) でも参照されるが、
+DB テーブルへの直接読み出しは発生しない。</p>
+<table>
+<thead>
+<tr>
+<th>マップ</th>
+<th>更新タイミング</th>
+<th>参照タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>m_vlanInstMap[vlan_id]</code></td>
+<td><code>STP_MST_INST</code> SET/DEL</td>
+<td><code>STP_VLAN</code> SET/DEL, <code>STATE_VLAN_MEMBER</code> SET/DEL</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>stpmgr.cpp:1067, 1105, 1454-1470</code></p>
+<h3 id="_5">このテーブルを参照する側<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照元</th>
+<th>参照フィールド / 用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_VLAN</code> 処理</td>
+<td><code>m_vlanInstMap[vlan_id]</code> — インスタンス ID 解決</td>
+<td><code>stpmgr.cpp:257-288</code></td>
+</tr>
+<tr>
+<td><code>STATE_VLAN_MEMBER</code> 処理</td>
+<td><code>m_vlanInstMap[vlan_id]</code> — メンバ変更通知</td>
+<td><code>stpmgr.cpp:711, 746</code></td>
+</tr>
+<tr>
+<td><code>STP_MST_PORT</code></td>
+<td><code>stpMstInstTask</code> フラグ — 起動ガード</td>
+<td><code>stpmgr.cpp:1160</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /cross-refs -->
+
+<hr />
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-failure.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+<p><code>stpmgrd</code> は orchagent と異なり <code>task_need_retry</code> / <code>task_failed</code> の明示的な戻り値を持たない。
+代わりに「エントリを <code>m_toSync</code> に残す（保留）」か「<code>m_toSync.erase()</code> する（消費）」かで
+リトライ有無が決まる。</p>
+<h3 id="_6">失敗パス一覧<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗トリガー</th>
+<th>ハンドラ</th>
+<th>処置</th>
+<th>リトライ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>起動ガード未満足 (<code>stpGlobalTask</code> 等)</td>
+<td>全 MST ハンドラ共通</td>
+<td><code>return</code>（保留）</td>
+<td>あり（1秒後ループ）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>不明フィールド (<code>name</code>/<code>revision</code> 以外)</td>
+<td><code>doStpMstGlobalTask</code></td>
+<td><code>SWSS_LOG_ERROR</code> のみ・0値送信</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>sendMsgStpd</code> calloc 失敗</td>
+<td><code>sendMsgStpd</code> 共通</td>
+<td><code>SWSS_LOG_ERROR</code>, <code>return -1</code>（呼び元無視）</td>
+<td>なし（エントリ消費済み）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>sendMsgStpd</code> <code>sendto</code> 失敗</td>
+<td><code>sendMsgStpd</code> 共通</td>
+<td><code>SWSS_LOG_ERROR</code>, <code>return -1</code>（呼び元無視）</td>
+<td>なし（エントリ消費済み）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>calloc</code> 失敗（<code>STP_MST_INST_CONFIG_MSG</code>）</td>
+<td><code>doStpMstInstTask</code></td>
+<td><code>SWSS_LOG_ERROR</code>, <code>return</code>（保留）</td>
+<td>あり（ただし m_vlanInstMap 不整合リスク）</td>
+</tr>
+<tr>
+<td>6</td>
+<td>無効キー形式（セパレータ <code>\|</code> なし）</td>
+<td><code>doStpMstInstPortTask</code></td>
+<td><code>SWSS_LOG_ERROR</code>, <code>erase</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>7</td>
+<td>DEL: <code>l2ProtoEnabled == L2_NONE</code> または インスタンス未マップ</td>
+<td><code>doStpMstInstPortTask</code></td>
+<td><code>erase</code>（ログなし）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>8</td>
+<td>SET: <code>l2ProtoEnabled == L2_NONE</code></td>
+<td><code>doStpMstInstPortTask</code></td>
+<td>保留（<code>it++</code>）</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>stoi</code> 例外（不正インスタンス ID 文字列）</td>
+<td><code>doStpMstInstTask</code></td>
+<td>未キャッチ → <code>stpmgrd</code> プロセス終了</td>
+<td>なし（プロセス再起動要）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">詳細<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h4 id="1">1. 起動ガード保留（共通パターン）<a class="headerlink" href="#1" title="Permanent link">&para;</a></h4>
+<p>すべての MST ハンドラは先行テーブル受信フラグを確認する。未満足の場合は即 <code>return</code> し、
+<code>m_toSync</code> のエントリはそのまま残る。<code>stpmgrd.cpp</code> の <code>SELECT_TIMEOUT = 1000ms</code> で
+次のタイムアウト後に <code>doTask()</code> が再呼び出しされ自動的にリトライされる。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// doStpMstGlobalTask — stpmgr.cpp:344</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="c1">// doStpMstInstTask — stpmgr.cpp:1027</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">stpPortTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isStpPortEmpty</span><span class="p">()))</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="c1">// doStpMstInstPortTask — stpmgr.cpp:1160</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stpGlobalTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">stpMstInstTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">stpPortTask</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span></code></pre></div>
+<h4 id="2-0">2. 不明フィールド → 0値送信（サイレント）<a class="headerlink" href="#2-0" title="Permanent link">&para;</a></h4>
+<p><code>doStpMstGlobalTask</code> では <code>name</code> / <code>revision</code> / <code>forward_delay</code> / <code>hello_time</code> / <code>max_age</code> / <code>max_hops</code> 以外のフィールドが来た場合、<code>SWSS_LOG_ERROR</code> を出力して処理を続行する（<code>break</code> しない）。
+結果として <code>memset(&amp;msg, 0, sizeof(msg))</code> で初期化されたメッセージが <code>sendMsgStpd</code> で送信される。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">// stpmgr.cpp:391-394</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">else</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="p">{</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Invalid field: %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">fvField</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="3-4-sendmsgstpd">3 &amp; 4. sendMsgStpd 失敗 → 呼び元で無視<a class="headerlink" href="#3-4-sendmsgstpd" title="Permanent link">&para;</a></h4>
+<p><code>sendMsgStpd()</code> (<code>stpmgr.cpp:1218</code>) の戻り値はすべての呼び出し元でチェックされない。
+calloc 失敗（<code>-1</code> 返却後 return）や Unix ドメインソケット <code>sendto</code> 失敗の場合も、
+呼び元は <code>m_toSync.erase(it)</code> でエントリを破棄する。イベントはサイレントに失われる。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// 呼び出し元の典型パターン (stpmgr.cpp:402-404)</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">sendMsgStpd</span><span class="p">(</span><span class="n">STP_MST_GLOBAL_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">);</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="p">.</span><span class="n">m_toSync</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span><span class="w">  </span><span class="c1">// 戻り値チェックなし</span>
+</span></code></pre></div>
+<h4 id="5-stp_mst_inst-calloc-m_vlaninstmap">5. STP_MST_INST calloc 失敗 → m_vlanInstMap 不整合<a class="headerlink" href="#5-stp_mst_inst-calloc-m_vlaninstmap" title="Permanent link">&para;</a></h4>
+<p>SET パスでは <code>updateVlanInstanceMap()</code> が <code>calloc</code> より先に呼ばれる（<code>stpmgr.cpp:1067</code>）。
+<code>calloc</code> が失敗して <code>return</code> した場合、<code>m_vlanInstMap</code> はすでに更新済みだが
+stpd へのメッセージは送信されていない。次回リトライで再送されるが、
+インメモリマップと stpd 内部状態が一時的に乖離する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1">// stpmgr.cpp:1067 — calloc より前</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">updateVlanInstanceMap</span><span class="p">(</span><span class="n">instance_id</span><span class="p">,</span><span class="w"> </span><span class="n">vlan_ids</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1">// stpmgr.cpp:1073-1078 — calloc がここで失敗</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">STP_MST_INST_CONFIG_MSG</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">calloc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">);</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="p">{</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Memory allocation failed for STP_MST_INST_CONFIG_MSG&quot;</span><span class="p">);</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span><span class="w">  </span><span class="c1">// m_vlanInstMap は更新済み、stpd へは未送信</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="6">6. 無効キー形式 → サイレントドロップ<a class="headerlink" href="#6" title="Permanent link">&para;</a></h4>
+<p><code>doStpMstInstPortTask</code> は <code>key.substr(9)</code> (<code>"INSTANCE"</code> = 8文字 + セパレータ) でプレフィックスを
+除去後、<code>mstKey.find(CONFIGDB_KEY_SEPARATOR)</code> でインスタンス ID とインタフェース名を分割する。
+セパレータが見つからない場合は <code>erase</code> して永続的に破棄する（リトライなし）。</p>
+<h4 id="7-del">7. DEL でのサイレントドロップ<a class="headerlink" href="#7-del" title="Permanent link">&para;</a></h4>
+<p>MST が無効化済み (<code>l2ProtoEnabled == L2_NONE</code>) または該当インスタンスが <code>m_vlanInstMap</code> に
+存在しない場合、DEL イベントはログなしで <code>erase</code> される（冪等扱い）。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">// stpmgr.cpp:1204-1207</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">l2ProtoEnabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">L2_NONE</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="n">isInstanceMapped</span><span class="p">(</span><span class="n">mst_id</span><span class="p">)))</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="p">{</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="p">.</span><span class="n">m_toSync</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="9-stoi-stpmgrd">9. stoi 例外 → stpmgrd プロセス終了<a class="headerlink" href="#9-stoi-stpmgrd" title="Permanent link">&para;</a></h4>
+<p><code>doStpMstInstTask</code> は <code>key.substr(13)</code> で取得した文字列に対して <code>stoi()</code> を呼ぶ
+（<code>stpmgr.cpp:1045</code>）。DB に不正な数値文字列（<code>""</code> や英字等）が書き込まれた場合、
+<code>std::invalid_argument</code> または <code>std::out_of_range</code> 例外が発生する。
+stpmgr.cpp 内部では例外がキャッチされないため、<code>stpmgrd.cpp:119-122</code> のトップレベル catch まで
+伝播し <code>stpmgrd</code> プロセスが終了する。systemd により再起動されるが、その間 MST 設定変更は
+CONFIG_DB に蓄積され再起動後に一括再処理される。</p>
+<div class="admonition warning">
+<p class="admonition-title">stoi 例外によるプロセス終了</p>
+<p><code>STP_MST_INST</code> テーブルに無効なインスタンス ID 文字列を直接書き込むと（CLI 外からの直接 DB 操作等）、<code>stpmgrd</code> がクラッシュする。CLI 経由では整数バリデーション済みのため通常発生しない。</p>
+</div>
+<!-- /failure -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35412,8 +36077,8 @@ MST 有効化時に書き込まれるキー <code>MST_INSTANCE:INSTANCE0</code>�
 </tr>
 </tbody>
 </table>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP</a></li>
 <li><a href="../stp-vlan/">CONFIG_DB: STP_VLAN / STP_VLAN_PORT</a></li>

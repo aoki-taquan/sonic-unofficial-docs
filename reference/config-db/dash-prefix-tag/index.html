@@ -25526,6 +25526,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis / ZMQ 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 有効化フラグ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 有効時のデータフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 無効時のデータフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / 応答 publish の有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35470,6 +35553,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis / ZMQ 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 有効化フラグ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 有効時のデータフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 無効時のデータフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / 応答 publish の有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36016,6 +36182,151 @@
 </table>
 <p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/dash-prefix-tag-side.md</code> を参照。</p>
 <!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis-zmq">Redis / ZMQ 購読方式<a class="headerlink" href="#redis-zmq" title="Permanent link">&para;</a></h3>
+<p><code>DashAclOrch</code> は <code>ZmqOrch</code> を継承する (<code>dashaclorch.h:33</code>)。<code>ZmqOrch::addConsumer()</code> は DB が <code>DPU_APPL_DB</code> の場合、<code>ZmqServer</code> の有無によって二系統の Executor を切り替える。</p>
+<table>
+<thead>
+<tr>
+<th>系統</th>
+<th>条件</th>
+<th>Executor 型</th>
+<th>購読 API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZMQ 有効</td>
+<td><code>ORCH_NORTHBOND_DASH_ZMQ_ENABLED = true</code>（デフォルト）</td>
+<td><code>ZmqConsumer</code>（<code>ZmqConsumerStateTable</code> ベース）</td>
+<td>ZMQ PUSH/PULL ソケット受信</td>
+</tr>
+<tr>
+<td>ZMQ 無効</td>
+<td><code>ORCH_NORTHBOND_DASH_ZMQ_ENABLED = false</code></td>
+<td><code>Consumer</code>（<code>ConsumerStateTable</code> ベース）</td>
+<td>Redis channel PUBLISH/SUBSCRIBE</td>
+</tr>
+</tbody>
+</table>
+<p><strong>購読テーブル</strong> (<code>orchdaemon.cpp:1371-1377</code>):</p>
+<p><code>DASH_PREFIX_TAG_TABLE</code> は <code>DashAclOrch</code> が購読する 5 テーブルのひとつ。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>DB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DASH_PREFIX_TAG_TABLE</code></td>
+<td>DPU_APPL_DB</td>
+</tr>
+<tr>
+<td><code>DASH_ACL_IN_TABLE</code></td>
+<td>DPU_APPL_DB</td>
+</tr>
+<tr>
+<td><code>DASH_ACL_OUT_TABLE</code></td>
+<td>DPU_APPL_DB</td>
+</tr>
+<tr>
+<td><code>DASH_ACL_GROUP_TABLE</code></td>
+<td>DPU_APPL_DB</td>
+</tr>
+<tr>
+<td><code>DASH_ACL_RULE_TABLE</code></td>
+<td>DPU_APPL_DB</td>
+</tr>
+</tbody>
+</table>
+<h3 id="zmq">ZMQ 有効化フラグ<a class="headerlink" href="#zmq" title="Permanent link">&para;</a></h3>
+<p><code>DEVICE_METADATA|localhost</code> の <code>orch_northbond_dash_zmq_enabled</code> フィールドで制御。未設定時はデフォルト <code>true</code> (ZMQ 有効)。</p>
+<h3 id="zmq_1">ZMQ 有効時のデータフロー<a class="headerlink" href="#zmq_1" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gNMI / SDN コントローラ
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ↓ ZmqProducerStateTable (DPU_APPL_DB, tcp://localhost:&lt;port&gt;)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ZMQ チャネル (PUSH/PULL)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  ↓
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>ZmqServer (orchagent 内)
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  ↓ ZmqConsumerStateTable.pops()
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>ZmqConsumer.execute() → addToSync(entries) → drain()
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  ↓
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>DashAclOrch::doTask(ConsumerBase&amp;)  ← テーブル名で分岐
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  └─ DASH_PREFIX_TAG_TABLE → taskUpdateDashPrefixTag / taskRemoveDashPrefixTag
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>       ↓
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>     DashTagMgr::create / update / remove (m_tag_table)
+</span></code></pre></div>
+<p><code>ZmqConsumer</code> はソケットイベント駆動で即時 wake up する（SELECT_TIMEOUT なし）。<code>ordered_queue = false</code>（デフォルト）のため FIFO 保証なし。</p>
+<h3 id="zmq_2">ZMQ 無効時のデータフロー<a class="headerlink" href="#zmq_2" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>gNMI / SDN コントローラ
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓ ProducerStateTable → Redis PUBLISH (DPU_APPL_DB channel)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ConsumerStateTable.pops() (SELECT ループ)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ↓
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>DashAclOrch::doTask(ConsumerBase&amp;)
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  └─ DASH_PREFIX_TAG_TABLE → taskUpdateDashPrefixTag / taskRemoveDashPrefixTag
+</span></code></pre></div>
+<h3 id="state_db-publish">STATE_DB / 応答 publish の有無<a class="headerlink" href="#state_db-publish" title="Permanent link">&para;</a></h3>
+<p><code>DashTagMgr</code> は処理結果を STATE_DB / APPL_DB へ publish しない。タグはメモリ内 <code>m_tag_table</code> にのみ保持され、orchagent 外部からは直接観測できない。SDN コントローラはタグ到達確認に STATE_DB 応答を利用できず、ZMQ 経由の処理成功を前提に次ステップ (ACL rule 投入) へ進む設計となっている。</p>
+<div class="admonition note">
+<p class="admonition-title">タグ参照時の非同期確認</p>
+<p><code>DASH_ACL_RULE_TABLE</code> の rule 投入が <code>task_need_retry</code> でキューに残った場合、ACL rule が STATE_DB に出現することでタグ投入の成功を間接的に確認できる。タグ単体の STATE_DB エントリは作成されない。</p>
+</div>
+<ul>
+<li>中間トレース: <code>meta/_intermediate/cdb-flow/dash-prefix-tag-pubsub.md</code></li>
+</ul>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>DPU (SmartSwitch) 専用</strong>: <code>DashAclOrch</code> および内包する <code>DashTagMgr</code> は <code>gMySwitchType == "dpu"</code> のときのみ <code>DpuOrchDaemon</code> 内で生成される (<code>main.cpp:990</code>, <code>orchdaemon.cpp:1378</code>)。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブルは存在しない。<code>DashTagMgr</code> は SAI API を一切呼び出さずタグを orchagent 内メモリのみに保持するため、ASIC 種別による挙動差異はない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell 等)</td>
+<td>無関係</td>
+<td><code>DashTagMgr</code> は SAI 非呼び出し。タグはメモリ保持のみ (<code>dashtagmgr.cpp</code>)</td>
+</tr>
+<tr>
+<td>DPU (SmartSwitch) 専用</td>
+<td>通常スイッチでは無効</td>
+<td><code>gMySwitchType == "dpu"</code> のみ <code>DpuOrchDaemon</code> → <code>DashAclOrch</code> を生成 (<code>main.cpp:990</code>, <code>orchdaemon.cpp:1378</code>)</td>
+</tr>
+<tr>
+<td>multi-asic</td>
+<td>非対応</td>
+<td>DPU 専用構成のため namespace iterate なし</td>
+</tr>
+<tr>
+<td>VOQ chassis / Fabric</td>
+<td>無効</td>
+<td><code>DashAclOrch</code> は DPU モード限定</td>
+</tr>
+<tr>
+<td>ZMQ transport</td>
+<td>feature flag <code>ORCH_NORTHBOND_DASH_ZMQ_ENABLED</code> で制御</td>
+<td>デフォルト有効。無効化で Redis fallback (<code>orchdaemon.cpp:1329</code>)</td>
+</tr>
+<tr>
+<td>IPv4 / IPv6</td>
+<td>orchagent メモリ属性のみ、ASIC 非依存</td>
+<td><code>to_sai(IpVersion)</code> が <code>0</code> を拒否。SAI 呼び出しなし (<code>dashtagmgr.cpp:11-14</code>)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>中間トレース: <code>meta/_intermediate/cdb-flow/dash-prefix-tag-platform.md</code></li>
+</ul>
+<!-- /platform -->
 
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>

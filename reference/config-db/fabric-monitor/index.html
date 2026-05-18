@@ -25982,6 +25982,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-fabricmgrd-appl_db-fabricportsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. fabricmgrd の APPL_DB 書込み → FabricPortsOrch コンストラクタ実行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-monstateenable-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. monState=enable 設定後はデバッグタイマー起動に最大 30 秒の遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 複数フィールドの同時変更は APPL_DB 側が逐次更新（中間状態あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SAI によるファブリックポートリスト取得完了が監視処理の前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35164,6 +35225,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-fabricmgrd-appl_db-fabricportsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. fabricmgrd の APPL_DB 書込み → FabricPortsOrch コンストラクタ実行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-monstateenable-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. monState=enable 設定後はデバッグタイマー起動に最大 30 秒の遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 複数フィールドの同時変更は APPL_DB 側が逐次更新（中間状態あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SAI によるファブリックポートリスト取得完了が監視処理の前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35680,6 +35802,54 @@
 <li><code>monCapacityThreshWarn</code> は 5..100 (%)</li>
 <li><code>monState</code> は <code>enable</code> または <code>disable</code></li>
 </ul>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="1-fabricmgrd-appl_db-fabricportsorch">1. <code>fabricmgrd</code> の APPL_DB 書込み → <code>FabricPortsOrch</code> コンストラクタ実行<a class="headerlink" href="#1-fabricmgrd-appl_db-fabricportsorch" title="Permanent link">&para;</a></h3>
+<p><code>FabricPortsOrch</code> コンストラクタ（<code>fabricportsorch.cpp:127</code>）は初期化時に <code>checkFabricPortMonState()</code> を呼び、<code>APPL_DB.APP_FABRIC_MONITOR_DATA_TABLE</code> の <code>monState</code> フィールドを参照する。<code>fabricmgrd</code> が APPL_DB に書き込む前に orchagent が起動した場合、<code>monState=enable</code> が CONFIG_DB に設定済みでも <code>setCfgVal=false</code> となりデバッグタイマーが起動しない（監視無効状態で初期化完了）。この場合は orchagent 再起動が必要になる。</p>
+<h3 id="2-monstateenable-30">2. <code>monState=enable</code> 設定後はデバッグタイマー起動に最大 30 秒の遅延<a class="headerlink" href="#2-monstateenable-30" title="Permanent link">&para;</a></h3>
+<p><code>monState=enable</code> を設定すると <code>fabricmgrd</code> は直ちに APPL_DB を更新するが、orchagent 内のデバッグタイマーは次の <code>FABRIC_POLL</code> タイマー発火時（デフォルト 30 秒間隔）の <code>checkFabricPortMonState()</code> 判定後に初めて <code>m_debugTimer-&gt;start()</code> が呼ばれる（<code>fabricportsorch.cpp:1582-1585</code>）。即時反映は orchagent 再起動のみ保証される。</p>
+<h3 id="3-appl_db">3. 複数フィールドの同時変更は APPL_DB 側が逐次更新（中間状態あり）<a class="headerlink" href="#3-appl_db" title="Permanent link">&para;</a></h3>
+<p><code>FabricMgr::doTask()</code> はフィールドを 1 件ずつ <code>writeConfigToAppDb()</code> に渡す（<code>fabricmgr.cpp:50-100</code>）。<code>updateFabricDebugCounters()</code> は毎ポーリングで APPL_DB を一括読み込みするため、複数フィールドを同時変更した場合にポーリングタイミングが重なると新旧混在値で監視計算が実行される可能性がある。</p>
+<h3 id="4-sai">4. SAI によるファブリックポートリスト取得完了が監視処理の前提<a class="headerlink" href="#4-sai" title="Permanent link">&para;</a></h3>
+<p><code>getFabricPortList()</code> が完了（<code>m_getFabricPortListDone=true</code>）するまで、<code>updateFabricDebugCounters()</code> / <code>updateFabricPortState()</code> はすべてスキップされる（<code>fabricportsorch.cpp:262,329,420</code>）。SAI がポートリストを返さない間は FABRIC_MONITOR の設定が有効でも監視処理は実行されない。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>fabricmgrd</code> APPL_DB 書込み → <code>FabricPortsOrch</code> init</td>
+<td><strong>推奨先行</strong></td>
+<td>デバッグタイマー未起動（監視無効で初期化完了）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>monState=enable</code> 設定 → デバッグタイマー有効化</td>
+<td><strong>遅延あり（最大 30 秒）</strong></td>
+<td>次回 FABRIC_POLL まで監視開始されない</td>
+</tr>
+<tr>
+<td>3</td>
+<td>複数フィールド同時更新</td>
+<td><strong>逐次書込み（中間状態あり）</strong></td>
+<td>ポーリング次第で新旧混在値で監視計算</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>getFabricPortList()</code> 完了（SAI 応答） → 監視処理実行</td>
+<td><strong>強制先行</strong></td>
+<td>SAI 応答遅延中はすべての監視処理スキップ</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
 <h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ファブリックモニタ daemon（プラットフォーム / <a href="../../glossary/#term-orchagent">orchagent</a> の FabricPortOrch 拡張）</li>

@@ -29836,6 +29836,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35490,6 +35501,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35804,6 +35826,86 @@
 </ul>
 <p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/voq-inband-interface-ordering.md</code> 参照。</p>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/cfgmgr/nbrmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>, <code>sonic-swss/orchagent/portsorch.cpp</code>, <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang</code>
+調査日: 2026-05-18
+調査証跡: <code>meta/_intermediate/cdb-flow/voq-inband-interface-cross-refs.md</code></p>
+</blockquote>
+<p>YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>参照先</th>
+<th>DB / 場所</th>
+<th>方向</th>
+<th>依存内容</th>
+<th>根拠コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>DEVICE_METADATA.localhost.switch_type</code></td>
+<td>CONFIG_DB</td>
+<td>READ</td>
+<td><code>switch_type != "voq"</code> のとき VoQ 系処理全体がスキップされ VOQ_INBAND_INTERFACE は事実上無効</td>
+<td><code>intfmgr.cpp:71-75</code>, <code>main.cpp</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>APP_INTF_TABLE</code></td>
+<td>APPL_DB</td>
+<td>WRITE</td>
+<td>単一キー SET は <code>doIntfGeneralTask()</code> をバイパスし <code>m_appIntfTableProducer.set()</code> で即時 relay</td>
+<td><code>intfmgr.cpp:1198-1199</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>STATE_INTF_TABLE</code></td>
+<td>STATE_DB</td>
+<td>WRITE/READ</td>
+<td><code>intfmgrd</code> が <code>vrf=""</code> を書き込み、IP プレフィクスロウ (2-key) の <code>isIntfCreated()</code> チェック成立に必要</td>
+<td><code>intfmgr.cpp:1200</code>, <code>intfmgr.cpp:1115</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>portsorch</code> 内部ポートマップ (<code>getPort()</code>)</td>
+<td>orchagent (in-process)</td>
+<td>READ</td>
+<td><code>setVoqInbandIntf()</code> が <code>getPort()</code> で対象ポートの存在を確認。未登録ならリトライキュー戻し</td>
+<td><code>portsorch.cpp:11121-11131</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>VOQ_INBAND_INTERFACE</code> (READ by nbrmgr)</td>
+<td>CONFIG_DB</td>
+<td>READ</td>
+<td><code>nbrmgrd</code> が VOQ 環境でリモートネイバーのカーネルルート追加時に <code>inband_type</code> を参照</td>
+<td><code>nbrmgr.cpp:82,524-549</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>VOQ_INBAND_INTERFACE_LIST.name</code> (YANG leafref)</td>
+<td>CONFIG_DB</td>
+<td>READ</td>
+<td>IP プレフィクスロウの <code>name</code> キーは属性ロウへの leafref。対応属性行なしで YANG バリデーション reject</td>
+<td><code>sonic-voq-inband-interface.yang:48</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">依存 #1 (switch_type ゲート)</p>
+<p><code>switch_type == "voq"</code> かつ VOQ chassis 環境が成立しない限り、VOQ_INBAND_INTERFACE を CONFIG_DB に書いても orchagent / intfmgrd ともに処理をスキップする（エラーログなし）。単体スイッチでは設定が無視される。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">依存 #3 (2-key IP プレフィクスロウの前提)</p>
+<p>属性ロウ（単一キー <code>VOQ_INBAND_INTERFACE|&lt;name&gt;</code>）の SET が先行し <code>STATE_INTF_TABLE</code> に <code>vrf=""</code> が書かれた後でなければ、IP プレフィクスロウ（2-key <code>VOQ_INBAND_INTERFACE|&lt;name&gt;|&lt;ip-prefix&gt;</code>）が <code>doIntfAddrTask()</code> で処理されない（<code>isIntfCreated()</code> が false を返す）。</p>
+</div>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 6981be1a469d -->
 

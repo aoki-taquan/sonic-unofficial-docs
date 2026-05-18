@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A 分析。">
+        <meta name="description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP / ICCP 連携 — コード由来デフォルト詳細 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A 分析。" />
+<meta property="og:description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-iccp.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-iccp/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP / ICCP 連携 — コード由来デフォルト詳細 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A 分析。" />
+<meta property="twitter:description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-iccp.png" />
 </head>
   
@@ -28660,7 +28660,196 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iccp-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICCP セッション確立と STP ロール決定の順序
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ICCP セッション確立と STP ロール決定の順序">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iccp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定前提条件（ICCP 接続拒否を防ぐ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動・処理順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCP クライアント/サーバー役の決定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        再起動時の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル間・DB 間参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="テーブル間・DB 間参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 内テーブル依存
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CONFIG_DB 内テーブル依存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclag_domain-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCLAG_DOMAIN → STP ロール決定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp-yang-leafrefstp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP YANG 内 leafref（STP テーブル間）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp-mode-must-stp-stp_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP mode must 制約（STP → STP_PORT）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccpd-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd ↔ STP デーモン間の直接インタフェース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルトとハードコード挙動
@@ -28754,6 +28943,267 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iccp-stp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICCP セッション切断時の STP ロールリセット
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗シナリオ一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schedulerh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scheduler.h の定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccp_csmh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccp_csm.h の定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msg_formath-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        msg_format.h の STP 関連定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG デフォルト vs コードハードコード の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込の対応表
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        カーネル直接書込み（DB 外）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iccpd-redis-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd は Redis を直接 subscribe しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccpd-epoll_wait-100-ms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd メインループ — epoll_wait + 100 ms タイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp-iccpd-mclagsyncd-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP ロール確定後の通知 (iccpd → mclagsyncd → STATE_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハートビートタイマー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28765,7 +29215,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28776,7 +29226,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34776,7 +35226,196 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iccp-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICCP セッション確立と STP ロール決定の順序
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ICCP セッション確立と STP ロール決定の順序">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iccp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定前提条件（ICCP 接続拒否を防ぐ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動・処理順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCP クライアント/サーバー役の決定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        再起動時の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル間・DB 間参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="テーブル間・DB 間参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 内テーブル依存
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CONFIG_DB 内テーブル依存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclag_domain-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCLAG_DOMAIN → STP ロール決定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp-yang-leafrefstp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP YANG 内 leafref（STP テーブル間）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp-mode-must-stp-stp_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP mode must 制約（STP → STP_PORT）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccpd-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd ↔ STP デーモン間の直接インタフェース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルトとハードコード挙動
@@ -34870,6 +35509,267 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        削除順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iccp-stp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICCP セッション切断時の STP ロールリセット
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗シナリオ一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schedulerh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scheduler.h の定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccp_csmh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccp_csm.h の定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msg_formath-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        msg_format.h の STP 関連定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG デフォルト vs コードハードコード の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込の対応表
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        カーネル直接書込み（DB 外）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#iccpd-redis-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd は Redis を直接 subscribe しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccpd-epoll_wait-100-ms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd メインループ — epoll_wait + 100 ms タイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp-iccpd-mclagsyncd-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP ロール確定後の通知 (iccpd → mclagsyncd → STATE_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハートビートタイマー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34881,7 +35781,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34892,7 +35792,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34930,7 +35830,7 @@
 <h1 id="stp-iccp">STP / ICCP 連携 — コード由来デフォルト詳細<a class="headerlink" href="#stp-iccp" title="Permanent link">&para;</a></h1>
 <div class="admonition info">
 <p class="admonition-title">ページの位置付け</p>
-<p>このページは MCLAG 環境における <strong>STP (Spanning Tree Protocol) と ICCP (Inter-Chassis Control Protocol) の連携</strong> を詳述する Phase A 分析ページ。
+<p>このページは MCLAG 環境における <strong>STP (Spanning Tree Protocol) と ICCP (Inter-Chassis Control Protocol) の連携</strong> を詳述する Phase A–G 分析ページ。
 <code>iccpd</code> (<code>docker-iccpd</code>) が担うロール決定アルゴリズム・CONFIG_DB フィールドとの対応・ICCP STP TLV の実装状況を解説する。</p>
 </div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -34945,8 +35845,335 @@ STP との連携は主に以下の 2 つの側面で存在する:</p>
 <p>STP/ICCP 連携専用の CONFIG_DB テーブルは存在しない。
 連携は <code>MCLAG_DOMAIN</code> テーブルの <code>source_ip</code> / <code>peer_ip</code> フィールドを入力として iccpd 内部で処理される。</p>
 </div>
+<!-- ordering -->
+<h2 id="phase-b">書込み順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
+
+<h3 id="iccp-stp">ICCP セッション確立と STP ロール決定の順序<a class="headerlink" href="#iccp-stp" title="Permanent link">&para;</a></h3>
+<p>STP ロール (<code>STP_ROLE_ACTIVE</code> / <code>STP_ROLE_STANDBY</code>) は ICCP セッション確立のタイミングで 1 回だけ決定される。
+以下の前提条件がすべて満たされた後に初めてロールが確定する。</p>
+<h4 id="iccp">設定前提条件（ICCP 接続拒否を防ぐ）<a class="headerlink" href="#iccp" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong><code>MCLAG_DOMAIN.source_ip</code> と <code>peer_ip</code> が CONFIG_DB に書かれていること</strong></li>
+<li><code>scheduler_check_csm_config()</code> (<code>scheduler.c:780-784</code>) が両フィールドの空文字をチェックし、いずれかが空なら <code>MCLAG_ERROR</code> を返して ICCP 接続を拒否する。</li>
+<li>
+<p>iccpd は接続拒否中は STP ロール決定処理に到達しない。</p>
+</li>
+<li>
+<p><strong><code>MCLAG_DOMAIN.peer_link</code> に指定したインターフェースが Linux カーネルに存在すること</strong></p>
+</li>
+<li><code>peer_itf_name</code> が設定されているのにインターフェースが未存在 (<code>local_if_find_by_name()</code> = NULL) の場合も接続拒否 (<code>scheduler.c:791-798</code>)。</li>
+<li>
+<p>PortChannel を peer_link とする場合は PortChannel の作成が先行必須。</p>
+</li>
+<li>
+<p><strong>mclagsyncd が iccpd と接続済みであること (<code>sync_fd &gt; 0</code>)</strong></p>
+</li>
+<li><code>mlacp_link_set_iccp_role()</code> は <code>sys-&gt;sync_fd &lt;= 0</code> のときロール通知をサイレントスキップする (<code>mlacp_link_handler.c:654-660</code>)。</li>
+<li>mclagsyncd は起動後に iccpd のサーバーソケットに接続し、完了してから <code>mclagsyncdFetchMclagConfigFromConfigdb()</code> を実行する (<code>mclagsyncd.cpp:51-58</code>)。</li>
+</ol>
+<h4 id="_2">起動・処理順序<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>処理</th>
+<th>依存</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>iccpd 起動・サーバーソケット listen</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>2</td>
+<td>mclagsyncd 起動 → iccpd ソケット接続 (<code>sync_fd</code> 確立)</td>
+<td>iccpd が先に起動していること</td>
+</tr>
+<tr>
+<td>3</td>
+<td>mclagsyncd が CONFIG_DB から <code>MCLAG_DOMAIN</code> をフェッチして iccpd へ送信</td>
+<td><code>sync_fd</code> 確立済み</td>
+</tr>
+<tr>
+<td>4</td>
+<td>iccpd が <code>source_ip</code> / <code>peer_ip</code> を CSM に格納</td>
+<td>ステップ 3 完了</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ICCP セッション確立 (TCP connect / accept)</td>
+<td><code>source_ip</code>, <code>peer_ip</code>, <code>peer_link</code> IF が揃っていること</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>scheduler_check_csm_config()</code> → <code>iccp_csm_stp_role_count()</code> でロール決定 (1 回のみ)</td>
+<td>ステップ 5 完了</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>mlacp_link_set_iccp_role()</code> → mclagsyncd へ <code>MCLAG_MSG_TYPE_SET_ICCP_ROLE</code> 送信</td>
+<td><code>sync_fd &gt; 0</code> (ステップ 2 完了)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tcp">TCP クライアント/サーバー役の決定<a class="headerlink" href="#tcp" title="Permanent link">&para;</a></h4>
+<p>ICCP セッションの TCP 接続方向は <code>source_ip</code> と <code>peer_ip</code> の数値大小で決まる:</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>役割</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source_ip</code> &lt; <code>peer_ip</code></td>
+<td>TCP クライアント</td>
+<td><code>session_client_conn_handler()</code> で相手に connect</td>
+</tr>
+<tr>
+<td><code>source_ip</code> &gt; <code>peer_ip</code></td>
+<td>TCP サーバー</td>
+<td><code>accept()</code> で待機</td>
+</tr>
+<tr>
+<td><code>source_ip</code> == <code>peer_ip</code></td>
+<td>異常</td>
+<td>WARN ログのみ・セッション未確立</td>
+</tr>
+</tbody>
+</table>
+<p><code>scheduler_prepare_session()</code> (<code>scheduler.c:682-700</code>) でこの判定を行う。TCP クライアント側ノードが接続を開始するため、<strong>小さい IP のノードが先にセッション確立を試みる</strong>。</p>
+<h4 id="_3">再起動時の注意点<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>iccp_csm_stp_role_count()</code> は <code>role_type == STP_ROLE_NONE</code> のときのみ実行される (1 回ガード, <code>iccp_csm.c:846</code>)。</li>
+<li>iccpd の<strong>プロセス再起動</strong>なしにセッションが切断・再接続しても <code>role_type</code> はリセットされない。</li>
+<li><code>MCLAG_DOMAIN.source_ip</code> を変更してもプロセス再起動なしにはロールが更新されない。</li>
+</ul>
+<h4 id="_4">順序依存サマリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>強制度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>MCLAG_DOMAIN.source_ip</code> / <code>peer_ip</code> が存在 → ICCP 接続許可</td>
+<td>必須</td>
+<td>空だと接続拒否</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>peer_link</code> IF が Linux に存在 → ICCP 接続許可</td>
+<td>必須</td>
+<td>PortChannel 作成が先行必要</td>
+</tr>
+<tr>
+<td>3</td>
+<td>iccpd 起動 → mclagsyncd 起動</td>
+<td>実質必須</td>
+<td>mclagsyncd の accept() 先行順序</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>sync_fd</code> 確立 → STP ロール通知到達</td>
+<td>必須</td>
+<td>sync_fd=0 ではロール通知スキップ</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ICCP セッション確立 → STP ロール決定</td>
+<td>必須</td>
+<td>セッション確立時に 1 回のみ</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>source_ip</code> &lt; <code>peer_ip</code> ノード → TCP connect 発信</td>
+<td>実装固定</td>
+<td>変更不可</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="db-phase-c">テーブル間・DB 間参照 (Phase C)<a class="headerlink" href="#db-phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-cross-refs.md -->
+
+<h3 id="config_db">CONFIG_DB 内テーブル依存<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h4 id="mclag_domain-stp">MCLAG_DOMAIN → STP ロール決定<a class="headerlink" href="#mclag_domain-stp" title="Permanent link">&para;</a></h4>
+<p><code>MCLAG_DOMAIN.source_ip</code> / <code>peer_ip</code> フィールドが iccpd 内部の STP ロール決定アルゴリズムの
+直接入力となる。CONFIG_DB から直接的な leafref はないが、機能上の依存関係が存在する:</p>
+<table>
+<thead>
+<tr>
+<th>参照元</th>
+<th>参照先</th>
+<th>依存の性質</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MCLAG_DOMAIN.source_ip</code></td>
+<td>iccpd <code>csm-&gt;sender_ip</code></td>
+<td>ICCP セッション確立 + STP ロール比較の左辺</td>
+</tr>
+<tr>
+<td><code>MCLAG_DOMAIN.peer_ip</code></td>
+<td>iccpd <code>csm-&gt;peer_ip</code></td>
+<td>ICCP セッション確立 + STP ロール比較の右辺</td>
+</tr>
+<tr>
+<td><code>MCLAG_DOMAIN.peer_link</code></td>
+<td>Linux IF (<code>local_if_find_by_name()</code>)</td>
+<td>ICCP 接続許可の前提</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>scheduler.c:768-807</code>, <code>iccp_csm.c:845-871</code></p>
+<h4 id="stp-yang-leafrefstp">STP YANG 内 leafref（STP テーブル間）<a class="headerlink" href="#stp-yang-leafrefstp" title="Permanent link">&para;</a></h4>
+<p><code>sonic-spanning-tree.yang</code> で定義される CONFIG_DB テーブル間の leafref:</p>
+<table>
+<thead>
+<tr>
+<th>参照元テーブル</th>
+<th>フィールド</th>
+<th>参照先テーブル</th>
+<th>YANG 行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_VLAN_PORT</code></td>
+<td><code>vlan-name</code></td>
+<td><code>STP_VLAN.name</code></td>
+<td>L216</td>
+</tr>
+<tr>
+<td><code>STP_VLAN_PORT</code></td>
+<td><code>ifname</code></td>
+<td><code>STP_PORT.ifname</code></td>
+<td>L224</td>
+</tr>
+<tr>
+<td><code>STP_MST_PORT</code></td>
+<td><code>ifname</code></td>
+<td><code>STP_PORT.ifname</code></td>
+<td>L491</td>
+</tr>
+</tbody>
+</table>
+<p><code>STP_VLAN_PORT</code> エントリを作成するには <code>STP_VLAN</code> と <code>STP_PORT</code> が先行して存在する必要がある。</p>
+<h4 id="stp-mode-must-stp-stp_port">STP mode must 制約（STP → STP_PORT）<a class="headerlink" href="#stp-mode-must-stp-stp_port" title="Permanent link">&para;</a></h4>
+<p><code>STP.mode</code> の値が <code>STP_PORT</code> 内フィールドの must 制約に影響する:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>制約</th>
+<th>エラーメッセージ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_PORT.portfast</code></td>
+<td><code>STP.mode == 'pvst'</code> が必須</td>
+<td>"Mode must be PVST, and PortFast must be enabled..."</td>
+</tr>
+<tr>
+<td><code>STP_PORT.edge_port</code></td>
+<td><code>STP.mode == 'mst'</code> が必須</td>
+<td>"Mode must be MST, and EdgePort must be enabled..."</td>
+</tr>
+<tr>
+<td><code>STP_PORT.link_type</code></td>
+<td><code>STP.mode == 'mst'</code> が必須</td>
+<td>"Configuration allowed in MST mode only"</td>
+</tr>
+<tr>
+<td><code>STP_MST_LIST.*</code></td>
+<td><code>STP.mode == 'mst'</code> が必須 (全フィールド)</td>
+<td><code>sonic-spanning-tree.yang:362-426</code></td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>sonic-spanning-tree.yang:289-304, 327, 362-426</code></p>
+<h3 id="appl_db">APPL_DB 参照<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd</code> (STP マネージャ) が CONFIG_DB の STP テーブルを読んで以下の APPL_DB テーブルに書き込み、
+<code>stporch</code> が消費して SAI へ設定する:</p>
+<table>
+<thead>
+<tr>
+<th>APPL_DB テーブル</th>
+<th>書き込み元</th>
+<th>消費者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code></td>
+<td><code>stpmgrd</code></td>
+<td><code>StpOrch::updateVlanToStpInstance()</code></td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code></td>
+<td><code>stpmgrd</code></td>
+<td><code>StpOrch::updateStpPortState()</code></td>
+</tr>
+<tr>
+<td><code>STP_FASTAGEING_FLUSH_TABLE</code></td>
+<td><code>stpmgrd</code></td>
+<td><code>StpOrch</code> (高速エージング flush)</td>
+</tr>
+<tr>
+<td><code>STP_INST_PORT_FLUSH_TABLE</code></td>
+<td><code>stpmgrd</code></td>
+<td><code>StpOrch</code> (インスタンスポート flush)</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>sonic-swss/orchagent/stporch.cpp:584-597</code>, <code>sonic-swss-common/common/schema.h:111-124</code></p>
+<h3 id="state_db">STATE_DB 参照<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>書き込み元</th>
+<th>STATE_DB テーブル</th>
+<th>参照者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stporch</code></td>
+<td><code>STATE_STP_TABLE</code></td>
+<td><code>show spanning_tree</code> CLI</td>
+</tr>
+<tr>
+<td><code>mclagsyncd</code></td>
+<td><code>STATE_MCLAG_TABLE</code> (role / system_mac)</td>
+<td><code>show mclag brief</code> CLI</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>stporch.cpp:26</code> (<code>STATE_STP_TABLE_NAME</code>), <code>mclaglink.cpp:1412</code></p>
+<h3 id="iccpd-stp">iccpd ↔ STP デーモン間の直接インタフェース<a class="headerlink" href="#iccpd-stp" title="Permanent link">&para;</a></h3>
+<p>iccpd は <code>stpmgrd</code> と <strong>直接通信しない</strong>。ICCP プロトコルに定義される STP TLV
+(<code>TLV_T_MLACP_STP_INFO = 0x1037</code>) は現在の実装で未サポート（<code>mlacp_fsm.c:729-733</code>）。
+ピア間の STP 設定一貫性はユーザーが手動で維持する必要がある。</p>
+<p>証跡: <code>msg_format.h:103</code>, <code>mlacp_fsm.c:729-733</code></p>
+<!-- /cross-refs -->
+
 <!-- defaults -->
-<h2 id="_2">暗黙デフォルトとハードコード挙動<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_5">暗黙デフォルトとハードコード挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-defaults.md -->
 
 <h3 id="1-stp-iccpd">1. STP ロール型 — iccpd 内部定義<a class="headerlink" href="#1-stp-iccpd" title="Permanent link">&para;</a></h3>
@@ -35327,6 +36554,458 @@ MST 有効化時に CLI が書き込む実際の値は <code>1</code> であり�
 <p>証跡: <code>sonic-spanning-tree.yang:86-105, 150-165, 380-432</code></p>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b_1">書込み順序依存 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
+
+<p>STP/ICCP 連携において iccpd が STP ロールを正しく決定するためには、以下の順序依存がある。</p>
+<h3 id="_6">追加順序<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong><code>MCLAG_DOMAIN</code> の <code>source_ip</code> / <code>peer_ip</code> / <code>peer_link</code> を先に CONFIG_DB に書く</strong></li>
+<li><code>scheduler_check_csm_config()</code> が <code>sender_ip</code> と <code>peer_ip</code> の空文字チェックを行い、空であれば <code>MCLAG_ERROR</code> を返して ICCP セッション接続を拒否する。</li>
+<li><code>peer_link</code> が設定済みでも対応するインターフェースが存在しない場合も接続を拒否する（<code>"peer connection can not establish"</code> ログ）。</li>
+<li>
+<p>evidence: <code>scheduler.c:780-792</code></p>
+</li>
+<li>
+<p><strong>mclagsyncd が iccpd の <code>accept()</code> に接続してから STP ロール通知が届く</strong></p>
+</li>
+<li><code>mlacp_link_set_iccp_role()</code> は <code>sys-&gt;sync_fd &lt;= 0</code> の場合にサイレントスキップする。</li>
+<li>mclagsyncd は iccpd が listen 状態になった後に接続するため、iccpd を先に起動する。</li>
+<li>
+<p>evidence: <code>mlacp_link_handler.c:654-660</code></p>
+</li>
+<li>
+<p><strong>クライアント/サーバー役は <code>source_ip</code> と <code>peer_ip</code> の大小比較で決定する</strong></p>
+</li>
+<li><code>scheduler_prepare_session()</code> で <code>inet_addr(sender_ip) &lt; inet_addr(peer_ip)</code> の場合のみ TCP client として connect を試みる。</li>
+<li><code>source_ip &gt; peer_ip</code> のノードは TCP server として LISTEN で待つ。</li>
+<li><code>source_ip == peer_ip</code> の場合は WARN ログを出してスキップし、セッションが確立されない。</li>
+<li>
+<p>evidence: <code>scheduler.c:686-697</code></p>
+</li>
+<li>
+<p><strong>STP ロール決定は ICCP セッション確立直後に 1 回だけ実行される</strong></p>
+</li>
+<li><code>iccp_csm_stp_role_count()</code> は <code>role_type == STP_ROLE_NONE</code> の場合のみ実行される（ガード条件）。</li>
+<li>セッション切断・再接続後も <code>role_type</code> はリセットされないため、再起動しないとロール変更は反映されない。</li>
+<li>STP デーモンへの通知はロール決定直後に行われ、その後の CONFIG_DB 変更は反映されない。</li>
+<li>evidence: <code>iccp_csm.c:845-871</code>, <code>scheduler.c:806</code></li>
+</ol>
+<h3 id="_7">削除順序<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>操作</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>MCLAG_DOMAIN</code> を DEL する前に ICCP セッションを停止</td>
+<td><code>scheduler_session_disconnect_handler()</code> が呼ばれ CSM がクリアされる</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>MCLAG_DOMAIN</code> の <code>peer_link</code> を unset</td>
+<td><code>unset_peer_link()</code> でピアリンク解除</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>MCLAG_DOMAIN</code> を DEL</td>
+<td><code>unset_mc_lag_by_id()</code> で CSM 解放</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">順序依存サマリ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>強制度</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>MCLAG_DOMAIN</code>（<code>source_ip</code> / <code>peer_ip</code> / <code>peer_link</code>）→ ICCP セッション確立</td>
+<td>強制</td>
+<td>CONFIG_DB 書込み後に iccpd が自動リトライ (<code>CONNECT_INTERVAL_SEC</code> ごと)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>iccpd 起動 → mclagsyncd 起動</td>
+<td>推奨</td>
+<td><code>sync_fd</code> 未確立の場合 STP ロール通知がサイレントスキップ</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>source_ip != peer_ip</code></td>
+<td>WARN のみ・ICCP 未確立</td>
+<td>同一 IP 設定はサポート外</td>
+</tr>
+<tr>
+<td>4</td>
+<td>ICCP セッション確立 → STP ロール決定（1 回限り）</td>
+<td>強制</td>
+<td>ロール変更には iccpd 再起動が必要</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-failure.md -->
+
+<h3 id="iccp-stp_1">ICCP セッション切断時の STP ロールリセット<a class="headerlink" href="#iccp-stp_1" title="Permanent link">&para;</a></h3>
+<p>ICCP セッションが切断されると <code>scheduler_session_disconnect_handler()</code> が <code>iccp_csm_status_reset(csm, 0)</code> を呼び出し、<code>role_type</code> が <strong><code>STP_ROLE_NONE</code> にリセット</strong> される (<code>iccp_csm.c:149</code>)。</p>
+<p>再接続時に <code>scheduler_check_csm_config()</code> → <code>iccp_csm_stp_role_count()</code> が実行され、STP ロールが再決定される (<code>scheduler.c:806</code>)。</p>
+<h3 id="_9">失敗シナリオ一覧<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗原因</th>
+<th>挙動</th>
+<th>自動回復</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ハートビートタイムアウト (<code>session_timeout</code> デフォルト 15 秒)</td>
+<td>セッション切断 → <code>role_type = STP_ROLE_NONE</code> → 再接続試行</td>
+<td>あり（<code>CONNECT_INTERVAL_SEC = 1</code> 秒ごとにリトライ）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>TCP 接続ドロップ (<code>sock_fd &lt;= 0</code>)</td>
+<td><code>ICCP_NONEXISTENT</code> 状態へ遷移・<code>role_type</code> リセット</td>
+<td>あり（自動再接続）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>source_ip == peer_ip</code></td>
+<td>セッション確立不可（WARN ログのみ、エラー通知なし）</td>
+<td>なし（CONFIG_DB 設定変更が必要）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>peer_link</code> 設定済みだが IF が未作成</td>
+<td><code>scheduler_check_csm_config()</code> が即 <code>MCLAG_ERROR</code> 返却 → 接続拒否</td>
+<td>あり（IF 作成後に次のチェックで回復）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>mclagsyncd</code> が iccpd から切断</td>
+<td><code>mlacp_link_set_iccp_role()</code> が <code>sync_fd &lt;= 0</code> でサイレントスキップ</td>
+<td>あり（<code>mclagsyncd</code> 再接続後の最初のロール変更で再通知）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">定数<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>場所</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HEARTBEAT_TIMEOUT_SEC</code></td>
+<td><code>15</code></td>
+<td><code>scheduler.h:42</code></td>
+<td>ハートビート無応答でセッション切断するまでの秒数</td>
+</tr>
+<tr>
+<td><code>CONNECT_INTERVAL_SEC</code></td>
+<td><code>1</code></td>
+<td><code>scheduler.h:40</code></td>
+<td>接続リトライ間隔（秒）</td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
+
+<!-- hardcoded-constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-constants.md -->
+
+<p>iccpd の STP/ICCP 連携に関係するハードコード定数を列挙する。これらは CONFIG_DB での設定変更が不可か、初期値として機能する。</p>
+<h3 id="schedulerh">scheduler.h の定数<a class="headerlink" href="#schedulerh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>場所</th>
+<th>概要</th>
+<th>CONFIG_DB 上書き</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONNECT_INTERVAL_SEC</code></td>
+<td><code>1</code> 秒</td>
+<td><code>scheduler.h:40</code></td>
+<td>ICCP TCP 接続リトライ間隔</td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>CONNECT_TIMEOUT_MSEC</code></td>
+<td><code>100</code> ms</td>
+<td><code>scheduler.h:41</code></td>
+<td>TCP connect システムコールタイムアウト</td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>HEARTBEAT_TIMEOUT_SEC</code></td>
+<td><code>15</code> 秒</td>
+<td><code>scheduler.h:42</code></td>
+<td>CSM 初期ハートビートタイムアウト初期値</td>
+<td>可（<code>session_timeout</code> で上書き）</td>
+</tr>
+<tr>
+<td><code>TRANSIT_INTERVAL_SEC</code></td>
+<td><code>1</code> 秒</td>
+<td><code>scheduler.h:43</code></td>
+<td>ICCP FSM 状態遷移チェック間隔</td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>EPOLL_TIMEOUT_MSEC</code></td>
+<td><code>100</code> ms</td>
+<td><code>scheduler.h:44</code></td>
+<td>epoll_wait のタイムアウト</td>
+<td>不可</td>
+</tr>
+</tbody>
+</table>
+<h3 id="iccp_csmh">iccp_csm.h の定数<a class="headerlink" href="#iccp_csmh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>場所</th>
+<th>概要</th>
+<th>CONFIG_DB 上書き</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ICCP_TCP_PORT</code></td>
+<td><code>8888</code></td>
+<td><code>iccp_csm.h:53</code></td>
+<td>iccpd が listen する TCP ポート番号</td>
+<td>不可</td>
+</tr>
+</tbody>
+</table>
+<h3 id="msg_formath-stp">msg_format.h の STP 関連定数<a class="headerlink" href="#msg_formath-stp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>場所</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TLV_T_MLACP_STP_INFO</code></td>
+<td><code>0x1037</code></td>
+<td><code>msg_format.h:103</code></td>
+<td>ICCP STP 情報同期 TLV 型コード（未実装・<code>//no support</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-vs">YANG デフォルト vs コードハードコード の乖離<a class="headerlink" href="#yang-vs" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">session_timeout の初期値不一致</p>
+<p><code>HEARTBEAT_TIMEOUT_SEC = 15</code>（C #define、<code>scheduler.h:42</code>）と YANG モデルの <code>session_timeout</code> デフォルト <code>30</code>（<code>sonic-mclag.yang:91</code>）は <strong>異なる値</strong> である。</p>
+<ul>
+<li>CSM 初期化時（<code>iccp_csm.c:126</code>）は <code>csm-&gt;session_timeout = HEARTBEAT_TIMEOUT_SEC = 15</code> が設定される。</li>
+<li>CONFIG_DB から <code>MCLAG_DOMAIN.session_timeout</code> を受け取ると <code>set_session_timeout()</code> で上書きされる（<code>mlacp_link_handler.c:3116</code>）。</li>
+<li>YANG デフォルト（<code>30</code>）が適用された場合は上書き後に <code>30</code> になるが、mclagsyncd が CONFIG_DB をフェッチして iccpd に送信するまでの <strong>短い初期期間は <code>15</code> 秒が適用</strong> される。</li>
+<li><code>session_timeout</code> が明示設定されない場合も <code>mclagsyncd</code> は YANG デフォルト <code>30</code> を送信する（<code>mclaglink.cpp:732-737</code>）。</li>
+</ul>
+</div>
+<p>証跡: <code>scheduler.h:40-44</code>, <code>iccp_csm.h:53</code>, <code>iccp_csm.c:126</code>, <code>msg_format.h:103</code>, <code>mlacp_link_handler.c:3116-3120</code>, <code>sonic-mclag.yang:81,91</code></p>
+<!-- /hardcoded-constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/stp-iccp-side-effects.md</code></p>
+</blockquote>
+<p>STP/ICCP 連携では CONFIG_DB への書き戻しは行われない。<code>iccpd</code> がロール決定・セッション状態を <code>mclagsyncd</code> へ通知し、<code>mclagsyncd</code> が <strong>STATE_DB</strong> へ書き込む。</p>
+<h3 id="state_db_1">STATE_DB 書込の対応表<a class="headerlink" href="#state_db_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>書込み契機</th>
+<th>iccpd メッセージ型</th>
+<th>mclagsyncd 関数</th>
+<th>STATE_DB テーブル / フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ICCP セッション確立/切断</td>
+<td><code>MCLAG_MSG_TYPE_SET_ICCP_STATE</code></td>
+<td><code>mclagsyncdSetIccpState()</code></td>
+<td><code>STATE_MCLAG_TABLE\|{mlag_id}</code>.<code>oper_status</code>: <code>"up"</code> / <code>"down"</code></td>
+</tr>
+<tr>
+<td>STP ロール確定</td>
+<td><code>MCLAG_MSG_TYPE_SET_ICCP_ROLE</code></td>
+<td><code>mclagsyncdSetIccpRole()</code></td>
+<td><code>STATE_MCLAG_TABLE\|{mlag_id}</code>.<code>role</code>: <code>"active"</code> / <code>"standby"</code> + <code>system_mac</code>（Active のみ）</td>
+</tr>
+<tr>
+<td>system_id 同期</td>
+<td><code>MCLAG_MSG_TYPE_SET_ICCP_SYSTEM_ID</code></td>
+<td><code>mclagsyncdSetSystemId()</code></td>
+<td><code>STATE_MCLAG_TABLE\|{mlag_id}</code>.<code>system_mac</code></td>
+</tr>
+<tr>
+<td>peer system_mac 更新</td>
+<td><code>MCLAG_MSG_TYPE_SET_ICCP_PEER_SYSTEM_ID</code></td>
+<td><code>mclagsyncdSetPeerSystemId()</code></td>
+<td><code>STATE_MCLAG_TABLE\|{mlag_id}</code>.<code>remote_system_mac</code></td>
+</tr>
+<tr>
+<td>ICCP セッション削除</td>
+<td><code>MCLAG_MSG_TYPE_DEL_ICCP_INFO</code></td>
+<td><code>mclagsyncdDelIccpInfo()</code></td>
+<td><code>STATE_MCLAG_TABLE\|{mlag_id}</code> エントリ全削除</td>
+</tr>
+</tbody>
+</table>
+<h3 id="db">カーネル直接書込み（DB 外）<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
+<p>Standby ロール確定時に <code>mlacp_fix_bridge_mac(csm)</code> が実行され、Linux カーネルの PortChannel ハードウェアアドレスを Active ノードの MAC (<code>system_id</code>) へ直接書き換える (<code>iccp_netlink_if_hwaddr_set()</code>、<code>iccp_netlink.c:643-676</code>)。この変更は STATE_DB / CONFIG_DB には反映されない。</p>
+<p>証跡: <code>mclaglink.cpp:1319-1420</code>, <code>mclaglink.cpp:1486-1508</code>, <code>mclaglink.cpp:1696-1740</code>, <code>iccp_netlink.c:643-676</code></p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-pubsub.md -->
+
+<p>STP/ICCP 連携における CONFIG_DB → iccpd → STATE_DB の通知経路を整理する。</p>
+<h3 id="iccpd-redis-subscribe">iccpd は Redis を直接 subscribe しない<a class="headerlink" href="#iccpd-redis-subscribe" title="Permanent link">&para;</a></h3>
+<p><code>iccpd</code> は Redis keyspace notification を直接購読しない。CONFIG_DB の変更は <strong><code>mclagsyncd</code> 経由</strong>で IPC として届く。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>CONFIG_DB (keyspace @4) ──PSUBSCRIBE──► mclagsyncd
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>   mclagsyncd ──Unix socket (port 2626)──► iccpd (sync_fd)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>      iccpd ──iccp_mclagsyncd_msg_handler()──► scheduler_check_csm_config()
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>         └──► iccp_csm_stp_role_count()  ← STP ロール決定
+</span></code></pre></div>
+<p><code>mclagsyncd</code> が購読する CONFIG_DB テーブル:</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>PSUBSCRIBE パターン</th>
+<th>実装位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MCLAG</code> (MCLAG_DOMAIN)</td>
+<td><code>__keyspace@4__:MCLAG\|*</code></td>
+<td><code>mclagsyncd.cpp:41</code></td>
+</tr>
+<tr>
+<td><code>MCLAG_INTERFACE</code></td>
+<td><code>__keyspace@4__:MCLAG_INTERFACE\|*</code></td>
+<td><code>mclaglink.cpp:912-921</code></td>
+</tr>
+<tr>
+<td><code>MCLAG_UNIQUE_IP</code></td>
+<td><code>__keyspace@4__:MCLAG_UNIQUE_IP\|*</code></td>
+<td><code>mclaglink.cpp:912-921</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="iccpd-epoll_wait-100-ms">iccpd メインループ — epoll_wait + 100 ms タイムアウト<a class="headerlink" href="#iccpd-epoll_wait-100-ms" title="Permanent link">&para;</a></h3>
+<p><code>scheduler_loop()</code> (<code>scheduler.c:462</code>) は <code>epoll_wait(EPOLL_TIMEOUT_MSEC = 100 ms)</code> でブロック待機し、
+以下のイベント源を処理する (<code>scheduler.h:44</code>, <code>iccp_netlink.c:2182</code>):</p>
+<table>
+<thead>
+<tr>
+<th>イベント源</th>
+<th>fd</th>
+<th>処理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mclagsyncd IPC</td>
+<td><code>sys-&gt;sync_fd</code></td>
+<td><code>iccp_mclagsyncd_msg_handler()</code> — CONFIG_DB 変更を受信</td>
+</tr>
+<tr>
+<td>ICCP peer TCP</td>
+<td><code>csm-&gt;sock_fd</code></td>
+<td><code>scheduler_csm_read_callback()</code> — ICCP TLV 処理</td>
+</tr>
+<tr>
+<td>netlink socket</td>
+<td>カーネル</td>
+<td>ネットワーク IF 変化検知</td>
+</tr>
+<tr>
+<td>シグナルパイプ</td>
+<td><code>sys-&gt;sig_pipe_r</code></td>
+<td>graceful shutdown</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stp-iccpd-mclagsyncd-state_db">STP ロール確定後の通知 (iccpd → mclagsyncd → STATE_DB)<a class="headerlink" href="#stp-iccpd-mclagsyncd-state_db" title="Permanent link">&para;</a></h3>
+<p>ロール決定後に <code>mlacp_link_set_iccp_role()</code> が <strong>iccpd → mclagsyncd IPC</strong> でロールを通知し、
+<code>mclagsyncd</code> が <code>ProducerStateTable</code> 経由で <code>STATE_DB</code> に書き込む（Redis 直接書き込みなし）:</p>
+<table>
+<thead>
+<tr>
+<th>iccpd メッセージ型</th>
+<th>mclagsyncd 関数</th>
+<th>STATE_DB テーブル / フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MCLAG_MSG_TYPE_SET_ICCP_ROLE</code></td>
+<td><code>mclagsyncdSetIccpRole()</code></td>
+<td><code>STATE_MCLAG_TABLE\|{mlag_id}</code>.<code>role</code>: <code>"active"</code> / <code>"standby"</code></td>
+</tr>
+<tr>
+<td><code>MCLAG_MSG_TYPE_SET_ICCP_STATE</code></td>
+<td><code>mclagsyncdSetIccpState()</code></td>
+<td><code>STATE_MCLAG_TABLE\|{mlag_id}</code>.<code>oper_status</code>: <code>"up"</code> / <code>"down"</code></td>
+</tr>
+</tbody>
+</table>
+<p>iccpd は <code>sync_fd &lt;= 0</code>（mclagsyncd 未接続）の場合にロール通知を<strong>サイレントスキップ</strong>する (<code>mlacp_link_handler.c:654-660</code>)。</p>
+<h3 id="_11">ハートビートタイマー<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p>ICCP セッション生存確認は TCP keepalive ではなく iccpd 独自タイマーで行う:</p>
+<ul>
+<li><code>scheduler.c:82</code>: <code>time(NULL) - csm-&gt;heartbeat_update_time &gt; csm-&gt;session_timeout</code> でタイムアウト検出</li>
+<li>タイムアウト時は <code>scheduler_session_disconnect_handler()</code> → <code>role_type = STP_ROLE_NONE</code> リセット</li>
+<li><code>session_timeout</code> は CONFIG_DB <code>MCLAG_DOMAIN.session_timeout</code> から受け取る（YANG デフォルト <code>30</code> 秒）</li>
+<li>CSM 初期化時は <code>HEARTBEAT_TIMEOUT_SEC = 15</code> 秒で初期化され、CONFIG_DB 受信後に上書きされる</li>
+</ul>
+<p>証跡: <code>scheduler.c:462-488</code>, <code>iccp_netlink.c:2182</code>, <code>scheduler.h:44</code>, <code>mlacp_link_handler.c:654-660</code>, <code>mclagsyncd.cpp:41</code>, <code>mclaglink.cpp:912-921</code>, <code>mclaglink.cpp:1357-1420</code></p>
+<!-- /pubsub -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35376,8 +37055,8 @@ MST 有効化時に CLI が書き込む実際の値は <code>1</code> であり�
 </tr>
 </tbody>
 </table>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">関連ページ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP</a></li>
 <li><a href="../stp-mst/">CONFIG_DB: STP_MST</a></li>
@@ -35407,6 +37086,12 @@ MST 有効化時に CLI が書き込む実際の値は <code>1</code> であり�
 </li>
 <li id="fn:7">
 <p>MCLAG YANG モデル: <code>sonic-mclag.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p>mclagsyncd メインループ: <code>mclagsyncd.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclagsyncd.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclagsyncd.cpp</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9">
+<p>mclagsyncd リンク実装: <code>mclaglink.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

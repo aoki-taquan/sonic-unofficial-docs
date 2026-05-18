@@ -26416,6 +26416,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35146,6 +35185,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35617,6 +35695,57 @@
   systemd_stub.py:22-55 — GNMI_CLIENT_CERT 書き込みロジック, GNMI_CLIENT_ROLE デフォルト
 -->
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>gnmi-native.sh</code> はコンテナ起動時に <strong>一度だけ</strong> CONFIG_DB を読み込み、<code>telemetry</code> バイナリへの引数を構築して <code>exec</code> する。このため順序制約のほとんどは「コンテナ起動前に設定完了していること」に集中する。</p>
+<h3 id="_7">検出された順序依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>GNMI\|certs</code> (または <code>DEVICE_METADATA\|localhost.x509</code>) → telemetry 起動</td>
+<td><strong>先行必須</strong></td>
+<td><code>--noTLS</code> フォールバックで TLS 無効起動</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled = true</code> → telemetry 起動</td>
+<td><strong>先行必須</strong></td>
+<td><code>--vrf mgmt</code> 付与なし。VRF バインドに失敗して管理 VRF 経由の接続不可</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>GNMI_CLIENT_CERT\|&lt;CN&gt;</code> エントリ群 → <code>GNMI\|gnmi.user_auth = cert</code> 有効化</td>
+<td><strong>先行推奨</strong></td>
+<td>エントリ不在時は全クライアントが <code>codes.Unauthenticated</code> で接続拒否</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>GNMI\|gnmi</code> / <code>GNMI\|certs</code> 変更 → <code>systemctl restart gnmi</code></td>
+<td><strong>必須後続</strong></td>
+<td>変更は既存 telemetry プロセスに反映されない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">主要な制約詳細<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><strong>TLS 証明書先行必須 (依存 #1)</strong>: <code>gnmi-native.sh</code> は <code>CERTS</code>（<code>GNMI|certs</code> テーブル由来）→ <code>X509</code>（<code>DEVICE_METADATA|localhost.x509</code> 由来）→ <code>--noTLS</code> の三段階フォールバックで TLS 設定を解決する（<code>gnmi-native.sh:32-61</code>）。コンテナ起動前に証明書パスを設定していない場合は TLS なしで起動し、後から <code>GNMI|certs</code> を設定してもコンテナ再起動まで反映されない。</p>
+<p><strong>管理 VRF 先行必須 (依存 #2)</strong>: <code>gnmi-native.sh:95-98</code> で <code>sonic-db-cli CONFIG_DB hget "MGMT_VRF_CONFIG|vrf_global" "mgmtVrfEnabled"</code> を実行してから <code>--vrf mgmt</code> を付与する。<code>MGMT_VRF_CONFIG</code> は telemetry コンテナ起動より前（<code>config vrf add mgmt</code> 完了後）に設定されている必要がある。</p>
+<p><strong>GNMI_CLIENT_CERT 事前登録 (依存 #3)</strong>: <code>user_auth = cert</code> モードでは各クライアント接続時に <code>clientCertAuth.go:PopulateAuthStructByCommonName()</code> が <code>GNMI_CLIENT_CERT|&lt;CN&gt;</code> を検索する。先に <code>GNMI|gnmi</code> を <code>user_auth=cert</code> で設定しても <code>GNMI_CLIENT_CERT</code> エントリが揃っていなければ即時に全クライアント拒否が発生する。安全な順序は <code>GNMI_CLIENT_CERT</code> エントリを先書きしてから <code>GNMI|gnmi</code> を有効化すること。</p>
+<!-- evidence:
+  gnmi-native.sh:32-61 — CERTS/X509/noTLS フォールバック
+  gnmi-native.sh:89-98 — SmartSwitch ZMQ + mgmt VRF 分岐
+  clientCertAuth.go:254-284 — PopulateAuthStructByCommonName による GNMI_CLIENT_CERT 参照
+-->
+<!-- /ordering -->
 
 <div class="footnote">
 <hr />

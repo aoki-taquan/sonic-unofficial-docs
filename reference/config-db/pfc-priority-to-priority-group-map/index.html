@@ -27958,6 +27958,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドラ登録とディスパッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select タイムアウト・リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36102,6 +36152,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドラ登録とディスパッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select タイムアウト・リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36845,6 +36945,67 @@ MAP 作成完了後の <code>doTask()</code> サイクルで自動再処理さ�
 その後この MAP 名への SET 操作も即 <code>task_need_retry</code> を返す (<code>qosorch.cpp:136-139</code>)。
 参照側 (<code>PORT_QOS_MAP.pfc_to_pg_map</code>) の解除後に DEL が再実行されて連鎖が解消する。</p>
 <!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-pubsub.md -->
+
+<h3 id="_23">購読方式<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の <code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> は <code>orchdaemon.cpp:367-384</code> の <code>qos_tables</code> ベクタの一員として <code>CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME</code> を指定され、<code>new QosOrch(m_configDb, qos_tables)</code> に渡される。基底 <code>Orch::addConsumer()</code> が CONFIG_DB ID を検出し <strong><code>swss::SubscriberStateTable</code></strong> を選択する（<code>orch.cpp:1186-1196</code>）。</p>
+<p><code>SubscriberStateTable</code> は Redis keyspace 通知 <code>__keyspace@&lt;dbId&gt;__:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|*</code> を <strong><code>PSUBSCRIBE</code></strong> で購読し、通知受信後に <code>HGETALL</code> で値を再取得して <code>(key, op, fvs)</code> タプルを返す。バッチサイズは <code>TableConsumable::DEFAULT_POP_BATCH_SIZE = 128</code>（<code>table.h:164</code>、ハードコード、<code>orchagent -b</code> 影響なし）。</p>
+<h3 id="_24">ハンドラ登録とディスパッチ<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>orchdaemon.cpp:377     qos_tables に CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME を追加
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>qosorch.cpp:1343       initTableHandlers() で
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>                        m_qos_handler_map[CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME]
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>                        = &amp;QosOrch::handlePfcPrioToPgTable を登録
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>qosorch.cpp:2231-2252  QosOrch::doTask() が PORT_QOS_MAP / QUEUE より先に本テーブルを drain
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>qosorch.cpp:2254-2295  ハンドラ関数ポインタ経由でディスパッチ
+</span></code></pre></div>
+<p><code>handlePfcPrioToPgTable()</code> → <code>PfcPrioToPgHandler::processWorkItem()</code> → <code>PfcPrioToPgHandler::createAttributeList()</code> → <code>sai_qos_map_api-&gt;create_qos_map()</code> [<code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP</code>] / <code>set_qos_map_attribute()</code> / <code>remove_qos_map()</code>。</p>
+<h3 id="select">select タイムアウト・リトライ<a class="headerlink" href="#select" title="Permanent link">&para;</a></h3>
+<p>select タイムアウト: <strong>1000 ms</strong>（<code>SELECT_TIMEOUT</code>、<code>orchdaemon.cpp:23</code>）。keyspace 通知到着時は即時 wake up。<code>task_need_retry</code> 時は <code>m_toSync</code> にエントリを残置し次サイクルで再処理。サービス再起動トリガーなし（SAI ライブ操作のみで完結）。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>購読方式</td>
+<td><code>SubscriberStateTable</code>（keyspace <code>PSUBSCRIBE</code> + <code>HGETALL</code>）</td>
+</tr>
+<tr>
+<td>バッチサイズ</td>
+<td>128（<code>DEFAULT_POP_BATCH_SIZE</code>、固定）</td>
+</tr>
+<tr>
+<td>select タイムアウト</td>
+<td>1000 ms</td>
+</tr>
+<tr>
+<td>ハンドラ</td>
+<td><code>QosOrch::handlePfcPrioToPgTable()</code> → <code>PfcPrioToPgHandler</code></td>
+</tr>
+<tr>
+<td>SAI API</td>
+<td><code>sai_qos_map_api-&gt;create_qos_map()</code> / <code>set_qos_map_attribute()</code> / <code>remove_qos_map()</code></td>
+</tr>
+<tr>
+<td>channel PUBLISH</td>
+<td>使わない</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>未使用（CONFIG_DB 永続）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>orchdaemon.cpp:367-384</code>; <code>orch.cpp:1186-1196</code>; <code>qosorch.cpp:984,1343,2231-2295</code>; <code>table.h:164</code></p>
+</blockquote>
+<!-- /pubsub -->
 
 <div class="footnote">
 <hr />

@@ -26381,6 +26381,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代表的な失敗コード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_dberror_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB・ERROR_TABLE への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -26431,7 +26492,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -26442,7 +26503,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -26453,7 +26514,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差
@@ -35656,6 +35717,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代表的な失敗コード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_dberror_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB・ERROR_TABLE への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35706,7 +35828,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35717,7 +35839,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35728,7 +35850,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差
@@ -36338,6 +36460,151 @@
 </table>
 <!-- /cross-refs -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>FdbOrch::doTask()</code> (<code>fdborch.cpp:707</code>) と <code>addFdbEntry()</code> / <code>removeFdbEntry()</code> のコード精読から、以下の失敗パターンを確認した。</p>
+<h3 id="set">SET 時の失敗パターン<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>VLAN 未解決（VLAN OID 取得失敗）</td>
+<td><code>doTask:739</code></td>
+<td><code>it++</code>（無制限待機ループ）</td>
+<td>無制限</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>2</td>
+<td>VXLAN DIP トンネルポート未作成</td>
+<td><code>doTask:836</code></td>
+<td>erase（silently drop）</td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>3</td>
+<td>VXLAN SIP VTEP 未取得（<code>getEVPNVtep()</code> NULL）</td>
+<td><code>doTask:847</code></td>
+<td>erase（silently drop）</td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>addFdbEntry()</code> が <code>false</code> を返した</td>
+<td><code>doTask:870</code></td>
+<td><code>it++</code>（無制限 retry）</td>
+<td>無制限</td>
+<td>INFO/ERROR</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SAI <code>create_fdb_entry()</code> 失敗</td>
+<td><code>addFdbEntry:1532</code></td>
+<td>SWSS_LOG_ERROR → <code>handleSaiCreateStatus</code> 判定</td>
+<td>条件次第</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>6</td>
+<td>SAI <code>set_fdb_entry_attribute()</code> 失敗（MAC update）</td>
+<td><code>addFdbEntry:1508</code></td>
+<td>SWSS_LOG_ERROR → <code>handleSaiSetStatus</code> 判定</td>
+<td>条件次第</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>type</code> フィールドが有効値以外</td>
+<td><code>doTask:830</code></td>
+<td><code>assert()</code> → orchagent クラッシュ（SIGABRT）</td>
+<td>再起動後</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 時の失敗パターン<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td>origin 不一致（<code>fdbData.origin != origin</code>）</td>
+<td><code>removeFdbEntry:1654</code></td>
+<td>erase（silently ignore、<code>saved_fdb</code> クリーンアップのみ）</td>
+<td>なし</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td>9</td>
+<td>SAI <code>remove_fdb_entry()</code> 失敗</td>
+<td><code>removeFdbEntry:1702</code></td>
+<td>SWSS_LOG_ERROR → <code>handleSaiRemoveStatus</code> 判定 → <code>it++</code></td>
+<td>無制限</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>10</td>
+<td>エントリが orchagent キャッシュ（<code>m_entries</code>）に不在</td>
+<td><code>removeFdbEntry:1649</code></td>
+<td><code>deleteFdbEntryFromSavedFDB()</code> → <code>return true</code>（成功扱い）</td>
+<td>なし</td>
+<td>INFO</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">代表的な失敗コード<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p><strong>SAI create 失敗（Pattern 5）</strong>:
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// fdborch.cpp:1532-1541</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_fdb_api</span><span class="o">-&gt;</span><span class="n">create_fdb_entry</span><span class="p">(</span><span class="o">&amp;</span><span class="n">fdb_entry</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">attrs</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="n">attrs</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="p">{</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to create %s FDB %s in %s on %s, rv:%d&quot;</span><span class="p">,</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">            </span><span class="n">fdbData</span><span class="p">.</span><span class="n">type</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">mac</span><span class="p">.</span><span class="n">to_string</span><span class="p">().</span><span class="n">c_str</span><span class="p">(),</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">            </span><span class="n">vlan</span><span class="p">.</span><span class="n">m_alias</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">port_name</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="n">task_process_status</span><span class="w"> </span><span class="n">handle_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">handleSaiCreateStatus</span><span class="p">(</span><span class="n">SAI_API_FDB</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">handle_status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">task_success</span><span class="p">)</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">parseHandleSaiStatusFailure</span><span class="p">(</span><span class="n">handle_status</span><span class="p">);</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<p><strong>assert クラッシュ（Pattern 7）</strong>:
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// fdborch.cpp:830</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">assert</span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;dynamic&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;dynamic_local&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;static&quot;</span><span class="p">);</span>
+</span></code></pre></div></p>
+<p>有効値以外の <code>type</code> 値が CONFIG_DB <code>FDB</code> に書き込まれると orchagent プロセスが SIGABRT でクラッシュする。orchagent 再起動後、CONFIG_DB にエントリが残存しているため再処理される。</p>
+<h3 id="state_dberror_table">STATE_DB・ERROR_TABLE への影響<a class="headerlink" href="#state_dberror_table" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>STATE_DB <code>FDB_TABLE</code></strong>: <code>storeFdbEntryState()</code> は <code>addFdbEntry()</code> が SAI 成功後にのみ呼ばれる。SAI 失敗時は書き込まれない。</li>
+<li><strong>ERROR_TABLE</strong>: 書き込みなし。</li>
+<li><strong>CONFIG_DB <code>FDB</code> エントリ</strong>: 失敗後も残存する（orchagent は書き戻さない）。</li>
+</ul>
+<blockquote>
+<p><strong>証跡</strong>: <code>FdbOrch::doTask(Consumer&amp;)</code> L707-921 精読、<code>addFdbEntry()</code> L1277-1582、<code>removeFdbEntry()</code> L1631-1715。中間ファイル: <code>meta/_intermediate/cdb-flow/fdb-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込（Phase F）<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
 <p>CONFIG_DB <code>FDB</code> エントリが APPL_DB <code>FDB_TABLE</code> 経由で <code>FdbOrch::addFdbEntry()</code> に処理されると、以下の副次書込が発生する。</p>
@@ -36350,15 +36617,15 @@
 </ul>
 <h3 id="state_db-fdb_table">STATE_DB: <code>FDB_TABLE</code><a class="headerlink" href="#state_db-fdb_table" title="Permanent link">&para;</a></h3>
 <p><code>addFdbEntry()</code> がローカル MAC エントリを正常登録した後、STATE_DB <code>FDB_TABLE</code> に書き込む（<code>fdborch.cpp:1574-1582</code>）。MCLAG 広告元エントリ（<code>FDB_ORIGIN_MCLAG_ADVERTIZED</code>）かつ <code>dynamic_local</code> 以外の場合は STATE_DB には書き込まれない。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// sonic-swss/orchagent/fdborch.cpp:1574-1582</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="cm">/* State-DB is updated only for Local Mac addresses */</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FieldValueTuple</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fvs</span><span class="p">;</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">fvs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">FieldValueTuple</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">port_name</span><span class="p">));</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fdbData</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;dynamic_local&quot;</span><span class="p">)</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="n">fvs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">FieldValueTuple</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;dynamic&quot;</span><span class="p">));</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="k">else</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="n">fvs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">FieldValueTuple</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">fdbData</span><span class="p">.</span><span class="n">type</span><span class="p">));</span>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="n">m_fdbStateTable</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">fvs</span><span class="p">);</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">// sonic-swss/orchagent/fdborch.cpp:1574-1582</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="cm">/* State-DB is updated only for Local Mac addresses */</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FieldValueTuple</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fvs</span><span class="p">;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">fvs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">FieldValueTuple</span><span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">port_name</span><span class="p">));</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fdbData</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;dynamic_local&quot;</span><span class="p">)</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="n">fvs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">FieldValueTuple</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;dynamic&quot;</span><span class="p">));</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="k">else</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="n">fvs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">FieldValueTuple</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">fdbData</span><span class="p">.</span><span class="n">type</span><span class="p">));</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="n">m_fdbStateTable</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">fvs</span><span class="p">);</span>
 </span></code></pre></div>
 <ul>
 <li><strong>キー形式</strong>: <code>Vlan&lt;id&gt;:&lt;MAC&gt;</code></li>
@@ -36368,8 +36635,8 @@
 <p>動的学習（LEARN イベント）の場合も <code>storeFdbEntryState()</code> 経由で同様に STATE_DB へ書き込む（<code>fdborch.cpp:131-135</code>）。</p>
 <h3 id="asic_db-asic_statesai_object_type_fdb_entry">ASIC_DB: <code>ASIC_STATE:SAI_OBJECT_TYPE_FDB_ENTRY</code><a class="headerlink" href="#asic_db-asic_statesai_object_type_fdb_entry" title="Permanent link">&para;</a></h3>
 <p><code>addFdbEntry()</code> が SAI API を呼び出すことで syncd が ASIC_DB に SAI FDB エントリを生成する。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// sonic-swss/orchagent/fdborch.cpp:1531</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_fdb_api</span><span class="o">-&gt;</span><span class="n">create_fdb_entry</span><span class="p">(</span><span class="o">&amp;</span><span class="n">fdb_entry</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">attrs</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="n">attrs</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// sonic-swss/orchagent/fdborch.cpp:1531</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_fdb_api</span><span class="o">-&gt;</span><span class="n">create_fdb_entry</span><span class="p">(</span><span class="o">&amp;</span><span class="n">fdb_entry</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">attrs</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="n">attrs</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
 </span></code></pre></div>
 <ul>
 <li><strong>エントリ型</strong>: <code>SAI_OBJECT_TYPE_FDB_ENTRY</code>（<code>bv_id</code> / MAC アドレス をキーに）</li>
@@ -36379,15 +36646,15 @@
 </ul>
 <!-- /side-effects -->
 
-<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>port</code> 省略時</strong>: <code>addFdbEntry()</code> でポート解決が失敗し、エントリが追加されない。エラーログ出力。</li>
 <li><strong><code>type</code> の assert チェック</strong>: <code>fdborch.cpp:830</code> で <code>assert(type == "dynamic" || type == "dynamic_local" || type == "static")</code> — 無効な type 値はプロセスクラッシュを引き起こす。</li>
 <li><strong>CONFIG_DB FDB は直接 orchagent に購読されない</strong>: <code>FdbOrch</code> は APPL_DB の <code>FDB_TABLE</code> を購読する。CONFIG_DB <code>FDB</code> は <code>swssconfig</code> を介して APPL_DB に転記される。</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- platform -->
-<h2 id="_13">プラットフォーム差<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">プラットフォーム差<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <h3 id="sai-fdb-dip-vs-sip">SAI FDB サポート差 — DIP トンネル vs SIP トンネル<a class="headerlink" href="#sai-fdb-dip-vs-sip" title="Permanent link">&para;</a></h3>
 <p>VXLAN FDB エントリの SAI プログラム方法はプラットフォームの VTEP トンネルモデルによって二分岐する（<code>fdborch.cpp:836-854, 1308-1313</code>）。</p>
 <table>
@@ -36421,11 +36688,11 @@
 </tr>
 </tbody>
 </table>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">// fdborch.cpp:1308-1313 — SIP トンネル時のみ end_point_ip をセット</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">tunnel_orch</span><span class="o">-&gt;</span><span class="n">isDipTunnelsSupported</span><span class="p">())</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="p">{</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="n">end_point_ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fdbData</span><span class="p">.</span><span class="n">remote_ip</span><span class="p">;</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// fdborch.cpp:1308-1313 — SIP トンネル時のみ end_point_ip をセット</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">tunnel_orch</span><span class="o">-&gt;</span><span class="n">isDipTunnelsSupported</span><span class="p">())</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="p">{</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="n">end_point_ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fdbData</span><span class="p">.</span><span class="n">remote_ip</span><span class="p">;</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="mclag">MCLAG 連携差<a class="headerlink" href="#mclag" title="Permanent link">&para;</a></h3>
 <p>MCLAG リモート MAC (<code>FDB_ORIGIN_MCLAG_ADVERTIZED</code>) は通常の PROVISIONED MAC とは異なる SAI 属性で登録される。</p>
@@ -36474,9 +36741,9 @@
 <p>VXLAN origin のエントリが PROVISIONED origin に変更された場合（origin 変更）、orchagent は <code>SAI_FDB_ENTRY_ATTR_ENDPOINT_IP</code> をゼロアドレスでセットしてクリアし（<code>fdborch.cpp:513-519</code>）、さらに <code>ALLOW_MAC_MOVE=false</code> を明示的に設定する（<code>fdborch.cpp:524-530</code>）。</p>
 <h3 id="warm-reboot">Warm-reboot リカバリ差<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h3>
 <p><code>FdbOrch::bake()</code> (<code>fdborch.cpp:51-66</code>) が warm-reboot 後の FDB リカバリを担う。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// fdborch.cpp:63</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kt">size_t</span><span class="w"> </span><span class="n">refilled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="o">-&gt;</span><span class="n">refillToSync</span><span class="p">(</span><span class="o">&amp;</span><span class="n">m_fdbStateTable</span><span class="p">);</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">SWSS_LOG_NOTICE</span><span class="p">(</span><span class="s">&quot;Add warm input FDB State: %s, %zd&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">APP_FDB_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">refilled</span><span class="p">);</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">// fdborch.cpp:63</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kt">size_t</span><span class="w"> </span><span class="n">refilled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="o">-&gt;</span><span class="n">refillToSync</span><span class="p">(</span><span class="o">&amp;</span><span class="n">m_fdbStateTable</span><span class="p">);</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">SWSS_LOG_NOTICE</span><span class="p">(</span><span class="s">&quot;Add warm input FDB State: %s, %zd&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">APP_FDB_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">refilled</span><span class="p">);</span>
 </span></code></pre></div>
 <ul>
 <li>STATE_DB <code>FDB_TABLE</code> に保存された FDB エントリを <code>APP_FDB_TABLE_NAME</code> コンシューマの <code>m_toSync</code> キューに再投入する。ASIC 再起動後の FDB 再プログラムを、APPL_DB からの通常フローと同じ処理パスで実行できる。</li>

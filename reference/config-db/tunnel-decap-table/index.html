@@ -23740,6 +23740,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差・SAI capability 分岐 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差・SAI capability 分岐 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-create-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI create-only 属性の更新スキップ — 全プラットフォーム共通
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overlay_rif_default_mtu-9100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OVERLAY_RIF_DEFAULT_MTU = 9100 — プラットフォーム非依存ハードコード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subnet-decap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        subnet decap — ハードコードトンネル名制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI capability query なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36122,6 +36183,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差・SAI capability 分岐 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差・SAI capability 分岐 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-create-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI create-only 属性の更新スキップ — 全プラットフォーム共通
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overlay_rif_default_mtu-9100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OVERLAY_RIF_DEFAULT_MTU = 9100 — プラットフォーム非依存ハードコード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subnet-decap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        subnet decap — ハードコードトンネル名制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI capability query なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37183,13 +37305,50 @@ TUNNEL_DECAP_TABLE DEL 後に muxorch が OID を参照するとエラーにな�
 </blockquote>
 <!-- /pubsub -->
 
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム差・SAI capability 分岐 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<h3 id="sai-create-only">SAI create-only 属性の更新スキップ — 全プラットフォーム共通<a class="headerlink" href="#sai-create-only" title="Permanent link">&para;</a></h3>
+<p><code>SAI_TUNNEL_ATTR_DECAP_ECN_MODE</code> / <code>SAI_TUNNEL_ATTR_ENCAP_ECN_MODE</code> は SAI 仕様上 create-only 属性であり、既存トンネルへの更新試行は自動スキップされる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>create-only の影響</th>
+<th>ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_TUNNEL_ATTR_DECAP_ECN_MODE</code> (<code>ecn_mode</code>)</td>
+<td>更新 SET をスキップ。作成時の値が永続する</td>
+<td><code>SWSS_LOG_WARN("Skip setting ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_DECAP_ECN_MODE is create only")</code></td>
+</tr>
+<tr>
+<td><code>SAI_TUNNEL_ATTR_ENCAP_ECN_MODE</code> (<code>encap_ecn_mode</code>)</td>
+<td>更新 SET をスキップ</td>
+<td><code>SWSS_LOG_NOTICE("Skip setting encap_ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_ENCAP_ECN_MODE is create only")</code></td>
+</tr>
+</tbody>
+</table>
+<p>この挙動は SAI 仕様準拠の共通動作であり、特定ベンダーに依存しない。<code>ecn_mode</code> を変更する場合は TUNNEL_DECAP_TABLE エントリを一度削除して再作成する必要がある。</p>
+<h3 id="overlay_rif_default_mtu-9100">OVERLAY_RIF_DEFAULT_MTU = 9100 — プラットフォーム非依存ハードコード<a class="headerlink" href="#overlay_rif_default_mtu-9100" title="Permanent link">&para;</a></h3>
+<p>オーバーレイ loopback RIF の MTU が <code>OVERLAY_RIF_DEFAULT_MTU = 9100</code> でハードコードされている (tunneldecaporch.cpp:14)。SAI プラットフォームのデフォルト MTU（通常 1500）に依存せず、VXLAN / IP-in-IP カプセルパケットの断片化を防ぐための固定値。プラットフォームを問わず適用される。</p>
+<h3 id="subnet-decap">subnet decap — ハードコードトンネル名制約<a class="headerlink" href="#subnet-decap" title="Permanent link">&para;</a></h3>
+<p><code>TUNNEL_DECAP_TABLE</code> で subnet decap を有効にするには <code>"IPINIP_SUBNET"</code> (IPv4) / <code>"IPINIP_SUBNET_V6"</code> (IPv6) という名前でトンネルを作成する必要がある。これらの名前は <code>SubnetDecapConfig</code> にハードコードされており、プラットフォームや構成に関わらず変更不可。別名のトンネルへ subnet decap term を設定しようとすると <code>"subnet decap is disabled, ignored."</code> を LOG_ERROR してスキップされる。</p>
+<h3 id="sai-capability-query">SAI capability query なし<a class="headerlink" href="#sai-capability-query" title="Permanent link">&para;</a></h3>
+<p><code>tunneldecaporch</code> は orchagent 起動時に <code>sai_query_attribute_enum_values_capability()</code> を呼ばない。プラットフォーム capability による動作分岐は存在せず、すべてのプラットフォームで同一の SAI 属性セットを使用する。特定の SAI 属性が非サポートの場合はエラーログのみで継続する。</p>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-decap-table-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->
 
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>tunneldecaporch 実装: <code>tunneldecaporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>tunneldecaporch 実装: <code>tunneldecaporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>テーブル名定数: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L49-L50">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L49-L50</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>

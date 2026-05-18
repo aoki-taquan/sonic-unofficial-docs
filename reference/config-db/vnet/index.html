@@ -29941,6 +29941,106 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要失敗ケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vnetorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vnetorch.h マクロ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        monitoring 種別文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG 型固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db-state_db-schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_DB / STATE_DB テーブル名定数（schema.h）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35756,6 +35856,106 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要失敗ケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vnetorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vnetorch.h マクロ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        monitoring 種別文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG 型固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db-state_db-schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_DB / STATE_DB テーブル名定数（schema.h）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36447,6 +36647,291 @@
 <p><strong>スキャン証跡</strong>: <code>vnetorch.cpp</code> L40, L392-428, L497-503, L738-748、<code>vxlanmgr.cpp</code> L183-213, L738-806、<code>orchdaemon.cpp</code> L265-285, L350-358、<code>sonic-vnet.yang</code> L57-58, L120-157</p>
 </blockquote>
 <!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vnetorch.cpp -->
+
+<p><code>VNET</code> / <code>VNET_ROUTE</code> テーブルの処理失敗は <code>vxlanmgrd</code>（CONFIG_DB 前段）と <code>VNetOrch</code>（APPL_DB → SAI 後段）の二層で発生する。失敗時の共通パターンは <code>doTask()</code> が <code>false</code> を返してエントリを <code>m_toSync</code> に残し、次イテレーションで再試行することだが、<strong>サイレントドロップ</strong>（return true で永久 erase）が 1 ケース存在する点に注意。</p>
+<h3 id="_19">主要失敗ケース<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p><strong>フィールド不完全によるサイレントドロップ (失敗 #2)</strong>: <code>vxlan_tunnel</code> または <code>vni</code> フィールドが欠落した VNET エントリは <code>SWSS_LOG_DEBUG("Vnet %s information is incomplete")</code> のみ記録して <code>return true</code>（<code>m_toSync</code> から erase）される (<code>vxlanmgr.cpp:308-317</code>)。エラーや WARN は出力されず、CLI や <code>show vnet</code> にも表示されない。<strong>不完全な JSON 投入は永久に無視される</strong>。</p>
+<p><strong>VXLAN トンネル未作成によるサスペンド (失敗 #1)</strong>: <code>m_vxlanTunnelCache</code> に参照先 VXLAN_TUNNEL が存在しない場合 <code>return false</code> で再キュー (<code>vxlanmgr.cpp:322-326</code>)。VXLAN_TUNNEL エントリが後から追加されれば自動的に処理再開する。</p>
+<p><strong>VRF STATE_DB 未 ready (失敗 #3)</strong>: <code>isVrfStateOk()</code> が <code>STATE_VRF_TABLE</code> で VRF 未登録を検出した場合 <code>return false</code> で再キュー (<code>vxlanmgr.cpp:328-332</code>)。起動シーケンス中に一時的に発生し、VRF 作成完了後に自然解消する。</p>
+<p><strong>SAI VR 作成失敗 → runtime_error 捕捉 (失敗 #6)</strong>: <code>sai_virtual_router_api-&gt;create_virtual_router()</code> が失敗すると <code>std::runtime_error</code> が throw され、<code>VNetOrch::addOperation()</code> の <code>catch</code> ブロックが <code>SWSS_LOG_ERROR("VNET add operation error for %s: error %s")</code> を記録して <code>return false</code> (<code>vnetorch.cpp:550-553</code>)。SAI リソース枯渇の場合は再試行しても継続失敗する。</p>
+<p><strong>VNET 削除時のルート残存 (失敗 #9)</strong>: <code>vrf_obj-&gt;getRouteCount() &gt; 0</code> の場合 <code>SWSS_LOG_ERROR("VNET '%s': Routes are still present")</code> + <code>return false</code> (<code>vnetorch.cpp:584-585</code>)。VNET_ROUTE / VNET_ROUTE_TUNNEL を先に全削除しないと VNET 本体の削除が永続ブロックされる（強制削除順序制約）。</p>
+<p><strong>NextHop group 上限超過 (失敗 #13)</strong>: ASIC の NHG 上限に達した場合 <code>SWSS_LOG_ERROR("Reached maximum number of next hop groups.")</code> + <code>return false</code> (<code>vnetorch.cpp:773-774</code>)。新規 VNET_ROUTE_TUNNEL の ECMP グループが作成できず、該当ルートのみ再試行キューに残る。既存ルートへの影響はない。</p>
+<h3 id="_20">失敗挙動サマリ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗条件</th>
+<th>ログレベル</th>
+<th>再試行</th>
+<th>分類</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>VXLAN_TUNNEL</code> 未作成（vxlanmgrd）</td>
+<td>DEBUG</td>
+<td>✅ 自動再試行</td>
+<td>順序依存 suspend</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>vxlan_tunnel</code>/<code>vni</code> フィールド欠落</td>
+<td>DEBUG</td>
+<td>❌ <strong>永久 erase</strong></td>
+<td>サイレントドロップ</td>
+</tr>
+<tr>
+<td>3</td>
+<td>VRF STATE_DB 未 ready</td>
+<td>DEBUG</td>
+<td>✅ 自動再試行</td>
+<td>起動シーケンス待ち</td>
+</tr>
+<tr>
+<td>4</td>
+<td>ルータ MAC 未設定</td>
+<td>DEBUG</td>
+<td>✅ 自動再試行</td>
+<td>起動シーケンス待ち</td>
+</tr>
+<tr>
+<td>5</td>
+<td>netdevice 作成失敗</td>
+<td>ERROR</td>
+<td>✅ 自動再試行</td>
+<td>カーネル操作失敗</td>
+</tr>
+<tr>
+<td>6</td>
+<td>SAI VR 作成失敗</td>
+<td>ERROR</td>
+<td>✅ 自動再試行</td>
+<td>SAI エラー</td>
+</tr>
+<tr>
+<td>7</td>
+<td>VXLAN tunnel map 作成失敗</td>
+<td>ERROR</td>
+<td>✅ 自動再試行</td>
+<td>SAI リソース</td>
+</tr>
+<tr>
+<td>8</td>
+<td>orchagent 側 tunnel 未存在</td>
+<td>WARN</td>
+<td>✅ 自動再試行</td>
+<td>順序依存 suspend</td>
+</tr>
+<tr>
+<td>9</td>
+<td>削除時にルートが残存</td>
+<td>ERROR</td>
+<td>✅ 再試行（先に Route 削除要）</td>
+<td>削除順序依存</td>
+</tr>
+<tr>
+<td>10</td>
+<td>削除時 tunnel map 解除失敗</td>
+<td>ERROR</td>
+<td>✅ 自動再試行</td>
+<td>SAI エラー</td>
+</tr>
+<tr>
+<td>11</td>
+<td>VR 属性更新失敗</td>
+<td>ERROR</td>
+<td>呼び出し元依存</td>
+<td>SAI エラー</td>
+</tr>
+<tr>
+<td>12</td>
+<td>VNET_ROUTE SAI 失敗</td>
+<td>ERROR</td>
+<td>✅ 自動再試行</td>
+<td>SAI エラー</td>
+</tr>
+<tr>
+<td>13</td>
+<td>NextHop group 上限超過</td>
+<td>ERROR</td>
+<td>✅ 自動再試行（上限解消まで）</td>
+<td>リソース枯渇</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>vxlanmgr.cpp:doVxlanCreateTask()</code> L287-376、<code>vxlanmgr.cpp:doVxlanDeleteTask()</code> L437-476、<code>vnetorch.cpp:VNetVrfObject::createObj()</code> L91-108、<code>vnetorch.cpp:VNetOrch::addOperation()</code> L489-558、<code>vnetorch.cpp:VNetOrch::delOperation()</code> L560-600、<code>vnetorch.cpp:addRoute()/delRoute()</code> L645-730、<code>vnetorch.cpp:createNextHopGroup()</code> L773-774; 詳細分析 <code>meta/_intermediate/cdb-flow/vnet-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>VNET</code> / <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> テーブルの処理に直接影響する、CONFIG_DB エントリでは制御できないコード内固定値の一覧。</p>
+<h3 id="vnetorchh">vnetorch.h マクロ定数<a class="headerlink" href="#vnetorchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VNET_BITMAP_SIZE</code></td>
+<td><code>32</code></td>
+<td>VNET bitmap 型の内部サイズ（bitmap モードのみ使用）</td>
+<td><code>vnetorch.h:20</code></td>
+</tr>
+<tr>
+<td><code>VNET_TUNNEL_SIZE</code></td>
+<td><code>40960</code></td>
+<td>tunnel エントリ上限（bitmap モード用）</td>
+<td><code>vnetorch.h:21</code></td>
+</tr>
+<tr>
+<td><code>VNET_ROUTE_FULL_MASK_OFFSET_MAX</code></td>
+<td><code>3000</code></td>
+<td>/32 ルートの bitmap オフセット最大値（bitmap モードのみ）</td>
+<td><code>vnetorch.h:22</code></td>
+</tr>
+<tr>
+<td><code>VNET_NEIGHBOR_MAX</code></td>
+<td><code>0xffff</code>（65535）</td>
+<td>neighbor エントリ上限（bitmap モードのみ）</td>
+<td><code>vnetorch.h:23</code></td>
+</tr>
+<tr>
+<td><code>VXLAN_ENCAP_TTL</code></td>
+<td><code>128</code></td>
+<td>VXLAN encapsulation 時の outer IP TTL 固定値</td>
+<td><code>vnetorch.h:24</code></td>
+</tr>
+<tr>
+<td><code>VNET_BITMAP_RIF_MTU</code></td>
+<td><code>9100</code></td>
+<td>bitmap モードで RIF 作成時に使用する MTU 固定値</td>
+<td><code>vnetorch.h:25</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="monitoring">monitoring 種別文字列定数<a class="headerlink" href="#monitoring" title="Permanent link">&para;</a></h3>
+<p><code>VNET_ROUTE_TUNNEL</code> の <code>monitoring</code> フィールドに指定可能な値はコード内でリテラル定数として定義されており、YANG では制約されていない。</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VNET_MONITORING_TYPE_CUSTOM</code></td>
+<td><code>"custom"</code></td>
+<td>カスタム BFD/ping モニタリング（<code>MonitorOrch</code> 連携）</td>
+<td><code>vnetorch.h:27</code></td>
+</tr>
+<tr>
+<td><code>VNET_MONITORING_TYPE_CUSTOM_BFD</code></td>
+<td><code>"custom_bfd"</code></td>
+<td>BFD セッション直接管理モード</td>
+<td><code>vnetorch.h:28</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>monitoring</code> フィールドがこれら 2 値以外の場合、orchagent は endpoint の BFD 状態チェックをスキップして常時 UP 扱いにする（<code>vnetorch.cpp:786</code>）。</p>
+<h3 id="yang">YANG 型固定値<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vnid_type</code> 有効範囲</td>
+<td><code>1..16777215</code></td>
+<td><code>VNET.vni</code> / <code>VNET_ROUTE_TUNNEL.vni</code> の YANG 型制約</td>
+<td><code>sonic-types.yang.j2:321-328</code></td>
+</tr>
+<tr>
+<td><code>scope</code> 有効値</td>
+<td><code>"default"</code> のみ</td>
+<td><code>VNET.scope</code> の YANG <code>pattern</code> 制約。それ以外は <code>"Invalid VRF name"</code> エラー</td>
+<td><code>sonic-vnet.yang:84</code></td>
+</tr>
+<tr>
+<td><code>guid</code> 最大長</td>
+<td><code>255</code> 文字</td>
+<td><code>VNET.guid</code> の YANG <code>length</code> 制約</td>
+<td><code>sonic-vnet.yang:75-78</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="app_db-state_db-schemah">APP_DB / STATE_DB テーブル名定数（schema.h）<a class="headerlink" href="#app_db-state_db-schemah" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の変更を消費するダウンストリーム側のテーブル名はコード定数で固定されており、ConfigDB フィールドでは変更できない。</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_VNET_TABLE_NAME</code></td>
+<td><code>"VNET_TABLE"</code></td>
+<td><code>schema.h:81</code></td>
+</tr>
+<tr>
+<td><code>APP_VNET_RT_TABLE_NAME</code></td>
+<td><code>"VNET_ROUTE_TABLE"</code></td>
+<td><code>schema.h:82</code></td>
+</tr>
+<tr>
+<td><code>APP_VNET_RT_TUNNEL_TABLE_NAME</code></td>
+<td><code>"VNET_ROUTE_TUNNEL_TABLE"</code></td>
+<td><code>schema.h:83</code></td>
+</tr>
+<tr>
+<td><code>APP_VNET_MONITOR_TABLE_NAME</code></td>
+<td><code>"VNET_MONITOR_TABLE"</code></td>
+<td><code>schema.h:133</code></td>
+</tr>
+<tr>
+<td><code>STATE_VNET_RT_TUNNEL_TABLE_NAME</code></td>
+<td><code>"VNET_ROUTE_TUNNEL_TABLE"</code></td>
+<td><code>schema.h:495</code></td>
+</tr>
+<tr>
+<td><code>STATE_VNET_MONITOR_TABLE_NAME</code></td>
+<td><code>"VNET_MONITOR_TABLE"</code></td>
+<td><code>schema.h:500</code></td>
+</tr>
+<tr>
+<td><code>CFG_VNET_RT_TABLE_NAME</code></td>
+<td><code>"VNET_ROUTE"</code></td>
+<td><code>schema.h:369</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>sonic-swss/orchagent/vnetorch.h:20-28</code>（マクロ定数全件）、<code>sonic-swss/orchagent/vnetorch.cpp:513,773,786</code>（定数使用箇所）、<code>sonic-swss-common/common/schema.h:81-83,133,369,495,500</code>（テーブル名定数）、<code>sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2:321-328</code>（<code>vnid_type</code> 型定義）、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang:75-92</code>（scope/guid 制約）</p>
+</blockquote>
+<!-- /constants -->
 
 <!-- glossary-links-injected: f94986e6b96c -->
 

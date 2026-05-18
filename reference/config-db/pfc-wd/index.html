@@ -23450,6 +23450,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35934,6 +35945,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36516,6 +36538,81 @@
 <p><strong>GLOBAL POLL_INTERVAL 推奨先行 (依存 #3)</strong>: orchestrator 起動時のデフォルトは <code>PFC_WD_POLL_MSECS = 100</code> ms (<code>orchdaemon.cpp:24</code>)。<code>PFC_WD|GLOBAL</code> の <code>POLL_INTERVAL</code> を per-port エントリより先に書けば、初期ポーリングから一貫した間隔が保証される。後から変更しても <code>updateGroupPollingInterval()</code> が適用されるため実害は軽微。</p>
 <p><strong>Broadcom DLR 同一 action 強制 (依存 #4)</strong>: <code>checkPfcDlrInitEnable()</code> が true の Broadcom 環境では、最初の <code>PFC_WD</code> per-port エントリの <code>action</code> が <code>SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION</code> としてスイッチレベルに設定される。後続エントリで異なる <code>action</code> を指定すると <code>"Invalid PFC Watchdog action %s as switch level action %s is set"</code> エラーで reject されるため、全ポートを同一 <code>action</code> で一括設定すること (<code>pfcwdorch.cpp:237-266</code>)。</p>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>PFC_WD</code> エントリが CONFIG_DB に書かれると <code>PfcWdOrch</code> が以下のテーブルを暗黙的に参照する。
+<code>ifname</code> → <code>PORT</code> は YANG leafref として明示されているが、<code>PORT_QOS_MAP</code> 経由の PFC bitmask 参照は実装コードのみに現れる暗黙依存。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT\|&lt;ifname&gt;</code></td>
+<td>YANG leafref（必須検証）+ 実装参照</td>
+<td><code>ifname != 'GLOBAL'</code> のとき。ポートが存在しない・非物理ポートは <code>task_invalid_entry</code></td>
+<td><code>sonic-pfcwd.yang:37-38</code>; <code>pfcwdorch.cpp:193-203</code></td>
+</tr>
+<tr>
+<td><code>PORT</code> 初期化完了状態</td>
+<td>読み取り（<code>allPortsReady()</code>）</td>
+<td>常時。全ポートが SAI 初期化を完了していない限り全タスクを保留</td>
+<td><code>pfcwdorch.cpp:68-71</code></td>
+</tr>
+<tr>
+<td><code>PORT_QOS_MAP\|&lt;port&gt;.pfcwd_sw_enable</code></td>
+<td>PFC bitmask 読み取り（暗黙）</td>
+<td>per-port エントリ処理時。<code>qosorch</code> が <code>setPortPfcWatchdogStatus()</code> で書き込んだ値を <code>getPortPfcWatchdogStatus()</code> で読む</td>
+<td><code>pfcwdorch.cpp:533-555</code>; <code>qosorch.cpp:2136-2155,2224</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.default_pfcwd_status</code></td>
+<td>読み取り（CLI 経由）</td>
+<td><code>pfcwd start_default</code> 実行時のみ。orchagent は直接参照しない</td>
+<td><code>pfcwd/main.py:409</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_NEIGHBOR</code>（逆参照）</td>
+<td>active_ports 取得（CLI 経由）</td>
+<td><code>pfcwd start_default</code> が対象ポート一覧を取得するため参照</td>
+<td><code>pfcwd/main.py:415</code></td>
+</tr>
+<tr>
+<td>APPL_DB <code>PFC_WD_TABLE_INSTORM</code>（書き込み先）</td>
+<td>書き込み</td>
+<td>storm 検出時に warm-reboot 用 storm 状態を記録</td>
+<td><code>pfcwdorch.cpp:688,998-1058</code></td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB <code>PFC_WD</code> グループ（書き込み先）</td>
+<td>書き込み</td>
+<td>per-port エントリ登録時に port / queue の FlexCounter エントリを登録</td>
+<td><code>pfcwdorch.cpp:560,587,593</code>; <code>pfcwdorch.h:16</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">PORT_QOS_MAP PFC 有効化の暗黙依存</p>
+<p><code>PORT_QOS_MAP|&lt;port&gt;</code> に <code>pfcwd_sw_enable</code> を設定することで <code>QosOrch</code> が <code>setPortPfcWatchdogStatus()</code> を呼び lossless TC bitmask を設定する。
+PFC_WD per-port エントリ処理時に <code>getPortPfcWatchdogStatus()</code> でこの bitmask を読み出し、lossless TC が 0 の場合は
+<code>"No lossless TC found on port"</code> を LOG_NOTICE し Watchdog 登録がスキップされる（<code>task_failed</code> にはならない）。
+<code>PORT_QOS_MAP</code> の PFC 有効化は YANG leafref として明示されていないが、実質的な先行条件となる。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">GLOBAL エントリは leafref 対象外</p>
+<p>YANG leafref は <code>ifname != 'GLOBAL'</code> に限定されている。<code>PFC_WD|GLOBAL</code> の <code>POLL_INTERVAL</code> フィールドは PORT への参照を持たず、
+どの port が存在しなくても書き込み可能。</p>
+</div>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/pfcwdorch.cpp:68-71,193-203,533-555,688,998-1058</code>; <code>orchagent/qosorch.cpp:2136-2155,2224</code>; <code>orchagent/portsorch.cpp:2482-2514</code>; <code>sonic-pfcwd.yang:37-38</code>; <code>pfcwd/main.py:409,415</code>; スキャンノート: <code>meta/_intermediate/cdb-flow/pfc-wd-cross-refs.md</code></p>
+</blockquote>
+<!-- /cross-refs -->
 
 <div class="footnote">
 <hr />

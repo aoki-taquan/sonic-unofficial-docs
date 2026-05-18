@@ -23351,7 +23351,168 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ntp_key-key-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY 先行必須 — key leafref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp_key-authenticationenabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY 登録 → authentication=enabled の順序推奨
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp_server-ntp_key-chrony" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_SERVER と NTP_KEY の合算 chrony 再起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ブート時の書込みシーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-max-elements10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG max-elements=10 による書込み上限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-ntp_srv_key_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd ntp_srv_key_update の失敗経路
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="hostcfgd ntp_srv_key_update の失敗経路">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キャッシュ更新省略による再処理保証
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chronyconfj2-ntp_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chrony.conf.j2 テンプレートの NTP_SERVER 固有失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗の可観測性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連サブテーブル
@@ -23362,7 +23523,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23384,7 +23545,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23395,7 +23556,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23417,7 +23578,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23429,7 +23590,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23440,7 +23601,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23451,7 +23612,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23467,7 +23628,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -23478,7 +23639,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -23617,7 +23778,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -23628,7 +23789,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -23678,7 +23839,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -35081,7 +35242,168 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ntp_key-key-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY 先行必須 — key leafref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp_key-authenticationenabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY 登録 → authentication=enabled の順序推奨
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp_server-ntp_key-chrony" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_SERVER と NTP_KEY の合算 chrony 再起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ブート時の書込みシーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-max-elements10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG max-elements=10 による書込み上限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-ntp_srv_key_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd ntp_srv_key_update の失敗経路
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="hostcfgd ntp_srv_key_update の失敗経路">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キャッシュ更新省略による再処理保証
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chronyconfj2-ntp_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chrony.conf.j2 テンプレートの NTP_SERVER 固有失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗の可観測性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連サブテーブル
@@ -35092,7 +35414,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -35114,7 +35436,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35125,7 +35447,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35147,7 +35469,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35159,7 +35481,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -35170,7 +35492,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -35181,7 +35503,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35197,7 +35519,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35208,7 +35530,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -35347,7 +35669,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -35358,7 +35680,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -35408,7 +35730,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -35562,7 +35884,216 @@
 <p>派生メモ全体は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ntp-server-defaults.md"><code>meta/_intermediate/cdb-flow/ntp-server-defaults.md</code></a> を参照。</p>
 <!-- /defaults -->
 
-<h2 id="_4">関連サブテーブル<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-ntp.yang</code> L195–236、<code>hostcfgd</code> L1366–1406、<code>chrony.conf.j2</code> L20–55、<code>minigraph.py</code> L2646 精読 (2026-05-18)
+詳細証跡: <code>meta/_intermediate/cdb-flow/ntp-server-ordering.md</code></p>
+</blockquote>
+<h3 id="ntp_key-key-leafref">NTP_KEY 先行必須 — key leafref<a class="headerlink" href="#ntp_key-key-leafref" title="Permanent link">&para;</a></h3>
+<p><code>sonic-ntp.yang</code> L199-203 の <code>leaf key</code> は <code>NTP_KEY_LIST/id</code> への leafref として定義される。<code>NTP_SERVER|&lt;server&gt;.key=&lt;id&gt;</code> を書き込む前に <code>NTP_KEY|&lt;id&gt;</code> が存在しなければ、YANG leafref バリデーションが SET を拒否する。</p>
+<p>正しい順序: <code>NTP_KEY|&lt;id&gt;</code> SET → <code>NTP_SERVER|&lt;server&gt;.key=&lt;id&gt;</code> SET。</p>
+<p>DEL の逆順序: <code>NTP_SERVER|&lt;server&gt;.key</code> フィールドをクリア（または <code>NTP_SERVER|&lt;server&gt;</code> DEL）→ <code>NTP_KEY|&lt;id&gt;</code> DEL。参照を残したまま <code>NTP_KEY</code> を先に DEL すると leafref dangling になり DEL が失敗する。</p>
+<h3 id="ntp_key-authenticationenabled">NTP_KEY 登録 → authentication=enabled の順序推奨<a class="headerlink" href="#ntp_key-authenticationenabled" title="Permanent link">&para;</a></h3>
+<p><code>chrony.conf.j2</code> L124-131 は <code>NTP.global.authentication == 'enabled'</code> の場合のみ <code>keyfile /etc/chrony/chrony.keys</code> を chrony.conf に書き込む。<code>NTP_KEY</code> 未登録のまま <code>NTP|global.authentication=enabled</code> に設定すると、chrony.keys が空のまま chrony が再起動し認証が機能しない（NTP サーバへの接続を試みるが鍵照合で失敗する）。</p>
+<p>推奨順序: <code>NTP_KEY|&lt;id&gt;</code> SET → <code>NTP|global.authentication=enabled</code> SET。</p>
+<h3 id="ntp_server-ntp_key-chrony">NTP_SERVER と NTP_KEY の合算 chrony 再起動<a class="headerlink" href="#ntp_server-ntp_key-chrony" title="Permanent link">&para;</a></h3>
+<p><code>hostcfgd</code> L2387-2391 の <code>ntp_srv_key_handler</code> は <code>NTP_SERVER</code> または <code>NTP_KEY</code> のいずれかが変更されると、<strong>両テーブルの全件を同時に取得</strong>して chrony を再起動する。<code>NTP_KEY</code> のみ変更した場合でも chrony が再起動されるため、認証鍵の追加・削除は一時的な NTP 断を伴う。</p>
+<h3 id="_4">ブート時の書込みシーケンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>minigraph.py L2646 が <code>NTP_SERVER</code> エントリ全台に <code>{iburst: 'on'}</code> を一括投入する。その後 <code>hostcfgd.load()</code> がスナップショットを取得するが <code>load()</code> は chrony を再起動しない（ブート時は chrony の起動設定ファイルから読まれる）。ブート後の最初の CONFIG_DB 変更イベントで初めて chrony restart が発火する。</p>
+<h3 id="yang-max-elements10">YANG max-elements=10 による書込み上限<a class="headerlink" href="#yang-max-elements10" title="Permanent link">&para;</a></h3>
+<p>YANG <code>max-elements 10</code> により <code>NTP_SERVER</code> エントリは最大 10 件に制限される。11 件目の SET は YANG バリデーションで拒否される（エラーメッセージ: <code>"Failed NTP version"</code> ではなく max-elements 制約違反）。エントリ削除後は再び SET 可能。</p>
+<h3 id="_5">順序依存サマリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>強制度</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>NTP_KEY\|&lt;id&gt;</code> SET 先行 → <code>NTP_SERVER\|&lt;server&gt;.key=&lt;id&gt;</code> SET</td>
+<td><strong>必須</strong></td>
+<td>YANG leafref 拒否（SET 失敗）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>NTP_SERVER\|&lt;server&gt;.key</code> クリア 先行 → <code>NTP_KEY\|&lt;id&gt;</code> DEL</td>
+<td><strong>必須</strong></td>
+<td>YANG leafref dangling（DEL 失敗）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>NTP_KEY</code> 登録 先行 → <code>NTP\|global.authentication=enabled</code></td>
+<td>推奨</td>
+<td>chrony 認証失敗（鍵なし起動）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>NTP_SERVER</code> エントリ数 ≤ 10</td>
+<td><strong>必須</strong></td>
+<td>YANG max-elements 拒否（SET 失敗）</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>NTP_SERVER</code> エントリを処理する <code>hostcfgd</code> の <code>ntp_srv_key_handler</code> と <code>chrony.conf.j2</code> テンプレートは、<code>NTP_SERVER</code> 以外の以下の CONFIG_DB テーブルを暗黙的に参照する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル</th>
+<th>参照フィールド</th>
+<th>参照タイミング</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../ntp-key/"><code>NTP_KEY</code></a></td>
+<td><code>id</code> (leafref 先)</td>
+<td>YANG SET バリデーション時</td>
+<td><code>NTP_SERVER.key</code> の leafref ターゲット。<code>NTP_KEY\|&lt;id&gt;</code> 未存在時は SET 拒否</td>
+<td><code>sonic-ntp.yang:199-203</code></td>
+</tr>
+<tr>
+<td><code>NTP</code> (global)</td>
+<td><code>authentication</code></td>
+<td><code>chrony.conf.j2</code> テンプレート生成時</td>
+<td><code>authentication == 'enabled'</code> のときのみ <code>key &lt;id&gt;</code> オプションを <code>chrony.conf</code> に生成。disabled なら <code>NTP_SERVER.key</code> は参照されても無効</td>
+<td><code>chrony.conf.j2:30-34</code></td>
+</tr>
+<tr>
+<td><code>NTP</code> (global)</td>
+<td><code>src_intf</code></td>
+<td><code>hostcfgd</code> <code>handle_ntp_source_intf_chg</code> / <code>chrony.conf.j2</code> 生成時</td>
+<td><code>src_intf</code> に指定したインタフェース IP を <code>bindacqaddress</code> ディレクティブに変換。<code>NTP_SERVER</code> が空の間は <code>src_intf</code> 変更イベントが no-op</td>
+<td><code>hostcfgd:1315-1316</code>; <code>chrony.conf.j2:87-107</code></td>
+</tr>
+<tr>
+<td><code>MGMT_INTERFACE</code></td>
+<td>(key, prefix)</td>
+<td><code>chrony.conf.j2</code> テンプレート生成時</td>
+<td><code>src_intf == 'eth0'</code> のとき <code>bindacqaddress</code> 用 IPv4/IPv6 アドレスを解決</td>
+<td><code>chrony.conf.j2:91-92</code></td>
+</tr>
+<tr>
+<td><code>INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>VLAN_INTERFACE</code></td>
+<td>(key, prefix)</td>
+<td><code>chrony.conf.j2</code> テンプレート生成時</td>
+<td><code>src_intf</code> が <code>Ethernet*</code> / <code>Loopback*</code> / <code>PortChannel*</code> / <code>Vlan*</code> のとき対応テーブルから IP を解決</td>
+<td><code>chrony.conf.j2:93-107</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>localhost.subtype</code> / <code>localhost.type</code></td>
+<td><code>chrony.conf.j2</code> テンプレート生成時</td>
+<td>SmartSwitch 判定。<code>subtype=SmartSwitch</code> かつ <code>type!=SmartSwitchDPU</code> のとき <code>NTP.server_role</code> / <code>NTP.dhcp</code> を参照して <code>allow</code> + <code>binddevice bridge-midplane</code> を追加</td>
+<td><code>chrony.conf.j2:57-63</code></td>
+</tr>
+<tr>
+<td><code>MGMT_VRF_CONFIG</code></td>
+<td><code>vrf_global.mgmtVrfEnabled</code></td>
+<td>chrony サービス起動時 (<code>chronyd-starter.sh</code>)</td>
+<td><code>"true"</code> なら <code>NTP.vrf</code> に応じて mgmt VRF または default VRF で起動。NTP_SERVER の変更で chrony が再起動されるたびに間接的に参照される</td>
+<td><code>chronyd-starter.sh:3-16</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">NTP_SERVER の変更は常に全テーブルを合算処理</p>
+<p><code>hostcfgd</code> の <code>ntp_srv_key_handler</code> は <code>NTP_SERVER</code> 変更時に <code>NTP_KEY</code> テーブル全体も同時に取得して chrony を再起動する。このため <code>NTP_SERVER</code> 単独の変更であっても <code>NTP_KEY</code> の現在値が <code>chrony.conf</code> / <code>chrony.keys</code> の生成に反映される。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>詳細証跡: <code>meta/_intermediate/cdb-flow/ntp-server-failure.md</code></p>
+</blockquote>
+<h3 id="hostcfgd-ntp_srv_key_update">hostcfgd ntp_srv_key_update の失敗経路<a class="headerlink" href="#hostcfgd-ntp_srv_key_update" title="Permanent link">&para;</a></h3>
+<p><code>NTP_SERVER</code> の変更は <code>ntp_srv_key_handler</code> → <code>ntp_srv_key_update</code> 経由で処理される。</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>systemctl restart chrony</code> 失敗</td>
+<td><code>hostcfgd:1397-1402</code></td>
+<td><code>LOG_ERR: "NtpCfg: Failed to restart chrony service"</code> → <code>return</code>（キャッシュ更新なし）</td>
+<td><code>hostcfgd:1399-1402</code></td>
+</tr>
+<tr>
+<td>サーバ・鍵ともに前回キャッシュと同一値</td>
+<td><code>hostcfgd:1383-1386</code></td>
+<td><code>LOG_NOTICE: "NtpCfg: Nothing to update"</code> → <code>return</code>（no-op、正常扱い）</td>
+<td><code>hostcfgd:1383-1386</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="_6">キャッシュ更新省略による再処理保証<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<p><code>ntp_srv_key_update</code> は <code>systemctl restart chrony</code> 失敗時にキャッシュ (<code>self.cache['servers']</code> / <code>self.cache['keys']</code>) を更新しない（<code>run_cmd</code> 失敗時に <code>return</code> し <code>self.cache['servers'] = ntp_servers</code> の行 <code>hostcfgd:1403</code> に到達しない）。<!-- evidence: hostcfgd:1397-1403 --></p>
+<p>これにより次回の <code>NTP_SERVER</code> / <code>NTP_KEY</code> 変更イベント時にキャッシュ差分が残るため、再処理が保証される（意図的な再試行設計）。<code>ntp_global_update</code> の失敗時とは異なり、キャッシュ不整合が「再試行保証」として機能する点が特徴的。</p>
+<h3 id="chronyconfj2-ntp_server">chrony.conf.j2 テンプレートの NTP_SERVER 固有失敗経路<a class="headerlink" href="#chronyconfj2-ntp_server" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin_state == 'disabled'</code></td>
+<td>そのサーバを生成ループから除外（サイレント除去）</td>
+<td><code>chrony.conf.j2:20</code></td>
+</tr>
+<tr>
+<td><code>config.iburst == 'off'</code>（文字列、非空）</td>
+<td>Jinja2 truthy 判定で <code>iburst</code> オプションが付与される（<code>iburst=off</code> が無効化されない潜在バグ）</td>
+<td><code>chrony.conf.j2:37</code></td>
+</tr>
+<tr>
+<td><code>NTP.authentication != 'enabled'</code> かつ <code>NTP_SERVER.key</code> 設定済み</td>
+<td><code>key &lt;id&gt;</code> オプションが生成されない（サイレントドロップ）</td>
+<td><code>chrony.conf.j2:30-34</code></td>
+</tr>
+<tr>
+<td><code>trusted == 'yes'</code> かつ <code>resolve_as</code> 未設定</td>
+<td><code>trusted_str</code> に追加されない（サイレントドロップ）</td>
+<td><code>chrony.keys.j2:8-10</code></td>
+</tr>
+<tr>
+<td><code>association_type == 'pool'</code> かつ <code>resolve_as</code> にカスタム値を設定</td>
+<td><code>resolve_as = server</code>（テーブル key のアドレス）に強制上書き</td>
+<td><code>chrony.conf.j2:49-51</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">失敗の可観測性<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p><code>NTP_SERVER</code> 処理は CONFIG_DB → テンプレート → <code>systemctl restart chrony</code> で完結し、<strong>STATE_DB / APPL_DB への書き込みは一切行われない</strong>。失敗検知は以下のみ:</p>
+<ul>
+<li><code>journalctl -u chrony</code> — chrony サービスの起動失敗ログ</li>
+<li><code>/var/log/syslog</code> の <code>NtpCfg: Failed to restart chrony service</code> — hostcfgd の LOG_ERR</li>
+<li><code>chronyc sources</code> / <code>chronyc tracking</code> — 実際の同期状態確認</li>
+</ul>
+<!-- /failure -->
+
+<h2 id="_8">関連サブテーブル<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>NTP|global</code> (container, single-instance):<ul>
 <li><code>src_intf</code> (leaf-list): 送信元 IF（PORT / PORTCHANNEL / LOOPBACK / MGMT_PORT / <code>eth0</code> の union）</li>
@@ -35580,7 +36111,7 @@
 </ul>
 </li>
 </ul>
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_9">購読者<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>hostcfgd</code> <code>NtpHandler</code>: chrony / ntp 設定の更新</li>
 </ul>
@@ -35592,14 +36123,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-ntp/"><code>sonic-ntp</code></a></li>
 <li>CLI: <a href="../../cli/config-ntp/"><code>config ntp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35608,18 +36139,18 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_12">運用ヒント<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_13">典型値<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>NTP_SERVER|&lt;ip-or-hostname&gt;</code>。</li>
 <li><code>iburst</code>: <code>on</code>（初期同期高速化）。</li>
 <li><code>association_type</code>: <code>server</code>。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_14">よくある誤設定<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
 <li>1 つだけサーバ登録すると障害時に時刻が drift。3 つ以上推奨。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_15">確認コマンド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NTP_SERVER|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ntp
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>chronyc<span class="w"> </span>sources
@@ -35627,7 +36158,7 @@
 <!-- /ops-hint -->
 
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_16">例外条件・特殊挙動<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang NTP_SERVER container -->
 
 <ul>
@@ -35641,7 +36172,7 @@
 <li><strong>trusted のデフォルト = "no"</strong>: <code>default no</code>。NTP 認証有効時にこのサーバのみを信頼する場合は <code>trusted = yes</code> を設定する。</li>
 </ul>
 <!-- value-behavior -->
-<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_17">値依存挙動マトリクス<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-host-services/scripts/hostcfgd ntp_srv_key_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
 
 <table>
@@ -35754,9 +36285,9 @@
 <p>db_migrator.py での NTP_SERVER マイグレーションなし</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_14">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_18">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_15">死活・デッドコード<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_19">死活・デッドコード<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
 
@@ -35792,7 +36323,7 @@
 <p>minigraph.py は NTP サーバ全台に対して <code>iburst: on</code> を自動設定する。init_cfg.json.j2 の <code>NTP</code> セクション (グローバル設定) は別テーブル。</p>
 <h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
 <p><code>NTP_SERVER</code> は orchagent では処理されない。<code>hostcfgd</code> が <code>NTP_SERVER</code> を購読し ntp.conf を再生成する (<code>hostcfgd:1308</code>)。条件付き platform 登録なし。YANG <code>max-elements 10</code> により 11 件目以降は拒否。</p>
-<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_20">グレップカバレッジ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

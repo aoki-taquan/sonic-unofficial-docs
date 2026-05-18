@@ -22891,6 +22891,294 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-mode-log_err-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. mode フィールド欠落 → LOG_ERR + silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-prefix_set-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 既存 PREFIX_SET への重複 SET → 無言スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-prefix_set-prefix-log_err-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. PREFIX_SET 未登録状態で PREFIX エントリが届く → LOG_ERR + DROP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-prefix-vtysh-del-log_err" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. PREFIX メンバ vtysh DEL 失敗 → LOG_ERR + キャッシュ不整合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-prefix-vtysh-add-log_err-revert-continue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. PREFIX メンバ vtysh ADD 失敗 → LOG_ERR + キャッシュ revert + continue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-ip_prefix-valueerror-log_err-continue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. ip_prefix 不正フォーマット → ValueError + LOG_ERR + continue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-frr-100-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 起動時 FRR デーモン接続失敗 → 最大 100 回 retry → プロセス終了
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターンサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#table_daemon-frrcfgdpy83" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TABLE_DAEMON ディスパッチ定数 (frrcfgd.py:83)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#masklength_range_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        masklength_range 変換定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode 文字列 正規化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR コマンドテンプレート（ハードコード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更波及 / 副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="変更波及 / 副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-prefix_set-del-frr-prefix-list-route-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PREFIX_SET DEL → FRR prefix-list 全削除 → route-map 即時無効化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-prefix-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PREFIX メンバ変更 → 複数 FRR デーモンへ同時発行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-bgp-soft-reconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. BGP ピアへの自動 soft-reconfiguration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-config_db-state_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. CONFIG_DB / STATE_DB / APPL_DB への副作用なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 購読メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CONFIG_DB 購読メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-sonic-frr-mgmt-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd (sonic-frr-mgmt-framework)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読フロー要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35712,6 +36000,294 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-mode-log_err-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. mode フィールド欠落 → LOG_ERR + silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-prefix_set-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 既存 PREFIX_SET への重複 SET → 無言スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-prefix_set-prefix-log_err-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. PREFIX_SET 未登録状態で PREFIX エントリが届く → LOG_ERR + DROP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-prefix-vtysh-del-log_err" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. PREFIX メンバ vtysh DEL 失敗 → LOG_ERR + キャッシュ不整合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-prefix-vtysh-add-log_err-revert-continue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. PREFIX メンバ vtysh ADD 失敗 → LOG_ERR + キャッシュ revert + continue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-ip_prefix-valueerror-log_err-continue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. ip_prefix 不正フォーマット → ValueError + LOG_ERR + continue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-frr-100-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 起動時 FRR デーモン接続失敗 → 最大 100 回 retry → プロセス終了
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターンサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#table_daemon-frrcfgdpy83" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TABLE_DAEMON ディスパッチ定数 (frrcfgd.py:83)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#masklength_range_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        masklength_range 変換定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode 文字列 正規化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR コマンドテンプレート（ハードコード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更波及 / 副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="変更波及 / 副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-prefix_set-del-frr-prefix-list-route-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PREFIX_SET DEL → FRR prefix-list 全削除 → route-map 即時無効化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-prefix-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PREFIX メンバ変更 → 複数 FRR デーモンへ同時発行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-bgp-soft-reconfiguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. BGP ピアへの自動 soft-reconfiguration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-config_db-state_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. CONFIG_DB / STATE_DB / APPL_DB への副作用なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config_db-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 購読メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CONFIG_DB 購読メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-sonic-frr-mgmt-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd (sonic-frr-mgmt-framework)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読フロー要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36102,6 +36678,335 @@
 <p>詳細根拠は <code>meta/_intermediate/cdb-flow/prefix-set-ordering.md</code> を参照</p>
 </blockquote>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>YANG leafref および frrcfgd 実装スキャンにより確認した参照先・被参照テーブル一覧。詳細は <code>meta/_intermediate/cdb-flow/prefix-set-cross-refs.md</code> を参照。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>参照フィールド</th>
+<th>条件・備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PREFIX</code> (<code>PREFIX_LIST</code> / <code>PREFIX_NOSEQ_LIST</code>)</td>
+<td>leafref ターゲット（被参照）</td>
+<td><code>set_name</code></td>
+<td>PREFIX_SET が先行必須。未作成時 YANG バリデーションでロード拒否</td>
+</tr>
+<tr>
+<td><a href="../route-map/"><code>ROUTE_MAP</code></a></td>
+<td>逆参照（ROUTE_MAP が PREFIX_SET を leafref）</td>
+<td><code>match_prefix_set</code>, <code>match_next_hop_set</code></td>
+<td>PREFIX_SET 未作成時 frrcfgd が AF 解決失敗 → FRR コマンド未発行（silent drop）。<code>frrcfgd.py:2669-2676</code></td>
+</tr>
+<tr>
+<td><a href="../route-map/"><code>ROUTE_MAP</code></a></td>
+<td>逆参照（YANG のみ、実装なし）</td>
+<td><code>match_ipv6_prefix_set</code></td>
+<td>sonic-route-map.yang には leafref あり、frrcfgd の <code>route_map_key_map</code> に未実装 → dead field</td>
+</tr>
+<tr>
+<td><a href="../bgp-neighbor-af/"><code>BGP_NEIGHBOR_AF</code></a></td>
+<td>逆参照（BGP ネイバーが PREFIX_SET を leafref）</td>
+<td><code>prefix_list_in</code>, <code>prefix_list_out</code></td>
+<td>frrcfgd が <code>neighbor {} prefix-list {} in/out</code> として <a href="../../glossary/#term-frr">FRR</a> に発行。<code>frrcfgd.py:1918-1919</code></td>
+</tr>
+<tr>
+<td><a href="../bgp-peer-group-af/"><code>BGP_PEER_GROUP_AF</code></a></td>
+<td>逆参照（BGP peer group が PREFIX_SET を leafref）</td>
+<td><code>prefix_list_in</code>, <code>prefix_list_out</code></td>
+<td>BGP_NEIGHBOR_AF と同一 handler 経路</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">match_ipv6_prefix_set は dead field</p>
+<p><code>sonic-route-map.yang</code> では <code>match_ipv6_prefix_set</code> に <code>PREFIX_SET</code> への leafref が定義されているが、frrcfgd の <code>route_map_key_map</code>（<code>frrcfgd.py:1928-1929</code>）には <code>match_prefix_set|ipv4</code> / <code>match_prefix_set|ipv6</code> のエントリのみ存在し <code>match_ipv6_prefix_set</code> のエントリはない。CONFIG_DB に書いても frrcfgd が処理せず FRR に反映されない。</p>
+</div>
+<blockquote>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/prefix-set-cross-refs.md</code> を参照</p>
+</blockquote>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>frrcfgd は PREFIX_SET / PREFIX の変換失敗をすべて <strong>syslog LOG_ERR + <code>continue</code></strong> で処理する。retry・rollback（DEL 失敗時のみ例外）・STATE_DB 記録はない。</p>
+<h3 id="1-mode-log_err-silent-drop">1. <code>mode</code> フィールド欠落 → LOG_ERR + silent drop<a class="headerlink" href="#1-mode-log_err-silent-drop" title="Permanent link">&para;</a></h3>
+<p><code>PREFIX_SET|&lt;name&gt;</code> SET イベントに <code>mode</code> がない場合:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>LOG_ERR: &#39;no mode given for prefix-set &lt;name&gt;&#39;
+</span></code></pre></div>
+<p><code>prefix_set_list</code> へのキャッシュ登録もされないため、後続の <code>PREFIX|&lt;name&gt;|*</code> SET イベントも全て DROP される（ガード #3 に該当）。<strong>YANG 経路では YANG default <code>"IPv4"</code> が補完されるためこの問題は発生しない。<code>redis-cli hset</code> 等の直接書き込みでのみ発生する。</strong></p>
+<h3 id="2-prefix_set-set">2. 既存 PREFIX_SET への重複 SET → 無言スキップ<a class="headerlink" href="#2-prefix_set-set" title="Permanent link">&para;</a></h3>
+<p>既存エントリへの SET 時は LOG_DEBUG のみ出力し更新をスキップする（<code>frrcfgd.py:2896-2900</code>）。
+<code>mode</code> 変更は実行時に<strong>反映されない</strong>。変更には DEL → SET のシーケンスが必要（Phase B 参照）。</p>
+<h3 id="3-prefix_set-prefix-log_err-drop">3. PREFIX_SET 未登録状態で PREFIX エントリが届く → LOG_ERR + DROP<a class="headerlink" href="#3-prefix_set-prefix-log_err-drop" title="Permanent link">&para;</a></h3>
+<p>対応 PREFIX_SET がキャッシュに存在しない状態で <code>PREFIX|&lt;name&gt;|*</code> SET イベントが届いた場合:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>LOG_ERR: &#39;could not find prefix-set &lt;name&gt; from cache&#39;
+</span></code></pre></div>
+<p>vtysh コマンド未発行。PREFIX エントリは CONFIG_DB に残るが FRR には反映されない。</p>
+<h3 id="4-prefix-vtysh-del-log_err">4. PREFIX メンバ vtysh DEL 失敗 → LOG_ERR + キャッシュ不整合<a class="headerlink" href="#4-prefix-vtysh-del-log_err" title="Permanent link">&para;</a></h3>
+<p><code>no ip prefix-list</code> コマンドが失敗した場合:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>LOG_ERR: &#39;failed to delete prefix &lt;ip&gt; with range &lt;range&gt; from set &lt;name&gt;&#39;
+</span></code></pre></div>
+<p>frrcfgd はキャッシュからの削除を行わず <code>continue</code>。<strong>FRR に旧エントリが残存し、frrcfgd 内部キャッシュとの不整合が発生する。retry なし。</strong></p>
+<h3 id="5-prefix-vtysh-add-log_err-revert-continue">5. PREFIX メンバ vtysh ADD 失敗 → LOG_ERR + キャッシュ revert + continue<a class="headerlink" href="#5-prefix-vtysh-add-log_err-revert-continue" title="Permanent link">&para;</a></h3>
+<p>ADD vtysh コマンドが失敗した場合:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>LOG_ERR: &#39;failed to add prefix &lt;ip&gt; with range &lt;range&gt; to set &lt;name&gt;&#39;
+</span></code></pre></div>
+<p>frrcfgd は内部キャッシュから追加済みエントリを <strong>revert</strong> する（DEL 失敗時は revert なし）。自動 retry はない。</p>
+<h3 id="6-ip_prefix-valueerror-log_err-continue">6. ip_prefix 不正フォーマット → ValueError + LOG_ERR + continue<a class="headerlink" href="#6-ip_prefix-valueerror-log_err-continue" title="Permanent link">&para;</a></h3>
+<p><code>MatchPrefixList.add_prefix()</code> が解析失敗すると <code>ValueError</code> を送出し:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>LOG_ERR: &#39;failed to update prefix-set &lt;name&gt; in cache with prefix &lt;ip&gt; range &lt;range&gt;&#39;
+</span></code></pre></div>
+<p>FRR には未登録。YANG バリデーション経路では事前に拒否されるため直接書き込み時のみ発生。</p>
+<h3 id="7-frr-100-retry">7. 起動時 FRR デーモン接続失敗 → 最大 100 回 retry → プロセス終了<a class="headerlink" href="#7-frr-100-retry" title="Permanent link">&para;</a></h3>
+<p>frrcfgd 起動時に FRR Unix socket (<code>/run/frr/&lt;daemon&gt;.vty</code>) への接続を <strong>2 秒間隔・最大 100 回（約 200 秒）</strong> リトライ。超過時は <code>re-tried too many times, give up</code> LOG_ERR でプロセス終了。再起動後は CONFIG_DB の全エントリを再読み込みして再適用する。</p>
+<h3 id="_17">失敗パターンサマリ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>テーブル</th>
+<th>LOG_ERR</th>
+<th>FRR 反映</th>
+<th>retry</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mode</code> 欠落</td>
+<td>PREFIX_SET</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>後続 PREFIX も全 DROP</td>
+</tr>
+<tr>
+<td>既存エントリ重複 SET</td>
+<td>PREFIX_SET</td>
+<td>なし (LOG_DEBUG)</td>
+<td>なし</td>
+<td>なし</td>
+<td>mode 変更は無視</td>
+</tr>
+<tr>
+<td>PREFIX_SET 未登録で PREFIX 到着</td>
+<td>PREFIX</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>SET 前に PREFIX_SET が必要</td>
+</tr>
+<tr>
+<td>vtysh DEL 失敗</td>
+<td>PREFIX</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>FRR ゴーストエントリ残存</td>
+</tr>
+<tr>
+<td>vtysh ADD 失敗</td>
+<td>PREFIX</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>キャッシュ revert あり</td>
+</tr>
+<tr>
+<td>ip_prefix 不正</td>
+<td>PREFIX</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>YANG 経路では事前拒否</td>
+</tr>
+<tr>
+<td>起動時接続失敗</td>
+<td>全般</td>
+<td>あり</td>
+<td>なし</td>
+<td>最大 100 回</td>
+<td>超過でプロセス終了</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-error_table">STATE_DB / ERROR_TABLE<a class="headerlink" href="#state_db-error_table" title="Permanent link">&para;</a></h3>
+<p>frrcfgd は PREFIX_SET / PREFIX の失敗を STATE_DB や ERROR_TABLE に<strong>記録しない</strong>。障害検知は syslog のみ。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>frr-mgmt-framework<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;prefix-set|prefix-list&#39;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip prefix-list&#39;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ipv6 prefix-list&#39;</span>
+</span></code></pre></div>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>frrcfgd.py</code> L2894-2910 (PREFIX_SET ハンドラ), L2911-2997 (PREFIX ハンドラ), L181-218 (接続 retry)。詳細は <code>meta/_intermediate/cdb-flow/prefix-set-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>frrcfgd が <code>PREFIX_SET</code> / <code>PREFIX</code> テーブル処理でハードコードしている定数一覧。詳細は <code>meta/_intermediate/cdb-flow/prefix-set-constants.md</code> を参照。</p>
+<h3 id="table_daemon-frrcfgdpy83">TABLE_DAEMON ディスパッチ定数 (frrcfgd.py:83)<a class="headerlink" href="#table_daemon-frrcfgdpy83" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>対象 FRR デーモン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PREFIX_SET</code></td>
+<td><code>bgpd</code> のみ</td>
+</tr>
+<tr>
+<td><code>PREFIX</code></td>
+<td><code>zebra</code>, <code>bgpd</code>, <code>ospfd</code>, <code>pimd</code>（4 プロセス同時）</td>
+</tr>
+</tbody>
+</table>
+<p><code>PREFIX_SET</code> の変更は bgpd にのみ反映されるが、<code>PREFIX</code> メンバの追加・削除は OSPF / PIM を含む全ルーティングデーモンに波及する。<code>PREFIX</code> DEL 操作は ルーティングポリシー全体への影響が広いため注意が必要。</p>
+<h3 id="masklength_range_1">masklength_range 変換定数<a class="headerlink" href="#masklength_range_1" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MatchPrefix</span><span class="p">:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">IPV4_MAXLEN</span> <span class="o">=</span> <span class="mi">32</span>   <span class="c1"># frrcfgd.py:1606</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">IPV6_MAXLEN</span> <span class="o">=</span> <span class="mi">128</span>  <span class="c1"># frrcfgd.py:1607</span>
+</span></code></pre></div>
+<p><code>masklength_range</code> の上限値がアドレスファミリの最大マスク長（IPv4: 32、IPv6: 128）に一致する場合、FRR コマンドの <code>le</code> 修飾子を省略する（FRR デフォルトと等価なため冗長修飾を避ける）。</p>
+<p><strong>具体例</strong>: <code>masklength_range = "0..32"</code> を IPv4 PREFIX に設定すると、<code>show ip prefix-list</code> の出力では <code>ge 0</code> のみ表示され <code>le 32</code> は現れない。CONFIG_DB の値と FRR の表示が一見異なるが正常動作。</p>
+<h3 id="mode_1">mode 文字列 正規化<a class="headerlink" href="#mode_1" title="Permanent link">&para;</a></h3>
+<p><code>PREFIX_SET.mode</code> フィールドの YANG enum 値は大文字（<code>IPv4</code> / <code>IPv6</code>）だが、frrcfgd は <code>bgp_table_handler_common</code> (L2904) で <code>.lower()</code> 変換してから内部処理する（内部値: <code>'ipv4'</code> / <code>'ipv6'</code>）。YANG 経路以外の直接書き込みで大文字以外の variant を渡しても frrcfgd が正規化する。</p>
+<h3 id="frr">FRR コマンドテンプレート（ハードコード）<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
+<p>frrcfgd が発行する FRR コマンド文字列（frrcfgd.py:2945, 2960, 2977, 2991）:</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>FRR コマンドテンプレート</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PREFIX ADD (IPv4)</td>
+<td><code>ip prefix-list &lt;name&gt; &lt;seq&gt; &lt;action&gt; &lt;prefix&gt; [ge X] [le Y]</code></td>
+</tr>
+<tr>
+<td>PREFIX ADD (IPv6)</td>
+<td><code>ipv6 prefix-list &lt;name&gt; &lt;seq&gt; &lt;action&gt; &lt;prefix&gt; [ge X] [le Y]</code></td>
+</tr>
+<tr>
+<td>PREFIX DEL (IPv4)</td>
+<td><code>no ip prefix-list &lt;name&gt; &lt;entry&gt;</code></td>
+</tr>
+<tr>
+<td>PREFIX DEL (IPv6)</td>
+<td><code>no ipv6 prefix-list &lt;name&gt; &lt;entry&gt;</code></td>
+</tr>
+<tr>
+<td>PREFIX_SET DEL (IPv4)</td>
+<td><code>no ip prefix-list &lt;name&gt;</code></td>
+</tr>
+<tr>
+<td>PREFIX_SET DEL (IPv6)</td>
+<td><code>no ipv6 prefix-list &lt;name&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: frrcfgd.py:83,1606-1607,1665,2904,2945,2960,2977,2991 -->
+
+<blockquote>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/prefix-set-constants.md</code> を参照</p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">変更波及 / 副作用 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<p>PREFIX_SET / PREFIX の変更は frrcfgd 経由で FRR に即時反映され、ルーティングポリシー・BGP・OSPF・PIM に連鎖的な影響を及ぼす。CONFIG_DB 内の他テーブルへの直接書き込みはない。</p>
+<h3 id="1-prefix_set-del-frr-prefix-list-route-map">1. PREFIX_SET DEL → FRR prefix-list 全削除 → route-map 即時無効化<a class="headerlink" href="#1-prefix_set-del-frr-prefix-list-route-map" title="Permanent link">&para;</a></h3>
+<p><code>PREFIX_SET|&lt;name&gt;</code> DEL 時、frrcfgd は <code>no ip prefix-list &lt;name&gt;</code>（または <code>no ipv6 prefix-list &lt;name&gt;</code>）を vtysh で発行し、FRR から prefix-list を完全削除する（frrcfgd.py:2976-2981）。その結果、当該 prefix-list を <code>match ip address prefix-list &lt;name&gt;</code> で参照するすべての route-map statement が <strong>条件未一致（= deny）として即時動作</strong>する。</p>
+<div class="admonition warning">
+<p class="admonition-title">意図せぬ全ルート拒否のリスク</p>
+<p>PREFIX_SET を DEL する前に ROUTE_MAP / BGP_NEIGHBOR_AF / BGP_PEER_GROUP_AF 側の参照を先に削除しないと、参照先不明の prefix-list は FRR に <code>deny</code> として評価されるため、フィルタリング対象ルートが全拒否になる。</p>
+</div>
+<h3 id="2-prefix-frr">2. PREFIX メンバ変更 → 複数 FRR デーモンへ同時発行<a class="headerlink" href="#2-prefix-frr" title="Permanent link">&para;</a></h3>
+<p><code>PREFIX_LIST</code> / <code>PREFIX_NOSEQ_LIST</code> の ADD / DEL は TABLE_DAEMON 定義（frrcfgd.py:87）に従い <strong>bgpd / zebra / ospfd / pimd の 4 デーモンすべて</strong>に vtysh コマンドを発行する。</p>
+<table>
+<thead>
+<tr>
+<th>FRR デーモン</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bgpd</code></td>
+<td>BGP ルーティングポリシー再評価</td>
+</tr>
+<tr>
+<td><code>zebra</code></td>
+<td>カーネル経路フィルタ再適用</td>
+</tr>
+<tr>
+<td><code>ospfd</code></td>
+<td>OSPF redistribute フィルタ再評価</td>
+</tr>
+<tr>
+<td><code>pimd</code></td>
+<td>PIM SSM グループレンジ変更（<code>ip pim ssm prefix-list</code> 参照時）</td>
+</tr>
+</tbody>
+</table>
+<p>PREFIX_SET 本体の変更は <code>bgpd</code> のみへの通知（frrcfgd.py:83）であり、PREFIX メンバの方が影響範囲が広い。</p>
+<h3 id="3-bgp-soft-reconfiguration">3. BGP ピアへの自動 soft-reconfiguration<a class="headerlink" href="#3-bgp-soft-reconfiguration" title="Permanent link">&para;</a></h3>
+<p>frrcfgd は FRR への prefix-list 変更後に明示的な <code>clear ip bgp</code> コマンドを発行しない。FRR bgpd が変更を検知して対象ピアへ <strong>自動で soft-reconfiguration</strong> を実行する:</p>
+<ul>
+<li>許可 → 拒否 に変わった経路: BGP WITHDRAW 送出</li>
+<li>拒否 → 許可 に変わった経路: BGP UPDATE 送出</li>
+</ul>
+<p>通知は FRR 内部の非同期処理のためミリ秒〜秒単位の遅延がある。</p>
+<h3 id="4-config_db-state_db-appl_db">4. CONFIG_DB / STATE_DB / APPL_DB への副作用なし<a class="headerlink" href="#4-config_db-state_db-appl_db" title="Permanent link">&para;</a></h3>
+<p>PREFIX_SET / PREFIX の変更は CONFIG_DB 内他テーブル・APPL_DB・STATE_DB・COUNTERS_DB を直接書き換えない。すべての副作用は FRR vtysh コマンド経由の FRR 内部状態変更のみ。</p>
+<!-- evidence: frrcfgd.py:83,87,2931,2945,2960,2974-2981 -->
+
+<blockquote>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/prefix-set-side-effects.md</code> を参照</p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="config_db-phase-g">CONFIG_DB 購読メカニズム (Phase G)<a class="headerlink" href="#config_db-phase-g" title="Permanent link">&para;</a></h2>
+<p>PREFIX_SET / PREFIX テーブルを購読するデーモンは <strong>frrcfgd</strong> のみ。bgpcfgd はこれらのテーブルを直接購読しない。</p>
+<h3 id="frrcfgd-sonic-frr-mgmt-framework">frrcfgd (sonic-frr-mgmt-framework)<a class="headerlink" href="#frrcfgd-sonic-frr-mgmt-framework" title="Permanent link">&para;</a></h3>
+<p><code>frrcfgd.py</code> は <code>ExtConfigDBConnector</code>（<code>ConfigDBConnector</code> サブクラス）を使用し、Redis keyspace イベント (<code>__keyspace@&lt;dbid&gt;__:*</code>) を <code>psubscribe</code> で監視する。<code>subscribe_all()</code> が <code>table_handler_list</code> 内の <code>PREFIX_SET</code> / <code>PREFIX</code> エントリを登録し、共通ハンドラ <code>bgp_table_handler_common</code> が変更通知を受け取る。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># frrcfgd.py L2298-2299</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="p">(</span><span class="s1">&#39;PREFIX_SET&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bgp_table_handler_common</span><span class="p">),</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="p">(</span><span class="s1">&#39;PREFIX&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bgp_table_handler_common</span><span class="p">),</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="o">...</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="c1"># frrcfgd.py L2359-2361</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">subscribe_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">hdlr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_handler_list</span><span class="p">:</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">config_db</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">hdlr</span><span class="p">)</span>
+</span></code></pre></div>
+<p>変更検知後、<code>bgp_table_handler_common</code> がイベントを <code>bgp_message</code> キューに投入し、<code>__update_bgp</code> が処理する。</p>
+<p><strong>PREFIX_SET イベント処理</strong>（frrcfgd.py L2894-2910）: FRR コマンドを直接発行せず <code>prefix_set_list</code> キャッシュのみ更新（新規 SET → <code>MatchPrefixList(mode)</code> 追加、DEL → キャッシュ削除）。</p>
+<p><strong>PREFIX イベント処理</strong>（frrcfgd.py L2911-2936）: <code>prefix_set_list</code> キャッシュから af を参照し、Jinja2 テンプレート <code>bgpd.conf.db.pref_list.j2</code> 経由で <code>ip/ipv6 prefix-list</code> vtysh コマンドを生成・実行。適用対象デーモンは AF 依存（IPv4 → 全デーモン、IPv6 → <code>['bgpd', 'zebra']</code>）。</p>
+<h3 id="_18">購読フロー要約<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>CONFIG_DB PREFIX_SET / PREFIX
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  └─ frrcfgd (ExtConfigDBConnector psubscribe)
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>       └─ bgp_table_handler_common
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>            ├─ PREFIX_SET イベント: prefix_set_list キャッシュ更新のみ（FRR コマンド非発行）
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>            └─ PREFIX イベント: Jinja2 (bgpd.conf.db.pref_list.j2)
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>                 └─ vtysh ip/ipv6 prefix-list &lt;name&gt; [seq &lt;seq&gt;] &lt;action&gt; &lt;prefix&gt;
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>                    適用デーモン: IPv4 → 全デーモン / IPv6 → [&#39;bgpd&#39;, &#39;zebra&#39;]
+</span></code></pre></div>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>frrcfgd.py</code> L2298-2299 (table_handler_list 登録), L2359-2361 (subscribe_all), L1536-1552 (listen_thread/psubscribe), L2894-2910 (PREFIX_SET ハンドラ), L2911-2936 (PREFIX ハンドラ)。<code>bgpd.conf.db.pref_list.j2</code> L1-42 (Jinja2 テンプレート)。詳細は <code>meta/_intermediate/cdb-flow/prefix-set-pubsub.md</code> を参照。</p>
+</blockquote>
+<!-- /pubsub -->
 
 <!-- glossary-links-injected: 88e792f23f63 -->
 

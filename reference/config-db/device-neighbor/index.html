@@ -23618,6 +23618,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minigraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        minigraph による生成順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pfcwd-start_default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pfcwd start_default の依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecnconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecnconfig の依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd の間接依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23862,7 +23923,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#minigraph" class="md-nav__link">
+  <a href="#minigraph_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         minigraph 由来エントリの構造
@@ -35308,6 +35369,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minigraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        minigraph による生成順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pfcwd-start_default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pfcwd start_default の依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecnconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecnconfig の依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd の間接依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35552,7 +35674,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#minigraph" class="md-nav__link">
+  <a href="#minigraph_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         minigraph 由来エントリの構造
@@ -35787,6 +35909,66 @@
 </blockquote>
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>DEVICE_NEIGHBOR</code> には orchagent / SAI 経路の依存はない。書込み順が問題になるのは <strong>minigraph.py によるテーブル生成時</strong> と、<strong>pfcwd / ecnconfig がテーブルを参照するタイミング</strong> の 2 箇所である。</p>
+<h3 id="minigraph">minigraph による生成順序<a class="headerlink" href="#minigraph" title="Permanent link">&para;</a></h3>
+<p><code>sonic-cfggen -m &lt;minigraph.xml&gt;</code> の <code>parse_xml()</code> 内部では、以下の順序で処理が行われる。</p>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>処理内容</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>get_port_config()</code> で <code>port_config.ini</code> を読み込み <code>ports</code> dict を構築</td>
+<td><code>minigraph.py:2064</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>minigraph.xml 解析で隣接情報 <code>neighbors</code> dict を構築</td>
+<td><code>minigraph.py:649,741,766</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>ports</code> に存在しない key を <code>neighbors</code> から削除（Warning 出力）</td>
+<td><code>minigraph.py:2631-2636</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>results['DEVICE_NEIGHBOR'] = neighbors</code> を確定</td>
+<td><code>minigraph.py:2637</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>results['DEVICE_NEIGHBOR_METADATA']</code> を <code>neighbors.values()</code> から派生生成</td>
+<td><code>minigraph.py:2638-2641</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>PORT（<code>port_config.ini</code>）が先行必須</strong>: ステップ 3 で <code>port_config.ini</code> に存在しないインターフェイス名のエントリは自動削除される。DEVICE_NEIGHBOR のキー空間は PORT テーブルのキー空間のサブセットであることが保証される。</p>
+<p><strong>DEVICE_NEIGHBOR → DEVICE_NEIGHBOR_METADATA の派生順序</strong>: ステップ 5 で <code>neighbors.values()</code> の <code>name</code> フィールドを使って DEVICE_NEIGHBOR_METADATA のエントリセットが決定される（multi-ASIC 環境）。DEVICE_NEIGHBOR が確定していないと DEVICE_NEIGHBOR_METADATA の絞り込みが正しく行われない。</p>
+<h3 id="pfcwd-start_default">pfcwd start_default の依存<a class="headerlink" href="#pfcwd-start_default" title="Permanent link">&para;</a></h3>
+<p><code>pfcwd start_default</code>（<code>pfcwd/main.py:413</code>）は起動時に <code>get_table('DEVICE_NEIGHBOR').keys()</code> を外部ポート一覧として取得する。<strong>DEVICE_NEIGHBOR が空の状態で <code>pfcwd start_default</code> を実行すると外部ポートが 0 件となり、PFC Watchdog が外部ポートに対して有効化されない</strong>（silent misconfiguration）。</p>
+<p>推奨書込み順:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>1. PORT テーブル確定（port_config.ini 由来）
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>2. DEVICE_NEIGHBOR 書込み（sonic-cfggen -m での minigraph 処理）
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>3. DEVICE_NEIGHBOR_METADATA 書込み（同上 parse_xml() 内で自動派生）
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>4. pfcwd start_default 実行（外部ポートが正しく認識される前提）
+</span></code></pre></div>
+<h3 id="ecnconfig">ecnconfig の依存<a class="headerlink" href="#ecnconfig" title="Permanent link">&para;</a></h3>
+<p><code>ecnconfig</code>（<code>scripts/ecnconfig:282-287</code>）は非 multi-ASIC 環境でポート一覧として <code>DEVICE_NEIGHBOR.keys()</code> を使用する。テーブルが空の場合は <code>Exception("No active ports detected...")</code> を raise し処理が中断する。DEVICE_NEIGHBOR が書き込まれる前に ecnconfig を実行してはならない。</p>
+<h3 id="bgpcfgd">bgpcfgd の間接依存<a class="headerlink" href="#bgpcfgd" title="Permanent link">&para;</a></h3>
+<p><code>bgpcfgd</code>（<code>managers_bgp.py:219-224</code>）は <code>BGP_NEIGHBOR</code> の SET 処理時に <code>DEVICE_NEIGHBOR_METADATA</code> を参照し、<code>data['name']</code>（DEVICE_NEIGHBOR の <code>name</code> フィールドと一致する値）が DEVICE_NEIGHBOR_METADATA に存在しない場合は <code>return False</code> でピア追加を保留する。DEVICE_NEIGHBOR_METADATA の内容は DEVICE_NEIGHBOR の <code>name</code> 集合から派生するため、DEVICE_NEIGHBOR が正しく書き込まれていないと BGP セッション確立が silent に失敗する。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-buildimage</code> <code>src/sonic-config-engine/minigraph.py:2064,2631-2641</code>; <code>sonic-utilities</code> <code>pfcwd/main.py:413-416</code>; <code>scripts/ecnconfig:282-287</code>; <code>sonic-buildimage</code> <code>src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:219-224</code></p>
+</blockquote>
+<!-- /ordering -->
+
 <!-- runtime-trace -->
 <h2 id="_14">実コンテナ動作トレース<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
@@ -35871,7 +36053,7 @@
 </ul>
 <h3 id="peer_name-key-minigraph-silent-drop"><code>peer_name</code> (key) — minigraph 由来の silent drop<a class="headerlink" href="#peer_name-key-minigraph-silent-drop" title="Permanent link">&para;</a></h3>
 <p>minigraph.py は <code>port_config.ini</code> に存在しないインターフェイス名を key とするエントリを、<code>Warning: ignore interface '%s' in DEVICE_NEIGHBOR...</code> を stderr に出力してから <code>del neighbors[nghbr]</code> で黙って削除する (<code>minigraph.py:2631-2636</code>)。書き込みは行われない。</p>
-<h3 id="minigraph">minigraph 由来エントリの構造<a class="headerlink" href="#minigraph" title="Permanent link">&para;</a></h3>
+<h3 id="minigraph_1">minigraph 由来エントリの構造<a class="headerlink" href="#minigraph_1" title="Permanent link">&para;</a></h3>
 <p>minigraph.py が生成するエントリは常に <code>{'name': &lt;隣接ホスト名&gt;, 'port': &lt;隣接ポート名&gt;}</code> の 2 フィールドのみ。<code>mgmt_addr</code>・<code>type</code>・<code>local_port</code> は minigraph 経由では DEVICE_NEIGHBOR テーブルには書かれない（これらは DEVICE_NEIGHBOR_METADATA 側に書かれる）。</p>
 <h3 id="multi-asic-device_neighbor_metadata">multi-ASIC での DEVICE_NEIGHBOR_METADATA スコープ相違<a class="headerlink" href="#multi-asic-device_neighbor_metadata" title="Permanent link">&para;</a></h3>
 <ul>

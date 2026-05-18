@@ -27903,6 +27903,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34943,6 +34954,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35140,6 +35162,67 @@
 <h3 id="db_migrator">db_migrator 非対応<a class="headerlink" href="#db_migrator" title="Permanent link">&para;</a></h3>
 <p><code>db_migrator.py</code> に ROUTE_MAP_SET の参照なし（grep 確認済み）。バージョン移行での自動補完なし。</p>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>ROUTE_MAP_SET</code> テーブルは frrcfgd・bgpcfgd・orchagent のいずれも購読しないため、
+<strong>FRR への反映という観点での書込み順序制約は存在しない</strong>。</p>
+<p>ただし gNMI / NETCONF 等の YANG 検証が有効なパスでは、以下のテーブルのフィールドが
+<code>ROUTE_MAP_SET_LIST/name</code> を leafref で参照しているため、<strong>参照元エントリを書く前に
+<code>ROUTE_MAP_SET|&lt;name&gt;</code> エントリが存在しなければ leafref 検証失敗</strong>となる。</p>
+<table>
+<thead>
+<tr>
+<th>参照元テーブル</th>
+<th>参照フィールド</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ROUTE_MAP</code></td>
+<td><code>call_route_map</code></td>
+<td><code>sonic-route-map.yang:269-273</code></td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR_AF</code> / <code>BGP_PEER_GROUP_AF</code></td>
+<td><code>default_rmap</code></td>
+<td><code>sonic-bgp-common.yang:354-358</code></td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR_AF</code> / <code>BGP_PEER_GROUP_AF</code></td>
+<td><code>route_map_in</code></td>
+<td><code>sonic-bgp-common.yang:385-392</code></td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR_AF</code> / <code>BGP_PEER_GROUP_AF</code></td>
+<td><code>route_map_out</code></td>
+<td><code>sonic-bgp-common.yang:394-401</code></td>
+</tr>
+<tr>
+<td><code>BGP_NEIGHBOR_AF</code> / <code>BGP_PEER_GROUP_AF</code></td>
+<td><code>unsuppress_map_name</code></td>
+<td><code>sonic-bgp-common.yang:408-413</code></td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS_AF</code></td>
+<td>各 route-map フィールド</td>
+<td><code>sonic-bgp-global.yang:373,380,502,532</code></td>
+</tr>
+<tr>
+<td><code>ROUTE_REDISTRIBUTE</code></td>
+<td><code>route_map</code></td>
+<td><code>sonic-route-common.yang:60-66</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>sonic-db-cli</code> 直接投入は YANG 検証をバイパスするため、この順序制約は実質適用されない。
+DEL 時も同様で、<code>sonic-db-cli</code> であれば参照中の <code>ROUTE_MAP_SET</code> エントリを先に削除することは可能だが、
+gNMI/NETCONF では参照元の解除が先行必須となる。</p>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>sonic-route-map.yang:125-134,269-273</code>、<code>sonic-bgp-common.yang:354-413</code>、<code>sonic-bgp-global.yang:373,380,502,532</code>、<code>sonic-route-common.yang:60-66</code>。詳細は <code>meta/_intermediate/cdb-flow/route-map-set-ordering.md</code> を参照。</p>
+</blockquote>
+<!-- /ordering -->
 
 <!-- ref-triangle:start -->
 

@@ -23732,6 +23732,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35902,6 +35913,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36890,6 +36912,78 @@
 <h3 id="warm-reboot-bake-no-op">warm-reboot: bake() は意図的 no-op<a class="headerlink" href="#warm-reboot-bake-no-op" title="Permanent link">&para;</a></h3>
 <p><code>FlexCounterOrch::bake()</code> は <code>return true</code> のみ。<code>FLEX_COUNTER_TABLE</code> はデータプレーン整合性に不要なため reconciling 処理を行わない。60 秒の遅延タイマー満了後に通常通り SET を処理する。</p>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/orchdaemon.cpp,
+     sonic-swss/orchagent/saihelper.cpp, sonic-swss/orchagent/portsorch.cpp;
+     詳細調査: meta/_intermediate/cdb-flow/flex-counter-table-cross-refs.md -->
+
+<p><code>FlexCounterOrch</code> が <code>FLEX_COUNTER_TABLE</code> を処理する際に暗黙的に参照・書き込む他テーブルを示す。YANG leafref として明示されない依存も含む。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル</th>
+<th>DB</th>
+<th>方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code> (<code>create_only_config_db_buffers</code>)</td>
+<td>CONFIG_DB</td>
+<td>読み（起動時 + 購読）</td>
+<td>常時。<code>create_only_config_db_buffers</code> フラグを取得し QUEUE/PG カウンタ対象を決定</td>
+<td><code>flexcounterorch.cpp:107-124,488-537</code>; <code>orchdaemon.cpp:622</code></td>
+</tr>
+<tr>
+<td><code>BUFFER_QUEUE</code></td>
+<td>APPL_DB</td>
+<td>読み（QUEUE/PG enable 時）</td>
+<td><code>create_only_config_db_buffers=true</code> かつ非 VOQ シャーシ。非ゼロ profile のエントリのみをカウンタ対象に登録</td>
+<td><code>flexcounterorch.cpp:544-620</code></td>
+</tr>
+<tr>
+<td><code>BUFFER_PG</code></td>
+<td>APPL_DB</td>
+<td>読み（PG enable 時）</td>
+<td><code>create_only_config_db_buffers=true</code>。非ゼロ profile の PG エントリのみを対象に</td>
+<td><code>flexcounterorch.cpp:623-670</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_GROUP_TABLE\|&lt;group&gt;</code></td>
+<td>FLEX_COUNTER_DB</td>
+<td>書き</td>
+<td>STATUS/INTERVAL/BULK_CHUNK_SIZE 変化のたびに更新。<code>gTraditionalFlexCounter=true</code> 時は ProducerTable 直接書込、<code>false</code> 時は SAI Redis 属性経由</td>
+<td><code>saihelper.cpp:884</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_TABLE\|&lt;group&gt;:&lt;oid&gt;</code></td>
+<td>FLEX_COUNTER_DB</td>
+<td>書き (enable) / 削除 (disable)</td>
+<td>初回 enable 後の <code>generateXxxMap()</code> が per-OID エントリ (<code>PORT_COUNTER_ID_LIST</code> 等) を書込。disable / オブジェクト削除時に DEL</td>
+<td><code>saihelper.cpp:1047,1075</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_PORT_NAME_MAP</code> 等</td>
+<td>COUNTERS_DB</td>
+<td>書き</td>
+<td><code>generatePortCounterMap()</code> / <code>generateQueueMap()</code> / <code>generatePriorityGroupMap()</code> が初回 enable 時に名前→SAI OID マッピングを書込。counterpoll / テレメトリが参照する</td>
+<td><code>portsorch.cpp:9102</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">BUFFER_QUEUE / BUFFER_PG 参照の VOQ 例外</p>
+<p><code>gMySwitchType == "voq"</code> の VOQ シャーシでは <code>getQueueConfigurations()</code> が BUFFER_QUEUE を参照せず全ポート・全キューを一括登録する (<code>flexcounterorch.cpp:549</code>)。非 VOQ かつ <code>create_only_config_db_buffers=false</code> の場合も同様に全キュー対象となり BUFFER_QUEUE 参照は行われない。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">DEVICE_METADATA の二重参照</p>
+<p><code>FlexCounterOrch</code> は起動時に CONFIG_DB から <code>DEVICE_METADATA|localhost</code> をスナップショット読み込みし、さらに実行時購読も設定する。minigraph 適用等で <code>create_only_config_db_buffers</code> が変化すると <code>handleDeviceMetadataTable()</code> が <code>m_createOnlyConfigDbBuffers</code> を動的に更新する。</p>
+</div>
+<!-- /cross-refs -->
 
 <!-- failure -->
 <h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>

@@ -24298,6 +24298,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36454,6 +36465,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37636,6 +37658,48 @@ UnixSocket も未設定の場合は <code>"no listener configured: port must be 
 <p><strong>Evidence</strong>: <code>sonic-buildimage/dockers/docker-sonic-telemetry/telemetry.sh@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code> L40-43; <code>sonic-gnmi/telemetry/telemetry.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22</code> L111,L340-404; <code>gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22</code> L792; 詳細 <code>meta/_intermediate/cdb-flow/telemetry-pubsub.md</code></p>
 </blockquote>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>プラットフォーム差なし</strong>: <code>TELEMETRY</code> テーブルの設定・処理において、ASIC 種別・multi-asic・VOQ chassis 構成・ベンダー固有挙動は検出されなかった。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等)</td>
+<td>影響なし</td>
+<td><code>gnmi_server</code> は SAI / ASIC_DB に直接アクセスしない。CONFIG_DB / STATE_DB / DATA_DB / COUNTERS_DB を Redis プロトコルで読み取るのみ (<code>telemetry.sh</code>, <code>server.go</code> に ASIC 種別参照なし)</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu() == True</code>)</td>
+<td>影響なし</td>
+<td><code>TELEMETRY</code> テーブルは host namespace CONFIG_DB (db 4) の 1 エントリ。ASIC namespace 数に依存しない。gNMI クライアントが購読するデータパスは namespace 指定で各 ASIC を参照できるが、<code>TELEMETRY</code> 設定内容は変わらない (<code>server.go</code> に namespace 参照なし)</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各ラインカードで独立適用</td>
+<td><code>TELEMETRY</code> テーブルはラインカードごとの host CONFIG_DB に独立して存在する。<code>telemetry.sh</code> / <code>server.go</code> に VOQ 固有コードなし</td>
+</tr>
+<tr>
+<td>ベンダー固有設定</td>
+<td>なし</td>
+<td><code>docker-sonic-telemetry/Dockerfile.j2</code> に platform 条件分岐なし。<code>telemetry_vars.j2</code> は <code>TELEMETRY</code> / <code>DEVICE_METADATA</code> のみ参照</td>
+</tr>
+<tr>
+<td>k8s 起動 (launch_by=k8s)</td>
+<td>hwsku シンボリックリンク生成のみ</td>
+<td><code>docker-telemetry-entry.sh</code> Part 1 は <code>/usr/share/sonic/platform</code> symlink を生成するが <code>TELEMETRY</code> テーブル処理とは無関係</td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/telemetry-platform.md</code> を参照。</p>
+<!-- /platform -->
 
 <!-- glossary-links-injected: 896d391185a9 -->
 

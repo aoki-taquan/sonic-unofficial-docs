@@ -25927,6 +25927,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35568,6 +35579,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36012,6 +36034,53 @@
 <p><strong>Evidence</strong>: <code>qosorch.cpp:124-201</code> (QosMapHandler::processWorkItem); <code>qosorch.cpp:2046-2134</code> (handlePortQosMapTable); <code>qosorch.cpp:422-427</code> (handleDot1pToTcTable); <code>qosorch.cpp:360-397</code> (Dot1pToTcMapHandler::convertFieldValuesToAttributes)</p>
 </blockquote>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>DOT1P_TO_TC_MAP</code> が関わる CONFIG_DB テーブル間の暗黙参照を <code>qosorch.cpp</code> / <code>qosorch.h</code> から抽出した。</p>
+<table>
+<thead>
+<tr>
+<th>参照方向</th>
+<th>参照元テーブル</th>
+<th>フィールド</th>
+<th>SAI 属性</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>被参照 (referenced by)</td>
+<td><code>PORT_QOS_MAP</code></td>
+<td><code>dot1p_to_tc_map</code></td>
+<td><code>SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP</code></td>
+<td><code>qosorch.h:13</code>, <code>qosorch.cpp:63</code></td>
+</tr>
+<tr>
+<td>参照管理</td>
+<td><code>handlePortQosMapTable</code></td>
+<td>SET 時 object_id 解決 / DEL 時参照解除</td>
+<td>—</td>
+<td><code>qosorch.cpp:2046,2077,2108,2133</code></td>
+</tr>
+<tr>
+<td>SWITCH レベル適用</td>
+<td>なし</td>
+<td>DOT1P マップは SWITCH 直接適用なし</td>
+<td>—</td>
+<td><code>qosorch.cpp:1956</code>（DSCP_TO_TC_MAP のみ対象）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>qos_to_ref_table_map</code>（<code>qosorch.cpp:99-102</code>）が <code>dot1p_to_tc_field_name</code> → <code>CFG_DOT1P_TO_TC_MAP_TABLE_NAME</code> と対応付けており、<code>PORT_QOS_MAP</code> SET 時の <code>resolveFieldRefValue()</code> で本マップが参照される。</li>
+<li><code>PORT_QOS_MAP.dot1p_to_tc_map</code> から参照中に DEL しようとすると <code>isObjectBeingReferenced()</code> が true を返し <code>task_need_retry</code> で削除保留。</li>
+<li>SWITCH レベルへの直接適用（<code>PORT_QOS_MAP|global</code> 経路）は <code>DSCP_TO_TC_MAP</code> のみ。<code>DOT1P_TO_TC_MAP</code> は SWITCH 直接適用なし（<code>querySwitchCapability</code> 判定対象外）。</li>
+</ul>
+<blockquote>
+<p>詳細: <code>meta/_intermediate/cdb-flow/dot1p-to-tc-map-cross-refs.md</code></p>
+</blockquote>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: b1003b21c66f -->
 

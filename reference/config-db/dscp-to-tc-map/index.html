@@ -23589,87 +23589,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e_1" class="md-nav__link">
+  <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ハードコード定数 (Phase E)
+        プラットフォーム差分 (Phase H)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dscp-tc_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DSCP / TC 範囲定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_23" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        フィールド名定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_24" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        デフォルトマップ名
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_25" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        型変換・例外処理
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_26" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラットフォーム差分
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラットフォーム差分">
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36400,87 +36328,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e_1" class="md-nav__link">
+  <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ハードコード定数 (Phase E)
+        プラットフォーム差分 (Phase H)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dscp-tc_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DSCP / TC 範囲定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_23" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        フィールド名定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_24" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        デフォルトマップ名
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sai_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI 定数
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_25" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        型変換・例外処理
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_26" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラットフォーム差分
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="プラットフォーム差分">
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -37537,139 +37393,11 @@
 </blockquote>
 <!-- /side-effects -->
 
-<!-- constants -->
-<h2 id="phase-e_1">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e_1" title="Permanent link">&para;</a></h2>
-<p>ソース: <code>sonic-swss/orchagent/qosorch.cpp</code>、<code>sonic-swss/orchagent/qosorch.h</code></p>
-<h3 id="dscp-tc_2">DSCP / TC 範囲定数<a class="headerlink" href="#dscp-tc_2" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>定数名</th>
-<th>値</th>
-<th>定義箇所</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>DSCP_MAX_VAL</code></td>
-<td><code>63</code></td>
-<td><code>qosorch.cpp:119</code></td>
-<td>DSCP 値の最大値。超過時 <code>task_failed</code></td>
-</tr>
-<tr>
-<td>DSCP key 範囲</td>
-<td><code>0</code>..<code>63</code></td>
-<td>上記定数に基づく</td>
-<td>超過は <code>task_failed</code>（<code>stoi</code> 変換後に範囲チェック）</td>
-</tr>
-<tr>
-<td>TC value 範囲 (YANG)</td>
-<td><code>0</code>..<code>15</code></td>
-<td><code>sonic-types.yang.j2:338</code></td>
-<td>YANG 定義上の上限</td>
-</tr>
-<tr>
-<td>TC value 範囲 (実運用)</td>
-<td><code>0</code>..<code>7</code></td>
-<td>ASIC/SAI 制約</td>
-<td>8 以上は SAI エラー → <code>task_failed</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="_23">フィールド名定数<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>定数名</th>
-<th>値</th>
-<th>定義箇所</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>dscp_to_tc_field_name</code></td>
-<td><code>"dscp_to_tc_map"</code></td>
-<td><code>qosorch.h:11</code></td>
-<td>PORT_QOS_MAP フィールド名</td>
-</tr>
-<tr>
-<td><code>decap_dscp_to_tc_field_name</code></td>
-<td><code>"decap_dscp_to_tc_map"</code></td>
-<td><code>qosorch.h:34</code></td>
-<td>Tunnel decap 用フィールド名</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_24">デフォルトマップ名<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>マップ名</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>"AZURE"</code></td>
-<td>標準 DSCP→TC マップ（<code>qos_config.j2</code> フォールバック）</td>
-</tr>
-<tr>
-<td><code>"AZURE_TUNNEL"</code></td>
-<td>Tunnel QoS 用 <code>decap_dscp_to_tc_map</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="sai_1">SAI 定数<a class="headerlink" href="#sai_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>定数</th>
-<th>使用箇所</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SAI_QOS_MAP_TYPE_DSCP_TO_TC</code></td>
-<td><code>qosorch.cpp:265</code></td>
-<td>SAI qos_map_type — マップ種別指定</td>
-</tr>
-<tr>
-<td><code>SAI_QOS_MAP_ATTR_TYPE</code></td>
-<td><code>qosorch.cpp:264</code></td>
-<td>create 時の type 属性 ID</td>
-</tr>
-<tr>
-<td><code>SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST</code></td>
-<td><code>qosorch.cpp:249,268</code></td>
-<td>マップエントリリスト属性 ID</td>
-</tr>
-<tr>
-<td><code>SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP</code></td>
-<td><code>qosorch.cpp:61</code></td>
-<td>ポートバインド属性 ID</td>
-</tr>
-<tr>
-<td><code>SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP</code></td>
-<td><code>qosorch.cpp:1993,2030</code></td>
-<td>スイッチレベルバインド属性 ID</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_25">型変換・例外処理<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>qosorch.cpp:245</code>: <code>(uint8_t)stoi(fvField(*i))</code> — DSCP key を uint8 変換。非数値文字列は <code>std::invalid_argument</code> → <code>task_failed</code>（try/catch なし）</li>
-<li><code>qosorch.cpp:246</code>: <code>(uint8_t)stoi(fvValue(*i))</code> — TC 値も同様</li>
-</ul>
-<blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/qosorch.cpp:119,245-246,264-265,273</code>; <code>orchagent/qosorch.h:11,34</code></p>
-</blockquote>
-<!-- /constants -->
-
 <!-- platform -->
-<h2 id="_26">プラットフォーム差分<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h2>
+<h2 id="phase-h">プラットフォーム差分 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/dscp-to-tc-map-platform.md</code></p>
+</blockquote>
 <h3 id="sai-capability">SAI capability クエリによる分岐<a class="headerlink" href="#sai-capability" title="Permanent link">&para;</a></h3>
 <p>スイッチレベルへの DSCP→TC map 適用時、<code>applyDscpToTcMapToSwitch()</code> は
 <code>sai_query_attribute_capability(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)</code> で

@@ -27242,6 +27242,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34948,6 +34959,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35144,6 +35166,60 @@
 </tbody>
 </table>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>PBH_RULE</code> は CONFIG_DB の <strong>読み手（consumer）専用</strong>テーブルで、<code>PbhOrch</code> が書き込む STATE_DB / APPL_DB エントリは存在しない。ここでの暗黙参照は、SAI 反映の前提となる他テーブル・他 Orch への依存を指す。</p>
+<!-- evidence: pbhorch.cpp:90-95 (constructor), pbhorch.cpp:633 (addAclRule), pbhorch.cpp:1808 (allPortsReady), pbhmgr.cpp:83-135 (validateDependencies / incRefCount) -->
+
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th style="text-align: center;">YANG leafref</th>
+<th>実行時依存</th>
+<th>非充足時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PBH_TABLE</code> (CONFIG_DB)</td>
+<td style="text-align: center;">✅</td>
+<td><code>validateDependencies(rule)</code> が <code>tableMap.find(rule.table)</code> で存在確認（<code>pbhmgr.cpp:83-88</code>）。成功後 <code>incRefCount</code> が <code>PBH_TABLE</code> の refCount を +1</td>
+<td>retry loop — TABLE 作成後に自動回復</td>
+</tr>
+<tr>
+<td><code>PBH_HASH</code> (CONFIG_DB)</td>
+<td style="text-align: center;">✅</td>
+<td><code>validateDependencies(rule)</code> が <code>hashMap.find(rule.hash.value)</code> で存在確認（<code>pbhmgr.cpp:88-94</code>）。成功後 <code>incRefCount</code> が <code>PBH_HASH</code> の refCount を +1</td>
+<td>retry loop — HASH 作成後に自動回復</td>
+</tr>
+<tr>
+<td><code>AclOrch</code>（Orch 間依存）</td>
+<td style="text-align: center;">✗</td>
+<td><code>createPbhRule()</code> が <code>this-&gt;aclOrch-&gt;addAclRule(pbhRule, rule.table)</code> を呼ぶ（<code>pbhorch.cpp:633</code>）。<code>updatePbhRule()</code> は <code>getAclRule()</code> + <code>updateAclRule()</code>、<code>removePbhRule()</code> は <code>removeAclRule()</code> を呼ぶ</td>
+<td>ERROR ログ + <code>return false</code> → retry loop</td>
+</tr>
+<tr>
+<td><code>PortsOrch</code>（グローバルゲート）</td>
+<td style="text-align: center;">✗</td>
+<td><code>PbhOrch::doTask()</code> (<code>pbhorch.cpp:1808</code>) が <code>portsOrch-&gt;allPortsReady()</code> を確認。false の間は PBH 全テーブルの処理がブロック</td>
+<td>全 PBH 処理ブロック — PortsOrch 完了後に自動回復</td>
+</tr>
+<tr>
+<td>SAI ACL API（間接）</td>
+<td style="text-align: center;">✗</td>
+<td><code>AclOrch::addAclRule()</code> 内で <code>sai_acl_api-&gt;create_acl_entry()</code> を呼ぶ。SAI 失敗は <code>addAclRule()</code> → <code>createPbhRule()</code> → retry loop として伝播</td>
+<td>ERROR ログ + retry loop</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">DEL 方向の逆参照</p>
+<p><code>PBH_TABLE</code> および <code>PBH_HASH</code> が <code>PBH_RULE</code> の生存中に DEL されても、refCount &gt; 0 のため <code>hasDependencies()</code> (<code>pbhmgr.cpp:75-78</code>) が削除を保留する。<code>PBH_RULE</code> を先に DEL して <code>decRefCount</code> を呼ぶことで refCount が 0 に戻り、<code>PBH_TABLE</code> / <code>PBH_HASH</code> の削除が可能になる（Phase B 依存 5 も参照）。</p>
+</div>
+<p>詳細な調査メモは <code>meta/_intermediate/cdb-flow/pbh-rule-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
 
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>PBH_RULE|&lt;table_name&gt;|&lt;rule_name&gt;

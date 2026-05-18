@@ -28021,7 +28021,457 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        強制先行条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨先行条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        特殊シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他コンポーネントとの参照関係 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="他コンポーネントとの参照関係 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-route_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB ROUTE_TABLE の読み取り主体
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STATE_DB ROUTE_TABLE の読み取り主体">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sonic-linkmgrd-dbinterface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-linkmgrd (DbInterface)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#appl_state_db-route_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB ROUTE_TABLE の読み取り主体
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_STATE_DB ROUTE_TABLE の読み取り主体">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-routesynconrouteresponse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd (RouteSync::onRouteResponse)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route_checkpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        route_check.py (自動修復)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照関係サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗時の挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗時の挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-route_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB ROUTE_TABLE — 失敗時は未更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-route_table-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB ROUTE_TABLE — SAI 成功時のみ書き込む（通常パス）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リトライ機構
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state フィールド値リテラル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#err_str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        err_str フィールドのプレフィックス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-fib-suppression-fpmsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB 書き込み → FIB suppression フィードバック（fpmsyncd）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-route_checkpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB 書き込みスキップ → route_check.py アラート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-state-nexthop-observer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB state 書き込みのタイミングと NextHop Observer 通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        レスポンス通知のバッチ遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-responsepublisher-response_channel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB — ResponsePublisher と RESPONSE_CHANNEL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-tableset-keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — Table::set() + keyspace notification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-response_channel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd による RESPONSE_CHANNEL 購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suppress-fib-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        suppress-fib-pending の動的切り替え
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox — ECMP グループ最大数の補正
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-ecmp-128" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ Chassis — ECMP メンバー上限 128 固定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route-flow-counter-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route Flow Counter — SAI 能力のプラットフォーム依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch DPU / その他
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appl_state_db-route_table_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         APPL_STATE_DB ROUTE_TABLE
@@ -28044,7 +28494,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド一覧
@@ -28071,7 +28521,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -28082,7 +28532,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28093,7 +28543,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -28105,7 +28555,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -28116,7 +28566,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -28127,7 +28577,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -35005,7 +35455,457 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        強制先行条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨先行条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        特殊シーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他コンポーネントとの参照関係 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="他コンポーネントとの参照関係 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-route_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB ROUTE_TABLE の読み取り主体
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STATE_DB ROUTE_TABLE の読み取り主体">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sonic-linkmgrd-dbinterface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-linkmgrd (DbInterface)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#appl_state_db-route_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB ROUTE_TABLE の読み取り主体
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_STATE_DB ROUTE_TABLE の読み取り主体">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-routesynconrouteresponse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd (RouteSync::onRouteResponse)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route_checkpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        route_check.py (自動修復)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照関係サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗時の挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗時の挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-route_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB ROUTE_TABLE — 失敗時は未更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-route_table-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB ROUTE_TABLE — SAI 成功時のみ書き込む（通常パス）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リトライ機構
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state フィールド値リテラル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#err_str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        err_str フィールドのプレフィックス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-fib-suppression-fpmsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB 書き込み → FIB suppression フィードバック（fpmsyncd）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-route_checkpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB 書き込みスキップ → route_check.py アラート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-state-nexthop-observer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB state 書き込みのタイミングと NextHop Observer 通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        レスポンス通知のバッチ遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-responsepublisher-response_channel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB — ResponsePublisher と RESPONSE_CHANNEL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-tableset-keyspace-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — Table::set() + keyspace notification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-response_channel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd による RESPONSE_CHANNEL 購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suppress-fib-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        suppress-fib-pending の動的切り替え
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox — ECMP グループ最大数の補正
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-ecmp-128" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ Chassis — ECMP メンバー上限 128 固定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route-flow-counter-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route Flow Counter — SAI 能力のプラットフォーム依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch DPU / その他
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appl_state_db-route_table_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         APPL_STATE_DB ROUTE_TABLE
@@ -35028,7 +35928,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド一覧
@@ -35055,7 +35955,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35066,7 +35966,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35077,7 +35977,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35089,7 +35989,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35100,7 +36000,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -35111,7 +36011,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -35236,7 +36136,7 @@
 <!-- evidence: meta/_intermediate/cdb-flow/route-state-defaults.md -->
 
 <h3 id="state_db-state">STATE_DB <code>state</code> フィールド<a class="headerlink" href="#state_db-state" title="Permanent link">&para;</a></h3>
-<p>ソース: <code>orchagent/routeorch.cpp</code> lines 287–295<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>ソース: <code>orchagent/routeorch.cpp</code> lines 287–295<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">6</a></sup></p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">RouteOrch::updateDefRouteState</span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">add</span><span class="p">)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="p">{</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FieldValueTuple</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tuples</span><span class="p">;</span>
@@ -35271,7 +36171,7 @@
 </table>
 <p><code>"na"</code> は「フィールド不在」ではなく「デフォルト経路なし」という<strong>明示的状態</strong>である点に注意。フィールドが存在しない状態はデフォルト経路が一度もプログラムされていない初期状態のみ。</p>
 <h3 id="appl_state_db-protocol">APPL_STATE_DB <code>protocol</code> フィールド<a class="headerlink" href="#appl_state_db-protocol" title="Permanent link">&para;</a></h3>
-<p>ソース: <code>orchagent/routeorch.cpp</code> lines 3185–3202<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>ソース: <code>orchagent/routeorch.cpp</code> lines 3185–3202<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">6</a></sup></p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">RouteOrch::publishRouteState</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RouteBulkContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ReturnCode</span><span class="o">&amp;</span><span class="w"> </span><span class="n">status</span><span class="p">)</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">{</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">FieldValueTuple</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fvs</span><span class="p">;</span>
@@ -35308,7 +36208,7 @@
 </tbody>
 </table>
 <h3 id="appl_state_db-err_str">APPL_STATE_DB <code>err_str</code> フィールド<a class="headerlink" href="#appl_state_db-err_str" title="Permanent link">&para;</a></h3>
-<p><code>ResponsePublisher::publish()</code> が自動付与するフィールド<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
+<p><code>ResponsePublisher::publish()</code> が自動付与するフィールド<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">7</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">swss</span><span class="o">::</span><span class="n">FieldValueTuple</span><span class="w"> </span><span class="n">err_str</span><span class="p">(</span><span class="s">&quot;err_str&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PrependedComponent</span><span class="p">(</span><span class="n">status</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">status</span><span class="p">.</span><span class="n">message</span><span class="p">());</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">intent_attrs_copy</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">intent_attrs_copy</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">err_str</span><span class="p">);</span>
 </span></code></pre></div>
@@ -35337,14 +36237,583 @@
 <p>成功時は APPL_STATE_DB に <code>protocol</code> と <code>err_str</code> の 2 フィールドが書き込まれる。失敗時は通知チャンネルに送出されるが APPL_STATE_DB への書き込みはスキップされる。</p>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>meta/_intermediate/cdb-flow/route-state-ordering.md</code></p>
+</blockquote>
+<p>STATE_DB / APPL_STATE_DB への <code>ROUTE_TABLE</code> 書き込みは <code>RouteOrch</code> が SAI 操作を完了させた後に行われる。以下に強制先行条件と推奨順序を示す。</p>
+<h3 id="_5">強制先行条件<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>先行リソース</th>
+<th>後続</th>
+<th>違反時の挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>PORT</code> 初期化完了（<code>allPortsReady()</code>）</td>
+<td>STATE_DB / APPL_STATE_DB への動的書き込み</td>
+<td><code>RouteOrch::doTask()</code> が即 <code>return</code>。APPL_DB の ROUTE_TABLE イベントを処理しないため書き込みも発生しない</td>
+<td><code>routeorch.cpp:609-611</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>SAI <code>create_route_entry()</code> 成功</td>
+<td><code>STATE_DB ROUTE_TABLE</code> への <code>state=ok</code> 書き込み</td>
+<td>SAI 失敗時は <code>updateDefRouteState()</code> が呼ばれず STATE_DB が未更新のまま。デフォルト経路のみが対象</td>
+<td><code>routeorch.cpp:2700-2703</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">推奨先行条件<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>先行リソース</th>
+<th>後続</th>
+<th>理由</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>SAI バルク操作完了</td>
+<td><code>APPL_STATE_DB ROUTE_TABLE</code> への <code>err_str</code>/<code>protocol</code> 書き込み</td>
+<td><code>publishRouteState()</code> はバルク応答処理後に呼ばれる。SAI 失敗時も <code>err_str</code> が書き込まれる点が STATE_DB と異なる</td>
+<td><code>routeorch.cpp:920-923, 2729, 2970</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">特殊シーケンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>タイミング</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_DB ROUTE_TABLE\|0.0.0.0/0 state=na</code> の初期書き込み</td>
+<td><code>RouteOrch</code> コンストラクタ実行時（<code>allPortsReady()</code> 不要）</td>
+<td>orchagent 起動直後から <code>state=na</code> が存在する。ポート初期化前でも確認可能</td>
+</tr>
+<tr>
+<td><code>STATE_DB state=na</code> 書き込み（DEL パス）</td>
+<td>SAI <code>set_route_entry</code> で packet_action を DROP に変更成功後</td>
+<td>DEL 失敗時は <code>state=na</code> にならず <code>state=ok</code> のまま残る</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">他コンポーネントとの参照関係 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-cross-refs.md -->
+
+<p>STATE_DB / APPL_STATE_DB の <code>ROUTE_TABLE</code> は <strong>書き込み専用</strong>（<code>RouteOrch</code> のみが書き込む）。読み取り側は以下の通り。</p>
+<h3 id="state_db-route_table_1">STATE_DB <code>ROUTE_TABLE</code> の読み取り主体<a class="headerlink" href="#state_db-route_table_1" title="Permanent link">&para;</a></h3>
+<h4 id="sonic-linkmgrd-dbinterface">sonic-linkmgrd (DbInterface)<a class="headerlink" href="#sonic-linkmgrd-dbinterface" title="Permanent link">&para;</a></h4>
+<p><code>sonic-linkmgrd/src/DbInterface.cpp:1835</code> にて <code>SubscriberStateTable</code> でデフォルト経路の有無を購読する<sup id="fnref:cr1"><a class="footnote-ref" href="#fn:cr1">1</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">swss</span><span class="o">::</span><span class="n">SubscriberStateTable</span><span class="w"> </span><span class="nf">stateDbRouteTable</span><span class="p">(</span><span class="n">stateDbPtr</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">STATE_ROUTE_TABLE_NAME</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>processDefaultRouteStateNotification()</code> が <code>0.0.0.0/0</code> / <code>::/0</code> の <code>state</code> フィールドを取り出し、<code>MuxManager::addOrUpdateDefaultRouteState()</code> へ渡す。</p>
+<table>
+<thead>
+<tr>
+<th><code>state</code> 値</th>
+<th>リンクプローバーへの影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"ok"</code></td>
+<td>リンクプローバーを再起動</td>
+</tr>
+<tr>
+<td><code>"na"</code></td>
+<td>リンクプローバーを停止</td>
+</tr>
+</tbody>
+</table>
+<p>デュアルTOR (MUX) 環境でのみ意味を持つ。非 MUX 環境では subscriberは存在するが実際の状態遷移は発生しない<sup id="fnref2:cr1"><a class="footnote-ref" href="#fn:cr1">1</a></sup>。</p>
+<h3 id="appl_state_db-route_table">APPL_STATE_DB <code>ROUTE_TABLE</code> の読み取り主体<a class="headerlink" href="#appl_state_db-route_table" title="Permanent link">&para;</a></h3>
+<h4 id="fpmsyncd-routesynconrouteresponse">fpmsyncd (RouteSync::onRouteResponse)<a class="headerlink" href="#fpmsyncd-routesynconrouteresponse" title="Permanent link">&para;</a></h4>
+<p><code>fpmsyncd.cpp:78</code> で <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> を <code>NotificationConsumer</code> で購読し、<code>RouteSync::onRouteResponse()</code> を呼び出す<sup id="fnref:cr2"><a class="footnote-ref" href="#fn:cr2">2</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">routeResponseChannelName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;APPL_DB_&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;_RESPONSE_CHANNEL&quot;</span><span class="p">;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">routeResponseChannel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">NotificationConsumer</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">applStateDb</span><span class="p">,</span><span class="w"> </span><span class="n">routeResponseChannelName</span><span class="p">);</span>
+</span></code></pre></div>
+<p>受信した通知の <code>err_str=SWSS_RC_SUCCESS</code> かつ <code>protocol</code> フィールドあり（SET 操作）の場合、FRR zebra へ netlink <code>RTM_F_OFFLOAD</code> フラグを送信する<sup id="fnref2:cr2"><a class="footnote-ref" href="#fn:cr2">2</a></sup>。この動作は <strong>BGP suppress feature</strong> (<code>isSuppressionEnabled()</code>) が有効な場合のみ実際の経路制御に影響する。</p>
+<h4 id="route_checkpy">route_check.py (自動修復)<a class="headerlink" href="#route_checkpy" title="Permanent link">&para;</a></h4>
+<p><code>route_check.py:767-773</code> が APPL_STATE_DB 未反映経路を検出した際、<code>NotificationProducer</code> で同チャンネルへ <code>SWSS_RC_SUCCESS</code> 応答を強制注入する<sup id="fnref:cr3"><a class="footnote-ref" href="#fn:cr3">3</a></sup>。これにより orchagent が応答を送れなかった場合でも FRR zebra へ offload フラグが届く自動修復が行われる。</p>
+<h3 id="_8">参照関係サマリ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>DB / テーブル</th>
+<th>書込み主体</th>
+<th>読み取り主体</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB <code>ROUTE_TABLE</code></td>
+<td><code>RouteOrch</code></td>
+<td><code>sonic-linkmgrd</code></td>
+<td>デュアルTOR リンクプローバー制御</td>
+</tr>
+<tr>
+<td>APPL_STATE_DB <code>ROUTE_TABLE</code> (RESPONSE_CHANNEL)</td>
+<td><code>RouteOrch</code> (via <code>ResponsePublisher</code>)</td>
+<td><code>fpmsyncd</code></td>
+<td>FRR へ RTM_F_OFFLOAD 通知</td>
+</tr>
+<tr>
+<td>APPL_STATE_DB <code>ROUTE_TABLE</code> (RESPONSE_CHANNEL)</td>
+<td><code>route_check.py</code> (注入)</td>
+<td><code>fpmsyncd</code></td>
+<td>自動修復時の offload 強制送信</td>
+</tr>
+</tbody>
+</table>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗時の挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-failure.md -->
+
+<p><code>RouteOrch</code> が SAI 操作に失敗した場合、STATE_DB と APPL_STATE_DB への書き込みは異なる挙動を示す。</p>
+<h3 id="state_db-route_table_2">STATE_DB <code>ROUTE_TABLE</code> — 失敗時は未更新<a class="headerlink" href="#state_db-route_table_2" title="Permanent link">&para;</a></h3>
+<p>SAI <code>create_route_entry()</code> 失敗（ADD パス）:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// routeorch.cpp:2472-2526</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">task_process_status</span><span class="w"> </span><span class="n">handle_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">handleSaiCreateStatus</span><span class="p">(</span><span class="n">SAI_API_ROUTE</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">handle_status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">task_success</span><span class="p">)</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">parseHandleSaiStatusFailure</span><span class="p">(</span><span class="n">handle_status</span><span class="p">);</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">}</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1">// updateDefRouteState() は成功パスにのみ存在する (routeorch.cpp:2700-2703)</span>
+</span></code></pre></div>
+<p>SAI <code>set_route_entry</code> 失敗（DEL パス、デフォルト経路のみ）:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// routeorch.cpp:2833-2856</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">parseHandleSaiStatusFailure</span><span class="p">(</span><span class="n">handle_status</span><span class="p">);</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">}</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1">// ...成功後にのみ:</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">updateDefRouteState</span><span class="p">(</span><span class="n">ipPrefix</span><span class="p">.</span><span class="n">to_string</span><span class="p">());</span><span class="w">  </span><span class="c1">// state=na</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>失敗シナリオ</th>
+<th>STATE_DB の結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI create 失敗 → リトライ</td>
+<td><code>state</code> 未更新（古い値残留）</td>
+</tr>
+<tr>
+<td>SAI create 失敗 → 恒久エラー</td>
+<td><code>state</code> 未更新のまま破棄</td>
+</tr>
+<tr>
+<td>SAI set(DEL) 失敗</td>
+<td><code>state=ok</code> のまま残留</td>
+</tr>
+</tbody>
+</table>
+<h3 id="appl_state_db-route_table-sai">APPL_STATE_DB <code>ROUTE_TABLE</code> — SAI 成功時のみ書き込む（通常パス）<a class="headerlink" href="#appl_state_db-route_table-sai" title="Permanent link">&para;</a></h3>
+<p>通常パスでは <code>publishRouteState()</code> は SAI バルク操作完了後にのみ呼ばれる。SAI 失敗時に <code>return false</code>（リトライ）が返された場合は <code>publishRouteState()</code> は呼ばれず、APPL_STATE_DB への書き込みは発生しない:</p>
+<table>
+<thead>
+<tr>
+<th>シナリオ</th>
+<th>APPL_STATE_DB の結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI 成功</td>
+<td><code>protocol</code> + <code>err_str=SWSS_RC_SUCCESS</code> を書き込む</td>
+</tr>
+<tr>
+<td>SAI 失敗 → <code>return false</code> (リトライ)</td>
+<td>書き込まれない（前回エントリが残留）</td>
+</tr>
+<tr>
+<td>SAI 失敗 → <code>task_failed</code> (恒久エラー)</td>
+<td>書き込まれない（エントリ破棄）</td>
+</tr>
+<tr>
+<td>特殊パス (loopback / duplicate SET)</td>
+<td>SAI 呼ばず直接 <code>publishRouteState()</code> を呼ぶ<sup id="fnref:d1"><a class="footnote-ref" href="#fn:d1">4</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">リトライ機構<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>parseHandleSaiStatusFailure(task_need_retry) → return false
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  → エントリが m_toSync に残る
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  → 次の doTask() サイクルで再処理
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>parseHandleSaiStatusFailure(task_failed) → return true
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  → エントリを m_toSync から破棄
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>  → STATE_DB / APPL_STATE_DB は古い状態のまま
+</span></code></pre></div>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-constants.md -->
+
+<p>STATE_DB / APPL_STATE_DB への <code>ROUTE_TABLE</code> 書き込みで使用される定数はすべてソースコードにハードコードされており、設定ファイル・環境変数・<code>DEVICE_METADATA</code> 等での上書き手段は提供されていない。</p>
+<h3 id="_10">テーブル名定数<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_ROUTE_TABLE_NAME</code></td>
+<td><code>"ROUTE_TABLE"</code></td>
+<td><code>common/schema.h:494</code><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">8</a></sup></td>
+</tr>
+<tr>
+<td><code>APP_ROUTE_TABLE_NAME</code></td>
+<td><code>"ROUTE_TABLE"</code></td>
+<td><code>common/schema.h:47</code><sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">8</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>STATE_DB と APPL_STATE_DB のテーブル名はいずれも <code>"ROUTE_TABLE"</code> で固定。</p>
+<h3 id="state"><code>state</code> フィールド値リテラル<a class="headerlink" href="#state" title="Permanent link">&para;</a></h3>
+<p>ソース: <code>orchagent/routeorch.cpp:290-291</code><sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">6</a></sup></p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">string</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;ok&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;na&quot;</span><span class="p">;</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">FieldValueTuple</span><span class="w"> </span><span class="n">tuple</span><span class="p">(</span><span class="s">&quot;state&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"ok"</code></td>
+<td>デフォルト経路が SAI に登録済み</td>
+</tr>
+<tr>
+<td><code>"na"</code></td>
+<td>デフォルト経路が SAI から削除済み（または未プログラム）</td>
+</tr>
+</tbody>
+</table>
+<p><code>"ok"</code> / <code>"na"</code> はソースコード直書きリテラルで、外部から変更不可。</p>
+<h3 id="err_str"><code>err_str</code> フィールドのプレフィックス定数<a class="headerlink" href="#err_str" title="Permanent link">&para;</a></h3>
+<p>ソース: <code>orchagent/response_publisher.cpp:18-19</code><sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">7</a></sup></p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">kOrchagentComponent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;[OrchAgent] &quot;</span><span class="p">;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">constexpr</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">kSaiComponent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;[SAI] &quot;</span><span class="p">;</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th><code>err_str</code> の形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI 操作成功</td>
+<td><code>"SWSS_RC_SUCCESS"</code> (プレフィックスなし)</td>
+</tr>
+<tr>
+<td>SAI エラー</td>
+<td><code>"[SAI] "</code> + SAI エラーメッセージ</td>
+</tr>
+<tr>
+<td>OrchAgent 内部エラー</td>
+<td><code>"[OrchAgent] "</code> + エラーメッセージ</td>
+</tr>
+</tbody>
+</table>
+<p><code>"[SAI] "</code> / <code>"[OrchAgent] "</code> はいずれも <code>constexpr</code> で固定。バイナリの再ビルドなしに変更できない。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">副作用 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-side.md -->
+
+<p>STATE_DB / APPL_STATE_DB への <code>ROUTE_TABLE</code> 書き込みは、以下のコンポーネントに連鎖的な副作用をもたらす。</p>
+<h3 id="appl_state_db-fib-suppression-fpmsyncd">APPL_STATE_DB 書き込み → FIB suppression フィードバック（fpmsyncd）<a class="headerlink" href="#appl_state_db-fib-suppression-fpmsyncd" title="Permanent link">&para;</a></h3>
+<p><code>publishRouteState()</code> が APPL_STATE_DB <code>ROUTE_TABLE</code> に書き込む際、<code>ResponsePublisher</code> が同時に <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> へ通知を送出する。<code>fpmsyncd</code> は <code>suppress-fib-pending=enabled</code> 設定時にこのチャンネルを購読し、SAI プログラミング結果を FRR の BGP FIB suppression 機能へフィードバックする<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">9</a></sup>。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>APPL_STATE_DB ROUTE_TABLE 書込み (err_str=SWSS_RC_SUCCESS)
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  → APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL 通知
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    → fpmsyncd: FRR への suppress 解除
+</span></code></pre></div>
+<ul>
+<li>SAI 成功時: <code>err_str=SWSS_RC_SUCCESS</code> → FRR が経路を BGP ピアにアドバタイズ可能になる</li>
+<li>SAI 失敗時: <code>err_str=[SAI] &lt;エラー&gt;</code> → FRR は経路を suppress 状態のまま保持し続ける</li>
+</ul>
+<p>この動作は <code>CONFIG_DB DEVICE_METADATA|localhost suppress-fib-pending=enabled</code> が設定されている場合のみ有効。</p>
+<h3 id="appl_state_db-route_checkpy">APPL_STATE_DB 書き込みスキップ → route_check.py アラート<a class="headerlink" href="#appl_state_db-route_checkpy" title="Permanent link">&para;</a></h3>
+<p>orchagent が SAI 操作失敗等で APPL_STATE_DB への書き込みをスキップした場合、<code>route_check.py</code> が APPL_DB と APPL_STATE_DB の不整合を <code>missed_ROUTE_TABLE_routes</code> としてアラートを記録する<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">9</a></sup>。</p>
+<h3 id="state_db-state-nexthop-observer">STATE_DB <code>state</code> 書き込みのタイミングと NextHop Observer 通知<a class="headerlink" href="#state_db-state-nexthop-observer" title="Permanent link">&para;</a></h3>
+<p>デフォルト経路の SAI 登録/削除成功後、<code>notifyNextHopChangeObservers()</code> が呼ばれた直後に <code>updateDefRouteState()</code> が STATE_DB を更新する（<code>routeorch.cpp:2703, 2726</code>）。このため MirrorOrch / NatOrch 等の Observer はデフォルト経路変更を STATE_DB 書き込みより前に受け取る。</p>
+<h3 id="_11">レスポンス通知のバッチ遅延<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p>RouteOrch は 1 回の <code>doTask()</code> イテレーションで複数 ROUTE_TABLE エントリをバルク処理し、全 SAI 操作完了後に <code>m_publisher.flush()</code> する（<code>routeorch.cpp:1227</code> コメント参照）。APPL_STATE_DB への書き込みとレスポンスチャンネル通知はイテレーション単位で遅延するため、短時間に大量の経路を書き込んだ場合は通知が数百ミリ秒単位で遅れることがある。</p>
+<table>
+<thead>
+<tr>
+<th>副作用</th>
+<th>トリガー</th>
+<th>有効条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RESPONSE_CHANNEL 通知 → fpmsyncd FIB suppression アンロック</td>
+<td>APPL_STATE_DB SET</td>
+<td><code>suppress-fib-pending=enabled</code> 時のみ</td>
+</tr>
+<tr>
+<td>route_check.py <code>missed_ROUTE_TABLE_routes</code> アラート</td>
+<td>APPL_STATE_DB 書き込みスキップ</td>
+<td>常時（route_check.py 実行時）</td>
+</tr>
+<tr>
+<td>NextHop Observer 通知（MirrorOrch / NatOrch 等）</td>
+<td>updateDefRouteState() 直前</td>
+<td>デフォルト経路変更時のみ</td>
+</tr>
+<tr>
+<td>APPL_STATE_DB 通知のバッチ遅延</td>
+<td>doTask バルク flush</td>
+<td>常時</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-pubsub.md -->
+
+<p>STATE_DB / APPL_STATE_DB の <code>ROUTE_TABLE</code> への書き込みには、それぞれ異なる通知経路が用いられる。</p>
+<h3 id="appl_state_db-responsepublisher-response_channel">APPL_STATE_DB — ResponsePublisher と RESPONSE_CHANNEL<a class="headerlink" href="#appl_state_db-responsepublisher-response_channel" title="Permanent link">&para;</a></h3>
+<p><code>publishRouteState()</code> → <code>ResponsePublisher::publish()</code> は APPL_STATE_DB への書き込みと同時に通知チャンネルへ送出する<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">7</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// response_publisher.cpp:104, 118-120</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">response_channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;APPL_DB_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">table</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;_RESPONSE_CHANNEL&quot;</span><span class="p">;</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">swss</span><span class="o">::</span><span class="n">NotificationProducer</span><span class="w"> </span><span class="n">notificationProducer</span><span class="p">{</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="n">m_ntf_pipe</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">response_channel</span><span class="p">,</span><span class="w"> </span><span class="n">m_buffered</span><span class="p">};</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">notificationProducer</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">status</span><span class="p">.</span><span class="n">codeStr</span><span class="p">(),</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">intent_attrs_copy</span><span class="p">);</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>チャンネル名</td>
+<td><code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code></td>
+</tr>
+<tr>
+<td>DB</td>
+<td>APPL_STATE_DB</td>
+</tr>
+<tr>
+<td>ペイロード (SET)</td>
+<td><code>{err_str, protocol}</code></td>
+</tr>
+<tr>
+<td>ペイロード (DEL)</td>
+<td><code>{err_str}</code> のみ</td>
+</tr>
+<tr>
+<td>バッファリング</td>
+<td><code>m_publisher.setBuffered(true)</code> (<code>routeorch.cpp:57</code>) で有効化。<code>doTask()</code> 末尾の <code>m_publisher.flush()</code> (<code>routeorch.cpp:1231</code>) で一括送出</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>バッファなし送出では OrchDaemon 周期フラッシュ（最大 1 秒）まで通知が遅延するため、明示的な <code>flush()</code> が必要（<code>routeorch.cpp:1228</code> コメント参照）。</p>
+</blockquote>
+<h3 id="state_db-tableset-keyspace-notification">STATE_DB — Table::set() + keyspace notification<a class="headerlink" href="#state_db-tableset-keyspace-notification" title="Permanent link">&para;</a></h3>
+<p>STATE_DB の <code>ROUTE_TABLE</code> は <code>ResponsePublisher</code> を経由せず <code>swss::Table::set()</code> で直接書き込む (<code>routeorch.cpp:294</code>)。アプリケーションレベルの通知チャンネルは存在せず、Redis の keyspace notification 機能（<code>__keyspace@6__:ROUTE_TABLE|&lt;ip&gt;</code>）を利用した <code>SubscriberStateTable</code> で購読される。</p>
+<h3 id="fpmsyncd-response_channel">fpmsyncd による RESPONSE_CHANNEL 購読<a class="headerlink" href="#fpmsyncd-response_channel" title="Permanent link">&para;</a></h3>
+<p><code>fpmsyncd</code> は <code>suppress-fib-pending=enabled</code> の場合のみ <code>NotificationConsumer</code> でチャンネルを購読し、主ループで受信する<sup id="fnref:p1"><a class="footnote-ref" href="#fn:p1">5</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// fpmsyncd.cpp:78, 116, 307-317</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">routeResponseChannelName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;APPL_DB_&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;_RESPONSE_CHANNEL&quot;</span><span class="p">;</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">routeResponseChannel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">NotificationConsumer</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">applStateDb</span><span class="p">,</span><span class="w"> </span><span class="n">routeResponseChannelName</span><span class="p">);</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1">// ...受信後:</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="n">routeResponseChannel</span><span class="o">-&gt;</span><span class="n">pops</span><span class="p">(</span><span class="n">notifications</span><span class="p">);</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="n">sync</span><span class="p">.</span><span class="n">onRouteResponse</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">fieldValues</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>RouteSync::onRouteResponse()</code> (<code>routesync.cpp:3165</code>) の処理条件:</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>err_str == "SWSS_RC_SUCCESS"</code> かつ <code>protocol</code> フィールドあり (SET)</td>
+<td><code>sendOffloadReply()</code> → FRR zebra へ <code>RTM_F_OFFLOAD</code> 付き netlink 送信</td>
+</tr>
+<tr>
+<td>DEL 操作 (<code>protocol</code> フィールドなし)</td>
+<td>無視（suppress 継続には影響しない）</td>
+</tr>
+<tr>
+<td>SAI 失敗 (<code>err_str != "SWSS_RC_SUCCESS"</code>)</td>
+<td>無視（経路は suppress 状態を維持）</td>
+</tr>
+<tr>
+<td><code>protocol</code> が空文字列</td>
+<td>無視（FRR 管轄外の経路）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="suppress-fib-pending">suppress-fib-pending の動的切り替え<a class="headerlink" href="#suppress-fib-pending" title="Permanent link">&para;</a></h3>
+<p><code>CONFIG_DB DEVICE_METADATA|localhost suppress-fib-pending</code> が実行時に変更された場合、<code>fpmsyncd</code> は <code>SubscriberStateTable</code> でこれを検知し即時対応する (<code>fpmsyncd.cpp:285-302</code>):</p>
+<ul>
+<li><code>enabled</code> に変更 → <code>NotificationConsumer</code> を生成し <code>s.addSelectable()</code> で登録</li>
+<li>無効化 → 既存 suppress 経路を一括 offloaded にマーク後、<code>routeResponseChannel.reset()</code> で購読解除</li>
+</ul>
+<h3 id="_12">購読方式サマリ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>チャンネル / テーブル</th>
+<th>購読方式</th>
+<th>購読主体</th>
+<th>有効条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code></td>
+<td><code>NotificationConsumer</code></td>
+<td><code>fpmsyncd</code></td>
+<td><code>suppress-fib-pending=enabled</code> 時のみ</td>
+</tr>
+<tr>
+<td><code>STATE_DB ROUTE_TABLE</code> (keyspace)</td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>sonic-linkmgrd</code></td>
+<td>常時（MUX 環境）</td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差分 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-state-platform.md -->
+
+<p>STATE_DB / APPL_STATE_DB への <code>ROUTE_TABLE</code> 書き込みロジック自体はプラットフォーム非依存だが、RouteOrch の初期化時とフロウカウンタ機能でプラットフォーム固有の挙動が存在する。</p>
+<h3 id="mellanox-ecmp">Mellanox — ECMP グループ最大数の補正<a class="headerlink" href="#mellanox-ecmp" title="Permanent link">&para;</a></h3>
+<p><code>RouteOrch</code> コンストラクタ (<code>routeorch.cpp:78-87</code>) で Mellanox プラットフォームのみ <code>m_maxNextHopGroupCount</code> を補正する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">6</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">platform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;platform&quot;</span><span class="p">);</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">platform</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">strstr</span><span class="p">(</span><span class="n">platform</span><span class="p">,</span><span class="w"> </span><span class="n">MLNX_PLATFORM_SUBSTRING</span><span class="p">))</span><span class="w">  </span><span class="c1">// &quot;mellanox&quot;</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="p">{</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="n">m_maxNextHopGroupCount</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">DEFAULT_MAX_ECMP_GROUP_SIZE</span><span class="p">;</span><span class="w">   </span><span class="c1">// ÷ 32</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>SAI が <code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> として返す値は「ECMP サイズ 1 のときの最大値」であるため、実際の最大 ECMP グループ数（サイズ 32 前提）に補正している。STATE_DB / APPL_STATE_DB への書き込みパスに直接影響はないが、ECMP 収容上限の低下により大規模環境での経路プログラミング失敗率が変化しうる。</p>
+<h3 id="voq-chassis-ecmp-128">VoQ Chassis — ECMP メンバー上限 128 固定<a class="headerlink" href="#voq-chassis-ecmp-128" title="Permanent link">&para;</a></h3>
+<p><code>routeorch.cpp:108-118</code> で <code>gMySwitchType == "voq"</code> のとき SAI の ECMP メンバー上限を 128 に制限する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">6</a></sup>。VoQ 分散スイッチでの ECMP 不均衡を防ぐための対策で、STATE_DB / APPL_STATE_DB 書き込みロジックには差分なし。</p>
+<h3 id="route-flow-counter-sai">Route Flow Counter — SAI 能力のプラットフォーム依存<a class="headerlink" href="#route-flow-counter-sai" title="Permanent link">&para;</a></h3>
+<p><code>FlowCounterRouteOrch::initRouteFlowCounterCapability()</code> (<code>flowcounterrouteorch.cpp:166-180</code>) が orchagent 起動時に SAI へ <code>sai_object_type_get_availability(SAI_OBJECT_TYPE_COUNTER, ...)</code> を問い合わせ、結果を STATE_DB に書き込む:</p>
+<table>
+<thead>
+<tr>
+<th>SAI 応答</th>
+<th><code>STATE_DB FLOW_COUNTER_CAPABILITY_TABLE\|route</code></th>
+<th>副次書き込みへの影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>サポートあり</td>
+<td><code>support=true</code></td>
+<td><code>COUNTERS_ROUTE_NAME_MAP</code> 等への書き込み <strong>発生</strong></td>
+</tr>
+<tr>
+<td>サポートなし</td>
+<td><code>support=false</code></td>
+<td>書き込み <strong>発生しない</strong></td>
+</tr>
+</tbody>
+</table>
+<p><code>support=false</code> のプラットフォーム（ソフトウェア ASIC、一部ハードウェア ASIC）では、route-state.md の副作用セクションで述べた <code>COUNTERS_ROUTE_NAME_MAP</code> / <code>COUNTERS_ROUTE_TO_PATTERN_MAP</code> への副次書き込みが完全にスキップされる。</p>
+<h3 id="smartswitch-dpu">SmartSwitch DPU / その他<a class="headerlink" href="#smartswitch-dpu" title="Permanent link">&para;</a></h3>
+<p><code>updateDefRouteState()</code> および <code>publishRouteState()</code> は <code>gMySwitchType</code> を参照しない。DPU / T2 / 標準 NPU のいずれも同一コードパスで STATE_DB / APPL_STATE_DB を更新する。</p>
+<h3 id="_13">プラットフォーム差分サマリ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>差分内容</th>
+<th>STATE_DB / APPL_STATE_DB への直接影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mellanox</td>
+<td>ECMP グループ最大数を 1/32 に補正</td>
+<td>なし（間接的に SAI 失敗率に影響する可能性）</td>
+</tr>
+<tr>
+<td>VoQ Chassis</td>
+<td>ECMP メンバー上限 128 固定</td>
+<td>なし（同上）</td>
+</tr>
+<tr>
+<td>Flow Counter 非対応 ASIC</td>
+<td><code>FLOW_COUNTER_CAPABILITY_TABLE\|route support=false</code></td>
+<td><code>COUNTERS_ROUTE_*_MAP</code> への副次書き込みが発生しない</td>
+</tr>
+<tr>
+<td>SmartSwitch DPU / 標準 NPU</td>
+<td>差分なし</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
 <hr />
-<h2 id="appl_state_db-route_table">APPL_STATE_DB ROUTE_TABLE<a class="headerlink" href="#appl_state_db-route_table" title="Permanent link">&para;</a></h2>
+<h2 id="appl_state_db-route_table_1">APPL_STATE_DB ROUTE_TABLE<a class="headerlink" href="#appl_state_db-route_table_1" title="Permanent link">&para;</a></h2>
 <h3 id="key_1">key 構造<a class="headerlink" href="#key_1" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ROUTE_TABLE:&lt;prefix&gt;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>ROUTE_TABLE:&lt;vrf_name&gt;:&lt;prefix&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>ROUTE_TABLE:&lt;prefix&gt;
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>ROUTE_TABLE:&lt;vrf_name&gt;:&lt;prefix&gt;
 </span></code></pre></div>
 <p>APPL_DB の <code>ROUTE_TABLE</code> と同一キー空間。orchagent が SAI プログラミングに成功した後にのみ書き込まれる。</p>
-<h3 id="_5">フィールド一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_14">フィールド一覧<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -35397,40 +36866,40 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_15">関連リファレンス<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
 <li>APPL_DB: <a href="../route/"><code>ROUTE_TABLE (APPL_DB)</code></a> — fpmsyncd が書き込む経路テーブル</li>
 <li>CONFIG_DB: <a href="../static-route/"><code>STATIC_ROUTE</code></a> — 静的経路の設定元</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_16">引用元<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># STATE_DB のデフォルト経路状態を確認</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE|0.0.0.0/0&#39;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE|::/0&#39;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># APPL_STATE_DB の経路プログラミング結果を確認</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:10.0.0.0/24&#39;</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># route_check.py でテーブル整合確認</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>sudo<span class="w"> </span>route_check.py
+<h2 id="_17">運用ヒント<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h3 id="_18">確認コマンド<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># STATE_DB のデフォルト経路状態を確認</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE|0.0.0.0/0&#39;</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE|::/0&#39;</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1"># APPL_STATE_DB の経路プログラミング結果を確認</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:10.0.0.0/24&#39;</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="c1"># route_check.py でテーブル整合確認</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>sudo<span class="w"> </span>route_check.py
 </span></code></pre></div>
-<h3 id="_10">典型エントリ例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a># STATE_DB: デフォルト経路あり
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>STATE_DB ROUTE_TABLE|0.0.0.0/0
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  state: ok
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a># STATE_DB: デフォルト経路なし（削除後）
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>STATE_DB ROUTE_TABLE|0.0.0.0/0
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>  state: na
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a># APPL_STATE_DB: BGP 経路のプログラミング成功
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>APPL_STATE_DB ROUTE_TABLE:10.1.0.0/24
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>  err_str: SWSS_RC_SUCCESS
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>  protocol: bgp
+<h3 id="_19">典型エントリ例<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a># STATE_DB: デフォルト経路あり
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>STATE_DB ROUTE_TABLE|0.0.0.0/0
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>  state: ok
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a># STATE_DB: デフォルト経路なし（削除後）
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>STATE_DB ROUTE_TABLE|0.0.0.0/0
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>  state: na
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a># APPL_STATE_DB: BGP 経路のプログラミング成功
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>APPL_STATE_DB ROUTE_TABLE:10.1.0.0/24
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>  err_str: SWSS_RC_SUCCESS
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>  protocol: bgp
 </span></code></pre></div>
-<h3 id="_11">よくある問題<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_20">よくある問題<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <ul>
 <li>STATE_DB の <code>state=na</code> が残る → デフォルト経路が FRR から削除されたが APPL_DB からも消えているか確認（<code>sonic-db-cli APPL_DB hgetall 'ROUTE_TABLE:0.0.0.0/0'</code>）</li>
 <li>APPL_STATE_DB にエントリがない → SAI プログラミングに失敗している可能性。<code>/var/log/syslog</code> の orchagent ログで <code>err_str</code> を確認</li>
@@ -35440,14 +36909,32 @@
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:cr1">
+<p>sonic-linkmgrd DbInterface: <code>src/DbInterface.cpp</code>. <a href="https://github.com/sonic-net/sonic-linkmgrd/blob/master/src/DbInterface.cpp#L1835">https://github.com/sonic-net/sonic-linkmgrd/blob/master/src/DbInterface.cpp#L1835</a>&#160;<a class="footnote-backref" href="#fnref:cr1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:cr1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cr2">
+<p>fpmsyncd RouteSync: <code>fpmsyncd/fpmsyncd.cpp</code>, <code>fpmsyncd/routesync.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78</a>&#160;<a class="footnote-backref" href="#fnref:cr2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:cr2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cr3">
+<p>route_check.py 自動修復: <code>scripts/route_check.py</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/master/scripts/route_check.py#L767">https://github.com/sonic-net/sonic-utilities/blob/master/scripts/route_check.py#L767</a>&#160;<a class="footnote-backref" href="#fnref:cr3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:d1">
+<p>loopback インタフェース向け経路・重複 SET・fullmask subnet 経路: <code>orchagent/routeorch.cpp:923, 1050, 1090</code>.&#160;<a class="footnote-backref" href="#fnref:d1" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:p1">
+<p>fpmsyncd RESPONSE_CHANNEL 購読: <code>fpmsyncd/fpmsyncd.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78</a>&#160;<a class="footnote-backref" href="#fnref:p1" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p>RouteOrch STATE/APPL_STATE 書込み実装: <code>orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp#L287">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp#L287</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>RouteOrch STATE/APPL_STATE 書込み実装: <code>orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp#L287">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp#L287</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>ResponsePublisher err_str 付与: <code>orchagent/response_publisher.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L102">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L102</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>ResponsePublisher err_str 付与: <code>orchagent/response_publisher.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L102">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L102</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 7 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>STATE_ROUTE_TABLE_NAME 定数: <code>common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L494">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L494</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>STATE_ROUTE_TABLE_NAME 定数: <code>common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L494">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L494</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>fpmsyncd FIB suppression / route_check.py: <code>fpmsyncd/fpmsyncd.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 9 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

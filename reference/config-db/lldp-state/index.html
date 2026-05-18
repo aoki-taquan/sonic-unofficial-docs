@@ -26702,6 +26702,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係マップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイミング制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dead-field" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -26725,7 +26775,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルトとハードコード固定値
@@ -35375,6 +35425,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係マップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイミング制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dead-field" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35398,7 +35498,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルトとハードコード固定値
@@ -35838,6 +35938,67 @@
 </ul>
 <!-- /entry-points -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2</code>, <code>sonic-buildimage/dockers/docker-lldp/lldpmgrd</code>, <code>sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py</code></p>
+</blockquote>
+<h3 id="_14">依存関係マップ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>lldpd 起動 (open-lldp デーモン)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  └─► waitfor_lldp_ready.sh (UNIX ソケット待機)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        └─► lldp-syncd 起動 (priority=4)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>              └─► APPL_DB: LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS 書き込み開始
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>LLDP PDU 受信 (物理ポート)
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  └─► lldpd 内部 DB 更新
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        └─► lldp-syncd ポーリング (lldpctl -f json)
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>              └─► APPL_DB: LLDP_ENTRY_TABLE|&lt;ifname&gt; hset
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>APPL_DB: LLDP_ENTRY_TABLE|&lt;ifname&gt; 存在
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>  └─► sonic-snmpagent (LLDP-MIB hgetall)
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>  └─► sonic-mgmt-common lldp_app.go (GetTable → REST / gNMI)
+</span></code></pre></div>
+<h3 id="_15">書込み順序ルール<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>優先度</th>
+<th>ルール</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>必須</td>
+<td>lldpd が起動し UNIX ソケットが ready になるまで lldp-syncd は開始しない</td>
+<td><code>supervisord.conf.j2</code>: lldp-syncd は <code>waitfor_lldp_ready:exited</code> を <code>dependent_startup_wait_for</code> に指定</td>
+</tr>
+<tr>
+<td>必須</td>
+<td>LLDP PDU が実際に受信されるまで <code>LLDP_ENTRY_TABLE</code> にエントリは現れない</td>
+<td>エントリ生成は lldpd の PDU 受信イベントに依存。lldp-syncd は polling で差分を書き込む</td>
+</tr>
+<tr>
+<td>情報</td>
+<td><code>LLDP_LOC_CHASSIS</code> はローカル情報のため PDU 受信前から書き込まれる</td>
+<td>lldp-syncd 起動後に lldpctl でローカル chassis 情報を取得して書き込む</td>
+</tr>
+<tr>
+<td>情報</td>
+<td>SNMP / REST は <code>LLDP_ENTRY_TABLE</code> を polling で読む。エントリが存在しない間は空結果を返す</td>
+<td>sonic-snmpagent の <code>poll_lldp_entry_updates()</code> は pubsub で変化を購読する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">タイミング制約<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>lldp-syncd はポーリング周期で APPL_DB を更新する</strong>。PDU 受信から APPL_DB に反映されるまで数秒の遅延がある。即時性は保証されない。</li>
+<li><strong>エントリ削除タイミング</strong>: lldpd の TTL タイマー切れ（デフォルト hold time = 30s × 4 = 120 秒）により lldp-syncd が APPL_DB エントリを DEL する。ポートがリンクダウンした場合も同様に削除される。</li>
+<li><strong>LLDP コンテナ再起動</strong>: lldp-syncd 再起動後は lldpd の全エントリを再スキャンして APPL_DB に書き込む。一時的に <code>LLDP_ENTRY_TABLE</code> が空になる可能性がある（再書き込みまでのウィンドウ）。</li>
+<li><strong><code>lldpcli resume</code> 前は LLDP PDU が送出されない</strong>: <code>lldpmgrd</code> が <code>PortInitDone</code> + <code>PortConfigDone</code> を受信するまで lldpd は pause 状態。この間は自ノードの LLDPDU が送出されないため、対向ノードの <code>LLDP_ENTRY_TABLE</code> に自ノードのエントリが現れない（最大 300 秒）。</li>
+</ul>
+<!-- /ordering -->
+
 <!-- defaults -->
 <h2 id="dead-field">コード由来の暗黙デフォルトと dead field<a class="headerlink" href="#dead-field" title="Permanent link">&para;</a></h2>
 <blockquote>
@@ -35862,7 +36023,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_14">暗黙デフォルトとハードコード固定値<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_17">暗黙デフォルトとハードコード固定値<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

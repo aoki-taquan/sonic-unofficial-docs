@@ -26366,6 +26366,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -26378,7 +26417,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -35353,6 +35392,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35365,7 +35443,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -35604,6 +35682,57 @@ OpenSSL の FIPS provider 切り替えや、SSH / TLS の暗号スイート絞�
 </ul>
 <!-- /entry-points -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>hostcfgd</code> の <code>FipsCfg</code> クラスは、CONFIG_DB の <code>FIPS|global</code> エントリを <strong>シングルトン</strong> として購読する。<code>load()</code> は <code>FIPS</code> テーブルを一括取得してから <code>update()</code> を実行するため、フィールドが中途半端に書かれた中間状態は観測されにくい。ただし以下の順序依存が存在する。</p>
+<h3 id="_17">検出された順序依存<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>hostcfgd 起動時の <code>load()</code> フェーズ内処理順序</td>
+<td><code>load_independent_config()</code> → <code>fipscfg.load()</code> の順で実行される（hostcfgd:2271）</td>
+<td>FIPS 設定は起動シーケンス後半に適用されるため、SSH など先行 unit が FIPS なしで一瞬起動する場合がある</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>enforce=true</code> 設定 → 次回起動時 bootloader パラメータ反映</td>
+<td><strong>遅延必須</strong>（現セッションには影響しない）</td>
+<td><code>update_enforce_config()</code> は次回 boot image の grub パラメータのみ変更。現行 kernel は影響を受けない（hostcfgd:1838-1846）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>enable</code> SET → <code>/etc/fips/fips_enable</code> 書込み → サービス再起動</td>
+<td>順次実行（同一コールチェーン内）</td>
+<td><code>cur_enforced=true</code>（現行 kernel が FIPS enforce 済み）のとき <code>restart()</code> はスキップされる（hostcfgd:1813-1816）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>FIPS_STATS\|state.config_datetime</code> 書込み → サービス再起動判定</td>
+<td>STATE_DB 参照で二重再起動を防止</td>
+<td><code>restart()</code> が既に再起動済みかを <code>config_datetime</code> vs ファイル mtime で比較し、不要な再起動を skip（hostcfgd:1821-1824）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>/etc/sonic/fips.json</code> の <code>restart_services</code> リスト → 再起動対象決定</td>
+<td><code>read_config()</code> が先行して読み込む（hostcfgd:1765-1769）</td>
+<td>ファイルが存在しない場合は <code>DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']</code> が使われる</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_18">主要な制約詳細<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><strong>enforce 変更の遅延反映 (依存 #2)</strong>: <code>enforce=true</code> を CONFIG_DB に書いても、現行カーネルの FIPS enforce 状態は変わらない。<code>update_enforce_config()</code> は <code>loader.set_fips(image, self.enforce)</code> でネクストブート用 grub エントリを書き換えるだけであり、<code>reboot</code> が必要となる（evidence: <code>hostcfgd:1838-1846</code>）。</p>
+<p><strong>二重再起動防止 (依存 #4)</strong>: <code>FIPS_STATS|state.config_datetime</code> は <code>update()</code> 内の <code>state_db_conn.hset()</code> で書かれる（hostcfgd:1792）。<code>restart()</code> はこのタイムスタンプと <code>/etc/fips/fips_enable</code> の mtime を比較し、timestamp が mtime より新しければ「既に再起動済み」と判断してサービス再起動をスキップする。デーモン再起動などで <code>state_db_conn</code> が失われると timestamp が消えるため、次の CONFIG_DB 変更時に再起動が走る（evidence: <code>hostcfgd:1818-1824</code>）。</p>
+<!-- /ordering -->
+
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <p><code>sonic-fips.yang</code> には <code>enable</code> / <code>enforce</code> の <code>default</code> 文がないため、実効デフォルトは hostcfgd <code>FipsCfg</code> クラスのコード由来 fallback で決まる。</p>
@@ -35634,7 +35763,7 @@ OpenSSL の FIPS provider 切り替えや、SSH / TLS の暗号スイート絞�
 </tr>
 </tbody>
 </table>
-<h3 id="_17">補足<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_19">補足<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>派生則</strong>: <code>load()</code> は <code>self.enable = self.enforce or is_true(common_config.get('enable', 'false'))</code> (hostcfgd:1782) で <code>enable</code> を計算する。<code>enforce=true</code> のときは <code>enable_db=false</code> でも <code>self.enable=True</code> に強制引き上げされる。</li>
 <li><strong>早期 return</strong>: <code>FIPS|global</code> エントリが CONFIG_DB に存在しない場合 (<code>common_config</code> が空)、<code>load()</code> は L1777-1779 で skip ログを出して return し、<code>/etc/fips/fips_enable</code> を書き換えない。実効デフォルトは「現状維持」（前回起動時の状態）。</li>

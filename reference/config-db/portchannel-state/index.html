@@ -27578,7 +27578,284 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teamsyncd-lag_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teamsyncd が LAG_TABLE に書き込むまでの事前条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-restart 時の書き込み遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lag_table-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LAG_TABLE を readiness ガードとして使用するデーモン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の連鎖的影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teamsyncd-teamportsync-teamsynccppl208-213-l280-365" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teamsyncd — TeamPortSync 初期化失敗 (teamsync.cpp:L208-213, L280-365)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teammgrd-teamd-teammgrcppl640-644" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teammgrd — teamd 起動失敗 (teammgr.cpp:L640-644)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart-teamsynccppl84-98-l197-203" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-restart 時の遅延書き込み (teamsync.cpp:L84-98, L197-203)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        後続デーモンへの影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-state_db-lag_member_table-tlm_teamd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STATE_DB LAG_MEMBER_TABLE への追記 (tlm_teamd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-app_db-intf_table-intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. APP_DB INTF_TABLE への連鎖書き込み (intfmgrd — サブインタフェース)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-state_db-lag_table-intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STATE_DB LAG_TABLE へのサブインタフェース用書き込み (intfmgrd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscriberStateTable の仕組み（共通基盤）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tlm_teamd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tlm_teamd — 主要購読者
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd — 副次購読者（サブインタフェース管理）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlanmgrd-stpmgrd-nbrmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vlanmgrd / stpmgrd / nbrmgrd — ポーリング方式（非購読）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27589,7 +27866,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34915,7 +35192,284 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teamsyncd-lag_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teamsyncd が LAG_TABLE に書き込むまでの事前条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-restart 時の書き込み遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lag_table-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LAG_TABLE を readiness ガードとして使用するデーモン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の連鎖的影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teamsyncd-teamportsync-teamsynccppl208-213-l280-365" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teamsyncd — TeamPortSync 初期化失敗 (teamsync.cpp:L208-213, L280-365)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teammgrd-teamd-teammgrcppl640-644" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teammgrd — teamd 起動失敗 (teammgr.cpp:L640-644)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart-teamsynccppl84-98-l197-203" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-restart 時の遅延書き込み (teamsync.cpp:L84-98, L197-203)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        後続デーモンへの影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-state_db-lag_member_table-tlm_teamd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STATE_DB LAG_MEMBER_TABLE への追記 (tlm_teamd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-app_db-intf_table-intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. APP_DB INTF_TABLE への連鎖書き込み (intfmgrd — サブインタフェース)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-state_db-lag_table-intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STATE_DB LAG_TABLE へのサブインタフェース用書き込み (intfmgrd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscriberStateTable の仕組み（共通基盤）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tlm_teamd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tlm_teamd — 主要購読者
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        intfmgrd — 副次購読者（サブインタフェース管理）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlanmgrd-stpmgrd-nbrmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vlanmgrd / stpmgrd / nbrmgrd — ポーリング方式（非購読）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34926,7 +35480,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35200,12 +35754,644 @@
 </ul>
 <!-- /defaults -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h2 id="_7">確認コマンド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;LAG_TABLE|*&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;LAG_TABLE|PortChannel0001&#39;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>teamdctl<span class="w"> </span>PortChannel0001<span class="w"> </span>state
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/teamsyncd/teamsync.cpp</code>, <code>sonic-swss/cfgmgr/teammgr.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/cfgmgr/vlanmgr.cpp</code>, <code>sonic-swss/cfgmgr/stpmgr.cpp</code>
+調査日: 2026-05-18
+詳細調査ノート: <code>meta/_intermediate/cdb-flow/portchannel-state-ordering.md</code></p>
+</blockquote>
+<p>このテーブルは STATE_DB の <strong>書き込み専用</strong>（teamsyncd / tlm_teamd のみが書き込む）であり、ユーザーが直接操作するものではない。<code>state=ok</code> エントリの有無が複数デーモンの readiness ガードとして機能するため、書き込み・削除の順序が後続処理の可否を決定する。</p>
+<h3 id="teamsyncd-lag_table">teamsyncd が LAG_TABLE に書き込むまでの事前条件<a class="headerlink" href="#teamsyncd-lag_table" title="Permanent link">&para;</a></h3>
+<p>LAG_TABLE への書き込みは以下の連鎖が完了することで発生する:</p>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>条件</th>
+<th>担当</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>CONFIG_DB <code>PORTCHANNEL</code> エントリが SET される</td>
+<td>CLI / minigraph</td>
+<td>—</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>TeamMgr::doLagTask()</code> が PORTCHANNEL エントリを受信する</td>
+<td>teammgrd</td>
+<td><code>teammgr.cpp:L157-</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>TeamMgr::addLag()</code> が teamd プロセスを起動する</td>
+<td>teammgrd</td>
+<td><code>teammgr.cpp:L564-</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>teamd が Linux に LAG netdev を作成し <code>RTM_NEWLINK</code> が発行される</td>
+<td>Linux カーネル</td>
+<td>—</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>TeamSync::addLag()</code> が <code>m_stateLagTable.set(lagName, ...)</code> で <code>state=ok</code> を書き込む</td>
+<td>teamsyncd</td>
+<td><code>teamsync.cpp:L175, L203, L223</code></td>
+</tr>
+</tbody>
+</table>
+<p>ステップ 3 (<code>exec()</code> 失敗) は <code>task_need_retry</code> を返し STATE_DB への書き込みをせずリトライ (<code>teammgr.cpp:L640-644</code>)。ステップ 5 の <code>teamdctl</code> 接続失敗は <code>SWSS_LOG_ERROR</code> を記録し STATE_DB 書き込みをスキップして次の <code>RTM_NEWLINK</code> を待つ (<code>teamsync.cpp:L208-213</code>)。</p>
+<h3 id="warm-restart">warm-restart 時の書き込み遅延<a class="headerlink" href="#warm-restart" title="Permanent link">&para;</a></h3>
+<p>warm-restart 中 (<code>m_warmstart == true</code>) は <code>addLag()</code> が <code>m_stateLagTablePreserved</code> に一時保存し、<code>applyState()</code> がタイムアウト（デフォルト: <code>DEFAULT_WR_PENDING_TIMEOUT</code>）後に一括で <code>m_stateLagTable.set()</code> を呼ぶ (<code>teamsync.cpp:L84-98</code>)。この間、<code>state=ok</code> は STATE_DB に存在しないため後続デーモンは保留状態が長引く。</p>
+<h3 id="lag_table-readiness">LAG_TABLE を readiness ガードとして使用するデーモン<a class="headerlink" href="#lag_table-readiness" title="Permanent link">&para;</a></h3>
+<p><code>state=ok</code> エントリが存在するまで以下の処理がブロックされる:</p>
+<table>
+<thead>
+<tr>
+<th>デーモン</th>
+<th>関数</th>
+<th>保留する処理</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>intfmgrd</code></td>
+<td><code>IntfMgr::isIntfStateOk(alias)</code></td>
+<td><code>PORTCHANNEL_INTERFACE</code> / サブ IF の SET 処理</td>
+<td><code>intfmgr.cpp:L661-668, L833</code></td>
+</tr>
+<tr>
+<td><code>teammgrd</code></td>
+<td><code>TeamMgr::isLagStateOk(alias)</code></td>
+<td><code>PORTCHANNEL_MEMBER</code> の teamd enslave 処理</td>
+<td><code>teammgr.cpp:L89-103, L357</code></td>
+</tr>
+<tr>
+<td><code>vlanmgrd</code></td>
+<td><code>VlanMgr::isMemberStateOk(alias)</code></td>
+<td>LAG を VLAN_MEMBER として追加する処理</td>
+<td><code>vlanmgr.cpp:L490-510</code></td>
+</tr>
+<tr>
+<td><code>stpmgrd</code></td>
+<td><code>StpMgr::isLagStateOk(alias)</code></td>
+<td>STP ポート処理</td>
+<td><code>stpmgr.cpp:L1292-1304</code></td>
+</tr>
+</tbody>
+</table>
+<p>各デーモンは <code>m_stateLagTable.get(alias, temp)</code> で LAG_TABLE エントリを確認し、存在しない場合はタスクをキューに残してリトライする（エントリが存在するまで自動リトライ）。</p>
+<h3 id="del">DEL 時の連鎖的影響<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<p>teamsyncd が <code>RTM_DELLINK</code> を受信すると <code>m_stateLagTable.del(lagName)</code> でエントリを削除する (<code>teamsync.cpp:L255</code>)。この削除により、<code>isIntfStateOk()</code> / <code>isLagStateOk()</code> を呼ぶすべてのデーモンが対象 LAG に対する処理を停止する。</p>
+<p>DEL 順序の推奨:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a># 推奨削除順序
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>DEL PORTCHANNEL_MEMBER|PortChannelN|*   # 全メンバを先に削除
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>DEL PORTCHANNEL_INTERFACE|PortChannelN|* # IP プレフィクスを先に削除
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>DEL PORTCHANNEL_INTERFACE|PortChannelN   # L3 IF 属性ロウ削除
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>DEL PORTCHANNEL|PortChannelN             # PORTCHANNEL を削除
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>                                          # → teammgrd が teamd を停止
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>                                          # → カーネルが RTM_DELLINK を発行
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                                          # → teamsyncd が LAG_TABLE エントリを削除
+</span></code></pre></div>
+<p>PORTCHANNEL を先に削除した場合、LAG_TABLE エントリが残存したまま teamd プロセスが停止し得る。teamsyncd は RTM_DELLINK を確認して LAG_TABLE を削除するが、タイミング次第で孤立エントリが残る可能性がある。</p>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/teamsyncd/teamsync.cpp</code>, <code>sonic-swss/tlm_teamd/main.cpp</code>, <code>sonic-swss/tlm_teamd/values_store.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/cfgmgr/teammgr.cpp</code>, <code>sonic-swss/cfgmgr/vlanmgr.cpp</code>, <code>sonic-swss/cfgmgr/stpmgr.cpp</code>, <code>sonic-swss/cfgmgr/nbrmgr.cpp</code>, <code>sonic-swss/cfgmgr/natmgr.cpp</code>
+調査日: 2026-05-18
+詳細調査ノート: <code>meta/_intermediate/cdb-flow/portchannel-state-cross-refs.md</code></p>
+</blockquote>
+<p>YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。STATE_DB テーブルであるため「何が書き込むか」と「何が読むか」の両方向を示す。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB / 場所</th>
+<th>方向</th>
+<th>契機</th>
+<th>根拠コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux netlink (<code>RTM_NEWLINK</code> / <code>RTM_DELLINK</code>)</td>
+<td>カーネル</td>
+<td>READ</td>
+<td>LAG netdev の追加・削除イベントを受信し <code>addLag()</code> / <code>removeLag()</code> を呼び出す。netlink イベントがなければ LAG_TABLE は書かれない</td>
+<td><code>teamsync.cpp:101-143</code></td>
+</tr>
+<tr>
+<td><code>teamdctl</code> JSON dump（UNIX socket）</td>
+<td>プロセス間</td>
+<td>READ</td>
+<td><code>TeamPortSync::readData()</code> が <code>teamdctl_connect()</code> で teamd プロセスソケットに接続し JSON dump を取得。<code>ValuesStore::update()</code> が <code>setup.*</code> / <code>runner.*</code> / <code>team_device.*</code> フィールドを LAG_TABLE に書き込む</td>
+<td><code>teamsync.cpp:317-348</code>, <code>values_store.cpp:352-380</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB::LAG_TABLE</code>（自己購読）</td>
+<td>STATE_DB</td>
+<td>READ</td>
+<td><code>tlm_teamd</code> が <code>SubscriberStateTable</code> で <code>LAG_TABLE</code> を購読し、<code>state=ok</code> 書き込みをトリガーに teamdctl 接続を開始する（循環構造）</td>
+<td><code>tlm_teamd/main.cpp:98-106</code></td>
+</tr>
+<tr>
+<td><code>intfmgrd</code> — <code>isIntfStateOk()</code></td>
+<td>STATE_DB</td>
+<td>READ by consumer</td>
+<td><code>PORTCHANNEL_INTERFACE</code> SET 処理前に <code>m_stateLagTable.get(alias)</code> でエントリ存在を確認。エントリなしは処理保留・retry</td>
+<td><code>intfmgr.cpp:38,663-668,833</code></td>
+</tr>
+<tr>
+<td><code>teammgrd</code> — <code>isLagStateOk()</code></td>
+<td>STATE_DB</td>
+<td>READ by consumer</td>
+<td><code>PORTCHANNEL_MEMBER</code> enslave 前に <code>m_stateLagTable.get(alias)</code> で確認。エントリなしは保留</td>
+<td><code>teammgr.cpp:38,89-103,357</code></td>
+</tr>
+<tr>
+<td><code>vlanmgrd</code> — <code>isMemberStateOk()</code></td>
+<td>STATE_DB</td>
+<td>READ by consumer</td>
+<td><code>VLAN_MEMBER</code> への LAG 追加前に <code>m_stateLagTable.get(alias)</code> で確認。エントリなしは保留</td>
+<td><code>vlanmgr.cpp:30,497</code></td>
+</tr>
+<tr>
+<td><code>stpmgrd</code> — <code>isLagStateOk()</code></td>
+<td>STATE_DB</td>
+<td>READ by consumer</td>
+<td>STP ポート処理前に <code>m_stateLagTable.get(alias)</code> で確認。エントリなしは保留</td>
+<td><code>stpmgr.cpp:32,1296</code></td>
+</tr>
+<tr>
+<td><code>nbrmgrd</code></td>
+<td>STATE_DB</td>
+<td>READ by consumer</td>
+<td>隣接エントリ処理前に LAG 状態を確認する</td>
+<td><code>nbrmgr.cpp:47</code></td>
+</tr>
+<tr>
+<td><code>natmgrd</code> — NAT ポートマッピング</td>
+<td>STATE_DB</td>
+<td>READ by consumer</td>
+<td>NAT インタフェースとして LAG を使用する場合に <code>m_stateLagTable.get(port)</code> で確認</td>
+<td><code>natmgr.cpp:38,111</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">補足</p>
+<ul>
+<li><strong>書き込みは teamsyncd と tlm_teamd のみ</strong>。orchagent / portsorch は APP_DB の <code>APP_LAG_TABLE</code> を購読して SAI に反映するため、STATE_DB の LAG_TABLE を直接読まない。</li>
+<li><strong>tlm_teamd の自己購読</strong>は teamsyncd が先に <code>state=ok</code> を書くことを前提とした依存関係であり、teamsyncd が書かないと tlm_teamd は teamdctl 接続を開始しない。</li>
+<li><strong>values_store.cpp の LAG_TABLE 削除回避</strong>（L284-291）: tlm_teamd は LAG_TABLE のエントリ本体を削除しない。LAG 削除は teamsyncd の <code>RTM_DELLINK</code> 処理のみが担う。</li>
+</ul>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/teamsyncd/teamsync.cpp</code>, <code>sonic-swss/cfgmgr/teammgr.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>
+調査日: 2026-05-18
+詳細調査ノート: <code>meta/_intermediate/cdb-flow/portchannel-state-failure.md</code></p>
+</blockquote>
+<p>STATE_DB <code>LAG_TABLE</code> への書き込みは teamsyncd と teammgrd の正常完了に依存するため、各ステップで失敗が発生すると <code>state=ok</code> エントリが書かれず後続デーモンが保留状態になる。</p>
+<h3 id="teamsyncd-teamportsync-teamsynccppl208-213-l280-365">teamsyncd — TeamPortSync 初期化失敗 (<code>teamsync.cpp:L208-213, L280-365</code>)<a class="headerlink" href="#teamsyncd-teamportsync-teamsynccppl208-213-l280-365" title="Permanent link">&para;</a></h3>
+<p><code>TeamSync::addLag()</code> は <code>TeamPortSync</code> コンストラクタを <code>try-catch</code> で保護している。コンストラクタ内では最大 3 回リトライ (<code>max_retries = 3</code>) を <code>sleep(1)</code> 間隔で実施し、すべて失敗すると <code>system_error</code> をリスローする。</p>
+<table>
+<thead>
+<tr>
+<th>失敗原因</th>
+<th>errno</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>team_alloc()</code> 失敗</td>
+<td><code>EADDRNOTAVAIL</code></td>
+<td><code>system_error</code> スロー → リトライ</td>
+</tr>
+<tr>
+<td><code>team_init()</code> 失敗</td>
+<td><code>EADDRNOTAVAIL</code></td>
+<td><code>system_error</code> スロー → リトライ。コンテナ再起動直後に多発（旧 ifindex が無効になるため）</td>
+</tr>
+<tr>
+<td><code>teamdctl_alloc()</code> 失敗</td>
+<td><code>EADDRNOTAVAIL</code></td>
+<td><code>system_error</code> スロー → リトライ</td>
+</tr>
+<tr>
+<td><code>teamdctl_connect()</code> 失敗</td>
+<td><code>ECONNREFUSED</code></td>
+<td><code>system_error</code> スロー → リトライ（teamd がまだ起動中の場合）</td>
+</tr>
+<tr>
+<td><code>teamdctl_config_get_raw_direct()</code> 失敗</td>
+<td><code>EIO</code></td>
+<td><code>system_error</code> スロー → リトライ</td>
+</tr>
+<tr>
+<td>3 回リトライ後も失敗</td>
+<td>上記いずれか</td>
+<td><code>SWSS_LOG_ERROR</code> → STATE_DB 書き込みスキップ → 次の <code>RTM_NEWLINK</code> を待つ</td>
+</tr>
+</tbody>
+</table>
+<p>3 回失敗後は <code>addLag()</code> の外側 catch が <code>SWSS_LOG_ERROR("addLag: Failed to initialize team handler for LAG %s ...")</code> を記録し、STATE_DB への書き込みをせずに return する。次の <code>RTM_NEWLINK</code> イベント（teamd が LAG netdev を再作成した際に発行）で再試行される。</p>
+<h3 id="teammgrd-teamd-teammgrcppl640-644">teammgrd — teamd 起動失敗 (<code>teammgr.cpp:L640-644</code>)<a class="headerlink" href="#teammgrd-teamd-teammgrcppl640-644" title="Permanent link">&para;</a></h3>
+<p><code>TeamMgr::addLag()</code> が <code>exec("teamd -r ...")</code> の戻り値が非ゼロのとき <code>task_need_retry</code> を返す。Consumer ループがタスクをキューに残し自動リトライする。teamd が起動しなければ Linux に LAG netdev が作成されず <code>RTM_NEWLINK</code> が発行されないため、STATE_DB には <code>state=ok</code> が書かれない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>exec(teamd_cmd) != 0
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  → SWSS_LOG_INFO(&quot;Failed to start port channel %s with teamd, retry...&quot;)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  → return task_need_retry
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  → Consumer がキューにタスクを保持・自動リトライ
+</span></code></pre></div>
+<h3 id="warm-restart-teamsynccppl84-98-l197-203">warm-restart 時の遅延書き込み (<code>teamsync.cpp:L84-98, L197-203</code>)<a class="headerlink" href="#warm-restart-teamsynccppl84-98-l197-203" title="Permanent link">&para;</a></h3>
+<p>warm-restart 中 (<code>m_warmstart == true</code>) は <code>addLag()</code> が STATE_DB に直接書かず <code>m_stateLagTablePreserved</code> に保存する。<code>applyState()</code> がタイムアウト（<code>WarmStart::getWarmStartTimer()</code> または <code>DEFAULT_WR_PENDING_TIMEOUT</code>）後に一括書き込みを実施する。タイムアウトまでの間、後続デーモンは保留状態になる。</p>
+<h3 id="_6">後続デーモンへの影響<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><code>state=ok</code> エントリが LAG_TABLE に書かれるまで以下の処理がすべて保留される:</p>
+<table>
+<thead>
+<tr>
+<th>デーモン</th>
+<th>保留される処理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>intfmgrd</code></td>
+<td><code>PORTCHANNEL_INTERFACE</code> の IP アドレス付与・IPv6 有効化</td>
+</tr>
+<tr>
+<td><code>teammgrd</code></td>
+<td><code>PORTCHANNEL_MEMBER</code> の teamd enslave</td>
+</tr>
+<tr>
+<td><code>vlanmgrd</code></td>
+<td>VLAN_MEMBER への LAG 追加</td>
+</tr>
+<tr>
+<td><code>stpmgrd</code></td>
+<td>STP ポート処理</td>
+</tr>
+</tbody>
+</table>
+<p>いずれも <code>m_stateLagTable.get(alias)</code> 失敗時にタスクをキューに残してリトライするため、LAG_TABLE に <code>state=ok</code> が書かれた瞬間に自動的に解消される。</p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/teamsyncd/teamsync.h</code>, <code>sonic-swss/teamsyncd/teamsync.cpp</code>, <code>sonic-swss/cfgmgr/teammgr.cpp</code>, <code>sonic-swss/cfgmgr/portmgr.h</code>, <code>sonic-swss/cfgmgr/shellcmd.h</code>, <code>sonic-swss-common/common/schema.h</code>
+調査日: 2026-05-18
+詳細調査ノート: <code>meta/_intermediate/cdb-flow/portchannel-state-constants.md</code></p>
+</blockquote>
+<p>以下の定数は STATE_DB <code>LAG_TABLE</code> の書き込み動作・タイミングに直接影響するマジックナンバーおよびハードコード値。</p>
+<table>
+<thead>
+<tr>
+<th>定数 / マクロ名</th>
+<th>値</th>
+<th>定義ファイル</th>
+<th>意味・影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_WR_PENDING_TIMEOUT</code></td>
+<td><code>70</code> 秒</td>
+<td><code>teamsync.h:16</code></td>
+<td>warm restart 時に <code>m_stateLagTablePreserved</code> の内容を STATE_DB へ一括書き込みするまでのタイムアウト。<code>WarmStart::getWarmStartTimer()</code> が設定されていない場合のフォールバック値</td>
+</tr>
+<tr>
+<td><code>TEAMSYNCD_APP_NAME</code></td>
+<td><code>"teamsyncd"</code></td>
+<td><code>teamsync.h:14</code></td>
+<td>WarmStart フレームワークへの登録名。warm restart 検出・状態遷移管理に使用。warm restart タイマーキー名にも反映される</td>
+</tr>
+<tr>
+<td><code>TEAM_DRV_NAME</code></td>
+<td><code>"team"</code></td>
+<td><code>teamsync.cpp:24</code></td>
+<td>netlink <code>RTM_NEWLINK</code> イベントで LAG を識別するドライバ名文字列。<code>rtnl_link_get_type()</code> の戻り値と <code>strcmp()</code> で比較し、一致しない netdev は無視される</td>
+</tr>
+<tr>
+<td><code>max_retries</code></td>
+<td><code>3</code></td>
+<td><code>teamsync.cpp:286</code></td>
+<td><code>TeamPortSync</code> コンストラクタ内で <code>team_init()</code> / <code>teamdctl_connect()</code> 失敗時の最大リトライ回数。3 回失敗すると <code>system_error</code> をリスローし STATE_DB への書き込みがスキップされる</td>
+</tr>
+<tr>
+<td>リトライ間隔</td>
+<td><code>1</code> 秒</td>
+<td><code>teamsync.cpp:363</code></td>
+<td><code>team_init()</code> / <code>teamdctl_connect()</code> リトライ間の <code>sleep()</code> 値。固定値。最大 3 回 × 1 秒 = 最大 3 秒の待機が発生しうる</td>
+</tr>
+<tr>
+<td><code>DEFAULT_ADMIN_STATUS_STR</code></td>
+<td><code>"down"</code></td>
+<td><code>portmgr.h:14</code></td>
+<td>CONFIG_DB <code>PORTCHANNEL</code> に <code>admin_status</code> が未指定の場合に <code>teammgrd</code> が使用するデフォルト値</td>
+</tr>
+<tr>
+<td><code>DEFAULT_MTU_STR</code></td>
+<td><code>"9100"</code></td>
+<td><code>portmgr.h:15</code></td>
+<td>CONFIG_DB <code>PORTCHANNEL</code> に <code>mtu</code> が未指定の場合に <code>teammgrd</code> が使用するデフォルト値 (文字列)。カーネルに設定された後 <code>teamsyncd</code> が実測値として STATE_DB <code>LAG_TABLE.mtu</code> に書き込む</td>
+</tr>
+<tr>
+<td><code>TEAMD_CMD</code></td>
+<td><code>"/usr/bin/teamd"</code></td>
+<td><code>shellcmd.h:13</code></td>
+<td><code>TeamMgr::addLag()</code> が LAG 作成時に <code>exec()</code> する teamd バイナリの絶対パス</td>
+</tr>
+<tr>
+<td><code>STATE_LAG_TABLE_NAME</code></td>
+<td><code>"LAG_TABLE"</code></td>
+<td><code>schema.h:422</code></td>
+<td>STATE_DB 内テーブル名定数</td>
+</tr>
+<tr>
+<td><code>APP_LAG_TABLE_NAME</code></td>
+<td><code>"LAG_TABLE"</code></td>
+<td><code>schema.h:43</code></td>
+<td>APP_DB 内テーブル名定数。STATE_DB と APP_DB で同一テーブル名 <code>"LAG_TABLE"</code> を使用する</td>
+</tr>
+<tr>
+<td>warmboot ダンプパス</td>
+<td><code>"/var/warmboot/teamd/"</code></td>
+<td><code>teammgr.cpp:573</code></td>
+<td>warm restart 時に teamd 設定ダンプを読み書きするファイルシステムパス。partner MAC アドレスの復元に使用</td>
+</tr>
+<tr>
+<td><code>partner_system_id_offset</code></td>
+<td><code>40</code> バイト</td>
+<td><code>teammgr.cpp:581</code></td>
+<td>warmboot ダンプファイル内で LACP partner system MAC が格納されるバイトオフセット</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">TeamMgr 起動時の LAG_TABLE クリア</p>
+<p><code>TeamMgr()</code> コンストラクタ (<code>teammgr.cpp:L43-50</code>) は起動直後に <code>m_stateLagTable.getKeys()</code> → <code>m_stateLagTable.del()</code> で STATE_DB <code>LAG_TABLE</code> の既存エントリをすべて削除する。これにより <code>teammgrd</code> 再起動時に古い <code>state=ok</code> エントリが残留しない設計となっている。ただしこの削除は一時的に後続デーモン（<code>intfmgrd</code>, <code>vlanmgrd</code> 等）の readiness チェックを失敗させる点に注意。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">APP_DB と STATE_DB で同名テーブル</p>
+<p><code>APP_LAG_TABLE_NAME = "LAG_TABLE"</code> と <code>STATE_LAG_TABLE_NAME = "LAG_TABLE"</code> は同一文字列だが、接続先 DB (<code>APPL_DB</code> と <code>STATE_DB</code>) が異なるため衝突しない。コードでは <code>m_lagTable</code>（APP_DB 用）と <code>m_stateLagTable</code>（STATE_DB 用）で別変数に格納される（<code>teamsync.cpp:L28-30</code>）。</p>
+</div>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/tlm_teamd/values_store.h</code>, <code>sonic-swss/tlm_teamd/values_store.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>
+調査日: 2026-05-18
+詳細調査ノート: <code>meta/_intermediate/cdb-flow/portchannel-state-ordering.md</code></p>
+</blockquote>
+<p>STATE_DB <code>LAG_TABLE</code> への書き込みをトリガーとして、他テーブル・他 DB へのカスケード書き込みが発生する。</p>
+<h3 id="1-state_db-lag_member_table-tlm_teamd">1. STATE_DB <code>LAG_MEMBER_TABLE</code> への追記 (tlm_teamd)<a class="headerlink" href="#1-state_db-lag_member_table-tlm_teamd" title="Permanent link">&para;</a></h3>
+<p><code>tlm_teamd</code> は <code>SubscriberStateTable</code> で <code>LAG_TABLE</code> の変化を受信すると (<code>main.cpp:L98-107</code>)、<code>teamdctl</code> の JSON dump (<code>teamdctl_mgr.get_dumps()</code>) を取得し <code>ValuesStore::update()</code> → <code>extract_values()</code> を呼び出す。このとき JSON dump に含まれる各メンバポートに対して <strong><code>STATE_DB::LAG_MEMBER_TABLE|&lt;lag_name&gt;|&lt;port&gt;</code></strong> エントリを生成・更新する (<code>values_store.cpp:L170-184</code>)。</p>
+<p>書き込まれるフィールドは <code>m_member_paths</code> (<code>values_store.h:L60-75</code>) で定義されている:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド (JSON パス)</th>
+<th>型</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ifinfo.dev_addr</code></td>
+<td>string</td>
+<td>メンバポートの MAC アドレス</td>
+</tr>
+<tr>
+<td><code>ifinfo.ifindex</code></td>
+<td>integer string</td>
+<td>メンバポートの ifindex</td>
+</tr>
+<tr>
+<td><code>link.up</code></td>
+<td>boolean string</td>
+<td>リンクが物理的に UP かどうか</td>
+</tr>
+<tr>
+<td><code>link_watches.list.link_watch_0.up</code></td>
+<td>boolean string</td>
+<td>link watch の状態</td>
+</tr>
+<tr>
+<td><code>runner.actor_lacpdu_info.port</code></td>
+<td>integer string</td>
+<td>LACP actor ポート番号</td>
+</tr>
+<tr>
+<td><code>runner.actor_lacpdu_info.state</code></td>
+<td>integer string</td>
+<td>LACP actor 状態フラグ</td>
+</tr>
+<tr>
+<td><code>runner.actor_lacpdu_info.system</code></td>
+<td>string</td>
+<td>LACP actor システム MAC</td>
+</tr>
+<tr>
+<td><code>runner.partner_lacpdu_info.port</code></td>
+<td>integer string</td>
+<td>LACP partner ポート番号</td>
+</tr>
+<tr>
+<td><code>runner.partner_lacpdu_info.state</code></td>
+<td>integer string</td>
+<td>LACP partner 状態フラグ</td>
+</tr>
+<tr>
+<td><code>runner.partner_lacpdu_info.system</code></td>
+<td>string</td>
+<td>LACP partner システム MAC</td>
+</tr>
+<tr>
+<td><code>runner.aggregator.id</code></td>
+<td>integer string</td>
+<td>aggregator ID</td>
+</tr>
+<tr>
+<td><code>runner.aggregator.selected</code></td>
+<td>boolean string</td>
+<td>aggregator が選択されているか</td>
+</tr>
+<tr>
+<td><code>runner.selected</code></td>
+<td>boolean string</td>
+<td>ポートが集約に選択されているか</td>
+</tr>
+<tr>
+<td><code>runner.state</code></td>
+<td>string</td>
+<td>LACP runner 状態 (<code>"defaulted"</code>, <code>"expired"</code> 等)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">LAG_TABLE エントリは削除しない</p>
+<p><code>ValuesStore::remove_keys_db()</code> (<code>values_store.cpp:L284-293</code>) は teamdctl dump 取得失敗時に古いキーを削除する際、<code>table_name == "LAG_TABLE"</code> のエントリをスキップする。<code>LAG_TABLE</code> の削除は teamsyncd の <code>RTM_DELLINK</code> 処理のみが担う設計。</p>
+</div>
+<h3 id="2-app_db-intf_table-intfmgrd">2. APP_DB <code>INTF_TABLE</code> への連鎖書き込み (intfmgrd — サブインタフェース)<a class="headerlink" href="#2-app_db-intf_table-intfmgrd" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> は <code>doPortTableTask()</code> (<code>intfmgr.cpp:L1244-1270</code>) で <code>LAG_TABLE</code> の変化を受信し、対象 LAG にサブインタフェース（<code>PortChannelN.VID</code> 形式）が存在する場合、以下の副次書き込みを行う:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド変化</th>
+<th>副次処理</th>
+<th>書き込み先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin_status</code> 変化</td>
+<td><code>updateSubIntfAdminStatus()</code> → <code>m_appIntfTableProducer.set(subIntf, ...)</code></td>
+<td>APP_DB <code>INTF_TABLE|PortChannelN.VID</code></td>
+</tr>
+<tr>
+<td><code>mtu</code> 変化</td>
+<td><code>updateSubIntfMtu()</code> → <code>m_appIntfTableProducer.set(subIntf, ...)</code></td>
+<td>APP_DB <code>INTF_TABLE|PortChannelN.VID</code></td>
+</tr>
+</tbody>
+</table>
+<p>これにより親 LAG の <code>admin_status</code> / <code>mtu</code> 変化がサブインタフェースに自動継承される (<code>intfmgr.cpp:L464-489, L407-461</code>)。</p>
+<h3 id="3-state_db-lag_table-intfmgrd">3. STATE_DB <code>LAG_TABLE</code> へのサブインタフェース用書き込み (intfmgrd)<a class="headerlink" href="#3-state_db-lag_table-intfmgrd" title="Permanent link">&para;</a></h3>
+<p>サブインタフェース (<code>PortChannelN.VID</code>) が正常に設定されると、<code>IntfMgr::setSubIntfStateOk()</code> (<code>intfmgr.cpp:L543-549</code>) が <code>m_stateLagTable.set(subIntfAlias, {{"state", "ok"}})</code> を呼ぶ。これにより <strong><code>LAG_TABLE|PortChannelN.VID</code></strong> エントリが STATE_DB に書かれ、さらに下流処理（nbrmgrd 等）の readiness ガードとして機能する。</p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/tlm_teamd/main.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss-common/common/subscriberstatetable.cpp</code>
+調査日: 2026-05-18
+詳細調査ノート: <code>meta/_intermediate/cdb-flow/portchannel-state-pubsub.md</code></p>
+</blockquote>
+<h3 id="subscriberstatetable">SubscriberStateTable の仕組み（共通基盤）<a class="headerlink" href="#subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p><code>SubscriberStateTable</code> はコンストラクタ内で Redis keyspace notification を PSUBSCRIBE し、テーブル変化を push 通知として受け取る (<code>subscriberstatetable.cpp:L20-24</code>)。<code>LAG_TABLE</code> に対するパターン:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>__keyspace@6__:LAG_TABLE|*
+</span></code></pre></div>
+<p>(STATE_DB の db_id = 6 — <code>database_config.json</code>)</p>
+<p>起動時には既存キーをすべて <code>m_buffer</code> に積んで初期同期を行う (<code>subscriberstatetable.cpp:L26-42</code>)。</p>
+<h3 id="tlm_teamd_1">tlm_teamd — 主要購読者<a class="headerlink" href="#tlm_teamd_1" title="Permanent link">&para;</a></h3>
+<p><code>tlm_teamd</code> (<code>main.cpp:L98-99</code>) は STATE_DB の <code>LAG_TABLE</code> を <code>SubscriberStateTable</code> で購読する唯一のプロセス:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">swss</span><span class="o">::</span><span class="n">SubscriberStateTable</span><span class="w"> </span><span class="nf">sst_lag</span><span class="p">(</span><span class="o">&amp;</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">STATE_LAG_TABLE_NAME</span><span class="p">);</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">s</span><span class="p">.</span><span class="n">addSelectable</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sst_lag</span><span class="p">);</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th><code>s.select()</code> 戻り値</th>
+<th>処理</th>
+<th>select タイムアウト</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OBJECT</code></td>
+<td><code>update_interfaces()</code> → <code>values_store.update(get_dumps(false))</code></td>
+<td>— (即時)</td>
+</tr>
+<tr>
+<td><code>TIMEOUT</code></td>
+<td><code>process_add_queue()</code> + <code>values_store.update(get_dumps(true))</code></td>
+<td><strong>1000 ms</strong> (<code>main.cpp:L68</code>)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>SET</code> イベント受信 → <code>mgr.add_lag(lag_name)</code> → 次の select で teamdctl dump を取得し <code>setup.*</code> / <code>runner.*</code> / <code>team_device.*</code> フィールドを STATE_DB に追記</li>
+<li><code>DEL</code> イベント受信 → <code>mgr.remove_lag(lag_name)</code> → teamdctl 接続を即時解除</li>
+<li>サブインタフェース (<code>VLAN_SUB_INTERFACE_SEPARATOR</code> を含むキー) は <code>update_interfaces()</code> 内でスキップ (<code>main.cpp:L34-37</code>)</li>
+</ul>
+<h3 id="intfmgrd">intfmgrd — 副次購読者（サブインタフェース管理）<a class="headerlink" href="#intfmgrd" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> (<code>intfmgr.cpp:L50-53</code>) も <code>STATE_LAG_TABLE_NAME</code> を <code>SubscriberStateTable</code> で購読する（priority=200）:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">subscriberStateLagTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">swss</span><span class="o">::</span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">stateDb</span><span class="p">,</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">        </span><span class="n">STATE_LAG_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">DEFAULT_POP_BATCH_SIZE</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>STATE_LAG_TABLE_NAME</code> の SET/DEL イベントを受信すると <code>doPortTableTask()</code> を呼び出し、親 LAG の <code>admin_status</code> / <code>mtu</code> 変化をサブインタフェース (<code>PortChannelN.VID</code>) の APP_DB <code>INTF_TABLE</code> にカスケード更新する (<code>intfmgr.cpp:L1183-1186</code>)。</p>
+<h3 id="vlanmgrd-stpmgrd-nbrmgrd">vlanmgrd / stpmgrd / nbrmgrd — ポーリング方式（非購読）<a class="headerlink" href="#vlanmgrd-stpmgrd-nbrmgrd" title="Permanent link">&para;</a></h3>
+<p><code>vlanmgrd</code> / <code>stpmgrd</code> / <code>nbrmgrd</code> は <code>SubscriberStateTable</code> による push 通知ではなく、各自タスクループ内で <code>m_stateLagTable.get(alias, temp)</code> を呼び出すポーリング方式。LAG_TABLE の変化通知は受け取らず、それぞれのトリガーイベント（VLAN_MEMBER SET・STP ポート追加等）発生時に現在値を参照する。</p>
+<h3 id="_7">通知フロー<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>teamsyncd: m_stateLagTable.set(lagName, fvVector)  [teamsync.cpp:L203]
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  │
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  └─ Redis keyspace notification: __keyspace@6__:LAG_TABLE|&lt;lag&gt;
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>       │
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>       ├─→ [tlm_teamd] select OBJECT → update_interfaces() → values_store.update()
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>       │     → STATE_DB LAG_TABLE に setup.*/runner.*/team_device.* 追記 (最大 1 秒遅延)
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>       │     → STATE_DB LAG_MEMBER_TABLE に各メンバフィールド書込み
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>       │
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>       └─→ [intfmgrd] stateLagConsumer → doPortTableTask()
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>             → APP_DB INTF_TABLE|PortChannelN.VID にカスケード更新
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>teamsyncd: m_stateLagTable.del(lagName)  [teamsync.cpp:L255]
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>  └─ Redis keyspace notification: DEL event
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>       ├─→ [tlm_teamd] mgr.remove_lag() → teamdctl 接続解除
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>       └─→ [intfmgrd] DEL イベント → サブインタフェース状態クリーンアップ
+</span></code></pre></div>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/portchannel-state-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p>STATE_DB <code>LAG_TABLE</code> への書き込みは Linux netlink (<code>RTM_NEWLINK</code> / <code>RTM_DELLINK</code>) と <code>teamdctl</code> UNIX ソケット経由の JSON dump に依存する。いずれも SAI を経由しないカーネル・ユーザー空間の仕組みであるため、プラットフォーム（ASIC ベンダー）差異は生じない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等)</td>
+<td>影響なし</td>
+<td><code>teamsyncd</code> は <code>libteam</code> + netlink のみを使用し SAI API を呼ばない。<code>teamsyncd.cpp</code> に SAI インクルードなし。フィールド値・書き込みタイミング・テーブル構造はすべての ASIC で同一</td>
+</tr>
+<tr>
+<td>multi-asic (namespace 分離構成)</td>
+<td>各 namespace で独立動作・差異なし</td>
+<td><code>teamsyncd</code> / <code>tlm_teamd</code> / <code>teammgrd</code> はいずれも <code>DBConnector("STATE_DB", 0)</code> を無引数で開く (<code>teamsyncd.cpp:L31-32</code>, <code>teammgrd.cpp:L48-50</code>, <code>tlm_teamd/main.cpp:L91</code>)。multi-asic 環境では各 namespace に独立インスタンスが起動し、同一ロジックで自 namespace の <code>LAG_TABLE</code> に書き込む</td>
+</tr>
+<tr>
+<td>VOQ chassis (Virtual Output Queue)</td>
+<td>影響なし</td>
+<td>VOQ chassis 固有の <code>SYSTEM_LAG_TABLE</code> / <code>SYSTEM_LAG_ID_TABLE</code> (<code>orchagent/lagids.lua</code>) は APPL_DB / CHASSIS_APP_DB 上のテーブルであり <code>STATE_DB::LAG_TABLE</code> とは別物。<code>teamsyncd</code> は VOQ 特有コードパスを持たず Linux netlink イベントに純粋に従う</td>
+</tr>
+<tr>
+<td>warm restart タイマー</td>
+<td>プラットフォーム非依存</td>
+<td><code>WarmStart::getWarmStartTimer(TEAMSYNCD_APP_NAME, "teamd")</code> でタイマー取得し、未設定時は <code>DEFAULT_WR_PENDING_TIMEOUT = 70</code> 秒を使用 (<code>teamsync.h:L16</code>)。タイマー値はプラットフォームではなく mgmt 設定に依存</td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/portchannel-state-platform.md</code> を参照。</p>
+<!-- /platform -->
+
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;LAG_TABLE|*&#39;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;LAG_TABLE|PortChannel0001&#39;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>teamdctl<span class="w"> </span>PortChannel0001<span class="w"> </span>state
 </span></code></pre></div>
 <div class="footnote">
 <hr />

@@ -25769,7 +25769,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -25791,7 +25830,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34948,7 +34987,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34970,7 +35048,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35279,8 +35357,84 @@
 </tbody>
 </table>
 <!-- /defaults -->
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd SmartSwitchModuleUpdater.update_dpu_state:864 / DpuStateUpdater.update_state:1303 / DpuStateManagerTask.task_worker:1482 / DpuChassisdDaemon.run:1537 -->
 
-<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p><code>DPU_STATE</code> は CHASSIS_STATE_DB への <strong>push 型</strong> 書き込みテーブルであり、CONFIG_DB テーブルとは異なる書込み順制約を持つ。以下の依存関係を守ること。</p>
+<h3 id="_7">依存関係サマリ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>set_initial_dpu_admin_state</code> → ポーリング開始</td>
+<td><strong>必須先行</strong> (初期化前にポーリングすると競合)</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>update_dpu_state('up')</code> → <code>DpuStateUpdater.update_state()</code></td>
+<td><strong>順序推奨</strong> (midplane up 後に CP/DP 評価)</td>
+<td>違反時は CP/DP が <code>down</code> のまま残る</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>SmartSwitchModuleUpdater.update_dpu_state('down')</code> → CP/DP 上書き禁止</td>
+<td><strong>上書き禁止</strong> (<code>'down'</code> SET は CP/DP を同時に <code>down</code> にする)</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>DpuStateUpdater.deinit()</code> → <code>SmartSwitchModuleUpdater.deinit()</code></td>
+<td><strong>推奨先行</strong> (CP/DP を <code>down</code> にしてから midplane 状態を変更)</td>
+<td>逆順でも実害なしだが論理上 midplane down 後に CP/DP down が正しい</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">詳細<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><strong>依存 1: 起動時初期化が先行 (必須)</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>set_initial_dpu_admin_state()  ← oper_status → DPU_STATE 初期値設定
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  ↓
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>ポーリングループ: module_updater.check_midplane_reachability()
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  ↓
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>DpuChassisdDaemon: dpu_updater.update_state()  ← 繰り返しポーリング
+</span></code></pre></div>
+<p><code>DpuChassisdDaemon.run()</code> (<code>chassisd:1537</code>) は <code>set_initial_dpu_admin_state()</code> (<code>chassisd:1432</code>) が完了した後にポーリングループへ入る。ポーリング開始前に DB が未初期化の場合、<code>hget</code> が <code>None</code> を返すため CP/DP 状態が正しく評価されない。</p>
+<p><strong>違反時</strong>: 初期化前にポーリングが動いた場合、<code>dpu_midplane_link_state</code> が未設定のまま <code>DpuStateUpdater</code> が <code>None</code> との比較を行い、意図しない状態遷移ログが出力される。</p>
+<p><strong>依存 2: midplane up 後に CP/DP を評価 (推奨順序)</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>SmartSwitchModuleUpdater.update_dpu_state(key, &#39;up&#39;)
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  ↓ midplane リンク UP を CHASSIS_STATE_DB に書き込む
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>DpuStateUpdater.update_state()  ← CP/DP 状態を評価して書き込む
+</span></code></pre></div>
+<p><code>update_dpu_state(key, 'up')</code> (<code>chassisd:864-891</code>) は <code>dpu_midplane_link_state</code> のみを更新し、CP/DP フィールドは変更しない。CP/DP の <code>up</code> 評価は <code>DpuStateUpdater.update_state()</code> (<code>chassisd:1303-1316</code>) が platform API または SYSTEM_READY / PORT oper_status を参照して行う。</p>
+<p>midplane が <code>up</code> になる前に <code>DpuStateUpdater</code> が評価を実行すると、platform API が midplane 経由の RPC で <code>NotImplementedError</code> を返す可能性があり、fallback ロジック（STATE_DB / CONFIG_DB ポート参照）に切り替わる。</p>
+<p><strong>違反時</strong>: 自動回復する。次の <code>update_state()</code> ポーリングまたは <code>DpuStateManagerTask</code> の再評価イベントで正しい状態に収束する。</p>
+<p><strong>依存 3: <code>'down'</code> 書込みは CP/DP を同時にリセット (上書き禁止)</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>SmartSwitchModuleUpdater.update_dpu_state(key, &#39;down&#39;)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  ↓ dpu_midplane_link_state, dpu_control_plane_state, dpu_data_plane_state を同時に &#39;down&#39; に設定
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>（DpuStateUpdater による後続書き込みは競合する）
+</span></code></pre></div>
+<p><code>update_dpu_state(key, 'down')</code> (<code>chassisd:882-884</code>) は CP/DP フィールドを <code>'down'</code> に強制設定する。その直後に <code>DpuStateUpdater.update_state()</code> が <code>up</code> を書き込むと状態が不整合になる。</p>
+<p><code>DpuStateManagerTask.task_worker()</code> (<code>chassisd:1517-1526</code>) は <code>DPU_STATE</code> 変化を検知して <code>update_required</code> フラグを立てるが、CP/DP の前回値と現在値が同一なら DB 書き込みをスキップする（<code>chassisd:1523-1525</code>）。</p>
+<p><strong>違反時</strong>: midplane <code>'down'</code> 後に CP/DP が誤って <code>'up'</code> に上書きされると、<code>show dpu</code> が <code>Partial Online</code> または <code>Online</code> を表示する誤表示が発生する。</p>
+<p><strong>依存 4: 終了時は CP/DP deinit → midplane deinit の順を推奨</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>DpuStateUpdater.deinit()  ← dpu_data_plane_state, dpu_control_plane_state を &#39;down&#39; に
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  ↓
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>（SmartSwitchModuleUpdater が midplane 状態を最後にクリア）
+</span></code></pre></div>
+<p><code>DpuStateUpdater.deinit()</code> (<code>chassisd:1318-1320</code>) は CP/DP を <code>'down'</code> にするが midplane は変更しない。論理的には「CP/DP が落ちた後に midplane が切れる」の順序が正しいが、<code>DpuChassisdDaemon.run()</code> (<code>chassisd:1558-1559</code>) では <code>dpu_state_mng.task_stop()</code> → <code>dpu_updater.deinit()</code> の順で CP/DP deinit が実行される。midplane の <code>'down'</code> 設定は <code>DpuStateManagerTask</code> の <code>SubscriberStateTable</code> 経由でトリガーされる。</p>
+<p><strong>違反時</strong>: 逆順でも機能上の問題は発生しないが、<code>show dpu</code> が終了処理中に瞬間的に <code>Partial Online</code> を表示する可能性がある。</p>
+<!-- /ordering -->
+
+<h2 id="_9">購読者<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>chassisd</code> (<code>SmartSwitchModuleUpdater</code> / <code>DpuStateUpdater</code>) — 書き込み元</li>
 <li><code>DpuStateManagerTask</code> — <code>SubscriberStateTable</code> で DPU_STATE 変化を検知し、CP/DP 状態の再評価をトリガー (chassisd:1482)</li>
@@ -35293,7 +35447,7 @@
 <li>関連 STATE_DB: <a href="../chassis-state/"><code>CHASSIS_STATE_DB 概要</code></a> — CHASSIS_STATE_DB 全テーブルの一覧</li>
 <li>関連 CLI: <code>show dpu</code></li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

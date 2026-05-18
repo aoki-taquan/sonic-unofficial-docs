@@ -22180,6 +22180,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#vrf" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36155,6 +36166,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#vrf" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37063,6 +37085,82 @@ APP_INTF_TABLE に記録される。</p>
 </ul>
 <p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/loopback-interface-ordering.md</code> 参照。</p>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>YANG leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB / 場所</th>
+<th>方向</th>
+<th>契機</th>
+<th>根拠コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_VRF_TABLE</code></td>
+<td>STATE_DB</td>
+<td>READ</td>
+<td><code>vrf_name</code> 指定時の readiness ガード。未登録なら処理をキューに戻してリトライ</td>
+<td><code>intfmgr.cpp</code> L839–842</td>
+</tr>
+<tr>
+<td><code>STATE_INTF_TABLE</code></td>
+<td>STATE_DB</td>
+<td>READ</td>
+<td>VRF 変更禁止チェック (<code>isIntfChangeVrf</code>)。既登録 VRF と異なる <code>vrf_name</code> 指定時に ERROR で拒否</td>
+<td><code>intfmgr.cpp</code> L846–849</td>
+</tr>
+<tr>
+<td><code>STATE_INTERFACE_TABLE</code></td>
+<td>STATE_DB</td>
+<td>READ</td>
+<td>IP プレフィクスロウ処理の前提確認 (<code>isIntfCreated</code>)。属性ロウ SET 完了前は IP アドレス設定をスキップしてリトライ</td>
+<td><code>intfmgr.cpp</code> L1115</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.switch_type</code></td>
+<td>CONFIG_DB</td>
+<td>READ (起動時 1 回)</td>
+<td>VOQ 判定。<code>voq</code> のとき IPv6 アドレス付与に <code>metric 256</code> を付与。起動後の変更は反映されない</td>
+<td><code>intfmgr.cpp</code> L70–75</td>
+</tr>
+<tr>
+<td><code>VRF</code> (VrfOrch 内部マップ経由)</td>
+<td>orchagent memory</td>
+<td>READ</td>
+<td>orchagent 側 VRF 存在確認。<code>m_vrfOrch-&gt;isVRFexists(vrf_name)</code> が false なら SET をリトライ</td>
+<td><code>intfsorch.cpp</code> L826–831</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.mac</code> → <code>gMacAddress</code></td>
+<td>CONFIG_DB (起動時)</td>
+<td>READ</td>
+<td><code>mac_addr</code> 省略時の SAI <code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code> フォールバック値</td>
+<td><code>intfsorch.cpp</code> L1205</td>
+</tr>
+<tr>
+<td><code>NAT_GLOBAL</code> → <code>gIsNatSupported</code></td>
+<td>CONFIG_DB (起動時)</td>
+<td>READ</td>
+<td><code>nat_zone</code> 指定時の NAT 有効判定。<code>gIsNatSupported==false</code> のとき SAI NAT zone 属性未設定</td>
+<td><code>intfsorch.cpp</code> L1287–1294</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">補足</p>
+<ul>
+<li><strong><code>STATE_*TABLE</code> 依存</strong> は YANG leafref には現れない実行時 readiness ガード。VRF が未 ready なら Consumer がエントリを保持して自動再試行する。</li>
+<li><strong><code>DEVICE_METADATA.switch_type</code> 依存</strong> は起動時 1 回読みのため、intfmgrd 起動後に <code>switch_type</code> を変更しても反映されない。</li>
+<li>VRF バインド・IP 削除ガードの詳細は <code>&lt;!-- implicit-refs --&gt;</code> セクション参照。</li>
+</ul>
+</div>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/loopback-interface-cross-refs.md</code> 参照。</p>
+<!-- /cross-refs -->
 
 <!-- implicit-refs -->
 <h2 id="vrf">暗黙参照 — VRF テーブルへの依存<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h2>

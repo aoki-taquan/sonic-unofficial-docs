@@ -22403,6 +22403,67 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込先サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radius-pam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RADIUS PAM 設定ファイル再生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netlink_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        カーネル netlink 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH 切断リスク
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#hostcfgd-systemd-interfaces-config" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36245,6 +36306,67 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込先サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radius-pam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RADIUS PAM 設定ファイル再生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netlink_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        カーネル netlink 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSH 切断リスク
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#hostcfgd-systemd-interfaces-config" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37115,8 +37237,102 @@
 </blockquote>
 <!-- /constants-phaseE -->
 
-<!-- phase-f -->
+<!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-host-services/scripts/hostcfgd L495-525,1626-1643,2345-2350; sonic-buildimage/files/image_config/interfaces/interfaces-config.sh; sonic-swss/cfgmgr/intfmgrd.cpp:28-35 -->
+
+<p><code>MGMT_INTERFACE</code> エントリの SET/DEL が CONFIG_DB に書き込まれると、<code>hostcfgd</code> の <code>mgmt_intf_handler</code> が 3 系統の副次処理を連鎖させる。APPL_DB / STATE_DB / ASIC_DB への直接書き込みは一切発生しない（eth0 は <code>intfmgrd</code> 非対象）。</p>
+<h3 id="_21">副次書込先サマリ<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次書込先</th>
+<th>テーブル / ファイル</th>
+<th>書込者</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ファイルシステム</td>
+<td><code>/etc/network/interfaces</code></td>
+<td><code>sonic-cfggen</code> (interfaces-config.sh)</td>
+<td>設定変化時</td>
+</tr>
+<tr>
+<td>カーネル netlink</td>
+<td>routing table / addr table</td>
+<td><code>ifupdown2</code></td>
+<td>常時</td>
+</tr>
+<tr>
+<td>RADIUS PAM conf</td>
+<td><code>/etc/pam_radius_auth.d/</code></td>
+<td><code>AaaCfg.modify_conf_file()</code></td>
+<td>RADIUS の <code>src_intf</code> または暗黙 NAS IP が eth0 を参照するとき</td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td>—</td>
+<td>eth0 は <code>intfmgrd</code> 非対象</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td>—</td>
+<td>eth0 は <code>intfmgrd</code> 非対象</td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td>なし</td>
+<td>—</td>
+<td>SAI 非経由</td>
+</tr>
+</tbody>
+</table>
+<h3 id="radius-pam">RADIUS PAM 設定ファイル再生成<a class="headerlink" href="#radius-pam" title="Permanent link">&para;</a></h3>
+<p><code>mgmt_intf_handler</code> (<code>hostcfgd:2345-2350</code>) は IP 変化のたびに <code>AaaCfg</code> の 2 メソッドを呼び出す。</p>
+<ul>
+<li><code>handle_radius_source_intf_ip_chg</code> (<code>L495</code>): <code>RADIUS_GLOBAL.src_intf</code> または <code>RADIUS_SERVER.&lt;addr&gt;.src_intf</code> が変更されたインターフェースを参照していた場合、<code>modify_conf_file()</code> で <code>/etc/pam_radius_auth.d/&lt;server&gt;</code> を再生成する</li>
+<li><code>handle_radius_nas_ip_chg</code> (<code>L512</code>): NAS IP が明示設定されていない場合（mgmt IP を暗黙使用するケース）、IP 変化時に <code>/etc/pam_radius_auth.d/</code> 全体を再生成する</li>
+</ul>
+<p>RADIUS 設定を保持しない環境では上記 2 メソッドはいずれも即 <code>return</code> するため副作用は発生しない。</p>
+<h3 id="netlink_2">カーネル netlink 書込<a class="headerlink" href="#netlink_2" title="Permanent link">&para;</a></h3>
+<p><code>ifupdown2</code> が <code>/etc/network/interfaces</code> を解釈し、カーネルへ netlink メッセージを発行する。</p>
+<table>
+<thead>
+<tr>
+<th>netlink 操作</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RTM_NEWADDR</code> / <code>RTM_DELADDR</code> (<code>ip addr add/del &lt;ip_prefix&gt; dev eth0</code>)</td>
+<td>常時</td>
+</tr>
+<tr>
+<td><code>RTM_NEWROUTE metric 201</code> (<code>ip route add default via &lt;gw&gt; dev eth0</code>)</td>
+<td><code>gwaddr</code> が有効な場合</td>
+</tr>
+<tr>
+<td><code>RTM_NEWROUTE table mgmt</code></td>
+<td><code>MGMT_VRF_CONFIG.mgmtVrfEnabled=true</code></td>
+</tr>
+<tr>
+<td><code>RTM_NEWROUTE</code> (forced routes)</td>
+<td><code>forced_mgmt_routes</code> 非空</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ssh">SSH 切断リスク<a class="headerlink" href="#ssh" title="Permanent link">&para;</a></h3>
+<p>eth0 の IP アドレスが変更される場合、<code>interfaces-config</code> サービス再起動中に eth0 の IP が一時的に解除される。SSH セッションが eth0 経由であれば接続が切断される点に注意。</p>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/mgmt-interface-side-effects.md</code> 参照。</p>
+<!-- /side-effects -->
+
+<!-- phase-f -->
+<h2 id="db-phase-f_1">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f_1" title="Permanent link">&para;</a></h2>
 <p><code>MGMT_INTERFACE</code> テーブルへの書込が発生すると、以下の副次処理が連鎖して行われる。</p>
 <h3 id="hostcfgd-systemd-interfaces-config">hostcfgd → systemd interfaces-config 経路<a class="headerlink" href="#hostcfgd-systemd-interfaces-config" title="Permanent link">&para;</a></h3>
 <p><code>hostcfgd</code> の <code>MgmtIfaceCfg.update_mgmt_iface()</code> が CONFIG_DB <code>MGMT_INTERFACE</code> の変化を検知し、<code>systemctl restart interfaces-config</code> を発行する<sup id="fnref:F1"><a class="footnote-ref" href="#fn:F1">2</a></sup>。</p>
