@@ -295,6 +295,32 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` (APPL_DB) の書き手・読み手が参照する他テーブルおよびリソースを整理する。
+本テーブルは lldp-syncd が **producer only** として書き込み、sonic-snmpagent / sonic-mgmt-common (lldp_app.go) が読み手として参照する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `PORT_TABLE` (APPL_DB) | 読み取り: OID→IF マッピング構築 | 常時。`LLDPRemTableUpdater.reinit_data()` が `init_sync_d_interface_tables()` 経由で参照。OID マップ不在ポートの LLDP エントリは SNMP walk に現れない | `ieee802_1ab.py:416-423`, `mibs/__init__.py:276-333` |
+| `MGMT_PORT_TABLE` (CONFIG_DB) | 読み取り: 管理ポートの alias 取得 | 管理ポート (`eth0` 等) のみ。データプレーンポートは APPL_DB `PORT_TABLE` 経由 | `ieee802_1ab.py:206-215` |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | 間接: lldpmgrd → lldpcli → LLDPDU TLV | 常時。`hostname` / `chassis_hostname` 変更時に `lldpcli configure system hostname` を実行。対向ノードの `lldp_rem_sys_name` に伝播 | `lldpmgrd:247-256, 308-310` |
+| `MGMT_INTERFACE` (CONFIG_DB) | 間接: lldpmgrd → lldpcli → LLDPDU TLV | 常時。管理 IP 変更時に `lldpcli configure system ip management pattern` を実行。対向ノードの `lldp_rem_man_addr` に伝播 | `lldpmgrd:228-245, 304-306` |
+| `PORT_TABLE.alias` (APPL_DB) | 間接: lldpmgrd → lldpcli → LLDPDU TLV | ポート up 時。alias / description を `lldpcli configure ports` で lldpd に設定。対向ノードの `lldp_rem_port_id` に伝播。alias 未設定時はポート名を使用 | `lldpmgrd:136-166, 300-325` |
+| `LLDP_LOC_CHASSIS` (APPL_DB) | 直接読み取り: SNMP lldpLocalSystemData | 常時。`LLDPLocalSystemDataUpdater` が `dbs_get_all` で全フィールドを取得して SNMP MIB に返す | `ieee802_1ab.py:114-146, 302-345` |
+
+!!! note "lldp_app.go の参照範囲"
+    `sonic-mgmt-common/translib/lldp_app.go` は `LLDP_ENTRY_TABLE` のみを参照する（`neighTs = &db.TableSpec{Name: "LLDP_ENTRY_TABLE"}`）。
+    `LLDP_LOC_CHASSIS` は参照せず、OpenConfig LLDP の local chassis 情報はスコープ外。
+
+!!! note "lldpmgrd の間接影響"
+    `lldpmgrd` は `LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` への直接書き込みを行わないが、
+    `DEVICE_METADATA` / `MGMT_INTERFACE` / `PORT_TABLE` の変化を lldpd に伝達することで
+    lldpd が送出する LLDPDU 内容を制御し、**対向ノードの** APPL_DB に書かれる値を間接的に決定する。
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルトと dead field
 
