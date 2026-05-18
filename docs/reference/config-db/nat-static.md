@@ -198,6 +198,49 @@ DEL STATIC_NAT|<global_ip>     # APPL_DB からも除去
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+STATIC_NAT エントリは CONFIG_DB → `natmgrd` → APPL_DB → `NatOrch` → SAI の 2 段階パイプラインで処理される。各段階での失敗パターンを以下に示す。
+
+### 段階 1: CONFIG_DB → natmgrd (`doStaticNatTask`) の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| `local_ip` フィールド欠落 | `natmgr.cpp:5902-5907` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし（永久 DROP） |
+| `nat_type` 値が `snat`/`dnat` 以外 | `natmgr.cpp:5954-5958` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
+| `global_ip` が特殊アドレス（Zero/BC/Loop/MC/Reserved） | `natmgr.cpp:5855-5861` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
+| `local_ip` が特殊アドレス | `natmgr.cpp:5944-5950` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
+| `global_ip` が `STATIC_NAPT` エントリと重複 | `natmgr.cpp:6007-6011` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
+| `global_ip` が `NAT_POOL` IP 範囲と重複 | `natmgr.cpp:6052-6056` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
+| 同一エントリ重複（key + `local_ip` が一致） | `natmgr.cpp:6067` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし（重複は無視） |
+| 未知フィールドあり (`nonValueFound=true`) | `natmgr.cpp:5897-5933` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
+| `NAT_GLOBAL.admin_mode != enabled` | `natmgr.cpp:1557-1560` (`isNatEnabled()`) | `addStaticNatEntry()` が即 return → APPL_DB 未反映 | admin_mode が `enabled` に変わると `addStaticNatEntries()` が自動再処理 |
+| DNAT エントリで対応インタフェース IP 未設定 | `natmgr.cpp:1564-1568` (`getIpEnabledIntf()`) | `addStaticNatEntry()` が即 return → APPL_DB 未反映 | インタフェース ready 時に `doNatIpInterfaceTask()` が `addStaticNatEntries()` を呼び自動再処理 |
+| iptables ルール追加失敗 | `natmgr.cpp` `addStaticSingleNatEntry()` | `SWSS_LOG_ERROR` のみ。APPL_DB への書き込みは先行済みで **取り消されない** | なし（iptables と APPL_DB が不整合のまま残る） |
+
+**キャッシュ保持と自動回復**: `doStaticNatTask()` が erase せずに `addStaticNatEntry()` が単に return したケース（`admin_mode` / インタフェース未 ready）では、エントリは `m_staticNatEntry` キャッシュに保持される。条件が解消された時点で natmgr が自動的に `addStaticNatEntries()` を呼び出し、キャッシュ全体を再処理する（`natmgr.cpp:3040`, `7640`）。
+
+### 段階 2: APPL_DB → NatOrch → SAI (`doNatTableTask` / `addNatEntry`) の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| APPL_DB `NAT_TABLE` のキーサイズ != 1 | `natorch.cpp:2636-2640` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
+| 重複エントリ（`m_natEntries` に既存） | `natorch.cpp:1873-1880` | INFO ログのみ、`return true`（無視） | なし |
+| dynamic SNAT エントリで `totalSnatEntries == maxAllowedSNatEntries` | `natorch.cpp:1886-1892` | `setTimeoutNotifier->send("AGEOUT-SINGLE-NAT")` を発行し `return true` | 間接的（ageout 後に再試行される可能性） |
+| `isNatEnabled() == false`（orchagent 側の NAT 無効） | `natorch.cpp:1910-1915` | `SWSS_LOG_WARN` + `return true`（エントリはキャッシュに保持） | `doNatGlobalTableTask()` で `admin_mode = enabled` 受信時に `addHwDnatEntry()` / `addHwSnatEntry()` が自動呼出し |
+| SAI `create_nat_entry` 失敗（ハードウェアエラー） | `natorch.cpp:774-786` (`addHwDnatEntry()`), `natorch.cpp:1307-1319` (`addHwSnatEntry()`) | `SWSS_LOG_ERROR` + `handleSaiCreateStatus()` + `parseHandleSaiStatusFailure()` → `return false` → `doNatTableTask()` で `it++`（保留） | SAI が解消されるまで無限 retry |
+| 不明 op type | `natorch.cpp:2672-2675` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
+
+**SAI 失敗時の retry**: `addNatEntry()` が `false` を返すと `doNatTableTask()` は `it++`（erase せず保留）する（`natorch.cpp:2661-2663`）。次の consumer tick で再試行されるため、SAI の一時的なリソース枯渇は自然に回復する。ただし `m_natEntries` キャッシュには既にエントリが追加されているため、再 SET 時に `Duplicate` と判定されて `return true` となり erase される点に注意（二重追加は発生しない）。
+
+### STATE_DB / エラー通知
+
+NAT パスには STATE_DB へのステータス書き込みはない。orchagent は `SWSS_LOG_ERROR` / `SWSS_LOG_WARN` で syslog にのみ記録する。`ERROR_TABLE` への書き込みも行われない。失敗の確認は syslog (`/var/log/syslog` の `natorch` / `natmgrd` エントリ) を参照すること。
+
+> **証跡**: `natmgr.cpp:doStaticNatTask` L5813-6136、`addStaticNatEntry()` L1548-1590、`addStaticSingleNatEntry()` L1992-2064、`natorch.cpp:doNatTableTask` L2617-2681、`addNatEntry()` L1866-1937、`addHwDnatEntry()` L738-800、`addHwSnatEntry()` L1271-1330。
+<!-- /failure -->
+
 ## silent drop / discrepancy
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doStaticNatTask L5810-6136 / sonic-utilities/config/nat.py add_basic L240-329 / sonic-nat.yang L117-155 -->
