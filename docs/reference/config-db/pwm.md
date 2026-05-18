@@ -237,6 +237,50 @@ APPL_DB の `WATERMARK_CLEAR_REQUEST` 通知チャネルで使用される `data
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 (2026-05-18)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/pwm-side-effects.md`
+
+`WATERMARK_TABLE|TELEMETRY_INTERVAL` および `FLEX_COUNTER_TABLE` への書込みが引き起こす、CONFIG_DB 以外の DB への副次的な書込みと SAI 呼び出しを示す。
+
+### タイマー tick — COUNTERS_DB `PERIODIC_WATERMARKS` への自動ゼロクリア
+
+telemetry タイマーが満了するたびに `clearSingleWm()` が呼ばれ、`COUNTERS_DB` の `PERIODIC_WATERMARKS` テーブルに **0** を書き込む。
+
+| 対象 DB / テーブル | フィールド | 書込内容 | トリガー |
+|-----------------|---------|---------|---------|
+| COUNTERS_DB / `PERIODIC_WATERMARKS` | `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` (全 PG OID) | `"0"` | telemetry タイマー満了ごと (`watermarkorch.cpp:259-261`) |
+| COUNTERS_DB / `PERIODIC_WATERMARKS` | `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` (全 PG OID) | `"0"` | telemetry タイマー満了ごと (`watermarkorch.cpp:262-265`) |
+| COUNTERS_DB / `PERIODIC_WATERMARKS` | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` (全ユニキャストキュー OID) | `"0"` | telemetry タイマー満了ごと (`watermarkorch.cpp:266-269`) |
+| COUNTERS_DB / `PERIODIC_WATERMARKS` | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` (全マルチキャストキュー OID) | `"0"` | telemetry タイマー満了ごと (`watermarkorch.cpp:270-273`) |
+| COUNTERS_DB / `PERIODIC_WATERMARKS` | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` (全キュー OID) | `"0"` | telemetry タイマー満了ごと (`watermarkorch.cpp:274-277`) |
+| COUNTERS_DB / `PERIODIC_WATERMARKS` | `SAI_BUFFER_POOL_STAT_WATERMARK_BYTES` (全バッファプール) | `"0"` | telemetry タイマー満了ごと (`watermarkorch.cpp:278-281`) |
+| COUNTERS_DB / `PERIODIC_WATERMARKS` | `SAI_BUFFER_POOL_STAT_XOFF_ROOM_WATERMARK_BYTES` (全バッファプール) | `"0"` | telemetry タイマー満了ごと (`watermarkorch.cpp:282-285`) |
+
+**`interval` の変更**はゼロクリア頻度を変化させる。短くすると PERIODIC_WATERMARKS がより頻繁にリセットされる。
+
+### 手動クリア — COUNTERS_DB `PERSISTENT_WATERMARKS` / `USER_WATERMARKS`
+
+`watermarkcfg clear` CLI が APPL_DB `WATERMARK_CLEAR_REQUEST` 通知チャネルへ送信すると、`WatermarkOrch::doTask(NotificationConsumer)` が対応する COUNTERS_DB テーブルをゼロクリアする。
+
+| `op` 値 | `data` 値 | 対象 DB / テーブル | 書込内容 |
+|---------|---------|-----------------|---------|
+| `"PERSISTENT"` | `"PG_HEADROOM"` | COUNTERS_DB / `PERSISTENT_WATERMARKS` | `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` = `"0"` |
+| `"PERSISTENT"` | `"PG_SHARED"` | COUNTERS_DB / `PERSISTENT_WATERMARKS` | `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` = `"0"` |
+| `"PERSISTENT"` | `"Q_SHARED_UNI"` | COUNTERS_DB / `PERSISTENT_WATERMARKS` | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES`（ユニキャスト） = `"0"` |
+| `"PERSISTENT"` | `"BUFFER_POOL"` | COUNTERS_DB / `PERSISTENT_WATERMARKS` | `SAI_BUFFER_POOL_STAT_WATERMARK_BYTES` = `"0"` |
+| `"USER"` | (上記と同じ) | COUNTERS_DB / `USER_WATERMARKS` | 同フィールドを `"0"` クリア |
+
+`PERIODIC_WATERMARKS` は手動クリア対象外。telemetry タイマーのみがリセットする。
+
+### SAI 呼び出し
+
+`WATERMARK_TABLE|TELEMETRY_INTERVAL` への書込みは SAI を直接呼び出さない。orchagent が COUNTERS_DB へ書き込むことで flex_counter が SAI 統計を読み出すタイミングと周期が間接的に制御される。SAI への直接操作は `clearSingleWm()` からは行われない（Redis テーブルへの書き込みのみ）。
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
