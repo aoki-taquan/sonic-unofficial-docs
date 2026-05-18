@@ -147,6 +147,31 @@ YANG leafref スキャン (`sonic-route-map.yang`, `sonic-bgp-common.yang`, `son
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> **調査根拠**: `sonic-route-map.yang:125-134,269-273`; `frrcfgd.py` 全文 grep (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-failure.md`
+
+ROUTE_MAP_SET テーブルには **購読デーモンが存在しない**。frrcfgd・bgpcfgd・orchagent のいずれも本テーブルを購読しないため、「デーモンが書き込みを処理してエラーを返す」形式の失敗パスは存在しない。
+
+### SET / DEL 失敗マトリクス
+
+| 操作 | 条件 | 動作 | 備考 |
+|------|------|------|------|
+| ROUTE_MAP_SET エントリ SET | gNMI / NETCONF 経由かつ ROUTE_MAP.call_route_map から参照中の name と重複 | YANG leafref 整合性違反として拒否 | sonic-db-cli 直接書き込みではバイパス |
+| ROUTE_MAP_SET エントリ DEL | gNMI / NETCONF 経由かつ ROUTE_MAP.call_route_map が参照中 | YANG leafref 参照先削除として拒否 | sonic-db-cli では拒否されず Redis から削除される |
+| ROUTE_MAP_SET エントリ SET | sonic-db-cli 直接書き込み | 常に成功（YANG 検証なし） | 購読デーモンがないため副作用なし |
+| 存在しない ROUTE_MAP_SET を参照する ROUTE_MAP の FRR 反映 | frrcfgd が call_route_map 値をそのまま vtysh に渡す | FRR が `% Unknown command` 等で拒否 → `LOG_ERR` + `continue` | frrcfgd の実行時チェックなし (`frrcfgd.py:1942`) |
+
+### ステータス書き戻しなし
+
+ROUTE_MAP_SET への SET/DEL の成否は CONFIG_DB に書き戻されない。YANG 検証エラーは gNMI/NETCONF のレスポンスで返されるのみ。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-route-map.yang:125-134 (ROUTE_MAP_SET_LIST 定義、must 句なし) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-route-map.yang:269-273 (call_route_map leafref) -->
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

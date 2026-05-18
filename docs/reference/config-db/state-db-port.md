@@ -174,6 +174,32 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+書き込みデーモン (`portsyncd` / `PortsOrch`) が STATE_DB へ書き込む前に暗黙的に参照・依存する CONFIG_DB / APPL_DB / STATE_DB テーブルおよび外部コンポーネントを示す。
+
+### portsyncd (linksync.cpp) の前提参照
+
+| 参照先テーブル / コンポーネント | 参照方向 | 条件 | evidence |
+|--------------------------------|---------|------|---------|
+| APPL_DB `PORT_TABLE` (`APP_PORT_TABLE_NAME`) | `m_portTable.get(key, temp)` で RTM_NEWLINK 受信ごとにエントリ存在確認 | キーが存在しないとき STATE_DB への書き込みをスキップ。orchagent の APPL_DB 初期化が完了していない起動初期は STATE_DB 書き込みが発生しない | linksync.cpp:193 |
+
+### PortsOrch (portsorch.cpp) の前提参照
+
+| 参照先テーブル / コンポーネント | 参照方向 | 条件 | evidence |
+|--------------------------------|---------|------|---------|
+| APPL_DB `PORT_TABLE` (`PortConfigDone` / `PortInitDone`) | `m_portTable->hget("PortConfigDone", "count", value)` / `m_portTable->get("PortInitDone", ...)` | 両エントリが揃うまでポート初期化ループを進めず、STATE_DB への `supported_speeds` / `supported_fecs` 等の書き込みも発生しない | portsorch.cpp:4342–4357 |
+| STATE_DB `TRANSCEIVER_INFO` (`STATE_TRANSCEIVER_INFO_TABLE_NAME`) | `SubscriberStateTable` として購読。SET/DEL イベントで `doTransceiverPresenceCheck()` を呼び出す | `m_cmisModuleAsicSyncSupported = true` の CMIS 対応環境のみ有効。このパスを経由して `host_tx_ready` が制御される。CMIS 非対応環境では購読しない | portsorch.cpp:984, 6498–6501 |
+| APPL_DB `_GEARBOX_TABLE` | `GearboxUtils::isGearboxEnabled()` で Gearbox 有無を判定し、`hset` で oper speed を書き込み | Gearbox が有効な環境では `setPortAdminStatus()` の成功判定に Gearbox ステータスを含め、STATE_DB `host_tx_ready` の更新タイミングが変化する | portsorch.cpp:775, 2246, 3422, 10375–10376 |
+| CONFIG_DB `WARM_RESTART` テーブル | `WarmStart::isWarmStart()` 経由でコンストラクタ時に参照 | warm start モードの場合、既存 APPL_DB エントリから `oper_status` を読み出してポートを復元するフローになる。cold boot 時と初期化順序が異なる | portsorch.cpp:753, 6610–6618 |
+
+!!! note "CMIS 環境での `host_tx_ready` 制御の切り替え"
+    `m_cmisModuleAsicSyncSupported` が `true` の場合、`PortsOrch` は `setPortAdminStatus()` 内で `host_tx_ready` を直接書き込まず、SAI コールバック `on_port_host_tx_ready` (portsorch.cpp:977) と `TRANSCEIVER_INFO` 購読経由でのみ書き込む。この切り替えにより `host_tx_ready = "true"` の到達タイミングが非 CMIS 環境と異なるため、consumer は環境依存の遅延を考慮する必要がある。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/state-db-port-cross-refs.md`
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト（Phase A — コード由来）
 

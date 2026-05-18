@@ -265,39 +265,37 @@ VRFOrch: STATE_DB VRF_OBJECT_TABLE|<name> DEL
 ## 暗黙参照テーブル (Phase C)
 
 > 調査日 2026-05-18。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vxlanmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`
-> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-ordering.md`
+> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-cross-refs.md`
 
-`VRF_TABLE` / `VRF_OBJECT_TABLE` の書込みトリガ・キー値・フィールド値が暗黙的に依存する入力テーブルとプロセス内状態を示す。
+本ページの 2 テーブルはいずれも **YANG 未モデル化のオペレーショナルテーブル**。
+`VRF_TABLE` の書き手は `vrfmgrd`、`VRF_OBJECT_TABLE` の書き手は `VRFOrch` のみである。
+以下の暗黙参照は、各テーブルの生成トリガ・読み手・依存関係を示す。
 
-| 参照方向 | このテーブル | 相手テーブル / リソース | 条件 | ソース evidence |
-|---------|------------|----------------------|------|----------------|
-| vrfmgrd → VRF_TABLE | `VRF_TABLE\|<name>` | `CONFIG_DB:VRF\|<name>` | SET/DEL トリガ。VRF 名はそのまま STATE_DB キーへ転写 | vrfmgr.cpp:289, 339 |
-| vrfmgrd → VRF_TABLE | `VRF_TABLE\|<name>` | `CONFIG_DB:MGMT_VRF_CONFIG\|vrf_global` | mgmt VRF 設定も同一 vrfmgrd パスで処理。`mgmt` キーで書込み | vrfmgr.cpp:323-324 |
-| vrfmgrd → VRF_TABLE | `VRF_TABLE\|<name>` | `CONFIG_DB:VNET\|<name>` | VNET も vrfmgrd が同ロジックで `VRF_TABLE` 書込み。VNET 名がキー | vrfmgr.cpp:308, 351 |
-| VRFOrch → VRF_OBJECT_TABLE | `VRF_OBJECT_TABLE\|<name>` | `APP_DB:VRF_TABLE\|<name>` | APP_DB への VRF_TABLE SET/DEL が VRFOrch の処理トリガ | vrforch.cpp:87-121, orchdaemon.cpp:283 |
-| VRFOrch → VRF_OBJECT_TABLE | `VRF_OBJECT_TABLE\|<name>` | SAI `sai_virtual_router_api` | `create_virtual_router()` / `remove_virtual_router()` 成否に直結。SAI 成功時のみ hset | vrforch.cpp:96-120, 173-193 |
-| intfmgrd ← VRF_TABLE | — | `VRF_TABLE\|<name>` | intfmgrd が `isIntfStateOk()` で `VRF_TABLE` 存在を gate として参照。エントリなければ VRF バインドを defer | intfmgr.cpp:671, 680 |
-| vxlanmgr ← VRF_TABLE | — | `VRF_TABLE\|<name>` | vxlanmgr が `isVrfStateOk()` で `VRF_TABLE` 存在を gate として参照。VXLAN-VRF マッピング設定を defer | vxlanmgr.cpp:328, 744 |
-| vrfmgrd ← VRF_OBJECT_TABLE | — | `VRF_OBJECT_TABLE\|<name>` | DEL 時 vrfmgrd が `isVrfObjExist()` で polling。存在する間は `m_toSync` 再キュー | vrfmgr.cpp:331, 342 |
+### `VRF_TABLE` の読み手（readiness consumer）
 
-### 参照関係サマリ
+| 読み手プロセス | 参照方法 | 待機条件 | evidence |
+|-------------|---------|---------|---------|
+| `intfmgrd` | `m_stateVrfTable.get(alias, temp)` | `*_INTERFACE.vrf_name` が設定されているとき VRF が STATE_DB に存在するまで VRF バインドを `m_toSync` に保留 | `intfmgr.cpp:671, 680` |
+| `vxlanmgr` | `isVrfStateOk()` → `m_stateVrfTable.get(vrfName, temp)` | `VNET` テーブルで VRF が指定されているとき、VRF_TABLE にエントリが現れるまで VXLAN マッピング設定を保留 | `vxlanmgr.cpp:328, 744` |
 
-```
-CONFIG_DB:VRF|<name>  (または MGMT_VRF_CONFIG / VNET)
-  │
-  ▼ SET/DEL トリガ
-vrfmgrd::doTask()
-  ├─ [書込み] STATE_DB:VRF_TABLE|<name>  {state="ok"}
-  │     ├─ consumer: intfmgrd (isIntfStateOk gate)
-  │     └─ consumer: vxlanmgr (isVrfStateOk gate)
-  └─ [書込み] APP_DB:VRF_TABLE|<name>
-        │
-        ▼ Orch 処理トリガ
-      VRFOrch::addOperation() / delOperation()
-        └─ SAI sai_virtual_router_api
-              └─ [書込み] STATE_DB:VRF_OBJECT_TABLE|<name>  {state="ok"}
-                    └─ consumer: vrfmgrd (isVrfObjExist polling, DEL 時)
-```
+### `VRF_OBJECT_TABLE` の読み手（削除同期 consumer）
+
+| 読み手プロセス | 参照方法 | 待機条件 | evidence |
+|-------------|---------|---------|---------|
+| `vrfmgrd` | `isVrfObjExist()` → `m_stateVrfObjectTable.get(vrfName, temp)` | VRF 削除時に `VRFOrch` が SAI VR を削除して `VRF_OBJECT_TABLE` が消えるまで APP_DB DEL と Linux VRF 削除を保留 | `vrfmgr.cpp:208, 331, 342` |
+
+### 書き手と生成トリガ
+
+| テーブル | 書き手 | SET トリガ | DEL トリガ |
+|---------|--------|-----------|----------|
+| `VRF_TABLE` | `vrfmgrd` | CONFIG_DB `VRF`/`VNET` SET 受信 → Linux VRF デバイス作成後 | `isVrfObjExist()` が false になった後（vrfmgr.cpp:339, 351） |
+| `VRF_OBJECT_TABLE` | `VRFOrch` | SAI `create_virtual_router()` 成功後 | SAI `remove_virtual_router()` 成功後（vrforch.cpp:193） |
+
+!!! note "VNET VRF は VRF_OBJECT_TABLE を書かない"
+    `VNETOrch` は `VRF_TABLE` には書き込まない。`VRFOrch` も VNET VRF に対して SAI VR を作成しないため、VNET 起源の VRF では `VRF_OBJECT_TABLE` エントリが存在しない（vrfmgr.cpp:316–317 コメント参照）。この非対称性は mgmt VRF と VNET VRF の両方に共通する。
+
+!!! note "orchagent クラッシュ時の stale エントリリスク"
+    `VRFOrch` が SAI VR 削除中にクラッシュした場合、`VRF_OBJECT_TABLE|<name>` が残留し `vrfmgrd` の削除待機ループが永続的にブロックされる。warm start なしの orchagent 再起動で解消（orchagent 起動時に既存エントリを参照し再処理を行う）。
 
 <!-- /cross-refs -->
 
