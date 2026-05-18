@@ -332,6 +332,62 @@ self.directory.subscribe([(self.db_name, "SRV6_MY_LOCATORS", locator_name)], sel
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム制約 (Phase H)
+
+> 根拠: `bgpcfgd/managers_srv6.py` L37-53, L47、`frrcfgd/frrcfgd.py` L2732-2744、`srv6orch.cpp` L104-107, L331-350 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-platform.md`
+
+### SAI 非依存テーブル（ハードウェア制約なし）
+
+`SRV6_MY_LOCATORS` は CONFIG_DB から FRR (zebra) へのソフトウェア通知専用テーブルであり、SAI / ASIC への書込みを直接引き起こさない。`Srv6Orch` は `m_locatorCfgTable` を GET 専用（`Table` 型）でのみ保持し (`srv6orch.cpp:107`)、ロケータそのものを SAI オブジェクトとして作成・削除しない。
+
+したがって、`SRV6_MY_LOCATORS` の適用可否にプラットフォーム固有のハードウェアケイパビリティ照会は不要。ASIC が SRv6 My-SID をサポートするか否かに関わらず、ロケータエントリは常に FRR へ通知できる。
+
+### `behavior usid` の暗黙強制（bgpcfgd 経路）
+
+`locators_set_handler()` (`managers_srv6.py:47`) は FRR コマンドに `"behavior usid"` を無条件で付加する:
+
+```python
+cmd_list += ['locators',
+             'locator {}'.format(locator_name),
+             'prefix {} block-len {} node-len {} func-bits {}'.format(...),
+             "behavior usid"    # ← ハードコード
+]
+```
+
+これにより FRR は当該ロケータを uSID（Micro-SID、RFC 9252）モードで扱う。CONFIG_DB に `behavior` フィールドは存在せず、変更手段はない。`frrcfgd` 経由の場合は `behavior usid` が付加されないため、2 経路で FRR への通知内容が異なる（後述）。
+
+### bgpcfgd と frrcfgd で FRR コマンドが異なる
+
+| 項目 | bgpcfgd パス | frrcfgd パス |
+|------|------------|------------|
+| `behavior usid` | **付加あり** (`managers_srv6.py:47`) | **なし**（`frrcfgd.py:2738-2744` — prefix/block/node/func-bits のみ） |
+| `arg_len`（`arg_len` > 0 時） | FRR コマンドに含めない | FRR コマンドに含めない（両者とも省略） |
+| プレフィックス形式 | `str` — bgpcfgd が `block_len + node_len` ビット長を付加した文字列 | `prefix.data` — swsscommon 型オブジェクトの `.data` 属性（ビット長は別引数） |
+
+FRR 設定の冪等性により両者が同じロケータを設定する場合は実害が出にくいが、bgpcfgd パスのみが `behavior usid` を設定するため、frrcfgd を通じて設定された場合は FRR がロケータを通常 SRv6 モード（非 uSID）として扱う可能性がある。
+
+### IPv6 専用（アドレスファミリ制約）
+
+`prefix` フィールドは `sonic-srv6.yang` で `inet:ipv6-prefix` 型として定義されており、IPv4 アドレスは受け付けない。SRv6 の仕様上 IPv6 のみをサポートするため、プラットフォームは IPv6 フォワーディングが有効である必要がある。
+
+### `arg_len` フィールドの FRR 未対応
+
+`managers_srv6.py` の FRR コマンド生成は `block-len`・`node-len`・`func-bits` の 3 パラメータのみを送信し、`arg_len` を FRR コマンドに含めない。FRR の `locator` コマンドが `args-bits`（または相当オプション）をサポートしているかは FRR バージョン依存であり、SONiC コードは引き渡しを行わない設計となっている。`arg_len` はロケータの SAI エントリ（`srv6orch.cpp:339-349`）でのみ利用される。
+
+### プラットフォーム制約まとめ
+
+| 機能 / 制約 | 内容 | 検出タイミング |
+|------------|------|--------------|
+| SAI / ASIC ケイパビリティ照会 | 不要（ロケータは FRR 専用、SAI 直接操作なし） | 該当なし |
+| `behavior usid` 強制 | bgpcfgd 経路では必ずロケータが uSID モードで設定される | 起動時・設定適用時 |
+| IPv6 必須 | `prefix` は `inet:ipv6-prefix` 型のみ | YANG バリデーション時 |
+| `arg_len` FRR 未対応 | arg_len は Srv6Orch (SAI) にのみ反映、FRR コマンドには含まれない | なし（サイレント無視） |
+| frrcfgd / bgpcfgd コマンド差異 | frrcfgd は `behavior usid` を送らない | FRR locator 設定確認時（`show segment-routing srv6 locator`） |
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: SRv6 YANG モデル: `sonic-srv6.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-srv6.yang>
