@@ -184,6 +184,56 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 
 <!-- /ordering (Phase B) -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`VRRP` / `VRRP6` テーブルは YANG leafref と CLI 実行時チェックの 2 系統で外部テーブルを参照する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-cross-refs.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-cross-refs.md)。
+
+### YANG leafref (VRRP / VRRP6 — `ifname` フィールド)
+
+`VRRP_LIST.ifname` / `VRRP6_LIST.ifname` は union leafref で以下 4 テーブルのいずれかを参照。`sonic-yang-mgmt` / gNMI 経路でバリデーション。
+
+| 参照先テーブル | フィールド | 条件 | evidence |
+|---|---|---|---|
+| `INTERFACE` | `INTERFACE_LIST/portname` | `Ethernet*` 系インタフェース | `sonic-vrrp.yang` L65–67, L190–192 |
+| `PORTCHANNEL_INTERFACE` | `PORTCHANNEL_INTERFACE_LIST/pch_name` | `PortChannel*` 系 | `sonic-vrrp.yang` L68–70, L193–195 |
+| `VLAN_INTERFACE` | `VLAN_INTERFACE_LIST/vlanName` | `Vlan*` 系 | `sonic-vrrp.yang` L71–73, L196–198 |
+| `VLAN_SUB_INTERFACE` | `VLAN_SUB_INTERFACE_LIST/id` | サブインタフェース (e.g. `Ethernet0.10`) | `sonic-vrrp.yang` L74–76, L199–201 |
+
+### YANG leafref (VRRP_TRACK / VRRP6_TRACK)
+
+| フィールド | 参照先テーブル | evidence |
+|---|---|---|
+| `baseifname` | `VRRP_LIST/ifname` (親 VRRP インスタンス) | `sonic-vrrp.yang` L144–146 |
+| `idkey` | `VRRP_LIST/idkey` (親 VRRP インスタンス) | `sonic-vrrp.yang` L150–152 |
+| `trackifname` | `PORT/PORT_LIST/ifname` | `sonic-vrrp.yang` L158–160 |
+| `trackifname` | `PORTCHANNEL/PORTCHANNEL_LIST/name` | `sonic-vrrp.yang` L161–163 |
+| `trackifname` | `VLAN/VLAN_LIST/name` | `sonic-vrrp.yang` L164–166 |
+| `trackifname` | `VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/id` | `sonic-vrrp.yang` L167–169 |
+
+(`VRRP6_TRACK` も同様に `VRRP6_LIST` を参照、`sonic-vrrp.yang` L263–291)
+
+### CLI 実行時存在確認 (config/main.py)
+
+YANG バリデーションとは独立して CLI が `get_table()` で存在確認を行う。
+
+| 確認対象テーブル | 確認タイミング | 失敗時の挙動 | evidence |
+|---|---|---|---|
+| `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` | VRRP インスタンス作成時 | `ctx.fail("Router Interface '{}' not found")` で永続拒絶 | `config/main.py` L6886–6890 |
+| `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` | VRRP_TRACK 追加時 (基底 IF) | `ctx.fail("Router Interface '{}' not found")` | `config/main.py` L7000–7006 |
+| `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` | VRRP_TRACK 追加時 (追跡 IF) | `ctx.fail("Router Interface '{}' not found")` | `config/main.py` L7007–7014 |
+
+### データ流出先
+
+`macvlanmgrd` が CONFIG_DB.VRRP / VRRP6 変更を受けて書き込む先:
+
+| 書き込み先 | 後続 Consumer |
+|---|---|
+| `APPL_DB.VRRP_TABLE` (VMAC・インタフェース情報) | `intforch` → VIP / VMAC エントリを `ASIC_DB` へ |
+| Linux macvlan デバイス (カーネル) | `vrrpsyncd` → `APPL_DB.INTF_TABLE` → `intforch` → `ASIC_DB` |
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: VRRP Adaptation HLD: `sonic-net/SONiC`, `doc/vrrp/VRRP_Adaptation_HLD.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/vrrp/VRRP_Adaptation_HLD.md>
