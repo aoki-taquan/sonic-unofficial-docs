@@ -275,3 +275,28 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 **minigraph による MGMT_PORT + MGMT_INTERFACE のアトミック書込み (依存 #3)**: `minigraph.py:2281-2308` では `results['MGMT_PORT']`・`results['MGMT_INTERFACE']`・`results['MGMT_VRF_CONFIG']` を同一関数 `parse_device_desc_xml()` 内で生成し、`sonic-cfggen` が CONFIG_DB へ一括書込みする。この経路では 3 テーブルの書込み順はほぼ同時であり実用上の問題は生じない。一方、REST/gNMI 経路では MGMT_PORT トランスフォーマーが未実装であるため (`sonic-mgmt-common`)、MGMT_PORT への書込みは minigraph または手動 CLI のみとなっている。
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mgmt-port-cross-refs.md`
+
+MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定ファイルへの実装上の依存は `lldpd.conf.j2` と `sonic-snmpagent` の 2 系統に集中する。
+
+| 参照元 | 参照先 DB / テーブル | 方向 | 契機 | 根拠コード |
+|--------|---------------------|------|------|-----------|
+| `lldpd.conf.j2` | `CONFIG_DB MGMT_PORT[name].alias` | READ | LLDP デーモン設定ファイル生成時。`alias` が存在すれば `configure ports eth0 lldp portidsubtype local <alias>` を生成。`alias` 未設定時は `mgmt_if.port_name`（`eth0`）をフォールバック使用 | `lldpd.conf.j2:17-20` |
+| `lldpd.conf.j2` | `CONFIG_DB MGMT_INTERFACE` (pfx_filter) | READ | `mgmt_if.port_name` を解決するために MGMT_INTERFACE を先読み。MGMT_INTERFACE が空の場合 LLDP 管理 IF ブロック自体が生成されない | `lldpd.conf.j2:2-12` |
+| `mgmt_oper_status.py` | `CONFIG_DB MGMT_PORT\|*` | READ | 管理ポートキーを列挙し `STATE_DB MGMT_PORT_TABLE\|<port>` へ全フィールドを同期。エントリ不在時は STATE_DB を更新せず終了 | `mgmt_oper_status.py:16-37` |
+| `sonic_ax_impl/mibs/__init__.py` | `CONFIG_DB MGMT_PORT\|*` | READ | SNMP MIB の `if_alias_map` 構築。`alias` フィールドを取得し、省略時は `if_name`（`eth0`）をフォールバック | `mibs/__init__.py:256-270` |
+| `sonic_ax_impl/mibs/__init__.py` | `STATE_DB MGMT_PORT_TABLE\|*` | READ | oper_status および speed / alias を SNMP OID テーブルへ展開 | `mibs/__init__.py:196-202` |
+
+!!! note "MGMT_INTERFACE との連動"
+    `lldpd.conf.j2` は MGMT_PORT の `alias` を参照する前に **MGMT_INTERFACE** テーブルをループして `port_name` を取得する。
+    MGMT_INTERFACE が未設定の場合、MGMT_PORT の `alias` フィールドは LLDP 設定に反映されない（テンプレートブロック自体がスキップされる）。
+
+!!! note "SNMP は CONFIG_DB を直接参照"
+    `sonic_ax_impl` は STATE_DB の `MGMT_PORT_TABLE` だけでなく、CONFIG_DB の `MGMT_PORT` も直接参照して `alias` を取得する。
+    STATE_DB の同期（`mgmt_oper_status.py`）が遅延している場合でも、SNMP の `alias` 返却は CONFIG_DB から即座に取得されるため影響を受けない。
+
+<!-- /cross-refs -->
