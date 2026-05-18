@@ -388,4 +388,50 @@ STATE_DB: PORT_TABLE|<ifname>.netdev_oper_status = "up"
 
 <!-- /ordering -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 証跡: `meta/_intermediate/cdb-flow/lldp-constants.md`
+
+### lldpmgrd Python 定数
+
+| 定数名 | 値 | ファイル:行 | 用途 |
+|-------|----|-----------|------|
+| `PORT_INIT_TIMEOUT` | `300` 秒 | `lldpmgrd:33` | PortInitDone / PortConfigDone 待機上限。超過すると強制 `lldpcli resume` を実行し、未設定ポートの誤 portid 広告リスクがある |
+| `FAILED_CMD_TIMEOUT` | `6` 秒 | `lldpmgrd:34` | lldpcli 失敗時の再試行インターバル |
+| `RETRY_LIMIT` | `5` 回 | `lldpmgrd:35` | ポート設定 lldpcli の最大再試行回数。超過すると当該ポートの alias/description が lldpd に未反映のまま継続（silent drop） |
+| `SELECT_TIMEOUT_MS` | `10000` ms | `lldpmgrd:291` | Redis select ループのタイムアウト。`process_pending_cmds()` の実行周期（約 10 秒）を兼ねる |
+| `REDIS_TIMEOUT_MS` | `0` | `lldpmgrd:50` | DBConnector タイムアウト (0 = ブロッキング) |
+
+### lldpd.conf.j2 ハードコード設定
+
+コンテナ起動時に `sonic-cfggen` が展開する Jinja2 テンプレートの固定値。
+
+| 設定内容 | 固定値 | ソース行 | 説明 |
+|---------|-------|---------|------|
+| グローバル portidsubtype | `ifname` | `lldpd.conf.j2:31` | 起動時に全ポートへ適用。lldpmgrd が後で `local <alias>` に上書きする二段構成 |
+| lldpd 起動状態 | `pause` | `lldpd.conf.j2:33` | コンテナ起動直後は LLDP PDU 送出を停止。lldpmgrd の `lldpcli resume` まで継続 |
+| eth0 portidsubtype | `local <MGMT_PORT.alias>` / `local eth0` | `lldpd.conf.j2:17-20` | MGMT_PORT に alias が存在する場合は alias を使用、なければポート名 `eth0` |
+| 管理 IP | IPv4 優先、次点 IPv6 | `lldpd.conf.j2:23-27` | MGMT_INTERFACE から IPv4 を優先取得、なければ IPv6。`configure system ip management pattern <ip>` |
+
+### lldpdSysDescr.conf.j2 ハードコード system description
+
+```
+SONiC Software Version: SONiC.<build_version> - HwSku: <hwsku> - Distribution: Debian <debian_version> - Kernel: <kernel_version>
+```
+
+ビルド時 (`sonic-cfggen`) に展開される固定フォーマット。`CONFIG_DB LLDP|GLOBAL.system_description` フィールドは `lldpmgrd` に読み取りパスがないため**無視される**（dead field）。<!-- evidence: lldpdSysDescr.conf.j2:1 -->
+
+### lldpd 組み込みデフォルト
+
+CONFIG_DB から制御できないが、SONiC の YANG `default` 文と偶然一致する lldpd 内部値。
+
+| 設定 | 値 | 備考 |
+|-----|-----|------|
+| hello_time (LLDP PDU 送出間隔) | **30 秒** | YANG `default 30`。`lldpcli configure system tx-interval <n>` で変更可能だが、`LLDP|GLOBAL.hello_time` は lldpmgrd に読み取りパスがない（dead field） |
+| hold multiplier | **4** | YANG `default 4`。`multiplier` フィールドは dead field のため変更不可 |
+| LLDP 動作方向 | **双方向 (rx+tx)** | `mode` 未設定時の lldpd デフォルト。`BOTH` enum 値は存在しない |
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 9d2a20a8f03b -->
