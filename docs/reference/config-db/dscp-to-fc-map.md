@@ -371,4 +371,44 @@ sonic-db-cli CONFIG_DB hgetall 'DSCP_TO_FC_MAP|AZURE'
 > **Evidence**: `qosorch.cpp:1039-1130` (DscpToFcMapHandler); `cbf/nhgmaporch.cpp:299-325` (getMaxNumFcs); `cbf_config.j2:1-69` (AZURE default); `test_qos_map.py:300-374` (TestCbf validation)
 <!-- /defaults -->
 
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-side-effects.md -->
+
+### MAP SET/DEL の直接副作用
+
+| 副作用 | トリガー | ソース |
+|--------|---------|--------|
+| SAI QoS map オブジェクト生成 (`SAI_QOS_MAP_TYPE_DSCP_TO_FORWARDING_CLASS`) | SET (新規) | `qosorch.cpp:1112-1115` |
+| SAI QoS map 属性更新 (`set_qos_map_attribute`) | SET (既存) | `qosorch.cpp:207` |
+| SAI QoS map 削除 (`remove_qos_map`) | DEL かつ参照なし | `qosorch.cpp:212-220` |
+| `getTypeMap()` への OID 登録 | SET 新規成功 | `qosorch.cpp:168` |
+| 同上エントリの erase | DEL 成功 | `qosorch.cpp:194` |
+| `m_pendingRemove = true` — 後続 SET を `task_need_retry` に | DEL 時に参照が残っている | `qosorch.cpp:185` |
+
+- **STATE_DB への書き込みなし** — `QosOrch` は `DSCP_TO_FC_MAP` 処理で STATE_DB / APPL_DB に書き込まない。CONFIG_DB → SAI 直結。
+- **APPL_DB への書き込みなし** — master の `orchagent` は `DSCP_TO_FC_MAP` 処理で APPL_DB を操作しない。
+
+### PORT_QOS_MAP 経由の間接副作用
+
+MAP OID 解決後、`PORT_QOS_MAP.dscp_to_fc_map` を参照するポートエントリが自動再処理されて以下が生じる:
+
+| 副作用 | API | ソース |
+|--------|-----|--------|
+| ポートへの `SAI_PORT_ATTR_QOS_DSCP_TO_FORWARDING_CLASS_MAP` 適用 | `sai_port_api->set_port_attribute()` | `qosorch.cpp:2193` |
+
+MAP が未作成の間は `PORT_QOS_MAP` の処理が `task_need_retry` で保留され (`qosorch.cpp:2124-2129`)、MAP 作成完了後の `doTask()` サイクルで自動再処理される。
+
+!!! note "PFC 関連副作用なし"
+    `dscp_to_fc_map` は CBF（Class-Based Forwarding）専用であり、PFC enable bitmask (`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL`) や PFC watchdog の更新は**発生しない**。`pfc_to_pg_map` / `pfc_to_queue_map` 等と異なり、ポートの PFC 状態は変化しない (`qosorch.cpp:2136-2156`)。
+
+### m_pendingRemove 連鎖
+
+DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセットされ、
+その後この MAP 名への SET 操作も即 `task_need_retry` を返す (`qosorch.cpp:136-139`)。
+参照側 (`PORT_QOS_MAP.dscp_to_fc_map`) の解除後に DEL が再実行されて連鎖が解消する。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: dscp-to-fc-map-2026-05-14 -->
