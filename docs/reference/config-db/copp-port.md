@@ -436,3 +436,38 @@ genetlink HostIf / HostIfTable を SAI に作成済みの後に呼ばれる `tra
 > **スキャン証跡**: `copporch.cpp` L419-471 (createGenetlinkHostIfTable)、L657-680 (createGenetlinkHostIf)、L833-856 (processCoppRule genetlink 分岐)、L880-933 (doTask)。失敗分岐 6 系統確認。詳細は `meta/_intermediate/cdb-flow/copp-port-failure.md` 参照。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### フィールド名文字列リテラル (copporch.h)
+
+| 定数名 | 値 | 用途 | evidence |
+|-------|-----|------|---------|
+| `copp_genetlink_name` | `"genetlink_name"` | `getAttribsFromTrapGroup()` でのフィールド照合キー | `copporch.h:45` |
+| `copp_genetlink_mcgrp_name` | `"genetlink_mcgrp_name"` | MCGRP 名フィールドの照合キー | `copporch.h:46` |
+
+これらは YANG モデルに対応する定義がなく、CONFIG_DB / APPL_DB への書き込み時はこの文字列と完全一致する必要がある。
+
+### chardata バッファサイズ上限
+
+`getAttribsFromTrapGroup()` 内の genetlink フィールド格納処理 (`copporch.cpp:1271-1275`, `1281-1285`):
+
+```cpp
+auto size = sizeof(attr.value.chardata);
+strncpy(attr.value.chardata, fvValue(*i).c_str(), size - 1);
+attr.value.chardata[size - 1] = '\0';
+```
+
+`sai_attribute_value_t::chardata` は標準 SAI で **32 バイト**。`strncpy` 上限は `size - 1 = 31` 文字で、末尾 NUL を強制書き込みするため **実効最大長は 31 文字**。31 文字超の値はサイレントに切り詰められ、SAI `create_hostif()` が失敗する可能性がある。
+
+### FlexCounter 関連定数
+
+| 定数名 | 値 | 用途 | evidence |
+|-------|-----|------|---------|
+| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | FlexCounter グループ名 (COUNTERS_DB キー) | `copporch.h:23` |
+| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | HostIF trap FlexCounter ポーリング間隔 (10 秒) | `copporch.cpp:189` |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | FlexCounter 更新タイマー間隔 | `copporch.cpp:37` |
+
+> **スキャン証跡**: `copporch.h` 全行、`copporch.cpp` L37,189,1265-1286 精読。定数 7 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-constants.md`
+<!-- /constants -->
+
