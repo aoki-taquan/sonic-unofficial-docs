@@ -322,6 +322,49 @@ CONFIG_DB `SRV6_MY_SID_TABLE` (db_id=4) は `SubscriberStateTable` ブランチ�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+> 根拠: `srv6orch.cpp` `createUpdateMysidEntry()` L1554-1568、`createMySidIpInIpTunnel()` L577-600、`initIpInIpTunnel()` L486-545、`createUpdateSidList()` L1069-1117、`doTask(SelectableTimer&)` L286-313 精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-applb-platform.md`
+
+`SRV6_MY_SID_TABLE` / `SRV6_SID_LIST_TABLE` の処理結果は、プラットフォームの SAI 実装に依存する箇所が複数ある。
+
+### 差異 1: SAI SRv6 API 未実装プラットフォーム
+
+`Srv6Orch` は `sai_srv6_api->create_srv6_sidlist()` / `create_my_sid_entry()` を直接呼び出す。VS (Virtual Switch) など SAI SRv6 API が stub 実装のプラットフォームでは、これらが `SAI_STATUS_NOT_IMPLEMENTED` を返し、`SRV6_SID_LIST_TABLE` SET は `task_failed` で破棄され、`SRV6_MY_SID_TABLE` SET も `false` を返してエントリが ASIC に登録されない。
+
+| プラットフォーム | SAI SRv6 対応 | SRV6_MY_SID_TABLE 処理 |
+|----------------|--------------|----------------------|
+| HW ASIC（SAI 対応） | あり | 正常に SAI へ登録 |
+| VS / stub SAI | なし（多くの場合） | SAI 呼び出し失敗 → エントリ破棄 |
+
+### 差異 2: DSCP モード設定が必要な MySID（IP-in-IP トンネル）
+
+`mySidTunnelRequired()` が true の MySID エントリ（DSCP モードを持つ構成）では、`sai_tunnel_api->create_tunnel()` + `create_tunnel_term_table_entry()` を呼び出して IP-in-IP トンネルを作成する（`srv6orch.cpp:1554-1568`）。
+
+- `SAI_TUNNEL_DSCP_MODE_UNIFORM_MODEL` / `SAI_TUNNEL_DSCP_MODE_PIPE_MODEL` の 2 種類を共有参照カウントで管理
+- `initIpInIpTunnel()` が失敗した場合、対応 MySID エントリ自体も SAI に登録されない（トンネル作成失敗でロールバック）
+- `sai_tunnel_api` が未実装のプラットフォームでは DSCP モード付き MySID の登録は不可能
+
+### 差異 3: gTraditionalFlexCounter モードと COUNTERS_DB 反映遅延
+
+orchagent 起動引数 `-c traditional` で `gTraditionalFlexCounter = true` になる（デフォルト `false`）。このモードでは MySID 追加後の FLEX_COUNTER_DB への OID 登録が ASIC_DB `VIDTORID` で VID→RID 変換確認を待ってから行われる（`srv6orch.cpp:294-295`）。
+
+| モード | FLEX_COUNTER_DB 登録タイミング |
+|--------|-------------------------------|
+| デフォルト (`false`) | MySID 追加から最大 1 秒後（タイマー発火で即登録） |
+| traditional (`true`) | ASIC_DB VIDTORID 確定後（RID 未確定ならポーリング繰り返し、追加遅延あり） |
+
+### 差異 4: SRV6_SID_LIST_TABLE の sidlist type とプラットフォーム対応
+
+`sidlist_type_map`（`srv6orch.cpp:73-79`）に定義された 4 種類（`insert`, `insert.red`, `encaps`, `encaps.red`）のみ有効。SAI 実装によっては `insert` / `insert.red` が未対応の場合があり、`sai_srv6_api->create_srv6_sidlist()` が `SAI_STATUS_NOT_SUPPORTED` を返して `task_failed` になる。fpmsyncd 経由では常に `type` フィールドが省略されるため `encaps.red`（SAI デフォルト）が使用され、通常は問題ない。
+
+!!! note "DSCP モード未使用が一般的"
+    fpmsyncd が書き込む `SRV6_MY_SID_TABLE` エントリには DSCP モード設定フィールドが含まれない。`mySidTunnelRequired()` が true になるのは `CONFIG_DB SRV6_MY_SIDS` の `decap_dscp_mode` フィールドが設定された場合のみ（`srv6orch.cpp:377-400` の CFG キャッシュ処理）。標準的な FRR 経由の設定ではトンネルは作成されない。
+
+<!-- /platform -->
+
 ### サポート action 値
 
 `end_behavior_map`（`srv6orch.cpp:41-62`）に定義:
