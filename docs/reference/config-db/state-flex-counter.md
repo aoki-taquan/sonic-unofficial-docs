@@ -238,6 +238,47 @@ STATE_DB（DB 6）に FLEX_COUNTER 専用の独立テーブルはない。FLEX_C
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/state-flex-counter-cross-refs.md -->
+
+`FlexCounterOrch` が `FLEX_COUNTER_DB` へ書き込む際に暗黙的に参照・依存する CONFIG_DB / APP_DB テーブルおよびOrch 内状態。
+
+| 参照方向 | このテーブル | 相手テーブル / Orch | 条件 |
+|---------|------------|-------------------|------|
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `CONFIG_DB:DEVICE_METADATA` `.create_only_config_db_buffers` | コンストラクタで hget; `"true"` のとき Queue/PG 設定で非ゼロプロファイルのポートのみ対象に絞る (`flexcounterorch.cpp:106-120`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gPortsOrch->allPortsReady()` | doTask 先頭ガード; PortsOrch が未初期化なら全イベントを silent defer (`flexcounterorch.cpp:164-167`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gFabricPortsOrch->allPortsReady()` | 同上; Fabric 版PortsOrch ガード (`flexcounterorch.cpp:169-172`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gPortsOrch->generate*Map()` 各メソッド | `FLEX_COUNTER_STATUS=enable` 時に PORT/QUEUE/PG/WRED 系グループのOIDリストを FLEX_COUNTER_DB へ書き込む起点 (`flexcounterorch.cpp:235-295`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gIntfsOrch->generateInterfaceMap()` | `RIF` グループ enable 時。RIF OIDリストを FLEX_COUNTER_DB へ登録 (`flexcounterorch.cpp:283-286`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` | `BUFFER_POOL_WATERMARK` グループ enable 時 (`flexcounterorch.cpp:287-290`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `APP_DB:BUFFER_QUEUE` / `APP_DB:BUFFER_PG` | `create_only_config_db_buffers=true` 時に `gBufferOrch->getBufferObjectsWithNonZeroProfile()` 経由で参照; 非ゼロプロファイルキュー/PGのみ対象 (`flexcounterorch.cpp:554,623`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `VxlanTunnelOrch->generateTunnelCounterMap()` | `TUNNEL` グループ enable 時。VxlanTunnelOrch を `gDirectory.get<>()` で動的取得 (`flexcounterorch.cpp:295-299`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gFlowCounterRouteOrch->generateRouteFlowStats()` | `FLOW_CNT_ROUTE` グループ enable 時 (`flexcounterorch.cpp:325-332`) |
+| warm-reboot 遅延 | — | `WarmStart::isWarmStart()` | warm-reboot 時は `m_delayTimerExpired=false` で起動し 60 秒間 doTask を全スキップ。CONFIG_DB 更新が届いても FLEX_COUNTER_DB は更新されない (`flexcounterorch.cpp:44,127-136,155-158`) |
+
+### 参照関係サマリ
+
+```
+CONFIG_DB:FLEX_COUNTER_TABLE
+  → FlexCounterOrch::doTask()
+      ├─ [guard]  gPortsOrch->allPortsReady()              (未完了なら silent defer)
+      ├─ [guard]  gFabricPortsOrch->allPortsReady()        (未完了なら silent defer)
+      ├─ [guard]  m_delayTimerExpired                      (warm-reboot 時 60s 遅延)
+      ├─ [config] DEVICE_METADATA.create_only_config_db_buffers
+      ├─ FLEX_COUNTER_DB:FLEX_COUNTER_GROUP_TABLE|<group>  (POLL_INTERVAL/STATUS/STATS_MODE/BULK)
+      └─ FLEX_COUNTER_DB:FLEX_COUNTER_TABLE|<group>|<oid>
+            ├─ gPortsOrch->generate*Map()  ... PORT / QUEUE / PG / WRED
+            ├─ gFabricPortsOrch->generateQueueStats()  ... FABRIC_QUEUE
+            ├─ gIntfsOrch->generateInterfaceMap()      ... RIF
+            ├─ gBufferOrch->generateBufferPoolWatermarkCounterIdList()  ... BUFFER_POOL
+            ├─ VxlanTunnelOrch->generateTunnelCounterMap()  ... TUNNEL
+            └─ gFlowCounterRouteOrch->generateRouteFlowStats()  ... FLOW_CNT_ROUTE
+```
+
+<!-- /cross-refs -->
+
 ## 確認コマンド
 
 ```bash
