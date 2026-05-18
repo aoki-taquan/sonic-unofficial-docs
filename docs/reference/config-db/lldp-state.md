@@ -254,6 +254,47 @@ show lldp neighbors Ethernet0
 
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+> 根拠: `sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2`, `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`
+
+### 依存関係マップ
+
+```
+lldpd 起動 (open-lldp デーモン)
+  └─► waitfor_lldp_ready.sh (UNIX ソケット待機)
+        └─► lldp-syncd 起動 (priority=4)
+              └─► APPL_DB: LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS 書き込み開始
+
+LLDP PDU 受信 (物理ポート)
+  └─► lldpd 内部 DB 更新
+        └─► lldp-syncd ポーリング (lldpctl -f json)
+              └─► APPL_DB: LLDP_ENTRY_TABLE|<ifname> hset
+
+APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
+  └─► sonic-snmpagent (LLDP-MIB hgetall)
+  └─► sonic-mgmt-common lldp_app.go (GetTable → REST / gNMI)
+```
+
+### 書込み順序ルール
+
+| 優先度 | ルール | 根拠 |
+|--------|--------|------|
+| 必須 | lldpd が起動し UNIX ソケットが ready になるまで lldp-syncd は開始しない | `supervisord.conf.j2`: lldp-syncd は `waitfor_lldp_ready:exited` を `dependent_startup_wait_for` に指定 |
+| 必須 | LLDP PDU が実際に受信されるまで `LLDP_ENTRY_TABLE` にエントリは現れない | エントリ生成は lldpd の PDU 受信イベントに依存。lldp-syncd は polling で差分を書き込む |
+| 情報 | `LLDP_LOC_CHASSIS` はローカル情報のため PDU 受信前から書き込まれる | lldp-syncd 起動後に lldpctl でローカル chassis 情報を取得して書き込む |
+| 情報 | SNMP / REST は `LLDP_ENTRY_TABLE` を polling で読む。エントリが存在しない間は空結果を返す | sonic-snmpagent の `poll_lldp_entry_updates()` は pubsub で変化を購読する |
+
+### タイミング制約
+
+- **lldp-syncd はポーリング周期で APPL_DB を更新する**。PDU 受信から APPL_DB に反映されるまで数秒の遅延がある。即時性は保証されない。
+- **エントリ削除タイミング**: lldpd の TTL タイマー切れ（デフォルト hold time = 30s × 4 = 120 秒）により lldp-syncd が APPL_DB エントリを DEL する。ポートがリンクダウンした場合も同様に削除される。
+- **LLDP コンテナ再起動**: lldp-syncd 再起動後は lldpd の全エントリを再スキャンして APPL_DB に書き込む。一時的に `LLDP_ENTRY_TABLE` が空になる可能性がある（再書き込みまでのウィンドウ）。
+- **`lldpcli resume` 前は LLDP PDU が送出されない**: `lldpmgrd` が `PortInitDone` + `PortConfigDone` を受信するまで lldpd は pause 状態。この間は自ノードの LLDPDU が送出されないため、対向ノードの `LLDP_ENTRY_TABLE` に自ノードのエントリが現れない（最大 300 秒）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルトと dead field
 
