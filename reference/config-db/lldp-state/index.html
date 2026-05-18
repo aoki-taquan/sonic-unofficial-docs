@@ -26752,6 +26752,261 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        構造的前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-lldp-syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理（lldp-syncd 書き込み）における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET 処理（Consumer 読み取り）における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry / recovery まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd タイムアウト / リトライ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpdconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpd.conf.j2 のハードコード設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisordconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord.conf.j2 — プロセス起動順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd のポート処理ハードコード動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-snmpagent-oid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-snmpagent OID インデックス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込の有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd の外部副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知の流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldp_appgo-gnmi-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldp_app.go の gNMI Subscribe 非対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd の間接購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dead-field" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -26775,7 +27030,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルトとハードコード固定値
@@ -35475,6 +35730,261 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        構造的前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-lldp-syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理（lldp-syncd 書き込み）における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET 処理（Consumer 読み取り）における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry / recovery まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd タイムアウト / リトライ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpdconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpd.conf.j2 のハードコード設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisordconfj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord.conf.j2 — プロセス起動順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd のポート処理ハードコード動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-snmpagent-oid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-snmpagent OID インデックス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込の有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd の外部副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知の流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldp_appgo-gnmi-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldp_app.go の gNMI Subscribe 非対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lldpmgrd_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lldpmgrd の間接購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dead-field" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35498,7 +36008,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルトとハードコード固定値
@@ -35999,6 +36509,562 @@
 </ul>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>LLDP_ENTRY_TABLE</code> / <code>LLDP_LOC_CHASSIS</code> (APPL_DB) の書き手・読み手が参照する他テーブルおよびリソースを整理する。
+本テーブルは lldp-syncd が <strong>producer only</strong> として書き込み、sonic-snmpagent / sonic-mgmt-common (lldp_app.go) が読み手として参照する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT_TABLE</code> (APPL_DB)</td>
+<td>読み取り: OID→IF マッピング構築</td>
+<td>常時。<code>LLDPRemTableUpdater.reinit_data()</code> が <code>init_sync_d_interface_tables()</code> 経由で参照。OID マップ不在ポートの LLDP エントリは SNMP walk に現れない</td>
+<td><code>ieee802_1ab.py:416-423</code>, <code>mibs/__init__.py:276-333</code></td>
+</tr>
+<tr>
+<td><code>MGMT_PORT_TABLE</code> (CONFIG_DB)</td>
+<td>読み取り: 管理ポートの alias 取得</td>
+<td>管理ポート (<code>eth0</code> 等) のみ。データプレーンポートは APPL_DB <code>PORT_TABLE</code> 経由</td>
+<td><code>ieee802_1ab.py:206-215</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code> (CONFIG_DB)</td>
+<td>間接: lldpmgrd → lldpcli → LLDPDU TLV</td>
+<td>常時。<code>hostname</code> / <code>chassis_hostname</code> 変更時に <code>lldpcli configure system hostname</code> を実行。対向ノードの <code>lldp_rem_sys_name</code> に伝播</td>
+<td><code>lldpmgrd:247-256, 308-310</code></td>
+</tr>
+<tr>
+<td><code>MGMT_INTERFACE</code> (CONFIG_DB)</td>
+<td>間接: lldpmgrd → lldpcli → LLDPDU TLV</td>
+<td>常時。管理 IP 変更時に <code>lldpcli configure system ip management pattern</code> を実行。対向ノードの <code>lldp_rem_man_addr</code> に伝播</td>
+<td><code>lldpmgrd:228-245, 304-306</code></td>
+</tr>
+<tr>
+<td><code>PORT_TABLE.alias</code> (APPL_DB)</td>
+<td>間接: lldpmgrd → lldpcli → LLDPDU TLV</td>
+<td>ポート up 時。alias / description を <code>lldpcli configure ports</code> で lldpd に設定。対向ノードの <code>lldp_rem_port_id</code> に伝播。alias 未設定時はポート名を使用</td>
+<td><code>lldpmgrd:136-166, 300-325</code></td>
+</tr>
+<tr>
+<td><code>LLDP_LOC_CHASSIS</code> (APPL_DB)</td>
+<td>直接読み取り: SNMP lldpLocalSystemData</td>
+<td>常時。<code>LLDPLocalSystemDataUpdater</code> が <code>dbs_get_all</code> で全フィールドを取得して SNMP MIB に返す</td>
+<td><code>ieee802_1ab.py:114-146, 302-345</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">lldp_app.go の参照範囲</p>
+<p><code>sonic-mgmt-common/translib/lldp_app.go</code> は <code>LLDP_ENTRY_TABLE</code> のみを参照する（<code>neighTs = &amp;db.TableSpec{Name: "LLDP_ENTRY_TABLE"}</code>）。
+<code>LLDP_LOC_CHASSIS</code> は参照せず、OpenConfig LLDP の local chassis 情報はスコープ外。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">lldpmgrd の間接影響</p>
+<p><code>lldpmgrd</code> は <code>LLDP_ENTRY_TABLE</code> / <code>LLDP_LOC_CHASSIS</code> への直接書き込みを行わないが、
+<code>DEVICE_METADATA</code> / <code>MGMT_INTERFACE</code> / <code>PORT_TABLE</code> の変化を lldpd に伝達することで
+lldpd が送出する LLDPDU 内容を制御し、<strong>対向ノードの</strong> APPL_DB に書かれる値を間接的に決定する。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py</code>, <code>sonic-mgmt-common/translib/lldp_app.go</code></p>
+</blockquote>
+<h3 id="_17">構造的前提<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><code>LLDP_ENTRY_TABLE</code> / <code>LLDP_LOC_CHASSIS</code> は <strong>lldp-syncd</strong> が唯一の書き手。外部 (CLI / REST / gNMI) からの書き込みは設計上不可能。失敗経路は (1) lldp-syncd の書き込み失敗、(2) 下流 Consumer (sonic-snmpagent / lldp_app.go) の読み取り時エラーの 2 種類に分類される。</p>
+<h3 id="set-lldp-syncd">SET 処理（lldp-syncd 書き込み）における失敗経路<a class="headerlink" href="#set-lldp-syncd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>STATE_DB 記録</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lldp-syncd プロセス停止</td>
+<td>supervisord</td>
+<td>supervisord が自動再起動。再起動後 lldpctl 全スキャンで再書き込み</td>
+<td>なし</td>
+<td><code>supervisord.conf.j2: autostart=true</code></td>
+</tr>
+<tr>
+<td>lldpd ソケット未応答</td>
+<td>lldp-syncd 起動時 <code>waitfor_lldp_ready.sh</code></td>
+<td>lldp-syncd 起動待機（UNIX ソケット ready まで待機）。タイムアウト時は supervisord が lldp-syncd を停止</td>
+<td>なし</td>
+<td><code>supervisord.conf.j2: dependent_startup_wait_for=lldp-ready:exited</code></td>
+</tr>
+<tr>
+<td>APPL_DB 接続失敗</td>
+<td>lldp-syncd 起動時</td>
+<td>lldp-syncd が起動失敗 → supervisord が再起動</td>
+<td>なし</td>
+<td>sonic-swss-common DB 接続例外</td>
+</tr>
+<tr>
+<td>TTL 超過による隣接エントリ消滅</td>
+<td>lldpd TTL タイマー</td>
+<td>lldpd が lldp-syncd に削除通知。lldp-syncd が <code>APPL_DB:LLDP_ENTRY_TABLE|&lt;ifname&gt;</code> を <code>DEL</code>。SNMP walk から当該エントリが消える</td>
+<td>なし</td>
+<td>lldpd 内部ロジック (hold time = hello × multiplier)</td>
+</tr>
+<tr>
+<td>ポートリンクダウン</td>
+<td>lldpd イベント</td>
+<td>lldpd が隣接エントリを削除 → lldp-syncd が APPL_DB から削除。<code>show lldp table</code> から消える</td>
+<td>なし</td>
+<td>lldpd リンク変化イベント</td>
+</tr>
+</tbody>
+</table>
+<h3 id="get-consumer">GET 処理（Consumer 読み取り）における失敗経路<a class="headerlink" href="#get-consumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>STATE_DB 記録</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lldp_rem_man_addr</code> が空文字列</td>
+<td><code>LLDPRemManAddrUpdater.update_rem_if_mgmt()</code></td>
+<td><code>return</code> して early exit。当該ポートの Management Address SNMP MIB エントリが欠落</td>
+<td>なし</td>
+<td><code>ieee802_1ab.py:523-525</code></td>
+</tr>
+<tr>
+<td><code>lldp_rem_man_addr</code> フィールド欠落</td>
+<td><code>update_rem_if_mgmt()</code></td>
+<td><code>'lldp_rem_man_addr' not in lldp_kvs</code> チェック → <code>return</code>。SNMP Management Address テーブルからエントリが消える</td>
+<td>なし</td>
+<td><code>ieee802_1ab.py:517</code></td>
+</tr>
+<tr>
+<td><code>lldp_rem_index</code> / <code>lldp_rem_sys_cap_*</code> フィールド欠落</td>
+<td><code>LLDPRemTableUpdater.update_data()</code></td>
+<td><code>KeyError</code>/<code>AttributeError</code> をキャッチし WARNING ログを出力して <code>continue</code>。当該インタフェースの lldpRemTable SNMP MIB エントリ全体が欠落</td>
+<td>なし</td>
+<td><code>ieee802_1ab.py:461-463</code></td>
+</tr>
+<tr>
+<td><code>lldp_table_lookup()</code> でフィールド欠落</td>
+<td><code>lldp_table_lookup()</code></td>
+<td>WARNING ログ (<code>0 - b'LLDP_ENTRY_TABLE' missing attribute '...'</code>) → <code>return None</code>。SNMP 応答の当該フィールドが欠落</td>
+<td>なし</td>
+<td><code>ieee802_1ab.py:490</code></td>
+</tr>
+<tr>
+<td><code>lldp_rem_time_mark</code> が非整数文字列</td>
+<td><code>update_rem_if_mgmt()</code> の <code>int()</code> 変換</td>
+<td><code>ValueError</code> → <code>except KeyError, AttributeError</code> 範囲外の場合は例外が伝播し当該エントリ処理がスキップ</td>
+<td>なし</td>
+<td><code>ieee802_1ab.py:528</code></td>
+</tr>
+<tr>
+<td>lldp_app.go <code>GetTable</code> 失敗</td>
+<td><code>lldp_app.go: getLldpInfoFromDB()</code></td>
+<td><code>log.Info("Can't get lldp table")</code> → 空レスポンスを返す。REST / gNMI クライアントは空の LLDP neighbor リストを受け取る</td>
+<td>なし</td>
+<td><code>lldp_app.go: getLldpInfoFromDB</code></td>
+</tr>
+<tr>
+<td>lldp_app.go <code>GetEntry</code> 失敗</td>
+<td><code>lldp_app.go: getLldpInfoFromDB()</code></td>
+<td><code>log.Info("can't access neighbor table for key: ...")</code> → 当該エントリをスキップ。他エントリは正常に返す</td>
+<td>なし</td>
+<td><code>lldp_app.go: getLldpInfoFromDB</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="retry-recovery">retry / recovery まとめ<a class="headerlink" href="#retry-recovery" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗種別</th>
+<th>retry</th>
+<th>上限</th>
+<th>間隔</th>
+<th>recovery 条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lldp-syncd プロセス停止</td>
+<td>supervisord 自動再起動</td>
+<td>supervisord 設定依存</td>
+<td>—</td>
+<td>プロセス再起動後に全エントリ再書き込み</td>
+</tr>
+<tr>
+<td>SNMP フィールド欠落</td>
+<td>なし（エントリスキップ）</td>
+<td>—</td>
+<td>—</td>
+<td>lldp-syncd が次回 lldpctl 差分で上書き</td>
+</tr>
+<tr>
+<td>lldp_app.go GetTable 失敗</td>
+<td>なし（空レスポンス）</td>
+<td>—</td>
+<td>—</td>
+<td>次回 REST/gNMI リクエスト時に再 GetTable</td>
+</tr>
+<tr>
+<td>TTL 超過エントリ削除</td>
+<td>なし</td>
+<td>—</td>
+<td>—</td>
+<td>隣接ノードが LLDPDU を再送するまでエントリ復活しない</td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>lldpmgrd</code> / <code>lldpd.conf.j2</code> / <code>supervisord.conf.j2</code> / <code>sonic-snmpagent</code> 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+出典は <code>sonic-buildimage/dockers/docker-lldp/lldpmgrd</code>、<code>lldpd.conf.j2</code>、<code>supervisord.conf.j2</code>、<code>sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py</code>。</p>
+<h3 id="lldpmgrd">lldpmgrd タイムアウト / リトライ定数<a class="headerlink" href="#lldpmgrd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT_INIT_TIMEOUT</code></td>
+<td><code>300</code> 秒</td>
+<td>PortInitDone / PortConfigDone を受信しないまま経過した場合に lldpd を強制 resume するタイムアウト (lldpmgrd L33)</td>
+</tr>
+<tr>
+<td><code>FAILED_CMD_TIMEOUT</code></td>
+<td><code>6</code> 秒</td>
+<td>lldpcli コマンド失敗後の次回リトライまでのバックオフ最小間隔 (lldpmgrd L34)</td>
+</tr>
+<tr>
+<td><code>RETRY_LIMIT</code></td>
+<td><code>5</code> 回</td>
+<td>lldpcli コマンド失敗時の最大リトライ回数。超過すると当該ポートの LLDP 設定を断念 (lldpmgrd L35)</td>
+</tr>
+<tr>
+<td><code>SELECT_TIMEOUT_MS</code></td>
+<td><code>10000</code> ms</td>
+<td>Redis Pub/Sub select() のポーリング間隔。CONFIG_DB / APPL_DB 変化を 10 秒以内に検出 (lldpmgrd L291)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="lldpdconfj2">lldpd.conf.j2 のハードコード設定<a class="headerlink" href="#lldpdconfj2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>configure lldp portidsubtype ifname</code></td>
+<td><code>ifname</code> (グローバル)</td>
+<td>全ポートのデフォルト portid を MAC アドレスではなくインタフェース名に固定。後続 lldpmgrd が <code>portidsubtype local</code> (alias) で上書きするまでの初期値 (lldpd.conf.j2 L31)</td>
+</tr>
+<tr>
+<td><code>pause</code></td>
+<td>—</td>
+<td>起動直後は LLDPDU 送出を停止。lldpmgrd が PortInitDone + PortConfigDone 受信後に <code>lldpcli resume</code> するまで LLDPDU は送出されない (lldpd.conf.j2 L33)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="supervisordconfj2">supervisord.conf.j2 — プロセス起動順序<a class="headerlink" href="#supervisordconfj2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プログラム</th>
+<th>priority</th>
+<th>起動待機条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rsyslogd</code></td>
+<td>1</td>
+<td>(なし)</td>
+</tr>
+<tr>
+<td><code>start</code></td>
+<td>2</td>
+<td><code>rsyslogd:running</code></td>
+</tr>
+<tr>
+<td><code>lldpd</code></td>
+<td>3</td>
+<td><code>start:exited</code></td>
+</tr>
+<tr>
+<td><code>waitfor_lldp_ready</code></td>
+<td>3</td>
+<td><code>lldpd:running</code></td>
+</tr>
+<tr>
+<td><code>lldp-syncd</code></td>
+<td>4</td>
+<td><code>waitfor_lldp_ready:exited</code></td>
+</tr>
+<tr>
+<td><code>lldpmgrd</code></td>
+<td>5</td>
+<td><code>lldp-syncd:running</code></td>
+</tr>
+</tbody>
+</table>
+<p>priority 値は supervisord の dependent_startup 起動順序制御に使用。lldp-syncd は lldpd UNIX ソケットが ready になるまで開始しないため、<code>LLDP_ENTRY_TABLE</code> / <code>LLDP_LOC_CHASSIS</code> への書き込みは lldpd 起動完了後にのみ開始する。</p>
+<h3 id="lldpmgrd_1">lldpmgrd のポート処理ハードコード動作<a class="headerlink" href="#lldpmgrd_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数 / 動作</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>portidsubtype local</code> (lldpcli コマンド)</td>
+<td><code>"local"</code></td>
+<td>ポート up 時、lldpcli に <code>configure ports &lt;port_name&gt; lldp portidsubtype local &lt;alias&gt;</code> を発行。alias 未設定時はポート名を alias として使用 (lldpmgrd L156)</td>
+</tr>
+<tr>
+<td>inband / recirc / backplane ポートをスキップ</td>
+<td><code>inband_prefix()</code> / <code>recirc_prefix()</code> / <code>backplane_prefix()</code></td>
+<td>これらプレフィックスで始まるポートは LLDP 設定対象外 (lldpmgrd L144-145)</td>
+</tr>
+<tr>
+<td><code>hostname</code> 優先順位</td>
+<td><code>chassis_hostname</code> &gt; <code>hostname</code></td>
+<td><code>DEVICE_METADATA\|localhost</code> の <code>chassis_hostname</code> が存在すれば優先使用。不在時は <code>hostname</code> (lldpmgrd L253)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sonic-snmpagent-oid">sonic-snmpagent OID インデックス定数<a class="headerlink" href="#sonic-snmpagent-oid" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数 / 動作</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>time_mark</code> (SNMP OID インデックス要素)</td>
+<td><code>0</code> (ハードコード)</td>
+<td>lldpRemTable の OID インデックスは <code>(timeMark, ifIndex, remIndex)</code> の 3 要素構成。Multi-ASIC 環境で同一 ifIndex が複数 timeMark で重複するのを避けるため、timeMark を常に <code>0</code> として OID を構築する。<code>lldp_rem_time_mark</code> フィールドの実際値は OID 計算に使用されない (ieee802_1ab.py L453)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">PORT_INIT_TIMEOUT の強制 resume</p>
+<p>300 秒 (5 分) を経過すると <code>port_init_done</code> / <code>port_config_done</code> が強制的に <code>True</code> に設定され、<code>lldpcli resume</code> が実行される。ポートが未初期化でも LLDPDU を送出し始めるため、不完全な TLV (alias 未設定 port ID 等) が対向ノードに伝達される可能性がある。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">portidsubtype の 2 段階設定</p>
+<p><code>lldpd.conf.j2</code> でグローバルに <code>ifname</code> を設定し、その後 lldpmgrd がポートごとに <code>local</code> (alias) で上書きする。ポートが up になるまで lldpcli コマンドが実行されないため、リンクアップ前は <code>ifname</code> ベースの portid が LLDPDU に含まれる。</p>
+</div>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/lldp-state-side-effects.md</code><br />
+ソース: <code>sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2</code>, <code>sonic-buildimage/dockers/docker-lldp/lldpmgrd</code>, <code>sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py</code>, <code>sonic-mgmt-common/translib/lldp_app.go</code></p>
+</blockquote>
+<h3 id="_18">副次書込の有無<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><code>LLDP_ENTRY_TABLE</code> / <code>LLDP_LOC_CHASSIS</code> (APPL_DB) は <strong>lldp-syncd が唯一の書き手</strong>であり、これらテーブルへの書き込みに起因する他 DB への副次書込は存在しない。</p>
+<table>
+<thead>
+<tr>
+<th>副次書込先</th>
+<th>有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>lldpmgrd</code> は STATE_DB <code>PORT_TABLE</code> を読み取るのみ（<code>is_port_up()</code> 経由）。Consumer (snmpagent / lldp_app.go) は書き込みなし</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td>lldp 系コンポーネント全体で COUNTERS_DB 書込コードなし。障害ログは syslog (<code>SWSS_LOG_*</code>) のみ</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td>なし</td>
+<td>lldp は SAI / orchagent とは独立した経路 (lldpd ← lldpcli) であり、flex-counter 機構を使用しない</td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td>なし</td>
+<td>lldp は SAI 非経由。lldpd が OS netdev / lldpcli を直接操作するため ASIC_DB に書き込まない</td>
+</tr>
+<tr>
+<td>CONFIG_DB</td>
+<td>なし</td>
+<td><code>lldp-syncd</code> / <code>lldpmgrd</code> は CONFIG_DB を読み取るのみ。書き込みパスは設計上存在しない</td>
+</tr>
+<tr>
+<td>EVENT_DB</td>
+<td>なし</td>
+<td>eventd との連携なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="lldpmgrd_2">lldpmgrd の外部副作用<a class="headerlink" href="#lldpmgrd_2" title="Permanent link">&para;</a></h3>
+<p><code>lldpmgrd</code> は DB への書込みを行わず、<strong><code>lldpcli</code> サブプロセス呼び出し</strong>（lldpd プロセスへのコマンド注入）のみを副作用として持つ。これは DB 書込ではなく OS プロセス間通信である。</p>
+<table>
+<thead>
+<tr>
+<th>アクセス対象</th>
+<th>DB</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_PORT_TABLE_NAME</code></td>
+<td>STATE_DB</td>
+<td><code>is_port_up()</code> — ポートの <code>netdev_oper_status</code> を読取</td>
+</tr>
+<tr>
+<td><code>CFG_DEVICE_METADATA_TABLE_NAME</code></td>
+<td>CONFIG_DB</td>
+<td><code>hostname</code> / <code>chassis_hostname</code> を読取</td>
+</tr>
+<tr>
+<td><code>CFG_PORT_TABLE_NAME</code></td>
+<td>CONFIG_DB</td>
+<td>ポートの <code>alias</code> / <code>description</code> を読取</td>
+</tr>
+<tr>
+<td><code>CFG_MGMT_INTERFACE_TABLE_NAME</code></td>
+<td>CONFIG_DB</td>
+<td>管理 IP を読取</td>
+</tr>
+<tr>
+<td><code>APP_PORT_TABLE_NAME</code></td>
+<td>APPL_DB</td>
+<td><code>PortInitDone</code> / <code>PortConfigDone</code> イベントを購読</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py</code> (L75-108, L173, L237-255, L503-573), <code>sonic-mgmt-common/translib/lldp_app.go</code> (L141-147), <code>sonic-buildimage/dockers/docker-lldp/lldpmgrd</code> (L277-325)</p>
+</blockquote>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p><code>LLDP_ENTRY_TABLE</code> / <code>LLDP_LOC_CHASSIS</code> (APPL_DB) に対する Consumer の購読方式を整理する。</p>
+<table>
+<thead>
+<tr>
+<th>Consumer</th>
+<th>購読 API</th>
+<th>購読パターン / DB</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic-snmpagent</code> <code>LocPortUpdater</code></td>
+<td>Redis keyspace <code>psubscribe</code></td>
+<td><code>__keyspace@{APPL_DB}__:LLDP_ENTRY_TABLE:*</code></td>
+<td>インタフェース設定変化を検知してローカルポートキャッシュを更新</td>
+</tr>
+<tr>
+<td><code>sonic-snmpagent</code> <code>LLDPRemManAddrUpdater</code></td>
+<td>同上 (keyspace psubscribe)</td>
+<td><code>__keyspace@{APPL_DB}__:LLDP_ENTRY_TABLE:*</code></td>
+<td>管理アドレス (<code>lldp_rem_man_addr</code>) の変化を検知して SNMP OID キャッシュを更新</td>
+</tr>
+<tr>
+<td><code>sonic-snmpagent</code> <code>LLDPRemTableUpdater</code></td>
+<td><strong>ポーリング</strong> (<code>update_data()</code>)</td>
+<td><code>LLDP_ENTRY_TABLE:*</code> (hgetall)</td>
+<td>SNMP walk ごとに全エントリを再取得。リアルタイム購読ではない</td>
+</tr>
+<tr>
+<td><code>sonic-snmpagent</code> <code>LLDPLocalSystemDataUpdater</code></td>
+<td><strong>ポーリング</strong> (<code>reinit_data()</code>)</td>
+<td><code>LLDP_LOC_CHASSIS</code> (dbs_get_all)</td>
+<td>1 分ごとに <code>reinit_data()</code> で再取得。ローカル chassis 情報はほぼ静的のため polling で十分</td>
+</tr>
+<tr>
+<td><code>sonic-mgmt-common</code> <code>lldp_app.go</code></td>
+<td><strong>直接 GET</strong> (<code>GetTable</code>)</td>
+<td><code>LLDP_ENTRY_TABLE</code> (全件)</td>
+<td>REST / gNMI 要求のたびに <code>GetTable</code> で全エントリを取得。<strong>購読なし</strong></td>
+</tr>
+<tr>
+<td><code>lldpmgrd</code></td>
+<td><code>swsscommon.SubscriberStateTable</code></td>
+<td><code>APP_PORT_TABLE</code> (APPL_DB), <code>CFG_MGMT_INTERFACE_TABLE</code>, <code>CFG_DEVICE_METADATA_TABLE</code> (CONFIG_DB)</td>
+<td><code>LLDP_ENTRY_TABLE</code> への直接購読ではなく、lldpd へのコマンド注入トリガとして使用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="keyspace">keyspace 通知の流れ<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
+<p><code>sonic-snmpagent</code> の <code>LocPortUpdater</code> / <code>LLDPRemManAddrUpdater</code> は Redis keyspace 通知 (<code>__keyspace@&lt;dbId&gt;__:LLDP_ENTRY_TABLE:*</code>) を <code>psubscribe</code> でパターン購読する。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># mibs/__init__.py:497-501</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_redis_pubsub</span><span class="p">(</span><span class="n">db_conn</span><span class="p">,</span> <span class="n">db_name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">redis_client</span> <span class="o">=</span> <span class="n">db_conn</span><span class="o">.</span><span class="n">get_redis_client</span><span class="p">(</span><span class="n">db_name</span><span class="p">)</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">db</span> <span class="o">=</span> <span class="n">db_conn</span><span class="o">.</span><span class="n">get_dbid</span><span class="p">(</span><span class="n">db_name</span><span class="p">)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">pubsub</span> <span class="o">=</span> <span class="n">redis_client</span><span class="o">.</span><span class="n">pubsub</span><span class="p">()</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">pubsub</span><span class="o">.</span><span class="n">psubscribe</span><span class="p">(</span><span class="s2">&quot;__keyspace@</span><span class="si">{}</span><span class="s2">__:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">pattern</span><span class="p">))</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="k">return</span> <span class="n">pubsub</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># ieee802_1ab.py:252-254 (LocPortUpdater.update_data)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pubsub</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">pattern</span> <span class="o">=</span> <span class="n">mibs</span><span class="o">.</span><span class="n">lldp_entry_table</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>  <span class="c1"># → &quot;LLDP_ENTRY_TABLE:*&quot;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">pubsub</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mibs</span><span class="o">.</span><span class="n">get_redis_pubsub</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</span></code></pre></div>
+<p>通知メッセージの <code>channel</code> フィールドからインタフェース名を取り出し (<code>msg["channel"].split(":")[-1]</code>)、<code>data</code> フィールドに <code>"set"</code> / <code>"del"</code> が含まれるかで SET / DEL を判別する (<code>poll_lldp_entry_updates()</code> L75-97)。</p>
+<h3 id="lldp_appgo-gnmi-subscribe">lldp_app.go の gNMI Subscribe 非対応<a class="headerlink" href="#lldp_appgo-gnmi-subscribe" title="Permanent link">&para;</a></h3>
+<p><code>sonic-mgmt-common/translib/lldp_app.go</code> は <code>translateSubscribe()</code> が <code>emptySubscribeResponse(req.path)</code> を返し、<code>processSubscribe()</code> が <code>tlerr.New("not implemented")</code> を返す（L141-147）。<strong>gNMI Subscribe は実装されていない</strong>。gNMI クライアントが LLDP ネイバー情報への Subscribe を要求した場合はエラーが返る。</p>
+<h3 id="lldpmgrd_3">lldpmgrd の間接購読<a class="headerlink" href="#lldpmgrd_3" title="Permanent link">&para;</a></h3>
+<p><code>lldpmgrd</code> は <code>LLDP_ENTRY_TABLE</code> を直接購読しない。代わりに以下のテーブルを <code>swsscommon.SubscriberStateTable</code> + <code>swsscommon.Select</code> で購読し (<code>lldpmgrd:298-313</code>)、変化を検知した場合は <code>lldpcli</code> コマンドを発行して lldpd を更新する。この結果が lldpd 経由で lldp-syncd に伝わり、最終的に <code>LLDP_ENTRY_TABLE</code> / <code>LLDP_LOC_CHASSIS</code> の内容に間接影響する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>lldpmgrd (swsscommon.Select, timeout=10000ms)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ├── sst_appdb       → APP_PORT_TABLE (APPL_DB)      PortInitDone / PortConfigDone
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  ├── sst_mgmt_ip     → CFG_MGMT_INTERFACE (CONFIG_DB) 管理 IP 変更
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  └── sst_device_meta → CFG_DEVICE_METADATA (CONFIG_DB) hostname 変更
+</span></code></pre></div>
+<h3 id="_19">サービス再起動トリガー<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p>LLDP テーブルへの書き込み自体はサービス再起動を伴わない。lldp-syncd は lldpd との UNIX ソケット通信で差分を受け取り APPL_DB を更新する。Consumer (sonic-snmpagent / lldp_app.go) は次回の <code>update_data()</code> / GET で変化を取得するため、プロセス再起動なしで反映される。</p>
+<!-- /pubsub -->
+
 <!-- defaults -->
 <h2 id="dead-field">コード由来の暗黙デフォルトと dead field<a class="headerlink" href="#dead-field" title="Permanent link">&para;</a></h2>
 <blockquote>
@@ -36023,7 +37089,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_17">暗黙デフォルトとハードコード固定値<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_20">暗黙デフォルトとハードコード固定値<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

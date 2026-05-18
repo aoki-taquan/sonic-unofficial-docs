@@ -26450,7 +26450,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35336,7 +35375,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35789,8 +35867,55 @@ flag デフォルト (<code>telemetry.go:193</code>): <code>false</code>.</p>
 <li>関連 CLI: <code>config gnmi</code></li>
 </ul>
 <hr />
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>gNMI サブシステムの CONFIG_DB 参照は <strong>起動時スナップショット</strong> (dial-in サーバ) と <strong>keyspace notification 購読</strong> (dial-out クライアント) の 2 モデルに分かれる。それぞれに書込み順依存がある。</p>
+<h3 id="_8">検出された順序依存<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>GNMI\|certs</code> (<code>server_crt</code>, <code>server_key</code>) → <code>GNMI\|gnmi</code> → コンテナ起動</td>
+<td><strong>強制先行</strong> (TLS モード)</td>
+<td>起動時のみ。両エントリ揃えてからコンテナ起動すること</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DEVICE_METADATA\|localhost</code> / <code>MGMT_VRF_CONFIG\|vrf_global</code> → gnmi コンテナ起動</td>
+<td>強制先行</td>
+<td>通常は初期プロビジョニング時に設定済み</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>TELEMETRY_CLIENT\|DestinationGroup_&lt;n&gt;</code> → <code>TELEMETRY_CLIENT\|Subscription_&lt;n&gt;</code></td>
+<td><strong>先行推奨</strong> (silent no-op 回避)</td>
+<td>ランタイム。逆順でも DB エラーにならないが送信が開始されない。DestGroup 追加後は自動回復</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>TELEMETRY_CLIENT\|Global</code> → <code>DestinationGroup_*</code> → <code>Subscription_*</code></td>
+<td>推奨 (接続フラップ回避)</td>
+<td>ランタイム。Global 後追い更新時は全接続が一時切断→再接続</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">主要な制約詳細<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p><strong>TLS 証明書先行必須 (依存 #1)</strong>: <code>gnmi-native.sh</code> は起動時に 1 回だけ <code>sonic-cfggen -d -t telemetry_vars.j2</code> で CONFIG_DB をスナップショット読み取りし、<code>telemetry</code> プロセスを <code>exec</code> で起動する。その後は CONFIG_DB を監視しないため、設定変更の反映にはコンテナ再起動が必要。TLS モード (<code>noTLS=false</code> かつ <code>--insecure</code> 未使用) では、<code>GNMI|certs</code> に <code>server_crt</code> / <code>server_key</code> が存在しない状態でコンテナを起動すると <code>telemetry.go:252-258</code> でエラー終了する。<code>GNMI|certs</code> を書いてから <code>GNMI|gnmi</code> を書き、コンテナを起動すること（evidence: <code>gnmi-native.sh:32-61</code>, <code>telemetry.go:252-258</code>）。</p>
+<p><strong>DestinationGroup → Subscription の順序 (依存 #3)</strong>: <code>processTelemetryClientConfig()</code> は Subscription エントリ処理時に <code>cs.destGroupName == ""</code> チェックを行い、<code>dst_group</code> 未設定の場合は silent no-op で返る。<code>dst_group</code> が設定されていても参照先 <code>DestinationGroup_&lt;n&gt;</code> が <code>destGrpNameMap</code> に未登録の場合は <code>DestGrp2ClientSubMap[cs.destGroupName]</code> が空のままとなり、接続インスタンスが生成されない。後から <code>DestinationGroup_&lt;n&gt;</code> が keyspace 通知で到着すると <code>setupDestGroupClients()</code> が呼ばれ自動回復するが、その間テレメトリ送信は発生しない（evidence: <code>dialout_client.go:622-625</code>, <code>dialout_client.go:514-543</code>）。</p>
+<p><strong>Global 後追い更新による全接続フラップ (依存 #4)</strong>: <code>processTelemetryClientConfig()</code> の <code>Global</code> 処理では <code>clientCfg</code> を更新した後、全 DestinationGroup に対して <code>closeDestGroupClient(grpName)</code> → <code>setupDestGroupClients(ctx, grpName)</code> を実行する。<code>Global</code> エントリを DestGroup / Subscription より後に書くと、既存接続が全て一時切断・再接続される（evidence: <code>dialout_client.go:507-513</code>）。</p>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/gnmi-server-ordering.md</code> を参照。</p>
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
-<h2 id="_8">例外条件・特殊挙動<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

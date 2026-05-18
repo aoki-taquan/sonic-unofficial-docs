@@ -23686,6 +23686,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-g" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23753,7 +23792,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         起動時スナップショット
@@ -23825,7 +23864,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         部分適用の注意
@@ -23864,7 +23903,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         内部キー区切り文字
@@ -23875,7 +23914,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム識別子
@@ -35098,6 +35137,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-g" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35165,7 +35243,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         起動時スナップショット
@@ -35237,7 +35315,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         部分適用の注意
@@ -35276,7 +35354,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         内部キー区切り文字
@@ -35287,7 +35365,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム識別子
@@ -35486,6 +35564,66 @@
 </ul>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/nhg-ordering.md -->
+
+<p><code>NhgOrch</code> は APPL_DB の <code>NEXTHOP_GROUP_TABLE</code> を <code>ConsumerStateTable</code> で購読し、<code>doTask()</code> で SAI next hop group の作成・更新・削除を行う。エントリの処理順序は複数の前提条件に依存しており、consumer から観測できる中間状態がいくつか存在する。</p>
+<h3 id="_10">検出された順序依存<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>メンバー NHG 登録 → 親（再帰）NHG の完全解決</td>
+<td><strong>強制先行</strong></td>
+<td>部分解決で即時適用（partial NHG）、残りはメンバー登録後に自動昇格</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>NEXTHOP_GROUP_TABLE</code> 書込み → <code>ROUTE_TABLE</code> <code>nexthop_group</code> 参照</td>
+<td>推奨先行</td>
+<td>逆転時は <code>RouteOrch</code> が NHG 解決まで待機して自動解消</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>ROUTE_TABLE</code> 参照クリア → <code>NEXTHOP_GROUP_TABLE</code> DEL</td>
+<td><strong>強制先行</strong></td>
+<td><code>ref_count &gt; 0</code> の間 DEL はブロック・自動 retry</td>
+</tr>
+<tr>
+<td>4</td>
+<td>DEL と後続 SET が競合 → DEL をスキップ</td>
+<td>自動調停</td>
+<td><code>m_toSync</code> キューで DEL を skip して最終 SET を適用</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>NeighOrch</code> ARP/NDP 解決 → <code>NhgOrch</code> SAI メンバー追加</td>
+<td>非同期（イベント駆動）</td>
+<td><code>invalidateNextHop</code> / <code>validateNextHop</code> で自動的に同期</td>
+</tr>
+<tr>
+<td>6</td>
+<td>NHG 数上限 → temporary NHG → full ECMP 昇格</td>
+<td>非同期（リソース依存）</td>
+<td>リソース解放後の次 <code>doTask()</code> 呼び出し時に自動昇格</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">主要な制約詳細<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p><strong>再帰 NHG のメンバー先行登録（依存 #1）</strong>: 再帰 NHG (<code>nexthop_group</code> フィールドあり) を処理する際、<code>doTask()</code> は各メンバー NHG が <code>m_syncdNextHopGroups</code> に存在するかを確認する (<code>nhgorch.cpp:L130</code>)。全メンバーが未登録の場合は <code>++it</code> で silent retry となる。一部のメンバーのみ登録済みの場合は、存在するメンバーのみで <strong>partial NHG</strong> を即時作成して SAI に登録し (<code>nhgorch.cpp:L160-164, L296-302</code>)、残りのメンバーは登録後に自動昇格する (<code>nhgorch.cpp:L362-391</code>)。consumer から見ると再帰 NHG が「縮退した ECMP → 完全 ECMP」に非同期で変化する。</p>
+<p><strong>DEL 前の参照クリア（依存 #3）</strong>: <code>NEXTHOP_GROUP_TABLE</code> の DEL_COMMAND は <code>nhg_it-&gt;second.ref_count &gt; 0</code> の間 <code>success = false</code> でブロックされ、<code>m_toSync</code> に残留する (<code>nhgorch.cpp:L413-417</code>)。<code>ROUTE_TABLE</code> からの参照が残っている限り NHG は削除されない。<code>fpmsyncd</code> は <code>ROUTE_TABLE</code> の <code>nexthop_group</code> 参照を解消してから <code>NEXTHOP_GROUP_TABLE</code> の DEL を送信する必要がある。参照が解消された次の <code>doTask()</code> イテレーションで自動的に削除される。</p>
+<p><strong>NeighOrch 連動による SAI メンバー追加（依存 #5）</strong>: <code>NEXTHOP_GROUP_TABLE</code> に NHG エントリが書き込まれた時点では SAI メンバーは追加されていない場合がある。<code>NeighOrch</code> が ARP/NDP 解決を通知して <code>NhgOrch::validateNextHop()</code> が呼ばれた時点で SAI <code>create_next_hop_group_member()</code> が実行される (<code>nhgorch.cpp:L466-487</code>)。逆にインタフェース DOWN 等で <code>invalidateNextHop()</code> が呼ばれると SAI メンバーが削除されるが NHG オブジェクト自体は保持される。</p>
+<!-- /ordering -->
+
 <!-- pubsub -->
 <h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
 <h3 id="appl_db-consumerstatetable">APPL_DB 購読 — <code>ConsumerStateTable</code> ベース<a class="headerlink" href="#appl_db-consumerstatetable" title="Permanent link">&para;</a></h3>
@@ -35574,7 +35712,7 @@
 <p>これによりインタフェース UP/DOWN や ARP 解決に連動して NHG メンバーが動的に追加・削除される。</p>
 <h3 id="crm-critical-resource-monitor">CRM (Critical Resource Monitor) 連携<a class="headerlink" href="#crm-critical-resource-monitor" title="Permanent link">&para;</a></h3>
 <p>NHG 作成時に <code>gCrmOrch-&gt;incCrmResUsedCounter(CRM_NEXTHOP_GROUP)</code> を呼び出し、ハードウェアリソース使用量を追跡する (<code>nhgorch.cpp</code> L795)。</p>
-<h3 id="_10">起動時スナップショット<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_12">起動時スナップショット<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <p>orchagent 起動時、<code>Select::select()</code> ループ開始前に <code>ConsumerStateTable</code> の既存エントリが drain され <code>doTask()</code> が一括処理される。再起動後も APPL_DB の既存 NHG エントリが SAI に再設定される。</p>
 <!-- /pubsub -->
 
@@ -35767,7 +35905,7 @@
 <li>リソース解放後に <code>doTask()</code> が temp NHG を完全 NHG に昇格させる</li>
 </ol>
 <p>SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時はルート解決そのものが保留される。</p>
-<h3 id="_11">部分適用の注意<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_13">部分適用の注意<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>syncMembers()</code> は <code>ObjectBulker</code> による bulk create を使用する。flush 後に個別 SAI ID を確認するため、一部成功・一部失敗の部分適用が発生しうる。</li>
 <li>NHG update 時に古いメンバー削除後・新しいメンバー追加前の間、NHG は縮退した状態で ASIC に存在する。</li>
@@ -35808,7 +35946,7 @@
 <blockquote>
 <p><strong>動作ロジック</strong>: <code>RouteOrch</code> 初期化時に <code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> を ASIC から取得する。取得失敗時は <code>128</code> をフォールバックとして使用。Mellanox プラットフォーム (<code>platform</code> 環境変数に <code>"mellanox"</code> を含む場合) では取得値を <code>32</code> で除算する。最終値は <code>SWITCH_TABLE:switch:MAX_NEXTHOP_GROUP_COUNT</code> として STATE_DB に書き込まれる。</p>
 </blockquote>
-<h3 id="_12">内部キー区切り文字<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_14">内部キー区切り文字<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -35839,7 +35977,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_13">プラットフォーム識別子<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<h3 id="_15">プラットフォーム識別子<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

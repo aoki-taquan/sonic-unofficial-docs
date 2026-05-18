@@ -29725,6 +29725,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35380,6 +35419,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35699,6 +35777,53 @@
 <li><strong><code>vni</code> = 0 のフォールバック</strong>: <a href="../../glossary/#term-vxlan">VXLAN</a> orch に <code>vni=0</code> を渡すとベース tunnel の VNI が encapsulation に使われる（<code>createNextHopTunnel()</code> 呼び出し経路）。</li>
 </ul>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> の CONFIG_DB エントリは <code>VNetCfgRouteOrch</code> が即座に APPL_DB へ passthrough するが、APPL_DB 側の <code>VNetRouteOrch</code> が SAI に反映する段階で複数の順序依存が存在する。</p>
+<h3 id="_16">検出された順序依存<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>VXLAN_TUNNEL</code> → <code>VNET</code> → <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code></td>
+<td><strong>強制先行</strong></td>
+<td>VXLAN トンネルが存在しない場合、<code>VNetOrch::addOperation()</code> が <code>return false</code> でリトライ待ち</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>VNET</code>（親）→ <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code>（子）</td>
+<td><strong>強制先行</strong></td>
+<td><code>doRouteTask()</code> は <code>isVnetExists(vnet)</code> が偽の間 <code>return false</code> でキューに残留</td>
+</tr>
+<tr>
+<td>3</td>
+<td>peer <code>VNET</code> エントリ群 → 経路処理</td>
+<td><strong>強制先行（全 peer 揃うまで待機）</strong></td>
+<td>peer のうち 1 件でも未生成なら <code>"Peer VNET %s not yet created"</code> を記録して <code>return false</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>CONFIG_DB 書込み → APPL_DB 到達</td>
+<td>即時（passthrough）</td>
+<td><code>VNetCfgRouteOrch::doVnetRouteTask()</code> / <code>doVnetTunnelRouteTask()</code> は依存チェックなし。KEY の <code>|</code> → <code>:</code> 変換のみ行い即時 SET</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">主要な制約詳細<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><strong>VNET 未存在による処理保留 (依存 #2)</strong>: <code>VNetRouteOrch::doRouteTask&lt;VNetVrfObject&gt;()</code> は冒頭で <code>vnet_orch_-&gt;isVnetExists(vnet)</code> を確認し、偽の場合は SET 操作に対して <code>return false</code> を返す（vnetorch.cpp:1158-1163, 1492-1497）。これにより APPL_DB エントリは <code>m_toSync</code> に保留され、次の orchagent イテレーションで再試行される。DEL 操作は VNET 未存在でも <code>return true</code>（スキップ扱い）。</p>
+<p><strong>peer VNET による追加待機 (依存 #3)</strong>: <code>VNET</code> テーブルに <code>peer_list</code> が設定されている場合、<code>doRouteTask()</code> は peer VNET 全件について <code>isVnetExists(peer)</code> を確認する（vnetorch.cpp:1175-1183, 1508-1516）。1 件でも未生成の peer があると <code>"Peer VNET %s not yet created"</code> を SWSS_LOG_INFO に記録し <code>return false</code> で再キューする。peer 数が多い構成では経路の SAI 反映が大幅に遅延する可能性がある。</p>
+<p><strong>VXLAN_TUNNEL の先行必須 (依存 #1)</strong>: <code>VNetOrch::addOperation()</code> は <code>vxlan_orch-&gt;isTunnelExists(tunnel)</code> で参照 VXLAN トンネルの存在を確認し、存在しない場合 <code>"Vxlan tunnel '%s' doesn't exist"</code> を記録して <code>return false</code> を返す（vnetorch.cpp:497-503）。したがって <code>VXLAN_TUNNEL</code> → <code>VNET</code> → <code>VNET_ROUTE*</code> という 3 段の順序制約が生じる。</p>
+<p><strong>CFG→APPL passthrough の順序独立性 (依存 #4)</strong>: <code>VNetCfgRouteOrch</code> は依存チェックを一切行わず、CONFIG_DB に書かれた瞬間に APPL_DB へ転送する。このため CONFIG_DB 上は <code>VNET_ROUTE</code> を先に書いても問題ないが、APPL_DB 購読側（<code>VNetRouteOrch</code>）が SAI に反映するまでの間は経路が「APPL_DB 存在・SAI 未反映」の中間状態になる。</p>
+<!-- /ordering -->
 
 <div class="footnote">
 <hr />

@@ -28598,6 +28598,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34989,6 +35000,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35237,6 +35259,47 @@
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1110-1161 (SshServer.set_policies — copy2 でコピー後に SSH_CONFIG_NAMES のみ書き換え) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES に Subsystem キーなし) -->
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>SSH_SFTP</code> テーブルは存在しないため、SFTP サブシステム固有の CONFIG_DB 参照関係はない。ただし <code>SSH_SERVER|POLICIES</code> の各フィールドは sshd_config 経由で SFTP セッションにも間接的に影響する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>SFTP への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SSH_SERVER\|POLICIES</code> (CONFIG_DB)</td>
+<td>間接制御（sshd_config 経由）</td>
+<td><code>ciphers</code> / <code>kex_algorithms</code> / <code>macs</code> / <code>password_authentication</code> / <code>ports</code> 設定時</td>
+<td>暗号スイート・認証方式・接続ポートが SFTP セッションにも適用される</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code> (CONFIG_DB)</td>
+<td><code>PamLimitsCfg</code> の early-return 条件</td>
+<td><code>PamLimitsCfg.update_config_file()</code> L1430: 両テーブルが存在しない場合は PAM limits 未更新</td>
+<td><code>max_sessions</code> 経由でセッション上限に影響</td>
+</tr>
+<tr>
+<td><code>openssh-server</code> パッケージ（OS）</td>
+<td>SFTP バイナリ提供</td>
+<td>デプロイ時固定。<code>/usr/lib/openssh/sftp-server</code> の存在に依存</td>
+<td><code>Subsystem sftp</code> 行の実体（CONFIG_DB 外）</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">直接制御経路なし</p>
+<p><code>Subsystem sftp</code> 行の有効/無効を CONFIG_DB から操作する手段は現状存在しない。上記の参照はすべて間接的・派生的なものであり、SFTP サブシステムそのものの状態は OS パッケージと sshd_config テンプレートに依存する。</p>
+</div>
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES — Subsystem キーなし、他フィールドは SFTP セッションに共通適用) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1425-1435 (PamLimitsCfg.update_config_file — DEVICE_METADATA|localhost early-return 条件) -->
+<!-- /cross-refs -->
 
 <!-- cdb-exceptions -->
 <h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

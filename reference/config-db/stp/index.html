@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A 分析。">
+        <meta name="description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A–C 分析（暗黙参照テーブル含む）。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A 分析。" />
+<meta property="og:description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A–C 分析（暗黙参照テーブル含む）。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A 分析。" />
+<meta property="twitter:description" content="CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A–C 分析（暗黙参照テーブル含む）。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp.png" />
 </head>
   
@@ -29060,6 +29060,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35180,6 +35191,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35805,6 +35827,86 @@ STP ポート状態は stpd の内部状態に基づき継続される。</p>
 </div>
 <p>証跡: <code>stpmgrd.cpp:39-40</code>, <code>stpmgr.cpp</code>（setWarmStartState 呼び出しなし）</p>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>stpmgrd</code> が CONFIG_DB の STP テーブル群を購読・処理する際に参照する外部テーブルを示す。
+これらは CONFIG_DB への書き込み有無に関わらず、<strong>ガード条件・フィールド値解決・処理可否判定</strong>に影響する。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-cross-refs.md -->
+
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>DB</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_PORT_TABLE\|PortInitDone</code></td>
+<td>APPL_DB</td>
+<td>起動ガード（存在確認）</td>
+<td>常時。stpmgrd 起動直後に 1 秒ポーリング。<code>portsyncd</code>/<code>orchagent</code> が書き込むまで全 STP 処理が停止</td>
+<td><code>stpmgr.cpp:1257-1273</code>, <code>stpmgrd.cpp:72</code></td>
+</tr>
+<tr>
+<td><code>STATE_VLAN_TABLE\|&lt;vlan&gt;</code></td>
+<td>STATE_DB</td>
+<td>存在確認 → SET/スキップ判定</td>
+<td><code>STP_VLAN</code> の各 SET 前に <code>isVlanStateOk()</code> で参照。エントリなしなら silent skip</td>
+<td><code>stpmgr.cpp:210, 1276-1290</code></td>
+</tr>
+<tr>
+<td><code>STATE_LAG_TABLE\|&lt;lag&gt;</code></td>
+<td>STATE_DB</td>
+<td>存在確認 → SET/スキップ判定</td>
+<td><code>STP_PORT</code> / <code>STP_VLAN_PORT</code> でキーが PortChannel の場合に <code>isLagStateOk()</code> で参照</td>
+<td><code>stpmgr.cpp:1291-1305</code></td>
+</tr>
+<tr>
+<td><code>STATE_STP_TABLE\|&lt;key&gt;</code></td>
+<td>STATE_DB</td>
+<td>既存エントリ確認</td>
+<td><code>doStpVlanPortTask()</code> 内でポート STP 状態確認</td>
+<td><code>stpmgr.cpp:1391</code></td>
+</tr>
+<tr>
+<td><code>VLAN_MEMBER\|&lt;vlan&gt;\|&lt;port&gt;</code></td>
+<td>CONFIG_DB</td>
+<td>VLAN メンバーシップ解決</td>
+<td><code>doStpVlanPortTask()</code> での VLAN メンバー確認。未所属ポートは設定遅延</td>
+<td><code>stpmgr.cpp:1366</code></td>
+</tr>
+<tr>
+<td><code>LAG_MEMBER\|&lt;lag&gt;\|&lt;port&gt;</code></td>
+<td>CONFIG_DB</td>
+<td>LAG メンバー数管理</td>
+<td><code>doLagMemUpdateTask()</code> が <code>m_lagMap</code> を更新。メンバーなし LAG は STP_PORT SET がスキップ</td>
+<td><code>stpmgr.cpp:648-653, doLagMemUpdateTask()</code></td>
+</tr>
+<tr>
+<td><code>STP_MST</code> / <code>STP_MST_INST</code> / <code>STP_MST_PORT</code></td>
+<td>CONFIG_DB</td>
+<td>MST モード時の主購読</td>
+<td><code>mode = "mst"</code> 時のみ使用。PVST 時はこれらのテーブルが処理されない</td>
+<td><code>stpmgrd.cpp:47-54</code>, <code>stpmgr.cpp:1023-1031, 1155-1160</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">STATE_DB 参照は silent skip のトリガ</p>
+<p><code>isVlanStateOk()</code> / <code>isLagStateOk()</code> が <code>false</code> を返した場合、stpmgrd はエラーログを出力せずイベントをキューに残す。
+<code>vlanmgrd</code> や <code>teamd</code> が STATE_DB にエントリを書き込んだ後、次回 SELECT ループで再処理される。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">CONFIG_DB と STATE_DB の両方に依存</p>
+<p>STP は CONFIG_DB の書き込み内容だけで動作が決まらず、STATE_DB（<code>STATE_VLAN_TABLE</code> / <code>STATE_LAG_TABLE</code>）の状態が揃うまで適用が遅延する。
+この依存は YANG モデルには記述されていない暗黙の前提条件である。</p>
+</div>
+<!-- /cross-refs -->
 
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>

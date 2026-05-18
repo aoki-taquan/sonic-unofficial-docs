@@ -27454,7 +27454,251 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pfcwdorch-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — pfcwdorch が依存する関連テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — pfcwdorch が依存する関連テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要テーブル / コンポーネント参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期化ガード順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タスク処理ステータスと対応挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_invalid_entry-createentry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_invalid_entry を返す失敗パス (createEntry())
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_need_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_need_retry を返す失敗パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_failed-deleteentry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_failed を返す失敗パス (deleteEntry())
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE へのフィードバックなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数の影響詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-pfc_wd_instormport-storm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB — PFC_WD_INSTORM|&lt;port&gt; (storm 状態の永続化)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-pfc-lossyhandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 経由のポート PFC マスク変更 (LossyHandler)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-sai_queue_attr_pfc_dlr_init-dlr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 経由の SAI_QUEUE_ATTR_PFC_DLR_INIT 設定 (DLR ハンドラ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-broadcom-dlr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI スイッチレベル属性設定 (Broadcom + DLR 初回登録時のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db-pfc_wd-counter-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_DB — PFC_WD グループへの counter ID 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-events-framework-pfc-storm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC events framework — pfc-storm イベント発行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -27465,7 +27709,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -27476,7 +27720,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35070,7 +35314,251 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pfcwdorch-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — pfcwdorch が依存する関連テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — pfcwdorch が依存する関連テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要テーブル / コンポーネント参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期化ガード順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タスク処理ステータスと対応挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_invalid_entry-createentry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_invalid_entry を返す失敗パス (createEntry())
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_need_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_need_retry を返す失敗パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_failed-deleteentry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_failed を返す失敗パス (deleteEntry())
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE へのフィードバックなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数の影響詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-pfc_wd_instormport-storm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB — PFC_WD_INSTORM|&lt;port&gt; (storm 状態の永続化)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-pfc-lossyhandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 経由のポート PFC マスク変更 (LossyHandler)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-sai_queue_attr_pfc_dlr_init-dlr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 経由の SAI_QUEUE_ATTR_PFC_DLR_INIT 設定 (DLR ハンドラ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-broadcom-dlr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI スイッチレベル属性設定 (Broadcom + DLR 初回登録時のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db-pfc_wd-counter-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_DB — PFC_WD グループへの counter ID 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-events-framework-pfc-storm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SONiC events framework — pfc-storm イベント発行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35081,7 +35569,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35092,7 +35580,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35299,23 +35787,421 @@
 <p><strong>非対称削除 (依存 #3)</strong>: <code>stopWdOnPort()</code> (<code>pfcwdorch.cpp:669</code>) が <code>hdel</code> で削除するのは <code>{PFC_WD_DETECTION_TIME, PFC_WD_RESTORATION_TIME, PFC_WD_ACTION, PFC_WD_STATUS}</code> のみ。<code>DEADLOCK_DETECTED</code> / <code>DEADLOCK_RESTORED</code> / <code>TX_PACKETS</code> 等カウンタ系フィールドはハッシュに残留する。次回 <code>pfcwd start</code> 時に <code>getQueueStats()</code> (<code>pfcactionhandler.cpp:119</code>) が既存値を読み出して継続するため、再起動をまたいでもカウンタは蓄積し続ける。</p>
 <!-- /ordering -->
 
-<h2 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># queue OID を取得</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span>COUNTERS_QUEUE_NAME_MAP<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Ethernet0
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># PFC WD 状態を確認</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span>COUNTERS:&lt;queue_oid&gt;
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># pfcwd CLI</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>show<span class="w"> </span>pfcwd<span class="w"> </span>stats
+<!-- cross-refs -->
+<h2 id="pfcwdorch-phase-c">暗黙参照 — <code>pfcwdorch</code> が依存する関連テーブル (Phase C)<a class="headerlink" href="#pfcwdorch-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>COUNTERS:&lt;queue_oid&gt;</code> ハッシュは YANG 定義を持たないため leafref による明示的 cross-table 参照はゼロ件。
+代わりに <code>pfcwdorch.cpp</code> / <code>pfcactionhandler.cpp</code> / Lua プラグイン群から抽出した <strong>4 系統の暗黙依存</strong> が実装レベルの cross-table 参照となる。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-cross-refs.md -->
+
+<h3 id="_9">主要テーブル / コンポーネント参照<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先 (テーブル / コンポーネント)</th>
+<th>フィールド / 条件</th>
+<th>参照方向</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONFIG_DB:PFC_WD\|&lt;port&gt;</code></td>
+<td><code>detection_time</code>, <code>restoration_time</code>, <code>action</code>, <code>pfc_stat_history</code></td>
+<td>読み取り（設定値を COUNTERS_DB へ変換・書込み）</td>
+<td><code>pfcwdorch.cpp:212-233</code> <code>createEntry()</code></td>
+</tr>
+<tr>
+<td><code>APPL_DB:PFC_WD_INSTORM</code></td>
+<td><code>&lt;port&gt;: { &lt;queue_index&gt;: "storm" }</code></td>
+<td>書き込み（storm 検知時） / 削除（storm 復旧時） / 再読み込み（warm-reboot）</td>
+<td><code>pfcwdorch.cpp:999,1016,1033,1057,1108</code></td>
+</tr>
+<tr>
+<td><code>pfc_detect_*.lua</code> (全プラットフォーム Lua プラグイン)</td>
+<td><code>PFC_WD_STATUS</code>, <code>PFC_WD_ACTION</code>, <code>PFC_WD_DETECTION_TIME</code>, <code>PFC_WD_DETECTION_TIME_LEFT</code>, <code>PFC_STAT_HISTORY</code></td>
+<td>読み取り（FlexCounter 経由で storm 検知判定に使用）</td>
+<td><code>pfc_detect_broadcom.lua:75-82</code>, 他各 lua</td>
+</tr>
+<tr>
+<td><code>pfc_restore*.lua</code> (restore Lua プラグイン)</td>
+<td><code>PFC_WD_STATUS</code></td>
+<td>読み取り（storm 復旧判定）</td>
+<td><code>pfc_restore.lua:20</code></td>
+</tr>
+<tr>
+<td><code>sonic-utilities/pfcwd/main.py</code></td>
+<td><code>PFC_WD_STATUS</code>, <code>PFC_WD_QUEUE_STATS_DEADLOCK_*</code>, <code>PFC_WD_QUEUE_STATS_TX/RX_*</code></td>
+<td>読み取り（<code>show pfcwd stats</code> 表示）</td>
+<td><code>pfcwd/main.py:45-49,147-162</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">初期化ガード順序<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>gPortsOrch-&gt;getPortPfcWatchdogStatus()</code> で PFC マスク取得 → lossless TC 集合が空なら COUNTERS_DB への書き込み全スキップ（<code>pfcwdorch.cpp:535-553</code>）。</li>
+<li><code>registerInWdDb()</code> 内 per-queue ループで config フィールドを先行書き込み → <code>initWdCounters()</code> がステータス・カウンタを後続書き込み（<code>pfcwdorch.cpp:579-601</code>）。</li>
+<li>storm 検知時に COUNTERS_DB (<code>PFC_WD_STATUS=stormed</code>) と APPL_DB (<code>PFC_WD_INSTORM</code>) の両方へ同時書き込み。</li>
+<li>warm-reboot 時は <code>refillToSync()</code> が APPL_DB <code>PFC_WD_INSTORM</code> を再読み込みして storm 状態を COUNTERS_DB に反映（<code>pfcwdorch.cpp:1108</code>）。</li>
+</ol>
+<h3 id="_11">範囲外<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>COUNTERS_QUEUE_NAME_MAP</code> — OID 解決のための読み取り専用マップ。<code>pfcwdorch</code> は書き込まない。</li>
+<li><code>FLEX_COUNTER_TABLE</code> — <code>pfcwdorch</code> は <code>PFC_WD</code> グループに counter ID リストを設定するが、<code>COUNTERS:&lt;queue_oid&gt;</code> フィールドへの直接参照はない。</li>
+</ul>
+<p>詳細スキャン手順と行番号一覧は <code>meta/_intermediate/cdb-flow/pfcwd-state-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>pfcwdorch</code> の <code>doTask()</code> はタスクステータスを <code>task_success</code> / <code>task_need_retry</code> / <code>task_invalid_entry</code> の 3 値で管理し、失敗時の挙動が種別ごとに異なる。</p>
+<!-- evidence: sonic-swss/orchagent/pfcwdorch.cpp -->
+
+<h3 id="_12">タスク処理ステータスと対応挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ステータス</th>
+<th>発生条件</th>
+<th>doTask の動作</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_success</code></td>
+<td><code>startWdOnPort()</code> / <code>stopWdOnPort()</code> 成功</td>
+<td><code>consumer.m_toSync.erase(it++)</code> でキューから除去</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>task_need_retry</code></td>
+<td><code>startWdOnPort()</code> が <code>false</code> を返した（FlexCounter グループ未初期化等）</td>
+<td><code>++it</code> でキューに残留（次回 <code>doTask()</code> で再試行）</td>
+<td>あり（自動）</td>
+</tr>
+<tr>
+<td><code>task_invalid_entry</code></td>
+<td>下記バリデーション失敗</td>
+<td><code>consumer.m_toSync.erase(it++)</code> でキューから除去</td>
+<td>なし（永久破棄）</td>
+</tr>
+<tr>
+<td><code>task_failed</code></td>
+<td><code>stopWdOnPort()</code> が <code>false</code> を返した（DEL 操作のみ）</td>
+<td><code>consumer.m_toSync.erase(it++)</code> でキューから除去</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="task_invalid_entry-createentry"><code>task_invalid_entry</code> を返す失敗パス (<code>createEntry()</code>)<a class="headerlink" href="#task_invalid_entry-createentry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>条件</th>
+<th>ログ</th>
+<th>行番号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>gPortsOrch-&gt;getPort()</code> が失敗（存在しないポート名）</td>
+<td><code>SWSS_LOG_ERROR("Invalid port interface %s")</code></td>
+<td><code>pfcwdorch.cpp:195-196</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>ポートが物理ポートでない（LAG / VLAN 等）</td>
+<td><code>SWSS_LOG_ERROR("Interface %s is not physical port")</code></td>
+<td><code>pfcwdorch.cpp:201-202</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>action</code> フィールドが <code>drop</code> / <code>forward</code> / <code>alert</code> 以外</td>
+<td><code>SWSS_LOG_ERROR("Invalid PFC Watchdog action %s")</code></td>
+<td><code>pfcwdorch.cpp:230-231</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Cisco 8000 プラットフォームで <code>forward</code> アクションを指定</td>
+<td><code>SWSS_LOG_ERROR("Unsupported action %s for platform %s")</code></td>
+<td><code>pfcwdorch.cpp:234-235</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Broadcom プラットフォームで DLR INIT 有効かつ既存ポートと <code>action</code> が不一致</td>
+<td><code>SWSS_LOG_ERROR("Invalid PFC Watchdog action %s as switch level action %s is set")</code></td>
+<td><code>pfcwdorch.cpp:260-262</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Broadcom + DLR + <code>set_switch_attribute</code> が SAI エラーを返した</td>
+<td><code>SWSS_LOG_ERROR("Failed to set switch level PFC DLR packet action rv : %d")</code></td>
+<td><code>pfcwdorch.cpp:250-251</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>不明なフィールド名が CONFIG_DB に含まれる</td>
+<td><code>SWSS_LOG_ERROR("Failed to parse PFC Watchdog %s configuration. Unknown attribute %s.")</code></td>
+<td><code>pfcwdorch.cpp:273-277</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>フィールド値パース時に例外発生（範囲外整数等）</td>
+<td><code>SWSS_LOG_ERROR("Failed to parse PFC Watchdog %s attribute %s error: %s.")</code></td>
+<td><code>pfcwdorch.cpp:282-287</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>detection_time</code> フィールドが存在しない（<code>detectionTime == 0</code>）</td>
+<td><code>SWSS_LOG_ERROR("%s missing")</code></td>
+<td><code>pfcwdorch.cpp:302-303</code></td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>pfc_stat_history</code> が <code>enable</code> / <code>disable</code> 以外</td>
+<td><code>SWSS_LOG_ERROR("%s is invalid value for %s")</code></td>
+<td><code>pfcwdorch.cpp:307-308</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="task_need_retry"><code>task_need_retry</code> を返す失敗パス<a class="headerlink" href="#task_need_retry" title="Permanent link">&para;</a></h3>
+<p><code>startWdOnPort()</code> が <code>false</code> を返した場合（<code>pfcwdorch.cpp:313-314</code>）:</p>
+<ul>
+<li><code>startWdOnPort()</code> は内部で <code>registerInWdDb()</code> を呼び出し、PFC マスク未取得など一時的な条件が揃っていない場合に <code>false</code> を返す。</li>
+<li>この場合、エントリはキューに残留して次回 <code>doTask()</code> で自動再試行される。</li>
+<li><code>allPortsReady()</code> が <code>false</code> の場合は <code>doTask()</code> 全体が即時 return されるため、ポート初期化完了まで処理が延期される（<code>pfcwdorch.cpp:66-69</code>）。</li>
+</ul>
+<h3 id="task_failed-deleteentry"><code>task_failed</code> を返す失敗パス (<code>deleteEntry()</code>)<a class="headerlink" href="#task_failed-deleteentry" title="Permanent link">&para;</a></h3>
+<p><code>stopWdOnPort()</code> が <code>false</code> を返した場合（<code>pfcwdorch.cpp:332-333</code>）:</p>
+<ul>
+<li><code>stopWdOnPort()</code> が SAI 操作でエラーを返した場合に発生する。</li>
+<li><code>task_failed</code> はキューから除去されるため再試行は行われない。</li>
+<li>COUNTERS_DB の残留フィールドはそのままになる（クリーンアップ不完全の可能性あり）。</li>
+</ul>
+<h3 id="state_db-error_table">STATE_DB / ERROR_TABLE へのフィードバックなし<a class="headerlink" href="#state_db-error_table" title="Permanent link">&para;</a></h3>
+<p><code>pfcwdorch</code> は失敗を <code>syslog</code> に記録するのみで、STATE_DB / ERROR_TABLE への書き込みを行わない。失敗確認は以下のログで行う:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>swss<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;pfc watchdog\|pfcwd&quot;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># または</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;pfc watchdog\|pfcwd&quot;</span><span class="w"> </span>/var/log/syslog
 </span></code></pre></div>
-<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- /failure -->
+
+<!-- hardcoded-constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-constants.md -->
+<!-- source: sonic-swss/orchagent/pfcwdorch.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
+<!-- source: sonic-swss/orchagent/pfcactionhandler.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
+
+<p><code>pfcwdorch</code> / <code>pfcactionhandler</code> が COUNTERS_DB を書き込む際に利用するハードコード定数。いずれも CONFIG_DB / YANG では設定不可。</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PFC_WD_TC_MAX</code></td>
+<td><code>8</code></td>
+<td><code>pfcwdorch.cpp:28</code></td>
+<td>lossless TC スキャン上限（queue index 0–7）。PFC 未有効 TC はスキップされ COUNTERS_DB エントリが作成されない</td>
+</tr>
+<tr>
+<td><code>PFC_WD_DETECTION_TIME_MIN</code></td>
+<td><code>100</code> ms</td>
+<td><code>pfcwdorch.cpp:23</code></td>
+<td><code>detection_time</code> の下限。範囲外は <code>task_invalid_entry</code> となり書き込み不実行</td>
+</tr>
+<tr>
+<td><code>PFC_WD_DETECTION_TIME_MAX</code></td>
+<td><code>5000</code> ms</td>
+<td><code>pfcwdorch.cpp:22</code></td>
+<td><code>detection_time</code> の上限（5 秒）</td>
+</tr>
+<tr>
+<td><code>PFC_WD_RESTORATION_TIME_MIN</code></td>
+<td><code>100</code> ms</td>
+<td><code>pfcwdorch.cpp:25</code></td>
+<td><code>restoration_time</code> の下限。同様に範囲外は書き込み不実行</td>
+</tr>
+<tr>
+<td><code>PFC_WD_RESTORATION_TIME_MAX</code></td>
+<td><code>60000</code> ms</td>
+<td><code>pfcwdorch.cpp:24</code></td>
+<td><code>restoration_time</code> の上限（60 秒）</td>
+</tr>
+<tr>
+<td><code>PFC_WD_QUEUE_STATUS</code></td>
+<td><code>"PFC_WD_STATUS"</code></td>
+<td><code>pfcactionhandler.cpp:9</code></td>
+<td>COUNTERS_DB フィールド名リテラル。YANG 定義外</td>
+</tr>
+<tr>
+<td><code>PFC_WD_QUEUE_STATUS_OPERATIONAL</code></td>
+<td><code>"operational"</code></td>
+<td><code>pfcactionhandler.cpp:10</code></td>
+<td><code>PFC_WD_STATUS</code> の stable 状態値</td>
+</tr>
+<tr>
+<td><code>PFC_WD_QUEUE_STATUS_STORMED</code></td>
+<td><code>"stormed"</code></td>
+<td><code>pfcactionhandler.cpp:11</code></td>
+<td><code>PFC_WD_STATUS</code> の storm 検知状態値</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_13">定数の影響詳細<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<p><strong><code>PFC_WD_TC_MAX = 8</code> による登録エントリ数制限</strong>: <code>registerInWdDb()</code> (<code>pfcwdorch.cpp:542-603</code>) は <code>for (uint8_t i = 0; i &lt; PFC_WD_TC_MAX; i++)</code> でポートの queue index 0–7 をスキャンする。<code>pfcMask</code> でビットが立っていない TC（PFC 未有効）はスキップされるため、COUNTERS_DB に書き込まれる <code>COUNTERS:&lt;queue_oid&gt;</code> エントリは実際に PFC が有効な TC 数に限定される。ポートの PFC 設定を変えずに <code>pfcwd start</code> を再実行しても、既存エントリに上書きするだけで数は変化しない。</p>
+<p><strong><code>detection_time</code> / <code>restoration_time</code> の範囲制約</strong>: <code>createEntry()</code> (<code>pfcwdorch.cpp:214-223</code>) で <code>to_uint&lt;uint32_t&gt;(value, MIN, MAX)</code> を呼び出す。範囲外の値は <code>std::out_of_range</code> / 検証失敗で <code>task_invalid_entry</code> を返し、<code>startWdOnPort()</code> は呼ばれない。COUNTERS_DB には一切書き込まれない。</p>
+<p><strong>フィールド名のリテラル固定</strong>: <code>PFC_WD_STATUS</code>、<code>PFC_WD_QUEUE_STATS_DEADLOCK_DETECTED</code> 等のフィールド名はすべて C++ マクロとして <code>pfcactionhandler.cpp</code> の先頭に定義されており、YANG モデルや CONFIG_DB スキーマによる検証外に置かれている。Lua プラグインおよび <code>show pfcwd stats</code> が同じ文字列リテラルを参照することで整合性が保たれている。</p>
+<!-- /hardcoded-constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>pfcwdorch</code> / <code>pfcactionhandler</code> は CONFIG_DB <code>PFC_WD</code> の SET/DEL 処理と storm イベント処理の結果として、COUNTERS_DB 以外の複数の場所へ書き込む。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-side-effects.md -->
+
+<h3 id="appl_db-pfc_wd_instormport-storm">APPL_DB — <code>PFC_WD_INSTORM|&lt;port&gt;</code> (storm 状態の永続化)<a class="headerlink" href="#appl_db-pfc_wd_instormport-storm" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>トリガ</th>
+<th>操作</th>
+<th>フィールド</th>
+<th>値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>storm 検知 (<code>action=drop/alert/forward</code>)</td>
+<td><code>hset</code></td>
+<td><code>&lt;queue_index&gt;</code></td>
+<td><code>"storm"</code></td>
+<td><code>pfcwdorch.cpp:998,1017,1034</code></td>
+</tr>
+<tr>
+<td>storm 復旧</td>
+<td><code>hdel</code></td>
+<td><code>&lt;queue_index&gt;</code></td>
+<td>—</td>
+<td><code>pfcwdorch.cpp:1056-1058</code></td>
+</tr>
+</tbody>
+</table>
+<p>warm-reboot 後に <code>bake()</code> が <code>APPL_DB:PFC_WD_INSTORM</code> を再読み込みして storm 状態を COUNTERS_DB に反映する (<code>pfcwdorch.cpp:1108</code>)。この書き込みがない状態で warm-reboot を行うと、storm が解消されたものとして扱われる。</p>
+<h3 id="sai-pfc-lossyhandler">SAI 経由のポート PFC マスク変更 (LossyHandler)<a class="headerlink" href="#sai-pfc-lossyhandler" title="Permanent link">&para;</a></h3>
+<p><code>action=drop</code> または <code>action=alert</code> 時、storm 検知で <code>PfcWdLossyHandler</code> コンストラクタ (<code>pfcactionhandler.cpp:541-568</code>) が実行される:</p>
+<ol>
+<li><code>gPortsOrch-&gt;getPortPfc(port, &amp;pfcMask)</code> で現在の PFC マスクを取得</li>
+<li><code>pfcMask &amp;= ~(1 &lt;&lt; queueId)</code> でストームキューの PFC ビットをクリア</li>
+<li><code>gPortsOrch-&gt;setPortPfc(port, pfcMask)</code> → SAI <code>set_port_attribute()</code> でハードウェアに反映（PFC 一時無効化）</li>
+</ol>
+<p>storm 復旧時 (<code>~PfcWdLossyHandler()</code>) は逆順に <code>pfcMask |= (1 &lt;&lt; queueId)</code> で PFC を再有効化する。</p>
+<div class="admonition note">
+<p class="admonition-title">プラットフォーム例外</p>
+<p>Cisco 8000 および Broadcom + DLR INIT 有効環境ではこのマスク変更をスキップ (<code>pfcactionhandler.cpp:549-552</code>)。</p>
+</div>
+<h3 id="sai-sai_queue_attr_pfc_dlr_init-dlr">SAI 経由の <code>SAI_QUEUE_ATTR_PFC_DLR_INIT</code> 設定 (DLR ハンドラ)<a class="headerlink" href="#sai-sai_queue_attr_pfc_dlr_init-dlr" title="Permanent link">&para;</a></h3>
+<p>Broadcom プラットフォームで DLR が有効な場合、<code>PfcWdDlrHandler</code> / <code>PfcWdSaiDlrInitHandler</code> が使用される:</p>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>SAI 操作</th>
+<th>値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>storm 検知 (コンストラクタ)</td>
+<td><code>sai_queue_api-&gt;set_queue_attribute(queue, SAI_QUEUE_ATTR_PFC_DLR_INIT)</code></td>
+<td><code>true</code></td>
+<td><code>pfcactionhandler.cpp:234,277</code></td>
+</tr>
+<tr>
+<td>storm 復旧 (デストラクタ)</td>
+<td><code>sai_queue_api-&gt;set_queue_attribute(queue, SAI_QUEUE_ATTR_PFC_DLR_INIT)</code></td>
+<td><code>false</code></td>
+<td><code>pfcactionhandler.cpp:257,300</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-broadcom-dlr">SAI スイッチレベル属性設定 (Broadcom + DLR 初回登録時のみ)<a class="headerlink" href="#sai-broadcom-dlr" title="Permanent link">&para;</a></h3>
+<p>Broadcom + PFC DLR INIT 有効環境で最初のポートを <code>pfcwd start</code> する際 (<code>pfcwdorch.cpp:244-251</code>):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sai_switch_api-&gt;set_switch_attribute(gSwitchId, SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION=&lt;action&gt;)
+</span></code></pre></div>
+<p>スイッチ全体のDLR パケットアクションを設定する。2 ポート目以降は新しい <code>action</code> が最初のポートと一致しない場合に <code>task_invalid_entry</code> を返すのみで SAI への書き込みは行わない。</p>
+<h3 id="flex_counter_db-pfc_wd-counter-id">FLEX_COUNTER_DB — <code>PFC_WD</code> グループへの counter ID 登録<a class="headerlink" href="#flex_counter_db-pfc_wd-counter-id" title="Permanent link">&para;</a></h3>
+<p><code>registerInWdDb()</code> (<code>pfcwdorch.cpp:558-595</code>) が <code>FlexCounterTaggedCachedManager</code> 経由で書き込む:</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>対象</th>
+<th>内容</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET (pfcwd start)</td>
+<td>port OID</td>
+<td><code>PFC_WD</code> グループの PORT stat ID リスト</td>
+<td><code>pfcwdorch.cpp:560</code></td>
+</tr>
+<tr>
+<td>SET (pfcwd start)</td>
+<td>queue OID</td>
+<td><code>PFC_WD</code> グループの QUEUE stat / attr ID リスト</td>
+<td><code>pfcwdorch.cpp:587,593</code></td>
+</tr>
+<tr>
+<td>DEL (pfcwd stop)</td>
+<td>port / queue OID</td>
+<td>counter ID リストを削除 (<code>clearCounterIdList</code>)</td>
+<td><code>pfcwdorch.cpp:652,657</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>syncd</code> はこの登録に従って PFC 統計を COUNTERS_DB へ書き込む。登録削除後は Lua プラグインによる storm 検知が機能しなくなる。</p>
+<h3 id="sonic-events-framework-pfc-storm">SONiC events framework — <code>pfc-storm</code> イベント発行<a class="headerlink" href="#sonic-events-framework-pfc-storm" title="Permanent link">&para;</a></h3>
+<p>storm 検知時に <code>report_pfc_storm()</code> (<code>pfcwdorch.cpp:965</code>) が SONiC events framework 経由でイベントを発行する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">event_publish</span><span class="p">(</span><span class="n">g_events_handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pfc-storm&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">params</span><span class="p">);</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1">// params: port-id, queue-index, additional_info</span>
+</span></code></pre></div>
+<p>gNMI / event-driven telemetry 向けのサイドチャンネルであり、COUNTERS_DB / APPL_DB へは書き込まない。</p>
+<h3 id="_14">副次書込なし<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>STATE_DB</strong>: <code>pfcwdorch</code> / <code>pfcactionhandler</code> は STATE_DB に書き込まない。</li>
+<li><strong>ERROR_TABLE</strong>: 失敗時もエラーフィードバックテーブルへの書込なし。syslog のみ。</li>
+<li><strong>ASIC_DB</strong>: SAI 経由で <code>syncd</code> が書き込む（orchagent の直接書込なし）。</li>
+</ul>
+<!-- /side-effects -->
+
+<h2 id="_15">確認コマンド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># queue OID を取得</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span>COUNTERS_QUEUE_NAME_MAP<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Ethernet0
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># PFC WD 状態を確認</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span>COUNTERS:&lt;queue_oid&gt;
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># pfcwd CLI</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>show<span class="w"> </span>pfcwd<span class="w"> </span>stats
+</span></code></pre></div>
+<h2 id="_16">関連リファレンス<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../pfc-wd/">CONFIG_DB: PFC_WD テーブル</a></li>
 <li><a href="../../yang/sonic-pfcwd/">YANG: sonic-pfcwd</a></li>
 <li>CLI: <code>pfcwd stats</code></li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_17">引用元<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -23644,6 +23644,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23678,7 +23717,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -35430,6 +35469,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35464,7 +35542,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -35829,6 +35907,56 @@
 <p>調査メモ詳細: <code>meta/_intermediate/cdb-flow/ntp-global-defaults.md</code></p>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>hostcfgd</code> の <code>NtpCfg</code> クラスは <code>NTP_GLOBAL</code> / <code>NTP_SERVER</code> / <code>NTP_KEY</code> / <code>LOOPBACK_INTERFACE</code> を独立に購読し、それぞれのハンドラが <code>chrony</code> を再起動する。書込み順は chrony の中間状態（空サーバリスト等）と YANG must 制約の可否に影響する。</p>
+<h3 id="_17">検出された順序依存<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>NTP_SERVER</code> / <code>NTP_KEY</code> → <code>NTP_GLOBAL</code></td>
+<td>推奨先行</td>
+<td>後追い設定でも <code>ntp_srv_key_handler</code> が再トリガされ自動復旧</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled = "true"</code> → <code>NTP_GLOBAL\|global.vrf = "mgmt"</code></td>
+<td><strong>必須先行</strong>（YANG must 制約）</td>
+<td>CLI 発行時に YANG バリデーション失敗で reject。redis 直書きでは制約がバイパスされる</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>LOOPBACK_INTERFACE</code> 存在 → <code>NTP_GLOBAL.src_intf</code> 有効化</td>
+<td>推奨先行</td>
+<td><code>NTP_SERVER</code> が空のとき <code>handle_ntp_source_intf_chg()</code> は early return (hostcfgd:1315)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>NTP_GLOBAL.src_intf</code> の名前 ∈ <code>LOOPBACK_INTERFACE</code> キー</td>
+<td>推奨先行</td>
+<td>登録前に loopback が追加されても名前一致しない限り chrony restart はスキップ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_18">主要な制約詳細<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><strong>MGMT_VRF_CONFIG 先行必須 (依存 #2)</strong>: <code>sonic-ntp.yang</code> の <code>must</code> 制約
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>(current() != &#39;mgmt&#39;) or (/mvrf:sonic-mgmt_vrf/.../mgmtVrfEnabled = &#39;true&#39;)
+</span></code></pre></div>
+により、<code>NTP_GLOBAL.vrf = "mgmt"</code> は <code>MGMT_VRF_CONFIG</code> で mgmt VRF が有効化されていないと CLI が reject する。<code>MGMT_VRF_CONFIG</code> を先に <code>mgmtVrfEnabled = true</code> で書いてから <code>NTP_GLOBAL.vrf</code> を設定すること（evidence: <code>sonic-ntp.yang must</code> 制約, <code>hostcfgd:1331-1365</code>）。</p>
+<p><strong>NTP_SERVER 先行推奨 (依存 #1)</strong>: <code>NTP_GLOBAL</code> だけ先に書いて <code>NTP_SERVER</code> を後から追加した場合、<code>ntp_global_update()</code> (hostcfgd:1331) 呼び出し時点では chrony がサーバリスト空で再起動される。その後 <code>NTP_SERVER</code> 追加イベントで <code>ntp_srv_key_handler</code> → <code>ntp_srv_key_update()</code> が再度トリガされ正常な chrony 設定で再起動されるため、最終的には収束する（evidence: <code>hostcfgd:2389-2391, 1383-1406</code>）。</p>
+<p><strong>diff 検知による冪等性</strong>: <code>ntp_global_update()</code> (hostcfgd:1344) はキャッシュと同一データなら no-op。<code>ntp_srv_key_update()</code> (hostcfgd:1383-1386) も同様。イベント到着順が逆でも最終状態は収束するが、中間状態で空サーバリストの chrony が一時的に動作する点に注意。</p>
+<p>調査メモ: <code>meta/_intermediate/cdb-flow/ntp-global-ordering.md</code></p>
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <!-- derivation -->
@@ -35837,7 +35965,7 @@
 <p>minigraph.py からの <code>NTP_GLOBAL</code> 自動派生はなし。<code>NTP_SERVER</code> のみ minigraph.py が自動設定する (iburst='on' 付き)。<code>NTP_GLOBAL</code> は CLI (<code>config ntp</code>) または <code>hostcfgd</code> のテンプレート生成で参照される。</p>
 <h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
 <p><code>NTP_GLOBAL</code> は orchagent では処理されない。<code>hostcfgd</code> が CONFIG_DB の <code>NTP</code>, <code>NTP_SERVER</code>, <code>NTP_KEY</code>, <code>LOOPBACK_INTERFACE</code> を購読し、<code>ntp.conf</code> テンプレートを再生成する (<code>hostcfgd:1278-1384</code>)。条件付き platform 登録なし。</p>
-<h3 id="_17">グレップカバレッジ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_19">グレップカバレッジ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

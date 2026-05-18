@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存を詳解。Phase A+B 分析。">
+        <meta name="description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブルを詳解。Phase A+B+C 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存を詳解。Phase A+B 分析。" />
+<meta property="og:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブルを詳解。Phase A+B+C 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-orch.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-orch/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存を詳解。Phase A+B 分析。" />
+<meta property="twitter:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブルを詳解。Phase A+B+C 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-orch.png" />
 </head>
   
@@ -28893,6 +28893,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・リトライ・リカバリ (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・リトライ・リカバリ (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fail-silent-no-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        即時破棄 (fail-silent / no retry)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        遅延リトライ (it++ 残置)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンシューマ全体ブロック (return)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-silent-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンストラクタ SAI クエリ失敗 (silent failure)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm Restart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        回復シナリオまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28904,7 +28998,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28915,7 +29009,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35036,6 +35130,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・リトライ・リカバリ (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・リトライ・リカバリ (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fail-silent-no-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        即時破棄 (fail-silent / no retry)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        遅延リトライ (it++ 残置)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンシューマ全体ブロック (return)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-silent-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンストラクタ SAI クエリ失敗 (silent failure)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Warm Restart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        回復シナリオまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35047,7 +35235,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35058,7 +35246,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35499,6 +35687,234 @@ DISABLED・LISTENING はいずれも <code>SAI_STP_PORT_STATE_BLOCKING</code> �
 <p>詳細根拠は <code>meta/_intermediate/cdb-flow/stp-orch-ordering.md</code> を参照。</p>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>StpOrch</code> が購読する APPL_DB 4 テーブルは <code>stpd → stpmgrd</code> が書き手で、<code>StpOrch</code> は読み手兼 SAI 変換器である。以下の暗黙参照は、各テーブルの処理がどのテーブル / Orch / SAI に依存するかを示す。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-cross-refs.md -->
+
+<table>
+<thead>
+<tr>
+<th>参照方向</th>
+<th>このテーブル / Orch</th>
+<th>相手テーブル / リソース</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>入力 (書き手)</td>
+<td>APPL_DB 4 テーブル</td>
+<td>stpd → stpmgrd</td>
+<td>常時。stpmgrd が CONFIG_DB <code>STP</code> / <code>STP_VLAN</code> 等を購読し stpd IPC を仲介して APPL_DB を書く</td>
+</tr>
+<tr>
+<td>起動順序ガード</td>
+<td>全テーブル</td>
+<td><code>PORT</code> (PortsOrch::allPortsReady)</td>
+<td>常時。false の間は <code>doTask()</code> が即 <code>return</code> し全処理を保留</td>
+</tr>
+<tr>
+<td>VLAN 解決</td>
+<td><code>STP_VLAN_INSTANCE_TABLE</code> SET/DEL</td>
+<td><code>VLAN</code> (PortsOrch::getPort)</td>
+<td>常時。未登録 VLAN は <code>addVlanToStpInstance()</code> / <code>removeVlanFromStpInstance()</code> が false → <code>it++</code> 残置</td>
+</tr>
+<tr>
+<td>ポート解決</td>
+<td><code>STP_PORT_STATE_TABLE</code> SET/DEL</td>
+<td><code>PORT</code> / <code>LAG</code> (PortsOrch::getPort)</td>
+<td>常時。未登録ポートは <code>doStpPortStateTask()</code> が <strong><code>return</code></strong> → コンシューマ全体ブロック</td>
+</tr>
+<tr>
+<td>Bridge Port 自動作成</td>
+<td><code>STP_PORT_STATE_TABLE</code> SET</td>
+<td>PortsOrch::addBridgePort</td>
+<td>bridge port 未作成時に自動試行。SAI 失敗なら <code>it++</code> 残置</td>
+</tr>
+<tr>
+<td>内部 Map 参照</td>
+<td><code>STP_INST_PORT_FLUSH_TABLE</code> SET</td>
+<td><code>STP_VLAN_INSTANCE_TABLE</code> (m_vlanAliasToStpInstanceMap)</td>
+<td>MSTP フラッシュ。<code>addVlanToStpInstance()</code> が更新する Map が未存在なら no-op</td>
+</tr>
+<tr>
+<td>SAI 書き込み先</td>
+<td><code>STP_VLAN_INSTANCE_TABLE</code></td>
+<td>SAI <code>sai_stp_api-&gt;create_stp</code> / <code>set_vlan_attribute(SAI_VLAN_ATTR_STP_INSTANCE)</code></td>
+<td>常時</td>
+</tr>
+<tr>
+<td>SAI 書き込み先</td>
+<td><code>STP_PORT_STATE_TABLE</code></td>
+<td>SAI <code>sai_stp_api-&gt;create_stp_port</code> / <code>set_stp_port_attribute</code></td>
+<td>常時</td>
+</tr>
+<tr>
+<td>SAI クエリ (起動時)</td>
+<td>StpOrch コンストラクタ</td>
+<td><code>SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID</code> / <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code></td>
+<td>起動時 1 回。失敗時は未初期化のまま動作継続 (silent failure)</td>
+</tr>
+<tr>
+<td>STATE_DB 書き込み</td>
+<td>StpOrch (書き手)</td>
+<td><code>STATE_DB STP_TABLE\|GLOBAL.max_stp_inst</code></td>
+<td>SAI クエリ成功時 (<code>updateMaxStpInstance()</code>)。<code>max_stp_instances - 1</code> を書き込む</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">APPL_DB 4 テーブルは StpOrch の入力のみ</p>
+<p><code>STP_VLAN_INSTANCE_TABLE</code> / <code>STP_PORT_STATE_TABLE</code> / <code>STP_FASTAGEING_FLUSH_TABLE</code> / <code>STP_INST_PORT_FLUSH_TABLE</code> への書き込みは stpd / stpmgrd が行う。StpOrch はこれらを<strong>読み取り専用</strong>（Consumer 経由の購読）で処理し、SAI とオプションで STATE_DB <code>STP_TABLE</code> へのみ書き込む。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title"><code>show spanning-tree</code> は別の APPL_DB テーブルを参照</p>
+<p><code>show/stp.py</code> が読む APPL_DB テーブルは <code>STP_VLAN_TABLE</code> / <code>STP_PORT_TABLE</code> / <code>STP_VLAN_PORT_TABLE</code> (stpd が直接書く STP 状態テーブル) であり、StpOrch が購読する 4 テーブルとは別物である。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動・リトライ・リカバリ (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-failure.md -->
+
+<h3 id="fail-silent-no-retry">即時破棄 (fail-silent / no retry)<a class="headerlink" href="#fail-silent-no-retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_FASTAGEING_FLUSH_TABLE</code> SET</td>
+<td>VLAN が PortsOrch に未登録</td>
+<td><code>stpVlanFdbFlush()</code> が false を返すが戻り値未チェック。エントリは即 <code>erase()</code>。エラーログなし。FDB フラッシュ機会を消失</td>
+</tr>
+<tr>
+<td><code>STP_INST_PORT_FLUSH_TABLE</code> SET</td>
+<td><code>m_vlanAliasToStpInstanceMap</code> にインスタンス未登録</td>
+<td>フラッシュなしで即 <code>erase()</code>。エラーログなし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="it">遅延リトライ (<code>it++</code> 残置)<a class="headerlink" href="#it" title="Permanent link">&para;</a></h3>
+<p>以下の条件ではエントリを <code>m_toSync</code> に残し、次ポーリングサイクルで自動再試行する。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>条件</th>
+<th>ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code> SET</td>
+<td><code>stp_instance</code> フィールド欠落</td>
+<td><code>SWSS_LOG_ERROR("Failed to parse STP instance from SET message for Vlan %s")</code></td>
+</tr>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code> SET</td>
+<td>VLAN が PortsOrch に未登録</td>
+<td><code>addVlanToStpInstance()</code> → false (evidence: stporch.cpp:123-126)</td>
+</tr>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code> SET</td>
+<td><code>sai_stp_api-&gt;create_stp</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to create STP instance for Vlan %s rv:%d")</code></td>
+</tr>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code> SET</td>
+<td><code>SAI_VLAN_ATTR_STP_INSTANCE</code> セット失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to set SAI_VLAN_ATTR_STP_INSTANCE for Vlan %s rv:%d")</code></td>
+</tr>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code> DEL</td>
+<td>VLAN が PortsOrch に未登録</td>
+<td><code>removeVlanFromStpInstance()</code> → false → <code>it++</code></td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code> SET</td>
+<td><code>addBridgePort()</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to add STP port %s invalid bridge port id")</code> → SAI_NULL_OBJECT_ID → <code>updateStpPortState()</code> false → <code>it++</code></td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code> SET</td>
+<td><code>create_stp_port</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to create STP port %s for STP instance %d rv:%d")</code> → SAI_NULL_OBJECT_ID → <code>it++</code></td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code> SET</td>
+<td><code>set_stp_port_attribute</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to set STP port state for %s rv:%d")</code> → false → <code>it++</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="return">コンシューマ全体ブロック (<code>return</code>)<a class="headerlink" href="#return" title="Permanent link">&para;</a></h3>
+<p><code>STP_PORT_STATE_TABLE</code> SET/DEL でポートが PortsOrch に未登録の場合、<code>doStpPortStateTask()</code> が <strong><code>return</code></strong> で抜ける。<code>it++</code> と異なり同一コンシューマの後続エントリも全てブロックされる。PortsOrch へのポート登録後に自動再開する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// stporch.cpp:449-453</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">getPort</span><span class="p">(</span><span class="n">port_alias</span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="p">))</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="p">{</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to get port for STP port state entry %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="sai-silent-failure">コンストラクタ SAI クエリ失敗 (silent failure)<a class="headerlink" href="#sai-silent-failure" title="Permanent link">&para;</a></h3>
+<p><code>StpOrch::StpOrch()</code> (stporch.cpp:17-43) で <code>SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID</code> / <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> の取得に失敗した場合、<code>SWSS_LOG_WARN</code> のみで <code>m_defaultStpId</code> と <code>m_maxStpInstance</code> が未初期化のまま動作を継続する。この状態では VLAN 削除時に <code>SAI_VLAN_ATTR_STP_INSTANCE</code> を誤った OID に戻す可能性がある。STATE_DB への <code>max_stp_inst</code> 書き込みも行われない。</p>
+<h3 id="warm-restart">Warm Restart<a class="headerlink" href="#warm-restart" title="Permanent link">&para;</a></h3>
+<p>StpOrch には専用の Warm Restart reconciliation 機構が実装されていない。<code>doTask()</code> は <code>allPortsReady()</code> ガードのみ持ち、再起動後は stpd/stpmgrd からの再投入に依存する。</p>
+<h3 id="_4">回復シナリオまとめ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>回復方法</th>
+<th>自動か手動か</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI STP 操作失敗 (create/set)</td>
+<td>次ポーリングサイクルで自動再試行</td>
+<td>自動</td>
+</tr>
+<tr>
+<td><code>stp_instance</code> フィールド欠落</td>
+<td>stpmgrd が正しい SET を再送後に自動再試行</td>
+<td>自動（stpmgrd 依存）</td>
+</tr>
+<tr>
+<td>ポート未登録 (<code>STP_PORT_STATE_TABLE</code>)</td>
+<td>PortsOrch へのポート登録後に自動再開</td>
+<td>自動</td>
+</tr>
+<tr>
+<td>VLAN 未登録 (<code>STP_VLAN_INSTANCE_TABLE</code>)</td>
+<td>PortsOrch への VLAN 登録後に自動再試行</td>
+<td>自動</td>
+</tr>
+<tr>
+<td>Bridge port 作成失敗</td>
+<td>次ポーリングサイクルで自動再試行</td>
+<td>自動</td>
+</tr>
+<tr>
+<td>FASTAGEING_FLUSH / INST_PORT_FLUSH の fail-silent</td>
+<td>フラッシュ機会を消失。stpd が再送する場合のみ回復</td>
+<td>stpd 依存</td>
+</tr>
+<tr>
+<td>コンストラクタ SAI クエリ失敗</td>
+<td>orchagent 再起動のみ</td>
+<td>手動</td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35560,8 +35976,8 @@ DISABLED・LISTENING はいずれも <code>SAI_STP_PORT_STATE_BLOCKING</code> �
 </tr>
 </tbody>
 </table>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP / STP_VLAN / STP_PORT テーブル</a></li>
 <li><a href="../stp-mst/">CONFIG_DB: STP_MST テーブル</a></li>

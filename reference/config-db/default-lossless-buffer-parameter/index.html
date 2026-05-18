@@ -25693,6 +25693,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35474,6 +35513,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35811,6 +35889,54 @@
 <p><strong>スキャン証跡</strong>: <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> のハンドラパス L1894-2010 全行読了。3 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>buffermgrdyn</code> は <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> を受信した際、内部ルックアップテーブルの準備状況を確認してから処理する。以下の順序制約が存在する。</p>
+<h3 id="_18">検出された順序依存<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>BUFFER_POOL|ingress_lossless_pool</code> が <code>m_bufferPoolLookup</code> に登録済み → <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> SET 処理</td>
+<td><strong>強制先行</strong></td>
+<td>pool 未登録時は <code>task_need_retry</code> を返して再キュー</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> の <code>default_dynamic_th</code> 設定 → lossless <code>BUFFER_PROFILE</code> の命名（<code>_th&lt;value&gt;</code> サフィックス）確定</td>
+<td><strong>強制先行</strong></td>
+<td><code>m_defaultThreshold</code> が空のまま他ポートのバッファ計算が走ると、後から設定時にプロファイル名スキームが変わりキャッシュと乖離</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>over_subscribe_ratio</code> 非ゼロ書込み + <code>m_portInitDone=true</code> → SAI への SHP 有効化確認（<code>isSharedHeadroomPoolEnabledInSai</code>）</td>
+<td><strong>強制先行</strong></td>
+<td>SAI 反映前に ratio を設定しようとすると <code>task_need_retry</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> DEL → <code>over_subscribe_ratio</code> を空にリセット → <code>refreshSharedHeadroomPool</code> 呼び出し</td>
+<td>DEL 受信時即時（過去値は破棄）</td>
+<td>削除後に再設定する場合は再度 SET が必要</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">主要な制約詳細<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p><strong><code>ingress_lossless_pool</code> 先行制約（依存 #1)</strong>: <code>handleDefaultLossLessBufferParam()</code> は SET 処理の冒頭で <code>m_bufferPoolLookup.find(INGRESS_LOSSLESS_PG_POOL_NAME)</code> を実行し、pool が見つからない場合は <code>task_need_retry</code> を返す。このため、<code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> を CONFIG_DB に書いても、<code>BUFFER_POOL|ingress_lossless_pool</code> が <code>handleBufferPoolTable()</code> 経由でキャッシュに登録されるまで実際の処理は保留される（evidence: <code>buffermgrdyn.cpp:1985-1988</code>）。</p>
+<p><strong><code>m_defaultThreshold</code> 空状態での命名競合（依存 #2)</strong>: <code>m_defaultThreshold</code> が未設定（空文字列）の状態で lossless BUFFER_PROFILE を生成すると、プロファイル名に <code>_th&lt;value&gt;</code> サフィックスが付加される命名パスを辿る。後から <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> の <code>default_dynamic_th</code> が設定されると、<code>m_defaultThreshold</code> の値次第でプロファイル名が変わり、既存の APPL_DB エントリと内部キャッシュ <code>m_bufferProfileLookup</code> の名前が一致しなくなる可能性がある（evidence: <code>buffermgrdyn.cpp:494-496</code>）。</p>
+<p><strong>SHP 有効化の SAI 確認（依存 #3)</strong>: ポート初期化完了後（<code>m_portInitDone=true</code>）に SHP を無効→有効へ遷移させる場合（<code>over_subscribe_ratio</code> を 0 から非ゼロに変更）、<code>isSharedHeadroomPoolEnabledInSai()</code> が <code>APPL_DB</code> の <code>BUFFER_POOL_TABLE|ingress_lossless_pool</code> の <code>xoff</code> フィールドを確認する。SAI への反映が完了していなければ <code>task_need_retry</code> を返す（evidence: <code>buffermgrdyn.cpp:2019-2025</code>, <code>buffermgrdyn.cpp:2035-2046</code>）。</p>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2046 全行読了、<code>isSharedHeadroomPoolEnabledInSai</code> L2034-2050 全行読了、<code>buffermgrdyn.cpp</code> L494-496 読了。4 件依存抽出。</p>
+</blockquote>
+<!-- /ordering -->
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <h3 id="default_dynamic_th"><code>default_dynamic_th</code><a class="headerlink" href="#default_dynamic_th" title="Permanent link">&para;</a></h3>

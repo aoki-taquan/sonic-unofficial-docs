@@ -29266,6 +29266,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c-cross-table-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — Phase C (cross-table refs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — Phase C (cross-table refs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_tableipinip_subnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE:IPINIP_SUBNET — 実質的な必須前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#routeorch-vnetrouteorch-vip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RouteOrch / VNetRouteOrch — VIP ルート連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan_interface-vlan-term" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN_INTERFACE — ビルド時 vlan term 生成の前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic_vendor-dscp_to_tc_map-dscp_mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_VENDOR / DSCP_TO_TC_MAP — dscp_mode 自動決定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35619,6 +35680,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c-cross-table-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — Phase C (cross-table refs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — Phase C (cross-table refs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_decap_tableipinip_subnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TUNNEL_DECAP_TABLE:IPINIP_SUBNET — 実質的な必須前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#routeorch-vnetrouteorch-vip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RouteOrch / VNetRouteOrch — VIP ルート連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan_interface-vlan-term" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN_INTERFACE — ビルド時 vlan term 生成の前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic_vendor-dscp_to_tc_map-dscp_mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_VENDOR / DSCP_TO_TC_MAP — dscp_mode 自動決定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36178,6 +36300,109 @@ L392-394 (is_subnet_decap_term 判定), L468-509 (src_ip 補完ロジック), L6
 <code>orchdaemon.cpp</code> L343-348; <code>ipinip.json.j2</code> L37-42, L93-123, L160-190</p>
 </blockquote>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c-cross-table-refs">暗黙参照 — Phase C (cross-table refs)<a class="headerlink" href="#phase-c-cross-table-refs" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>tunneldecaporch.cpp</code>, <code>tunneldecaporch.h</code>, <code>routeorch.cpp</code>, <code>vnetorch.cpp</code>, <code>ipinip.json.j2</code> 全行精読 (2026-05-18)
+詳細証跡: <code>meta/_intermediate/cdb-flow/subnet-decap-ordering.md</code></p>
+</blockquote>
+<p><code>SUBNET_DECAP</code> テーブルは直接の YANG leafref をほとんど持たないが、実行時に以下のテーブルを暗黙的に参照・連動する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB</th>
+<th>参照方向</th>
+<th>YANG leafref</th>
+<th>実装上の必須度</th>
+<th>証拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TUNNEL_DECAP_TABLE:IPINIP_SUBNET</code></td>
+<td>APP_DB</td>
+<td>読み取り (tunnel オブジェクト存在確認)</td>
+<td>なし</td>
+<td><strong>実質必須</strong> (ブート時 <code>ipinip.json.j2</code> が生成)</td>
+<td><code>tunneldecaporch.cpp:392</code></td>
+</tr>
+<tr>
+<td><code>TUNNEL_DECAP_TABLE:IPINIP_SUBNET_V6</code></td>
+<td>APP_DB</td>
+<td>読み取り (IPv6 tunnel オブジェクト存在確認)</td>
+<td>なし</td>
+<td><strong>実質必須</strong></td>
+<td><code>tunneldecaporch.cpp:393</code></td>
+</tr>
+<tr>
+<td><code>TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:*</code></td>
+<td>APP_DB</td>
+<td>読み取り (MP2MP vlan/vip term)</td>
+<td>なし</td>
+<td>必須</td>
+<td><code>tunneldecaporch.cpp:350-540</code></td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (<code>ipinip.json.j2</code> がビルド時参照)</td>
+<td>なし</td>
+<td>実質必須</td>
+<td><code>ipinip.json.j2:28-32</code></td>
+</tr>
+<tr>
+<td><code>VLAN_INTERFACE</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (<code>ipinip.json.j2</code> が vlan term 生成に使用)</td>
+<td>なし</td>
+<td>VLAN subnet decap 必須</td>
+<td><code>ipinip.json.j2:47-51</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA.localhost.switch_type</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (<code>ipinip.json.j2</code> が DPU で全設定をスキップ)</td>
+<td>なし</td>
+<td>platform 依存</td>
+<td><code>ipinip.json.j2:1</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA.localhost.type</code></td>
+<td>CONFIG_DB</td>
+<td>読み取り (Broadcom T1 判定で dscp_mode 切り替え)</td>
+<td>なし</td>
+<td>platform 依存</td>
+<td><code>ipinip.json.j2:13-14</code></td>
+</tr>
+<tr>
+<td><code>STATE_TUNNEL_DECAP_TABLE</code></td>
+<td>STATE_DB</td>
+<td>書き込み (tunnel 状態を STATE_DB へ記録)</td>
+<td>なし</td>
+<td>情報提供</td>
+<td><code>tunneldecaporch.cpp:34, 287</code></td>
+</tr>
+<tr>
+<td><code>STATE_TUNNEL_DECAP_TERM_TABLE</code></td>
+<td>STATE_DB</td>
+<td>書き込み (term 状態を STATE_DB へ記録)</td>
+<td>なし</td>
+<td>情報提供</td>
+<td><code>tunneldecaporch.cpp:35</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunnel_decap_tableipinip_subnet">TUNNEL_DECAP_TABLE:IPINIP_SUBNET — 実質的な必須前提条件<a class="headerlink" href="#tunnel_decap_tableipinip_subnet" title="Permanent link">&para;</a></h3>
+<p><code>TunnelDecapOrch::doTunnelDecapTermTask()</code> は <code>tunnel_exists = (tunnelTable.find(tunnel_name) != tunnelTable.end())</code> でトンネルオブジェクトの存在を確認する。<code>IPINIP_SUBNET</code> が APP_DB に存在しない場合、subnet decap term は <code>unhandledDecapTerms</code> キューに積まれ SAI に反映されない。このトンネルは <code>ipinip.json.j2</code> がブート時に <code>SUBNET_DECAP[*].status == enable</code> を確認した場合のみ生成するため、<strong>ブート前に <code>status=enable</code> が CONFIG_DB に存在すること</strong>が実質的な必須条件となる（<code>tunneldecaporch.cpp:392-394, 516-521</code>）。</p>
+<h3 id="routeorch-vnetrouteorch-vip">RouteOrch / VNetRouteOrch — VIP ルート連動<a class="headerlink" href="#routeorch-vnetrouteorch-vip" title="Permanent link">&para;</a></h3>
+<p><code>RouteOrch::addRoute()</code> および <code>VNetRouteOrch</code> は VIP ルート追加・削除時に <code>gTunneldecapOrch-&gt;getSubnetDecapConfig()</code> を参照する。<code>subnetDecapConfig.enable == true</code> の場合、VIP prefix に対する MP2MP tunnel term (<code>subnet_type: vip</code>) を動的に APP_DB へ書き込む。<code>SUBNET_DECAP</code> が disable / 未設定の場合は VIP ルートに対する decap term が生成されない（<code>routeorch.cpp:2714-2717, 3220-3251</code>; <code>vnetorch.cpp:1563-1594</code>）。</p>
+<h3 id="vlan_interface-vlan-term">VLAN_INTERFACE — ビルド時 vlan term 生成の前提<a class="headerlink" href="#vlan_interface-vlan-term" title="Permanent link">&para;</a></h3>
+<p><code>ipinip.json.j2</code> は <code>VLAN_INTERFACE</code> から IPv4/IPv6 プレフィックスを取得し <code>TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:&lt;prefix&gt;</code> (MP2MP, vlan) を APP_DB へ注入する。VLAN_INTERFACE が存在しなければ vlan 型の decap term が生成されず、VLAN サブネット内からの IPinIP トラフィックが decap されない（<code>ipinip.json.j2:47-51</code>）。</p>
+<h3 id="asic_vendor-dscp_to_tc_map-dscp_mode">ASIC_VENDOR / DSCP_TO_TC_MAP — dscp_mode 自動決定<a class="headerlink" href="#asic_vendor-dscp_to_tc_map-dscp_mode" title="Permanent link">&para;</a></h3>
+<p><code>ipinip.json.j2</code> が <code>ASIC_VENDOR</code> および <code>DEVICE_METADATA.localhost.type</code> を参照して <code>dscp_mode</code> (<code>pipe</code>/<code>uniform</code>) を決定する。また <code>DSCP_TO_TC_MAP.AZURE</code> が存在する場合は <code>decap_dscp_to_tc_map: AZURE</code> を付加する。CONFIG_DB の <code>SUBNET_DECAP</code> フィールドではなくビルド時テンプレートが決定するため、CONFIG_DB 側からの変更は不可（<code>ipinip.json.j2:8-25</code>）。</p>
+<!-- /cross-refs -->
 
 <!-- entry-points -->
 <h2 id="direction-a">書き込み入り口 (Direction A)<a class="headerlink" href="#direction-a" title="Permanent link">&para;</a></h2>

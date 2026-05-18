@@ -26979,6 +26979,250 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-config_db-natmgrd-dostaticnattask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 1: CONFIG_DB → natmgrd (doStaticNatTask) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-appl_db-natorch-sai-donattabletask-addnatentry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 2: APPL_DB → NatOrch → SAI (doNatTableTask / addNatEntry) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / エラー通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バリデーション定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アドレス検証マクロ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nat_global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイムアウト定数 (NAT_GLOBAL 連動)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dnat-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNAT Pool の参照カウンタ管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kernel への直接書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出されなかった書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 購読 — SubscriberStateTable ベース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blocking-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        メインループ — blocking select + タイマー併用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static_nat_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATIC_NAT 変更イベントの処理パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB への書き込み — ProducerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加通知チャネル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 参照 (購読なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#silent-drop-discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -26990,7 +27234,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -27001,7 +27245,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -27023,7 +27267,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -27034,7 +27278,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27045,7 +27289,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -27057,7 +27301,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型設定
@@ -27068,7 +27312,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -27079,7 +27323,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -34998,6 +35242,250 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-config_db-natmgrd-dostaticnattask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 1: CONFIG_DB → natmgrd (doStaticNatTask) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-appl_db-natorch-sai-donattabletask-addnatentry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 2: APPL_DB → NatOrch → SAI (doNatTableTask / addNatEntry) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / エラー通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バリデーション定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アドレス検証マクロ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nat_global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイムアウト定数 (NAT_GLOBAL 連動)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dnat-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNAT Pool の参照カウンタ管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kernel への直接書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出されなかった書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 購読 — SubscriberStateTable ベース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blocking-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        メインループ — blocking select + タイマー併用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static_nat_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATIC_NAT 変更イベントの処理パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB への書き込み — ProducerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加通知チャネル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 参照 (購読なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#silent-drop-discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35009,7 +35497,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -35020,7 +35508,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -35042,7 +35530,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35053,7 +35541,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35064,7 +35552,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35076,7 +35564,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型設定
@@ -35087,7 +35575,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35098,7 +35586,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -35334,6 +35822,518 @@
 </blockquote>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>doStaticNatTask()</code> → <code>addStaticNatEntry()</code> の処理において、YANG の leafref 定義を超えて実装上で参照される他テーブル・内部キャッシュを示す。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NAT_GLOBAL\|Values.admin_mode</code> (CONFIG_DB)</td>
+<td>読み取り (ガード)</td>
+<td>常時。<code>natAdminMode == ENABLED</code> でなければ <code>addStaticNatEntry()</code> が即 return し APPL_DB に反映しない</td>
+<td><code>natmgr.cpp</code> L150–157 (<code>isNatEnabled()</code>), L1557–1560</td>
+</tr>
+<tr>
+<td><code>STATE_INTERFACE_TABLE\|&lt;port&gt;\|&lt;ip/prefix&gt;</code> (STATE_DB)</td>
+<td>読み取り (ガード)</td>
+<td><code>doNatIpInterfaceTask()</code> が <code>INTERFACE</code> の IP prefix エントリを受信する際に <code>isIntfStateOk()</code> を呼ぶ。ready でなければリトライキュー (it++) に戻る</td>
+<td><code>natmgr.cpp</code> L135–147 (<code>isIntfStateOk()</code>), L7593–7597</td>
+</tr>
+<tr>
+<td><code>INTERFACE\|&lt;port&gt;\|&lt;ip/prefix&gt;</code> (CONFIG_DB) → <code>m_natIpInterfaceInfo</code></td>
+<td>読み取り (ガード, DNAT のみ)</td>
+<td><code>getIpEnabledIntf()</code> が <code>m_natIpInterfaceInfo</code> を走査し、<code>global_ip</code> がいずれかのサブネットに含まれるか確認。含まれなければ APPL_DB 反映を保留</td>
+<td><code>natmgr.cpp</code> L236–254 (<code>getIpEnabledIntf()</code>), L1564–1568</td>
+</tr>
+<tr>
+<td><code>STATIC_NAPT\|&lt;global_ip&gt;\|&lt;proto&gt;\|&lt;port&gt;</code> (CONFIG_DB) → <code>m_staticNaptEntry</code></td>
+<td>存在確認 (論理排他)</td>
+<td><code>addStaticNatEntry()</code> 内で <code>isMatchesWithStaticNapt()</code> を呼ぶ。同 <code>global_ip</code> の NAPT エントリが存在する場合は APPL_DB 反映を中断 (return)</td>
+<td><code>natmgr.cpp</code> L200–233 (<code>isMatchesWithStaticNapt()</code>), L1571–1575</td>
+</tr>
+<tr>
+<td><code>NAT_POOL\|&lt;pool_name&gt;.ip_range</code> (CONFIG_DB) → <code>m_natPoolInfo</code></td>
+<td>存在確認 (重複排除)</td>
+<td><code>doStaticNatTask()</code> の SET パス内で <code>m_natPoolInfo</code> 全体を走査し、<code>global_ip</code> が Dynamic Pool の IP 範囲と重複しないか確認。重複時はエントリを erase (DROP)</td>
+<td><code>natmgr.cpp</code> L6021–6056</td>
+</tr>
+<tr>
+<td><code>STATIC_NAT\|&lt;other_key&gt;</code> (CONFIG_DB) → <code>m_staticNatEntry</code></td>
+<td>読み取り (Twice NAT ペア探索)</td>
+<td><code>twice_nat_id</code> 非空の場合に <code>addStaticTwiceNatEntry()</code> が <code>m_staticNatEntry</code> 全体を走査し、同一 <code>twice_nat_id</code> で逆方向 (<code>nat_type</code> が異なる) エントリを探して APPL_DB に Twice NAT エントリを書く。ペアが揃うまで両エントリとも APPL_DB 未反映</td>
+<td><code>natmgr.cpp</code> L2083–2168 (<code>addStaticTwiceNatEntry()</code>), L2100–2119</td>
+</tr>
+<tr>
+<td><code>NAT_BINDINGS\|&lt;name&gt;</code> + <code>NAT_POOL\|&lt;name&gt;</code> → <code>m_natBindingInfo</code> + <code>m_natPoolInfo</code></td>
+<td>読み取り (Twice NAT バインディング)</td>
+<td><code>addStaticTwiceNatEntry()</code> で STATIC_NAT 同士のペアが見つからない場合、<code>m_natBindingInfo</code> と対応する <code>m_natPoolInfo</code> を走査してダイナミック SNAT バインディングとの Twice NAT 接続を試みる</td>
+<td><code>natmgr.cpp</code> L2210–2263</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">YANG leafref 非対応の参照</p>
+<p>上記参照はいずれも YANG <code>sonic-nat</code> の leafref として定義されていない。<code>NAT_GLOBAL</code>・<code>INTERFACE</code>・<code>STATIC_NAPT</code>・<code>NAT_POOL</code> への依存は natmgr.cpp の実装コードによってのみ強制される暗黙の前提条件である。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>STATIC_NAT エントリは CONFIG_DB → <code>natmgrd</code> → APPL_DB → <code>NatOrch</code> → SAI の 2 段階パイプラインで処理される。各段階での失敗パターンを以下に示す。</p>
+<h3 id="1-config_db-natmgrd-dostaticnattask">段階 1: CONFIG_DB → natmgrd (<code>doStaticNatTask</code>) の失敗パターン<a class="headerlink" href="#1-config_db-natmgrd-dostaticnattask" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>local_ip</code> フィールド欠落</td>
+<td><code>natmgr.cpp:5902-5907</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし（永久 DROP）</td>
+</tr>
+<tr>
+<td><code>nat_type</code> 値が <code>snat</code>/<code>dnat</code> 以外</td>
+<td><code>natmgr.cpp:5954-5958</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>global_ip</code> が特殊アドレス（Zero/BC/Loop/MC/Reserved）</td>
+<td><code>natmgr.cpp:5855-5861</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>local_ip</code> が特殊アドレス</td>
+<td><code>natmgr.cpp:5944-5950</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>global_ip</code> が <code>STATIC_NAPT</code> エントリと重複</td>
+<td><code>natmgr.cpp:6007-6011</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>global_ip</code> が <code>NAT_POOL</code> IP 範囲と重複</td>
+<td><code>natmgr.cpp:6052-6056</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>同一エントリ重複（key + <code>local_ip</code> が一致）</td>
+<td><code>natmgr.cpp:6067</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし（重複は無視）</td>
+</tr>
+<tr>
+<td>未知フィールドあり (<code>nonValueFound=true</code>)</td>
+<td><code>natmgr.cpp:5897-5933</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>NAT_GLOBAL.admin_mode != enabled</code></td>
+<td><code>natmgr.cpp:1557-1560</code> (<code>isNatEnabled()</code>)</td>
+<td><code>addStaticNatEntry()</code> が即 return → APPL_DB 未反映</td>
+<td>admin_mode が <code>enabled</code> に変わると <code>addStaticNatEntries()</code> が自動再処理</td>
+</tr>
+<tr>
+<td>DNAT エントリで対応インタフェース IP 未設定</td>
+<td><code>natmgr.cpp:1564-1568</code> (<code>getIpEnabledIntf()</code>)</td>
+<td><code>addStaticNatEntry()</code> が即 return → APPL_DB 未反映</td>
+<td>インタフェース ready 時に <code>doNatIpInterfaceTask()</code> が <code>addStaticNatEntries()</code> を呼び自動再処理</td>
+</tr>
+<tr>
+<td>iptables ルール追加失敗</td>
+<td><code>natmgr.cpp</code> <code>addStaticSingleNatEntry()</code></td>
+<td><code>SWSS_LOG_ERROR</code> のみ。APPL_DB への書き込みは先行済みで <strong>取り消されない</strong></td>
+<td>なし（iptables と APPL_DB が不整合のまま残る）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>キャッシュ保持と自動回復</strong>: <code>doStaticNatTask()</code> が erase せずに <code>addStaticNatEntry()</code> が単に return したケース（<code>admin_mode</code> / インタフェース未 ready）では、エントリは <code>m_staticNatEntry</code> キャッシュに保持される。条件が解消された時点で natmgr が自動的に <code>addStaticNatEntries()</code> を呼び出し、キャッシュ全体を再処理する（<code>natmgr.cpp:3040</code>, <code>7640</code>）。</p>
+<h3 id="2-appl_db-natorch-sai-donattabletask-addnatentry">段階 2: APPL_DB → NatOrch → SAI (<code>doNatTableTask</code> / <code>addNatEntry</code>) の失敗パターン<a class="headerlink" href="#2-appl_db-natorch-sai-donattabletask-addnatentry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB <code>NAT_TABLE</code> のキーサイズ != 1</td>
+<td><code>natorch.cpp:2636-2640</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>重複エントリ（<code>m_natEntries</code> に既存）</td>
+<td><code>natorch.cpp:1873-1880</code></td>
+<td>INFO ログのみ、<code>return true</code>（無視）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>dynamic SNAT エントリで <code>totalSnatEntries == maxAllowedSNatEntries</code></td>
+<td><code>natorch.cpp:1886-1892</code></td>
+<td><code>setTimeoutNotifier-&gt;send("AGEOUT-SINGLE-NAT")</code> を発行し <code>return true</code></td>
+<td>間接的（ageout 後に再試行される可能性）</td>
+</tr>
+<tr>
+<td><code>isNatEnabled() == false</code>（orchagent 側の NAT 無効）</td>
+<td><code>natorch.cpp:1910-1915</code></td>
+<td><code>SWSS_LOG_WARN</code> + <code>return true</code>（エントリはキャッシュに保持）</td>
+<td><code>doNatGlobalTableTask()</code> で <code>admin_mode = enabled</code> 受信時に <code>addHwDnatEntry()</code> / <code>addHwSnatEntry()</code> が自動呼出し</td>
+</tr>
+<tr>
+<td>SAI <code>create_nat_entry</code> 失敗（ハードウェアエラー）</td>
+<td><code>natorch.cpp:774-786</code> (<code>addHwDnatEntry()</code>), <code>natorch.cpp:1307-1319</code> (<code>addHwSnatEntry()</code>)</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>handleSaiCreateStatus()</code> + <code>parseHandleSaiStatusFailure()</code> → <code>return false</code> → <code>doNatTableTask()</code> で <code>it++</code>（保留）</td>
+<td>SAI が解消されるまで無限 retry</td>
+</tr>
+<tr>
+<td>不明 op type</td>
+<td><code>natorch.cpp:2672-2675</code></td>
+<td><code>SWSS_LOG_ERROR</code> + <code>m_toSync.erase()</code></td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<p><strong>SAI 失敗時の retry</strong>: <code>addNatEntry()</code> が <code>false</code> を返すと <code>doNatTableTask()</code> は <code>it++</code>（erase せず保留）する（<code>natorch.cpp:2661-2663</code>）。次の consumer tick で再試行されるため、SAI の一時的なリソース枯渇は自然に回復する。ただし <code>m_natEntries</code> キャッシュには既にエントリが追加されているため、再 SET 時に <code>Duplicate</code> と判定されて <code>return true</code> となり erase される点に注意（二重追加は発生しない）。</p>
+<h3 id="state_db">STATE_DB / エラー通知<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p>NAT パスには STATE_DB へのステータス書き込みはない。orchagent は <code>SWSS_LOG_ERROR</code> / <code>SWSS_LOG_WARN</code> で syslog にのみ記録する。<code>ERROR_TABLE</code> への書き込みも行われない。失敗の確認は syslog (<code>/var/log/syslog</code> の <code>natorch</code> / <code>natmgrd</code> エントリ) を参照すること。</p>
+<blockquote>
+<p><strong>証跡</strong>: <code>natmgr.cpp:doStaticNatTask</code> L5813-6136、<code>addStaticNatEntry()</code> L1548-1590、<code>addStaticSingleNatEntry()</code> L1992-2064、<code>natorch.cpp:doNatTableTask</code> L2617-2681、<code>addNatEntry()</code> L1866-1937、<code>addHwDnatEntry()</code> L738-800、<code>addHwSnatEntry()</code> L1271-1330。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/nat-static-constants.md -->
+
+<p><code>STATIC_NAT</code> エントリの処理に関与する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は <code>sonic-swss/cfgmgr/natmgr.h</code>。</p>
+<h3 id="_5">バリデーション定数<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATIC_NAT_KEY_SIZE</code></td>
+<td><code>1</code></td>
+<td>キーセグメント数。<code>keys.size() != 1</code> の場合 SWSS_LOG_ERROR + erase</td>
+<td><code>natmgr.h:33</code></td>
+</tr>
+<tr>
+<td><code>TWICE_NAT_ID_MIN</code></td>
+<td><code>1</code></td>
+<td><code>twice_nat_id</code> の下限値。YANG <code>range "1..9999"</code> と一致</td>
+<td><code>natmgr.h:40</code></td>
+</tr>
+<tr>
+<td><code>TWICE_NAT_ID_MAX</code></td>
+<td><code>9999</code></td>
+<td><code>twice_nat_id</code> の上限値。YANG <code>range "1..9999"</code> と一致</td>
+<td><code>natmgr.h:41</code></td>
+</tr>
+<tr>
+<td><code>DNAT_NAT_TYPE</code></td>
+<td><code>"dnat"</code></td>
+<td><code>nat_type</code> 省略時のデフォルト文字列</td>
+<td><code>natmgr.h:38</code></td>
+</tr>
+<tr>
+<td><code>SNAT_NAT_TYPE</code></td>
+<td><code>"snat"</code></td>
+<td>SNAT を示す文字列リテラル</td>
+<td><code>natmgr.h:37</code></td>
+</tr>
+<tr>
+<td><code>EMPTY_STRING</code></td>
+<td><code>""</code></td>
+<td><code>twice_nat_id</code> 省略時の初期値</td>
+<td><code>natmgr.h:113</code></td>
+</tr>
+<tr>
+<td><code>NONE_STRING</code></td>
+<td><code>"None"</code></td>
+<td>エントリ登録直後のインタフェース初期値 (<code>m_staticNatEntry[key].interface</code>)</td>
+<td><code>natmgr.h:114</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">アドレス検証マクロ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><code>doStaticNatTask()</code> が <code>global_ip</code> および <code>local_ip</code> の有効性を検証するために使用する bit マスクマクロ。</p>
+<table>
+<thead>
+<tr>
+<th>マクロ</th>
+<th>ビット定義</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IS_ZERO_ADDR(ipaddr)</code></td>
+<td><code>ipaddr == 0</code></td>
+<td>ゼロアドレス拒否 (<code>natmgr.cpp:5855</code>)</td>
+</tr>
+<tr>
+<td><code>IS_BROADCAST_ADDR(ipaddr)</code></td>
+<td><code>ipaddr == 0xFFFFFFFF</code></td>
+<td>ブロードキャスト拒否</td>
+</tr>
+<tr>
+<td><code>IS_LOOPBACK_ADDR(ipaddr)</code></td>
+<td><code>(ipaddr &amp; 0xFF000000) == 0x7F000000</code></td>
+<td>127.x.x.x 拒否</td>
+</tr>
+<tr>
+<td><code>IS_MULTICAST_ADDR(ipaddr)</code></td>
+<td><code>0xE0000000 &lt;= ipaddr &lt;= 0xEFFFFFFF</code></td>
+<td>マルチキャスト拒否</td>
+</tr>
+<tr>
+<td><code>IS_RESERVED_ADDR(ipaddr)</code></td>
+<td><code>ipaddr &gt;= 0xF0000000</code></td>
+<td>240.x.x.x 以上の予約アドレス拒否</td>
+</tr>
+</tbody>
+</table>
+<p>これら 5 条件は <code>global_ip</code> (L5855-5861) と <code>local_ip</code> (L5944-5950) の両方で同じ順序で適用される。</p>
+<h3 id="nat_global">タイムアウト定数 (NAT_GLOBAL 連動)<a class="headerlink" href="#nat_global" title="Permanent link">&para;</a></h3>
+<p>STATIC_NAT 自体のフィールドではないが、<code>addStaticSingleNatEntry()</code> が APPL_DB に書き込む際、<code>natmgrd</code> の内部状態として保持されるタイムアウト値がデフォルトで使用される。</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>説明</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NAT_TIMEOUT_DEFAULT</code></td>
+<td><code>600</code> 秒</td>
+<td>非 TCP/UDP NAT エントリのアイドルタイムアウト</td>
+<td><code>natmgr.h:64</code></td>
+</tr>
+<tr>
+<td><code>NAT_TCP_TIMEOUT_DEFAULT</code></td>
+<td><code>86400</code> 秒</td>
+<td>TCP NAT タイムアウト (1 日)</td>
+<td><code>natmgr.h:69</code></td>
+</tr>
+<tr>
+<td><code>NAT_UDP_TIMEOUT_DEFAULT</code></td>
+<td><code>300</code> 秒</td>
+<td>UDP NAT タイムアウト</td>
+<td><code>natmgr.h:73</code></td>
+</tr>
+<tr>
+<td><code>NAT_ENTRY_REFRESH_PERIOD</code></td>
+<td><code>86400</code> 秒</td>
+<td>dynamic NAT エントリ refresh タイマー周期 (1 日)</td>
+<td><code>natmgr.h:125</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>YANG との対応</strong>: <code>TWICE_NAT_ID_MIN/MAX</code> は YANG <code>sonic-nat.yang</code> の <code>range "1..9999"</code> と完全に一致しており、コードと YANG の二重バリデーションが機能している。タイムアウト定数は <code>NAT_GLOBAL</code> テーブルのデフォルト値として YANG にも対応する定義があるが、<code>STATIC_NAT</code> エントリ自体のフィールドではない。</p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>natmgrd</code> が CONFIG_DB <code>STATIC_NAT</code> エントリを処理する際、<a href="../../glossary/#term-appl_db">APPL_DB</a> への書き込みに加え、以下の副次的な書き込み・OS 操作が発生する。下流の <code>NatOrch</code> による <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> 書き込みも含む。</p>
+<table>
+<thead>
+<tr>
+<th>副次先</th>
+<th>テーブル / キー</th>
+<th>書込フィールド</th>
+<th>発火条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td><code>NAT_TABLE\|&lt;global_ip&gt;</code> (DNAT) + <code>NAT_TABLE\|&lt;local_ip&gt;</code> (SNAT)</td>
+<td><code>translated_ip</code>, <code>nat_type</code>, <code>entry_type=static</code></td>
+<td><code>addStaticSingleNatEntry()</code> 成功時 (NAT enabled + L3 interface up)。<code>STATIC_NAT</code> 1 件から 2 件の NAT_TABLE エントリが同時生成される</td>
+<td><code>natmgr.cpp:2052-2053</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td><code>NAT_DNAT_POOL_TABLE\|&lt;dnat_ip&gt;</code></td>
+<td>なし (NULL:NULL フラグ)</td>
+<td>DNAT エントリ追加時に <code>addDnatPoolEntry()</code> を呼ぶ。参照カウンタ (<code>m_natDnatPoolInfo</code>) で管理し、refcount が 0 になるまで DEL しない</td>
+<td><code>natmgr.cpp:2031-2033, 1502-1524</code></td>
+</tr>
+<tr>
+<td>kernel conntrack</td>
+<td>仮 conntrack エントリ (UDP, timeout=432000 秒)</td>
+<td>—</td>
+<td><code>addConntrackStaticSingleNatEntry()</code> が <code>/usr/sbin/conntrack -I</code> を実行。static NAT セッションを conntrack テーブルに事前登録し dynamic セッションとの競合を防ぐ</td>
+<td><code>natmgr.cpp:2058, 457-489</code></td>
+</tr>
+<tr>
+<td>kernel iptables</td>
+<td><code>nat</code> テーブル PREROUTING / POSTROUTING ルール</td>
+<td>—</td>
+<td><code>setStaticNatIptablesRules(INSERT, ...)</code> が iptables コマンドを直接実行。DNAT / SNAT ルールを mark ベースで挿入</td>
+<td><code>natmgr.cpp:2060-2068, 956-1000</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_NAT\|&lt;global_ip&gt;</code></td>
+<td><code>NAT_TRANSLATIONS_PKTS</code>, <code>NAT_TRANSLATIONS_BYTES</code> (0 初期化)</td>
+<td>NatOrch が <code>addHwNatEntry()</code> 完了直後に <code>updateNatCounters(ip, 0, 0)</code> を呼ぶ</td>
+<td><code>natorch.cpp:789, 4049-4061</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_GLOBAL_NAT\|Values</code></td>
+<td><code>STATIC_NAT_ENTRIES</code> (int)</td>
+<td>NatOrch が static NAT エントリ追加/削除後に <code>updateStaticNatCounters(count)</code> を呼ぶ</td>
+<td><code>natorch.cpp:796, 4481-4490</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dnat-pool">DNAT Pool の参照カウンタ管理<a class="headerlink" href="#dnat-pool" title="Permanent link">&para;</a></h3>
+<p><code>addDnatPoolEntry()</code> (<code>natmgr.cpp:1502-1524</code>) は <code>m_natDnatPoolInfo[destIp]</code> をインクリメントし、初回追加時のみ <code>NAT_DNAT_POOL_TABLE</code> に SET を送る。複数の <code>STATIC_NAT</code> / <code>STATIC_NAPT</code> / <code>NAT_BINDINGS</code> が同一 DNAT IP を共有している場合、refcount が 0 になるまで APPL_DB の DEL は発行されない。</p>
+<h3 id="kernel">kernel への直接書き込み<a class="headerlink" href="#kernel" title="Permanent link">&para;</a></h3>
+<p>iptables / conntrack への書き込みは <code>swss::exec()</code> による OS コマンド直接実行 (<code>/usr/sbin/conntrack</code>、<code>iptables</code>) であり、Redis DB を経由しない。<code>natmgrd</code> 再起動後も kernel iptables / conntrack は残存するため、<code>natmgrd</code> はエントリ再追加前に既存ルールを確認・再同期する。</p>
+<h3 id="_7">検出されなかった書込み<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>STATE_DB、FLEX_COUNTER_DB、LOGLEVEL_DB、CONFIG_DB への書き戻しは確認されなかった。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/cfgmgr/natmgr.cpp</code> <code>addStaticSingleNatEntry()</code> L1992-2069, <code>removeStaticSingleNatEntry()</code> L2650-2719, <code>addDnatPoolEntry()</code> L1502-1524, <code>addConntrackStaticSingleNatEntry()</code> L457-489, <code>setStaticNatIptablesRules()</code> L930-1000; <code>sonic-swss/orchagent/natorch.cpp</code> <code>updateNatCounters()</code> L4049-4061, <code>updateStaticNatCounters()</code> L4481-4490; 詳細スキャン結果は <code>meta/_intermediate/cdb-flow/nat-static-side-effects.md</code> を参照。</p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="config_db-subscriberstatetable">CONFIG_DB 購読 — <code>SubscriberStateTable</code> ベース<a class="headerlink" href="#config_db-subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p><code>natmgrd</code> (<code>natmgrd.cpp:109-121</code>) は起動時に以下の CONFIG_DB テーブル群を <code>cfg_tables</code> に列挙し、<code>NatMgr</code> コンストラクタへ渡す:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>CFG_STATIC_NAT_TABLE_NAME   → &quot;STATIC_NAT&quot;
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>CFG_STATIC_NAPT_TABLE_NAME, CFG_NAT_POOL_TABLE_NAME,
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>CFG_NAT_BINDINGS_TABLE_NAME, CFG_NAT_GLOBAL_TABLE_NAME,
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>CFG_INTF_TABLE_NAME (LAG / VLAN / Loopback バリアント含む),
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>CFG_ACL_TABLE_TABLE_NAME, CFG_ACL_RULE_TABLE_NAME
+</span></code></pre></div>
+<p><code>NatMgr</code> は <code>Orch</code> を継承し、各テーブルを <strong><code>SubscriberStateTable</code></strong> として CONFIG_DB (DB 4) から購読する。Redis keyspace notification パターンは <code>__keyspace@4__:STATIC_NAT|*</code>。</p>
+<h3 id="blocking-select">メインループ — blocking select + タイマー併用<a class="headerlink" href="#blocking-select" title="Permanent link">&para;</a></h3>
+<p><code>natmgrd.cpp:156</code> の無限ループで <code>s.select(&amp;sel, SELECT_TIMEOUT)</code> を呼び出す。タイムアウト間隔はデフォルト 1000ms。変更がなければタイムアウトごとに <code>doTask(SelectableTimer &amp;)</code> が実行される (<code>natmgr.cpp:5797</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>Selectable</th>
+<th>種別</th>
+<th>チャネル / テーブル</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NatMgr</code> (Orch)</td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>STATIC_NAT</code> ほか</td>
+<td>CONFIG_DB 変更イベント受信</td>
+</tr>
+<tr>
+<td><code>timeoutNotificationsConsumer</code></td>
+<td><code>NotificationConsumer</code></td>
+<td><code>SETTIMEOUTNAT</code> (APPL_DB)</td>
+<td>タイムアウト値変更通知</td>
+</tr>
+<tr>
+<td><code>flushNotificationsConsumer</code></td>
+<td><code>NotificationConsumer</code></td>
+<td><code>FLUSHNATENTRIES</code> (APPL_DB)</td>
+<td><code>flush nat translations</code> CLI トリガ</td>
+</tr>
+<tr>
+<td><code>SelectableTimer</code></td>
+<td>タイマー</td>
+<td>—</td>
+<td>NAT エントリ refresh 周期タスク</td>
+</tr>
+</tbody>
+</table>
+<h3 id="static_nat_1">STATIC_NAT 変更イベントの処理パス<a class="headerlink" href="#static_nat_1" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Redis keyspace: __keyspace@4__:STATIC_NAT|&lt;global_ip&gt;
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  └─ NatMgr::doTask(Consumer&amp;)             [natmgr.cpp:8147]
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>        └─ CFG_STATIC_NAT_TABLE_NAME → doStaticNatTask(consumer)  [natmgr.cpp:8153]
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>              ├─ SET → addStaticNatEntry()
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>              │       ├─ Single NAT → addStaticSingleNatEntry()
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>              │       └─ Twice NAT  → addStaticTwiceNatEntry()
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>              └─ DEL → removeStaticNatEntry()
+</span></code></pre></div>
+<h3 id="appl_db-producerstatetable">APPL_DB への書き込み — <code>ProducerStateTable</code><a class="headerlink" href="#appl_db-producerstatetable" title="Permanent link">&para;</a></h3>
+<p><code>natmgr.h:257</code> で宣言された <code>ProducerStateTable m_appNatTableProducer</code> が APPL_DB <code>NAT_TABLE</code> への書き込みを担う:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// natmgr.cpp:43</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">m_appNatTableProducer</span><span class="p">(</span><span class="n">appDb</span><span class="p">,</span><span class="w"> </span><span class="n">APP_NAT_TABLE_NAME</span><span class="p">)</span><span class="w">  </span><span class="c1">// &quot;NAT_TABLE&quot;</span>
+</span></code></pre></div>
+<p><code>ProducerStateTable</code> は書き込み時に APPL_DB (DB 1) の <code>NAT_TABLE_CHANNEL@1</code> へ PUBLISH する。下流 <code>NatOrch</code> がこのチャネルを <code>ConsumerStateTable</code> として購読し SAI 操作を実行する。</p>
+<h3 id="_8">追加通知チャネル<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>チャネル</th>
+<th>方向</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NAT_DB_CLEANUP_NOTIFICATION</code> (APPL_DB <code>NotificationProducer</code>)</td>
+<td>natmgrd → NatOrch</td>
+<td>SIGTERM 受信時に orchagent へ静的 NAT エントリの SAI 削除を要求</td>
+</tr>
+<tr>
+<td><code>SETTIMEOUTNAT</code></td>
+<td>NatOrch → natmgrd</td>
+<td>NAT タイムアウト値変更を natmgr 内部状態に反映</td>
+</tr>
+<tr>
+<td><code>FLUSHNATENTRIES</code></td>
+<td>orchagent → natmgrd</td>
+<td>dynamic NAT テーブル全消去をトリガ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db_1">STATE_DB 参照 (購読なし)<a class="headerlink" href="#state_db_1" title="Permanent link">&para;</a></h3>
+<p><code>isIntfStateOk()</code> が <code>m_stateInterfaceTable</code> (STATE_DB:STATE_INTERFACE_TABLE) をポイントリード (<code>hget</code>) で参照するが、keyspace 購読はしない。インタフェース状態変化は <code>CFG_INTF_TABLE_NAME</code> の SET イベント経由で間接的に受け取る。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>natmgrd.cpp:109-153</code>; <code>natmgr.cpp:8147-8175</code>; <code>natmgr.h:257</code>; <code>schema.h:101</code>。詳細は <code>meta/_intermediate/cdb-flow/nat-static-pubsub.md</code> を参照。</p>
+</blockquote>
+<!-- /pubsub -->
+
 <h2 id="silent-drop-discrepancy">silent drop / discrepancy<a class="headerlink" href="#silent-drop-discrepancy" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doStaticNatTask L5810-6136 / sonic-utilities/config/nat.py add_basic L240-329 / sonic-nat.yang L117-155 -->
 
@@ -35415,7 +36415,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_5">制約<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_9">制約<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>local_ip</code>: unicast IPv4 のみ (同様のアドレスクラス制限)</li>
 <li><code>nat_type</code>: <code>"snat"</code> または <code>"dnat"</code> のみ。それ以外は ERROR + erase。</li>
@@ -35424,7 +36424,7 @@
 <li>エントリ数: CLI では <code>COUNTERS_DB:COUNTERS_GLOBAL_NAT:Values</code> の <code>SNAT_ENTRIES &gt;= MAX_NAT_ENTRIES</code> でスキップ (<code>nat.py:298-300</code>)</li>
 <li><code>NAT_GLOBAL.admin_mode = disabled</code> の状態ではエントリを受け付けるが ASIC に反映しない (キュー保持)</li>
 </ul>
-<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_10">購読者<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>natmgrd</code> (<code>doStaticNatTask</code>): <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>STATIC_NAT</code> 変更を検知し、フィールドを解析してキャッシュ (<code>m_staticNatEntry</code>) に格納後、<code>addStaticNatEntry</code> / <code>removeStaticNatEntry</code> 経由で iptables ルールと <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>NAT_TABLE</code> を更新する。</li>
 <li><code>orchagent / NatOrch</code>: <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>NAT_TABLE</code> エントリを消費して <a href="../../glossary/#term-sai">SAI</a> <code>sai_nat_api</code> NAT object を作成する。</li>
@@ -35437,7 +36437,7 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-nat/"><code>sonic-nat</code></a></li>
 <li>CLI: <a href="../../cli/config-nat/"><code>config nat</code></a></li>
@@ -35446,25 +36446,25 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># DNAT: 外部 IP 65.55.42.1 → 内部 10.0.0.1 (デフォルト nat_type=dnat)</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>static<span class="w"> </span>basic<span class="w"> </span><span class="m">65</span>.55.42.1<span class="w"> </span><span class="m">10</span>.0.0.1
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># SNAT: 内部 10.0.0.1 → 外部 65.55.42.1</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>static<span class="w"> </span>basic<span class="w"> </span><span class="m">65</span>.55.42.1<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span>-nat_type<span class="w"> </span>snat
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Twice NAT</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>static<span class="w"> </span>basic<span class="w"> </span><span class="m">65</span>.55.42.1<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span>-twice_nat_id<span class="w"> </span><span class="m">100</span>
+<h2 id="_13">運用ヒント<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="_14">典型設定<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># DNAT: 外部 IP 65.55.42.1 → 内部 10.0.0.1 (デフォルト nat_type=dnat)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>static<span class="w"> </span>basic<span class="w"> </span><span class="m">65</span>.55.42.1<span class="w"> </span><span class="m">10</span>.0.0.1
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># SNAT: 内部 10.0.0.1 → 外部 65.55.42.1</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>static<span class="w"> </span>basic<span class="w"> </span><span class="m">65</span>.55.42.1<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span>-nat_type<span class="w"> </span>snat
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># Twice NAT</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>static<span class="w"> </span>basic<span class="w"> </span><span class="m">65</span>.55.42.1<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span>-twice_nat_id<span class="w"> </span><span class="m">100</span>
 </span></code></pre></div>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;STATIC_NAT|65.55.42.1&#39;</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>show<span class="w"> </span>nat<span class="w"> </span>config<span class="w"> </span>static
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>show<span class="w"> </span>nat<span class="w"> </span>translations
+<h3 id="_15">確認コマンド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;STATIC_NAT|65.55.42.1&#39;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>show<span class="w"> </span>nat<span class="w"> </span>config<span class="w"> </span>static
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>show<span class="w"> </span>nat<span class="w"> </span>translations
 </span></code></pre></div>
-<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_16">よくある誤設定<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>NAT_GLOBAL.admin_mode</code> を <code>enabled</code> にせず STATIC_NAT だけ入れても NAT は動作しない。</li>
 <li><code>nat_type</code> を省略すると <code>dnat</code> になる。<code>NAT_BINDINGS</code> の省略時 (<code>snat</code>) と逆であることに注意。</li>

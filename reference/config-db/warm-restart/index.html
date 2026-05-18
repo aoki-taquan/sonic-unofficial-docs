@@ -30043,6 +30043,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35512,6 +35523,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35966,6 +35988,64 @@ fast-reboot 後に <code>teamsyncd_timer</code> エントリが削除される�
 </ol>
 <!-- evidence: warm_restart.cpp L86-95 (checkWarmStart), L149-172 (getWarmStartTimer), orchdaemon.cpp L1099-1170 (warmRestoreAndSyncUp) -->
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照マップ (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>WARM_RESTART</code> テーブルは YANG 内で他テーブルへの leafref を持たないが、ランタイムコードに以下の暗黙参照が存在する。</p>
+<table>
+<thead>
+<tr>
+<th>参照方向</th>
+<th>このテーブル</th>
+<th>相手テーブル / リソース</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WARM_RESTART →</td>
+<td><code>bgp_timer</code> / <code>bgp_eoiu</code> (<code>module=bgp</code>)</td>
+<td><code>STATE_DB WARM_RESTART_ENABLE_TABLE\|bgp</code> (enable フラグ)</td>
+<td><code>WarmStart::checkWarmStart()</code> が STATE_DB enable=true + restore_count&gt;0 を確認した場合のみ <code>getWarmStartTimer()</code> で CONFIG_DB から値を読む</td>
+<td><code>warm_restart.cpp:86-147,149-172</code></td>
+</tr>
+<tr>
+<td>WARM_RESTART →</td>
+<td><code>teamsyncd_timer</code> (<code>module=teamd</code>)</td>
+<td><code>STATE_DB WARM_RESTART_ENABLE_TABLE\|teamd</code></td>
+<td>同上。enable フラグが false なら <code>teamsyncd_timer</code> は参照されない</td>
+<td><code>warm_restart.cpp:86-147</code></td>
+</tr>
+<tr>
+<td>WARM_RESTART →</td>
+<td><code>neighsyncd_timer</code> (<code>module=swss</code>)</td>
+<td><code>STATE_DB WARM_RESTART_ENABLE_TABLE\|swss</code></td>
+<td>同上。enable フラグが false なら <code>neighsyncd_timer</code> は参照されない</td>
+<td><code>warm_restart.cpp:86-147</code></td>
+</tr>
+<tr>
+<td>WARM_RESTART →</td>
+<td><code>bgp_eoiu=true</code></td>
+<td><code>supervisord.conf.j2</code> (<code>bgp_eoiu_marker</code> プロセス登録)</td>
+<td><code>bgp_eoiu=true</code> の場合のみ <code>bgp_eoiu_marker</code> supervisord エントリが生成される。false または未設定では登録なし</td>
+<td><code>docker-fpm-frr/.../supervisord.conf.j2:239</code></td>
+</tr>
+<tr>
+<td>→ WARM_RESTART</td>
+<td><code>finalize-warmboot.sh</code> (fast-reboot 完了時)</td>
+<td><code>WARM_RESTART\|teamd</code> (DEL)</td>
+<td><code>finalize_fast_reboot()</code> が <code>CONFIG_DB DEL "WARM_RESTART\|teamd"</code> を実行する。fast-reboot 後に <code>teamsyncd_timer</code> エントリが消失する副作用</td>
+<td><code>finalize-warmboot.sh:175</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">STATE_DB との分離</p>
+<p><code>WARM_RESTART</code> テーブル（CONFIG_DB）と <code>WARM_RESTART_ENABLE_TABLE</code> / <code>WARM_RESTART_TABLE</code>（STATE_DB）は別 DB のため、CONFIG_DB の timer 値は STATE_DB の enable フラグが true になって初めて意味を持つ。enable フラグの設定順序が先行必須となる。</p>
+</div>
+<!-- evidence: warm_restart.cpp L86-147 (checkWarmStart), L149-172 (getWarmStartTimer); bgp.sh L9-27 (check_warm_boot); finalize-warmboot.sh L175 (fast-reboot DEL); docker-fpm-frr supervisord.conf.j2 L239 (bgp_eoiu_marker) -->
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: ddc022697593 -->
 

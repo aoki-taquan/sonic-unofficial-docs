@@ -27197,6 +27197,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#allportsready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allPortsReady ガードなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nvgre_tunnel-nvgre_tunnel_map_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NVGRE_TUNNEL → NVGRE_TUNNEL_MAP の順序が必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN が先行必須（MAP 登録時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        安全な DEL 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35309,6 +35370,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#allportsready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allPortsReady ガードなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nvgre_tunnel-nvgre_tunnel_map_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NVGRE_TUNNEL → NVGRE_TUNNEL_MAP の順序が必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN が先行必須（MAP 登録時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        安全な DEL 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35948,6 +36070,58 @@
 </blockquote>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="allportsready">allPortsReady ガードなし<a class="headerlink" href="#allportsready" title="Permanent link">&para;</a></h3>
+<p><code>NvgreTunnelOrch::addOperation()</code> および <code>NvgreTunnelMapOrch::addOperation()</code> はいずれも <code>gPortsOrch-&gt;allPortsReady()</code> をチェックしない (<code>nvgreorch.cpp:350-508</code>)。orchdaemon 起動直後から SET を処理できる。</p>
+<h3 id="nvgre_tunnel-nvgre_tunnel_map_1">NVGRE_TUNNEL → NVGRE_TUNNEL_MAP の順序が必須<a class="headerlink" href="#nvgre_tunnel-nvgre_tunnel_map_1" title="Permanent link">&para;</a></h3>
+<p><code>NvgreTunnelMapOrch::addOperation()</code> (L464-508) は冒頭で <code>tunnel_orch-&gt;isTunnelExists(tunnel_name)</code> を確認する。親トンネルが未登録の場合は <code>SWSS_LOG_WARN("NVGRE tunnel '%s' doesn't exist", ...)</code> + <code>return true</code> で<strong>エントリを破棄する</strong>（retry キューに戻らない）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>SET NVGRE_TUNNEL|&lt;tunnel_name&gt;    src_ip=&lt;vtep_ip&gt;      # 先に作成
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>SET NVGRE_TUNNEL_MAP|&lt;tunnel_name&gt;|&lt;map_name&gt;  vlan_id=&lt;vid&gt; vsid=&lt;vsid&gt;  # その後
+</span></code></pre></div>
+<h3 id="vlan-map">VLAN が先行必須（MAP 登録時）<a class="headerlink" href="#vlan-map" title="Permanent link">&para;</a></h3>
+<p><code>addOperation()</code> L489: <code>gPortsOrch-&gt;getVlanByVlanId(vlan_id, port)</code> が false を返すと WARN + <code>return true</code> でエントリ破棄。<code>VLAN|&lt;vlan_id&gt;</code> が PortsOrch に登録されてから MAP を書き込むこと。</p>
+<h3 id="del">安全な DEL 順序<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>DEL NVGRE_TUNNEL_MAP|&lt;tunnel_name&gt;|&lt;map_name&gt;  # 先に MAP を削除
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>DEL NVGRE_TUNNEL|&lt;tunnel_name&gt;                  # その後トンネルを削除
+</span></code></pre></div>
+<p><code>NvgreTunnelMapOrch::delOperation()</code> (L554) はトンネル存在チェック後に MAP 削除処理を行う。NVGRE_TUNNEL を先に DEL すると MAP の DEL で <code>does not exist</code> WARN となり SAI 上のマップエントリが残留する可能性がある。</p>
+<table>
+<thead>
+<tr>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NVGRE_TUNNEL</code> SET → <code>NVGRE_TUNNEL_MAP</code> SET</td>
+<td>必須</td>
+<td>逆順だと MAP エントリが<strong>永続的に破棄</strong>（retry なし）</td>
+</tr>
+<tr>
+<td><code>VLAN</code> 登録完了 → <code>NVGRE_TUNNEL_MAP</code> SET</td>
+<td>必須</td>
+<td>逆順だと MAP エントリが<strong>永続的に破棄</strong>（retry なし）</td>
+</tr>
+<tr>
+<td><code>NVGRE_TUNNEL_MAP</code> DEL → <code>NVGRE_TUNNEL</code> DEL</td>
+<td>推奨</td>
+<td>逆順でも orchagent は継続するが SAI エントリ孤立リスク</td>
+</tr>
+<tr>
+<td>allPortsReady</td>
+<td>不要</td>
+<td>NVGRE orch には allPortsReady ガードなし</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>nvgreorch.cpp:464-508</code> 全行精読、<code>orchdaemon.cpp:361-364</code> 登録順確認。</p>
+</blockquote>
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 <h2 id="_7">例外条件・特殊挙動<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- evidence: meta/_intermediate/cdb-flow/nvgre-tunnel.md -->
@@ -35998,8 +36172,8 @@
 <li><code>VXLAN_TUNNEL</code> と <code>NVGRE_TUNNEL</code> を同一スイッチで併用し、orch が想定外動作。</li>
 </ul>
 <h3 id="_14">確認コマンド<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NVGRE_TUNNEL*&#39;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NVGRE_TUNNEL*&#39;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
 

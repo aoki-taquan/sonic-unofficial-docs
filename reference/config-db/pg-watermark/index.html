@@ -27410,7 +27410,74 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -27438,7 +27505,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -27449,7 +27516,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34943,7 +35010,74 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -34971,7 +35105,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34982,7 +35116,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35132,7 +35266,146 @@
 <!-- /defaults -->
 
 <hr />
-<h2 id="_5">設定例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> の <code>FLEX_COUNTER_STATUS=enable</code> が反映されるまでに、flexcounterorch・portsorch・watermarkorch の 3 コンポーネント間で以下の順序依存が発生する。</p>
+<h3 id="_5">検出された順序依存<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> enable → <code>m_pg_watermark_enabled</code> フラグ設定</td>
+<td><strong>強制先行</strong></td>
+<td>flexcounterorch が enable を受信してフラグを立てた後でなければ BUFFER_PG イベントで PG OID が FlexCounter に登録されない</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>BUFFER_PG</code> テーブル設定 → PG SAI OID の FlexCounter 登録</td>
+<td><strong>強制先行</strong></td>
+<td><code>createPortBufferPgCounters()</code> 実行時点で <code>getPgWatermarkCountersState()</code> が真でないと OID 登録はスキップされる</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>generatePriorityGroupMap()</code> 完了 → <code>addPriorityGroupWatermarkFlexCounters()</code> 呼び出し</td>
+<td><strong>強制先行</strong>（同一 enable ハンドラ内）</td>
+<td>flexcounterorch.cpp:265-269 で <code>generatePriorityGroupMap()</code> → <code>m_pg_watermark_enabled=true</code> → <code>addPriorityGroupWatermarkFlexCounters()</code> の順序が直列に実行される</td>
+</tr>
+<tr>
+<td>4</td>
+<td>FlexCounter enable → <code>watermarkorch</code> の <code>m_wmStatus</code> 更新 → telemetry タイマー起動</td>
+<td>即時（同 Consumer ループ内）</td>
+<td><code>handleFcConfigUpdate()</code> が <code>m_wmStatus</code> を更新し、<code>prevStatus==0 &amp;&amp; m_wmStatus!=0</code> 時に <code>m_telemetryTimer-&gt;start()</code> を呼ぶ。telemetry タイマーは FlexCounter よりも後に起動する</td>
+</tr>
+<tr>
+<td>5</td>
+<td>PG OID の COUNTERS_DB マップ登録 → syncd の FlexCounter ポーリング開始</td>
+<td>非自明（syncd 側判断）</td>
+<td><code>pg_watermark_manager.setCounterIdList()</code> でエントリが FLEX_COUNTER_DB に書かれた後、syncd が次のポーリングサイクルで処理する。エントリ登録直後の最初のポーリングまでに最大 <code>POLL_INTERVAL</code>（デフォルト 60000 ms）の遅延が生じる</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">主要な制約詳細<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><strong>enable フラグと BUFFER_PG の二重依存 (依存 #1, #2)</strong>: PG OID が FlexCounter に登録されるルートは 2 つある。</p>
+<ol>
+<li><code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> を enable に設定した瞬間 → <code>addPriorityGroupWatermarkFlexCounters()</code> が既存 BUFFER_PG 設定から全ポートの OID を一括登録する（<code>flexcounterorch.cpp:265-269</code>, <code>portsorch.cpp:8998-9027</code>）</li>
+<li><code>BUFFER_PG</code> テーブルに新エントリが書き込まれた瞬間 → <code>createPortBufferPgCounters()</code> → <code>addPortBufferPgCounters()</code> → <code>getPgWatermarkCountersState()</code> が真の場合のみ OID を登録する（<code>portsorch.cpp:8904-8933</code>）</li>
+</ol>
+<p>このため、BUFFER_PG を先に設定してから PG_WATERMARK を enable にしても機能する（ルート 1 で一括登録）し、PG_WATERMARK を enable にしてから BUFFER_PG を設定しても機能する（ルート 2 でイベント駆動登録）。ただし、PG_WATERMARK が disable の状態で BUFFER_PG を設定した場合、その時点では OID 登録がスキップされ、後から enable にしてルート 1 で補完される。<strong>orchagent 再起動時は両テーブルの状態を再読み込みするため順序依存は解消される</strong>。</p>
+<p><strong>watermarkorch telemetry タイマーの起動依存 (依存 #4)</strong>: <code>PERIODIC_WATERMARKS</code> の周期クリアは telemetry タイマーが起動して初めて開始される。FlexCounter の enable が <code>WatermarkOrch</code> に通知されるのは同一 Consumer ループ内だが、タイマーのティックは最初の <code>WATERMARK_TABLE|TELEMETRY_INTERVAL</code>（デフォルト 120 秒）が経過するまで発火しない。enable 直後の約 120 秒間は <code>PERIODIC_WATERMARKS</code> の自動クリアが行われない点に注意する（<code>watermarkorch.cpp:116-140</code>）。</p>
+<!-- /ordering -->
+
+<hr />
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pg-watermark-cross-refs.md -->
+
+<p>YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB / 場所</th>
+<th>方向</th>
+<th>契機</th>
+<th>根拠コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_PG_NAME_MAP</code></td>
+<td>COUNTERS_DB</td>
+<td>WRITE</td>
+<td><code>portsorch</code> が <code>BUFFER_PG</code> エントリ追加時に <code>&lt;port&gt;:&lt;pg_index&gt;</code> → <code>&lt;sai_oid&gt;</code> マッピングを書き込む。PG_WATERMARK の enable 状態に関わらず常時書かれる</td>
+<td><code>portsorch.cpp:785, 8882, 8937</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_PG_PORT_MAP</code></td>
+<td>COUNTERS_DB</td>
+<td>WRITE</td>
+<td><code>portsorch</code> が <code>BUFFER_PG</code> エントリ追加時に <code>&lt;sai_pg_oid&gt;</code> → <code>&lt;sai_port_oid&gt;</code> マッピングを書き込む。<code>watermarkstat</code> がポートごとの集計に参照</td>
+<td><code>portsorch.cpp:786, 8883, 8938</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_PG_INDEX_MAP</code></td>
+<td>COUNTERS_DB</td>
+<td>WRITE</td>
+<td><code>portsorch</code> が <code>BUFFER_PG</code> エントリ追加時に <code>&lt;sai_pg_oid&gt;</code> → <code>&lt;pg_index&gt;</code> マッピングを書き込む。PG インデックス逆引きに利用</td>
+<td><code>portsorch.cpp:787, 8884, 8939</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_GROUP_TABLE\|PG_WATERMARK_STAT_COUNTER</code></td>
+<td>FLEX_COUNTER_DB</td>
+<td>WRITE</td>
+<td><code>portsorch</code> init 時に <code>setFlexCounterGroupParameter()</code> でポーリング間隔 (60000 ms) と <code>STATS_MODE=READ_AND_CLEAR</code> を書き込む。<code>syncd</code> FlexCounter がグループ設定を読んでポーリング動作を決定する</td>
+<td><code>portsorch.cpp:872-876</code></td>
+</tr>
+<tr>
+<td><code>PG_WATERMARK_STAT_COUNTER:&lt;sai_oid&gt;</code></td>
+<td>FLEX_COUNTER_DB</td>
+<td>WRITE</td>
+<td><code>pg_watermark_manager.setCounterIdList()</code> が PG OID ごとに <code>PG_WATERMARK_STAT_ID_LIST</code> を書き込む。<code>FLEX_COUNTER_TABLE\|PG_WATERMARK</code> が enable の場合のみ書き込まれ、disable 時は <code>clearCounterIdList()</code> で削除される</td>
+<td><code>portsorch.cpp:9051, 9095</code></td>
+</tr>
+<tr>
+<td><code>PERIODIC_WATERMARKS</code> / <code>PERSISTENT_WATERMARKS</code> / <code>USER_WATERMARKS</code></td>
+<td>COUNTERS_DB</td>
+<td>WRITE（Lua）</td>
+<td><code>watermark_pg.lua</code> が syncd FlexCounter ポーリング結果を 3 テーブルへ書き込む。<code>PERIODIC_WATERMARKS</code> は telemetry タイマー周期でクリア、他 2 テーブルは明示クリアまで保持</td>
+<td><code>watermark_pg.lua:10-12</code>; <code>watermarkorch.cpp:31-33</code></td>
+</tr>
+<tr>
+<td><code>BUFFER_PG</code></td>
+<td>CONFIG_DB</td>
+<td>READ</td>
+<td><code>getPgConfigurations()</code> が PG_WATERMARK enable 受信時に BUFFER_PG を参照して対象 PG インデックスセットを決定する。BUFFER_PG エントリがない場合は FlexCounter への OID 登録が発生しない</td>
+<td><code>flexcounterorch.cpp:538-670</code></td>
+</tr>
+<tr>
+<td><code>WATERMARK_CLEAR_REQUEST</code></td>
+<td>APPL_DB</td>
+<td>READ（通知）</td>
+<td><code>watermarkorch</code> が通知チャネルを購読し、<code>watermarkcfg clear</code> CLI からの <code>PERSISTENT</code> / <code>USER</code> クリア要求を処理する</td>
+<td><code>watermarkorch.cpp:35-39</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">補足<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>COUNTERS_PG_NAME_MAP の生成タイミング</strong>: このマップは <code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> の enable 状態に依存せず、<code>BUFFER_PG</code> テーブルへの書き込みイベント（<code>createPortBufferPgCounters()</code> 呼び出し）で生成される。PG watermark を enable にする前にマップが存在する点に注意。</li>
+<li><strong>FLEX_COUNTER_DB 二層構造</strong>: <code>FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER</code>（グループ設定）と <code>PG_WATERMARK_STAT_COUNTER:&lt;oid&gt;</code>（per-OID エントリ）は独立して管理される。グループ設定は orchagent init 時に 1 回書かれ、per-OID エントリは enable/disable や BUFFER_PG の変化に応じて動的に追加・削除される。</li>
+</ul>
+<!-- /cross-refs -->
+
+<hr />
+<h2 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;FLEX_COUNTER_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">&quot;PG_WATERMARK&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -35157,7 +35430,7 @@
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>watermarkstat<span class="w"> </span>priority-group<span class="w"> </span>headroom
 </span></code></pre></div>
 <hr />
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></li>
 <li>CONFIG_DB: <a href="../buffer-pg/"><code>BUFFER_PG</code></a></li>
@@ -35165,7 +35438,7 @@
 <li>CLI: <code>counterpoll watermark</code>、<code>watermarkstat</code></li>
 </ul>
 <hr />
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

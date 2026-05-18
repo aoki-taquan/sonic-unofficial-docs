@@ -29211,6 +29211,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35508,6 +35519,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36051,6 +36073,76 @@
 </tbody>
 </table>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-cross-refs.md</code></p>
+</blockquote>
+<p><code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> の処理において、SwitchOrch が参照・生成する他テーブル / リソースを網羅した。
+このテーブルは APPL_DB 中継なしで CONFIG_DB → SAI の直接経路を取る点が特徴である。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_DB SWITCH_CAPABILITY\|switch.ASIC_SDK_HEALTH_EVENT</code></td>
+<td>書き (SwitchOrch → STATE_DB)</td>
+<td>orchagent 起動時 1 回。health event 通知サポート可否を <code>true</code>/<code>false</code> で記録</td>
+<td><code>switchorch.cpp:231, 246</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB SWITCH_CAPABILITY\|switch.REG_{FATAL,WARNING,NOTICE}_ASIC_SDK_HEALTH_CATEGORY</code></td>
+<td>書き</td>
+<td>各 severity の SAI capability 確認結果を記録</td>
+<td><code>switchorch.cpp:265-269</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB ASIC_SDK_HEALTH_EVENT_TABLE</code></td>
+<td>書き (SAI コールバック経由)</td>
+<td><code>onSwitchAsicSdkHealthEvent()</code> が SAI から受け取ったイベントを書き込む。SUPPRESS 設定が SAI フィルタを決定し書き込み数を制御する</td>
+<td><code>switchorch.cpp:1661</code></td>
+</tr>
+<tr>
+<td>SAI <code>SAI_SWITCH_ATTR_SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY</code> capability</td>
+<td>読み (SAI クエリ)</td>
+<td>起動時。非対応なら全 severity の初期登録をスキップ</td>
+<td><code>switchorch.cpp:220</code></td>
+</tr>
+<tr>
+<td>SAI <code>SAI_SWITCH_ATTR_REG_{FATAL,WARNING,NOTICE}_SWITCH_ASIC_SDK_HEALTH_CATEGORY</code></td>
+<td>書き (SAI set_switch_attribute)</td>
+<td>SET/DEL ごとに <code>registerAsicSdkHealthEventCategories()</code> から呼ばれる</td>
+<td><code>switchorch.cpp:1366-1408</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB <code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> (起動時直接 <code>hget</code>)</td>
+<td>読み (起動時スナップショット)</td>
+<td><code>initAsicSdkHealthEventNotification()</code> が Consumer 非経由で直接読み取る唯一の経路</td>
+<td><code>switchorch.cpp:240-274</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">SWITCH_CAPABILITY への書き込みは起動時 1 回</p>
+<p><code>ASIC_SDK_HEALTH_EVENT</code> および <code>REG_*_ASIC_SDK_HEALTH_CATEGORY</code> フィールドは
+orchagent 起動時の <code>initAsicSdkHealthEventNotification()</code> 内でのみ書かれ、実行中に変化しない。
+<code>show event-driven-telemetry</code> / <code>show asic-sdk-health-event</code> (sonic-utilities/show/main.py:2803, 2849) が
+この値を読んでプラットフォームサポート有無を判断する。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">STATE_DB ASIC_SDK_HEALTH_EVENT_TABLE は SUPPRESS 設定の間接的な出力</p>
+<p><code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> の設定が SAI に登録するカテゴリフィルタを決定する。
+結果として SAI から届く health event の数・種別が変わり、STATE_DB への書き込みも制御される。
+CONFIG_DB エントリが存在しない severity は全カテゴリを購読（= 抑制なし）。</p>
+</div>
+<!-- /cross-refs -->
 
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>

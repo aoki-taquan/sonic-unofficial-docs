@@ -27773,7 +27773,201 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sai-oid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. SAI OID フェッチが先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-warm-reboot-60" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Warm-reboot 時の 60 秒遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-buffer_queue-flex_counter_tablequeue-enable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. BUFFER_QUEUE と FLEX_COUNTER_TABLE|QUEUE = enable の順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-m_isqueuemapgenerated-generatequeuemap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. m_isQueueMapGenerated — generateQueueMap() は一度だけ実行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-iscreateonlyconfigdbbuffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. isCreateOnlyConfigDbBuffers の事後変更は限定的
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-sai-queue-oid-orchagent-abort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. SAI Queue OID フェッチ失敗 → orchagent abort（致命的）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-flexcounter-runtime_error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. FlexCounter グループ初期化の runtime_error（継続）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-buffer_queue-silent-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. BUFFER_QUEUE キー / インデックス解析失敗（silent skip）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-wred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. WRED ケイパビリティクエリ失敗（フォールバック）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-create_only_config_db_buffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. create_only_config_db_buffers 読み込み失敗（フォールバック）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗時の COUNTERS_DB 状態まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -27784,7 +27978,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35137,7 +35331,201 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順序依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順序依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sai-oid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. SAI OID フェッチが先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-warm-reboot-60" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Warm-reboot 時の 60 秒遅延
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-buffer_queue-flex_counter_tablequeue-enable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. BUFFER_QUEUE と FLEX_COUNTER_TABLE|QUEUE = enable の順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-m_isqueuemapgenerated-generatequeuemap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. m_isQueueMapGenerated — generateQueueMap() は一度だけ実行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-iscreateonlyconfigdbbuffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. isCreateOnlyConfigDbBuffers の事後変更は限定的
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-sai-queue-oid-orchagent-abort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. SAI Queue OID フェッチ失敗 → orchagent abort（致命的）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-flexcounter-runtime_error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. FlexCounter グループ初期化の runtime_error（継続）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-buffer_queue-silent-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. BUFFER_QUEUE キー / インデックス解析失敗（silent skip）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-wred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. WRED ケイパビリティクエリ失敗（フォールバック）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-create_only_config_db_buffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. create_only_config_db_buffers 読み込み失敗（フォールバック）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗時の COUNTERS_DB 状態まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35148,7 +35536,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35399,9 +35787,319 @@
 <p><code>FLEX_COUNTER_TABLE|QUEUE</code> の <code>FLEX_COUNTER_STATUS</code> が <code>enable</code> になるまで、syncd は SAI ポーリングを行わない。カウンタ値は <code>0</code> のまま（または初期化前）。ポートが allPortsReady 前の場合、<code>enable</code> 受信後も FlexCounter への登録は遅延し、全ポート ready 後に一括適用される。</p>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順序依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp (ref:4305596156d7),
+     sonic-swss/orchagent/flexcounterorch.cpp (ref:4305596156d7) -->
+
+<h3 id="1-sai-oid">1. SAI OID フェッチが先行必須<a class="headerlink" href="#1-sai-oid" title="Permanent link">&para;</a></h3>
+<p><code>PortsOrch::initializePorts()</code>（<code>portsorch.cpp:6583-6598</code>）が <code>initializeQueuesBulk()</code> で SAI から各ポートの Queue OID リスト（<code>SAI_PORT_ATTR_QOS_QUEUE_LIST</code>）を取得して <code>port.m_queue_ids</code> へキャッシュするまで、<code>generateQueueMap()</code> / <code>generateQueueMapPerPort()</code> は OID が空のまま動作してマッピングを書き込まない<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。<code>FlexCounterOrch::doTask()</code> は <code>gPortsOrch-&gt;allPortsReady()</code> が <code>false</code> の間 <code>return</code> する（<code>flexcounterorch.cpp:164-167</code>）ため、<code>FLEX_COUNTER_TABLE|QUEUE = enable</code> を orchagent 起動前に書き込んでいても、全ポート ready 後まで <code>generateQueueMap()</code> 呼び出しは自動的に遅延する。</p>
+<h3 id="2-warm-reboot-60">2. Warm-reboot 時の 60 秒遅延<a class="headerlink" href="#2-warm-reboot-60" title="Permanent link">&para;</a></h3>
+<p><code>FlexCounterOrch</code> コンストラクタ（<code>flexcounterorch.cpp:127-136</code>）は warm-reboot 時に <code>FLEX_COUNTER_DELAY_SEC = 60</code> 秒のタイマーを設定し、<code>doTask()</code> 先頭の <code>if (!m_delayTimerExpired) return;</code>（<code>flexcounterorch.cpp:156-158</code>）で全 FlexCounter 処理をブロックする。cold boot では即 <code>m_delayTimerExpired = true</code> になり遅延なし。warm-reboot 中に <code>FLEX_COUNTER_TABLE|QUEUE = enable</code> を書き込んでも最大 60 秒間 <code>COUNTERS:&lt;oid&gt;</code> の更新が停止する<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
+<h3 id="3-buffer_queue-flex_counter_tablequeue-enable">3. <code>BUFFER_QUEUE</code> と <code>FLEX_COUNTER_TABLE|QUEUE = enable</code> の順序<a class="headerlink" href="#3-buffer_queue-flex_counter_tablequeue-enable" title="Permanent link">&para;</a></h3>
+<p><code>BUFFER_QUEUE</code> SET が届いたときに <code>createPortBufferQueueCounters()</code>（<code>portsorch.cpp:8700-8755</code>）が <code>flexCounterOrch-&gt;getQueueCountersState()</code> を確認し、<code>false</code>（= <code>FLEX_COUNTER_TABLE|QUEUE</code> が disable）ならカウンタ登録をスキップする。<code>BUFFER_QUEUE</code> を先に書いた後に <code>enable</code> を書くと、<code>enable</code> 処理時に <code>addQueueFlexCounters(getQueueConfigurations())</code> が実行され、その時点で非ゼロプロファイルを持つ <code>BUFFER_QUEUE</code> エントリが一括登録される<sup id="fnref3:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。逆順（<code>enable</code> 先・<code>BUFFER_QUEUE</code> 後）でも即時登録されるため、<strong>どちらの順序でも最終状態は同じ</strong>。</p>
+<h3 id="4-m_isqueuemapgenerated-generatequeuemap">4. <code>m_isQueueMapGenerated</code> — <code>generateQueueMap()</code> は一度だけ実行<a class="headerlink" href="#4-m_isqueuemapgenerated-generatequeuemap" title="Permanent link">&para;</a></h3>
+<p><code>generateQueueMap()</code>（<code>portsorch.cpp:8391-8396</code>）は <code>m_isQueueMapGenerated</code> フラグで保護されており、初回のみ実行される。<code>FLEX_COUNTER_TABLE|QUEUE</code> と <code>FLEX_COUNTER_TABLE|QUEUE_WATERMARK</code> の enable 順序に関係なく最初の enable で一度だけ走る。<code>m_isQueueMapGenerated</code> がセット済みの状態で新規ポートが追加された場合は <code>createPortBufferQueueCounters()</code> 経由でマッピングが生成される<sup id="fnref4:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
+<h3 id="5-iscreateonlyconfigdbbuffers">5. <code>isCreateOnlyConfigDbBuffers</code> の事後変更は限定的<a class="headerlink" href="#5-iscreateonlyconfigdbbuffers" title="Permanent link">&para;</a></h3>
+<p><code>FlexCounterOrch</code> は起動時に <code>DEVICE_METADATA|localhost|create_only_config_db_buffers</code> を読み込み <code>m_createOnlyConfigDbBuffers</code> にキャッシュする。<code>true</code> の場合、<code>getQueueConfigurations()</code> は <code>BUFFER_QUEUE</code> に非ゼロプロファイルが設定されたキューのみ対象にする（デフォルト <code>false</code> = 全キュー）。起動後に値を変更しても、既に <code>m_isQueueMapGenerated = true</code> でガードされている場合は以後の <code>getQueueConfigurations()</code> 呼び出しにのみ影響し、既登録カウンタは変更されない。既存カウンタを変更するには orchagent 再起動が必要<sup id="fnref5:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
+<h3 id="_8">順序依存サマリ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SAI OID フェッチ (<code>initializeQueuesBulk</code>) → <code>generateQueueMap()</code></td>
+<td>先行必須</td>
+<td><code>allPortsReady()</code> チェックで自動待機</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Warm-reboot 時 60 秒 delay timer</td>
+<td>強制遅延</td>
+<td>定数 <code>FLEX_COUNTER_DELAY_SEC=60</code>。60 秒後に自動再開</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>BUFFER_QUEUE</code> SET と <code>FLEX_COUNTER_TABLE\|QUEUE = enable</code> の順序</td>
+<td>どちらが先でも最終状態は同じ</td>
+<td>enable 後に <code>addQueueFlexCounters()</code> で追加</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>m_isQueueMapGenerated</code> ガード</td>
+<td>冪等保護（順序非依存）</td>
+<td>新規ポートは <code>createPortBufferQueueCounters()</code> 経由</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>DEVICE_METADATA.create_only_config_db_buffers</code> 事後変更</td>
+<td>以後の呼び出しにのみ影響</td>
+<td>既存カウンタ変更には orchagent 再起動が必要</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>YANG leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB / 場所</th>
+<th>方向</th>
+<th>契機</th>
+<th>根拠コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_TABLE\|QUEUE</code></td>
+<td>CONFIG_DB</td>
+<td>READ</td>
+<td><code>FLEX_COUNTER_STATUS = enable</code> を受信した時点で <code>addQueueFlexCounters()</code> を呼び SAI カウンタ登録を開始。<code>disable</code> で <code>clearQueueFlexCounters()</code> を呼びカウンタ登録を解除</td>
+<td><code>flexcounterorch.cpp:247-252</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_TABLE\|QUEUE_WATERMARK</code></td>
+<td>CONFIG_DB</td>
+<td>READ</td>
+<td><code>enable</code> 受信時に <code>addQueueWatermarkFlexCounters()</code> を呼び <code>QUEUE_WATERMARK_STAT_COUNTER</code> グループを開始。<code>disable</code> で解除</td>
+<td><code>flexcounterorch.cpp:258-264</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE</code></td>
+<td>CONFIG_DB</td>
+<td>READ</td>
+<td><code>enable</code> 受信時に <code>addWredQueueFlexCounters(getQueueConfigurations())</code> を呼び WRED カウンタ登録を開始。SAI ケイパビリティ未サポートポートは silent にスキップ</td>
+<td><code>flexcounterorch.cpp:276-281</code></td>
+</tr>
+<tr>
+<td><code>BUFFER_QUEUE</code></td>
+<td>CONFIG_DB</td>
+<td>READ</td>
+<td><code>create_only_config_db_buffers = true</code> の場合、<code>getQueueConfigurations()</code> が <code>BUFFER_QUEUE</code> に非ゼロプロファイルが設定されたキューのみを対象にする。<code>false</code>（デフォルト）では全キューを対象</td>
+<td><code>flexcounterorch.cpp:544-554</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code></td>
+<td>CONFIG_DB</td>
+<td>READ</td>
+<td>起動時に <code>create_only_config_db_buffers</code> を 1 回読み込み <code>m_createOnlyConfigDbBuffers</code> にキャッシュ。<code>handleDeviceMetadataTable()</code> が動的更新を購読</td>
+<td><code>flexcounterorch.cpp:106-124, 488-521</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_QUEUE_NAME_MAP</code></td>
+<td>COUNTERS_DB</td>
+<td>WRITE</td>
+<td><code>generateQueueMap()</code> が <code>&lt;port_alias&gt;:&lt;queue_index&gt;</code> → SAI OID マッピングを書き込む。<code>m_isQueueMapGenerated</code> フラグで冪等保護（初回のみ）</td>
+<td><code>portsorch.cpp:8391-8443</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_QUEUE_PORT_MAP</code></td>
+<td>COUNTERS_DB</td>
+<td>WRITE</td>
+<td><code>&lt;queue_oid&gt;</code> → <code>&lt;port_oid&gt;</code> の逆引きマップ。<code>generateQueueMapPerPort()</code> で書き込まれ、<code>queuestat</code> がキューをポートに紐付ける際に参照</td>
+<td><code>portsorch.cpp:778-782</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_QUEUE_INDEX_MAP</code></td>
+<td>COUNTERS_DB</td>
+<td>WRITE</td>
+<td><code>&lt;queue_oid&gt;</code> → <code>&lt;queue_index&gt;</code> の逆引きマップ。<code>generateQueueMapPerPort()</code> で書き込まれ、<code>queuestat</code> が表示列の並べ替えに使用</td>
+<td><code>portsorch.cpp:780-781</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_QUEUE_TYPE_MAP</code></td>
+<td>COUNTERS_DB</td>
+<td>WRITE</td>
+<td><code>&lt;queue_oid&gt;</code> → <code>SAI_QUEUE_TYPE_*</code> の逆引きマップ。UC / MC / ALL / VOQ の判別に使用</td>
+<td><code>portsorch.cpp:781-782</code></td>
+</tr>
+<tr>
+<td>SAI <code>SAI_PORT_ATTR_QOS_QUEUE_LIST</code></td>
+<td>SAI（ハードウェア）</td>
+<td>READ</td>
+<td><code>initializeQueuesBulk()</code> が各ポートの Queue OID リストを SAI から取得して <code>port.m_queue_ids</code> へキャッシュ。このフェッチが完了するまで <code>generateQueueMap()</code> はマッピングを書き込まない</td>
+<td><code>portsorch.cpp:6583-6598</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>FLEX_COUNTER_TABLE</code> との依存は双方向</strong>: <code>COUNTERS_DB</code> の <code>COUNTERS:&lt;oid&gt;</code> は <code>FLEX_COUNTER_TABLE</code> の enable/disable 状態が <code>true</code> の間のみ syncd がポーリングして更新する。disable にするとポーリングは停止するが、<code>COUNTERS_QUEUE_NAME_MAP</code> 等のマッピングテーブルは削除されない。</li>
+<li><strong><code>BUFFER_QUEUE</code> との依存は条件付き</strong>: <code>create_only_config_db_buffers = false</code>（デフォルト）では <code>BUFFER_QUEUE</code> の設定内容に関係なく全キューのカウンタが有効化される。この場合 <code>BUFFER_QUEUE</code> の書込み順序はカウンタ有効化の最終状態に影響しない（Phase B 依存 #3 参照）。</li>
+<li><strong>VoQ モード固有</strong>: <code>gMySwitchType == "voq"</code> の場合、<code>FLEX_COUNTER_TABLE|QUEUE</code> の enable 状態に関係なく <code>generateQueueMapPerPort()</code> が直接 <code>addQueueFlexCountersPerPortPerQueueIndex()</code> を呼ぶため、VoQ 環境では上記 <code>FLEX_COUNTER_TABLE</code> 依存の一部が無効化される（<code>portsorch.cpp:8499-8514</code>）。</li>
+</ul>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>COUNTERS_DB</code> QUEUE カウンタ書き込み経路（<code>portsorch</code> + <code>flexcounterorch</code>）における失敗は、(A) SAI 初期化段階で orchagent abort に至る致命的失敗、(B) FlexCounter グループ設定の非致命的エラー（ログのみ・継続）、(C) <code>BUFFER_QUEUE</code> キー解析エラー（silent skip）、(D) WRED ケイパビリティクエリ失敗（フォールバック）、(E) warm-reboot 遅延中の受信（設計上の猶予処理）の 5 系統に分類される。</p>
+<p>中間調査: <code>meta/_intermediate/cdb-flow/queue-counter-failure.md</code></p>
+<h3 id="a-sai-queue-oid-orchagent-abort">A. SAI Queue OID フェッチ失敗 → orchagent abort（致命的）<a class="headerlink" href="#a-sai-queue-oid-orchagent-abort" title="Permanent link">&para;</a></h3>
+<p><code>initializeQueuesBulk()</code> (<code>portsorch.cpp:6854-6935</code>) は 2 段バルク GET:</p>
+<table>
+<thead>
+<tr>
+<th>フェーズ</th>
+<th>SAI 属性</th>
+<th>失敗時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>フェーズ 1</td>
+<td><code>SAI_PORT_ATTR_QOS_NUMBER_OF_QUEUES</code></td>
+<td><code>handleSaiGetStatus(SAI_API_PORT, status)</code> → <code>throw runtime_error("PortsOrch initialization failure.")</code></td>
+</tr>
+<tr>
+<td>フェーズ 2</td>
+<td><code>SAI_PORT_ATTR_QOS_QUEUE_LIST</code></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p><code>runtime_error</code> は <code>PortsOrch</code> コンストラクタを超えて伝播し orchagent プロセスが abort する。systemd が自動再起動するまで <code>COUNTERS_QUEUE_NAME_MAP</code> 等の初期化マッピングは書き込まれず、<code>queuestat</code> / <code>wredstat</code> はキューを表示できない状態になる（evidence: <code>portsorch.cpp:6878-6890, 6922-6934</code>）。</p>
+<div class="admonition warning">
+<p class="admonition-title">例外: キュー数 0 のポートはスキップ</p>
+<p><code>port.m_queue_ids.size() == 0</code> のポートはフェーズ 2 の bulk GET 対象から除外され継続する。Queue OID 取得失敗が問題ポートのみで発生する場合でも、そのポートのキューは <code>COUNTERS_QUEUE_NAME_MAP</code> に登録されない。</p>
+</div>
+<h3 id="b-flexcounter-runtime_error">B. FlexCounter グループ初期化の runtime_error（継続）<a class="headerlink" href="#b-flexcounter-runtime_error" title="Permanent link">&para;</a></h3>
+<p><code>PortsOrch</code> コンストラクタ (<code>portsorch.cpp:820-840</code>) の try-catch:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>try {
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    // FlexCounter グループ setFlexCounterGroupPollInterval 等
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>}
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>catch (const runtime_error&amp; e) {
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    SWSS_LOG_ERROR(&quot;Port flex counter groups were not set successfully: %s&quot;, e.what());
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>}
+</span></code></pre></div>
+<p>例外を <strong>飲み込んで継続</strong>。FlexCounter グループが不完全な状態で起動した場合、<code>COUNTERS:&lt;oid&gt;</code> の更新が一部のグループで停止する可能性があるが、orchagent プロセスは落ちない（evidence: <code>portsorch.cpp:820-840</code>）。</p>
+<h3 id="c-buffer_queue-silent-skip">C. <code>BUFFER_QUEUE</code> キー / インデックス解析失敗（silent skip）<a class="headerlink" href="#c-buffer_queue-silent-skip" title="Permanent link">&para;</a></h3>
+<p><code>FlexCounterOrch::getQueueConfigurations()</code> (<code>flexcounterorch.cpp:544-606</code>) でのエラー:</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>挙動</th>
+<th>COUNTERS_DB への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_QUEUE</code> キーのトークン数が 2 以外</td>
+<td><code>SWSS_LOG_ERROR("Invalid BUFFER_QUEUE key: [%s]")</code> → <code>continue</code></td>
+<td>当該キーのカウンタが未登録（silent skip）</td>
+</tr>
+<tr>
+<td>キューインデックスが範囲外または非数値</td>
+<td><code>std::invalid_argument</code> を catch → <code>SWSS_LOG_ERROR("Invalid queue index [%s] for port [%s]")</code> → <code>continue</code></td>
+<td>当該ポートの対象キューが未登録（silent skip）</td>
+</tr>
+</tbody>
+</table>
+<p>どちらも orchagent は継続するが、無効キーに対応するキューの <code>COUNTER_ID_LIST</code> が syncd に投入されず <code>COUNTERS:&lt;oid&gt;</code> が更新されない。<code>queuestat</code> で該当キューが N/A または欠落表示になる（evidence: <code>flexcounterorch.cpp:555-605</code>）。</p>
+<h3 id="d-wred">D. WRED ケイパビリティクエリ失敗（フォールバック）<a class="headerlink" href="#d-wred" title="Permanent link">&para;</a></h3>
+<p><code>initCounterCapabilities()</code> (<code>portsorch.cpp:1882-1921</code>):</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>挙動</th>
+<th>STATE_DB / COUNTERS_DB への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_query_stats_capability()</code> → <code>SAI_STATUS_BUFFER_OVERFLOW</code> → リサイズ後再クエリも失敗</td>
+<td><code>SWSS_LOG_NOTICE("Queue stat capability get failed: ...")</code></td>
+<td><code>QUEUE_COUNTER_CAPABILITIES|WRED_*</code> 全フラグが <code>"false"</code> のまま。WRED フィールドは <code>COUNTERS:&lt;oid&gt;</code> に追加されない</td>
+</tr>
+<tr>
+<td><code>sai_query_stats_capability()</code> が <code>SUCCESS</code> 以外 (初回)</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>sai_query_stats_capability()</code> 成功だが WRED 統計がリストに含まれない</td>
+<td><code>SWSS_LOG_INFO("WRED queue stats is_capable: ...")</code> (各フラグ false)</td>
+<td>対応フラグのみ <code>"false"</code> のまま（部分サポートあり）</td>
+</tr>
+</tbody>
+</table>
+<p>WRED カウンタ失敗は <strong>non-fatal</strong>。orchagent は継続し、WRED 以外のキューカウンタ（通常 Packets/Bytes/Drops）は正常に収集される（evidence: <code>portsorch.cpp:1882-1921</code>）。</p>
+<h3 id="e-create_only_config_db_buffers">E. <code>create_only_config_db_buffers</code> 読み込み失敗（フォールバック）<a class="headerlink" href="#e-create_only_config_db_buffers" title="Permanent link">&para;</a></h3>
+<p><code>FlexCounterOrch</code> コンストラクタ (<code>flexcounterorch.cpp:120-125</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">catch</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">system_error</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;System error reading create_only_config_db_buffers: %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">());</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>フォールバック: <code>m_createOnlyConfigDbBuffers</code> は初期値 <code>false</code>（全キュー対象）のまま。読み込み失敗でも orchagent は継続し、全キューのカウンタが有効化される（evidence: <code>flexcounterorch.cpp:120-125</code>）。</p>
+<h3 id="counters_db">失敗時の COUNTERS_DB 状態まとめ<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗シナリオ</th>
+<th><code>COUNTERS_QUEUE_NAME_MAP</code> 等</th>
+<th><code>COUNTERS:&lt;oid&gt;</code> 更新</th>
+<th>orchagent 状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI Queue OID フェッチ失敗</td>
+<td>未書き込み（初期化未完了）</td>
+<td>停止</td>
+<td>abort → systemd 再起動</td>
+</tr>
+<tr>
+<td>FlexCounter グループ初期化 runtime_error</td>
+<td>書き込み済み（マップは完了後）</td>
+<td>一部グループが停止する可能性</td>
+<td>継続（ログのみ）</td>
+</tr>
+<tr>
+<td>BUFFER_QUEUE キー解析失敗</td>
+<td>正常書き込み済み</td>
+<td>問題キューの <code>COUNTER_ID_LIST</code> 未登録</td>
+<td>継続（ログのみ）</td>
+</tr>
+<tr>
+<td>WRED capability クエリ失敗</td>
+<td>正常書き込み済み</td>
+<td>WRED フィールドのみ追加されない</td>
+<td>継続（NOTICE ログ）</td>
+</tr>
+<tr>
+<td><code>create_only_config_db_buffers</code> 読み込み失敗</td>
+<td>正常書き込み済み</td>
+<td>全キュー対象（フォールバック）</td>
+<td>継続（ログのみ）</td>
+</tr>
+<tr>
+<td>warm-reboot delay 中 enable 受信</td>
+<td>タイマー満了後に書き込み（最大 60 秒猶予）</td>
+<td>タイマー満了後に開始</td>
+<td>正常（設計上の遅延）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>証跡</strong>: <code>initializeQueuesBulk()</code> <code>portsorch.cpp:6854-6935</code>、FlexCounter グループ try-catch <code>portsorch.cpp:820-840</code>、<code>getQueueConfigurations()</code> <code>flexcounterorch.cpp:544-606</code>、<code>initCounterCapabilities()</code> <code>portsorch.cpp:1850-1942</code>、warm-reboot delay <code>flexcounterorch.cpp:127-136,156-158</code>。詳細は <code>meta/_intermediate/cdb-flow/queue-counter-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../flex-counter-table/">CONFIG_DB FLEX_COUNTER_TABLE</a></li>
 <li><a href="../buffer-queue/">CONFIG_DB BUFFER_QUEUE</a></li>
@@ -35410,7 +36108,7 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
@@ -35425,6 +36123,9 @@
 </li>
 <li id="fn:4">
 <p>portsorch.h:34-42 および portsorch.cpp:90-91 — FlexCounter グループ名定数とハードコードポーリング間隔定義。<a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.h#L34">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.h#L34</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>sonic-swss/orchagent/portsorch.cpp:6583-6598,8391-8443,8700-8755</code> / <code>sonic-swss/orchagent/flexcounterorch.cpp:127-136,156-167,247-252,544-554</code> — 書込み順序依存・タイミング依存の実装根拠。<a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

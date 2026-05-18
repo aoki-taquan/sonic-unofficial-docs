@@ -30041,6 +30041,106 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込の対応表
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次作用の連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlanmgrd-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vxlanmgrd の Consumer ロール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent の Consumer ロール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35956,6 +36056,106 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込の対応表
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次作用の連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlanmgrd-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vxlanmgrd の Consumer ロール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent の Consumer ロール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36932,6 +37132,167 @@
 <p><strong>スキャン証跡</strong>: <code>sonic-swss/orchagent/vnetorch.h:20-28</code>（マクロ定数全件）、<code>sonic-swss/orchagent/vnetorch.cpp:513,773,786</code>（定数使用箇所）、<code>sonic-swss-common/common/schema.h:81-83,133,369,495,500</code>（テーブル名定数）、<code>sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2:321-328</code>（<code>vnid_type</code> 型定義）、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang:75-92</code>（scope/guid 制約）</p>
 </blockquote>
 <!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB <code>VNET</code> / <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> テーブルの変更に伴って <code>VNetOrch</code> / <code>VNetRouteOrch</code> が副次的に書き込む DB エントリを示す。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>対象テーブル / 根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><strong>あり</strong></td>
+<td><code>VNET_ROUTE_TUNNEL_TABLE</code> — トンネルルート active 化時に <code>active_endpoints</code> + <code>state</code> を書込 (<code>vnetorch.cpp:2572</code>)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><strong>あり</strong></td>
+<td><code>ADVERTISE_NETWORK_TABLE</code> — <code>advertise_prefix: true</code> かつルート active 化時に prefix を書込、BGP コンテナが広告経路として参照 (<code>vnetorch.cpp:2645</code>)</td>
+</tr>
+<tr>
+<td>APP_DB</td>
+<td><strong>あり</strong></td>
+<td><code>VNET_MONITOR_TABLE</code> — <code>monitoring</code> フィールド付き <code>VNET_ROUTE_TUNNEL</code> 追加時にモニタリングセッションを書込 (<code>vnetorch.cpp:2247</code>)</td>
+</tr>
+<tr>
+<td>APP_DB</td>
+<td><strong>あり</strong></td>
+<td><code>BFD_SESSION_TABLE</code> — <code>monitoring: bfd</code> / <code>ping</code> 指定時に <code>createBfdSession()</code> が BFD セッションを書込 (<code>vnetorch.cpp:2046-2115</code>)</td>
+</tr>
+<tr>
+<td>ASIC_DB (SAI 経由)</td>
+<td><strong>あり</strong></td>
+<td><code>sai_virtual_router_api-&gt;create_virtual_router()</code> によって VRF オブジェクトが ASIC_DB に間接書込。VNET 削除時には <code>remove_virtual_router()</code> + <code>gFlowCounterRouteOrch-&gt;onRemoveVR()</code> が呼ばれる (<code>vnetorch.cpp:91-108</code>, <code>345-362</code>)</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td><code>vnetorch.cpp</code> 全体で COUNTERS_DB への書込コード 0 件</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB / LOGLEVEL_DB</td>
+<td>なし</td>
+<td><code>vnetorch.cpp</code> 内に参照 0 件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db_1">STATE_DB 書込の対応表<a class="headerlink" href="#state_db_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>書込関数</th>
+<th>STATE_DB テーブル</th>
+<th>操作</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>updateTunnelRouteStatus()</code></td>
+<td><code>VNET_ROUTE_TUNNEL_TABLE</code></td>
+<td><code>set(&lt;vnet&gt;\|&lt;prefix&gt;, active_endpoints, state)</code></td>
+<td>ECMP エンドポイント alive 状態の公開</td>
+</tr>
+<tr>
+<td><code>addRouteAdvertisement()</code></td>
+<td><code>ADVERTISE_NETWORK_TABLE</code></td>
+<td><code>set(&lt;prefix&gt;, profile)</code></td>
+<td>BGP コンテナへの経路広告指示</td>
+</tr>
+<tr>
+<td><code>removeRouteAdvertisement()</code></td>
+<td><code>ADVERTISE_NETWORK_TABLE</code></td>
+<td><code>del(&lt;prefix&gt;)</code></td>
+<td>広告撤回</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_21">副次作用の連鎖<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>VNET_ROUTE_TUNNEL_TABLE</code> への書込は <code>monitoring</code> 有効時の BFD 状態変化 (<code>SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE</code>) を <code>updateVnetTunnel()</code> で受けて行われる (<code>vnetorch.cpp:2654-2665</code>)。</li>
+<li><code>advertise_prefix: true</code> かつトンネルルートが active 化すると <code>addRouteAdvertisement()</code> → <code>ADVERTISE_NETWORK_TABLE</code> 書込 → BGP コンテナが prefix を広告、という連鎖が発生する (<code>vnetorch.cpp:2590-2600</code>)。</li>
+<li>BFD セッション削除 (<code>removeBfdSession()</code>) は <code>bfd_session_producer_.del()</code> で <code>BFD_SESSION_TABLE</code> エントリを消し、BfdOrch 側のセッションが破棄される (<code>vnetorch.cpp:2117</code>)。</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/vnet-side-effects.md</code> を参照。</p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の <code>VNET</code> / <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> テーブルは <code>vxlanmgrd</code> (<code>VxlanMgr</code>) が直接購読し、<code>orchagent</code> の <code>VNetOrch</code> / <code>VNetRouteOrch</code> は APPL_DB 経由で消費する。</p>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>方式</th>
+<th>チャンネル / パターン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB[VNET] → vxlanmgrd</td>
+<td><code>Orch::addConsumer()</code> による <code>Selectable</code> 登録、<code>select()</code> ループで受信</td>
+<td><code>CFG_VNET_TABLE_NAME</code> キースペース通知</td>
+</tr>
+<tr>
+<td>CONFIG_DB[VXLAN_TUNNEL] → vxlanmgrd</td>
+<td>同上</td>
+<td><code>CFG_VXLAN_TUNNEL_TABLE_NAME</code> キースペース通知</td>
+</tr>
+<tr>
+<td>vxlanmgrd → APPL_DB[VNET_TABLE]</td>
+<td><code>ProducerStateTable::set()</code> (<code>m_appVxlanTunnelTable</code> 等)</td>
+<td>APPL_DB pub/sub チャンネル</td>
+</tr>
+<tr>
+<td>APPL_DB[VNET_TABLE] → VNetOrch</td>
+<td><code>Orch2(db, APP_VNET_TABLE_NAME, ...)</code> → <code>ConsumerStateTable</code> で受信</td>
+<td><code>__keyspace@1__:VNET_TABLE\|*</code></td>
+</tr>
+<tr>
+<td>APPL_DB[VNET_RT_TABLE / VNET_RT_TUNNEL_TABLE] → VNetRouteOrch</td>
+<td><code>Orch2(db, tableNames, ...)</code> → <code>ConsumerStateTable</code></td>
+<td><code>__keyspace@1__:VNET_ROUTE_TABLE\|*</code> 他</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vxlanmgrd-consumer">vxlanmgrd の Consumer ロール<a class="headerlink" href="#vxlanmgrd-consumer" title="Permanent link">&para;</a></h3>
+<p><code>vxlanmgrd</code> (<code>cfgmgr/vxlanmgrd.cpp:46-53</code>) は起動時に以下 4 テーブルを購読する:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>CFG_VNET_TABLE_NAME
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>CFG_VXLAN_TUNNEL_TABLE_NAME
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>CFG_VXLAN_TUNNEL_MAP_TABLE_NAME
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>CFG_VXLAN_EVPN_NVO_TABLE_NAME
+</span></code></pre></div>
+<p><code>doVxlanCreateTask()</code> が <code>CFG_VNET_TABLE_NAME</code> SET イベントを受けて、<code>vxlan_tunnel</code> + <code>vni</code> の完備を確認してから APP_DB へ転記する。不完全なメッセージは <code>return true</code> (破棄)、依存オブジェクト未作成は <code>return false</code> (再キュー) で処理される (<code>vxlanmgr.cpp:307-342</code>)。</p>
+<h3 id="orchagent-consumer">orchagent の Consumer ロール<a class="headerlink" href="#orchagent-consumer" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:276</code> で <code>VNetOrch</code> が <code>APPL_DB</code> + <code>APP_VNET_TABLE_NAME</code> を渡して構築される。<code>Orch2</code> の <code>ConsumerStateTable</code> が APPL_DB の keyspace 変化を <code>Select::select()</code> ループで捕捉し、<code>addOperation()</code> / <code>delOperation()</code> を呼び出す。</p>
+<p><code>VNetRouteOrch</code> (<code>orchdaemon.cpp:265-269</code>) は <code>APP_VNET_RT_TABLE_NAME</code> と <code>APP_VNET_RT_TUNNEL_TABLE_NAME</code> の 2 テーブルを同一 <code>Orch2</code> インスタンスで購読し、<code>handler_map_</code> によって <code>handleRoutes()</code> / <code>handleTunnel()</code> にディスパッチする (<code>vnetorch.cpp:738-739</code>)。</p>
+<h3 id="_22">データフロー概要<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>operator / REST
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  ↓ sonic-db-cli / config vxlan
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  CONFIG_DB[VNET|&lt;name&gt;]  ← SET/DEL
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>        ↓ keyspace通知
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>vxlanmgrd (cfgmgr/vxlanmgr.cpp)
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  doVxlanCreateTask():
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    - vxlan_tunnel + vni 完備チェック (L307-313)
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    - m_vxlanTunnelCache 存在チェック (L318-323)
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    - isVrfStateOk() チェック (L328-333)
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    - MAC アドレス取得 (L334-342)
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    → (成功時) APPL_DB[VNET_TABLE|&lt;name&gt;] ProducerStateTable::set()
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>        ↓ ConsumerStateTable keyspace通知
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>orchagent / VNetOrch (orchagent/vnetorch.cpp L377)
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>  addOperation():
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    - VxlanTunnelOrch::isTunnelExists() (L499-502)
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    - createObject&lt;VNetVrfObject&gt;() → SAI create_virtual_router()
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>    → APPL_DB[VNET_TABLE] 状態反映完了
+</span></code></pre></div>
+<!-- /pubsub -->
 
 <!-- glossary-links-injected: f94986e6b96c -->
 

@@ -25358,6 +25358,106 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db-flushcounters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_DB フラッシュ（flushCounters()）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各 Orch への連鎖呼び出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent → FLEX_COUNTER_DB 書き込み方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#syncd-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        syncd — FLEX_COUNTER_DB の購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#syncd-flexcounter-counters_db-polling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        syncd FlexCounter → COUNTERS_DB 書き込み（polling スレッド）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producer-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer / Consumer ペアサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35470,6 +35570,106 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db-flushcounters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_DB フラッシュ（flushCounters()）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        各 Orch への連鎖呼び出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent → FLEX_COUNTER_DB 書き込み方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#syncd-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        syncd — FLEX_COUNTER_DB の購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#syncd-flexcounter-counters_db-polling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        syncd FlexCounter → COUNTERS_DB 書き込み（polling スレッド）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producer-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer / Consumer ペアサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36519,6 +36719,198 @@ APP_DB の <code>BUFFER_QUEUE</code>/<code>BUFFER_PG</code> エントリの存�
 </tbody>
 </table>
 <!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-side-effects.md -->
+<!-- source: sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/portsorch.cpp,
+     sonic-swss/orchagent/intfsorch.cpp (ref: master) -->
+
+<p><code>FLEX_COUNTER_TABLE|&lt;group&gt;</code> への <code>FLEX_COUNTER_STATUS = enable/disable</code> 処理に伴い
+<code>FlexCounterOrch::doTask()</code> が各 Orch の <code>generateXxxMap()</code> を呼び出す際に生じる副次 DB 書き込み。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込内容</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_DB</code></td>
+<td><code>FLEX_COUNTER_TABLE:&lt;group&gt;:&lt;oid&gt;</code></td>
+<td><code>PORT</code> / <code>QUEUE</code> / <code>PG</code> 等 per-OID カウンタ ID リスト（本ページの主作用）</td>
+<td><code>portsorch.cpp:9118</code> <code>port_stat_manager.setCounterIdList()</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td><code>COUNTERS_PORT_NAME_MAP</code></td>
+<td><code>&lt;alias&gt;</code> → <code>&lt;oid&gt;</code> のエイリアスマップ。<code>PORT</code> enable 時に更新</td>
+<td><code>portsorch.cpp:4118</code> <code>m_counterNameMapUpdater-&gt;setCounterNameMap()</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td><code>COUNTERS_QUEUE_NAME_MAP</code></td>
+<td><code>&lt;Ethernet0:0&gt;</code> → <code>&lt;oid&gt;</code> のキューエイリアスマップ。<code>QUEUE</code> / <code>QUEUE_WATERMARK</code> / <code>WRED_ECN_QUEUE</code> enable 時に更新</td>
+<td><code>portsorch.cpp:8524,8749</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td><code>COUNTERS_PG_NAME_MAP</code></td>
+<td><code>&lt;Ethernet0:0&gt;</code> → <code>&lt;oid&gt;</code> の PG エイリアスマップ。<code>PG_DROP</code> / <code>PG_WATERMARK</code> enable 時に更新</td>
+<td><code>portsorch.cpp:8882,8937</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td><code>COUNTERS_RIF_NAME_MAP</code> / <code>COUNTERS_RIF_TYPE_MAP</code></td>
+<td><code>&lt;alias&gt;</code> → <code>&lt;oid&gt;</code> / <code>&lt;oid&gt;</code> → <code>&lt;type&gt;</code> の RIF エイリアス・タイプマップ。<code>RIF</code> enable 時にタイマー経由で更新</td>
+<td><code>intfsorch.cpp:1527-1545</code> <code>addRifToFlexCounter()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="flex_counter_db-flushcounters">FLEX_COUNTER_DB フラッシュ（<code>flushCounters()</code>）<a class="headerlink" href="#flex_counter_db-flushcounters" title="Permanent link">&para;</a></h3>
+<p><code>FLEX_COUNTER_STATUS</code> フィールドを処理した直後、<code>gPortsOrch-&gt;flushCounters()</code> が呼ばれ
+（<code>flexcounterorch.cpp:375-378</code>）、<code>counter_managers</code> 全体に対して <code>flush()</code> を実行する。
+バッファ済みの FLEX_COUNTER_DB 書き込みが即時 Redis へ送信されるため、enable / disable
+後の FLEX_COUNTER_DB は中間状態にならない。</p>
+<h3 id="orch">各 Orch への連鎖呼び出し<a class="headerlink" href="#orch" title="Permanent link">&para;</a></h3>
+<p><code>FLEX_COUNTER_STATUS</code> の enable / disable は対応する Orch の生成・削除関数を直接呼ぶ。</p>
+<table>
+<thead>
+<tr>
+<th>グループキー</th>
+<th>enable 時の連鎖</th>
+<th>disable 時の連鎖</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLOW_CNT_TRAP</code></td>
+<td><code>gCoppOrch-&gt;generateHostIfTrapCounterIdList()</code> → FLEX_COUNTER_DB に <code>FLOW_COUNTER_ID_LIST</code> 書込</td>
+<td><code>gCoppOrch-&gt;clearHostIfTrapCounterIdList()</code> → FLEX_COUNTER_DB から削除</td>
+</tr>
+<tr>
+<td><code>FLOW_CNT_ROUTE</code></td>
+<td><code>gFlowCounterRouteOrch-&gt;generateRouteFlowStats()</code> → ルート flow カウンタ書込</td>
+<td><code>gFlowCounterRouteOrch-&gt;clearRouteFlowStats()</code> → 削除</td>
+</tr>
+<tr>
+<td><code>SRV6</code></td>
+<td><code>gSrv6Orch-&gt;setCountersState(true)</code> → SRV6_COUNTER_ID_LIST 書込</td>
+<td><code>setCountersState(false)</code> → 削除</td>
+</tr>
+<tr>
+<td><code>SWITCH</code></td>
+<td><code>gSwitchOrch-&gt;generateSwitchCounterIdList()</code> → SWITCH_COUNTER_ID_LIST 書込</td>
+<td>— (disable 処理なし)</td>
+</tr>
+<tr>
+<td><code>BUFFER_POOL_WATERMARK</code></td>
+<td><code>gBufferOrch-&gt;generateBufferPoolWatermarkCounterIdList()</code> → バッファプール OID を FLEX_COUNTER_DB 書込</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>ENI</code> / <code>DASH_METER</code> / <code>HA_SET</code></td>
+<td><code>dash_orch-&gt;handleFCStatusUpdate(true)</code> 等 → DASH 系カウンタ書込</td>
+<td><code>handleFCStatusUpdate(false)</code> → 削除</td>
+</tr>
+</tbody>
+</table>
+<p>evidence: <code>flexcounterorch.cpp:287-340</code></p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-pubsub.md -->
+<!-- source: sonic-swss/orchagent/saihelper.cpp (ref: master),
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp (ref: master),
+     sonic-sairedis/syncd/Syncd.cpp (ref: master),
+     sonic-sairedis/syncd/FlexCounter.cpp (ref: master) -->
+
+<h3 id="orchagent-flex_counter_db">orchagent → FLEX_COUNTER_DB 書き込み方式<a class="headerlink" href="#orchagent-flex_counter_db" title="Permanent link">&para;</a></h3>
+<p><code>FlexCounterManager</code> が per-OID カウンタ ID リストを FLEX_COUNTER_DB へ書き込む経路は
+起動オプション <code>--traditional-flexcounter</code> の有無で 2 系統に分かれる。</p>
+<table>
+<thead>
+<tr>
+<th>モード</th>
+<th>書き込み API</th>
+<th>通知方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Traditional (<code>gTraditionalFlexCounter = true</code>)</td>
+<td><code>ProducerTable::set()</code> (<code>saihelper.cpp:1047</code>)</td>
+<td><code>_KEY_SET</code> + <code>PUBLISH FLEX_COUNTER_TABLE_CHANNEL</code> で syncd が即時起床</td>
+</tr>
+<tr>
+<td>非 Traditional（デフォルト）</td>
+<td><code>SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER</code> 属性経由 (<code>saihelper.cpp:1055-1063</code>)</td>
+<td>ASIC チャンネル経由で syncd へ伝達。FLEX_COUNTER_DB への直接 PUBLISH は行わない</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Traditional モードと FLEX_COUNTER_TABLE の可視性</p>
+<p>Traditional モードでは <code>gFlexCounterTable = ProducerTable(FLEX_COUNTER_DB, FLEX_COUNTER_TABLE)</code> が使われ (<code>saihelper.cpp:324</code>)、per-OID エントリが FLEX_COUNTER_DB 上で可視になる。非 Traditional モードでは FLEX_COUNTER_DB にエントリが書き込まれないため、<code>redis-cli -n 5 HGETALL "FLEX_COUNTER_TABLE:PORT_STAT_COUNTER:oid:..."</code> で確認できない。</p>
+</div>
+<h3 id="syncd-flex_counter_db">syncd — FLEX_COUNTER_DB の購読<a class="headerlink" href="#syncd-flex_counter_db" title="Permanent link">&para;</a></h3>
+<p><code>Syncd.cpp:209</code>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">m_flexCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">swss</span><span class="o">::</span><span class="n">ConsumerTable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_dbFlexCounter</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">FLEX_COUNTER_TABLE</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>syncd</code> は <code>ConsumerTable</code> (<code>Syncd.cpp:5855</code>) を SELECT ループに登録し、Traditional モードで
+orchagent が書き込んだ SET/DEL イベントを <code>processFlexCounterEvent()</code> (<code>Syncd.cpp:5982</code>) で処理する。
+非 Traditional モードでは <code>REDIS_FLEX_COUNTER_COMMAND_START_POLL</code> / <code>STOP_POLL</code> コマンドが
+ASIC チャンネルから届き同様に処理される。</p>
+<h3 id="syncd-flexcounter-counters_db-polling">syncd FlexCounter → COUNTERS_DB 書き込み（polling スレッド）<a class="headerlink" href="#syncd-flexcounter-counters_db-polling" title="Permanent link">&para;</a></h3>
+<p><code>FlexCounter.cpp:3123</code>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">swss</span><span class="o">::</span><span class="n">Table</span><span class="w"> </span><span class="nf">countersTable</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pipeline</span><span class="p">,</span><span class="w"> </span><span class="n">COUNTERS_TABLE</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>FlexCounter</code> の定期ポーリングスレッドは SAI bulk counter API でカウンタを収集し、
+<code>swss::Table::set()</code> で直接 <code>COUNTERS_DB:COUNTERS</code> へ書き込む。
+<strong><code>ProducerStateTable</code> を使用しないため <code>COUNTERS_TABLE_CHANNEL</code> への PUBLISH は発行されない</strong>。
+consumer 側はすべて on-demand polling で読み出す必要がある。</p>
+<h3 id="producer-consumer">Producer / Consumer ペアサマリ<a class="headerlink" href="#producer-consumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>方式</th>
+<th>チャンネル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orchagent → FLEX_COUNTER_DB (traditional)</td>
+<td><code>ProducerTable</code></td>
+<td><code>FLEX_COUNTER_TABLE_CHANNEL</code>（<code>syncd</code> が消費）</td>
+</tr>
+<tr>
+<td>orchagent → syncd (非 traditional)</td>
+<td>SAI Redis Attribute / ASIC channel</td>
+<td>—</td>
+</tr>
+<tr>
+<td>syncd FlexCounter → COUNTERS_DB</td>
+<td><code>swss::Table::set()</code> (plain HSET)</td>
+<td><strong>なし（PUBLISH 非発行）</strong></td>
+</tr>
+<tr>
+<td>CLI / SNMP / gNMI ← COUNTERS_DB</td>
+<td>on-demand polling (<code>HGETALL</code>) / gNMI STREAM subscription</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">COUNTERS_DB は push 通知なし</p>
+<p>COUNTERS_DB へのカウンタ書き込みは通知なし（plain HSET）のため、<code>counterpoll show</code> で STATUS が <code>enable</code> に見えても、ポーリング間隔が経過するまで COUNTERS_DB の値は更新されない。
+<code>show interfaces counters</code> 等は実行時点の snapshot を表示する。</p>
+</div>
+<!-- /pubsub -->
 
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- ref-triangle:start -->

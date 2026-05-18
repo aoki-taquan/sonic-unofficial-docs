@@ -29289,6 +29289,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙テーブル参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG 明示 leafref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 他テーブルへの参照: なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29417,7 +29467,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -29428,7 +29478,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -35558,6 +35608,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙テーブル参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG 明示 leafref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 他テーブルへの参照: なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35686,7 +35786,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -35697,7 +35797,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -36017,6 +36117,36 @@
 </table>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙テーブル参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/switch-hash-cross-refs.md</code></p>
+</blockquote>
+<h3 id="yang-leafref">YANG 明示 leafref<a class="headerlink" href="#yang-leafref" title="Permanent link">&para;</a></h3>
+<p><code>sonic-hash.yang</code> の <code>SWITCH_HASH.GLOBAL</code> コンテナには他テーブルへの <code>leafref</code> が存在しない。フィールドはすべて自己完結した <code>hash-field</code> enum / <code>hash-algorithm</code> enum で定義される。</p>
+<h3 id="_16">暗黙参照<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照元</th>
+<th>参照先</th>
+<th>種別</th>
+<th>参照箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SwitchOrch</code> コンストラクタ</td>
+<td>SAI <code>SAI_SWITCH_ATTR_ECMP_HASH</code> / <code>SAI_SWITCH_ATTR_LAG_HASH</code> OID</td>
+<td>ASIC 内部 OID（CONFIG_DB テーブルではない）</td>
+<td><code>switchorch.cpp:2030-2043</code> (<code>querySwitchHashDefaults</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="config_db">CONFIG_DB 他テーブルへの参照: なし<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>doCfgSwitchHashTableTask()</code> は Consumer からフィールドを読み取り、<code>parseSwHash()</code> → <code>setSwitchHash()</code> を呼ぶだけで、<code>PORT</code> / <code>PORTCHANNEL</code> / <code>VRF</code> / <code>INTERFACE</code> / <code>FG_NHG</code> など他 CONFIG_DB テーブルを参照しない。Fine-Grained ECMP (<code>FG_NHG</code>) は <code>FgNhgOrch</code> が独立して管理し、<code>SwitchOrch</code> とは別経路で SAI に設定される。</p>
+<!-- /cross-refs -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
@@ -36053,9 +36183,9 @@
 <p>db_migrator.py での SWITCH_HASH マイグレーションなし</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_16">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_17">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_17">死活・デッドコード<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_18">死活・デッドコード<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
 

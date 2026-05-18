@@ -27150,6 +27150,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 操作の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 操作の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ログ・ERROR_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35336,6 +35397,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 操作の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 操作の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ログ・ERROR_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35792,6 +35914,158 @@
 <p>中間調査詳細: <code>meta/_intermediate/cdb-flow/nat-pool-cross-refs.md</code></p>
 </blockquote>
 <!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>NatMgr::doNatPoolTask(Consumer&amp;)</code> (<code>sonic-swss/cfgmgr/natmgr.cpp</code> L6482–6866) を全行調査した。すべての失敗ケースは <code>consumer.m_toSync.erase(it)</code> でエントリを<strong>即座に破棄</strong>する設計（保留/retry なし）。</p>
+<h3 id="set">SET 操作の失敗パターン<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>key セグメント数 != 1 (<code>\|</code> 区切りで複数)</td>
+<td><code>doNatPoolTask()</code> L6504-6508</td>
+<td><code>SWSS_LOG_ERROR</code> + erase → <strong>破棄</strong></td>
+<td>なし（再投入が必要）</td>
+</tr>
+<tr>
+<td><code>nat_ip</code> フィールド欠落 または複数</td>
+<td><code>doNatPoolTask()</code> L6539-6543</td>
+<td><code>SWSS_LOG_ERROR("Invalid nat_ip values")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_port</code> フィールドが複数</td>
+<td><code>doNatPoolTask()</code> L6547-6551</td>
+<td><code>SWSS_LOG_ERROR("Invalid key values")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>未知フィールド (<code>nat_ip</code> / <code>nat_port</code> 以外)</td>
+<td><code>doNatPoolTask()</code> L6555-6559</td>
+<td><code>SWSS_LOG_ERROR("Invalid value")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>pool 名が 32 文字超</td>
+<td><code>doNatPoolTask()</code> L6563-6567</td>
+<td><code>SWSS_LOG_ERROR("Invalid pool name length")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_ip</code> が空または <code>"NULL"</code></td>
+<td><code>doNatPoolTask()</code> L6571-6575</td>
+<td><code>SWSS_LOG_ERROR("Invalid nat_ip")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_ip</code> 範囲 token 数 &gt; 2</td>
+<td><code>doNatPoolTask()</code> L6588-6592</td>
+<td><code>SWSS_LOG_ERROR("Invalid nat ip range size")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_ip</code> high/low の IP 形式不正</td>
+<td><code>doNatPoolTask()</code> L6599-6604, L6617-6622</td>
+<td><code>SWSS_LOG_ERROR("Invalid ip address format")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_ip</code> に 0.0.0.0 / ブロードキャスト / ループバック / マルチキャスト / 予約済みアドレス</td>
+<td><code>doNatPoolTask()</code> L6608-6613, L6626-6631, L6656-6661</td>
+<td><code>SWSS_LOG_ERROR("Invalid ip address")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_ip</code> 範囲で low &gt;= high</td>
+<td><code>doNatPoolTask()</code> L6635-6639</td>
+<td><code>SWSS_LOG_ERROR("NAT pool ip range ... is not valid")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_port</code> range token 数 &gt; 2</td>
+<td><code>doNatPoolTask()</code> L6673-6677</td>
+<td><code>SWSS_LOG_ERROR("Invalid nat port range size")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_port</code> が整数に変換不可</td>
+<td><code>doNatPoolTask()</code> L6682-6690, L6701-6709, L6731-6739</td>
+<td><code>SWSS_LOG_ERROR("Invalid port")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_port</code> 値が 1〜65535 の範囲外 (0 含む)</td>
+<td><code>doNatPoolTask()</code> L6694-6698, L6714-6718, L6743-6747</td>
+<td><code>SWSS_LOG_ERROR("Invalid port value")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_port</code> 範囲で low &gt;= high</td>
+<td><code>doNatPoolTask()</code> L6721-6725</td>
+<td><code>SWSS_LOG_ERROR("Invalid nat port range")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nat_ip</code> 範囲が <code>STATIC_NAT</code> の global IP と重複</td>
+<td><code>doNatPoolTask()</code> L6771-6775</td>
+<td><code>SWSS_LOG_ERROR("Pool Ip address is overlaps with static NAT entry")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>同一 key・同一値の重複 SET</td>
+<td><code>doNatPoolTask()</code> L6786-6788</td>
+<td><code>SWSS_LOG_ERROR("Duplicate Pool and it's values")</code> + erase → <strong>破棄</strong></td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del_1">DEL 操作の挙動<a class="headerlink" href="#del_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>キャッシュに存在する pool を DEL</td>
+<td><code>doNatPoolTask()</code> L6838-6851</td>
+<td><code>isPoolMappedtoBinding()</code> で binding を確認 → binding があれば <code>removeDynamicNatRule()</code> → <code>m_natPoolInfo.erase()</code> → erase（正常完了）</td>
+</tr>
+<tr>
+<td>キャッシュに存在しない pool を DEL</td>
+<td><code>doNatPoolTask()</code> L6853-6855</td>
+<td><code>SWSS_LOG_ERROR("Invalid NAT Pool ... do nothing")</code> + erase（no-op 成功扱い）</td>
+</tr>
+<tr>
+<td>不明 op type</td>
+<td><code>doNatPoolTask()</code> L6860-6863</td>
+<td><code>SWSS_LOG_ERROR("Unknown operation type")</code> + erase（消費）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error_table">ログ・ERROR_TABLE<a class="headerlink" href="#error_table" title="Permanent link">&para;</a></h3>
+<ul>
+<li>すべてのエラーは <code>SWSS_LOG_ERROR</code> で syslog (<code>/var/log/swss/natmgr.log</code>) に出力される。</li>
+<li>STATE_DB / <code>ERROR_TABLE</code> への書き込みは<strong>行われない</strong>。NAT_POOL の処理失敗は syslog のみで確認可能。</li>
+<li><code>sonic-db-cli CONFIG_DB hgetall 'NAT_POOL|&lt;name&gt;'</code> でエントリ残存の確認は可能だが、natmgrd キャッシュ (<code>m_natPoolInfo</code>) の状態は外部から確認するコマンドがない。</li>
+</ul>
+<h3 id="retry">retry 挙動<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<p><code>doNatPoolTask()</code> は失敗時に<strong>一切保留しない</strong>。iptables / APPL_DB / SAI 設定スキップ（NAT 無効・インタフェース未準備）の場合のみ erase せず次のイベントで自然に再処理されるが、バリデーション失敗は全件 erase 破棄となる。再適用するには <code>config nat add pool</code> でエントリを再投入する必要がある。</p>
+<blockquote>
+<p><strong>証跡</strong>: <code>NatMgr::doNatPoolTask()</code> L6482–6866 (<code>sonic-swss/cfgmgr/natmgr.cpp</code>).</p>
+</blockquote>
+<!-- /failure -->
 
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

@@ -26257,7 +26257,35 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -26268,7 +26296,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         コード由来の暗黙デフォルト
@@ -26279,7 +26307,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34804,7 +34832,35 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34815,7 +34871,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         コード由来の暗黙デフォルト
@@ -34826,7 +34882,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34949,8 +35005,52 @@
 <li>関連 CLI: なし（コマンドは確認されていない）</li>
 <li>関連 YANG: なし（YANG 未定義）</li>
 </ul>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>community sonic-swss/orchagent は <code>HARDWARE</code> テーブルを<strong>購読しない</strong>（dead consumer）。
+<code>orchagent/</code>・<code>cfgmgr/</code>・<code>fpmsyncd/</code> 全体で <code>COUNTER_MODE</code> / <code>LOOKUP_MODE</code> / <code>TCAM_SHARING</code> / <code>ACCESS_LIST</code> の参照は 0 件であり、書込み順依存は community コードパスでは発生しない。</p>
+<h3 id="_5">検出された順序依存<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>HARDWARE\|ACCESS_LIST</code> 書込み → AclOrch への反映</td>
+<td><strong>依存なし（dead consumer）</strong></td>
+<td>community orchagent は無視。SAI / ASIC への影響なし</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>HARDWARE_TABLE\|ACCESS_LIST</code>（アンダースコア版）書込み</td>
+<td><strong>依存なし</strong></td>
+<td>こちらも community では未消費。testdata でのみ観測</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>ACL_TABLE</code> / <code>ACL_RULE</code> との書込み前後関係</td>
+<td><strong>無関係</strong></td>
+<td><code>HARDWARE\|ACCESS_LIST</code> は <code>AclOrch</code> に到達しないため前後依存は存在しない</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">ベンダー実装（Dell translib 等）での順序依存</p>
+<p>Dell 等のベンダー向け gNMI/translib スタック（<code>sonic-mgmt-common</code> transformer 層）では
+<code>HARDWARE|ACCESS_LIST</code> を READ/WRITE するとされる。当該コードは community リポジトリ外のため
+書込み順序の詳細は本ページの対象外。</p>
+</div>
+<p>詳細探索証跡: <code>meta/_intermediate/cdb-flow/hardware-ordering.md</code></p>
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
-<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -34985,7 +35085,7 @@
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
-<h2 id="_6">コード由来の暗黙デフォルト<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">コード由来の暗黙デフォルト<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35021,7 +35121,7 @@
 <p>詳細探索証跡: <code>meta/_intermediate/cdb-flow/hardware-defaults.md</code></p>
 <!-- /defaults -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

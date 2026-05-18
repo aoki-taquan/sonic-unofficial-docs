@@ -25296,7 +25296,284 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-copporch-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. CoppOrch 初期化失敗（orchagent 起動時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-copporchdotask-processcopprule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. CoppOrch::doTask() — processCoppRule の失敗分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-coppmgrd-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. coppmgrd — STATE_DB 書き込みの失敗挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. STATE_DB 不整合が発生しうる中間状態
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter / タイマー定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB フィールド値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デフォルトトラップグループ / トラップ ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム環境変数分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI トラップ作成成功時 — COUNTERS_DB 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI トラップ作成成功後 — FLEX_COUNTER_DB 書き込み（タイマー非同期）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-counters_db-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI トラップ削除時 — COUNTERS_DB / FLEX_COUNTER_DB クリーンアップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書き込みが発生しないケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscriberStateTable の動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-dotask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループと doTask 実行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copp_trap_capability_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COPP_TRAP_CAPABILITY_TABLE の特殊経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-subscriber" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB の読み出し側（subscriber）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -25307,7 +25584,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -25329,7 +25606,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -25340,7 +25617,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35480,7 +35757,284 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-copporch-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. CoppOrch 初期化失敗（orchagent 起動時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-copporchdotask-processcopprule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. CoppOrch::doTask() — processCoppRule の失敗分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-coppmgrd-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. coppmgrd — STATE_DB 書き込みの失敗挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. STATE_DB 不整合が発生しうる中間状態
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter / タイマー定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB フィールド値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デフォルトトラップグループ / トラップ ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム環境変数分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI トラップ作成成功時 — COUNTERS_DB 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI トラップ作成成功後 — FLEX_COUNTER_DB 書き込み（タイマー非同期）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-counters_db-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI トラップ削除時 — COUNTERS_DB / FLEX_COUNTER_DB クリーンアップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書き込みが発生しないケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscriberStateTable の動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-dotask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループと doTask 実行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copp_trap_capability_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COPP_TRAP_CAPABILITY_TABLE の特殊経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-subscriber" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB の読み出し側（subscriber）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35491,7 +36045,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -35513,7 +36067,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35524,7 +36078,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35828,20 +36382,570 @@
 <p><code>state</code> (coppmgr) と <code>hw_status</code> (copporch) は同一 Redis キーに非同期で書き込まれるため、両フィールドが揃うタイミングは保証されない。短時間の不整合（<code>state=ok</code> だが <code>hw_status</code> 未設定、またはその逆）は正常動作である。</p>
 <!-- /ordering -->
 
-<h2 id="_15">確認コマンド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># グループ状態確認</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_GROUP_TABLE|queue4_group1&#39;</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># トラップ状態確認</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_TRAP_TABLE|bgp&#39;</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># プラットフォームサポートトラップ一覧</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_TRAP_CAPABILITY_TABLE|traps&#39;</span>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="c1"># 全 COPP 状態を一覧</span>
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COPP_*TABLE|*&#39;</span>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>本ページの STATE_DB 3 テーブル（<code>COPP_GROUP_TABLE</code> / <code>COPP_TRAP_TABLE</code> / <code>COPP_TRAP_CAPABILITY_TABLE</code>）はいずれも YANG 未モデル化のオペレーショナルテーブルで、<code>coppmgrd</code> および <code>CoppOrch</code> が<strong>書き手 (producer only)</strong> として書き込む。以下では各 STATE_DB エントリの<strong>生成トリガ・キー値・フィールド値</strong>が依存する入力側テーブルと前提リソースを整理する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COPP_TRAP\|&lt;trap-name&gt;</code> (CONFIG_DB)</td>
+<td>キー転写 + SET/DEL トリガ</td>
+<td>常時。<code>&lt;trap-name&gt;</code> は <code>COPP_TRAP_TABLE</code> キーに転写される。<code>trap_group</code> / <code>trap_ids</code> / <code>always_enabled</code> フィールドを参照</td>
+<td><code>coppmgr.cpp</code> L298-303 (テーブル参照), L531-815 (<code>doCoppTrapTask</code>)</td>
+</tr>
+<tr>
+<td><code>COPP_GROUP\|&lt;group-name&gt;</code> (CONFIG_DB)</td>
+<td>キー転写 + SET/DEL トリガ</td>
+<td>常時。<code>&lt;group-name&gt;</code> は <code>COPP_GROUP_TABLE</code> キーに転写</td>
+<td><code>coppmgr.cpp</code> L299, L840-927 (<code>doCoppGroupTask</code>)</td>
+</tr>
+<tr>
+<td><code>FEATURE\|&lt;feature-name&gt;</code> (CONFIG_DB)</td>
+<td>feature 有効フラグ参照</td>
+<td>常時。<code>state</code> フィールドが <code>enabled</code> かどうかで <code>COPP_TRAP_TABLE</code> / <code>COPP_GROUP_TABLE</code> のエントリ追加・削除が決まる</td>
+<td><code>coppmgr.cpp</code> L300, L323-330, L928-967 (<code>doFeatureTask</code>), L157-172 (<code>isFeatureEnabled</code>)</td>
+</tr>
+<tr>
+<td><code>APP_COPP_TABLE\|&lt;group-name&gt;</code> (APPL_DB)</td>
+<td>中継テーブル — coppmgr が書き込み、CoppOrch が読み出す</td>
+<td>常時。<code>coppmgrd</code> が <code>APPL_DB</code> に書いた後、<code>CoppOrch</code> が SAI に反映し <code>hw_status</code> を STATE_DB に返す</td>
+<td><code>coppmgr.cpp</code> L301 (<code>m_appCoppTable</code>), <code>copporch.cpp</code> L191 (Consumer)</td>
+</tr>
+<tr>
+<td><code>PortsOrch::allPortsReady()</code></td>
+<td>起動順序ガード</td>
+<td>常時。全ポートが Ready でない間は <code>CoppOrch::doTask()</code> が即 return し、<code>COPP_TRAP_TABLE.hw_status</code> が書き込まれない</td>
+<td><code>copporch.cpp</code> L885-888</td>
+</tr>
+<tr>
+<td>SAI <code>sai_query_attribute_enum_values_capability()</code></td>
+<td>SAI クエリ → <code>COPP_TRAP_CAPABILITY_TABLE</code> 書込み</td>
+<td>起動時 1 回。成功時は SAI 返値、失敗時は <code>default_supported_trap_ids</code>（42 種、<code>neighbor_miss</code> 除く）にフォールバック</td>
+<td><code>copporch.cpp</code> L240-300 (<code>publishTrapIdsCapability</code>)</td>
+</tr>
+<tr>
+<td>SAI <code>sai_hostif_api-&gt;create_hostif_trap()</code> / <code>remove_hostif_trap()</code></td>
+<td>SAI 戻り値 → <code>hw_status</code> 値</td>
+<td>常時。成功時のみ <code>"installed"</code> / <code>"not-installed"</code> を書込む。失敗時は書込みをスキップしエラーログのみ</td>
+<td><code>copporch.cpp</code> L526, L1413 (<code>updateTrapOperStatus</code>)</td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB COUNTERS_TRAP_NAME_MAP</code></td>
+<td>トラップカウンタ名マップ書込み</td>
+<td><code>bindTrapCounter()</code> 成功時。FlexCounter 経由の統計収集に必要。STATE_DB への書込みには直接影響しない</td>
+<td><code>copporch.cpp</code> L1455-1456 (<code>m_counter_table-&gt;set</code>)</td>
+</tr>
+<tr>
+<td><code>platform</code> 環境変数 (<code>getenv("platform")</code>)</td>
+<td>プラットフォーム分岐</td>
+<td>Mellanox / Marvell プラットフォームでは SAI への trap priority 設定をスキップ。<code>COPP_TRAP_TABLE.hw_status</code> の書込み自体には影響しないが SAI 操作の成否に間接影響</td>
+<td><code>copporch.cpp</code> L353-354, L1188-1189 (<code>initDefaultTrapIds</code>, <code>getAttribsFromTrapGroup</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">STATE_DB エントリは「書き出し専用」のステータスレジスタ</p>
+<p><code>coppmgrd</code> / <code>CoppOrch</code> 以外の書き手は存在しない。<code>show copp</code> / <code>dump copp</code> 等の CLI ツールは読み手のみ。
+orchagent 再起動時も <code>coppmgrd</code> は同一キーへの上書き set で再書き込みするため、冪等性が保たれる。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title"><code>COPP_TRAP_CAPABILITY_TABLE</code> は orchagent 起動時 1 回のみ更新</p>
+<p><code>publishTrapIdsCapability()</code> は <code>CoppOrch</code> コンストラクタ (<code>copporch.cpp:208-209</code>) で呼ばれるのみで、CONFIG_DB / APPL_DB の動的変更による再書込みは発生しない。プラットフォームの SAI 実装が変わらない限り、起動後の値は固定である。</p>
+</div>
+<blockquote>
+<p><strong>スキャン証跡</strong>: coppmgr.cpp L296-411, L531-985 全行読了。copporch.cpp L32-36, L191-215, L240-300, L392-420, L880-960, L1370-1492 読了。cross-refs 8 件検出。</p>
+</blockquote>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>COPP_GROUP_TABLE</code> / <code>COPP_TRAP_TABLE</code> / <code>COPP_TRAP_CAPABILITY_TABLE</code> への書き手は <code>coppmgrd</code> と <code>CoppOrch</code>（orchagent）の 2 プロセス。両プロセスとも STATE_DB への書き込みは <code>swss::Table::set/del</code>（void 戻り値）で行うため、<strong>Redis 書き込み失敗はアプリ層では検出できず</strong>、例外伝播によるプロセス abort → systemd 再起動が唯一の回復経路となる。以下では各プロセスの失敗分岐と STATE_DB への影響を整理する。</p>
+<h3 id="a-copporch-orchagent">A. <code>CoppOrch</code> 初期化失敗（orchagent 起動時）<a class="headerlink" href="#a-copporch-orchagent" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗箇所</th>
+<th>失敗条件</th>
+<th>致死性</th>
+<th>STATE_DB への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>publishTrapIdsCapability()</code> — SAI capability クエリ</td>
+<td><code>sai_query_attribute_enum_values_capability()</code> 失敗</td>
+<td><strong>非致死</strong> (フォールバック)</td>
+<td><code>COPP_TRAP_CAPABILITY_TABLE|traps</code> に <code>default_supported_trap_ids</code>（42 種、<code>neighbor_miss</code> 除く）で書き込み。orchagent は継続</td>
+</tr>
+<tr>
+<td><code>initDefaultHostIntfTable()</code> — デフォルト hostif テーブル作成</td>
+<td><code>sai_hostif_api-&gt;create_hostif_table_entry()</code> 失敗</td>
+<td><strong>致死</strong></td>
+<td><code>throw "CoppOrch initialization failure"</code> → orchagent abort → systemd 再起動。<code>COPP_TRAP_CAPABILITY_TABLE</code> は直前に書き込み済み</td>
+</tr>
+<tr>
+<td><code>initDefaultTrapGroup()</code> — デフォルトトラップグループ取得</td>
+<td><code>sai_switch_api-&gt;get_switch_attribute()</code> 失敗</td>
+<td><strong>致死</strong></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>initDefaultTrapIds()</code> — デフォルトトラップ ID 適用</td>
+<td><code>applyAttributesToTrapIds()</code> 失敗</td>
+<td><strong>致死</strong></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: copporch.cpp L208-215, L262-299, L318-326, L361-365, L377-385 -->
+
+<h3 id="b-copporchdotask-processcopprule">B. <code>CoppOrch::doTask()</code> — <code>processCoppRule</code> の失敗分岐<a class="headerlink" href="#b-copporchdotask-processcopprule" title="Permanent link">&para;</a></h3>
+<p><strong>起動ガード（<code>allPortsReady()</code> false）</strong>: <code>doTask()</code> 冒頭で全ポート未 ready を検出した場合、即 <code>return</code> して全 APPL_DB アイテムを保留。<code>COPP_TRAP_TABLE.hw_status</code> は一切書き込まれない。ポートが ready になれば次サイクルで自動再開する。<!-- evidence: copporch.cpp L885-888 --></p>
+<table>
+<thead>
+<tr>
+<th><code>task_status</code></th>
+<th>発生条件</th>
+<th><code>doTask()</code> の動作</th>
+<th>STATE_DB 影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_success</code> / <code>task_ignore</code></td>
+<td>正常完了 / 無視可能</td>
+<td><code>m_toSync.erase(it)</code> → 次アイテムへ</td>
+<td>正常書き込み</td>
+</tr>
+<tr>
+<td><code>task_need_retry</code></td>
+<td>SAI 一時失敗（transient error）</td>
+<td><code>it++</code> でアイテム保留 → 次サイクルで再試行</td>
+<td><code>hw_status</code> 未書き込み（次回再試行）</td>
+</tr>
+<tr>
+<td><code>task_failed</code></td>
+<td>SAI 致命的失敗（ポリサー作成失敗、genetlink 重複等）</td>
+<td><code>m_toSync.erase(it)</code> → <strong><code>return</code>（残アイテム処理停止）</strong></td>
+<td><code>hw_status</code> 未書き込み。orchagent は生存するが次イテレーションまで他グループも処理されない</td>
+</tr>
+<tr>
+<td><code>task_invalid_entry</code></td>
+<td>例外（<code>out_of_range</code> / <code>std::exception</code>）または未知 op</td>
+<td><code>m_toSync.erase(it)</code> → 次アイテムへ（永久スキップ）</td>
+<td><code>hw_status</code> 未書き込み。当該エントリは再試行されない</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: copporch.cpp L896-932 -->
+
+<p><strong><code>create_hostif_trap</code> SAI 失敗 → <code>hw_status</code> 未書き込み</strong>: <code>applyAttributesToTrapIds()</code> 内で SAI 操作が失敗した場合、<code>updateTrapOperStatus()</code> の呼び出しがスキップされ <code>COPP_TRAP_TABLE.hw_status</code> は書き込まれない。<code>handleSaiCreateStatus()</code> が返す status に応じて <code>task_need_retry</code> または <code>task_failed</code> として伝播する。<!-- evidence: copporch.cpp L515-526 --></p>
+<p><strong>Genetlink 重複作成 — <code>task_failed</code> 即時</strong>:  <code>m_trap_group_hostif_map</code> に既存エントリが存在する状態で再度 genetlink trap group を作成しようとすると <code>task_failed</code> が即時返却される。当該グループへの <code>hw_status</code> 書き込みはスキップされ、<code>doTask()</code> が <code>return</code> して後続グループの処理も停止する。<!-- evidence: copporch.cpp L835-840 --></p>
+<h3 id="c-coppmgrd-state_db">C. <code>coppmgrd</code> — STATE_DB 書き込みの失敗挙動<a class="headerlink" href="#c-coppmgrd-state_db" title="Permanent link">&para;</a></h3>
+<p><strong><code>setCoppGroupStateOk()</code> / <code>setCoppTrapStateOk()</code> の戻り値なし</strong>: <code>swss::Table::set()</code> は void。Redis I/O エラーは例外として伝播し coppmgrd プロセス abort → systemd 再起動で自己回復する。STATE_DB の書き込み失敗が永続する設計は存在しない。</p>
+<p><strong><code>trap_group</code> / <code>trap_ids</code> 欠落によるサイレントスキップ</strong>: <code>doCoppTrapTask()</code> で <code>trap_group.empty() || trap_ids.empty()</code> の場合、エラーログなしで <code>m_toSync.erase(it)</code> し永久スキップする。<code>setCoppTrapStateOk()</code> は呼ばれず <code>COPP_TRAP_TABLE.state</code> は書き込まれない。<!-- evidence: coppmgr.cpp L609-613 --></p>
+<h3 id="d-state_db">D. STATE_DB 不整合が発生しうる中間状態<a class="headerlink" href="#d-state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>原因</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>state=ok</code> あり、<code>hw_status</code> なし</td>
+<td>coppmgrd 書き込み完了、orchagent の SAI 処理未完了</td>
+<td>正常な起動中間状態。SAI 成功後に <code>hw_status=installed</code> が追記される</td>
+</tr>
+<tr>
+<td><code>hw_status=installed</code> あり、<code>state</code> なし</td>
+<td>coppmgrd が DEL した後、orchagent の <code>remove_hostif_trap</code> が未実行</td>
+<td>短時間の過渡状態。次サイクルで <code>hw_status=not-installed</code> に更新される</td>
+</tr>
+<tr>
+<td><code>hw_status</code> 未書き込み（永続）</td>
+<td>SAI <code>create_hostif_trap</code> の <code>task_invalid_entry</code> 系失敗</td>
+<td>当該エントリは永久スキップ。orchagent 再起動後に再処理</td>
+</tr>
+<tr>
+<td><code>COPP_TRAP_TABLE.state</code> 未書き込み</td>
+<td><code>trap_group</code> / <code>trap_ids</code> 欠落による coppmgrd サイレントスキップ</td>
+<td>CONFIG_DB の当該 COPP_TRAP エントリを修正して再投入するまで回復しない</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>copporch.cpp</code> L208-215, L240-300, L315-390, L499-532, L880-934 読了。<code>coppmgr.cpp</code> L424-451, L531-815 読了。失敗分岐 4 系統（SAI init / doTask status / SAI trap create / coppmgrd skip）を確認。詳細は <code>meta/_intermediate/cdb-flow/copp-state-failure.md</code> 参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>CoppOrch</code> (<code>copporch.cpp</code> / <code>copporch.h</code>) および <code>CoppMgr</code> (<code>coppmgr.cpp</code>) 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。これらの値は STATE_DB テーブルの書き込みタイミング・フィールド値・capability 公開内容に直接影響する。</p>
+<h3 id="flexcounter">FlexCounter / タイマー定数<a class="headerlink" href="#flexcounter" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_UPD_INTERVAL</code></td>
+<td><code>1</code> 秒</td>
+<td><code>SelectableTimer</code> の更新周期。FlexCounter グループパラメータ設定タイミングに影響</td>
+<td><code>copporch.cpp</code> L37</td>
+</tr>
+<tr>
+<td><code>HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>10000</code> ms</td>
+<td>ホストインタフェーストラップカウンタの FlexCounter ポーリング間隔</td>
+<td><code>copporch.cpp</code> L189</td>
+</tr>
+<tr>
+<td><code>HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"HOSTIF_TRAP_FLOW_COUNTER"</code></td>
+<td>COUNTERS_DB FlexCounter グループ名。<code>bindTrapCounter()</code> / <code>unbindTrapCounter()</code> 経由で <code>COUNTERS_TRAP_NAME_MAP</code> への書き込みを制御</td>
+<td><code>copporch.h</code> L23</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db">STATE_DB フィールド値定数<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数 / リテラル</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hw_status</code> 値 ("installed")</td>
+<td><code>"installed"</code></td>
+<td><code>create_hostif_trap()</code> 成功後に <code>COPP_TRAP_TABLE.&lt;trap-name&gt;.hw_status</code> へ書き込む文字列。ハードコード</td>
+<td><code>copporch.cpp</code> L526</td>
+</tr>
+<tr>
+<td><code>hw_status</code> 値 ("not-installed")</td>
+<td><code>"not-installed"</code></td>
+<td><code>remove_hostif_trap()</code> 成功後に書き込む文字列。ハードコード</td>
+<td><code>copporch.cpp</code> L1413</td>
+</tr>
+<tr>
+<td><code>state</code> 値 ("ok")</td>
+<td><code>"ok"</code></td>
+<td><code>setCoppGroupStateOk()</code> / <code>setCoppTrapStateOk()</code> が書き込む固定値。COPP_GROUP_TABLE / COPP_TRAP_TABLE の <code>state</code> フィールドはこの 1 値のみ取る</td>
+<td><code>coppmgr.cpp</code> L426, L441</td>
+</tr>
+<tr>
+<td><code>COPP_TRAP_CAPABILITY_TABLE</code> key</td>
+<td><code>"traps"</code></td>
+<td><code>publishTrapIdsCapability()</code> が書き込む固定 key。1 エントリのみ存在し、フィールド名は <code>"trap_ids"</code></td>
+<td><code>copporch.cpp</code> L298-299</td>
+</tr>
+</tbody>
+</table>
+<h3 id="id">デフォルトトラップグループ / トラップ ID<a class="headerlink" href="#id" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>default_trap_group</code></td>
+<td><code>"default"</code></td>
+<td>orchagent 起動時に <code>initDefaultTrapGroup()</code> で取得するデフォルトトラップグループ名</td>
+<td><code>copporch.cpp</code> L184</td>
+</tr>
+<tr>
+<td><code>default_trap_ids</code></td>
+<td><code>{SAI_HOSTIF_TRAP_TYPE_TTL_ERROR}</code> (1 種)</td>
+<td><code>initDefaultTrapIds()</code> で初期適用される固定トラップ ID。TTL エラーのみ</td>
+<td><code>copporch.cpp</code> L185-187</td>
+</tr>
+<tr>
+<td><code>default_supported_trap_ids</code> フォールバックリスト</td>
+<td>44 エントリ (<code>stp</code>～<code>bfdv6_micro</code>、<code>neighbor_miss</code> <strong>除外</strong>)</td>
+<td>SAI capability クエリ失敗時に <code>COPP_TRAP_CAPABILITY_TABLE|traps.trap_ids</code> へ書き込まれるリスト。<code>neighbor_miss</code> は意図的に除外（コメント: "This list is intended to remain static and should not be updated with new traps."）</td>
+<td><code>copporch.cpp</code> L106-151</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_15">プラットフォーム環境変数分岐<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数 / 検査値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getenv("platform")</code> 文字列比較</td>
+<td><code>"x86_64-mlnx_msn*"</code> (Mellanox) または <code>"arm64-marvell_*"</code> パターンで trap priority 設定をスキップ。SAI create_hostif_trap の attrib リストに <code>SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY</code> を含めない</td>
+<td><code>copporch.cpp</code> L353-354, L1188-1189</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>copporch.cpp</code> L37, L106-151, L184-215, L296-299, L350-360, L499-532, L1185-1195, L1385-1395, L1413 読了。<code>copporch.h</code> L23-46 読了。<code>coppmgr.cpp</code> L424-451 読了。定数 5 種別 13 件を確認。</p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>CoppOrch</code> (<code>copporch.cpp</code>) が STATE_DB 3 テーブルへの書き込みと並行して行う、COUNTERS_DB および FLEX_COUNTER_DB への副次書き込みを整理する。<code>coppmgrd</code> が書く APPL_DB は本ページのテーブルの直接の生成トリガ（Phase B 参照）であるため除外する。</p>
+<h3 id="sai-counters_db">SAI トラップ作成成功時 — COUNTERS_DB 書き込み<a class="headerlink" href="#sai-counters_db" title="Permanent link">&para;</a></h3>
+<p><code>applyAttributesToTrapIds()</code> 内で <code>create_hostif_trap()</code> が成功し、<code>bindTrapCounter()</code> が呼ばれた場合、以下が書き込まれる。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>フィールド</th>
+<th>書込内容</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_TRAP_NAME_MAP</code></td>
+<td><code>&lt;trap-name&gt;</code></td>
+<td>SAI generic counter OID 文字列</td>
+<td><code>copporch.cpp</code> L1452-1456 (<code>bindTrapCounter</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>書き込みは <code>FlexCounterOrch::getHostIfTrapCounterState()</code> が <code>true</code> を返す場合のみ実行される。FlexCounter 機能が無効な場合は <code>bindTrapCounter()</code> が即 <code>return false</code> し COUNTERS_DB への書き込みは発生しない。<!-- evidence: copporch.cpp L1420-1425 --></p>
+<h3 id="sai-flex_counter_db">SAI トラップ作成成功後 — FLEX_COUNTER_DB 書き込み（タイマー非同期）<a class="headerlink" href="#sai-flex_counter_db" title="Permanent link">&para;</a></h3>
+<p><code>bindTrapCounter()</code> は counter_id を <code>m_pendingAddToFlexCntr</code> に積み、<code>SelectableTimer</code>（1 秒周期）を起動する。タイマー発火時の <code>doTask(SelectableTimer&amp;)</code> が FLEX_COUNTER_DB へ書き込む。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込内容</th>
+<th>書込タイミング</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>HOSTIF_TRAP_FLOW_COUNTER\|&lt;counter_oid&gt;</code></td>
+<td><code>HOSTIF_TRAP_STAT_PACKETS</code> カウンタ ID リスト</td>
+<td>タイマー発火時（≤1 秒後）。<code>gTraditionalFlexCounter</code> が true の場合は VID→RID マップ確認後に書き込み</td>
+<td><code>copporch.cpp</code> L944-951 (<code>doTask</code> timer), <code>L1463</code> (timer start)</td>
+</tr>
+</tbody>
+</table>
+<p><code>gTraditionalFlexCounter</code> が false（デフォルト: SONiC 4.x 以降）の場合は VID 確認なしで即書き込み。true の場合は <code>VIDTORID</code> テーブルで対応 RID が確認できるまでペンディングされ続ける。<!-- evidence: copporch.cpp L944-951 --></p>
+<p>また、<code>initTrapRatePlugin()</code> が初回のみ呼ばれ、FlexCounter グループにカスタム Lua スクリプト SHA を設定する:</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込内容</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>FLEX_COUNTER_GROUP_TABLE\|HOSTIF_TRAP_FLOW_COUNTER</code></td>
+<td><code>FLOW_COUNTER_PLUGIN_FIELD</code> = Lua スクリプト SHA</td>
+<td><code>copporch.cpp</code> L1389-1396 (<code>setFlexCounterGroupParameter</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-counters_db-flex_counter_db">SAI トラップ削除時 — COUNTERS_DB / FLEX_COUNTER_DB クリーンアップ<a class="headerlink" href="#sai-counters_db-flex_counter_db" title="Permanent link">&para;</a></h3>
+<p><code>removeTrap()</code> → <code>unbindTrapCounter()</code> が呼ばれると以下が削除される。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>操作</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_TRAP_NAME_MAP</code></td>
+<td><code>hdel(&lt;trap-name&gt;)</code> で当該トラップ OID マッピングを削除</td>
+<td><code>copporch.cpp</code> L1494-1495</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>HOSTIF_TRAP_FLOW_COUNTER\|&lt;counter_oid&gt;</code></td>
+<td><code>clearCounterIdList(counter_id)</code> でカウンタ ID リストをクリア</td>
+<td><code>copporch.cpp</code> L1487</td>
+</tr>
+</tbody>
+</table>
+<p><code>m_pendingAddToFlexCntr</code> にまだ pending 中の場合は FLEX_COUNTER_DB への書き込みをキャンセルし <code>clearCounterIdList</code> をスキップする（二重クリーンアップ防止）。<!-- evidence: copporch.cpp L1484-1491 --></p>
+<h3 id="_16">副次書き込みが発生しないケース<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FlexCounter 無効時 (<code>getHostIfTrapCounterState() = false</code>)</td>
+<td><code>bindTrapCounter()</code> が即 <code>return false</code>。COUNTERS_DB / FLEX_COUNTER_DB への書き込みなし</td>
+</tr>
+<tr>
+<td>SAI <code>create_hostif_trap</code> 失敗時</td>
+<td><code>applyAttributesToTrapIds()</code> が <code>hw_status</code> 書き込みもスキップするため <code>bindTrapCounter()</code> は呼ばれない (<code>copporch.cpp</code> L515-526)</td>
+</tr>
+<tr>
+<td>APPL_DB / CONFIG_DB</td>
+<td><code>CoppOrch</code> は CONFIG_DB / APPL_DB への書き戻しを行わない</td>
+</tr>
+<tr>
+<td>STATE_DB 以外の STATE 系</td>
+<td>APPL_STATE_DB への <code>ResponsePublisher</code> 書き込みは COPP テーブルには存在しない</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>copporch.cpp</code> L35-37, L193-215, L520-532, L935-965, L1375-1530 読了。副次書き込み先は COUNTERS_DB (<code>COUNTERS_TRAP_NAME_MAP</code>) と FLEX_COUNTER_DB (<code>HOSTIF_TRAP_FLOW_COUNTER|*</code>, <code>FLEX_COUNTER_GROUP_TABLE|HOSTIF_TRAP_FLOW_COUNTER</code>) の 3 テーブルのみ。詳細は <code>meta/_intermediate/cdb-flow/copp-state-side.md</code> 参照。</p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p>STATE_DB の COPP 3 テーブルは、CONFIG_DB → coppmgrd → APPL_DB → CoppOrch → STATE_DB という多段 Producer/Consumer パイプラインの終端に位置する。</p>
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>方式</th>
+<th>チャンネル/パターン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB (<code>COPP_TRAP</code>, <code>COPP_GROUP</code>, <code>FEATURE</code>) → <code>CoppMgr</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td>keyspace notification (<code>__keyspace@{cfg_db_id}__:COPP_TRAP\|*</code> 等)</td>
+</tr>
+<tr>
+<td><code>CoppMgr</code> → APPL_DB (<code>COPP_TABLE</code>)</td>
+<td><code>ProducerStateTable</code></td>
+<td>Redis Streams (<code>COPP_TABLE</code>)</td>
+</tr>
+<tr>
+<td>APPL_DB (<code>COPP_TABLE</code>) → <code>CoppOrch</code></td>
+<td><code>Consumer</code>（<code>Orch</code> 基底）</td>
+<td>keyspace notification (<code>__keyspace@{appl_db_id}__:COPP_TABLE\|*</code>)</td>
+</tr>
+<tr>
+<td><code>CoppOrch</code> → STATE_DB (<code>COPP_GROUP_TABLE</code>, <code>COPP_TRAP_TABLE</code>, <code>COPP_TRAP_CAPABILITY_TABLE</code>)</td>
+<td><code>Table::set()</code> / <code>Table::del()</code> (直接書き込み)</td>
+<td>通知なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="subscriberstatetable">SubscriberStateTable の動作<a class="headerlink" href="#subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p><code>CoppMgr</code> は <code>Orch(cfgDb, {CFG_COPP_TRAP_TABLE_NAME, CFG_COPP_GROUP_TABLE_NAME, CFG_FEATURE_TABLE_NAME})</code> 基底を通じて 3 テーブルの <code>SubscriberStateTable</code> を生成する (<code>coppmgrd.cpp:28-31</code>)。CONFIG_DB の keyspace notification でエントリ変化を検出し、<code>pops()</code> で現在値を読み出す。起動時は既存エントリを先読み (<code>getKeys()</code>) して起動前の設定を取りこぼさない。</p>
+<p><code>CoppOrch</code> は <code>Orch(applDb, APP_COPP_TABLE_NAME)</code> 基底を通じて APPL_DB の <code>APP_COPP_TABLE</code> の <code>Consumer</code> を生成し、<code>coppmgrd</code> が <code>ProducerStateTable::set()</code> で書き込んだエントリを受信する (<code>orchdaemon.cpp:341</code>)。</p>
+<h3 id="select-dotask">select() ループと doTask 実行順序<a class="headerlink" href="#select-dotask" title="Permanent link">&para;</a></h3>
+<p><code>coppmgrd</code> と <code>orchagent</code> はそれぞれ独立した <code>Select::select()</code> ループ（タイムアウト 1000 ms）を持つ。</p>
+<ul>
+<li><code>coppmgrd</code>: <code>CoppMgr::doTask()</code> を呼び出し、<code>doCoppTrapTask()</code> / <code>doCoppGroupTask()</code> / <code>setFeatureTrapIdsStatus()</code> で CONFIG_DB 変更を APPL_DB に反映、その後 STATE_DB の <code>COPP_GROUP_TABLE</code> / <code>COPP_TRAP_TABLE</code> に <code>state=ok</code> を書き込む (<code>coppmgr.cpp:424-451</code>)</li>
+<li><code>orchagent</code>: <code>CoppOrch::doTask(Consumer&amp;)</code> の冒頭で <code>gPortsOrch-&gt;allPortsReady()</code> をチェックし、全ポート初期化完了まで APPL_DB イベントを保留する (<code>copporch.cpp:885-888</code>)</li>
+</ul>
+<h3 id="copp_trap_capability_table_1">COPP_TRAP_CAPABILITY_TABLE の特殊経路<a class="headerlink" href="#copp_trap_capability_table_1" title="Permanent link">&para;</a></h3>
+<p><code>COPP_TRAP_CAPABILITY_TABLE</code> は上記パイプラインとは独立して、<code>CoppOrch</code> コンストラクタ内の <code>publishTrapIdsCapability()</code> が <strong>orchagent 起動時に 1 回だけ</strong>直接書き込む。CONFIG_DB / APPL_DB 変化には依存しない (<code>copporch.cpp:208-215</code>)。</p>
+<h3 id="state_db-subscriber">STATE_DB の読み出し側（subscriber）<a class="headerlink" href="#state_db-subscriber" title="Permanent link">&para;</a></h3>
+<p>STATE_DB の COPP テーブルを読み出すコンポーネント:</p>
+<table>
+<thead>
+<tr>
+<th>コンポーネント</th>
+<th>読み出し方式</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic-utilities</code> <code>show copp policer</code> (<code>show/copp.py:21</code>)</td>
+<td><code>db.get_all(STATE_DB, "COPP_TRAP_TABLE\|{trap_id}")</code></td>
+<td>トラップの hw_status を CLI 表示</td>
+</tr>
+<tr>
+<td><code>sonic-utilities</code> <code>dump copp</code> プラグイン (<code>dump/plugins/copp.py:109-113</code>)</td>
+<td><code>MatchRequest(db="STATE_DB", table="COPP_TRAP_TABLE")</code> 等</td>
+<td>デバッグ用 DB エントリ集約</td>
+</tr>
+</tbody>
+</table>
+<p>STATE_DB の COPP テーブルを <code>SubscriberStateTable</code> で非同期購読するデーモンは存在しない（poll/snapshot 読み出しのみ）。</p>
+<h3 id="_17">データフロー図<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>CONFIG_DB[COPP_TRAP|*, COPP_GROUP|*, FEATURE|*]
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  ↓ SubscriberStateTable (keyspace notification)
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>coppmgrd: CoppMgr::doTask()
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>  ↓ doCoppTrapTask() / doCoppGroupTask() / setFeatureTrapIdsStatus()
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>  ↓ ProducerStateTable::set()/del()
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>APPL_DB[COPP_TABLE|&lt;group-name&gt;]
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>  ↓ Consumer (keyspace notification)
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>orchagent: CoppOrch::doTask()
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>  ↓   [allPortsReady() チェック — PortsOrch 完了まで保留]
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>  ↓ processCoppRule()
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>  ↓   → sai_hostif_api (SAI create/remove)
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>  ↓ Table::set() (直接書き込み)
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>STATE_DB[COPP_GROUP_TABLE|*, COPP_TRAP_TABLE|*, COPP_TRAP_CAPABILITY_TABLE|traps]
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>  ↓ snapshot read (poll)
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>sonic-utilities (show copp / dump copp)
 </span></code></pre></div>
-<h2 id="_16">購読者<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>coppmgrd.cpp</code> L21-65 全行読了。<code>coppmgr.cpp</code> L71, L296-310, L424-451 読了。<code>copporch.cpp</code> L191-215, L880-892 読了。<code>orchdaemon.cpp</code> L341, L500 読了。<code>show/copp.py</code> L21 読了。<code>dump/plugins/copp.py</code> L109-113 読了。</p>
+</blockquote>
+<!-- /pubsub -->
+
+<h2 id="_18">確認コマンド<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># グループ状態確認</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_GROUP_TABLE|queue4_group1&#39;</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># トラップ状態確認</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_TRAP_TABLE|bgp&#39;</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># プラットフォームサポートトラップ一覧</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_TRAP_CAPABILITY_TABLE|traps&#39;</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="c1"># 全 COPP 状態を一覧</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COPP_*TABLE|*&#39;</span>
+</span></code></pre></div>
+<h2 id="_19">購読者<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-utilities</code> の <code>dump copp</code> プラグイン (<code>dump/plugins/copp.py</code>): デバッグ用にすべての COPP 関連 DB エントリを集約して表示</li>
 </ul>
@@ -35852,14 +36956,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_17">関連リファレンス<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h2 id="_20">関連リファレンス<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../copp-group/"><code>COPP_GROUP</code></a></li>
 <li>CONFIG_DB: <a href="../copp-trap/"><code>COPP_TRAP</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_18">引用元<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
+<h2 id="_21">引用元<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: a827b4343c01 -->
 
 <div class="footnote">

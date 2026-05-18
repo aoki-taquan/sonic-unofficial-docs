@@ -23410,6 +23410,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・連動更新 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・連動更新 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35670,6 +35709,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・連動更新 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・連動更新 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36578,6 +36656,93 @@ HW にマッピング実体が存在しない状態となる。後続の <code>d
 </tbody>
 </table>
 <!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">副作用・連動更新 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-side.md; sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vxlanorch.cpp -->
+
+<p><code>VXLAN_TUNNEL_MAP</code> への SET / DEL は CONFIG_DB 外の複数のコンポーネントに副作用を及ぼす。</p>
+<h3 id="set">SET 時<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副作用</th>
+<th>対象</th>
+<th>詳細</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>カーネル VXLAN net device 作成</td>
+<td>Linux kernel</td>
+<td><code>&lt;tunnel&gt;-&lt;vlan_id&gt;</code> デバイスを <code>ip link add ... type vxlan</code> で作成し、<code>Bridge</code> に参加させて UP</td>
+<td><code>vxlanmgr.cpp:1003-1051</code></td>
+</tr>
+<tr>
+<td><code>STATE_NEIGH_SUPPRESS_VLAN_TABLE</code> 書込み</td>
+<td>STATE_DB</td>
+<td><code>Vlan&lt;id&gt;</code> key に <code>netdev=&lt;tunnel&gt;-&lt;vlan_id&gt;</code> を書込み。vlanmgrd が ARP/ND Suppression フラグ更新のためにこのエントリを参照する</td>
+<td><code>vxlanmgr.cpp:613-618</code></td>
+</tr>
+<tr>
+<td>APP_DB エントリ書込み</td>
+<td>APP_DB</td>
+<td><code>APP_VXLAN_TUNNEL_MAP_TABLE</code> にエントリを転記し、orchagent が SAI 操作を実行するトリガとなる</td>
+<td><code>vxlanmgr.cpp:592</code></td>
+</tr>
+<tr>
+<td>SAI トンネルオブジェクト一括生成（初回のみ）</td>
+<td>SAI / HW</td>
+<td>初回 MAP エントリ受信時に <code>createTunnelHw()</code> が呼ばれ、encap/decap マッパー・SAI トンネル・トンネル終端エントリが一括生成される。<strong>2 枚目以降の MAP エントリ追加では SAI トンネル再作成は発生しない</strong></td>
+<td><code>vxlanorch.cpp:2063-2087</code></td>
+</tr>
+<tr>
+<td>orchagent 内部マップ更新</td>
+<td>orchagent memory</td>
+<td><code>vxlan_vni_vlan_map_table_[vni] = vlan_id</code> が更新され、EVPN 動的 DIP トンネル処理時に参照される</td>
+<td><code>vxlanorch.cpp:2120</code>, <code>vxlanorch.h:354-357</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 時<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副作用</th>
+<th>対象</th>
+<th>詳細</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>カーネル VXLAN net device 削除</td>
+<td>Linux kernel</td>
+<td><code>ip link set dev &lt;tunnel&gt;-&lt;vlan_id&gt; down</code> → <code>ip link del dev &lt;tunnel&gt;-&lt;vlan_id&gt;</code> を実行</td>
+<td><code>vxlanmgr.cpp:655-656</code>, <code>vxlanmgr.cpp:1065-1069</code></td>
+</tr>
+<tr>
+<td><code>STATE_NEIGH_SUPPRESS_VLAN_TABLE</code> 削除</td>
+<td>STATE_DB</td>
+<td><code>Vlan&lt;id&gt;</code> エントリを削除し、ARP/ND suppression 設定が解除される</td>
+<td><code>vxlanmgr.cpp:668</code></td>
+</tr>
+<tr>
+<td>最終エントリ削除時: SAI トンネルオブジェクト削除</td>
+<td>SAI / HW</td>
+<td><code>vlan_vrf_vni_count == 0</code> で <code>deleteTunnelHw()</code> が呼ばれ SAI マッパー・トンネル・終端が削除される。DIP トンネルが残存する場合は <code>del_tnl_hw_pending = true</code> で遅延削除される</td>
+<td><code>vxlanorch.cpp:2180-2226</code></td>
+</tr>
+<tr>
+<td>EVPN MAC/IP ルート連動削除</td>
+<td>FDB / ルートテーブル</td>
+<td>VXLAN MAP 削除に伴い、対応する EVPN type-2/3 経路と紐付いた MAC/IP エントリが自動削除される</td>
+<td><code>vxlanorch.cpp</code> (EVPN ルート管理経路)</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
 
 <h2 id="_9">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->

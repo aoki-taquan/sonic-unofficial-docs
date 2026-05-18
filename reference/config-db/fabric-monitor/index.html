@@ -26043,6 +26043,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c-cross-table-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — Phase C (cross-table refs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — Phase C (cross-table refs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-fabric_monitor_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB FABRIC_MONITOR_TABLE — 中継バッファ（双方向参照）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-fabric_port_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB FABRIC_PORT_TABLE — 監視状態の永続化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter_db-counters_table-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTER_DB COUNTERS_TABLE — SAI ポート統計
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-fabric-port-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI Fabric Port List — 処理全体の前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35286,6 +35347,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c-cross-table-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — Phase C (cross-table refs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — Phase C (cross-table refs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-fabric_monitor_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB FABRIC_MONITOR_TABLE — 中継バッファ（双方向参照）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-fabric_port_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB FABRIC_PORT_TABLE — 監視状態の永続化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter_db-counters_table-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTER_DB COUNTERS_TABLE — SAI ポート統計
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-fabric-port-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI Fabric Port List — 処理全体の前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35849,6 +35971,84 @@
 </tbody>
 </table>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c-cross-table-refs">暗黙参照 — Phase C (cross-table refs)<a class="headerlink" href="#phase-c-cross-table-refs" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>fabricmgr.cpp</code>, <code>fabricportsorch.cpp</code> 全行精読 (2026-05-18)</p>
+</blockquote>
+<p><code>FABRIC_MONITOR</code> テーブルは YANG leafref を持たないが、<code>fabricmgrd</code> / <code>FabricPortsOrch</code> が実行時に以下のテーブル・リソースを暗黙参照する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>DB</th>
+<th>参照方向</th>
+<th>YANG leafref</th>
+<th>実装上の必須度</th>
+<th>証拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FABRIC_MONITOR_TABLE\|FABRIC_MONITOR_DATA</code> (APPL_DB)</td>
+<td>APPL_DB</td>
+<td>書き込み (fabricmgrd) / 読み取り (FabricPortsOrch)</td>
+<td>なし</td>
+<td>実質必須</td>
+<td><code>fabricmgr.cpp:112-116</code>, <code>fabricportsorch.cpp:139,444</code></td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE\|&lt;lane&gt;</code> (APPL_DB)</td>
+<td>APPL_DB</td>
+<td>読み取り (<code>isolateStatus</code>)</td>
+<td>なし</td>
+<td>監視処理時必須</td>
+<td><code>fabricportsorch.cpp:590-613</code></td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE\|&lt;lane&gt;</code> (STATE_DB)</td>
+<td>STATE_DB</td>
+<td>読み取り / 書き込み (poll カウンタ・isolate 状態)</td>
+<td>なし</td>
+<td>監視処理時必須</td>
+<td><code>fabricportsorch.cpp:619,756-959</code></td>
+</tr>
+<tr>
+<td><code>FABRIC_CAPACITY_TABLE</code> (STATE_DB)</td>
+<td>STATE_DB</td>
+<td>書き込み (capacity 警告判定結果)</td>
+<td>なし</td>
+<td><code>monCapacityThreshWarn</code> 有効時</td>
+<td><code>fabricportsorch.cpp:1054-1095</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_TABLE\|&lt;port_oid&gt;</code> (COUNTER_DB)</td>
+<td>COUNTER_DB</td>
+<td>読み取り (SAI ポート統計)</td>
+<td>なし</td>
+<td>監視処理時必須</td>
+<td><code>fabricportsorch.cpp:500-529</code></td>
+</tr>
+<tr>
+<td>SAI Switch (<code>SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS</code> / <code>SAI_SWITCH_ATTR_FABRIC_PORT_LIST</code>)</td>
+<td>SAI</td>
+<td>読み取り (ファブリックポートリスト)</td>
+<td>なし</td>
+<td>起動時必須</td>
+<td><code>fabricportsorch.cpp:171-228</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="appl_db-fabric_monitor_table">APPL_DB <code>FABRIC_MONITOR_TABLE</code> — 中継バッファ（双方向参照）<a class="headerlink" href="#appl_db-fabric_monitor_table" title="Permanent link">&para;</a></h3>
+<p><code>fabricmgrd</code> は CONFIG_DB の <code>FABRIC_MONITOR</code> 変化を検知すると、フィールド単位で <code>FABRIC_MONITOR_TABLE|FABRIC_MONITOR_DATA</code> (APPL_DB) に書き込む（<code>fabricmgr.cpp:112-116</code>）。<code>FabricPortsOrch</code> はポーリング毎にこのエントリを <code>hgetall</code> で一括読み込み（<code>fabricportsorch.cpp:444</code>）、閾値・<code>monState</code> を取得する。CONFIG_DB に値があっても APPL_DB への書込みが完了するまで orchagent 側には反映されない。</p>
+<h3 id="state_db-fabric_port_table">STATE_DB <code>FABRIC_PORT_TABLE</code> — 監視状態の永続化<a class="headerlink" href="#state_db-fabric_port_table" title="Permanent link">&para;</a></h3>
+<p><code>updateFabricDebugCounters()</code> は各ファブリックポートの <code>STATUS</code> / <code>POLL_WITH_ERRORS</code> / <code>POLL_WITH_NO_ERRORS</code> / <code>AUTO_ISOLATED</code> などを <code>m_stateTable</code> (STATE_DB <code>FABRIC_PORT_TABLE</code>) から読み取り、計算後に同テーブルへ書き戻す（<code>fabricportsorch.cpp:619-959</code>）。このエントリが存在しない場合は処理全体を early return する（<code>fabricportsorch.cpp:622-624</code>）。<strong>FABRIC_PORT_TABLE エントリが STATE_DB に存在することが監視処理の前提条件</strong>。</p>
+<h3 id="counter_db-counters_table-sai">COUNTER_DB <code>COUNTERS_TABLE</code> — SAI ポート統計<a class="headerlink" href="#counter_db-counters_table-sai" title="Permanent link">&para;</a></h3>
+<p>CRC エラー率の判定には SAI から収集された <code>SAI_PORT_STAT_IF_IN_ERRORS</code>（CRC エラー数）と <code>SAI_PORT_STAT_IF_IN_FABRIC_DATA_UNITS</code>（受信セル数）を <code>COUNTERS_TABLE</code> から取得する（<code>fabricportsorch.cpp:500</code>）。カウンタが存在しない場合はゼロ値として扱われ、エラーなしと判断される。</p>
+<h3 id="sai-fabric-port-list">SAI Fabric Port List — 処理全体の前提<a class="headerlink" href="#sai-fabric-port-list" title="Permanent link">&para;</a></h3>
+<p><code>getFabricPortList()</code> が SAI から <code>SAI_SWITCH_ATTR_FABRIC_PORT_LIST</code> を取得し <code>m_getFabricPortListDone=true</code> をセットするまで、<code>updateFabricDebugCounters()</code> / <code>updateFabricPortState()</code> / <code>generateQueueStats()</code> はすべて冒頭で early return する（<code>fabricportsorch.cpp:262,329,420</code>）。FABRIC_MONITOR の設定が完了していても、SAI 初期化が遅延すると監視処理が開始されない。</p>
+<!-- /cross-refs -->
 
 <h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>

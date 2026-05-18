@@ -29668,6 +29668,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#device_metadatalocalhost-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29746,7 +29785,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -29757,7 +29796,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -29768,7 +29807,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29779,7 +29818,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29790,7 +29829,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34877,6 +34916,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#device_metadatalocalhost-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34955,7 +35033,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -34966,7 +35044,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34977,7 +35055,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34988,7 +35066,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34999,7 +35077,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35135,6 +35213,58 @@ APPL_DB テーブルへの書き込みを直接受け取るための ZeroMQ ベ�
 <p>システムレベルのポート定数 <code>ORCH_ZMQ_PORT = 8100</code> は CONFIG_DB フィールドではなく
 <code>sonic-swss-common/common/zmqserver.h:16</code> にハードコードされている<sup id="fnref:zmq_port"><a class="footnote-ref" href="#fn:zmq_port">4</a></sup>。</p>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>ZMQ 関連フィールドは orchagent <strong>起動時の一回のみ</strong> 読まれる。以下の順序依存が存在する。</p>
+<h3 id="_4">検出された順序依存<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>orch_northbond_*_zmq_enabled</code> の CONFIG_DB 書き込み → orchagent 再起動</td>
+<td><strong>起動前必須</strong></td>
+<td>runtime 変更は無効。orchdaemon コンストラクタ内で一度だけ読まれる</td>
+</tr>
+<tr>
+<td>2</td>
+<td>全 ZmqConsumerStateTable ハンドラ登録 → <code>ZmqServer::bind()</code></td>
+<td>強制先行（lazy bind で自動保証）</td>
+<td>bind 前に送信側が接続しても <code>ECONNREFUSED</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>orchagent の <code>bind()</code> 完了 → fpmsyncd / gnmi の ZmqClient 接続</td>
+<td>orchagent 先行</td>
+<td>fpmsyncd は <code>routesync.cpp:155</code> で ZmqClient を起動時に固定</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</code> 読み取り → <code>RouteOrch</code> 生成</td>
+<td>1 回限り（init 内）</td>
+<td>変更には orchagent 再起動が必要。以後の runtime 書き換えは無視</td>
+</tr>
+<tr>
+<td>5</td>
+<td>DASH ZMQ 有効 → DashXxxOrch 群を同一 <code>zmq_server</code> 共有で直列生成</td>
+<td><code>DpuOrchDaemon::init()</code> 内で直列</td>
+<td>全 DASH orch は同一 ZmqServer インスタンスを参照</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">主要な制約詳細<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><strong>CONFIG_DB 読み取りは起動時の一回のみ (依存 #1, #4)</strong>: <code>get_feature_status()</code> (<code>orch_zmq_config.cpp:81-104</code>) は orchagent 起動時に <code>DEVICE_METADATA|localhost</code> から直接 <code>hget</code> してフラグを決定する。<code>OrchDaemon</code> コンストラクタ内 (<code>orchdaemon.cpp:334</code>, <code>1329</code>) で呼ばれ、以降はテーブル変更を購読しない。そのため <code>orch_northbond_dash_zmq_enabled</code> / <code>orch_northbond_route_zmq_enabled</code> を runtime に書き換えても、orchagent を再起動しない限り反映されない。</p>
+<p><strong>lazy bind による「ハンドラ登録 → bind」順序保証 (依存 #2)</strong>: <code>create_zmq_server()</code> (<code>orch_zmq_config.cpp:64-79</code>) は lazy bind モード (<code>lazy=true</code>) で <code>ZmqServer</code> を生成し、<code>main.cpp:1036</code> で全ハンドラ登録完了後に初めて <code>bind()</code> を呼ぶ。これにより「ハンドラ未登録状態で ZMQ メッセージを受信してドロップする」競合を防ぐ。起動シーケンスは固定: <code>create_zmq_server()</code> → <code>orchDaemon-&gt;init()</code> (全ハンドラ登録) → <code>zmq_server-&gt;bind()</code> → <code>orchDaemon-&gt;start()</code> の順（evidence: <code>main.cpp:646-654</code>, <code>main.cpp:1032-1040</code>）。</p>
+<p><strong>ZmqConsumer の ordered キューと順序保証 (依存 #5)</strong>: <code>ZmqOrch::addConsumer()</code> (<code>zmqorch.cpp:59-78</code>) は <code>orderedQueue=true</code> のとき <code>ZmqConsumerStateTable</code> を ordered モードで生成する。ordered モードでは <code>execute()</code> がエントリを <code>m_queue</code> に蓄積し、<code>drain()</code> で <code>doTask()</code> を呼ぶことで同一テーブル内の SET/DEL 順序が保たれる。非 ordered モードは従来の <code>m_toSync</code> を使う（evidence: <code>zmqorch.cpp:8-33</code>）。</p>
+<!-- /ordering -->
 
 <hr />
 <h2 id="device_metadatalocalhost-zmq">DEVICE_METADATA|localhost の ZMQ フィールド<a class="headerlink" href="#device_metadatalocalhost-zmq" title="Permanent link">&para;</a></h2>
@@ -35297,7 +35427,7 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 この値は CONFIG_DB から読まれず、スクリプト内にハードコードされている<sup id="fnref:gnmi_sh"><a class="footnote-ref" href="#fn:gnmi_sh">8</a></sup>。</p>
 <hr />
 <!-- value-behavior -->
-<h2 id="_4">値依存挙動マトリクス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_6">値依存挙動マトリクス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35351,7 +35481,7 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 </table>
 <!-- /value-behavior -->
 
-<h2 id="_5">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_7">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/lib/orch_zmq_config.cpp; sonic-swss/orchagent/orchdaemon.cpp; sonic-buildimage/dockers/docker-orchagent/orch_zmq_tables.conf.j2 -->
 
 <ul>
@@ -35361,7 +35491,7 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../device-metadata/"><code>DEVICE_METADATA</code></a> — <code>orch_northbond_dash_zmq_enabled</code> / <code>orch_northbond_route_zmq_enabled</code> / <code>subtype</code> / <code>switch_type</code> フィールドの全体像</li>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../yang/sonic-smart-switch.md"><code>sonic-smart-switch</code></a> — <code>DPU_LIST.orchagent_zmq_port</code> 定義</li>
@@ -35369,9 +35499,9 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <h3 id="zmq">ZMQ フィーチャーフラグの確認<a class="headerlink" href="#zmq" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>orch_northbond_dash_zmq_enabled
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>orch_northbond_route_zmq_enabled

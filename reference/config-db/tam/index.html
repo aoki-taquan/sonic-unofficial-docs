@@ -29250,6 +29250,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tam_collector_table-tam_int_ifa_flow_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. TAM_COLLECTOR_TABLE → TAM_INT_IFA_FLOW_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-acl_table-acl_rule-tam_int_ifa_flow_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ACL_TABLE / ACL_RULE → TAM_INT_IFA_FLOW_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tam_device_table-tam_int_ifa_feature_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TAM_DEVICE_TABLE / TAM_INT_IFA_FEATURE_TABLE は依存なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. DEL 時の逆順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. orchagent 側の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35102,6 +35174,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tam_collector_table-tam_int_ifa_flow_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. TAM_COLLECTOR_TABLE → TAM_INT_IFA_FLOW_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-acl_table-acl_rule-tam_int_ifa_flow_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ACL_TABLE / ACL_RULE → TAM_INT_IFA_FLOW_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tam_device_table-tam_int_ifa_feature_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TAM_DEVICE_TABLE / TAM_INT_IFA_FEATURE_TABLE は依存なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. DEL 時の逆順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. orchagent 側の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35468,6 +35612,39 @@
 </tbody>
 </table>
 <!-- /value-behavior -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/tam-ordering.md</code></p>
+</blockquote>
+<h3 id="1-tam_collector_table-tam_int_ifa_flow_table">1. TAM_COLLECTOR_TABLE → TAM_INT_IFA_FLOW_TABLE<a class="headerlink" href="#1-tam_collector_table-tam_int_ifa_flow_table" title="Permanent link">&para;</a></h3>
+<p><code>TAM_INT_IFA_FLOW_TABLE</code> の <code>collector-name</code> フィールドは YANG 上 string 型だが、
+CVL（sonic-mgmt-common）が <code>TAM_COLLECTOR_TABLE</code> のエントリ存在を検証する
+（<code>cvl_leafref_test.go</code> 参照）。
+コレクタ名が <code>TAM_COLLECTOR_TABLE</code> に存在しない状態で IFA フローを書き込むと
+CVL バリデーションが失敗する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>TAM_COLLECTOR_TABLE|&lt;name&gt;  →  書く  →  TAM_INT_IFA_FLOW_TABLE|&lt;name&gt; (collector-name フィールドあり)
+</span></code></pre></div>
+<h3 id="2-acl_table-acl_rule-tam_int_ifa_flow_table">2. ACL_TABLE / ACL_RULE → TAM_INT_IFA_FLOW_TABLE<a class="headerlink" href="#2-acl_table-acl_rule-tam_int_ifa_flow_table" title="Permanent link">&para;</a></h3>
+<p><code>TAM_INT_IFA_FLOW_TABLE</code> の <code>acl-table-name</code> は <code>leafref → ACL_TABLE.aclname</code>、
+<code>acl-rule-name</code> は <code>leafref → ACL_RULE.rulename</code> と YANG で明示的に定義されている。
+CVL は leafref 解決を行うため、対応する ACL エントリが先に CONFIG_DB に存在していなければならない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ACL_TABLE|&lt;aclname&gt;  →  書く  →  TAM_INT_IFA_FLOW_TABLE|&lt;name&gt; (acl-table-name / acl-rule-name フィールドあり)
+</span></code></pre></div>
+<h3 id="3-tam_device_table-tam_int_ifa_feature_table">3. TAM_DEVICE_TABLE / TAM_INT_IFA_FEATURE_TABLE は依存なし<a class="headerlink" href="#3-tam_device_table-tam_int_ifa_feature_table" title="Permanent link">&para;</a></h3>
+<p>どちらも singleton で他テーブルへの leafref 参照を持たない。任意の順序で書ける。</p>
+<h3 id="4-del">4. DEL 時の逆順<a class="headerlink" href="#4-del" title="Permanent link">&para;</a></h3>
+<p>ADD と逆順で削除する。<code>TAM_INT_IFA_FLOW_TABLE</code> のエントリを削除してから
+<code>TAM_COLLECTOR_TABLE</code> や <code>ACL_RULE</code> を削除する。
+参照が残った状態での DEL は CVL が拒否する（leafref / string 参照チェック）。</p>
+<h3 id="5-orchagent">5. orchagent 側の挙動<a class="headerlink" href="#5-orchagent" title="Permanent link">&para;</a></h3>
+<p>コミュニティ版 orchagent には <code>TAM_DEVICE_TABLE</code> / <code>TAM_COLLECTOR_TABLE</code> /
+<code>TAM_INT_IFA_*</code> を直接購読するハンドラが存在しない。
+上記の順序制約は主に Management フレームワーク（GNMI/REST）経由での CVL 検証で発生する。
+<code>sonic-db-cli</code> で直接書き込む場合は YANG 制約チェックが走らないため、
+順序違反してもリジェクトされない（ただし IFA 機能は orchagent 非実装のため SAI 反映もなし）。</p>
+<!-- /ordering -->
 
 <div class="footnote">
 <hr />

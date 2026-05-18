@@ -28008,6 +28008,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差・SAI capability 分岐 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差・SAI capability 分岐 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic-mellanox-barefoot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC 限定生成 — Mellanox / Barefoot のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port_qos_map-pfc_to_pg_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT_QOS_MAP の pfc_to_pg_map も同様に制限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dualtor-azure_dualtor-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DualToR 向け AZURE_DUALTOR マップ (Mellanox 限定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qosorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QosOrch 登録はプラットフォーム非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pfcpriotopghandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PfcPrioToPgHandler — ベンダー固有分岐なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36202,6 +36274,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差・SAI capability 分岐 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差・SAI capability 分岐 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic-mellanox-barefoot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC 限定生成 — Mellanox / Barefoot のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port_qos_map-pfc_to_pg_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT_QOS_MAP の pfc_to_pg_map も同様に制限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dualtor-azure_dualtor-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DualToR 向け AZURE_DUALTOR マップ (Mellanox 限定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qosorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QosOrch 登録はプラットフォーム非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pfcpriotopghandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PfcPrioToPgHandler — ベンダー固有分岐なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37006,6 +37150,90 @@ MAP 作成完了後の <code>doTask()</code> サイクルで自動再処理さ�
 <p><strong>Evidence</strong>: <code>orchdaemon.cpp:367-384</code>; <code>orch.cpp:1186-1196</code>; <code>qosorch.cpp:984,1343,2231-2295</code>; <code>table.h:164</code></p>
 </blockquote>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム差・SAI capability 分岐 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-buildimage/files/build_templates/qos_config.j2</code>, <code>sonic-swss/orchagent/qosorch.cpp</code>, <code>sonic-swss/orchagent/orchdaemon.cpp</code>
+調査日: 2026-05-18</p>
+</blockquote>
+<h3 id="asic-mellanox-barefoot">ASIC 限定生成 — Mellanox / Barefoot のみ<a class="headerlink" href="#asic-mellanox-barefoot" title="Permanent link">&para;</a></h3>
+<p><code>qos_config.j2:163</code> で対応 ASIC を限定している:</p>
+<div class="language-jinja highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="cp">{%</span>- <span class="k">set</span> <span class="nv">pfc_to_pg_map_supported_asics</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;mellanox&#39;</span><span class="o">,</span> <span class="s1">&#39;barefoot&#39;</span><span class="o">]</span> -<span class="cp">%}</span>
+</span></code></pre></div>
+<p><code>config qos reload</code> 実行時、<code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> テーブルが CONFIG_DB に投入されるのは <strong>Mellanox (NVIDIA) と Barefoot (Intel Tofino) プラットフォームのみ</strong> (<code>qos_config.j2:395-410</code>)。Broadcom / Marvell / Cisco-8000 / VS では本テーブルが生成されない。</p>
+<table>
+<thead>
+<tr>
+<th>ASIC / プラットフォーム</th>
+<th>テーブル生成</th>
+<th>デフォルトマップ名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mellanox (NVIDIA)</td>
+<td>あり</td>
+<td><code>AZURE</code></td>
+</tr>
+<tr>
+<td>Barefoot (Intel Tofino)</td>
+<td>あり</td>
+<td><code>AZURE</code></td>
+</tr>
+<tr>
+<td>Broadcom</td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Marvell (Prestera)</td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Cisco-8000</td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>VS (virtual switch)</td>
+<td>なし</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="port_qos_map-pfc_to_pg_map">PORT_QOS_MAP の <code>pfc_to_pg_map</code> も同様に制限<a class="headerlink" href="#port_qos_map-pfc_to_pg_map" title="Permanent link">&para;</a></h3>
+<p><code>qos_config.j2:456-461</code> で <code>PORT_QOS_MAP</code> の <code>pfc_to_pg_map</code> フィールドも上記 ASIC でのみ設定される。他 ASIC では <code>PORT_QOS_MAP</code> にこのフィールドが存在しないため、<code>PFC_PRIORITY_TO_PRIORITY_GROUP_MAP</code> テーブル自体も参照されない。</p>
+<h3 id="dualtor-azure_dualtor-mellanox">DualToR 向け AZURE_DUALTOR マップ (Mellanox 限定)<a class="headerlink" href="#dualtor-azure_dualtor-mellanox" title="Permanent link">&para;</a></h3>
+<p>Mellanox DualToR 構成 (<code>port_names_list_extra_queues</code> が非空) では <code>AZURE</code> に加えて <code>AZURE_DUALTOR</code> マップが追加生成される (<code>qos_config.j2:397-403</code>):</p>
+<table>
+<thead>
+<tr>
+<th>マップ名</th>
+<th>PFC priority → PG</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AZURE</code></td>
+<td>3→3, 4→4</td>
+<td>通常構成 (lossless TC 2 本)</td>
+</tr>
+<tr>
+<td><code>AZURE_DUALTOR</code></td>
+<td>2→2, 3→3, 4→4, 6→6</td>
+<td>DualToR 構成 (lossless TC 4 本)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="qosorch">QosOrch 登録はプラットフォーム非依存<a class="headerlink" href="#qosorch" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:377</code> で <code>CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME</code> は platform 条件なしに無条件登録される。テーブルが存在するプラットフォームでのみ実際に処理が走る設計。</p>
+<h3 id="pfcpriotopghandler">PfcPrioToPgHandler — ベンダー固有分岐なし<a class="headerlink" href="#pfcpriotopghandler" title="Permanent link">&para;</a></h3>
+<p><code>qosorch.cpp:957-988</code> の <code>PfcPrioToPgHandler::addQosItem()</code> および <code>handlePfcPrioToPgTable()</code> にベンダー固有分岐はない。SAI <code>sai_qos_map_api-&gt;create_qos_map()</code> を直接呼ぶだけで、ASIC capability クエリも行わない。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-platform.md -->
+<!-- /platform -->
 
 <div class="footnote">
 <hr />

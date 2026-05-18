@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G 分析。">
+        <meta name="description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G + Phase H 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP / ICCP 連携 — コード由来デフォルト詳細 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G 分析。" />
+<meta property="og:description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G + Phase H 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-iccp.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-iccp/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP / ICCP 連携 — コード由来デフォルト詳細 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G 分析。" />
+<meta property="twitter:description" content="MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G + Phase H 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-iccp.png" />
 </head>
   
@@ -29204,6 +29204,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-2-mclaglinkcpp190-282" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. ポート隔離方式の 2 経路分岐 (mclaglink.cpp:190-282)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-iccpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. iccpd コアロジックはプラットフォーム非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. 特殊環境
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29215,7 +29276,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29226,7 +29287,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35770,6 +35831,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-2-mclaglinkcpp190-282" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. ポート隔離方式の 2 経路分岐 (mclaglink.cpp:190-282)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-iccpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. iccpd コアロジックはプラットフォーム非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. 特殊環境
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35781,7 +35903,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35792,7 +35914,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -37006,6 +37128,139 @@ MST 有効化時に CLI が書き込む実際の値は <code>1</code> であり�
 <p>証跡: <code>scheduler.c:462-488</code>, <code>iccp_netlink.c:2182</code>, <code>scheduler.h:44</code>, <code>mlacp_link_handler.c:654-660</code>, <code>mclagsyncd.cpp:41</code>, <code>mclaglink.cpp:912-921</code>, <code>mclaglink.cpp:1357-1420</code></p>
 <!-- /pubsub -->
 
+<!-- platform-diff -->
+<h2 id="phase-h">プラットフォーム差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-platform.md -->
+
+<p>STP/ICCP 連携における <code>iccpd</code> コアロジック（ロール決定・MAC 書き換え）自体にプラットフォーム分岐はない。プラットフォーム差異は <strong>mclagsyncd の <code>setPortIsolate()</code></strong> に集中する。</p>
+<h3 id="a-2-mclaglinkcpp190-282">A. ポート隔離方式の 2 経路分岐 (<code>mclaglink.cpp:190-282</code>)<a class="headerlink" href="#a-2-mclaglinkcpp190-282" title="Permanent link">&para;</a></h3>
+<p>mclagsyncd は <code>MCLAG_MSG_TYPE_SET_PORT_ISOLATE</code> 受信時に <code>getenv("platform")</code> を以下のホワイトリストと照合する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// mclaglink.h:54-59 / mclaglink.cpp:192-202</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">unordered_set</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">supported</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="s">&quot;broadcom&quot;</span><span class="p">,</span><span class="w">          </span><span class="c1">// BRCM_PLATFORM_SUBSTRING</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="s">&quot;barefoot&quot;</span><span class="p">,</span><span class="w">          </span><span class="c1">// BFN_PLATFORM_SUBSTRING</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="s">&quot;centec&quot;</span><span class="p">,</span><span class="w">            </span><span class="c1">// CTC_PLATFORM_SUBSTRING</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="s">&quot;clounix&quot;</span><span class="p">,</span><span class="w">           </span><span class="c1">// CLX_PLATFORM_SUBSTRING</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="s">&quot;marvell-prestera&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// MRVL_PRST_PLATFORM_SUBSTRING</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="s">&quot;marvell-teralynx&quot;</span><span class="w">   </span><span class="c1">// MRVL_TL_PLATFORM_SUBSTRING</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="p">};</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>経路</th>
+<th>DB 書き込み先</th>
+<th>方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Broadcom / Barefoot / Centec / Clounix / Marvell-Prestera / Marvell-Teralynx</td>
+<td>経路 A</td>
+<td><code>APPL_DB ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP</code></td>
+<td>Isolation Group</td>
+</tr>
+<tr>
+<td>Mellanox / VS / その他（ホワイトリスト外）</td>
+<td>経路 B</td>
+<td><code>APPL_DB ACL_TABLE_TABLE\|mclag</code> + <code>ACL_RULE_TABLE\|mclag:mclag</code></td>
+<td>ACL ベース</td>
+</tr>
+</tbody>
+</table>
+<p><strong>経路 A（Isolation Group）の特徴</strong>:
+- <code>MEMBERS</code> に <code>Ethernet</code> プレフィックスのインターフェースは除外し PortChannel のみ含める（<code>mclaglink.cpp:258-261</code>）
+- dst が空（リモートリンク全断）時は <code>del("MCLAG_ISO_GRP")</code> でエントリ削除</p>
+<p><strong>経路 B（ACL）の特徴</strong>:
+- <code>acl_table_is_added</code> フラグで ACL テーブルは初回のみ作成（2 回目以降はルールのみ更新）
+- dst が空の場合は <code>del(acl_name)</code> で ACL テーブルごと削除</p>
+<h3 id="b-iccpd">B. iccpd コアロジックはプラットフォーム非依存<a class="headerlink" href="#b-iccpd" title="Permanent link">&para;</a></h3>
+<p><code>iccpd</code> (<code>docker-iccpd</code>) の以下のコアロジックには <code>#ifdef</code> や <code>getenv("platform")</code> による分岐が存在しない:</p>
+<table>
+<thead>
+<tr>
+<th>機能</th>
+<th>動作</th>
+<th>全プラットフォーム共通</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STP ロール決定 (<code>iccp_csm_stp_role_count()</code>)</td>
+<td>IP 数値比較による Active/Standby 決定</td>
+<td>共通</td>
+</tr>
+<tr>
+<td>Standby MAC 書き換え (<code>mlacp_fix_bridge_mac()</code>)</td>
+<td>Linux netlink 経由の PortChannel hw_addr 変更</td>
+<td>共通</td>
+</tr>
+<tr>
+<td>ICCP TLV 未サポート (<code>TLV_T_MLACP_STP_INFO</code>)</td>
+<td><code>mlacp_sync_recv_stpInfo()</code> が即 return</td>
+<td>共通</td>
+</tr>
+<tr>
+<td>ハートビートタイムアウト</td>
+<td><code>session_timeout</code> 秒でセッション切断</td>
+<td>共通</td>
+</tr>
+</tbody>
+</table>
+<h3 id="c">C. 特殊環境<a class="headerlink" href="#c" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VS（仮想スイッチ）</td>
+<td>platform がホワイトリスト外のため <strong>ACL 方式</strong> にフォールバック。STP ロール決定ロジック自体は物理 ASIC と同一</td>
+</tr>
+<tr>
+<td>SmartSwitch DPU</td>
+<td><code>docker-iccpd</code> は DPU 上では起動しないため STP/ICCP 連携は非適用。SmartSwitch NPU 側では通常動作</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_12">プラットフォーム差異要約<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>Broadcom / Barefoot / Centec / Clounix / Marvell</th>
+<th>Mellanox / VS / その他</th>
+<th>SmartSwitch DPU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ポート隔離方式</td>
+<td>Isolation Group (<code>APPL_DB</code>)</td>
+<td>ACL テーブル/ルール (<code>APPL_DB</code>)</td>
+<td>N/A（非起動）</td>
+</tr>
+<tr>
+<td>STP ロール決定</td>
+<td>IP 数値比較（共通）</td>
+<td>IP 数値比較（共通）</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Standby MAC 書き換え</td>
+<td>netlink（共通）</td>
+<td>netlink（共通）</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>mclaglink.cpp:190-282</code>, <code>mclaglink.h:54-59</code></p>
+<!-- /platform-diff -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -37055,8 +37310,8 @@ MST 有効化時に CLI が書き込む実際の値は <code>1</code> であり�
 </tr>
 </tbody>
 </table>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<h2 id="_13">関連ページ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">関連ページ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP</a></li>
 <li><a href="../stp-mst/">CONFIG_DB: STP_MST</a></li>

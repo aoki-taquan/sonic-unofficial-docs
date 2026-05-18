@@ -23737,7 +23737,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-orchagent-state_db-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. orchagent → STATE_DB → stpmgrd の前提順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI 取得失敗時 — STATE_DB 書き込みスキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 書き込みは起動時の 1 回のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -23748,7 +23809,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23759,7 +23820,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34871,7 +34932,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-orchagent-state_db-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. orchagent → STATE_DB → stpmgrd の前提順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI 取得失敗時 — STATE_DB 書き込みスキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 書き込みは起動時の 1 回のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34882,7 +35004,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34893,7 +35015,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35074,19 +35196,84 @@
 <p>証跡: <code>stporch.cpp:34-41</code></p>
 <!-- /defaults -->
 
-<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>STATE_DB STP_TABLE</code> は <code>orchagent</code> (<code>StpOrch</code>) が書き込み、<code>stpmgrd</code> (<code>StpMgr</code>) がポーリング読み取りする。書き込み側と読み取り側が別プロセスであるため、起動順序・タイミングに依存する動作が存在する。</p>
+<h3 id="1-orchagent-state_db-stpmgrd">1. orchagent → STATE_DB → stpmgrd の前提順序<a class="headerlink" href="#1-orchagent-state_db-stpmgrd" title="Permanent link">&para;</a></h3>
+<p><code>StpOrch</code> コンストラクタ (<code>stporch.cpp:17-43</code>) は起動時に SAI から <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> を取得し、即時 <code>updateMaxStpInstance()</code> で <code>STP_TABLE|GLOBAL</code> を書き込む:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// stporch.cpp:34-39</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_switch_api</span><span class="o">-&gt;</span><span class="n">get_switch_attribute</span><span class="p">(</span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">attrs</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="n">attrs</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">{</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">m_defaultStpId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">attrs</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">value</span><span class="p">.</span><span class="n">oid</span><span class="p">;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="n">updateMaxStpInstance</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">value</span><span class="p">.</span><span class="n">u32</span><span class="p">);</span><span class="w">  </span><span class="c1">// → STATE_DB 書き込み</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>StpMgr::getStpMaxInstances()</code> (<code>stpmgr.cpp:1381-1413</code>) は 60 秒のポーリングループで読み取りを試みる:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">while</span><span class="p">(</span><span class="n">max_delay</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_stateStpTable</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">vmEntry</span><span class="p">))</span><span class="w">  </span><span class="c1">// STP_TABLE|GLOBAL を読む</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">break</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="n">max_delay</span><span class="o">--</span><span class="p">;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>→ <strong>順序依存</strong>: <code>orchagent</code> (<code>StpOrch</code>) の初期化が <code>stpmgrd</code> の <code>getStpMaxInstances()</code> 呼び出しより先行するか、60 秒以内に完了する必要がある。先行しない場合はフォールバック値 <code>255</code> が使われる。</p>
+<h3 id="2-sai-state_db">2. SAI 取得失敗時 — STATE_DB 書き込みスキップ<a class="headerlink" href="#2-sai-state_db" title="Permanent link">&para;</a></h3>
+<p>SAI の <code>get_switch_attribute()</code> が <code>SAI_STATUS_SUCCESS</code> 以外を返した場合、<code>updateMaxStpInstance()</code> は呼ばれず <code>STP_TABLE|GLOBAL</code> エントリは作成されない (<code>stporch.cpp:35-40</code>)。</p>
+<p><code>stpmgrd</code> は 60 秒のポーリングでエントリが見つからないまま最終的にフォールバック値 <code>255</code> を使用する。この場合エラーログは <code>stporch.cpp</code> 側にのみ出力される（<code>stpmgrd</code> 側はフォールバックへの切替のみ通知）。</p>
+<p>→ <strong>タイミング依存</strong>: SAI 属性取得の成否が STATE_DB への書き込み有無を決定し、stpmgrd のインスタンス上限値に影響する。</p>
+<h3 id="3-1">3. 書き込みは起動時の 1 回のみ<a class="headerlink" href="#3-1" title="Permanent link">&para;</a></h3>
+<p><code>updateMaxStpInstance()</code> は <code>StpOrch</code> コンストラクタからのみ呼ばれ、実行中の再書き込みは行われない。<code>doTask()</code> による動的更新の仕組みは存在しない (<code>stporch.cpp</code> 全体に他の呼び出し箇所なし)。</p>
+<p>→ <code>STP_TABLE|GLOBAL</code> は orchagent 起動後に固定され、その後 CONFIG_DB の変更によって更新されることはない。</p>
+<h3 id="_5">書込み順依存のまとめ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>依存関係</th>
+<th>条件</th>
+<th>不成立時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orchagent (StpOrch) 起動 → STATE_DB 書き込み</td>
+<td>SAI 取得成功</td>
+<td><code>STP_TABLE|GLOBAL</code> に <code>max_stp_inst</code> を書き込み</td>
+</tr>
+<tr>
+<td>orchagent 起動失敗 / SAI エラー</td>
+<td>SAI 取得失敗</td>
+<td>STATE_DB 未書き込み、stpmgrd は 60 秒待機後フォールバック <code>255</code> を使用</td>
+</tr>
+<tr>
+<td>stpmgrd の読み取りタイミング</td>
+<td>orchagent が 60 秒以内に起動完了</td>
+<td>成功: SAI 由来の実 HW 値を使用</td>
+</tr>
+<tr>
+<td>stpmgrd の読み取りタイムアウト</td>
+<td>orchagent が 60 秒以内に未起動</td>
+<td>フォールバック <code>255</code> を使用 (エラーログなし、no-op)</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>stporch.cpp:17-43</code>, <code>stporch.cpp:603-617</code>, <code>stpmgr.cpp:1381-1413</code></p>
+<!-- /ordering -->
+
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>-1 補正</strong>: <code>max_stp_inst</code> は SAI の返す最大数から -1 した値。STP インスタンス ID が 0 始まりのため、使用可能な最大インスタンス ID が <code>max_stp_inst</code> と一致する。</li>
 <li><strong>起動レース</strong>: <code>stpmgrd</code> が <code>orchagent</code> より先に起動した場合、60 秒の待機ループが発動する。プロダクション環境では通常 orchagent が先に起動するためタイムアウトは稀。</li>
 <li><strong>フォールバック値 <code>255</code> との関係</strong>: CONFIG_DB <code>STP_VLAN</code> の上限 <code>PVST_MAX_INSTANCES = 255</code> (<code>config/stp.py:136</code>) および stpmgrd の <code>STP_DEFAULT_MAX_INSTANCES = 255</code> (<code>stpmgr.h:38</code>) と整合する設計。実 HW の SAI 値が 255 以下の場合は SAI 値が優先される。</li>
 <li><strong>フィールドは 1 本のみ</strong>: <code>STP_TABLE|GLOBAL</code> には <code>max_stp_inst</code> のみ存在し、他のフィールドは書かれない。</li>
 </ul>
-<h2 id="_6">確認コマンド<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># STP_TABLE のエントリ確認</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;STP_TABLE|GLOBAL&#39;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># 出典: https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp#L603-L617</span>
+<h2 id="_7">確認コマンド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># STP_TABLE のエントリ確認</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;STP_TABLE|GLOBAL&#39;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># 出典: https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp#L603-L617</span>
 </span></code></pre></div>
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../stp/"><code>STP</code></a> — グローバル STP 設定 (PVST/MST タイマー、コード由来デフォルト詳細)</li>
 <li>CONFIG_DB: <a href="../stp-vlan/"><code>STP_VLAN</code></a> — VLAN ごとの STP 設定</li>

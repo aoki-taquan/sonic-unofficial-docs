@@ -29533,6 +29533,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#qosorch-tc_to_dscp_map-config_db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — QosOrch が TC_TO_DSCP_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — QosOrch が TC_TO_DSCP_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tc_to_dscp_map_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        上流参照元 (TC_TO_DSCP_MAP を参照するテーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パイプライン上流 (TC を生成する先行テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照カウンタ連動 (DEL 保留メカニズム)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35612,6 +35673,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#qosorch-tc_to_dscp_map-config_db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — QosOrch が TC_TO_DSCP_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — QosOrch が TC_TO_DSCP_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tc_to_dscp_map_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        上流参照元 (TC_TO_DSCP_MAP を参照するテーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パイプライン上流 (TC を生成する先行テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照カウンタ連動 (DEL 保留メカニズム)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36008,6 +36130,82 @@ map object が事前に存在している必要がある。</p>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>             └─ QosOrch::doTask() が map 系を先に drain → OID 解決後に PORT_QOS_MAP を適用
 </span></code></pre></div>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="qosorch-tc_to_dscp_map-config_db-phase-c">暗黙参照 — <code>QosOrch</code> が TC_TO_DSCP_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)<a class="headerlink" href="#qosorch-tc_to_dscp_map-config_db-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>QosOrch</code> は <code>TC_TO_DSCP_MAP</code> を <code>SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP</code> として SAI 登録した後、
+<code>PORT_QOS_MAP</code> および <code>TUNNEL</code> ハンドラを通じてポート/トンネルに bind する。
+<code>qos_to_ref_table_map</code> (qosorch.cpp:L100-116) と <code>m_qos_maps</code> 参照カウンタ管理 (qosorch.cpp:L81-96)
+により、以下のテーブルとの連鎖参照が発生する。</p>
+<h3 id="tc_to_dscp_map_1">上流参照元 (TC_TO_DSCP_MAP を参照するテーブル)<a class="headerlink" href="#tc_to_dscp_map_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>参照タイミング</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../port-qos-map/"><code>PORT_QOS_MAP</code></a></td>
+<td><code>tc_to_dscp_map</code></td>
+<td>SET 処理時 <code>resolveFieldRefValue()</code></td>
+<td>ポートに bind する TC→DSCP マップ名を解決。未作成なら <code>task_need_retry</code></td>
+<td>qosorch.cpp:L105,L2077-2133</td>
+</tr>
+<tr>
+<td><code>TUNNEL</code></td>
+<td><code>encap_tc_to_dscp_map</code></td>
+<td>SET 処理時 <code>gQosOrch-&gt;resolveTunnelQosMap()</code></td>
+<td>トンネル encap 時の DSCP 書換えマップを OID 解決。未解決なら <code>task_need_retry</code></td>
+<td>tunneldecaporch.cpp:L245-250; qosorch.cpp:L115</td>
+</tr>
+</tbody>
+</table>
+<p><code>PORT_QOS_MAP</code> が <code>tc_to_dscp_map</code> フィールドで <code>TC_TO_DSCP_MAP</code> の名前を参照し、<code>QosOrch</code> が OID を解決して
+<code>SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP</code> をポートにセットする（qosorch.cpp:L66）。
+<code>TUNNEL</code> の <code>encap_tc_to_dscp_map</code> は <code>tunneldecaporch</code> が <code>resolveTunnelQosMap()</code> 経由で同じ <code>TC_TO_DSCP_MAP</code> テーブルの OID を参照し、<code>tunnelTable[key].encap_tc_to_dscp_map_id</code> に格納する（tunneldecaporch.cpp:L257）。</p>
+<p>いずれも <code>TC_TO_DSCP_MAP</code> が未作成の場合は <code>task_need_retry</code> でキューに戻される。</p>
+<h3 id="tc">パイプライン上流 (TC を生成する先行テーブル)<a class="headerlink" href="#tc" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>役割</th>
+<th>TC_TO_DSCP_MAP との関係</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../dscp-to-tc-map/"><code>DSCP_TO_TC_MAP</code></a></td>
+<td>ingress DSCP → TC 変換</td>
+<td>受信パケットの DSCP を TC に変換するパイプライン前段。変換後の TC を egress 時に TC_TO_DSCP_MAP が DSCP に再マップする</td>
+<td>qosorch.cpp:L61,L81,L100</td>
+</tr>
+<tr>
+<td><a href="../dot1p-to-tc-map/"><code>DOT1P_TO_TC_MAP</code></a></td>
+<td>802.1p PCP → TC 変換</td>
+<td>L2 フレームの TC 源泉。egress では TC_TO_DSCP_MAP が DSCP rewrite に使用される</td>
+<td>qosorch.cpp:L62,L101</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del_1">参照カウンタ連動 (DEL 保留メカニズム)<a class="headerlink" href="#del_1" title="Permanent link">&para;</a></h3>
+<p><code>QosOrch::m_qos_maps</code> の <code>object_reference_map</code>（qosorch.cpp:L95）が <code>TC_TO_DSCP_MAP</code> への参照を追跡する。
+<code>PORT_QOS_MAP</code> または <code>TUNNEL</code> がマップを参照している間は <code>TC_TO_DSCP_MAP</code> の DEL は <code>m_pendingRemove=true</code> で保留され、
+参照解放まで SAI <code>remove_qos_map()</code> は呼ばれない（qosorch.cpp:L181-186）。</p>
+<h3 id="_20">範囲外 (誤解されやすい隣接テーブル)<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>TC_TO_QUEUE_MAP</code>: egress queue 方向のマップで、TC_TO_DSCP_MAP ハンドラからの直接参照はない。別ハンドラ (<code>handleTcToQueueTable</code>) が独立に処理する。</li>
+<li><code>WRED_PROFILE</code>: DROP profile。TC_TO_DSCP_MAP ハンドラからの参照なし。</li>
+<li><code>DSCP_TO_FC_MAP</code> / <code>EXP_TO_FC_MAP</code>: Forwarding Class 系は別系統で TC_TO_DSCP_MAP と直接連鎖しない。</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/tc-to-dscp-map-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
 
 <div class="footnote">
 <hr />

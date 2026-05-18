@@ -25367,6 +25367,311 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#coppmgr-trap-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        coppmgr 側の TRAP → GROUP 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#allportsready_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allPortsReady() ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchdaemoncpp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchdaemon.cpp における初期化順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 書込み順序（運用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-allportsready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. allPortsReady() ガード — 全処理保留
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-genetlink-hostif-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Genetlink HostIf 二重作成 → task_failed → 後続処理停止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-create_hostif-sai-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. create_hostif() SAI 失敗 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-create_hostif_table_entry-sai-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. create_hostif_table_entry() SAI 失敗 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-trapgroupprocesstrapidchange-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. trapGroupProcessTrapIdChange() 失敗 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f-del-default_trap_group-task_ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F. DEL — default_trap_group → task_ignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#g-task_invalid_entry-erase-continue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G. 例外 → task_invalid_entry → erase &amp; continue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_status 処理まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#copporchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド名文字列リテラル (copporch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chardata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chardata バッファサイズ上限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter 関連定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / FLEX_COUNTER_DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic_db-syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB 副次書込 (syncd 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -35629,6 +35934,311 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#coppmgr-trap-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        coppmgr 側の TRAP → GROUP 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#allportsready_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allPortsReady() ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchdaemoncpp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchdaemon.cpp における初期化順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 書込み順序（運用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-allportsready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. allPortsReady() ガード — 全処理保留
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-genetlink-hostif-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Genetlink HostIf 二重作成 → task_failed → 後続処理停止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-create_hostif-sai-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. create_hostif() SAI 失敗 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-create_hostif_table_entry-sai-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. create_hostif_table_entry() SAI 失敗 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-trapgroupprocesstrapidchange-task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. trapGroupProcessTrapIdChange() 失敗 → task_failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f-del-default_trap_group-task_ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F. DEL — default_trap_group → task_ignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#g-task_invalid_entry-erase-continue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G. 例外 → task_invalid_entry → erase &amp; continue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_status 処理まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#copporchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド名文字列リテラル (copporch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chardata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chardata バッファサイズ上限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter 関連定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / FLEX_COUNTER_DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic_db-syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB 副次書込 (syncd 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -35993,15 +36603,64 @@
 
 <!-- ordering -->
 <h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
-<h3 id="allportsready"><code>allPortsReady()</code> ゲート<a class="headerlink" href="#allportsready" title="Permanent link">&para;</a></h3>
-<p><code>CoppOrch::doTask()</code> の先頭で <code>gPortsOrch-&gt;allPortsReady()</code> を確認する（<code>copporch.cpp:885-888</code>）。全ポートの SAI 初期化が完了するまで <code>COPP_GROUP</code>（genetlink フィールド含む）の処理はスキップされ、<code>m_toSync</code> キューに蓄積される。<code>allPortsReady()</code> が true になった後に順次処理される。</p>
+<h3 id="allportsready">allPortsReady() ゲート<a class="headerlink" href="#allportsready" title="Permanent link">&para;</a></h3>
+<p><code>CoppOrch::doTask()</code> の先頭 (<code>copporch.cpp:885-888</code>) に次のガードが存在する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">allPortsReady</span><span class="p">())</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>全物理ポートが ready になるまで、genetlink フィールドを含む <code>COPP_GROUP</code> の全処理がブロックされる。</strong>
+起動時に CONFIG_DB へ <code>COPP_GROUP|queue2_group1</code> を書き込んでも、<code>PortsOrch</code> の初期化完了前は <code>m_toSync</code> キューに蓄積されるのみで SAI HostIf 作成は実行されない。<code>allPortsReady()</code> が true になった後に順次処理される。<!-- evidence: copporch.cpp L885-888 --></p>
 <h3 id="orchdaemoncpp">orchdaemon.cpp における初期化順序<a class="headerlink" href="#orchdaemoncpp" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>L232: gPortsOrch = new PortsOrch(...)   # PortsOrch を最初に生成
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>...
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に CoppOrch を生成
+<p><code>OrchDaemon::init()</code> での生成順序:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>L232: gPortsOrch = new PortsOrch(...)   # 最初に生成 (gPortsOrch が確定)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>...
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に生成
+</span></code></pre></div>
+<p><code>CoppOrch</code> コンストラクタ内で <code>initDefaultHostIntfTable()</code> / <code>initDefaultTrapGroup()</code> / <code>initDefaultTrapIds()</code> が実行されるが、これらは <code>allPortsReady()</code> ガードに依存しない（SAI 初期状態で直接実行）。genetlink HostIf の作成は <code>doTask()</code> 経由のため、ポート初期化完了後となる。<!-- evidence: orchdaemon.cpp L232, L341; copporch.cpp L191-213 --></p>
+<h3 id="config_db">CONFIG_DB 書込み順序（運用）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>推奨順序</th>
+<th>違反時の結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>起動時 genetlink HostIf 作成</td>
+<td><code>allPortsReady()</code> が true になるまで自動遅延</td>
+<td><code>m_toSync</code> に蓄積。PortsOrch 初期化完了後に自動処理（問題なし）</td>
+</tr>
+<tr>
+<td>新規 <code>COPP_GROUP</code> (genetlink フィールド付き) 書込み</td>
+<td>PortsOrch 初期化後が理想だが事前書込みも可</td>
+<td><code>allPortsReady()</code> 前は処理スキップ、次回 <code>doTask()</code> で再試行</td>
+</tr>
+<tr>
+<td><code>COPP_GROUP</code> DEL (genetlink フィールドあり)</td>
+<td>順序制約なし</td>
+<td><code>allPortsReady()</code> 前は DEL も遅延（自動再試行）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="coppmgr-trap-group">coppmgr 側の TRAP → GROUP 順序<a class="headerlink" href="#coppmgr-trap-group" title="Permanent link">&para;</a></h3>
+<p><code>coppmgr</code> コンストラクタ (<code>coppmgr.cpp:334, L372</code>) は <code>COPP_TRAP</code> を先にマージしてから <code>COPP_GROUP</code> をマージする。genetlink フィールドを持つ <code>queue2_group1</code> を APPL_DB に書き込む際、<code>sample_packet</code> を担当する COPP_TRAP エントリが先に処理されていれば <code>trap_ids</code> が正しく付与される。直接 APPL_DB を操作する場合は <code>COPP_TRAP</code> エントリを先に書き込むこと。<!-- evidence: coppmgr.cpp L334, L372 --></p>
+<!-- /ordering -->
+
+<!-- ordering -->
+<h2 id="phase-b_1">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
+<h3 id="allportsready_1"><code>allPortsReady()</code> ゲート<a class="headerlink" href="#allportsready_1" title="Permanent link">&para;</a></h3>
+<p><code>CoppOrch::doTask()</code> の先頭で <code>gPortsOrch-&gt;allPortsReady()</code> を確認する（<code>copporch.cpp:885-888</code>）。全ポートの SAI 初期化が完了するまで <code>COPP_GROUP</code>（genetlink フィールド含む）の処理はスキップされ、<code>m_toSync</code> キューに蓄積される。<code>allPortsReady()</code> が true になった後に順次処理される。</p>
+<h3 id="orchdaemoncpp_1">orchdaemon.cpp における初期化順序<a class="headerlink" href="#orchdaemoncpp_1" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>L232: gPortsOrch = new PortsOrch(...)   # PortsOrch を最初に生成
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>...
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に CoppOrch を生成
 </span></code></pre></div>
 <p><code>CoppOrch</code> コンストラクタ内の <code>initDefaultHostIntfTable()</code> / <code>initDefaultTrapGroup()</code> / <code>initDefaultTrapIds()</code> は <code>allPortsReady()</code> に依存せず即時実行される。<code>m_orchList</code> では <code>gCoppOrch</code> は <code>gPortsOrch</code>・<code>gBufferOrch</code> の後に位置し、ポート・バッファ初期化後に COPP 処理が行われる。<!-- evidence: orchdaemon.cpp L232,341,500 --></p>
-<h3 id="config_db">CONFIG_DB 書込み順序（運用）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<h3 id="config_db_1">CONFIG_DB 書込み順序（運用）<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36029,6 +36688,359 @@
 </tbody>
 </table>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>COPP_GROUP</code> の genetlink フィールド (<code>genetlink_name</code> / <code>genetlink_mcgrp_name</code>) が処理される際に
+<code>coppmgr</code> / <code>CoppOrch</code> が暗黙的に参照する他テーブル・内部マップの依存関係を示す。</p>
+<table>
+<thead>
+<tr>
+<th>依存方向</th>
+<th>参照元</th>
+<th>参照先テーブル / マップ</th>
+<th>参照先キー形式</th>
+<th>依存内容</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>間接依存（sflow feature 経由）</td>
+<td><code>queue2_group1</code> の genetlink HostIf 有効性</td>
+<td><code>FEATURE</code></td>
+<td><code>FEATURE\|sflow</code></td>
+<td>sflow feature <code>state=disabled</code> の場合、<code>sample_packet</code> trap が APPL_DB から除外される。genetlink HostIf / HostIfTable は SAI に作成されるが、trap が届かないため実質無効。feature enabled 時に <code>doCoppTrapTask()</code> が trap_ids を再評価して APPL_DB を更新</td>
+<td><code>coppmgr.cpp:173-191</code>, <code>coppmgr.cpp:928-965</code></td>
+</tr>
+<tr>
+<td>内部マップ依存（HostIfTable 作成時）</td>
+<td><code>createGenetlinkHostIfTable()</code></td>
+<td><code>m_syncdTrapIds</code> (内部マップ)</td>
+<td trap_group_obj_="trap_group_obj," trap_obj="trap_obj">trap_type →</td>
+<td>genetlink HostIfTable の <code>SAI_HOSTIF_TABLE_ENTRY_ATTR_TRAP_ID</code> は <code>m_syncdTrapIds[trap_id].trap_obj</code> から取得する。<code>trap_id_list</code> 内の trap が <code>m_syncdTrapIds</code> に未登録の場合、<code>SAI_HOSTIF_TABLE_ENTRY_ATTR_TRAP_ID</code> に無効 OID が渡り、SAI 操作が失敗する可能性がある</td>
+<td><code>copporch.cpp:429,442</code></td>
+</tr>
+<tr>
+<td>内部マップ依存（HostIf OID 参照）</td>
+<td><code>createGenetlinkHostIfTable()</code></td>
+<td><code>m_trap_group_hostif_map</code> (内部マップ)</td>
+<td>trap_group_id → hostif_oid</td>
+<td><code>SAI_HOSTIF_TABLE_ENTRY_ATTR_HOST_IF</code> を設定するために <code>m_trap_group_hostif_map</code> から genetlink HostIf の OID を取得する。<code>createGenetlinkHostIf()</code> が先に完了していない場合、<code>hostif_map == end()</code> となり HostIfTable エントリが未作成のままスキップされる</td>
+<td><code>copporch.cpp:430-431,466</code></td>
+</tr>
+<tr>
+<td>ビルド時依存</td>
+<td><code>queue2_group1</code> の <code>genetlink_name</code> / <code>genetlink_mcgrp_name</code> 初期値</td>
+<td><code>/etc/sonic/copp_cfg.json</code> (= <code>copp_cfg.j2</code> 展開物)</td>
+<td>—</td>
+<td><code>genetlink_name="psample"</code> / <code>genetlink_mcgrp_name="packets"</code> は <code>copp_cfg.j2</code> でハードコードされ、起動時に <code>coppmgrd</code> が初期値として読み込む。ユーザーが DEL しても init cfg に同名キーがあれば自動復元される</td>
+<td><code>copp_cfg.j2:76-88</code>, <code>coppmgr.cpp:898-921</code></td>
+</tr>
+<tr>
+<td>初期化順序依存</td>
+<td>genetlink HostIfTable (<code>CHANNEL_TYPE_GENETLINK</code>)</td>
+<td><code>initDefaultHostIntfTable()</code> が作成する wildcard エントリ</td>
+<td>—</td>
+<td><code>initDefaultHostIntfTable()</code> は起動時に <code>SAI_HOSTIF_TABLE_ENTRY_TYPE_WILDCARD</code> / <code>CHANNEL_TYPE_NETDEV_PHYSICAL_PORT</code> のデフォルトエントリを作成する。genetlink trap_id の <code>HOSTIF_TABLE_ENTRY</code> はこのデフォルトエントリより優先されるが、先にデフォルトエントリが存在することで「genetlink HostIfTable 未登録の trap は NETDEV_PHYSICAL_PORT チャネルで処理」という fallback が保証される</td>
+<td><code>copporch.cpp:209,211,302-330,419-468</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">解決タイミング<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>FEATURE → sflow 有効性</strong>: <code>doFeatureTask()</code> が <code>FEATURE</code> テーブルの変化を購読し、state 変更時に <code>setFeatureTrapIdsStatus()</code> 経由で <code>sample_packet</code> trap の APPL_DB 登録状態を再評価する。genetlink HostIf / HostIfTable 自体は feature state に関わらず SAI に残留する。</li>
+<li><strong>m_syncdTrapIds 依存</strong>: <code>trapGroupProcessTrapIdChange()</code> が <code>processCoppRule()</code> 内で呼ばれ、trap_ids を <code>m_syncdTrapIds</code> に同期した後に <code>createGenetlinkHostIfTable()</code> が呼ばれる。同一 <code>processCoppRule()</code> 呼び出し内で順序が保証される（<code>copporch.cpp:848-855</code>）。</li>
+<li><strong>m_trap_group_hostif_map 依存</strong>: <code>createGenetlinkHostIf()</code> → <code>createGenetlinkHostIfTable()</code> の呼び出し順序は <code>processCoppRule()</code> 内でハードコードされており（<code>copporch.cpp:844,848</code>）、HostIf OID が <code>m_trap_group_hostif_map</code> に登録された後に HostIfTable が作成される。</li>
+</ul>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>COPP_GROUP</code> の genetlink フィールド (<code>genetlink_name</code> / <code>genetlink_mcgrp_name</code>) を処理する <code>CoppOrch::processCoppRule()</code> と <code>doTask()</code> の失敗分岐を整理する。</p>
+<h3 id="a-allportsready">A. <code>allPortsReady()</code> ガード — 全処理保留<a class="headerlink" href="#a-allportsready" title="Permanent link">&para;</a></h3>
+<p><code>doTask()</code> 冒頭の <code>allPortsReady()</code> チェック (<code>copporch.cpp:885-888</code>) が false の場合、即 <code>return</code> して全エントリを <code>m_toSync</code> に保留する。genetlink HostIf / HostIfTable は一切作成されず、PortsOrch 初期化完了後に次サイクルで自動再処理される。</p>
+<h3 id="b-genetlink-hostif-task_failed">B. Genetlink HostIf 二重作成 → <code>task_failed</code> → 後続処理停止<a class="headerlink" href="#b-genetlink-hostif-task_failed" title="Permanent link">&para;</a></h3>
+<p><code>copporch.cpp:835-840</code>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_trap_group_hostif_map</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">m_trap_group_map</span><span class="p">[</span><span class="n">trap_group_name</span><span class="p">])</span><span class="w"> </span><span class="o">!=</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">        </span><span class="n">m_trap_group_hostif_map</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Genetlink hostif exists for the trap group %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">task_process_status</span><span class="o">::</span><span class="n">task_failed</span><span class="p">;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>同一 trap_group に genetlink フィールドを持つエントリが重複 SET された場合（orchagent 再起動なしに CONFIG_DB を再書き込みした場合など）、<code>processCoppRule()</code> が <code>task_failed</code> を返す。<code>doTask()</code> は当該エントリを erase して <code>return</code> し、<strong>後続の全 pending エントリの処理も停止する</strong>（<code>copporch.cpp:920-923</code>）。</p>
+<h3 id="c-create_hostif-sai-task_failed">C. <code>create_hostif()</code> SAI 失敗 → <code>task_failed</code><a class="headerlink" href="#c-create_hostif-sai-task_failed" title="Permanent link">&para;</a></h3>
+<p><code>createGenetlinkHostIf()</code> 内で <code>sai_hostif_api-&gt;create_hostif()</code> が <code>SAI_STATUS_SUCCESS</code> 以外を返した場合、<code>handleSaiCreateStatus()</code> + <code>parseHandleSaiStatusFailure()</code> により <code>false</code> が返り、<code>processCoppRule()</code> が <code>task_failed</code> に変換する（<code>copporch.cpp:667-675</code>, <code>L844-846</code>）。</p>
+<h3 id="d-create_hostif_table_entry-sai-task_failed">D. <code>create_hostif_table_entry()</code> SAI 失敗 → <code>task_failed</code><a class="headerlink" href="#d-create_hostif_table_entry-sai-task_failed" title="Permanent link">&para;</a></h3>
+<p><code>createGenetlinkHostIfTable()</code> 内で trap_id ごとに <code>create_hostif_table_entry()</code> を呼び出す。失敗すると <code>false</code> 返却 → <code>processCoppRule()</code> が <code>task_failed</code>（<code>copporch.cpp:457-464</code>, <code>L848-850</code>）。</p>
+<h3 id="e-trapgroupprocesstrapidchange-task_failed">E. <code>trapGroupProcessTrapIdChange()</code> 失敗 → <code>task_failed</code><a class="headerlink" href="#e-trapgroupprocesstrapidchange-task_failed" title="Permanent link">&para;</a></h3>
+<p>genetlink HostIf / HostIfTable を SAI に作成済みの後に呼ばれる <code>trapGroupProcessTrapIdChange()</code> が失敗した場合も <code>task_failed</code> となる（<code>copporch.cpp:853-856</code>）。genetlink HostIf は SAI に残存するが trap_id への適用が不完全な状態となる。</p>
+<h3 id="f-del-default_trap_group-task_ignore">F. DEL — <code>default_trap_group</code> → <code>task_ignore</code><a class="headerlink" href="#f-del-default_trap_group-task_ignore" title="Permanent link">&para;</a></h3>
+<p><code>COPP_GROUP|default_trap_group</code> の DEL は <code>task_ignore</code> として扱われ、erase 後に次アイテムへ進む（<code>copporch.cpp:861-865</code>）。</p>
+<h3 id="g-task_invalid_entry-erase-continue">G. 例外 → <code>task_invalid_entry</code> → erase &amp; continue<a class="headerlink" href="#g-task_invalid_entry-erase-continue" title="Permanent link">&para;</a></h3>
+<p><code>processCoppRule()</code> が <code>out_of_range</code> / <code>std::exception</code> を送出した場合、<code>doTask()</code> が <code>task_invalid_entry</code> として当該エントリを erase して後続処理を継続する（<code>copporch.cpp:900-909</code>）。当該エントリは永久スキップとなり、orchagent 再起動後に再処理される。</p>
+<h3 id="task_status"><code>task_status</code> 処理まとめ<a class="headerlink" href="#task_status" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>task_status</th>
+<th>主な発生条件</th>
+<th><code>doTask()</code> 動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_success</code> / <code>task_ignore</code></td>
+<td>正常完了 / <code>default_trap_group</code> DEL</td>
+<td>erase → 次アイテム</td>
+</tr>
+<tr>
+<td><code>task_invalid_entry</code></td>
+<td>例外、未知 op</td>
+<td>erase → 次アイテム（永久スキップ）</td>
+</tr>
+<tr>
+<td><code>task_failed</code></td>
+<td>SAI 失敗、二重作成、<code>trapGroupProcessTrapIdChange</code> 失敗</td>
+<td>erase → <strong>return</strong>（後続処理停止）</td>
+</tr>
+<tr>
+<td><code>task_need_retry</code></td>
+<td>SAI 一時失敗（transient error）</td>
+<td><code>it++</code> → 次サイクルで再試行</td>
+</tr>
+</tbody>
+</table>
+<p><code>task_failed</code> 時は SWSS_LOG_ERROR が記録される。orchagent はプロセス終了せず生存するが、次回 <code>doTask()</code> 呼び出しまで他 COPP グループの処理も停止する点に注意。</p>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>copporch.cpp</code> L419-471 (createGenetlinkHostIfTable)、L657-680 (createGenetlinkHostIf)、L833-856 (processCoppRule genetlink 分岐)、L880-933 (doTask)。失敗分岐 6 系統確認。詳細は <code>meta/_intermediate/cdb-flow/copp-port-failure.md</code> 参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h3 id="copporchh">フィールド名文字列リテラル (copporch.h)<a class="headerlink" href="#copporchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>copp_genetlink_name</code></td>
+<td><code>"genetlink_name"</code></td>
+<td><code>getAttribsFromTrapGroup()</code> でのフィールド照合キー</td>
+<td><code>copporch.h:45</code></td>
+</tr>
+<tr>
+<td><code>copp_genetlink_mcgrp_name</code></td>
+<td><code>"genetlink_mcgrp_name"</code></td>
+<td>MCGRP 名フィールドの照合キー</td>
+<td><code>copporch.h:46</code></td>
+</tr>
+</tbody>
+</table>
+<p>これらは YANG モデルに対応する定義がなく、CONFIG_DB / APPL_DB への書き込み時はこの文字列と完全一致する必要がある。</p>
+<h3 id="chardata">chardata バッファサイズ上限<a class="headerlink" href="#chardata" title="Permanent link">&para;</a></h3>
+<p><code>getAttribsFromTrapGroup()</code> 内の genetlink フィールド格納処理 (<code>copporch.cpp:1271-1275</code>, <code>1281-1285</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">chardata</span><span class="p">);</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">strncpy</span><span class="p">(</span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">chardata</span><span class="p">,</span><span class="w"> </span><span class="n">fvValue</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">).</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">chardata</span><span class="p">[</span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</span></code></pre></div>
+<p><code>sai_attribute_value_t::chardata</code> は標準 SAI で <strong>32 バイト</strong>。<code>strncpy</code> 上限は <code>size - 1 = 31</code> 文字で、末尾 NUL を強制書き込みするため <strong>実効最大長は 31 文字</strong>。31 文字超の値はサイレントに切り詰められ、SAI <code>create_hostif()</code> が失敗する可能性がある。</p>
+<h3 id="flexcounter">FlexCounter 関連定数<a class="headerlink" href="#flexcounter" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"HOSTIF_TRAP_FLOW_COUNTER"</code></td>
+<td>FlexCounter グループ名 (COUNTERS_DB キー)</td>
+<td><code>copporch.h:23</code></td>
+</tr>
+<tr>
+<td><code>HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>10000</code> ms</td>
+<td>HostIF trap FlexCounter ポーリング間隔 (10 秒)</td>
+<td><code>copporch.cpp:189</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_UPD_INTERVAL</code></td>
+<td><code>1</code> 秒</td>
+<td>FlexCounter 更新タイマー間隔</td>
+<td><code>copporch.cpp:37</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>copporch.h</code> 全行、<code>copporch.cpp</code> L37,189,1265-1286 精読。定数 7 件抽出。中間ファイル: <code>meta/_intermediate/cdb-flow/copp-port-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>COPP_GROUP</code> の <code>genetlink_name</code> / <code>genetlink_mcgrp_name</code> を SET/DEL したときに CONFIG_DB 以外の DB へ書き込まれるエントリを示す。</p>
+<h3 id="appl_db">APPL_DB 書込<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>テーブル</th>
+<th>キー</th>
+<th>フィールド</th>
+<th>タイミング</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set</code></td>
+<td><code>COPP_TABLE</code></td>
+<td><code>COPP_TABLE\|&lt;group-name&gt;</code></td>
+<td><code>genetlink_name</code>, <code>genetlink_mcgrp_name</code> 他全フィールド</td>
+<td>CONFIG_DB 変化を <code>coppmgrd</code> が検知後</td>
+<td><code>coppmgr.cpp:152,511,526</code></td>
+</tr>
+<tr>
+<td><code>del</code></td>
+<td><code>COPP_TABLE</code></td>
+<td><code>COPP_TABLE\|&lt;group-name&gt;</code></td>
+<td>(全削除)</td>
+<td>グループ pending / DEL 時</td>
+<td><code>coppmgr.cpp:126,288,891</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db">STATE_DB 書込<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p><code>genetlink_name</code> フィールド自体は STATE_DB への書込を追加しない。ただし同一 <code>COPP_GROUP</code> エントリに <code>trap_ids</code> が含まれる場合、<code>applyAttributesToTrapIds()</code> 内で <code>updateTrapOperStatus()</code> が呼ばれ、STATE_DB に副次書込が発生する。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>テーブル</th>
+<th>キー</th>
+<th>フィールド</th>
+<th>タイミング</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set</code></td>
+<td><code>COPP_TRAP_TABLE</code></td>
+<td><code>COPP_TRAP_TABLE\|&lt;trap-name&gt;</code></td>
+<td><code>hw_status="installed"</code></td>
+<td>SAI <code>create_hostif_trap()</code> 成功後</td>
+<td><code>copporch.cpp:526, 222-236</code></td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td><code>COPP_TRAP_TABLE</code></td>
+<td><code>COPP_TRAP_TABLE\|&lt;trap-name&gt;</code></td>
+<td><code>hw_status="not-installed"</code></td>
+<td>SAI trap 削除時</td>
+<td><code>copporch.cpp:1413</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="counters_db-flex_counter_db">COUNTERS_DB / FLEX_COUNTER_DB 書込<a class="headerlink" href="#counters_db-flex_counter_db" title="Permanent link">&para;</a></h3>
+<p>trap_ids 追加に伴い <code>bindTrapCounter()</code> が呼ばれ、カウンタ登録が行われる。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>DB</th>
+<th>テーブル</th>
+<th>キー</th>
+<th>フィールド</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set</code></td>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_TRAP_NAME_MAP</code></td>
+<td><code>""</code> (hash)</td>
+<td><code>&lt;trap_name&gt;=&lt;counter_oid&gt;</code></td>
+<td><code>copporch.cpp:1452-1456</code></td>
+</tr>
+<tr>
+<td><code>hdel</code></td>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_TRAP_NAME_MAP</code></td>
+<td><code>""</code> (hash)</td>
+<td><code>&lt;trap_name&gt;</code></td>
+<td><code>copporch.cpp:1494-1495</code></td>
+</tr>
+<tr>
+<td><code>setCounterIdList</code></td>
+<td>FLEX_COUNTER_DB</td>
+<td><code>HOSTIF_TRAP_FLOW_COUNTER</code></td>
+<td><code>&lt;counter_oid&gt;</code></td>
+<td>統計 ID リスト</td>
+<td><code>copporch.cpp:950</code></td>
+</tr>
+<tr>
+<td><code>clearCounterIdList</code></td>
+<td>FLEX_COUNTER_DB</td>
+<td><code>HOSTIF_TRAP_FLOW_COUNTER</code></td>
+<td><code>&lt;counter_oid&gt;</code></td>
+<td>(クリア)</td>
+<td><code>copporch.cpp:1487</code></td>
+</tr>
+</tbody>
+</table>
+<p>FLEX_COUNTER_DB 登録は <code>FLEX_COUNTER_UPD_TIMER</code>（1 秒間隔）経由で非同期に実行される。</p>
+<h3 id="asic_db-syncd">ASIC_DB 副次書込 (syncd 経由)<a class="headerlink" href="#asic_db-syncd" title="Permanent link">&para;</a></h3>
+<p><code>CoppOrch</code> は ASIC_DB に直接書き込まない。SAI API 呼び出しを受けた <code>syncd</code> が ASIC_DB <code>VIDTORID</code> に OID を記録する。<code>genetlink_name</code> が設定されると以下の SAI 呼び出しが追加で発生する:</p>
+<table>
+<thead>
+<tr>
+<th>SAI API</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_hostif_api-&gt;create_hostif()</code> (TYPE_GENETLINK)</td>
+<td><code>genetlink_attribs</code> 非空</td>
+<td><code>copporch.cpp:680</code></td>
+</tr>
+<tr>
+<td><code>sai_hostif_api-&gt;create_hostif_table_entry()</code> (CHANNEL_TYPE_GENETLINK)</td>
+<td>当該グループ内の各 trap_id に対して</td>
+<td><code>copporch.cpp:453-466</code></td>
+</tr>
+<tr>
+<td><code>sai_hostif_api-&gt;remove_hostif()</code></td>
+<td>DEL または既存 hostif 検知時</td>
+<td><code>copporch.cpp:702</code></td>
+</tr>
+<tr>
+<td><code>sai_hostif_api-&gt;remove_hostif_table_entry()</code></td>
+<td>trap_id 除去時</td>
+<td><code>copporch.cpp:481-487</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>copporch.cpp</code> L126-152 (coppmgrd APPL_DB 書込)、L222-236 (updateTrapOperStatus)、L419-493 (genetlink hostif table create/remove)、L499-533 (applyAttributesToTrapIds + bindTrapCounter)、L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf)、L833-851 (processCoppRule genetlink 分岐)、L1418-1495 (bindTrapCounter/unbindTrapCounter)。中間ファイル: <code>meta/_intermediate/cdb-flow/copp-port-side-effects.md</code></p>
+</blockquote>
+<!-- /side-effects -->
 
 <div class="footnote">
 <hr />

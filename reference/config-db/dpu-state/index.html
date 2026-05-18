@@ -25808,7 +25808,345 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        failure パターン概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#try_get-platform-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        try_get による platform API 失敗の吸収
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB 書き込み失敗時の retry なし設計
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord による自動再起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        部分初期化が残るケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassisd108-111" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド名定数 (chassisd:108-111)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisd159" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイムスタンプフォーマット (chassisd:159)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー・タイムアウト定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB クリーンアップ対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpustatemanagertask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DpuStateManagerTask による自己フィードバック書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poll_dpu_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        poll_dpu_state 有効時 — フィードバックループなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#down-dpu_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        モジュール down 時 — DPU_STATE は削除対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書き込みが発生しないケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swsscommontable-hset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側 — swsscommon.Table による直接 hset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読み取り側 — SubscriberStateTable + select ループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-dpu-cli-on-demand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show dpu CLI — on-demand 読み取り (非購読)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poll_dpu_state_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        poll_dpu_state フラグによる通知方式の切り替え
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提: SmartSwitch 専用テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platform-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差の主軸: platform API 実装有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別プラットフォーム差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis との差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch 固有の platform 設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -25830,7 +26168,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35026,7 +35364,345 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        failure パターン概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#try_get-platform-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        try_get による platform API 失敗の吸収
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB 書き込み失敗時の retry なし設計
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord による自動再起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        部分初期化が残るケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chassisd108-111" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド名定数 (chassisd:108-111)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisd159" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイムスタンプフォーマット (chassisd:159)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー・タイムアウト定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB クリーンアップ対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpustatemanagertask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DpuStateManagerTask による自己フィードバック書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poll_dpu_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        poll_dpu_state 有効時 — フィードバックループなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#down-dpu_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        モジュール down 時 — DPU_STATE は削除対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書き込みが発生しないケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#swsscommontable-hset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側 — swsscommon.Table による直接 hset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読み取り側 — SubscriberStateTable + select ループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show-dpu-cli-on-demand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show dpu CLI — on-demand 読み取り (非購読)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poll_dpu_state_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        poll_dpu_state フラグによる通知方式の切り替え
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提: SmartSwitch 専用テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platform-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差の主軸: platform API 実装有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別プラットフォーム差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis との差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch 固有の platform 設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -35048,7 +35724,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35434,7 +36110,603 @@
 <p><strong>違反時</strong>: 逆順でも機能上の問題は発生しないが、<code>show dpu</code> が終了処理中に瞬間的に <code>Partial Online</code> を表示する可能性がある。</p>
 <!-- /ordering -->
 
-<h2 id="_9">購読者<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>DPU_STATE</code> は CHASSIS_STATE_DB への <strong>書き出し専用</strong> テーブル。<code>SmartSwitchModuleUpdater</code> と <code>DpuStateUpdater</code> が書き手であり、フィールド値の算出に以下の外部テーブル / リソースを<strong>暗黙に参照</strong>する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APPL_DB PORT_TABLE\|&lt;port&gt;.oper_status</code></td>
+<td>読み取り (DP state 算出)</td>
+<td>platform API <code>get_dataplane_state()</code> が <code>NotImplementedError</code> を返す場合のみ。全ポートが <code>'up'</code> なら DP state = <code>'up'</code></td>
+<td><code>chassisd:1267-1275</code> (<code>_get_data_plane_state_common</code>)</td>
+</tr>
+<tr>
+<td><code>STATE_DB SYSTEM_READY\|SYSTEM_STATE.Status</code></td>
+<td>読み取り (CP state 算出)</td>
+<td>platform API <code>get_controlplane_state()</code> が <code>NotImplementedError</code> を返す場合のみ。値が <code>'up'</code> なら CP state = <code>'up'</code></td>
+<td><code>chassisd:1277-1284</code> (<code>_get_control_plane_state_common</code>)</td>
+</tr>
+<tr>
+<td><code>CONFIG_DB PORT\|&lt;port&gt;</code></td>
+<td>キー列挙 (DP state 算出)</td>
+<td><code>_get_data_plane_state_common()</code> が CONFIG_DB の <code>PORT</code> テーブルを走査してポート一覧を取得する</td>
+<td><code>chassisd:1268</code> (<code>self.config_db.get_table('PORT')</code>)</td>
+</tr>
+<tr>
+<td>Platform API <code>chassis.get_dataplane_state()</code></td>
+<td>platform 呼び出し (DP state)</td>
+<td>platform API が実装されている場合に優先。<code>NotImplementedError</code> 時は <code>APPL_DB PORT_TABLE</code> fallback へ</td>
+<td><code>chassisd:1249-1253</code></td>
+</tr>
+<tr>
+<td>Platform API <code>chassis.get_controlplane_state()</code></td>
+<td>platform 呼び出し (CP state)</td>
+<td>platform API が実装されている場合に優先。<code>NotImplementedError</code> 時は <code>STATE_DB SYSTEM_READY</code> fallback へ</td>
+<td><code>chassisd:1254-1258</code></td>
+</tr>
+<tr>
+<td>Platform API <code>chassis.get_module().get_oper_status()</code></td>
+<td>platform 呼び出し (midplane state)</td>
+<td>起動時 <code>set_initial_dpu_admin_state()</code> で DPU_STATE 初期値を決定する</td>
+<td><code>chassisd:1377</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_STATE_DB DPU_STATE\|DPU&lt;N&gt;</code> (自己参照)</td>
+<td>前回値読み取り (変化検知)</td>
+<td><code>DpuStateUpdater.update_state()</code> が前回 CP/DP state と比較して変化した場合のみ書き込む</td>
+<td><code>chassisd:1306,1312</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">書き手は chassisd のみ</p>
+<p><code>DPU_STATE</code> テーブルへの書き込みは <code>SmartSwitchModuleUpdater</code> / <code>DpuStateUpdater</code> / <code>DpuStateManagerTask</code> のみが行う。<code>show dpu</code> CLI、<code>DpuStateManagerTask</code> の <code>SubscriberStateTable</code> は読み取り専用。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">platform API 実装有無でロジックが切り替わる</p>
+<p><code>DpuStateUpdater.__init__()</code> (<code>chassisd:1246-1258</code>) で <code>get_dataplane_state()</code> / <code>get_controlplane_state()</code> の実装有無を確認し、<code>NotImplementedError</code> であれば fallback 関数 (<code>_get_data_plane_state_common</code> / <code>_get_control_plane_state_common</code>) を使用する。つまり同じ DP/CP state フィールドでも <strong>platform 実装あり</strong> の場合と <strong>fallback (DB 参照)</strong> の場合で参照先テーブルが異なる。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="retry-recovery-phase-d">失敗挙動・retry / recovery (Phase D)<a class="headerlink" href="#retry-recovery-phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd update_dpu_state:864-891 / try_get:125-139 / set_initial_dpu_admin_state:1364-1405 / DpuChassisdDaemon.run:1408-1461 -->
+
+<p><code>DPU_STATE</code> は <code>chassisd</code> が <strong>push 型</strong> で書き込む CHASSIS_STATE_DB テーブルであり、orchagent の <code>task_need_retry</code> / <code>task_failed</code> 機構とは異なる failure/recovery モデルを持つ。</p>
+<h3 id="failure">failure パターン概要<a class="headerlink" href="#failure" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>パターン</th>
+<th>トリガー</th>
+<th>挙動</th>
+<th>recovery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>platform API <code>NotImplementedError</code></strong></td>
+<td><code>get_oper_status()</code> / <code>get_dataplane_state()</code> / <code>get_controlplane_state()</code> が未実装</td>
+<td><code>try_get()</code> がデフォルト値 (<code>MODULE_STATUS_OFFLINE</code> / <code>False</code>) を返す。例外はログなし</td>
+<td>fallback ロジック (DB 参照) に自動切り替え</td>
+</tr>
+<tr>
+<td><strong>DB 接続エラー (<code>update_dpu_state</code>)</strong></td>
+<td><code>daemon_base.db_connect()</code> / <code>hset()</code> が例外</td>
+<td><code>except Exception as e: log_error(...)</code> でログのみ。DB への書き込みは失敗し <strong>retry なし</strong></td>
+<td>次のポーリングサイクル (10 秒後) で再試行</td>
+</tr>
+<tr>
+<td><strong><code>midplane_initialized = False</code></strong></td>
+<td><code>chassis.init_midplane_switch()</code> が <code>False</code> を返す</td>
+<td><code>check_midplane_reachability()</code> が即 <code>return</code> し midplane 状態を更新しない</td>
+<td>midplane スイッチ初期化成功まで永続的にスキップ</td>
+</tr>
+<tr>
+<td><strong><code>set_initial_dpu_admin_state</code> 単一 DPU 例外</strong></td>
+<td><code>get_module()</code> / <code>get_oper_status()</code> 等で例外</td>
+<td><code>except Exception as e: log_error(...)</code> でログ。当該 DPU の <code>DPU_STATE</code> は未初期化のまま残る</td>
+<td>次のポーリングで <code>check_midplane_reachability()</code> が補完</td>
+</tr>
+<tr>
+<td><strong><code>DpuStateUpdater.update_state</code> での評価エラー</strong></td>
+<td><code>_get_dp_state()</code> / <code>_get_cp_state()</code> 内で例外</td>
+<td>例外は上位のポーリングループに伝搬。<code>DpuChassisdDaemon.run()</code> がキャッチしない場合は supervisord が再起動</td>
+<td>supervisord がプロセス再起動 (非ゼロ exit)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="try_get-platform-api">try_get による platform API 失敗の吸収<a class="headerlink" href="#try_get-platform-api" title="Permanent link">&para;</a></h3>
+<p><code>try_get()</code> (<code>chassisd:125-139</code>) は platform API 呼び出しを安全にラップし、<code>NotImplementedError</code> または任意の例外時に <code>default</code> 値を返す:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># chassisd:125-139</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">try_get</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        <span class="n">default</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">NOT_AVAILABLE</span><span class="p">)</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="n">default</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>        <span class="n">default</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">NOT_AVAILABLE</span><span class="p">)</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="n">default</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="k">return</span> <span class="n">ret</span>
+</span></code></pre></div>
+<p><code>try_get</code> を経由する代表的な呼び出しと fallback 値:</p>
+<table>
+<thead>
+<tr>
+<th>呼び出し</th>
+<th>default</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>chassis.init_midplane_switch()</code></td>
+<td><code>False</code></td>
+<td><code>midplane_initialized = False</code> → <code>check_midplane_reachability</code> が無効化</td>
+</tr>
+<tr>
+<td><code>module.get_oper_status()</code></td>
+<td><code>MODULE_STATUS_OFFLINE</code></td>
+<td>起動時に全 DPU が <code>op_state = 'down'</code> で初期化される</td>
+</tr>
+<tr>
+<td><code>module.get_name()</code></td>
+<td><code>'MODULE {index}'</code></td>
+<td>DPU_STATE キーが <code>DPU_STATE|MODULE 0</code> 等になる</td>
+</tr>
+<tr>
+<td><code>module.get_midplane_ip()</code></td>
+<td><code>'0.0.0.0'</code></td>
+<td>CHASSIS_MIDPLANE_TABLE への IP が無効値になる</td>
+</tr>
+<tr>
+<td><code>module.is_midplane_reachable()</code></td>
+<td><code>False</code></td>
+<td>全 DPU が midplane 到達不可として処理される</td>
+</tr>
+</tbody>
+</table>
+<h3 id="db-retry">DB 書き込み失敗時の retry なし設計<a class="headerlink" href="#db-retry" title="Permanent link">&para;</a></h3>
+<p><code>SmartSwitchModuleUpdater.update_dpu_state()</code> (<code>chassisd:864-891</code>) は DB 書き込みエラー時に <code>log_error</code> のみでリターンし、<strong>retry キューには積まない</strong>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># chassisd:864-891</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">update_dpu_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>        <span class="o">...</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">updates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">chassis_state_db</span><span class="o">.</span><span class="n">hset</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>この設計の意図: <code>DPU_STATE</code> は <strong>volatile な状態テーブル</strong> であり、次のポーリングサイクル (<code>CHASSIS_INFO_UPDATE_PERIOD_SECS = 10</code> 秒) で再評価・再書き込みされるため、単一サイクルの書き込み失敗は自己修復する。</p>
+<h3 id="supervisord">supervisord による自動再起動<a class="headerlink" href="#supervisord" title="Permanent link">&para;</a></h3>
+<p><code>chassisd</code> は <code>supervisord</code> 管理下で動作し、非ゼロ exit code で終了した場合に自動再起動される (<code>chassisd:114-116</code>):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># chassisd:114-116</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1"># This daemon should return non-zero exit code so that supervisord will</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1"># restart it automatically.</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">exit_code</span> <span class="o">=</span> <span class="mi">0</span>
+</span></code></pre></div>
+<p><code>SIGINT</code> / <code>SIGTERM</code> 受信時は <code>exit_code = 128 + sig</code> を設定して終了するため、supervisord が再起動をトリガーする。再起動後は <code>set_initial_dpu_admin_state()</code> から再実行され、DPU_STATE が再初期化される。</p>
+<h3 id="_9">部分初期化が残るケース<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p><code>set_initial_dpu_admin_state()</code> (<code>chassisd:1364-1405</code>) はモジュールごとに <code>try/except</code> を持つが、<strong>ループ全体は例外でも継続</strong>する。特定 DPU の初期化が失敗した場合、当該 <code>DPU&lt;N&gt;</code> の <code>DPU_STATE</code> フィールドが書き込まれないまま残る可能性がある。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># chassisd:1400-1401</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">log_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in run: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></code></pre></div>
+<p>初期化漏れが発生した DPU は <code>check_midplane_reachability()</code> の次回ポーリングで midplane 到達性に基づいて補完される。ただし CP/DP state (<code>dpu_control_plane_state</code> / <code>dpu_data_plane_state</code>) は <code>DpuStateUpdater</code>(DPU 側 chassisd) が評価するため、DPU 側デーモンが正常起動するまでは未書き込みのままとなる。</p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/dpu-state-constants.md</code></p>
+</blockquote>
+<p><code>chassisd</code> は <code>DPU_STATE</code> テーブルのフィールド名・タイムスタンプ形式・ポーリング間隔をモジュール先頭の定数で管理する。</p>
+<h3 id="chassisd108-111">フィールド名定数 (<code>chassisd:108-111</code>)<a class="headerlink" href="#chassisd108-111" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値 (CONFIG_DB フィールド名)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DP_STATE</code></td>
+<td><code>'dpu_data_plane_state'</code></td>
+</tr>
+<tr>
+<td><code>DP_UPDATE_TIME</code></td>
+<td><code>'dpu_data_plane_time'</code></td>
+</tr>
+<tr>
+<td><code>CP_STATE</code></td>
+<td><code>'dpu_control_plane_state'</code></td>
+</tr>
+<tr>
+<td><code>CP_UPDATE_TIME</code></td>
+<td><code>'dpu_control_plane_time'</code></td>
+</tr>
+</tbody>
+</table>
+<p>midplane 側 3 フィールド (<code>dpu_midplane_link_state</code> / <code>dpu_midplane_link_reason</code> / <code>dpu_midplane_link_time</code>) は <code>update_dpu_state()</code> 内でリテラル文字列として直接使用される（定数化なし）。</p>
+<h3 id="chassisd159">タイムスタンプフォーマット (<code>chassisd:159</code>)<a class="headerlink" href="#chassisd159" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="s2">&quot;</span><span class="si">%a</span><span class="s2"> %b </span><span class="si">%d</span><span class="s2"> %I:%M:%S %p UTC %Y&quot;</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1"># 例: &quot;Mon May 18 10:30:45 AM UTC 2026&quot;</span>
+</span></code></pre></div>
+<p><code>get_formatted_time()</code> がすべての <code>*_time</code> フィールドで共通使用される。12 時間制 (<code>%I</code>) + <code>%p</code> (AM/PM) を UTC で表記することに注意。</p>
+<h3 id="_10">タイマー・タイムアウト定数<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>単位</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CHASSIS_INFO_UPDATE_PERIOD_SECS</code></td>
+<td><code>10</code></td>
+<td>秒</td>
+<td>メインループの <code>stop.wait()</code> 間隔 (<code>chassisd:89</code>)。midplane ポーリング周期と DPU_STATE 書き込み周期を決定する</td>
+</tr>
+<tr>
+<td><code>SELECT_TIMEOUT</code></td>
+<td><code>1000</code></td>
+<td>ms</td>
+<td><code>DpuStateManagerTask</code> の <code>sel.select()</code> タイムアウト (<code>chassisd:95</code>)。イベント駆動モードでの待機上限</td>
+</tr>
+<tr>
+<td><code>DEFAULT_DPU_REBOOT_TIMEOUT</code></td>
+<td><code>360</code></td>
+<td>秒</td>
+<td>DPU reboot タイムアウト初期値 (<code>chassisd:82</code>)。<code>platform_env.conf</code> の <code>dpu_reboot_timeout</code> で上書き可能</td>
+</tr>
+<tr>
+<td><code>MAX_DPU_REBOOT_DURATION</code></td>
+<td><code>800</code></td>
+<td>秒</td>
+<td>DPU reboot 最長待機時間のハードリミット (<code>chassisd:83</code>)。設定で変更不可</td>
+</tr>
+<tr>
+<td><code>CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD</code></td>
+<td><code>30</code></td>
+<td>分</td>
+<td>モジュール down 検出後、<code>DPU_STATE</code> 以外の CHASSIS_STATE_DB エントリを削除するまでの猶予期間 (<code>chassisd:90</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="db">DB クリーンアップ対象外<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
+<p><code>module_down_chassis_db_cleanup()</code> (<code>chassisd:1113-1130</code>) はモジュールが down 状態になった後 30 分経過で CHASSIS_STATE_DB エントリを削除するが、<code>DPU_STATE</code> と <code>REBOOT_CAUSE</code> キーは <strong>削除対象外</strong> として明示的に除外される:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># chassisd:1124</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">if</span> <span class="ow">not</span> <span class="s2">&quot;DPU_STATE&quot;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s2">&quot;REBOOT_CAUSE&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">chassis_state_db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span></code></pre></div>
+<p><code>DPU_STATE</code> は DPU 再起動後も参照されるため、down 状態でも保持し続ける設計となっている。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd DpuStateManagerTask.task_worker:1484-1530 / DpuStateUpdater.update_state:1303-1316 / SmartSwitchModuleUpdater.module_down_chassis_db_cleanup:1113-1130 / DpuChassisdDaemon.run:1537-1557 -->
+
+<p><code>DPU_STATE</code> テーブルへの書き込みに伴う副次的な DB 変化を整理する。このテーブルは CHASSIS_STATE_DB の <strong>状態専用テーブル</strong>であり、CONFIG_DB / APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き戻しは発生しない。</p>
+<h3 id="dpustatemanagertask">DpuStateManagerTask による自己フィードバック書き込み<a class="headerlink" href="#dpustatemanagertask" title="Permanent link">&para;</a></h3>
+<p><code>DpuStateManagerTask.task_worker()</code> (<code>chassisd:1484-1530</code>) は <code>DPU_STATE</code> 自身の変化も購読トリガーとしている。<code>dpu_midplane_link_state</code> などの変化通知を受けると <code>DpuStateUpdater.update_state()</code> が呼ばれ、CP/DP state を再評価して <strong>DPU_STATE に書き戻す</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込条件</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CHASSIS_STATE_DB</code></td>
+<td><code>DPU_STATE\|DPU&lt;N&gt;</code> (<code>dpu_control_plane_state</code>, <code>dpu_data_plane_state</code>)</td>
+<td>DPU_STATE 変化通知後、CP / DP state の再評価値が前回値と異なる場合のみ</td>
+<td><code>chassisd:1506-1526</code>, <code>chassisd:1303-1316</code></td>
+</tr>
+</tbody>
+</table>
+<p>この自己フィードバックは <strong>無限ループを引き起こさない</strong>。<code>update_state()</code> (<code>chassisd:1303-1316</code>) は前回値と同値の場合は <code>hset</code> をスキップするため、変化がなければ書き込みは発生しない。</p>
+<h3 id="poll_dpu_state"><code>poll_dpu_state</code> 有効時 — フィードバックループなし<a class="headerlink" href="#poll_dpu_state" title="Permanent link">&para;</a></h3>
+<p><code>DpuChassisdDaemon.run()</code> (<code>chassisd:1537-1557</code>) は <code>poll_dpu_state = True</code> の場合（platform API <code>get_dataplane_state</code> / <code>get_controlplane_state</code> が実装済み）、<code>DpuStateManagerTask</code> を起動しない。この場合 DPU_STATE 変化による自己フィードバックは発生せず、ポーリングループ (<code>while not stop.wait(loop_interval)</code>) が定期的に <code>update_state()</code> を呼ぶだけとなる。</p>
+<h3 id="down-dpu_state">モジュール down 時 — DPU_STATE は削除対象外<a class="headerlink" href="#down-dpu_state" title="Permanent link">&para;</a></h3>
+<p><code>module_down_chassis_db_cleanup()</code> (<code>chassisd:1113-1130</code>) はモジュール down 後に CHASSIS_STATE_DB の関連エントリを削除するが、<code>DPU_STATE</code> キーと <code>REBOOT_CAUSE</code> キーは明示的に除外される:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># chassisd:1124</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">if</span> <span class="ow">not</span> <span class="s2">&quot;DPU_STATE&quot;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s2">&quot;REBOOT_CAUSE&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">chassis_state_db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span></code></pre></div>
+<p>DPU_STATE エントリは DPU down 状態でも CHASSIS_STATE_DB に残り続け、再起動後の状態参照に利用される。</p>
+<h3 id="_11">副次書き込みが発生しないケース<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>poll_dpu_state = True</code> の場合</td>
+<td><code>DpuStateManagerTask</code> 未起動。DPU_STATE 変化による自己フィードバックなし (<code>chassisd:1540-1546</code>)</td>
+</tr>
+<tr>
+<td>CP/DP state が前回値と同一の場合</td>
+<td><code>update_state()</code> が <code>hset</code> をスキップ (<code>chassisd:1303-1316</code>)</td>
+</tr>
+<tr>
+<td>CONFIG_DB / APPL_DB / STATE_DB</td>
+<td><code>chassisd</code> はこれらへの書き戻しを行わない</td>
+</tr>
+<tr>
+<td>COUNTERS_DB / FLEX_COUNTER_DB</td>
+<td>DPU_STATE は SAI counter binding を持たないため書き込みなし</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>chassisd</code> <code>DpuStateUpdater</code> クラス全行 (L1234-1320)、<code>DpuStateManagerTask</code> 全行 (L1464-1557)、<code>SmartSwitchModuleUpdater.module_down_chassis_db_cleanup</code> (L1113-1130) 読了。副次書き込みは <code>CHASSIS_STATE_DB:DPU_STATE</code> への自己フィードバック 1 件のみ。詳細は <code>meta/_intermediate/cdb-flow/dpu-state-side.md</code> 参照。</p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd DpuStateManagerTask:1464-1530 / DpuChassisdDaemon.run:1537-1557 / SELECT_TIMEOUT:95 -->
+
+<h3 id="swsscommontable-hset">書き込み側 — swsscommon.Table による直接 hset<a class="headerlink" href="#swsscommontable-hset" title="Permanent link">&para;</a></h3>
+<p><code>DPU_STATE</code> への書き込みは <strong>ProducerStateTable ではなく</strong> <code>swsscommon.Table.hset()</code> を使用する。これは CHASSIS_STATE_DB が CONFIG_DB / APPL_DB の producer/consumer パターンではなく、デーモン直接書き込みの state DB であるため。</p>
+<table>
+<thead>
+<tr>
+<th>書き込み元</th>
+<th>書き込みメソッド</th>
+<th>キー例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SmartSwitchModuleUpdater.update_dpu_state()</code> (chassisd:864-891)</td>
+<td><code>chassis_state_db.hset(key, field, value)</code></td>
+<td><code>DPU_STATE\|DPU0</code></td>
+</tr>
+<tr>
+<td><code>DpuStateUpdater._update_dp_dpu_state()</code> (chassisd:1290-1291)</td>
+<td><code>dpu_state_table.hset(name, DP_STATE, state)</code></td>
+<td><code>DPU_STATE\|DPU0</code></td>
+</tr>
+<tr>
+<td><code>DpuStateUpdater._update_cp_dpu_state()</code> (chassisd:1294-1295)</td>
+<td><code>dpu_state_table.hset(name, CP_STATE, state)</code></td>
+<td><code>DPU_STATE\|DPU0</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>swsscommon.Table.hset()</code> は内部で Redis keyspace notification (<code>__keyspace@13__:DPU_STATE|DPU&lt;N&gt;</code>) を PUBLISH するため、<code>SubscriberStateTable</code> で購読している側がイベントを受け取る。</p>
+<h3 id="subscriberstatetable-select">読み取り側 — SubscriberStateTable + select ループ<a class="headerlink" href="#subscriberstatetable-select" title="Permanent link">&para;</a></h3>
+<p><code>DpuStateManagerTask.task_worker()</code> (chassisd:1464-1530) は 3 テーブルを <code>SubscriberStateTable</code> で購読し、<code>SELECT_TIMEOUT = 1000</code> ms で永続ブロックする:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># chassisd:95</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">SELECT_TIMEOUT</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># ms</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># chassisd:1479-1482</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="n">selectable</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">swsscommon</span><span class="o">.</span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app_db</span><span class="p">,</span> <span class="s1">&#39;PORT_TABLE&#39;</span><span class="p">),</span>         <span class="c1"># APP_DB (DB ID=0)</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>    <span class="n">swsscommon</span><span class="o">.</span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_db</span><span class="p">,</span> <span class="s1">&#39;SYSTEM_READY&#39;</span><span class="p">),</span>     <span class="c1"># STATE_DB (DB ID=6)</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>    <span class="n">swsscommon</span><span class="o">.</span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chassis_state_db</span><span class="p">,</span> <span class="s1">&#39;DPU_STATE&#39;</span><span class="p">)</span> <span class="c1"># CHASSIS_STATE_DB (DB ID=13)</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="p">]</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>DB ID</th>
+<th>テーブル</th>
+<th>keyspace チャネル</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CHASSIS_STATE_DB</td>
+<td>13</td>
+<td><code>DPU_STATE</code></td>
+<td><code>__keyspace@13__:DPU_STATE\|DPU&lt;N&gt;</code></td>
+<td>CP/DP state 変化の自己フィードバック検知</td>
+</tr>
+<tr>
+<td>APP_DB</td>
+<td>0</td>
+<td><code>PORT_TABLE</code></td>
+<td><code>__keyspace@0__:PORT_TABLE\|*</code></td>
+<td>platform API 非実装時の DP state fallback ソース</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>6</td>
+<td><code>SYSTEM_READY</code></td>
+<td><code>__keyspace@6__:SYSTEM_READY\|*</code></td>
+<td>platform API 非実装時の CP state fallback ソース</td>
+</tr>
+</tbody>
+</table>
+<p><code>TIMEOUT</code> 時は <code>continue</code> (何もしない)。<code>OBJECT</code> 検出時にのみ <code>DpuStateUpdater.update_state()</code> を呼んで CP/DP state を再評価・再書き込みする。</p>
+<h3 id="show-dpu-cli-on-demand">show dpu CLI — on-demand 読み取り (非購読)<a class="headerlink" href="#show-dpu-cli-on-demand" title="Permanent link">&para;</a></h3>
+<p><code>sonic-utilities/show/system_health.py:show_dpu_state()</code> (L172-222) は <code>swsscommon.Table</code> で CHASSIS_STATE_DB を直接読み取る (購読なし)。コマンド実行時のみ on-demand でフィールドを取得し <code>oper_status</code> を算出する。</p>
+<h3 id="poll_dpu_state_1">poll_dpu_state フラグによる通知方式の切り替え<a class="headerlink" href="#poll_dpu_state_1" title="Permanent link">&para;</a></h3>
+<p><code>DpuChassisdDaemon.run()</code> (chassisd:1537-1557) は platform API の実装有無に応じて通知方式を切り替える:</p>
+<table>
+<thead>
+<tr>
+<th><code>poll_dpu_state</code></th>
+<th>条件</th>
+<th>通知方式</th>
+<th><code>DpuStateManagerTask</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>True</code></td>
+<td><code>get_dataplane_state()</code> / <code>get_controlplane_state()</code> が実装済み</td>
+<td>ポーリング (loop_interval 秒ごとに <code>update_state()</code>)</td>
+<td><strong>起動しない</strong></td>
+</tr>
+<tr>
+<td><code>False</code></td>
+<td>両 API が <code>NotImplementedError</code></td>
+<td>subscribe ベース (<code>PORT_TABLE</code> / <code>SYSTEM_READY</code> / <code>DPU_STATE</code> イベント駆動)</td>
+<td><strong>起動する</strong></td>
+</tr>
+</tbody>
+</table>
+<p><code>poll_dpu_state = True</code> の場合は DPU_STATE 変化の keyspace notification は使用されない。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/dpu-state-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/dpu-state-platform.md</code></p>
+</blockquote>
+<h3 id="smartswitch">前提: SmartSwitch 専用テーブル<a class="headerlink" href="#smartswitch" title="Permanent link">&para;</a></h3>
+<p><code>DPU_STATE</code> は SmartSwitch プラットフォーム上の DPU 側 <code>chassisd</code> (<code>DpuChassisdDaemon</code>) が書き込む CHASSIS_STATE_DB テーブルであり、通常の SONiC スイッチ (非 SmartSwitch) ではこのテーブル自体が存在しない。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># chassisd:1574-1579</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">if</span> <span class="n">chassis</span><span class="o">.</span><span class="n">is_smartswitch</span><span class="p">()</span> <span class="ow">and</span> <span class="n">chassis</span><span class="o">.</span><span class="n">is_dpu</span><span class="p">():</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>    <span class="n">chassisd</span> <span class="o">=</span> <span class="n">DpuChassisdDaemon</span><span class="p">(</span><span class="n">SYSLOG_IDENTIFIER</span><span class="p">,</span> <span class="n">chassis</span><span class="p">)</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    <span class="n">chassisd</span> <span class="o">=</span> <span class="n">ChassisdDaemon</span><span class="p">(</span><span class="n">SYSLOG_IDENTIFIER</span><span class="p">,</span> <span class="n">chassis</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="platform-api">プラットフォーム差の主軸: platform API 実装有無<a class="headerlink" href="#platform-api" title="Permanent link">&para;</a></h3>
+<p><code>DpuChassisdDaemon.run()</code> (chassisd:1537-1540) は起動時に <code>get_dataplane_state()</code> / <code>get_controlplane_state()</code> の実装有無を確認し、CP/DP 状態の評価方式を 2 系統に切り替える:</p>
+<table>
+<thead>
+<tr>
+<th><code>poll_dpu_state</code></th>
+<th>条件</th>
+<th>CP/DP 評価方式</th>
+<th><code>DpuStateManagerTask</code> 起動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>True</code></td>
+<td>platform API 実装済み</td>
+<td>platform API 直接呼び出し (ループごと)</td>
+<td><strong>しない</strong></td>
+</tr>
+<tr>
+<td><code>False</code></td>
+<td>両 API とも <code>NotImplementedError</code></td>
+<td>DB fallback (<code>PORT_TABLE</code> / <code>SYSTEM_READY</code> 参照)</td>
+<td><strong>する</strong> (subscribe ベース)</td>
+</tr>
+</tbody>
+</table>
+<p>この切り替えは実行時に動的に行われるため、同一コードで複数ベンダーの SmartSwitch プラットフォームに対応する。</p>
+<h3 id="_12">フィールド別プラットフォーム差<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>platform API 実装あり</th>
+<th>platform API なし (fallback)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dpu_data_plane_state</code></td>
+<td><code>chassis.get_dataplane_state()</code> 戻り値 → <code>'up'</code>/<code>'down'</code></td>
+<td><code>APPL_DB PORT_TABLE</code> の全ポート <code>oper_status == 'up'</code> で判定 (chassisd:1267-1275)</td>
+</tr>
+<tr>
+<td><code>dpu_control_plane_state</code></td>
+<td><code>chassis.get_controlplane_state()</code> 戻り値 → <code>'up'</code>/<code>'down'</code></td>
+<td><code>STATE_DB SYSTEM_READY\|SYSTEM_STATE.Status == 'up'</code> で判定 (chassisd:1277-1284)</td>
+</tr>
+<tr>
+<td><code>dpu_midplane_link_state</code></td>
+<td><code>chassis.get_oper_status()</code> 経由 (Platform API 必須)</td>
+<td>platform API 未実装時は <code>MODULE_STATUS_OFFLINE</code> → <code>'down'</code> (fallback なし)</td>
+</tr>
+<tr>
+<td><code>*_time</code> フィールド</td>
+<td><code>get_formatted_time()</code> (UTC, 12h 書式)</td>
+<td>同左 — プラットフォーム差なし</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">PORT_TABLE fallback の注意点</p>
+<p><code>_get_data_plane_state_common()</code> は CONFIG_DB <code>PORT</code> テーブルを走査するが、<strong>ポートが 1 件も存在しない場合はループがスキップされ <code>True</code> (= <code>'up'</code>) が返る</strong>。DPU 起動直後で PORT が未登録の状態では誤って <code>'up'</code> が書き込まれる可能性がある (chassisd:1267-1275)。</p>
+</div>
+<h3 id="multi-asic-voq-chassis">multi-asic / VOQ chassis との差異<a class="headerlink" href="#multi-asic-voq-chassis" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th><code>DPU_STATE</code> 書き込み</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SmartSwitch DPU</td>
+<td>あり (<code>DpuChassisdDaemon</code>)</td>
+<td>本テーブルの対象</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor / line card)</td>
+<td>なし</td>
+<td><code>CHASSIS_MODULE</code> テーブルと <code>CHASSIS_STATE_DB LINE_CARD</code> エントリを使用</td>
+</tr>
+<tr>
+<td>multi-asic (複数 ASIC 単体スイッチ)</td>
+<td>なし</td>
+<td>SmartSwitch DPU とは別アーキテクチャ</td>
+</tr>
+<tr>
+<td>通常スイッチ</td>
+<td>なし</td>
+<td><code>chassis.is_smartswitch()</code> が <code>False</code> のため <code>ChassisdDaemon</code> が起動</td>
+</tr>
+</tbody>
+</table>
+<h3 id="smartswitch-platform">SmartSwitch 固有の platform 設定<a class="headerlink" href="#smartswitch-platform" title="Permanent link">&para;</a></h3>
+<p><code>platform_env.conf</code> (<code>/usr/share/sonic/platform/platform_env.conf</code>) で DPU reboot タイムアウトをベンダーが調整可能:</p>
+<table>
+<thead>
+<tr>
+<th>設定キー</th>
+<th>デフォルト</th>
+<th>ハードリミット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dpu_reboot_timeout</code></td>
+<td>360 秒 (<code>DEFAULT_DPU_REBOOT_TIMEOUT</code>)</td>
+<td>800 秒 (<code>MAX_DPU_REBOOT_DURATION</code>) — 上書き不可</td>
+</tr>
+</tbody>
+</table>
+<p><code>DPU_STATE</code> フィールド名・DB 番号 (CHASSIS_STATE_DB = 13)・タイムスタンプ書式は全 SmartSwitch ベンダー共通でプラットフォーム差なし。</p>
+<!-- /platform -->
+
+<h2 id="_13">購読者<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>chassisd</code> (<code>SmartSwitchModuleUpdater</code> / <code>DpuStateUpdater</code>) — 書き込み元</li>
 <li><code>DpuStateManagerTask</code> — <code>SubscriberStateTable</code> で DPU_STATE 変化を検知し、CP/DP 状態の再評価をトリガー (chassisd:1482)</li>
@@ -35447,7 +36719,7 @@
 <li>関連 STATE_DB: <a href="../chassis-state/"><code>CHASSIS_STATE_DB 概要</code></a> — CHASSIS_STATE_DB 全テーブルの一覧</li>
 <li>関連 CLI: <code>show dpu</code></li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -27594,6 +27594,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd ユニット名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chronykeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chrony.keys ファイルパス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chronykeysj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chrony.keys.j2 テンプレート固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35878,6 +35939,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd ユニット名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chronykeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chrony.keys ファイルパス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chronykeysj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chrony.keys.j2 テンプレート固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36455,6 +36577,132 @@ NTP_KEY の SET 操作だけでは <code>trusted_str</code> は変わらず、NT
 <p><code>chrony.keys.j2</code> は <code>NTP_KEY[keyid].type</code> または <code>NTP_KEY[keyid].value</code> が falsy の場合、その鍵エントリを keyfile から<strong>無警告で除外</strong>する。エラーは発生せず、次回 DB 変更で再生成されるまで chrony は当該鍵 ID を未登録として扱う。</p>
 <p>詳細調査メモ: <code>meta/_intermediate/cdb-flow/ntp-key-failure.md</code>。</p>
 <!-- /failure-behavior -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>NTP_KEY</code> テーブルの処理に関わるコード中のハードコード定数。CONFIG_DB / YANG で管理されない固定値のみを対象とする。出典は <code>sonic-host-services/scripts/hostcfgd</code>、<code>sonic-buildimage/files/image_config/chrony/</code> 以下のスクリプト・テンプレート群、および <code>sonic-ntp.yang</code>。</p>
+<h3 id="systemd">systemd ユニット名<a class="headerlink" href="#systemd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NtpCfg.CHRONY_RESTART</code></td>
+<td><code>['systemctl', 'restart', 'chrony']</code></td>
+<td><code>NTP_KEY</code> / <code>NTP_SERVER</code> / <code>NTP</code> 変更時に呼ばれる chrony 再起動コマンド。リスト形式で <code>run_cmd()</code> に渡される</td>
+<td><code>hostcfgd:1280</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="chronykeys">chrony.keys ファイルパス<a class="headerlink" href="#chronykeys" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>chrony.keys 出力先</td>
+<td><code>/etc/chrony/chrony.keys</code></td>
+<td><code>chrony-config.sh</code> が <code>sonic-cfggen</code> で展開する鍵ファイルの固定パス</td>
+<td><code>chrony-config.sh:10</code></td>
+</tr>
+<tr>
+<td>chrony.keys テンプレートパス</td>
+<td><code>/usr/share/sonic/templates/chrony.keys.j2</code></td>
+<td><code>sonic-cfggen -d -t &lt;このパス&gt;</code> で DB から生成</td>
+<td><code>chrony-config.sh:10</code></td>
+</tr>
+<tr>
+<td>chmod 値</td>
+<td><code>o-r</code> (others から read 権を除去)</td>
+<td>鍵ファイルへのアクセスを chrony ユーザに限定するための固定権限設定</td>
+<td><code>chrony-config.sh:11</code></td>
+</tr>
+<tr>
+<td>keyfile パス (chrony.conf 中)</td>
+<td><code>/etc/chrony/chrony.keys</code></td>
+<td><code>global.authentication == 'enabled'</code> のとき <code>chrony.conf</code> に <code>keyfile /etc/chrony/chrony.keys</code> を固定出力。chrony はこのパスからのみ鍵を読み込む</td>
+<td><code>chrony.conf.j2:127</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang_1">YANG スキーマ定数<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key-id</code> の range</td>
+<td><code>1..65535</code></td>
+<td><code>NTP_KEY.id</code> の有効範囲。0 および 65536 以上は YANG が <code>error-message "Failed NTP key ID"</code> で拒否</td>
+<td><code>sonic-ntp.yang</code> typedef <code>key-id</code></td>
+</tr>
+<tr>
+<td><code>key-type</code> enum</td>
+<td><code>md5</code> / <code>sha1</code> / <code>sha256</code> / <code>sha384</code> / <code>sha512</code></td>
+<td><code>NTP_KEY.type</code> の有効値セット (YANG default: <code>md5</code>)</td>
+<td><code>sonic-ntp.yang</code> typedef <code>key-type</code></td>
+</tr>
+<tr>
+<td><code>value</code> の length</td>
+<td><code>1..64</code></td>
+<td><code>NTP_KEY.value</code> の有効文字列長。空文字列と 65 文字以上は拒否</td>
+<td><code>sonic-ntp.yang</code> leaf <code>value</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="chronykeysj2">chrony.keys.j2 テンプレート固定値<a class="headerlink" href="#chronykeysj2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>value デコード方式</td>
+<td><code>b64decode</code> フィルタ</td>
+<td><code>NTP_KEY.value</code> は base64 エンコード済み前提。<code>\| b64decode</code> でデコードして keyfile に書き出す</td>
+<td><code>chrony.keys.j2:16</code></td>
+</tr>
+<tr>
+<td>type 正規化フィルタ</td>
+<td><code>\| upper</code></td>
+<td><code>md5</code> → <code>MD5</code>、<code>sha256</code> → <code>SHA256</code> のように大文字変換 (chrony がアルゴリズム名に大文字を要求)</td>
+<td><code>chrony.keys.j2:17</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">NTP_KEY 個数上限の YANG 制約なし</p>
+<p><code>NTP_SERVER_LIST</code> は <code>max-elements 10</code> を持つが、<code>NTP_KEY_LIST</code> には <code>max-elements</code> 制約がなく、chrony / ntpd の内部制限のみが上限となる。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">value の base64 デコードはテンプレートに固定</p>
+<p><code>NTP_KEY.value</code> が base64 以外の形式で格納された場合、Jinja2 の <code>b64decode</code> フィルタがエラーを発生させ <code>chrony.keys</code> 生成が失敗する。YANG スキーマは <code>length 1..64</code> のみ検証し、エンコード形式は検証しない。</p>
+</div>
+<p>詳細調査メモ: <code>meta/_intermediate/cdb-flow/ntp-key-constants.md</code>。</p>
+<!-- /constants -->
 
 <div class="footnote">
 <hr />

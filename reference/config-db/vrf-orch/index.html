@@ -29560,7 +29560,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setvrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET（VRF 追加）の先行必須条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delvrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL（VRF 削除）の先行必須条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自動調停の仕組み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -29571,7 +29621,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29582,7 +29632,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34914,7 +34964,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setvrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET（VRF 追加）の先行必須条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delvrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL（VRF 削除）の先行必須条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自動調停の仕組み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34925,7 +35025,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34936,7 +35036,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35176,13 +35276,95 @@
 <p>VRFOrch は VRF 作成/更新成功後に <code>STATE_VRF_OBJECT_TABLE|&lt;vrf_name&gt;</code> に <code>"state"="ok"</code> を書く (vrforch.cpp:120, 150)。削除時は <code>m_stateVrfObjectTable.del(vrf_name)</code> (vrforch.cpp:193)。vrfmgrd は <code>isVrfObjExist()</code> でこのフラグを参照し、VRF 削除の遅延タイミングを制御する。</p>
 <!-- /defaults -->
 
-<h2 id="_3">例外条件・特殊挙動<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>vrfmgrd</code> (<code>sonic-swss/cfgmgr/vrfmgr.cpp</code>) および <code>VRFOrch::addOperation</code> / <code>VRFOrch::delOperation</code> (<code>sonic-swss/orchagent/vrforch.cpp</code>) を精読した結果、以下の順序依存・タイミング依存を検出した。</p>
+<h3 id="setvrf">SET（VRF 追加）の先行必須条件<a class="headerlink" href="#setvrf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>先行条件</th>
+<th>方向</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Linux VRF デバイス作成（vrfmgrd <code>setLink()</code>）</td>
+<td><strong>強制先行</strong></td>
+<td>VRF プールが空 (<code>getFreeTable()</code> → <code>0</code>) の場合 <code>ip link add</code> が失敗しエントリが APPL_DB に書かれない (<code>vrfmgr.cpp:185-188</code>)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>EVPN VTEP（<code>VXLAN_EVPN_NVO</code> テーブル）— <code>vni</code> フィールドが非ゼロの VRF のみ</td>
+<td><strong>強制先行</strong></td>
+<td><code>updateVrfVNIMap()</code> が <code>evpn_orch-&gt;getEVPNVtep()</code> null を検出して <code>false</code> を返し、<code>addOperation</code> が <code>false</code> でリターン → Consumer がエントリを <code>m_toSync</code> に残して次ループで再試行 (<code>vrforch.cpp:225-230</code>)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>APPL_DB VRF_TABLE エントリ到着（VRFOrch の前提）— vrfmgrd が先に書いていること</td>
+<td>自然順（vrfmgrd → APPL_DB → VRFOrch）</td>
+<td><code>VRFOrch::addOperation</code> は APPL_DB の Consumer イベントで駆動されるため、vrfmgrd が <code>m_appVrfTableProducer.set()</code> を呼ぶまで SAI 作成は発生しない (<code>vrfmgr.cpp:303</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>推奨書込み順序（VNI 付き VRF の場合）</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a># 1. VXLAN NVO/VTEP を先に作成
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>SET CONFIG_DB VXLAN_EVPN_NVO|nvo1  ...
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a># 2. VRF を追加（vrfmgrd が Linux link 作成 → APPL_DB 書込み → VRFOrch が SAI VR 作成）
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>SET CONFIG_DB VRF|VrfRed  vni=10000
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a># 3. VRFOrch が STATE_VRF_OBJECT_TABLE|VrfRed  state=ok を書く
+</span></code></pre></div>
+<p>VNI なし VRF は手順 1 が不要。</p>
+<h3 id="delvrf">DEL（VRF 削除）の先行必須条件<a class="headerlink" href="#delvrf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>先行条件</th>
+<th>方向</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>VRF を参照する INTERFACE / ROUTE の削除</td>
+<td><strong>強制先行</strong></td>
+<td><code>VRFOrch::delOperation</code> は <code>vrf_table_[vrf_name].ref_count != 0</code> を検出して <code>false</code> をリターン → Consumer が再キューし、参照カウントが 0 になるまで無限ポーリング (<code>vrforch.cpp:169-170</code>)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>VRFOrch による <code>STATE_VRF_OBJECT_TABLE</code> エントリ削除</td>
+<td><strong>強制先行</strong></td>
+<td>vrfmgrd DEL ハンドラは <code>isVrfObjExist()</code> が真の間、<code>it++; continue</code> で DEL を保留し続ける。VRFOrch が SAI <code>remove_virtual_router()</code> 成功後に <code>m_stateVrfObjectTable.del()</code> を呼んだ後にのみ <code>ip link del</code> が実行される (<code>vrfmgr.cpp:331-346</code>, <code>vrforch.cpp:193</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>安全な削除手順</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a># 1. VRF 配下の全 INTERFACE を削除（ref_count のデクリメント）
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>DEL CONFIG_DB INTERFACE|Ethernet0|10.0.0.1/31  (VRFOrch が decreaseVrfRefCount を呼ぶまで待機)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a># 2. VRF を削除
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>DEL CONFIG_DB VRF|VrfRed
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a># → vrfmgrd が APPL_DB DEL → VRFOrch が SAI DEL → STATE_VRF_OBJECT_TABLE クリア → vrfmgrd が ip link del
+</span></code></pre></div>
+<h3 id="_3">自動調停の仕組み<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>VNI 解決待ち（doTask 再試行）</strong>: <code>addOperation</code> が <code>false</code> を返すと <code>Orch2::doTask()</code> が <code>m_toSync</code> にエントリを残したまま次ループへ。EVPN VTEP 作成後の次スケジュールで自動再評価される。</li>
+<li><strong>ref_count ガード（delOperation 再試行）</strong>: <code>delOperation</code> が <code>false</code> を返した場合も同様。参照 Orch（RouteOrch / IntfsOrch 等）が <code>decreaseVrfRefCount()</code> を呼び ref_count が 0 になるまでポーリングを繰り返す。</li>
+<li><strong>VNI マップ整合性</strong>: VNI 変更 (SET) 時は <code>updateVrfVNIMap()</code> が新旧 VNI を比較し差分のみ更新するため、同一 VNI での再投入は冪等 (<code>vrforch.cpp:212</code>)。</li>
+</ul>
+<!-- /ordering -->
+
+<h2 id="_4">例外条件・特殊挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>VRF 削除タイミング</strong>: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は <code>ip link del</code> を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は <code>ref_count</code> が非ゼロで <code>delOperation</code> が <code>false</code> を返して再キュー。</li>
 <li><strong>VXLAN EVPN 未設定時の VNI</strong>: <code>evpn_orch-&gt;getEVPNVtep()</code> が null を返す場合 <code>updateVrfVNIMap()</code> は <code>false</code> を返して VRF 作成を中断する (vrforch.cpp:228-230)。VNI 付き VRF は EVPN VTEP が先に設定されている必要がある。</li>
 <li><strong>VNI の SAI 非直接性</strong>: VNI は <code>sai_virtual_router_api</code> には渡されない。VXLAN Tunnel Orch が VNI-VRF マッピングを別途管理する。</li>
 </ul>
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vrf/">CONFIG_DB VRF テーブル</a></li>
 <li><a href="../mgmt-vrf-config/">CONFIG_DB MGMT_VRF_CONFIG</a></li>
@@ -35190,7 +35372,7 @@
 <li><a href="../../yang/sonic-vrf/">YANG: sonic-vrf</a></li>
 <li><a href="../../cli/config-vrf/">CLI: config vrf</a></li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

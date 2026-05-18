@@ -28692,6 +28692,95 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙テーブル参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portsyncd-linksynccpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        portsyncd (linksync.cpp) の前提参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch-portsorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch (portsorch.cpp) の前提参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portsyncd-linksynccpp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        portsyncd (linksync.cpp) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch-portsorchcpp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch (portsorch.cpp) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不在・stale 残留のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35043,6 +35132,95 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙テーブル参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portsyncd-linksynccpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        portsyncd (linksync.cpp) の前提参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch-portsorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch (portsorch.cpp) の前提参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portsyncd-linksynccpp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        portsyncd (linksync.cpp) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portsorch-portsorchcpp_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortsOrch (portsorch.cpp) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不在・stale 残留のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35389,6 +35567,175 @@
 <p><strong>host_tx_ready の順序 (依存 #5)</strong>: <code>initHostTxReadyState()</code> で <code>"false"</code> を初期書き込み後、<code>setPortAdminStatus()</code> 内で admin UP + SAI set 成功 + Gearbox OK がそろって初めて <code>"true"</code> に更新される（portsorch.cpp:2220-2257）。SAI が失敗している間は <code>"false"</code> のまま。<code>m_cmisModuleAsicSyncSupported = true</code> の CMIS 対応環境では <code>setPortAdminStatus()</code> の直接制御はスキップされ、SAI コールバック <code>on_port_host_tx_ready</code>（portsorch.cpp:977）が代わりに書き込む。</p>
 <p><strong>speed / fec の stale 残留 (依存 #6)</strong>: <code>PortsOrch::refreshPortStatus()</code> はポート oper UP 確認後にのみ <code>updateDbPortOperSpeed()</code> / <code>updateDbPortOperFec()</code> を呼ぶ（portsorch.cpp:9905-9930）。ポートが oper DOWN になっても、speed / fec の STATE_DB フィールドは削除も更新もされないため、最後に UP だった時の値が残留する。speed / fec を参照する際は <code>netdev_oper_status</code> が <code>"up"</code> であることを先に確認すること。</p>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙テーブル参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>書き込みデーモン (<code>portsyncd</code> / <code>PortsOrch</code>) が STATE_DB へ書き込む前に暗黙的に参照・依存する CONFIG_DB / APPL_DB / STATE_DB テーブルおよび外部コンポーネントを示す。</p>
+<h3 id="portsyncd-linksynccpp">portsyncd (linksync.cpp) の前提参照<a class="headerlink" href="#portsyncd-linksynccpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / コンポーネント</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB <code>PORT_TABLE</code> (<code>APP_PORT_TABLE_NAME</code>)</td>
+<td><code>m_portTable.get(key, temp)</code> で RTM_NEWLINK 受信ごとにエントリ存在確認</td>
+<td>キーが存在しないとき STATE_DB への書き込みをスキップ。orchagent の APPL_DB 初期化が完了していない起動初期は STATE_DB 書き込みが発生しない</td>
+<td>linksync.cpp:193</td>
+</tr>
+</tbody>
+</table>
+<h3 id="portsorch-portsorchcpp">PortsOrch (portsorch.cpp) の前提参照<a class="headerlink" href="#portsorch-portsorchcpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / コンポーネント</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB <code>PORT_TABLE</code> (<code>PortConfigDone</code> / <code>PortInitDone</code>)</td>
+<td><code>m_portTable-&gt;hget("PortConfigDone", "count", value)</code> / <code>m_portTable-&gt;get("PortInitDone", ...)</code></td>
+<td>両エントリが揃うまでポート初期化ループを進めず、STATE_DB への <code>supported_speeds</code> / <code>supported_fecs</code> 等の書き込みも発生しない</td>
+<td>portsorch.cpp:4342–4357</td>
+</tr>
+<tr>
+<td>STATE_DB <code>TRANSCEIVER_INFO</code> (<code>STATE_TRANSCEIVER_INFO_TABLE_NAME</code>)</td>
+<td><code>SubscriberStateTable</code> として購読。SET/DEL イベントで <code>doTransceiverPresenceCheck()</code> を呼び出す</td>
+<td><code>m_cmisModuleAsicSyncSupported = true</code> の CMIS 対応環境のみ有効。このパスを経由して <code>host_tx_ready</code> が制御される。CMIS 非対応環境では購読しない</td>
+<td>portsorch.cpp:984, 6498–6501</td>
+</tr>
+<tr>
+<td>APPL_DB <code>_GEARBOX_TABLE</code></td>
+<td><code>GearboxUtils::isGearboxEnabled()</code> で Gearbox 有無を判定し、<code>hset</code> で oper speed を書き込み</td>
+<td>Gearbox が有効な環境では <code>setPortAdminStatus()</code> の成功判定に Gearbox ステータスを含め、STATE_DB <code>host_tx_ready</code> の更新タイミングが変化する</td>
+<td>portsorch.cpp:775, 2246, 3422, 10375–10376</td>
+</tr>
+<tr>
+<td>CONFIG_DB <code>WARM_RESTART</code> テーブル</td>
+<td><code>WarmStart::isWarmStart()</code> 経由でコンストラクタ時に参照</td>
+<td>warm start モードの場合、既存 APPL_DB エントリから <code>oper_status</code> を読み出してポートを復元するフローになる。cold boot 時と初期化順序が異なる</td>
+<td>portsorch.cpp:753, 6610–6618</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">CMIS 環境での <code>host_tx_ready</code> 制御の切り替え</p>
+<p><code>m_cmisModuleAsicSyncSupported</code> が <code>true</code> の場合、<code>PortsOrch</code> は <code>setPortAdminStatus()</code> 内で <code>host_tx_ready</code> を直接書き込まず、SAI コールバック <code>on_port_host_tx_ready</code> (portsorch.cpp:977) と <code>TRANSCEIVER_INFO</code> 購読経由でのみ書き込む。この切り替えにより <code>host_tx_ready = "true"</code> の到達タイミングが非 CMIS 環境と異なるため、consumer は環境依存の遅延を考慮する必要がある。</p>
+</div>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/state-db-port-cross-refs.md</code></p>
+</blockquote>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>STATE_DB PORT_TABLE</code> への書き込みは <code>portsyncd</code> と <code>PortsOrch</code> の 2 プロセスが担い、それぞれ独立した失敗経路を持つ。本テーブルは STATUS テーブルではないため、フィールドへの書き込み失敗は<strong>サイレント（フィールド不在または旧値残留）</strong>になる場合が多い。<code>ERROR_TABLE</code> への書き込みはどちらのプロセスも行わない。</p>
+<h3 id="portsyncd-linksynccpp_1">portsyncd (linksync.cpp) の失敗パターン<a class="headerlink" href="#portsyncd-linksynccpp_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RTM_NEWLINK 受信時に APP_DB <code>PORT_TABLE</code> にポートが未登録</td>
+<td>linksync.cpp:193 (<code>m_portTable.get(key, temp)</code> が false)</td>
+<td>STATE_DB への書き込み全体をスキップ。<code>SWSS_LOG_NOTICE("Cannot find %s in port table")</code> のみ</td>
+<td>なし。次の RTM_NEWLINK まで STATE_DB エントリ不在</td>
+</tr>
+<tr>
+<td>RTM_NEWLINK が旧インタフェースの ifindex で届いた</td>
+<td>linksync.cpp:172-177 (<code>m_ifindexOldNameMap</code> チェック)</td>
+<td>処理全体を無視。STATE_DB の更新なし。エラーログなし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>RTM_DELLINK 受信 → <code>m_statePortTable.del(key)</code></td>
+<td>linksync.cpp:184</td>
+<td>STATE_DB エントリ全体を削除。フィールド単位の partial delete は行わない</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<p><strong>起動時の書き込み空白期間</strong>: 非 warm-reboot 起動時、portsyncd は既存フロントパネルポートを <code>ip link set Ethernet* down</code> し、新しい RTM_NEWLINK を待つ。この間に consumer が STATE_DB を参照すると古い値を読むか（DB が残留）エントリが不在（DB がリセットされた場合）となる。warm-reboot の場合はこの down / up サイクルが発生しないため STATE_DB の空白期間はない（linksync.cpp:45, 74-77）。</p>
+<h3 id="portsorch-portsorchcpp_1">PortsOrch (portsorch.cpp) の失敗パターン<a class="headerlink" href="#portsorch-portsorchcpp_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allPortsReady() == false</code> 時に port_state_change 通知を受信</td>
+<td>portsorch.cpp:9617-9621</td>
+<td>通知全体をドロップ。<code>speed</code> / <code>fec</code> / <code>link_training_status</code> の更新なし。通知は消費されキューに残らない</td>
+<td>なし。<code>refreshPortStatus()</code> によるポーリングで補完される場合あり</td>
+</tr>
+<tr>
+<td><code>getPortOperStatus()</code> が SAI 失敗を返す</td>
+<td>portsorch.cpp:9898-9901</td>
+<td><code>throw runtime_error("PortsOrch get port oper status failure")</code> — orchagent プロセスがクラッシュ。STATE_DB への書き込みが全停止する</td>
+<td>プロセス再起動後に復旧</td>
+</tr>
+<tr>
+<td><code>getPortSupportedSpeeds()</code> で SAI が <code>NOT_SUPPORTED</code> / <code>NOT_IMPLEMENTED</code></td>
+<td>portsorch.cpp:3145-3156</td>
+<td><code>supported_speeds</code> に空文字列を書き込む（フィールド不在とは区別）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>getPortOperFec()</code> 成功だが <code>fecToStr()</code> が未知 FEC 値を受けた</td>
+<td>portsorch.cpp:9920-9928</td>
+<td><code>SWSS_LOG_ERROR</code> 出力 + <code>fec = "N/A"</code> で書き込み。フォールバックのため STATE_DB は必ず更新される</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>initHostTxReadyState()</code> → SAI または Gearbox 失敗</td>
+<td>portsorch.cpp:2219-2274</td>
+<td><code>host_tx_ready = "false"</code> が残留。"true" への更新は発生しない</td>
+<td>なし（再 admin up 操作で再評価）</td>
+</tr>
+<tr>
+<td><code>setPortSerdesAttribute()</code> が失敗</td>
+<td>portsorch.cpp:5191-5200</td>
+<td><code>m_unreliable_los = false</code> のまま <code>phy_ctrl_unreliable_los = "false"</code> を書き込む。SAI エラーはログのみ</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>rmt_adv_speeds</code> — autoneg OFF 時に <code>hdel</code></td>
+<td>portsorch.cpp:4862</td>
+<td>フィールドを削除。autoneg が再度 ON になれば書き戻される</td>
+<td>自動</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stale">不在・stale 残留のまとめ<a class="headerlink" href="#stale" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>フィールド不在</strong>: ポートが APP_DB に未登録のうちは STATE_DB エントリそのものが不在。SAI が <code>NOT_SUPPORTED</code> を返した場合 <code>supported_fecs</code> はフィールド不在のまま。</li>
+<li><strong>stale 残留</strong>: <code>speed</code> / <code>fec</code> はポート oper DOWN 時に削除・更新されない。<code>netdev_oper_status != "up"</code> 時に参照すると前回 UP 時の値が返る。</li>
+<li><strong>ERROR_TABLE</strong>: linksync.cpp / portsorch.cpp いずれも失敗時に <code>ERROR_TABLE</code> へ書き込まない。失敗検知は syslog (<code>journalctl -u swss</code>) の <code>SWSS_LOG_ERROR</code> / <code>SWSS_LOG_NOTICE</code> のみ。</li>
+</ul>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/state-db-port-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
 
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト（Phase A — コード由来）<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>

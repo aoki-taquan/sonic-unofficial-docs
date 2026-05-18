@@ -26150,7 +26150,74 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fec-admin-fec-oper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FEC Admin と FEC Oper の参照先の違い
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -26201,7 +26268,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         検出した挙動乖離・注意点
@@ -26217,7 +26284,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -26228,7 +26295,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35038,7 +35105,74 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fec-admin-fec-oper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FEC Admin と FEC Oper の参照先の違い
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -35089,7 +35223,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         検出した挙動乖離・注意点
@@ -35105,7 +35239,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35116,7 +35250,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35361,8 +35495,168 @@
 </tr>
 </tbody>
 </table>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>STATE_DB <code>PORT_TABLE</code> の <code>fec</code> / <code>supported_fecs</code> フィールドは <code>PortsOrch</code> が書き手となるが、書き込み発生のタイミングと前提条件がフィールドごとに異なる。consumer が読むタイミングによっては中間状態（未書込み・stale 値）を観測しうる。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-ordering.md -->
+
+<h3 id="_10">検出された順序依存<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SAI ポート作成 (<code>initializePorts</code>) → <code>supported_fecs</code> 書込み</td>
+<td><strong>強制先行</strong></td>
+<td><code>initPortSupportedFecModes</code> は有効な SAI port_id なしでは実行不可 (portsorch.cpp:6461, 3265)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>postPortInit()</code> 完了 → <code>supported_fecs</code> STATE_DB 書込み</td>
+<td><strong>ポート登録時 1 回限り</strong></td>
+<td>cold boot では <code>addPort()</code> の後 <code>postPortInit()</code> を呼ぶ (portsorch.cpp:4078, 6461)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ポート oper-status UP 通知 → <code>fec</code> 書込み</td>
+<td><strong>イベント駆動・UP 時のみ</strong></td>
+<td>DOWN 遷移では書き込まれない。最後の UP 時の値が残留 (portsorch.cpp:9682–9694)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>oper_fec_sup</code> フラグ確定 (PortsOrch コンストラクタ) → <code>fec</code> 書込み可否決定</td>
+<td><strong>初期化先行・1 回限り</strong></td>
+<td>false 確定後は <code>fec</code> が常に <code>"N/A"</code> になることが全呼び出し経路で保証される (portsorch.cpp:1001–1010)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>fec_override_sup</code> フラグ確定 (PortsOrch コンストラクタ) → <code>supported_fecs</code> の <code>"auto"</code> 追加可否</td>
+<td><strong>初期化先行・1 回限り</strong></td>
+<td>true でなければ <code>"auto"</code> は絶対に末尾追加されない (portsorch.cpp:990–998, 3310–3313)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>warm boot: <code>onWarmBootEnd()</code> → <code>refreshPortStatus()</code> → <code>fec</code> 再同期</td>
+<td><strong>warm boot 限定・起動後 1 回</strong></td>
+<td><code>m_isWarmRestoreStage=false</code> 直後に全 PHY ポートの FEC を SAI から再取得して上書き (portsorch.cpp:6431)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">主要な制約詳細<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p><strong><code>fec</code> — UP 時のみ書込み (依存 #3)</strong>: <code>updateDbPortOperFec()</code> は <code>status == SAI_PORT_OPER_STATUS_UP</code> ブロック内でのみ呼ばれる (portsorch.cpp:9668–9694, 9910–9929)。DOWN 遷移では書き込みが発生しないため、<code>fec</code> フィールドにはポートが DOWN であっても最後に UP だった時の値が残留する。<code>intfutil</code> は表示時に <code>oper_status != "up"</code> を確認して <code>"N/A"</code> に変換するが、STATE_DB の値自体は変化しない。</p>
+<p><strong><code>supported_fecs</code> — lazy init かつ 1 回限り (依存 #1, #2)</strong>: cold boot では <code>postPortInit()</code> 内で <code>initPortSupportedFecModes()</code> を呼ぶため、<code>PortInitDone</code> 受信後にポートが存在する時点で値が確定する。ただし <code>m_portSupportedFecModes</code> に一度格納されると orchagent 再起動まで SAI を再問い合わせしない。トランシーバ換装後も <code>supported_fecs</code> が更新されないため、stale な値を consumer が読む可能性がある。</p>
+<p><strong><code>oper_fec_sup</code> / <code>fec_override_sup</code> の静的確定 (依存 #4, #5)</strong>: 両フラグは PortsOrch コンストラクタ (portsorch.cpp:987–1010) で SAI capability クエリを 1 回だけ実行して確定する。これ以降は変更されない。この静的評価により、プラットフォームが FEC oper 取得を未実装 (<code>get_implemented=false</code>) であれば <code>fec</code> は起動から終了まで常に <code>"N/A"</code> となる。</p>
+<p><strong>warm boot での再同期 (依存 #6)</strong>: warm boot 完了時に <code>onWarmBootEnd()</code> → <code>refreshPortStatus()</code> を呼び、全 PHY ポートの FEC を SAI から再取得して STATE_DB に上書きする。cold boot では <code>refreshPortStatus()</code> が呼ばれないため、ポート UP イベントが到達するまで <code>fec</code> フィールドが書き込まれない（フィールド不在の中間状態になりうる）。</p>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>STATE_DB PORT_TABLE</code> の <code>fec</code> / <code>supported_fecs</code> フィールドに関する書き手・読み手それぞれの
+暗黙的なテーブル参照をまとめる。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-cross-refs.md -->
+
+<table>
+<thead>
+<tr>
+<th>依存方向</th>
+<th>参照元</th>
+<th>参照先テーブル</th>
+<th>参照先フィールド</th>
+<th>依存内容</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>書き手依存 (fec)</td>
+<td><code>PortsOrch::updateDbPortOperFec</code></td>
+<td><code>STATE_DB PORT_TABLE\|&lt;port&gt;</code></td>
+<td><code>fec</code></td>
+<td>SAI port_state_change UP 通知受信後に STATE_DB へ書き込む。書き込み前に <code>oper_fec_sup</code> フラグ（PortsOrch コンストラクタで確定）を参照し、false なら無条件 <code>"N/A"</code></td>
+<td><code>portsorch.cpp:9864-9872</code></td>
+</tr>
+<tr>
+<td>書き手依存 (supported_fecs)</td>
+<td><code>PortsOrch::initPortSupportedFecModes</code></td>
+<td><code>STATE_DB PORT_TABLE\|&lt;port&gt;</code></td>
+<td><code>supported_fecs</code></td>
+<td><code>postPortInit()</code> 時に SAI から取得した FEC モード一覧を書き込む。<code>fec_override_sup</code> フラグが true の場合のみ末尾に <code>"auto"</code> を追加</td>
+<td><code>portsorch.cpp:3265-3327</code></td>
+</tr>
+<tr>
+<td>読み手 (FEC Oper)</td>
+<td><code>intfutil generate_fec_status()</code></td>
+<td><code>STATE_DB PORT_TABLE\|&lt;port&gt;</code></td>
+<td><code>fec</code>, <code>oper_status</code></td>
+<td><code>show interfaces fec status</code> の FEC Oper 列を生成。<code>oper_status != "up"</code> のとき <code>fec</code> を <code>"N/A"</code> に変換して表示（STATE_DB の値は変更しない）</td>
+<td><code>intfutil:911-914</code></td>
+</tr>
+<tr>
+<td>読み手 (FEC Admin)</td>
+<td><code>intfutil generate_fec_status()</code></td>
+<td><code>APPL_DB PORT_TABLE:&lt;port&gt;</code></td>
+<td><code>fec</code></td>
+<td><code>show interfaces fec status</code> の FEC Admin 列は <strong>STATE_DB ではなく APPL_DB</strong> から読む。CONFIG_DB <code>PORT.fec</code> が portmgrd 経由で APPL_DB に書き込まれた値</td>
+<td><code>intfutil:910</code></td>
+</tr>
+<tr>
+<td>間接参照 (FEC 設定検証)</td>
+<td><code>PortsOrch::isFecModeSupported</code></td>
+<td><code>m_portSupportedFecModes</code> (in-memory)</td>
+<td>—</td>
+<td>CONFIG_DB <code>PORT.fec</code> 変更時の妥当性確認に使用。<code>initPortSupportedFecModes()</code> の lazy init 結果をキャッシュ参照するため STATE_DB を再読しない</td>
+<td><code>portsorch.cpp:3205-3222</code></td>
+</tr>
+<tr>
+<td>間接参照 (トランシーバ)</td>
+<td><code>PortsOrch</code> (SubscriberStateTable)</td>
+<td><code>STATE_DB TRANSCEIVER_INFO_TABLE</code></td>
+<td>—</td>
+<td>トランシーバ存在確認に購読。ただし <code>supported_fecs</code> の lazy init はトランシーバ変化では再トリガーされない（<code>postPortInit()</code> 時 1 回限り）</td>
+<td><code>portsorch.cpp:984</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="fec-admin-fec-oper">FEC Admin と FEC Oper の参照先の違い<a class="headerlink" href="#fec-admin-fec-oper" title="Permanent link">&para;</a></h3>
+<p><code>show interfaces fec status</code> は同一コマンドでも参照 DB が異なる:</p>
+<table>
+<thead>
+<tr>
+<th>列</th>
+<th>参照 DB</th>
+<th>テーブル</th>
+<th>フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FEC Oper</td>
+<td>STATE_DB</td>
+<td><code>PORT_TABLE\|&lt;port&gt;</code></td>
+<td><code>fec</code></td>
+</tr>
+<tr>
+<td>FEC Admin</td>
+<td>APPL_DB</td>
+<td><code>PORT_TABLE:&lt;port&gt;</code></td>
+<td><code>fec</code></td>
+</tr>
+</tbody>
+</table>
+<p>FEC Admin 列は CONFIG_DB <code>PORT.&lt;port&gt;.fec</code> が portmgrd によって APPL_DB に反映された値を読む。
+STATE_DB の <code>fec</code> (oper) と APPL_DB の <code>fec</code> (admin) は別フィールドであり、
+ポートが DOWN 中は Oper 側に stale 値が残留する（<code>intfutil</code> は表示時に <code>"N/A"</code> に変換する）。</p>
+<!-- /cross-refs -->
+
 <!-- value-behavior -->
-<h2 id="_10">値依存挙動マトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <h3 id="oper_fec_sup">oper_fec_sup フラグ<a class="headerlink" href="#oper_fec_sup" title="Permanent link">&para;</a></h3>
 <p><code>oper_fec_sup</code> (portsorch.cpp:1001–1010) は orchagent 初期化時に 1 回だけ評価される:</p>
 <table>
@@ -35449,7 +35743,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_11">検出した挙動乖離・注意点<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_13">検出した挙動乖離・注意点<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ol>
 <li>
 <p><strong><code>"auto"</code> は oper fec に出現しない</strong>: <code>portFecRevMap</code> には <code>SAI_PORT_FEC_MODE_NONE</code> → <code>"none"</code> の逆引きしかなく、<code>"auto"</code> は逆引き不可。CONFIG_DB に <code>fec=auto</code> を設定してもポートが UP になると <code>fec</code> フィールドには実際の oper モード (<code>"none"</code> / <code>"rs"</code> / <code>"fc"</code>) が書き込まれる。<code>"auto"</code> という文字列が STATE_DB に現れることはない。</p>
@@ -35470,7 +35764,7 @@
 <!-- /defaults -->
 
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <!-- evidence: meta/_intermediate/cdb-flow/fec-state-defaults.md -->
 
 <ul>
@@ -35480,7 +35774,7 @@
 </ul>
 <!-- /cdb-exceptions -->
 
-<h2 id="_13">関連リファレンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_15">関連リファレンス<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../port/"><code>PORT</code> テーブル</a> — FEC の設定フィールド (<code>fec</code>)</li>
 <li>アーキテクチャ: <a href="../../../architecture/sonic-port-auto-fec-design/"><code>Port Auto FEC 設計</code></a> — <code>fec=auto</code> モードと <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> の詳細</li>

@@ -29634,7 +29634,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -29656,7 +29695,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29667,7 +29706,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29678,7 +29717,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29689,7 +29728,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29712,7 +29751,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -34899,7 +34938,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34921,7 +34999,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34932,7 +35010,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34943,7 +35021,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34954,7 +35032,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34977,7 +35055,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある問題
@@ -35161,7 +35239,85 @@ VTEP が先に有効化されている前提で動作する。</p>
 実装はハードコードされており設定変更手段はない。</p>
 <!-- /defaults -->
 
-<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>EVPN DIP トンネルは CONFIG_DB の直接エントリを持たないが、APP_DB 経由の動的生成フローにおいて
+複数の「先行条件が満たされなければ処理が進まない」強制順序依存が存在する。</p>
+<h3 id="_5">検出された順序依存<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>先行条件</th>
+<th>後続操作</th>
+<th>強制度</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>VXLAN_EVPN_NVO</code> 処理済み (<code>getEVPNVtep()</code> 非 NULL)</td>
+<td>DIP トンネル生成</td>
+<td><strong>強制先行</strong></td>
+<td><code>vxlanorch.cpp:1685-1692</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>VXLAN_TUNNEL</code> (VTEP) が active (<code>isActive()</code> = true)</td>
+<td>DIP トンネル生成</td>
+<td><strong>強制先行</strong></td>
+<td><code>vxlanorch.cpp:1694-1699</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>VXLAN_TUNNEL_MAP</code> でローカル VNI-VLAN マップが存在</td>
+<td><code>EVPN_REMOTE_VNI_TABLE</code> 処理</td>
+<td><strong>強制先行</strong></td>
+<td><code>vxlanorch.cpp:2490-2494</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>対象 VLAN が存在 (<code>getVlanByVlanId()</code> 成功)</td>
+<td><code>EVPN_REMOTE_VNI_TABLE</code> 処理</td>
+<td><strong>強制先行</strong></td>
+<td><code>vxlanorch.cpp:2483-2487</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>全 DIP トンネルの参照カウント = 0 (<code>del_tnl_hw_pending</code> = false)</td>
+<td><code>VXLAN_EVPN_NVO</code> 削除</td>
+<td><strong>強制先行</strong></td>
+<td><code>vxlanorch.cpp:2803-2807</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">主要な制約詳細<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><strong>EVPN VTEP 未設定 / 未 active の場合の silent drop (依存 #1, #2)</strong>:
+<code>VxlanTunnelOrch::addTunnelUser()</code> は冒頭で <code>evpn_orch-&gt;getEVPNVtep()</code> を呼ぶ。
+VTEP ポインタが NULL の場合（<code>VXLAN_EVPN_NVO</code> 未設定）は <code>SWSS_LOG_WARN("Unable to find EVPN VTEP")</code> を
+出力して即 <code>false</code> を返す。VTEP ポインタが非 NULL でも <code>isActive()</code> が false の場合は
+<code>SWSS_LOG_WARN("VTEP not yet active")</code> を出力して <code>false</code> を返す。
+どちらの場合もリクエストは <strong>再エンキューされない</strong>。再試行は上位呼び出し元（<code>EvpnRemoteVnip2pOrch::addOperation()</code>
+が <code>return false</code> を返した場合に orchagent のイベントループが次の消費サイクルで再処理する）
+に依存する（<code>vxlanorch.cpp:1687-1699</code>）。</p>
+<p><strong>VXLAN_TUNNEL_MAP が先に必要 (依存 #3)</strong>:
+<code>EvpnRemoteVnip2pOrch::addOperation()</code> は
+<code>vxlan_tun_map_orch-&gt;isVniVlanMapExists(vni_id, ...)</code> を呼び、ローカル VNI マップが
+存在しない場合は <code>SWSS_LOG_WARN("Vxlan tunnel map is not created for vni:%d")</code> を出力し
+<code>return false</code> で処理を中断する。<code>VXLAN_TUNNEL_MAP</code> で VNI-VLAN ペアを事前登録してから
+BGP EVPN がリモート VTEP を学習する順序が必要
+（<code>vxlanorch.cpp:2489-2494</code>、コメント <code>"Remote end point can be added only after local VLAN to VNI map gets created"</code>）。</p>
+<p><strong>NVO 削除が DIP トンネル完全削除まで待機 (依存 #5)</strong>:
+<code>EvpnNvoOrch::delOperation()</code> は <code>source_vtep_ptr-&gt;del_tnl_hw_pending</code> が true の場合に
+<code>SWSS_LOG_WARN("NVO not deleted as hw delete is pending")</code> を出力して <code>return false</code> を返す。
+<code>del_tnl_hw_pending</code> は DIP トンネルが HW 削除ペンディング状態の間 true を保持し、
+<code>deletePendingSIPTunnel()</code> が全 DIP トンネルの参照カウント = 0 を確認してから <code>false</code> に戻す。
+<code>config vxlan evpn_nvo del</code> を実行しても、既存リモート VTEP への DIP トンネルが残存していると
+CONFIG_DB 削除が SAI に反映されない（<code>vxlanorch.cpp:2803-2807</code>, <code>vxlanorch.cpp:952-964</code>）。</p>
+<!-- /ordering -->
+
+<h2 id="_7">例外条件・特殊挙動<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>isDipTunnelsSupported() = false の場合</strong>: DIP トンネルは作成されず、リモート VTEP の
   IP 参照カウントのみ更新される (<code>vxlanorch.cpp:1701-1704</code>)。プラットフォームが DIP トンネルを
@@ -35179,7 +35335,7 @@ VTEP が先に有効化されている前提で動作する。</p>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vxlan-tunnel/">CONFIG_DB: VXLAN_TUNNEL</a></li>
 <li><a href="../vxlan-evpn-nvo/">CONFIG_DB: VXLAN_EVPN_NVO</a></li>
@@ -35188,8 +35344,8 @@ VTEP が先に有効化されている前提で動作する。</p>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../overlay/vxlan-sonic/">HLD: VXLAN / VNet 全体設計</a></li>
 <li><a href="../vxlan-tunnel/">CONFIG_DB: VXLAN_TUNNEL</a></li>
@@ -35198,7 +35354,7 @@ VTEP が先に有効化されている前提で動作する。</p>
 <li><a href="../../yang/sonic-vxlan/">YANG: sonic-vxlan</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <h3 id="evpn-dip_1">EVPN DIP トンネルの確認<a class="headerlink" href="#evpn-dip_1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># STATE_DB でダイナミックトンネルを確認 (tnl_src=EVPN のもの)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VXLAN_TUNNEL_TABLE|EVPN_*&#39;</span>
@@ -35210,7 +35366,7 @@ VTEP が先に有効化されている前提で動作する。</p>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>show<span class="w"> </span>vxlan<span class="w"> </span>tunnel
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>show<span class="w"> </span>vxlan<span class="w"> </span>remotevtep
 </span></code></pre></div>
-<h3 id="_10">よくある問題<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある問題<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>EVPN VTEP 不在</strong>: <code>VXLAN_EVPN_NVO</code> が設定されていないと DIP トンネルが生成されない。
   先に <code>config vxlan evpn_nvo add &lt;name&gt; &lt;vtep&gt;</code> を実行する。</li>

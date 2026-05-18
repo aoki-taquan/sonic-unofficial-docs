@@ -28513,6 +28513,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙テーブル参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device_metadatalocalhost-pam-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA|localhost — PAM limits ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sshd_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sshd_config — 読み書き両方向
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pam-limits-max_sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PAM limits ファイル — max_sessions の最終書き込み先
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34937,6 +34987,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙テーブル参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device_metadatalocalhost-pam-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA|localhost — PAM limits ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sshd_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sshd_config — 読み書き両方向
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pam-limits-max_sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PAM limits ファイル — max_sessions の最終書き込み先
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35163,6 +35263,79 @@
 <!-- evidence: sonic-host-services/scripts/hostcfgd L2478 (subscribe SSH_SERVER) -->
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙テーブル参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/ssh-config-base-cross-refs.md</code></p>
+</blockquote>
+<p><code>SSH_SERVER|POLICIES</code> テーブルは YANG leafref を持たない。ただし <code>hostcfgd</code> の <code>SshServer</code> クラスおよび <code>PamLimitsCfg</code> クラスが以下の暗黙参照を持つ。</p>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>方向</th>
+<th>条件</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONFIG_DB DEVICE_METADATA\|localhost</code></td>
+<td>読み取り</td>
+<td>PAM limits early-return ガード</td>
+<td><code>hostcfgd</code> L1430</td>
+</tr>
+<tr>
+<td><code>/etc/ssh/sshd_config</code></td>
+<td>読み取り + 書き込み</td>
+<td><code>set_policies()</code> 実行時 (常時)</td>
+<td><code>hostcfgd</code> L1113, L1142</td>
+</tr>
+<tr>
+<td><code>/etc/security/limits.conf</code></td>
+<td>書き込み</td>
+<td><code>update_config_file()</code> が early-return しないとき</td>
+<td><code>hostcfgd</code> L1468–1475</td>
+</tr>
+<tr>
+<td><code>/etc/pam.d/pam-limits-conf</code></td>
+<td>書き込み</td>
+<td>同上</td>
+<td><code>hostcfgd</code> L1460–1466</td>
+</tr>
+<tr>
+<td><code>systemd ssh.service</code></td>
+<td><code>systemctl restart</code></td>
+<td><code>sshd -T</code> 検証成功後</td>
+<td><code>hostcfgd</code> L1152–1155</td>
+</tr>
+<tr>
+<td><code>/usr/sbin/sshd</code> バイナリ</td>
+<td>外部実行</td>
+<td><code>sshd -T -f &lt;tmp&gt;</code> 検証</td>
+<td><code>hostcfgd</code> L1150–1160</td>
+</tr>
+</tbody>
+</table>
+<h3 id="device_metadatalocalhost-pam-limits"><code>DEVICE_METADATA|localhost</code> — PAM limits ガード<a class="headerlink" href="#device_metadatalocalhost-pam-limits" title="Permanent link">&para;</a></h3>
+<p><code>PamLimitsCfg.update_config_file()</code> は <code>SSH_SERVER|POLICIES</code> と <code>DEVICE_METADATA|localhost</code> の両方が不在の場合のみ early-return する（どちらか一方が存在すれば続行）。通常の SONiC デプロイでは <code>DEVICE_METADATA|localhost</code> は必ず存在する。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># hostcfgd L1430</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">if</span> <span class="s2">&quot;localhost&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">device_metadata</span> <span class="ow">and</span> <span class="s2">&quot;POLICIES&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ssh_server_policies</span><span class="p">:</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="k">return</span>
+</span></code></pre></div>
+<h3 id="sshd_config">sshd_config — 読み書き両方向<a class="headerlink" href="#sshd_config" title="Permanent link">&para;</a></h3>
+<p><code>set_policies()</code> は既存の <code>/etc/ssh/sshd_config</code> を一時ファイルにコピーし、フィールドごとに <code>modify_single_file_inplace</code> で行内置換/追記した後、<code>sshd -T</code> で検証してから rename する。ファイルが存在しない場合はコピー失敗で例外が発生し、ERR ログのみ記録されて sshd は再起動されない。</p>
+<h3 id="pam-limits-max_sessions">PAM limits ファイル — max_sessions の最終書き込み先<a class="headerlink" href="#pam-limits-max_sessions" title="Permanent link">&para;</a></h3>
+<p><code>max_sessions</code> は <code>SSH_CONFIG_NAMES</code> に含まれず <code>sshd_config</code> には反映されない。<code>PamLimitsCfg.render_conf_file()</code> が Jinja2 テンプレート（<code>limits.conf.j2</code>）経由で <code>/etc/security/limits.conf</code> に書き込む。書き込み先が存在しない場合は例外をキャッチして ERR ログのみ記録。</p>
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1113 (copy2 sshd_config) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1142 (modify_single_file_inplace) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1150-1160 (sshd -T 検証ゲート) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1152-1155 (systemctl restart ssh) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1430 (DEVICE_METADATA early-return) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1460-1475 (render_conf_file PAM) -->
+
+<!-- /cross-refs -->
 
 <!-- ref-triangle:start -->
 

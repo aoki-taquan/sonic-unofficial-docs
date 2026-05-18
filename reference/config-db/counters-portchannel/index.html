@@ -25508,6 +25508,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-lag-oid-counters_lag_name_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ スイッチ — リモート LAG OID が COUNTERS_LAG_NAME_MAP に混在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-lag-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox — LAG メンバ有効/無効の操作順序が異なる（COUNTERS_DB への影響なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gtraditionalflexcounter-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gTraditionalFlexCounter による RIF カウンタ登録タイミング差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vsvirtual-switch-rif-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS（Virtual Switch）— RIF カウンタ値は 0 固定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rif-stat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIF stat セット — プラットフォーム共通
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35658,6 +35730,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#voq-lag-oid-counters_lag_name_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ スイッチ — リモート LAG OID が COUNTERS_LAG_NAME_MAP に混在
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-lag-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox — LAG メンバ有効/無効の操作順序が異なる（COUNTERS_DB への影響なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gtraditionalflexcounter-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gTraditionalFlexCounter による RIF カウンタ登録タイミング差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vsvirtual-switch-rif-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS（Virtual Switch）— RIF カウンタ値は 0 固定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rif-stat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RIF stat セット — プラットフォーム共通
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36528,6 +36672,42 @@ CONFIG_DB とは別の DB（FLEX_COUNTER_DB / COUNTERS_DB 内の他テーブル�
 <li><strong>外部ツールによる動的監視</strong>: <code>intfstat -p &lt;interval&gt;</code> で定期ポーリングを実行する場合、内部的には毎回 HGETALL を発行している（<code>intfstat:168-197</code>）。</li>
 </ul>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/counters-portchannel-platform.md</code></p>
+</blockquote>
+<p><code>COUNTERS_LAG_NAME_MAP</code> / <code>COUNTERS_RIF_NAME_MAP</code> の書き込み自体はプラットフォームを問わず同じコードパスを通るが、以下のプラットフォーム固有の差異が存在する。</p>
+<h3 id="voq-lag-oid-counters_lag_name_map">VoQ スイッチ — リモート LAG OID が COUNTERS_LAG_NAME_MAP に混在<a class="headerlink" href="#voq-lag-oid-counters_lag_name_map" title="Permanent link">&para;</a></h3>
+<p><code>gMySwitchType == "voq"</code> 環境では <code>portsorch::addLag()</code> が <code>SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID</code> を付与して <code>create_lag()</code> を呼ぶ (<code>portsorch.cpp:7962-7991</code>)。さらに <code>doVoqSystemLagTask()</code> が CHASSIS_APP_DB から届くリモートシステム LAG エントリに対しても <code>addLag()</code> を呼ぶため、<strong>ローカル PortChannel の OID とリモートシステム LAG の OID が COUNTERS_LAG_NAME_MAP に共存する</strong>。キー名はローカルが <code>PortChannelXXXX</code>、リモートが <code>&lt;hostname&gt;|&lt;asic&gt;|PortChannelXXXX</code> で区別できる。</p>
+<table>
+<thead>
+<tr>
+<th>スイッチ種別</th>
+<th>COUNTERS_LAG_NAME_MAP に登録されるキー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通常スイッチ</td>
+<td><code>PortChannelXXXX</code> のみ</td>
+</tr>
+<tr>
+<td>VoQ スイッチ (multi-asic)</td>
+<td>ローカル <code>PortChannelXXXX</code> ＋ リモート <code>&lt;host&gt;\|&lt;asic&gt;\|PortChannelXXXX</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="mellanox-lag-counters_db">Mellanox — LAG メンバ有効/無効の操作順序が異なる（COUNTERS_DB への影響なし）<a class="headerlink" href="#mellanox-lag-counters_db" title="Permanent link">&para;</a></h3>
+<p>Mellanox SAI は collection=false かつ distribution=true の「distribution-only 中間状態」をサポートしないため、<code>setCollectionOnLagMember()</code> / <code>setDistributionOnLagMember()</code> の呼び出し順が通常とは逆になる (<code>portsorch.cpp:6361-6382</code>、コメントに明記)。ただしこれは <code>SAI_LAG_MEMBER_ATTR_INGRESS_DISABLE</code> / <code>SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE</code> のみの問題であり、<code>COUNTERS_LAG_NAME_MAP</code> / <code>COUNTERS_RIF_NAME_MAP</code> の書き込みには影響しない。</p>
+<h3 id="gtraditionalflexcounter-rif"><code>gTraditionalFlexCounter</code> による RIF カウンタ登録タイミング差<a class="headerlink" href="#gtraditionalflexcounter-rif" title="Permanent link">&para;</a></h3>
+<p><code>gTraditionalFlexCounter = true</code> 環境（一部旧構成・VS デフォルト）では <code>intfsorch</code> がタイマーループで <code>ASIC_DB VIDTORID</code> の確定を待ってから <code>COUNTERS_RIF_NAME_MAP</code> を書き込む (<code>intfsorch.cpp:1627</code>)。<code>gTraditionalFlexCounter = false</code> の環境では即座に書き込まれる。前者ではポートチャンネル RIF 作成後、<code>COUNTERS_RIF_NAME_MAP</code> への反映まで最大数秒の遅延がある。</p>
+<h3 id="vsvirtual-switch-rif-0">VS（Virtual Switch）— RIF カウンタ値は 0 固定<a class="headerlink" href="#vsvirtual-switch-rif-0" title="Permanent link">&para;</a></h3>
+<p>Virtual Switch SAI（<code>sonic-sairedis/vslib</code>）は <code>SAI_OBJECT_TYPE_ROUTER_INTERFACE</code> 統計を stub 応答するため、<code>COUNTERS:&lt;rif_oid&gt;</code> の IN/OUT パケット・バイト数は常に 0。<code>RATES:&lt;rif_oid&gt;</code> の BPS/PPS も計算上 0 となる。<code>intfstat</code> は動作するが実トラフィックを反映しない。</p>
+<h3 id="rif-stat">RIF stat セット — プラットフォーム共通<a class="headerlink" href="#rif-stat" title="Permanent link">&para;</a></h3>
+<p><code>rifStatIds</code>（<code>intfsorch.cpp:49-58</code>）の 8 統計はすべてのプラットフォームで共通であり、プラットフォームごとに変化しない。SAI が特定の stat に対して <code>SAI_STATUS_NOT_SUPPORTED</code> を返した場合、FlexCounter はその stat を 0 で書き込む（エラーをログして継続）。個別 stat の capability チェックはコード中に存在しない。</p>
+<!-- /platform -->
 
 <h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># L3 PortChannel の RIF カウンタ確認</span>

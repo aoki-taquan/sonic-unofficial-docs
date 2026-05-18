@@ -23620,7 +23620,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23631,7 +23670,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -23642,7 +23681,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み入り口
@@ -23681,7 +23720,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23703,7 +23742,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23714,7 +23753,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34922,7 +34961,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34933,7 +35011,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34944,7 +35022,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み入り口
@@ -34983,7 +35061,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35005,7 +35083,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35016,7 +35094,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35212,7 +35290,80 @@
 <!-- /defaults -->
 
 <hr />
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>NhgOrch</code> および <code>CbfNhgOrch</code> は <code>doTask()</code> 先頭で <code>gPortsOrch-&gt;allPortsReady()</code> を確認し、ポートが未初期化の間は処理を一切行わない。その後、テーブルエントリの SET / DEL 操作はいくつかの依存関係に従って処理される。</p>
+<h3 id="_5">検出された順序依存<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>PortsOrch</code> 全ポート初期化 → NHG 処理開始</td>
+<td><strong>強制先行</strong></td>
+<td>初期化前は <code>doTask()</code> が即 return、全エントリが Consumer キューで待機</td>
+</tr>
+<tr>
+<td>2</td>
+<td>fpmsyncd: <code>NEXTHOP_GROUP_TABLE</code> 書込み → <code>ROUTE_TABLE</code> 書込み</td>
+<td><strong>強制先行</strong></td>
+<td>fpmsyncd は同一 Netlink イベント処理内で NHG を先に書き込んでから ROUTE_TABLE を書く</td>
+</tr>
+<tr>
+<td>3</td>
+<td>再帰 NHG: 子 NHG が <code>m_syncdNextHopGroups</code> に存在 → 親 NHG の SET 完了</td>
+<td><strong>強制先行</strong></td>
+<td>子未存在の場合は <code>++it</code> でキューに残し再試行。子が recursive/temporary の場合は即破棄</td>
+</tr>
+<tr>
+<td>4</td>
+<td>NHG 総数が上限未満 → 通常 NHG 作成</td>
+<td><strong>前提条件</strong></td>
+<td>上限到達時は temporary NHG（単一 NH で代替）を作成し本エントリをキューに残す。SRv6 NHG は temp 非対応</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CBF NHG: <code>FC_TO_NHG_INDEX_MAP_TABLE</code> の MAP が存在 → <code>CbfNhg::sync()</code> 完了</td>
+<td><strong>前提条件</strong></td>
+<td>MAP 未存在時は <code>return false</code> → Consumer キューに残り再試行</td>
+</tr>
+<tr>
+<td>6</td>
+<td>CBF NHG: temp NHG メンバー解消 → success=true で Consumer 消費</td>
+<td>監視継続</td>
+<td><code>hasTemps()</code> が真の間は <code>success = false</code> のままループし昇格を待機</td>
+</tr>
+<tr>
+<td>7</td>
+<td>DEL 操作: 同一 key の pending SET が存在 → DEL をスキップ</td>
+<td><strong>DEL 抑制</strong></td>
+<td><code>m_toSync.count(key) &gt; 1</code> の場合 DEL を消費し SET に任せることで状態の上書き削除を防止</td>
+</tr>
+<tr>
+<td>8</td>
+<td>DEL 操作: NHG の <code>ref_count</code> がゼロ → 削除実行</td>
+<td><strong>強制前提</strong></td>
+<td><code>ref_count &gt; 0</code>（ROUTE_TABLE などが参照中）の間は DEL が保留されキューに残る</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">主要な制約詳細<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><strong>PortsOrch 初期化ガード (依存 #1)</strong>: <code>NhgOrch::doTask()</code> / <code>CbfNhgOrch::doTask()</code> はどちらも最初の行で <code>gPortsOrch-&gt;allPortsReady()</code> を評価し、<code>false</code> の場合は即 <code>return</code> する（<code>nhgorch.cpp:41-43</code>、<code>cbfnhgorch.cpp:42-44</code>）。システム起動直後にエントリが投入されても、全ポートが ready になるまで処理が始まらない。</p>
+<p><strong>fpmsyncd の書込み順序 (依存 #2)</strong>: fpmsyncd は FRR の Netlink nexthop メッセージを受け取ると、まず <code>m_nexthop_groupTable.set()</code> で <code>NEXTHOP_GROUP_TABLE</code> を更新し、その後 <code>m_routeTable-&gt;set()</code> で <code>ROUTE_TABLE</code> を書き込む（<code>routesync.cpp:1882-1896</code>）。これにより、orchagent が ROUTE_TABLE を処理する時点では NHG が APPL_DB に存在している。</p>
+<p><strong>再帰 NHG の子依存 (依存 #3)</strong>: <code>nexthop_group</code> フィールドが存在するとき <code>is_recursive = true</code> となり、<code>NhgOrch::doTask()</code> は各子 NHG キーを <code>m_syncdNextHopGroups</code> で検索する（<code>nhgorch.cpp:130-134</code>）。子が未存在の場合は <code>non_existent_member = true</code> としてキーから除外し、存在する子のみで NHG を作成してから <code>success = false</code> でエントリをキューに残す（<code>nhgorch.cpp:298-305</code>）。子が recursive または temporary の場合は <code>SWSS_LOG_ERROR</code> を出力し、エントリを即破棄する（<code>nhgorch.cpp:143-156</code>）。</p>
+<p><strong>NHG 上限と temporary NHG (依存 #4)</strong>: <code>gRouteOrch-&gt;getNhgCount() + NextHopGroup::getSyncedCount() &gt;= gRouteOrch-&gt;getMaxNhgCount()</code> が真のとき、<code>NhgOrch</code> は <code>createTempNhg()</code> でメンバーのうち 1 つだけを使った仮グループを作成し、SAI に反映したうえでエントリをキューに残す（<code>nhgorch.cpp:252-281</code>）。SAI リソースが解放されると次のループで通常 NHG に昇格する。SRv6 NHG はこの仮作成ロジックを経由せず <code>++it</code> でスキップされる（<code>nhgorch.cpp:257-261</code>）。<code>CbfNhgOrch</code> は上限到達時に <code>success = false</code> のまま返してキューに残す（<code>cbfnhgorch.cpp:100-104</code>）。</p>
+<p><strong>DEL 後に SET がある場合の保護 (依存 #7)</strong>: DEL 操作時に同一キーで <code>m_toSync.count(key) &gt; 1</code> が成立する場合（DEL の後に SET が積まれている）、DEL を消費して何もしない（<code>nhgorch.cpp:402-404</code>）。これにより DEL が参照カウント待ちで保留されている間に SET が実行され整合性が壊れる問題を防ぐ。</p>
+<p><strong>参照カウントによる DEL ガード (依存 #8)</strong>: <code>NhgEntry::ref_count &gt; 0</code> の間は DEL を実行せず、<code>++it</code> でキューに残す（<code>nhgorch.cpp:414-416</code>）。<code>ROUTE_TABLE</code> エントリが当該 NHG を <code>nexthop_group</code> で参照している間は ref_count が非ゼロになるため、ROUTE_TABLE の DEL が先行しなければ NHG は削除されない。</p>
+<!-- /ordering -->
+
+<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35239,7 +35390,7 @@
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">gCbfNhgOrch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CbfNhgOrch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME</span><span class="p">);</span>
 </span></code></pre></div>
 <hr />
-<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">例外条件・特殊挙動<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35283,7 +35434,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="_7">書き込み入り口<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">書き込み入り口<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <h3 id="nexthop_group_table_1">NEXTHOP_GROUP_TABLE<a class="headerlink" href="#nexthop_group_table_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>fpmsyncd</strong> (<code>sonic-swss/fpmsyncd/routesync.cpp</code>): FRR の Netlink nexthop メッセージを <code>NextHopGroupTableFieldValueTupleWrapper</code> でラップし APPL_DB に書き込む。ZMQ 有効時は全フィールドを常に送出、無効時は空フィールドをスキップ。</li>
@@ -35293,7 +35444,7 @@
 <li><strong>直接書き込み</strong>: CLI 経路なし。<code>config_db.json</code> 直編集または gNMI/REST 経由で APPL_DB に書き込む。</li>
 </ul>
 <hr />
-<h2 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 通常 NHG の一覧</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP_TABLE:*&#39;</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP_TABLE:&lt;index&gt;&#39;</span>
@@ -35314,7 +35465,7 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/class-based-forwarding-enhancement/">クラスベース転送 (CBF)</a></li>
 <li><a href="../../../routing/routing-and-next-hop-table-enhancement/">ルーティングと NHG テーブル拡張</a></li>
@@ -35322,7 +35473,7 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

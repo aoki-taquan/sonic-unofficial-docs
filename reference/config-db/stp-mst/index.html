@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・discrepancy を詳細解説。Phase A+B+C+D 分析。">
+        <meta name="description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・ハードコード定数・副次 DB 書込・discrepancy を詳細解説。Phase A+B+C+D+E+F 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP_MST_INST / STP_MST_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・discrepancy を詳細解説。Phase A+B+C+D 分析。" />
+<meta property="og:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・ハードコード定数・副次 DB 書込・discrepancy を詳細解説。Phase A+B+C+D+E+F 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-mst.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-mst/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP_MST_INST / STP_MST_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・discrepancy を詳細解説。Phase A+B+C+D 分析。" />
+<meta property="twitter:description" content="CONFIG_DB の STP_MST_INST・STP_MST_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・MST 起動順序・失敗挙動・ハードコード定数・副次 DB 書込・discrepancy を詳細解説。Phase A+B+C+D+E+F 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-mst.png" />
 </head>
   
@@ -29015,6 +29015,195 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デーモン内部定数 (stpmgr.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrdcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動ループ定数 (stpmgrd.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB ポーリングタイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キープレフィックス長マジックナンバー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mst-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MST グローバル設定メッセージの name フィールド長
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_inst-setdel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_INST SET/DEL の副次効果
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STP_MST_INST SET/DEL の副次効果">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stpd-ipc-stp_mst_inst_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpd IPC 送信 (STP_MST_INST_CONFIG)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        m_vlanInstMap[] 更新（インメモリ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m_vlaninstmap-state_vlan_member" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        m_vlanInstMap 変化による STATE_VLAN_MEMBER 処理への連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_port-setdel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_PORT SET/DEL の副次効果
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STP_MST_PORT SET/DEL の副次効果">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stpd-ipc-stp_mst_inst_port_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpd IPC 送信 (STP_MST_INST_PORT_CONFIG)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB との関係（読み取り専用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次効果サマリー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29026,7 +29215,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29037,7 +29226,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35336,6 +35525,195 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デーモン内部定数 (stpmgr.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrdcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動ループ定数 (stpmgrd.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB ポーリングタイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キープレフィックス長マジックナンバー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mst-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MST グローバル設定メッセージの name フィールド長
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_inst-setdel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_INST SET/DEL の副次効果
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STP_MST_INST SET/DEL の副次効果">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stpd-ipc-stp_mst_inst_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpd IPC 送信 (STP_MST_INST_CONFIG)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m_vlaninstmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        m_vlanInstMap[] 更新（インメモリ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m_vlaninstmap-state_vlan_member" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        m_vlanInstMap 変化による STATE_VLAN_MEMBER 処理への連鎖
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_mst_port-setdel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STP_MST_PORT SET/DEL の副次効果
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="STP_MST_PORT SET/DEL の副次効果">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stpd-ipc-stp_mst_inst_port_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpd IPC 送信 (STP_MST_INST_PORT_CONFIG)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB との関係（読み取り専用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次効果サマリー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35347,7 +35725,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35358,7 +35736,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -36028,6 +36406,267 @@ CONFIG_DB に蓄積され再起動後に一括再処理される。</p>
 </div>
 <!-- /failure -->
 
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-constants.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.h ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+<p><code>stpmgrd</code> デーモンの内部実装に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。</p>
+<h3 id="stpmgrh">デーモン内部定数 (stpmgr.h)<a class="headerlink" href="#stpmgrh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAX_VLANS</code></td>
+<td><code>4096</code></td>
+<td><code>m_vlanInstMap[]</code> 配列サイズ。VLAN ID の最大数上限</td>
+</tr>
+<tr>
+<td><code>L2_INSTANCE_MAX</code></td>
+<td><code>4096</code> (<code>= MAX_VLANS</code>)</td>
+<td><code>l2InstPool</code> bitset のサイズ。PVST での最大インスタンスプール</td>
+</tr>
+<tr>
+<td><code>STP_DEFAULT_MAX_INSTANCES</code></td>
+<td><code>255</code></td>
+<td>STATE_DB 取得失敗時のフォールバック最大インスタンス数</td>
+</tr>
+<tr>
+<td><code>INVALID_INSTANCE</code></td>
+<td><code>-1</code></td>
+<td><code>m_vlanInstMap[]</code> の未割り当てセンチネル値</td>
+</tr>
+<tr>
+<td><code>STPMGRD_SOCK_NAME</code></td>
+<td><code>"/var/run/stpmgrd.sock"</code></td>
+<td>stpmgrd が bind する Unix ドメインソケットパス</td>
+</tr>
+<tr>
+<td><code>STPD_SOCK_NAME</code></td>
+<td><code>"/var/run/stpipc.sock"</code></td>
+<td>STP デーモン (stpd) との IPC 通信ソケットパス</td>
+</tr>
+<tr>
+<td><code>STP_SET_COMMAND</code></td>
+<td><code>1</code></td>
+<td>stpd IPC メッセージの SET オペコード</td>
+</tr>
+<tr>
+<td><code>STP_DEL_COMMAND</code></td>
+<td><code>0</code></td>
+<td>stpd IPC メッセージの DEL オペコード</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>stpmgr.h:28-108</code></p>
+<h3 id="stpmgrdcpp">起動ループ定数 (stpmgrd.cpp)<a class="headerlink" href="#stpmgrdcpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SELECT_TIMEOUT</code></td>
+<td><code>1000</code> ms</td>
+<td><code>Select::select()</code> タイムアウト。保留イベントのリトライ間隔でもある</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>stpmgrd.cpp:17</code></p>
+<h3 id="state_db">STATE_DB ポーリングタイムアウト<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p><code>getStpMaxInstances()</code> (<code>stpmgr.cpp:1381</code>) は STATE_STP_TABLE の <code>GLOBAL.max_stp_inst</code> を
+最大 <strong>60 秒</strong> (60 回 × <code>sleep(1)</code>) ポーリングする:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kt">uint16_t</span><span class="w"> </span><span class="n">max_delay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">60</span><span class="p">;</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">max_delay</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_stateStpTable</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;GLOBAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">vmEntry</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">break</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">    </span><span class="n">max_delay</span><span class="o">--</span><span class="p">;</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="p">}</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">max_stp_instances</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">    </span><span class="n">max_stp_instances</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STP_DEFAULT_MAX_INSTANCES</span><span class="p">;</span><span class="w">  </span><span class="c1">// = 255</span>
+</span></code></pre></div>
+<p>取得成功時は STATE_DB 値を使用し、タイムアウトまたは値が <code>0</code> の場合は <code>255</code> にフォールバックする。
+フォールバック値 <code>255</code> はコードにハードコードされており、YANG / CONFIG_DB では設定不可。</p>
+<p>証跡: <code>stpmgr.cpp:1381-1414</code></p>
+<h3 id="_8">キープレフィックス長マジックナンバー<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>テーブルキーのプレフィックス除去にマジックナンバーを使用している:</p>
+<table>
+<thead>
+<tr>
+<th>ハンドラ</th>
+<th>除去文字数</th>
+<th>除去対象プレフィックス</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>doStpMstInstTask</code></td>
+<td><code>13</code></td>
+<td><code>"MST_INSTANCE\|"</code></td>
+<td><code>stpmgr.cpp:1044</code></td>
+</tr>
+<tr>
+<td><code>doStpMstInstPortTask</code></td>
+<td><code>9</code></td>
+<td><code>"INSTANCE\|"</code> 相当</td>
+<td><code>stpmgr.cpp:1174</code></td>
+</tr>
+</tbody>
+</table>
+<p>これらはキー形式がハードコードされたマジックナンバーであり、キー形式変更時に誤動作する。</p>
+<h3 id="mst-name">MST グローバル設定メッセージの name フィールド長<a class="headerlink" href="#mst-name" title="Permanent link">&para;</a></h3>
+<p><code>STP_MST_GLOBAL_CONFIG_MSG.name</code> は固定長 32 バイト配列であり、有効な最大リージョン名は 31 文字:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span><span class="w">  </span><span class="c1">// stpmgr.h:205</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">strncpy</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">fvValue</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span></code></pre></div>
+<p>CLI (<code>config/stp.py:763</code>) も最大 31 文字でバリデーションしており整合している。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-side-effects.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+<p><code>stpmgrd</code> は <code>STP_MST_INST</code> / <code>STP_MST_PORT</code> のイベントを処理する際、STATE_DB / APPL_DB / ASIC_DB への直接書き込みを行わない。副次効果は Unix ドメインソケット経由の stpd IPC 送信と、プロセスメモリ上の <code>m_vlanInstMap[]</code> 更新のみである。</p>
+<h3 id="stp_mst_inst-setdel">STP_MST_INST SET/DEL の副次効果<a class="headerlink" href="#stp_mst_inst-setdel" title="Permanent link">&para;</a></h3>
+<h4 id="stpd-ipc-stp_mst_inst_config">stpd IPC 送信 (<code>STP_MST_INST_CONFIG</code>)<a class="headerlink" href="#stpd-ipc-stp_mst_inst_config" title="Permanent link">&para;</a></h4>
+<p><code>doStpMstInstTask()</code> (<code>stpmgr.cpp:1108</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">sendMsgStpd</span><span class="p">(</span><span class="n">STP_MST_INST_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">msg</span><span class="p">);</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>メッセージ型</th>
+<th>宛先ソケット</th>
+<th>送信タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_MST_INST_CONFIG</code></td>
+<td><code>/var/run/stpipc.sock</code></td>
+<td>SET/DEL の calloc 成功後</td>
+</tr>
+</tbody>
+</table>
+<p><code>sendMsgStpd()</code> の戻り値は呼び元でチェックされない。<code>sendto</code> 失敗時もエントリは消費される（Phase D 参照）。</p>
+<h4 id="m_vlaninstmap"><code>m_vlanInstMap[]</code> 更新（インメモリ）<a class="headerlink" href="#m_vlaninstmap" title="Permanent link">&para;</a></h4>
+<p><code>STP_MST_INST</code> イベント処理時に <code>updateVlanInstanceMap()</code> (<code>stpmgr.cpp:1454</code>) がプロセスメモリ内の VLAN-インスタンス対応表を更新する:</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>更新内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET (<code>vlan_list</code> フィールドあり)</td>
+<td>新リストの各 <code>vlan_id</code> に <code>m_vlanInstMap[vlan_id] = instance_id</code> をセット。旧リストから外れた VLAN は <code>0</code>（デフォルトインスタンス）にリセット</td>
+</tr>
+<tr>
+<td>DEL</td>
+<td>当該インスタンスにマップされていた全 VLAN ID を <code>0</code> にリセット</td>
+</tr>
+</tbody>
+</table>
+<p>このマップは <strong>stpmgrd プロセス再起動で揮発する</strong>。再起動後は CONFIG_DB の再処理で再構築される。</p>
+<h4 id="m_vlaninstmap-state_vlan_member"><code>m_vlanInstMap</code> 変化による STATE_VLAN_MEMBER 処理への連鎖<a class="headerlink" href="#m_vlaninstmap-state_vlan_member" title="Permanent link">&para;</a></h4>
+<p><code>doVlanMemUpdateTask()</code> (<code>stpmgr.cpp:711</code>) は <code>m_vlanInstMap[vlan_id]</code> を参照して stpd への <code>STP_VLAN_MEM_CONFIG</code> 送信を判定する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_vlanInstMap</span><span class="p">[</span><span class="n">vlan_id</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">INVALID_INSTANCE</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isLagEmpty</span><span class="p">(</span><span class="n">intfName</span><span class="p">))</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="p">{</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">    </span><span class="n">sendMsgStpd</span><span class="p">(</span><span class="n">STP_VLAN_MEM_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">);</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>STP_MST_INST</code> の SET/DEL で <code>m_vlanInstMap</code> が変化すると、それ以降の <code>STATE_VLAN_MEMBER</code> イベント処理で stpd への通知対象 VLAN が変わる。ただし処理済みの <code>STATE_VLAN_MEMBER</code> イベントは遡及再処理されない。</p>
+<h3 id="stp_mst_port-setdel">STP_MST_PORT SET/DEL の副次効果<a class="headerlink" href="#stp_mst_port-setdel" title="Permanent link">&para;</a></h3>
+<h4 id="stpd-ipc-stp_mst_inst_port_config">stpd IPC 送信 (<code>STP_MST_INST_PORT_CONFIG</code>)<a class="headerlink" href="#stpd-ipc-stp_mst_inst_port_config" title="Permanent link">&para;</a></h4>
+<p><code>processStpMstInstPortAttr()</code> (<code>stpmgr.cpp:1152</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">sendMsgStpd</span><span class="p">(</span><span class="n">STP_MST_INST_PORT_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>STP_MST_PORT</code> 処理は <code>m_vlanInstMap[]</code> を更新しない。per-port の <code>path_cost</code> / <code>priority</code> を stpd へ転送するのみ。</p>
+<h3 id="state_db_1">STATE_DB との関係（読み取り専用）<a class="headerlink" href="#state_db_1" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd</code> は STATE_DB を <strong>読み取り専用</strong> で参照する:</p>
+<table>
+<thead>
+<tr>
+<th>STATE_DB テーブル</th>
+<th>参照目的</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_VLAN_TABLE</code></td>
+<td><code>isVlanStateOk()</code> — VLAN ready 判定</td>
+<td><code>stpmgr.cpp:1282</code></td>
+</tr>
+<tr>
+<td><code>STATE_LAG_TABLE</code></td>
+<td><code>isLagStateOk()</code> — LAG ready 判定</td>
+<td><code>stpmgr.cpp:1296</code></td>
+</tr>
+<tr>
+<td><code>STATE_STP_TABLE</code></td>
+<td><code>getStpMaxInstances()</code> — MST 最大インスタンス数取得 (60秒ポーリング)</td>
+<td><code>stpmgr.cpp:1391</code></td>
+</tr>
+<tr>
+<td><code>STATE_VLAN_MEMBER_TABLE</code></td>
+<td><code>isLagEmpty()</code> / <code>doVlanMemUpdateTask()</code> — メンバ情報参照</td>
+<td><code>stpmgr.cpp:938, 984</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>set()</code> / <code>del()</code> 呼び出しはなく、STATE_DB への書き込みは一切発生しない。</p>
+<h3 id="_9">副次効果サマリー<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次効果</th>
+<th>種別</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>stpd IPC (<code>STP_MST_INST_CONFIG</code>)</td>
+<td>Unix ドメインソケット送信</td>
+<td>ベストエフォート。失敗時エントリ消費済み</td>
+</tr>
+<tr>
+<td>stpd IPC (<code>STP_MST_INST_PORT_CONFIG</code>)</td>
+<td>Unix ドメインソケット送信</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>m_vlanInstMap[]</code> 更新</td>
+<td>インメモリ（揮発）</td>
+<td>stpmgrd 再起動で失われる</td>
+</tr>
+<tr>
+<td><code>STP_VLAN_MEM_CONFIG</code> 連鎖送信</td>
+<td>Unix ドメインソケット送信（間接）</td>
+<td>以降の STATE_VLAN_MEMBER イベントに影響</td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への書き込みは発生しない。</p>
+<!-- /side-effects -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36077,8 +36716,8 @@ CONFIG_DB に蓄積され再起動後に一括再処理される。</p>
 </tr>
 </tbody>
 </table>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP</a></li>
 <li><a href="../stp-vlan/">CONFIG_DB: STP_VLAN / STP_VLAN_PORT</a></li>

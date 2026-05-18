@@ -27803,6 +27803,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35568,6 +35657,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36116,6 +36294,159 @@ gRPC ポート・TLS 証明書・認可ポリシー・genetlink 設定などを 
 </tbody>
 </table>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>p4rt</code> コンテナは起動時に <code>sonic-cfggen -d -t p4rt_vars.j2</code> で CONFIG_DB を<strong>一度だけ</strong>読み込む。
+このため <code>P4RT|certs</code> / <code>P4RT|p4rt_app</code> の書込み順と存在タイミングがコンテナの TLS モード・機能設定を確定させる。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-ordering.md -->
+
+<h3 id="_15">検出された順序依存<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>CONFIG_DB への書込み → <code>p4rt</code> コンテナ起動</td>
+<td><strong>強制先行</strong></td>
+<td>起動後の DB 変更は <code>systemctl restart p4rt</code> まで無効</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>P4RT\|certs</code> 存否 → <code>DEVICE_METADATA\|localhost\|x509</code> フォールバック参照</td>
+<td>条件分岐（先行優先）</td>
+<td><code>P4RT\|certs</code> が存在する場合、<code>x509</code> は参照されない</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>server_crt</code> + <code>server_key</code> の同時存在 → TLS 有効化</td>
+<td><strong>同時必須</strong></td>
+<td>片方のみ書込み時に起動すると平文 gRPC になる</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>ca_crt</code> 存在 → <code>cert_crl_dir</code> が有効化</td>
+<td><strong>先行必須</strong></td>
+<td><code>ca_crt</code> なしで <code>cert_crl_dir</code> を設定しても CRL チェックは機能しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">主要な制約詳細<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<p><strong>起動時単回読込み (依存 #1)</strong>: <code>p4rt.sh</code> L13 の <code>sonic-cfggen -d -t ${P4RT_VARS_FILE}</code> は<strong>コンテナ起動時に 1 回だけ</strong>実行される。<code>p4rt</code> プロセスは DB 変更を watch しない。したがって <code>P4RT|certs</code> や <code>P4RT|p4rt_app</code> の変更は <code>systemctl restart p4rt</code> によるコンテナ再起動後にのみ反映される。証明書の更新・ポート変更・設定追加を行った場合は必ず再起動が必要（evidence: <code>p4rt.sh:L13</code>）。</p>
+<p><strong><code>P4RT|certs</code> → <code>DEVICE_METADATA|x509</code> フォールバック順序 (依存 #2)</strong>: <code>p4rt_vars.j2</code> L2–4 は <code>P4RT["certs"]</code> を先に評価し、存在しない場合のみ <code>DEVICE_METADATA["x509"]</code> を代替として <code>p4rt.sh</code> に渡す。<code>p4rt.sh</code> L21–57 も同様の条件分岐で <code>${CERTS}</code> 非空を優先する。<code>P4RT|certs</code> が CONFIG_DB に存在する限り、<code>DEVICE_METADATA|localhost|x509</code> の内容は完全に無視される（evidence: <code>p4rt_vars.j2:L2–4</code>, <code>p4rt.sh:L21–57</code>）。</p>
+<p><strong><code>server_crt</code> / <code>server_key</code> のアトミック書込み (依存 #3)</strong>: <code>p4rt.sh</code> L24–25 は <code>server_crt</code> と <code>server_key</code> の<strong>両方</strong>が非空かどうかをチェックし、いずれか一方でも空の場合は <code>--use_insecure_server_credentials</code> を付与する（エラーにはならない）。TLS を有効化するには、2 つのフィールドを<strong>同一トランザクションで書き込んだ後</strong>にコンテナを起動する必要がある（evidence: <code>p4rt.sh:L22–28</code>）。</p>
+<p><strong><code>ca_crt</code> → <code>cert_crl_dir</code> の階層依存 (依存 #4)</strong>: CRL チェックを有効にする <code>--cert_crl_dir</code> 引数は <code>p4rt.sh</code> L33–36 の <code>ca_crt</code> 存在ブロック内でのみ評価される。<code>ca_crt</code> が未設定の場合、<code>cert_crl_dir</code> をどれだけ設定しても CRL チェックは起動せず、引数も付与されない（evidence: <code>p4rt.sh:L30–37</code>）。</p>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>P4RT テーブルには専用 YANG モデルが存在しないため leafref は一切なし。以下はすべてスクリプトレベルの暗黙参照。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-cross-refs.md -->
+
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost\|x509</code></td>
+<td>読み取り（TLS 代替設定）</td>
+<td><code>P4RT\|certs</code> が CONFIG_DB に存在しない場合のみ。<code>P4RT\|certs</code> が存在すれば完全に無視される</td>
+<td><code>p4rt_vars.j2:L4</code>, <code>p4rt.sh:L38–56</code></td>
+</tr>
+<tr>
+<td>ファイルシステム（証明書・ソケットパス）</td>
+<td>ランタイム参照（パス解決）</td>
+<td>各 string フィールドに設定されたパスをバイナリ起動引数に変換。存在チェックなし（<code>p4rt_unix_socket</code> のディレクトリのみ <code>mkdir -p</code> 自動作成）</td>
+<td><code>p4rt.sh:L21–97</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">orch レベルの参照なし</p>
+<p><code>p4rt</code> コンテナは orchagent (<code>sonic-swss</code>) とは独立して動作し、APP_DB / STATE_DB の生成・購読を行わない。
+<code>sonic-swss/orchagent/p4orch/</code> の各コンポーネントは APPL_DB の <code>P4RT_*</code> テーブルを参照するが、
+CONFIG_DB の <code>P4RT</code> テーブルを直接参照する経路は存在しない。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-net/sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh</code> (コミット <code>9ea932ec</code>)</p>
+<p><code>p4rt</code> テーブルは orchagent ではなく <code>p4rt.sh</code> スクリプトが起動時単回読込みするため、失敗は「サイレントフォールバック」または「起動中断」の二択になる。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-failure.md -->
+
+<h3 id="_17">失敗挙動マトリクス<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>p4rt_vars.j2</code> テンプレートファイル不在</td>
+<td><code>p4rt.sh:L6–9</code></td>
+<td><code>exit 1</code> — gRPC サーバ起動せず (<code>systemctl failed</code>)</td>
+<td><code>"P4rt vars template file not found"</code> を stdout</td>
+<td><code>p4rt.sh:L8</code></td>
+</tr>
+<tr>
+<td><code>server_crt</code> または <code>server_key</code> が空</td>
+<td><code>p4rt.sh:L24–25</code></td>
+<td><code>--use_insecure_server_credentials</code> で平文 gRPC 起動（エラーなし）</td>
+<td>なし</td>
+<td><code>p4rt.sh:L25</code></td>
+</tr>
+<tr>
+<td><code>P4RT\|certs</code> も <code>DEVICE_METADATA\|localhost\|x509</code> も不在</td>
+<td><code>p4rt.sh:L55–57</code></td>
+<td><code>--use_insecure_server_credentials</code> で平文 gRPC 起動（エラーなし）</td>
+<td>なし</td>
+<td><code>p4rt.sh:L56</code></td>
+</tr>
+<tr>
+<td><code>ca_crt</code> なしで <code>cert_crl_dir</code> のみ設定</td>
+<td><code>p4rt.sh:L30–37</code></td>
+<td><code>cert_crl_dir</code> が無視され CRL チェックなしで TLS 起動</td>
+<td>なし</td>
+<td><code>p4rt.sh:L30–37</code></td>
+</tr>
+<tr>
+<td><code>p4rt_unix_socket</code> ディレクトリ不在</td>
+<td><code>p4rt.sh:L92–96</code></td>
+<td><code>mkdir -p</code> で自動作成（権限不足時は p4rt バイナリが socket bind エラー）</td>
+<td>なし（mkdir 失敗時はバイナリ側でエラー）</td>
+<td><code>p4rt.sh:L94–95</code></td>
+</tr>
+<tr>
+<td>未知フィールド / typo フィールド</td>
+<td>各 <code>jq -r '.field // empty'</code></td>
+<td>該当引数なしで起動（サイレント無視）— YANG モデルなしのため CLI 事前バリデーションもなし</td>
+<td>なし</td>
+<td><code>p4rt.sh:L60–97</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_18">補足<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><strong>テンプレートファイル不在のみが <code>exit 1</code> となる唯一の hard failure</strong>。それ以外の設定誤り（証明書欠如・フィールド typo）はすべてサイレントフォールバックであり、<code>p4rt</code> コンテナ自体は起動してしまう。意図しない平文 gRPC 起動を検知するには <code>systemctl status p4rt</code> の起動引数を確認するか、<code>p4rt</code> プロセスの <code>/proc/&lt;pid&gt;/cmdline</code> で <code>--use_insecure_server_credentials</code> の有無を確認する必要がある。</p>
+<!-- /failure -->
 
 <!-- glossary-links-injected -->
 

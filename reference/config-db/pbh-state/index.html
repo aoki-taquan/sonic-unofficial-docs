@@ -27397,6 +27397,95 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側の参照先
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-utilities_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読み取り側 (sonic-utilities) の参照先
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-pbh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        消費側 (config pbh) の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27408,7 +27497,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35169,6 +35258,95 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側の参照先
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-utilities_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読み取り側 (sonic-utilities) の参照先
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-pbh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        消費側 (config pbh) の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35180,7 +35358,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35650,6 +35828,174 @@ Generic platform での期待値:</p>
 <p><code>config pbh</code> コマンドが <code>pbh_capabilities_query()</code> を呼ぶ時点で orchestrator が起動済みで STATE_DB に <code>PBH_CAPABILITIES</code> が存在しなければ validation が失敗する。orchagent の起動完了を待つ明示的な仕組みは CLI 側にない。</p>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-cross-refs.md -->
+
+<p><code>PBH_CAPABILITIES</code> は <code>PbhCapabilities::writePbhVendorCapabilitiesToDb()</code> が起動時 1 回のみ書き込む STATE_DB テーブルである。書き込まれるフィールド値はすべてコンストラクタ内でハードコードされており、CONFIG_DB / APPL_DB / SAI への実行時参照はない。</p>
+<h3 id="_7">書き込み側の参照先<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_DB</code> 接続 (<code>PbhCapabilities::stateDb</code>)</td>
+<td>書き込み先 DB</td>
+<td>必須。static メンバとして orchdaemon 起動の最初期に確立される</td>
+<td><code>pbhcap.cpp:288</code></td>
+</tr>
+<tr>
+<td><code>ASIC_VENDOR</code> 環境変数</td>
+<td>env var 読み取り → ベンダー分岐</td>
+<td>任意。未設定時は <code>GENERIC</code> platform へ fallback。値は <code>"mellanox"</code> のみ分岐</td>
+<td><code>pbhcap.cpp:314–329</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB <code>PBH_TABLE</code> / <code>PBH_RULE</code> / <code>PBH_HASH</code> / <code>PBH_HASH_FIELD</code></td>
+<td><strong>参照なし</strong></td>
+<td>フィールド値はコンストラクタ内のハードコード定数のみ。CONFIG_DB エントリは読まない</td>
+<td><code>pbhcap.cpp:107–124</code></td>
+</tr>
+<tr>
+<td>APPL_DB / SAI</td>
+<td><strong>参照なし</strong></td>
+<td>SAI クエリなし。ベンダー判別は env var のみ</td>
+<td><code>pbhcap.cpp:310–334</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sonic-utilities_1">読み取り側 (sonic-utilities) の参照先<a class="headerlink" href="#sonic-utilities_1" title="Permanent link">&para;</a></h3>
+<p><code>config pbh</code> コマンドは <code>pbh_capabilities_query(db, key)</code> で <code>STATE_DB.PBH_CAPABILITIES|&lt;key&gt;</code> を <code>hgetall</code> し、操作可否を検証する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先 STATE_DB キー</th>
+<th>参照方向</th>
+<th>使用箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PBH_CAPABILITIES\|table</code></td>
+<td>読み取り</td>
+<td><code>config pbh table add/update/del</code> (<code>pbh.py:1351</code>)</td>
+</tr>
+<tr>
+<td><code>PBH_CAPABILITIES\|rule</code></td>
+<td>読み取り</td>
+<td><code>config pbh rule add/update/del</code> (<code>pbh.py:1090, 1218</code>)</td>
+</tr>
+<tr>
+<td><code>PBH_CAPABILITIES\|hash</code></td>
+<td>読み取り</td>
+<td><code>config pbh hash add/update/del</code> (<code>pbh.py:781</code>)</td>
+</tr>
+<tr>
+<td><code>PBH_CAPABILITIES\|hash-field</code></td>
+<td>読み取り</td>
+<td><code>config pbh hash-field add/update/del</code> (<code>pbh.py:670</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">orchagent 未起動時の挙動</p>
+<p><code>config pbh</code> コマンドが orchagent 起動前に実行されると、<code>STATE_DB</code> に <code>PBH_CAPABILITIES</code> キーが存在しないため <code>pbh_capabilities_query()</code> が空 dict を返す。各 <code>config pbh</code> サブコマンドはこれを「capability 不明 = 操作拒否」と扱い、エラーメッセージを出力する。明示的な orchagent 起動待ち機構は CLI 側に存在しない。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-failure.md -->
+
+<p><code>PBH_CAPABILITIES</code> は <code>PbhCapabilities</code> コンストラクタが起動時 1 回のみ書き込む STATE_DB テーブルである。
+書き込み経路は <code>parsePbhAsicVendor()</code> → <code>initPbhVendorCapabilities()</code> → <code>writePbhVendorCapabilitiesToDb()</code> の 3 段。</p>
+<h3 id="_8">書き込み側の失敗経路<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ASIC_VENDOR</code> 環境変数が未設定</td>
+<td><code>parsePbhAsicVendor()</code> L314–317</td>
+<td><code>WARN</code> 出力後 <code>asicVendor = GENERIC</code> に silent fallback。STATE_DB には Generic 向け値が書かれる</td>
+<td><code>SWSS_LOG_WARN("Failed to parse ASIC vendor: fallback to %s platform")</code></td>
+<td><code>pbhcap.cpp:295–298</code></td>
+</tr>
+<tr>
+<td><code>ASIC_VENDOR</code> が <code>"mellanox"</code> 以外の未知ベンダー文字列</td>
+<td><code>parsePbhAsicVendor()</code> L323–329</td>
+<td><code>"mellanox"</code> の else ブランチで <code>GENERIC</code> 扱い。unknown ベンダーは Generic として動作</td>
+<td>なし（分岐なし）</td>
+<td><code>pbhcap.cpp:323–329</code></td>
+</tr>
+<tr>
+<td><code>initPbhVendorCapabilities()</code> で <code>fieldCap</code> が <code>nullptr</code>（将来 unknown vendor 追加時）</td>
+<td><code>initPbhVendorCapabilities()</code> L356–359</td>
+<td><code>SWSS_LOG_ERROR</code> 出力後 <code>return</code>。<code>this-&gt;table</code> 等が <code>nullptr</code> のまま → <code>writePbhVendorCapabilitiesToDb()</code> 内で <code>nullptr</code> deref = <code>PBH_CAPABILITIES</code> が STATE_DB に<strong>書かれない</strong></td>
+<td><code>SWSS_LOG_ERROR("Failed to initialize PBH capabilities: unknown ASIC vendor")</code></td>
+<td><code>pbhcap.cpp:356–359</code></td>
+</tr>
+<tr>
+<td><code>Table::set()</code> (Redis <code>HSET</code>) が失敗（Redis ACL 等）</td>
+<td><code>writePbhEntityCapabilitiesToDb()</code> L381 / L405 / L420 / L437</td>
+<td>戻り値 void のため silent drop。<code>SWSS_LOG_NOTICE</code> はエントリ書き込み後に出力されるが、失敗は未検出</td>
+<td>なし</td>
+<td><code>pbhcap.cpp:381,405,420,437</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB</code> (static <code>DBConnector</code>, timeout=0) 接続失敗</td>
+<td>static member 初期化時</td>
+<td><code>swsscommon</code> 内部で例外発生 → orchagent プロセスが起動失敗 (crash)。systemd により自動再起動</td>
+<td>スタックトレース (未捕捉)</td>
+<td><code>pbhcap.cpp:288–289</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="config-pbh">消費側 (<code>config pbh</code>) の失敗経路<a class="headerlink" href="#config-pbh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orchagent 未起動 / <code>PBH_CAPABILITIES</code> キー欠如</td>
+<td><code>pbh_capabilities_query()</code></td>
+<td>空 dict を返す → 各 <code>config pbh</code> サブコマンドが「操作拒否」エラーを出力</td>
+<td><code>pbh.py:670–679, 781, 1090, 1351</code></td>
+</tr>
+<tr>
+<td><code>PBH_CAPABILITIES\|&lt;subkey&gt;</code> に対象フィールドが存在しない</td>
+<td><code>pbh_capabilities_query()</code></td>
+<td><code>hgetall</code> 結果に該当フィールドなし → 空文字列として扱われ「capability 不明 = 操作拒否」と判定</td>
+<td><code>pbh.py:670–679</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>write-once の冪等性</strong>: コンストラクタで 1 回のみ書くため、Redis の <code>HSET</code> は既存値を上書きする動作になる。orchagent が再起動しても同じ値が再書き込みされる（冪等）。</li>
+<li><strong><code>nullptr</code> deref の実際のリスク</strong>: 現行コードの分岐は <code>GENERIC</code> / <code>MELLANOX</code> のみで <code>default</code> で <code>fieldCap</code> が nullptr になるパスは <code>nullptr</code> 状態をチェックして早期 return しているため (L356–359)、実際に deref は発生しない。ただし <code>writePbhVendorCapabilitiesToDb()</code> が呼ばれた後にメンバポインタが <code>nullptr</code> ならシグナル SIGSEGV が発生するため、<code>initPbhVendorCapabilities()</code> の <code>return</code> が実質的なガードとして機能している。</li>
+</ul>
+<!-- /failure -->
+
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>設定元: <a href="../pbh/"><code>PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD</code></a> (CONFIG_DB)</li>
@@ -35661,7 +36007,7 @@ Generic platform での期待値:</p>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|hash&#39;</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|hash-field&#39;</span>
 </span></code></pre></div>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

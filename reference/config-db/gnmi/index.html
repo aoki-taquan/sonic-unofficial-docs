@@ -26455,6 +26455,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35224,6 +35235,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35746,6 +35768,83 @@
   clientCertAuth.go:254-284 — PopulateAuthStructByCommonName による GNMI_CLIENT_CERT 参照
 -->
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>gnmi-native.sh</code> は起動時に <code>sonic-cfggen -d -t telemetry_vars.j2</code> で CONFIG_DB 全体を読み込み、<code>GNMI</code> テーブルと <code>DEVICE_METADATA</code> の一部を JSON 化して参照する。実行時は <code>clientCertAuth.go</code> が接続ごとに <code>GNMI_CLIENT_CERT</code> テーブルを直接参照する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GNMI\|gnmi</code> (CONFIG_DB)</td>
+<td>起動引数生成（port / log_level / threshold / idle_conn_duration / user_auth / enable_crl / crl_expire_duration）</td>
+<td>常時。エントリ不在時は各フィールド独自の fallback 値を使用</td>
+<td><code>gnmi-native.sh:19-22,64-148</code> — <code>sonic-cfggen</code> → <code>$GNMI</code> 変数</td>
+</tr>
+<tr>
+<td><code>GNMI\|certs</code> (CONFIG_DB)</td>
+<td>TLS 証明書パス解決（server_crt / server_key / ca_crt）</td>
+<td>常時。存在する場合 <code>DEVICE_METADATA|localhost.x509</code> より優先</td>
+<td><code>gnmi-native.sh:19-22,31-43</code> — <code>$CERTS</code> 変数経由</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.x509</code> (CONFIG_DB)</td>
+<td>TLS 証明書パス解決（フォールバック）</td>
+<td><code>GNMI|certs</code> が不在のとき。<code>telemetry_vars.j2:4</code> で <code>x509</code> キーを抽出</td>
+<td><code>gnmi-native.sh:44-58</code> — <code>$X509</code> 変数経由; <code>telemetry_vars.j2:4</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.subtype</code> (CONFIG_DB)</td>
+<td>SmartSwitch 判定 → <code>--zmq_port=8100</code> 付与</td>
+<td><code>subtype == "SmartSwitch"</code> のとき。ZMQ ポートを強制付与</td>
+<td><code>gnmi-native.sh:89-91</code> — <code>sonic-db-cli CONFIG_DB hget</code></td>
+</tr>
+<tr>
+<td><code>MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled</code> (CONFIG_DB)</td>
+<td>管理 VRF バインド → <code>--vrf mgmt</code> 付与</td>
+<td><code>mgmtVrfEnabled == "true"</code> のとき</td>
+<td><code>gnmi-native.sh:95-98</code> — <code>sonic-db-cli CONFIG_DB hget</code></td>
+</tr>
+<tr>
+<td><code>GNMI_CLIENT_CERT\|&lt;CN&gt;</code> (CONFIG_DB)</td>
+<td>実行時認可ロール解決（role / role@）</td>
+<td><code>user_auth=cert</code> モード時、各クライアント接続ごと</td>
+<td><code>gnmi_server/clientCertAuth.go:254-284</code> — <code>PopulateAuthStructByCommonName()</code></td>
+</tr>
+<tr>
+<td><code>TELEMETRY\|gnmi</code> (CONFIG_DB)</td>
+<td>マイグレーション元（レガシー）</td>
+<td><code>db_migrator.migrate_gnmi()</code> が <code>GNMI|gnmi</code> へ自動コピー。通常運用では参照されない</td>
+<td><code>sonic-utilities</code> <code>db_migrator.py</code> — <code>migrate_gnmi()</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title"><code>sonic-cfggen</code> 一括読み込みの意味</p>
+<p><code>gnmi-native.sh</code> は起動時に <strong>1 回だけ</strong> <code>sonic-cfggen -d -t telemetry_vars.j2</code> を実行し、その結果を変数に保持する。
+テンプレートは <code>GNMI["certs"]</code>・<code>GNMI["gnmi"]</code>・<code>DEVICE_METADATA["x509"]</code> の 3 キーを JSON 化する（<code>telemetry_vars.j2:2-4</code>）。
+コンテナが稼働中に CONFIG_DB が変更されても <code>telemetry</code> プロセスには反映されず、<code>systemctl restart gnmi</code> が必要。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title"><code>DEVICE_METADATA|localhost.subtype</code> / <code>MGMT_VRF_CONFIG</code> は <code>sonic-db-cli</code> で直接取得</p>
+<p>これら 2 つのフィールドは <code>sonic-cfggen</code> テンプレートではなく <code>sonic-db-cli CONFIG_DB hget</code> で個別取得される。
+取得は起動スクリプトの実行時点（<code>exec telemetry</code> の直前）に限られる。</p>
+</div>
+<!-- evidence:
+  gnmi-native.sh:19-22 — sonic-cfggen -d -t telemetry_vars.j2 で $GNMI/$CERTS/$X509 を一括取得
+  telemetry_vars.j2:2-4 — GNMI["certs"], GNMI["gnmi"], DEVICE_METADATA["x509"] の Jinja2 テンプレート
+  gnmi-native.sh:89-91 — DEVICE_METADATA|localhost subtype 取得 (sonic-db-cli)
+  gnmi-native.sh:95-98 — MGMT_VRF_CONFIG|vrf_global mgmtVrfEnabled 取得 (sonic-db-cli)
+  clientCertAuth.go:254-284 — PopulateAuthStructByCommonName による GNMI_CLIENT_CERT 参照
+-->
+<!-- /cross-refs -->
 
 <div class="footnote">
 <hr />

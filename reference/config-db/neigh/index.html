@@ -23730,6 +23730,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-config_db-neigh-nbrmgrdnetlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路 1: CONFIG_DB NEIGH → nbrmgrd（Netlink 直送）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-appl_db-neigh_table-neighorchorchagent-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路 2: APPL_DB NEIGH_TABLE → NeighOrch（orchagent 経由・SAI プログラミング）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#neighorch-phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35448,6 +35487,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-config_db-neigh-nbrmgrdnetlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路 1: CONFIG_DB NEIGH → nbrmgrd（Netlink 直送）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-appl_db-neigh_table-neighorchorchagent-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路 2: APPL_DB NEIGH_TABLE → NeighOrch（orchagent 経由・SAI プログラミング）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#neighorch-phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36201,6 +36279,98 @@ APPL_DB <code>NEIGH_TABLE</code> → <code>NeighOrch</code> → SAI / ASIC 経�
 <p>aging time のハードコード定数は <code>neighorch.cpp</code> に存在しない。neighbor のエージング管理は Linux カーネルと SAI プラットフォーム実装に委任されている。</p>
 </blockquote>
 <!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB <code>NEIGH</code> テーブルの変更に伴う副次的 DB 書込みは、処理経路によって異なる。</p>
+<h3 id="1-config_db-neigh-nbrmgrdnetlink">経路 1: CONFIG_DB NEIGH → nbrmgrd（Netlink 直送）<a class="headerlink" href="#1-config_db-neigh-nbrmgrdnetlink" title="Permanent link">&para;</a></h3>
+<p><code>nbrmgrd</code> は DB への書込みを一切行わない。副作用は Linux カーネルの neighbor テーブル変更に閉じる。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>reconcileNeighResolveTable()</code> は <code>NEIGH_RESOLVE_TABLE</code> を読み取るのみ（<code>getKeys</code>/<code>hget</code>）。<code>nbrmgrd</code> 内に Producer/Table の書込み呼出なし</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>isIntfStateOk()</code> / <code>isNeighRestoreDone()</code> は読取のみ。<code>m_stateIntfTable</code> / <code>m_stateNeighRestoreTable</code> への SET/DEL 呼出なし</td>
+</tr>
+<tr>
+<td>COUNTERS_DB / ASIC_DB / FLEX_COUNTER_DB</td>
+<td>なし</td>
+<td><code>nbrmgr.cpp</code> 全体に COUNTERS_DB / ASIC_DB 参照なし</td>
+</tr>
+</tbody>
+</table>
+<p>カーネルへの副作用:
+- <code>RTM_NEWNEIGH</code> (<code>NUD_PERMANENT</code>): スタティック neighbor をカーネル neighbor テーブルへ直接書込み
+- <code>RTM_NEWNEIGH</code> (<code>NUD_DELAY + NTF_USE</code>): <code>neigh</code> MAC 省略時にカーネルへ ARP/NDP 解決を要求。ネットワーク上に ARP Request / ICMPv6 Neighbor Solicitation が送出される</p>
+<h3 id="2-appl_db-neigh_table-neighorchorchagent-sai">経路 2: APPL_DB NEIGH_TABLE → NeighOrch（orchagent 経由・SAI プログラミング）<a class="headerlink" href="#2-appl_db-neigh_table-neighorchorchagent-sai" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB <code>NEIGH</code> → <code>nbrmgrd</code> → カーネル → <code>neighsyncd</code> → APPL_DB <code>NEIGH_TABLE</code> → <code>NeighOrch</code> の下流経路で、以下の副次 DB 書込みが発生する。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル</th>
+<th>操作</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td><code>NEIGH_RESOLVE_TABLE</code></td>
+<td>SET（解決要求発行）</td>
+<td>MAC がゼロ（未解決）の neighbor が SET で来たとき。<code>resolveNeighborEntry()</code> が書込み</td>
+<td><code>neighorch.cpp:121</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td><code>NEIGH_RESOLVE_TABLE</code></td>
+<td>DEL（解決完了後削除）</td>
+<td>MAC 確定後の <code>addNeighbor</code> 成功時。<code>clearResolvedNeighborEntry()</code> が削除</td>
+<td><code>neighorch.cpp:140</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>STATE_SYSTEM_NEIGH_TABLE</code></td>
+<td>SET / DEL</td>
+<td><strong>VoQ 環境のみ</strong> (<code>switch_type == "voq"</code>)。リモートシステム neighbor のステータスを反映</td>
+<td><code>neighorch.cpp:2223, 2173, 2260</code></td>
+</tr>
+<tr>
+<td>CHASSIS_APP_DB</td>
+<td><code>CHASSIS_APP_SYSTEM_NEIGH_TABLE</code></td>
+<td>SET / DEL</td>
+<td><strong>VoQ 環境のみ</strong>。シャーシ共有 system neighbor テーブルへ書込み</td>
+<td><code>neighorch.cpp:2654, 2688</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>CRM カウンタ（<code>CRM_IPV4/IPV6_NEIGHBOR</code> / <code>CRM_IPV4/IPV6_NEXTHOP</code> / <code>CRM_IPV4/IPV6_ROUTE</code>）</td>
+<td>inc / dec</td>
+<td><code>gCrmOrch-&gt;incCrmResUsedCounter</code> / <code>decCrmResUsedCounter</code> 経由。SAI 作成・削除成否に連動</td>
+<td><code>neighorch.cpp:1361, 1365, 1387, 1391, 359, 363, 1148, 1152</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">CONFIG_DB NEIGH の直接副作用</p>
+<p>CONFIG_DB <code>NEIGH</code> エントリの SET は <code>nbrmgrd</code> → カーネル Netlink のみ。APPL_DB <code>NEIGH_RESOLVE_TABLE</code> への書込みは <code>NeighOrch</code> が行うものであり、CONFIG_DB <code>NEIGH</code> 書込みから直接発生するわけではない。<br />
+ただし <code>nbrmgrd</code> が MAC なしで <code>NUD_DELAY+NTF_USE</code> を発行してカーネルが ARP 解決を行うと、<code>neighsyncd</code> がその結果を APPL_DB <code>NEIGH_TABLE</code> に書き込み、間接的に上記ネストした副作用が発生する。</p>
+</div>
+<p>詳細スキャン手順は <code>meta/_intermediate/cdb-flow/neigh-side-effects.md</code> を参照。</p>
+<!-- /side-effects -->
 
 <!-- cross-refs -->
 <h2 id="neighorch-phase-c">暗黙参照 — <code>NeighOrch</code> が依存する関連テーブル (Phase C)<a class="headerlink" href="#neighorch-phase-c" title="Permanent link">&para;</a></h2>

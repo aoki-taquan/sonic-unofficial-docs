@@ -26346,7 +26346,85 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照・共依存コンポーネント (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照・共依存コンポーネント (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キャッシュによる共通制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        asic_type フィールドの重要性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34848,7 +34926,85 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照・共依存コンポーネント (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照・共依存コンポーネント (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キャッシュによる共通制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        asic_type フィールドの重要性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35125,7 +35281,123 @@
 </ul>
 <!-- /defaults -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>/etc/sonic/sonic_version.yml</code> はビルド時に生成される静的ファイルであり、CONFIG_DB / STATE_DB への書込みは行わない。ただし、ビルドパイプライン内の変数確定順序と、ランタイムでの読込みキャッシュ挙動に順序依存が存在する。</p>
+<h3 id="_7">検出された順序依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>環境変数エクスポート → <code>j2</code> レンダリング (<code>build_debian.sh</code>)</td>
+<td><strong>強制先行（同スクリプト内逐次実行）</strong></td>
+<td>必須フィールドが空、またはガード対象フィールドが省略される</td>
+</tr>
+<tr>
+<td>2</td>
+<td>CI による <code>BUILD_NUMBER</code> 設定 → <code>build_debian.sh</code> 実行</td>
+<td><strong>推奨先行</strong></td>
+<td><code>BUILD_NUMBER</code> 未設定時は <code>functions.sh:60</code> の <code>${BUILD_NUMBER:-0}</code> フォールバックで <code>build_number: 0</code> が刻まれる</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SONiC イメージインストール（ファイル配置完了） → <code>get_sonic_version_info()</code> 呼び出し</td>
+<td><strong>強制先行</strong></td>
+<td>ファイル不在時は <code>os.path.isfile()</code> チェックで <code>None</code> を返す（<code>device_info.py:512-513</code>）。<code>show version</code> / gNMI が version なし表示になる</td>
+</tr>
+<tr>
+<td>4</td>
+<td>初回 <code>get_sonic_version_info()</code> 呼び出し → 以降の同プロセス参照</td>
+<td><strong>プロセスライフタイム固定（キャッシュ）</strong></td>
+<td><code>global sonic_ver_info</code> に結果を保持し、2 回目以降はファイルを再読しない（<code>device_info.py:515-517</code>）。ファイルを書き換えてもプロセス再起動なしでは反映されない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">主要な制約詳細<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><strong>ビルド時の変数先行 (依存 #1)</strong>: <code>build_debian.sh:642-654</code> は <code>BUILD_VERSION</code>・<code>DEBIAN_VERSION</code>・<code>KERNEL_VERSION</code> 等の環境変数をエクスポートしてから <code>j2 &lt;template&gt;</code> を呼び出す。これらは同一 Bash スクリプト内で逐次実行されるため、通常は問題が生じない。ただし <code>asic_subtype</code>（<code>TARGET_MACHINE</code> 変数が空なら省略）や <code>asan</code>（<code>ENABLE_ASAN != "y"</code> なら省略）は Jinja2 <code>{% if %}</code> ガードで条件付き出力となる（<code>sonic_version.yml.j2:10-12, 29-31</code>）。</p>
+<p><strong><code>BUILD_NUMBER</code> フォールバック (依存 #2)</strong>: <code>functions.sh:60</code> の <code>BUILD_NUMBER=${BUILD_NUMBER:-0}</code> により、CI 環境変数が未設定のローカルビルドでは常に <code>build_number: 0</code> が埋め込まれる。<code>build_version</code> 文字列も <code>&lt;branch&gt;.0-&lt;commit_sha&gt;</code> 形式になるため、同一コミットの複数ローカルビルドを <code>build_version</code> で区別できない。</p>
+<p><strong>プロセスキャッシュと hot-reload 不可 (依存 #4)</strong>: <code>device_info.get_sonic_version_info()</code> は <code>sonic_ver_info</code> グローバル変数でキャッシュするため、<code>show version</code> CLI や gNMI telemetry サービスが起動してから <code>/etc/sonic/sonic_version.yml</code> を手動書き換えしても、<strong>該当プロセスを再起動するまで旧バージョン情報が返り続ける</strong>。sonic-py-common を使う全デーモン（<code>telemetry</code>・<code>sonic-utilities</code>）が影響を受ける。</p>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照・共依存コンポーネント (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/image-state-cross-refs.md</code></p>
+</blockquote>
+<p><code>/etc/sonic/sonic_version.yml</code> は Redis テーブルではないため YANG leafref による参照整合性保証は存在しない。しかし複数のコンポーネントがこのファイルを直接読み込んでおり、ファイル不在またはフィールド欠落時の影響は広範囲に及ぶ。</p>
+<table>
+<thead>
+<tr>
+<th>コンポーネント</th>
+<th>依存フィールド</th>
+<th>ファイル不在時の挙動</th>
+<th>フィールド欠落時の挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show version</code> (sonic-utilities)</td>
+<td><code>build_version</code>・<code>asic_type</code> 等</td>
+<td><code>get_sonic_version_info()</code> が <code>None</code> を返す → 各フィールド <code>.get(key, 'N/A')</code> で graceful fallback</td>
+<td><code>N/A</code> 表示</td>
+<td><code>show/main.py:1718-1733</code></td>
+</tr>
+<tr>
+<td>gNMI telemetry (sonic-gnmi)</td>
+<td><code>build_version</code></td>
+<td><code>SonicVersionInfo.Error</code> にエラー文字列、<code>build_version=""</code> として返却</td>
+<td>同上</td>
+<td><code>non_db_client.go:42-58</code></td>
+</tr>
+<tr>
+<td><code>db_migrator.py</code></td>
+<td><code>asic_type</code></td>
+<td><code>version_info.get('asic_type')</code> が <code>None</code> → asic 固有 migration が mellanox 向け等でスキップ</td>
+<td>mellanox 向け migrate_xxx が実行されない</td>
+<td><code>db_migrator.py:96-98</code></td>
+</tr>
+<tr>
+<td><code>field_operation_validators.py</code> (gcu)</td>
+<td><code>asic_type</code></td>
+<td><code>device_info.get_sonic_version_info()['asic_type']</code> の直接キーアクセスで <strong><code>KeyError</code></strong> → gcu フィールド操作が失敗</td>
+<td><code>None</code> 比較で asic 固有ルールが不適用</td>
+<td><code>field_operation_validators.py:33</code></td>
+</tr>
+<tr>
+<td><code>sonic_package_manager</code></td>
+<td>version_info dict 全体</td>
+<td><code>None</code> アクセスでクラッシュの可能性</td>
+<td>パッケージバージョン検証の欠落</td>
+<td><code>manager.py:323</code></td>
+</tr>
+<tr>
+<td>show プラグイン (mlnx / barefoot / cisco-8000)</td>
+<td><code>asic_type</code></td>
+<td><code>None</code> 参照エラー → プラットフォーム固有 show コマンドが失敗</td>
+<td>プラグイン固有処理がスキップ</td>
+<td><code>show/plugins/*.py:157,48,22</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">キャッシュによる共通制約<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>sonic-py-common</strong> (<code>get_sonic_version_info()</code>): <code>global sonic_ver_info</code> にプロセスライフタイム固定でキャッシュ。ファイルを書き換えてもプロセス再起動なしでは反映されない (<code>device_info.py:515-517</code>)</li>
+<li><strong>sonic-gnmi</strong>: <code>sync.Once</code> で 1 回のみ読み込む。telemetry サービス再起動まで更新されない。<code>InvalidateVersionFileStash()</code> API が存在するがテスト用途のみ (<code>non_db_client.go:55-58</code>)</li>
+</ul>
+<h3 id="asic_type"><code>asic_type</code> フィールドの重要性<a class="headerlink" href="#asic_type" title="Permanent link">&para;</a></h3>
+<p><code>asic_type</code> は最も多くのコンポーネントが参照するフィールドであり、<code>db_migrator</code>・<code>gcu</code>・mirrororch (<code>gre_type</code> プラットフォーム分岐)・各 show プラグインが <code>asic_type</code> に基づいて動作を切り替える。ビルド時には必ず <code>sonic_asic_platform</code> 変数から設定される必須フィールドだが、テスト環境・VS 環境では <code>asic_type: vs</code> が入る。</p>
+<!-- /cross-refs -->
+
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

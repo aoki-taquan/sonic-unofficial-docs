@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズムを詳細解説。Phase A+B+C+D+E+F+G 分析。">
+        <meta name="description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズム・プラットフォーム差異を詳細解説。Phase A+B+C+D+E+F+G+H 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="STP_VLAN / STP_VLAN_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズムを詳細解説。Phase A+B+C+D+E+F+G 分析。" />
+<meta property="og:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズム・プラットフォーム差異を詳細解説。Phase A+B+C+D+E+F+G+H 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-vlan.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-vlan/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="STP_VLAN / STP_VLAN_PORT テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズムを詳細解説。Phase A+B+C+D+E+F+G 分析。" />
+<meta property="twitter:description" content="CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数・副作用・通信メカニズム・プラットフォーム差異を詳細解説。Phase A+B+C+D+E+F+G+H 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-vlan.png" />
 </head>
   
@@ -29475,6 +29475,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-stp-pvst-vs-mstp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. STP プロトコルモード (PVST vs MSTP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-asic-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. ASIC ごとの最大 STP インスタンス数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-ebtables-pvst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. ebtables PVST マルチキャストフィルタ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29486,7 +29547,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29497,7 +29558,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -36088,6 +36149,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-stp-pvst-vs-mstp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. STP プロトコルモード (PVST vs MSTP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-asic-stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. ASIC ごとの最大 STP インスタンス数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-ebtables-pvst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. ebtables PVST マルチキャストフィルタ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36099,7 +36221,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36110,7 +36232,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -37167,6 +37289,131 @@ CONFIG_DB 変更の最終反映は <code>stpmgrd</code> → Unix Domain Socket �
 <p>証跡: <code>stpmgrd.cpp:17, 43-65, 92-117</code>, <code>stpmgr.cpp:22-48</code>, <code>stpmgr.h:28, 49</code>, <code>schema.h:374-377, 423-424, 445</code></p>
 <!-- /pubsub -->
 
+<!-- platform-diff -->
+<h2 id="phase-h">プラットフォーム差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-platform.md -->
+
+<p><code>STP_VLAN</code> / <code>STP_VLAN_PORT</code> テーブルの処理に ASIC ベンダー固有の条件分岐は存在しない。<code>stpmgrd</code> は SAI を直接呼ばず Unix Domain Socket 経由で <code>stpd</code> に IPC を送信する設計で、ASIC 差異は <code>stpd</code> 内部で吸収される。ただし以下 3 点でプラットフォームに依存した挙動が観測される。</p>
+<h3 id="a-stp-pvst-vs-mstp">A. STP プロトコルモード (PVST vs MSTP)<a class="headerlink" href="#a-stp-pvst-vs-mstp" title="Permanent link">&para;</a></h3>
+<p><code>STP_VLAN</code> / <code>STP_VLAN_PORT</code> は <strong>PVST モード (<code>L2_PVSTP</code>) 専用</strong> のテーブルである。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c1">// stpmgr.cpp:260</span>
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">l2ProtoEnabled</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">L2_PVSTP</span><span class="p">)</span>
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="p">{</span>
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="w">    </span><span class="n">newInstance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="w">    </span><span class="n">instId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocL2Instance</span><span class="p">(</span><span class="n">vlan_id</span><span class="p">);</span>
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>モード</th>
+<th><code>STP_VLAN</code> SET 処理</th>
+<th>per-VLAN インスタンス割当</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>L2_PVSTP</code></td>
+<td><code>allocL2Instance()</code> → IPC 送信</td>
+<td>実行</td>
+</tr>
+<tr>
+<td><code>L2_MSTP</code></td>
+<td>IPC 送信するが <code>newInstance = 0</code> (割当なし)</td>
+<td>スキップ。<code>STP_MST_INST</code> が担う</td>
+</tr>
+<tr>
+<td><code>L2_NONE</code></td>
+<td>ガード条件で skip / erase のみ</td>
+<td>実行せず</td>
+</tr>
+</tbody>
+</table>
+<p><code>l2ProtoEnabled</code> は ASIC ではなく CLI で設定する <code>STP|GLOBAL.mode</code>（<code>"pvst"</code> / <code>"mst"</code>）で決まる<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">3</a></sup>。</p>
+<h3 id="b-asic-stp">B. ASIC ごとの最大 STP インスタンス数<a class="headerlink" href="#b-asic-stp" title="Permanent link">&para;</a></h3>
+<p><code>stporch</code> 起動時に SAI 属性 <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> を照会して <code>STATE_STP|GLOBAL.max_stp_inst</code> に書き込む<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">1</a></sup>。<code>stpmgrd</code> はこの値を読み取って <code>max_stp_instances</code> に設定し、超過 VLAN は silent truncation する (Phase E 参照)。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="c1">// stporch.cpp:32-38</span>
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_SWITCH_ATTR_MAX_STP_INSTANCE</span><span class="p">;</span>
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_switch_api</span><span class="o">-&gt;</span><span class="n">get_switch_attribute</span><span class="p">(</span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a><span class="w">    </span><span class="n">m_maxStpInstance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">sai_uint16_t</span><span class="p">)</span><span class="n">max_stp_instances</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-34-6"><a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a><span class="w">    </span><span class="n">m_stpTable</span><span class="o">-&gt;</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;GLOBAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{{</span><span class="s">&quot;max_stp_inst&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">m_maxStpInstance</span><span class="p">)}});</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>SAI 照会結果</th>
+<th><code>max_stp_instances</code> 実効値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Broadcom 等物理 ASIC</td>
+<td>成功 (255 以上が多い)</td>
+<td><code>SAI 値 - 1</code> (デフォルト STP インスタンスを除く)</td>
+</tr>
+<tr>
+<td>一部 Marvell / 低グレード ASIC</td>
+<td>成功 (値が少ない)</td>
+<td><code>SAI 値 - 1</code>。STP_VLAN 有効化数が制限される</td>
+</tr>
+<tr>
+<td>VS (仮想スイッチ)</td>
+<td>失敗または 0 返却</td>
+<td><code>STP_DEFAULT_MAX_INSTANCES</code> = 255 (フォールバック)<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">3</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h3 id="c-ebtables-pvst">C. ebtables PVST マルチキャストフィルタ<a class="headerlink" href="#c-ebtables-pvst" title="Permanent link">&para;</a></h3>
+<p>PVST モード有効化時に <code>stpmgr</code> は Cisco PVST+ マルチキャストアドレス (<code>01:00:0c:cc:cc:cd</code>) をブロックする ebtables ルールをカーネルに挿入する<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">3</a></sup>。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="c1">// stpmgr.cpp:113-117 (PVST 有効化時)</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="s">&quot;ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP&quot;</span>
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a><span class="c1">// stpmgr.cpp:161-165 (STP 無効化時)</span>
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a><span class="s">&quot;ebtables -D FORWARD -d 01:00:0c:cc:cc:cd -j DROP&quot;</span>
+</span></code></pre></div>
+<ul>
+<li><strong>物理 ASIC (Broadcom / Mellanox 等)</strong>: ebtables が有効なため PVST マルチキャストが適切に遮断される。</li>
+<li><strong>VS (仮想スイッチ)</strong>: <code>ebtables</code> バイナリが存在しない場合は <code>system()</code> が失敗し <code>SWSS_LOG_DEBUG</code> のみ出力される。PVST マルチキャストの遮断は機能しないが、VS 環境ではハードウェアフラッディングがないため実害なし。</li>
+<li><strong>SmartSwitch DPU</strong>: DPU 側では <code>stpmgrd</code> は通常起動しないため非適用。</li>
+</ul>
+<h3 id="_10">プラットフォーム差異要約<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>物理 ASIC (PVST モード)</th>
+<th>物理 ASIC (MSTP モード)</th>
+<th>VS / コンテナ</th>
+<th>SmartSwitch DPU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_VLAN</code> per-VLAN 割当</td>
+<td><code>allocL2Instance</code> 実行</td>
+<td>スキップ (<code>newInstance=0</code>)</td>
+<td>実行</td>
+<td>N/A (非起動)</td>
+</tr>
+<tr>
+<td><code>max_stp_instances</code> 上限</td>
+<td>SAI 照会値 − 1</td>
+<td>N/A</td>
+<td>255 (フォールバック)</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>ebtables PVST フィルタ</td>
+<td>有効</td>
+<td>STP 無効化時に削除</td>
+<td>no-op (バイナリ非存在時)</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform-diff -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -37246,8 +37493,8 @@ CONFIG_DB 変更の最終反映は <code>stpmgrd</code> → Unix Domain Socket �
 </tr>
 </tbody>
 </table>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP</a></li>
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>
@@ -37256,14 +37503,17 @@ CONFIG_DB 変更の最終反映は <code>stpmgrd</code> → Unix Domain Socket �
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:4">
+<p>STP Orch 実装: <code>stporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p>STP CLI 実装: <code>config/stp.py</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>STP CLI 実装: <code>config/stp.py</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>STP Manager 実装: <code>stpmgr.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>STP Manager 実装: <code>stpmgr.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>STP Manager ヘッダ: <code>stpmgr.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>STP Manager ヘッダ: <code>stpmgr.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
