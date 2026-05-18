@@ -147,6 +147,33 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## テーブル間クロスリファレンス (Phase C)
+
+> 根拠: `sonic-srv6.yang` L81-82, L108-109、`srv6orch.cpp` L107, L331-350、`frrcfgd.py` L121, L2335, L2732 精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-my-locators-cross-refs.md`
+
+| 参照元 | 参照先 | 種別 | 必須条件 |
+|--------|--------|------|----------|
+| `SRV6_MY_SIDS.locator_name` | `SRV6_MY_LOCATORS.locator_name` | YANG leafref | SID 書き込み前にロケータが存在すること |
+| `SRV6_MY_LOCATORS.vrf` | `VRF.name` | YANG leafref | 非 `"default"` VRF 指定時のみ |
+| `Srv6Orch` (swss orchagent) | `CONFIG_DB SRV6_MY_LOCATORS` | 直接 DB 参照 | MySID APPL_DB 処理時にビット長を取得 |
+| `frrcfgd` | `CONFIG_DB SRV6_MY_LOCATORS` | 購読 → zebra 転送 | bgpcfgd と並立した FRR 通知経路 |
+
+### SRV6_MY_SIDS からの leafref 参照
+
+`sonic-srv6.yang:108-109` が `SRV6_MY_SIDS` の `locator_name` を `SRV6_MY_LOCATORS.locator_name` への leafref として定義している。YANG バリデーションにより、対応するロケータエントリが存在しない `SRV6_MY_SIDS` の書き込みは拒否される。
+
+### VRF テーブルへの leafref
+
+`sonic-srv6.yang:81-82` が `SRV6_MY_LOCATORS` の `vrf` フィールドを `VRF.name` への leafref として定義している。`vrf` に `"default"` 以外の値を指定する場合は `VRF` テーブルに対象 VRF が先に存在しなければならない。bgpcfgd は `vrf` を FRR コマンドに反映しないが、YANG バリデーション層は本制約を強制する。
+
+### srv6orch による CONFIG_DB 直接参照
+
+`Srv6Orch` は `m_locatorCfgTable`（`srv6orch.cpp:107`）で CONFIG_DB の `SRV6_MY_LOCATORS` を直接読み取る。`getLocatorCfgFromDb()`（`srv6orch.cpp:331-350`）は APPL_DB の MySID エントリ処理時にロケータの `block_len` / `node_len` / `func_len` / `arg_len` を取得し、SAI エントリに詰める。ロケータが CONFIG_DB に存在しない場合は `SWSS_LOG_ERROR` を出力してエントリ処理が失敗する。
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: SRv6 YANG モデル: `sonic-srv6.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-srv6.yang>
