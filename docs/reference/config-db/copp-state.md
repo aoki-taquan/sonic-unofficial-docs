@@ -259,6 +259,33 @@ orchagent が APPL_DB を処理
 `state` (coppmgr) と `hw_status` (copporch) は同一 Redis キーに非同期で書き込まれるため、両フィールドが揃うタイミングは保証されない。短時間の不整合（`state=ok` だが `hw_status` 未設定、またはその逆）は正常動作である。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+本ページの STATE_DB 3 テーブル（`COPP_GROUP_TABLE` / `COPP_TRAP_TABLE` / `COPP_TRAP_CAPABILITY_TABLE`）はいずれも YANG 未モデル化のオペレーショナルテーブルで、`coppmgrd` および `CoppOrch` が**書き手 (producer only)** として書き込む。以下では各 STATE_DB エントリの**生成トリガ・キー値・フィールド値**が依存する入力側テーブルと前提リソースを整理する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `COPP_TRAP\|<trap-name>` (CONFIG_DB) | キー転写 + SET/DEL トリガ | 常時。`<trap-name>` は `COPP_TRAP_TABLE` キーに転写される。`trap_group` / `trap_ids` / `always_enabled` フィールドを参照 | `coppmgr.cpp` L298-303 (テーブル参照), L531-815 (`doCoppTrapTask`) |
+| `COPP_GROUP\|<group-name>` (CONFIG_DB) | キー転写 + SET/DEL トリガ | 常時。`<group-name>` は `COPP_GROUP_TABLE` キーに転写 | `coppmgr.cpp` L299, L840-927 (`doCoppGroupTask`) |
+| `FEATURE\|<feature-name>` (CONFIG_DB) | feature 有効フラグ参照 | 常時。`state` フィールドが `enabled` かどうかで `COPP_TRAP_TABLE` / `COPP_GROUP_TABLE` のエントリ追加・削除が決まる | `coppmgr.cpp` L300, L323-330, L928-967 (`doFeatureTask`), L157-172 (`isFeatureEnabled`) |
+| `APP_COPP_TABLE\|<group-name>` (APPL_DB) | 中継テーブル — coppmgr が書き込み、CoppOrch が読み出す | 常時。`coppmgrd` が `APPL_DB` に書いた後、`CoppOrch` が SAI に反映し `hw_status` を STATE_DB に返す | `coppmgr.cpp` L301 (`m_appCoppTable`), `copporch.cpp` L191 (Consumer) |
+| `PortsOrch::allPortsReady()` | 起動順序ガード | 常時。全ポートが Ready でない間は `CoppOrch::doTask()` が即 return し、`COPP_TRAP_TABLE.hw_status` が書き込まれない | `copporch.cpp` L885-888 |
+| SAI `sai_query_attribute_enum_values_capability()` | SAI クエリ → `COPP_TRAP_CAPABILITY_TABLE` 書込み | 起動時 1 回。成功時は SAI 返値、失敗時は `default_supported_trap_ids`（42 種、`neighbor_miss` 除く）にフォールバック | `copporch.cpp` L240-300 (`publishTrapIdsCapability`) |
+| SAI `sai_hostif_api->create_hostif_trap()` / `remove_hostif_trap()` | SAI 戻り値 → `hw_status` 値 | 常時。成功時のみ `"installed"` / `"not-installed"` を書込む。失敗時は書込みをスキップしエラーログのみ | `copporch.cpp` L526, L1413 (`updateTrapOperStatus`) |
+| `COUNTERS_DB COUNTERS_TRAP_NAME_MAP` | トラップカウンタ名マップ書込み | `bindTrapCounter()` 成功時。FlexCounter 経由の統計収集に必要。STATE_DB への書込みには直接影響しない | `copporch.cpp` L1455-1456 (`m_counter_table->set`) |
+| `platform` 環境変数 (`getenv("platform")`) | プラットフォーム分岐 | Mellanox / Marvell プラットフォームでは SAI への trap priority 設定をスキップ。`COPP_TRAP_TABLE.hw_status` の書込み自体には影響しないが SAI 操作の成否に間接影響 | `copporch.cpp` L353-354, L1188-1189 (`initDefaultTrapIds`, `getAttribsFromTrapGroup`) |
+
+!!! note "STATE_DB エントリは「書き出し専用」のステータスレジスタ"
+    `coppmgrd` / `CoppOrch` 以外の書き手は存在しない。`show copp` / `dump copp` 等の CLI ツールは読み手のみ。
+    orchagent 再起動時も `coppmgrd` は同一キーへの上書き set で再書き込みするため、冪等性が保たれる。
+
+!!! note "`COPP_TRAP_CAPABILITY_TABLE` は orchagent 起動時 1 回のみ更新"
+    `publishTrapIdsCapability()` は `CoppOrch` コンストラクタ (`copporch.cpp:208-209`) で呼ばれるのみで、CONFIG_DB / APPL_DB の動的変更による再書込みは発生しない。プラットフォームの SAI 実装が変わらない限り、起動後の値は固定である。
+
+> **スキャン証跡**: coppmgr.cpp L296-411, L531-985 全行読了。copporch.cpp L32-36, L191-215, L240-300, L392-420, L880-960, L1370-1492 読了。cross-refs 8 件検出。
+<!-- /cross-refs -->
+
 ## 確認コマンド
 
 ```bash
