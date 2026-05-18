@@ -193,6 +193,34 @@ YANG schema が存在しないため、すべてのデフォルトはコード�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`featured` は CONFIG_DB `FEATURE` テーブルを subscribe し、変化を検知した順に systemctl 操作を行い、その結果を STATE_DB `FEATURE` テーブルに書き込む。`sonic-ctrmgrd` (`container_startup.py`) は各コンテナ起動スクリプト内から独立して STATE_DB に書き込む。両者の書込み順は並行して発生し、以下の依存関係が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `featured` 起動 → CONFIG_DB 接続完了 → `FEATURE` subscribe → `state` 書込み | 強制先行（connect 完了後のみ） | 起動直後は STATE_DB に `state` フィールドが存在しない。`show feature status` は空文字列を表示 |
+| 2 | `delayed=True` feature: APP_DB `PORT_TABLE` 初期化 (または `PORT_INIT_TIMEOUT_SEC=180s` 経過) → `enable_feature()` 実行 → `state=enabled` 書込み | **強制先行** | 遅延 feature は port init 完了か timeout まで systemctl start を発行しない。timeout 前は STATE_DB に `state` が書かれない (`featured:273-274,647-660`) |
+| 3 | `RestartWaiter.waitAdvancedBootDone()` 完了 → feature 処理開始 | 強制先行（warm/fast boot 時） | advanced boot（warm/fast boot）中は `featured` が ready 待機するため、STATE_DB への書込みが遅延する (`featured:607-609`) |
+| 4 | `enable_feature()` の各 feature インスタンス loop → 最後のインスタンス完了後 `set_feature_state(ENABLED)` | 強制先行（loop 内直列） | multi-asic 環境では全 namespace のインスタンスの systemctl start が順次完了するまで `state` は書き込まれない (`featured:513`) |
+| 5 | `featured` が `state` を STATE_DB 書込 → `ctrmgrd` の `container_startup.py` が `current_owner` / `container_id` 等を独立に書込 | **非同期・独立** | 両者は同一エントリを別フィールドに書き込む。`state` と `current_owner` は書込み主体が異なるため中間状態（`state=enabled` だが `current_owner=""` など）が観測されうる |
+| 6 | CONFIG_DB `FEATURE` エントリ削除 → `featured` の `handler()` が `_del()` を発行 → STATE_DB エントリ全体が消える | 強制先行（DELETE イベント後） | エントリ削除後に `ctrmgrd` が旧フィールドを書き込もうとすると、エントリが再生成される可能性がある（タイミング依存）(`featured:190`) |
+
+### 主要な制約詳細
+
+**delayed feature の初期化遅延 (依存 #2)**: `featured` は APP_DB `PORT_TABLE` を subscribe し、`port_listener()` が最初の PORT エントリ変化を受け取ると `enable_delayed_services()` を呼び出す。`PORT_INIT_TIMEOUT_SEC`（180 秒）が経過しても PORT イベントが来ない場合はタイムアウトで強制 enable される。この間、`delayed=True` な feature（例: `lldp`）の `state` フィールドは STATE_DB に存在しないか、初期値のままとなる（evidence: `featured:23-24,143,163-177,647-660`）。
+
+**advanced boot 待機 (依存 #3)**: warm boot / fast boot 時は `RestartWaiter.isAdvancedBootInProgress()` が真を返し、`waitAdvancedBootDone()` が STATE_DB の ready 状態を待機する。この待機中は `FEATURE` テーブルの subscribe ループが開始されないため、STATE_DB への `state` 書込みが数秒〜数分遅延しうる（evidence: `featured:607-609`）。
+
+**`state` と `current_owner` の独立書込み (依存 #5)**: `state` は `featured` のみが書き込み、`current_owner` / `container_id` / `container_version` / `remote_state` は `container_startup.py` が書き込む。両者は別プロセスであり Redis の atomic HSET でフィールドを個別更新するため、consumer は「`state=enabled` かつ `current_owner=none`」という中間状態を観測しうる。`show feature status` は STATE_DB を直接読むため、この中間状態がそのまま表示される（evidence: `featured:585-590`; `container_startup.py:164-186`）。
+
+> **Evidence**: `sonic-host-services/scripts/featured:23-24,143,163-177,273-274,510-513,544-547,585-590,607-609,644-660,190`
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
