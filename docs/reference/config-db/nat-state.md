@@ -225,6 +225,32 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 
 <!-- /value-behavior -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`NAT_RESTORE_TABLE` と `COUNTERS_DB:COUNTERS_NAT*` は互いに独立した書き手（`restore_nat_entries.py` / `NatOrch`）が管理する。ただし warm reboot 時は `restored` フラグの到達タイミングが `natsyncd` の reconciliation 開始を決定するため、フラグ書き込みの順序が重要になる。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `restore_nat_entries.py` が conntrack 復元完了 → `NAT_RESTORE_TABLE\|Flags.restored = "true"` 書込み → `natsyncd` が reconciliation 開始 | **強制先行**（フラグなしでは natsyncd は reconciliation をスキップ） | 通常起動ではフラグが存在しないため reconciliation そのものが発生しない |
+| 2 | `NatOrch` コンストラクタ完了 → `COUNTERS_GLOBAL_NAT\|Values` 書込み | 1 回限り（起動時に即時書き込み） | orchestrator 起動前は `COUNTERS_GLOBAL_NAT` エントリが存在しない |
+| 3 | SAI エントリ登録成功 → `COUNTERS_NAT\|<ip>` / `COUNTERS_NAPT\|<proto:ip:port>` 初期値 `"0"` 書込み | SAI 登録直後（`updateNatCounters(..., 0, 0)`） | `admin_mode = "disabled"` の間は SAI 登録が起きないためカウンタエントリも存在しない |
+| 4 | `NAT_GLOBAL_TABLE.admin_mode = "enabled"` → `m_natQueryTimer` 起動 → 5 秒周期カウンタポーリング開始 | enable 後に初回ポーリング | disable 中はタイマーが停止しカウンタは更新されない |
+| 5 | warm reboot で `natsyncd` が reconciliation 完了 → APPL_DB と conntrack の差分更新 → SAI エントリ登録 → `COUNTERS_NAT*` 書込み | reconciliation 完了後に逐次書込み | 通常起動では reconciliation がないため APPL_DB 受信の都度即時 |
+| 6 | `COUNTERS_GLOBAL_NAT\|Values.MAX_NAT_ENTRIES` = 0 → `gIsNatSupported = false` → `enableNatFeature()` が即時 return | NatOrch コンストラクタ時の SAI クエリ結果で固定 | カウンタキーは書かれるが NAT エントリは SAI に降りない |
+
+### 主要な制約詳細
+
+**warm reboot 時のフラグ先行要件 (依存 #1)**: `natsyncd` は起動後 `isNatRestoreDone()` (`natsync.cpp:96-108`) を周期的に呼び、`STATE_DB:NAT_RESTORE_TABLE|Flags.restored == "true"` を確認してから reconciliation を開始する。`restore_nat_entries.py` は `/var/warmboot/nat/nat_entries.dump` から conntrack を復元した後にこのフラグをセットする。フラグがセットされる前に `natsyncd` が APPL_DB を更新しても reconciliation 処理に乗らないため、データの整合性がとれない可能性がある。通常起動（warm start 無効）では `hget` が空文字列を返し、`isNatRestoreDone()` は `false` を返すが、natsyncd は warm start フラグを確認したうえで reconciliation をスキップして通常動作に移行する（evidence: `natsync.cpp:96-108`）。
+
+**COUNTERS_GLOBAL_NAT の起動時 1 回書込み (依存 #2)**: `NatOrch::NatOrch()` コンストラクタは `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` をクエリして `MAX_NAT_ENTRIES` を決定し、`COUNTERS_GLOBAL_NAT|Values` に `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` の 4 フィールドを 1 度だけ書き込む（evidence: `natorch.cpp:108-134`）。その後 CONFIG_DB の `NAT_GLOBAL.nat_timeout` が変更されても `COUNTERS_GLOBAL_NAT` の TIMEOUT フィールドは更新されない。このためタイムアウト表示の出所は起動時の固定値となる。
+
+**カウンタポーリングと enable 状態の依存 (依存 #4)**: `m_natQueryTimer` は `enableNatFeature()` (`natorch.cpp:2565`) で開始され、`disableNatFeature()` (`natorch.cpp:2602`) で停止する。タイマー発火ごとに `queryCounters()` が `m_natEntries` / `m_naptEntries` を走査して SAI から hit count を取得し `COUNTERS_NAT*` を更新する（evidence: `natorch.cpp:3099-3115`）。`admin_mode = "disabled"` の間は timer が停止しているため、`COUNTERS_NAT*` の値は最後の disable 時点で固定される。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
