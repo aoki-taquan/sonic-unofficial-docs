@@ -346,6 +346,8 @@ STATE_DB エントリが存在しない場合に `read_data()` が使用する�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
+> 詳細証跡: `meta/_intermediate/cdb-flow/feature-state-side-effects.md`
+
 STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `container_startup.py` / `ctrmgrd.py`) が FEATURE テーブル以外へ副次的に書き込む先を示す。
 
 | 副次書込み先 | 書込み元 | 条件 | evidence |
@@ -364,7 +366,13 @@ STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `con
   その後 `systemctl daemon-reload` を実行する (`featured:357-406`)。
   CONFIG_DB `FEATURE.auto_restart` フィールドが変化した場合にトリガーされる。
 
-> 中間調査詳細: `meta/_intermediate/cdb-flow/feature-state-side-effects.md`
+### APPL_DB / ASIC_DB / COUNTERS_DB — 書込なし
+
+| DB | 結果 | 根拠 |
+|---|---|---|
+| APPL_DB | 書込なし | `featured` は `APPL_DB PORT_TABLE` を Subscribe 専用で開く (`featured:603,647`)。書き込み呼び出しなし |
+| ASIC_DB | 書込なし | `featured` / `container_startup.py` / `ctrmgrd.py` はすべて SAI 非経由。`ASIC_DB` 参照なし |
+| COUNTERS_DB / FLEX_COUNTER_DB | 書込なし | `featured` 全行の grep で `COUNTERS_DB` / `FLEX_COUNTER_DB` への参照・書き込み 0 件 |
 <!-- /side-effects -->
 
 <!-- ops-hint -->
