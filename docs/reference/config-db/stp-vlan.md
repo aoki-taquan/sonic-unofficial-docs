@@ -1,6 +1,6 @@
 ---
 title: STP_VLAN / STP_VLAN_PORT テーブル
-description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動を詳細解説。Phase A+B+C+D 分析。"
+description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値・失敗挙動・ハードコード定数を詳細解説。Phase A+B+C+D+E 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -568,6 +568,115 @@ stpmgr.cpp 内では例外がキャッチされないため、`stpmgrd.cpp:119` 
     書き込むと `stpmgrd` がクラッシュする。CLI 経由の操作では発生しない。
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-constants.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.h ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+`stpmgr.h` と `stpmgrd.cpp` にハードコードされた定数の一覧。YANG 定義や CONFIG_DB スキーマには現れないが、挙動境界値として実装に埋め込まれている。
+
+### 1. VLAN・インスタンス上限定数
+
+`stpmgr.h:34–39`:
+
+```c
+#define MAX_VLANS               4096   // VLAN ID 最大数 / m_vlanInstMap 配列サイズ
+#define L2_INSTANCE_MAX         MAX_VLANS  // L2 インスタンスプール論理上限 = 4096
+#define STP_DEFAULT_MAX_INSTANCES  255  // STP 有効 VLAN 上限のデフォルト値
+#define INVALID_INSTANCE        -1     // m_vlanInstMap 未割当マーカー
+```
+
+`STP_DEFAULT_MAX_INSTANCES = 255` は DB (`max_stp_instances`) から読み取れない場合のフォールバック値として `stpmgr.cpp:1409` で使用される:
+
+```cpp
+if (max_stp_instances == 0)
+{
+    max_stp_instances = STP_DEFAULT_MAX_INSTANCES;
+    SWSS_LOG_NOTICE("set default max stp instance %d", max_stp_instances);
+}
+```
+
+証跡: `stpmgr.h:34-39`, `stpmgr.cpp:1409`
+
+---
+
+### 2. m_vlanInstMap — VLAN→インスタンスマッピング配列
+
+```cpp
+// stpmgr.h:261
+int m_vlanInstMap[MAX_VLANS];  // サイズ 4096 の固定長配列
+
+// stpmgr.cpp:45 (コンストラクタ)
+fill_n(m_vlanInstMap, MAX_VLANS, INVALID_INSTANCE);  // 起動時に全要素を -1 で初期化
+```
+
+`m_vlanInstMap[vlan_id]` が `INVALID_INSTANCE (-1)` のまま `STP_VLAN_PORT` SET が届いても silent skip される（Phase B / C で記載）。
+配列は 4096 要素固定で動的拡張は不可。VLAN ID が範囲外の場合の境界チェックはコード上では行われない。
+
+証跡: `stpmgr.h:261`, `stpmgr.cpp:45`
+
+---
+
+### 3. ソケットパス定数
+
+```c
+#define STPMGRD_SOCK_NAME  "/var/run/stpmgrd.sock"  // stpmgrd 制御ソケット
+#define STPD_SOCK_NAME     "/var/run/stpipc.sock"   // stpd IPC ソケット
+```
+
+どちらもコンパイル時固定。実行時の変更・環境変数での上書きは不可。
+
+証跡: `stpmgr.h:28, 49`
+
+---
+
+### 4. VLAN タグモード定数
+
+```c
+#define TAGGED_MODE    1
+#define UNTAGGED_MODE  0
+#define INVALID_MODE  -1
+```
+
+`doVlanMemUpdateTask()` (`stpmgr.cpp:687-689`) でポートの VLAN メンバーシップモード (`tagged` / `untagged`) を整数に変換するために使用。CONFIG_DB の文字列フィールドとコードレベルの整数定数の対応関係。
+
+証跡: `stpmgr.h:30-32`
+
+---
+
+### 5. SELECT_TIMEOUT — swssdk ループタイムアウト
+
+```c
+// stpmgrd.cpp:17
+#define SELECT_TIMEOUT 1000  // ミリ秒
+```
+
+stpmgrd のメインループが `s.select(&sel, SELECT_TIMEOUT)` で最大 1000 ms 待機する。
+「保留エントリ（silent defer）」は最大 1 秒後の次ループで再試行される（Phase D 参照）。
+
+証跡: `stpmgrd.cpp:17, 103`
+
+---
+
+### 定数一覧サマリ
+
+| 定数 | 値 | 定義場所 | 役割 |
+|------|-----|----------|------|
+| `MAX_VLANS` | 4096 | `stpmgr.h:34` | VLAN ID 最大数・配列サイズ |
+| `L2_INSTANCE_MAX` | 4096 | `stpmgr.h:37` | L2 インスタンスプール上限 |
+| `STP_DEFAULT_MAX_INSTANCES` | 255 | `stpmgr.h:38` | STP 有効 VLAN 上限デフォルト |
+| `INVALID_INSTANCE` | -1 | `stpmgr.h:39` | m_vlanInstMap 未割当マーカー |
+| `STPMGRD_SOCK_NAME` | `/var/run/stpmgrd.sock` | `stpmgr.h:28` | stpmgrd 制御ソケット |
+| `STPD_SOCK_NAME` | `/var/run/stpipc.sock` | `stpmgr.h:49` | stpd IPC ソケット |
+| `TAGGED_MODE` | 1 | `stpmgr.h:30` | VLAN タグ付きモード |
+| `UNTAGGED_MODE` | 0 | `stpmgr.h:31` | VLAN タグなしモード |
+| `INVALID_MODE` | -1 | `stpmgr.h:32` | 不正タグモードマーカー |
+| `SELECT_TIMEOUT` | 1000 ms | `stpmgrd.cpp:17` | swssdk Select ループタイムアウト |
+
+<!-- /constants -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 

@@ -448,30 +448,78 @@ EXP 値は 0..7 の範囲のみ有効。`convertFieldValuesToAttributes()` L1150
 | 副作用 | トリガー | ソース |
 |--------|---------|--------|
 | SAI QoS map オブジェクト生成 (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) | SET (新規) | `qosorch.cpp:1189-1213` |
-| SAI QoS map 属性 in-place 更新 (`set_qos_map_attribute`) | SET (既存) | `qosorch.cpp:151-155`, `qosorch.cpp:204-211` |
-| SAI QoS map 削除 (`remove_qos_map`) | DEL かつ参照なし | `qosorch.cpp:188-198` |
-| `getTypeMap()` への OID 登録 | SET 新規成功 | `qosorch.cpp:168-172` |
-| 同上エントリの erase | DEL 成功 | `qosorch.cpp:194-198` |
-| `m_pendingRemove = true` — 後続 SET を `task_need_retry` に defer | DEL 時に `PORT_QOS_MAP` 参照が残っている | `qosorch.cpp:181-186` |
+| SAI QoS map 属性更新 (`set_qos_map_attribute`) | SET (既存) | `qosorch.cpp:204-214` |
+| 参照ポートの MPLS EXP→FC 分類を即時変更 | SET (既存 in-place 更新) | ASIC に伝播 (`qosorch.cpp:151-157`) |
+| SAI QoS map 削除 (`remove_qos_map`) | DEL かつ参照なし | `qosorch.cpp:188-194` |
+| `getTypeMap()` への OID 登録 | SET 新規成功 | `qosorch.cpp:168` |
+| 同上エントリの erase | DEL 成功 | `qosorch.cpp:194` |
+| `m_pendingRemove = true` — 後続 SET を `task_need_retry` に | DEL 時に参照が残っている | `qosorch.cpp:185` |
 
-**既存マップの in-place 更新**:  SET 時にエントリが既に SAI 登録済みの場合 (`sai_object != SAI_NULL_OBJECT_ID`)、`modifyQosItem()` が `sai_qos_map_api->set_qos_map_attribute()` で同一 SAI oid を直接更新する。この SAI oid を参照している全ポート (`SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP`) に変更が即時反映され、PORT_QOS_MAP の再設定は不要。
-
-**STATE_DB / APPL_DB への書き込みなし**: `QosOrch` は `EXP_TO_FC_MAP` 処理で STATE_DB / APPL_DB へ書き込まない。CONFIG_DB → SAI 直結。
+- **STATE_DB への書き込みなし** — `QosOrch` は `EXP_TO_FC_MAP` の処理で STATE_DB / APPL_DB へ書き込まない。CONFIG_DB → SAI 直結。
+- **APPL_DB への書き込みなし** — CONFIG_DB を直接購読。APPL_DB 中継なし。
+- **in-place 更新の即時伝播** — マップを `modifyQosItem()` で上書きすると、参照しているポート全体の MPLS EXP→FC 分類がポート側の操作なしで即座に変更される。
 
 ### PORT_QOS_MAP 経由の間接副作用
 
+MAP OID 解決後、`PORT_QOS_MAP` の `handlePortQosMapTable` が自動再実行されて以下が生じる:
+
 | 副作用 | API | ソース |
 |--------|-----|--------|
-| ポートへの `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` 適用 | `sai_port_api->set_port_attribute()` | `qosorch.cpp:2193` |
+| ポートへの `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` 適用 | `sai_port_api->set_port_attribute()` | `qosorch.cpp:2124-2133` |
 
-MAP OID が確定したことで `PORT_QOS_MAP.exp_to_fc_map` の参照解決が完了し、`handlePortQosMapTable` が各ポートに適用する。MAP 未作成の間は `task_need_retry` で保留され、MAP 作成完了後の `doTask()` サイクルで自動再処理される (`qosorch.cpp:2124-2133`)。
+MAP が未作成の間は `PORT_QOS_MAP` の処理が `task_need_retry` で保留され (`qosorch.cpp:2124-2129`)、
+MAP 作成完了後の `doTask()` サイクルで自動再処理される。
 
 ### m_pendingRemove 連鎖
 
-DEL 試行時に `PORT_QOS_MAP` で `exp_to_fc_map` が参照中の場合、`m_pendingRemove = true` がセットされ、その後同名への SET 操作も即 `task_need_retry` を返す (`qosorch.cpp:136-139`)。参照側の解除後に DEL が再実行されて連鎖が解消する。
-
-### CBF / NHG への副作用
-
-なし。`EXP_TO_FC_MAP` の変更は `NhgMapOrch` / CBF テーブルへの直接副作用はない。`NhgMapOrch::getMaxNumFcs()` は FC 値の検証時のみ参照される。
+DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセットされ、
+その後この MAP 名への SET 操作も即 `task_need_retry` を返す (`qosorch.cpp:136-139`)。
+参照側 (`PORT_QOS_MAP.exp_to_fc_map`) の解除後に DEL が再実行されて連鎖が解消する。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-pubsub.md`
+> ソース: `sonic-swss/orchagent/orchdaemon.cpp:367-384`, `orch.cpp:1186-1196`, `qosorch.cpp:1317-1345,2231-2300`
+
+### 購読方式
+
+`QosOrch` は `orchdaemon.cpp:367-384` で `qos_tables` ベクタの一員として `CFG_EXP_TO_FC_MAP_TABLE_NAME` を指定され、`new QosOrch(m_configDb, qos_tables)` に渡される。基底 `Orch(db, tableNames)` が `Orch::addConsumer()` を呼び、CONFIG_DB ID の分岐により **`swss::SubscriberStateTable`** が選択される（`orch.cpp:1186-1196`）。
+
+`SubscriberStateTable` は Redis keyspace 通知 `__keyspace@<dbId>__:EXP_TO_FC_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、固定）。
+
+### ハンドラ登録とディスパッチ
+
+```
+orchdaemon.cpp:367-384  qos_tables に CFG_EXP_TO_FC_MAP_TABLE_NAME を追加
+qosorch.cpp:1338        initTableHandlers() で m_qos_handler_map[CFG_EXP_TO_FC_MAP_TABLE_NAME]
+                         = &QosOrch::handleExpToFcTable を登録
+qosorch.cpp:2231-2252   QosOrch::doTask() が PORT_QOS_MAP / QUEUE より先に全 QoS map を drain
+                         （EXP_TO_FC_MAP の先行処理を保証）
+qosorch.cpp:2253-2300   QosOrch::doTask(Consumer&) がハンドラ関数ポインタ経由でディスパッチ
+```
+
+`handleExpToFcTable()` → `ExpToFcMapHandler::processWorkItem()` → `ExpToFcMapHandler::convertFieldValuesToAttributes()` → `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()`。
+
+### select タイムアウト・リトライ
+
+select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`）。keyspace 通知到着時は即時 wake up。リトライキャッシュは未使用で `m_toSync` 残留方式（`task_need_retry` 時はエントリを保持し次回 drain で再処理）。
+
+| 観点 | 内容 |
+|---|---|
+| 購読方式 | `SubscriberStateTable`（keyspace `PSUBSCRIBE` + `HGETALL`） |
+| バッチサイズ | 128（`DEFAULT_POP_BATCH_SIZE`、固定） |
+| select タイムアウト | 1000 ms |
+| SAI 呼び出し | `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()` |
+| リトライ方式 | `m_toSync` 残留（キャッシュなし） |
+| channel PUBLISH | 使わない |
+| TTL | 未使用（CONFIG_DB 永続） |
+
+### 起動時スナップショット
+
+`Orch` 基底クラスは SELECT ループ開始前に `getContent()` で既存エントリをスナップショット取得して `m_toSync` に積む。`allPortsReady()` が false の間は `doTask()` が即 return するため、スナップショット分は全ポート ready 後に一括処理される（silent defer）。
+
+> **Evidence**: `orchdaemon.cpp:367-384` (QosOrch 生成・qos_tables 登録); `orch.cpp:1186-1196` (SubscriberStateTable 生成); `qosorch.cpp:1317-1345` (initTableHandlers / handleExpToFcTable 登録); `qosorch.cpp:2231-2300` (doTask drain 順序)
+<!-- /pubsub -->

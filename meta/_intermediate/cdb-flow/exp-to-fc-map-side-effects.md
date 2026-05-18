@@ -1,60 +1,75 @@
-# EXP_TO_FC_MAP — Phase F 副作用調査
+# EXP_TO_FC_MAP — Phase F 副作用スキャンノート
 
-## 調査対象
+対象ページ: `docs/reference/config-db/exp-to-fc-map.md`
+対象テーブル: `EXP_TO_FC_MAP`
+Consumer: `QosOrch::handleExpToFcTable()` / `QosMapHandler::processWorkItem()` (`orchagent/qosorch.cpp`)
+スキャン範囲: `qosorch.cpp:124-201` (QosMapHandler::processWorkItem), `qosorch.cpp:1132-1213` (ExpToFcMapHandler), `qosorch.cpp:2046-2240` (handlePortQosMapTable / doTask), `nhgmaporch.cpp:299-325` (getMaxNumFcs)
 
-- `orchagent/qosorch.cpp` (sonic-swss@4305596156d70e9797e8a881b3d19b46de0bce0d)
-- `orchagent/cbf/nhgmaporch.cpp`
+---
 
-## MAP SET/DEL の直接副作用
+## 直接副作用
 
-### SET (新規) — create_qos_map
+### SET (新規)
+- `addQosItem()` → `sai_qos_map_api->create_qos_map()` で SAI QoS map オブジェクト (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) を生成。
+- 生成 OID を `getTypeMap()[CFG_EXP_TO_FC_MAP_TABLE_NAME][<name>].m_saiObjectId` に格納 (`qosorch.cpp:168`)。
+- `m_pendingRemove = false` にリセット (`qosorch.cpp:169`)。
 
-`ExpToFcMapHandler::addQosItem()` が `sai_qos_map_api->create_qos_map()` を呼ぶ。
-SAI QoS map オブジェクト (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) が生成され、
-OID が `m_qos_maps[CFG_EXP_TO_FC_MAP_TABLE_NAME][<name>]` にキャッシュされる。
+### SET (既存 — 上書き)
+- `modifyQosItem()` → `sai_qos_map_api->set_qos_map_attribute()` で既存 SAI map を in-place 更新。
+- **現在そのマップを参照しているポートの MPLS EXP→FC 分類が即座に変更される**（SAI 経由で ASIC に伝播）。PORT_QOS_MAP の再操作は不要。
 
-Evidence: `qosorch.cpp:1189-1213`
+### DEL (参照なし)
+- `removeQosItem()` → `sai_qos_map_api->remove_qos_map()` で SAI map 削除。
+- `getTypeMap()` からエントリを erase (`qosorch.cpp:194`)。
+- 以降 `PORT_QOS_MAP.exp_to_fc_map` でこの名前を解決しようとすると `task_need_retry` が発生する。
 
-### SET (既存) — set_qos_map_attribute
+### DEL (参照あり)
+- `isObjectBeingReferenced()` が真 → `m_pendingRemove = true` + `task_need_retry` を返す (`qosorch.cpp:185-186`)。
+- SAI map はまだ削除されない。PORT_QOS_MAP 参照解除後の次サイクルで再実行。
+- `m_pendingRemove = true` の期間中、同名への SET は即 `task_need_retry` (`qosorch.cpp:136-139`)。
 
-エントリが既に SAI に登録済みの場合 (`sai_object != SAI_NULL_OBJECT_ID`)、
-`QosMapHandler::modifyQosItem()` が `sai_qos_map_api->set_qos_map_attribute(sai_object, ...)` を呼ぶ。
-同一 SAI oid を**in-place で更新**するため、この SAI oid を参照している全ポート
-(`SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP`) に変更が即時反映される。
-PORT_QOS_MAP を再設定する必要はない。
-
-Evidence: `qosorch.cpp:151-155`, `qosorch.cpp:204-211`
-
-### DEL (参照なし) — remove_qos_map
-
-参照がない場合 `QosMapHandler::removeQosItem()` が `sai_qos_map_api->remove_qos_map()` を呼ぶ。
-`m_qos_maps` のエントリも erase される。
-
-Evidence: `qosorch.cpp:188-198`
-
-### DEL (参照あり) — pendingRemove
-
-PORT_QOS_MAP で `exp_to_fc_map` を参照中の場合 `m_pendingRemove = true` がセットされ、
-`task_need_retry` を返す。SAI 操作は発生しない。
-後続の同名 SET も `m_pendingRemove` が解消されるまで即 `task_need_retry` で defer される。
-
-Evidence: `qosorch.cpp:181-186`, `qosorch.cpp:136-139`
-
-## STATE_DB / APPL_DB への書き込み
-
-なし。`QosOrch` は `EXP_TO_FC_MAP` の処理で STATE_DB / APPL_DB へ書き込まない。CONFIG_DB → SAI 直結。
+---
 
 ## PORT_QOS_MAP 経由の間接副作用
 
-MAP OID が確定したことで `PORT_QOS_MAP.exp_to_fc_map` の参照解決が完了し、
-`handlePortQosMapTable` が `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` を
-各ポートに適用する。MAP 未作成の間は `task_need_retry` で保留、MAP 作成完了後の
-`doTask()` サイクルで自動再処理。
+`EXP_TO_FC_MAP` エントリ作成後に `PORT_QOS_MAP.exp_to_fc_map` を SET すると、
+`handlePortQosMapTable()` 内の `resolveFieldRefValue()` が OID 解決成功 →
+`sai_port_api->set_port_attribute(port_id, SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP, oid)` でポートへ適用される。
 
-Evidence: `qosorch.cpp:2124-2133`, `qosorch.cpp:2185-2204`
+MAP 削除 (DEL) の場合、PORT_QOS_MAP 参照解除後に orchagent の次サイクルで自動的に
+`set_port_attribute(..., SAI_NULL_OBJECT_ID)` が呼ばれてポートのマッピングが解除される。
 
-## CBF / NHG への副作用
+---
 
-`EXP_TO_FC_MAP` の変更は `NhgMapOrch` / CBF テーブルへの直接副作用はない。
-`NhgMapOrch::getMaxNumFcs()` は FC 値の検証のみに使用（マップ内容の変更を契機として
-NHG が更新されるパスはない）。
+## 書き込みなし・通知なし の確認
+
+| 確認対象 | 結果 | 根拠 |
+|---------|------|------|
+| STATE_DB への書き込み | **なし** | `handleExpToFcTable` は STATE_DB を参照・書込みしない |
+| APPL_DB への書き込み | **なし** | CONFIG_DB → SAI 直結。APPL_DB 中継なし |
+| FLEX_COUNTER 更新 | **なし** | EXP_TO_FC MAP オブジェクトは flex counter 対象外 |
+| ERROR_TABLE への書き込み | **なし** | エラーは syslog のみ |
+| channel_ready / pub-sub 通知 | **なし** | Notification なし |
+
+---
+
+## 副作用サマリ
+
+| 副作用 | トリガー | ソース |
+|--------|---------|--------|
+| SAI QoS map 生成 (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) | SET 新規 | `qosorch.cpp:1189-1213` |
+| SAI QoS map 属性更新 (`set_qos_map_attribute`) | SET 既存 | `qosorch.cpp:204-214` |
+| 参照ポートの MPLS EXP→FC 分類の即時変更 | SET 既存（in-place 更新）| `qosorch.cpp:151-157`, ASIC 経由 |
+| SAI QoS map 削除 (`remove_qos_map`) | DEL かつ参照なし | `qosorch.cpp:188-194` |
+| `getTypeMap()` OID 登録 | SET 新規成功 | `qosorch.cpp:168` |
+| `getTypeMap()` エントリ erase | DEL 成功 | `qosorch.cpp:194` |
+| `m_pendingRemove = true` — 後続 SET も `task_need_retry` 化 | DEL 時に PORT_QOS_MAP 参照あり | `qosorch.cpp:185` |
+| ポートへの `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` 適用 | PORT_QOS_MAP SET 後 | `qosorch.cpp:2124-2133`, `qosorch.cpp:2193-2200` |
+
+---
+
+## ページ反映方針
+
+- `<!-- side-effects -->` ブロックを `<!-- /constants -->` の直後に追加する。
+- pfc-priority-to-priority-group-map の side-effects ブロックと同構造で記述。
+- EXP_TO_FC_MAP 固有のポイント: in-place 更新時に参照ポートの ASIC 分類が即時変更される点を明記。

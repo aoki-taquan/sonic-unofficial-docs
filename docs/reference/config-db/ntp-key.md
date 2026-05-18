@@ -63,6 +63,68 @@ NTP_KEY|<id>
 - `NTP_SERVER_LIST.key` が `/ntp:sonic-ntp/ntp:NTP_KEY/ntp:NTP_KEY_LIST/ntp:id` を leafref 参照する
 - `NTP.global.authentication = enabled` のときに鍵が実際に検証で使われる
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> **調査根拠**: `sonic-ntp.yang` L199–203、`hostcfgd` L2511–2517、`chrony.keys.j2` L8–17 精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-key-ordering.md`
+
+### NTP_KEY は被参照側 — DEL 順序制約
+
+`sonic-ntp.yang` の `NTP_SERVER_LIST.key` は `NTP_KEY_LIST/id` への leafref として定義される。`NTP_KEY` 自体は他テーブルへの leafref を持たないが、`NTP_SERVER` から参照されるため DEL に順序制約が課される。
+
+`NTP_SERVER|<server>.key=<id>` を参照したまま `NTP_KEY|<id>` を DEL しようとすると、YANG leafref 整合性チェックで拒否される。
+
+正しい DEL 順序: `NTP_SERVER|<server>.key` フィールドをクリア（または `NTP_SERVER|<server>` を DEL）→ `NTP_KEY|<id>` を DEL。
+
+### NTP_KEY SET は自律的（先行依存なし）
+
+`NTP_KEY|<id>` の SET そのものには他テーブルへの依存がなく、いつでも独立して書き込める。ただし `NTP_SERVER|<server>.key=<id>` の SET は本テーブルへの先行存在を必須とする（YANG leafref が NTP_SERVER 側で検証される）。
+
+### NTP_KEY 変更で chrony 再起動が発生
+
+`hostcfgd` L2516-2517 は `NTP_KEY` の変更を `NTP_SERVER` と共通の `ntp_srv_key_handler` で購読する。`NTP_KEY` を変更するたびに `NTP_SERVER` 全件と合算して `chrony.conf` / `chrony.keys` を再生成し `systemctl restart chrony` が実行される。鍵のロールオーバー（追加・削除・値更新）は一時的な NTP 断を伴う。
+
+### authentication=enabled との推奨順序
+
+`NTP.global.authentication=enabled` に設定する前に `NTP_KEY` が存在しない場合、空の `chrony.keys` で chrony が再起動し、認証付きサーバへの接続が失敗する。
+
+推奨順序: `NTP_KEY|<id>` SET → `NTP|global.authentication=enabled` SET。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 強制度 | 違反時の挙動 |
+|---|----------|--------|------------|
+| 1 | `NTP_SERVER\|<server>.key` クリア 先行 → `NTP_KEY\|<id>` DEL | **必須** | YANG leafref 整合性チェックで拒否（DEL 失敗） |
+| 2 | `NTP_KEY\|<id>` SET 先行（NTP_SERVER 側の要求） | **必須（被参照側）** | `NTP_SERVER.key=<id>` の SET が YANG leafref で拒否される |
+| 3 | `NTP_KEY` 登録 先行 → `NTP\|global.authentication=enabled` | 推奨 | chrony が空 keyfile で再起動し認証失敗 |
+
+<!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-key-cross-refs.md`
+
+`NTP_KEY` 自体は他テーブルへの leafref を持たない（被参照側）が、`chrony.keys.j2` テンプレートと `hostcfgd` の共通ハンドラを通じて以下のテーブルを暗黙的に参照する。
+
+| 参照先テーブル | 参照フィールド | 参照タイミング | 用途 | evidence |
+|---|---|---|---|---|
+| `NTP_SERVER` | `trusted` / `resolve_as` | `chrony.keys.j2` テンプレート生成時（NTP_KEY 変更のたびに全件再処理） | `trusted=='yes' and resolve_as` を満たすサーバを `trusted_str` に集約し、NTP_KEY の各行末（鍵の chrony.keys エントリ）に付与する。NTP_SERVER がない、または全て `trusted=no` の場合は `trusted_str` が空になる | `chrony.keys.j2:8-17` |
+| `NTP` (global) | `authentication` | `chrony.conf.j2` テンプレート生成時（NTP_KEY 変更で chrony 再起動のたびに間接参照） | `authentication == 'enabled'` のときのみ `keyfile /etc/chrony/chrony.keys` を chrony.conf に出力する。`disabled` の場合は NTP_KEY の内容が chrony.keys に書き込まれても chrony が keyfile を読み込まず認証は機能しない | `chrony.conf.j2:124-127` |
+
+!!! note "NTP_KEY は「被参照側」だが chrony.keys の内容は NTP_SERVER に依存する"
+    `NTP_SERVER.key` leafref が NTP_KEY を参照する方向（NTP_SERVER → NTP_KEY）のほかに、
+    `chrony.keys.j2` がキー行末の `trusted_str` を構築する際に NTP_SERVER テーブル全体を走査する。
+    NTP_KEY の SET 操作だけでは `trusted_str` は変わらず、NTP_SERVER の `trusted` / `resolve_as` を変更することで間接的に chrony.keys の内容が変化する。
+
+!!! note "NTP_KEY 変更時は NTP_SERVER テーブル全件も合算処理"
+    `hostcfgd` の `ntp_srv_key_handler`（`hostcfgd:2387-2391`）は NTP_KEY の変更イベントを受け取ると
+    `get_table(NTP_SERVER)` と `get_table(NTP_KEY)` を両方取得して `ntp_srv_key_update()` に渡す。
+    これにより NTP_KEY 単独の変更でも NTP_SERVER の現在値が chrony 設定生成に反映される。
+
+<!-- /cross-refs -->
+
 ## 購読者
 
 - `ntp-config.service` (host): [CONFIG_DB](../../reference/glossary.md#term-config_db) → `/etc/chrony/chrony.keys` (または `ntp.keys`)

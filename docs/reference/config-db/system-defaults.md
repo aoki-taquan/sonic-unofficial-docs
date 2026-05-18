@@ -410,4 +410,37 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 > **Evidence**: `sonic-swss/orchagent/muxorch.cpp:1388-1416`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:117-121`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:8-42`; 詳細スキャン結果は `meta/_intermediate/cdb-flow/system-defaults-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+`SYSTEM_DEFAULTS` は `ConsumerStateTable` / `SubscriberStateTable` による pub/sub 駆動のハンドラを持たない。各サービスは**起動時に一度だけ**スナップショット読み取りを行い、その後は再購読しない。
+
+### 通信方式まとめ
+
+| 読み取り元 | 通信方式 | タイミング | 購読 |
+|-----------|---------|----------|------|
+| `muxorch` (`MuxAclHandler`) | `Table::hget()` — 同期 one-shot | [MuxPort](../../reference/glossary.md#term-mux) 初期化のたびに実行 | **なし** |
+| `orchagent.sh` (`swss_vars.j2`) | `sonic-cfggen -d -t` — 同期 HGETALL スナップショット | orchagent コンテナ起動時 (priority=4) | **なし** |
+| `docker-fpm-frr supervisord.conf.j2` | Jinja2 テンプレート展開 — 同期スナップショット | docker-fpm-frr コンテナ起動前 | **なし** |
+
+### pub/sub チャネル
+
+| チャネル | DB | 使用有無 | 理由 |
+|---------|-----|---------|------|
+| `SYSTEM_DEFAULTS_CHANNEL@4` (ProducerStateTable) | 4 | **使用なし** | 書き込みは JSON 一括投入（direct HSET）のみ |
+| `__keyspace@4__:SYSTEM_DEFAULTS\|*` (keyspace notification) | 4 | **使用なし** | どのプロセスも PSUBSCRIBE していない |
+
+### 動的変更への非対応
+
+`SYSTEM_DEFAULTS` は「起動時設定」として設計されており、実行中の変更は各サービスに自動反映されない:
+
+- `mux_tunnel_egress_acl`: `MuxAclHandler` コンストラクタは既存インスタンスに対して再実行されない。ACL は作成時の値で固定される。
+- `tunnel_qos_remap` / `dscp_remapping`: orchagent 起動時に `swss_vars.j2` で確定済みのため、orchagent 再起動が必要。
+- `software_bfd`: supervisord.conf は静的ファイルとして生成済みのため、docker-fpm-frr コンテナの再起動が必要。
+
+これらの制約は pub/sub を意図的に使わない設計上の選択であり、バグではない。
+
+> **Evidence**: `sonic-swss/orchagent/muxorch.cpp:1388-1390`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）; `sonic-buildimage/files/build_templates/swss_vars.j2:14`; `sonic-buildimage/dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:213`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; 詳細は `meta/_intermediate/cdb-flow/system-defaults-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 90fa20b1e615 -->

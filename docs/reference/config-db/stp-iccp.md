@@ -1,6 +1,6 @@
 ---
 title: STP / ICCP 連携 — コード由来デフォルト詳細
-description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C 分析。"
+description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase E 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -488,6 +488,49 @@ ICCP セッションが切断されると `scheduler_session_disconnect_handler(
 | `CONNECT_INTERVAL_SEC` | `1` | `scheduler.h:40` | 接続リトライ間隔（秒） |
 
 <!-- /failure -->
+
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-constants.md -->
+
+iccpd の STP/ICCP 連携に関係するハードコード定数を列挙する。これらは CONFIG_DB での設定変更が不可か、初期値として機能する。
+
+### scheduler.h の定数
+
+| 定数 | 値 | 場所 | 概要 | CONFIG_DB 上書き |
+|------|----|------|------|-----------------|
+| `CONNECT_INTERVAL_SEC` | `1` 秒 | `scheduler.h:40` | ICCP TCP 接続リトライ間隔 | 不可 |
+| `CONNECT_TIMEOUT_MSEC` | `100` ms | `scheduler.h:41` | TCP connect システムコールタイムアウト | 不可 |
+| `HEARTBEAT_TIMEOUT_SEC` | `15` 秒 | `scheduler.h:42` | CSM 初期ハートビートタイムアウト初期値 | 可（`session_timeout` で上書き） |
+| `TRANSIT_INTERVAL_SEC` | `1` 秒 | `scheduler.h:43` | ICCP FSM 状態遷移チェック間隔 | 不可 |
+| `EPOLL_TIMEOUT_MSEC` | `100` ms | `scheduler.h:44` | epoll_wait のタイムアウト | 不可 |
+
+### iccp_csm.h の定数
+
+| 定数 | 値 | 場所 | 概要 | CONFIG_DB 上書き |
+|------|----|------|------|-----------------|
+| `ICCP_TCP_PORT` | `8888` | `iccp_csm.h:53` | iccpd が listen する TCP ポート番号 | 不可 |
+
+### msg_format.h の STP 関連定数
+
+| 定数 | 値 | 場所 | 概要 |
+|------|----|------|------|
+| `TLV_T_MLACP_STP_INFO` | `0x1037` | `msg_format.h:103` | ICCP STP 情報同期 TLV 型コード（未実装・`//no support`） |
+
+### YANG デフォルト vs コードハードコード の乖離
+
+!!! warning "session_timeout の初期値不一致"
+    `HEARTBEAT_TIMEOUT_SEC = 15`（C #define、`scheduler.h:42`）と YANG モデルの `session_timeout` デフォルト `30`（`sonic-mclag.yang:91`）は **異なる値** である。
+
+    - CSM 初期化時（`iccp_csm.c:126`）は `csm->session_timeout = HEARTBEAT_TIMEOUT_SEC = 15` が設定される。
+    - CONFIG_DB から `MCLAG_DOMAIN.session_timeout` を受け取ると `set_session_timeout()` で上書きされる（`mlacp_link_handler.c:3116`）。
+    - YANG デフォルト（`30`）が適用された場合は上書き後に `30` になるが、mclagsyncd が CONFIG_DB をフェッチして iccpd に送信するまでの **短い初期期間は `15` 秒が適用** される。
+    - `session_timeout` が明示設定されない場合も `mclagsyncd` は YANG デフォルト `30` を送信する（`mclaglink.cpp:732-737`）。
+
+証跡: `scheduler.h:40-44`, `iccp_csm.h:53`, `iccp_csm.c:126`, `msg_format.h:103`, `mlacp_link_handler.c:3116-3120`, `sonic-mclag.yang:81,91`
+
+<!-- /hardcoded-constants -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
