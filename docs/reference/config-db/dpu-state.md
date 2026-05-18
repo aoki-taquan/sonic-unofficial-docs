@@ -408,6 +408,51 @@ if not "DPU_STATE" in key and not "REBOOT_CAUSE" in key:
 `DPU_STATE` は DPU 再起動後も参照されるため、down 状態でも保持し続ける設計となっている。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd DpuStateManagerTask.task_worker:1484-1530 / DpuStateUpdater.update_state:1303-1316 / SmartSwitchModuleUpdater.module_down_chassis_db_cleanup:1113-1130 / DpuChassisdDaemon.run:1537-1557 -->
+
+`DPU_STATE` テーブルへの書き込みに伴う副次的な DB 変化を整理する。このテーブルは CHASSIS_STATE_DB の **状態専用テーブル**であり、CONFIG_DB / APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き戻しは発生しない。
+
+### DpuStateManagerTask による自己フィードバック書き込み
+
+`DpuStateManagerTask.task_worker()` (`chassisd:1484-1530`) は `DPU_STATE` 自身の変化も購読トリガーとしている。`dpu_midplane_link_state` などの変化通知を受けると `DpuStateUpdater.update_state()` が呼ばれ、CP/DP state を再評価して **DPU_STATE に書き戻す**。
+
+| 副次 DB | テーブル / キー | 書込条件 | 根拠 |
+|---------|---------------|---------|------|
+| `CHASSIS_STATE_DB` | `DPU_STATE\|DPU<N>` (`dpu_control_plane_state`, `dpu_data_plane_state`) | DPU_STATE 変化通知後、CP / DP state の再評価値が前回値と異なる場合のみ | `chassisd:1506-1526`, `chassisd:1303-1316` |
+
+この自己フィードバックは **無限ループを引き起こさない**。`update_state()` (`chassisd:1303-1316`) は前回値と同値の場合は `hset` をスキップするため、変化がなければ書き込みは発生しない。
+
+### `poll_dpu_state` 有効時 — フィードバックループなし
+
+`DpuChassisdDaemon.run()` (`chassisd:1537-1557`) は `poll_dpu_state = True` の場合（platform API `get_dataplane_state` / `get_controlplane_state` が実装済み）、`DpuStateManagerTask` を起動しない。この場合 DPU_STATE 変化による自己フィードバックは発生せず、ポーリングループ (`while not stop.wait(loop_interval)`) が定期的に `update_state()` を呼ぶだけとなる。
+
+### モジュール down 時 — DPU_STATE は削除対象外
+
+`module_down_chassis_db_cleanup()` (`chassisd:1113-1130`) はモジュール down 後に CHASSIS_STATE_DB の関連エントリを削除するが、`DPU_STATE` キーと `REBOOT_CAUSE` キーは明示的に除外される:
+
+```python
+# chassisd:1124
+if not "DPU_STATE" in key and not "REBOOT_CAUSE" in key:
+    self.chassis_state_db.delete(key)
+```
+
+DPU_STATE エントリは DPU down 状態でも CHASSIS_STATE_DB に残り続け、再起動後の状態参照に利用される。
+
+### 副次書き込みが発生しないケース
+
+| ケース | 理由 |
+|--------|------|
+| `poll_dpu_state = True` の場合 | `DpuStateManagerTask` 未起動。DPU_STATE 変化による自己フィードバックなし (`chassisd:1540-1546`) |
+| CP/DP state が前回値と同一の場合 | `update_state()` が `hset` をスキップ (`chassisd:1303-1316`) |
+| CONFIG_DB / APPL_DB / STATE_DB | `chassisd` はこれらへの書き戻しを行わない |
+| COUNTERS_DB / FLEX_COUNTER_DB | DPU_STATE は SAI counter binding を持たないため書き込みなし |
+
+> **スキャン証跡**: `chassisd` `DpuStateUpdater` クラス全行 (L1234-1320)、`DpuStateManagerTask` 全行 (L1464-1557)、`SmartSwitchModuleUpdater.module_down_chassis_db_cleanup` (L1113-1130) 読了。副次書き込みは `CHASSIS_STATE_DB:DPU_STATE` への自己フィードバック 1 件のみ。詳細は `meta/_intermediate/cdb-flow/dpu-state-side.md` 参照。
+<!-- /side-effects -->
+
 ## 購読者
 
 - `chassisd` (`SmartSwitchModuleUpdater` / `DpuStateUpdater`) — 書き込み元
