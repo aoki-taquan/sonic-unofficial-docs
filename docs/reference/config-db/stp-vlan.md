@@ -1,6 +1,6 @@
 ---
 title: STP_VLAN / STP_VLAN_PORT テーブル
-description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A+B 分析。"
+description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・テーブル間依存・sentinel 値を詳細解説。Phase A+B+C 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -343,6 +343,88 @@ if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
 | 5 | `STP_VLAN` 処理完了（stpd インスタンス割当） → `STP_VLAN_PORT` 処理 | 先行必須（欠如時 silent skip） | stpd IPC 応答後に `m_vlanInstMap` が設定される |
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照（テーブル間依存）
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-cross-refs.md -->
+
+`STP_VLAN` / `STP_VLAN_PORT` テーブルを処理する `StpMgr::doStpVlanTask()` / `doStpVlanPortTask()` が実行時に参照する他テーブル・Orch 内状態。YANG の leafref 定義は VLAN への参照のみで、それ以外は実装レベルの暗黙依存である。コード調査の詳細は `meta/_intermediate/cdb-flow/stp-vlan-cross-refs.md` に記録した。
+
+### 1. `STP|GLOBAL` — l2ProtoEnabled フラグ源（必須依存）
+
+- **参照先**: CONFIG_DB `STP|GLOBAL` → stpmgrd 内部変数 `l2ProtoEnabled`
+- **方向**: 読み取り（`stpmgr.cpp:210`）
+- **意味**: `doStpGlobalTask()` が `STP|GLOBAL.mode` (`pvst` / `mst`) を受信し `l2ProtoEnabled` を `L2_PVSTP` / `L2_MSTP` に設定する。`l2ProtoEnabled == L2_NONE` のまま `STP_VLAN` SET が届いた場合はイテレータを進めて silent skip される。
+- **非対称性**: `STP|GLOBAL` 受信前に書き込んだ `STP_VLAN` エントリはキューに残りモードが確定後のループで自動処理される。
+
+### 2. `STP_PORT` — stpPortTask フラグ源（条件付き必須）
+
+- **参照先**: CONFIG_DB `STP_PORT` → stpmgrd 内部フラグ `stpPortTask`
+- **方向**: 読み取り（`stpmgr.cpp:183-185`）
+- **意味**: `doStpPortTask()` が `STP_PORT` の最初の SET を受け取ると `stpPortTask = true` に設定する。ポートが存在しない場合（`isStpPortEmpty()` = true、`m_cfgStpPortTable.getKeys()` が空）はフラグなしで通過可能。
+- **参照コード**:
+  ```cpp
+  if (stpGlobalTask == false || (stpPortTask == false && !isStpPortEmpty()))
+      return;
+  ```
+  `stpmgr.cpp:1326-1335`
+
+### 3. `STATE_DB:STATE_VLAN_TABLE` — VLAN 準備確認（必須依存）
+
+- **参照先**: STATE_DB `STATE_VLAN_TABLE|Vlan<vid>` (vlanmgrd が書き込む)
+- **方向**: 読み取り（`stpmgr.cpp:1276-1290`、`isVlanStateOk()`）
+- **意味**: `doStpVlanTask()` SET ハンドラ内 (`stpmgr.cpp:210`) で `isVlanStateOk(key)` を確認する。対象 VLAN が STATE_VLAN_TABLE に存在しない場合 SET はイテレータを進めて持ち越し（silent skip）。`vlanmgrd` が ASIC 適用後に STATE_VLAN_TABLE を書き込むまで繰り返される。
+
+!!! warning "vlanmgrd との順序依存"
+    `config spanning-tree enable pvst` 直後など、対象 VLAN の `STATE_VLAN_TABLE` エントリが未書込の状態で `STP_VLAN` SET が到達しても処理されない。エラーログは出力されず、次の SELECT ループで自動リトライされる。
+
+### 4. `STATE_DB:STATE_VLAN_MEMBER_TABLE` — PVST インスタンス割当時のポートメンバー参照
+
+- **参照先**: STATE_DB `STATE_VLAN_MEMBER_TABLE` (vlanmgrd が管理)
+- **方向**: 読み取り（`stpmgr.cpp:938`、`getAllVlanMem()`）
+- **意味**: PVST 新規 VLAN インスタンス割当時 (`newInstance = 1`、`m_vlanInstMap[vlan_id] == INVALID_INSTANCE`)、`getAllVlanMem()` が `STATE_VLAN_MEMBER_TABLE` から当該 VLAN の全メンバーポートを取得し `STP_VLAN_CONFIG` IPC メッセージに付加する。MST モードでは参照されない。
+
+### 5. stpmgrd 内部 `m_vlanInstMap[]` — `STP_VLAN_PORT` への暗黙連鎖
+
+- **参照先**: stpmgrd 内部配列 `m_vlanInstMap[MAX_VLANS]`
+- **方向**: `STP_VLAN` 処理時に書き込み → `STP_VLAN_PORT` 処理時に読み取り
+- **意味**: `allocL2Instance(vlan_id)` / `deallocL2Instance(vlan_id)` が `m_vlanInstMap[vlan_id]` を設定する。`doStpVlanPortTask()` は `m_vlanInstMap[vlan_id] == INVALID_INSTANCE` の間、同 VLAN の全 SET を silent skip する。
+- **参照コード** (`stpmgr.cpp:486-495`):
+  ```cpp
+  if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
+  {
+      it++;
+      continue;
+  }
+  ```
+
+### 6. `STP_VLAN_PORT` (cfg) — VlanMember 変化時の遅延再送
+
+- **参照先**: CONFIG_DB `STP_VLAN_PORT` (m_cfgStpVlanPortTable)
+- **方向**: 読み取り（`stpmgr.cpp:732, 844`）
+- **意味**: `doVlanMemUpdateTask()` が `STATE_VLAN_MEMBER_TABLE` 変化（ポートの VLAN 参加/離脱）を検知した際、既存の `STP_VLAN_PORT` エントリを参照して path_cost / priority の設定済み値を stpd へ再送する。
+
+### 7. stpd IPC socket — STP デーモンへの通知（出力）
+
+- **参照先**: Unix Domain Socket `/var/run/stpipc.sock` (stpd が待ち受け)
+- **方向**: 書き込み（`stpmgr.cpp:332`、`sendMsgStpd(STP_VLAN_CONFIG, ...)`）
+- **意味**: `STP_VLAN` SET 処理後に `STP_VLAN_CONFIG` IPC メッセージを stpd に送信する。`STP_VLAN_PORT` は `STP_VLAN_PORT_CONFIG` として送信される。CONFIG_DB から APPL_DB / ASIC_DB への書き込みは行わず、IPC 経由で stpd が直接 ASIC を制御する構成になっている。
+
+### 参照関係サマリ
+
+```
+STP_VLAN / STP_VLAN_PORT
+  |- [必須フラグ]  STP|GLOBAL → l2ProtoEnabled (stpmgrd 内部; 欠如時 silent skip)
+  |- [条件必須]    STP_PORT → stpPortTask (stpmgrd 内部; ポートなし時は不要)
+  |- [必須状態]    STATE_DB:STATE_VLAN_TABLE|Vlan<vid> (vlanmgrd が書込; 欠如時 silent skip)
+  |- [PVST限定]    STATE_DB:STATE_VLAN_MEMBER_TABLE (インスタンス初回割当時のみ参照)
+  |- [内部連鎖]    m_vlanInstMap[] (STP_VLAN 処理後 → STP_VLAN_PORT の silent skip 解除)
+  |- [遅延再送]    STP_VLAN_PORT cfg (VlanMem 変化時の path_cost/priority 再送)
+  `- [出力先]      stpd IPC socket (CONFIG_DB→ASIC 経路は IPC のみ; APPL_DB 書込なし)
+```
+
+<!-- /cross-refs -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
