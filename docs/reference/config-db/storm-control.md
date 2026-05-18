@@ -531,6 +531,47 @@ storm control 専用 policer の参照カウントは常に `0` で固定され�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/storm-control-pubsub.md`
+> ソース: `sonic-swss/orchagent/orchdaemon.cpp:395-402`, `policerorch.cpp:374-404`
+
+### Redis 購読方式
+
+`PORT_STORM_CONTROL` テーブルへの変更通知は `PolicerOrch` が **`swsscommon::SubscriberStateTable`** (`TableConnector` 経由) で受け取る。`hostcfgd` 等の管理系デーモンは `ConfigDBConnector.subscribe()` を使うが、orchagent 側は `Orch` 基底クラスの select ループで駆動される `SubscriberStateTable` を使用する点が異なる。
+
+| 購読者 | 購読 DB | 購読テーブル | 購読 API |
+|--------|---------|------------|---------|
+| `PolicerOrch` (`gPolicerOrch`) | CONFIG_DB | `PORT_STORM_CONTROL` | `SubscriberStateTable` (`TableConnector` 経由) |
+| `PolicerOrch` (`gPolicerOrch`) | CONFIG_DB | `POLICER` | 同上 |
+
+`gPolicerOrch` 以外に `PORT_STORM_CONTROL` を直接購読するプロセスは存在しない。CLI (`sonic-utilities`) は CONFIG_DB を直接 HGET して表示するのみ。
+
+### 通知フロー
+
+```
+CLI: config interface storm-control add Ethernet0 broadcast kbps 1000
+  ↓ HSET "PORT_STORM_CONTROL|Ethernet0|broadcast" kbps "1000"
+Redis keyspace PUBLISH "__keyspace@4__:PORT_STORM_CONTROL|Ethernet0|broadcast" "hset"
+  ↓ SubscriberStateTable が通知受信 → HGETALL で値を再取得
+Orch::execute() → consumer.m_toSync にエントリを積む
+  ↓
+PolicerOrch::doTask(consumer)  — allPortsReady() が true の場合のみ処理
+  ↓
+handlePortStormControlTable(tuple)
+  ↓ SET: create_policer + set_port_attribute (policer アタッチ)
+  ↓ DEL: set_port_attribute(SAI_NULL_OBJECT_ID) + remove_policer
+SAI API → syncd → ASIC_DB
+```
+
+### 起動時スナップショット
+
+`Orch` 基底クラスは SELECT ループ開始前に `getContent()` で既存エントリをスナップショット取得して `m_toSync` に積む。`allPortsReady()` が false の間は `doTask()` が即 return するため、スナップショット分は全ポート ready 後に一括処理される（silent defer）。
+
+> **Evidence**: `orchdaemon.cpp:395-402` (PolicerOrch 生成・TableConnector 登録)、`policerorch.cpp:374-382` (doTask + allPortsReady ガード)
+<!-- /pubsub -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
