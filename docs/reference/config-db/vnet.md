@@ -427,4 +427,56 @@ CONFIG_DB: VNET
 > **スキャン証跡**: `vxlanmgr.cpp:doVxlanCreateTask()` L287-376、`vxlanmgr.cpp:doVxlanDeleteTask()` L437-476、`vnetorch.cpp:VNetVrfObject::createObj()` L91-108、`vnetorch.cpp:VNetOrch::addOperation()` L489-558、`vnetorch.cpp:VNetOrch::delOperation()` L560-600、`vnetorch.cpp:addRoute()/delRoute()` L645-730、`vnetorch.cpp:createNextHopGroup()` L773-774; 詳細分析 `meta/_intermediate/cdb-flow/vnet-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`VNET` / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルの処理に直接影響する、CONFIG_DB エントリでは制御できないコード内固定値の一覧。
+
+### vnetorch.h マクロ定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `VNET_BITMAP_SIZE` | `32` | VNET bitmap 型の内部サイズ（bitmap モードのみ使用）| `vnetorch.h:20` |
+| `VNET_TUNNEL_SIZE` | `40960` | tunnel エントリ上限（bitmap モード用）| `vnetorch.h:21` |
+| `VNET_ROUTE_FULL_MASK_OFFSET_MAX` | `3000` | /32 ルートの bitmap オフセット最大値（bitmap モードのみ）| `vnetorch.h:22` |
+| `VNET_NEIGHBOR_MAX` | `0xffff`（65535）| neighbor エントリ上限（bitmap モードのみ）| `vnetorch.h:23` |
+| `VXLAN_ENCAP_TTL` | `128` | VXLAN encapsulation 時の outer IP TTL 固定値 | `vnetorch.h:24` |
+| `VNET_BITMAP_RIF_MTU` | `9100` | bitmap モードで RIF 作成時に使用する MTU 固定値 | `vnetorch.h:25` |
+
+### monitoring 種別文字列定数
+
+`VNET_ROUTE_TUNNEL` の `monitoring` フィールドに指定可能な値はコード内でリテラル定数として定義されており、YANG では制約されていない。
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `VNET_MONITORING_TYPE_CUSTOM` | `"custom"` | カスタム BFD/ping モニタリング（`MonitorOrch` 連携）| `vnetorch.h:27` |
+| `VNET_MONITORING_TYPE_CUSTOM_BFD` | `"custom_bfd"` | BFD セッション直接管理モード | `vnetorch.h:28` |
+
+`monitoring` フィールドがこれら 2 値以外の場合、orchagent は endpoint の BFD 状態チェックをスキップして常時 UP 扱いにする（`vnetorch.cpp:786`）。
+
+### YANG 型固定値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `vnid_type` 有効範囲 | `1..16777215` | `VNET.vni` / `VNET_ROUTE_TUNNEL.vni` の YANG 型制約 | `sonic-types.yang.j2:321-328` |
+| `scope` 有効値 | `"default"` のみ | `VNET.scope` の YANG `pattern` 制約。それ以外は `"Invalid VRF name"` エラー | `sonic-vnet.yang:84` |
+| `guid` 最大長 | `255` 文字 | `VNET.guid` の YANG `length` 制約 | `sonic-vnet.yang:75-78` |
+
+### APP_DB / STATE_DB テーブル名定数（schema.h）
+
+CONFIG_DB の変更を消費するダウンストリーム側のテーブル名はコード定数で固定されており、ConfigDB フィールドでは変更できない。
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| `APP_VNET_TABLE_NAME` | `"VNET_TABLE"` | `schema.h:81` |
+| `APP_VNET_RT_TABLE_NAME` | `"VNET_ROUTE_TABLE"` | `schema.h:82` |
+| `APP_VNET_RT_TUNNEL_TABLE_NAME` | `"VNET_ROUTE_TUNNEL_TABLE"` | `schema.h:83` |
+| `APP_VNET_MONITOR_TABLE_NAME` | `"VNET_MONITOR_TABLE"` | `schema.h:133` |
+| `STATE_VNET_RT_TUNNEL_TABLE_NAME` | `"VNET_ROUTE_TUNNEL_TABLE"` | `schema.h:495` |
+| `STATE_VNET_MONITOR_TABLE_NAME` | `"VNET_MONITOR_TABLE"` | `schema.h:500` |
+| `CFG_VNET_RT_TABLE_NAME` | `"VNET_ROUTE"` | `schema.h:369` |
+
+> **スキャン証跡**: `sonic-swss/orchagent/vnetorch.h:20-28`（マクロ定数全件）、`sonic-swss/orchagent/vnetorch.cpp:513,773,786`（定数使用箇所）、`sonic-swss-common/common/schema.h:81-83,133,369,495,500`（テーブル名定数）、`sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2:321-328`（`vnid_type` 型定義）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang:75-92`（scope/guid 制約）
+<!-- /constants -->
+
 <!-- glossary-links-injected: f94986e6b96c -->
