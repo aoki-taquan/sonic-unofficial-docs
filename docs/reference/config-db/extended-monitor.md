@@ -282,6 +282,45 @@ HLD および `eventd.cpp` の定数から導出する[^1][^3]。
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `eventd` が読み書きする関連 DB・ファイル (Phase C)
+
+`eventd` はファイルシステム上の設定ファイルと複数の Redis DB にまたがって依存を持つ。以下にその全体像を示す。
+
+### ファイル参照
+
+| ファイルパス | 読み/書き | タイミング | 内容 |
+|------------|---------|-----------|------|
+| `/etc/sonic/init_cfg.json` | 読み | 起動時 1 回 | ZMQ エンドポイント (`xsub_path`, `xpub_path`, `capture_path`) と `cache_max_cnt` を取得。不在時はハードコードデフォルト (`tcp://127.0.0.1:5570〜5573`) を使用 (`events_common.h:129–144`) |
+| `/etc/evprofile/default.json` | 読み | 起動時 1 回 | イベントプロファイル (`name`, `revision`, `severity`, `enable`, `message`) を読み込み `static_event_map` を構築。不在時は空マップで動作 (HLD section 3.1.2) |
+| `/etc/eventd.json` | 読み | 起動時 (HLD 設計) | EVENT テーブルの `no-of-records` / `no-of-days` 保持上限を取得。**実装確認不可** (eventd.cpp に読み込みロジック未検出) |
+
+### Redis DB 参照
+
+| DB | テーブル | 読み/書き | 根拠 |
+|----|---------|---------|------|
+| `COUNTERS_DB` | `COUNTERS_EVENTS` | **書き** | `stats_collector` の writer スレッドが `published` (発行済みイベント数) と `missed_to_cache` (キャッシュ溢れ数) を定期書き込み (`eventd.cpp:186–210`; `schema.h:266, 275, 278`; `eventd.h:23`) |
+| `EVENT_DB` (index 19) | `EVENT` / `ALARM` | **書き** | event consumer が受信イベントを EVENT テーブルへ追記し、`action=RAISE` のイベントを ALARM テーブルへも追記 (HLD section 3.1.2; `schema.h:551–554`) |
+| `EVENT_DB` (index 19) | `EVENT_STATS` / `ALARM_STATS` | **書き** | 各イベント受信時に severity 別カウンタ (`critical`, `major`, `minor`, `warning`, `acknowledged`) を更新 |
+| `EVENT_DB` (index 19) | `ALARM_STATS` | **読み** (pmon) | `pmon` が ALARM_STATS を購読してシステム LED を制御: Critical/Major → Red、Minor/Warning → Amber、なし → Green (HLD section 3.1.3) |
+
+### ZMQ エンドポイント参照
+
+| エンドポイント | キー | デフォルト | 役割 |
+|--------------|-----|---------|------|
+| XSUB | `xsub_path` | `tcp://127.0.0.1:5570` | イベント producer (`event_publish()`) が接続して publish する入口 |
+| XPUB | `xpub_path` | `tcp://127.0.0.1:5571` | subscriber (stats_collector, event consumer) が接続して受信する出口 |
+| capture PUB | `capture_path` | `tcp://127.0.0.1:5573` | capture_service が subscribe してイベントをキャッシュする専用チャネル |
+
+### 暗黙的な他コンポーネント依存
+
+| 依存先 | 依存内容 | 備考 |
+|--------|---------|------|
+| telemetry (gnmi_server) | `EVENT_CACHE_INIT` → `EVENT_CACHE_START` → `EVENT_CACHE_STOP` → `EVENT_CACHE_READ` のシーケンスを eventd に送信 | telemetry が起動するまでキャッシュが drain されない (HLD section 3.1.8) |
+| rsyslogd | eventd の `supervisord.conf` で `dependent_startup_wait_for=start:exited` が設定されており、start.sh (rsyslogd 起動後に exited) を待ってから起動 | `docker-eventd/supervisord.conf:47–57` |
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. section 3.1.5 (Event Profile), 3.1.7 (Event Table and Alarm Table). <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
