@@ -351,6 +351,37 @@ m_appNatTableProducer.set(appKeySnat, fvVectorSnat);   // nat_type: snat
 CONFIG_DB の `STATIC_NAT|<global_ip>` 1 件 → APPL_DB `NAT_TABLE|<global_ip>` と `NAT_TABLE|<local_ip>` の 2 件が生成される。
 <!-- /defaults -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`APPL_DB` NAT テーブル群の SET/DEL に伴い、主購読者 `NatOrch` が以下の副次 DB エントリを書き込む。SAI `sai_nat_api` への直接 ASIC_DB 操作は主作用のため除外する。
+
+| 副次 DB | テーブル / キー | 書込フィールド | 根拠 |
+|---|---|---|---|
+| COUNTERS_DB | `COUNTERS_NAT\|<global_ip>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` (per-entry polling) | `natorch.cpp:4049-4061` `updateNatCounters()` |
+| COUNTERS_DB | `COUNTERS_NAPT\|<proto>:<ip>:<port>` | 同上 | `natorch.cpp:4079-4097` `updateNaptCounters()` |
+| COUNTERS_DB | `COUNTERS_TWICE_NAT\|<src>:<dst>` | 同上 | `natorch.cpp:4109-4134` `updateTwiceNat/NaptCounters()` |
+| COUNTERS_DB | `COUNTERS_GLOBAL_NAT\|Values` | `STATIC_NAT_ENTRIES`, `STATIC_NAPT_ENTRIES`, `STATIC_TWICE_NAT_ENTRIES`, `STATIC_TWICE_NAPT_ENTRIES`, `DYNAMIC_NAT_ENTRIES`, `DYNAMIC_NAPT_ENTRIES`, `DYNAMIC_TWICE_NAT_ENTRIES`, `DYNAMIC_TWICE_NAPT_ENTRIES`, `SNAT_ENTRIES`, `DNAT_ENTRIES` (int) | `natorch.cpp:4481-4588` `updateStaticNatCounters()` … `updateDnatCounters()` |
+
+### admin_mode → SAI_SWITCH_ATTR_NAT_ENABLE (直接 SAI)
+
+`NAT_GLOBAL_TABLE.admin_mode` が `enabled` に変化すると `enableNatFeature()` (natorch.cpp:2534) が `sai_switch_api->set_switch_attribute(gSwitchId, SAI_SWITCH_ATTR_NAT_ENABLE=true)` を呼ぶ。`disabled` 時は逆。ASIC_DB 経由ではなく直接 SAI call のため ASIC_DB には経由エントリが残らない。
+
+### SETTIMEOUTNAT notification (aging loop)
+
+`NatOrch` は `m_natTimeoutTimer` タイムアウト時に `NotificationProducer(appDb, "SETTIMEOUTNAT")` 経由でエージング通知 (`AGEOUT-SINGLE-NAT` など) を送信する (natorch.cpp:1888, 2002, 2118, 2287, 3336-3501)。`natsyncd / NatSync` がこの通知を受信し kernel conntrack エントリを削除、連動して APPL_DB の dynamic エントリを DEL する間接ループを形成する。
+
+### RouteOrch NH 追跡 (DNAT のみ、in-process)
+
+`addDnatToNhCache()` (natorch.cpp:408-504) が translated-ip に対して `m_routeOrch->attach(this, translatedIp)` を呼ぶ。ネクストホップが解決されたとき `RouteOrch` コールバック経由で SAI DNAT エントリの追加 / 削除が再試行される。APPL_DB / COUNTERS_DB への追加書込みは発生しない。
+
+### 検出されなかった書込み
+
+STATE_DB, FLEX_COUNTER_DB, CONFIG_DB, LOGLEVEL_DB への書込みは確認されなかった。
+
+> **Evidence**: `sonic-swss/orchagent/natorch.cpp` (COUNTERS_DB 初期化 L51-56, per-entry counters L4049-4134, global counters L4481-4588, enableNatFeature L2534-2562, SETTIMEOUTNAT L137/1888/2002/2118/2287/3336-3501, routeOrch attach L408-560); `sonic-swss-common/common/schema.h:260-264` (COUNTERS_NAT* table defines); 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-app-side.md` を参照。
+<!-- /side-effects -->
+
 ## 制約
 
 - `NAT_TABLE` key: 1 セグメント (`<ip>`)。他は ERROR + erase。
