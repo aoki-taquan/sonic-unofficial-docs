@@ -347,4 +347,40 @@ self.pamLimitsCfg.update_config_file()
 **`MGMT_INTERFACE` (間接参照)**: SSH_SERVER テーブルは `MGMT_INTERFACE` を直接参照しないが、SSH 認証バックエンドとして TACACS+/RADIUS を使用する場合、AAA の `src_intf` → `MGMT_INTERFACE` の IP 解決が SSH 認証経路に影響する（hostcfgd:L596-606）。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` (コミット `c5bbbe8b`)
+
+### SET 処理における失敗経路
+
+#### SshServer.set_policies() 内
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `ports` 値が int 型（文字列でない） | `handle_ports_set()` | LOG_ERR → `set_policies()` が即 `return`・sshd_config 変更なし | `LOG_ERR: "port num value {} in wrong format"` | `hostcfgd:L1097` |
+| `ports` 値が `1..65535` 範囲外 | `handle_ports_set()` | LOG_ERR → `set_policies()` が即 `return`・sshd_config 変更なし | `LOG_ERR: "Ssh port {} out of range"` | `hostcfgd:L1100` |
+| 整数フィールド (`authentication_retries` / `login_timeout` / `inactivity_timeout`) が設定範囲外 | `set_policies()` L1121 | `continue` でそのフィールドのみスキップ（他フィールドは適用継続） | `LOG_ERR: "Ssh {} {} out of range"` | `hostcfgd:L1123-1124` |
+| 未知のキーが `ssh_policies` に含まれる | `set_policies()` L1148 | `continue` でそのフィールドのみスキップ（他フィールドは適用継続） | `LOG_ERR: "Failed to update sshd config file - wrong key {}"` | `hostcfgd:L1148` |
+| `sshd -T -f <tmp>` バリデーション失敗（設定文法エラー等） | `set_policies()` L1150 | `os.remove(SSH_CONFG_TMP)` → 全フィールドをロールバック・sshd_config 本番は変更なし | `LOG_ERR: "Failed to update sshd config file - sshd -T returned {} with error {}"` | `hostcfgd:L1159` |
+| `systemctl restart ssh` 失敗 | `run_cmd()` L1154 | sshd_config は更新済みだが sshd デーモンは旧設定で継続稼働（設定ファイルと動作の不整合） | `LOG_ERR: "Failed to update sshd config file"` | `hostcfgd:L1157` |
+
+#### PamLimitsCfg.render_conf_file() 内
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| jinja2 テンプレートレンダリング例外（テンプレートファイル不在・権限エラー等） | `render_conf_file()` L1475 | 例外捕捉・PAM limits ファイル (`/etc/security/limits.conf`) 未更新 | `LOG_ERR: "modify pam_limits config file failed with exception: {}"` | `hostcfgd:L1476-1478` |
+| PAM limits ファイルへの書き込み `IOError` | `render_conf_file()` L1468 | 上記 `except Exception` に捕捉・LOG_ERR | 同上 | `hostcfgd:L1469-1472` |
+
+### DEL 処理における挙動
+
+`SSH_SERVER|POLICIES` エントリが DEL された場合、`ssh_handler` は空 `data = {}` で `policies_update()` を呼ぶ。`self.policies = {}` となり `modify_conf_file()` は `len(ssh_policies) > 0` が `False` のため `set_policies()` を呼ばない。sshd_config は変更されず**最後に適用された設定が残存**する（DEL でデフォルト値に戻るわけではない）。
+
+### 補足
+
+- **`ports` エラー時の早期 return と tmp ファイル残存**: `set_policies()` は `copy2(SSH_CONFG, SSH_CONFG_TMP)` 後に `ports` を処理する。`handle_ports_set()` が `False` を返すと `return` するが、`SSH_CONFG_TMP` の削除は行わない。ただし次回 `set_policies()` 呼び出し時に `copy2` で上書きされるため実害は限定的。
+- **整数フィールドの部分適用**: 範囲外フィールドは `continue` でスキップされるが、他フィールドは `sshd -T` ゲートを通過すれば sshd_config に書き込まれる。YANG バリデーションが範囲チェックを先行して行うため、通常このパスは発生しない。
+- **`SshServer` 成功 + `PamLimitsCfg` 失敗の不整合**: `ssh_handler` は両者をトランザクションなしで逐次呼び出す。sshd_config 更新成功後に PAM limits 更新が失敗した場合、`sshd_config` の `max_sessions` は `PamLimitsCfg` が処理しないため sshd_config 側への影響はなく PAM 側のみ古い値が残る。
+<!-- /failure -->
+
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
