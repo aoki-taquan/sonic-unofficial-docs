@@ -274,6 +274,33 @@ CREDENTIALS|CERT|<profileID>
 -->
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`CREDENTIALS|CERT` 書込時に `gnsi_certz.go` が STATE_DB 以外に与える副次効果を整理する。
+
+| 副次先 | 書込有無 | 対象 | evidence |
+|--------|---------|------|----------|
+| STATE_DB | あり（主体） | `CREDENTIALS\|CERT\|<profileID>` — `writeCredentialsMetadataToDB()` が `HSet` | `gnsi_certz.go:1050-1052` |
+| CONFIG_DB | なし | 接続・書き込み処理ゼロ | — |
+| APPL_DB | なし | 接続・書き込み処理ゼロ | — |
+| ASIC_DB | なし | 接続・書き込み処理ゼロ | — |
+| FLEX_COUNTER_DB / COUNTERS_DB / LOGLEVEL_DB | なし | 接続・書き込み処理ゼロ | — |
+| ファイルシステム (TLS symlink) | あり | `SrvCertLnk` / `SrvKeyLnk` / `CaCertLnk` を atomically 更新 | `gnsi_certz.go:925-990` |
+| ファイルシステム (CRL ディレクトリ) | あり | `CertCRLConfig/<profileID>/` に PEM ファイル群を書き込み | `gnsi_certz.go:531-534` |
+| ファイルシステム (AuthPolicy `.bak`) | あり | Rotate 中に `.bak` 作成 / Finalize 時に削除 | `gnsi_certz.go:537-540,678` |
+| ファイルシステム (JSON メタデータ) | あり | `CertzMetaFile` (`/keys/grpc-version.json`) を Finalize 後に上書き保存 | `gnsi_certz.go:685,717-725` |
+
+### TLS シンボリックリンク更新による gnmi 影響
+
+`atomicSetSrvCertKeyPair()` および `atomicSetCACert()` はシンボリックリンクを原子的に差し替えるため、
+次回の TLS ハンドシェイクから新証明書が有効になる。
+`CREDENTIALS|CERT` の STATE_DB フィールドは freshness メタデータのみを保持し、証明書の実体はファイルシステム上のシンボリックリンク先ファイルである。
+Rotate 成功後に gnmi サーバを再起動しなくても新証明書が有効になる（go の `tls.Config.GetCertificate` による都度ロードによる）。
+
+詳細スキャン結果は `meta/_intermediate/cdb-flow/certs-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
