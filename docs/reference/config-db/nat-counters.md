@@ -441,3 +441,107 @@ NatOrch が消費する APPL_DB テーブルの優先度（小さい値 = 高優
 > **証跡**: `natorch.cpp:3101-3104` (ヒットビット/カウンタタイマー多重化), `natorch.cpp:3316-3338` (AGEOUT通知送信), `natorch.cpp:4166-4170` (HIT_BIT_COR=1), `natorch.cpp:3107-3111` (1日タイマー分岐), `natorch.cpp:3443-3505` (updateAllConntrackEntries), `natorch.cpp:4063-4075` (deleteNatCounters), `natorch.cpp:4474-4478` (NAT_DB_CLEANUP_NOTIFICATION), `natorch.cpp:2457-2532` (cleanupAppDbEntries), `natorch.cpp:4569-4589` (updateSnat/DnatCounters).
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-swss/orchagent/natorch.cpp`, `sonic-swss/cfgmgr/natmgr.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
+> 詳細証跡: `meta/_intermediate/cdb-flow/nat-pubsub.md`
+
+`COUNTERS_DB` NAT カウンタテーブル群は `NatOrch` のみが書き手となる特殊なランタイムステータスレジスタである。通常の CONFIG_DB → APPL_DB → orchagent パスとは異なり、**SAI タイマーポーリング**と**APPL_DB 非同期通知チャンネル**の 2 つの経路で COUNTERS_DB が更新される。
+
+### 書き込み経路の全体像
+
+```
+CONFIG_DB (NAT_GLOBAL / NAT_POOL / NAT_BINDINGS)
+  ↓ SubscriberStateTable (keyspace PSUBSCRIBE)
+natmgrd (NatMgr::doTask)
+  ↓ ProducerStateTable
+APPL_DB (APP_NAT_TABLE / APP_NAPT_TABLE / APP_NAT_GLOBAL_TABLE 等)
+  ↓ ConsumerStateTable (SUBSCRIBE APP_NAT_TABLE_CHANNEL@0 等)
+NatOrch::doTask(Consumer&)
+  ↓ sai_nat_api->create_nat_entry() 成功時
+  → updateNatCounters(ip, 0, 0)  # COUNTERS_DB エントリを 0 で初期化
+  ↓
+SelectableTimer (5 秒周期)
+  → queryCounters() → getNatCounters() → SAI get_nat_entry_attribute
+  → updateNatCounters(ip, pkts, bytes)  # COUNTERS_DB に実測値を書き込み
+```
+
+### 層 1: CONFIG_DB → natmgrd (SubscriberStateTable)
+
+`natmgrd` は起動時に以下の CONFIG_DB テーブルを `SubscriberStateTable` (keyspace PSUBSCRIBE) で購読する (`natmgrd.cpp:109-121`):
+
+| CONFIG_DB テーブル | 対応 doTask ハンドラ |
+|-------------------|---------------------|
+| `NAT_GLOBAL` | `doNatGlobalTask` → `m_appNatGlobalTableProducer.set(...)` |
+| `NAT_POOL` | `doNatPoolTask` → `m_appNatDnatPoolProducer.set(...)` |
+| `NAT_BINDINGS` | `doNatBindingTask` → `m_appNatTableProducer.set(...)` 等 |
+| `STATIC_NAT` / `STATIC_NAPT` | `doStaticNatTask` / `doStaticNaptTask` |
+| `INTERFACE` / `LAG_INTERFACE` / `VLAN_INTERFACE` 等 | `doNatIpInterfaceTask` |
+| `ACL_TABLE` / `ACL_RULE` | `doNatAclTableTask` / `doNatAclRuleTask` |
+
+keyspace 購読パターン (CONFIG_DB db_id=4 の場合):
+
+```
+PSUBSCRIBE __keyspace@4__:NAT_GLOBAL|*
+PSUBSCRIBE __keyspace@4__:NAT_POOL|*
+PSUBSCRIBE __keyspace@4__:NAT_BINDINGS|*
+```
+
+`SubscriberStateTable` は PSUBSCRIBE 後に既存 key を全件スナップショットとして再生するため、`natmgrd` 再起動後も全 NAT エントリが再処理される。
+
+### 層 2: APPL_DB → NatOrch (ConsumerStateTable)
+
+`orchdaemon.cpp:457-462` で `NatOrch` を生成し、APPL_DB 上の以下のテーブルを **ConsumerStateTable** で購読する:
+
+| APPL_DB テーブル | 優先度 | COUNTERS_DB への影響 |
+|-----------------|--------|----------------------|
+| `APP_NAT_DNAT_POOL_TABLE` | 55 (最高) | DNAT プール IP 登録 → SAI DNAT エントリ作成 → `COUNTERS_NAT` キー生成 |
+| `APP_NAT_TABLE` | 54 | SNAT / DNAT エントリ → `updateNatCounters(0,0)` |
+| `APP_NAPT_TABLE` | 53 | NAPT エントリ → `updateNaptCounters(0,0)` |
+| `APP_NAT_TWICE_TABLE` | 52 | Twice NAT エントリ → `updateTwiceNatCounters(0,0)` |
+| `APP_NAPT_TWICE_TABLE` | 51 | Twice NAPT エントリ → `updateTwiceNaptCounters(0,0)` |
+| `APP_NAT_GLOBAL_TABLE` | 50 (最低) | `admin_mode=enabled` → `enableNatFeature()` → タイマー起動 |
+
+`ConsumerStateTable` は `SUBSCRIBE APP_NAT_TABLE_CHANNEL@0` 形式のチャンネルを購読し、`ProducerStateTable::set()` が Lua スクリプトで PUBLISH したメッセージを受信する。
+
+### 層 3: SAI タイマーポーリング → COUNTERS_DB
+
+COUNTERS_DB への実測値書き込みは `SelectableTimer` 経由で行われる。これは通常の Redis pub/sub ではなく、`swss::Select` の fd ポーリング機構を使う:
+
+```
+orchagent メインループ (Select::select)
+  → m_natQueryTimer の fd が ready
+  → NatOrch::doTask(SelectableTimer&)
+  → queryHitBits() [30 秒に 1 回]  +  queryCounters() [5 秒ごと]
+  → getNatCounters() / getNaptCounters() / getTwiceNatCounters()
+  → SAI: sai_nat_api->get_nat_entry_attribute(SAI_NAT_ENTRY_ATTR_BYTE_COUNT / PACKET_COUNT)
+  → updateNatCounters(ip, pkts, bytes)
+  → m_countersNatTable.set(key, {NAT_TRANSLATIONS_PKTS, NAT_TRANSLATIONS_BYTES})
+```
+
+### 非同期通知チャンネル
+
+NAT データパスには `NotificationConsumer / NotificationProducer` による 4 本の非同期チャンネルが存在する:
+
+| チャンネル名 | DB | 方向 | 送信者 | 受信者 | COUNTERS_DB への影響 |
+|---|---|---|---|---|---|
+| `SETTIMEOUTNAT` | APPL_DB | NatOrch → natmgrd | `NatOrch::setTimeoutNotifier` (`natorch.cpp:137`) | `natmgrd.cpp:149` `timeoutNotificationsConsumer` | 直接影響なし (conntrack タイムアウトのみ) |
+| `FLUSHNATENTRIES` | APPL_DB | CLI → natmgrd | `sonic-clear nat translations` | `natmgrd.cpp:152` `flushNotificationsConsumer` | natmgrd が APPL_DB エントリを削除 → NatOrch が `deleteNatCounters()` を呼ぶ → COUNTERS_DB キー消滅 |
+| `FLUSHNATSTATISTICS` | APPL_DB | CLI → NatOrch | `sonic-clear nat statistics` | `natorch.cpp:84-86` `m_flushNotificationsConsumer` | `clearCounters()` → SAI `reset_nat_entry_attribute` → `COUNTERS_NAT*` フィールドを `"0"` にリセット |
+| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 停止シグナル時 | `natorch.cpp:89-91` `m_cleanupNotificationConsumer` | `cleanupAppDbEntries()` → 全 NAT エントリ削除 → 全 `COUNTERS_NAT*` キー消滅 |
+
+### COUNTERS_GLOBAL_NAT の書き込みタイミング
+
+`COUNTERS_GLOBAL_NAT|Values` の各フィールドは Redis pub/sub によらず直接 `m_countersGlobalNatTable.set()` で書き込まれる:
+
+| フィールド | 書き込みタイミング | トリガ |
+|---|---|---|
+| `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` | NatOrch コンストラクタ (1 回のみ) | orchagent 起動 |
+| `STATIC_NAT_ENTRIES` 等のエントリ数カウンタ | `addHwSnatEntry()` / `removeHwSnatEntry()` 成功時 | APPL_DB ConsumerStateTable イベント |
+| `SNAT_ENTRIES` / `DNAT_ENTRIES` | SAI エントリ追加/削除ごとに即時 | 同上 |
+
+> **Evidence**: `natorch.cpp:84-91` (NotificationConsumer 登録), `natorch.cpp:137` (NotificationProducer), `natorch.cpp:3095-3117` (SelectableTimer doTask), `orchdaemon.cpp:457-462` (ConsumerStateTable 優先度), `natmgr.cpp:43-49` (ProducerStateTable 群), `natmgrd.cpp:109-121` (SubscriberStateTable 購読テーブル一覧), `natorch.cpp:4450-4490` (NotificationConsumer doTask); 詳細分析 `meta/_intermediate/cdb-flow/nat-pubsub.md`
+
+<!-- /pubsub -->
