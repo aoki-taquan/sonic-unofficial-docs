@@ -370,3 +370,32 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 **Broadcom DLR 同一 action 強制 (依存 #4)**: `checkPfcDlrInitEnable()` が true の Broadcom 環境では、最初の `PFC_WD` per-port エントリの `action` が `SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION` としてスイッチレベルに設定される。後続エントリで異なる `action` を指定すると `"Invalid PFC Watchdog action %s as switch level action %s is set"` エラーで reject されるため、全ポートを同一 `action` で一括設定すること (`pfcwdorch.cpp:237-266`)。
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`PFC_WD` エントリが CONFIG_DB に書かれると `PfcWdOrch` が以下のテーブルを暗黙的に参照する。
+`ifname` → `PORT` は YANG leafref として明示されているが、`PORT_QOS_MAP` 経由の PFC bitmask 参照は実装コードのみに現れる暗黙依存。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `PORT\|<ifname>` | YANG leafref（必須検証）+ 実装参照 | `ifname != 'GLOBAL'` のとき。ポートが存在しない・非物理ポートは `task_invalid_entry` | `sonic-pfcwd.yang:37-38`; `pfcwdorch.cpp:193-203` |
+| `PORT` 初期化完了状態 | 読み取り（`allPortsReady()`） | 常時。全ポートが SAI 初期化を完了していない限り全タスクを保留 | `pfcwdorch.cpp:68-71` |
+| `PORT_QOS_MAP\|<port>.pfcwd_sw_enable` | PFC bitmask 読み取り（暗黙） | per-port エントリ処理時。`qosorch` が `setPortPfcWatchdogStatus()` で書き込んだ値を `getPortPfcWatchdogStatus()` で読む | `pfcwdorch.cpp:533-555`; `qosorch.cpp:2136-2155,2224` |
+| `DEVICE_METADATA\|localhost.default_pfcwd_status` | 読み取り（CLI 経由） | `pfcwd start_default` 実行時のみ。orchagent は直接参照しない | `pfcwd/main.py:409` |
+| `DEVICE_NEIGHBOR`（逆参照） | active_ports 取得（CLI 経由） | `pfcwd start_default` が対象ポート一覧を取得するため参照 | `pfcwd/main.py:415` |
+| APPL_DB `PFC_WD_TABLE_INSTORM`（書き込み先） | 書き込み | storm 検出時に warm-reboot 用 storm 状態を記録 | `pfcwdorch.cpp:688,998-1058` |
+| FLEX_COUNTER_DB `PFC_WD` グループ（書き込み先） | 書き込み | per-port エントリ登録時に port / queue の FlexCounter エントリを登録 | `pfcwdorch.cpp:560,587,593`; `pfcwdorch.h:16` |
+
+!!! note "PORT_QOS_MAP PFC 有効化の暗黙依存"
+    `PORT_QOS_MAP|<port>` に `pfcwd_sw_enable` を設定することで `QosOrch` が `setPortPfcWatchdogStatus()` を呼び lossless TC bitmask を設定する。
+    PFC_WD per-port エントリ処理時に `getPortPfcWatchdogStatus()` でこの bitmask を読み出し、lossless TC が 0 の場合は
+    `"No lossless TC found on port"` を LOG_NOTICE し Watchdog 登録がスキップされる（`task_failed` にはならない）。
+    `PORT_QOS_MAP` の PFC 有効化は YANG leafref として明示されていないが、実質的な先行条件となる。
+
+!!! note "GLOBAL エントリは leafref 対象外"
+    YANG leafref は `ifname != 'GLOBAL'` に限定されている。`PFC_WD|GLOBAL` の `POLL_INTERVAL` フィールドは PORT への参照を持たず、
+    どの port が存在しなくても書き込み可能。
+
+> **Evidence**: `sonic-swss/orchagent/pfcwdorch.cpp:68-71,193-203,533-555,688,998-1058`; `orchagent/qosorch.cpp:2136-2155,2224`; `orchagent/portsorch.cpp:2482-2514`; `sonic-pfcwd.yang:37-38`; `pfcwd/main.py:409,415`; スキャンノート: `meta/_intermediate/cdb-flow/pfc-wd-cross-refs.md`
+<!-- /cross-refs -->
