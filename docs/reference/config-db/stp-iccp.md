@@ -1,6 +1,6 @@
 ---
 title: STP / ICCP 連携 — コード由来デフォルト詳細
-description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G 分析。"
+description: "MCLAG 環境における STP と ICCP (iccpd) の連携メカニズム、STP ロール決定アルゴリズム、CONFIG_DB フィールドとの対応、および TLV_T_MLACP_STP_INFO 未サポート状況を詳細解説。Phase A + Phase B + Phase C + Phase D + Phase E + Phase F + Phase G + Phase H 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -621,6 +621,72 @@ ICCP セッション生存確認は TCP keepalive ではなく iccpd 独自タ�
 
 証跡: `scheduler.c:462-488`, `iccp_netlink.c:2182`, `scheduler.h:44`, `mlacp_link_handler.c:654-660`, `mclagsyncd.cpp:41`, `mclaglink.cpp:912-921`, `mclaglink.cpp:1357-1420`
 <!-- /pubsub -->
+
+<!-- platform-diff -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-platform.md -->
+
+STP/ICCP 連携における `iccpd` コアロジック（ロール決定・MAC 書き換え）自体にプラットフォーム分岐はない。プラットフォーム差異は **mclagsyncd の `setPortIsolate()`** に集中する。
+
+### A. ポート隔離方式の 2 経路分岐 (`mclaglink.cpp:190-282`)
+
+mclagsyncd は `MCLAG_MSG_TYPE_SET_PORT_ISOLATE` 受信時に `getenv("platform")` を以下のホワイトリストと照合する:
+
+```cpp
+// mclaglink.h:54-59 / mclaglink.cpp:192-202
+static const unordered_set<string> supported {
+    "broadcom",          // BRCM_PLATFORM_SUBSTRING
+    "barefoot",          // BFN_PLATFORM_SUBSTRING
+    "centec",            // CTC_PLATFORM_SUBSTRING
+    "clounix",           // CLX_PLATFORM_SUBSTRING
+    "marvell-prestera",  // MRVL_PRST_PLATFORM_SUBSTRING
+    "marvell-teralynx"   // MRVL_TL_PLATFORM_SUBSTRING
+};
+```
+
+| プラットフォーム | 経路 | DB 書き込み先 | 方式 |
+|----------------|------|-------------|------|
+| Broadcom / Barefoot / Centec / Clounix / Marvell-Prestera / Marvell-Teralynx | 経路 A | `APPL_DB ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` | Isolation Group |
+| Mellanox / VS / その他（ホワイトリスト外） | 経路 B | `APPL_DB ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` | ACL ベース |
+
+**経路 A（Isolation Group）の特徴**:
+- `MEMBERS` に `Ethernet` プレフィックスのインターフェースは除外し PortChannel のみ含める（`mclaglink.cpp:258-261`）
+- dst が空（リモートリンク全断）時は `del("MCLAG_ISO_GRP")` でエントリ削除
+
+**経路 B（ACL）の特徴**:
+- `acl_table_is_added` フラグで ACL テーブルは初回のみ作成（2 回目以降はルールのみ更新）
+- dst が空の場合は `del(acl_name)` で ACL テーブルごと削除
+
+### B. iccpd コアロジックはプラットフォーム非依存
+
+`iccpd` (`docker-iccpd`) の以下のコアロジックには `#ifdef` や `getenv("platform")` による分岐が存在しない:
+
+| 機能 | 動作 | 全プラットフォーム共通 |
+|------|------|---------------------|
+| STP ロール決定 (`iccp_csm_stp_role_count()`) | IP 数値比較による Active/Standby 決定 | 共通 |
+| Standby MAC 書き換え (`mlacp_fix_bridge_mac()`) | Linux netlink 経由の PortChannel hw_addr 変更 | 共通 |
+| ICCP TLV 未サポート (`TLV_T_MLACP_STP_INFO`) | `mlacp_sync_recv_stpInfo()` が即 return | 共通 |
+| ハートビートタイムアウト | `session_timeout` 秒でセッション切断 | 共通 |
+
+### C. 特殊環境
+
+| 環境 | 挙動 |
+|------|------|
+| VS（仮想スイッチ）| platform がホワイトリスト外のため **ACL 方式** にフォールバック。STP ロール決定ロジック自体は物理 ASIC と同一 |
+| SmartSwitch DPU | `docker-iccpd` は DPU 上では起動しないため STP/ICCP 連携は非適用。SmartSwitch NPU 側では通常動作 |
+
+### プラットフォーム差異要約
+
+| 観点 | Broadcom / Barefoot / Centec / Clounix / Marvell | Mellanox / VS / その他 | SmartSwitch DPU |
+|------|--------------------------------------------------|----------------------|-----------------|
+| ポート隔離方式 | Isolation Group (`APPL_DB`) | ACL テーブル/ルール (`APPL_DB`) | N/A（非起動） |
+| STP ロール決定 | IP 数値比較（共通） | IP 数値比較（共通） | N/A |
+| Standby MAC 書き換え | netlink（共通） | netlink（共通） | N/A |
+
+証跡: `mclaglink.cpp:190-282`, `mclaglink.h:54-59`
+
+<!-- /platform-diff -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
