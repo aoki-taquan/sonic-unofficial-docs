@@ -550,3 +550,46 @@ ENI の MAC アドレス（例: `f4:93:9f:ef:c4:7e`）は `EniInfo::formatMac()`
 
 `findInternalPorts()` (`dashenifwdorch.cpp:414-431`) は `CONFIG_DB:PORT` テーブルを走査し、`role == "Dpc"` (Data-plane Connection) のポートを「DPU 専用内部ポート」として ACL テーブルのバインドポイントから除外する。SmartSwitch では NPU-DPU 間の内部リンクが `PORT_ROLE_DPC` として登録されており、ENI ACL テーブルのバインド対象から自動的に除かれる。
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-eni-side-effects.md`
+
+`DashEniFwdOrch` は CONFIG_DB / APPL_DB の DPU / ENI テーブルを読み込み、処理結果を APPL_DB の ACL 関連テーブルへ書き出す。STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書込はない。
+
+### APPL_DB への書込 (ProducerStateTable)
+
+`EniFwdCtxBase` のコンストラクタで 3 本の `ProducerStateTable` を生成する (`dashenifwdorch.cpp:403-405`)。
+
+| 書込テーブル | 操作 | トリガ | 証跡 |
+|------------|------|--------|------|
+| `APPL_DB:ACL_TABLE_TYPE_TABLE` | SET `ENI_REDIRECT` | ENI ACL ルール 1 件目の作成時 (`addAclTable()`) | `dashenifwdorch.cpp:603-630` |
+| `APPL_DB:ACL_TABLE_TABLE` | SET `ENI` | 同上 | `dashenifwdorch.cpp:631-642` |
+| `APPL_DB:ACL_RULE_TABLE` | SET `ENI:<vnet>_<MAC>[_TERM]` | `EniAclRule::fire()` で Neighbor RESOLVED 時 | `dashenifwdinfo.cpp:205` |
+| `APPL_DB:ACL_RULE_TABLE` | DEL `ENI:<vnet>_<MAC>[_TERM]` | ENI 削除 / primary endpoint 変更時 | `dashenifwdinfo.cpp:182, 220` |
+| `APPL_DB:ACL_TABLE_TYPE_TABLE` | DEL `ENI_REDIRECT` | ENI ACL ルール件数が 0 になったとき (`deleteAclTable()`) | `dashenifwdorch.cpp:592-595` |
+| `APPL_DB:ACL_TABLE_TABLE` | DEL `ENI` | 同上 | `dashenifwdorch.cpp:592-595` |
+
+### DB 別書込有無サマリ
+
+| 副次 DB / リソース | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB: ACL_TABLE_TYPE_TABLE / ACL_TABLE_TABLE | SET / DEL あり | `addAclTable()` / `deleteAclTable()` — `dashenifwdorch.cpp:603-648` |
+| APPL_DB: ACL_RULE_TABLE | SET / DEL あり | `createAclRule()` / `deleteAclRule()` — `dashenifwdorch.cpp:574-601` |
+| STATE_DB | なし | `state_db` / `StateDBConnector` 参照なし |
+| ASIC_DB | SAI 経由で間接更新 (AclOrch が担当) | AclOrch が `ACL_RULE_TABLE` を購読して SAI 操作 |
+| COUNTERS_DB | なし | CRM 連携なし |
+| FLEX_COUNTER_DB | なし | Flex カウンタ設定なし |
+
+### NeighOrch 副次効果 — ARP/NDP 解決
+
+ローカル DPU (`dpu_type_t::LOCAL`) への ENI ルール作成時、`LocalEniNH::resolve()` が `NeighOrch::resolveNeighbor()` を呼び出す (`dashenifwdinfo.cpp:30`)。Neighbor が未解決の場合は ARP/NDP プローブが副次的に送出される。
+
+| ケース | 副次効果 |
+|--------|---------|
+| LOCAL DPU endpoint が未解決 | `NeighOrch::resolveNeighbor()` → ARP/NDP プローブ送出 |
+| CLUSTER DPU endpoint | resolveNeighbor() 呼び出しなし。VxLAN トンネルのみ使用 |
+
+Neighbor が解決されると `NeighOrch` からの Observer 通知 (`DashEniFwdOrch::update()` → `handleNeighUpdate()`) が発火し (`dashenifwdorch.cpp:31-44`)、影響 ENI の `fireAllRules()` が再実行されて APPL_DB `ACL_RULE_TABLE` への SET が副次的に発生する。
+<!-- /side-effects -->
