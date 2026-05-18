@@ -77,6 +77,49 @@ NTP_SERVER|<server_address>
 派生メモ全体は [`meta/_intermediate/cdb-flow/ntp-server-defaults.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ntp-server-defaults.md) を参照。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> **調査根拠**: `sonic-ntp.yang` L195–236、`hostcfgd` L1366–1406、`chrony.conf.j2` L20–55、`minigraph.py` L2646 精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-server-ordering.md`
+
+### NTP_KEY 先行必須 — key leafref
+
+`sonic-ntp.yang` L199-203 の `leaf key` は `NTP_KEY_LIST/id` への leafref として定義される。`NTP_SERVER|<server>.key=<id>` を書き込む前に `NTP_KEY|<id>` が存在しなければ、YANG leafref バリデーションが SET を拒否する。
+
+正しい順序: `NTP_KEY|<id>` SET → `NTP_SERVER|<server>.key=<id>` SET。
+
+DEL の逆順序: `NTP_SERVER|<server>.key` フィールドをクリア（または `NTP_SERVER|<server>` DEL）→ `NTP_KEY|<id>` DEL。参照を残したまま `NTP_KEY` を先に DEL すると leafref dangling になり DEL が失敗する。
+
+### NTP_KEY 登録 → authentication=enabled の順序推奨
+
+`chrony.conf.j2` L124-131 は `NTP.global.authentication == 'enabled'` の場合のみ `keyfile /etc/chrony/chrony.keys` を chrony.conf に書き込む。`NTP_KEY` 未登録のまま `NTP|global.authentication=enabled` に設定すると、chrony.keys が空のまま chrony が再起動し認証が機能しない（NTP サーバへの接続を試みるが鍵照合で失敗する）。
+
+推奨順序: `NTP_KEY|<id>` SET → `NTP|global.authentication=enabled` SET。
+
+### NTP_SERVER と NTP_KEY の合算 chrony 再起動
+
+`hostcfgd` L2387-2391 の `ntp_srv_key_handler` は `NTP_SERVER` または `NTP_KEY` のいずれかが変更されると、**両テーブルの全件を同時に取得**して chrony を再起動する。`NTP_KEY` のみ変更した場合でも chrony が再起動されるため、認証鍵の追加・削除は一時的な NTP 断を伴う。
+
+### ブート時の書込みシーケンス
+
+minigraph.py L2646 が `NTP_SERVER` エントリ全台に `{iburst: 'on'}` を一括投入する。その後 `hostcfgd.load()` がスナップショットを取得するが `load()` は chrony を再起動しない（ブート時は chrony の起動設定ファイルから読まれる）。ブート後の最初の CONFIG_DB 変更イベントで初めて chrony restart が発火する。
+
+### YANG max-elements=10 による書込み上限
+
+YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制限される。11 件目の SET は YANG バリデーションで拒否される（エラーメッセージ: `"Failed NTP version"` ではなく max-elements 制約違反）。エントリ削除後は再び SET 可能。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 強制度 | 違反時の挙動 |
+|---|----------|--------|------------|
+| 1 | `NTP_KEY\|<id>` SET 先行 → `NTP_SERVER\|<server>.key=<id>` SET | **必須** | YANG leafref 拒否（SET 失敗） |
+| 2 | `NTP_SERVER\|<server>.key` クリア 先行 → `NTP_KEY\|<id>` DEL | **必須** | YANG leafref dangling（DEL 失敗） |
+| 3 | `NTP_KEY` 登録 先行 → `NTP\|global.authentication=enabled` | 推奨 | chrony 認証失敗（鍵なし起動） |
+| 4 | `NTP_SERVER` エントリ数 ≤ 10 | **必須** | YANG max-elements 拒否（SET 失敗） |
+
+<!-- /ordering -->
+
 ## 関連サブテーブル
 
 - `NTP|global` (container, single-instance):
