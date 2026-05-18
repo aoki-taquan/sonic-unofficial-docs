@@ -277,6 +277,39 @@ assert(!entry.second.routeTable.empty());
 
 ---
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-ordering.md -->
+
+`RouteOrch` の `publishRouteState()` (ResponsePublisher) と `notifyNextHopChangeObservers()` (NextHopObserver) は、複数の依存関係に従って発火順序が制御される。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `PortsOrch::allPortsReady()` → `doTask()` 処理開始 | **強制先行** | 未完了時は全エントリ保留、ポート Ready 後に自動再処理 |
+| 2 | `NeighOrch` / `NhgOrch` `doTask()` → `RouteOrch::doTask()` | `m_orchList` 順序で担保 | 同バッチ内で nexthop 登録 → SAI プログラミングが完結 |
+| 3 | VRF の `VRFOrch` 登録 → VRF ルートの SAI プログラミング | **強制先行** | 未登録時はスキップ・自動リトライ |
+| 4 | SAI バルクコミット → `notifyNextHopChangeObservers` → `publishRouteState` (ADD) | **固定順序** | Observer 通知が RESPONSE_CHANNEL 通知より常に先行 |
+| 5 | `doTask()` 全ルート処理 → `m_publisher.flush()` → fpmsyncd 受信 | バッチ単位 | 個別ルートの即時通知なし。最大 1s の遅延 |
+| 6 | `CONFIG_DB suppress-fib-pending = enabled` + fpmsyncd 起動 → RESPONSE_CHANNEL 購読 | **機能有効化依存** | 無効時 fpmsyncd は RESPONSE_CHANNEL を無視 |
+| 7 | `publishRouteState` → `notifyNextHopChangeObservers` (DEL) | **固定順序（ADD と逆）** | DEL 時は ResponsePublisher が Observer より先行 |
+
+### 主要な制約詳細
+
+**PortsOrch 先行必須 (依存 #1)**: `RouteOrch::doTask()` の冒頭 (routeorch.cpp:609) で `gPortsOrch->allPortsReady()` を確認し、false なら即 return する。ポート初期化が完了するまで APPL_DB に積まれた ROUTE_TABLE エントリは一切処理されず、`publishRouteState()` も `notifyNextHopChangeObservers()` も発火しない（evidence: `routeorch.cpp:605-612`）。
+
+**orchList 処理順序 (依存 #2)**: orchdaemon.cpp の `m_orchList` は `gNeighOrch` → `gNhgOrch` → `gCbfNhgOrch` → `gFgNhgOrch` → `gRouteOrch` の順で `doTask()` を呼ぶ (orchdaemon.cpp:500)。これにより同一バッチサイクルで NeighOrch・NhgOrch が処理を完了してから RouteOrch が起動するため、`addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時点で同バッチ内のエントリが既に登録済みになる（evidence: `orchdaemon.cpp:500`）。
+
+**ADD 時の固定発火順 (依存 #4)**: `addRoutePost()` の末尾 (routeorch.cpp:2724-2729) で、SAI バルクコミット完了後に `notifyNextHopChangeObservers()` → `publishRouteState()` の順が固定される。Observer（`MirrorOrch` / `NeighOrch` 等）は RESPONSE_CHANNEL 通知より常に先に nexthop 変化を受け取り、CASCADE する SAI 操作を開始する可能性がある（evidence: `routeorch.cpp:2724-2729`）。
+
+**flush はバッチ末尾のみ (依存 #5)**: `m_publisher.setBuffered(true)` のため、個々の `publishRouteState()` は Redis パイプラインにバッファされるだけで即時送出されない。`doTask()` 末尾の `m_publisher.flush()` (routeorch.cpp:1231) でまとめて送出されるため、fpmsyncd が RESPONSE_CHANNEL 通知を受け取るのはバッチ全体の完了後となる（evidence: `routeorch.cpp:57-58`, `routeorch.cpp:1231`）。
+
+**suppress-fib-pending 設定依存 (依存 #6)**: `fpmsyncd` が RESPONSE_CHANNEL を購読するのは `CONFIG_DB DEVICE_METADATA|localhost.suppress-fib-pending = "enabled"` が設定されている場合のみ (fpmsyncd.cpp:116)。未設定だと orchagent 側が通知を送出しても fpmsyncd は受信しない（Redis Pub/Sub はバッファされないため通知は消失する）。`onRouteResponse()` 内でも `isSuppressionEnabled()` が false なら即 return する (routesync.cpp:3176-3180)（evidence: `fpmsyncd.cpp:113-117`, `routesync.cpp:3176-3180`）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来デフォルト詳細 (Phase A)
 
