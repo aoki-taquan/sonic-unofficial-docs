@@ -459,6 +459,36 @@ STP/ICCP 連携において iccpd が STP ロールを正しく決定するた�
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-failure.md -->
+
+### ICCP セッション切断時の STP ロールリセット
+
+ICCP セッションが切断されると `scheduler_session_disconnect_handler()` が `iccp_csm_status_reset(csm, 0)` を呼び出し、`role_type` が **`STP_ROLE_NONE` にリセット** される (`iccp_csm.c:149`)。
+
+再接続時に `scheduler_check_csm_config()` → `iccp_csm_stp_role_count()` が実行され、STP ロールが再決定される (`scheduler.c:806`)。
+
+### 失敗シナリオ一覧
+
+| # | 失敗原因 | 挙動 | 自動回復 |
+|---|----------|------|---------|
+| 1 | ハートビートタイムアウト (`session_timeout` デフォルト 15 秒) | セッション切断 → `role_type = STP_ROLE_NONE` → 再接続試行 | あり（`CONNECT_INTERVAL_SEC = 1` 秒ごとにリトライ） |
+| 2 | TCP 接続ドロップ (`sock_fd <= 0`) | `ICCP_NONEXISTENT` 状態へ遷移・`role_type` リセット | あり（自動再接続） |
+| 3 | `source_ip == peer_ip` | セッション確立不可（WARN ログのみ、エラー通知なし） | なし（CONFIG_DB 設定変更が必要） |
+| 4 | `peer_link` 設定済みだが IF が未作成 | `scheduler_check_csm_config()` が即 `MCLAG_ERROR` 返却 → 接続拒否 | あり（IF 作成後に次のチェックで回復） |
+| 5 | `mclagsyncd` が iccpd から切断 | `mlacp_link_set_iccp_role()` が `sync_fd <= 0` でサイレントスキップ | あり（`mclagsyncd` 再接続後の最初のロール変更で再通知） |
+
+### 定数
+
+| 定数 | 値 | 場所 | 意味 |
+|------|-----|------|------|
+| `HEARTBEAT_TIMEOUT_SEC` | `15` | `scheduler.h:42` | ハートビート無応答でセッション切断するまでの秒数 |
+| `CONNECT_INTERVAL_SEC` | `1` | `scheduler.h:40` | 接続リトライ間隔（秒） |
+
+<!-- /failure -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
