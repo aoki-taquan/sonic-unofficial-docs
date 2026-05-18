@@ -125,6 +125,28 @@ gNMI/NETCONF では参照元の解除が先行必須となる。
 > **スキャン証跡**: `sonic-route-map.yang:125-134,269-273`、`sonic-bgp-common.yang:354-413`、`sonic-bgp-global.yang:373,380,502,532`、`sonic-route-common.yang:60-66`。詳細は `meta/_intermediate/cdb-flow/route-map-set-ordering.md` を参照。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref スキャン (`sonic-route-map.yang`, `sonic-bgp-common.yang`, `sonic-bgp-global.yang`, `sonic-route-common.yang`) および frrcfgd 実装確認による参照関係。詳細は `meta/_intermediate/cdb-flow/route-map-set-cross-refs.md` を参照。
+
+`ROUTE_MAP_SET` テーブル自身は他テーブルを leafref で参照するフィールドを持たない（`name` key のみの名前レジストリ）。以下はすべて **被参照**（他テーブルから ROUTE_MAP_SET.name を参照する逆参照）。
+
+| 参照元テーブル | 参照フィールド | YANG 根拠 | 備考 |
+|--------------|--------------|----------|------|
+| [`ROUTE_MAP`](./route-map.md) | `call_route_map` | `sonic-route-map.yang:269-273` | frrcfgd が FRR に `call <name>` を発行。call 先未定義時は FRR がポリシー素通り |
+| [`BGP_NEIGHBOR_AF`](./bgp-neighbor-af.md) | `route_map_in`, `route_map_out`, `default_rmap`, `unsuppress_map_name` | `sonic-bgp-common.yang:354-413` | frrcfgd が `neighbor {} route-map {} in/out` に変換 |
+| [`BGP_PEER_GROUP_AF`](./bgp-peer-group-af.md) | `route_map_in`, `route_map_out`, `default_rmap`, `unsuppress_map_name` | `sonic-bgp-common.yang:354-413` | BGP_NEIGHBOR_AF と同一 YANG grouping を共有 |
+| `BGP_GLOBALS_AF` | `import_vrf_route_map`, `route_download_filter` | `sonic-bgp-global.yang:371-382` | frrcfgd が `vrf import` / `table-map` コマンドに変換 |
+| `BGP_GLOBALS_AF_AGGREGATE_ADDR` | `policy` | `sonic-bgp-global.yang:500-505` | BGP aggregate-address に route-map を適用 |
+| `BGP_GLOBALS_AF_NETWORK` | `policy` | `sonic-bgp-global.yang:530-534` | BGP network コマンドに route-map を適用 |
+| `ROUTE_REDISTRIBUTE` | `route_map` (leaf-list) | `sonic-route-common.yang:60-66` | redistribute コマンドへの route-map 付与 |
+
+!!! note "frrcfgd の実行時チェックなし"
+    これらの参照は YANG レベルの leafref 整合性検証のみ機能する。frrcfgd は ROUTE_MAP_SET エントリの存在を実行時にチェックせず、name 文字列を FRR コマンドにそのまま渡す（`sonic-route-map.yang:269-273`; `frrcfgd.py:1942`）。`sonic-db-cli` 直接投入では YANG 検証もバイパスされるため、参照整合性は実質ユーザー責任となる。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
