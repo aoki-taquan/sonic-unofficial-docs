@@ -520,54 +520,10 @@ DSCP_TO_TC_MAP は `TUNNEL_DECAP_TABLE` の `decap_dscp_to_tc_map` フィール�
 > **Evidence**: `sonic-swss/orchagent/qosorch.cpp:61,181-186,207,265-276,289-293,1956-1975,1993,2086,2193`; `orchagent/tunneldecaporch.cpp:831-834,1084`
 <!-- /side-effects -->
 
-<!-- constants -->
-## ハードコード定数 (Phase E)
-
-ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
-
-### DSCP / TC 範囲定数
-
-| 定数名 | 値 | 定義箇所 | 説明 |
-|--------|----|---------|------|
-| `DSCP_MAX_VAL` | `63` | `qosorch.cpp:119` | DSCP 値の最大値。超過時 `task_failed` |
-| DSCP key 範囲 | `0`..`63` | 上記定数に基づく | 超過は `task_failed`（`stoi` 変換後に範囲チェック） |
-| TC value 範囲 (YANG) | `0`..`15` | `sonic-types.yang.j2:338` | YANG 定義上の上限 |
-| TC value 範囲 (実運用) | `0`..`7` | ASIC/SAI 制約 | 8 以上は SAI エラー → `task_failed` |
-
-### フィールド名定数
-
-| 定数名 | 値 | 定義箇所 | 説明 |
-|--------|----|---------|------|
-| `dscp_to_tc_field_name` | `"dscp_to_tc_map"` | `qosorch.h:11` | PORT_QOS_MAP フィールド名 |
-| `decap_dscp_to_tc_field_name` | `"decap_dscp_to_tc_map"` | `qosorch.h:34` | Tunnel decap 用フィールド名 |
-
-### デフォルトマップ名
-
-| マップ名 | 用途 |
-|---------|------|
-| `"AZURE"` | 標準 DSCP→TC マップ（`qos_config.j2` フォールバック） |
-| `"AZURE_TUNNEL"` | Tunnel QoS 用 `decap_dscp_to_tc_map` |
-
-### SAI 定数
-
-| 定数 | 使用箇所 | 説明 |
-|------|---------|------|
-| `SAI_QOS_MAP_TYPE_DSCP_TO_TC` | `qosorch.cpp:265` | SAI qos_map_type — マップ種別指定 |
-| `SAI_QOS_MAP_ATTR_TYPE` | `qosorch.cpp:264` | create 時の type 属性 ID |
-| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `qosorch.cpp:249,268` | マップエントリリスト属性 ID |
-| `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:61` | ポートバインド属性 ID |
-| `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:1993,2030` | スイッチレベルバインド属性 ID |
-
-### 型変換・例外処理
-
-- `qosorch.cpp:245`: `(uint8_t)stoi(fvField(*i))` — DSCP key を uint8 変換。非数値文字列は `std::invalid_argument` → `task_failed`（try/catch なし）
-- `qosorch.cpp:246`: `(uint8_t)stoi(fvValue(*i))` — TC 値も同様
-
-> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:119,245-246,264-265,273`; `orchagent/qosorch.h:11,34`
-<!-- /constants -->
-
 <!-- platform -->
-## プラットフォーム差分
+## プラットフォーム差分 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dscp-to-tc-map-platform.md`
 
 ### SAI capability クエリによる分岐
 
