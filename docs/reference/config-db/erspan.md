@@ -177,6 +177,32 @@ ERSPAN セッションは以下の非同期チェーンで活性化される:
 
 dst_ip のルートが存在しない場合、セッションは永久に `inactive` のまま。
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`MirrorOrch` は CONFIG_DB `MIRROR_SESSION` を消費し、ERSPAN セッションを SAI に反映する。ERSPAN 種別は RouteOrch / NeighOrch との非同期協調を必要とするため、書込み順依存が複数存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `gPortsOrch->allPortsReady()` が true になる → `doTask()` が MIRROR_SESSION を処理し始める | **強制先行** | allPortsReady() が false の間は `doTask()` が即リターン。SET コマンドは Consumer キューに滞留し、ポート初期化完了後に一括処理される |
+| 2 | `MIRROR_SESSION` SET → `m_routeOrch->attach(this, entry.dstIp)` → RouteOrch が nexthop 解決 callback → `activateSession()` | **非同期先行**（RouteOrch 依存） | dst_ip のルートが未確定の間はセッションが `inactive` のまま。RouteOrch の処理完了 (callback) まで SAI への create_mirror_session は実行されない |
+| 3 | nexthop 解決済み neighbor MAC → `NeighOrch::getNeighborEntry()` 成功 → `activateSession()` 実行 | **非同期先行**（NeighOrch 依存） | neighbor が ARP/ND 解決済みでない場合は `getNeighborInfo()` が失敗し `activateSession()` がスキップされる（`mirrororch.cpp:656-664`） |
+| 4 | `createEntry()` 成功 (SAI create_mirror_session) → STATE_DB `MIRROR_SESSION_TABLE.<name>.status = "active"` | SET 成功後即時 | STATUS は `setSessionState()` 内で `status=active` に書き込まれる。consumer は `inactive` を一時的に観測しうる |
+| 5 | orchdaemon 起動時: PortsOrch / RouteOrch / NeighOrch / FdbOrch / PolicerOrch / SwitchOrch の 3 ループが先行 → その後 MirrorOrch `doTask()` → さらに AclOrch `doTask()` | **強制順序**（orchdaemon 設計） | `orchdaemon.cpp:1127-1142` コメント「MirrorOrch depends on everything else being settled before it can run, and mirror ACL rules depend on MirrorOrch, so run these two at the end」。AclOrch の mirror アクション ACL はセッションが active になった後に処理される |
+| 6 | `POLICER` SET が先行 → `MIRROR_SESSION` で `policer` フィールド参照 | 任意先行（省略可） | `policer` フィールド省略時は PolicerOrch 参照なし。指定時は `gPolicerOrch->getPolicer()` が失敗すると `task_need_retry` でキュー再試行 |
+
+### 主要な制約詳細
+
+**PortsOrch 初期化ガード (依存 #1)**: `doTask()` 冒頭で `gPortsOrch->allPortsReady()` をチェックし、false の場合は即 return する（`mirrororch.cpp:1571`）。これにより起動直後の設定投入は全ポート初期化完了まで実際の処理がされない。
+
+**RouteOrch 非同期依存 (依存 #2)**: ERSPAN セッション作成時、`createEntry()` は `m_routeOrch->attach(this, entry.dstIp)` で MirrorOrch を RouteOrch の observer に登録する（`mirrororch.cpp:517`）。RouteOrch が dst_ip のルート/nexthop を解決すると `MirrorOrch::updateNextHop()` → `updateSession()` → `activateSession()` の callback チェーンが走る。`MIRROR_SESSION` SET と SAI create の間に任意の遅延が発生しうる。
+
+**orchdaemon の MirrorOrch 後回し設計 (依存 #5)**: warm reboot リストア時も通常 Select ループ時も、`orchdaemon` は MirrorOrch を 3 ループの最後に実行し (`orchdaemon.cpp:1142`)、さらにその後 AclOrch を実行する。ACL ルールの `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` は参照するセッションが active でなければ SAI に反映されない点に注意（evidence: `mirrororch.cpp:80-95, 1567-1571`, `orchdaemon.cpp:1127-1142`）。
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## ERSPAN 固有の例外条件
 
