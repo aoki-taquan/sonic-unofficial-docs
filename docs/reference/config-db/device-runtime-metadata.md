@@ -275,4 +275,25 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DEVICE_RUNTIME_METADATA` は CONFIG_DB に書き込まれず `get_device_runtime_metadata()` がインメモリで構築する仮想テーブルである。そのためここでの「暗黙参照」は、**生成関数が内部で依存するリソース**（CONFIG_DB テーブルおよびファイルシステムオブジェクト）を指す。
+
+| 参照先リソース | 参照方向 | 条件 | 参照元 evidence |
+|---|---|---|---|
+| `DEVICE_METADATA\|localhost.switch_type` (CONFIG_DB) | 読み取り → `chassis_type` 決定 | 常時。`get_platform_info()` が CONFIG_DB から `switch_type` を読み取り、`is_voq_chassis()` / `is_packet_chassis()` 判定へ。結果が `CHASSIS_METADATA.chassis_type` (`'voq'` / `'packet'`) に反映される | `device_info.py:559-566` (`get_platform_info`), L630-639 (`is_voq_chassis`, `is_packet_chassis`) |
+| `platform_env.conf` (ファイルシステム) | 読み取り → `module_type` / `MACSEC_SUPPORTED` 決定 | `is_chassis()=True` 時（`module_type` 判定）または常時（`MACSEC_SUPPORTED` 判定）。`supervisor=1` 行で `module_type='supervisor'`、`macsec_enabled=1` 行で `MACSEC_SUPPORTED=True`、ファイル不在時は両方 `False` / `'linecard'` | `device_info.py:228-248` (`get_platform_env_conf_file_path`), L699-712 (`is_supervisor`), L715-732 (`is_macsec_supported`) |
+| `chassisdb.conf` (ファイルシステム) | 存在確認 → `is_voq_chassis()` 分岐 | `switch_type=voq/fabric` の場合のみ参照。ファイル存在 = `is_chassis_config_absent()=False` → `CHASSIS_METADATA` 生成対象として確定 | `device_info.py:251-268` (`get_chassis_db_conf_file_path`), L630-634 (`is_voq_chassis`) |
+| `port_config.ini` / `platform.json` (ファイルシステム) | 存在確認 → `ETHERNET_PORTS_PRESENT` 決定 | 常時。`get_path_to_port_config_file()` がプラットフォーム hwsku ディレクトリを探索。supervisor / fabric カードでは不在のため `False` となる | `device_info.py:445-509` (`get_path_to_port_config_file`), L741 |
+| `sonic_version.yml` (ファイルシステム) | 読み取り → `is_virtual_chassis()` 判定 | VS / テスト環境で `asic_type=vs` かつ `switch_type` が `dummy-sup`/`voq`/`chassis-packet` のとき。`CHASSIS_METADATA` が生成される | `device_info.py:511-523` (`get_sonic_version_info`), L658-664 (`is_virtual_chassis`) |
+
+!!! note "CONFIG_DB 参照は `get_platform_info()` のグローバルキャッシュ経由"
+    `get_platform_info()` は `hw_info_dict` グローバル変数にキャッシュするため (`device_info.py:541-542`)、同一プロセス内では `DEVICE_METADATA` が変化しても再読み込みされない。`DEVICE_RUNTIME_METADATA` の値はプロセス起動時点の `switch_type` に固定される。ファイルシステム系関数 (`is_supervisor` / `is_macsec_supported` / `get_path_to_port_config_file`) はキャッシュを持たず、呼び出しごとにファイルを開く。
+
+!!! note "書き手は存在しない"
+    `DEVICE_RUNTIME_METADATA` に書き込みを行うプロセスは存在しない。本テーブルは `get_device_runtime_metadata()` の返り値として `sonic-cfggen` / `sysmonitor.py` がローカル辞書として保持するのみであり、CONFIG_DB には永続化されない。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: e33fec70e206 -->
