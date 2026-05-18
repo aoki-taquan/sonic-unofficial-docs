@@ -114,6 +114,37 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DEVICE_NEIGHBOR_METADATA` の consumer はいずれも **`DEVICE_NEIGHBOR` テーブルと組み合わせて**参照する。
+`DEVICE_NEIGHBOR[port].name` をキーとして本テーブルの `type` / `hwsku` / `lo_addr` / `mgmt_addr` 等を取得し、
+トポロジ認識・バッファ設定・BGP セッション設定・PFC watchdog 等に利用する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/device-neighbor-metadata-cross-refs.md -->
+
+| 依存方向 | 参照元 | 参照先テーブル | 参照フィールド | 用途 | 証跡 |
+|---------|--------|--------------|--------------|------|------|
+| 読み手 (BGP) | `bgpcfgd BGPPeerMgrBase.set_handler` | `CONFIG_DB BGP_NEIGHBOR` (キー), `CONFIG_DB DEVICE_METADATA\|localhost` | `type`, `hwsku`, `deployment_id` | BGP セッション Jinja2 テンプレートへの渡し — `kwargs['CONFIG_DB__DEVICE_NEIGHBOR_METADATA']` として全 meta を転送 | `managers_bgp.py:218-224` |
+| 読み手 (バッファ設定) | `buffers_config.j2` (sonic-cfggen テンプレート) | `CONFIG_DB DEVICE_NEIGHBOR` (ポート→name), `CONFIG_DB DEVICE_METADATA\|localhost` (type/subtype), `CONFIG_DB SYSTEM_DEFAULTS` (tunnel_qos_remap 条件) | `type` | `switch_role + '_' + neighbor_role` の組み合わせでケーブル長を決定; LeafRouter/DualToR + ToRRouter/LeafRouter 条件で extra queues ポートリストを構築 | `buffers_config.j2:81-82,209-210` |
+| 読み手 (QoS 設定) | `qos_config.j2` (sonic-cfggen テンプレート) | `CONFIG_DB DEVICE_NEIGHBOR`, `CONFIG_DB DEVICE_METADATA\|localhost` | `type` | アクティブポートを `PORT_UPLINK` / `PORT_DOWNLINK` に分類 (LeafRouter ↔ ToRRouter/SpineRouter, ToRRouter ↔ LeafRouter) | `qos_config.j2:107-108,150-151` |
+| 読み手 (pfcwd) | `pfcwd get_server_facing_ports()` | `CONFIG_DB DEVICE_NEIGHBOR` (ポート→name) | `type` | `type.lower() == 'server'` でサーバー向けポートを判定; 欠落時は `CONFIG_DB VLAN_MEMBER` フォールバック | `pfcwd/main.py:97-108` |
+| 読み手 (CLI) | `show interfaces neighbor expected` | `CONFIG_DB DEVICE_NEIGHBOR` | `lo_addr`, `mgmt_addr`, `type` 等 | 隣接デバイス情報の表示 (`show interfaces neighbor expected`) | `show/interfaces/__init__.py:315-340` |
+| 読み手 (db_migrator) | `update_edgezone_aggregator_config()` | `CONFIG_DB DEVICE_NEIGHBOR`, `CONFIG_DB CABLE_LENGTH` | `type` | `type == 'EdgeZoneAggregator'` のデバイスに接続するポートを特定し CABLE_LENGTH を 40m に更新 | `db_migrator.py:765-790` |
+
+### DEVICE_NEIGHBOR との密結合
+
+全 consumer が `DEVICE_NEIGHBOR[port].name` をルックアップキーとして使用する。
+このため `DEVICE_NEIGHBOR` と `DEVICE_NEIGHBOR_METADATA` のホスト名が一致していることが前提となり、
+いずれか一方が欠落するか名前がズレた場合、バッファ長・QoS ポートリスト・BGP セッション・pfcwd の動作がすべて影響を受ける。
+
+!!! note "`type` フィールドがトポロジ認識の鍵"
+    `buffers_config.j2` / `qos_config.j2` は `type` 値に基づいてポートをアップリンク/ダウンリンクに分類し、
+    ケーブル長テーブルを選択する。`type` の大文字小文字感受性は consumer によって異なる
+    (`pfcwd` は `.lower()` で比較する一方、`qos_config.j2` は `'ToRRouter' in neighbor_info.type` で大文字小文字を区別する)。
+
+<!-- /cross-refs -->
+
 ## 購読者
 
 - minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): minigraph から生成
