@@ -343,6 +343,48 @@ STATE_DB エントリが存在しない場合に `read_data()` が使用する�
 > 中間調査詳細: `meta/_intermediate/cdb-flow/feature-state-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/feature-state-side-effects.md`
+
+`featured` / `container_startup.py` / `ctrmgrd.py` が STATE_DB `FEATURE` テーブルを書き込む際に副次的に発生する他 DB への書き込みを示す。
+
+### CONFIG_DB FEATURE — フィードバック書込
+
+`featured` は 2 つの条件で CONFIG_DB `FEATURE` テーブルに逆方向の書き込み (フィードバック) を行う:
+
+| 対象フィールド | 書込関数 | 書込条件 | ソース |
+|---|---|---|---|
+| `state` | `resync_feature_state()` | `feature.state` が `"always_enabled"` または `"always_disabled"` (immutable)、またはDB上の現在値がテンプレート文字列のとき | `featured:560-571` |
+| `delayed` | `sync_feature_delay_state()` | `feature.delayed` の算出値が CONFIG_DB 上の値と異なるとき | `featured:574-581` |
+
+multi-ASIC 環境では host と全 namespace の CONFIG_DB に同時書き込みが行われる。これは STATE_DB 書き込みの副作用ではなく、起動時の `sync_state_field()` → `resync_feature_state()` / `sync_feature_delay_state()` 呼び出し経路でも独立して実行される。
+
+### STATE_DB — multi-ASIC 全 namespace への伝播
+
+`set_feature_state()` は host の STATE_DB だけでなく、全 namespace の STATE_DB にも同一の `state` を書き込む:
+
+```python
+# featured:585-590
+def set_feature_state(self, feature, state):
+    self._feature_state_table.set(feature.name, [('state', state)])
+    for ns, tbl in self.ns_feature_state_tbl.items():
+        tbl.set(feature.name, [('state', state)])
+```
+
+シングル ASIC 環境では `ns_feature_state_tbl` は空のため追加書き込みは発生しない。
+
+### APPL_DB / ASIC_DB / COUNTERS_DB — 書込なし
+
+| DB | 結果 | 根拠 |
+|---|---|---|
+| APPL_DB | 書込なし | `featured` は `APPL_DB PORT_TABLE` を Subscribe 専用で開く (`featured:603,647`)。書き込み呼び出しなし |
+| ASIC_DB | 書込なし | `featured` / `container_startup.py` / `ctrmgrd.py` はすべて SAI 非経由。`ASIC_DB` 参照なし |
+| COUNTERS_DB / FLEX_COUNTER_DB | 書込なし | `featured` 全行の grep で `COUNTERS_DB` / `FLEX_COUNTER_DB` への参照・書き込み 0 件 |
+
+<!-- /side-effects -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
