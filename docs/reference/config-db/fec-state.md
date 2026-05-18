@@ -180,6 +180,38 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドは `PortsOrch
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`STATE_DB PORT_TABLE` の `fec` / `supported_fecs` フィールドに関する書き手・読み手それぞれの
+暗黙的なテーブル参照をまとめる。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-cross-refs.md -->
+
+| 依存方向 | 参照元 | 参照先テーブル | 参照先フィールド | 依存内容 | 証跡 |
+|---------|--------|--------------|----------------|---------|------|
+| 書き手依存 (fec) | `PortsOrch::updateDbPortOperFec` | `STATE_DB PORT_TABLE\|<port>` | `fec` | SAI port_state_change UP 通知受信後に STATE_DB へ書き込む。書き込み前に `oper_fec_sup` フラグ（PortsOrch コンストラクタで確定）を参照し、false なら無条件 `"N/A"` | `portsorch.cpp:9864-9872` |
+| 書き手依存 (supported_fecs) | `PortsOrch::initPortSupportedFecModes` | `STATE_DB PORT_TABLE\|<port>` | `supported_fecs` | `postPortInit()` 時に SAI から取得した FEC モード一覧を書き込む。`fec_override_sup` フラグが true の場合のみ末尾に `"auto"` を追加 | `portsorch.cpp:3265-3327` |
+| 読み手 (FEC Oper) | `intfutil generate_fec_status()` | `STATE_DB PORT_TABLE\|<port>` | `fec`, `oper_status` | `show interfaces fec status` の FEC Oper 列を生成。`oper_status != "up"` のとき `fec` を `"N/A"` に変換して表示（STATE_DB の値は変更しない） | `intfutil:911-914` |
+| 読み手 (FEC Admin) | `intfutil generate_fec_status()` | `APPL_DB PORT_TABLE:<port>` | `fec` | `show interfaces fec status` の FEC Admin 列は **STATE_DB ではなく APPL_DB** から読む。CONFIG_DB `PORT.fec` が portmgrd 経由で APPL_DB に書き込まれた値 | `intfutil:910` |
+| 間接参照 (FEC 設定検証) | `PortsOrch::isFecModeSupported` | `m_portSupportedFecModes` (in-memory) | — | CONFIG_DB `PORT.fec` 変更時の妥当性確認に使用。`initPortSupportedFecModes()` の lazy init 結果をキャッシュ参照するため STATE_DB を再読しない | `portsorch.cpp:3205-3222` |
+| 間接参照 (トランシーバ) | `PortsOrch` (SubscriberStateTable) | `STATE_DB TRANSCEIVER_INFO_TABLE` | — | トランシーバ存在確認に購読。ただし `supported_fecs` の lazy init はトランシーバ変化では再トリガーされない（`postPortInit()` 時 1 回限り） | `portsorch.cpp:984` |
+
+### FEC Admin と FEC Oper の参照先の違い
+
+`show interfaces fec status` は同一コマンドでも参照 DB が異なる:
+
+| 列 | 参照 DB | テーブル | フィールド |
+|----|--------|---------|-----------|
+| FEC Oper | STATE_DB | `PORT_TABLE\|<port>` | `fec` |
+| FEC Admin | APPL_DB | `PORT_TABLE:<port>` | `fec` |
+
+FEC Admin 列は CONFIG_DB `PORT.<port>.fec` が portmgrd によって APPL_DB に反映された値を読む。
+STATE_DB の `fec` (oper) と APPL_DB の `fec` (admin) は別フィールドであり、
+ポートが DOWN 中は Oper 側に stale 値が残留する（`intfutil` は表示時に `"N/A"` に変換する）。
+
+<!-- /cross-refs -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
