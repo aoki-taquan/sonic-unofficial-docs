@@ -227,6 +227,35 @@ YANG leafref および実装スキャンにより確認した参照関係。詳�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`SNMP_COMMUNITY` テーブルを消費する経路は `snmpd.conf.j2` テンプレート（バッチ読み取り）と `snmp_yml_to_configdb.py`（ブート時注入）の 2 本立てであり、それぞれ独立した失敗モードを持つ。詳細スキャン証跡は `meta/_intermediate/cdb-flow/community-list-failure.md` を参照。
+
+### 検出された失敗パターン
+
+| # | 失敗条件 | 症状 | ログ | 緩和策 |
+|---|---------|------|------|--------|
+| 1 | `/etc/sonic/snmp.yml` 不在 | `snmp_yml_to_configdb.py` が `sys.exit(1)` で終了、テーブル注入なし | `log_info: snmp.yml does not exist` | snmp.yml を配置してコンテナ再起動 |
+| 2 | `snmp.yml` に `snmp_location` 未定義 | community 書き込み後に `sys.exit(1)`（community は書き込まれる、SNMP テーブルへの LOCATION 注入は行われない） | `log_info: snmp_location does not exist` | snmp.yml に `snmp_location` を追加して再起動 |
+| 3 | `TYPE` を小文字（`ro`/`rw`）で直接 DB 書き込み | `snmpd.conf.j2` の大文字比較に不一致、community 行が生成されない（サイレントスキップ） | なし | `sonic-db-cli` で `TYPE: RO`（大文字）に上書き → snmpd 再起動 |
+| 4 | `TYPE` フィールド欠如（キーなし） | Jinja2 が `KeyError` または `Undefined` 比較で当該エントリをスキップ、community 行不生成 | なし | `set_entry` で `TYPE` を再設定 → snmpd 再起動 |
+| 5 | ConfigDB（Redis）接続失敗 | `snmp_yml_to_configdb.py` が uncaught exception で終了、テーブル注入なし | OS レベルのスタックトレース | Redis / swsscommon を確認後に再試行 |
+| 6 | YANG バリデーション失敗（CLI 経由） | `config snmp community add` がエラーを出力して中断、DB 書き込みなし | CLI に表示 | community 名を YANG 制約（4〜32 文字、禁止文字なし）に合わせて修正 |
+| 7 | snmpd 設定変更後に再起動なし | 変更が snmpd に反映されない（古い community が有効のまま） | なし | `systemctl restart snmp.service` を手動実行 |
+
+### 詳細
+
+**snmp.yml 不在 (失敗 #1)**: `snmp_yml_to_configdb.py` は起動直後に `/etc/sonic/snmp.yml` の存在チェックを行う（`L25-27`）。ファイルが存在しない場合は `sys.exit(1)` で終了し、以降の community 注入は実行されない。`SNMP_COMMUNITY` テーブルが空のまま `docker-snmp` コンテナが起動すると、`snmpd.conf.j2` の `{% if SNMP_COMMUNITY is defined %}` が偽となり全 SNMPv1/v2c アクセスが拒否される。
+
+**TYPE フィールド問題 (失敗 #3/#4)**: `snmpd.conf.j2` のテンプレートは `SNMP_COMMUNITY[community]['TYPE'] == 'RO'` / `== 'RW'` の厳格な文字列比較のみで分岐する（`snmpd.conf.j2 L50, L59`）。小文字（`ro`/`rw`）やフィールド欠如はいずれも community 行を生成せず、snmpd は当該 community を無視して起動する。エラーログ・例外は出力されない。
+
+**設定変更の非即時性 (失敗 #7)**: `SNMP_COMMUNITY` は CONFIG_DB の購読ではなくコンテナ起動時の一括読み取りで消費されるため、実行中の snmpd プロセスには変更が通知されない。CLI (`config snmp community add/del/replace`) は変更後に `systemctl restart snmp.service` を自動発行（`config/main.py:4395-4401`）するが、`sonic-db-cli` など直接書き込み手段では手動再起動が必要。再起動中は既存 SNMP セッションが切断される。
+
+> **スキャン証跡**: `snmpd.conf.j2` L48-64 / `snmp_yml_to_configdb.py` L25-56 読了。失敗時のリトライロジック・フォールバックは実装されていない。詳細は `meta/_intermediate/cdb-flow/community-list-failure.md` を参照。
+
+<!-- /failure -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
