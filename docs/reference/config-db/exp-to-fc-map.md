@@ -294,3 +294,26 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 
 > **Evidence**: `qosorch.cpp:124-201` (QosMapHandler::processWorkItem); `qosorch.cpp:2046-2134` (handlePortQosMapTable); `qosorch.cpp:1132-1213` (ExpToFcMapHandler)
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照・共依存テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-cross-refs.md`
+
+`EXP_TO_FC_MAP` は YANG leafref を持たない自己完結テーブルだが、実装レベルで以下の外部依存が存在する。
+
+| 参照先テーブル / コンポーネント | YANG leafref | 参照種別 | 非充足時の挙動 | evidence |
+|---|:---:|---|---|---|
+| `PORT_QOS_MAP.exp_to_fc_map` | ✗ | **被参照**（`PORT_QOS_MAP` が OID を名前解決） | `EXP_TO_FC_MAP` 未登録時に `PORT_QOS_MAP` SET は `task_need_retry`（自動再試行） | `qosorch.cpp:112`, `qosorch.cpp:2124-2131` |
+| `NhgMapOrch::getMaxNumFcs()` | ✗ | FC 値上限の動的クエリ（SAI 経由） | 未初期化 (`max_num_fcs=-1`) または FC 未サポート (`max_num_fcs=0`) の場合、全 FC 値が `task_invalid_entry` で reject | `nhgmaporch.cpp:299-325`, `nhgmaporch.cpp:346-370` |
+| `PortsOrch::allPortsReady()` | ✗ | 起動順序ガード | `false` の間は orchagent で全 QoS テーブル処理がブロック（`EXP_TO_FC_MAP` SET も未処理のまま待機） | `qosorch.cpp:2253-2258` |
+
+### YANG leafref 非存在の補足
+
+`sonic-port-qos-map.yang` の `PORT_QOS_MAP_LIST` において、他の QoS マップフィールド（`tc_to_pg_map`, `tc_to_queue_map`, `dscp_to_tc_map` 等）は各 YANG モジュールへ leafref が定義されているが、**`exp_to_fc_map` フィールドは leafref なし**（YANG モジュール不在のため）。参照整合性は実装レベル（`resolveFieldRefValue()` + `m_pendingRemove` ロック）のみで担保される。
+
+### doTask() 実行順序による自然解決
+
+`QosOrch::doTask()` は `EXP_TO_FC_MAP` 等の参照先マップを先に drain し、`PORT_QOS_MAP` を後から drain する（`qosorch.cpp:2231-2260`）。同一イベントループ内で `EXP_TO_FC_MAP` SET → `PORT_QOS_MAP` SET の順に投入されていれば、`task_need_retry` は発生せずに 1 イテレーションで解決される。
+
+<!-- /cross-refs -->
