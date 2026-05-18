@@ -195,6 +195,38 @@ ERROR_DB のフィールドはすべて OrchAgent が SAI 通知から動的に�
 - **SWSS_RC_UNKNOWN のフォールバック**: `status_code_util.h:74` — `strToStatusCode()` が未知文字列を受けると `SWSS_RC_UNKNOWN` を返す。つまり未知の SAI エラーコードは `SWSS_RC_UNKNOWN` にマップされる。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+ERROR_DB への書込みは **OrchAgent が唯一の producer** であり、syncd → OrchAgent → ERROR_DB → ErrorListener の単一経路で伝搬する。HLD Section 3.3.1 は「単一通知チャネルを使うことで通知の順序が保たれる」と明記している[^1]。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | syncd の ASIC_DB 通知チャネル → OrchAgent 受信 | **強制先行**（SAI 操作結果が先） | OrchAgent は通知を受信するまで ERROR_DB に何も書かない |
+| 2 | OrchAgent による SAI 型 → SWSS_RC_* 翻訳 → `HSET` → `publish` | 強制先行（翻訳 → HSET → publish の順） | pub/sub 購読者（ErrorListener）は `publish` の後にしか通知を受けない |
+| 3 | 失敗エントリの `HSET`（書込み） → `publish`（通知） | **強制先行** | ErrorListener のコールバックが呼ばれる時点でエントリは必ず DB に存在する |
+| 4 | 成功時の `DEL`（エントリ削除） → `publish`（通知） | **強制先行** | 成功通知受信時点でエントリは既に削除済み（コールバック内での `HGET` は空を返す） |
+| 5 | `sonic-clear error-database` → アプリへの通知なし | CLI 操作による直接削除 | アプリは通知を受けず、次の失敗が発生するまで状態は不定 |
+| 6 | OrchAgent 再起動 → ERROR_DB 内容クリア | 起動時リセット（非永続） | warm reboot 後は再度 SAI 失敗が発生するまで ERROR_DB は空 |
+
+### 主要な制約詳細
+
+**syncd 単一チャネルによる順序保証 (依存 #1)**:  
+HLD Section 3.3.1 では syncd が単一通知チャネル（`ASIC_DB` の通知 keyspace）を使ってエラーを OrchAgent に報告することで、**SAI 操作の発生順と通知の到着順が一致する**ことが保証されると説明されている。複数チャネルだとマルチオブジェクトの失敗順序が逆転しうるが、単一チャネルによりこの問題を回避している（evidence: HLD Section 3.3.1, "Using a single notification channel ensures that order of the notifications is retained."）。
+
+**HSET → publish の不可分性 (依存 #2, #3)**:  
+OrchAgent の ErrorReporter は SAI 型を SWSS_RC_* に翻訳後、先に `HSET` で ERROR_DB エントリを書いてから `publish` で購読者に通知する設計である。このため ErrorListener のコールバックが呼び出される時点でエントリは必ず Redis に存在し、コールバック内で `HGETALL` を実行しても空応答にならない。逆順（publish 先行）の場合は競合状態が生じるが、HLD は HSET 先行を明示している。
+
+**成功時の逆順: DEL → publish (依存 #4)**:  
+成功通知時は「エントリを DB から削除してから publish」の順になる（HLD Section 3.3.1 "Removes the entry from database. if present. Publishes the notifications"）。失敗時と逆の操作であり、通知受信側は成功通知を受けた時点でエントリが存在しないことを前提として動作する必要がある。
+
+**warm reboot による非永続化 (依存 #6)**:  
+ERROR_DB は warm reboot をまたいで永続しない（HLD Section 6）。OrchAgent 再起動後は ERROR_DB が空から開始するため、warm reboot 前に存在していたエラーエントリは消去され、再度 SAI 失敗が発生するまで通知されない。この挙動は「最新エラーの上書き」ポリシーと組み合わさり、reboot 跨ぎの古いエラーが残留しない副作用をもたらす。
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
