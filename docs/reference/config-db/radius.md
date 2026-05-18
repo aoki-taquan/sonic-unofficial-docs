@@ -183,6 +183,44 @@ show radius
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `AaaCfg` が `RADIUS` 処理時に読み出す関連テーブル (Phase C)
+
+`hostcfgd` の `AaaCfg` は `RADIUS|global` イベントを受け取ると `radius_global_update()` でメモリ上の `self.radius_global` を更新し、即座に `modify_conf_file()` を呼ぶ。この `modify_conf_file()` は RADIUS 設定の生成に際して `RADIUS` 単体だけでなく、以下の関連テーブルを直接または間接に参照する。
+
+### 常時結合されるテーブル (modify_conf_file 内で参照)
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| [`RADIUS_SERVER`](radius-server.md) | 毎回 | サーバ毎の `auth_port` / `passkey` / `retransmit` / `timeout` / `src_intf` を global dict とマージ | hostcfgd:681-695 |
+| [`AAA`](aaa.md) | 毎回 | `authentication.login` に `radius` が含まれる場合のみ PAM に RADIUS 設定を反映 | hostcfgd:752-780 |
+
+### 動的 IP / hostname 解決 (modify_conf_file 内で get_interface_ip 経由)
+
+`RADIUS|global` に `nas_ip` が指定されていない場合、`get_interface_ip("eth0")` を呼んで `MGMT_INTERFACE` テーブルを読み `nas_ip` を自動補完する。`nas_id` が未指定の場合は `get_hostname()` で `DEVICE_METADATA.localhost.hostname` を取得する。
+
+| テーブル | 参照条件 | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `nas_ip` フィールド未指定 | `eth0` の管理 IPv4 を `nas_ip` として PAM 設定に注入 | hostcfgd:671-674 |
+| [`DEVICE_METADATA`](device-metadata.md) (`localhost.hostname`) | `nas_id` フィールド未指定 | ホスト名を `nas_id` として PAM 設定に注入 | hostcfgd:675-678 |
+| `INTERFACE` / `VLAN_INTERFACE` / `VLAN_SUB_INTERFACE` / `PORTCHANNEL_INTERFACE` / `LOOPBACK_INTERFACE` | `RADIUS_SERVER.src_intf` または `RADIUS.src_intf` 指定時 | 指定インタフェースの IP を `src_ip` として解決 | hostcfgd:582-614 |
+
+### 逆方向 subscribe — RADIUS 設定を再トリガするテーブル
+
+RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけでなく、以下の subscribe でも `modify_conf_file()` が再呼び出しされる。
+
+| テーブル | handler | RADIUS への影響 | evidence |
+|---|---|---|---|
+| `MGMT_INTERFACE` | `mgmt_intf_handler` → `handle_radius_source_intf_ip_chg()` + `handle_radius_nas_ip_chg()` | eth0 IP 変化時に `src_ip` / `nas_ip` を再計算して conf 再生成 | hostcfgd:2348-2349, 2485 |
+| `INTERFACE` | `phy_intf_handler` → `handle_radius_source_intf_ip_chg()` | 物理ポート IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2365, 2489 |
+| `VLAN_INTERFACE` | `vlan_intf_handler` → `handle_radius_source_intf_ip_chg()` | VLAN IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2369, 2486 |
+| `PORTCHANNEL_INTERFACE` | `portchannel_intf_handler` → `handle_radius_source_intf_ip_chg()` | PortChannel IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2377, 2488 |
+| [`DEVICE_METADATA`](device-metadata.md) | `device_metadata_handler` → `aaacfg.hostname_update()` | hostname 変化時に RADIUS `nas_id` を再生成 | hostcfgd:2280, 2492 |
+
+> RADIUS 設定ファイル (`pam_radius_auth.conf` / `radius_nss.conf`) は `RADIUS` テーブルの変更以外にも、上記テーブルの変更で再生成される。特に `MGMT_INTERFACE` の IP 変化は `nas_ip` に影響するため、管理アドレス変更時は RADIUS 認証が一時的に中断される可能性がある。
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・Fallback
 
