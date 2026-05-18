@@ -509,4 +509,25 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
 > **Evidence**: `hostcfgd:2478` (`subscribe('SSH_SERVER', ...)`)、`hostcfgd:2528` (`config_db.listen(init_data_handler=self.load)`)、`hostcfgd:2245,2265` (`sshscfg.load(ssh_server)`)、`hostcfgd:2297-2299` (`ssh_handler`)、`hostcfgd:2454-2466` (`make_callback` 定義); 詳細証跡 `meta/_intermediate/cdb-flow/ssh-config-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**。`SSH_SERVER` は `hostcfgd` が host namespace の CONFIG_DB のみを購読し、SAI / ASIC SDK を経由しない純粋な host-only 設定処理のため、ASIC ベンダー・multi-asic / chassis 構成に依存しない。
+
+### 検証結果
+
+| 差異候補 | 実態 | evidence |
+|---------|------|----------|
+| `hwsku` / `type` (DEVICE_METADATA) の参照 | `PamLimitsCfg.render_conf_file()` がテンプレートに渡すが `limits.conf.j2` / `pam_limits.j2` は未参照 (`max_sessions` のみ条件使用) | `hostcfgd:1460-1476`; `data/templates/limits.conf.j2` |
+| multi-asic 構成 | `is_multi_npu()` は `HostconfigDaemon` で取得するが `SshServer` / `PamLimitsCfg` には渡されない。`SSH_SERVER` は host CONFIG_DB のみに存在し `asicN` namespace には置かれない | `hostcfgd:2182,2201,2191` |
+| SAI / ASIC capability | 経路なし。`SshServer.set_policies()` は `sshd_config` 直接書換え + `systemctl restart ssh` のみ | `hostcfgd:1045-1186` |
+| 暗号スイート (`ciphers` / `kex_algorithms` / `macs`) | YANG enumeration で許容値が固定されており ASIC 非依存 | `sonic-ssh-server.yang` |
+| VOQ chassis / line card 分散 | 各 host の `hostcfgd` が独立に同一処理を実行。chassis 集中適用機構なし | 設計上の派生 |
+
+!!! note "プラットフォーム差なしの根拠"
+    SSH 設定はカーネル・OpenSSH・PAM の host OS レイヤで完結し、データプレーン ASIC との接点がない。`hostcfgd` が `is_multi_npu()` を取得しても SSH 処理経路では参照されない点がコードで確認されている (`hostcfgd:2182` 取得 → SSH ハンドラへの伝播なし)。
+
+> **証跡**: `hostcfgd:1045-1186` (`SshServer`)、`hostcfgd:1408-1476` (`PamLimitsCfg`)、`data/templates/limits.conf.j2` (platform 分岐なし)、`data/templates/pam_limits.j2` (platform 分岐なし); 詳細分析 `meta/_intermediate/cdb-flow/ssh-config-platform.md`
+<!-- /platform -->
+
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
