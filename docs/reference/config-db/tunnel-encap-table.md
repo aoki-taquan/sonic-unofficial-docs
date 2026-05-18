@@ -228,6 +228,52 @@ GRE tunnel は warm-reboot 後に P4RT controller が APPL_DB に再書き込み
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`FIXED_TUNNEL_TABLE` の処理に使われる、DB フィールドではなくコード中にハードコードされた文字列定数・SAI 定数の一覧。
+
+### アクション文字列定数 (`p4orch_util.h:111`)
+
+| 定数名 | 値 | 用途 |
+|--------|----|------|
+| `kTunnelAction` | `"mark_for_p2p_tunnel_encap"` | 唯一受け入れられるアクション名。`validateGreTunnelAppDbEntry()` (`gre_tunnel_manager.cpp:83-87`) で比較。不一致は即 `SWSS_RC_INVALID_PARAM` |
+
+### フィールド名定数 (`p4orch_util.h`)
+
+| 定数名 | 値 | 役割 |
+|--------|----|------|
+| `kTunnelId` | `"tunnel_id"` | `match/tunnel_id` の末尾部分 |
+| `kRouterInterfaceId` | `"router_interface_id"` | `param/router_interface_id` の末尾部分 |
+| `kEncapSrcIp` | `"encap_src_ip"` | `param/encap_src_ip` の末尾部分 |
+| `kEncapDstIp` | `"encap_dst_ip"` | `param/encap_dst_ip` の末尾部分 |
+| `kControllerMetadata` | `"controller_metadata"` | ホワイトリスト外だが例外的に無視されるフィールド |
+| `kMatchPrefix` | `"match"` | フィールド名プレフィックス（`match/tunnel_id` の `match` 部） |
+| `kActionParamPrefix` | `"param"` | フィールド名プレフィックス（`param/router_interface_id` 等の `param` 部） |
+| `kFieldDelimiter` | `'/'` | `match/`・`param/` のデリミタ文字 |
+
+### テーブル名定数 (`schema.h:72`)
+
+| 定数名 | 値 |
+|--------|----|
+| `APP_P4RT_TABLE_NAME` | `"P4RT_TABLE"` |
+| `APP_P4RT_TUNNEL_TABLE_NAME` | `"FIXED_TUNNEL_TABLE"` |
+
+完全な APPL_DB キーは `P4RT_TABLE:FIXED_TUNNEL_TABLE:<json_key>`[^2]。
+
+### SAI ハードコード定数 (`gre_tunnel_manager.cpp`)
+
+| 定数 / 属性 | 値 | 適用箇所 |
+|------------|-----|---------|
+| `SAI_TUNNEL_ATTR_TYPE` | `SAI_TUNNEL_TYPE_IPINIP_GRE` | `prepareSaiAttrs()` (`gre_tunnel_manager.cpp:42`) でハードコード |
+| `SAI_TUNNEL_ATTR_PEER_MODE` | `SAI_TUNNEL_PEER_MODE_P2P` | `prepareSaiAttrs()` (`gre_tunnel_manager.cpp:46`) でハードコード |
+| `SAI_BULK_OP_ERROR_MODE` | `SAI_BULK_OP_ERROR_MODE_STOP_ON_ERROR` | `createGreTunnels()` / `removeGreTunnels()` (`gre_tunnel_manager.cpp:431, 493`) |
+| `SAI_TUNNEL_ATTR_OVERLAY_INTERFACE` | `gUnderlayIfId`（グローバルループバック RIF） | `createGreTunnels()` (`gre_tunnel_manager.cpp:420`) で代用。将来削除予定の TODO あり |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-table-constants.md`
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
