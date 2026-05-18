@@ -277,6 +277,38 @@ warm-restart 中 (`m_warmstart == true`) は `addLag()` が STATE_DB に直接�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査対象: `sonic-swss/teamsyncd/teamsync.h`, `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/portmgr.h`, `sonic-swss/cfgmgr/shellcmd.h`, `sonic-swss-common/common/schema.h`
+> 調査日: 2026-05-18
+> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-constants.md`
+
+以下の定数は STATE_DB `LAG_TABLE` の書き込み動作・タイミングに直接影響するマジックナンバーおよびハードコード値。
+
+| 定数 / マクロ名 | 値 | 定義ファイル | 意味・影響 |
+|-----------------|-----|--------------|-----------|
+| `DEFAULT_WR_PENDING_TIMEOUT` | `70` 秒 | `teamsync.h:16` | warm restart 時に `m_stateLagTablePreserved` の内容を STATE_DB へ一括書き込みするまでのタイムアウト。`WarmStart::getWarmStartTimer()` が設定されていない場合のフォールバック値 |
+| `TEAMSYNCD_APP_NAME` | `"teamsyncd"` | `teamsync.h:14` | WarmStart フレームワークへの登録名。warm restart 検出・状態遷移管理に使用。warm restart タイマーキー名にも反映される |
+| `TEAM_DRV_NAME` | `"team"` | `teamsync.cpp:24` | netlink `RTM_NEWLINK` イベントで LAG を識別するドライバ名文字列。`rtnl_link_get_type()` の戻り値と `strcmp()` で比較し、一致しない netdev は無視される |
+| `max_retries` | `3` | `teamsync.cpp:286` | `TeamPortSync` コンストラクタ内で `team_init()` / `teamdctl_connect()` 失敗時の最大リトライ回数。3 回失敗すると `system_error` をリスローし STATE_DB への書き込みがスキップされる |
+| リトライ間隔 | `1` 秒 | `teamsync.cpp:363` | `team_init()` / `teamdctl_connect()` リトライ間の `sleep()` 値。固定値。最大 3 回 × 1 秒 = 最大 3 秒の待機が発生しうる |
+| `DEFAULT_ADMIN_STATUS_STR` | `"down"` | `portmgr.h:14` | CONFIG_DB `PORTCHANNEL` に `admin_status` が未指定の場合に `teammgrd` が使用するデフォルト値 |
+| `DEFAULT_MTU_STR` | `"9100"` | `portmgr.h:15` | CONFIG_DB `PORTCHANNEL` に `mtu` が未指定の場合に `teammgrd` が使用するデフォルト値 (文字列)。カーネルに設定された後 `teamsyncd` が実測値として STATE_DB `LAG_TABLE.mtu` に書き込む |
+| `TEAMD_CMD` | `"/usr/bin/teamd"` | `shellcmd.h:13` | `TeamMgr::addLag()` が LAG 作成時に `exec()` する teamd バイナリの絶対パス |
+| `STATE_LAG_TABLE_NAME` | `"LAG_TABLE"` | `schema.h:422` | STATE_DB 内テーブル名定数 |
+| `APP_LAG_TABLE_NAME` | `"LAG_TABLE"` | `schema.h:43` | APP_DB 内テーブル名定数。STATE_DB と APP_DB で同一テーブル名 `"LAG_TABLE"` を使用する |
+| warmboot ダンプパス | `"/var/warmboot/teamd/"` | `teammgr.cpp:573` | warm restart 時に teamd 設定ダンプを読み書きするファイルシステムパス。partner MAC アドレスの復元に使用 |
+| `partner_system_id_offset` | `40` バイト | `teammgr.cpp:581` | warmboot ダンプファイル内で LACP partner system MAC が格納されるバイトオフセット |
+
+!!! note "TeamMgr 起動時の LAG_TABLE クリア"
+    `TeamMgr()` コンストラクタ (`teammgr.cpp:L43-50`) は起動直後に `m_stateLagTable.getKeys()` → `m_stateLagTable.del()` で STATE_DB `LAG_TABLE` の既存エントリをすべて削除する。これにより `teammgrd` 再起動時に古い `state=ok` エントリが残留しない設計となっている。ただしこの削除は一時的に後続デーモン（`intfmgrd`, `vlanmgrd` 等）の readiness チェックを失敗させる点に注意。
+
+!!! note "APP_DB と STATE_DB で同名テーブル"
+    `APP_LAG_TABLE_NAME = "LAG_TABLE"` と `STATE_LAG_TABLE_NAME = "LAG_TABLE"` は同一文字列だが、接続先 DB (`APPL_DB` と `STATE_DB`) が異なるため衝突しない。コードでは `m_lagTable`（APP_DB 用）と `m_stateLagTable`（STATE_DB 用）で別変数に格納される（`teamsync.cpp:L28-30`）。
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: `sonic-swss/teamsyncd/teamsync.cpp` (L26-30 コンストラクタ, L101-143 onMsg, L146-226 addLag, L228-259 removeLag). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
