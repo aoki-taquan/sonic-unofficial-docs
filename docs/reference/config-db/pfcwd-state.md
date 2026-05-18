@@ -225,6 +225,36 @@ sudo grep -i "pfc watchdog\|pfcwd" /var/log/syslog
 
 <!-- /failure -->
 
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-constants.md -->
+<!-- source: sonic-swss/orchagent/pfcwdorch.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
+<!-- source: sonic-swss/orchagent/pfcactionhandler.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
+
+`pfcwdorch` / `pfcactionhandler` が COUNTERS_DB を書き込む際に利用するハードコード定数。いずれも CONFIG_DB / YANG では設定不可。
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|----|---------|------|
+| `PFC_WD_TC_MAX` | `8` | `pfcwdorch.cpp:28` | lossless TC スキャン上限（queue index 0–7）。PFC 未有効 TC はスキップされ COUNTERS_DB エントリが作成されない |
+| `PFC_WD_DETECTION_TIME_MIN` | `100` ms | `pfcwdorch.cpp:23` | `detection_time` の下限。範囲外は `task_invalid_entry` となり書き込み不実行 |
+| `PFC_WD_DETECTION_TIME_MAX` | `5000` ms | `pfcwdorch.cpp:22` | `detection_time` の上限（5 秒） |
+| `PFC_WD_RESTORATION_TIME_MIN` | `100` ms | `pfcwdorch.cpp:25` | `restoration_time` の下限。同様に範囲外は書き込み不実行 |
+| `PFC_WD_RESTORATION_TIME_MAX` | `60000` ms | `pfcwdorch.cpp:24` | `restoration_time` の上限（60 秒） |
+| `PFC_WD_QUEUE_STATUS` | `"PFC_WD_STATUS"` | `pfcactionhandler.cpp:9` | COUNTERS_DB フィールド名リテラル。YANG 定義外 |
+| `PFC_WD_QUEUE_STATUS_OPERATIONAL` | `"operational"` | `pfcactionhandler.cpp:10` | `PFC_WD_STATUS` の stable 状態値 |
+| `PFC_WD_QUEUE_STATUS_STORMED` | `"stormed"` | `pfcactionhandler.cpp:11` | `PFC_WD_STATUS` の storm 検知状態値 |
+
+### 定数の影響詳細
+
+**`PFC_WD_TC_MAX = 8` による登録エントリ数制限**: `registerInWdDb()` (`pfcwdorch.cpp:542-603`) は `for (uint8_t i = 0; i < PFC_WD_TC_MAX; i++)` でポートの queue index 0–7 をスキャンする。`pfcMask` でビットが立っていない TC（PFC 未有効）はスキップされるため、COUNTERS_DB に書き込まれる `COUNTERS:<queue_oid>` エントリは実際に PFC が有効な TC 数に限定される。ポートの PFC 設定を変えずに `pfcwd start` を再実行しても、既存エントリに上書きするだけで数は変化しない。
+
+**`detection_time` / `restoration_time` の範囲制約**: `createEntry()` (`pfcwdorch.cpp:214-223`) で `to_uint<uint32_t>(value, MIN, MAX)` を呼び出す。範囲外の値は `std::out_of_range` / 検証失敗で `task_invalid_entry` を返し、`startWdOnPort()` は呼ばれない。COUNTERS_DB には一切書き込まれない。
+
+**フィールド名のリテラル固定**: `PFC_WD_STATUS`、`PFC_WD_QUEUE_STATS_DEADLOCK_DETECTED` 等のフィールド名はすべて C++ マクロとして `pfcactionhandler.cpp` の先頭に定義されており、YANG モデルや CONFIG_DB スキーマによる検証外に置かれている。Lua プラグインおよび `show pfcwd stats` が同じ文字列リテラルを参照することで整合性が保たれている。
+
+<!-- /hardcoded-constants -->
+
 ## 確認コマンド
 
 ```bash
