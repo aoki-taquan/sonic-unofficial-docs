@@ -1,6 +1,6 @@
 ---
 title: APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
-description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存を詳解。Phase A+B 分析。"
+description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブルを詳解。Phase A+B+C 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -388,6 +388,34 @@ if (it_map != m_vlanAliasToStpInstanceMap.end())
 
 詳細根拠は `meta/_intermediate/cdb-flow/stp-orch-ordering.md` を参照。
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`StpOrch` が購読する APPL_DB 4 テーブルは `stpd → stpmgrd` が書き手で、`StpOrch` は読み手兼 SAI 変換器である。以下の暗黙参照は、各テーブルの処理がどのテーブル / Orch / SAI に依存するかを示す。
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-cross-refs.md -->
+
+| 参照方向 | このテーブル / Orch | 相手テーブル / リソース | 条件 |
+|---------|-------------------|----------------------|------|
+| 入力 (書き手) | APPL_DB 4 テーブル | stpd → stpmgrd | 常時。stpmgrd が CONFIG_DB `STP` / `STP_VLAN` 等を購読し stpd IPC を仲介して APPL_DB を書く |
+| 起動順序ガード | 全テーブル | `PORT` (PortsOrch::allPortsReady) | 常時。false の間は `doTask()` が即 `return` し全処理を保留 |
+| VLAN 解決 | `STP_VLAN_INSTANCE_TABLE` SET/DEL | `VLAN` (PortsOrch::getPort) | 常時。未登録 VLAN は `addVlanToStpInstance()` / `removeVlanFromStpInstance()` が false → `it++` 残置 |
+| ポート解決 | `STP_PORT_STATE_TABLE` SET/DEL | `PORT` / `LAG` (PortsOrch::getPort) | 常時。未登録ポートは `doStpPortStateTask()` が **`return`** → コンシューマ全体ブロック |
+| Bridge Port 自動作成 | `STP_PORT_STATE_TABLE` SET | PortsOrch::addBridgePort | bridge port 未作成時に自動試行。SAI 失敗なら `it++` 残置 |
+| 内部 Map 参照 | `STP_INST_PORT_FLUSH_TABLE` SET | `STP_VLAN_INSTANCE_TABLE` (m_vlanAliasToStpInstanceMap) | MSTP フラッシュ。`addVlanToStpInstance()` が更新する Map が未存在なら no-op |
+| SAI 書き込み先 | `STP_VLAN_INSTANCE_TABLE` | SAI `sai_stp_api->create_stp` / `set_vlan_attribute(SAI_VLAN_ATTR_STP_INSTANCE)` | 常時 |
+| SAI 書き込み先 | `STP_PORT_STATE_TABLE` | SAI `sai_stp_api->create_stp_port` / `set_stp_port_attribute` | 常時 |
+| SAI クエリ (起動時) | StpOrch コンストラクタ | `SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID` / `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` | 起動時 1 回。失敗時は未初期化のまま動作継続 (silent failure) |
+| STATE_DB 書き込み | StpOrch (書き手) | `STATE_DB STP_TABLE\|GLOBAL.max_stp_inst` | SAI クエリ成功時 (`updateMaxStpInstance()`)。`max_stp_instances - 1` を書き込む |
+
+!!! note "APPL_DB 4 テーブルは StpOrch の入力のみ"
+    `STP_VLAN_INSTANCE_TABLE` / `STP_PORT_STATE_TABLE` / `STP_FASTAGEING_FLUSH_TABLE` / `STP_INST_PORT_FLUSH_TABLE` への書き込みは stpd / stpmgrd が行う。StpOrch はこれらを**読み取り専用**（Consumer 経由の購読）で処理し、SAI とオプションで STATE_DB `STP_TABLE` へのみ書き込む。
+
+!!! note "`show spanning-tree` は別の APPL_DB テーブルを参照"
+    `show/stp.py` が読む APPL_DB テーブルは `STP_VLAN_TABLE` / `STP_PORT_TABLE` / `STP_VLAN_PORT_TABLE` (stpd が直接書く STP 状態テーブル) であり、StpOrch が購読する 4 テーブルとは別物である。
+
+<!-- /cross-refs -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
