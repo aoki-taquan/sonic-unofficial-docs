@@ -415,6 +415,49 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_RIF_TYPE_MAP
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-ordering.md`
+
+### 書き込み方式 — ProducerStateTable を使わない直接 HSET
+
+`portsorch` の `m_counterLagTable` および `intfsorch` の `m_rifNameTable` / `m_rifTypeTable` はいずれも **`swsscommon::Table`** インスタンスであり、`ProducerStateTable` ではない (`portsorch.cpp:762`, `intfsorch.cpp:70-71`)。
+
+このため `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` / `COUNTERS_RIF_TYPE_MAP` への書き込みは Redis HSET コマンドで直接実行され、**`<TABLE>_CHANNEL@2` への PUBLISH は発生しない**。
+
+### 消費側のポーリングアクセス
+
+これらのマップを参照するツールはすべてポーリング（都度 HGET / HGETALL）でアクセスする。keyspace notification の購読は行っていない。
+
+| 消費プロセス / CLI | アクセス方式 | 参照テーブル | 用途 |
+|---|---|---|---|
+| `intfstat` (sonic-utilities) | 起動時 1 回の `HGETALL` | `COUNTERS_RIF_NAME_MAP` | RIF 名 → OID 解決 |
+| `vnet_route_check.py` | 起動時 1 回の `swsscommon::Table` 参照 | `COUNTERS_RIF_NAME_MAP` | VNet ルート確認用 RIF OID 解決 |
+| `FlexCounter` (syncd) | `FLEX_COUNTER_DB` エントリを直接読み取り | `FLEX_COUNTER_DB RIF_STAT_COUNTER:<rif_oid>` | SAI 統計ポーリング（`COUNTERS_RIF_NAME_MAP` は参照しない） |
+| `snmpagent` | SNMP ポーリングごとに `COUNTERS_DB` HGET | `COUNTERS_LAG_NAME_MAP` / `COUNTERS:<oid>` | LAG OID 経由のポート統計集計 |
+
+### FlexCounter が `COUNTERS_DB COUNTERS:<rif_oid>` を更新する仕組み
+
+`COUNTERS_RIF_NAME_MAP` は FlexCounter から直接購読されるのではなく、`intfsorch` が `addRifToFlexCounter()` 内で `FLEX_COUNTER_DB RIF_STAT_COUNTER:<rif_oid>` に `RIF_COUNTER_ID_LIST` を書き込む副次操作によって FlexCounter のポーリング対象が登録される。FlexCounter は `FLEX_COUNTER_DB` のエントリを購読し（`ConsumerStateTable` 経由）、SAI 収集結果を `COUNTERS_DB COUNTERS:<rif_oid>` に書き込む。
+
+```
+FLEX_COUNTER_DB (ConsumerStateTable / subscribe)
+  ← intfsorch が addRifToFlexCounter() で RIF_STAT_COUNTER:<rif_oid> を書き込む
+     ↓ (FlexCounter ループ)
+COUNTERS_DB COUNTERS:<rif_oid>  ← SAI 収集値が書き込まれる
+```
+
+### keyspace notification 不使用の影響
+
+`COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` は PUBLISH を発生させないため:
+
+- **ホットパス外での参照**: `intfstat` などのツールは起動都度 HGETALL を実行する。常時更新を受け取る仕組みがない。
+- **RIF 登録タイミングのズレ**: `addRifToFlexCounter()` が呼ばれるまで（タイマー非同期）、`intfstat` の HGETALL はエントリ不在を返す。エラーメッセージ `"Interface missing from COUNTERS_RIF_NAME_MAP!"` はこの中間状態で発生する。
+- **外部ツールによる動的監視**: `intfstat -p <interval>` で定期ポーリングを実行する場合、内部的には毎回 HGETALL を発行している（`intfstat:168-197`）。
+
+<!-- /pubsub -->
+
 ## 運用ヒント
 
 ```bash
