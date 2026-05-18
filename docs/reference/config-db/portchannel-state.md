@@ -436,6 +436,21 @@ teamsyncd: m_stateLagTable.del(lagName)  [teamsync.cpp:L255]
 > 中間調査詳細: `meta/_intermediate/cdb-flow/portchannel-state-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+STATE_DB `LAG_TABLE` への書き込みは Linux netlink (`RTM_NEWLINK` / `RTM_DELLINK`) と `teamdctl` UNIX ソケット経由の JSON dump に依存する。いずれも SAI を経由しないカーネル・ユーザー空間の仕組みであるため、プラットフォーム（ASIC ベンダー）差異は生じない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `teamsyncd` は `libteam` + netlink のみを使用し SAI API を呼ばない。`teamsyncd.cpp` に SAI インクルードなし。フィールド値・書き込みタイミング・テーブル構造はすべての ASIC で同一 |
+| multi-asic (namespace 分離構成) | 各 namespace で独立動作・差異なし | `teamsyncd` / `tlm_teamd` / `teammgrd` はいずれも `DBConnector("STATE_DB", 0)` を無引数で開く (`teamsyncd.cpp:L31-32`, `teammgrd.cpp:L48-50`, `tlm_teamd/main.cpp:L91`)。multi-asic 環境では各 namespace に独立インスタンスが起動し、同一ロジックで自 namespace の `LAG_TABLE` に書き込む |
+| VOQ chassis (Virtual Output Queue) | 影響なし | VOQ chassis 固有の `SYSTEM_LAG_TABLE` / `SYSTEM_LAG_ID_TABLE` (`orchagent/lagids.lua`) は APPL_DB / CHASSIS_APP_DB 上のテーブルであり `STATE_DB::LAG_TABLE` とは別物。`teamsyncd` は VOQ 特有コードパスを持たず Linux netlink イベントに純粋に従う |
+| warm restart タイマー | プラットフォーム非依存 | `WarmStart::getWarmStartTimer(TEAMSYNCD_APP_NAME, "teamd")` でタイマー取得し、未設定時は `DEFAULT_WR_PENDING_TIMEOUT = 70` 秒を使用 (`teamsync.h:L16`)。タイマー値はプラットフォームではなく mgmt 設定に依存 |
+
+詳細根拠は `meta/_intermediate/cdb-flow/portchannel-state-platform.md` を参照。
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `sonic-swss/teamsyncd/teamsync.cpp` (L26-30 コンストラクタ, L101-143 onMsg, L146-226 addLag, L228-259 removeLag). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
