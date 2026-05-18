@@ -393,6 +393,68 @@ if (status != SAI_STATUS_SUCCESS)
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`nat_zone` フィールドを処理する `natmgrd` (`NatMgr`) と `orchagent` (`IntfsOrch`) に存在する、CONFIG_DB / YANG で管理されない固定値の一覧。ソースは `sonic-swss/cfgmgr/natmgr.h`・`shellcmd.h`・`natmgr.cpp` と `sonic-swss/orchagent/intfsorch.cpp`・`orchdaemon.cpp`・`main.cpp`。
+
+### キーサイズ定数 (natmgr.h)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `L3_INTERFACE_ZONE_SIZE` | `1` | ゾーン単位エントリ (`INTERFACE\|<port>`) の有効キー要素数 — これ以外は無効として erase (`natmgr.h:75`) |
+| `L3_INTERFACE_KEY_SIZE` | `2` | IP プレフィックス付きエントリ (`INTERFACE\|<port>\|<ip>/<len>`) の有効キー要素数 (`natmgr.h:74`) |
+| `IP_PREFIX_SIZE` | `2` | プレフィックス文字列をアドレス+マスク長に分割したときの有効要素数 (`natmgr.h:104`) |
+| `IP_ADDR_MASK_LEN_MIN` | `1` | IPv4 マスク長の最小有効値 (`natmgr.h:105`) |
+| `IP_ADDR_MASK_LEN_MAX` | `32` | IPv4 マスク長の最大有効値 (`natmgr.h:106`) |
+
+### インタフェースプレフィックス文字列 (natmgr.h)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `ETHERNET_PREFIX` | `"Ethernet"` | Ethernet ポート判定（iptables mangle + SAI 両対応） (`natmgr.h:78`) |
+| `VLAN_PREFIX` | `"Vlan"` | Vlan インタフェース判定 (`natmgr.h:76`) |
+| `LAG_PREFIX` | `"PortChannel"` | PortChannel (LAG) 判定 (`natmgr.h:77`) |
+| `LOOPBACK_PREFIX` | `"Loopback"` | Loopback 判定 — iptables mangle スキップ分岐で参照 (`natmgr.h:79`) |
+
+上記 4 プレフィックス以外で始まるキーは `doNatZoneIntfTask` で `SWSS_LOG_INFO` + erase される (`natmgr.cpp:7412-7420`)。
+
+### iptables コマンドパス定数 (shellcmd.h)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `IPTABLES_CMD` | `"/sbin/iptables"` | `setMangleIptablesRules()` 内で mangle MARK ルールの追加・削除に使用 (`shellcmd.h:15`) |
+
+`setMangleIptablesRules()` が生成するコマンドテンプレート (`natmgr.cpp:912-913`):
+
+```
+/sbin/iptables -t mangle -{A|D} PREROUTING  -i <port> -j MARK --set-mark <mark>
+/sbin/iptables -t mangle -{A|D} POSTROUTING -o <port> -j MARK --set-mark <mark>
+```
+
+`"-t mangle"` / `"PREROUTING"` / `"POSTROUTING"` / `"-j MARK"` / `"--set-mark"` はすべて文字列リテラルとして固定されており、CONFIG_DB / YANG から変更できない。
+
+### iptables mark オフセット (natmgr.cpp)
+
+`nat_zone_value++` が `natmgr.cpp:7513` にハードコードされており、DB 値に **常に +1** した値を mangle MARK として使用する。mark=0 がカーネルのデフォルト mangle 動作と衝突するのを回避するための固定オフセット。YANG や CONFIG_DB には公開されていない。
+
+| DB `nat_zone` | iptables MARK (固定オフセット +1) |
+|--------------|----------------------------------|
+| `0` | `1` |
+| `1` | `2` |
+| `2` | `3` |
+| `3` | `4` |
+
+### gIsNatSupported グローバルフラグ (orchagent)
+
+| 変数 | 初期値 | 確定ロジック |
+|------|--------|------------|
+| `gIsNatSupported` | `false` (`orchdaemon.cpp:78`) | orchagent 起動時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` をクエリし、返却値が `!= 0` の場合のみ `true` に設定 (`main.cpp:935-947`) |
+
+`false` のプラットフォームでは `setRouterIntfsNatZoneId()` が呼ばれず、`nat_zone` を書き込んでも SAI RIF への zone_id 設定がスキップされる。この挙動はプロセスライフタイムを通じて不変（再クエリなし）。
+
+<!-- /constants -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
