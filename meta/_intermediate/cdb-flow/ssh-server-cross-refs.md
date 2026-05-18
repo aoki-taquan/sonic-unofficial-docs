@@ -1,41 +1,85 @@
-# SSH_SERVER 暗黙参照マップ (Phase C)
+# ssh-server — 暗黙参照 (cross-table refs) 調査メモ
 
-生成日: 2026-05-16  
-調査対象: `sonic-host-services/scripts/hostcfgd`
+## 調査対象
 
-## 参照関係の整理
+`docs/reference/config-db/ssh-server.md` Phase C 追加分。
+`SSH_SERVER|POLICIES` テーブルに対して `hostcfgd` の `SshServer` クラスおよび `PamLimitsCfg` クラスが持つ暗黙参照関係を整理する。
 
-### SSH_SERVER → DEVICE_METADATA（暗黙参照）
+## ソースファイル精読
 
-`PamLimitsCfg.update_config_file()` は `DEVICE_METADATA` テーブルを `get_table('DEVICE_METADATA')` で読み込み、`localhost` キーの存在確認を行う（L1422, L1430）。
+| ファイル | 役割 |
+|---------|------|
+| `sonic-host-services/scripts/hostcfgd` | `SshServer` (L1045–1175)、`PamLimitsCfg` (L1418–1441)、`HostConfigDaemon.__init__` (L2191–2277)、`ssh_handler` (L2297–2299)、`config_db.subscribe('SSH_SERVER', ...)` (L2478) |
 
-- `"localhost" not in device_metadata and "POLICIES" not in ssh_server_policies` の場合は early return
-- `localhost["hwsku"]` / `localhost["type"]` を PAM limits テンプレートに渡す
-- つまり `SSH_SERVER|POLICIES.max_sessions` の反映には `DEVICE_METADATA|localhost` の存在が前提
+## YANG leafref
 
-### SSH_SERVER → AAA（間接参照：/etc/pam.d/sshd 共有）
+`sonic-ssh-server.yang` は `SSH_SERVER|POLICIES` のフィールドに対して他テーブルへの leafref を持たない。全依存は実装レベルの暗黙参照。
 
-`AaaCfg.modify_conf_file()` は `/etc/pam.d/sshd` を直接書き換える（L748-751）。
+## 暗黙参照 (実装レベル)
 
-- AAA の認証方式（TACACS+/RADIUS/LDAP）が変わると `/etc/pam.d/sshd` の `@include` 行が `common-auth-sonic` に切り替わる
-- SSH_SERVER の `password_authentication` と PAM の認証スタックは**独立した設定ファイル**だが、sshd が両方を参照するため実質的に連動する
-- `PasswordAuthentication yes` + PAM `common-auth-sonic`（TACACS+）の組み合わせで TACACS+ 認証が有効になる
+### 1. CONFIG_DB `DEVICE_METADATA|localhost` (PAM limits 更新の前提条件)
 
-### SSH_SERVER → MGMT_INTERFACE（間接参照：TACACS/RADIUS src_intf 経由）
+- **参照先テーブル**: `CONFIG_DB DEVICE_METADATA` キー `localhost`
+- **参照方向**: 読み取り（`PamLimitsCfg.update_config_file()` 内）
+- **条件**: `update_config_file()` 冒頭の early-return ガード (L1430)
+- **意味**: `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` のどちらかが存在しない場合、PAM limits の書き込みをスキップして即時 return する。通常デプロイでは `DEVICE_METADATA|localhost` は必ず存在するが、テスト環境やミニマル構成では注意が必要。
+- **evidence**: `hostcfgd` L1430
 
-`AaaCfg.get_interface_ip()` が TACACS+/RADIUS の `src_intf` に `eth0` を指定すると `MGMT_INTERFACE` テーブルの IP を参照する（L600）。SSH_SERVER テーブルは MGMT_INTERFACE を直接参照しないが、SSH 認証バックエンドとして TACACS+/RADIUS を使用する場合、AAA の `src_intf` → `MGMT_INTERFACE` の IP 解決が SSH 認証経路に影響する。
+### 2. `/etc/ssh/sshd_config` (書き込み先ファイル)
 
-## サマリ
+- **参照先**: ファイルシステム `/etc/ssh/sshd_config`
+- **参照方向**: 読み取り + 書き込み（`SshServer.set_policies()` → `modify_conf_file()` 内）
+- **条件**: 常時。sshd_config が存在しない / 読み取り不可の場合は更新失敗
+- **意味**: `modify_conf_file()` は既存 sshd_config を読み込んで差分更新する。ファイルが存在しなければ `FileNotFoundError` が発生し hostcfgd のエラーログに記録される。
+- **evidence**: `hostcfgd` L1073–1090 (`modify_conf_file`)
 
-| 参照方向 | このテーブル | 相手テーブル | 条件 |
-|---------|------------|-------------|------|
-| SSH_SERVER → | `max_sessions` (PamLimitsCfg) | `DEVICE_METADATA` | `update_config_file()` が localhost キー確認。不在時 early return |
-| SSH_SERVER ← | `PasswordAuthentication` (sshd_config) | `AAA` | AAA が /etc/pam.d/sshd を書き換え、パスワード認証と PAM 認証スタックが連動 |
-| SSH_SERVER ← (間接) | SSH 認証経路 | `MGMT_INTERFACE` | TACACS+/RADIUS の src_intf=eth0 時に MGMT_INTERFACE の IP を解決 |
+### 3. `/etc/security/limits.d/` ディレクトリ (PAM limits 書き込み先)
+
+- **参照先**: ファイルシステム `/etc/security/limits.d/`
+- **参照方向**: 書き込み（`PamLimitsCfg.update_config_file()` 内）
+- **条件**: `max_sessions > 0` のとき
+- **意味**: ディレクトリが存在しない場合、PAM limits 設定が反映されない。
+- **evidence**: `hostcfgd` L1440
+
+### 4. `ssh.service` (systemd unit)
+
+- **参照先**: `ssh.service` (systemd unit)
+- **参照方向**: `systemctl restart ssh` 呼び出し
+- **条件**: `sshd -T` 検証成功後（`set_policies()` 末尾）
+- **意味**: `systemctl restart ssh` が失敗した場合（非 systemd 環境など）、sshd_config の更新は完了しているが sshd プロセスへの反映は行われない。
+- **evidence**: `hostcfgd` L1170–1172
+
+### 5. `/usr/sbin/sshd` バイナリ (設定検証ゲート)
+
+- **参照先**: `/usr/sbin/sshd` (外部バイナリ)
+- **参照方向**: `sshd -T -f <tmp>` 実行（検証のみ）
+- **条件**: `set_policies()` の全フィールド反映後
+- **意味**: `sshd -T` の返り値が非 0 の場合、一時ファイルを削除して全フィールドをロールバックする。sshd バイナリのバージョンによって許容される設定値が異なるため、YANG に定義された列挙値でも古い OpenSSH バージョンでは検証失敗の可能性がある。
+- **evidence**: `hostcfgd` L1150–1168
+
+## YANG leafref なし (確認済)
+
+`sonic-ssh-server.yang` の全フィールド (`authentication_retries`, `login_timeout`, `ports`, `inactivity_timeout`, `max_sessions`, `password_authentication`, `permit_root_login`, `ciphers`, `kex_algorithms`, `macs`) に leafref 定義なし。他テーブルへの YANG 制約参照は存在しない。
+
+## 参照関係サマリ
+
+```
+CONFIG_DB SSH_SERVER|POLICIES
+  ↓ (subscribe / get_table)
+hostcfgd SshServer + PamLimitsCfg
+
+暗黙参照:
+  ├─ [暗黙] CONFIG_DB DEVICE_METADATA|localhost  — PAM limits early-return ガード (L1430)
+  ├─ [暗黙] /etc/ssh/sshd_config                 — 読み書き対象ファイル (L1073–1090)
+  ├─ [暗黙] /etc/security/limits.d/              — PAM limits 書き込み先ディレクトリ (L1440)
+  ├─ [暗黙] systemd ssh.service                  — systemctl restart ssh (L1170–1172)
+  └─ [暗黙] /usr/sbin/sshd バイナリ              — sshd -T 検証ゲート (L1150–1168)
+```
 
 ## evidence
 
-- `sonic-host-services/scripts/hostcfgd` L1422-1430: PamLimitsCfg.update_config_file() の DEVICE_METADATA 参照
-- `sonic-host-services/scripts/hostcfgd` L744-751: AaaCfg.modify_conf_file() の /etc/pam.d/sshd 書き換え
-- `sonic-host-services/scripts/hostcfgd` L596-606: AaaCfg.get_interface_ip() の MGMT_INTERFACE 参照
-- `sonic-host-services/scripts/hostcfgd` L2297-2299: ssh_handler() — SSH_SERVER 変更時に sshscfg + pamLimitsCfg を逐次実行
+- `sonic-host-services/scripts/hostcfgd` L1045–1175 (`SshServer.set_policies`, `modify_conf_file`, `handle_ports_set`, sshd -T 検証)
+- `sonic-host-services/scripts/hostcfgd` L1418–1441 (`PamLimitsCfg.update_config_file`, DEVICE_METADATA early-return, PAM limits 書き込み)
+- `sonic-host-services/scripts/hostcfgd` L2191–2277 (`HostConfigDaemon.__init__`, `sshscfg.load`)
+- `sonic-host-services/scripts/hostcfgd` L2297–2299 (`ssh_handler`)
+- `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang` — leafref 定義なし確認

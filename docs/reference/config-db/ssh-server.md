@@ -419,3 +419,33 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 <!-- evidence: sonic-host-services/scripts/hostcfgd L81-84 (PAM_LIMITS_CONF_TEMPLATE, LIMITS_CONF_TEMPLATE, PAM_LIMITS_CONF, LIMITS_CONF) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1439-1440 (max_sessions=0 → None) -->
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えおよびサービス再起動に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `SshServer` / `PamLimitsCfg` 内に `ProducerStateTable` / `Table.set()` 呼出が 0 件 (`hostcfgd` L1045–1175, L1418–1441 を `set(`/`hset`/`ProducerStateTable`/`NotificationProducer` で grep して 0 ヒット) |
+| STATE_DB | なし | `hostcfgd` の STATE_DB 参照は `FipsCfg` (L1759–1821) と `RestartWaiter` 用 (L2160–2162) のみ。`SshServer` は `state_db_conn` を保持しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。SSH はカーネル/ユーザ空間のみで動作し SAI を経由しない |
+| FLEX_COUNTER_DB / ASIC_DB | なし | SAI 非経由。SSH_SERVER を購読する orchagent / mgrd は `sonic-swss/` に存在しない |
+| LOGLEVEL_DB / ERROR_DB | なし | `SshServer` / `PamLimitsCfg` 内に参照なし |
+
+`SshServer.set_policies()` の副作用は以下のファイルシステム操作に限られる:
+
+- `/etc/ssh/sshd_config` の差分上書き (全フィールド適用後 `sshd -T` 検証、成功時に `os.rename(SSH_CONFG_TMP, SSH_CONFG)`)
+- `systemctl restart ssh` の実行
+
+`PamLimitsCfg.update_config_file()` の副作用は以下に限られる:
+
+- `/etc/pam.d/pam-limits-conf` の Jinja2 テンプレート再生成
+- `/etc/security/limits.conf` の Jinja2 テンプレート再生成 (`max_sessions > 0` のとき `maxlogins` 設定を含む)
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ssh-server-side.md` を参照。
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1175 (SshServer — DB 書込なし確認) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1441 (PamLimitsCfg — DB 書込なし確認) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1164-1172 (os.rename + systemctl restart ssh) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1434-1441 (render_conf_file — PAM limits ファイル出力) -->
+<!-- /side-effects -->
