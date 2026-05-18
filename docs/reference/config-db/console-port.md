@@ -323,6 +323,49 @@ CONFIG_DB エントリに TTL 設定はない（永続エントリ）。
 > 詳細スキャン結果: `meta/_intermediate/cdb-flow/console-port-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+`CONSOLE_PORT` テーブルのスキーマ自体はプラットフォーム間で共通だが、`consutil` が参照する物理 TTY デバイスのパスがプラットフォームごとに異なる。
+
+### `udevprefix.conf` による TTY デバイスプレフィックスの差異
+
+`consutil` の `SysInfoProvider.init_device_prefix()` は起動時にプラットフォームディレクトリ内の `udevprefix.conf` を読み込み、デフォルトの `/dev/ttyUSB` プレフィックスを上書きする。
+
+```python
+# consutil/lib.py:300-307
+@staticmethod
+def init_device_prefix():
+    platform_path, _ = device_info.get_paths_to_platform_and_hwsku_dirs()
+    UDEV_PREFIX_CONF_FILE_PATH = os.path.join(platform_path, UDEV_PREFIX_CONF_FILENAME)
+
+    if os.path.exists(UDEV_PREFIX_CONF_FILE_PATH):
+        fp = open(UDEV_PREFIX_CONF_FILE_PATH, 'r')
+        lines = fp.readlines()
+        SysInfoProvider.DEVICE_PREFIX = "/dev/" + lines[0].rstrip()
+```
+
+| プラットフォーム | `udevprefix.conf` の値 | `DEVICE_PREFIX` | `line_num=0` の物理デバイス |
+|-----------------|----------------------|-----------------|---------------------------|
+| デフォルト（ファイル不在） | — | `/dev/ttyUSB` | `/dev/ttyUSB0` |
+| `arm64-nexthop_b27-r0` | `ttySwitchCpu` | `/dev/ttySwitchCpu` | `/dev/ttySwitchCpu0` |
+| `arm64-aspeed_ast2700_evb-r0` | `ttySwitchCpu` | `/dev/ttySwitchCpu` | `/dev/ttySwitchCpu0` |
+| `arm64-nokia_ixs7215_c1xa-r0` | `ttyCR` | `/dev/ttyCR` | `/dev/ttyCR0` |
+| `x86_64-arista_7800_sup` | `ttySCD` | `/dev/ttySCD` | `/dev/ttySCD0` |
+
+`CONSOLE_PORT.line_num` を物理デバイスに対応させるには、当該プラットフォームの `udevprefix.conf` を確認すること。`udevprefix.conf` がないプラットフォームでは USB-to-serial アダプタ (`/dev/ttyUSBN`) が前提となる。
+
+### ASIC ベンダー固有差異なし
+
+- SAI 非経由（consutil は Linux シリアルデバイスと直接通信）。Broadcom / Mellanox / Marvell 等の ASIC ベンダーによる差異はなし。
+- Multi-ASIC プラットフォームへの対応は `consutil` 現実装には含まれていない（シングルホスト前提）。
+
+<!-- evidence: sonic-utilities/consutil/lib.py:297-307 -->
+<!-- evidence: sonic-buildimage/device/nexthop/arm64-nexthop_b27-r0/udevprefix.conf -->
+<!-- evidence: sonic-buildimage/device/nokia/arm64-nokia_ixs7215_c1xa-r0/udevprefix.conf -->
+<!-- evidence: sonic-buildimage/device/arista/x86_64-arista_7800_sup/plugins/udevprefix.conf -->
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
