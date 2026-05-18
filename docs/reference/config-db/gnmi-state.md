@@ -118,6 +118,36 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 | `EnableStreamMultiplexing = true` | StreamID が client key に含まれ、同一 peer から複数ストリームが共存可能 (STATE_DB の connection_key に変化なし) |
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`TELEMETRY_CONNECTIONS` は `telemetry` デーモン (`sonic-gnmi`) が直接 STATE_DB に HSet / HDel する単純な構造であり、orchagent 経由の間接書き込みは一切行われない。しかし以下の順序依存が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `PrepareRedis()` (全エントリ削除) → `HSet` (新接続登録) | 強制先行（削除優先） | デーモン起動直後は旧エントリが残存しない。consumer は起動完了まで読み取りを待機すべき |
+| 2 | 閾値チェック (`threshold` 判定) → メモリ内 `cm.connections` 更新 → `storeKeyRedis()` (STATE_DB 書込み) | 強制順序 | STATE_DB への書込みはメモリ更新の後。外部 consumer がエントリを観測した時点では接続はすでにメモリに確定している |
+| 3 | `setConnectionManager()` 再初期化 (閾値変更時) → `PrepareRedis()` | 強制先行（閾値変更時に全クリア） | 閾値が変更されると新しい `ConnectionManager` インスタンスが生成され、既存の接続情報がメモリ・STATE_DB 両方でリセットされる |
+| 4 | `Remove()` でのメモリ削除 → `deleteKeyRedis()` (STATE_DB 削除) | 強制順序 | 接続切断時はメモリが先にクリアされ、その後 STATE_DB から削除される。瞬間的に STATE_DB にエントリが残存しうる |
+
+### 主要な制約詳細
+
+**起動時の全削除 → 新規登録の順序 (依存 #1)**: `ConnectionManager.PrepareRedis()` は `HGetAll` で既存エントリを全取得し、`HDel` で全削除した後に処理を返す。`Subscribe` RPC の受け付けは `PrepareRedis()` 完了後に始まるため、consumer から見た STATE_DB は「空 → 新接続追加」の順に変化する。`PrepareRedis()` が STATE_DB 接続エラーで早期 return した場合は前回の残留エントリが削除されずに残り、consumer が古い接続情報を読む可能性がある（evidence: `connection_manager.go:32-61`）。
+
+**閾値変更による意図しないリセット (依存 #3)**: `Subscribe` RPC ハンドラが `setConnectionManager(s.config.Threshold)` を呼ぶたびに、既存 `connectionManager` の閾値と新 `Threshold` を比較する。値が異なる場合、新しい `ConnectionManager` インスタンスを生成して `PrepareRedis()` を呼ぶため、**進行中の接続メタデータが全クリアされる**。CONFIG_DB の `GNMI|gnmi.threshold` を動的に変更した場合、次の Subscribe RPC 到着時に STATE_DB がリセットされる（evidence: `client_subscribe.go:73-85`）。
+
+**切断 vs STATE_DB 削除のタイムラグ (依存 #4)**: `Remove(key)` はメモリ上の `cm.connections` から先にエントリを削除し (`delete(cm.connections, key)`)、その後 `deleteKeyRedis(key)` で STATE_DB から削除する。両操作の間に STATE_DB をポーリングする consumer はメモリ上では存在しない接続を STATE_DB で観測しうる。削除は通常ミリ秒以内で完了するが、STATE_DB が高負荷の場合は遅延しうる（evidence: `connection_manager.go:80-92`）。
+
+<!-- evidence:
+  connection_manager.go:32-61 — PrepareRedis(): 全削除 → Redis 接続初期化の順序
+  connection_manager.go:63-78 — Add(): 閾値チェック → メモリ追加 → storeKeyRedis の順序
+  connection_manager.go:80-92 — Remove(): メモリ削除 → deleteKeyRedis の順序
+  client_subscribe.go:73-85 — setConnectionManager(): 閾値変更時の再初期化ロジック
+-->
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
