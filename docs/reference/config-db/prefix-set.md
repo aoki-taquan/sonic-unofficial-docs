@@ -497,4 +497,45 @@ PREFIX_SET / PREFIX の変更は CONFIG_DB 内他テーブル・APPL_DB・STATE_
 > 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-side-effects.md` を参照
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+PREFIX_SET / PREFIX テーブルを購読するデーモンは **frrcfgd** のみ。bgpcfgd はこれらのテーブルを直接購読しない。
+
+### frrcfgd (sonic-frr-mgmt-framework)
+
+`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、Redis keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `PREFIX_SET` / `PREFIX` エントリを登録し、共通ハンドラ `bgp_table_handler_common` が変更通知を受け取る。
+
+```python
+# frrcfgd.py L2298-2299
+('PREFIX_SET', self.bgp_table_handler_common),
+('PREFIX', self.bgp_table_handler_common),
+...
+# frrcfgd.py L2359-2361
+def subscribe_all(self):
+    for table, hdlr in self.table_handler_list:
+        self.config_db.subscribe(table, hdlr)
+```
+
+変更検知後、`bgp_table_handler_common` がイベントを `bgp_message` キューに投入し、`__update_bgp` が処理する。
+
+**PREFIX_SET イベント処理**（frrcfgd.py L2894-2910）: FRR コマンドを直接発行せず `prefix_set_list` キャッシュのみ更新（新規 SET → `MatchPrefixList(mode)` 追加、DEL → キャッシュ削除）。
+
+**PREFIX イベント処理**（frrcfgd.py L2911-2936）: `prefix_set_list` キャッシュから af を参照し、Jinja2 テンプレート `bgpd.conf.db.pref_list.j2` 経由で `ip/ipv6 prefix-list` vtysh コマンドを生成・実行。適用対象デーモンは AF 依存（IPv4 → 全デーモン、IPv6 → `['bgpd', 'zebra']`）。
+
+### 購読フロー要約
+
+```
+CONFIG_DB PREFIX_SET / PREFIX
+  └─ frrcfgd (ExtConfigDBConnector psubscribe)
+       └─ bgp_table_handler_common
+            ├─ PREFIX_SET イベント: prefix_set_list キャッシュ更新のみ（FRR コマンド非発行）
+            └─ PREFIX イベント: Jinja2 (bgpd.conf.db.pref_list.j2)
+                 └─ vtysh ip/ipv6 prefix-list <name> [seq <seq>] <action> <prefix>
+                    適用デーモン: IPv4 → 全デーモン / IPv6 → ['bgpd', 'zebra']
+```
+
+> **スキャン証跡**: `frrcfgd.py` L2298-2299 (table_handler_list 登録), L2359-2361 (subscribe_all), L1536-1552 (listen_thread/psubscribe), L2894-2910 (PREFIX_SET ハンドラ), L2911-2936 (PREFIX ハンドラ)。`bgpd.conf.db.pref_list.j2` L1-42 (Jinja2 テンプレート)。詳細は `meta/_intermediate/cdb-flow/prefix-set-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 88e792f23f63 -->
