@@ -133,6 +133,39 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `pfcwdorch` が依存する関連テーブル (Phase C)
+
+`COUNTERS:<queue_oid>` ハッシュは YANG 定義を持たないため leafref による明示的 cross-table 参照はゼロ件。
+代わりに `pfcwdorch.cpp` / `pfcactionhandler.cpp` / Lua プラグイン群から抽出した **4 系統の暗黙依存** が実装レベルの cross-table 参照となる。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-cross-refs.md -->
+
+### 主要テーブル / コンポーネント参照
+
+| 参照先 (テーブル / コンポーネント) | フィールド / 条件 | 参照方向 | evidence |
+|---|---|---|---|
+| `CONFIG_DB:PFC_WD\|<port>` | `detection_time`, `restoration_time`, `action`, `pfc_stat_history` | 読み取り（設定値を COUNTERS_DB へ変換・書込み） | `pfcwdorch.cpp:212-233` `createEntry()` |
+| `APPL_DB:PFC_WD_INSTORM` | `<port>: { <queue_index>: "storm" }` | 書き込み（storm 検知時） / 削除（storm 復旧時） / 再読み込み（warm-reboot） | `pfcwdorch.cpp:999,1016,1033,1057,1108` |
+| `pfc_detect_*.lua` (全プラットフォーム Lua プラグイン) | `PFC_WD_STATUS`, `PFC_WD_ACTION`, `PFC_WD_DETECTION_TIME`, `PFC_WD_DETECTION_TIME_LEFT`, `PFC_STAT_HISTORY` | 読み取り（FlexCounter 経由で storm 検知判定に使用） | `pfc_detect_broadcom.lua:75-82`, 他各 lua |
+| `pfc_restore*.lua` (restore Lua プラグイン) | `PFC_WD_STATUS` | 読み取り（storm 復旧判定） | `pfc_restore.lua:20` |
+| `sonic-utilities/pfcwd/main.py` | `PFC_WD_STATUS`, `PFC_WD_QUEUE_STATS_DEADLOCK_*`, `PFC_WD_QUEUE_STATS_TX/RX_*` | 読み取り（`show pfcwd stats` 表示） | `pfcwd/main.py:45-49,147-162` |
+
+### 初期化ガード順序
+
+1. `gPortsOrch->getPortPfcWatchdogStatus()` で PFC マスク取得 → lossless TC 集合が空なら COUNTERS_DB への書き込み全スキップ（`pfcwdorch.cpp:535-553`）。
+2. `registerInWdDb()` 内 per-queue ループで config フィールドを先行書き込み → `initWdCounters()` がステータス・カウンタを後続書き込み（`pfcwdorch.cpp:579-601`）。
+3. storm 検知時に COUNTERS_DB (`PFC_WD_STATUS=stormed`) と APPL_DB (`PFC_WD_INSTORM`) の両方へ同時書き込み。
+4. warm-reboot 時は `refillToSync()` が APPL_DB `PFC_WD_INSTORM` を再読み込みして storm 状態を COUNTERS_DB に反映（`pfcwdorch.cpp:1108`）。
+
+### 範囲外
+
+- `COUNTERS_QUEUE_NAME_MAP` — OID 解決のための読み取り専用マップ。`pfcwdorch` は書き込まない。
+- `FLEX_COUNTER_TABLE` — `pfcwdorch` は `PFC_WD` グループに counter ID リストを設定するが、`COUNTERS:<queue_oid>` フィールドへの直接参照はない。
+
+詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/pfcwd-state-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 確認コマンド
 
 ```bash
