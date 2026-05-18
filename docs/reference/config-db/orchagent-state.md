@@ -285,6 +285,43 @@ orchagent が STATE_DB へ書き込む 5 テーブルはそれぞれ異なる初
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `orchagent/orchdaemon.cpp`, `orchagent/main.cpp`, `orchagent/portsorch.cpp`, `orchagent/fdborch.cpp`, `orchagent/vrforch.cpp`, `orchagent/macsecpost.cpp`, `common/warm_restart.cpp` 全行精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/orchagent-state-cross-refs.md`
+
+orchagent が STATE_DB へ書き込む各テーブルは、以下の上流 DB・SAI イベントを暗黙的に参照する。YANG leafref はいずれも存在しない。
+
+| 参照先 | DB | 方向 | STATE_DB テーブル | 実装上の必須度 | 根拠コード |
+|--------|----|----|------------------|--------------|-----------|
+| `PORT_TABLE\|PortInitDone` | APPL_DB | READ | PORT_TABLE, FDB_TABLE | **必須** (PortInitDone がない限り初期化不完） | `portsorch.cpp:4350-4357, 4613` |
+| `PORT_TABLE\|PortConfigDone` | APPL_DB | READ | PORT_TABLE | **必須** (PortConfigDone と PortInitDone 両方で設定完了判定） | `portsorch.cpp:4357` |
+| `FDB_TABLE\|*` | APPL_DB | READ | FDB_TABLE | 必須 (APPL_DB FDB エントリを購読して STATE_DB に反映) | `fdborch.cpp:31-32`, `orchdaemon.cpp:227` |
+| `VRF_TABLE\|*` | APPL_DB | READ | VRF_OBJECT_TABLE | 必須 (VRF エントリを受けて SAI create → 成功時に `state="ok"` 書込) | `vrforch.h:52`, `orchdaemon.cpp:283` |
+| `WARM_RESTART_TABLE\|orchagent` | STATE_DB (自己) | READ | WARM_RESTART_TABLE | warm start 時のみ必須 (restore_count インクリメントに現在値を読取) | `warm_restart.cpp:113-125` |
+| SAI `create_virtual_router` レスポンス | SAI / ASIC | READ (SAI resp) | VRF_OBJECT_TABLE | **必須** (SAI 失敗時はエントリ書込なし) | `vrforch.cpp:93, 120, 150` |
+| SAI `SAI_SWITCH_ATTR_MACSEC_SUPPORTED` 取得 | SAI / ASIC | READ (SAI resp) | FIPS_MACSEC_POST_TABLE | 必須 (非対応時は `post_state="disabled"` で固定) | `main.cpp:791-793, 924` |
+| SAI MACsec POST 完了コールバック | SAI / ASIC | 非同期 NOTIFY | FIPS_MACSEC_POST_TABLE | MACsec POST 対応 SAI のみ | `macsecorch.cpp:705, 710, 786, 791` |
+
+### APPL_DB PORT_TABLE — PortInitDone / PortConfigDone
+
+`portsyncd` が APPL_DB の `PORT_TABLE|PortInitDone` を書き込むと、`portsorch` がこれを検出して `m_initDone = true` をセットする（`portsorch.cpp:4613`）。`PORT_TABLE|PortConfigDone` も同様に確認される（`portsorch.cpp:4357`）。この 2 キーが揃って初めて `initPortSupportedSpeeds()` / `initPortSupportedFecModes()` / `initHostTxReadyState()` が実行され、STATE_DB `PORT_TABLE` へのフィールド書込が始まる。**APPL_DB の PortInitDone が存在しない間は STATE_DB PORT_TABLE に何も書かれない**。
+
+### APPL_DB FDB_TABLE — allPortsReady() ガード
+
+`fdborch` は APPL_DB `FDB_TABLE` を購読する（`orchdaemon.cpp:227`）。しかし `FdbOrch::doTask()` 冒頭で `m_portsOrch->allPortsReady()` を確認し、`false` の場合は即リターンする（`fdborch.cpp:711, 927`）。よって **APPL_DB FDB_TABLE に SET エントリが存在しても、PortInitDone 処理完了前は STATE_DB FDB_TABLE に書き込まれない**。
+
+### APPL_DB VRF_TABLE — SAI 成功のみ書込
+
+`vrforch` は APPL_DB `VRF_TABLE` を購読し、SAI `create_virtual_router` / `set_virtual_router_attribute` の成功を受けて `m_stateVrfObjectTable.hset(vrf_name, "state", "ok")` を書く（`vrforch.cpp:120, 150`）。SAI 呼び出しが失敗した場合、STATE_DB VRF_OBJECT_TABLE にはエントリが書き込まれない。逆に `vrfmgrd` は VRF 削除時に STATE_DB `VRF_OBJECT_TABLE` のエントリ消失を確認してから実際の削除を完了させる（`vrforch.cpp:193` の `del()` を監視）。
+
+### WARM_RESTART_TABLE 自己参照
+
+`WarmStart::checkWarmStart()` は `WARM_RESTART_TABLE|orchagent.restore_count` を STATE_DB から読み取り、`stoul(value) + 1` でインクリメントした値を書き戻す（`warm_restart.cpp:113-125`）。cold start 時（エントリが存在しない場合）は `"0"` を書き込む。これは STATE_DB 内の自己参照であり、外部 DB への依存はない。
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
