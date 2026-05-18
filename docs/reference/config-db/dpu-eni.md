@@ -386,3 +386,61 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 !!! note "VIP_TABLE は唯一の THROW 発生源"
     `VIP_TABLE` が空の場合のみ `SWSS_LOG_THROW` が実行される。他の参照（VNET 未登録・Neighbor 未解決など）はいずれも処理を PENDING 状態で保留し、後続イベントで自動再評価される仕組みになっている。
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`DashEniFwdOrch` / `DpuRegistry` / `EniInfo` の各レイヤで発生する失敗を、影響範囲と回復手段とともに整理する。
+
+### DpuRegistry::populate() — 起動時スナップショット読込失敗
+
+| 失敗ケース | 発生箇所 | 挙動 | 回復手段 |
+|---|---|---|---|
+| `DPU.pa_ipv4` / `REMOTE_DPU.pa_ipv4` / `npu_ipv4` 欠落 | `Request::parse()` — `dashenifwdorch.cpp:240`, `dashenifwdorch.cpp:286` | `catch(exception& e)` → `SWSS_LOG_ERROR("Failed to parse key")` でそのエントリをスキップ。他エントリは継続処理 | CONFIG_DB を修正して orchagent を再起動（populate は lazyInit で 1 回限り）|
+| `VDPU.main_dpu_ids` に未登録 DPU 名 | `processVdpuTable()` L330-339 | `SWSS_LOG_WARN("Invalid DPU ID")` でその DPU ID をスキップ。VDPU 内の他 DPU ID は継続処理 | orchagent 再起動前に DPU エントリを先に追加 |
+| CONFIG_DB に `DPU` / `VDPU` テーブルが存在しない | `Table::getKeys()` が空を返す | 空の DpuRegistry が確定。以降 ENI の ACL ルールが生成されない | CONFIG_DB にエントリ追加後 orchagent 再起動 |
+
+### EniInfo::create() — DASH_ENI_FORWARD_TABLE ADD 失敗
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| `vdpu_ids` または `primary_vdpu` フィールド欠落 | `EniInfo::create()` L285-288 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Invalid DASH_ENI_FORWARD_TABLE request")` → `false` 返却。`eni_container_` に登録されず ACL ルールなし | 正しいフィールドで再 SET |
+| `primary_vdpu` が DpuRegistry に未登録 | `EniAclRule::processUpdate()` L104-108 | `SWSS_LOG_ERROR("No primary id in DPU Table")` → `update_type_t::INVALID` → `rule_state_t::FAILED` | orchagent 再起動（DpuRegistry は動的更新不可）|
+| LOCAL DPU の Neighbor 未解決 | `LocalEniNH::resolve()` L28-31 (`dashenifwdinfo.cpp`) | `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING`。`ctx->createAclRule()` 非呼び出し | `NeighOrch` の Neighbor Up 通知受信で自動再評価 (`handleNeighUpdate()`) |
+| CLUSTER DPU の VNET トンネル名が未登録 | `RemoteEniNH::resolve()` L45-49 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Couldn't find tunnel name for Vnet")` → `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING` | VNetOrch に VNET エントリ登録後、ENI の再 SET で再評価 |
+| CLUSTER DPU の VNET VNI が未登録 | `RemoteEniNH::resolve()` L52-57 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Couldn't find VNI for Vnet")` → `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING` | 上記と同様 |
+| `VIP_TABLE` が空 (CLUSTER 型 ENI の ACL ルール生成時) | `EniFwdCtxBase::getVip()` L499-503 (`dashenifwdorch.cpp`) | `SWSS_LOG_THROW("Invalid Config: VIP info not populated")` → **orchagent プロセス abort** | orchagent 再起動前に `VIP_TABLE` を CONFIG_DB に設定 |
+| `TUNNEL_TERM` ルール用のローカルエンドポイントなし | `EniAclRule::processUpdate()` L93-97 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("No Local endpoint was found for Rule")` → `update_type_t::INVALID` → `rule_state_t::FAILED` | ENI の `vdpu_ids` に LOCAL DPU を含む VDPU を指定 |
+
+### EniInfo::update() — DASH_ENI_FORWARD_TABLE SET (更新) 失敗
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| `primary_vdpu` フィールドが更新リクエストに含まれない | `EniInfo::update()` L339-341 (`dashenifwdinfo.cpp`) | `throw logic_error("Invalid DASH_ENI_FORWARD_TABLE update: No primary idx")` → orchagent プロセス abort | 正しいフィールドで再 SET |
+| `primary_vdpu` 変更なし | 同 L344-347 | `return true`（idempotent）。ACL ルール変更なし | — |
+
+### EniInfo::destroy() — DASH_ENI_FORWARD_TABLE DEL 失敗
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| DEL で `eni_container_` に対象 ENI が存在しない | `DashEniFwdOrch::delOperation()` L192-196 (`dashenifwdorch.cpp`) | `SWSS_LOG_ERROR("Invalid del request")` → `return true`（エントリ不在を容認）。ACL ルールへの影響なし | — |
+
+### rule_state_t 遷移サマリ
+
+```
+DASH_ENI_FORWARD_TABLE SET
+  ├─ primary_id が DpuRegistry 未登録       → FAILED     (no retry, orchagent 再起動要)
+  ├─ Neighbor / VNET / VNI 未解決           → PENDING    (Up/登録通知で自動再評価)
+  ├─ VIP_TABLE 空 (CLUSTER 時)              → orchagent ABORT
+  └─ resolve 成功                            → INSTALLED
+
+DASH_ENI_FORWARD_TABLE DEL
+  ├─ state == INSTALLED                     → deleteAclRule() → UNINSTALLED
+  └─ state != INSTALLED                     → 削除のみ (APPL_DB への影響なし)
+```
+
+**エラーはすべて syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`) に出力される。`ERROR_TABLE` への書き込みはなし。**  
+APPL_DB の `ACL_RULE_TABLE` に未インストール状態のルールは存在しない。`rule_state_t::FAILED` / `PENDING` は orchagent メモリ内の状態のみであり、STATE_DB や APPL_DB には露出しない。
+
+> **証跡**: `dashenifwdorch.cpp` L131-146 (`lazyInit`), L212-347 (`DpuRegistry::populate`), L574-601 (`createAclRule`/`deleteAclRule`), L492-517 (`getVip`); `dashenifwdinfo.cpp` L18-32 (`LocalEniNH::resolve`), L40-64 (`RemoteEniNH::resolve`), L81-151 (`EniAclRule::processUpdate`), L153-207 (`EniAclRule::fire`), L266-312 (`EniInfo::create`/`destroy`), L314-355 (`EniInfo::update`).
+<!-- /failure -->
