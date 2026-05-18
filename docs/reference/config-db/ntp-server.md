@@ -120,6 +120,26 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`NTP_SERVER` エントリを処理する `hostcfgd` の `ntp_srv_key_handler` と `chrony.conf.j2` テンプレートは、`NTP_SERVER` 以外の以下の CONFIG_DB テーブルを暗黙的に参照する。
+
+| 参照先テーブル | 参照フィールド | 参照タイミング | 用途 | evidence |
+|---|---|---|---|---|
+| [`NTP_KEY`](ntp-key.md) | `id` (leafref 先) | YANG SET バリデーション時 | `NTP_SERVER.key` の leafref ターゲット。`NTP_KEY\|<id>` 未存在時は SET 拒否 | `sonic-ntp.yang:199-203` |
+| `NTP` (global) | `authentication` | `chrony.conf.j2` テンプレート生成時 | `authentication == 'enabled'` のときのみ `key <id>` オプションを `chrony.conf` に生成。disabled なら `NTP_SERVER.key` は参照されても無効 | `chrony.conf.j2:30-34` |
+| `NTP` (global) | `src_intf` | `hostcfgd` `handle_ntp_source_intf_chg` / `chrony.conf.j2` 生成時 | `src_intf` に指定したインタフェース IP を `bindacqaddress` ディレクティブに変換。`NTP_SERVER` が空の間は `src_intf` 変更イベントが no-op | `hostcfgd:1315-1316`; `chrony.conf.j2:87-107` |
+| `MGMT_INTERFACE` | (key, prefix) | `chrony.conf.j2` テンプレート生成時 | `src_intf == 'eth0'` のとき `bindacqaddress` 用 IPv4/IPv6 アドレスを解決 | `chrony.conf.j2:91-92` |
+| `INTERFACE` / `LOOPBACK_INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` | (key, prefix) | `chrony.conf.j2` テンプレート生成時 | `src_intf` が `Ethernet*` / `Loopback*` / `PortChannel*` / `Vlan*` のとき対応テーブルから IP を解決 | `chrony.conf.j2:93-107` |
+| `DEVICE_METADATA` | `localhost.subtype` / `localhost.type` | `chrony.conf.j2` テンプレート生成時 | SmartSwitch 判定。`subtype=SmartSwitch` かつ `type!=SmartSwitchDPU` のとき `NTP.server_role` / `NTP.dhcp` を参照して `allow` + `binddevice bridge-midplane` を追加 | `chrony.conf.j2:57-63` |
+| `MGMT_VRF_CONFIG` | `vrf_global.mgmtVrfEnabled` | chrony サービス起動時 (`chronyd-starter.sh`) | `"true"` なら `NTP.vrf` に応じて mgmt VRF または default VRF で起動。NTP_SERVER の変更で chrony が再起動されるたびに間接的に参照される | `chronyd-starter.sh:3-16` |
+
+!!! note "NTP_SERVER の変更は常に全テーブルを合算処理"
+    `hostcfgd` の `ntp_srv_key_handler` は `NTP_SERVER` 変更時に `NTP_KEY` テーブル全体も同時に取得して chrony を再起動する。このため `NTP_SERVER` 単独の変更であっても `NTP_KEY` の現在値が `chrony.conf` / `chrony.keys` の生成に反映される。
+
+<!-- /cross-refs -->
+
 ## 関連サブテーブル
 
 - `NTP|global` (container, single-instance):
