@@ -171,6 +171,42 @@ YANG モデル (`sonic-gnmi.yang`) は `save_on_set` フィールドを `boolean
 <!-- evidence: sonic-net/sonic-gnmi:telemetry/telemetry.go:171-328; sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:64-150; sonic-net/sonic-buildimage:src/sonic-yang-models/yang-models/sonic-gnmi.yang -->
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 根拠: `sonic-buildimage/dockers/docker-sonic-gnmi/supervisord.conf`, `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`, `sonic-buildimage/dockers/docker-sonic-gnmi/start.sh`, `sonic-gnmi/telemetry/telemetry.go`
+
+### 起動シーケンス（supervisord）
+
+```
+rsyslogd 起動 (priority=1)
+  └─► start.sh 実行 (priority=2, rsyslogd:running 待機)
+        CONFIG_DB は start.sh 完了前に利用可能（Redis は独立して起動）
+        └─► gnmi-native.sh 実行 (priority=3, start:exited 待機)
+              └─► sonic-cfggen -d で GNMI|gnmi / GNMI|certs を一括読み取り
+                    → CLI フラグを構築して telemetry バイナリを exec
+                          └─► dialout.sh 起動 (priority=4, gnmi-native:running 待機)
+```
+
+### 順序依存ルール
+
+| # | 依存関係 | 方向 | 影響 |
+|---|----------|------|------|
+| 1 | `start.sh` 完了 → `gnmi-native.sh` 起動 | **強制先行**（supervisord `dependent_startup_wait_for=start:exited`） | `gnmi-native.sh` は `start.sh` が終了するまで起動しない |
+| 2 | CONFIG_DB への `GNMI\|gnmi` / `GNMI\|certs` 書込み → `gnmi-native.sh` 実行 | **強制先行**（スクリプト起動時に `sonic-cfggen` で一括読み取り） | 起動後の設定変更はコンテナ再起動まで反映されない（hot reload なし） |
+| 3 | `gnmi-native.sh:running` → `dialout.sh` 起動 | **強制先行**（supervisord `dependent_startup_wait_for=gnmi-native:running`） | gNMI サーバが起動していないと dial-out テレメトリも開始しない |
+| 4 | `DEVICE_METADATA\|localhost.subtype` 読み取り → ZMQ ポート設定 | **起動時スナップショット**（`sonic-db-cli` で inline 読み取り） | SmartSwitch 判定は起動時に確定。再起動なしに変更不可 |
+| 5 | `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` 読み取り → VRF 設定 | **起動時スナップショット**（同上） | 管理 VRF 有効化後のコンテナ再起動が必要 |
+
+### 重要な制約
+
+- **設定変更は再起動が必要**: `gnmi-native.sh` は起動時に CONFIG_DB を 1 回読み取るだけで、以降の変更を監視しない。`GNMI|gnmi` / `GNMI|certs` フィールドを変更した場合は `docker restart gnmi` が必要。
+- **TLS 証明書は動的リロード可**: `telemetry` バイナリ（Go）は `fsnotify` で証明書ファイルパスを監視し、証明書ファイルの変更を動的に検知してリロードする。ただし証明書パス（`server_crt`, `server_key`）の変更自体はコンテナ再起動が必要。
+- **`TELEMETRY` → `GNMI` 移行の順序**: `db_migrator.migrate_gnmi()` が旧 `TELEMETRY` テーブルを `GNMI` テーブルへ自動移行する。移行前に `gnmi-native.sh` が起動した場合は `TELEMETRY` テーブルを参照し、移行後は `GNMI` テーブルが優先される。
+- **CONFIG_DB 存在前の起動**: `GNMI` テーブルが CONFIG_DB に存在しない場合、`gnmi-native.sh` はシェルスクリプト内のデフォルト値（port=8080, threshold=100 等）を使用して起動を継続する。
+
+<!-- /ordering -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
