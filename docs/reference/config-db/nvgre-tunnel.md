@@ -149,6 +149,46 @@ const request_description_t nvgre_tunnel_request_description = {
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### allPortsReady ガードなし
+
+`NvgreTunnelOrch::addOperation()` および `NvgreTunnelMapOrch::addOperation()` はいずれも `gPortsOrch->allPortsReady()` をチェックしない (`nvgreorch.cpp:350-508`)。orchdaemon 起動直後から SET を処理できる。
+
+### NVGRE_TUNNEL → NVGRE_TUNNEL_MAP の順序が必須
+
+`NvgreTunnelMapOrch::addOperation()` (L464-508) は冒頭で `tunnel_orch->isTunnelExists(tunnel_name)` を確認する。親トンネルが未登録の場合は `SWSS_LOG_WARN("NVGRE tunnel '%s' doesn't exist", ...)` + `return true` で**エントリを破棄する**（retry キューに戻らない）。
+
+```
+SET NVGRE_TUNNEL|<tunnel_name>    src_ip=<vtep_ip>      # 先に作成
+SET NVGRE_TUNNEL_MAP|<tunnel_name>|<map_name>  vlan_id=<vid> vsid=<vsid>  # その後
+```
+
+### VLAN が先行必須（MAP 登録時）
+
+`addOperation()` L489: `gPortsOrch->getVlanByVlanId(vlan_id, port)` が false を返すと WARN + `return true` でエントリ破棄。`VLAN|<vlan_id>` が PortsOrch に登録されてから MAP を書き込むこと。
+
+### 安全な DEL 順序
+
+```
+DEL NVGRE_TUNNEL_MAP|<tunnel_name>|<map_name>  # 先に MAP を削除
+DEL NVGRE_TUNNEL|<tunnel_name>                  # その後トンネルを削除
+```
+
+`NvgreTunnelMapOrch::delOperation()` (L554) はトンネル存在チェック後に MAP 削除処理を行う。NVGRE_TUNNEL を先に DEL すると MAP の DEL で `does not exist` WARN となり SAI 上のマップエントリが残留する可能性がある。
+
+| 依存関係 | 方向 | 緩和策 |
+|---|---|---|
+| `NVGRE_TUNNEL` SET → `NVGRE_TUNNEL_MAP` SET | 必須 | 逆順だと MAP エントリが**永続的に破棄**（retry なし） |
+| `VLAN` 登録完了 → `NVGRE_TUNNEL_MAP` SET | 必須 | 逆順だと MAP エントリが**永続的に破棄**（retry なし） |
+| `NVGRE_TUNNEL_MAP` DEL → `NVGRE_TUNNEL` DEL | 推奨 | 逆順でも orchagent は継続するが SAI エントリ孤立リスク |
+| allPortsReady | 不要 | NVGRE orch には allPortsReady ガードなし |
+
+> **スキャン証跡**: `nvgreorch.cpp:464-508` 全行精読、`orchdaemon.cpp:361-364` 登録順確認。
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
