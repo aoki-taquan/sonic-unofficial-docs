@@ -318,6 +318,72 @@ STATE_DB、FLEX_COUNTER_DB、LOGLEVEL_DB、CONFIG_DB への書き戻しは確認
 > **Evidence**: `sonic-swss/cfgmgr/natmgr.cpp` `addStaticSingleNatEntry()` L1992-2069, `removeStaticSingleNatEntry()` L2650-2719, `addDnatPoolEntry()` L1502-1524, `addConntrackStaticSingleNatEntry()` L457-489, `setStaticNatIptablesRules()` L930-1000; `sonic-swss/orchagent/natorch.cpp` `updateNatCounters()` L4049-4061, `updateStaticNatCounters()` L4481-4490; 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-static-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB 購読 — `SubscriberStateTable` ベース
+
+`natmgrd` (`natmgrd.cpp:109-121`) は起動時に以下の CONFIG_DB テーブル群を `cfg_tables` に列挙し、`NatMgr` コンストラクタへ渡す:
+
+```
+CFG_STATIC_NAT_TABLE_NAME   → "STATIC_NAT"
+CFG_STATIC_NAPT_TABLE_NAME, CFG_NAT_POOL_TABLE_NAME,
+CFG_NAT_BINDINGS_TABLE_NAME, CFG_NAT_GLOBAL_TABLE_NAME,
+CFG_INTF_TABLE_NAME (LAG / VLAN / Loopback バリアント含む),
+CFG_ACL_TABLE_TABLE_NAME, CFG_ACL_RULE_TABLE_NAME
+```
+
+`NatMgr` は `Orch` を継承し、各テーブルを **`SubscriberStateTable`** として CONFIG_DB (DB 4) から購読する。Redis keyspace notification パターンは `__keyspace@4__:STATIC_NAT|*`。
+
+### メインループ — blocking select + タイマー併用
+
+`natmgrd.cpp:156` の無限ループで `s.select(&sel, SELECT_TIMEOUT)` を呼び出す。タイムアウト間隔はデフォルト 1000ms。変更がなければタイムアウトごとに `doTask(SelectableTimer &)` が実行される (`natmgr.cpp:5797`)。
+
+| Selectable | 種別 | チャネル / テーブル | 用途 |
+|------------|------|-------------------|------|
+| `NatMgr` (Orch) | `SubscriberStateTable` | `STATIC_NAT` ほか | CONFIG_DB 変更イベント受信 |
+| `timeoutNotificationsConsumer` | `NotificationConsumer` | `SETTIMEOUTNAT` (APPL_DB) | タイムアウト値変更通知 |
+| `flushNotificationsConsumer` | `NotificationConsumer` | `FLUSHNATENTRIES` (APPL_DB) | `flush nat translations` CLI トリガ |
+| `SelectableTimer` | タイマー | — | NAT エントリ refresh 周期タスク |
+
+### STATIC_NAT 変更イベントの処理パス
+
+```
+Redis keyspace: __keyspace@4__:STATIC_NAT|<global_ip>
+  └─ NatMgr::doTask(Consumer&)             [natmgr.cpp:8147]
+        └─ CFG_STATIC_NAT_TABLE_NAME → doStaticNatTask(consumer)  [natmgr.cpp:8153]
+              ├─ SET → addStaticNatEntry()
+              │       ├─ Single NAT → addStaticSingleNatEntry()
+              │       └─ Twice NAT  → addStaticTwiceNatEntry()
+              └─ DEL → removeStaticNatEntry()
+```
+
+### APPL_DB への書き込み — `ProducerStateTable`
+
+`natmgr.h:257` で宣言された `ProducerStateTable m_appNatTableProducer` が APPL_DB `NAT_TABLE` への書き込みを担う:
+
+```cpp
+// natmgr.cpp:43
+m_appNatTableProducer(appDb, APP_NAT_TABLE_NAME)  // "NAT_TABLE"
+```
+
+`ProducerStateTable` は書き込み時に APPL_DB (DB 1) の `NAT_TABLE_CHANNEL@1` へ PUBLISH する。下流 `NatOrch` がこのチャネルを `ConsumerStateTable` として購読し SAI 操作を実行する。
+
+### 追加通知チャネル
+
+| チャネル | 方向 | 用途 |
+|---------|------|------|
+| `NAT_DB_CLEANUP_NOTIFICATION` (APPL_DB `NotificationProducer`) | natmgrd → NatOrch | SIGTERM 受信時に orchagent へ静的 NAT エントリの SAI 削除を要求 |
+| `SETTIMEOUTNAT` | NatOrch → natmgrd | NAT タイムアウト値変更を natmgr 内部状態に反映 |
+| `FLUSHNATENTRIES` | orchagent → natmgrd | dynamic NAT テーブル全消去をトリガ |
+
+### STATE_DB 参照 (購読なし)
+
+`isIntfStateOk()` が `m_stateInterfaceTable` (STATE_DB:STATE_INTERFACE_TABLE) をポイントリード (`hget`) で参照するが、keyspace 購読はしない。インタフェース状態変化は `CFG_INTF_TABLE_NAME` の SET イベント経由で間接的に受け取る。
+
+> **Evidence**: `natmgrd.cpp:109-153`; `natmgr.cpp:8147-8175`; `natmgr.h:257`; `schema.h:101`。詳細は `meta/_intermediate/cdb-flow/nat-static-pubsub.md` を参照。
+<!-- /pubsub -->
+
 ## silent drop / discrepancy
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doStaticNatTask L5810-6136 / sonic-utilities/config/nat.py add_basic L240-329 / sonic-nat.yang L117-155 -->
