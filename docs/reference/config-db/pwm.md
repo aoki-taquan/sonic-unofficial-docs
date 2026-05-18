@@ -149,6 +149,55 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL (interval フィールド)
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> **調査根拠**: `watermarkorch.cpp` 全行精読、`converter.h` `to_uint` 実装、`orch.cpp` `Consumer::drain()` 例外ハンドリング確認 (2026-05-18)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/pwm-failure.md`
+
+### `interval` 値が不正な場合 — 繰り返しエラーログ + タイマー未変更
+
+`handleWmConfigUpdate()` (`watermarkorch.cpp:103`) は `to_uint<uint32_t>(i.second)` で文字列を変換する。非数値文字列・uint32 範囲外の値は `std::invalid_argument` を throw する (`converter.h:20,25`)。
+
+| 条件 | ログ | 挙動 |
+|------|------|------|
+| `interval` が非数値 (例: `"abc"`) | `SWSS_LOG_ERROR "Exception caught: type=invalid_argument, table=..., error=failed to convert abc"` (`orch.cpp:614`) | エントリが `m_toSync` から**削除されない**まま残留。次 select イテレーションで再び同エラーが繰り返される。タイマー周期は変更されない |
+| `interval` が uint32 範囲超過 | 同上 | 同上 |
+| orchagent プロセスへの影響 | なし | `Consumer::drain()` (`orch.cpp:612-615`) が例外をキャッチするためクラッシュしない |
+
+**回復方法**: `watermarkcfg -c <正値>` または `sonic-db-cli CONFIG_DB hset 'WATERMARK_TABLE|TELEMETRY_INTERVAL' interval <正値>` で上書きするとエントリが更新され、次のイテレーションで正常処理される。
+
+### `interval` フィールド以外のキーが設定された場合
+
+`handleWmConfigUpdate()` の `else` 分岐 (`watermarkorch.cpp:110`) で `SWSS_LOG_WARN("Unsupported key: %s", i.first.c_str())` を出力するのみ。エントリは正常に `m_toSync` から削除される（タイマー変更なし）。
+
+### DEL_COMMAND — タイマーリセットなし
+
+`WATERMARK_TABLE|TELEMETRY_INTERVAL` が CONFIG_DB から DEL された場合 (`watermarkorch.cpp:82-83`):
+
+| 条件 | ログ | 挙動 |
+|------|------|------|
+| DEL_COMMAND 受信 | `SWSS_LOG_WARN("Unsupported op DEL")` | タイマー周期は変更されない。エントリは `m_toSync` から削除される（再試行なし）|
+
+DEL 後もタイマーは直前の周期（またはデフォルト 120 秒）のまま動作し続ける。
+
+### `allPortsReady()` 未達 — 無限保留
+
+`doTask()` 冒頭 (`watermarkorch.cpp:56`) で `!gPortsOrch->allPortsReady()` の場合は即 return する。`WATERMARK_TABLE` / `FLEX_COUNTER_TABLE` 両イベントが `m_toSync` に保留され、ports ready 後に再処理される。通常は一時的だが、PortsOrch 初期化が永続的に失敗した環境では両テーブルの設定が永遠に適用されない。
+
+### WATERMARK_CLEAR_REQUEST 不正 op / data
+
+| 条件 | ログ | 挙動 |
+|------|------|------|
+| `op` が `"PERSISTENT"` / `"USER"` 以外 | `SWSS_LOG_WARN("Unknown watermark clear request op: ...")` | COUNTERS_DB への書き込みなし (`watermarkorch.cpp:180-181`) |
+| `data` が既知クリア要求以外 | `SWSS_LOG_WARN("Unknown watermark clear request data: ...")` | COUNTERS_DB への書き込みなし (`watermarkorch.cpp:228-229`) |
+
+### `clearSingleWm()` での空 OID リスト — silent スキップ
+
+`init_pg_ids()` / `init_queue_ids()` 呼び出し後も COUNTERS_DB にエントリがない場合（ポート未初期化等）、`clearSingleWm()` の `for` ループがゼロ回実行されるだけでエラーログなく終了する。`PERIODIC_WATERMARKS` テーブルへのゼロクリアは発生しない（watermark 値は前回値のまま）。
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
