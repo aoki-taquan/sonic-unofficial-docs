@@ -460,6 +460,58 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 | offload 応答送信失敗 | ERROR | APPL_DB には影響なし | FPM 再接続・warm-restart |
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`fpmsyncd/routesync.cpp` および `fpmsyncd/fpmsyncd.cpp` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### 経路処理上限
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MAX_MULTIPATH_NUM` | `514` | nexthop group メンバー数の上限。超過分は SWSS_LOG_ERROR を出力した上でクランプ | `routesync.cpp` L121 |
+| `IPV4_MAX_BITLEN` | `32` | IPv4 プレフィックス長の最大値。ホストルート (`/32`) 判定に使用 | `routesync.cpp` L54 |
+| `IPV6_MAX_BITLEN` | `128` | IPv6 プレフィックス長の最大値。ホストルート (`/128`) 判定に使用 | `routesync.cpp` L55 |
+| `protocolNameBufferSize` | `128` | `getProtocolString()` 内で `rtnl_route_proto2str()` に渡すバッファサイズ（バイト） | `routesync.cpp` L126 |
+
+### encap タイプ識別子
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `NH_ENCAP_VXLAN` | `100` | VXLAN encap タイプ番号。`getEncapType()` で使用 | `routesync.cpp` L48 |
+| `NH_ENCAP_SRV6_ROUTE` | `101` | SRv6 ステアリングルート encap タイプ番号。`onMsgRaw()` のスイッチ分岐に使用 | `routesync.cpp` L50 |
+| `VXLAN_VNI` | `0` | `tb_encap` 配列内 VNI 属性のインデックス | `routesync.cpp` L46 |
+
+### インタフェース名プレフィクス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `VNET_PREFIX` | `"Vnet"` | master デバイス名がこのプレフィクスで始まる場合 `onVnetRouteMsg()` に分岐 | `routesync.cpp` L25 |
+| `VRF_PREFIX` | `"Vrf"` | master デバイス名がこのプレフィクスで始まる場合 VRF スコープ経路として `onRouteMsg()` に渡す | `routesync.cpp` L26 |
+| `MGMT_VRF_PREFIX` | `"mgmt"` | VRF 名がこのプレフィクスで始まる場合 `onRouteMsg()` 内でスキップ（管理 VRF 除外） | `routesync.cpp` L27 |
+| `VXLAN_IF_NAME_PREFIX` | `"Brvxlan"` | VXLAN ブリッジインタフェース名プレフィクス | `routesync.cpp` L24 |
+
+### SRv6 My SID デフォルト長
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `DEFAULT_SRV6_MY_SID_BLOCK_LEN` | `"32"` | SRv6 SID のブロック長デフォルト（ビット） | `routesync.cpp` L59 |
+| `DEFAULT_SRV6_MY_SID_NODE_LEN` | `"16"` | SRv6 SID のノード長デフォルト（ビット） | `routesync.cpp` L60 |
+| `DEFAULT_SRV6_MY_SID_FUNC_LEN` | `"16"` | SRv6 SID のファンクション長デフォルト（ビット） | `routesync.cpp` L61 |
+| `DEFAULT_SRV6_MY_SID_ARG_LEN` | `"0"` | SRv6 SID のアーギュメント長デフォルト（ビット） | `routesync.cpp` L62 |
+
+### タイマー・フラッシュ間隔 (fpmsyncd.cpp)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `FLUSH_TIMEOUT` | `500` ms | Redis パイプラインのフラッシュ間隔の上限。アイドル時間がこの値を超えたら即時フラッシュ | `fpmsyncd.cpp` L25 |
+| `SMALL_TRAFFIC` | `500`（エントリ数目安） | フラッシュ判定における "低トラフィック" 閾値。remaining < SMALL_TRAFFIC の場合は即時フラッシュ | `fpmsyncd.cpp` L28 |
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` 秒 | warm-restart タイマーのデフォルト値。`DEVICE_METADATA.restart_timer` 未設定時に使用 | `fpmsyncd.cpp` L46 |
+
+> **注意**: `FLUSH_TIMEOUT` と `SMALL_TRAFFIC` は実行時引数では変更できない。warm-restart 中は `pipeline.flush()` の実行タイミングが変わり、APPL_DB への書き込みが warm-restart タイマー満了後（最大 `DEFAULT_ROUTING_RESTART_INTERVAL` 秒）まで遅延する。
+
+<!-- /constants -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` を同時に持つ経路は orchagent がエラー棄却（`m_toSync` から削除）。
