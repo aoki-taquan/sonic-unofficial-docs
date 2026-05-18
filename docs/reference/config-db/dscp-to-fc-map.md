@@ -276,6 +276,56 @@ DSCP_TO_FC_MAP
 > **スキャン証跡**: `qosorch.cpp:80-93, 111, 1039-1094, 1337` 読了 / `nhgmaporch.cpp:299-325` 読了。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`DscpToFcMapHandler::processWorkItem()` は SET / DEL 失敗を以下のパターンに分類し、失敗ログをすべて `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` で出力する。STATE_DB へのステータス記録はなく（CONFIG_DB → SAI 直行経路）、`ERROR_TABLE` への書き込みも発生しない。
+
+<!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-failure.md -->
+
+### SET 時の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | task_status | retry |
+|---|---|---|---|---|
+| 1 | DSCP 値 < 0 または > 63 | `convertFieldValuesToAttributes()` L1057-1069 | `task_invalid_entry` | なし（erase） |
+| 2 | FC 値が範囲外 (`< 0` または `>= max_num_fcs`) | `convertFieldValuesToAttributes()` L1072-1082 | `task_invalid_entry` | なし（erase） |
+| 3 | FC 非対応 ASIC (`max_num_fcs=0`) で全 FC reject | `convertFieldValuesToAttributes()` L1072-1082 | `task_invalid_entry` | なし（erase） |
+| 4 | 非整数文字列 (`stoi` 例外) | `convertFieldValuesToAttributes()` L1083-1089 | `task_invalid_entry` | なし（erase） |
+| 5 | SAI `create_qos_map` 失敗 | `addQosItem()` L1115-1120 → `processWorkItem()` L157-164 | `task_failed` | なし（erase） |
+| 6 | SAI `modifyQosItem()` 失敗 | `processWorkItem()` L151-158 | `task_failed` | なし（erase） |
+| 7 | `m_pendingRemove` 中に SET | `processWorkItem()` L135-140 | `task_need_retry` | あり（無制限・参照解除まで） |
+
+### DEL 時の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | task_status | retry |
+|---|---|---|---|---|
+| 8 | 未登録オブジェクトへの DEL | `processWorkItem()` L177-180 | `task_invalid_entry` | なし（erase） |
+| 9 | `PORT_QOS_MAP` 参照中の DEL | `processWorkItem()` L181-187 | `task_need_retry` + `m_pendingRemove=true` | あり（参照解除まで） |
+| 10 | SAI `removeQosItem()` 失敗 | `processWorkItem()` L188-193 | `task_failed` | なし（erase） |
+
+### 各パターンの詳細
+
+**DSCP / FC バリデーション失敗 (# 1-4)**: `convertFieldValuesToAttributes()` が `false` を返し、`processWorkItem()` は即座に `task_invalid_entry` を返してエントリを `m_toSync` から erase する。SAI への呼び出しは行われない。エラーは `SWSS_LOG_ERROR` でのみ通知される。
+
+**FC 非対応 ASIC の silent reject (# 3)**: `NhgMapOrch::getMaxNumFcs()` が 0 を返すとき（`SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` 非対応 ASIC）、条件 `value >= max_num_fcs` が `value >= 0` と等価になり**全 FC 値が reject**される。FC 非対応スイッチで CBF 設定を試みても SAI map は作成されない（evidence: `nhgmaporch.cpp:299-325`）。
+
+**SAI create / modify 失敗 (# 5-6)**: `task_failed` を返すためエントリは erase され自動 retry されない。ASIC 側の一時的エラーでも再投入が必要。ログに `SWSS_LOG_ERROR` が出力される。
+
+**参照中 DEL の自動保留 (# 9)**: `PORT_QOS_MAP` の `dscp_to_fc_map` フィールドから参照されている間は `m_pendingRemove = true` がセットされ `task_need_retry` が返る。`PORT_QOS_MAP` 側の参照を先に削除すると次のサイクルで自動的に DEL が実行される（evidence: `qosorch.cpp:181-187`）。
+
+### 確認コマンド
+
+```bash
+# orchagent ログで失敗を確認
+grep -i "dscp_to_fc\|dscp.*fc" /var/log/swss/orchagent.log | tail -20
+
+# SAI map が作成されているか確認
+sonic-db-cli CONFIG_DB hgetall 'DSCP_TO_FC_MAP|AZURE'
+```
+
+> **証跡**: `QosMapHandler::processWorkItem()` qosorch.cpp:124-210 全行精読; `DscpToFcMapHandler::convertFieldValuesToAttributes()` qosorch.cpp:1039-1094; `DscpToFcMapHandler::addQosItem()` qosorch.cpp:1095-1124; `NhgMapOrch::getMaxNumFcs()` nhgmaporch.cpp:299-325。
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・制約
 
