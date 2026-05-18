@@ -512,6 +512,66 @@ selectable = [
 > 中間調査詳細: `meta/_intermediate/cdb-flow/dpu-state-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dpu-state-platform.md`
+
+### 前提: SmartSwitch 専用テーブル
+
+`DPU_STATE` は SmartSwitch プラットフォーム上の DPU 側 `chassisd` (`DpuChassisdDaemon`) が書き込む CHASSIS_STATE_DB テーブルであり、通常の SONiC スイッチ (非 SmartSwitch) ではこのテーブル自体が存在しない。
+
+```python
+# chassisd:1574-1579
+if chassis.is_smartswitch() and chassis.is_dpu():
+    chassisd = DpuChassisdDaemon(SYSLOG_IDENTIFIER, chassis)
+else:
+    chassisd = ChassisdDaemon(SYSLOG_IDENTIFIER, chassis)
+```
+
+### プラットフォーム差の主軸: platform API 実装有無
+
+`DpuChassisdDaemon.run()` (chassisd:1537-1540) は起動時に `get_dataplane_state()` / `get_controlplane_state()` の実装有無を確認し、CP/DP 状態の評価方式を 2 系統に切り替える:
+
+| `poll_dpu_state` | 条件 | CP/DP 評価方式 | `DpuStateManagerTask` 起動 |
+|-----------------|------|--------------|--------------------------|
+| `True` | platform API 実装済み | platform API 直接呼び出し (ループごと) | **しない** |
+| `False` | 両 API とも `NotImplementedError` | DB fallback (`PORT_TABLE` / `SYSTEM_READY` 参照) | **する** (subscribe ベース) |
+
+この切り替えは実行時に動的に行われるため、同一コードで複数ベンダーの SmartSwitch プラットフォームに対応する。
+
+### フィールド別プラットフォーム差
+
+| フィールド | platform API 実装あり | platform API なし (fallback) |
+|-----------|---------------------|----------------------------|
+| `dpu_data_plane_state` | `chassis.get_dataplane_state()` 戻り値 → `'up'`/`'down'` | `APPL_DB PORT_TABLE` の全ポート `oper_status == 'up'` で判定 (chassisd:1267-1275) |
+| `dpu_control_plane_state` | `chassis.get_controlplane_state()` 戻り値 → `'up'`/`'down'` | `STATE_DB SYSTEM_READY\|SYSTEM_STATE.Status == 'up'` で判定 (chassisd:1277-1284) |
+| `dpu_midplane_link_state` | `chassis.get_oper_status()` 経由 (Platform API 必須) | platform API 未実装時は `MODULE_STATUS_OFFLINE` → `'down'` (fallback なし) |
+| `*_time` フィールド | `get_formatted_time()` (UTC, 12h 書式) | 同左 — プラットフォーム差なし |
+
+!!! note "PORT_TABLE fallback の注意点"
+    `_get_data_plane_state_common()` は CONFIG_DB `PORT` テーブルを走査するが、**ポートが 1 件も存在しない場合はループがスキップされ `True` (= `'up'`) が返る**。DPU 起動直後で PORT が未登録の状態では誤って `'up'` が書き込まれる可能性がある (chassisd:1267-1275)。
+
+### multi-asic / VOQ chassis との差異
+
+| 構成 | `DPU_STATE` 書き込み | 備考 |
+|------|-------------------|------|
+| SmartSwitch DPU | あり (`DpuChassisdDaemon`) | 本テーブルの対象 |
+| VOQ chassis (supervisor / line card) | なし | `CHASSIS_MODULE` テーブルと `CHASSIS_STATE_DB LINE_CARD` エントリを使用 |
+| multi-asic (複数 ASIC 単体スイッチ) | なし | SmartSwitch DPU とは別アーキテクチャ |
+| 通常スイッチ | なし | `chassis.is_smartswitch()` が `False` のため `ChassisdDaemon` が起動 |
+
+### SmartSwitch 固有の platform 設定
+
+`platform_env.conf` (`/usr/share/sonic/platform/platform_env.conf`) で DPU reboot タイムアウトをベンダーが調整可能:
+
+| 設定キー | デフォルト | ハードリミット |
+|---------|----------|-------------|
+| `dpu_reboot_timeout` | 360 秒 (`DEFAULT_DPU_REBOOT_TIMEOUT`) | 800 秒 (`MAX_DPU_REBOOT_DURATION`) — 上書き不可 |
+
+`DPU_STATE` フィールド名・DB 番号 (CHASSIS_STATE_DB = 13)・タイムスタンプ書式は全 SmartSwitch ベンダー共通でプラットフォーム差なし。
+<!-- /platform -->
+
 ## 購読者
 
 - `chassisd` (`SmartSwitchModuleUpdater` / `DpuStateUpdater`) — 書き込み元
