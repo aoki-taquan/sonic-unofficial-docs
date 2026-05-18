@@ -409,6 +409,56 @@ STP 設定テーブルの YANG 定義デフォルト値:
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
+
+STP/ICCP 連携において iccpd が STP ロールを正しく決定するためには、以下の順序依存がある。
+
+### 追加順序
+
+1. **`MCLAG_DOMAIN` の `source_ip` / `peer_ip` / `peer_link` を先に CONFIG_DB に書く**
+   - `scheduler_check_csm_config()` が `sender_ip` と `peer_ip` の空文字チェックを行い、空であれば `MCLAG_ERROR` を返して ICCP セッション接続を拒否する。
+   - `peer_link` が設定済みでも対応するインターフェースが存在しない場合も接続を拒否する（`"peer connection can not establish"` ログ）。
+   - evidence: `scheduler.c:780-792`
+
+2. **mclagsyncd が iccpd の `accept()` に接続してから STP ロール通知が届く**
+   - `mlacp_link_set_iccp_role()` は `sys->sync_fd <= 0` の場合にサイレントスキップする。
+   - mclagsyncd は iccpd が listen 状態になった後に接続するため、iccpd を先に起動する。
+   - evidence: `mlacp_link_handler.c:654-660`
+
+3. **クライアント/サーバー役は `source_ip` と `peer_ip` の大小比較で決定する**
+   - `scheduler_prepare_session()` で `inet_addr(sender_ip) < inet_addr(peer_ip)` の場合のみ TCP client として connect を試みる。
+   - `source_ip > peer_ip` のノードは TCP server として LISTEN で待つ。
+   - `source_ip == peer_ip` の場合は WARN ログを出してスキップし、セッションが確立されない。
+   - evidence: `scheduler.c:686-697`
+
+4. **STP ロール決定は ICCP セッション確立直後に 1 回だけ実行される**
+   - `iccp_csm_stp_role_count()` は `role_type == STP_ROLE_NONE` の場合のみ実行される（ガード条件）。
+   - セッション切断・再接続後も `role_type` はリセットされないため、再起動しないとロール変更は反映されない。
+   - STP デーモンへの通知はロール決定直後に行われ、その後の CONFIG_DB 変更は反映されない。
+   - evidence: `iccp_csm.c:845-871`, `scheduler.c:806`
+
+### 削除順序
+
+| ステップ | 操作 | 理由 |
+|---------|------|------|
+| 1 | `MCLAG_DOMAIN` を DEL する前に ICCP セッションを停止 | `scheduler_session_disconnect_handler()` が呼ばれ CSM がクリアされる |
+| 2 | `MCLAG_DOMAIN` の `peer_link` を unset | `unset_peer_link()` でピアリンク解除 |
+| 3 | `MCLAG_DOMAIN` を DEL | `unset_mc_lag_by_id()` で CSM 解放 |
+
+### 順序依存サマリ
+
+| # | 依存関係 | 強制度 | 緩和策 |
+|---|----------|--------|--------|
+| 1 | `MCLAG_DOMAIN`（`source_ip` / `peer_ip` / `peer_link`）→ ICCP セッション確立 | 強制 | CONFIG_DB 書込み後に iccpd が自動リトライ (`CONNECT_INTERVAL_SEC` ごと) |
+| 2 | iccpd 起動 → mclagsyncd 起動 | 推奨 | `sync_fd` 未確立の場合 STP ロール通知がサイレントスキップ |
+| 3 | `source_ip != peer_ip` | WARN のみ・ICCP 未確立 | 同一 IP 設定はサポート外 |
+| 4 | ICCP セッション確立 → STP ロール決定（1 回限り） | 強制 | ロール変更には iccpd 再起動が必要 |
+
+<!-- /ordering -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
