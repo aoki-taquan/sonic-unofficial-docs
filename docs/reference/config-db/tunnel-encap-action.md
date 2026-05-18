@@ -247,6 +247,43 @@ P4RT controller が単一 WriteRequest でこれらを混在させた場合で�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・他オブジェクトへの波及 (Phase F)
+
+`NextHopManager` が `set_p2p_tunnel_encap_nexthop` エントリを **SET / DEL** した際に、nexthop 本体以外で変化するシステム状態を記す。
+
+### SET 成功時の副作用
+
+| 副作用 | 対象 | 変化 | evidence |
+|--------|------|------|----------|
+| P4OidMapper — GRE Tunnel の ref_count インクリメント | `SAI_OBJECT_TYPE_TUNNEL` | `increaseRefCount(TUNNEL, tunnel_key)` → トンネル DEL がブロックされる | `next_hop_manager.cpp:541-545` |
+| P4OidMapper — Neighbor の ref_count インクリメント | `SAI_OBJECT_TYPE_NEIGHBOR_ENTRY` | `increaseRefCount(NEIGHBOR_ENTRY, neighbor_key)` → Neighbor DEL がブロックされる | `next_hop_manager.cpp:554-557` |
+| CRM カウンタのインクリメント | `CrmOrch::CRM_IPV4_NEXTHOP` / `CRM_IPV6_NEXTHOP` | `gCrmOrch->incCrmResUsedCounter()` → `show crm resources nexthop` の使用量が増加 | `next_hop_manager.cpp:558-562` |
+| P4OidMapper — nexthop OID の登録 | `SAI_OBJECT_TYPE_NEXT_HOP` | `setOID(NEXT_HOP, next_hop_key, oid)` → 下流 (WCMP / Route) が nexthop OID を参照可能になる | `next_hop_manager.cpp:568-569` |
+
+### DEL 成功時の副作用
+
+| 副作用 | 対象 | 変化 | evidence |
+|--------|------|------|----------|
+| P4OidMapper — GRE Tunnel の ref_count デクリメント | `SAI_OBJECT_TYPE_TUNNEL` | `decreaseRefCount(TUNNEL, tunnel_key)` → ref_count が 0 になるとトンネル DEL が可能になる | `next_hop_manager.cpp:613-616` |
+| P4OidMapper — Neighbor の ref_count デクリメント | `SAI_OBJECT_TYPE_NEIGHBOR_ENTRY` | `decreaseRefCount(NEIGHBOR_ENTRY, neighbor_key)` — DEL 時は GRE Tunnel から router_interface_id を再解決 | `next_hop_manager.cpp:625-635` |
+| CRM カウンタのデクリメント | `CrmOrch::CRM_IPV4_NEXTHOP` / `CRM_IPV6_NEXTHOP` | `gCrmOrch->decCrmResUsedCounter()` → `show crm resources nexthop` の使用量が減少 | `next_hop_manager.cpp:636-640` |
+| P4OidMapper — nexthop OID の削除 | `SAI_OBJECT_TYPE_NEXT_HOP` | `eraseOID(NEXT_HOP, next_hop_key)` → 下流 (WCMP / Route) からの OID 参照が無効化 | `next_hop_manager.cpp:643` |
+
+### 波及の連鎖
+
+nexthop を作成すると GRE Tunnel の ref_count が増加し、nexthop を削除するまでトンネルの DEL が `SWSS_RC_INVALID_PARAM` で失敗する。削除の逆順制約は以下の通り:
+
+```
+削除順: (WCMP / Route) → FIXED_NEXTHOP_TABLE (nexthop DEL) → FIXED_TUNNEL_TABLE (tunnel DEL) → Neighbor → RIF
+```
+
+nexthop DEL が成功するまで、CRM カウンタは nexthop 1 件分の消費として計上され続ける。CRM しきい値超過アラートは nexthop が解放されるまでクリアされない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-side.md`
+
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来デフォルト・暗黙挙動
 
