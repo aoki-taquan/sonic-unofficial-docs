@@ -471,3 +471,82 @@ APPL_DB の `ACL_RULE_TABLE` に未インストール状態のルールは存在
 
 > **証跡**: `dashenifwdorch.cpp` L131-146 (`lazyInit`), L212-347 (`DpuRegistry::populate`), L574-601 (`createAclRule`/`deleteAclRule`), L492-517 (`getVip`); `dashenifwdinfo.cpp` L18-32 (`LocalEniNH::resolve`), L40-64 (`RemoteEniNH::resolve`), L81-151 (`EniAclRule::processUpdate`), L153-207 (`EniAclRule::fire`), L266-312 (`EniInfo::create`/`destroy`), L314-355 (`EniInfo::update`).
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`DashEniFwdOrch` / `DpuRegistry` / `EniAclRule` が CONFIG_DB フィールド名・ACL テーブル名・優先度・MAC フォーマットをコード内定数で管理する。YANG 定義が存在しないため、これらの定数がスキーマの正本となる。出典は `sonic-swss/orchagent/dash/dashenifwdorch.h` と `sonic-swss/orchagent/dash/dashenifwdinfo.cpp`。
+
+### テーブル名定数 (`dashenifwdorch.h:63-66`)
+
+| 定数名 | 値 (CONFIG_DB テーブル名) | 備考 |
+|--------|--------------------------|------|
+| `DashEniFwd::DPU_TABLE` | `"DPU"` | ローカル DPU 登録テーブル |
+| `DashEniFwd::REMOTE_DPU_TABLE` | `"REMOTE_DPU"` | リモート DPU 登録テーブル |
+| `DashEniFwd::VDPU_TABLE` | `"VDPU"` | 仮想 DPU グループテーブル |
+| `DashEniFwd::VIP_TABLE` | `"VIP_TABLE"` | SmartSwitch VIP プレフィックステーブル |
+
+### ACL テーブル・タイプ名定数 (`dashenifwdorch.h:69-70`)
+
+| 定数名 | 値 | 用途 |
+|--------|----|------|
+| `DashEniFwd::TABLE_TYPE` | `"ENI_REDIRECT"` | APPL_DB `ACL_TABLE_TYPE_TABLE` のキー。最初の ENI 追加時に `addAclTable()` が自動生成 |
+| `DashEniFwd::TABLE` | `"ENI"` | APPL_DB `ACL_TABLE_TABLE` のキー。ENI ACL ルールの親テーブル名 |
+
+### フィールド名定数 (`dashenifwdorch.h:71-80`)
+
+| 定数名 | 値 (フィールド名) | 対応テーブル | 備考 |
+|--------|-----------------|------------|------|
+| `DashEniFwd::VDPU_IDS` | `"vdpu_ids"` | `DASH_ENI_FORWARD_TABLE` | ENI に関連する VDPU 名のコンマ区切りリスト |
+| `DashEniFwd::PRIMARY` | `"primary_vdpu"` | `DASH_ENI_FORWARD_TABLE` | 必須。プライマリ VDPU 名。ACL redirect 先を決定 |
+| `DashEniFwd::STATE` | `"state"` | `DPU` | `"down"` の場合のみ DpuRegistry 登録をスキップ |
+| `DashEniFwd::PA_V4` | `"pa_ipv4"` | `DPU` / `REMOTE_DPU` | Physical Address IPv4。必須フィールド |
+| `DashEniFwd::PA_V6` | `"pa_ipv6"` | `DPU` / `REMOTE_DPU` | Physical Address IPv6。省略可 |
+| `DashEniFwd::NPU_V4` | `"npu_ipv4"` | `REMOTE_DPU` | リモート SmartSwitch の NPU IP。必須フィールド |
+| `DashEniFwd::NPU_V6` | `"npu_ipv6"` | `REMOTE_DPU` | リモート SmartSwitch の NPU IPv6。省略可 |
+| `DashEniFwd::DPU_IDS` | `"main_dpu_ids"` | `VDPU` | VDPU が束ねる DPU 名のコンマ区切りリスト。必須 |
+
+### ACL ルール優先度定数 (`dashenifwdinfo.cpp:6`)
+
+| 定数名 | 値 | 用途 |
+|--------|----|------|
+| `EniAclRule::BASE_PRIORITY` | `9996` | ENI ACL ルールの基底優先度。実際の優先度は `BASE_PRIORITY + static_cast<int>(rule_type_t)` で計算 |
+
+`rule_type_t` の値と実際の ACL ルール優先度:
+
+| `rule_type_t` | enum 値 | ACL ルール優先度 |
+|--------------|---------|----------------|
+| `NO_TUNNEL_TERM` | `0` | `9996` |
+| `TUNNEL_TERM` | `1` | `9997` |
+
+Tunnel Termination ルールが常に NO_TUNNEL_TERM ルールより高優先度となるよう設計されている (`dashenifwdorch.h:46-48`)。
+
+### ACL マッチ・アクション定数 (`dashenifwdorch.cpp:605-643`)
+
+`addAclTable()` が APPL_DB に書き込む `ACL_TABLE_TYPE_TABLE` / `ACL_TABLE_TABLE` の内容:
+
+**ACL_TABLE_TYPE_TABLE (`ENI_REDIRECT`)**:
+
+| フィールド | 値 | 説明 |
+|-----------|----|------|
+| `matches` | `"DST_IP,INNER_DST_MAC,TUNNEL_TERM"` | ENI 転送ルールが使用する 3 マッチフィールド (ハードコード) |
+| `actions` | `"REDIRECT_ACTION"` | 転送先変更アクションのみをサポート |
+| `bind_point_types` | `"PORT,PORTCHANNEL"` | PHY ポートと LAG に対してテーブルをバインド |
+
+**ACL_TABLE_TABLE (`ENI`)**:
+
+| フィールド | 値 | 説明 |
+|-----------|----|------|
+| `policy_desc` | `"Contains Rule for DASH ENI Based Forwarding"` | テーブル説明文 (ハードコード) |
+| `type` | `"ENI_REDIRECT"` | `DashEniFwd::TABLE_TYPE` 定数と一致 |
+| `stage` | `"INGRESS"` | `STAGE_INGRESS` 定数。変更不可 |
+| `ports` | PHY / LAG ポートのコンマ区切り | `getBindPoints()` が `PORT_ROLE != "Dpc"` のポートを動的に列挙 |
+
+### MAC キーフォーマット規則 (`dashenifwdinfo.cpp:381-391`)
+
+ENI の MAC アドレス（例: `f4:93:9f:ef:c4:7e`）は `EniInfo::formatMac()` によってコロン除去・全大文字に変換され (`F4939FEFC47E`)、ACL ルールキー `ENI:<vnet>_<MAC>` の `<MAC>` 部分として使用される。この変換ルールはコードにのみ存在し、YANG や CONFIG_DB スキーマには記載されない。
+
+### `PORT_ROLE_DPC` による内部ポート除外
+
+`findInternalPorts()` (`dashenifwdorch.cpp:414-431`) は `CONFIG_DB:PORT` テーブルを走査し、`role == "Dpc"` (Data-plane Connection) のポートを「DPU 専用内部ポート」として ACL テーブルのバインドポイントから除外する。SmartSwitch では NPU-DPU 間の内部リンクが `PORT_ROLE_DPC` として登録されており、ENI ACL テーブルのバインド対象から自動的に除かれる。
+<!-- /constants -->
