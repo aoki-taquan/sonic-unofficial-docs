@@ -145,6 +145,49 @@ warm-restart 時、STATE_DB `VLAN_TABLE` に既存エントリがあり in-memor
 **cold reboot との差異**: コールドリブートでは STATE_DB がクリアされるため全 VLAN の再処理が走る。warm-reboot では Linux bridge がカーネルに残存するため、STATE_DB エントリ存在確認 → 再作成スキップが機能し、トラフィック断を最小化する。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## テーブル間クロスリファレンス (Phase C)
+
+> 根拠: `vlanmgr.cpp` L27-33, L318-322, L371-378, L437-443, L517-530, L642; `intfmgr.cpp` L649-659; `stpmgr.cpp` L210, L1276-1282; `natmgr.cpp` L100-108; `vxlanmgr.cpp` L537, L767-774; `nbrmgr.cpp` L48; `schema.h` L423。
+> evidence: `meta/_intermediate/cdb-flow/vlan-state-cross-refs.md`
+
+| 参照元 | 参照先 | 種別 | 必須条件 |
+|--------|--------|------|----------|
+| `VLAN_TABLE\|VlanN` キー | `CONFIG_DB VLAN\|VlanN` のキー | キー転写（1:1） | CONFIG_DB に VLAN SET が存在すること |
+| `vlanmgrd` の書込みトリガー | `CONFIG_DB VLAN\|VlanN` の SET/DEL | イベントトリガー | 常時 |
+| `vlanmgrd` の書込み前提 | `gMacAddress`（グローバル変数） | 起動前提チェック | syncd が Switch MAC を確定済みであること。未確定時は全書込みを保留 |
+| `intfmgrd` (`isIntfStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | VLAN インタフェース (SVI) 設定前 |
+| `stpmgrd` (`isVlanStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | STP VLAN/ポート設定前 |
+| `natmgrd` (`isPortStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | NAT エントリ設定前 |
+| `vxlanmgrd` (`isVlanStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | VXLAN tunnel member 設定前 |
+| `nbrmgrd` | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | ネイバーエントリ設定前 |
+
+### キー転写パターン
+
+`VLAN_TABLE` のキーは CONFIG_DB `VLAN` テーブルのキーと同一形式 `VlanN` で、変換なしに転写される:
+
+```
+CONFIG_DB VLAN|VlanN  →  vlanmgrd doVlanTask()  →  STATE_DB VLAN_TABLE|VlanN
+```
+
+### gMacAddress 依存の影響範囲
+
+`isVlanMacOk()` が false を返す間（起動直後、syncd が Switch MAC を応答するまで）、`doVlanTask()` は全 VLAN タスクを **キューに残したまま即リターン**する。この間は `VLAN_TABLE` への書き込みが完全に停止するため、下流の全 consumers（intfmgrd / stpmgrd / natmgrd / vxlanmgrd / nbrmgrd）は VLAN readiness を得られず、それぞれの処理も保留状態となる。
+
+### consumers の依存パターン（共通）
+
+6 つの consumers は全て同一パターンで `VLAN_TABLE` を参照する:
+
+1. `m_stateVlanTable.get(alias, temp)` で `STATE_DB VLAN_TABLE|VlanN` の存在を確認
+2. 存在すれば処理を進める / 存在しなければ `m_toSync` に残してスキップ（自動リトライ）
+
+値（`state=ok`）は参照されず、**エントリの存在のみが判定基準**。
+
+!!! note "nbrmgrd の参照は定義のみ"
+    `nbrmgrd` は `m_stateVlanTable` をコンストラクタで保持するが、コード中での直接 `get()` 呼び出しは確認されていない（`nbrmgr.cpp:48`）。ネイバー設定前の VLAN readiness 確認は `intfmgrd` が先行して処理する構造のため、間接的に依存している可能性がある。
+
+<!-- /cross-refs -->
+
 ## 読み取り主体
 
 | プロセス | ファイル | 用途 |
