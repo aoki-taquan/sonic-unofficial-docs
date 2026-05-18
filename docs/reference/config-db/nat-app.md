@@ -184,6 +184,57 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+`NatOrch` (`orchagent/natorch.cpp`) が APPL_DB NAT テーブル群を消費する際の各テーブルごとの失敗経路を示す。
+
+### NAT_TABLE / NAPT_TABLE / NAT_TWICE_TABLE / NAPT_TWICE_TABLE — SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| key セグメント数不正 (NAT_TABLE: 1 以外、NAPT_TABLE: 3 以外、TWICE_TABLE: 2 以外、TWICE_NAPT: 5 以外) | 各 `doTask()` 冒頭 | ERROR ログ → `erase(it)` → **恒久スキップ** | `natorch.cpp:2636-2640`, `natorch.cpp:2697-2701`, `natorch.cpp:2730-2734`, `natorch.cpp:2770-2774` |
+| `entry_type` が `"dynamic"` / `"static"` 以外 | `doNatTableTask()` / 他 | `assert` abort — orchagent プロセス停止 | `natorch.cpp:2659` |
+| dynamic SNAT エントリ数が `maxAllowedSNatEntries` に到達 | `addNatEntry()` | INFO ログ → `setTimeoutNotifier->send("AGEOUT-SINGLE-NAT")` → `return true`（エージアウト通知、エントリ破棄） | `natorch.cpp:1882-1893` |
+| `isNatEnabled() == false` (`admin_mode != "enabled"`) | `addNatEntry()` / `addNaptEntry()` 等 | WARN ログ → エントリを `m_natEntries` / `m_naptEntries` に保持 → `return true`（SAI は呼ばない） | `natorch.cpp:1907-1913`, `natorch.cpp:2009-2015`, `natorch.cpp:2137-2143`, `natorch.cpp:2294-2300` |
+| SAI `create_nat_entry` 失敗 (一般エラー) | `addHwDnatEntry()` / `addHwSnatEntry()` 等 | ERROR ログ → `handleSaiCreateStatus(SAI_API_NAT)` → `parseHandleSaiStatusFailure()` → 失敗時 `return false` → `doTask` で `it++`（次サイクルで再試行） | `natorch.cpp:774-782`, `natorch.cpp:1307-1315` |
+| DNAT エントリ処理時 NH 未解決 (`gNhTrackingSupported == true`) | `addDnatToNhCache()` 内 `m_neighOrch->getNeighborEntry` | `m_routeOrch->attach()` で Observer 登録 → SAI 投入を保留（キャッシュに滞留） | `natorch.cpp:390-430`, `natorch.cpp:407-414` |
+
+### NAT_TABLE / NAPT_TABLE / NAT_TWICE_TABLE / NAPT_TWICE_TABLE — DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| 削除対象エントリが内部キャッシュに存在しない | `removeNatEntry()` / `removeNaptEntry()` 等 | INFO ログ → `return true`（冪等・成功扱い） | `natorch.cpp:1944-1948`, `natorch.cpp:2069-2073` |
+| エントリが `addedToHw == false`（SAI 未登録） | `removeNatEntry()` / 他 | INFO ログ → キャッシュのみ削除 → `return true` | `natorch.cpp:1955-1960` |
+| SAI `remove_nat_entry` 失敗 | `removeHwDnatEntry()` 等 | ERROR ログ → `handleSaiRemoveStatus(SAI_API_NAT)` → `parseHandleSaiStatusFailure()` → `return false` → `doTask` で `it++` | `natorch.cpp:928-936`, `natorch.cpp:1017-1025` |
+
+### NAT_GLOBAL_TABLE — 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| key が `"Values"` 以外 | `doNatGlobalTableTask()` 冒頭 | ERROR ログ → `erase(it)` → **恒久スキップ** | `natorch.cpp:2924-2928` |
+| `admin_mode` が `"enabled"` / `"disabled"` 以外 | `doNatGlobalTableTask()` | `assert` abort — orchagent プロセス停止 | `natorch.cpp:2938` |
+| SAI `set_switch_attribute(SAI_SWITCH_ATTR_NAT_ENABLE)` 失敗 | `enableNatFeature()` / `disableNatFeature()` | ERROR ログ → `handleSaiSetStatus()` → ログのみ（処理は続行） | `natorch.cpp:2567-2572` |
+| `gIsNatSupported == false` でかつ `admin_mode = "enabled"` | `enableNatFeature()` 冒頭 | NOTICE ログ → `return`（SAI 操作・タイマ開始・キャッシュ投入すべてスキップ） | `natorch.cpp:2541-2544` |
+
+### NAT_DNAT_POOL_TABLE — 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| key セグメント数が 1 以外 | `doDnatPoolTableTask()` 冒頭 | ERROR ログ → `erase(it)` → **恒久スキップ** | `natorch.cpp:2983-2987` |
+| 重複 SET（既にキャッシュに存在） | `doDnatPoolTableTask()` SET 分岐 | INFO ログ → `erase(it)` → 成功扱い（冪等） | `natorch.cpp:2995-2999` |
+| `isNatEnabled() == false` | `addHwDnatPoolEntry()` 冒頭 | WARN ログ → エントリを `m_dnatPoolEntries` に保持 → `return true`（SAI は呼ばない） | `natorch.cpp:1789-1793` |
+| SAI `create_nat_entry` (DNAT POOL) 失敗 | `addHwDnatPoolEntry()` | ERROR ログ → `handleSaiCreateStatus(SAI_API_NAT)` → `return false` → `doDnatPoolTableTask` で `it++` | `natorch.cpp:1812-1820` |
+| DEL 対象が `m_dnatPoolEntries` に存在しない | `doDnatPoolTableTask()` DEL 分岐 | INFO ログ → `erase(it)` → 成功扱い（冪等） | `natorch.cpp:3015-3019` |
+
+### 補足
+
+- **assert abort**: `entry_type` / `admin_mode` の値不正は `assert` で即時 abort する。CLI / natmgrd / natsyncd 経由の書き込みは必ず合法値を使用するため、直接 APPL_DB に不正値を書いた場合にのみ発生する。
+- **恒久スキップと再試行の違い**: key セグメント数不正 / key 不正は `erase(it)` で恒久スキップ（再投入なし）。SAI 失敗は `it++` で次サイクルに再試行される。
+- **`maxAllowedSNatEntries == 0`** の場合（SAI クエリ失敗時のデフォルト）、dynamic SNAT 上限チェックは行われない（`0 == 0` は false 扱いとならないよう初期化時に明示: `natorch.cpp:112-121`）。実際には `totalSnatEntries == 0` かつ `maxAllowedSNatEntries == 0` でも上限に達したとみなされエージアウト通知が発生するリスクがある。
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
