@@ -295,6 +295,60 @@ sudo grep -iE "host_tx_ready|supported_speed|oper speed|oper fec" /var/log/swss/
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/ports-status-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`portsyncd/linksync` と `PortsOrch` が STATE_DB `PORT_TABLE` に書き込む際に使用する、コード上で固定された文字列定数・列挙値マッピングを列挙する。これらは YANG スキーマや CONFIG_DB 設定では変更できない。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/ports-status-constants.md`
+
+### linksync 由来の定数
+
+| フィールド | 定数値 | 行番号 | 説明 |
+|-----------|--------|--------|------|
+| `state` | `"ok"` | `linksync.cpp:196` | RTM_NEWLINK 受信時に無条件で書き込む唯一の値。エントリの存在 = `"ok"` が設計上の不変条件 |
+| `admin_status` | `"up"` / `"down"` | `linksync.cpp:197` | `flags & IFF_UP` の bool を二値文字列化した定数 |
+| `netdev_oper_status` | `"up"` / `"down"` | `linksync.cpp:201` | `flags & IFF_RUNNING` の bool を二値文字列化した定数 |
+
+### PortsOrch 由来の定数
+
+| フィールド | 定数値 | 行番号 | 説明 |
+|-----------|--------|--------|------|
+| `speed` | `"N/A"` | `portsorch.cpp:9855` | `speed == 0` または SAI 取得失敗時のフォールバックリテラル |
+| `fec` | `"N/A"` | `updateDbPortOperFec()` | FEC モード取得失敗時のフォールバックリテラル |
+| `supported_fecs` | `"N/A"` | `portsorch.cpp:3292` | サポート FEC モードセットが空集合の場合にリストへ push するシングルエントリ文字列 |
+| `host_tx_ready` | `"false"` | `portsorch.cpp:2202, 2236, 2248` | initHostTxReadyState() 初期値・SAI 失敗時・admin DOWN 時のフォールバック値 |
+| `host_tx_ready` | `"true"` | `portsorch.cpp:2256` | admin UP + SAI 成功 + CMIS 非同期非対応時の書込み値 |
+| `rmt_adv_speeds` | `"N/A"` | `portsorch.cpp:11327` | admin DOWN または `getPortAdvSpeeds()` 失敗時のフォールバック |
+| `phy_ctrl_unreliable_los` | `"true"` / `"false"` | `portsorch.cpp:5200` | `p.m_unreliable_los` を `"true"/"false"` で `hset` する二値定数 |
+| `link_training_status` | `"off"` | `portsorch.cpp:11351` | LT 無効 / admin DOWN / `m_cap_lt==0` 時の初期デフォルト |
+| `link_training_status` | `"on"` | `portsorch.cpp:11362` | LT 有効だが SAI RX status 取得失敗時の中間状態値 |
+
+### `link_training_status` SAI 列挙型マッピング定数
+
+`portsorch.cpp` ファイルスコープの `static map` として定義されたハードコード定数。YANG / CONFIG_DB での変更不可。
+
+```cpp
+// portsorch.cpp:180-192
+static map<sai_port_link_training_failure_status_t, string> link_training_failure_map =
+{
+    { SAI_PORT_LINK_TRAINING_FAILURE_STATUS_NO_ERROR,           "none"       },
+    { SAI_PORT_LINK_TRAINING_FAILURE_STATUS_FRAME_LOCK_ERROR,   "frame_lock" },
+    { SAI_PORT_LINK_TRAINING_FAILURE_STATUS_SNR_LOWER_THRESHOLD,"snr_low"    },
+    { SAI_PORT_LINK_TRAINING_FAILURE_STATUS_TIME_OUT,           "timeout"    }
+};
+
+static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_map =
+{
+    { SAI_PORT_LINK_TRAINING_RX_STATUS_NOT_TRAINED, "not_trained" },
+    { SAI_PORT_LINK_TRAINING_RX_STATUS_TRAINED,     "trained"     }
+};
+```
+
+`refreshPortStateLinkTraining()` (`portsorch.cpp:11343`) がこれらのマップを参照して `link_training_status` の文字列値を決定する。`"none"` は `NO_ERROR` 状態（フェイルマップの初期エントリだが `link_training_status` には書かれず、`"off"` または `"trained"` が代わりに書かれる）。
+
+<!-- /constants -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
