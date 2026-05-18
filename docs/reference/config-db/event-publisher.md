@@ -145,6 +145,29 @@ flowchart LR
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`eventd` がイベントフレームワーク設定を処理する際に暗黙的に依存する外部リソースとの関係を示す。
+
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp stats_collector::start() L172-225 / run_eventd_service() L659-704 / sonic-swss-common/common/events_common.h INIT_CFG_PATH:129 / sonic-swss-common/common/schema.h COUNTERS_EVENTS_TABLE:266, COUNTERS_EVENTS_PUBLISHED:275, COUNTERS_EVENTS_MISSED_CACHE:278 -->
+
+| 依存方向 | 参照元 | 参照先 | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|--------|--------|--------------|---------|------|
+| eventd → `/etc/sonic/init_cfg.json` | `get_config()` — lazy 初期化 (`events_common.cpp:78`) | ファイルシステム (`INIT_CFG_PATH`) | `"events"` キー配下 | 起動時に ZMQ エンドポイント・キャッシュ上限・統計間隔を一度だけ読み込む。ファイル不在でも `cfg_default` でフォールバック | `events_common.h:129`, `events_common.cpp:38-83` |
+| eventd → COUNTERS_DB | `stats_collector::start()` — `m_counters_db` 接続 | `COUNTERS_DB` (DB index 2) | `COUNTERS_EVENTS\|published`, `COUNTERS_EVENTS\|missed_to_cache` | `stats_upd_secs` 間隔でパブリッシュ数・キャッシュ未達数を COUNTERS_DB へ書き込む。COUNTERS_DB 接続失敗は `RET_ON_ERR` でサービス異常終了 | `eventd.cpp:178-210` |
+| パブリッシャー (全コンテナ) → eventd | `events_init_publisher()` — ZMQ connect | ZMQ XSUB `:5570` (`xsub_path`) | N/A (ZMQ socket) | swss / syncd / bgp / dhcp-relay 等が `events_init_publisher()` でこのエンドポイントに接続してイベントを発行する。`xsub_path` 変更時は全コンテナ再起動が必要 | `events_common.cpp:80-81`, `eventd.cpp:80-81` |
+| サブスクライバー (telemetry 等) → eventd | `events_init_subscriber()` — ZMQ connect | ZMQ XPUB `:5571` (`xpub_path`) | N/A (ZMQ socket) | telemetry / sonic-gnmi が `events_init_subscriber()` でこのエンドポイントに接続してイベントストリームを受信する | `events_common.cpp:83-87`, `eventd.cpp:83-87` |
+| telemetry → eventd | `event_service` REQ/REP — `EVENT_CACHE_INIT` / `EVENT_CACHE_STOP_SUBCRIBER` / `EVENT_CACHE_READ` リクエスト | ZMQ REQ/REP `:5572` (`req_rep_path`) | N/A (ZMQ socket) | telemetry コンテナが起動時に eventd へキャッシュ転送を要求する。この接続が確立するまで eventd はキャッシュを保持し続ける | `eventd.cpp:682`, `eventd.cpp:706-819` |
+
+### 解決タイミング
+
+- **`init_cfg.json` 読み込み**: `eventd` 起動中の `get_config_data(CACHE_MAX_CNT, ...)` 呼び出し時点（`eventd.cpp:674`）で `cfg_data` が確定する。同一 eventd プロセスライフタイム内では再読み込みされない。
+- **COUNTERS_DB 接続**: `stats_collector::start()` (`eventd.cpp:684`) が `stats_instance` スレッドを起動し、`COUNTERS_DB` への接続に失敗した場合 `stats_instance.is_running()` が偽を返し eventd サービスが異常終了する (`eventd.cpp:704`)。
+- **ZMQ エンドポイント依存**: パブリッシャー・サブスクライバーは `zmq_connect()` を lazy で呼び出すため接続自体はエラーにならないが、`eventd_proxy` が XSUB/XPUB にバインドする前に publish されたメッセージは消失する。`docker-eventd` は他コンテナの起動に先行するよう systemd 依存関係で制御される。
+
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
