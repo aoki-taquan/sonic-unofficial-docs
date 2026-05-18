@@ -231,6 +231,38 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-cross-refs.md -->
+
+`PBH_CAPABILITIES` は `PbhCapabilities::writePbhVendorCapabilitiesToDb()` が起動時 1 回のみ書き込む STATE_DB テーブルである。書き込まれるフィールド値はすべてコンストラクタ内でハードコードされており、CONFIG_DB / APPL_DB / SAI への実行時参照はない。
+
+### 書き込み側の参照先
+
+| 参照先リソース | 参照方向 | 条件 | evidence |
+|--------------|---------|------|---------|
+| `STATE_DB` 接続 (`PbhCapabilities::stateDb`) | 書き込み先 DB | 必須。static メンバとして orchdaemon 起動の最初期に確立される | `pbhcap.cpp:288` |
+| `ASIC_VENDOR` 環境変数 | env var 読み取り → ベンダー分岐 | 任意。未設定時は `GENERIC` platform へ fallback。値は `"mellanox"` のみ分岐 | `pbhcap.cpp:314–329` |
+| CONFIG_DB `PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` | **参照なし** | フィールド値はコンストラクタ内のハードコード定数のみ。CONFIG_DB エントリは読まない | `pbhcap.cpp:107–124` |
+| APPL_DB / SAI | **参照なし** | SAI クエリなし。ベンダー判別は env var のみ | `pbhcap.cpp:310–334` |
+
+### 読み取り側 (sonic-utilities) の参照先
+
+`config pbh` コマンドは `pbh_capabilities_query(db, key)` で `STATE_DB.PBH_CAPABILITIES|<key>` を `hgetall` し、操作可否を検証する。
+
+| 参照先 STATE_DB キー | 参照方向 | 使用箇所 |
+|--------------------|---------|---------|
+| `PBH_CAPABILITIES\|table` | 読み取り | `config pbh table add/update/del` (`pbh.py:1351`) |
+| `PBH_CAPABILITIES\|rule` | 読み取り | `config pbh rule add/update/del` (`pbh.py:1090, 1218`) |
+| `PBH_CAPABILITIES\|hash` | 読み取り | `config pbh hash add/update/del` (`pbh.py:781`) |
+| `PBH_CAPABILITIES\|hash-field` | 読み取り | `config pbh hash-field add/update/del` (`pbh.py:670`) |
+
+!!! note "orchagent 未起動時の挙動"
+    `config pbh` コマンドが orchagent 起動前に実行されると、`STATE_DB` に `PBH_CAPABILITIES` キーが存在しないため `pbh_capabilities_query()` が空 dict を返す。各 `config pbh` サブコマンドはこれを「capability 不明 = 操作拒否」と扱い、エラーメッセージを出力する。明示的な orchagent 起動待ち機構は CLI 側に存在しない。
+
+<!-- /cross-refs -->
+
 ## 関連 CONFIG_DB / CLI
 
 - 設定元: [`PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD`](pbh.md) (CONFIG_DB)
