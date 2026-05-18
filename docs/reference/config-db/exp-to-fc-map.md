@@ -294,3 +294,25 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 
 > **Evidence**: `qosorch.cpp:124-201` (QosMapHandler::processWorkItem); `qosorch.cpp:2046-2134` (handlePortQosMapTable); `qosorch.cpp:1132-1213` (ExpToFcMapHandler)
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-cross-refs.md`
+
+`EXP_TO_FC_MAP` が関わる CONFIG_DB テーブル間の暗黙参照を `qosorch.cpp` から抽出した。
+
+| 参照方向 | 参照元テーブル | フィールド | SAI 属性 | evidence |
+|---------|-------------|-----------|---------|---------|
+| 被参照 (referenced by) | `PORT_QOS_MAP` | `exp_to_fc_map` | `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` | `qosorch.cpp:72, 112` |
+| 参照管理 | `handlePortQosMapTable` | SET 時 object_id 解決 / DEL 時参照解除 | — | `qosorch.cpp:2046, 2124-2134` |
+| SWITCH レベル適用 | なし | EXP_TO_FC は SWITCH 直接適用なし | — | `qosorch.cpp:2011-2013` |
+| FC 値上限検証 | `NhgMapOrch::getMaxNumFcs()` | `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` から取得した上限と照合 | — | `nhgmaporch.cpp:299-325` |
+
+- `PORT_QOS_MAP.<port>.exp_to_fc_map` にマップ名を設定すると、`QosOrch` が `EXP_TO_FC_MAP` の SAI オブジェクト ID を `resolveFieldRefValue()` で解決しポートへ適用する (`SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP`)。
+- `PORT_QOS_MAP` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留（`m_pendingRemove=true`）。
+- `SWITCH` (`PORT_QOS_MAP|global`) への直接適用は `DSCP_TO_TC_MAP` のみ対象。`handleGlobalQosMap` は `exp_to_fc_map` フィールドを `LOG_WARN("Qos map type %s is not supported at global level")` として無視する（`qosorch.cpp:2011-2013`）。
+- FC 値の有効範囲は `NhgMapOrch::getMaxNumFcs()` が `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を SAI から取得して決定する。スイッチが FC 未サポートの場合 `max_num_fcs=0` となり全 FC 値が `task_invalid_entry` で reject される。
+- TUNNEL_DECAP_TABLE や他のオーケストレータからの参照はない（MPLS EXP は Port QoS レイヤのみ）。
+
+<!-- /cross-refs -->
