@@ -247,6 +247,29 @@ DpuStateUpdater.deinit()  ← dpu_data_plane_state, dpu_control_plane_state を 
 **違反時**: 逆順でも機能上の問題は発生しないが、`show dpu` が終了処理中に瞬間的に `Partial Online` を表示する可能性がある。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DPU_STATE` は CHASSIS_STATE_DB への **書き出し専用** テーブル。`SmartSwitchModuleUpdater` と `DpuStateUpdater` が書き手であり、フィールド値の算出に以下の外部テーブル / リソースを**暗黙に参照**する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `APPL_DB PORT_TABLE\|<port>.oper_status` | 読み取り (DP state 算出) | platform API `get_dataplane_state()` が `NotImplementedError` を返す場合のみ。全ポートが `'up'` なら DP state = `'up'` | `chassisd:1267-1275` (`_get_data_plane_state_common`) |
+| `STATE_DB SYSTEM_READY\|SYSTEM_STATE.Status` | 読み取り (CP state 算出) | platform API `get_controlplane_state()` が `NotImplementedError` を返す場合のみ。値が `'up'` なら CP state = `'up'` | `chassisd:1277-1284` (`_get_control_plane_state_common`) |
+| `CONFIG_DB PORT\|<port>` | キー列挙 (DP state 算出) | `_get_data_plane_state_common()` が CONFIG_DB の `PORT` テーブルを走査してポート一覧を取得する | `chassisd:1268` (`self.config_db.get_table('PORT')`) |
+| Platform API `chassis.get_dataplane_state()` | platform 呼び出し (DP state) | platform API が実装されている場合に優先。`NotImplementedError` 時は `APPL_DB PORT_TABLE` fallback へ | `chassisd:1249-1253` |
+| Platform API `chassis.get_controlplane_state()` | platform 呼び出し (CP state) | platform API が実装されている場合に優先。`NotImplementedError` 時は `STATE_DB SYSTEM_READY` fallback へ | `chassisd:1254-1258` |
+| Platform API `chassis.get_module().get_oper_status()` | platform 呼び出し (midplane state) | 起動時 `set_initial_dpu_admin_state()` で DPU_STATE 初期値を決定する | `chassisd:1377` |
+| `CHASSIS_STATE_DB DPU_STATE\|DPU<N>` (自己参照) | 前回値読み取り (変化検知) | `DpuStateUpdater.update_state()` が前回 CP/DP state と比較して変化した場合のみ書き込む | `chassisd:1306,1312` |
+
+!!! note "書き手は chassisd のみ"
+    `DPU_STATE` テーブルへの書き込みは `SmartSwitchModuleUpdater` / `DpuStateUpdater` / `DpuStateManagerTask` のみが行う。`show dpu` CLI、`DpuStateManagerTask` の `SubscriberStateTable` は読み取り専用。
+
+!!! note "platform API 実装有無でロジックが切り替わる"
+    `DpuStateUpdater.__init__()` (`chassisd:1246-1258`) で `get_dataplane_state()` / `get_controlplane_state()` の実装有無を確認し、`NotImplementedError` であれば fallback 関数 (`_get_data_plane_state_common` / `_get_control_plane_state_common`) を使用する。つまり同じ DP/CP state フィールドでも **platform 実装あり** の場合と **fallback (DB 参照)** の場合で参照先テーブルが異なる。
+
+<!-- /cross-refs -->
+
 ## 購読者
 
 - `chassisd` (`SmartSwitchModuleUpdater` / `DpuStateUpdater`) — 書き込み元
