@@ -140,6 +140,27 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`PBH_RULE` は CONFIG_DB の **読み手（consumer）専用**テーブルで、`PbhOrch` が書き込む STATE_DB / APPL_DB エントリは存在しない。ここでの暗黙参照は、SAI 反映の前提となる他テーブル・他 Orch への依存を指す。
+
+<!-- evidence: pbhorch.cpp:90-95 (constructor), pbhorch.cpp:633 (addAclRule), pbhorch.cpp:1808 (allPortsReady), pbhmgr.cpp:83-135 (validateDependencies / incRefCount) -->
+
+| 参照先テーブル / リソース | YANG leafref | 実行時依存 | 非充足時の挙動 |
+|--------------------------|:------------:|----------|--------------|
+| `PBH_TABLE` (CONFIG_DB) | ✅ | `validateDependencies(rule)` が `tableMap.find(rule.table)` で存在確認（`pbhmgr.cpp:83-88`）。成功後 `incRefCount` が `PBH_TABLE` の refCount を +1 | retry loop — TABLE 作成後に自動回復 |
+| `PBH_HASH` (CONFIG_DB) | ✅ | `validateDependencies(rule)` が `hashMap.find(rule.hash.value)` で存在確認（`pbhmgr.cpp:88-94`）。成功後 `incRefCount` が `PBH_HASH` の refCount を +1 | retry loop — HASH 作成後に自動回復 |
+| `AclOrch`（Orch 間依存） | ✗ | `createPbhRule()` が `this->aclOrch->addAclRule(pbhRule, rule.table)` を呼ぶ（`pbhorch.cpp:633`）。`updatePbhRule()` は `getAclRule()` + `updateAclRule()`、`removePbhRule()` は `removeAclRule()` を呼ぶ | ERROR ログ + `return false` → retry loop |
+| `PortsOrch`（グローバルゲート） | ✗ | `PbhOrch::doTask()` (`pbhorch.cpp:1808`) が `portsOrch->allPortsReady()` を確認。false の間は PBH 全テーブルの処理がブロック | 全 PBH 処理ブロック — PortsOrch 完了後に自動回復 |
+| SAI ACL API（間接） | ✗ | `AclOrch::addAclRule()` 内で `sai_acl_api->create_acl_entry()` を呼ぶ。SAI 失敗は `addAclRule()` → `createPbhRule()` → retry loop として伝播 | ERROR ログ + retry loop |
+
+!!! note "DEL 方向の逆参照"
+    `PBH_TABLE` および `PBH_HASH` が `PBH_RULE` の生存中に DEL されても、refCount > 0 のため `hasDependencies()` (`pbhmgr.cpp:75-78`) が削除を保留する。`PBH_RULE` を先に DEL して `decRefCount` を呼ぶことで refCount が 0 に戻り、`PBH_TABLE` / `PBH_HASH` の削除が可能になる（Phase B 依存 5 も参照）。
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/pbh-rule-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## key 構造
 
 ```text
