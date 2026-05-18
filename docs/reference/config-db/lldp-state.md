@@ -450,7 +450,6 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 | `CFG_PORT_TABLE_NAME` | CONFIG_DB | ポートの `alias` / `description` を読取 |
 | `CFG_MGMT_INTERFACE_TABLE_NAME` | CONFIG_DB | 管理 IP を読取 |
 | `APP_PORT_TABLE_NAME` | APPL_DB | `PortInitDone` / `PortConfigDone` イベントを購読 |
-
 <!-- /side-effects -->
 
 <!-- defaults -->
