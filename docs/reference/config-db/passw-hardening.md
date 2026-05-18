@@ -223,6 +223,29 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 > `UID_MAX` または `UID_MIN` がファイルに存在しない場合、`get_normal_accounts()` は `False` を返し、`chage` は一切実行されない (hostcfgd L1024-1026)。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `PASSW_HARDENING` テーブルの変更に伴って `hostcfgd` の `PasswHardening` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイルシステム書き換えに閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `PasswHardening` クラス内に `ProducerStateTable` / `Table.set` 呼出が 0 件 (`sonic-host-services/scripts/hostcfgd:873-1051` を `set(`/`hset`/`Producer`/`Notification` で grep して 0 ヒット) |
+| STATE_DB | なし | `hostcfgd` の `state_db_conn` は `FipsCfg` / `RestartWaiter` 専用。`PasswHardening` は STATE_DB に参照・書込を行わない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし |
+| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由 (Linux host daemon)。ログ出力は `syslog()` 直呼び出しのみ |
+
+### ファイルシステムへの副次書き換え（DB 外）
+
+| 対象ファイル | 操作 | 発動条件 | evidence |
+|---|---|---|---|
+| `/etc/pam.d/common-password` | Jinja2 テンプレート展開 → `.tmp` 経由 atomic rename | `PASSW_HARDENING` SET/DEL 毎回 | `hostcfgd:944-958` |
+| `/etc/login.defs` | `modify_single_file_inplace()` で `PASS_MAX_DAYS` / `PASS_WARN_AGE` を sed 書き換え | 現在値と変化がある場合のみ (`is_passwd_aging_expire_update()` でチェック) | `hostcfgd:961-975` |
+| `chage` コマンド実行 | 既存 normal ユーザ全員のパスワード有効期限を更新 | `/etc/login.defs` 書き換えと同タイミング | `hostcfgd:1019-1032` |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/passw-hardening-side.md` を参照。
+<!-- /side-effects -->
+
 ## 購読者
 
 - `hostcfgd` (`host-services` パッケージ)。`PasswHardening.load()` が `PASSW_HARDENING` テーブルを読み込み、Jinja2 テンプレート (`common-password.j2`) を展開して `/etc/pam.d/common-password` を書き換え、`/etc/login.defs` の `PASS_MAX_DAYS` / `PASS_WARN_AGE` を `sed` で更新する
