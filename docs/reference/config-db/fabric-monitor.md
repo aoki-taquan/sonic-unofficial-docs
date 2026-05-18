@@ -146,6 +146,40 @@ FABRIC_MONITOR|FABRIC_MONITOR_DATA
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `fabricmgr.cpp`, `fabricportsorch.cpp` 全行精読 (2026-05-18)
+
+`FABRIC_MONITOR` テーブルは YANG leafref を持たないが、`fabricmgrd` / `FabricPortsOrch` が実行時に以下のテーブル・リソースを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `FABRIC_MONITOR_TABLE\|FABRIC_MONITOR_DATA` (APPL_DB) | APPL_DB | 書き込み (fabricmgrd) / 読み取り (FabricPortsOrch) | なし | 実質必須 | `fabricmgr.cpp:112-116`, `fabricportsorch.cpp:139,444` |
+| `FABRIC_PORT_TABLE\|<lane>` (APPL_DB) | APPL_DB | 読み取り (`isolateStatus`) | なし | 監視処理時必須 | `fabricportsorch.cpp:590-613` |
+| `FABRIC_PORT_TABLE\|<lane>` (STATE_DB) | STATE_DB | 読み取り / 書き込み (poll カウンタ・isolate 状態) | なし | 監視処理時必須 | `fabricportsorch.cpp:619,756-959` |
+| `FABRIC_CAPACITY_TABLE` (STATE_DB) | STATE_DB | 書き込み (capacity 警告判定結果) | なし | `monCapacityThreshWarn` 有効時 | `fabricportsorch.cpp:1054-1095` |
+| `COUNTERS_TABLE\|<port_oid>` (COUNTER_DB) | COUNTER_DB | 読み取り (SAI ポート統計) | なし | 監視処理時必須 | `fabricportsorch.cpp:500-529` |
+| SAI Switch (`SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS` / `SAI_SWITCH_ATTR_FABRIC_PORT_LIST`) | SAI | 読み取り (ファブリックポートリスト) | なし | 起動時必須 | `fabricportsorch.cpp:171-228` |
+
+### APPL_DB `FABRIC_MONITOR_TABLE` — 中継バッファ（双方向参照）
+
+`fabricmgrd` は CONFIG_DB の `FABRIC_MONITOR` 変化を検知すると、フィールド単位で `FABRIC_MONITOR_TABLE|FABRIC_MONITOR_DATA` (APPL_DB) に書き込む（`fabricmgr.cpp:112-116`）。`FabricPortsOrch` はポーリング毎にこのエントリを `hgetall` で一括読み込み（`fabricportsorch.cpp:444`）、閾値・`monState` を取得する。CONFIG_DB に値があっても APPL_DB への書込みが完了するまで orchagent 側には反映されない。
+
+### STATE_DB `FABRIC_PORT_TABLE` — 監視状態の永続化
+
+`updateFabricDebugCounters()` は各ファブリックポートの `STATUS` / `POLL_WITH_ERRORS` / `POLL_WITH_NO_ERRORS` / `AUTO_ISOLATED` などを `m_stateTable` (STATE_DB `FABRIC_PORT_TABLE`) から読み取り、計算後に同テーブルへ書き戻す（`fabricportsorch.cpp:619-959`）。このエントリが存在しない場合は処理全体を early return する（`fabricportsorch.cpp:622-624`）。**FABRIC_PORT_TABLE エントリが STATE_DB に存在することが監視処理の前提条件**。
+
+### COUNTER_DB `COUNTERS_TABLE` — SAI ポート統計
+
+CRC エラー率の判定には SAI から収集された `SAI_PORT_STAT_IF_IN_ERRORS`（CRC エラー数）と `SAI_PORT_STAT_IF_IN_FABRIC_DATA_UNITS`（受信セル数）を `COUNTERS_TABLE` から取得する（`fabricportsorch.cpp:500`）。カウンタが存在しない場合はゼロ値として扱われ、エラーなしと判断される。
+
+### SAI Fabric Port List — 処理全体の前提
+
+`getFabricPortList()` が SAI から `SAI_SWITCH_ATTR_FABRIC_PORT_LIST` を取得し `m_getFabricPortListDone=true` をセットするまで、`updateFabricDebugCounters()` / `updateFabricPortState()` / `generateQueueStats()` はすべて冒頭で early return する（`fabricportsorch.cpp:262,329,420`）。FABRIC_MONITOR の設定が完了していても、SAI 初期化が遅延すると監視処理が開始されない。
+
+<!-- /cross-refs -->
+
 ## 購読者
 
 - ファブリックモニタ daemon（プラットフォーム / [orchagent](../../reference/glossary.md#term-orchagent) の FabricPortOrch 拡張）
