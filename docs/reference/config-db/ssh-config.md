@@ -440,4 +440,30 @@ CONFIG_DB フィールド名から sshd_config ディレクティブ名へのマ
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えに閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `SshServer.set_policies()` / `PamLimitsCfg.render_conf_file()` 内に `set(`/`hset`/`Producer`/`Notification` の呼出 0 件 (`hostcfgd:L1110-1479`) |
+| STATE_DB | なし | `SshServer` / `PamLimitsCfg` は `state_db_conn` を保持しない。STATE_DB 書込は `FipsCfg` のみ (`hostcfgd:L1759-1821`) |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし |
+| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由。`SSH_SERVER` を購読する orchagent は存在しない |
+
+### ファイルシステムへの副次書込（DB 外）
+
+`ssh_handler` が `sshscfg.policies_update()` および `pamLimitsCfg.update_config_file()` を逐次呼び出すことで以下のホスト OS ファイルが書き換えられる:
+
+| 書込先ファイル | 処理クラス | 契機 |
+|-------------|----------|------|
+| `/etc/ssh/sshd_config` | `SshServer.set_policies()` | `SSH_SERVER\|POLICIES` SET 時 (全フィールド or ロールバック) |
+| `/etc/ssh/sshd_config.tmp` (中間) | `SshServer.set_policies()` | `sshd -T` 検証用一時ファイル (成功時 rename、失敗時削除) |
+| `/etc/security/limits.conf` | `PamLimitsCfg.render_conf_file()` | `max_sessions` 変更時 (`ssh_handler` 経由) |
+| `/etc/pam.d/pam-limits-conf` | `PamLimitsCfg.render_conf_file()` | 同上 |
+
+> 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ssh-config-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
