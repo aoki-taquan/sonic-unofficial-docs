@@ -176,6 +176,38 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 <!-- evidence: sonic-host-services/scripts/hostcfgd L2410-2415, L1725-1726; sonic-syslog.yang must "(../format != 'standard')" -->
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `hostcfgd` (`RSyslogCfg.update_rsyslog_config`, `rsyslog_handler`)・`rsyslog.conf.j2` 全行精読 (2026-05-18)
+> 詳細証跡: `meta/_intermediate/cdb-flow/syslog-config-cross-refs.md`
+
+`SYSLOG_CONFIG` テーブルは実行時に以下のテーブルを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `SYSLOG_SERVER` | CONFIG_DB | 読み取り (毎回ペア取得 + テンプレート展開) | なし | 任意 (0件でも動作) | `hostcfgd:2410-2415`, `rsyslog.conf.j2:84-125` |
+| `DEVICE_METADATA\|localhost.hostname` | CONFIG_DB | 読み取り (welf_firewall_name フォールバック) | なし | 条件付き必須 (format=welf かつ welf_firewall_name 未設定時) | `rsyslog.conf.j2:52` |
+| `SYSLOG_CONFIG_FEATURE` | CONFIG_DB | 参照元として rate-limit 提供 (ホスト側のみ) | なし | アーキテクチャ上の独立 | `rsyslog-container.conf.j2` defaults |
+
+### SYSLOG_SERVER — 常にペアで読まれる
+
+`rsyslog_handler()` は `SYSLOG_CONFIG` と `SYSLOG_SERVER` を同時に `get_table()` で取得し (`hostcfgd:2410-2415`)、`RSyslogCfg.update_rsyslog_config(rsyslog_config, rsyslog_servers)` へ渡す。`rsyslog.conf.j2` の `{% for server in SYSLOG_SERVER %}` ループ (L84-125) が全サーバエントリを展開する。`SYSLOG_CONFIG|GLOBAL.format = welf` の場合、テンプレート内でサーバ側の出力テンプレートも `WelfRemoteFormat` に切り替わるため (L99-105)、`SYSLOG_CONFIG.format` 値が `SYSLOG_SERVER` の出力形式を間接的に制御する[^cross-server]。
+
+### DEVICE_METADATA|localhost.hostname — welf_firewall_name フォールバック
+
+`rsyslog.conf.j2` L52: `{% set fw_name = gconf.get('welf_firewall_name', hostname) %}` — `welf_firewall_name` が未設定の場合、`sonic-cfggen -d` が `DEVICE_METADATA|localhost.hostname` から取得した `hostname` 変数がフォールバックとして WELF ログのファイアウォール名になる[^cross-hostname]。`format = welf` 時に `welf_firewall_name` を省略すると、意図しないホスト名がログに含まれる。
+
+### SYSLOG_CONFIG_FEATURE との独立性
+
+`SYSLOG_CONFIG|GLOBAL` の rate-limit 設定はホスト側 rsyslog にのみ反映される。各コンテナの rsyslog は `containercfgd` が `rsyslog-container.conf.j2` を展開し、`SYSLOG_CONFIG_FEATURE` が未設定のコンテナにはテンプレートのハードコードデフォルト (`interval=300`, `burst=20000`) が使われる。`SYSLOG_CONFIG|GLOBAL` の値はコンテナ rsyslog には**直接継承されない**[^cross-feature]。
+
+[^cross-server]: `sonic-host-services/scripts/hostcfgd` L2410-2415 (`rsyslog_handler`), `sonic-buildimage/files/image_config/rsyslog/rsyslog.conf.j2` L84-125. <https://github.com/sonic-net/sonic-buildimage/blob/master/files/image_config/rsyslog/rsyslog.conf.j2>
+[^cross-hostname]: `sonic-buildimage/files/image_config/rsyslog/rsyslog.conf.j2` L52 (`welf_firewall_name` フォールバック). <https://github.com/sonic-net/sonic-buildimage/blob/master/files/image_config/rsyslog/rsyslog.conf.j2>
+[^cross-feature]: `sonic-buildimage/files/image_config/rsyslog/rsyslog-container.conf.j2` (`|default('300')`, `|default('20000')`). <https://github.com/sonic-net/sonic-buildimage/blob/master/files/image_config/rsyslog/rsyslog-container.conf.j2>
+
+<!-- /cross-refs -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
