@@ -262,6 +262,43 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 > **証跡**: `CbfNhgOrch::doTask()` L38-200、`CbfNhgOrch::getMembers()` L212-237、`CbfNhg::sync()` L287-375、`CbfNhg::update()` L453-593、`CbfNhg::syncMembers()` L603-703、`CbfNhg::remove()` (`sonic-swss/orchagent/nhg.h` 基底クラス)。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`CbfNhgOrch` / `CbfNhg` / `CbfNhgMember` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/cbf/cbfnhgorch.cpp` および `sonic-swss/orchagent/cbf/cbfnhgorch.h`。
+
+### SAI 属性固定値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `SAI_NEXT_HOP_GROUP_ATTR_TYPE` の設定値 | `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` | CBF NHG 作成時にグループ種別を固定で設定。他の NHG タイプ（ECMP等）との混在不可 | `cbfnhgorch.cpp:301-302` |
+| メンバー index 型 | `uint8_t` (0〜255) | `CbfNhgMember::m_index` の型。メンバー数の実用上限は 255 | `cbfnhgorch.h:10`, `cbfnhgorch.cpp:257` |
+| members の数の assert 上限 | `UINT32_MAX` | `SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE` に渡す前に `m_members.size() <= UINT32_MAX` をアサート | `cbfnhgorch.cpp:307` |
+
+### FC 数上限チェック
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` | プラットフォーム依存 (SAI クエリ値) | `NhgMapOrch::getMaxNumFcs()` が SAI から取得する最大 FC 数。取得失敗時は `0` にフォールバック | `nhgmaporch.cpp:311-321` |
+| FC 数取得失敗時フォールバック | `0` | `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` の取得に失敗した場合の `max_num_fcs` 初期値 | `nhgmaporch.cpp:319-320` |
+
+> **注意**: `CbfNhg::sync()` は `nhg_attr.value.u32 > gNhgMapOrch->getMaxNumFcs()` の場合に `SWSS_LOG_WARN` を出力するが、エラーとして中断しない（ `cbfnhgorch.cpp:311-314`）。メンバー数が FC 上限を超えても SAI へのプログラムは継続される。
+
+### members 変更判定
+
+| 定数 / ロジック | 値 | 用途 | ソース |
+|----------------|----|------|--------|
+| `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` の扱い | `CREATE_ONLY` (SAI 仕様) | index 属性は作成時のみ設定可能。members の順序が変わると全 member を remove → 再 sync することが必須 | `cbfnhgorch.cpp:509-516` |
+| members 変更なし判定条件 | `!m_temp_nhgs.empty() && hasSameMembers(members)` が真 | メンバーリストが同一かつ順序も同じ場合のみ差分更新（NHG OID 変化分のみ `updateNhAttr()`）、それ以外は全 remove → 再 sync | `cbfnhgorch.cpp:463-504` |
+
+### DEL 保留ガード
+
+| 定数 / 条件 | 値 | 用途 | ソース |
+|------------|----|------|--------|
+| pending SET の検出条件 | `consumer.m_toSync.count(it->first) > 1` | 同一 key に複数エントリが pending の場合 DEL をスキップして SET を更新扱い | `cbfnhgorch.cpp:152-155` |
+| ref_count DEL ブロック条件 | `cbf_nhg_it->second.ref_count > 0` | 参照カウントが 0 より大きい場合 DEL を保留して `it++` | `cbfnhgorch.cpp:165-171` |
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
