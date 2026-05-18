@@ -340,6 +340,59 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 `NhgBase::m_syncdCount`（static メンバ）が副次的に変化する。CBF NHG sync 成功時に `incSyncedCount()` (`cbfnhgorch.cpp:359`)、削除時に `decSyncedCount()` (`nhgbase.h:278`) が呼ばれる。この値は新規 NHG 作成時の上限チェック `gRouteOrch->getNhgCount() + NhgBase::getSyncedCount() >= gRouteOrch->getMaxNhgCount()` で参照される (`cbfnhgorch.cpp:100`)。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## PUBSUB / Keyspace 通知メカニズム (Phase G)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/cbf-nhg-pubsub.md`
+
+### 書き込みメカニズム: ProducerStateTable
+
+`APPL_DB CLASS_BASED_NEXT_HOP_GROUP_TABLE` への書き込みは `swsscommon.ProducerStateTable` を使用する。テスト (`sonic-swss/tests/test_nhg.py:216`) で確認:
+
+```python
+self.cbf_nhg_ps = swsscommon.ProducerStateTable(
+    self.app_db.db_connection, swsscommon.APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME)
+```
+
+`ProducerStateTable` は内部で EVALSHA スクリプトを実行し、エントリを `_TEMP:CLASS_BASED_NEXT_HOP_GROUP_TABLE:*` に書いた後に `CLASS_BASED_NEXT_HOP_GROUP_TABLE_CHANNEL@0` チャンネルへ PUBLISH を発行する。
+
+!!! note "標準 fpmsyncd は非対応"
+    HLD Rev 0.2 の Restrictions 節に記載のとおり、標準の `fpmsyncd` は `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を書き込まない。本テーブルへの書き込みには修正版 `fpmsyncd` またはカスタムアプリケーションが必要となる。
+
+### 読み取りメカニズム: ConsumerStateTable (Orch フレームワーク)
+
+`CbfNhgOrch` は `Orch` 基底クラスを継承する (`nhgbase.h:398-404`)。`Orch(db, tableName)` コンストラクタは `ConsumerStateTable` を自動生成する (`orch.cpp:1194`):
+
+```cpp
+// orch.cpp:1194
+addExecutor(new Consumer(
+    new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+```
+
+`ConsumerStateTable` は `CLASS_BASED_NEXT_HOP_GROUP_TABLE_CHANNEL@0` を SUBSCRIBE し、PUBLISH 受信時に `m_toSync` へ積んで `orchdaemon` の `select()` ループが `CbfNhgOrch::doTask(Consumer&)` を呼び出す。
+
+### 通知フロー
+
+```
+ProducerStateTable::set() / del()
+  ↓ EVALSHA → HSET APPL_DB + PUBLISH CLASS_BASED_NEXT_HOP_GROUP_TABLE_CHANNEL@0 <key>
+Redis channel 通知
+  ↓ ConsumerStateTable が受信 → m_toSync に追積
+orchdaemon select() ループ
+  ↓ CbfNhgOrch::doTask(Consumer&) 呼び出し
+```
+
+### 起動時スナップショット
+
+`ConsumerStateTable` は起動時に APPL_DB に残存する `_TEMP:CLASS_BASED_NEXT_HOP_GROUP_TABLE:*` の pending エントリを `pops()` で一括取得して `m_toSync` に投入する。warm-reboot 時は `orchdaemon::warmRestoreAndSyncUp()` が 3 回ループして既存エントリを再処理する。
+
+### 他プロセスの購読
+
+`CLASS_BASED_NEXT_HOP_GROUP_TABLE` を購読するプロセスは `CbfNhgOrch` のみ。`show` コマンドや他ツールは APPL_DB を `sonic-db-cli APPL_DB hgetall` / `keys` で直接読み取る形式であり、channel 購読を行わない。
+
+> **Evidence**: `sonic-swss/orchagent/cbf/cbfnhgorch.cpp` L21-24 (コンストラクタ)、`sonic-swss/orchagent/nhgbase.h` L398-404 (`NhgOrchCommon` クラス定義)、`sonic-swss/orchagent/orch.cpp` L1194 (`ConsumerStateTable` 生成)、`sonic-swss/tests/test_nhg.py` L216 (`ProducerStateTable` 使用例)、`sonic-swss-common/common/schema.h` L56 (`APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME` 定義)
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
