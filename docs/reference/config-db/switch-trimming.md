@@ -370,4 +370,51 @@ SET ハンドラが受け取ったフィールド群を `parseTrimConfig()` で�
 詳細調査ログ: `meta/_intermediate/cdb-flow/switch-trimming-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`SwitchOrch::doCfgSwitchTrimmingTableTask()` (`sonic-swss/orchagent/switchorch.cpp`) および `SwitchTrimmingHelper` (`orchagent/switch/trimming/helper.cpp`) の実装から導出した失敗パターン一覧。
+
+### SET 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | エラーログ | 挙動 | retry |
+|---|---|---|---|---|
+| key が空文字列 | `switchorch.cpp` L1326 | `"Failed to parse switch trimming key: empty string"` | `erase(it)` してスキップ | なし |
+| `size` / `dscp_value` / `tc_value` / `queue_index` のいずれかが空文字列 | `helper.cpp` parseTrimSize/Dscp/Tc/Queue の先頭 | `"Failed to parse field(%s): empty value is prohibited"` | `parseTrimConfig` が `false` → SET 全体スキップ | なし |
+| `size` が数値でない | `helper.cpp` L75-80 | `"Failed to parse field(size): ..."` (exception) | `parseTrimConfig` が `false` → SET 全体スキップ | なし |
+| `dscp_value` が数値でも `from-tc` でもない | `helper.cpp` L115-119 | `"Failed to parse field(dscp_value): ..."` (exception) | `parseTrimConfig` が `false` → SET 全体スキップ | なし |
+| `dscp_value` が数値範囲外 (0..63 外) | `helper.cpp` L121-128 | `"Failed to parse field(dscp_value): value(%s) is out of range: 0 <= dscp <= 63"` | `parseTrimConfig` が `false` → SET 全体スキップ | なし |
+| `tc_value` が数値でない | `helper.cpp` L143-148 | `"Failed to parse field(tc_value): ..."` (exception) | `parseTrimConfig` が `false` → SET 全体スキップ | なし |
+| `queue_index` が数値でも `dynamic` でもない | `helper.cpp` L168-173 | `"Failed to parse field(queue_index): ..."` (exception) | `parseTrimConfig` が `false` → SET 全体スキップ | なし |
+| 有効フィールドが 1 件もない (全て未知フィールドのみ) | `helper.cpp` L233-238 (`validateTrimConfig`) | `"Validation error: missing valid fields"` | `parseTrimConfig` が `false` → SET 全体スキップ | なし |
+| ASIC が packet trimming 非サポート | `switchorch.cpp` L1081-1085 | `"Switch trimming configuration is not supported: skipping ..."` (WARN) | `return true` (no-op、エラーにならない) | なし (capability 変化まで永続的 no-op) |
+| DSCP mode capability 非サポート | `switchorch.cpp` L1115-1119 | `"Failed to validate switch trimming DSCP mode: capability is not supported"` | `setSwitchTrimming` が `false` → `"Failed to set switch trimming: ASIC and CONFIG DB are diverged"` | なし |
+| DSCP 値の SAI set 失敗 | `switchorch.cpp` L1121-1123 | `"Failed to set switch trimming DSCP mode in SAI"` | `return false` → `"ASIC and CONFIG DB are diverged"` | なし |
+| TC value capability 非サポート | `switchorch.cpp` L1176-1179 | `"Failed to validate switch trimming TC value: capability is not supported"` | `return false` → `"ASIC and CONFIG DB are diverged"` | なし |
+| TC value の SAI set 失敗 | `switchorch.cpp` L1182-1184 | `"Failed to set switch trimming TC value in SAI"` | `return false` → `"ASIC and CONFIG DB are diverged"` | なし |
+| symmetric DSCP モード時の TC value (警告のみ) | `switchorch.cpp` L1190 | `"Skip setting switch trimming TC value for symmetric DSCP mode"` (WARN) | TC 属性の SAI 送信スキップ、エントリ自体は処理継続 | なし |
+| queue mode capability 非サポート | `switchorch.cpp` L1217-1221 | `"Failed to validate switch trimming queue mode: capability is not supported"` | `return false` → `"ASIC and CONFIG DB are diverged"` | なし |
+| queue index capability 非サポート | `switchorch.cpp` L1250-1254 | `"Failed to validate switch trimming queue index: capability is not supported"` | `return false` → `"ASIC and CONFIG DB are diverged"` | なし |
+| `size` / `dscp` / `tc` / `queue` の SAI set 失敗 | `switchorch.cpp` L1093, L1121, L1160, L1182, L1223, L1256 | `"Failed to set switch trimming <attr> in SAI"` | `return false` → `"ASIC and CONFIG DB are diverged"` | なし |
+
+### DEL 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | エラーログ | 挙動 | retry |
+|---|---|---|---|---|
+| DEL 操作全般 | `switchorch.cpp` L1355 | `"Failed to remove switch trimming: operation is not supported: ASIC and CONFIG DB are diverged"` | LOG_ERROR のみ、CONFIG_DB エントリは残存 | なし (DEL 自体非サポート) |
+| `size` / `dscp` / `tc` / `queue` 各属性の個別 DEL | `switchorch.cpp` L1104, L1149, L1206, L1239 | `"Failed to remove switch trimming <attr> configuration: operation is not supported"` | `return false` → `setSwitchTrimming` も `false` | なし |
+
+### 未知フィールドの扱い
+
+未知フィールドは `LOG_WARN("Unknown field(%s): skipping ...")` を出力してスキップするが、**エントリ全体は破棄しない**。有効フィールドが少なくとも 1 件あれば `validateTrimConfig` が通り SET が継続される (`helper.cpp` L222-228)。
+
+### 失敗後の CONFIG_DB 状態
+
+- `SWITCH_TRIMMING|GLOBAL` エントリは失敗後も CONFIG_DB に残る（orchagent は書き戻さない）
+- STATE_DB `SWITCH_CAPABILITY|switch` の `SWITCH_TRIMMING_CAPABLE` フィールドで SAI 反映有無を確認できる
+- エラーはすべて `SWSS_LOG_ERROR` / `SWSS_LOG_WARN` でサイログに出力。`ERROR_TABLE` への書き込みはなし
+
+> **証跡**: `switchorch.cpp` L1070–1360 全行精読、`helper.cpp` L62–250 全行精読。
+<!-- /failure -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->
