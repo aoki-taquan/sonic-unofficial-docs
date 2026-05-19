@@ -320,6 +320,70 @@ FEC SET 成功時のみ `p.m_fec_cfg = true` をセットして `m_portList` を
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドで使われる文字列・マップはすべてコンパイル時定数として固定されている。外部設定（CONFIG_DB / DEVICE_METADATA）で変更できる部分はポート名 (`<port>`) とフラグ (`fec_override_sup`) のみ。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-constants.md -->
+
+### STATE_DB テーブル名マクロ（`sonic-swss-common/common/schema.h`）
+
+| マクロ | 値 | evidence |
+|--------|----|----------|
+| `STATE_PORT_TABLE_NAME` | `"PORT_TABLE"` | `schema.h:420` |
+
+`PortsOrch` コンストラクタ (portsorch.cpp:725) で `m_portStateTable(stateDb, STATE_PORT_TABLE_NAME)` として初期化。テーブル名は外部設定で変更不可。
+
+### フィールド名文字列（リテラル直書き）
+
+| フィールド名 | 書込み関数 | evidence |
+|-------------|-----------|----------|
+| `"fec"` | `updateDbPortOperFec()` | `portsorch.cpp:9869` |
+| `"supported_fecs"` | `initPortSupportedFecModes()` | `portsorch.cpp:3318` |
+
+いずれも `#define` マクロ化されておらず文字列リテラルが直書きされている。
+
+### FEC モード文字列マクロ（`portschema.h:38-41`）
+
+| マクロ | 値 | STATE_DB での出現先 |
+|--------|----|-------------------|
+| `PORT_FEC_NONE` | `"none"` | `fec` / `supported_fecs` |
+| `PORT_FEC_RS` | `"rs"` | `fec` / `supported_fecs` |
+| `PORT_FEC_FC` | `"fc"` | `fec` / `supported_fecs` |
+| `PORT_FEC_AUTO` | `"auto"` | `supported_fecs` のみ（`fec` には出現しない） |
+
+### `portFecRevMap` — SAI enum → STATE_DB 文字列（`porthlpr.cpp:85-90`）
+
+```
+SAI_PORT_FEC_MODE_NONE → "none"
+SAI_PORT_FEC_MODE_RS   → "rs"
+SAI_PORT_FEC_MODE_FC   → "fc"
+(その他 / 未知)         → "N/A" (fecToStr 失敗フォールバック)
+```
+
+`SAI_PORT_FEC_MODE_AUTO` エントリは `portFecRevMap` に存在しない。よって `fec` フィールドに `"auto"` が書き込まれることはなく、CONFIG_DB で `fec=auto` を設定してポートが UP になると実際の oper モード (`"none"` / `"rs"` / `"fc"`) が書き込まれる。
+
+### `"N/A"` フォールバック文字列
+
+| 書込み箇所 | 条件 | フィールド |
+|-----------|------|-----------|
+| `portsorch.cpp:9688` | `fecToStr` 変換失敗（未知 SAI fec_mode） | `fec` |
+| `portsorch.cpp:9694` | `oper_fec_sup=false` または `getPortOperFec` 失敗 | `fec` |
+| `portsorch.cpp:9926-9929` | `refreshPortStatus()` 時の失敗パス | `fec` |
+| `portsorch.cpp:3292` | SAI が対応 FEC モードを空集合で返した | `supported_fecs` |
+
+`"N/A"` はマクロ化されておらずリテラル直書き。`supported_fecs` がフィールド不在（`NOT_IMPLEMENTED`）の場合とは別条件なので注意（フィールド不在 ≠ `"N/A"`）。
+
+### カンマ区切り（`supported_fecs`）
+
+`supported_fecs` の値は `swss::join(',', ...)` で結合 (portsorch.cpp:3317)。区切り文字はカンマ 1 文字固定でスペースなし。典型値: `"none,rs,fc"` / `"none,rs,fc,auto"`。
+
+!!! note "`\"auto\"` は `supported_fecs` のみに出現"
+    `portFecRevMap` に `"auto"` エントリがないため `fec` フィールドに `"auto"` は絶対に現れない。`supported_fecs` への `"auto"` 追加は `fec_override_sup=true` かつ `fecModeList` が非空の場合のみ (portsorch.cpp:3310-3313)。
+
+<!-- /constants -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`PORT` テーブル](port.md) — FEC の設定フィールド (`fec`)
