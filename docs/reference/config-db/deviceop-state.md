@@ -317,6 +317,44 @@ DEVICE_NEIGHBOR テーブルへの SET/DEL が直接引き起こす CONFIG_DB �
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:285-300,405-444`; `scripts/ecnconfig:282-293`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-224`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 購読方式の全体像
+
+`DEVICE_NEIGHBOR` テーブルを参照する consumer は全件 **スナップショット取得（`get_table` / `get_entry` の一回限り読み出し）** のみを使用する。`swsscommon.SubscriberStateTable` や `ConfigDBConnector.subscribe()` で DEVICE_NEIGHBOR を継続購読するプロセスは現行実装に存在しない。
+
+| consumer | 方式 | API | タイミング |
+|---------|------|-----|---------|
+| `pfcwd start_default` | スナップショット | `config_db.get_table('DEVICE_NEIGHBOR')` | pfcwd 起動時 1 回のみ |
+| `pfcwd get_server_facing_ports` | スナップショット | `db.get_table('DEVICE_NEIGHBOR')` + `db.get_entry('DEVICE_NEIGHBOR_METADATA', ...)` | pfcwd 起動時 1 回のみ |
+| `ecnconfig` (非 multi-ASIC) | スナップショット | `self.config_db.get_table(DEVICE_NEIGHBOR_TABLE_NAME)` | ecnconfig 実行時 1 回のみ |
+| `show interfaces neighbor expected` | スナップショット | `db.cfgdb_clients[namespace].get_table("DEVICE_NEIGHBOR")` | コマンド実行時 1 回のみ |
+| `lldpmgrd` | **購読なし（TODO 状態）** | — | DEVICE_NEIGHBOR を subscribe していない（lldpmgrd:12-14 に TODO コメントあり） |
+| `bgpcfgd` | **DEVICE_NEIGHBOR 本体は対象外** | — | DEVICE_NEIGHBOR_METADATA のみ SubscriberStateTable で購読 |
+
+### lldpmgrd — 未実装の購読（TODO 状態）
+
+`lldpmgrd` のソース (`dockers/docker-lldp/lldpmgrd:12-14`) に次のコメントが存在する:
+
+```python
+# TODO: Also listen for changes in DEVICE_NEIGHBOR and PORT tables in
+#       Config DB and update LLDP config upon changes.
+```
+
+現時点で DEVICE_NEIGHBOR への subscribe は実装されていない。lldpmgrd が購読するのは `APP_PORT_TABLE_NAME`（APPL_DB）・`CFG_MGMT_INTERFACE_TABLE_NAME`・`CFG_DEVICE_METADATA_TABLE_NAME`（CONFIG_DB）の 3 テーブルのみ。
+
+### bgpcfgd — DEVICE_NEIGHBOR_METADATA を購読（DEVICE_NEIGHBOR 本体は対象外）
+
+`bgpcfgd` の `BGPDataBaseMgr` は `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を `SubscriberStateTable` で継続購読する（`runner.py:49-52`）。DEVICE_NEIGHBOR テーブル本体は購読対象ではない。DEVICE_NEIGHBOR の `name` フィールド値（デバイス名）は DEVICE_NEIGHBOR_METADATA 購読イベントの処理内で参照されるが、DEVICE_NEIGHBOR 自体の変化は bgpcfgd に通知されない（`managers_bgp.py:219-224`）。
+
+### keyspace 通知の実効的な受信者なし
+
+DEVICE_NEIGHBOR は CONFIG_DB に保存される永続テーブルであり TTL なし。Redis への `HSET` 操作は keyspace 通知を発行するが、それを受信する継続的 subscriber は現行実装に存在しない。このため **DEVICE_NEIGHBOR への変更はリアルタイムでは伝搬されない**。各 consumer は起動時または実行時の一回限りのスナップショットで動作し、ランタイムの変更は consumer 再起動（または pfcwd start_default / ecnconfig の再実行）まで反映されない。
+
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-293`; `show/interfaces/__init__.py:310-320`; `sonic-buildimage` `dockers/docker-lldp/lldpmgrd:12-14`; `src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52`; `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:139-140,219-224`; 中間調査 `meta/_intermediate/cdb-flow/deviceop-state-pubsub.md`
+<!-- /pubsub -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
