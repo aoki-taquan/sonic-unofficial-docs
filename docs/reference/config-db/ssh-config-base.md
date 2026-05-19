@@ -348,6 +348,66 @@ CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer`
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-pubsub.md`
+
+### Redis 購読方式
+
+`SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@4__:SSH_SERVER|*`)** によって配信される。`swsscommon.ConsumerStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|------------|--------|
+| `hostcfgd` (`SshServer` + `PamLimitsCfg`) | `ConfigDBConnector.subscribe()` | `SSH_SERVER` | `ssh_handler` |
+
+`hostcfgd` 以外で `SSH_SERVER` テーブルを購読するプロセスは存在しない（SSH は SAI 非経由でスイッチ ASIC と無関係のため `orchagent` / `syncd` / `mgrd` は参照しない）。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config ssh-server policies ...
+  ↓ HSET "SSH_SERVER|POLICIES" <field> <value>
+Redis keyspace PUBLISH "__keyspace@4__:SSH_SERVER|POLICIES"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ HGETALL "SSH_SERVER|POLICIES"  ← 通知後に値を再取得
+ssh_handler(key="POLICIES", op=SET, data={<fields>})
+  ↓ SshServer.policies_update()   → modify_conf_file() → set_policies()
+  │   └─ /etc/ssh/sshd_config 書き換え + sshd -T 検証 + systemctl restart ssh
+  └─ PamLimitsCfg.update_config_file()
+      └─ /etc/security/limits.conf + /etc/pam.d/pam-limits-conf 再生成
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `HGETALL` で取得する。
+- `op` は `data is None ? DEL : SET` の 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により Subscribe ループ開始前に `SshServer.load()` が `init_data['SSH_SERVER']` をスナップショットで適用してから通知受信ループへ入る。
+
+### keyspace 通知パターン
+
+| Redis 通知 | hostcfgd 受信 |
+|-----------|-------------|
+| `__keyspace@4__:SSH_SERVER\|POLICIES` `hset` | `ssh_handler("POLICIES", SET, {…})` |
+| `__keyspace@4__:SSH_SERVER\|POLICIES` `del`  | `ssh_handler("POLICIES", DEL, {})` |
+
+dbId は CONFIG_DB の通常 4（`sonic-swss-common/common/database_config.json` 既定）。
+
+### `ssh_handler` 内部処理
+
+```python
+# hostcfgd:2297-2299
+def ssh_handler(self, key, op, data):
+    self.sshscfg.policies_update(key, data)    # sshd_config 更新
+    self.pamLimitsCfg.update_config_file()     # PAM limits 更新
+    syslog.syslog(LOG_INFO, 'SSH Update: key:{} op:{} data:{}'.format(key, op, data))
+```
+
+`policies_update()` が `modify_conf=True` (既定) で呼ばれるため、ハンドラ呼び出しのたびに `set_policies()` → sshd 再起動チェーンが実行される。
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2458-2466` (make_callback)、`hostcfgd:2478` (subscribe 'SSH_SERVER')、`hostcfgd:2528` (listen)、`hostcfgd:2297-2299` (ssh_handler)、`hostcfgd:2245,2265` (load スナップショット)、`hostcfgd:1045-1075` (SshServer.load / policies_update); 詳細分析 `meta/_intermediate/cdb-flow/ssh-config-base-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
