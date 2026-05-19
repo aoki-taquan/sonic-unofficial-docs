@@ -400,3 +400,55 @@ const std::string loopback3 = "Loopback3|";
 linkmgrd は `Loopback3|<IP>` のパターンで CONFIG_DB の `LOOPBACK_INTERFACE` テーブルを探索し、IPv4 アドレスから `read_side` (0 = T0, 1 = LT0) を決定する。`"Loopback3"` という名称はコード固定であり、他のループバックインタフェース名には対応しない。Loopback3 IPv4 が見つからない場合は `MUXLOGFATAL` を出力し、コード内デフォルト値 (`10.212.64.1/32` / `10.212.64.2/32` 等) を使用するが、この状態は設定誤りを示すため正常運用時には発生しない (y_cable_helper.py:63-66, DbInterface.cpp:729-730)。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`MUX_CABLE_TABLE` (STATE_DB) への書き込みを直接トリガとする形で、`MuxCableOrch` (orchagent) と linkmgrd (`DbInterface`) はそれぞれ複数の副次テーブルに書き込む。主作用 (STATE_DB `MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` の更新) に加えて以下の副次書込みが発生する。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-side-effects.md`
+
+### MuxCableOrch (orchagent) による副次書込み
+
+| 副次 DB | テーブル | フィールド / キー | トリガ / 書込元 | 根拠 |
+|---------|---------|----------------|--------------|------|
+| APP_DB | `HW_MUX_CABLE_TABLE` | `state` | `MuxCableOrch::updateMuxState()` が MUX 状態遷移のたびに APPL_DB に書き込む。`MuxStateOrch` はこの APPL_DB テーブルを購読して STATE_DB `MUX_CABLE_TABLE.state` を更新する（orchagent 内部 pub-sub 経路） | `muxorch.cpp:2505,2508-2513` |
+| STATE_DB | `MUX_METRICS_TABLE` | `orch_switch_<state>_start` / `orch_switch_<state>_end` | `MuxCableOrch::updateMuxMetricState()` が状態遷移の開始・終了タイムスタンプを記録する。フォーマットは `"YYYY-Mon-DD HH:MM:SS.uuuuuu"` (マイクロ秒精度) | `muxorch.cpp:2516-2544` |
+| APP_DB | `TUNNEL_ROUTE_TABLE` | `alias` (nexthop alias) | `MuxCableOrch::addTunnelRoute()` / `removeTunnelRoute()` が standby 側への P2P トンネル経路を追加・削除する。neighbor が MUX 管理下に入る / 外れるタイミングで発火 | `muxorch.cpp:2547-2570, 1104,1108` |
+
+!!! note "MUX_METRICS_TABLE の二重書込み"
+    `MUX_METRICS_TABLE` (STATE_DB) は orchagent (`MuxCableOrch`) と linkmgrd の両方が書き込む。同じキー空間 (`<ifname>`) に対して両者が独立してタイムスタンプを hset するため、linkmgrd の書込みは `del(portName)` で古い値をクリアしてから行われる (DbInterface.cpp:498-501)。orchagent 側は del なしで上書き hset を行う (muxorch.cpp:2544)。
+
+### linkmgrd (DbInterface) による副次書込み
+
+STATE_DB `MUX_CABLE_TABLE` を **購読** した linkmgrd は、受信内容に応じて以下の副次書込みを行う。
+
+| 副次 DB | テーブル | フィールド / キー | トリガ | 根拠 |
+|---------|---------|----------------|-------|------|
+| STATE_DB | `MUX_LINKMGR_TABLE` | `state` | linkmgrd の内部ステートマシン (`MuxLinkmgrState`) が遷移するたびに `hset` | `DbInterface.cpp:471`, `schema.h:459` |
+| STATE_DB | `MUX_METRICS_TABLE` | `linkmgrd_switch_<state>_start` / `_end` 等 | 上述の orchagent と同様の形式でタイムスタンプを記録。`del` で古エントリを消去してから書き込む | `DbInterface.cpp:498-501` |
+| STATE_DB | `MUX_SWITCH_CAUSE` | `cause`, `time` | active ↔ standby 切替が発生した際に切替原因文字列とタイムスタンプを記録する | `DbInterface.cpp:246-247`, `DbInterface.h:63` |
+| STATE_DB | `LINK_PROBE_STATS` | リンクプローバ統計フィールド群 | ICMP echo session の送受信統計。`hdel` + `hset` パターンで更新 | `DbInterface.cpp:528-531, 558` |
+| APP_DB | `MUX_CABLE_TABLE` | `state` 等 (ProducerStateTable) | linkmgrd が mux 状態変更コマンドを APPL_DB に投入し、orchagent が実際の切替を実行する | `DbInterface.cpp:316-317` |
+| APP_DB | `HW_FORWARDING_STATE_PEER` | `state` | ycabled / gRPC から受信したピア ToR の HW forwarding state を APP_DB に転写 | `DbInterface.cpp:430`, `schema.h:149` |
+| APP_DB | `MUX_CABLE_COMMAND_TABLE` | `command` (`"probe"`) | orchagent に gRPC probe 実行を指示するコマンドを APP_DB に送る | `DbInterface.cpp:443`, `schema.h:142` |
+| CONFIG_DB | `MUX_CABLE` | `state` | **warm restart 限定**。`handleSetMuxMode()` が warm restart 後の mux mode を CONFIG_DB に書き戻す。通常運用時は発生しない | `DbInterface.cpp:1039-1047` |
+
+### 副次書込みの総覧
+
+| 副次 DB | テーブル名 | 書込み元 |
+|---------|----------|---------|
+| APP_DB | `HW_MUX_CABLE_TABLE` | MuxCableOrch |
+| APP_DB | `TUNNEL_ROUTE_TABLE` | MuxCableOrch |
+| STATE_DB | `MUX_METRICS_TABLE` | MuxCableOrch / linkmgrd |
+| STATE_DB | `MUX_LINKMGR_TABLE` | linkmgrd |
+| STATE_DB | `MUX_SWITCH_CAUSE` | linkmgrd |
+| STATE_DB | `LINK_PROBE_STATS` | linkmgrd |
+| APP_DB | `MUX_CABLE_TABLE` | linkmgrd (ProducerStateTable) |
+| APP_DB | `HW_FORWARDING_STATE_PEER` | linkmgrd |
+| APP_DB | `MUX_CABLE_COMMAND_TABLE` | linkmgrd |
+| CONFIG_DB | `MUX_CABLE` | linkmgrd (warm restart のみ) |
+
+ASIC_DB への直接書込み・FLEX_COUNTER_DB・COUNTERS_DB への書込みは muxorch / linkmgrd では検出されなかった（SAI MUX 操作は `SaiRedis` 経由で ASIC_DB に間接的に書き込まれるが、それは主作用に含まれる）。
+
+<!-- /side-effects -->
