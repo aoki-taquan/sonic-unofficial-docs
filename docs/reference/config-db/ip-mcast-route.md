@@ -237,6 +237,28 @@ DEL 時は逆順: `FIXED_*` → `REPLICATION_*` → `MULTICAST_ROUTER_INTERFACE_
 IpMulticastManager 内で管理されており、参照が残っているグループを先に削除しようとすると SAI 削除が失敗する。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+本ページの APP_DB 3 テーブル（`REPLICATION_IP_MULTICAST_TABLE` / `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE`）はいずれも P4RT YANG 未定義のため leafref は存在しない。`L3MulticastManager` / `IpMulticastManager` が消費する際に以下のテーブル / Orch に対する暗黙参照が発生する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `FIXED_MULTICAST_ROUTER_INTERFACE_TABLE` (APP_DB) | OID 解決（必須先行） | `REPLICATION_IP_MULTICAST_TABLE` の `replicas` 内の各 `(port, instance)` を処理するとき。エントリ不在は即時 `SWSS_RC_NOT_FOUND` — pending retry なし | `l3_multicast_manager.cpp` L1002-1008 (`validateReplicas` router interface lookup) |
+| `REPLICATION_IP_MULTICAST_TABLE` (APP_DB) — P4OidMapper `IPMC_GROUP` OID | OID 存在確認（必須先行） | `FIXED_IPV4/IPV6_MULTICAST_TABLE` の `param/multicast_group_id` を処理するとき。OID 未登録は即時 `SWSS_RC_NOT_FOUND` — pending retry なし | `ip_multicast_manager.cpp` L509-514 (`validateSetIpMulticastEntry` existsOID), L748-756 (`getOID` → `SAI_IPMC_ENTRY_ATTR_OUTPUT_GROUP_ID`) |
+| `VRFOrch::isVRFexists()` / `getVRFid()` / `increaseVrfRefCount()` | Orch 照合 + 参照カウント管理 | `FIXED_IPV4/IPV6_MULTICAST_TABLE` の `match/vrf_id` が空文字列以外のとき。VRF 未作成は即時 `SWSS_RC_NOT_FOUND`。デフォルト VRF (`vrf_id` = 空) は確認スキップ | `ip_multicast_manager.cpp` L477-481, L703 (`getVRFid`), L775 (`increaseVrfRefCount`), L886 (`decreaseVrfRefCount`) |
+| `PortsOrch::getPort()` | ポート OID 解決 | `REPLICATION_IP_MULTICAST_TABLE` の `replicas` 内の各 `multicast_replica_port` を処理するとき。ポート未登録は `SWSS_RC_NOT_FOUND` | `l3_multicast_manager.cpp` L67-72 (`getSaiPort` → `PortsOrch::getPort`) |
+| P4OidMapper `IPMC_GROUP` 参照カウント | 参照カウント管理（書き込み） | `FIXED_*` エントリ作成 / 削除のたびに `increaseRefCount` / `decreaseRefCount` を呼ぶ。参照が残っている `IPMC_GROUP` を先に削除しようとすると SAI 削除が失敗 | `ip_multicast_manager.cpp` L776 (`increaseRefCount`), L838-839 / L881 (`decreaseRefCount`) |
+
+!!! note "pending retry は存在しない"
+    P4RT フレームワークは依存オブジェクト不在時に即座にエラーを返し、自動 retry キューを持たない。`p4rt-app` (コントローラ) が依存解決済みの順序で書き込む必要がある。書き込み順序の詳細は [Phase B](#書込み順依存タイミング依存-phase-b) を参照。
+
+!!! note "デフォルト VRF 使用時の VRFOrch 依存はスキップ"
+    `match/vrf_id` が空文字列の場合、`validateIpMulticastEntry()` は VRF 存在確認をスキップし、SAI エントリ作成時に `vr_id = 0` (`SAI_NULL_OBJECT_ID`) を使用する。VRFOrch への参照は非デフォルト VRF 専用。
+
+詳細分析: `meta/_intermediate/cdb-flow/ip-mcast-route-cross-refs.md`
+<!-- /cross-refs -->
+
 ## 購読者
 
 | コンポーネント | テーブル | SAI 操作 |
