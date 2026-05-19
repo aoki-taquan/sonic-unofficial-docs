@@ -286,6 +286,74 @@ APPL_DB に `FABRIC_MONITOR_DATA` エントリが存在する場合は CONFIG_DB
 > **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:21-48,84-88,106,434-439,766,817,1133,1137,1350,1647,1697`; `cfgmgr/fabricmgr.cpp` — 定数定義なし
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence:
+     sonic-swss/cfgmgr/fabricmgr.cpp:107-119,
+     sonic-swss/orchagent/fabricportsorch.cpp:83-100,253,255,318,320,414,884-954,1225-1231,1630,
+     sonic-swss-common/common/schema.h:40,548-549,
+     sonic-swss/orchagent/fabricportsorch.h:15 -->
+
+`FABRIC_MONITOR` (CONFIG_DB) を変更すると、`cfgmgr` (`FabricMgr`) がまず APPL_DB に転送し、続いて orchagent (`FabricPortsOrch`) が STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB に副次的に書き込む。
+
+### APPL_DB
+
+`FabricMgr::writeConfigToAppDb()` (`fabricmgr.cpp:107-119`) が CONFIG_DB の変更内容をそのまま APPL_DB に転送する。
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `FABRIC_MONITOR_TABLE\|FABRIC_MONITOR_DATA` | `monErrThreshCrcCells`, `monErrThreshRxCells`, `monPollThreshRecovery`, `monPollThreshIsolation`, `monState` | CONFIG_DB `FABRIC_MONITOR\|FABRIC_MONITOR_DATA` の各フィールド変更時 | `FabricMgr::writeConfigToAppDb()` | `fabricmgr.cpp:113-115` |
+| `FABRIC_PORT_TABLE\|<port_key>` | `alias`, `lanes`, `isolateStatus` およびその他フィールド | CONFIG_DB `FABRIC_MONITOR_PORT\|<port_key>` の変更時 | `FabricMgr::writeConfigToAppDb()` | `fabricmgr.cpp:118-119` |
+
+### STATE_DB
+
+`FabricPortsOrch` が APPL_DB からの変更を処理し、2 つの STATE_DB テーブルに書き込む。
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `FABRIC_PORT_TABLE\|<port_key>` | `AUTO_ISOLATED`, `CONFIG_ISOLATED`, `ISOLATED`, `PRM_ISOLATED`, `POLL_WITH_ERRORS`, `POLL_WITH_NO_ERRORS`, `POLL_WITH_FEC_ERRORS`, `POLL_WITH_NOFEC_ERRORS`, `PORT_DOWN_COUNT_handled`, `RX_CELLS`, `CRC_ERRORS`, `CODE_ERRORS`, `SKIP_CRC_ERR_ON_LNKUP_CNT`, `SKIP_FEC_ERR_ON_LNKUP_CNT` | ポート状態ポーリング時（タイマー周期）および自動隔離イベント発生時 | `FabricPortsOrch::updateStateDbTable()` / `m_stateTable->hset()` | `fabricportsorch.cpp:414,756,774,825,884-954` |
+| `FABRIC_CAPACITY_TABLE\|FABRIC_CAPACITY_DATA` | `fabric_capacity`, `missing_capacity`, `operating_links`, `number_of_links`, `warning_threshold`, `last_event`, `last_event_time` | キャパシティ計算タイマー (`updateFabricCapacity()`) 実行時 | `FabricPortsOrch::updateFabricCapacity()` → `m_fabricCapacityTable->hset()` | `fabricportsorch.cpp:1225-1231` |
+
+### COUNTERS_DB
+
+ファブリックポート / キューの名前→OID マッピングが書き込まれ、`syncd` のカウンタ収集で使用される。
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `COUNTERS_FABRIC_PORT_NAME_MAP` | port 名 → SAI OID | ポートリスト取得完了後 (`getFabricPortList()` 成功後) | `FabricPortsOrch` → `m_portNamePortCounterTable->set("", ...)` | `fabricportsorch.cpp:255` |
+| `COUNTERS_FABRIC_QUEUE_NAME_MAP` | queue 名 → SAI OID | 上記と同タイミング | `FabricPortsOrch` → `m_portNameQueueCounterTable->set("", ...)` | `fabricportsorch.cpp:320` |
+
+### FLEX_COUNTER_DB
+
+FlexCounter グループの登録と per-OID カウンタ ID リストの書込みにより `syncd` のカウンタポーリングが起動する。
+
+| テーブル / key | 書込内容 | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `FLEX_COUNTER_GROUP_TABLE\|FABRIC_PORT_STAT_COUNTER` | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL` (10000 ms), `STATS_MODE` | `FabricPortsOrch` 初期化時 | `port_stat_manager` (`FlexCounterManager`) | `fabricportsorch.cpp:83-84` |
+| `FLEX_COUNTER_GROUP_TABLE\|FABRIC_QUEUE_STAT_COUNTER` | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL` (100000 ms), `STATS_MODE` | `FabricPortsOrch` 初期化時 | `queue_stat_manager` (`FlexCounterManager`) | `fabricportsorch.cpp:85-86` |
+| `FABRIC_PORT_STAT_COUNTER\|<port_oid>` | `PORT_COUNTER_ID_LIST` (SAI ファブリックポート統計 ID リスト) | ポートリスト取得後の `setCounterIdList()` 呼び出し時 | `port_stat_manager.setCounterIdList()` | `fabricportsorch.cpp:253` |
+| `FABRIC_QUEUE_STAT_COUNTER\|<queue_oid>` | `QUEUE_COUNTER_ID_LIST` | ポートリスト取得後のキュー登録時 | `queue_stat_manager.setCounterIdList()` | `fabricportsorch.cpp:318` |
+| `SWITCH_DEBUG_COUNTER\|<switch_oid>` | スイッチデバッグカウンタ ID リスト | `createSwitchDropCounters()` 呼び出し時（タイマー周期） | `switch_drop_counter_manager->setCounterIdList()` | `fabricportsorch.cpp:1630` |
+
+### 副次書込サマリ
+
+| 副次 DB | テーブル | トリガ | 書込主体 |
+|---|---|---|---|
+| APPL_DB | `FABRIC_MONITOR_TABLE\|FABRIC_MONITOR_DATA` | CONFIG_DB `FABRIC_MONITOR_DATA` 変更 | FabricMgr |
+| APPL_DB | `FABRIC_PORT_TABLE\|<port>` | CONFIG_DB `FABRIC_MONITOR_PORT` 変更 | FabricMgr |
+| STATE_DB | `FABRIC_PORT_TABLE\|<port>` | ポーリングタイマー / 隔離イベント | FabricPortsOrch |
+| STATE_DB | `FABRIC_CAPACITY_TABLE\|FABRIC_CAPACITY_DATA` | キャパシティ計算タイマー | FabricPortsOrch |
+| COUNTERS_DB | `COUNTERS_FABRIC_PORT_NAME_MAP` | ポートリスト取得完了時 | FabricPortsOrch |
+| COUNTERS_DB | `COUNTERS_FABRIC_QUEUE_NAME_MAP` | ポートリスト取得完了時 | FabricPortsOrch |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|FABRIC_PORT_STAT_COUNTER` | orch 初期化時 | FlexCounterManager |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|FABRIC_QUEUE_STAT_COUNTER` | orch 初期化時 | FlexCounterManager |
+| FLEX_COUNTER_DB | `FABRIC_PORT_STAT_COUNTER\|<oid>` | ポート登録時 | FlexCounterManager |
+| FLEX_COUNTER_DB | `FABRIC_QUEUE_STAT_COUNTER\|<oid>` | キュー登録時 | FlexCounterManager |
+
+詳細根拠は `meta/_intermediate/cdb-flow/fabric-monitor-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
