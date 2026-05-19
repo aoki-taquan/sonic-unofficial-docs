@@ -569,6 +569,104 @@ CONFIG_DB: CLI が STP_PORT|<interface> を書き込む
 > 調査証跡: `meta/_intermediate/cdb-flow/stp-port-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-port-platform.md -->
+
+`STP_PORT` テーブルの処理に ASIC ベンダー固有のコード分岐は存在しない。
+stpmgrd は SAI を直接呼ばず、Unix Domain Socket 経由で stpd に IPC を送信する設計であり、
+ASIC 差異は stpd 内部で吸収される。
+ただし以下 3 点においてプラットフォーム依存の挙動が観測される。
+
+### 1. STP プロトコルモード (L2_PVSTP vs L2_MSTP)
+
+`STP_PORT` は PVST / MST 両モードで使用されるが、処理されるフィールドセットがモードによって異なる。
+
+```cpp
+// stpmgr.cpp:doStpPortTask()
+if (l2ProtoEnabled == L2_NONE)
+{
+    it++;   // SET を defer (DEL は即消費・ドロップ)
+    continue;
+}
+```
+
+| モード | 有効フィールド | 備考 |
+|--------|--------------|------|
+| `L2_PVSTP` | `portfast`, `uplink_fast`, `bpdu_guard_do_disable` | PVST 専用フィールド |
+| `L2_MSTP` | `edge_port`, `link_type`, `bpdu_guard_do` | MST 専用フィールド。`link_type` は `stoi(field)` バグ (Phase D 参照) のためクラッシュ発生 |
+| `L2_NONE` | なし | SET はキューに残留、DEL は即消去 |
+
+プロトコルモードはプラットフォームではなく CLI 設定 (`STP|GLOBAL.mode`) で決まる。
+DPU / SmartSwitch NPU 側では `stpmgrd` が起動しないため `STP_PORT` は実質的に無効となる。
+
+証跡: `stpmgr.cpp:119-127, 630-677`
+
+---
+
+### 2. ASIC ごとの最大 STP インスタンス数 (SAI_SWITCH_ATTR_MAX_STP_INSTANCE)
+
+`StpOrch` 初期化時に SAI 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を照会し、
+`STATE_DB:STP_TABLE|GLOBAL.max_stp_inst` に書き込む (`stporch.cpp:29-40, 603-615`)。
+
+```cpp
+// stporch.cpp:32-38
+attr.id = SAI_SWITCH_ATTR_MAX_STP_INSTANCE;
+status = sai_switch_api->get_switch_attribute(gSwitchId, (uint32_t)attrs.size(), attrs.data());
+if (status == SAI_STATUS_SUCCESS)
+    updateMaxStpInstance(attrs[1].value.u32);  // STATE_DB に max_stp_inst を書き込み
+```
+
+`stpmgrd` 起動時に `getStpMaxInstances()` (`stpmgr.cpp:1381-1413`) がこの値を読み取り `max_stp_instances` に設定する。最大 60 秒ポーリングし、取得できない場合は `STP_DEFAULT_MAX_INSTANCES = 255` にフォールバックする。
+
+```cpp
+// stpmgr.cpp:1407-1410
+if (max_stp_instances == 0)
+    max_stp_instances = STP_DEFAULT_MAX_INSTANCES;  // = 255
+```
+
+| プラットフォーム例 | SAI 照会結果 | `max_stp_instances` 実効値 |
+|-------------------|-------------|---------------------------|
+| 多くの Broadcom ASIC | 成功 (255 以上) | SAI 値 - 1 |
+| 一部 Marvell / 低グレード ASIC | 成功 (少ない値) | SAI 値 - 1 |
+| VS (仮想スイッチ) | 失敗 または 0 | `STP_DEFAULT_MAX_INSTANCES` = 255 (フォールバック) |
+
+この制限は `STP_PORT` を直接は参照しないが、`doStpVlanTask()` の `IS_INST_ID_AVAILABLE()` マクロが
+インスタンス割り当て上限をチェックすることで間接的に有効化可能な VLAN 数（= STP_PORT が関連付けられる VLAN 数）を制限する。
+
+証跡: `stpmgr.h:38, 47`, `stpmgr.cpp:1381-1413`, `stporch.cpp:29-40, 603-615`
+
+---
+
+### 3. ebtables PVST マルチキャストフィルタ
+
+PVST モード有効化時、stpmgr が Cisco PVST+ マルチキャストアドレス (`01:00:0c:cc:cc:cd`) を遮断する
+ebtables ルールをカーネルに挿入する。`STP_PORT` 処理自体は ebtables に依存しないが、
+PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接的に環境依存となる。
+
+| 環境 | 挙動 |
+|------|------|
+| 標準 SONiC (物理 ASIC) | ebtables 有効。PVST+ マルチキャストが遮断され STP_PORT 設定が stpd に反映される |
+| VS (仮想スイッチ) | ebtables 呼び出しは成功するが、仮想環境ではハードウェアフラッディングが発生しないため実効影響なし |
+| ebtables 非存在環境 (コンテナ) | `system()` 失敗。`SWSS_LOG_DEBUG` のみ出力され stpmgrd は継続動作する |
+| SmartSwitch DPU | stpmgrd 通常非起動のため対象外 |
+
+証跡: `stpmgr.cpp:47-48, 113-117, 161-165`
+
+---
+
+### プラットフォーム別サマリ
+
+| プラットフォーム | STP_PORT 処理 | max_stp_instances | ebtables |
+|----------------|--------------|------------------|----------|
+| 物理 ASIC (PVST) | PVST フィールドセット | SAI 照会値 - 1 | 有効 |
+| 物理 ASIC (MSTP) | MST フィールドセット | SAI 照会値 - 1 | 無効 |
+| VS (仮想スイッチ) | 動作 | 255 (フォールバック) | no-op の場合あり |
+| SmartSwitch DPU | 非起動 | N/A | N/A |
+
+<!-- /platform -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | フィールド | 内容 |
