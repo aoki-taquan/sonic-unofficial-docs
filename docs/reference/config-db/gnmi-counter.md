@@ -324,6 +324,55 @@ func IncCounter(cnt CounterType) {
 カウンタはすべて SysV 共有メモリに格納される。失敗時も STATE_DB / CONFIG_DB / APPL_DB への書込は発生しない。エラーログも `SWSS_LOG_ERROR` ではなく Go の `fmt.Errorf` のみで、syslog には記録されない。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence:
+source: sonic-net/sonic-gnmi/common_utils/shareMem.go (master)
+excerpt: |
+  memKey  = 7749
+  memSize = 1024
+  memMode = 0x380
+reasoning: SysV IPC キー・領域サイズ・flags はすべて定数宣言。CONFIG_DB / YANG 管理なし。
+-->
+<!-- evidence:
+source: sonic-net/sonic-gnmi/common_utils/context.go (master)
+excerpt: |
+  COUNTER_SIZE CounterType = iota  // value = 32, sentinel
+reasoning: iota 番兵として COUNTER_SIZE = 32 が確定。配列サイズと SetMemCounters ループ上限に使用。
+-->
+
+`sonic-gnmi` の共有メモリカウンタ実装に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-gnmi/common_utils/shareMem.go` と `sonic-gnmi/common_utils/context.go`。
+
+### SysV 共有メモリ定数 (`shareMem.go`)
+
+| 定数名 | 値 | 用途 | 出典 |
+|--------|-----|------|------|
+| `memKey` | `7749` | `shmget` に渡す SysV IPC キー。固定値であり設定変更不可 | `shareMem.go:15` |
+| `memSize` | `1024` バイト | 共有メモリ領域サイズ。`uint64 × 128` スロット分を確保（実使用は 32 スロット = 256 バイト） | `shareMem.go:16` |
+| `memMode` | `0x380` | `shmget` フラグ（`O_RDWR \| IPC_CREAT`） | `shareMem.go:17` |
+
+### カウンタ配列定数 (`context.go`)
+
+| 定数名 | 値 | 用途 | 出典 |
+|--------|-----|------|------|
+| `COUNTER_SIZE` | `32`（iota 番兵） | `globalCounters [COUNTER_SIZE]uint64` 配列サイズ。`InitCounters` / `SetMemCounters` のループ上限 | `context.go:55` |
+
+> **注意**: `COUNTER_SIZE` を変更する場合は `telemetryd` と `gnmi_dump` を**同時に**再ビルド・再デプロイしないと配列インデックスがずれ、カウンタの対応関係が壊れる。
+
+### `gnmi_dump` 出力フォーマット定数 (`gnmi_dump.go`)
+
+| 用途 | 値 | 出典 |
+|------|----|------|
+| ヘッダ行 | `"Dump GNMI counters\n"` | `gnmi_dump.go:17` |
+| カウンタ出力書式 | `"%s---%d\n"` | `gnmi_dump.go:22` |
+| エラーメッセージ | `"Error: Fail to read counters, syscall error, err: %v\n"` | `gnmi_dump.go:20` |
+
+> `gnmi_dump` の終了コードは失敗時も `0`。自動化スクリプトで異常検知するには出力文字列の `"Error:"` プレフィクスを確認する必要がある。
+
+詳細な定数一覧は `meta/_intermediate/cdb-flow/gnmi-counter-constants.md` を参照。
+<!-- /constants -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
