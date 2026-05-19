@@ -211,6 +211,58 @@ orchagent 自体はクライアント側の送信失敗を直接検出しない�
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp; sonic-buildimage/dockers/docker-orchagent/docker-init.j2; sonic-buildimage/dockers/docker-orchagent/orch_zmq_tables.conf.j2 -->
+
+ZMQ 関連フィールド (`orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` / `orchagent_zmq_port`) の CONFIG_DB 書き込みは **orchagent コンテナの再起動時にのみ反映** される。実行中の orchagent はこれらのフィールドを購読せず、DB への副次書き込みも発生しない。
+
+### 副次書込先サマリ
+
+| 副次書込先 | テーブル / ファイル | 書込者 | 発生タイミング |
+|---|---|---|---|
+| ファイルシステム | `/etc/swss/orch_zmq_tables.conf` | `sonic-cfggen` (`docker-init.j2`) | orchagent コンテナ起動時 |
+| APPL_DB | なし | — | 購読なし・直接書込なし |
+| STATE_DB | なし | — | 購読なし・直接書込なし |
+| ASIC_DB | なし | — | SAI 非経由 |
+
+### `/etc/swss/orch_zmq_tables.conf` 生成
+
+`docker-init.j2` がコンテナ起動時に `sonic-cfggen -d -t orch_zmq_tables.conf.j2,/etc/swss/orch_zmq_tables.conf` を実行し、CONFIG_DB の現在値から設定ファイルを生成する。
+
+```
+CONFIG_DB (DEVICE_METADATA|localhost)
+  orch_northbond_dash_zmq_enabled   ─┐
+  orch_northbond_route_zmq_enabled  ─┤→ sonic-cfggen (orch_zmq_tables.conf.j2)
+                                      └→ /etc/swss/orch_zmq_tables.conf
+                                              ↓
+                                         orchagent 起動 (main.cpp:load_zmq_tables())
+                                              ↓
+                                     ZmqConsumerStateTable 登録テーブル決定
+```
+
+`orch_zmq_tables.conf` に含まれるテーブル名の一覧:
+- `orch_northbond_dash_zmq_enabled != "false"` のとき: DASH_VNET_TABLE 等 24 種の DASH テーブルを追記
+- `orch_northbond_route_zmq_enabled == "true"` のとき: `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` を追記
+
+orchagent の `load_zmq_tables()` (`orch_zmq_config.cpp:18-33`) がコンテナ起動直後にこのファイルを読み込み、ZMQ 受信対象テーブルを確定する。**実行中の CONFIG_DB 変更はファイルに反映されない**。
+
+### APPL_DB への間接的な経路変化
+
+フラグ有効時、上位コンポーネント (gNMI / fpmsyncd) は Redis `ProducerStateTable` の代わりに `ZmqProducerStateTable` を使って APPL_DB の同一テーブルに書き込む。APPL_DB テーブル自体のスキーマは変わらないが、書き込み経路が Redis Pub/Sub から ZMQ TCP ソケットに切り替わる。
+
+| フラグ | APPL_DB 書込み経路 |
+|---|---|
+| `orch_northbond_dash_zmq_enabled=true` (デフォルト) | gNMI → ZmqProducerStateTable → orchagent (ZMQ) |
+| `orch_northbond_dash_zmq_enabled=false` | gNMI → ProducerStateTable → APPL_DB → orchagent (Redis Pub/Sub) |
+| `orch_northbond_route_zmq_enabled=true` | fpmsyncd → ZmqProducerStateTable → orchagent (ZMQ) |
+| `orch_northbond_route_zmq_enabled=false` (デフォルト) | fpmsyncd → ProducerStateTable → APPL_DB → orchagent (Redis Pub/Sub) |
+
+> **注意**: ZMQ 経路では APPL_DB Redis には書き込まれず、メッセージが orchagent に直接届く。`sonic-db-cli APPL_DB keys 'DASH_*'` で確認した場合、ZMQ 有効時は APPL_DB に対応するレコードが存在しないことがある。
+
+<!-- /side-effects -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
