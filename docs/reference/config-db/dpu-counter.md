@@ -259,6 +259,115 @@ FLEX_COUNTER_TABLE|ENI の `enable` が実際に機能するためには、
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` に対する書き込みが、ENI カウンタポーリング開始に至らない失敗パターンをコードから特定した。
+
+### 失敗パターン一覧
+
+| # | トリガー | ログレベル | FLEX_COUNTER_DB への影響 | 自動回復 |
+|---|---------|---------|----------------------|---------|
+| 1 | `m_delayTimerExpired = false`（warm-reboot 60 秒タイマー未満了） | なし（silent 保留） | なし（`m_toSync` で全保留） | 自動（60 秒後に `doTask(SelectableTimer&)` が `m_delayTimerExpired = true` に変更） |
+| 2 | `gPortsOrch->allPortsReady() = false` | なし（silent 保留） | なし（`m_toSync` で保留） | 自動（PortInitDone 受信後の最初のイベントループで一括処理） |
+| 3 | 無効グループキー（`flexCounterGroupMap` 未登録） | `NOTICE` | なし | なし（再書き込み必要） |
+| 4 | 未サポートフィールド（`FLEX_COUNTER_STATUS` / `POLL_INTERVAL` 以外） | `NOTICE` | なし（他フィールドは継続処理） | 不要 |
+| 5 | ENI OID が `SAI_NULL_OBJECT_ID` の状態で `addToFC()` | `WARN` | なし（`addToFC` 即 return） | 自動（ENI が有効 OID で再登録された時点で解消） |
+| 6 | `fc_status` 変化なし（`enable` → `enable` 連続） | なし（silent no-op） | なし（`handleStatusUpdate` が前後同値なら `refreshStats` をスキップ） | 不要（設計上冪等） |
+
+### 失敗パターン詳細
+
+**パターン 1 — warm-reboot 遅延タイマー**
+
+`FlexCounterOrch` コンストラクタは warm-reboot 時のみ 60 秒のタイマーを設定し、満了まで `doTask(Consumer&)` の冒頭で即 `return` する:
+
+```cpp
+// flexcounterorch.cpp:156-159
+if (!m_delayTimerExpired)
+{
+    return;
+}
+```
+
+cold-start では `m_delayTimerExpired = true` が即時設定されるためブロックは発生しない。
+
+**パターン 2 — `allPortsReady()` ガード**
+
+`gPortsOrch` が初期化完了していない間、ENI / DASH_METER エントリは `m_toSync` に積まれたまま処理されない:
+
+```cpp
+// flexcounterorch.cpp:164-167
+if (gPortsOrch && !gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+DPU ノードでは `gPortsOrch` が nullptr になる場合があり、この場合ガードはスキップされる（DPU は物理ポートを持たない）。
+
+**パターン 3 — 無効グループキー**
+
+`FLEX_COUNTER_TABLE` に `ENI` / `DASH_METER` 以外のキー（例: `INVALID_KEY`）が書かれた場合、`flexCounterGroupMap.count(key) == 0` で即削除・retry なし:
+
+```cpp
+// flexcounterorch.cpp:183-187
+if (!flexCounterGroupMap.count(key))
+{
+    SWSS_LOG_NOTICE("Invalid flex counter group input, %s", key.c_str());
+    consumer.m_toSync.erase(it++);
+    continue;
+}
+```
+
+**パターン 4 — 未サポートフィールド**
+
+`FLEX_COUNTER_STATUS` / `POLL_INTERVAL` / `BULK_CHUNK_SIZE` 以外のフィールドは `NOTICE` ログのみで silent skip:
+
+```cpp
+// flexcounterorch.cpp:395-398
+else
+{
+    SWSS_LOG_NOTICE("Unsupported field %s", field.c_str());
+}
+```
+
+**パターン 5 — NULL OID ガード**
+
+`DashCounter::addToFC()` は ENI OID が `SAI_NULL_OBJECT_ID` の場合 WARN を出力して即 return し、`setCounterIdList` は呼ばれない:
+
+```cpp
+// dashcounter.h:30-34
+if (oid == SAI_NULL_OBJECT_ID)
+{
+    SWSS_LOG_WARN("Cannot add counter on NULL OID for %s", name.c_str());
+    return;
+}
+```
+
+**パターン 6 — `handleStatusUpdate` の冪等ガード**
+
+`DashCounter::handleStatusUpdate(enabled, entries)` は `fc_status` に変化がない場合 `refreshStats` をスキップする:
+
+```cpp
+// dashcounter.h:65-70
+bool prev_enabled = fc_status;
+fc_status = enabled;
+if (fc_status != prev_enabled)
+{
+    refreshStats(fc_status, entries);
+}
+```
+
+`enable` → `enable` の連続書き込みは no-op。これにより `enable_counters.py` の再実行（サービス再起動時）でも重複投入は発生しない。
+
+### 回復不能な失敗
+
+- **無効グループキー (パターン 3)**: `m_toSync.erase()` 後は自動リトライなし。正しいキーで再書き込みが必要
+- **ENI が一度も追加されない状態の `enable`**: `eni_entries_` が空のため `refreshStats()` が 0 件処理。ただし後続 ENI 追加時に `addToFC()` が個別に補填するため最終的には解消される
+
+> **Evidence**: `sonic-swss/orchagent/flexcounterorch.cpp:156-187,395-398` (warm-reboot タイマー・allPortsReady ガード・無効キー・未サポートフィールド), `sonic-swss/orchagent/dash/dashcounter.h:23-70` (NULL OID ガード・冪等ガード)
+<!-- /failure -->
+
 ## 制約
 
 - `POLL_INTERVAL`: 100 以上 (uint32 上限 4294967295)
