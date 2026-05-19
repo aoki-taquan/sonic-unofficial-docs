@@ -409,3 +409,63 @@ reasoning: ICCP セッション確立直後に APPL_DB の FLUSHFDBREQUEST チ�
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-side.md`
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclagsyncd.cpp L41,57-58,66-110 / sonic-swss/mclagsyncd/mclaglink.cpp L813-818,903-941,989-1085,164-188 / sonic-swss/orchagent/mlagorch.cpp L45-52,193-234 / sonic-swss/orchagent/orchdaemon.cpp L536-540 -->
+
+`MCLAG_INTERFACE` テーブルの変化は **MlagOrch**（orchagent 内）と **mclagsyncd**（独立デーモン）の 2 つの Consumer が受け取る。
+
+### mclagsyncd — SubscriberStateTable の遅延登録
+
+`mclagsyncd` は起動時に `MCLAG_DOMAIN`（`CFG_MCLAG_TABLE_NAME`）のみを購読する。`MCLAG_INTERFACE`（`CFG_MCLAG_INTF_TABLE_NAME`）の `SubscriberStateTable` は、MCLAG_DOMAIN の**初回 SET（新規作成）が成功した後**に `addDomainCfgDependentSelectables()` で動的に生成・登録される（`mclaglink.cpp:813-818,910-941`）。
+
+```
+processMclagDomainCfg():
+  └─ op=="SET" && !entryExists  →  add_cfg_dependent_selectables = 1
+       └─ addDomainCfgDependentSelectables()
+            ├─ new SubscriberStateTable(config_db, CFG_MCLAG_INTF_TABLE_NAME)
+            └─ m_select->addSelectable(p_mclag_intf_cfg_tbl)
+```
+
+`MCLAG_DOMAIN` が削除されると `delDomainCfgDependentSelectables()` で購読が解除され、`p_mclag_intf_cfg_tbl` が delete される（`mclaglink.cpp:845-847,954-959`）。
+
+### mclagsyncd — SELECT ループでのディスパッチ
+
+```cpp
+// mclagsyncd.cpp:86-92
+else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
+    std::deque<KeyOpFieldsValuesTuple> entries;
+    mclag.getMclagIntfCfgTable()->pops(entries);
+    mclag.mclagsyncdSendMclagIfaceCfg(entries);
+}
+```
+
+`pops()` で取り出したエントリを `mclagsyncdSendMclagIfaceCfg()` に渡し、`MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_IFACE` メッセージとして TCP ソケット（`127.0.6.1:2626`）経由で `iccpd` に送信する。Select タイムアウトは指定なし（無限待機）。
+
+### mclagsyncd — 起動時全量 fetch
+
+接続確立直後に `mclagsyncdFetchMclagInterfaceConfigFromConfigdb()`（`mclagsyncd.cpp:58`）が呼ばれ、`Table::dump()` で CONFIG_DB の全 MCLAG_INTERFACE エントリを取得して iccpd に一括送信する。iccpd 再起動・接続断後の再接続時も全設定が自動復元される。
+
+### MlagOrch (orchagent) — Consumer 登録
+
+`MlagOrch` は `Orch` 継承により orchagent 起動時から CONFIG_DB の `MCLAG_INTERFACE` を Consumer として購読する（`orchdaemon.cpp:536-540`）。イベントは `doTask()` → `doMlagInterfaceTask()` → `addMlagInterface()` / `delMlagInterface()` でディスパッチされる。SAI 直接呼出はなく、`SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知で `FdbOrch` に伝達する。
+
+### 通信経路サマリ
+
+| 経路 | Consumer | プロトコル | 行き先 |
+|------|---------|-----------|--------|
+| CONFIG_DB → MlagOrch | orchagent Consumer (keyspace) | Redis keyspace notification | FdbOrch (Observer 通知) |
+| CONFIG_DB → mclagsyncd | SubscriberStateTable (動的登録) | Redis keyspace notification | iccpd (TCP IPC 127.0.6.1:2626) |
+| iccpd → mclagsyncd → STATE_DB | — | TCP IPC → swss Table::set | `MCLAG_LOCAL_INTF_TABLE` / `MCLAG_REMOTE_INTF_TABLE` |
+
+### タイムアウト / リトライ
+
+| デーモン | select タイムアウト | 再試行 |
+|---------|-------------------|----|
+| mclagsyncd | 無限（指定なし） | 接続断で即時 `accept()` 再試行 + 全量再 fetch |
+| orchagent (MlagOrch) | 1000 ms (`orchdaemon.cpp:23`) | キュー保留（allPortsReady 完了まで） |
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-pubsub.md`
+<!-- /pubsub -->
