@@ -333,6 +333,55 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/fdb-aging-F.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `sonic-swss/orchagent/switchorch.cpp`, `orchagent/orchdaemon.cpp`
+
+### fdb_aging_time の通信経路概要
+
+`fdb_aging_time` は **CONFIG_DB ではなく APPL_DB** に書き込まれる特殊なフィールドである。`switch.json.j2` テンプレートが orchestration コンテナ起動時に展開され、`swssconfig` が APPL_DB `SWITCH_TABLE:switch` に書き込む。その後 `SwitchOrch` が `ConsumerStateTable`（Orch 基底クラス）で変化を検知し SAI に設定する。
+
+### 書き込み経路（APPL_DB への注入）
+
+```
+[orchagent コンテナ起動]
+switch.json.j2 (Jinja2 展開)
+  ↓ swssconfig switch.json (HSET)
+APPL_DB: SWITCH_TABLE:switch  fdb_aging_time="600"
+  ↓ keyspace notification (ConsumerStateTable)
+SwitchOrch::doAppSwitchTableTask()
+  ↓ SAI set_switch_attribute(gSwitchId, SAI_SWITCH_ATTR_FDB_AGING_TIME, 600)
+```
+
+CONFIG_DB を経由しないため、`SubscriberStateTable` / `ProducerStateTable` の 2 段構成は存在しない。
+
+### 購読方式
+
+| コンポーネント | 通信方式 | 対象 DB / テーブル | API |
+|---|---|---|---|
+| `SwitchOrch` | `ConsumerStateTable` (Orch 基底, priority=auto) | APPL_DB `SWITCH_TABLE` (`APP_SWITCH_TABLE_NAME`) | `Orch(connectors)` → `orchdaemon.cpp:197,210` |
+| `swssconfig` | `ProducerStateTable`/直接 HSET | APPL_DB `SWITCH_TABLE:switch` | `swssconfig switch.json` |
+| warm-reboot パス (`orchdaemon.cpp:1068`) | SAI 直接呼び出し | SAI `set_switch_attribute()` | `gSwitchOrch->setAgingFDB(0)` — APPL_DB を経由しない |
+
+### keyspace 通知 / pub-sub の有無
+
+APPL_DB `SWITCH_TABLE` への書き込みは `swss::Select` ループが検知する。`SwitchOrch` の Orch 基底クラスが `ConsumerStateTable` を生成し、Redis keyspace notification (`PSUBSCRIBE`) で変化を受け取る。`orchdaemon.cpp:1000ms` の `SELECT_TIMEOUT` でポーリングも行う。
+
+CONFIG_DB → fabricmgrd のような中継デーモンは**存在しない**。`fdb_aging_time` は CONFIG_DB に永続化されず、再起動時は常に `switch.json.j2` からの再注入で復元される。
+
+### warm-reboot パスの直接 SAI 呼び出し
+
+warm-reboot 中の aging 無効化 (`setAgingFDB(0)`) は APPL_DB を**経由しない**。`orchdaemon.cpp:1068` が `gSwitchOrch->setAgingFDB(0)` を直接呼び、`switchorch.cpp:1671-1688` が `sai_switch_api->set_switch_attribute()` を呼ぶ。Consumer キューの処理を待たずに即時 SAI 設定が行われる。
+
+| 通信経路 | Redis pub-sub | 経由する DB | SAI 呼び出しタイミング |
+|---------|-------------|------------|----------------------|
+| `swssconfig` → `SwitchOrch` | あり (keyspace) | APPL_DB | 次の orchagent ループ (最大 1 秒遅延) |
+| warm-reboot `setAgingFDB(0)` | なし (直接) | なし | 即時 |
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:197-213`; `orchagent/switchorch.cpp:148-161,1671-1688`; `cfgmgr/swssconfig.sh:96-101`
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
