@@ -145,6 +145,71 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 根拠: `sonic-utilities/pfcwd/main.py`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`; `sonic-utilities/scripts/db_migrator.py`
+
+`DEVICE_NEIGHBOR_METADATA` は **CONFIG_DB への書き込みのみ** であり、orchagent のような明示的な task_failed / task_need_retry は持たない。失敗は consumer 側（bgpcfgd / pfcwd / db_migrator 等）で検出・処理される。
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | consumer | 処置 | リトライ |
+|---|---|---|---|---|
+| 1 | `DEVICE_NEIGHBOR_METADATA` テーブル未到達（directory 未登録） | bgpcfgd `BGPPeerMgrBase.set_handler` | directory メカニズムがテーブル到着まで全 BGP ピア SET をブロック（`return False`） | あり（テーブル到着後に自動再処理） |
+| 2 | 個別エントリ `data['name']` が neigmeta に不在 | bgpcfgd `BGPPeerMgrBase.add_peer` | `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")`, `return False` | あり（エントリ到着後に directory が再通知） |
+| 3 | `candidates[port]['name']` キー欠落（DEVICE_NEIGHBOR エントリに `name` フィールドなし） | pfcwd `get_server_facing_ports` | `KeyError` 例外発生 → pfcwd の起動シーケンスが中断 | なし（pfcwd プロセス再起動まで） |
+| 4 | `neighbor['type']` キー欠落（DEVICE_NEIGHBOR_METADATA エントリに `type` なし） | pfcwd `get_server_facing_ports` | `KeyError` 例外発生 → pfcwd の起動シーケンスが中断 | なし（pfcwd プロセス再起動まで） |
+| 5 | サーバー向けポートが 0 件（`type == 'server'` エントリなし） | pfcwd `get_server_facing_ports` | `VLAN_MEMBER` をフォールバックとして使用（サイレント） | N/A（フォールバックで継続） |
+| 6 | `DEVICE_NEIGHBOR_METADATA` テーブルが空または EdgeZoneAggregator 型なし | db_migrator `update_edgezone_aggregator_config` | 早期 return（CABLE_LENGTH 変更なし）、サイレント継続 | N/A（冪等） |
+| 7 | `type` フィールド値の大文字小文字不一致（`qos_config.j2`） | sonic-cfggen / `qos_config.j2` | `'ToRRouter' in neighbor_info.type` が `False` → アップリンク/ダウンリンク分類が行われない（サイレント） | なし（cfggen 再実行まで） |
+
+### 詳細
+
+#### 1 & 2. bgpcfgd directory ブロックと個別エントリ延期
+
+bgpcfgd は `constants.bgp.use_neighbors_meta == True` の場合のみ `DEVICE_NEIGHBOR_METADATA` を
+依存テーブル (`deps`) として宣言する (`managers_bgp.py:128-140`)。
+宣言された場合、directory メカニズムはテーブル全体が到着するまで BGP ピア `set_handler` の
+実行を保留する（全件ブロック）。
+
+テーブル到着後は個別エントリ単位のチェックが走る。`data['name']` が `neigmeta` に存在しない場合、
+`log_info` を出力して `return False` し再試行を待つ。minigraph 書込み完了前に bgpcfgd が起動している
+環境や、BGP_NEIGHBOR エントリを手動で先書きした場合に発生しやすい。
+
+```python
+# managers_bgp.py:219-223
+if self.check_neig_meta:
+    neigmeta = self.directory.get_slot("CONFIG_DB", swsscommon.CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME)
+    if 'name' in data and data["name"] not in neigmeta:
+        log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor '%s' - '%s'" % (nbr, data['name']))
+        return False
+```
+
+#### 3 & 4. pfcwd KeyError によるプロセス中断
+
+`get_server_facing_ports()` (`pfcwd/main.py:97-108`) は
+`candidates[port]['name']` で DEVICE_NEIGHBOR から名前を取得し、
+続けて `neighbor['type'].lower()` で型を参照する。
+
+`name` または `type` フィールドが欠落している場合は `KeyError` が発生する。
+pfcwd は try-catch を設けていないため、例外はコールスタックを伝播して
+pfcwd の起動シーケンス (`start_default`) が中断される。
+
+!!! warning "pfcwd 起動中断"
+    DEVICE_NEIGHBOR_METADATA の `type` フィールドを省略して書き込むと、
+    pfcwd の初回起動時に `KeyError` でプロセスが中断する。
+    minigraph 経由では `type` が常に書き込まれるが、直接 DB 操作時は要注意。
+
+#### 5. サーバー向けポート 0 件 → VLAN_MEMBER フォールバック
+
+`type.lower() == 'server'` に合致するエントリが存在しない場合、
+`server_facing_ports` は空リストとなり、`VLAN_MEMBER` テーブルのポートで代替される。
+これはサイレントなフォールバックで、ログ出力もエラーも発生しない
+(`pfcwd/main.py:106-107`)。
+
+<!-- /failure -->
+
 ## 購読者
 
 - minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): minigraph から生成
