@@ -428,6 +428,72 @@ intfmgrd (swss::Select, SELECT_TIMEOUT=1000 ms)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/portsyncd/linksync.cpp`
+> 中間調査: `meta/_intermediate/cdb-flow/state-db-port-platform.md`
+
+### portsyncd (linksync.cpp) — プラットフォーム非依存
+
+`linksync.cpp` には `switch_type` / VOQ / chassis / platform 参照が存在しない。`state` / `admin_status` / `netdev_oper_status` / `mtu` の 4 フィールドは全プラットフォームで同一コードパスで書き込まれる。
+
+### host_tx_ready — CMIS 対応 ASIC で書き込みパスが変わる
+
+`m_cmisModuleAsicSyncSupported` は SAI が以下の両属性をサポートする場合に `true` になる (portsorch.cpp:969–972):
+
+| SAI 属性 | 条件 |
+|----------|------|
+| `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` | `create_implemented == true` |
+| `SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE` | `set_implemented == true` |
+
+| 環境 | `host_tx_ready` の書き込み経路 |
+|------|-------------------------------|
+| CMIS 対応 ASIC（`m_cmisModuleAsicSyncSupported = true`） | `setPortAdminStatus()` では書かない。SAI コールバック `on_port_host_tx_ready` (portsorch.cpp:977) 経由でのみ書き込む。`STATE_TRANSCEIVER_INFO_TABLE` を購読して CMIS モジュール存在確認 (portsorch.cpp:984) |
+| 非 CMIS 環境 | `setPortAdminStatus()` 内で admin UP + SAI set 成功 + Gearbox OK がそろった時点で直接書く (portsorch.cpp:2254) |
+
+CMIS 環境では `host_tx_ready = "true"` への遷移タイミングが SAI コールバック依存のため、非 CMIS 環境より遅延する場合がある。
+
+### host_tx_ready — Gearbox（外付け PHY）で条件追加
+
+Gearbox が有効な環境（`isGearboxEnabled() == true`）では、`host_tx_ready = "true"` セットに Gearbox 成功確認（`gbstatus == true`）が追加条件になる (portsorch.cpp:2246)。Gearbox なし環境ではこの条件はスキップされる。
+
+### switch_type == "dpu" — 複数フィールドが不在になりうる
+
+DPU 構成では以下の SAI クエリと初期化処理がスキップされる:
+
+| スキップ処理 | 影響するフィールド |
+|------------|-----------------|
+| autoneg FEC モード override / oper FEC mode capability クエリ (portsorch.cpp:987–1011) | `fec` / `supported_fecs` の SAI oper 取得が機能しない可能性 |
+| `initializePriorityGroupsBulk()` / `initializeQueuesBulk()` (portsorch.cpp:6589–6594) | `speed` / `rmt_adv_speeds` / `link_training_status` に間接影響 |
+| `removeDefaultVlanMembers()` / `removeDefaultBridgePorts()` (portsorch.cpp:1043–1051) | PORT_TABLE には直接影響なし |
+
+portsyncd が書く `state` / `admin_status` / `netdev_oper_status` / `mtu` は DPU でも同様に書き込まれる。
+
+### switch_type == "voq" — システムポートの追加管理
+
+VOQ 構成では `addSystemPorts()` が呼ばれ、リモートシステムポートが `PortsOrch` 内部で管理される。ただし STATE_DB `PORT_TABLE` への書き込みは **物理ポート (`Port::PHY`) のみ**が対象。`updateSystemPort()` (portsorch.cpp:11033) も `gMySwitchType == "voq" && port.m_type == Port::PHY` を条件としており、システムポート自体のステータスは別テーブル（`CHASSIS_APP_DB`）で管理される。
+
+### phy_ctrl_unreliable_los — serdes 設定依存
+
+`phy_ctrl_unreliable_los` フィールドは `pCfg.serdes.unreliable_los.is_set` が `true` の場合のみ書き込まれる (portsorch.cpp:5182–5200)。この設定は主に Mellanox serdes 設定ファイルが存在するプラットフォームで現れる。`is_set` が `false` のプラットフォームではフィールドが書き込まれない（不在のまま）。
+
+### Mellanox (MLNX) プラットフォーム — PORT_TABLE への直接影響なし
+
+`isMlnxPlatform()` が `true` の場合、FLEX_COUNTER_DB の trim stat プラグイン設定が異なる (portsorch.cpp:858–863)。これは STATE_DB `PORT_TABLE` フィールドへの直接書き込みには影響しない。
+
+### フィールドごとのプラットフォーム差まとめ
+
+| フィールド | プラットフォーム差異 | 差異の概要 |
+|-----------|-------------------|-----------|
+| `state` / `admin_status` / `netdev_oper_status` / `mtu` | **なし** | linksync.cpp は全プラットフォーム共通 |
+| `host_tx_ready` | **あり（CMIS / Gearbox）** | `m_cmisModuleAsicSyncSupported` が `true` の場合は SAI コールバック経由に切り替わる。Gearbox 有効時は追加条件あり |
+| `speed` / `fec` / `supported_fecs` | **あり（DPU）** | DPU では FEC oper / autoneg capability クエリがスキップされる可能性 |
+| `phy_ctrl_unreliable_los` | **あり（serdes 設定依存）** | `is_set` フラグが `true` のプラットフォームでのみ書き込まれる |
+| `supported_speeds` | **あり（SAI 実装依存）** | SAI `NOT_SUPPORTED` 時は空文字または不在になる |
+
+<!-- /platform -->
+
 ## 購読者（consumer）
 
 | プロセス | 参照フィールド | 用途 |
