@@ -266,6 +266,50 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 詳細は `meta/_intermediate/cdb-flow/ipv6-link-local-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`ipv6_use_link_local_only` フィールドへの SET/DEL を受けた `intfmgrd` は CONFIG_DB 以外に **APP_DB と STATE_DB** へ副次書込を行う。詳細スキャンノート: [`meta/_intermediate/cdb-flow/ipv6-link-local-side-effects.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ipv6-link-local-side-effects.md)。
+
+### APP_DB への書込
+
+| タイミング | テーブル | キー | フィールド | 値 | evidence |
+|-----------|---------|------|-----------|-----|---------|
+| SET (enable/disable) | `APP_DB / INTF_TABLE` | `INTF_TABLE\|<interface_name>` | `ipv6_use_link_local_only` | `"enable"` / `"disable"` | `intfmgr.cpp:926, 1053` |
+
+`intfmgrd` の `doIntfGeneralTask()` は `ipv6_use_link_local_only` フィールドを他の INTF_TABLE フィールドと合わせて `m_appIntfTableProducer.set()` で APP_DB に書き込む。
+
+確認コマンド:
+```bash
+sonic-db-cli APPL_DB hgetall 'INTF_TABLE|Ethernet0'
+```
+
+### STATE_DB への書込
+
+| タイミング | テーブル | キー | フィールド | 値 | evidence |
+|-----------|---------|------|-----------|-----|---------|
+| SET 処理完了時 | `STATE_DB / INTERFACE_TABLE` | `<interface_name>` | `vrf` | VRF 名 (デフォルト: `""`) | `intfmgr.cpp:1054` |
+| DEL 処理時 | `STATE_DB / INTERFACE_TABLE` | `<interface_name>` | — | エントリ削除 | `intfmgr.cpp:1089` |
+
+STATE_DB への書込はインタフェース設定処理全体の一部であり、`ipv6_use_link_local_only` フィールド単体の変更に限らず SET 操作全体で実行される。
+
+### カーネル操作（DB 書込なし）
+
+disable 時に `delIpv6LinkLocalNeigh()` が呼ばれ、NEIGH_TABLE (APP_DB) から FE80::/64 スコープのネイバーエントリを検索し `ip neigh del` コマンドでカーネルの近隣テーブルから削除する（`intfmgr.cpp:712-738`）。DB への書込は行われないが、カーネル操作によって neighsyncd が NEIGH_TABLE を更新する可能性がある。
+
+### ASIC_DB への影響
+
+APP_DB.INTF_TABLE の `ipv6_use_link_local_only` フィールドは IntfsOrch (orchagent) が購読するが、このフィールドは SAI API に転送しないため **ASIC_DB への書込は発生しない**（dead consumer、HLD なし）。
+
+### 副次書込サマリ
+
+| 副次 DB | テーブル | トリガ | 書込主体 |
+|---------|---------|--------|---------|
+| APP_DB | `INTF_TABLE` | SET (enable / disable) | intfmgrd |
+| STATE_DB | `INTERFACE_TABLE` | SET 処理完了時 | intfmgrd |
+| カーネル | 近隣テーブル | disable 時 | intfmgrd (`ip neigh del`) |
+<!-- /side-effects -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |
