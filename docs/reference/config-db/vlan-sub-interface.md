@@ -663,7 +663,7 @@ PUBLISH ペイロードは固定文字列 `"G"`。IP prefix 行（`doIntfAddrTas
 
 <!-- /pubsub -->
 
-<!-- platform-diff -->
+<!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
 VLAN_SUB_INTERFACE の実挙動はプラットフォームタイプによって以下の点で異なる。
@@ -723,7 +723,7 @@ Broadcom SAI も `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` をサポートする。�
 [^ph1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 [^ph2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
 
-<!-- /platform-diff -->
+<!-- /platform -->
 <!-- secondary-db-writes -->
 ## 副次 DB 書込（Phase F）
 
