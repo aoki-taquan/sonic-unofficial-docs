@@ -189,6 +189,31 @@ DEL NVGRE_TUNNEL|<tunnel_name>                  # その後トンネルを削除
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照・共依存コンポーネント (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/nvgre-tunnel-cross-refs.md`
+
+`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` テーブルは YANG leafref と実装レベルの双方で他テーブル・グローバル変数を暗黙参照する。Redis の明示的 leafref 整合性保証は `sonic-db-cli` SET 時には行われず、orchagent 内部で実行時に解決される。
+
+| 参照元 | 参照先テーブル / 情報源 | 参照フィールド | 未解決時の挙動 | evidence |
+|--------|----------------------|--------------|--------------|---------|
+| `NvgreTunnelMapOrch::addOperation()` | `CONFIG_DB VLAN` テーブル（PortsOrch 内部マップ） | `vlan_id` | WARN ログ + `return true` → MAP エントリが**永続的に破棄**（retry なし） | `nvgreorch.cpp:489` |
+| `NvgreTunnelMapOrch::addOperation()` | `NvgreTunnelOrch` 内部マップ（`NVGRE_TUNNEL` エントリ） | `tunnel_name` | WARN ログ + `return true` → MAP エントリが**永続的に破棄**（retry なし） | `nvgreorch.cpp:469-471` |
+| `NvgreTunnel::NvgreTunnel()` コンストラクタ | `gUnderlayIfId`（orchagent main が SAI から取得するアンダーレイ RIF OID） | — | orchagent 起動時に設定済み。起動前参照は想定外 | `nvgreorch.cpp:312`, `main.cpp:967` |
+| `NvgreTunnel::NvgreTunnel()` コンストラクタ | `gVirtualRouterId`（SAI `SAI_SWITCH_ATTR_DEFAULT_VIRTUAL_ROUTER_ID`） | — | orchagent 起動時に設定済み。起動前参照は想定外 | `nvgreorch.cpp:313`, `main.cpp:902` |
+| YANG `NVGRE_TUNNEL_MAP` スキーマ | `NVGRE_TUNNEL.tunnel_name`（leafref） | `tunnel_name` | YANG バリデーション段階で reject（ただし `sonic-db-cli` の直接 SET は YANG を通らない） | `sonic-nvgre-tunnel.yang` |
+
+### 参照解決タイミング
+
+- **VLAN 存在確認**: `addOperation()` 呼び出しのたびに毎回 `gPortsOrch->getVlanByVlanId()` を呼ぶ（キャッシュなし）。MAP エントリ SET 時点で VLAN が未登録であれば破棄される。その後 VLAN を作成しても MAP エントリは**自動再適用されない**。
+- **親トンネル存在確認**: `gDirectory.get<NvgreTunnelOrch*>()->isTunnelExists()` で内部 `m_nvgreTunnels` マップを参照。`NVGRE_TUNNEL` エントリが未作成のまま `NVGRE_TUNNEL_MAP` を SET すると破棄される（Phase B 書込み順依存と同じ制約）。
+- **`gUnderlayIfId` / `gVirtualRouterId`**: orchagent 起動時に `main.cpp:902-974` で初期化済みのため、通常運用では依存関係として意識する必要はない。VS 環境など SAI 属性取得が一部スキップされるケースでは `0`（SAI_NULL_OBJECT_ID）のまま使用されトンネル作成が失敗する場合がある。
+
+> **Evidence**: `sonic-swss` `orchagent/nvgreorch.cpp:9-13,312-313,469-491,559-563`、`orchagent/main.cpp:48-49,902,967`、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-nvgre-tunnel.yang`
+
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
