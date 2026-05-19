@@ -364,47 +364,96 @@ show fips status
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
+## 副作用・波及挙動 (Phase F)
 
-`FIPS` テーブルへの書込みは、`hostcfgd` の `FipsCfg` クラスを経由して以下の副作用を引き起こす。すべての副作用は `update()` → `update_enforce_config()` / `update_noneenforce_config()` の呼出し連鎖で実行される（`hostcfgd:1788-1793`）。
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1788-1846 -->
 
-### 副作用一覧
+`FIPS|global` テーブルへの書き込みは CONFIG_DB 以外のリソース（STATE_DB・ファイルシステム・bootloader・systemd ユニット）に対して副作用を生じる。副作用はすべて `FipsCfg.update()` のコールチェーン内で同期的に実行される。
 
-| # | 副作用 | トリガー条件 | 実装箇所 |
-|---|--------|------------|---------|
-| 1 | `/etc/fips/fips_enable` への `"0"` / `"1"` 書込み | `enable` フィールドが変更されて現在値と異なる場合 | `update_noneenforce_config()` hostcfgd:1795-1809 |
-| 2 | `systemctl restart ssh telemetry.service restapi` の実行 | FIPS enforce 中でなく (`cur_enforced=False`)、かつ前回再起動後に設定変更がある場合 | `restart()` hostcfgd:1811-1835 |
-| 3 | 次回起動イメージのブートローダー FIPS enforce 設定変更 | `enforce` フィールドが変更されて現在の bootloader 設定と異なる場合 | `update_enforce_config()` hostcfgd:1837-1846 |
-| 4 | `STATE_DB FIPS_STATS\|state` の `config_datetime` 更新 | 常に（`update()` が呼ばれるたび） | `update()` hostcfgd:1792 |
+### 1. STATE_DB — `FIPS_STATS|state.config_datetime` 書き込み
 
-### 副作用詳細
+```python
+# hostcfgd:1792
+self.state_db_conn.hset('FIPS_STATS|state', 'config_datetime', datetime.utcnow().isoformat())
+```
 
-**副作用 1 — OpenSSL FIPS ファイル書込み**: `FipsCfg.enable` が `True` のとき `/etc/fips/fips_enable` に `"1"` を書き込み、`False` のとき `"0"` を書き込む。ディレクトリ `/etc/fips/` が存在しない場合は `os.makedirs` で自動作成する。このファイルの変更は OpenSSL の FIPS provider ロードに影響し、**再起動なしに**現行プロセスへ伝播するわけではない。次回サービス起動時に OpenSSL が当該ファイルを参照する。
+`update()` の最後に、STATE_DB の `FIPS_STATS|state` エントリへ UTC タイムスタンプ（ISO-8601 形式）を書き込む。このタイムスタンプは `restart()` が `/etc/fips/fips_enable` の mtime と比較して二重サービス再起動を防止するために使用される。
 
-**副作用 2 — サービス再起動**: `restart()` が以下の条件を満たす場合にのみサービスを再起動する:
-- カーネルコマンドライン上で FIPS enforce 中（`cur_enforced=True`）の場合は**スキップ**される
-- `FIPS_STATS|state` の `config_datetime` が `/etc/fips/fips_enable` の mtime より新しい場合も**スキップ**される（二重再起動防止）
-- 再起動対象は `DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']` または `/etc/sonic/fips.json` の `restart_services` キーで上書き可能
-- `systemctl -t service --state=running` で現在 running 状態のサービスに限り再起動する
+| STATE_DB テーブル | フィールド | 書込内容 | 条件 |
+|-----------------|-----------|---------|------|
+| `FIPS_STATS\|state` | `config_datetime` | `datetime.utcnow().isoformat()` | `FIPS\|global` の SET が処理されるたびに毎回上書き |
 
-**副作用 3 — ブートローダー設定**: `update_enforce_config()` は `bootloader.get_bootloader().get_next_image()` で次回起動候補イメージを取得し、`set_fips(image, enforce)` でその FIPS enforce 設定を書き換える。**再起動後**に `sonic_fips=1` カーネルパラメータが有効化 / 無効化される。
+---
 
-**副作用 4 — STATE_DB タイムスタンプ更新**: `hostcfgd:1792` で `state_db_conn.hset('FIPS_STATS|state', 'config_datetime', datetime.utcnow().isoformat())` が実行される。このフィールドは `restart()` での二重再起動防止チェックにも使われる。
+### 2. ファイルシステム — `/etc/fips/fips_enable` 書き込み
 
-### 注記
+```python
+# hostcfgd:1806-1809
+if cur_fips_enabled != expected_fips_enabled:
+    os.makedirs(os.path.dirname(OPENSSL_FIPS_CONFIG_FILE), exist_ok=True)
+    with open(OPENSSL_FIPS_CONFIG_FILE, 'w') as f:
+        f.write(expected_fips_enabled)  # "0" または "1"
+```
 
-- 副作用 1 と 3 は独立して実行されるが、副作用 1 の後に副作用 3 が失敗すると「OpenSSL FIPS は有効だがブートローダーには反映されない」非一貫状態になる（`<!-- failure -->` セクション参照）。
-- `restart()` は `run_cmd` 失敗時に例外ハンドリングをしないため、`ssh` 再起動失敗時も後続の `telemetry.service` / `restapi` が実行されない可能性がある（サイレント部分失敗）。
+`enable=true`（または `enforce=true` 由来）の場合 `"1"` を、`enable=false` の場合 `"0"` を書き込む。現在のファイル内容と一致する場合は書き込みをスキップする（冪等的な更新）。ディレクトリ `/etc/fips/` が存在しない場合は自動作成される。
 
-<!-- evidence:
-  hostcfgd:1785-1846 — FipsCfg.update / update_noneenforce_config / restart / update_enforce_config
-  hostcfgd:1788-1793 — update() 呼出しシーケンス
-  hostcfgd:1795-1809 — /etc/fips/fips_enable 書込みロジック
-  hostcfgd:1811-1835 — restart(): cur_enforced skip / 二重再起動防止 / systemctl restart
-  hostcfgd:1837-1846 — update_enforce_config(): bootloader get/set
-  hostcfgd:1792 — STATE_DB config_datetime 更新
-  hostcfgd:103 — DEFAULT_FIPS_RESTART_SERVICES
--->
+| ファイル | 書込内容 | 条件 |
+|---------|---------|------|
+| `/etc/fips/fips_enable` | `"1"` | `self.enable == True`（`enable=true` または `enforce=true` 由来） |
+| `/etc/fips/fips_enable` | `"0"` | `self.enable == False` |
+
+!!! note "ファイル変更はカーネルへの即時反映ではない"
+    このファイルは OpenSSL FIPS provider の起動時ロード判定に使われる。書き込んだ直後に現行プロセスの OpenSSL 動作が変わるわけではなく、該当サービス（ssh 等）が再起動されてから有効化される。
+
+---
+
+### 3. bootloader — 次回起動用 grub パラメータ変更
+
+```python
+# hostcfgd:1838-1846
+loader = bootloader.get_bootloader()
+image = loader.get_next_image()
+if next_enforced != self.enforce:
+    loader.set_fips(image, self.enforce)  # grub エントリに sonic_fips=1 / fips=1 を付与・除去
+```
+
+`enforce` フィールドの変更は現行カーネルには反映されず、**次回起動時** の grub エントリにのみ `sonic_fips=1` / `fips=1` パラメータを付与・除去する。現在値と変更後値が同じ場合はスキップされる。
+
+| 副作用 | 条件 | 影響範囲 |
+|--------|------|---------|
+| 次回 boot イメージの grub エントリに `sonic_fips=1` 付与 | `enforce=true` かつ現行設定と異なる | 次回 reboot 後のカーネル FIPS enforce 状態 |
+| 次回 boot イメージの grub エントリから FIPS パラメータ除去 | `enforce=false` かつ現行設定と異なる | 次回 reboot 後のカーネル FIPS enforce 解除 |
+
+---
+
+### 4. systemd — サービス再起動（`restart()`）
+
+```python
+# hostcfgd:1832-1835
+for service in self.restart_services:  # デフォルト: ['ssh', 'telemetry.service', 'restapi']
+    if service in services or service + '.service' in services:
+        run_cmd(['sudo', 'systemctl', 'restart', service])
+```
+
+`/etc/fips/fips_enable` を更新した後、`restart()` が実行中の対象サービスを再起動する。以下の条件で再起動がスキップされる:
+
+| スキップ条件 | 判定箇所 |
+|-------------|---------|
+| 現行 kernel が FIPS enforce 済み (`cur_enforced=True`) | hostcfgd:1813-1815 |
+| `config_datetime`（STATE_DB）が `/etc/fips/fips_enable` の mtime より新しい（二重再起動防止） | hostcfgd:1821-1824 |
+
+デフォルトの再起動対象: `ssh`、`telemetry.service`、`restapi`。`/etc/sonic/fips.json` の `restart_services` キーで上書き可能。
+
+### 副作用サマリー
+
+| # | トリガー | 副作用 | 対象 | 条件 |
+|---|---------|-------|------|------|
+| 1 | `FIPS\|global` SET 処理完了 | `FIPS_STATS\|state.config_datetime` 書き込み | STATE_DB | 毎回実行 |
+| 2 | `enable` または `enforce` が `true` に変更 | `/etc/fips/fips_enable` に `"1"` 書込み | ファイルシステム | 現在値と異なる場合のみ |
+| 3 | `enable` が `false` に変更 | `/etc/fips/fips_enable` に `"0"` 書込み | ファイルシステム | 現在値と異なる場合のみ |
+| 4 | `enforce` 変更 | 次回 boot grub エントリを更新 | bootloader | 現在の grub 設定と異なる場合のみ |
+| 5 | `enable` 変更後の `restart()` 実行 | `ssh` / `telemetry.service` / `restapi` を再起動 | systemd | `cur_enforced=False` かつ二重再起動防止チェック通過時 |
+
 <!-- /side-effects -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->

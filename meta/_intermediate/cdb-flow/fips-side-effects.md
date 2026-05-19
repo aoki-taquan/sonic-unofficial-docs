@@ -1,94 +1,34 @@
-# fips — side-effects scan notes
+# FIPS — Phase F 副作用 調査メモ
 
-## 対象ファイル
+## 調査対象
 
-- `sonic-host-services/scripts/hostcfgd` — `FipsCfg` クラス (L1753-1846)
+- `sonic-host-services/scripts/hostcfgd` — `FipsCfg` クラス（L1753–1846）
 
-## 検出された副作用
+## 副作用の調査結果
 
-### 1. `/etc/fips/fips_enable` への書込み
+### STATE_DB 書き込み
 
-`update_noneenforce_config()` (hostcfgd:1795-1809) が `FipsCfg.enable` の値に応じて
-`/etc/fips/fips_enable` に `"0"` または `"1"` を書き込む。
+`FipsCfg.update()` (L1788–1793) の末尾で `state_db_conn.hset('FIPS_STATS|state', 'config_datetime', datetime.utcnow().isoformat())` を実行する。この書き込みは `FIPS|global` SET が処理されるたびに毎回行われる。
 
-```python
-if cur_fips_enabled != expected_fips_enabled:
-    os.makedirs(os.path.dirname(OPENSSL_FIPS_CONFIG_FILE), exist_ok=True)
-    with open(OPENSSL_FIPS_CONFIG_FILE, 'w') as f:
-        f.write(expected_fips_enabled)
-```
+`restart()` (L1821) がこのタイムスタンプを読み取り、`/etc/fips/fips_enable` の mtime と比較して二重サービス再起動を防止する。
 
-- ディレクトリが存在しない場合は自動作成される
-- このファイルは OpenSSL の FIPS provider ロードに影響するが、**既存プロセスには即座に伝播しない**
+### ファイルシステム書き込み — `/etc/fips/fips_enable`
 
-### 2. systemd サービス再起動
+`update_noneenforce_config()` (L1795–1811) が `/etc/fips/fips_enable` を読み取り、期待値（`self.enable` に応じた `"0"` / `"1"`）と異なる場合のみ書き込む（冪等的）。ディレクトリ `/etc/fips/` が存在しない場合は `os.makedirs` で自動作成。
 
-`restart()` (hostcfgd:1811-1835) が以下の条件で実行される:
+### bootloader grub パラメータ変更
 
-条件チェック:
-1. `cur_enforced=True` の場合: **スキップ**（FIPS enforce 中はサービス再起動不要）
-2. `FIPS_STATS|state.config_datetime` > `/etc/fips/fips_enable` の mtime の場合: **スキップ**（二重再起動防止）
+`update_enforce_config()` (L1838–1846) が `sonic_installer.bootloader` 経由で次回起動イメージの grub エントリを操作する。`enforce` の現行値と変更値が同じ場合はスキップ。現行カーネルへの影響はなく、次回 reboot 後に有効化される。
 
-再起動対象:
-- デフォルト: `['ssh', 'telemetry.service', 'restapi']`（`DEFAULT_FIPS_RESTART_SERVICES` = hostcfgd:103）
-- `/etc/sonic/fips.json` の `restart_services` キーで上書き可能（hostcfgd:1766-1769）
-- `systemctl -t service --state=running` で running 状態のサービスのみ再起動
+### systemd サービス再起動
 
-```python
-for service in self.restart_services:
-    if service in services or service + '.service' in services:
-        run_cmd(['sudo', 'systemctl', 'restart', service])
-```
+`restart()` (L1813–1835) が `DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']` の各サービスを `systemctl restart` する。以下の条件でスキップ:
+- `cur_enforced=True`（現行 kernel が FIPS enforce 済み）— L1813-1815
+- `config_datetime`（STATE_DB）が `/etc/fips/fips_enable` の mtime より新しい — L1821-1824
 
-### 3. ブートローダー FIPS enforce 設定変更
+`/etc/sonic/fips.json` の `restart_services` キーが存在する場合はデフォルトリストを上書きする。
 
-`update_enforce_config()` (hostcfgd:1837-1846):
+## 特記事項
 
-```python
-loader = bootloader.get_bootloader()
-image = loader.get_next_image()
-next_enforced = loader.get_fips(image)
-if next_enforced == self.enforce:
-    return  # 変更不要
-loader.set_fips(image, self.enforce)
-```
-
-- 次回起動イメージのブートローダー設定を変更する
-- **再起動後**に `sonic_fips=1` カーネルパラメータが有効化/無効化される
-- 副作用 1（OpenSSL ファイル書込み）より先に実行される
-
-### 4. STATE_DB タイムスタンプ更新
-
-`update()` (hostcfgd:1792):
-
-```python
-self.state_db_conn.hset('FIPS_STATS|state', 'config_datetime', datetime.utcnow().isoformat())
-```
-
-- `update()` 呼出しごとに必ず実行される
-- `restart()` の二重再起動防止チェックにも使用される
-
-## 実行順序
-
-```
-update()
-├── update_enforce_config()   [副作用 3: bootloader 設定変更]
-├── update_noneenforce_config()
-│   ├── /etc/fips/fips_enable 書込み [副作用 1]
-│   └── restart()             [副作用 2: サービス再起動]
-└── state_db_conn.hset(...)   [副作用 4: STATE_DB 更新]
-```
-
-## 非一貫状態リスク
-
-- `update_enforce_config()` 失敗時: OpenSSL FIPS（副作用 1）は変わるがブートローダーには反映されない
-- `restart()` の `run_cmd` 失敗: 例外ハンドリングなし → 後続サービスが再起動されない可能性
-
-## evidence
-
-- `hostcfgd:1753-1846` — FipsCfg クラス全体
-- `hostcfgd:1788-1793` — update() 呼出しシーケンス
-- `hostcfgd:1795-1809` — update_noneenforce_config
-- `hostcfgd:1811-1835` — restart()
-- `hostcfgd:1837-1846` — update_enforce_config()
-- `hostcfgd:103` — DEFAULT_FIPS_RESTART_SERVICES
+- `update_enforce_config()` は `update_noneenforce_config()` より先に呼ばれる（L1790-1791）。bootloader 更新 → ファイル更新 → サービス再起動の順。
+- `restart()` の `systemctl restart` 失敗時に例外ハンドリングがないため、1 件失敗すると後続サービスの再起動が中断される可能性がある。
