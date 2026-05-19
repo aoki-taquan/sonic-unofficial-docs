@@ -238,6 +238,81 @@ PAM limits 例外     → except で吸収・ログのみ・PAM ファイル未�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-constants.md`
+
+`hostcfgd` の `SshServer` クラスおよび `PamLimitsCfg` クラスが参照するモジュールレベル定数の一覧。これらの値はコードに直書きされており、CONFIG_DB や YANG から変更できない。
+
+### 整数フィールドの min / max 制約
+
+```python
+# hostcfgd L62-66
+SSH_INT_VALUES = ["authentication_retries", "login_timeout", "inactivity_timeout", "max_sessions"]
+
+SSH_MIN_VALUES = {
+    "authentication_retries": 3,
+    "login_timeout": 1,
+    "ports": 1,
+    "inactivity_timeout": 0,
+    "max_sessions": 0,
+}
+
+SSH_MAX_VALUES = {
+    "authentication_retries": 100,
+    "login_timeout": 600,
+    "ports": 65535,
+    "inactivity_timeout": 35000,
+    "max_sessions": 100,
+}
+```
+
+| フィールド | min | max | 備考 |
+|-----------|----:|----:|------|
+| `authentication_retries` | **3** | **100** | YANG range は `1..100` だがコード側 min が 3 に切り上げられる |
+| `login_timeout` | **1** | **600** | 秒単位 |
+| `ports` | **1** | **65535** | ポート番号の有効範囲 |
+| `inactivity_timeout` | **0** | **35000** | 分単位（コードが秒に変換）。YANG range は `0..35000` と一致 |
+| `max_sessions` | **0** | **100** | `0` は PAM limits 非設定（無制限）を意味する |
+
+### sshd_config フィールド名マッピング
+
+```python
+# hostcfgd L67-79
+SSH_CONFIG_NAMES = {
+    "authentication_retries": "MaxAuthTries",
+    "login_timeout":          "LoginGraceTime",
+    "ports":                  "Port",
+    "inactivity_timeout":     "ClientAliveInterval",
+    "permit_root_login":      "PermitRootLogin",
+    "password_authentication":"PasswordAuthentication",
+    "ciphers":                "Ciphers",
+    "kex_algorithms":         "KexAlgorithms",
+    "macs":                   "MACs",
+}
+```
+
+`max_sessions` はこのマッピングに含まれない（PAM limits 経由で書き込まれる）。
+
+### ファイルパス定数
+
+| 定数名 | 値 | 用途 |
+|-------|----|------|
+| `SSH_CONFG` | `/etc/ssh/sshd_config` | SSH サーバー設定ファイル（読み書き） |
+| `SSH_CONFG_TMP` | `/etc/ssh/sshd_config.tmp` | 検証用一時ファイル |
+| `PAM_LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/pam_limits.j2` | PAM limits Jinja2 テンプレート |
+| `LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/limits.conf.j2` | limits.conf Jinja2 テンプレート |
+| `PAM_LIMITS_CONF` | `/etc/pam.d/pam-limits-conf` | PAM pam-limits-conf 出力先 |
+| `LIMITS_CONF` | `/etc/security/limits.conf` | PAM limits.conf 出力先 |
+| `ETC_PAMD_SSHD` | `/etc/pam.d/sshd` | PAM sshd 設定ファイル（認証バックエンド切替時に使用） |
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L32-33 (SSH_CONFG / SSH_CONFG_TMP) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L50 (ETC_PAMD_SSHD) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L61-84 (SSH_INT_VALUES / SSH_MIN_VALUES / SSH_MAX_VALUES / SSH_CONFIG_NAMES / PAM定数) -->
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
