@@ -307,3 +307,82 @@ REST/gNMI 書き込み経路なし（手動 JSON 投入が主経路）。
 
 詳細根拠は `meta/_intermediate/cdb-flow/vnet-route-cross-refs.md` を参照。
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vnet-route-failure.md -->
+<!-- source: sonic-swss/orchagent/vnetorch.cpp -->
+
+### 失敗パス一覧
+
+#### CFG 層 (`VNetCfgRouteOrch`)
+
+`doTask()` は戻り値が `false` のエントリを `m_toSync` に保留して次回再試行し、`true` なら erase する（vnetorch.cpp:3599-3608）。
+
+| # | 失敗トリガー | 戻り値 | 再試行 | SAI 影響 |
+|---|------------|--------|--------|---------|
+| 1 | SET/DEL 以外の不明コマンド | `false` | あり（永続ループ） | なし |
+
+#### APPL 層 — VNET_ROUTE（underlay）
+
+| # | 失敗トリガー | 戻り値 | 再試行 | SAI 影響 |
+|---|------------|--------|--------|---------|
+| 2 | VNET 未存在（SET） | `false` | あり | なし |
+| 3 | VNET 未存在（DEL） | `true` (スキップ) | なし | なし |
+| 4 | peer VNET が 1 件でも未存在 | `false` | あり | なし |
+| 5 | Port/RIF 未存在（subnet 経路） | `false` | あり | なし |
+| 6 | SAI `create_route_entry()` / `remove_route_entry()` 失敗 | `false` | あり | SAI 変更なし / 部分変更 |
+| 7 | `RouteOrch::addRoutePost()` / `removeRoutePost()` 失敗 | `false` | あり | ASIC 状態依存 |
+
+#### APPL 層 — VNET_ROUTE_TUNNEL（VXLAN トンネル経路）
+
+| # | 失敗トリガー | 戻り値 | 再試行 | SAI 影響 |
+|---|------------|--------|--------|---------|
+| 8 | `vni` リスト件数 ≠ `endpoint` 件数 | `false` | あり（永続） | なし |
+| 9 | `mac_address` リスト件数 ≠ `endpoint` 件数 | `false` | あり（永続） | なし |
+| 10 | `endpoint_monitor` 件数 ≠ `endpoint` 件数 | `false` | あり（永続） | なし |
+| 11 | `primary` 設定 + `endpoint_monitor` なし | `false` | あり（永続） | なし |
+| 12 | `pinned_state` 件数 ≠ `endpoint_monitor` 件数 | `false` | あり（永続） | なし |
+| 13 | nexthop グループ上限到達 | `false` | あり | なし |
+| 14 | SAI `create_next_hop_group()` 失敗 | `false` | あり | なし |
+| 15 | SAI nexthop group member 作成失敗 | `false` | あり | 既存メンバー孤立リスク |
+| 16 | SAI `create_route_entry()` 失敗 + nhg ロールバック | `false` | あり | nhg ロールバック試行 |
+| 17 | `VxlanTunnelOrch::createNextHopTunnel()` 失敗 | `false` | あり | なし |
+
+### 詳細
+
+#### #1. 不明コマンド → 永続再試行ループ
+
+`doVnetRouteTask()` / `doVnetTunnelRouteTask()` は SET / DEL 以外のコマンドに `SWSS_LOG_ERROR("Unknown command : %s")` を出力して `return false` する（vnetorch.cpp:3630, 3662）。`doTask()` はこのエントリを `m_toSync` から削除せずに `++it` するため、コマンドが変わらない限り毎回のイテレーションで同じエントリを再処理し続ける。実運用上はこのパスに入らないが、直接 APPL_DB に不正コマンドを書き込んだ場合に発生する。
+
+#### #2–#4. VNET / peer VNET 未存在 → retry
+
+`doRouteTask<VNetVrfObject>()` 冒頭で `isVnetExists(vnet)` を確認し、偽の場合は SET で `return false`、DEL で `return true`（スキップ）（vnetorch.cpp:1494-1497, 1684-1688）。peer VNET については peer 全件 `isVnetExists(peer)` を確認し、1 件でも偽なら `SWSS_LOG_INFO("Peer VNET %s not yet created")` + `return false`（vnetorch.cpp:1514, 1738）。VNET 作成後に自動的に再試行されて解消する。
+
+#### #5. Port/RIF 未存在（subnet 経路）→ retry
+
+`gPortsOrch->getPort(nh.ifname, port)` が偽または `port.m_rif_id == SAI_NULL_OBJECT_ID` の場合、`SWSS_LOG_WARN("Port/RIF %s doesn't exist")` + `return false`（vnetorch.cpp:1700-1703）。対応インタフェースが存在しない間はリトライ待ちとなる。
+
+#### #8–#12. リスト件数不一致・設定矛盾 → 永続エラー
+
+`handleTunnel()` はフィールド解析段階で件数チェックを行い、不一致があれば `SWSS_LOG_ERROR` + `return false` を返す（vnetorch.cpp:3274-3299）。
+
+- `vni` 件数不一致: `"VNI size of %zu does not match endpoint size of %zu"` （vnetorch.cpp:3276）
+- `mac_address` 件数不一致: `"MAC address size of %zu does not match endpoint size of %zu"` （vnetorch.cpp:3282）
+- `endpoint_monitor` 件数不一致: `"Peer monitor size of %zu does not match endpoint size of %zu"` （vnetorch.cpp:3288）
+- `primary` + monitor なし: `"Primary/backup behaviour cannot function without endpoint monitoring."` （vnetorch.cpp:3293）
+- `pinned_state` 件数不一致: `"Pinned state size of %zu does not match monitor size of %zu"` （vnetorch.cpp:3298）
+
+`return false` によりエントリは `m_toSync` に残り再試行されるが、設定を修正しない限り毎回同じエラーを繰り返す。
+
+#### #15. SAI nexthop group member 作成失敗 → 孤立メンバーリスク
+
+`addNextHopGroup()` がメンバー作成中に SAI エラーになった場合、既に作成済みのメンバーのロールバックを行わず `return false` する（vnetorch.cpp:856-858）。SAI 側に孤立した nexthop group member が残存する可能性がある。
+
+!!! warning "リスト件数不一致は永続エラーになる"
+    `VNET_ROUTE_TUNNEL` の `mac_address` / `vni` / `endpoint_monitor` / `pinned_state` の件数が `endpoint` と一致しない場合、orchagent は設定が修正されるまで毎回エラーを出力してリトライし続ける。CONFIG_DB の値を修正して件数を一致させるまで SAI への反映は行われない。
+
+!!! warning "SAI nexthop group member 孤立"
+    nexthop group member の一括作成中に途中のメンバー作成が失敗した場合、先に作成済みのメンバーのロールバックが実装されていない（vnetorch.cpp:856-858）。SAI 側に孤立したメンバーが残存する可能性があり、再起動するまで解消されない場合がある。
+<!-- /failure -->
