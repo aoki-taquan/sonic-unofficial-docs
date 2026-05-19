@@ -472,6 +472,47 @@ gRPC RPC 受信
 詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/gnmi-counter-platform.md`
+> ソース: `sonic-gnmi/pkg/bypass/bypass.go` (master)
+
+### ASIC/SAI 依存: なし
+
+gNMI 内部カウンタは SysV 共有メモリ（key=`7749`）に格納されるため、ASIC ベンダーや SAI capability によるプラットフォーム差異は存在しない。`shareMem.go` の定数（IPC キー・メモリサイズ・フラグ）はすべてハードコードで全プラットフォーム共通。
+
+### `GNMI_SET_BYPASS` カウンタ — Cisco 専用制限
+
+`bypass.go:33-37` に HwSku プレフィクスが明示ハードコードされており、`GNMI_SET_BYPASS` カウンタの増分は以下の Cisco SKU のみで発生する:
+
+| HwSku プレフィクス | プラットフォーム例 |
+|---|---|
+| `Cisco-8102` | Cisco 8000 シリーズ (Silicon One) |
+| `Cisco-8101` | Cisco 8000 シリーズ (Silicon One) |
+| `Cisco-8223` | Cisco 8200 シリーズ |
+
+`checkSKU()` は `DEVICE_METADATA|localhost` の `hwsku` フィールドを毎リクエスト CONFIG_DB から読み取り（キャッシュなし）、上記いずれかのプレフィクスに前方一致する場合のみ bypass 高速パスへ進む。
+
+### プラットフォーム別カウンタ挙動
+
+| カウンタ | Cisco 8101/8102/8223 | Broadcom / Mellanox / VS / その他 |
+|---|---|---|
+| `GNMI_SET_BYPASS` | bypass 3 条件が全て揃った場合に増分 | **常に 0**（bypass パス不可） |
+| 他の全カウンタ（`GNMI_GET` 〜 `DBUS_CONFIG_REPLACE`） | 通常通り増分 | 通常通り増分 |
+
+> bypass 3 条件: (1) gRPC メタデータ `x-sonic-ss-bypass-validation: true`、(2) HwSku が上表のいずれかと前方一致、(3) 対象テーブルが `VNET` / `VNET_ROUTE_TUNNEL` / `VLAN_SUB_INTERFACE` / `ACL_RULE` / `BGP_PEER_RANGE` のいずれか。
+
+### SmartSwitch / DPU 環境
+
+`pkg/interceptors/dpuproxy/` が DPU へリクエストを転送する構成では、カウンタ増分は NPU 側の `telemetryd` インスタンスで行われる。DPU 側 `telemetryd` が存在する場合はそれぞれ独立した共有メモリ（同一 IPC キー `7749`）に書き込む。`gnmi_dump` は実行したコンテナの共有メモリのみ参照する。
+
+### Virtual Switch (VS)
+
+`hwsku` が `vs` のため `checkSKU()` は false を返す。bypass パスは無効で `GNMI_SET_BYPASS` は常に 0。それ以外の動作は実機と同一。
+
+<!-- /platform -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
