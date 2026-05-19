@@ -368,6 +368,86 @@ if (fc_status != prev_enabled)
 > **Evidence**: `sonic-swss/orchagent/flexcounterorch.cpp:156-187,395-398` (warm-reboot タイマー・allPortsReady ガード・無効キー・未サポートフィールド), `sonic-swss/orchagent/dash/dashcounter.h:23-70` (NULL OID ガード・冪等ガード)
 <!-- /failure -->
 
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `dashorch.h:29-33`, `flexcounterorch.cpp:44`, `enable_counters.py:50-63`, `schema.h:293-295`, `flex_counter_manager.cpp:54-55` 全行精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-counter-constants.md`
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` に関連する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### FlexCounter グループ名文字列
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `ENI_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"ENI_STAT_COUNTER"` | FLEX_COUNTER_DB のグループキー。CONFIG_DB キー `ENI` と FLEX_COUNTER_DB グループ名のマッピング | `dashorch.h:29` |
+| `METER_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"METER_STAT_COUNTER"` | FLEX_COUNTER_DB のグループキー。CONFIG_DB キー `DASH_METER` と FLEX_COUNTER_DB グループ名のマッピング | `dashorch.h:32` |
+
+ユーザーが CONFIG_DB で指定する `ENI` / `DASH_METER` キーとは異なる内部文字列であり、YANG / CONFIG_DB でオーバーライド不可。
+
+### ポーリングインターバルデフォルト値
+
+| 定数名 | 値 | 単位 | 用途 | ソース |
+|--------|-----|------|------|--------|
+| `ENI_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | ms | ENI カウンタグループの orchagent 内部デフォルトポーリング間隔 | `dashorch.h:30` |
+| `METER_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | ms | DASH_METER カウンタグループの orchagent 内部デフォルトポーリング間隔 | `dashorch.h:33` |
+
+```cpp
+// dashorch.h:29-33
+#define ENI_STAT_COUNTER_FLEX_COUNTER_GROUP         "ENI_STAT_COUNTER"
+#define ENI_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS   10000
+#define METER_STAT_COUNTER_FLEX_COUNTER_GROUP       "METER_STAT_COUNTER"
+#define METER_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS 10000
+```
+
+CONFIG_DB に `POLL_INTERVAL` が書き込まれない場合はこの値が継続有効となる。
+
+### warm-reboot 遅延タイマー
+
+| 定数名 | 値 | 単位 | 用途 | ソース |
+|--------|-----|------|------|--------|
+| `FLEX_COUNTER_DELAY_SEC` | `60` | 秒 | warm-reboot 時に `FlexCounterOrch::doTask()` をブロックする遅延時間 | `flexcounterorch.cpp:44` |
+
+```cpp
+// flexcounterorch.cpp:44
+#define FLEX_COUNTER_DELAY_SEC 60
+```
+
+ENI / DASH_METER への `FLEX_COUNTER_STATUS=enable` は warm-reboot 後 60 秒間処理されない。CONFIG_DB / YANG でオーバーライド不可。
+
+### enable_counters.py 起動待機タイマー
+
+| 値 | 単位 | 条件 | 用途 | ソース |
+|----|------|------|------|--------|
+| `300` | 秒 | uptime 判定しきい値 | uptime < 300 秒であれば「起動直後」と判定し、長めの待機を行う | `enable_counters.py:60` |
+| `180` | 秒 | uptime < 300 秒の場合の sleep | orchagent が完全起動するまでの待機時間 (起動直後の場合) | `enable_counters.py:61` |
+| `60` | 秒 | uptime >= 300 秒の場合の sleep | サービス再起動等で既に起動済みの場合の短い待機時間 | `enable_counters.py:63` |
+
+```python
+# enable_counters.py:56-63
+# If the switch was just started (uptime less than 5 minutes),
+# wait for 3 minutes and enable counters
+# otherwise wait for 60 seconds and enable counters
+uptime = get_uptime()
+if uptime < 300:
+    time.sleep(180)
+else:
+    time.sleep(60)
+```
+
+これらはハードコードされており、CONFIG_DB / YANG でオーバーライド不可。
+
+### FLEX_COUNTER_DB フィールド名文字列
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `ENI_COUNTER_ID_LIST` | `"ENI_COUNTER_ID_LIST"` | FLEX_COUNTER_DB に書き込まれる ENI カウンタ ID リストのフィールド名 | `schema.h:293` |
+| `DASH_METER_COUNTER_ID_LIST` | `"DASH_METER_COUNTER_ID_LIST"` | FLEX_COUNTER_DB に書き込まれる DASH_METER カウンタ ID リストのフィールド名 | `schema.h:295` |
+
+`DashCounter<CounterType::ENI>` と `DashCounter<CounterType::DASH_METER>` がそれぞれ `flex_counter_manager.cpp:54-55` の `counter_id_field_lookup` マップを通じてこれらのフィールド名を解決する。
+
+<!-- /hardcoded-constants -->
+
 ## 制約
 
 - `POLL_INTERVAL`: 100 以上 (uint32 上限 4294967295)
