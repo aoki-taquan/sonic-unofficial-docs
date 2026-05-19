@@ -463,6 +463,70 @@ FlexCounter グループ名（`FABRIC_PORT_STAT_COUNTER` / `FABRIC_QUEUE_STAT_CO
 
 <!-- /side-effects -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/fabric-port-platform.md`
+> ソース: `sonic-swss/orchagent/main.cpp:995-1014`、`orchagent/orchdaemon.cpp:601-611`、`orchagent/fabricportsorch.cpp:33-34,104-111`
+
+### switch_type による FabricPortsOrch 起動モード分岐
+
+`main.cpp:995-1014` にて `gMySwitchType` の値により orchagent の起動クラスが分岐し、`FabricPortsOrch` の生成有無が決まる。`FABRIC_PORT` テーブルを処理する `FabricPortsOrch` は `gMySwitchType == "voq"` または `"fabric"` の場合にのみ起動する:
+
+| `gMySwitchType` | 起動クラス | `FabricPortsOrch` | fabricPortStat | fabricQueueStat |
+|---|---|---|---|---|
+| `"voq"` | `OrchDaemon` | 起動 (`m_fabricEnabled=true`) | 有効 | **無効** |
+| `"fabric"` | `FabricOrchDaemon` (専用デーモン) | 起動 | 有効 | 有効 |
+| その他 (標準 ToR 等) | `OrchDaemon` | **起動しない** | N/A | N/A |
+
+標準 [ToR](../../reference/glossary.md#term-tor) では `FabricPortsOrch` 自体が生成されないため、CONFIG_DB に `FABRIC_PORT` エントリを書き込んでも何も処理されない。
+
+### switch drop counter ポーリング間隔の差異
+
+`FabricPortsOrch` コンストラクタ (`fabricportsorch.cpp:104-111`) は `gMySwitchType` により switch drop counter の FlexCounter ポーリング間隔を切り替える:
+
+| `gMySwitchType` | 定数 | ポーリング間隔 |
+|---|---|---|
+| `"voq"` | `SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS` | **500 ms** |
+| `"fabric"` | `FABRIC_SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS` | **60,000 ms (60 秒)** |
+
+### fabricQueueStat の差異
+
+`voq` switch では `FabricPortsOrch` のコンストラクタ内で `m_fabricQueueStatEnabled = false` が設定され、キューレベルの FlexCounter (`FABRIC_QUEUE_STAT_COUNTER`) が登録されない。`fabric` switch では有効となり `COUNTERS_FABRIC_QUEUE_NAME_MAP` が COUNTERS_DB に書き込まれる (`fabricportsorch.cpp:33-34`)。
+
+この差異により、`show fabric counters queue` コマンドは `fabric` switch でのみ有効な出力を返す。
+
+### `lanes` フィールドのプラットフォーム依存性
+
+`doFabricPortTask()` は `lanes` 文字列を `to_uint<uint8_t>(lanes)` で SAI lane ID に変換する (`fabricportsorch.cpp:1541`)。プラットフォームによっては複数レーンをカンマ区切りで格納するが、その場合 uint8_t 変換が失敗し例外となる可能性がある。`lanes` の有効フォーマットはプラットフォームの `platform.json` と SAI 実装に依存する。
+
+### キャパシティ閾値アラートの NOTICE ログ — voq のみ
+
+`updateFabricCapacity()` (`fabricportsorch.cpp:1201-1214`) のキャパシティ低下/復帰イベントで `SWSS_LOG_NOTICE` が出力されるのは `gMySwitchType == "voq"` の場合のみ。`"fabric"` switch では STATE_DB への書き込みは行われるが `SWSS_LOG_NOTICE` は出力されない。
+
+```cpp
+// fabricportsorch.cpp:1201-1207 — voq のみ NOTICE ログ出力
+if (gMySwitchType == "voq")
+{
+    SWSS_LOG_NOTICE("Total links %d. Expected up links %d. Operational links %d. Fabric capacity %s than threshold.",
+          total_links, expect_links, operating_links, cur_event.c_str());
+}
+```
+
+### voq と fabric switch の機能差異サマリ
+
+| 観点 | `voq` switch | `fabric` switch | 標準 ToR |
+|---|---|---|---|
+| `FabricPortsOrch` 起動 | 起動 | 起動 | **起動しない** |
+| `FABRIC_PORT` テーブル処理 | 有効 | 有効 | **無効 (テーブル無視)** |
+| switch drop counter 収集間隔 | 500 ms | 60,000 ms | N/A |
+| fabricQueueStat | **無効** | 有効 | N/A |
+| キャパシティ閾値 `SWSS_LOG_NOTICE` | **出力あり** | **出力なし** | N/A |
+
+> **Evidence**: `sonic-swss` `orchagent/main.cpp:995-1014`、`orchagent/orchdaemon.cpp:601-611`、`orchagent/fabricportsorch.cpp:33-34,87-100,104-111,1201-1214`
+
+<!-- /platform -->
+
 <!-- pubsub -->
 ## Redis 通知メカニズム (Phase G)
 
