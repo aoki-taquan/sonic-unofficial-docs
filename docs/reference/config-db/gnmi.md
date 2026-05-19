@@ -439,6 +439,74 @@ Go バイナリの `setupFlags()` が引数を検証し、不正な組み合わ�
 -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### GNMI / GNMI_CLIENT_CERT テーブルの読み取り方式
+
+`GNMI` / `GNMI_CLIENT_CERT` の各 CONFIG_DB テーブルは **`swsscommon.ConfigDBConnector` によるポイントインタイム読み取り**のみで消費される。`ConsumerStateTable` / `SubscriberStateTable` (チャネルベース Pub/Sub) は使用しない。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 消費者 | API 種別 | 対象テーブル | タイミング |
+|--------|---------|------------|-----------|
+| `gnmi-native.sh` | `sonic-cfggen -d -t telemetry_vars.j2` (一括スナップショット) | `GNMI\|gnmi`・`GNMI\|certs`・`DEVICE_METADATA\|localhost.x509` | コンテナ起動時 1 回のみ |
+| `clientCertAuth.go` — `PopulateAuthStructByCommonName()` | `ConfigDBConnector.Connect(false)` + `Get_entry()` (接続ごとポイントインタイム読み取り) | `GNMI_CLIENT_CERT\|<CN>` | gNMI クライアント接続ごと |
+
+`gnmi-native.sh` は `sonic-cfggen` の結果を Shell 変数に保持したまま `exec telemetry` する。コンテナ稼働中に CONFIG_DB の `GNMI` エントリが変更されても `telemetry` プロセスへの通知は **一切発生しない**。`systemctl restart gnmi` が唯一の反映手段となる。
+
+### TELEMETRY_CLIENT テーブル — Redis keyspace 購読 (dialout モード)
+
+`dialout_client.go` の `DialOutRun()` は CONFIG_DB の `TELEMETRY_CLIENT` テーブルを **Redis `PSUBSCRIBE`** でリアルタイム監視する。`GNMI|gnmi` / `GNMI_CLIENT_CERT` テーブルは対象外。
+
+```
+PSUBSCRIBE "__keyspace@<configdb_id>__:TELEMETRY_CLIENT|*"
+  ↓ hset / hdel 通知を受信
+processTelemetryClientConfig(ctx, redisDb, key, op)
+  ↓ HGetAll で最新値を取得
+  ↓ Global → clientCfg 更新 → 全 destGroup クライアント再起動
+     DestinationGroup_* → gRPC 接続先を再構成
+     Subscription_* → push サブスクリプション再構成
+```
+
+`DialOutRun()` は起動時に `TELEMETRY_CLIENT|*` の全既存 key を `KEYS` コマンドで一括取得してから PSUBSCRIBE ループに入る (`dialout_client.go:706-715`)。つまり初回スナップショット + 差分通知の 2 段構成。
+
+### CONFIG_DB ジャーナル — 全テーブル keyspace 購読 (オプション)
+
+`telemetry` バイナリの起動引数に `--enable_config_db_journal=true` を指定した場合、`NewDbJournal("CONFIG_DB")` が CONFIG_DB の **全テーブル** に対して keyspace 通知を購読し、変更履歴をホスト側ファイル (`/host/var/log/config_db.txt`) に記録する。通常運用では `gnmi-native.sh` からこのフラグは付与されないため、ジャーナルは無効 (`false` デフォルト)。
+
+```go
+// gnmi_server/db_journal.go:67-69
+keyspace := fmt.Sprintf("__keyspace@%d__:*", dbNum)
+keyevent  := fmt.Sprintf("__keyevent@%d__:*", dbNum)
+journal.ps = journal.rc.PSubscribe(ctx, keyspace, keyevent)
+```
+
+### gNMI Subscribe RPC — DB データの keyspace 購読
+
+`telemetry` は外部 gNMI クライアントからの **Subscribe RPC** を受けると、要求されたパス (例: `STATE_DB/PORT_TABLE/Ethernet0`) に対応する Redis DB へ `PSubscribe __keyspace@<N>__:<table>|<key>*` を張る。この購読は **CONFIG_DB の GNMI テーブル自体** ではなく、gNMI クライアントが監視したい任意の SONiC DB テーブルを対象とする (`sonic_data_client/db_client.go:1419-1447`)。
+
+| Subscribe モード | 実装 | キャッシュ更新トリガー |
+|----------------|------|-------------------|
+| `ON_CHANGE` | `dbTableKeySubscribe()` が `PSubscribe` を張り、keyspace 通知で差分をキュー送信 | Redis keyspace event |
+| `SAMPLE` | `streamSampleSubscription()` がポーリング間隔で `subscribeTableData2TypedValue()` を呼ぶ | タイマ (`time.Ticker`) |
+| `POLL` | `PollRun()` がクライアントの Poll メッセージ受信時に全パスを読み取り | クライアント要求 |
+| `ONCE` | `OnceRun()` が全パスを 1 回読み取って完了通知を送信 | 即時 1 回 |
+
+!!! note "GNMI|gnmi テーブルへの subscribe は存在しない"
+    `GNMI|gnmi` / `GNMI_CLIENT_CERT` テーブルを watch して設定変更を動的反映する仕組みは、`sonic-gnmi` リポジトリ内に存在しない。変更の反映はコンテナ再起動のみ。
+
+<!-- evidence:
+  gnmi-native.sh:19-22 — sonic-cfggen -d -t telemetry_vars.j2 による 1 回読み取り
+  gnmi_server/clientCertAuth.go:259-261 — ConfigDBConnector.Connect(false).Get_entry() (接続ごとポイントインタイム)
+  dialout/dialout_client/dialout_client.go:646-745 — DialOutRun: TELEMETRY_CLIENT PSUBSCRIBE + 初回スナップショット
+  dialout/dialout_client/dialout_client.go:686 — pattern "__keyspace@<N>__:TELEMETRY_CLIENT|*"
+  dialout/dialout_client/dialout_client.go:462-643 — processTelemetryClientConfig: hset/hdel ハンドラ
+  gnmi_server/db_journal.go:67-69 — CONFIG_DB 全テーブル keyspace + keyevent 購読 (--enable_config_db_journal 時)
+  gnmi_server/server.go:60,646-651 — enable_config_db_journal フラグ (デフォルト false)
+  sonic_data_client/db_client.go:1419-1447 — dbTableKeySubscribe: gNMI Subscribe RPC 用 PSubscribe
+  sonic_data_client/db_client.go:224-317 — StreamRun: ON_CHANGE / SAMPLE 分岐
+-->
+<!-- /pubsub -->
+
 <!-- hardcoded-constants -->
 ## ハードコード定数 (Phase E)
 
