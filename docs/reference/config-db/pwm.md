@@ -365,6 +365,44 @@ APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チ�
 
 <!-- /pubsub -->
 
+---
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/pwm-platform.md`
+> スキャン範囲: `sonic-swss/orchagent/watermarkorch.cpp` 全行, `sonic-swss/orchagent/orchdaemon.cpp:432-437`, `sonic-swss/orchagent/main.cpp:997`
+
+`watermarkorch.cpp` に `getenv("platform")` による ASIC 種別分岐は存在しない。`WATERMARK_TABLE|TELEMETRY_INTERVAL` の処理ロジック自体はプラットフォーム非依存だが、以下の構成・スイッチタイプ起因の差異がある。
+
+### fabric スイッチタイプ — WatermarkOrch が存在しない
+
+`main.cpp:997` の分岐により `gMySwitchType == "fabric"` のとき `OrchDaemon` が生成されず、`orchdaemon.cpp:437` の `WatermarkOrch` も存在しない。fabric スイッチではウォーターマーク機能自体がないため、`WATERMARK_TABLE|TELEMETRY_INTERVAL` への書き込みは無効。
+
+| 構成 | WatermarkOrch | WATERMARK_TABLE 処理 |
+|------|--------------|---------------------|
+| 通常スイッチ / voq / chassis-packet / dpu | 存在 | 正常に interval を更新 |
+| fabric スイッチ (`gMySwitchType == "fabric"`) | **存在しない** | **CONFIG_DB 書き込みは無効** |
+
+### allPortsReady() ガードによる初期化遅延
+
+`watermarkorch.cpp:56, 147` の `allPortsReady()` チェックにより、全フロントパネルポートが初期化完了するまで `doTask()` が early return する。`WATERMARK_TABLE|TELEMETRY_INTERVAL` の更新もその間は保留される。VOQ シャーシやラインカード構成では初期化完了が遅れる場合がある。
+
+### VOQ / multi-ASIC — 挙動は通常スイッチと同一
+
+`watermarkorch.cpp` に `gMySwitchType` 分岐は存在しない。VOQ シャーシでも interval 更新は通常通り動作する。multi-ASIC 構成では各 ASIC namespace の orchagent が独立して `WATERMARK_TABLE|TELEMETRY_INTERVAL` を読み取るため、全 ASIC に同じ interval を設定するには各 namespace に個別書き込みが必要（自動同期なし）。
+
+### プラットフォーム差サマリ
+
+| 差異点 | 条件 | WATERMARK_TABLE への影響 |
+|--------|------|------------------------|
+| WatermarkOrch 非存在 | `gMySwitchType == "fabric"` | CONFIG_DB 書き込みは無効 |
+| `doTask()` 初期化遅延 | 全ポート未 ready | interval 更新が遅延 |
+| multi-ASIC | 各 namespace 独立 | 各 ASIC に個別設定が必要 |
+| ASIC 種別 | ASIC 実装依存 | WATERMARK_TABLE 自体に影響なし |
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
