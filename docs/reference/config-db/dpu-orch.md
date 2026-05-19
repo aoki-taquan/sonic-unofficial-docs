@@ -229,6 +229,63 @@ addOrchList(各 Orch)  ← イベントループへの登録
 **`orchagent.sh` による引数付与と CONFIG_DB 読み取り (依存 #5)**: `orchagent.sh` は `sonic-db-cli` で `switch_type` を読み取り (`-b 65536 -z zmq_sync -k 65536`) を orchagent プロセス起動引数として付与する。この読み取りはシェルスクリプト側で起動前に一回のみ実行されるため、orchagent プロセス起動後に CONFIG_DB の `switch_type` を変更しても引数は変わらない。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `DpuOrchDaemon` が読み出す関連 DB テーブル (Phase C)
+
+`DpuOrchDaemon` は CONFIG_DB `DEVICE_METADATA|localhost` の 2 フィールド（Phase A/B 記述済み）以外にも、配下の DASH Orch 群を通じて以下の DB テーブルを暗黙的に参照する。
+
+### DPU_APPL_DB 購読テーブル (DpuOrchDaemon::init() 実行時)
+
+DASH Orch 群はすべて `DPU_APPL_DB`（SmartSwitch 上の DPU 側 APPL DB）から ProducerStateTable / ZMQ 経由でイベントを受信する[^1]。
+
+| DASH Orch | 購読テーブル | evidence |
+|-----------|------------|----------|
+| `DashVnetOrch` | `DASH_VNET_TABLE`, `DASH_VNET_MAPPING_TABLE` | orchdaemon.cpp:1336-1339 |
+| `DashOrch` | `DASH_APPLIANCE_TABLE`, `DASH_ROUTING_TYPE_TABLE`, `DASH_ENI_TABLE`, `DASH_ENI_ROUTE_TABLE`, `DASH_QOS_TABLE` | orchdaemon.cpp:1343-1350 |
+| `DashHaOrch` | `DASH_HA_SET_TABLE`, `DASH_HA_SCOPE_TABLE`, `BFD_SESSION_TABLE` | orchdaemon.cpp:1354-1359 |
+| `DashRouteOrch` | `DASH_ROUTE_TABLE`, `DASH_ROUTE_RULE_TABLE`, `DASH_ROUTE_GROUP_TABLE` | orchdaemon.cpp:1363-1368 |
+| `DashAclOrch` | `DASH_PREFIX_TAG_TABLE`, `DASH_ACL_IN_TABLE`, `DASH_ACL_OUT_TABLE`, `DASH_ACL_GROUP_TABLE`, `DASH_ACL_RULE_TABLE` | orchdaemon.cpp:1372-1378 |
+| `DashTunnelOrch` | `DASH_TUNNEL_TABLE` | orchdaemon.cpp:1382-1384 |
+| `DashMeterOrch` | `DASH_METER_POLICY_TABLE`, `DASH_METER_RULE_TABLE` | orchdaemon.cpp:1388-1392 |
+| `DashPortMapOrch` | `DASH_OUTBOUND_PORT_MAP_TABLE`, `DASH_OUTBOUND_PORT_MAP_RANGE_TABLE` | orchdaemon.cpp:1396-1399 |
+| `DashHaFlowOrch` | `DASH_FLOW_SYNC_SESSION_TABLE`, `DASH_FLOW_DUMP_FILTER_TABLE` | orchdaemon.cpp:1403-1406 |
+
+> `DPU_APPL_DB` は通常の `APPL_DB` とは独立した Redis DB インスタンスであり、SmartSwitch NPU 側からは `DPU_APPL_DB` という名前で接続する。DPU 側デーモン（`dashd` など）が書き込み側となり、`DpuOrchDaemon` が読み取り側となる。
+
+### DPU_APPL_STATE_DB 書込み (実行時)
+
+全 DASH Orch コンストラクタに `m_dpu_appstateDb` が渡される。各 DASH Orch は SAI API 呼出し完了後に `DPU_APPL_STATE_DB` へ結果ステータスを書き込む。`DPU_APPL_STATE_DB` への書込みは DASH Orch 群の責務であり、DpuOrchDaemon 自体は直接書き込まない。
+
+### APPL_DB|BFD_SESSION の間接参照 (DashHaOrch)
+
+`DashHaOrch` は `APP_BFD_SESSION_TABLE_NAME` を購読テーブルに含めるとともに、`OrchDaemon::init()` が生成した `gBfdOrch`（`BfdOrch` のグローバルインスタンス）へのポインタを受け取る[^1]。
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/orchdaemon.cpp#L1354-L1359
+excerpt: |
+  vector<string> dash_ha_tables = {
+      APP_DASH_HA_SET_TABLE_NAME,
+      APP_DASH_HA_SCOPE_TABLE_NAME,
+      APP_BFD_SESSION_TABLE_NAME
+  };
+  DashHaOrch *dash_ha_orch = new DashHaOrch(m_dpu_appDb, dash_ha_tables, dash_orch, gBfdOrch, m_dpu_appstateDb, dash_zmq_server);
+reasoning: DashHaOrch が gBfdOrch を受け取ることで、BFD セッション状態を HA スコープ制御に利用する。gBfdOrch は OrchDaemon::init() (orchdaemon.cpp:243) で生成される BfdOrch の参照であり、APPL_DB BFD_SESSION テーブルを間接的に読み取る。
+-->
+
+`gBfdOrch` は `OrchDaemon::init()`（基底クラス初期化）内で生成されるため (`orchdaemon.cpp:243`)、`DpuOrchDaemon::init()` が先頭で `OrchDaemon::init()` を呼ぶ依存順序（Phase B 依存 #3）と連動している。
+
+### CONFIG_DB を直接読まない DASH Orch 群
+
+`dashorch.cpp` / `dashhaorch.cpp` / `dashvnetorch.cpp` / `dashaclorch.cpp` 等の DASH Orch 実装は、CONFIG_DB を直接 `hget` / `hgetall` しない。CONFIG_DB 参照はすべて上位層（`main.cpp` の `getCfgSwitchType()` と `DpuOrchDaemon::init()` の `get_feature_status()`）で完結している。
+
+### 範囲外（誤解されやすい隣接テーブル）
+
+- `DEVICE_METADATA|localhost.synchronous_mode`: orchagent プロセスの同期モードを制御するが、`switch_type = "dpu"` のとき `orchagent.sh` が `-z zmq_sync` を無条件付与するため、このフィールドの値は DPU モードでは無視される。
+- `DPU` / `REMOTE_DPU` / `VDPU` / `ENI` テーブル: SmartSwitch 制御プレーン（`sonic-platform-daemons` 系）が読み取る。`DpuOrchDaemon` は直接参照しない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dpu-orch-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: DpuOrchDaemon クラス定義と起動条件: `sonic-swss/orchagent/orchdaemon.h:150-158`, `sonic-swss/orchagent/orchdaemon.cpp:1313-1419`, `sonic-swss/orchagent/main.cpp:981-994`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>
