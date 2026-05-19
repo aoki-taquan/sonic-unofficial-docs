@@ -113,6 +113,28 @@ ZMQ 関連フィールドは orchagent **起動時の一回のみ** 読まれる
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp; sonic-swss/orchagent/orchdaemon.cpp; sonic-swss/fpmsyncd/routesync.cpp; sonic-buildimage/dockers/docker-orchagent/orch_zmq_tables.conf.j2 -->
+
+ZMQ 関連フィールドは独立テーブルを持たず `DEVICE_METADATA|localhost` / `DPU|<name>` に分散している。それぞれが参照先・参照元となる外部テーブルとの関係を示す。
+
+| 参照方向 | このフィールド | 相手テーブル / ページ | 条件 |
+|---------|--------------|---------------------|------|
+| → DEVICE_METADATA 読み取り | `orch_northbond_dash_zmq_enabled` | [`DEVICE_METADATA`](device-metadata.md) | `get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true)` が起動時に CONFIG_DB `DEVICE_METADATA\|localhost` を直接 `hget`。存在しない場合は `true` (DASH ZMQ 有効) (`orch_zmq_config.cpp:88`) |
+| → DEVICE_METADATA 読み取り | `orch_northbond_route_zmq_enabled` | [`DEVICE_METADATA`](device-metadata.md) | `create_local_zmq_client(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false)` が同様に `hget`。存在しない場合は `false` (ROUTE ZMQ 無効) (`routesync.cpp:155`) |
+| → DPU 読み取り | `orchagent_zmq_port` | [`dpu`](dpu.md) | `gnmi-native.sh` / `orchagent.sh` が `DPU\|<name>` の `orchagent_zmq_port` を読み取り ZMQ 接続ポートを決定。YANG 定義: `sonic-smart-switch.yang:176-179` |
+| DEVICE_METADATA → | `subtype == "SmartSwitch"` | [`smart-switch`](smart-switch.md) | `orchagent.sh` が `subtype` を参照して ZMQ アドレスを `tcp://eth0-midplane` または `tcp://127.0.0.1` に切り替える (`orchagent.sh:105-118`) |
+| DEVICE_METADATA → | `switch_type == "dpu"` | [`smart-switch`](smart-switch.md) | `orchagent.sh:38-39` が `switch_type` を参照して `-z zmq_sync -k 65536` を orchagent 起動引数に付与。ZMQ 同期モードが強制される |
+| フラグ有効 → APPL_DB 書き込み先 | `orch_northbond_dash_zmq_enabled=true` | APPL_DB `DASH_*` テーブル群 (22 種) | `orch_zmq_tables.conf.j2` で conf に追記された DASH テーブル群が ZMQ 経由でオーケストレータに直接届く。無効時は gNMI が Redis ProducerStateTable を使用 |
+| フラグ有効 → APPL_DB 書き込み先 | `orch_northbond_route_zmq_enabled=true` | APPL_DB `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` | `fpmsyncd` が `ZmqProducerStateTable` 経由で直接 orchagent に送信。無効時は Redis 経由 (`orch_zmq_config.cpp:117-140`) |
+| 設定ファイル生成 | `orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` | `/etc/swss/orch_zmq_tables.conf` | `orch_zmq_tables.conf.j2` の Jinja2 テンプレートが CONFIG_DB のフラグを参照して実行時設定ファイルを生成。orchagent の `load_zmq_tables()` がこのファイルを読む (`orch_zmq_config.cpp:18-33`) |
+
+> **ポイント**: `orch_northbond_*_zmq_enabled` フラグは orchagent **起動時** のみ評価され、その後 `DEVICE_METADATA` の変更をサブスクライブしない。フラグを変更した場合は orchagent の再起動が必要。`orchagent.sh` は起動シェルスクリプトであるため、フラグ変更後のコンテナ再起動で新しい設定ファイルが生成され、新しい orchagent プロセスが新設定で起動する。
+
+<!-- /cross-refs -->
+
 ---
 
 ## DEVICE_METADATA|localhost の ZMQ フィールド
