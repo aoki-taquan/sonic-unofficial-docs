@@ -332,6 +332,60 @@ sendMsgStpd(STP_INIT_READY)   // → stpd に max_stp_instances 送信 (stpmgrd.
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-state-pubsub.md -->
+
+`STATE_DB STP_TABLE|GLOBAL` は `ProducerStateTable` / `NotificationProducer` を介した PUBLISH 通知を**発行しない**。書き手 (`StpOrch`) は `swss::Table::set()` (素の `HSET`) のみを使用し、読み手 (`stpmgrd`) は `SubscriberStateTable` / keyspace 通知を購読せずに **ポーリング** で読み取る。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル/API |
+|------|------|----------------|
+| `StpOrch` → STATE_DB `STP_TABLE\|GLOBAL` | `swss::Table::set()` (素の `HSET`) | なし (PUBLISH 非発行) |
+| `stpmgrd` ← STATE_DB `STP_TABLE\|GLOBAL` | `swss::Table::get()` (`HGET` ポーリング、最大 60 秒) | なし (keyspace 通知不使用) |
+
+### 書き手側: swss::Table (PUBLISH 非発行)
+
+`StpOrch` は `m_stpTable` を `swss::Table` として初期化する (`stporch.cpp:26`):
+
+```cpp
+m_stpTable = unique_ptr<Table>(new Table(stateDb, STATE_STP_TABLE_NAME));
+```
+
+書き込みは `m_stpTable->set("GLOBAL", tuples)` (`stporch.cpp:612`) の 1 箇所のみ。`swss::Table::set()` は内部で `HSET` を発行するが、`ProducerStateTable` が行う `_KEY_SET` セット追加 + `PUBLISH <TABLE>_CHANNEL` 通知は行わない。
+
+### 読み手側: swss::Table + ポーリング (購読なし)
+
+`stpmgrd` は `m_stateStpTable` を `swss::Table` として保持し (`stpmgr.h:253`)、`getStpMaxInstances()` (`stpmgr.cpp:1381-1413`) で 1 秒おきの polling ループを最大 60 秒実行する:
+
+```cpp
+while(max_delay)
+{
+    if (m_stateStpTable.get(key, vmEntry)) { break; }  // HGET polling
+    sleep(1);
+    max_delay--;
+}
+```
+
+`SubscriberStateTable` / `ConsumerStateTable` / `__keyspace` 通知は一切使用しない。読み取りは `stpmgrd` 起動シーケンス内の **1 回のみ** であり、実行中の再監視は行われない。
+
+### 通知チャンネル
+
+| 経路 | 状態 |
+|------|------|
+| `STP_TABLE_CHANNEL` への `PUBLISH` | **発行されない** (`swss::Table` を使用、`ProducerStateTable` 非保有) |
+| `NotificationProducer` (ad-hoc channel) | なし |
+| `__keyspace@<dbId>__:...` keyspace 通知 | Redis サーバ設定次第で発火しうるが、正規 consumer はいずれも購読しない |
+
+!!! note "STP_TABLE|GLOBAL は起動時 1 回限りのステータスレジスタ"
+    書き手 (`StpOrch`) は起動時コンストラクタ内の 1 回のみ書き込み、読み手 (`stpmgrd`) は起動シーケンスの 1 回のみポーリングで読み取る。動的イベント駆動の仕組みは持たず、起動後は固定値として扱われる。
+
+> **証跡**: `stporch.cpp:26, 603-617`、`stpmgr.h:253`、`stpmgr.cpp:1381-1413`。詳細は `meta/_intermediate/cdb-flow/stp-state-pubsub.md` を参照。
+
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 - **-1 補正**: `max_stp_inst` は SAI の返す最大数から -1 した値。STP インスタンス ID が 0 始まりのため、使用可能な最大インスタンス ID が `max_stp_inst` と一致する。
