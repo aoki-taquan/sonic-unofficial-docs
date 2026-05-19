@@ -99,6 +99,58 @@ SONiC ホストを Kubernetes worker としてマスターに参加させるた�
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158,292-307,333-342,413-414,440,471-474,488,505-506 -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/kubernetes-master-failure.md -->
+<!-- source: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py -->
+
+`KUBERNETES_MASTER` テーブルを処理する `ctrmgrd` の失敗経路を示す。主要な失敗は (A) kubelet join 失敗時のリトライ、(B) `set_node_labels()` の例外伝播、(C) メインループの Redis / select 例外によるプロセス終了の 3 系統に分類される。
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | 挙動 | 再試行 | STATE_DB 影響 |
+|---|------------|------|--------|--------------|
+| 1 | `kube_join_master()` 失敗（`ret != 0`） | `ST_SER_CONNECTED="false"` を書込み、`JOIN_RETRY`（デフォルト 10 秒）後に再スケジュール | タイマーによる自動リトライ（無限） | `KUBERNETES_MASTER\|SERVER.connected="false"` が残存 |
+| 2 | `kube_reset_master()` 失敗 | 戻り値を無視して続行。`ST_SER_CONNECTED="false"` は設定される | なし | `connected="false"` が残存 |
+| 3 | `set_node_labels()` 内で `get_sonic_version_info()` が `None` を返す | `version_info['build_version']` の直接キーアクセスで `TypeError` が発生し ctrmgrd プロセス異常終了 | supervisord による自動再起動後に再試行 | `KUBE_LABEL_TABLE\|SET` の更新が行われない |
+| 4 | `mod_db_entry()` / `set_db_entry()` で Redis 接続失敗 | `swss::DBConnector` 由来の例外が伝播し ctrmgrd プロセス異常終了 | supervisord による自動再起動後に再試行 | STATE_DB への書込みが行われない |
+| 5 | メインループ `selector.select()` が `ERROR` を返す | `raise Exception("Received error from select")` によりプロセス異常終了 | supervisord による自動再起動後に再試行 | なし |
+
+### 詳細
+
+#### 1. `kube_join_master()` 失敗 — 自動リトライ
+
+`do_join()` は `kube_commands.kube_join_master(ip, port, insecure)` の戻り値 `ret` を検査する。`ret != 0` の場合（ネットワーク到達不可・TLS 証明書不一致・kubelet コマンド失敗等）、以下を実行する（`ctrmgrd.py:442-455`）:
+
+1. `st_server[ST_SER_CONNECTED] = "false"` / `remote_connected = False` を設定
+2. `start_time = now + JOIN_RETRY` を計算し `register_timer(start_time, handle_update)` で再スケジュール
+3. `pending = True` に設定し、タイマー発火まで新規 CONFIG_DB 変化を処理しない
+
+このリトライは無限に継続する。K8s master が復帰するまで `STATE_DB:KUBERNETES_MASTER|SERVER.connected` は `"false"` のままであり、`FEATURE.set_owner=kube` のサービスが起動しない状態が続く。
+
+!!! warning "JOIN_RETRY 中の CONFIG_DB 変更"
+    `pending=True` の期間中に `KUBERNETES_MASTER` が更新されても、`on_config_update()` は `log_debug` のみ出力して即座に return する（`ctrmgrd.py:379-388`）。タイマー発火時には最新の `cfg_server` 値で `do_join()` が実行されるため、変更自体は反映されるが、タイマー満了まで即時 join は行われない。
+
+#### 2. `set_node_labels()` — `version_info` KeyError 例外
+
+`set_node_labels()` は join 成功直後に `do_join()` から呼ばれる（`ctrmgrd.py:440`）。内部で `device_info.get_sonic_version_info()['build_version']` に直接キーアクセスするため、`/etc/sonic/sonic_version.yml` が不在または `build_version` フィールドが欠落している場合に `TypeError` / `KeyError` が発生し、ctrmgrd プロセスが異常終了する（`ctrmgrd.py:295-301`）。
+
+この失敗が発生すると:
+- join 自体は成功しているが `STATE_DB:KUBERNETES_MASTER|SERVER.connected` が `"true"` に更新されない
+- `KUBE_LABEL_TABLE|SET` の Kubernetes ノードラベルが書き込まれない
+- ctrmgrd 再起動後、join が再試行される（`st_server` の `update_time` が書かれていないため `JOIN_LATENCY` 遅延が再発する）
+
+#### 3. プロセス全体障害 — supervisord 自己回復
+
+Redis 接続失敗（`set_db_entry` / `mod_db_entry`）および `select()` ERROR いずれも ctrmgrd プロセスを異常終了させる。supervisord が `docker-config-engine` サービスとして管理しており、プロセス終了後に自動再起動が行われる。
+
+再起動後は `RemoteServerHandler.__init__()` から再実行される。`STATE_DB:KUBERNETES_MASTER|SERVER.update_time` に値があれば即座に `handle_update()` が呼ばれ、なければ `JOIN_LATENCY`（10 秒）後に join が開始される。
+
+> **Evidence**: `sonic-buildimage` `src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:231-232,271-275,292-307,418-455`
+
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールドデフォルト
 
