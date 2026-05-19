@@ -343,6 +343,41 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 根拠: `ip_multicast_manager.cpp:L45,L61,L376,L596,L704,L712,L719`、`l3_multicast_manager.cpp:L53-56,L167,L189,L641,L1415-1416`
+> evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-constants.md`
+
+以下の定数はいずれもコード中にハードコードされており、CONFIG_DB フィールド・YANG スキーマ・環境変数による上書きは不可能。
+
+### ip_multicast_manager.cpp 内定数
+
+| 定数 | 値 | 用途 | 変更可否 |
+|------|----|------|---------|
+| `kRifMemberMacAddress` | `"00:00:00:00:00:01"` | RPF group 向けに自動生成される RIF の `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` に固定設定 (`ip_multicast_manager.cpp:L596`) | 不可 |
+| `SAI_PACKET_ACTION_FORWARD` | SAI enum (`0`) | 全 IPMC エントリのパケットアクション (`ip_multicast_manager.cpp:L61,L376`) | 不可 |
+| `SAI_IPMC_ENTRY_TYPE_XG` | SAI enum (`0`) | 全 IPMC エントリタイプを any-source (XG) 固定。SSM (Source-Specific Multicast) は本実装で非対応 (`ip_multicast_manager.cpp:L704`) | 不可 |
+| Source IP `0` | IPv4 `0.0.0.0` / IPv6 `::` | IPMC エントリの送信元 IP フィールドをゼロ埋め (any-source を示す) (`ip_multicast_manager.cpp:L712,L719`) | 不可 |
+
+### l3_multicast_manager.cpp 内定数
+
+ソースコードコメント (`l3_multicast_manager.cpp:L48-52`) に「これらはプレースホルダ値。リンクローカル IP はどんな値でも構わない。デフォルト MAC は MAC 書き換えを行わない場合は無視される」と明記されている。
+
+| 定数 | 値 | 用途 | 変更可否 |
+|------|----|------|---------|
+| `kLinkLocalIpv4Address` | `"169.254.0.1"` | SAI neighbor entry および next hop オブジェクト作成時の IP アドレスフィールドに固定設定 (`l3_multicast_manager.cpp:L167,L189`)。実データプレーン転送には影響しない | 不可 |
+| `kNeighborMacAddress` | `"00:00:00:00:00:01"` | `MULTICAST_ROUTER_INTERFACE_TABLE` エントリの内部デフォルト `dst_mac` (`l3_multicast_manager.cpp:L641`)。アクションが明示的な MAC 書き換えを指定しない限り無視 | 不可 |
+| `kDefaultMyMacAddress` | `"00:00:00:00:00:01"` | SAI my-mac エントリの `SAI_MY_MAC_ATTR_MAC_ADDRESS` に固定設定 (`l3_multicast_manager.cpp:L1415`) | 不可 |
+| `kDefaultMyMacAddressMask` | `"00:00:00:00:00:00"` | SAI my-mac エントリの `SAI_MY_MAC_ATTR_MAC_ADDRESS_MASK` に固定設定 (`l3_multicast_manager.cpp:L1416`)。オールゼロマスクにより任意 MAC にマッチするワイルドカードとして機能する | 不可 |
+
+### 設計上の含意
+
+- `kLinkLocalIpv4Address` / `kNeighborMacAddress` は SAI 構造体の「必須フィールドを埋めるプレースホルダ」であり、これらの値が実際のパケット転送ロジックに影響することはない
+- `kDefaultMyMacAddressMask` がオールゼロであるため、SAI my-mac ACL エントリは全 MAC に対してワイルドカードマッチを行う
+- `SAI_IPMC_ENTRY_TYPE_XG` 固定により、このテーブルは ASM (Any-Source Multicast) のみをサポートする。SSM を必要とする場合は別実装が必要
+<!-- /constants -->
+
 ## 購読者
 
 | コンポーネント | テーブル | SAI 操作 |
