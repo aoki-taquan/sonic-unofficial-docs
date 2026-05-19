@@ -3,7 +3,7 @@ title: GNMI / GNMI_CLIENT_CERT テーブル
 description: "GNMI テーブル — gNMI サーバの動作設定 (ポート・認証・TLS) と GNMI_CLIENT_CERT テーブル — クライアント証明書 CN → ロールマッピングを CONFIG_DB に保持するテーブル群。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-gnmi
     path: telemetry/telemetry.go
@@ -13,6 +13,12 @@ sources:
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-gnmi
     path: gnmi_server/clientCertAuth.go
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+  - repo: sonic-net/sonic-gnmi
+    path: sonic_data_client/mixed_db_client.go
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+  - repo: sonic-net/sonic-gnmi
+    path: sonic_data_client/db_client.go
     ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
 related:
   config_db:
@@ -506,6 +512,91 @@ journal.ps = journal.rc.PSubscribe(ctx, keyspace, keyevent)
   sonic_data_client/db_client.go:224-317 — StreamRun: ON_CHANGE / SAMPLE 分岐
 -->
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> **調査根拠**: `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`、`sonic-gnmi/telemetry/telemetry.go`、`sonic-gnmi/sonic_data_client/mixed_db_client.go`、`sonic-gnmi/sonic_data_client/db_client.go`、`sonic-gnmi/sonic_db_config/db_config.go` 全行精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/gnmi-ordering.md`
+
+### 差異 1: SmartSwitch — ZMQ ポート自動付与
+
+`gnmi-native.sh:89-91`
+
+| `DEVICE_METADATA.localhost.subtype` | telemetry 起動オプション | 効果 |
+|-------------------------------------|------------------------|------|
+| `SmartSwitch` | `-zmq_port=8100` を自動付与 | `orchagent` との通信を Redis ベースから ZMQ ベースに切り替え。CONFIG_DB フィールドではなく gnmi-native.sh が固定ポート `8100` を挿入する |
+| その他 (`npu` / `dpu` 等)、または `DEVICE_METADATA|localhost` 不在 | ZMQ 無効 (フラグ付与なし) | `telemetry` は Redis ベースの通信チャネルを使用 |
+
+`subtype` の参照は `sonic-cfggen` テンプレートではなく `sonic-db-cli CONFIG_DB hget "DEVICE_METADATA|localhost" "subtype"` で直接取得するため、`GNMI` テーブルとは独立して解決される。
+
+### 差異 2: SmartSwitch + multi-ASIC NPU — gNMI パスの namespace/container 二段解決
+
+`sonic_data_client/mixed_db_client.go:437-463`
+
+SmartSwitch 構成では **namespace 数 (`namespace_cnt`)** と **container 数 (`container_cnt`)** の両方が 1 より大きくなる。この場合、gNMI パスの第 2 要素は namespace (ASIC) と container (DPU) の両方の候補として試行される。
+
+| 構成 | `namespace_cnt` | `container_cnt` | パス第 2 要素の解釈 |
+|------|-----------------|-----------------|---------------------|
+| single-ASIC / single-container | 1 | 1 | 第 2 要素はテーブル名 (namespace/container 無視) |
+| multi-ASIC only (pure multi-asic NPU) | > 1 | 1 | 第 2 要素を namespace (例: `asic0`, `asic1`) として解釈 |
+| multi-container only (SmartSwitch DPU) | 1 | > 1 | 第 2 要素を container (例: `dpu0`, `dpu1`) として解釈 |
+| multi-ASIC + multi-container (SmartSwitch with multi-ASIC) | > 1 | > 1 | 第 2 要素を namespace で試行し、失敗した場合に container として再試行。`localhost` は常にデフォルト namespace にマップ |
+
+**gNMI パス例 (SmartSwitch DPU)**:
+
+```
+/DPU_APPL_DB/dpu0/DASH_QOS   → DPU_APPL_DB target、container=dpu0
+/DPU_APPL_DB/localhost/...   → DPU_APPL_DB target、container=デフォルト
+```
+
+DPU container 向け Write 操作は `getZmqAddress(dpuId, zmqPort)` で DPU の IP アドレス (DHCP_SERVER_IPV4_PORT 経由) を解決し、TCP ZMQ 経由で送信される。localhost (デフォルト container) の場合は `127.0.0.1:<zmqPort>` に直接接続する (`mixed_db_client.go:198-200`)。
+
+### 差異 3: multi-ASIC 構成 — DB target の namespace サフィックス
+
+`sonic_data_client/db_client.go:513-535`
+
+`IsTargetDb()` 関数は gNMI Subscribe/Get リクエストの target 文字列を `"DB名/namespace"` 形式でパースする。
+
+| 構成 | target 形式 | 動作 |
+|------|------------|------|
+| single-ASIC | `CONFIG_DB` / `STATE_DB` 等 | namespace = デフォルト (グローバル) |
+| multi-ASIC | `CONFIG_DB/asic0`、`STATE_DB/asic1` 等 | namespace サフィックスを抽出し、対応する Redis インスタンスに接続 |
+
+multi-ASIC 環境では各 ASIC ごとに独立した Redis インスタンスが `/var/run/redis/sonic-db/database_global.json` で定義される。`CheckDbMultiNamespace()` がインスタンス数 > 1 を検出した場合のみ namespace サフィックスが有効になる。
+
+### 差異 4: 管理 VRF 構成 — VRF バインド
+
+`gnmi-native.sh:95-98`
+
+| `MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled` | telemetry 起動オプション | 効果 |
+|---------------------------------------------|------------------------|------|
+| `true` | `--vrf mgmt` を自動付与 | gNMI サーバが管理 VRF (`mgmt`) の netns にバインド。管理ポート (eth0) 経由でのみ到達可能 |
+| `false` / 未設定 | VRF オプションなし | デフォルト VRF でリッスン。全インターフェースから到達可能 |
+
+`MGMT_VRF_CONFIG` は `sonic-db-cli CONFIG_DB hget` で直接参照されるため、`GNMI` テーブルとは独立して起動時に解決される。`--vrf mgmt` が付与されると `telemetry` の Go バイナリが `vrf_config.go` 内で管理 VRF netns に切り替えてから listen を開始する。
+
+### 要約
+
+| プラットフォーム | `GNMI` テーブルへの影響 | 追加される起動オプション |
+|-----------------|------------------------|-------------------------|
+| standard NPU (single-ASIC) | 変化なし | なし |
+| multi-ASIC NPU | DB target に `/asicN` サフィックス対応 | なし (テーブルへの影響なし) |
+| SmartSwitch (DPU 有り) | なし (GNMI テーブル自体は共通) | `-zmq_port=8100` (固定) |
+| SmartSwitch + multi-ASIC NPU | 上記 2 つの組み合わせ | `-zmq_port=8100` (固定) |
+| 管理 VRF 有効 | なし | `--vrf mgmt` |
+
+<!-- evidence:
+  gnmi-native.sh:89-91 — SmartSwitch subtype 判定 → zmq_port=8100 固定付与
+  gnmi-native.sh:95-98 — mgmtVrfEnabled 判定 → --vrf mgmt 付与
+  sonic_data_client/mixed_db_client.go:437-463 — ParseDatabase: namespace_cnt/container_cnt による二段解決
+  sonic_data_client/mixed_db_client.go:55 — HOSTNAME = "localhost"
+  sonic_data_client/mixed_db_client.go:118-165 — getDpuAddress/getZmqAddress: DPU IP 解決
+  sonic_data_client/mixed_db_client.go:192-208 — getZmqClient: local/remote ZMQ 分岐
+  sonic_data_client/db_client.go:513-535 — IsTargetDb: multi-namespace target/asicN パース
+  sonic_db_config/db_config.go:32-46 — CheckDbMultiNamespace: namespace > 1 判定
+-->
+<!-- /platform -->
 
 <!-- hardcoded-constants -->
 ## ハードコード定数 (Phase E)
