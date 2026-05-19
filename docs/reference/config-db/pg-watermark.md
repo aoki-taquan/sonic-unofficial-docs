@@ -241,6 +241,36 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 
 ---
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.h, sonic-swss/orchagent/portsorch.cpp,
+     sonic-swss/orchagent/watermarkorch.cpp -->
+
+`FLEX_COUNTER_TABLE|PG_WATERMARK` に関連するマジックナンバー・グループ名・パス定数の一覧。いずれも CONFIG_DB・YANG・CLI から変更不可能。
+
+| 定数 / マクロ名 | 値 | 定義ファイル | 意味・影響 |
+|---|---|---|---|
+| `PG_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` | `portsorch.h:39` | `setFlexCounterGroupParameter()` 呼び出し時に FLEX_COUNTER_DB へ書き込まれるデフォルトポーリング間隔文字列。`FLEX_COUNTER_TABLE|PG_WATERMARK` の `POLL_INTERVAL` フィールドで上書き可能。`portsorch.cpp:873` で参照される |
+| `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` | `portsorch.cpp:92` | `pg_watermark_manager` コンストラクタ (`portsorch.cpp:736`) に渡す内部整数定数。上記 POLL_MSECS 文字列と値が一致することで設定の二重管理を実装している |
+| `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_WATERMARK_STAT_COUNTER"` | `portsorch.h:36` | FLEX_COUNTER_DB の `FLEX_COUNTER_GROUP_TABLE` キーに使用されるグループ名。syncd がこのグループ名でポーリングスレッドを識別する |
+| `STATS_MODE_READ_AND_CLEAR` | `"READ_AND_CLEAR"` | `portsorch.cpp:872-876` 呼び出し引数 | `setFlexCounterGroupParameter()` 経由で `FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER` の `STATS_MODE` フィールドに書き込まれる固定値。SAI からポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。ユーザーが変更するフィールドは CONFIG_DB に存在しない |
+| `DEFAULT_TELEMETRY_INTERVAL` | `120` 秒 | `watermarkorch.cpp:9` | `watermarkorch` が `m_telemetryTimer` を初期化する際のデフォルト周期。`WATERMARK_TABLE|TELEMETRY_INTERVAL` エントリの `interval` フィールドで上書き可能。変更単位は秒 |
+| `CLEAR_PG_HEADROOM_REQUEST` | `"PG_HEADROOM"` | `watermarkorch.cpp:11` | `WATERMARK_CLEAR_REQUEST` APPL_DB 通知チャネルへのリクエスト文字列。`watermarkcfg clear pg-headroom` CLI が発行する値と一致しなければクリア処理が発火しない |
+| `CLEAR_PG_SHARED_REQUEST` | `"PG_SHARED"` | `watermarkorch.cpp:12` | 同上。`watermarkcfg clear pg-shared` CLI が発行するリクエスト文字列 |
+| `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` | SAI enum 値 | `portsorch.cpp:412` (`ingressPriorityGroupWatermarkStatIds[]`) | FlexCounter が各 PG OID に対して収集する SAI カウンタ 1 つ目。XOFF（headroom）ウォーターマークをバイト単位で返す。ASIC が非対応の場合は `SAI_STATUS_NOT_SUPPORTED` が返るが、orchagent はエラー扱いしない |
+| `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` | SAI enum 値 | `portsorch.cpp:413` (`ingressPriorityGroupWatermarkStatIds[]`) | FlexCounter が各 PG OID に対して収集する SAI カウンタ 2 つ目。Shared バッファウォーターマークをバイト単位で返す。収集カウンタリストはコードで完全に固定されており、CONFIG_DB や YANG からの変更手段はない |
+
+!!! note "POLL_MSECS 二重定義の理由"
+    `PG_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS`（文字列 `"60000"`）と `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS`（整数 `60000`）は同一の 60 秒を 2 種類の型で保持している。文字列版は `setFlexCounterGroupParameter()` での FLEX_COUNTER_DB 書き込みに、整数版は `FlexCounterManager` コンストラクタの内部初期化に使用される。値の不一致が生じた場合でも orchagent は検出しない。
+
+!!! note "収集カウンタのハードコード制約"
+    `ingressPriorityGroupWatermarkStatIds` 配列は `static const` で宣言されており、ランタイムで変更する手段がない。ASIC が `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` をサポートしない場合（例: headroom なし構成）、当該 PG の XOFF_ROOM カウンタは常に 0 または `SAI_STATUS_NOT_SUPPORTED` が返る。
+
+<!-- /constants -->
+
+---
+
 ## 設定例
 
 ```json
