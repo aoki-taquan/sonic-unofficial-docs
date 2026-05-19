@@ -448,6 +448,58 @@ else:
 
 <!-- /hardcoded-constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence:
+     sonic-swss/orchagent/flexcounterorch.cpp:202-214,380-392,
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp:124-254,
+     sonic-swss/orchagent/saihelper.cpp:877-1080,
+     sonic-swss/orchagent/dash/dashcounter.h:23-71,
+     sonic-swss/orchagent/dash/dashorch.cpp:67-68,751-752,1378-1397,
+     sonic-swss-common/common/schema.h:249,293-295 -->
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` を変更すると、orchagent (`FlexCounterOrch` / `DashOrch` / `FlexCounterManager`) が CONFIG_DB 自身ではなく **FLEX_COUNTER_DB** および **COUNTERS_DB** に副次的に書き込む。これらは `syncd` の ENI/Meter カウンタポーリングの起点となる。
+
+### FLEX_COUNTER_DB
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `FLEX_COUNTER_GROUP_TABLE\|ENI_STAT_COUNTER` | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL`, `STATS_MODE` | `FLEX_COUNTER_TABLE\|ENI` の `FLEX_COUNTER_STATUS` / `POLL_INTERVAL` 変更時、および `DashOrch` コンストラクタ初期化時 | `FlexCounterOrch` → `setFlexCounterGroupOperation()` / `setFlexCounterGroupPollInterval()` (`saihelper.cpp:877-884`) | `flexcounterorch.cpp:202-214,380-386`, `flex_counter_manager.cpp:124,147-153` |
+| `FLEX_COUNTER_GROUP_TABLE\|METER_STAT_COUNTER` | 同上 | `FLEX_COUNTER_TABLE\|DASH_METER` の変更時 / `DashOrch` コンストラクタ | 同上 | 同上 |
+| `ENI_STAT_COUNTER:<eni_oid>` (per OID) | `ENI_COUNTER_ID_LIST` = ENI SAI 統計 ID リスト, `STATS_MODE` = `STATS_MODE_READ` | ENI 作成時 + `EniCounter.fc_status == true` の場合に `EniCounter.addToFC(eni_id, eni)` が実行された時 | `DashCounter<ENI>::addToFC()` → `FlexCounterManager::setCounterIdList()` → `startFlexCounterPolling()` → `ProducerTable::set()` (`saihelper.cpp:1047`) | `dashcounter.h:35`, `dashorch.cpp:751`, `flex_counter_manager.cpp:225` |
+| `METER_STAT_COUNTER:<eni_oid>` (per OID) | `DASH_METER_COUNTER_ID_LIST`, `STATS_MODE` | ENI 作成時 + `MeterCounter.fc_status == true` の場合 | `DashCounter<DASH_METER>::addToFC()` → 同上 | `dashcounter.h:35`, `dashorch.cpp:752` |
+
+ENI 削除時は `EniCounter.removeFromFC()` → `FlexCounterManager::clearCounterIdList()` → `stopFlexCounterPolling()` → `ProducerTable::del(key)` で per-OID エントリが削除される (`saihelper.cpp:1075-1077`)。
+
+### COUNTERS_DB
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `COUNTERS_ENI_NAME_MAP` (単一 hash) | field=ENI 名 (例 `eni_01`), value=SAI ENI OID の文字列シリアライズ | ENI 作成成功後 (`dashorch.cpp:750`) に `addEniMapEntry()` が呼ばれた時 | `DashOrch::addEniMapEntry()` → `m_eni_name_table->set()` | `dashorch.cpp:1378-1382`, `schema.h:249` |
+| `COUNTERS:<eni_oid>` (per OID、間接書込) | `SAI_ENI_STAT_*` 各統計値 (packets / bytes 等) | `POLL_INTERVAL` (デフォルト 10000 ms) ごとに syncd が SAI ENI カウンタ API を呼び出した後 | `syncd` FlexCounter スレッド (orchagent は直接書かない) | FLEX_COUNTER_DB `ENI_STAT_COUNTER:<oid>` 経由 |
+
+ENI 削除時は `removeEniMapEntry()` → `m_eni_name_table->hdel("", name)` で `COUNTERS_ENI_NAME_MAP` のエントリが削除される (`dashorch.cpp:1395`)。
+
+### 副次書込サマリ
+
+| 副次 DB | テーブル | トリガ | 書込主体 |
+|---|---|---|---|
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|ENI_STAT_COUNTER` | `FLEX_COUNTER_STATUS` / `POLL_INTERVAL` 変更 / orch 起動 | FlexCounterOrch / FlexCounterManager |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|METER_STAT_COUNTER` | 同上 (DASH_METER) | FlexCounterOrch / FlexCounterManager |
+| FLEX_COUNTER_DB | `ENI_STAT_COUNTER:<oid>` | ENI 追加 + `fc_status=true` | DashCounter → FlexCounterManager |
+| FLEX_COUNTER_DB | `METER_STAT_COUNTER:<oid>` | ENI 追加 + `MeterCounter.fc_status=true` | DashCounter → FlexCounterManager |
+| COUNTERS_DB | `COUNTERS_ENI_NAME_MAP` | ENI 作成 / 削除 | DashOrch (`addEniMapEntry` / `removeEniMapEntry`) |
+| COUNTERS_DB | `COUNTERS:<oid>` | POLL_INTERVAL ごと (間接) | syncd FlexCounter スレッド |
+
+!!! warning "残置・リーク経路"
+    - `FLEX_COUNTER_DB ENI_STAT_COUNTER:<oid>` は `FLEX_COUNTER_STATUS=disable` 操作のみでは削除されない。`disableFlexCounterGroup()` はグループの `FLEX_COUNTER_STATUS` を `disable` にするだけで per-OID エントリは残る。ENI 削除時の `clearCounterIdList()` で削除される
+    - ENI OID が `SAI_NULL_OBJECT_ID` の場合 `addToFC()` が即 return するため FLEX_COUNTER_DB per-OID 書込なし (ただし `COUNTERS_ENI_NAME_MAP` は `addEniMapEntry()` で書かれる可能性がある)
+    - orchagent 再起動後、`DashOrch` コンストラクタが `applyGroupConfiguration()` を呼び FLEX_COUNTER_GROUP_TABLE に初期状態 (`disable`, `POLL_INTERVAL=10000`) を再書込する。per-OID エントリは ENI エントリ再処理後に再投入される
+
+詳細根拠は `meta/_intermediate/cdb-flow/dpu-counter-side.md` を参照。
+<!-- /side-effects -->
+
 ## 制約
 
 - `POLL_INTERVAL`: 100 以上 (uint32 上限 4294967295)

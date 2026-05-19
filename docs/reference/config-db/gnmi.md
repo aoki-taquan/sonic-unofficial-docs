@@ -380,6 +380,65 @@ Go バイナリの `setupFlags()` が引数を検証し、不正な組み合わ�
 -->
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`telemetry` バイナリ (gNMI サーバ) は CONFIG_DB の `GNMI` / `GNMI_CLIENT_CERT` テーブルを**読み取るだけ**で、コアデータパス (orchagent / SAI) へは一切書き込まない。ただし、実行中に STATE_DB へ副次的な書き込みを行い、カウンタ統計は共有メモリ (SysV IPC) に書き込む。
+
+### 1. STATE_DB — `TELEMETRY_CONNECTIONS` テーブル
+
+| 副次 DB | テーブル / キー | 書込タイミング | 操作 | ソース |
+|---|---|---|---|---|
+| STATE_DB | `TELEMETRY_CONNECTIONS` (Hash) | デーモン起動 (`PrepareRedis()`) | 全既存エントリを `HDel` で削除 (起動時クリア) | `connection_manager.go:52-60` |
+| STATE_DB | `TELEMETRY_CONNECTIONS` (Hash) | gNMI Subscribe RPC 開始 (`Add()`) | `HSet(table, key, "active")` | `connection_manager.go:116` |
+| STATE_DB | `TELEMETRY_CONNECTIONS` (Hash) | gNMI Subscribe RPC 終了 (`Remove()`) | `HDel(table, key)` | `connection_manager.go:127` |
+
+**Hash フィールド (connection key) の生成規則**: `createKey()` が `<peer_ip:port>|<target_1>|<target_2>|...|<RFC3339_timestamp>` 形式で生成する (`connection_manager.go:94-108`)。値は常にハードコード `"active"` 固定。
+
+**threshold との関係**: `GNMI|gnmi.threshold` (デフォルト 100、0 = 無制限) を超えると新規接続の `Add()` が `false` を返して接続拒否となる。接続拒否時は STATE_DB への書き込みは行われない (`connection_manager.go:65`)。
+
+**フォールトトレラント**: STATE_DB クライアントが `nil` の場合 (`connection_manager.go:111-115`) は書き込みをスキップし、`telemetry` サーバ自体は継続動作する。
+
+### 2. COUNTERS_DB — 書込なし
+
+`telemetry` デーモンはカウンタ統計を **COUNTERS_DB (Redis) ではなく SysV 共有メモリ** に書き込む。
+
+| カウンタストア | 用途 | ソース |
+|---|---|---|
+| SysV 共有メモリ (`memKey=7749`, 1024 バイト) | GNMI_GET / GNMI_SET / GNMI_SET_BYPASS / GNOI_* / GNSI_* / DBUS_* カウンタ群 (計 32 種) を uint64 で保持 | `common_utils/shareMem.go` |
+| COUNTERS_DB | **書込なし** | — |
+
+カウンタ操作:
+- **初期化**: `NewServer()` 起動時に `InitCounters()` が全 32 カウンタを `uint64(0)` にリセットして共有メモリへ書き込む (`gnmi_server/server.go:528`)
+- **増分**: `IncCounter(cnt)` が `atomic.AddUint64` でアトミックにインクリメント後、`SetMemCounters` で共有メモリ全体を同期 (`common_utils/context.go`)
+- **読み取り**: `gnmi_dump` ツール (`gnmi_dump/gnmi_dump.go`) が `GetMemCounters` で読み出して標準出力に表示する。Redis には公開されない
+- **永続化**: なし。プロセス再起動 / システム再起動で全カウンタが 0 にリセット
+
+!!! note "`gnmi_dump` コマンドで カウンタを表示"
+    `docker exec gnmi gnmi_dump` を実行すると現在の全カウンタが `<CounterType.String()>: <uint64_value>` 形式で表示される。
+    COUNTERS_DB / STATE_DB からは取得できないため、通常の Redis 監視ツール (`redis-cli`) では見えない点に注意。
+
+### 3. その他の DB — 書込なし
+
+| DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `telemetry` バイナリに Producer / Notification 書込なし (`gnmi_server/server.go` 全体を `ProducerStateTable`/`NotificationProducer` で grep してヒット 0 件) |
+| ASIC_DB | なし | SAI 非経由。gNMI 経由の Write は swss/orchagent に転送されるが `telemetry` 自身は ASIC_DB を保持しない |
+| FLEX_COUNTER_DB | なし | `telemetry` に FLEX_COUNTER_DB 参照なし |
+
+<!-- evidence:
+  gnmi_server/connection_manager.go:52-60 — PrepareRedis: 起動時に TELEMETRY_CONNECTIONS 全エントリ削除
+  gnmi_server/connection_manager.go:65 — threshold による接続拒否 (0 = 無制限)
+  gnmi_server/connection_manager.go:94-108 — createKey: connection key 生成ロジック
+  gnmi_server/connection_manager.go:111-116 — storeKeyRedis: nil ガード + HSet "active"
+  gnmi_server/connection_manager.go:127 — HDel による接続終了時エントリ削除
+  common_utils/context.go — CounterType iota 定義 (GNMI_GET=0 ... COUNTER_SIZE=32), IncCounter, InitCounters
+  common_utils/shareMem.go — memKey=7749, memSize=1024, GetMemCounters/SetMemCounters
+  gnmi_server/server.go:528 — NewServer で InitCounters 呼び出し
+  gnmi_dump/gnmi_dump.go — GetMemCounters で共有メモリ読み取り・表示
+-->
+<!-- /side-effects -->
+
 <!-- hardcoded-constants -->
 ## ハードコード定数 (Phase E)
 

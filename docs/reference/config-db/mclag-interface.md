@@ -334,3 +334,138 @@ docker exec iccpd grep -i "mclag iface" /var/log/swss/mclagsyncd.log
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-failure.md`
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L66,L423,L429,L1509-1533,L1538-1633 / sonic-swss/orchagent/mlagorch.cpp L193-234 / sonic-swss-common/common/schema.h L440-443 -->
+
+CONFIG_DB `MCLAG_INTERFACE` の SET/DEL を受けた `MlagOrch` および `mclagsyncd` が副次的に書き込む DB エントリの一覧。
+
+### MlagOrch (orchagent) の副次書込
+
+`MlagOrch::addMlagInterface()` / `delMlagInterface()` は内部マップ (`m_mlagIntfs`) の更新と `SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知のみを行う。STATE_DB / APPL_DB / COUNTERS_DB への直接書込は **0 件**（`mlagorch.cpp` に `state_db` / `appl_db` / `counters_db` への書込呼出なし）。
+
+### mclagsyncd の副次書込
+
+`mclagsyncd` は MCLAG_INTERFACE の SET/DEL を受けて iccpd へ IPC 通知を送信し、iccpd との ICCP ネゴシエーション完了後に以下の STATE_DB テーブルを更新する。
+
+| 副次 DB | テーブル | キー形式 | 書込フィールド | 書込タイミング | ソース |
+|---|---|---|---|---|---|
+| STATE_DB | `MCLAG_LOCAL_INTF_TABLE` | `<if_name>` | `port_isolate_peer_link = true\|false` | iccpd からポート分離設定受信時 (`setLocalIfPortIsolate()`) | `mclaglink.cpp:L1520` |
+| STATE_DB | `MCLAG_LOCAL_INTF_TABLE` | `<if_name>` | — (del) | iccpd からローカル IF 削除通知受信時 (`deleteLocalIfPortIsolate()`) | `mclaglink.cpp:L1533` |
+| STATE_DB | `MCLAG_REMOTE_INTF_TABLE` | `<mlag_id>\|<if_name>` | `oper_status = up\|down` | iccpd からリモート IF 状態通知受信時 (`mclagsyncdSetRemoteIfState()`) | `mclaglink.cpp:L1584` |
+| STATE_DB | `MCLAG_REMOTE_INTF_TABLE` | `<mlag_id>\|<if_name>` | — (del) | iccpd からリモート IF 削除通知受信時 (`mclagsyncdDelRemoteIfInfo()`) | `mclaglink.cpp:L1633` |
+| APPL_DB | `FLUSHFDBREQUEST` (通知チャネル) | — | `ALL` | ICCP セッション確立直後の FDB フラッシュ要求 | `mclaglink.cpp:L423,L429` |
+
+### 副次書込なし
+
+| DB | 根拠 |
+|---|---|
+| COUNTERS_DB | `p_counters_db->hgetall("COUNTERS_PORT_NAME_MAP")` (`mclaglink.cpp:L66`) は **読取専用**。書込呼出なし |
+| ASIC_DB | `MlagOrch` から SAI 直接呼出なし。FDB 削除などは `FdbOrch` Observer 経由（間接） |
+| FLEX_COUNTER_DB | MCLAG_INTERFACE には FlexCounter 登録なし |
+
+!!! note "副次書込のタイミング"
+    STATE_DB (`MCLAG_LOCAL_INTF_TABLE` / `MCLAG_REMOTE_INTF_TABLE`) への書込は CONFIG_DB `MCLAG_INTERFACE` SET 直後ではなく、ICCP セッション確立後の iccpd ネゴシエーション完了を待って行われる。`sonic-db-cli CONFIG_DB hset 'MCLAG_INTERFACE|...'` 実行直後に `sonic-db-cli STATE_DB hgetall 'MCLAG_LOCAL_INTF_TABLE|...'` を確認しても空の場合がある。`show mclag interface` コマンドで ICCP ネゴシエーション完了後の状態を確認すること。
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.cpp#L1509-1533 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  /* Set local interface portisolate field enable/disable in the
+   * STATE_MCLAG_LOCAL_INTF_TABLE. */
+  void MclagLink::setLocalIfPortIsolate(std::string mclag_if, bool is_enable) {
+      ...
+      fvVector.push_back(make_pair("port_isolate_peer_link", is_enable ? "true" : "false"));
+      p_mclag_local_intf_tbl->set(key, fvVector);
+  }
+  void MclagLink::deleteLocalIfPortIsolate(std::string mclag_if) {
+      p_mclag_local_intf_tbl->del(mclag_if);
+  }
+reasoning: MCLAG_INTERFACE の SET/DEL に応じて iccpd が port-isolation 設定を mclagsyncd に返送し、STATE_DB MCLAG_LOCAL_INTF_TABLE を更新する。
+-->
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.cpp#L1538-1633 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  /* Set remote interface state field oper_status in the STATE_MCLAG_REMOTE_INTF_TABLE.
+   * Key = "Mclag<id>|interface" */
+  void MclagLink::mclagsyncdSetRemoteIfState(char *msg, size_t msg_len) {
+      ...
+      key = to_string(mlag_id) + "|" + lag_name;
+      p_mclag_remote_intf_tbl->set(key, fvVector);
+  }
+reasoning: ICCP ピアからのリモートインターフェース oper 状態変化が iccpd 経由で mclagsyncd に届き、STATE_DB MCLAG_REMOTE_INTF_TABLE が更新される。
+-->
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.cpp#L423,429 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  swss::NotificationProducer flushFdb(p_appl_db.get(), "FLUSHFDBREQUEST");
+  ...
+  flushFdb.send("ALL", "ALL", values);
+reasoning: ICCP セッション確立直後に APPL_DB の FLUSHFDBREQUEST チャネルへ通知を送信して全 FDB フラッシュを要求する。MCLAG_INTERFACE の直接 SET への応答ではなく ICCP セッション状態変化に連動。
+-->
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-side.md`
+<!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclagsyncd.cpp L41,57-58,66-110 / sonic-swss/mclagsyncd/mclaglink.cpp L813-818,903-941,989-1085,164-188 / sonic-swss/orchagent/mlagorch.cpp L45-52,193-234 / sonic-swss/orchagent/orchdaemon.cpp L536-540 -->
+
+`MCLAG_INTERFACE` テーブルの変化は **MlagOrch**（orchagent 内）と **mclagsyncd**（独立デーモン）の 2 つの Consumer が受け取る。
+
+### mclagsyncd — SubscriberStateTable の遅延登録
+
+`mclagsyncd` は起動時に `MCLAG_DOMAIN`（`CFG_MCLAG_TABLE_NAME`）のみを購読する。`MCLAG_INTERFACE`（`CFG_MCLAG_INTF_TABLE_NAME`）の `SubscriberStateTable` は、MCLAG_DOMAIN の**初回 SET（新規作成）が成功した後**に `addDomainCfgDependentSelectables()` で動的に生成・登録される（`mclaglink.cpp:813-818,910-941`）。
+
+```
+processMclagDomainCfg():
+  └─ op=="SET" && !entryExists  →  add_cfg_dependent_selectables = 1
+       └─ addDomainCfgDependentSelectables()
+            ├─ new SubscriberStateTable(config_db, CFG_MCLAG_INTF_TABLE_NAME)
+            └─ m_select->addSelectable(p_mclag_intf_cfg_tbl)
+```
+
+`MCLAG_DOMAIN` が削除されると `delDomainCfgDependentSelectables()` で購読が解除され、`p_mclag_intf_cfg_tbl` が delete される（`mclaglink.cpp:845-847,954-959`）。
+
+### mclagsyncd — SELECT ループでのディスパッチ
+
+```cpp
+// mclagsyncd.cpp:86-92
+else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
+    std::deque<KeyOpFieldsValuesTuple> entries;
+    mclag.getMclagIntfCfgTable()->pops(entries);
+    mclag.mclagsyncdSendMclagIfaceCfg(entries);
+}
+```
+
+`pops()` で取り出したエントリを `mclagsyncdSendMclagIfaceCfg()` に渡し、`MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_IFACE` メッセージとして TCP ソケット（`127.0.6.1:2626`）経由で `iccpd` に送信する。Select タイムアウトは指定なし（無限待機）。
+
+### mclagsyncd — 起動時全量 fetch
+
+接続確立直後に `mclagsyncdFetchMclagInterfaceConfigFromConfigdb()`（`mclagsyncd.cpp:58`）が呼ばれ、`Table::dump()` で CONFIG_DB の全 MCLAG_INTERFACE エントリを取得して iccpd に一括送信する。iccpd 再起動・接続断後の再接続時も全設定が自動復元される。
+
+### MlagOrch (orchagent) — Consumer 登録
+
+`MlagOrch` は `Orch` 継承により orchagent 起動時から CONFIG_DB の `MCLAG_INTERFACE` を Consumer として購読する（`orchdaemon.cpp:536-540`）。イベントは `doTask()` → `doMlagInterfaceTask()` → `addMlagInterface()` / `delMlagInterface()` でディスパッチされる。SAI 直接呼出はなく、`SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知で `FdbOrch` に伝達する。
+
+### 通信経路サマリ
+
+| 経路 | Consumer | プロトコル | 行き先 |
+|------|---------|-----------|--------|
+| CONFIG_DB → MlagOrch | orchagent Consumer (keyspace) | Redis keyspace notification | FdbOrch (Observer 通知) |
+| CONFIG_DB → mclagsyncd | SubscriberStateTable (動的登録) | Redis keyspace notification | iccpd (TCP IPC 127.0.6.1:2626) |
+| iccpd → mclagsyncd → STATE_DB | — | TCP IPC → swss Table::set | `MCLAG_LOCAL_INTF_TABLE` / `MCLAG_REMOTE_INTF_TABLE` |
+
+### タイムアウト / リトライ
+
+| デーモン | select タイムアウト | 再試行 |
+|---------|-------------------|----|
+| mclagsyncd | 無限（指定なし） | 接続断で即時 `accept()` 再試行 + 全量再 fetch |
+| orchagent (MlagOrch) | 1000 ms (`orchdaemon.cpp:23`) | キュー保留（allPortsReady 完了まで） |
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-pubsub.md`
+<!-- /pubsub -->

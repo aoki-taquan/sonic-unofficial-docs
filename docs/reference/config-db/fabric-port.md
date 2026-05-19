@@ -257,6 +257,76 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 > **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:80-228,420-520,1394-1542`、`cfgmgr/fabricmgr.cpp:14-124`、`sonic-swss-common/common/schema.h` (`APP_FABRIC_PORT_TABLE_NAME`, `COUNTERS_FABRIC_PORT_NAME_MAP`)、`orchdaemon.cpp:26-27` (`APP_FABRIC_MONITOR_PORT_TABLE_NAME`, `APP_FABRIC_MONITOR_DATA_TABLE_NAME`)
 <!-- /cross-refs -->
 
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+`FabricPortsOrch` はポーリング間隔・FlexCounter 周期・リンク監視閾値のほぼ全てをソース上の `#define` またはクラスメンバ初期化子に固定している。これらは CONFIG_DB・DEVICE_METADATA・FABRIC_MONITOR のいずれからも変更できない。一部は FABRIC_MONITOR テーブルのフィールド（`monPollThreshIsolation` 等）で実行時に上書きされるが、上書き不可の定数が多数残る。
+
+### ポーリング間隔（`fabricportsorch.cpp:21-48`）
+
+| マクロ | 値 | 用途 |
+|--------|----|------|
+| `FABRIC_POLLING_INTERVAL_DEFAULT` | 30 秒 | ポート接続状態・リンク up/down のポーリング周期（`m_timer`） |
+| `FABRIC_DEBUG_POLLING_INTERVAL_DEFAULT` | 12 秒 | CRC/FEC エラーカウンタ収集・レート計算周期（`m_debugTimer`） |
+| `CHECK_TIME` | 120 秒 | `dnLkQueues` リンクダウン履歴の保持ウィンドウ幅 |
+
+これら 3 値はコンストラクタの `SelectableTimer` 初期化子（`fabricportsorch.cpp:87-88`）とポーリング内比較（`fabricportsorch.cpp:1350`）で直接使われ、外部からの変更手段が存在しない。
+
+### FlexCounter 登録間隔（`fabricportsorch.cpp:24-37`）
+
+| マクロ | 値 | 用途 |
+|--------|----|------|
+| `FABRIC_PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | 10,000 ms (10 秒) | ポートレベル SAI 統計カウンタ FlexCounter グループの収集間隔 |
+| `FABRIC_QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | 100,000 ms (100 秒) | キューレベル SAI 統計カウンタ FlexCounter グループの収集間隔 |
+| `SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS` | 500 ms | 通常スイッチドロップカウンタ FlexCounter 間隔 |
+| `FABRIC_SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS` | 60,000 ms (60 秒) | fabric スイッチ専用ドロップカウンタ FlexCounter 間隔 |
+
+FlexCounter グループ名（`FABRIC_PORT_STAT_COUNTER` / `FABRIC_QUEUE_STAT_COUNTER` / `SWITCH_DEBUG_COUNTER`）もハードコードされており、`FLEX_COUNTER_DB` のキー空間を固定する（`fabricportsorch.cpp:24-37`）。
+
+### リンク監視閾値 — CONFIG_DB 上書き不可定数
+
+| マクロ | 値 | 備考 |
+|--------|----|------|
+| `MAX_SKIP_CRCERR_ON_LNKUP_POLLS` | 20 | リンクアップ直後の CRC エラースキップポーリング回数 |
+| `MAX_SKIP_FECERR_ON_LNKUP_POLLS` | 20 | リンクアップ直後の FEC エラースキップポーリング回数 |
+| `FABRIC_LINK_RATE` | 44,316 | capacity 計算の単位値（capacity += FABRIC_LINK_RATE per non-isolated port） |
+
+`MAX_SKIP_*` は `updateFabricDebugCounters()` 内で `maxSkipCrcCnt` / `maxSkipFecCnt` に代入されるが（`fabricportsorch.cpp:766,817`）、FABRIC_MONITOR テーブルのいかなるフィールドでも上書きできず、プラットフォーム差異にも対応しない。
+
+### リンク監視閾値 — CONFIG_DB（FABRIC_MONITOR）で上書き可能なデフォルト
+
+以下は `fabricportsorch.cpp:21-48` に `#define` で存在するが、`updateFabricDebugCounters()` 内で FABRIC_MONITOR フィールドが存在する場合はそちらで上書きされる（`fabricportsorch.cpp:444-483`）。FABRIC_MONITOR フィールドが欠落している場合のフォールバック値として機能する。
+
+| マクロ | 値 | 対応 FABRIC_MONITOR フィールド |
+|--------|----|-------------------------------|
+| `FEC_ISOLATE_POLLS` | 2 | `monPollThreshIsolation` |
+| `FEC_UNISOLATE_POLLS` | 8 | `monPollThreshRecovery` |
+| `ISOLATION_POLLS_CFG` | 1 | `monPollThreshIsolation`（CRC 系） |
+| `RECOVERY_POLLS_CFG` | 8 | `monPollThreshRecovery`（CRC 系） |
+| `ERROR_RATE_CRC_CELLS_CFG` | 1 | `monErrThreshCrcCells` |
+| `ERROR_RATE_RX_CELLS_CFG` | 61,035,156 | `monErrThreshRxCells` |
+
+### STATE_DB リセットデフォルト値（`fabricportsorch.h:62-68`）
+
+`forceUnisolateStatus` を適用した際に STATE_DB に書き込まれる初期値。クラスメンバ初期化子で固定されており、FABRIC_MONITOR の `monPollThreshRecovery` とは連動しない。
+
+| メンバ | 値 | STATE_DB フィールド |
+|--------|----|---------------------|
+| `m_defaultPollWithErrors` | 0 | `POLL_WITH_ERRORS` |
+| `m_defaultPollWithNoErrors` | 8 | `POLL_WITH_NO_ERRORS` |
+| `m_defaultPollWithFecErrors` | 0 | `POLL_WITH_FEC_ERRORS` |
+| `m_defaultPollWithNoFecErrors` | 8 | `POLL_WITH_NOFEC_ERRORS` |
+| `m_defaultConfigIsolated` | 0 | `CONFIG_ISOLATED` |
+| `m_defaultIsolated` | 0 | `ISOLATED` |
+| `m_defaultAutoIsolated` | 0 | `AUTO_ISOLATED` |
+
+!!! note "FABRIC_MONITOR との乖離"
+    `monPollThreshRecovery` は `updateFabricDebugCounters()` の自動 unisolate 判定に使われるが、`doFabricPortTask()` の force unisolate 時の STATE_DB リセット（`m_defaultPollWithNoErrors=8` / `m_defaultPollWithNoFecErrors=8`）はこの値と独立している。`monPollThreshRecovery` を FABRIC_MONITOR で変更しても、force unisolate 後のリセット値には影響しない（`fabricportsorch.cpp:1529-1532`）。
+
+> **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:21-48,87-88,766,817,1350,1529-1532`、`orchagent/fabricportsorch.h:62-68`
+
+<!-- /hardcoded-constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

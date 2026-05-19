@@ -4,7 +4,7 @@ description: "STATE_DB PORT_TABLE の FEC 関連フィールド（fec / supporte
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp
@@ -319,6 +319,111 @@ YANG default 外の fallback。`PortsOrch::updateDbPortOperFec` と `initPortSup
 FEC SET 成功時のみ `p.m_fec_cfg = true` をセットして `m_portList` を更新する (portsorch.cpp:5366-5369)。失敗時は `m_fec_cfg=false` のまま。次サイクルで `m_fec_cfg` または `m_fec_mode != pCfg.fec.value` の変化検出条件が再評価され、retry ループが動く（`it++` パターンのみ。`erase(it)` パターンは再試行されない）。
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`PortsOrch` と `PortHelper` が FEC フィールドの書込み・検証に使うハードコード文字列定数・マップを整理する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-constants.md -->
+
+### FEC モード文字列定数 (portschema.h:38–41)
+
+| マクロ | 値 | 用途 |
+|-------|----|------|
+| `PORT_FEC_NONE` | `"none"` | CONFIG_DB 設定値 / STATE_DB `supported_fecs` リスト要素 |
+| `PORT_FEC_RS` | `"rs"` | 同上 |
+| `PORT_FEC_FC` | `"fc"` | 同上 |
+| `PORT_FEC_AUTO` | `"auto"` | CONFIG_DB 設定値 / `supported_fecs` 末尾追加値（oper fec には出現しない） |
+
+### SAI ↔ 文字列変換マップ (porthlpr.cpp:77–98)
+
+**`portFecMap`**（文字列 → SAI fec mode、CONFIG_DB 設定時の変換に使用）:
+
+| キー | 値 |
+|------|----|
+| `"none"` | `SAI_PORT_FEC_MODE_NONE` |
+| `"rs"` | `SAI_PORT_FEC_MODE_RS` |
+| `"fc"` | `SAI_PORT_FEC_MODE_FC` |
+| `"auto"` | `SAI_PORT_FEC_MODE_NONE`（auto は NONE にマップ） |
+
+**`portFecRevMap`**（SAI fec mode → 文字列、STATE_DB `fec` フィールド書込みに使用）:
+
+| キー | 値 |
+|------|----|
+| `SAI_PORT_FEC_MODE_NONE` | `"none"` |
+| `SAI_PORT_FEC_MODE_RS` | `"rs"` |
+| `SAI_PORT_FEC_MODE_FC` | `"fc"` |
+| （それ以外） | マップ不在 → `fecToStr()` が `false` を返し `"N/A"` フォールバック |
+
+`portFecRevMap` に `"auto"` エントリが**存在しない**ため、STATE_DB `fec` フィールドに `"auto"` という値が現れることはない。`fec=auto` で設定されたポートが UP しても、SAI は実際の FEC モード（`NONE`/`RS`/`FC`）を返すのでそれが書き込まれる。
+
+**`portFecOverrideMap`**（FEC モード → `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` が必要か、porthlpr.cpp:92–98）:
+
+| FEC モード | override 必要 |
+|-----------|--------------|
+| `"none"` | `true` |
+| `"rs"` | `true` |
+| `"fc"` | `true` |
+| `"auto"` | `false`（SAI の auto-neg に委ねるため override 不要） |
+
+### フォールバック文字列
+
+| 値 | 定義箇所 | 用途 |
+|----|---------|------|
+| `"N/A"` | portsorch.cpp 各所（リテラル） | `fec` フィールドのフォールバック。YANG 定義外の値だが orchagent が書き込む |
+| `"N/A"` | portsorch.cpp:3292（`supported_fec_modes.empty()` 時） | `supported_fecs` 空集合時のフォールバック |
+
+`"N/A"` は YANG スキーマに含まれない orchagent 独自のセンチネル値。YANG が想定する有効値セット（`none`/`rs`/`fc`/`auto`）とは別系統の値として扱う必要がある。
+
+### 拡張性の制約
+
+`portFecMap` / `portFecRevMap` はコンパイル時に固定されたスタティック `unordered_map`。新しい SAI FEC モード（例: `SAI_PORT_FEC_MODE_RS_KP4` 等）が追加されても、これらのマップを手動更新しない限り変換に失敗して `"N/A"` となる。orchagent の再コンパイルが必要であり、設定ファイルや YANG の変更だけでは対応不可。
+
+<!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込みは `PortsOrch` が行う主作用だが、同一トリガーで他 DB・他フィールドへの副次的な書込みが発生する。consumer がこれらの副次書込みを前提に状態を読む場合、書込み順序と原子性の欠如を考慮する必要がある。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-side-effects.md -->
+
+### トリガー A: ポート UP 通知（`fec` フィールドと同時に発生する副次書込）
+
+ポート oper-status UP 通知受信 → `status == SAI_PORT_OPER_STATUS_UP` ブロック内で以下が順次実行される:
+
+| # | 副次書込 | DB | テーブル | フィールド | 証跡 |
+|---|---------|-----|---------|-----------|------|
+| 1 | `updateDbPortOperStatus()` | APPL_DB | `PORT_TABLE:<port>` | `oper_status` = `"up"` | `portsorch.cpp:9667, 9787, 3928-3930` |
+| 2 | `updateDbPortOperSpeed()` | STATE_DB | `PORT_TABLE\|<port>` | `speed` = oper speed (Mbps) / `"N/A"` | `portsorch.cpp:9671-9678, 9850-9857` |
+| 3 | **`updateDbPortOperFec()`** | STATE_DB | `PORT_TABLE\|<port>` | **`fec`**（本ページの主作用） | `portsorch.cpp:9690, 9694, 9864-9870` |
+
+3 回の書込みは Redis `set` コマンドとして独立して発行される。APPL_DB と STATE_DB は別接続のため、`oper_status` が APPL_DB に書かれた時点で `fec` がまだ STATE_DB に届いていない中間状態が生じうる。
+
+### トリガー B: `postPortInit()` 呼出し（`supported_fecs` と同時に発生する副次書込）
+
+`postPortInit()` (portsorch.cpp:6445) 内で以下が順次実行される:
+
+| # | 副次書込 | DB | テーブル | フィールド | 証跡 |
+|---|---------|-----|---------|-----------|------|
+| 1 | `initPortSupportedSpeeds()` | STATE_DB | `PORT_TABLE\|<port>` | `supported_speeds` = サポート速度 CSV | `portsorch.cpp:6460, 3159-3172` |
+| 2 | **`initPortSupportedFecModes()`** | STATE_DB | `PORT_TABLE\|<port>` | **`supported_fecs`**（本ページの主作用） | `portsorch.cpp:6461, 3265-3320` |
+
+`supported_speeds` が先に書かれた後、`supported_fecs` が書かれる。両フィールドとも lazy init で 1 回限り。
+
+### トリガー C: `addPort()` でのポート登録（`supported_fecs` より先に発生）
+
+`addPort()` (portsorch.cpp:4118) は `m_counterNameMapUpdater->setCounterNameMap()` を呼び COUNTERS_DB を更新する。この時点では `initPortSupportedFecModes()` はまだ呼ばれていない（`postPortInit()` が後で呼ばれる）。
+
+| 副次書込 | DB | テーブル / キー | 書込内容 | 証跡 |
+|---------|-----|--------------|---------|------|
+| `setCounterNameMap()` | COUNTERS_DB | `COUNTERS_PORT_NAME_MAP` | `<port_alias>` → SAI port OID 文字列 | `portsorch.cpp:4114-4118` |
+
+!!! note "FEC 設定変更では COUNTERS_PORT_NAME_MAP は更新されない"
+    `COUNTERS_PORT_NAME_MAP` は `addPort()` 時の 1 回限りの書込みで確定する。ポート削除時は `delCounterNameMap()` (portsorch.cpp:4312) で削除される。FEC モード変更 (`doPortTask` → `setPortFec`) では `COUNTERS_PORT_NAME_MAP` は再書込みされない。
+
+<!-- /side-effects -->
 
 ## 関連リファレンス
 
