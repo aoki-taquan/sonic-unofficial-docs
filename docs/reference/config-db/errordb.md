@@ -432,6 +432,100 @@ ERROR_DB フレームワークは SAI 抽象化層の上で動作し、特定の
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G) — ErrorListener 購読方式
+
+> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3.1–3.3.2  
+> **注意**: ErrorListener / ErrorReporter クラスは 2026-05 時点で master 未マージのため、以下は HLD 設計に基づく記述である。  
+> 詳細証跡: `meta/_intermediate/cdb-flow/errordb-pubsub.md`
+
+### Producer / Consumer ペア
+
+| 区間 | 方式 | チャンネル / API |
+|------|------|-----------------|
+| OrchAgent → ERROR_DB (失敗時) | `HSET` + `PUBLISH` | ERROR_DB 専用チャンネル |
+| OrchAgent → ERROR_DB (成功時) | `DEL` + `PUBLISH` | ERROR_DB 専用チャンネル |
+| OrchAgent → ERROR_DB (clear 時) | `DEL` のみ | **PUBLISH なし** |
+| ErrorListener ← ERROR_DB | `swss::Selectable` + select() ループ | ERROR_DB 専用チャンネル |
+| fpmsyncd ← ERROR_ROUTE_TABLE | `ErrorListener` (bgp_error_handling 有効時のみ) | ERROR_DB 専用チャンネル |
+
+### ErrorListener クラス — 購読登録
+
+`ErrorListener` は `swss::Selectable` を継承し、orchdaemon またはアプリの `select()` ループに `addSelectable()` で組み込む（HLD Section 3.3.2）。
+
+```cpp
+// HLD Section 3.3.2 — アプリ登録例 (コード未マージ)
+ErrorListener fpmErrorListener(APP_ROUTE_TABLE_NAME,
+    (ERR_NOTIFY_FAIL | ERR_NOTIFY_POSITIVE_ACK));
+
+Select s;
+s.addSelectable(&fpmErrorListener);
+```
+
+コンストラクタ引数:
+
+| 引数 | 説明 | 備考 |
+|------|------|------|
+| テーブル名 | `APP_ROUTE_TABLE_NAME` / `APP_NEIGH_TABLE_NAME` 等 | 購読対象テーブルを特定 |
+| 通知フラグ | `ERR_NOTIFY_FAIL` / `ERR_NOTIFY_POSITIVE_ACK` の OR | デフォルトは `ERR_NOTIFY_FAIL` のみ |
+
+### 通知フラグ
+
+| フラグ | 意味 |
+|--------|------|
+| `ERR_NOTIFY_FAIL` | SAI 操作失敗時のみコールバックを受ける（デフォルト動作） |
+| `ERR_NOTIFY_POSITIVE_ACK` | SAI 操作成功時にもコールバックを受ける（オプション） |
+
+フラグの正式なビット値は HLD 未定義。master には `ERR_NOTIFY_*` 定数もヘッダーも存在しない（Phase E 参照）。
+
+### 通知チャンネルの動作
+
+OrchAgent は `HSET`（失敗エントリ書込）または `DEL`（成功通知 / DEL 失敗）後に **ERROR_DB 専用チャンネル**へ `PUBLISH` を送る。ErrorListener は subscribe 中のチャンネルで PUBLISH を受信し、登録フラグと照合してコールバックを起動する（HLD Section 3.3.1）。
+
+```
+[失敗通知]
+Syncd → ASIC_DB 通知チャンネル → OrchAgent
+  → HSET ERROR_ROUTE_TABLE|<prefix> ...
+  → PUBLISH ERROR_DB channel
+    → ErrorListener.isReadable() = true
+      → select() ループ wake → readData() → コールバック(opcode, rc, ...)
+
+[成功通知]
+Syncd → ASIC_DB 通知チャンネル → OrchAgent
+  → DEL ERROR_ROUTE_TABLE|<prefix>
+  → PUBLISH ERROR_DB channel
+    → ErrorListener.isReadable() = true (ERR_NOTIFY_POSITIVE_ACK 登録時のみ起動)
+      → select() ループ wake → readData() → コールバック(opcode, SUCCESS)
+
+[clear コマンド]
+OrchAgent (clear 受信) → DEL ERROR_DB エントリ
+  → PUBLISH なし → ErrorListener に通知されない
+```
+
+### 複数アプリの同時購読
+
+HLD Section 1.1.1 に明示されているとおり、複数アプリが同一テーブルを購読可能である。`ERROR_ROUTE_TABLE` の場合、fpmsyncd と別のアプリ（例: bgpcfgd）が同時に購読し、それぞれ独立したコールバックを受け取ることができる。各 ErrorListener はフィルタ条件（テーブル名・通知フラグ）ごとに独立して評価される。
+
+### fpmsyncd の購読制御
+
+`BGP_GLOBALS|default` の `bgp_error_handling` フィールドが `true` に設定された場合のみ、fpmsyncd は `ErrorListener` を `Select` に登録して `ERROR_ROUTE_TABLE` を購読する（BGP HLD Section 3.7.1）。フィールドが `false` / 未設定の場合は `ErrorListener` を登録しないため、ERROR_ROUTE_TABLE への書込みは fpmsyncd に届かない。
+
+### 実装不在の確認
+
+```bash
+# ErrorListener / ErrorReporter が sonic-swss-common に存在しないことを確認
+grep -r "ErrorListener\|ErrorReporter" .cache/sonic-sources/sonic-swss-common/
+# → 0 件
+
+# sonic-swss にも存在しないことを確認
+grep -r "ErrorListener\|ErrorReporter" .cache/sonic-sources/sonic-swss/
+# → 0 件
+```
+
+2026-05 時点で `ErrorListener` クラス・`ErrorReporter` クラス・ERROR_DB チャンネル定数・`ERR_NOTIFY_*` ビット定数はいずれも master に存在しない。HLD Section 3.3.1–3.3.2 のみが仕様根拠である。
+
+<!-- /pubsub -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
