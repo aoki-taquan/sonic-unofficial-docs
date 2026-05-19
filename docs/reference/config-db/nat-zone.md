@@ -612,3 +612,45 @@ CONFIG_DB  INTERFACE|<port>  {nat_zone=N}
 - `init_cfg.json.j2` にエントリなし。
 
 <!-- /entry-points -->
+
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+`nat_zone` フィールドの実際の効果はプラットフォームの NAT ハードウェアサポート (`gIsNatSupported`) に強く依存する。SAI への書き込みと iptables mangle への書き込みで挙動が異なる。
+
+### プラットフォーム別挙動マトリクス
+
+| 条件 | natmgrd iptables MARK | orchagent SAI zone_id |
+|------|----------------------|----------------------|
+| NAT サポートプラットフォーム (`gIsNatSupported=true`) | 設定される (Loopback 除く) | 設定される |
+| NAT 非サポートプラットフォーム (`gIsNatSupported=false`) | 設定される (Loopback 除く) | スキップ (NOTICE ログのみ) |
+| Loopback インタフェース (`Loopback*`) | スキップ | 設定される (`gIsNatSupported=true` の場合) |
+| VS / テスト環境 | 試みるが失敗する場合あり | スキップ |
+
+### `gIsNatSupported` の決定経路
+
+`gIsNatSupported` は orchagent 起動時の `main.cpp:936-948` で一度だけ決定され、以後変更されない。
+
+```
+main.cpp:936-948
+  sai_switch_api->get_switch_attribute(SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY)
+  status != SAI_STATUS_SUCCESS → gIsNatSupported = false (変更なし)
+  attr.value.u32 == 0         → gIsNatSupported = false (変更なし)
+  attr.value.u32 > 0          → gIsNatSupported = true
+```
+
+### SAI zone_id 書き込みのゲーティング
+
+`IntfsOrch` は `doIntfTask()` での更新時 (`intfsorch.cpp:978-986`) と RIF 作成時 (`intfsorch.cpp:1287-1294`) の両方で `gIsNatSupported` を参照する。`false` の場合は `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` の set/create を完全にスキップし `SWSS_LOG_NOTICE` のみ出力する。
+
+### iptables mangle 経路はプラットフォーム非依存
+
+`natmgrd` (`NatMgr::doNatZoneIntfTask`) は `gIsNatSupported` を参照しない。NAT 非サポートプラットフォームでも CONFIG_DB に `nat_zone` が書かれていれば iptables mangle MARK ルールの設定を試みる。VS 環境ではカーネルの iptables が使用できない場合があり、その場合は natmgr がエラーログを出力して続行する。
+
+### Loopback インタフェースの特殊扱い
+
+Loopback (`Loopback*`) インタフェースは iptables MARK ルールの設定・削除対象外 (`natmgr.cpp:7526-7528, 7548-7549`)。これは Loopback IP を NAT Public IP として使用する DC 構成での設計上の選択であり、SAI への zone_id 設定は行われる (`gIsNatSupported=true` の場合)。
+
+> **Evidence**: `intfsorch.cpp:978-986` (gIsNatSupported ガード / doIntfTask), `intfsorch.cpp:1287-1294` (gIsNatSupported ガード / RIF 作成), `natmgr.cpp:7526-7549` (Loopback スキップ), `main.cpp:936-948` (gIsNatSupported 決定); 詳細分析 `meta/_intermediate/cdb-flow/nat-zone-platform.md`
+
+<!-- /platform -->
