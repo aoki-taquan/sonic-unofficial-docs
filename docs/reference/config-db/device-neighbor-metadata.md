@@ -312,6 +312,47 @@ DEVICE_NEIGHBOR_METADATA にサーバー向けポートが 0 件の場合、`get
 > **スキャン証跡**: `managers_bgp.py` L128-243, L271-300 読了。`db_migrator.py` L757-799 読了。`buffers_config.j2` L76-130 読了。`qos_config.j2` L103-154 読了。副次書き込み先は STATE_DB (`BGP_PEER_CONFIGURED_TABLE`) と CONFIG_DB (`CABLE_LENGTH|AZURE`) の 2 テーブル。詳細は `meta/_intermediate/cdb-flow/device-neighbor-metadata-side-effects.md` 参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 購読方式の全体像
+
+`DEVICE_NEIGHBOR_METADATA` を参照する consumer は 2 種類の DB アクセス方式を使い分ける。
+
+| consumer | 方式 | API | 備考 |
+|----------|------|-----|------|
+| `bgpcfgd` (BGPDataBaseMgr) | 継続 subscribe | `swsscommon.SubscriberStateTable` | keyspace PSUBSCRIBE で変更を都度受信 |
+| `pfcwd` | スナップショット | `db.get_table()` / `db.get_entry()` | 起動時一回限り HGETALL + HGET |
+| `show interfaces neighbor expected` | スナップショット | `get_table()` | コマンド実行時の一回限り |
+| `db_migrator` | スナップショット | `get_table()` | マイグレーション実行時の一回限り |
+
+### bgpcfgd — SubscriberStateTable + keyspace PSUBSCRIBE
+
+`bgpcfgd` は `BGPDataBaseMgr("CONFIG_DB", CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME)` を `Runner` に登録する (`main.py:76`)。`Runner.add_manager()` (`runner.py:31-52`) が内部で `SubscriberStateTable` を生成し `swsscommon.Select` に追加する:
+
+```python
+# runner.py:49-51
+subscriber = swsscommon.SubscriberStateTable(conn, table_name)
+self.subscribers.add(subscriber)
+self.selector.addSelectable(subscriber)
+```
+
+- **PSUBSCRIBE パターン**: `__keyspace@4__:DEVICE_NEIGHBOR_METADATA|*`
+- **SELECT_TIMEOUT**: `1000 ms` (`runner.py:21`)
+- **イベント取得**: `key, op, fvs = subscriber.pop()` — key にエントリ名、op に `SET`/`DEL`、fvs にフィールド値の FV リスト
+- **受信後の処理**: `BGPDataBaseMgr.set_handler()` が `directory.put()` でインメモリ `Directory` オブジェクトを更新する。その後 `cfg_manager.commit()` で `BGPPeerMgrBase` 等の依存 manager が `directory.get_slot()` で最新値を参照して BGP ピア設定を生成する (`managers_bgp.py:219-224`)
+
+### pfcwd — スナップショット (HGETALL + HGET)
+
+`get_server_facing_ports(db)` (`pfcwd/main.py:97-107`) は DEVICE_NEIGHBOR テーブルを `get_table()` で一括取得後、エントリごとに `get_entry('DEVICE_NEIGHBOR_METADATA', name)` で該当メタデータを取得する。**継続的な subscribe は行わない**。pfcwd 起動時の一回限りの読み込みであり、その後 DEVICE_NEIGHBOR_METADATA が更新されても pfcwd は再読み込みしない。
+
+### タイムアウトとポーリング間隔
+
+`bgpcfgd Runner` の `SELECT_TIMEOUT = 1000 ms` はイベント待機の最大時間であり、DEVICE_NEIGHBOR_METADATA への変更は keyspace 通知によって即時（≤ 1 秒以内）に `BGPDataBaseMgr` へ届く。`pfcwd` は subscribe しないためポーリング間隔は存在しない。
+
+> **Evidence**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_db.py:4-27`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:76`; `sonic-utilities/pfcwd/main.py:97-107`; 中間調査 `meta/_intermediate/cdb-flow/device-neighbor-metadata-pubsub.md`
+<!-- /pubsub -->
+
 ## 購読者
 
 - minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): minigraph から生成
