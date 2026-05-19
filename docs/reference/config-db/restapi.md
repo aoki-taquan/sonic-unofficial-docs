@@ -248,7 +248,7 @@ REST/gNMI 書き込み経路なし
 | `allow_insecure` (HTTP) | 無効 (`-enablehttp` フラグなし) | 起動引数に HTTP 許可フラグが含まれず、HTTPS のみで起動 |
 | `port` | rest_server バイナリデフォルト（8443） | `SERVER_PORT=$(... jq -r '.port // empty')` — 空の場合は `-port` 引数なし、rest_server の組み込みデフォルトが有効 |
 
-> **スキャン証跡**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh` の起動スクリプトより抽出。YANG `sonic-restapi.yang` には `default` 文なし。コード由来デフォルトのみ。
+> **スキャン証跡**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh` の起動スクリプトより抽出[^3]。YANG `sonic-restapi.yang` には `default` 文なし。コード由来デフォルトのみ。
 
 [^3]: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-sonic-mgmt-framework/rest-server.sh>
 
