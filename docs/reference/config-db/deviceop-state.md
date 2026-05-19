@@ -272,6 +272,51 @@ BGP neighbor 処理において Loopback0 を特別扱いする参照先とし�
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:36-42,405-442`; `scripts/ecnconfig:289-293`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:100`
 <!-- /hardcoded-constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+DEVICE_NEIGHBOR テーブルへの SET/DEL が直接引き起こす CONFIG_DB 以外の DB 書込と、DEVICE_NEIGHBOR を読み取った consumer が実行する副次的な DB 書込を示す。
+
+### `pfcwd start_default` — CONFIG_DB への書込み（DEVICE_NEIGHBOR 由来）
+
+`pfcwd start_default` (`pfcwd/main.py:405-444`) は DEVICE_NEIGHBOR のキー集合（= 外部ポート一覧）を取得し、各外部ポートに対して `PFC_WD` テーブルを **CONFIG_DB に書き込む**。DEVICE_NEIGHBOR のエントリが増減すると書込対象ポートが変化する。
+
+| 操作 | 対象 DB / テーブル / キー | 条件 |
+|------|--------------------------|------|
+| `config_db.set_entry(PFC_WD, <port>, pfcwd_info)` で各外部ポートに PFC_WD エントリを設定 | CONFIG_DB / `PFC_WD\|<port>` | `DEVICE_METADATA.localhost.default_pfcwd_status == 'enable'` かつ `PORT[port].pfc_asym` が有効な場合 |
+| `config_db.mod_entry(PFC_WD, <port>, None)` で既存エントリをクリアしてから `set_entry` で再書込み | CONFIG_DB / `PFC_WD\|<port>` | `overwrite=True`（`start_default` は常に True） |
+| `config_db.mod_entry(PFC_WD, "GLOBAL", {"POLL_INTERVAL": <value>})` でグローバルポーリング間隔を設定 | CONFIG_DB / `PFC_WD\|GLOBAL` | `DEVICE_METADATA.localhost.default_pfcwd_status == 'enable'` の場合 |
+
+**DEVICE_NEIGHBOR が空の場合の副次書込**: `active_ports = []` となり、`PFC_WD|<port>` の個別エントリへの `set_entry` は一切実行されない。`PFC_WD|GLOBAL` への `POLL_INTERVAL` 書込のみが発生する。
+
+> evidence: `sonic-utilities` `pfcwd/main.py:292-296,413-444`
+
+### `ecnconfig` — DB 書込なし（読取専用）
+
+`ecnconfig` は DEVICE_NEIGHBOR を起動時に読み取ってポートスコープを決定するが、DEVICE_NEIGHBOR への SET/DEL によって他 DB への書込は発生しない。`ecnconfig` が書き込む対象は CONFIG_DB の `DEVICE_NEIGHBOR` ではなく `TC_TO_QUEUE_MAP` / `DSCP_TO_TC_MAP` 等の QoS テーブルであり、DEVICE_NEIGHBOR はポート選択フィルタとして使われるのみ。
+
+> evidence: `sonic-utilities` `scripts/ecnconfig:282-293`
+
+### `bgpcfgd` — DB 書込なし（CONFIG_DB 読取 + BGP セッション処理）
+
+`bgpcfgd` は `DEVICE_NEIGHBOR_METADATA` を通じて間接的に DEVICE_NEIGHBOR の内容を参照するが、DEVICE_NEIGHBOR への SET/DEL によって他 DB への直接書込は発生しない。BGP セッション確立（FRR への Zebra 通知）はプロセス間通信で行われ、DB 書込の形をとらない。
+
+> evidence: `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-150,219-224`
+
+### 副次書込サマリ
+
+| consumer | 直接書込先 DB / テーブル | 発生条件 |
+|---------|------------------------|---------|
+| `pfcwd start_default` | CONFIG_DB / `PFC_WD\|<port>`（外部ポート各 1 件） | `default_pfcwd_status == 'enable'` かつ PFC が有効なポートが存在する場合 |
+| `pfcwd start_default` | CONFIG_DB / `PFC_WD\|GLOBAL`（`POLL_INTERVAL` のみ） | `default_pfcwd_status == 'enable'` の場合（常時） |
+| `ecnconfig` | なし | — |
+| `bgpcfgd` | なし | — |
+| `show interfaces neighbor expected` | なし（read-only 表示コマンド） | — |
+| `lldpmgrd` | なし（DEVICE_NEIGHBOR を購読しない） | — |
+
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:285-300,405-444`; `scripts/ecnconfig:282-293`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-224`
+<!-- /side-effects -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
