@@ -584,4 +584,63 @@ SwitchOrch::doTask() → tableName == CFG_SWITCH_TRIMMING_TABLE_NAME
 <!-- evidence: sonic-swss/orchagent/switchorch.cpp L1511 (tableName == CFG_SWITCH_TRIMMING_TABLE_NAME) -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-swss/orchagent/switchorch.cpp`、`orchagent/switch/trimming/capabilities.cpp`、`orchagent/portsorch.cpp` L689-706, L855-865
+> 調査日: 2026-05-19
+
+`SWITCH_TRIMMING` の SET 処理本体にコード上のプラットフォーム分岐は存在しない。
+機能の可用性は **実行時 SAI capability クエリ**によって決まる。また、トリミング関連カウンタの計算は NVIDIA/Mellanox プラットフォームでのみ追加処理が入る。
+
+### プラットフォーム分岐の有無
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| `setSwitchTrimming()` / `doCfgSwitchTrimmingTableTask()` 内分岐 | **分岐なし** | `switchorch.cpp` を `platform|BRCM|MLNX|broadcom|mellanox|cisco|marvell|barefoot|vendor` で grep → 0 ヒット |
+| `switch/trimming/` ディレクトリ全体 | **分岐なし** | `capabilities.cpp` / `helper.cpp` / `schema.h` も同様 0 ヒット |
+| SAI capability クエリ | **ASIC 依存** | `SwitchTrimmingCapabilities::queryCapabilities()` が起動時に各属性をクエリ。未サポートなら全 SET が no-op |
+| multi-asic / VOQ chassis | **分岐なし** | `conf_switch_trim` は host `m_configDb` のみ購読。per-asic namespace 展開なし |
+
+### SAI capability によるプラットフォーム差
+
+`SwitchTrimmingCapabilities` コンストラクタ (`capabilities.cpp:142-146`) が orchagent 起動時に `queryCapabilities()` を実行し、結果を `STATE_DB:SWITCH_CAPABILITY|switch` に書き出す。
+
+| `STATE_DB` フィールド | 値の例 | 意味 |
+|---|---|---|
+| `SWITCH_TRIMMING_CAPABLE` | `"true"` / `"false"` | ハードウェアが packet trimming をサポートするか |
+| `SWITCH\|PACKET_TRIMMING_DSCP_RESOLUTION_MODE` | `"DSCP_VALUE,FROM_TC"` / `"N/A"` | 対応 DSCP 解決モード |
+| `SWITCH\|PACKET_TRIMMING_QUEUE_RESOLUTION_MODE` | `"STATIC,DYNAMIC"` / `"N/A"` | 対応キュー解決モード |
+
+`isSwitchTrimmingSupported()` が `false` の場合、`setSwitchTrimming()` 冒頭 (`switchorch.cpp:1081-1085`) で `SWSS_LOG_WARN` のみ出力して `return true`（no-op）となる。実装がサポートを宣言していない ASIC では `SWITCH_TRIMMING|GLOBAL` への SET が全て無視される。
+
+### NVIDIA/Mellanox 固有のカウンタ Lua プラグイン
+
+`portsorch.cpp:855-864` に NVIDIA 向け追加処理がある:
+
+```cpp
+// Nvidia custom trim stat calculation
+if (isMlnxPlatform() &&
+    isPortStatSupported(SAI_PORT_STAT_TRIM_PACKETS) &&
+    isPortStatSupported(SAI_PORT_STAT_TX_TRIM_PACKETS) &&
+    !isPortStatSupported(SAI_PORT_STAT_DROPPED_TRIM_PACKETS))
+{
+    portStatPlugins += "," + nvdaPortTrimSha;  // nvda_port_trim_drop.lua
+}
+```
+
+`isMlnxPlatform()` は `getenv("platform")` が `"mellanox"` 文字列を含む場合に `true` を返す (`portsorch.cpp:689-706`)。
+
+- `nvda_port_trim_drop.lua` は port stat FLEX_COUNTER グループの Lua プラグインとして登録される
+- `SAI_PORT_STAT_TRIM_PACKETS` と `SAI_PORT_STAT_TX_TRIM_PACKETS` の差から `DROPPED_TRIM_PACKETS` を算出する
+- 非 NVIDIA/Mellanox プラットフォームでは本プラグインは登録されない
+- これは `SWITCH_TRIMMING` テーブルの設定処理ではなくカウンタ収集の差異であり、CONFIG_DB の値が SAI に反映されるかどうかとは独立している
+
+!!! note "SWITCH_TRIMMING 設定自体の挙動はプラットフォーム不問"
+    Packet trimming の有効化・フィールド値の適用は `SwitchTrimmingCapabilities` が SAI に問い合わせた capability の有無のみに依存する。コード上のプラットフォーム文字列比較は存在しない。
+
+> **Evidence**: `meta/_intermediate/cdb-flow/switch-trimming-platform.md`
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->

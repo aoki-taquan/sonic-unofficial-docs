@@ -656,7 +656,7 @@ NotificationConsumer: なし（カウンタ配信に使用せず）
 [^19]: intfstat COUNTERS_DB 直接読み出し: `sonic-utilities/scripts/intfstat:81-82,96,109,123`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bd/scripts/intfstat#L81>
 <!-- /pubsub -->
 
-<!-- platform:start -->
+<!-- platform -->
 
 ## プラットフォーム / SAI Capability 差異 (Phase H)
 

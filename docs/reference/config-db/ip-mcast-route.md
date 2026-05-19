@@ -503,6 +503,39 @@ gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOr
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/orchagent/p4orch/ip_multicast_manager.cpp`, `l3_multicast_manager.cpp`, `orchdaemon.cpp`, `crmorch.cpp`
+> 中間メモ: `meta/_intermediate/cdb-flow/ip-mcast-route-platform.md`
+
+### プラットフォーム条件分岐なし
+
+`ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` には `getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等の ASIC 種別判定コードが**存在しない**。コードパスはすべてのプラットフォームで共通。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | コードパス差なし | `ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` にプラットフォーム分岐なし。ASIC 差は SAI 実装（`create_ipmc_group` / `create_ipmc_entry` の成否）に委ねられる |
+| P4RT 非対応 ASIC | SAI エラーが返る | `gP4Orch = new P4Orch(...)` は `orchdaemon.cpp:849` で常に生成される。P4RT / IPMC をサポートしない ASIC では SAI 呼び出しが `SWSS_RC_UNIMPLEMENTED` 等のエラーを返し、各 Manager が上流 (`P4OA_STATUS_*`) に通知する |
+| multi-asic (multi-NPU) | 非対応 | `L3MulticastManager` / `IpMulticastManager` に `is_multi_npu` / namespace 分岐なし。orchagent は global namespace で動作する前提。multi-asic 構成での分散処理は設計外 |
+| VOQ chassis | 非対応 | `switch_type == "voq"` 向けの分岐なし |
+| SmartSwitch / DPU | DpuOrchDaemon では P4Orch を生成しない | `DpuOrchDaemon::init()` (`orchdaemon.cpp:1322`) は標準的な P4Orch の生成を行わない。IPMC 機能は DPU 側では利用不可 |
+
+### IPMC エントリ容量: SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY
+
+P4RT IPMC エントリ容量はハードウェア依存。`IpMulticastManager` は SAI エントリ作成・削除のたびに CRM カウンタを更新する:
+
+```cpp
+// ip_multicast_manager.cpp:774
+gCrmOrch->incCrmResUsedCounter(CrmResourceType::CRM_IPMC_ENTRY);
+
+// ip_multicast_manager.cpp:885
+gCrmOrch->decCrmResUsedCounter(CrmResourceType::CRM_IPMC_ENTRY);
+```
+
+`CrmOrch` は `SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` (`crmorch.cpp:89`) で残容量を監視し、しきい値超過時に syslog 警告を出力する。容量値はハードウェアが SAI 経由で返す値に依存する（一例: bcm56850 / mlnx2700 の VS モデルでは 100 エントリ）。
+<!-- /platform -->
+
 ## 購読者
 
 | コンポーネント | テーブル | SAI 操作 |
