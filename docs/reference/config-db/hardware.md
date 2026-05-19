@@ -20,6 +20,7 @@ related:
     - ACL_RULE
   cli: []
   yang: []
+  _no_yang: true
 ---
 
 # HARDWARE テーブル
