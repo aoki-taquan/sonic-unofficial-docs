@@ -324,6 +324,34 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/heartbeat-side.md`
+
+CONFIG_DB `HEARTBEAT` テーブルの変更に伴って副次的に書き込まれる DB エントリは **存在しない**。主消費者 `supervisor-proc-exit-listener`（Python 版・Rust 版）は CONFIG_DB を読み取るのみで他 DB への書込は行わない。eventd は CONFIG_DB の `HEARTBEAT` テーブルを直接購読せず、ZeroMQ RPC 経由でのみ heartbeat interval を受け取る構造であるため、`HEARTBEAT` エントリの変更が他 DB へ伝播する経路はない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---------|---------|------|
+| APPL_DB | なし | `supervisor-proc-exit-listener` に `Producer`/`Table`/`hset` 書込呼出ゼロ件（スクリプト全文 grep） |
+| STATE_DB | なし | 同スクリプトに STATE_DB への書込参照なし |
+| COUNTERS_DB | なし | HEARTBEAT 監視は統計カウンタを持たない |
+| ASIC_DB | なし | SAI 非経由（ホストサービス設定） |
+| FLEX_COUNTER_DB | なし | 同上 |
+
+### 実際の副作用（syslog のみ）
+
+`HEARTBEAT` 設定の変更が間接的に引き起こす副作用は syslog 出力の変化に閉じる。
+
+| トリガー | 副作用 | 重大度 | 証跡 |
+|----------|--------|--------|------|
+| `alert_interval` を短縮 → 対象プロセスが新閾値以上 heartbeat 無送信 | `generate_alerting_message(process, "stuck", ..., LOG_WARNING)` で syslog WARNING を記録 | LOG_WARNING | `supervisor-proc-exit-listener:249` |
+| クリティカルプロセスが予期せず終了 | `events_init_publisher("sonic-events-host")` を通じて `process-exited-unexpectedly` イベントを publish。`HEARTBEAT` 設定とは独立したパス | LOG_INFO + event | `supervisor-proc-exit-listener:149,202` |
+
+**注意**: `supervisor-proc-exit-listener` は起動時に `HEARTBEAT` テーブルを一括読み込みし (`load_heartbeat_alert_interval`)、以後は再読しない。そのため `alert_interval` を変更しても動作中の daemon には反映されず、次回 daemon 再起動後に有効化される。この「設定変更の副作用が遅延する」挙動はオペレーション上の注意点である。
+
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
