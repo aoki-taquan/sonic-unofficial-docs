@@ -386,6 +386,39 @@ Redis keyspace notification は発火するが受信側が存在しないため�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+> **調査根拠**: `sonic-buildimage/src/sonic-supervisord-utilities/scripts/supervisor-proc-exit-listener` 全文精査（プラットフォーム分岐ゼロ件確認）、`sonic-buildimage/src/sonic-supervisord-utilities-rs/src/proc_exit_listener.rs` 同確認、`sonic-buildimage/dockers/docker-orchagent/orchagent.sh:71-130` (プラットフォーム別引数 vs heartbeat 引数の独立確認)、`sonic-swss/orchagent/main.cpp:75` (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/heartbeat-platform.md`
+
+### SAI Capability 依存なし
+
+`HEARTBEAT` テーブルは APPL_DB / ASIC_DB / SAI を経由しない。コンシューマはホストサービス層 (`supervisor-proc-exit-listener`) と orchagent 起動スクリプト (`orchagent.sh`) に限定されるため、ASIC Capability の問い合わせは一切発生しない。
+
+### ベンダー固有コードなし
+
+`supervisor-proc-exit-listener`（Python 版・Rust 版）および `orchagent.sh` の heartbeat 処理部分には `mellanox` / `broadcom` 等のベンダー文字列判定が存在しない。
+
+### orchagent.sh — プラットフォーム引数と独立
+
+`orchagent.sh` ではプラットフォーム別分岐（MAC アドレス渡しなど、L71-100）の**後**に独立した条件で `HEARTBEAT|orchagent.heartbeat_interval` を読み、`-I <interval>` として orchagent に渡す（`orchagent.sh:126-130`）。この処理はプラットフォーム種別を問わず同一パスを通る。
+
+| プラットフォーム | orchagent heartbeat 処理 |
+|---|---|
+| broadcom / mellanox / marvell 等 | 全て同一: `HEARTBEAT|orchagent.heartbeat_interval` → `-I <ms>` |
+| `HEARTBEAT|orchagent` エントリなし | `-I` フラグ未付与。orchagent デフォルト `10000 ms` が使われる（`main.cpp:75`） |
+
+### multi-ASIC 環境
+
+multi-ASIC 構成では NAMESPACE_ID ごとに独立した orchagent インスタンスが起動するが、各インスタンスは同一の CONFIG_DB（または名前空間内の DB インスタンス）から `HEARTBEAT|orchagent` を読む。ASIC 数による処理の差異はない。
+
+### vs (virtual switch)
+
+vs 環境でも `supervisor-proc-exit-listener` は同一コードで動作する。SAI 非依存のため動作差異なし。
+
+<!-- /platform -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
