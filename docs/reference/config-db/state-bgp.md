@@ -441,3 +441,63 @@ CONFIG_DB / YANG で管理されず、コード中に直書きされた定数の
 
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-side.md`
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### bgpcfgd — SubscriberStateTable による CONFIG_DB / STATE_DB 購読
+
+`bgpcfgd` は `Runner` クラス (`runner.py:21–69`) が `swsscommon.SubscriberStateTable` と `swsscommon.Select` を組み合わせた **keyspace 通知駆動**のイベントループで動作する。`SELECT_TIMEOUT = 1000` ms でブロッキング `select()` を繰り返し、SET / DEL イベントを検知して各 Manager のハンドラを呼び出す。
+
+| 購読元 DB | テーブル | Manager / ハンドラ |
+|---------|---------|------------------|
+| CONFIG_DB | `BGP_NEIGHBOR` (`CFG_BGP_NEIGHBOR_TABLE_NAME`) | `BGPPeerMgrBase` ("general") |
+| CONFIG_DB | `BGP_INTERNAL_NEIGHBOR` (`CFG_BGP_INTERNAL_NEIGHBOR_TABLE_NAME`) | `BGPPeerMgrBase` ("internal") |
+| CONFIG_DB | `BGP_MONITORS` | `BGPPeerMgrBase` ("monitors") |
+| CONFIG_DB | `BGP_PEER_RANGE` | `BGPPeerMgrBase` ("dynamic") |
+| CONFIG_DB | `BGP_VOQ_CHASSIS_NEIGHBOR` | `BGPPeerMgrBase` ("voq_chassis") |
+| CONFIG_DB | `BGP_SENTINELS` | `BGPPeerMgrBase` ("sentinels") |
+| CONFIG_DB | `DEVICE_METADATA` | `BGPDataBaseMgr` |
+| CONFIG_DB | `DEVICE_NEIGHBOR_METADATA` | `BGPDataBaseMgr` |
+| CONFIG_DB | `INTERFACE` / `LOOPBACK_INTERFACE` / `VLAN_INTF` / `LAG_INTF` / `VLAN_SUB_INTF` | `InterfaceMgr` |
+| STATE_DB | `INTERFACE_TABLE` (`STATE_INTERFACE_TABLE_NAME`) | `ZebraSetSrc` |
+| STATE_DB | `BFD_SOFTWARE_SESSION_TABLE` | `BfdMgr`（`software_bfd` 有効時のみ） |
+| APPL_DB | `STATIC_ROUTE` | `StaticRouteMgr` |
+| APPL_DB | `BGP_PROFILE_TABLE` (`APP_BGP_PROFILE_TABLE_NAME`) | `RouteMapMgr` |
+
+**BGP_PEER_CONFIGURED_TABLE への書込みフロー**:
+
+```
+CONFIG_DB BGP_NEIGHBOR|<key> SET
+  ↓ SubscriberStateTable で keyspace 通知受信 (SELECT_TIMEOUT=1000ms)
+Runner.run() → BGPPeerMgrBase.handler() → set_handler() → add_peer()/update_peer()
+  ↓ FRR vtysh へ設定テンプレ注入成功
+update_state_db(key, data)
+  ↓ swsscommon.DBConnector("STATE_DB", 0)
+  ↓ swsscommon.Table(state_db, STATE_BGP_PEER_CONFIGURED_TABLE_NAME)
+  ↓ state_peer_table.set(key, list(sorted(data.items())))  ← managers_bgp.py:289
+STATE_DB BGP_PEER_CONFIGURED_TABLE|<key> SET 完了
+```
+
+DEL イベントでは `state_peer_table.delete(key)` (managers_bgp.py:294) を呼び出す。
+
+### fpmsyncd — BGP_STATE_TABLE のタイマーポーリング
+
+`fpmsyncd` は `BGP_STATE_TABLE` を `swsscommon.Table.hget()` で**直接ポーリング**する（keyspace 通知は使用しない）。ポーリングは **Warm Restart モード有効時のみ**起動する。
+
+| タイマー | 間隔 | 役割 |
+|---------|------|------|
+| `eoiuCheckTimer` | 初回 5 秒後、以降 1 秒ごと | `BGP_STATE_TABLE|{IPv4,IPv6}|eoiu` の `state` を `hget()` で確認 |
+| `eoiuHoldTimer` | `DEFAULT_EOIU_HOLD_INTERVAL` = 3 秒（`WarmStart::getWarmStartTimer("eoiu_hold","bgp")` で上書き可） | EOIU 検出後の hold タイマー。満了後に reconciliation を実行 |
+| `warmStartTimer` | `DEFAULT_ROUTING_RESTART_INTERVAL` = 120 秒 | タイムアウトによる強制 reconciliation |
+
+`fpmsyncd` 本体の select タイムアウトは通常 `INFINITE (-1)` でブロック、フラッシュ中のみ `FLUSH_TIMEOUT = 500 ms` に切り替わる (fpmsyncd.cpp:24–25)。
+
+### bmpcfgd / openbmpd — BMP_STATE_DB テーブルの書込み
+
+`BGP_NEIGHBOR_TABLE` / `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` は `openbmpd` (OpeNBMP) が FRR と **BMP (RFC 7854) セッション**を直接確立し、受信した BGP OPEN / UPDATE メッセージを解析して `BMP_STATE_DB` へ書き込む。Redis pub/sub を経由しない独立経路。
+
+`bmpcfgd` は CONFIG_DB `BMP` テーブルを `ConfigDBConnector.subscribe()` + `listen()` (keyspace 通知) で購読し、フィールド変更時に `openbmpd` 停止 → `delete_all_by_pattern` → 再起動 を実行する (bmpcfgd.py:58–70, 82–89)。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-pubsub.md`
+<!-- /pubsub -->
