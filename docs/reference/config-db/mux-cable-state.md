@@ -238,3 +238,40 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
 `return false` はイベントループによる再キューで次のイテレーションで再処理される。
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の内容は、複数の CONFIG_DB テーブル・APPL_DB テーブル・外部コンポーネントが連携して決定される。YANG 定義に leafref は存在しないが、実装レベルで以下の暗黙依存がある。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-cross-refs.md`
+
+### MUX_CABLE_TABLE (STATE_DB) への暗黙参照
+
+| 参照先テーブル / コンポーネント | 参照フィールド | 依存内容 | 参照箇所 |
+|-------------------------------|--------------|---------|---------|
+| `CONFIG_DB.MUX_CABLE\|<ifname>` | `server_ipv4`, `server_ipv6`, `cable_type`, `neighbor_mode` | `MuxOrch::handleMuxCfg()` が `MuxCable` オブジェクト生成に使用。`neighbor_mode` の値がそのまま `STATE_DB MUX_CABLE_TABLE.<ifname>.neighbor_mode` に転写される | `muxorch.cpp:2189,2206-2285` |
+| `CONFIG_DB.PEER_SWITCH\|<switch_name>` | `address_ipv4` | `handlePeerSwitch()` で `mux_peer_switch_` を設定。この値が設定されるまで全ポートの `MuxCable` 生成（および STATE_DB 書き込み）がブロックされる | `muxorch.cpp:2190,2271-2281,2340-2388` |
+| `APPL_DB.HW_MUX_CABLE_TABLE\|<ifname>` | `state` | `MuxStateOrch::addOperation()` が APPL_DB の `HW_MUX_CABLE_TABLE` を購読し、hw_state と mux_state を比較して STATE_DB `MUX_CABLE_TABLE.state` を更新する。`isMuxExists(port_name)` が false の場合は更新スキップ | `muxorch.cpp:2505,2633,2651-2655,2676-2691` |
+| `TunnelDecapOrch` (MuxTunnel0) | `dscp_mode`, `tc_to_dscp_map_id`, `tc_to_queue_map_id` | `handlePeerSwitch()` で peer switch への P2P トンネルを作成する際に参照。トンネルが未作成の場合はスタンバイ側への転送 nexthop が確立されず、STATE_DB の state 遷移に間接影響 | `muxorch.cpp:2348-2381` |
+| `NeighOrch` (gNeighOrch) | neighbor 状態 | `MuxCable::nbrHandler()` が `enableNeighbor()` / `disableNeighbor()` を呼び、MUX の active/standby 切り替えに伴う neighbor の有効化・無効化を行う。neighbor 状態が `MuxCable` の内部ステートマシンと連動する | `muxorch.cpp:32,766-774,813-935` |
+| `FdbOrch` | FDB エントリの port_name, mac | `MuxOrch` が FdbOrch の observer として登録され、FDB 変化 (`SUBJECT_TYPE_FDB_CHANGE`) を受信。FDB update を契機に既存 neighbor → MUX neighbor 変換が起こる場合があり、`MuxCable` の state 遷移のトリガになる | `muxorch.cpp:2161,2183-2196,1856-1894` |
+
+### HW_MUX_CABLE_TABLE (STATE_DB) への暗黙参照
+
+| 参照先テーブル / コンポーネント | 参照フィールド | 依存内容 | 参照箇所 |
+|-------------------------------|--------------|---------|---------|
+| `CONFIG_DB.MUX_CABLE\|<ifname>` | `soc_ipv4`, `cable_type` | ycabled が `soc_ipv4` を gRPC エンドポイントとして使用。`soc_ipv4` が未設定の場合は gRPC チャネルが未確立のまま `HW_MUX_CABLE_TABLE.state = "unknown"` が書き込まれる | `y_cable_helper.py:597-631,672` |
+| gRPC (soc_ipv4 エンドポイント) | forwarding state 応答 | `QueryAdminForwardingPortState` の gRPC 応答から `state` / `read_side` / `active_side` を決定する。gRPC stub が None の場合は `"unknown"` | `y_cable_helper.py:604-626` |
+| `CONFIG_DB.LOOPBACK_INTERFACE\|Loopback3` | IP prefix | linkmgrd と ycabled が Loopback3 の IPv4 アドレスから `read_side`（自 ToR が side 0 か side 1 か）を判定する。Loopback3 IPv4 が未設定の場合は `read_side` が書き込まれない | `DbInterface.cpp:667-730`, `y_cable_helper.py:633-651` |
+
+### 解決タイミングと注意点
+
+- **`PEER_SWITCH` が先行必須**: `CONFIG_DB.PEER_SWITCH` が処理されて `mux_peer_switch_` が設定されるまで、全ポートの `MuxCable` 生成と STATE_DB `MUX_CABLE_TABLE` への書き込みが行われない。`PEER_SWITCH` の設定後に `MUX_CABLE` エントリを投入しても、その逆順でも結果は同じ（先着した方がキューに残り、後から処理される）。
+- **`soc_ipv4` なしでは HW 状態が常に `unknown`**: `cable_type=active-active` 構成では `soc_ipv4` が必須だが、`active-standby` では不要。`cable_type` によって HW_MUX_CABLE_TABLE の有効性が変わる。
+- **FDB / NeighOrch の関与はトリガのみ**: FdbOrch や NeighOrch は STATE_DB への直接書き込みを行わず、`MuxCable` 内部ステートマシンを介して間接的に影響する。STATE_DB が更新されるのはステートマシン遷移後の `updateMuxState()` 呼び出し時のみ。
+
+!!! note "YANG leafref 未定義"
+    `STATE_DB.MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` はいずれも YANG スキーマ外のオペレーショナルテーブルであり、leafref による参照整合性検証は存在しない。上記の参照依存はすべて実装コードレベルの暗黙依存である。
+
+<!-- /cross-refs -->
