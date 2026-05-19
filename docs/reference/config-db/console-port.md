@@ -483,4 +483,27 @@ show console
 
 > **スキャン証跡**: ソース横断 grep で CONSOLE_PORT の subscribe/doTask 呼び出しなし。分岐: 0 件。
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`consutil` は CONFIG_DB の `CONSOLE_SWITCH` を読み取ってから `CONSOLE_PORT` を参照する。この読み取り順は実行のたびにバッチで行われるが、DB 書き込み側から見ると以下の順序依存が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `CONSOLE_SWITCH.console_mgmt.enabled` 確認 → `CONSOLE_PORT` 全件読み取り | **強制先行**（SWITCH が先） | SWITCH が absent または `enabled="no"` の場合、PORT エントリが存在しても consutil は接続を拒否する |
+| 2 | `CONSOLE_SWITCH.default_escape_char` 解決 → `CONSOLE_PORT.escape_char` fallback 先決定 | SWITCH が先 | SWITCH 欠如時は `default_escape_char = None`、picocom は `-e` オプションなしで起動（Ctrl+A 相当） |
+| 3 | minigraph: `parse_png()` → `CONSOLE_PORT` 代入 (L2516) と `CONSOLE_SWITCH` 生成 (L2728) は独立 | 同時書き込み（cfggen がアトミックに投入） | 手動で `CONSOLE_SWITCH.enabled` のみ変更した場合、`CONSOLE_PORT` エントリが存在しても接続不能になる |
+| 4 | `db_migrator.migrate_console_switch()`: `console_mgmt` key 不在を前提 | **事前条件**（key 不在が必須） | マイグレーション前に CLI で `console_mgmt` を書き込んだ場合、旧設定が優先され移行値が無視される |
+
+### 主要な制約詳細
+
+**CONSOLE_SWITCH → CONSOLE_PORT 読み取り順 (依存 #1, #2)**: `ConsolePortList._init_all()` (consutil/lib.py L86–130) は `config_db.get_entry(CONSOLE_SWITCH_TABLE, FEATURE_KEY)` を先に呼んで `enabled` を確認し、`_default_escape_char` を決定する。この後に `config_db.get_keys(CONSOLE_PORT_TABLE)` を呼ぶ。`enabled == "yes"` でなければ `_default_escape_char = None` のまま PORT 一覧を読む。consutil main.py L26 の `data = config_db.get_entry(CONSOLE_SWITCH_TABLE, FEATURE_KEY)` でも同様の確認が行われ、`enabled != "yes"` の場合はコマンドによって "Console management is disabled" のエラーで終了する（evidence: `consutil/lib.py:91–106`, `consutil/main.py:26–34`）。
+
+**minigraph 生成の独立性 (依存 #3)**: `minigraph.py` は `CONSOLE_PORT` を L2516 で `console_ports` 変数から代入し、`CONSOLE_SWITCH` を L2728 でデバイスタイプ (`MgmtTsToR`) の確認結果から独立して生成する。`sonic-cfggen` がこれら 2 テーブルを同一 JSON 出力としてまとめて DB に書き込むため、minigraph フロー内では順序問題は発生しない。ただし、デバイスタイプが `MgmtTsToR` **以外** の場合でも `CONSOLE_PORT` エントリが XML に存在すれば生成されるが、`CONSOLE_SWITCH.enabled` は `"no"` になるため、consutil からの接続は不可能になる（evidence: `minigraph.py:52`, `minigraph.py:2516`, `minigraph.py:2728–2731`）。
+
+**db_migrator の前提条件 (依存 #4)**: `migrate_console_switch()` は `self.configDB.get_entry('CONSOLE_SWITCH', 'console_mgmt')` で現在の DB 値を取得し、空の場合（`if not console_mgmt`）のみ `set_entry` を実行する。このため、マイグレーション前に `config console enable` / `disable` コマンドを手動実行してキーが存在する場合、移行元 `config_src_data` の値は書き込まれない（evidence: `db_migrator.py:659–666`）。
+<!-- /ordering -->
 <!-- glossary-links-injected: d5320e852f7a -->
