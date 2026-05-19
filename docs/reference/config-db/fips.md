@@ -363,4 +363,33 @@ show fips status
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `FIPS` テーブルの変更に伴って `hostcfgd` の `FipsCfg` ハンドラが副次的に書き込む DB エントリは **STATE_DB `FIPS_STATS|state` のみ**。他の副作用はホスト OS のファイルシステム変更（`/etc/fips/fips_enable` 書換、bootloader grub パラメータ更新、systemd サービス再起動）に閉じる。
+
+| 副次 DB | キー | フィールド | 書込タイミング | evidence |
+|---------|------|-----------|---------------|----------|
+| STATE_DB | `FIPS_STATS\|state` | `config_datetime` | `update()` 呼出ごとに `datetime.utcnow().isoformat()` を書込む | hostcfgd:1792 |
+| APPL_DB | なし | — | `FipsCfg` 内に `ProducerStateTable` / `Table.set(` 呼出が 0 件 | — |
+| COUNTERS_DB | なし | — | `hostcfgd` 全体に COUNTERS_DB 参照なし。FIPS は認証経路外 | — |
+| ASIC_DB / FLEX_COUNTER_DB | なし | — | SAI 非経由（OpenSSL / kernel 操作のみ） | — |
+
+### STATE_DB 書込の用途
+
+`FIPS_STATS|state.config_datetime` は、`restart()` メソッドが `/etc/fips/fips_enable` の mtime と比較して「既に再起動済みか」を判定するために使う（hostcfgd:1821-1823）。二重再起動防止機構として機能し、デーモン再起動後に STATE_DB が消えると次の CONFIG_DB 変更時に再びサービス再起動が走る。
+
+### ホスト OS への副作用（DB 外）
+
+DB への書込ではないが、`update()` が引き起こすファイルシステム・プロセス変更は以下のとおり。
+
+| 副作用 | 対象 | トリガー |
+|--------|------|---------|
+| `/etc/fips/fips_enable` に `"0"` / `"1"` を書込む | ホスト OS OpenSSL FIPS フラグ | `update_noneenforce_config()` |
+| bootloader grub エントリに `sonic_fips=1` / `fips=1` を付与・除去 | 次回 boot の FIPS enforce 状態 | `update_enforce_config()` |
+| `ssh` / `telemetry.service` / `restapi` を systemctl restart | サービス FIPS 設定の再読込 | `restart()` |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/fips-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
