@@ -187,6 +187,79 @@ evidence: `logger.cpp:210-241`
 - `settingThread` 内に DB 再接続ロジックはなく、起動後の DB 切断は `Select::ERROR` の繰り返しとして観測されるがスレッドは継続する（自動リカバリなし）
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss-common/common/logger.cpp`, `logger.h`, `schema.h` 全行精読 (2026-05-19)
+
+`LOGGER` テーブルの処理で使われる値のうち、CONFIG_DB フィールドで制御できずソースに固定されている定数をまとめる。
+
+### テーブル名定数 (`schema.h:392`)
+
+```cpp
+#define CFG_LOGGER_TABLE_NAME  "LOGGER"
+```
+
+CONFIG_DB 上のテーブル名。`logger.cpp` の `linkToDbWithOutput()` および `settingThread()` で常にこのマクロを使用。
+
+### フィールド名定数 (`logger.h:28-29`)
+
+```cpp
+static constexpr const char * const DAEMON_LOGLEVEL  = "LOGLEVEL";
+static constexpr const char * const DAEMON_LOGOUTPUT = "LOGOUTPUT";
+```
+
+`hget` / `hset` で使用するフィールド名。YANG の `leaf` 名 (`LOGLEVEL`, `LOGOUTPUT`) と一致しており、フィールド名を変更する手段は存在しない。
+
+### DB 名固定値 (`logger.cpp:126, 195`)
+
+```cpp
+DBConnector db("CONFIG_DB", 0);
+```
+
+`Logger` が購読する DB は常に `"CONFIG_DB"` 固定。起動後の再設定手段はない。
+
+### `LOGLEVEL` 有効値マップ (`logger.cpp:66-75`)
+
+```cpp
+const Logger::PriorityStringMap Logger::priorityStringMap = {
+    { "EMERG",  SWSS_EMERG },
+    { "ALERT",  SWSS_ALERT },
+    { "CRIT",   SWSS_CRIT },
+    { "ERROR",  SWSS_ERROR },
+    { "WARN",   SWSS_WARN },
+    { "NOTICE", SWSS_NOTICE },
+    { "INFO",   SWSS_INFO },
+    { "DEBUG",  SWSS_DEBUG }
+};
+```
+
+このマップに存在しない文字列を `LOGLEVEL` にセットした場合は自動的に `"NOTICE"` (`SWSS_NOTICE`) にフォールバックする（`logger.cpp:81-84`）。
+
+### `LOGOUTPUT` 有効値マップ (`logger.cpp:93-97`)
+
+```cpp
+const Logger::OutputStringMap Logger::outputStringMap = {
+    { "SYSLOG", SWSS_SYSLOG },
+    { "STDOUT", SWSS_STDOUT },
+    { "STDERR", SWSS_STDERR }
+};
+```
+
+このマップに存在しない文字列を `LOGOUTPUT` にセットした場合は自動的に `"SYSLOG"` (`SWSS_SYSLOG`) にフォールバックする（`logger.cpp:103-106`）。
+
+### デフォルト値のハードコード
+
+| 呼び出し元 | デフォルト LOGLEVEL | デフォルト LOGOUTPUT |
+|-----------|--------------------|--------------------|
+| `linkToDb()` | 呼び出し側依存（例: `"NOTICE"`） | `"SYSLOG"` (`logger.cpp:161`) |
+| `linkToDbNative()` | `"NOTICE"`（第 2 引数デフォルト値） | `"SYSLOG"` |
+| `m_output` メンバ初期値 | — | `SWSS_SYSLOG` (`logger.h:162`) |
+
+CONFIG_DB の `LOGGER` テーブルにエントリが存在しない場合は、`linkToDbWithOutput()` が自動的にデフォルト値をテーブルへ書き込む（`logger.cpp:143-148`）。
+
+<!-- /constants -->
+
 ## 制約
 
 - `LOGLEVEL` は `mandatory true`（YANG）。エントリ作成時に必須
