@@ -343,4 +343,55 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 <!-- evidence: warm_restart.cpp L86-147 (checkWarmStart), L149-172 (getWarmStartTimer); bgp.sh L9-27 (check_warm_boot); finalize-warmboot.sh L175 (fast-reboot DEL); docker-fpm-frr supervisord.conf.j2 L239 (bgp_eoiu_marker) -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`WARM_RESTART` テーブルは `task_process_status` ベースの retry ループとは異なる経路で参照される。
+`WarmStart::checkWarmStart()` と `WarmStart::getWarmStartTimer()` が
+起動時に一回だけ CONFIG_DB から同期的に読み取る設計のため、
+失敗は「コールドスタートへのフォールバック」または「ハードコードデフォルト使用」として現れる。
+
+### A. `checkWarmStart()` 内のフォールバック (warm_restart.cpp:86-147)
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `STATE_DB WARM_RESTART_ENABLE_TABLE\|system.enable` も `\|<docker>.enable` も `"true"` 以外（未設定・disabled 含む） | `m_enabled = false` → `hset(app_name, "restore_count", "0")` → `return false`（コールドスタート） | なし（設計上の正常経路） | `warm_restart.cpp:88-107` |
+| warm start 有効だが `STATE_DB WARM_RESTART_TABLE\|<app>.restore_count` が空（DB フラッシュ済み等） | `m_enabled = false`, `m_systemWarmRebootEnabled = false` → `return false`（コールドスタートフォールバック） | `SWSS_LOG_WARN "%s doing warm start, but restore_count not found in stateDB %s table, fall back to cold start"` | `warm_restart.cpp:111-121` |
+| CONFIG_DB / STATE_DB 接続失敗（Redis 不到達） | `initialize()` の `DBConnector` コンストラクタで例外 → プロセス abort | 各アプリ側クラッシュハンドラ依存 | `warm_restart.cpp:44-60` |
+
+### B. `getWarmStartTimer()` 内のフォールバック (warm_restart.cpp:149-172)
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `WARM_RESTART\|<docker>.<app>_timer` 未設定（空文字列） | `strtoul("", NULL, 0)` = 0 → `return 0` → 各プロセスのハードコードデフォルト使用 | `SWSS_LOG_NOTICE "warmStartTimer is not configured or invalid for docker: %s, app: %s"` | `warm_restart.cpp:163-171` |
+| タイマー値が `MAXIMUM_WARMRESTART_TIMER_VALUE` (= 9999 秒) 超過 | `return 0` → ハードコードデフォルト使用 | 同上 | `warm_restart.cpp:163-171` |
+| 数値変換不能文字列（`strtoul` が `ULONG_MAX` 返却） | `return 0` → ハードコードデフォルト使用 | 同上 | `warm_restart.cpp:163-171` |
+
+`getWarmStartTimer()` が `0` を返した場合のハードコードデフォルト:
+`bgp_timer` = 120 秒 (`DEFAULT_ROUTING_RESTART_INTERVAL`)、`neighsyncd_timer` = 5 秒 (`DEFAULT_NEIGHSYNC_WARMSTART_TIMER`)。
+
+### C. `orchagent` warm start 再収束失敗 (orchdaemon.cpp:1092-1170)
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `warmRestoreValidation()` で未処理タスクが残存 | NOTICE ログのみ、abort せず reconciliation 継続 | `SWSS_LOG_NOTICE "Unfinished tasks..."` | `orchdaemon.cpp:1150-1152` |
+| `syncd_apply_view()` 失敗 | orchagent プロセス abort → systemd 再起動 | `SWSS_LOG_ERROR` + exit | `orchdaemon.cpp:1154-1157` |
+
+### D. 失敗パターンサマリ
+
+| # | トリガー | 直接挙動 | 自動回復 |
+|---|---------|---------|---------|
+| 1 | warm restart enable 未設定 / STATE_DB enable=false | `checkWarmStart()` が `false` → コールドスタート | なし（設計上の正常経路） |
+| 2 | `restore_count` 未存在（DB フラッシュ後等） | WARN ログ → コールドスタートフォールバック | コールドスタートで自己回復 |
+| 3 | タイマー未設定 / 無効値 | `getWarmStartTimer()` が `0` → ハードコードデフォルト使用 | なし（デフォルト値で継続） |
+| 4 | Redis DB 接続失敗 | `initialize()` 例外 → プロセス abort | systemd autorestart により自己回復 |
+| 5 | `syncd_apply_view()` 失敗 | orchagent abort | systemd autorestart により自己回復 |
+
+!!! note "設定変更の反映タイミング"
+    `WARM_RESTART` テーブルの読み取りは各プロセスの**起動時一回**のみ。
+    テーブル内容を変更しても実行中プロセスには反映されない。次回プロセス再起動時に有効になる。
+
+> 詳細スキャンノートは `meta/_intermediate/cdb-flow/warm-restart-failure.md` を参照。
+<!-- /failure -->
+
 <!-- glossary-links-injected: ddc022697593 -->
