@@ -331,4 +331,31 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/nhg-side-effects.md -->
+
+`NhgOrch` は `NEXTHOP_GROUP_TABLE` の SET / DEL 処理において、**STATE\_DB・APPL\_DB・FLEX\_COUNTER\_DB への直接書込みは一切行わない**。副次変化は ASIC\_DB（SAI API 経由）と COUNTERS\_DB（CRM カウンタ）の 2 系統のみ。
+
+### COUNTERS\_DB — CRM カウンタ
+
+| 操作 | CRM リソース | 変化 | コードロケーション |
+|------|-------------|------|------------------|
+| NHG SAI グループ作成成功 | `CRM_NEXTHOP_GROUP` | +1 | `nhgorch.cpp:795` |
+| NHG SAI グループ削除成功 | `CRM_NEXTHOP_GROUP` | −1 | `nhgbase.h` `NhgCommon::remove()` |
+| NHG メンバー SAI エントリ作成成功 | `CRM_NEXTHOP_GROUP_MEMBER` | +1 (メンバー数分) | `nhgbase.h` `NhgMemberBase::sync()` |
+| NHG メンバー SAI エントリ削除成功 | `CRM_NEXTHOP_GROUP_MEMBER` | −1 (メンバー数分) | `nhgbase.h` `NhgMemberBase::remove()` |
+
+CRM カウンタの更新は `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsedCounter()` 経由であり、`COUNTERS_DB:CRM_STATS_NEXTHOP_GROUP_USED` / `CRM_STATS_NEXTHOP_GROUP_MEMBER_USED` に反映される。
+
+### 内部 ref\_count（プロセス内メモリ、DB 非書込み）
+
+`RouteOrch` がルートエントリと NHG を紐付けるたびに `gNhgOrch->incNhgRefCount()` / `decNhgRefCount()` を呼び出す。このカウンタは orchagent プロセス内メモリのみに存在し、DB には書き込まれない。`ref_count > 0` の NHG は `doTask()` の DEL\_COMMAND パスでブロックされ `m_toSync` に残る（`nhgorch.cpp:414`）。
+
+!!! note "STATE_DB 書込なし"
+    `NEXTHOP_GROUP_TABLE` の処理結果は STATE\_DB に反映されない。`NhgOrch` の動作状況は ASIC\_DB のオブジェクト有無と CRM カウンタでのみ確認できる。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: nhg-2026-0515 -->
