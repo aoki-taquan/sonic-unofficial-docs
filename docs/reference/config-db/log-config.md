@@ -89,6 +89,52 @@ LOGGER|<component>
 - 未設定時は false 相当（SIGHUP 不要）として動作する
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`Logger::linkToDbWithOutput()` / `settingThread()` (`sonic-swss-common/common/logger.cpp`) を全行精読した結果、以下の順序依存・タイミング依存を検出した。中間ノート: `meta/_intermediate/cdb-flow/log-config-ordering.md`。
+
+### 他テーブル先行必須
+
+LOGGER テーブルは `VLAN`・`PORT`・`DEVICE_METADATA` 等の他テーブルを参照しない。**他テーブルに対する先行条件は存在しない**。
+
+### 起動前 SET vs 起動後 SET
+
+| タイミング | 挙動 | 根拠 |
+|---|---|---|
+| **デーモン起動前** に CONFIG_DB に `LOGLEVEL` を SET | `linkToDbWithOutput()` が `table.hget()` で既存値を読み出し、デフォルト上書きをスキップして即座に適用 | `logger.cpp:132-148` |
+| **デーモン起動後** に `LOGLEVEL` を SET | `settingThread` が `SubscriberStateTable` でリアルタイム変更を受け取り反映。SELECT タイムアウトにより最大 **1000 ms** の適用遅延あり | `logger.cpp:192-263` |
+
+どちらのタイミングでも機能するが、起動前設定の方がデフォルト上書きコストがなく確実。
+
+### DEL は稼動中デーモンに反映されない
+
+- `settingThread` (L237-238) は `op != SET_COMMAND` の場合 `continue` して無視する。
+- LOGGER エントリを DEL しても稼動中デーモンの loglevel は変化しない。
+- デーモン再起動時に `linkToDbWithOutput()` がデフォルト値でエントリを再書き込みする。
+
+  evidence: `logger.cpp:237-238`
+
+### 未登録コンポーネント名への SET は silently ignored
+
+- `settingThread` (L238) は `!m_settingChangeObservers.contains(key)` の場合スキップ。
+- 存在しないコンポーネント名への SET はエラーなく無視される。コンポーネント名は `swssloglevel -p` で確認すること。
+
+### 推奨書込み順序
+
+```text
+# LOGGER テーブルは他テーブルに対する先行条件がないため任意タイミングで SET 可能。
+
+# (推奨) デーモン起動前に事前設定:
+SET CONFIG_DB LOGGER|orchagent  LOGLEVEL=DEBUG  LOGOUTPUT=SYSLOG
+SET CONFIG_DB LOGGER|syncd      LOGLEVEL=INFO   LOGOUTPUT=SYSLOG
+
+# デーモン起動後でも SET_COMMAND はリアルタイム反映される (最大 1000 ms 遅延):
+SET CONFIG_DB LOGGER|orchagent  LOGLEVEL=NOTICE
+```
+
+<!-- /ordering -->
+
 ## 制約
 
 - `LOGLEVEL` は `mandatory true`（YANG）。エントリ作成時に必須
