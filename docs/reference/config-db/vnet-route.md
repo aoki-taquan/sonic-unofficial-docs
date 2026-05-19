@@ -503,3 +503,68 @@ REST/gNMI 書き込み経路なし（手動 JSON 投入が主経路）。
 !!! note "VNET_ROUTE（underlay）の STATE_DB 書込なし"
     `VNET_ROUTE`（underlay 経路）は BFD モニタリングを行わないため、STATE_DB への書込は発生しない。STATE_DB 副次書込は `VNET_ROUTE_TUNNEL` かつ `endpoint_monitor` を設定した場合のみ生じる。
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 書き込み側 VNetCfgRouteOrch の通信構造
+
+CONFIG_DB から APPL_DB への通知は 2 段構成で行われる。
+
+1. **CONFIG_DB → VNetCfgRouteOrch**: orchagent 内の `Consumer`（`ConsumerStateTable` ラッパー）が CONFIG_DB の `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルを keyspace notification で監視する
+2. **VNetCfgRouteOrch → APPL_DB**: `ProducerStateTable` 経由で APPL_DB の `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` に SET/DEL を書き込み、チャネルへ PUBLISH する
+
+### 購読方式: ConsumerStateTable / SubscriberStateTable
+
+`VNetCfgRouteOrch` は orchdaemon 起動時に以下の CONFIG_DB テーブルを Consumer として登録する（orchdaemon.cpp:270-279）:
+
+| 購読元 | DB | テーブル | PSUBSCRIBE パターン |
+|--------|-----|---------|-------------------|
+| CONFIG_DB | 4 | `VNET_ROUTE` | `__keyspace@4__:VNET_ROUTE\|*` |
+| CONFIG_DB | 4 | `VNET_ROUTE_TUNNEL` | `__keyspace@4__:VNET_ROUTE_TUNNEL\|*` |
+
+### APPL_DB への書き込み — ProducerStateTable
+
+`VNetCfgRouteOrch` コンストラクタ（vnetorch.cpp:3573-3574）で 2 つの `ProducerStateTable` を初期化する:
+
+```cpp
+m_appVnetRouteTable       = ProducerStateTable(appDb, APP_VNET_RT_TABLE_NAME);         // "VNET_ROUTE_TABLE"
+m_appVnetRouteTunnelTable = ProducerStateTable(appDb, APP_VNET_RT_TUNNEL_TABLE_NAME);  // "VNET_ROUTE_TUNNEL_TABLE"
+```
+
+書き込みごとに `VNET_ROUTE_TABLE_CHANNEL@0` / `VNET_ROUTE_TUNNEL_TABLE_CHANNEL@0` へ PUBLISH され、`VNetRouteOrch` 側の `ConsumerStateTable` が即座に通知を受け取る。
+
+### 消費側 VNetRouteOrch の select タイムアウト
+
+APPL_DB に書き込まれたエントリは orchagent が ConsumerStateTable で消費する。orchagent 主ループは `SELECT_TIMEOUT = 1000` ms でポーリングする（orchdaemon.cpp:23）:
+
+| APPL_DB テーブル | 消費 Orch | ディスパッチ先 |
+|-----------------|----------|-------------|
+| `VNET_ROUTE_TABLE` | `VNetRouteOrch` | `handleRoutes()` (vnetorch.cpp:740) |
+| `VNET_ROUTE_TUNNEL_TABLE` | `VNetRouteOrch` | `handleTunnel()` (vnetorch.cpp:741) |
+
+### BFD セッション通知 — BfdOrch との Observer 連携
+
+`VNET_ROUTE_TUNNEL` に `endpoint_monitor` を設定すると、`VNetRouteOrch` は `gBfdOrch->attach(this)` でオブザーバー登録する（vnetorch.cpp:754）。BFD デーモンが STATE_DB `BFD_SESSION_TABLE` を更新すると `BfdOrch` が `notifyObservers()` を呼び出し、`VNetRouteOrch::update()` コールバックが起動して STATE_DB `VNET_ROUTE_TUNNEL_TABLE` に active/inactive 状態を書き込む。
+
+BFD セッション自体の書き込みは `bfd_session_producer_`（ProducerStateTable）経由で APPL_DB `BFD_SESSION_TABLE` に行われる（vnetorch.cpp:733）。
+
+### 購読チャネルまとめ
+
+| 経路 | DB | チャネル / パターン | 書き込み元 | 消費者 |
+|------|-----|---------------------|-----------|--------|
+| CONFIG_DB → VNetCfgRouteOrch | CONFIG_DB (4) | `__keyspace@4__:VNET_ROUTE\|*` | configd / config CLI | `VNetCfgRouteOrch` (Consumer) |
+| CONFIG_DB → VNetCfgRouteOrch | CONFIG_DB (4) | `__keyspace@4__:VNET_ROUTE_TUNNEL\|*` | configd / config CLI | `VNetCfgRouteOrch` (Consumer) |
+| VNetCfgRouteOrch → APPL_DB | APPL_DB (0) | `VNET_ROUTE_TABLE_CHANNEL@0` | `ProducerStateTable` | `VNetRouteOrch` (ConsumerStateTable) |
+| VNetCfgRouteOrch → APPL_DB | APPL_DB (0) | `VNET_ROUTE_TUNNEL_TABLE_CHANNEL@0` | `ProducerStateTable` | `VNetRouteOrch` (ConsumerStateTable) |
+| VNetRouteOrch → APPL_DB BFD | APPL_DB (0) | `BFD_SESSION_TABLE_CHANNEL@0` | `bfd_session_producer_` | `BfdOrch` |
+| BfdOrch → VNetRouteOrch | STATE_DB (6) | `__keyspace@6__:BFD_SESSION_TABLE\|*` | BFD デーモン | `BfdOrch` → Observer → `VNetRouteOrch` |
+
+### リトライ / バックオフ
+
+- `VNetCfgRouteOrch::doTask()` はエントリを `m_toSync` に保留し、orchagent の次サイクル（最大 1000 ms 後）で再試行する。VNET_ROUTE 専用の backoff / sleep は存在しない。
+- `VNetRouteOrch` も同様に `return false` で `m_toSync` に残留し、1 サイクルごとに再試行する。
+- BFD 状態変化通知は非同期（BFD デーモン主導）であり、明示的な retry interval は存在しない。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/vnet-route-pubsub.md`
+<!-- /pubsub -->
