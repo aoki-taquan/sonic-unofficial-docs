@@ -1,6 +1,6 @@
 ---
 title: APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
-description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数を詳解。Phase A+B+C+D+E 分析。"
+description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用を詳解。Phase A+B+C+D+E+F 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -533,6 +533,111 @@ m_maxStpInstance = (sai_uint16_t)max_stp_instances - 1;
 STATE_DB に書き込まれる `max_stp_inst` はインデックス最大値 (`max_stp_instances - 1`) であり、SAI の返す「インスタンス数」とは 1 差異がある (意図的 off-by-one)。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-side-effects.md -->
+
+`StpOrch` が処理するテーブルは、SAI オブジェクト生成・VLAN 属性変更・FDB フラッシュ・STATE_DB 書き込みという複数の副作用を伴う。副作用はテーブルごとに異なる。
+
+### APPL_DB:STP_VLAN_INSTANCE_TABLE SET の副作用
+
+#### 1. SAI STP インスタンス作成 (`create_stp`)
+
+`addVlanToStpInstance()` (`stporch.cpp:115-163`) で STP インスタンスが未存在の場合、`sai_stp_api->create_stp()` を呼び SAI に新規 STP インスタンスオブジェクトを生成する。OID は `m_stpInstToOid` マップに保存される。
+
+```cpp
+sai_stp_api->create_stp(&stp_oid, gSwitchId, 0, &attr);
+m_stpInstToOid[instance] = stp_oid;
+```
+
+#### 2. SAI VLAN 属性変更 (`SAI_VLAN_ATTR_STP_INSTANCE`)
+
+生成または既存の SAI STP インスタンス OID を VLAN オブジェクトに紐付ける:
+
+```cpp
+attr.id = SAI_VLAN_ATTR_STP_INSTANCE;
+attr.value.oid = stp_oid;
+sai_vlan_api->set_vlan_attribute(vlan_oid, &attr);
+```
+
+これにより ASIC 上の VLAN が指定 STP インスタンスの制御下に置かれ、L2 フォワーディング挙動が変化する。
+
+#### 3. `m_vlanAliasToStpInstanceMap` 内部マップ更新
+
+`STP_INST_PORT_FLUSH_TABLE` の MSTP フラッシュ処理が依存する内部マップ `m_vlanAliasToStpInstanceMap` が更新される。この更新は `STP_INST_PORT_FLUSH_TABLE` の処理結果に間接的に影響する。
+
+### APPL_DB:STP_VLAN_INSTANCE_TABLE DEL の副作用
+
+#### 4. SAI VLAN 属性をデフォルトに復元
+
+`removeVlanFromStpInstance()` (`stporch.cpp:165-200`) は `SAI_VLAN_ATTR_STP_INSTANCE` を `m_defaultStpId` (起動時に取得したデフォルト STP インスタンス) に戻す:
+
+```cpp
+attr.id = SAI_VLAN_ATTR_STP_INSTANCE;
+attr.value.oid = m_defaultStpId;
+sai_vlan_api->set_vlan_attribute(vlan_oid, &attr);
+```
+
+#### 5. SAI STP インスタンス削除 (`remove_stp`)
+
+インスタンスに紐付く VLAN がゼロになった場合、`sai_stp_api->remove_stp()` でインスタンスを削除し `m_stpInstToOid` から除去する。
+
+### APPL_DB:STP_PORT_STATE_TABLE SET の副作用
+
+#### 6. SAI Bridge Port 自動作成
+
+`addStpPort()` (`stporch.cpp:207-258`) でポートの bridge port (`m_bridge_port_id`) が未作成の場合、`gPortsOrch->addBridgePort(port)` を呼び bridge port を SAI に自動作成する。これは PortsOrch の管理する Port オブジェクトを変更するため、他の Orch (FdbOrch 等) からも参照されるオブジェクトが影響を受ける。
+
+#### 7. SAI STP ポート作成 (`create_stp_port`) / 状態更新
+
+`create_stp_port` で SAI STP ポートオブジェクトを生成し (`SAI_STP_PORT_STATE_BLOCKING` 初期値)、続いて `set_stp_port_attribute(SAI_STP_PORT_ATTR_STATE)` で実際の状態に更新する。ASIC のポートフォワーディング挙動が変化する。
+
+### APPL_DB:STP_PORT_STATE_TABLE DEL の副作用
+
+#### 8. SAI STP ポート削除 (`remove_stp_port`)
+
+`removeStpPort()` で `sai_stp_api->remove_stp_port()` を呼び SAI ポートオブジェクトを削除する。
+
+### APPL_DB:STP_FASTAGEING_FLUSH_TABLE SET の副作用
+
+#### 9. FDB エントリ一括フラッシュ
+
+`state == "true"` のとき `gFdbOrch->flushFdbByVlan(vlan_alias)` を呼び、対象 VLAN の全 FDB エントリを削除する。ASIC の L2 学習テーブルがクリアされ、次のフレーム受信時に再学習が発生する。VLAN 未登録時は no-op (fail-silent)。
+
+### APPL_DB:STP_INST_PORT_FLUSH_TABLE SET の副作用
+
+#### 10. MST インスタンス配下の全 VLAN FDB フラッシュ
+
+`state == "true"` のとき `m_vlanAliasToStpInstanceMap[instance].stp_inst_vlan_list` を走査し、各 VLAN に対して `stpVlanFdbFlush()` を呼ぶ。1 つの MST インスタンスに属する複数 VLAN の FDB が一括フラッシュされる。
+
+### 起動時の副作用 (コンストラクタ)
+
+#### 11. STATE_DB `STP_TABLE|GLOBAL.max_stp_inst` 書き込み
+
+`updateMaxStpInstance()` (`stporch.cpp:603-616`) が `STATE_DB` の `STP_TABLE` テーブルに `GLOBAL` キーで `max_stp_inst` フィールドを書き込む。値は `SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1` (インデックス最大値)。
+
+```
+STATE_DB: STP_TABLE|GLOBAL
+  max_stp_inst = <SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1>
+```
+
+**この値は `stpmgrd` (`cfgmgr/stpmgrd.cpp:1395`) が `getStpMaxInstances()` で読み取り、stpd への初期化メッセージ (`STP_BRIDGE_CONFIG_MSG.max_stp_instances`) に含める**。SAI クエリ失敗時はこのフィールドが書き込まれず、stpmgrd はタイムアウト後 `STP_DEFAULT_MAX_INSTANCES = 255` にフォールバックする (`stpmgr.h:38`)。
+
+### 副作用サマリ
+
+| テーブル | 操作 | 直接副作用 | 間接副作用 |
+|---------|------|-----------|-----------|
+| `STP_VLAN_INSTANCE_TABLE` | SET | SAI STP インスタンス生成・`SAI_VLAN_ATTR_STP_INSTANCE` 変更 | `m_vlanAliasToStpInstanceMap` 更新 → MSTP フラッシュの前提 |
+| `STP_VLAN_INSTANCE_TABLE` | DEL | `SAI_VLAN_ATTR_STP_INSTANCE` をデフォルト復元・SAI STP インスタンス削除 | なし |
+| `STP_PORT_STATE_TABLE` | SET | Bridge Port 自動作成・SAI STP ポート生成・ASIC ポート状態変更 | PortsOrch の Port オブジェクト変更 |
+| `STP_PORT_STATE_TABLE` | DEL | SAI STP ポート削除 | なし |
+| `STP_FASTAGEING_FLUSH_TABLE` | SET | VLAN FDB エントリ一括フラッシュ (ASIC L2 テーブルクリア) | L2 再学習トリガ |
+| `STP_INST_PORT_FLUSH_TABLE` | SET | MST インスタンス配下 全 VLAN FDB フラッシュ | L2 再学習トリガ (複数 VLAN) |
+| コンストラクタ | — | `STATE_DB STP_TABLE\|GLOBAL.max_stp_inst` 書き込み | `stpmgrd` の最大インスタンス数取得に使用 |
+
+<!-- /side-effects -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
