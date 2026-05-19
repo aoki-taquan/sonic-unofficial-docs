@@ -415,7 +415,7 @@ TAM テーブル群に関わる定数は YANG スキーマ由来のバリデー�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-> 調査証跡: `meta/_intermediate/cdb-flow/tam-side.md`
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-side-effects.md`
 
 TAM テーブル群（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE`）に対する主要購読者（`portsorch` および `HFTelOrch`）が副次的に書き込む DB エントリを以下に示す。
 
