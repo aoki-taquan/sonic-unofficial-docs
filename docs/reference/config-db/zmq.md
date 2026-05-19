@@ -311,6 +311,55 @@ ZMQ チャネル実装に存在する、CONFIG_DB / YANG では管理されな�
 
 <!-- /constants -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/lib/orch_zmq_config.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-swss/fpmsyncd/routesync.cpp`
+> 中間メモ: `meta/_intermediate/cdb-flow/zmq-pubsub.md`
+
+### CONFIG_DB 読み取りは起動時 `hget` のみ — subscribe なし
+
+`orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` フィールドは、`SubscriberStateTable` や keyspace PSUBSCRIBE ではなく **一時 `DBConnector` + `hget` による 1 回限りの同期読み取り**で評価される。
+
+`get_feature_status()` (`orch_zmq_config.cpp:81-104`):
+
+```cpp
+swss::DBConnector config_db("CONFIG_DB", 0);
+enabled = config_db.hget("DEVICE_METADATA|localhost", feature);
+// 以降はこのフィールドを再読み取りしない
+```
+
+呼び出し箇所はいずれも orchagent / fpmsyncd の**起動時初期化コード**内に位置する:
+
+| 呼び出し元 | 箇所 | 読み取るフィールド |
+|-----------|------|-----------------|
+| `orchdaemon.cpp` | `OrchDaemon` コンストラクタ内 `create_zmq_server()` 呼び出し前後 | `orch_northbond_dash_zmq_enabled` (`orchdaemon.cpp:334, 1329`) |
+| `routesync.cpp` | `RouteSync` コンストラクタ初期化リスト | `orch_northbond_route_zmq_enabled` (`routesync.cpp:155`) |
+
+### Redis keyspace PUBLISH は無視される
+
+CONFIG_DB `DEVICE_METADATA|localhost` のフィールドが変更されると Redis が `__keyspace@4__:DEVICE_METADATA|localhost` へ PUBLISH するが、orchagent も fpmsyncd も**このチャネルを PSUBSCRIBE していない**。通知は届かず、実行中のプロセスの動作は変化しない。
+
+### 起動時テンプレート生成 (orch_zmq_tables.conf)
+
+orchagent コンテナ起動時に `docker-init.j2` が `sonic-cfggen -d -t orch_zmq_tables.conf.j2,...` を実行し、`sonic-cfggen` が CONFIG_DB を **`hgetall` で一括読み取り**して `/etc/swss/orch_zmq_tables.conf` を生成する。こちらも subscribe ではなくバッチ読み取り。
+
+### `orchagent_zmq_port` (DPU)
+
+`orchagent.sh` がコンテナ起動時に `sonic-db-cli CONFIG_DB hget "DPU|<name>" orchagent_zmq_port` で値を取得して起動引数に埋め込む。起動後は変更を追跡しない。
+
+### まとめ: 購読者なし、hget のみ
+
+| フィールド | 読み取り方式 | タイミング | 変更反映 |
+|-----------|-------------|---------|---------|
+| `orch_northbond_dash_zmq_enabled` | `hget`（一時 DBConnector） | orchagent 起動時のみ | **コンテナ再起動が必要** |
+| `orch_northbond_route_zmq_enabled` | `hget`（一時 DBConnector） | fpmsyncd 起動時のみ | **プロセス再起動が必要** |
+| `orchagent_zmq_port` | `sonic-db-cli hget`（シェルスクリプト） | orchagent.sh 実行時のみ | **コンテナ再起動が必要** |
+
+!!! warning "runtime 変更は反映されない"
+    実行中に `sonic-db-cli CONFIG_DB hset "DEVICE_METADATA|localhost" orch_northbond_dash_zmq_enabled false` を実行しても orchagent の動作は変わらない。`SubscriberStateTable` / `ConsumerStateTable` は使用されておらず、変更通知は一切届かない。
+<!-- /pubsub -->
+
 ---
 
 ## DEVICE_METADATA|localhost の ZMQ フィールド
