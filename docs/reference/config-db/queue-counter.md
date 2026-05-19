@@ -387,6 +387,67 @@ catch(const std::system_error& e) {
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## SET/DEL 副次 DB 書込み (Phase F)
+
+`FLEX_COUNTER_TABLE|QUEUE` / `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` / `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` の enable/disable および PORT の追加・削除に伴い、portsorch (orchagent) がトリガとなって複数の DB・テーブルへ副次書き込みを行う。
+
+### portsorch 起動時 — STATE_DB への WRED ケイパビリティ初期化
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET `isSupported=false` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` | orchagent 起動時 `initCounterCapabilities()` 冒頭で無条件初期化[^f1] |
+| SET `isSupported=false` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` | 同上[^f1] |
+| SET `isSupported=false` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER` | 同上[^f1] |
+| SET `isSupported=false` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER` | 同上[^f1] |
+| SET `isSupported=true` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | 上記各キー | SAI `sai_query_stats_capability()` でプラットフォームが当該統計をサポートしていると報告した場合のみ上書き[^f1] |
+
+**ポイント**: `initCounterCapabilities()` は起動時に 1 回のみ実行される。プラットフォームが WRED 統計をサポートしない場合（または SAI クエリ失敗）、全フラグは `false` のまま。`wredstat` / `counterpoll wred-ecn-queue` はこのフラグを参照して表示・操作対象を決定する（evidence: `portsorch.cpp:1850-1921`）。
+
+### FLEX_COUNTER_TABLE|QUEUE が enable — COUNTERS_DB マッピング書込み
+
+`FLEX_COUNTER_TABLE|QUEUE = enable` を受信した `FlexCounterOrch` が `addQueueFlexCounters()` → `generateQueueMap()` を呼ぶと、portsorch は以下を COUNTERS_DB へ書き込む:
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|-----------------|------|------|
+| SET `<port_alias>:<queue_index>` → `<sai_oid>` | COUNTERS_DB / `COUNTERS_QUEUE_NAME_MAP` | ハッシュフィールド | `m_isQueueMapGenerated` フラグで一度だけ実行（`portsorch.cpp:8391-8396`）[^f2] |
+| SET `<queue_oid>` → `<port_oid>` | COUNTERS_DB / `COUNTERS_QUEUE_PORT_MAP` | ハッシュフィールド | 同上[^f2] |
+| SET `<queue_oid>` → `<queue_index>` | COUNTERS_DB / `COUNTERS_QUEUE_INDEX_MAP` | ハッシュフィールド | 同上[^f2] |
+| SET `<queue_oid>` → `SAI_QUEUE_TYPE_*` | COUNTERS_DB / `COUNTERS_QUEUE_TYPE_MAP` | ハッシュフィールド | 同上[^f2] |
+
+VoQ モード (`gMySwitchType == "voq"`) では `COUNTERS_QUEUE_NAME_MAP` の代わりに `COUNTERS_VOQ_NAME_MAP`（`m_voqTable`）へ書き込まれる（`portsorch.cpp:8518-8521`）。
+
+### FLEX_COUNTER_TABLE|QUEUE が enable — FLEX_COUNTER_DB への COUNTER_ID_LIST 書込み
+
+`addQueueFlexCountersPerPortPerQueueIndex()` が `queue_stat_manager.setCounterIdList()` を呼ぶと、swss FlexCounterManager が FLEX_COUNTER_DB の `FLEX_COUNTER_TABLE|QUEUE_STAT_COUNTER:<queue_oid>` ハッシュへ `COUNTER_ID_LIST` フィールドを書き込む:
+
+| 操作 | 対象 DB / テーブル | キー | フィールド | 条件 |
+|------|-----------------|------|------------|------|
+| SET | FLEX_COUNTER_DB / `FLEX_COUNTER_TABLE` | `QUEUE_STAT_COUNTER:<queue_oid>` | `COUNTER_ID_LIST=SAI_QUEUE_STAT_PACKETS,...` | `FLEX_COUNTER_TABLE\|QUEUE = enable` 後に全対象キューで実行[^f2] |
+| SET | FLEX_COUNTER_DB / `FLEX_COUNTER_TABLE` | `QUEUE_WATERMARK_STAT_COUNTER:<queue_oid>` | `COUNTER_ID_LIST=SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK = enable` 後[^f2] |
+| SET | FLEX_COUNTER_DB / `FLEX_COUNTER_TABLE` | `WRED_ECN_QUEUE_STAT_COUNTER:<queue_oid>` | `COUNTER_ID_LIST=SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS,...` | `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE = enable` 後かつ SAI ケイパビリティ確認済みキューのみ[^f2] |
+
+syncd はこの COUNTER_ID_LIST を受け取り、ポーリング周期ごとに `sai_queue_api->get_queue_stats()` を実行して `COUNTERS:<queue_oid>` を更新する（これは syncd の書込みであり、portsorch の直接書込みではない）。
+
+### PORT 削除時 — COUNTERS_DB マッピング DEL
+
+ポートが削除される (`removePortCounterMap()` / `clearQueueFlexCounters()`) と、以下が COUNTERS_DB から削除される:
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|-----------------|------|------|
+| DEL `<port_alias>:<queue_index>` | COUNTERS_DB / `COUNTERS_QUEUE_NAME_MAP` | ハッシュフィールド | ポート削除時 `m_queueCounterNameMapUpdater->delCounterNameMap()`[^f3] |
+| DEL `<queue_oid>` | COUNTERS_DB / `COUNTERS_QUEUE_PORT_MAP` | ハッシュフィールド | 同上 `m_queuePortTable->hdel()`[^f3] |
+| DEL `<queue_oid>` | COUNTERS_DB / `COUNTERS_QUEUE_TYPE_MAP` | ハッシュフィールド | 同上 `m_queueTypeTable->hdel()`[^f3] |
+| DEL `<queue_oid>` | COUNTERS_DB / `COUNTERS_QUEUE_INDEX_MAP` | ハッシュフィールド | 同上 `m_queueIndexTable->hdel()`[^f3] |
+| clearCounterIdList | FLEX_COUNTER_DB / `FLEX_COUNTER_TABLE` | `QUEUE_STAT_COUNTER:<queue_oid>` | `getQueueCountersState()` が true のとき `queue_stat_manager.clearCounterIdList()`[^f3] |
+| clearCounterIdList | FLEX_COUNTER_DB / `FLEX_COUNTER_TABLE` | `QUEUE_WATERMARK_STAT_COUNTER:<queue_oid>` | `getQueueWatermarkCountersState()` が true のとき[^f3] |
+| clearCounterIdList | FLEX_COUNTER_DB / `FLEX_COUNTER_TABLE` | `WRED_ECN_QUEUE_STAT_COUNTER:<queue_oid>` | `getWredQueueCountersState()` が true のとき[^f3] |
+
+[^f1]: `sonic-swss/orchagent/portsorch.cpp:1850-1921` — `initCounterCapabilities()` による STATE_DB `QUEUE_COUNTER_CAPABILITIES` 初期化。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L1850>
+[^f2]: `sonic-swss/orchagent/portsorch.cpp:8391-8614` — `generateQueueMap()` / `generateQueueMapPerPort()` / `addQueueFlexCountersPerPortPerQueueIndex()` による COUNTERS_DB・FLEX_COUNTER_DB 書込み。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L8391>
+[^f3]: `sonic-swss/orchagent/portsorch.cpp:8780-8816` — ポート削除時の COUNTERS_DB マッピング削除および FLEX_COUNTER_DB clearCounterIdList。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L8780>
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
