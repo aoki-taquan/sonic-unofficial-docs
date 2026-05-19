@@ -355,6 +355,59 @@ APPL_DB 書込 → Redis Lists → orchagent VxlanTunnelMapOrch ConsumerStateTab
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-platform.md; sonic-swss/orchagent/vxlanorch.cpp -->
+
+`VXLAN_TUNNEL_MAP` の SAI オブジェクト生成・削除パスは、`VxlanTunnelOrch` 初期化時に実行される SAI ケーパビリティクエリによって P2P / P2MP モードが決定され、ASIC 種別によって挙動が分岐する。
+
+### SAI ケーパビリティクエリによるモード決定 (vxlanorch.cpp:1256-1274)
+
+`VxlanTunnelOrch` コンストラクタ起動時に `sai_query_attribute_enum_values_capability()` で ASIC がサポートするトンネルピアモードを問い合わせる:
+
+| 結果 | `is_dip_tunnel_supported` | 動作モード |
+|------|--------------------------|-----------|
+| SAI クエリ失敗（未対応ドライバ等） | `true`（fallback） | P2P モード（DIP トンネルあり） |
+| `SAI_TUNNEL_PEER_MODE_P2P` が列挙に含まれる | `true` | P2P モード（DIP トンネルあり） |
+| `SAI_TUNNEL_PEER_MODE_P2P` が列挙にない（P2MP のみ） | `false` | P2MP モード（DIP トンネルなし） |
+
+CONFIG_DB の `VXLAN_TUNNEL_MAP` スキーマにこの差異を制御するフィールドはなく、**ASIC の SAI 実装次第で自動選択される**。
+
+### MAP addOperation() でのプラットフォーム分岐
+
+初回 MAP エントリ追加（SIP トンネルが未 active）時に分岐する (vxlanorch.cpp:2075-2086):
+
+| ASIC モード | 動作 |
+|------------|------|
+| **P2MP** (`!isDipTunnelsSupported()`) | `addOperation()` 内で SIP トンネルポートとブリッジポートを即時生成。`gPortsOrch->addTunnel()` + `addBridgePort()` を呼ぶ |
+| **P2P** (`isDipTunnelsSupported()`) | ブリッジポート生成をスキップ。EVPN `addTunnelUser()` が後から DIP トンネルごとにブリッジポートを生成する |
+
+### MAP delOperation() でのプラットフォーム分岐
+
+最後の MAP エントリ削除時（`vlan_vrf_vni_count == 0`）の SIP トンネル HW 削除 (vxlanorch.cpp:2191-2226):
+
+| ASIC モード | 動作 |
+|------------|------|
+| **P2MP** (`!isDipTunnelsSupported()`) | リモート参照なし (`!isTunnelReferenced()`) を確認して即時にブリッジポート・トンネルポートを削除後、`deleteTunnelHw()` を実行 |
+| **P2P** (`isDipTunnelsSupported()`) | DIP トンネルが残存している場合は `del_tnl_hw_pending = true` を設定して遅延削除。ログ: `"Postponing the SIP Tunnel HW deletion DIP Tunnel count = %d"` |
+
+### SmartSwitch / DPU 差異
+
+`vxlanorch.cpp` に SmartSwitch DPU 固有の分岐コードは存在しない。DPU 側の VXLAN トンネル処理は別のオーバーレイスタックが担当する可能性があるが、現在の orchagent 実装では NPU 通常モードのみが対象。
+
+### まとめ
+
+| 差異ポイント | P2P（DIP サポートあり） | P2MP（DIP サポートなし） |
+|---|---|---|
+| SAI クエリ失敗時 | fallback で P2P | — |
+| MAP 初回追加時ブリッジポート | スキップ（EVPN が後で管理） | addOperation() で即時生成 |
+| MAP 最終削除時ブリッジポート | 遅延（DIP カウント 0 待ち） | 参照なければ即時削除 |
+| `del_tnl_hw_pending` 設定 | DIP トンネル残存時 | リモート参照残存時 |
+| SmartSwitch DPU | コード分岐なし | 同左 |
+
+<!-- /platform -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
