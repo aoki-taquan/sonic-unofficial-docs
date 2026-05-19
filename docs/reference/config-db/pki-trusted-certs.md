@@ -1,6 +1,6 @@
 ---
 title: SECURITY_PROFILES / PKI テーブル
-description: "SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。"
+description: "SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。Phase A–H 分析。"
 area: reference
 hard: 0
 verification: discrepancy-found
@@ -463,6 +463,40 @@ Rotate RPC が証明書を差し替えると、以下のシンボリックリン
   sonic-gnmi/common_utils/notification_producer.go:16 — dbName="STATE_DB" (DB=6)
 -->
 <!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+`SECURITY_PROFILES` / gNSI Certz のコアロジックはプラットフォーム非依存である。`iccpd` のような `getenv("platform")` 分岐や `#ifdef` による ASIC 固有パスは存在しない。
+
+### プラットフォーム共通動作
+
+| 機能 | 動作 | 全プラットフォーム共通か |
+|------|------|----------------------|
+| gNSI Certz — プロファイル管理 | `/keys/grpc-version.json` + シンボリックリンクによるファイルシステム管理 | 共通 |
+| gNSI Certz — STATE_DB 書込み | `CREDENTIALS\|CERT\|<profileID>` へ HSET | 共通 |
+| CVL leafref バリデーション | `SECURITY_PROFILES` ↔ `SECURITY_GLOBAL` 参照整合性チェック | 共通 |
+| TLS 証明書再読み込み | 新規 gRPC 接続ごとに `LoadX509KeyPair(SrvCertLnk, SrvKeyLnk)` | 共通 |
+| Rotate RPC 並行排他 | `certzMu.TryLock()` による Mutex | 共通 |
+
+### 環境別の特記事項
+
+| 環境 | 挙動 |
+|------|------|
+| VS（仮想スイッチ）| gNSI Certz は物理 ASIC と同一コードパスで動作。CONFIG_DB ハンドラ未実装という制約も同様に適用される |
+| SmartSwitch DPU | `gnmi_server` / `gnsi_certz.go` が DPU 上で起動するかは構成依存。NPU 側では通常動作 |
+| SONiC-on-Docker / テスト環境 | `CertzMetaFile` パス (`/keys/grpc-version.json`) が書き込み不可の場合、`saveCertzMetadata` がエラーをログして継続する。証明書機能は `/keys/` ディレクトリの読み書き権限に依存 |
+
+### ASIC / SAI 非依存
+
+gNSI Certz は SAI API を呼び出さない。`SECURITY_PROFILES` を消費する translib / orchagent ハンドラが community master に存在しないため、CONFIG_DB への書込みが ASIC_DB / SAI に到達する経路はない。プラットフォーム間で動作差異が生じる余地は現時点でない。
+
+<!-- evidence:
+  sonic-gnmi/gnmi_server/gnsi_certz.go — getenv("platform") / #ifdef 等のプラットフォーム分岐なし（全体スキャン確認）
+  sonic-gnmi/gnmi_server/server.go:423-434 — LoadX509KeyPair は全プラットフォーム共通
+  sonic-gnmi/gnmi_server/gnsi_certz.go:232-235 — certzMu.TryLock() による並行排他（共通実装）
+-->
+<!-- /platform -->
 
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
