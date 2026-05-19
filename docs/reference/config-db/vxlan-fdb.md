@@ -303,6 +303,71 @@ FDB_ORIGIN_MCLAG_ADVERTIZED = 8
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-side-effects.md`
+
+`VXLAN_FDB_TABLE` エントリは `FDB_ORIGIN_VXLAN_ADVERTIZED` として orchagent に処理される。このオリジン値が副次 DB 書込みの有無を決定する。
+
+### STATE_DB 書込み
+
+| タイミング | テーブル | キー | フィールド | 備考 |
+|---|---|---|---|---|
+| `addFdbEntry()` — VXLAN origin | `FDB_TABLE` (STATE_DB) | — | **書かない** | `FDB_ORIGIN_VXLAN_ADVERTIZED` は `m_fdbStateTable.set()` の条件に含まれない (`fdborch.cpp:1567-1582`) |
+| `removeFdbEntry()` — VXLAN origin | `FDB_TABLE` (STATE_DB) | — | **削除しない** | `origin != FDB_ORIGIN_VXLAN_ADVERTIZED` の時のみ削除するため (`fdborch.cpp:1722-1726`) |
+| `addFdbEntry()` — MCLAG origin | `MCLAG_REMOTE_FDB_TABLE` (STATE_DB) | `<VlanName>:<MAC>` | `port`, `type` | VXLAN FDB は該当しない (`fdborch.cpp:1595-1613`) |
+
+VXLAN 由来の FDB エントリは STATE_DB:FDB_TABLE に **一切書かれない**。`show mac` / `show fdb` が表示するエントリはローカル学習・プロビジョニング MAC のみであり、VXLAN リモート MAC は `show vxlan remotemac` で確認する。
+
+```bash
+# VXLAN リモート MAC の確認
+show vxlan remotemac all
+sonic-db-cli APPL_DB keys 'VXLAN_FDB_TABLE:*'
+# STATE_DB には存在しない
+sonic-db-cli STATE_DB keys 'FDB_TABLE:*'  # VXLAN エントリは含まれない
+```
+
+### CRM カウンタ (COUNTERS_DB)
+
+| タイミング | 操作 | CRM リソース | コード根拠 |
+|---|---|---|---|
+| `addFdbEntry()` — 新規 (macUpdate=false) | `incCrmResUsedCounter` | `CRM_FDB_ENTRY` | `fdborch.cpp:1617` |
+| `removeFdbEntry()` 成功 | `decCrmResUsedCounter` | `CRM_FDB_ENTRY` | `fdborch.cpp:1728` |
+
+CRM カウンタは `COUNTERS_DB` の `CRM:ACL_STATS:FDB_ENTRY` に反映される。`show crm resources fdb` で確認可能。
+
+### 内部 Observer 通知 (SUBJECT_TYPE_FDB_CHANGE)
+
+`addFdbEntry()` および `removeFdbEntry()` 完了後に `notify(SUBJECT_TYPE_FDB_CHANGE, &update)` が呼ばれ (`fdborch.cpp:1626, 1736`)、以下のオーケストレータが反応する。
+
+| Observer | 反応内容 | コード根拠 |
+|---|---|---|
+| **MirrorOrch** | `m_fdbOrch->attach(this)` でサブスクライブ。ミラーセッション next-hop が FDB テーブルの変化で再評価される | `mirrororch.cpp:95, 179, 1400` |
+| **MuxOrch** | MUX テーブルの状態管理に FDB 変化を反映 | `muxorch.cpp:2161` |
+
+いずれも **DB への直接書き込みではなく内部メモリ/SAI 操作**であり、外部から観測可能な DB 副作用はない。
+
+### VxlanTunnelOrch への間接コールバック
+
+`removeFdbEntry()` 完了後に `notifyTunnelOrch(update.port)` が呼ばれる (`fdborch.cpp:1738`)。
+
+```cpp
+// sonic-swss/orchagent/fdborch.cpp:1792-1801
+void FdbOrch::notifyTunnelOrch(Port& port) {
+    VxlanTunnelOrch* tunnel_orch = gDirectory.get<VxlanTunnelOrch*>();
+    if ((port.m_type != Port::TUNNEL) || (port.m_fdb_count != 0))
+        return;
+    tunnel_orch->deleteTunnelPort(port);  // FDB 参照数が 0 になったトンネルポートを削除
+}
+```
+
+VXLAN_FDB_TABLE エントリ削除によって当該トンネルポートの FDB 参照数 (`m_fdb_count`) がゼロになると、VxlanTunnelOrch がそのトンネルポート自体を SAI から削除する。これは VXLAN_FDB_TABLE 書き込みの **間接的副作用**であり、他の VXLAN_FDB_TABLE エントリが同じリモート VTEP を参照している間は発生しない。
+
+<!-- evidence: sonic-swss/orchagent/fdborch.cpp:1567-1582,1595-1613,1617,1722-1728,1736,1738,1792-1801; sonic-swss/orchagent/mirrororch.cpp:95,179,1400; sonic-swss/orchagent/muxorch.cpp:2161 -->
+
+<!-- /side-effects -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->

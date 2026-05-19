@@ -516,3 +516,55 @@ linkmgrd::handleMuxStateNotifiction()
 ycabled は `HW_MUX_CABLE_TABLE` の **書き込み側** であり、このテーブルを購読しない。ycabled は `swsscommon.Table` (`put_init_values_for_grpc_states`, `update_table_mux_status_for_statedb_port_tbl`) で直接 STATE_DB に hset し、通知は MuxStateOrch が受信する非対称構造になっている (y_cable_helper.py:597-631)。
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の動作は **`getenv("platform")` 参照なし**で設計されているが、(1) `neighbor_mode = "prefix-route"` の有効化は SAI capability クエリでゲートされ、(2) `cable_type` によって gRPC 経路とレガシー経路で ycabled の動作が大きく変わり、(3) VS (virtual switch) プラットフォームは専用フォールバックパスを持つ。
+
+> 調査証跡: muxorch.cpp — platform 環境変数なし。neighorch.cpp:78-104、y_cable_helper.py:42-44,178,222
+
+### MuxOrch / MuxStateOrch のプラットフォーム非依存性
+
+`orchagent/muxorch.cpp` には `getenv("platform")` / `getenv("ASIC_VENDOR")` の呼び出しが **一切存在しない**。STATE_DB への書き込み文字列定数・ステートマシン遷移ロジック・SAI 呼び出し順序はすべてプラットフォーム共通で動作する。mellanox / broadcom / barefoot 等の ASIC 差分はここでは吸収されない。
+
+### neighbor_mode = "prefix-route" の SAI capability ゲート
+
+`MuxOrch` は起動時に `NeighOrch::isNoHostRouteSupported()` を呼び、`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` の `create_implemented` を `sai_query_attribute_capability()` で問い合わせる (neighorch.cpp:78-104)。結果は `prefix_nbrs_supported_` フラグとして保存される (muxorch.cpp:2192)。
+
+| `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` | `prefix_nbrs_supported_` | `neighbor_mode = "prefix-route"` の効果 |
+|---|---|---|
+| `create_implemented = true` | `true` | `MuxPort` が `NBR_HANDLER_PREFIX_BASED` モードで動作し、/32(/128) host route の代わりに prefix-based route を使用 |
+| `create_implemented = false` または SAI エラー | `false` | `neighbor_mode = "prefix-route"` の CONFIG_DB 設定は **無視され** (muxorch.cpp:2240-2246)、常に `host-route` として動作。STATE_DB `MUX_CABLE_TABLE.neighbor_mode` への書き込みも発生しない |
+
+`isNoHostRouteSupported()` は結果を static キャッシュするため、orchagent 起動中に SAI capability が変化してもフラグは更新されない。
+
+### cable_type によるプラットフォーム動作差異
+
+`cable_type` フィールドは CONFIG_DB `MUX_CABLE` の設定値であり、orchagent と ycabled の双方が参照する。STATE_DB の書き込みパスが `cable_type` によって分岐する。
+
+| `cable_type` | HW_MUX_CABLE_TABLE 書き込み元 | gRPC チャネル | orchagent 内部 MuxCable クラス |
+|---|---|---|---|
+| `"active-standby"` (デフォルト) | ycabled が Y-Cable ドライバ経由で SFP transceiver API を呼び出す。`soc_ipv4` 不使用 | 不使用 | `MuxCable` (SAI ACL + neighbor + tunnel 操作) |
+| `"active-active"` | ycabled が `soc_ipv4` の gRPC エンドポイントへ `QueryAdminForwardingPortState` を呼び出す (y_cable_helper.py:597-631) | 必須 (`soc_ipv4` で確立) | `MuxCable` (type `ACTIVE_ACTIVE` 分岐、muxorch.cpp:2233-2237) |
+
+`active-active` かつ `soc_ipv4` 未設定の場合、gRPC チャネルが確立されず `HW_MUX_CABLE_TABLE.state = "unknown"` が初期値として書き込まれる (y_cable_helper.py:603-612)。
+
+### VS (virtual switch) プラットフォームの特殊挙動
+
+ycabled は `is_vs` パラメータで VS プラットフォームを検出し、グローバル変数 `y_cable_is_platform_vs` に保存する (y_cable_helper.py:1363,1369)。VS 環境では以下の挙動が変わる。
+
+| 関数 | 通常プラットフォーム | VS (`y_cable_is_platform_vs == True`) |
+|---|---|---|
+| `y_cable_wrapper_get_presence()` | `platform_sfputil.get_presence(physical_port)` 呼び出し | **常に `True` を返す** (物理 SFP なし) (y_cable_helper.py:178) |
+| `y_cable_wrapper_get_transceiver_info()` | `platform_sfputil.get_transceiver_info_dict()` 呼び出し | **空辞書 `{}` を返す** (y_cable_helper.py:222) |
+
+この結果、VS 環境では Y-Cable の存在チェックが常に「存在する」と判定されるため、`HW_MUX_CABLE_TABLE` への書き込みパスが物理ハードウェアなしでもテスト可能になる。ただし gRPC チャネルは VS では未確立になるため、`HW_MUX_CABLE_TABLE.state = "unknown"` が書き込まれるのが通常の VS 実行結果である。
+
+### シミュレーション Y-Cable ドライバの注入
+
+ycabled は `/etc/sonic/mux_simulator.json` ファイルの存在を検出し、transceiver info の `manufacturer = "microsoft"` / `model = "simulated"` に上書きすることでシミュレーション用 Y-Cable ドライバ (`y_cable_simulated`) を動的に選択する (y_cable_helper.py:184-213)。
+
+このメカニズムは物理 Y-Cable を持たない CI / インテグレーションテスト環境向けであり、実機では使用しない。`/etc/sonic/mux_simulator.json` が存在する状態で pmon を再起動すると、物理ポートの MUX 挙動が simulated driver で上書きされる危険性がある。
+
+<!-- /platform -->
