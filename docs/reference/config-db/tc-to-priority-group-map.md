@@ -1,6 +1,6 @@
 ---
 title: TC_TO_PRIORITY_GROUP_MAP テーブル
-description: "TC_TO_PRIORITY_GROUP_MAP テーブル — Traffic Class (TC) を ingress Priority Group (PG) へマップし、バッファ admission control と PFC の対象 PG を決定する。"
+description: "TC_TO_PRIORITY_GROUP_MAP テーブル — Traffic Class (TC) を ingress Priority Group (PG) へマップし、バッファ admission control と PFC の対象 PG を決定する。Phase A〜H 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -478,6 +478,75 @@ NotificationConsumer: なし
 ```
 
 <!-- /pubsub -->
+
+<!-- platform-diff -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/tc-to-priority-group-map-platform.md -->
+<!-- source: sonic-buildimage/files/build_templates/qos_config.j2 ref:master -->
+<!-- source: sonic-swss/orchagent/qosorch.cpp ref:master -->
+
+`TC_TO_PRIORITY_GROUP_MAP` の **orchagent 側処理**（`QosOrch`）はプラットフォーム非依存だが、**マップの内容（Config 生成）**はプラットフォーム・SKU・デプロイ構成によって異なる。
+
+### A. qos_config.j2 — マップ生成の優先順位
+
+`qos_config.j2:170-179` に 4 段の条件分岐がある:
+
+```jinja2
+{% if (generate_tc_to_pg_map is defined) and tunnel_qos_remap_enable %}
+    {{- generate_tc_to_pg_map() }}          {# トンネル QoS 対応プラットフォーム #}
+{% elif (generate_tc_to_pg_map is defined) and ... ComputeAI ... %}
+    {{- generate_tc_to_pg_map() }}          {# Azure ComputeAI バックエンド #}
+{% elif generate_tc_to_pg_map_per_sku is defined %}
+    {{- generate_tc_to_pg_map_per_sku() }}  {# SKU 固有マクロ #}
+{% else %}
+    "TC_TO_PRIORITY_GROUP_MAP": { "AZURE": {...} }  {# 標準デフォルト #}
+{% endif %}
+```
+
+| 条件 | 適用対象 | 生成マップ |
+|------|---------|-----------|
+| `generate_tc_to_pg_map` + `tunnel_qos_remap_enable=true` | VxLAN decap TC→PG 再マッピング対応プラットフォーム (Broadcom 等) | SKU 定義関数が生成 |
+| `generate_tc_to_pg_map` + `backend_device_types` + `ComputeAI` | Azure AI ラック向け BackEndToRRouter / BackEndLeafRouter | SKU 定義関数が生成 |
+| `generate_tc_to_pg_map_per_sku` | 一部 Mellanox / Broadcom SKU | SKU ごとに異なる TC→PG 対応表 |
+| その他（デフォルト） | 一般コミュニティ SONiC | `AZURE`（TC3→PG3, TC4→PG4, 他→PG0） |
+
+### B. SmartSwitch / DPU — AZURE_DPC マップ
+
+`PORT_DPC`（DPU 接続ポート）が存在する環境では `AZURE_DPC` マップが追加生成される (`qos_config.j2:182-193`):
+
+```json
+"AZURE_DPC": {
+    "0": "0", "1": "0", "2": "0", "3": "0",
+    "4": "0", "5": "0", "6": "0", "7": "7"
+}
+```
+
+全 TC を PG0（ベストエフォート）に割り当て、TC7 のみ PG7 に割り当てる。PFC は TC7/PG7 のみ対象となる。DPU 接続ポートは `PORT_QOS_MAP.tc_to_pg_map = "AZURE_DPC"` で参照される (`qos_config.j2:476`)。
+
+### C. トンネル QoS 再マッピング対応プラットフォーム
+
+`DEVICE_METADATA.tunnel_qos_remap_enable = "true"` が設定されたプラットフォームでは `TUNNEL_DECAP_TABLE.decap_tc_to_pg_map` フィールドが有効になる。`TunnelDecapOrch` が `TC_TO_PRIORITY_GROUP_MAP` の SKU 固有マップを `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` に適用し、トンネル decap 後のパケットに別の TC→PG マッピングを施す。一般プラットフォーム（`tunnel_qos_remap_enable=false`）では `decap_tc_to_pg_map` フィールド自体が使用されない。
+
+### D. ASIC の TC 範囲制限
+
+YANG の `tc_type` は `uint8 0..15` を許容するが、実用上 TC 8..15 をサポートする ASIC は少ない。`sai_qos_map_api->create_qos_map()` は TC 8..15 を含むマップでプラットフォーム依存の挙動を示す:
+
+| プラットフォーム | TC 8..15 の扱い |
+|-----------------|----------------|
+| Broadcom 等物理 ASIC | SAI が TC 0..7 のみ有効化し TC 8..15 エントリを無視するか、マップ全体を拒否する（SAI 実装依存） |
+| VS (仮想スイッチ) | `create_qos_map()` は成功するが ASIC 反映なし |
+
+### プラットフォーム差異サマリ
+
+| 観点 | 標準プラットフォーム | SKU 固有 (`per_sku` マクロあり) | SmartSwitch DPU ポート | トンネル QoS 対応 |
+|------|------------------|--------------------------------|----------------------|------------------|
+| 生成マップ名 | `AZURE` | SKU 依存 | `AZURE` + `AZURE_DPC` | SKU 依存 |
+| TC3/TC4 の PG | PG3 / PG4（lossless） | プラットフォーム依存 | PG0（lossy） | プラットフォーム依存 |
+| `decap_tc_to_pg_map` | 不使用 | 不使用 | 不使用 | 使用（SAI tunnel 属性） |
+| TC 8..15 サポート | ASIC 依存（多くは拒否） | ASIC 依存 | ASIC 依存 | ASIC 依存 |
+
+<!-- /platform-diff -->
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
