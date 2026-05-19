@@ -280,6 +280,65 @@ rsyslogd 起動 (priority=1)
 > **注意**: `save_on_set` は `gnmi-native.sh` から自動読み取りされない。Go フラグ `--with-save-on-set` で手動指定が必要。
 <!-- /value-behavior -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh` (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd); `sonic-net/sonic-gnmi:telemetry/telemetry.go` (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); `sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go` (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+
+### gnmi-native.sh レベル（コンテナ起動時）
+
+| 失敗条件 | 検出箇所 | 結果 | exit code |
+|---|---|---|---|
+| `TELEMETRY_VARS_FILE` テンプレートが存在しない | `gnmi-native.sh:12-15` | `echo` + スクリプト終了 | 1 (`EXIT_TELEMETRY_VARS_FILE_NOT_FOUND`) |
+| `port` フィールドが正整数でない (`GNMI` エントリ存在時) | `gnmi-native.sh:68-71` | stderr 出力 + スクリプト終了 | 2 (`INCORRECT_TELEMETRY_VALUE`) |
+| `threshold` が正整数でない かつ `GNMI` エントリが存在する | `gnmi-native.sh:107-110` | stderr 出力 + スクリプト終了 | 2 |
+| `idle_conn_duration` が正整数でない かつ `GNMI` エントリが存在する | `gnmi-native.sh:120-123` | stderr 出力 + スクリプト終了 | 2 |
+
+### telemetry.go レベル（Go フラグパース・起動時）
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| `port <= 0` かつ `unix_socket` も空 | `telemetry.go:232-234` | `fmt.Errorf` → `main()` が `log.Errorf` してプロセス終了 |
+| `threshold < 0` | `telemetry.go:237-239` | `fmt.Errorf` → プロセス終了 |
+| `idle_conn_duration < 0` | `telemetry.go:241-243` | `fmt.Errorf` → プロセス終了 |
+| `log_level < 0` | `telemetry.go:246-250` | ログ出力のみ。デフォルト値 `2` に置換して継続（唯一の silent fallback） |
+| TLS モードで `server_crt` が空 | `telemetry.go:253-256` | `fmt.Errorf` → プロセス終了 |
+| TLS モードで `server_key` が空 | `telemetry.go:256-258` | `fmt.Errorf` → プロセス終了 |
+| `user_auth=cert` かつ `ca_crt` が空（setupFlags 段階） | `telemetry.go:318-321` | `cert` モードを自動無効化 + `log.V(2)` 警告のみ。処理継続 |
+
+### サーバ起動ループレベル（TLS 証明書ロード）
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| TLS キーペアのロード失敗 (`tls.LoadX509KeyPair`) | `telemetry.go:459-476` | `log.Errorf` + SHA512 チェックサムをログ出力 → `serverControlSignal` 待機ループ。fsnotify が `ServerStart` を通知すると再試行。`ServerStop` 受信でプロセス終了 |
+| CA 証明書ファイルの読み取り失敗 (`ioutil.ReadFile`) | `telemetry.go:505-509` | `log.Errorf` → 同様に `serverControlSignal` 待機ループ |
+| CA 証明書の `AppendCertsFromPEM` 失敗 | `telemetry.go:511-514` | `log.Errorf` → 同様に `serverControlSignal` 待機ループ |
+| `ca_crt` 未設定で `user_auth=cert`（起動ループ内） | `telemetry.go:529-532` | `cert` モードを自動無効化 + `log.Warning` のみ。起動継続 |
+| fsnotify ウォッチャー作成失敗 | `telemetry.go:453-455` | `log.Errorf` のみ。証明書監視なしで起動継続（nil watcher は無視） |
+| インターセプタチェーン作成失敗 | `telemetry.go:570-573` | `log.Errorf` → goroutine が return。プロセスは `wg.Wait()` 後に終了 |
+| gNMI サーバ作成失敗 (`gnmi.NewServer`) | `telemetry.go:578-581` | `log.Errorf` → goroutine が return してプロセス終了 |
+
+### クライアント接続時レベル（`user_auth=cert` 時のみ）
+
+| 失敗条件 | 検出箇所 | gRPC エラーコード | メッセージ |
+|---|---|---|---|
+| peer 情報が context から取得できない | `clientCertAuth.go:118-120` | `Unauthenticated` | "no peer found" |
+| TLS AuthInfo 取得失敗 | `clientCertAuth.go:121-123` | `Unauthenticated` | "unexpected peer transport credentials" |
+| クライアント証明書の検証チェーンが空 | `clientCertAuth.go:125-127` | `Unauthenticated` | "could not verify peer certificate" |
+| 証明書 CN が空 | `clientCertAuth.go:133-135` | `Unauthenticated` | "invalid username in certificate common name." |
+| `config_table_name` が空文字列 | `clientCertAuth.go:255-257` | `Unauthenticated` | "Service config table name should not be empty" |
+| CRL ダウンロード失敗（全 URL 試行後） | `clientCertAuth.go:230-236` | `Unauthenticated` | "Can't download CRL and verify cert" |
+| 証明書が CRL で失効 | `clientCertAuth.go:244-248` | `Unauthenticated` | "Peer certificate revoked" |
+| `GNMI_CLIENT_CERT\|<CN>` エントリ不在または role フィールド欠如 | `clientCertAuth.go:274,279-281` | `Unauthenticated` | "Invalid cert cname:'%s', not a trusted cert common name." |
+
+### 補足
+
+- **TLS キーペアロード失敗はプロセス終了しない**: fsnotify の `ServerStart` シグナル待機ループに入り、証明書ファイルが書き込まれると自動的に再試行する。これは TLS ローテーション対応のための設計。
+- **`user_auth=cert` + `ca_crt` 欠如の silent fallback**: 起動フラグパース段階とサーバ起動ループ段階の両方で cert モードが静かに無効化される。運用者が気づかないまま認証なし状態になるリスクがある。
+- **`gnmi-native.sh` exit code 2**: supervisord が検出してコンテナを再起動させる。不正値を CONFIG_DB に書き込んだ場合、supervisord の `autorestart=true` 設定によりコンテナが再起動ループに陥る可能性がある。
+<!-- evidence: sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:12-15,68-71,107-123 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd); sonic-net/sonic-gnmi:telemetry/telemetry.go:232-260,318-321,453-583 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go:118-281 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22) -->
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
