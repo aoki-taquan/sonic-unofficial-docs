@@ -438,6 +438,35 @@ CLI / gNMI 経由の CONFIG_DB 書き込み時に YANG スキーマが検証さ�
 <!-- /constants -->
 
 <!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `NTP_KEY` テーブルの変更に伴って `hostcfgd` の `NtpCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えと `chrony` サービス再起動に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `NtpCfg.ntp_srv_key_update()` 内に `set(`/`hset(`/`Producer`/`Notification` の呼出 0 件 (`hostcfgd:1366-1406` を grep して 0 ヒット) |
+| STATE_DB | なし | `NtpCfg` は `state_db_conn` を保持しない。STATE_DB 書込は `FipsCfg` (`hostcfgd:1759-1821`) のみ |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 書込参照なし。NTP は SAI カウンタを持たない |
+| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由。`NTP_KEY` を購読する orchagent は `sonic-swss/` に存在しない |
+
+### ファイルシステムへの副次書込（DB 外）
+
+`ntp_srv_key_update()` は `run_cmd(self.CHRONY_RESTART)` によって `systemctl restart chrony` を実行する。chrony 再起動に先立ち、`ntp-config.service` の `ExecStartPre` 相当として `chrony-config.sh` がテンプレートを再展開する。
+
+| 書込先ファイル | 生成手段 | 根拠 |
+|---|---|---|
+| `/etc/chrony/chrony.keys` | `sonic-cfggen -d -t /usr/share/sonic/templates/chrony.keys.j2` | `chrony-config.sh:10` |
+| `/etc/chrony/chrony.conf` | `sonic-cfggen -d -t /usr/share/sonic/templates/chrony.conf.j2` | `chrony-config.sh:9` |
+
+`chrony.keys.j2` は `NTP_KEY` 全件を走査し、`type` と `value` が有効なエントリのみ `<id> <TYPE> <decoded-value>[ trusted_str]` 形式で書き出す。`NTP_SERVER.trusted == 'yes'` のサーバ IP リストが `trusted_str` として各行末に付与される (`chrony.keys.j2:8-17`)。`chrony.conf.j2` は `NTP|global.authentication == 'enabled'` のとき `keyfile /etc/chrony/chrony.keys` を出力する (`chrony.conf.j2:127`)。
+
+!!! note "NTP_KEY 変更は chrony.conf も再生成する"
+    `hostcfgd` の `run_cmd(CHRONY_RESTART)` は `chrony-config.sh` 経由で `chrony.conf` と `chrony.keys` を両方再生成してから chrony を再起動する。NTP_KEY の変更一件が chrony.conf と chrony.keys の両ファイルを上書きするため、同一 restart トリガで `NTP` / `NTP_SERVER` の設定変更も chrony に反映される。
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L1272–1406 (`NtpCfg.__init__` / `ntp_srv_key_update`); `sonic-buildimage/files/image_config/chrony/chrony-config.sh` L9-11; `chrony.keys.j2` L1-18。詳細スキャン結果は `meta/_intermediate/cdb-flow/ntp-key-side.md` を参照。
+<!-- /side-effects -->
+
+<!-- side-effects -->
 ## 副次ファイル書込 (Phase F)
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/files/image_config/chrony/chrony.keys.j2 -->
