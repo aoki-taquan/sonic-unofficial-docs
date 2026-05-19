@@ -513,4 +513,48 @@ NotificationConsumer: なし
 
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/tc-to-priority-group-map-platform.md`
+
+`TC_TO_PRIORITY_GROUP_MAP` を処理する `QosOrch` の orchagent コードパスと、
+初期設定を生成する `qos_config.j2` テンプレートのプラットフォーム依存性を調査した結果を示す。
+
+### orchagent 実行時コードパス — プラットフォーム差異なし
+
+`TcToPgHandler::convertFieldValuesToAttributes()` (`qosorch.cpp:888-900`) および
+`TcToPgHandler::addQosItem()` (`qosorch.cpp:905-930`) のいずれにも `gMySwitchType` 参照が存在しない。
+`handlePortQosMapTable()` (`qosorch.cpp:2046-2156`) も TC_TO_PRIORITY_GROUP_MAP に関する
+platform 分岐を持たない。
+
+`gMySwitchType == "voq"` 分岐は `applySchedulerToQueueSchedulerGroup()` / `applyWredProfileToQueue()` /
+`applySchedulerToVoqGroup()` にのみ存在し、TC_TO_PRIORITY_GROUP_MAP 処理には適用されない。
+
+全 switch_type（standard / voq / dpu）で同一 SAI 経路
+（`sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP)`
+→ `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP)`）が実行される。
+
+### 初期設定注入のプラットフォーム差異（qos_config.j2）
+
+`qos_config.j2:170-204` は以下の優先順位で `TC_TO_PRIORITY_GROUP_MAP` を生成する:
+
+| 優先度 | プラットフォーム条件 | 生成内容 |
+|-------|---------------------|---------|
+| 1 | `generate_tc_to_pg_map()` 定義 + `tunnel_qos_remap_enable` 有効 | マクロ出力（platform 固有） |
+| 2 | `backend_device_types` 該当 + `resource_type == 'ComputeAI'` + `generate_tc_to_pg_map()` 定義 | マクロ出力（platform 固有） |
+| 3 | `generate_tc_to_pg_map_per_sku()` 定義 | SKU 固有マクロ出力 |
+| 4 | `PORT_DPC` 有効（フォールバック） | `AZURE` + `AZURE_DPC` を生成 |
+| 5 | 上記以外（大多数の platform） | `AZURE` のみ生成 |
+
+プラットフォームベンダーが `generate_tc_to_pg_map()` または `generate_tc_to_pg_map_per_sku()` マクロを
+定義している場合、`AZURE` マップとは異なる TC→PG マッピング（異なる PG 番号・TC 範囲）が生成される。
+実際のデフォルト値はプラットフォームによって異なる。orchagent のランタイムコードパスは全 platform で共通。
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:888-930`（platform 分岐なし）;
+> `sonic-swss/orchagent/qosorch.cpp:1637,1715,1772`（voq 分岐は Scheduler/Queue/Wred 系のみ）;
+> `sonic-buildimage/files/build_templates/qos_config.j2:170-204`（platform 条件分岐）
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: tc-to-priority-group-map -->
