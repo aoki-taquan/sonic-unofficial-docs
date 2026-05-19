@@ -287,3 +287,57 @@ ADD と逆順で削除する。`TAM_INT_IFA_FLOW_TABLE` のエントリを削除
   任意の順序で書き込み可能。
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-failure.md`
+
+### CVL バリデーション失敗（Management Framework 経由）
+
+GNMI/REST 経由の書込みは CVL（sonic-mgmt-common）が検証を行う。`sonic-db-cli` での直接書込みは CVL をバイパスするため以下の制約は適用されない。
+
+#### TAM_COLLECTOR_TABLE への SET 失敗
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `ipaddress-type=ipv4` かつ `ipaddress` が IPv6 形式（`:` 含む） | CVL must 制約 | リジェクト（`error-app-tag: ipaddres-type-mismatch`） | `sonic-tam.yang` must 制約 |
+| `ipaddress-type=ipv6` かつ `ipaddress` が IPv4 形式（`.` 含む） | CVL must 制約 | リジェクト（`error-app-tag: ipaddres-type-mismatch`） | `sonic-tam.yang` must 制約 |
+
+#### TAM_INT_IFA_FLOW_TABLE への SET 失敗
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `acl-table-name` が `ACL_TABLE` に未登録 | CVL leafref 解決 | リジェクト | `sonic-ifa.yang:58-60` |
+| `acl-rule-name` が `ACL_RULE\|<acl-table-name>` 下に未登録 | CVL 連鎖 leafref 解決 | リジェクト | `sonic-ifa.yang:65-67` |
+| `collector-name` が `TAM_COLLECTOR_TABLE` に未登録 | CVL must 制約 | リジェクト | `cvl_must_test.go:449-461` |
+| `sampling-rate` が範囲外（0 または 10001 以上） | CVL range 制約 | リジェクト（`error-app-tag: Invalid IFA flow sampling rate.`） | `sonic-ifa.yang:73` |
+
+### HFTelOrch 起動時 SAI 能力クエリ失敗
+
+`hftelorch.cpp` の `isSupportedByHFTel()` が起動時に SAI 能力を問い合わせ、失敗すると HFTel 機能全体を無効化する。TAM テーブルは CONFIG_DB から直接読まれないが、HFTel が無効化された状態では TAM_COLLECTOR_TABLE の情報も SAI に反映されない。
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `sai_query_attribute_capability()` が `SAI_STATUS_SUCCESS` 以外 | NOTICE ログ → HFTel 全体無効化 | `hftelorch.cpp:199` |
+| 必須 SAI 属性（例: `SAI_TAM_COLLECTOR_ATTR_*`）の create 能力なし | NOTICE ログ → HFTel 全体無効化 | `hftelorch.cpp:202-209` |
+| `SAI_TAM_TRANSPORT_TYPE_NONE` または `SAI_TAM_BIND_POINT_TYPE_SWITCH` が enum 未サポート | NOTICE ログ → HFTel 全体無効化 | `hftelorch.cpp:244` |
+| コンストラクタで `SAI_SWITCH_ATTR_TAM_TEL_TYPE_CONFIG_CHANGE_NOTIFY` 設定失敗 | ERROR ログ → `runtime_error` 例外（プロセスクラッシュ） | `hftelorch.cpp:88-89` |
+| コンストラクタで `SAI_SWITCH_ATTR_TAM_OBJECT_ID` 設定失敗 | ERROR ログ → `runtime_error` 例外（プロセスクラッシュ） | `hftelorch.cpp:829-831` |
+
+### HFTelOrch doTask() 処理失敗
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| 未知のテーブル名 | ERROR ログ → `task_failed`（永続スキップ） | `hftelorch.cpp:623` |
+| 未知のオペレーション型 | ERROR ログ → `task_failed`（永続スキップ） | `hftelorch.cpp:598, 618` |
+| 処理例外送出 | ERROR ログ → `task_failed`（永続スキップ） | `hftelorch.cpp:628-633` |
+| プロファイルが `canBeUpdated()=false`（ストリーム稼働中） | `task_need_retry`（次サイクルで再試行） | `hftelorch.cpp:275` |
+| グループのプロファイルが未発見 | `task_need_retry` | `hftelorch.cpp:340-345` |
+
+### 補足
+
+- **orchagent 非購読**: コミュニティ版 orchagent は `TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_*` を CONFIG_DB から直接購読しない。上記の CVL 制約は Management Framework 経由の設定のみに適用される。
+- **sonic-db-cli 直接書込み**: CVL をバイパスするため制約違反値もエラーなく書き込まれる。ただし orchagent が購読していないため SAI への反映も行われない。
+
+<!-- /failure -->
