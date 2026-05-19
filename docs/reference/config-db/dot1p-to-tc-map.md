@@ -369,6 +369,63 @@ show qos map dot1p-tc
 > **Evidence**: `sonic-swss/orchagent/qosorch.h:13`; `sonic-swss/orchagent/qosorch.cpp:63,391,405-406,372-373`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-side-effects.md`
+
+**結論: Redis 副次 DB (APPL_DB / STATE_DB / COUNTERS_DB) への書込みおよび PUBLISH 通知は一切なし**。`QosOrch` は [CONFIG_DB](../../reference/glossary.md#term-config_db) → SAI の直結経路をとり、中間 DB を経由しない。
+
+### SET 時の副作用
+
+#### 1. SAI QoS map オブジェクト生成・更新
+
+`Dot1pToTcMapHandler::processWorkItem()` が `sai_qos_map_api->create_qos_map()` または `set_qos_map_attribute()` を呼び出す。成功すると SAI（ASIC）上に `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` オブジェクトが生成/更新される（`qosorch.cpp:399-415`）。
+
+#### 2. in-memory マップへの登録
+
+`addQosItem()` が成功すると `QosOrch` の内部 map `m_qos_maps` に `name → SAI object_id` のエントリが追加される。以降 `PORT_QOS_MAP` の `resolveFieldRefValue()` が本マップを参照する。
+
+#### 3. 後続 `PORT_QOS_MAP` エントリのアンブロック
+
+`DOT1P_TO_TC_MAP|<name>` の SAI オブジェクトが生成された後、`PORT_QOS_MAP|<port>` の `dot1p_to_tc_map` フィールドを処理中に `task_need_retry` で待機していたエントリが次の `doTask()` サイクルでアンブロックされる（`qosorch.cpp:2120-2130`）。これにより SAI ポートオブジェクトへのマップバインドが行われる。
+
+#### 4. ポート QoS 分類への即時影響
+
+マップ内容の更新は SAI を通じて即座に ASIC ハードウェアへ反映される。`PORT_QOS_MAP.dot1p_to_tc_map` で当該マップを参照しているすべてのポートの 802.1p PCP → Traffic Class マッピングが即座に変化し、インフライトトラフィックの優先度処理に影響する。
+
+### DEL 時の副作用
+
+#### 5. 参照中の場合: `m_pendingRemove` フラグセット
+
+`PORT_QOS_MAP` から参照中の DEL は即時実行されず、`m_pendingRemove = true` がセットされて `task_need_retry` を返す（`qosorch.cpp:181-186`）。参照解除後に自動的に DEL が再実行される。この間 `m_pendingRemove = true` の状態では新規 SET も `task_need_retry` で遅延する（`qosorch.cpp:136-139`）。
+
+#### 6. SAI QoS map オブジェクト削除
+
+`sai_qos_map_api->remove_qos_map()` が呼ばれ SAI オブジェクトが削除される。`m_qos_maps` から該当エントリも除去される。
+
+### STATE_DB / 他 DB への影響なし
+
+| DB | 書込み | 理由 |
+|---|---|---|
+| `APPL_DB` | なし | CONFIG_DB → orchagent 直結（APPL_DB 中継経路なし） |
+| `STATE_DB` | なし | `qosorch.cpp` に STATE_DB 書込み呼び出しなし |
+| `COUNTERS_DB` | なし | QoS map 処理ではカウンタ更新なし |
+| PUBLISH 通知 | なし | `NotificationProducer` / channel PUBLISH の使用なし |
+
+### 副作用サマリ
+
+| 操作 | 直接副作用 | 間接副作用 |
+|---|---|---|
+| SET（有効エントリ、新規） | SAI QoS map 生成、`m_qos_maps` 登録 | 待機中 `PORT_QOS_MAP` エントリのアンブロック → ポートへのマップバインド |
+| SET（有効エントリ、既存更新） | SAI QoS map 更新 | 参照ポートの 802.1p→TC 分類が即座に変化 |
+| SET（不正エントリ混在） | 有効エントリのみ SAI 反映（不正エントリはサイレント脱落） | CONFIG_DB と SAI の乖離 |
+| DEL（未参照） | SAI QoS map 削除、`m_qos_maps` 削除 | なし |
+| DEL（参照中） | `m_pendingRemove=true`、DEL 保留 | 参照解除後に SAI 削除が自動実行される |
+
+> **Evidence**: `qosorch.cpp:124-201` (QosMapHandler::processWorkItem); `qosorch.cpp:399-415` (addQosItem / convertFieldValuesToAttributes); `qosorch.cpp:2046-2134` (handlePortQosMapTable / resolveFieldRefValue); `qosorch.cpp:136-139` (pendingRemove 中の SET 遅延)
+<!-- /side-effects -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
