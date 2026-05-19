@@ -327,4 +327,46 @@ show qos map dot1p-tc
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-constants.md`
+
+### フィールド名定数
+
+| 定数名 | 値 | 定義箇所 | 説明 |
+|--------|----|---------|------|
+| `dot1p_to_tc_field_name` | `"dot1p_to_tc_map"` | `qosorch.h:13` | PORT_QOS_MAP フィールド名。`qos_to_ref_table_map` / `qos_to_attr_map` のキーとして使用 |
+
+### SAI 定数
+
+| 定数 | 使用箇所 | 説明 |
+|------|---------|------|
+| `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` | `qosorch.cpp:406` | SAI qos_map_type — create 時の type 固定値 |
+| `SAI_QOS_MAP_ATTR_TYPE` | `qosorch.cpp:405` | create 時の type 属性 ID |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `qosorch.cpp:391` | マップエントリリスト属性 ID |
+| `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` | `qosorch.cpp:63` | ポートバインド属性 ID |
+
+> **注意**: DSCP_TO_TC_MAP が持つスイッチレベルバインド (`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP`) に相当する `SAI_SWITCH_ATTR_QOS_DOT1P_TO_TC_MAP` の使用は `qosorch` に実装されていない。DOT1P_TO_TC_MAP はポートバインドのみ。
+
+### 型変換・キャスト定数
+
+| 処理 | 型 | コード箇所 | 説明 |
+|------|-----|---------|------|
+| dot1p key 変換 | `sai_uint8_t` | `qosorch.cpp:372` | `static_cast<sai_uint8_t>(stoi(fvField(fv)))` — YANG pattern `[0-7]?` の 0..7 を uint8 に変換 |
+| tc value 変換 | `sai_cos_t` (uint8) | `qosorch.cpp:373` | `static_cast<sai_cos_t>(stoi(fvValue(fv)))` — YANG tc_type (0..15) を uint8 に変換 |
+
+> **注意**: DSCP_TO_TC_MAP の `DSCP_MAX_VAL = 63` に相当する dot1p 最大値の明示的な範囲チェック定数は存在しない。上限は YANG pattern `[0-7]?` と SAI `sai_uint8_t` キャストの組み合わせで暗黙的に制約される。
+
+### デフォルトマップ名
+
+| マップ名 | 用途 | ソース |
+|---------|------|--------|
+| `"AZURE"` | ストレージバックエンドプラットフォームで `qos_config.j2` が注入するデフォルトマップ名 | `qos_config.j2:240-253` |
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.h:13`; `sonic-swss/orchagent/qosorch.cpp:63,391,405-406,372-373`
+<!-- /constants -->
+
 <!-- glossary-links-injected: b1003b21c66f -->
