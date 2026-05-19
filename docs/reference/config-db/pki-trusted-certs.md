@@ -407,6 +407,63 @@ const (
 -->
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込・外部副作用 (Phase F)
+
+`SECURITY_PROFILES` / `SECURITY_GLOBAL` を書き込む production ハンドラは community master に存在しないため、CONFIG_DB 操作に伴う orchagent / translib 由来の副次 DB 書込はない。ただし gNSI Certz が Rotate RPC・起動処理を通じて以下の副次作用を持つ。
+
+### STATE_DB — `CREDENTIALS|CERT|<profileID>`
+
+| トリガ | 操作 | キー | フィールド | 値 | ソース |
+|--------|------|------|-----------|-----|--------|
+| gNSI Certz 起動 (`bootstrapDefaultProfile`) | HSET | `CREDENTIALS\|CERT\|<profileID>` | `certificate_version` / `ca_trust_bundle_version` 等 6 フィールド | `"V1"` (起動初期値) | `gnsi_certz.go:134-138, 688-715` |
+| Rotate RPC `activateEntity` | HSET | `CREDENTIALS\|CERT\|<profileID>` | 対応エンティティの `*_version` / `*_created_on` フィールド | クライアント指定値 | `gnsi_certz.go:502` |
+| Rotate RPC `finalizeProfile` | HSET | `CREDENTIALS\|CERT\|<profileID>` | 確定済みエンティティ全フィールド | 確定値 | `gnsi_certz.go:646-685` |
+
+DB クライアント: `common_utils.GetRedisDBClient()` — DB 番号 **6** (STATE_DB) に対して `HSET` (`gnsi_certz.go:1040-1052`, `common_utils/notification_producer.go:16`)。Redis 障害時は `"REDIS is not available"` をログ出力のみで継続（証明書ファイル自体には影響しない）。
+
+### ファイルシステム副作用 — シンボリックリンク更新
+
+Rotate RPC が証明書を差し替えると、以下のシンボリックリンクがアトミックに更新される:
+
+| シンボリックリンク | 対象エンティティ | 更新関数 | ソース |
+|-------------------|----------------|---------|--------|
+| `cfg.SrvCertLnk` (`/keys/server_cert.lnk`) | サーバ証明書 (Cert) | `atomicSetSrvCertKeyPair` | `gnsi_certz.go:924-963` |
+| `cfg.SrvKeyLnk` (`/keys/server_key.lnk`) | サーバ秘密鍵 (Cert) | `atomicSetSrvCertKeyPair` | `gnsi_certz.go:924-963` |
+| `cfg.CaCertLnk` (`/keys/ca_cert.lnk`) | CA 証明書 (TrustBundle) | `atomicSetCACert` | `gnsi_certz.go:966-989` |
+
+これらのリンクは gRPC サーバが **新規接続ごとに** `tls.LoadX509KeyPair(cfg.SrvCertLnk, cfg.SrvKeyLnk)` で読み直す (`server.go:429`)。すなわちリンク更新後に張られた新規 TLS セッションは自動的に新証明書を使用し、**gRPC サーバ再起動は不要**。既存セッションは旧証明書のまま継続する。
+
+読み取り時は `muPath.RLock()` を保持することで、シンボリックリンク差し替え中（`muPath.Lock()` 保持）との競合が防がれる (`server.go:426-427, 449-450`)。
+
+### CertzMetaFile — プロファイルメタデータ JSON
+
+`saveCertzMetadata` が `/keys/grpc-version.json` (デフォルト `CertzMetaFile`) を上書き更新する。更新タイミング:
+
+- gNSI Certz 起動直後 (`gnsi_certz.go:141`)
+- Rotate RPC `finalizeProfile` 完了後 (`gnsi_certz.go:683-685`)
+
+このファイルはプロセス再起動時に `loadCertzMetadata` で読み込まれ、証明書バージョン情報の永続化に使われる。STATE_DB や CONFIG_DB への書き込みは伴わない。
+
+### CONFIG_DB / APPL_DB / ASIC_DB
+
+対象なし。`SECURITY_PROFILES` を消費する translib / orchagent ハンドラが community master に存在しないため、CONFIG_DB への書込みが APPL_DB / ASIC_DB へ伝播する経路は確認されない。
+
+<!-- evidence:
+  sonic-gnmi/gnmi_server/gnsi_certz.go:134-138 — bootstrapDefaultProfile: writeEntityFreshness × 4
+  sonic-gnmi/gnmi_server/gnsi_certz.go:502 — activateEntity: writeEntityFreshness
+  sonic-gnmi/gnmi_server/gnsi_certz.go:646-685 — finalizeProfile: writeEntityFreshness × 4 + saveCertzMetadata
+  sonic-gnmi/gnmi_server/gnsi_certz.go:688-715 — writeEntityFreshness (STATE_DB HSET)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:717-735 — saveCertzMetadata (CertzMetaFile JSON 書込)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:924-963 — atomicSetSrvCertKeyPair (SrvCertLnk / SrvKeyLnk 更新)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:966-989 — atomicSetCACert (CaCertLnk 更新)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:1036-1057 — writeCredentialsMetadataToDB (STATE_DB DB=6, REDIS unavailable 処理)
+  sonic-gnmi/gnmi_server/server.go:423-434 — GetIdentityCertificatesForServer: 新規接続ごと LoadX509KeyPair + muPath.RLock
+  sonic-gnmi/gnmi_server/server.go:448-460 — GetRootCertificates: 新規接続ごと ReadFile(CaCertLnk) + muPath.RLock
+  sonic-gnmi/common_utils/notification_producer.go:16 — dbName="STATE_DB" (DB=6)
+-->
+<!-- /side-effects -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)
