@@ -776,6 +776,29 @@ orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`stpmgrd` は SAI / ASIC SDK を一切経由しない純粋なソフトウェア STP 実装。プラットフォーム依存の挙動は以下の 2 点に集約される。
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-platform.md -->
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | PVST インスタンス上限のみ影響 | `getStpMaxInstances()` が `STATE_STP_TABLE\|GLOBAL.max_stp_inst` を読み取り、ASIC 能力 (`sai_switch_attr_max_stp_instance`) が実効上限になる。stpmgrd の処理ロジック自体は ASIC 非依存 (`stpmgr.cpp:1381-1413`) |
+| multi-asic (`is_multi_npu() == True`) | 非対応 | `stpmgrd.cpp:35-37` は `DBConnector` をすべて `DEFAULT_UNIXSOCKET`（ホスト namespace）で生成。`is_multi_npu()` / CHASSIS_APP_DB 参照なし。asicN namespace の STP は管理されない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | stpmgrd はホスト単体スコープ。他カードとの PVST 状態同期機構は存在しない |
+| VS（仮想スイッチ） | `max_stp_instances` がフォールバック 255 | VS では `StpOrch` が `STATE_STP_TABLE\|GLOBAL.max_stp_inst` を書き込まない場合が多く、`STP_DEFAULT_MAX_INSTANCES = 255` が使われる |
+| warm-reboot | 全プラットフォーム共通スタブ | `WarmStart::initialize/checkWarmStart` を呼ぶが `setWarmStartState()` および reconcile ロジックは未実装。cold reboot と同一フロー |
+| PVST BPDU ebtables ルール | ASIC 非依存（カーネル依存のみ） | `ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP` はカーネルの ebtables モジュール使用。ASIC ベンダー固有処理なし (`stpmgr.cpp:113`) |
+
+!!! note "max_stp_instances の実効上限"
+    CLI の `PVST_MAX_INSTANCES = 255` チェックより ASIC 能力値が小さい場合、ASIC 側の値が実効上限となる。たとえば ASIC が 64 インスタンスしかサポートしない場合、65 番目の VLAN への STP 適用は `allocL2Instance()` 内の `IS_INST_ID_AVAILABLE()` チェックで失敗し、`SWSS_LOG_ERROR` + 恒久スキップとなる。この値は `stporch.cpp:612` が SAI から取得して `STATE_STP_TABLE|GLOBAL.max_stp_inst` に書き込む。
+
+詳細根拠は `meta/_intermediate/cdb-flow/stp-platform.md` を参照。
+
+<!-- /platform -->
+
 ## 関連ページ
 
 - [CONFIG_DB: VLAN](vlan.md)
