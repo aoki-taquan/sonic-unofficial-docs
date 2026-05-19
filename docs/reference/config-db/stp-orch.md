@@ -1,6 +1,6 @@
 ---
 title: APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
-description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズムを詳解。Phase A+B+C+D+E+F+G 分析。"
+description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズム・プラットフォーム差を詳解。Phase A+B+C+D+E+F+G+H 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -35,7 +35,7 @@ related:
 # APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
 
 !!! info "ページの位置付け"
-    このページは orchagent (`StpOrch`) が購読する **APPL_DB の STP 関連 4 テーブル** のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・失敗挙動・ハードコード定数・副作用・Redis 通知メカニズムを詳述する Phase A-G 分析ページ。
+    このページは orchagent (`StpOrch`) が購読する **APPL_DB の STP 関連 4 テーブル** のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・失敗挙動・ハードコード定数・副作用・Redis 通知メカニズム・プラットフォーム差を詳述する Phase A-H 分析ページ。
     CONFIG_DB 側のデフォルト (STP/STP_VLAN/STP_PORT テーブル) は [STP/STP_VLAN/STP_PORT テーブル](stp.md) を参照。
 
 ## 概要
@@ -718,6 +718,50 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 | stpmgrd ← STATE_DB `STP_TABLE` | `swss::Table::get()` ポーリング (最大 60 秒、1 秒間隔) | PUBLISH 非購読 |
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-platform.md -->
+
+`StpOrch` 自体はプラットフォーム分岐コードを一切持たない (`stporch.cpp` に `getenv("platform")` / `#ifdef` なし)。ASIC 固有差異はすべて SAI レイヤーに隠蔽されており、プラットフォーム差として実運用上意味があるのは以下の点に限られる。
+
+### SAI_SWITCH_ATTR_MAX_STP_INSTANCE — ASIC 能力依存
+
+コンストラクタ (`stporch.cpp:29-43`) で SAI スイッチ属性から最大 STP インスタンス数を取得し `updateMaxStpInstance()` で STATE_DB に公開する:
+
+```cpp
+attr.id = SAI_SWITCH_ATTR_MAX_STP_INSTANCE;
+if (sai_switch_api->get_switch_attribute(gSwitchId, 2, attrs) == SAI_STATUS_SUCCESS)
+{
+    updateMaxStpInstance(attrs[1].value.u32);
+}
+```
+
+`updateMaxStpInstance()` は `max_stp_instances - 1` を `STATE_DB STP_TABLE|GLOBAL.max_stp_inst` に書き込む。この値は ASIC ベンダー SAI 実装が返すため、ハードウェア依存:
+
+| プラットフォーム | 典型的な最大インスタンス数 | 備考 |
+|---|---|---|
+| Broadcom 系 (BRCM SAI) | 実測 64 が一般的 | ASIC SKU による |
+| VS (virtual switch) | SAI スタブ実装依存 | 実際の転送制約なし |
+| その他 ASIC | ASIC ベンダー実装依存 | — |
+
+SAI クエリ失敗時は STATE_DB 書き込みが行われず、`stpmgrd` は 60 秒タイムアウト後に `STP_DEFAULT_MAX_INSTANCES = 255` (`stpmgr.h:38`) にフォールバックする。
+
+!!! note "HLD の記述"
+    `SONiC_PVST_HLD.md` は「スケーリング限界はプラットフォームと CPU に依存し、テストで決定する必要がある (16K port-vlan インスタンス・最大 255 STP インスタンスはリファレンス値)」と明示している。
+
+### multi-asic / VoQ chassis — 非対応
+
+`orchdaemon.cpp:262` の `StpOrch` 初期化は host APPL_DB のみ使用し namespace 指定がない。`stpmgrd` も `DEFAULT_UNIXSOCKET` (host namespace) のみで動作し `is_multi_npu()` / `CHASSIS_APP_DB` を参照しない。
+
+VOQ シャーシ / multi-ASIC 環境では stpd/stpmgrd がシングル namespace 専用設計のため、**STP の有効スコープはシングル ASIC に限定**される。分散シャーシ全体での STP 状態同期機構は存在しない。
+
+### VS (virtual switch) 環境
+
+VS SAI は `sai_stp_api_t` のスタブ実装を提供するため `StpOrch` の SAI 呼び出しは成功するが、実際のデータプレーン転送制御は行われない。STP の BPDU 受送信に必要なハードウェアトラップ (`SAI_HOSTIF_TRAP_TYPE_STP` / `SAI_HOSTIF_TRAP_TYPE_PVRST`, `copporch.cpp:56,60`) も VS では実動作しないため、VS 環境での STP 収束確認は限定的となる。
+
+<!-- /platform -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
