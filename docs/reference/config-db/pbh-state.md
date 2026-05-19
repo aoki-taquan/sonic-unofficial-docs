@@ -295,6 +295,64 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`PBH_CAPABILITIES` テーブルに関係するハードコード定数の一覧。YANG スキーマは存在せず、テーブル名・フィールド名・値の文字列はすべて C++ `#define` および Python 変数としてコードに埋め込まれている。詳細スキャンノート: [`meta/_intermediate/cdb-flow/pbh-state-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/pbh-state-constants.md)。
+
+### STATE_DB 接続パラメータ
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PBH_STATE_DB_NAME` | `"STATE_DB"` | `DBConnector` 初期化時の DB 名。静的メンバ `PbhCapabilities::stateDb` に使用 | `pbhcap.cpp:35` |
+| `PBH_STATE_DB_TIMEOUT` | `0` ms | DB 接続タイムアウト (0 = ブロッキング、タイムアウトなし)。Redis 未起動時はハング | `pbhcap.cpp:36` |
+| `STATE_PBH_CAPABILITIES_TABLE_NAME` | `"PBH_CAPABILITIES"` | `Table` オブジェクト初期化時のテーブル名。`sonic-swss-common` で定義 | `schema.h:419` |
+
+### プラットフォーム識別定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PBH_PLATFORM_ENV_VAR` | `"ASIC_VENDOR"` | ベンダー識別に使う環境変数名。`parsePbhAsicVendor()` が `getenv()` で読み取る | `pbhcap.cpp:20` |
+| `PBH_PLATFORM_GENERIC` | `"generic"` | Generic プラットフォーム識別文字列。`ASIC_VENDOR` 未設定時の fallback 値 | `pbhcap.cpp:21` |
+| `PBH_PLATFORM_MELLANOX` | `"mellanox"` | Mellanox プラットフォーム識別文字列。大文字小文字区別あり (lowercase 固定) | `pbhcap.cpp:22` |
+| `PBH_PLATFORM_UNKN` | `"unknown"` | ログ出力専用の未知プラットフォーム文字列。分岐制御には使用されない | `pbhcap.cpp:23` |
+
+### STATE_DB サブキー名定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PBH_TABLE_CAPABILITIES_KEY` | `"table"` | `PBH_CAPABILITIES\|table` サブキー名 | `pbhcap.cpp:25` |
+| `PBH_RULE_CAPABILITIES_KEY` | `"rule"` | `PBH_CAPABILITIES\|rule` サブキー名 | `pbhcap.cpp:26` |
+| `PBH_HASH_CAPABILITIES_KEY` | `"hash"` | `PBH_CAPABILITIES\|hash` サブキー名 | `pbhcap.cpp:27` |
+| `PBH_HASH_FIELD_CAPABILITIES_KEY` | `"hash-field"` | `PBH_CAPABILITIES\|hash-field` サブキー名 | `pbhcap.cpp:28` |
+
+### フィールド操作能力トークン
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PBH_FIELD_CAPABILITY_ADD` | `"ADD"` | STATE_DB に書き込まれる能力トークン。`toStr()` でセットをカンマ連結する | `pbhcap.cpp:30` |
+| `PBH_FIELD_CAPABILITY_UPDATE` | `"UPDATE"` | 同上 | `pbhcap.cpp:31` |
+| `PBH_FIELD_CAPABILITY_REMOVE` | `"REMOVE"` | 同上 | `pbhcap.cpp:32` |
+| `PBH_FIELD_CAPABILITY_UNKN` | `"UNKNOWN"` | `pbhFieldCapabilityMap` に未登録の enum 値が来た場合のフォールバック文字列 | `pbhcap.cpp:33` |
+
+> **`toStr()` のソート順**: `PbhFieldCapability` の enum 値は `ADD=0, UPDATE=1, REMOVE=2` の順に定義されており、`std::set<PbhFieldCapability>` が昇順ソートされるため、3 つ全て有効な場合の書き込み値は `"ADD,UPDATE,REMOVE"` になる（`"ADD,REMOVE,UPDATE"` ではない）。
+
+### Python 側固有定数 (config/plugins/pbh.py)
+
+`sonic-utilities` が C++ 定数とは独立に定義するコンシューマ側定数。
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PBH_CAPABILITIES_SDB` | `"PBH_CAPABILITIES"` | STATE_DB テーブル名（`STATE_PBH_CAPABILITIES_TABLE_NAME` の Python 側ミラー）| `pbh.py:72` |
+| `PBH_ADD` | `"ADD"` | `pbh_capabilities_query()` の戻り値との照合に使用 | `pbh.py:82` |
+| `PBH_UPDATE` | `"UPDATE"` | 同上 | `pbh.py:83` |
+| `PBH_REMOVE` | `"REMOVE"` | 同上 | `pbh.py:84` |
+
+!!! note "C++ / Python の定数二重管理"
+    `pbhschema.h`（C++）と `pbh.py`（Python）はフィールド名文字列を独立して定義している。一方のみを変更した場合、バグがコンパイル時に検出されないリスクがある。
+
+<!-- /constants -->
+
 ## 関連 CONFIG_DB / CLI
 
 - 設定元: [`PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD`](pbh.md) (CONFIG_DB)
