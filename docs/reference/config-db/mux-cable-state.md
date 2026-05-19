@@ -400,3 +400,79 @@ const std::string loopback3 = "Loopback3|";
 linkmgrd は `Loopback3|<IP>` のパターンで CONFIG_DB の `LOOPBACK_INTERFACE` テーブルを探索し、IPv4 アドレスから `read_side` (0 = T0, 1 = LT0) を決定する。`"Loopback3"` という名称はコード固定であり、他のループバックインタフェース名には対応しない。Loopback3 IPv4 が見つからない場合は `MUXLOGFATAL` を出力し、コード内デフォルト値 (`10.212.64.1/32` / `10.212.64.2/32` 等) を使用するが、この状態は設定誤りを示すため正常運用時には発生しない (y_cable_helper.py:63-66, DbInterface.cpp:729-730)。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) への書込は、CONFIG_DB からのデータフローの最終段に位置するが、書込の一部がさらに他のコンポーネントの副次処理を引き起こす連鎖構造を持つ。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-side-effects.md`
+
+<!-- evidence:
+  sonic-swss/orchagent/muxorch.cpp:2285,2509-2514,2517-2547,2637-2641
+  sonic-linkmgrd/src/DbInterface.cpp:317-346,1481-1519,1833,1866,1899
+  sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:597-631,741-746
+  sonic-swss-common/common/schema.h:140-143,457-465
+-->
+
+### 書込連鎖のサマリ
+
+`STATE_DB MUX_CABLE_TABLE` への書込は linkmgrd がリアルタイムで購読しており、ステートマシン更新→APPL_DB 書込の連鎖が生じる。また orchagent の `MuxCableOrch` は APPL_DB `HW_MUX_CABLE_TABLE` に書き込み、それを `MuxStateOrch` が購読して STATE_DB `MUX_CABLE_TABLE.state` を更新する二重ループが存在する。
+
+| 書込トリガー | 副次書込先 DB / テーブル | 書込者 | 条件 |
+|---|---|---|---|
+| STATE_DB `MUX_CABLE_TABLE.state` 書込 | linkmgrd 内部ステートマシン (メモリ) | linkmgrd `processMuxStateNotifiction()` (`DbInterface.cpp:1481`) | 常時 |
+| linkmgrd ステートマシン遷移 | APPL_DB `MUX_CABLE_TABLE` (切替コマンド) | linkmgrd (`DbInterface.cpp:317`) | active / standby 切替判断時 |
+| linkmgrd ステートマシン遷移 | STATE_DB `MUX_LINKMGR_TABLE` | linkmgrd (`DbInterface.cpp:332`) | 内部状態変化時 |
+| linkmgrd ステートマシン遷移 | STATE_DB `MUX_SWITCH_CAUSE` | linkmgrd (`DbInterface.cpp:341`) | 切替理由変化時 |
+| linkmgrd ステートマシン遷移 | STATE_DB `MUX_METRICS_TABLE` | linkmgrd (`DbInterface.cpp:335`) | メトリクス計測時 |
+| APPL_DB `HW_MUX_CABLE_TABLE` 書込 | STATE_DB `MUX_CABLE_TABLE.state` | orchagent `MuxStateOrch::updateMuxState()` (`muxorch.cpp:2640`) | hw_state vs mux_state 比較後 |
+| `MuxCableOrch::updateMuxMetricState()` | STATE_DB `MUX_METRICS_TABLE` | orchagent (`muxorch.cpp:2544`) | 切替開始 / 完了時（タイムスタンプ計測） |
+
+### 詳細: STATE_DB MUX_CABLE_TABLE → linkmgrd
+
+linkmgrd は `SubscriberStateTable(stateDbPtr, STATE_MUX_CABLE_TABLE_NAME)` (`DbInterface.cpp:1833`) で STATE_DB `MUX_CABLE_TABLE` を購読する。`MuxStateOrch` が書き込んだ `state` フィールドが変化すると:
+
+```
+STATE_DB MUX_CABLE_TABLE|<ifname>.state 書込 (hset)
+  └─ linkmgrd handleMuxStateNotifiction()
+       └─ processMuxStateNotifiction()
+            └─ MuxManager::addOrUpdateMuxPortMuxState(port, state)
+                 └─ ステートマシン更新 (メモリ)
+                      ├─ APPL_DB MUX_CABLE_TABLE への active/standby コマンド書込
+                      ├─ STATE_DB MUX_LINKMGR_TABLE 更新
+                      └─ STATE_DB MUX_SWITCH_CAUSE 更新 (切替が発生した場合)
+```
+
+### 詳細: APPL_DB HW_MUX_CABLE_TABLE → STATE_DB MUX_CABLE_TABLE ループ
+
+`MuxCableOrch::updateMuxState()` は APPL_DB `HW_MUX_CABLE_TABLE` へ `state` を書込む (`muxorch.cpp:2513`)。これを `MuxStateOrch` が購読し、hw_state と mux_state（内部ステートマシン）を比較して STATE_DB `MUX_CABLE_TABLE.state` を更新する:
+
+```
+mux state 遷移 (active / standby)
+  └─ MuxCableOrch::updateMuxState()
+       └─ APPL_DB HW_MUX_CABLE_TABLE|<ifname>.state = "active"/"standby"
+            └─ MuxStateOrch::addOperation() (Orch2 subscribe)
+                 └─ hw_state と mux_state を比較
+                      └─ STATE_DB MUX_CABLE_TABLE|<ifname>.state = "active"/"standby"/"unknown"/"error"
+```
+
+`STATE_DB MUX_CABLE_TABLE.state` が最終的に `show mux status` に表示される値となる。
+
+### APPL_DB / STATE_DB 書込先一覧
+
+| DB | テーブル名 | キー形式 | 書込フィールド | 書込者 |
+|----|-----------|---------|--------------|-------|
+| STATE_DB | `MUX_CABLE_TABLE` | `MUX_CABLE_TABLE\|<ifname>` | `state` (`active`/`standby`/`unknown`/`error`) | orchagent `MuxStateOrch` |
+| STATE_DB | `MUX_CABLE_TABLE` | `MUX_CABLE_TABLE\|<ifname>` | `neighbor_mode` | orchagent `MuxOrch::handleMuxCfg()` (初回のみ) |
+| APPL_DB | `HW_MUX_CABLE_TABLE` | `HW_MUX_CABLE_TABLE\|<ifname>` | `state` | orchagent `MuxCableOrch::updateMuxState()` |
+| STATE_DB | `MUX_METRICS_TABLE` | `MUX_METRICS_TABLE\|<ifname>` | `orch_switch_{active\|standby}_{start\|end}` | orchagent `MuxCableOrch::updateMuxMetricState()` |
+| APPL_DB | `MUX_CABLE_TABLE` | `MUX_CABLE_TABLE\|<ifname>` | `state` (切替コマンド) | linkmgrd |
+| STATE_DB | `MUX_LINKMGR_TABLE` | `MUX_LINKMGR_TABLE\|<ifname>` | 内部状態 | linkmgrd |
+| STATE_DB | `MUX_SWITCH_CAUSE` | `MUX_SWITCH_CAUSE\|<ifname>` | 切替理由 | linkmgrd |
+| STATE_DB | `MUX_METRICS_TABLE` | `MUX_METRICS_TABLE\|<ifname>` | 切替メトリクス | linkmgrd |
+
+> **注**: ASIC_DB への書込は `MuxCable::stateActive()` / `stateStandby()` から SAI nexthop 操作を通じて発生する。これは orchagent 内部の MuxCable ステートマシン遷移であり、STATE_DB テーブル経由ではなく直接 SAI API を介した書込になる (`muxorch.cpp:463-511`)。
+
+<!-- /side-effects -->
+
