@@ -368,6 +368,61 @@ STP_PORT テーブル処理
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-port-constants.md -->
+
+`STP_PORT` テーブルのフィールド値バリデーションおよび MST 初期化時に使用される、コードに直接埋め込まれた定数の一覧。
+出典は `sonic-net/sonic-utilities/config/stp.py` および `sonic-net/sonic-swss/cfgmgr/stpmgr.h`。
+
+### PVST インタフェース定数 (`config/stp.py`)
+
+| 定数名 | 値 | 対象フィールド | 役割 | ソース |
+|--------|-----|--------------|------|--------|
+| `STP_INTERFACE_MIN_PRIORITY` | `0` | `priority` | 最小値（バリデーション） | stp.py:1018 |
+| `STP_INTERFACE_MAX_PRIORITY` | `240` | `priority` | 最大値（バリデーション） | stp.py:1019 |
+| `STP_INTERFACE_DEFAULT_PRIORITY` | `128` | `priority` | CLI デフォルト（DB には書き込まれない） | stp.py:1020 |
+| `STP_INTERFACE_MIN_PATH_COST` | `1` | `path_cost` | 最小値（バリデーション） | stp.py:1029 |
+| `STP_INTERFACE_MAX_PATH_COST` | `200000000` | `path_cost` | 最大値（バリデーション） | stp.py:1030 |
+| `STP_INTERFACE_DEFAULT_COST` | `0` | `path_cost` | 未設定センチネル値（有効範囲外） | stp.py:1584 |
+
+!!! note "`STP_INTERFACE_DEFAULT_COST = 0` の意味"
+    有効な `path_cost` は 1–200,000,000 であり、`0` は「フィールドが未設定であること」を示すセンチネル値。
+    CONFIG_DB に `STP_PORT.path_cost` が存在しない状態を表すため、SONiC CLI 内部でのみ使用され、DB に書き込まれることはない。
+
+### MST インタフェース定数 (`config/stp.py`)
+
+| 定数名 | 値 | 対象フィールド | 役割 | ソース |
+|--------|-----|--------------|------|--------|
+| `MST_MIN_PORT_PRIORITY` | `0` | `priority` | 最小値（バリデーション） | stp.py:90 |
+| `MST_MAX_PORT_PRIORITY` | `240` | `priority` | 最大値（バリデーション） | stp.py:91 |
+| `MST_DEFAULT_PORT_PRIORITY` | `128` | `priority` | MST 有効化時の STP_PORT 初期書き込み値 | stp.py:92 |
+| `MST_MIN_PORT_PATH_COST` | `1` | `path_cost` | 最小値（バリデーション） | stp.py:106 |
+| `MST_MAX_PORT_PATH_COST` | `200000000` | `path_cost` | 最大値（バリデーション） | stp.py:107 |
+| `MST_DEFAULT_PORT_PATH_COST` | `1` | `path_cost` | MST 有効化時の STP_PORT 初期書き込み値 | stp.py:108 |
+| `MST_AUTO_LINK_TYPE` | `'auto'` | `link_type` | MST 有効化時の `link_type` 初期値 | stp.py:110 |
+| `MST_P2P_LINK_TYPE` | `'p2p'` | `link_type` | P2P リンクタイプ文字列 | stp.py:111 |
+| `MST_SHARED_LINK_TYPE` | `'shared'` | `link_type` | 共有リンクタイプ文字列 | stp.py:112 |
+
+### stpmgr — `LinkType` enum と IPC コマンド定数 (`stpmgr.h`)
+
+| 定数 | 値 | 用途 | ソース |
+|------|-----|------|--------|
+| `LinkType::AUTO` | `0` | `link_type = "auto"` に対応する enum 値 | stpmgr.h:60 |
+| `LinkType::POINT_TO_POINT` | `1` | `link_type = "point-to-point"` / `"p2p"` に対応 | stpmgr.h:61 |
+| `LinkType::SHARED` | `2` | `link_type = "shared"` に対応 | stpmgr.h:62 |
+| `STP_SET_COMMAND` | `1` | `STP_PORT_CONFIG` IPC メッセージの SET opcode | stpmgr.h:107 |
+| `STP_DEL_COMMAND` | `0` | `STP_PORT_CONFIG` IPC メッセージの DEL opcode | stpmgr.h:108 |
+
+!!! warning "`link_type` 文字列とenum の不一致"
+    CLI の `stp_interface_link_type_point_to_point()` (stp.py:1235) は `'point-to-point'` を DB に書き込む。
+    一方 stpmgr.h:61 の `POINT_TO_POINT` は `stoi()` による整数変換で使用されており、
+    文字列 `"point-to-point"` からの直接マッピングは存在しない。
+    さらに `stpmgr.cpp:612` の `stoi(field.c_str())` バグ（Phase D 参照）により、MST `link_type` の処理は実質機能していない可能性がある。
+
+<!-- /constants -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | フィールド | 内容 |
