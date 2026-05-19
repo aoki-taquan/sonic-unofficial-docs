@@ -435,37 +435,64 @@ rsyslogd 起動 (priority=1)
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-### Redis 購読方式
+### GNMI|gnmi / GNMI|certs テーブルの読み取り方式
 
-`GNMI|gnmi` / `GNMI|certs` テーブルに対する Redis Subscribe は**存在しない**。`gnmi-native.sh` 起動スクリプトが `sonic-cfggen -d` コマンドで CONFIG_DB を**起動時に 1 回だけ読み取り**、得られた値を Go バイナリの CLI フラグへ変換して `exec` する。以降の CONFIG_DB 変更は **コンテナ再起動までテレメトリデーモンに反映されない**（hot reload なし）。
+`GNMI|gnmi` および `GNMI|certs` テーブルに対する Redis Subscribe は**存在しない**。`gnmi-native.sh` 起動スクリプトが `sonic-cfggen -d` コマンドで CONFIG_DB を**起動時に 1 回だけ読み取り**、得られた値を Go バイナリの CLI フラグへ変換して `exec` する。以降の CONFIG_DB 変更は**コンテナ再起動までテレメトリデーモンに反映されない**（hot reload なし）。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` は一切使用しない。
 
-`GNMI_CLIENT_CERT|<CommonName>` は gNMI RPC ごとに `configDbConnector.Get_entry()` で**直接ポーリング**（subscribe なし）。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` は一切使用しない。
-
-| テーブル | 購読方式 | タイミング | 購読者 |
-|---------|---------|-----------|--------|
-| `GNMI\|gnmi` (CONFIG_DB) | 購読なし — `sonic-cfggen -d` 一括読み取り | コンテナ起動時 1 回 | `gnmi-native.sh` |
-| `GNMI\|certs` (CONFIG_DB) | 同上 | コンテナ起動時 1 回 | `gnmi-native.sh` |
-| `DEVICE_METADATA\|localhost` (CONFIG_DB) | 購読なし — `sonic-db-cli` inline 読み取り | コンテナ起動時 1 回 | `gnmi-native.sh` |
-| `GNMI_CLIENT_CERT\|<CN>` (CONFIG_DB) | 購読なし — `Get_entry()` 直接読み取り | 各 gNMI RPC リクエスト時 | `gnmi_server/clientCertAuth.go` |
-| `TELEMETRY_CONNECTIONS` (STATE_DB) | 書込み専用 (subscribe なし) | Subscribe RPC 開始 / 終了時 | `gnmi_server/connection_manager.go` |
+| 消費者 | API 種別 | 対象テーブル | タイミング |
+|--------|---------|------------|-----------|
+| `gnmi-native.sh` | `sonic-cfggen -d -t telemetry_vars.j2` (一括スナップショット) | `GNMI\|gnmi`・`GNMI\|certs`・`DEVICE_METADATA\|localhost.x509` | コンテナ起動時 1 回のみ |
+| `gnmi-native.sh` | `sonic-db-cli CONFIG_DB hget` (inline 読み取り) | `DEVICE_METADATA\|localhost.subtype`・`MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` | コンテナ起動時 1 回のみ |
+| `clientCertAuth.go` — `PopulateAuthStructByCommonName()` | `ConfigDBConnector.Connect(false)` + `Get_entry()` (接続ごとポイントインタイム読み取り) | `GNMI_CLIENT_CERT\|<CN>` | gNMI クライアント接続ごと |
+| `bypass.go` — `IsAllowedSKU()` | `ConfigDBConnector.Get_entry()` (RPC ごとポイントインタイム読み取り) | `DEVICE_METADATA\|localhost.hwsku` | SmartSwitch gNMI Set RPC ごと |
+| `connection_manager.go` | `HSet` / `HDel` (書込み専用、subscribe なし) | `TELEMETRY_CONNECTIONS` (STATE_DB) | Subscribe RPC 開始 / 終了時 |
 
 ### 証明書ファイルの fsnotify 監視
 
-TLS 証明書ファイル（`server_crt` / `server_key` / `ca_crt` が指し示すパス）は、Redis 経由ではなく `fsnotify.Watcher` でファイルシステムレベルで監視する。証明書ファイルが更新されると `serverControlSignal` チャネルに `ServerRestart` が送信され、gRPC サーバを再起動して新しい TLS 設定を反映する。CONFIG_DB の証明書パスフィールド自体はコンテナ再起動なしには更新されない。
+TLS 証明書ファイル（`server_crt` / `server_key` / `ca_crt` が指し示すパス）は、Redis 経由ではなく `fsnotify.Watcher` でファイルシステムレベルで監視する。証明書ファイルが更新されると `serverControlSignal` チャネルに `ServerRestart` が送信され、gRPC サーバを再起動して新しい TLS 設定を反映する。CONFIG_DB の証明書パスフィールド自体はコンテナ再起動なしには更新されない (`telemetry.go:434-448`)。
+
+### TELEMETRY_CLIENT テーブル — Redis keyspace 購読 (dial-out モード)
+
+`dialout_client.go` の `DialOutRun()` は CONFIG_DB の `TELEMETRY_CLIENT` テーブルを **Redis `PSUBSCRIBE`** でリアルタイム監視する。`GNMI|gnmi` / `GNMI|certs` テーブルは対象外。
 
 ```
-fsnotify.Watcher 監視（telemetry.go:434-448）
-  ファイル変更イベント受信
-  ↓ serverControlSignal ← ServerRestart
-  gRPC サーバ停止 → 新 tls.Config でサーバ再起動
-  ↓ STATE_DB: TELEMETRY_CONNECTIONS は PrepareRedis() で全エントリ初期化
+PSUBSCRIBE "__keyspace@<configdb_id>__:TELEMETRY_CLIENT|*"
+  ↓ hset / hdel 通知を受信
+processTelemetryClientConfig(ctx, redisDb, key, op)
+  ↓ HGetAll で最新値を取得
+  ↓ Global → clientCfg 更新 → 全 destGroup クライアント再起動
+     DestinationGroup_* → gRPC 接続先を再構成
+     Subscription_* → push サブスクリプション再構成
 ```
 
-### channel PUBLISH 経路の有無
+`DialOutRun()` は起動時に `TELEMETRY_CLIENT|*` の全既存キーを `KEYS` コマンドで一括取得してから PSUBSCRIBE ループに入る (`dialout_client.go:706-715`)。初回スナップショット + 差分通知の 2 段構成。
 
-`GNMI|gnmi` テーブルへの書込みは `ConsumerStateTable`/`SubscriberStateTable` チャネルを経由しない。Redis `PUBLISH` は発生しない。したがって orchagent やその他のプロセスへの cascading notification は**発生しない**。
+### gNMI Subscribe RPC — DB データの keyspace 購読
 
-<!-- evidence: sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:19-98 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd); sonic-net/sonic-gnmi:telemetry/telemetry.go:434-476 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go:254-277 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/connection_manager.go:32-61 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22) -->
+`telemetry` は外部 gNMI クライアントからの **Subscribe RPC** を受けると、要求されたパス (例: `STATE_DB/PORT_TABLE/Ethernet0`) に対応する Redis DB へ `PSubscribe __keyspace@<N>__:<table>|<key>*` を張る。この購読は `GNMI|gnmi` テーブル自体ではなく、gNMI クライアントが監視したい任意の SONiC DB テーブルを対象とする (`sonic_data_client/db_client.go:1419-1447`)。
+
+| Subscribe モード | 実装 | キャッシュ更新トリガー |
+|----------------|------|-------------------|
+| `ON_CHANGE` | `dbTableKeySubscribe()` が `PSubscribe` を張り、keyspace 通知で差分をキュー送信 | Redis keyspace event |
+| `SAMPLE` | `streamSampleSubscription()` がポーリング間隔で `subscribeTableData2TypedValue()` を呼ぶ | タイマ (`time.Ticker`) |
+| `POLL` | `PollRun()` がクライアントの Poll メッセージ受信時に全パスを読み取り | クライアント要求 |
+| `ONCE` | `OnceRun()` が全パスを 1 回読み取って完了通知を送信 | 即時 1 回 |
+
+!!! note "GNMI|gnmi テーブルへの Subscribe は存在しない"
+    `GNMI|gnmi` / `GNMI|certs` テーブルを watch して設定変更を動的反映する仕組みは `sonic-gnmi` リポジトリ内に存在しない。変更の反映はコンテナ再起動のみ。
+
+<!-- evidence:
+  gnmi-native.sh:19-22 — sonic-cfggen -d -t telemetry_vars.j2 による 1 回読み取り
+  gnmi-native.sh:89-98 — sonic-db-cli による subtype / mgmtVrfEnabled inline 読み取り
+  telemetry.go:434-448 — fsnotify ウォッチャー作成 (証明書ファイル動的リロード)
+  gnmi_server/clientCertAuth.go:259-261 — ConfigDBConnector.Connect(false).Get_entry() (接続ごとポイントインタイム)
+  pkg/bypass/bypass.go:148-168 — IsAllowedSKU ConfigDBConnector.Get_entry() (RPC ごと)
+  gnmi_server/connection_manager.go:32-61 — PrepareRedis / HSet / HDel (STATE_DB 書込み専用)
+  dialout/dialout_client/dialout_client.go:646-745 — DialOutRun: TELEMETRY_CLIENT PSUBSCRIBE + 初回スナップショット
+  dialout/dialout_client/dialout_client.go:686 — pattern "__keyspace@<N>__:TELEMETRY_CLIENT|*"
+  sonic_data_client/db_client.go:1419-1447 — dbTableKeySubscribe: gNMI Subscribe RPC 用 PSubscribe
+  sonic_data_client/db_client.go:224-317 — StreamRun: ON_CHANGE / SAMPLE 分岐
+-->
 <!-- /pubsub -->
 
 <!-- ref-triangle:start -->
