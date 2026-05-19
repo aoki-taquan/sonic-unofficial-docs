@@ -338,6 +338,41 @@ YANG/スキーマ定義外の fallback。`linksync.cpp` および `portsorch.cpp
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込み (Phase F)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/cfgmgr/macsecmgr.cpp`
+> 中間調査: `meta/_intermediate/cdb-flow/state-db-port-side-effects.md`
+
+`STATE_DB PORT_TABLE|EthernetN` への SET/DEL は、購読プロセスが非同期に検出して下流 DB へ書き込む。書き込み瞬間に同期的な副次書き込みは発生しない。
+
+| トリガー操作 | 副次書込先 | 書込プロセス | 書込条件 |
+|---|---|---|---|
+| `PORT_TABLE\|EthernetN` SET (`admin_status` 変化) | `APPL_DB INTF_TABLE\|EthernetN.VID` `admin_status` | `intfmgrd` | `m_subIntfList` にサブインタフェースが登録済み (intfmgr.cpp:464–484) |
+| `PORT_TABLE\|EthernetN` SET (`mtu` 変化) | `APPL_DB INTF_TABLE\|EthernetN.VID` `mtu` | `intfmgrd` | `m_subIntfList` にサブインタフェースが登録済み (intfmgr.cpp:407–428) |
+| `PORT_TABLE\|EthernetN` SET (`state=ok`) | `APPL_DB INTF_TABLE\|EthernetN:PREFIX` SET | `intfmgrd` | CONFIG_DB `INTERFACE` にエントリが存在し `isIntfStateOk()` を通過 (intfmgr.cpp:686–695) |
+| `PORT_TABLE\|EthernetN` SET | `APPL_DB LAG_TABLE\|PortChannelN` SET | `teammgrd` | CONFIG_DB `PORTCHANNEL_MEMBER` に登録済み かつ MACsec 条件を通過 (teammgr.cpp:442–481) |
+| `PORT_TABLE\|EthernetN` SET (`supported_speeds` 変化) | `APPL_DB BUFFER_PG_TABLE` / `BUFFER_PROFILE_TABLE` | `buffermgrdyn` | `autoneg=true` かつ `cable_length` 設定済み かつ admin UP (buffermgrdyn.cpp:2240–2246) |
+
+### 主要な副次書き込み詳細
+
+**サブインタフェースへの admin_status / mtu 伝播 (intfmgr)**:
+`doPortTableTask()` が `STATE_DB PORT_TABLE|EthernetN` の `admin_status` / `mtu` フィールド変化を受信し、`updateSubIntfAdminStatus()` / `updateSubIntfMtu()` を経由して `APPL_DB INTF_TABLE|EthernetN.VID` を更新する。`mtu` は親ポート MTU とサブインタフェース設定 MTU の小さい方が採用される（継承設定時は `DEFAULT_MTU_STR = 9100` が基準値）。
+
+**LAG メンバー追加 (teammgr)**:
+`doPortUpdateTask()` が `PORT_TABLE|EthernetN` の SET を受信し `findPortMaster()` が LAG を返した場合、`teamdctl <lag> port add <member>` + `m_appLagTable.set(lag, fvs)` を呼び出す。MACsec が有効で `isMACsecIngressSAOk()` が false の場合は次の SET イベントまでスキップされる (teammgr.cpp:461–466)。
+
+**バッファプロファイル再計算 (buffermgrdyn)**:
+`handlePortStateTable()` が `supported_speeds` フィールド更新を受信し、autoneg 有効かつ実効速度が変化した場合、`refreshPgsForPort()` を呼び出して `APPL_DB BUFFER_PG_TABLE` および `APPL_DB BUFFER_PROFILE_TABLE` を書き直す。条件が揃わない場合は何も書かない。
+
+### 副次書き込みなし（直接）
+
+- **ASIC_DB**: PORT_TABLE への書き込みは ASIC_DB に直接波及しない。ASIC_DB への書き込みは PortsOrch が SAI 経由で独立して行う。
+- **COUNTERS_DB / FLEX_COUNTER_DB**: PORT_TABLE の SET/DEL はカウンタグループ設定を変更しない。
+- **STATE_DB（自テーブル以外）**: portsyncd / PortsOrch の PORT_TABLE 書き込みは他の STATE_DB テーブルへの直接副次書き込みを行わない。
+
+<!-- /side-effects -->
+
 ## 購読者（consumer）
 
 | プロセス | 参照フィールド | 用途 |
