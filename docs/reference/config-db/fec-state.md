@@ -382,6 +382,37 @@ FEC SET 成功時のみ `p.m_fec_cfg = true` をセットして `m_portList` を
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`PortsOrch` が `STATE_DB PORT_TABLE` の `fec` / `supported_fecs` を書込む際、その書込処理自体には他 DB への直接的な副次書込は存在しない。ただし FEC 設定フロー全体では以下の副次的な DB 書込みが発生する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-side-effects.md -->
+
+### 副次 DB 書込一覧
+
+| 副次 DB | テーブル / キー | 書込内容 | 書込主体 | 契機 | 根拠 |
+|---------|------------|---------|---------|-----|------|
+| APPL_DB | `PORT_TABLE:<port>` → `fec` | CONFIG_DB の `PORT.fec` 値をそのまま転写 | `portmgrd` | CONFIG_DB `PORT.fec` 変更時 | `portmgr.cpp:186-264` |
+| FLEX_COUNTER_DB | `PORT_PHY_ATTR:<port_oid>` | `SAI_PORT_ATTR_FEC_ALIGNMENT_LOCK` を含む phy attr ID リストを `set` | `PortsOrch::port_phy_attr_manager` (FlexCounterManager) | `postPortInit()` / ポート登録時 | `portsorch.cpp:4164-4166` |
+| COUNTERS_DB | `COUNTERS:<port_oid>` | `SAI_PORT_ATTR_FEC_ALIGNMENT_LOCK` の値（lane 別 FEC アライメントロック状態） | `syncd`（FLEX_COUNTER_DB ポーリング受け） | 10 秒間隔の定期ポーリング | `portsorch.cpp:229-234, 728-729` |
+| COUNTERS_DB | `COUNTERS:<port_oid>` | `SAI_PORT_STAT_IF_IN_FEC_SYMBOL_ERRORS` / `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0`〜`_S15` | `syncd`（FLEX_COUNTER_DB ポーリング受け） | 1 秒間隔の定期ポーリング | `portsorch.cpp:308-324, 727` |
+
+### APPL_DB への FEC 転写 (portmgrd)
+
+`portmgrd` は CONFIG_DB `PORT` テーブルの変更を購読し、`fec` を含む全フィールドを APPL_DB `PORT_TABLE:<port>` に書き写す (portmgr.cpp:186–264)。これは `show interfaces fec status` の **FEC Admin 列**として表示される値であり、STATE_DB の `fec` (oper) とは独立したフィールド。
+
+CONFIG_DB → portmgrd → APPL_DB の流れが完了した後、PortsOrch は APPL_DB `PORT_TABLE` の `fec` フィールドを読んで SAI に適用する。SAI 適用が成功してポートが UP になったとき、STATE_DB `PORT_TABLE` の `fec` フィールドに oper 値が書き込まれる。
+
+### FLEX_COUNTER_DB / COUNTERS_DB への FEC 関連書込
+
+`port_phy_attr_ids` (portsorch.cpp:229–234) には `SAI_PORT_ATTR_FEC_ALIGNMENT_LOCK` が含まれる。ポート初期化時に `port_phy_attr_manager.setCounterIdList()` を呼んで FLEX_COUNTER_DB に attr ID リストを登録し、`syncd` が定期ポーリングして COUNTERS_DB に値を格納する。FEC エラーカウンタ (`SAI_PORT_STAT_IF_IN_FEC_*`) も同様に `port_stat_manager` 経由で COUNTERS_DB に書き込まれる。これらは `show interfaces counters` 等で参照される。
+
+!!! note "PortsOrch 自身は COUNTERS_DB / FLEX_COUNTER_DB に FEC 関連データを直接書かない"
+    FEC oper 値 (`fec`) と対応 FEC モード一覧 (`supported_fecs`) の書込みは STATE_DB に閉じており、COUNTERS_DB / FLEX_COUNTER_DB への書込みは `syncd` が担う。APPL_DB への転写は `portmgrd` が担う。
+
+<!-- /side-effects -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`PORT` テーブル](port.md) — FEC の設定フィールド (`fec`)
