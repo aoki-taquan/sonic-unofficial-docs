@@ -290,6 +290,39 @@ YANG `sonic-scheduler.yang` の enum も同じ 2 値（`bytes` / `packets`）を
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/scheduler-orch-side-effects.md`
+
+`QosOrch::handleSchedulerTable()` の SET/DEL は APPL_DB・STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB への直接書き込みを行わない。副次書き込みは SAI API 経由の **ASIC_DB のみ** である。
+
+| 操作 | SAI API / 属性 | ASIC_DB 書込先 | 証跡 |
+|------|--------------|--------------|------|
+| SET（新規） | `sai_scheduler_api->create_scheduler()` | `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<new_oid>` 新規作成 | `qosorch.cpp:1460` |
+| SET（更新） | `sai_scheduler_api->set_scheduler_attribute()` | `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` 属性更新 | `qosorch.cpp:1446` |
+| DEL | `sai_scheduler_api->remove_scheduler()` | `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` 削除 | `qosorch.cpp:1490` |
+| QUEUE バインド（副次） | `sai_scheduler_group_api->set_scheduler_group_attribute(SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID)` | `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER_GROUP:<group_oid>` 属性更新 | `qosorch.cpp:1690–1695` |
+
+### QUEUE バインドによる副次書込
+
+SCHEDULER が作成されると、QUEUE テーブルの `scheduler` フィールドが当該 SCHEDULER 名を参照したタイミングで `handleQueueTable()` から `applySchedulerToQueueSchedulerGroup()` が呼ばれ、SCHEDULER_GROUP SAI オブジェクトのスケジューラプロファイル属性が更新される。
+
+```cpp
+// qosorch.cpp:1688–1695
+attr.id = SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID;
+attr.value.oid = scheduler_profile_id;
+sai_status = sai_scheduler_group_api->set_scheduler_group_attribute(group_id, &attr);
+```
+
+- QUEUE DEL 時は `scheduler_profile_id = SAI_NULL_OBJECT_ID` を渡してバインドを解除する。
+- VoQ モード (`gMySwitchType == "voq"`) でリモートシステムポート宛のキューの場合はスキップされる。
+
+!!! note "APPL_DB / STATE_DB への書き込みなし"
+    `handleSchedulerTable()` の SET/DEL パスに `ProducerStateTable`・`Table::set()` 等の DB 書き込み呼び出しは存在しない。SCHEDULER テーブルは純粋に SAI 経由で ASIC_DB に書き込む一方向の処理である。
+
+<!-- /side-effects -->
+
 ## YANG-実装 Discrepancy まとめ
 
 | フィールド | YANG 定義 | qosorch 実装 | 分類 |
