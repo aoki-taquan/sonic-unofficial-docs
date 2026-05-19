@@ -425,6 +425,81 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G — Redis PUBSUB / keyspace notification)
+
+STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込み・読み取りで使われる Redis 通信方式を整理する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-pubsub.md -->
+
+### syncd → PortsOrch: NotificationConsumer (SUBSCRIBE)
+
+`PortsOrch` は ASIC_DB の `NOTIFICATIONS` チャンネルを `NotificationConsumer` で購読し、syncd からの
+`port_state_change` イベントを受け取ることで `fec` フィールドの書込みをトリガーする。
+
+```
+SUBSCRIBE NOTIFICATIONS  (ASIC_DB)
+→ op="port_state_change"
+  ↓ status=SAI_PORT_OPER_STATUS_UP 確認
+  ↓ getPortOperFec → SAI_PORT_ATTR_OPER_PORT_FEC_MODE
+  ↓ updateDbPortOperFec(port, fec_str)
+STATE_DB PORT_TABLE|<port> → fec  (Table::set, TTL なし)
+```
+
+| 項目 | 値 |
+|------|----|
+| 購読チャンネル | `NOTIFICATIONS` (ASIC_DB) |
+| Consumer クラス | `NotificationConsumer` |
+| 通知方式 | Redis 通常 SUBSCRIBE |
+| 処理条件 | `allPortsReady()` が true のときのみ処理 (portsorch.cpp:9618) |
+
+!!! warning "初期化前の通知は破棄"
+    `allPortsReady()` が false の間に届いた `port_state_change` 通知は処理されず破棄される。
+    orchagent 起動直後の port oper-status UP イベントが lost event になるリスクがあるが、
+    cold boot では `refreshPortStatus()` が PortInitDone 後に代替ポーリングを行わないため、
+    初回 UP イベント到達まで `fec` フィールドは未書込み状態になりうる。
+
+### PortsOrch → STATE_DB: Table::set() (直接 HSET、非 ProducerStateTable)
+
+`updateDbPortOperFec()` と `initPortSupportedFecModes()` はどちらも `swss::Table::set()` を直接呼ぶ (portsorch.cpp:9868, 3318)。
+
+- **ProducerStateTable を使わない**: Lua スクリプト (`EVALSHA`) + `PUBLISH` の原子操作は発生しない
+- Redis `HSET` コマンドが直接発行される
+- **TTL なし**: `DEFAULT_DB_TTL = -1` のため `EXPIRE` は発行されない
+- **consumer への PUBLISH なし**: consumer は keyspace notification (`SubscriberStateTable`) または直接読取りで変化を検出する
+
+### intfutil → STATE_DB / APPL_DB: Table::get() (直接 HGET)
+
+`intfutil` は `db.get()` で STATE_DB / APPL_DB を直接読み取る。pub/sub 購読ではなくコマンド実行時点のスナップショット。
+
+| `show interfaces fec status` 列 | 参照 DB | 読み取り方式 | ソース |
+|-------------------------------|--------|------------|-------|
+| FEC Oper | STATE_DB `PORT_TABLE\|<port>` → `fec` | `db.get(STATE_DB, ...)` | intfutil:911 |
+| FEC Admin | APPL_DB `PORT_TABLE:<port>` → `fec` | `db.get(APPL_DB, ...)` | intfutil:910 |
+
+### 通信フロー全体図
+
+```
+SAI (port_state_change) → syncd
+  ↓ PUBLISH NOTIFICATIONS (ASIC_DB)
+PortsOrch::doTask(NotificationConsumer&)
+  ↓ status=UP → SAI SAI_PORT_ATTR_OPER_PORT_FEC_MODE
+  ↓ Table::set() (HSET 直接, TTL なし)
+STATE_DB[PORT_TABLE|Ethernet* → fec]
+
+SAI create_port() → postPortInit()
+  ↓ initPortSupportedFecModes()
+  ↓ SAI_PORT_ATTR_SUPPORTED_FEC_MODE
+  ↓ Table::set() (HSET 直接, lazy init 1 回)
+STATE_DB[PORT_TABLE|Ethernet* → supported_fecs]
+
+intfutil show interfaces fec status
+  ↓ db.get(STATE_DB, PORT_TABLE|<port>, fec)   ← FEC Oper
+  ↓ db.get(APPL_DB,  PORT_TABLE:<port>, fec)   ← FEC Admin
+```
+
+<!-- /pubsub -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`PORT` テーブル](port.md) — FEC の設定フィールド (`fec`)
