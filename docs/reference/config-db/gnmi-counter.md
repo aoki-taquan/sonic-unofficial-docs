@@ -271,6 +271,59 @@ excerpt: |
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/gnmi-counter-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/gnmi-counter-failure.md -->
+<!-- source: sonic-gnmi/common_utils/shareMem.go ref:master -->
+<!-- source: sonic-gnmi/common_utils/context.go ref:master -->
+<!-- source: sonic-gnmi/gnmi_dump/gnmi_dump.go ref:master -->
+<!-- source: sonic-gnmi/gnmi_server/server.go ref:master -->
+
+このページが扱う「カウンタ」はデータベーステーブルではなく SysV 共有メモリ（key=`7749`）に格納される。失敗モードの中心は `SetMemCounters` / `GetMemCounters` の syscall 失敗と、エラー戻り値の黙認にある。
+
+### SetMemCounters — エラー戻り値の無視
+
+`SetMemCounters` (`shareMem.go:21-36`) は `SYS_SHMGET` または `SYS_SHMAT` が失敗した場合に `error` を返す。しかし呼び出し元 `InitCounters` と `IncCounter`（いずれも `context.go`）はこの戻り値を**チェックしない**。
+
+```go
+// context.go:173-178 — InitCounters
+func InitCounters() {
+    for i := 0; i < int(COUNTER_SIZE); i++ {
+        globalCounters[i] = 0
+    }
+    SetMemCounters(&globalCounters)  // 戻り値を無視
+}
+
+// context.go:180-183 — IncCounter
+func IncCounter(cnt CounterType) {
+    atomic.AddUint64(&globalCounters[cnt], 1)
+    SetMemCounters(&globalCounters)  // 戻り値を無視
+}
+```
+
+### 失敗パターン別挙動
+
+| # | 失敗シナリオ | in-memory カウンタ | 共有メモリ | gnmi_dump 出力 | ログ出力 |
+|---|------------|-------------------|-----------|---------------|---------|
+| 1 | `telemetryd` 起動時 `shmget` 失敗（`ENOMEM` 等） | 0 にリセット済み | 未初期化のまま | `Error: Fail to read counters, ...` | なし（エラー無視） |
+| 2 | `IncCounter` 呼び出し時 `SYS_SHMGET` 失敗 | `atomic.Add` で正常増加 | SHM に反映されない（古い値のまま） | 古い値を表示 | なし（エラー無視） |
+| 3 | `telemetryd` 未起動で `gnmi_dump` 実行 | 対象外 | 未存在 | `Error: Fail to read counters, syscall error, err: ...` → exit 0 | なし |
+| 4 | `COUNTER_SIZE` 不一致（telemetryd と gnmi_dump のビルド不一致） | インデックスずれ（配列内なら panic なし） | 誤位置に書込み | 誤ったカウンタを出力 | panic の場合 Go ランタイムログ |
+
+### NewServer での初期化失敗
+
+`NewServer` (`server.go:528`) は `common_utils.InitCounters()` を呼ぶが、SHM 初期化が失敗しても `NewServer` はエラーを返さずサーバー起動を継続する。gRPC サービスは動作するがカウンタは共有メモリに書き込まれない。
+
+### gnmi_dump の終了コード
+
+`gnmi_dump` (`gnmi_dump.go:20-24`) は `GetMemCounters` 失敗時に `fmt.Printf("Error: Fail to read counters, ...")` を標準出力に出力して `return` する。**exit コードは 0** のままであり、シェルスクリプトによる失敗検知には明示的な出力文字列チェックが必要。
+
+### STATE_DB / CONFIG_DB への影響
+
+カウンタはすべて SysV 共有メモリに格納される。失敗時も STATE_DB / CONFIG_DB / APPL_DB への書込は発生しない。エラーログも `SWSS_LOG_ERROR` ではなく Go の `fmt.Errorf` のみで、syslog には記録されない。
+<!-- /failure -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
