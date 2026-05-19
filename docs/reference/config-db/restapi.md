@@ -457,4 +457,47 @@ RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`RESTAPI` テーブルへの書込は CONFIG_DB 内で完結し、他の DB (APPL_DB / STATE_DB / ASIC_DB) への副次書込を**引き起こさない**。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/restapi-side-effects.md`
+
+<!-- evidence:
+  sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh:13-66
+  sonic-host-services/scripts/hostcfgd:103
+  sonic-buildimage/dockers/docker-sonic-mgmt-framework/supervisord.conf:39-47
+-->
+
+### 一括読み取りモデル（subscribe なし）
+
+`rest-server.sh` は起動時に `sonic-cfggen -d -t $MGMT_VARS_FILE` を **一度だけ** 実行し、`RESTAPI|config` と `DEVICE_METADATA|x509` の値を取得して `rest_server` プロセスの起動引数に組み込む (`rest-server.sh:13`)。
+
+起動後は CONFIG_DB を購読せず、`RESTAPI` テーブルの変更は実行中の `rest_server` には届かない。設定変更を反映するにはコンテナ再起動（`config reload` または `systemctl restart docker-sonic-mgmt-framework`）が必要。
+
+### 副次書込先サマリ
+
+| 副次書込先 | 書込の有無 | 理由 |
+|-----------|-----------|------|
+| APPL_DB | なし | `rest-server.sh` は起動時一括読み取りのみ。Consumer / subscribe なし |
+| STATE_DB | なし | `RESTAPI` テーブルを購読するデーモンなし |
+| ASIC_DB | なし | SAI 非経由 |
+| ファイルシステム | なし | 設定値は起動引数として適用されるのみ |
+
+### FIPS 変更による間接的なサービス再起動（参考）
+
+`hostcfgd` は FIPS 設定 (`FIPS_CFG` テーブル) 変更時に `DEFAULT_FIPS_RESTART_SERVICES` (`hostcfgd:103`) に列挙されたサービスを再起動する。このリストに `restapi` が含まれるため、FIPS 変更が `restapi` サービスの再起動を引き起こす。ただしこれは **`RESTAPI` テーブル変更が引き起こす副次処理ではなく**、`FIPS_CFG` 変更を受けた `hostcfgd` が副次的に `restapi` サービスを再起動するフローである。
+
+```
+FIPS_CFG (SET/DEL)
+  └─ hostcfgd fips_handler()
+       └─ systemctl restart restapi    ← RESTAPI テーブル変更とは無関係
+            └─ rest-server.sh が CONFIG_DB を再読み取り (起動時一括)
+```
+
+`RESTAPI` テーブル変更から `rest-server` に変更を反映させるには、このフローを経由せず手動でサービス再起動する必要がある。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: d5320e852f7a -->

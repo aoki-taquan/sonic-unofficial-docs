@@ -472,6 +472,61 @@ gRPC RPC 受信
 詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+gNMI 内部カウンタは SysV 共有メモリ（key=`7749`）に格納されるため、SAI capability の有無に依存するプラットフォーム差はない。ただし **`GNMI_SET_BYPASS` カウンタ**は特定の Cisco HwSku 専用であり、SmartSwitch/DPU 環境ではカウント集計の分離に注意が必要である。
+
+### GNMI_SET_BYPASS — Cisco 専用バイパス経路
+
+`pkg/bypass/bypass.go:33-36` の `AllowedSKUPrefixes` にハードコードされた HwSku のみで `GNMI_SET_BYPASS` が増分される:
+
+```go
+var AllowedSKUPrefixes = []string{
+    "Cisco-8102",
+    "Cisco-8101",
+    "Cisco-8223",
+}
+```
+
+`ShouldBypass()` (`bypass.go:83-98`) は以下の 3 条件が**すべて**真の場合のみバイパス経路に進み、`GNMI_SET_BYPASS` を増分する:
+
+| 条件 | チェック内容 |
+|------|------------|
+| gRPC メタデータ | `x-sonic-ss-bypass-validation: true` が存在 |
+| HwSku 前方一致 | `DEVICE_METADATA\|localhost.hwsku` が `AllowedSKUPrefixes` に前方一致 |
+| 操作テーブル | `VNET` / `VNET_ROUTE_TUNNEL` / `VLAN_SUB_INTERFACE` / `ACL_RULE` / `BGP_PEER_RANGE` |
+
+Broadcom / Mellanox / Marvell / Barefoot 系 HwSku ではバイパス条件を満たさないため `GNMI_SET_BYPASS` は **常に 0**。
+
+### SmartSwitch / DPU 環境
+
+`pkg/interceptors/setup.go` に DPU プロキシインターセプターが登録されており、gRPC メタデータ `x-sonic-target-type: dpu` があれば NPU 側の `telemetryd` が RPC を DPU 側 gNMI サーバーに転送する。
+
+| 観点 | 挙動 |
+|------|------|
+| NPU 側 gnmi_dump | NPU telemetryd が受け取った RPC のみ計上。DPU に転送された RPC も `GNMI_GET` / `GNMI_SET` が NPU 側で増分されてから転送される |
+| DPU 側カウンタ | DPU 上の独立した telemetryd が持つ SHM（key=`7749`）に格納される。NPU 側 `gnmi_dump` では **集計されない** |
+| `dpuproxy` パッケージ内 | `IncCounter` 呼び出しは 0 件 (`pkg/interceptors/dpuproxy/` 全体) |
+
+SmartSwitch 構成では NPU + 各 DPU それぞれで `gnmi_dump` を実行しないと全体の RPC 集計が得られない。
+
+### VS / テストシミュレーター
+
+VS (libsaivs) 環境では `DEVICE_METADATA|localhost.hwsku` が非 Cisco 値（例: `Force10-S6000`）となるため `checkSKU()` は常に `false` を返し、`GNMI_SET_BYPASS` は発生しない。SysV 共有メモリ自体は Linux カーネルが提供するため VS 上でも正常動作する。
+
+### プラットフォーム別カウンタ挙動まとめ
+
+| プラットフォーム | `GNMI_SET_BYPASS` | DPU カウンタ分離 | 共有メモリ |
+|----------------|-------------------|----------------|-----------|
+| Cisco-8102 / 8101 / 8223 | **発生あり**（バイパス条件充足時） | N/A | 正常 |
+| Broadcom / Mellanox 等 | 常に 0 | N/A | 正常 |
+| SmartSwitch (NPU 側) | HwSku 依存 | DPU 側は別 SHM | 正常 |
+| VS / シミュレーター | 常に 0 | N/A | 正常 |
+
+詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-platform.md` を参照。
+<!-- /platform -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
