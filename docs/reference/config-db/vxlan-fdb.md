@@ -198,7 +198,7 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 
 <!-- /cross-refs -->
 
-<!-- failure-behavior -->
+<!-- failure -->
 ## 失敗挙動 (Phase D)
 
 > 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-failure.md`
@@ -244,7 +244,7 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 !!! note "`VXLAN_FDB_TABLE` に失敗ステータスは書かれない"
     orchagent は `VXLAN_FDB_TABLE` の失敗を STATE_DB / ERROR_TABLE には記録しない。失敗は `SWSS_LOG_*` 経由でのみ `/var/log/swss/orchagent.log` に出力される。エントリの存否は `sonic-db-cli APPL_DB keys 'VXLAN_FDB_TABLE:*'` または `show vxlan remotemac` で確認する。
 
-<!-- /failure-behavior -->
+<!-- /failure -->
 
 ## 例外条件・特殊挙動
 
