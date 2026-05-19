@@ -427,6 +427,49 @@ HLD および `eventd.cpp` の定数から導出する[^1][^3]。
 > **注意**: 上記 2 値は `eventd.cpp` 内にマクロ定数として定義されておらず、HLD ドキュメントのみに出現する。実装が HLD から乖離している可能性がある（`verification: hld-only`）。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+EventDB service (`eventd` 内の event_consumer + alarm_consumer) が `/etc/evprofile/default.json` の内容をもとにイベントを処理した際の副次 DB 書込みを示す。
+
+### DB 書込み一覧
+
+| DB | テーブル | 書込有無 | 根拠 |
+|----|---------|---------|------|
+| `EVENT_DB` (index 19) | `EVENT` | **あり** | 受信イベント (`enable=true`) ごとにシーケンス ID を採番して書込み。`no-of-records`/`no-of-days` 上限超過で古いエントリをローテーション (HLD section 3.1.2) |
+| `EVENT_DB` (index 19) | `ALARM` | **あり** | `action=RAISE_ALARM` でエントリ追加、`CLEAR_ALARM` で削除。`ACK_ALARM`/`UNACK_ALARM` で `acknowledged` フラグと `acknowledge_time` を更新 (HLD section 3.1.3) |
+| `EVENT_DB` (index 19) | `EVENT_STATS` | **あり** | イベント累計統計カウンタ (HLD section 3.1.4) |
+| `EVENT_DB` (index 19) | `ALARM_STATS` | **あり** | severity 別アクティブアラーム数 (`critical`/`major`/`minor`/`warning`/`acknowledged`)。RAISE/CLEAR/ACK/UNACK ごとに増減 (HLD section 3.1.3) |
+| `COUNTERS_DB` | `COUNTERS_EVENTS` | **あり（定期）** | `stats_collector::run_writer()` が最大 10 ms 毎に発行済み・キャッシュ損失カウンタを書込み (`eventd.cpp:198-210`)。`event-publisher.md` の Phase F と共通の書込みパス |
+| `CONFIG_DB` | — | なし | eventd はファイル直接読み。CONFIG_DB アクセスなし |
+| `APPL_DB` | — | なし | 書込みパスなし |
+| `STATE_DB` | — | なし | 書込みパスなし |
+| `ASIC_DB` | — | なし | SAI 非経由 |
+
+### ALARM_STATS → pmon LED 制御（副次購読）
+
+`pmon` コンテナが `ALARM_STATS` テーブルを購読し、アクティブアラームの severity に応じてシステム LED 色を決定する[^1]:
+
+| ALARM_STATS 状態 | LED 色 |
+|-----------------|--------|
+| `critical` または `major` > 0 | **Red** |
+| `minor` または `warning` > 0 かつ critical/major = 0 | **Amber** |
+| 全 severity = 0 | **Green** |
+
+この LED 制御は `evprofile` の設定が間接的に影響する副次作用であり、`severity=CRITICAL` のイベントを `enable=true` で定義するかどうかがシステム LED の挙動に直結する。
+
+### リブート時の EVENT_DB 書込み挙動
+
+| リブート種別 | EVENT テーブル | ALARM / ALARM_STATS |
+|------------|-------------|---------------------|
+| Cold reboot | **ディスク永続化あり** (再起動後に復元) | 消去（アプリが再 RAISE 必要） |
+| Warm reboot | **ディスク永続化あり** (ALARM/ALARM_STATS を除外) | 消去 |
+| Fast reboot | **ディスク永続化あり** (EVENT + EVENT_STATS) | 消去 |
+| Power reset | **ディスク永続化あり** (定期永続化 DB から復元) | 消去（永続化タイミング次第で一部損失の可能性あり） |
+
+(根拠: HLD section 4.1.1〜4.4[^1])
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. section 3.1.5 (Event Profile), 3.1.7 (Event Table and Alarm Table). <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>

@@ -242,71 +242,53 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 
 <!-- /failure -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`qosorch.h` および `qosorch.cpp` に直接定義されている文字列定数・enum 値・マップを一覧化する。CONFIG_DB フィールド名や許容値を正確に把握するための参照用。
+> 証跡: `meta/_intermediate/cdb-flow/scheduler-orch-constants.md`
 
-### フィールド名定数 (`qosorch.h` L44–53)
+### フィールド名定数 (qosorch.h)
 
-| C++ 定数名 | CONFIG_DB フィールド名 | 備考 |
-|-----------|----------------------|------|
-| `scheduler_algo_type_field_name` | `"type"` | スケジューリングアルゴリズム種別 |
-| `scheduler_weight_field_name` | `"weight"` | WRR/DWRR の重み値 (`uint8`) |
-| `scheduler_meter_type_field_name` | `"meter_type"` | メータータイプ (`packets` or `bytes`) |
-| `scheduler_min_bandwidth_rate_field_name` | `"cir"` | Committed Information Rate |
-| `scheduler_min_bandwidth_burst_rate_field_name` | `"cbs"` | Committed Burst Size |
-| `scheduler_max_bandwidth_rate_field_name` | `"pir"` | Peak Information Rate |
-| `scheduler_max_bandwidth_burst_rate_field_name` | `"pbs"` | Peak Burst Size |
+`handleSchedulerTable()` が CONFIG_DB フィールドを識別するために使用する文字列定数。YANG スキーマと一致している必要があるが、コード上の定数とスキーマは独立して管理されており、片方の変更がもう片方に自動反映されない点に注意する。
 
-### 参照フィールド名定数 (`qosorch.h` L22)
+| 定数名 | 値 | 定義 | 用途 |
+|--------|----|------|------|
+| `scheduler_algo_type_field_name` | `"type"` | `qosorch.h:44` | スケジューリングアルゴリズム種別フィールド識別子 |
+| `scheduler_algo_DWRR` | `"DWRR"` | `qosorch.h:45` | `type` フィールドの DWRR 値文字列 |
+| `scheduler_algo_WRR` | `"WRR"` | `qosorch.h:46` | `type` フィールドの WRR 値文字列 |
+| `scheduler_algo_STRICT` | `"STRICT"` | `qosorch.h:47` | `type` フィールドの STRICT 値文字列 |
+| `scheduler_weight_field_name` | `"weight"` | `qosorch.h:48` | スケジューリング重みフィールド識別子 |
+| `scheduler_meter_type_field_name` | `"meter_type"` | `qosorch.h:49` | メータタイプフィールド識別子 |
+| `scheduler_min_bandwidth_rate_field_name` | `"cir"` | `qosorch.h:50` | CIR (Committed Information Rate) フィールド識別子 |
+| `scheduler_min_bandwidth_burst_rate_field_name` | `"cbs"` | `qosorch.h:51` | CBS (Committed Burst Size) フィールド識別子 |
+| `scheduler_max_bandwidth_rate_field_name` | `"pir"` | `qosorch.h:52` | PIR (Peak Information Rate) フィールド識別子 |
+| `scheduler_max_bandwidth_burst_rate_field_name` | `"pbs"` | `qosorch.h:53` | PBS (Peak Burst Size) フィールド識別子 |
 
-| C++ 定数名 | 値 | 用途 |
-|-----------|----|------|
-| `scheduler_field_name` | `"scheduler"` | `QUEUE` テーブルの SCHEDULER 参照フィールド名 (`qos_to_ref_table_map` に登録) |
+### meter_type 許容値マップ (qosorch.cpp)
 
-### `type` フィールド許容値定数 (`qosorch.h` L45–47)
-
-| C++ 定数名 | 文字列値 | SAI マッピング |
-|-----------|---------|--------------|
-| `scheduler_algo_DWRR` | `"DWRR"` | `SAI_SCHEDULING_TYPE_DWRR` |
-| `scheduler_algo_WRR` | `"WRR"` | `SAI_SCHEDULING_TYPE_WRR` |
-| `scheduler_algo_STRICT` | `"STRICT"` | `SAI_SCHEDULING_TYPE_STRICT` |
-
-上記 3 値以外は `task_invalid_entry` を返しエントリ全体が破棄される（`qosorch.cpp:1393-1396`）。
-
-### `meter_type` フィールド許容値マップ (`qosorch.cpp` L75–78)
+`scheduler_meter_map` は `"packets"` と `"bytes"` の 2 値のみを保持する。これ以外の値に対しては `std::map::at()` が `std::out_of_range` 例外を送出し、orchagent がクラッシュする（Phase D 参照）。
 
 ```cpp
+// qosorch.cpp L75–78
 map<string, sai_meter_type_t> scheduler_meter_map = {
     {"packets", SAI_METER_TYPE_PACKETS},
     {"bytes",   SAI_METER_TYPE_BYTES}
 };
 ```
 
-`"packets"` / `"bytes"` 以外の値を渡すと `std::map::at()` が `std::out_of_range` 例外をスローし **orchagent がクラッシュ**する（`qosorch.cpp:1407`）。
+YANG `sonic-scheduler.yang` の enum も同じ 2 値（`bytes` / `packets`）を定義しており、通常経路では CONFIG_DB バリデーション済みの値のみが到達する。`sonic-db-cli` 等で直接投入する場合のみリスクが顕在化する。
 
-### SAI 属性 ID マッピング (`qosorch.cpp` L1380–1432)
+### 型変換の暗黙的な制約
 
-| フィールド | SAI 属性 ID |
-|-----------|-----------|
-| `type` | `SAI_SCHEDULER_ATTR_SCHEDULING_TYPE` |
-| `weight` | `SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT` |
-| `meter_type` | `SAI_SCHEDULER_ATTR_METER_TYPE` |
-| `cir` | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE` |
-| `cbs` | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_BURST_RATE` |
-| `pir` | `SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_RATE` |
-| `pbs` | `SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_BURST_RATE` |
+| フィールド | 変換関数 | 暗黙的な制約 | 異常入力時の挙動 |
+|-----------|----------|------------|----------------|
+| `weight` | `(uint8_t)stoi(fvValue(*i))` | 数値文字列, 1〜255 範囲（YANG `range "1..100"` は未検証） | `stoi()` 失敗時は `std::invalid_argument` → orchagent クラッシュ |
+| `cir` / `cbs` / `pir` / `pbs` | `stoull(fvValue(*i))` | 数値文字列, 非負整数 | `stoull()` 失敗時は `std::invalid_argument` → orchagent クラッシュ |
 
-### テーブル名定数
+!!! note "`priority` フィールドの定数欠如"
+    YANG `sonic-scheduler.yang` に `leaf priority { type uint8 { range "0..9"; } }` が定義されているが、`qosorch.h` に対応する定数 `scheduler_priority_field_name` は存在しない。`handleSchedulerTable()` の if-else チェーンにも `priority` の処理分岐がないため、このフィールドは dead field となる（Phase A 参照）。
 
-| C++ マクロ | CONFIG_DB テーブル名 | ソース |
-|-----------|-------------------|-------|
-| `CFG_SCHEDULER_TABLE_NAME` | `"SCHEDULER"` | `sonic-swss-common/common/schema.h` (swsscommon) |
-
-`qos_to_ref_table_map` (`qosorch.cpp:99-116`) に `{scheduler_field_name, CFG_SCHEDULER_TABLE_NAME}` として登録され、`QUEUE` テーブルの `scheduler` フィールドの参照解決先テーブル名として使用される。
-
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 ## YANG-実装 Discrepancy まとめ
 
