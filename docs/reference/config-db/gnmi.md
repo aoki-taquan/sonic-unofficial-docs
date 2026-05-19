@@ -380,5 +380,100 @@ Go バイナリの `setupFlags()` が引数を検証し、不正な組み合わ�
 -->
 <!-- /failure -->
 
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+`telemetry` バイナリ (`telemetry.go`) および `gnmi-native.sh` 起動スクリプトに埋め込まれた固定値を整理する。これらは CONFIG_DB フィールドとは独立して動作し、設定変更なしに挙動に影響する。
+
+### 1. Unix ソケットパス (telemetry.go)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `unix_socket` デフォルト | `/var/run/gnmi/gnmi.sock` | TLS なしのローカル接続用 Unix ドメインソケットパス。空文字列を渡すと無効化される | `telemetry.go:175` |
+
+`unix_socket` は CONFIG_DB に対応フィールドがなく、`gnmi-native.sh` からも付与されない。つまり常にデフォルト `/var/run/gnmi/gnmi.sock` が使用される。同一コンテナ内の他プロセスはこのソケット経由で TLS なしに gNMI へ接続できる。
+
+---
+
+### 2. JWT 認証インターバル (telemetry.go)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `jwt_refresh_int` デフォルト | `900` 秒 (15 分) | JWT 有効期限切れ前にトークンをリフレッシュできる残り時間の閾値 | `telemetry.go:183` |
+| `jwt_valid_int` デフォルト | `3600` 秒 (1 時間) | JWT アクセストークンの有効期間 | `telemetry.go:184` |
+
+`JwtRefreshInt` / `JwtValidInt` は `gnmi_server/jwtAuth.go:17-18` で宣言されるパッケージグローバル変数に `telemetry.go:262-263` で代入される。CONFIG_DB には対応フィールドがなく、`gnmi-native.sh` からも設定されないため、常にデフォルト値が適用される。
+
+---
+
+### 3. 証明書シンボリックリンクパス (telemetry.go)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `ca_cert_lnk` デフォルト | `/keys/ca_cert.lnk` | CA 証明書シンボリックリンクパス (mTLS ローテーション用) | `telemetry.go:199` |
+| `server_cert_lnk` デフォルト | `/keys/server_cert.lnk` | サーバ証明書シンボリックリンクパス | `telemetry.go:200` |
+| `server_key_lnk` デフォルト | `/keys/server_key.lnk` | サーバ秘密鍵シンボリックリンクパス | `telemetry.go:201` |
+
+**自動上書きロジック**: `GNMI|certs.server_crt` が設定されている場合、`telemetry.go:306-310` でシンボリックリンクパスを `GNMI|certs.server_crt` と同一ディレクトリに自動変更する (`filepath.Dir(cfg.SrvCertFile)`)。デフォルト `/keys/` は証明書が `DEVICE_METADATA` 由来でディレクトリが `/keys/` である場合のみ有効。
+
+---
+
+### 4. gRPC メッセージサイズ制限 (telemetry.go)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `max_recv_msg_size` デフォルト | `4 * 1024 * 1024` = 4 MiB | gRPC サーバが受信できる最大メッセージサイズ | `telemetry.go:209` |
+| `max_send_msg_size` デフォルト | `4 * 1024 * 1024` = 4 MiB | gRPC サーバが送信できる最大メッセージサイズ | `telemetry.go:210` |
+
+CONFIG_DB に対応フィールドはなく、`gnmi-native.sh` からも設定されない。大量の Subscribe レスポンス (例: 全 BGP テーブル) を取得する場合、4 MiB を超えるメッセージはサイズ制限エラーになることがある。
+
+---
+
+### 5. gnmi-native.sh 固定環境変数・パス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `GRPC_GO_LOG_VERBOSITY_LEVEL` | `99` | gRPC-Go 内部ログ冗長度。99 = 最大詳細。`-logtostderr` と組み合わせでコンテナログに全 gRPC イベントを出力する | `gnmi-native.sh:26` |
+| `GRPC_GO_LOG_SEVERITY_LEVEL` | `info` | gRPC-Go ログ重要度フィルタ。`info` = INFO 以上を全出力 | `gnmi-native.sh:27` |
+| `CVL_SCHEMA_PATH` | `/usr/sbin/schema` | CVL (Config Validation Library) スキーマ読み込みパス。固定パスが設定されないと gNMI native write が CVL 検証失敗になる | `gnmi-native.sh:30` |
+| `TELEMETRY_VARS_FILE` | `/usr/share/sonic/templates/telemetry_vars.j2` | CONFIG_DB 読み込み用 Jinja2 テンプレートの固定パス。不在時は exit 1 で起動失敗 | `gnmi-native.sh:5` |
+| SmartSwitch ZMQ ポート | `8100` | `DEVICE_METADATA|localhost.subtype == "SmartSwitch"` のとき `--zmq_port=8100` を強制付与。固定値で上書き不可 | `gnmi-native.sh:91` |
+
+---
+
+### 6. その他 Go バイナリ固定定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `img_dir` デフォルト | `/tmp/host_tmp` | gNOI OS ダウンロード一時ディレクトリパス (OS アップグレード用) | `telemetry.go:195` |
+| `cert_crl_dir` デフォルト | `/mtls/crl` | CRL ファイル格納ディレクトリ (`--enable_crl` 有効時) | `telemetry.go:203` |
+| `grpc_meta` デフォルト | `/keys/grpc-version.json` | gRPC 証明書メタデータ JSON ファイルパス (certz 機能用) | `telemetry.go:204` |
+| `authz_meta` デフォルト | `/keys/authz-version.json` | 認可ポリシーメタデータ JSON ファイルパス | `telemetry.go:205` |
+| `authorization_policy_file` デフォルト | `/keys/authorization_policy.json` | 認可ポリシー JSON ファイルパス (`--authz_policy_enabled` 有効時) | `telemetry.go:207` |
+| `ENABLE_NATIVE_WRITE` | `false` (ビルドタグ `gnmi_native_write` 未指定時) | gNMI ネイティブ書込み機能の有効/無効。ビルド時に決定 | `gnmi_server/constants_native.go:5` |
+| `ENABLE_TRANSLIB_WRITE` | `false` (ビルドタグ `gnmi_translib_write` 未指定時) | gNMI translib 書込み機能の有効/無効。ビルド時に決定 | `gnmi_server/constants_translib.go:5` |
+
+!!! warning "ビルドタグによる書込み機能の有効化"
+    `ENABLE_NATIVE_WRITE` / `ENABLE_TRANSLIB_WRITE` はビルド時の Go ビルドタグ (`-tags gnmi_native_write`, `-tags gnmi_translib_write`) で制御される。SONiC コミュニティ master の標準ビルドではいずれも `false`。管理フレームワーク統合ビルドでは `gnmi_translib_write` タグが付与され、`ENABLE_TRANSLIB_WRITE = true` / デフォルト認証モード `password+jwt` が有効になる (`telemetry.go:219`)。
+
+<!-- evidence:
+  telemetry.go:175 — unix_socket "/var/run/gnmi/gnmi.sock" デフォルト
+  telemetry.go:183-184 — jwt_refresh_int=900, jwt_valid_int=3600 デフォルト
+  telemetry.go:195 — img_dir "/tmp/host_tmp" デフォルト
+  telemetry.go:199-201 — /keys/ シンボリックリンクパスデフォルト
+  telemetry.go:203-207 — cert_crl_dir, grpc_meta, authz_meta, authorization_policy_file デフォルト
+  telemetry.go:209-210 — max_recv_msg_size, max_send_msg_size 4*1024*1024
+  telemetry.go:262-263 — JwtRefreshInt, JwtValidInt 代入
+  telemetry.go:303-313 — /keys/ シンボリックリンク自動上書きロジック
+  gnmi-native.sh:5 — TELEMETRY_VARS_FILE 固定パス
+  gnmi-native.sh:26-27 — GRPC_GO_LOG_VERBOSITY_LEVEL=99, GRPC_GO_LOG_SEVERITY_LEVEL=info
+  gnmi-native.sh:30 — CVL_SCHEMA_PATH=/usr/sbin/schema
+  gnmi-native.sh:91 — SmartSwitch zmq_port=8100 固定値
+  gnmi_server/constants_native.go:5 — ENABLE_NATIVE_WRITE=false
+  gnmi_server/constants_translib.go:5 — ENABLE_TRANSLIB_WRITE=false
+  gnmi_server/jwtAuth.go:17-18 — JwtRefreshInt, JwtValidInt パッケージグローバル宣言
+-->
+<!-- /hardcoded-constants -->
+
 [^1]: `sonic-buildimage` `dockers/docker-sonic-gnmi/gnmi-native.sh` — ConfigDB → telemetry 引数変換ロジック全体
 [^2]: `sonic-gnmi` `gnmi_server/clientCertAuth.go:254-284` — `PopulateAuthStructByCommonName()` による GNMI_CLIENT_CERT 参照
