@@ -368,6 +368,51 @@ VXLAN_FDB_TABLE エントリ削除によって当該トンネルポートの FDB
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-pubsub.md`
+
+`VXLAN_FDB_TABLE` は APP_DB (dbId=0) に存在し、**書き込みは fdbsyncd の ProducerStateTable**、**消費は orchagent/FdbOrch の ConsumerStateTable** という非対称な構造を持つ。CONFIG_DB ベースのテーブルと異なり keyspace notification (PSUBSCRIBE) ではなく **PUBLISH/SUBSCRIBE チャネル**で通知される。
+
+### Producer/Consumer ペア
+
+| 区間 | 方向 | API | チャネル / テーブル | 根拠 |
+|------|-----|-----|------------------|------|
+| fdbsyncd → APP_DB | 書き込み | `ProducerStateTable` | `VXLAN_FDB_TABLE_CHANNEL@0` | `fdbsync.h:88, fdbsync.cpp:25,645,676` |
+| APP_DB → orchagent | 読み取り | `ConsumerStateTable` | `VXLAN_FDB_TABLE_CHANNEL@0` | `orchdaemon.cpp:228, orch.cpp:1194` |
+| ASIC_DB → orchagent | 逆通知 (FDB 学習) | `NotificationConsumer` | `NOTIFICATIONS` (ASIC_DB) | `fdborch.cpp:46-49` |
+| CLI / sonic-utilities → orchagent | フラッシュ指示 | `NotificationConsumer` | `FLUSHFDBREQUEST` (APP_DB) | `fdborch.cpp:41-43` |
+
+### 書き込み側 (fdbsyncd) — ProducerStateTable
+
+`FdbSync` クラスは `ProducerStateTable m_fdbTable` (`fdbsync.h:88`) を `pipelineAppDB` パイプライン上に保持し、`m_fdbTable.set(key, fvVector)` / `m_fdbTable.del(key)` でエントリを書き込む (`fdbsync.cpp:676, 645`)。`ProducerStateTable` は SET/DEL ごとに以下の 2 操作をアトミックに発行する:
+
+1. `HSET APPL_DB:VXLAN_FDB_TABLE|<key>` — フィールド値書き込み
+2. `PUBLISH VXLAN_FDB_TABLE_CHANNEL@0 <key>` — 購読者への即時通知
+
+warm-restart タイマー (120 秒) 中は直接 `m_fdbTable` への書き込みを抑制し、`AppRestartAssist::insertToMap()` でキャッシュに蓄積する (`fdbsync.cpp:641, 672`)。reconcile フェーズ完了後に差分のみを一括フラッシュする。
+
+### 読み取り側 (orchagent) — ConsumerStateTable
+
+`FdbOrch` は `Orch(applDbConnector, appFdbTables)` 基底クラス経由で `addConsumer()` を呼ぶ (`fdborch.cpp:29`)。`applDbConnector` は APP_DB (dbId=0) であり CONFIG_DB / STATE_DB ではないため、`Orch::addConsumer()` は **ConsumerStateTable** ブランチを選択する (`orch.cpp:1193-1195`)。
+
+| パラメータ | 値 | 根拠 |
+|-----------|-----|------|
+| 優先度 | `fdborch_pri = 20` | `fdborch.cpp:25` |
+| バッチサイズ | `gBatchSize` (デフォルト `0` → 実効値 30000) | `orch.cpp:17,913` |
+| SELECT_TIMEOUT | 1000 ms | `orchdaemon.cpp:23` |
+
+orchagent のメインループは 1000 ms タイムアウト付きブロッキング `select()` (`orchdaemon.cpp:959`) で待機し、`VXLAN_FDB_TABLE_CHANNEL@0` への PUBLISH で即座に `FdbOrch::doTask(Consumer&)` が呼び出される。
+
+### ASIC_DB 逆方向通知 (FDB_NOTIFICATIONS)
+
+FdbOrch はローカル MAC 学習・エージングイベントを ASIC_DB の `NOTIFICATIONS` チャネルから受け取る (`fdborch.cpp:46-49`)。このパスは ASIC → orchagent の一方向通知であり、`VXLAN_FDB_TABLE` への書き込みとは逆方向。VXLAN_FDB_TABLE への副作用はない（`FDB_ORIGIN_VXLAN_ADVERTIZED` エントリは STATE_DB:FDB_TABLE に書かれないため、ASIC FDB 通知でも STATE_DB は更新されない）。
+
+<!-- evidence: sonic-swss/fdbsyncd/fdbsync.h:88-90; sonic-swss/fdbsyncd/fdbsync.cpp:24-34,641,645,672,676; sonic-swss/orchagent/fdborch.cpp:25,27-49; sonic-swss/orchagent/orchdaemon.cpp:23,227-229,959; sonic-swss/orchagent/orch.cpp:17,913,1186-1196; sonic-swss-common/common/table.h:85,94 -->
+
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
