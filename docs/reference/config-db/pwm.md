@@ -365,6 +365,58 @@ APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チ�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/pwm-platform.md`  
+> 調査根拠: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 + `sonic-swss/orchagent/portsorch.cpp` watermark FlexCounter 設定部分精読 (2026-05-19)
+
+### `watermarkorch.cpp` 自体にプラットフォーム固有コードは存在しない
+
+`watermarkorch.cpp`（全 348 行）を精読した結果、以下の条件分岐は**一切存在しない**:
+
+| 確認項目 | 結果 |
+|---------|------|
+| `gMySwitchType` / `"voq"` 参照 | なし |
+| `platform` / `sub_platform` 文字列比較 | なし |
+| `MLNX_PLATFORM_SUBSTRING` 等の定数参照 | なし |
+| `isMlnxPlatform()` 等の helper 呼び出し | なし |
+| SAI capability クエリ | なし |
+
+WATERMARK_TABLE の interval 設定・タイマー制御・COUNTERS_DB ゼロクリアは全 ASIC ベンダーで同一コードを通る。
+
+### ASIC 依存として間接的に現れるプラットフォーム差
+
+#### SAI_QUEUE_TYPE_ALL キューの存在有無
+
+`init_queue_ids()`（`watermarkorch.cpp:298`）は COUNTERS_DB `COUNTERS_QUEUE_TYPE_MAP` から
+`SAI_QUEUE_TYPE_UNICAST` / `SAI_QUEUE_TYPE_MULTICAST` / `SAI_QUEUE_TYPE_ALL` に分類する。
+`SAI_QUEUE_TYPE_ALL` の存在は ASIC ベンダーに依存する:
+
+| ASIC 系統 | キュー型 | `m_all_queue_ids` の内容 |
+|----------|---------|------------------------|
+| Broadcom XGS / Mellanox | `SAI_QUEUE_TYPE_UNICAST` + `SAI_QUEUE_TYPE_MULTICAST` | 空（`Q_SHARED_ALL` クリアはノーオペレーション） |
+| Broadcom DNX (Jericho 系) | `SAI_QUEUE_TYPE_ALL` のみ | 全キューが登録される |
+
+`CLEAR_QUEUE_SHARED_ALL_REQUEST`（`"Q_SHARED_ALL"`）の `clearSingleWm()` は `m_all_queue_ids` が空の場合、ゼロ回ループで終了し、エラーログもなくサイレントにスキップされる（`watermarkorch.cpp:274-277`）。`SAI_QUEUE_TYPE_ALL` を持たない ASIC で `watermarkstat -c` を実行しても Q_SHARED_ALL のクリアは発生しない。
+
+#### FLEX_COUNTER READ_AND_CLEAR モード — ASIC 対応依存
+
+watermark FlexCounter グループは `STATS_MODE_READ_AND_CLEAR` で設定される（`portsorch.cpp:866-873`）。一部の ASIC は `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` に対するアトミックな READ_AND_CLEAR をサポートせず `SAI_STATUS_NOT_SUPPORTED` を返す。この場合、flexcounter は統計収集に失敗し COUNTERS_DB の watermark 値が更新されない。`WatermarkOrch` はこのエラーを検知せず、PERIODIC_WATERMARKS のゼロクリアは引き続き実行される（COUNTERS_DB への書き込みは発生するが、flexcounter が値を更新しないため意味がない）。
+
+#### VoQ モード — VoQ ユニキャストキューが収集対象外
+
+`watermarkorch.cpp` に `gMySwitchType` 参照はなく、VoQ モードでも同一コードを通る。しかし VoQ 環境では `SAI_QUEUE_TYPE_UNICAST_VOQ` が存在するが、`init_queue_ids()` の分類ロジックに `SAI_QUEUE_TYPE_UNICAST_VOQ` ブランチがない（`watermarkorch.cpp:303-325`）。PortsOrch がキュー型を `COUNTERS_QUEUE_TYPE_MAP` に書き込む際も VoQ ユニキャストキューは型文字列 `"SAI_QUEUE_TYPE_UNICAST_VOQ"` で登録されるため、`init_queue_ids()` のどの分岐にも該当せずスキップされる。**VoQ モードでは VoQ ユニキャストキューの watermark 収集が行われない**。
+
+### Lua プラグイン — ASIC 非依存
+
+`watermark_queue.lua` と `watermark_pg.lua` は ASIC ベンダーに関わらず同一スクリプトが登録される。Nvidia 固有の `nvda_port_trim_drop.lua` はポート trim 統計専用であり WatermarkOrch には無関係。
+
+!!! note "WATERMARK_TABLE 設定自体はプラットフォーム完全非依存"
+    `WATERMARK_TABLE|TELEMETRY_INTERVAL` の書き込みと `interval` フィールドの処理は全プラットフォームで同一。プラットフォーム差は SAI 層での統計収集（FlexCounter）とキュー型サポートの有無として現れ、WATERMARK_TABLE の設定処理には直接影響しない。
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
