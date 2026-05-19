@@ -315,6 +315,74 @@ sonic-db-cli CONFIG_DB hgetall 'SWITCH_HASH|GLOBAL'
 ```
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-constants.md`
+> ソース: `sonic-swss/orchagent/switch/switch_schema.h` L1-37、`switch_helper.cpp` L22-53
+
+### テーブルフィールド名定数 (switch_schema.h:25-37)
+
+`parseSwHash()` (`switch_helper.cpp:159-180`) が field 名マッチングに使用するマクロ:
+
+| マクロ名 | 値 |
+|---|---|
+| `SWITCH_HASH_ECMP_HASH` | `"ecmp_hash"` |
+| `SWITCH_HASH_LAG_HASH` | `"lag_hash"` |
+| `SWITCH_HASH_ECMP_HASH_ALGORITHM` | `"ecmp_hash_algorithm"` |
+| `SWITCH_HASH_LAG_HASH_ALGORITHM` | `"lag_hash_algorithm"` |
+
+これら 4 フィールド以外は `parseSwHash()` のマッチングに引っかからず、サイレントに無視される。
+
+### hash-field 有効値定数 (switch_schema.h:5-23)
+
+`swHashHashFieldMap` (`switch_helper.cpp:22-43`) がこれらを `sai_native_hash_field_t` にマッピング。19 値のみ有効:
+
+| マクロ名 | 値 | SAI enum |
+|---|---|---|
+| `SWITCH_HASH_FIELD_IN_PORT` | `"IN_PORT"` | `SAI_NATIVE_HASH_FIELD_IN_PORT` |
+| `SWITCH_HASH_FIELD_DST_MAC` | `"DST_MAC"` | `SAI_NATIVE_HASH_FIELD_DST_MAC` |
+| `SWITCH_HASH_FIELD_SRC_MAC` | `"SRC_MAC"` | `SAI_NATIVE_HASH_FIELD_SRC_MAC` |
+| `SWITCH_HASH_FIELD_ETHERTYPE` | `"ETHERTYPE"` | `SAI_NATIVE_HASH_FIELD_ETHERTYPE` |
+| `SWITCH_HASH_FIELD_VLAN_ID` | `"VLAN_ID"` | `SAI_NATIVE_HASH_FIELD_VLAN_ID` |
+| `SWITCH_HASH_FIELD_IP_PROTOCOL` | `"IP_PROTOCOL"` | `SAI_NATIVE_HASH_FIELD_IP_PROTOCOL` |
+| `SWITCH_HASH_FIELD_DST_IP` | `"DST_IP"` | `SAI_NATIVE_HASH_FIELD_DST_IP` |
+| `SWITCH_HASH_FIELD_SRC_IP` | `"SRC_IP"` | `SAI_NATIVE_HASH_FIELD_SRC_IP` |
+| `SWITCH_HASH_FIELD_L4_DST_PORT` | `"L4_DST_PORT"` | `SAI_NATIVE_HASH_FIELD_L4_DST_PORT` |
+| `SWITCH_HASH_FIELD_L4_SRC_PORT` | `"L4_SRC_PORT"` | `SAI_NATIVE_HASH_FIELD_L4_SRC_PORT` |
+| `SWITCH_HASH_FIELD_INNER_DST_MAC` | `"INNER_DST_MAC"` | `SAI_NATIVE_HASH_FIELD_INNER_DST_MAC` |
+| `SWITCH_HASH_FIELD_INNER_SRC_MAC` | `"INNER_SRC_MAC"` | `SAI_NATIVE_HASH_FIELD_INNER_SRC_MAC` |
+| `SWITCH_HASH_FIELD_INNER_ETHERTYPE` | `"INNER_ETHERTYPE"` | `SAI_NATIVE_HASH_FIELD_INNER_ETHERTYPE` |
+| `SWITCH_HASH_FIELD_INNER_IP_PROTOCOL` | `"INNER_IP_PROTOCOL"` | `SAI_NATIVE_HASH_FIELD_INNER_IP_PROTOCOL` |
+| `SWITCH_HASH_FIELD_INNER_DST_IP` | `"INNER_DST_IP"` | `SAI_NATIVE_HASH_FIELD_INNER_DST_IP` |
+| `SWITCH_HASH_FIELD_INNER_SRC_IP` | `"INNER_SRC_IP"` | `SAI_NATIVE_HASH_FIELD_INNER_SRC_IP` |
+| `SWITCH_HASH_FIELD_INNER_L4_DST_PORT` | `"INNER_L4_DST_PORT"` | `SAI_NATIVE_HASH_FIELD_INNER_L4_DST_PORT` |
+| `SWITCH_HASH_FIELD_INNER_L4_SRC_PORT` | `"INNER_L4_SRC_PORT"` | `SAI_NATIVE_HASH_FIELD_INNER_L4_SRC_PORT` |
+| `SWITCH_HASH_FIELD_IPV6_FLOW_LABEL` | `"IPV6_FLOW_LABEL"` | `SAI_NATIVE_HASH_FIELD_IPV6_FLOW_LABEL` |
+
+この 19 値以外の文字列が `ecmp_hash` / `lag_hash` leaf-list に含まれると `parseSwHashFieldList()` のルックアップが失敗し、`LOG_ERROR` → erase される。
+
+### hash-algorithm 有効値定数 (switch_schema.h:28-34)
+
+`swHashAlgorithmMap` (`switch_helper.cpp:45-53`) がこれらを `sai_hash_algorithm_t` にマッピング。7 値のみ有効:
+
+| マクロ名 | 値 | SAI enum |
+|---|---|---|
+| `SWITCH_HASH_ALGORITHM_CRC` | `"CRC"` | `SAI_HASH_ALGORITHM_CRC` |
+| `SWITCH_HASH_ALGORITHM_XOR` | `"XOR"` | `SAI_HASH_ALGORITHM_XOR` |
+| `SWITCH_HASH_ALGORITHM_RANDOM` | `"RANDOM"` | `SAI_HASH_ALGORITHM_RANDOM` |
+| `SWITCH_HASH_ALGORITHM_CRC_32LO` | `"CRC_32LO"` | `SAI_HASH_ALGORITHM_CRC_32LO` |
+| `SWITCH_HASH_ALGORITHM_CRC_32HI` | `"CRC_32HI"` | `SAI_HASH_ALGORITHM_CRC_32HI` |
+| `SWITCH_HASH_ALGORITHM_CRC_CCITT` | `"CRC_CCITT"` | `SAI_HASH_ALGORITHM_CRC_CCITT` |
+| `SWITCH_HASH_ALGORITHM_CRC_XOR` | `"CRC_XOR"` | `SAI_HASH_ALGORITHM_CRC_XOR` |
+
+YANG の `sonic-types.yang` で定義された `hash-algorithm` typedef の列挙値と完全一致する。
+
+!!! note "YANG と lookup map の整合性"
+    `sonic-hash.yang` の `ecmp_hash_algorithm` / `lag_hash_algorithm` フィールドの型は `stypes:hash-algorithm` で、`switch_schema.h` のマクロ値と一致している。YANG バリデーション段階で無効値は弾かれるが、orchagent コードも独自に `swHashAlgorithmMap` で再チェックするため、二重ガードになっている。
+
+<!-- /constants -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
