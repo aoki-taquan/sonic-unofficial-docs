@@ -497,6 +497,78 @@ CONFIG_DB 以外の永続 DB への書き込みは **発生しない**。
 
 <!-- /side-effects -->
 
+---
+
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 書き込み側の通信構造
+
+`CONFIG_DB` の `STP_PORT` テーブルへの書き込み元は **SONiC CLI (`config/stp.py`)** のみ。`ProducerStateTable` / ZMQ は使用されず、click フレームワーク経由で CONFIG_DB に直接書き込まれる。
+
+| テーブル | 書き込み元 | 書き込み方式 |
+|---------|-----------|------------|
+| `STP_PORT` (CONFIG_DB) | SONiC CLI (`config/stp.py`) | CONFIG_DB 直接書き込み |
+
+### 購読方式: SubscriberStateTable (keyspace PSUBSCRIBE)
+
+`StpMgr` は `Orch(tables)` コンストラクタ経由で `STP_PORT` テーブルを購読する。`Orch::Orch(const vector<TableConnector>& tables)` が各 `TableConnector` に対して `addConsumer()` を呼び (`orchagent/orch.cpp:127-133`)、内部で `SubscriberStateTable` を生成する (`orchagent/orch.cpp:1190`):
+
+```cpp
+// orchagent/orch.cpp:1190
+addExecutor(new Consumer(
+    new SubscriberStateTable(db, tableName,
+        TableConsumable::DEFAULT_POP_BATCH_SIZE, pri),
+    this, tableName));
+```
+
+`SubscriberStateTable` は Redis keyspace notification を PSUBSCRIBE する (`subscriberstatetable.cpp:20-24`):
+
+```cpp
+m_keyspace = "__keyspace@";
+m_keyspace += to_string(db->getDbId()) + "__:" + tableName + m_table.getTableNameSeparator() + "*";
+psubscribe(m_db, m_keyspace);
+```
+
+CONFIG_DB は DB ID = 4 (`schema.h:16`)、テーブルセパレータは `"|"` のため、実際の PSUBSCRIBE パターンは `__keyspace@4__:STP_PORT|*` となる。
+
+### stpmgrd の主ループ
+
+`stpmgrd.cpp:46` で `TableConnector conf_stp_port_table(&conf_db, CFG_STP_PORT_TABLE_NAME)` を生成し `StpMgr` に渡す。主ループの SELECT_TIMEOUT は **1000 ms** (`stpmgrd.cpp:17`)。タイムアウト時は `stpmgr.doTask()` を直接呼んでキューに残ったエントリを再処理する:
+
+```
+CONFIG_DB: CLI が STP_PORT|<interface> を書き込む
+  → SubscriberStateTable: PSUBSCRIBE __keyspace@4__:STP_PORT|* で通知受信
+  → stpmgrd 主ループ: s.select(&sel, SELECT_TIMEOUT=1000ms)
+  → Executor::execute() → StpMgr::doTask() → doStpPortTask()
+      stpGlobalTask チェック → isLagEmpty チェック → l2ProtoEnabled チェック
+      → processStpPortAttr() → sendMsgStpd(STP_PORT_CONFIG)  (stpd へ IPC)
+```
+
+### doStpPortTask の処理順序と保留条件
+
+`StpMgr::doStpPortTask()` (`stpmgr.cpp:630-677`) は以下の順に処理する:
+
+1. `stpGlobalTask == false` → 即 `return`（STP グローバル設定の先行が必要）
+2. `isLagEmpty(key)` → `erase(it)` で破棄（LAG が空）
+3. SET 操作かつ `l2ProtoEnabled == L2_NONE` → `++it` で保留（STP 未有効化の間キューに残留）
+4. DEL 操作かつ `l2ProtoEnabled == L2_NONE` → `erase(it)` で破棄
+5. それ以外 → `processStpPortAttr()` → `sendMsgStpd(STP_PORT_CONFIG)` で stpd へ IPC 送信 → `erase(it)`
+
+保留エントリは次の SELECT_TIMEOUT 発火 (`stpmgrd.cpp:103`) で `stpmgr.doTask()` が呼ばれる際に再処理される。
+
+### 主なパラメータ
+
+| パラメータ | 値 | ソース |
+|-----------|-----|--------|
+| CONFIG_DB ID | `4` | `schema.h:16` |
+| PSUBSCRIBE パターン | `__keyspace@4__:STP_PORT\|*` | `subscriberstatetable.cpp:20-24` |
+| SELECT_TIMEOUT | `1000` ms | `stpmgrd.cpp:17` |
+| DEFAULT_POP_BATCH_SIZE | `128` | `common/table.h:164` |
+
+> 調査証跡: `meta/_intermediate/cdb-flow/stp-port-pubsub.md`
+<!-- /pubsub -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | フィールド | 内容 |
