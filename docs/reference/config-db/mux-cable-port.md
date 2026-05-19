@@ -215,6 +215,53 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-failure.md`
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:2202-2290,2394-2415; sonic-linkmgrd/src/DbInterface.cpp:990-1001; sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:295-320,660-718 -->
+
+`MuxOrch::handleMuxCfg()` (`muxorch.cpp:2202`) を全行調査した。エラーパターンは **即消費（retry なし）**、**永続 retry ループ**、**自動回復あり** の 3 種に分類される。
+
+### SET 操作の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| `server_ipv4` または `server_ipv6` フィールド欠落 | `muxorch.cpp:2206-2207` — `getAttrIpPrefix()` が `std::out_of_range` をスロー | 例外が上位まで伝播しエントリ erase → **破棄** | なし（再投入が必要） |
+| `neighbor_mode` を既存 mux ポートで変更しようとした | `muxorch.cpp:2258-2266` — `SWSS_LOG_ERROR("Neighbor mode change is not allowed")` | `return false` でリトライキューへ保留 → **永続 retry ループ** | 永続（DEL+再 SET が必要） |
+| `PEER_SWITCH` エントリが未設定 | `muxorch.cpp:2271-2274` — `mux_peer_switch_.isZero()` が true | `return false` でリトライキューへ保留 → **自動回復** | `PEER_SWITCH` SET 後の次ループで自動処理 |
+| すでに登録済みポートへの重複 SET | `muxorch.cpp:2254-2257` — `isMuxExists()` が true | `return true` でエントリ消費（no-op）。SAI/STATE_DB 変更なし | なし |
+
+### DEL 操作の挙動
+
+| ケース | 発生箇所 | 挙動 |
+|--------|---------|------|
+| 未登録ポートへの DEL | `muxorch.cpp` — `mux_cable_tb_` にキーが存在しない | `SWSS_LOG_NOTICE` + `return true`（no-op 正常終了） |
+| 登録済みポートへの DEL | `muxorch.cpp` | `mux_cable_tb_.erase()` + STATE_DB `MUX_CABLE_TABLE` クリア。正常完了 |
+
+### linkmgrd — state フィールド欠落
+
+| 失敗ケース | 発生箇所 | 挙動 |
+|---|---|---|
+| `state` フィールドが `MUX_CABLE` エントリに存在しない | `DbInterface.cpp:996` | `MUXLOGERROR` を出力しポートを初期化マップから除外。SubscriberStateTable で再通知されるまで未初期化のまま |
+
+### ycabled — silent skip
+
+| 失敗ケース | 発生箇所 | 挙動 |
+|---|---|---|
+| `state` フィールド欠落 | `y_cable_helper.py:319` | `(False, None)` を返す → gRPC セットアップ未実施。ログ出力なし（silent skip） |
+| `soc_ipv4` フィールド欠落（active-active ポート） | `y_cable_helper.py:672` | gRPC チャネルセットアップをスキップ。ログ出力なし（silent skip） |
+
+### ログ・ERROR_TABLE
+
+- orchagent エラーは `SWSS_LOG_ERROR` / `SWSS_LOG_INFO` で `/var/log/swss/orchagent.log` にのみ出力される。
+- STATE_DB / `ERROR_TABLE` への書き込みは**行われない**。
+- linkmgrd エラーは `/var/log/linkmgrd/linkmgrd.log` に `MUXLOGERROR` レベルで出力される。
+- ycabled の silent skip はログが出力されないため、`show mux status` で状態を確認する必要がある。
+
+<!-- /failure -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
