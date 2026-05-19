@@ -315,6 +315,52 @@ sonic-db-cli CONFIG_DB hgetall 'SWITCH_HASH|GLOBAL'
 ```
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-constants.md`
+
+`SWITCH_HASH` を消費する `SwitchOrch` と capability 管理層 (`switch_capabilities.cpp`) に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) に格納されないハードコード定数の一覧。
+
+### 1. フィールド名・アルゴリズム名文字列定数 (`switch_schema.h`)
+
+| 定数 | 値 | 用途 | evidence |
+|------|----|----|---------|
+| `SWITCH_HASH_ECMP_HASH` | `"ecmp_hash"` | CONFIG_DB フィールド名 | `sonic-swss/orchagent/switch/switch_schema.h:25` |
+| `SWITCH_HASH_LAG_HASH` | `"lag_hash"` | CONFIG_DB フィールド名 | `sonic-swss/orchagent/switch/switch_schema.h:26` |
+| `SWITCH_HASH_ECMP_HASH_ALGORITHM` | `"ecmp_hash_algorithm"` | CONFIG_DB フィールド名 | `sonic-swss/orchagent/switch/switch_schema.h:36` |
+| `SWITCH_HASH_LAG_HASH_ALGORITHM` | `"lag_hash_algorithm"` | CONFIG_DB フィールド名 | `sonic-swss/orchagent/switch/switch_schema.h:37` |
+| `SWITCH_HASH_FIELD_IN_PORT` 〜 `SWITCH_HASH_FIELD_IPV6_FLOW_LABEL` (19 定数) | `"IN_PORT"` 〜 `"IPV6_FLOW_LABEL"` | hash-field enum の文字列表現（CONFIG_DB 値・SAI 変換テーブルで参照） | `sonic-swss/orchagent/switch/switch_schema.h:5-23` |
+| `SWITCH_HASH_ALGORITHM_CRC` 〜 `SWITCH_HASH_ALGORITHM_CRC_XOR` (7 定数) | `"CRC"` 〜 `"CRC_XOR"` | hash-algorithm enum の文字列表現 | `sonic-swss/orchagent/switch/switch_schema.h:28-34` |
+
+### 2. STATE_DB capability キー定数 (`switch_capabilities.cpp`)
+
+| 定数 | 値 | 用途 | evidence |
+|------|----|----|---------|
+| `SWITCH_CAPABILITY_KEY` | `"switch"` | STATE_DB への capability 書き込みキー（`SWITCH_CAPABILITY\|switch`） | `sonic-swss/orchagent/switch/switch_capabilities.cpp:40` |
+| `SWITCH_STATE_DB_NAME` | `"STATE_DB"` | capability 書き込み先 DB 名 | `sonic-swss/orchagent/switch/switch_capabilities.cpp:42` |
+| `SWITCH_STATE_DB_TIMEOUT` | `0` | DB 接続タイムアウト（即時/ブロックなし） | `sonic-swss/orchagent/switch/switch_capabilities.cpp:43` |
+| `SWITCH_CAPABILITY_HASH_NATIVE_HASH_FIELD_LIST_FIELD` | `"HASH\|NATIVE_HASH_FIELD_LIST"` | SAI から取得した hash-field capability の STATE_DB フィールド名 | `sonic-swss/orchagent/switch/switch_capabilities.cpp:30` |
+| `SWITCH_CAPABILITY_ECMP_HASH_CAPABLE_FIELD` | `"ECMP_HASH_CAPABLE"` | ECMP hash サポート可否フラグの STATE_DB フィールド名 | `sonic-swss/orchagent/switch/switch_capabilities.cpp:32` |
+| `SWITCH_CAPABILITY_LAG_HASH_CAPABLE_FIELD` | `"LAG_HASH_CAPABLE"` | LAG hash サポート可否フラグの STATE_DB フィールド名 | `sonic-swss/orchagent/switch/switch_capabilities.cpp:33` |
+| `SWITCH_CAPABILITY_ECMP_HASH_ALGORITHM_FIELD` | `"ECMP_HASH_ALGORITHM"` | ECMP アルゴリズム capability リストの STATE_DB フィールド名 | `sonic-swss/orchagent/switch/switch_capabilities.cpp:35` |
+| `SWITCH_CAPABILITY_ECMP_HASH_ALGORITHM_CAPABLE_FIELD` | `"ECMP_HASH_ALGORITHM_CAPABLE"` | ECMP アルゴリズム capability 可否フラグ | `sonic-swss/orchagent/switch/switch_capabilities.cpp:36` |
+| `SWITCH_CAPABILITY_LAG_HASH_ALGORITHM_FIELD` | `"LAG_HASH_ALGORITHM"` | LAG アルゴリズム capability リストの STATE_DB フィールド名 | `sonic-swss/orchagent/switch/switch_capabilities.cpp:37` |
+| `SWITCH_CAPABILITY_LAG_HASH_ALGORITHM_CAPABLE_FIELD` | `"LAG_HASH_ALGORITHM_CAPABLE"` | LAG アルゴリズム capability 可否フラグ | `sonic-swss/orchagent/switch/switch_capabilities.cpp:38` |
+
+### 3. `SwitchHash` 構造体の初期値 (`switch_container.h`)
+
+`SwitchHash` 構造体 (`sonic-swss/orchagent/switch/switch_container.h:18-35`) の各フィールドは `is_set = false` で初期化される。CONFIG_DB にフィールドが存在しない場合、`setSwitchHash()` は対応する SAI 属性を設定しない（SAI デフォルト維持）。これは「コード側デフォルトなし」の実装根拠であり、暗黙的な動作として重要。
+
+| 構造体メンバ | 型 | `is_set` デフォルト | SAI 未設定時の挙動 |
+|---|---|---|---|
+| `ecmp_hash.value` | `std::set<sai_native_hash_field_t>` | `false` | SAI `SAI_SWITCH_ATTR_ECMP_HASH` の ASIC デフォルト維持 |
+| `lag_hash.value` | `std::set<sai_native_hash_field_t>` | `false` | SAI `SAI_SWITCH_ATTR_LAG_HASH` の ASIC デフォルト維持 |
+| `ecmp_hash_algorithm.value` | `sai_hash_algorithm_t` | `false` | SAI アルゴリズム ASIC デフォルト維持（典型: `SAI_HASH_ALGORITHM_CRC`） |
+| `lag_hash_algorithm.value` | `sai_hash_algorithm_t` | `false` | 同上 |
+
+<!-- /constants -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
