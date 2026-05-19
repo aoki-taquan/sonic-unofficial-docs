@@ -4,11 +4,26 @@ description: "MCLAG_UNIQUE_IP テーブル — MC-LAG (Multi-Chassis Link Aggreg
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-16
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-mclag.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/include/mlacp_link_handler.h
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/include/port.h
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/src/mlacp_link_handler.c
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclag.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclaglink.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: mclagsyncd/mclaglink.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
@@ -245,3 +260,58 @@ docker exec iccpd tail -f /var/log/syslog
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-failure.md`
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclag.h L23,56,61-62,81,91 / sonic-swss/mclagsyncd/mclaglink.h L52,97,292 / sonic-swss/mclagsyncd/mclaglink.cpp L1134,1138,1141,1143,1148,1157,1166,1168 / sonic-buildimage/src/iccpd/include/mlacp_link_handler.h L30,34 / sonic-buildimage/src/iccpd/include/port.h L46 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3197,3222 -->
+
+### mclagsyncd ↔ iccpd IPC 固定定数
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MCLAG_DEFAULT_IP` | `0x7f000006` (= 127.0.0.6) | mclagsyncd が listen する IPC アドレス | `mclag.h:23` |
+| `MCLAG_DEFAULT_PORT` | `2626` | mclagsyncd ↔ iccpd 間の TCP IPC ポート番号。`MclagLink` コンストラクタのデフォルト引数 | `mclag.h:56`, `mclaglink.h:292` |
+| `MCLAG_PROTO_VERSION` | `1` | IPC メッセージヘッダ `version` フィールドの固定値。`mclagsyncdSendMclagUniqueIpCfg()` 内で `cfg_msg_hdr->version = 1` とハードコード | `mclag.h:81`, `mclaglink.cpp:1141,1166` |
+
+### バッファ長定数
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MCLAG_MAX_SEND_MSG_LEN` | `4096` バイト | mclagsyncd 送信バッファ上限。UNIQUE_IP エントリが多く 1 バッファに収まらない場合は中間フラッシュを行う | `mclag.h:62`, `mclaglink.cpp:1138` |
+| `MCLAG_MAX_MSG_LEN` | `4096` バイト | 個別メッセージの最大長（mclagsyncd 側・iccpd 側共通定義） | `mclag.h:61`, `mlacp_link_handler.h:30` |
+| `ICCP_MLAGSYNCD_RECV_MSG_BUFFER_SIZE` | `MCLAG_MAX_MSG_LEN × 256` = 1,048,576 バイト | iccpd の受信バッファ総サイズ。UNIQUE_IP メッセージはこのバッファに読み込まれる | `mlacp_link_handler.h:34` |
+
+### インターフェース名バッファ長
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MAX_L_PORT_NAME` | `20` バイト | `struct mclag_unique_ip_cfg_info.mclag_unique_ip_ifname[]` および iccpd 内 `Unq_ip_If_info.name[]` のバッファサイズ。VLAN IF 名（`Vlan<id>`）のコピー先 | `mclaglink.h:52,97`, `port.h:46`, `mlacp_link_handler.c:3222` |
+
+> `MAX_L_PORT_NAME = 20` バイトは YANG パターンで許容される最長 VLAN IF 名 `Vlan4094`（8 文字 + NUL）を十分収容できる。
+
+### メッセージタイプ enum
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_UNIQUE_IP` | `5` | mclagsyncd → iccpd の UNIQUE_IP 設定通知メッセージ種別 | `mclag.h:91` |
+
+### YANG パターン制約（実質的定数）
+
+`sonic-mclag.yang:150-152` の `if_name` パターンが許容する VLAN ID 範囲:
+
+| VLAN ID 範囲 | パターン部分 |
+|---|---|
+| 0 〜 999 | `[0-9]{1,3}` |
+| 1000 〜 3999 | `[1-3][0-9]{3}` |
+| 4000 〜 4089 | `[4][0][0-8][0-9]` |
+| 4090 〜 4094 | `[4][0][9][0-4]` |
+
+有効上限は実質 **4094**（IEEE 802.1Q 標準上限）。最長文字列 `Vlan4094` = 8 文字で `MAX_L_PORT_NAME=20` の制約内。
+
+### 未解決定数
+
+`CFG_MCLAG_UNIQUE_IP_TABLE_NAME` マクロは `sonic-swss/mclagsyncd/mclaglink.cpp:921` で参照されているが、`sonic-swss-common/common/schema.h`（ref: 4305596）に `#define` が存在しない。`CFG_MCLAG_TABLE_NAME="MCLAG_DOMAIN"` および `CFG_MCLAG_INTF_TABLE_NAME="MCLAG_INTERFACE"` は定義済みであることから、実効値は `"MCLAG_UNIQUE_IP"` と推定される。インストール済み swss-common パッケージかビルド生成ファイルで供給されている可能性がある。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-constants.md`
+<!-- /constants -->
