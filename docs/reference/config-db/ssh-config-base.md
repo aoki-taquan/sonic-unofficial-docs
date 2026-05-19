@@ -316,7 +316,7 @@ SSH_CONFIG_NAMES = {
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-side.md`
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-side-effects.md`
 
 CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書換とサービス再起動に閉じる。
 
