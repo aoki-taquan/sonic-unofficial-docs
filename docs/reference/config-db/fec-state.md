@@ -4,7 +4,7 @@ description: "STATE_DB PORT_TABLE の FEC 関連フィールド（fec / supporte
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp
@@ -319,6 +319,68 @@ YANG default 外の fallback。`PortsOrch::updateDbPortOperFec` と `initPortSup
 FEC SET 成功時のみ `p.m_fec_cfg = true` をセットして `m_portList` を更新する (portsorch.cpp:5366-5369)。失敗時は `m_fec_cfg=false` のまま。次サイクルで `m_fec_cfg` または `m_fec_mode != pCfg.fec.value` の変化検出条件が再評価され、retry ループが動く（`it++` パターンのみ。`erase(it)` パターンは再試行されない）。
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`PortsOrch` と `PortHelper` が FEC フィールドの書込み・検証に使うハードコード文字列定数・マップを整理する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-constants.md -->
+
+### FEC モード文字列定数 (portschema.h:38–41)
+
+| マクロ | 値 | 用途 |
+|-------|----|------|
+| `PORT_FEC_NONE` | `"none"` | CONFIG_DB 設定値 / STATE_DB `supported_fecs` リスト要素 |
+| `PORT_FEC_RS` | `"rs"` | 同上 |
+| `PORT_FEC_FC` | `"fc"` | 同上 |
+| `PORT_FEC_AUTO` | `"auto"` | CONFIG_DB 設定値 / `supported_fecs` 末尾追加値（oper fec には出現しない） |
+
+### SAI ↔ 文字列変換マップ (porthlpr.cpp:77–98)
+
+**`portFecMap`**（文字列 → SAI fec mode、CONFIG_DB 設定時の変換に使用）:
+
+| キー | 値 |
+|------|----|
+| `"none"` | `SAI_PORT_FEC_MODE_NONE` |
+| `"rs"` | `SAI_PORT_FEC_MODE_RS` |
+| `"fc"` | `SAI_PORT_FEC_MODE_FC` |
+| `"auto"` | `SAI_PORT_FEC_MODE_NONE`（auto は NONE にマップ） |
+
+**`portFecRevMap`**（SAI fec mode → 文字列、STATE_DB `fec` フィールド書込みに使用）:
+
+| キー | 値 |
+|------|----|
+| `SAI_PORT_FEC_MODE_NONE` | `"none"` |
+| `SAI_PORT_FEC_MODE_RS` | `"rs"` |
+| `SAI_PORT_FEC_MODE_FC` | `"fc"` |
+| （それ以外） | マップ不在 → `fecToStr()` が `false` を返し `"N/A"` フォールバック |
+
+`portFecRevMap` に `"auto"` エントリが**存在しない**ため、STATE_DB `fec` フィールドに `"auto"` という値が現れることはない。`fec=auto` で設定されたポートが UP しても、SAI は実際の FEC モード（`NONE`/`RS`/`FC`）を返すのでそれが書き込まれる。
+
+**`portFecOverrideMap`**（FEC モード → `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` が必要か、porthlpr.cpp:92–98）:
+
+| FEC モード | override 必要 |
+|-----------|--------------|
+| `"none"` | `true` |
+| `"rs"` | `true` |
+| `"fc"` | `true` |
+| `"auto"` | `false`（SAI の auto-neg に委ねるため override 不要） |
+
+### フォールバック文字列
+
+| 値 | 定義箇所 | 用途 |
+|----|---------|------|
+| `"N/A"` | portsorch.cpp 各所（リテラル） | `fec` フィールドのフォールバック。YANG 定義外の値だが orchagent が書き込む |
+| `"N/A"` | portsorch.cpp:3292（`supported_fec_modes.empty()` 時） | `supported_fecs` 空集合時のフォールバック |
+
+`"N/A"` は YANG スキーマに含まれない orchagent 独自のセンチネル値。YANG が想定する有効値セット（`none`/`rs`/`fc`/`auto`）とは別系統の値として扱う必要がある。
+
+### 拡張性の制約
+
+`portFecMap` / `portFecRevMap` はコンパイル時に固定されたスタティック `unordered_map`。新しい SAI FEC モード（例: `SAI_PORT_FEC_MODE_RS_KP4` 等）が追加されても、これらのマップを手動更新しない限り変換に失敗して `"N/A"` となる。orchagent の再コンパイルが必要であり、設定ファイルや YANG の変更だけでは対応不可。
+
+<!-- /constants -->
 
 ## 関連リファレンス
 

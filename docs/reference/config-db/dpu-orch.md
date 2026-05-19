@@ -393,8 +393,56 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 詳細なソーススキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DpuOrchDaemon` が起動する DASH Orch 群は、CONFIG_DB `DEVICE_METADATA` を直接の書込先とはしない。各 DASH Orch は `DPU_APPL_DB` から受信した DASH エントリを SAI API で処理した後、**`DPU_APPL_STATE_DB`** へ操作結果 (`result` フィールド) を書き込む。これが DpuOrchDaemon 系の主要な副次 DB 書込である。
+
+### DPU_APPL_STATE_DB への書込テーブル一覧
+
+`writeResultToDB()` (`saihelper.cpp:1125-1155`) は SAI 操作結果 (`uint32_t res`) を `result` フィールドとして `table->set(key, fvs)` で書き込む。`res=0` が成功、`res!=0` が SAI ステータスコード（失敗）を示す。`DashRouteOrch` の `DASH_ROUTE_GROUP_TABLE` のみ、追加で `version` フィールドを付与する。
+
+| DASH Orch | DPU_APPL_STATE_DB テーブル | フィールド | 書込トリガ | evidence |
+|-----------|---------------------------|-----------|-----------|---------|
+| `DashVnetOrch` | `DASH_VNET_TABLE` | `result` | `addVnet()` / `removeVnet()` 後 | `dashvnetorch.cpp:217,283` |
+| `DashVnetOrch` | `DASH_VNET_MAPPING_TABLE` | `result` | `addVnetMapping()` / `removeVnetMapping()` 後 | `dashvnetorch.cpp:788,851` |
+| `DashOrch` | `DASH_APPLIANCE_TABLE` | `result` | `addAppliance()` / `removeAppliance()` 後 | `dashorch.cpp:419` |
+| `DashOrch` | `DASH_ROUTING_TYPE_TABLE` | `result` | routing type SET/DEL 後 | `dashorch.cpp:517` |
+| `DashOrch` | `DASH_ENI_TABLE` | `result` | `addEni()` / `removeEni()` 後 | `dashorch.cpp:1077` |
+| `DashOrch` | `DASH_QOS_TABLE` | `result` | QoS SET/DEL 後 | `dashorch.cpp:1159` |
+| `DashOrch` | `DASH_ENI_ROUTE_TABLE` | `result` | ENI route SET/DEL 後 | `dashorch.cpp:1312` |
+| `DashHaOrch` | `DASH_HA_SET_TABLE` | `result` | HA set SET/DEL 後 | `dashhaorch.cpp:447` |
+| `DashHaOrch` | `DASH_HA_SCOPE_TABLE` | `result` | HA scope SET/DEL 後 | `dashhaorch.cpp:985` |
+| `DashRouteOrch` | `DASH_ROUTE_TABLE` | `result` | route SET/DEL 後 | `dashrouteorch.cpp:342,403` |
+| `DashRouteOrch` | `DASH_ROUTE_RULE_TABLE` | `result` | route rule SET/DEL 後 | `dashrouteorch.cpp:644,705` |
+| `DashRouteOrch` | `DASH_ROUTE_GROUP_TABLE` | `result`, `version` | route group SET/DEL 後 | `dashrouteorch.cpp:874` |
+| `DashTunnelOrch` | `DASH_TUNNEL_TABLE` | `result` | tunnel SET/DEL 後 | `dashtunnelorch.cpp:142,197,251` |
+| `DashPortMapOrch` | `DASH_OUTBOUND_PORT_MAP_TABLE` | `result` | port map SET/DEL 後 | `dashportmaporch.cpp:89,149` |
+| `DashPortMapOrch` | `DASH_OUTBOUND_PORT_MAP_RANGE_TABLE` | `result` | port map range SET/DEL 後 | `dashportmaporch.cpp:329,387` |
+
+> テーブル名は `sonic-swss-common/common/schema.h:172-200` で定義。`DPU_APPL_STATE_DB` は `main.cpp:993` で `DBConnector("DPU_APPL_STATE_DB", ...)` として生成され、`DpuOrchDaemon` コンストラクタ経由で全 DASH Orch に渡される。
+
+### DashPortMapOrch のみ removeResultFromDB を使用
+
+`DashPortMapOrch` は DEL 操作成功時に `writeResultToDB` ではなく `removeResultFromDB` (`saihelper.cpp:1157-1177`) を呼び、`DPU_APPL_STATE_DB` の対応エントリを `del(key)` で削除する。他の DASH Orch は DEL 操作後も `result=0`（成功）を書いてエントリを残す方式を取る。
+
+### DashAclOrch / DashMeterOrch — DPU_APPL_STATE_DB 書込なし
+
+`DashAclOrch` (`dashaclorch.cpp:77-85`) と `DashMeterOrch` (`dashmeterorch.cpp:27-32`) はコンストラクタで `app_state_db` を受け取るが result table メンバを持たず、`writeResultToDB` を呼ばない。
+
+### DashHaFlowOrch — DPU_STATE_DB への例外的書込
+
+`DashHaFlowOrch` は `app_state_db`（`DPU_APPL_STATE_DB`）を受け取るが使用しない。代わりに自コンストラクタ内で独立して `DBConnector("DPU_STATE_DB", ...)` を生成し (`dashhafloworch.cpp:766`)、フロー同期セッション状態を `DPU_STATE_DB` の `DASH_FLOW_SYNC_SESSION_STATE_TABLE` へ書き込む (`dashhafloworch.cpp:247,307`)。これは `DPU_APPL_STATE_DB` とは別個の Redis インスタンスへの書込みである。
+
+| DASH Orch | 書込 DB | テーブル | フィールド | 書込トリガ |
+|-----------|--------|---------|-----------|-----------|
+| `DashHaFlowOrch` | `DPU_STATE_DB` | `DASH_FLOW_SYNC_SESSION_STATE_TABLE` | `state`, `creation_time_in_ms`, `last_state_start_time_in_ms` | フロー同期セッション状態遷移時 (`FlowApiHandler::updateState()`) |
+
+詳細スキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- pubsub -->
-## ZMQ 購読方式 (Phase F)
+## ZMQ 購読方式 (Phase G)
 
 `DpuOrchDaemon` が `DPU_APPL_DB` の DASH テーブル群を受信するための通信メカニズムを示す。ZMQ 有効時と無効時の 2 経路が存在し、`orch_northbond_dash_zmq_enabled` フィールドにより切り替わる。
 
@@ -439,7 +487,7 @@ m_zmqServer.registerMessageHandler(m_db->getDbName(), tableName, this);
 
 ### 遅延バインド (lazy bind) — メッセージロスト防止
 
-`ZmqServer` はコンストラクタで `lazy=true` を指定し、全ハンドラ登録完了後に `main()` が `zmq_server->bind()` を呼ぶ(`main.cpp:1032-1037`)。これにより、クライアント側 `ZmqProducerStateTable` の接続確立前に bind が完了し、DpuOrchDaemon::init() 中の `ZmqConsumerStateTable` 生成（= ハンドラ登録）との間のメッセージロストを防止する。
+`ZmqServer` はコンストラクタで `lazy=true` を指定し、全ハンドラ登録完了後に `main()` が `zmq_server->bind()` を呼ぶ (`main.cpp:1032-1037`)。これにより、クライアント側 `ZmqProducerStateTable` の接続確立前に bind が完了し、DpuOrchDaemon::init() 中の `ZmqConsumerStateTable` 生成（= ハンドラ登録）との間のメッセージロストを防止する。
 
 ### ZMQ サーバアドレスと gBatchSize
 

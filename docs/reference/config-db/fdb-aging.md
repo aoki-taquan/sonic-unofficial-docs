@@ -4,7 +4,7 @@ description: "SWITCH_TABLE の fdb_aging_time フィールド — FDB (Forwardin
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-16
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/switchorch.cpp
@@ -222,6 +222,7 @@ aging 無効化が SAI レベルで失敗しても orchagent は処理を継続�
 ## 引用元
 
 [^1]: `SwitchOrch::doAppSwitchTableTask()`: `sonic-swss/orchagent/switchorch.cpp:595-748`. fdb_aging_time の SAI マッピング: `switchorch.cpp:49` (`switch_attribute_map`). warm-reboot での aging 無効化: `orchdaemon.cpp:1068`. デフォルト値: `sonic-buildimage/dockers/docker-orchagent/switch.json.j2:38`.
+[^2]: `switchorch.cpp:664-666` の `case SAI_SWITCH_ATTR_FDB_AGING_TIME:` は `to_uint<uint32_t>(value)` でキャストするのみ。プラットフォーム識別関数 (`isMlnxPlatform()` 等) は `doAppSwitchTableTask()` 内には存在しない。プラットフォーム別の `querySwitchCapability()` チェックは ECMP/LAG hash offset (`switchorch.cpp:683-703`) にのみ適用される。
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
@@ -304,5 +305,71 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 | 6 | リトライバックオフ | `500` ms | ハードコード (`#define`) | `orch.h:57` |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-F.md -->
+
+`APPL_DB SWITCH_TABLE:switch` の `fdb_aging_time` フィールドを `SwitchOrch::doAppSwitchTableTask()` が処理する際、および warm-reboot パスで呼ばれる `setAgingFDB()` の実行時に、**副次的な DB 書込は発生しない**。いずれの処理パスも SAI `set_switch_attribute(gSwitchId, &attr)` を呼ぶのみで、APPL_DB / STATE_DB / COUNTERS_DB への書込を一切行わない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---------|---------|------|
+| APPL_DB | なし | `doAppSwitchTableTask()` L595-748 全体を `set(`/`hset`/`Producer`/`Notification` で検索してマッチ 0 件 |
+| STATE_DB | なし | `fdb_aging_time` 処理パス (`switchorch.cpp:664-666`, `switchorch.cpp:1671-1688`) に `m_stateDb`/`m_switchTable` 書込なし。`set_switch_capability()` による `STATE_DB SWITCH_CAPABILITY_TABLE` 書込は PFC DLR / ASIC SDK health 等の能力フラグのためであり `fdb_aging_time` SET とは独立したパス |
+| COUNTERS_DB | なし | `switchorch.cpp` 全体に COUNTERS_DB 書込は FlexCounter 統計グループ登録のみで `fdb_aging_time` 処理に連動しない |
+| ASIC_DB | 間接のみ | orchagent は ASIC_DB に直接書き込まない。SAI 操作は syncd が ASIC_DB に記録するが orchagent 側に明示的書込なし |
+
+### SwitchOrch が持つ STATE_DB 書込経路（fdb_aging_time 非連動）
+
+`SwitchOrch` は `STATE_DB` への書込経路を 3 つ保持しているが、いずれも `fdb_aging_time` の SET 処理とは独立している。
+
+| 経路 | 書込テーブル | トリガー | コード箇所 |
+|------|------------|---------|-----------|
+| `set_switch_capability()` | `STATE_DB SWITCH_CAPABILITY_TABLE:switch` | コンストラクタ起動時・能力照会時（PFC DLR / TPID / ASIC SDK health 等） | `switchorch.cpp:1864-1866` |
+| `m_asicSensorsTable->set()` | `STATE_DB ASIC_TEMPERATURE_INFO_TABLE` | 温度 polling timer 発火時 | `switchorch.cpp:1860` |
+| `m_asicSdkHealthEventTable->set()` | `STATE_DB STATE_ASIC_SDK_HEALTH_EVENT_TABLE` | ASIC SDK health event 通知受信時 | `switchorch.cpp:155-156` |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/fdb-aging-F.md` を参照。
+<!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-platform.md -->
+
+`fdb_aging_time` のプラットフォーム差は SAI レイヤより上位の `switch.json.j2` テンプレート展開時にのみ発生する。`SwitchOrch::doAppSwitchTableTask()` 内に `isMlnxPlatform()` 等のプラットフォーム識別コードは存在せず[^2]、SAI への書込みはプラットフォーム非依存である（`switchorch.cpp:664-666`）。
+
+### switch.json.j2 による注入可否の分岐
+
+`switch.json.j2:35` の条件式が `switch_type` の値に基づいて `fdb_aging_time` フィールドの注入可否を決定する。
+
+```jinja2
+{# switch.json.j2:35-38 #}
+{% if not DEVICE_METADATA.localhost.switch_type or DEVICE_METADATA.localhost.switch_type != "dpu" %}
+    "fdb_aging_time": "600",
+```
+
+| `switch_type` 値 | `fdb_aging_time` 注入 | SAI 設定値 | 備考 |
+|---|---|---|---|
+| 未設定（通常スイッチ） | される (`"600"`) | 600 秒 | ToRRouter / LeafRouter / SpineRouter 等 |
+| `"dpu"` | されない | ASIC ハードウェアデフォルト | SmartSwitch DPU スロット (DASH ターゲット) |
+| `"chassis-packet"` | される (`"600"`) | 600 秒 | `dpu` でないため条件を通過 |
+| その他の任意文字列 | される (`"600"`) | 600 秒 | `dpu` 以外は全て注入 |
+
+`switch_type == "dpu"` のノードでは APPL_DB `SWITCH_TABLE:switch` に `fdb_aging_time` フィールド自体が存在しないため、`SwitchOrch` は当フィールドを処理しない。DPU ノードは DASH ターゲットとして扱われ、Ethernet スイッチング (FDB aging) を必要としない。
+
+> **実証**: `sonic-buildimage/src/sonic-config-engine/tests/sample_output/t1-smartswitch-dpu.json` は DPU 向け生成 JSON であり、`SWITCH_TABLE` エントリが一切存在しない。
+
+### SAI capability チェックの有無
+
+`switchorch.cpp:683-703` では `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_OFFSET` / `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_OFFSET` に対して `querySwitchCapability()` による ASIC 能力照会が実施されるが、`SAI_SWITCH_ATTR_FDB_AGING_TIME`（`switchorch.cpp:664-666`）にはこのチェックが存在しない。すべての ASIC ベンダーで capability チェックなしに `set_switch_attribute()` が呼ばれる。
+
+### multi-asic 環境
+
+各 namespace ごとに orchagent が独立起動し、それぞれ `switch.json.j2` 展開によって `fdb_aging_time: "600"` が注入される。`switch.json.j2:28-31` の `namespace_id` は `ecmp_hash_seed` / `lag_hash_seed` のオフセット計算にのみ使用され、`fdb_aging_time` の値には影響しない（全 namespace 共通 `600` 秒）。
+
+> **証跡**: `sonic-buildimage/src/sonic-config-engine/tests/sample_output/t2-switch-masic1.json` — 全 namespace 共通 `"fdb_aging_time": "600"`。スキャン元: `meta/_intermediate/cdb-flow/fdb-aging-platform.md`
+<!-- /platform -->
 
 <!-- glossary-links-injected: fdb-aging -->

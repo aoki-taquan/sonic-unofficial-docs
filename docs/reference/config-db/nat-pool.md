@@ -535,6 +535,72 @@ natmgrd が `ProducerStateTable::set("NAT_DNAT_POOL_TABLE", ...)` を呼ぶと `
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差・ASIC ベンダー依存 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch L107-149 / addHwDnatPoolEntry L1783-1819 / enableNatFeature L2534-2581 / sonic-swss/orchagent/orch.h L43 / sonic-swss/orchagent/main.cpp L935-949 -->
+
+### SAI NAT capability チェック（全ベンダー共通）
+
+NatOrch 初期化時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を `sai_switch_api->get_switch_attribute()` で照会し、返値が **0 より大きい場合のみ** `gIsNatSupported = true` を設定する (`main.cpp:935-949`)。`gIsNatSupported` が `false` の場合、`enableNatFeature()` は `"NAT Feature is not supported in this Platform"` をログして即座に処理を中断し、**DNAT pool entry を含む SAI NAT オブジェクトは一切作成されない** (`natorch.cpp:2541-2544`)。
+
+```cpp
+// main.cpp:935-948
+attr.id = SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY;
+status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status == SAI_STATUS_SUCCESS && attr.value.u32 != 0)
+{
+    gIsNatSupported = true;
+}
+```
+
+`maxAllowedSNatEntries` は同属性の取得値で初期化され、dynamic SNAT エントリ数の上限として使用される。`NAT_POOL` 経由の dynamic SNAT がこの上限に達すると新規 SNAT エントリは SAI に投入されず `AGEOUT-SINGLE-NAT` 通知で conntrack がエージアウトされる (`natorch.cpp:1882-1889`)。なお DNAT pool entry (`SAI_NAT_TYPE_DESTINATION_NAT_POOL`) はこの SNAT 上限とは**無関係**。
+
+### Broadcom 専用: DNAT ネクストホップトラッキング
+
+`orchagent/orch.h:43` に `#define BRCM_PLATFORM_SUBSTRING "broadcom"` が定義されており、NatOrch コンストラクタで環境変数 `platform` が `"broadcom"` を含む場合のみ `gNhTrackingSupported = true` が設定される (`natorch.cpp:144-148`)。
+
+```cpp
+// natorch.cpp:144-148
+char *platform = getenv("platform");
+if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
+{
+    gNhTrackingSupported = true;
+}
+```
+
+`gNhTrackingSupported` は DNAT エントリ (`SAI_NAT_TYPE_DESTINATION_NAT`) の追加・削除パスで分岐条件として使用されるが、**DNAT pool エントリ (`SAI_NAT_TYPE_DESTINATION_NAT_POOL`) の `addHwDnatPoolEntry()` / `removeHwDnatPoolEntry()` はこのフラグを参照しない**。DNAT pool entry の投入は platform 分岐なしで実行される。
+
+Broadcom では `enableNatFeature()` L2570 で `m_neighOrch->attach(this)` が呼ばれ NeighborOrch の変更通知を受信できるようになるため、DNAT エントリのネクストホップ変更時の遅延投入が機能する。非 Broadcom ではネクストホップ未解決でも即時 SAI 書き込みとなる。
+
+### DNAT pool entry の SAI 固定属性
+
+`addHwDnatPoolEntry()` (`natorch.cpp:1799-1805`) にはプラットフォーム分岐が存在しない。マスクは `0xffffffff`（ホストマスク）にハードコードされており、SAI 属性配列は空（`attr_count = 0`）で作成される。
+
+```cpp
+// natorch.cpp:1799-1805
+dnat_pool_entry.nat_type          = SAI_NAT_TYPE_DESTINATION_NAT_POOL;
+dnat_pool_entry.data.key.dst_ip   = ip_address.getV4Addr();
+dnat_pool_entry.data.mask.dst_ip  = 0xffffffff;  // ホストマスク固定（platform 非依存）
+// attr_count = 0 — DNAT pool entry は SAI 属性を持たない
+status = sai_nat_api->create_nat_entry(&dnat_pool_entry, attr_count, nat_entry_attr);
+```
+
+### まとめ
+
+| 挙動 | 条件 |
+|------|------|
+| NAT 機能全体（DNAT pool 含む）が有効 | `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY > 0` (gIsNatSupported=true) |
+| NAT 機能全体が無効（DNAT pool も投入されない） | 上記属性が 0 または取得失敗 (gIsNatSupported=false) |
+| DNAT ネクストホップ追跡（DNAT entry 用） | Broadcom ASIC のみ (gNhTrackingSupported=true) |
+| DNAT pool entry への platform 差 | なし（platform 分岐なし） |
+| SNAT ハードウェア上限超過 | `totalSnatEntries == maxAllowedSNatEntries` → ageout 通知（DNAT pool は無関係） |
+
+現行 SONiC コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-platform.md`
+<!-- /platform -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

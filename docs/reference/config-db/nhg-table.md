@@ -429,6 +429,73 @@ m_countersCrmTable->set(cnt.first, attrs);
 
 ---
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 書き込み側の通信構造
+
+`NEXTHOP_GROUP_TABLE` への書き込み元は **fpmsyncd** のみ。`CLASS_BASED_NEXT_HOP_GROUP_TABLE` は CLI 経路がなく、直接 APPL_DB 書き込み（`config_db.json` 直編集・gNMI 等）のみ。
+
+| テーブル | 書き込み元 | 書き込み方式 |
+|---------|-----------|------------|
+| `NEXTHOP_GROUP_TABLE` | fpmsyncd (`routesync.cpp`) | `ProducerStateTable` (非 ZMQ 固定) |
+| `CLASS_BASED_NEXT_HOP_GROUP_TABLE` | 直接 APPL_DB 書き込み | `ProducerStateTable` または redis-cli |
+
+`m_nexthop_groupTable` は `routesync.cpp:157` で `ProducerStateTable(pipeline, APP_NEXTHOP_GROUP_TABLE_NAME, true)` として初期化される。`ROUTE_TABLE` と異なり ZMQ チャンネルは使用しない（`routesync.cpp:156` との比較）。`ProducerStateTable::set()` / `del()` 呼び出しごとに `NEXTHOP_GROUP_TABLE_CHANNEL@0` へ PUBLISH される。
+
+### 購読方式: ConsumerStateTable (APPL_DB)
+
+`NhgOrch` および `CbfNhgOrch` は orchdaemon 起動時に `Orch(db, tableName)` コンストラクタ経由で `ConsumerStateTable` を生成し APPL_DB を購読する。
+
+```
+orchdaemon.cpp:338-339
+  gNhgOrch    = new NhgOrch   (m_applDb, APP_NEXTHOP_GROUP_TABLE_NAME)
+  gCbfNhgOrch = new CbfNhgOrch(m_applDb, APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME)
+
+Orch::addConsumer() — orch.cpp:1186-1196
+  APPL_DB (dbId != CONFIG_DB / STATE_DB / CHASSIS_APP_DB)
+    → new ConsumerStateTable(db, tableName, gBatchSize, pri)
+    → SUBSCRIBE NEXTHOP_GROUP_TABLE_CHANNEL@0
+               CLASS_BASED_NEXT_HOP_GROUP_TABLE_CHANNEL@0
+```
+
+`ConsumerStateTable` は `ProducerStateTable` が PUBLISH したチャンネルを内部で `SUBSCRIBE` し、メッセージ受信時に `HGETALL` でフィールドを取得して `KeyOpFieldsValuesTuple (key, op, fvs)` に変換する。
+
+### イベント発火から ASIC 適用までの流れ
+
+```
+fpmsyncd: FRR の Netlink nexthop イベント受信
+  → m_nexthop_groupTable.set(key, fvVector)  (routesync.cpp:1882)
+    → ProducerStateTable: APPL_DB HSET + PUBLISH NEXTHOP_GROUP_TABLE_CHANNEL@0
+  → ConsumerStateTable (orchagent 側) がチャンネル通知を受信
+  → orchdaemon 主ループ: m_select->select(&s, SELECT_TIMEOUT=1000ms)  (orchdaemon.cpp:959)
+  → Consumer::execute() → NhgOrch::doTask()
+      gPortsOrch->allPortsReady() チェック後エントリを処理
+      → sai_next_hop_group_api->create_next_hop_group() / remove_next_hop_group()
+```
+
+### orchdaemon の select タイムアウトとバッチサイズ
+
+| パラメータ | 値 | ソース |
+|-----------|-----|--------|
+| `SELECT_TIMEOUT` | 1000 ms | `orchdaemon.cpp:23` |
+| `gBatchSize` | 128 (`DEFAULT_MAX_BULK_SIZE` = 1000 は別用途) | `orchdaemon.cpp:81` |
+
+`gBatchSize` は `ConsumerStateTable` のポップ上限として渡され、1 イベントループ当たり最大 128 エントリを一括処理する。NHG エントリ数が多い起動時の初期スナップショット再生も同バッチサイズで処理される。
+
+### ZMQ 非使用の確認
+
+`NEXTHOP_GROUP_TABLE` は `createProducerStateTable()` ではなく直接 `ProducerStateTable(...)` で初期化されており (`routesync.cpp:157`)、`m_zmqClient` を渡さない。`ZmqConsumerStateTable` は使用されない。`ROUTE_TABLE` のみが ZMQ 経路を持つ (`routesync.cpp:156`)。
+
+### warm restart との関係
+
+orchdaemon の warm restart 時、`ConsumerStateTable` が保持するペンディングエントリは `m_toSync` に残り、reconcile フェーズで再処理される。`NhgOrch` / `CbfNhgOrch` は warm restart に対する個別ハンドラを持たず、`doTask()` の通常ループで `m_syncdNextHopGroups` に存在しないエントリを SAI 再作成する。
+
+> Evidence: `routesync.cpp:157` (ProducerStateTable 初期化、ZMQ 非使用)、`orch.cpp:1186-1196` (addConsumer)、`orchdaemon.cpp:23,338-339,959` (SELECT_TIMEOUT / Orch インスタンス生成 / select ループ)。詳細調査ログ: `meta/_intermediate/cdb-flow/nhg-table-pubsub.md`。
+<!-- /pubsub -->
+
+---
+
 ## 購読者
 
 | テーブル | 購読者 | SAI API |
