@@ -538,6 +538,52 @@ orchagent 側の `FLEX_COUNTER_TABLE`（OID リスト）と `FLEX_COUNTER_GROUP_
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/state-flex-counter-platform.md`
+
+FLEX_COUNTER_DB のテーブル名・チャネル名・`FlexCounter` 制御ロジック自体はプラットフォーム非依存だが、**どのカウンタグループが FLEX_COUNTER_DB に生成されるか**はプラットフォーム構成に依存する。
+
+### Gearbox (外付け PHY) 有効時 — PORT / MACSEC グループへの追加書き込み
+
+`gPortsOrch->isGearboxEnabled()` が `true` の場合のみ、`PORT` グループおよび `MACSEC_*` グループのポーリング間隔・enable 状態が **Gearbox 専用の `FlexCounterManager` インスタンスにも同時に書き込まれる**（`flexcounterorch.cpp:204-212, 382-390`）。
+
+```cpp
+if (gPortsOrch && gPortsOrch->isGearboxEnabled())
+{
+    if (key == PORT_KEY || key.rfind("MACSEC", 0) == 0)
+    {
+        setFlexCounterGroupPollInterval(flexCounterGroupMap[key], value, true);  // true = gearbox instance
+        setFlexCounterGroupOperation(flexCounterGroupMap[key], value, true);
+    }
+}
+```
+
+Gearbox なし構成ではこのコードパスは実行されず、Gearbox 用 FLEX_COUNTER_DB エントリは生成されない。
+
+### MACsec ハードウェアオフロード — MACSEC_SA / MACSEC_FLOW グループ
+
+`MACSEC_SA`・`MACSEC_SA_ATTR`・`MACSEC_FLOW` の 3 グループは `flexCounterGroupMap` に定義されており（`flexcounterorch.cpp:89-91`）、MACsec オフロード有効プラットフォーム (`macsecorch` が初期化される構成) でのみ `FLEX_COUNTER_GROUP_TABLE|MACSEC_*` エントリが FLEX_COUNTER_DB に書き込まれる。MACsec 非搭載構成では `macsecorch` が存在せず、これらのグループは生成されない。
+
+### VOQ chassis — QUEUE グループの一括展開
+
+VOQ シャーシ（`gMySwitchType == "voq"`）では、BUFFER_QUEUE CONFIG_DB 設定の有無に関わらず**全フロントパネルポートおよびシステムポートの全 egress queue と VoQ** に対して `FLEX_COUNTER_TABLE|QUEUE|<oid>` が FLEX_COUNTER_DB に一括書き込まれる（`flexcounterorch.cpp:544-558`）。非 VOQ 環境では `BUFFER_QUEUE` にプロファイル設定を持つキューのみが対象になる。
+
+### FabricPortsOrch — ファブリックポート Queue カウンタ
+
+`gFabricPortsOrch` が初期化されている構成（ファブリックスイッチまたはファブリックポートを持つ構成）では、`FLEX_COUNTER_STATUS = enable` 受信時に `gFabricPortsOrch->generateQueueStats()` が追加呼び出しされる（`flexcounterorch.cpp:291-294`）。ファブリックポートなし構成では `gFabricPortsOrch == nullptr` でスキップされる。また、ファブリックポートが全部 ready になるまで CONFIG_DB 変更処理自体がブロックされる（`flexcounterorch.cpp:169`）。
+
+### DASH / ENI / SmartSwitch — ENI / DASH_METER / HA_SET グループ
+
+`DashOrch` / `DashHaOrch` が初期化される SmartSwitch 構成では `ENI`・`DASH_METER`・`HA_SET` グループへのポーリング制御が連動する（`flexcounterorch.cpp:299-314`）。標準 BOX スイッチでは `dash_orch == nullptr` であり、これらのコードパスは到達されない。
+
+### FLEX_COUNTER_DB 制御フィールド自体はプラットフォーム共通
+
+`FLEX_COUNTER_GROUP_TABLE` のフィールド（`POLL_INTERVAL`・`FLEX_COUNTER_STATUS`・`STATS_MODE`・`BULK_CHUNK_SIZE`）、`FlexCounter::setStatus` / `setStatsMode` / `setPollInterval` の処理ロジック、DB 番号（5）・テーブル名・チャネル名（`schema.h` 定義）はすべてプラットフォーム非依存。各カウンタの SAI 統計値取得（`sai_*_stats` API）は ASIC SDK に依存するが、FLEX_COUNTER_DB のフィールド設計には影響しない。
+
+<!-- /platform -->
+
 ## 確認コマンド
 
 ```bash
