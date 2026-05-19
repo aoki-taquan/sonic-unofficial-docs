@@ -446,6 +446,77 @@ orchagent Select::select()
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2`, `sonic-swss/orchagent/orchdaemon.cpp`
+
+`VRFOrch::addOperation` / `delOperation` および `vrfmgrd` の実装にはコード上のプラットフォーム固有分岐（`getenv("platform")` 等）は存在しない。SAI 属性は capability query なしに無条件で投入される。ただし以下の系統でプラットフォーム差が発生する。
+
+### 1. fabric ASIC — vrfmgrd 非起動
+
+`supervisord.conf.j2:247-263` の条件:
+
+```jinja
+{% if is_fabric_asic == 0 %}
+[program:vrfmgrd]
+...
+{%- endif %}
+```
+
+fabric ASIC スロット（chassis linecard のファブリック面プロセス）では `vrfmgrd` が起動しない。
+
+- `APPL_DB VRF_TABLE` は書き込まれない → `VRFOrch::addOperation` がトリガされない
+- `STATE_DB VRF_OBJECT_TABLE` も書き込まれない
+
+`VRFOrch` 自体は `orchdaemon.cpp:283` で無条件にインスタンス化されるが、APPL_DB に VRF_TABLE エントリが届かないため実質 no-op となる。
+
+### 2. SAI 属性の capability query なし — vendor SAI 依存
+
+`VRFOrch::addOperation()` は SAI capability を事前照会せず、以下の属性を直接 `create_virtual_router()` / `set_virtual_router_attribute()` に渡す:
+
+| SAI 属性 | フィールド | vendor SAI 未サポート時の挙動 |
+|---|---|---|
+| `SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V4_STATE` | `v4` | `SAI_STATUS_NOT_SUPPORTED` 等 → `handleSaiCreateStatus` / `handleSaiSetStatus` がエラー処理 |
+| `SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V6_STATE` | `v6` | 同上 |
+| `SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` | `src_mac` | 同上 |
+| `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_TTL1_PACKET_ACTION` | `ttl_action` | 同上 |
+| `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_IP_OPTIONS_PACKET_ACTION` | `ip_opt_action` | 同上 |
+| `SAI_VIRTUAL_ROUTER_ATTR_UNKNOWN_L3_MULTICAST_PACKET_ACTION` | `l3_mc_action` | 同上 |
+
+フィールド省略時は attrs ベクタに追加されないため、`create_virtual_router()` 呼び出し時に SAI 実装側デフォルト値が適用される。VS（仮想スイッチ）SAI は `create_virtual_router` を正常終了させるが、attribute の実値は無視することが多い。
+
+### 3. カーネル l3mdev モジュール依存
+
+vrfmgrd はコンストラクタで `ip rule add pref 1001 table local && ip rule del pref 0` を実行する（`vrfmgr.cpp:103-105`）。これは `l3mdev-table` カーネルモジュール対応カーネル（4.15+ が目安）を前提とした設計。カーネルが l3mdev 未対応の場合:
+
+- `ip link add ... type vrf table <id>` が失敗 → `EXEC_WITH_ERROR_THROW` が例外を throw → vrfmgrd クラッシュ → supervisord による再起動ループ
+
+最大 VRF 数 4096 はカーネルルーティングテーブル ID プール（1001〜5096）に由来するハードリミット。プール枯渇時は `setLink()` が失敗するが Linux の l3mdev 制約ではなくソフトウェア側の定数（`VRF_TABLE_START`/`END`）による制限。
+
+### 4. warm restart — 初期化挙動差異
+
+vrfmgrd コンストラクタは `WarmStart::isWarmStart()` で以下のように分岐する:
+
+| モード | 挙動 |
+|---|---|
+| **Cold start** | 起動時に既存 Linux VRF デバイス（`mgmt` 以外）を `ip link del` で削除してプール再計算 |
+| **Warm restart** | 既存デバイスのテーブル ID を `m_vrfTableMap` に再登録し `m_freeTables` から除外（削除しない） |
+
+この差異はプラットフォームではなく warm restart 設定依存だが、warm restart 非対応ハードウェア・構成では cold start 動作のみが発生する。
+
+### プラットフォーム差サマリ
+
+| 観点 | プラットフォーム差 | コード上の capability 分岐 |
+|---|---|---|
+| fabric ASIC | vrfmgrd 非起動 → APPL_DB VRF_TABLE / STATE_DB VRF_OBJECT_TABLE 未書込み | `supervisord.conf.j2:247-263` の Jinja 条件 |
+| SAI 属性サポート | vendor SAI が `violation_ttl1` / `ip_opt` / `l3_mc` / `src_mac` 未実装なら SAI エラー | **なし**（無条件 attr 投入） |
+| l3mdev カーネル | l3mdev 未対応カーネルでは vrfmgrd クラッシュ | **なし**（例外発生） |
+| warm restart | 起動時 Linux VRF デバイスの削除 vs 保持 | `WarmStart::isWarmStart()` 条件 |
+
+詳細: `meta/_intermediate/cdb-flow/vrf-orch-platform.md`
+<!-- /platform -->
+
 ## 例外条件・特殊挙動
 
 - **VRF 削除タイミング**: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は `ip link del` を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は `ref_count` が非ゼロで `delOperation` が `false` を返して再キュー。
