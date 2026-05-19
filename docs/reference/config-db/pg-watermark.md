@@ -241,6 +241,54 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 
 ---
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 証跡: `meta/_intermediate/cdb-flow/pg-watermark-constants.md`
+> スキャン対象: `orchagent/portsorch.h:35-41`、`orchagent/portsorch.cpp:88-93,736,872-876`、`orchagent/flexcounterorch.cpp:44,79,127`、`orchagent/watermarkorch.cpp:9-17,41`
+
+### ポーリング間隔定数
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | `pg_watermark_manager` コンストラクタ引数（int）。syncd に渡すデフォルトポーリング間隔 | `portsorch.cpp:92,736` |
+| `PG_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` | `setFlexCounterGroupParameter()` が `FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER` へ書き込む文字列定数 | `portsorch.h:39`, `portsorch.cpp:872-876` |
+
+CONFIG_DB の `POLL_INTERVAL` フィールドを設定すると、orchagent が `setFlexCounterGroupParameter()` を呼び直してこのデフォルト値を上書きする。
+
+### FlexCounter グループ名
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_WATERMARK_STAT_COUNTER"` | FLEX_COUNTER_DB の `FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER` キーおよび per-OID エントリのプレフィクス | `portsorch.h:36` |
+
+CONFIG_DB / YANG では変更不可。FlexCounter インフラが内部的に使用するグループ識別子。
+
+### FlexCounter 遅延タイマーと telemetry タイマー
+
+| 定数名 | 値 | 変更可否 | 用途 | ソース |
+|--------|-----|---------|------|--------|
+| `FLEX_COUNTER_DELAY_SEC` | `60` 秒 | 変更不可 | warm-reboot 時に `FlexCounterOrch::doTask()` 全体を 60 秒間ブロックする遅延タイマー。cold boot では即満了 | `flexcounterorch.cpp:44,127` |
+| `DEFAULT_TELEMETRY_INTERVAL` | `120` 秒 | `WATERMARK_TABLE\|TELEMETRY_INTERVAL` で上書き可 | `WatermarkOrch` が `PERIODIC_WATERMARKS` テーブルを周期クリアするタイマーのデフォルト間隔 | `watermarkorch.cpp:9,41` |
+
+### SAI 収集カウンタ（変更不可）
+
+`portsorch.cpp:410-414` の静的配列で固定される収集対象 SAI stat（YANG / CONFIG_DB から変更不可）:
+
+```cpp
+static const vector<sai_ingress_priority_group_stat_t> ingressPriorityGroupWatermarkStatIds =
+{
+    SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES,
+    SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES,
+};
+```
+
+`pg_watermark_manager.setCounterIdList()` がこの配列を `PG_WATERMARK_STAT_ID_LIST` フィールドとして FLEX_COUNTER_DB に書き込む。ハードウェアが当該 stat をサポートしない場合は syncd が `SAI_STATUS_NOT_SUPPORTED` でスキップする。
+
+<!-- /constants -->
+
+---
+
 ## 設定例
 
 ```json
