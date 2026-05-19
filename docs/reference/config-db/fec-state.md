@@ -382,6 +382,49 @@ FEC SET 成功時のみ `p.m_fec_cfg = true` をセットして `m_portList` を
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込みは `PortsOrch` が行う主作用だが、同一トリガーで他 DB・他フィールドへの副次的な書込みが発生する。consumer がこれらの副次書込みを前提に状態を読む場合、書込み順序と原子性の欠如を考慮する必要がある。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-side-effects.md -->
+
+### トリガー A: ポート UP 通知（`fec` フィールドと同時に発生する副次書込）
+
+ポート oper-status UP 通知受信 → `status == SAI_PORT_OPER_STATUS_UP` ブロック内で以下が順次実行される:
+
+| # | 副次書込 | DB | テーブル | フィールド | 証跡 |
+|---|---------|-----|---------|-----------|------|
+| 1 | `updateDbPortOperStatus()` | APPL_DB | `PORT_TABLE:<port>` | `oper_status` = `"up"` | `portsorch.cpp:9667, 9787, 3928-3930` |
+| 2 | `updateDbPortOperSpeed()` | STATE_DB | `PORT_TABLE\|<port>` | `speed` = oper speed (Mbps) / `"N/A"` | `portsorch.cpp:9671-9678, 9850-9857` |
+| 3 | **`updateDbPortOperFec()`** | STATE_DB | `PORT_TABLE\|<port>` | **`fec`**（本ページの主作用） | `portsorch.cpp:9690, 9694, 9864-9870` |
+
+3 回の書込みは Redis `set` コマンドとして独立して発行される。APPL_DB と STATE_DB は別接続のため、`oper_status` が APPL_DB に書かれた時点で `fec` がまだ STATE_DB に届いていない中間状態が生じうる。
+
+### トリガー B: `postPortInit()` 呼出し（`supported_fecs` と同時に発生する副次書込）
+
+`postPortInit()` (portsorch.cpp:6445) 内で以下が順次実行される:
+
+| # | 副次書込 | DB | テーブル | フィールド | 証跡 |
+|---|---------|-----|---------|-----------|------|
+| 1 | `initPortSupportedSpeeds()` | STATE_DB | `PORT_TABLE\|<port>` | `supported_speeds` = サポート速度 CSV | `portsorch.cpp:6460, 3159-3172` |
+| 2 | **`initPortSupportedFecModes()`** | STATE_DB | `PORT_TABLE\|<port>` | **`supported_fecs`**（本ページの主作用） | `portsorch.cpp:6461, 3265-3320` |
+
+`supported_speeds` が先に書かれた後、`supported_fecs` が書かれる。両フィールドとも lazy init で 1 回限り。
+
+### トリガー C: `addPort()` でのポート登録（`supported_fecs` より先に発生）
+
+`addPort()` (portsorch.cpp:4118) は `m_counterNameMapUpdater->setCounterNameMap()` を呼び COUNTERS_DB を更新する。この時点では `initPortSupportedFecModes()` はまだ呼ばれていない（`postPortInit()` が後で呼ばれる）。
+
+| 副次書込 | DB | テーブル / キー | 書込内容 | 証跡 |
+|---------|-----|--------------|---------|------|
+| `setCounterNameMap()` | COUNTERS_DB | `COUNTERS_PORT_NAME_MAP` | `<port_alias>` → SAI port OID 文字列 | `portsorch.cpp:4114-4118` |
+
+!!! note "FEC 設定変更では COUNTERS_PORT_NAME_MAP は更新されない"
+    `COUNTERS_PORT_NAME_MAP` は `addPort()` 時の 1 回限りの書込みで確定する。ポート削除時は `delCounterNameMap()` (portsorch.cpp:4312) で削除される。FEC モード変更 (`doPortTask` → `setPortFec`) では `COUNTERS_PORT_NAME_MAP` は再書込みされない。
+
+<!-- /side-effects -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`PORT` テーブル](port.md) — FEC の設定フィールド (`fec`)
