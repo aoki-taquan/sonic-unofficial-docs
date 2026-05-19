@@ -291,6 +291,50 @@ NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_K
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` (NtpCfg L1272–1406), `sonic-buildimage/files/image_config/chrony/chrony.conf.j2`, `chrony.keys.j2`, `chronyd-starter.sh`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `systemctl restart chrony` 失敗 (`handle_ntp_source_intf_chg`) | `hostcfgd:1324-1328` | `LOG_ERR` → `return`（キャッシュ更新なし・再試行なし） | `LOG_ERR: NtpCfg: Failed to restart chrony service` | `hostcfgd:1326-1329` |
+| `systemctl restart chrony` 失敗 (`ntp_global_update`) | `hostcfgd:1356-1361` | `LOG_ERR` → `return`（キャッシュ未更新・CONFIG_DB 変更は適用済みで乖離が生じる） | `LOG_ERR: NtpCfg: Failed to restart chrony service` | `hostcfgd:1358-1361` |
+| `systemctl restart chrony` 失敗 (`ntp_srv_key_update`) | `hostcfgd:1397-1402` | `LOG_ERR` → `return`（キャッシュ未更新→次回イベントで再処理保証） | `LOG_ERR: NtpCfg: Failed to restart chrony service` | `hostcfgd:1399-1402` |
+| `key != 'global'` または差分なし (`ntp_global_update`) | `hostcfgd:1344-1346` | `LOG_NOTICE: Nothing to update` → `return`（no-op・正常扱い） | `LOG_NOTICE: NtpCfg: Nothing to update` | `hostcfgd:1344-1346` |
+| サーバ・鍵ともに差分なし (`ntp_srv_key_update`) | `hostcfgd:1383-1386` | `LOG_NOTICE: Nothing to update` → `return`（no-op・正常扱い） | `LOG_NOTICE: NtpCfg: Nothing to update` | `hostcfgd:1383-1386` |
+| `src_intf` に対応するサーバが未設定 (`handle_ntp_source_intf_chg`) | `hostcfgd:1315-1316` | `return`（何も行わない・サーバ登録後に初めて反映される） | なし | `hostcfgd:1315-1316` |
+
+### テンプレート (chrony.conf.j2 / chrony.keys.j2) の失敗経路
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `NTP_SERVER[server].admin_state == 'disabled'` | そのサーバを `chrony.conf` から除外（サイレント除去） | `chrony.conf.j2:20` |
+| `NTP.authentication == 'enabled'` だが `NTP_KEY` が空 | `keyfile` ディレクティブは追加されるが `chrony.keys` が空 → chrony が認証エラーで起動失敗する可能性 | `chrony.conf.j2:124-128`, `chrony.keys.j2:15-18` |
+| `NTP_KEY[keyid].type` または `.value` が falsy (空) | そのキーをキーファイルからスキップ（サイレントスキップ） | `chrony.keys.j2:15` |
+| `NTP_KEY[keyid].value` が不正 Base64 | `b64decode` が不正文字を無視してデコード → 誤った鍵値を `chrony.keys` に書き込む（サイレント誤動作） | `chrony.keys.j2:16` |
+
+### chronyd-starter.sh の失敗経路
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `sonic-db-cli` が `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` 読み取り失敗 | `VRF_ENABLED` が空 → default VRF で起動（安全フォールバック） | `chronyd-starter.sh:3-16` |
+| `ip vrf exec mgmt` が失敗（mgmt VRF 未設定） | `exec` が失敗 → chrony サービスが起動しない（サービス障害） | `chronyd-starter.sh:11` |
+
+### キャッシュ不整合リスク
+
+`ntp_global_update` は `systemctl restart chrony` 失敗時にキャッシュを更新しない（`self.cache[key] = data` は `return` より後で到達しない）。CONFIG_DB 値は変更済みであるため、次回同フィールド変更が `cache == data` 判定で no-op になるリスクがある。
+
+### STATE_DB ステータスの非存在
+
+NTP 処理は `hostcfgd` + テンプレートエンジンのパイプラインで完結するため、**STATE_DB への NTP ステータス書き込みは存在しない**。失敗検知は `journalctl -u chrony` と syslog の `NtpCfg: Failed to restart chrony service` ログのみで行う。
+
+調査メモ: `meta/_intermediate/cdb-flow/ntp-failure.md`
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <!-- derivation -->

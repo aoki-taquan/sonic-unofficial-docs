@@ -471,4 +471,48 @@ SHP (Shared Headroom Pool) が無効化された際、`refreshSharedHeadroomPool
 
 詳細は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-side.md` を参照。
 <!-- /side-effects -->
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式 — SubscriberStateTable (keyspace PSUBSCRIBE)
+
+`DEFAULT_LOSSLESS_BUFFER_PARAMETER` (CONFIG_DB, DB id = 4) の変更通知は、`buffermgrdyn` が **`SubscriberStateTable`** を通じて受け取る。
+
+`buffermgrd.cpp L183` で `TableConnector(&cfgDb, CFG_DEFAULT_LOSSLESS_BUFFER_PARAMETER)` が `vector<TableConnector>` に追加され、`Orch(const vector<TableConnector>& tables)` コンストラクタ (`orch.cpp L127-133`) が各エントリに `addConsumer(db, tableName)` を呼ぶ。`addConsumer` の DB ID 分岐 (`orch.cpp L1188`) で CONFIG_DB は `SubscriberStateTable` 経路に落ちる:
+
+```cpp
+// orch.cpp L1186-1196
+if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || ...)
+    addExecutor(new Consumer(new SubscriberStateTable(db, tableName, ...), this, tableName));
+```
+
+`SubscriberStateTable` は内部で `PSUBSCRIBE __keyspace@4__:DEFAULT_LOSSLESS_BUFFER_PARAMETER|*` を発行し、CONFIG_DB への HSET / DEL 操作をキースペース通知として受信する。通知ペイロードは操作名（`hset`/`del`）のみで、フィールド値は通知後の `HGETALL` で取得する。
+
+### 通知受信 → ハンドラ呼び出しの流れ
+
+```
+config set DEFAULT_LOSSLESS_BUFFER_PARAMETER|AZURE over_subscribe_ratio=2
+  ↓ HSET "DEFAULT_LOSSLESS_BUFFER_PARAMETER|AZURE" over_subscribe_ratio "2"
+Redis keyspace PUBLISH "__keyspace@4__:DEFAULT_LOSSLESS_BUFFER_PARAMETER|AZURE" "hset"
+  ↓ SubscriberStateTable がパターンマッチ
+buffermgrdyn doTask(Consumer&) (buffermgrdyn.cpp L3574)
+  ↓ m_bufferTableHandlerMap[CFG_DEFAULT_LOSSLESS_BUFFER_PARAMETER]
+handleDefaultLossLessBufferParam() (buffermgrdyn.cpp L1978)
+  ↓ HGETALL で over_subscribe_ratio を取得
+m_overSubscribeRatio 更新 → refreshSharedHeadroomPool()
+  ↓ ProducerStateTable → APPL_DB BUFFER_POOL_TABLE|ingress_lossless_pool
+```
+
+主ループのタイムアウトは `SELECT_TIMEOUT = 1000 ms` (`buffermgrd.cpp L22,225`)。`task_need_retry` 時はエントリを `m_toSync` に残し次回 select で再処理する (`buffermgrdyn.cpp L3597-3599`)。加えて `BUFFERMGR_TIMER_PERIOD = 10 秒` の `SelectableTimer` (`buffermgrdyn.h L17`) が定期的に保留タスクを消化する。
+
+### 購読者一覧
+
+| 購読者 | 購読 API | DB | PSUBSCRIBE パターン | ハンドラ |
+|--------|---------|-----|-------------------|---------|
+| `buffermgrdyn` (dynamic-buffer モード) | `SubscriberStateTable` | CONFIG_DB (4) | `__keyspace@4__:DEFAULT_LOSSLESS_BUFFER_PARAMETER\|*` | `handleDefaultLossLessBufferParam` |
+
+`buffermgr` (static-buffer モード) はこのテーブルを subscribe しない。`buffermgrd.cpp L165` の `if (dynamic_buffer)` 分岐で `BufferMgrDynamic` のみが生成されるため、static モード時は完全に無視される。
+
+> **Evidence**: `sonic-swss/cfgmgr/buffermgrd.cpp L22,165-187,225`; `sonic-swss/cfgmgr/buffermgrdyn.h L17`; `sonic-swss/cfgmgr/buffermgrdyn.cpp L127-131,442,1978-2033,3574-3610,3791`; `sonic-swss/orchagent/orch.cpp L127-133,1186-1196`; 詳細調査 `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-pubsub.md`
+<!-- /pubsub -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->

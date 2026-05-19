@@ -287,51 +287,38 @@ APPL_DB に `FABRIC_MONITOR_DATA` エントリが存在する場合は CONFIG_DB
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副次 DB 書込 (Phase F)
+## SET/DEL 副次 DB 書込み (Phase F)
 
-> 調査根拠: `sonic-swss/cfgmgr/fabricmgr.cpp`, `orchagent/fabricportsorch.cpp` 全行精読 (2026-05-18)
+`CONFIG_DB FABRIC_MONITOR|FABRIC_MONITOR_DATA` の SET が `fabricmgrd` / `FabricPortsOrch` を経由して引き起こす他 DB への副次書込みの一覧。
 
-`FABRIC_MONITOR` テーブルへの SET を受けた `fabricmgrd` と `FabricPortsOrch` は以下の副次 DB 書込みを行う。
+### fabricmgrd による APPL_DB 書込み (cfgmgr/fabricmgr.cpp)
 
-### APPL_DB 書込み
+| 操作 | 対象 DB / テーブル | キー | 書込フィールド | 条件 |
+|------|-----------------|------|--------------|------|
+| SET | APPL_DB / `APP_FABRIC_MONITOR_DATA_TABLE` (`FABRIC_MONITOR_DATA_TABLE`) | `FABRIC_MONITOR_DATA` | `monErrThreshCrcCells`, `monErrThreshRxCells`, `monPollThreshIsolation`, `monPollThreshRecovery`, `monState` | CONFIG_DB に各フィールドが含まれる場合のみ、フィールド単位で逐次書込 (`fabricmgr.cpp:50-100`) |
+| SET | APPL_DB / `APP_FABRIC_MONITOR_PORT_TABLE` | `<port-key>` | `alias`, `lanes`, `isolateStatus` | `FABRIC_MONITOR` テーブル中のポートキーに対応するエントリ (`fabricmgr.cpp:119-121`) |
 
-`fabricmgrd` の `FabricMgr::doTask()` は CONFIG_DB `FABRIC_MONITOR|FABRIC_MONITOR_DATA` の変化を検知すると、フィールドを 1 件ずつ `APP_FABRIC_MONITOR_DATA_TABLE|FABRIC_MONITOR_DATA` (APPL_DB) に書き込む (`fabricmgr.cpp:50-116`)。
+### FabricPortsOrch による STATE_DB 書込み (orchagent/fabricportsorch.cpp)
 
-| タイミング | テーブル (APPL_DB) | キー | 書込フィールド |
-|---|---|---|---|
-| CONFIG_DB `FABRIC_MONITOR` SET 受信 | `APP_FABRIC_MONITOR_DATA_TABLE` | `FABRIC_MONITOR_DATA` | `monState`, `monErrThreshCrcCells`, `monErrThreshRxCells`, `monPollThreshIsolation`, `monPollThreshRecovery`, `monCapacityThreshWarn` (変化したフィールドのみ) |
-| CONFIG_DB `FABRIC_MONITOR` DEL 受信 | `APP_FABRIC_MONITOR_DATA_TABLE` | `FABRIC_MONITOR_DATA` | エントリ削除 |
+APPL_DB への書込み完了後、`FabricPortsOrch` がポーリング周期（12 秒間隔）で以下の副次書込みを実行する。これらは `FABRIC_MONITOR` の設定値変更に連動した間接的な副次効果である。
 
-### STATE_DB 書込み
+| 操作 | 対象 DB / テーブル | キー | 書込フィールド | トリガー条件 |
+|------|-----------------|------|--------------|------------|
+| SET/UPDATE | STATE_DB / `FABRIC_PORT_TABLE` | `PORT<lane>` | `AUTO_ISOLATED`, `ISOLATED`, `PRM_ISOLATED`, `POLL_WITH_ERRORS`, `POLL_WITH_NO_ERRORS`, `POLL_WITH_FEC_ERRORS`, `POLL_WITH_NOFEC_ERRORS`, `CONFIG_ISOLATED`, `RX_CELLS`, `CRC_ERRORS`, `CODE_ERRORS` | `monState=enable` かつ `getFabricPortList()` 完了時、各ポーリング周期で書込み (`fabricportsorch.cpp:884,939-959`) |
+| SET/UPDATE | STATE_DB / `FABRIC_CAPACITY_TABLE` | `FABRIC_CAPACITY_DATA` | `fabric_capacity`, `missing_capacity`, `operating_links`, `number_of_links`, `warning_threshold`, `last_event`, `last_event_time` | `monState=enable` かつ `monCapacityThreshWarn` 有効時、`updateFabricCapacity()` がポーリング周期で書込み (`fabricportsorch.cpp:1225-1231`) |
 
-`FabricPortsOrch` のポーリング処理 (`updateFabricDebugCounters()`, `updateFabricPortState()`, `updateFabricCapacity()`) が実行されるたびに STATE_DB へ書き込む。ただしこれは FABRIC_MONITOR **設定変更に直接起因**するのではなく、`monState=enable` が前提となったポーリング処理の定常的な副作用である。
+### `monState=enable` 設定時のデバッグタイマー起動 (間接副作用)
 
-| タイミング | テーブル (STATE_DB) | キー | 書込フィールド |
-|---|---|---|---|
-| FABRIC_POLL 発火 (`updateFabricPortState()`) | `FABRIC_PORT_TABLE` | `PORT<lane>` | `STATUS`, `POLL_WITH_ERRORS`, `POLL_WITH_NO_ERRORS`, `AUTO_ISOLATED`, `ISOLATED` など |
-| FABRIC_DEBUG_POLL 発火 (`updateFabricDebugCounters()`) | `FABRIC_PORT_TABLE` | `PORT<lane>` | CRC/FEC エラーカウンタ、poll カウンタ |
-| `updateFabricCapacity()` 実行 | `FABRIC_CAPACITY_DATA` | `AGGREGATE_INFO` | `TOTAL_LINKS`, `TOTAL_LINKS_DOWN`, `CAPACITY` (%) |
+`monState=disable` → `enable` に変更された場合、次の `FABRIC_POLL` タイマー発火時（最大 30 秒後）に `checkFabricPortMonState()` が `true` を返し `m_debugTimer->start()` が呼ばれる（`fabricportsorch.cpp:1582-1585`）。これにより 12 秒周期の STATE_DB 書込みループが開始される副次効果が生じる。
 
-`monState=disable` に設定すると `checkFabricPortMonState()=false` により APPL_DB イベント処理が全スキップされ、STATE_DB への監視結果書込みも停止する (`fabricportsorch.cpp:1396-1399`)。
+### ASIC_DB / COUNTERS_DB
 
-### COUNTERS_DB 書込み
+| DB | 書込有無 | 根拠 |
+|----|---------|------|
+| ASIC_DB | SAI `set_port_attribute` (`SAI_PORT_ATTR_FABRIC_ISOLATE`) が呼ばれるが、ASIC_DB への直接書込みは `syncd` 経由のため `fabricportsorch` は直接書込まない (`fabricportsorch.cpp:1000-1006`) | — |
+| COUNTERS_DB | `COUNTERS_TABLE` から**読み取り**のみ（`SAI_PORT_STAT_IF_IN_ERRORS` / `SAI_PORT_STAT_IF_IN_FABRIC_DATA_UNITS`）。書込みは FlexCounter 管理下の別経路 | `fabricportsorch.cpp:500-529` |
 
-FABRIC_MONITOR テーブル自体は COUNTERS_DB に直接書き込まない。FlexCounter グループ (`FABRIC_PORT_STAT_FLEX_COUNTER` / `FABRIC_QUEUE_STAT_FLEX_COUNTER`) は `FabricPortsOrch` コンストラクタで登録済みであり、`FABRIC_MONITOR` 設定変更に起因する COUNTERS_DB 書込みの追加/削除は発生しない。
-
-| 副次 DB | 書込有無 | 根拠 |
-|---|---|---|
-| APPL_DB | **あり** | `fabricmgrd` が `APP_FABRIC_MONITOR_DATA_TABLE` に転送 |
-| STATE_DB | **あり** (`monState=enable` 時) | ポーリング結果の `FABRIC_PORT_TABLE` / `FABRIC_CAPACITY_DATA` |
-| COUNTERS_DB | なし (間接的のみ) | FlexCounter は起動時登録済み。FABRIC_MONITOR 変更で追加登録/解除なし |
-| ASIC_DB | なし | FABRIC_MONITOR は SAI attribute を直接セットしない（SAI の fabric link monitor 制御は FlexCounter 経由のカウンタ読取のみ） |
-
-確認コマンド:
-
-```bash
-sonic-db-cli APPL_DB hgetall 'APP_FABRIC_MONITOR_DATA_TABLE|FABRIC_MONITOR_DATA'
-sonic-db-cli STATE_DB hgetall 'FABRIC_PORT_TABLE|PORT0'
-sonic-db-cli STATE_DB hgetall 'FABRIC_CAPACITY_DATA|AGGREGATE_INFO'
-```
+> **Evidence**: `sonic-swss` `cfgmgr/fabricmgr.cpp:50-124`; `orchagent/fabricportsorch.cpp:884-959,1225-1231,1582-1585`
 <!-- /side-effects -->
 
 <!-- platform -->

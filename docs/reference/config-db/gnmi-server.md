@@ -372,6 +372,39 @@ gNMI サブシステムは CONFIG_DB テーブルのうち GNMI / GNMI_CLIENT_CE
 詳細根拠は `meta/_intermediate/cdb-flow/gnmi-server-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`, `sonic-net/sonic-gnmi/telemetry/telemetry.go`
+
+### 起動時失敗経路 (gnmi-native.sh)
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `TELEMETRY_VARS_FILE` (`telemetry_vars.j2`) が存在しない | `gnmi-native.sh:12-15` | `exit 1` (EXIT_TELEMETRY_VARS_FILE_NOT_FOUND) — コンテナ起動失敗 | stderr: "Telemetry vars template file not found" | `gnmi-native.sh:12-15` |
+| `GNMI\|gnmi.port` が空または非数値 (`^[0-9]+$` 不一致) | `gnmi-native.sh:68-71` | `exit 2` (INCORRECT_TELEMETRY_VALUE) — コンテナ起動失敗 | stderr: "Incorrect port value ${PORT}, expecting positive integers" | `gnmi-native.sh:68-71` |
+| `GNMI\|gnmi.threshold` が空または非数値かつ GNMI エントリ存在 | `gnmi-native.sh:107-110` | `exit 2` — コンテナ起動失敗 | stderr: "Incorrect threshold value, expecting positive integers" | `gnmi-native.sh:107-110` |
+| `GNMI\|gnmi.idle_conn_duration` が空または非数値かつ GNMI エントリ存在 | `gnmi-native.sh:120-123` | `exit 2` — コンテナ起動失敗 | stderr: "Incorrect idle_conn_duration value, expecting positive integers" | `gnmi-native.sh:120-123` |
+| `GNMI\|certs` の `server_crt` または `server_key` が空 (TLS モード) | `gnmi-native.sh:35-39` | `--insecure` フラグを付与して起動 (TLS 無効化フォールバック) | なし | `gnmi-native.sh:35-39` |
+| `GNMI\|certs` も `DEVICE_METADATA\|x509` も未設定 | `gnmi-native.sh:60-61` | `--noTLS` フラグを付与して起動 | なし | `gnmi-native.sh:60-61` |
+
+### telemetry プロセス起動時失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `--server_crt` / `--server_key` 指定ファイルが存在しない | `telemetry.go:252-258` | `log.Fatal` — プロセス終了 | "Failed to get TLS credentials" | `telemetry.go:252-258` |
+| `--ca_crt` 指定ファイルが存在しない (TLS モード) | `telemetry.go:318-320` | `log.Fatal` — プロセス終了 | CA 読み込みエラーメッセージ | `telemetry.go:318-320` |
+
+### dial-out クライアント失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `TELEMETRY_CLIENT\|Subscription_*` の `dst_group` が空 | `dialout_client.go:622-625` | silent no-op — クライアントインスタンス未生成 | なし | `dialout_client.go:622-625` |
+| `dst_group` 参照先の `DestinationGroup_*` が未登録 | `dialout_client.go:514-543` | クライアントインスタンス未生成。後で DestGroup 追加時に自動回復 | なし | `dialout_client.go:514-543` |
+| 接続先コレクターへの dial-out 接続失敗 | `dialout_client.go` retry ループ | バックオフ再試行 — 接続確立まで継続 | gRPC エラーログ | `dialout_client.go` |
+
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
