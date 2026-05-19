@@ -466,6 +466,41 @@ NotificationConsumer: なし
 > **Evidence**: `orchdaemon.cpp:367-384`; `qosorch.cpp:2231-2261` (doTask 実行順序・allPortsReady ガード); `qosorch.cpp:1326-1344` (initTableHandlers)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-platform.md`
+
+`DSCP_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DSCP_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` / `PORT_QOS_MAP`) のプラットフォーム依存挙動を記述する。
+
+### DSCP_TO_TC_MAP / TC_TO_PRIORITY_GROUP_MAP ハンドラ本体 — プラットフォーム差なし
+
+`DscpToTcMapHandler` / `TcToPgHandler` の各コンバータ・addQosItem・removeQosItem には `gMySwitchType` / `platform` / ASIC ベンダー参照が存在しない。全 switch_type で同一経路（`sai_qos_map_api->create_qos_map / set_qos_map_attribute / remove_qos_map`）が実行される。
+
+`gMySwitchType == "voq"` 分岐は `applySchedulerToQueueSchedulerGroup()` (L1637)・`applyWredProfileToQueue()` (L1715)・`handleQueueTable()` (L1772) のみに存在し、DSCP/TC/PG マップハンドラには影響しない。
+
+### switch_type="fabric" — QosOrch 未初期化
+
+`FabricOrchDaemon`（ファブリックスイッチ）は `QosOrch` を初期化しない。ファブリックスイッチでは `DSCP_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` の CONFIG_DB 購読自体が行われず、エントリを書き込んでも処理されない。
+
+### PORT_QOS_MAP|global — SAI switch-level capability ゲート
+
+`applyDscpToTcMapToSwitch()` (L1950-1975) は `querySwitchCapability(SAI_OBJECT_TYPE_SWITCH, SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)` を事前確認する。非対応 ASIC では `PORT_QOS_MAP|global` の SAI 適用がスキップされ（エラーログのみ）、`DSCP_TO_TC_MAP` をスイッチ全体に適用できない。ポート個別の `PORT_QOS_MAP|<port>` には影響しない。
+
+### qos_config.j2 テンプレート初期値のプラットフォーム差
+
+CONFIG_DB への初期投入は `qos_config.j2` テンプレートが担う。以下のプラットフォーム分岐が存在する:
+
+| プラットフォーム条件 | 差分 |
+|---|---|
+| DPU 接続ポート (`PORT_DPC`) | `TC_TO_PRIORITY_GROUP_MAP|AZURE_DPC` が追加される（TC 0-6 → PG 0、TC 7 → PG 7）。`PORT_QOS_MAP.<port>.tc_to_pg_map = "AZURE_DPC"` に切り替わる |
+| `generate_tc_to_pg_map` マクロ定義あり（tunnel_qos_remap / BackEnd ComputeAI） | `TC_TO_PRIORITY_GROUP_MAP` の内容がプラットフォーム固有マクロで置換される |
+| BackEndToR/LeafRouter かつ `storage_device=true` | `DSCP_TO_TC_MAP` が投入されず `DOT1P_TO_TC_MAP` が代わりに設定される。`PORT_QOS_MAP` フィールドも `dot1p_to_tc_map` に切り替わる。`require_global_dscp_to_tc_map=false` となり global エントリも投入されない |
+| `asic_type` が `mellanox` / `barefoot` | `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブルおよび `PORT_QOS_MAP.<port>.pfc_to_pg_map` フィールドが追加される（他 ASIC では存在しない） |
+
+> **Evidence**: `qosorch.cpp:L32,L1637,L1715,L1772,L1950-1975`; `qos_config.j2:L163,L170-205,L265-360,L395-480,L450-478`
+<!-- /platform -->
+
 ## 制約
 
 - `DSCP_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
