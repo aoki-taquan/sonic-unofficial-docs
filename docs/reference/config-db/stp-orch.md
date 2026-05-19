@@ -1,6 +1,6 @@
 ---
 title: APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
-description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズムを詳解。Phase A+B+C+D+E+F+G 分析。"
+description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズム・プラットフォーム差分を詳解。Phase A+B+C+D+E+F+G+H 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -718,6 +718,29 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 | stpmgrd ← STATE_DB `STP_TABLE` | `swss::Table::get()` ポーリング (最大 60 秒、1 秒間隔) | PUBLISH 非購読 |
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+`StpOrch` は ASIC から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を取得する 1 か所のみにプラットフォーム依存がある。orchdaemon はプラットフォーム条件なしで `gStpOrch` を常に登録し、multi-ASIC / VOQ chassis 分岐コードは存在しない。
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-platform.md -->
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox 等) | SAI 取得成否で `max_stp_instances` が変わるのみ。処理ロジックは同一 | `stporch.cpp:34-42` |
+| VS（仮想スイッチ） | SAI 取得失敗時は `m_defaultStpId` / `m_maxStpInstance` 未初期化のまま動作継続 | `stporch.cpp:42` (`ret = false` ログのみ) |
+| multi-asic (`is_multi_npu() == True`) | 非対応（分岐なし） | `stporch.cpp` 全体に `is_multi_npu` 出現なし |
+| VOQ chassis | 各 host で独立適用 | CHASSIS_APP_DB / asicN 参照なし |
+| warm-reboot | 対応コードなし（全プラットフォーム共通） | `stporch.cpp` に `WarmStart` 参照なし |
+| j2 テンプレート / platform_config.json | なし | `sonic-buildimage/device/` に STP orch 設定注入なし |
+
+!!! note "SAI 取得失敗時の動作"
+    `StpOrch` コンストラクタ (`stporch.cpp:34-42`) は `SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID` と `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` をまとめて取得する。VS などで取得が失敗した場合、`m_defaultStpId` と `m_maxStpInstance` は未初期化のまま残り、`SWSS_LOG_NOTICE("StpOrch initialization failure")` のみが出力される。STATE_DB への `max_stp_inst` 書き込みも行われないため、`stpmgrd` はフォールバック値 `STP_DEFAULT_MAX_INSTANCES = 255` を使用する。
+
+詳細根拠は `meta/_intermediate/cdb-flow/stp-orch-platform.md` を参照。
+
+<!-- /platform -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
