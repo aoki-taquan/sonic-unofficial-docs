@@ -667,3 +667,42 @@ ARP/NDP 解決
 | NeighOrch → DashEniFwdOrch | Observer コールバック (C++ オブジェクト) | なし | — |
 | DPU/VDPU 読み取り | Table::getKeys() スナップショット (一回限り) | CONFIG_DB | `DPU`, `REMOTE_DPU`, `VDPU` |
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dpu-eni-platform.md`
+
+### SmartSwitch サブタイプ限定
+
+`DashEniFwdOrch` は `gMySwitchSubType == "SmartSwitch"` の場合のみ `OrchDaemon::init()` で生成される (`orchdaemon.cpp:613-619`)。`DEVICE_METADATA|localhost.switch_sub_type` が `"SmartSwitch"` 以外のプラットフォームでは、このオーケストレータは存在せず **`DPU` / `REMOTE_DPU` / `VDPU` テーブルへの書き込みは有効にならない**。
+
+```cpp
+// orchdaemon.cpp:613-619
+if (gMySwitchSubType == "SmartSwitch")
+{
+    DashEniFwdOrch *dash_eni_fwd_orch =
+        new DashEniFwdOrch(m_configDb, m_applDb, APP_DASH_ENI_FORWARD_TABLE, gNeighOrch);
+    gDirectory.set(dash_eni_fwd_orch);
+    m_orchList.push_back(dash_eni_fwd_orch);
+}
+```
+
+### DPU ロールとの分離
+
+`DEVICE_METADATA.switch_type == "dpu"` のプラットフォーム（DPU カード側）では `DpuOrchDaemon` が起動し (`main.cpp:994`)、`DashAclOrch` / `DashVnetOrch` 等の DASH オーケストレータが動く。NPU 側 SmartSwitch の `DashEniFwdOrch` とは完全に別の Daemon であり、`DPU` / `REMOTE_DPU` / `VDPU` テーブルは **NPU 側のみが消費**する。
+
+### ASIC 種別依存
+
+`DashEniFwdOrch` はエンドポイント到達確認に `NeighOrch` を使い、ACL ルール書き込みに `AclOrch` を経由する。ACL 実装は ASIC ベンダー依存だが、ENI 転送 ACL は専用テーブルタイプ (`ACL_TABLE_TYPE_TABLE`) を自前定義して使用するため (`dashenifwdorch.cpp:403-450`)、standard ACL type の platform 差（MIRRORV6 可否・L3V4V6 可否等）は ENI 転送ルールには直接影響しない。
+
+### プラットフォーム差サマリー
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| SmartSwitch 非対応プラットフォーム | DashEniFwdOrch 非存在。DPU/ENI テーブルは処理されない | `orchdaemon.cpp:613` |
+| DPU ロール (`switch_type=dpu`) | DpuOrchDaemon が動作。NPU 側の DPU/VDPU テーブル消費なし | `main.cpp:994` |
+| ASIC 種別 (broadcom/mellanox 等) | ENI 専用 ACL タイプを自前定義するため主要な差なし | `dashenifwdorch.cpp:403-450` |
+| VOQ chassis | SmartSwitch と排他。DashEniFwdOrch は非起動 | `orchdaemon.cpp:613` |
+| multi-asic | SmartSwitch 構成では単一 ASIC を想定。multi-asic では DashEniFwdOrch 非起動 | `orchdaemon.cpp:613` |
+<!-- /platform -->
