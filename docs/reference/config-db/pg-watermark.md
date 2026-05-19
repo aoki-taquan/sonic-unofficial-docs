@@ -384,6 +384,48 @@ syncd FlexCounter スレッド: FLEX_COUNTER_DB を読んで SAI ポーリング
 
 ---
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/pg-watermark-platform.md`
+> スキャン範囲: `sonic-swss/orchagent/main.cpp:874,997`, `sonic-swss/orchagent/orchdaemon.cpp:232,609,625`, `sonic-swss/orchagent/flexcounterorch.cpp:145-175,265-270`, `sonic-swss/orchagent/portsorch.cpp:8889-8960`
+
+`flexcounterorch.cpp`・`portsorch.cpp`・`watermarkorch.cpp` のいずれにも `getenv("platform")` による ASIC 種別分岐は存在しない。PG_WATERMARK FlexCounter の制御ロジック自体はプラットフォーム非依存だが、以下の構成・スイッチタイプ起因の差異がある。
+
+### fabric スイッチタイプ — FlexCounterOrch / PortsOrch が存在しない
+
+`main.cpp:997` の分岐により `gMySwitchType == "fabric"` のとき `OrchDaemon` が生成されず、`orchdaemon.cpp:232` の `gPortsOrch = new PortsOrch(...)` と `orchdaemon.cpp:625` の `FlexCounterOrch` も生成されない。CONFIG_DB に `FLEX_COUNTER_TABLE|PG_WATERMARK` を書き込んでも **PG watermark カウンタは有効にならない**。
+
+| 構成 | FlexCounterOrch | gPortsOrch | PG_WATERMARK 処理 |
+|------|----------------|------------|-----------------|
+| 通常スイッチ / voq / chassis-packet / dpu | 存在 | 存在 | 正常に enable/disable 反映 |
+| fabric スイッチ (`gMySwitchType == "fabric"`) | **存在しない** | **存在しない** | **CONFIG_DB 書き込みは無効** |
+
+### VOQ シャーシ — PG_WATERMARK の挙動は通常スイッチと同一
+
+VOQ シャーシ (`gMySwitchType == "voq"`) では `OrchDaemon` が生成されるため `gPortsOrch` も存在する。`flexcounterorch.cpp:544-558` の VOQ 専用コードパスは QUEUE グループ向けであり PG_WATERMARK には無関係。動作は通常スイッチと同一。
+
+### FabricPortsOrch ブロック — fabric ポート ready 待ち
+
+`flexcounterorch.cpp:169-172` で `gFabricPortsOrch` が存在しかつ全ファブリックポート未 ready の場合、`doTask()` 全体が早期リターンする。ファブリックポートを持つラインカード構成では `FLEX_COUNTER_TABLE|PG_WATERMARK` の enable 処理がファブリックポート初期化完了まで遅延する。
+
+### SAI カウンタ非サポート — ASIC 依存
+
+`pg_watermark_manager.setCounterIdList()` が FLEX_COUNTER_DB へ書き込まれても、ASIC が `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` / `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` をサポートしない場合、syncd は `SAI_STATUS_NOT_SUPPORTED` を受け取り COUNTERS_DB に値が現れない。CONFIG_DB / FLEX_COUNTER_DB の書き込み自体は行われる。
+
+### プラットフォーム差サマリ
+
+| 差異点 | 条件 | PG_WATERMARK への影響 |
+|--------|------|----------------------|
+| FlexCounterOrch / PortsOrch 非存在 | `gMySwitchType == "fabric"` | CONFIG_DB 書き込みは無効（カウンタ機能なし） |
+| `doTask()` ブロック | `gFabricPortsOrch != nullptr` かつファブリックポート未 ready | enable 反映が遅延 |
+| SAI カウンタ非サポート | ASIC 実装依存 | FLEX_COUNTER_DB 登録は成功するが COUNTERS_DB に値なし |
+| Gearbox / DASH / MACsec | 各オプション機能 | PG_WATERMARK には無関係 |
+
+<!-- /platform -->
+
+---
+
 ## 設定例
 
 ```json
