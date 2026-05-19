@@ -321,6 +321,56 @@ APPL_DB への書込み完了後、`FabricPortsOrch` がポーリング周期（
 > **Evidence**: `sonic-swss` `cfgmgr/fabricmgr.cpp:50-124`; `orchagent/fabricportsorch.cpp:884-959,1225-1231,1582-1585`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `sonic-swss/cfgmgr/fabricmgrd.cpp`, `cfgmgr/fabricmgr.cpp`, `orchagent/fabricportsorch.cpp`, `orchagent/orchdaemon.cpp`
+
+### CONFIG_DB → APPL_DB: fabricmgrd の ProducerStateTable 書き込み
+
+`fabricmgrd` は `swss::Orch` 基底クラスを継承し、`CONFIG_DB` の `FABRIC_MONITOR|FABRIC_MONITOR_DATA` および `FABRIC_MONITOR|<port>` テーブルを **`SubscriberStateTable`（Orch 内部）** で購読する。変化を検知すると `FabricMgr::doTask()` が呼ばれ、**`ProducerStateTable`（`m_appFabricMonitorTable` / `m_appFabricPortTable`）** を通じて APPL_DB へ書き込む。
+
+```
+CONFIG_DB FABRIC_MONITOR|FABRIC_MONITOR_DATA
+  ↓ SubscriberStateTable (fabricmgrd, cfgmgr/fabricmgrd.cpp:28)
+FabricMgr::doTask() (cfgmgr/fabricmgr.cpp:27-124)
+  ↓ ProducerStateTable.set() → APPL_DB FABRIC_MONITOR_TABLE|FABRIC_MONITOR_DATA
+```
+
+### APPL_DB → FabricPortsOrch: ConsumerStateTable 読み取り
+
+`orchdaemon.cpp:606-607` にて `APP_FABRIC_MONITOR_PORT_TABLE_NAME` (`FABRIC_PORT_TABLE`) と `APP_FABRIC_MONITOR_DATA_TABLE_NAME` (`FABRIC_MONITOR_TABLE`) を `FabricPortsOrch` の購読テーブルとして登録する。`FabricPortsOrch::doTask(Consumer &consumer)` が呼ばれて `APP_FABRIC_MONITOR_PORT_TABLE_NAME` のエントリを処理する（`fabricportsorch.cpp:1549-1561`）。ただし `FABRIC_MONITOR_DATA` の閾値は **Consumer ではなく** `m_applMonitorConstTable->get()` による直接 `hgetall` で読み取られる（ポーリング毎: `fabricportsorch.cpp:444`）。
+
+| 購読方式 | コンポーネント | 対象テーブル (DB) | API |
+|---------|-------------|-----------------|-----|
+| `SubscriberStateTable` (Orch) | fabricmgrd | CONFIG_DB `FABRIC_MONITOR|FABRIC_MONITOR_DATA`, `FABRIC_MONITOR|<port>` | `Orch::getSelectables()` → `swss::Select` |
+| `ProducerStateTable` 書き込み | fabricmgrd | APPL_DB `FABRIC_MONITOR_TABLE|FABRIC_MONITOR_DATA`, `FABRIC_PORT_TABLE|<port>` | `m_appFabricMonitorTable.set()` (`fabricmgr.cpp:114`) |
+| `ConsumerStateTable` (Orch) | FabricPortsOrch | APPL_DB `FABRIC_PORT_TABLE|<port>` | orchdaemon 登録 (`orchdaemon.cpp:606`) |
+| `Table::get` (ポーリング) | FabricPortsOrch | APPL_DB `FABRIC_MONITOR_TABLE|FABRIC_MONITOR_DATA` | `m_applMonitorConstTable->get()` (`fabricportsorch.cpp:444`) |
+| `Table::get` (ポーリング) | FabricPortsOrch | STATE_DB `FABRIC_PORT_TABLE|PORT<lane>` | `m_stateTable->get()` (`fabricportsorch.cpp:619`) |
+| `Table::hset` (書き込み) | FabricPortsOrch | STATE_DB `FABRIC_PORT_TABLE|PORT<lane>` | `updateStateDbTable()` (`fabricportsorch.cpp:966-976`) |
+| `Table::set` (書き込み) | FabricPortsOrch | STATE_DB `FABRIC_CAPACITY_TABLE|FABRIC_CAPACITY_DATA` | `m_fabricCapacityTable->set()` (`fabricportsorch.cpp:1225`) |
+| `Table::get` (読み取り) | FabricPortsOrch | COUNTERS_DB `COUNTERS_TABLE|<port_oid>` | `m_fabricCounterTable->get()` (`fabricportsorch.cpp:500`) |
+
+### keyspace 通知 / pub-sub の有無
+
+`FABRIC_MONITOR` テーブルに対する **Redis keyspace 通知（`__keyspace@*__` / `__keyevent@*__`）は使用しない**。`fabricmgrd` は `Orch` フレームワークの `Select` ループ (`SELECT_TIMEOUT=1000ms` ポーリング) で変化を検知し、タイムアウト時は `fabricmgr.doTask()` を呼んで残キューを処理する（`fabricmgrd.cpp:59`）。
+
+### 設定変更の反映経路（end-to-end）
+
+```
+管理者: sonic-db-cli CONFIG_DB hset 'FABRIC_MONITOR|FABRIC_MONITOR_DATA' monState enable
+  ↓ SubscriberStateTable (fabricmgrd, 最大 1 秒ポーリング)
+fabricmgr.doTask() → ProducerStateTable.set(APPL_DB, FABRIC_MONITOR_TABLE, ...)
+  ↓ ConsumerStateTable notify → FabricPortsOrch::doTask(consumer) [PORT テーブルのみ]
+  または m_applMonitorConstTable->get() [次の FABRIC_DEBUG_POLL タイマー発火時 (最大 12 秒)]
+FabricPortsOrch: updateFabricDebugCounters() / updateFabricCapacity()
+  ↓ STATE_DB FABRIC_PORT_TABLE / FABRIC_CAPACITY_TABLE へ書き込み
+```
+
+> **Evidence**: `sonic-swss/cfgmgr/fabricmgrd.cpp:28-64`; `cfgmgr/fabricmgr.cpp:14-124`; `orchagent/orchdaemon.cpp:26-27,601-610`; `orchagent/fabricportsorch.cpp:80-139,444,500,619,966-976,1225`
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
