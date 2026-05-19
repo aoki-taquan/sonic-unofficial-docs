@@ -491,6 +491,35 @@ CONFIG_DB 経路では `ProducerStateTable` を使用しない。CLI (`sonic-uti
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/nvgre-tunnel-platform.md -->
+
+`NvgreTunnelOrch` / `NvgreTunnelMapOrch` は**全プラットフォームで同一の動作**をする。`orchdaemon.cpp:361-364` で両 Orch が無条件にインスタンス化されており、`platform` 変数や SAI capability 照会による条件分岐はゼロ。
+
+### プラットフォーム依存ゼロの証跡
+
+`nvgreorch.cpp` 全 582 行・`nvgreorch.h` 全行を `platform|broadcom|mellanox|barefoot|cisco|namespace|multi_asic` でスキャンしたがヒット 0 件。`orchdaemon.cpp:190` で `platform = getenv("platform")` を読み込むが、直後の NVGRE orch 生成 (L361-364) は `if (platform == ...)` の外側にある無条件ブロックである。L503 以降の platform 分岐（DTEL / FlexCounter / QoS 制御）は NVGRE に関与しない。
+
+### multi-asic / VOQ chassis
+
+multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動するが、各インスタンスが同じ無条件経路を通るため namespace 間で挙動差はない。NVGRE_TUNNEL テーブルは per-asic CONFIG_DB に書かれた分だけ各 orchagent が処理する。VOQ chassis でも特別なガードは存在しない。
+
+### SAI 実装依存性（プラットフォーム間の実質的な差）
+
+`NvgreTunnelOrch` は SAI capability を事前照会しない。`create_tunnel(SAI_TUNNEL_TYPE_NVGRE)` が成功するかどうかはハードウェア SAI 実装依存である。非サポート ASIC では SAI が非 `SAI_STATUS_SUCCESS` を返して `std::runtime_error` がスローされ orchagent が abort する（Phase D シナリオ 2–4 参照）。コードレベルでの ASIC 種別チェックはないため、サポート可否はハードウェアベンダーの SAI 実装に委ねられる。
+
+| 項目 | 状況 |
+|------|------|
+| orchagent コードの platform 分岐 | なし |
+| SAI capability 事前照会 | なし |
+| multi-asic での挙動差 | なし（各 orchagent が同一処理） |
+| 非サポート ASIC での帰結 | orchagent abort（SAI 失敗 → runtime_error） |
+| VS (仮想 ASIC) | テスト (`test_nvgre_tunnel.py`) が VS 上で動作確認済み |
+
+<!-- /platform -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
