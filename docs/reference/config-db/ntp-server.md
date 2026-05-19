@@ -180,6 +180,86 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang (L174,L189,L195,L213,L219,L227-231),
+     sonic-buildimage/files/image_config/chrony/chrony.conf.j2 (L26-27,L127,L132,L135,L141,L144,L156,L159),
+     sonic-host-services/scripts/caclmgrd (L95-100),
+     sonic-host-services/scripts/hostcfgd (L1280),
+     sonic-buildimage/src/sonic-config-engine/minigraph.py (L2646) -->
+
+`NTP_SERVER` テーブルの処理に関わるハードコード定数の一覧。これらは CONFIG_DB・YANG 設定では変更できない値であり、コードまたはテンプレートに直接埋め込まれている。
+
+### YANG 由来の定数（sonic-ntp.yang）
+
+| 定数 / フィールド | 値 | 定義箇所 | 備考 |
+|-----------------|-----|---------|------|
+| `NTP_SERVER_LIST` 最大エントリ数 | **10** | `sonic-ntp.yang:174` (`max-elements 10`) | 11 件目以降は YANG バリデーションで拒否 |
+| `association_type` YANG default | **`server`** | `sonic-ntp.yang:189` | `server` / `pool` の 2 値 enum |
+| `iburst` YANG default | **`on`** | `sonic-ntp.yang:195` | `on` / `off` の 2 値 enum |
+| `admin_state` YANG default | **`enabled`** | `sonic-ntp.yang:213` | `enabled` / `disabled` の admin_mode |
+| `trusted` YANG default | **`no`** | `sonic-ntp.yang:219` | `yes` / `no` の yes-no |
+| `version` YANG default | **4** | `sonic-ntp.yang:231` | 許容範囲 `3..4`（NTPv3 / v4 のみ） |
+| `version` 範囲制約 | **3〜4** | `sonic-ntp.yang:227-228` (`range "3..4"`, `error-message "Failed NTP version"`) | NTPv1・v2 は明示禁止 |
+
+### chrony.conf.j2 テンプレートの Jinja2 フォールバック定数
+
+| フォールバック | 値 | 定義箇所 | 条件 |
+|---|---|---|---|
+| `association_type` テンプレート fallback | **`'server'`** | `chrony.conf.j2:26` (`config.association_type \| d('server')`) | DB にキーなし時 |
+| `resolve_as` テンプレート fallback | **`server`**（テーブル key のサーバアドレス） | `chrony.conf.j2:27` (`config.resolve_as \| d(server)`) | DB にキーなし時 |
+| `association_type == 'pool'` 時の `resolve_as` 強制上書き | **`server`**（テーブル key） | `chrony.conf.j2:49-51` | pool タイプでは resolve_as カスタム値を無視 |
+
+!!! warning "iburst のテンプレート判定バグ"
+    `chrony.conf.j2:37` の `{% if config.iburst %}` は truthy 判定のみを行う。`iburst = 'off'`（非空文字列）でも iburst オプションが付与される。`iburst = 'on'` と `iburst = 'off'` の区別は YANG enum 制約が担うが、テンプレート側では `'off'` が有効として扱われる。
+
+### chrony.conf.j2 ハードコードされたファイルパスと数値定数
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|-----|---------|------|
+| driftfile パス | **`/var/lib/chrony/chrony.drift`** | `chrony.conf.j2:132` | クロック周波数誤差を記録するファイル |
+| ntsdumpdir パス | **`/var/lib/chrony`** | `chrony.conf.j2:135` | NTS キー・クッキー保存ディレクトリ |
+| logdir パス | **`/var/log/chrony`** | `chrony.conf.j2:141` | chrony ログ出力ディレクトリ |
+| `maxupdateskew` | **100.0** | `chrony.conf.j2:144` | クロック更新の最大スキュー（ppm）。これを超える更新は適用されない |
+| rtcfile パス | **`/var/lib/chrony/rtc`** | `chrony.conf.j2:156` | RTC（ハードウェア時計）誤差ファイル |
+| hwclockfile パス | **`/etc/adjtime`** | `chrony.conf.j2:157` | hwclock 補正ファイル |
+| `rtcautotrim` | **15** | `chrony.conf.j2:159` | RTC 自動トリム間隔（秒） |
+| leapsectz | **`right/UTC`** | `chrony.conf.j2:170` | TAI-UTC オフセット・閏秒データソース |
+| keyfile パス | **`/etc/chrony/chrony.keys`** | `chrony.conf.j2:127` | NTP 認証鍵ファイル。`authentication=enabled` 時のみ `chrony.conf` に生成 |
+| confdir | **`/etc/chrony/conf.d`** | `chrony.conf.j2:10` | 追加設定ファイルインクルードディレクトリ |
+| sourcedir (dhcp) | **`/run/chrony-dhcp`** | `chrony.conf.j2:119` | DHCP 経由の NTP ソースディレクトリ |
+| sourcedir (static) | **`/etc/chrony/sources.d`** | `chrony.conf.j2:122` | 静的 NTP ソース定義ディレクトリ |
+
+### NTP UDP ポート定数（caclmgrd）
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|-----|---------|------|
+| NTP サービスポート | **UDP 123** | `caclmgrd:98` (`"dst_ports": ["123"]`) | iptables ACL ルール生成の宛先ポート。CONFIG_DB から変更不可 |
+| プロトコル | **`udp`** | `caclmgrd:97` | NTP パケットフィルタのプロトコル固定値 |
+| `multi_asic_ns_to_host_fwd` | **`False`** | `caclmgrd:99` | multi-ASIC 環境での名前空間→ホスト転送なし |
+
+### hostcfgd のコマンド定数
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|-----|---------|------|
+| `CHRONY_RESTART` | **`['systemctl', 'restart', 'chrony']`** | `hostcfgd:1280` | `NTP_SERVER` / `NTP_KEY` 変更時に実行するコマンド。変更不可 |
+
+### minigraph.py によるブート時注入定数
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|-----|---------|------|
+| iburst ブート時注入値 | **`'on'`** | `minigraph.py:2646` | minigraph から生成される全 `NTP_SERVER` エントリに `iburst: 'on'` を一律設定 |
+
+### CONFIG_DB で制御不可能な chrony パラメータ
+
+| パラメータ | chrony 内部デフォルト | 備考 |
+|-----------|---------------------|------|
+| `minpoll` | **6**（= 64 秒間隔） | YANG / CONFIG_DB にフィールドなし。chrony デフォルト値が使用される |
+| `maxpoll` | **10**（= 1024 秒間隔） | 同上。SONiC からは制御不可 |
+
+<!-- /constants -->
+
 ## 関連サブテーブル
 
 - `NTP|global` (container, single-instance):
