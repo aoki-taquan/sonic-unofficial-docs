@@ -383,6 +383,45 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 > **スキャン証跡**: `dhcp4relay_stats.cpp` 全行読了。`dhcp4relay.cpp:86-87, 591-828, 1570-1571` 読了。`dhcp4relay_stats.h:12` 読了。`dhcp4relay_mgr.cpp:56-90, 510-518, 762-771` 読了。副次書き込み先は `COUNTERS_DB.COUNTERS_DHCPV4` のみ確認。CONFIG_DB / APPL_DB への書き込みなし。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`DHCPV4_RELAY` テーブルは `SubscriberStateTable`（keyspace notification）では**直接購読されない**。
+`dhcprelayd` は `FEATURE`・`VLAN`・`VLAN_INTERFACE` テーブルの変化をトリガとして受け取り、
+その都度スナップショット読み出し (`get_config_db_table`) で設定を取り込み `dhcrelay` プロセスを制御する。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | 購読テーブル / チャンネル |
+|------|------|--------------------------|
+| CONFIG_DB → `dhcprelayd` | `SubscriberStateTable` | `FEATURE` (常時有効) |
+| CONFIG_DB → `dhcprelayd` | `SubscriberStateTable` (動的有効化) | `VLAN`・`VLAN_INTERFACE` (`dhcp_server` feature 有効時) |
+| CONFIG_DB → `dhcprelayd` | スナップショット読み出し (`get_config_db_table`) | `DHCPV4_RELAY`・`DEVICE_METADATA` (イベント受信後) |
+| `dhcprelayd` → `dhcrelay` | supervisord + プロセス起動 | コマンドライン引数経由 |
+
+### DhcpRelaydDbMonitor の select ループ
+
+`DhcpRelaydDbMonitor.check_db_update()` が `swsscommon.Select.select(timeout=5000ms)` でブロック待機する。
+イベント受信時は有効な `ConfigDbEventChecker` を順に `check_update_event()` で評価する。
+
+- `DhcpServerFeatureStateChecker` — `FEATURE` テーブルの `dhcp_server|state` フィールドを監視。`enabled`↔`disabled` の遷移のみ通知 (`dhcp_db_monitor.py:401-411`)。
+- `VlanTableEventChecker` — `VLAN` テーブルの変化を監視。`enabled_dhcp_interfaces` に含まれる VLAN の変化時のみ `refresh_dhcrelay()` をトリガ (`dhcp_db_monitor.py:294-299`)。
+- `VlanIntfTableEventChecker` — `VLAN_INTERFACE` テーブルを監視。対象 VLAN の IPv4 アドレス変化のみ通知 (`dhcp_db_monitor.py:315-323`)。
+
+### DHCPV4_RELAY テーブルの読み出しタイミング
+
+`DHCPV4_RELAY` テーブルは keyspace notification を使わず、`refresh_dhcrelay()` が呼ばれるたびに
+`DEVICE_METADATA.has_sonic_dhcpv4_relay` の値を確認し、旧来方式 (`dhcrelay` プロセス起動) を行うかを決定する (`dhcprelayd.py:111-113`)。
+実際のサーバ IP 設定等は `supervisord` 設定ファイル経由でコマンドライン引数として `dhcrelay` へ渡される。
+
+### APPL_DB・STATE_DB への通知
+
+`dhcprelayd` は APPL_DB・STATE_DB への書き込みを行わない。
+`DHCPV4_RELAY` は orchagent 非経由（Linux カーネルレイヤの中継）のため、SAI 通知は発生しない。
+
+> **Evidence**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:20-411, 442-485`; `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:44-128`
+<!-- /pubsub -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
