@@ -328,6 +328,51 @@ sshd_config バリデーション成功時に `systemctl restart ssh` が発行�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`SSH_SFTP` テーブルは CONFIG_DB に存在しないため、SFTP サブシステム専用の購読チャネルは存在しない。SFTP に間接的に影響する CONFIG_DB 通知経路は `SSH_SERVER|POLICIES` を購読する `hostcfgd` のみである。
+
+### 購読メカニズム
+
+`hostcfgd` (`sonic-host-services/scripts/hostcfgd`) は `swsscommon` Python ラッパの `ConfigDBConnector.subscribe()` でハンドラを登録し、`listen()` で Redis keyspace 通知を受信する。
+
+```python
+# hostcfgd:2478
+self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))
+# hostcfgd:2528
+self.config_db.listen(init_data_handler=self.load)
+```
+
+`ConfigDBConnector.listen()` が内部で `PSUBSCRIBE "__keyspace@4__:*"` を発行し（`swsscommon/common/configdb.h:101`）、`SSH_SERVER|POLICIES` の `HSET` / `DEL` イベントを `ssh_handler()` へディスパッチする。
+
+| 項目 | 値 |
+|------|----|
+| 購読クラス | `ConfigDBConnector.subscribe()` (keyspace 通知ベース) |
+| keyspace パターン | `__keyspace@4__:*` (CONFIG_DB dbId=4) |
+| 対象テーブル | `SSH_SERVER` のみ（`SSH_SFTP` キーは存在しない） |
+| channel ベース PUBLISH | **使用しない**（CONFIG_DB は `HSET` のみ、ConsumerStateTable 形式ではない） |
+| POP_BATCH_SIZE | 非該当（ConsumerStateTable ではなく keyspace 通知） |
+| TTL | CONFIG_DB 全エントリで未設定（永続前提） |
+| SFTP 専用チャンネル | **なし** |
+| 起動時スナップショット | `init_data_handler=self.load` で `SSH_SERVER` 全体を初期ロード（hostcfgd:2528, 2265） |
+
+### SFTP への影響
+
+`ssh_handler()` → `SshServer.set_policies()` の内部で `SSH_CONFIG_NAMES`（hostcfgd:67-75）に `Subsystem` キーが存在しないため、通知が発火しても SFTP サブシステムへの書き込みは発生しない。Subsystem 行は `copy2` でコピー元から引き継がれるだけで変更されない。
+
+### 外部購読者
+
+`SSH_SERVER` テーブルを購読するプロセスは `hostcfgd` のみ。SFTP サブシステムを直接購読する orchagent / gNMI translib / sairedis へのコードは存在しない（sonic-swss / sonic-gnmi 各リポ grep 確認）。
+
+詳細解析: `meta/_intermediate/cdb-flow/ssh-sftp-pubsub.md`
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd:2478 (config_db.subscribe('SSH_SERVER', ...)) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd:2528 (config_db.listen(init_data_handler=self.load)) -->
+<!-- evidence: sonic-swss-common/common/configdb.h:101 (PSUBSCRIBE "__keyspace@4__:*") -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd:67-75 (SSH_CONFIG_NAMES に Subsystem キーなし) -->
+<!-- /pubsub -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
