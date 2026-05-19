@@ -383,6 +383,27 @@ flowchart TD
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ipv6-link-local-platform.md`
+
+`ipv6_use_link_local_only` の処理は SAI 非経由（orchagent は dead consumer）であり、Linux カーネルの IPv6 スタックと `intfmgrd` の sysctl / netlink 操作で完結する。ASIC 種別・ベンダーへの依存は原理的に発生しない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `intfmgrd` は SAI API を呼ばない。`intfmgr.cpp` を `platform\|asic\|vendor` で grep してヒット 0 件（`using namespace std/swss` のみ） |
+| multi-asic (per-asic namespace) | **intfmgrd は per-asic 実行** | `sonic-buildimage/files/build_templates/per_namespace/swss.service.j2` の存在から swss は `has_per_asic_scope=True`。各 asic namespace で独立した `intfmgrd` が稼働し、対応する CONFIG_DB/APP_DB/STATE_DB のみを参照する |
+| CLI の multi-asic 対応 | `config ipv6` に `-n/--namespace` オプション | `config/main.py:9495-9506` の `ipv6` グループが `multi_asic.connect_config_db_for_ns(namespace)` を使用。multi-asic 環境では namespace 指定が必須。`config interface ipv6` は interface グループの config_db を継承 |
+| VOQ chassis (`mySwitchType == "voq"`) | link-local 処理への影響なし | `intfmgr.cpp:L103` の VOQ 分岐は `setIntfIp()` 内の IPv6 アドレス metric 設定専用。`ipv6_use_link_local_only` 処理（L817-926）は VOQ 条件分岐を含まない |
+| supervisor / line card 分離 | 各 host で独立適用 | INTERFACE テーブルは host-local scope。chassis 全体の集中管理機構は存在しない。supervisor / line card 各 host で独立した `intfmgrd` が稼働する |
+| ベンダー固有 platform plugin | 関係なし | `ipv6_use_link_local_only` の処理パス（intfmgrd → APP_DB / neighsyncd → NEIGH_TABLE）に `sonic-platform-common` の抽象 API は登場しない |
+
+### 実運用上の注意点 (multi-asic)
+
+multi-asic 環境では、`config ipv6 enable link-local`（全 IF 一括）を実行する際に `-n <namespace>` で対象 ASIC を指定する必要がある。指定しない場合はデフォルト namespace（asic0 相当）の CONFIG_DB にのみ書き込まれ、他 ASIC の Ethernet ポートには反映されない。per-ASIC の `intfmgrd` は自身の namespace の CONFIG_DB しか購読しないためである。
+<!-- /platform -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |
