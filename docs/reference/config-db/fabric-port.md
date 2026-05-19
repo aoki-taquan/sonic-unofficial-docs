@@ -257,8 +257,66 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 > **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:80-228,420-520,1394-1542`、`cfgmgr/fabricmgr.cpp:14-124`、`sonic-swss-common/common/schema.h` (`APP_FABRIC_PORT_TABLE_NAME`, `COUNTERS_FABRIC_PORT_NAME_MAP`)、`orchdaemon.cpp:26-27` (`APP_FABRIC_MONITOR_PORT_TABLE_NAME`, `APP_FABRIC_MONITOR_DATA_TABLE_NAME`)
 <!-- /cross-refs -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/fabricportsorch.cpp:21-48, fabricportsorch.h:14-16, sonic-swss-common/common/schema.h:40,255,405-406,548-549 -->
+
+### テーブル名定数 (`schema.h` / `fabricportsorch.h`)
+
+| マクロ名 | 値 | DB | ソース |
+|---|---|---|---|
+| `CFG_FABRIC_MONITOR_PORT_TABLE_NAME` | `"FABRIC_PORT"` | CONFIG_DB | `schema.h:406` |
+| `APP_FABRIC_MONITOR_PORT_TABLE_NAME` | `"FABRIC_PORT_TABLE"` | APPL_DB | `schema.h:549` |
+| `APP_FABRIC_PORT_TABLE_NAME` | `"FABRIC_PORT_TABLE"` | STATE_DB | `schema.h:40` |
+| `APP_FABRIC_MONITOR_DATA_TABLE_NAME` | `"FABRIC_MONITOR_TABLE"` | APPL_DB | `schema.h:548` |
+| `COUNTERS_FABRIC_PORT_NAME_MAP` | `"COUNTERS_FABRIC_PORT_NAME_MAP"` | COUNTERS_DB | `schema.h:255` |
+| `STATE_FABRIC_CAPACITY_TABLE_NAME` | `"FABRIC_CAPACITY_TABLE"` | STATE_DB | `fabricportsorch.h:15` |
+| `STATE_PORT_CAPACITY_TABLE_NAME` | `"PORT_CAPACITY_TABLE"` | STATE_DB | `fabricportsorch.h:16` |
+
+### CONFIG_DB フィールドキー定数
+
+`doFabricPortTask()` が CONFIG_DB / APPL_DB から読み取るフィールド名文字列:
+
+| フィールド文字列 | 意味 | 参照箇所 |
+|---|---|---|
+| `"alias"` | ファブリックポートエイリアス名 | `fabricportsorch.cpp:1417,1440` |
+| `"lanes"` | SAI lane ID 文字列 (mandatory) | `fabricportsorch.cpp:1421,1454` |
+| `"isolateStatus"` | 隔離状態 (`"True"`/`"False"`) | `fabricportsorch.cpp:1425,1469,600` |
+| `"forceUnisolateStatus"` | 強制 unisolate カウンタ (uint32) | `fabricportsorch.cpp:1495-1512` |
+
+### STATE_DB フィールドキー定数
+
+`FabricPortsOrch` が `STATE_DB FABRIC_PORT_TABLE|PORT<lane>` に書き込む際に使用する文字列:
+
+| フィールド文字列 | 意味 | 参照箇所 |
+|---|---|---|
+| `"STATUS"` | ポートリンク状態 (`"up"`/`"down"`) | `fabricportsorch.cpp:402,628` |
+| `"REMOTE_MOD"` | 接続先モジュール番号 | `fabricportsorch.cpp:405` |
+| `"REMOTE_PORT"` | 接続先ポート番号 | `fabricportsorch.cpp:406` |
+| `"ISOLATED"` | 実効 isolate 状態 | `fabricportsorch.cpp:694,944,1031` |
+| `"CONFIG_ISOLATED"` | CONFIG_DB 由来 isolate フラグ | `fabricportsorch.cpp:943,1107,1533` |
+| `"AUTO_ISOLATED"` | FABRIC_MONITOR 自動 isolate フラグ | `fabricportsorch.cpp:688,884,893` |
+| `"FORCE_UN_ISOLATE"` | force unisolate カウンタ (STATE_DB) | `fabricportsorch.cpp:1511,1528` |
+
+### 内部識別子定数 (`fabricportsorch.cpp:22-38`)
+
+| マクロ名 | 値 | 用途 |
+|---|---|---|
+| `FABRIC_PORT_PREFIX` | `"PORT"` | STATE_DB キー生成 (`PORT<lane>`) |
+| `APPL_FABRIC_PORT_PREFIX` | `"Fabric"` | COUNTERS_DB 名前マップのポート名プレフィックス |
+| `FABRIC_MONITOR_DATA` | `"FABRIC_MONITOR_DATA"` | APPL_DB `monState` 取得時のキー |
+| `FABRIC_PORT_ERROR` | `0` | `getFabricPortList()` 失敗時の戻り値 |
+| `FABRIC_PORT_SUCCESS` | `1` | `getFabricPortList()` 成功時の戻り値 |
+
+### FlexCounter グループ名定数 (`fabricportsorch.cpp:25-34`)
+
+| マクロ名 | 値 | 用途 |
+|---|---|---|
+| `FABRIC_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"FABRIC_PORT_STAT_COUNTER"` | ポートレベル FlexCounter グループ名 |
+| `FABRIC_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"FABRIC_QUEUE_STAT_COUNTER"` | キューレベル FlexCounter グループ名 |
+| `SWITCH_DEBUG_COUNTER_FLEX_COUNTER_GROUP` | `"SWITCH_DEBUG_COUNTER"` | スイッチドロップカウンタ FlexCounter グループ名 |
+| `SWITCH_STANDARD_DROP_COUNTERS` | `"SWITCH_ID"` | COUNTERS_DB デバッグ名前マップのキー |
 
 `FabricPortsOrch` はポーリング間隔・FlexCounter 周期・リンク監視閾値のほぼ全てをソース上の `#define` またはクラスメンバ初期化子に固定している。これらは CONFIG_DB・DEVICE_METADATA・FABRIC_MONITOR のいずれからも変更できない。一部は FABRIC_MONITOR テーブルのフィールド（`monPollThreshIsolation` 等）で実行時に上書きされるが、上書き不可の定数が多数残る。
 
@@ -325,7 +383,7 @@ FlexCounter グループ名（`FABRIC_PORT_STAT_COUNTER` / `FABRIC_QUEUE_STAT_CO
 
 > **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:21-48,87-88,766,817,1350,1529-1532`、`orchagent/fabricportsorch.h:62-68`
 
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)

@@ -320,4 +320,42 @@ connection key 末尾に付加される RFC3339 タイムスタンプは `time.N
 -->
 <!-- /defaults -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`TELEMETRY_CONNECTIONS` テーブル自体は STATE_DB への書込専用ランタイム状態テーブルであり、このテーブルへの HSet / HDel が他の DB テーブルへの書込を **連鎖的にトリガすることはない**。
+
+### 副次書込の調査結果
+
+| 副次 DB / リソース | テーブル / キー | 書込内容 | 有無 |
+|---|---|---|---|
+| CONFIG_DB | 任意テーブル | `TELEMETRY_CONNECTIONS` の変化に起因する書戻し | **なし** |
+| APPL_DB | 任意テーブル | orchagent 等への通知 | **なし** |
+| ASIC_DB | 任意テーブル | SAI 操作のトリガ | **なし** |
+| COUNTERS_DB | 任意テーブル | カウンタ更新 | **なし** |
+| FLEX_COUNTER_DB | 任意テーブル | 参照なし | **なし** |
+| ファイルシステム | 任意パス | 設定ファイル書込 | **なし** |
+| SysV IPC 共有メモリ | key=`7749` | gNMI 操作カウンタ (`InitCounters` / `IncCounter`) | `telemetry` デーモン **起動時** に初期化。TELEMETRY_CONNECTIONS への書込とは独立 (`common_utils/shareMem.go`) |
+
+### 読み取り専用の consumer
+
+`TELEMETRY_CONNECTIONS` を読み取るコンポーネントは以下に限定される。いずれも読み取りのみであり、他 DB への書込は行わない。
+
+| Consumer | 操作 | 目的 |
+|---|---|---|
+| `show gnmi`（sonic-utilities） | `HGetAll(TELEMETRY_CONNECTIONS)` | アクティブな Subscribe RPC 接続一覧の表示 |
+| `gnmi_server/server_test.go` | `HGetAll(TELEMETRY_CONNECTIONS)` | 接続登録・削除の単体テスト検証 |
+
+### 設計上の特性
+
+このテーブルは **可視化専用** のランタイム状態であり、制御フローには含まれない。`telemetry` デーモンが HSet / HDel を行っても、orchagent・syncd・その他デーモンは何ら反応しない。CONFIG_DB への書き戻しも発生しない。
+
+<!-- evidence:
+  connection_manager.go:16,52,116,127 — TELEMETRY_CONNECTIONS HSet/HDel のみ。他 DB 書込なし
+  server_test.go:5176,5182 — HGetAll による読み取りテストのみ
+  server.go:528 — NewServer() が InitCounters() を呼び出す（TELEMETRY_CONNECTIONS とは独立）
+  common_utils/shareMem.go — SysV IPC 共有メモリのカウンタ管理（Redis COUNTERS_DB への書込なし）
+-->
+<!-- /side-effects -->
+
 [^1]: `sonic-gnmi` `gnmi_server/connection_manager.go:16` — `const table = "TELEMETRY_CONNECTIONS"`、`PrepareRedis()` / `Add()` / `Remove()` で STATE_DB を読み書き

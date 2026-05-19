@@ -418,6 +418,53 @@ Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/s
 詳細根拠は `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-side-effects.md`
+
+`SUPPRESS_ASIC_SDK_HEALTH_EVENT` の処理で `SwitchOrch` が書き込む副次 DB は次の通り。
+
+### 1. STATE_DB `SWITCH_CAPABILITY|switch` — 起動時 1 回
+
+`initAsicSdkHealthEventNotification()` が `set_switch_capability(fvVector)` で書き込む。
+SET/DEL 操作では変化しない（起動時スナップショットのみ）。
+
+| フィールド | 値 | 条件 | evidence |
+|----------|----|------|----------|
+| `ASIC_SDK_HEALTH_EVENT` | `"true"` | SAI がサポートし、コールバック登録成功 | `switchorch.cpp:231` |
+| `ASIC_SDK_HEALTH_EVENT` | `"false"` | SAI 非対応またはコールバック登録失敗 | `switchorch.cpp:246` |
+| `REG_FATAL_ASIC_SDK_HEALTH_CATEGORY` | `"true"` / `"false"` | fatal severity の SAI capability 確認結果 | `switchorch.cpp:258-276` |
+| `REG_WARNING_ASIC_SDK_HEALTH_CATEGORY` | `"true"` / `"false"` | warning severity の SAI capability 確認結果 | `switchorch.cpp:258-276` |
+| `REG_NOTICE_ASIC_SDK_HEALTH_CATEGORY` | `"true"` / `"false"` | notice severity の SAI capability 確認結果 | `switchorch.cpp:258-276` |
+
+定数: `STATE_SWITCH_CAPABILITY_TABLE_NAME = "SWITCH_CAPABILITY"` (`schema.h:417`)、
+`SWITCH_CAPABILITY_TABLE_ASIC_SDK_HEALTH_EVENT_CAPABLE = "ASIC_SDK_HEALTH_EVENT"` (`switchorch.h:30`)
+
+### 2. STATE_DB `ASIC_SDK_HEALTH_EVENT_TABLE|<timestamp>` — 間接副次効果
+
+SUPPRESS 設定が SAI に登録するカテゴリフィルタを決定するため、
+**SET/DEL の結果として STATE_DB に書き込まれるイベントの数・種別が変わる**（SAI コールバック `onSwitchAsicSdkHealthEvent()` 経由の間接書込）。
+
+書き込みフィールド: `severity` / `category` / `description` (`switchorch.cpp:1655-1657`)
+
+定数: `STATE_ASIC_SDK_HEALTH_EVENT_TABLE_NAME = "ASIC_SDK_HEALTH_EVENT_TABLE"` (`schema.h:507`)
+
+fatal イベント受信ごとに内部カウンタ `m_fatalEventCount` がインクリメントされる (`switchorch.cpp:1667`)。
+
+### 3. Events framework `"asic-sdk-health-event"` — 間接副次効果
+
+`event_publish(g_events_handle, "asic-sdk-health-event", &params)` (`switchorch.cpp:1663`) で
+SAI コールバックごとにパブリッシュされる。SUPPRESS 設定で SAI フィルタが変わるため、パブリッシュ数も間接制御される。
+
+パラメータ: `sai_timestamp` / `severity` / `category` / `description` / `asic_name` (マルチ ASIC 時のみ)
+
+### APPL_DB 書込なし
+
+SUPPRESS_ASIC_SDK_HEALTH_EVENT は CONFIG_DB → SAI の直接経路。APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない。
+
+<!-- /side-effects -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 

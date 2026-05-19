@@ -332,3 +332,51 @@ config qos reload
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/tc-to-dscp-map-cross-refs.md` を参照。
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`QosOrch` が `TC_TO_DSCP_MAP` の SET / DEL を処理する際、失敗種別に応じて `task_invalid_entry` / `task_failed` / `task_need_retry` の 3 種類のステータスを返す。
+
+<!-- evidence: meta/_intermediate/cdb-flow/tc-to-dscp-map-failure.md -->
+
+### タスク処理ステータスと対応挙動
+
+| ステータス | 発生条件 | doTask の動作 | 再試行 |
+|-----------|---------|--------------|--------|
+| `task_success` | SAI QoS map 作成 / 更新 / 削除が正常完了 | キューから除去 | なし |
+| `task_invalid_entry` | バリデーション失敗（下記参照） | キューから除去（永久破棄） | なし |
+| `task_failed` | SAI API がエラーを返した | キューから除去 | なし |
+| `task_need_retry` | 参照解決失敗またはDEL保留 | キューに残留（自動リトライ） | あり |
+
+### `task_invalid_entry` を返す失敗パス
+
+| # | 条件 | ログ | 行番号 |
+|---|------|------|--------|
+| 1 | `dscp` が負値 | `SWSS_LOG_ERROR("Invalid DSCP value %s")` | `qosorch.cpp:1219-1223` |
+| 2 | `dscp` が `DSCP_MAX_VAL=63` 超 | `SWSS_LOG_ERROR("DSCP value %s exceed maximum")` | `qosorch.cpp:1225-1229` |
+| 3 | `dscp` が非数値文字列 | `std::invalid_argument` / `std::out_of_range` 例外を catch → `false` 返却 | `qosorch.cpp:1216-1260` |
+| 4 | `tc` (key) が解析不能 | key 解析失敗 → `task_invalid_entry` | `qosorch.cpp` key parse |
+
+これらはいずれも再試行なしで永久破棄される。YANG バリデーション（`0..63` / `0..15`）では弾かれず orchagent 実装でのみ検出されるため、YANG 準拠の設定ツールを迂回して Redis に直接書き込んだ場合に発生しうる。
+
+### `task_need_retry` を返す失敗パス
+
+**DEL 時の参照残留 (`qosorch.cpp:181-186`)**:
+`isObjectBeingReferenced()` が `true`（`PORT_QOS_MAP.tc_to_dscp_map` または `TUNNEL.encap_tc_to_dscp_map` から参照中）の場合、`m_pendingRemove = true` をセットして `task_need_retry` を返す。参照が解除されるまで SAI `remove_qos_map()` は呼ばれない。
+
+### `task_failed` を返す失敗パス
+
+`sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()` が SAI エラーコードを返した場合に `task_failed` となる (`qosorch.cpp:162-166`)。SAI エラーはハードウェア / ASIC ドライバの不整合で発生し、再試行なしで破棄される。TC 値が 8..15 の場合、多くの ASIC が SAI レベルで reject するためこのパスを経由する。
+
+### STATE_DB / ERROR_TABLE へのフィードバックなし
+
+`QosOrch` は失敗を `SWSS_LOG_ERROR` で syslog に記録するのみで、STATE_DB や ERROR_TABLE への書き込みを行わない。失敗確認は以下のログで行う:
+
+```bash
+journalctl -u swss | grep -i "tc.*dscp\|qosorch"
+# または
+sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
+```
+
+<!-- /failure -->
