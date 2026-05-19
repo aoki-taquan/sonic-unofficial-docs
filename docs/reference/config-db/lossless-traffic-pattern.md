@@ -340,4 +340,50 @@ LOSSLESS_TRAFFIC_PATTERN (CONFIG_DB)  ←── 読み取られる側（leafref 
 
 > **スキャン証跡**: `buffer_headroom_mellanox.lua` L55-110 全行読了、`buffer_headroom_barefoot.lua` L55-94 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了（leafref なし確認済み）。3 件暗黙参照抽出。
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`LOSSLESS_TRAFFIC_PATTERN` は `buffermgrdyn` の `m_bufferTableHandlerMap` に登録されていない。
+ベンダー別 Lua プラグイン (`buffer_headroom_<vendor>.lua`) が `calculateHeadroomSize()` の呼び出し時に
+CONFIG_DB から直接 `KEYS LOSSLESS_TRAFFIC_PATTERN*` + `HGETALL` でフェッチする構造のため、
+このテーブルの障害は Lua スクリプト経由で `allocateProfile()` / `handleBufferPgTable()` に間接的に伝播する。
+
+### A. Lua 呼び出し失敗 — `calculateHeadroomSize()` キャッチ
+
+| 失敗条件 | 発生源 | `calculateHeadroomSize` の動作 | 影響 | evidence |
+|---|---|---|---|---|
+| `LOSSLESS_TRAFFIC_PATTERN` エントリが 0 件 → `lossless_traffic_keys[1]` が `nil` → `HGETALL nil` → Lua エラー | `buffer_headroom_mellanox.lua:91-94` / `buffer_headroom_barefoot.lua:80-83` | `catch (...)` で例外捕捉 → `SWSS_LOG_WARN "Lua scripts for headroom calculation were not executed successfully"` | `headroom.xoff` / `headroom.xon` / `headroom.size` が空文字列のまま。BUFFER_PROFILE が空フィールドで APPL_DB に書き込まれる | `buffermgrdyn.cpp:647-649` |
+| `mtu` フィールドが欠落または非数値 → `tonumber(nil)` → Lua 算術エラー | `buffer_headroom_mellanox.lua:96-98` / `buffer_headroom_barefoot.lua:87-89` | 上と同経路 | headroom 全フィールドが空 | `buffermgrdyn.cpp:647-649` |
+| `small_packet_percentage` フィールドが欠落または非数値 → `tonumber(nil)` → Lua 算術エラー | `buffer_headroom_mellanox.lua:100-101` / `buffer_headroom_barefoot.lua:89-92` | 上と同経路 | headroom 全フィールドが空 | `buffermgrdyn.cpp:647-649` |
+| Lua スクリプトファイル不存在 (プラットフォーム名不一致) | `buffermgrdyn.cpp:76-79` 初期化失敗 | `ret.empty()` → `SWSS_LOG_WARN "Failed to calculate headroom"` | headroom フィールドが空のまま APPL_DB に書き込まれる | `buffermgrdyn.cpp:620-626` |
+
+!!! note "`calculateHeadroomSize()` は失敗を呼び元に伝播させない"
+    失敗しても例外を呼び元 (`allocateProfile()`) に伝播させず、空フィールドのまま `return` する。
+    `allocateProfile()` 側は headroom 計算失敗を検知せず `task_success` を返す（L1011）。
+
+### B. 下流 SAI 反映での retry 検出
+
+`calculateHeadroomSize()` が空 xoff を返した場合、空 xoff の BUFFER_PROFILE が APPL_DB に書き込まれる。
+その後 `isProfileAppliedToSai()` (L2054-2101) が SAI 反映を確認する際に失敗を検出する。
+
+| 確認ポイント | 失敗条件 | 挙動 | evidence |
+|---|---|---|---|
+| `APPL_STATE_DB.BUFFER_POOL_TABLE.[profile].xoff` | xoff が空 (Lua 失敗起因) | `SWSS_LOG_INFO "Lossless buffer profile %s has not been applied to SAI yet, retrying"` → `return false` → 上位が `task_need_retry` | `buffermgrdyn.cpp:2067-2070` |
+| xoff 値が APPL_DB の期待値と不一致 | Lua 部分成功で計算値が誤っている場合 | `SWSS_LOG_INFO "... xoff mismatch ..., retrying"` → `return false` → 上位が `task_need_retry` | `buffermgrdyn.cpp:2072-2075` |
+
+`isProfileAppliedToSai()` が `false` を返すと呼び元 (`handleBufferPgTable()` 等) が `task_need_retry` を返し、
+次回 doTask で再試行される。**ただし再試行のたびに `calculateHeadroomSize()` が再実行され、
+`LOSSLESS_TRAFFIC_PATTERN` が依然 0 件であれば同じ Lua エラーが繰り返される（無限 retry ループ）。**
+
+### C. 失敗パターンサマリ
+
+| # | トリガー | 直接挙動 | 下流挙動 | 自動回復 |
+|---|---------|---------|---------|---------|
+| 1 | `LOSSLESS_TRAFFIC_PATTERN` エントリ 0 件 | Lua エラー → `catch(...)` WARN | headroom 空フィールド → APPL_DB 書込 → SAI 反映チェック失敗 → `task_need_retry` 無限ループ | `LOSSLESS_TRAFFIC_PATTERN\|AZURE` を CONFIG_DB に SET すると解消 |
+| 2 | `mtu` / `small_packet_percentage` 欠落または非数値 | 同上 | 同上 | 正しい値を SET して再試行 |
+| 3 | Lua スクリプトファイル不存在 (platform 名不一致) | `ret.empty()` → WARN | headroom 空フィールド → 以降同経路 | プラットフォーム名修正 + `swss` コンテナ再起動 |
+
+> 詳細スキャンノートは `meta/_intermediate/cdb-flow/lossless-traffic-pattern-failure.md` を参照。
+<!-- /failure -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
