@@ -158,7 +158,9 @@ NHG 数が上限 (`getMaxNhgCount()`) に達した場合、1 メンバーをラ�
 - 関連テーブル: `FG_NHG` (FG ECMP、別オーケストレータ `FgNhgOrch`)
 
 <!-- ordering -->
-## 書込み順依存・タイミング依存
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-net/sonic-swss orchagent/nhgorch.cpp NhgOrch::doTask:41-44 / NhgOrch::addNhg(sync):775-808 / syncMembers:913-964 / NhgOrch::update:988-1087 / recursive-member-check:128-153 / NH-resolve-check:936-944 -->
 
 ### 1. NEXTHOP 先行必須（NeighOrch NH 解決待ち）
 
