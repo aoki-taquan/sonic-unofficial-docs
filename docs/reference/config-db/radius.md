@@ -510,4 +510,28 @@ db_migrator.py での RADIUS マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L92-98, L354-398, L2182-2185 (`AaaCfg` 初期化); `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-radius.yang` 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/radius-platform.md`
+
+**プラットフォーム差なし**: RADIUS は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | RADIUS は SAI 非経由。`hostcfgd` が Linux PAM / NSS 設定ファイルを直接書き換えるのみ (`runtime-trace` 段階 3 参照) |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `AaaCfg` は host CONFIG_DB (`ConfigDBConnector()` 引数なし) のみを購読。`asicN` namespace を iterate しない (`hostcfgd:2182-2185`)。`is_multi_npu` 値は RADIUS 経路に渡されない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `RADIUS` テーブルは host scope。chassis 全体での集中適用機構なく、各 line card host で `hostcfgd` が独立に PAM を再生成 |
+| MGMT_VRF_CONFIG 変更 | 影響なし | `update_mgmt_vrf()` が再起動するのは `chrony` / `interfaces-config` のみ。`RadiusCfg.modify_conf_file()` は呼ばれない。`vrf` フィールドへの自動注入機構なし (`hostcfgd:1645-1669`) |
+| ベンダー固有 PAM モジュール | なし | community master の PAM スタックは `pam_radius_auth` 標準 Debian パッケージ。`common-auth-sonic.j2` / `pam_radius_auth.conf.j2` に `platform\|asic\|chassis\|namespace\|vendor` 条件分岐なし |
+| テンプレート内分岐 | プラットフォーム条件なし | 条件分岐は `AAA.authentication.login` 文字列・`failthrough` / `debug` / `trace` / `statistics` ブール・サーバリストのみ |
+
+### 軽微な環境依存: `nas_ip` 自動補完時の管理 IF 名
+
+`RADIUS|global.nas_ip` が未設定の場合、`hostcfgd` は `get_interface_ip("eth0")` で eth0 IP を自動補完する。管理インタフェース名が `eth0` 以外 (例: `ma1`) のプラットフォームでは IP 解決に失敗し、`NAS-IP-Address` attribute が省略される。これは CONFIG_DB スキーマ上の差異ではなくランタイム挙動の差にとどまる。明示的に `RADIUS|global.nas_ip` を設定すれば回避可能。
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L92-98 (RADIUS モジュール定数)、L354-398 (`AaaCfg.__init__`)、L2182-2185 (`is_multi_npu` 取得 / `AaaCfg` 初期化); `sonic-system-radius.yang` (host scope YANG); 詳細は `meta/_intermediate/cdb-flow/radius-platform.md` 参照。
+<!-- /platform -->
+
 <!-- glossary-links-injected: 9bd150521228 -->
