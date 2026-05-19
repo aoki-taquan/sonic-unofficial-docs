@@ -299,6 +299,48 @@ CONFIG_DB:ROUTE_REDISTRIBUTE
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+調査ソース: `frrcfgd.py` 全行スキャン。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-common-platform.md`。
+
+### docker_routing_config_mode（unified / separated）
+
+`frrcfgd` は起動時に `DEVICE_METADATA.localhost.docker_routing_config_mode` を読み取る（evidence: `frrcfgd.py:2167-2170`）[^2]。
+
+| モード | 起動時動作 | 定常動作 |
+|--------|-----------|---------|
+| `unified` | `ROUTE_REDISTRIBUTE` を含む全テーブルを CONFIG_DB から読み込み FRR へ一括リプレイ（`frrcfgd.py:2344-2357`） | SET/DEL イベント購読・処理（変更なし） |
+| `separated`（デフォルト） | 起動時リプレイなし | SET/DEL イベント購読・処理（変更なし） |
+
+`unified` モードは T1/T2 以上の SONiC 構成で利用されることが多く、frrcfgd 再起動後に CONFIG_DB の設定が FRR へ自動再適用される点が `separated` との唯一の動作差分。
+
+### VOQ Chassis
+
+`frrcfgd.py` に VOQ chassis 固有の分岐コードなし。`ChassisAppDbMgr`（`bgpcfgd/main.py` 側機能）は frrcfgd に含まれない。各 linecard は独立した CONFIG_DB を持ち、`ROUTE_REDISTRIBUTE` 処理ロジックは linecard スコープで共通。
+
+### SmartSwitch (DPU)
+
+frrcfgd は NPU 側 host namespace で動作し、DPU 固有の BGP テーブル（`BGP_VOQ_CHASSIS_NEIGHBOR` 等）は別テーブルで管理される。`ROUTE_REDISTRIBUTE` ハンドラに DPU 固有分岐なし。
+
+### multi-asic
+
+multi-asic 構成では frrcfgd が各 namespace（asic0/asic1 …）で独立して起動する。`ROUTE_REDISTRIBUTE` 処理に namespace 間差分コードなし。
+
+### FRR バージョン差
+
+`frrcfgd.py` に FRR バージョン検出・条件分岐コードなし。`vtysh` へのコマンド文字列は固定。
+
+| プラットフォーム | 動作差分 | 備考 |
+|----------------|---------|------|
+| 標準 T0/T1/T2（separated） | なし | デフォルト。起動時リプレイなし |
+| T1/T2（unified） | 起動時リプレイあり | frrcfgd.py:2344–2357 |
+| VOQ chassis (linecard) | なし | linecard スコープで独立動作 |
+| SmartSwitch (NPU 側) | なし | DPU 経路は別テーブル管理 |
+| multi-asic | なし | namespace ごとに独立起動 |
+
+<!-- /platform -->
+
 ## key 構造
 
 ```text
