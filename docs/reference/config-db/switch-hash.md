@@ -413,6 +413,51 @@ DEL 操作は `SWSS_LOG_ERROR` を出力して erase するだけで SAI API も
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-pubsub.md`
+
+### Redis 購読方式
+
+`SwitchOrch` は `Orch(connectors)` 基底クラスコンストラクタに `TableConnector` ベクタを渡す (`orchdaemon.cpp:204-213`)。`Orch::addConsumer()` (`orch.cpp:1186-1196`) は DB ID が `CONFIG_DB` である場合に **`SubscriberStateTable`** を選択する:
+
+```cpp
+if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || ...)
+    addExecutor(new Consumer(new SubscriberStateTable(db, tableName, ...), this, tableName));
+else
+    addExecutor(new Consumer(new ConsumerStateTable(db, tableName, ...), this, tableName));
+```
+
+`SWITCH_HASH` は CONFIG_DB テーブルであるため `SubscriberStateTable` が使用される。これは Redis の **keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:SWITCH_HASH|*`) で変更イベントを受信する仕組みであり、`ProducerStateTable` ベースの channel PUBLISH/SUBSCRIBE とは異なる。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル/API |
+|------|------|----------------|
+| CLI `config switch-hash` → CONFIG_DB `SWITCH_HASH` | `ConfigDBConnector.set_entry()` (HSET) | なし (keyspace 通知を Redis が自動発行) |
+| CONFIG_DB `SWITCH_HASH` → `SwitchOrch` | `SubscriberStateTable` (keyspace 通知受信) | Redis `PSUBSCRIBE __keyspace@<dbId>__:SWITCH_HASH|*` |
+
+`SwitchOrch` 以外に CONFIG_DB `SWITCH_HASH` を購読するデーモン・サービスは存在しない。
+
+### CLI / 管理ツールのアクセスパターン
+
+`show switch-hash global` (`show/plugins/sonic-hash.py:101`) は `cfgdb.get_table(CFG_SWITCH_HASH)` (HGETALL 相当のオンデマンド polling) で読み出す。keyspace 通知の購読はしない。
+
+`show switch-hash capabilities` (`show/plugins/sonic-hash.py:207`) は STATE_DB `SWITCH_CAPABILITY|switch` を `state_db.get_all()` で読み出す (SWITCH_HASH とは別テーブル)。
+
+### 通知チャンネル
+
+`SwitchOrch` は `SWITCH_HASH` 処理経路では STATE_DB への書き込みを行わない (`<!-- side-effects -->` 参照)。`ProducerStateTable` / `NotificationProducer` も保有しないため、下流への追加通知は発生しない。
+
+| 経路 | 状態 |
+|------|------|
+| `SWITCH_HASH_CHANNEL` への `PUBLISH` | **発行されない** (`ProducerStateTable` を保有しない) |
+| STATE_DB への書込み → keyspace 通知 | **なし** (SWITCH_HASH 処理経路は STATE_DB を書かない) |
+| `syncd` → ASIC_DB (間接) | SAI API 経由で syncd が非同期に反映 (`<!-- side-effects -->` 参照) |
+
+<!-- /pubsub -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 

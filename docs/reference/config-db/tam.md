@@ -362,68 +362,52 @@ docker logs swss 2>&1 | grep -E "TAM|HFTel|Path Tracing"
 
 > 調査証跡: `meta/_intermediate/cdb-flow/tam-constants.md`
 
-TAM テーブル群の固定定数は 4 つの層に分かれる: (1) YANG `enumeration` によるキー固定値、(2) YANG `default` 値、(3) CVL エラータグ文字列、(4) orchagent の SAI 呼び出し側ハードコード値。
+TAM テーブル群に関わる定数は YANG スキーマ由来のバリデーション定数と、orchagent が SAI オブジェクト生成時に使用するランタイム定数の 2 層に存在する。
 
-### 1. YANG 固定キー（singleton enumeration）
+### YANG スキーマ由来のバリデーション定数
 
-| テーブル | キーフィールド | 固定値 | 根拠 |
-|---------|-------------|-------|------|
-| `TAM_DEVICE_TABLE` | `name` | `"device"` | `sonic-tam.yang:31` |
-| `TAM_INT_IFA_FEATURE_TABLE` | `name` | `"feature"` | `sonic-ifa.yang:34` |
-
-両テーブルは YANG `enumeration` でキーを単一値に強制しているため、CVL 経由では `device` / `feature` 以外のキーを持つエントリを生成できない。
-
-### 2. `deviceid` YANG デフォルトとオーバーライド
-
-| 層 | 値 | 根拠 |
-|----|----|----|
-| YANG `default` | `0` | `sonic-tam.yang:37` |
-| `portsorch.cpp` ハードコード | `0`（固定、DB 値を読まない） | `portsorch.cpp:11597-11598` |
-
-`SAI_TAM_INT_ATTR_DEVICE_ID` には `TAM_DEVICE_TABLE.deviceid` の DB 値は**使われず**、`portsorch.cpp` 内でリテラル `0` が直接渡される。YANG デフォルトは GNMI/REST 経由の入力補完にのみ機能する。
-
-### 3. CVL YANG エラータグ文字列（固定）
-
-| 制約 | `error-app-tag` 文字列 | `error-message` 文字列 | 根拠 |
-|------|----------------------|----------------------|------|
-| `ipaddress-type` `must` | `ipaddres-type-mismatch`（typo: `s` 欠落） | `"IP address and IP address type does not match."` | `sonic-tam.yang:62-63` |
-| `sampling-rate` range | `"Invalid IFA flow sampling rate."` | ― | `sonic-ifa.yang:73` |
+| 定数 | 値 | 宣言箇所 |
+|------|----|---------|
+| `TAM_DEVICE_TABLE.name` 許容値 | `device`（enum 固定） | `sonic-tam.yang:28-31` |
+| `TAM_DEVICE_TABLE.deviceid` YANG デフォルト | `0` | `sonic-tam.yang:36` |
+| `TAM_INT_IFA_FEATURE_TABLE.name` 許容値 | `feature`（enum 固定） | `sonic-ifa.yang:28-31` |
+| `TAM_COLLECTOR_TABLE.name` 文字パターン | `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,32})` | `sonic-tam.yang:49` |
+| `TAM_COLLECTOR_TABLE.name` 最大長 | 32 文字 | `sonic-tam.yang:50` |
+| `TAM_INT_IFA_FLOW_TABLE.name` 文字パターン | `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,32})` | `sonic-ifa.yang:46` |
+| `TAM_INT_IFA_FLOW_TABLE.name` 最大長 | 32 文字 | `sonic-ifa.yang:47` |
+| `TAM_INT_IFA_FLOW_TABLE.sampling-rate` 範囲 | 1〜10000 | `sonic-ifa.yang:64` |
+| `TAM_INT_IFA_FLOW_TABLE.sampling-rate` エラータグ | `"Invalid IFA flow sampling rate."` | `sonic-ifa.yang:65` |
+| `TAM_COLLECTOR_TABLE.port` 範囲 | 0〜65535 (`inet:port-number`) | `sonic-tam.yang:57` |
 
 !!! warning "`ipaddres-type-mismatch` の typo"
-    YANG ソース (`sonic-tam.yang:62`) の `error-app-tag` 値は `ipaddres-type-mismatch`（`ipaddress` の `s` が 1 文字欠落）。CVL が実際に返すエラータグもこの typo 文字列で固定されているため、GNMI/REST クライアントがエラータグでマッチングする場合はこの文字列をそのまま使用する必要がある。
+    `TAM_COLLECTOR_TABLE` の `must` 制約 `error-app-tag` は `ipaddres-type-mismatch`（`ipaddress` の `s` が 1 文字欠落、`sonic-tam.yang:62`）。CVL が実際に返すエラータグもこの typo 文字列で固定されているため、GNMI/REST クライアントがエラータグでマッチングする場合はこの文字列をそのまま使用する必要がある。
 
-### 4. `portsorch.cpp` Path Tracing TAM SAI 属性定数
+### portsorch Path Tracing TAM のランタイム定数
 
-`createPtTam()` 内ですべての SAI 属性値がハードコードされており、CONFIG_DB の TAM テーブルから値を取得しない。
+`portsorch.cpp:createPtTam()` は `TAM_DEVICE_TABLE.deviceid` を CONFIG_DB から**読まず**、SAI TAM INT オブジェクトに以下の固定値を使用する。
 
-| SAI 属性 | ハードコード値 | 根拠 |
-|---------|-------------|------|
-| `SAI_TAM_REPORT_ATTR_TYPE` | `SAI_TAM_REPORT_TYPE_VENDOR_EXTN` | `portsorch.cpp:11568` |
-| `SAI_TAM_INT_ATTR_TYPE` | `SAI_TAM_INT_TYPE_PATH_TRACING` | `portsorch.cpp:11594` |
-| `SAI_TAM_INT_ATTR_DEVICE_ID` | `0` | `portsorch.cpp:11598` |
-| `SAI_TAM_INT_ATTR_INT_PRESENCE_TYPE` | `SAI_TAM_INT_PRESENCE_TYPE_UNDEFINED` | `portsorch.cpp:11602` |
-| `SAI_TAM_INT_ATTR_INLINE` | `false` | `portsorch.cpp:11606` |
+| SAI 属性 | 固定値 | 宣言箇所 |
+|---------|--------|---------|
+| `SAI_TAM_INT_ATTR_DEVICE_ID` | `0`（CONFIG_DB の `deviceid` を無視） | `portsorch.cpp:11597-11598` |
+| `SAI_TAM_INT_ATTR_TYPE` | `SAI_TAM_INT_TYPE_PATH_TRACING` | `portsorch.cpp:11593-11594` |
+| `SAI_TAM_INT_ATTR_INT_PRESENCE_TYPE` | `SAI_TAM_INT_PRESENCE_TYPE_UNDEFINED` | `portsorch.cpp:11601-11602` |
+| `SAI_TAM_INT_ATTR_INLINE` | `false` | `portsorch.cpp:11605-11606` |
+| `SAI_TAM_REPORT_ATTR_TYPE` | `SAI_TAM_REPORT_TYPE_VENDOR_EXTN` | `portsorch.cpp:11567-11568` |
 
-`pt_timestamp_template_map`（`portsorch.cpp:213-218`）もポートの Timestamp Template 文字列値→ SAI enum の静的マップを提供する:
+!!! warning "TAM_DEVICE_TABLE.deviceid は dead field"
+    `SAI_TAM_INT_ATTR_DEVICE_ID` には常に `0` が設定される。CONFIG_DB の `deviceid` フィールドは現在のコードでは Path Tracing TAM に反映されない（`portsorch.cpp:11597-11598`）。
 
-| CONFIG_DB 値 | SAI enum |
-|------------|---------|
-| `"template1"` | `SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_8_15` |
-| `"template2"` | `SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_12_19` |
-| `"template3"` | `SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_16_23` |
-| `"template4"` | `SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_20_27` |
+### HFTelOrch TAM のランタイム定数
 
-### 5. HFTelOrch GenL / STATE_DB 定数
+`hftelorch.cpp:createTAM()` が作成する SAI TAM オブジェクト群はすべてハードコード値を使用する。`TAM_COLLECTOR_TABLE` の CONFIG_DB 設定は HFTel の SAI TAM オブジェクトに**反映されない**（別機構）。
 
-`HFTelOrch` は `TAM_COLLECTOR_TABLE` を直接参照しないが、独自に SAI TAM Collector を生成する際に以下の値を固定使用する。
-
-| 定数 | 値 | 根拠 |
-|-----|----|------|
-| GenL family | `"sonic_stel"` | `hftelorch.cpp:78` |
-| GenL group | `"ipfix"` | `hftelorch.cpp:78` |
-| `session_type` フィールド値 | `"ipfix"` | `hftelorch.cpp:552` |
-| `stream_status` 有効時 | `"enabled"` | `hftelorch.cpp:534` |
-| `stream_status` 無効時 | `"disabled"` | `hftelorch.cpp:538` |
-| STATE_DB テーブル名 | `"HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE"` | `schema.h:509` |
+| SAI 属性 | 固定値 | 宣言箇所 |
+|---------|--------|---------|
+| `SAI_TAM_TRANSPORT_ATTR_TRANSPORT_TYPE` | `SAI_TAM_TRANSPORT_TYPE_NONE` | `hftelorch.cpp:751-752` |
+| `SAI_TAM_COLLECTOR_ATTR_SRC_IP` | `0.0.0.0`（固定） | `hftelorch.cpp:766-768` |
+| `SAI_TAM_COLLECTOR_ATTR_DST_IP` | `0.0.0.0`（固定、localhost 経由） | `hftelorch.cpp:771-773` |
+| `SAI_TAM_COLLECTOR_ATTR_LOCALHOST` | `true` | `hftelorch.cpp:780-781` |
+| `SAI_TAM_COLLECTOR_ATTR_DSCP_VALUE` | `0` | `hftelorch.cpp:788-789` |
+| `SAI_TAM_ATTR_TAM_BIND_POINT_TYPE_LIST` | `SAI_TAM_BIND_POINT_TYPE_SWITCH` | `hftelorch.cpp:802-807` |
 
 <!-- /constants -->
