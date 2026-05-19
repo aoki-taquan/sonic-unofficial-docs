@@ -447,3 +447,65 @@ MUX 状態遷移の開始・終了タイムスタンプが `MUX_METRICS_TABLE` (
 SAI 操作が途中で失敗すると rollback が実行され、`MUX_CABLE_TABLE.state` は rollback 先 state の値で上書きされる。STATE_DB 更新と SAI 操作は同一トランザクション内で原子的には行われないため、rollback 直後は STATE_DB 値とデータプレーンの実態が一時的に乖離する可能性がある (muxorch.cpp:547-611)。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-net/sonic-swss` `orchagent/muxorch.cpp` `orchagent/orchdaemon.cpp`、`sonic-net/sonic-linkmgrd` `src/DbInterface.cpp:310-356,1813-1912`、`sonic-net/sonic-platform-daemons` `sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:725-746`
+> 調査日: 2026-05-19
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) には **書き込みチャンネル** と **購読チャンネル** の 2 系統が存在する。
+
+### 書き込みチャンネル（STATE_DB 発行元）
+
+| 発行元プロセス | 購読クラス / API | テーブル | 書き込みメソッド |
+|---|---|---|---|
+| `orchagent` (`MuxStateOrch`) | `swss::Table::hset()` (直接 hset) | `STATE_DB MUX_CABLE_TABLE` | `MuxStateOrch::updateMuxState()` (`muxorch.cpp:2638-2641`) |
+| `orchagent` (`MuxCableOrch`) | `swss::Table::set()` (直接 set) | `APPL_DB HW_MUX_CABLE_TABLE` | `MuxCableOrch::updateMuxState()` (`muxorch.cpp:2508-2514`) ※副次書き込み |
+| `ycabled` (`y_cable_helper`) | `swsscommon.Table.set()` | `STATE_DB HW_MUX_CABLE_TABLE` | `put_init_values_for_grpc_states()` / `update_table_mux_status_for_statedb_port_tbl()` (`y_cable_helper.py:604,624,628`) |
+
+`MuxOrch` は `orchdaemon.cpp:2199` で `state_mux_cable_table_` を `swss::Table` として構築し、STATE_DB に直接 `hset` する（keyspace 通知を自動 PUBLISH）。`ycabled` も `swsscommon.Table` 経由で STATE_DB に直接 `set` するため、Redis keyspace 通知が自動的にサブスクライバーへ配信される。
+
+### 購読チャンネル（STATE_DB 読み取り元）
+
+| 購読プロセス | 購読クラス | テーブル | 処理関数 |
+|---|---|---|---|
+| `linkmgrd` (`DbInterface`) | `swss::SubscriberStateTable` | `STATE_DB MUX_CABLE_TABLE` (`STATE_MUX_CABLE_TABLE_NAME`) | `handleMuxStateNotifiction()` → `processMuxStateNotifiction()` → `mMuxManagerPtr->addOrUpdateMuxPortMuxState()` (`DbInterface.cpp:1513-1519,1481-1505`) |
+
+`linkmgrd` の `handleSwssNotification()` はバックグラウンドスレッドで `swss::Select` を用いて複数テーブルを多重待機し、`stateDbPortTable`（`STATE_MUX_CABLE_TABLE_NAME`）へのイベントが到着すると `handleMuxStateNotifiction()` を呼ぶ (`DbInterface.cpp:1833,1900`)。
+
+### linkmgrd の Select ループと全購読テーブル
+
+`DbInterface::handleSwssNotification()` は以下すべてを `swss::Select` に登録する (`DbInterface.cpp:1859-1871`)。
+
+| テーブル | DB | 用途 |
+|---|---|---|
+| `CFG_MUX_LINKMGR_TABLE_NAME` | CONFIG_DB | linkmgrd 設定 |
+| `CFG_BGP_DEVICE_GLOBAL_TABLE_NAME` | CONFIG_DB | TSA 制御 |
+| `CFG_MUX_CABLE_TABLE_NAME` | CONFIG_DB | MUX per-port 設定 |
+| `APP_PORT_TABLE_NAME` | APPL_DB | リンクアップ/ダウン |
+| `APP_MUX_CABLE_RESPONSE_TABLE_NAME` | APPL_DB | orchagent コマンド応答 |
+| `APP_FORWARDING_STATE_RESPONSE_TABLE_NAME` | APPL_DB | HW 転送状態プローブ応答 |
+| `STATE_MUX_CABLE_TABLE_NAME` | STATE_DB | **(本テーブル)** orchagent の state 更新 |
+| `STATE_ROUTE_TABLE_NAME` | STATE_DB | デフォルトルート状態 |
+| `MUX_CABLE_INFO_TABLE` | STATE_DB | ピア ToR のリンク状態 |
+| `STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME` | STATE_DB | ピア ToR の HW 転送状態 |
+| `STATE_ICMP_ECHO_SESSION_TABLE_NAME` | STATE_DB | ICMP エコーセッション状態 |
+
+`DEFAULT_TIMEOUT_MSEC` でポーリングタイムアウトし、イベント受信時にテーブル識別子を比較してハンドラをディスパッチする。
+
+### HW_MUX_CABLE_TABLE の購読経路
+
+`HW_MUX_CABLE_TABLE` (STATE_DB) は ycabled が書き込む一方、orchagent の `MuxStateOrch` が **APPL_DB 版** (`APP_HW_MUX_CABLE_TABLE_NAME`) を `Orch2` 経由で購読する。orchdaemon.cpp:474-477 にて `MuxCableOrch` が APPL_DB の `APP_MUX_CABLE_TABLE_NAME` を、`MuxStateOrch` が STATE_DB の `STATE_HW_MUX_CABLE_TABLE_NAME` をそれぞれ `Orch2` に渡して構築される。
+
+| 購読プロセス | 購読クラス | テーブル | 処理 |
+|---|---|---|---|
+| `orchagent` (`MuxStateOrch`) | `Orch2` → `ConsumerStateTable` (APP_DB) | `STATE_DB HW_MUX_CABLE_TABLE` | `MuxStateOrch::addOperation()` — hw_state と mux_state を比較して `MUX_CABLE_TABLE.state` を更新 (`muxorch.cpp:2643-2691`) |
+
+### バッチサイズと配信保証
+
+- `SubscriberStateTable::pops()` のデフォルトバッチサイズは `DEFAULT_POP_BATCH_SIZE = 128`。
+- **起動時スナップショット**: `SubscriberStateTable` は接続開始時に既存エントリを `m_buffer` へ流し込む。orchagent・linkmgrd が再起動しても既存の `MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` エントリは再配信される。
+- `swss::Table::hset()` は Redis 接続断で例外をスローし、サブスクライバーへの keyspace 通知も欠落する。orchagent と linkmgrd はどちらも systemd 管理下で自動再起動し、再起動後のスナップショット取得で状態を回復する。
+
+<!-- /pubsub -->
