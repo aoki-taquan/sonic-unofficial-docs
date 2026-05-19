@@ -500,4 +500,53 @@ FIPS_CFG (SET/DEL)
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh:13`, `supervisord.conf:39-47`, `sonic-host-services/scripts/hostcfgd` 購読リスト精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/restapi-pubsub.md`
+
+### RESTAPI テーブルに subscribe するデーモンは存在しない
+
+`RESTAPI` テーブルは **「起動時一括読み取り」** モデルを採用しており、常駐デーモンによる `ConfigDBConnector.subscribe()` / `swsscommon.SubscriberStateTable` / `swsscommon.ConsumerStateTable` のいずれも**使用しない**。
+
+| プロセス | 購読 API | RESTAPI テーブルへの subscribe |
+|---------|---------|-------------------------------|
+| `rest-server.sh` | `sonic-cfggen -d -t mgmt_vars.j2` (起動時 1 回) | **なし** (起動時一括読み取りのみ) |
+| `hostcfgd` | `ConfigDBConnector.subscribe()` | **なし** (`RESTAPI` は購読リストに含まれない) |
+| orchagent / syncd | `swsscommon.ConsumerStateTable` | **なし** (管理プレーン機能のため) |
+
+### 起動時一括読み取りのフロー
+
+`rest-server.sh` は supervisord から起動されると `sonic-cfggen -d -t $MGMT_VARS_FILE` を **1 回だけ** 実行し、`RESTAPI|config` と `DEVICE_METADATA|localhost.x509` の値を変数に取り込んで `rest_server` の起動引数に組み込む。
+
+```
+supervisord 起動
+  ├─ rsyslogd  (priority=1)
+  ├─ start.sh  (priority=2, wait_for=rsyslogd:running)
+  └─ rest-server.sh  (priority=3, wait_for=start:exited)
+       │  sonic-cfggen -d -t /usr/share/sonic/templates/mgmt_vars.j2  ← CONFIG_DB 一括読み取り
+       │    ├─ REST_SERVER ← RESTAPI|config (client_auth / log_level / port)
+       │    └─ X509        ← DEVICE_METADATA|localhost.x509 (cert フォールバック)
+       └─ rest_server -cert ... -key ... -cacert ... -client-auth ...  ← 1 回起動
+            （起動後は CONFIG_DB への接続なし / subscribe なし）
+```
+
+起動後の `rest_server` プロセスは Redis に接続を維持しない。`RESTAPI` テーブルを変更しても実行中の `rest_server` には通知が届かない。
+
+### FIPS 変更による間接的な再起動（参考）
+
+`hostcfgd` は `FIPS_CFG` テーブル変更時に `restapi` サービスを再起動することがある (`DEFAULT_FIPS_RESTART_SERVICES` リスト、`hostcfgd:103`)。これは `RESTAPI` テーブルの subscribe ではなく、`FIPS_CFG` テーブル変更に起因する副次処理である。この再起動の副作用として `rest-server.sh` が CONFIG_DB を再読み取りし、`RESTAPI` テーブルの最新値が反映される。
+
+### RESTAPI テーブル変更を反映する方法
+
+| 手段 | 説明 |
+|------|------|
+| `docker restart mgmt-framework` | コンテナ再起動。`rest-server.sh` が CONFIG_DB を再読み取りする |
+| `systemctl restart docker-sonic-mgmt-framework` | 同上 (systemd 経由) |
+| `config reload` (システム全体) | 全コンテナ再起動の副作用として反映される |
+| `FIPS_CFG` 変更 | 間接的に `restapi` サービスが再起動される (意図的な使い方ではない) |
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
