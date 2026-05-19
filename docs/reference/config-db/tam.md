@@ -257,3 +257,33 @@ ADD と逆順で削除する。`TAM_INT_IFA_FLOW_TABLE` のエントリを削除
 順序違反してもリジェクトされない（ただし IFA 機能は orchagent 非実装のため SAI 反映もなし）。
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-cross-refs.md`
+
+`TAM_INT_IFA_FLOW_TABLE` の各フィールドは YANG leafref および CVL must 制約によって
+以下のテーブルのエントリを**参照**する。CVL (sonic-mgmt-common) が GNMI/REST 経由の
+設定適用時にこれらの制約を強制する。
+
+| 参照元フィールド | 参照先テーブル | 参照先キー形式 | 制約種別 | 根拠 |
+|---|---|---|---|---|
+| `acl-table-name` | `ACL_TABLE` | `ACL_TABLE\|<aclname>` | YANG leafref (mandatory) | `sonic-ifa.yang:58-60` |
+| `acl-rule-name` | `ACL_RULE` | `ACL_RULE\|<aclname>\|<rulename>` | YANG leafref (mandatory, 連鎖キー) | `sonic-ifa.yang:65-67` |
+| `collector-name` | `TAM_COLLECTOR_TABLE` | `TAM_COLLECTOR_TABLE\|<name>` | CVL must 制約 (string 型) | `cvl_must_test.go:449-461` |
+
+### 解決タイミング
+
+- すべての参照チェックは **CVL バリデーション** (Management Framework が呼び出す) で行われる。
+  `sonic-db-cli` の直接書き込み時は CVL をバイパスするため制約は適用されない。
+- `acl-rule-name` の leafref は `current()/../acl-table-name` でフィルタされた連鎖 leafref のため、
+  `ACL_RULE|<acl-table-name>|<acl-rule-name>` の組み合わせが正確に一致している必要がある。
+- `collector-name` は optional のため、省略時は参照チェックが走らない。
+
+### 依存なしのテーブル
+
+- `TAM_DEVICE_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` — 他テーブルへの leafref 参照を持たない。
+  任意の順序で書き込み可能。
+
+<!-- /cross-refs -->
