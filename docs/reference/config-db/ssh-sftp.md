@@ -115,6 +115,74 @@ SFTP サブシステムに関して CONFIG_DB フィールドは存在しない�
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang (SFTP leaf なし) -->
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L32-75 -->
+
+`hostcfgd` (`sonic-host-services/scripts/hostcfgd`) のモジュールレベルに定義されたハードコード定数のうち、SSH サブシステム（SFTP を含む）の挙動に関係するもの。これらの値は CONFIG_DB や YANG から変更できない。
+
+### sshd_config ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `SSH_CONFG` | `/etc/ssh/sshd_config` | `set_policies()` が編集する SSH 設定ファイルの本番パス | `hostcfgd:32` |
+| `SSH_CONFG_TMP` | `/etc/ssh/sshd_config.tmp` | `set_policies()` が一時書込に使用するワークファイル。バリデーション後に rename | `hostcfgd:33` |
+
+### SSH_CONFIG_NAMES — CONFIG_DB で制御できるキーの全量
+
+```python
+# hostcfgd L67-75
+SSH_CONFIG_NAMES = {
+    "authentication_retries": "MaxAuthTries",
+    "login_timeout":          "LoginGraceTime",
+    "ports":                  "Port",
+    "inactivity_timeout":     "ClientAliveInterval",
+    "permit_root_login":      "PermitRootLogin",
+    "password_authentication": "PasswordAuthentication",
+    "ciphers":                "Ciphers",
+    "kex_algorithms":         "KexAlgorithms",
+    "macs":                   "MACs",
+}
+```
+
+この辞書に `Subsystem` キーが存在しないことが、SFTP サブシステムを CONFIG_DB から制御できない根拠。`set_policies()` はこの辞書のキーのみを sshd_config に書き込む（`hostcfgd:1127`）。
+
+### SSH フィールドの min / max 制約
+
+```python
+# hostcfgd L62-66
+SSH_INT_VALUES = ["authentication_retries", "login_timeout", "inactivity_timeout", "max_sessions"]
+
+SSH_MIN_VALUES = {
+    "authentication_retries": 3,
+    "login_timeout": 1,
+    "ports": 1,
+    "inactivity_timeout": 0,
+    "max_sessions": 0,
+}
+
+SSH_MAX_VALUES = {
+    "authentication_retries": 100,
+    "login_timeout": 600,
+    "ports": 65535,
+    "inactivity_timeout": 35000,
+    "max_sessions": 100,
+}
+```
+
+| フィールド | min | max | SFTP への影響 |
+|-----------|-----|-----|-------------|
+| `authentication_retries` | 3 | 100 | SFTP 認証失敗回数の上限として間接適用 |
+| `login_timeout` | 1 s | 600 s | SFTP 接続のログイングレース時間 |
+| `ports` | 1 | 65535 | SFTP が listen する TCP ポート番号 |
+| `inactivity_timeout` | 0 s | 35000 s | SFTP セッションのアイドルタイムアウト |
+| `max_sessions` | 0 | 100 | 同時 SSH/SFTP セッション上限 |
+
+> **注意**: `max_sessions` は `SSH_CONFIG_NAMES` に存在しないため、`PamLimitsCfg` 経由で PAM limits ファイル (`/etc/security/limits.conf`) に書き込まれる。sshd_config の `MaxSessions` ディレクティブではない。
+
+<!-- /constants -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
