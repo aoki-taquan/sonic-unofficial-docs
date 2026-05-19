@@ -369,6 +369,53 @@ show qos map dot1p-tc
 > **Evidence**: `sonic-swss/orchagent/qosorch.h:13`; `sonic-swss/orchagent/qosorch.cpp:63,391,405-406,372-373`
 <!-- /constants -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-pubsub.md`
+
+### 購読方式
+
+`QosOrch` は `orchdaemon.cpp:367-384` で `qos_tables` ベクタの一員として `CFG_DOT1P_TO_TC_MAP_TABLE_NAME` を指定され、`new QosOrch(m_configDb, qos_tables)` に渡される。基底 `Orch(db, tableNames)` が `Orch::addConsumer()` を呼び、CONFIG_DB ID の分岐により **`swss::SubscriberStateTable`** が選択される（`orch.cpp:1186-1190`）。
+
+`SubscriberStateTable` は Redis keyspace 通知 `__keyspace@<dbId>__:DOT1P_TO_TC_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、`orchagent -b` の `gBatchSize` 影響なし）。
+
+### ハンドラ登録とディスパッチ
+
+```
+orchdaemon.cpp:372  qos_tables に CFG_DOT1P_TO_TC_MAP_TABLE_NAME を追加
+qosorch.cpp:1331    initTableHandlers() で m_qos_handler_map[CFG_DOT1P_TO_TC_MAP_TABLE_NAME]
+                     = &QosOrch::handleDot1pToTcTable を登録
+qosorch.cpp:2231-2251  QosOrch::doTask() が PORT_QOS_MAP / QUEUE より先に
+                        DOT1P_TO_TC_MAP を drain（マップ先行処理を保証）
+qosorch.cpp:2254-2295  QosOrch::doTask(Consumer&) がハンドラ関数ポインタ経由でディスパッチ
+```
+
+`handleDot1pToTcTable()` → `Dot1pToTcMapHandler::processWorkItem()` → `Dot1pToTcMapHandler::convertFieldValuesToAttributes()` → `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()`。
+
+### drain 順序の保証
+
+`QosOrch::doTask()` は PORT_QOS_MAP と QUEUE を後回しにして、`DOT1P_TO_TC_MAP` を含む全マップテーブルを先に drain する（`qosorch.cpp:2231-2251`）。これにより `PORT_QOS_MAP` が `resolveFieldRefValue()` で `DOT1P_TO_TC_MAP` の SAI object_id を解決する際に `task_need_retry` が生じにくくなる。
+
+### select タイムアウト・リトライ
+
+select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`）。keyspace 通知到着時は即時 wake up。リトライキャッシュは未使用で `m_toSync` 残留方式（`task_need_retry` 時はエントリを保持し次回 drain で再処理）。
+
+| 観点 | 内容 |
+|---|---|
+| 購読方式 | `SubscriberStateTable`（keyspace `PSUBSCRIBE` + `HGETALL`） |
+| バッチサイズ | 128（`DEFAULT_POP_BATCH_SIZE`、固定） |
+| select タイムアウト | 1000 ms |
+| SAI 呼び出し | `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()` |
+| リトライ方式 | `m_toSync` 残留（キャッシュなし） |
+| APPL_DB 中継 | なし（CONFIG_DB → orchagent 直結） |
+| channel PUBLISH | 使わない |
+| TTL | 未使用（CONFIG_DB 永続） |
+
+> **Evidence**: `orchdaemon.cpp:23,367-384`; `orch.cpp:1186-1194`; `qosorch.cpp:1313-1345,1331,2231-2295,399-415`
+
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差分 (Phase H)
 
