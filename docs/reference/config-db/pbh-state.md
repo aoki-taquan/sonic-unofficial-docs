@@ -380,6 +380,38 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-pubsub.md -->
+
+### 書き込み側の通信構造
+
+`PbhCapabilities` は `swsscommon::Table` を使って STATE_DB へ直接書き込む。`Table::set()` は Redis `HSET` を実行するのみで、`ProducerStateTable` のようなチャネル PUBLISH を伴わない (`pbhcap.cpp:381, 405, 420, 437`)。
+
+```cpp
+// pbhcap.cpp:288-289
+DBConnector PbhCapabilities::stateDb(PBH_STATE_DB_NAME, PBH_STATE_DB_TIMEOUT);
+Table PbhCapabilities::capTable(&stateDb, STATE_PBH_CAPABILITIES_TABLE_NAME);
+```
+
+書き込み後に Redis サーバーが keyspace 通知 (`__keyspace@6__:PBH_CAPABILITIES|*`) を発火しうるが、それを購読するプロセスは現行実装に存在しない。
+
+### 読み取り側 (sonic-utilities) の通信方式
+
+`config/plugins/pbh.py` の `pbh_capabilities_query()` は `db.get_all()` で `HGETALL` を実行する。これはコマンド実行時の**ワンショットスナップショット**であり、継続的な購読は行わない (`pbh.py:492–498`)。
+
+### 購読方式サマリ
+
+| コンポーネント | 方式 | API | タイミング |
+|--------------|------|-----|---------|
+| `PbhCapabilities` (orchagent) | STATE_DB 書き込み専用 | `Table::set()` — チャネル PUBLISH なし | orchagent 起動時 1 回のみ |
+| `config pbh *` (sonic-utilities) | スナップショット読み取り | `db.get_all()` → Redis `HGETALL` | `config pbh` サブコマンド実行時のみ |
+
+`PBH_CAPABILITIES` を `SubscriberStateTable` / `ConsumerStateTable` / `ConfigDBConnector.subscribe()` で継続購読するプロセスは sonic-swss / sonic-utilities のいずれにも存在しない。継続的な pub/sub 経路はない。
+
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / CLI
 
 - 設定元: [`PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD`](pbh.md) (CONFIG_DB)
