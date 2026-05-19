@@ -263,6 +263,45 @@ DEL CONFIG_DB VRF|VrfRed
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/vrfmgr.cpp`
+
+### addOperation における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ | evidence |
+|---|---|---|---|---|
+| `sai_virtual_router_api->create_virtual_router()` 失敗 | `vrforch.cpp:97-104` | `handleSaiCreateStatus` → `task_need_retry` なら `false` 返却・Consumer 再試行 / `task_failed` なら `true` 返却・Consumer drop | `SWSS_LOG_ERROR "Failed to create virtual router name: %s, rv: %d"` | `vrforch.cpp:99-103` |
+| VNI 付き VRF 追加時に EVPN VTEP 未設定 (`getEVPNVtep()` → null) | `vrforch.cpp:225-229` | SAI VR 作成は成功済みだが `STATE_VRF_OBJECT_TABLE` 未書込み → `addOperation` が `false` 返却 → Consumer 再試行。EVPN VTEP 到着後の次スケジュールで `updateVrfVNIMap` を再実行 | `SWSS_LOG_NOTICE "updateVrfVNIMap unable to find EVPN VTEP"` | `vrforch.cpp:228-229` |
+| 既存 VRF の `set_virtual_router_attribute()` 失敗 | `vrforch.cpp:131-140` | 失敗した属性のみ `handleSaiSetStatus` でエラー処理。後続の属性 set は**継続**（属性単位の中断なし） | `SWSS_LOG_ERROR "Failed to update virtual router attribute. vrf name: %s, rv: %d"` | `vrforch.cpp:134-139` |
+| 未知フィールド名 (`fallback` 等) が attrs リストに届く | `vrforch.cpp:79-83` | `attrs` に追加されず **silent discard**。SAI 処理なし | `SWSS_LOG_ERROR "Logic error: Unknown attribute: %s"` | `vrforch.cpp:81` |
+
+!!! note "EVPN VTEP 中間状態"
+    VNI 付き VRF の EVPN VTEP 未設定失敗では SAI VR が作成済み (`vrf_table_` / `vrf_id_table_` 登録済み) だが `STATE_VRF_OBJECT_TABLE` にエントリがない。次の再試行は `vrf_table_.find(vrf_name) != end` に入るため、SAI VR 重複作成は発生せず `set_virtual_router_attribute` + `updateVrfVNIMap` のみ再実行される。
+
+### delOperation における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ | evidence |
+|---|---|---|---|---|
+| `vrf_table_[vrf_name].ref_count != 0`（INTERFACE / ROUTE 参照中） | `vrforch.cpp:169-170` | `false` 返却 → Consumer が `m_toSync` に保留。参照 Orch が `decreaseVrfRefCount()` を呼び `ref_count == 0` になるまで無限保留 | なし（ログなし）| `vrforch.cpp:169-170` |
+| 存在しない VRF 名への DEL | `vrforch.cpp:163-166` | `true` 返却（Consumer はエントリを消費）・SAI / STATE_DB への変更なし | `SWSS_LOG_ERROR "VRF '%s' doesn't exist"` | `vrforch.cpp:165-166` |
+| `sai_virtual_router_api->remove_virtual_router()` 失敗 | `vrforch.cpp:174-181` | `handleSaiRemoveStatus` → `task_need_retry` なら `false` 返却（`m_stateVrfObjectTable.del` 未呼出し → vrfmgrd の `ip link del` も保留継続）/ `task_failed` なら `true` 返却（SAI VR リーク） | `SWSS_LOG_ERROR "Failed to remove virtual router name: %s, rv:%d"` | `vrforch.cpp:176-181` |
+| `delVrfVNIMap` 内 `updateL3VniStatus` 失敗 | `vrforch.cpp:267` | 戻り値無視・処理継続（VLAN VE が DOWN 通知されない可能性） | なし | `vrforch.cpp:267-268` |
+
+### vrfmgrd 側の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ | evidence |
+|---|---|---|---|---|
+| VRF テーブルプール枯渇（4096 VRF 使用済み、`getFreeTable()` → `0`） | `vrfmgr.cpp:185-188` | `setLink()` が `false` 返却。エラーログ後も STATE_VRF_TABLE.set / APPL_DB.set が**実行継続**。Linux VRF デバイスなしで SAI VR だけが作成される中間状態になりうる | `SWSS_LOG_ERROR "Failed to create vrf netdev %s"` | `vrfmgr.cpp:282-284, 289, 303` |
+| `ip link add` / `ip link set up` 失敗（`EXEC_WITH_ERROR_THROW`） | `vrfmgr.cpp:192, 198` | `std::runtime_error` 例外が未捕捉 → vrfmgrd プロセスクラッシュ → supervisord による再起動 | stderr + supervisord ログ | `vrfmgr.cpp:192, 198` |
+| `ip link del` 失敗（`EXEC_WITH_ERROR_THROW`） | `vrfmgr.cpp:156` | `std::runtime_error` 例外が未捕捉 → vrfmgrd クラッシュ → supervisord 再起動。Linux VRF デバイスが残存したまま再起動する可能性 | stderr + supervisord ログ | `vrfmgr.cpp:156` |
+| VNI 重複 (`vni` が既存 VRF にマップ済み) | `vrfmgr.cpp:436-444` | `doVrfVxlanTableCreateTask` が `false` 返却 → Consumer がエントリを **erase**（再試行なし）。`setLink` + `STATE_VRF_TABLE.set` は実行済みで APPL_DB 書き込みのみ抑止 | `SWSS_LOG_ERROR " vni %d is already mapped to vrf %s"` | `vrfmgr.cpp:441-443` |
+| VRF-VNI マッピング済みの VRF に対して異なる VNI を再 SET | `vrfmgr.cpp:459-462` | `doVrfVxlanTableCreateTask` が `false` 返却 → Consumer erase（再試行なし） | `SWSS_LOG_ERROR " vrf %s is already mapped to vni %d"` | `vrfmgr.cpp:461-462` |
+
+詳細解析: `meta/_intermediate/cdb-flow/vrf-orch-failure.md`
+<!-- /failure -->
+
 ## 例外条件・特殊挙動
 
 - **VRF 削除タイミング**: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は `ip link del` を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は `ref_count` が非ゼロで `delOperation` が `false` を返して再キュー。

@@ -398,6 +398,40 @@ rsyslogd 起動 (priority=1)
 <!-- evidence: sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:12-15,68-71,107-123 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd); sonic-net/sonic-gnmi:telemetry/telemetry.go:232-260,318-321,453-583 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go:118-281 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22) -->
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/gnmi-dialin-side-effects.md`
+
+`GNMI|gnmi` テーブルを直接起点とする DB 書込ではないが、`telemetry` デーモン（dial-in gNMI サーバ）は Subscribe RPC のセッション状態を STATE_DB に記録する副次的な書込を行う。
+
+### STATE_DB — TELEMETRY_CONNECTIONS
+
+| 操作タイミング | Redis 操作 | キー形式 | 値 |
+|---|---|---|---|
+| `client_subscribe.go` 初期化 (`PrepareRedis()`) | `HGetAll` + 既存エントリ全 `HDel` | `TELEMETRY_CONNECTIONS` Hash | — |
+| Subscribe RPC 開始 (`Add()`) | `HSet(table, key, "active")` | `<peer_ip:port>\|<target_1>\|...\|<RFC3339_timestamp>` | `"active"` (固定) |
+| Subscribe RPC 終了 (`Remove()`) | `HDel(table, key)` | 同上 | — |
+
+- **threshold 連動**: `GNMI|gnmi.threshold`（デフォルト `100`）に達した場合は新規 Subscribe を拒否し HSet を行わない (`connection_manager.go:65`)。`threshold=0` は無制限。
+- **フォールトトレラント**: STATE_DB が利用不可能な場合 (`rclient == nil`) は警告ログのみで `telemetry` サーバは継続動作する (`connection_manager.go:111-115`)。
+
+### カウンタ統計 — SysV IPC 共有メモリ
+
+`NewServer()` が `InitCounters()` を呼び出し、32 種類の gNMI/gNOI/gNSI 操作カウンタを SysV IPC 共有メモリ（`memKey=7749`）に管理する。**Redis COUNTERS_DB への書込は一切行わない**。`gnmi_dump` ツールが共有メモリから読み取る。
+
+### その他の DB 書込
+
+| DB | 書込 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `gnmi_server/server.go` に ProducerStateTable / NotificationProducer 書込なし |
+| COUNTERS_DB | なし | カウンタは SysV 共有メモリのみ。`redis-cli` から不可視 |
+| ASIC_DB | なし | SAI 非経由 |
+| FLEX_COUNTER_DB | なし | 参照なし |
+
+<!-- evidence: sonic-net/sonic-gnmi:gnmi_server/connection_manager.go:32-61,65,94-116,127 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/client_subscribe.go:84 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/server.go:528 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:common_utils/context.go (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:common_utils/shareMem.go (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22) -->
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

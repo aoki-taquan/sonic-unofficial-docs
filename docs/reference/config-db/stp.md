@@ -432,6 +432,104 @@ stpmgrd 自身の warm-reboot reconcile フェーズは **事実上スタブ** �
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`stpmgrd` は CONFIG_DB を購読して stpd デーモンへ UDS (Unix Domain Socket) 経由で IPC メッセージを送信する設計であり、失敗は (A) IPC ソケット初期化失敗、(B) IPC 送信失敗 (silent discard)、(C) PVST インスタンス枯渇、(D) メモリ割り当て失敗、(E) ebtables / 不正フィールド、(F) 前提条件未達による defer の 6 系統に整理される。
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-failure.md -->
+
+### A. IPC ソケット初期化失敗 (`ipcInitStpd`)
+
+`ipcInitStpd()` (`stpmgr.cpp:859-884`) は起動時に UDS ソケットを作成・bind する。
+
+| 失敗条件 | 結果 | 回復経路 |
+|---|---|---|
+| `socket()` 失敗 | `SWSS_LOG_ERROR` + `return`。`stpd_fd` が 0 のまま残り、以降の全 `sendMsgStpd()` は `sendto(0, ...)` となる | stpmgrd プロセス再起動のみ |
+| `bind()` 失敗 | `SWSS_LOG_ERROR` + `close(stpd_fd)` + `return`。ソケットはクローズされるが fd は更新されないため全 IPC 無効 | stpmgrd プロセス再起動のみ |
+
+どちらの場合も **stpmgrd プロセス自体は継続**するが、CONFIG_DB の変更内容は stpd に一切届かない。systemd がプロセスを再起動するまで STP 設定が適用されない状態となる。
+
+---
+
+### B. IPC 送信失敗 (`sendMsgStpd`) — silent discard
+
+`sendMsgStpd()` (`stpmgr.cpp:1218-1255`) の失敗分岐:
+
+| 失敗条件 | 結果 |
+|---|---|
+| `calloc` 失敗 | `SWSS_LOG_ERROR("tx_msg mem alloc error")` + `return -1` |
+| `sendto` 失敗 | `SWSS_LOG_ERROR("tx_msg send error")` + `rc == -1` を返す |
+
+**全呼出し元 (`doStpGlobalTask`, `doStpVlanTask`, `doStpPortTask`, `doStpVlanPortTask`, `doVlanMemUpdateTask`, `doLagMemUpdateTask`) は `sendMsgStpd` の戻り値を検査しない**。
+IPC 送信失敗後もエントリは `consumer.m_toSync.erase(it)` で消費され、**リトライなし・silent discard** となる。
+
+!!! warning "IPC 失敗は CONFIG_DB 書込み成功後に発生する"
+    `config spanning-tree` CLI は CONFIG_DB 書込みで正常終了するが、stpmgrd → stpd の IPC 送信が失敗した場合はエラーがユーザーに通知されない。BPDU 挙動や STP ポート状態が CONFIG_DB と乖離したまま syslog にのみ ERROR が記録される。
+
+---
+
+### C. PVST インスタンス枯渇 (`allocL2Instance` 失敗)
+
+`doStpVlanTask()` 内 (`stpmgr.cpp:263-269`) で PVST 新規 VLAN への STP 適用時に `allocL2Instance(vlan_id)` が `-1` を返した場合:
+
+- `SWSS_LOG_ERROR("Couldnt allocate instance to VLAN %d", vlan_id)`
+- `it = consumer.m_toSync.erase(it)` + `continue` → **恒久スキップ**
+
+`PVST_MAX_INSTANCES = 255` を超えると新規 VLAN には STP インスタンスが割り当てられず、設定は永続的に無視される。回復はSTP 無効化 → 再有効化によるインスタンス解放が必要。
+
+---
+
+### D. メモリ割り当て失敗 (`calloc`)
+
+`STP_VLAN_CONFIG_MSG` の `calloc` 失敗 (`stpmgr.cpp:278-283, 319-324`):
+
+- `SWSS_LOG_ERROR("mem failed for vlan %d", vlan_id)` + `return`
+- タスク関数全体が中断され、未処理キューエントリは次回 SELECT ループに残る
+
+`processStpPortAttr()` 内の `calloc` 失敗 (`stpmgr.cpp:534-538`):
+
+- `SWSS_LOG_ERROR("calloc failed for interface %s", intfName.c_str())` + `return`
+- 呼出し元 `doStpPortTask` は戻り値を確認せず `erase(it)` するため **silent discard** になる点に注意
+
+---
+
+### E. ebtables 失敗 / 不正フィールド
+
+`doStpGlobalTask()` 内:
+
+| 失敗条件 | 結果 |
+|---|---|
+| PVST 有効化時 `ebtables -A` 失敗 | `SWSS_LOG_ERROR("ebtables add failed for PVST %d", ret)` のみ。IPC は送信される (stpmgr.cpp:116-119) |
+| STP|GLOBAL DEL 時 `ebtables -D` 失敗 | 同上 (stpmgr.cpp:164-165) |
+| `mode` フィールドが `pvst`/`mst` 以外 | `SWSS_LOG_ERROR("Error: Invalid mode %s")` のみ。`msg.stp_mode = 0` のまま IPC 送信 (stpmgr.cpp:136) |
+
+---
+
+### F. 前提条件未達による defer / discard
+
+各タスク関数の defer / discard 挙動の整理:
+
+| 条件 | 操作 | 処理 | エラーログ |
+|---|---|---|---|
+| `l2ProtoEnabled == L2_NONE` + STP_VLAN SET | `it++` (defer) | 次回ループで再試行 | なし |
+| `!isVlanStateOk()` (STATE_VLAN 未登録) + STP_VLAN SET | `it++` (defer) | 次回ループで再試行 | なし |
+| `l2ProtoEnabled == L2_NONE` + STP_VLAN DEL | `erase(it)` (discard) | 回復なし | なし |
+| `isLagEmpty(key)` (LAG にメンバーなし) + STP_PORT | `erase(it)` (discard) | `doLagMemUpdateTask` 経由で再実行 | なし |
+| `l2ProtoEnabled == L2_NONE` + STP_PORT SET | `it++` (defer) | 次回ループで再試行 | なし |
+| `l2ProtoEnabled == L2_NONE` + STP_PORT DEL | `erase(it)` (discard) | 回復なし | なし |
+| 前提フラグ未達 + STP_VLAN_PORT | `return` (タスク全体 defer) | フラグが揃った後に再処理 | なし |
+| `m_vlanInstMap[vlan_id] == INVALID_INSTANCE` + STP_VLAN_PORT SET | `it++` (defer) | 次回ループで再試行 | なし |
+| `isLagEmpty(intfName)` + STP_VLAN_PORT | `erase(it)` (discard) | `doLagMemUpdateTask` 経由で再実行 | なし |
+| 不正キー形式 | `erase(it)` (discard) | 回復なし | ERROR |
+
+!!! note "defer と discard の非対称性"
+    SET 操作の多くは `it++` による defer（次回 SELECT で再試行）だが、DEL 操作の多くは `erase(it)` による silent discard となる。STP 無効化・削除操作は前提条件が揃っていない場合に黙って捨てられる設計であり、実際に stpd 側に削除が届かない可能性がある。
+
+> **証跡**: `stpmgr.cpp:116-119, 136, 164-165, 210-214, 246-250, 263-283, 319-324, 448-449, 477-479, 486-498, 502-507, 534-539, 634-635, 648-670, 784-795, 824, 859-884, 1218-1255`。詳細 grep 証跡は `meta/_intermediate/cdb-flow/stp-failure.md` を参照。
+
+<!-- /failure -->
+
 ## 関連ページ
 
 - [CONFIG_DB: VLAN](vlan.md)

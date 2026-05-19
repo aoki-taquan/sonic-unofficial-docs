@@ -260,6 +260,89 @@ IpMulticastManager 内で管理されており、参照が残っているグル�
 `ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` はいずれも CONFIG_DB を直接 subscribe / get しない。CONFIG_DB 依存は VRFOrch および P4Orch 上位レイヤが間接処理する。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ip-mcast-route-failure.md`
+
+<!-- evidence: sonic-swss/orchagent/p4orch/ip_multicast_manager.cpp:120-195,612-697,741-831,862-876, sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp:430-478,525-596,978-1033 -->
+
+P4RT フレームワークの失敗モデルは**バッチ内一括適用**で、失敗発生時は残りのエントリに `SWSS_RC_NOT_EXECUTED` を付与して中断する。個別エントリの自動 retry はなく、コントローラ (`p4rt-app`) が状態確認のうえ再送を担う。
+
+### IpMulticastManager (FIXED_IPV4/IPV6_MULTICAST_TABLE) の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 返却コード | retry | ログレベル |
+|---|-----------|---------|-----------|-------|-----------|
+| 1 | APP_DB エントリのデシリアライズ失敗 | `ip_multicast_manager.cpp:L127-135` | エラーコード (parse 失敗内容) | なし | ERROR |
+| 2 | 同一バッチ内での同一エントリ重複 | `ip_multicast_manager.cpp:L142-150` | `SWSS_RC_INVALID_PARAM` | なし | ERROR |
+| 3 | バリデーション失敗 (`validateIpMulticastEntry`) | `ip_multicast_manager.cpp:L154-163` | `SWSS_RC_NOT_FOUND` / `SWSS_RC_INVALID_PARAM` | なし | ERROR |
+| 4 | multicast group OID が P4OidMapper 未登録 (CREATE) | `ip_multicast_manager.cpp:L748-755` | `SWSS_RC_NOT_FOUND` | なし | — |
+| 5 | SAI `create_ipmc_entry` 失敗 | `ip_multicast_manager.cpp:L761-764` | SAI ステータスコード | なし | — |
+| 6 | SAI `create_rpf_group` / RIF 作成失敗 (初回エントリ追加時) | `ip_multicast_manager.cpp:L661-665` | SAI ステータスコード | なし | ERROR |
+| 7 | 内部キャッシュに存在しないエントリの UPDATE | `ip_multicast_manager.cpp:L794-798` | `SWSS_RC_INTERNAL` | なし | — |
+| 8 | multicast group OID が P4OidMapper 未登録 (UPDATE) | `ip_multicast_manager.cpp:L817-820` | `SWSS_RC_NOT_FOUND` | なし | — |
+| 9 | SAI `set_ipmc_entry_attribute` 失敗 (UPDATE) | `ip_multicast_manager.cpp:L827-830` | SAI ステータスコード | なし | — |
+| 10 | 内部キャッシュに存在しないエントリの DEL | `ip_multicast_manager.cpp:L866` | `SWSS_RC_NOT_FOUND` | なし | — |
+| 11 | SAI `remove_rpf_group` 失敗 (全エントリ削除後) | `ip_multicast_manager.cpp:L691-693` | SAI ステータスコード | なし | ERROR |
+
+### L3MulticastManager (REPLICATION_IP_MULTICAST_TABLE) の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 返却コード | retry | ログレベル |
+|---|-----------|---------|-----------|-------|-----------|
+| 12 | APP_DB エントリのデシリアライズ失敗 | `l3_multicast_manager.cpp:L430` | エラーコード | なし | ERROR |
+| 13 | `replicas` フィールドが空 | `l3_multicast_manager.cpp:L991` | `SWSS_RC_INVALID_PARAM` | なし | — |
+| 14 | replica の router interface が内部キャッシュ未登録 | `l3_multicast_manager.cpp:L1003-1008` | `SWSS_RC_NOT_FOUND` | なし | — |
+
+### 代表的な失敗コード
+
+**バッチ中断と `SWSS_RC_NOT_EXECUTED` 付与 (Pattern 1〜3)**:
+```cpp
+// ip_multicast_manager.cpp:L183-189
+if (!status.ok()) {
+  // Return SWSS_RC_NOT_EXECUTED if failure has occured.
+  m_publisher->publish(APP_P4RT_TABLE_NAME, kfvKey(key_op_fvs_tuple),
+                       kfvFieldsValues(key_op_fvs_tuple),
+                       ReturnCode(StatusCode::SWSS_RC_NOT_EXECUTED),
+                       /*replace=*/true);
+  break;
+}
+```
+
+**multicast group OID 未登録 (Pattern 4)**:
+```cpp
+// ip_multicast_manager.cpp:L748-755
+if (!m_p4OidMapper->getOID(SAI_OBJECT_TYPE_IPMC_GROUP,
+                           ip_multicast_entry.multicast_group_id,
+                           &group_oid)) {
+  statuses[i] = ReturnCode(StatusCode::SWSS_RC_NOT_FOUND)
+                << "Multicast group ID "
+                << QuotedVar(ip_multicast_entry.multicast_group_id)
+                << " has not been created yet.";
+  break;
+}
+```
+
+**RPF group 削除失敗 (Pattern 11)**:
+```cpp
+// ip_multicast_manager.cpp:L688-694
+ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
+  sai_status_t status =
+      sai_rpf_group_api->remove_rpf_group(ipmc_rpf_group_oid_);
+  if (status != SAI_STATUS_SUCCESS) {
+    LOG_ERROR_AND_RETURN(ReturnCode(status)
+                         << "Failed to delete default RPF group");
+  }
+```
+
+### STATE_DB / ERROR_TABLE への影響
+
+- P4RT マネージャは STATE_DB を直接操作しない
+- 失敗は `m_publisher->publish()` で `APP_P4RT_TABLE_NAME` にステータスコードとして書き戻される（コントローラが確認可能）
+- CONFIG_DB は本テーブルに対して無関係（直接 subscribe / get なし）
+- Pattern 11（RPF group 削除失敗）では全 IPMC エントリが正常削除済みでも RPF group が残存する可能性があり、その場合は orchagent 再起動が必要
+
+<!-- /failure -->
+
 ## 購読者
 
 | コンポーネント | テーブル | SAI 操作 |

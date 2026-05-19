@@ -340,4 +340,49 @@ LOSSLESS_TRAFFIC_PATTERN (CONFIG_DB)  ←── 読み取られる側（leafref 
 
 > **スキャン証跡**: `buffer_headroom_mellanox.lua` L55-110 全行読了、`buffer_headroom_barefoot.lua` L55-94 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了（leafref なし確認済み）。3 件暗黙参照抽出。
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗・リトライ挙動 (Phase D)
+
+`LOSSLESS_TRAFFIC_PATTERN` テーブルの値は `buffermgrdyn` が直接購読するのではなく、
+ベンダー別 Lua ヘッドルーム計算プラグイン（`buffer_headroom_<vendor>.lua`）が実行時に
+CONFIG_DB から直接参照する。そのため、C++ レイヤーの retry メカニズムは存在せず、
+Lua 実行失敗はヘッドルーム計算の中断として現れる。
+詳細スキャンノートは `meta/_intermediate/cdb-flow/lossless-traffic-pattern-failure.md` を参照。
+
+### 失敗モード一覧
+
+| # | 失敗条件 | 検出場所 | 直接影響 | 復旧手順 |
+|---|----------|---------|---------|---------|
+| 1 | `LOSSLESS_TRAFFIC_PATTERN` エントリが 0 件 | `buffer_headroom_<vendor>.lua` — `lossless_traffic_keys[1]` が `nil` → `HGETALL nil` → Lua エラー | `calculateHeadroom()` が `catch(...)` で捕捉 → `SWSS_LOG_WARN` → BUFFER_PROFILE が APPL_DB に書き込まれない | 正しい値で `LOSSLESS_TRAFFIC_PATTERN|<name>` を SET する |
+| 2 | `mtu` または `small_packet_percentage` フィールド欠損 | Lua `tonumber(nil)` → 算術演算で nil エラー | 同上 (Lua エラーで計算中断) | 両フィールドを含む正しいエントリを SET する |
+| 3 | Lua が空リストを返す（計算式入力不正） | `buffermgrdyn.cpp:621-623` — `ret.empty()` チェック | `SWSS_LOG_WARN("Failed to calculate headroom for %s")` → headroom 値が更新されない | フィールド値（`mtu`、`small_packet_percentage`）を適正値に修正する |
+| 4 | DEL 操作後の次回計算 | Lua `KEYS 'LOSSLESS_TRAFFIC_PATTERN*'` → 0 件 → 上記 #1 と同様 | 全 lossless ポートのヘッドルーム再計算が失敗 | エントリを再 SET する |
+| 5 | static buffer モード | `buffermgr.cpp` はこのテーブルを参照しない | エラーなし（**silent skip**）— 値変更は headroom 計算に影響しない | 動的バッファモード (`buffermgrdyn`) でのみ設定変更が有効 |
+
+### 失敗の伝播経路
+
+```text
+LOSSLESS_TRAFFIC_PATTERN 欠損/不正
+  ↓
+buffer_headroom_<vendor>.lua: Lua エラー
+  ↓
+buffermgrdyn.cpp calculateHeadroom(): catch(...) 捕捉
+  → SWSS_LOG_WARN("Lua scripts for headroom calculation were not executed successfully")
+  ↓
+BUFFER_PROFILE の headroom 値が未更新
+  ↓
+APPL_DB APP_BUFFER_PROFILE_TABLE への書き込みが行われない
+  ↓
+orchagent / BufferOrch が古い headroom 値または未設定のまま SAI へ書き込む
+  → 最悪ケース: PFC lossless フローのバッファが不足しパケットロス
+```
+
+### 注意点
+
+- C++ 側には **リトライロジックが存在しない**。エラーが発生してもエントリは削除され、次のトリガイベント（他テーブルの変更等）が来るまで再計算は行われない。
+- YANG `mandatory true` のため CLI / gNMI 経由では不正省略は防止される。手動 redis-cli 書き込みや誤った automation ツールで起こりうる。
+- `mtu` に `0` や負値は YANG の `range "1..9216"` で拒否されるが、Lua 内でバリデーションはないため YANG をバイパスした書き込みでは `lossless_mtu = 0` となり計算結果が 0 になりうる。
+
+<!-- /failure -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
