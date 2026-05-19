@@ -607,4 +607,66 @@ db_migrator.py での SUBNET_DECAP マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-platform.md -->
+<!-- source: sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2, sonic-swss/orchagent/tunneldecaporch.cpp -->
+
+`tunneldecaporch.cpp` 自体にはプラットフォーム固有の分岐が存在しない。プラットフォーム差はすべて **ビルド時テンプレート `ipinip.json.j2`** に閉じている。
+
+### 1. `switch_type == "dpu"` — 全設定スキップ (`ipinip.json.j2:1-3`)
+
+SmartSwitch の DPU ノードでは `switch_type = "dpu"` が設定される。この場合テンプレートは空配列 `[]` を返し、`TUNNEL_DECAP_TABLE:IPINIP_SUBNET` / `IPINIP_SUBNET_V6` が一切 APP_DB に投入されない。`SUBNET_DECAP` に `status=enable` を書いても decap は機能しない。
+
+| `switch_type` | `IPINIP_SUBNET` 生成 |
+|---|---|
+| `"dpu"` | **生成されない**（APP_DB への投入ゼロ） |
+| その他 (`""` / `"voq"` / `"fabric"` 等) | 通常処理継続 |
+
+### 2. BackEnd デバイス種別 — tunnel term 抑止 (`ipinip.json.j2:68-76`)
+
+`type` が `BackEndToRRouter` / `BackEndLeafRouter` / `BackEndSpineRouter` で、かつ `storage_device` フィールドが未設定の場合、すべての IP アドレスリストがクリアされ tunnel term が生成されない。ただし `storage_device` フィールドが存在する BackEnd デバイス（iSCSI storage leaf 等）は例外として通常通り生成される。
+
+| `type` | `storage_device` | `IPINIP_SUBNET` 生成 |
+|---|---|---|
+| `BackEndToRRouter` 等 | なし | **生成されない** |
+| `BackEndToRRouter` 等 | あり | 生成される |
+| `ToRRouter` / `LeafRouter` 等 | どちらでも | 生成される |
+
+### 3. Broadcom T1 vs その他 — `dscp_mode` 差 (`ipinip.json.j2:5-14, 97-108`)
+
+`IPINIP_SUBNET` / `IPINIP_SUBNET_V6` 含む全トンネルオブジェクトの `dscp_mode` がビルド時に決定される。`ecn_mode = "copy_from_outer"` / `ttl_mode = "pipe"` は全プラットフォーム共通固定。
+
+| プラットフォーム | `dscp_mode` |
+|---|---|
+| Broadcom かつ `type` に `"LeafRouter"` を含む (T1 ToR 相当) | `"pipe"` |
+| Broadcom かつ `type` に `"LeafRouter"` を含まない | `"uniform"` |
+| 非 Broadcom (Mellanox / Barefoot / Cisco 等) | `"pipe"` |
+
+### 4. `DSCP_TO_TC_MAP.AZURE` による `decap_dscp_to_tc_map` 注入 (`ipinip.json.j2:86-107`)
+
+非 Broadcom プラットフォームで `DSCP_TO_TC_MAP.AZURE` が CONFIG_DB に存在する場合のみ、`TUNNEL_DECAP_TABLE:IPINIP_SUBNET` に `"decap_dscp_to_tc_map": "AZURE"` フィールドが追加される。Broadcom ではこの分岐に入らない。
+
+| ASIC ベンダ | `DSCP_TO_TC_MAP.AZURE` | `decap_dscp_to_tc_map` |
+|---|---|---|
+| Broadcom | どちらでも | なし |
+| 非 Broadcom | あり | `"AZURE"` |
+| 非 Broadcom | なし | なし |
+
+### 5. `sub_role` による Loopback インタフェースセット差 (`ipinip.json.j2:22-26`)
+
+Multi-ASIC T2 chassis (`sub_role=FrontEnd`/`BackEnd`) では `Loopback4096` を参照し `Loopback2` / `Loopback3` を除外する。シングル ASIC デバイスは `Loopback0` / `Loopback2` / `Loopback3` を参照する。これにより tunnel term の inner dst IP 候補が変わる。
+
+### 6. ルート数 > 128 による tunnel term 数削減 (`ipinip.json.j2:80-83`)
+
+IPv4 + IPv6 アドレス数の合計が 128 超の大規模トポロジでは、SAI `TABLE_FULL` 回避のために INTERFACE / PORTCHANNEL_INTERFACE 由来の term を除外し Loopback / VLAN 由来のみに制限する。閾値 128 はハードコード。
+
+### `tunneldecaporch.cpp` のプラットフォーム差
+
+`tunneldecaporch.cpp` 全行走査の結果: `gMySwitchType` / VOQ / ベンダー文字列 (`broadcom` 等) 分岐はゼロ件。`SAI_STATUS_NOT_IMPLEMENTED` の処理は `ecn_mode` (L179) と `encap_ecn_mode` (L195) の create-only スキップのみで全プラットフォーム共通。multi-asic namespace 切替なし。
+
+> **Evidence**: `sonic-buildimage` `dockers/docker-orchagent/ipinip.json.j2` (全 228 行精読)、`sonic-swss` `orchagent/tunneldecaporch.cpp` (1576 行走査)
+<!-- /platform -->
+
 <!-- glossary-links-injected: f9445b5b4106 -->
