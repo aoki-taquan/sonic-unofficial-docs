@@ -682,6 +682,100 @@ CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。SA
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通知メカニズム (Phase G)
+
+`STP` / `STP_VLAN` / `STP_PORT` / `STP_VLAN_PORT` (CONFIG_DB) への変更は、**keyspace 通知** ベースの `SubscriberStateTable` で `stpmgrd` に配送され、さらに Unix Domain Socket (UDS) 経由で STP デーモン (`stpd`) に転送される。その後 `stpd` が APPL_DB に書き込んだエントリを orchagent の `StpOrch` が **ConsumerStateTable** (channel PUBLISH/SUBSCRIBE) で消費する。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/stp-pubsub.md`
+
+### 全体フロー
+
+```
+config stp ... (sonic-utilities/config/stp.py)
+  ↓ CONFIG_DB: HSET STP|GLOBAL / STP_VLAN|Vlan<vid> / ...
+  ↓ Redis keyspace通知 __keyspace@4__:<TABLE>|<key>
+stpmgrd (cfgmgr/stpmgrd.cpp) ← SubscriberStateTable で CONFIG_DB 購読
+  ↓ doTask() → sendMsgStpd(STP_BRIDGE_CONFIG / STP_VLAN_CONFIG / ...)
+  ↓ AF_UNIX SOCK_DGRAM: sendto(/var/run/stpipc.sock)
+stpd (sonic-stp, APPL_DB 書き込み)
+  ↓ ProducerStateTable → APPL_DB STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE 等
+  ↓ Redis PUBLISH STP_VLAN_INSTANCE_TABLE_CHANNEL@0 / ...
+orchagent StpOrch (orchagent/stporch.cpp) ← ConsumerStateTable で APPL_DB 購読
+  ↓ doStpTask() / doStpPortStateTask()
+  ↓ SAI: sai_stp_api->set_stp_port_state()
+```
+
+### CONFIG_DB → stpmgrd: SubscriberStateTable
+
+`stpmgrd` は `StpMgr(&conf_db, &app_db, &state_db, tables)` で `Orch(tables)` を継承する。`Orch` コンストラクタが各 `TableConnector` に対して `addConsumer()` を呼ぶ (orch.cpp:127-133)。CONFIG_DB (dbId=4) は `addConsumer()` の分岐で **SubscriberStateTable** が選択され、内部で keyspace 通知 PSUBSCRIBE が設定される (orch.cpp:1188-1190):
+
+| DB | テーブル | PSUBSCRIBE パターン |
+|----|---------|-------------------|
+| CONFIG_DB (4) | `STP` | `__keyspace@4__:STP\|*` |
+| CONFIG_DB (4) | `STP_VLAN` | `__keyspace@4__:STP_VLAN\|*` |
+| CONFIG_DB (4) | `STP_PORT` | `__keyspace@4__:STP_PORT\|*` |
+| CONFIG_DB (4) | `STP_VLAN_PORT` | `__keyspace@4__:STP_VLAN_PORT\|*` |
+| CONFIG_DB (4) | `LAG_MEMBER` | `__keyspace@4__:LAG_MEMBER_TABLE\|*` |
+| STATE_DB (6) | `VLAN_MEMBER_TABLE` | `__keyspace@6__:VLAN_MEMBER_TABLE\|*` |
+| CONFIG_DB (4) | `STP_MST`, `STP_MST_INST`, `STP_MST_PORT` | (MSTP 拡張) |
+
+実装: `stpmgrd.cpp:43-65` (TableConnector リスト)、`orch.cpp:1188-1190` (addConsumer 分岐)。
+
+**select ループ** (stpmgrd.cpp:98-116):
+
+```cpp
+while (true) {
+    ret = s.select(&sel, SELECT_TIMEOUT);   // SELECT_TIMEOUT = 1000 ms
+    if (ret == Select::TIMEOUT) { stpmgr.doTask(); continue; }
+    auto *c = (Executor *)sel;
+    c->execute();                           // → StpMgr::doTask(Consumer&)
+}
+```
+
+タイムアウト時 (`1000 ms`) は `stpmgr.doTask()` (引数なし) で内部保留タスクをフラッシュする (stpmgrd.cpp:110-112)。
+
+### stpmgrd → stpd: Unix Domain Socket IPC
+
+`StpMgr::doTask(Consumer&)` はテーブル変化を受けて `sendMsgStpd()` を呼ぶ。
+
+```cpp
+// stpmgr.h:28,49
+#define STPMGRD_SOCK_NAME  "/var/run/stpmgrd.sock"   // 自分のソケット (bind)
+#define STPD_SOCK_NAME     "/var/run/stpipc.sock"    // stpd の受信ソケット (sendto 先)
+```
+
+`sendMsgStpd()` は `AF_UNIX / SOCK_DGRAM` で `sendto(stpd_fd, ..., /var/run/stpipc.sock)` を実行する (stpmgr.cpp:1241-1243)。送信失敗 (rc=-1) はエラーログのみで再送処理はない (stpmgr.cpp:1244-1249)。
+
+| CONFIG_DB テーブル | IPC メッセージ型 |
+|-------------------|----------------|
+| `STP` | `STP_BRIDGE_CONFIG` (stpmgr.cpp:171) |
+| `STP_VLAN` | `STP_VLAN_CONFIG` (stpmgr.cpp:332) |
+| `STP_PORT` | `STP_PORT_CONFIG` (stpmgr.cpp:624) |
+| `STP_VLAN_PORT` | `STP_VLAN_PORT_CONFIG` (stpmgr.cpp:441) |
+| `STP_MST` | `STP_MST_GLOBAL_CONFIG` (stpmgr.cpp:402) |
+
+### APPL_DB → StpOrch: ConsumerStateTable
+
+`StpOrch` は `Orch(db, tableNames)` (APPL_DB, dbId=0) として初期化される (stporch.cpp:17-18)。APPL_DB は `addConsumer()` の else 分岐 → **ConsumerStateTable** (channel PUBLISH/SUBSCRIBE) が使用される:
+
+| APPL_DB テーブル | 処理ハンドラ | SAI 操作 |
+|----------------|------------|---------|
+| `STP_VLAN_INSTANCE_TABLE` | `doStpTask()` (stporch.cpp:380) | `sai_vlan_api` VLAN-STP インスタンス関連付け |
+| `STP_PORT_STATE_TABLE` | `doStpPortStateTask()` (stporch.cpp:429) | `sai_stp_api->set_stp_port_state()` |
+| `STP_FASTAGEING_FLUSH_TABLE` | `doStpFastAgeFlushTask()` | `gFdbOrch->flushFdbByVlan()` |
+| `STP_INST_PORT_FLUSH_TABLE` | (flush ハンドラ) | FDB flush |
+
+orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959)。
+
+### retry セマンティクス
+
+- **stpmgrd**: `StpMgr::doStpTask()` 内で `addVlanToStpInstance()` が `!getPort()` (ポート未準備) で失敗した場合は `it++; continue` でエントリを `m_toSync` に残置し次 select サイクルで再評価 (stporch.cpp:411-413)。
+- **sendMsgStpd の IPC 失敗**: リトライなし。エラーログのみ。次に CONFIG_DB が変化したときに再試行される。
+- **StpOrch**: `doStpTask()` でポート/VLAN 未解決の場合は `it++; continue` で `m_toSync` 残置、正常完了時は `erase(it)` で破棄 (stporch.cpp:411-425)。
+
+<!-- /pubsub -->
+
 ## 関連ページ
 
 - [CONFIG_DB: VLAN](vlan.md)
