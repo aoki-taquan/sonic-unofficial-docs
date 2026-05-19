@@ -318,59 +318,33 @@ SSH_CONFIG_NAMES = {
 
 > 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-side-effects.md`
 
-`SSH_SERVER|POLICIES` エントリへの SET/DEL が CONFIG_DB に書き込まれると、`hostcfgd` の `ssh_handler` が 2 クラスを連鎖呼び出しする。APPL_DB / STATE_DB / ASIC_DB への直接書き込みは一切発生しない。
+CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書換とサービス再起動に閉じる。
 
-### 副次書込先サマリ
+| 副次 DB | 書込有無 | 根拠 |
+|--------|---------|------|
+| APPL_DB | なし | `SshServer` および `PamLimitsCfg` クラス全域（`hostcfgd` L1020–1490）に `set(` / `hset(` / `Producer` / `Notification` 呼出が 0 件 |
+| STATE_DB | なし | `hostcfgd` の `STATE_DB` 書込は `FipsCfg`（L1759–1821）と `RestartWaiter`（L2160–2162）のみ。SSH 処理パスには存在しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。SSH は SAI 非経由でスイッチ ASICと無関係 |
+| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由。`orchagent` は `SSH_SERVER` テーブルを購読しない |
 
-| 副次書込先 | ファイル / サービス | 書込者 | 条件 |
-|---|---|---|---|
-| ファイルシステム | `/etc/ssh/sshd_config` | `SshServer.set_policies()` | `sshd -T` 検証成功後 |
-| サービス再起動 | `ssh.service` (systemd) | `systemctl restart ssh` | `sshd -T` 検証成功後 |
-| ファイルシステム | `/etc/pam.d/pam-limits-conf` | `PamLimitsCfg.render_conf_file()` | PAM limits 更新時 (常時) |
-| ファイルシステム | `/etc/security/limits.conf` | `PamLimitsCfg.render_conf_file()` | PAM limits 更新時 (常時) |
-| APPL_DB | なし | — | — |
-| STATE_DB | なし | — | — |
-| ASIC_DB | なし | — | — |
+### Linux ホスト OS への副次書込（DB 外）
 
-### `/etc/ssh/sshd_config` の更新と ssh 再起動
+`SshServer.set_policies()` および `PamLimitsCfg` が行うファイルシステム側の副次書込を以下に示す。
 
-`SshServer.set_policies()` は次の手順でファイルを更新する。
+| 書込先 | 操作 | 条件 | 根拠 |
+|-------|------|------|------|
+| `/etc/ssh/sshd_config` | `copy2` → `modify_single_file_inplace` → `os.rename` | `set_policies()` 実行時（フィールド変更のたびに必ず実行） | `hostcfgd` L1113, L1142, L1152 |
+| `ssh.service` | `systemctl restart ssh` | `sshd -T` 検証が成功した場合のみ | `hostcfgd` L1154 |
+| `/etc/security/limits.conf` | Jinja2 テンプレート (`limits.conf.j2`) から再生成 | `PamLimitsCfg.update_config_file()` 呼出時 | `hostcfgd` L1469–1476 |
+| `/etc/pam.d/pam-limits-conf` | Jinja2 テンプレート (`pam_limits.j2`) から再生成 | 同上 | `hostcfgd` L1460–1466 |
 
-```
-copy2(sshd_config → sshd_config.tmp)          # L1113
-modify_single_file_inplace(sshd_config.tmp)   # L1142 × フィールド数
-sshd -T -f sshd_config.tmp                    # L1150 — 検証
-  ├─ returncode == 0
-  │   ├─ os.rename(sshd_config.tmp, sshd_config)  # L1152
-  │   └─ systemctl restart ssh                     # L1154
-  └─ returncode != 0
-      └─ os.remove(sshd_config.tmp)               # L1160 — ロールバック
-```
+`systemctl restart ssh` は既存 SSH セッションを切断しないが、新規接続受付が瞬断する（`sshd -T` 検証付きのため安全）。
 
-`sshd -T` が失敗した場合は一時ファイルを削除してロールバックする。`sshd_config` は変更されず `ssh` サービスも再起動されない。
-
-`systemctl restart ssh` が例外を投げた場合は `except Exception` で捕捉し ERR ログのみ記録する。このとき `sshd_config` は新しい内容に書き換え済みだが `ssh.service` は再起動されていない不整合状態となる（詳細は Phase D 参照）。
-
-### PAM limits ファイルの更新
-
-`ssh_handler` は `set_policies()` の後に必ず `pamLimitsCfg.update_config_file()` を呼び出す（`hostcfgd` L2299）。このメソッドは `max_sessions` の現在値に関わらず Jinja2 テンプレートをレンダリングして次の 2 ファイルを上書きする。
-
-| ファイル | テンプレート | 内容 |
-|---------|------------|------|
-| `/etc/pam.d/pam-limits-conf` | `pam_limits.j2` | pam_limits モジュールの有効化 |
-| `/etc/security/limits.conf` | `limits.conf.j2` | `maxlogins <N>` または空（無制限） |
-
-`max_sessions == 0`（デフォルト）の場合、`self.max_sessions` が `None` となりテンプレートは `maxlogins` 行を出力しない（無制限）。
-
-### STATE_DB 書込なしの根拠
-
-`HostConfigDaemon` は起動時に `DBConnector(STATE_DB, 0)` を保持するが、この接続は `FipsCfg` クラスが `FIPS_STATS|state` に統計を書き込むためのものであり、SSH ハンドラーチェーンからは参照されない（`hostcfgd` L2160、L2210）。
-
-<!-- evidence: sonic-host-services/scripts/hostcfgd L1110-1160 (SshServer.set_policies) -->
-<!-- evidence: sonic-host-services/scripts/hostcfgd L1152-1155 (systemctl restart ssh) -->
-<!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1479 (PamLimitsCfg.update_config_file / render_conf_file) -->
-<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2301 (ssh_handler) -->
-<!-- evidence: sonic-host-services/scripts/hostcfgd L2160 (state_db_conn FIPS 専用) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1020-1170 (SshServer クラス全体) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1410-1490 (PamLimitsCfg クラス全体) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1154 (systemctl restart ssh) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1460-1476 (render_conf_file PAM) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1759-1821 (FipsCfg STATE_DB 参照) -->
 
 <!-- /side-effects -->
 

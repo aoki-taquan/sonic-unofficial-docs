@@ -429,6 +429,84 @@ DIP トンネル生成・oper status 変化・削除のたびに orchagent が S
 <!-- evidence: fdbsyncd/fdbsyncd.cpp:26-28,79,91 (netlink登録・selectループ); fdbsyncd/fdbsync.cpp:26,561-615,692,804-817 (imetAddRoute/delRoute・RTM判定); orchdaemon.cpp:23,579-586,959 (EvpnRemoteVniOrch生成・SELECT_TIMEOUT); vxlanorch.h:499-502 (EvpnRemoteVnip2pOrch Orch2基底); vxlanorch.cpp:1930-1953 (STATE_DB書き込み) -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+EVPN DIP トンネルの動作はプラットフォームの SAI ケーパビリティによって 2 つのモードに分岐する。
+分岐の起点は `VxlanTunnelOrch` 初期化時に 1 回だけ実行される `isDipTunnelsSupported()` の結果である。
+
+### 1. DIP トンネルサポート判定 (起動時 SAI 照会)
+
+`vxlanorch.cpp:1256-1274` — `VxlanTunnelOrch` コンストラクタが `sai_query_attribute_enum_values_capability()` で
+`SAI_OBJECT_TYPE_TUNNEL` / `SAI_TUNNEL_ATTR_PEER_MODE` に対して ASIC のサポートする peer mode を照会する。
+
+| 照会結果 | `is_dip_tunnel_supported` | 実装モード |
+|---------|--------------------------|-----------|
+| SAI クエリ失敗（`SAI_STATUS_SUCCESS` 以外） | `true` (fallback) | P2P DIP トンネルモード |
+| `SAI_TUNNEL_PEER_MODE_P2P` が列挙値に含まれる | `true` | P2P DIP トンネルモード |
+| `SAI_TUNNEL_PEER_MODE_P2P` が列挙値に**含まれない** | `false` | P2MP 縮退モード |
+
+SAI クエリに失敗した場合は `SWSS_LOG_WARN("Unable to get supported tunnel peer modes. Defaulting to P2P")` を出力して
+`true` に設定する (`vxlanorch.cpp:1260-1261`)。
+
+### 2. P2P モード (DIP トンネルあり) — 主要プラットフォーム
+
+`isDipTunnelsSupported()` = `true` の場合 (`orchdaemon.cpp:577-581`)、
+`EvpnRemoteVnip2pOrch` が起動され EVPN リモート VTEP ごとに個別の P2P DIP トンネルを動的生成する。
+
+- SAI トンネル: `SAI_TUNNEL_PEER_MODE_P2P` + `SAI_TUNNEL_ATTR_ENCAP_DST_IP` でリモート VTEP IP を指定
+- per-VTEP トンネルポート (`Port_EVPN_<remote_vtep_ip>`) を生成して VLAN flood domain に参加
+- VTEP ごとに FDB エントリを独立管理
+- 生成関数: `createDynamicDIPTunnel()` (`vxlanorch.cpp:1151-1184`)
+
+### 3. P2MP 縮退モード (DIP トンネルなし) — 一部プラットフォーム
+
+`isDipTunnelsSupported()` = `false` の場合 (`orchdaemon.cpp:583-587`)、
+`EvpnRemoteVnip2mpOrch` が起動される。DIP トンネルは生成されない。
+
+- `addTunnelUser()` は DIP トンネル作成をスキップし、リモート VTEP の IP 参照カウントのみ更新して `return true` (`vxlanorch.cpp:1701-1704`)
+- 単一の P2MP SIP トンネルブリッジポートを共用し、IMET ルートの L2MC グループメンバーとして処理
+- SIP トンネル生成時に `addBridgePort()` で P2MP トンネルポートを bridge domain に追加 (`vxlanorch.cpp:2191-2199`)
+- SIP トンネル削除時も DIP カウントが常に 0 のため `del_tnl_hw_pending` が立たず即時削除可能
+
+### 4. TTL モード: `NOT_SET` → プラットフォームデフォルト
+
+EVPN DIP トンネルは `VxlanTunnel` コンストラクタの `ttl_mode` 引数を省略するため
+`VxlanTunnelTTLMode::NOT_SET` が適用される。`createTunnelHw()` は `NOT_SET` の場合
+`SAI_TUNNEL_ATTR_DECAP_TTL_MODE` を属性リストに追加しない (`vxlanorch.cpp:372-383`)。
+結果として ASIC ベンダーの SAI 実装デフォルト TTL モードが適用される。
+
+| プラットフォーム傾向 | 一般的な SAI デフォルト |
+|--------------------|----------------------|
+| Broadcom XGS / Trident / Tomahawk | `PIPE` (実装依存) |
+| Mellanox / NVIDIA Spectrum | `PIPE` (実装依存) |
+| VS (仮想スイッチ) | SAI stub — 実際の TTL 書換なし |
+| その他 ASIC | ベンダー定義。変更手段なし |
+
+`DEFAULT_TUNNEL_ENCAP_TTL = 255` (`vxlanorch.h:49`) は CLI 生成トンネル専用であり、EVPN DIP トンネルには**適用されない**。
+
+### 5. WarmBoot 時のプラットフォーム差
+
+WarmBoot 中は `vxlanorch.cpp:1925-1948` のガードにより STATE_DB `VXLAN_TUNNEL_TABLE` への重複書込みをスキップする。
+`is_dip_tunnel_supported` フラグは WarmBoot 後の orchagent 再起動時に再度 SAI 照会によって設定される。
+プラットフォームの SAI が WarmBoot で peer mode ケーパビリティを変化させると、DIP/P2MP モードが切り替わる可能性があるが
+SONiC コード上には明示的な変化検出ロジックは存在しない。
+
+### プラットフォーム差異サマリ
+
+| 観点 | P2P 対応 ASIC | P2MP 専用 ASIC |
+|------|------------|--------------|
+| `isDipTunnelsSupported()` | `true` | `false` |
+| 起動する Orch | `EvpnRemoteVnip2pOrch` | `EvpnRemoteVnip2mpOrch` |
+| DIP トンネル生成 | VTEP ごとに動的生成 | 生成しない (IP 参照カウントのみ) |
+| SAI peer_mode | `P2P` + dst_ip | (SIP トンネルの `P2MP` を共用) |
+| VLAN メンバ管理 | トンネルポート単位 (`Port_EVPN_*`) | P2MP ブリッジポート共用 |
+| TTL モード | プラットフォームデフォルト (`NOT_SET`) | 同左 |
+| SIP 遅延削除 | `del_tnl_hw_pending` で DIP カウント待ち | 即時削除可能 |
+
+<!-- evidence: vxlanorch.cpp:1256-1274 (isDipTunnelsSupported SAI照会); vxlanorch.cpp:1701-1704 (P2MP縮退 skip); orchdaemon.cpp:577-587 (Orch分岐); vxlanorch.cpp:372-383 (TTL NOT_SET時の属性省略); vxlanorch.cpp:1925-1948 (WarmBoot guard); vxlanorch.cpp:2191-2199 (P2MP addBridgePort) -->
+<!-- /platform -->
+
 ## 例外条件・特殊挙動
 
 - **isDipTunnelsSupported() = false の場合**: DIP トンネルは作成されず、リモート VTEP の
