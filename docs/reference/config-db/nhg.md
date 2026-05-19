@@ -358,4 +358,67 @@ CRM カウンタの更新は `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsed
 
 <!-- /side-effects -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/nhg-platform.md`
+
+`NEXTHOP_GROUP_TABLE` 自体のスキーマ (フィールド名・フォーマット) はプラットフォーム共通だが、`NhgOrch` が行う SAI next hop group 作成処理はプラットフォームによって以下の 3 点で挙動が異なる。
+
+### Mellanox — ECMP グループ数の除算補正
+
+`RouteOrch` コンストラクタ (`routeorch.cpp:83-87`) は環境変数 `platform` に `"mellanox"` が含まれる場合のみ、SAI から取得した `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` 値を `DEFAULT_MAX_ECMP_GROUP_SIZE = 32` で除算する:
+
+```cpp
+// orchagent/routeorch.cpp:83-87
+char *platform = getenv("platform");
+if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))
+{
+    m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;
+}
+```
+
+Mellanox SAI はグループサイズ=1 前提の最大数を返すため、実際の ECMP グループ数上限を得るには除算が必要になる。算出した上限値は `STATE_DB SWITCH_CAPABILITY|switch:MAX_NEXTHOP_GROUP_COUNT` に書き込まれ (`routeorch.cpp:90-91`)、`NhgOrch::doTask()` (`nhgorch.cpp:252`) が上限判定に使用する。
+
+Broadcom / Marvell / VS / VPP 等は SAI 戻り値をそのまま上限として使用する（除算補正なし）。
+
+### VOQ プラットフォーム — ECMP メンバー数を 128 に固定
+
+`gMySwitchType == "voq"` かつ `SAI_SWITCH_ATTR_MAX_ECMP_MEMBER_COUNT` 取得値が 128 以上の場合、`SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` を 128 に強制設定する (`routeorch.cpp:109-123`):
+
+| 構成 | ECMP メンバー数上限 |
+|------|------------------|
+| VOQ スイッチ (取得値 ≥ 128) | 128 (強制設定) |
+| 非 VOQ スイッチ | SAI 取得値そのまま |
+
+### SRv6 NHG — 上限到達時に temp NHG をスキップ
+
+`NEXTHOP_GROUP_TABLE` の `seg_src` フィールドを持つ SRv6 NHG は、NHG 上限到達時の **temp NHG 作成が抑制される**:
+
+```cpp
+// orchagent/nhgorch.cpp:256-261
+// don't create temp nhg for srv6
+if (nhg_key.is_srv6_nexthop())
+{
+    ++it;
+    continue;
+}
+```
+
+通常の ECMP NHG は上限到達時に 1 メンバーの temp NHG を作成してルート転送を維持するが、SRv6 NHG はリソースが回復するまで SAI への登録を試みない。SRv6 NHG 自体のサポートも ASIC ベンダー実装依存であり、非対応 ASIC では `seg_src` フィールドを持つエントリの NHG 作成が失敗する。
+
+### フィールド別プラットフォーム差
+
+| フィールド | プラットフォーム共通 | プラットフォーム依存要素 |
+|-----------|----------------|----------------------|
+| `nexthop` / `ifname` | 全 ASIC | なし |
+| `weight` | フィールド構文は共通 | SAI UCMP 対応が必要。UCMP 非対応 ASIC では weight 設定が無視される可能性がある |
+| `seg_src` | フィールド構文は共通 | SRv6 対応 ASIC が必要。非対応 ASIC では NHG 作成失敗。上限到達時 temp NHG も作成されない |
+| `mpls_nh` | フィールド構文は共通 | MPLS 対応 ASIC が必要。非対応 ASIC では NHG 作成失敗 |
+
+### VS プラットフォーム
+
+VS では SAI シムが create/member create を `SAI_STATUS_SUCCESS` で返すが実 ASIC 転送はない。CRM 統計 (`CRM_NEXTHOP_GROUP_USED` / `CRM_NEXTHOP_GROUP_MEMBER_USED`) はダミー値となる。
+<!-- /platform -->
+
 <!-- glossary-links-injected: nhg-2026-0515 -->
