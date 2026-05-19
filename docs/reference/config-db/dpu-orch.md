@@ -393,6 +393,84 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 詳細なソーススキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-constants.md` を参照。
 <!-- /constants -->
 
+<!-- pubsub -->
+## ZMQ 購読方式 (Phase F)
+
+`DpuOrchDaemon` が `DPU_APPL_DB` の DASH テーブル群を受信するための通信メカニズムを示す。ZMQ 有効時と無効時の 2 経路が存在し、`orch_northbond_dash_zmq_enabled` フィールドにより切り替わる。
+
+### Producer/Consumer ペア
+
+| 区間 | ZMQ 有効 (`orch_northbond_dash_zmq_enabled = true`) | ZMQ 無効 (`false`) |
+|------|---------------------------------------------------|-------------------|
+| gNMI サービス → `DPU_APPL_DB` DASH テーブル | `ZmqProducerStateTable` → ZMQ wire → `ZmqServer` | `ProducerStateTable` → Redis PUBLISH |
+| `DPU_APPL_DB` → DASH Orch | `ZmqConsumerStateTable` (SelectableEvent 駆動) | `ConsumerStateTable` (Redis SUBSCRIBE 駆動) |
+| DASH Orch → `DPU_APPL_STATE_DB` | `swss::Table::set()` / `del()` (HSET/HDEL, PUBLISH 非発行) | 同左 |
+
+### ZmqOrch::addConsumer() — DPU_APPL_DB 判別
+
+全 DASH Orch は `ZmqOrch` を継承する。`ZmqOrch::addConsumer()` は `DPU_APPL_DB` に対して `ZmqConsumerStateTable` / `ConsumerStateTable` を切り替える[^5]:
+
+```cpp
+// zmqorch.cpp:59-80
+if (db->getDbId() == APPL_DB || db->getDbId() == DPU_APPL_DB)
+{
+    if (zmqServer != nullptr)
+        addExecutor(new ZmqConsumer(
+            new ZmqConsumerStateTable(db, tableName, *zmqServer, gBatchSize, pri, dbPersistence),
+            this, tableName, orderedQueue));
+    else
+        addExecutor(new Consumer(
+            new ConsumerStateTable(db, tableName, gBatchSize, pri),
+            this, tableName));
+}
+```
+
+`zmqServer` は `DpuOrchDaemon::init()` の `dash_zmq_server` ポインタから各 DASH Orch コンストラクタへ渡される。`orch_northbond_dash_zmq_enabled = false` のとき `nullptr` となり `ConsumerStateTable` にフォールバックする。
+
+### ZmqConsumerStateTable — ZmqServer へのハンドラ登録
+
+`ZmqConsumerStateTable` コンストラクタ（`zmqconsumerstatetable.cpp:47`）:
+
+```cpp
+m_zmqServer.registerMessageHandler(m_db->getDbName(), tableName, this);
+```
+
+`DPU_APPL_DB` では `getDbName()` が `"DPU_APPL_DB"` を返し、テーブル名（`APP_DASH_ENI_TABLE_NAME` 等）を鍵として `ZmqServer` に登録する。ZMQ wire 上のメッセージが到着すると `ZmqServer` が対応ハンドラの `handleReceivedData()` を呼び出し、`SelectableEvent` 経由で orchdaemon の select ループを起動する。
+
+### 遅延バインド (lazy bind) — メッセージロスト防止
+
+`ZmqServer` はコンストラクタで `lazy=true` を指定し、全ハンドラ登録完了後に `main()` が `zmq_server->bind()` を呼ぶ(`main.cpp:1032-1037`)。これにより、クライアント側 `ZmqProducerStateTable` の接続確立前に bind が完了し、DpuOrchDaemon::init() 中の `ZmqConsumerStateTable` 生成（= ハンドラ登録）との間のメッセージロストを防止する。
+
+### ZMQ サーバアドレスと gBatchSize
+
+| パラメータ | DPU での値 | 決定経路 |
+|-----------|-----------|---------|
+| ZMQ サーバアドレス | `tcp://127.0.0.1:8100`（通常）または `tcp://eth0-midplane:8100` | `orchagent.sh:105-117` — `LOCALHOST_SUBTYPE` が `SmartSwitch` かつ midplane UP のとき `eth0-midplane`、それ以外 `127.0.0.1`。ポート `8100` は `get_zmq_port()`（NAMESPACE_ID 空のとき `ORCH_ZMQ_PORT=8100`） |
+| `gBatchSize` (`ZmqConsumerStateTable` の popBatchSize) | `65536` | `orchagent.sh:29` の `-b 65536` 引数 → `main.cpp` の `gBatchSize`。通常 NPU の `1024` の 64 倍 |
+| `dbPersistence` | `false` | `ZmqOrch` が `addConsumer()` に渡すデフォルト値。`AsyncDBUpdater` は未生成 |
+
+### select ループでの受信フロー
+
+```
+ZmqServer (ZMQ wire 受信スレッド)
+  ↓ handleReceivedData() → m_receivedOperationQueue.push()
+  ↓ m_selectableEvent.notify()
+orchdaemon select ループ (ZmqConsumerStateTable の fd を epoll)
+  ↓ ZmqConsumer::execute()
+  ↓   table->pops() → addToSync() → drain()
+  ↓ ZmqOrch::doTask(ZmqConsumer&)
+  ↓ 各 DASH Orch の doTask()（SAI API 呼出し → DPU_APPL_STATE_DB 書込み）
+```
+
+`ZmqConsumer::execute()` は `m_ordered_queue = false`（DASH Orch は ordered queue 非使用）のため、`pops()` で一括取り出しして `addToSync()` に渡す（`zmqorch.cpp:14-18`）。
+
+### DPU_APPL_STATE_DB への書込み — 通知なし
+
+DASH Orch が SAI 完了後に `DPU_APPL_STATE_DB` の結果テーブルへ書き込む際は `swss::Table::set()` / `del()` を使用する（`dashorch.cpp:69-73`）。`ProducerStateTable` ではないため Redis `PUBLISH` は発行されない。結果読み取り側（`dashd` 等）は keyspace 通知を待たずオンデマンド `HGETALL` で参照する。
+
+詳細調査証跡は `meta/_intermediate/cdb-flow/dpu-orch-pubsub.md` を参照。
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: DpuOrchDaemon クラス定義と起動条件: `sonic-swss/orchagent/orchdaemon.h:150-158`, `sonic-swss/orchagent/orchdaemon.cpp:1313-1419`, `sonic-swss/orchagent/main.cpp:981-994`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>
@@ -402,3 +480,5 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 [^3]: YANG 定義: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang:217-224, 340-350`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-device_metadata.yang>
 
 [^4]: orchagent.sh DPU 固有引数: `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:22-42`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/orchagent.sh>
+
+[^5]: ZmqOrch / ZmqConsumerStateTable 実装: `sonic-swss/orchagent/zmqorch.cpp:59-80`, `sonic-swss-common/common/zmqconsumerstatetable.cpp:20-47`, `sonic-swss/lib/orch_zmq_config.cpp:35-80`, `sonic-swss/orchagent/main.cpp:646-654, 1032-1037`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/zmqorch.cpp>
