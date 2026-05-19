@@ -380,3 +380,51 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 ```
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`TC_TO_DSCP_MAP` の処理に関わる定数はすべてソースコードに固定されており、CONFIG_DB や DEVICE_METADATA から変更できない。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-constants.md`
+
+### テーブル名・フィールド名定数
+
+| 定数名 | 値 | 定義箇所 |
+|---|---|---|
+| `CFG_TC_TO_DSCP_MAP_TABLE_NAME` | `"TC_TO_DSCP_MAP"` | swsscommon / `test_qos_map.py:6` |
+| `tc_to_dscp_field_name` | `"tc_to_dscp_map"` | `qosorch.cpp:21` |
+| `encap_tc_to_dscp_field_name` | `"encap_tc_to_dscp_map"` | `qosorch.cpp:37` |
+
+`tc_to_dscp_field_name` は `PORT_QOS_MAP` の参照フィールド名として `qos_to_attr_map`（qosorch.cpp:66）および `qos_to_ref_table_map`（qosorch.cpp:105）に登録される。`encap_tc_to_dscp_field_name` は `TUNNEL` の参照フィールド名として `tunnel_qos_to_ref_table_map`（qosorch.cpp:115）に登録される。
+
+### バリデーション上限定数
+
+```cpp
+// qosorch.cpp:119
+#define DSCP_MAX_VAL 63
+```
+
+`convertFieldValuesToAttributes()`（qosorch.cpp:1238-1241）が `value > DSCP_MAX_VAL` を明示チェックし、超過した場合は `SWSS_LOG_ERROR` を出力して `task_invalid_entry` を返す。YANG 側の `dscp` 型定義（`"6[0-3]|[1-5][0-9]?|[0-9]?"` pattern）と一致。
+
+### SAI 型定数（ハードコード）
+
+| 定数 | 用途 | 定義箇所 |
+|---|---|---|
+| `SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP` | `create_qos_map()` の map type 引数 | `qosorch.cpp:1271` |
+| `SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` | ポートへの bind 時の SAI 属性 ID | `qosorch.cpp:66` |
+
+`TcToDscpMapHandler::addQosItem()` がこれらを直接コードに埋め込んでいるため、map type を変更する設定パスは存在しない。
+
+### YANG 型定数
+
+| typedef | 範囲 | 実態上の制約 | 定義箇所 |
+|---|---|---|---|
+| `tc_type` (TC キー) | `uint8 range "0..15"` | 大多数の ASIC は 0..7 のみ対応。8..15 は SAI `task_failed` | `sonic-types.yang.j2:338` |
+| `dscp` フィールド | `"0..63"` (string pattern) | `DSCP_MAX_VAL=63` と一致 | `sonic-tc-dscp-map.yang:58` |
+
+!!! warning "YANG と ASIC の乖離"
+    YANG は TC キーを 0..15 と定義するが、実装上の有効範囲は 0..7。8..15 を設定すると YANG バリデーションは通過するが、
+    orchagent が SAI エラーを受けて `task_failed` を返す（Silent drop ではなく syslog にエラー出力あり）。
+
+<!-- /constants -->
