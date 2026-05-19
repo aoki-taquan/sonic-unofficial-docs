@@ -511,6 +511,68 @@ CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/subnet-decap-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+CONFIG_DB の `SUBNET_DECAP` への変更通知は、`TunnelDecapOrch` が **`swss::SubscriberStateTable`** (Redis keyspace 通知ベース) で購読する。コンストラクタ (`tunneldecaporch.cpp:39`) が直接 `new SubscriberStateTable(configDb, CFG_SUBNET_DECAP_TABLE_NAME, TableConsumable::DEFAULT_POP_BATCH_SIZE, 0)` を生成し、`Orch::addExecutor()` に渡す (`tunneldecaporch.cpp:48`)。
+
+`Orch::addConsumer()` の CONFIG_DB / STATE_DB 分岐 (`orch.cpp:1186-1196`) と同様に、`SubscriberStateTable` は keyspace パターン `__keyspace@<dbId>__:SUBNET_DECAP|*` に `PSUBSCRIBE` する。書き込み側 (`sonic-cfggen` / `sonic-db-cli` / gNMI) は `HSET` のみ行い、明示的な `PUBLISH` は発行しない。
+
+```cpp
+// tunneldecaporch.cpp:39-48
+auto cfgSubnetDecapSubTable = new SubscriberStateTable(
+    configDb, CFG_SUBNET_DECAP_TABLE_NAME,
+    TableConsumable::DEFAULT_POP_BATCH_SIZE, 0);
+deque<KeyOpFieldsValuesTuple> entries;
+cfgSubnetDecapSubTable->pops(entries);
+// init subnet decap config (先読み初期化)
+for (auto &entry : entries)
+    doSubnetDecapTask(entry);
+Orch::addExecutor(new Consumer(cfgSubnetDecapSubTable, this, CFG_SUBNET_DECAP_TABLE_NAME));
+```
+
+| 購読者 | 購読 API | 購読テーブル | バッチサイズ | 優先度 |
+|--------|---------|--------------|------------|--------|
+| `orchagent` (`TunnelDecapOrch`) | `swss::SubscriberStateTable` | `SUBNET_DECAP` | `DEFAULT_POP_BATCH_SIZE` = 128 | 0 (低) |
+
+バッチサイズは `sonic-swss-common/common/table.h:164` の `DEFAULT_POP_BATCH_SIZE = 128` で固定される。優先度 `0` は他の orchagent ハンドラより低く、SUBNET_DECAP の処理は後回しになりやすい。CONFIG_DB のため TTL は使用されない。
+
+### 先読み初期化（コンストラクタ pops）
+
+`TunnelDecapOrch` のコンストラクタは `Orch::addExecutor()` に登録する **前** に `cfgSubnetDecapSubTable->pops(entries)` で既存エントリを全件先読みし、`doSubnetDecapTask()` で `subnetDecapConfig` を初期化する。これにより orchagent 起動時点で CONFIG_DB に存在する `SUBNET_DECAP` エントリが即座に処理され、keyspace 通知が来る前に `subnetDecapConfig.enable / src_ip / src_ip_v6` が確定する。
+
+この設計の目的は「**SUBNET_DECAP の状態が RouteOrch / VNetRouteOrch の VIP ルート処理より先に確定する**」ことにある。`subnetDecapConfig.enable == true` でなければ VIP ルート投入時に tunnel term が生成されないため、先読みによる初期化保証が必要。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+sonic-cfggen / sonic-db-cli / gNMI
+  ↓ Table::set("SUBNET_DECAP|<name>", fvs)
+CONFIG_DB: HSET "SUBNET_DECAP|<name>" <fields>
+  ↓ Redis keyspace event "__keyspace@4__:SUBNET_DECAP|<name>" "hset"
+OrchDaemon main loop: m_select->select(&s, SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::execute() → SubscriberStateTable::pops()
+    └─ HGETALL "SUBNET_DECAP|<name>" で値再取得
+TunnelDecapOrch::doTask(consumer)  (tunneldecaporch.cpp:69)
+  ↓ table_name == CFG_SUBNET_DECAP_TABLE_NAME で分岐
+TunnelDecapOrch::doSubnetDecapTask(consumer)
+  ↓ SET: subnetDecapConfig 更新 + SAI tunnel term 更新
+  ↓ DEL: subnetDecapConfig.enable = false
+```
+
+- `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:23`)。keyspace 通知到着で即座に wake up し、通知がなければ最大 1 秒後にポーリング。
+- `doTask` 内の `gPortsOrch->allPortsReady()` ガード (`tunneldecaporch.cpp:55-57`) により、ポート初期化完了前の通知は**早期リターン**される。通知は Consumer キューに残り、次のループで再試行される。
+- `subnetDecapConfig` はシングルトン構造体のため、複数エントリを書き込んでも最後の SET で上書きされる（再試行キャッシュなし）。
+
+### サービス再起動トリガー
+
+なし。`TunnelDecapOrch` は orchagent プロセス内のハンドラであり、`SUBNET_DECAP` の追加・変更・削除は SAI `sai_tunnel_api` のライブ操作のみで反映され、プロセス再起動・サービス restart を伴わない。
+
+> **Evidence**: `sonic-swss/orchagent/tunneldecaporch.cpp:39-48,55-57,69-72` (SubscriberStateTable 生成・先読み・doTask 分岐)、`sonic-swss/orchagent/orchdaemon.cpp:23,959` (SELECT_TIMEOUT / select ループ)、`sonic-swss-common/common/table.h:164` (`DEFAULT_POP_BATCH_SIZE = 128`)、`sonic-swss-common/common/subscriberstatetable.cpp:17,45-165` (PSUBSCRIBE + HGETALL 動作)
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
