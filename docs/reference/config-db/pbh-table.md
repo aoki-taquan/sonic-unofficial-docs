@@ -194,6 +194,63 @@ PBH_TABLE が SAI に未反映のまま
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`pbhorch.cpp` / `config/plugins/pbh.py` にハードコードされ、CONFIG_DB・YANG では管理されない定数の一覧。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-constants.md -->
+
+### 1. CONFIG_DB テーブル名定数 (pbh.py:47–50)
+
+CLI プラグイン (`config/plugins/pbh.py`) で定義される CONFIG_DB テーブル名定数。
+
+| 定数名 | 値 | 用途 |
+|--------|----|------|
+| `PBH_TABLE_CDB` | `"PBH_TABLE"` | PBH テーブルの CONFIG_DB テーブル名 |
+| `PBH_RULE_CDB` | `"PBH_RULE"` | PBH ルールテーブル名 |
+| `PBH_HASH_CDB` | `"PBH_HASH"` | PBH ハッシュテーブル名 |
+| `PBH_HASH_FIELD_CDB` | `"PBH_HASH_FIELD"` | PBH ハッシュフィールドテーブル名 |
+
+### 2. フィールド名定数 (pbh.py:52–70)
+
+`PBH_TABLE` のフィールド名定数。
+
+| 定数名 | 値 |
+|--------|----|
+| `PBH_TABLE_INTERFACE_LIST` | `"interface_list"` |
+| `PBH_TABLE_DESCRIPTION` | `"description"` |
+
+### 3. SAI ACL バインドポイント定数 (pbhorch.cpp:244–245)
+
+`PbhOrch::createPbhTable()` 内の `static const auto pbhTableType = AclTableTypeBuilder()` で定義される ACL テーブル型にハードコードされたバインドポイント。CONFIG_DB には存在せず、すべての PBH テーブルに一律適用される。
+
+| 定数名 | 意味 |
+|--------|------|
+| `SAI_ACL_BIND_POINT_TYPE_PORT` | PBH ACL テーブルを物理ポートにバインド可能 |
+| `SAI_ACL_BIND_POINT_TYPE_LAG` | PBH ACL テーブルを LAG にバインド可能 |
+
+### 4. SAI ACL マッチフィールド定数 (pbhorch.cpp:246–251)
+
+同じく `pbhTableType` にハードコードされたマッチフィールド群。`PBH_RULE` で使用できるマッチフィールドの集合は、この定数リストにより SAI レベルで固定されている。
+
+| 定数名 | 意味 |
+|--------|------|
+| `SAI_ACL_TABLE_ATTR_FIELD_GRE_KEY` | GRE キーマッチ |
+| `SAI_ACL_TABLE_ATTR_FIELD_ETHER_TYPE` | イーサタイプマッチ |
+| `SAI_ACL_TABLE_ATTR_FIELD_IP_PROTOCOL` | IP プロトコルマッチ |
+| `SAI_ACL_TABLE_ATTR_FIELD_IPV6_NEXT_HEADER` | IPv6 Next Header マッチ |
+| `SAI_ACL_TABLE_ATTR_FIELD_L4_DST_PORT` | L4 dst port マッチ |
+| `SAI_ACL_TABLE_ATTR_FIELD_INNER_ETHER_TYPE` | inner ether type マッチ |
+
+### 5. ACL ステージ定数 (pbhorch.cpp:260)
+
+| 定数名 | 意味 |
+|--------|------|
+| `ACL_STAGE_INGRESS` | PBH テーブルは常に ingress ステージで展開される。CONFIG_DB にステージフィールドは存在せず、この値はバイナリにハードコードされている |
+
+<!-- /constants -->
+
 ## key 構造
 
 ```text
