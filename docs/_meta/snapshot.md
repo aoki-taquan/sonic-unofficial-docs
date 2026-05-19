@@ -2,7 +2,7 @@
 title: スナップショット
 area: meta
 verification: meta
-last_verified: 2026-05-13
+last_verified: 2026-05-19
 sources: []
 ---
 
@@ -16,28 +16,28 @@ sources: []
 
 ## verification 分布
 
-全 **917** ページ。
+全 **1089** ページ。
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 570 |
+| code-verified | 734 |
 | runbook-verified | 27 |
-| discrepancy-found | 102 |
+| discrepancy-found | 107 |
 | issue-confirmed | 0 |
-| hld-only | 0 |
+| hld-only | 2 |
 | meta | 208 |
-| stub | 10 |
-| **合計** | **917** |
+| stub | 11 |
+| **合計** | **1089** |
 
 ## last_verified 鮮度
 
-基準日 **2026-05-13**。
+基準日 **2026-05-19**。
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 58 |
-| 7 日以内 (1-7d) | 847 |
-| 30 日以内 (8-30d) | 0 |
+| 今日 (0d) | 1 |
+| 7 日以内 (1-7d) | 241 |
+| 30 日以内 (8-30d) | 835 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 12 |
 
@@ -57,7 +57,7 @@ sources: []
 | 種別 | 公開ページ | 索引総数 | カバレッジ |
 |---|---:|---:|---:|
 | CLI | 72 | 298 | 24.2% |
-| CONFIG_DB | 121 | — | — |
+| CONFIG_DB | 293 | — | — |
 | YANG | 84 | 136 | 61.8% |
 
 ## Mermaid カバレッジ (Reference 系)
@@ -66,7 +66,7 @@ sources: []
 
 | 種別 | mermaid あり | 総ページ | カバレッジ |
 |---|---:|---:|---:|
-| CONFIG_DB | 121 | 121 | 100.0% |
+| CONFIG_DB | 265 | 293 | 90.4% |
 | CLI | 72 | 72 | 100.0% |
 | YANG | 84 | 84 | 100.0% |
 
@@ -79,7 +79,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 290 |
-| docs 内被リンク数 | 7792 |
+| docs 内被リンク数 | 8159 |
 
 ## 直近 5 round quality-audit
 
@@ -99,8 +99,8 @@ sources: []
 
 | 項目 | 件数 |
 |---|---:|
-| frontmatter-lint (hard) | 0 |
-| frontmatter-lint (warn) | 1 |
+| frontmatter-lint (hard) | — |
+| frontmatter-lint (warn) | 0 |
 | link-density low (<2.0/1k) | 68 |
 | link-density high (>30.0/1k) | 0 |
 | discrepancy-related-yang violations | 0 |
