@@ -415,6 +415,82 @@ tunnel が存在しない場合 (#11) や `src_ip` が未設定の場合 (#12) �
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `tunneldecaporch.h`, `tunneldecaporch.cpp`, `ipinip.json.j2` 全行精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/subnet-decap-constants.md`
+
+`SUBNET_DECAP` 処理で使われる値のうち、CONFIG_DB フィールドで制御できずソースに固定されている定数をまとめる。
+
+### `subnetDecapConfig` メンバ初期化定数 (`tunneldecaporch.h:97-103`)
+
+| フィールド | 固定値 | 説明 |
+|-----------|--------|------|
+| `tunnel` | `"IPINIP_SUBNET"` | IPv4 subnet decap トンネルオブジェクト名 |
+| `tunnel_v6` | `"IPINIP_SUBNET_V6"` | IPv6 subnet decap トンネルオブジェクト名 |
+| `enable` (初期) | `false` | CONFIG_DB 読み込み前の orchagent 起動直後の状態 |
+
+これらは `SubnetDecapConfig` 構造体のメンバ初期化子として固定されており、CONFIG_DB 側から変更する手段はない。
+
+### Overlay RIF MTU デフォルト (`tunneldecaporch.cpp:14`)
+
+```cpp
+#define OVERLAY_RIF_DEFAULT_MTU 9100
+```
+
+SAI `SAI_ROUTER_INTERFACE_ATTR_MTU` の値として使用される。CONFIG_DB の `SUBNET_DECAP` テーブルには MTU フィールドが存在しない。
+
+### `ecn_mode` / `ttl_mode` ハードコード (`ipinip.json.j2:109-110`)
+
+| フィールド | 固定値 | 適用先 |
+|-----------|--------|--------|
+| `ecn_mode` | `"copy_from_outer"` | `TUNNEL_DECAP_TABLE:IPINIP_SUBNET` および `IPINIP_SUBNET_V6` |
+| `ttl_mode` | `"pipe"` | 同上 |
+
+すべての subnet decap トンネルで条件分岐なく固定。CONFIG_DB からオーバーライド不可。
+
+### `dscp_mode` プラットフォーム分岐 (`ipinip.json.j2:97-104`)
+
+| 条件 | `dscp_mode` 値 | 判定変数 |
+|------|---------------|----------|
+| Broadcom T1 (`ASIC_VENDOR` に `"broadcom"` かつ `type` に `"LeafRouter"`) | `"pipe"` | `is_broadcom_t1` |
+| Broadcom 非 T1 (`ASIC_VENDOR` に `"broadcom"`) | `"uniform"` | `is_broadcom` |
+| その他 (非 Broadcom) | `"pipe"` | デフォルト |
+
+`dscp_mode` はビルド時テンプレートが決定するため、起動後に CONFIG_DB から変更することはできない。
+
+### `decap_dscp_to_tc_map` 条件付き挿入 (`ipinip.json.j2:87-107`)
+
+```jinja
+{% if DSCP_TO_TC_MAP is defined and DSCP_TO_TC_MAP.AZURE is defined %}
+    "decap_dscp_to_tc_map": "AZURE",
+{% endif %}
+```
+
+マップ名 `"AZURE"` はハードコード。`DSCP_TO_TC_MAP.AZURE` が CONFIG_DB に存在する場合のみ自動付加され、存在しない場合は付加されない。
+
+### `term_type` / `subnet_type` ハードコード
+
+| 定数 | 値 | 使用箇所 |
+|------|----|-----------| 
+| vlan decap term type | `"MP2MP"` | `ipinip.json.j2:117` |
+| vlan decap subnet_type | `"vlan"` | `ipinip.json.j2:118` |
+| vip decap subnet_type | `"vip"` | `routeorch.cpp:3224`, `vnetorch.cpp:1572` |
+
+`term_type = "MP2MP"` 以外の term が `IPINIP_SUBNET` / `IPINIP_SUBNET_V6` トンネルに渡された場合、orchagent は `SWSS_LOG_ERROR("only MP2MP tunnel decap term is allowed.")` でエラーを返す。
+
+### 対象 Loopback インタフェース名 (`ipinip.json.j2:22-26`)
+
+| 条件 | 対象 Loopback |
+|------|---------------|
+| `sub_role == 'FrontEnd'` または `'BackEnd'` | `Loopback0`, `Loopback4096` |
+| その他 | `Loopback0`, `Loopback2`, `Loopback3` |
+
+IPv4/IPv6 ループバックアドレスの収集範囲をこのリストに限定。リスト自体は CONFIG_DB から変更不可。
+
+<!-- /constants -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
