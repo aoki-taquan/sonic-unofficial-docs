@@ -672,3 +672,44 @@ Lua スクリプト (`pfc_detect_<platform>.lua`) が FLEX_COUNTER 経由でカ�
 `orchdaemon.cpp:959` — `m_select->select(&s, SELECT_TIMEOUT)` (SELECT_TIMEOUT = 1000 ms)。CONFIG_DB・APPL_DB・COUNTERS_DB のすべての Selectable がこの主ループで多重化され、イベント発生またはタイムアウトで `doTask()` が呼ばれる。明示的な retry interval / sleep は存在せず、イベント駆動で逐次処理される。
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-platform.md -->
+
+PFC_WD の platform 差は community SONiC の中でも特に重大なカテゴリ。ASIC ベンダーが識別できない場合は **PFC-WD 機能自体が無効化** され、ベンダーが識別できても Handler クラス・SAI カウンタ種別・Lua 検出スクリプトがすべて異なる。
+
+### ASIC ベンダー別 Handler 登録・SAI カウンタ種別
+
+`orchdaemon.cpp:635-843` の `getenv("platform")` 分岐で Handler クラスと SAI ポートカウンタ種別が決定される。
+
+| platform 文字列 | 登録 Handler | SAI ポートカウンタ | ソース |
+|---|---|---|---|
+| `mellanox` / `vs` | `PfcWdSwOrch<PfcWdZeroBufferHandler, PfcWdLossyHandler>` | `SAI_PORT_STAT_PFC_*_PAUSE_DURATION_US` (μs 単位) | `orchdaemon.cpp:635-672` |
+| `marvell-teralynx` / `marvell-prestera` / `clounix` / `nephos` | `PfcWdSwOrch<PfcWdZeroBufferHandler, PfcWdLossyHandler>` | `SAI_PORT_STAT_PFC_*_PAUSE_DURATION` (ms 単位) | `orchdaemon.cpp:709-720` |
+| `barefoot` | `PfcWdSwOrch<PfcWdAclHandler, PfcWdLossyHandler>` | `SAI_PORT_STAT_PFC_*_PAUSE_DURATION` (ms 単位) | `orchdaemon.cpp:722-731` |
+| `broadcom` (DLR init 有効) | `PfcWdSwOrch<PfcWdDlrHandler, PfcWdDlrHandler>` | `SAI_PORT_STAT_PFC_*_RX_PKTS` + `ON2OFF_RX_PKTS` + `SAI_QUEUE_ATTR_PAUSE_STATUS` | `orchdaemon.cpp:786-792` |
+| `broadcom` (DLR init 無効) | `PfcWdSwOrch<PfcWdAclHandler, PfcWdLossyHandler>` | 同上 | `orchdaemon.cpp:796-803` |
+| `cisco-8000` | `PfcWdSwOrch<PfcWdSaiDlrInitHandler, PfcWdActionHandler>` | `SAI_PORT_STAT_PFC_*_RX_PKTS` + `TX_PKTS` + `SAI_QUEUE_ATTR_PAUSE_STATUS` | `orchdaemon.cpp:804-836` |
+| それ以外（未知 platform） | **登録なし（PFC-WD 無効）** | — | `orchdaemon.cpp:635-843` |
+
+### platform 別 Lua 検出スクリプト
+
+`pfcwdorch.cpp:693` で `"pfc_detect_" + m_platform + ".lua"` を動的にロードする。各プラットフォーム専用の検出ロジック (`pfc_detect_mellanox.lua` / `pfc_detect_broadcom.lua` / `pfc_detect_barefoot.lua` / `pfc_detect_cisco-8000.lua` 等) がそれぞれ存在する。
+
+復旧スクリプトは Cisco-8000 のみ `pfc_restore_cisco-8000.lua` を使用し (`pfcwdorch.cpp:698`)、それ以外の全プラットフォームは共通の `pfc_restore.lua` を使用する (`pfcwdorch.cpp:700`)。
+
+### Cisco-8000: `action = forward` 非サポート
+
+`pfcwdorch.cpp:233-236` — `m_platform == CISCO_8000_PLATFORM_SUBSTRING` かつ `action == PFC_WD_ACTION_FORWARD` の場合、`task_invalid_entry` を返し設定を拒否する。他プラットフォームでは `forward` は許容される。
+
+### Broadcom: DLR 有効時に全ポート同一 action 強制
+
+`pfcwdorch.cpp:237-263` — Broadcom + DLR 有効時 (`checkPfcDlrInitEnable()`)、`SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION` をスイッチ全体に適用する。既存エントリと異なる `action` を持つ新エントリは `task_invalid_entry` で拒否される。環境変数 `PFC_DLR_INIT_ENABLE=1/0` で強制上書き可能（テスト専用）。
+
+### multi-asic / VoQ / DASH — PFC_WD への影響なし
+
+`pfcwdorch.cpp` に `gMySwitchType`・`gFabricPortsOrch`・`IS_MULTI_NPU` 参照はゼロ。multi-asic 構成では各 ASIC namespace の orchagent が独立して `PFC_WD` テーブルを購読するが、コードパスは同一。VoQ chassis・DASH 環境でも PFC_WD の動作ロジックは変化しない。
+
+<!-- /platform -->
