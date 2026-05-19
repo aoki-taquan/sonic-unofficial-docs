@@ -155,6 +155,28 @@ Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` t
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`HARDWARE` テーブルは community sonic-swss/orchagent に**購読されない**（dead consumer）。このため、書き込み自体の成否と ACL ハードウェア設定の反映との間に失敗パスは存在しない。
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | 挙動 | 備考 |
+|---|------------|------|------|
+| 1 | `HARDWARE\|ACCESS_LIST` の `HSET` が Redis 書込みエラー | Redis 自体のエラー（メモリ不足等）としてクライアントに返る。consumer がいないため ASIC / SAI への二次影響なし | community SONiC での通常運用では発生しない |
+| 2 | `COUNTER_MODE` / `LOOKUP_MODE` に不正値を書き込む | YANG CVL 検証なし（YANG モジュール未定義）、consumer なし。書込みは成功し CONFIG_DB に保存されるが ASIC 設定には影響しない | 実質 no-op |
+| 3 | `TCAM_SHARING` の leaf-list エンコーディング不正（`@` サフィックス欠落） | Redis に通常フィールドとして格納。consumer がいないため実害なし。ただしベンダー translib が期待する leaf-list 形式と乖離する | community では無影響 |
+| 4 | orchagent 起動中・停止中にかかわらず書き込む | orchagent は `HARDWARE` テーブルを購読していないため、いかなるタイミングでも ACL 設定変更は行われない | dead consumer |
+
+### community での失敗なし
+
+community sonic-swss は `HARDWARE` テーブルを読み取らないため、**書込みエラーが ACL 設定失敗に連鎖することはない**。SAI / ASIC への影響・rollback・retry ループも発生しない。
+
+ベンダー向け gNMI/translib スタック（`sonic-mgmt-common` transformer 層）では別途失敗パスが存在しうるが、当該コードは community リポジトリ外のため本ページの対象外とする。
+
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
