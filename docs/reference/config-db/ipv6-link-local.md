@@ -171,6 +171,50 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ipv6-link-local-failure.md`
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:712-740,832-843, sonic-swss/neighsyncd/neighsync.cpp:93-110,193-243 -->
+
+`ipv6_use_link_local_only` フィールドに関連する失敗シナリオは、CONFIG_DB への書込みが APP_DB に転送されない silent-skip 系と、近傍エントリ操作コマンドの失敗を無視する系に大別される。
+
+### 失敗シナリオ一覧
+
+| # | 失敗トリガー | 影響コンポーネント | 挙動 | ログレベル | 再試行 |
+|---|------------|-----------------|------|-----------|--------|
+| 1 | インターフェースが `STATE_DB` に未登録（起動直後・初期化中） | `intfmgrd` | CONFIG_DB SET を `return false` で再キュー、APP_DB への転送スキップ | `SWSS_LOG_DEBUG`（不可視） | 自動（インターフェース ready 後に再処理） |
+| 2 | VRF が `STATE_VRF_TABLE` に未登録 | `intfmgrd` | 同様に `return false` で再キュー | `SWSS_LOG_DEBUG`（不可視） | 自動（VRF ready 後に再処理） |
+| 3 | `disable` 時の `ip neigh del` コマンド失敗 | `intfmgrd` `delIpv6LinkLocalNeigh()` | `swss::exec()` の戻り値を無視して続行、カーネルの近傍エントリが残存する可能性 | `SWSS_LOG_INFO` のみ | なし |
+| 4 | CONFIG_DB テーブル `.get()` 失敗（エントリ不在 / DB 一時障害） | `neighsyncd` `isLinkLocalEnabled()` | `false` 返却 → link-local neigh ADD を silent drop | `SWSS_LOG_INFO` のみ | なし（次の neigh イベント発生時に再評価） |
+| 5 | サポート外インターフェース種別（`eth0`, `lo`, `docker0` 等） | `neighsyncd` `isLinkLocalEnabled()` | `false` 返却 → link-local neigh を無条件無視 | `SWSS_LOG_INFO` のみ | なし |
+
+### 詳細
+
+#### 1 & 2. インターフェース / VRF 未 ready による再キュー
+
+`intfmgr.cpp:832-843` の冒頭ゲートでは、インターフェース（`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE`）および VRF（`STATE_VRF_TABLE`）の両方が ready である必要がある。どちらかが未登録の場合 `return false` となり、swss ConsumerStateTable の再キューメカニズムで自動リトライされる。
+
+この挙動自体は意図的な設計だが、**`SWSS_LOG_DEBUG` レベル**のためデフォルト設定では出力されない。`ipv6_use_link_local_only=enable` を設定してもすぐに効果が現れない場合、インターフェース初期化遅延が原因である可能性がある。
+
+#### 3. `delIpv6LinkLocalNeigh()` — `ip neigh del` 失敗の無視
+
+`disable` イベント受信時、`intfmgrd` は `delIpv6LinkLocalNeigh()` を呼び出して APP_DB `NEIGH_TABLE` の link-local エントリを `ip neigh del` コマンド経由で削除する。しかし `swss::exec()` の戻り値をチェックしていないため (`intfmgr.cpp:733`)、コマンドが失敗してもカーネルの近傍キャッシュにエントリが残存する。残存した link-local neigh は NDP タイムアウト（通常数十秒〜数分）まで有効のままとなる。
+
+#### 4. `neighsyncd` の CONFIG_DB 参照失敗
+
+`neighsyncd` は link-local neigh の ADD イベント処理時に `isLinkLocalEnabled()` を呼び CONFIG_DB を直接参照する (`neighsync.cpp:193-243`)。この参照が失敗した場合（エントリが存在しない、または一時的な DB 接続障害）、`false` を返して neigh ADD を無視する。この挙動はフィルタリング（意図的無視）と障害（意図しない無視）を区別できないため、link-local neigh が学習されない場合のデバッグを困難にする。
+
+#### 5. サポート外インターフェース種別の silent drop
+
+`isLinkLocalEnabled()` は `Ethernet` / `Vlan` / `PortChannel` で始まるインターフェース名のみを処理する (`neighsync.cpp:198-226`)。これ以外（`eth0`、`lo`、管理 OOB ポート等）は実装上サポートされておらず、CONFIG_DB に設定が存在しても link-local neigh は一切 APP_DB に登録されない。エラーログは `SWSS_LOG_INFO` レベルのみ。
+
+!!! note "観測手段"
+    失敗シナリオ 1・2 は `swssconfig -d` で DEBUG ログを有効化すると `intfmgrd` のログに現れる。シナリオ 3〜5 は `SWSS_LOG_INFO` レベルのため `swssconfig -a INFO` 以上が必要。
+
+<!-- /failure -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |
