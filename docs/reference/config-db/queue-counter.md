@@ -544,6 +544,49 @@ queuestat
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/orchagent/flexcounterorch.cpp`
+> 調査日: 2026-05-19
+
+### switch_type による挙動差
+
+QUEUE カウンタの有効化ロジックは `gMySwitchType` によって分岐する。
+
+| switch_type | 挙動 |
+|-------------|------|
+| `"switch"` (通常スイッチ) | `FLEX_COUNTER_TABLE\|QUEUE = enable` 受信後に `getQueueConfigurations()` が `BUFFER_QUEUE` 設定を参照してカウンタ対象キューを決定。`counterpoll queue enable/disable` で制御可能 |
+| `"voq"` | **2 系統**のキューカウンタが動作する。①物理ポートの egress queue: `gMySwitchType == "voq"` 条件で `FLEX_COUNTER_TABLE|QUEUE` の有効化とは無関係に `addQueueFlexCountersPerPortPerQueueIndex()` を常時呼ぶ（`portsorch.cpp:8504-8510`）。② VOQ (Virtual Output Queue): `m_port_voq_ids` から OID を取得し `voq_stat_ids`（`SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` を含む）を合算。VOQ カウンタはバッファプロファイル設定を必要とせず常時有効（`portsorch.cpp:8483-8500`） |
+| `"fabric"` | `FabricPortsOrch` が管理し、`FlexCounterOrch::doTask()` は `gFabricPortsOrch->allPortsReady()` を確認する。通常の QUEUE カウンタ（`COUNTERS_QUEUE_NAME_MAP` 等）は生成されない |
+| `"dpu"` | `m_queue_ids` が初期化されないプラットフォームが存在する（`portsorch.cpp:6454`）。この場合 `createPortBufferQueueCounters()` は `m_host_tx_queue` 用の 1 エントリのみ生成し、通常の QUEUE FlexCounter は登録されない |
+
+### WRED カウンタの SAI ケイパビリティ依存
+
+`SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` / `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` 等の WRED 統計は、`initCounterCapabilities()` (`portsorch.cpp:1881-1922`) が `sai_query_stats_capability(SAI_OBJECT_TYPE_QUEUE)` を呼んで各ベンダー SAI のサポート状況を確認してから登録する。サポートしない ASIC ではこれらのフィールドが `COUNTERS:<oid>` に現れない（silent 非追加）。
+
+| SAI ケイパビリティ | 登録されるカウンタ |
+|------------------|-----------------|
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` 対応 | `COUNTERS_DB:QUEUE_COUNTER_CAPABILITY_TABLE\|WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` が書かれ、WRED ECN パケットカウンタが FlexCounter に登録される |
+| 非対応 / SAI GET 失敗 | `SWSS_LOG_NOTICE("Queue stat capability get failed...")` のみ記録。WRED カウンタは FlexCounter に追加されない |
+
+### VoQ システム固有の OID キー形式
+
+VOQ モードでは `COUNTERS_QUEUE_NAME_MAP` のキー形式が通常と異なる:
+
+| モード | COUNTERS_QUEUE_NAME_MAP キー形式 |
+|--------|-------------------------------|
+| 通常スイッチ | `<port_alias>:<queue_index>` (例: `Ethernet0:0`) |
+| VOQ | `<system_port_alias>:<queue_index>` (例: `Linecard1\|ASIC0\|Ethernet0:0`) |
+
+加えて VOQ モードでは `COUNTERS_VOQ_NAME_MAP` テーブル（`portsorch.cpp:779`）が別途作成され、VOQ OID → system_port alias: queue_index のマッピングが格納される。
+
+### isMlnxPlatform との関係
+
+`isMlnxPlatform()` (`portsorch.cpp:689`) は NVIDIA Mellanox ASIC の場合 `true` を返す。ただし QUEUE カウンタの `queue_stat_ids` 静的配列自体は全プラットフォーム共通で変化しない。`isMlnxPlatform()` が影響するのは PORT trim stat の Lua プラグイン登録（`portsorch.cpp:858-863`）のみであり、QUEUE FlexCounter のフィールドセット・ポーリング間隔・有効化フローには影響しない。
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
