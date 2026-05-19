@@ -320,3 +320,83 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
 `swss::Table::hset()` は Redis 接続断や AUTH エラーを例外として送出する。`MuxStateOrch` 内に catch ブロックはないため、例外はスタックを伝播して orchagent プロセスを abort させ、systemd により再起動される。再起動後に orchagent は CONFIG_DB を再読み込みし STATE_DB を再構築するため、書き込み失敗が永続的な不整合を残すことはない（自己回復系）。
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence:
+     sonic-swss/orchagent/muxorch.cpp:48-95
+     sonic-swss/orchagent/tunneldecaporch.h:21
+     sonic-swss/orchagent/aclorch.h:111-112
+     sonic-swss-common/common/schema.h:140-143,457-465
+     sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:55-115
+     sonic-linkmgrd/src/DbInterface.cpp:672,730
+-->
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の書き込みロジックにはいくつかの文字列定数・数値定数がコードに直書きされており、CONFIG_DB・環境変数いずれからも変更できない。変更にはソースビルドが必要。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-constants.md`
+
+### STATE 文字列定数 (muxorch.cpp)
+
+| 定数 | 値 | 用途 | 箇所 |
+|------|----|----|------|
+| `MUX_HW_STATE_UNKNOWN` | `"unknown"` | HW/mux state 不一致 (非 failed) 時に `MUX_CABLE_TABLE.state` へ書き込む固定値 | `muxorch.cpp:50,2683` |
+| `MUX_HW_STATE_ERROR` | `"error"` | HW/mux state 不一致 かつ `isStateChangeFailed()` 時の固定値 | `muxorch.cpp:51,2680` |
+| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | standby 側の ingress drop ACL ルール名 (変更不可) | `muxorch.cpp:49` |
+| `MUX_ACL_TABLE_NAME` | `"IngressTableDrop"` | ACL テーブル名 (`INGRESS_TABLE_DROP` 経由) | `muxorch.cpp:48`, `aclorch.h:111` |
+
+### state 文字列マッピング (muxorch.cpp:68-84)
+
+内部 enum `MuxState` と STATE_DB 書き込み文字列の対応はコード内静的マップで固定される。
+
+| 内部 enum 値 | STATE_DB 書き込み文字列 | 備考 |
+|--------------|----------------------|------|
+| `MUX_STATE_ACTIVE` | `"active"` | — |
+| `MUX_STATE_STANDBY` | `"standby"` | — |
+| `MUX_STATE_INIT` | `"init"` | warm restart 専用中間状態 |
+| `MUX_STATE_FAILED` | `"failed"` | rollback 不能時の終端状態 |
+| `MUX_STATE_PENDING` | `"pending"` | 状態遷移中の中間状態 |
+
+!!! note "\"unknown\" 入力は内部で standby として処理"
+    入力方向のマッピングでは `"unknown"` → `MUX_STATE_STANDBY` (muxorch.cpp:81)。これは APP_DB から `HW_MUX_CABLE_TABLE.state = "unknown"` が届いた場合も orchagent 内部では `standby` として扱うことを意味する。STATE_DB への書き戻しは前述の `MUX_HW_STATE_UNKNOWN = "unknown"` で行われるため、外部から見た値は `"unknown"` のままだが、内部ステートマシンは `standby` として動作する。
+
+### テーブル名定数 (sonic-swss-common/common/schema.h)
+
+STATE_DB・APP_DB テーブル名はすべて `schema.h` で定義されており、コード外からの変更は不可。
+
+| 定数 | 値 | DB | 箇所 |
+|------|----|----|------|
+| `STATE_MUX_CABLE_TABLE_NAME` | `"MUX_CABLE_TABLE"` | STATE_DB | `schema.h:457` |
+| `STATE_HW_MUX_CABLE_TABLE_NAME` | `"HW_MUX_CABLE_TABLE"` | STATE_DB | `schema.h:458` |
+| `STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME` | `"HW_MUX_CABLE_TABLE_PEER"` | STATE_DB | `schema.h:465` |
+| `APP_HW_MUX_CABLE_TABLE_NAME` | `"HW_MUX_CABLE_TABLE"` | APP_DB | `schema.h:141` |
+
+### トンネル名定数 (tunneldecaporch.h:21)
+
+```cpp
+#define MUX_TUNNEL "MuxTunnel0"
+```
+
+Dual-ToR の P2P トンネルは `MuxTunnel0` という名称がコード固定。`handlePeerSwitch()` はこの定数を用いてトンネルの存在を参照し (muxorch.cpp:2348,2359,2365,2374)、デカプセルオーケストレータ (`TunnelDecapOrch`) から dscp_mode・tc_to_dscp_map_id・tc_to_queue_map_id を取得する。`MuxTunnel0` 以外の名称でトンネルを定義しても mux ロジックに接続されない。
+
+### ycabled gRPC 接続定数 (y_cable_helper.py:55-80)
+
+| 定数 | 値 | 用途 | 箇所 |
+|------|----|----|------|
+| `GRPC_PORT` | `50075` | Y-Cable SoC への gRPC 接続ポート番号 (固定) | `y_cable_helper.py:55` |
+| `grpc.keepalive_timeout_ms` | `8000` | gRPC keepalive タイムアウト (ms) | `y_cable_helper.py:71` |
+| `grpc.keepalive_time_ms` | `4000` | gRPC keepalive 送信間隔 (ms) | `y_cable_helper.py:72` |
+| `grpc.http2.max_pings_without_data` | `0` (無制限) | HTTP/2 ping 上限 | `y_cable_helper.py:74` |
+
+`GRPC_PORT = 50075` は環境変数・CONFIG_DB からは変更できず、SoC 側も同ポートでリッスンしている前提。接続先 IP (`soc_ipv4`) のみ CONFIG_DB から取得する。
+
+### Loopback3 インタフェース名 (DbInterface.cpp:672)
+
+```cpp
+const std::string loopback3 = "Loopback3|";
+```
+
+linkmgrd は `Loopback3|<IP>` のパターンで CONFIG_DB の `LOOPBACK_INTERFACE` テーブルを探索し、IPv4 アドレスから `read_side` (0 = T0, 1 = LT0) を決定する。`"Loopback3"` という名称はコード固定であり、他のループバックインタフェース名には対応しない。Loopback3 IPv4 が見つからない場合は `MUXLOGFATAL` を出力し、コード内デフォルト値 (`10.212.64.1/32` / `10.212.64.2/32` 等) を使用するが、この状態は設定誤りを示すため正常運用時には発生しない (y_cable_helper.py:63-66, DbInterface.cpp:729-730)。
+
+<!-- /constants -->
