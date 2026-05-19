@@ -463,6 +463,58 @@ priority = 100 を指定しているため、他の Consumer (priority = 0) よ�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`STATE_DB PORT_TABLE` への書き込みは `portsyncd/linksync` と `PortsOrch` の 2 経路に分かれており、プラットフォーム差の大部分は PortsOrch 側の SAI capability クエリ結果と `gMySwitchType` 分岐に起因する。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/ports-status-platform.md`
+
+### switch_type == "dpu" の影響
+
+| 影響箇所 | 差異内容 | 証跡 |
+|---------|---------|------|
+| `linksync` 起動時の旧インタフェース比較ロジック | DPU では `g_switchType == "dpu"` のとき `m_ifindexOldNameMap` 構築ループを skip して即 `return`。RTM_NEWLINK/DELLINK 自体は正常に処理されるため `state` / `admin_status` / `mtu` 書き込みに変化なし | `linksync.cpp:74-78` |
+| `initializePortBufferMaximumParameters()` | DPU ではスキップ (`gMySwitchType != "dpu"` ガード)。バッファ最大値の STATE_DB 書き込みは発生しない | `portsorch.cpp:6449` |
+| PG / queue / scheduler 一括初期化 | DPU ではスキップ。`m_queue_ids` が初期化されないため `host_tx_queue` 関連 flex counter 設定も抑制される | `portsorch.cpp:6589` |
+| `fec_override_sup` / `oper_fec_sup` クエリ | `gMySwitchType != "dpu"` ガード内で実行されるため、DPU では両フラグが `false` のまま。`fec` フィールドは常に `"N/A"`、`supported_fecs` に `"auto"` が含まれない | `portsorch.cpp:987-1010` |
+
+### fec / supported_fecs の SAI capability 依存
+
+`fec_override_sup` と `oper_fec_sup` はプラットフォームの SAI 実装によって決まる:
+
+| SAI capability | フラグ | STATE_DB への影響 |
+|---------------|--------|-----------------|
+| `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` set/create 実装あり | `fec_override_sup = true` | `supported_fecs` に `"auto"` エントリが追加される (`portsorch.cpp:3310`) |
+| `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` get 実装あり | `oper_fec_sup = true` | oper-status UP 時に実際の FEC モード文字列が `fec` フィールドに書き込まれる。非対応時は常に `"N/A"` (`portsorch.cpp:9682-9693`) |
+
+### CMIS モジュール非同期対応プラットフォームの host_tx_ready
+
+SAI が `SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE`（create サポート）と `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY`（create サポート）の両方を実装する場合、`m_cmisModuleAsicSyncSupported = true` となる (`portsorch.cpp:968-972`)。
+
+| プラットフォーム種別 | host_tx_ready 更新方式 |
+|-----------------|----------------------|
+| CMIS 非同期対応（`m_cmisModuleAsicSyncSupported = true`） | admin_status 変更時の明示書き込みをすべてスキップ。`on_port_host_tx_ready` SAI コールバックが CMIS シーケンス完了後に更新 |
+| CMIS 非対応（`m_cmisModuleAsicSyncSupported = false`） | `initHostTxReadyState()` で `"false"` 初期化 + admin_status 変更のたびに `setHostTxReady()` を呼んで都度更新 |
+
+### Gearbox（External PHY）対応プラットフォームの host_tx_ready
+
+Gearbox 非対応プラットフォームでは `setGearboxPortsAttr()` が常に `false` を返すため、admin UP 設定時に `gbstatus == false` → `host_tx_ready = "false"` が書き込まれる。ただし `m_cmisModuleAsicSyncSupported = true` の環境では Gearbox 分岐が完全にスキップされるため影響なし (`portsorch.cpp:2245-2256`)。
+
+```
+admin UP 設定時の host_tx_ready 確定ロジック:
+  SAI set_port_attribute 失敗           → "false"  (非 CMIS プラットフォームのみ)
+  gbstatus == false                     → "false"  (非 CMIS プラットフォームのみ)
+  SAI 成功 かつ gbstatus == true        → "true"   (非 CMIS プラットフォームのみ)
+  m_cmisModuleAsicSyncSupported == true → 書き込みなし（CMIS コールバック待ち）
+```
+
+### プラットフォーム差のないフィールド
+
+`state`, `netdev_oper_status`, `admin_status`, `mtu` は linksync が netlink イベントから直接書き込むため、ASIC ベンダー・switch_type・Gearbox 有無を問わず同一のロジックで書かれる。`link_training_status`, `rmt_adv_speeds`, `phy_ctrl_unreliable_los`, `supported_speeds` の書き込み関数にも `platform` 環境変数参照・`gMySwitchType` 分岐は存在しない（SAI の capability 不備がフォールバック値 `"N/A"` や空文字列に現れる）。
+
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
