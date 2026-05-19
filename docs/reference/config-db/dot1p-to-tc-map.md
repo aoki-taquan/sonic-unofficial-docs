@@ -369,6 +369,41 @@ show qos map dot1p-tc
 > **Evidence**: `sonic-swss/orchagent/qosorch.h:13`; `sonic-swss/orchagent/qosorch.cpp:63,391,405-406,372-373`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-side.md`
+
+`DOT1P_TO_TC_MAP` への SET/DEL が `QosOrch::handleDot1pToTcTable()` を通じて引き起こす、CONFIG_DB 以外の DB への書込みを示す。
+
+### SET 時の副次書込み (ASIC_DB)
+
+| 操作 | SAI API | ASIC_DB への影響 |
+|------|---------|----------------|
+| 新規 SET (マップ未存在) | `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_DOT1P_TO_TC, ...)` | `SAI_OBJECT_TYPE_QOS_MAP` エントリを ASIC_DB に新規作成 |
+| 更新 SET (マップ既存) | `sai_qos_map_api->set_qos_map_attribute(SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST, ...)` | 既存 `SAI_OBJECT_TYPE_QOS_MAP` の属性を ASIC_DB 上で更新 |
+
+SAI Redis アダプタが `sai_qos_map_api` 呼び出しを ASIC_DB の `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:<oid>` として自動記録する。orchagent が直接 ASIC_DB に書くわけではなく syncd 経由で反映される。
+
+### DEL 時の副次書込み (ASIC_DB)
+
+| 条件 | SAI API | ASIC_DB への影響 |
+|------|---------|----------------|
+| 参照なし DEL | `sai_qos_map_api->remove_qos_map(<oid>)` | `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:<oid>` を ASIC_DB から削除 |
+| 参照中 DEL | SAI 呼び出しなし (`m_pendingRemove=true`) | ASIC_DB は変化しない（参照解放後に削除実行） |
+
+### 副次書込みなしの DB
+
+| DB | 書込有無 | 根拠 |
+|----|---------|------|
+| APPL_DB | なし | `QosOrch` は CONFIG_DB を直接購読し APPL_DB を中継しない (`qosorch.cpp:422-426`) |
+| STATE_DB | なし | `Dot1pToTcMapHandler::processWorkItem()` に STATE_DB 書込呼び出しなし |
+| COUNTERS_DB | なし | `qosorch.cpp` 全体に `COUNTERS_DB` 参照なし。QoS map 自体は統計カウンタを持たない |
+| FLEX_COUNTER_DB | なし | `qosorch.cpp` に FlexCounter 登録なし。dot1p→TC マップはカウンタ計測対象外 |
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:399-420` (`addQosItem`); `sonic-swss/orchagent/qosorch.cpp:204-213` (`modifyQosItem`); `sonic-swss/orchagent/qosorch.cpp:216-228` (`removeQosItem`); `sonic-swss/orchagent/qosorch.cpp:124-201` (`processWorkItem`)
+<!-- /side-effects -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
