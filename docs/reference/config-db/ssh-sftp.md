@@ -373,6 +373,38 @@ ssh_handler(key="POLICIES", op=SET, data={ciphers:"aes128-ctr,aes256-ctr"})
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-sftp-platform.md`
+
+`SshServer` クラス (`hostcfgd:1045-1161`) と SFTP サブシステムの取り扱いは **全プラットフォームで同一**。`class SshServer` を `platform|multi_asic|is_multi_npu|chassis|asic[0-9]|namespace|vendor` で grep しても **0 ヒット** であり、機種依存分岐コードが存在しない。
+
+### hostcfgd は host 単一インスタンス（multi-asic 非考慮）
+
+`hostcfgd` (行 2166-2167) は `ConfigDBConnector()` を引数なしで生成し host namespace の CONFIG_DB のみに接続する。`self.is_multi_npu = device_info.is_multi_npu()` (行 2182) は取得されるが `SshServer` 経路には渡されない。
+
+| 構成 | SSH_SERVER テーブルの所在 | SFTP 有効化 | 備考 |
+|------|--------------------------|-------------|------|
+| single-ASIC (T0/T1) | host CONFIG_DB のみ | OS テンプレート固定 | 標準構成 |
+| multi-ASIC (複数 NPU) | host CONFIG_DB のみ（asicN namespace には非存在） | 同上 | `is_multi_npu` は SSH 経路で未参照 |
+| VOQ chassis (line card) | 各 line card host の CONFIG_DB | 同上 | line card 独立管理 |
+| VOQ chassis (supervisor) | supervisor host の CONFIG_DB | 同上 | chassis 全体集中管理なし |
+| SmartSwitch (NPU 側) | host CONFIG_DB | 同上 | DPU 側に hostcfgd は別インスタンス |
+
+### YANG スキーマに機種分岐なし
+
+`sonic-ssh-server.yang` を `platform|asic|chassis|namespace|vendor|multi` で grep すると `namespace "http://github.com/sonic-net/sonic-ssh-server"` のみにヒット。deviation・augment によるプラットフォーム別スキーマ差は存在しない。
+
+### SFTP バイナリはパッケージ提供（ベンダー非依存）
+
+`/usr/lib/openssh/sftp-server` は `openssh-server` Debian パッケージが提供する標準バイナリ。`sonic-buildimage/files/image_config/` に SSH 固有のプラットフォーム別オーバーレイは存在せず、community SONiC master 全機種で同一パスが使用される。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1161 (SshServer — platform 分岐なし) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2166-2201 (hostcfgd.__init__ — is_multi_npu は SshServer に渡されない) -->
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang (platform deviation なし) -->
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
