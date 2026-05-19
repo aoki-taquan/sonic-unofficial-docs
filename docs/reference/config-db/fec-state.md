@@ -425,6 +425,71 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`STATE_DB PORT_TABLE` の `fec` / `supported_fecs` フィールドは `PortsOrch` を唯一の書き手とする**読み取り専用のステータスレジスタ**であり、`ProducerStateTable` / `NotificationProducer` を介した PUBLISH 通知は発行されない。consumer 側 (`intfutil` / `generic_config_updater`) は keyspace 通知を購読せず、必要時にのみオンデマンドで読み出す。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-pubsub.md -->
+
+### 書込み API: 素の `swss::Table`
+
+`PortsOrch` は STATE_DB PORT_TABLE を `swss::Table` メンバとして保有する (`portsorch.h:320`):
+
+```cpp
+// portsorch.h:320
+Table m_portStateTable;   // = Table(stateDb, STATE_PORT_TABLE_NAME)
+```
+
+初期化は `portsorch.cpp:725` で `stateDb` を直結する。`ProducerStateTable` のような `_KEY_SET` + `PUBLISH <TABLE>_CHANNEL` 系の通知は一切発行しない。書込みは純粋な `HSET` のみ。
+
+主な書込ポイント:
+
+- `updateDbPortOperFec()` (portsorch.cpp:9864–9871): `m_portStateTable.set(alias, [("fec", fec_str)])` — ポート UP 時
+- `initPortSupportedFecModes()` (portsorch.cpp:3316–3320): `m_portStateTable.set(alias, [("supported_fecs", ...)])` — postPortInit 時 1 回
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / API | タイミング |
+|------|------|----------------|---------|
+| `PortsOrch` → STATE_DB `PORT_TABLE\|<port>.fec` | `swss::Table::set()` (HSET) | なし（PUBLISH 非発行） | ポート UP イベント / warm boot `refreshPortStatus()` |
+| `PortsOrch` → STATE_DB `PORT_TABLE\|<port>.supported_fecs` | `swss::Table::set()` (HSET) | なし（PUBLISH 非発行） | `postPortInit()` 時 1 回（lazy init） |
+| `intfutil` ← STATE_DB `PORT_TABLE\|<port>.fec` | `db.get()` (HGET, on-demand) | — | `show interfaces fec status` 実行毎 1 回 |
+| `generic_config_updater` ← STATE_DB `PORT_TABLE\|<port>.supported_fecs` | `read_statedb_entry()` (HGET) | — | CONFIG_DB PATCH 適用前バリデーション時 |
+
+### `generic_config_updater` による `supported_fecs` 参照
+
+`generic_config_updater/field_operation_validators.py:216` は CONFIG_DB `PORT.fec` を変更する PATCH の事前検証で `supported_fecs` を参照する:
+
+```python
+supported_fecs_str = read_statedb_entry(scope, "PORT_TABLE", port, "supported_fecs")
+if supported_fecs_str:
+    if supported_fecs_str != 'N/A':
+        supported_fecs_list = [e.strip() for e in supported_fecs_str.split(',')]
+    else:
+        supported_fecs_list = []
+else:
+    supported_fecs_list = DEFAULT_SUPPORTED_FECS_LIST
+if value.strip() not in supported_fecs_list:
+    return False
+```
+
+`supported_fecs` フィールドが不在（SAI 未実装プラットフォーム）の場合は `DEFAULT_SUPPORTED_FECS_LIST` にフォールバックし、バリデーションは通る。
+
+### STATE_PORT_TABLE を購読するプロセスと FEC フィールドの非参照
+
+以下のプロセスは `STATE_PORT_TABLE`（`SubscriberStateTable` または `Table`）を購読・参照するが、`fec` / `supported_fecs` フィールドを参照するコードは存在しない:
+
+| プロセス | 参照する STATE_PORT_TABLE フィールド | FEC 参照 |
+|---------|--------------------------------|---------|
+| `intfmgr` (SubscriberStateTable) | `netdev_oper_status` | なし |
+| `portmgrd` (Table 読み取り) | ポート存在確認 | なし |
+| `nbrmgr` | `netdev_oper_status` | なし |
+| `teammgrd` | ポート存在確認 | なし |
+| `buffermgrdyn` | ポート speed / oper_status 系 | なし |
+
+<!-- /pubsub -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`PORT` テーブル](port.md) — FEC の設定フィールド (`fec`)
