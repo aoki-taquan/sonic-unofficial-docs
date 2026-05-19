@@ -334,6 +334,58 @@ gNMI / event-driven telemetry 向けのサイドチャンネルであり、COUNT
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`pfcwdorch` は **2 系統の異なる通知方式**で COUNTERS_DB の `COUNTERS:<queue_oid>` フィールドへの書き込みをトリガーされる。
+
+| 購読者 | 購読方式 | チャンネル / テーブル | 発行元 | 目的 |
+|--------|---------|----------------------|--------|------|
+| `pfcwdorch` (`PfcWdSwOrch`) | `NotificationConsumer` (Redis SUBSCRIBE) | `PFC_WD_ACTION` (COUNTERS_DB) | Lua プラグイン (`pfc_detect_<platform>.lua`) | storm 検知 / restore 通知を受信して COUNTERS_DB フィールドを更新 |
+| `pfcwdorch` (`PfcWdSwOrch`) | `SubscriberStateTable` (swsscommon) | `APPL_DB:PFC_WD` | 外部コントローラ / warm-reboot refill | APPL_DB 経由の storm 状態変化を受信 |
+| `pfcwdorch` (`PfcWdOrch`) | `ConsumerStateTable` (swsscommon) | `CONFIG_DB:PFC_WD` | `pfcwd` CLI / config load | CONFIG_DB の SET/DEL 変化を受信し COUNTERS_DB 初期書き込みを実行 |
+
+### Lua プラグイン → `PFC_WD_ACTION` チャンネル → orchagent の流れ
+
+FlexCounter グループ `PFC_WD` の poll サイクル（デフォルト `m_pollInterval` ms）ごとに `syncd` が Lua スクリプト (`pfc_detect_<platform>.lua` / `pfc_restore.lua`) を COUNTERS_DB 上で実行する。
+
+```
+syncd FlexCounter poll (PFC_WD グループ)
+  ↓ Lua: HGET COUNTERS:<queueOid> PFC_WD_STATUS / PFC_WD_DETECTION_TIME 等を参照
+Lua storm 判定成功
+  ↓ redis.call('PUBLISH', 'PFC_WD_ACTION', '["<queueOid>","storm"]')
+  ↓ redis.call('PUBLISH', 'PFC_WD_ACTION', '["<queueOid>","restore"]')  # 復旧時
+orchagent NotificationConsumer::pop() で受信
+  ↓ pfcwdorch::doTask(NotificationConsumer&) → startWdActionOnQueue(event, queueId)
+  ↓ PfcWdActionHandler::initCounters() / commitCounters() が COUNTERS_DB フィールドを更新
+```
+
+- `PFC_WD_ACTION` は COUNTERS_DB (`dbId=2`) 上の Redis Pub/Sub チャンネル名（テーブルではない）。
+- ペイロードは JSON 配列 `["<queueOid>","storm"]` / `["<queueOid>","restore"]` の 2 種類（`pfcwdorch.cpp:724-728`、`pfc_detect_broadcom.lua:130,138`）。
+- `NotificationConsumer::pop()` は `event` 文字列と `values` ベクターを返す。`event` が `"storm"` か `"restore"` かで `startWdActionOnQueue()` 内の分岐が決まる。
+
+### Lua プラグインが COUNTERS_DB フィールドを直接参照する箇所
+
+Lua スクリプトは `redis.call('HGET', 'COUNTERS:<queueOid>', ...)` で以下のフィールドを直接読み出す（write はしない）:
+
+| フィールド | 用途 | Lua スクリプト |
+|-----------|------|--------------|
+| `PFC_WD_STATUS` | 現在状態確認（`operational` なら storm 検知判定を実行） | `pfc_detect_broadcom.lua:75` |
+| `PFC_WD_ACTION` | storm 時のアクション取得 | `pfc_detect_broadcom.lua:76` |
+| `PFC_WD_DETECTION_TIME` | storm 検知閾値 (μs) | `pfc_detect_broadcom.lua:79` |
+| `PFC_WD_DETECTION_TIME_LEFT` | 残余検知時間カウントダウン | `pfc_detect_broadcom.lua:82` |
+| `BIG_RED_SWITCH_MODE` | BRS（Big Red Switch）モード確認 | `pfc_detect_broadcom.lua:77` |
+| `PFC_STAT_HISTORY` | storm 期間中の統計履歴有効フラグ | `pfc_detect_broadcom.lua:100` |
+
+### warm-reboot 時の再同期
+
+warm-reboot 後は `refillToSync()` (`pfcwdorch.cpp:1108`) が `APPL_DB:PFC_WD_INSTORM` を直接スキャンして storm 状態を復元する。通常の Pub/Sub フローを経由せず、APPL_DB のスナップショットから COUNTERS_DB フィールドを再書き込みする。
+
+<!-- evidence: sonic-swss/orchagent/pfcwdorch.cpp:724-728 (NotificationConsumer 登録), sonic-swss/orchagent/pfc_detect_broadcom.lua:75-77,79,82,130,138 (Lua HGET/PUBLISH), sonic-swss/orchagent/pfcwdorch.cpp:890-916 (doTask NotificationConsumer 処理) -->
+<!-- /pubsub -->
+
 ## 確認コマンド
 
 ```bash
