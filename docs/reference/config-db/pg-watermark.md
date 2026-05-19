@@ -329,6 +329,61 @@ PG_WATERMARK（または QUEUE_WATERMARK）が enable になると `WatermarkOrc
 
 ---
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 証跡: `meta/_intermediate/cdb-flow/pg-watermark-pubsub.md`
+> スキャン対象: `orchagent/orchdaemon.cpp:432-437,620-626`、`orchagent/flexcounterorch.cpp:40-155`、`orchagent/watermarkorch.cpp:23-50,52-143,144-232`
+
+### CONFIG_DB 購読方式
+
+`FLEX_COUNTER_TABLE|PG_WATERMARK` への変更は 2 つの orchagent 内 Orch が `ConsumerStateTable` で受信する。
+
+| 購読者 | DB | テーブル | ハンドラ |
+|--------|-----|---------|---------|
+| `FlexCounterOrch` | CONFIG_DB (4) | `FLEX_COUNTER_TABLE` | `doTask(Consumer&)` → PG_WATERMARK ハンドラ → `addPriorityGroupWatermarkFlexCounters()` |
+| `WatermarkOrch` | CONFIG_DB (4) | `FLEX_COUNTER_TABLE` | `doTask(Consumer&)` → `handleFcConfigUpdate("PG_WATERMARK")` → telemetry タイマー制御 |
+| `WatermarkOrch` | CONFIG_DB (4) | `WATERMARK_TABLE` | `doTask(Consumer&)` → telemetry interval 更新 |
+
+`Orch` 汎用の `ConsumerStateTable` が `ProducerStateTable::set()` からの `FLEX_COUNTER_TABLE_CHANNEL@4` PUBLISH を受信し、orchagent 主ループが `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:23`) で起床する。
+
+### APPL_DB 通知チャネル（watermark クリア）
+
+`WatermarkOrch` コンストラクタ (`watermarkorch.cpp:35-38`) が `APPL_DB:WATERMARK_CLEAR_REQUEST` を `NotificationConsumer` で購読する。`watermarkcfg clear pg-headroom` / `clear pg-shared` CLI が PUBLISH するクリア要求を受信して `clearSingleWm()` を呼ぶ。
+
+| 購読者 | DB | チャネル | ハンドラ |
+|--------|-----|---------|---------|
+| `WatermarkOrch` | APPL_DB | `WATERMARK_CLEAR_REQUEST` | `doTask(NotificationConsumer&)` → `clearSingleWm()` |
+
+### イベントフロー概要
+
+```
+FLEX_COUNTER_STATUS = enable を CONFIG_DB に書き込み
+  → ProducerStateTable: PUBLISH FLEX_COUNTER_TABLE_CHANNEL@4
+
+orchagent select() (SELECT_TIMEOUT = 1000 ms)
+  → FlexCounterOrch::doTask(): m_pg_watermark_enabled=true
+                               → pg_watermark_manager.setCounterIdList() / FLEX_COUNTER_DB
+  → WatermarkOrch::doTask(): m_wmStatus 更新 → m_telemetryTimer->start()
+
+syncd FlexCounter スレッド: FLEX_COUNTER_DB を読んで SAI ポーリング開始
+  → POLL_INTERVAL (デフォルト 60000 ms) ごとに sai_get_ingress_priority_group_stats()
+  → pgWmSha Lua スクリプトが COUNTERS_DB に書き込み
+```
+
+### 遅延サマリ
+
+| 段階 | 遅延上限 |
+|------|---------|
+| CONFIG_DB 書き込み → orchagent 処理 | SELECT_TIMEOUT = 1000 ms |
+| warm-reboot 時の FlexCounter 全体遅延 | `FLEX_COUNTER_DELAY_SEC = 60` 秒 |
+| orchagent 処理 → syncd 最初のポーリング | POLL_INTERVAL = 60000 ms（デフォルト） |
+| PG_WATERMARK enable → PERIODIC_WATERMARKS 初回クリア | DEFAULT_TELEMETRY_INTERVAL = 120 秒 |
+
+<!-- /pubsub -->
+
+---
+
 ## 設定例
 
 ```json
