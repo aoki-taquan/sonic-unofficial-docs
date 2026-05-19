@@ -485,6 +485,56 @@ NAT pool エントリ追加・削除に直接連動した COUNTERS_DB 更新は�
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/cfgmgr/natmgrd.cpp L109-121,L149-153 / sonic-swss/cfgmgr/natmgr.cpp L8163-8165 / sonic-swss/orchagent/orchdaemon.cpp L456-465 / sonic-swss/orchagent/natorch.cpp L84-91,L137 -->
+
+`NAT_POOL` の変更通知は **2 層** の非同期メカニズムで処理される。
+
+### 層 1: natmgrd — CONFIG_DB → APPL_DB
+
+`natmgrd` は `NatMgr` を通じて CONFIG_DB の `NAT_POOL` テーブルを **`SubscriberStateTable`** (Redis keyspace PSUBSCRIBE) で購読する (`natmgrd.cpp:112`)。
+
+```
+PSUBSCRIBE __keyspace@4__:NAT_POOL|*
+```
+
+SET/DEL イベントを受信すると `Consumer::execute()` → `NatMgr::doNatPoolTask()` へディスパッチされる (`natmgr.cpp:8163-8165`)。natmgrd のメインループは `SELECT_TIMEOUT=1000ms` で待機し、タイムアウト時は `natmgr->doTask()` でキュー残存タスクを処理する (`natmgrd.cpp:190-193`)。
+
+起動時の初期スナップショット: `SubscriberStateTable` コンストラクタが PSUBSCRIBE 後に `m_table.getKeys()` で既存 key を全件取得し SET として積む。natmgrd 再起動後も既存 `NAT_POOL` エントリが全再処理される (再起動耐性)。
+
+### 層 2: NatOrch — APPL_DB → SAI
+
+`orchdaemon.cpp:457` で NatOrch を生成し、APPL_DB の `NAT_DNAT_POOL_TABLE` を **`ConsumerStateTable`** で最高優先度 (`natorch_base_pri + 5`) で購読する。
+
+```cpp
+{ APP_NAT_DNAT_POOL_TABLE_NAME,  natorch_base_pri + 5 },  // 優先度最高
+```
+
+natmgrd が `ProducerStateTable::set("NAT_DNAT_POOL_TABLE", ...)` を呼ぶと `APP_NAT_DNAT_POOL_TABLE_CHANNEL@0` が PUBLISH され、NatOrch の `doDnatPoolTableTask()` が `sai_nat_api->create_nat_entry(SAI_NAT_TYPE_DESTINATION_NAT_POOL)` を呼び出す。
+
+### 非同期通知チャンネル
+
+| チャンネル名 | DB | 方向 | 用途 |
+|---|---|---|---|
+| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 終了時に `NAT_DNAT_POOL_TABLE` を含む全 NAT エントリの Redis/ASIC クリーンアップを依頼 (`natmgrd.cpp:86`) |
+| `FLUSHNATENTRIES` | APPL_DB | CLI → natmgrd | `show nat translate flush` による conntrack 全フラッシュ。pool 経由の dynamic session も削除される (`natmgrd.cpp:152`) |
+
+### 経路サマリ
+
+| ステップ | 実装 | ソース |
+|---------|------|--------|
+| CLI → CONFIG_DB | `config nat add pool` が `CONFIG_DB HSET NAT_POOL|<name>` を発行 | sonic-utilities/config/nat.py |
+| CONFIG_DB → natmgrd | `SubscriberStateTable` PSUBSCRIBE `__keyspace@4__:NAT_POOL|*` | subscriberstatetable.cpp |
+| natmgrd ディスパッチ | `doNatPoolTask(consumer)` | natmgr.cpp:8163 |
+| natmgrd → APPL_DB | `ProducerStateTable::set("NAT_DNAT_POOL_TABLE", destIp, ...)` (ref-count 付き) | natmgr.cpp:1520 |
+| APPL_DB → NatOrch | `ConsumerStateTable("NAT_DNAT_POOL_TABLE")` + orchagent 統合ループ | orchdaemon.cpp:457 |
+| NatOrch → SAI | `sai_nat_api->create_nat_entry(SAI_NAT_TYPE_DESTINATION_NAT_POOL)` | natorch.cpp:1805 |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-pubsub.md`
+<!-- /pubsub -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
