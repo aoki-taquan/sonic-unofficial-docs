@@ -367,6 +367,92 @@ VNI 付き VRF の追加時に `gPortsOrch->updateL3VniStatus(vlan_id, true)` �
 詳細: `meta/_intermediate/cdb-flow/vrf-orch-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/cfgmgr/vrfmgrd.cpp`, `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
+> 中間メモ: `meta/_intermediate/cdb-flow/vrf-orch-pubsub.md`
+
+### 段階 1 — vrfmgrd: CONFIG_DB を SubscriberStateTable で購読
+
+`VrfMgr` は `Orch(cfgDb, tableNames)` を基底コンストラクタに渡す (`vrfmgr.cpp:21`)。`Orch` 基底の `addConsumer()` は DB id が CONFIG_DB であるテーブルに対して **`SubscriberStateTable`** (Redis keyspace PSUBSCRIBE) を使用する。
+
+vrfmgrd が購読する CONFIG_DB テーブル (`vrfmgrd.cpp:29-33`):
+
+| テーブル名 | 定数 | 用途 |
+|-----------|------|------|
+| `VRF` | `CFG_VRF_TABLE_NAME` | 通常 VRF の追加・削除 |
+| `VNET` | `CFG_VNET_TABLE_NAME` | VNET 統合エントリ |
+| `VXLAN_EVPN_NVO` | `CFG_VXLAN_EVPN_NVO_TABLE_NAME` | EVPN NVO/VTEP 設定 |
+| `MGMT_VRF_CONFIG` | `CFG_MGMT_VRF_CONFIG_TABLE_NAME` | mgmt VRF 有効/無効 |
+
+主ループのタイムアウトは `SELECT_TIMEOUT = 1000 ms`（`vrfmgrd.cpp:17`）。TIMEOUT 時は `vrfmgr.doTask()` を呼び出して pending キューを処理する。
+
+```cpp
+// vrfmgrd.cpp:62
+ret = s.select(&sel, SELECT_TIMEOUT);
+if (ret == Select::TIMEOUT)
+{
+    vrfmgr.doTask();
+    ...
+}
+```
+
+### 段階 2 — vrfmgrd: APPL_DB への書込みは ProducerStateTable
+
+`VrfMgr` コンストラクタはメンバとして `ProducerStateTable` を宣言し (`vrfmgr.cpp:22-24`)、`doTask` の SET/DEL 処理後に以下へ書き込む:
+
+| 書込み先 | API | 条件 | evidence |
+|---------|-----|------|---------|
+| `APPL_DB VRF_TABLE` | `m_appVrfTableProducer.set(vrfName, kfvFieldsValues(t))` | `CONFIG_DB VRF` または `MGMT_VRF_CONFIG` SET 処理後 | `vrfmgr.cpp:303` |
+| `APPL_DB VRF_TABLE` | `m_appVrfTableProducer.del(vrfName)` | `CONFIG_DB VRF` DEL 処理後（参照解除完了後） | `vrfmgr.cpp:352` |
+| `APPL_DB VXLAN_VRF_TABLE` | `m_appVxlanVrfTableProducer.set/del()` | VNI 付き VRF で `m_evpnVxlanTunnel` 設定済み時のみ | `vrfmgr.cpp:510-528` |
+| `STATE_DB VRF_TABLE` | `m_stateVrfTable.set(vrfName, state=ok)` | `CONFIG_DB VRF` SET 直後・APPL_DB 書込み前 | `vrfmgr.cpp:289` |
+| `STATE_DB VRF_TABLE` | `m_stateVrfTable.del(vrfName)` | `CONFIG_DB VRF` DEL 完了後 | `vrfmgr.cpp:339` |
+
+### 段階 3 — vrfmgrd: STATE_DB VRF_OBJECT_TABLE の同期ポーリング
+
+vrfmgrd は `STATE_DB VRF_OBJECT_TABLE` を subscribe せず **同期 GET** でポーリングする。`isVrfObjExist()` (`vrfmgr.cpp:204-211`) が `m_stateVrfObjectTable.get(vrfName, temp)` を直接呼び、DEL フロー (`vrfmgr.cpp:331-346`) ではこのフラグが消えるまで `ip link del` を保留する。
+
+```cpp
+// vrfmgr.cpp:204-211
+bool VrfMgr::isVrfObjExist(const string& vrfName)
+{
+    vector<FieldValueTuple> temp;
+    if (m_stateVrfObjectTable.get(vrfName, temp))
+        return true;
+    return false;
+}
+```
+
+### 段階 4 — VRFOrch: APPL_DB を ConsumerStateTable で消費
+
+`VRFOrch` は `orchdaemon.cpp:283` で次のように生成される:
+
+```cpp
+new VRFOrch(m_applDb, APP_VRF_TABLE_NAME, m_stateDb, STATE_VRF_OBJECT_TABLE_NAME)
+```
+
+`Orch::addConsumer()` は APPL_DB id に対して **`ConsumerStateTable`** を使用する (`orch.cpp:1186-1195`)。`vrfmgrd` の `ProducerStateTable::set/del` が `VRF_TABLE_KEY_SET` チャネルへ PUBLISH したイベントを `ConsumerStateTable::pops()` で消費し、`doTask(Consumer&)` → `Orch2` 経由で `addOperation` / `delOperation` へ dispatch する。
+
+### 全体フロー図
+
+```
+CONFIG_DB                      vrfmgrd                          APPL_DB
+VRF|<name>                SubscriberStateTable            ProducerStateTable
+MGMT_VRF_CONFIG  ──PSUBSCRIBE──> doTask()  ──set()/del()──> VRF_TABLE
+VXLAN_EVPN_NVO             (SELECT 1000ms)  ──set()/del()──> VXLAN_VRF_TABLE
+
+STATE_DB                                                        VRFOrch
+VRF_TABLE         <──set()────── vrfmgrd                   ConsumerStateTable
+VRF_OBJECT_TABLE  ──GET(poll)──> isVrfObjExist()  <──pops()── VRF_TABLE
+VRF_OBJECT_TABLE  <──set/del()── VRFOrch (SAI 完了後)
+```
+
+!!! note "SubscriberStateTable vs ConsumerStateTable"
+    `SubscriberStateTable` は Redis keyspace notification (PSUBSCRIBE) を利用する。CONFIG_DB の変更は `HSET` → keyspace PUBLISH → vrfmgrd で受信される。一方 `ConsumerStateTable` は `ProducerStateTable` 側が書き込む `_KEY_SET` チャネルを消費する。APPL_DB は `Producer/ConsumerStateTable` ペアでバッチ化された pub/sub 設計のため、vrfmgrd と VRFOrch は対になっている。
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 - **VRF 削除タイミング**: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は `ip link del` を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は `ref_count` が非ゼロで `delOperation` が `false` を返して再キュー。
