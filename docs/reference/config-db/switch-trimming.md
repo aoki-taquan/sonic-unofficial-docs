@@ -335,4 +335,39 @@ SET ハンドラが受け取ったフィールド群を `parseTrimConfig()` で�
 
 <!-- /ordering -->
 
+---
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`SwitchOrch::doCfgSwitchTrimmingTableTask()` (`sonic-swss/orchagent/switchorch.cpp`) は他の Orch への依存が極めて少ない。CONFIG_DB の `SWITCH_TRIMMING` エントリを SAI へ直接マッピングするシンプルなフローだが、1 つの重要な副次書き込みが存在する。
+
+### SWITCH_TRIMMING の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `STATE_DB: SWITCH_CAPABILITY\|switch` (書き込み) | capability クエリ結果の書き出し。orchagent 起動時に SAI へ問い合わせた trim 機能の有無と対応モード一覧を STATE_DB に格納する | `SwitchOrch` コンストラクタ内で無条件実行 | `capabilities.cpp:724` (`writeCapabilitiesToDb`)、`capabilities.cpp:145` (コンストラクタから呼び出し) |
+| `SAI sai_switch_api` (必須) | `set_switch_attribute(gSwitchId, ...)` で ASIC に直接書き込む。他の Orch / DB への依存なし | SET ハンドラが valid なエントリを受け取るたび | `switchorch.cpp:1000–1065` (setSwitchTrimming 系各メソッド) |
+
+### STATE_DB への書き込みフィールド
+
+`SwitchTrimmingCapabilities::writeCapabilitiesToDb()` が `STATE_DB:SWITCH_CAPABILITY|switch` に書き込むフィールド一覧。`sonic-swss-common/common/schema.h:417` の `STATE_SWITCH_CAPABILITY_TABLE_NAME = "SWITCH_CAPABILITY"` が対象テーブル、キーは `"switch"` 固定 (`capabilities.cpp:39`)。
+
+| フィールド名 | 値の形式 | 書込み元定数 |
+|---|---|---|
+| `SWITCH_TRIMMING_CAPABLE` | `"true"` / `"false"` | `CAPABILITY_SWITCH_TRIMMING_CAPABLE_FIELD` (`capabilities.cpp:37`) |
+| `SWITCH\|PACKET_TRIMMING_DSCP_RESOLUTION_MODE` | サポートモードの comma-separated set (例: `"DSCP_VALUE,FROM_TC"`) または `"N/A"` | `CAPABILITY_SWITCH_DSCP_RESOLUTION_MODE_FIELD` (`capabilities.cpp:32`) |
+| `SWITCH\|PACKET_TRIMMING_QUEUE_RESOLUTION_MODE` | サポートモードの comma-separated set (例: `"STATIC,DYNAMIC"`) または `"N/A"` | `CAPABILITY_SWITCH_QUEUE_RESOLUTION_MODE_FIELD` (`capabilities.cpp:33`) |
+| `SWITCH\|NUMBER_OF_TRAFFIC_CLASSES` | 整数文字列 または `"N/A"` | `CAPABILITY_SWITCH_NUMBER_OF_TRAFFIC_CLASSES_FIELD` (`capabilities.cpp:34`) |
+| `SWITCH\|NUMBER_OF_UNICAST_QUEUES` | 整数文字列 または `"N/A"` | `CAPABILITY_SWITCH_NUMBER_OF_UNICAST_QUEUES_FIELD` (`capabilities.cpp:35`) |
+
+!!! note "他 Orch への依存なし"
+    `doCfgSwitchTrimmingTableTask()` は `gPortsOrch`・`gNeighOrch`・`gRouteOrch` 等の global Orch を一切参照しない。orchdaemon は `SwitchOrch` を orchList の先頭に置き (`orchdaemon.cpp:500`)、他 Orch の初期化完了を待たずに SWITCH_TRIMMING エントリを処理できる。唯一の外部依存は `gSwitchId` (SAI スイッチオブジェクト) であり、これは `SwitchOrch` コンストラクタより前に確立されている。
+
+!!! note "STATE_DB の利用方法"
+    `STATE_DB:SWITCH_CAPABILITY|switch` の `SWITCH_TRIMMING_CAPABLE` フィールドを参照することで、現在の ASIC が packet trimming をサポートしているかを確認できる。CONFIG_DB への `SWITCH_TRIMMING|GLOBAL` 書き込みが SAI に反映されているかどうかは、この STATE_DB 値で判断するのが正しい運用 (`capabilities.cpp:130–131` の `SWSS_LOG_WARN("Switch trimming configuration is not supported: skipping ...")` と対応)。
+
+詳細調査ログ: `meta/_intermediate/cdb-flow/switch-trimming-cross-refs.md`
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->
