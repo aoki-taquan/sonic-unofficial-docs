@@ -290,6 +290,40 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`HEARTBEAT` テーブルのコンシューマ `supervisor-proc-exit-listener`（Python 版・Rust 版）内に存在する、CONFIG_DB / YANG で管理されない固定値の一覧。
+
+### supervisor-proc-exit-listener タイムアウト定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `SELECT_TIMEOUT_SECS` | **1.0** 秒 (Python) / **1** 秒 (Rust) | `select()` 呼び出しのタイムアウト。このインターバルで heartbeat stuck 検出ループが動く | `supervisor-proc-exit-listener:39` / `proc_exit_listener.rs:30` |
+| `ALERTING_INTERVAL_SECS` | **60** 秒 | `alert_interval` フィールドが CONFIG_DB に存在しないプロセスに対するデフォルト stuck 検出閾値。`HEARTBEAT` エントリが空またはプロセスが未登録の場合にこの値が使われる | `supervisor-proc-exit-listener:42` / `proc_exit_listener.rs:31` |
+
+### イベントパブリッシャー識別子
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `EVENTS_PUBLISHER_SOURCE` | `"sonic-events-host"` | `events_init_publisher()` に渡すイベントソース名 | `supervisor-proc-exit-listener:44` |
+| `EVENTS_PUBLISHER_TAG` | `"process-exited-unexpectedly"` | クリティカルプロセス unexpected exit 時に publish するイベントタグ | `supervisor-proc-exit-listener:45` |
+
+### 設定ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `WATCH_PROCESSES_FILE` | `/etc/supervisor/watchdog_processes` | heartbeat 監視対象プロセスを列挙するファイル。`PROCESS_COMMUNICATION_STDOUT` イベントで heartbeat を更新する対象を絞り込む | `supervisor-proc-exit-listener:22` |
+| `CRITICAL_PROCESSES_FILE` | `/etc/supervisor/critical_processes` | 予期しない終了時に supervisord を SIGTERM で停止する対象プロセス・グループを列挙 | `supervisor-proc-exit-listener:30` |
+
+### 補足
+
+- `ALERTING_INTERVAL_SECS = 60` はフォールバック定数であり、`HEARTBEAT|<name>.alert_interval` に値が設定されていれば ms 単位でその値が優先される (`supervisor-proc-exit-listener:131-133`: `int(alert_interval) / 1000` に変換)。
+- `HEARTBEAT_TABLE_NAME = 'HEARTBEAT'` はシンボル定数として定義されているが (`supervisor-proc-exit-listener:36`)、CONFIG_DB テーブル名の変更が生じた際の単一変更点として機能する。
+- Rust 版 (`proc_exit_listener.rs`) は Python 版の構造を踏襲し、同一定数を `const` として再定義している。
+
+<!-- /constants -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
