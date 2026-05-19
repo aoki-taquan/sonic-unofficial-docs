@@ -464,6 +464,37 @@ Rotate RPC が証明書を差し替えると、以下のシンボリックリン
 -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルを購読するプロセスは community master では**検出されなかった**。
+
+### Redis 購読状況
+
+| テーブル | 購読者 | 購読方式 | ハンドラ |
+|---------|--------|---------|---------|
+| `SECURITY_PROFILES` | なし（ハンドラ未実装） | — | — |
+| `SECURITY_GLOBAL` | なし（ハンドラ未実装） | — | — |
+
+`sonic-pki.yang` は `sonic-buildimage` の本体 YANG には未マージであり、`SECURITY_PROFILES` を消費する orchagent / translib / certmgr ハンドラが community master に存在しない。CONFIG_DB への書込みは CVL バリデーションのみを通過し、runtime プロセスには伝播しない。
+
+### gNSI Certz — CONFIG_DB を購読しない
+
+gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用しない。証明書バンドル情報は `/keys/grpc-version.json` (CertzMetaFile) とファイルシステムシンボリックリンクで管理される。STATE_DB (`CREDENTIALS|CERT|<profileID>`) への書込みは発生するが（Phase F 参照）、これは購読通知ではなく直接 HSET による**書込み**である。
+
+### 将来の実装が想定される購読経路
+
+`sonic-pki.yang` が `sonic-buildimage` にマージされ、対応ハンドラが実装された場合は以下の購読経路が想定される:
+
+| 想定購読者 | 購読テーブル | 期待される動作 |
+|-----------|------------|---------------|
+| certmgr または translib ハンドラ | `SECURITY_PROFILES` / `SECURITY_GLOBAL` | 証明書ファイルのインストール・シンボリックリンク更新 |
+
+ただし実装は community master 2026-05-14 時点では未存在。
+
+> **Evidence**: `sonic-gnmi/gnmi_server/gnsi_certz.go` 全体スキャン — `ConfigDBConnector.subscribe()` / `SubscriberStateTable` / `ConsumerStateTable` の使用なし確認。`sonic-swss` / `sonic-swss-common` でも `SECURITY_PROFILES` / `SECURITY_GLOBAL` のキーワード一致なし。
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)
