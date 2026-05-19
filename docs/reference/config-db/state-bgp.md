@@ -501,3 +501,45 @@ DEL イベントでは `state_peer_table.delete(key)` (managers_bgp.py:294) を�
 
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-pubsub.md`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py`, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`, `sonic-swss/fpmsyncd/fpmsyncd.cpp`, `sonic-swss/fpmsyncd/bgp_eoiu_marker.py`
+> 調査日: 2026-05-19
+
+### BGP_STATE_TABLE — プラットフォーム非依存
+
+`bgp_eoiu_marker.py` および `fpmsyncd.cpp` のいずれにも `switch_type` / ASIC 種別 / プラットフォーム名による分岐は存在しない。
+
+| 条件 | 挙動 |
+|------|------|
+| Warm Restart 無効（`isWarmStart()` が false） | `bgp_eoiu_marker` スクリプト全体がスキップされ `BGP_STATE_TABLE` への書き込みは **発生しない**（bgp_eoiu_marker.py L191–197） |
+| Warm Restart 有効（任意プラットフォーム） | EOR 受信状況に応じて `BGP_STATE_TABLE|IPv4\|eoiu` / `IPv6\|eoiu` が書き込まれる |
+
+`fpmsyncd` も `warmStartEnabled` フラグのみで動作を切り替え、ASIC 種別には非依存（fpmsyncd.cpp:153）。
+
+### BGP_PEER_CONFIGURED_TABLE — VOQ chassis 構成で追加エントリが現れる
+
+`bgpcfgd` は 6 種の `BGPPeerMgrBase` インスタンスを起動時に常時登録する（main.py:87–92）。`update_state_db()` の書き込みロジック自体はすべての peer_type で共通コードパス（managers_bgp.py:271–298）。
+
+| peer_type | 入力テーブル | 出現する構成 |
+|-----------|------------|-------------|
+| `general` | `BGP_NEIGHBOR` | すべての構成 |
+| `internal` | `BGP_INTERNAL_NEIGHBOR` | iBGP セッション設定時 |
+| `monitors` | `BGP_MONITORS` | BGP モニタリング設定時 |
+| `dynamic` | `BGP_PEER_RANGE` | 動的ピアグループ設定時 |
+| `voq_chassis` | `BGP_VOQ_CHASSIS_NEIGHBOR` | **VOQ chassis 構成のみ** |
+| `sentinels` | `BGP_SENTINELS` | Sentinel ピア設定時 |
+
+`BGP_VOQ_CHASSIS_NEIGHBOR` に設定が投入されるのは `switch_type == "voq"` の chassis 構成のみ。通常スイッチ（`switch_type == "switch"`）では当テーブルが空のため、`voq_chassis` peer_type 由来の `BGP_PEER_CONFIGURED_TABLE` エントリは生成されない。
+
+!!! note "ChassisAppDbMgr との関係"
+    `device_info.is_chassis()` が `true` の場合のみ `ChassisAppDbMgr` が登録される（main.py:112–113）。これは supervisor chassis の TSA 状態を linecard 側 bgpcfgd に伝えるための機構であり、`BGP_PEER_CONFIGURED_TABLE` の内容には影響しない。
+
+### BMP_STATE_DB テーブル — プラットフォーム非依存
+
+`openbmpd` は RFC 7854 の BMP プロトコル実装であり、FRR bgpd が稼働する任意のプラットフォームで動作する。ASIC 種別および `switch_type` 設定には非依存。テーブルの生成有無は CONFIG_DB `BMP` テーブルのフィールド設定（`bgp_neighbor_table` / `bgp_rib_in_table` / `bgp_rib_out_table`）のみで制御される。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-platform.md`
+<!-- /platform -->
