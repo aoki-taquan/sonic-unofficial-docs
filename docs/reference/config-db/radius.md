@@ -259,6 +259,43 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 > **証跡**: `sonic-net/sonic-host-services/scripts/hostcfgd` L527-545 (`radius_global_update`/`radius_server_update`)、L641-851 (`modify_conf_file`). <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`RADIUS` テーブルを処理する `hostcfgd` (`sonic-host-services/scripts/hostcfgd`) 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### RADIUS 設定ファイルパス
+
+| 定数 | 値 | 用途 | evidence |
+|------|----|------|---------|
+| `NSS_RADIUS_CONF` | `/etc/radius_nss.conf` | libnss-radius NSS 設定ファイルのパス (テンプレートから再生成) | `hostcfgd:36` |
+| `NSS_RADIUS_CONF_TEMPLATE` | `/usr/share/sonic/templates/radius_nss.conf.j2` | `radius_nss.conf` 生成用 Jinja2 テンプレートのパス | `hostcfgd:37` |
+| `PAM_RADIUS_AUTH_CONF_TEMPLATE` | `/usr/share/sonic/templates/pam_radius_auth.conf.j2` | `pam_radius_auth.conf` 生成用 Jinja2 テンプレートのパス | `hostcfgd:38` |
+| `RADIUS_PAM_AUTH_CONF_DIR` | `/etc/pam_radius_auth.d/` | サーバごとの PAM RADIUS 設定ファイル (`{ip}_{auth_port}.conf`) を 0600 で配置するディレクトリ | `hostcfgd:97` |
+
+> **ファイル命名規則**: サーバごとの PAM 設定ファイルは `RADIUS_PAM_AUTH_CONF_DIR + srv['ip'] + "_" + srv['auth_port'] + ".conf"` の形式で生成される (`hostcfgd:829`)。サーバ削除時にはファイルが削除されずに残留する（Phase D 参照）。
+
+### RADIUS サーバデフォルト値
+
+`hostcfgd` は `self.radius_global_default` dict に以下の定数を注入し、`RADIUS|global` フィールドが未指定の場合のフォールバック値として使用する (`hostcfgd:374-382`)。
+
+| 定数 | 値 | 用途 | YANG との整合 | evidence |
+|------|----|------|-------------|---------|
+| `RADIUS_SERVER_AUTH_PORT_DEFAULT` | `"1812"` (UDP) | `RADIUS_SERVER.auth_port` 未指定時のデフォルト (RFC 2865 標準ポート) | YANG `RADIUS_SERVER.auth_port` の `default 1812` と一致 | `hostcfgd:92` |
+| `RADIUS_SERVER_PASSKEY_DEFAULT` | `""` (空文字) | RADIUS 共有秘密鍵未指定時の fallback | YANG に default 宣言なし（空は PAM で `secret=` 行省略相当） | `hostcfgd:93` |
+| `RADIUS_SERVER_RETRANSMIT_DEFAULT` | `"3"` | 再送回数デフォルト | YANG `RADIUS.global.retransmit` / `RADIUS_SERVER.retransmit` の `default 3` と一致 | `hostcfgd:94` |
+| `RADIUS_SERVER_TIMEOUT_DEFAULT` | `"5"` 秒 | 応答待ちタイムアウトデフォルト | YANG `RADIUS.global.timeout` / `RADIUS_SERVER.timeout` の `default 5` と一致 | `hostcfgd:95` |
+| `RADIUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | 認証プロトコルデフォルト | YANG `RADIUS.global.auth_type` / `RADIUS_SERVER.auth_type` の `default "pap"` と一致 | `hostcfgd:96` |
+| `RADIUS_SERVER_SKIP_MSG_AUTH` | `False` | Message-Authenticator 属性スキップフラグのデフォルト | YANG に対応フィールドなし。コード定数のみ。 | `hostcfgd:98` |
+
+### 注記
+
+- **YANG 一致率が高い**: RADIUS テーブルは `auth_type`・`timeout`・`retransmit`・`auth_port` のデフォルト値について YANG 宣言とコード定数が完全一致している。ただし `passkey` は YANG に default なく、コードでは空文字 fallback となっており PAM 的には「認証不能」を意味するため、実運用では必ず明示指定が必要。
+- **`skip_msg_auth` はコードのみ**: YANG モジュール `sonic-system-radius.yang` に `skip_msg_auth` フィールドの宣言がなく、デフォルト値 `False` はコード定数 `RADIUS_SERVER_SKIP_MSG_AUTH` のみで担保されている。CONFIG_DB から書き込まれた場合 `is_true()` で変換される (`hostcfgd:542`)。
+- **`radius_global_default` のマージ順**: `modify_conf_file()` は `radius_global_default.copy()` に `self.radius_global`（CONFIG_DB の実値）を `update()` でマージするため、CONFIG_DB の値が定数を上書きする。定数は未設定フィールドの補完に限定される (`hostcfgd:661-665`)。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・Fallback
 
