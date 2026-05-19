@@ -249,6 +249,49 @@ else
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss/orchagent/portsorch.cpp` @ master 全行精読  
+> 詳細証跡: `meta/_intermediate/cdb-flow/queue-state-constants.md`
+
+`QUEUE_COUNTER_CAPABILITIES` テーブルに関わるハードコード定数は `portsorch.cpp` の `initCounterCapabilities()` 内にすべて埋め込まれており、YANG / CONFIG_DB に対応するスキーマ定義は存在しない。
+
+### テーブル名定数
+
+| 定数名 | 値 | 定義箇所 |
+|--------|----|---------|
+| `STATE_QUEUE_COUNTER_CAPABILITIES_NAME` | `"QUEUE_COUNTER_CAPABILITIES"` | `sonic-swss-common/common/schema.h:528` |
+
+### キー名文字列（コード埋め込みリテラル）
+
+4 つのキー名はマクロ定義なしで `portsorch.cpp` 内にリテラル文字列として直接記述される。
+
+| キー文字列 | 対応 SAI 統計 | コード行 |
+|-----------|-------------|---------|
+| `"WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER"` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | `portsorch.cpp:1872, 1896` |
+| `"WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER"` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | `portsorch.cpp:1873, 1901` |
+| `"WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER"` | `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` | `portsorch.cpp:1874, 1906` |
+| `"WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER"` | `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` | `portsorch.cpp:1875, 1911` |
+
+### フィールド値定数
+
+| フィールド名 | 値 | 意味 | コード行 |
+|------------|-----|------|---------|
+| `"isSupported"` | `"false"` | 初期値（全キーへの書込み）および SAI クエリ失敗時の確定値 | `portsorch.cpp:1868-1875` — `fieldValuesFalse` |
+| `"isSupported"` | `"true"` | SAI クエリ成功時、対応する統計を含む行に上書き | `portsorch.cpp:1865-1866, 1896-1911` — `fieldValuesTrue` |
+
+### ログメッセージ定数
+
+| ログレベル | メッセージ | コード行 |
+|----------|-----------|---------|
+| `SWSS_LOG_NOTICE` | `"Queue stat capability get failed: WRED queue stats can not be enabled, rv:%d"` | `portsorch.cpp:1921` |
+| `SWSS_LOG_INFO` | `"WRED queue stats is_capable: [ecn-marked-pkts:%d,ecn-marked-bytes:%d,wred-drop-pkts:%d,wred-drop-bytes:%d]"` | `portsorch.cpp:1916-1917` |
+
+> **注意**: `SAI_STATUS_BUFFER_OVERFLOW` リトライ時のリスト初期化は `stat_enum = 0, stat_modes = 0` のゼロ初期化定数で行われる（`portsorch.cpp:1859-1860`）。これは有効な SAI 統計を示す値ではなく、リスト拡張時のプレースホルダとしてのみ使用される。
+
+<!-- /constants -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md) — WRED_ECN_QUEUE グループの enable/disable 設定

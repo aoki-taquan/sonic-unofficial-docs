@@ -460,6 +460,84 @@ PortsOrch コンストラクタが `FlexCounterManager` 初期化時に直接渡
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 書き込み側 orchagent の通信構造
+
+orchagent 内の各 Orch（`FlexCounterOrch` / `PortsOrch` / `IntfsOrch` / `BufferOrch` 等）は `FLEX_COUNTER_DB`（DB 5）に対して **`ProducerTable`** 経由で書き込む。`ProducerTable` は Lua スクリプトで `LPUSH` + `PUBLISH` をアトミックに実行するため、書き込みと同時にチャネルへの通知が発行される（`producertable.cpp:38`）。
+
+| 書き込みコンポーネント | 書き込み先テーブル | 使用クラス |
+|----------------------|-----------------|-----------|
+| `FlexCounterOrch::doTask()` | `FLEX_COUNTER_GROUP_TABLE` | `ProducerTable` |
+| `PortsOrch::initPort()` など各 Orch | `FLEX_COUNTER_TABLE` | `ProducerTable` (FlexCounterManager 経由) |
+
+### 購読方式: ConsumerTable + SUBSCRIBE
+
+syncd は `Syncd::Syncd()` コンストラクタ（`Syncd.cpp:209-210`）で **`ConsumerTable`** を生成し、FLEX_COUNTER_DB の 2 テーブルを購読する:
+
+| ConsumerTable インスタンス | 購読チャネル | 生成箇所 |
+|--------------------------|------------|---------|
+| `m_flexCounter` | `FLEX_COUNTER_TABLE_CHANNEL@5` | `Syncd.cpp:209` |
+| `m_flexCounterGroup` | `FLEX_COUNTER_GROUP_TABLE_CHANNEL@5` | `Syncd.cpp:210` |
+
+`ConsumerTable` は構築時に `SUBSCRIBE <TABLE>_CHANNEL@<dbId>` を発行し、`ProducerTable` からの PUBLISH を受け取る（`consumertable.cpp:31`）。
+
+### syncd 主ループ — 永続 blocking select
+
+`Syncd::run()` のメインループ（`Syncd.cpp:5832-5856`）は `swss::Select` に上記 2 ConsumerTable を登録し、イベント到着まで永続ブロックする:
+
+```cpp
+s->addSelectable(m_selectableChannel.get());   // orchagent → syncd 主チャネル
+s->addSelectable(m_restartQuery.get());         // warm-reboot/fast-reboot 制御
+s->addSelectable(m_flexCounter.get());          // FLEX_COUNTER_TABLE イベント
+s->addSelectable(m_flexCounterGroup.get());     // FLEX_COUNTER_GROUP_TABLE イベント
+```
+
+`swss::Select` は Linux epoll を使用し、タイムアウト指定なし（`UINT_MAX`）で永続ブロックする。受信したセレクタに応じて `processFlexCounterEvent()` または `processFlexCounterGroupEvent()` を呼び出す（`Syncd.cpp:477-486`）:
+
+```cpp
+if (temps == m_flexCounter.get())
+    processFlexCounterEvent(key, SET_COMMAND, kfvFieldsValues(kco));
+else if (temps == m_flexCounterGroup.get())
+    processFlexCounterGroupEvent(key, SET_COMMAND, kfvFieldsValues(kco));
+```
+
+### FlexCounter ポーリングスレッドの内部 Wakeup
+
+`FlexCounter` ポーリングスレッドは条件変数 `m_cvSleep`（`std::condition_variable`）で待機する。設定変更時には `m_cvSleep.notify_all()` でスレッドを即時 wakeup する:
+
+| 変更操作 | wakeup 発生箇所 |
+|---------|---------------|
+| `FLEX_COUNTER_STATUS` 変更（enable/disable） | `FlexCounter.cpp:3089` |
+| `POLL_INTERVAL` 変更 | `FlexCounter.cpp:3068` |
+| `STATS_MODE` 変更 | `FlexCounter.cpp:3110` |
+| スレッド終了 (`endFlexCounterThread`) | `FlexCounter.cpp:3597` |
+
+3 条件（`m_enable && !allIdsEmpty() && m_pollInterval > 0`）が揃わない場合はスレッドが `waitPoll()`（`FlexCounter.cpp:3902`）に戻り、次の wakeup まで待機する。ポーリング自体に外部 Redis SUBSCRIBE は使われず、内部スレッド間の条件変数のみで制御される。
+
+### イベント到達タイムライン（通常起動時）
+
+```
+orchagent FlexCounterOrch::doTask()
+  LPUSH FLEX_COUNTER_GROUP_TABLE_KEY_VALUE_OP_QUEUE|5    (STATUS=enable)
+  PUBLISH FLEX_COUNTER_GROUP_TABLE_CHANNEL@5  1
+      ↓
+syncd Syncd::run() select() wakeup
+  processFlexCounterGroupEvent("PORT", SET, {STATUS=enable})
+    → FlexCounter::setStatus("enable") → m_enable=true → m_cvSleep.notify_all()
+      ↓
+FlexCounter ポーリングスレッド wakeup
+  if (m_enable && !allIdsEmpty() && m_pollInterval > 0)  ← allIdsEmpty チェック
+    collectCounters() → COUNTERS_DB 書込み
+```
+
+orchagent 側の `FLEX_COUNTER_TABLE`（OID リスト）と `FLEX_COUNTER_GROUP_TABLE`（グループ制御）は別チャネルで独立して届くため、syncd が STATUS=enable を先に受信するケースと OID リストを先に受信するケースの両方が発生しうる。いずれの順序でも 3 条件が揃った次回ポーリングスレッド判定時にポーリングが起動する（Phase B「書込み順依存 #1」参照）。
+
+> **参照ソース**: `Syncd.cpp:208-212, 5832-5856, 477-486`（主ループ）、`consumertable.cpp:31`（SUBSCRIBE）、`producertable.cpp:38`（PUBLISH）、`table.h:85-96`（チャネル名生成）、`FlexCounter.cpp:3068, 3089, 3110, 3597, 3902`（条件変数 wakeup）
+
+<!-- /pubsub -->
+
 ## 確認コマンド
 
 ```bash

@@ -312,4 +312,44 @@ it = consumer.m_toSync.erase(it);
 | SAI remove 失敗 (NOT_EXECUTED) | m_toSync に残留 | 削除されない | bulker 再試行 |
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-rule-side-effects.md -->
+
+`DashRouteOrch` は `DASH_ROUTE_RULE_TABLE` の SET/DEL 処理に伴い、以下の DB へ副次的に書き込む。
+
+### APPL_STATE_DB / `DASH_ROUTE_RULE_TABLE` (result テーブル)
+
+`DashRouteOrch` コンストラクタが `app_state_db` に `APP_DASH_ROUTE_RULE_TABLE_NAME` (`"DASH_ROUTE_RULE_TABLE"`) をキーとして `dash_route_rule_result_table_` を初期化する (`dashrouteorch.cpp:57`)。SAI プログラミング結果をコントローラへフィードバックするために使用する。
+
+`writeResultToDB()` (`saihelper.cpp:1125-1156`) が書き込むフィールドは `result` のみ。`version` はデフォルト `""` のため route rule 呼び出しでは書き込まれない。
+
+| トリガ | 操作 | フィールド | 値 | evidence |
+|--------|------|-----------|-----|---------|
+| SET — pre-op で `addInboundRouting()` が `true` を返した場合（依存解決済み・bulker 不要ケース） | `set` | `result` | `"0"` (DASH_RESULT_SUCCESS) | `dashrouteorch.cpp:644` |
+| SET — post-op で bulker flush 後、成功・失敗を問わず | `set` | `result` | `"0"` (成功) または `"1"` (失敗) | `dashrouteorch.cpp:705` |
+| DEL — pre-op で `removeInboundRouting()` が `true` を返した場合 | `del` | — (エントリ削除) | — | `dashrouteorch.cpp:656` |
+| DEL — post-op で `removeInboundRoutingPost()` が `true` を返した場合 | `del` | — (エントリ削除) | — | `dashrouteorch.cpp:712` |
+
+### CRM リソースカウンタ (COUNTERS_DB への間接書込)
+
+`addInboundRoutingPost()` / `removeInboundRoutingPost()` 成功時に `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsedCounter()` を呼び出す。カウンタは `CrmOrch` がメモリ上で保持し、定期的に COUNTERS_DB へフラッシュする（直接書込ではない）。
+
+| 操作 | 条件 | カウンタ | evidence |
+|------|------|---------|---------|
+| inc | `addInboundRoutingPost()` 成功 かつ `ctxt.sip.isV4() == true` | `CRM_DASH_IPV4_INBOUND_ROUTING` | `dashrouteorch.cpp:507` |
+| inc | `addInboundRoutingPost()` 成功 かつ `ctxt.sip.isV4() == false` | `CRM_DASH_IPV6_INBOUND_ROUTING` | `dashrouteorch.cpp:507` |
+| dec | `removeInboundRoutingPost()` 成功 かつ `ctxt.sip.isV4() == true` | `CRM_DASH_IPV4_INBOUND_ROUTING` | `dashrouteorch.cpp:546` |
+| dec | `removeInboundRoutingPost()` 成功 かつ `ctxt.sip.isV4() == false` | `CRM_DASH_IPV6_INBOUND_ROUTING` | `dashrouteorch.cpp:546` |
+
+### 副次書込なし
+
+- **CONFIG_DB**: 書き込みなし
+- **STATE_DB**: 書き込みなし（DASH は APPL_STATE_DB を使用）
+- **FLEX_COUNTER_DB**: 書き込みなし（ACL と異なりカウンタポーリング設定なし）
+- **ASIC_DB**: SAI → syncd 経由（`DashRouteOrch` の直接書込なし）
+
+<!-- /side-effects -->
+
 [^1]: sonic-net/SONiC `doc/dash/dash-sonic-hld.md` §3.2.10 "ROUTE RULE TABLE - INBOUND" (ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
