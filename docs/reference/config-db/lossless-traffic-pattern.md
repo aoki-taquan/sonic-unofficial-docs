@@ -385,4 +385,77 @@ orchagent / BufferOrch が古い headroom 値または未設定のまま SAI へ
 - `mtu` に `0` や負値は YANG の `range "1..9216"` で拒否されるが、Lua 内でバリデーションはないため YANG をバイパスした書き込みでは `lossless_mtu = 0` となり計算結果が 0 になりうる。
 
 <!-- /failure -->
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`LOSSLESS_TRAFFIC_PATTERN` の `mtu` と `small_packet_percentage` はユーザー設定値だが、
+ヘッドルーム計算式内にはコードハードコードの物理定数・IEEE 規定値が多数存在し、
+それらが実際の計算結果を左右する。以下はベンダー別 Lua プラグイン
+(`buffer_headroom_mellanox.lua` / `buffer_headroom_barefoot.lua`) から抽出した定数一覧。
+
+### 光速 (speed_of_light)
+
+| 定数 | 値 | 根拠 | 証拠 |
+|---|---|---|---|
+| `speed_of_light` | `198000000` (m/s) | 光ファイバ実効伝搬速度（真空中光速 3×10⁸ の約 66%）。ケーブル長→伝搬遅延変換に使用 | `buffer_headroom_mellanox.lua:119`, `buffer_headroom_barefoot.lua:97` |
+
+計算式: `bytes_on_cable = 2 * cable_length * port_speed * 1e9 / speed_of_light / (8 * 1000)`
+
+### 最小パケットサイズ (minimal_packet_size)
+
+| 定数 | 値 | 根拠 | 証拠 |
+|---|---|---|---|
+| `minimal_packet_size` | `64` (bytes) | イーサネット最小フレームサイズ。セル占有率計算 (`worst_case_factor`) の基準値 | `buffer_headroom_mellanox.lua:120`, `buffer_headroom_barefoot.lua:98` |
+
+`cell_size > 2 * minimal_packet_size` の場合: `worst_case_factor = cell_size / minimal_packet_size`
+それ以外: `worst_case_factor = (2 * cell_size) / (1 + cell_size)`
+
+### Pause Quanta テーブル (IEEE 802.3 31B.3.7)
+
+速度ごとの PFC pause quanta はハードコードテーブルで定義。IEEE 802.3 規格 31B.3.7 に基づく。
+
+| 速度 (Mb/s) | pause_quanta | peer_response_time (bytes = quanta × 512/8) |
+|---|---|---|
+| 800000 | 905 | 57,920 |
+| 400000 | 905 | 57,920 |
+| 200000 | 453 | 28,992 |
+| 100000 | 394 | 25,216 |
+| 50000 | 147 | 9,408 |
+| 40000 | 118 | 7,552 |
+| 25000 | 80 | 5,120 |
+| 10000 | 67 | 4,288 |
+| 1000 | 2 | 128 |
+| 100 | 1 | 64 |
+
+証拠: `buffer_headroom_mellanox.lua:41-51`, `buffer_headroom_barefoot.lua:37-46`
+
+Mellanox のみ 800Gbps (`800000`) エントリを追加で保持。Barefoot は 400Gbps 止まり。
+
+速度がテーブルに存在しない場合: STATE_DB `ASIC_TABLE` の `peer_response_time` にフォールバック。
+
+### アライメント定数
+
+| 定数 | 値 | 用途 | 証拠 |
+|---|---|---|---|
+| アライメント単位 | `1024` bytes | `xoff_value`、`xon_value`、`headroom_size` を 1024 バイト境界に切り上げ | `buffer_headroom_mellanox.lua:165,167,174`, `buffer_headroom_barefoot.lua:136,138,141` |
+
+切り上げ式: `math.ceil(x / 1024) * 1024`
+
+### Spectrum-4/5 向け追加定数 (Mellanox のみ)
+
+| 定数 | 値 | 用途 | 証拠 |
+|---|---|---|---|
+| `kb_on_tile` 係数 | `port_speed / 1000 * 120 / 8` | ASIC キー末尾が `4` または `5`（Spectrum-4/5）の場合のタイルバッファ遅延補正 | `buffer_headroom_mellanox.lua:86` |
+
+### pause_quanta → peer_response_time 変換係数
+
+| 計算式 | 値 | 根拠 |
+|---|---|---|
+| `peer_response_time = pause_quanta * 512 / 8` | 単位: bytes | 1 pause quanta = 512 bit time。`/ 8` でビット→バイト変換 |
+
+証拠: `buffer_headroom_mellanox.lua:157`, `buffer_headroom_barefoot.lua:124`
+
+> **スキャン証跡**: `buffer_headroom_mellanox.lua` 全行読了 (L1-180)、`buffer_headroom_barefoot.lua` 全行読了 (L1-141)。物理定数 5 種・IEEE テーブル 2 種・アライメント定数 1 種を抽出。
+<!-- /constants -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
