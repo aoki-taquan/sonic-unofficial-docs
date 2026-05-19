@@ -367,6 +367,54 @@ routeorch / vnetorch が **ランタイムで動的生成** する。
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-failure.md -->
+<!-- source: sonic-swss/orchagent/tunneldecaporch.cpp -->
+
+### `SUBNET_DECAP` テーブル処理 (`doSubnetDecapTask`) の失敗パス
+
+`doSubnetDecapTask()` は `valid = true` で開始し、バリデーション失敗時に `valid = false` をセットして処理をスキップする。**いずれも `erase` されて再試行なし**。
+
+| # | 失敗条件 | ログ | 再試行 | 影響 |
+|---|---------|------|--------|------|
+| 1 | `src_ip` が IPv4 プレフィックスとしてパース不能 | `SWSS_LOG_ERROR("Invalid source IP prefix %s.")` L593 | なし | `subnetDecapConfig` 更新されず |
+| 2 | `src_ip` に IPv6 アドレスを指定 | `SWSS_LOG_ERROR("Invalid source IP prefix %s.")` L599 | なし | 同上 |
+| 3 | `src_ip_v6` が IPv6 プレフィックスとしてパース不能 | `SWSS_LOG_ERROR("Invalid source IPv6 prefix %s.")` L613 | なし | 同上 |
+| 4 | `src_ip_v6` に IPv4 アドレスを指定 | `SWSS_LOG_ERROR("Invalid source IPv6 prefix %s.")` L619 | なし | 同上 |
+| 5 | 未知フィールド名 | `SWSS_LOG_ERROR("unknown subnet decap table attribute '%s'.")` L630 | なし | 同上 |
+| 6 | `src_ip` と `src_ip_v6` の両方が空 | `SWSS_LOG_ERROR("Both src_ip and src_ip_v6 of subnet decap are not set.")` L638 | なし | 同上 |
+| 7 | SET / DEL 以外の不明コマンド | `SWSS_LOG_ERROR("Unknown operation type %s.")` L697 | なし | 同上 |
+
+DEL コマンドはバリデーションなしで `subnetDecapConfig.enable = false` をセットするため、失敗パスは存在しない。
+
+### `TUNNEL_DECAP_TERM_TABLE` (subnet decap 関連) の失敗パス
+
+`IPINIP_SUBNET` / `IPINIP_SUBNET_V6` トンネルに対する term 処理でも失敗が発生する。
+
+| # | 失敗条件 | ログ | 再試行 | 影響 |
+|---|---------|------|--------|------|
+| 8 | subnet decap term が MP2MP 型以外 | `SWSS_LOG_ERROR("%s: only MP2MP tunnel decap term is allowed.")` L448 | なし (erase) | SAI 未作成 |
+| 9 | 非 subnet decap term で MP2MP かつ `src_ip` なし | `SWSS_LOG_ERROR("%s: no source IP is provided.")` L458/L463 | なし (erase) | SAI 未作成 |
+| 10 | `status=disable` 状態での term 受信 | `SWSS_LOG_ERROR("%s: subnet decap is disabled, ignored.")` L506 | なし (erase) | SAI 未作成 |
+| 11 | トンネルオブジェクト未存在 (`IPINIP_SUBNET` 未作成) | `SWSS_LOG_NOTICE("%s: tunnel doesn't exist, added to unhandled list.")` L521 | **自動あり** (`unhandledDecapTerms` キュー) | tunnel 作成後に `processUnhandledDecapTunnelTerms()` が自動再処理 |
+| 12 | `src_ip` 未設定で subnet decap term を処理 | `SWSS_LOG_ERROR("%s: source IP is not configured for subnet decap term, ignored.")` L484 | **自動あり** (`unhandledDecapTerms` キュー) | `SUBNET_DECAP` の `src_ip` 設定後に `updateUnhandledDecapTunnelTerms()` が埋め直す |
+| 13 | SAI `create_tunnel_term_table_entry()` 失敗 | `SWSS_LOG_ERROR("%s: failed to add tunnel decap term to ASIC_DB.")` L515 | なし (erase) | SAI 未作成 |
+
+### `unhandledDecapTerms` キューの自動回復経路
+
+tunnel が存在しない場合 (#11) や `src_ip` が未設定の場合 (#12) の term は `unhandledDecapTerms[tunnel_name][key]` に積まれる。
+
+- **tunnel 作成後**: `addDecapTunnel()` 成功時に `processUnhandledDecapTunnelTerms(key)` (L309) が呼ばれ、積み残し term を `addDecapTunnelTermEntry()` で再処理する。SAI 作成成功エントリは `unhandledDecapTerms` から削除。失敗エントリは残留。
+- **`src_ip` 変更後**: `doSubnetDecapTask()` が新しい `src_ip` を受信した際に `updateUnhandledDecapTunnelTerms()` (L662) が src_ip を埋め直す。ただしこの時点では `addDecapTunnelTermEntry()` は呼ばれず、次の `processUnhandledDecapTunnelTerms()` 呼び出しまで SAI には反映されない。
+
+### `src_ip` 変更時の SAI 不整合リスク
+
+`subnetDecapConfig.src_ip` が変化した際 (L655: `subnetDecapConfig.src_ip != src_ip_str`) かつ `enable == true` の場合、`setIpAttribute()` (L660) が SAI `set_tunnel_term_table_entry_attribute()` で既存 term の `src_ip` を更新する。この SAI 呼び出しが失敗しても `subnetDecapConfig.src_ip` は新しい値で上書きされ (L664)、**SAI と CONFIG_DB の不整合が黙過される**点に注意が必要。
+
+<!-- /failure -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
