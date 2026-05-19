@@ -135,6 +135,82 @@ ZMQ 関連フィールドは独立テーブルを持たず `DEVICE_METADATA|loca
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査対象: `sonic-swss/lib/orch_zmq_config.cpp`, `sonic-swss-common/common/zmqserver.cpp`, `sonic-swss-common/common/zmqclient.cpp`, `sonic-swss/orchagent/main.cpp`
+> 調査日: 2026-05-19
+
+ZMQ 関連の失敗は大きく「CONFIG_DB 読み取り失敗」「ZmqServer 起動・受信失敗」「ZmqClient 送信失敗」の 3 系統に分かれる。
+
+### A. `get_feature_status()` — CONFIG_DB 読み取り失敗
+
+`get_feature_status()` (`orch_zmq_config.cpp:83-110`) は `std::runtime_error` を捕捉し、
+エラーログを出力した後に `default_value` を返す。Redis 接続エラー等で `hget` が失敗しても
+orchagent は起動を継続し、ZMQ チャネルの有効/無効はデフォルト値に固定される。
+**retry や再読み取りは行われない**。
+
+| フィールド | 読み取り失敗時の動作 | デフォルト値 |
+|-----------|------------------|------------|
+| `orch_northbond_dash_zmq_enabled` | ERROR ログ → デフォルトで DASH ZMQ 有効 | `true` |
+| `orch_northbond_route_zmq_enabled` | ERROR ログ → デフォルトで ROUTE ZMQ 無効 | `false` |
+
+### B. `get_zmq_port()` — NAMESPACE_ID パース失敗
+
+`NAMESPACE_ID` 環境変数が整数でない場合、`stoi()` 例外を `catch(...)` で捕捉して
+ERROR ログを出力し、デフォルトポート `ORCH_ZMQ_PORT = 8100` にフォールバックする。
+orchagent は継続動作する（evidence: `orch_zmq_config.cpp:47-50`）。
+
+### C. `ZmqServer::bind()` 失敗 → `SWSS_LOG_THROW` → プロセス abort
+
+`zmq_bind()` が失敗した場合（`EADDRINUSE` 等）`SWSS_LOG_THROW` が例外を投げる。
+`main.cpp` には `zmq_server->bind()` を包む try/catch がないため、例外は
+`main()` まで伝播して orchagent プロセスが終了し、systemd が再起動する。
+二重 bind も同様に THROW する（evidence: `zmqserver.cpp:67-125`, `main.cpp:1032-1037`）。
+
+### D. ZmqServer 受信スレッド失敗 → メッセージ DROP
+
+| 失敗ケース | コード根拠 | 動作 |
+|-----------|---------|------|
+| `zmq_recv` 失敗 | `zmqserver.cpp:233` | `SWSS_LOG_THROW` → 受信スレッド終了 → ZMQ 受信不可 |
+| 受信バッファ超過 | `zmqserver.cpp:239` | `SWSS_LOG_THROW` + メッセージ DROP（再送なし） |
+| ハンドラ未登録テーブル | `zmqserver.cpp:173` | `SWSS_LOG_WARN` + メッセージ DROP |
+
+受信スレッドが終了した場合、orchagent は再起動するまで ZMQ メッセージを処理できない。
+Redis 経由の通常経路へのフォールバックは行われない。
+
+### E. `ZmqClient::sendMsg()` — 送信失敗と retry (fpmsyncd / gnmi 側)
+
+送信側（fpmsyncd / gnmi）で `ZmqClient::sendMsg()` が失敗した場合の挙動:
+
+| ZMQ エラー | 挙動 | evidence |
+|-----------|------|---------|
+| `EAGAIN`（socket not ready） | 即時 retry（バックオフなし） | `zmqclient.cpp:209-211` |
+| HWM 超過 | WARN + 指数バックオフ retry（10ms→20ms→…） | `zmqclient.cpp:216-217` |
+| 接続断（`m_connected=false`） | ERROR + `system_error(connection_reset)` throw | `zmqclient.cpp:220-223` |
+| その他送信エラー | ERROR + `system_error(io_error)` throw | `zmqclient.cpp:227-230` |
+| retry 上限超過 | ERROR + `system_error(io_error)` throw | `zmqclient.cpp:238-239` |
+
+`system_error` が fpmsyncd/gnmi まで伝播すると各プロセスが abort → systemd 再起動。
+orchagent 自体はクライアント側の送信失敗を直接検出しない。
+
+### まとめ: 失敗ケース一覧
+
+| 失敗ケース | コード根拠 | 動作 |
+|-----------|---------|------|
+| CONFIG_DB `hget` 失敗（Redis 接続エラー） | `orch_zmq_config.cpp:93-97` | ERROR ログ → default_value 返却 → orchagent 継続 |
+| `NAMESPACE_ID` 非整数 | `orch_zmq_config.cpp:47-50` | ERROR ログ → port=8100 フォールバック |
+| `zmq_bind` 失敗（`EADDRINUSE` 等） | `zmqserver.cpp:115-120` | THROW → orchagent abort → systemd 再起動 |
+| ZmqServer 二重 bind | `zmqserver.cpp:71-73` | THROW → orchagent abort |
+| `zmq_recv` 失敗（受信スレッド） | `zmqserver.cpp:233` | THROW → 受信スレッド終了 → ZMQ 受信不可 |
+| バッファ超過（受信） | `zmqserver.cpp:239` | THROW + メッセージ DROP |
+| ハンドラ未登録メッセージ | `zmqserver.cpp:173` | WARN + メッセージ DROP |
+| `zmq_connect` 失敗（クライアント側） | `zmqclient.cpp:144-145` | THROW → fpmsyncd/gnmi abort → systemd 再起動 |
+| 接続断（送信中） | `zmqclient.cpp:220-223` | ERROR + `system_error` throw → プロセス abort |
+| 送信 retry 上限超過 | `zmqclient.cpp:238-239` | ERROR + `system_error` throw → プロセス abort |
+
+<!-- /failure -->
+
 ---
 
 ## DEVICE_METADATA|localhost の ZMQ フィールド
