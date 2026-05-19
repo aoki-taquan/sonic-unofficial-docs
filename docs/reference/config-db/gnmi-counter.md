@@ -408,6 +408,70 @@ gNMI カウンタ本体は SysV 共有メモリに格納されるため、カウ
 詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/gnmi-counter-pubsub.md -->
+<!-- source: sonic-gnmi/common_utils/shareMem.go ref:master -->
+<!-- source: sonic-gnmi/common_utils/context.go ref:master -->
+<!-- source: sonic-gnmi/gnmi_dump/gnmi_dump.go ref:master -->
+
+gNMI 内部カウンタは SysV 共有メモリ（key=`7749`）に格納されるため、**Redis pub/sub 機構は一切存在しない**。`SubscriberStateTable` / `ConsumerStateTable` / `NotificationConsumer` / Redis keyspace 通知のいずれも使用しない。
+
+### 購読方式一覧
+
+| テーブル / 対象 | 方向 | API / 方式 | 購読者 |
+|---------------|------|-----------|--------|
+| SysV 共有メモリ (key=7749) | telemetryd → 読み取り専用 | `shmget` + `shmat` 直接アクセス | `gnmi_dump` のみ |
+| SysV 共有メモリ (key=7749) | telemetryd → 書き込み | `atomic.AddUint64` + `SetMemCounters` | `telemetryd` 内部（RPC 受信ごと） |
+
+### (1) gnmi_dump — SysV SHM 直接読み取り（購読なし）
+
+`gnmi_dump` (`gnmi_dump.go:17-24`) は `common_utils.GetMemCounters()` を呼び出し、
+`syscall.SYS_SHMGET` → `SYS_SHMAT` で SysV 共有メモリにアタッチしてカウンタ配列を読み取る。
+Redis 接続は一切行わない。`telemetryd` が動作中かどうかに関わらず直接 SHM にアクセスするが、
+`telemetryd` 未起動時は SHM 自体が存在しないため `shmget` がエラーを返す。
+
+```
+gnmi_dump 実行
+  ↓ GetMemCounters() → syscall.SYS_SHMGET(key=7749)
+  ↓ SYS_SHMAT でメモリアタッチ
+  ↓ globalCounters[0..31] を読み取り
+  ↓ "GNMI get---42\n" 形式でテキスト出力 (gnmi_dump.go:22)
+```
+
+Redis pub/sub・swsscommon は介在しない。
+
+### (2) telemetryd 内部 — RPC ごとの SHM 書き込み（通知なし）
+
+`IncCounter` (`context.go:180-183`) は `atomic.AddUint64` でインメモリカウンタを増分した後、
+`SetMemCounters` で全 32 カウンタを SHM に同期書き込みする。
+変更通知は Redis に送られない。`gnmi_dump` が次に読み取るまで外部には非表示。
+
+```
+gRPC RPC 受信
+  ↓ IncCounter(GNMI_GET)
+  ↓ atomic.AddUint64(&globalCounters[0], 1)
+  ↓ SetMemCounters(&globalCounters)  // SYS_SHMGET + SYS_SHMAT + memcpy
+  ↓ 通知なし — Redis PUBLISH は発生しない
+```
+
+### (3) keyspace 通知（カウンタとは無関係）
+
+`sonic-gnmi` リポジトリ内で Redis keyspace 通知を使用するコードは以下の 3 箇所に限定され、
+いずれも gNMI カウンタとは無関係である。
+
+| ファイル | 対象テーブル | 用途 |
+|--------|-----------|------|
+| `dialout/dialout_client/dialout_client.go:686` | `TELEMETRY_CLIENT\|*` | dial-out 設定変更の追従（カウンタ非関与） |
+| `gnmi_server/db_journal.go:67-69` | `__keyspace@<dbNum>__:*` | gNMI Set の CONFIG_DB ジャーナル記録（カウンタ非関与） |
+| `sonic_data_client/mixed_db_client.go:2093` | `__keyspace@<dbNum>__:<path>` | gNMI Subscribe ON_CHANGE 変更検知（カウンタ非関与） |
+
+> **外部監視の注意点**: カウンタを Prometheus 等に収集する場合、Redis から直接取得するパスは存在しない。`gnmi_dump` を定期実行してテキスト出力をパースするか、gNMI Subscribe RPC で `COUNTERS_DB` を購読する方式（カウンタ自体とは別経路）を使う必要がある。
+
+詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
