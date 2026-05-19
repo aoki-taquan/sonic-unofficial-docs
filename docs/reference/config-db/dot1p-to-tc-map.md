@@ -369,4 +369,52 @@ show qos map dot1p-tc
 > **Evidence**: `sonic-swss/orchagent/qosorch.h:13`; `sonic-swss/orchagent/qosorch.cpp:63,391,405-406,372-373`
 <!-- /constants -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-platform.md`
+
+### スイッチレベル適用なし
+
+`DSCP_TO_TC_MAP` は `PORT_QOS_MAP|global` 経由でスイッチレベル (`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP`) への適用が実装されているが、`DOT1P_TO_TC_MAP` には対応する `applyDot1pToTcMapToSwitch()` 関数が存在しない。
+
+`handleGlobalQosMap()` 内のスイッチ適用分岐は `dscp_to_tc_field_name` のみを対象としており、`dot1p_to_tc_field_name` が渡された場合は `"Qos map type %s is not supported at global level"` を WARN して **スキップ** される（`qosorch.cpp:2012`）。
+
+| マップ種別 | スイッチレベル適用 | ポートレベル適用 |
+|-----------|-----------------|----------------|
+| `DSCP_TO_TC_MAP` | あり（`PORT_QOS_MAP\|global` 経由） | あり |
+| `DOT1P_TO_TC_MAP` | **なし**（未実装） | あり（`PORT_QOS_MAP\|<port>` 経由） |
+
+### ビルド時デフォルト注入のプラットフォーム条件
+
+`qos_config.j2` は以下の条件を **すべて** 満たすプラットフォームでのみ `DOT1P_TO_TC_MAP|AZURE` を注入する:
+
+```text
+DEVICE_METADATA.localhost.type in ['BackEndToRRouter', 'BackEndLeafRouter']
+AND DEVICE_METADATA.localhost.storage_device == 'true'
+```
+
+上記条件（`qos_config.j2:164,240-253`）に当てはまらない一般的な ToR / LeafRouter / Spine では `DOT1P_TO_TC_MAP` のビルド時デフォルト注入は行われない。Mellanox 向け `generate_dscp_to_tc_map()` マクロは DOT1P マップを生成しない（dot1p は L2 QoS のためトンネル QoS remap の対象外）。
+
+PORT_QOS_MAP へのマップ割り当ては、ストレージバックエンドプラットフォームでのみ `"dot1p_to_tc_map": "AZURE"` が自動注入される（`qos_config.j2:435`）。その他プラットフォームでは手動設定が必要。
+
+### TC 範囲の ASIC 差分
+
+YANG では `tc_type: uint8 range 0..15` を定義するが、実際の ASIC 対応は以下の通り:
+
+| ASIC 系統 | 実用 TC 範囲 | 挙動 |
+|-----------|------------|------|
+| Broadcom（大多数） | 0..7 | TC 8 以上は SAI `create_qos_map` / `set_qos_map_attribute` がエラーを返し `task_failed` |
+| Mellanox（大多数） | 0..7 | 同上 |
+| 一部高性能 ASIC | 0..15（可能性） | SAI ベンダー実装依存。YANG 検証は通過する |
+
+TC 8..15 を設定した場合、YANG バリデーションは通過するが SAI 層で ASIC がエラーを返すことがある。`qosorch` はフィールド変換成功後に SAI に送るため、ASIC 拒否時は `task_failed` となる（エラーログのみ、STATE_DB への書き込みなし）。
+
+### db_migrator での扱い
+
+`db_migrator.py:575-577` は `PORT_QOS_MAP` の `dot1p_to_tc_map` フィールドに含まれる ABNF 形式の参照接頭辞 (`|`) を削除するマイグレーションを持つ。`DOT1P_TO_TC_MAP` テーブル自体の schema migration は現行 master には存在しない。
+
+> **Evidence**: `qosorch.cpp:1979-2054` (handleGlobalQosMap — DOT1P 非対象確認); `qos_config.j2:164,240-253` (ストレージバックエンド条件); `qos_config.j2:435` (PORT_QOS_MAP への dot1p_to_tc_map 割り当て); `db_migrator.py:575-577` (ABNF 参照削除)
+<!-- /platform -->
+
 <!-- glossary-links-injected: b1003b21c66f -->

@@ -306,6 +306,33 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-F.md -->
+
+`APPL_DB SWITCH_TABLE:switch` の `fdb_aging_time` フィールドを `SwitchOrch::doAppSwitchTableTask()` が処理する際、および warm-reboot パスで呼ばれる `setAgingFDB()` の実行時に、**副次的な DB 書込は発生しない**。いずれの処理パスも SAI `set_switch_attribute(gSwitchId, &attr)` を呼ぶのみで、APPL_DB / STATE_DB / COUNTERS_DB への書込を一切行わない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---------|---------|------|
+| APPL_DB | なし | `doAppSwitchTableTask()` L595-748 全体を `set(`/`hset`/`Producer`/`Notification` で検索してマッチ 0 件 |
+| STATE_DB | なし | `fdb_aging_time` 処理パス (`switchorch.cpp:664-666`, `switchorch.cpp:1671-1688`) に `m_stateDb`/`m_switchTable` 書込なし。`set_switch_capability()` による `STATE_DB SWITCH_CAPABILITY_TABLE` 書込は PFC DLR / ASIC SDK health 等の能力フラグのためであり `fdb_aging_time` SET とは独立したパス |
+| COUNTERS_DB | なし | `switchorch.cpp` 全体に COUNTERS_DB 書込は FlexCounter 統計グループ登録のみで `fdb_aging_time` 処理に連動しない |
+| ASIC_DB | 間接のみ | orchagent は ASIC_DB に直接書き込まない。SAI 操作は syncd が ASIC_DB に記録するが orchagent 側に明示的書込なし |
+
+### SwitchOrch が持つ STATE_DB 書込経路（fdb_aging_time 非連動）
+
+`SwitchOrch` は `STATE_DB` への書込経路を 3 つ保持しているが、いずれも `fdb_aging_time` の SET 処理とは独立している。
+
+| 経路 | 書込テーブル | トリガー | コード箇所 |
+|------|------------|---------|-----------|
+| `set_switch_capability()` | `STATE_DB SWITCH_CAPABILITY_TABLE:switch` | コンストラクタ起動時・能力照会時（PFC DLR / TPID / ASIC SDK health 等） | `switchorch.cpp:1864-1866` |
+| `m_asicSensorsTable->set()` | `STATE_DB ASIC_TEMPERATURE_INFO_TABLE` | 温度 polling timer 発火時 | `switchorch.cpp:1860` |
+| `m_asicSdkHealthEventTable->set()` | `STATE_DB STATE_ASIC_SDK_HEALTH_EVENT_TABLE` | ASIC SDK health event 通知受信時 | `switchorch.cpp:155-156` |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/fdb-aging-F.md` を参照。
+<!-- /side-effects -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
