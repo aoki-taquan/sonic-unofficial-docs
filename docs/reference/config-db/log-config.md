@@ -187,6 +187,68 @@ evidence: `logger.cpp:210-241`
 - `settingThread` 内に DB 再接続ロジックはなく、起動後の DB 切断は `Select::ERROR` の繰り返しとして観測されるがスレッドは継続する（自動リカバリなし）
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`logger.cpp` / `loglevel.h` / `logger.h` にハードコードされ、CONFIG_DB・YANG では管理されない数値・enum 定数の一覧。
+
+<!-- evidence: meta/_intermediate/cdb-flow/log-config-constants.md -->
+
+### 1. デフォルト loglevel 定数 (loglevel.h:4–5)
+
+| 定数名 | 値 | 用途 |
+|--------|----|------|
+| `DEFAULT_LOGLEVEL` | `"NOTICE"` | swss コンポーネントの `LOGLEVEL` 初期値。`linkToDbNative()` のデフォルト引数として参照され、DB に `LOGLEVEL` が存在しない場合に書き込まれる |
+| `SAI_DEFAULT_LOGLEVEL` | `"SAI_LOG_LEVEL_NOTICE"` | SAI コンポーネント (`SAI_API_*`) の `LOGLEVEL` 初期値。`swssloglevel -d` による全コンポーネントリセット時の値 |
+
+### 2. settingThread タイムアウト定数 (logger.cpp:208)
+
+| 値 | 用途 |
+|----|------|
+| `1000` ms | `select.select(&selectable, 1000)` のタイムアウト間隔。LOGGER テーブルへの変更通知受信待ちの最大遅延を決定する。CONFIG_DB で変更不可のハードコード値 |
+
+### 3. ログバッファサイズ定数 (logger.cpp:302, 378)
+
+| 値 | 用途 |
+|----|------|
+| `0x1000` (4096 バイト) | `write()` / `wthrow()` 内で `vsnprintf(buffer, 0x1000, ...)` に使われるバッファ上限。4096 バイトを超えるログメッセージは切り捨てられる。CONFIG_DB とは無関係のバイナリ内固定値 |
+
+### 4. Priority enum (logger.h:54–64)
+
+`LOGLEVEL` フィールドに書き込める文字列と内部 enum 値の対応。YANG `swss_loglevel` 型で定義された有効値と一致する。
+
+| 内部 enum 値 | CONFIG_DB 書き込み文字列 | デフォルト |
+|------------|------------------------|-----------|
+| `SWSS_EMERG` | `"EMERG"` | |
+| `SWSS_ALERT` | `"ALERT"` | |
+| `SWSS_CRIT` | `"CRIT"` | |
+| `SWSS_ERROR` | `"ERROR"` | |
+| `SWSS_WARN` | `"WARN"` | |
+| `SWSS_NOTICE` | `"NOTICE"` | デフォルト (`DEFAULT_LOGLEVEL`) |
+| `SWSS_INFO` | `"INFO"` | |
+| `SWSS_DEBUG` | `"DEBUG"` | |
+
+### 5. Output enum (logger.h:70–75)
+
+`LOGOUTPUT` フィールドに書き込める文字列と内部 enum 値の対応。
+
+| 内部 enum 値 | CONFIG_DB 書き込み文字列 | 出力先 | デフォルト |
+|------------|------------------------|--------|-----------|
+| `SWSS_SYSLOG` | `"SYSLOG"` | `vsyslog()` | デフォルト (YANG `default SYSLOG`) |
+| `SWSS_STDOUT` | `"STDOUT"` | `printf()` | |
+| `SWSS_STDERR` | `"STDERR"` | `fprintf(stderr, ...)` | |
+
+### 6. プロセス内部初期値 (logger.h:160, 162)
+
+DB から読み取る前にプロセス内で保持される初期値。
+
+| メンバー変数 | 初期値 | 意味 |
+|------------|--------|------|
+| `m_minPrio` | `SWSS_NOTICE` | 最小ログ優先度の内部初期値。`linkToDbWithOutput()` で CONFIG_DB の値に更新される |
+| `m_output` | `SWSS_SYSLOG` | ログ出力先の内部初期値。`linkToDbWithOutput()` で CONFIG_DB の値に更新される |
+
+<!-- /constants -->
+
 ## 制約
 
 - `LOGLEVEL` は `mandatory true`（YANG）。エントリ作成時に必須
