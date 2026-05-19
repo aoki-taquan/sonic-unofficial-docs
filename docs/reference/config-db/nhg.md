@@ -149,6 +149,29 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`NEXTHOP_GROUP_TABLE` は **APPL\_DB** テーブルであり、`NhgOrch` が書き込み先の SAI へ反映するための入力ソースである。`NhgOrch::doTask()` 内部で参照・依存する外部テーブル・Orch・リソースを以下に列挙する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `NEXTHOP_GROUP_TABLE` (APPL\_DB) — 本テーブル | 消費 (consumer) | 常時。`fpmsyncd` (`routesync.cpp`) が SET/DEL、`NhgOrch::doTask()` が読み出す | `nhgorch.cpp` L46; `orchdaemon.cpp` `gNhgOrch = new NhgOrch(m_applDb, APP_NEXTHOP_GROUP_TABLE_NAME)` |
+| `ROUTE_TABLE` (APPL\_DB) | 逆参照 — `nexthop_group` フィールドでキーを参照 | `ROUTE_TABLE` エントリが `nexthop_group` フィールドで NHG キーを参照している間は NHG DEL がブロックされる (`ref_count > 0`) | `nhgorch.cpp` L413-417; `routeorch.cpp` L1368-1391 (`incRefCount` / `decRefCount`) |
+| `CLASS_BASED_NEXT_HOP_GROUP_TABLE` (APPL\_DB) | 逆参照 — CBF NHG がメンバー NHG として参照 | CBF NHG (`CbfNhgOrch`) が `nexthop_group` フィールドで本テーブルのエントリキーをメンバーとして参照 | `cbfnhgorch.cpp` `doTask()` メンバー解決ロジック |
+| `FC_TO_NHG_INDEX_MAP_TABLE` (APPL\_DB) | 間接参照 — CBF NHG 経由 | CBF NHG の `selection_map` が FC → NHG インデックスマップを参照 | `nhgmaporch.cpp` |
+| `NeighOrch` 内部テーブル (`m_neighborTable`) | 読み取り — ARP/NDP 解決状態 | `NextHopGroupMember::getNhId()` が `gNeighOrch->hasNextHop()` / `getNextHopId()` を参照して SAI NH ID を取得 | `nhgorch.cpp` L529-585 |
+| `PortsOrch::allPortsReady()` | 起動順序ガード | `allPortsReady()` が false の間は `doTask()` が即 return。全ポート初期化完了まで NHG 処理を行わない | `nhgorch.cpp` L41-44 |
+| `RouteOrch` ECMP カウンタ (`getNhgCount()` / `getMaxNhgCount()`) | リソース上限チェック | `RouteOrch::getNhgCount() + NextHopGroup::getSyncedCount() >= RouteOrch::getMaxNhgCount()` で NHG 数上限を判定。上限時は temporary NHG にフォールバック | `nhgorch.cpp` L252; `routeorch.cpp` L86-90 |
+| `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` | SAI クエリ → 上限値決定 | orchagent 起動時 (`RouteOrch` init) に ASIC からクエリ。失敗時は `DEFAULT_NUMBER_OF_ECMP_GROUPS=128` をフォールバック | `routeorch.cpp` L37, L67-90 |
+| `CrmOrch` (`gCrmOrch`) | リソース使用量追跡 | NHG 作成時 `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` / 削除時 `decCrmResUsedCounter` | `nhgorch.cpp` L795 |
+| `FG_NHG` (CONFIG\_DB) / `FgNhgOrch` | 独立経路 — 参照なし | Fine-Grained ECMP (`FgNhgOrch`) は `FG_NHG*` テーブルを直接処理し、`NhgOrch` とは独立。本テーブル (`NEXTHOP_GROUP_TABLE`) との直接依存はない | `fgnhgorch.cpp` 分離実装 |
+
+!!! note "NeighOrch との結合"
+    `NhgOrch` は `NeighOrch` に **observer** として登録されている。`NeighOrch` が ARP/NDP 解決・失効を検知すると `NhgOrch::validateNextHop()` / `invalidateNextHop()` を呼び出し、SAI の next hop group member を動的に追加・削除する。これにより `NEXTHOP_GROUP_TABLE` の SET/DEL がなくても NHG メンバーセットが変化する点に注意。
+
+<!-- /cross-refs -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
