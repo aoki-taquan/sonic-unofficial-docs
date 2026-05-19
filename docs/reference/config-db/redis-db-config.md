@@ -194,6 +194,52 @@ docker-database コンテナ起動
 が起動時に依存する基盤層であり、間接的にすべての CONFIG_DB テーブル操作の前提条件となる。
 
 <!-- /cross-refs -->
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`database_config.json` は CONFIG_DB テーブルではなくインフラ層ファイルであり、`SonicDBConfig` クラスが起動時に一度だけ読み込む。読み込み・解析に失敗した場合は例外として呼び出し元に伝播し、キャッチされなければプロセス abort → systemd 再起動という自己回復経路を取る。
+
+### A. ファイル読み込み失敗 (`parseDatabaseConfig`)
+
+| 失敗条件 | 挙動 | evidence |
+|---------|------|---------|
+| 設定ファイルが存在しない / 開けない (`i.good() == false`) | `SWSS_LOG_ERROR` + `throw runtime_error("Sonic database config file doesn't exist at " + file)` で上位伝播 | `dbconnector.cpp:83-85` |
+| `ignore_nonexistent=true` かつファイル不在 (`access() == -1`) | `SWSS_LOG_NOTICE` を出力して `return`（例外なし、エントリ空で続行） | `dbconnector.cpp:33-36` |
+| JSON 必須キー欠落 (`domain_error`) | `SWSS_LOG_ERROR` + `throw runtime_error("key doesn't exist in json object ...")` で上位伝播 | `dbconnector.cpp:71-74` |
+| その他 JSON 解析例外 | `SWSS_LOG_ERROR` + `throw runtime_error("Sonic database config file syntax error ...")` で上位伝播 | `dbconnector.cpp:76-79` |
+
+### B. 二重初期化 (`initialize`)
+
+`m_init == true` の状態で `initialize()` を呼ぶと `SWSS_LOG_ERROR` + `throw runtime_error("SonicDBConfig already initialized")` が発生する (`dbconnector.cpp:193-194`)。通常の起動フローでは自動初期化 (`m_init == false` のときのみ実行) により二重実行は回避される。
+
+### C. グローバル設定失敗 (`initializeGlobalConfig`)
+
+| 失敗条件 | 挙動 | evidence |
+|---------|------|---------|
+| グローバル設定ファイルが存在しない | `SWSS_LOG_ERROR` 出力後、**例外なし**で `m_global_init = true` をセットして続行（名前空間情報なしで初期化完了扱い） | `dbconnector.cpp:173-179` |
+| `ignore_nonexistent=true` の include ファイルが不在 | `SWSS_LOG_NOTICE` 出力後 `return`（当該エントリをスキップして続行） | `dbconnector.cpp:33-36` |
+| 二重初期化 (`m_global_init == true`) | `SWSS_LOG_ERROR` を出力して **早期リターン**（例外なし） | `dbconnector.cpp:96-99` |
+
+### D. DB 名・namespace 解決失敗 (`getDbInfo` / `getRedisInfo` / `getSeparator`)
+
+| 失敗条件 | 挙動 | evidence |
+|---------|------|---------|
+| namespace 非空かつ `m_global_init == false` | `SWSS_LOG_THROW` でプロセス即 abort（プログラミングエラー扱い） | `dbconnector.cpp:229-231`, `259-260` |
+| namespace 名が設定ファイルに存在しない | `SWSS_LOG_THROW("Namespace %s is not a valid namespace ...")` でプロセス即 abort | `dbconnector.cpp:242` |
+| DB 名または key が設定ファイルに存在しない | `SWSS_LOG_ERROR` + `throw out_of_range(msg)` で上位伝播 | `dbconnector.cpp:263-275` |
+
+!!! note "SWSS_LOG_THROW vs throw"
+    `SWSS_LOG_THROW` は SONiC 独自マクロで `abort()` 相当の即プロセス終了を引き起こす。namespace 解決失敗はこの経路を通り、systemd の `Restart=always` 設定でのみ回復する。
+
+### E. 自己回復経路
+
+- `getDbInfo()` 等のアクセサ API は `m_init == false` のとき自動的に `initialize(DEFAULT_SONIC_DB_CONFIG_FILE)` を呼ぶため、明示的な初期化呼び出しなしでもデフォルトパスからの読み込みが行われる (`dbconnector.cpp:252-253`)。
+- `parseDatabaseConfig()` や `initialize()` から `runtime_error` が伝播した場合、各デーモン（`swss`/`syncd`/`mgmt` 等）がキャッチしなければプロセス abort → systemd 再起動 → 再 `initialize()` で自己回復する。
+- Redis 接続層（`DBConnector` コンストラクタ）の TCP/UNIX ソケット接続失敗は `system_error` として伝播し、各アプリが個別に処理する (`dbconnector.cpp:589`, `605`)。
+
+> **証跡**: `parseDatabaseConfig()` L27-87、`initialize()` L182-204、`initializeGlobalConfig()` L89-180、`getDbInfo()` L246-278、`getRedisInfo()` L280-310。詳細は `meta/_intermediate/cdb-flow/redis-db-config-failure.md` を参照。
+
+<!-- /failure -->
 
 ## separator の役割
 
