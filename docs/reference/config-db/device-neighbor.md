@@ -500,35 +500,66 @@ DEVICE_NEIGHBOR が正しく書き込まれていない場合、`DEVICE_NEIGHBOR
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## 通信メカニズム (Phase G)
+## CONFIG_DB Subscribe 機構 (Phase G)
 
-`DEVICE_NEIGHBOR` テーブルは **Redis Pub/Sub による動的購読者を持たない**。すべてのコンシューマは起動時または CLI 実行時にバルク読み込み (`get_table`) で参照する。
+`DEVICE_NEIGHBOR` テーブルは **SubscriberStateTable / subscribe によるリアルタイム購読をするコンポーネントが存在しない**。すべての consumer は起動時または操作実行時の **one-shot `get_table()` 読み取り** でテーブル全体を取得する。
 
-<!-- evidence: meta/_intermediate/cdb-flow/device-neighbor-pubsub.md -->
+### lldpmgrd — DEVICE_NEIGHBOR を購読しない（TODO 状態）
 
-### テーブル変更の伝搬方式
+`lldpmgrd` (`dockers/docker-lldp/lldpmgrd:13`) のコメントに
 
-| コンポーネント | 参照方式 | タイミング | evidence |
-|-------------|---------|----------|----------|
-| `pfcwd start_default` | `config_db.get_table('DEVICE_NEIGHBOR')` | 起動時バルク読み | `pfcwd/main.py:413` |
-| `pfcwd get_server_facing_ports()` | `db.get_table('DEVICE_NEIGHBOR')` | CLI 実行時バルク読み | `pfcwd/main.py:98` |
-| `ecnconfig -s enable/disable` | `db.get_table('DEVICE_NEIGHBOR')` | CLI 実行時バルク読み | `ecnconfig:282` |
-| `lldpmgrd` | 参照なし（TODO コメントあり） | — | `lldpmgrd:12` |
-| `bgpcfgd` | `DEVICE_NEIGHBOR_METADATA` のみ subscribe; `DEVICE_NEIGHBOR` 本体は参照しない | — | `managers_bgp.py:140` |
-| orchagent (sonic-swss) | 参照なし | — | — |
+```python
+# TODO: Also listen for changes in DEVICE_NEIGHBOR and PORT tables in
+#       Config DB and update LLDP config upon changes.
+```
 
-### 動的購読なしの実装上の影響
+と明記されており、実装は存在しない。`lldpmgrd` が `swsscommon.Select` に登録するのは以下の 3 テーブルのみ:
 
-`DEVICE_NEIGHBOR` に対して `ConsumerStateTable` / `SubscriberStateTable` を登録しているデーモンは存在しない。このため:
+| テーブル | DB | subscribe 方式 | 用途 |
+|---------|-----|--------------|------|
+| `APP_PORT_TABLE` (APPL_DB) | APPL_DB | `SubscriberStateTable` | ポート oper-status 変化 → lldpcli 設定 |
+| `CFG_MGMT_INTERFACE_TABLE_NAME` (CONFIG_DB) | CONFIG_DB | `SubscriberStateTable` | 管理 IP 変化 → lldpcli management pattern 更新 |
+| `CFG_DEVICE_METADATA_TABLE_NAME` (CONFIG_DB) | CONFIG_DB | `SubscriberStateTable` | hostname 変化 → lldpcli hostname 更新 |
 
-- **runtime での SET/DEL が即時反映されない**: `pfcwd start_default` や `ecnconfig` は起動時・CLI 実行時のスナップショットしか参照しないため、`DEVICE_NEIGHBOR` を変更しても実行中デーモンには自動で再読み込みされない。
-- **lldpmgrd の未実装**: ソースコード先頭の TODO コメント（`lldpmgrd:12`）に「`DEVICE_NEIGHBOR` の変更も listen すべき」と明記されているが、現時点では未実装。ポートトポロジー変更を LLDP に反映するには `lldpmgrd` の再起動が必要。
-- **bgpcfgd との分離**: `bgpcfgd` は `DEVICE_NEIGHBOR_METADATA` (隣接デバイスの属性情報) を `BGPDataBaseMgr` 経由で購読しているが、`DEVICE_NEIGHBOR` (ポート–ホスト対応) は購読しない。BGP ピア設定時に `DEVICE_NEIGHBOR.name` → `DEVICE_NEIGHBOR_METADATA` の解決を行うが、この解決はイベント駆動ではなく BGP_NEIGHBOR の SET 処理時に on-demand で実行される（`managers_bgp.py:220-224`）。
+`DEVICE_NEIGHBOR` への subscribe は実装されていないため、**DEVICE_NEIGHBOR の変化は lldpmgrd にリアルタイム通知されない**。
 
-### CONFIG_DB KeySpace notification
+### pfcwd / ecnconfig — one-shot 読み取り
 
-`DEVICE_NEIGHBOR` の変更は CONFIG_DB の KeySpace notification (`__keyevent@4__:hset` 等) 経由で観測可能だが、現時点でこれを購読するデーモンは確認されていない。テーブル変更の影響を受けるコンポーネント（pfcwd, ecnconfig, lldpmgrd）は手動での再実行またはデーモン再起動が必要となる。
+`pfcwd start_default`（`pfcwd/main.py:413`）および `ecnconfig`（`ecnconfig:282`）は、コマンド実行時に `config_db.get_table('DEVICE_NEIGHBOR')` を 1 回呼び出してキー一覧を取得する。subscribe ではないため、実行後に DEVICE_NEIGHBOR が変化しても pfcwd / ecnconfig には通知されない。再実行時のみ最新値を反映する。
 
+### bgpcfgd — DEVICE_NEIGHBOR_METADATA を購読（DEVICE_NEIGHBOR は非購読）
+
+`bgpcfgd` (`main.py:76`) は `BGPDataBaseMgr` を通じて `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を購読するが、`DEVICE_NEIGHBOR` テーブル自体は購読しない。DEVICE_NEIGHBOR の変化は bgpcfgd に直接通知されない。
+
+### minigraph.py — one-shot 書き込みのみ
+
+`sonic-cfggen -m` の parse_xml() は DEVICE_NEIGHBOR への **一回限りの書き込み** であり、テーブルを購読する Consumer 側には位置しない。
+
+### 通信フロー全体図
+
+```
+CONFIG_DB DEVICE_NEIGHBOR|<peer_name> (SET/DEL)
+  │
+  ├─ [購読なし] lldpmgrd — TODO コメントのみ、subscribe 未実装
+  │
+  ├─ [one-shot] pfcwd start_default
+  │     config_db.get_table('DEVICE_NEIGHBOR')  ← コマンド実行時のみ
+  │     → 外部ポート一覧取得 → CONFIG_DB PFC_WD 書込
+  │
+  ├─ [one-shot] ecnconfig
+  │     config_db.get_table('DEVICE_NEIGHBOR')  ← コマンド実行時のみ
+  │     → ポート一覧取得 → CONFIG_DB QUEUE 書込
+  │
+  └─ [間接] bgpcfgd
+        CFG_DEVICE_NEIGHBOR_METADATA を購読
+        （DEVICE_NEIGHBOR_METADATA は DEVICE_NEIGHBOR から派生するが、
+         DEVICE_NEIGHBOR 本体は subscribe 対象外）
+```
+
+!!! note "DEVICE_NEIGHBOR 変更後の手動再実行が必要"
+    `DEVICE_NEIGHBOR` をランタイムに変更（`redis-cli hset` 等）しても、pfcwd / ecnconfig / lldpmgrd はリアルタイムに反応しない。`pfcwd start_default` や `ecnconfig` を手動で再実行する必要がある。
+
+> **Evidence**: `sonic-buildimage` `dockers/docker-lldp/lldpmgrd:12-14,300-326`; `sonic-utilities` `pfcwd/main.py:413`; `scripts/ecnconfig:282-287`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/main.py:75-76`
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: 2c4f81fa98e5 -->

@@ -475,6 +475,72 @@ CONFIG_DB MIRROR_SESSION|<name> に SET/DEL
 > 中間調査詳細: `meta/_intermediate/cdb-flow/erspan-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform:start -->
+
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/erspan-platform.md -->
+
+### 差異 1: GRE protocol type の Mellanox 分岐
+
+`MirrorEntry` コンストラクタ (`mirrororch.cpp:57-77`) は `getenv("platform")` を `MLNX_PLATFORM_SUBSTRING`（`"mellanox"`）と完全一致比較し、GRE type のデフォルトを分岐する[^3]:
+
+```cpp
+if (platform == MLNX_PLATFORM_SUBSTRING)
+    greType = 0x8949;   // ERSPAN Type III / Broadcom 互換
+else
+    greType = 0x88be;   // ERSPAN Type II / Cisco 準拠
+```
+
+| プラットフォーム | デフォルト `gre_type` | YANG `default` | 整合性 |
+|----------------|----------------------|----------------|--------|
+| mellanox | `0x8949` | `0x88be` | **乖離あり** |
+| その他全て | `0x88be` | `0x88be` | 一致 |
+
+YANG 定義の `default 0x88be` は Mellanox では適用されない。`gre_type` を省略した MIRROR_SESSION エントリを Mellanox に投入した場合、コレクタは `0x8949` フレームを受信することに注意が必要。
+
+### 差異 2: TC (Traffic Class) 属性の一部 ASIC 非対応
+
+`activateSession()` (`mirrororch.cpp:931-938`) は `session.queue != 0` の場合のみ `SAI_MIRROR_SESSION_ATTR_TC` を SAI に push する:
+
+```cpp
+// Some platforms don't support SAI_MIRROR_SESSION_ATTR_TC and only
+// support global mirror session traffic class.
+if (session.queue != 0)
+{
+    attr.id = SAI_MIRROR_SESSION_ATTR_TC;
+    attr.value.u8 = session.queue;
+    attrs.push_back(attr);
+}
+```
+
+`queue` を省略（デフォルト `0`）した場合は TC 属性を送らず、プラットフォームの global mirror session TC が採用される。`queue >= 1` を指定した際に `SAI_MIRROR_SESSION_ATTR_TC` 非対応 ASIC では `create_mirror_session()` がエラーを返す可能性がある[^4]。
+
+### 差異 3: VoQ シャーシ — monitor port と DST MAC の自動置換
+
+`gMySwitchType == "voq"` かつ ERSPAN セッションの場合、通常フローとは異なるフィールドが SAI に渡される:
+
+| SAI 属性 | 非 VoQ | VoQ シャーシ |
+|----------|--------|------------|
+| `SAI_MIRROR_SESSION_ATTR_MONITOR_PORT` | 宛先物理ポートの OID | `getRecircPort(Rec)` の OID（recirc port）|
+| `SAI_MIRROR_SESSION_ATTR_DST_MAC_ADDRESS` | 隣接 NEP 解決済み MAC | `gMacAddress`（スイッチ router MAC）|
+
+VoQ ではチャーシス ファブリック側が L3 転送を担当するため、ERSPAN outer GRE パケットは recirc port 経由でファブリックに送出され、DST MAC は router MAC で事足りる。この自動置換は `mirrororch.cpp:961-969` (monitor port) および `mirrororch.cpp:1037-1041` (DST MAC) で実装されている[^4]。
+
+### 差異 4: ハードウェアリソース可用性の SAI 依存
+
+`isHwResourcesAvailable()` (`mirrororch.cpp:357-379`) が `sai_object_type_get_availability(SAI_OBJECT_TYPE_MIRROR_SESSION)` を呼ぶ。SAI が `NOT_SUPPORTED` / `NOT_IMPLEMENTED` を返す ASIC では警告ログのみで `true`（利用可能）として扱い、リソース上限監視を省略する。`availCount == 0` の場合は `createEntry()` が `task_need_retry` を返してセッション作成を保留する[^4]。
+
+### 差異 5: Ingress / Egress mirror ASIC capability チェック
+
+`setUnsetPortMirror()` (`mirrororch.cpp:817-826`) は `SwitchOrch::isPortIngressMirrorSupported()` / `isPortEgressMirrorSupported()` を確認する。Ingress mirror 非対応 ASIC に対して ingress 方向の mirror を設定しようとするとエラーログを出力して `false` を返し、SAI には属性が渡らない（セッション自体は STATE_DB に残る）[^4]。
+
+[^3]: MirrorEntry コンストラクタ platform 分岐: `sonic-swss/orchagent/mirrororch.cpp:57-77`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/mirrororch.cpp#L57>
+
+[^4]: MirrorOrch platform 分岐詳細 (TC / VoQ / HW resource / ASIC capability): `sonic-swss/orchagent/mirrororch.cpp:357-379,817-826,931-938,961-969,1037-1041`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/mirrororch.cpp#L357>
+
+<!-- /platform -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス（ERSPAN 固有）
 
