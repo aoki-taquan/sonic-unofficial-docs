@@ -4,7 +4,7 @@ description: "MCLAG_INTERFACE テーブル — MC-LAG (Multi-Chassis Link Aggreg
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-16
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-mclag.yang
@@ -17,6 +17,12 @@ sources:
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: mclagsyncd/mclaglink.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclaglink.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclag.h
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
@@ -178,6 +184,58 @@ show mclag interface
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-ordering.md`
 <!-- /ordering -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.h / sonic-swss/mclagsyncd/mclag.h / sonic-utilities/config/mclag.py -->
+
+### mclagsyncd 内定数
+
+`mclagsyncd` が MCLAG_INTERFACE エントリを iccpd へ転送する際、以下の定数が適用される。
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `MAX_L_PORT_NAME` | `20` (バイト) | `mclag_iface_cfg_info.mclag_iface[]` 配列長。PortChannel 名の転送上限 | `mclaglink.h:52` |
+| `MCLAG_MAX_SEND_MSG_LEN` | `4096` バイト | mclagsyncd → iccpd 間 IPC 送信バッファ上限。1 メッセージに格納できるインターフェース設定数はこの上限に依存 | `mclag.h:62` |
+| `MCLAG_PROTO_VERSION` | `1` | IPC プロトコルバージョン（固定値。変更不可） | `mclag.h:81` |
+
+> **実運用上の注意**: `MAX_L_PORT_NAME = 20` は null 終端を含む配列長のため、実効上限は **19 バイト**。`PortChannel` (11 文字) + 数字部分 4 桁 = 最大 15 文字 (`CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX = 15`) のため通常の PortChannel 名は範囲内。しかし `strncpy` による無言切り捨てを防ぐため、カスタム名で長い場合は注意が必要。
+
+### CLI 側定数（config/mclag.py）
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `CFG_PORTCHANNEL_PREFIX` | `"PortChannel"` | `if_name` として許可する名前プレフィックス。これ以外のプレフィックスは CLI が拒否 | `config/mclag.py:10` |
+| `CFG_PORTCHANNEL_PREFIX_LEN` | `11` | プレフィックス文字数（`"PortChannel"` の長さ） | `config/mclag.py:11` |
+| `CFG_PORTCHANNEL_MAX_VAL` | `9999` | PortChannel 番号の最大値（`PortChannel0`〜`PortChannel9999`） | `config/mclag.py:12` |
+| `CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX` | `15` | PortChannel 名の最大文字数（`PortChannel9999` = 15 文字） | `config/mclag.py:13` |
+| `if_type` 固定値 | `"PortChannel"` | `config mclag member add` が MCLAG_INTERFACE エントリに書き込む `if_type` の値。`MlagOrch` はこの値を参照しないが、CLI は常に固定で書き込む | `config/mclag.py:293` |
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.h#L52 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  #define MAX_L_PORT_NAME 20
+  struct mclag_iface_cfg_info {
+      int op_type;
+      int domain_id;
+      char mclag_iface[MAX_L_PORT_NAME];
+  };
+reasoning: mclag_iface[] の配列長が MAX_L_PORT_NAME=20 で固定されているため、MCLAG_INTERFACE の if_name (PortChannel 名) は 19 バイトを超えると iccpd 転送時に無言切り捨てされる。通常の命名規則 (CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX=15) では問題ないが、カスタムポート名を使う場合は要注意。
+-->
+
+<!-- evidence:
+source: sonic-utilities/config/mclag.py#L10-L14 (sha: a3e5b4c9fb7a95e213d08f8761e6c94f02a18b41)
+excerpt: |
+  CFG_PORTCHANNEL_PREFIX = "PortChannel"
+  CFG_PORTCHANNEL_PREFIX_LEN = 11
+  CFG_PORTCHANNEL_MAX_VAL = 9999
+  CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX = 15
+  CFG_PORTCHANNEL_NO="<0-9999>"
+reasoning: CLI レベルで MCLAG_INTERFACE の if_name に設定できる PortChannel 名を上記定数で厳格に制限している。YANG leafref は名前の形式を検証しないが、CLI はこれらの定数で事前フィルタする。
+-->
+
+<!-- /constants -->
 
 <!-- cross-refs -->
 ## 暗黙参照マップ (Phase C)
