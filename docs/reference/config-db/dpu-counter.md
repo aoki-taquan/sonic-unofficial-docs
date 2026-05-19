@@ -368,6 +368,95 @@ if (fc_status != prev_enabled)
 > **Evidence**: `sonic-swss/orchagent/flexcounterorch.cpp:156-187,395-398` (warm-reboot タイマー・allPortsReady ガード・無効キー・未サポートフィールド), `sonic-swss/orchagent/dash/dashcounter.h:23-70` (NULL OID ガード・冪等ガード)
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`FlexCounterOrch`・`DashOrch`・`DashCounter` テンプレートおよび `enable_counters.py` に存在する、
+CONFIG_DB / YANG で管理されない実装レベルの固定値一覧。
+
+> **調査根拠**: `dashorch.h:29-33`, `flexcounterorch.cpp:44,60-61`, `dashcounter.h:15`, `enable_counters.py:52-64` 全行精読 (2026-05-19)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-counter-constants.md`
+
+### FlexCounter グループ名リテラル (dashorch.h)
+
+| 定数マクロ | 値 | 用途 | ソース |
+|-----------|-----|------|--------|
+| `ENI_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"ENI_STAT_COUNTER"` | FLEX_COUNTER_DB / COUNTERS_DB における ENI カウンタグループ識別子。`flexCounterGroupMap` への登録キーおよび FLEX_COUNTER_DB ハッシュキーのプレフィックスとして使用される | `dashorch.h:29` |
+| `METER_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"METER_STAT_COUNTER"` | DASH_METER カウンタグループ識別子。同上 | `dashorch.h:32` |
+
+これらの文字列は CONFIG_DB や YANG で変更できない。`flexcounterorch.cpp` の `flexCounterGroupMap` に静的に登録されており (`flexcounterorch.cpp:92-93`)、CONFIG_DB キー `ENI` / `DASH_METER` から固定マッピングで解決される。
+
+### orchagent 内部 polling interval デフォルト (dashorch.h)
+
+| 定数マクロ | 値 | 用途 | ソース |
+|-----------|-----|------|--------|
+| `ENI_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | `DashOrch` コンストラクタで `EniCounter` 初期化時に渡す polling interval。CONFIG_DB `POLL_INTERVAL` が未設定の場合に適用される内部デフォルト | `dashorch.h:30` |
+| `METER_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | 同上、`MeterCounter` 向け | `dashorch.h:33` |
+
+CONFIG_DB に `POLL_INTERVAL` フィールドを書き込むことで上書き可能だが、`enable_counters.py` は `POLL_INTERVAL` を書き込まないため、DPU ノードで自動起動した場合はこのハードコード値 `10000` ms がそのまま維持される。
+
+### warm-start 遅延タイマー (flexcounterorch.cpp)
+
+| 定数マクロ | 値 | 用途 | ソース |
+|-----------|-----|------|--------|
+| `FLEX_COUNTER_DELAY_SEC` | `60` 秒 | warm-start 時に `FlexCounterOrch::doTask(Consumer&)` をブロックする SelectableTimer の満了時間。通常起動では適用されない | `flexcounterorch.cpp:44` |
+
+warm-start 時のみ `FlexCounterOrch` コンストラクタ内でこの値を使って 60 秒タイマーを設定する (`flexcounterorch.cpp:127-136`)。タイマー満了前は `m_delayTimerExpired = false` のため `doTask()` が即 return し、ENI / DASH_METER の SET メッセージは `m_toSync` に保留される。
+
+### enable_counters.py の uptime 境界値・sleep 定数
+
+| リテラル値 | 変数 / コンテキスト | 用途 | ソース |
+|-----------|-------------------|------|--------|
+| `300` 秒 | `if uptime < 300:` | uptime 分岐しきい値。「起動直後」と「安定動作中」を区別 | `enable_counters.py:60` |
+| `180` 秒 | `time.sleep(180)` | uptime < 300 秒の場合の待機時間。orchagent が完全起動するまでの猶予 | `enable_counters.py:61` |
+| `60` 秒 | `time.sleep(60)` | uptime ≥ 300 秒の場合の待機時間 | `enable_counters.py:63` |
+
+これらの定数は `#define` や変数宣言なしのリテラルで、外部から変更不可能。DPU ノード上での `FLEX_COUNTER_STATUS=enable` 書き込み遅延の実装根拠となる。
+
+### DashCounter テンプレートの初期フラグ (dashcounter.h)
+
+| メンバ変数 | 初期値 | 用途 | ソース |
+|-----------|--------|------|--------|
+| `fc_status` | `false` | `DashCounter<CT, TableT>` の polling 有効状態フラグ。`DashOrch` コンストラクタでも `enabled=false` を渡すため二重に無効化される | `dashcounter.h:15` |
+
+CONFIG_DB 未設定時の DashCounter の初期状態は常に `false` (= `disable`)。
+
+### CONFIG_DB キー文字列リテラル (flexcounterorch.cpp)
+
+| 定数マクロ | 値 | 用途 | ソース |
+|-----------|-----|------|--------|
+| `ENI_KEY` | `"ENI"` | `flexCounterGroupMap` でのキー文字列。`FLEX_COUNTER_TABLE|ENI` の `ENI` 部分と一致 | `flexcounterorch.cpp:60` |
+| `DASH_METER_KEY` | `"DASH_METER"` | 同上、`FLEX_COUNTER_TABLE|DASH_METER` の `DASH_METER` 部分 | `flexcounterorch.cpp:61` |
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/dash/dashorch.h#L29-L33 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  #define ENI_STAT_COUNTER_FLEX_COUNTER_GROUP "ENI_STAT_COUNTER"
+  #define ENI_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS 10000
+  #define METER_STAT_COUNTER_FLEX_COUNTER_GROUP "METER_STAT_COUNTER"
+  #define METER_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS 10000
+reasoning: グループ名文字列と polling interval のデフォルト値はマクロ定義でありコードから変更できない
+-->
+
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/flexcounterorch.cpp#L44 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  #define FLEX_COUNTER_DELAY_SEC 60
+reasoning: warm-start 時の FlexCounterOrch ブロック秒数
+-->
+
+<!-- evidence:
+source: sonic-net/sonic-buildimage/dockers/docker-orchagent/enable_counters.py#L59-L64 (sha: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
+excerpt: |
+  uptime = get_uptime()
+  if uptime < 300:
+      time.sleep(180)
+  else:
+      time.sleep(60)
+reasoning: DPU 自動有効化タイミングの根拠となるリテラル定数
+-->
+<!-- /constants -->
+
 ## 制約
 
 - `POLL_INTERVAL`: 100 以上 (uint32 上限 4294967295)
