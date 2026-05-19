@@ -368,6 +368,68 @@ VXLAN_FDB_TABLE エントリ削除によって当該トンネルポートの FDB
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/fdbsyncd/fdbsync.cpp`, `sonic-swss/fdbsyncd/fdbsync.h`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-swss/orchagent/fdborch.cpp`, `sonic-swss/orchagent/orch.cpp`
+> 中間メモ: `meta/_intermediate/cdb-flow/vxlan-fdb-pubsub.md`
+
+### 書き込み側: fdbsyncd が ProducerStateTable を使用
+
+`FdbSync` は `m_fdbTable` を `ProducerStateTable` (`fdbsync.h:88`) として宣言し、コンストラクタ (`fdbsync.cpp:25`) で `APP_VXLAN_FDB_TABLE_NAME` に紐付ける:
+
+```cpp
+// fdbsync.h:88
+ProducerStateTable m_fdbTable;
+
+// fdbsync.cpp:25
+m_fdbTable(pipelineAppDB, APP_VXLAN_FDB_TABLE_NAME)
+```
+
+- SET: `m_fdbTable.set(key, fvVector)` (`fdbsync.cpp:676`) — Lua EVALSHA でアトミックに `SADD VXLAN_FDB_TABLE_KEY_SET <key>`, `HSET _VXLAN_FDB_TABLE:<key> ...`, `PUBLISH VXLAN_FDB_TABLE_CHANNEL@0 G`
+- DEL: `m_fdbTable.del(key)` (`fdbsync.cpp:645`)
+
+warm-restart 中（`isWarmStartInProgress() == true`）は `m_AppRestartAssist->insertToMap(APP_VXLAN_FDB_TABLE_NAME, key, fvs, isDel)` でキャッシュに蓄積し、完了後に reconciliation で一括書き込みする (`fdbsync.cpp:641, 672`)。
+
+### 読み取り側: FdbOrch が ConsumerStateTable で購読
+
+`FdbOrch` は `orchdaemon.cpp:226-235` で `APP_VXLAN_FDB_TABLE_NAME` を含む複数テーブルとともに登録される:
+
+```cpp
+// orchdaemon.cpp:226-235
+vector<table_name_with_pri_t> app_fdb_tables = {
+    { APP_FDB_TABLE_NAME,        FdbOrch::fdborch_pri },  // 優先度 20
+    { APP_VXLAN_FDB_TABLE_NAME,  FdbOrch::fdborch_pri },
+    { APP_MCLAG_FDB_TABLE_NAME,  FdbOrch::fdborch_pri }
+};
+gFdbOrch = new FdbOrch(m_applDb, app_fdb_tables, stateDbFdb, stateMclagDbFdb, gPortsOrch);
+```
+
+`Orch::addConsumer()` (`orch.cpp:1186-1196`) は APPL_DB (dbId ≠ CONFIG_DB/STATE_DB) に対して **`ConsumerStateTable`** を割り当てる。`ConsumerStateTable` は `VXLAN_FDB_TABLE_CHANNEL@0` を SUBSCRIBE し、`ProducerStateTable` 側の PUBLISH を受信してエントリを `pops()` でバッチ取得する。バッチサイズは orchagent グローバルの `gBatchSize`（デフォルト 128、`-b <n>` で変更可）。優先度 `fdborch_pri = 20` (`fdborch.cpp:25`)。
+
+### 購読者一覧
+
+| 購読者 | 購読方式 | テーブル | 優先度 |
+|--------|---------|---------|--------|
+| `orchagent` (FdbOrch) | `ConsumerStateTable` | `VXLAN_FDB_TABLE` | 20 |
+
+CONFIG_DB の keyspace 通知 (`__keyspace@4__:...`) は使用しない。
+
+### 全体フロー
+
+```
+Linux Kernel (netlink RTM_NEWNEIGH)
+  ↓
+fdbsyncd (FdbSync::onMsgNbr)
+  ↓ m_fdbTable.set/del()  ProducerStateTable
+APPL_DB VXLAN_FDB_TABLE (_VXLAN_FDB_TABLE:<key> / VXLAN_FDB_TABLE_KEY_SET)
+  ↓ VXLAN_FDB_TABLE_CHANNEL@0 PUBLISH
+orchagent FdbOrch (ConsumerStateTable)
+  ↓ doTask() → SAI sai_fdb_api
+ASIC
+```
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
