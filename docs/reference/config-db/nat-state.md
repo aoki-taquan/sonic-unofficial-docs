@@ -457,3 +457,60 @@ YANG 定義外の実行時テーブルのためコード hardcode 値のみ。
 `COUNTERS_GLOBAL_NAT|Values` の `TIMEOUT`/`TCP_TIMEOUT`/`UDP_TIMEOUT` フィールドは NatOrch 起動時に一度だけ書き込まれ、その後 CONFIG_DB の `NAT_GLOBAL.nat_timeout` が変更されても**更新されない**。`show nat statistics` の timeout 表示は起動時の初期値を反映したものになる可能性がある。実際のタイムアウト値は `show nat config globalvalues` で確認すること。
 
 <!-- /defaults -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`NAT_RESTORE_TABLE` / `COUNTERS_NAT*` テーブル群の挙動に影響するプラットフォーム固有の差異を整理する。
+
+### DNAT ネクストホップ追跡 — Broadcom 専用機能
+
+`NatOrch` コンストラクタ (`natorch.cpp:144-148`) で `platform` 環境変数を確認し、`"broadcom"` が含まれる場合に限り `gNhTrackingSupported = true` にセットする。
+
+```cpp
+char *platform = getenv("platform");
+if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
+{
+    gNhTrackingSupported = true;
+}
+```
+
+`BRCM_PLATFORM_SUBSTRING` は `orch.h:43` で `"broadcom"` と定義されている。
+
+#### gNhTrackingSupported が影響するカウンタ関連挙動
+
+| 条件 | DNAT エントリの追加挙動 | COUNTERS_NAT への影響 |
+|------|----------------------|----------------------|
+| Broadcom (`gNhTrackingSupported == true`) | DNAT エントリはネクストホップ解決待ちキャッシュ (`m_nhResolvingDnatEntries`) に格納される。ネクストホップが解決されたとき `addHwDnatEntry()` が呼ばれ SAI にプログラムされる。その後 `updateNatCounters()` / `COUNTERS_NAT` が書き込まれる | ネクストホップ未解決時は `COUNTERS_NAT` にエントリが存在しない（SAI エントリなし） |
+| 非 Broadcom (`gNhTrackingSupported == false`) | `addHwDnatEntry()` が即時呼ばれ SAI にプログラムされる。カウンタはその直後に初期化される | `COUNTERS_NAT` エントリが即時作成される |
+
+この差異は DNAT（宛先 NAT）エントリの `COUNTERS_NAT` テーブルへの書き込みタイミングに影響する。SNAT エントリの処理は `gNhTrackingSupported` に依存しない。<!-- evidence: natorch.cpp L1921-1932, L1957-1968 -->
+
+### MAX_NAT_ENTRIES — SAI 問い合わせ成否によるプラットフォーム差
+
+`NatOrch` コンストラクタ (`natorch.cpp:111-122`) で `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を問い合わせる。SAI 実装がこの属性をサポートしない場合 (`status != SAI_STATUS_SUCCESS`) は `maxAllowedSNatEntries = 0` のままとなり、`COUNTERS_GLOBAL_NAT|Values` の `MAX_NAT_ENTRIES` フィールドに `"0"` が書き込まれる。
+
+| SAI 実装 | SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY | COUNTERS_GLOBAL_NAT MAX_NAT_ENTRIES |
+|---------|-------------------------------------|-------------------------------------|
+| サポートあり | 実際の上限値を返す | 上限値 (例: `"4096"`) |
+| サポートなし / エラー | `SAI_STATUS_SUCCESS` 以外 | `"0"` (ハードウェア上限不明) |
+
+`MAX_NAT_ENTRIES == "0"` であっても NAT エントリの追加は試みられる（ガードなし）。ハードウェア上限超過は `create_nat_entry()` の戻り値 (`SAI_STATUS_INSUFFICIENT_RESOURCES` 等) で検出される。<!-- evidence: natorch.cpp L107-135 -->
+
+### NAT_RESTORE_TABLE — warm reboot 対応状況
+
+`STATE_DB:NAT_RESTORE_TABLE` は warm reboot シナリオ専用のテーブルである。`restore_nat_entries.py` が warm reboot 時のみ動作するため、通常起動では `NAT_RESTORE_TABLE|Flags` は存在しない。NAT docker を含まない（NAT 機能が無効化された）プラットフォーム構成では `restore_nat_entries.py` が実行されず、warm reboot 後も `NAT_RESTORE_TABLE|Flags.restored` が `"true"` にならない。この場合 `natsyncd` の `isNatRestoreDone()` は永遠に `false` を返し、reconciliation が開始されない。<!-- evidence: natsync.cpp:96-108, restore_nat_entries.py:49-52 -->
+
+### プラットフォーム差サマリ
+
+| 差異点 | 条件 | テーブルへの影響 |
+|--------|------|----------------|
+| DNAT カウンタ書込みタイミング | `platform` 環境変数に `"broadcom"` を含む → `gNhTrackingSupported=true` | DNAT 用 `COUNTERS_NAT` エントリがネクストホップ解決後に遅延作成 |
+| DNAT カウンタ書込みタイミング | `"broadcom"` を含まない → `gNhTrackingSupported=false` | DNAT 用 `COUNTERS_NAT` エントリが即時作成 |
+| `MAX_NAT_ENTRIES` | SAI が `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` をサポートするか否か | `"0"` (不明) または実上限値 |
+| `NAT_RESTORE_TABLE` の存在 | NAT 機能有効 + warm reboot | `restored="true"` が書き込まれる |
+| `NAT_RESTORE_TABLE` の存在 | 通常起動 / NAT 機能無効 | テーブルエントリなし |
+
+> **スキャン証跡**: `natorch.cpp` L44 (`gNhTrackingSupported` 定義), L107-148 (コンストラクタ — platform チェックと SAI 問い合わせ), L1921-1932 (addNatEntry DNAT パス), L1957-1968 (removeNatEntry DNAT パス), `orch.h:43` (`BRCM_PLATFORM_SUBSTRING` 定義), `natsync.cpp:96-108` (isNatRestoreDone), `restore_nat_entries.py:49-52` (STATE_DB hset)。中間ファイル: `meta/_intermediate/cdb-flow/nat-state-platform.md`
+
+<!-- /platform -->
