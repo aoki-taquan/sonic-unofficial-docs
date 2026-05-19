@@ -150,6 +150,53 @@ CONFIG_DB 削除が SAI に反映されない（`vxlanorch.cpp:2803-2807`, `vxla
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+EVPN DIP トンネルは CONFIG_DB に直接テーブルを持たないため YANG `leafref` 制約は存在しない。
+しかし DIP トンネルを生成・VLAN flood domain に参加させるまでの処理チェーンに複数の暗黙参照が存在する。
+
+### YANG leafref (sonic-vxlan.yang)
+
+`VXLAN_EVPN_TUNNEL` テーブル自体は YANG モデル化されていない。関連テーブルの leafref は以下の 2 点のみ:
+
+| テーブル | フィールド | leafref 先 | 根拠 |
+|---------|-----------|-----------|------|
+| `VXLAN_EVPN_NVO` | `source_vtep` | `VXLAN_TUNNEL_LIST/name` | `sonic-vxlan.yang:123-124` |
+| `VXLAN_TUNNEL_MAP` | `name` | `VXLAN_TUNNEL_LIST/name` | `sonic-vxlan.yang:75-76` |
+
+VLAN への leafref (`VXLAN_TUNNEL_MAP.name → VLAN.name`) はコメントアウトされており未実施 (`sonic-vxlan.yang:89-90`)。
+
+### 暗黙参照テーブル一覧
+
+| # | 参照先 | 方向 | 強制度 | 意味 | 根拠 |
+|---|--------|------|--------|------|------|
+| 1 | `CONFIG_DB VXLAN_EVPN_NVO` | 読み取り (EvpnNvoOrch::getEVPNVtep()) | **必須** (NULL → silent drop) | EVPN VTEP ポインタが NULL の場合 `addTunnelUser()` は即 `false` を返しトンネル生成をスキップ | `vxlanorch.cpp:1685-1692` |
+| 2 | `CONFIG_DB VXLAN_TUNNEL` | 読み取り (VxlanTunnel::isActive()) | **必須** (false → silent drop) | VTEP ポインタが非 NULL でも `isActive()` が false の場合 `addTunnelUser()` は `false` を返す | `vxlanorch.cpp:1694-1699` |
+| 3 | `CONFIG_DB VXLAN_TUNNEL_MAP` | 読み取り (isVniVlanMapExists()) | **必須** (未存在 → return false) | `EvpnRemoteVnip2pOrch::addOperation()` で VNI-VLAN マップ未存在なら処理中断。コード注記: `"Remote end point can be added only after local VLAN to VNI map gets created"` | `vxlanorch.cpp:2490-2494` |
+| 4 | `CONFIG_DB VLAN` (PortsOrch) | 読み取り (getVlanByVlanId()) | **必須** (未存在 → return false) | VLAN が PortsOrch に未登録の場合 `addOperation()` は処理を中断。DIP トンネルポートを VLAN flood domain へ参加させる前提 | `vxlanorch.cpp:2483-2487` |
+| 5 | `APP_DB EVPN_REMOTE_VNI_TABLE` | 読み取り (EvpnRemoteVnip2pOrch subscribe) | 起動トリガ | BGP EVPN が学習したリモート VTEP を fpmsyncd が書き込み、`EvpnRemoteVnip2pOrch` が購読して DIP トンネル生成を開始 | `vxlanorch.cpp:2447-2520` |
+| 6 | `STATE_DB VXLAN_TUNNEL_TABLE` | 書き込み (m_stateVxlanTable.set()) | 書き込み先 | DIP トンネル生成後に `src_ip`, `dst_ip`, `tnl_src="EVPN"`, `operstatus` を書き込む。削除時は del | `vxlanorch.cpp:1910`, `1928-1953` |
+
+### 参照グラフ
+
+```
+fpmsyncd (BGP EVPN type-2/3)
+  └─→ APP_DB EVPN_REMOTE_VNI_TABLE
+        └─→ EvpnRemoteVnip2pOrch::addOperation()
+              ├─[必須] CONFIG_DB VXLAN_EVPN_NVO  ─→ getEVPNVtep() ── NULL → skip
+              ├─[必須] CONFIG_DB VXLAN_TUNNEL     ─→ isActive()    ── false → skip
+              ├─[必須] CONFIG_DB VXLAN_TUNNEL_MAP ─→ isVniVlanMapExists() ── 未存在 → return false
+              ├─[必須] CONFIG_DB VLAN             ─→ getVlanByVlanId()     ── 未存在 → return false
+              └─→ addTunnelUser() ─→ createDynamicDIPTunnel()
+                    └─→ STATE_DB VXLAN_TUNNEL_TABLE (tnl_src="EVPN", operstatus="down"→"up")
+```
+
+詳細解析: `meta/_intermediate/cdb-flow/vxlan-evpn-tunnel-cross-refs.md`
+
+<!-- evidence: vxlanorch.cpp:1685-1699 (addTunnelUser VTEP ガード); vxlanorch.cpp:2483-2494 (VLAN + VNI-VLAN マップ確認); vxlanorch.cpp:2516 (addTunnelUser 呼び出し); vxlanorch.cpp:1910,1928-1953 (STATE_DB 書き込み); sonic-vxlan.yang:75-76,89-90,123-124 (leafref) -->
+<!-- /cross-refs -->
+
 ## 例外条件・特殊挙動
 
 - **isDipTunnelsSupported() = false の場合**: DIP トンネルは作成されず、リモート VTEP の
