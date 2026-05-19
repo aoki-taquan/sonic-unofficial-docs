@@ -524,4 +524,68 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-trimming-pubsub.md`
+
+### Redis 購読方式 — swsscommon SubscriberStateTable
+
+`SWITCH_TRIMMING` テーブルへの変更は、`orchagent` の `SwitchOrch` が **`swsscommon.SubscriberStateTable`** で受信する。これは `hostcfgd` 系テーブル（`ConfigDBConnector.subscribe()` による keyspace 通知直接受信）とは異なり、`Orch` 基底クラスの `addConsumer()` 経由で登録される。
+
+```cpp
+// orchdaemon.cpp L200, L204-214
+TableConnector conf_switch_trim(m_configDb, CFG_SWITCH_TRIMMING_TABLE_NAME);
+vector<TableConnector> switch_tables = { ..., conf_switch_trim, ... };
+gSwitchOrch = new SwitchOrch(m_applDb, switch_tables, stateDbSwitchTable);
+
+// orch.cpp L1186-1190
+void Orch::addConsumer(DBConnector *db, string tableName, int pri) {
+    addExecutor(new Consumer(
+        new SubscriberStateTable(db, tableName, ...),  // keyspace PSUBSCRIBE
+        this, tableName));
+}
+```
+
+| 購読者 | 購読方式 | 購読テーブル | ハンドラ |
+|--------|---------|------------|--------|
+| `orchagent` (`SwitchOrch`) | `SubscriberStateTable` (keyspace PSUBSCRIBE) | `SWITCH_TRIMMING` (CONFIG_DB) | `doCfgSwitchTrimmingTableTask()` |
+
+`SwitchOrch` 以外で `SWITCH_TRIMMING` を購読するプロセスは存在しない。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config switch-trimming size 128 dscp-value 10 queue-index dynamic
+  ↓ HSET "SWITCH_TRIMMING|GLOBAL" size "128" dscp_value "10" queue_index "dynamic"
+SubscriberStateTable: __keyspace@4__:SWITCH_TRIMMING|GLOBAL  hset
+  ↓ orchagent select() ループ (SELECT_TIMEOUT = 1000 ms)
+  ↓ Consumer::execute() → SwitchOrch::doTask()
+  ↓ tableName == CFG_SWITCH_TRIMMING_TABLE_NAME
+  ↓ doCfgSwitchTrimmingTableTask(consumer)
+  ↓ parseTrimConfig() → validateTrimConfig()
+  ↓ setSwitchTrimming()
+      ├─ setSwitchTrimmingSizeSai()       → SAI_SWITCH_ATTR_PACKET_TRIM_SIZE
+      ├─ setSwitchTrimmingDscpModeSai()   → SAI_SWITCH_ATTR_PACKET_TRIM_DSCP_RESOLUTION_MODE
+      ├─ setSwitchTrimmingDscpSai()       → SAI_SWITCH_ATTR_PACKET_TRIM_DSCP_VALUE
+      └─ setSwitchTrimmingQueueIndexSai() → SAI_SWITCH_ATTR_PACKET_TRIM_QUEUE_INDEX
+```
+
+- `SubscriberStateTable` は内部で Redis keyspace notification を PSUBSCRIBE しており、pop 操作で `(key, op, fields)` タプルが返る。
+- DB number は CONFIG_DB の通常 4（`database_config.json` 既定）。
+- `ProducerStateTable` / channel ベース `PUBLISH/SUBSCRIBE` は使用しない。
+
+### 通知発行側（生産者）
+
+| 書き込み経路 | 方式 | 備考 |
+|------------|------|------|
+| `config switch-trimming ...` CLI | `ConfigDBConnector.set_entry()` → `HSET` | `sonic-utilities/config/plugins/sonic-trimming.py` |
+| `sonic-db-cli CONFIG_DB hset 'SWITCH_TRIMMING\|GLOBAL' ...` | 直接 `HSET` | テスト・手動操作 |
+
+いずれも CONFIG_DB に直接 `HSET` するだけで、`ProducerStateTable` による channel publish を行わない。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:200,204-214` (TableConnector 登録)、`orchagent/orch.cpp:127-132,1186-1190` (Orch / addConsumer / SubscriberStateTable)、`orchagent/switchorch.cpp:1505-1515` (doTask ルーティング)、`orchagent/switchorch.cpp:1309-1371` (doCfgSwitchTrimmingTableTask); 詳細分析 `meta/_intermediate/cdb-flow/switch-trimming-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->
