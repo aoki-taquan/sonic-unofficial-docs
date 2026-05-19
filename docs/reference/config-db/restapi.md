@@ -332,4 +332,87 @@ REST/gNMI 書き込み経路なし
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh,
+     sonic-buildimage/dockers/docker-sonic-mgmt-framework/supervisord.conf,
+     sonic-utilities/scripts/db_migrator.py L608-619 -->
+
+RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込みするため、失敗は **起動時点** (静的) と **証明書生成時点** の 2 フェーズに集中する。orchagent/syncd のような実行時 retry ループは存在しない。
+
+### `mgmt_vars.j2` テンプレートファイル未存在 → EXIT_MGMT_VARS_FILE_NOT_FOUND (exit 1)
+
+`rest-server.sh` の先頭で `/usr/share/sonic/templates/mgmt_vars.j2` の存在確認を行う (`rest-server.sh:6-9`)。
+
+| 条件 | 動作 |
+|------|------|
+| ファイルが存在しない | `echo "Mgmt vars template file not found"` → `exit 1` |
+| supervisord の `autorestart=true` | 即座に再起動 (無限ループ)。テンプレートが復元されるまで回復しない |
+
+コンテナイメージが壊れているか、`/usr/share/sonic/templates/` ディレクトリがマウントに失敗した場合に発生する。RESTAPI テーブルの内容とは無関係にコンテナが起動不能になる。
+
+### `sonic-cfggen -d -t mgmt_vars.j2` 失敗 → REST_SERVER 変数が空
+
+`MGMT_VARS=$(sonic-cfggen -d -t $MGMT_VARS_FILE)` が失敗または空を返した場合 (`rest-server.sh:12`)、`REST_SERVER` / `X509` 変数が全て未設定になる。
+
+| ケース | 結果 |
+|--------|------|
+| CONFIG_DB に `RESTAPI` テーブルなし | `CLIENT_AUTH="user"` のフォールバックが適用される。証明書も未設定 → `/tmp/` に自己署名証明書を自動生成して起動 |
+| `sonic-cfggen` プロセス自体が失敗 (非ゼロ exit) | bash の `set -e` は使用されていないため、空変数のまま続行。自己署名証明書で起動 |
+| Redis 未起動 / CONFIG_DB 接続失敗 | `sonic-cfggen` が空出力を返す → 同上の自動生成パスへ |
+
+### 証明書自動生成 (`generate_cert`) 失敗
+
+`RESTAPI|certs` も `DEVICE_METADATA|localhost.x509` も未設定の場合、`/usr/sbin/generate_cert --host="localhost,127.0.0.1"` が実行される (`rest-server.sh:46-49`)。
+
+| 失敗原因 | 結果 |
+|---------|------|
+| `generate_cert` バイナリ不存在 | bash はエラーを出力して続行。`SERVER_CRT=/tmp/cert.pem` が設定されるが、ファイルは存在しない |
+| `/tmp/` の書き込み権限なし | `generate_cert` が失敗。`SERVER_CRT` / `SERVER_KEY` 変数にパスが設定されたまま `rest_server` 起動 → TLS 設定失敗で `rest_server` が異常終了 |
+| `rest_server` の TLS init 失敗 | `rest_server` 側で致命的エラー → プロセス終了 → supervisord が `autorestart=true` で再起動 |
+
+### 証明書ファイルパスの実在チェックなし
+
+`rest-server.sh` は `RESTAPI|certs` で指定されたパスの **実在を確認しない**。存在しないパスをそのまま `-cert` / `-key` / `-cacert` 引数として `rest_server` に渡す。
+
+| 状態 | 結果 |
+|------|------|
+| `server_crt` / `server_key` が指すファイルが存在しない | `rest_server` が TLS 初期化に失敗して即終了 |
+| supervisord `autorestart=true` | 証明書ファイルが復元されるまで無限再起動 |
+| `ca_crt` が指すファイルのみ存在しない (クライアント認証なし) | `client_auth=user` であれば `ca_crt` は参照されず起動に影響しない場合がある |
+
+### runtime 中の RESTAPI テーブル変更 → 反映されない
+
+`rest-server.sh` は起動時に **一度だけ** CONFIG_DB を読み込む。実行中に `RESTAPI` テーブルを変更しても `rest_server` プロセスには通知されない。
+
+| 操作 | 挙動 |
+|------|------|
+| `sonic-db-cli CONFIG_DB hset 'RESTAPI|config' client_auth cert` | 反映されない。既存の `rest_server` は変更前の設定で稼働継続 |
+| `docker restart mgmt-framework` | コンテナ再起動時に `rest-server.sh` が新しい値を読み直す |
+
+### db_migrator 失敗 → アップグレード後も旧設定が残留
+
+`db_migrator.py` の `migrate_restapi()` はアップグレード時に `config_src_data` が存在しないと早期リターンする (`db_migrator.py:610-611`)。
+
+| 条件 | 結果 |
+|------|------|
+| `config_src_data` が None / `RESTAPI` キーなし | `migrate_restapi()` が即 return。移行なし |
+| `RESTAPI|config` が既存エントリとして存在 | 上書きしない (`db_migrator.py:614-616`)。旧フォーマットが残留しても強制変換されない |
+
+これは設計上の安全策（手動設定保護）であるが、アップグレード後に `config` / `certs` が古い形式のまま残るリスクがある。
+
+### 失敗パス要約
+
+| ケース | ログ | retry/recovery | サービス影響 |
+|--------|------|----------------|--------------|
+| `mgmt_vars.j2` 未存在 | stderr `"Mgmt vars template file not found"` | supervisord 無限再起動 | REST API 完全不能 |
+| `sonic-cfggen` 失敗 | 出力なし (空変数) | 自己署名証明書で起動を試みる | 機能低下（非本番証明書） |
+| 証明書ファイル不存在 | `rest_server` stderr | supervisord 無限再起動 | REST API 完全不能 |
+| `generate_cert` 失敗 | stderr | supervisord 再起動 | REST API 起動失敗 |
+| runtime 設定変更 | なし | コンテナ再起動が必要 | 変更反映なし |
+| db_migrator 早期 return | `log_notice` 出力なし | 手動再移行が必要 | 旧設定残留 |
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
