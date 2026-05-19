@@ -550,6 +550,28 @@ rclient.HDel(ctx, table, key)             // 切断時
 詳細根拠は `meta/_intermediate/cdb-flow/gnmi-server-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+gNMI サブシステム (`telemetry` / `dialout_client_cli`) は GNMI / GNMI_CLIENT_CERT / TELEMETRY_CLIENT の消費に加え、セッション状態・証明書メタデータ・再起動通知を他 DB / 外部リソースへ副次的に書き込む。
+
+| 副次 DB / リソース | テーブル / キー | 書込内容 | トリガ | evidence |
+|---|---|---|---|---|
+| STATE_DB | `TELEMETRY_CONNECTIONS` (Hash) | field = `<peer_ip:port>\|<target>\|...\|<RFC3339>`, value = `"active"` — Subscribe RPC 接続を追跡 | dial-in Subscribe RPC の開始 (`HSet`) / 終了 (`HDel`); 起動時に全エントリを削除 (`PrepareRedis`) | `connection_manager.go:52–60, 116, 127` |
+| STATE_DB | `CREDENTIALS\|<tbl>[|<key>]` (Hash) | gNSI Certz RPC が証明書メタデータを `fld=val` 形式で記録 | gNSI Certz 証明書インストール RPC | `gnsi_certz.go:1046–1051` |
+| STATE_DB | `Reboot_Request_Channel` (Redis PUBLISH) | gNOI System Reboot RPC がリブート要求メッセージを publish; 応答を同チャネルで受信 | gNOI `Reboot` RPC 呼び出し | `gnoi_system.go:27, 117` via `common_utils/notification_producer.go:91` |
+| ファイルシステム | `/etc/sonic/config_db.json` | `GNMI\|gnmi.save_on_set=true` のとき、Set RPC 完了後に `dbus ConfigSave` で startup-config を上書き | gNMI Set RPC 実行後 | `server.go:1051–1063` `SaveOnSetEnabled()` |
+| SysV IPC 共有メモリ | key=`7749`, size=1024 B | gNMI サーバ起動時に `InitCounters()` で 32 カウンタスロットを初期化; `IncCounter()` で更新 | `NewServer()` 初期化 (`server.go:528`) | `common_utils/context.go`, `common_utils/shareMem.go` |
+
+!!! note "APPL_DB / COUNTERS_DB / ASIC_DB への書込なし"
+    `gnmi_server` パッケージには `swsscommon.ProducerStateTable` / `NotificationProducer` の APPL_DB 書込インスタンスは存在しない。カウンタは SysV IPC 共有メモリにのみ記録され、`gnmi_dump` ツール経由で参照できるが COUNTERS_DB には書き込まれない。
+
+!!! note "TELEMETRY_CONNECTIONS の threshold 連動"
+    `GNMI\|gnmi.threshold` (デフォルト `100`) が満たされると新規 Subscribe RPC を拒否し、STATE_DB への `HSet` も行われない (`connection_manager.go:65`)。`threshold=0` は無制限。
+
+詳細な証跡は `meta/_intermediate/cdb-flow/gnmi-server-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
