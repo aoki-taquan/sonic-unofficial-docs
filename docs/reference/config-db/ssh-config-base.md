@@ -313,6 +313,41 @@ SSH_CONFIG_NAMES = {
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-side.md`
+
+CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書換とサービス再起動に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|--------|---------|------|
+| APPL_DB | なし | `SshServer` および `PamLimitsCfg` クラス全域（`hostcfgd` L1020–1490）に `set(` / `hset(` / `Producer` / `Notification` 呼出が 0 件 |
+| STATE_DB | なし | `hostcfgd` の `STATE_DB` 書込は `FipsCfg`（L1759–1821）と `RestartWaiter`（L2160–2162）のみ。SSH 処理パスには存在しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。SSH は SAI 非経由でスイッチ ASICと無関係 |
+| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由。`orchagent` は `SSH_SERVER` テーブルを購読しない |
+
+### Linux ホスト OS への副次書込（DB 外）
+
+`SshServer.set_policies()` および `PamLimitsCfg` が行うファイルシステム側の副次書込を以下に示す。
+
+| 書込先 | 操作 | 条件 | 根拠 |
+|-------|------|------|------|
+| `/etc/ssh/sshd_config` | `copy2` → `modify_single_file_inplace` → `os.rename` | `set_policies()` 実行時（フィールド変更のたびに必ず実行） | `hostcfgd` L1113, L1142, L1152 |
+| `ssh.service` | `systemctl restart ssh` | `sshd -T` 検証が成功した場合のみ | `hostcfgd` L1154 |
+| `/etc/security/limits.conf` | Jinja2 テンプレート (`limits.conf.j2`) から再生成 | `PamLimitsCfg.update_config_file()` 呼出時 | `hostcfgd` L1469–1476 |
+| `/etc/pam.d/pam-limits-conf` | Jinja2 テンプレート (`pam_limits.j2`) から再生成 | 同上 | `hostcfgd` L1460–1466 |
+
+`systemctl restart ssh` は既存 SSH セッションを切断しないが、新規接続受付が瞬断する（`sshd -T` 検証付きのため安全）。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1020-1170 (SshServer クラス全体) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1410-1490 (PamLimitsCfg クラス全体) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1154 (systemctl restart ssh) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1460-1476 (render_conf_file PAM) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1759-1821 (FipsCfg STATE_DB 参照) -->
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
