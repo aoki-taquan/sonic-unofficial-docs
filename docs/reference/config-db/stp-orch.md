@@ -1,6 +1,6 @@
 ---
 title: APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
-description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズムを詳解。Phase A+B+C+D+E+F+G 分析。"
+description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズム・プラットフォーム差を詳解。Phase A+B+C+D+E+F+G+H 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -35,7 +35,7 @@ related:
 # APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
 
 !!! info "ページの位置付け"
-    このページは orchagent (`StpOrch`) が購読する **APPL_DB の STP 関連 4 テーブル** のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・失敗挙動・ハードコード定数・副作用・Redis 通知メカニズムを詳述する Phase A-G 分析ページ。
+    このページは orchagent (`StpOrch`) が購読する **APPL_DB の STP 関連 4 テーブル** のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・失敗挙動・ハードコード定数・副作用・Redis 通知メカニズム・プラットフォーム差を詳述する Phase A-H 分析ページ。
     CONFIG_DB 側のデフォルト (STP/STP_VLAN/STP_PORT テーブル) は [STP/STP_VLAN/STP_PORT テーブル](stp.md) を参照。
 
 ## 概要
@@ -718,6 +718,62 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 | stpmgrd ← STATE_DB `STP_TABLE` | `swss::Table::get()` ポーリング (最大 60 秒、1 秒間隔) | PUBLISH 非購読 |
 
 <!-- /pubsub -->
+
+<!-- platform -->
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-platform.md -->
+
+## プラットフォーム差 (Phase H)
+
+`StpOrch` は `AclOrch` のような平文プラットフォーム文字列比較を**行わない**。ASIC 差異はすべて SAI 抽象レイヤ経由で吸収される。ただし初期化時の SAI 照会結果と SAI 実装状況によって動作が変わる。
+
+### 初期化時 SAI 照会 (stporch.cpp:28-40)
+
+`StpOrch::StpOrch()` のコンストラクタで `sai_switch_api->get_switch_attribute(gSwitchId, ...)` を呼び出し、2 つの ASIC 由来値を取得する。
+
+| SAI 属性 | 格納先 | 用途 | 取得失敗時 |
+|----------|--------|------|-----------|
+| `SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID` | `m_defaultStpId` | VLAN を STP インスタンスから切り離す際に「デフォルト STP インスタンスへ戻す」操作で参照 (`stporch.cpp:178`) | 未初期化のまま動作継続 (silent failure) |
+| `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` | `m_maxStpInstance` (`= max - 1`) | `STATE_DB STP\|GLOBAL.max_stp_inst` に書き込み → `stpmgrd` がインスタンス上限として使用 | STATE_DB への書き込みが行われず、stpmgrd のポーリングがタイムアウト後に `STP_DEFAULT_MAX_INSTANCES = 255` にフォールバック (`stpmgr.h:38`, `stpmgr.cpp:1407-1410`) |
+
+`SAI_STATUS_SUCCESS` 以外が返った場合は `SWSS_LOG_NOTICE("StpOrch initialization failure")` を出力して **処理を中断せず** 続行する (`stporch.cpp:42`)。
+
+### ASIC ベンダー別 SAI 対応状況
+
+`SAI_SWITCH_ATTR_MAX_STP_INSTANCE` の返却値は ASIC ベンダーの SAI 実装に依存する。
+
+| ASIC / プラットフォーム | `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` 取得 | 実効 `m_maxStpInstance` | 補足 |
+|---|---|---|---|
+| Broadcom XGS (非 DNX) | 実装済み | ASIC 型番依存 (例: Tomahawk3 = 4096) | SAI 実装が充実している |
+| Broadcom DNX / Jericho | 実装依存 | ASIC 型番依存 | DNX は SAI STP サポートが限定的 |
+| Mellanox Spectrum | 実装済み | 通常 512–1024 | SAI 実装済み |
+| VS (Virtual Switch) | 取得成功 (SAI vs 実装) | 通常返却値あり | テスト環境では成功するが値はダミー |
+| SAI 未実装 ASIC | `SAI_STATUS_NOT_SUPPORTED` など | 255 (stpmgrd フォールバック) | `StpOrch` 初期化は failure だが継続 |
+
+### ブリッジポート依存 (stporch.cpp:218-247)
+
+`addStpPort()` は `SAI_STP_PORT_ATTR_BRIDGE_PORT` に `port.m_bridge_port_id` を設定するため、**ポートが 802.1D ブリッジモード (1D bridge) で動作していること** が前提条件となる。
+
+- `port.m_bridge_port_id == SAI_NULL_OBJECT_ID` の場合は `PortsOrch` に `getBridgePort()` で取得を試み、それも失敗するとエラーログを出して `SAI_NULL_OBJECT_ID` を返す (SAI 呼び出し不実施)
+- これは ASIC がネイティブ VLAN モードで動作している環境や、ブリッジポートがまだ作成されていないポートで STP ポートを作成しようとした場合に起こる
+
+### SAI STP ポート状態の制約 (stporch.cpp:316-352)
+
+SAI が定義する STP ポート状態は 3 種類のみで、IEEE 802.1D の 5 状態より少ない。
+
+| SONiC STP 状態 (stporch.h) | マップ先 SAI 状態 | 備考 |
+|---------------------------|-------------------|------|
+| DISABLED (0) | `SAI_STP_PORT_STATE_BLOCKING` | SAI に DISABLED 状態なし |
+| BLOCKING (1) | `SAI_STP_PORT_STATE_BLOCKING` | 直接マップ |
+| LISTENING (2) | `SAI_STP_PORT_STATE_BLOCKING` | SAI に LISTENING 状態なし |
+| LEARNING (3) | `SAI_STP_PORT_STATE_LEARNING` | 直接マップ |
+| FORWARDING (4) | `SAI_STP_PORT_STATE_FORWARDING` | 直接マップ |
+
+この制約は SAI API 仕様レベルの制約であり、特定 ASIC 固有の問題ではなく **すべての ASIC** に適用される。
+
+!!! warning "SAI 初期化失敗時の挙動"
+    `sai_switch_api->get_switch_attribute()` が失敗した場合、`m_defaultStpId` と `m_maxStpInstance` は未初期化のままになる。その状態で `STP_VLAN_INSTANCE_TABLE` の SET が来ると `removeVlanFromStpInstance()` で未初期化の `m_defaultStpId` が使われ、予期しない SAI オブジェクト操作につながる可能性がある (`stporch.cpp:178`)。
+
+<!-- /platform -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
