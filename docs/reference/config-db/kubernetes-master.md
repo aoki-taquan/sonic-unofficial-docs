@@ -160,6 +160,47 @@ join 成功直後に `set_node_labels()` → `LabelsPendingHandler.update_node_l
 詳細調査ノートは `meta/_intermediate/cdb-flow/kubernetes-master-failure.md` 参照。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/kubernetes-master-constants.md -->
+<!-- source: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py ref:9ea932ec -->
+<!-- source: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-kubernetes_master.yang ref:9ea932ec -->
+
+`ctrmgrd` に埋め込まれた、CONFIG_DB / YANG で管理されないハードコード定数の一覧。タイミング制御定数のデフォルト値はすべて `remote_ctr_config` 辞書（`ctrmgrd.py:111-119`）に集約されており、`/etc/sonic/remote_ctr.config.json` が存在する場合のみ上書きされる。標準インストールではファイルが存在しないため常にハードコードデフォルトが使用される。
+
+### タイミング制御定数 (`remote_ctr_config` デフォルト)
+
+| 定数名 | キー文字列 | デフォルト値 | 用途 |
+|-------|----------|------------|------|
+| `JOIN_LATENCY` | `"join_latency_on_boot_seconds"` | `10` 秒 | 初回起動時に kubelet join を遅延させる待機時間（`STATE_DB:KUBERNETES_MASTER\|SERVER.update_time` が空 = 初回起動時のみ適用） |
+| `JOIN_RETRY` | `"retry_join_interval_seconds"` | `10` 秒 | `kube_join_master()` 失敗時のリトライ間隔（join 成功まで無制限に繰り返す） |
+| `LABEL_RETRY` | `"retry_labels_update_seconds"` | `2` 秒 | `kube_write_labels()` 失敗時のリトライ間隔（ラベル書き込み成功まで無制限に繰り返す） |
+| `TAG_IMAGE_LATEST` | `"tag_latest_image_on_wait_seconds"` | `5` 秒 | 最新イメージへのタグ付け待機時間 |
+| `TAG_RETRY` | `"retry_tag_latest_seconds"` | `5` 秒 | タグ付け失敗時のリトライ間隔 |
+| `CLEAN_IMAGE_RETRY` | `"retry_clean_image_seconds"` | `5` 秒 | 古いイメージ削除失敗時のリトライ間隔 |
+| `USE_K8S_PROXY` | `"use_k8s_as_http_proxy"` | `""` (空文字) | K8s を HTTP プロキシとして使用するかどうか（空 = 無効） |
+
+> **上書きファイル**: `SONIC_CTR_CONFIG = "/etc/sonic/remote_ctr.config.json"` (`ctrmgrd.py:23`) が存在する場合のみ上記デフォルトを上書きできる。標準 SONiC インストールではこのファイルは配置されない。
+
+### select ループタイムアウト
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `MainServer.SELECT_TIMEOUT` | `1000` ms | `select()` ループのタイムアウト。1 秒ごとに wakeup して pending タイマー処理を確認する | `ctrmgrd.py:181` |
+
+### テーブル・キー文字列定数
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `SERVER_TABLE` | `"KUBERNETES_MASTER"` | CONFIG_DB / STATE_DB テーブル名 |
+| `SERVER_KEY` | `"SERVER"` | テーブル内の固定キー名（単一 container） |
+| `KUBE_LABEL_TABLE` | `"KUBE_LABELS"` | join 後のノードラベル書き込み先テーブル名 |
+| `KUBE_LABEL_SET_KEY` | `"SET"` | `KUBE_LABELS` テーブルのキー名 |
+
+詳細根拠は `meta/_intermediate/cdb-flow/kubernetes-master-constants.md` を参照。
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールドデフォルト
 
