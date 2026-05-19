@@ -354,6 +354,44 @@ CONFIG_DB への `HSET` から `settingThread` が反映するまでの最大遅
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/log-config-platform.md`
+> ソース: `sonic-swss-common/common/logger.cpp`, `sonic-swss-common/common/loglevel.cpp`, `sonic-utilities/config/syslog.py:661-698`
+
+### ASIC/ベンダー依存性
+
+`logger.cpp` の `linkToDbWithOutput()` および `settingThread()` は `DBConnector db("CONFIG_DB", 0)` でデフォルト namespace の CONFIG_DB に直接接続する。`platform` / `asic` / `hwsku` / `vendor` / `chassis` に基づく条件分岐は一切存在しない。ASIC ベンダーによる差異はない。
+
+### multi-asic 構成
+
+`swssloglevel` (C++ バイナリ) は namespace オプションを持たず、常にそのコンテナ内のデフォルト CONFIG_DB に接続する (`loglevel.cpp:129`)。multi-asic 構成では各 ASIC コンテナ (`asic0`, `asic1`, ...) で `swssloglevel` を個別実行する必要がある。
+
+ホストから namespace を横断して設定できるのは `config syslog level` CLI のみ:
+
+```python
+# syslog.py:676-678
+asic_id = multi_asic.get_asic_id_from_name(namespace)
+container = f'{container}{asic_id}'
+cfg_db = db.cfgdb_clients[namespace]
+```
+
+| ツール | namespace 対応 | 備考 |
+|--------|---------------|------|
+| `swssloglevel` (C++) | **なし** — コンテナ内専用 | `loglevel.cpp:129` |
+| `config syslog level --namespace` (Python) | **あり** | `syslog.py:661-678` |
+
+### SAI コンポーネント (`SAI_API_*`)
+
+`syncd` は各 ASIC コンテナ内に 1 インスタンスとして存在する。`SAI_API_*` の LOGGER エントリは各コンテナの CONFIG_DB に独立して存在し、ASIC ベンダーによって登録される `SAI_API_*` コンポーネント名の一覧が異なる可能性がある。ただし logger.cpp/loglevel.cpp の処理ロジックはベンダー非依存で共通。
+
+### SmartSwitch / VOQ Chassis
+
+`logger.cpp` / `loglevel.cpp` に SmartSwitch / VOQ Chassis 固有の分岐はない。DPU コンテナでも同一の `Logger` ライブラリが使用されるが、CONFIG_DB 接続先はそれぞれのコンテナ内のデフォルト namespace に固定される。
+
+<!-- /platform -->
+
 ## 制約
 
 - `LOGLEVEL` は `mandatory true`（YANG）。エントリ作成時に必須
