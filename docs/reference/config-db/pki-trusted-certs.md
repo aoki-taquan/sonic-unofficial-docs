@@ -241,6 +241,80 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/pki-trusted-certs-failure.md`
+
+### CVL バリデーション失敗
+
+| 操作 | 失敗条件 | CVL エラー | 挙動 |
+|------|----------|-----------|------|
+| `SECURITY_GLOBAL\|global` SET | `security_profile` が参照する `SECURITY_PROFILES\|<profile>` が存在しない | `invalid-value` (leafref 未解決) | CONFIG_DB への書込み拒否。既存値は変更されない |
+| `SECURITY_PROFILES\|<profile>` DEL | `SECURITY_GLOBAL\|global.security_profile` が当該プロファイルを参照中 | `instance-in-use` | 削除拒否。参照元の `security_profile` を先に削除するまでブロックされる |
+
+証拠: `sonic-security-global.yang:29-35` (leafref 定義), `cvl_test.go:2506-2537`
+
+### gNSI Certz 起動時エラー
+
+| 条件 | 挙動 | 証拠 |
+|------|------|------|
+| `CertzMetaFile` 読み込み失敗 (ファイル欠損・不正 JSON) | `log.V(0).Info(err)` でログ出力のみ。処理は継続し `bootstrapDefaultProfile()` が呼ばれデフォルトプロファイルが再生成される | `gnsi_certz.go:126-127` |
+| CRL ディレクトリ (`CertCRLConfig` 配下) の `os.MkdirAll` 失敗 | `log.V(1).Infof("Failed Creating CRL Flush dir: ...")` のみ。プロセス継続。後続の CRL 操作で失敗する | `gnsi_certz.go:145-155` |
+
+### Rotate RPC 失敗パス
+
+#### 入力バリデーション失敗 (`codes.InvalidArgument` / `codes.Aborted`)
+
+| 条件 | gRPC コード | エラーメッセージ | 証拠 |
+|------|------------|----------------|------|
+| `ssl_profile_id` が未登録プロファイル | `InvalidArgument` | `"Rotate requested with invalid ssl_profile_id: %s"` | `gnsi_certz.go:287-289` |
+| `entity` が空 | `InvalidArgument` | `"entity cannot be empty"` | `gnsi_certz.go:386` |
+| `created_on` が空 | `InvalidArgument` | `"created_on cannot be empty"` | `gnsi_certz.go:390` |
+| `version` が空文字列 | `InvalidArgument` | `"version cannot be empty"` | `gnsi_certz.go:393` |
+| CRL 未設定状態で CRL entity を Upload | `Aborted` | `"CRL not configured"` | `gnsi_certz.go:406` |
+| 並行 Rotate RPC (既に処理中) | `Aborted` | `"concurrent certz.Rotate RPCs are not allowed"` | `gnsi_certz.go:232-234` |
+
+#### 証明書ファイル操作失敗とロールバック
+
+`activateEntity` 内の `atomicSetSrvCertKeyPair` / `atomicSetCACert` がシンボリックリンク作成に失敗した場合:
+
+- **`atomicSetSrvCertKeyPair`**: 新シンボリックリンク (`SrvCertLnk` / `SrvKeyLnk`) 作成失敗時に `restoreSymlink` で旧リンクを復元。ただし restore 自体の失敗は `_ =` で無視されるため、restore が失敗するとシンボリックリンクなし状態 (gRPC 証明書読み込み不能) が残りうる (`gnsi_certz.go:951-952`, `958-959`)
+- **`atomicSetCACert`**: 同様に `restoreSymlink(oldCert, CaCertLnk)` でロールバック (`gnsi_certz.go:984`)
+
+`saveEntities` 失敗 (ファイル書き込みエラー等) は `codes.Aborted: "Entity save err: ..."` で Rotate ストリーム全体を中断する。
+
+#### Finalize なし終了
+
+クライアントが Upload を送らずに Rotate ストリームを切断 (EOF) した場合、`codes.Aborted: "No Finalize message"` を返す。`ActiveEntities` に中間状態のエンティティが残る可能性があるが、次回 Rotate で上書きされる (`gnsi_certz.go:244-248`)。
+
+### STATE_DB 書込み失敗
+
+Redis が利用不可の場合、`writeCredentialsMetadataToDB` が `"REDIS is not available: ..."` エラーを返す。`writeEntityFreshness` はこのエラーをログ (`log.V(0).Infof`) するが処理を継続する。証明書ファイル自体は有効であり gRPC 動作に直接の影響はない (`gnsi_certz.go:1038-1042`, `688-730`)。
+
+### 未実装 RPC
+
+`AddProfile` / `DeleteProfile` / `GetProfileList` はすべて `codes.Unimplemented` を返す。デフォルトプロファイル `"gnxi"` を含む全プロファイルの追加・削除は RPC 経由では不可能 (`gnsi_certz.go:162-170`)。
+
+### ハンドラ未実装による非影響
+
+`SECURITY_PROFILES` を CONFIG_DB から読み込む production ハンドラ (orchagent / translib / certmgr) が community master に存在しないため、DB 書込みエラー (CVL バリデーション以外) が runtime 動作に影響を与える経路は現時点で確認されない。
+
+<!-- evidence:
+  sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:29-35 — security_profile leafref (invalid-value / instance-in-use の根拠)
+  sonic-mgmt-common/cvl/cvl_test.go:2506-2537 — instance-in-use テスト
+  sonic-gnmi/gnmi_server/gnsi_certz.go:126-127 — loadCertzMetadata エラー処理
+  sonic-gnmi/gnmi_server/gnsi_certz.go:145-155 — MkdirAll エラー処理
+  sonic-gnmi/gnmi_server/gnsi_certz.go:162-170 — Unimplemented RPC
+  sonic-gnmi/gnmi_server/gnsi_certz.go:232-234 — TryLock (並行 Rotate 拒否)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:244-248 — EOF without Finalize
+  sonic-gnmi/gnmi_server/gnsi_certz.go:286-305 — processRotateRequest (InvalidArgument)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:381-430 — doUpload バリデーションと Aborted エラー
+  sonic-gnmi/gnmi_server/gnsi_certz.go:925-989 — atomicSetSrvCertKeyPair / atomicSetCACert ロールバック
+  sonic-gnmi/gnmi_server/gnsi_certz.go:1037-1055 — writeCredentialsMetadataToDB REDIS unavailable
+-->
+<!-- /failure -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)
