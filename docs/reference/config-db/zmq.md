@@ -211,6 +211,54 @@ orchagent 自体はクライアント側の送信失敗を直接検出しない�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ZMQ チャネル実装に存在する、CONFIG_DB / YANG では管理されないハードコード定数の一覧。
+出典は `sonic-swss-common/common/zmqserver.h`、`sonic-swss/lib/orch_zmq_config.h`、
+`sonic-swss-common/common/zmqserver.cpp`、`sonic-swss-common/common/zmqclient.cpp`。
+
+### ZMQ ポート・アドレス定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `ORCH_ZMQ_PORT` | `8100` | orchagent ZMQ サーバのベースポート番号。Namespace あり環境では `8100 + NAMESPACE_ID + 1` で計算される | `zmqserver.h:16` |
+| `ZMQ_LOCAL_ADDRESS` | `"tcp://localhost"` | swssconfig / fpmsyncd がローカル orchagent に接続する際のベースアドレス | `orch_zmq_config.h:16` |
+| `ZMQ_TABLE_CONFIGFILE` | `"/etc/swss/orch_zmq_tables.conf"` | ZMQ 経由で受け付けるテーブル名一覧を記述する実行時設定ファイルパス。`orch_zmq_tables.conf.j2` から生成される | `orch_zmq_config.cpp:10` |
+
+### メッセージキュー・バッファ定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MQ_RESPONSE_MAX_COUNT` | `16 * 1024 * 1024` (16 MiB) | 1 メッセージの最大バイト数。送受信バッファのサイズ上限。超過すると THROW + DROP | `zmqserver.h:9` |
+| `MQ_SIZE` | `100` | ZmqConsumerStateTable の内部キュー初期サイズ (要素数) | `zmqserver.h:10` |
+| `MQ_MAX_RETRY` | `10` | 送信失敗時の最大 retry 回数。超過で `system_error(io_error)` を throw | `zmqserver.h:11` |
+| `MQ_POLL_TIMEOUT` | `1000` (ms) | `zmq_poll` のタイムアウト。受信待機の最大ブロック時間 | `zmqserver.h:12` |
+| `MQ_WATERMARK` | `10000` | ZMQ ソケットの High-Water Mark (HWM)。サーバは `ZMQ_RCVHWM`、クライアントは `ZMQ_SNDHWM` に設定。超過時は EAGAIN / メッセージ DROP | `zmqserver.h:13` |
+| `DEFAULT_POP_BATCH_SIZE` | `128` | `ZmqConsumerStateTable::pops()` が 1 回のポールで取り出す最大エントリ数 | `zmqserver.h:31` |
+
+### 送信リトライ・バックオフ定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| 初期バックオフ遅延 | `10` (ms) | `zmq_send` 失敗時の初期待機時間 (EAGAIN 等) | `zmqclient.cpp:182` — `retry_delay = 10` |
+| バックオフ倍率 | `×2` (指数) | retry 毎に `retry_delay *= 2`（10ms → 20ms → 40ms → …）。EINTR / EFSM 時は遅延 0 にリセット | `zmqclient.cpp:199` |
+
+### TCP Keepalive 定数 (サーバ・クライアント共通)
+
+サーバ (`ZmqServer`) とクライアント (`ZmqClient`) の両方で同一値が設定される。
+
+| ソケットオプション | 値 | 用途 | ソース |
+|------------------|-----|------|--------|
+| `ZMQ_TCP_KEEPALIVE` | `1` (有効) | TCP keepalive を有効化 | `zmqserver.cpp:97`, `zmqclient.cpp:121` |
+| `ZMQ_TCP_KEEPALIVE_IDLE` | `5` 秒 | 最初の keepalive probe を送信するまでのアイドル時間 | `zmqserver.cpp:100`, `zmqclient.cpp:124` |
+| `ZMQ_TCP_KEEPALIVE_INTVL` | `1` 秒 | keepalive probe の送信間隔 | `zmqserver.cpp:103`, `zmqclient.cpp:127` |
+| `ZMQ_TCP_KEEPALIVE_CNT` | `5` 回 | 失敗 probe 回数の上限。超過で接続 dead 判定 | `zmqserver.cpp:106`, `zmqclient.cpp:130` |
+
+> **注意**: Keepalive 設定はソケット生成時にハードコードで適用される。CONFIG_DB から変更する手段はない。DPU 環境でネットワーク切断を検出するために特に重要（`zmqclient.cpp:114-130` コメント参照）。
+
+<!-- /constants -->
+
 ---
 
 ## DEVICE_METADATA|localhost の ZMQ フィールド
