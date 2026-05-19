@@ -217,6 +217,49 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`STP_TABLE|GLOBAL` の書込みパスは `SAI → StpOrch::updateMaxStpInstance() → swss::Table::set()` の 1 段構成であり、書込み失敗は (A) SAI 取得失敗による書込みスキップ、(B) Redis 接続失敗による例外、の 2 系統に集約される。読み取り側 `stpmgrd` は (C) 60 秒タイムアウト後のフォールバック、(D) 例外による stpmgrd プロセス終了、を持つ。
+
+### A. SAI 取得失敗 → STATE_DB 書込みスキップ
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `sai_switch_api->get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返す | `updateMaxStpInstance()` 未呼び出し → `STP_TABLE\|GLOBAL` エントリ未作成 | `SWSS_LOG_NOTICE` "StpOrch initialization failure" (ERROR ではない) | `stporch.cpp:34-43` |
+
+!!! note "ログレベルに注意"
+    SAI 取得失敗は `SWSS_LOG_NOTICE` レベルの "failure" 文字列で出力される。`SWSS_LOG_ERROR` は出力されないため、アラート監視のしきい値設定によっては見落とされる可能性がある。
+
+### B. Redis (STATE_DB) 書込み失敗 → orchagent abort
+
+`updateMaxStpInstance()` 内の `m_stpTable->set("GLOBAL", tuples)` は `swss::Table::set()` を呼ぶ (戻り値 void)。Redis I/O エラー時は `system_error` / `runtime_error` 例外が `swss::DBConnector` から送出され、`stporch.cpp` に try/catch がないため `orchdaemon` まで伝播し orchagent プロセスが abort する。systemd による再起動で自己回復する (`stporch.cpp:603-615`)。
+
+### C. stpmgrd 側のタイムアウトフォールバック
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `STP_TABLE\|GLOBAL` が 60 秒以内に読み取れない（orchagent 未起動 / SAI 失敗で未書込み） | `max_stp_instances = STP_DEFAULT_MAX_INSTANCES = 255` をフォールバック値として使用 | `SWSS_LOG_NOTICE` "set default max stp instance 255" (ERROR なし) | `stpmgr.cpp:1381-1413`, `stpmgr.h:38` |
+
+フォールバック動作はサイレント (ERROR ログなし)。実 HW の SAI 上限が 255 を下回る場合はオーバープロビジョニングとなりうるが、STP インスタンス作成時の SAI エラーで顕在化する。
+
+### D. stpmgrd プロセスの例外終了
+
+`stpmgrd.cpp:119-122` は `catch (const exception &e)` でトップレベルの例外を捕捉し、`SWSS_LOG_ERROR("Runtime error: %s", e.what())` をログ出力した後 `-1` で終了する (自動再試行なし)。起動シーケンス中に `DEVICE_METADATA|localhost` の `mac` フィールドが見つからない場合 (`stpmgrd.cpp:86`) も `runtime_error` を throw してこの経路を通る。supervisord による再起動が回復経路となる。
+
+### 失敗系統まとめ
+
+| 失敗条件 | 書込み可否 | 回復経路 | ログ |
+|---|---|---|---|
+| SAI 属性取得失敗 | 未書込み | orchagent 再起動 → 再 SAI クエリ | NOTICE "initialization failure" |
+| Redis 接続失敗 (STATE_DB) | 途中 abort | orchagent abort → systemd 再起動 | `system_error` 例外メッセージ |
+| stpmgrd が 60 秒タイムアウト | 読取り失敗 → フォールバック 255 | なし (フォールバックで続行) | NOTICE "set default max stp instance" |
+| stpmgrd 起動中例外 | 読取り未到達 | supervisord 再起動 | ERROR "Runtime error" |
+
+> **証跡**: `stporch.cpp:17-43, 603-615`、`stpmgr.cpp:1381-1413`、`stpmgrd.cpp:70-122`、`stpmgr.h:38`。詳細は `meta/_intermediate/cdb-flow/stp-state-failure.md` を参照。
+
+<!-- /failure -->
+
 ## 例外条件・特殊挙動
 
 - **-1 補正**: `max_stp_inst` は SAI の返す最大数から -1 した値。STP インスタンス ID が 0 始まりのため、使用可能な最大インスタンス ID が `max_stp_inst` と一致する。
