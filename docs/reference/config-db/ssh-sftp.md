@@ -272,6 +272,42 @@ hostcfgd 起動
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-sftp-side-effects.md`
+
+`SSH_SFTP` テーブルは存在しないため、SFTP サブシステム固有の CONFIG_DB 書込経路はない。`SSH_SERVER|POLICIES` 変更に伴って `hostcfgd` の `SshServer` / `PamLimitsCfg` ハンドラが副次的に書込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書換とサービス再起動に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|--------|---------|------|
+| APPL_DB | なし | `SshServer` および `PamLimitsCfg` クラス全域（`hostcfgd` L1020–1490）に `set(` / `hset(` / `Producer` / `Notification` 呼出が 0 件 |
+| STATE_DB | なし | `hostcfgd` の `STATE_DB` 書込は `FipsCfg`（L1759–1821）と `RestartWaiter`（L2160–2162）のみ。SSH 処理パスには存在しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。SSH は SAI 非経由でスイッチ ASIC と無関係 |
+| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由。`orchagent` は `SSH_SERVER` テーブルを購読しない |
+
+### Linux ホスト OS への副次書込（DB 外）
+
+`SSH_SERVER|POLICIES` 変更時に `SshServer.set_policies()` および `PamLimitsCfg` が行うファイルシステム側の副次書込を以下に示す。`Subsystem sftp` 行は `SSH_CONFIG_NAMES` に含まれないため、いずれの経路でも SFTP サブシステムへの書込は発生しない。
+
+| 書込先 | 操作 | 条件 | 根拠 |
+|-------|------|------|------|
+| `/etc/ssh/sshd_config` | `copy2` → `modify_single_file_inplace` → `os.rename` | `set_policies()` 実行時（`Subsystem sftp` 行はそのまま引き継がれ変更なし） | `hostcfgd` L1113, L1142, L1152 |
+| `ssh.service` | `systemctl restart ssh` | `sshd -T` 検証が成功した場合のみ | `hostcfgd` L1154 |
+| `/etc/security/limits.conf` | Jinja2 テンプレート (`limits.conf.j2`) から再生成 | `PamLimitsCfg.update_config_file()` 呼出時 | `hostcfgd` L1469–1476 |
+| `/etc/pam.d/pam-limits-conf` | Jinja2 テンプレート (`pam_limits.j2`) から再生成 | 同上 | `hostcfgd` L1460–1466 |
+
+`systemctl restart ssh` は既存 SSH/SFTP セッションを即座に切断しないが、新規接続受付が瞬断する（`sshd -T` 検証付きのため誤設定時は自動ロールバック）。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1020-1170 (SshServer クラス全体) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1410-1490 (PamLimitsCfg クラス全体) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES — Subsystem キーなし) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1154 (systemctl restart ssh) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1460-1476 (render_conf_file PAM) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1759-1821 (FipsCfg STATE_DB 参照) -->
+
+<!-- /side-effects -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
