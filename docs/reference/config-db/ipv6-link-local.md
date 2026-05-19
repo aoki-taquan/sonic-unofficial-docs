@@ -135,6 +135,42 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 横断リファレンス (Phase C)
+
+`ipv6_use_link_local_only` フィールドはインターフェース系 3 テーブルで共有され、複数の swss daemon・CLI・YANG モジュールから参照される。
+
+### 参照マップ
+
+| 種別 | 識別子 | 参照位置 | 役割 |
+|------|--------|----------|------|
+| CONFIG_DB | `INTERFACE` (属性ロウ) | `cfgmgr/intfmgr.cpp:817-820` | Ethernet 系の一次格納 |
+| CONFIG_DB | `PORTCHANNEL_INTERFACE` | 同上 (共通 parser) | PortChannel 系の一次格納 |
+| CONFIG_DB | `VLAN_INTERFACE` | 同上 (共通 parser) | VLAN 系の一次格納 |
+| CONFIG_DB | `PORT` / `PORTCHANNEL` / `VLAN` | `show/main.py:1611-1623` | `show ipv6 link-local-mode` の母集合 |
+| STATE_DB | `PORT_TABLE` / `LAG_TABLE` / `VLAN_TABLE` | `intfmgr.cpp:833-837` (`isIntfStateOk`) | APP_DB 転送の gating (Phase B 既述) |
+| STATE_DB | `VRF_TABLE` | `intfmgr.cpp:839-843` | VRF バインド時の gating (Phase B 既述) |
+| APP_DB | `INTF_TABLE` | `intfmgr.cpp:926` (`fvTuple`) | `"enable"` 時に転送、ただし orchagent は dead consumer |
+| APP_DB | `NEIGH_TABLE` | `neighsyncd/neighsync.cpp:227` | link-local neigh 登録時のフィルタキー |
+| daemon | `intfmgrd` | `cfgmgr/intfmgr.cpp` | CONFIG_DB → APP_DB 転送と `m_ipv6LinkLocalModeList` 管理 |
+| daemon | `neighsyncd` | `neighsync.cpp:193-239` | **CONFIG_DB を直接参照** (APP_DB 経由ではない) |
+| daemon | `orchagent` IntfsOrch | `orchagent/intfsorch.cpp` | APP_DB を購読するが本フィールドを SAI 転送しない (dead consumer) |
+| CLI (config) | `config interface ipv6 enable/disable use-link-local-only` | `config/main.py:L9462-L9484` | 個別 IF への書込み、テーブルは `get_interface_table_name()` で判別 |
+| CLI (config) | `config ipv6 enable/disable link-local` | `config/main.py` (`enable_ipv6_link_local_all` 系) | 全 IF 一括、VLAN/PortChannel member は除外 |
+| CLI (show) | `show ipv6 link-local-mode` | `show/main.py:1611-1630` | `PORT`/`PORTCHANNEL`/`VLAN` と INTERFACE 属性ロウの join 表示 |
+| YANG | `sonic-interface:INTERFACE_LIST/ipv6_use_link_local_only` | `sonic-interface.yang:95-99` | スキーマ宣言、`default disable` |
+| YANG | `sonic-portchannel-interface` / `sonic-vlan-interface` | 同様の leaf | PortChannel / VLAN 用 |
+| YANG 型 | `sonic-types:mode-status` | `sonic-types.yang` | `enum enable` / `enum disable` |
+
+### 整合性メモ
+
+- **三テーブル共有**: `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` はフィールド名・型・semantics が完全に同一で、`intfmgr.cpp` の `doIntfGeneralTask()` が共通 parser で処理する。CLI レイヤだけが `get_interface_table_name(interface_name)` で書き分ける
+- **APP_DB は dead path**: `intfmgr` は `INTF_TABLE` に `ipv6_use_link_local_only` を転送するが、orchagent IntfsOrch は受信しても SAI に渡さない。実効的な依存先は `neighsyncd` であり、しかも `neighsyncd` は CONFIG_DB を直接参照するため APP_DB の値変更は実質的に観測者がいない
+- **`show` 母集合の非対称**: `show ipv6 link-local-mode` は PORT / PORTCHANNEL / VLAN を全件走査し、INTERFACE 属性ロウが欠如するポートを `Disabled` 表示する。属性ロウ削除と `"disable"` 設定はランタイム上区別されない (Phase A の "disable は属性ロウ自体を削除する" 挙動と整合)
+- **YANG default と実装の役割分担**: YANG `default disable` はスキーマ宣言上の値で、`intfmgr` のフィールド欠如時 fallback (APP_DB に書かない) とは別レイヤ。YANG validation を通った絶対無設定状態でも `intfmgrd` は何もしない
+
+<!-- /cross-refs -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |
