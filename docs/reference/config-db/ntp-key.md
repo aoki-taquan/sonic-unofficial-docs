@@ -560,3 +560,26 @@ ntp_srv_key_handler(key="1", op="SET", data={...})
 
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:2458-2466` (`make_callback`)、`hostcfgd:2511-2517` (`subscribe` 登録)、`hostcfgd:2527-2528` (`listen`)、`hostcfgd:2387-2391` (`ntp_srv_key_handler`)、`hostcfgd:2255-2272` (起動時スナップショット)、`hostcfgd:1366-1406` (`ntp_srv_key_update`)。詳細分析 `meta/_intermediate/cdb-flow/ntp-key-pubsub.md`。
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L1272–1406 (`NtpCfg` 全行)、`chrony.keys.j2` L1–18、`chrony.conf.j2` L57–63、`chronyd-starter.sh`、`ntp_smartswitch_dpu_interfaces.json` 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-key-platform.md`
+
+### 結論: NTP_KEY 処理はプラットフォーム非依存
+
+`NtpCfg.ntp_srv_key_update()` および `chrony.keys.j2` にはプラットフォーム識別子・`hwsku`・`subtype` による条件分岐が存在しない。`NTP_KEY` テーブルの鍵テーブル処理はすべてのプラットフォームで同一の動作をする。
+
+| 観点 | プラットフォーム差 | 根拠 |
+|------|----------------|------|
+| `NtpCfg.ntp_srv_key_update()` 分岐 | **なし** | `hostcfgd:1366-1406` — `hwsku` / `subtype` 参照なし |
+| `chrony.keys.j2` 条件分岐 | **なし** | `chrony.keys.j2:1-18` — `device_metadata` 参照なし |
+| SmartSwitch NPU NTP サーバ機能 | **NTP_SERVER 側に限定** | `chrony.conf.j2:57-63` の `allow` / `binddevice bridge-midplane` ブロックは NTP_KEY テーブルの内容と独立 |
+| SmartSwitch DPU NTP ソース | **NTP_SERVER テーブル側** | DPU が使用する midplane IP `169.254.200.254` は `NTP_SERVER` に登録される。`chrony.keys.j2` の NTP_KEY 処理は同一 |
+| VRF バインド (mgmt-vrf) | **NTP global / chronyd 起動時** | `chronyd-starter.sh` が `NTP|global.vrf` を参照して `ip vrf exec mgmt` で chrony を起動するが、`chrony.keys` 生成内容には影響しない |
+
+### SmartSwitch DPU: NTP_KEY は設定可能だが通常は不使用
+
+SmartSwitch DPU (`type=SmartSwitchDPU`) は `169.254.200.254`（midplane ブリッジ）を NTP ソースとして使用し、midplane 経由で NPU 側の chrony と時刻同期する。midplane NTP サーバは通常 NTP 認証を要求しないため、`NTP_KEY` は設定されないのが一般的である（テストデータ: `ntp_smartswitch_dpu_interfaces.json` — `authentication=disabled`）。`NTP_KEY` を設定した場合も `chrony.keys.j2` は標準処理で鍵ファイルを生成し、DPU 固有の特別処理は発生しない。
+<!-- /platform -->
