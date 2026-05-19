@@ -170,3 +170,33 @@ show mclag unique-ip
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-ordering.md`
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang L132-152 / sonic-utilities/config/mclag.py L328-373 / sonic-swss/mclagsyncd/mclaglink.cpp L910-935 -->
+
+### MCLAG_UNIQUE_IP → 参照先
+
+| 参照元フィールド | 参照先テーブル | 参照種別 | evidence |
+|---|---|---|---|
+| `MCLAG_UNIQUE_IP_LIST`（テーブル全体） | CONFIG_DB `MCLAG_DOMAIN` | YANG `must` 制約（DOMAIN 0 件なら書込み拒否） | `sonic-mclag.yang:132-134` |
+| `MCLAG_UNIQUE_IP.if_name` | CONFIG_DB `VLAN` | YANG leafref 意図あり・libyang 制約でコメントアウト。現在は string パターンのみ | `sonic-mclag.yang:146-152` |
+| `MCLAG_UNIQUE_IP.if_name` | CONFIG_DB `VLAN_INTERFACE` | CLI が全テーブルスキャンし IP/VRF 存在を事前チェック。直接 DB 書込みでは回避可能 | `config/mclag.py:338-347`, `config/mclag.py:365-373` |
+
+### 参照先 → MCLAG_UNIQUE_IP（逆方向）
+
+MCLAG_UNIQUE_IP を逆参照するテーブルは YANG モデル上存在しない。
+
+### STATE_DB 暗黙接続
+
+`mclagsyncd` が MCLAG_DOMAIN 初回 SET 後に `MCLAG_UNIQUE_IP` の購読と同時に STATE_DB `VLAN_MEMBER_TABLE` も購読開始する。これはスキーマ制約ではなくデーモン内部の実装上の関連。
+
+| 参照先 | 種別 | 用途 | evidence |
+|---|---|---|---|
+| STATE_DB `VLAN_MEMBER_TABLE` | SubscriberStateTable（READ） | mclagsyncd が VLAN メンバーシップを監視し iccpd へ FDB 情報を提供 | `mclaglink.cpp:915-934` |
+
+> `if_name` の `VLAN` leafref はコメントアウト中（`sonic-mclag.yang:146-152`）。libyang back-links 問題が解消されれば `VLAN_LIST.name` への参照が有効化される見込み。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-cross-refs.md`
+<!-- /cross-refs -->
