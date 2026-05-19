@@ -28453,6 +28453,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI レベルで ASIC 非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装コードの調査結果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35636,6 +35675,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI レベルで ASIC 非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装コードの調査結果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35735,8 +35813,8 @@
 </table>
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>intfmgrd</code> / <code>IntfMgr</code>: <code>SAG|GLOBAL.gateway_mac</code> と <code>VLAN_INTERFACE.&lt;n&gt;.static_anycast_gateway</code> を読み出し、APPL_DB <code>SAG_TABLE</code> へ転送する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><code>orchagent</code> / <code>IntfsOrch</code>: APPL_DB <code>SAG_TABLE</code> を消費し、VLAN インターフェースの SAI RIF の <code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code> を仮想 MAC に更新する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>intfmgrd</code> / <code>IntfMgr</code>: <code>SAG|GLOBAL.gateway_mac</code> と <code>VLAN_INTERFACE.&lt;n&gt;.static_anycast_gateway</code> を読み出し、APPL_DB <code>SAG_TABLE</code> へ転送する<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>orchagent</code> / <code>IntfsOrch</code>: APPL_DB <code>SAG_TABLE</code> を消費し、VLAN インターフェースの SAI RIF の <code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code> を仮想 MAC に更新する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35841,25 +35919,25 @@
 <td><code>VLAN_INTERFACE\|&lt;n&gt;.static_anycast_gateway</code> (CONFIG_DB)</td>
 <td>読み取り（トリガー）</td>
 <td>常時。<code>static_anycast_gateway=true</code> のインターフェースすべてに <code>gateway_mac</code> を適用</td>
-<td><code>intfmgrd</code> が <code>VLAN_INTERFACE</code> テーブルの SET イベントで <code>static_anycast_gateway</code> フィールドを読み取り、SAG 適用対象として登録する<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>intfmgrd</code> が <code>VLAN_INTERFACE</code> テーブルの SET イベントで <code>static_anycast_gateway</code> フィールドを読み取り、SAG 適用対象として登録する<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><code>SAG_TABLE\|GLOBAL</code> (APPL_DB)</td>
 <td>書込み先</td>
 <td><code>SAG\|GLOBAL</code> の SET/DEL 時</td>
-<td><code>intfmgrd</code> が CONFIG_DB の <code>SAG|GLOBAL.gateway_mac</code> を <code>APPL_DB:SAG_TABLE|GLOBAL.gateway_mac</code> へ転送する。キー構造はシングルトン（<code>GLOBAL</code> 1 エントリ固定）<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>intfmgrd</code> が CONFIG_DB の <code>SAG|GLOBAL.gateway_mac</code> を <code>APPL_DB:SAG_TABLE|GLOBAL.gateway_mac</code> へ転送する。キー構造はシングルトン（<code>GLOBAL</code> 1 エントリ固定）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code> (SAI RIF 属性)</td>
 <td>書込み先（SAI 経由）</td>
 <td><code>static_anycast_gateway=true</code> の VLAN インターフェースが存在する場合</td>
-<td><code>IntfsOrch</code> が APPL_DB の <code>SAG_TABLE|GLOBAL</code> を消費し、対象 VLAN インターフェースの RIF の MAC アドレスを <code>gateway_mac</code> に差し替える。既存の SAI 属性を流用（SAI API 変更なし）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td><code>IntfsOrch</code> が APPL_DB の <code>SAG_TABLE|GLOBAL</code> を消費し、対象 VLAN インターフェースの RIF の MAC アドレスを <code>gateway_mac</code> に差し替える。既存の SAI 属性を流用（SAI API 変更なし）<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><code>VLAN_INTERFACE\|&lt;n&gt;.vrf_name</code> (CONFIG_DB)</td>
 <td>読み取り（コンテキスト）</td>
 <td>VRF が設定されている場合</td>
-<td>VRF が存在する場合、<code>gateway_mac</code> は該当 VRF の RIF コンテキストで適用される<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>VRF が存在する場合、<code>gateway_mac</code> は該当 VRF の RIF コンテキストで適用される<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 </tbody>
 </table>
@@ -36277,11 +36355,57 @@
 </ul>
 <!-- /ops-hint -->
 
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>meta/_intermediate/cdb-flow/sag-platform.md</code></p>
+</blockquote>
+<p>SAG のコードパスにはプラットフォーム固有の分岐は<strong>存在しない</strong>。</p>
+<h3 id="sai-asic">SAI レベルで ASIC 非依存<a class="headerlink" href="#sai-asic" title="Permanent link">&para;</a></h3>
+<p>HLD §SAI API に "There are no changes to SAI headers/implementation to support this feature." と明記されている<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAG の本質は VLAN インターフェースの SAI RIF 属性 <code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code> を仮想 MAC に差し替えるだけであり、この属性はすべての主要 ASIC ベンダーが SAI v1 時点からサポートしている。</p>
+<h3 id="_19">実装コードの調査結果<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p>sonic-swss master に SAG 専用の実装ファイル（<code>sagmgr.cpp</code> / <code>sagorch.cpp</code> 等）は存在しない。<code>intfmgr.cpp</code> および <code>intfsorch.cpp</code> にも SAG ハンドラは未マージのため、現時点では <code>switch_type</code>・<code>platform</code>・<code>sub_platform</code> に依存するコード分岐を確認できない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC ベンダー (Broadcom / NVIDIA-Mellanox / Marvell / Barefoot)</td>
+<td>コード分岐なし</td>
+</tr>
+<tr>
+<td>VOQ / Chassis</td>
+<td>考慮なし（HLD・master コードに記述なし）</td>
+</tr>
+<tr>
+<td>SmartSwitch DPU</td>
+<td>考慮なし（DPU 固有処理なし）</td>
+</tr>
+<tr>
+<td><code>switch_type</code> 分岐</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>Warmboot / Fastboot</td>
+<td>影響なし（HLD §Warmboot and Fastboot に明記）</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">実装未マージによる制約</p>
+<p>現行 master では SAG の ConfigDB への書き込みは <code>intfmgrd</code> に購読されない（<code>schema.h</code> の定数定義のみ存在）。実装がマージされた際も SAI 層の ASIC 差異は <code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code> の set_attribute() が返すステータスとして間接的に現れる可能性があるが、全主要プラットフォームでサポートされる属性であるため実害は想定されない。</p>
+</div>
+<!-- /platform -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>SAG HLD: <code>SONiC/doc/sag/sag-HLD.md</code>. <a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sag/sag-HLD.md">https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sag/sag-HLD.md</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>SAG HLD: <code>SONiC/doc/sag/sag-HLD.md</code>. <a href="https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sag/sag-HLD.md">https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sag/sag-HLD.md</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
