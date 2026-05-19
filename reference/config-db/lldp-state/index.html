@@ -27007,6 +27007,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-lldp_entry_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic 構成での LLDP_ENTRY_TABLE スコープ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dead-field" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35985,6 +36013,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-lldp_entry_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic 構成での LLDP_ENTRY_TABLE スコープ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dead-field" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37064,6 +37120,67 @@ lldpd が送出する LLDPDU 内容を制御し、<strong>対向ノードの</st
 <h3 id="_19">サービス再起動トリガー<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <p>LLDP テーブルへの書き込み自体はサービス再起動を伴わない。lldp-syncd は lldpd との UNIX ソケット通信で差分を受け取り APPL_DB を更新する。Consumer (sonic-snmpagent / lldp_app.go) は次回の <code>update_data()</code> / GET で変化を取得するため、プロセス再起動なしで反映される。</p>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/lldp-state-platform.md</code>
+ソース: <code>sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2</code>, <code>sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2</code>, <code>sonic-buildimage/dockers/docker-lldp/lldpmgrd</code>, <code>sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py</code></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell 等)</td>
+<td><strong>影響なし</strong></td>
+<td>LLDP は SAI 非経由。<code>lldpd</code> が OS netdev を直接操作するため ASIC ベンダーに依存しない</td>
+</tr>
+<tr>
+<td>multi-asic (namespace_id あり)</td>
+<td><strong>影響あり</strong></td>
+<td>lldpd が <code>Ethernet[0-9]*</code> のみ監視（<code>eth0</code> 除外）。各 ASIC namespace で独立した lldp コンテナが起動し、それぞれ独自の <code>LLDP_ENTRY_TABLE</code> を書き込む (<code>supervisord.conf.j2:52-56</code>)</td>
+</tr>
+<tr>
+<td>multi-asic — eth0 LLDP 設定</td>
+<td><strong>生成されない</strong></td>
+<td><code>lldpd.conf.j2:15</code> の <code>{% if not namespace_id %}</code> ガードにより、namespace 環境では eth0 の <code>portidsubtype local</code> が設定されない</td>
+</tr>
+<tr>
+<td>multi-asic — SNMP OID 重複</td>
+<td><strong>ワークアラウンド適用</strong></td>
+<td>同一 ifIndex が複数 namespace の timeMark で重複しないよう <code>time_mark = 0</code> をハードコード固定 (<code>ieee802_1ab.py:449-455</code>)</td>
+</tr>
+<tr>
+<td>multi-asic — sonic-snmpagent</td>
+<td><strong>Namespace API 対応済み</strong></td>
+<td><code>Namespace.init_namespace_dbs()</code> / <code>get_sync_d_from_all_namespace()</code> で全 namespace の APPL_DB を横断取得 (<code>ieee802_1ab.py:118, 157, 182</code>)</td>
+</tr>
+<tr>
+<td>multi-asic — inband / recirc / backplane ポート</td>
+<td><strong>LLDP 対象外</strong></td>
+<td><code>lldpmgrd</code> がこれらプレフィックスのポートをスキップするため <code>LLDP_ENTRY_TABLE</code> のキーとして現れない (<code>lldpmgrd:143-145</code>)</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各 host で独立動作</td>
+<td>LLDP テーブルは host/namespace スコープ。集中管理機構なし</td>
+</tr>
+<tr>
+<td>VS (virtual switch / KVM)</td>
+<td><strong>動作制限あり</strong></td>
+<td>VS 環境では NIC が LLDP PDU を pass-through しないことが多く、<code>LLDP_ENTRY_TABLE</code> が空になる場合がある。sonic-snmpagent テストでは mock_tables を使用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="multi-asic-lldp_entry_table">multi-asic 構成での LLDP_ENTRY_TABLE スコープ<a class="headerlink" href="#multi-asic-lldp_entry_table" title="Permanent link">&para;</a></h3>
+<p>multi-asic 環境では各 ASIC namespace が独立した docker-lldp コンテナを起動し、それぞれ固有の APPL_DB インスタンスに <code>LLDP_ENTRY_TABLE</code> を書き込む。<code>sonic-snmpagent</code> はすべての namespace の APPL_DB を横断して SNMP MIB を構築するが、<code>sonic-mgmt-common</code> (<code>lldp_app.go</code>) は単一 DB 接続のため namespace 間の集約はトランスポート層 (gnmi-server / rest-server) に委ねられる。</p>
+<!-- /platform -->
 
 <!-- defaults -->
 <h2 id="dead-field">コード由来の暗黙デフォルトと dead field<a class="headerlink" href="#dead-field" title="Permanent link">&para;</a></h2>

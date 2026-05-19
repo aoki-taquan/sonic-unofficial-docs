@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="TC_TO_PRIORITY_GROUP_MAP テーブル — Traffic Class (TC) を ingress Priority Group (PG) へマップし、バッファ admission control と PFC の対象 PG を決定する。">
+        <meta name="description" content="TC_TO_PRIORITY_GROUP_MAP テーブル — Traffic Class (TC) を ingress Priority Group (PG) へマップし、バッファ admission control と PFC の対象 PG を決定する。Phase A〜H 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="TC_TO_PRIORITY_GROUP_MAP テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="TC_TO_PRIORITY_GROUP_MAP テーブル — Traffic Class (TC) を ingress Priority Group (PG) へマップし、バッファ admission control と PFC の対象 PG を決定する。" />
+<meta property="og:description" content="TC_TO_PRIORITY_GROUP_MAP テーブル — Traffic Class (TC) を ingress Priority Group (PG) へマップし、バッファ admission control と PFC の対象 PG を決定する。Phase A〜H 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/tc-to-priority-group-map.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/tc-to-priority-group-map/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="TC_TO_PRIORITY_GROUP_MAP テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="TC_TO_PRIORITY_GROUP_MAP テーブル — Traffic Class (TC) を ingress Priority Group (PG) へマップし、バッファ admission control と PFC の対象 PG を決定する。" />
+<meta property="twitter:description" content="TC_TO_PRIORITY_GROUP_MAP テーブル — Traffic Class (TC) を ingress Priority Group (PG) へマップし、バッファ admission control と PFC の対象 PG を決定する。Phase A〜H 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/tc-to-priority-group-map.png" />
 </head>
   
@@ -29773,6 +29773,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-qos_configj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. qos_config.j2 — マップ生成の優先順位
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-smartswitch-dpu-azure_dpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. SmartSwitch / DPU — AZURE_DPC マップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-qos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. トンネル QoS 再マッピング対応プラットフォーム
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-asic-tc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. ASIC の TC 範囲制限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29785,7 +29857,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルト一覧
@@ -29807,7 +29879,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         書込み順依存
@@ -29818,7 +29890,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム依存
@@ -36096,6 +36168,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-qos_configj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. qos_config.j2 — マップ生成の優先順位
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-smartswitch-dpu-azure_dpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. SmartSwitch / DPU — AZURE_DPC マップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-qos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. トンネル QoS 再マッピング対応プラットフォーム
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-asic-tc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. ASIC の TC 範囲制限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36108,7 +36252,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙デフォルト一覧
@@ -36130,7 +36274,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         書込み順依存
@@ -36141,7 +36285,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム依存
@@ -36907,6 +37051,130 @@
 </span></code></pre></div>
 <!-- /pubsub -->
 
+<!-- platform-diff -->
+<h2 id="phase-h">プラットフォーム差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/tc-to-priority-group-map-platform.md -->
+<!-- source: sonic-buildimage/files/build_templates/qos_config.j2 ref:master -->
+<!-- source: sonic-swss/orchagent/qosorch.cpp ref:master -->
+
+<p><code>TC_TO_PRIORITY_GROUP_MAP</code> の <strong>orchagent 側処理</strong>（<code>QosOrch</code>）はプラットフォーム非依存だが、<strong>マップの内容（Config 生成）</strong>はプラットフォーム・SKU・デプロイ構成によって異なる。</p>
+<h3 id="a-qos_configj2">A. qos_config.j2 — マップ生成の優先順位<a class="headerlink" href="#a-qos_configj2" title="Permanent link">&para;</a></h3>
+<p><code>qos_config.j2:170-179</code> に 4 段の条件分岐がある:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>{% if (generate_tc_to_pg_map is defined) and tunnel_qos_remap_enable %}
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    {{- generate_tc_to_pg_map() }}          {# トンネル QoS 対応プラットフォーム #}
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>{% elif (generate_tc_to_pg_map is defined) and ... ComputeAI ... %}
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    {{- generate_tc_to_pg_map() }}          {# Azure ComputeAI バックエンド #}
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>{% elif generate_tc_to_pg_map_per_sku is defined %}
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    {{- generate_tc_to_pg_map_per_sku() }}  {# SKU 固有マクロ #}
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>{% else %}
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    &quot;TC_TO_PRIORITY_GROUP_MAP&quot;: { &quot;AZURE&quot;: {...} }  {# 標準デフォルト #}
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>{% endif %}
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>適用対象</th>
+<th>生成マップ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>generate_tc_to_pg_map</code> + <code>tunnel_qos_remap_enable=true</code></td>
+<td>VxLAN decap TC→PG 再マッピング対応プラットフォーム (Broadcom 等)</td>
+<td>SKU 定義関数が生成</td>
+</tr>
+<tr>
+<td><code>generate_tc_to_pg_map</code> + <code>backend_device_types</code> + <code>ComputeAI</code></td>
+<td>Azure AI ラック向け BackEndToRRouter / BackEndLeafRouter</td>
+<td>SKU 定義関数が生成</td>
+</tr>
+<tr>
+<td><code>generate_tc_to_pg_map_per_sku</code></td>
+<td>一部 Mellanox / Broadcom SKU</td>
+<td>SKU ごとに異なる TC→PG 対応表</td>
+</tr>
+<tr>
+<td>その他（デフォルト）</td>
+<td>一般コミュニティ SONiC</td>
+<td><code>AZURE</code>（TC3→PG3, TC4→PG4, 他→PG0）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-smartswitch-dpu-azure_dpc">B. SmartSwitch / DPU — AZURE_DPC マップ<a class="headerlink" href="#b-smartswitch-dpu-azure_dpc" title="Permanent link">&para;</a></h3>
+<p><code>PORT_DPC</code>（DPU 接続ポート）が存在する環境では <code>AZURE_DPC</code> マップが追加生成される (<code>qos_config.j2:182-193</code>):</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">&quot;AZURE_DPC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="nt">&quot;0&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&quot;4&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;5&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;6&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;7&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7&quot;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>全 TC を PG0（ベストエフォート）に割り当て、TC7 のみ PG7 に割り当てる。PFC は TC7/PG7 のみ対象となる。DPU 接続ポートは <code>PORT_QOS_MAP.tc_to_pg_map = "AZURE_DPC"</code> で参照される (<code>qos_config.j2:476</code>)。</p>
+<h3 id="c-qos">C. トンネル QoS 再マッピング対応プラットフォーム<a class="headerlink" href="#c-qos" title="Permanent link">&para;</a></h3>
+<p><code>DEVICE_METADATA.tunnel_qos_remap_enable = "true"</code> が設定されたプラットフォームでは <code>TUNNEL_DECAP_TABLE.decap_tc_to_pg_map</code> フィールドが有効になる。<code>TunnelDecapOrch</code> が <code>TC_TO_PRIORITY_GROUP_MAP</code> の SKU 固有マップを <code>SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP</code> に適用し、トンネル decap 後のパケットに別の TC→PG マッピングを施す。一般プラットフォーム（<code>tunnel_qos_remap_enable=false</code>）では <code>decap_tc_to_pg_map</code> フィールド自体が使用されない。</p>
+<h3 id="d-asic-tc">D. ASIC の TC 範囲制限<a class="headerlink" href="#d-asic-tc" title="Permanent link">&para;</a></h3>
+<p>YANG の <code>tc_type</code> は <code>uint8 0..15</code> を許容するが、実用上 TC 8..15 をサポートする ASIC は少ない。<code>sai_qos_map_api-&gt;create_qos_map()</code> は TC 8..15 を含むマップでプラットフォーム依存の挙動を示す:</p>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>TC 8..15 の扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Broadcom 等物理 ASIC</td>
+<td>SAI が TC 0..7 のみ有効化し TC 8..15 エントリを無視するか、マップ全体を拒否する（SAI 実装依存）</td>
+</tr>
+<tr>
+<td>VS (仮想スイッチ)</td>
+<td><code>create_qos_map()</code> は成功するが ASIC 反映なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">プラットフォーム差異サマリ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>標準プラットフォーム</th>
+<th>SKU 固有 (<code>per_sku</code> マクロあり)</th>
+<th>SmartSwitch DPU ポート</th>
+<th>トンネル QoS 対応</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生成マップ名</td>
+<td><code>AZURE</code></td>
+<td>SKU 依存</td>
+<td><code>AZURE</code> + <code>AZURE_DPC</code></td>
+<td>SKU 依存</td>
+</tr>
+<tr>
+<td>TC3/TC4 の PG</td>
+<td>PG3 / PG4（lossless）</td>
+<td>プラットフォーム依存</td>
+<td>PG0（lossy）</td>
+<td>プラットフォーム依存</td>
+</tr>
+<tr>
+<td><code>decap_tc_to_pg_map</code></td>
+<td>不使用</td>
+<td>不使用</td>
+<td>不使用</td>
+<td>使用（SAI tunnel 属性）</td>
+</tr>
+<tr>
+<td>TC 8..15 サポート</td>
+<td>ASIC 依存（多くは拒否）</td>
+<td>ASIC 依存</td>
+<td>ASIC 依存</td>
+<td>ASIC 依存</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform-diff -->
+
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/orchagent/qosorch.cpp L884-934 -->
@@ -36914,7 +37182,7 @@
 <!-- evidence: sonic-buildimage/files/build_templates/qos_config.j2 L181-204 -->
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang L56-69 -->
 
-<h3 id="_20">暗黙デフォルト一覧<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<h3 id="_21">暗黙デフォルト一覧<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36981,9 +37249,9 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_21">書込み順依存<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<h3 id="_22">書込み順依存<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
 <p><code>TUNNEL_DECAP_TABLE.decap_tc_to_pg_map</code> は本テーブルへの参照を持つ。本テーブルのマップが未作成の状態でトンネルエントリが先に来ると <code>task_need_retry</code> が繰り返され、マップ作成後に自動解消される。CONFIG_DB を一括 reload する場合は通常問題ないが、動的に tunnel を追加する場合は本マップを先に作成すること。</p>
-<h3 id="_22">プラットフォーム依存<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<h3 id="_23">プラットフォーム依存<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
 <p>プラットフォームベンダーが <code>generate_tc_to_pg_map_per_sku()</code> Jinja2 マクロを定義している場合、SKU 固有の TC→PG マッピングが <code>AZURE</code> マップに代わって（または追加で）生成される。実際のデフォルト値はプラットフォームによって異なる。</p>
 <!-- /defaults -->
 

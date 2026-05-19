@@ -25082,6 +25082,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai_next_hop_group_type_class_based" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED サポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nhg-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NHG 総数上限: Mellanox のみ補正
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_switch_attr_max_number_of_forwarding_classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フォワーディングクラス数: SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nhg-sai_object_type_get_availability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NHG マップ収容数: sai_object_type_get_availability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index-create_only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        メンバー INDEX の CREATE_ONLY 制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35769,6 +35841,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai_next_hop_group_type_class_based" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED サポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nhg-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NHG 総数上限: Mellanox のみ補正
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_switch_attr_max_number_of_forwarding_classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フォワーディングクラス数: SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nhg-sai_object_type_get_availability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NHG マップ収容数: sai_object_type_get_availability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index-create_only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        メンバー INDEX の CREATE_ONLY 制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36605,6 +36749,67 @@
 </blockquote>
 <!-- /pubsub -->
 
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<p><code>CbfNhgOrch</code> の動作はプラットフォームが提供する SAI Capability によって以下の軸で分岐する。</p>
+<h3 id="sai_next_hop_group_type_class_based">SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED サポート<a class="headerlink" href="#sai_next_hop_group_type_class_based" title="Permanent link">&para;</a></h3>
+<p>CBF NHG は <code>SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED</code> を SAI に渡す (<code>cbfnhgorch.cpp:302</code>)。このグループ型のサポートはプラットフォーム依存であり、ASIC ベンダーごとに異なる。VS プラットフォームはスタブ実装として <code>SAI_STATUS_SUCCESS</code> を返すが実転送はない。</p>
+<h3 id="nhg-mellanox">NHG 総数上限: Mellanox のみ補正<a class="headerlink" href="#nhg-mellanox" title="Permanent link">&para;</a></h3>
+<p><code>CbfNhgOrch::doTask()</code> の上限チェック (<code>cbfnhgorch.cpp:100</code>) は <code>gRouteOrch-&gt;getMaxNhgCount()</code> を参照する。この値は <code>RouteOrch</code> コンストラクタ (<code>routeorch.cpp:61-89</code>) が <code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> で取得したものだが、Mellanox プラットフォーム（<code>getenv("platform")</code> に <code>"mellanox"</code> が含まれる場合）のみ <code>DEFAULT_MAX_ECMP_GROUP_SIZE = 32</code> で除算して補正される。CBF NHG と通常 NHG は同一カウンタを共有する。</p>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>上限値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mellanox</td>
+<td><code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS / 32</code></td>
+</tr>
+<tr>
+<td>Broadcom / Marvell / その他</td>
+<td><code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> をそのまま使用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai_switch_attr_max_number_of_forwarding_classes">フォワーディングクラス数: SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES<a class="headerlink" href="#sai_switch_attr_max_number_of_forwarding_classes" title="Permanent link">&para;</a></h3>
+<p><code>NhgMapOrch::getMaxNumFcs()</code> (<code>nhgmaporch.cpp:299-325</code>) は初回呼び出し時に <code>SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES</code> を SAI から取得する。</p>
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI 対応 ASIC</td>
+<td><code>max_num_fcs = attr.value.u8</code>（ASIC 依存値）</td>
+</tr>
+<tr>
+<td>SAI 非対応 ASIC</td>
+<td><code>SWSS_LOG_WARN("Switch does not support FCs")</code> + <code>max_num_fcs = 0</code> → 全 FC 値が範囲外エラーで破棄される</td>
+</tr>
+</tbody>
+</table>
+<p><code>CbfNhg::sync()</code> (<code>cbfnhgorch.cpp:311-312</code>) はメンバー数が <code>getMaxNumFcs()</code> を超えると <code>SWSS_LOG_WARN</code> を出力するが処理は継続する。</p>
+<h3 id="nhg-sai_object_type_get_availability">NHG マップ収容数: sai_object_type_get_availability<a class="headerlink" href="#nhg-sai_object_type_get_availability" title="Permanent link">&para;</a></h3>
+<p><code>NhgMapOrch</code> コンストラクタ (<code>nhgmaporch.cpp:26-34</code>) で <code>sai_object_type_get_availability(SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP)</code> を呼び出す。非対応 ASIC は <code>m_max_nhg_map_count = 0</code> のまま起動し、以降の <code>FC_TO_NHG_INDEX_MAP_TABLE</code> への全 SET が <code>SWSS_LOG_WARN</code> + <code>success=false</code> となる。この状態では <code>selection_map</code> の OID 解決が永続的に失敗し、CBF NHG の sync が完了しない。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// orchagent/cbf/nhgmaporch.cpp:26-34</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sai_object_type_get_availability</span><span class="p">(</span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="n">SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">                                     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">m_max_nhg_map_count</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">{</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="n">SWSS_LOG_WARN</span><span class="p">(</span><span class="s">&quot;Switch does not support NHG maps&quot;</span><span class="p">);</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="n">m_max_nhg_map_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="index-create_only">メンバー INDEX の CREATE_ONLY 制約<a class="headerlink" href="#index-create_only" title="Permanent link">&para;</a></h3>
+<p><code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX</code> は SAI 仕様上 <code>CREATE_ONLY</code> 属性であるため、メンバー順序の変更時は全メンバーの remove → 再 sync が必須となる (<code>cbfnhgorch.cpp:509-516</code>)。この制約はプラットフォーム共通。</p>
+<p>詳細証跡: <code>meta/_intermediate/cdb-flow/cbf-nhg-platform.md</code></p>
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_14">関連リファレンス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
@@ -36630,8 +36835,8 @@
 <li>メンバー NHG を先に <code>NEXT_HOP_GROUP_TABLE</code> に登録せず参照 → 一時 NHG として保留・再試行される</li>
 </ul>
 <h3 id="_19">確認コマンド<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;CLASS_BASED_NEXT_HOP_GROUP_TABLE:*&#39;</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;CLASS_BASED_NEXT_HOP_GROUP_TABLE:CbfNhg1&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;CLASS_BASED_NEXT_HOP_GROUP_TABLE:*&#39;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;CLASS_BASED_NEXT_HOP_GROUP_TABLE:CbfNhg1&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
 

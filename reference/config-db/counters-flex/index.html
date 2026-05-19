@@ -25458,7 +25458,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム識別
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-nvidia-spectrum-trim-lua" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox (NVIDIA Spectrum) 固有 — trim 統計 Lua プラグイン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-wred-stat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI Capability クエリによる WRED stat — プラットフォーム依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gearbox-stat-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gearbox 環境 — 別 stat リストと別 COUNTERS_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -25469,7 +25541,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35670,7 +35742,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム識別
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-nvidia-spectrum-trim-lua" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox (NVIDIA Spectrum) 固有 — trim 統計 Lua プラグイン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-wred-stat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI Capability クエリによる WRED stat — プラットフォーム依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gearbox-stat-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gearbox 環境 — 別 stat リストと別 COUNTERS_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35681,7 +35825,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -36912,10 +37056,120 @@ consumer 側はすべて on-demand polling で読み出す必要がある。</p>
 </div>
 <!-- /pubsub -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-platform.md -->
+<!-- source: sonic-swss/orchagent/portsorch.cpp (ref: master),
+     sonic-swss-common/common/schema.h (ref: master) -->
+
+<h3 id="_6">プラットフォーム識別<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p><code>portsorch.cpp:689-703</code> の <code>isMlnxPlatform()</code> 関数が環境変数 <code>platform</code> から <code>"mellanox"</code> 文字列を検索する（<code>MLNX_PLATFORM_SUBSTRING</code>、<code>orch.h:42</code>）。<code>flexcounterorch.cpp</code> にはプラットフォーム分岐は存在せず、カウンタ stat リストに影響する分岐はすべて <code>portsorch.cpp</code> 内に閉じている。</p>
+<h3 id="mellanox-nvidia-spectrum-trim-lua">Mellanox (NVIDIA Spectrum) 固有 — trim 統計 Lua プラグイン<a class="headerlink" href="#mellanox-nvidia-spectrum-trim-lua" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// portsorch.cpp:857-863</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isMlnxPlatform</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">isPortStatSupported</span><span class="p">(</span><span class="n">SAI_PORT_STAT_TRIM_PACKETS</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">isPortStatSupported</span><span class="p">(</span><span class="n">SAI_PORT_STAT_TX_TRIM_PACKETS</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="o">!</span><span class="n">isPortStatSupported</span><span class="p">(</span><span class="n">SAI_PORT_STAT_DROPPED_TRIM_PACKETS</span><span class="p">))</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">{</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="n">portStatPlugins</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nvdaPortTrimSha</span><span class="p">;</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Mellanox Spectrum では <code>SAI_PORT_STAT_DROPPED_TRIM_PACKETS</code> をネイティブに返せない世代がある。条件が成立すると <code>nvda_port_trim_drop.lua</code> (<code>portsorch.cpp:802</code>) が <code>PORT_STAT</code> FlexCounter グループへ追加され、<code>TRIM_PACKETS</code> と <code>TX_TRIM_PACKETS</code> から <code>DROPPED_TRIM_PACKETS</code> 相当値を Lua 側で計算して <code>COUNTERS_DB</code> に書き込む。非 Mellanox プラットフォームでは Lua プラグインは追加されない。</p>
+<h3 id="sai-capability-wred-stat">SAI Capability クエリによる WRED stat — プラットフォーム依存<a class="headerlink" href="#sai-capability-wred-stat" title="Permanent link">&para;</a></h3>
+<p><code>initCounterCapabilities()</code> (<code>portsorch.cpp:1850</code>) が orchagent 起動時に <code>sai_query_stats_capability</code> で ASIC がサポートする stat を問い合わせ、結果を <code>STATE_DB</code> へ書き込む。</p>
+<table>
+<thead>
+<tr>
+<th>STATE_DB テーブル</th>
+<th>キー</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QUEUE_COUNTER_CAPABILITIES</code></td>
+<td><code>WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER</code></td>
+<td><code>SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS</code> 対応有無</td>
+</tr>
+<tr>
+<td><code>QUEUE_COUNTER_CAPABILITIES</code></td>
+<td><code>WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER</code></td>
+<td><code>SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES</code> 対応有無</td>
+</tr>
+<tr>
+<td><code>QUEUE_COUNTER_CAPABILITIES</code></td>
+<td><code>WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER</code></td>
+<td><code>SAI_QUEUE_STAT_WRED_DROPPED_PACKETS</code> 対応有無</td>
+</tr>
+<tr>
+<td><code>QUEUE_COUNTER_CAPABILITIES</code></td>
+<td><code>WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER</code></td>
+<td><code>SAI_QUEUE_STAT_WRED_DROPPED_BYTES</code> 対応有無</td>
+</tr>
+<tr>
+<td><code>PORT_COUNTER_CAPABILITIES</code></td>
+<td><code>WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER</code></td>
+<td><code>SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS</code> 対応有無</td>
+</tr>
+<tr>
+<td><code>PORT_COUNTER_CAPABILITIES</code></td>
+<td><code>WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER</code></td>
+<td><code>SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS</code> 対応有無</td>
+</tr>
+<tr>
+<td><code>PORT_COUNTER_CAPABILITIES</code></td>
+<td><code>WRED_ECN_PORT_WRED_RED_DROP_COUNTER</code></td>
+<td><code>SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS</code> 対応有無</td>
+</tr>
+<tr>
+<td><code>PORT_COUNTER_CAPABILITIES</code></td>
+<td><code>WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER</code></td>
+<td><code>SAI_PORT_STAT_WRED_DROPPED_PACKETS</code> 対応有無</td>
+</tr>
+</tbody>
+</table>
+<p>各フラグは起動時に <code>isSupported=false</code> で初期化され、SAI クエリ成功時に対応 stat のみ <code>isSupported=true</code> に更新される。WRED stat が未対応の ASIC では <code>WRED_ECN_PORT/QUEUE</code> グループを enable しても FLEX_COUNTER_DB へのエントリ登録は行われない。</p>
+<h3 id="gearbox-stat-counters_db">Gearbox 環境 — 別 stat リストと別 COUNTERS_DB<a class="headerlink" href="#gearbox-stat-counters_db" title="Permanent link">&para;</a></h3>
+<p><code>m_gearboxEnabled = true</code> の環境（Marvell Gearbox 等を外付けするプラットフォーム）では:</p>
+<ul>
+<li><code>gbport_stat_ids[]</code> (<code>portsorch.cpp:344-383</code>) が gearbox system 側・line 側ポートにそれぞれ設定される</li>
+<li>書き込み先が通常の <code>COUNTERS_DB</code> ではなく専用の <code>m_gb_counter_db</code> (Gearbox COUNTERS_DB) になる</li>
+<li><code>port_rates.lua</code> が gearbox FlexCounter グループに追加登録される (<code>portsorch.cpp:822-834</code>)</li>
+</ul>
+<p><code>gbport_stat_ids[]</code> は通常の <code>port_stat_ids[]</code> のサブセットであり FEC 統計を含む（gearbox ポートでの FEC 計測が主目的）。</p>
+<h3 id="_7">プラットフォーム差異サマリ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>差異</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mellanox かつ trim stat 非ネイティブ</td>
+<td><code>nvda_port_trim_drop.lua</code> が PORT_STAT グループへ追加</td>
+</tr>
+<tr>
+<td>WRED stat SAI 非対応</td>
+<td><code>WRED_ECN_PORT/QUEUE</code> stat が FLEX_COUNTER_DB 未登録、<code>STATE_DB</code> に <code>isSupported=false</code></td>
+</tr>
+<tr>
+<td>Gearbox 有効環境</td>
+<td>gearbox ポートは <code>gbport_stat_ids[]</code> で別 COUNTERS_DB に書き込まれる</td>
+</tr>
+<tr>
+<td>上記以外</td>
+<td>WRED stat は SAI capability 次第、trim 統計は SAI ネイティブ対応があれば Lua プラグインなしで取得</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../flex-counter-table/">FLEX_COUNTER_TABLE テーブル</a> — グループレベルの enable/disable・polling interval 設定</li>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-flex_counter/"><code>sonic-flex_counter</code></a></li>

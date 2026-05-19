@@ -27377,6 +27377,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム別挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gisnatsupported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gIsNatSupported の決定経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnhtrackingsupported-broadcom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNhTrackingSupported の決定経路 (Broadcom 限定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dnat-nh-counters_nat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNAT NH 追跡有無による COUNTERS_NAT キー生成タイミングの差
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35836,6 +35897,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム別挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gisnatsupported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gIsNatSupported の決定経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnhtrackingsupported-broadcom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNhTrackingSupported の決定経路 (Broadcom 限定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dnat-nh-counters_nat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNAT NH 追跡有無による COUNTERS_NAT キー生成タイミングの差
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37016,6 +37138,88 @@
 <p><strong>Evidence</strong>: <code>natorch.cpp:84-91</code> (NotificationConsumer 登録), <code>natorch.cpp:137</code> (NotificationProducer), <code>natorch.cpp:3095-3117</code> (SelectableTimer doTask), <code>orchdaemon.cpp:457-462</code> (ConsumerStateTable 優先度), <code>natmgr.cpp:43-49</code> (ProducerStateTable 群), <code>natmgrd.cpp:109-121</code> (SubscriberStateTable 購読テーブル一覧), <code>natorch.cpp:4450-4490</code> (NotificationConsumer doTask); 詳細分析 <code>meta/_intermediate/cdb-flow/nat-pubsub.md</code></p>
 </blockquote>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<p><code>COUNTERS_DB</code> NAT カウンタテーブル群の書き込み有無・更新挙動はプラットフォームの NAT ハードウェアサポートと DNAT ネクストホップ追跡能力に強く依存する。</p>
+<h3 id="_26">プラットフォーム別挙動マトリクス<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th><code>gIsNatSupported</code></th>
+<th><code>gNhTrackingSupported</code></th>
+<th>COUNTERS_DB への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY == 0</code> または取得失敗</td>
+<td><code>false</code></td>
+<td><code>false</code></td>
+<td><code>enableNatFeature()</code> が即 return → <code>m_natQueryTimer</code> 未起動 → <code>COUNTERS_NAT*</code> のエントリ数カウンタは 0 のまま。エントリ追加時のゼロ初期化 <code>update*Counters(0,0)</code> は呼ばれるが、5 秒タイマー更新が来ない</td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY &gt; 0</code> かつ非 Broadcom</td>
+<td><code>true</code></td>
+<td><code>false</code></td>
+<td>DNAT エントリは APPL_DB 受信と同時に <code>addHwDnatEntry()</code> を即時呼び出し → <code>COUNTERS_NAT</code> に即座にキーが生成。5 秒タイマーによるカウンタ更新あり</td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY &gt; 0</code> かつ <code>broadcom</code></td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+<td>DNAT エントリは NeighOrch / RouteOrch のネクストホップ解決後に <code>addHwDnatEntry()</code> が遅延呼び出しされる。NH 未解決の間は <code>COUNTERS_NAT</code> にキーが存在しない</td>
+</tr>
+<tr>
+<td>VS / テスト環境 (<code>sw.sonic-test</code>)</td>
+<td><code>false</code></td>
+<td><code>false</code></td>
+<td><code>SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY</code> 未サポート → <code>gIsNatSupported=false</code>。NAT 機能全体が無効。CLI は受け付けるが APPL_DB エントリが SAI に降りないため <code>COUNTERS_NAT*</code> 実測値は更新されない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gisnatsupported"><code>gIsNatSupported</code> の決定経路<a class="headerlink" href="#gisnatsupported" title="Permanent link">&para;</a></h3>
+<p><code>gIsNatSupported</code> は orchagent 起動時 <code>main.cpp:936-948</code> で一度だけ設定され、以後変更されない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>main.cpp:936-948
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  sai_switch_api-&gt;get_switch_attribute(SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  status != SAI_STATUS_SUCCESS → gIsNatSupported 変更なし (false のまま)
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  attr.value.u32 == 0         → gIsNatSupported 変更なし (false のまま)
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  attr.value.u32 &gt; 0          → gIsNatSupported = true
+</span></code></pre></div>
+<h3 id="gnhtrackingsupported-broadcom"><code>gNhTrackingSupported</code> の決定経路 (Broadcom 限定)<a class="headerlink" href="#gnhtrackingsupported-broadcom" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// natorch.cpp:144-149</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">platform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;platform&quot;</span><span class="p">);</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">platform</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">strstr</span><span class="p">(</span><span class="n">platform</span><span class="p">,</span><span class="w"> </span><span class="n">BRCM_PLATFORM_SUBSTRING</span><span class="p">))</span><span class="w">  </span><span class="c1">// &quot;broadcom&quot;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">{</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="n">gNhTrackingSupported</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>BRCM_PLATFORM_SUBSTRING = "broadcom"</code> が <code>platform</code> 環境変数に含まれる場合のみ <code>true</code>。Mellanox / Marvell / Cisco / Innovium 等は <code>false</code>。</p>
+<h3 id="dnat-nh-counters_nat">DNAT NH 追跡有無による COUNTERS_NAT キー生成タイミングの差<a class="headerlink" href="#dnat-nh-counters_nat" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th><code>gNhTrackingSupported</code></th>
+<th>DNAT エントリの <code>COUNTERS_NAT</code> キー生成タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>false</code> (非 Broadcom)</td>
+<td><code>addNatEntry()</code> → <code>addHwDnatEntry()</code> → <code>updateNatCounters(0,0)</code> が <strong>即時</strong> 呼ばれる</td>
+</tr>
+<tr>
+<td><code>true</code> (Broadcom)</td>
+<td><code>addNatEntry()</code> → NH 未解決なら <code>addDnatToCache()</code> のみ → <code>COUNTERS_NAT</code> キー未生成。NH 解決通知後に <code>addHwDnatEntry()</code> → <code>updateNatCounters(0,0)</code> で初めてキーが生成される</td>
+</tr>
+</tbody>
+</table>
+<p>SNAT / NAPT / Twice NAT エントリおよび <code>COUNTERS_GLOBAL_NAT</code> の書き込みは <code>gNhTrackingSupported</code> に関わらず共通動作。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>natorch.cpp:144-149</code> (gNhTrackingSupported 設定), <code>main.cpp:936-948</code> (gIsNatSupported 設定), <code>natorch.cpp:2541-2544</code> (gIsNatSupported ガード), <code>natorch.cpp:1923,1959</code> (gNhTrackingSupported 分岐); 詳細分析 <code>meta/_intermediate/cdb-flow/nat-app-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
 
 <div class="footnote">
 <hr />

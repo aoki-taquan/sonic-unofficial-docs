@@ -30141,6 +30141,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ordered-ecmp-asic-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ordered ECMP サポート — ASIC Capability 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダー固有コードなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet_exec-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET_EXEC モード (VRF 固定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ / Multi-ASIC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36156,6 +36217,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ordered-ecmp-asic-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ordered ECMP サポート — ASIC Capability 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダー固有コードなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet_exec-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET_EXEC モード (VRF 固定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ / Multi-ASIC
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37293,6 +37415,43 @@
 </span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>    → APPL_DB[VNET_TABLE] 状態反映完了
 </span></code></pre></div>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<h3 id="ordered-ecmp-asic-capability">Ordered ECMP サポート — ASIC Capability 依存<a class="headerlink" href="#ordered-ecmp-asic-capability" title="Permanent link">&para;</a></h3>
+<p><code>VNetRouteOrch</code> が <code>VNET_ROUTE_TUNNEL</code> の ECMP Next Hop Group を作成する際、<code>gSwitchOrch-&gt;checkOrderedEcmpEnable()</code> の SAI capability 問い合わせ結果に基づいて NHG type を決定する (<code>vnetorch.cpp:804</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>ASIC capability</th>
+<th>NHG type</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ordered ECMP 対応かつ有効化</td>
+<td><code>SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP</code></td>
+<td>endpoint の優先順序を <a href="../../glossary/#term-asic">ASIC</a> が保持</td>
+</tr>
+<tr>
+<td>非対応または無効</td>
+<td><code>SAI_NEXT_HOP_GROUP_TYPE_ECMP</code></td>
+<td>通常 ECMP (ラウンドロビン)</td>
+</tr>
+</tbody>
+</table>
+<p><code>checkOrderedEcmpEnable()</code> は起動時に SAI switch attribute をクエリし、<a href="../../glossary/#term-asic">ASIC</a> が非対応の場合は false を返す。このため非対応 <a href="../../glossary/#term-asic">ASIC</a> で Ordered ECMP ビットが設定されることはなく、<code>create_next_hop_group()</code> 失敗は発生しない。</p>
+<h3 id="_23">ベンダー固有コードなし<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<p><code>vnetorch.cpp</code> / <code>vxlanmgr.cpp</code> には <code>platform</code> 環境変数参照・ベンダー文字列判定 (<code>mellanox</code> / <code>broadcom</code> 等) が存在しない。VNET の <a href="../../glossary/#term-sai">SAI</a> 操作 (<code>sai_virtual_router_api</code> / <code>sai_route_api</code> / <code>sai_next_hop_group_api</code>) は標準 <a href="../../glossary/#term-sai">SAI</a> インタフェース経由で呼ばれ、<a href="../../glossary/#term-asic">ASIC</a> 固有の最適化は <a href="../../glossary/#term-sai">SAI</a> 実装層に委譲される。</p>
+<h3 id="vnet_exec-vrf">VNET_EXEC モード (VRF 固定)<a class="headerlink" href="#vnet_exec-vrf" title="Permanent link">&para;</a></h3>
+<p><code>vnetorch.h</code> では <code>VNET_EXEC_VRF</code> と <code>VNET_EXEC_BRIDGE</code> の 2 モードが定義されているが、<code>orchdaemon.cpp:276</code> では常に <code>VNET_EXEC_VRF</code> が使用される。コミュニティ SONiC では BRIDGE モードは無効。</p>
+<h3 id="voq-multi-asic">VoQ / Multi-ASIC<a class="headerlink" href="#voq-multi-asic" title="Permanent link">&para;</a></h3>
+<p>VNET テーブル処理に VoQ / multi-ASIC 分岐は存在しない。VNET は単一 <a href="../../glossary/#term-asic">ASIC</a> 構成を前提とした機能。</p>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>vnetorch.cpp:804,841,2778</code>（Ordered ECMP NHG type 分岐）、<code>vnetorch.h:63-67</code>（VNET_EXEC enum）、<code>orchdaemon.cpp:276</code>（VRF モード固定）、<code>vxlanmgr.cpp</code> 全体（ベンダー分岐 0 件確認）</p>
+</blockquote>
+<!-- /platform -->
 
 <!-- glossary-links-injected: f94986e6b96c -->
 

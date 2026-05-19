@@ -23830,6 +23830,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-neigh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB NEIGH の購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nbrmgrd-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nbrmgrd の Select ループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ 環境の追加購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-neigh_resolve_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB NEIGH_RESOLVE_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-kernel-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → kernel の直接パス（SAI 非経由）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35587,6 +35659,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-neigh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB NEIGH の購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nbrmgrd-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nbrmgrd の Select ループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ 環境の追加購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-neigh_resolve_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB NEIGH_RESOLVE_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-kernel-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → kernel の直接パス（SAI 非経由）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36504,6 +36648,64 @@ APPL_DB <code>NEIGH_TABLE</code> → <code>NeighOrch</code> → SAI / ASIC 経�
 <p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/neigh-cross-refs.md</code> を参照。</p>
 <!-- /cross-refs -->
 
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/neigh-pubsub.md -->
+
+<h3 id="config_db-neigh">CONFIG_DB NEIGH の購読方式<a class="headerlink" href="#config_db-neigh" title="Permanent link">&para;</a></h3>
+<p><code>nbrmgrd</code> が <strong>ConsumerStateTable</strong> を通じて CONFIG_DB <code>NEIGH</code> テーブルをリアルタイム購読する。SET/DEL イベントが発生すると即座に <code>doSetNeighTask()</code> / <code>doDeleteNeighTask()</code> が呼ばれる。</p>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読方式</th>
+<th>チャンネル / テーブル</th>
+<th>トリガー処理</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nbrmgrd</code></td>
+<td><code>ConsumerStateTable</code> (CONFIG_DB)</td>
+<td><code>CFG_NEIGH_TABLE_NAME</code> (<code>"NEIGH"</code>)</td>
+<td>SET → <code>doSetNeighTask()</code> → Netlink <code>RTM_NEWNEIGH</code></td>
+<td><code>nbrmgrd.cpp:32-34</code>, <code>nbrmgr.cpp:390</code></td>
+</tr>
+<tr>
+<td><code>nbrmgrd</code></td>
+<td><code>ConsumerStateTable</code> (APPL_DB)</td>
+<td><code>APP_NEIGH_RESOLVE_TABLE_NAME</code> (<code>"NEIGH_RESOLVE_TABLE"</code>)</td>
+<td>SET → 隣接解決トリガー</td>
+<td><code>nbrmgr.cpp:64-67</code></td>
+</tr>
+<tr>
+<td><code>nbrmgrd</code> (VoQ のみ)</td>
+<td><code>SubscriberStateTable</code> (STATE_DB)</td>
+<td><code>STATE_SYSTEM_NEIGH_TABLE_NAME</code></td>
+<td>VoQ リモート neighbor → カーネル静的 neighbor 挿入</td>
+<td><code>nbrmgr.cpp:78-83</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="nbrmgrd-select">nbrmgrd の Select ループ<a class="headerlink" href="#nbrmgrd-select" title="Permanent link">&para;</a></h3>
+<p><code>nbrmgrd</code> は <code>swss::Select</code> を使い、<code>SELECT_TIMEOUT = 1000</code> ms のタイムアウトで待機する。タイムアウト時は <code>nbrmgr.doTask()</code> を呼び出してキューに残留したエントリを再処理する（<code>nbrmgrd.cpp:83-86</code>）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>CONFIG_DB NEIGH|&lt;port&gt;|&lt;ip&gt; SET
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓ ConsumerStateTable が keyspace notification を受信
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  ↓ Select::select() が返る
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ↓ nbrmgr::doSetNeighTask()
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>     → isIntfStateOk() で STATE_DB INTERFACE_TABLE を確認
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>     → OK: setNeighbor() → Netlink RTM_NEWNEIGH をカーネルへ
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>     → NG: it++ でキュー留め（次の SELECT_TIMEOUT 後に再試行）
+</span></code></pre></div>
+<h3 id="voq">VoQ 環境の追加購読<a class="headerlink" href="#voq" title="Permanent link">&para;</a></h3>
+<p><code>DEVICE_METADATA.switch_type == "voq"</code> の場合のみ、<code>NbrMgr</code> コンストラクタが <code>STATE_DB:STATE_SYSTEM_NEIGH_TABLE_NAME</code> を <code>SubscriberStateTable</code> で追加登録する（<code>nbrmgr.cpp:78-83</code>）。これにより <code>doStateSystemNeighTask()</code> がリモートシステムポートの neighbor をカーネルに挿入する経路が有効になる。VoQ 以外の環境では購読されない。</p>
+<h3 id="appl_db-neigh_resolve_table">APPL_DB NEIGH_RESOLVE_TABLE<a class="headerlink" href="#appl_db-neigh_resolve_table" title="Permanent link">&para;</a></h3>
+<p>外部コントローラ（gNMI、SDN コントローラ等）が <code>APPL_DB:NEIGH_RESOLVE_TABLE</code> へ書き込むことで ARP/NDP 解決をトリガーできる。nbrmgrd はこのテーブルを起動時から購読し (<code>nbrmgr.cpp:64-67</code>)、warm-reboot 後は <code>reconcileNeighResolveTable()</code> で保留エントリを再読み込みする (<code>nbrmgr.cpp:70</code>)。</p>
+<h3 id="config_db-kernel-sai">CONFIG_DB → kernel の直接パス（SAI 非経由）<a class="headerlink" href="#config_db-kernel-sai" title="Permanent link">&para;</a></h3>
+<p>本テーブル (<code>CONFIG_DB NEIGH</code>) の変更は SAI / orchagent 経由を通らない。<code>nbrmgrd</code> が Netlink で直接カーネル ARP テーブルを操作し、その後 <code>neighsyncd</code> / <code>orchagent</code> の別パスで ASIC へのプログラミングが行われる。</p>
+<!-- /pubsub -->
+
 <!-- value-behavior -->
 <h2 id="_8">値依存挙動マトリクス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <h3 id="neigh-yangmac-address"><code>neigh</code> (yang:mac-address)<a class="headerlink" href="#neigh-yangmac-address" title="Permanent link">&para;</a></h3>
@@ -36631,19 +36833,19 @@ APPL_DB <code>NEIGH_TABLE</code> → <code>NeighOrch</code> → SAI / ASIC 経�
 <!-- ops-hint -->
 <h2 id="_15">運用ヒント<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <h3 id="neighbor">典型値（スタティック neighbor の手動設定）<a class="headerlink" href="#neighbor" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;NEIGH|Ethernet0|10.0.0.2&#39;</span><span class="w"> </span>neigh<span class="w"> </span><span class="s1">&#39;00:11:22:33:44:55&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;NEIGH|Ethernet0|10.0.0.2&#39;</span><span class="w"> </span>neigh<span class="w"> </span><span class="s1">&#39;00:11:22:33:44:55&#39;</span>
 </span></code></pre></div>
 <p>FG-NHG 用（minigraph.py が自動生成）:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">&quot;NEIGH&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;Ethernet0|192.168.1.1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&quot;family&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPv4&quot;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">&quot;NEIGH&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;Ethernet0|192.168.1.1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;family&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPv4&quot;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="_16">確認コマンド<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEIGH|*&#39;</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;NEIGH|Ethernet0|10.0.0.2&#39;</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>ip<span class="w"> </span>neigh<span class="w"> </span>show<span class="w"> </span>dev<span class="w"> </span>Ethernet0
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEIGH|*&#39;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;NEIGH|Ethernet0|10.0.0.2&#39;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>ip<span class="w"> </span>neigh<span class="w"> </span>show<span class="w"> </span>dev<span class="w"> </span>Ethernet0
 </span></code></pre></div>
 <h3 id="_17">よくある誤設定<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36700,8 +36902,8 @@ APPL_DB <code>NEIGH_TABLE</code> → <code>NeighOrch</code> → SAI / ASIC 経�
 <h2 id="_19">実コンテナ動作トレース<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <p><code>nbrmgrd</code> 起動時に <code>NbrMgr</code> コンストラクタが <code>CFG_NEIGH_TABLE_NAME</code> (<code>"NEIGH"</code>) を購読対象として登録。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cfg_nbr_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">CFG_NEIGH_TABLE_NAME</span><span class="w"> </span><span class="p">};</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">NbrMgr</span><span class="w"> </span><span class="nf">nbrmgr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfgDb</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">appDb</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stateDb</span><span class="p">,</span><span class="w"> </span><span class="n">cfg_nbr_tables</span><span class="p">);</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cfg_nbr_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">CFG_NEIGH_TABLE_NAME</span><span class="w"> </span><span class="p">};</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">NbrMgr</span><span class="w"> </span><span class="nf">nbrmgr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cfgDb</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">appDb</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stateDb</span><span class="p">,</span><span class="w"> </span><span class="n">cfg_nbr_tables</span><span class="p">);</span>
 </span></code></pre></div>
 <h3 id="2-set-dosetneightask">段階 2 — SET ハンドラ (<code>doSetNeighTask</code>)<a class="headerlink" href="#2-set-dosetneightask" title="Permanent link">&para;</a></h3>
 <ol>

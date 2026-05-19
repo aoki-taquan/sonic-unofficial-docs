@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数を含む Phase A+B+C+D+E 分析。">
+        <meta name="description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む Phase A+B+C+D+E+F+G+H 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="APPL_STATE_DB ROUTE_TABLE (route offload cache) - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数を含む Phase A+B+C+D+E 分析。" />
+<meta property="og:description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む Phase A+B+C+D+E+F+G+H 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/route-cache.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/route-cache/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="APPL_STATE_DB ROUTE_TABLE (route offload cache) - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数を含む Phase A+B+C+D+E 分析。" />
+<meta property="twitter:description" content="APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む Phase A+B+C+D+E+F+G+H 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/route-cache.png" />
 </head>
   
@@ -28174,7 +28174,218 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・連鎖変更 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・連鎖変更 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        連鎖変更マップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-fpmsyncd-frr-zebra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. fpmsyncd → FRR zebra（通常フロー）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-warm-restart-offload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Warm Restart: 一括 offload 通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-route_checkpy-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. route_check.py による recovery 注入
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responsepublisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側: ResponsePublisher の通知チャネル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-notificationconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読側: fpmsyncd の NotificationConsumer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主ループ: select タイムアウトとフラッシュ戦略
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知メカニズムまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-responsepublisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd / ResponsePublisher — プラットフォーム差なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-routeorch-mellanoxvoq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent (RouteOrch) — Mellanox・VOQ で動作差あり
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="orchagent (RouteOrch) — Mellanox・VOQ で動作差あり">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox: ECMP グループ数上限の補正
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-ecmp-128" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ chassis: ECMP メンバー数を 128 に制限
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -28186,7 +28397,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -28202,7 +28413,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28213,7 +28424,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35631,7 +35842,218 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・連鎖変更 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・連鎖変更 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        連鎖変更マップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-fpmsyncd-frr-zebra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. fpmsyncd → FRR zebra（通常フロー）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-warm-restart-offload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Warm Restart: 一括 offload 通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-route_checkpy-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. route_check.py による recovery 注入
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responsepublisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側: ResponsePublisher の通知チャネル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-notificationconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読側: fpmsyncd の NotificationConsumer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主ループ: select タイムアウトとフラッシュ戦略
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知メカニズムまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fpmsyncd-responsepublisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fpmsyncd / ResponsePublisher — プラットフォーム差なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-routeorch-mellanoxvoq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent (RouteOrch) — Mellanox・VOQ で動作差あり
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="orchagent (RouteOrch) — Mellanox・VOQ で動作差あり">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-ecmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox: ECMP グループ数上限の補正
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-ecmp-128" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VOQ chassis: ECMP メンバー数を 128 に制限
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35643,7 +36065,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型エントリ例
@@ -35659,7 +36081,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35670,7 +36092,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36516,40 +36938,289 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 </table>
 <!-- /constants -->
 
-<h2 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># APPL_STATE_DB の特定経路エントリを確認</span>
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:10.0.0.0/24&#39;</span>
-</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
-</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># APPL_STATE_DB の全 ROUTE_TABLE エントリ数を確認</span>
-</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<!-- side-effects -->
+<h2 id="phase-f">副作用・連鎖変更 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-side-effects.md -->
+
+<p>APPL_STATE_DB <code>ROUTE_TABLE</code> への書き込みは、orchagent の内部処理で終結せず、<code>fpmsyncd</code> を経由して FRR zebra への外向き副作用を持つ。また <code>route_check.py</code> による recovery パスも存在する。</p>
+<h3 id="_10">連鎖変更マップ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>orchagent (RouteOrch::publishRouteState)
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>  └─▶ APPL_STATE_DB:ROUTE_TABLE  (ResponsePublisher, SET/DEL)
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>        └─▶ APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL  (Redis Pub/Sub 通知)
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>              └─▶ fpmsyncd (RouteSync::onRouteResponse)
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>                    └─▶ FPM (RTM_NEWROUTE + RTM_F_OFFLOAD) ──▶ FRR zebra
 </span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
-</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1"># APPL_DB と APPL_STATE_DB の経路エントリ数比較（差分がある場合 SAI 失敗の可能性）</span>
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;APPL_DB:&quot;</span>
-</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
-</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;APPL_STATE_DB:&quot;</span>
-</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>route_check.py
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>  ├─ 読み取り APPL_STATE_DB:ROUTE_TABLE
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>  └─▶ APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL  (recovery 注入)
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>        └─▶ fpmsyncd (RouteSync::onRouteResponse)
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>              └─▶ FPM (RTM_NEWROUTE + RTM_F_OFFLOAD) ──▶ FRR zebra
 </span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>
-</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="c1"># route_check.py でテーブル整合を確認</span>
-</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>sudo<span class="w"> </span>route_check.py
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>Warm Restart (fpmsyncd::onWarmStartEnd)
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>  ├─ 読み取り APPL_STATE_DB:ROUTE_TABLE（全エントリ）
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>  └─▶ FPM (RTM_NEWROUTE + RTM_F_OFFLOAD) ──▶ FRR zebra（一括送出）
 </span></code></pre></div>
-<h3 id="_11">典型エントリ例<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a># BGP 経路のオフロード成功
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>APPL_STATE_DB&gt; hgetall ROUTE_TABLE:10.1.0.0/24
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>1) &quot;protocol&quot;
-</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>2) &quot;bgp&quot;
-</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
-</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a># protocol 不明（fpmsyncd 側で protocol を省略した経路）
-</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>APPL_STATE_DB&gt; hgetall ROUTE_TABLE:192.168.0.0/16
-</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>1) &quot;protocol&quot;
-</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>2) &quot;&quot;
+<h3 id="1-fpmsyncd-frr-zebra">1. fpmsyncd → FRR zebra（通常フロー）<a class="headerlink" href="#1-fpmsyncd-frr-zebra" title="Permanent link">&para;</a></h3>
+<p><code>RouteOrch::publishRouteState()</code> が RESPONSE_CHANNEL に通知を送出すると、suppression 有効時に <code>fpmsyncd</code> の <code>onRouteResponse()</code> が受信し、<code>sendOffloadReply()</code> で FRR zebra に RTM_NEWROUTE + <code>RTM_F_OFFLOAD</code> フラグを付加したメッセージを送出する<sup id="fnref4:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>。</p>
+<ul>
+<li><strong>条件</strong>: <code>CONFIG_DB DEVICE_METADATA|localhost.suppress-fib-pending = "enabled"</code> が設定済みであること</li>
+<li><strong>効果</strong>: FRR zebra が当該経路を「HW にオフロード済み」として認識し、経路の offload フラグが立つ</li>
+<li><strong>suppression 無効時</strong>: <code>onRouteResponse()</code> が冒頭で即 <code>return</code>し、offload 通知は行われない（<code>routesync.cpp:3174-3177</code>）</li>
+</ul>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">// routesync.cpp:3174-3177</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">RouteSync::onRouteResponse</span><span class="p">(...)</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="p">{</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isSuppressionEnabled</span><span class="p">())</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">        </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="2-warm-restart-offload">2. Warm Restart: 一括 offload 通知<a class="headerlink" href="#2-warm-restart-offload" title="Permanent link">&para;</a></h3>
+<p>Warm restart 完了時（<code>onWarmStartEnd()</code>）、<code>markRoutesOffloaded()</code> が APPL_STATE_DB <code>ROUTE_TABLE</code> の全エントリを走査して FRR zebra に RTM_NEWROUTE を一括送信する<sup id="fnref5:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1">// routesync.cpp:3291-3295</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">RouteSync::onWarmStartEnd</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">DBConnector</span><span class="o">&amp;</span><span class="w"> </span><span class="n">applStateDb</span><span class="p">)</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="p">{</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isSuppressionEnabled</span><span class="p">())</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">        </span><span class="n">markRoutesOffloaded</span><span class="p">(</span><span class="n">applStateDb</span><span class="p">);</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<ul>
+<li><strong>タイミング</strong>: orchagent warm restart 完了後に 1 回のみ自動実行</li>
+<li><strong>効果</strong>: orchagent 再起動後も FRR が保持している全経路の offload フラグが復元される</li>
+<li><strong>注入値</strong>: <code>err_str = "SWSS_RC_SUCCESS"</code> リテラル固定（<code>routesync.cpp:3285</code>）</li>
+</ul>
+<h3 id="3-route_checkpy-recovery">3. route_check.py による recovery 注入<a class="headerlink" href="#3-route_checkpy-recovery" title="Permanent link">&para;</a></h3>
+<p><code>route_check.py</code> は APPL_STATE_DB <code>ROUTE_TABLE</code> を読み出して FRR・ASIC_DB の経路整合を検証し、offload フラグ未設定経路を検出した場合に <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> へ <code>SWSS_RC_SUCCESS</code> を注入する。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># route_check.py:767-771</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">producer</span> <span class="o">=</span> <span class="n">swss</span><span class="o">.</span><span class="n">NotificationProducer</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</span><span class="p">)</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">routes</span><span class="p">:</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>    <span class="n">fvs</span> <span class="o">=</span> <span class="n">swss</span><span class="o">.</span><span class="n">FieldValuePairs</span><span class="p">([(</span><span class="s2">&quot;err_str&quot;</span><span class="p">,</span> <span class="s2">&quot;SWSS_RC_SUCCESS&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;protocol&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)])</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>    <span class="n">producer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">SET_COMMAND</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">fvs</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>条件</strong>: FRR に存在するが offload フラグが立っていない経路が検出された場合</li>
+<li><strong>効果</strong>: fpmsyncd が <code>onRouteResponse()</code> を再実行し、FRR zebra への offload 通知を再送（recovery）</li>
+<li><strong>注意</strong>: APPL_STATE_DB エントリを直接書き換えるのではなく、RESPONSE_CHANNEL 経由でフローを再起動する</li>
+</ul>
+<h3 id="_11">副作用サマリ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副作用先</th>
+<th>トリガ</th>
+<th>書き手</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FPM → FRR zebra（RTM_F_OFFLOAD）</td>
+<td>RESPONSE_CHANNEL 受信</td>
+<td>fpmsyncd RouteSync::sendOffloadReply()</td>
+<td>suppress-fib-pending=enabled 時のみ</td>
+</tr>
+<tr>
+<td>FPM → FRR zebra（RTM_F_OFFLOAD）一括</td>
+<td>Warm Restart 完了</td>
+<td>fpmsyncd RouteSync::markRoutesOffloaded()</td>
+<td>suppress-fib-pending=enabled かつ warm restart 時</td>
+</tr>
+<tr>
+<td><code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> 注入</td>
+<td>route_check.py 実行</td>
+<td>route_check.py NotificationProducer</td>
+<td>FRR offload フラグ未設定経路検出時</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-pubsub.md -->
+
+<h3 id="responsepublisher">書き込み側: ResponsePublisher の通知チャネル<a class="headerlink" href="#responsepublisher" title="Permanent link">&para;</a></h3>
+<p><code>RouteOrch::publishRouteState()</code> は <code>ResponsePublisher::publish()</code> を呼び出し、2 段階でデータを Redis に送出する（<code>orchagent/response_publisher.cpp:L96-133</code>）<sup id="fnref5:respub"><a class="footnote-ref" href="#fn:respub">2</a></sup>:</p>
+<ol>
+<li><strong>通知チャネルへの PUBLISH</strong>: <code>NotificationProducer</code> を用いて <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> チャネルへ <code>PUBLISH</code> コマンドを発行する。<code>err_str</code>・<code>protocol</code> 等のフィールドを含むメッセージが subscriber（fpmsyncd）へ即座にプッシュされる。</li>
+<li><strong>APPL_STATE_DB への書き込み</strong>: SAI 成功 + SET 操作の場合に限り <code>writeToDB()</code> で <code>APPL_STATE_DB ROUTE_TABLE</code> ハッシュを更新する。</li>
+</ol>
+<p><code>ResponsePublisher</code> はバッファリングモード（<code>m_buffered = true</code>）で動作し、<code>routeorch.cpp:57</code> で <code>setBuffered(true)</code> が設定される。<code>NotificationProducer</code> も同一の <code>m_ntf_pipe</code> パイプラインを共有するため、通知は <code>m_publisher.flush()</code>（<code>routeorch.cpp:1231</code>）が呼ばれるまで Redis パイプラインにバッファされる。1 回の <code>doTask()</code> サイクルで処理された複数経路の通知はすべて <strong>同一 flush</strong> でまとめて送出される:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1">// response_publisher.cpp:117-120</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="n">swss</span><span class="o">::</span><span class="n">NotificationProducer</span><span class="w"> </span><span class="n">notificationProducer</span><span class="p">{</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="w">    </span><span class="n">m_ntf_pipe</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">response_channel</span><span class="p">,</span><span class="w"> </span><span class="n">m_buffered</span><span class="p">};</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="n">notificationProducer</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">status</span><span class="p">.</span><span class="n">codeStr</span><span class="p">(),</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">intent_attrs_copy</span><span class="p">);</span>
+</span></code></pre></div>
+<h3 id="fpmsyncd-notificationconsumer">購読側: fpmsyncd の NotificationConsumer<a class="headerlink" href="#fpmsyncd-notificationconsumer" title="Permanent link">&para;</a></h3>
+<p><code>fpmsyncd</code> は起動時に <code>suppress-fib-pending = enabled</code> が設定されている場合のみ、<code>APPL_STATE_DB</code> に対して <code>NotificationConsumer</code> を生成し <code>APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL</code> チャネルを購読する（<code>fpmsyncd.cpp:L113-118</code>）<sup id="fnref6:fpmsyncd"><a class="footnote-ref" href="#fn:fpmsyncd">3</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1">// fpmsyncd.cpp:113-118</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">suppressionEnabledStr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;enabled&quot;</span><span class="p">)</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="p">{</span>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="w">    </span><span class="n">routeResponseChannel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">NotificationConsumer</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">applStateDb</span><span class="p">,</span><span class="w"> </span><span class="n">routeResponseChannelName</span><span class="p">);</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="w">    </span><span class="n">sync</span><span class="p">.</span><span class="n">setSuppressionEnabled</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>suppress-fib-pending</code> は CONFIG_DB の <code>DEVICE_METADATA|localhost</code> フィールドを <code>SubscriberStateTable</code> で監視しており、実行中に動的変更が可能:</p>
+<ul>
+<li><code>disabled → enabled</code>: 新規 <code>NotificationConsumer</code> を作成し <code>s.addSelectable()</code> でイベントループに追加（<code>fpmsyncd.cpp:287-289</code>）</li>
+<li><code>enabled → disabled</code>: <code>markRoutesOffloaded()</code> で既存経路を一括 offload 通知後、<code>NotificationConsumer</code> を破棄（<code>fpmsyncd.cpp:298-302</code>）</li>
+</ul>
+<h3 id="select">主ループ: select タイムアウトとフラッシュ戦略<a class="headerlink" href="#select" title="Permanent link">&para;</a></h3>
+<p>fpmsyncd の主ループは <code>gSelectTimeout</code>（デフォルト <code>INFINITE = -1</code>）で <code>s.select()</code> をブロックする（<code>fpmsyncd.cpp:186-193</code>）。通知チャネルから <code>routeResponseChannel</code> イベントが届くと <code>pops()</code> で一括取得し <code>onRouteResponse()</code> に渡す（<code>fpmsyncd.cpp:307-318</code>）:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1">// fpmsyncd.cpp:307-318</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">routeResponseChannel</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">temps</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">routeResponseChannel</span><span class="p">.</span><span class="n">get</span><span class="p">()))</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="p">{</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">deque</span><span class="o">&lt;</span><span class="n">KeyOpFieldsValuesTuple</span><span class="o">&gt;</span><span class="w"> </span><span class="n">notifications</span><span class="p">;</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">    </span><span class="n">routeResponseChannel</span><span class="o">-&gt;</span><span class="n">pops</span><span class="p">(</span><span class="n">notifications</span><span class="p">);</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">notification</span><span class="o">:</span><span class="w"> </span><span class="n">notifications</span><span class="p">)</span>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">        </span><span class="n">sync</span><span class="p">.</span><span class="n">onRouteResponse</span><span class="p">(</span><span class="n">kfvKey</span><span class="p">(</span><span class="n">notification</span><span class="p">),</span><span class="w"> </span><span class="n">kfvFieldsValues</span><span class="p">(</span><span class="n">notification</span><span class="p">));</span>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>APPL_DB への書き込みパイプライン（<code>pipeline</code> = <code>RedisPipeline</code>、サイズ上限 <code>ROUTE_SYNC_PPL_SIZE = 50000</code> エントリ）は <code>flushPipeline()</code> で制御される。<code>SMALL_TRAFFIC = 500</code> エントリ未満または <code>FLUSH_TIMEOUT = 500 ms</code> 経過時にフラッシュし、<code>gSelectTimeout</code> を残余時間に調整する（<code>fpmsyncd.cpp:350-363</code>）。<code>onRouteResponse()</code> 自体は APPL_DB に書き込まず FRR zebra への netlink 送信のみを行うため、このパイプラインには関与しない。</p>
+<h3 id="_12">通知メカニズムまとめ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>方式</th>
+<th>タイムアウト / バッファ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orchagent → Redis</td>
+<td><code>NotificationProducer</code>（バッファあり）</td>
+<td><code>m_publisher.flush()</code> で 1 doTask() サイクル末にまとめて送出</td>
+</tr>
+<tr>
+<td>Redis → fpmsyncd</td>
+<td><code>NotificationConsumer</code>（SUBSCRIBE）</td>
+<td><code>s.select(gSelectTimeout=INFINITE)</code> で即座にブロック解除</td>
+</tr>
+<tr>
+<td>fpmsyncd → FRR zebra</td>
+<td>netlink <code>RTM_NEWROUTE</code>（offload フラグ）</td>
+<td><code>onRouteResponse()</code> 内で同期的に送信、遅延なし</td>
+</tr>
+<tr>
+<td>fpmsyncd APPL_DB書き込み</td>
+<td><code>RedisPipeline</code>（サイズ 50000）</td>
+<td><code>FLUSH_TIMEOUT = 500 ms</code> または <code>SMALL_TRAFFIC = 500</code> エントリ閾値</td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-platform.md -->
+
+<p>調査ソース: <code>orchagent/routeorch.cpp</code>、<code>orchagent/orch.h</code>、<code>fpmsyncd/fpmsyncd.cpp</code>、<code>fpmsyncd/routesync.cpp</code>、<code>orchagent/response_publisher.cpp</code>。</p>
+<h3 id="fpmsyncd-responsepublisher">fpmsyncd / ResponsePublisher — プラットフォーム差なし<a class="headerlink" href="#fpmsyncd-responsepublisher" title="Permanent link">&para;</a></h3>
+<p><code>fpmsyncd.cpp</code> / <code>routesync.cpp</code> に <code>getenv("platform")</code> および <code>gMySwitchType</code> 等のプラットフォーム条件分岐は存在しない。RESPONSE_CHANNEL の購読・<code>onRouteResponse()</code> の処理・<code>markRoutesOffloaded()</code> による Warm Restart offload 通知はすべてプラットフォーム非依存。<code>ResponsePublisher</code> / <code>response_publisher.cpp</code> にもプラットフォーム分岐なし。</p>
+<h3 id="orchagent-routeorch-mellanoxvoq">orchagent (RouteOrch) — Mellanox・VOQ で動作差あり<a class="headerlink" href="#orchagent-routeorch-mellanoxvoq" title="Permanent link">&para;</a></h3>
+<p>APPL_STATE_DB への書き込み自体（<code>publishRouteState</code> 経由の <code>ResponsePublisher</code>）はプラットフォーム非依存だが、<strong>書き込みを生む SAI 経路プログラミングの上限値</strong>がプラットフォームによって異なる。</p>
+<h4 id="mellanox-ecmp">Mellanox: ECMP グループ数上限の補正<a class="headerlink" href="#mellanox-ecmp" title="Permanent link">&para;</a></h4>
+<p><code>RouteOrch</code> コンストラクタが <code>platform</code> 環境変数を参照し、<code>"mellanox"</code> が含まれる場合は SAI から取得した <code>m_maxNextHopGroupCount</code> を <code>DEFAULT_MAX_ECMP_GROUP_SIZE</code>（=32）で除算する（<code>routeorch.cpp:L83-87</code>）。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1">// routeorch.cpp:83-87</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">platform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;platform&quot;</span><span class="p">);</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">platform</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">strstr</span><span class="p">(</span><span class="n">platform</span><span class="p">,</span><span class="w"> </span><span class="n">MLNX_PLATFORM_SUBSTRING</span><span class="p">))</span>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="p">{</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="w">    </span><span class="n">m_maxNextHopGroupCount</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">DEFAULT_MAX_ECMP_GROUP_SIZE</span><span class="p">;</span>
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<ul>
+<li><code>MLNX_PLATFORM_SUBSTRING = "mellanox"</code> (<code>orch.h:L42</code>)</li>
+<li><code>DEFAULT_MAX_ECMP_GROUP_SIZE = 32</code> (<code>routeorch.cpp:L38</code>)</li>
+<li>Mellanox ASIC は <code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> を「ECMP サイズ=1 前提の最大グループ数」として返すため、SONiC は /32 して実効 ECMP グループ数を算出する</li>
+<li>結果: 有効 ECMP グループ上限が他プラットフォームより 1/32 になり、ECMP 経路が上限に達すると SAI プログラミングが失敗し APPL_STATE_DB へのエントリ書き込みが発生しない</li>
+</ul>
+<h4 id="voq-chassis-ecmp-128">VOQ chassis: ECMP メンバー数を 128 に制限<a class="headerlink" href="#voq-chassis-ecmp-128" title="Permanent link">&para;</a></h4>
+<p><code>gMySwitchType == "voq"</code> かつ SAI から取得した最大 ECMP メンバー数が 128 以上の場合、RouteOrch が <code>SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT</code> を 128 に強制設定する（<code>routeorch.cpp:L109-123</code>）。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1">// routeorch.cpp:109-123</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gMySwitchType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;voq&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">maxEcmpGroupSize</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">128</span><span class="p">)</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="p">{</span>
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="w">    </span><span class="n">maxEcmpGroupSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">;</span>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT</span><span class="p">;</span>
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">s32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxEcmpGroupSize</span><span class="p">;</span>
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="w">    </span><span class="n">sai_switch_api</span><span class="o">-&gt;</span><span class="n">set_switch_attribute</span><span class="p">(</span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>VOQ chassis 環境では 1 つの ECMP グループで 128 を超えるメンバーを持つ経路は SAI 制限に抵触する可能性があり、当該経路の APPL_STATE_DB ROUTE_TABLE エントリが生成されない場合がある。</p>
+<h3 id="_13">プラットフォーム差サマリ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>fpmsyncd (offload 通知)</th>
+<th>orchagent (APPL_STATE_DB 書き込みトリガ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>標準 T0/T1/T2</td>
+<td>変更なし</td>
+<td>変更なし</td>
+</tr>
+<tr>
+<td>Mellanox</td>
+<td>変更なし</td>
+<td>ECMP グループ上限を /32 補正（初期化時のみ）</td>
+</tr>
+<tr>
+<td>VOQ chassis</td>
+<td>変更なし</td>
+<td>ECMP メンバー数を 128 に制限（SAI 設定）</td>
+</tr>
+<tr>
+<td>SmartSwitch</td>
+<td>変更なし</td>
+<td>変更なし</td>
+</tr>
+<tr>
+<td>multi-asic</td>
+<td>変更なし</td>
+<td>各 ASIC namespace 独立、処理自体は同一</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
+<h2 id="_14">確認コマンド<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># APPL_STATE_DB の特定経路エントリを確認</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:10.0.0.0/24&#39;</span>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="c1"># APPL_STATE_DB の全 ROUTE_TABLE エントリ数を確認</span>
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>
+</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="c1"># APPL_DB と APPL_STATE_DB の経路エントリ数比較（差分がある場合 SAI 失敗の可能性）</span>
+</span><span id="__span-28-8"><a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;APPL_DB:&quot;</span>
+</span><span id="__span-28-9"><a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-28-10"><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;APPL_STATE_DB:&quot;</span>
+</span><span id="__span-28-11"><a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a>sonic-db-cli<span class="w"> </span>APPL_STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-28-12"><a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>
+</span><span id="__span-28-13"><a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a><span class="c1"># route_check.py でテーブル整合を確認</span>
+</span><span id="__span-28-14"><a id="__codelineno-28-14" name="__codelineno-28-14" href="#__codelineno-28-14"></a>sudo<span class="w"> </span>route_check.py
+</span></code></pre></div>
+<h3 id="_15">典型エントリ例<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a># BGP 経路のオフロード成功
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>APPL_STATE_DB&gt; hgetall ROUTE_TABLE:10.1.0.0/24
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>1) &quot;protocol&quot;
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>2) &quot;bgp&quot;
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a># protocol 不明（fpmsyncd 側で protocol を省略した経路）
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>APPL_STATE_DB&gt; hgetall ROUTE_TABLE:192.168.0.0/16
+</span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>1) &quot;protocol&quot;
+</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>2) &quot;&quot;
+</span></code></pre></div>
+<h2 id="_16">関連ページ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../appl-db-route/"><code>ROUTE_TABLE (APPL_DB)</code></a> — fpmsyncd が書き込む経路要求テーブル</li>
 <li><a href="../route-state/"><code>ROUTE_TABLE (STATE_DB / APPL_STATE_DB)</code></a> — STATE_DB のデフォルト経路状態テーブルも含む統合ページ</li>
 <li><a href="../static-route/"><code>STATIC_ROUTE</code></a> — CONFIG_DB の静的経路設定</li>
 </ul>
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_17">引用元<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
@@ -36557,10 +37228,10 @@ APPL_DB と APPL_STATE_DB のエントリ数差は SAI 失敗ではなく DEL �
 <p>RouteOrch publishRouteState 実装: <code>orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp#L3185">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp#L3185</a>&#160;<a class="footnote-backref" href="#fnref:rorch" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rorch" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:respub">
-<p>ResponsePublisher publish 実装: <code>orchagent/response_publisher.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L96">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L96</a>&#160;<a class="footnote-backref" href="#fnref:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:respub" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>ResponsePublisher publish 実装: <code>orchagent/response_publisher.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L96">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L96</a>&#160;<a class="footnote-backref" href="#fnref:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:respub" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:respub" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:fpmsyncd">
-<p>fpmsyncd onRouteResponse / markRoutesOffloaded 実装: <code>fpmsyncd/routesync.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165</a>&#160;<a class="footnote-backref" href="#fnref:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>fpmsyncd onRouteResponse / markRoutesOffloaded 実装: <code>fpmsyncd/routesync.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165</a>&#160;<a class="footnote-backref" href="#fnref:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:fpmsyncd" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名・DB インデックス定数: <code>common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L27">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L27</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 4 in the text">&#8617;</a></p>

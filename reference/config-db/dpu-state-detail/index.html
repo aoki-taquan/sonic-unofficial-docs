@@ -26040,6 +26040,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提: SmartSwitch 専用ページ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#midplane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        midplane 系フィールドのプラットフォーム差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cpdp-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CP/DP state フィールドのプラットフォーム差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platform_envconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        platform_env.conf によるリブートタイムアウト設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        非 SmartSwitch 構成との差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35535,6 +35607,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提: SmartSwitch 専用ページ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#midplane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        midplane 系フィールドのプラットフォーム差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cpdp-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CP/DP state フィールドのプラットフォーム差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platform_envconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        platform_env.conf によるリブートタイムアウト設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        非 SmartSwitch 構成との差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36411,6 +36555,159 @@ midplane 状態が変化しない場合でも <code>update_dpu_state()</code> �
 </span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>NotificationProducer: なし
 </span></code></pre></div>
 <!-- /pubsub -->
+
+<hr />
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/dpu-state-detail-platform.md</code></p>
+</blockquote>
+<h3 id="smartswitch">前提: SmartSwitch 専用ページ<a class="headerlink" href="#smartswitch" title="Permanent link">&para;</a></h3>
+<p>このページが記述するフィールドは SmartSwitch プラットフォーム上の DPU 側 <code>chassisd</code> (<code>DpuChassisdDaemon</code>) が書き込む。通常の SONiC スイッチ (非 SmartSwitch) では <code>DPU_STATE</code> テーブル自体が存在しないため、フィールドレベルの差分も適用外。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># chassisd:1574-1579</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="k">if</span> <span class="n">chassis</span><span class="o">.</span><span class="n">is_smartswitch</span><span class="p">()</span> <span class="ow">and</span> <span class="n">chassis</span><span class="o">.</span><span class="n">is_dpu</span><span class="p">():</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>    <span class="n">chassisd</span> <span class="o">=</span> <span class="n">DpuChassisdDaemon</span><span class="p">(</span><span class="n">SYSLOG_IDENTIFIER</span><span class="p">,</span> <span class="n">chassis</span><span class="p">)</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>    <span class="n">chassisd</span> <span class="o">=</span> <span class="n">ChassisdDaemon</span><span class="p">(</span><span class="n">SYSLOG_IDENTIFIER</span><span class="p">,</span> <span class="n">chassis</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="midplane">midplane 系フィールドのプラットフォーム差<a class="headerlink" href="#midplane" title="Permanent link">&para;</a></h3>
+<p><code>dpu_midplane_link_state</code> / <code>dpu_midplane_link_reason</code> / <code>dpu_midplane_link_time</code> の値は platform API <code>is_midplane_reachable()</code> の実装有無で決まる:</p>
+<table>
+<thead>
+<tr>
+<th>API 実装状況</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>実装あり</td>
+<td><code>is_midplane_reachable()</code> の <code>True</code>/<code>False</code> を <code>'up'</code>/<code>'down'</code> に変換</td>
+</tr>
+<tr>
+<td><code>NotImplementedError</code></td>
+<td><code>try_get()</code> default <code>False</code> → 常に <code>'down'</code> (chassisd:1060-1062)</td>
+</tr>
+</tbody>
+</table>
+<p>起動時の初期書き込み (<code>set_initial_dpu_admin_state</code>, chassisd:1377) も同様:
+<code>get_oper_status()</code> が <code>NotImplementedError</code> → <code>try_get()</code> default <code>MODULE_STATUS_OFFLINE</code> → <code>dpu_midplane_link_state = 'down'</code>。</p>
+<h3 id="cpdp-state">CP/DP state フィールドのプラットフォーム差<a class="headerlink" href="#cpdp-state" title="Permanent link">&para;</a></h3>
+<p><code>DpuChassisdDaemon.run()</code> (chassisd:1537-1540) が起動時に <code>get_dataplane_state()</code> / <code>get_controlplane_state()</code> の実装有無を確認し <code>poll_dpu_state</code> フラグを設定する:</p>
+<table>
+<thead>
+<tr>
+<th><code>poll_dpu_state</code></th>
+<th>API 実装条件</th>
+<th>CP/DP 評価方式</th>
+<th><code>DpuStateManagerTask</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>True</code></td>
+<td>少なくとも一方の API が実装済み</td>
+<td>platform API 直接呼び出し (ループごと)</td>
+<td>起動しない</td>
+</tr>
+<tr>
+<td><code>False</code></td>
+<td>両 API とも <code>NotImplementedError</code></td>
+<td>DB fallback (<code>PORT_TABLE</code> / <code>SYSTEM_READY</code> 参照)</td>
+<td>起動する (subscribe ベース)</td>
+</tr>
+</tbody>
+</table>
+<p>フィールド別のプラットフォーム差:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>platform API 実装あり</th>
+<th>platform API なし (fallback)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dpu_data_plane_state</code></td>
+<td><code>chassis.get_dataplane_state()</code> 戻り値 → <code>'up'</code>/<code>'down'</code></td>
+<td>CONFIG_DB <code>PORT</code> 全ポートの <code>APPL_DB PORT_TABLE.oper_status == 'up'</code> で判定 (chassisd:1267-1275)</td>
+</tr>
+<tr>
+<td><code>dpu_control_plane_state</code></td>
+<td><code>chassis.get_controlplane_state()</code> 戻り値 → <code>'up'</code>/<code>'down'</code></td>
+<td><code>STATE_DB SYSTEM_READY\|SYSTEM_STATE.Status == 'up'</code> で判定 (chassisd:1277-1284)</td>
+</tr>
+<tr>
+<td><code>dpu_control_plane_time</code></td>
+<td>変化時のみ書き込み (<code>DpuStateUpdater</code>)</td>
+<td>同左 — プラットフォーム差なし</td>
+</tr>
+<tr>
+<td><code>dpu_data_plane_time</code></td>
+<td>変化時のみ書き込み (<code>DpuStateUpdater</code>)</td>
+<td>同左 — プラットフォーム差なし</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">PORT_TABLE fallback 固有のリスク</p>
+<p><code>_get_data_plane_state_common()</code> (chassisd:1267-1275) は CONFIG_DB <code>PORT</code> テーブルを走査するが、<strong>DPU 起動直後でポートが未登録の場合はループがスキップされ <code>True</code> (= <code>'up'</code>) が返る</strong>。これは platform API を実装していない SmartSwitch ベンダー環境固有のリスクであり、platform API を実装したベンダーでは発生しない。</p>
+</div>
+<h3 id="platform_envconf"><code>platform_env.conf</code> によるリブートタイムアウト設定<a class="headerlink" href="#platform_envconf" title="Permanent link">&para;</a></h3>
+<p>DPU reboot タイムアウトはベンダーが <code>platform_env.conf</code> で調整可能。<code>DPU_STATE</code> フィールド値への直接影響はないが、DPU が <code>'up'</code> に到達するまでの待機時間を制御する:</p>
+<table>
+<thead>
+<tr>
+<th>設定ファイル</th>
+<th>キー</th>
+<th>デフォルト</th>
+<th>ハードリミット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/usr/share/sonic/platform/platform_env.conf</code></td>
+<td><code>dpu_reboot_timeout</code></td>
+<td>360 秒</td>
+<td>800 秒 (<code>MAX_DPU_REBOOT_DURATION</code>) — 上書き不可</td>
+</tr>
+</tbody>
+</table>
+<p><code>DPU_STATE</code> フィールド名・DB 番号 (CHASSIS_STATE_DB = 13)・タイムスタンプ書式 (<code>"%a %b %d %I:%M:%S %p UTC %Y"</code>) は全 SmartSwitch ベンダー共通でプラットフォーム差なし。</p>
+<h3 id="smartswitch_1">非 SmartSwitch 構成との差異<a class="headerlink" href="#smartswitch_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th><code>DPU_STATE</code> フィールド書き込み</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SmartSwitch DPU (platform API 実装あり)</td>
+<td><code>DpuChassisdDaemon</code> が platform API 直接呼び出し</td>
+<td>最小レイテンシで状態反映</td>
+</tr>
+<tr>
+<td>SmartSwitch DPU (platform API 未実装)</td>
+<td>DB fallback + <code>DpuStateManagerTask</code> subscribe</td>
+<td>PORT_TABLE 空時の誤 <code>'up'</code> リスクあり</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor / line card)</td>
+<td>書き込みなし</td>
+<td><code>CHASSIS_MODULE</code> テーブルが担当</td>
+</tr>
+<tr>
+<td>通常スイッチ / multi-asic</td>
+<td>書き込みなし</td>
+<td><code>chassis.is_smartswitch()</code> == <code>False</code> のため <code>ChassisdDaemon</code> が起動</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
 
 <hr />
 <h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>

@@ -27892,6 +27892,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        終了コード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイルシステムパス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG / スキーマ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイルシステムへの副次書き換え（DB 外）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#p4rt-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        p4rt バイナリが管理する APPL_DB 書込（間接）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35746,6 +35835,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        終了コード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイルシステムパス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG / スキーマ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイルシステムへの副次書き換え（DB 外）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#p4rt-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        p4rt バイナリが管理する APPL_DB 書込（間接）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36447,6 +36625,131 @@ CONFIG_DB の <code>P4RT</code> テーブルを直接参照する経路は存在
 <h3 id="_18">補足<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <p><strong>テンプレートファイル不在のみが <code>exit 1</code> となる唯一の hard failure</strong>。それ以外の設定誤り（証明書欠如・フィールド typo）はすべてサイレントフォールバックであり、<code>p4rt</code> コンテナ自体は起動してしまう。意図しない平文 gRPC 起動を検知するには <code>systemctl status p4rt</code> の起動引数を確認するか、<code>p4rt</code> プロセスの <code>/proc/&lt;pid&gt;/cmdline</code> で <code>--use_insecure_server_credentials</code> の有無を確認する必要がある。</p>
 <!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>p4rt.sh</code> および関連テンプレートに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+出典: <code>sonic-net/sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh</code>（コミット <code>9ea932ec</code>）</p>
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-constants.md -->
+
+<h3 id="_19">終了コード<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EXIT_P4RT_VARS_FILE_NOT_FOUND</code></td>
+<td><code>1</code></td>
+<td><code>p4rt_vars.j2</code> テンプレートが <code>/usr/share/sonic/templates/</code> に不在の場合の終了コード</td>
+<td><code>p4rt.sh:L3</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">ファイルシステムパス<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名（変数名またはリテラル）</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>P4RT_VARS_FILE</code></td>
+<td><code>/usr/share/sonic/templates/p4rt_vars.j2</code></td>
+<td><code>sonic-cfggen -d -t</code> に渡す Jinja2 テンプレートパス。<code>readonly</code> 宣言。変更不可</td>
+<td><code>p4rt.sh:L4</code></td>
+</tr>
+<tr>
+<td>(exec リテラル)</td>
+<td><code>/usr/local/bin/p4rt</code></td>
+<td>P4Runtime gRPC サーババイナリの絶対パス。<code>exec /usr/local/bin/p4rt ${P4RT_ARGS}</code> に埋め込み</td>
+<td><code>p4rt.sh:L99</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang">YANG / スキーマ定数<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>P4RT</code> テーブルには専用 YANG モデルが存在しない。YANG <code>default</code> 文によるスキーマ定数は <strong>0 件</strong>。
+フィールドデフォルト（ポート <code>9559</code> 等）はすべて <code>p4rt</code> バイナリ内部で保持されており、
+<code>p4rt.sh</code> 側には明示的なデフォルト値定数が存在しない（各フィールドは <code>jq -r '.field // empty'</code> で未設定時は引数なしとなる）。</p>
+<blockquote>
+<p><strong>注意</strong>: バイナリ起動引数名（<code>--p4rt_grpc_port</code>、<code>--use_insecure_server_credentials</code> 等）はスクリプト内にリテラルとして埋め込まれているが、
+これらは CONFIG_DB フィールドとバイナリ引数の対応を定義するものであり、設定値ではない。</p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB <code>P4RT</code> テーブルを読み込む <code>p4rt.sh</code> は DB への書き戻しを<strong>一切行わない</strong>。副作用はすべてファイルシステムまたは p4rt バイナリの間接動作に閉じる。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-side-effects.md -->
+
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>p4rt.sh</code> に <code>sonic-db-cli</code> / <code>ProducerStateTable</code> 等の DB 書込コードなし</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB</td>
+<td>なし</td>
+<td>SAI 非経由（Linux コンテナ起動スクリプト）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="db">ファイルシステムへの副次書き換え（DB 外）<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>対象</th>
+<th>操作</th>
+<th>発動条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$(dirname ${p4rt_unix_socket})</code></td>
+<td><code>mkdir -p</code> でソケット用ディレクトリを自動作成</td>
+<td><code>p4rt_unix_socket</code> フィールドが設定されているとき</td>
+<td><code>p4rt.sh:L92–94</code></td>
+</tr>
+<tr>
+<td><code>save_forwarding_config_file</code> パス</td>
+<td>p4rt バイナリ起動後、P4Runtime 転送設定をファイルに書き込む</td>
+<td><code>save_forwarding_config_file</code> フィールドが設定されているとき</td>
+<td><code>p4rt.sh:L84–87</code>（バイナリ内実装）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="p4rt-appl_db">p4rt バイナリが管理する APPL_DB 書込（間接）<a class="headerlink" href="#p4rt-appl_db" title="Permanent link">&para;</a></h3>
+<p><code>p4rt</code> バイナリ自体は gRPC 経由で受信した P4Runtime リクエストを APPL_DB <code>P4RT_*</code> テーブルへ書き込む。ただしこれは CONFIG_DB <code>P4RT</code> テーブルの読込に伴う直接の副次書込ではなく、外部コントローラからの gRPC リクエストドリブンの書込であるため、<code>p4rt.sh</code> の副次 DB 書込とは区別する。</p>
+<!-- /side-effects -->
 
 <!-- glossary-links-injected -->
 

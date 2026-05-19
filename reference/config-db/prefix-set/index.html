@@ -23179,6 +23179,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-gate-device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要: frrcfgd 起動 gate (DEVICE_METADATA 設定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アドレスファミリ別の適用デーモン (論理分岐・プラットフォーム差ではない)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36288,6 +36327,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-gate-device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要: frrcfgd 起動 gate (DEVICE_METADATA 設定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アドレスファミリ別の適用デーモン (論理分岐・プラットフォーム差ではない)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37007,6 +37085,84 @@
 <p><strong>スキャン証跡</strong>: <code>frrcfgd.py</code> L2298-2299 (table_handler_list 登録), L2359-2361 (subscribe_all), L1536-1552 (listen_thread/psubscribe), L2894-2910 (PREFIX_SET ハンドラ), L2911-2936 (PREFIX ハンドラ)。<code>bgpd.conf.db.pref_list.j2</code> L1-42 (Jinja2 テンプレート)。詳細は <code>meta/_intermediate/cdb-flow/prefix-set-pubsub.md</code> を参照。</p>
 </blockquote>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code>, <code>templates/bgpd/bgpd.conf.db.pref_list.j2</code>, <code>sonic-device_metadata.yang</code>
+調査日: 2026-05-19</p>
+</blockquote>
+<p><strong>プラットフォーム固有差異なし</strong>: PREFIX_SET は FRR (<code>bgpd</code> / <code>zebra</code>) 制御プレーン上の prefix-list であり SAI 非経由。ASIC 種別（Broadcom / Mellanox / Marvell / Innovium / VPP）・VOQ chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別</td>
+<td>影響なし</td>
+<td>SAI 非経由 (FRR 内部 prefix-list)。orchagent / syncd 経由なし</td>
+</tr>
+<tr>
+<td>multi-asic (<code>asicN</code> namespace)</td>
+<td>各 namespace 独立・同一ロジック</td>
+<td><code>frrcfgd</code> は per-namespace 起動。PREFIX_SET / PREFIX ハンドラ (<code>frrcfgd.py:2894-2995</code>) に namespace 分岐なし</td>
+</tr>
+<tr>
+<td><code>switch_type</code> (voq / chassis-packet)</td>
+<td>影響なし</td>
+<td><code>frrcfgd.py</code> の PREFIX ハンドラ部を <code>platform\|asic\|switch_type\|chassis\|sub_role\|namespace</code> で grep して 0 ヒット</td>
+</tr>
+<tr>
+<td><code>sub_role</code> (FrontEnd / BackEnd)</td>
+<td>影響なし</td>
+<td>同上で参照 0</td>
+</tr>
+<tr>
+<td>Jinja2 テンプレート (<code>bgpd.conf.db.pref_list.j2</code>)</td>
+<td>プラットフォーム条件なし</td>
+<td>L1-42 に <code>{% if platform/asic/chassis/switch_type %}</code> 0 件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frrcfgd-gate-device_metadata">重要: frrcfgd 起動 gate (DEVICE_METADATA 設定)<a class="headerlink" href="#frrcfgd-gate-device_metadata" title="Permanent link">&para;</a></h3>
+<p><code>DEVICE_METADATA|localhost|frr_mgmt_framework_config = true</code> が設定されていない環境では sonic-frr-mgmt-framework パッケージが有効化されず frrcfgd が起動しない。この場合 PREFIX_SET を購読するプロセスが存在せず、CONFIG_DB への書き込みは FRR に反映されない。</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># DEVICE_METADATA の既定値</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="nt">frr_mgmt_framework_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">  </span><span class="c1"># ← true に変更しないと frrcfgd 非起動</span>
+</span></code></pre></div>
+<p>根拠: <code>sonic-device_metadata.yang:132-138</code>（<code>default "false"</code>）</p>
+<h3 id="_19">アドレスファミリ別の適用デーモン (論理分岐・プラットフォーム差ではない)<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p>PREFIX テーブルのエントリ処理では <code>PREFIX_SET.mode</code> の AF に応じて vtysh 適用先デーモンが変わる:</p>
+<table>
+<thead>
+<tr>
+<th>AF</th>
+<th>daemons 引数</th>
+<th>vtysh コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IPv4</code> (AF_INET)</td>
+<td><code>None</code>（テーブルデフォルト: zebra・bgpd・ospfd・pimd）</td>
+<td><code>ip prefix-list ...</code></td>
+</tr>
+<tr>
+<td><code>IPv6</code> (AF_INET6)</td>
+<td><code>['bgpd', 'zebra']</code>（ospfd・pimd は除外）</td>
+<td><code>ipv6 prefix-list ...</code></td>
+</tr>
+</tbody>
+</table>
+<p>根拠: <code>frrcfgd.py:2931-2936</code></p>
+<blockquote>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/prefix-set-platform.md</code> を参照</p>
+</blockquote>
+<!-- /platform -->
 
 <!-- glossary-links-injected: 88e792f23f63 -->
 

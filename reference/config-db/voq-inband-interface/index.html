@@ -30063,6 +30063,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type による有効性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI レベルの前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis-vs-standalone-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic VOQ chassis vs. standalone VOQ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipv6-metric-switch_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPv6 metric 差分（switch_type 依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダー ASIC 固有性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35944,6 +36016,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type による有効性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI レベルの前提
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis-vs-standalone-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic VOQ chassis vs. standalone VOQ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipv6-metric-switch_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPv6 metric 差分（switch_type 依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダー ASIC 固有性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36632,6 +36776,119 @@
 <li>STATE_DB <code>PORT_TABLE</code> に <code>state=ok</code> が書かれると <code>intfmgrd</code> の <code>doPortTableTask()</code> が呼ばれ、pending の interface タスクを再実行するトリガーになる。</li>
 </ul>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/orchagent/main.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/portsorch.cpp</code>
+調査日: 2026-05-19</p>
+</blockquote>
+<h3 id="switch_type">switch_type による有効性<a class="headerlink" href="#switch_type" title="Permanent link">&para;</a></h3>
+<p><code>VOQ_INBAND_INTERFACE</code> テーブルは <strong><code>switch_type == "voq"</code> の場合のみ</strong> 実質的に機能する。</p>
+<table>
+<thead>
+<tr>
+<th>switch_type</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"voq"</code></td>
+<td><code>intfmgrd</code> が購読 → APP_DB に relay → orchagent <code>IntfsOrch</code> / <code>PortsOrch</code> が SAI 設定 → VOQ inband ポートを使用</td>
+</tr>
+<tr>
+<td><code>"switch"</code> (通常スイッチ)</td>
+<td><code>intfmgrd</code> は表を購読しているがコード分岐 (<code>intfmgr.cpp:1195</code>) は <code>switch_type=="voq"</code> 前提で生成された設定のためあり得ない。<code>PortsOrch::setVoqInbandIntf()</code> も呼ばれない</td>
+</tr>
+<tr>
+<td><code>"fabric"</code></td>
+<td><code>FabricOrchDaemon</code> を使用し <code>IntfsOrch</code> 自体が起動しない。テーブルは完全に無視される</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai">SAI レベルの前提<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<p>orchagent が <code>switch_type == "voq"</code> のとき <code>sai_create_switch()</code> に次の属性を渡す（<code>main.cpp:697-707</code>）:</p>
+<table>
+<thead>
+<tr>
+<th>SAI 属性</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_SWITCH_ATTR_TYPE</code></td>
+<td><code>SAI_SWITCH_TYPE_VOQ</code></td>
+<td>SAI に VOQ 動作モードを宣言</td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_SWITCH_ID</code></td>
+<td><code>gVoqMySwitchId</code></td>
+<td>DEVICE_METADATA.localhost.switch_id から取得</td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_MAX_SYSTEM_CORES</code></td>
+<td><code>gVoqMaxCores</code></td>
+<td>DEVICE_METADATA.localhost.max_cores から取得</td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST</code></td>
+<td>システムポートリスト</td>
+<td>SYSTEM_PORT テーブルから生成。0 件なら <code>exit(EXIT_FAILURE)</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>SAI_SWITCH_TYPE_VOQ</code> をサポートしない ASIC では orchagent 起動時点で SAI エラーが発生し、<code>VOQ_INBAND_INTERFACE</code> の処理に到達しない。</p>
+<h3 id="multi-asic-voq-chassis-vs-standalone-voq">multi-asic VOQ chassis vs. standalone VOQ<a class="headerlink" href="#multi-asic-voq-chassis-vs-standalone-voq" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th><code>gMultiAsicVoq</code></th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>multi-asic chassis（<code>CHASSIS_APP_DB</code> 利用可能）</td>
+<td><code>true</code></td>
+<td>LAG / System Port が CHASSIS_APP_DB に同期される。<code>VOQ_INBAND_INTERFACE</code> 処理自体に差はないが、inband ポートのリモートネイバールートが supervisor 経由で他 asic に配信される</td>
+</tr>
+<tr>
+<td>standalone VOQ（<code>CHASSIS_APP_DB</code> 不在）</td>
+<td><code>false</code></td>
+<td>CHASSIS_APP_DB への同期なし。LAG/System Port の chassis 共有は行われないが、inband インタフェースの APP_DB relay / SAI 設定は同一</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ipv6-metric-switch_type">IPv6 metric 差分（switch_type 依存）<a class="headerlink" href="#ipv6-metric-switch_type" title="Permanent link">&para;</a></h3>
+<p><code>intfmgr.cpp:103-106</code> において <code>mySwitchType == "voq"</code> 時のみ IPv6 アドレス追加コマンドに <code>metric 256</code> を付与する。通常スイッチ (<code>"switch"</code>) では metric 指定なし（カーネルデフォルト 0 またはカーネル任意値）。</p>
+<table>
+<thead>
+<tr>
+<th>switch_type</th>
+<th><code>ip -6 address add</code> オプション</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"voq"</code></td>
+<td><code>metric 256</code> を付加</td>
+<td>inband 接続ルートとカーネルの connected route metric を同値にして eBGP/iBGP ECMP を成立させる</td>
+</tr>
+<tr>
+<td>その他</td>
+<td>metric 指定なし</td>
+<td>VOQ 固有の ECMP 要件なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="asic">ベンダー ASIC 固有性<a class="headerlink" href="#asic" title="Permanent link">&para;</a></h3>
+<p>VOQ SAI (<code>SAI_SWITCH_TYPE_VOQ</code>) を実装しているベンダー ASIC に限定される。コミュニティ SONiC では Cisco 8000 シリーズなどが代表例として挙げられるが、SONiC コードは ASIC 種別を直接確認せず <code>switch_type</code> 設定のみで判定する。</p>
+<!-- /platform -->
 
 <!-- glossary-links-injected: 6981be1a469d -->
 

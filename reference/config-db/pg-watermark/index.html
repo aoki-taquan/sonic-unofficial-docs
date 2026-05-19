@@ -27477,7 +27477,262 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 操作の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 操作の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ログ・ERROR_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-flex_counter_db-orchagent-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① FLEX_COUNTER_DB — グループ設定書き込み（orchagent init 時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-flex_counter_db-per-oid-enabledisable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② FLEX_COUNTER_DB — per-OID エントリ（enable/disable 時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-counters_db-pg-buffer_pg-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③ COUNTERS_DB — PG マップ書き込み（BUFFER_PG SET イベント時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-counters_db-periodic_watermarks-telemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④ COUNTERS_DB — PERIODIC_WATERMARKS クリア（telemetry タイマー）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書き込みが発生しないケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-watermark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 通知チャネル（watermark クリア）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベントフロー概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        遅延サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_device-minigraph-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理デバイス (mgmt_device) — minigraph が強制 disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI カウンタサポート差 — ASIC 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-dash-pg_watermark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファブリックポート / VoQ / DASH — PG_WATERMARK への影響なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / namespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -27505,7 +27760,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -27516,7 +27771,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35077,7 +35332,262 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 操作の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 操作の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ログ・ERROR_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-flex_counter_db-orchagent-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ① FLEX_COUNTER_DB — グループ設定書き込み（orchagent init 時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-flex_counter_db-per-oid-enabledisable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ② FLEX_COUNTER_DB — per-OID エントリ（enable/disable 時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-counters_db-pg-buffer_pg-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ③ COUNTERS_DB — PG マップ書き込み（BUFFER_PG SET イベント時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-counters_db-periodic_watermarks-telemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ④ COUNTERS_DB — PERIODIC_WATERMARKS クリア（telemetry タイマー）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書き込みが発生しないケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-watermark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 通知チャネル（watermark クリア）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベントフロー概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        遅延サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_device-minigraph-disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理デバイス (mgmt_device) — minigraph が強制 disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI カウンタサポート差 — ASIC 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-dash-pg_watermark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファブリックポート / VoQ / DASH — PG_WATERMARK への影響なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / namespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -35105,7 +35615,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35116,7 +35626,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35405,32 +35915,526 @@
 <!-- /cross-refs -->
 
 <hr />
-<h2 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">&quot;FLEX_COUNTER_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">&quot;PG_WATERMARK&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">            </span><span class="nt">&quot;FLEX_COUNTER_STATUS&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enable&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="nt">&quot;POLL_INTERVAL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60000&quot;</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">}</span>
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>meta/_intermediate/cdb-flow/pg-watermark-failure.md</code></p>
+</blockquote>
+<p><code>FlexCounterOrch::doTask(Consumer&amp;)</code>（<code>sonic-swss/orchagent/flexcounterorch.cpp</code>）および <code>portsorch</code> の PG watermark 登録関数を調査した。</p>
+<h3 id="set">SET 操作の失敗パターン<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>遅延タイマー (<code>m_delayTimerExpired</code>) 未満了</td>
+<td><code>flexcounterorch.cpp:156-159</code></td>
+<td>return — m_toSync に残留。タイマー満了後に自動再処理</td>
+<td>自動（タイマー満了時）</td>
+</tr>
+<tr>
+<td><code>gPortsOrch-&gt;allPortsReady()</code> が false</td>
+<td><code>flexcounterorch.cpp:164-167</code></td>
+<td>return — m_toSync に残留。全ポート初期化完了後に自動再処理</td>
+<td>自動（ポート初期化完了時）</td>
+</tr>
+<tr>
+<td>不正なグループキー（<code>flexCounterGroupMap</code> に未登録）</td>
+<td><code>flexcounterorch.cpp:183-188</code></td>
+<td><code>SWSS_LOG_NOTICE("Invalid flex counter group input, %s")</code> + <strong>即時廃棄</strong></td>
+<td>なし（<code>PG_WATERMARK</code> キーは正常登録済みのため通常発生しない）</td>
+</tr>
+<tr>
+<td>未知フィールド（<code>POLL_INTERVAL_FIELD</code> 等以外）</td>
+<td><code>flexcounterorch.cpp:395-398</code></td>
+<td><code>SWSS_LOG_NOTICE("Unsupported field %s")</code> — <strong>フィールドをスキップ</strong>。エントリは廃棄されない</td>
+<td>なし（フィールド単位でスキップ）</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_STATUS</code> が <code>"enable"</code> / <code>"disable"</code> 以外の値</td>
+<td><code>flexcounterorch.cpp:225-394</code></td>
+<td>enable / disable 分岐に入らず <code>setFlexCounterGroupOperation()</code> のみ実行。syncd 側バリデーション依存</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>BUFFER_PG</code> テーブルが空（PG 設定なし）</td>
+<td><code>portsorch.cpp:8998-9052</code></td>
+<td>OID 登録をスキップ（エラーなし・サイレント）。後から BUFFER_PG を追加すると自動登録</td>
+<td>自動（BUFFER_PG SET イベント時）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 操作の挙動<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<p><code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> エントリを DEL すると flexcounterorch の doTask() でエントリが消費されるが、<code>clearCounterIdList()</code> は呼ばれない。PG watermark カウンタを無効化するには <code>FLEX_COUNTER_STATUS = "disable"</code> を SET する必要がある（DEL ではカウンタポーリングは停止しない）。</p>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_STATUS = "disable"</code> SET</td>
+<td><code>setFlexCounterGroupOperation(group, "disable")</code> — syncd FlexCounter グループを非活性化</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> の DEL</td>
+<td>エントリ消費のみ。カウンタ登録（<code>PG_WATERMARK_STAT_COUNTER:&lt;oid&gt;</code>）は削除されない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error_table">ログ・ERROR_TABLE<a class="headerlink" href="#error_table" title="Permanent link">&para;</a></h3>
+<ul>
+<li>失敗は <code>SWSS_LOG_NOTICE</code> または <code>SWSS_LOG_ERROR</code> で <code>/var/log/swss/orchagent.log</code> に出力される。</li>
+<li>STATE_DB の <code>ERROR_TABLE</code> や <code>COUNTERS_DB</code> への失敗通知は<strong>一切書き込まれない</strong>。</li>
+<li>FlexCounter 登録失敗はサイレントなため、<code>counterpoll show</code> で <code>ENABLE</code> と表示されていても <code>COUNTERS_DB</code> に PG watermark 値が現れない場合は BUFFER_PG 設定や allPortsReady 状態を確認する。</li>
+</ul>
+<!-- /failure -->
+
+<hr />
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/portsorch.h, sonic-swss/orchagent/portsorch.cpp,
+     sonic-swss/orchagent/watermarkorch.cpp -->
+
+<p><code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> に関連するマジックナンバー・グループ名・パス定数の一覧。いずれも CONFIG_DB・YANG・CLI から変更不可能。</p>
+<table>
+<thead>
+<tr>
+<th>定数 / マクロ名</th>
+<th>値</th>
+<th>定義ファイル</th>
+<th>意味・影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PG_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS</code></td>
+<td><code>"60000"</code></td>
+<td><code>portsorch.h:39</code></td>
+<td><code>setFlexCounterGroupParameter()</code> 呼び出し時に FLEX_COUNTER_DB へ書き込まれるデフォルトポーリング間隔文字列。<code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> の <code>POLL_INTERVAL</code> フィールドで上書き可能。<code>portsorch.cpp:873</code> で参照される</td>
+</tr>
+<tr>
+<td><code>PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>60000</code></td>
+<td><code>portsorch.cpp:92</code></td>
+<td><code>pg_watermark_manager</code> コンストラクタ (<code>portsorch.cpp:736</code>) に渡す内部整数定数。上記 POLL_MSECS 文字列と値が一致することで設定の二重管理を実装している</td>
+</tr>
+<tr>
+<td><code>PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"PG_WATERMARK_STAT_COUNTER"</code></td>
+<td><code>portsorch.h:36</code></td>
+<td>FLEX_COUNTER_DB の <code>FLEX_COUNTER_GROUP_TABLE</code> キーに使用されるグループ名。syncd がこのグループ名でポーリングスレッドを識別する</td>
+</tr>
+<tr>
+<td><code>STATS_MODE_READ_AND_CLEAR</code></td>
+<td><code>"READ_AND_CLEAR"</code></td>
+<td><code>portsorch.cpp:872-876</code> 呼び出し引数</td>
+<td><code>setFlexCounterGroupParameter()</code> 経由で <code>FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER</code> の <code>STATS_MODE</code> フィールドに書き込まれる固定値。SAI からポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。ユーザーが変更するフィールドは CONFIG_DB に存在しない</td>
+</tr>
+<tr>
+<td><code>DEFAULT_TELEMETRY_INTERVAL</code></td>
+<td><code>120</code> 秒</td>
+<td><code>watermarkorch.cpp:9</code></td>
+<td><code>watermarkorch</code> が <code>m_telemetryTimer</code> を初期化する際のデフォルト周期。<code>WATERMARK_TABLE|TELEMETRY_INTERVAL</code> エントリの <code>interval</code> フィールドで上書き可能。変更単位は秒</td>
+</tr>
+<tr>
+<td><code>CLEAR_PG_HEADROOM_REQUEST</code></td>
+<td><code>"PG_HEADROOM"</code></td>
+<td><code>watermarkorch.cpp:11</code></td>
+<td><code>WATERMARK_CLEAR_REQUEST</code> APPL_DB 通知チャネルへのリクエスト文字列。<code>watermarkcfg clear pg-headroom</code> CLI が発行する値と一致しなければクリア処理が発火しない</td>
+</tr>
+<tr>
+<td><code>CLEAR_PG_SHARED_REQUEST</code></td>
+<td><code>"PG_SHARED"</code></td>
+<td><code>watermarkorch.cpp:12</code></td>
+<td>同上。<code>watermarkcfg clear pg-shared</code> CLI が発行するリクエスト文字列</td>
+</tr>
+<tr>
+<td><code>SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES</code></td>
+<td>SAI enum 値</td>
+<td><code>portsorch.cpp:412</code> (<code>ingressPriorityGroupWatermarkStatIds[]</code>)</td>
+<td>FlexCounter が各 PG OID に対して収集する SAI カウンタ 1 つ目。XOFF（headroom）ウォーターマークをバイト単位で返す。ASIC が非対応の場合は <code>SAI_STATUS_NOT_SUPPORTED</code> が返るが、orchagent はエラー扱いしない</td>
+</tr>
+<tr>
+<td><code>SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES</code></td>
+<td>SAI enum 値</td>
+<td><code>portsorch.cpp:413</code> (<code>ingressPriorityGroupWatermarkStatIds[]</code>)</td>
+<td>FlexCounter が各 PG OID に対して収集する SAI カウンタ 2 つ目。Shared バッファウォーターマークをバイト単位で返す。収集カウンタリストはコードで完全に固定されており、CONFIG_DB や YANG からの変更手段はない</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">POLL_MSECS 二重定義の理由</p>
+<p><code>PG_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS</code>（文字列 <code>"60000"</code>）と <code>PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code>（整数 <code>60000</code>）は同一の 60 秒を 2 種類の型で保持している。文字列版は <code>setFlexCounterGroupParameter()</code> での FLEX_COUNTER_DB 書き込みに、整数版は <code>FlexCounterManager</code> コンストラクタの内部初期化に使用される。値の不一致が生じた場合でも orchagent は検出しない。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">収集カウンタのハードコード制約</p>
+<p><code>ingressPriorityGroupWatermarkStatIds</code> 配列は <code>static const</code> で宣言されており、ランタイムで変更する手段がない。ASIC が <code>SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES</code> をサポートしない場合（例: headroom なし構成）、当該 PG の XOFF_ROOM カウンタは常に 0 または <code>SAI_STATUS_NOT_SUPPORTED</code> が返る。</p>
+</div>
+<!-- /constants -->
+
+<hr />
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>meta/_intermediate/cdb-flow/pg-watermark-side-effects.md</code></p>
+</blockquote>
+<p><code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> の <code>FLEX_COUNTER_STATUS</code> 変化を起点として、以下の副次 DB 書き込みが発生する。</p>
+<h3 id="1-flex_counter_db-orchagent-init">① FLEX_COUNTER_DB — グループ設定書き込み（orchagent init 時）<a class="headerlink" href="#1-flex_counter_db-orchagent-init" title="Permanent link">&para;</a></h3>
+<p><code>PortsOrch::init()</code> → <code>setFlexCounterGroupParameter()</code> (<code>portsorch.cpp:872-876</code>) が orchagent 起動時に <strong>1 回</strong>、<code>FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER</code> へポーリング間隔 (<code>60000 ms</code>) と <code>STATS_MODE=READ_AND_CLEAR</code> を書き込む。これは CONFIG_DB の PG_WATERMARK エントリの有無に関係なく常時書かれる。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>フィールド</th>
+<th>書込内容</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>FLEX_COUNTER_GROUP_TABLE\|PG_WATERMARK_STAT_COUNTER</code></td>
+<td><code>POLL_INTERVAL</code></td>
+<td><code>"60000"</code></td>
+<td><code>portsorch.cpp:872-876</code></td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>FLEX_COUNTER_GROUP_TABLE\|PG_WATERMARK_STAT_COUNTER</code></td>
+<td><code>STATS_MODE</code></td>
+<td><code>"READ_AND_CLEAR"</code></td>
+<td><code>portsorch.cpp:872-876</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-flex_counter_db-per-oid-enabledisable">② FLEX_COUNTER_DB — per-OID エントリ（enable/disable 時）<a class="headerlink" href="#2-flex_counter_db-per-oid-enabledisable" title="Permanent link">&para;</a></h3>
+<p><code>FLEX_COUNTER_STATUS=enable</code> を受信すると <code>addPriorityGroupWatermarkFlexCounters()</code> が <code>pg_watermark_manager.setCounterIdList()</code> (<code>portsorch.cpp:9051</code>) を呼び、PG OID ごとに SAI カウンタ ID リストを書き込む。<code>disable</code> 受信時は <code>clearCounterIdList()</code> (<code>portsorch.cpp:9095</code>) でエントリが削除される。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>フィールド</th>
+<th>書込内容</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>PG_WATERMARK_STAT_COUNTER:&lt;sai_pg_oid&gt;</code></td>
+<td><code>PG_WATERMARK_STAT_ID_LIST</code></td>
+<td>SAI カウンタ名リスト（XOFF_ROOM + SHARED の 2 統計）</td>
+<td><code>portsorch.cpp:9051</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-counters_db-pg-buffer_pg-set">③ COUNTERS_DB — PG マップ書き込み（BUFFER_PG SET イベント時）<a class="headerlink" href="#3-counters_db-pg-buffer_pg-set" title="Permanent link">&para;</a></h3>
+<p><code>BUFFER_PG</code> テーブルにエントリが書き込まれると、PG_WATERMARK の enable 状態に関わらず以下の 3 マップが更新される。<code>wredstat</code> / <code>watermarkstat</code> はこれらのマップから PG OID を逆引きする。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込内容</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_PG_NAME_MAP</code></td>
+<td><code>&lt;port&gt;:&lt;pg_index&gt;</code> → <code>&lt;sai_pg_oid&gt;</code></td>
+<td><code>portsorch.cpp:8937</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_PG_PORT_MAP</code></td>
+<td><code>&lt;sai_pg_oid&gt;</code> → <code>&lt;sai_port_oid&gt;</code></td>
+<td><code>portsorch.cpp:8938</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_PG_INDEX_MAP</code></td>
+<td><code>&lt;sai_pg_oid&gt;</code> → <code>&lt;pg_index&gt;</code></td>
+<td><code>portsorch.cpp:8939</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-counters_db-periodic_watermarks-telemetry">④ COUNTERS_DB — PERIODIC_WATERMARKS クリア（telemetry タイマー）<a class="headerlink" href="#4-counters_db-periodic_watermarks-telemetry" title="Permanent link">&para;</a></h3>
+<p>PG_WATERMARK（または QUEUE_WATERMARK）が enable になると <code>WatermarkOrch::handleFcConfigUpdate()</code> が <code>m_telemetryTimer-&gt;start()</code> を呼ぶ。タイマー発火ごとに <code>clearSingleWm()</code> (<code>watermarkorch.cpp:258-266</code>) が <code>PERIODIC_WATERMARKS</code> テーブルの PG カウンタ 2 フィールドを <code>"0"</code> にリセットする。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>フィールド</th>
+<th>書込内容</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>PERIODIC_WATERMARKS\|&lt;sai_pg_oid&gt;</code></td>
+<td><code>SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES</code></td>
+<td><code>"0"</code>（クリア）</td>
+<td><code>m_wmStatus != 0</code>（telemetry タイマー動作中）</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>PERIODIC_WATERMARKS\|&lt;sai_pg_oid&gt;</code></td>
+<td><code>SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES</code></td>
+<td><code>"0"</code>（クリア）</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意</strong>: both PG_WATERMARK と QUEUE_WATERMARK が disable になると <code>m_telemetryTimer-&gt;stop()</code> が呼ばれ、<code>PERIODIC_WATERMARKS</code> のクリアが停止する。<code>PERSISTENT_WATERMARKS</code> / <code>USER_WATERMARKS</code> は telemetry タイマーのクリア対象外で、<code>watermarkcfg clear</code> コマンドでのみ手動クリアされる。</p>
+<h3 id="_8">副次書き込みが発生しないケース<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_STATUS=disable</code>（または未設定）</td>
+<td>FLEX_COUNTER_DB per-OID エントリが登録されず syncd ポーリングが発生しない</td>
+</tr>
+<tr>
+<td><code>BUFFER_PG</code> テーブルが空</td>
+<td>PG OID がなく、FLEX_COUNTER_DB への per-OID エントリ登録も COUNTERS_DB マップ書き込みも発生しない</td>
+</tr>
+<tr>
+<td>PG_WATERMARK / QUEUE_WATERMARK が両方 disable</td>
+<td><code>m_wmStatus == 0</code> となり telemetry タイマーが停止し <code>PERIODIC_WATERMARKS</code> のクリアが発生しない</td>
+</tr>
+<tr>
+<td>orchagent 未起動</td>
+<td><code>FLEX_COUNTER_GROUP_TABLE</code> 設定が書かれず syncd がグループを認識しない</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
+
+<hr />
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>meta/_intermediate/cdb-flow/pg-watermark-pubsub.md</code>
+スキャン対象: <code>orchagent/orchdaemon.cpp:432-437,620-626</code>、<code>orchagent/flexcounterorch.cpp:40-155</code>、<code>orchagent/watermarkorch.cpp:23-50,52-143,144-232</code></p>
+</blockquote>
+<h3 id="config_db">CONFIG_DB 購読方式<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> への変更は 2 つの orchagent 内 Orch が <code>ConsumerStateTable</code> で受信する。</p>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>DB</th>
+<th>テーブル</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FlexCounterOrch</code></td>
+<td>CONFIG_DB (4)</td>
+<td><code>FLEX_COUNTER_TABLE</code></td>
+<td><code>doTask(Consumer&amp;)</code> → PG_WATERMARK ハンドラ → <code>addPriorityGroupWatermarkFlexCounters()</code></td>
+</tr>
+<tr>
+<td><code>WatermarkOrch</code></td>
+<td>CONFIG_DB (4)</td>
+<td><code>FLEX_COUNTER_TABLE</code></td>
+<td><code>doTask(Consumer&amp;)</code> → <code>handleFcConfigUpdate("PG_WATERMARK")</code> → telemetry タイマー制御</td>
+</tr>
+<tr>
+<td><code>WatermarkOrch</code></td>
+<td>CONFIG_DB (4)</td>
+<td><code>WATERMARK_TABLE</code></td>
+<td><code>doTask(Consumer&amp;)</code> → telemetry interval 更新</td>
+</tr>
+</tbody>
+</table>
+<p><code>Orch</code> 汎用の <code>ConsumerStateTable</code> が <code>ProducerStateTable::set()</code> からの <code>FLEX_COUNTER_TABLE_CHANNEL@4</code> PUBLISH を受信し、orchagent 主ループが <code>SELECT_TIMEOUT = 1000 ms</code> (<code>orchdaemon.cpp:23</code>) で起床する。</p>
+<h3 id="appl_db-watermark">APPL_DB 通知チャネル（watermark クリア）<a class="headerlink" href="#appl_db-watermark" title="Permanent link">&para;</a></h3>
+<p><code>WatermarkOrch</code> コンストラクタ (<code>watermarkorch.cpp:35-38</code>) が <code>APPL_DB:WATERMARK_CLEAR_REQUEST</code> を <code>NotificationConsumer</code> で購読する。<code>watermarkcfg clear pg-headroom</code> / <code>clear pg-shared</code> CLI が PUBLISH するクリア要求を受信して <code>clearSingleWm()</code> を呼ぶ。</p>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>DB</th>
+<th>チャネル</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WatermarkOrch</code></td>
+<td>APPL_DB</td>
+<td><code>WATERMARK_CLEAR_REQUEST</code></td>
+<td><code>doTask(NotificationConsumer&amp;)</code> → <code>clearSingleWm()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">イベントフロー概要<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>FLEX_COUNTER_STATUS = enable を CONFIG_DB に書き込み
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  → ProducerStateTable: PUBLISH FLEX_COUNTER_TABLE_CHANNEL@4
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>orchagent select() (SELECT_TIMEOUT = 1000 ms)
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  → FlexCounterOrch::doTask(): m_pg_watermark_enabled=true
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>                               → pg_watermark_manager.setCounterIdList() / FLEX_COUNTER_DB
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  → WatermarkOrch::doTask(): m_wmStatus 更新 → m_telemetryTimer-&gt;start()
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>syncd FlexCounter スレッド: FLEX_COUNTER_DB を読んで SAI ポーリング開始
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  → POLL_INTERVAL (デフォルト 60000 ms) ごとに sai_get_ingress_priority_group_stats()
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>  → pgWmSha Lua スクリプトが COUNTERS_DB に書き込み
+</span></code></pre></div>
+<h3 id="_10">遅延サマリ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>段階</th>
+<th>遅延上限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB 書き込み → orchagent 処理</td>
+<td>SELECT_TIMEOUT = 1000 ms</td>
+</tr>
+<tr>
+<td>warm-reboot 時の FlexCounter 全体遅延</td>
+<td><code>FLEX_COUNTER_DELAY_SEC = 60</code> 秒</td>
+</tr>
+<tr>
+<td>orchagent 処理 → syncd 最初のポーリング</td>
+<td>POLL_INTERVAL = 60000 ms（デフォルト）</td>
+</tr>
+<tr>
+<td>PG_WATERMARK enable → PERIODIC_WATERMARKS 初回クリア</td>
+<td>DEFAULT_TELEMETRY_INTERVAL = 120 秒</td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
+
+<hr />
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> の処理ロジック自体は ASIC ベンダー・スイッチタイプに依存しないが、有効化後に実際に収集されるカウンタ値やカウンタの存在はプラットフォーム構成に依存する。</p>
+<h3 id="mgmt_device-minigraph-disable">管理デバイス (mgmt_device) — minigraph が強制 disable<a class="headerlink" href="#mgmt_device-minigraph-disable" title="Permanent link">&para;</a></h3>
+<p><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:58</code> の <code>mgmt_disabled_counters</code> リストに <code>"PG_WATERMARK"</code> が含まれる<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。管理デバイスタイプ (<code>mgmt_device_types</code>) に分類されるスイッチでは、minigraph 生成時に CONFIG_DB の <code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> に <code>FLEX_COUNTER_STATUS = "disable"</code> が明示的に書き込まれる。これにより管理デバイスでは PG watermark カウンタが自動的に無効化される。</p>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム種別</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通常スイッチ（non-mgmt）</td>
+<td><code>FLEX_COUNTER_STATUS</code> 未設定（<code>disable</code> 相当） — ユーザーが <code>counterpoll watermark enable</code> で有効化可能</td>
+</tr>
+<tr>
+<td>管理デバイス (mgmt_device)</td>
+<td>minigraph が <code>FLEX_COUNTER_STATUS = "disable"</code> を明示設定 — <code>counterpoll watermark enable</code> で上書き可能だが設定再生成時に元に戻る</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-asic">SAI カウンタサポート差 — ASIC 依存<a class="headerlink" href="#sai-asic" title="Permanent link">&para;</a></h3>
+<p>収集対象の 2 SAI カウンタはハードコードされており、ASIC が対応していない場合はサイレントに 0 値またはエラーが返る<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>SAI カウンタ</th>
+<th>ASIC 非対応時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES</code></td>
+<td>headroom（XOFF バッファ）非サポート ASIC では <code>SAI_STATUS_NOT_SUPPORTED</code> または常時 0。XOFF-based PFC を実装しない構成では意味のある値が得られない</td>
+</tr>
+<tr>
+<td><code>SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES</code></td>
+<td>通常ほとんどの ASIC でサポートされるが、仮想スイッチ（<code>vs</code> プラットフォーム）では SAI スタブが固定値または 0 を返す</td>
+</tr>
+</tbody>
+</table>
+<p>orchagent は SAI エラーを PG watermark の設定失敗として扱わない（FlexCounter Manager が syncd 側でエラーを吸収する）。COUNTERS_DB に値が現れない場合は orchagent ログを確認する。</p>
+<h3 id="voq-dash-pg_watermark">ファブリックポート / VoQ / DASH — PG_WATERMARK への影響なし<a class="headerlink" href="#voq-dash-pg_watermark" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VoQ シャーシ (<code>gMySwitchType == "voq"</code>)</td>
+<td>PG_WATERMARK グループの処理に VoQ 固有分岐なし。VoQ モードでも通常どおり <code>m_pg_watermark_enabled</code> フラグと <code>BUFFER_PG</code> 設定に基づき OID 登録される</td>
+</tr>
+<tr>
+<td>ファブリックポート (<code>gFabricPortsOrch</code> 有効)</td>
+<td>PG_WATERMARK は ingress priority group カウンタ専用。ファブリックポートには PG が存在せず影響なし</td>
+</tr>
+<tr>
+<td>SmartSwitch DPU / DASH</td>
+<td><code>flexcounterorch.cpp</code> の DASH 系 orch 参照は ENI/HA グループ専用。PG_WATERMARK グループの処理パスに DASH 依存コードなし</td>
+</tr>
+<tr>
+<td>Gearbox（外付け PHY）</td>
+<td>PG_WATERMARK は Gearbox の PORT/MACSEC グループと独立。Gearbox 有効 / 無効で PG watermark 動作は変化しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="multi-asic-namespace">multi-asic / namespace<a class="headerlink" href="#multi-asic-namespace" title="Permanent link">&para;</a></h3>
+<p>multi-asic 構成では各 ASIC の namespace で orchagent が独立して起動し、それぞれが自 namespace の CONFIG_DB <code>FLEX_COUNTER_TABLE|PG_WATERMARK</code> を購読する。各 ASIC の BUFFER_PG エントリと SAI OID は namespace 間で分離されており、PG watermark カウンタも ASIC ごとに独立して COUNTERS_DB に書き込まれる。</p>
+<!-- /platform -->
+
+<hr />
+<h2 id="_11">設定例<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nt">&quot;FLEX_COUNTER_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="nt">&quot;PG_WATERMARK&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">            </span><span class="nt">&quot;FLEX_COUNTER_STATUS&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enable&quot;</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">            </span><span class="nt">&quot;POLL_INTERVAL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60000&quot;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="cli">CLI での操作<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># PG ウォーターマークカウンタを有効化</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>counterpoll<span class="w"> </span>watermark<span class="w"> </span><span class="nb">enable</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># ポーリング間隔を変更（ms）</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>counterpoll<span class="w"> </span>watermark<span class="w"> </span>interval<span class="w"> </span><span class="m">30000</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 現在の設定を確認</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>counterpoll<span class="w"> </span>show
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># ウォーターマーク値を表示</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>watermarkstat<span class="w"> </span>priority-group<span class="w"> </span>shared
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>watermarkstat<span class="w"> </span>priority-group<span class="w"> </span>headroom
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># PG ウォーターマークカウンタを有効化</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>counterpoll<span class="w"> </span>watermark<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># ポーリング間隔を変更（ms）</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>counterpoll<span class="w"> </span>watermark<span class="w"> </span>interval<span class="w"> </span><span class="m">30000</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># 現在の設定を確認</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>counterpoll<span class="w"> </span>show
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># ウォーターマーク値を表示</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>watermarkstat<span class="w"> </span>priority-group<span class="w"> </span>shared
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>watermarkstat<span class="w"> </span>priority-group<span class="w"> </span>headroom
 </span></code></pre></div>
 <hr />
-<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></li>
 <li>CONFIG_DB: <a href="../buffer-pg/"><code>BUFFER_PG</code></a></li>
@@ -35438,7 +36442,7 @@
 <li>CLI: <code>counterpoll watermark</code>、<code>watermarkstat</code></li>
 </ul>
 <hr />
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
@@ -35449,13 +36453,13 @@
 <p>counterpoll/main.py:819 — <code>pg_wm_info.get("FLEX_COUNTER_STATUS", DISABLE)</code> によるデフォルト <code>"disable"</code> 表示。<a href="https://github.com/sonic-net/sonic-utilities/blob/master/counterpoll/main.py">https://github.com/sonic-net/sonic-utilities/blob/master/counterpoll/main.py</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>minigraph.py:58/2740 — <code>mgmt_disabled_counters</code> リストに <code>PG_WATERMARK</code> が含まれ、管理デバイスで <code>disable</code> を明示設定。<a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>minigraph.py:58/2740 — <code>mgmt_disabled_counters</code> リストに <code>PG_WATERMARK</code> が含まれ、管理デバイスで <code>disable</code> を明示設定。<a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-config-engine/minigraph.py</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
 <p>portsorch.h:39 および portsorch.cpp:92,872-876 — <code>PG_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS = "60000"</code> 定数と <code>setFlexCounterGroupParameter()</code> での <code>READ_AND_CLEAR</code> 設定。<a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.h">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.h</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
-<p>portsorch.cpp:410-414 — <code>ingressPriorityGroupWatermarkStatIds</code> 静的配列定義（XOFF_ROOM + SHARED の 2 カウンタ）。&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p>portsorch.cpp:410-414 — <code>ingressPriorityGroupWatermarkStatIds</code> 静的配列定義（XOFF_ROOM + SHARED の 2 カウンタ）。&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:6">
 <p>flexcounterorch.cpp:265-268 および portsorch getPgWatermarkCountersState() — PG OID 登録の二重条件チェック（enable フラグ + BUFFER_PG 設定イベント）。&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>

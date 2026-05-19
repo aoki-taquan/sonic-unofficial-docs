@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="DASH_ROUTE_RULE_TABLE — DASH インバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル。ENI・VNI・SIP プレフィックス・優先度をキーとして、VNI トンネルデカプセルと PA 検証を制御する。">
+        <meta name="description" content="DASH_ROUTE_RULE_TABLE — DASH インバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル。ENI・VNI・SIP プレフィックス・優先度をキーとして、VNI トンネルデカプセルと PA 検証を制御する。ZMQ 受信チャネル・APPL_STATE_DB フィードバックを含む Phase A-G 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="DASH_ROUTE_RULE_TABLE テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="DASH_ROUTE_RULE_TABLE — DASH インバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル。ENI・VNI・SIP プレフィックス・優先度をキーとして、VNI トンネルデカプセルと PA 検証を制御する。" />
+<meta property="og:description" content="DASH_ROUTE_RULE_TABLE — DASH インバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル。ENI・VNI・SIP プレフィックス・優先度をキーとして、VNI トンネルデカプセルと PA 検証を制御する。ZMQ 受信チャネル・APPL_STATE_DB フィードバックを含む Phase A-G 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/route-rule.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/route-rule/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="DASH_ROUTE_RULE_TABLE テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="DASH_ROUTE_RULE_TABLE — DASH インバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル。ENI・VNI・SIP プレフィックス・優先度をキーとして、VNI トンネルデカプセルと PA 検証を制御する。" />
+<meta property="twitter:description" content="DASH_ROUTE_RULE_TABLE — DASH インバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル。ENI・VNI・SIP プレフィックス・優先度をキーとして、VNI トンネルデカプセルと PA 検証を制御する。ZMQ 受信チャネル・APPL_STATE_DB フィードバックを含む Phase A-G 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/route-rule.png" />
 </head>
   
@@ -28275,6 +28275,134 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-dash_route_rule_table-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB / DASH_ROUTE_RULE_TABLE (result テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM リソースカウンタ (COUNTERS_DB への間接書込)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zmq-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        受信側: ZMQ チャネル (コントローラ → orchagent)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="受信側: ZMQ チャネル (コントローラ → orchagent)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dbpersistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dbPersistence フラグ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ エンドポイント
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        送信側: APPL_STATE_DB フィードバック (orchagent → コントローラ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信フロー全体図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35448,6 +35576,134 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-dash_route_rule_table-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_STATE_DB / DASH_ROUTE_RULE_TABLE (result テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM リソースカウンタ (COUNTERS_DB への間接書込)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zmq-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        受信側: ZMQ チャネル (コントローラ → orchagent)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="受信側: ZMQ チャネル (コントローラ → orchagent)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dbpersistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dbPersistence フラグ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ エンドポイント
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_state_db-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        送信側: APPL_STATE_DB フィードバック (orchagent → コントローラ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信フロー全体図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36122,6 +36378,185 @@
 </tbody>
 </table>
 <!-- /failure -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-rule-side-effects.md -->
+
+<p><code>DashRouteOrch</code> は <code>DASH_ROUTE_RULE_TABLE</code> の SET/DEL 処理に伴い、以下の DB へ副次的に書き込む。</p>
+<h3 id="appl_state_db-dash_route_rule_table-result">APPL_STATE_DB / <code>DASH_ROUTE_RULE_TABLE</code> (result テーブル)<a class="headerlink" href="#appl_state_db-dash_route_rule_table-result" title="Permanent link">&para;</a></h3>
+<p><code>DashRouteOrch</code> コンストラクタが <code>app_state_db</code> に <code>APP_DASH_ROUTE_RULE_TABLE_NAME</code> (<code>"DASH_ROUTE_RULE_TABLE"</code>) をキーとして <code>dash_route_rule_result_table_</code> を初期化する (<code>dashrouteorch.cpp:57</code>)。SAI プログラミング結果をコントローラへフィードバックするために使用する。</p>
+<p><code>writeResultToDB()</code> (<code>saihelper.cpp:1125-1156</code>) が書き込むフィールドは <code>result</code> のみ。<code>version</code> はデフォルト <code>""</code> のため route rule 呼び出しでは書き込まれない。</p>
+<table>
+<thead>
+<tr>
+<th>トリガ</th>
+<th>操作</th>
+<th>フィールド</th>
+<th>値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET — pre-op で <code>addInboundRouting()</code> が <code>true</code> を返した場合（依存解決済み・bulker 不要ケース）</td>
+<td><code>set</code></td>
+<td><code>result</code></td>
+<td><code>"0"</code> (DASH_RESULT_SUCCESS)</td>
+<td><code>dashrouteorch.cpp:644</code></td>
+</tr>
+<tr>
+<td>SET — post-op で bulker flush 後、成功・失敗を問わず</td>
+<td><code>set</code></td>
+<td><code>result</code></td>
+<td><code>"0"</code> (成功) または <code>"1"</code> (失敗)</td>
+<td><code>dashrouteorch.cpp:705</code></td>
+</tr>
+<tr>
+<td>DEL — pre-op で <code>removeInboundRouting()</code> が <code>true</code> を返した場合</td>
+<td><code>del</code></td>
+<td>— (エントリ削除)</td>
+<td>—</td>
+<td><code>dashrouteorch.cpp:656</code></td>
+</tr>
+<tr>
+<td>DEL — post-op で <code>removeInboundRoutingPost()</code> が <code>true</code> を返した場合</td>
+<td><code>del</code></td>
+<td>— (エントリ削除)</td>
+<td>—</td>
+<td><code>dashrouteorch.cpp:712</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="crm-counters_db">CRM リソースカウンタ (COUNTERS_DB への間接書込)<a class="headerlink" href="#crm-counters_db" title="Permanent link">&para;</a></h3>
+<p><code>addInboundRoutingPost()</code> / <code>removeInboundRoutingPost()</code> 成功時に <code>gCrmOrch-&gt;incCrmResUsedCounter()</code> / <code>decCrmResUsedCounter()</code> を呼び出す。カウンタは <code>CrmOrch</code> がメモリ上で保持し、定期的に COUNTERS_DB へフラッシュする（直接書込ではない）。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>条件</th>
+<th>カウンタ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inc</td>
+<td><code>addInboundRoutingPost()</code> 成功 かつ <code>ctxt.sip.isV4() == true</code></td>
+<td><code>CRM_DASH_IPV4_INBOUND_ROUTING</code></td>
+<td><code>dashrouteorch.cpp:507</code></td>
+</tr>
+<tr>
+<td>inc</td>
+<td><code>addInboundRoutingPost()</code> 成功 かつ <code>ctxt.sip.isV4() == false</code></td>
+<td><code>CRM_DASH_IPV6_INBOUND_ROUTING</code></td>
+<td><code>dashrouteorch.cpp:507</code></td>
+</tr>
+<tr>
+<td>dec</td>
+<td><code>removeInboundRoutingPost()</code> 成功 かつ <code>ctxt.sip.isV4() == true</code></td>
+<td><code>CRM_DASH_IPV4_INBOUND_ROUTING</code></td>
+<td><code>dashrouteorch.cpp:546</code></td>
+</tr>
+<tr>
+<td>dec</td>
+<td><code>removeInboundRoutingPost()</code> 成功 かつ <code>ctxt.sip.isV4() == false</code></td>
+<td><code>CRM_DASH_IPV6_INBOUND_ROUTING</code></td>
+<td><code>dashrouteorch.cpp:546</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">副次書込なし<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>CONFIG_DB</strong>: 書き込みなし</li>
+<li><strong>STATE_DB</strong>: 書き込みなし（DASH は APPL_STATE_DB を使用）</li>
+<li><strong>FLEX_COUNTER_DB</strong>: 書き込みなし（ACL と異なりカウンタポーリング設定なし）</li>
+<li><strong>ASIC_DB</strong>: SAI → syncd 経由（<code>DashRouteOrch</code> の直接書込なし）</li>
+</ul>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p><code>DASH_ROUTE_RULE_TABLE</code> の受信・フィードバックは 2 系統の通信経路を使う。</p>
+<h3 id="zmq-orchagent">受信側: ZMQ チャネル (コントローラ → orchagent)<a class="headerlink" href="#zmq-orchagent" title="Permanent link">&para;</a></h3>
+<p><code>DashRouteOrch</code> は <code>ZmqOrch</code> を継承し、ZMQ 経由で protobuf メッセージを受け取る (<code>dashrouteorch.cpp:49-52</code>):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>コントローラ
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ZmqProducerStateTable → ZMQ ipc/tcp (protobuf バイナリ)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    → ZmqServer (orchagent 内)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>      → ZmqConsumerStateTable::handleReceivedData()
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>        → DashRouteOrch::doTaskRouteRuleTable()
+</span></code></pre></div>
+<p><code>ZmqOrch::addConsumer()</code> が <code>ZmqConsumerStateTable</code> を生成し <code>ZmqServer</code> にテーブル名ベースのハンドラを登録する (<code>zmqorch.cpp:66</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ZmqConsumer</span><span class="p">(</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">new</span><span class="w"> </span><span class="n">ZmqConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">,</span><span class="w"> </span><span class="n">dbPersistence</span><span class="p">),</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">orderedQueue</span><span class="p">));</span>
+</span></code></pre></div>
+<p><code>ZmqConsumerStateTable</code> コンストラクタで <code>ZmqServer</code> にハンドラ登録 (<code>zmqconsumerstatetable.cpp:47</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">m_zmqServer</span><span class="p">.</span><span class="n">registerMessageHandler</span><span class="p">(</span><span class="n">m_db</span><span class="o">-&gt;</span><span class="n">getDbName</span><span class="p">(),</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>ZmqServer</code> がメッセージを受信し、テーブル名でルーティングして <code>handleReceivedData()</code> を呼び出す。<code>SelectableEvent</code> で orchagent メインループ (<code>select()</code>) に fd 通知が来るため、タイムアウト（1000 ms）を待たず即時起動する (<code>orchdaemon.cpp:23</code>)。</p>
+<h4 id="dbpersistence">dbPersistence フラグ<a class="headerlink" href="#dbpersistence" title="Permanent link">&para;</a></h4>
+<p><code>ZmqOrch</code> のデフォルト <code>dbPersistence = true</code> のため <code>AsyncDBUpdater</code> が有効。ZMQ 経由で受信したメッセージは APPL_DB にも非同期で書き込まれる（Redis keyspace を通じた参照も可能になる）。</p>
+<h4 id="zmq">ZMQ エンドポイント<a class="headerlink" href="#zmq" title="Permanent link">&para;</a></h4>
+<p><code>orchdaemon.cpp:1329</code>: <code>ORCH_NORTHBOND_DASH_ZMQ_ENABLED</code> フィーチャーフラグが <code>true</code>（デフォルト有効）のとき DASH ZMQ が活性化される:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">get_feature_status</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_DASH_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">))</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="n">dash_zmq_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_zmqServer</span><span class="p">;</span>
+</span></code></pre></div>
+<p>エンドポイントアドレスは orchagent 起動時の <code>-q</code> オプションで指定する (<code>main.cpp:114</code>):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>-q zmq_server_address: ZMQ server address (default disable ZMQ)
+</span></code></pre></div>
+<h3 id="appl_state_db-orchagent">送信側: APPL_STATE_DB フィードバック (orchagent → コントローラ)<a class="headerlink" href="#appl_state_db-orchagent" title="Permanent link">&para;</a></h3>
+<p>SAI プログラミング完了後、<code>DashRouteOrch</code> は APPL_STATE_DB の <code>DASH_ROUTE_RULE_TABLE</code> に結果を書き戻す:</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>タイミング</th>
+<th>メソッド</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET (result = "0" 成功)</td>
+<td>pre-op 依存解決済みケース / post-op SAI flush 後</td>
+<td><code>writeResultToDB(dash_route_rule_result_table_, key, result)</code></td>
+<td><code>dashrouteorch.cpp:644, 705</code></td>
+</tr>
+<tr>
+<td>SET (result = "1" 失敗)</td>
+<td>post-op SAI 失敗確定後</td>
+<td>同上</td>
+<td><code>dashrouteorch.cpp:705</code></td>
+</tr>
+<tr>
+<td>DEL (エントリ削除)</td>
+<td>DEL 操作成功後</td>
+<td><code>removeResultFromDB(dash_route_rule_result_table_, key)</code></td>
+<td><code>dashrouteorch.cpp:656, 712</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>Table::set()</code> は APPL_STATE_DB (DB index 14) に HSET を行うとともに keyspace notification を PUBLISH する。コントローラは <code>__keyspace@14__:DASH_ROUTE_RULE_TABLE|&lt;key&gt;</code> チャネルへの PSUBSCRIBE でプログラミング完了を検知できる。</p>
+<h3 id="_12">通信フロー全体図<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  CTRL["コントローラ\n(ZmqProducerStateTable)"]
+  ZS["ZmqServer\n(orchagent)"]
+  ZCST["ZmqConsumerStateTable\nDASH_ROUTE_RULE_TABLE"]
+  OA["DashRouteOrch\ndoTaskRouteRuleTable()"]
+  SAI["SAI DASH\nInbound Routing API"]
+  RES["APPL_STATE_DB\nDASH_ROUTE_RULE_TABLE\n(result)"]
+
+  CTRL --&gt;|ZMQ protobuf| ZS
+  ZS --&gt;|handleReceivedData| ZCST
+  ZCST --&gt; OA
+  OA --&gt; SAI
+  OA --&gt;|writeResultToDB| RES
+  RES --&gt;|keyspace PUBLISH| CTRL</code></pre>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/route-rule-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
 
 <div class="footnote">
 <hr />

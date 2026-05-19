@@ -26137,7 +26137,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zmq-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: なし (ファイル起動時読み込みのみ — ZMQ が内部 pub/sub メカニズム)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更の反映経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB / SAI 中継
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35382,7 +35443,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zmq-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: なし (ファイル起動時読み込みのみ — ZMQ が内部 pub/sub メカニズム)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更の反映経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB / SAI 中継
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36190,7 +36312,132 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 <p><code>stats_collector::run_collector()</code> は <code>events_init_publisher(EVENTD_PUBLISHER_SOURCE)</code> でハートビートパブリッシャーを作成し、<code>sonic-events-eventd:heartbeat</code> イベントを <code>xsub_path</code>(:5570) 経由で発行する (<code>eventd.cpp:240-296</code>)。このイベントはすべての ZMQ サブスクライバー（<code>xpub_path</code> :5571 に接続する telemetry コンテナ等）に配信される。ハートビート自体は DB への書込みではなく ZMQ ブロードキャストである。</p>
 <!-- /side-effects -->
 
-<h2 id="_17">引用元<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-swss-common/common/events_common.cpp</code> <code>read_init_config()</code> L38-83 / <code>sonic-buildimage/src/sonic-eventd/src/eventd.cpp</code> <code>run_eventd_service()</code> L656-704 / <code>stats_collector::start()</code> L172-225 精読 (2026-05-19)
+詳細証跡: <code>meta/_intermediate/cdb-flow/event-publisher-pubsub.md</code></p>
+</blockquote>
+<h3 id="zmq-pubsub">購読方式: なし (ファイル起動時読み込みのみ — ZMQ が内部 pub/sub メカニズム)<a class="headerlink" href="#zmq-pubsub" title="Permanent link">&para;</a></h3>
+<p><code>init_cfg.json</code> の <code>"events"</code> 設定を <strong>Redis keyspace 通知で購読するプロセスは存在しない</strong>。
+<code>eventd</code> は起動時に <code>read_init_config(INIT_CFG_PATH)</code> (<code>events_common.cpp:38-83</code>) でファイルを直接読み込む。
+<code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> / <code>ConfigDBConnector.subscribe()</code> はいずれも使用しない。</p>
+<p>代わりに <code>eventd</code> 自体が <strong>ZeroMQ (ZMQ) ブローカー</strong>として動作し、全コンテナ間のイベント転送に ZMQ を使用する。</p>
+<table>
+<thead>
+<tr>
+<th>コンポーネント</th>
+<th>通信方式</th>
+<th>対象</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eventd</code> (<code>run_eventd_service</code>)</td>
+<td><code>ifstream</code> ファイル直接読み取り</td>
+<td><code>init_cfg.json ["events"]</code> キー</td>
+<td>起動時 1 回のみ。lazy 初期化後は <code>docker restart eventd</code> でのみ再読み込み</td>
+</tr>
+<tr>
+<td>パブリッシャー（全コンテナ）</td>
+<td>ZMQ XSUB <code>zmq_connect</code></td>
+<td><code>:5570</code> (<code>xsub_path</code>)</td>
+<td><code>events_init_publisher()</code> で接続。<code>eventd</code> proxy が XSUB/XPUB 間でメッセージを転送</td>
+</tr>
+<tr>
+<td>サブスクライバー（telemetry 等）</td>
+<td>ZMQ XPUB <code>zmq_connect</code></td>
+<td><code>:5571</code> (<code>xpub_path</code>)</td>
+<td><code>events_init_subscriber()</code> で接続。<code>sonic-gnmi</code> も直接接続してイベントストリームを gNMI に転送</td>
+</tr>
+<tr>
+<td>telemetry → eventd (キャッシュ制御)</td>
+<td>ZMQ REQ/REP</td>
+<td><code>:5572</code> (<code>req_rep_path</code>)</td>
+<td><code>EVENT_CACHE_INIT</code> / <code>EVENT_CACHE_STOP_SUBCRIBER</code> / <code>EVENT_CACHE_READ</code> リクエスト</td>
+</tr>
+<tr>
+<td><code>stats_collector</code> (内部)</td>
+<td>ZMQ XPUB <code>events_init_subscriber</code></td>
+<td><code>:5571</code> (<code>xpub_path</code>)</td>
+<td>ハートビート・カウンタ収集用内部サブスクライバー (<code>eventd.cpp:244</code>)</td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td>購読しない</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>orchagent</code></td>
+<td>処理しない</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">変更の反映経路<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB を経由しないため、Redis keyspace notification は発火しない:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>管理者: /etc/sonic/init_cfg.json を手動編集
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ↓ (Redis への書き込みなし — ファイル直接編集)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>systemctl restart eventd
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  ↓ run_eventd_service() → get_config_data() で init_cfg.json を再読み込み (eventd.cpp:674)
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  ↓ ZMQ ソケット再バインド (xsub:5570 / xpub:5571 / req_rep:5572 / capture:5573)
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>全 ZMQ クライアント (パブリッシャー・サブスクライバー) が lazy connect で自動再接続
+</span></code></pre></div>
+<p><code>config reload</code> は <code>init_cfg.json</code> を書き直さないため、ZMQ エンドポイント等の変更には
+手動での <code>init_cfg.json</code> 編集 + <code>systemctl restart eventd</code> が必要となる。</p>
+<h3 id="appl_db-sai">APPL_DB / SAI 中継<a class="headerlink" href="#appl_db-sai" title="Permanent link">&para;</a></h3>
+<p>なし。<code>init_cfg.json ["events"]</code> 設定は <code>eventd</code> の ZMQ フレームワーク起動パラメータとして機能し、
+APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。</p>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>プラットフォーム差なし</strong>: <code>eventd</code> は ZMQ ブローカーおよびファイルベース設定 (<code>init_cfg.json</code>) のみで動作し、SAI / ASIC ベンダー依存コードを一切持たない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco-8000 等)</td>
+<td>影響なし</td>
+<td><code>eventd.cpp</code> / <code>eventd.h</code> / <code>events_common.cpp</code> に <code>getenv("platform")</code> 参照・ASIC 種別分岐はゼロ。SAI API 呼び出しなし (<code>eventd.cpp</code> 全行確認)</td>
+</tr>
+<tr>
+<td>multi-asic (<code>IS_MULTI_NPU</code>)</td>
+<td>影響なし</td>
+<td><code>eventd</code> は単一コンテナとして host network namespace で動作する。<code>asicN</code> namespace への個別接続・ループ処理なし。<code>IS_MULTI_NPU</code> / <code>gMySwitchType</code> 参照もなし</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各ノードで独立動作</td>
+<td><code>eventd</code> は各ノードの <code>docker-eventd</code> コンテナとして独立起動する。ノード間でイベントを集約する仕組みは community master に存在しない</td>
+</tr>
+<tr>
+<td>VS (仮想スイッチ / sonic-vs)</td>
+<td>完全サポート (差異なし)</td>
+<td><code>eventd_ut.cpp</code> テストが VS 環境で動作する。ZMQ ポートアドレスは <code>init_cfg.json</code> で変更可能なため環境依存なし</td>
+</tr>
+<tr>
+<td>ベンダー固有 eventd プラグイン</td>
+<td>なし</td>
+<td><code>rsyslog_plugin/</code> は <code>eventd</code> 本体と別バイナリ。syslog テキストを ZMQ に変換する補助コンポーネントであり、platform 条件分岐を持たない (<code>rsyslog_plugin/rsyslog_plugin.cpp</code> 全行確認)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>sonic-buildimage/src/sonic-eventd/src/eventd.cpp</code>・<code>eventd.h</code>・<code>rsyslog_plugin/rsyslog_plugin.cpp</code>・<code>sonic-swss-common/common/events_common.cpp</code>・<code>events.cpp</code> を <code>platform|PLATFORM|asic|ASIC|multi_npu|IS_MULTI_NPU|chassis|vendor</code> で grep → 全ファイル 0 ヒット。platform 分岐なしを確認。</p>
+</blockquote>
+<!-- /platform -->
+
+<h2 id="_18">引用元<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

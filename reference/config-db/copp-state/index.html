@@ -25573,6 +25573,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-marvell-prestera-trap_priority-hw_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox / Marvell Prestera — trap_priority 設定のスキップと hw_status への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36034,6 +36062,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-marvell-prestera-trap_priority-hw_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox / Marvell Prestera — trap_priority 設定のスキップと hw_status への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36931,6 +36987,68 @@ orchagent 再起動時も <code>coppmgrd</code> は同一キーへの上書き s
 <p><strong>スキャン証跡</strong>: <code>coppmgrd.cpp</code> L21-65 全行読了。<code>coppmgr.cpp</code> L71, L296-310, L424-451 読了。<code>copporch.cpp</code> L191-215, L880-892 読了。<code>orchdaemon.cpp</code> L341, L500 読了。<code>show/copp.py</code> L21 読了。<code>dump/plugins/copp.py</code> L109-113 読了。</p>
 </blockquote>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<h3 id="mellanox-marvell-prestera-trap_priority-hw_status">Mellanox / Marvell Prestera — <code>trap_priority</code> 設定のスキップと <code>hw_status</code> への影響<a class="headerlink" href="#mellanox-marvell-prestera-trap_priority-hw_status" title="Permanent link">&para;</a></h3>
+<p><code>CoppOrch</code> は <code>getenv("platform")</code> 環境変数を参照し、<code>"mellanox"</code> (<code>MLNX_PLATFORM_SUBSTRING</code>) または <code>"marvell-prestera"</code> (<code>MRVL_PRST_PLATFORM_SUBSTRING</code>) を含むプラットフォームでは <code>SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY</code> 属性を SAI 呼び出しのリストから除外する。この分岐は 2 箇所に存在する。</p>
+<table>
+<thead>
+<tr>
+<th>呼び出し箇所</th>
+<th>分岐条件</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>initDefaultTrapIds()</code> — 起動時デフォルトトラップ適用</td>
+<td><code>platform</code> に <code>"mellanox"</code> / <code>"marvell-prestera"</code> を含む</td>
+<td><code>SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY = 1</code> を attrib リストに含めずに <code>create_hostif_trap()</code> を呼ぶ</td>
+</tr>
+<tr>
+<td><code>getAttribsFromTrapGroup()</code> — COPP_GROUP の <code>trap_priority</code> フィールド処理</td>
+<td>同上</td>
+<td>CONFIG_DB / APPL_DB から <code>trap_priority</code> が来ても SAI へは渡さず無視する</td>
+</tr>
+</tbody>
+</table>
+<p><strong>STATE_DB <code>COPP_TRAP_TABLE.hw_status</code> への影響</strong>: <code>trap_priority</code> のスキップは SAI <code>create_hostif_trap()</code> の成否には直接影響しない。成功すれば <code>hw_status=installed</code> が書き込まれ、失敗すれば書き込みがスキップされる点はすべてのプラットフォームで共通。ただし Mellanox / Marvell Prestera では <code>trap_priority</code> に依存した SAI 実装側の挙動（デフォルト priority の扱い）が異なるため、SAI 失敗率に間接影響しうる。</p>
+<p><strong><code>COPP_TRAP_CAPABILITY_TABLE</code> への影響</strong>: <code>publishTrapIdsCapability()</code> はプラットフォーム環境変数を参照しない。<code>sai_query_attribute_enum_values_capability()</code> の結果はプラットフォームごとに異なる（返却される trap ID リストが異なる）が、書き込みロジック自体はプラットフォーム非依存。SAI capability クエリが失敗した場合のフォールバックリストも全プラットフォーム共通の静的リストが使用される。</p>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th><code>trap_priority</code> SAI 設定</th>
+<th><code>hw_status</code> 書込みロジック</th>
+<th><code>COPP_TRAP_CAPABILITY_TABLE</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mellanox (<code>"mellanox"</code> 含む)</td>
+<td>スキップ</td>
+<td>共通 (SAI 成否に依存)</td>
+<td>SAI capability 返却値依存</td>
+</tr>
+<tr>
+<td>Marvell Prestera (<code>"marvell-prestera"</code> 含む)</td>
+<td>スキップ</td>
+<td>共通 (SAI 成否に依存)</td>
+<td>SAI capability 返却値依存</td>
+</tr>
+<tr>
+<td>その他 (x86, Broadcom 等)</td>
+<td><code>priority=1</code> を設定</td>
+<td>共通 (SAI 成否に依存)</td>
+<td>SAI capability 返却値依存</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>copporch.cpp</code> L348-362 (<code>initDefaultTrapIds</code> platform 分岐)、<code>copporch.cpp</code> L1183-1195 (<code>getAttribsFromTrapGroup</code> platform 分岐)、<code>orchagent/orch.h</code> L41-42 (定数定義 <code>MLNX_PLATFORM_SUBSTRING="mellanox"</code>, <code>MRVL_PRST_PLATFORM_SUBSTRING="marvell-prestera"</code>)、<code>copporch.cpp</code> L240-300 (<code>publishTrapIdsCapability</code> — platform 分岐なし) 読了。</p>
+</blockquote>
+<!-- /platform -->
 
 <h2 id="_18">確認コマンド<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># グループ状態確認</span>

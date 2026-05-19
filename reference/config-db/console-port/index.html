@@ -25594,6 +25594,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36190,6 +36229,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37086,6 +37164,52 @@
 <p><strong>スキャン証跡</strong>: ソース横断 grep で CONSOLE_PORT の subscribe/doTask 呼び出しなし。分岐: 0 件。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- ordering -->
+<h2 id="phase-b_1">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
+<p><code>consutil</code> は CONFIG_DB の <code>CONSOLE_SWITCH</code> を読み取ってから <code>CONSOLE_PORT</code> を参照する。この読み取り順は実行のたびにバッチで行われるが、DB 書き込み側から見ると以下の順序依存が存在する。</p>
+<h3 id="_21">検出された順序依存<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>CONSOLE_SWITCH.console_mgmt.enabled</code> 確認 → <code>CONSOLE_PORT</code> 全件読み取り</td>
+<td><strong>強制先行</strong>（SWITCH が先）</td>
+<td>SWITCH が absent または <code>enabled="no"</code> の場合、PORT エントリが存在しても consutil は接続を拒否する</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>CONSOLE_SWITCH.default_escape_char</code> 解決 → <code>CONSOLE_PORT.escape_char</code> fallback 先決定</td>
+<td>SWITCH が先</td>
+<td>SWITCH 欠如時は <code>default_escape_char = None</code>、picocom は <code>-e</code> オプションなしで起動（Ctrl+A 相当）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>minigraph: <code>parse_png()</code> → <code>CONSOLE_PORT</code> 代入 (L2516) と <code>CONSOLE_SWITCH</code> 生成 (L2728) は独立</td>
+<td>同時書き込み（cfggen がアトミックに投入）</td>
+<td>手動で <code>CONSOLE_SWITCH.enabled</code> のみ変更した場合、<code>CONSOLE_PORT</code> エントリが存在しても接続不能になる</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>db_migrator.migrate_console_switch()</code>: <code>console_mgmt</code> key 不在を前提</td>
+<td><strong>事前条件</strong>（key 不在が必須）</td>
+<td>マイグレーション前に CLI で <code>console_mgmt</code> を書き込んだ場合、旧設定が優先され移行値が無視される</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_22">主要な制約詳細<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<p><strong>CONSOLE_SWITCH → CONSOLE_PORT 読み取り順 (依存 #1, #2)</strong>: <code>ConsolePortList._init_all()</code> (consutil/lib.py L86–130) は <code>config_db.get_entry(CONSOLE_SWITCH_TABLE, FEATURE_KEY)</code> を先に呼んで <code>enabled</code> を確認し、<code>_default_escape_char</code> を決定する。この後に <code>config_db.get_keys(CONSOLE_PORT_TABLE)</code> を呼ぶ。<code>enabled == "yes"</code> でなければ <code>_default_escape_char = None</code> のまま PORT 一覧を読む。consutil main.py L26 の <code>data = config_db.get_entry(CONSOLE_SWITCH_TABLE, FEATURE_KEY)</code> でも同様の確認が行われ、<code>enabled != "yes"</code> の場合はコマンドによって "Console management is disabled" のエラーで終了する（evidence: <code>consutil/lib.py:91–106</code>, <code>consutil/main.py:26–34</code>）。</p>
+<p><strong>minigraph 生成の独立性 (依存 #3)</strong>: <code>minigraph.py</code> は <code>CONSOLE_PORT</code> を L2516 で <code>console_ports</code> 変数から代入し、<code>CONSOLE_SWITCH</code> を L2728 でデバイスタイプ (<code>MgmtTsToR</code>) の確認結果から独立して生成する。<code>sonic-cfggen</code> がこれら 2 テーブルを同一 JSON 出力としてまとめて DB に書き込むため、minigraph フロー内では順序問題は発生しない。ただし、デバイスタイプが <code>MgmtTsToR</code> <strong>以外</strong> の場合でも <code>CONSOLE_PORT</code> エントリが XML に存在すれば生成されるが、<code>CONSOLE_SWITCH.enabled</code> は <code>"no"</code> になるため、consutil からの接続は不可能になる（evidence: <code>minigraph.py:52</code>, <code>minigraph.py:2516</code>, <code>minigraph.py:2728–2731</code>）。</p>
+<p><strong>db_migrator の前提条件 (依存 #4)</strong>: <code>migrate_console_switch()</code> は <code>self.configDB.get_entry('CONSOLE_SWITCH', 'console_mgmt')</code> で現在の DB 値を取得し、空の場合（<code>if not console_mgmt</code>）のみ <code>set_entry</code> を実行する。このため、マイグレーション前に <code>config console enable</code> / <code>disable</code> コマンドを手動実行してキーが存在する場合、移行元 <code>config_src_data</code> の値は書き込まれない（evidence: <code>db_migrator.py:659–666</code>）。</p>
+<!-- /ordering -->
 <!-- glossary-links-injected: d5320e852f7a -->
 
 <div class="footnote">
