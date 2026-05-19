@@ -368,6 +368,65 @@ HLD および `eventd.cpp` の定数から導出する[^1][^3]。
 > **証跡**: `run_eventd_service()` (L656-827)、`eventd_proxy::run()` (L72-123)、`stats_collector::start()` (L172-196)、`stats_collector::run_collector()` (L229-312)、`capture_service::do_capture()` (L383-530)、`capture_service::set_control()` (L545-620)、`events_common.h:RET_ON_ERR` (L47-52)。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`eventd` および `events_common.h` / `eventd.cpp` / `eventd.h` 内に存在する、CONFIG_DB / YANG で管理されない固定値の一覧。`/etc/eventd.json` や `/etc/evprofile/default.json` で上書きできないプロセス内部定数を中心に示す。
+
+### イベントキャッシュ・サイズ定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `EVT_SIZE_AVG` | **150** バイト | キャッシュサイズ計算用イベント平均バイト数。`MAX_CACHE_SIZE` 算出の分母 | `eventd.cpp:31` |
+| `MAX_CACHE_SIZE` | **699050** 件 | `MB(100) / EVT_SIZE_AVG = (100×1024×1024) / 150`。`/etc/sonic/init_cfg.json` の `cache_max_cnt` が空文字の場合の実効上限 | `eventd.cpp:33` |
+| `READ_SET_SIZE` | **100** 件 | `EVENT_CACHE_READ` 1 回のレスポンスで返すイベント件数上限 | `eventd.cpp:36` |
+| `MAX_PUBLISHERS_COUNT` | **1000** 件 | 同時パブリッシャーの最大数（runtime-ID キャッシュエントリ上限）。超過した古い runtime-ID は時刻順に削除 | `events_common.h:45` |
+
+### ハートビート・タイミング定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `HEARTBEAT_INTERVAL_SECS` | **2** 秒 | `stats_collector` 起動時に `set_heartbeat_interval(2)` で設定するデフォルト発行間隔 | `eventd.cpp:43` (旧 `eventd.h:43`) |
+| `STATS_HEARTBEAT_MIN` | **300** ms | ハートビート間隔の内部量子化単位。設定値は `(val×1000 + 299) / 300` カウントに丸められる。結果として実効周期は指定値より最大 300ms 長くなる場合がある | `eventd.cpp:24` |
+
+> **例**: `set_heartbeat_interval(2)` → `(2000 + 299) / 300 = 7` カウント → 実効周期 `7 × 300 ms = 2100 ms`
+
+### キャプチャサービス制御定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `CAPTURE_SERVICE_POLLING_DURATION` | **10** ms | `set_control()` 内でのポーリング待ち初期間隔 | `eventd.cpp:25` |
+| `CAPTURE_SERVICE_POLLING_INCREMENT` | **10** ms | ポーリング間隔の増加量（バックオフ） | `eventd.cpp:26` |
+| `CAPTURE_SERVICE_POLLING_MAX_DURATION` | **100** ms | ポーリング間隔の最大値 | `eventd.cpp:27` |
+| `CAPTURE_SERVICE_POLLING_RETRIES` | **100** 回 | 最大ポーリング試行回数。100 回 × 最大 100 ms = 最大 10 秒待機 | `eventd.cpp:28` |
+| `CACHE_DRAIN_IN_MILLISECS` | **1000** ms | `STOP_CAPTURE` 時に capture スレッドを join する前に待機するドレイン時間 | `events_common.h:470` |
+| `CAPTURE_SOCK_TIMEOUT` | **800** ms | capture SUB ソケットの `ZMQ_RCVTIMEO`。タイムアウト時に `SIGTERM` 確認ループへ戻る | `eventd.cpp:41` |
+
+### ZMQ ソケット定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `LINGER_TIMEOUT` | **100** ms | ZMQ ソケットの `SO_LINGER` 相当タイムアウト。close 時に未送信メッセージを最大 100ms 待つ | `events_common.h:54` |
+
+### Publisher ソース識別子
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `EVENTD_PUBLISHER_SOURCE` | `"sonic-events-eventd"` | eventd が heartbeat を発行するときに使う publisher 識別子 (ZMQ メッセージの source フィールド) | `eventd.cpp:46` |
+| `EVENTD_HEARTBEAT_TAG` | `"heartbeat"` | heartbeat イベントの event-id (tag)。`event_publish(pub_handle, "heartbeat")` で発行 | `eventd.cpp:47` |
+
+### EVENT テーブル保持上限のデフォルト値 (HLD 設計値)
+
+`/etc/eventd.json` が存在しない場合や読み込み失敗時に適用される想定値。現行 `eventd.cpp` に読み込みロジックが確認できないため HLD 設計値として記録する。
+
+| 項目 | HLD 設計デフォルト | 出典 |
+|------|-----------------|------|
+| `no-of-records` | **40000** 件 | HLD section 3.1.7: `"The size of Event Table is 40k records"` |
+| `no-of-days` | **30** 日 | HLD section 3.1.7: `"or 30 days worth of events"` |
+
+> **注意**: 上記 2 値は `eventd.cpp` 内にマクロ定数として定義されておらず、HLD ドキュメントのみに出現する。実装が HLD から乖離している可能性がある（`verification: hld-only`）。
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. section 3.1.5 (Event Profile), 3.1.7 (Event Table and Alarm Table). <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
