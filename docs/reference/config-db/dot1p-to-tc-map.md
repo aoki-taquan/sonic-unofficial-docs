@@ -369,6 +369,56 @@ show qos map dot1p-tc
 > **Evidence**: `sonic-swss/orchagent/qosorch.h:13`; `sonic-swss/orchagent/qosorch.cpp:63,391,405-406,372-373`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-side-effects.md`
+
+`DOT1P_TO_TC_MAP` を SET/DEL した際に [orchagent](../../reference/glossary.md#term-orchagent) が書き込む副次 DB を示す。cfgmgr ステージは存在しない（[CONFIG_DB](../../reference/glossary.md#term-config_db) → orchagent 直結）。[STATE_DB](../../reference/glossary.md#term-state_db) / APPL_STATE_DB への書き込みはない。
+
+### SET — DOT1P_TO_TC_MAP 作成・更新
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_DOT1P_TO_TC, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` | 新規マップ作成 (`qosorch.cpp:399-416`) |
+| `sai_qos_map_api->set_qos_map_attribute(oid, SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` field=`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | 既存マップ更新 (`qosorch.cpp:207`) |
+
+### SET — PORT_QOS_MAP によるポートバインド
+
+`PORT_QOS_MAP|<port>` に `dot1p_to_tc_map` フィールドを書いた際の副次書き込み:
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP, oid)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `<port_oid>` field=`SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` | 参照先 DOT1P_TO_TC_MAP が SAI 解決済みの各ポート (`qosorch.cpp:2086,2193`) |
+
+### スイッチレベル適用: なし
+
+`DSCP_TO_TC_MAP` は `PORT_QOS_MAP|global` 経由でスイッチレベル (`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP`) への適用が実装されているが、`DOT1P_TO_TC_MAP` には対応する実装が存在しない。`handleGlobalQosMap()` は `dot1p_to_tc_field_name` を受け取ると `"Qos map type %s is not supported at global level"` を WARN してスキップする（`qosorch.cpp:2012`）。
+
+### DEL — DOT1P_TO_TC_MAP 削除
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_qos_map_api->remove_qos_map(sai_object)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` 削除 | `<qos_map_oid>` | PORT_QOS_MAP 非参照時 (`qosorch.cpp:188-191`) |
+| `pending_remove=true` → `task_need_retry`（削除スキップ） | — | — | PORT_QOS_MAP から参照中 (`qosorch.cpp:181-186`) |
+
+### 副次書き込みサマリ
+
+| DB | テーブル / 属性 | SET 時 | DEL 時 |
+|----|----------------|--------|--------|
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | create / update (syncd 経由) | remove (syncd 経由, 非参照時のみ) |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_PORT` field=`SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` | set_port_attribute (syncd 経由, PORT_QOS_MAP SET 時) | set SAI_NULL_OBJECT_ID (PORT_QOS_MAP DEL 時) |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | なし（スイッチレベル未実装） | なし |
+| APPL_DB | — | なし | なし |
+| STATE_DB | — | なし | なし |
+| APPL_STATE_DB | — | なし | なし |
+| COUNTERS_DB | — | なし | なし |
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:63,181-186,207,399-416,2012,2086,2193`
+<!-- /side-effects -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
