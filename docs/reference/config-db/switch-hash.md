@@ -383,6 +383,36 @@ YANG の `sonic-types.yang` で定義された `hash-algorithm` typedef の列�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`SWITCH_HASH|GLOBAL` の SET 処理は `doCfgSwitchHashTableTask()` → `setSwitchHash()` → `setSwitchHashFieldListSai()` / `setSwitchHashAlgorithmSai()` を経て SAI API を直接呼ぶのみであり、**他の Redis DB への副次書込を一切発生させない**。
+
+| 副次 DB | 書込 | 根拠 |
+|---------|------|------|
+| APPL_DB | なし | `doCfgSwitchHashTableTask()` に `ProducerStateTable` / `Table::set` の呼び出しなし (`switchorch.cpp:943-998`) |
+| STATE_DB | なし | `SwitchOrch` の STATE_DB メンバ (`m_asicSensorsTable`、`m_asicSdkHealthEventTable`) は ASIC センサー系テーブル専用。SWITCH_HASH 処理経路からはアクセスされない |
+| COUNTERS_DB | なし | `m_counterManager` は switch 統計カウンタ向け。SWITCH_HASH 処理経路からは呼ばれない |
+| FLEX_COUNTER_DB | なし | 同上 |
+| ASIC_DB | 間接（syncd 経由） | `setSwitchHashFieldListSai()` が `sai_hash_api->set_hash_attribute()` でハッシュフィールドリストを設定し、`setSwitchHashAlgorithmSai()` が `sai_switch_api->set_switch_attribute()` でアルゴリズムを設定する。syncd が ASIC_DB に反映する |
+
+### SAI 副次呼び出し
+
+`setSwitchHash()` (`switchorch.cpp:782-879`) 内で行われる SAI API 呼び出しは以下のとおり:
+
+| 状況 | SAI API 呼び出し | SAI 属性 |
+|------|-----------------|---------|
+| `ecmp_hash` フィールドリスト設定 | `sai_hash_api->set_hash_attribute()` | `SAI_HASH_ATTR_NATIVE_HASH_FIELD_LIST` |
+| `ecmp_hash_algorithm` 設定 | `sai_switch_api->set_switch_attribute()` | `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_ALGORITHM` |
+| `lag_hash` フィールドリスト設定 | `sai_hash_api->set_hash_attribute()` | `SAI_HASH_ATTR_NATIVE_HASH_FIELD_LIST` |
+| `lag_hash_algorithm` 設定 | `sai_switch_api->set_switch_attribute()` | `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_ALGORITHM` |
+
+DEL 操作は `SWSS_LOG_ERROR` を出力して erase するだけで SAI API も呼ばれない (`switchorch.cpp:988-990`)。
+
+> **Evidence**: `sonic-swss/orchagent/switchorch.cpp` L943-998 (`doCfgSwitchHashTableTask`)、L750-879 (`setSwitchHashFieldListSai` / `setSwitchHashAlgorithmSai` / `setSwitchHash`)。
+
+<!-- /side-effects -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
