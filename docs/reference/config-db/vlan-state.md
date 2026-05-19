@@ -351,6 +351,63 @@ poll のタイミングは、各 consumer が自身の（CONFIG_DB 等の）イ�
 
 <!-- /pubsub -->
 
+---
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`STATE_DB VLAN_TABLE` の書込スキーマ・格納先・通信方式は**全プラットフォームで共通**。`vlanmgr.cpp` 全 1008 行を `platform`・`mellanox`・`broadcom`・`voq`・`getenv`・`SAI` で grep してもヒット 0 件。Linux kernel bridge 操作のみで SAI を呼ばない純 cfgmgr ロジックのため、ASIC ベンダー依存がない。
+
+詳細調査ログ: `meta/_intermediate/cdb-flow/vlan-state-platform.md`
+
+### 1. fabric ASIC カード — vlanmgrd 不起動
+
+VOQ chassis のファブリック ASIC カードでは `switch_type = "fabric"` となり、`supervisord.conf.j2` の Jinja2 テンプレートが vlanmgrd を起動しない:
+
+```jinja2
+{# supervisord.conf.j2:33-38 #}
+{% set is_fabric_asic = 0 %}
+{% if DEVICE_METADATA.localhost.switch_type == "fabric" %}
+{% set is_fabric_asic = 1 %}
+{% endif %}
+...
+{% if is_fabric_asic == 0 %}
+[program:vlanmgrd]   {# fabric ASIC では block ごと除外 #}
+```
+
+`switch_type = "fabric"` の ASIC では `STATE_DB VLAN_TABLE` へのエントリが**一切書かれない**。`switch_type = "voq"`（line card）や `switch_type = "switch"`（fixed T0/T1）では `is_fabric_asic=0` となり vlanmgrd は通常起動する（`supervisord.conf.j2:164-177`）。
+
+| switch_type | is_fabric_asic | vlanmgrd 起動 | VLAN_TABLE 書込 |
+|------------|--------------|-------------|---------------|
+| `"switch"` (fixed) | 0 | あり | 通常通り |
+| `"voq"` (line card) | 0 | あり | 通常通り |
+| `"fabric"` (fabric card) | 1 | **なし** | **なし** |
+
+### 2. Pensando arm64-elba — ヘルスチェック対象外
+
+```json
+// device/pensando/arm64-elba-asic-flash128-r0/system_health_monitoring_config.json
+"services_to_ignore": ["vlanmgrd", "vxlanmgrd"]
+```
+
+Elba ASIC を搭載した Pensando DPU プラットフォームでは vlanmgrd は起動するが、`system_health_monitor` のプロセス死活監視から除外されている。vlanmgrd のクラッシュが health check アラームを発報しない点で他プラットフォームと異なる。
+
+### 3. DEFAULT_MTU_STR — 全プラットフォーム共通 9100 バイト
+
+`vlanmgr.cpp:18` の `#define DEFAULT_MTU_STR "9100"` はプラットフォーム env・hwsku に依存しない。VLAN インタフェースのデフォルト MTU は全 SKU で 9100 バイト固定である。
+
+### 4. multi-asic 環境 — namespace ごとに独立した VLAN_TABLE
+
+`vlanmgrd.cpp` は `DBConnector("CONFIG_DB", 0)` 固定で namespace を参照しない。multi-asic (NPU 複数) 環境では各 ASIC namespace で独立した swss コンテナが起動し、それぞれの vlanmgrd が各 namespace の `STATE_DB` に `VLAN_TABLE` エントリを書き込む。chassis 全体を集中管理する VLAN_TABLE は存在しない。
+
+!!! note "fabric カードの readiness ガードへの影響"
+    `intfmgrd`・`nbrmgrd`・`stpmgrd` は `isVlanStateOk()` で VLAN_TABLE の存在を確認してから処理を進める。fabric カードでは vlanmgrd が起動しないため VLAN_TABLE が書かれず、これらのデーモンも事実上 VLAN 依存の処理を行わない。fabric ASIC でそれらのデーモンが必要になるユースケースは想定されていない。
+
+> **スキャン証跡**: `vlanmgr.cpp` 全 1008 行 grep（platform/SAI 分岐なし）、`supervisord.conf.j2:33-38,164-177`（is_fabric_asic 定義・vlanmgrd block）、`device/pensando/arm64-elba-asic-flash128-r0/system_health_monitoring_config.json`（services_to_ignore）。
+<!-- /platform -->
+
+---
+
 ## 読み取り主体
 
 | プロセス | ファイル | 用途 |
