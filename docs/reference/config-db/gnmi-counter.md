@@ -408,6 +408,45 @@ gNMI カウンタ本体は SysV 共有メモリに格納されるため、カウ
 詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+`sonic-gnmi` の gNMI カウンタ（SysV 共有メモリ）は Redis pub/sub と直接連動しない。しかし `telemetryd` 内には 2 系統の Redis keyspace notification 購読が存在する。
+
+### dialout_client — CONFIG_DB `TELEMETRY_CLIENT` keyspace 購読
+
+`dialout_client` (`dialout/dialout_client/dialout_client.go:686-740`) は CONFIG_DB の `TELEMETRY_CLIENT|*` キーに対して Redis keyspace notification を `PSubscribe` する。
+
+| 属性 | 値 |
+|------|----|
+| DB | CONFIG_DB (DB 4) |
+| PSubscribe パターン | `__keyspace@4__:TELEMETRY_CLIENT|*` |
+| 受信イベント | `hset`・`hdel`・`del` |
+| ReceiveTimeout | 1000 ms（タイムアウトは継続ループ、エラー扱いなし） |
+| 処理関数 | `processTelemetryClientConfig(ctx, redisDb, dbkey, op)` |
+
+`hset` 受信時はサブスクリプション設定を追加・更新し、`hdel` / `del` 受信時は該当エントリを削除する。これにより `telemetryd` の再起動なしに dial-out 宛先の変更がリアルタイムに反映される。`GNMI_COUNTER` の増分ロジックとは独立しており、カウンタ値は変化しない。
+
+### DbJournal — CONFIG_DB / STATE_DB の全キー keyspace + keyevent 購読
+
+`DbJournal` (`gnmi_server/db_journal.go:67-70`) は CONFIG_DB または STATE_DB の全キーを対象に keyspace notification と keyevent notification の両方を `PSubscribe` する。
+
+| 属性 | 値 |
+|------|----|
+| DB | CONFIG_DB (DB 4) または STATE_DB (DB 6) |
+| PSubscribe パターン | `__keyspace@N__:*` + `__keyevent@N__:*` |
+| チャネル受信 | `ps.Channel()` を goroutine で消費 |
+| 用途 | DB 変更をジャーナルファイル (`/var/log/<db>.txt`) に記録 |
+
+これは `gnmi_server` のジャーナル機能で使われており、カウンタ増分とは無関係である。
+
+### カウンタ自体は pub/sub に関与しない
+
+`IncCounter` / `InitCounters` (`common_utils/context.go`) は Redis に一切アクセスしない。カウンタはプロセス内の `globalCounters [COUNTER_SIZE]uint64` 配列と SysV 共有メモリのみで完結する。**カウンタ増分が Redis pub/sub をトリガーすることはなく、Redis pub/sub イベントがカウンタを変化させることもない**。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/gnmi-counter-pubsub.md`
+<!-- /pubsub -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
