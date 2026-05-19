@@ -470,6 +470,48 @@ EventDB service (`eventd` 内の event_consumer + alarm_consumer) が `/etc/evpr
 (根拠: HLD section 4.1.1〜4.4[^1])
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/extended-monitor-pubsub.md`
+
+### 購読方式: Redis keyspace 通知なし — ファイル直接読み込み + ZMQ ブローカー
+
+`/etc/eventd.json` および `/etc/evprofile/default.json` を **Redis keyspace 通知で購読するプロセスは存在しない**。`eventd` は起動時にこれらのファイルを `ifstream` で直接読み込む。`SubscriberStateTable` / `ConsumerStateTable` は使用しない。
+
+代わりに `eventd` 自体が **ZeroMQ (ZMQ) ブローカー** として動作し、全コンテナ間のイベント転送に ZMQ を使用する（基本設定の詳細は [`event-publisher.md`](event-publisher.md) を参照）。
+
+### 各コンポーネントの通信方式
+
+| コンポーネント | 通信方式 | エンドポイント / 対象 | 役割 |
+|---|---|---|---|
+| `eventd` (設定読み込み) | `ifstream` ファイル直接 | `/etc/eventd.json`, `/etc/evprofile/default.json` | 起動時 1 回読み込み。変更反映は `systemctl restart eventd` が必要 |
+| event producer (全コンテナ) | ZMQ XSUB `zmq_connect` | `:5570` (`xsub_path`) | `event_publish()` 経由でイベントを送信。eventd proxy が XSUB→XPUB 間で転送 |
+| `stats_collector` (内部サブスクライバー) | ZMQ XPUB `events_init_subscriber` | `:5571` (`xpub_path`) | 全イベントを受信してハートビート検知 + COUNTERS_DB 書き込み (`eventd.cpp:244`) |
+| telemetry (gnmi_server) | ZMQ XPUB subscribe + REQ/REP | `:5571` / `:5572` | `EVENT_CACHE_INIT` → `EVENT_CACHE_START` → `EVENT_CACHE_STOP` → `EVENT_CACHE_READ` でキャッシュ制御 |
+| capture_service (内部) | ZMQ SUB `zmq_connect` | `:5573` (`capture_path`) | キャプチャ専用チャネルでイベントをバッファリング (HLD section 3.1.8) |
+| `pmon` | `EVENT_DB.ALARM_STATS` 購読 | `EVENT_DB` (Redis index 19) | ALARM_STATS の severity 別カウンタ変化を監視してシステム LED を制御: Critical/Major → Red、Minor/Warning → Amber、なし → Green (HLD section 3.1.3) |
+
+### 設定変更の反映経路
+
+```
+管理者: /etc/eventd.json または /etc/evprofile/default.json を手動編集
+  ↓ (Redis への書き込みなし — CONFIG_DB 変更なし)
+systemctl restart eventd
+  ↓ run_eventd_service() が起動時に両ファイルを再読み込み (eventd.cpp:656-704)
+  ↓ ZMQ ソケット再バインド (xsub:5570 / xpub:5571 / req_rep:5572 / capture:5573)
+全 ZMQ クライアント (producer・subscriber) が lazy connect で自動再接続
+```
+
+`config reload` は `/etc/evprofile/default.json` を書き直さないため、イベントプロファイルの変更は手動編集 + `restart eventd` が唯一の反映手段である。
+
+### APPL_DB / SAI 中継
+
+なし。拡張監視設定 (`eventd.json` / `evprofile`) は `eventd` 内部で完結し、APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。EVENT_DB と COUNTERS_DB への書き込みは `eventd` が直接行う（Phase F 参照）。
+
+> **Evidence**: `eventd.cpp:172-225` (stats_collector::start); `eventd.cpp:656-704` (run_eventd_service 起動シーケンス); `eventd.cpp:244` (内部サブスクライバー); HLD section 3.1.2, 3.1.3, 3.1.8
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. section 3.1.5 (Event Profile), 3.1.7 (Event Table and Alarm Table). <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
