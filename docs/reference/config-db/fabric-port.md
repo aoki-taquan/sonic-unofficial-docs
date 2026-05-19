@@ -405,6 +405,65 @@ FlexCounter グループ名（`FABRIC_PORT_STAT_COUNTER` / `FABRIC_QUEUE_STAT_CO
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+> **調査根拠**: `fabricmgrd.cpp:27-35`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1394-1400` 全行精読 (2026-05-19)
+
+### Producer/Consumer ペア
+
+`FABRIC_PORT` テーブルは CONFIG_DB → fabricmgrd → APPL_DB → FabricPortsOrch の **2 段中継構成**をとる。
+
+```
+CONFIG_DB (DB=4)
+  FABRIC_PORT|*      ──PSUBSCRIBE──▶  fabricmgrd (SubscriberStateTable)
+      │
+      │ ProducerStateTable.set (RPUSH + PUBLISH)
+      ▼
+APPL_DB (DB=0)
+  FABRIC_PORT_TABLE|*  ──PSUBSCRIBE──▶  FabricPortsOrch (SubscriberStateTable)
+```
+
+### fabricmgrd — CONFIG_DB 購読 (SubscriberStateTable)
+
+`fabricmgrd.cpp:27-35` にて `FabricMgr` を `Orch` 派生として構築する際、`Orch::Orch(DBConnector*, vector<string>)` 経由で各テーブルに対して `addConsumer()` → `Consumer(new SubscriberStateTable(...))` を生成する。
+
+| 購読元 | DB | Redis DB 番号 | テーブル定数 | 実テーブル名 | PSUBSCRIBE パターン |
+|--------|----|--------------|------------|------------|-------------------|
+| CONFIG_DB | CONFIG_DB | 4 | `CFG_FABRIC_MONITOR_PORT_TABLE_NAME` | `FABRIC_PORT` | `__keyspace@4__:FABRIC_PORT\|*` |
+
+`fabricmgrd` 主ループの select タイムアウトは `SELECT_TIMEOUT = 1000` ms (`fabricmgrd.cpp:16`)。イベント受信時は `FabricMgr::doTask(Consumer&)` が呼ばれ、CONFIG_DB の変更内容を APPL_DB へ転送する。
+
+### fabricmgrd → APPL_DB 書き込み方式
+
+| APPL_DB テーブル | テーブル定数 | 実テーブル名 | 書き込みクラス | チャネル PUBLISH |
+|----------------|------------|------------|--------------|---------------|
+| `m_appFabricPortTable` | `APP_FABRIC_MONITOR_PORT_TABLE_NAME` | `FABRIC_PORT_TABLE` | `ProducerStateTable`（RPUSH + PUBLISH） | `FABRIC_PORT_TABLE_CHANNEL@0` |
+
+`APP_FABRIC_MONITOR_PORT_TABLE_NAME` ("FABRIC_PORT_TABLE") は `ProducerStateTable` 経由のため、RPUSH + PUBLISH による明示的チャネル通知が行われる (`fabricmgr.cpp:119`)。
+
+### FabricPortsOrch — APPL_DB 購読 (SubscriberStateTable)
+
+`orchdaemon.cpp:603-607` にて `FabricPortsOrch` を初期化する際、以下の 2 テーブルが `SubscriberStateTable` として登録される。orchagent 主ループの SELECT_TIMEOUT は `1000` ms (`orchdaemon.cpp:23`)。
+
+| 購読元 | DB | Redis DB 番号 | テーブル定数 | 実テーブル名 | PSUBSCRIBE パターン | 優先度 |
+|--------|----|--------------|------------|------------|-------------------|-------|
+| APPL_DB | APPL_DB | 0 | `APP_FABRIC_MONITOR_PORT_TABLE_NAME` | `FABRIC_PORT_TABLE` | `__keyspace@0__:FABRIC_PORT_TABLE\|*` | 30 |
+| APPL_DB | APPL_DB | 0 | `APP_FABRIC_MONITOR_DATA_TABLE_NAME` | `FABRIC_MONITOR_TABLE` | `__keyspace@0__:FABRIC_MONITOR_TABLE\|*` | 30 |
+
+`FabricPortsOrch::doTask(Consumer&)` (`fabricportsorch.cpp:1549`) は `table_name` が `APP_FABRIC_MONITOR_PORT_TABLE_NAME` のとき `doFabricPortTask()` を呼び出す。ただし `doFabricPortTask()` 冒頭で `checkFabricPortMonState()` が `false` を返すと early return するため、`FABRIC_MONITOR.monState=enable` でない限り SAI への反映は行われない。
+
+### 消費経路サマリ
+
+| 経路 | 購読方式 | SELECT タイムアウト | 実テーブル名 | 処理関数 |
+|------|---------|------------------|------------|---------|
+| CONFIG_DB → fabricmgrd | `SubscriberStateTable` (PSUBSCRIBE) | 1000 ms | `FABRIC_PORT` | `FabricMgr::doTask()` |
+| APPL_DB → FabricPortsOrch | `SubscriberStateTable` (PSUBSCRIBE) | 1000 ms | `FABRIC_PORT_TABLE` | `FabricPortsOrch::doFabricPortTask()` |
+
+> **Evidence**: `sonic-swss` `cfgmgr/fabricmgrd.cpp:14-72`、`cfgmgr/fabricmgr.cpp:14-124`、`orchdaemon.cpp:603-610`、`orchagent/fabricportsorch.cpp:80-133,1394-1400,1549-1556`
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
