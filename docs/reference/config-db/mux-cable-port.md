@@ -93,6 +93,64 @@ MUX_CABLE|<ifname>
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp handleMuxCfg:2202 / handlePeerSwitch:2336 / addOperation:2394; sonic-linkmgrd/src/DbInterface.cpp:1843-1849 -->
+
+`MUX_CABLE|<port>` エントリの SAI 反映は `PEER_SWITCH` の設定完了と `MuxTunnel0` トンネルの存在に依存する。orchagent は `Orch2` フレームワーク経由で `MuxOrch::handleMuxCfg()` を呼び出す（`orch.cpp:1226` の `Orch2::doTask()` 経由）。
+
+### 依存 1: PEER_SWITCH 先行必須（必須先行・自動回復あり）
+
+```
+PEER_SWITCH|<name>  SET (address_ipv4 確定)  先行
+  ↓
+MUX_CABLE|<port>  SET
+```
+
+`handleMuxCfg()` (`muxorch.cpp:2271`) は `mux_peer_switch_.isZero()` を確認する。`PEER_SWITCH` エントリが未設定の間は `SWSS_LOG_INFO("Mux Peer switch addr not yet configured")` → `return false` で `m_toSync` に保留し次のイベントループで再試行する。
+
+**違反時**: `PEER_SWITCH` SET 完了後の次イベントループで自動的に処理される（自動回復あり）。
+
+### 依存 2: TUNNEL MuxTunnel0 → PEER_SWITCH チェーン
+
+```
+APP_DB TUNNEL_DECAP_TABLE:MuxTunnel0  存在  先行
+  ↓
+PEER_SWITCH|<name>  SET
+  ↓
+MUX_CABLE|<port>  SET
+```
+
+`handlePeerSwitch()` (`muxorch.cpp:2348-2354`) は `decap_orch_->getDstIpAddresses(MUX_TUNNEL)` が空の場合 `return false` でリトライに戻す。`MuxTunnel0` トンネルが APP_DB に存在しなければ PEER_SWITCH 自体も処理できず、MUX_CABLE の処理も間接的にブロックされる。
+
+**違反時**: `MuxTunnel0` 追加後の次イベントループで自動回復。
+
+### 依存 3: server_ipv4 / server_ipv6 同一 SET_COMMAND 必須（自動回復なし）
+
+`handleMuxCfg()` (`muxorch.cpp:2206-2207`) はフィールドリスト走査前に `getAttrIpPrefix("server_ipv4")` と `getAttrIpPrefix("server_ipv6")` を **無条件** で呼び出す。これらが欠落すると `std::out_of_range` 例外が発生し `addOperation()` の catch ブロック (`muxorch.cpp:2409`) で捕捉されエントリが erase される。
+
+**違反時**: エントリ破棄（自動回復なし）。`server_ipv4` / `server_ipv6` は必ず同一 SET_COMMAND に含める。
+
+### 依存 4: linkmgrd 起動時の初期読み込み順序
+
+linkmgrd は起動時に以下の順序で `MUX_CABLE` テーブルを読み込む（`DbInterface.cpp:1846-1849`）:
+
+```
+getPortCableType()   # cable_type を全ポート読み込み
+getProberType()      # prober_type を全ポート読み込み
+getServerIpAddress() # server_ipv4 / server_ipv6 を全ポート読み込み
+getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
+```
+
+この順序は固定。初期読み込み中の MUX_CABLE 変更は Subscribe ループで後から処理される。
+
+### 依存 5: neighbor_mode 変更の禁止（運用注意）
+
+既存 mux ポートに対する `neighbor_mode` の変更は orchagent によって拒否される (`muxorch.cpp:2258-2266`)。`SWSS_LOG_ERROR("Neighbor mode change is not allowed")` が出力され `return false` でリトライに保留されるが、元の `neighbor_mode` が存在する限り永続的に失敗する。変更する場合はポートを `DEL` してから再 `SET` する必要がある。
+
+<!-- /ordering -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
