@@ -526,6 +526,48 @@ grep -r "ErrorListener\|ErrorReporter" .cache/sonic-sources/sonic-swss/
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.2・3.4.3、`sonic-swss-common/common/status_code_util.h`  
+> **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下は HLD 設計と実装済み `status_code_util.h` に基づく記述である。  
+> 詳細証跡: `meta/_intermediate/cdb-flow/errordb-platform.md`
+
+### 結論: ERROR_DB フレームワーク自体はプラットフォーム非依存
+
+HLD Section 3.1–3.4 にはプラットフォーム固有の分岐・条件分け・定数が一切記載されていない。`sonic-swss-common/common/status_code_util.h` の `StatusCode` enum および `statusCodeMapping` はコンパイル時静的マッピングであり、`#ifdef PLATFORM_*` 等のプリプロセッサ条件を含まない。
+
+### SWSS_RC_* 変換テーブルはプラットフォーム非依存
+
+HLD Section 3.2 に定義された SAI ステータス → `SWSS_RC_*` のマッピングは全プラットフォーム共通である。
+
+| 観点 | プラットフォーム差 | 根拠 |
+|------|-----------------|------|
+| `SWSS_RC_*` enum 定義 | **なし** | `status_code_util.h` — 静的マッピング、条件分岐なし |
+| SAI → `SWSS_RC_*` 変換 | **なし** | HLD Section 3.2 — 固定マッピング表 |
+| ERROR_DB スキーマ（フィールド名・型） | **なし** | HLD Section 3.4.3 — 全 ASIC 共通 |
+| pub/sub 通知方式 | **なし** | Redis PUBLISH/SUBSCRIBE — 実装非依存 |
+| `bgp_error_handling` 有効化条件 | **なし** | CONFIG_DB グローバル設定、プラットフォーム非依存 |
+
+### 間接的プラットフォーム影響: SAI エラー発生頻度
+
+プラットフォームごとに ASIC テーブルサイズや対応 SAI 機能が異なるため、特定の SAI エラーの発生しやすさは変わる。しかし ERROR_DB フレームワークの動作仕様自体（スキーマ・書込順序・通知方式）は変化しない。
+
+| SAI エラー | 発生しやすいプラットフォーム条件 | ERROR_DB に現れる `rc` |
+|------------|-------------------------------|----------------------|
+| `SAI_STATUS_TABLE_FULL` | テーブルサイズが小さい ASIC（一部 OF-DPA 等） | `SWSS_RC_FULL` |
+| `SAI_STATUS_NO_MEMORY` | メモリ制限の厳しい環境 | `SWSS_RC_NO_MEMORY` |
+| `SAI_STATUS_NOT_SUPPORTED` | 機能非対応 ASIC (例: L3V4V6 非対応) | `SWSS_RC_UNAVAIL` |
+| ベンダー固有 SAI 拡張エラーコード | 任意 | `SWSS_RC_UNKNOWN`（フォールバック） |
+
+**`SWSS_RC_UNKNOWN` フォールバック**: プラットフォーム SAI が `SAI_STATUS_*` 標準セット外の実装依存エラーコードを返した場合、`strToStatusCode()` が未知文字列として `SWSS_RC_UNKNOWN` にマップする（`status_code_util.h:74-80`）。これがプラットフォーム差を ERROR_DB レイヤで吸収する唯一の機構である。
+
+### ERROR_DB Redis DB ID — 未登録、プラットフォーム差なし
+
+現行の `database_config.json` に ERROR_DB は未登録（実装未マージ）。実装時に追加される DB ID は全プラットフォーム共通 ID が割り当てられる設計であり、プラットフォーム固有の DB ID 設定は HLD に規定されていない。
+
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
