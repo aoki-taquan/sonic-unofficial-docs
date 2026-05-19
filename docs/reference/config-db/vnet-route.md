@@ -568,3 +568,50 @@ BFD セッション自体の書き込みは `bfd_session_producer_`（ProducerSt
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/vnet-route-pubsub.md`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+### Ordered ECMP サポート — ASIC Capability 依存
+
+`VNetRouteOrch` が `VNET_ROUTE_TUNNEL` の ECMP Next Hop Group を作成・更新する際、
+`gSwitchOrch->checkOrderedEcmpEnable()` の SAI capability 照会結果に基づいて NHG type と
+メンバー属性を決定する。
+
+| ASIC capability | NHG type (`SAI_NEXT_HOP_GROUP_ATTR_TYPE`) | NHG Member `SEQUENCE_ID` | 動作 |
+|----------------|------------------------------------------|--------------------------|------|
+| Ordered ECMP 対応かつ有効化 | `SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP` | 設定あり | endpoint の優先順序を ASIC が保持 |
+| 非対応または無効 | `SAI_NEXT_HOP_GROUP_TYPE_ECMP` | 設定なし | 通常 ECMP（ラウンドロビン） |
+
+分岐は 3 箇所で発生する:
+
+- `vnetorch.cpp:804` — `create_next_hop_group` 時の `SAI_NEXT_HOP_GROUP_ATTR_TYPE` 設定
+- `vnetorch.cpp:841` — NHG メンバー追加時の `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID` 付与
+- `vnetorch.cpp:2778` — BFD モニタリング有効時の NHG メンバー更新における `SEQUENCE_ID` 付与
+
+`checkOrderedEcmpEnable()` は `switchorch.h:68` で参照し、`switchorch.cpp:467-501` の
+`setSwitchNonSaiAttributes()` で `ordered_ecmp=true` が CONFIG_DB `SWITCH` テーブルに
+書かれた際に `sai_query_attribute_enum_values_capability` を発行して ASIC 能力を確認する。
+非対応 ASIC では照会が失敗するか対応値を返さず、`m_orderedEcmpEnable = false` に固定される。
+
+### ベンダー固有コードなし
+
+`vnetorch.cpp` および `vnetorch.h` には `platform` 環境変数参照・ベンダー文字列判定
+（`broadcom` / `mellanox` 等）が存在しない。VNET の SAI 操作
+（`sai_virtual_router_api` / `sai_route_api` / `sai_next_hop_group_api` / `sai_tunnel_api`）
+は標準 SAI インタフェース経由で呼ばれ、ASIC 固有の最適化は SAI 実装層に委譲される。
+
+### VNET_EXEC モード固定 (VRF のみ)
+
+`vnetorch.h:63-67` には `VNET_EXEC_VRF` / `VNET_EXEC_BRIDGE` / `VNET_EXEC_INVALID` の
+3 モードが定義されているが、`orchdaemon.cpp:276` では引数省略で `VNetOrch` が生成されるため
+デフォルト値の `VNET_EXEC::VNET_EXEC_VRF` が常に使用される。コミュニティ SONiC では
+BRIDGE モードは無効。
+
+### VoQ / Multi-ASIC
+
+`vnetorch.cpp` に VoQ / Multi-ASIC 固有の分岐は存在しない。VNET は単一 ASIC 構成を前提とした
+機能であり、Multi-ASIC / SmartSwitch 向け拡張は対象外。
+
+> **スキャン証跡**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type・SEQUENCE_ID 分岐）、`switchorch.cpp:467-501`（`setSwitchNonSaiAttributes` — `ordered_ecmp` 属性処理）、`switchorch.h:68`（`checkOrderedEcmpEnable`）、`vnetorch.h:63-67`（`VNET_EXEC` enum）、`orchdaemon.cpp:276`（VRF モード固定）。詳細は `meta/_intermediate/cdb-flow/vnet-route-platform.md` を参照。
+<!-- /platform -->
