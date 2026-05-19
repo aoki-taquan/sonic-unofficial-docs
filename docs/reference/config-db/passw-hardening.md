@@ -289,6 +289,26 @@ passwh_handler(key="POLICIES", op=SET, data={state:"enabled", ...})
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:2477` (`subscribe('PASSW_HARDENING', ...)`)、`hostcfgd:2528` (`config_db.listen(init_data_handler=self.load)`)、`hostcfgd:2293-2296` (`passwh_handler`)、`hostcfgd:881-885` (`PasswHardening.load`)、`hostcfgd:887-912` (`passw_policies_update`)、`hostcfgd:2244` (`init_data['PASSW_HARDENING']`)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/passw-hardening-platform.md`
+
+### プラットフォーム差なし
+
+`hostcfgd` の `PasswHardening` クラスは Linux PAM 設定ファイル (`/etc/pam.d/common-password`) と `/etc/login.defs` を書き換えるのみであり、ASIC 種別・`switch_type`・multi-asic 構成・chassis 構成に一切依存しない。`hostcfgd` コード全体に `getenv("platform")`・`gMySwitchType`・`mellanox` 等のプラットフォーム条件分岐は存在せず、全プラットフォームで同一の挙動となる。
+
+| 構成 | 挙動 |
+|------|------|
+| 標準スイッチ (T0/T1/T2) | 変更なし |
+| Mellanox / Broadcom / その他 ASIC | 変更なし (PAM/login.defs 操作は ASIC 非依存) |
+| multi-asic | 変更なし (hostcfgd は各 namespace を持たず、ホスト OS の PAM のみ管理) |
+| VOQ chassis / SmartSwitch | 変更なし |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:874-1043` (`PasswHardening` クラス全体にプラットフォーム条件分岐なし)、`hostcfgd:2244`、`hostcfgd:2477`
+
+<!-- /platform -->
+
 ## 購読者
 
 - `hostcfgd` (`host-services` パッケージ)。`PasswHardening.load()` が `PASSW_HARDENING` テーブルを読み込み、Jinja2 テンプレート (`common-password.j2`) を展開して `/etc/pam.d/common-password` を書き換え、`/etc/login.defs` の `PASS_MAX_DAYS` / `PASS_WARN_AGE` を `sed` で更新する
