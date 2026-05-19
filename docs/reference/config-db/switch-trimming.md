@@ -478,4 +478,50 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`SWITCH_TRIMMING` への SET 操作 (`doCfgSwitchTrimmingTableTask()` → `setSwitchTrimming()`) は SAI API を直接呼ぶのみであり、**通常の CONFIG_DB 書込に伴う他 Redis DB への副次書込は発生しない**。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-trimming-side-effects.md`
+
+### 副次 DB 書込サマリ
+
+| 書込先 DB | CONFIG_DB SET 時の書込 | 根拠 |
+|---|---|---|
+| APPL_DB | **なし** | `doCfgSwitchTrimmingTableTask()` に `ProducerStateTable` / `Table::set` 呼び出しなし (`switchorch.cpp:1320-1371`) |
+| STATE_DB | **なし** (起動時のみ) | `writeCapabilitiesToDb()` は `SwitchTrimmingCapabilities` コンストラクタから起動時一回のみ実行される (`capabilities.cpp:142-146`) |
+| COUNTERS_DB | **なし** | — |
+| FLEX_COUNTER_DB | **なし** | — |
+| ASIC_DB (間接) | **あり** (syncd 経由) | SAI API 呼び出しを syncd が非同期に ASIC_DB に反映する |
+
+### SAI 副次呼び出し
+
+`setSwitchTrimming()` (`switchorch.cpp:1066-1363`) 内で行われる SAI API 呼び出し:
+
+| フィールド | SAI API 呼び出し | SAI 属性 ID |
+|---|---|---|
+| `size` | `sai_switch_api->set_switch_attribute()` | `SAI_SWITCH_ATTR_PACKET_TRIM_SIZE` |
+| `dscp_value` (モード) | `sai_switch_api->set_switch_attribute()` | `SAI_SWITCH_ATTR_PACKET_TRIM_DSCP_RESOLUTION_MODE` |
+| `dscp_value` (値) | `sai_switch_api->set_switch_attribute()` | `SAI_SWITCH_ATTR_PACKET_TRIM_DSCP_VALUE` |
+| `tc_value` | `sai_switch_api->set_switch_attribute()` | `SAI_SWITCH_ATTR_PACKET_TRIM_TC_VALUE` |
+| `queue_index` (モード) | `sai_switch_api->set_switch_attribute()` | `SAI_SWITCH_ATTR_PACKET_TRIM_QUEUE_RESOLUTION_MODE` |
+| `queue_index` (値) | `sai_switch_api->set_switch_attribute()` | `SAI_SWITCH_ATTR_PACKET_TRIM_QUEUE_INDEX` |
+
+### 起動時の STATE_DB capability 書込（CONFIG_DB SET 操作とは無関係）
+
+`SwitchTrimmingCapabilities` は orchagent 起動時に `writeCapabilitiesToDb()` を呼び、`STATE_DB:SWITCH_CAPABILITY|switch` に以下のフィールドを一度だけ書き込む。これは CONFIG_DB の SWITCH_TRIMMING エントリ SET 操作とは独立した初期化処理であり、設定変更のたびに繰り返されない。
+
+| フィールド名 | 例 | 意味 |
+|---|---|---|
+| `SWITCH_TRIMMING_CAPABLE` | `"true"` | ハードウェアがパケットトリミングをサポートするか |
+| `SWITCH\|PACKET_TRIMMING_DSCP_RESOLUTION_MODE` | `"DSCP_VALUE,FROM_TC"` | 対応 DSCP 解決モード一覧（カンマ区切り） |
+| `SWITCH\|PACKET_TRIMMING_QUEUE_RESOLUTION_MODE` | `"STATIC,DYNAMIC"` | 対応キュー解決モード一覧（カンマ区切り） |
+| `SWITCH\|NUMBER_OF_TRAFFIC_CLASSES` | `"8"` | SAI から取得したトラフィッククラス数 |
+| `SWITCH\|NUMBER_OF_UNICAST_QUEUES` | `"8"` | SAI から取得したユニキャストキュー数 |
+
+これらの値はハードウェア依存であり、`sai_query_attribute_enum_values_capability()` および `sai_switch_api->get_switch_attribute()` で取得される（`capabilities.cpp:665-682`）。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->
