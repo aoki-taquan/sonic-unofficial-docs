@@ -494,4 +494,56 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### WARM_RESTART テーブルの読み取り方式
+
+`WARM_RESTART` テーブルは **`SubscriberStateTable`（keyspace 通知 / PSUBSCRIBE）を使用しない**。
+各プロセスは起動時に `Table::hget()` による**同期読み取り**で値を取得する。
+
+`WarmStart::initialize()` (`warm_restart.cpp:35-62`) が `Table` オブジェクトを生成し、
+`WarmStart::getWarmStartTimer()` (`warm_restart.cpp:149-172`) が以下のように直接 HGET を発行する:
+
+```cpp
+// warm_restart.cpp:156
+warmStart.m_cfgWarmRestartTable->hget(docker_name, timer_name, timer_value_str);
+```
+
+`hget()` は Redis の `HGET` コマンドを同期実行するポーリング型アクセスであり、
+`PSUBSCRIBE` や channel-based `PUBLISH/SUBSCRIBE` は一切使用しない。
+
+### イベント駆動通知なし
+
+`WARM_RESTART` テーブルが実行中に変更されても、実行中プロセスにはリアルタイム通知が届かない。
+変更は次回プロセス起動時（再起動後）にのみ有効となる。
+
+### STATE_DB 書き込みにも PUBLISH なし
+
+`WarmStart::setWarmStartState()` / `WarmStart::setDataCheckState()` も `Table::hset()` を使用する。
+
+```cpp
+// warm_restart.cpp:227
+warmStart.m_stateWarmRestartTable->hset(app_name, "state", statestr);
+```
+
+`ProducerStateTable`（APPL_DB 等が使う channel ベース PUBLISH）とは異なり、`Table::hset()` は
+Redis チャネルへの明示的 `PUBLISH` を発行しない。
+
+### 購読方式サマリ
+
+| 方向 | DB | アクセス方式 | PUBLISH/SUBSCRIBE |
+|------|----|-----------|--------------------|
+| 読み取り | CONFIG_DB | `Table::hget()` (起動時一回) | **なし** |
+| 書き込み | STATE_DB | `Table::hset()` | **なし** |
+| 書き込み | CONFIG_DB (fast-reboot のみ) | `Table::del()` | **なし** |
+
+> APPL_DB を使うサービス（`orchagent` 等）では `ProducerStateTable` / `ConsumerStateTable` による
+> channel ベース通知が使われるが、`WARM_RESTART` テーブルはその経路の外にある。
+
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L35-62 (initialize — Table 生成) -->
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L149-172 (getWarmStartTimer — hget) -->
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L227,247 (hset — STATE_DB 書き込み) -->
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: ddc022697593 -->
