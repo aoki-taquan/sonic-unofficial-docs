@@ -417,6 +417,64 @@ MirrorOrch はこれらへの書き込みを行わない。CRM カウンタ・Fl
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/erspan-pubsub.md`  
+> ソース: `sonic-swss/orchagent/mirrororch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-swss/orchagent/orch.cpp`, `sonic-swss/orchagent/aclorch.cpp`
+
+### 購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
+
+`MirrorOrch` は `Orch::addConsumer()` (`orch.cpp:1186-1190`) 経由で CONFIG_DB `MIRROR_SESSION` テーブルを購読する。内部では `SubscriberStateTable` が Redis keyspace notification を PSUBSCRIBE する。
+
+購読チャンネルパターン:
+
+```
+PSUBSCRIBE __keyspace@4__:MIRROR_SESSION|*
+```
+
+書き込み側が `ProducerStateTable` を使う場合（`sonic-cfggen` / `config mirror_session` CLI など）は `MIRROR_SESSION_CHANNEL@4` への PUBLISH も行われるが、`SubscriberStateTable` は keyspace notification を使うため、**書き込み元が ProducerStateTable か直接 HSET かを問わずイベントを受信できる**。
+
+### イベント発火から SAI 反映までの流れ
+
+```
+CONFIG_DB MIRROR_SESSION|<name> に SET/DEL
+  → Redis: __keyspace@4__:MIRROR_SESSION|<name> に pmessage 発火
+  → SubscriberStateTable::readData() が hiredis 経由で受信
+  → orchdaemon select ループ (SELECT_TIMEOUT = 1000 ms、orchdaemon.cpp:23,959)
+  → MirrorOrch::doTask(Consumer&) 呼び出し (mirrororch.cpp:1566)
+      ├─ gPortsOrch->allPortsReady() が false → 即 return (全ポート初期化待ち)
+      ├─ SET → createEntry()
+      │    ├─ ポート・policer バリデーション
+      │    ├─ ERSPAN: m_routeOrch->attach(this, dst_ip)
+      │    │    └─ (非同期) RouteOrch callback → updateNextHop()
+      │    │         → activateSession()
+      │    │              → sai_mirror_api->create_mirror_session()
+      │    │              → STATE_DB MIRROR_SESSION_TABLE.set()
+      │    │              → notify(SUBJECT_TYPE_MIRROR_SESSION_CHANGE, ...)
+      │    └─ task_need_retry (policer 未定義) → it++ で次ループ再試行
+      └─ DEL → deleteEntry()
+               → deactivateSession()
+                    → sai_mirror_api->remove_mirror_session()
+                    → notify(SUBJECT_TYPE_MIRROR_SESSION_CHANGE, ...)
+               → STATE_DB MIRROR_SESSION_TABLE.del()
+```
+
+### 内部 Observer 通知 (Redis 非介在)
+
+`MirrorOrch::activateSession()` (`mirrororch.cpp:1096`) と `deactivateSession()` (`mirrororch.cpp:1111`) は `Subject::notify(SUBJECT_TYPE_MIRROR_SESSION_CHANGE, ...)` を呼び出す。`AclOrch` が `m_mirrorOrch->attach(this)` (`aclorch.cpp:3720`) で登録しており、セッション変化時に ACL ルールの mirror OID を即座に更新する。**これは Redis pub/sub ではなく C++ オブジェクト内のコールバック**であり、STATE_DB への追加書き込みは伴わない。
+
+### STATE_DB への書き込み方式
+
+`MirrorOrch` は STATE_DB に対して `Table::set()` / `Table::del()` を直接使用する (`mirrororch.cpp:637,644`)。`ProducerStateTable` を経由しないため通常の Consumer/Producer チャンネルは使われない。STATE_DB `MIRROR_SESSION_TABLE` チャンネルへの keyspace pmessage は `Table::set()` が自動発火するが、このチャンネルを SUBSCRIBE する consumer プロセスは存在せず、`show mirror_session` は HGETALL で直接読み取る。
+
+### retry 動作
+
+`task_need_retry` 返却時（policer 未登録など）は `it++` で `m_toSync` に残留し、次回 select イベントループ (1000 ms 以内) で `doTask` が再呼び出しされる。明示的な sleep / timer は存在しない。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/erspan-pubsub.md`
+<!-- /pubsub -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス（ERSPAN 固有）
 
