@@ -314,6 +314,57 @@ orchagent が warm reboot で再起動すると `initAsicSdkHealthEventNotificat
 
 <!-- /cross-refs -->
 
+---
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-failure.md`
+
+Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/switchorch.cpp:1410-1491`)
+
+### SET 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| key が空文字列 | `doTask()` L1425-1430 | `SWSS_LOG_ERROR("Failed to parse switch hash key: empty string")` → `erase(it)` でエントリ破棄 | なし |
+| severity が未知の値 (`fatal`/`warning`/`notice` 以外) | `doTask()` L1432-1442 | `SWSS_LOG_ERROR("Unknown severity %s in SUPPRESS_ASIC_SDK_HEALTH_EVENT table")` → `erase(it)` でエントリ破棄 | なし |
+| プラットフォームが該当 severity をサポートしない | `doTask()` L1455-1461 | `SWSS_LOG_NOTICE("Unsupport to register categories on severity %d")` → `erase(it)` でエントリ破棄 | なし |
+| `categories` フィールドに未知の category 文字列 | `registerAsicSdkHealthEventCategories()` L1378-1386 | `SWSS_LOG_ERROR("Unknown ASIC/SDK health category %s to suppress")` → その値のみスキップ、残りの categories で処理継続 | なし（不正値を除いて継続） |
+| SAI `set_switch_attribute` 失敗 | `registerAsicSdkHealthEventCategories()` L1404-1407 | `SWSS_LOG_ERROR("Failed to register ASIC/SDK health event categories for severity %s, status: %s")` → エントリは正常消費 | なし |
+| 不明な op コマンド | `doTask()` L1484-1487 | `SWSS_LOG_ERROR("Unknown operation(%s)")` → `erase(it)` でエントリ破棄 | なし |
+
+### DEL 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| key が空文字列 | `doTask()` L1425-1430 | SET 時と同様。`SWSS_LOG_ERROR` → `erase(it)` | なし |
+| severity が未知の値 | `doTask()` L1432-1442 | SET 時と同様。`SWSS_LOG_ERROR` → `erase(it)` | なし |
+| SAI `set_switch_attribute` 失敗（抑制解除失敗） | `registerAsicSdkHealthEventCategories()` L1404-1407 | `SWSS_LOG_ERROR` → エントリは正常消費。SAI の抑制解除が反映されない状態が継続 | なし |
+
+### 起動時 (`initAsicSdkHealthEventNotification`) の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 |
+|---|---|---|
+| SAI が health event 通知をサポートしない | `switchorch.cpp:218-253` | `SWSS_LOG_NOTICE("ASIC/SDK health event is not supported")` → `STATE_DB SWITCH_CAPABILITY` に `false` 書き込み → 全 severity の初期登録をスキップして return |
+| SAI コールバック登録失敗 | `switchorch.cpp:224-228` | `SWSS_LOG_ERROR("Failed to register ASIC/SDK health event handler: %s")` → `supported=false` → 全 severity の初期登録をスキップ |
+| Lua スクリプト (`eliminate_events.lua`) ロード失敗 | `switchorch.cpp:280-297` | `SWSS_LOG_ERROR("Unable to load the Lua script to eliminate events")` → `max_events` によるイベント削除タイマーが機能しない。SUPPRESS 設定の処理は継続 |
+
+### retry 挙動まとめ
+
+| シナリオ | retry 上限 | 解消トリガー |
+|---|---|---|
+| key 空文字 / severity 不明 | **0 回**（即 erase） | CONFIG 修正 + 再投入が必要 |
+| プラットフォーム非対応 severity | **0 回**（即 erase） | プラットフォーム変更以外に解消手段なし |
+| `categories` 内の不明な値 | なし（値をスキップして継続） | 影響: 不正値が参照するカテゴリは抑制されず全購読になる |
+| SAI `set_switch_attribute` 失敗 | **0 回**（ログのみ、正常消費） | なし。orchagent はエラーログのみで処理継続 |
+| SAI 非対応（起動時） | **0 回**（全件スキップ） | ASIC が当該 SAI 属性に対応するまで機能しない |
+
+### SAI エラーのサイレント消費に関する注意
+
+`registerAsicSdkHealthEventCategories()` は `void` 関数であり、SAI 失敗時に呼び出し元へ `false` を返さない。このため `doCfgSuppressAsicSdkHealthEventTableTask()` は SAI 設定成否に関わらずエントリを `erase(it)` で消費し、次のエントリへ進む（`switchorch.cpp:1489`）。SAI 登録失敗が発生しても orchagent 内の `m_supportedAsicSdkHealthEventAttributes` は変化せず、**その severity の health event フィルタが意図通り設定されない状態が永続する**。復旧には当該エントリを再投入（DEL → SET）するか orchagent を再起動する必要がある。
+<!-- /failure -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
