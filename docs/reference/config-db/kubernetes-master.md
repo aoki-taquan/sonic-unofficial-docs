@@ -223,6 +223,63 @@ SELECT_TIMEOUT = 1000  # ms
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:23,30-45,56-57,59-62,74,103-118,181 -->
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査対象: `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py`
+> 調査日: 2026-05-19
+
+`KUBERNETES_MASTER` の SET/DEL が `ctrmgrd` を経由して引き起こす CONFIG_DB 以外への書込みを示す。SAI は経由しない（K8s 統合はホスト OS レベルの処理）。
+
+### STATE_DB — KUBERNETES_MASTER|SERVER（接続状態）
+
+join 成功・失敗・reset のたびに `ctrmgrd` が `STATE_DB::KUBERNETES_MASTER|SERVER` を更新する。
+
+| 操作トリガー | 書込先 DB / テーブル | キー | フィールド | 値 | ソース |
+|---|---|---|---|---|---|
+| join 成功 | STATE_DB / `KUBERNETES_MASTER` | `SERVER` | `connected` | `"true"` | `ctrmgrd.py:436-440` |
+| join 成功 | STATE_DB / `KUBERNETES_MASTER` | `SERVER` | `update_time` | ISO タイムスタンプ | `ctrmgrd.py:436-440` |
+| join 成功 | STATE_DB / `KUBERNETES_MASTER` | `SERVER` | `ip` | 接続先 IP | `ctrmgrd.py:436-440` |
+| join 成功 | STATE_DB / `KUBERNETES_MASTER` | `SERVER` | `port` | 接続先ポート | `ctrmgrd.py:436-440` |
+| join 失敗 / do_reset() | STATE_DB / `KUBERNETES_MASTER` | `SERVER` | `connected` | `"false"` | `ctrmgrd.py:423,444` |
+
+`update_time` は初回起動判定に使用される（Phase B ordering 依存 #2 参照）。join 成功後に書き込まれるため、初回起動かどうかを次回起動時に判断する唯一の STATE_DB 証跡となる。
+
+### STATE_DB — KUBE_LABELS|SET（K8s ノードラベル）
+
+join 成功後に `set_node_labels()` が `STATE_DB::KUBE_LABELS|SET` へノード情報を書き込む。また `FEATURE.set_owner=kube` の変化で feature ごとのラベルを追加する。
+
+| 操作トリガー | 書込先 DB / テーブル | キー | フィールド | 値 | ソース |
+|---|---|---|---|---|---|
+| join 成功 (`do_join()` 完了後) | STATE_DB / `KUBE_LABELS` | `SET` | `sonic_version` | SONiC ソフトウェアバージョン | `ctrmgrd.py:297-307,440` |
+| join 成功 | STATE_DB / `KUBE_LABELS` | `SET` | `hwsku` | ハードウェア SKU 文字列 | `ctrmgrd.py:297-307,440` |
+| join 成功 | STATE_DB / `KUBE_LABELS` | `SET` | `deployment_type` | `DEVICE_METADATA.localhost.type` から取得 | `ctrmgrd.py:297-299,440` |
+| join 成功 | STATE_DB / `KUBE_LABELS` | `SET` | `worker.sonic/platform` | プラットフォーム識別子 | `ctrmgrd.py:297-307` |
+| `FEATURE.set_owner=kube` 変化 | STATE_DB / `KUBE_LABELS` | `SET` | `<feat>_enabled` | `"true"` | `ctrmgrd.py:505-506` |
+
+`KUBE_LABELS|SET` の内容は別プロセス `LabelsPendingHandler.update_node_labels()` が `kube_commands.kube_write_labels()` で Kubernetes API サーバに転送する。失敗時は LABEL_RETRY（デフォルト 2 秒）でリトライ。
+
+### CONFIG_DB — FEATURE テーブル（サービス再起動）
+
+`FeatureTransitionHandler` が `FEATURE` テーブルの `set_owner` 変化を受けて、サービス再起動が必要な場合に `CONFIG_DB::FEATURE|<feature>.restart` を書き込む。
+
+| 操作トリガー | 書込先 DB / テーブル | キー | フィールド | 値 | ソース |
+|---|---|---|---|---|---|
+| `FEATURE.set_owner` 変化 | CONFIG_DB / `FEATURE` | `<feature>` | `restart` | `"true"` | `ctrmgrd.py:157-158` |
+
+> **注意**: `FEATURE.restart` への書き込みは `KUBERNETES_MASTER` の変化に直接起因するのではなく、`FEATURE.set_owner=kube` 設定後に K8s join が完了して初めてサービス再起動トリガーが発火する。`KUBERNETES_MASTER` への SET が間接的に `FEATURE` テーブルを書き換えるチェーンが存在する点に注意。
+
+### APPL_DB / SAI 書込み
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `ctrmgrd` に ProducerStateTable / AppTable への書込みなし |
+| ASIC_DB | なし | SAI 非経由（K8s 統合はホスト OS 処理） |
+| FLEX_COUNTER_DB | なし | 統計カウンタなし |
+
+詳細スキャン証跡: `meta/_intermediate/cdb-flow/kubernetes-master-side-effects.md`
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## フィールドデフォルト
 
