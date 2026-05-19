@@ -181,6 +181,42 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`TELEMETRY_CONNECTIONS` テーブルへの書き込み・削除は `storeKeyRedis()` / `deleteKeyRedis()` で行われる。これらの関数は **best-effort** 設計であり、Redis 操作が失敗してもデーモン本体の動作を止めない。
+
+### 失敗パターン一覧
+
+| 失敗ケース | 発生箇所 | 挙動 | retry | STATE_DB への影響 |
+|---|---|---|---|---|
+| `GetDbTcpAddr()` または `GetDbId()` エラー (`database_config.json` 不正 / STATE_DB 未定義) | `PrepareRedis()` L34-42 | `log.Errorf` を出力して早期 return。`rclient` は nil のまま | なし | 以降の HSet / HDel すべて silent no-op |
+| `redis.NewClient()` 後の STATE_DB 接続失敗 | `storeKeyRedis()` / `deleteKeyRedis()` — `rclient != nil` だが Redis 疎通なし | `HSet` / `HDel` が `err != nil` を返す → `log.V(1).Infof` のみ | なし | エントリ未登録 / 未削除のまま残留 |
+| `rclient == nil`（PrepareRedis 失敗後に Add / Remove が呼ばれた場合） | `storeKeyRedis()` L112-114 / `deleteKeyRedis()` L122-124 | `log.V(1).Infof` を出力して return。エラーコードは返さない | なし | HSet / HDel 実行されず。メモリ上の `cm.connections` はすでに更新済みのため、STATE_DB とメモリ状態が乖離する |
+| `HSet` エラー（Redis 高負荷 / ネットワーク切断等） | `storeKeyRedis()` L116-118 | `log.V(1).Infof` のみ。gNMI RPC 自体は成功する | なし | TELEMETRY_CONNECTIONS にエントリが追加されない。`show gnmi` での接続数が実際より少なく見える |
+| `HDel` が `ret == 0`（対象 key が存在しない） | `deleteKeyRedis()` L127-130 | `log.V(1).Infof` のみ | なし | 冪等。二重削除は無害 |
+| 閾値超過 (`len(cm.connections) >= cm.threshold && cm.threshold != 0`) | `Add()` L65-69 | `cm.mu.RUnlock()` して `("", false)` を返す。`storeKeyRedis()` は呼ばれない | なし | STATE_DB への書き込みなし。Subscribe RPC はサーバ側で拒否される |
+| `PrepareRedis()` の `HGetAll` が nil を返す（TELEMETRY_CONNECTIONS が存在しない場合） | `PrepareRedis()` L52-56 | `res == nil` → early return。前回エントリの削除をスキップ | なし | 残留エントリなし（テーブルが空の場合は無害） |
+| デーモン異常終了による STATE_DB 残留エントリ | プロセスクラッシュ時 | `PrepareRedis()` が呼ばれないため古いエントリが残存 | デーモン再起動後に `PrepareRedis()` が全削除 | 再起動まで古い接続情報が `show gnmi` に表示される |
+
+### 重要な設計上の特性
+
+**エラーはデーモン動作に影響しない**: `storeKeyRedis()` / `deleteKeyRedis()` の失敗は gNMI RPC の成否に一切影響しない。Subscribe が正常に受け付けられたとしても STATE_DB への記録が失敗する可能性がある。これは意図された設計であり、STATE_DB は可視化目的であって制御パスには含まれない。
+
+**STATE_DB とメモリの乖離**: `Add()` はメモリ (`cm.connections`) への追加を **`storeKeyRedis()` より先に実行**し (`connection_manager.go:73-76`)、`Remove()` もメモリからの削除を `deleteKeyRedis()` より先に実行する (`connection_manager.go:87-90`)。Redis 操作が失敗した場合、メモリ状態は正しいが STATE_DB は古い状態になる。`ConnectionManager` にはこの乖離を検出・修復する仕組みはない。
+
+**障害後の自動回復**: `setConnectionManager()` が再呼び出しされると（閾値変更時）、`PrepareRedis()` が STATE_DB の全エントリを削除した上でメモリも新しい `ConnectionManager` で初期化されるため、乖離状態は次回 Subscribe RPC 到着時に解消される (`client_subscribe.go:73-85`)。ただし進行中の接続メタデータも失われる。
+
+<!-- evidence:
+  connection_manager.go:32-61 — PrepareRedis(): GetDbTcpAddr/GetDbId エラーで rclient = nil のまま early return
+  connection_manager.go:63-78 — Add(): threshold 超過で early return → storeKeyRedis 未呼び出し
+  connection_manager.go:80-92 — Remove(): deleteKeyRedis は ret==0 でも no-op
+  connection_manager.go:111-118 — storeKeyRedis: rclient == nil ガード + HSet エラーのみ log
+  connection_manager.go:121-131 — deleteKeyRedis: rclient == nil ガード + ret==0 で log のみ
+  client_subscribe.go:73-85 — setConnectionManager(): 閾値変更時の全リセット
+-->
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
