@@ -99,6 +99,67 @@ SONiC ホストを Kubernetes worker としてマスターに参加させるた�
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158,292-307,333-342,413-414,440,471-474,488,505-506 -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:113-114,273-275,395-455,668-685 -->
+
+`ctrmgrd` は `KUBERNETES_MASTER` の変化を受けて `do_join()` / `do_reset()` を実行し、その成否に応じてタイマーリトライまたはプロセス abort で自己回復する。
+
+### kube_join_master 失敗 → JOIN_RETRY による自動リトライ
+
+`RemoteServerHandler.do_join()` (`ctrmgrd.py:429-455`) が `kube_commands.kube_join_master(ip, port, insecure)` を呼び、戻り値が非ゼロの場合:
+
+| 手順 | 処理内容 | evidence |
+|---|---|---|
+| 1 | `st_server[ST_SER_CONNECTED] = "false"` → STATE_DB 即時更新 | `ctrmgrd.py:444` |
+| 2 | `remote_connected = False` | `ctrmgrd.py:445` |
+| 3 | `JOIN_RETRY` 秒後にタイマー登録 (`register_timer(self.start_time, self.handle_update)`) | `ctrmgrd.py:449-451` |
+| 4 | `self.pending = True` — タイマー満了まで新規 join を抑制 | `ctrmgrd.py:452` |
+
+`JOIN_RETRY` のデフォルト値は **10 秒** (`ctrmgrd.py:113`)。join が成功するまで 10 秒間隔で無制限にリトライが続く。STATE_DB の `connected` は join 成功時のみ `"true"` に変わる。
+
+> **FQDN ip での DNS 解決失敗**: `ip` フィールドに FQDN を設定した場合、起動早期 (DNS 未起動 / キャッシュ未熱) は `kube_join_master` が非ゼロを返し JOIN_RETRY ループに入る。静的 IP アドレスの使用を推奨する。
+
+### kube_reset_master 失敗
+
+`do_reset()` (`ctrmgrd.py:418-426`) は `kube_commands.kube_reset_master(True)` の戻り値を無視する。
+
+| 条件 | 挙動 |
+|---|---|
+| reset 成功・失敗いずれも | `st_server[ST_SER_CONNECTED] = "false"` に即時書き込み (`ctrmgrd.py:423`) |
+| reset コマンド失敗 | `log_debug` のみ。エラーログ出力後に続行、リトライなし |
+
+reset は「接続解除の意思表示」であり、コマンド失敗でも STATE_DB 側の `connected` フラグは `"false"` に確定するため、上位 Orch の接続状態に不整合は残らない。
+
+### kube_write_labels 失敗 → LABEL_RETRY による自動リトライ
+
+join 成功直後に `set_node_labels()` → `LabelsPendingHandler.update_node_labels()` (`ctrmgrd.py:668-685`) が `kube_commands.kube_write_labels(self.set_labels)` を実行し、非ゼロ返却の場合:
+
+| 手順 | 処理内容 | evidence |
+|---|---|---|
+| 1 | `self.pending = True` | `ctrmgrd.py:678` |
+| 2 | `LABEL_RETRY` 秒後にタイマー再登録 (`register_timer(ts, self.update_node_labels)`) | `ctrmgrd.py:679-681` |
+
+`LABEL_RETRY` のデフォルト値は **2 秒** (`ctrmgrd.py:114`)。ラベル書き込みが成功するまで 2 秒間隔で繰り返す。`STATE_DB:KUBE_LABELS|SET` への書き込みは `kube_write_labels` 内部で行われるため、失敗時は前回値が残留する。
+
+### select() エラー → ctrmgrd プロセス abort
+
+`ctrmgrd.py:273-275`: メインループの `select()` が EINTR 以外のエラーを返すと `raise Exception("Received error from select")` が送出される。catch なしで ctrmgrd プロセスが abort し、systemd の `Restart=on-failure` 設定により自動再起動で自己回復する。
+
+### 失敗挙動まとめ
+
+| 失敗箇所 | 回復方式 | リトライ間隔 (デフォルト) | STATE_DB への影響 |
+|---|---|---|---|
+| `kube_join_master` 失敗 | タイマー再試行 (無制限) | JOIN_RETRY: **10s** | `connected = "false"` |
+| `kube_reset_master` 失敗 | ログのみ・続行 | なし | `connected = "false"` (確定) |
+| `kube_write_labels` 失敗 | タイマー再試行 (無制限) | LABEL_RETRY: **2s** | `KUBE_LABELS|SET` 前値残留 |
+| `select()` エラー | ctrmgrd abort → systemd 再起動 | systemd restart delay | 再起動後に再構築 |
+| DNS 解決失敗 (FQDN) | JOIN_RETRY ループ | **10s** | `connected = "false"` |
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/kubernetes-master-failure.md` 参照。
+<!-- /failure -->
+
 <!-- defaults -->
 ## フィールドデフォルト
 
