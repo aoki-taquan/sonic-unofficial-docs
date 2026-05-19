@@ -520,4 +520,20 @@ def make_callback(func):
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:2456-2509` (`register_callbacks`)、`:2433-2436` (`fips_config_handler`)、`:2527-2528` (`start`/`listen`)、`:2254,2271` (起動時スナップショット)、`:1777-1779` (DEL 時早期 return)。詳細分析: `meta/_intermediate/cdb-flow/fips-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: FIPS は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | FIPS は SAI 非経由。`hostcfgd` が `/etc/fips/fips_enable` 書換えと bootloader grub 操作を行うのみ (`FipsCfg.update` hostcfgd:1788–1846) |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `FipsCfg` は host CONFIG_DB (`ConfigDBConnector()` 引数なし相当) のみを購読。`asicN` namespace を iterate しない。`is_multi_npu` 値は FIPS 経路に渡されない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | FIPS テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card host で `hostcfgd` が独立に `/etc/fips/fips_enable` を書き換える |
+| ベンダー固有モジュール | なし | community master の FIPS 経路は OpenSSL FIPS provider + `sonic_installer.bootloader` の標準実装。`files/image_config/` にも `files/build_templates/` にもベンダー hook 注入箇所なし |
+| YANG 条件分岐 | プラットフォーム条件なし | `sonic-fips.yang` を `platform\|asic\|chassis\|namespace\|vendor` で grep しても 0 ヒット。フィールド制約はなし |
+
+詳細根拠は `meta/_intermediate/cdb-flow/fips-platform.md` を参照。
+<!-- /platform -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
