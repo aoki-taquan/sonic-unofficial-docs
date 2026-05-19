@@ -525,6 +525,67 @@ if (status != SAI_STATUS_SUCCESS)
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/cfgmgr/natmgrd.cpp main() L100-155 / sonic-swss/cfgmgr/natmgr.cpp NatMgr::doTask L8163-8185 / sonic-swss/cfgmgr/intfmgrd.cpp main() L25-45 / sonic-swss/cfgmgr/intfmgr.cpp IntfMgr() L30-50 / sonic-swss/orchagent/orchdaemon.cpp L296 / sonic-swss/orchagent/intfsorch.cpp IntfsOrch() L63 -->
+
+`nat_zone` フィールドの変更は 2 つの独立した購読経路で伝播する。`natmgrd` は CONFIG_DB を直接購読してカーネル iptables を更新し、`intfmgrd → orchagent (IntfsOrch)` の 2 段経路が SAI RIF 属性を更新する。
+
+### 購読経路の全体像
+
+```
+CONFIG_DB  INTERFACE|<port>  {nat_zone=N}
+  ├─ 経路 A: natmgrd (Consumer/SubscriberStateTable)
+  │    └─ NatMgr::doNatZoneIntfTask()
+  │         └─ kernel iptables mangle PREROUTING/POSTROUTING MARK
+  │
+  └─ 経路 B: intfmgrd (Consumer/SubscriberStateTable)
+       └─ IntfMgr::setIntf()
+            └─ m_appIntfTableProducer.set(alias, {nat_zone=N})
+                 └─ APPL_DB  INTF_TABLE|<intf>  {nat_zone=N}
+                      └─ orchagent IntfsOrch (Orch constructor, APP_INTF_TABLE_NAME)
+                           └─ doIntfTask()
+                                └─ setRouterIntfsNatZoneId()
+                                     └─ SAI  SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID
+```
+
+### 経路 A: CONFIG_DB → natmgrd (直接購読)
+
+`natmgrd` (`natmgrd.cpp:109-121`) は起動時に以下の CONFIG_DB テーブルを `Consumer` (内部的に `SubscriberStateTable`) で購読する。
+
+| CONFIG_DB テーブル | ハンドラ |
+|------------------|---------|
+| `INTERFACE` (`CFG_INTF_TABLE_NAME`) | `NatMgr::doNatZoneIntfTask` |
+| `PORTCHANNEL_INTERFACE` (`CFG_LAG_INTF_TABLE_NAME`) | `NatMgr::doNatZoneIntfTask` |
+| `VLAN_INTERFACE` (`CFG_VLAN_INTF_TABLE_NAME`) | `NatMgr::doNatZoneIntfTask` |
+| `LOOPBACK_INTERFACE` (`CFG_LOOPBACK_INTERFACE_TABLE_NAME`) | `NatMgr::doNatZoneIntfTask` |
+
+`NatMgr::doTask()` は table_name に応じて `doNatZoneIntfTask` にディスパッチする (`natmgr.cpp:8178-8182`)。イベントは `swss::Select` によるイベントループで処理され、`SETTIMEOUTNAT` / `FLUSHNATENTRIES` の `NotificationConsumer` と同一の `Select` オブジェクトを共有する。
+
+### 経路 B-1: CONFIG_DB → intfmgrd
+
+`intfmgrd` (`intfmgrd.cpp:29-44`) は `CFG_INTF_TABLE_NAME`・`CFG_VLAN_INTF_TABLE_NAME`・`CFG_LAG_INTF_TABLE_NAME`・`CFG_LOOPBACK_INTERFACE_TABLE_NAME` を購読し、`IntfMgr::setIntf()` でフィールドを解析する。`nat_zone` フィールドを検出した場合 (`intfmgr.cpp:813-815`)、`m_appIntfTableProducer.set(alias, data)` により APPL_DB の `APP_INTF_TABLE_NAME` (`INTF_TABLE`) にフォワードする (`intfmgr.cpp:1053`)。`ProducerStateTable` は Lua スクリプト経由で APPL_DB にアトミック書き込みし、`APP_INTF_TABLE_CHANNEL@0` を PUBLISH する。
+
+### 経路 B-2: APPL_DB → orchagent (IntfsOrch)
+
+`orchdaemon.cpp:296` で `IntfsOrch(m_applDb, APP_INTF_TABLE_NAME, ...)` として生成される。`Orch` 基底クラスのコンストラクタが `APP_INTF_TABLE_NAME` に対して `Consumer(SubscriberStateTable)` を登録し、APPL_DB の `ConsumerStateTable` チャンネル購読が確立する。`doIntfTask()` は `nat_zone` フィールドを解析し、`setRouterIntfsNatZoneId(port)` 経由で SAI `set_router_interface_attribute(SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID)` を呼び出す。
+
+### 非同期通知チャンネル
+
+| チャンネル | DB | 方向 | 送信者 | 受信者 | nat_zone への影響 |
+|-----------|-----|------|--------|--------|------------------|
+| `SETTIMEOUTNAT` | APPL_DB | NatOrch → natmgrd | `NatOrch` | `natmgrd` `timeoutNotificationsConsumer` | 直接影響なし |
+| `FLUSHNATENTRIES` | APPL_DB | CLI → natmgrd | `sonic-clear nat translations` | `natmgrd` `flushNotificationsConsumer` | NAT エントリ全削除時に `m_natZoneInterfaceInfo` も一部クリアされうる |
+
+### 冪等性と再起動時の挙動
+
+- `natmgrd` 再起動時: `Consumer` (`SubscriberStateTable`) は PSUBSCRIBE 後に既存 key を全件スナップショットとして再生するため、CONFIG_DB の `nat_zone` が再処理され iptables mangle ルールが再構築される。
+- `orchagent` 再起動時: APPL_DB の `INTF_TABLE` に残存する `nat_zone` フィールドが `ConsumerStateTable` で再読み込みされ、SAI RIF zone_id が再適用される。
+- `intfmgrd` 再起動時: CONFIG_DB の全 INTERFACE エントリを再処理し、`nat_zone` を含む全フィールドを APPL_DB に再書き込みする。
+
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
