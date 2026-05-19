@@ -413,6 +413,65 @@ FdbOrch はローカル MAC 学習・エージングイベントを ASIC_DB の 
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-platform.md`
+
+`VXLAN_FDB_TABLE` エントリの SAI プログラム方法は、ASIC の VTEP トンネルモデルによって分岐する。`VxlanTunnelOrch::isDipTunnelsSupported()` が ASIC capability を保持し、初期化時に `sai_query_attribute_enum_values_capability()` で P2P/P2MP サポートを問い合わせる（`vxlanorch.cpp:1256-1274`）。
+
+### DIP / SIP トンネルモード分岐
+
+| 項目 | DIP 対応 ASIC（P2P モード） | DIP 非対応 ASIC（P2MP/SIP モード） |
+|------|----------------------------|------------------------------------|
+| トンネルポート解決 | リモート VTEP IP ごとの個別ポート (`getTunnelPortName(remote_ip)`) | EVPN NVO の共有 SIP トンネルポート (`getEVPNVtep()`) |
+| `remote_vtep` 空時 | `erase(it)` で即破棄 | `VXLAN_EVPN_NVO` 未設定なら破棄 |
+| VLAN メンバー判定 | port のみで判定 (`end_point_ip = ""`) | port + `end_point_ip`（remote_ip）で判定 |
+
+```cpp
+// sonic-swss/orchagent/fdborch.cpp:836-854
+if (tunnel_orch->isDipTunnelsSupported()) {
+    port = tunnel_orch->getTunnelPortName(remote_ip);          // DIP モード
+} else {
+    VxlanTunnel* sip_tunnel = evpn_nvo_orch->getEVPNVtep();
+    port = tunnel_orch->getTunnelPortName(sip_tunnel->getSrcIP().to_string(), true);  // SIP モード
+}
+
+// sonic-swss/orchagent/fdborch.cpp:1308-1313 — SIP モードのみ end_point_ip をセット
+if (!tunnel_orch->isDipTunnelsSupported())
+    end_point_ip = fdbData.remote_ip;
+if (!m_portsOrch->isVlanMember(vlan, port, end_point_ip))
+```
+
+### VXLAN 固有 SAI FDB 属性
+
+VXLAN 由来エントリ（`FDB_ORIGIN_VXLAN_ADVERTIZED`）は通常の MAC エントリと異なる SAI 属性が設定される。これは ASIC ベンダーによらず、origin が VXLAN であれば常に適用される。
+
+| SAI 属性 | VXLAN 由来 | PROVISIONED (static) | PROVISIONED (dynamic) |
+|----------|-----------|----------------------|-----------------------|
+| `SAI_FDB_ENTRY_ATTR_TYPE` | `STATIC`（type に関わらず常に） | `STATIC` or `DYNAMIC`（type 依存） | `DYNAMIC` |
+| `SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` | `true`（type=`"dynamic"` 時のみ） | 設定なし | 設定なし |
+| `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` | 設定（remote_vtep IP を埋め込む） | 設定なし | 設定なし |
+
+```cpp
+// sonic-swss/orchagent/fdborch.cpp:1424-1470 (抜粋)
+// VXLAN は常に STATIC
+if (fdbData.origin == FDB_ORIGIN_VXLAN_ADVERTIZED)
+    attr.value.s32 = SAI_FDB_ENTRY_TYPE_STATIC;
+
+// dynamic VXLAN には ALLOW_MAC_MOVE=true — ローカル学習で上書き移動可能
+if ((fdbData.origin == FDB_ORIGIN_VXLAN_ADVERTIZED) && (fdbData.type == "dynamic"))
+    { attr.id = SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE; attr.value.booldata = true; }
+
+// ENDPOINT_IP を必ず設定 — ASIC 側でリモート VTEP の同定に使用
+if (fdbData.origin == FDB_ORIGIN_VXLAN_ADVERTIZED)
+    { attr.id = SAI_FDB_ENTRY_ATTR_ENDPOINT_IP; attr.value.ipaddr = remote_ip; }
+```
+
+<!-- evidence: sonic-swss/orchagent/fdborch.cpp:836-854,1308-1313,1424-1495; sonic-swss/orchagent/vxlanorch.cpp:1256-1274 -->
+
+<!-- /platform -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
