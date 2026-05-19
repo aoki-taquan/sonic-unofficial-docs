@@ -524,4 +524,42 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/orchdaemon.cpp:23,500,959; orchagent/switchorch.cpp:1320-1371; orchagent/switch/trimming/capabilities.cpp:142-146,724 -->
+
+### 購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
+
+`SwitchOrch` は `orchdaemon.cpp` の初期化コードで `SWITCH_TRIMMING` テーブルを `SubscriberStateTable` に登録する。`SubscriberStateTable` は内部で Redis keyspace notification の `PSUBSCRIBE` を発行し、CONFIG_DB（DB インデックス 4）の `SWITCH_TRIMMING|GLOBAL` エントリの変化を受信する。
+
+| 購読元 | DB | テーブル | PSUBSCRIBE パターン |
+|--------|----|---------|--------------------|
+| orchagent (SwitchOrch) | CONFIG_DB (4) | `SWITCH_TRIMMING` | `__keyspace@4__:SWITCH_TRIMMING\|*` |
+
+### 主ループと select タイムアウト
+
+`orchdaemon.cpp` の主ループは `SELECT_TIMEOUT = 1000` ms（`orchdaemon.cpp:23`）でポーリングし、通知を受けると `SwitchOrch::doCfgSwitchTrimmingTableTask()` を呼び出す。CONFIG_DB への書き込みから SAI API 呼び出しまでの最大遅延は **1000 ms** 以内となる。
+
+```
+CONFIG_DB SWITCH_TRIMMING|GLOBAL (SET)
+  → keyspace notification → PSUBSCRIBE (__keyspace@4__:SWITCH_TRIMMING|*)
+    → orchagent select() (タイムアウト 1000 ms)
+      → SwitchOrch::doCfgSwitchTrimmingTableTask()
+          → setSwitchTrimming()
+            → sai_switch_api->set_switch_attribute()  (SAI 直接書き込み)
+```
+
+### APPL_DB 中継なし
+
+`doCfgSwitchTrimmingTableTask()` (`switchorch.cpp:1320-1371`) は `ProducerStateTable` / `Table::set` への書き込みを行わない。CONFIG_DB → SAI の直接パスであり、下流の Orch が APPL_DB チャネルを購読するようなパブリッシュは発生しない。
+
+### STATE_DB capability 書き込み（起動時のみ・pubsub パスと独立）
+
+`SwitchTrimmingCapabilities::writeCapabilitiesToDb()` は orchagent 起動時に一度だけ `STATE_DB:SWITCH_CAPABILITY|switch` に書き込む（`capabilities.cpp:142-146,724`）。これは CONFIG_DB の SET 操作に連動する通常の pubsub パスではなく、`SwitchTrimmingCapabilities` コンストラクタが起動時に SAI capability をクエリして結果を STATE_DB に記録する初期化処理である。設定変更のたびに繰り返されない。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/switch-trimming-pubsub.md` 参照。
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->
