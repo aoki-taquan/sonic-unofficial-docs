@@ -161,6 +161,107 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 詳細な調査メモは `meta/_intermediate/cdb-flow/pbh-rule-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`PBH_RULE` の SET / UPDATE / DEL 処理（`PbhOrch` / `pbhmgr` / `pbhrule` / `pbhcap`）における失敗は、(A) parse 段階の入力値エラー、(B) バリデーション失敗（match 欠如・必須フィールド欠損）、(C) SAI 作成・更新・削除失敗、(D) capability 未サポート、(E) 依存関係未解決（retry loop）の 5 系統に分類される。
+
+証跡: `meta/_intermediate/cdb-flow/pbh-phaseD-failure.md`
+
+### A. フィールド Parse 失敗（pbhmgr.cpp — silent skip / return false）
+
+`parsePbhRule()` は各 match フィールドの値フォーマットを検証する。失敗時は `return false` で当該 RULE が SAI に反映されない。
+
+| 失敗条件 | ログ | 動作 |
+|---|---|---|
+| match フィールドの値が空文字列 | `"Failed to parse field(%s): empty value is prohibited"` (ERROR) | `return false` — RULE 全体が SAI 未反映 |
+| `gre_key` が `0x.../0x...` 形式でない（mask 欠如等） | `"Failed to parse field(%s): invalid value(%s)"` (ERROR) | `return false` |
+| hex フィールドに `0x` プレフィックスがない / 数値変換例外 | `"Failed to parse field(%s): <exception>"` (ERROR) | `return false` |
+| 未知フィールド名 | `"Unknown field(%s): skipping ..."` (WARN) | フィールドをスキップ（RULE は処理継続） |
+
+### B. バリデーション失敗（pbhmgr.cpp:validatePbhRule / pbhrule.cpp:validate）
+
+| 失敗条件 | ログ | 動作 |
+|---|---|---|
+| `priority` フィールド欠損（必須） | `"Validation error: missing mandatory field(priority)"` (ERROR) | `return false` — RULE 全体が SAI 未反映 |
+| `hash` フィールド欠損（必須） | `"Validation error: missing mandatory field(hash)"` (ERROR) | `return false` — RULE 全体が SAI 未反映 |
+| match field が 1 つも指定されない（`AclRulePbh::validate()`） | `"Failed to validate rule: invalid parameters"` (ERROR) | `return false` — SAI create_acl_entry が呼ばれない |
+| action 数が 1 でない | 同上 | `return false` |
+| `packet_action` 省略（非必須） | `"Missing non mandatory field(packet_action): setting default value(SET_ECMP_HASH)"` (NOTICE) | デフォルト `SET_ECMP_HASH` を注入して継続 |
+| `flow_counter` 省略（非必須） | `"Missing non mandatory field(flow_counter): setting default value(DISABLED)"` (NOTICE) | デフォルト `DISABLED` を注入して継続 |
+
+!!! note "YANG との discrepancy"
+    YANG は全 match フィールドを optional と定義するが、実装側 (`AclRulePbh::validate()`) では最低 1 フィールドが必須。YANG バリデーションは通過しても orchagent が reject するケースがある。
+
+### C. SAI 作成・更新・削除失敗（pbhorch.cpp）
+
+#### SET（新規作成）失敗
+
+| 失敗条件 | ログ | 動作 |
+|---|---|---|
+| 同一 key が既存（重複 SET） | `"Failed to create PBH rule(%s) in SAI: object already exists"` (ERROR) | `return false` |
+| `priority` の SAI 属性設定失敗 | `"Failed to configure PBH rule(%s) priority"` (ERROR) | `return false` |
+| match フィールド設定失敗（GRE_KEY / ETHER_TYPE 等） | `"Failed to configure PBH rule(%s) match: <FIELD>"` (ERROR) | `return false` |
+| action 設定失敗 | `"Failed to configure PBH rule(%s) action"` (ERROR) | `return false` |
+| `validate()` 失敗（match=0 or action≠1） | `"Failed to validate PBH rule(%s)"` (ERROR) | `return false` |
+| SAI `create_acl_entry()` 失敗 | `"Failed to create PBH rule(%s) in SAI"` (ERROR) | `return false` |
+| 内部キャッシュ追加失敗 | `"Failed to add PBH rule(%s) to internal cache"` (ERROR) | `return false` |
+| refCount 追加失敗 | `"Failed to add PBH rule(%s) dependencies"` (ERROR) | `return false` |
+
+#### UPDATE 失敗
+
+| 失敗条件 | ログ | 動作 |
+|---|---|---|
+| 対象 key が不在 | `"Failed to update PBH rule(%s) in SAI: object doesn't exist"` (ERROR) | `return false` |
+| capability ADD 不可 | `"Failed to validate PBH rule(%s) added fields: unsupported capabilities"` (ERROR) | `return false` |
+| capability UPDATE 不可 | `"Failed to validate PBH rule(%s) updated fields: unsupported capabilities"` (ERROR) | `return false` |
+| capability REMOVE 不可 | `"Failed to validate PBH rule(%s) removed fields: unsupported capabilities"` (ERROR) | `return false` |
+| Mellanox: `disableAction()` 失敗（`hash` / `packet_action` 変更時） | `"Failed to disable PBH rule(%s) action"` (ERROR) | `return false`（UPDATE 全体が中断） |
+| SAI `update_acl_entry()` 失敗 | `"Failed to update PBH rule(%s) in SAI"` (ERROR) | `return false` |
+
+#### DEL 失敗
+
+| 失敗条件 | ログ | 動作 |
+|---|---|---|
+| 対象 key が不在 | `"Failed to remove PBH rule(%s) from SAI: object doesn't exist"` (ERROR) | `return false` |
+| SAI `remove_acl_entry()` 失敗 | `"Failed to remove PBH rule(%s) from SAI"` (ERROR) | `return false` |
+
+いずれの `return false` も `doPbhRuleTask()` 内で `it++`（retry loop）として扱われる。CONFIG_DB エントリは保持されたまま次の `deployPbhTasks()` 呼び出しで再試行される。SAI 側の永続的エラー（重複・存在しない等）では無限 retry に陥ることがある。
+
+### D. Capability 未サポート（pbhcap.cpp:validatePbhRuleCap）
+
+`pbhcap.cpp` の `validatePbhRuleCap()` は各フィールドの ADD / UPDATE / REMOVE 操作がプラットフォームでサポートされているかを確認する。
+
+| 失敗条件 | ログ | 動作 |
+|---|---|---|
+| フィールド操作（ADD/UPDATE/REMOVE）が capability で未サポート | `"Failed to validate field(%s): capability(%s) is not supported"` (ERROR) | `return false` — UPDATE 全体が中断 |
+| 未知の ASIC vendor | `"Failed to initialize PBH capabilities: unknown ASIC vendor"` (ERROR) | `return false` |
+
+- ASIC_VENDOR 未設定時は GENERIC platform へ fallback（`pbhcap.cpp:297-318`）
+- `validatePbhRuleCap()` の失敗は `createPbhRule()` / `updatePbhRule()` 経由で retry loop として伝播する
+
+### E. 依存関係未解決（retry loop — 自動回復）
+
+依存テーブル（`PBH_TABLE` / `PBH_HASH`）が未存在の場合:
+
+| 失敗条件 | ログ | 動作 |
+|---|---|---|
+| `validateDependencies()` が false（TABLE または HASH が未作成） | `"object has missing dependencies: adding a retry"` (NOTICE) | `pendingSetupMap` に保留 → 依存解決後に自動回復 |
+
+依存が解決されるまで SAI への反映は行われない（CONFIG_DB エントリは保持）。
+
+### 失敗時の SAI 状態サマリ
+
+| 失敗シナリオ | CONFIG_DB | SAI ACL entry | orchagent 状態 |
+|---|---|---|---|
+| parse / validation 失敗（必須フィールド欠損等） | 残存 | 未作成 | 継続（ERROR ログ、retry） |
+| SAI create 失敗（重複・API エラー） | 残存 | 未作成 | 継続（ERROR ログ、retry） |
+| SAI update 失敗（capability 不足等） | 残存 | 更新前の状態を維持 | 継続（ERROR ログ、retry） |
+| capability 未サポート | 残存 | 変更されない | 継続（ERROR ログ） |
+| 依存テーブル未存在 | 残存 | 未作成（保留中） | 継続（retry loop、自動回復） |
+
+<!-- /failure -->
+
 ## key 構造
 
 ```text
