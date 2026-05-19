@@ -151,6 +151,70 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照・共依存コンポーネント (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-cross-refs.md`
+
+`MUX_CABLE|<ifname>` エントリは orchagent (`MuxOrch`)、`linkmgrd`、`ycabled` の 3 コンポーネントが参照する。YANG leafref により `ifname` は `PORT` テーブルとの整合性が保証され、`orchagent` は `PEER_SWITCH` と `TUNNEL` の存在を処理前提として要求する。
+
+### YANG leafref 先
+
+| leafref フィールド | 参照先テーブル | 条件 | evidence |
+|------------------|--------------|------|---------|
+| `ifname` | `PORT.PORT_LIST.name` (CONFIG_DB) | `MUX_CABLE` エントリのキーは必ず PORT に存在するインタフェース名 | `sonic-mux-cable.yang:37-40` |
+
+### orchagent が依存する入力テーブル
+
+| 参照先テーブル | 参照方向 | 条件 | evidence |
+|--------------|---------|------|---------|
+| `PEER_SWITCH\|<name>` (CONFIG_DB) | 処理前提 (先行必須) | `address_ipv4` が未確定の間は `handleMuxCfg()` が `return false` で保留。自動回復あり | `muxorch.cpp:2271` |
+| `TUNNEL\|MuxTunnel0` (CONFIG_DB) | `TunnelDecapOrch` キャッシュ経由 | `handlePeerSwitch()` が `getDstIpAddresses("MuxTunnel0")` 等でトンネル情報を取得。未存在なら `return false` でリトライ | `muxorch.cpp:2348, 2359, 2367, 2374` |
+| `PORT\|<ifname>` (CONFIG_DB / PortsOrch キャッシュ) | `gPortsOrch->getPort()` 経由 | `MuxCable` 状態遷移時にポート SAI oid を取得。未登録なら即リターン | `muxorch.cpp:468, 493` |
+| `NEIGHBOR_TABLE` (APPL_DB / NeighOrch キャッシュ) | `gNeighOrch->getMuxNeighborsForPort()` 経由 | `addOperation()` 末尾で既存ネイバーを MUX ネイバーに変換 | `muxorch.cpp:2290` |
+
+### orchagent が書き出す STATE/APP テーブル
+
+| DB | テーブル名 | キー | 書込みフィールド | タイミング | evidence |
+|-----|---------|-----|-----------------|---------|---------|
+| STATE_DB | `MUX_CABLE_TABLE` | `<ifname>` | `neighbor_mode` (`"host-route"` / `"prefix-route"`) | `handleMuxCfg()` 処理時 1 回、`neighbor_mode` フィールド確定後 | `muxorch.cpp:2283-2285` |
+| APPL_DB | `HW_MUX_CABLE_TABLE` | `<ifname>` | `state` (mux の HW 状態) | mux state 切替時 (`MuxCable::setState()`) | `muxorch.cpp:2510-2513` |
+
+### linkmgrd が依存する入力テーブル
+
+| 参照先テーブル | 参照方向 | タイミング | evidence |
+|--------------|---------|---------|---------|
+| `MUX_CABLE` (CONFIG_DB) | `Table` 直読み (起動時一括) + `SubscriberStateTable` (ランタイム) | 起動時に全ポートの `cable_type`/`prober_type`/`server_ipv4`/`soc_ipv4` を取得。以降は変更通知 | `DbInterface.cpp:801, 843, 898, 956, 1824` |
+| `PORT_TABLE` (APPL_DB) | `SubscriberStateTable` 購読 | リンク状態変化を検知して mux ステートマシンをトリガ | `DbInterface.cpp:1827` |
+
+### linkmgrd が書き出す STATE/APP テーブル
+
+| DB | テーブル名 | 用途 | evidence |
+|-----|---------|------|---------|
+| APPL_DB | `MUX_CABLE_TABLE` | mux 状態コマンド | `DbInterface.cpp:317` |
+| APPL_DB | `MUX_CABLE_COMMAND_TABLE` | active/standby 切替コマンド | `DbInterface.cpp:323` |
+| APPL_DB | `FORWARDING_STATE_COMMAND` | フォワーディング状態コマンド | `DbInterface.cpp:326` |
+| STATE_DB | `MUX_LINKMGR_TABLE` | linkmgrd 内部状態 | `DbInterface.cpp:332` |
+| STATE_DB | `MUX_METRICS_TABLE` | 切替メトリクス | `DbInterface.cpp:335` |
+| STATE_DB | `MUX_SWITCH_CAUSE` | 切替理由 | `DbInterface.cpp:341`, `DbInterface.h:63` |
+| STATE_DB | `MUX_CABLE_TABLE` | mux 現在状態 | `DbInterface.cpp:346` |
+
+### ycabled が依存する入力テーブル
+
+| 参照先テーブル | 参照方向 | タイミング | evidence |
+|--------------|---------|---------|---------|
+| `MUX_CABLE` (CONFIG_DB) | `swsscommon.Table` 直読み (ASIC ごと) | 起動時・gRPC チャネルセットアップ時に `cable_type`/`state`/`soc_ipv4` を取得 | `y_cable_helper.py:295-320, 734-739` |
+
+### ycabled が書き出す STATE テーブル
+
+| DB | テーブル名 | 用途 | evidence |
+|-----|---------|------|---------|
+| STATE_DB | `HW_MUX_CABLE_TABLE` (`STATE_HW_MUX_CABLE_TABLE_NAME`) | gRPC 経由の HW mux 状態 | `y_cable_helper.py:741-742` |
+| STATE_DB | `HW_MUX_CABLE_TABLE_PEER` | peer 側 HW mux 状態 | `y_cable_helper.py:743-744` |
+| STATE_DB | `MUX_CABLE_INFO` | ケーブル情報 | `y_cable_helper.py:746` |
+
+<!-- /cross-refs -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
