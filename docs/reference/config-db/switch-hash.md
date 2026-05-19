@@ -267,6 +267,54 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-failure.md`
+
+`SWITCH_HASH` の処理失敗は `doCfgSwitchHashTableTask()` / `setSwitchHash()` / `setSwitchHashFieldListSai()` 内で検出される。STATE_DB へのステータス書き込みはなく、エラー記録は syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`) のみ。
+
+### SET 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| キーが空文字列 | `doCfgSwitchHashTableTask()` 冒頭 | `LOG_ERROR("Failed to parse switch hash key: empty string")` → erase | なし |
+| ASIC capability 機構自体が未サポート (`isSwitchEcmpHashSupported()` = false) | `setSwitchHash()` capability チェック | `LOG_WARN("Switch ECMP hash configuration is not supported: skipping ...")` → erase、**サイレント握りつぶし** | なし |
+| SAI capability セットに含まれない hash-field / hash-algorithm | `validateSwitchHashFieldCap()` / `validateSwitchHashAlgorithmCap()` | `LOG_ERROR("Failed to validate switch ECMP/LAG hash: capability is not supported")` → `"Failed to set switch hash: ASIC and CONFIG DB are diverged"` → erase | なし |
+| SAI `set_hash_attribute()` 失敗 | `setSwitchHashFieldListSai()` L750-769 | `LOG_ERROR("Failed to set switch ECMP/LAG hash in SAI")` → キャッシュ未更新 → erase | なし（CLI 再書き込みが唯一の回復手段） |
+| 起動時 OID キャッシュ未取得での SET | `querySwitchHashDefaults()` 失敗後の SAI SET | SAI SET 失敗（→ 上記 SAI 失敗パターンに帰着）; OID 取得失敗自体は `LOG_WARN` のみ | なし |
+
+### DEL 時の失敗パターン
+
+`ecmp_hash` / `lag_hash` / `ecmp_hash_algorithm` / `lag_hash_algorithm` はすべて DEL 非サポート。
+
+| 失敗ケース | 挙動 | retry |
+|---|---|---|
+| DEL 操作（通常） | `LOG_ERROR("Failed to remove switch ECMP/LAG hash configuration: operation is not supported")` → erase | なし |
+| DEL 操作（ASIC/CONFIG_DB 乖離時） | `LOG_ERROR("Failed to remove switch hash: operation is not supported: ASIC and CONFIG DB are diverged")` → erase | なし |
+
+### 失敗時の挙動サマリ
+
+```
+SET 受信
+  ├─ 空キー                                  → LOG_ERROR → erase（スキップ）
+  ├─ capability 機構未サポート               → LOG_WARN  → erase（サイレント握りつぶし）
+  ├─ capability セット外フィールド/アルゴリズム → LOG_ERROR → erase（CONFIG_DB 乖離ログ）
+  └─ SAI SET 失敗 or OID 未取得             → LOG_ERROR → erase（CLI 再書き込みで回復）
+
+DEL 受信
+  └─ 全ケース                               → LOG_ERROR → erase（DEL 非サポート）
+```
+
+**自動再試行なし**: Consumer が `map.erase(it)` でエントリを消費するため、失敗後は CLI / `sonic-db-cli` による再書き込みが唯一の回復手段。`ERROR_TABLE` への書き込みもなし。CONFIG_DB のエントリは失敗後も残る（orchagent は書き戻さない）。
+
+確認コマンド:
+```bash
+sudo grep "switch.*hash" /var/log/syslog | grep -E "ERROR|WARN"
+sonic-db-cli CONFIG_DB hgetall 'SWITCH_HASH|GLOBAL'
+```
+<!-- /failure -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
