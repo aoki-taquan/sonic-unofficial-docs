@@ -70,7 +70,7 @@ SONiC NOS (community master) の AI 再構成 日本語ドキュメント。
 - 全 **894** ページ (code-verified 586 + runbook-verified 27 + discrepancy-found 74 + reference/meta)
 - mermaid 構文エラー 0、broken link 0、frontmatter 違反 0
 - サンプリング監査 round 50: **4.972 / 5**
-- 本文 `hld-only` ページ 0 件 (v1.0 GA 達成)
+- 本文 `hld-only` ページ 0 件
 
 詳細は [スナップショット](_meta/snapshot.md) / [カバレッジ](_meta/coverage.md) / [実装との乖離](_meta/discrepancies.md) を参照。
 

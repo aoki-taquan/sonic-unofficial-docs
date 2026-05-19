@@ -113,7 +113,7 @@ Writer / Verifier を並列に動かすとき、索引層のメタファイル�
 | --- | --- | --- |
 | `frontmatter_lint.py` 警告件数 | CI ステップ | 0 |
 | `gen_chapter_progress.py --check` の drift | CI ステップ | 0 |
-| `verification: hld-only` 残数 | `docs/_meta/discrepancies.md` 集計 | 0 (v1.0 GA 達成済) |
+| `verification: hld-only` 残数 | `docs/_meta/discrepancies.md` 集計 | 0 |
 | `meta/reference-gaps.md` の未着手項目 | Indexer 出力との差分 | 50 以下 |
 | `discrepancy-found` のうち `monitor` 未指定数 | frontmatter スキャン | 0 |
 | dead link 数 (mkdocs strict) | `mkdocs build --strict` | 0 |

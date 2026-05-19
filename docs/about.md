@@ -47,7 +47,7 @@ SONiC の公式ドキュメントには以下のような構造的な課題が�
 - コミュニティ版 SONiC の `master` 以外のブランチ（リリースブランチ・古いブランチ）
 - 公式 HLD の直訳・公式ドキュメントの翻訳
 - スクリーンショット / PNG（図は Mermaid のみ）
-- 英語・その他言語版（v2.0 以降で再検討）
+- 英語・その他言語版（将来的に再検討）
 
 ## スコープ
 
@@ -70,7 +70,7 @@ SONiC の公式ドキュメントには以下のような構造的な課題が�
 | `meta` | プロジェクト運営に関するメタページ（本ページなど） |
 | `stub` | 執筆途中のスタブ（β 段階では極力残さない） |
 
-品質指標（2026-05-12 時点、**v1.0 GA 後**）:
+品質指標（2026-05-12 時点）:
 
 - 総ページ数: 833
 - `code-verified` ページ: 597
@@ -81,7 +81,7 @@ SONiC の公式ドキュメントには以下のような構造的な課題が�
 - Reference Mermaid 図カバレッジ: CONFIG_DB / CLI / YANG いずれも 100%
 - CLI Reference: 73 ページ / CONFIG_DB Reference: 122 ページ / YANG Reference: 85 ページ / Runbooks: 46 ページ
 
-公開ステータスは **v1.0 GA**。最新の品質状態とロードマップは [`CHANGELOG`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/CHANGELOG.md) と `meta/roadmap-v2.md` を参照してください。
+最新の品質状態とロードマップは [`CHANGELOG`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/CHANGELOG.md) と `meta/roadmap-v2.md` を参照してください。
 
 ## ライセンス
 
