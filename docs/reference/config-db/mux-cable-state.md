@@ -190,3 +190,51 @@ show mux hwmode muxdirection Ethernet0
 - **HW_MUX_CABLE_TABLE の `"unknown"` は gRPC 問題のシグナル**: `soc_ipv4` が CONFIG_DB に設定されていない場合、ycabled は gRPC チャネルを確立せず (`y_cable_helper.py:672` の `soc_ipv4 in dict` 条件)、初期値として `"unknown"` が書き込まれる。`show mux status` の SERVER_STATUS 列が `unknown` の場合はこの状態を疑う。
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) への書き込みは、複数の先行条件が
+満たされなければ処理が進まない強制順序依存を持つ。本ページは CONFIG_DB エントリを持たない
+STATE_DB 専用テーブルだが、orchagent 内部でのポート生成フローに順序制約が存在する。
+
+### 検出された順序依存
+
+| # | 先行条件 | 後続操作 | 強制度 | 根拠 |
+|---|----------|----------|--------|------|
+| 1 | `CONFIG_DB.PEER_SWITCH` 処理済み (`mux_peer_switch_` 非 zero) | `MUX_CABLE` per-port 処理・`MuxCable` オブジェクト生成 | **強制先行** | `muxorch.cpp:2271-2275` |
+| 2 | `MuxCable` オブジェクト生成済み (`isMuxExists()` = true) | `HW_MUX_CABLE_TABLE` → `MUX_CABLE_TABLE.state` 更新 | **強制先行** | `muxorch.cpp:2651-2655` |
+| 3 | cold boot: MuxCable 生成直後に `stateStandby()` → `MUX_CABLE_TABLE.state = "standby"` | APP_DB sync 後の実際 state 上書き | **初期値先行** | `muxorch.cpp:444-447` |
+| 4 | warm restart: APP_DB sync 完了 → `"init"` → `"active"` / `"standby"` 遷移 | `MUX_CABLE_TABLE.state` 最終確定 | **warm restart 限定** | `muxorch.cpp:437-442` |
+| 5 | `MuxStateOrch::addOperation()` で `isStateChangeInProgress()` = false | `MUX_CABLE_TABLE.state` 更新 | **状態遷移中はブロック** | `muxorch.cpp:2673-2677` |
+
+### 主要な制約詳細
+
+**PEER_SWITCH が先に必要 (依存 #1)**:
+`MuxOrch::handleMuxCfg()` は `MuxCable` オブジェクト生成前に `mux_peer_switch_.isZero()` をチェックし、
+ピアスイッチアドレスが未設定の場合は `SWSS_LOG_INFO("Mux Peer switch addr not yet configured, port '%s'")` を
+出力して `return false` を返す。`CONFIG_DB.PEER_SWITCH` が処理されて `handlePeerSwitch()` が
+`mux_peer_switch_` を設定するまで、全ポートの `MUX_CABLE_TABLE.neighbor_mode` および
+初期 `state` は STATE_DB に書き込まれない（`muxorch.cpp:2271-2281`）。
+
+**MuxCable 未生成時の HW_MUX_CABLE_TABLE 処理ブロック (依存 #2)**:
+`MuxStateOrch::addOperation()` (APP_DB の `HW_MUX_CABLE_TABLE` を購読) は冒頭で `MuxOrch::isMuxExists(port_name)` を
+呼び、対応する `MuxCable` オブジェクトが存在しない場合は `SWSS_LOG_WARN("Mux entry for port '%s' doesn't exist")` を
+出力して `return false` を返す。ycabled が HW_MUX_CABLE_TABLE を書き込んでも、
+`CONFIG_DB.MUX_CABLE` + `PEER_SWITCH` が未処理で `MuxCable` が生成されていなければ
+`MUX_CABLE_TABLE.state` の更新は行われない（`muxorch.cpp:2651-2655`）。
+
+**cold boot での "standby" 初期書き込み → APP_DB 上書き (依存 #3)**:
+`MuxCable` コンストラクタは warm restart でない場合、即座に `stateStandby()` を呼んで
+`MuxCableOrch::updateMuxState(port_name, "standby")` 経由で `MUX_CABLE_TABLE.state` に
+`"standby"` を書き込む（`muxorch.cpp:444-447`, `muxorch.cpp:2508-2514`）。
+消費者はこの初期書き込みを「確定値」と誤解しないよう注意が必要で、
+orchagent が APP_DB から実際の MUX 状態を取得して上書きするまでは中間状態である。
+
+**状態遷移中のブロック (依存 #5)**:
+`MuxStateOrch::addOperation()` は `mux_obj->isStateChangeInProgress()` が true の場合に
+`SWSS_LOG_INFO("Mux state change for port '%s' is in-progress")` を出力して `return false` を返す。
+これにより ycabled からの HW 状態更新が状態遷移の完了まで待機させられる（`muxorch.cpp:2673-2677`）。
+`return false` はイベントループによる再キューで次のイテレーションで再処理される。
+
+<!-- /ordering -->
