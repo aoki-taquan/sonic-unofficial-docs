@@ -332,6 +332,74 @@ sendMsgStpd(STP_INIT_READY)   // → stpd に max_stp_instances 送信 (stpmgrd.
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-swss/orchagent/stporch.cpp`、`sonic-swss/orchagent/orchdaemon.cpp`、`sonic-swss/cfgmgr/stpmgrd.cpp`、`sonic-swss/cfgmgr/stpmgr.cpp`、`sonic-swss/cfgmgr/stpmgr.h`
+> 調査日: 2026-05-19
+
+`STP_TABLE` (STATE_DB) は **pub/sub ではなくポーリング読み取り** で消費される特殊なテーブルである。書き込み側 (`StpOrch`) は `swss::Table::set()` で直接書き込み、読み取り側 (`stpmgrd`) は `swss::Table::get()` を用いた **60 秒ポーリングループ** で値を取得する。
+
+### 書き込みチャンネル（orchagent → STATE_DB）
+
+| 書き込みプロセス | API | テーブル | 呼び出し箇所 |
+|---|---|---|---|
+| `orchagent` (`StpOrch`) | `swss::Table::set()` | `STATE_DB STP_TABLE\|GLOBAL` | `StpOrch::updateMaxStpInstance()` (`stporch.cpp:603-617`) |
+
+`StpOrch` コンストラクタ (`stporch.cpp:17-43`) が起動時に SAI から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を取得して即時 `m_stpTable->set("GLOBAL", ...)` を呼ぶ。この書き込みは起動時 1 回のみで、実行中の再書き込みはない。
+
+`StpOrch` 自体は `orchdaemon.cpp:256-262` で `Orch(m_applDb, stp_tables, ...)` として構築され、APPL_DB の以下テーブルを `ConsumerStateTable` 経由で購読する。
+
+| APPL_DB テーブル | 用途 |
+|---|---|
+| `APP_STP_VLAN_INSTANCE_TABLE_NAME` | VLAN STP インスタンス状態 |
+| `APP_STP_PORT_STATE_TABLE_NAME` | ポート STP 状態 |
+| `APP_STP_FASTAGEING_FLUSH_TABLE_NAME` | Fast-aging フラッシュ |
+| `APP_STP_INST_PORT_FLUSH_TABLE_NAME` | STP インスタンス・ポートフラッシュ |
+
+これらは `stpd → APPL_DB → StpOrch` の経路であり、`STP_TABLE` (STATE_DB) の書き込みとは別系統。
+
+### 読み取りチャンネル（stpmgrd → STATE_DB ポーリング）
+
+`stpmgrd` は `STP_TABLE|GLOBAL` に対して **pub/sub 購読を行わない**。`StpMgr::getStpMaxInstances()` (`stpmgr.cpp:1381-1413`) が 1 秒間隔 × 60 回のポーリングループで `m_stateStpTable.get("GLOBAL", vmEntry)` を呼び出し、成功するとループを抜けて値を返す。
+
+```text
+stpmgrd 起動
+  │
+  ├─ ipcInitStpd()        // Unix socket セットアップ (stpmgrd.cpp:71)
+  ├─ isPortInitDone()     // APPL_DB PORT_TABLE|PortInitDone ガード (stpmgrd.cpp:72)
+  └─ getStpMaxInstances() // STATE_DB STP_TABLE|GLOBAL ポーリング (stpmgrd.cpp:77)
+       │  成功: SAI 由来の max_stp_inst を取得
+       │  60 秒タイムアウト: フォールバック 255 を使用
+       └─ sendMsgStpd(STP_INIT_READY, max_stp_instances)
+            └─ stpd がインスタンスプールを初期化
+```
+
+### stpmgrd の CONFIG_DB 購読
+
+STP 設定変更の受信は `stpmgrd.cpp:43-65` の `TableConnector` 群 → `Orch` フレームワーク（`SubscriberStateTable`）で行われる。これは `STP_TABLE` (STATE_DB) の読み取りとは別の仕組みである。
+
+| CONFIG_DB テーブル | 購読クラス | 処理 |
+|---|---|---|
+| `CFG_STP_GLOBAL_TABLE_NAME` | `SubscriberStateTable` (TableConnector 経由) | グローバル STP 設定変更 |
+| `CFG_STP_VLAN_TABLE_NAME` | `SubscriberStateTable` | VLAN STP 設定変更 |
+| `CFG_STP_VLAN_PORT_TABLE_NAME` | `SubscriberStateTable` | VLAN-ポート STP 設定変更 |
+| `CFG_STP_PORT_TABLE_NAME` | `SubscriberStateTable` | ポート STP 設定変更 |
+| `STATE_VLAN_MEMBER_TABLE_NAME` | `SubscriberStateTable` | STATE_DB VLAN メンバー変化 |
+| `CFG_LAG_MEMBER_TABLE_NAME` | `SubscriberStateTable` | LAG メンバー変化 |
+
+### 購読者まとめ
+
+| プロセス | テーブル | 方式 | タイミング |
+|---|---|---|---|
+| `stpmgrd` | `STATE_DB STP_TABLE\|GLOBAL` | `swss::Table::get()` ポーリング | 起動時 1 回のみ（60 秒以内） |
+| その他プロセス | — | — | 購読なし（STATE_DB `STP_TABLE` を購読するプロセスは存在しない） |
+
+!!! note "`STP_TABLE` は pub/sub 外のデータパス"
+    Redis keyspace notification / `SubscriberStateTable` / `ConsumerStateTable` のいずれも使用されず、ワンショットのポーリング `get()` のみが消費経路である。`STP_TABLE|GLOBAL` の値が動的に変化しない（起動時 1 書き込みのみ）ため、ポーリングベースで十分な設計となっている。
+
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 - **-1 補正**: `max_stp_inst` は SAI の返す最大数から -1 した値。STP インスタンス ID が 0 始まりのため、使用可能な最大インスタンス ID が `max_stp_inst` と一致する。
