@@ -339,4 +339,64 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic_py_common/device_info.py` L1-60 (定数定義群), L699-747 (生成関数群) 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-constants.md`
+
+`DEVICE_RUNTIME_METADATA` の全フィールドキー名・フィールド値文字列はすべて `device_info.py` にハードコードされた Python 文字列リテラルであり、YANG スキーマ・CLI・設定ファイルから変更できない。
+
+### ファイルシステムパス定数
+
+| 定数名 | ハードコード値 | 影響フィールド |
+|-------|--------------|--------------|
+| `HOST_DEVICE_PATH` | `"/usr/share/sonic/device"` | プラットフォームディレクトリ探索全般 |
+| `CONTAINER_PLATFORM_PATH` | `"/usr/share/sonic/platform"` | コンテナ内プラットフォームパス |
+| `MACHINE_CONF_PATH` | `"/host/machine.conf"` | プラットフォーム名解決 |
+| `SONIC_VERSION_YAML_PATH` | `"/etc/sonic/sonic_version.yml"` | VS/仮想シャーシ判定 |
+| `PORT_CONFIG_FILE` | `"port_config.ini"` | `ETHERNET_PORTS_PRESENT` |
+| `PLATFORM_JSON_FILE` | `"platform.json"` | `ETHERNET_PORTS_PRESENT` (代替候補) |
+| `PLATFORM_ENV_CONF_FILENAME` | `"platform_env.conf"` | `module_type`, `MACSEC_SUPPORTED` |
+| `CHASSIS_DB_CONF_FILENAME` | `"chassisdb.conf"` | `is_voq_chassis()` → `CHASSIS_METADATA` 生成有無 |
+
+(evidence: `device_info.py:14-43`)
+
+### フィールド値文字列リテラル
+
+`get_device_runtime_metadata()` が返す辞書のキーおよびフィールド値はすべてハードコード:
+
+| キー / フィールド | ハードコード値 | 条件 |
+|-----------------|--------------|------|
+| `CHASSIS_METADATA` (辞書キー) | `'CHASSIS_METADATA'` | `is_chassis()=True` 時のみ生成 |
+| `module_type` | `'supervisor'` / `'linecard'` | `is_supervisor()` 真偽値で切替 |
+| `chassis_type` | `'voq'` / `'packet'` | `is_voq_chassis()` 真偽値で切替 |
+| `ETHERNET_PORTS_PRESENT` (辞書キー) | `'ETHERNET_PORTS_PRESENT'` | 常時生成 |
+| `MACSEC_SUPPORTED` (辞書キー) | `'MACSEC_SUPPORTED'` | 常時生成 |
+
+(evidence: `device_info.py:738-742`)
+
+### `platform_env.conf` パース用キーワード
+
+`platform_env.conf` から設定を読み取る際の比較キーワードもハードコード:
+
+| 検索キーワード | 解釈 | 使用関数 |
+|------------|------|---------|
+| `'supervisor'` (`.lower()` 後比較) | 値 `'1'` → `module_type='supervisor'` | `is_supervisor()` L708-711 |
+| `'macsec_enabled'` (`.lower()` 後比較) | 値を `int()` 変換 → `MACSEC_SUPPORTED` | `is_macsec_supported()` L729-731 |
+
+> **注意**: `'supervisor=YES'` や `'macsec_enabled=true'` のような非整数・非 `'1'` 値はいずれも検出されない（`'1'` のみ `True` 扱い）。`macsec_enabled` の値が整数文字列以外だと `int()` で `ValueError` が未キャッチで伝播する（Phase D 参照）。
+
+### マルチ NPU での ASIC 番号ハードコード
+
+`ETHERNET_PORTS_PRESENT` の判定で multi-NPU 環境では常に ASIC `"0"` のポート設定ファイルを確認する:
+
+```python
+get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None)
+```
+
+ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降の存在は確認されない (`device_info.py:741`)。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: e33fec70e206 -->
