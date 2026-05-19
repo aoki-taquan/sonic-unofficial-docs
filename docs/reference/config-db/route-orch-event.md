@@ -641,6 +641,49 @@ const auto routeResponseChannelName =
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書き込み (Phase F)
+
+> 証跡: `meta/_intermediate/cdb-flow/route-orch-event-side.md`
+
+`RouteOrch` の通知機構は CONFIG_DB 以外の以下の DB・テーブルへ書き込みを行う。
+
+### APPL_STATE_DB — ROUTE_TABLE (ResponsePublisher 経由)
+
+`publishRouteState()` が `ResponsePublisher::publish()` を経由して APPL_STATE_DB へ書き込む。
+
+| テーブル | キー形式 | フィールド | 値 | 書き込み元 | タイミング |
+|---|---|---|---|---|---|
+| `APPL_STATE_DB ROUTE_TABLE` | `ROUTE_TABLE\|<prefix>` | `err_str` | `"SWSS_RC_SUCCESS"` または `"[SAI] ..."` | `ResponsePublisher::writeToDB()` | `doTask()` 末尾の `flush()` 時 |
+| `APPL_STATE_DB ROUTE_TABLE` | `ROUTE_TABLE\|<prefix>` | `protocol` | `""` またはソースプロトコル文字列 | 同上 | SET 操作時のみ（DEL 時は空 fvs でエントリ削除） |
+
+SAI 失敗時は RESPONSE_CHANNEL 通知は送出されるが、APPL_STATE_DB への書き込みは行われない（`response_publisher.cpp` L130–136）。
+
+### STATE_DB — ROUTE_TABLE (デフォルトルート状態)
+
+`updateDefRouteState()` が `m_stateDefaultRouteTb->set(ip, tuples)` を呼び出し、デフォルトルートの存在状態を STATE_DB へ記録する。
+
+| テーブル | キー形式 | フィールド | 値 | タイミング |
+|---|---|---|---|---|
+| `STATE_DB ROUTE_TABLE` | `ROUTE_TABLE\|0.0.0.0/0` | `state` | `"ok"` | IPv4 デフォルトルート SAI 書き込み成功後 (`routeorch.cpp` L2703) |
+| `STATE_DB ROUTE_TABLE` | `ROUTE_TABLE\|0.0.0.0/0` | `state` | `"na"` | IPv4 デフォルトルート DEL 後 (`routeorch.cpp` L2856) |
+| `STATE_DB ROUTE_TABLE` | `ROUTE_TABLE\|::/0` | `state` | `"ok"` | IPv6 デフォルトルート SAI 書き込み成功後 |
+| `STATE_DB ROUTE_TABLE` | `ROUTE_TABLE\|::/0` | `state` | `"na"` | IPv6 デフォルトルート DEL 後 |
+
+起動時に `state = "na"` で初期化される（`routeorch.cpp` L130, L156）。APPL_STATE_DB への ResponsePublisher 書き込みとは別テーブル（`common/schema.h` L494: `STATE_ROUTE_TABLE_NAME = "ROUTE_TABLE"`）。
+
+### Redis Pub/Sub — APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL
+
+`publishRouteState()` は DB への永続書き込みに加えて Pub/Sub チャネルへも通知を送出する。
+
+| チャネル | メッセージ | 購読者 | 条件 |
+|---|---|---|---|
+| `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | `(status_code, prefix_key, [(err_str, val), (protocol, val)])` | `fpmsyncd` (`routesync.cpp` L3156–3190) | `suppress-fib-pending = enabled` 時のみ |
+
+通知は `doTask()` 末尾の `m_publisher.flush()` まではバッファされる（`routeorch.cpp` L1231）。
+
+<!-- /side-effects -->
+
 ---
 
 ## 制約
