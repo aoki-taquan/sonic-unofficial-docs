@@ -566,3 +566,73 @@ minigraph.py は NTP サーバ全台に対して `iburst: on` を自動設定す
 > **スキャン証跡**: `minigraph.py:2646` + `hostcfgd:1285-1389` を確認、4 件分岐抽出。iburst のデフォルト on が minigraph から自動付与されることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`NTP_SERVER` の設定処理 (`hostcfgd + chrony.conf.j2`) はプラットフォーム識別文字列（`getenv("platform")`）による静的分岐を持たない。ただし `DEVICE_METADATA.localhost` の `subtype`・`type` および `NTP.global.vrf` の値によって生成される `chrony.conf` の内容が変化する。
+
+### A. SmartSwitch — NTP サーバモードの有効化
+
+`chrony.conf.j2:58-62` は以下の **2 条件が同時に成立する** 場合のみ NTP サーバ機能を有効化する:
+
+| 条件フィールド | 値 |
+|---|---|
+| `DEVICE_METADATA['localhost']['subtype']` | `"SmartSwitch"` |
+| `DEVICE_METADATA['localhost']['type']` | `"SmartSwitchDPU"` 以外（NPU ノード） |
+
+NPU ノードに該当する場合、`chrony.conf` に以下が追記される:
+
+```
+allow
+binddevice bridge-midplane
+```
+
+`allow` は全クライアントからの NTP 問い合わせを許可し、`binddevice bridge-midplane` は NTP サーバのリスンインタフェースを内部ブリッジ `bridge-midplane` に限定する。DPU ノード（`type == SmartSwitchDPU`）では上記ブロックは生成されず、NTP クライアントとしてのみ動作する。
+
+**evidence**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2:58-62`
+
+### B. 管理 VRF (`NTP.global.vrf == 'mgmt'`) — chronyd の起動 VRF 切り替え
+
+`chronyd-starter.sh` は `MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled` と `NTP.global.vrf` の組み合わせで chronyd の起動方式を決定する:
+
+| `mgmtVrfEnabled` | `NTP.global.vrf` | chronyd 起動コマンド |
+|---|---|---|
+| `"true"` でない | 任意 | `exec /usr/sbin/chronyd $DAEMON_OPTS`（default VRF） |
+| `"true"` | `"default"` | `exec /usr/sbin/chronyd $DAEMON_OPTS`（default VRF） |
+| `"true"` | それ以外（`"mgmt"` 等） | `exec ip vrf exec mgmt /usr/sbin/chronyd $DAEMON_OPTS`（mgmt VRF） |
+
+mgmt VRF で chronyd を起動する場合、NTP パケットは Linux の mgmt ネットワーク名前空間 (`ip vrf exec mgmt`) 内を経由し、管理インタフェース (`eth0`) にルーティングされる。
+
+さらに `chrony.conf.j2:109-116` は `NTP.global.vrf == 'mgmt'` のとき `bindacqaddress` ディレクティブ（送信元 IP バインド）を**出力しない**。mgmt VRF 内での `src_intf` に基づく送信元 IP 指定が不要なため。
+
+**evidence**: `sonic-buildimage/files/image_config/chrony/chronyd-starter.sh:1-15`, `sonic-buildimage/files/image_config/chrony/chrony.conf.j2:109-116`
+
+### C. `src_intf` によるソースインタフェース分岐
+
+`chrony.conf.j2:71-108` は `NTP.global.src_intf` が設定されている場合にインタフェース種別を判定し、対応するテーブルから IPv4/IPv6 アドレスを取得して `bindacqaddress` ディレクティブを生成する:
+
+| `src_intf` プレフィックス | 参照テーブル |
+|---|---|
+| `eth0` | `MGMT_INTERFACE` |
+| `Vlan*` | `VLAN_INTERFACE` |
+| `Ethernet*` | `INTERFACE` |
+| `PortChannel*` | `PORTCHANNEL_INTERFACE` |
+| `Loopback*` | `LOOPBACK_INTERFACE` |
+
+プラットフォーム識別文字列による分岐ではなく、インタフェース名のプレフィックスによる分岐である。`src_intf` 未設定時は `bindacqaddress` なし（カーネルルーティングに委ねる）。
+
+**evidence**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2:71-108`
+
+### まとめ
+
+| 観点 | プラットフォーム差 |
+|---|---|
+| `hostcfgd` NTP_SERVER 処理 (`ntp_srv_key_update`) | **差なし**（`getenv("platform")` 参照なし） |
+| `chrony.conf` NTP サーバ有効化 | SmartSwitch NPU ノードのみ `allow + binddevice bridge-midplane` を追記 |
+| `chronyd` 起動 VRF | mgmt VRF 有効かつ `NTP.vrf != "default"` の場合に `ip vrf exec mgmt` 経由で起動 |
+| `bindacqaddress` 出力 | mgmt VRF モードでは抑制。それ以外は `src_intf` 種別でテーブルを切り替え |
+| multi-ASIC / VoQ chassis | NTP_SERVER テーブル処理への直接影響なし（管理インタフェース経由） |
+
+> **スキャン証跡**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` 全行スキャン、`chronyd-starter.sh` 全行スキャン、`hostcfgd:1278-1410` 確認。`getenv("platform")` 参照なし — 誤読なし。
+<!-- /platform -->
