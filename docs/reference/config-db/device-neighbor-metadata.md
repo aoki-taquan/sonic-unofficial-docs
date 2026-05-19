@@ -210,6 +210,60 @@ pfcwd の起動シーケンス (`start_default`) が中断される。
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`DEVICE_NEIGHBOR_METADATA` を参照・生成する consumer コード内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-buildimage/src/sonic-config-engine/minigraph.py`、`sonic-utilities/pfcwd/main.py`、`sonic-utilities/scripts/db_migrator.py`、`sonic-buildimage/files/build_templates/buffers_config.j2`、`sonic-buildimage/files/build_templates/qos_config.j2`。
+
+### minigraph.py — `type` フィールドに関連するデバイス種別定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `backend_device_types` | `['BackEndToRRouter', 'BackEndLeafRouter']` | バックエンドデバイス判定（DEVICE_METADATA.localhost 対象） | `minigraph.py:51` |
+| `leafrouter_device_types` | `['LeafRouter']` | リーフルーター判定 | `minigraph.py:55` |
+| `dhcp_server_enabled_device_types` | `['BmcMgmtToRRouter']` | DHCP サーバ有効化対象デバイス種別 | `minigraph.py:53` |
+| `mgmt_device_types` | `['BmcMgmtToRRouter', 'MgmtToRRouter', 'MgmtTsToR']` | 管理デバイス判定 | `minigraph.py:54` |
+
+> これらのリストは DEVICE_METADATA.localhost.type の判定に使用されるが、DEVICE_NEIGHBOR_METADATA の `type` フィールドにも同系統の文字列（`LeafRouter`, `SpineRouter`, `ToRRouter`, `Server`, `EdgeZoneAggregator` 等）が格納される。両テーブルで参照される文字列リテラルは YANG 上制約されておらず、コード内ハードコードのみが事実上の仕様。
+
+### minigraph.py — `slice_type` の固定値
+
+| 定数 | 値 | 条件 | ソース |
+|------|----|------|--------|
+| `slice_type` 固定値 | `"AZNG_Production"` | XML の `<AssociatedSliceStr>` テキストに `"AZNG_Production"` が含まれる場合のみ書き込む | `minigraph.py:518-519` |
+
+`slice_type` は上記条件を満たす場合に限り `"AZNG_Production"` という固定文字列で書き込まれる。条件不一致の場合は `None` のままで DEVICE_NEIGHBOR_METADATA へは追加されない（silent drop）。YANG 上は自由文字列だが実装は事実上二値（`"AZNG_Production"` or 欠落）。
+
+### pfcwd — サーバー判定文字列とフォールバック
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| サーバー種別判定 | `'server'`（`.lower()` で大文字小文字非感受） | `type.lower() == 'server'` でサーバー向けポートを選別 | `pfcwd/main.py:104` |
+
+DEVICE_NEIGHBOR_METADATA にサーバー向けポートが 0 件の場合、`get_server_facing_ports()` は自動的に `VLAN_MEMBER` テーブルのポートにフォールバックする（`pfcwd/main.py:106-107`）。この切り替えに明示的な定数はなく、空リスト判定のみ。
+
+### db_migrator — EdgeZoneAggregator ケーブル長
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `EDGEZONE_AGG_CABLE_LENGTH` | `"40m"` | EdgeZoneAggregator デバイスに接続するポートの CABLE_LENGTH 強制値 | `db_migrator.py:771` |
+| CABLE_LENGTH テーブルキー | `"AZURE"` | 参照・更新対象のキー名（ハードコード） | `db_migrator.py:783` |
+| EdgeZoneAggregator 型名 | `"EdgeZoneAggregator"` | 大文字小文字感受の完全一致で判定（`.get("type") == "EdgeZoneAggregator"`） | `db_migrator.py:772` |
+
+> `"EdgeZoneAggregator"` は大文字小文字感受（完全一致）。`pfcwd` の `'server'` 判定（`.lower()` 比較）と異なる点に注意。
+
+### buffers_config.j2 / qos_config.j2 — ポートロール分類文字列
+
+| テンプレート | リテラル | 比較方式 | 用途 |
+|------------|---------|---------|------|
+| `buffers_config.j2` | `'LeafRouter'`, `'ToRRouter'`, `'SpineRouter'`, `'BackEndLeafRouter'`, `'BackEndToRRouter'` | `neighbor_role \| lower`（大文字小文字非感受） | ケーブル長テーブル選択・extra queues ポートリスト構築 |
+| `qos_config.j2` | `'ToRRouter'`, `'LeafRouter'`, `'SpineRouter'` | `'ToRRouter' in neighbor_info.type`（大文字小文字感受・部分一致） | アップリンク/ダウンリンクポート分類 |
+
+`qos_config.j2` の `'ToRRouter' in neighbor_info.type` は**大文字小文字感受の部分一致**であり、`'torporouter'` や `'tOrRouter'` では一致しない。`buffers_config.j2` の `neighbor_role | lower` は Jinja2 フィルタで正規化するため大文字小文字に非感受。同じ `type` 文字列を参照しながら比較方式が異なることに注意（詳細は `<!-- defaults -->` セクション参照）。
+
+詳細な定数一覧は `meta/_intermediate/cdb-flow/device-neighbor-metadata-constants.md` を参照。
+<!-- /constants -->
+
 ## 購読者
 
 - minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): minigraph から生成
