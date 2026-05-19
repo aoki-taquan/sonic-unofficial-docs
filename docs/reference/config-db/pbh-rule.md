@@ -443,6 +443,91 @@ createPbhRule() → AclOrch::addAclRule() → SAI: sai_acl_api->create_acl_entry
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/pbh/pbhcap.cpp:107-141 (PbhGenericFieldCapabilities / PbhMellanoxFieldCapabilities), pbhorch.cpp:839-863 (updatePbhRule Mellanox W/A), pbhcap.cpp:286-407 (STATE_DB write), sonic-swss-common/common/schema.h:419 (STATE_PBH_CAPABILITIES_TABLE_NAME) -->
+
+`PBH_RULE` のフィールド操作可否（capability）は `ASIC_VENDOR` 環境変数で決まる。現在コードが識別するプラットフォームは **generic** と **mellanox** の 2 種のみ。その他の vendor は全て generic として扱われる。
+
+### 検出ロジック
+
+`PbhCapabilities::initPbhCapabilities()` (`pbhcap.cpp:310-332`) が `orchagent` 起動時に `std::getenv("ASIC_VENDOR")` を呼ぶ。
+
+```
+ASIC_VENDOR == "mellanox"  →  PbhMellanoxFieldCapabilities
+ASIC_VENDOR == <その他>    →  PbhGenericFieldCapabilities（WARN ログ後 fallback）
+ASIC_VENDOR が未設定       →  PbhGenericFieldCapabilities（WARN ログ後 fallback）
+```
+
+`ASIC_VENDOR` の値は `docker-orchagent.service` の環境ファイル（`/etc/sonic/device/<platform>/asic_vendor`）から注入される。
+
+### フィールド capability 差異（PBH_RULE スコープ）
+
+`setPbhDefaults()` は ADD / UPDATE / REMOVE の 3 つを登録する。`insert(UPDATE)` のみは UPDATE 単独で ADD / REMOVE は不可。
+
+| フィールド | generic | mellanox | 備考 |
+|-----------|:-------:|:--------:|------|
+| `priority` | UPDATE のみ | UPDATE のみ | ADD / REMOVE 不可（SET 時に初期値設定、削除は RULE DEL で） |
+| `gre_key` | ADD / UPDATE / REMOVE | ADD / UPDATE / REMOVE | 同一 |
+| `ether_type` | ADD / UPDATE / REMOVE | ADD / UPDATE / REMOVE | 同一 |
+| `ip_protocol` | ADD / UPDATE / REMOVE | ADD / UPDATE / REMOVE | 同一 |
+| `ipv6_next_header` | ADD / UPDATE / REMOVE | ADD / UPDATE / REMOVE | 同一 |
+| `l4_dst_port` | ADD / UPDATE / REMOVE | ADD / UPDATE / REMOVE | 同一 |
+| `inner_ether_type` | ADD / UPDATE / REMOVE | ADD / UPDATE / REMOVE | 同一 |
+| `hash` | UPDATE のみ | UPDATE のみ | 同一 |
+| `packet_action` | ADD / UPDATE / REMOVE | ADD / UPDATE / REMOVE | 同一 |
+| `flow_counter` | ADD / UPDATE / REMOVE | ADD / UPDATE / REMOVE | 同一 |
+
+`PBH_HASH` スコープの `hash_field_list` については generic では `UPDATE` が登録されるが、`PbhMellanoxFieldCapabilities` ではコンストラクタで `hash_field_list` への挿入が存在せず **空（ADD / UPDATE / REMOVE 全て不可）** になる（`pbhcap.cpp:126-141`）。これは `PBH_HASH` テーブルの制限であり `PBH_RULE` の直接フィールドではないが、`PBH_HASH` の更新が Mellanox で制限される結果 `PBH_RULE` の `hash` フィールド変更時にも影響する（既存 HASH を更新できないため新規 HASH を作り直す必要がある）。
+
+### Mellanox 専用 W/A: disableAction before updateAclRule
+
+Mellanox プラットフォームでは `updatePbhRule()` (`pbhorch.cpp:839-863`) に特別な処理が入る。
+
+```
+更新フィールドに "hash" または "packet_action" が含まれる場合:
+  AclRulePbh::disableAction()   ← ACL action を一時無効化
+    ↓
+  AclOrch::updateAclRule()      ← SAI update
+```
+
+`disableAction()` は SAI ACL entry の action フィールドを一時的にクリアして Mellanox ASIC の制約（action が SET されている状態での ECMP/LAG hash 変更が不可）を回避する。失敗した場合は UPDATE 全体が `return false` となり retry loop に入る。
+
+**generic プラットフォームでは `disableAction()` を呼ばない**。条件分岐は `this->pbhCap.getAsicVendor() == PbhAsicVendor::MELLANOX` で制御される。
+
+### capabilities の STATE_DB 書き込み
+
+`PbhCapabilities::writePbhVendorCapabilitiesToDb()` (`pbhcap.cpp:442-452`) が起動時にフィールド capability 一覧を `STATE_DB` の `PBH_CAPABILITIES|rule` キーへ書き込む（`schema.h:419`: `STATE_PBH_CAPABILITIES_TABLE_NAME = "PBH_CAPABILITIES"`）。
+
+```
+STATE_DB:
+  PBH_CAPABILITIES|rule
+    priority       = "UPDATE"
+    gre_key        = "ADD,UPDATE,REMOVE"
+    ether_type     = "ADD,UPDATE,REMOVE"
+    ip_protocol    = "ADD,UPDATE,REMOVE"
+    ipv6_next_header = "ADD,UPDATE,REMOVE"
+    l4_dst_port    = "ADD,UPDATE,REMOVE"
+    inner_ether_type = "ADD,UPDATE,REMOVE"
+    hash           = "UPDATE"
+    packet_action  = "ADD,UPDATE,REMOVE"
+    flow_counter   = "ADD,UPDATE,REMOVE"
+```
+
+この情報は管理ツール（`show pbh` 等）が capability を動的に確認するために使用される。`validatePbhRuleCap()` (`pbhcap.cpp:456-600`) が SET / UPDATE / DEL 時に capability を参照し、未サポート操作を拒否する。
+
+### プラットフォームサマリ
+
+| 差異 | generic | mellanox |
+|------|---------|----------|
+| `hash` / `packet_action` UPDATE 前に `disableAction()` | 不要 | **必須**（ASIC 制約） |
+| `PBH_HASH.hash_field_list` UPDATE | 可能（UPDATE 登録済み） | **不可**（空 capability） |
+| `PBH_RULE` フィールド capability | 上表参照 | 上表参照（同一） |
+| capability 検出 | `ASIC_VENDOR` 未設定 / 未知 → fallback | `ASIC_VENDOR=mellanox` |
+
+<!-- /platform -->
+
 ## key 構造
 
 ```text
