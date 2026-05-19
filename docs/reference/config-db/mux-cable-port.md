@@ -220,45 +220,55 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 > 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-failure.md`
 
+`MUX_CABLE|<ifname>` エントリは `MuxOrch::handleMuxCfg()` → `addOperation()` 経路で処理される。orchagent・ycabled・linkmgrd の 3 コンポーネントそれぞれに固有の失敗経路がある。
+
 <!-- evidence: sonic-swss/orchagent/muxorch.cpp:2202-2290,2394-2415; sonic-linkmgrd/src/DbInterface.cpp:990-1001; sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:295-320,660-718 -->
 
-`MuxOrch::handleMuxCfg()` (`muxorch.cpp:2202`) を全行調査した。エラーパターンは **即消費（retry なし）**、**永続 retry ループ**、**自動回復あり** の 3 種に分類される。
+### A. orchagent (MuxOrch) の失敗パターン
 
-### SET 操作の失敗パターン
+| 失敗条件 | 検出箇所 | 結果 | retry | evidence |
+|---|---|---|---|---|
+| `server_ipv4` / `server_ipv6` が SET_COMMAND に欠落 | `handleMuxCfg()` 冒頭 `getAttrIpPrefix()` | `std::out_of_range` 例外が `addOperation()` の catch (runtime_error のみ) をすり抜け orchagent abort | なし (プロセス異常終了) | `muxorch.cpp:2206-2207, 2411` |
+| `mux_peer_switch_.isZero()` — PEER_SWITCH 未設定 | `handleMuxCfg()` L2271 | `return false` → `m_toSync` 保留 | 自動 (PEER_SWITCH SET 後の次イベントループ) | `muxorch.cpp:2271` |
+| 既存 mux ポートへの `neighbor_mode` 変更試行 | `handleMuxCfg()` L2258-2266 | `SWSS_LOG_ERROR` → `return false` → 永続保留 | なし (手動 DEL → 再 SET が必要) | `muxorch.cpp:2258-2266` |
+| 二重 SET (`isMuxExists == true`) | `handleMuxCfg()` L2253 | `SWSS_LOG_INFO` → `return true`（冪等スキップ） | 不要 | `muxorch.cpp:2253-2254` |
+| DEL 時: エントリ不在 (`isMuxExists == false`) | `handleMuxCfg()` L2323 | `SWSS_LOG_ERROR` → `return true`（成功扱い）| なし | `muxorch.cpp:2323` |
+| `std::runtime_error` 例外（tunnel 作成失敗等） | `addOperation()` / `delOperation()` catch | `SWSS_LOG_ERROR` → `return true`（erase・恒久スキップ）| なし | `muxorch.cpp:2411, 2435` |
 
-| 失敗ケース | 発生箇所 | 挙動 | retry |
-|---|---|---|---|
-| `server_ipv4` または `server_ipv6` フィールド欠落 | `muxorch.cpp:2206-2207` — `getAttrIpPrefix()` が `std::out_of_range` をスロー | 例外が上位まで伝播しエントリ erase → **破棄** | なし（再投入が必要） |
-| `neighbor_mode` を既存 mux ポートで変更しようとした | `muxorch.cpp:2258-2266` — `SWSS_LOG_ERROR("Neighbor mode change is not allowed")` | `return false` でリトライキューへ保留 → **永続 retry ループ** | 永続（DEL+再 SET が必要） |
-| `PEER_SWITCH` エントリが未設定 | `muxorch.cpp:2271-2274` — `mux_peer_switch_.isZero()` が true | `return false` でリトライキューへ保留 → **自動回復** | `PEER_SWITCH` SET 後の次ループで自動処理 |
-| すでに登録済みポートへの重複 SET | `muxorch.cpp:2254-2257` — `isMuxExists()` が true | `return true` でエントリ消費（no-op）。SAI/STATE_DB 変更なし | なし |
+!!! warning "`server_ipv4` / `server_ipv6` 欠落は orchagent abort"
+    `addOperation()` は `std::runtime_error` のみ catch する。`getAttrIpPrefix()` が `server_ipv4` / `server_ipv6` 欠落で投げる `std::out_of_range` は派生でないため未捕捉となり、orchagent プロセスが abort する。`minigraph.py` 経由では自動補完されるが、手動で CONFIG_DB に直接投入する場合は両フィールドを必ず含める。
 
-### DEL 操作の挙動
+### B. ycabled の失敗パターン
 
-| ケース | 発生箇所 | 挙動 |
-|--------|---------|------|
-| 未登録ポートへの DEL | `muxorch.cpp` — `mux_cable_tb_` にキーが存在しない | `SWSS_LOG_NOTICE` + `return true`（no-op 正常終了） |
-| 登録済みポートへの DEL | `muxorch.cpp` | `mux_cable_tb_.erase()` + STATE_DB `MUX_CABLE_TABLE` クリア。正常完了 |
+| 失敗条件 | 検出箇所 | 結果 | retry | evidence |
+|---|---|---|---|---|
+| `port_tbl.get(port)` → `status=False`（エントリ不在） | `check_mux_cable_port_type()` L297 | `(False, None)` を返しポートをスキップ | なし | `y_cable_helper.py:297-301` |
+| `"state"` キーが MUX_CABLE エントリに存在しない | `check_mux_cable_port_type()` L308 | `(False, None)` を返しポートをスキップ（silent skip、DEBUG ログのみ） | なし | `y_cable_helper.py:317-320` |
+| `"soc_ipv4"` キーが欠落（active-active ポート） | `retry_setup_grpc_channel_for_port()` L363 条件不成立 | gRPC チャネルセットアップをスキップ、active-active 制御不能（silent skip） | 自動（定期スレッドが再試行）| `y_cable_helper.py:363` |
+| gRPC チャネル確立失敗（channel / stub が None） | `retry_setup_grpc_channel_for_port()` L371 | `NOTICE` ログ → `return False` | 自動（定期スレッド） | `y_cable_helper.py:373-375` |
 
-### linkmgrd — state フィールド欠落
+### C. linkmgrd の失敗パターン
 
-| 失敗ケース | 発生箇所 | 挙動 |
-|---|---|---|
-| `state` フィールドが `MUX_CABLE` エントリに存在しない | `DbInterface.cpp:996` | `MUXLOGERROR` を出力しポートを初期化マップから除外。SubscriberStateTable で再通知されるまで未初期化のまま |
+| 失敗条件 | 検出箇所 | 結果 | retry | evidence |
+|---|---|---|---|---|
+| 起動時 `"state"` フィールド欠落 | `getPortMuxMode()` L996 | `MUXLOGERROR` → 当該ポートを `PortToMuxModeConfigMapping` に追加せず処理続行 | なし（起動時 1 回のみ）| `DbInterface.cpp:994-997` |
+| `cable_type` / `prober_type` / `server_ipv4` / `soc_ipv4` 欠落 | 各 getter のフィールド探索 | フォールバック値または no-op で続行。`state` 欠落のみ ERROR、他は DEBUG 以下 | なし | `DbInterface.cpp:827, 880-881, 910-946, 968-1001` |
 
-### ycabled — silent skip
+### D. ログ出力先
 
-| 失敗ケース | 発生箇所 | 挙動 |
-|---|---|---|
-| `state` フィールド欠落 | `y_cable_helper.py:319` | `(False, None)` を返す → gRPC セットアップ未実施。ログ出力なし（silent skip） |
-| `soc_ipv4` フィールド欠落（active-active ポート） | `y_cable_helper.py:672` | gRPC チャネルセットアップをスキップ。ログ出力なし（silent skip） |
-
-### ログ・ERROR_TABLE
-
-- orchagent エラーは `SWSS_LOG_ERROR` / `SWSS_LOG_INFO` で `/var/log/swss/orchagent.log` にのみ出力される。
-- STATE_DB / `ERROR_TABLE` への書き込みは**行われない**。
+- orchagent エラーは `SWSS_LOG_ERROR` / `SWSS_LOG_INFO` で `/var/log/swss/orchagent.log` にのみ出力される。STATE_DB / `ERROR_TABLE` への書き込みは行われない。
 - linkmgrd エラーは `/var/log/linkmgrd/linkmgrd.log` に `MUXLOGERROR` レベルで出力される。
 - ycabled の silent skip はログが出力されないため、`show mux status` で状態を確認する必要がある。
+
+### E. 失敗ケース全体サマリー
+
+| ケース | 最悪の結果 | 回復方法 |
+|---|---|---|
+| `server_ipv4` / `server_ipv6` 欠落 | orchagent abort（systemd 再起動） | 両フィールドを含む SET_COMMAND を再投入 |
+| `neighbor_mode` 変更試行 | 該当ポートの MUX_CABLE が永続保留 | ポートを DEL → 再 SET |
+| `PEER_SWITCH` 未設定 | MUX_CABLE が `m_toSync` で無制限保留 | PEER_SWITCH エントリを先行設定（自動回復） |
+| ycabled `soc_ipv4` 欠落（active-active）| gRPC チャネル未確立で active-active 制御不能 | `soc_ipv4` を CONFIG_DB に追記、ycabled 定期スレッドが自動再試行 |
+| linkmgrd 起動時 `state` 欠落 | 該当ポートの mux mode 未反映 | `state` フィールド追記後 linkmgrd 再起動 |
 
 <!-- /failure -->
 
