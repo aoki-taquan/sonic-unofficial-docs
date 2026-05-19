@@ -129,6 +129,76 @@ warm-reboot パスで `checkRestartNoFreeze()` が false の場合、`orchdaemon
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`SwitchOrch::doAppSwitchTableTask()` (`switchorch.cpp:595-748`) と `setAgingFDB()` (`switchorch.cpp:1671-1688`) の
+コード精読から、以下の失敗パターンを確認した。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-D.md -->
+
+### SET 時の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 挙動 | retry | ログレベル |
+|---|-----------|---------|------|-------|-----------|
+| 1 | 不明属性が同一エントリに先行 | `switchorch.cpp:617-623` | `break` → 残フィールドスキップ → erase | なし | ERROR |
+| 2 | 無効値（uint32_t 変換不可） | `switchorch.cpp:664-714` | `break` → erase | なし | ERROR |
+| 3 | SAI `INSUFFICIENT_RESOURCES` / `TABLE_FULL` / `NO_MEMORY` | `switchorch.cpp:727` + `saihelper.cpp:658-662` | `retry = true` → `it++`（無制限再試行） | 無制限 | ERROR |
+| 4 | SAI その他エラー（デフォルト） | `switchorch.cpp:727` + `saihelper.cpp:663-667` | `handleSaiFailure` → SAI dump リクエスト → erase | なし | ERROR |
+| 5 | `setAgingFDB()` SAI 失敗（warm-reboot パス） | `switchorch.cpp:1677-1684` | 呼び元が戻り値を無視して継続 | なし | ERROR |
+| 6 | DEL 操作受信 | `switchorch.cpp:743-749` | `Unsupported operation` warn → erase | なし | WARN |
+
+### SAI エラーコード別分岐
+
+`handleSaiSetStatus()` (`saihelper.cpp:623-668`) の分岐:
+
+```cpp
+// saihelper.cpp:639-667
+switch (status)
+{
+    case SAI_STATUS_INSUFFICIENT_RESOURCES:
+    case SAI_STATUS_TABLE_FULL:
+    case SAI_STATUS_NO_MEMORY:
+    case SAI_STATUS_NV_STORAGE_FULL:
+        return task_need_retry;   // → retry = true → it++ (無制限再試行)
+    default:
+        handleSaiFailure(api, "set", status, false);  // SAI dump → task_failed
+        break;
+}
+return task_failed;  // → retry = false → erase
+```
+
+`retry = true` のとき Consumer キューにエントリが**保持**され次のメインループで再処理される。
+`retry = false` のときエントリは**破棄**され、次の `swssconfig` 再注入まで SAI への設定は行われない。
+
+### warm-reboot パスの setAgingFDB() 失敗
+
+```cpp
+// switchorch.cpp:1677-1684
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to set switch %" PRIx64 " fdb_aging_time attribute: %d", gSwitchId, status);
+    task_process_status handle_status = handleSaiSetStatus(SAI_API_SWITCH, status);
+    if (handle_status != task_success)
+    {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+}
+```
+
+呼び出し元 `orchdaemon.cpp:1068` は `setAgingFDB(0)` の返り値を**検査しない**。そのため warm-reboot 中に
+aging 無効化が SAI レベルで失敗しても orchagent は処理を継続する。この場合、warm-reboot 中に動的 MAC
+エントリが aging により失われるリスクがある。
+
+### STATE_DB・ERROR_TABLE への影響
+
+- **STATE_DB**: `fdb_aging_time` に対する書き込みなし（SAI 設定のみ）
+- **ERROR_TABLE**: 書き込みなし（`SWSS_LOG_ERROR` のみ）
+- **APPL_DB エントリ**: `retry = false` の場合エントリ削除。`retry = true` の場合エントリ保持
+
+> **証跡**: `switchorch.cpp:595-748`, `switchorch.cpp:1671-1688`, `saihelper.cpp:623-668, 745-762`。中間ファイル: `meta/_intermediate/cdb-flow/fdb-aging-D.md`
+<!-- /failure -->
+
 ## 書き込み入り口 (Direction A)
 
 ### ビルド時デフォルト (build-time default)
