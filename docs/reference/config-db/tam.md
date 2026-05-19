@@ -444,3 +444,51 @@ STATE_DB:HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE|<profile_name>|<group_type>
     `TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_*` への書込みは orchagent で直接購読されないため、これらの変更が STATE_DB の `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE` に反映されることは**ない**。STATE_DB 書込は HFTel プロファイル/グループ系テーブルの操作を通じて発生する。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-pubsub.md`
+
+### 直接購読者の欠如（open-source master ブランチ）
+
+`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE` に対して `swsscommon.SubscriberStateTable` または `ConsumerStateTable` で購読するプロセスは、現在の sonic-swss master ブランチには**存在しない**。
+
+| テーブル | 直接購読者 | 備考 |
+|---------|----------|------|
+| `TAM_DEVICE_TABLE` | なし | `portsorch` は CONFIG_DB を読まず `SAI_TAM_INT_ATTR_DEVICE_ID = 0` ハードコード (`portsorch.cpp:11597-11598`) |
+| `TAM_COLLECTOR_TABLE` | なし | `hftelorch` は独自の SAI TAM オブジェクトを作成（`hftelorch.cpp:760-790`）。TAM_COLLECTOR_TABLE の値を使用しない |
+| `TAM_INT_IFA_FEATURE_TABLE` | なし | orchdaemon.cpp に IFA orch 登録なし |
+| `TAM_INT_IFA_FLOW_TABLE` | なし | 同上 |
+
+### CVL による入力バリデーション（gNMI / REST 経由書き込み時）
+
+TAM テーブルへの書き込みが gNMI（`sonic-gnmi`）または REST（`sonic-mgmt-framework`）経由で行われる場合、`sonic-mgmt-common` の **CVL（Config Validation Library）** が Redis に接続して YANG 制約を同期バリデーションする。これは keyspace 通知購読とは異なる書き込み前検証である。
+
+```
+gNMI YANG write → sonic-mgmt-framework/sonic-gnmi
+  ↓ CVL バリデーション (sonic-mgmt-common)
+  ↓ TAM_INT_IFA_FLOW_TABLE.acl-table-name → ACL_TABLE leafref 解決
+  ↓ TAM_INT_IFA_FLOW_TABLE.acl-rule-name  → ACL_RULE leafref 解決
+  ↓ TAM_COLLECTOR_TABLE 参照確認
+  ↓ バリデーション通過 → Redis HSET
+```
+
+CLI（`config` コマンド）経由の書き込みは CVL を経由せず、`ConfigDBConnector.set_entry()` で CONFIG_DB に直接 `HSET` する。
+
+### 通知パスのまとめ
+
+```
+CONFIG_DB TAM_*  HSET  （どの経路でも）
+  ↓
+keyspace notification が発生するが受信するプロセスはなし
+  （orchdaemon 側に TableConnector 登録なし）
+  ↓
+APPL_DB 転送なし・NotificationProducer 通知なし
+```
+
+`ProducerStateTable` / channel ベース `PUBLISH/SUBSCRIBE` は使用しない。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp`（TAM 関連 TableConnector 登録なし）、`sonic-swss/orchagent/portsorch.cpp:11597-11598`（TAM deviceid ハードコード）、`sonic-swss/orchagent/hftelorch.cpp:760-790`（独自 TAM オブジェクト生成）、`sonic-mgmt-common/cvl/testdata/schema/sonic-tam.yang`、`sonic-ifa.yang:56-61`（CVL leafref 制約）; 詳細分析 `meta/_intermediate/cdb-flow/tam-pubsub.md`
+
+<!-- /pubsub -->
