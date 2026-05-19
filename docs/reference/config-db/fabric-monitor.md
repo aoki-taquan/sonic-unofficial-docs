@@ -426,6 +426,63 @@ if (gMySwitchType == "voq")
 
 <!-- /platform -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `fabricmgrd.cpp:14-72`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1396-1400` 全行精読 (2026-05-19)
+
+### Producer/Consumer ペア
+
+`FABRIC_MONITOR` テーブルは CONFIG_DB → APPL_DB → orchagent の **2段中継構成**をとる。
+
+| 区間 | 方式 | テーブル |
+|------|------|---------|
+| CONFIG_DB → `fabricmgrd` | `ConsumerStateTable` (swsscommon `Orch` 基底) | `CFG_FABRIC_MONITOR_DATA_TABLE_NAME` / `CFG_FABRIC_MONITOR_PORT_TABLE_NAME` |
+| `fabricmgrd` → APPL_DB | `ProducerStateTable` (`set()` 直接呼び出し) | `APP_FABRIC_MONITOR_DATA_TABLE_NAME` / `APP_FABRIC_MONITOR_PORT_TABLE_NAME` |
+| APPL_DB → `FabricPortsOrch` | `SubscriberStateTable` (swsscommon `Orch` 基底, priority=30) | `APP_FABRIC_MONITOR_DATA_TABLE_NAME` / `APP_FABRIC_MONITOR_PORT_TABLE_NAME` |
+| `FabricPortsOrch` → SAI | SAI API 直接呼び出し | SAI fabric port / switch attributes |
+| `FabricPortsOrch` → STATE_DB | `Table::hset()` | `FABRIC_PORT_TABLE`、`FABRIC_CAPACITY_TABLE` |
+
+### fabricmgrd — CONFIG_DB 購読
+
+`fabricmgrd` は `FabricMgr` を `Orch(cfgDb, tableNames)` として初期化し、`CFG_FABRIC_MONITOR_DATA_TABLE_NAME`（`"FABRIC_MONITOR"`）と `CFG_FABRIC_MONITOR_PORT_TABLE_NAME`（`"FABRIC_PORT"`）の `ConsumerStateTable` を生成する（`fabricmgr.cpp:14-21`）。
+
+メインループは `Select::select()` を 1000 ms タイムアウトで実行する（`fabricmgrd.cpp:46-65`）。CONFIG_DB への HSET により keyspace notification が発火すると `Consumer::drain()` → `FabricMgr::doTask(Consumer&)` が呼ばれ、変更フィールドを1件ずつ `writeConfigToAppDb()` 経由で APPL_DB へ転写する。`DEL_COMMAND` のハンドラは存在しないため、CONFIG_DB エントリ削除時は APPL_DB 側が更新されない（既存値が残留する）。
+
+### FabricPortsOrch — APPL_DB 購読
+
+`FabricPortsOrch` は `Orch(appl_db, tableNames)` として orchdaemon の select ループに登録される。APPL_DB の `APP_FABRIC_MONITOR_DATA_TABLE_NAME` / `APP_FABRIC_MONITOR_PORT_TABLE_NAME` を priority=30 の `SubscriberStateTable` で購読する（`orchdaemon.cpp:605-608`）。
+
+ただし `FabricPortsOrch::doTask(Consumer&)` の処理は APPL_DB イベント主導より **タイマー主導**が中心:
+
+| タイマー | 間隔 | 処理内容 |
+|---------|------|---------|
+| `FABRIC_POLL` (`m_timer`) | 30 秒 | `updateFabricPortState()`、SAI ポート状態取得 |
+| `FABRIC_DEBUG_POLL` (`m_debugTimer`) | 12 秒 | `updateFabricDebugCounters()`、`updateFabricCapacity()` — `monState=enable` 時のみ |
+
+APPL_DB イベント到着時に呼ばれる `doFabricPortTask()` は `checkFabricPortMonState()=true`（`monState=enable` かつ APPL_DB エントリ存在）でなければ early return する（`fabricportsorch.cpp:1396-1400`）。閾値・フラグの反映は次回 `FABRIC_DEBUG_POLL` タイマー発火を待つ。
+
+### フルデータフロー
+
+```
+config fabric monitoring error-threshold <val>
+  ↓ HSET CONFIG_DB: FABRIC_MONITOR|FABRIC_MONITOR_DATA  (永続化)
+  ↓ keyspace notification → fabricmgrd ConsumerStateTable
+fabricmgrd select() loop (1000 ms)
+  ↓ FabricMgr::doTask() → writeConfigToAppDb()
+  ↓ HSET APPL_DB: APP_FABRIC_MONITOR_DATA_TABLE|FABRIC_MONITOR_DATA  (中継)
+  ↓ keyspace notification → FabricPortsOrch SubscriberStateTable
+FabricPortsOrch orchdaemon select() loop
+  ↓ doFabricPortTask() [monState=enable 時のみ有効]
+  [FABRIC_DEBUG_POLL タイマー 12秒]
+  ↓ updateFabricDebugCounters() — APPL_DB hgetall で閾値一括読込
+  ↓ SAI set_port_attribute (isolate / unisolate)
+  ↓ STATE_DB: FABRIC_PORT_TABLE|PORT<n>, FABRIC_CAPACITY_TABLE|FABRIC_CAPACITY_DATA
+```
+
+詳細根拠は `meta/_intermediate/cdb-flow/fabric-monitor-pubsub.md` を参照。
+<!-- /pubsub -->
+
 ## 購読者
 
 - ファブリックモニタ daemon（プラットフォーム / [orchagent](../../reference/glossary.md#term-orchagent) の FabricPortOrch 拡張）
