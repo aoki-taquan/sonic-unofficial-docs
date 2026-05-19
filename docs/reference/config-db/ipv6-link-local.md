@@ -386,22 +386,29 @@ flowchart TD
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-> 調査証跡: `meta/_intermediate/cdb-flow/ipv6-link-local-platform.md`
+`ipv6_use_link_local_only` の処理経路は **全プラットフォームで同一**。`cfgmgr/intfmgr.cpp`・`neighsyncd/neighsync.cpp`・`sonic-interface.yang` をプラットフォーム識別キーワード (`multi_asic|is_multi_npu|chassis|asic[0-9]|namespace|platform|vendor|broadcom|mellanox|barefoot|cisco`) で検索してもヒット 0 件であり、機種依存コードが存在しない。
 
-`ipv6_use_link_local_only` の処理は SAI 非経由（orchagent は dead consumer）であり、Linux カーネルの IPv6 スタックと `intfmgrd` の sysctl / netlink 操作で完結する。ASIC 種別・ベンダーへの依存は原理的に発生しない。
+### intfmgrd は per-asic スコープではない (host 単一インスタンス)
 
-| 観点 | 結果 | 根拠 |
-|------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `intfmgrd` は SAI API を呼ばない。`intfmgr.cpp` を `platform\|asic\|vendor` で grep してヒット 0 件（`using namespace std/swss` のみ） |
-| multi-asic (per-asic namespace) | **intfmgrd は per-asic 実行** | `sonic-buildimage/files/build_templates/per_namespace/swss.service.j2` の存在から swss は `has_per_asic_scope=True`。各 asic namespace で独立した `intfmgrd` が稼働し、対応する CONFIG_DB/APP_DB/STATE_DB のみを参照する |
-| CLI の multi-asic 対応 | `config ipv6` に `-n/--namespace` オプション | `config/main.py:9495-9506` の `ipv6` グループが `multi_asic.connect_config_db_for_ns(namespace)` を使用。multi-asic 環境では namespace 指定が必須。`config interface ipv6` は interface グループの config_db を継承 |
-| VOQ chassis (`mySwitchType == "voq"`) | link-local 処理への影響なし | `intfmgr.cpp:L103` の VOQ 分岐は `setIntfIp()` 内の IPv6 アドレス metric 設定専用。`ipv6_use_link_local_only` 処理（L817-926）は VOQ 条件分岐を含まない |
-| supervisor / line card 分離 | 各 host で独立適用 | INTERFACE テーブルは host-local scope。chassis 全体の集中管理機構は存在しない。supervisor / line card 各 host で独立した `intfmgrd` が稼働する |
-| ベンダー固有 platform plugin | 関係なし | `ipv6_use_link_local_only` の処理パス（intfmgrd → APP_DB / neighsyncd → NEIGH_TABLE）に `sonic-platform-common` の抽象 API は登場しない |
+`intfmgrd.cpp` はシングルインスタンスで起動し、複数 ASIC 構成でも追加インスタンスを持たない。`INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルは host namespace の CONFIG_DB のみに存在し、`asic0..N` の Redis には複製されない。
 
-### 実運用上の注意点 (multi-asic)
+| 構成 | 挙動 |
+|------|------|
+| single-asic | intfmgrd が 1 インスタンス、host CONFIG_DB を購読 |
+| multi-asic (VOQ chassis 含む) | intfmgrd は host 側で 1 インスタンスのみ起動。各 asic namespace の CONFIG_DB には `INTERFACE` テーブルが存在せず、per-asic intfmgrd インスタンスも起動しない |
+| Virtual Switch (VS) | 挙動は real ASIC と同一。sysctl は実行されるが Linux カーネルの動作に依存 |
 
-multi-asic 環境では、`config ipv6 enable link-local`（全 IF 一括）を実行する際に `-n <namespace>` で対象 ASIC を指定する必要がある。指定しない場合はデフォルト namespace（asic0 相当）の CONFIG_DB にのみ書き込まれ、他 ASIC の Ethernet ポートには反映されない。per-ASIC の `intfmgrd` は自身の namespace の CONFIG_DB しか購読しないためである。
+### Linux sysctl 依存（カーネルドライバ不問）
+
+`enableIpv6Flag()` が実行する `net.ipv6.conf.<alias>.disable_ipv6 = 0` は Linux カーネルの IPv6 スタック制御であり、ASIC / SAI ドライバとは独立している。SAI API の呼び出しは一切なく、ASIC_DB への書込も発生しない（dead consumer の確認は Phase G 済み）。このため、Broadcom / Mellanox / Barefoot / Cisco など ASIC 種別を問わず動作は一定である。
+
+### neighsyncd の動作もプラットフォーム不問
+
+`neighsync.cpp` の `isLinkLocalEnabled()` はプレフィクス文字列比較と CONFIG_DB 直接参照のみで構成されており（Phase E 定数表参照）、platform 定数・vendor フラグ・capability クエリを一切参照しない。link-local neigh の学習有効/無効判定は CONFIG_DB 値のみで決まる。
+
+### 差異が残る唯一の領域（インターフェース名種別）
+
+Phase E で示したインターフェース名プレフィクス (`Ethernet` / `PortChannel` / `Vlan`) によるテーブル振り分けは、特定 ASIC 機種固有ではなくインターフェース命名規則依存である。スマートスイッチ / DPU などで異なるプレフィクス名を持つインターフェース (`dpu0` 等) が登場した場合、`isLinkLocalEnabled()` が `false` を返して link-local neigh を無視するが、これはプラットフォーム分岐ではなく未サポートインターフェース種別として Phase D (#5) で既述。
 <!-- /platform -->
 
 ## 購読者

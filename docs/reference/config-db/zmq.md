@@ -314,6 +314,52 @@ orchagent 側は `ZmqConsumerStateTable` で ZMQ メッセージを受信する�
 <!-- evidence: sonic-swss-common/common/zmqserver.h:13,31 (MQ_WATERMARK=10000, DEFAULT_POP_BATCH_SIZE=128) -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/lib/orch_zmq_config.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-buildimage/dockers/docker-orchagent/orchagent.sh`
+
+### 共通: ZMQ ロジック自体はプラットフォーム非依存
+
+`orch_zmq_config.cpp` / `orchdaemon.cpp` に `getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等の ASIC 種別判定はない。ZMQ チャネルのセットアップはすべての ASIC 種別で共通コードパスを使用する。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `orch_zmq_config.cpp` にプラットフォーム分岐なし |
+| multi-asic (multi-NPU) | ZMQ ポートに NAMESPACE_ID オフセットが付く | `get_zmq_port()` (`orch_zmq_config.cpp:37-51`) が `NAMESPACE_ID` 環境変数を読み取り `8100 + NAMESPACE_ID + 1` を計算。global namespace では `NAMESPACE_ID` 未設定 → ポート固定 8100 |
+| VOQ chassis | 影響なし | `switch_type == "voq"` 向けの ZMQ 固有分岐はなし |
+
+### SmartSwitch 専用: ZMQ アドレスと DPU ポート
+
+ZMQ の**アドレス・ポート**はプラットフォームで変化する:
+
+| プラットフォーム | ZMQ サーバアドレス | ポート | 根拠 |
+|----------------|-------------------|--------|------|
+| 一般 (`subtype` なし) | `tcp://127.0.0.1` | `8100` | `orchagent.sh:105-118` (デフォルト分岐) |
+| SmartSwitch NPU (`subtype=SmartSwitch`, `eth0-midplane` UP) | `tcp://eth0-midplane` | `8100` | `orchagent.sh:107-112` |
+| SmartSwitch NPU (`subtype=SmartSwitch`, `eth0-midplane` DOWN) | `tcp://127.0.0.1` | `8100` | `orchagent.sh:113-117` |
+| SmartSwitch DPU (`switch_type=dpu`) | DPU 側 `orchagent.sh` で決定 | `DPU|<name>.orchagent_zmq_port` または `8100 + NS_ID + 1` | `orchagent.sh:38-39` + `orch_zmq_config.cpp:37-51` |
+
+`orchagent_zmq_port` (`DPU|<name>`) は SmartSwitch 環境**のみ**に存在する CONFIG_DB フィールドであり、一般プラットフォームでは不要。
+
+### DpuOrchDaemon と ZMQ サーバ
+
+SmartSwitch の DPU orchagent は `DpuOrchDaemon` として動作し、`ZMQ_SYNC` モード (`-z zmq_sync -k 65536`) で起動する。これは `orchagent.sh:38-39` で `switch_type == "dpu"` のときに強制付与される引数であり、一般プラットフォームでは付与されない。
+
+### multi-asic のポート計算
+
+```cpp
+// orch_zmq_config.cpp:37-51
+int zmq_port = ORCH_ZMQ_PORT;  // 8100
+if (namespace_id != "")
+{
+    zmq_port = ORCH_ZMQ_PORT + stoi(namespace_id) + 1;
+}
+```
+
+asic0 → 8101、asic1 → 8102 のようにオフセットされる。global namespace (NAMESPACE_ID 未設定) → 8100 固定。
+<!-- /platform -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
@@ -361,6 +407,23 @@ ZMQ チャネル実装に存在する、CONFIG_DB / YANG では管理されな�
 > **注意**: Keepalive 設定はソケット生成時にハードコードで適用される。CONFIG_DB から変更する手段はない。DPU 環境でネットワーク切断を検出するために特に重要（`zmqclient.cpp:114-130` コメント参照）。
 
 <!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/zmq-platform.md`
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox 等) | **影響なし** | ZMQ は orchagent northbound 通信層であり SAI 非経由。`get_feature_status()` / `get_zmq_port()` はベンダー依存コードを含まない (`orch_zmq_config.cpp:35-79`) |
+| multi-ASIC / namespace | **ZMQ ポート番号が変化** | `get_zmq_port()` が `NAMESPACE_ID` 環境変数を参照し `8100 + NAMESPACE_ID + 1` で計算。global=8100、asic0=8101、asic1=8102 (`orch_zmq_config.cpp:38-51`)。`orch_northbond_*_zmq_enabled` はグローバル CONFIG_DB に一元管理され、各 namespace orchagent が共通参照する |
+| SmartSwitch / DPU | **専用フィールドあり** | `DPU|<name>.orchagent_zmq_port` は SmartSwitch 専用。`orchagent.sh` が `subtype=="SmartSwitch"` で ZMQ アドレスを `tcp://eth0-midplane` に切替え、`switch_type=="dpu"` で zmq_sync モードを強制 (`orchagent.sh:38-39,105-118`) |
+| VOQ chassis | 影響なし (確認) | 各 line card orchagent が独立して ZMQ を管理。chassis-wide な ZMQ 集約機構なし |
+
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:35-52 (get_zmq_port — NAMESPACE_ID 分岐) -->
+<!-- evidence: sonic-buildimage/dockers/docker-orchagent/orchagent.sh:38-39,105-118 (SmartSwitch / DPU 専用分岐) -->
+<!-- evidence: sonic-swss-common/common/zmqserver.h:16 (ORCH_ZMQ_PORT = 8100) -->
+<!-- /platform -->
 
 ---
 
