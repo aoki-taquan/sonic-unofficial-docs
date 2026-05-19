@@ -171,6 +171,81 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`intfmgrd` と `neighsyncd` のコード精読から、以下の失敗パターンを確認した。
+
+### intfmgrd — SET_COMMAND 時の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 挙動 | retry | ログレベル |
+|---|-----------|---------|------|-------|-----------|
+| 1 | インターフェースが STATE_DB 未 ready (`isIntfStateOk` false) | `intfmgr.cpp:833-836` | `return false`（再キュー） | 無制限 | DEBUG |
+| 2 | VRF が STATE_DB 未 ready | `intfmgr.cpp:839-842` | `return false`（再キュー） | 無制限 | DEBUG |
+| 3 | VRF 直接変更（現在 VRF → 別 VRF に直接切替） | `intfmgr.cpp:846-849` | `SWSS_LOG_ERROR` + `return true`（silent drop） | なし | ERROR |
+
+### intfmgrd — DEL_COMMAND 時の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 挙動 | retry | ログレベル |
+|---|-----------|---------|------|-------|-----------|
+| 4 | IP アドレスがまだ存在する (`getIntfIpCount` > 0) | `intfmgr.cpp:1060-1063` | `return false`（再キュー） | 無制限 | — |
+| 5 | `ip neigh del` コマンド失敗 (`delIpv6LinkLocalNeigh`) | `intfmgr.cpp:732-733` | `swss::exec()` 戻り値を無視（silent ignore） | なし | — |
+
+### neighsyncd — isLinkLocalEnabled の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 挙動 | retry | ログレベル |
+|---|-----------|---------|------|-------|-----------|
+| 6 | インターフェース名が `Ethernet`/`Vlan`/`PortChannel` 以外 | `neighsync.cpp:221-224` | `return false`（link-local neigh を NEIGH_TABLE に書き込まない） | なし | INFO |
+| 7 | CONFIG_DB に対象インターフェースの属性ロウが存在しない | `neighsync.cpp:199-219` | `return false`（同上） | なし | INFO |
+| 8 | `ipv6_use_link_local_only` が `"enable"` 以外 | `neighsync.cpp:227-235` | `return false`（同上） | なし | INFO |
+
+### 代表的な失敗コード
+
+**インターフェース未 ready による再キュー (Pattern 1)**:
+```cpp
+// intfmgr.cpp:833-836
+if (!isIntfStateOk(parentAlias.empty() ? alias : parentAlias))
+{
+    SWSS_LOG_DEBUG("Interface is not ready, skipping %s", alias.c_str());
+    return false;
+}
+```
+
+**VRF 直接変更の拒否 (Pattern 3)**:
+```cpp
+// intfmgr.cpp:846-849
+if (isIntfChangeVrf(alias, vrf_name))
+{
+    SWSS_LOG_ERROR("%s can not change to %s directly, skipping", alias.c_str(), vrf_name.c_str());
+    return true;
+}
+```
+
+**DEL 時の IP アドレス残存チェック (Pattern 4)**:
+```cpp
+// intfmgr.cpp:1060-1063
+if (getIntfIpCount(alias))
+{
+    return false;
+}
+```
+
+**link-local neigh 削除のサイレント無視 (Pattern 5)**:
+```cpp
+// intfmgr.cpp:732-733
+cmd << IP_CMD << " neigh del dev " << keys[0] << " " << keys[1];
+swss::exec(cmd.str(), res);  // 戻り値チェックなし
+```
+
+### STATE_DB / ERROR_TABLE への影響
+
+- `intfmgrd` は `ipv6_use_link_local_only` 処理失敗時に STATE_DB も ERROR_TABLE も更新しない
+- `return false`（再キュー）では APP_DB への書き込みは発生しない（`doIntfGeneralTask` の末尾処理がスキップされる）
+- Pattern 3（VRF 直接変更）は `return true`（エラーログのみ）のため、CONFIG_DB のエントリは処理済みとして消費されるが APP_DB は更新されない
+
+> **証跡**: `IntfMgr::doIntfGeneralTask()` L741-1097 精読、`IntfMgr::delIpv6LinkLocalNeigh()` L712-738、`NeighSync::isLinkLocalEnabled()` L192-238。中間ファイル: `meta/_intermediate/cdb-flow/ipv6-link-local-failure.md`
+<!-- /failure -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |
