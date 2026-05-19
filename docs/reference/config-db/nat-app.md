@@ -441,6 +441,61 @@ doTwiceNaptTableTask() / doNatGlobalTableTask() / doDnatPoolTableTask()
 > **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:454-465` (NatOrch 生成・テーブル優先度); `sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐); `sonic-swss/orchagent/natorch.cpp:137` (SETTIMEOUTNAT NotificationProducer), `natorch.cpp:3041-3084` (`doTask` ディスパッチ); `sonic-swss/cfgmgr/natmgrd.cpp:149-150` (SETTIMEOUTNAT NotificationConsumer); `sonic-swss/orchagent/main.cpp:459,478` (`DEFAULT_BATCH_SIZE = 128`); `sonic-swss/orchagent/orchdaemon.cpp:22-23` (SELECT_TIMEOUT)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+APPL_DB NAT テーブル群の処理は、`orchagent` 起動時に設定される 2 つのグローバルフラグ `gIsNatSupported` と `gNhTrackingSupported` によってプラットフォーム依存の挙動分岐が発生する。
+
+### フラグ設定のしくみ
+
+`gIsNatSupported` は `orchagent/main.cpp:936-948` で `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会し、戻り値が `> 0` の場合のみ `true` に設定される。
+
+```cpp
+// main.cpp:936-948
+attr.id = SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY;
+status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status == SAI_STATUS_SUCCESS && attr.value.u32 != 0)
+{
+    gIsNatSupported = true;
+}
+```
+
+`gNhTrackingSupported` は `NatOrch` コンストラクタ (natorch.cpp:144-148) で `getenv("platform")` に `"broadcom"` が含まれる場合のみ `true` に設定される。
+
+```cpp
+// natorch.cpp:144-149
+char *platform = getenv("platform");
+if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
+{
+    gNhTrackingSupported = true;
+}
+```
+
+### プラットフォーム別の挙動マトリクス
+
+| SAI 取得結果 | platform 文字列 | `gIsNatSupported` | `gNhTrackingSupported` | APPL_DB NAT テーブル処理結果 |
+|------------|----------------|------------------|----------------------|---------------------------|
+| `SNAT_ENTRY == 0` または取得失敗 | (任意) | `false` | `false` | `enableNatFeature()` 冒頭で NOTICE + 即 return。NAT エントリは APPL_DB に書かれても SAI に降りない |
+| `SNAT_ENTRY > 0` | `"broadcom"` を含まない | `true` | `false` | DNAT エントリは APPL_DB 受信と同時に `addHwDnatEntry()` を即時呼び出し |
+| `SNAT_ENTRY > 0` | `"broadcom"` を含む | `true` | `true` | DNAT エントリは `addDnatToNhCache()` でネクストホップキャッシュに保存され、RouteOrch / NeighOrch のネクストホップ解決通知後に `addHwDnatEntry()` を遅延実行 |
+
+### テーブル別 platform 依存まとめ
+
+| APPL_DB テーブル | platform 依存の挙動差 |
+|----------------|---------------------|
+| `NAT_TABLE` (SNAT) | platform 非依存。`isNatEnabled() == false` なら SAI 操作なし (共通) |
+| `NAT_TABLE` / `NAPT_TABLE` (DNAT) | broadcom: NH 解決待ちでキャッシュ保持 → 解決後 SAI 登録。非 broadcom: 即時 SAI 登録 |
+| `NAT_TWICE_TABLE` / `NAPT_TWICE_TABLE` | broadcom: NH キャッシュ (`addTwiceNatToNhCache`) 経由。非 broadcom: 即時 SAI 登録 |
+| `NAT_GLOBAL_TABLE` | platform 非依存 (`gIsNatSupported == false` なら `enableNatFeature()` 全体が skip) |
+| `NAT_DNAT_POOL_TABLE` | platform 非依存 (`addHwDnatPoolEntry()` は platform 分岐なし) |
+
+### VS / テスト環境
+
+VS プラットフォームは `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` をサポートしないため `gIsNatSupported = false` となり、NAT 機能全体が無効化される。APPL_DB への書き込みは受け付けるが SAI には降りない。
+
+> **Evidence**: `sonic-swss/orchagent/natorch.cpp:39-44` (`gIsNatSupported` extern / `gNhTrackingSupported` 宣言); `natorch.cpp:144-149` (platform 文字列チェック); `natorch.cpp:2541-2544` (`enableNatFeature()` の `gIsNatSupported` ガード); `natorch.cpp:1923-1963, 2017-2054` (`gNhTrackingSupported` による DNAT NH キャッシュ分岐); `sonic-swss/orchagent/main.cpp:936-948` (`gIsNatSupported` 設定); `sonic-swss/orchagent/orch.h` (`BRCM_PLATFORM_SUBSTRING = "broadcom"`)
+<!-- /platform -->
+
 ## 制約
 
 - `NAT_TABLE` key: 1 セグメント (`<ip>`)。他は ERROR + erase。
