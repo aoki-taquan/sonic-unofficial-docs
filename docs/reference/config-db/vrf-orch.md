@@ -367,6 +367,85 @@ VNI 付き VRF の追加時に `gPortsOrch->updateL3VniStatus(vlan_id, true)` �
 詳細: `meta/_intermediate/cdb-flow/vrf-orch-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/vrf-orch-pubsub.md`
+
+`APPL_DB VRF_TABLE` を書くのは `vrfmgrd` の `ProducerStateTable` であり、消費するのは `VRFOrch` の `ConsumerStateTable`。CONFIG_DB → vrfmgrd の経路は [CONFIG_DB VRF テーブル](./vrf.md#通信メカニズム-phase-g) を参照。ここでは APPL_DB → VRFOrch の経路に絞る。
+
+### vrfmgrd → APPL_DB（ProducerStateTable）
+
+`vrfmgrd` は `m_appVrfTableProducer`（`ProducerStateTable`）を通じて APPL_DB に書く (`vrfmgr.h:46`、`vrfmgr.cpp:303`)。
+
+書込みは Lua スクリプト（`EVALSHA`）でアトミックに実行:
+
+```
+SADD VRF_TABLE_KEY_SET <vrfName>
+HSET _VRF_TABLE:<vrfName> <fields>
+PUBLISH VRF_TABLE_CHANNEL@0 G
+```
+
+DEL 操作:
+
+```
+SREM VRF_TABLE_KEY_SET <vrfName>
+DEL _VRF_TABLE:<vrfName>
+PUBLISH VRF_TABLE_CHANNEL@0 G
+```
+
+### APPL_DB → VRFOrch（ConsumerStateTable）
+
+`orchdaemon.cpp:283` で VRFOrch を生成:
+
+```cpp
+VRFOrch *vrf_orch = new VRFOrch(m_applDb, APP_VRF_TABLE_NAME,
+                                 m_stateDb, STATE_VRF_OBJECT_TABLE_NAME);
+```
+
+`VRFOrch` は `Orch2(appDb, APP_VRF_TABLE_NAME, request_)` を通じて `ConsumerStateTable` を使用 (`orch.cpp:1194`)。APPL_DB (`db_id=0`) のチャンネルを購読:
+
+```
+SUBSCRIBE VRF_TABLE_CHANNEL@0
+```
+
+イベント受信時に `consumer_state_table_pops.lua` が実行され `SPOP VRF_TABLE_KEY_SET` + `HGETALL _VRF_TABLE:<key>` でエントリを取り出し、`VRFOrch::addOperation()` / `delOperation()` に渡す。
+
+### 購読者サマリ
+
+| 購読者 | 購読 API | 購読テーブル / チャンネル | ハンドラ |
+|--------|---------|--------------------------|---------|
+| `VRFOrch` (orchagent) | `ConsumerStateTable` (`SUBSCRIBE VRF_TABLE_CHANNEL@0`) | `APPL_DB VRF_TABLE` | `addOperation()` → `sai_virtual_router_api->create_virtual_router()` |
+
+`VRFOrch` 以外で `APPL_DB VRF_TABLE` を直接購読するプロセスは存在しない。
+
+### 通知フロー（APPL_DB 中心）
+
+```
+vrfmgrd::setLink() 成功
+  └─ ProducerStateTable::set(VRF_TABLE, vrfName, fields)
+      EVALSHA: SADD VRF_TABLE_KEY_SET <vrfName>
+               HSET _VRF_TABLE:<vrfName> ...
+               PUBLISH VRF_TABLE_CHANNEL@0 G
+
+orchagent Select::select()
+  └─ wake-up (VRF_TABLE_CHANNEL@0)
+      consumer_state_table_pops.lua
+        SPOP VRF_TABLE_KEY_SET → key
+        HGETALL _VRF_TABLE:<key> → fields
+      Consumer::execute() → VRFOrch::addOperation()
+        sai_virtual_router_api->create_virtual_router()
+        STATE_DB VRF_OBJECT_TABLE|<vrf_name> state=ok
+```
+
+<!-- evidence: sonic-swss/orchagent/vrforch.cpp L1-20 (コンストラクタ、Orch2 継承) -->
+<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp L283 (VRFOrch 生成 + ConsumerStateTable) -->
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp L303 (m_appVrfTableProducer.set) -->
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.h L46 (ProducerStateTable m_appVrfTableProducer) -->
+<!-- evidence: sonic-swss-common/common/schema.h L80 (APP_VRF_TABLE_NAME = "VRF_TABLE") -->
+
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 - **VRF 削除タイミング**: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は `ip link del` を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は `ref_count` が非ゼロで `delOperation` が `false` を返して再キュー。
