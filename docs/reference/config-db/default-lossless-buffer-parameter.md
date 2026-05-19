@@ -3,7 +3,7 @@ title: DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル
 description: "DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル — Dynamic buffer manager が動的に生成するロスレスバッファプロファイルの既定パラメータを定義するテーブル。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-default-lossless-buffer-parameter.yang
@@ -11,6 +11,12 @@ sources:
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
     ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/buffermgrdyn.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/buffermgrdyn.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - DEFAULT_LOSSLESS_BUFFER_PARAMETER
@@ -365,4 +371,47 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 > **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2033 全行読了、コンストラクタ L130-172 全行読了、`buffers_config.j2` L331-349 全行読了、`db_migrator.py` L327-416, L1075-1099 全行読了、`sonic-default-lossless-buffer-parameter.yang` 全行読了。
 <!-- /defaults -->
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`buffermgrdyn` が `DEFAULT_LOSSLESS_BUFFER_PARAMETER` を処理する際に使用する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-swss/cfgmgr/buffermgrdyn.h` と `buffermgrdyn.cpp`。
+
+### バッファプール名 / MTU マクロ
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `INGRESS_LOSSLESS_PG_POOL_NAME` | `"ingress_lossless_pool"` | lossless PG 向け ingress バッファプールの固定キー名。`handleDefaultLossLessBufferParam()` で `m_bufferPoolLookup.find()` の引数として使用 | buffermgrdyn.h L14 |
+| `DEFAULT_MTU_STR` | `"9100"` | MTU 未設定時のデフォルト。`getDynamicProfileName()` で MTU がこの値と一致する場合、プロファイル名に `_mtu<value>` サフィックスを付加しない | buffermgrdyn.h L15 |
+| `BUFFERMGR_TIMER_PERIOD` | `10` (秒) | `SelectableTimer` の周期。PORT_INIT_DONE 完了待ちポーリング間隔 | buffermgrdyn.h L17 |
+
+### 追加ゼロプロファイル適用遅延
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `m_waitApplyAdditionalZeroProfiles` (cold/fast reboot 初期値) | `3` カウント | cold/fast reboot 時の追加ゼロプロファイル遅延カウント初期値。`BUFFERMGR_TIMER_PERIOD(10) × 3 = 30 秒` の遅延に相当。fast reboot 収束時間の短縮が目的 | buffermgrdyn.cpp L169 |
+| `m_waitApplyAdditionalZeroProfiles` (warm reboot 初期値) | `0` | warm reboot 時は即時適用 | buffermgrdyn.cpp L164 |
+
+### 動的プロファイル命名規則
+
+`getDynamicProfileName()` で生成されるプロファイル名の各要素は文字列リテラルとしてハードコードされている。
+
+| 要素 | リテラル | 付加条件 | ソース |
+|------|----------|----------|--------|
+| プレフィックス | `"pg_lossless_"` | 常時 | buffermgrdyn.cpp L487 |
+| MTU サフィックス | `"_mtu"` | MTU が `"9100"` (DEFAULT_MTU_STR) 以外のとき | buffermgrdyn.cpp L491 |
+| threshold サフィックス | `"_th"` | `default_dynamic_th` の値が `m_defaultThreshold` と異なるとき | buffermgrdyn.cpp L496 |
+
+プロファイル名例:
+- 標準 (9100 MTU、デフォルト threshold): `pg_lossless_100000_40m`
+- 非標準 threshold: `pg_lossless_100000_40m_th3`
+- 非標準 MTU: `pg_lossless_100000_40m_mtu1500`
+
+> **運用注意**: `DEFAULT_MTU_STR = "9100"` がハードコードされているため、PORT.mtu が 9100 のポートではプロファイル名が短縮形 (サフィックスなし) になる。MTU を変更するとプロファイル名が変わり既存 APPL_DB のプロファイル名と乖離する可能性がある。
+
+### SHP 無効化時の xoff リセット
+
+SHP (Shared Headroom Pool) が無効化された際、`refreshSharedHeadroomPool()` は ingress_lossless_pool の `xoff` を文字列 `"0"` にハードコードして APPL_DB を更新する (buffermgrdyn.cpp L1701)。ゼロバッファプール生成時の xoff 初期値も `"0"` でハードコード (buffermgrdyn.cpp L773)。
+
+詳細な定数一覧は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-constants.md` を参照。
+<!-- /constants -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
