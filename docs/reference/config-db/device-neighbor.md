@@ -449,4 +449,54 @@ port['description'] = "%s:%s" % (neighbors[port_name]['name'], neighbors[port_na
 > **スキャン証跡**: `ecnconfig:93,282-294` 読了。`pfcwd/main.py:98,413` 読了。`show/interfaces/__init__.py:316-323` 読了。`minigraph.py:610,631-655,2465,2635-2637` 読了。`sonic-device_neighbor.yang` 全行読了。定数 5 種別 15 件を確認。詳細は `meta/_intermediate/cdb-flow/device-neighbor-constants.md` 参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DEVICE_NEIGHBOR` テーブルは **書かれる側（producer のみ）** であり、orchagent / SAI 経路の書き手を持たない。副次書込が発生するのは、DEVICE_NEIGHBOR を**参照した後に別テーブルへ書き込む CLI ツール**（pfcwd / ecnconfig）と、**bgpcfgd が BGP セッション確立後に STATE_DB へ書き込む**場面の 2 種類に分類される。
+
+### DB 書込サマリ
+
+| 副次 DB | 書込有無 | 書込テーブル | 書込コンポーネント | 根拠 |
+|--------|---------|------------|----------------|------|
+| CONFIG_DB `PFC_WD` | あり | `PFC_WD\|<port>`, `PFC_WD\|GLOBAL` | `pfcwd start_default` | `pfcwd/main.py:292-300,442-444` |
+| CONFIG_DB `QUEUE` | あり | `QUEUE\|<port>\|<queue>` | `ecnconfig -s enable/disable` | `ecnconfig:325-336` |
+| STATE_DB `BGP_PEER_CONFIGURED` | あり | `BGP_PEER_CONFIGURED\|<nbr>` | `bgpcfgd managers_bgp.py` | `managers_bgp.py:286-295` |
+| APPL_DB | なし | — | — | DEVICE_NEIGHBOR を参照するコンポーネントは APPL_DB に書かない |
+| COUNTERS_DB | なし | — | — | 同上 |
+| ASIC_DB | なし | — | — | SAI 非経由。DEVICE_NEIGHBOR は topology 情報のみ |
+
+### pfcwd → CONFIG_DB PFC_WD 書込
+
+`pfcwd start_default`（`pfcwd/main.py:405-444`）は起動時に以下の順序で CONFIG_DB `PFC_WD` テーブルへ書き込む:
+
+1. `get_table('DEVICE_NEIGHBOR').keys()` で外部ポート一覧を取得（`pfcwd/main.py:413`）
+2. 各ポートに対して `verify_pfc_enable_status_per_port()` を呼び出し、`PFC_WD|<port>` エントリを `set_entry()` または `mod_entry()` で書き込む（`pfcwd/main.py:295-300`）
+3. `PFC_WD|GLOBAL` に `POLL_INTERVAL` を書き込む（`pfcwd/main.py:442-444`）
+
+DEVICE_NEIGHBOR が空の場合、ステップ 1 で外部ポートが 0 件となり、ステップ 2 の書込みが全スキップされる。**PFC_WD が書き込まれないため、PFC Watchdog は外部ポートに対して有効化されない**（silent misconfiguration）。
+
+### ecnconfig → CONFIG_DB QUEUE 書込
+
+`ecnconfig -s enable/disable`（`ecnconfig:282-336`）は DEVICE_NEIGHBOR からポート一覧を取得後、各ポートの `QUEUE` エントリに `wred_profile` フィールドを書き込む（enable 時）または削除する（disable 時）:
+
+```python
+# ecnconfig:325-336 抜粋（簡略）
+for port_key in self.ports_key:
+    key = '|'.join([port_key, queue])
+    entry = self.config_db.get_entry(QUEUE_TABLE_NAME, key)
+    entry[FIELD] = ON  # または del entry[FIELD]
+    self.config_db.set_entry(QUEUE_TABLE_NAME, key, entry)
+```
+
+DEVICE_NEIGHBOR が空の場合は `gen_ports_key()` 内で `Exception("No active ports detected...")` を raise して処理が中断し、QUEUE テーブルへの書込みは行われない。
+
+### bgpcfgd → STATE_DB BGP_PEER_CONFIGURED 書込
+
+`bgpcfgd` は DEVICE_NEIGHBOR を直接 subscribe しないが、BGP_NEIGHBOR の SET 処理時に DEVICE_NEIGHBOR_METADATA（DEVICE_NEIGHBOR の `name` 集合から派生）を参照した後、ピア追加に成功すると STATE_DB `BGP_PEER_CONFIGURED_TABLE` へ書き込む（`managers_bgp.py:285-295`）。
+
+DEVICE_NEIGHBOR が正しく書き込まれていない場合、`DEVICE_NEIGHBOR_METADATA` の内容が不完全となり、bgpcfgd の STATE_DB 書込みが silent に保留される。
+
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:62,278-300,413-444`; `scripts/ecnconfig:282-336`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:219-224,284-295`
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 2c4f81fa98e5 -->
