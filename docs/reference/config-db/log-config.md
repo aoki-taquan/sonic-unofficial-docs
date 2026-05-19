@@ -260,6 +260,39 @@ CONFIG_DB の `LOGGER` テーブルにエントリが存在しない場合は、
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`sonic-swss-common/common/logger.cpp` および `loglevel.cpp` を全行精読した結果、`LOGGER` テーブルの処理は `CONFIG_DB` の `LOGGER` テーブル**のみ**を読み書きし、他 DB への副次書込は発生しない。中間ノート: `meta/_intermediate/cdb-flow/log-config-side-effects.md`。
+
+### DB 別書込有無
+
+| DB | 書込有無 | 根拠 |
+|---|---|---|
+| CONFIG_DB (`LOGGER` 自身) | **あり（自己書込）** | `linkToDbWithOutput()` が既存エントリ未作成時にデフォルト値 `{LOGLEVEL, LOGOUTPUT}` を `table.set()` で書き戻す | `logger.cpp:132-149` |
+| APPL_DB | なし | `ProducerStateTable` 使用なし |
+| STATE_DB | なし | `StateTable` / `StateDBConnector` 参照なし |
+| COUNTERS_DB | なし | ログ verbosity に統計カウンタなし |
+| ASIC_DB | なし | SAI 非経由 |
+| FLEX_COUNTER_DB | なし | FlexCounter 機能と無関係 |
+
+### CONFIG_DB 自己書込の詳細
+
+デーモン起動時に `linkToDbWithOutput()` は `table.hget(dbName, "LOGLEVEL")` と `table.hget(dbName, "LOGOUTPUT")` で既存値を確認し、どちらか一方でも未設定の場合にのみ `table.set(dbName, fieldValues)` でデフォルト値を書き戻す（`logger.cpp:132-149`）。デーモンが既に存在するエントリを上書きすることはない。
+
+### DB 外副作用
+
+DB 書込ではないが以下の副作用が発生する:
+
+| 副作用 | トリガ | 根拠 |
+|---|---|---|
+| デーモン内部 loglevel 変更（`Logger::m_minPrio` / `m_output` 書き換え） | `settingThread` が `prioNotify` / `outputNotify` コールバック呼び出し | `logger.cpp:250-258` |
+| SAI loglevel API 呼び出し (`sai_log_set()`) | `SAI_API_*` コンポーネントの LOGLEVEL 変更時、`syncd` 内コールバックが SAI ライブラリ loglevel を変更 | `syncd` 側 `swssPrioNotify` 実装 |
+| デーモンへの SIGHUP 送信 | `config syslog level` CLI が `require_manual_refresh=true` のデーモンに `supervisorctl signal HUP` または `kill -SIGHUP` を発行 | `sonic-utilities/config/syslog.py:684-696` |
+
+SIGHUP は `logger.cpp` 自体が送信するのではなく `config syslog level` CLI ツール側の動作である点に注意。
+<!-- /side-effects -->
+
 ## 制約
 
 - `LOGLEVEL` は `mandatory true`（YANG）。エントリ作成時に必須
