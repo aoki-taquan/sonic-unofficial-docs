@@ -352,6 +352,45 @@ minigraph.py および init_cfg.json.j2 からの `NVGRE_TUNNEL` 自動派生は
 
 <!-- /derivation -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/nvgreorch.cpp:106,124,190,207,253,270,325-327,357-360,376-377,438,473-474,482-483,491-492,498-499,527,539-543,565-566,571-573 -->
+
+`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` のエントリ書き込みに関わる失敗シナリオを一覧化する。`NvgreTunnelOrch` および `NvgreTunnelMapOrch` は `Orch2` フレームワークを使用し、`addOperation()` / `delOperation()` が `true` を返せばエントリ消費完了（リトライなし）、`false` を返せばキュー再投入（リトライあり）となる。
+
+### 失敗シナリオ一覧
+
+| # | 操作 | 失敗トリガー | 挙動 | ログ | リトライ |
+|---|------|------------|------|------|---------|
+| 1 | SET `NVGRE_TUNNEL` | 同名トンネルがすでに存在 | WARN ログ + `return true` (消費完了) | `SWSS_LOG_WARN("NVGRE tunnel '%s' already exists")` `nvgreorch.cpp:359` | なし |
+| 2 | SET `NVGRE_TUNNEL` | SAI `create_tunnel_map()` 失敗 (非 `SAI_STATUS_SUCCESS`) | `std::runtime_error` throw → `NvgreTunnel` コンストラクタがクラッシュ → orchagent プロセス abort | `nvgreorch.cpp:106` | orchagent 再起動後に再処理 |
+| 3 | SET `NVGRE_TUNNEL` | SAI `create_tunnel()` 失敗 | `std::runtime_error` throw → orchagent abort | `nvgreorch.cpp:190` | orchagent 再起動後に再処理 |
+| 4 | SET `NVGRE_TUNNEL` | SAI `create_tunnel_termination()` 失敗 | `std::runtime_error` throw → orchagent abort | `nvgreorch.cpp:253` | orchagent 再起動後に再処理 |
+| 5 | DEL `NVGRE_TUNNEL` | 存在しないトンネルを削除 | ERROR ログ + `return true` (消費完了) | `SWSS_LOG_ERROR("NVGRE tunnel '%s' doesn't exist")` `nvgreorch.cpp:376` | なし |
+| 6 | DEL `NVGRE_TUNNEL` | SAI `remove_tunnel_termination()` / `remove_tunnel()` 失敗 | `std::runtime_error` が `removeNvgreTunnel()` 内でキャッチされ `SWSS_LOG_ERROR` のみ。エラーを飲み込んで処理を継続する | `SWSS_LOG_ERROR("Error while removing tunnel entry …")` `nvgreorch.cpp:325-327` | なし (エラー消費) |
+| 7 | SET `NVGRE_TUNNEL_MAP` | 親トンネルが未登録 | WARN ログ + `return true` (消費完了、**永続破棄**) | `SWSS_LOG_WARN("NVGRE tunnel '%s' doesn't exist")` `nvgreorch.cpp:473` | なし — 再投入されない |
+| 8 | SET `NVGRE_TUNNEL_MAP` | 同名マップエントリがすでに存在 | WARN ログ + `return true` (消費完了) | `SWSS_LOG_WARN("NVGRE tunnel map '%s' already exist")` `nvgreorch.cpp:482` | なし |
+| 9 | SET `NVGRE_TUNNEL_MAP` | 指定 `vlan_id` が PortsOrch に未登録 | WARN ログ + `return true` (消費完了、**永続破棄**) | `SWSS_LOG_WARN("VLAN ID doesn't exist: %d")` `nvgreorch.cpp:491` | なし — VLAN 登録後に再投入が必要 |
+| 10 | SET `NVGRE_TUNNEL_MAP` | `vsid` が範囲外 (> 16777214) | WARN ログ + `return true` (消費完了) | `SWSS_LOG_WARN("VSID is invalid: %d")` `nvgreorch.cpp:498` | なし |
+| 11 | SET `NVGRE_TUNNEL_MAP` | SAI `create_tunnel_map_entry()` 失敗 | `std::runtime_error` throw → orchagent abort | `nvgreorch.cpp:438` | orchagent 再起動後に再処理 |
+| 12 | DEL `NVGRE_TUNNEL_MAP` | 親トンネルが存在しない | WARN ログ + `return true` (消費完了) | `SWSS_LOG_WARN("NVGRE tunnel '%s' does not exist")` `nvgreorch.cpp:565` | なし |
+| 13 | DEL `NVGRE_TUNNEL_MAP` | 指定マップエントリが存在しない | WARN ログ + `return true` (消費完了) | `SWSS_LOG_WARN("NVGRE tunnel map '%s' does not exist")` `nvgreorch.cpp:571` | なし |
+| 14 | DEL `NVGRE_TUNNEL_MAP` | SAI `remove_tunnel_map_entry()` 失敗 | `std::runtime_error` が `delMapperEntry()` 内でキャッチされ `SWSS_LOG_ERROR` 後 `false` を返す。`delOperation()` は `return true` で消費完了扱い | `SWSS_LOG_ERROR("Error while removing decap tunnel map …")` `nvgreorch.cpp:539-543` | なし (エラー消費) |
+
+### 重要な設計特性
+
+**`return true` による永続廃棄 (シナリオ 7、9)**:
+`NvgreTunnelMapOrch` は親トンネル未登録 (シナリオ 7) および VLAN 未登録 (シナリオ 9) のいずれの場合も `return true` を返してエントリを**永続廃棄**する。`Orch2` フレームワークでは `true` = 消費完了のためキューへ再投入されない。これらの条件が解消された後も MAP エントリは自動復旧しない。`NVGRE_TUNNEL` SET が orchagent 処理完了した後に `NVGRE_TUNNEL_MAP` を書き込む手順を守ることで回避できる（Phase B 参照）。
+
+**SAI 操作失敗は orchagent abort (シナリオ 2–4、11)**:
+SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tunnel_termination / create_tunnel_map_entry`) が `SAI_STATUS_SUCCESS` 以外を返すと `std::runtime_error` がスローされる。`NvgreTunnelOrch::addOperation()` には catch ブロックが存在しないため、例外はスタックを伝播して orchagent プロセスを abort させる。systemd の自動再起動後に orchagent が CONFIG_DB を再読み込みして再処理する。
+
+**DEL の SAI 失敗はエラーを飲み込む (シナリオ 6、14)**:
+削除操作 (`removeNvgreTunnel()` / `delMapperEntry()`) は `std::runtime_error` を catch してログ出力後に処理を継続 / `false` を返す。`delOperation()` は `return true` で消費完了扱いにするため、SAI 上でオブジェクトが残留する可能性がある。
+
+<!-- /failure -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
