@@ -657,6 +657,63 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への
 <!-- source: sonic-swss/orchagent/orch.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / 構成差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/stp-mst-platform.md`
+> 調査対象: `sonic-swss/cfgmgr/stpmgrd.cpp`, `sonic-swss/cfgmgr/stpmgr.cpp`, `sonic-swss/cfgmgr/stpmgr.h`
+
+`stpmgrd` は SAI / ASIC SDK を一切経由しない純粋なソフトウェア STP デーモンであり、ASIC ベンダー固有の処理は存在しない。プラットフォーム差は `max_stp_instances` の上限値と multi-asic / VoQ chassis への非対応に集約される。
+
+### max_stp_instances — ASIC 能力依存の上限値
+
+`stpmgrd` 起動時 (`stpmgrd.cpp:77-78`) に `getStpMaxInstances()` が `STATE_STP_TABLE|GLOBAL.max_stp_inst` を最大 60 秒ポーリングして取得し、stpd へ `STP_INIT_READY` メッセージで通知する。この値はプラットフォームドライバが書き込む ASIC 能力に由来する[^ph1]。
+
+| 状態 | `max_stp_instances` の値 | 備考 |
+|---|---|---|
+| STATE_STP_TABLE 書込み済み | プラットフォームドライバが書いた値 | ASIC 依存（例: Broadcom は一般的に最大 64） |
+| 60 秒タイムアウト or 値 0 | `STP_DEFAULT_MAX_INSTANCES = 255` | ハードコードフォールバック (`stpmgr.h:38`) |
+| VS (virtual switch) | 多くの場合 255（STATE_DB 未書込のため） | テスト用フォールバック動作 |
+
+`IS_INST_ID_AVAILABLE()` マクロ (`stpmgr.h:47`) が `l2InstPool.count() < max_stp_instances` でチェックするため、`max_stp_instances` の値がプラットフォームごとに異なると MST インスタンスの新規作成可能数が変わる。CLI バリデーション (`config/stp.py`) は `MST_MAX_INSTANCES = 63` で上限を固定しているため、stpd 側の制限が 63 以上であれば実用上の差は生じない。
+
+### multi-asic / VoQ chassis 非対応
+
+`stpmgrd.cpp:35-37` は `DBConnector` をすべて `DEFAULT_UNIXSOCKET`（ホスト namespace）で生成し、`is_multi_npu()` / `gMySwitchType` / `isChassisDbInUse()` を一切参照しない[^ph2]。
+
+| 構成 | stpmgrd の動作範囲 | 注意点 |
+|---|---|---|
+| 通常シングル ASIC | ホスト CONFIG_DB 全体 | 正常動作 |
+| multi-asic | ホスト CONFIG_DB のみ（asicN namespace 非参照） | ASIC namespace の設定は対象外 |
+| VoQ chassis (line card) | 当該 line card のホスト CONFIG_DB のみ | カード間 MST 状態同期機構なし |
+
+### PortInitDone 待機 — ポート初期化タイミング依存
+
+`stpmgrd.cpp:72` の `stpmgr.isPortInitDone(&app_db)` が `APPL_DB:APP_PORT_TABLE|PortInitDone` を無限ループで待機する。PortsOrch が全ポートの SAI OID 取得完了を宣言するまで stpmgrd の処理は開始されない。プラットフォームによって起動所要時間は異なるが、stpmgrd 自体の動作ロジックに差はない[^ph3]。
+
+### PortChannel (LAG) の ready 判定
+
+`STP_MST_PORT` の SET 処理で PortChannel インタフェースが対象の場合、`isLagStateOk()` (`stpmgr.cpp:1292`) が `STATE_LAG_TABLE` エントリの存在を確認してから stpd に通知する。ASIC によって LAG 初期化タイミングが異なるが、stpmgrd の動作（STATE_LAG_TABLE が現れるまで保留）は同一。
+
+### warm-reboot (宣言のみ)
+
+`stpmgrd.cpp:39-40` で `WarmStart::initialize("stpmgrd", "stpd")` / `WarmStart::checkWarmStart("stpmgrd", "stpd")` を呼ぶが、stpmgr.cpp 内に warm-reboot 固有のリストア処理は実装されていない。warm-reboot 後も通常起動と同等の全 CONFIG_DB 再処理が行われる。FlexCounterOrch の 60 秒ブロックのような特別な遅延機構は存在しない[^ph4]。
+
+### プラットフォーム差まとめ
+
+| 差異項目 | 通常 ASIC | VS/テスト環境 | multi-asic / VoQ |
+|---|---|---|---|
+| `max_stp_instances` 上限 | STATE_DB 値（ASIC 依存） | 255（フォールバック） | 255（STATE_DB 未書込の場合が多い） |
+| multi-asic namespace 対応 | N/A（シングルのみ） | N/A | **非対応**（ホスト namespace のみ） |
+| warm-reboot リストア | なし（全再処理） | なし | なし |
+
+[^ph1]: getStpMaxInstances 実装: `sonic-swss/cfgmgr/stpmgr.cpp:1381-1413`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp#L1381>
+[^ph2]: stpmgrd DBConnector 初期化: `sonic-swss/cfgmgr/stpmgrd.cpp:35-37`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgrd.cpp#L35>
+[^ph3]: isPortInitDone: `sonic-swss/cfgmgr/stpmgr.cpp:1257-1274`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp#L1257>
+[^ph4]: WarmStart 宣言: `sonic-swss/cfgmgr/stpmgrd.cpp:39-40`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgrd.cpp#L39>
+
+<!-- /platform -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
