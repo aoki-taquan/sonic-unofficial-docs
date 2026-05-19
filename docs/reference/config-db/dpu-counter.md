@@ -259,6 +259,92 @@ FLEX_COUNTER_TABLE|ENI の `enable` が実際に機能するためには、
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+> **調査根拠**: `flexcounterorch.cpp:155-417`, `dashcounter.h:23-71`, `dashorch.cpp:299-305,751-752,903-904` 全行精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-counter-failure.md`
+
+### 失敗パターン一覧
+
+| # | トリガー | ログレベル | FLEX_COUNTER_DB への影響 | 自動回復 |
+|---|---------|---------|----------------------|---------|
+| 1 | 無効グループキー | NOTICE | なし | なし (再書き込みが必要) |
+| 2 | `allPortsReady() = false` | なし | 保留 | 自動 (PortInitDone 後) |
+| 3 | Warm-reboot 60 秒タイマー | なし | 保留 | 自動 (60 秒後) |
+| 4 | ENI OID が NULL (`addToFC`) | WARN | なし (書込みスキップ) | なし (SAI 復旧要) |
+| 5 | ENI エントリが空で `enable` | なし | なし | 自動 (ENI 追加時に補完) |
+| 6 | 未サポートフィールド | NOTICE | なし | 不要 (他フィールドは継続) |
+| 7 | `dash_orch` が nullptr | なし | per-OID 書込みスキップ | なし (DashOrch 初期化要) |
+| 8 | ENI OID が NULL (`removeFromFC`) | WARN | ゴミエントリ残留の可能性 | orchagent 再起動後 |
+
+### パターン詳細
+
+**1. 無効グループキー → 即削除・retry なし**
+
+`FLEX_COUNTER_TABLE` に `flexCounterGroupMap` 未登録のキーが書かれた場合、`NOTICE` ログ出力後エントリを即削除する。ENI / DASH_METER は登録済みキーのため通常このパスには入らない。
+
+```cpp
+// flexcounterorch.cpp:183-188
+if (!flexCounterGroupMap.count(key))
+{
+    SWSS_LOG_NOTICE("Invalid flex counter group input, %s", key.c_str());
+    consumer.m_toSync.erase(it++);
+    continue;
+}
+```
+
+**2. `allPortsReady() = false` → m_toSync 保留（自動回復）**
+
+`FlexCounterOrch::doTask()` は `gPortsOrch->allPortsReady()` が `false` の間、全エントリを `m_toSync` に残してリターンする (`flexcounterorch.cpp:164-167`)。DPU ノードでは物理ポートが存在しない場合もあるが `gPortsOrch` が `nullptr` でない限りガードが適用される。portsyncd が PortInitDone を発行した時点で一括自動処理される。
+
+**3. Warm-reboot 60 秒タイマー → 全保留**
+
+Warm-reboot 時のみコンストラクタが 60 秒タイマーを起動し、`m_delayTimerExpired = false` の間 `doTask()` が即リターンする (`flexcounterorch.cpp:156-159`)。cold-start では `m_delayTimerExpired = true` が即時設定されるため発生しない。60 秒後に自動回復。
+
+**4. ENI OID が NULL → WARN + setCounterIdList スキップ**
+
+`DashCounter::addToFC()` が `SAI_NULL_OBJECT_ID` を受け取ると `WARN` ログを出力し `setCounterIdList` をスキップする (`dashcounter.h:30-34`)。SAI での ENI オブジェクト生成失敗が原因となる場合が多く、自動回復はない。
+
+```cpp
+// dashcounter.h:30-34
+if (oid == SAI_NULL_OBJECT_ID)
+{
+    SWSS_LOG_WARN("Cannot add counter on NULL OID for %s", name.c_str());
+    return;
+}
+```
+
+**5. ENI エントリが空で `enable` → silent no-op（後から自動補完）**
+
+`FLEX_COUNTER_STATUS=enable` 受信時に `eni_entries_` が空の場合、`refreshStats()` のループが 0 回実行され FLEX_COUNTER_DB への書込みは発生しない (silent)。後から ENI が追加されるたびに `EniCounter.addToFC(eni_id, eni)` (`dashorch.cpp:751`) が個別に `setCounterIdList` を呼び出し、`fc_status == true` であれば自動的にカウンタ登録が完了する。
+
+**6. 未サポートフィールド → NOTICE + 継続**
+
+`FLEX_COUNTER_STATUS` / `POLL_INTERVAL` / `BULK_CHUNK_SIZE` 以外のフィールドが含まれると `NOTICE` ログを出力する (`flexcounterorch.cpp:395-398`)。エントリは削除されず他フィールドの処理は継続するため FLEX_COUNTER_DB への実害はない。
+
+**7. `dash_orch` が nullptr → per-OID 書込みスキップ**
+
+```cpp
+// flexcounterorch.cpp:299-305
+if (dash_orch && (key == ENI_KEY))
+{
+    dash_orch->handleFCStatusUpdate((value == "enable"));
+}
+if (dash_orch && (key == DASH_METER_KEY))
+{
+    dash_orch->handleMeterFCStatusUpdate((value == "enable"));
+}
+```
+
+`DashOrch` がディレクトリに未登録の場合、`FLEX_COUNTER_STATUS` 変化は `FlexCounterManager` レベルの FLEX_COUNTER_DB グループ設定のみ更新され、per-OID の `ENI_COUNTER_ID_LIST` は書き込まれない。DASH 機能を含まないビルドや `DashOrch` 初期化失敗時に発生。ログなし。
+
+**8. removeFromFC で NULL OID → WARN のみ**
+
+ENI 削除時に NULL OID を受け取ると `WARN` ログ後に return し、`clearCounterIdList` は呼ばれない (`dashcounter.h:38-44`)。FLEX_COUNTER_DB にゴミエントリが残留する可能性があるが、orchagent 再起動後に再構築される。
+
+<!-- /failure -->
+
 ## 制約
 
 - `POLL_INTERVAL`: 100 以上 (uint32 上限 4294967295)
