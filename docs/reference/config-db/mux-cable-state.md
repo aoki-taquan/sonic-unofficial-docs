@@ -400,3 +400,50 @@ const std::string loopback3 = "Loopback3|";
 linkmgrd は `Loopback3|<IP>` のパターンで CONFIG_DB の `LOOPBACK_INTERFACE` テーブルを探索し、IPv4 アドレスから `read_side` (0 = T0, 1 = LT0) を決定する。`"Loopback3"` という名称はコード固定であり、他のループバックインタフェース名には対応しない。Loopback3 IPv4 が見つからない場合は `MUXLOGFATAL` を出力し、コード内デフォルト値 (`10.212.64.1/32` / `10.212.64.2/32` 等) を使用するが、この状態は設定誤りを示すため正常運用時には発生しない (y_cable_helper.py:63-66, DbInterface.cpp:729-730)。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の状態遷移は STATE_DB 本体への書き込み以外に、APPL_DB の複数テーブル・STATE_DB 内のメトリクステーブル・SAI (ASIC) への副次操作を引き起こす。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-side-effects.md`
+
+### APPL_DB への副次書込み
+
+| タイミング | テーブル | キー | 操作 | 根拠 |
+|---------|---------|------|------|------|
+| MUX state 変化時（常時） | `APPL_DB HW_MUX_CABLE_TABLE` | `<ifname>` | `state` フィールド SET | `MuxCableOrch::updateMuxState()` → `mux_table_->set()` (muxorch.cpp:2509-2514) |
+| `active` → `standby` 遷移 | `APPL_DB TUNNEL_ROUTE_TABLE` | `<server_ip>/32` | SET (alias フィールド) | `addTunnelRoute()` (muxorch.cpp:2547-2560) |
+| `standby` → `active` 遷移 | `APPL_DB TUNNEL_ROUTE_TABLE` | `<server_ip>/32` | DEL | `removeTunnelRoute()` (muxorch.cpp:2562-2570) |
+
+`APPL_DB HW_MUX_CABLE_TABLE` への書き込みは linkmgrd の `handleSwssNotification()` (DbInterface.cpp:1833) が購読しており、linkmgrd 内部ステートマシンの更新トリガとなる。`APPL_DB TUNNEL_ROUTE_TABLE` 更新は RouteOrch が処理し、standby ToR 側の `show ip route` に tunnel 宛 static route として現れる。
+
+### STATE_DB 内の副次書込み（メトリクス）
+
+MUX 状態遷移の開始・終了タイムスタンプが `MUX_METRICS_TABLE` (STATE_DB) に記録される。
+
+| タイミング | フィールド | 値 |
+|---------|-----------|-----|
+| `setState()` 呼び出し直後（遷移開始） | `orch_switch_<new_state>_start` | ISO 形式タイムスタンプ (マイクロ秒精度) |
+| `setState()` 完了後（遷移終了）または rollback 後 | `orch_switch_<new_state>_end` | ISO 形式タイムスタンプ |
+
+`MuxCableOrch::updateMuxMetricState()` が `STATE_MUX_METRICS_TABLE_NAME = "MUX_METRICS_TABLE"` に hset する (muxorch.cpp:540,556,576,611,2516-2544)。rollback が発生した場合も `_end` タイムスタンプは書き込まれる。
+
+### SAI (ASIC / データプレーン) への副次操作
+
+状態遷移は SAI API 経由でデータプレーンを直接変更する。以下は遷移方向ごとの操作概要。
+
+| 遷移方向 | SAI 操作 | 概要 |
+|---------|---------|------|
+| `standby` → `active` | ACL drop rule 削除 | standby 側の `IngressTableDrop / mux_acl_rule` を削除 (`stateActive()` muxorch.cpp:475-479) |
+| `standby` → `active` | neighbor 有効化 | `gNeighOrch->enableNeighbors()` でサーバ neighbor を SAI に再作成 |
+| `standby` → `active` | nexthop / ECMP route 更新 | tunnel nexthop → local neighbor nexthop へ切り替え (`updateNextHopRoutes`, `invalidnexthopinNextHopGroup`, `validnexthopinNextHopGroup`) |
+| `standby` → `active` | tunnel route 削除 | `remove_route(pfx)` で server IP /32 → MuxTunnel0 の static route を SAI から削除 |
+| `active` → `standby` | neighbor 無効化 | `gNeighOrch->disableNeighbors()` でサーバ neighbor を SAI から削除 |
+| `active` → `standby` | nexthop / ECMP route 更新 | local neighbor nexthop → tunnel nexthop へ切り替え |
+| `active` → `standby` | tunnel route 追加 | `create_route(pfx, tunnelId)` で server IP /32 → MuxTunnel0 nexthop を SAI に追加 |
+| `active` → `standby` | ACL drop rule 追加 | `IngressTableDrop / mux_acl_rule` を SAI に追加 (`stateStandby()` muxorch.cpp:498-508) |
+
+SAI 操作が途中で失敗すると rollback が実行され、`MUX_CABLE_TABLE.state` は rollback 先 state の値で上書きされる。STATE_DB 更新と SAI 操作は同一トランザクション内で原子的には行われないため、rollback 直後は STATE_DB 値とデータプレーンの実態が一時的に乖離する可能性がある (muxorch.cpp:547-611)。
+
+<!-- /side-effects -->
