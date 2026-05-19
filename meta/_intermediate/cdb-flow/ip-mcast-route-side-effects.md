@@ -1,63 +1,77 @@
-# IP マルチキャストルート (P4RT) — Phase F 副作用スキャンノート
+# ip-mcast-route: Phase F — 副次 DB 書込 (side-effects)
 
-対象テーブル: `REPLICATION_IP_MULTICAST_TABLE` / `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE`
-Writer: `p4rt-app`
-Consumer: `L3MulticastManager` / `IpMulticastManager` (`sonic-swss/orchagent/p4orch/`)
-スキャン範囲: `ip_multicast_manager.cpp:L760-890`, `l3_multicast_manager.cpp:L2190-2270`
+調査日: 2026-05-19  
+調査対象:
+- `sonic-net/sonic-swss` `orchagent/p4orch/ip_multicast_manager.cpp`
+- `sonic-net/sonic-swss` `orchagent/p4orch/l3_multicast_manager.cpp`
 
----
+## 結論サマリー
 
-## 検出した副作用
+`REPLICATION_IP_MULTICAST_TABLE` / `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE`
+への書き込みが引き起こす副次的な状態変化は以下に集約される。
 
-### 1. P4OidMapper への OID 登録・参照カウント変更
+1. **SAI ASIC 側への書き込み** (ASIC_STATE 経由; 主目的)
+2. **P4OidMapper 内部テーブル更新** (in-process OID キャッシュ; Redis DB ではない)
+3. **CRM カウンタ更新** (`COUNTERS_DB::CRM_IPMC_ENTRY` 相当; `gCrmOrch` 経由)
+4. **VRF 参照カウント更新** (`VRFOrch` 内部カウンタ; FIXED テーブルのみ)
+5. **APP_P4RT_TABLE へのステータス書き戻し** (失敗/成功通知; m_publisher 経由)
 
-REPLICATION_IP_MULTICAST_TABLE (SET):
-- `m_p4OidMapper->setOID(SAI_OBJECT_TYPE_IPMC_GROUP, entry.multicast_group_id, mcast_group_oid)` — SAI グループ OID を登録 (`l3_multicast_manager.cpp:L2196-2197`)
-- `m_p4OidMapper->setOID(SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER, ...)` — 各メンバーの OID を登録 (`l3_multicast_manager.cpp:L2262`)
-- `FIXED_IPV4/IPV6_MULTICAST_TABLE` が存在する場合、そのグループに対する参照カウントを管理するため、削除順を誤ると SWSS_RC_NOT_FOUND が発生する
+STATE_DB / APPL_DB への直接書き込みは一切ない。COUNTERS_DB への書き込みは CRM 経由のみ。
 
-FIXED_IPV4/IPV6_MULTICAST_TABLE (SET):
-- `m_p4OidMapper->setDummyOID(SAI_OBJECT_TYPE_IPMC_ENTRY, key)` — 逆引き用ダミー OID 登録 (`ip_multicast_manager.cpp:L772-773`)
-- `m_p4OidMapper->increaseRefCount(SAI_OBJECT_TYPE_IPMC_GROUP, multicast_group_id)` — グループの参照カウントをインクリメント (`ip_multicast_manager.cpp:L776-777`)
-- `m_vrfOrch->increaseVrfRefCount(vrf_id)` — VRF の参照カウントをインクリメント (`ip_multicast_manager.cpp:L775`)
+## 詳細
 
-FIXED_IPV4/IPV6_MULTICAST_TABLE (DEL):
-- `m_p4OidMapper->decreaseRefCount(SAI_OBJECT_TYPE_IPMC_GROUP, multicast_group_id)` — グループの参照カウントをデクリメント (`ip_multicast_manager.cpp:L881-882`)
-- `m_p4OidMapper->eraseOID(SAI_OBJECT_TYPE_IPMC_ENTRY, key)` — IPMC エントリ OID を削除 (`ip_multicast_manager.cpp:L883-884`)
-- `m_vrfOrch->decreaseVrfRefCount(vrf_id)` — VRF の参照カウントをデクリメント (`ip_multicast_manager.cpp:L886`)
+### 1. SAI / ASIC_STATE
 
-### 2. CRM (Capacity Resource Manager) カウンタ更新
+| 操作 | テーブル | SAI API | コード根拠 |
+|------|---------|---------|-----------|
+| REPLICATION SET | SAI_OBJECT_TYPE_IPMC_GROUP | `sai_ipmc_group_api->create_ipmc_group()` | `l3_multicast_manager.cpp:L2196` |
+| REPLICATION SET | SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER (replicas 数) | `sai_ipmc_group_api->create_ipmc_group_member()` | `l3_multicast_manager.cpp:L2262` |
+| REPLICATION DEL | SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER | `sai_ipmc_group_api->remove_ipmc_group_member()` | `l3_multicast_manager.cpp:L2552` |
+| REPLICATION DEL | SAI_OBJECT_TYPE_IPMC_GROUP | `sai_ipmc_group_api->remove_ipmc_group()` | `l3_multicast_manager.cpp:L2247` |
+| FIXED SET (初回のみ) | SAI_OBJECT_TYPE_RPF_GROUP + SAI_OBJECT_TYPE_RPF_GROUP_MEMBER | `sai_rpf_group_api->create_rpf_group()` / `create_rpf_group_member()` | `ip_multicast_manager.cpp:L651-665` |
+| FIXED SET | SAI_OBJECT_TYPE_IPMC_ENTRY | `sai_ipmc_api->create_ipmc_entry()` | `ip_multicast_manager.cpp:L761` |
+| FIXED DEL | SAI_OBJECT_TYPE_IPMC_ENTRY | `sai_ipmc_api->remove_ipmc_entry()` | `ip_multicast_manager.cpp:L874` |
+| FIXED DEL (最終エントリ削除後) | SAI_OBJECT_TYPE_RPF_GROUP_MEMBER + SAI_OBJECT_TYPE_RPF_GROUP | `sai_rpf_group_api->remove_rpf_group_member()` / `remove_rpf_group()` | `ip_multicast_manager.cpp:L688-694` |
 
-FIXED_IPV4/IPV6_MULTICAST_TABLE:
-- SET (CREATE) 成功時: `gCrmOrch->incCrmResUsedCounter(CrmResourceType::CRM_IPMC_ENTRY)` (`ip_multicast_manager.cpp:L774`)
-- DEL 成功時: `gCrmOrch->decCrmResUsedCounter(CrmResourceType::CRM_IPMC_ENTRY)` (`ip_multicast_manager.cpp:L885`)
-- CRM は STATE_DB `CRM_STATS_TABLE` の使用量カウンタに反映される。閾値超過時に syslog アラートが発生する
+### 2. P4OidMapper 内部テーブル (in-process 非 Redis)
 
-### 3. 内部キャッシュ更新
+| 操作 | SAI タイプ | キー | コード根拠 |
+|------|-----------|------|-----------|
+| REPLICATION SET 成功 | SAI_OBJECT_TYPE_IPMC_GROUP | multicast_group_id | `l3_multicast_manager.cpp:L2196` setOID |
+| REPLICATION SET 成功 | SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER | replica.key | `l3_multicast_manager.cpp:L2262` setOID |
+| REPLICATION DEL 成功 | SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER | replica.key | `l3_multicast_manager.cpp:L2552` eraseOID |
+| REPLICATION DEL 成功 | SAI_OBJECT_TYPE_IPMC_GROUP | multicast_group_id | `l3_multicast_manager.cpp:L2247` eraseOID |
+| FIXED SET 成功 | SAI_OBJECT_TYPE_IPMC_ENTRY | ip_multicast_entry_key | `ip_multicast_manager.cpp:L772` setDummyOID |
+| FIXED SET 成功 | SAI_OBJECT_TYPE_IPMC_GROUP (refcount増) | multicast_group_id | `ip_multicast_manager.cpp:L776` increaseRefCount |
+| FIXED DEL 成功 | SAI_OBJECT_TYPE_IPMC_GROUP (refcount減) | multicast_group_id | `ip_multicast_manager.cpp:L881` decreaseRefCount |
+| FIXED DEL 成功 | SAI_OBJECT_TYPE_IPMC_ENTRY | ip_multicast_entry_key | `ip_multicast_manager.cpp:L883` eraseOID |
 
-- IpMulticastManager: `m_ipMulticastTable[key] = entry` で内部マップ更新 (`ip_multicast_manager.cpp:L768-771`)
-- L3MulticastManager: `m_multicastGroupTable[key]` に SAI グループ・メンバー情報を格納
+### 3. CRM カウンタ (FIXED_IPV4/IPV6_MULTICAST_TABLE のみ)
 
-### 4. APP_DB への応答 publish
+| 操作 | CRM リソースタイプ | コード根拠 |
+|------|-----------------|-----------|
+| FIXED SET 成功 | `CRM_IPMC_ENTRY` (+ 1) | `ip_multicast_manager.cpp:L774` `gCrmOrch->incCrmResUsedCounter()` |
+| FIXED DEL 成功 | `CRM_IPMC_ENTRY` (- 1) | `ip_multicast_manager.cpp:L885` `gCrmOrch->decCrmResUsedCounter()` |
 
-- 処理完了（成功・失敗問わず）後に `m_publisher->publish(APP_P4RT_TABLE_NAME, key, fvs, status)` でコントローラ (`p4rt-app`) に結果を書き戻す (`ip_multicast_manager.cpp:L183-189`, `l3_multicast_manager.cpp:L375,L433,L448,L476`)
-- 失敗時は残りエントリに `SWSS_RC_NOT_EXECUTED` を付与してバッチ中断
+`REPLICATION_IP_MULTICAST_TABLE` の IPMC_GROUP / IPMC_GROUP_MEMBER に対応する CRM リソースタイプは
+`l3_multicast_manager.cpp` 内に存在しない (コメントアウト済み: `L387` `// attr.id = SAI_IPMC_ENTRY_ATTR_COUNTER_ID;`)。
 
-### 5. SAI オブジェクト作成・削除
+### 4. VRF 参照カウント (FIXED_IPV4/IPV6_MULTICAST_TABLE のみ)
 
-- REPLICATION SET: `SAI_OBJECT_TYPE_IPMC_GROUP` + `SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER` を SAI に作成
-- FIXED SET: `SAI_OBJECT_TYPE_IPMC_ENTRY` + 必要に応じて `SAI_OBJECT_TYPE_RPF_GROUP` / `SAI_OBJECT_TYPE_RPF_GROUP_MEMBER` / `SAI_OBJECT_TYPE_ROUTER_INTERFACE` / `SAI_OBJECT_TYPE_NEXT_HOP` を SAI に作成
-- 初回 FIXED エントリ追加時は `createDefaultRpfGroup()` が RPF group を自動作成 (`ip_multicast_manager.cpp:L647-697`)
-- 全 FIXED エントリ削除後は `deleteDefaultRpfGroup()` が RPF group を自動削除
+| 操作 | VRF 操作 | コード根拠 |
+|------|---------|-----------|
+| FIXED SET 成功 (非空 vrf_id) | `VRFOrch::increaseVrfRefCount(vrf_id)` | `ip_multicast_manager.cpp:L775` |
+| FIXED DEL 成功 (非空 vrf_id) | `VRFOrch::decreaseVrfRefCount(vrf_id)` | `ip_multicast_manager.cpp:L886` |
 
----
+VRF 参照カウントは VRFOrch のインプロセスカウンタ。Redis には書き込まれない。
 
-## 副作用サマリ
+### 5. APP_P4RT_TABLE ステータス書き戻し
 
-| 操作 | 直接副作用 | 間接副作用 |
-|------|-----------|-----------|
-| REPLICATION SET | P4OidMapper IPMC_GROUP/MEMBER OID 登録、SAI IPMC_GROUP/MEMBER 作成 | FIXED テーブルから GROUP への参照カウント管理が有効化 |
-| REPLICATION DEL | P4OidMapper OID 削除、SAI IPMC_GROUP/MEMBER 削除 | FIXED エントリが参照カウントを保持している間は削除失敗 |
-| FIXED SET (初回) | P4OidMapper IPMC_ENTRY ダミー OID 登録、VRF refcount 増加、GROUP refcount 増加、CRM_IPMC_ENTRY インクリメント、RPF group 自動作成 | SAI IPMC_ENTRY 作成 |
-| FIXED SET (UPDATE) | 古い GROUP refcount 減少、新 GROUP refcount 増加 | SAI IPMC_ENTRY 属性更新 |
-| FIXED DEL | P4OidMapper IPMC_ENTRY OID 削除、VRF refcount 減少、GROUP refcount 減少、CRM_IPMC_ENTRY デクリメント | 全エントリ削除後に RPF group 自動削除 |
+処理成功・失敗ともに `m_publisher->publish(APP_P4RT_TABLE_NAME, ...)` でコントローラ (`p4rt-app`) へ
+ステータスコードを返す (`ip_multicast_manager.cpp:L132,L147,L159,L185,L230`)。
+バッチ中断時は残エントリに `SWSS_RC_NOT_EXECUTED` が付与される (`L183-189`)。
+
+### 6. STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書き込み — なし
+
+grep 結果: `ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` には `STATE_DB` `FLEX_COUNTER_DB`
+`NotificationProducer` 等の直接書き込みは存在しない。

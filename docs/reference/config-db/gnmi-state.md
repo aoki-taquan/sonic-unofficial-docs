@@ -409,4 +409,49 @@ telemetry デーモン
 -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`TELEMETRY_CONNECTIONS` テーブルへの書き込みロジックは `gnmi_server/connection_manager.go` 内に完結しており、ASIC 種別・`DEVICE_METADATA` の `platform` / `hwsku` フィールド・サードパーティ SAI 実装に**依存しない**。STATE_DB への HSet / HDel は Redis TCP 接続経由でのみ行われ、スイッチ ASIC とは直接関係しない。
+
+### A. 設計上プラットフォーム非依存な点
+
+| 項目 | 詳細 | evidence |
+|------|------|----------|
+| ASIC 種別 | `connection_manager.go` は ASIC / SAI API を参照しない。broadcom / mellanox / barefoot / cisco-8000 等で挙動に差はない | `connection_manager.go` 全体 — `sai_*` 系 import なし |
+| `platform` / `hwsku` 文字列 | `DEVICE_METADATA|localhost` の `platform` / `hwsku` を参照しない。プラットフォーム分岐コードなし | `connection_manager.go` — `DEVICE_METADATA` 参照なし |
+| connection key フォーマット | peer IP:port + gNMI query + RFC3339 タイムスタンプで構成。ASIC に依存しない | `connection_manager.go:94-108` — `createKey()` |
+| `"active"` 固定値 | 全プラットフォームで HSet 値は `"active"` のみ | `connection_manager.go:116` |
+| TCP 接続 | Redis クライアントは `Network: "tcp"` 固定。プラットフォーム差なし | `connection_manager.go:44` |
+
+### B. multi-ASIC / namespace 環境での注意点
+
+`PrepareRedis()` は `sdcfg.GetDbDefaultNamespace()` を呼び、**常にデフォルト名前空間（空文字列 `""`）** の STATE_DB アドレスを取得する（`connection_manager.go:33`）。
+
+| 環境 | 動作 | 影響 |
+|------|------|------|
+| シングル ASIC（通常構成） | デフォルト名前空間の STATE_DB に書き込む。動作に問題なし | なし |
+| multi-ASIC（`asic0` / `asic1` / ... 並存） | **デフォルト名前空間の STATE_DB にのみ書き込む**。各 ASIC 名前空間の STATE_DB には `TELEMETRY_CONNECTIONS` が存在しない | `show gnmi` はデフォルト名前空間のみ参照するため、表示上は一貫している |
+| SmartSwitch DPU 構成 | NPU 側の `telemetry` デーモンがデフォルト名前空間 STATE_DB を使用する。DPU namespace には `TELEMETRY_CONNECTIONS` なし | DPU 側の gNMI 接続はこのテーブルに記録されない場合がある |
+
+!!! note "multi-ASIC で `TELEMETRY_CONNECTIONS` は 1 インスタンスのみ"
+    multi-ASIC 環境で `telemetry` デーモンは通常 1 プロセスのみ起動し、デフォルト名前空間の STATE_DB を使う。`AclOrch` 等の各 ASIC 名前空間に対応した複数インスタンス起動モデルとは異なる。
+
+### C. 仮想プラットフォーム (VS) での動作
+
+Virtual Switch (`platform = "vs"`) 環境では Redis が通常通り起動していれば `TELEMETRY_CONNECTIONS` の書き込みは実 ASIC と同一の経路で動作する。SAI 制約がないため capability フォールバックのような特別処理は発生しない。
+
+### プラットフォーム別サマリ
+
+| プラットフォーム | STATE_DB への書込動作 | 備考 |
+|----------------|--------------------|------|
+| broadcom / mellanox / barefoot / cisco-8000 等 | 全プラットフォーム共通 (`"active"` 固定値) | ASIC 種別による差異なし |
+| vs (Virtual Switch) | 実 ASIC と同一動作 | SAI 非依存のため差異なし |
+| multi-ASIC | デフォルト名前空間 STATE_DB のみ使用 | ASIC 名前空間ごとの書き込みなし |
+| SmartSwitch DPU | NPU 側 `telemetry` のみ書き込み | DPU namespace STATE_DB には非対応 |
+
+> **Evidence**: `gnmi_server/connection_manager.go:32-50` (`PrepareRedis()` — `GetDbDefaultNamespace()` → デフォルト namespace の STATE_DB アドレス取得)、`connection_manager.go:44` (`Network: "tcp"` 固定)、`connection_manager.go:116` (`"active"` リテラル)、`sonic_db_config/db_config.go:28-30` (`GetDbDefaultNamespace()` は常に `SONIC_DEFAULT_NAMESPACE`（空文字列）を返す)。`platform` / `hwsku` / SAI 参照なし — `connection_manager.go` 全行調査済み。
+
+<!-- /platform -->
+
 [^1]: `sonic-gnmi` `gnmi_server/connection_manager.go:16` — `const table = "TELEMETRY_CONNECTIONS"`、`PrepareRedis()` / `Add()` / `Remove()` で STATE_DB を読み書き

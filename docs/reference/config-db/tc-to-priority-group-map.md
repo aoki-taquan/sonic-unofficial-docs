@@ -479,7 +479,7 @@ NotificationConsumer: なし
 
 <!-- /pubsub -->
 
-<!-- platform-diff -->
+<!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
 <!-- evidence: meta/_intermediate/cdb-flow/tc-to-priority-group-map-platform.md -->
@@ -546,7 +546,7 @@ YANG の `tc_type` は `uint8 0..15` を許容するが、実用上 TC 8..15 を
 | `decap_tc_to_pg_map` | 不使用 | 不使用 | 不使用 | 使用（SAI tunnel 属性） |
 | TC 8..15 サポート | ASIC 依存（多くは拒否） | ASIC 依存 | ASIC 依存 | ASIC 依存 |
 
-<!-- /platform-diff -->
+<!-- /platform -->
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
