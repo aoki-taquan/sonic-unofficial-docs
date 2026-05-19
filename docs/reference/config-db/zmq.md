@@ -311,6 +311,65 @@ ZMQ チャネル実装に存在する、CONFIG_DB / YANG では管理されな�
 
 <!-- /constants -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+ZMQ ページが扱うフィールドは 2 種類の異なるメカニズムで消費される。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/zmq-pubsub.md`
+
+### A. CONFIG_DB フィールドの読み取り（一回限り、購読なし）
+
+`DEVICE_METADATA|localhost.orch_northbond_dash_zmq_enabled` および `orch_northbond_route_zmq_enabled` は、通常の Orch 購読（`SubscriberStateTable` / `ConsumerStateTable`）経由では**読まれない**。
+
+代わりに `get_feature_status()` (`orch_zmq_config.cpp:81-104`) が orchagent **起動時に一度だけ** `DBConnector::hget()` で直接値を取得する。
+
+```cpp
+// sonic-swss/lib/orch_zmq_config.cpp:87-88
+swss::DBConnector config_db("CONFIG_DB", 0);
+enabled = config_db.hget("DEVICE_METADATA|localhost", feature);
+```
+
+| 項目 | 値 |
+|------|-----|
+| 消費クラス | 購読なし（`DBConnector::hget` 一回読み取り） |
+| 呼び出し元 | `OrchDaemon::init()` → `get_feature_status(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false)` (`orchdaemon.cpp:334`) |
+| 呼び出し元 (DPU) | `DpuOrchDaemon::init()` → `get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true)` (`orchdaemon.cpp:1329`) |
+| runtime 変更反映 | **不可**。orchagent 再起動が必要 |
+| TTL | なし（CONFIG_DB は永続） |
+
+`DPU|<name>.orchagent_zmq_port` は orchagent が直接読まず、`gnmi-native.sh` が起動パラメータとして渡す（`orchagent.sh` 経由）。orchagent への購読・通知はない。
+
+### B. ZMQ チャネル自体の通信メカニズム（northbound 受信側）
+
+ZMQ が有効な場合、orchagent は Redis の Pub/Sub (`ConsumerStateTable`) の代わりに `ZmqConsumerStateTable` / `ZmqServer` を使ってメッセージを受信する。
+
+```
+gNMI / fpmsyncd                orchagent (DPU)
+  ZmqProducerStateTable  →→→  ZmqConsumerStateTable
+  (ZmqClient, tcp://...)       (ZmqServer, tcp://...:8100)
+```
+
+| 項目 | 値 |
+|------|-----|
+| サーバ側クラス | `ZmqServer` (`sonic-swss-common/common/zmqserver.h`) |
+| クライアント側クラス | `ZmqProducerStateTable` (`ZmqClient` ラッパー) |
+| バインドアドレス | `tcp://127.0.0.1:8100`（ローカル）または `tcp://<eth0-midplane IP>:8100`（SmartSwitch）|
+| POP_BATCH_SIZE | `DEFAULT_POP_BATCH_SIZE` = **128** (`zmqserver.h:31`) |
+| 受信バッファ最大 | `MQ_RESPONSE_MAX_COUNT` = **16 MiB** (`zmqserver.h:9`) |
+| キュー内部サイズ | `MQ_SIZE` = **100** エントリ (`zmqserver.h:10`) |
+| ポールタイムアウト | `MQ_POLL_TIMEOUT` = **1000 ms** (`zmqserver.h:12`) |
+| High-Water Mark | `MQ_WATERMARK` = **10000** （超過時 EAGAIN / メッセージ DROP） (`zmqserver.h:13`) |
+| Redis APPL_DB 書込 | **なし**（ZMQ 有効時はメッセージが APPL_DB を経由せず orchagent に直達） |
+| 対象テーブル | `/etc/swss/orch_zmq_tables.conf` の記載テーブル（DASH 系 22 種 / ROUTE_TABLE 等） |
+
+ZMQ 無効時のフォールバック: `create_local_zmq_client()` が `nullptr` を返し、`createProducerStateTable()` が通常の `ProducerStateTable` （Redis Pub/Sub 経路）を生成する (`orch_zmq_config.cpp:117-130`)。
+
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:81-115 (get_feature_status / create_local_zmq_client) -->
+<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp:334,1329 (呼び出し元) -->
+<!-- evidence: sonic-swss-common/common/zmqserver.h:9-31 (MQ 定数群) -->
+<!-- /pubsub -->
+
 ---
 
 ## DEVICE_METADATA|localhost の ZMQ フィールド
