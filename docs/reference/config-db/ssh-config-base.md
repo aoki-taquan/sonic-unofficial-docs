@@ -348,6 +348,65 @@ CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer`
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-pubsub.md`
+
+### Redis 購読方式
+
+`SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:SSH_SERVER|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`SshServer` / `PamLimitsCfg` 経由) | `ConfigDBConnector.subscribe()` | `SSH_SERVER` | `ssh_handler` → `policies_update()` + `update_config_file()` |
+
+`hostcfgd` 以外で `SSH_SERVER` テーブルを購読するプロセスは存在しない（`orchagent` / `syncd` / `mgrd` 等は SSH 設定テーブルを購読しない）。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config ssh-server policies authentication-retries 5
+  ↓ HSET "SSH_SERVER|POLICIES" authentication_retries "5"
+Redis keyspace PUBLISH "__keyspace@4__:SSH_SERVER|POLICIES"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ HGETALL "SSH_SERVER|POLICIES"  ← 通知後に値を再取得
+ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
+  ↓ SshServer.policies_update() → set_policies()
+  │   ├─ copy2(sshd_config → sshd_config.tmp)
+  │   ├─ modify_single_file_inplace でフィールド行内置換/追記
+  │   ├─ sshd -T -f sshd_config.tmp  (検証)
+  │   │   ├─ OK  → rename tmp→本番, systemctl restart ssh
+  │   │   └─ NG  → remove tmp (ロールバック)
+  │   └─ max_sessions は continue でスキップ
+  └─ PamLimitsCfg.update_config_file()
+      └─ Jinja2 テンプレートで /etc/security/limits.conf を再生成
+```
+
+- keyspace 通知のペイロードは操作名（`hset`/`del` 等）のみ。フィールド値は `HGETALL` で取得する。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- 起動時は `config_db.listen(init_data_handler=self.load)`（hostcfgd:2534）により、Subscribe ループ開始前に `SshServer.load()` が `init_data['SSH_SERVER']` を一括スナップショットで適用する。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `SSH_SERVER` 変更 + `sshd -T` 検証成功 | `systemctl restart ssh` | `SshServer.set_policies()` — hostcfgd:1154 |
+| `SSH_SERVER` 変更（常時） | `/etc/security/limits.conf` + `/etc/pam.d/pam-limits-conf` 再生成 | `PamLimitsCfg.update_config_file()` — hostcfgd:1460-1476 |
+| `sshd -T` 検証失敗 | サービス再起動なし（`sshd_config.tmp` を削除してロールバック） | hostcfgd:1158-1160 |
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2478 (subscribe SSH_SERVER) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2534 (listen init_data_handler) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2244,2265 (init_data SSH_SERVER + sshscfg.load) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2299 (ssh_handler) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1075 (SshServer.load / policies_update) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1110-1162 (set_policies + sshd -T gate) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1154 (systemctl restart ssh) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1490 (PamLimitsCfg.update_config_file) -->
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
