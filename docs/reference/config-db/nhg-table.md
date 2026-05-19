@@ -3,7 +3,7 @@ title: NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE
 description: "APPL_DB NEXTHOP_GROUP_TABLE および CLASS_BASED_NEXT_HOP_GROUP_TABLE — fpmsyncd が FRR から受け取った次ホップグループを APPL_DB に書き込み、orchagent の NhgOrch / CbfNhgOrch が SAI 経由で ASIC に反映する。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/nhgorch.cpp
@@ -12,10 +12,19 @@ sources:
     path: orchagent/cbf/cbfnhgorch.cpp
     ref: HEAD
   - repo: sonic-net/sonic-swss
+    path: orchagent/cbf/nhgmaporch.cpp
+    ref: HEAD
+  - repo: sonic-net/sonic-swss
+    path: orchagent/routeorch.cpp
+    ref: HEAD
+  - repo: sonic-net/sonic-swss
     path: fpmsyncd/routesync.cpp
     ref: HEAD
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
+    ref: HEAD
+  - repo: sonic-net/sonic-swss
+    path: orchagent/orch.h
     ref: HEAD
 related:
   config_db:
@@ -220,6 +229,270 @@ SAI グループ属性は固定:
 
 詳細分析: `meta/_intermediate/cdb-flow/nhg-table-cross-refs.md`
 <!-- /cross-refs -->
+
+---
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/nhg-table-failure.md`
+
+Consumer: `NhgOrch::doTask()` (`orchagent/nhgorch.cpp`) および `CbfNhgOrch::doTask()` (`orchagent/cbf/cbfnhgorch.cpp`)。
+
+### 起動ガード
+
+両 Orch の `doTask()` 冒頭で `gPortsOrch->allPortsReady()` を評価し、`false` の場合は即 `return` する（`nhgorch.cpp:41-43`、`cbfnhgorch.cpp:42-44`）。ログ出力なし。`Consumer::m_toSync` のエントリが滞留したまま次回イベントループで暗黙 retry される。
+
+### NEXTHOP_GROUP_TABLE — SET 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| `nexthop_group` と `nexthop`/`ifname` が共存 | `doTask()` L98-103 | `SWSS_LOG_ERROR` → `erase(it)` でエントリ破棄 | なし |
+| SRv6 NHG で `nexthop` 数と `seg_src` 数が不一致 | `doTask()` L209-214 | `SWSS_LOG_ERROR` → `erase(it)` でエントリ破棄 | なし |
+| 再帰 NHG の子 NHG が recursive または temporary | `doTask()` L139-157 | `SWSS_LOG_ERROR("Invalid member nexthop group %s in parent nhg %s")` → `erase(it)` | なし |
+| 再帰 NHG で型不一致（SRv6/overlay 混在） | `doTask()` L175-198 | `SWSS_LOG_ERROR("Inconsistent nexthop group type between %s and %s")` → `erase(it)` | なし |
+| 再帰 NHG の全子 NHG が未登録 | `doTask()` L160-164 | ログなし → `++it` でスキップ | 子 NHG 登録後に自動 retry |
+| NHG 数上限到達 + SRv6 NHG 新規作成 | `doTask()` L252-260 | `SWSS_LOG_DEBUG` → `++it`（temp NHG も作成しない） | リソース解放後に自動 retry |
+| NHG 数上限到達 + 非 SRv6 NHG の temp sync 失敗 | `doTask()` L271-275 | `SWSS_LOG_INFO("Failed to sync temporary NHG %s")` → temp NHG 未登録のまま `++it` | 自動 retry |
+| `createTempNhg()` で有効 NH が 1 つもない | `createTempNhg()` L844-849 | `std::logic_error` throw → 呼び出し元が catch して `SWSS_LOG_INFO` → `++it` | 自動 retry |
+| SAI `create_next_hop_group` 失敗 | `NextHopGroup::sync()` L782-791 | `SWSS_LOG_ERROR("Failed to create next hop group %s, rv:%d")` → `handleSaiCreateStatus()` → `false` | SAI 状態次第で retry |
+| `syncMembers()` でいずれかのメンバーの SAI ID が NULL | `NextHopGroup::syncMembers()` L937-944 | `SWSS_LOG_WARN("Failed to get next hop %s in group %s")` → `sync()` false → `++it` | ネイバー解決後に自動 retry |
+| `syncMembers()` 後のメンバー SAI ID が NULL（bulk create 失敗） | `NextHopGroup::syncMembers()` L973-977 | `SWSS_LOG_ERROR("Failed to create next hop group %s's member %s")` → 部分適用状態 | 自動 retry（部分適用残存に注意） |
+| 単一メンバー NHG で NH ID が SAI_NULL_OBJECT_ID | `NextHopGroup::sync()` L746-749 | `SWSS_LOG_WARN("Next hop %s is not synced")` → `return false` → `++it` | ネイバー解決後に自動 retry |
+| SRv6 nexthop 作成失敗 | `NextHopGroupMember::getNhId()` L551-553 | `SWSS_LOG_ERROR("Failed to create SRv6 nexthop %s")` → SAI_NULL_OBJECT_ID を返す | 上位 syncMembers 失敗として処理 |
+| NHG update でメンバー weight 更新失敗 | `NextHopGroup::update()` L1042-1045 | `SWSS_LOG_WARN("Failed to update member %s weight")` → `return false` → `++it` | 自動 retry |
+| NHG update で旧メンバー削除失敗 | `NextHopGroup::update()` L1057-1060 | `SWSS_LOG_WARN("Failed to remove members from group %s")` → `return false` → `++it` | 自動 retry（部分削除状態残存） |
+| NHG update で新メンバー sync 失敗 | `NextHopGroup::update()` L1080-1083 | `SWSS_LOG_WARN("Failed to sync new members for group %s")` → `return false` → `++it` | 自動 retry |
+
+### NEXTHOP_GROUP_TABLE — DEL 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| DEL 対象 NHG が参照中（ref_count > 0） | `doTask()` L413-417 | `SWSS_LOG_INFO("Unable to remove group %s which is referenced")` → `++it` で保留 | 参照解除（ROUTE_TABLE DEL）後に自動 retry |
+| DEL 対象 NHG が未登録 | `doTask()` L407-411 | `SWSS_LOG_INFO("Unable to find group with key %s to remove")` → `success = true` で消費（冪等） | なし |
+| SAI `remove_next_hop_group` 失敗 | `NhgCommon::remove()` 内部 | `success = false` → `++it`（`m_syncdNextHopGroups` から erase されない） | 自動 retry |
+| DEL と同一キーに pending SET が存在 | `doTask()` L401-405 | DEL をスキップして SET に委ねる（最終状態の整合のため） | — |
+
+### CLASS_BASED_NEXT_HOP_GROUP_TABLE — SET 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| `members` が空または重複 | `getMembers()` L225-238 | `SWSS_LOG_ERROR("...members list is empty/not unique")` → `erase(it)` | なし |
+| NHG 数上限到達 | `doTask()` L100-103 | `SWSS_LOG_WARN("Reached next hop group limit.")` → `success=false` → `++it` | リソース解放後に自動 retry |
+| `selection_map` の MAP が未登録 | `CbfNhg::sync()` L319-325 | `SWSS_LOG_ERROR("FC to NHG map index %s does not exist")` → `return false` | MAP 登録後に自動 retry |
+| MAP が参照する最大 NH index がメンバー数以上 | `CbfNhg::sync()` L327-331 | `SWSS_LOG_ERROR("FC to NHG map references more NHG members than exist")` → `return false` | 自動 retry |
+| SAI `create_next_hop_group` 失敗（CBF） | `CbfNhg::sync()` L341-345 | `SWSS_LOG_ERROR("Failed to create CBF next hop group %s")` → `return false` | 自動 retry |
+| `syncMembers()` 失敗（CBF） | `CbfNhg::sync()` L369-373 | `SWSS_LOG_ERROR("Failed to sync CBF next hop group %s")` → `return false` | 自動 retry |
+| sync 成功後に temp NHG メンバーが存在 | `doTask()` L116-119 | `success = false` → `++it`（NHG は登録済み） | temp NHG 昇格後に自動 retry |
+
+### CLASS_BASED_NEXT_HOP_GROUP_TABLE — DEL 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| DEL 対象 CBF NHG が参照中（ref_count > 0） | `doTask()` L165-170 | `SWSS_LOG_WARN("Skipping removal ... which is still referenced")` → `++it` | 参照解除後に自動 retry |
+| DEL 対象 CBF NHG が未登録 | `doTask()` L157-163 | `SWSS_LOG_WARN("Deleting inexistent CBF NHG %s")` → `success = true` で消費（冪等） | なし |
+| SAI remove 失敗（CBF） | `CbfNhg::remove()` / `removeMembers()` | `false` → `success = false` → `++it` | 自動 retry |
+| DEL と同一キーに pending SET が存在 | `doTask()` L152-155 | DEL をスキップして SET に委ねる | — |
+
+### retry 挙動まとめ
+
+| シナリオ | retry 上限 | 解消トリガー |
+|---|---|---|
+| 再帰 NHG メンバー未登録 | なし（無制限） | 子 NHG の SET 処理後 |
+| NHG 数上限到達（SRv6） | なし（無制限） | ASIC リソース解放時 |
+| NHG 数上限到達（temp NHG） | なし（temp 経由で継続） | リソース解放後に完全 NHG へ昇格 |
+| DEL が参照カウントにブロック | なし（無制限） | 参照元（ROUTE_TABLE 等）の DEL 処理後 |
+| フィールド不正（混在・不一致） | **0 回**（即 erase） | CONFIG 修正 + 再投入が必要 |
+
+### 部分適用に関する注意
+
+`syncMembers()` は `ObjectBulker` による bulk create を使用する。bulk flush 後に個別 SAI ID を検証するため、一部成功・一部失敗の部分適用が発生しうる。失敗したメンバーは NULL ID のまま残り、成功メンバーのみ SAI に登録済みになる。NHG update 時に旧メンバー削除後・新メンバー追加前の瞬間、NHG は縮退した状態で ASIC に存在する。
+
+SRv6 NHG はリソース枯渇時に temporary group を作成しないため、枯渇中はルート解決そのものが保留される。非 SRv6 NHG は temporary group (1 NH のみ) を経由して ECMP なしでルート解決を継続するが、リソース解放まで ECMP 動作は失われる。
+<!-- /failure -->
+
+---
+
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+`NhgOrch` (`orchagent/nhgorch.cpp`)・`CbfNhgOrch` (`orchagent/cbf/cbfnhgorch.cpp`)・`RouteOrch` (`orchagent/routeorch.cpp`) に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### NHG 上限フォールバック値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` の取得に失敗した場合の NHG 上限フォールバック値 | `routeorch.cpp:37,68` |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | Mellanox プラットフォームで SAI が返す NHG 上限数（全メンバー数 1 前提の値）を ECMP グループ数に換算するための除数 | `routeorch.cpp:38,86` |
+
+`RouteOrch` 初期化時に `sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr)` で `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を取得する。取得失敗時は `m_maxNextHopGroupCount = DEFAULT_NUMBER_OF_ECMP_GROUPS (128)` を使用する。Mellanox プラットフォーム（`MLNX_PLATFORM_SUBSTRING = "mellanox"`、`orch.h:42`）の場合、取得値を `DEFAULT_MAX_ECMP_GROUP_SIZE (32)` で割って最終的な上限とする（`routeorch.cpp:83-86`）。
+
+```cpp
+// routeorch.cpp:37-38
+#define DEFAULT_NUMBER_OF_ECMP_GROUPS   128
+#define DEFAULT_MAX_ECMP_GROUP_SIZE     32
+
+// routeorch.cpp:60-88（RouteOrch コンストラクタ）
+sai_status_t status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status != SAI_STATUS_SUCCESS)
+{
+    m_maxNextHopGroupCount = DEFAULT_NUMBER_OF_ECMP_GROUPS;  // 128
+}
+else
+{
+    m_maxNextHopGroupCount = attr.value.s32;
+    char *platform = getenv("platform");
+    if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))
+    {
+        m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;  // /= 32
+    }
+}
+```
+
+### SAI グループタイプ固定値
+
+| 定数 | 値 | 適用箇所 | ソース |
+|------|----|---------|--------|
+| `SAI_NEXT_HOP_GROUP_TYPE_ECMP` | SAI 列挙体 | 通常 NEXTHOP_GROUP_TABLE エントリを SAI に create する際の `SAI_NEXT_HOP_GROUP_ATTR_TYPE` 値。YANG / CONFIG_DB で指定不可 | `nhgorch.cpp:771-772` |
+| `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` | SAI 列挙体 | CBF NHG を SAI に create する際の `SAI_NEXT_HOP_GROUP_ATTR_TYPE` 値。`CLASS_BASED_NEXT_HOP_GROUP_TABLE` エントリは常にこの型で作成される | `cbfnhgorch.cpp:301-302` |
+
+### メンバーウェイト送出閾値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| weight 送出ゼロ閾値 | `0` | `weight == 0` のメンバーは `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT` 属性を SAI に送出しない。ASIC 側はウェイト未指定を等コスト ECMP として扱う | `nhgorch.cpp:1114` |
+
+### CBF メンバーインデックス開始値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| CBF メンバー SAI INDEX 開始値 | `0` (`uint8_t`) | CBF NHG の各メンバーに付与する `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` は追加順に `0, 1, 2, ...` と自動採番される。CONFIG_DB で指定不可。INDEX は `CREATE_ONLY` 属性のため順序変更時は全メンバーの remove → add が必要 | `cbfnhgorch.cpp:257-261` |
+
+### FC 数上限クエリとフォールバック
+
+| 定数 / 挙動 | 値 | 用途 | ソース |
+|------------|-----|------|--------|
+| FC 数フォールバック | `0` | `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` の取得失敗時に `max_num_fcs = 0` を使用。CBF NHG のメンバー数 vs FC 数の超過警告に影響する（`cbfnhgorch.cpp:311-315`） | `nhgmaporch.cpp:318-321` |
+| FC 数超過警告閾値 | `gNhgMapOrch->getMaxNumFcs()` 返値 | CBF NHG のメンバー数 > FC 数のとき `SWSS_LOG_WARN("More CBF NHG members configured than supported Forwarding Classes")` を出力するが、処理を中断しない | `cbfnhgorch.cpp:311-315` |
+
+!!! note "NHG 上限は起動時に 1 度だけ算出"
+    `m_maxNextHopGroupCount` は `RouteOrch` コンストラクタで SAI に問い合わせて確定し、以後変更されない。動的なリソース追加・削除には対応しておらず、ASIC がサポートする最大値の静的スナップショットとして機能する。
+
+!!! note "Mellanox プラットフォームの除算ロジック"
+    Mellanox 向けの `/= DEFAULT_MAX_ECMP_GROUP_SIZE` は「SAI が ECMP グループサイズ=1 を前提に返す最大グループ数」を「サイズ=32 を前提にした ECMP グループ数」に変換するワークアラウンドである（`routeorch.cpp:74-87` のコメント）。他プラットフォームでは除算なしで SAI 返値をそのまま使用する。
+<!-- /hardcoded-constants -->
+
+---
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`NhgOrch` および `CbfNhgOrch` は SAI 経由で ASIC に NHG を反映する主作用のほかに、**COUNTERS_DB** の `CRM` テーブルへ副次的なカウンタ書込を行う。STATE_DB / FLEX_COUNTER_DB / APPL_DB / CONFIG_DB への直接書込みは確認されない。
+
+| 副次 DB | テーブル / キー | 書込フィールド | 書込タイミング |
+|---|---|---|---|
+| COUNTERS_DB | `CRM:STATS` (hash) | `crm_stats_nexthop_group_used` / `crm_stats_nexthop_group_available` | NHG の SAI 作成・削除に連動して in-memory カウンタを増減 → CRM ポーリングタイマー発火時に反映 |
+| COUNTERS_DB | `CRM:STATS` (hash) | `crm_stats_nexthop_group_member_used` / `crm_stats_nexthop_group_member_available` | NHG メンバーの SAI 作成・削除に連動して in-memory カウンタを増減 → CRM ポーリングタイマー発火時に反映 |
+
+### カウンタ増減のトリガ
+
+**NHG グループ作成 (inc)**: `NextHopGroup::sync()` 内で `sai_next_hop_group_api->create_next_hop_group()` が成功すると `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼ぶ (`nhgorch.cpp:795`)。`CbfNhg::sync()` も同様に `create_next_hop_group` 成功後に `incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼ぶ (`cbfnhgorch.cpp:358`)。
+
+**NHG グループ削除 (dec)**: `NextHopGroupBase::remove()` 内で `sai_next_hop_group_api->remove_next_hop_group()` 成功後に `gCrmOrch->decCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼ぶ (`nhgbase.h:277`)。`CbfNhg` も同じ基底クラス実装を経由する。
+
+**NHG メンバー作成 (inc) / 削除 (dec)**:
+
+```cpp
+// nhgbase.h:132  — NextHopGroupMemberBase::sync() — SAI member 作成成功時
+gCrmOrch->incCrmResUsedCounter(CrmResourceType::CRM_NEXTHOP_GROUP_MEMBER);
+
+// nhgbase.h:151  — NextHopGroupMemberBase::remove() — SAI member 削除成功時
+gCrmOrch->decCrmResUsedCounter(CrmResourceType::CRM_NEXTHOP_GROUP_MEMBER);
+```
+
+### COUNTERS_DB への実際の書込み
+
+in-memory カウンタは即時 COUNTERS_DB に書かれるのではなく、`CrmOrch::updateCrmCountersTable()` が `CRM_COUNTERS_POLL` タイマー発火時にバッチで書き込む (`crmorch.cpp:1067-1115`):
+
+```cpp
+// crmorch.cpp:1067-1083
+m_countersCrmTable->set(cnt.first, attrs);
+// → COUNTERS_DB:CRM:STATS
+//   crm_stats_nexthop_group_used / crm_stats_nexthop_group_member_used
+//   crm_stats_nexthop_group_available / crm_stats_nexthop_group_member_available
+```
+
+テーブル名定数: `sonic-swss-common/common/schema.h:237` `COUNTERS_CRM_TABLE = "CRM"`。フィールド名: `crmorch.cpp:360-361` (used)、`crmorch.cpp:314-315` (available)。
+
+> **Evidence**: `nhgorch.cpp:795` (NHG inc)、`nhgbase.h:277` (NHG dec)、`nhgbase.h:132/151` (member inc/dec)、`cbfnhgorch.cpp:358` (CBF NHG inc)、`crmorch.cpp:1067-1115` (COUNTERS_DB 書込)、`schema.h:237` (テーブル名定数)。詳細調査ログ: `meta/_intermediate/cdb-flow/nhg-table-side-effects.md`。
+<!-- /side-effects -->
+
+---
+
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 書き込み側の通信構造
+
+`NEXTHOP_GROUP_TABLE` への書き込み元は **fpmsyncd** のみ。`CLASS_BASED_NEXT_HOP_GROUP_TABLE` は CLI 経路がなく、直接 APPL_DB 書き込み（`config_db.json` 直編集・gNMI 等）のみ。
+
+| テーブル | 書き込み元 | 書き込み方式 |
+|---------|-----------|------------|
+| `NEXTHOP_GROUP_TABLE` | fpmsyncd (`routesync.cpp`) | `ProducerStateTable` (非 ZMQ 固定) |
+| `CLASS_BASED_NEXT_HOP_GROUP_TABLE` | 直接 APPL_DB 書き込み | `ProducerStateTable` または redis-cli |
+
+`m_nexthop_groupTable` は `routesync.cpp:157` で `ProducerStateTable(pipeline, APP_NEXTHOP_GROUP_TABLE_NAME, true)` として初期化される。`ROUTE_TABLE` と異なり ZMQ チャンネルは使用しない（`routesync.cpp:156` との比較）。`ProducerStateTable::set()` / `del()` 呼び出しごとに `NEXTHOP_GROUP_TABLE_CHANNEL@0` へ PUBLISH される。
+
+### 購読方式: ConsumerStateTable (APPL_DB)
+
+`NhgOrch` および `CbfNhgOrch` は orchdaemon 起動時に `Orch(db, tableName)` コンストラクタ経由で `ConsumerStateTable` を生成し APPL_DB を購読する。
+
+```
+orchdaemon.cpp:338-339
+  gNhgOrch    = new NhgOrch   (m_applDb, APP_NEXTHOP_GROUP_TABLE_NAME)
+  gCbfNhgOrch = new CbfNhgOrch(m_applDb, APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME)
+
+Orch::addConsumer() — orch.cpp:1186-1196
+  APPL_DB (dbId != CONFIG_DB / STATE_DB / CHASSIS_APP_DB)
+    → new ConsumerStateTable(db, tableName, gBatchSize, pri)
+    → SUBSCRIBE NEXTHOP_GROUP_TABLE_CHANNEL@0
+               CLASS_BASED_NEXT_HOP_GROUP_TABLE_CHANNEL@0
+```
+
+`ConsumerStateTable` は `ProducerStateTable` が PUBLISH したチャンネルを内部で `SUBSCRIBE` し、メッセージ受信時に `HGETALL` でフィールドを取得して `KeyOpFieldsValuesTuple (key, op, fvs)` に変換する。
+
+### イベント発火から ASIC 適用までの流れ
+
+```
+fpmsyncd: FRR の Netlink nexthop イベント受信
+  → m_nexthop_groupTable.set(key, fvVector)  (routesync.cpp:1882)
+    → ProducerStateTable: APPL_DB HSET + PUBLISH NEXTHOP_GROUP_TABLE_CHANNEL@0
+  → ConsumerStateTable (orchagent 側) がチャンネル通知を受信
+  → orchdaemon 主ループ: m_select->select(&s, SELECT_TIMEOUT=1000ms)  (orchdaemon.cpp:959)
+  → Consumer::execute() → NhgOrch::doTask()
+      gPortsOrch->allPortsReady() チェック後エントリを処理
+      → sai_next_hop_group_api->create_next_hop_group() / remove_next_hop_group()
+```
+
+### orchdaemon の select タイムアウトとバッチサイズ
+
+| パラメータ | 値 | ソース |
+|-----------|-----|--------|
+| `SELECT_TIMEOUT` | 1000 ms | `orchdaemon.cpp:23` |
+| `gBatchSize` | 128 (`DEFAULT_MAX_BULK_SIZE` = 1000 は別用途) | `orchdaemon.cpp:81` |
+
+`gBatchSize` は `ConsumerStateTable` のポップ上限として渡され、1 イベントループ当たり最大 128 エントリを一括処理する。NHG エントリ数が多い起動時の初期スナップショット再生も同バッチサイズで処理される。
+
+### ZMQ 非使用の確認
+
+`NEXTHOP_GROUP_TABLE` は `createProducerStateTable()` ではなく直接 `ProducerStateTable(...)` で初期化されており (`routesync.cpp:157`)、`m_zmqClient` を渡さない。`ZmqConsumerStateTable` は使用されない。`ROUTE_TABLE` のみが ZMQ 経路を持つ (`routesync.cpp:156`)。
+
+### warm restart との関係
+
+orchdaemon の warm restart 時、`ConsumerStateTable` が保持するペンディングエントリは `m_toSync` に残り、reconcile フェーズで再処理される。`NhgOrch` / `CbfNhgOrch` は warm restart に対する個別ハンドラを持たず、`doTask()` の通常ループで `m_syncdNextHopGroups` に存在しないエントリを SAI 再作成する。
+
+> Evidence: `routesync.cpp:157` (ProducerStateTable 初期化、ZMQ 非使用)、`orch.cpp:1186-1196` (addConsumer)、`orchdaemon.cpp:23,338-339,959` (SELECT_TIMEOUT / Orch インスタンス生成 / select ループ)。詳細調査ログ: `meta/_intermediate/cdb-flow/nhg-table-pubsub.md`。
+<!-- /pubsub -->
 
 ---
 

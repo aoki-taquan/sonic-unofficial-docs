@@ -438,6 +438,35 @@ CLI / gNMI 経由の CONFIG_DB 書き込み時に YANG スキーマが検証さ�
 <!-- /constants -->
 
 <!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `NTP_KEY` テーブルの変更に伴って `hostcfgd` の `NtpCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換えと `chrony` サービス再起動に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `NtpCfg.ntp_srv_key_update()` 内に `set(`/`hset(`/`Producer`/`Notification` の呼出 0 件 (`hostcfgd:1366-1406` を grep して 0 ヒット) |
+| STATE_DB | なし | `NtpCfg` は `state_db_conn` を保持しない。STATE_DB 書込は `FipsCfg` (`hostcfgd:1759-1821`) のみ |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 書込参照なし。NTP は SAI カウンタを持たない |
+| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由。`NTP_KEY` を購読する orchagent は `sonic-swss/` に存在しない |
+
+### ファイルシステムへの副次書込（DB 外）
+
+`ntp_srv_key_update()` は `run_cmd(self.CHRONY_RESTART)` によって `systemctl restart chrony` を実行する。chrony 再起動に先立ち、`ntp-config.service` の `ExecStartPre` 相当として `chrony-config.sh` がテンプレートを再展開する。
+
+| 書込先ファイル | 生成手段 | 根拠 |
+|---|---|---|
+| `/etc/chrony/chrony.keys` | `sonic-cfggen -d -t /usr/share/sonic/templates/chrony.keys.j2` | `chrony-config.sh:10` |
+| `/etc/chrony/chrony.conf` | `sonic-cfggen -d -t /usr/share/sonic/templates/chrony.conf.j2` | `chrony-config.sh:9` |
+
+`chrony.keys.j2` は `NTP_KEY` 全件を走査し、`type` と `value` が有効なエントリのみ `<id> <TYPE> <decoded-value>[ trusted_str]` 形式で書き出す。`NTP_SERVER.trusted == 'yes'` のサーバ IP リストが `trusted_str` として各行末に付与される (`chrony.keys.j2:8-17`)。`chrony.conf.j2` は `NTP|global.authentication == 'enabled'` のとき `keyfile /etc/chrony/chrony.keys` を出力する (`chrony.conf.j2:127`)。
+
+!!! note "NTP_KEY 変更は chrony.conf も再生成する"
+    `hostcfgd` の `run_cmd(CHRONY_RESTART)` は `chrony-config.sh` 経由で `chrony.conf` と `chrony.keys` を両方再生成してから chrony を再起動する。NTP_KEY の変更一件が chrony.conf と chrony.keys の両ファイルを上書きするため、同一 restart トリガで `NTP` / `NTP_SERVER` の設定変更も chrony に反映される。
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L1272–1406 (`NtpCfg.__init__` / `ntp_srv_key_update`); `sonic-buildimage/files/image_config/chrony/chrony-config.sh` L9-11; `chrony.keys.j2` L1-18。詳細スキャン結果は `meta/_intermediate/cdb-flow/ntp-key-side.md` を参照。
+<!-- /side-effects -->
+
+<!-- side-effects -->
 ## 副次ファイル書込 (Phase F)
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/files/image_config/chrony/chrony.keys.j2 -->
@@ -482,3 +511,75 @@ CONFIG_DB 変更 (NTP_KEY)
 
 詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-side-effects.md`。
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`NTP_KEY` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@4__:NTP_KEY|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`NtpCfg` 経由) | `ConfigDBConnector.subscribe()` | `NTP_KEY` | `ntp_srv_key_handler` → `NtpCfg.ntp_srv_key_update()` |
+| `hostcfgd` | 同上 | `NTP_SERVER` | `ntp_srv_key_handler` → `NtpCfg.ntp_srv_key_update()` |
+| `hostcfgd` | 同上 | `NTP` (global) | `ntp_global_handler` → `NtpCfg.ntp_global_update()` |
+
+`hostcfgd` 以外で `NTP_KEY` テーブルを購読するプロセスは `sonic-swss/` に存在しない（orchagent / syncd / mgrd はいずれも NTP_KEY を購読しない）。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config ntp authentication-key add 1 --type sha256 --value <key>
+  ↓ HSET "NTP_KEY|1" type "sha256" value "<base64>"
+Redis keyspace PUBLISH "__keyspace@4__:NTP_KEY|1"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (table, key, data) を生成:
+  data is None → op="DEL"、else → op="SET"
+  ↓ HGETALL 呼出なし — ハンドラが get_table() で全件再取得
+ntp_srv_key_handler(key="1", op="SET", data={...})
+  ↓ NtpCfg.ntp_srv_key_update(
+         config_db.get_table("NTP_SERVER"),  ← NTP_SERVER 全件
+         config_db.get_table("NTP_KEY"))     ← NTP_KEY 全件
+  ↓ キャッシュ比較（差分なし → スキップ）
+  ↓ run_cmd(['systemctl', 'restart', 'chrony'])
+  ↓ ExecStartPre: chrony-config.sh → chrony.keys + chrony.conf 再生成
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `get_table()` で**全件スナップショット**として取得する。
+- `NTP_KEY` と `NTP_SERVER` はどちらが変更されても同一ハンドラ (`ntp_srv_key_handler`) が両テーブルを全件取得して `ntp_srv_key_update()` に渡す。個別フィールドの差分処理は行わない。
+- `op` は `data is None ? "DEL" : "SET"` の 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない (`hostcfgd:2458-2465`)。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (`hostcfgd:2528`) により、Subscribe ループ開始前に `NtpCfg.load()` が `NTP_GLOBAL` / `NTP_SERVER` / `NTP_KEY` を一括スナップショットでキャッシュに適用する。chrony の起動時設定は `ntp-config.service` テンプレートが担うため、`load()` は chrony 再起動をトリガーしない。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `NTP_KEY` または `NTP_SERVER` 変更でキャッシュ差分あり | `systemctl restart chrony` (ExecStartPre で `chrony.keys` + `chrony.conf` 再生成) | `NtpCfg.ntp_srv_key_update()` — `hostcfgd:1396-1402` |
+| キャッシュ差分なし (同値更新) | chrony 再起動スキップ | `hostcfgd:1383-1386` |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2458-2466` (`make_callback`)、`hostcfgd:2511-2517` (`subscribe` 登録)、`hostcfgd:2527-2528` (`listen`)、`hostcfgd:2387-2391` (`ntp_srv_key_handler`)、`hostcfgd:2255-2272` (起動時スナップショット)、`hostcfgd:1366-1406` (`ntp_srv_key_update`)。詳細分析 `meta/_intermediate/cdb-flow/ntp-key-pubsub.md`。
+<!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L1272–1406 (`NtpCfg` 全行)、`chrony.keys.j2` L1–18、`chrony.conf.j2` L57–63、`chronyd-starter.sh`、`ntp_smartswitch_dpu_interfaces.json` 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-key-platform.md`
+
+### 結論: NTP_KEY 処理はプラットフォーム非依存
+
+`NtpCfg.ntp_srv_key_update()` および `chrony.keys.j2` にはプラットフォーム識別子・`hwsku`・`subtype` による条件分岐が存在しない。`NTP_KEY` テーブルの鍵テーブル処理はすべてのプラットフォームで同一の動作をする。
+
+| 観点 | プラットフォーム差 | 根拠 |
+|------|----------------|------|
+| `NtpCfg.ntp_srv_key_update()` 分岐 | **なし** | `hostcfgd:1366-1406` — `hwsku` / `subtype` 参照なし |
+| `chrony.keys.j2` 条件分岐 | **なし** | `chrony.keys.j2:1-18` — `device_metadata` 参照なし |
+| SmartSwitch NPU NTP サーバ機能 | **NTP_SERVER 側に限定** | `chrony.conf.j2:57-63` の `allow` / `binddevice bridge-midplane` ブロックは NTP_KEY テーブルの内容と独立 |
+| SmartSwitch DPU NTP ソース | **NTP_SERVER テーブル側** | DPU が使用する midplane IP `169.254.200.254` は `NTP_SERVER` に登録される。`chrony.keys.j2` の NTP_KEY 処理は同一 |
+| VRF バインド (mgmt-vrf) | **NTP global / chronyd 起動時** | `chronyd-starter.sh` が `NTP|global.vrf` を参照して `ip vrf exec mgmt` で chrony を起動するが、`chrony.keys` 生成内容には影響しない |
+
+### SmartSwitch DPU: NTP_KEY は設定可能だが通常は不使用
+
+SmartSwitch DPU (`type=SmartSwitchDPU`) は `169.254.200.254`（midplane ブリッジ）を NTP ソースとして使用し、midplane 経由で NPU 側の chrony と時刻同期する。midplane NTP サーバは通常 NTP 認証を要求しないため、`NTP_KEY` は設定されないのが一般的である（テストデータ: `ntp_smartswitch_dpu_interfaces.json` — `authentication=disabled`）。`NTP_KEY` を設定した場合も `chrony.keys.j2` は標準処理で鍵ファイルを生成し、DPU 固有の特別処理は発生しない。
+<!-- /platform -->

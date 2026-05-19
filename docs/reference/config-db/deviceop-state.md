@@ -414,6 +414,81 @@ DEVICE_NEIGHBOR は CONFIG_DB に保存される永続テーブルであり TTL 
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-293`; `show/interfaces/__init__.py:310-320`; `sonic-buildimage` `dockers/docker-lldp/lldpmgrd:12-14`; `src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52`; `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:139-140,219-224`; 中間調査 `meta/_intermediate/cdb-flow/deviceop-state-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/deviceop-state-platform.md -->
+<!-- source: sonic-utilities scripts/ecnconfig:92-95,264-293 (ref: HEAD);
+     sonic-utilities pfcwd/main.py:36-42,111-119,405-444 (ref: HEAD) -->
+
+DEVICE_NEIGHBOR テーブルの consumer は `platform` 環境変数による分岐を持たないが、
+**`switch_type`（voq vs. 非 voq）** と **ASIC 構成（シングル ASIC vs. multi-ASIC）** によって
+DEVICE_NEIGHBOR の参照有無やポートスコープが変化する。
+
+### ecnconfig — `voq` 環境では DEVICE_NEIGHBOR を参照しない
+
+`ecnconfig` (`scripts/ecnconfig:264-293`) は起動時に `DEVICE_METADATA.localhost.switch_type` を読み取り、
+`voq` かどうかでポート決定ロジックを切り替える。
+
+```python
+switch_type = device_info.get_localhost_info('switch_type', self.config_db)
+if switch_type == 'voq':
+    q_table = self.config_db.get_table(QUEUE_TABLE_NAME)
+    ...
+else:
+    port_table = self.config_db.get_table(DEVICE_NEIGHBOR_TABLE_NAME)
+    self.ports_key = list(port_table.keys())
+    if len(self.ports_key) == 0:
+        raise Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")
+```
+
+| `switch_type` | ポート決定元 | DEVICE_NEIGHBOR 参照 | 空テーブル時の挙動 |
+|---------------|------------|---------------------|----------------|
+| `voq` | `QUEUE` テーブル | **なし** | 影響なし |
+| それ以外（default） | `DEVICE_NEIGHBOR` | あり | Exception で停止 |
+
+!!! note "voq 環境での実質スキップ"
+    `switch_type == 'voq'` の環境（Cisco Silicon One / Broadcom DNX 等の VoQ アーキテクチャ）では
+    `ecnconfig` が DEVICE_NEIGHBOR を読まないため、テーブルが空でも Exception は発生しない。
+    DEVICE_NEIGHBOR の空テーブル例外は**非 voq 環境のみ**で発現する。
+
+### ecnconfig — multi-ASIC バックエンドポートのソート
+
+非 voq 環境ではポートキーをソートする際、`Ethernet-BPxy` 形式のバックエンドポートを
+通常ポートの末尾に配置するためのオフセット加算を行う（`scripts/ecnconfig:289-293`）。
+
+```python
+self.ports_key.sort(
+    key = lambda k: int(k[8:]) if "BP" not in k else int(k[11:]) + 1024
+)
+```
+
+- シングル ASIC 環境では `BP` を含むポート名が存在しないため、ソートロジックに実質的差異はない
+- multi-ASIC 環境ではバックエンドポート（`Ethernet-BPxy`）が通常ポートの後ろにまとめて配置される
+
+### pfcwd — multi-ASIC ネームスペース対応
+
+`pfcwd start_default` は `@multi_asic_util.run_on_multi_asic` デコレータで修飾されており、
+multi-ASIC 環境では各ネームスペース（`asic0` / `asic1` / ...）に対して独立実行される（`pfcwd/main.py:405-444`）。
+
+- 各ネームスペース内の `DEVICE_NEIGHBOR` テーブルを個別スキャンする。ネームスペース間でスコープは独立
+- バックプレーンポート（`get_bp_ports`; `PORT.role == 'Int'` かつ `admin_status == 'up'`）は
+  multi-ASIC 環境ではネームスペース内の ASIC 間接続ポートとして存在し、`active_ports` に追加される
+- シングル ASIC 環境では `role == 'Int'` のポートが存在しないため `bp_ports = []`
+
+### プラットフォーム差異サマリ
+
+| 環境 / 条件 | consumer | 差異 |
+|------------|---------|------|
+| `voq` switch_type | `ecnconfig` | DEVICE_NEIGHBOR を参照しない（`QUEUE` テーブル使用）。空テーブル例外が発生しない |
+| multi-ASIC (非 voq) | `ecnconfig` | バックエンドポート `Ethernet-BPxy` がソート末尾に配置される |
+| multi-ASIC | `pfcwd` | ネームスペースごとに独立した DEVICE_NEIGHBOR スキャン。bp_ports が追加される |
+| シングル ASIC | `pfcwd` | `bp_ports = []`。DEVICE_NEIGHBOR のキー集合が `active_ports` の全体 |
+| 全プラットフォーム共通 | `bgpcfgd` / `lldpmgrd` | `platform` 環境変数による分岐なし。プラットフォーム差異は存在しない |
+
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:36-42,111-119,405-444`; `scripts/ecnconfig:92-95,264-293`; 中間調査 `meta/_intermediate/cdb-flow/deviceop-state-platform.md`
+<!-- /platform -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 

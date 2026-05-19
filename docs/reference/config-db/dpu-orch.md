@@ -286,6 +286,161 @@ reasoning: DashHaOrch が gBfdOrch を受け取ることで、BFD セッショ�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dpu-orch-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`DpuOrchDaemon` の起動・動作時に発生しうる失敗を 5 系統に分類する。
+
+### A. `get_feature_status()` — CONFIG_DB 接続失敗時のフォールバック
+
+`DpuOrchDaemon::init()` 冒頭の `get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true)` は CONFIG_DB への hget をラップしており、`runtime_error` 例外をキャッチしてデフォルト値を返す:
+
+| 失敗条件 | 結果 | evidence |
+|---------|------|---------|
+| CONFIG_DB 接続失敗 (`runtime_error`) | `SWSS_LOG_ERROR` + `default_value` 返却。`init()` は中断しない | `orch_zmq_config.cpp:90-93` |
+| フィールド欠如 (`hget` null) | `SWSS_LOG_NOTICE` + `default_value` 返却 | `orch_zmq_config.cpp:97-99` |
+| 値が `"true"` 以外 (`"false"` 等) | `false` 返却 → `dash_zmq_server = nullptr` | `orch_zmq_config.cpp:103` |
+
+`orch_northbond_dash_zmq_enabled` の default_value は `true` のため、CONFIG_DB が参照不能でも ZMQ が有効化される方向でフォールバックする。`orch_northbond_route_zmq_enabled` の default_value は `false`。
+
+### B. `DPU_APPL_DB` / `DPU_APPL_STATE_DB` 接続失敗
+
+`switch_type = "dpu"` のとき `main.cpp:992-993` で `DBConnector("DPU_APPL_DB", ...)` / `DBConnector("DPU_APPL_STATE_DB", ...)` を生成する。`DBConnector` コンストラクタは Redis 接続失敗時に例外を送出するため、`main()` がキャッチせずに orchagent が abort し、systemd により再起動される。
+
+### C. `DpuOrchDaemon::init()` 失敗 → `exit(EXIT_FAILURE)`
+
+`orchdaemon.cpp:1322-1419` の `DpuOrchDaemon::init()` は DASH Orch 生成中に例外が発生すると `main.cpp:1017-1020` の次のガードで捕捉される:
+
+```cpp
+// main.cpp:1017-1020
+if (!orchDaemon->init()) {
+    SWSS_LOG_ERROR("Failed to initialize orchestration daemon");
+    exit(EXIT_FAILURE);
+}
+```
+
+`DpuOrchDaemon::init()` のコード上の `return false` パスは現存しない（`return true` のみ）。ただし `OrchDaemon::init()` 内で例外送出・false 返却がある場合も同様に `exit(EXIT_FAILURE)` → systemd 再起動となる。
+
+### D. DASH Orch の SAI 操作失敗 → retry / erase
+
+各 DASH Orch の `doTask*()` メソッドは以下の共通パターンで失敗を処理する:
+
+| 失敗ケース | `doTask()` 挙動 | `DPU_APPL_STATE_DB` 書込み | evidence |
+|-----------|----------------|--------------------------|---------|
+| `addXxx()` 失敗 (SAI API 戻り `!SAI_STATUS_SUCCESS`) | `result = DASH_RESULT_FAILURE` → `writeResultToDB()` → `it++`（次サイクル retry） | `result=1` (FAILURE) | `dashorch.cpp:416-419` |
+| `removeXxx()` 失敗 | `it++`（retry）。`removeResultFromDB()` を呼ばない | （前値保持） | `dashorch.cpp:428-430` |
+| protobuf parse 失敗 (`parsePbMessage` false) | `SWSS_LOG_WARN` → `erase(it)`（恒久スキップ） | （書込みなし） | `dashorch.cpp:404-408` |
+| 未知 op (`SET`/`DEL` 以外) | `SWSS_LOG_ERROR` → `erase(it)` | （書込みなし） | `dashorch.cpp:433-436` |
+
+`writeResultToDB()` は `DPU_APPL_STATE_DB` の対応テーブル（例: `DashOrch` → `APP_DASH_APPLIANCE_TABLE_NAME`）に `result` フィールドとして `0`（成功）/ `1`（失敗）を書き込む（`orchdaemon.cpp` の `DashOrch` コンストラクタで `app_state_db` が渡される）。
+
+!!! note "retry の上限なし"
+    `it++` による retry に上限は設定されていない。SAI API が常に失敗を返す場合（例: ASIC ファームウェア異常）、該当エントリは `DPU_APPL_STATE_DB` に `result=1` を書き続けたまま永続的に retry ループに入る。`orchagent restart` か DASH Orch 側の CONFIG/APPL 再投入が必要。
+
+### E. `switch_type` 不正値 — DpuOrchDaemon 非選択フォールバック
+
+`getCfgSwitchType()` (`main.cpp:260-264`) は `switch_type` の値が既知の enum 外の場合 `"switch"` にフォールバックし `SWSS_LOG_ERROR` を出力する:
+
+| 条件 | 挙動 |
+|------|------|
+| `switch_type` が `"voq"` / `"fabric"` / `"chassis-packet"` / `"switch"` / `"dpu"` 以外 | `SWSS_LOG_ERROR` + `switch_type = "switch"` フォールバック → `DpuOrchDaemon` 非選択、通常 NPU orchagent として起動 |
+| `switch_type` DB 読み取り失敗（hget 例外） | 同上: `"switch"` フォールバック |
+
+SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が正確に設定されていなければならず、typo や欠落は orchagent 起動後にサイレントに NPU モードで動作するため注意が必要。
+
+> **証跡**: `getCfgSwitchType()` `main.cpp:242-265`、`get_feature_status()` `orch_zmq_config.cpp:81-103`、`DpuOrchDaemon::init()` `orchdaemon.cpp:1322-1419`、`doTaskApplianceTable()` `dashorch.cpp:386-438`。詳細グレップ証跡は `meta/_intermediate/cdb-flow/dpu-orch-failure.md` を参照。
+<!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`DpuOrchDaemon` および関連コンポーネントに存在する、CONFIG_DB / YANG で管理されない固定値の一覧。
+
+### orchagent.sh — DPU 起動引数固定値
+
+`switch_type = "dpu"` のとき `orchagent.sh` が orchagent プロセスに渡す引数はすべてスクリプト内ハードコードであり、CONFIG_DB フィールドで上書きできない。
+
+| 引数 | 固定値 | 意味 | ソース |
+|------|--------|------|--------|
+| `-b` (pop batch size) | `65536` | SelectableTable から 1 回のループで取り出すエントリ数上限。通常 NPU の `1024`・chassis-packet の `128` より大幅に増加し、DPU の高ボリューム処理に対応する | `orchagent.sh:29` |
+| `-z` (redis/zmq mode) | `zmq_sync` | orchagent の通信モードを ZMQ 同期モードに固定。`synchronous_mode` フィールド (`DEVICE_METADATA`) の値に関係なく適用される | `orchagent.sh:39` |
+| `-k` (max bulk size) | `65536` | ZMQ バルク送信上限。通常 NPU のデフォルト `1000` の約 65 倍 | `orchagent.sh:39` |
+
+### orch_zmq_config — ZMQ アドレス・ポート固定値
+
+| 定数 | 値 | 定義場所 | 用途 |
+|------|----|---------|------|
+| `ZMQ_LOCAL_ADDRESS` | `"tcp://localhost"` | `orch_zmq_config.h:16` | `create_local_zmq_client()` が ZMQ クライアントを生成するときに使うベースアドレス |
+| `ORCH_ZMQ_PORT` (基底ポート) | `8100` | `sonic-swss-common/common/zmqserver.h:16` | `get_zmq_port()` が計算の起点とするポート番号。`NAMESPACE_ID` が空の場合 `8100` がそのまま使われる。マルチ ASIC 環境では `8100 + namespace_id + 1` に加算される |
+| `ZMQ_TABLE_CONFIGFILE` | `"/etc/swss/orch_zmq_tables.conf"` | `orch_zmq_config.cpp:10` | `load_zmq_tables()` が読み込む ZMQ テーブルリストファイルのパス。内容は `orch_zmq_tables.conf.j2` テンプレートから生成される |
+
+### orch_zmq_config — フィーチャーフラグキー名
+
+| 定数 | 値 | 定義場所 | 用途 |
+|------|----|---------|------|
+| `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` | `"orch_northbond_dash_zmq_enabled"` | `orch_zmq_config.h:21` | `get_feature_status()` が CONFIG_DB `DEVICE_METADATA|localhost` から読み出すフィールドキー名 |
+| `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` | `"orch_northbond_route_zmq_enabled"` | `orch_zmq_config.h:26` | 同上、ROUTE ZMQ フィーチャーフラグ用キー名 |
+
+### orchdaemon.h — P4Orch ZMQ エンドポイント固定値
+
+| 定数 | 値 | 定義場所 | 用途 |
+|------|----|---------|------|
+| `m_p4OrchZmqServerEp` | `"ipc:///zmq_swss/p4orch_zmq_swss_ep"` | `orchdaemon.h:121` | `OrchDaemon` が P4Orch 向けに生成する ZMQ サーバの IPC エンドポイント。DPU モードでは P4Orch を使用しないため、`DpuOrchDaemon::init()` では事実上参照されない |
+
+!!! note "上書き不可の定数"
+    `-b 65536`・`-z zmq_sync`・`-k 65536` の 3 引数は `orchagent.sh` が `switch_type = "dpu"` のとき無条件に付与し、CONFIG_DB / YANG フィールドで変更する手段は存在しない。これらの値を変更するにはシェルスクリプトの修正と orchagent の再起動が必要。
+
+詳細なソーススキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-constants.md` を参照。
+<!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DpuOrchDaemon` が起動する DASH Orch 群は、CONFIG_DB `DEVICE_METADATA` を直接の書込先とはしない。各 DASH Orch は `DPU_APPL_DB` から受信した DASH エントリを SAI API で処理した後、**`DPU_APPL_STATE_DB`** へ操作結果 (`result` フィールド) を書き込む。これが DpuOrchDaemon 系の主要な副次 DB 書込である。
+
+### DPU_APPL_STATE_DB への書込テーブル一覧
+
+`writeResultToDB()` (`saihelper.cpp:1125-1155`) は SAI 操作結果 (`uint32_t res`) を `result` フィールドとして `table->set(key, fvs)` で書き込む。`res=0` が成功、`res!=0` が SAI ステータスコード（失敗）を示す。`DashRouteOrch` の `DASH_ROUTE_GROUP_TABLE` のみ、追加で `version` フィールドを付与する。
+
+| DASH Orch | DPU_APPL_STATE_DB テーブル | フィールド | 書込トリガ | evidence |
+|-----------|---------------------------|-----------|-----------|---------|
+| `DashVnetOrch` | `DASH_VNET_TABLE` | `result` | `addVnet()` / `removeVnet()` 後 | `dashvnetorch.cpp:217,283` |
+| `DashVnetOrch` | `DASH_VNET_MAPPING_TABLE` | `result` | `addVnetMapping()` / `removeVnetMapping()` 後 | `dashvnetorch.cpp:788,851` |
+| `DashOrch` | `DASH_APPLIANCE_TABLE` | `result` | `addAppliance()` / `removeAppliance()` 後 | `dashorch.cpp:419` |
+| `DashOrch` | `DASH_ROUTING_TYPE_TABLE` | `result` | routing type SET/DEL 後 | `dashorch.cpp:517` |
+| `DashOrch` | `DASH_ENI_TABLE` | `result` | `addEni()` / `removeEni()` 後 | `dashorch.cpp:1077` |
+| `DashOrch` | `DASH_QOS_TABLE` | `result` | QoS SET/DEL 後 | `dashorch.cpp:1159` |
+| `DashOrch` | `DASH_ENI_ROUTE_TABLE` | `result` | ENI route SET/DEL 後 | `dashorch.cpp:1312` |
+| `DashHaOrch` | `DASH_HA_SET_TABLE` | `result` | HA set SET/DEL 後 | `dashhaorch.cpp:447` |
+| `DashHaOrch` | `DASH_HA_SCOPE_TABLE` | `result` | HA scope SET/DEL 後 | `dashhaorch.cpp:985` |
+| `DashRouteOrch` | `DASH_ROUTE_TABLE` | `result` | route SET/DEL 後 | `dashrouteorch.cpp:342,403` |
+| `DashRouteOrch` | `DASH_ROUTE_RULE_TABLE` | `result` | route rule SET/DEL 後 | `dashrouteorch.cpp:644,705` |
+| `DashRouteOrch` | `DASH_ROUTE_GROUP_TABLE` | `result`, `version` | route group SET/DEL 後 | `dashrouteorch.cpp:874` |
+| `DashTunnelOrch` | `DASH_TUNNEL_TABLE` | `result` | tunnel SET/DEL 後 | `dashtunnelorch.cpp:142,197,251` |
+| `DashPortMapOrch` | `DASH_OUTBOUND_PORT_MAP_TABLE` | `result` | port map SET/DEL 後 | `dashportmaporch.cpp:89,149` |
+| `DashPortMapOrch` | `DASH_OUTBOUND_PORT_MAP_RANGE_TABLE` | `result` | port map range SET/DEL 後 | `dashportmaporch.cpp:329,387` |
+
+> テーブル名は `sonic-swss-common/common/schema.h:172-200` で定義。`DPU_APPL_STATE_DB` は `main.cpp:993` で `DBConnector("DPU_APPL_STATE_DB", ...)` として生成され、`DpuOrchDaemon` コンストラクタ経由で全 DASH Orch に渡される。
+
+### DashPortMapOrch のみ removeResultFromDB を使用
+
+`DashPortMapOrch` は DEL 操作成功時に `writeResultToDB` ではなく `removeResultFromDB` (`saihelper.cpp:1157-1177`) を呼び、`DPU_APPL_STATE_DB` の対応エントリを `del(key)` で削除する。他の DASH Orch は DEL 操作後も `result=0`（成功）を書いてエントリを残す方式を取る。
+
+### DashAclOrch / DashMeterOrch — DPU_APPL_STATE_DB 書込なし
+
+`DashAclOrch` (`dashaclorch.cpp:77-85`) と `DashMeterOrch` (`dashmeterorch.cpp:27-32`) はコンストラクタで `app_state_db` を受け取るが result table メンバを持たず、`writeResultToDB` を呼ばない。
+
+### DashHaFlowOrch — DPU_STATE_DB への例外的書込
+
+`DashHaFlowOrch` は `app_state_db`（`DPU_APPL_STATE_DB`）を受け取るが使用しない。代わりに自コンストラクタ内で独立して `DBConnector("DPU_STATE_DB", ...)` を生成し (`dashhafloworch.cpp:766`)、フロー同期セッション状態を `DPU_STATE_DB` の `DASH_FLOW_SYNC_SESSION_STATE_TABLE` へ書き込む (`dashhafloworch.cpp:247,307`)。これは `DPU_APPL_STATE_DB` とは別個の Redis インスタンスへの書込みである。
+
+| DASH Orch | 書込 DB | テーブル | フィールド | 書込トリガ |
+|-----------|--------|---------|-----------|-----------|
+| `DashHaFlowOrch` | `DPU_STATE_DB` | `DASH_FLOW_SYNC_SESSION_STATE_TABLE` | `state`, `creation_time_in_ms`, `last_state_start_time_in_ms` | フロー同期セッション状態遷移時 (`FlowApiHandler::updateState()`) |
+
+詳細スキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-side-effects.md` を参照。
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: DpuOrchDaemon クラス定義と起動条件: `sonic-swss/orchagent/orchdaemon.h:150-158`, `sonic-swss/orchagent/orchdaemon.cpp:1313-1419`, `sonic-swss/orchagent/main.cpp:981-994`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>

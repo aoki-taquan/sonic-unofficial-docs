@@ -434,6 +434,173 @@ NatOrch 初期化時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会して `
 詳細な定数一覧は `meta/_intermediate/cdb-flow/nat-pool-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`NAT_POOL` エントリが処理されると、`natmgrd` → `orchagent / NatOrch` の経路で以下の副次書込が発生する。ソース: `sonic-swss/cfgmgr/natmgr.cpp`[^F1]、`sonic-swss/orchagent/natorch.cpp`[^F2]。
+
+**書込が発生する前提条件**: `isNatEnabled()` が true、かつ pool に紐づく `NAT_BINDINGS` エントリが存在し、L3 インタフェース readiness を満たしている場合のみ。いずれかを満たさない場合、以下の APPL_DB / ASIC_DB 書込はすべてスキップされる。
+
+### APPL_DB — NAT_DNAT_POOL_TABLE
+
+`NatMgr::addDynamicNatRule()` が `setDnatPoolfromNatPool(ADD, ip_range)` を呼び出し、pool 内の各 IP アドレスを 1 エントリずつ APPL_DB に書き込む。
+
+```
+NAT_DNAT_POOL_TABLE|<pool_ip>
+    NULL: NULL
+```
+
+| 操作 | 関数 | 挙動 | ソース |
+|------|------|------|--------|
+| pool SET + binding 存在 | `addDnatPoolEntry(destIp)` | 初回は ref-count=1 で `m_appNatDnatPoolProducer.set(destIp, {"NULL":"NULL"})` | `natmgr.cpp:1520` |
+| pool IP が複数 binding で共有 | `addDnatPoolEntry(destIp)` | ref-count を加算のみ。APPL_DB への重複書込なし | `natmgr.cpp:1508` |
+| pool DEL + binding 存在 | `removeDnatPoolEntry(destIp)` | ref-count を減算し 0 になった時点で `m_appNatDnatPoolProducer.del(destIp)` | `natmgr.cpp:1543` |
+
+ref-count は内部マップ `m_natDnatPoolInfo[destIp]` で管理される。複数の binding が同一 pool の IP アドレスを参照する場合、最後の binding が削除されるまで APPL_DB エントリは保持される。
+
+### ASIC_DB — SAI NAT エントリ (SAI_NAT_TYPE_DESTINATION_NAT_POOL)
+
+`NatOrch::doDnatPoolTableTask()` が `NAT_DNAT_POOL_TABLE` 変更を受けて `addHwDnatPoolEntry()` / `removeHwDnatPoolEntry()` を呼び出す。
+
+| 操作 | SAI API 呼び出し | SAI nat_type | ソース |
+|------|----------------|-------------|--------|
+| pool IP 追加 | `sai_nat_api->create_nat_entry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | `natorch.cpp:1805` |
+| pool IP 削除 | `sai_nat_api->remove_nat_entry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | `natorch.cpp:1837` |
+
+`addHwDnatPoolEntry()` は `isNatEnabled()` が false の場合に SAI 書込をスキップして success (`true`) を返す (`natorch.cpp:1789-1793`)。APPL_DB エントリは保持されるため、NAT が後から有効化されると `enableNatFeature()` → `addAllDnatPoolEntries()` で全 pool IP が遡及的に ASIC に投入される。
+
+### COUNTERS_DB — 初期化時の静的書込
+
+NatOrch の初期化時に SAI `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会し、取得値を `COUNTERS_GLOBAL_NAT|Values` の `MAX_NAT_ENTRIES` フィールドとして一度だけ書込む (`natorch.cpp:127`, `natorch.cpp:135`)。
+
+NAT pool エントリ追加・削除に直接連動した COUNTERS_DB 更新はない。DNAT エントリ数カウンタ (`DNAT_ENTRIES`) は `addHwDnatPoolEntry()` では更新されず、pool 経由で確立した SNAT/DNAT セッション数カウンタは NatOrch のヒットビットタイマー (5 秒周期) で更新される。
+
+### STATE_DB — 書込なし
+
+`NatMgr` および `NatOrch` は STATE_DB への書込を行わない。`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_INTERFACE_TABLE` は L3 インタフェース readiness ガード用の**読み取り専用**アクセスのみ。
+
+[^F1]: natmgr APPL_DB 書込実装: `sonic-swss/cfgmgr/natmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/natmgr.cpp>
+[^F2]: NatOrch ASIC 書込実装: `sonic-swss/orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/natorch.cpp>
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-side-effects.md`
+<!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/cfgmgr/natmgrd.cpp L109-121,L149-153 / sonic-swss/cfgmgr/natmgr.cpp L8163-8165 / sonic-swss/orchagent/orchdaemon.cpp L456-465 / sonic-swss/orchagent/natorch.cpp L84-91,L137 -->
+
+`NAT_POOL` の変更通知は **2 層** の非同期メカニズムで処理される。
+
+### 層 1: natmgrd — CONFIG_DB → APPL_DB
+
+`natmgrd` は `NatMgr` を通じて CONFIG_DB の `NAT_POOL` テーブルを **`SubscriberStateTable`** (Redis keyspace PSUBSCRIBE) で購読する (`natmgrd.cpp:112`)。
+
+```
+PSUBSCRIBE __keyspace@4__:NAT_POOL|*
+```
+
+SET/DEL イベントを受信すると `Consumer::execute()` → `NatMgr::doNatPoolTask()` へディスパッチされる (`natmgr.cpp:8163-8165`)。natmgrd のメインループは `SELECT_TIMEOUT=1000ms` で待機し、タイムアウト時は `natmgr->doTask()` でキュー残存タスクを処理する (`natmgrd.cpp:190-193`)。
+
+起動時の初期スナップショット: `SubscriberStateTable` コンストラクタが PSUBSCRIBE 後に `m_table.getKeys()` で既存 key を全件取得し SET として積む。natmgrd 再起動後も既存 `NAT_POOL` エントリが全再処理される (再起動耐性)。
+
+### 層 2: NatOrch — APPL_DB → SAI
+
+`orchdaemon.cpp:457` で NatOrch を生成し、APPL_DB の `NAT_DNAT_POOL_TABLE` を **`ConsumerStateTable`** で最高優先度 (`natorch_base_pri + 5`) で購読する。
+
+```cpp
+{ APP_NAT_DNAT_POOL_TABLE_NAME,  natorch_base_pri + 5 },  // 優先度最高
+```
+
+natmgrd が `ProducerStateTable::set("NAT_DNAT_POOL_TABLE", ...)` を呼ぶと `APP_NAT_DNAT_POOL_TABLE_CHANNEL@0` が PUBLISH され、NatOrch の `doDnatPoolTableTask()` が `sai_nat_api->create_nat_entry(SAI_NAT_TYPE_DESTINATION_NAT_POOL)` を呼び出す。
+
+### 非同期通知チャンネル
+
+| チャンネル名 | DB | 方向 | 用途 |
+|---|---|---|---|
+| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 終了時に `NAT_DNAT_POOL_TABLE` を含む全 NAT エントリの Redis/ASIC クリーンアップを依頼 (`natmgrd.cpp:86`) |
+| `FLUSHNATENTRIES` | APPL_DB | CLI → natmgrd | `show nat translate flush` による conntrack 全フラッシュ。pool 経由の dynamic session も削除される (`natmgrd.cpp:152`) |
+
+### 経路サマリ
+
+| ステップ | 実装 | ソース |
+|---------|------|--------|
+| CLI → CONFIG_DB | `config nat add pool` が `CONFIG_DB HSET NAT_POOL|<name>` を発行 | sonic-utilities/config/nat.py |
+| CONFIG_DB → natmgrd | `SubscriberStateTable` PSUBSCRIBE `__keyspace@4__:NAT_POOL|*` | subscriberstatetable.cpp |
+| natmgrd ディスパッチ | `doNatPoolTask(consumer)` | natmgr.cpp:8163 |
+| natmgrd → APPL_DB | `ProducerStateTable::set("NAT_DNAT_POOL_TABLE", destIp, ...)` (ref-count 付き) | natmgr.cpp:1520 |
+| APPL_DB → NatOrch | `ConsumerStateTable("NAT_DNAT_POOL_TABLE")` + orchagent 統合ループ | orchdaemon.cpp:457 |
+| NatOrch → SAI | `sai_nat_api->create_nat_entry(SAI_NAT_TYPE_DESTINATION_NAT_POOL)` | natorch.cpp:1805 |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-pubsub.md`
+<!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差・ASIC ベンダー依存 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch L107-149 / addHwDnatPoolEntry L1783-1819 / enableNatFeature L2534-2581 / sonic-swss/orchagent/orch.h L43 / sonic-swss/orchagent/main.cpp L935-949 -->
+
+### SAI NAT capability チェック（全ベンダー共通）
+
+NatOrch 初期化時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を `sai_switch_api->get_switch_attribute()` で照会し、返値が **0 より大きい場合のみ** `gIsNatSupported = true` を設定する (`main.cpp:935-949`)。`gIsNatSupported` が `false` の場合、`enableNatFeature()` は `"NAT Feature is not supported in this Platform"` をログして即座に処理を中断し、**DNAT pool entry を含む SAI NAT オブジェクトは一切作成されない** (`natorch.cpp:2541-2544`)。
+
+```cpp
+// main.cpp:935-948
+attr.id = SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY;
+status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status == SAI_STATUS_SUCCESS && attr.value.u32 != 0)
+{
+    gIsNatSupported = true;
+}
+```
+
+`maxAllowedSNatEntries` は同属性の取得値で初期化され、dynamic SNAT エントリ数の上限として使用される。`NAT_POOL` 経由の dynamic SNAT がこの上限に達すると新規 SNAT エントリは SAI に投入されず `AGEOUT-SINGLE-NAT` 通知で conntrack がエージアウトされる (`natorch.cpp:1882-1889`)。なお DNAT pool entry (`SAI_NAT_TYPE_DESTINATION_NAT_POOL`) はこの SNAT 上限とは**無関係**。
+
+### Broadcom 専用: DNAT ネクストホップトラッキング
+
+`orchagent/orch.h:43` に `#define BRCM_PLATFORM_SUBSTRING "broadcom"` が定義されており、NatOrch コンストラクタで環境変数 `platform` が `"broadcom"` を含む場合のみ `gNhTrackingSupported = true` が設定される (`natorch.cpp:144-148`)。
+
+```cpp
+// natorch.cpp:144-148
+char *platform = getenv("platform");
+if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
+{
+    gNhTrackingSupported = true;
+}
+```
+
+`gNhTrackingSupported` は DNAT エントリ (`SAI_NAT_TYPE_DESTINATION_NAT`) の追加・削除パスで分岐条件として使用されるが、**DNAT pool エントリ (`SAI_NAT_TYPE_DESTINATION_NAT_POOL`) の `addHwDnatPoolEntry()` / `removeHwDnatPoolEntry()` はこのフラグを参照しない**。DNAT pool entry の投入は platform 分岐なしで実行される。
+
+Broadcom では `enableNatFeature()` L2570 で `m_neighOrch->attach(this)` が呼ばれ NeighborOrch の変更通知を受信できるようになるため、DNAT エントリのネクストホップ変更時の遅延投入が機能する。非 Broadcom ではネクストホップ未解決でも即時 SAI 書き込みとなる。
+
+### DNAT pool entry の SAI 固定属性
+
+`addHwDnatPoolEntry()` (`natorch.cpp:1799-1805`) にはプラットフォーム分岐が存在しない。マスクは `0xffffffff`（ホストマスク）にハードコードされており、SAI 属性配列は空（`attr_count = 0`）で作成される。
+
+```cpp
+// natorch.cpp:1799-1805
+dnat_pool_entry.nat_type          = SAI_NAT_TYPE_DESTINATION_NAT_POOL;
+dnat_pool_entry.data.key.dst_ip   = ip_address.getV4Addr();
+dnat_pool_entry.data.mask.dst_ip  = 0xffffffff;  // ホストマスク固定（platform 非依存）
+// attr_count = 0 — DNAT pool entry は SAI 属性を持たない
+status = sai_nat_api->create_nat_entry(&dnat_pool_entry, attr_count, nat_entry_attr);
+```
+
+### まとめ
+
+| 挙動 | 条件 |
+|------|------|
+| NAT 機能全体（DNAT pool 含む）が有効 | `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY > 0` (gIsNatSupported=true) |
+| NAT 機能全体が無効（DNAT pool も投入されない） | 上記属性が 0 または取得失敗 (gIsNatSupported=false) |
+| DNAT ネクストホップ追跡（DNAT entry 用） | Broadcom ASIC のみ (gNhTrackingSupported=true) |
+| DNAT pool entry への platform 差 | なし（platform 分岐なし） |
+| SNAT ハードウェア上限超過 | `totalSnatEntries == maxAllowedSNatEntries` → ageout 通知（DNAT pool は無関係） |
+
+現行 SONiC コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-platform.md`
+<!-- /platform -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

@@ -4,7 +4,7 @@ description: "MCLAG_INTERFACE テーブル — MC-LAG (Multi-Chassis Link Aggreg
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-16
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-mclag.yang
@@ -17,6 +17,12 @@ sources:
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: mclagsyncd/mclaglink.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclaglink.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclag.h
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
@@ -179,6 +185,58 @@ show mclag interface
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-ordering.md`
 <!-- /ordering -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.h / sonic-swss/mclagsyncd/mclag.h / sonic-utilities/config/mclag.py -->
+
+### mclagsyncd 内定数
+
+`mclagsyncd` が MCLAG_INTERFACE エントリを iccpd へ転送する際、以下の定数が適用される。
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `MAX_L_PORT_NAME` | `20` (バイト) | `mclag_iface_cfg_info.mclag_iface[]` 配列長。PortChannel 名の転送上限 | `mclaglink.h:52` |
+| `MCLAG_MAX_SEND_MSG_LEN` | `4096` バイト | mclagsyncd → iccpd 間 IPC 送信バッファ上限。1 メッセージに格納できるインターフェース設定数はこの上限に依存 | `mclag.h:62` |
+| `MCLAG_PROTO_VERSION` | `1` | IPC プロトコルバージョン（固定値。変更不可） | `mclag.h:81` |
+
+> **実運用上の注意**: `MAX_L_PORT_NAME = 20` は null 終端を含む配列長のため、実効上限は **19 バイト**。`PortChannel` (11 文字) + 数字部分 4 桁 = 最大 15 文字 (`CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX = 15`) のため通常の PortChannel 名は範囲内。しかし `strncpy` による無言切り捨てを防ぐため、カスタム名で長い場合は注意が必要。
+
+### CLI 側定数（config/mclag.py）
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `CFG_PORTCHANNEL_PREFIX` | `"PortChannel"` | `if_name` として許可する名前プレフィックス。これ以外のプレフィックスは CLI が拒否 | `config/mclag.py:10` |
+| `CFG_PORTCHANNEL_PREFIX_LEN` | `11` | プレフィックス文字数（`"PortChannel"` の長さ） | `config/mclag.py:11` |
+| `CFG_PORTCHANNEL_MAX_VAL` | `9999` | PortChannel 番号の最大値（`PortChannel0`〜`PortChannel9999`） | `config/mclag.py:12` |
+| `CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX` | `15` | PortChannel 名の最大文字数（`PortChannel9999` = 15 文字） | `config/mclag.py:13` |
+| `if_type` 固定値 | `"PortChannel"` | `config mclag member add` が MCLAG_INTERFACE エントリに書き込む `if_type` の値。`MlagOrch` はこの値を参照しないが、CLI は常に固定で書き込む | `config/mclag.py:293` |
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.h#L52 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  #define MAX_L_PORT_NAME 20
+  struct mclag_iface_cfg_info {
+      int op_type;
+      int domain_id;
+      char mclag_iface[MAX_L_PORT_NAME];
+  };
+reasoning: mclag_iface[] の配列長が MAX_L_PORT_NAME=20 で固定されているため、MCLAG_INTERFACE の if_name (PortChannel 名) は 19 バイトを超えると iccpd 転送時に無言切り捨てされる。通常の命名規則 (CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX=15) では問題ないが、カスタムポート名を使う場合は要注意。
+-->
+
+<!-- evidence:
+source: sonic-utilities/config/mclag.py#L10-L14 (sha: a3e5b4c9fb7a95e213d08f8761e6c94f02a18b41)
+excerpt: |
+  CFG_PORTCHANNEL_PREFIX = "PortChannel"
+  CFG_PORTCHANNEL_PREFIX_LEN = 11
+  CFG_PORTCHANNEL_MAX_VAL = 9999
+  CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX = 15
+  CFG_PORTCHANNEL_NO="<0-9999>"
+reasoning: CLI レベルで MCLAG_INTERFACE の if_name に設定できる PortChannel 名を上記定数で厳格に制限している。YANG leafref は名前の形式を検証しないが、CLI はこれらの定数で事前フィルタする。
+-->
+
+<!-- /constants -->
+
 <!-- cross-refs -->
 ## 暗黙参照マップ (Phase C)
 
@@ -217,3 +275,137 @@ MCLAG_INTERFACE の SET/DEL を受けた mclagsyncd → iccpd → mclagsyncd IPC
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-52,136-155,193-234 / sonic-swss/mclagsyncd/mclaglink.cpp L918-960,989-1085 / sonic-swss/mclagsyncd/mclagsyncd.cpp L44-124 -->
+
+`MCLAG_INTERFACE` の SET/DEL を処理する 2 つの Consumer（`MlagOrch` と `mclagsyncd`）それぞれの失敗経路を整理する。
+
+### MlagOrch (orchagent) の失敗経路
+
+| # | 失敗条件 | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | `allPortsReady()` 未完了 | `mlagorch.cpp:49-52` | 即 `return`。エントリはキューに保留 | あり（PortsOrch 起動完了後に自動処理） |
+| 2 | 不明 operation type（SET / DEL 以外） | `mlagorch.cpp:148-151` | `SWSS_LOG_ERROR` + エントリ erase（ドロップ） | なし |
+| 3 | 重複 SET（既登録 if_name を再 SET） | `mlagorch.cpp:196-213` | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface")` のみ。`m_mlagIntfs` 変更・Observer 通知なし。エントリは erase される | なし |
+| 4 | 未知 if_name の DEL（未登録 if_name を DEL） | `mlagorch.cpp:219-233` | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface")` のみ。エントリは erase される | なし |
+
+`addMlagInterface()` / `delMlagInterface()` はどちらも常に `return true` を返す設計であるため、orchagent 側は **retry ループに入らない**。エラーが発生してもエントリは即座に erase され、再試行されない。
+
+### mclagsyncd の失敗経路
+
+| # | 失敗条件 | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 5 | MCLAG_DOMAIN が未 SET の状態で MCLAG_INTERFACE を書く | `mclaglink.cpp:918`（購読テーブル未生成） | `mclagsyncd` は MCLAG_INTERFACE を購読していないため**完全に無視**（エラーログなし） | なし（ICCP セッション再確立後に iccpd が再 fetch） |
+| 6 | key の `<if_name>` 部分が空 | `mclaglink.cpp:1022-1027` | `SWSS_LOG_ERROR("Invalid Key ... No mclag iface specified")` → `continue` で当該エントリをスキップ | なし |
+| 7 | iccpd 向け IPC `write()` 失敗（バッファ中間送信） | `mclaglink.cpp:1055-1060` | `SWSS_LOG_ERROR` のみ。デーモン継続 | なし（残バッファは継続処理） |
+| 8 | iccpd 向け IPC `write()` 失敗（最終送信） | `mclaglink.cpp:1078-1084` | `SWSS_LOG_ERROR` のみ。iccpd への MCLAG_INTERFACE 通知が欠落 | なし（ICCP セッション再確立時に再 fetch） |
+| 9 | iccpd からの malformed メッセージ受信 | `mclaglink.cpp:1901-1902` | `system_error` throw → mclagsyncd プロセス終了 (`return 0`) | systemd による restart |
+
+### IPC 接続断・再接続時の自動リカバリ
+
+`mclagsyncd.cpp` の外側 `while(1)` ループは iccpd との接続断 (`MclagConnectionClosedException`) を捕捉して再接続する。再接続後は `mclagsyncdFetchMclagInterfaceConfigFromConfigdb()` を呼び、CONFIG_DB の全 MCLAG_INTERFACE エントリを再読み込みして iccpd へ再送信する（evidence: `mclagsyncd.cpp:57-58,112-115`）。
+
+ケース #7〜#8（IPC 送信失敗）は iccpd 再起動 / 接続断で自動回復する。ケース #9（malformed メッセージ）は `MclagConnectionClosedException` と異なり while(1) で再接続せず、systemd が mclagsyncd を restart する。
+
+### 失敗後の復旧パス
+
+- **ケース #1 (allPortsReady 未完了)**: エントリは orchagent の Consumer キューに残り、PortsOrch 起動完了後の次回 `doTask()` 呼び出しで自動処理される。
+- **ケース #2〜#4 (MlagOrch 側エラー)**: エントリは erase されて失われる。再設定には CLI または sonic-db-cli での再 SET が必要。
+- **ケース #5 (mclagsyncd 購読未開始)**: MCLAG_DOMAIN を SET してから MCLAG_INTERFACE を再 SET することで解消。
+- **ケース #6〜#8 (mclagsyncd IPC 失敗)**: ICCP セッションが再確立されると CONFIG_DB を全量再 fetch して iccpd に送信する。
+
+!!! warning "silent drop に注意"
+    ケース #5（MCLAG_DOMAIN 未設定時の MCLAG_INTERFACE 書込）はエラーログが一切出力されず、mclagsyncd 側で完全に無視される。`show mclag interface` で期待したエントリが出ない場合は MCLAG_DOMAIN の存在確認と mclagsyncd ログの確認を行うこと。
+
+### STATE_DB / ERROR_TABLE への記録
+
+`MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。`mclagsyncd` も MCLAG_INTERFACE 処理失敗時は STATE_DB を更新しない（STATE_DB への書き込みは iccpd からの応答受信後に行われるため、iccpd への送信に失敗した場合は STATE_DB も更新されない）。
+
+```bash
+# orchagent ログで MCLAG_INTERFACE 失敗確認
+docker exec swss grep -i "MLAG" /var/log/swss/orchagent.log
+
+# mclagsyncd ログ確認
+docker exec iccpd grep -i "mclag iface" /var/log/swss/mclagsyncd.log
+```
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-failure.md`
+<!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L66,L423,L429,L1509-1533,L1538-1633 / sonic-swss/orchagent/mlagorch.cpp L193-234 / sonic-swss-common/common/schema.h L440-443 -->
+
+CONFIG_DB `MCLAG_INTERFACE` の SET/DEL を受けた `MlagOrch` および `mclagsyncd` が副次的に書き込む DB エントリの一覧。
+
+### MlagOrch (orchagent) の副次書込
+
+`MlagOrch::addMlagInterface()` / `delMlagInterface()` は内部マップ (`m_mlagIntfs`) の更新と `SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知のみを行う。STATE_DB / APPL_DB / COUNTERS_DB への直接書込は **0 件**（`mlagorch.cpp` に `state_db` / `appl_db` / `counters_db` への書込呼出なし）。
+
+### mclagsyncd の副次書込
+
+`mclagsyncd` は MCLAG_INTERFACE の SET/DEL を受けて iccpd へ IPC 通知を送信し、iccpd との ICCP ネゴシエーション完了後に以下の STATE_DB テーブルを更新する。
+
+| 副次 DB | テーブル | キー形式 | 書込フィールド | 書込タイミング | ソース |
+|---|---|---|---|---|---|
+| STATE_DB | `MCLAG_LOCAL_INTF_TABLE` | `<if_name>` | `port_isolate_peer_link = true\|false` | iccpd からポート分離設定受信時 (`setLocalIfPortIsolate()`) | `mclaglink.cpp:L1520` |
+| STATE_DB | `MCLAG_LOCAL_INTF_TABLE` | `<if_name>` | — (del) | iccpd からローカル IF 削除通知受信時 (`deleteLocalIfPortIsolate()`) | `mclaglink.cpp:L1533` |
+| STATE_DB | `MCLAG_REMOTE_INTF_TABLE` | `<mlag_id>\|<if_name>` | `oper_status = up\|down` | iccpd からリモート IF 状態通知受信時 (`mclagsyncdSetRemoteIfState()`) | `mclaglink.cpp:L1584` |
+| STATE_DB | `MCLAG_REMOTE_INTF_TABLE` | `<mlag_id>\|<if_name>` | — (del) | iccpd からリモート IF 削除通知受信時 (`mclagsyncdDelRemoteIfInfo()`) | `mclaglink.cpp:L1633` |
+| APPL_DB | `FLUSHFDBREQUEST` (通知チャネル) | — | `ALL` | ICCP セッション確立直後の FDB フラッシュ要求 | `mclaglink.cpp:L423,L429` |
+
+### 副次書込なし
+
+| DB | 根拠 |
+|---|---|
+| COUNTERS_DB | `p_counters_db->hgetall("COUNTERS_PORT_NAME_MAP")` (`mclaglink.cpp:L66`) は **読取専用**。書込呼出なし |
+| ASIC_DB | `MlagOrch` から SAI 直接呼出なし。FDB 削除などは `FdbOrch` Observer 経由（間接） |
+| FLEX_COUNTER_DB | MCLAG_INTERFACE には FlexCounter 登録なし |
+
+!!! note "副次書込のタイミング"
+    STATE_DB (`MCLAG_LOCAL_INTF_TABLE` / `MCLAG_REMOTE_INTF_TABLE`) への書込は CONFIG_DB `MCLAG_INTERFACE` SET 直後ではなく、ICCP セッション確立後の iccpd ネゴシエーション完了を待って行われる。`sonic-db-cli CONFIG_DB hset 'MCLAG_INTERFACE|...'` 実行直後に `sonic-db-cli STATE_DB hgetall 'MCLAG_LOCAL_INTF_TABLE|...'` を確認しても空の場合がある。`show mclag interface` コマンドで ICCP ネゴシエーション完了後の状態を確認すること。
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.cpp#L1509-1533 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  /* Set local interface portisolate field enable/disable in the
+   * STATE_MCLAG_LOCAL_INTF_TABLE. */
+  void MclagLink::setLocalIfPortIsolate(std::string mclag_if, bool is_enable) {
+      ...
+      fvVector.push_back(make_pair("port_isolate_peer_link", is_enable ? "true" : "false"));
+      p_mclag_local_intf_tbl->set(key, fvVector);
+  }
+  void MclagLink::deleteLocalIfPortIsolate(std::string mclag_if) {
+      p_mclag_local_intf_tbl->del(mclag_if);
+  }
+reasoning: MCLAG_INTERFACE の SET/DEL に応じて iccpd が port-isolation 設定を mclagsyncd に返送し、STATE_DB MCLAG_LOCAL_INTF_TABLE を更新する。
+-->
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.cpp#L1538-1633 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  /* Set remote interface state field oper_status in the STATE_MCLAG_REMOTE_INTF_TABLE.
+   * Key = "Mclag<id>|interface" */
+  void MclagLink::mclagsyncdSetRemoteIfState(char *msg, size_t msg_len) {
+      ...
+      key = to_string(mlag_id) + "|" + lag_name;
+      p_mclag_remote_intf_tbl->set(key, fvVector);
+  }
+reasoning: ICCP ピアからのリモートインターフェース oper 状態変化が iccpd 経由で mclagsyncd に届き、STATE_DB MCLAG_REMOTE_INTF_TABLE が更新される。
+-->
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.cpp#L423,429 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  swss::NotificationProducer flushFdb(p_appl_db.get(), "FLUSHFDBREQUEST");
+  ...
+  flushFdb.send("ALL", "ALL", values);
+reasoning: ICCP セッション確立直後に APPL_DB の FLUSHFDBREQUEST チャネルへ通知を送信して全 FDB フラッシュを要求する。MCLAG_INTERFACE の直接 SET への応答ではなく ICCP セッション状態変化に連動。
+-->
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-side.md`
+<!-- /side-effects -->

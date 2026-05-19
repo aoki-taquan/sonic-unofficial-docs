@@ -4,11 +4,26 @@ description: "MCLAG_UNIQUE_IP テーブル — MC-LAG (Multi-Chassis Link Aggreg
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-16
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-mclag.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/include/mlacp_link_handler.h
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/include/port.h
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/src/mlacp_link_handler.c
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclag.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: mclagsyncd/mclaglink.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: mclagsyncd/mclaglink.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
@@ -200,3 +215,154 @@ MCLAG_UNIQUE_IP を逆参照するテーブルは YANG モデル上存在しな�
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L1087-1180 / sonic-swss/mclagsyncd/mclaglink.h L94-99 / sonic-swss/mclagsyncd/mclag.h L62 / sonic-utilities/config/mclag.py L327-378 -->
+
+### mclagsyncdSendMclagUniqueIpCfg 失敗パス一覧
+
+`mclagsyncd` 内で `MCLAG_UNIQUE_IP` エントリを iccpd へ TCP IPC 送信する `mclagsyncdSendMclagUniqueIpCfg()` の失敗パターンを以下に示す。
+
+| # | トリガー | 箇所 | 動作 | retry |
+|---|---------|------|------|-------|
+| 1 | key 中の `\|` デリミタ以降が空文字（if_name 欠落） | `mclaglink.cpp:1119-1122` | `SWSS_LOG_ERROR("Invalid Key %s Format. No unique ip ifname specified")` + `continue` で当該エントリをスキップ | なし（次回 SELECT まで再通知なし） |
+| 2 | 送信バッファ残量不足（MCLAG_MAX_SEND_MSG_LEN=4096 を超過） | `mclaglink.cpp:1138-1155` | 既存バッファをフラッシュして `::write()` し、バッファをリセット。フラッシュ失敗（write<=0）時は `SWSS_LOG_ERROR("...buffer full; write to m_connection_socket failed")` のみ | なし（ロールバックなし・iccpd 側未受信分は消失） |
+| 3 | `::write()` 失敗（iccpd 切断 / ソケットエラー） | `mclaglink.cpp:1173-1177` | `SWSS_LOG_ERROR("mclagsycnd to ICCPD, mclag unique ip cfg send; write to m_connection_socket failed")` のみ | なし（メッセージ消失。iccpd 再接続後は `addDomainCfgDependentSelectables()` で再購読されるが既送メッセージの再送機能はない） |
+| 4 | `entries` が空 | `mclaglink.cpp:1100-1104` | 即リターン（正常系） | — |
+
+### CLI バリデーション失敗（CONFIG_DB 書込み前の拒否）
+
+CLI `config mclag unique-ip add/del` 段で以下のチェックに引っかかると、CONFIG_DB への書込み自体が行われない。
+
+| # | 条件 | CLI 側の動作 | evidence |
+|---|------|-------------|---------|
+| 1 | MCLAG_DOMAIN テーブルに 1 件もエントリがない | `ctx.fail("MCLAG not configured.")` で中断 | `config/mclag.py:328-330` |
+| 2 | `interface_name` が `"Vlan"` プレフィックスで始まらない | `ctx.fail("...interface %s is not a VLAN interface")` で中断 | `config/mclag.py:335-336` |
+| 3 | ADD 時: 対象 VLAN IF に IP アドレスが設定済み | `ctx.fail("...unique ip not supported when ip address is already configured")` で中断 | `config/mclag.py:338-344` |
+| 4 | ADD 時: 対象 VLAN IF に非デフォルト VRF バインドが存在する | `ctx.fail("...unique ip not supported when VRF is already configured")` で中断 | `config/mclag.py:346-347` |
+| 5 | DEL 時: `unique_ip` エントリが DB に存在しない | `ctx.fail("...unique ip is not configured")` で中断 | `config/mclag.py:365-373` |
+
+### STATE_DB / ERROR_TABLE への記録
+
+`mclagsyncd` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。確認コマンド:
+
+```bash
+docker exec iccpd cat /var/log/syslog | grep -i "mclag unique ip"
+# または
+docker exec iccpd tail -f /var/log/syslog
+```
+
+### iccpd 接続断時の挙動
+
+`mclagsyncd` と iccpd 間の TCP ソケット (`m_connection_socket`) が切断された場合、`mclagsyncdSendMclagUniqueIpCfg()` の `::write()` がエラーを返すが **リトライ機構はなく、メッセージは消失する**。iccpd が再起動すると `accept()` で新規ソケットを受け入れ、`addDomainCfgDependentSelectables()` で `MCLAG_UNIQUE_IP` テーブルの購読を再登録する。ただしその時点での CONFIG_DB スナップショット読み取りは行われないため、iccpd 側の `unique_ip` 状態が CONFIG_DB と不一致になる可能性がある。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-failure.md`
+<!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclag.h L23,56,61-62,81,91 / sonic-swss/mclagsyncd/mclaglink.h L52,97,292 / sonic-swss/mclagsyncd/mclaglink.cpp L1134,1138,1141,1143,1148,1157,1166,1168 / sonic-buildimage/src/iccpd/include/mlacp_link_handler.h L30,34 / sonic-buildimage/src/iccpd/include/port.h L46 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3197,3222 -->
+
+### mclagsyncd ↔ iccpd IPC 固定定数
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MCLAG_DEFAULT_IP` | `0x7f000006` (= 127.0.0.6) | mclagsyncd が listen する IPC アドレス | `mclag.h:23` |
+| `MCLAG_DEFAULT_PORT` | `2626` | mclagsyncd ↔ iccpd 間の TCP IPC ポート番号。`MclagLink` コンストラクタのデフォルト引数 | `mclag.h:56`, `mclaglink.h:292` |
+| `MCLAG_PROTO_VERSION` | `1` | IPC メッセージヘッダ `version` フィールドの固定値。`mclagsyncdSendMclagUniqueIpCfg()` 内で `cfg_msg_hdr->version = 1` とハードコード | `mclag.h:81`, `mclaglink.cpp:1141,1166` |
+
+### バッファ長定数
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MCLAG_MAX_SEND_MSG_LEN` | `4096` バイト | mclagsyncd 送信バッファ上限。UNIQUE_IP エントリが多く 1 バッファに収まらない場合は中間フラッシュを行う | `mclag.h:62`, `mclaglink.cpp:1138` |
+| `MCLAG_MAX_MSG_LEN` | `4096` バイト | 個別メッセージの最大長（mclagsyncd 側・iccpd 側共通定義） | `mclag.h:61`, `mlacp_link_handler.h:30` |
+| `ICCP_MLAGSYNCD_RECV_MSG_BUFFER_SIZE` | `MCLAG_MAX_MSG_LEN × 256` = 1,048,576 バイト | iccpd の受信バッファ総サイズ。UNIQUE_IP メッセージはこのバッファに読み込まれる | `mlacp_link_handler.h:34` |
+
+### インターフェース名バッファ長
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MAX_L_PORT_NAME` | `20` バイト | `struct mclag_unique_ip_cfg_info.mclag_unique_ip_ifname[]` および iccpd 内 `Unq_ip_If_info.name[]` のバッファサイズ。VLAN IF 名（`Vlan<id>`）のコピー先 | `mclaglink.h:52,97`, `port.h:46`, `mlacp_link_handler.c:3222` |
+
+> `MAX_L_PORT_NAME = 20` バイトは YANG パターンで許容される最長 VLAN IF 名 `Vlan4094`（8 文字 + NUL）を十分収容できる。
+
+### メッセージタイプ enum
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_UNIQUE_IP` | `5` | mclagsyncd → iccpd の UNIQUE_IP 設定通知メッセージ種別 | `mclag.h:91` |
+
+### YANG パターン制約（実質的定数）
+
+`sonic-mclag.yang:150-152` の `if_name` パターンが許容する VLAN ID 範囲:
+
+| VLAN ID 範囲 | パターン部分 |
+|---|---|
+| 0 〜 999 | `[0-9]{1,3}` |
+| 1000 〜 3999 | `[1-3][0-9]{3}` |
+| 4000 〜 4089 | `[4][0][0-8][0-9]` |
+| 4090 〜 4094 | `[4][0][9][0-4]` |
+
+有効上限は実質 **4094**（IEEE 802.1Q 標準上限）。最長文字列 `Vlan4094` = 8 文字で `MAX_L_PORT_NAME=20` の制約内。
+
+### 未解決定数
+
+`CFG_MCLAG_UNIQUE_IP_TABLE_NAME` マクロは `sonic-swss/mclagsyncd/mclaglink.cpp:921` で参照されているが、`sonic-swss-common/common/schema.h`（ref: 4305596）に `#define` が存在しない。`CFG_MCLAG_TABLE_NAME="MCLAG_DOMAIN"` および `CFG_MCLAG_INTF_TABLE_NAME="MCLAG_INTERFACE"` は定義済みであることから、実効値は `"MCLAG_UNIQUE_IP"` と推定される。インストール済み swss-common パッケージかビルド生成ファイルで供給されている可能性がある。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-constants.md`
+<!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L435-460 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3186-3292 / sonic-buildimage/src/iccpd/src/iccp_netlink.c L2245-2365,L460-510 -->
+
+`MCLAG_UNIQUE_IP` を CONFIG_DB に書き込むと `mclagsyncd` → `iccpd` → `mclagsyncd` の往復 IPC を経て以下の副次 DB 書込みが発生する場合がある。
+
+### APPL_DB INTF_TABLE — mac_addr 更新
+
+`MCLAG_UNIQUE_IP` SET/DEL により **STANDBY ノードかつ VLAN IF が L3 モード**（IP アドレス設定済み）の場合に、mclagsyncd が APPL_DB `INTF_TABLE` に MAC アドレスを書き込む。
+
+| キー | フィールド | 書込トリガー | evidence |
+|---|---|---|---|
+| `INTF_TABLE\|<if_name>` (例: `Vlan100`) | `mac_addr = <active_system_id>` | UNIQUE_IP ADD: STANDBY が VLAN IF の MAC をアクティブピアの `system_id` に上書き | `iccp_netlink.c:update_vlan_if_mac_on_standby()`, `mclaglink.cpp:setIntfMac()` |
+| `INTF_TABLE\|<if_name>` | `mac_addr = <local_system_id>` | UNIQUE_IP DEL: STANDBY が VLAN IF の MAC を自ノードの `system_id` に戻す | `iccp_netlink.c:recover_vlan_if_mac_on_standby()`, `mclaglink.cpp:setIntfMac()` |
+
+**発火条件**:
+
+1. `csm->role_type == STP_ROLE_STANDBY`（スタンバイノードのみ）
+2. `local_if_is_l3_mode(lif)` が true（VLAN IF が L3 モード）
+3. ICCP セッションが確立済みで `MLACP(csm).remote_system.system_id` が初期化済み
+
+書込み経路:
+```
+CONFIG_DB MCLAG_UNIQUE_IP SET
+  → mclagsyncd: mclagsyncdSendMclagUniqueIpCfg() (mclaglink.cpp:1088)
+    → iccpd TCP IPC (MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_UNIQUE_IP)
+      → iccpd: iccp_mclagsyncd_mclag_unique_ip_cfg_handler() (mlacp_link_handler.c:3186)
+        → lif->is_l3_proto_enabled = true
+        → update_vlan_if_mac_on_standby(lif, 6)       [STANDBY かつ L3 mode 時]
+          → iccp_set_interface_ipadd_mac(lif, macaddr) (iccp_netlink.c:460)
+            → TCP IPC MCLAG_MSG_TYPE_SET_INTF_MAC → mclagsyncd
+              → setIntfMac() (mclaglink.cpp:435)
+                → APPL_DB INTF_TABLE|<vlan_if>  mac_addr=<system_mac>
+```
+
+### STATE_DB への書込みはなし
+
+`MCLAG_UNIQUE_IP` SET/DEL 処理パス自体は STATE_DB への書込みを行わない。STATE_DB `STATE_MCLAG_TABLE` / `STATE_MCLAG_LOCAL_INTF_TABLE` / `STATE_MCLAG_REMOTE_INTF_TABLE` への書込みは ICCP セッション状態変化・ロールネゴシエーション完了等によってトリガーされ、`MCLAG_UNIQUE_IP` 処理とは独立したイベント駆動。
+
+### ASIC_DB は読取専用
+
+`mclagsyncd` は FDB ポート解決のために ASIC_DB を読取専用で参照するが、`MCLAG_UNIQUE_IP` 処理パスで直接参照することはない。
+
+### ピア間 ICCP 通信
+
+`iccp_mclagsyncd_mclag_unique_ip_cfg_handler()` は `syn_local_neigh_mac_info_to_peer()` を呼び出してピア iccpd へネイバー / MAC 情報を ICCP プロトコルで同期するが、これは iccpd ↔ iccpd 間の TCP 通信であり SONiC Redis DB への直接書込みではない。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-side-effects.md`
+<!-- /side-effects -->

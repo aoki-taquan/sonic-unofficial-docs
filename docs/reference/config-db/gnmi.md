@@ -311,5 +311,228 @@ GNMI_CLIENT_CERT|<cname>
 -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`、`sonic-gnmi/telemetry/telemetry.go`、`sonic-gnmi/gnmi_server/clientCertAuth.go`
+
+### gnmi-native.sh レベル (コンテナ起動時)
+
+`gnmi-native.sh` は起動スクリプトとして実行される。失敗時は非ゼロ終了コードでコンテナが落ちる（`exit 1` / `exit 2`）か、安全な fallback 値で継続する。
+
+| 失敗条件 | 検出箇所 | 結果 | exit code |
+|---|---|---|---|
+| `TELEMETRY_VARS_FILE` テンプレートが存在しない | `gnmi-native.sh:12-15` | stderr 出力 + 即時終了 | 1 (`EXIT_TELEMETRY_VARS_FILE_NOT_FOUND`) |
+| `port` フィールドが正整数でない (DB エントリ存在時) | `gnmi-native.sh:68-71` | stderr 出力 + 即時終了 | 2 (`INCORRECT_TELEMETRY_VALUE`) |
+| `threshold` フィールドが正整数でない かつ `GNMI` エントリが存在する | `gnmi-native.sh:107-110` | stderr 出力 + 即時終了 | 2 |
+| `idle_conn_duration` フィールドが正整数でない かつ `GNMI` エントリが存在する | `gnmi-native.sh:120-123` | stderr 出力 + 即時終了 | 2 |
+| `GNMI` エントリが存在しない (`-z "$GNMI"` が真) | `gnmi-native.sh:64-65` | `PORT=8080` フォールバック、処理継続 | なし |
+| `threshold` / `idle_conn_duration` が `null` | `gnmi-native.sh:105,118` | デフォルト値 (`100` / `5`) を使用、処理継続 | なし |
+
+### telemetry.go レベル (Go フラグパース)
+
+Go バイナリの `setupFlags()` が引数を検証し、不正な組み合わせを検出する。エラーは `main()` の `log.Errorf` で記録されてプロセスが終了する。
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| `--port <= 0` かつ `--unix_socket` も空 | `telemetry.go:232-234` | `fmt.Errorf` → `log.Errorf` → 終了 |
+| `--threshold < 0` | `telemetry.go:237-239` | `fmt.Errorf` → 終了 |
+| `--idle_conn_duration < 0` | `telemetry.go:241-243` | `fmt.Errorf` → 終了 |
+| `--log_level < 0` | `telemetry.go:246-250` | `log.Infof` 警告のみ、デフォルト値 `2` に自動置換して**処理継続** |
+| TLS モード (`--noTLS` / `--insecure` 両方とも false) で `--server_crt` が空 | `telemetry.go:252-256` | `fmt.Errorf` → 終了 |
+| TLS モードで `--server_key` が空 | `telemetry.go:256-258` | `fmt.Errorf` → 終了 |
+| `client_auth=cert` 指定かつ `--ca_crt` が空 | `telemetry.go:318-321` | cert モードを**静かに無効化** (`UserAuth.Unset("cert")`) + `log.V(2)` 警告のみ、処理継続 |
+
+!!! warning "`client_auth=cert` + `ca_crt` 欠如の無音無効化"
+    `user_auth = cert` を設定しかつ `GNMI|certs.ca_crt` を省略した場合、`gnmi-native.sh` は `--client_auth cert` を渡すが `--ca_crt` を渡さない。Go バイナリはこの組み合わせを検出して cert 認証モードを**警告のみで自動無効化**する (`telemetry.go:318-321`)。ログレベル 2 (INFO) 以上でのみ記録されるため、ログを監視していない場合は認証なし状態になっていることに気づきにくい。
+
+### clientCertAuth.go レベル (クライアント接続時)
+
+`user_auth = cert` モード時、各クライアント接続の認証・認可は `ClientCertAuthenAndAuthor()` が処理する。すべての失敗は gRPC `codes.Unauthenticated` を返し、接続を即時拒否する。
+
+| 失敗条件 | 検出箇所 | gRPC エラーメッセージ |
+|---|---|---|
+| `peer.FromContext` 失敗 (peer 情報なし) | `clientCertAuth.go:118-120` | `"no peer found"` |
+| TLS `AuthInfo` 取得失敗 | `clientCertAuth.go:121-123` | `"unexpected peer transport credentials"` |
+| クライアント証明書検証チェーンが空 | `clientCertAuth.go:125-127` | `"could not verify peer certificate"` |
+| 証明書の CN が空文字列 | `clientCertAuth.go:133-135` | `"invalid username in certificate common name."` |
+| `serviceConfigTableName` が空文字列 | `clientCertAuth.go:255-257` | `"Service config table name should not be empty"` |
+| `GNMI_CLIENT_CERT\|<CN>` エントリ不在または `role` / `role@` フィールド欠如 | `clientCertAuth.go:263-284` | `"Invalid cert cname:'%s', not a trusted cert common name."` |
+| CRL ダウンロード失敗 (全 URL 試行後) | `clientCertAuth.go:230-236` | `"Can't download CRL and verify cert"` |
+| 証明書が CRL で失効 (`CheckChainRevocation` 失敗) | `clientCertAuth.go:244-248` | `"Peer certificate revoked"` |
+
+### 補足
+
+- **`GNMI_CLIENT_CERT` エントリ不在の glog レベル**: `glog.Warningf` で記録される (`clientCertAuth.go:274`)。Warning は glog `-v=0` 以上で常に出力されるが、gRPC エラーは `codes.Unauthenticated` となるため接続は拒否される。
+- **CRL の部分到達**: 複数の CRL 配布点 URL を持つ証明書の場合、1 つでも到達・ダウンロード成功した URL があれば `crlAvailable = true` となり、失効チェックが実施される (`clientCertAuth.go:189-204`)。全 URL が到達不能な場合のみ Unauthenticated を返す。
+- **コンテナ再起動が唯一の回復手段**: gnmi-native.sh はコンテナ起動時の 1 回実行のみであるため、CONFIG_DB の誤設定を修正しても `systemctl restart gnmi` が必要。誤設定による exit 2 はコンテナ起動失敗として記録される。
+
+<!-- evidence:
+  gnmi-native.sh:12-15 — TELEMETRY_VARS_FILE 存在チェック・exit 1
+  gnmi-native.sh:64-71 — GNMI エントリ空フォールバック + port 正整数チェック・exit 2
+  gnmi-native.sh:101-124 — threshold / idle_conn_duration null フォールバック + 正整数チェック・exit 2
+  telemetry.go:84-88 — main() の runTelemetry エラーハンドリング
+  telemetry.go:232-258 — setupFlags() port / threshold / idle_conn_duration / log_level / TLS 検証
+  telemetry.go:318-321 — client_auth=cert + ca_crt 欠如時の cert モード自動無効化
+  clientCertAuth.go:115-157 — ClientCertAuthenAndAuthor 全体フロー
+  clientCertAuth.go:254-284 — PopulateAuthStructByCommonName 失敗経路
+  clientCertAuth.go:221-251 — VerifyCertCrl CRL ダウンロード失敗・失効証明書処理
+-->
+<!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`telemetry` バイナリ (gNMI サーバ) は CONFIG_DB の `GNMI` / `GNMI_CLIENT_CERT` テーブルを**読み取るだけ**で、コアデータパス (orchagent / SAI) へは一切書き込まない。ただし、実行中に STATE_DB へ副次的な書き込みを行い、カウンタ統計は共有メモリ (SysV IPC) に書き込む。
+
+### 1. STATE_DB — `TELEMETRY_CONNECTIONS` テーブル
+
+| 副次 DB | テーブル / キー | 書込タイミング | 操作 | ソース |
+|---|---|---|---|---|
+| STATE_DB | `TELEMETRY_CONNECTIONS` (Hash) | デーモン起動 (`PrepareRedis()`) | 全既存エントリを `HDel` で削除 (起動時クリア) | `connection_manager.go:52-60` |
+| STATE_DB | `TELEMETRY_CONNECTIONS` (Hash) | gNMI Subscribe RPC 開始 (`Add()`) | `HSet(table, key, "active")` | `connection_manager.go:116` |
+| STATE_DB | `TELEMETRY_CONNECTIONS` (Hash) | gNMI Subscribe RPC 終了 (`Remove()`) | `HDel(table, key)` | `connection_manager.go:127` |
+
+**Hash フィールド (connection key) の生成規則**: `createKey()` が `<peer_ip:port>|<target_1>|<target_2>|...|<RFC3339_timestamp>` 形式で生成する (`connection_manager.go:94-108`)。値は常にハードコード `"active"` 固定。
+
+**threshold との関係**: `GNMI|gnmi.threshold` (デフォルト 100、0 = 無制限) を超えると新規接続の `Add()` が `false` を返して接続拒否となる。接続拒否時は STATE_DB への書き込みは行われない (`connection_manager.go:65`)。
+
+**フォールトトレラント**: STATE_DB クライアントが `nil` の場合 (`connection_manager.go:111-115`) は書き込みをスキップし、`telemetry` サーバ自体は継続動作する。
+
+### 2. COUNTERS_DB — 書込なし
+
+`telemetry` デーモンはカウンタ統計を **COUNTERS_DB (Redis) ではなく SysV 共有メモリ** に書き込む。
+
+| カウンタストア | 用途 | ソース |
+|---|---|---|
+| SysV 共有メモリ (`memKey=7749`, 1024 バイト) | GNMI_GET / GNMI_SET / GNMI_SET_BYPASS / GNOI_* / GNSI_* / DBUS_* カウンタ群 (計 32 種) を uint64 で保持 | `common_utils/shareMem.go` |
+| COUNTERS_DB | **書込なし** | — |
+
+カウンタ操作:
+- **初期化**: `NewServer()` 起動時に `InitCounters()` が全 32 カウンタを `uint64(0)` にリセットして共有メモリへ書き込む (`gnmi_server/server.go:528`)
+- **増分**: `IncCounter(cnt)` が `atomic.AddUint64` でアトミックにインクリメント後、`SetMemCounters` で共有メモリ全体を同期 (`common_utils/context.go`)
+- **読み取り**: `gnmi_dump` ツール (`gnmi_dump/gnmi_dump.go`) が `GetMemCounters` で読み出して標準出力に表示する。Redis には公開されない
+- **永続化**: なし。プロセス再起動 / システム再起動で全カウンタが 0 にリセット
+
+!!! note "`gnmi_dump` コマンドで カウンタを表示"
+    `docker exec gnmi gnmi_dump` を実行すると現在の全カウンタが `<CounterType.String()>: <uint64_value>` 形式で表示される。
+    COUNTERS_DB / STATE_DB からは取得できないため、通常の Redis 監視ツール (`redis-cli`) では見えない点に注意。
+
+### 3. その他の DB — 書込なし
+
+| DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `telemetry` バイナリに Producer / Notification 書込なし (`gnmi_server/server.go` 全体を `ProducerStateTable`/`NotificationProducer` で grep してヒット 0 件) |
+| ASIC_DB | なし | SAI 非経由。gNMI 経由の Write は swss/orchagent に転送されるが `telemetry` 自身は ASIC_DB を保持しない |
+| FLEX_COUNTER_DB | なし | `telemetry` に FLEX_COUNTER_DB 参照なし |
+
+<!-- evidence:
+  gnmi_server/connection_manager.go:52-60 — PrepareRedis: 起動時に TELEMETRY_CONNECTIONS 全エントリ削除
+  gnmi_server/connection_manager.go:65 — threshold による接続拒否 (0 = 無制限)
+  gnmi_server/connection_manager.go:94-108 — createKey: connection key 生成ロジック
+  gnmi_server/connection_manager.go:111-116 — storeKeyRedis: nil ガード + HSet "active"
+  gnmi_server/connection_manager.go:127 — HDel による接続終了時エントリ削除
+  common_utils/context.go — CounterType iota 定義 (GNMI_GET=0 ... COUNTER_SIZE=32), IncCounter, InitCounters
+  common_utils/shareMem.go — memKey=7749, memSize=1024, GetMemCounters/SetMemCounters
+  gnmi_server/server.go:528 — NewServer で InitCounters 呼び出し
+  gnmi_dump/gnmi_dump.go — GetMemCounters で共有メモリ読み取り・表示
+-->
+<!-- /side-effects -->
+
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+`telemetry` バイナリ (`telemetry.go`) および `gnmi-native.sh` 起動スクリプトに埋め込まれた固定値を整理する。これらは CONFIG_DB フィールドとは独立して動作し、設定変更なしに挙動に影響する。
+
+### 1. Unix ソケットパス (telemetry.go)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `unix_socket` デフォルト | `/var/run/gnmi/gnmi.sock` | TLS なしのローカル接続用 Unix ドメインソケットパス。空文字列を渡すと無効化される | `telemetry.go:175` |
+
+`unix_socket` は CONFIG_DB に対応フィールドがなく、`gnmi-native.sh` からも付与されない。つまり常にデフォルト `/var/run/gnmi/gnmi.sock` が使用される。同一コンテナ内の他プロセスはこのソケット経由で TLS なしに gNMI へ接続できる。
+
+---
+
+### 2. JWT 認証インターバル (telemetry.go)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `jwt_refresh_int` デフォルト | `900` 秒 (15 分) | JWT 有効期限切れ前にトークンをリフレッシュできる残り時間の閾値 | `telemetry.go:183` |
+| `jwt_valid_int` デフォルト | `3600` 秒 (1 時間) | JWT アクセストークンの有効期間 | `telemetry.go:184` |
+
+`JwtRefreshInt` / `JwtValidInt` は `gnmi_server/jwtAuth.go:17-18` で宣言されるパッケージグローバル変数に `telemetry.go:262-263` で代入される。CONFIG_DB には対応フィールドがなく、`gnmi-native.sh` からも設定されないため、常にデフォルト値が適用される。
+
+---
+
+### 3. 証明書シンボリックリンクパス (telemetry.go)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `ca_cert_lnk` デフォルト | `/keys/ca_cert.lnk` | CA 証明書シンボリックリンクパス (mTLS ローテーション用) | `telemetry.go:199` |
+| `server_cert_lnk` デフォルト | `/keys/server_cert.lnk` | サーバ証明書シンボリックリンクパス | `telemetry.go:200` |
+| `server_key_lnk` デフォルト | `/keys/server_key.lnk` | サーバ秘密鍵シンボリックリンクパス | `telemetry.go:201` |
+
+**自動上書きロジック**: `GNMI|certs.server_crt` が設定されている場合、`telemetry.go:306-310` でシンボリックリンクパスを `GNMI|certs.server_crt` と同一ディレクトリに自動変更する (`filepath.Dir(cfg.SrvCertFile)`)。デフォルト `/keys/` は証明書が `DEVICE_METADATA` 由来でディレクトリが `/keys/` である場合のみ有効。
+
+---
+
+### 4. gRPC メッセージサイズ制限 (telemetry.go)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `max_recv_msg_size` デフォルト | `4 * 1024 * 1024` = 4 MiB | gRPC サーバが受信できる最大メッセージサイズ | `telemetry.go:209` |
+| `max_send_msg_size` デフォルト | `4 * 1024 * 1024` = 4 MiB | gRPC サーバが送信できる最大メッセージサイズ | `telemetry.go:210` |
+
+CONFIG_DB に対応フィールドはなく、`gnmi-native.sh` からも設定されない。大量の Subscribe レスポンス (例: 全 BGP テーブル) を取得する場合、4 MiB を超えるメッセージはサイズ制限エラーになることがある。
+
+---
+
+### 5. gnmi-native.sh 固定環境変数・パス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `GRPC_GO_LOG_VERBOSITY_LEVEL` | `99` | gRPC-Go 内部ログ冗長度。99 = 最大詳細。`-logtostderr` と組み合わせでコンテナログに全 gRPC イベントを出力する | `gnmi-native.sh:26` |
+| `GRPC_GO_LOG_SEVERITY_LEVEL` | `info` | gRPC-Go ログ重要度フィルタ。`info` = INFO 以上を全出力 | `gnmi-native.sh:27` |
+| `CVL_SCHEMA_PATH` | `/usr/sbin/schema` | CVL (Config Validation Library) スキーマ読み込みパス。固定パスが設定されないと gNMI native write が CVL 検証失敗になる | `gnmi-native.sh:30` |
+| `TELEMETRY_VARS_FILE` | `/usr/share/sonic/templates/telemetry_vars.j2` | CONFIG_DB 読み込み用 Jinja2 テンプレートの固定パス。不在時は exit 1 で起動失敗 | `gnmi-native.sh:5` |
+| SmartSwitch ZMQ ポート | `8100` | `DEVICE_METADATA|localhost.subtype == "SmartSwitch"` のとき `--zmq_port=8100` を強制付与。固定値で上書き不可 | `gnmi-native.sh:91` |
+
+---
+
+### 6. その他 Go バイナリ固定定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `img_dir` デフォルト | `/tmp/host_tmp` | gNOI OS ダウンロード一時ディレクトリパス (OS アップグレード用) | `telemetry.go:195` |
+| `cert_crl_dir` デフォルト | `/mtls/crl` | CRL ファイル格納ディレクトリ (`--enable_crl` 有効時) | `telemetry.go:203` |
+| `grpc_meta` デフォルト | `/keys/grpc-version.json` | gRPC 証明書メタデータ JSON ファイルパス (certz 機能用) | `telemetry.go:204` |
+| `authz_meta` デフォルト | `/keys/authz-version.json` | 認可ポリシーメタデータ JSON ファイルパス | `telemetry.go:205` |
+| `authorization_policy_file` デフォルト | `/keys/authorization_policy.json` | 認可ポリシー JSON ファイルパス (`--authz_policy_enabled` 有効時) | `telemetry.go:207` |
+| `ENABLE_NATIVE_WRITE` | `false` (ビルドタグ `gnmi_native_write` 未指定時) | gNMI ネイティブ書込み機能の有効/無効。ビルド時に決定 | `gnmi_server/constants_native.go:5` |
+| `ENABLE_TRANSLIB_WRITE` | `false` (ビルドタグ `gnmi_translib_write` 未指定時) | gNMI translib 書込み機能の有効/無効。ビルド時に決定 | `gnmi_server/constants_translib.go:5` |
+
+!!! warning "ビルドタグによる書込み機能の有効化"
+    `ENABLE_NATIVE_WRITE` / `ENABLE_TRANSLIB_WRITE` はビルド時の Go ビルドタグ (`-tags gnmi_native_write`, `-tags gnmi_translib_write`) で制御される。SONiC コミュニティ master の標準ビルドではいずれも `false`。管理フレームワーク統合ビルドでは `gnmi_translib_write` タグが付与され、`ENABLE_TRANSLIB_WRITE = true` / デフォルト認証モード `password+jwt` が有効になる (`telemetry.go:219`)。
+
+<!-- evidence:
+  telemetry.go:175 — unix_socket "/var/run/gnmi/gnmi.sock" デフォルト
+  telemetry.go:183-184 — jwt_refresh_int=900, jwt_valid_int=3600 デフォルト
+  telemetry.go:195 — img_dir "/tmp/host_tmp" デフォルト
+  telemetry.go:199-201 — /keys/ シンボリックリンクパスデフォルト
+  telemetry.go:203-207 — cert_crl_dir, grpc_meta, authz_meta, authorization_policy_file デフォルト
+  telemetry.go:209-210 — max_recv_msg_size, max_send_msg_size 4*1024*1024
+  telemetry.go:262-263 — JwtRefreshInt, JwtValidInt 代入
+  telemetry.go:303-313 — /keys/ シンボリックリンク自動上書きロジック
+  gnmi-native.sh:5 — TELEMETRY_VARS_FILE 固定パス
+  gnmi-native.sh:26-27 — GRPC_GO_LOG_VERBOSITY_LEVEL=99, GRPC_GO_LOG_SEVERITY_LEVEL=info
+  gnmi-native.sh:30 — CVL_SCHEMA_PATH=/usr/sbin/schema
+  gnmi-native.sh:91 — SmartSwitch zmq_port=8100 固定値
+  gnmi_server/constants_native.go:5 — ENABLE_NATIVE_WRITE=false
+  gnmi_server/constants_translib.go:5 — ENABLE_TRANSLIB_WRITE=false
+  gnmi_server/jwtAuth.go:17-18 — JwtRefreshInt, JwtValidInt パッケージグローバル宣言
+-->
+<!-- /hardcoded-constants -->
+
 [^1]: `sonic-buildimage` `dockers/docker-sonic-gnmi/gnmi-native.sh` — ConfigDB → telemetry 引数変換ロジック全体
 [^2]: `sonic-gnmi` `gnmi_server/clientCertAuth.go:254-284` — `PopulateAuthStructByCommonName()` による GNMI_CLIENT_CERT 参照

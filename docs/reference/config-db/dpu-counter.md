@@ -183,6 +183,323 @@ if platform_info.get('switch_type') == 'dpu':
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> **調査根拠**: `flexcounterorch.cpp`, `dashorch.cpp`, `dashorch.h`, `dashcounter.h`, `enable_counters.py`, `device_info.py` 全行精読 (2026-05-19)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-counter-cross-refs.md`
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` はいずれも YANG leafref を持たないが、
+実行時に以下のテーブル・リソースを暗黙参照する。
+
+| # | 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|--------|-----|---------|-------------|--------------|------|
+| 1 | `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | 読み取り | なし | DPU 自動有効化に必須 | `enable_counters.py:42-45`, `device_info.py:563-566` |
+| 2 | `PORT` (PortsOrch `allPortsReady()`) | — | 状態確認 (起動順序ガード) | なし | `FlexCounterOrch` 処理開始の前提 | `flexcounterorch.cpp:164-166` |
+| 3 | `APP_DASH_ENI_TABLE` → `DashOrch::eni_entries_` | APPL_DB | 間接 (DashOrch 内部マップ) | なし | カウンタ ID 投入に実質必須 | `dashorch.cpp:69`, `dashorch.h:128` |
+| 4 | `COUNTERS_ENI_NAME_MAP` | COUNTERS_DB | 書き込み (DashOrch が生産) | なし | `counterpoll` / `show dash counters eni` の前提 | `dashorch.cpp:68`, `schema.h:249` |
+| 5 | `DEVICE_METADATA\|localhost.create_only_config_db_buffers` | CONFIG_DB | 読み取り (初期化のみ) | なし | ENI/DASH_METER 処理パスに非直接 | `flexcounterorch.cpp:114` |
+
+### DEVICE_METADATA|localhost.switch_type — DPU 自動有効化スイッチ
+
+`enable_counters.py` は起動後 60〜180 秒で `device_info.get_platform_info()` を呼び出し、
+`DEVICE_METADATA|localhost` の `switch_type` フィールドを読み取る。
+
+```python
+# enable_counters.py:37-45
+def enable_counters():
+    db = swsscommon.ConfigDBConnector()
+    db.connect()
+    dpu_counters = ["ENI","DASH_METER"]
+    platform_info = device_info.get_platform_info(db)
+    if platform_info.get('switch_type') == 'dpu':
+        for key in dpu_counters:
+            enable_counter_group(db, key)
+```
+
+`switch_type` が `'dpu'` でない場合、または `switch_type` キーが欠如している場合、
+ENI / DASH_METER への `FLEX_COUNTER_STATUS=enable` 書き込みは行われず、カウンタは無効のままとなる。YANG leafref なし。
+
+### PORT (allPortsReady) — FlexCounterOrch 起動順序ガード
+
+```cpp
+// flexcounterorch.cpp:164-166
+if (gPortsOrch && !gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+`FlexCounterOrch::doTask()` は `gPortsOrch->allPortsReady()` が `false` の間、
+`FLEX_COUNTER_TABLE|ENI` / `|DASH_METER` の SET メッセージを処理しない（`m_toSync` に残留）。
+DPU ノードでは物理ポートが存在しない場合もあるが、`gPortsOrch` が `nullptr` でない限りこのガードが適用される。
+
+### APP_DASH_ENI_TABLE → DashOrch::eni_entries_ — カウンタ ID 投入の前提
+
+`DashCounter<ENI>::refreshStats()` が走査する `eni_entries_` は、`DashOrch` が APPL_DB の
+`APP_DASH_ENI_TABLE` から ENI エントリを受信するたびに `addEniEntry()` で更新される。
+
+- `FLEX_COUNTER_STATUS=enable` が処理された時点で `eni_entries_` が空の場合: FLEX_COUNTER_DB への ENI カウンタ ID 書込みは発生しない
+- 後から ENI エントリが追加された時点で `EniCounter.addToFC(eni_id, eni)` (`dashorch.cpp:751`) が個別に `setCounterIdList` を実行し、カウンタ登録が完了する
+
+YANG leafref なし。`APP_DASH_ENI_TABLE` は APPL_DB 側の DPU 専用運用経路。
+
+### COUNTERS_ENI_NAME_MAP — show / counterpoll の前提
+
+`DashOrch` は ENI 追加/削除のたびに `COUNTERS_DB|COUNTERS_ENI_NAME_MAP` に
+ENI 名 → OID のマッピングを書き込む (`dashorch.cpp:1382, 1395`)。
+`show dash counters eni` や `counterpoll` はこのマップを参照してカウンタ値を表示する。
+FLEX_COUNTER_TABLE|ENI の `enable` が実際に機能するためには、
+`COUNTERS_ENI_NAME_MAP` に対応エントリが存在することが実用上の前提となる。
+
+!!! note "すべての参照は YANG leafref なし"
+    `sonic-flex_counter.yang` の ENI / DASH_METER コンテナには leafref 定義が存在しない。
+    ここに記載した暗黙参照はすべて実装コードのロジックのみで成立しており、
+    YANG バリデーションによる強制はない。
+
+<!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` に対する書き込みが、ENI カウンタポーリング開始に至らない失敗パターンをコードから特定した。
+
+### 失敗パターン一覧
+
+| # | トリガー | ログレベル | FLEX_COUNTER_DB への影響 | 自動回復 |
+|---|---------|---------|----------------------|---------|
+| 1 | `m_delayTimerExpired = false`（warm-reboot 60 秒タイマー未満了） | なし（silent 保留） | なし（`m_toSync` で全保留） | 自動（60 秒後に `doTask(SelectableTimer&)` が `m_delayTimerExpired = true` に変更） |
+| 2 | `gPortsOrch->allPortsReady() = false` | なし（silent 保留） | なし（`m_toSync` で保留） | 自動（PortInitDone 受信後の最初のイベントループで一括処理） |
+| 3 | 無効グループキー（`flexCounterGroupMap` 未登録） | `NOTICE` | なし | なし（再書き込み必要） |
+| 4 | 未サポートフィールド（`FLEX_COUNTER_STATUS` / `POLL_INTERVAL` 以外） | `NOTICE` | なし（他フィールドは継続処理） | 不要 |
+| 5 | ENI OID が `SAI_NULL_OBJECT_ID` の状態で `addToFC()` | `WARN` | なし（`addToFC` 即 return） | 自動（ENI が有効 OID で再登録された時点で解消） |
+| 6 | `fc_status` 変化なし（`enable` → `enable` 連続） | なし（silent no-op） | なし（`handleStatusUpdate` が前後同値なら `refreshStats` をスキップ） | 不要（設計上冪等） |
+
+### 失敗パターン詳細
+
+**パターン 1 — warm-reboot 遅延タイマー**
+
+`FlexCounterOrch` コンストラクタは warm-reboot 時のみ 60 秒のタイマーを設定し、満了まで `doTask(Consumer&)` の冒頭で即 `return` する:
+
+```cpp
+// flexcounterorch.cpp:156-159
+if (!m_delayTimerExpired)
+{
+    return;
+}
+```
+
+cold-start では `m_delayTimerExpired = true` が即時設定されるためブロックは発生しない。
+
+**パターン 2 — `allPortsReady()` ガード**
+
+`gPortsOrch` が初期化完了していない間、ENI / DASH_METER エントリは `m_toSync` に積まれたまま処理されない:
+
+```cpp
+// flexcounterorch.cpp:164-167
+if (gPortsOrch && !gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+DPU ノードでは `gPortsOrch` が nullptr になる場合があり、この場合ガードはスキップされる（DPU は物理ポートを持たない）。
+
+**パターン 3 — 無効グループキー**
+
+`FLEX_COUNTER_TABLE` に `ENI` / `DASH_METER` 以外のキー（例: `INVALID_KEY`）が書かれた場合、`flexCounterGroupMap.count(key) == 0` で即削除・retry なし:
+
+```cpp
+// flexcounterorch.cpp:183-187
+if (!flexCounterGroupMap.count(key))
+{
+    SWSS_LOG_NOTICE("Invalid flex counter group input, %s", key.c_str());
+    consumer.m_toSync.erase(it++);
+    continue;
+}
+```
+
+**パターン 4 — 未サポートフィールド**
+
+`FLEX_COUNTER_STATUS` / `POLL_INTERVAL` / `BULK_CHUNK_SIZE` 以外のフィールドは `NOTICE` ログのみで silent skip:
+
+```cpp
+// flexcounterorch.cpp:395-398
+else
+{
+    SWSS_LOG_NOTICE("Unsupported field %s", field.c_str());
+}
+```
+
+**パターン 5 — NULL OID ガード**
+
+`DashCounter::addToFC()` は ENI OID が `SAI_NULL_OBJECT_ID` の場合 WARN を出力して即 return し、`setCounterIdList` は呼ばれない:
+
+```cpp
+// dashcounter.h:30-34
+if (oid == SAI_NULL_OBJECT_ID)
+{
+    SWSS_LOG_WARN("Cannot add counter on NULL OID for %s", name.c_str());
+    return;
+}
+```
+
+**パターン 6 — `handleStatusUpdate` の冪等ガード**
+
+`DashCounter::handleStatusUpdate(enabled, entries)` は `fc_status` に変化がない場合 `refreshStats` をスキップする:
+
+```cpp
+// dashcounter.h:65-70
+bool prev_enabled = fc_status;
+fc_status = enabled;
+if (fc_status != prev_enabled)
+{
+    refreshStats(fc_status, entries);
+}
+```
+
+`enable` → `enable` の連続書き込みは no-op。これにより `enable_counters.py` の再実行（サービス再起動時）でも重複投入は発生しない。
+
+### 回復不能な失敗
+
+- **無効グループキー (パターン 3)**: `m_toSync.erase()` 後は自動リトライなし。正しいキーで再書き込みが必要
+- **ENI が一度も追加されない状態の `enable`**: `eni_entries_` が空のため `refreshStats()` が 0 件処理。ただし後続 ENI 追加時に `addToFC()` が個別に補填するため最終的には解消される
+
+> **Evidence**: `sonic-swss/orchagent/flexcounterorch.cpp:156-187,395-398` (warm-reboot タイマー・allPortsReady ガード・無効キー・未サポートフィールド), `sonic-swss/orchagent/dash/dashcounter.h:23-70` (NULL OID ガード・冪等ガード)
+<!-- /failure -->
+
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `dashorch.h:29-33`, `flexcounterorch.cpp:44`, `enable_counters.py:50-63`, `schema.h:293-295`, `flex_counter_manager.cpp:54-55` 全行精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-counter-constants.md`
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` に関連する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### FlexCounter グループ名文字列
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `ENI_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"ENI_STAT_COUNTER"` | FLEX_COUNTER_DB のグループキー。CONFIG_DB キー `ENI` と FLEX_COUNTER_DB グループ名のマッピング | `dashorch.h:29` |
+| `METER_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"METER_STAT_COUNTER"` | FLEX_COUNTER_DB のグループキー。CONFIG_DB キー `DASH_METER` と FLEX_COUNTER_DB グループ名のマッピング | `dashorch.h:32` |
+
+ユーザーが CONFIG_DB で指定する `ENI` / `DASH_METER` キーとは異なる内部文字列であり、YANG / CONFIG_DB でオーバーライド不可。
+
+### ポーリングインターバルデフォルト値
+
+| 定数名 | 値 | 単位 | 用途 | ソース |
+|--------|-----|------|------|--------|
+| `ENI_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | ms | ENI カウンタグループの orchagent 内部デフォルトポーリング間隔 | `dashorch.h:30` |
+| `METER_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | ms | DASH_METER カウンタグループの orchagent 内部デフォルトポーリング間隔 | `dashorch.h:33` |
+
+```cpp
+// dashorch.h:29-33
+#define ENI_STAT_COUNTER_FLEX_COUNTER_GROUP         "ENI_STAT_COUNTER"
+#define ENI_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS   10000
+#define METER_STAT_COUNTER_FLEX_COUNTER_GROUP       "METER_STAT_COUNTER"
+#define METER_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS 10000
+```
+
+CONFIG_DB に `POLL_INTERVAL` が書き込まれない場合はこの値が継続有効となる。
+
+### warm-reboot 遅延タイマー
+
+| 定数名 | 値 | 単位 | 用途 | ソース |
+|--------|-----|------|------|--------|
+| `FLEX_COUNTER_DELAY_SEC` | `60` | 秒 | warm-reboot 時に `FlexCounterOrch::doTask()` をブロックする遅延時間 | `flexcounterorch.cpp:44` |
+
+```cpp
+// flexcounterorch.cpp:44
+#define FLEX_COUNTER_DELAY_SEC 60
+```
+
+ENI / DASH_METER への `FLEX_COUNTER_STATUS=enable` は warm-reboot 後 60 秒間処理されない。CONFIG_DB / YANG でオーバーライド不可。
+
+### enable_counters.py 起動待機タイマー
+
+| 値 | 単位 | 条件 | 用途 | ソース |
+|----|------|------|------|--------|
+| `300` | 秒 | uptime 判定しきい値 | uptime < 300 秒であれば「起動直後」と判定し、長めの待機を行う | `enable_counters.py:60` |
+| `180` | 秒 | uptime < 300 秒の場合の sleep | orchagent が完全起動するまでの待機時間 (起動直後の場合) | `enable_counters.py:61` |
+| `60` | 秒 | uptime >= 300 秒の場合の sleep | サービス再起動等で既に起動済みの場合の短い待機時間 | `enable_counters.py:63` |
+
+```python
+# enable_counters.py:56-63
+# If the switch was just started (uptime less than 5 minutes),
+# wait for 3 minutes and enable counters
+# otherwise wait for 60 seconds and enable counters
+uptime = get_uptime()
+if uptime < 300:
+    time.sleep(180)
+else:
+    time.sleep(60)
+```
+
+これらはハードコードされており、CONFIG_DB / YANG でオーバーライド不可。
+
+### FLEX_COUNTER_DB フィールド名文字列
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `ENI_COUNTER_ID_LIST` | `"ENI_COUNTER_ID_LIST"` | FLEX_COUNTER_DB に書き込まれる ENI カウンタ ID リストのフィールド名 | `schema.h:293` |
+| `DASH_METER_COUNTER_ID_LIST` | `"DASH_METER_COUNTER_ID_LIST"` | FLEX_COUNTER_DB に書き込まれる DASH_METER カウンタ ID リストのフィールド名 | `schema.h:295` |
+
+`DashCounter<CounterType::ENI>` と `DashCounter<CounterType::DASH_METER>` がそれぞれ `flex_counter_manager.cpp:54-55` の `counter_id_field_lookup` マップを通じてこれらのフィールド名を解決する。
+
+<!-- /hardcoded-constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence:
+     sonic-swss/orchagent/flexcounterorch.cpp:202-214,380-392,
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp:124-254,
+     sonic-swss/orchagent/saihelper.cpp:877-1080,
+     sonic-swss/orchagent/dash/dashcounter.h:23-71,
+     sonic-swss/orchagent/dash/dashorch.cpp:67-68,751-752,1378-1397,
+     sonic-swss-common/common/schema.h:249,293-295 -->
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` を変更すると、orchagent (`FlexCounterOrch` / `DashOrch` / `FlexCounterManager`) が CONFIG_DB 自身ではなく **FLEX_COUNTER_DB** および **COUNTERS_DB** に副次的に書き込む。これらは `syncd` の ENI/Meter カウンタポーリングの起点となる。
+
+### FLEX_COUNTER_DB
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `FLEX_COUNTER_GROUP_TABLE\|ENI_STAT_COUNTER` | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL`, `STATS_MODE` | `FLEX_COUNTER_TABLE\|ENI` の `FLEX_COUNTER_STATUS` / `POLL_INTERVAL` 変更時、および `DashOrch` コンストラクタ初期化時 | `FlexCounterOrch` → `setFlexCounterGroupOperation()` / `setFlexCounterGroupPollInterval()` (`saihelper.cpp:877-884`) | `flexcounterorch.cpp:202-214,380-386`, `flex_counter_manager.cpp:124,147-153` |
+| `FLEX_COUNTER_GROUP_TABLE\|METER_STAT_COUNTER` | 同上 | `FLEX_COUNTER_TABLE\|DASH_METER` の変更時 / `DashOrch` コンストラクタ | 同上 | 同上 |
+| `ENI_STAT_COUNTER:<eni_oid>` (per OID) | `ENI_COUNTER_ID_LIST` = ENI SAI 統計 ID リスト, `STATS_MODE` = `STATS_MODE_READ` | ENI 作成時 + `EniCounter.fc_status == true` の場合に `EniCounter.addToFC(eni_id, eni)` が実行された時 | `DashCounter<ENI>::addToFC()` → `FlexCounterManager::setCounterIdList()` → `startFlexCounterPolling()` → `ProducerTable::set()` (`saihelper.cpp:1047`) | `dashcounter.h:35`, `dashorch.cpp:751`, `flex_counter_manager.cpp:225` |
+| `METER_STAT_COUNTER:<eni_oid>` (per OID) | `DASH_METER_COUNTER_ID_LIST`, `STATS_MODE` | ENI 作成時 + `MeterCounter.fc_status == true` の場合 | `DashCounter<DASH_METER>::addToFC()` → 同上 | `dashcounter.h:35`, `dashorch.cpp:752` |
+
+ENI 削除時は `EniCounter.removeFromFC()` → `FlexCounterManager::clearCounterIdList()` → `stopFlexCounterPolling()` → `ProducerTable::del(key)` で per-OID エントリが削除される (`saihelper.cpp:1075-1077`)。
+
+### COUNTERS_DB
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `COUNTERS_ENI_NAME_MAP` (単一 hash) | field=ENI 名 (例 `eni_01`), value=SAI ENI OID の文字列シリアライズ | ENI 作成成功後 (`dashorch.cpp:750`) に `addEniMapEntry()` が呼ばれた時 | `DashOrch::addEniMapEntry()` → `m_eni_name_table->set()` | `dashorch.cpp:1378-1382`, `schema.h:249` |
+| `COUNTERS:<eni_oid>` (per OID、間接書込) | `SAI_ENI_STAT_*` 各統計値 (packets / bytes 等) | `POLL_INTERVAL` (デフォルト 10000 ms) ごとに syncd が SAI ENI カウンタ API を呼び出した後 | `syncd` FlexCounter スレッド (orchagent は直接書かない) | FLEX_COUNTER_DB `ENI_STAT_COUNTER:<oid>` 経由 |
+
+ENI 削除時は `removeEniMapEntry()` → `m_eni_name_table->hdel("", name)` で `COUNTERS_ENI_NAME_MAP` のエントリが削除される (`dashorch.cpp:1395`)。
+
+### 副次書込サマリ
+
+| 副次 DB | テーブル | トリガ | 書込主体 |
+|---|---|---|---|
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|ENI_STAT_COUNTER` | `FLEX_COUNTER_STATUS` / `POLL_INTERVAL` 変更 / orch 起動 | FlexCounterOrch / FlexCounterManager |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|METER_STAT_COUNTER` | 同上 (DASH_METER) | FlexCounterOrch / FlexCounterManager |
+| FLEX_COUNTER_DB | `ENI_STAT_COUNTER:<oid>` | ENI 追加 + `fc_status=true` | DashCounter → FlexCounterManager |
+| FLEX_COUNTER_DB | `METER_STAT_COUNTER:<oid>` | ENI 追加 + `MeterCounter.fc_status=true` | DashCounter → FlexCounterManager |
+| COUNTERS_DB | `COUNTERS_ENI_NAME_MAP` | ENI 作成 / 削除 | DashOrch (`addEniMapEntry` / `removeEniMapEntry`) |
+| COUNTERS_DB | `COUNTERS:<oid>` | POLL_INTERVAL ごと (間接) | syncd FlexCounter スレッド |
+
+!!! warning "残置・リーク経路"
+    - `FLEX_COUNTER_DB ENI_STAT_COUNTER:<oid>` は `FLEX_COUNTER_STATUS=disable` 操作のみでは削除されない。`disableFlexCounterGroup()` はグループの `FLEX_COUNTER_STATUS` を `disable` にするだけで per-OID エントリは残る。ENI 削除時の `clearCounterIdList()` で削除される
+    - ENI OID が `SAI_NULL_OBJECT_ID` の場合 `addToFC()` が即 return するため FLEX_COUNTER_DB per-OID 書込なし (ただし `COUNTERS_ENI_NAME_MAP` は `addEniMapEntry()` で書かれる可能性がある)
+    - orchagent 再起動後、`DashOrch` コンストラクタが `applyGroupConfiguration()` を呼び FLEX_COUNTER_GROUP_TABLE に初期状態 (`disable`, `POLL_INTERVAL=10000`) を再書込する。per-OID エントリは ENI エントリ再処理後に再投入される
+
+詳細根拠は `meta/_intermediate/cdb-flow/dpu-counter-side.md` を参照。
+<!-- /side-effects -->
+
 ## 制約
 
 - `POLL_INTERVAL`: 100 以上 (uint32 上限 4294967295)
