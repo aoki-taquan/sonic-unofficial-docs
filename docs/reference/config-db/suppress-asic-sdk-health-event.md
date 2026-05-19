@@ -523,6 +523,73 @@ APPL_DB への書き込みはない。
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-platform.md`
+
+`SUPPRESS_ASIC_SDK_HEALTH_EVENT` の処理は `SwitchOrch` が持つ `platform` / `sub_platform` 環境変数を直接参照しない。すべてのプラットフォーム差は `querySwitchCapability()` による **SAI 動的照会** で決定され、静的な文字列比較は存在しない。
+
+### SAI capability 照会の構造
+
+`initAsicSdkHealthEventNotification()` (`switchorch.cpp:207-277`) が orchagent 起動時に行う 2 段階のクエリ:
+
+```
+1. querySwitchCapability(SAI_OBJECT_TYPE_SWITCH, SAI_SWITCH_ATTR_SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY)
+   └─ false → 全機能を無効化して早期 return（"ASIC/SDK health event is not supported" とログ）
+   └─ true  → コールバック登録 → 続行
+
+2. severity ごとに querySwitchCapability(SAI_OBJECT_TYPE_SWITCH, <REG_*_CATEGORY_ATTR>)
+   ├─ SAI_SWITCH_ATTR_REG_FATAL_SWITCH_ASIC_SDK_HEALTH_CATEGORY
+   ├─ SAI_SWITCH_ATTR_REG_WARNING_SWITCH_ASIC_SDK_HEALTH_CATEGORY
+   └─ SAI_SWITCH_ATTR_REG_NOTICE_SWITCH_ASIC_SDK_HEALTH_CATEGORY
+   ── 結果 (true/false) を m_supportedAsicSdkHealthEventAttributes に追加し STATE_DB へ記録
+```
+
+`querySwitchCapability()` は `sai_query_attribute_capability(gSwitchId, object, attr_id, &cap)` を呼び出し、`cap.set_implemented` が true の場合のみ成功とみなす (`switchorch.cpp:2066-2091`)。
+
+### プラットフォーム別挙動サマリ
+
+| プラットフォーム | ASIC_SDK_HEALTH_EVENT_NOTIFY 対応 | severity 対応状況 | 実質的な挙動 |
+|----------------|-----------------------------------|-------------------|-------------|
+| Broadcom XGS (非 DNX) | SAI 実装依存 | SDK バージョンによる | 全 severity 対応が一般的 |
+| Broadcom DNX/Jericho | SAI 実装依存 | SDK バージョンによる | 全 severity 対応が一般的 |
+| Mellanox Spectrum | SAI 実装依存 | Spectrum-2 以降で全 severity | 旧世代では `fatal` のみサポートの場合あり |
+| Cisco Silicon One | SAI 実装依存 | 一部 severity のみサポートの可能性 | SWITCH_CAPABILITY で確認必須 |
+| VS (Virtual Switch) | **false**（非実装） | なし | 全処理スキップ。`STATE_DB SWITCH_CAPABILITY` に `ASIC_SDK_HEALTH_EVENT=false` が記録される |
+| その他 | SAI 実装依存 | 不明 | `STATE_DB SWITCH_CAPABILITY` の値で確認 |
+
+!!! note "platform 文字列比較は一切行わない"
+    `switchorch.cpp` には SUPPRESS テーブルの処理に `BRCM_PLATFORM_SUBSTRING` / `MLNX_PLATFORM_SUBSTRING` 等の定数を使ったコードが存在しない。プラットフォーム依存の挙動はすべて SAI capability query の結果により決まる。
+
+### STATE_DB によるプラットフォームサポート確認
+
+`STATE_DB SWITCH_CAPABILITY|switch` の以下フィールドで現在のサポート状況を確認できる:
+
+| フィールド | 値 | 意味 |
+|-----------|-----|------|
+| `ASIC_SDK_HEALTH_EVENT` | `"true"` | health event 通知機能が有効 |
+| `ASIC_SDK_HEALTH_EVENT` | `"false"` | プラットフォーム非対応 — SUPPRESS 設定は無効 |
+| `REG_FATAL_ASIC_SDK_HEALTH_CATEGORY` | `"true"` / `"false"` | `fatal` severity のカテゴリ登録が可能か |
+| `REG_WARNING_ASIC_SDK_HEALTH_CATEGORY` | `"true"` / `"false"` | `warning` severity のカテゴリ登録が可能か |
+| `REG_NOTICE_ASIC_SDK_HEALTH_CATEGORY` | `"true"` / `"false"` | `notice` severity のカテゴリ登録が可能か |
+
+```bash
+sonic-db-cli STATE_DB hgetall 'SWITCH_CAPABILITY|switch' | grep -E 'ASIC_SDK|HEALTH'
+```
+
+`ASIC_SDK_HEALTH_EVENT=false` の環境では CONFIG_DB への書き込みは受け付けられるが SAI への登録が行われないため、実質的に機能しない。
+
+### multi-ASIC / SmartSwitch 環境
+
+- multi-ASIC 構成では `SwitchOrch` が namespace ごとに独立して起動し、SAI capability も namespace ごとに独立して照会・記録される。
+- SmartSwitch DPU SAI は SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY を実装していない可能性が高く、DPU 側では `ASIC_SDK_HEALTH_EVENT=false` となるケースが想定される。NPU 側と DPU 側で `SWITCH_CAPABILITY` フィールドが異なる場合がある。
+- `sonic-utilities/show/main.py:2803, 2849` の `show event-driven-telemetry` / `show asic-sdk-health-event` は default namespace の STATE_DB を参照するため、multi-ASIC 構成では一部 namespace の情報しか反映されない点に注意。
+
+証跡: `sonic-swss/orchagent/switchorch.cpp:207-277, 2066-2091`, `sonic-swss/orchagent/switchorch.h:29-30`
+
+<!-- /platform -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
