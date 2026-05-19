@@ -495,6 +495,31 @@ sonic-utilities (show copp / dump copp)
 > **スキャン証跡**: `coppmgrd.cpp` L21-65 全行読了。`coppmgr.cpp` L71, L296-310, L424-451 読了。`copporch.cpp` L191-215, L880-892 読了。`orchdaemon.cpp` L341, L500 読了。`show/copp.py` L21 読了。`dump/plugins/copp.py` L109-113 読了。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+### Mellanox / Marvell Prestera — `trap_priority` 設定のスキップと `hw_status` への影響
+
+`CoppOrch` は `getenv("platform")` 環境変数を参照し、`"mellanox"` (`MLNX_PLATFORM_SUBSTRING`) または `"marvell-prestera"` (`MRVL_PRST_PLATFORM_SUBSTRING`) を含むプラットフォームでは `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` 属性を SAI 呼び出しのリストから除外する。この分岐は 2 箇所に存在する。
+
+| 呼び出し箇所 | 分岐条件 | 影響 |
+|-------------|---------|------|
+| `initDefaultTrapIds()` — 起動時デフォルトトラップ適用 | `platform` に `"mellanox"` / `"marvell-prestera"` を含む | `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY = 1` を attrib リストに含めずに `create_hostif_trap()` を呼ぶ | `copporch.cpp:354` |
+| `getAttribsFromTrapGroup()` — COPP_GROUP の `trap_priority` フィールド処理 | 同上 | CONFIG_DB / APPL_DB から `trap_priority` が来ても SAI へは渡さず無視する | `copporch.cpp:1189` |
+
+**STATE_DB `COPP_TRAP_TABLE.hw_status` への影響**: `trap_priority` のスキップは SAI `create_hostif_trap()` の成否には直接影響しない。成功すれば `hw_status=installed` が書き込まれ、失敗すれば書き込みがスキップされる点はすべてのプラットフォームで共通。ただし Mellanox / Marvell Prestera では `trap_priority` に依存した SAI 実装側の挙動（デフォルト priority の扱い）が異なるため、SAI 失敗率に間接影響しうる。
+
+**`COPP_TRAP_CAPABILITY_TABLE` への影響**: `publishTrapIdsCapability()` はプラットフォーム環境変数を参照しない。`sai_query_attribute_enum_values_capability()` の結果はプラットフォームごとに異なる（返却される trap ID リストが異なる）が、書き込みロジック自体はプラットフォーム非依存。SAI capability クエリが失敗した場合のフォールバックリストも全プラットフォーム共通の静的リストが使用される。
+
+| プラットフォーム | `trap_priority` SAI 設定 | `hw_status` 書込みロジック | `COPP_TRAP_CAPABILITY_TABLE` |
+|----------------|------------------------|--------------------------|------------------------------|
+| Mellanox (`"mellanox"` 含む) | スキップ | 共通 (SAI 成否に依存) | SAI capability 返却値依存 |
+| Marvell Prestera (`"marvell-prestera"` 含む) | スキップ | 共通 (SAI 成否に依存) | SAI capability 返却値依存 |
+| その他 (x86, Broadcom 等) | `priority=1` を設定 | 共通 (SAI 成否に依存) | SAI capability 返却値依存 |
+
+> **スキャン証跡**: `copporch.cpp` L348-362 (`initDefaultTrapIds` platform 分岐)、`copporch.cpp` L1183-1195 (`getAttribsFromTrapGroup` platform 分岐)、`orchagent/orch.h` L41-42 (定数定義 `MLNX_PLATFORM_SUBSTRING="mellanox"`, `MRVL_PRST_PLATFORM_SUBSTRING="marvell-prestera"`)、`copporch.cpp` L240-300 (`publishTrapIdsCapability` — platform 分岐なし) 読了。
+<!-- /platform -->
+
 ## 確認コマンド
 
 ```bash
