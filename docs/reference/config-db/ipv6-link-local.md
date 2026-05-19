@@ -383,6 +383,56 @@ flowchart TD
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`ipv6_use_link_local_only` フィールドのスキーマ・処理ロジック自体は**全プラットフォームで共通**。プラットフォーム差は (1) multi-ASIC 環境でのネームスペース分離、(2) VOQ inband interface の特殊パス、の 2 点に局所化される。
+
+### multi-ASIC / ネームスペース差異
+
+**CLI のネームスペース対応**: `config ipv6` グループは `multi_asic.is_multi_asic()` の結果で `-n/--namespace` オプションを必須化する (`config/main.py:9492`)。single-ASIC では `namespace=None` → `DEFAULT_NAMESPACE` にフォールバック。`config interface ipv6` の個別インタフェースコマンドは `get_port_namespace(interface_name)` でポートが属するネームスペースを自動特定し、対応する CONFIG_DB に書き込む (`config/main.py:528-564`)。
+
+**`show ipv6 link-local-mode` のネームスペース対応**: `@multi_asic_util.multi_asic_click_option_namespace` デコレータで `-n/--namespace` オプションを付与し、`masic.get_ns_list_based_on_options()` で対象ネームスペースを列挙する (`show/main.py:1595-1596`)。
+
+| 呼び出し方 | 動作 |
+|-----------|------|
+| `show ipv6 link-local-mode -n asic0` | asic0 の CONFIG_DB のみ参照 → asic0 所属ポートのみ表示 |
+| `show ipv6 link-local-mode` (single-ASIC) | DEFAULT_NAMESPACE の CONFIG_DB を参照 |
+| `show ipv6 link-local-mode` (multi-ASIC, 全 NS) | 全 asic の CONFIG_DB を順次参照して結合表示 |
+
+**全インタフェース一括操作の multi-ASIC 制限**: `config ipv6 enable link-local` は呼び出し時の `config_db`（ネームスペース指定済み）内のポートのみを対象とする。multi-ASIC 環境で「全 ASIC 一括有効化」を行うには、ネームスペースごとに別々のコマンドが必要。単一 `config ipv6 enable link-local` は指定ネームスペース内のポートのみを変更し、他の asic namespace には波及しない (evidence: `tests/multi_asic_ipv6_link_local_test.py:47-65`)。
+
+**intfmgrd のインスタンス数**: multi-ASIC SONiC では各ネームスペース (asic0, asic1, …) で独立した swss コンテナが走り、各コンテナが自 namespace の CONFIG_DB / APPL_DB / STATE_DB に接続する。`intfmgrd.cpp` 自体には ASIC 番号分岐や `multi_asic` ライブラリへの依存は一切なく、コンテナのネームスペース分離で multi-ASIC 対応を実現する。
+
+### VOQ Inband Interface のバイパス
+
+`intfmgr.cpp:1195-1203` において `VOQ_INBAND_INTERFACE` テーブルからの SET イベントは `doIntfGeneralTask()` を経由せず、フィールド解析なしで直接 APP_DB に relay される:
+
+```cpp
+if((table_name == CFG_VOQ_INBAND_INTERFACE_TABLE_NAME) && (op == SET_COMMAND))
+{
+    //No further processing needed. Just relay to orchagent
+    m_appIntfTableProducer.set(keys[0], data);
+    m_stateIntfTable.hset(keys[0], "vrf", "");
+    it = consumer.m_toSync.erase(it);
+    continue;
+}
+```
+
+`VOQ_INBAND_INTERFACE` は VOQ chassis の inband 管理インタフェースに使用されるテーブル。このテーブルに `ipv6_use_link_local_only` フィールドを書いても `m_ipv6LinkLocalModeList` への登録・`delIpv6LinkLocalNeigh()` は実行されない。通常の `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルとは異なる扱いとなる。
+
+### ベンダー固有コード・ハードウェア依存なし
+
+- `intfmgr.cpp` / `neighsync.cpp` に `platform` / `vendor` / `chassis` / `asic[0-9]` / `is_multi_npu` キーワードの依存はゼロ（`using namespace std;` / `using namespace swss;` を除く grep で 0 ヒット）
+- `sonic-buildimage/device/` 配下の vendor/SKU ディレクトリに `ipv6_use_link_local_only` を含むファイルは存在しない
+- YANG スキーマ (`sonic-interface.yang`, `sonic-portchannel.yang`, `sonic-vlan.yang`) に platform 条件分岐なし
+- IPv6 link-local アドレス生成はカーネルの IPv6 スタック (EUI-64) が担い、ハードウェア ASIC 側の処理は不要。SAI への転送が存在しないため、NIC/ASIC ベンダーによる差異も生じない
+
+詳細解析: `meta/_intermediate/cdb-flow/ipv6-link-local-platform.md`
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:1195-1203; sonic-swss/cfgmgr/intfmgrd.cpp (no platform branches); sonic-utilities/config/main.py:9490-9570; sonic-utilities/show/main.py:1586-1629; sonic-utilities/tests/multi_asic_ipv6_link_local_test.py:19-138 -->
+<!-- /platform -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |
