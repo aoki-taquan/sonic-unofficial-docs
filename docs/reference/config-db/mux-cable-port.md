@@ -272,6 +272,47 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-constants.md`
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:48-51, sonic-swss/orchagent/tunneldecaporch.h:21, sonic-linkmgrd/src/DbInterface.cpp:48,827,880-881 -->
+
+`MuxOrch` と `linkmgrd` はフィールドのデフォルト値・ACL 名・トンネル名をソースコード上にハードコードしており、CONFIG_DB 経由での変更はできない。
+
+### orchagent ハードコード定数（`muxorch.cpp:48-51`）
+
+| 定数マクロ | 値 | 用途 |
+|-----------|-----|------|
+| `MUX_ACL_TABLE_NAME` | `INGRESS_TABLE_DROP` | ポートアイソレーション時に使用する ACL テーブル名 |
+| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | ポートアイソレーション時に使用する ACL ルール名 |
+| `MUX_HW_STATE_UNKNOWN` | `"unknown"` | HW mux 状態が不明の際に `STATE_DB:HW_MUX_CABLE_TABLE` に書き込む値 |
+| `MUX_HW_STATE_ERROR` | `"error"` | HW mux 操作失敗時に `STATE_DB:HW_MUX_CABLE_TABLE` に書き込む値 |
+
+### トンネル名定数（`tunneldecaporch.h:21`）
+
+| 定数マクロ | 値 | 用途 |
+|-----------|-----|------|
+| `MUX_TUNNEL` | `"MuxTunnel0"` | `handlePeerSwitch()` / ネクストホップトンネル生成で参照するトンネル名。`TUNNEL\|MuxTunnel0` エントリが CONFIG_DB に存在しなければ `PEER_SWITCH` 処理が永続 retry ループになる |
+
+### フィールド欠落時の実行時フォールバック（`linkmgrd`）
+
+| フィールド | コードデフォルト | 適用条件 | ソース |
+|-----------|--------------|---------|--------|
+| `cable_type` | `"active-standby"` | `cable_type` フィールドが `MUX_CABLE` エントリに存在しない場合 | `DbInterface.cpp:827` |
+| `prober_type` | `"software"` | `STATE_DB SWITCH_CAPABILITY.ICMP_OFFLOAD_CAPABLE != "true"` の場合、または `prober_type` フィールドが欠落している場合 | `DbInterface.cpp:858-881` |
+
+これらの実行時フォールバックは YANG スキーマのデフォルト値（`cable_type: active-standby`、`prober_type: software`）と一致しており、乖離はない。
+
+### linkmgrd 内部タイムアウト（`DbInterface.cpp:48`）
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `DEFAULT_TIMEOUT_MSEC` | `1000` ms | Redis `select()` 呼び出しのブロックタイムアウト。CONFIG_DB からの変更通知ポーリング間隔に相当 |
+
+<!-- /constants -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
