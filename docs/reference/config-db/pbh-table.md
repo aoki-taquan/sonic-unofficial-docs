@@ -354,6 +354,62 @@ APPL_DB への中継はなく、STATE_DB への書き込みもない。CLI (`con
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-platform.md -->
+
+`PbhOrch` は起動時に環境変数 `ASIC_VENDOR` を読み取り、ASIC ベンダーを判定して field update 可否を決定する (`pbhcap.cpp:176-197`)。認識するベンダーは `"mellanox"` のみで、それ以外はすべて GENERIC として扱われる。
+
+### プラットフォーム識別
+
+```c
+// pbhcap.cpp:22-24
+#define PBH_PLATFORM_ENV_VAR  "ASIC_VENDOR"
+#define PBH_PLATFORM_MELLANOX "mellanox"
+// getenv("ASIC_VENDOR") == "mellanox" → PbhAsicVendor::MELLANOX
+// それ以外 / 未設定               → PbhAsicVendor::GENERIC (fallback)
+```
+
+### PBH_TABLE フィールドの操作可否
+
+| フィールド | GENERIC (broadcom 等) | MELLANOX |
+|-----------|----------------------|----------|
+| `interface_list` | **UPDATE** のみ | **UPDATE** のみ |
+| `description` | **UPDATE** のみ | **UPDATE** のみ |
+
+どちらのプラットフォームも `interface_list`・`description` は **ADD/REMOVE 不可**。既存テーブルの `interface_list` や `description` を更新する場合のみ反映される。
+
+### PBH_HASH フィールドの操作可否
+
+| フィールド | GENERIC | MELLANOX |
+|-----------|---------|----------|
+| `hash_field_list` | **UPDATE** のみ | **更新不可（空集合）** |
+
+`PbhMellanoxFieldCapabilities` では `hash_field_list` が一切設定されないため (`pbhcap.cpp:126-141`)、Mellanox 環境では `PBH_HASH` テーブルの `hash_field_list` フィールドを後から変更できない。
+
+### PBH_RULE の hash/packet_action 更新 — Mellanox W/A
+
+`updatePbhRule()` で `hash` または `packet_action` を更新するとき、Mellanox ASIC では SAI の制約から action を一時的に無効化してから更新する回避策が必要 (`pbhorch.cpp:839-880`):
+
+| プラットフォーム | `hash`/`packet_action` 更新手順 |
+|----------------|---------------------------------|
+| GENERIC | `updateAclRule()` を直接呼び出す |
+| MELLANOX | `disableAction()` → `updateAclRule()` → `enableAction()` |
+
+!!! warning "Mellanox 環境での PBH_HASH 変更"
+    Mellanox では `hash_field_list` の UPDATE capability が空のため、`PBH_HASH|<name>` の `hash_field_list` を変更しようとすると `validatePbhHashCap()` が `false` を返し、変更が拒否される (`pbhorch.cpp:1103-1117`)。ハッシュフィールドを変更するには既存の PBH_HASH を削除してから再作成する必要がある。
+
+### STATE_DB への capability 書き込み
+
+`PbhCapabilities` はコンストラクタ内でベンダー判定後すぐに `STATE_DB` の `PBH_CAPABILITIES_TABLE` へ capability 情報を書き込む (`pbhcap.cpp:210-220`)。これにより CLI や他コンポーネントが実行時 capability を参照できる。
+
+### VM・Virtual Switch
+
+`ASIC_VENDOR` が未設定または `"vs"` など不明な値の場合は GENERIC として動作する。VM 環境でも `PbhCapabilities` の初期化・STATE_DB 書き込みは正常に行われる。SAI は VS 実装 (mock) で動作するため実際のハードウェアへの降りはないが、ACL/HASH オブジェクトは ASIC_DB に記録される。
+
+<!-- /platform -->
+
 ## key 構造
 
 ```text
