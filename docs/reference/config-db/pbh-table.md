@@ -281,6 +281,79 @@ SAI の変更は CONFIG_DB / APPL_DB / STATE_DB には反映されない。ス�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+> 根拠: `sonic-swss/orchagent/orchdaemon.cpp:550-565`、`sonic-swss/orchagent/pbhorch.cpp:88-97,1804-1831`、`sonic-swss/orchagent/orch.cpp:1186-1195`
+
+### PbhOrch — SubscriberStateTable 経由 (CONFIG_DB)
+
+`PbhOrch` は `Orch(connectorList)` を継承し、`orchdaemon.cpp:553-565` が 4 テーブルの `TableConnector` リストを渡してコンストラクタを呼ぶ:
+
+```cpp
+// orchdaemon.cpp:553-565
+TableConnector cfgDbPbhTable(m_configDb, CFG_PBH_TABLE_TABLE_NAME);       // "PBH_TABLE"
+TableConnector cfgDbPbhRuleTable(m_configDb, CFG_PBH_RULE_TABLE_NAME);    // "PBH_RULE"
+TableConnector cfgDbPbhHashTable(m_configDb, CFG_PBH_HASH_TABLE_NAME);    // "PBH_HASH"
+TableConnector cfgDbPbhHashFieldTable(m_configDb, CFG_PBH_HASH_FIELD_TABLE_NAME); // "PBH_HASH_FIELD"
+vector<TableConnector> pbhTableConnectorList = { ... };
+gPbhOrch = new PbhOrch(pbhTableConnectorList, gAclOrch, gPortsOrch);
+```
+
+`Orch(const vector<TableConnector>&)` コンストラクタ (`orch.cpp:127-133`) が各 `TableConnector` に対して `addConsumer(db, tableName)` を呼ぶ。CONFIG_DB (dbId=4) の場合は `SubscriberStateTable` が選択される (`orch.cpp:1189-1190`):
+
+```cpp
+// orch.cpp:1186-1195
+void Orch::addConsumer(DBConnector *db, string tableName, int pri) {
+    if (db->getDbId() == CONFIG_DB || ...) {
+        addExecutor(new Consumer(new SubscriberStateTable(...), this, tableName));
+    } else { ... }
+}
+```
+
+### PbhOrch::doTask のディスパッチ
+
+SELECT イベント受信後、`PbhOrch::doTask(Consumer&)` (`pbhorch.cpp:1804`) がテーブル名で handler を選択する。まず `allPortsReady()` を確認し、ポート初期化が完了するまで処理を保留する:
+
+```cpp
+// pbhorch.cpp:1804-1831
+void PbhOrch::doTask(Consumer &consumer) {
+    if (!this->portsOrch->allPortsReady()) return;  // ポート初期化待ち
+
+    auto tableName = consumer.getTableName();
+    if      (tableName == CFG_PBH_TABLE_TABLE_NAME)      this->doPbhTableTask(consumer);
+    else if (tableName == CFG_PBH_RULE_TABLE_NAME)       this->doPbhRuleTask(consumer);
+    else if (tableName == CFG_PBH_HASH_TABLE_NAME)       this->doPbhHashTask(consumer);
+    else if (tableName == CFG_PBH_HASH_FIELD_TABLE_NAME) this->doPbhHashFieldTask(consumer);
+}
+```
+
+| 購読テーブル | テーブル名 | handler |
+|------------|----------|---------|
+| `CONFIG_DB:PBH_TABLE` | `"PBH_TABLE"` | `doPbhTableTask()` |
+| `CONFIG_DB:PBH_RULE` | `"PBH_RULE"` | `doPbhRuleTask()` |
+| `CONFIG_DB:PBH_HASH` | `"PBH_HASH"` | `doPbhHashTask()` |
+| `CONFIG_DB:PBH_HASH_FIELD` | `"PBH_HASH_FIELD"` | `doPbhHashFieldTask()` |
+
+### 通知フロー全体図
+
+```
+CONFIG_DB PBH_TABLE|<name>  (SET/DEL)
+  │  Redis keyspace notification (__keyspace@4__:PBH_TABLE|<name>)
+  └─ orchagent SubscriberStateTable → Consumer → PbhOrch::doTask()
+       └─ doPbhTableTask() → AclOrch::addAclTable() / removeAclTable()
+            └─ SAI: sai_acl_api (→ ASIC_DB → syncd → hardware)
+
+CONFIG_DB PBH_RULE|<table>|<rule>  (SET/DEL)
+  │  Redis keyspace notification (__keyspace@4__:PBH_RULE|*)
+  └─ orchagent SubscriberStateTable → Consumer → PbhOrch::doTask()
+       └─ doPbhRuleTask() → AclOrch::addAclRule() / removeAclRule()
+```
+
+APPL_DB への中継はなく、STATE_DB への書き込みもない。CLI (`config pbh table ...`) が CONFIG_DB に直接 `hset`/`hdel` し、orchagent が `SubscriberStateTable` で変化を受け取って SAI API を呼び出す。
+
+<!-- /pubsub -->
+
 ## key 構造
 
 ```text
