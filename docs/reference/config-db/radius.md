@@ -396,6 +396,26 @@ radius_global_handler(key="global", op=SET, data={passkey: "..."})
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:2473-2474` (RADIUS/RADIUS_SERVER subscribe)、`hostcfgd:2528` (listen/init_data_handler)、`hostcfgd:2324-2329` (`radius_global_handler`)、`hostcfgd:2317-2322` (`radius_server_handler`)、`hostcfgd:527-545` (`radius_global_update`/`radius_server_update`)、`hostcfgd:641-851` (`modify_conf_file`)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: RADIUS は SSH / コンソール認証のコントロールプレーン処理であり、SAI 非経由。ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/radius-platform.md`
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `hostcfgd` の RADIUS ハンドラは SAI API を呼び出さない。PAM / NSS 設定ファイルの生成のみ (`hostcfgd:527-545, 641-851`) |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `hostcfgd` は `ConfigDBConnector()` (引数なし) で host 単体の CONFIG_DB のみを購読する。`asicN` namespace を iterate しない (`hostcfgd:2166-2185`)。RADIUS は per-host 認証のため namespace 分割は無関係 |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | RADIUS テーブルは host scope。chassis 全体での集中認証機構はなく、各 line card host で `hostcfgd` が独立に PAM 設定を再生成する |
+| ベンダー固有 PAM モジュール | なし | community master の RADIUS スタックは `pam_radius_auth.so` (Debian 標準パッケージ)。`sonic-buildimage` の `files/image_config/` にベンダー向け hook 注入箇所なし |
+| SmartSwitch (NPU + DPU 構成) | 影響なし | RADIUS は管理プレーン認証。DPU 側の orchagent / SAI は参照しない。`DPU` テーブルに RADIUS 関連フィールドなし |
+| Jinja2 テンプレート内のプラットフォーム分岐 | なし | `pam_radius_auth.conf.j2` / `radius_nss.conf.j2` を `platform|asic|chassis|namespace|vendor` で grep して 0 ヒット。分岐は `auth_type` / `src_ip` / `vrf_name` / `statistics` フィールド値のみ |
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd:527-545 (radius_global_update — SAI 呼び出しなし) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd:2166-2185 (hostcfgd main — multi-asic 無考慮) -->
+<!-- /platform -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・Fallback
 
