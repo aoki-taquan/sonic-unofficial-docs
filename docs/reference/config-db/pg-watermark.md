@@ -271,6 +271,75 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 
 ---
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 証跡: `meta/_intermediate/cdb-flow/pg-watermark-side-effects.md`
+> スキャン対象: `orchagent/portsorch.cpp:785-787,872-876,8903-8941,8998-9052,9070-9100`、`orchagent/flexcounterorch.cpp:265-270`、`orchagent/watermarkorch.cpp:41-45,116-141`
+
+`FLEX_COUNTER_TABLE|PG_WATERMARK` の SET/DEL が引き起こす副次的な DB 書き込みを示す。
+
+### FLEX_COUNTER_DB — グループ設定（orchagent init 時・常時）
+
+`PortsOrch` コンストラクタの `setFlexCounterGroupParameter()` (`portsorch.cpp:872-876`) が orchagent 起動時に書き込む。`FLEX_COUNTER_TABLE|PG_WATERMARK` の SET とは無関係に常時実行される。
+
+| DB | テーブル / キー | フィールド | 値 | 根拠 |
+|----|----------------|-----------|-----|------|
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|PG_WATERMARK_STAT_COUNTER` | `POLL_INTERVAL` | `"60000"` | `portsorch.cpp:872-876` |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|PG_WATERMARK_STAT_COUNTER` | `STATS_MODE` | `"READ_AND_CLEAR"` | 同上 |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|PG_WATERMARK_STAT_COUNTER` | `PG_PLUGIN_FIELD` | `pgWmSha`（Lua スクリプト SHA） | 同上 |
+
+### FLEX_COUNTER_DB — per-OID エントリ（enable 時）
+
+`FLEX_COUNTER_STATUS = enable` を受信すると `addPriorityGroupWatermarkFlexCounters()` が全 PHY ポートの PG OID に対して書き込む。
+
+| DB | テーブル / キー | フィールド | 値 | 根拠 |
+|----|----------------|-----------|-----|------|
+| FLEX_COUNTER_DB | `PG_WATERMARK_STAT_COUNTER:<sai_pg_oid>` | `PG_WATERMARK_STAT_ID_LIST` | `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES,SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` | `portsorch.cpp:9051` |
+
+`BUFFER_PG` の DEL または `FLEX_COUNTER_STATUS = disable` で `clearCounterIdList()` が呼ばれ、対応エントリが削除される (`portsorch.cpp:9095`)。
+
+### COUNTERS_DB — PG マップ（BUFFER_PG イベント時・間接連動）
+
+`BUFFER_PG` テーブルへの SET/DEL イベントで `addPortBufferPgCounters()` / `deletePortBufferPgCounters()` が呼ばれ、COUNTERS_DB マップを更新する。`FLEX_COUNTER_TABLE|PG_WATERMARK` の enable 状態に関わらず常時実行される。
+
+| DB | テーブル | 操作 | 根拠 |
+|----|---------|------|------|
+| COUNTERS_DB | `COUNTERS_PG_NAME_MAP` | SET `<port>:<pg_index>` → `<sai_pg_oid>` (`BUFFER_PG` SET 時) / DEL (`BUFFER_PG` DEL 時) | `portsorch.cpp:8937,9081` |
+| COUNTERS_DB | `COUNTERS_PG_PORT_MAP` | SET `<sai_pg_oid>` → `<sai_port_oid>` / DEL | `portsorch.cpp:8938,9082` |
+| COUNTERS_DB | `COUNTERS_PG_INDEX_MAP` | SET `<sai_pg_oid>` → `<pg_index>` / DEL | `portsorch.cpp:8939,9083` |
+
+### COUNTERS_DB — ウォーターマーク値（syncd ポーリング後・Lua）
+
+syncd の FlexCounter が `READ_AND_CLEAR` モードで値を収集した後、`pgWmSha` Lua スクリプトが書き込む。
+
+| DB | テーブル | 書込タイミング |
+|----|---------|--------------|
+| COUNTERS_DB | `PERIODIC_WATERMARKS` | 各ポーリングサイクル（デフォルト 60 秒ごと）。telemetry タイマー（デフォルト 120 秒）で自動クリア |
+| COUNTERS_DB | `PERSISTENT_WATERMARKS` | 同上。明示クリアまで保持 |
+| COUNTERS_DB | `USER_WATERMARKS` | 同上。`watermarkcfg clear pg-*` CLI がクリア |
+
+### watermarkorch — telemetry タイマー制御（副次動作）
+
+`handleFcConfigUpdate()` (`watermarkorch.cpp:116-141`) が `FLEX_COUNTER_TABLE` の PG_WATERMARK および QUEUE_WATERMARK イベントを受信し、`m_wmStatus` フラグを更新する。
+
+| 動作 | 条件 | 根拠 |
+|------|------|------|
+| `m_telemetryTimer->start()` | `prevStatus == 0 && m_wmStatus != 0`（初めて enable になるとき） | `watermarkorch.cpp:132-135` |
+| `m_telemetryTimer->stop()` | `m_wmStatus == 0`（全 watermark が disable になるとき） | `watermarkorch.cpp:136-139` |
+
+### 副次書込なし DB
+
+| DB | 書込なし理由 |
+|----|------------|
+| APPL_DB | `FlexCounterOrch` / `PortsOrch` / `WatermarkOrch` は `FLEX_COUNTER_TABLE|PG_WATERMARK` 処理時に APPL_DB へ書き込まない |
+| STATE_DB | エラーステータス・STATE テーブルへの書き込みなし（失敗はサイレント） |
+| ASIC_DB | FlexCounter は SAI 統計読み取りのみ。SAI オブジェクト作成は不要 |
+
+<!-- /side-effects -->
+
+---
+
 ## 設定例
 
 ```json
