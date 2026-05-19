@@ -3,7 +3,7 @@ title: TELEMETRY_CONNECTIONS テーブル (STATE_DB)
 description: "TELEMETRY_CONNECTIONS — gNMI サーバ (telemetry デーモン) がアクティブな Subscribe RPC 接続を STATE_DB に記録するテーブル。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-gnmi
     path: gnmi_server/connection_manager.go
@@ -147,6 +147,39 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
   client_subscribe.go:73-85 — setConnectionManager(): 閾値変更時の再初期化ロジック
 -->
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`TELEMETRY_CONNECTIONS` は `telemetry` デーモン (`sonic-gnmi`) が **唯一の書き手** であり、外部 Orch やパイプラインを経由しない。以下はこのテーブルのエントリ生成・制御に間接的に影響する入力リソースと暗黙参照先の一覧である。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `database_config.json` (`/var/run/redis/sonic-db/database_config.json`) | STATE_DB アドレス・DB 番号の解決 | `PrepareRedis()` 呼び出し時に常時参照。このファイルが欠損または STATE_DB エントリが未定義の場合 `rclient` は nil となり以降の HSet / HDel はすべて silent no-op | `sonic_db_config/db_config.go:14` — `SONIC_DB_CONFIG_FILE` 定数; `connection_manager.go:33-43` — `GetDbTcpAddr("STATE_DB", ns)` / `GetDbId("STATE_DB", ns)` |
+| `GNMI\|gnmi` (CONFIG_DB) — `threshold` フィールド | 接続上限の間接制御 (エントリ数の上限) | `telemetry.go` フラグ `--threshold` (デフォルト 100) またはシステム起動時に CONFIG_DB から読み込んだ値が `Server.config.Threshold` にセットされ、`Subscribe()` RPC ごとに `setConnectionManager(s.config.Threshold)` へ渡される。閾値到達後は `Add()` が `false` を返し STATE_DB への書き込みが発生しない | `server.go:866` — `c.setConnectionManager(s.config.Threshold)`; `connection_manager.go:65` — `len(cm.connections) >= cm.threshold && cm.threshold != 0` チェック; `telemetry.go:187` — `fs.Int("threshold", 100, ...)` |
+| `Server.clients` (in-memory, `server.go`) | STATE_DB エントリの概念的ミラー | `Subscribe()` RPC ハンドラが `s.clients[clientKey] = c` でメモリ登録した後に `ConnectionManager.Add()` → `storeKeyRedis()` で STATE_DB に反映。同一 peer が重複して Subscribe した場合は `oc.Close()` + `delete(s.clients, clientKey)` でメモリから削除後、`Remove()` → `deleteKeyRedis()` で STATE_DB からも削除される（Phase B 依存 #1 と連動） | `server.go:872-877` — 重複クライアント削除フロー; `client_subscribe.go:73-85` — `setConnectionManager()` 再初期化ロジック |
+
+### consumer（読み取り側）
+
+`TELEMETRY_CONNECTIONS` テーブルは書き込み専用のランタイム状態であり、標準的な orchagent / translib パイプラインからは参照されない。既知の読み取りパスは以下のみ:
+
+| 読み取り元 | 参照方法 | 目的 |
+|-----------|---------|------|
+| `show gnmi` (sonic-utilities 側の実装) | `HGetAll(TELEMETRY_CONNECTIONS)` | アクティブな Subscribe RPC 接続一覧の表示 |
+| `gnmi_server/server_test.go` (テストコード) | `HGetAll(TELEMETRY_CONNECTIONS)` | 接続登録・削除の単体テスト検証 |
+
+!!! note "CONFIG_DB への書き戻しは発生しない"
+    `TELEMETRY_CONNECTIONS` の値は CONFIG_DB に一切書き戻されない。このテーブルはオペレーション状態の可視化専用であり、設定変更のトリガにはならない。
+
+<!-- evidence:
+  connection_manager.go:10,33-43 — sdcfg.GetDbTcpAddr("STATE_DB", ns) / GetDbId("STATE_DB", ns) で database_config.json を間接参照して rclient を初期化
+  connection_manager.go:63-78 — Add(): threshold チェック → cm.connections 更新 → storeKeyRedis()
+  server.go:866 — Subscribe() が setConnectionManager(s.config.Threshold) を呼び閾値を渡す
+  server.go:872-877 — 重複クライアント Close → delete(s.clients) → 既存エントリ削除フロー
+  telemetry.go:187 — threshold フラグのデフォルト 100
+  server_test.go:5176,5182 — HGetAll("TELEMETRY_CONNECTIONS") による読み取り確認
+-->
+<!-- /cross-refs -->
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
