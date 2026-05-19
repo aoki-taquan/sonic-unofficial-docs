@@ -107,6 +107,29 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-ordering.md -->
+
+### 前提条件: allPortsReady() ガード
+
+`pfcwdorch::doTask()` は `gPortsOrch->allPortsReady()` が false の間は即 return する。ポート初期化完了前は `CONFIG_DB PFC_WD` テーブルの処理がすべてブロックされる。CONFIG_DB への書き込み自体は受け付けるが、orchagent が処理するのはポート初期化完了後。[^2]
+
+### PORT が PortsOrch に存在しなければならない
+
+`createEntry()` は `gPortsOrch->getPort(key, port)` でポートを引くが、ポートが未登録の場合は `task_invalid_entry` を返してスキップする。`PFC_WD|<port>` の SET より先に `PORT_TABLE|<port>` が PortsOrch に取り込まれ、`allPortsReady()` が true になっている必要がある。[^3]
+
+### PFC 有効 TC (pfcMask) が確定してから COUNTERS_DB に書き込まれる
+
+`registerInWdDb()` は `getPortPfcWatchdogStatus()` で lossless TC マスクを取得し、有効 TC が 0 個の場合は `false` を返して COUNTERS_DB への書き込みを行わない。`PORT_QOS_MAP` や `QUEUE` テーブルが PortsOrch に反映されて PFC マスクが確定する前に `PFC_WD` が書き込まれても、COUNTERS_DB エントリは作られない。[^4]
+
+### FlexCounter 登録と COUNTERS_DB 書き込みは同一シーケンス内
+
+`registerInWdDb()` は COUNTERS_DB への `PFC_WD_*` フィールド書き込みと FlexCounter の `setCounterIdList()` をシリアルに実行する。COUNTERS_DB エントリが存在するタイミングで FlexCounter ポーリングも開始されるため、書き込みと計測開始の間に隙間はない。[^5]
+
+<!-- /ordering -->
+
 ## 確認コマンド
 
 ```bash
@@ -129,3 +152,7 @@ show pfcwd stats
 ## 引用元
 
 [^1]: `pfcactionhandler.cpp` および `pfcwdorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/pfcactionhandler.cpp>
+[^2]: `pfcwdorch.cpp:64-70` — `doTask()` の `allPortsReady()` ガード. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/pfcwdorch.cpp>
+[^3]: `pfcwdorch.cpp:192-198` — `getPort()` 失敗時の `task_invalid_entry` 返却. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/pfcwdorch.cpp>
+[^4]: `pfcwdorch.cpp:534-555` — `registerInWdDb()` における losslessTc 空チェックと COUNTERS_DB 書き込み. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/pfcwdorch.cpp>
+[^5]: `pfcwdorch.cpp:558-593` — COUNTERS_DB 書き込みと `setCounterIdList()` の直列実行. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/pfcwdorch.cpp>

@@ -207,6 +207,30 @@ YANG モデル (`sonic-gnmi.yang`) は `save_on_set` フィールドを `boolean
 > **注意**: `save_on_set` は `gnmi-native.sh` から自動読み取りされない。Go フラグ `--with-save-on-set` で手動指定が必要。
 <!-- /value-behavior -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`gnmi-native.sh` は起動時に CONFIG_DB を 1 回読み取り、CLI フラグとして `telemetry` バイナリへ渡す。以降は CONFIG_DB への変更がランタイムに反映されないため、設定変更にはコンテナ再起動が必要である。一方、TLS 証明書ファイルのみは `fsnotify` による動的リロードが行われる。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | CONFIG_DB `GNMI` 読み取り → telemetry バイナリ起動 | 強制先行（1 回限り） | 設定変更後はコンテナ再起動が必要 |
+| 2 | 証明書ファイル更新 → iNotify 検証 → gRPC サーバ再起動 | 非同期（検証待機窓あり） | 証明書更新後は検証成功まで旧サーバが継続稼働 |
+| 3 | SmartSwitch / MGMT_VRF 読み取り | 独立（並列可） | 起動時スナップショット; 動的変更は不可 |
+| 4 | 管理 VRF `up` → VRF 内 gRPC バインド | 外部依存（ネットワーク NS） | コンテナ起動前に mgmt VRF が up であること |
+
+### 主要な制約詳細
+
+**CONFIG_DB の 1 回読み取り (依存 #1)**: `gnmi-native.sh` は `sonic-cfggen -d -t $TELEMETRY_VARS_FILE` (L19) および `sonic-db-cli CONFIG_DB hget` (L88, L93) で `GNMI|gnmi`・`GNMI|certs`・`DEVICE_METADATA|localhost`・`MGMT_VRF_CONFIG|vrf_global` を読み取る。読み取りはスクリプト実行時の 1 回のみで、その後は `exec /usr/sbin/telemetry ${TELEMETRY_ARGS}` (L150) でバイナリへ制御を移す。CONFIG_DB の値が後から変わっても `telemetry` プロセスには通知されない — **hot reload なし**（evidence: `gnmi-native.sh:19-22`, `gnmi-native.sh:150`）。
+
+**証明書ファイルの動的リロード (依存 #2)**: `telemetry` バイナリは `startGNMIServer()` 内で `iNotifyCertMonitoring()` を goroutine として起動し、証明書ファイルへの `CloseWrite` / `MovedTo` / `Create` イベントを監視する。証明書ファイルが更新されると証明書ペアの妥当性検証を行い、成功すると `serverControlSignal <- ServerStart` が送られて gRPC サーバが再ビルドされる (telemetry.go:368-379)。検証中および再ビルド中は旧 gRPC サーバが継続稼働するため、クライアントは接続切断を経験しない。**ただし** `GNMI|certs` の CONFIG_DB 値は起動時にシェル変数へコピー済みであり、CONFIG_DB を更新しても `iNotifyCertMonitoring` はファイルシステム変更のみを監視するため、「CONFIG_DB 書き換えのみでは再読み込みは起きない」（evidence: `telemetry.go:452-457`, `telemetry.go:340-400`）。
+
+**管理 VRF バインドの前提条件 (依存 #4)**: `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` の場合、`gnmi-native.sh` は `--vrf mgmt` フラグを付与する。telemetry バイナリはこのフラグがある場合、管理 VRF ネームスペース内でポートをバインドするため、管理 VRF インタフェースが `up` になっている必要がある。コンテナ起動タイミングで VRF が未確立の場合は起動エラーとなる（evidence: `gnmi-native.sh:93-95`）。
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
