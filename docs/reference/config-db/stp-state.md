@@ -285,6 +285,53 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 波及副作用 (Phase F)
+
+`STP_TABLE|GLOBAL` の `max_stp_inst` は `stpmgrd` が読み取った直後に `stpd`（STP デーモン）へ IPC メッセージとして転送される。STATE_DB の 1 フィールドがダウンストリームの STP デーモン全体の動作を規定するという点で、このテーブルは読み取り専用ながら実質的な制御データとして機能する。
+
+### 1. stpd への STP_INIT_READY IPC 送信
+
+`stpmgrd.cpp:74-78` の起動シーケンス:
+
+```cpp
+// Get max STP instances from state DB and send to stpd
+STP_INIT_READY_MSG msg;
+memset(&msg, 0, sizeof(STP_INIT_READY_MSG));
+msg.max_stp_instances = stpmgr.getStpMaxInstances();
+stpmgr.sendMsgStpd(STP_INIT_READY, sizeof(msg), (void *)&msg);
+```
+
+`getStpMaxInstances()` が `STP_TABLE|GLOBAL.max_stp_inst` を読み取り、取得した値を `STP_INIT_READY_MSG.max_stp_instances` に設定して、Unix Domain Socket (`STPD_SOCK_NAME`) 経由で `stpd` に送信する。
+
+→ `STP_TABLE|GLOBAL` の値（または SAI 失敗時のフォールバック `255`）が `stpd` 内のインスタンスプール初期化上限となる。
+
+### 2. IPC 送信の位置づけ（起動シーケンス内）
+
+```
+stpmgr.ipcInitStpd()          // Unix socket bind (stpmgrd.cpp:71)
+stpmgr.isPortInitDone(...)     // APPL_DB PORT_TABLE|PortInitDone ガード (stpmgrd.cpp:72)
+getStpMaxInstances()           // STATE_DB STP_TABLE|GLOBAL 読み取り (stpmgrd.cpp:77)
+sendMsgStpd(STP_INIT_READY)   // → stpd に max_stp_instances 送信 (stpmgrd.cpp:78)
+```
+
+`STP_TABLE|GLOBAL` の読み取りは、IPC ソケット確立とポート初期化ガードの後に行われる。`stpd` はこの `STP_INIT_READY` メッセージを受け取ってインスタンスプールを初期化し、以降の `STP_BRIDGE_CONFIG` / `STP_VLAN_CONFIG` 等の設定処理を受け付ける状態に遷移する。
+
+### 3. 副作用は起動時 1 回のみ
+
+`STP_INIT_READY` の送信は `stpmgrd.cpp` のメインシーケンスに 1 回だけ存在し、実行中の再送信はない。`STP_TABLE|GLOBAL` が orchagent によって書き換えられることもないため（`stporch.cpp:603-617` はコンストラクタからのみ呼ばれる）、副作用の発生は起動時の 1 回に限定される。
+
+### 副作用まとめ
+
+| 副作用先 | 副作用の種別 | トリガー | evidence |
+|---|---|---|---|
+| `stpd` (STP デーモン) | IPC 送信 (`STP_INIT_READY` メッセージ、`max_stp_instances` フィールドを含む) | `stpmgrd` 起動時、STATE_DB `STP_TABLE\|GLOBAL` 読み取り直後 | `stpmgrd.cpp:74-78` |
+| `stpd` 内インスタンスプール | STP インスタンス上限の初期化（HW 依存値 または フォールバック `255`） | `STP_INIT_READY` 受信 | `stpmgrd.cpp:77`, `stpmgr.h:38` |
+
+> **証跡**: `stpmgrd.cpp:70-78`、`stpmgr.cpp:1218-1248, 1381-1413`。詳細は `meta/_intermediate/cdb-flow/stp-state-side-effects.md` を参照。
+
+<!-- /side-effects -->
+
 ## 例外条件・特殊挙動
 
 - **-1 補正**: `max_stp_inst` は SAI の返す最大数から -1 した値。STP インスタンス ID が 0 始まりのため、使用可能な最大インスタンス ID が `max_stp_inst` と一致する。
