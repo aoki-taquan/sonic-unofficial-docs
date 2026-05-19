@@ -384,6 +384,43 @@ m_appNatTableProducer(appDb, APP_NAT_TABLE_NAME)  // "NAT_TABLE"
 > **Evidence**: `natmgrd.cpp:109-153`; `natmgr.cpp:8147-8175`; `natmgr.h:257`; `schema.h:101`。詳細は `meta/_intermediate/cdb-flow/nat-static-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+プラットフォーム差は `orchagent/natorch.cpp` の **DNAT エントリの HW 追加経路** にのみ現れる。`natmgrd` (`cfgmgr/natmgr.cpp`) は platform 非依存。
+
+### gNhTrackingSupported フラグ (Broadcom 専用)
+
+`NatOrch` コンストラクタで `getenv("platform")` を取得し、`BRCM_PLATFORM_SUBSTRING = "broadcom"` が部分一致すれば `gNhTrackingSupported = true` に設定する。
+
+| platform 環境変数 | `gNhTrackingSupported` |
+|------------------|----------------------|
+| `"broadcom"` を含む (Broadcom XGS / DNX) | `true` |
+| それ以外 (mellanox / barefoot / vs / cisco-8000 等) | `false` (デフォルト) |
+
+### DNAT エントリの HW 追加経路
+
+| platform | DNAT 追加経路 | 挙動 |
+|----------|-------------|------|
+| **Broadcom** (`gNhTrackingSupported = true`) | `addDnatToNhCache(translated_ip, dst_ip)` | nexthop 解決キャッシュ (`m_nhResolvCache`) に格納。`NeighOrch` で `translated_ip` の ARP が解決済みなら即 `addHwDnatEntry()` を呼ぶ。未解決なら `RouteOrch::attach()` でルート変化通知を待ち、解決後に HW 追加 |
+| **非 Broadcom** (`gNhTrackingSupported = false`) | `addHwDnatEntry(dst_ip)` を直接呼ぶ | nexthop 解決を待たず即時 SAI `sai_nat_api` DNAT オブジェクト作成 |
+
+SNAT エントリは `addHwSnatEntry()` を直接呼ぶため platform 非依存。
+
+### 運用上の挙動差
+
+| 状況 | Broadcom | 非 Broadcom |
+|------|----------|-------------|
+| ARP 未解決状態での STATIC_NAT 設定 | DNAT エントリはキャッシュ待機。SAI オブジェクトは ARP 解決後に作成 | ARP 解決を待たず SAI オブジェクト作成 |
+| ルート変化でネクストホップが変わった場合 | `RouteOrch::update()` → `NatOrch::update()` → DNAT HW エントリ自動更新 | 自動追従なし (NAT エントリ削除・再追加が必要) |
+| DNAT エントリ削除時 | `clearDnatNhCacheEntry()` → `removeHwDnatEntry()` | `removeHwDnatEntry()` 直接 |
+
+!!! note "Broadcom 環境での注意"
+    ARP が未解決の状態で STATIC_NAT を設定すると `show nat translations` にエントリが表示されるが、実際の SAI オブジェクトは ARP 解決まで作成されない。`ping` などで ARP を解決してから NAT 動作を確認すること。
+
+> **証跡**: `natorch.cpp:44` (`gNhTrackingSupported` 初期値 false)、`natorch.cpp:144-149` (platform 判定)、`natorch.cpp:1920-1934` (DNAT 経路分岐)、`natorch.cpp:390-433` (`addDnatToNhCache`)、`natorch.cpp:2017, 2045` (`clearDnatNhCacheEntry` 分岐)、`orch.h:43` (`BRCM_PLATFORM_SUBSTRING`)。詳細は `meta/_intermediate/cdb-flow/nat-static-platform.md` を参照。
+<!-- /platform -->
+
 ## silent drop / discrepancy
 
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doStaticNatTask L5810-6136 / sonic-utilities/config/nat.py add_basic L240-329 / sonic-nat.yang L117-155 -->
