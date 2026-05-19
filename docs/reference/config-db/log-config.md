@@ -260,6 +260,36 @@ CONFIG_DB の `LOGGER` テーブルにエントリが存在しない場合は、
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence:
+source: sonic-net/sonic-swss-common/common/logger.cpp (master)
+excerpt: |
+  // linkToDbWithOutput — 起動時のデフォルト値自己登録
+  if (doUpdate) {
+      table.set(dbName, fieldValues);  // CONFIG_DB|LOGGER|<component> へ書込
+  }
+reasoning: LOGGER テーブルへの書込はすべて CONFIG_DB への書き戻し（自己登録）のみ。
+  APPL_DB / STATE_DB / COUNTERS_DB への副次書込はなし。
+-->
+
+`LOGGER` テーブルを読む各デーモンが起動時に自分のエントリを CONFIG_DB へ**書き戻す**（自己登録）以外に、副次的な DB 書き込みは発生しない。
+
+| 副次 DB | テーブル | 操作 | タイミング | 根拠 |
+|--------|---------|------|-----------|------|
+| CONFIG_DB | `LOGGER\|<component>` | `table.set(dbName, {LOGLEVEL, LOGOUTPUT})` | `linkToDbWithOutput()` 実行時（エントリ未存在の場合のみ） | `logger.cpp:143-149` |
+| APPL_DB | — | なし | — | `logger.cpp` に APPL_DB 接続なし |
+| STATE_DB | — | なし | — | `settingThread` は CONFIG_DB のみ購読 |
+| COUNTERS_DB | — | なし | — | Logger は統計テーブルを持たない |
+
+### 自己登録の詳細
+
+デーモンが `Logger::linkToDbNative()` / `linkToDb()` を呼ぶと `linkToDbWithOutput()` が実行される。CONFIG_DB の `LOGGER|<component>` に `LOGLEVEL` または `LOGOUTPUT` が未設定の場合のみ、デフォルト値を `table.set()` でテーブルに書き込む（`logger.cpp:143-149`）。すでにエントリが存在する場合は書き込みをスキップする。
+
+この書き込みは LOGGER テーブル**自身**への書き戻しであり、APPL_DB や他の DB への連鎖書き込みは発生しない。
+<!-- /side-effects -->
+
 ## 制約
 
 - `LOGLEVEL` は `mandatory true`（YANG）。エントリ作成時に必須
