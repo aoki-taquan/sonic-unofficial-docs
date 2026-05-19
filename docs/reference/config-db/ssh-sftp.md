@@ -272,6 +272,27 @@ hostcfgd 起動
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`SSH_SFTP` テーブルは存在せず、SFTP サブシステムは OS テンプレート固定（CONFIG_DB 管理外）。CONFIG_DB 操作に起因する副次 DB 書込みは **一切存在しない**。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `SshServer` / `PamLimitsCfg` 内に `ProducerStateTable` / `Table.set()` 呼出が 0 件。`Subsystem sftp` 行は `SSH_CONFIG_NAMES`（L67–75）に含まれないため `set_policies()` の処理対象外 |
+| STATE_DB | なし | `hostcfgd` の STATE_DB 参照は `FipsCfg` (L1759–1821) と `RestartWaiter` (L2160–2162) のみ。`SshServer` は `state_db_conn` を保持しない。SFTP 状態を STATE_DB に通知する経路は存在しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。SFTP は SAI を経由しない |
+| FLEX_COUNTER_DB / ASIC_DB | なし | SAI 非経由。`SSH_SERVER` を購読する orchagent / mgrd は `sonic-swss/` に存在しない |
+| LOGLEVEL_DB / ERROR_DB | なし | `SshServer` / `PamLimitsCfg` 内に参照なし |
+
+SFTP サブシステムの状態（有効・無効）が CONFIG_DB または他の DB に反映される経路はない。`Subsystem sftp` 行の静的存在は OS の sshd_config テンプレートに依存し、どの DB にも波及しない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ssh-sftp-side.md` 参照。
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES に Subsystem キーなし — SFTP は set_policies() 処理対象外) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1175 (SshServer クラス全体 — ProducerStateTable / STATE_DB 参照なし) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1441 (PamLimitsCfg クラス全体 — ProducerStateTable / STATE_DB 参照なし) -->
+<!-- /side-effects -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
