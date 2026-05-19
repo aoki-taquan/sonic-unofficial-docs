@@ -506,7 +506,7 @@ IPv4 link-local アドレスは APPL_DB へ転送されない（`intfmgr.cpp:113
 
 <!-- /ordering -->
 
-<!-- constants-phaseE -->
+<!-- constants -->
 ## ハードコード定数 (Phase E / intfmgr)
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp L24-29, sonic-buildimage/src/sonic-config-engine/minigraph.py L2874,2880 -->
@@ -537,7 +537,7 @@ XML `ManagementIPInterfaces` に記載されたインターフェース名に関
 
 > **注意**: MGMT_INTERFACE テーブル自体には `mtu` フィールドが YANG で定義されていない。`DEFAULT_MTU_STR=9100` は `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` 等の通常 IF に適用されるものであり、管理 IF (`eth0`) の MTU は kernel / platform デフォルト（通常 **1500**）に依存する。管理 IF の MTU を変更するには `ip link set eth0 mtu <value>` を直接実行するか、プラットフォーム固有の設定が必要。
 
-<!-- /constants-phaseE -->
+<!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
