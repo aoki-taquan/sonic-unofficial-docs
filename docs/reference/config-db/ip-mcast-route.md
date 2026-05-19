@@ -383,7 +383,6 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 
 > 詳細証跡: `meta/_intermediate/cdb-flow/ip-mcast-route-side-effects.md`
 > 調査対象: `sonic-swss/orchagent/p4orch/ip_multicast_manager.cpp`, `sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp`
-> 調査日: 2026-05-19
 
 `REPLICATION_IP_MULTICAST_TABLE` / `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE` への SET/DEL が引き起こす CONFIG_DB 以外への書き込みを示す。STATE_DB / APPL_DB への直接書き込みは存在しない。
 

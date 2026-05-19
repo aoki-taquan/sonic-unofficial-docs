@@ -495,6 +495,58 @@ processTelemetryClientConfig(ctx, redisDb, key, op)
 -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`GNMI` テーブルのスキーマとフィールドは **全プラットフォームで同一**。プラットフォーム差は `telemetry` デーモンの起動スクリプト (`gnmi-native.sh`) による引数付与ロジックに局所化されており、CONFIG_DB テーブルのフィールド定義・処理ロジック自体に影響しない。
+
+### SmartSwitch — ZMQ ポート有効化
+
+`gnmi-native.sh:89-92` にプラットフォーム固有の唯一の分岐が存在する。
+
+```bash
+LOCALHOST_SUBTYPE=`sonic-db-cli CONFIG_DB hget "DEVICE_METADATA|localhost" "subtype"`
+if [[ x"${LOCALHOST_SUBTYPE}" == x"SmartSwitch" ]]; then
+    TELEMETRY_ARGS+=" -zmq_port=8100"
+fi
+```
+
+`DEVICE_METADATA|localhost.subtype == "SmartSwitch"` の場合のみ `-zmq_port=8100` が付与され、orchagent との ZMQ 通信経路が有効化される。非 SmartSwitch 機では ZMQ ポートは付与されず、Redis ベース通信のみが使用される。値 `8100` はハードコード定数であり、`GNMI` テーブルに `zmq_port` フィールドは存在しない。
+
+### 管理 VRF 対応機種 — `--vrf mgmt` 付与
+
+`gnmi-native.sh:95-98` の条件分岐は ASIC 種別非依存であり、管理 VRF 機能を有効化した全機種に共通する。
+
+| 条件 | 挙動 |
+|------|------|
+| `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled == "true"` | `telemetry` 起動時に `--vrf mgmt` を付与。gNMI サーバが管理 VRF 上でリッスン |
+| それ以外 | VRF 指定なし。デフォルト VRF でリッスン |
+
+この分岐は `GNMI` テーブルのフィールドには影響せず、`MGMT_VRF_CONFIG` テーブルを直接参照する独立したパスである。
+
+### multi-asic 構成
+
+GNMI テーブルは host namespace の CONFIG_DB にのみ存在する。`gnmi-native.sh` の `sonic-cfggen -d` は host DB のみを参照し、`asicN` namespace を iterate しない。multi-asic 機でも `telemetry` デーモンは host namespace で 1 プロセスのみ起動し、GNMI テーブルの読み込みは常に host DB 限定である。
+
+`sonic_data_client/db_client.go` の `GetDbAllNamespaces()` は gNMI の **データ参照経路**（Subscribe / Get のターゲット解決）に使用されるが、これは GNMI テーブルの読み込みとは独立した機能である。
+
+### ASIC 種別・YANG 差異なし
+
+`telemetry/telemetry.go`, `gnmi-native.sh`, `gnmi_server/clientCertAuth.go` を `platform|asic|broadcom|mellanox|marvell|vendor` で grep → **0 ヒット**（無関係なコメントを除く）。gNMI サーバは SAI 非経由であり、ASIC ドライバに依存するコードパスを持たない。
+
+`sonic-gnmi.yang` は単一ファイルであり、platform 固有の if-feature / deviation なし。すべての機種で同一 YANG スキーマが適用される。
+
+詳細解析: `meta/_intermediate/cdb-flow/gnmi-dialin-platform.md`
+
+<!-- evidence:
+  gnmi-native.sh:89-92 — SmartSwitch 判定: DEVICE_METADATA|localhost.subtype == "SmartSwitch" → -zmq_port=8100
+  gnmi-native.sh:95-98 — VRF 判定: MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled == "true" → --vrf mgmt
+  telemetry/telemetry.go — platform/asic/vendor grep = 0 hits
+  sonic-gnmi.yang — if-feature/deviation なし (platform 差し替え機構なし)
+  sonic_data_client/db_client.go — GetDbAllNamespaces() は gNMI データ参照経路用; GNMI テーブル読み込みとは独立
+-->
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

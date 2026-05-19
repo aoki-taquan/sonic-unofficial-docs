@@ -115,6 +115,74 @@ SFTP サブシステムに関して CONFIG_DB フィールドは存在しない�
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang (SFTP leaf なし) -->
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L32-75 -->
+
+`hostcfgd` (`sonic-host-services/scripts/hostcfgd`) のモジュールレベルに定義されたハードコード定数のうち、SSH サブシステム（SFTP を含む）の挙動に関係するもの。これらの値は CONFIG_DB や YANG から変更できない。
+
+### sshd_config ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `SSH_CONFG` | `/etc/ssh/sshd_config` | `set_policies()` が編集する SSH 設定ファイルの本番パス | `hostcfgd:32` |
+| `SSH_CONFG_TMP` | `/etc/ssh/sshd_config.tmp` | `set_policies()` が一時書込に使用するワークファイル。バリデーション後に rename | `hostcfgd:33` |
+
+### SSH_CONFIG_NAMES — CONFIG_DB で制御できるキーの全量
+
+```python
+# hostcfgd L67-75
+SSH_CONFIG_NAMES = {
+    "authentication_retries": "MaxAuthTries",
+    "login_timeout":          "LoginGraceTime",
+    "ports":                  "Port",
+    "inactivity_timeout":     "ClientAliveInterval",
+    "permit_root_login":      "PermitRootLogin",
+    "password_authentication": "PasswordAuthentication",
+    "ciphers":                "Ciphers",
+    "kex_algorithms":         "KexAlgorithms",
+    "macs":                   "MACs",
+}
+```
+
+この辞書に `Subsystem` キーが存在しないことが、SFTP サブシステムを CONFIG_DB から制御できない根拠。`set_policies()` はこの辞書のキーのみを sshd_config に書き込む（`hostcfgd:1127`）。
+
+### SSH フィールドの min / max 制約
+
+```python
+# hostcfgd L62-66
+SSH_INT_VALUES = ["authentication_retries", "login_timeout", "inactivity_timeout", "max_sessions"]
+
+SSH_MIN_VALUES = {
+    "authentication_retries": 3,
+    "login_timeout": 1,
+    "ports": 1,
+    "inactivity_timeout": 0,
+    "max_sessions": 0,
+}
+
+SSH_MAX_VALUES = {
+    "authentication_retries": 100,
+    "login_timeout": 600,
+    "ports": 65535,
+    "inactivity_timeout": 35000,
+    "max_sessions": 100,
+}
+```
+
+| フィールド | min | max | SFTP への影響 |
+|-----------|-----|-----|-------------|
+| `authentication_retries` | 3 | 100 | SFTP 認証失敗回数の上限として間接適用 |
+| `login_timeout` | 1 s | 600 s | SFTP 接続のログイングレース時間 |
+| `ports` | 1 | 65535 | SFTP が listen する TCP ポート番号 |
+| `inactivity_timeout` | 0 s | 35000 s | SFTP セッションのアイドルタイムアウト |
+| `max_sessions` | 0 | 100 | 同時 SSH/SFTP セッション上限 |
+
+> **注意**: `max_sessions` は `SSH_CONFIG_NAMES` に存在しないため、`PamLimitsCfg` 経由で PAM limits ファイル (`/etc/security/limits.conf`) に書き込まれる。sshd_config の `MaxSessions` ディレクティブではない。
+
+<!-- /constants -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
@@ -203,65 +271,6 @@ hostcfgd 起動
 詳細調査ノートは `meta/_intermediate/cdb-flow/ssh-sftp-failure.md` 参照。
 
 <!-- /failure -->
-
-<!-- constants -->
-## ハードコード定数 (Phase E)
-
-`SSH_SFTP` テーブルは存在しないため、SFTP サブシステムに固有のハードコード定数は `hostcfgd` 内に存在しない。ただし `SshServer.set_policies()` が操作する sshd_config は SFTP 行を保持したまま書き換えられるため、以下のファイルパス定数・バリデーション閾値定数が間接的に関係する。
-
-### ファイルパス定数（hostcfgd L32-33）
-
-| 定数 | 値 | 用途 |
-|------|----|------|
-| `SSH_CONFG` | `/etc/ssh/sshd_config` | コピー元（`Subsystem sftp` 行を含む） |
-| `SSH_CONFG_TMP` | `/etc/ssh/sshd_config.tmp` | 書き換え作業用一時ファイル |
-
-`set_policies()` は `copy2(SSH_CONFG, SSH_CONFG_TMP)` でコピー後に `SSH_CONFIG_NAMES` キーのみ書き換えるため、`Subsystem sftp` 行はそのまま引き継がれる（`SSH_CONFIG_NAMES` に `Subsystem` キーが存在しないことが根拠）。
-
-### SFTP 非制御を裏付けるフィールドマッピング（hostcfgd L67-75）
-
-`SSH_CONFIG_NAMES` に `Subsystem` キーが含まれないことが、SFTP の CONFIG_DB 非管理の根拠となる定数である。
-
-```python
-SSH_CONFIG_NAMES = {
-    "authentication_retries":  "MaxAuthTries",
-    "login_timeout":           "LoginGraceTime",
-    "ports":                   "Port",
-    "inactivity_timeout":      "ClientAliveInterval",
-    "permit_root_login":       "PermitRootLogin",
-    "password_authentication": "PasswordAuthentication",
-    "ciphers":                 "Ciphers",
-    "kex_algorithms":          "KexAlgorithms",
-    "macs":                    "MACs",
-    # ← "Subsystem" キーなし → SFTP は書き換え対象外
-}
-```
-
-### バリデーション閾値定数（hostcfgd L61-65）
-
-SSH_SERVER フィールドを検証する際に参照する閾値。SFTP サブシステム自体は対象外だが、sshd_config の共有によって SFTP セッションに適用される暗号スイートや接続ポートの範囲を間接的に規定する。
-
-| 定数 | 対象フィールド | 最小値 | 最大値 |
-|------|-------------|--------|--------|
-| `SSH_MIN/MAX_VALUES["authentication_retries"]` | MaxAuthTries | 3 | 100 |
-| `SSH_MIN/MAX_VALUES["login_timeout"]` | LoginGraceTime | 1 | 600 |
-| `SSH_MIN/MAX_VALUES["ports"]` | Port | 1 | 65535 |
-| `SSH_MIN/MAX_VALUES["inactivity_timeout"]` | ClientAliveInterval | 0 | 35000 |
-| `SSH_MIN/MAX_VALUES["max_sessions"]` | (PAM limits 経由) | 0 | 100 |
-
-### SFTP バイナリパス（OS パッケージ由来、CONFIG_DB 外）
-
-| 項目 | 値 | 出典 |
-|------|----|------|
-| SFTP サーババイナリ | `/usr/lib/openssh/sftp-server` | `sshd_config` テンプレート `Subsystem sftp` 行（OS パッケージ固定） |
-
-このパスは `hostcfgd` のコードにも YANG にも記録されない。`openssh-server` パッケージの再インストールでのみ復元できる。
-
-<!-- evidence: sonic-host-services/scripts/hostcfgd L32-33 (SSH_CONFG / SSH_CONFG_TMP) -->
-<!-- evidence: sonic-host-services/scripts/hostcfgd L61-65 (SSH_MIN_VALUES / SSH_MAX_VALUES) -->
-<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES — Subsystem キーなし) -->
-<!-- evidence: sonic-host-services/tests/hostcfgd/sample_output/SSH_SERVER_default_values/sshd_config L112 (Subsystem sftp バイナリパス) -->
-<!-- /constants -->
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動

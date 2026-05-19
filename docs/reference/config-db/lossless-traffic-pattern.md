@@ -576,4 +576,79 @@ local lossless_traffic = redis.call('HGETALL', lossless_traffic_keys[1])
 詳細根拠は `meta/_intermediate/cdb-flow/lossless-traffic-pattern-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/lossless-traffic-pattern-platform.md`
+
+`LOSSLESS_TRAFFIC_PATTERN` の `mtu` / `small_packet_percentage` はプラットフォームに関わらず同じ方法で CONFIG_DB から読み取られるが、ヘッドルーム計算式内の定数・補正係数がプラットフォームごとに異なる。
+
+### ASIC_VENDOR 環境変数によるプラグイン選択
+
+`buffermgrdyn` は起動時に `ASIC_VENDOR` 環境変数から `buffer_headroom_<platform>.lua` を動的に選択する (`buffermgrdyn.cpp:68-76`)。`ASIC_VENDOR` が未定義の場合、`buffermgrd won't start` エラーで起動失敗となり、`LOSSLESS_TRAFFIC_PATTERN` エントリが存在しても headroom 計算は一切実行されない。
+
+| `ASIC_VENDOR` 値 | Lua プラグイン | 主な差異 |
+|---|---|---|
+| `mellanox` | `buffer_headroom_mellanox.lua` | Spectrum 世代別 `kb_on_tile` 補正・8 レーン対応・800G pause quanta |
+| `barefoot` | `buffer_headroom_barefoot.lua` | `kb_on_tile` なし・8 レーン補正なし・最大 400G |
+| `vs` | `buffer_headroom_vs.lua` | 仮想スイッチ向け（Mellanox と同アルゴリズム、ASIC_TABLE はモック値） |
+
+### Mellanox — Spectrum-4/5 向け `kb_on_tile` 補正
+
+`buffer_headroom_mellanox.lua:82-86` は、STATE_DB `ASIC_TABLE` のキー末尾が `4`（Spectrum-4）または `5`（Spectrum-5）の場合に限り `kb_on_tile` を計算して `propagation_delay` に加算する:
+
+```lua
+local kb_on_tile = 0
+if asic_keys[1]:sub(-1) == '4' or asic_keys[1]:sub(-1) == '5' then
+    kb_on_tile = port_speed / 1000 * 120 / 8
+end
+```
+
+他世代（Spectrum-1/2/3）では `kb_on_tile = 0` のため加算なし。`small_packet_percentage` が同じ値でも Spectrum-4/5 ではタイルバッファ遅延分だけ `xoff_value` が大きくなる。
+
+> **evidence**: `buffer_headroom_mellanox.lua:82-86`
+
+### Mellanox — モデル番号と 8 レーンポート判定
+
+`buffermgrdyn.cpp:85-103` は `DEVICE_METADATA|localhost.platform`（例: `x86_64-mlnx_msn4700-r0`）から `sn` 以降 4 桁の数字を抽出して `m_model_number` に格納する。`m_model_number` が取得できない場合は `SWSS_LOG_ERROR` のみ（headroom 計算は続行）。
+
+`buffermgrdyn.cpp:504-523` は、ポートが 8 レーンかつ以下の条件を満たす場合にバッファプロファイル名へ `_8lane` サフィックスを付与し、独立したプロファイルとして管理する:
+
+| モデル系統 | 8 レーン扱いになる速度 |
+|---|---|
+| 4xxx (Spectrum-4) | 400G **以外** の 8 レーンポート |
+| 5xxx (Spectrum-5) | 800G **以外** の 8 レーンポート |
+| その他 | 適用なし |
+
+Lua 側では `is_8lane = (ARGV[5] == "8")` で判定し、8 レーンポートでは `pipeline_latency` を 2 倍・`speed_overhead = port_mtu` とする (`buffer_headroom_mellanox.lua:131-135`)。結果として `xon_value` が 2 倍近く増大する。
+
+> **evidence**: `buffermgrdyn.cpp:504-523`; `buffer_headroom_mellanox.lua:30,131-135`
+
+### Pause quanta テーブルの対応速度上限差
+
+| プラットフォーム | pause quanta テーブル最大速度 | 800G ポートでの挙動 |
+|---|---|---|
+| mellanox | 800,000 Mb/s (800G) — `pause_quanta = 905` | テーブルから直接解決 |
+| barefoot / vs | 400,000 Mb/s (400G) 止まり | テーブル未登録 → STATE_DB `ASIC_TABLE.peer_response_time` にフォールバック |
+
+800G ポートを barefoot Lua スクリプトで処理しようとすると `pause_quanta == nil` となり、`peer_response_time` の解決が STATE_DB `ASIC_TABLE` の値に完全依存する。`ASIC_TABLE.peer_response_time` が存在しない場合は `nil` のまま計算式に入り Lua エラーとなる。
+
+> **evidence**: `buffer_headroom_mellanox.lua:41-51`; `buffer_headroom_barefoot.lua:37-46`
+
+### VS (仮想スイッチ)
+
+`buffer_headroom_vs.lua` は Mellanox 系と同一アルゴリズムを使用するが、仮想スイッチ環境では STATE_DB `ASIC_TABLE` の `cell_size` / `pipeline_latency` 等がモック値となるため、headroom 計算結果は実 ASIC とは異なる値になる。`LOSSLESS_TRAFFIC_PATTERN` の `mtu` / `small_packet_percentage` 変更はテストシナリオとしては有効に機能する。
+
+### プラットフォーム別 LOSSLESS_TRAFFIC_PATTERN 処理まとめ
+
+| 条件 | 挙動 |
+|------|------|
+| `ASIC_VENDOR` 未定義 | `buffermgrd` 起動失敗 → headroom 計算なし |
+| mellanox + Spectrum-4/5 | `kb_on_tile` 加算あり → xoff が他世代より大きい |
+| mellanox + 8 レーンポート (非 400G/800G) | `_8lane` プロファイルを別途生成 → pipeline_latency 2 倍 |
+| barefoot / vs + 800G ポート | pause quanta テーブルなし → STATE_DB フォールバック |
+| `ASIC_VENDOR=mock_test` | Lua 未ロード時も起動継続（テスト用特例） (`buffermgrdyn.cpp:119`) |
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
