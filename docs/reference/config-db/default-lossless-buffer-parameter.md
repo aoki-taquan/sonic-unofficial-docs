@@ -414,4 +414,61 @@ SHP (Shared Headroom Pool) が無効化された際、`refreshSharedHeadroomPool
 
 詳細な定数一覧は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-constants.md` を参照。
 <!-- /constants -->
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`
+
+`DEFAULT_LOSSLESS_BUFFER_PARAMETER` の SET/DEL 処理は CONFIG_DB への直接書込を行わないが、`buffermgrdyn` が副次的に APPL_DB・STATE_DB の複数テーブルを更新する。
+
+### APPL_DB `BUFFER_PROFILE_TABLE` (副次書込 A — 動的プロファイル再生成)
+
+`default_dynamic_th` 変更時、または `over_subscribe_ratio` 変化による SHP 有効/無効切替時に、`refreshSharedHeadroomPool()` → `calculateHeadroomSize()` → `updateBufferProfileToDb()` の経路で動的 lossless プロファイルをすべて再計算して書き込む。
+
+| 操作 | 対象 DB / テーブル | 条件 | evidence |
+|------|------------------|------|----------|
+| `m_applBufferProfileTable.set(name, fvVector)` | APPL_DB / `BUFFER_PROFILE_TABLE` | `default_dynamic_th` 変更または SHP 有効/無効切替時に動的プロファイル全件再計算 | `buffermgrdyn.cpp:919` |
+| `m_stateBufferProfileTable.set(name, fvVector)` | STATE_DB / `BUFFER_PROFILE_TABLE` | APPL_DB 書込と同時に STATE_DB にも書込（`updateBufferProfileToDb()` 内） | `buffermgrdyn.cpp:920` |
+
+書込フィールド: `xon`, `xoff`（lossless のみ）, `xon_offset`（あれば）, `size`, `pool`, `dynamic_th`（または `static_th`）。
+
+### APPL_DB `BUFFER_POOL_TABLE` (副次書込 B — SHP xoff 更新)
+
+`over_subscribe_ratio` が変化して Shared Headroom Pool (SHP) の有効/無効が切り替わった場合のみ、`refreshSharedHeadroomPool()` → `updateBufferPoolToDb(INGRESS_LOSSLESS_PG_POOL_NAME, pool)` が呼ばれ `ingress_lossless_pool` の `xoff` が更新される。
+
+| 操作 | 対象 DB / テーブル | 条件 | evidence |
+|------|------------------|------|----------|
+| `m_applBufferPoolTable.set(name, fvVector)` | APPL_DB / `BUFFER_POOL_TABLE` | SHP 有効化（`over_subscribe_ratio` が 0 → 非ゼロ）かつ `pool.total_size` 非ゼロ | `buffermgrdyn.cpp:885, 1695` |
+| `m_applBufferPoolTable.set(name, fvVector)` (xoff="0") | APPL_DB / `BUFFER_POOL_TABLE` | SHP 無効化（`over_subscribe_ratio` が 非ゼロ → 0、ratio 起因の場合）かつ `pool.total_size` 非ゼロ | `buffermgrdyn.cpp:885, 1701-1703` |
+| `m_stateBufferPoolTable.set(name, fvVector)` | STATE_DB / `BUFFER_POOL_TABLE` | 上記 APPL_DB 書込と同時に STATE_DB にも書込 | `buffermgrdyn.cpp:887` |
+
+書込フィールド: `type`, `mode`, `size`, `xoff`（非空の場合）。
+
+### 副次書込が発生しない条件
+
+- `newRatio == m_overSubscribeRatio`（`over_subscribe_ratio` が変化していない）→ `refreshSharedHeadroomPool()` は呼ばれず副次書込なし（`buffermgrdyn.cpp:2015`）
+- `default_dynamic_th` のみの変更の場合、`BUFFER_POOL_TABLE` への副次書込は発生しない（プロファイル再計算のみ）
+- `m_portInitDone=false`（起動直後）の場合、SHP 有効化の副次書込はガードされ `task_need_retry`（`buffermgrdyn.cpp:2019-2023`）
+
+### 副次書込の発火順序
+
+```
+1. buffermgrdyn: CONFIG_DB DEFAULT_LOSSLESS_BUFFER_PARAMETER|<key> SET 受信
+2. default_dynamic_th 変更時:
+   2a. calculateHeadroomSize(profile) → doUpdateBufferProfileForSize() → updateBufferProfileToDb()
+       → APPL_DB  BUFFER_PROFILE_TABLE|<profile> SET  ← 副次書込 A
+       → STATE_DB BUFFER_PROFILE_TABLE|<profile> SET  ← 副次書込 A (同時)
+3. over_subscribe_ratio 変化によるSHP切替時:
+   3a. refreshSharedHeadroomPool(enable_state_updated_by_ratio=true)
+       → (need_refresh_profiles=true) → updateBufferProfileToDb() × 全動的プロファイル件数
+           → APPL_DB  BUFFER_PROFILE_TABLE|<profile> SET × N  ← 副次書込 A
+           → STATE_DB BUFFER_PROFILE_TABLE|<profile> SET × N  ← 副次書込 A (同時)
+       → updateBufferPoolToDb(ingress_lossless_pool)
+           → APPL_DB  BUFFER_POOL_TABLE|ingress_lossless_pool SET  ← 副次書込 B
+           → STATE_DB BUFFER_POOL_TABLE|ingress_lossless_pool SET  ← 副次書込 B (同時)
+4. BufferOrch: APPL_DB BUFFER_PROFILE_TABLE / BUFFER_POOL_TABLE イベント受信 → SAI 更新 → ASIC_DB
+```
+
+詳細は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-side.md` を参照。
+<!-- /side-effects -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->

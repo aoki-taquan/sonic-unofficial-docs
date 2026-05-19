@@ -313,9 +313,8 @@ CONFIG_DB `HARDWARE|ACCESS_LIST` に書き込まれたキー変更イベント�
 | ベンダー固有 SAI / SDK 差分 | なし | SAI 呼出が発生しないため、SAI 実装の差に依存しない |
 | YANG / CVL 差分 | なし | HARDWARE テーブルは YANG モジュール未定義。プラットフォーム別 CVL プロファイルなし |
 
-詳細根拠: `meta/_intermediate/cdb-flow/hardware-side-effects.md`
+詳細根拠: `meta/_intermediate/cdb-flow/hardware-platform.md`
 <!-- /platform -->
-
 ## 引用元
 
 [^1]: sonic-net/sonic-gnmi `testdata/db_dump.json` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
