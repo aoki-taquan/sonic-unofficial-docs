@@ -464,40 +464,6 @@ Rotate RPC が証明書を差し替えると、以下のシンボリックリン
 -->
 <!-- /side-effects -->
 
-<!-- platform -->
-## プラットフォーム差異 (Phase H)
-
-`SECURITY_PROFILES` / gNSI Certz のコアロジックはプラットフォーム非依存である。`iccpd` のような `getenv("platform")` 分岐や `#ifdef` による ASIC 固有パスは存在しない。
-
-### プラットフォーム共通動作
-
-| 機能 | 動作 | 全プラットフォーム共通か |
-|------|------|----------------------|
-| gNSI Certz — プロファイル管理 | `/keys/grpc-version.json` + シンボリックリンクによるファイルシステム管理 | 共通 |
-| gNSI Certz — STATE_DB 書込み | `CREDENTIALS\|CERT\|<profileID>` へ HSET | 共通 |
-| CVL leafref バリデーション | `SECURITY_PROFILES` ↔ `SECURITY_GLOBAL` 参照整合性チェック | 共通 |
-| TLS 証明書再読み込み | 新規 gRPC 接続ごとに `LoadX509KeyPair(SrvCertLnk, SrvKeyLnk)` | 共通 |
-| Rotate RPC 並行排他 | `certzMu.TryLock()` による Mutex | 共通 |
-
-### 環境別の特記事項
-
-| 環境 | 挙動 |
-|------|------|
-| VS（仮想スイッチ）| gNSI Certz は物理 ASIC と同一コードパスで動作。CONFIG_DB ハンドラ未実装という制約も同様に適用される |
-| SmartSwitch DPU | `gnmi_server` / `gnsi_certz.go` が DPU 上で起動するかは構成依存。NPU 側では通常動作 |
-| SONiC-on-Docker / テスト環境 | `CertzMetaFile` パス (`/keys/grpc-version.json`) が書き込み不可の場合、`saveCertzMetadata` がエラーをログして継続する。証明書機能は `/keys/` ディレクトリの読み書き権限に依存 |
-
-### ASIC / SAI 非依存
-
-gNSI Certz は SAI API を呼び出さない。`SECURITY_PROFILES` を消費する translib / orchagent ハンドラが community master に存在しないため、CONFIG_DB への書込みが ASIC_DB / SAI に到達する経路はない。プラットフォーム間で動作差異が生じる余地は現時点でない。
-
-<!-- evidence:
-  sonic-gnmi/gnmi_server/gnsi_certz.go — getenv("platform") / #ifdef 等のプラットフォーム分岐なし（全体スキャン確認）
-  sonic-gnmi/gnmi_server/server.go:423-434 — LoadX509KeyPair は全プラットフォーム共通
-  sonic-gnmi/gnmi_server/gnsi_certz.go:232-235 — certzMu.TryLock() による並行排他（共通実装）
--->
-<!-- /platform -->
-
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
@@ -528,6 +494,22 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 
 > **Evidence**: `sonic-gnmi/gnmi_server/gnsi_certz.go` 全体スキャン — `ConfigDBConnector.subscribe()` / `SubscriberStateTable` / `ConsumerStateTable` の使用なし確認。`sonic-swss` / `sonic-swss-common` でも `SECURITY_PROFILES` / `SECURITY_GLOBAL` のキーワード一致なし。
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+**プラットフォーム差なし**: `SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルおよび gNSI Certz は ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU 構成に依らず同一動作をする。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `SECURITY_PROFILES` を消費する SAI 経由ハンドラが community master に存在しない。証明書管理はファイルシステム + gRPC のみで ASIC SAI API を呼ばない |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | gNSI Certz (`gnsi_certz.go`) は `ConfigDBConnector` 引数なし (host CONFIG_DB のみ) で起動し、`asicN` namespace を iterate しない。`sonic-pki.yang` も host scope で定義されている |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `SECURITY_PROFILES` / `SECURITY_GLOBAL` は host scope テーブル。chassis 全体集中管理機構はなく、各 line card host で独立して CVL バリデーションが適用される |
+| SmartSwitch (NPU + DPU) | 影響なし | `gnmi-native.sh` が SmartSwitch 時に ZMQ オプションを付与する (`gnmi-native.sh:88-91`) が、これは gNMI サーバ全体の通信チャネル切替であり gNSI Certz のプロファイル管理・証明書ファイル操作には影響しない。DPU 側での `SECURITY_PROFILES` ハンドラも未実装 |
+| コンテナ分離 | 影響なし | gNSI Certz は `docker-sonic-gnmi` コンテナ内で動作し、ファイルシステムマウント (`/keys/`) の構成はプラットフォームによらず共通 (`gnmi-native.sh` 全体調査) |
+
+> **根拠**: `sonic-gnmi/gnmi_server/gnsi_certz.go` 全行調査 — `is_multi_npu` / `DEVICE_METADATA` / `SmartSwitch` / `chassis` の参照なし確認。`sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh` — SmartSwitch 分岐は ZMQ ポート付与のみ (`gnmi-native.sh:88-91`) で gNSI Certz 固有の設定変更なし。`sonic-mgmt-common/cvl/testdata/schema/sonic-pki.yang` — platform 条件分岐なし。
+<!-- /platform -->
 
 ## 関連 CONFIG_DB / YANG / CLI
 
