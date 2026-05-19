@@ -373,6 +373,41 @@ reasoning: iota 番兵として COUNTER_SIZE = 32 が確定。配列サイズと
 詳細な定数一覧は `meta/_intermediate/cdb-flow/gnmi-counter-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/gnmi-counter-side-effects.md -->
+<!-- source: sonic-gnmi/gnmi_server/connection_manager.go ref:master -->
+<!-- source: sonic-gnmi/gnmi_server/client_subscribe.go ref:master -->
+
+gNMI カウンタ本体は SysV 共有メモリに格納されるため、カウンタ増分ロジック自体が CONFIG_DB / STATE_DB を書き変えることはない。ただし `telemetryd` は gRPC **Subscribe** セッション管理の一環として **STATE_DB の `TELEMETRY_CONNECTIONS`** テーブルを副次的に読み書きする。
+
+### STATE_DB — `TELEMETRY_CONNECTIONS`
+
+| 操作 | Redis コマンド | タイミング | 書込元 | 根拠 |
+|------|--------------|-----------|--------|------|
+| 起動時クリア | `HGetAll` → 全フィールド `HDel` | `setConnectionManager()` → `PrepareRedis()` 実行時（最初の Subscribe RPC 受信で 1 回のみ） | `connection_manager.go:52-60` | 旧セッション残置エントリを起動直後に掃除する |
+| 接続確立 | `HSet(table, key, "active")` | Subscribe セッション受け入れ時 (`connectionManager.Add()`) | `connection_manager.go:116`, `client_subscribe.go:179` | セッション追跡用エントリ登録 |
+| 接続切断 | `HDel(table, key)` | Subscribe セッション終了時 (`connectionManager.Remove()`、defer で保証) | `connection_manager.go:127`, `client_subscribe.go:183` | セッション終了に合わせてエントリ削除 |
+
+キー形式は `<client-ip:port>|<target-name>|...|<RFC3339-timestamp>` となり、`createKey()` がクエリ文字列の `target:` / `element:` フィールドを正規表現で抽出して構成する（`connection_manager.go:94-109`）。
+
+> **注意**: `rclient == nil`（`PrepareRedis` 失敗時）の場合、`storeKeyRedis` / `deleteKeyRedis` はログ出力のみでリターンする。副次書込の失敗は Subscribe セッション自体には影響しない。
+
+### 副次書込のないテーブル（スコープ外）
+
+| テーブル / DB | 理由 |
+|-------------|------|
+| CONFIG_DB（全テーブル） | カウンタはメモリのみ。Set RPC の書込先は配下の DB だがカウンタロジック経路での副次書込はなし |
+| COUNTERS_DB | telemetryd はデータの**読み取り元**として使用するが、`IncCounter` 経路での書込なし |
+| FLEX_COUNTER_DB | telemetryd は書込まない（orchagent 管轄） |
+| APPL_DB | 書込なし |
+
+> **Get / Set RPC は `TELEMETRY_CONNECTIONS` を更新しない**。`ConnectionManager` は Subscribe セッション専用。
+
+詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-side-effects.md` を参照。
+<!-- /side-effects -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
