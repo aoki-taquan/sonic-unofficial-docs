@@ -377,3 +377,31 @@ sonic-db-cli CONFIG_DB hgetall 'VLAN_INTERFACE|Vlan201'
 - SAG MAC を変更する際に `del` を忘れて `add` を実行すると CLI が reject する。必ず `del <old_mac>` → `add <new_mac>` の順で操作する。
 
 <!-- /ops-hint -->
+
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 証跡: `meta/_intermediate/cdb-flow/sag-platform.md`
+
+SAG のコードパスにはプラットフォーム固有の分岐は**存在しない**。
+
+### SAI レベルで ASIC 非依存
+
+HLD §SAI API に "There are no changes to SAI headers/implementation to support this feature." と明記されている[^1]。SAG の本質は VLAN インターフェースの SAI RIF 属性 `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` を仮想 MAC に差し替えるだけであり、この属性はすべての主要 ASIC ベンダーが SAI v1 時点からサポートしている。
+
+### 実装コードの調査結果
+
+sonic-swss master に SAG 専用の実装ファイル（`sagmgr.cpp` / `sagorch.cpp` 等）は存在しない。`intfmgr.cpp` および `intfsorch.cpp` にも SAG ハンドラは未マージのため、現時点では `switch_type`・`platform`・`sub_platform` に依存するコード分岐を確認できない。
+
+| 観点 | 詳細 |
+|-----|------|
+| ASIC ベンダー (Broadcom / NVIDIA-Mellanox / Marvell / Barefoot) | コード分岐なし |
+| VOQ / Chassis | 考慮なし（HLD・master コードに記述なし） |
+| SmartSwitch DPU | 考慮なし（DPU 固有処理なし） |
+| `switch_type` 分岐 | なし |
+| Warmboot / Fastboot | 影響なし（HLD §Warmboot and Fastboot に明記） |
+
+!!! note "実装未マージによる制約"
+    現行 master では SAG の ConfigDB への書き込みは `intfmgrd` に購読されない（`schema.h` の定数定義のみ存在）。実装がマージされた際も SAI 層の ASIC 差異は `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` の set_attribute() が返すステータスとして間接的に現れる可能性があるが、全主要プラットフォームでサポートされる属性であるため実害は想定されない。
+
+<!-- /platform -->
