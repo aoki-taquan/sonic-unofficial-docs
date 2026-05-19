@@ -335,6 +335,121 @@ NTP 処理は `hostcfgd` + テンプレートエンジンのパイプライン�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`hostcfgd` (`NtpCfg`) / `chrony.conf.j2` / `chrony.keys.j2` / `caclmgrd` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### chrony 操作コマンド
+
+| 定数 | 値 | 用途 | ソース |
+|------|-----|------|--------|
+| `CHRONY_RESTART` | `['systemctl', 'restart', 'chrony']` | NTP 設定変更のたびに発行される chrony 再起動コマンド。SIGHUP による設定リロードは採用されない | `hostcfgd:1280` |
+
+### ファイルパス定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|-----|------|--------|
+| chrony 設定ファイル | `/etc/chrony/chrony.conf` | `chrony-config.sh` が `sonic-cfggen -d -t chrony.conf.j2` の出力先として使用 | `chrony-config.sh:9` |
+| chrony 鍵ファイル | `/etc/chrony/chrony.keys` | `chrony-config.sh` が `chrony.keys.j2` のレンダリング結果を書き込む。`chmod o-r` でパーミッション制限 | `chrony-config.sh:10-11` / `chrony.conf.j2:127` |
+
+### NTP サービスポート (caclmgrd)
+
+`caclmgrd:95-100` の `ACL_SERVICES` 定義:
+
+| 定数 | 値 | 用途 | ソース |
+|------|-----|------|--------|
+| NTP サービスポート (UDP) | **123** | `caclmgrd` が iptables フィルタルール生成に使用するリテラル値。CONFIG_DB に対応フィールドなし | `caclmgrd:98` |
+| プロトコル | **`udp`** | 同上 | `caclmgrd:97` |
+| `multi_asic_ns_to_host_fwd` | **`False`** | multi-asic 環境での namespace → host フォワーディング無効。NTP は host デーモンが処理するため namespace 経由不要 | `caclmgrd:99` |
+
+NTP UDP ポート 123 は CONFIG_DB の `NTP_GLOBAL` テーブルで変更できない。`caclmgrd` のリテラルを直接変更するしかない。
+
+### タイムゾーン・ポーリング非管理定数
+
+| 項目 | 値 | 説明 |
+|------|-----|------|
+| chrony `minpoll` | 6（= 64 秒） | CONFIG_DB / YANG に対応フィールドなし。chrony 内部デフォルト |
+| chrony `maxpoll` | 10（= 1024 秒） | 同上 |
+| `keyfile` パス | `/etc/chrony/chrony.keys` | `chrony.conf.j2:127` でハードコード。CONFIG_DB で変更不可 |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:1280`; `sonic-host-services/scripts/caclmgrd:95-100`; `sonic-buildimage/files/image_config/chrony/chrony.conf.j2:127`; `sonic-buildimage/files/image_config/chrony/chrony-config.sh:9-11`
+
+<!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込・ファイル書込 (Phase F)
+
+`NTP_GLOBAL` への変更は APPL_DB / STATE_DB への副次書込を一切行わない。ただし、以下のファイルシステム副作用が発生する。
+
+### ファイルシステム書込
+
+| 書込先ファイル | 操作 | 条件 | evidence |
+|--------------|------|------|----------|
+| `/etc/chrony/chrony.conf` | 上書き生成（`sonic-cfggen -d -t chrony.conf.j2`） | ブート時 (`config-setup.service` ExecStartPre) + ランタイムの `systemctl restart chrony` ごと | `chrony-config.sh:9`; `chrony.conf.j2` |
+| `/etc/chrony/chrony.keys` | 上書き生成 + `chmod o-r`（world-read 削除） | 同上 | `chrony-config.sh:10-11`; `chrony.keys.j2` |
+
+どちらのファイルも chrony サービス再起動のたびに **完全上書き** される。CONFIG_DB 変更 → `hostcfgd` が `systemctl restart chrony` → `ExecStartPre` で再生成のパスを取る。
+
+### `NTP_GLOBAL` フィールドと chrony.conf への反映対応
+
+| `NTP_GLOBAL` フィールド | chrony.conf への影響 |
+|-------------------------|---------------------|
+| `authentication == 'enabled'` | `keyfile /etc/chrony/chrony.keys` ディレクティブ追加 |
+| `src_intf` (非 mgmt 時) | `bindacqaddress <ip>` ディレクティブ追加 |
+| `vrf == 'mgmt'` | `bindacqaddress` 生成を抑止 |
+| `server_role` / `dhcp` | SmartSwitch NPU のみ `allow` + `binddevice bridge-midplane` 追加 |
+| `admin_state` | **反映なし**（dead field。`admin_state=disabled` でも chrony は再起動されるだけで停止しない） |
+
+### STATE_DB / APPL_DB への書込
+
+**0 件。** NTP 処理系は APPL_DB / STATE_DB への書込を行わない。NTP 同期状態の観測は `chronyc tracking` / `chronyc sources` コマンドのみで行う。
+
+> **Evidence**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2:58-128`; `sonic-host-services/scripts/hostcfgd:1280,1325,1357,1398`
+
+<!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`hostcfgd` の `NtpCfg` クラスは CONFIG_DB の複数テーブルを `config_db.subscribe()` で購読し、変更検知のたびに chrony を再起動する。
+
+### CONFIG_DB Subscribe 登録
+
+| 購読テーブル | ハンドラ | 発行コマンド | evidence |
+|------------|---------|------------|----------|
+| `NTP` (`CFG_NTP_GLOBAL_TABLE_NAME`) | `ntp_global_handler` → `ntp_global_update()` | `systemctl restart chrony` | `hostcfgd:2511-2513` |
+| `NTP_SERVER` (`CFG_NTP_SERVER_TABLE_NAME`) | `ntp_srv_key_handler` → `ntp_srv_key_update()` | `systemctl restart chrony` | `hostcfgd:2514-2516` |
+| `NTP_KEY` (`CFG_NTP_KEY_TABLE_NAME`) | `ntp_srv_key_handler` → `ntp_srv_key_update()` | `systemctl restart chrony` | `hostcfgd:2514,2517` |
+| `LOOPBACK_INTERFACE` | `lpbk_handler` → `handle_ntp_source_intf_chg()` | `systemctl restart chrony`（`src_intf` 一致かつサーバ存在時のみ） | `hostcfgd:2483`; `hostcfgd:1312-1329` |
+
+`NTP_SERVER` と `NTP_KEY` は **共通ハンドラ** (`ntp_srv_key_handler`) に集約されており、どちらが変化してもその時点の両テーブル全件を再取得して chrony を再起動する。
+
+### 差分チェック（冪等性）
+
+| ハンドラ | 差分チェック | キャッシュ更新条件 |
+|---------|------------|----------------|
+| `ntp_global_update` | `self.cache.get('global', {}) == data` が True → no-op | `systemctl restart chrony` 成功時のみ `self.cache[key] = data` |
+| `ntp_srv_key_update` | `cache['servers'] == ntp_servers and cache['keys'] == ntp_keys` が True → no-op | 成功時のみキャッシュ更新 |
+| `handle_ntp_source_intf_chg` | 差分チェックなし（`src_intf` 名が一致すれば再起動） | キャッシュ更新なし |
+
+### SIGHUP の非採用
+
+`hostcfgd` 自体は `SIGHUP` を受けても **無視する** (`hostcfgd:111-112`)。NTP 設定変更は必ず `systemctl restart chrony`（フルリスタート）であり、SIGHUP によるホットリロードは採用されない。
+
+### 初期化パス
+
+```
+hostcfgd 起動 → config_db.listen(init_data_handler=self.load) → NtpCfg.load() でスナップショット一括取得
+→ subscribe() ループ開始
+```
+
+`init_data_handler=self.load` により、subscribe ループ開始前に `NtpCfg.load()` でスナップショットを一括取得し、初期状態を適用する（evidence: `hostcfgd:2527-2528`）。
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:111-112,1280,1312-1329,1331-1406,2387-2391,2483,2511-2528`
+
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
