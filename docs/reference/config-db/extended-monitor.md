@@ -512,7 +512,7 @@ systemctl restart eventd
 > **Evidence**: `eventd.cpp:172-225` (stats_collector::start); `eventd.cpp:656-704` (run_eventd_service 起動シーケンス); `eventd.cpp:244` (内部サブスクライバー); HLD section 3.1.2, 3.1.3, 3.1.8
 <!-- /pubsub -->
 
-<!-- platform:start -->
+<!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.cpp (全体),
