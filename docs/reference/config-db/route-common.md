@@ -213,6 +213,33 @@ FRR bgpd が未起動の場合や socket 切断時に発生する。CONFIG_DB �
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-common-side-effects.md -->
+
+`frrcfgd`（`BGPConfigDaemon`）は `ROUTE_REDISTRIBUTE` イベントを `bgpd` への vtysh コマンドに変換するのみで、STATE_DB・APPL_DB・ASIC_DB への書込みは一切行わない。`frrcfgd.py` が接続する DB は `ConfigDBConnector`（CONFIG_DB 読み取り・購読）のみであり、ERROR_TABLE への書込みも実装されていない（evidence: `frrcfgd.py:2157`, `frrcfgd.py:3149-3168`）[^2]。
+
+### 副次書込先テーブル
+
+| 副次書込先 DB | テーブル名 | 有無 |
+|-------------|----------|------|
+| STATE_DB | — | なし |
+| APPL_DB | — | なし |
+| ASIC_DB | — | なし |
+| ERROR_TABLE | — | なし |
+
+### FRR 側の副作用（DB 外）
+
+ROUTE_REDISTRIBUTE の SET/DEL は以下の FRR running-config 変化と、それに伴う BGP 制御プレーンの動作変化を引き起こす（DB への反映はない）。
+
+| 操作 | FRR bgpd 側の変化 |
+|------|-----------------|
+| SET | `hdl_route_redist_set()` が `no redistribute <src_proto>` で既存設定をリセット後、`redistribute <src_proto> [metric <N>] [route-map <name>]` を発行。再配布対象プロトコルの経路が BGP RIB に追加され、ピアへ BGP UPDATE で広告される（evidence: `frrcfgd.py:1330-1342`）[^2] |
+| DEL | `no redistribute <src_proto>` を発行。bgpd が該当プロトコルの再配布経路を BGP RIB から削除し、ピアへ BGP WITHDRAW を送出する（evidence: `frrcfgd.py:3160-3168`）[^2] |
+
+<!-- /side-effects -->
+
 ## key 構造
 
 ```text
