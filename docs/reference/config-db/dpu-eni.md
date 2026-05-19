@@ -593,3 +593,44 @@ ENI の MAC アドレス（例: `f4:93:9f:ef:c4:7e`）は `EniInfo::formatMac()`
 
 Neighbor が解決されると `NeighOrch` からの Observer 通知 (`DashEniFwdOrch::update()` → `handleNeighUpdate()`) が発火し (`dashenifwdorch.cpp:31-44`)、影響 ENI の `fireAllRules()` が再実行されて APPL_DB `ACL_RULE_TABLE` への SET が副次的に発生する。
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-eni-pubsub.md`
+
+### 書き込み側 — HaMgrd → APPL_DB:DASH_ENI_FORWARD_TABLE
+
+`DashEniFwdOrch` は APPL_DB の `DASH_ENI_FORWARD_TABLE` を**読み取る** consumer であり、このテーブルへの書き込みは `HaMgrd` が担当する (evidence: `eni-based-forwarding.md:108`)。SmartSwitch HA 構成では HaMgrd が ProducerStateTable / ZMQ 経由で ENI-to-VDPU マッピングを書き込む。
+
+### 読み取り側 — ConsumerStateTable (Orch2)
+
+`DashEniFwdOrch` は `Orch2` を継承する (`dashenifwdorch.h:92`)。`Orch2` コンストラクタが `Orch::addConsumer()` を呼び、`ConsumerStateTable(applDb, "DASH_ENI_FORWARD_TABLE", gBatchSize, pri)` を生成する (`orch.cpp:1186-1194`)。
+
+`APP_DASH_ENI_FORWARD_TABLE = "DASH_ENI_FORWARD_TABLE"` (`sonic-swss-common/common/schema.h:196`)。
+
+```
+HaMgrd
+  ↓ ProducerStateTable → APPL_DB:DASH_ENI_FORWARD_TABLE
+Redis keyspace notification (__keyspace@0__:DASH_ENI_FORWARD_TABLE|*)
+  ↓ ConsumerStateTable.pops()
+Orch2::doTask(Consumer&) → addOperation() / delOperation()
+  ↓
+DashEniFwdOrch::addOperation() — lazyInit → DpuRegistry::populate() → ENI ACL 生成
+DashEniFwdOrch::delOperation() — ENI ACL 削除
+```
+
+### NeighOrch Observer — Neighbor 変化通知
+
+`DashEniFwdOrch` は `Observer` を実装し、コンストラクタで `neighorch_->attach(this)` を呼ぶ (`dashenifwdorch.cpp:15-19`)。`NeighOrch` が Neighbor 解決 / 削除イベントを発行すると `DashEniFwdOrch::update(SUBJECT_TYPE_NEIGH_CHANGE, cntx)` が呼ばれ、`handleNeighUpdate()` → 影響 ENI の `fireAllRules()` が実行される。
+
+| 通知経路 | 方向 | 用途 |
+|---------|------|------|
+| `neighorch_->attach(this)` | `NeighOrch` → `DashEniFwdOrch` | Neighbor 解決イベント受信 |
+| `DashEniFwdOrch::update(SUBJECT_TYPE_NEIGH_CHANGE)` | Observer コールバック | LOCAL DPU の ENI ACL ルール再発火 |
+| `neighorch_->detach(this)` (デストラクタ) | 購読解除 | ライフサイクル管理 |
+
+### SmartSwitch 限定登録
+
+`DashEniFwdOrch` は `orchdaemon.cpp:613-617` の `gMySwitchSubType == "SmartSwitch"` 分岐内でのみインスタンス化される。通常の SONiC スイッチでは `DASH_ENI_FORWARD_TABLE` の ConsumerStateTable 購読は発生しない。
+<!-- /pubsub -->
