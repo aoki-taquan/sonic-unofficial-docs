@@ -515,4 +515,49 @@ m_overSubscribeRatio 更新 → refreshSharedHeadroomPool()
 
 > **Evidence**: `sonic-swss/cfgmgr/buffermgrd.cpp L22,165-187,225`; `sonic-swss/cfgmgr/buffermgrdyn.h L17`; `sonic-swss/cfgmgr/buffermgrdyn.cpp L127-131,442,1978-2033,3574-3610,3791`; `sonic-swss/orchagent/orch.cpp L127-133,1186-1196`; 詳細調査 `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-pubsub.md`
 <!-- /pubsub -->
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`DEFAULT_LOSSLESS_BUFFER_PARAMETER` のフィールド仕様・ハンドラ分岐・失敗挙動・副次書込はプラットフォームによらず共通。差異は **ヘッドルーム計算 Lua プラグイン** と **プロファイル命名規則 (`_8lane` サフィックス: Mellanox SPC3/4/5 のみ)** および **SHP を Lua レベルで考慮するか否か (Barefoot は無視)** の 3 点に限定される。
+
+### プラットフォーム識別方法
+
+`buffermgrdyn` コンストラクタ (L68-103) は環境変数 `ASIC_VENDOR` を読み取り、プラットフォーム名に対応する Lua スクリプトを動的にロードする。Mellanox の場合はさらに `DEVICE_METADATA|localhost` の `platform` フィールドから機種番号 (`m_model_number`) を抽出して世代を判定する。
+
+| プラットフォーム (`ASIC_VENDOR`) | Lua スクリプト例 | 備考 |
+|-------------------------------|-----------------|------|
+| `mellanox` | `buffer_headroom_mellanox.lua` / `buffer_pool_mellanox.lua` | 機種番号 (`sn<NNNN>`) で世代判定 |
+| `barefoot` | `buffer_headroom_barefoot.lua` / `buffer_pool_barefoot.lua` | Intel Tofino |
+| `vs` | `buffer_headroom_vs.lua` / `buffer_pool_vs.lua` | 仮想スイッチ (テスト用) |
+| その他 | `buffer_headroom_<vendor>.lua` / `buffer_pool_<vendor>.lua` | ロード失敗時は起動中断 |
+
+### capability 差異一覧
+
+| 観点 | Mellanox | Barefoot | VS | 根拠 |
+|------|----------|----------|----|------|
+| **`over_subscribe_ratio` を Lua ヘッドルーム計算に反映** | yes (SHP 有効時 `headroom_size = xon_value` に縮小) | **no** (Lua で参照しない。`headroom_size = xon_value` 常時) | yes | `buffer_headroom_mellanox.lua:104-116`; `buffer_headroom_barefoot.lua` で `over_subscribe_ratio` 参照なし |
+| **8-lane プロファイル命名 (`_8lane` サフィックス)** | SPC3 (4xxx系) / SPC4/5 (5xxx系) のみ適用 | **なし** | **なし** | `buffermgrdyn.cpp:504-523` |
+| **Spectrum-4/5 の `kb_on_tile` 補正** | SPC4 / SPC5 ASIC (`ASIC_TABLE` キー末尾が `4` or `5`) のみ `port_speed / 1000 * 120 / 8` を `propagation_delay` に加算 | なし | なし | `buffer_headroom_mellanox.lua:83-87` |
+| **SPC6 の `modification_descriptors_pool_size`** | `m_model_number >= 6000` のとき 32 MB 確保、`egress_mirror_headroom = 0` | なし | なし | `buffer_pool_mellanox.lua:190-205` |
+| **ヘッドルーム計算の `cell_occupancy` 算出式** | `small_packet_percentage_by_byte` (バイト換算済) を使用 | percentage 値を直接使用 (バイト換算なし) | Mellanox 同様 | `buffer_headroom_mellanox.lua:146-147`; `buffer_headroom_barefoot.lua:114` |
+| **400G `peer_response_time` 倍加** | なし | 400G 限定で `peer_response_time *= 2` | なし | `buffer_headroom_barefoot.lua:127-129` |
+| **`buffer_check_headroom` Lua の SHP フィールド参照** | `port_reserved_shp` / `port_max_shp` を `ASIC_TABLE` から取得して SHP 上限チェック | なし (simpler check) | あり | `buffer_check_headroom_mellanox.lua:63-70` |
+
+### Mellanox SPC3/4/5 の `_8lane` サフィックスと `default_dynamic_th` の関係
+
+`getDynamicProfileName()` (L504-523) は以下の 2 条件が重なるとプロファイル名が `_8lane` + `_th<N>` の複合サフィックスになる:
+
+- 8-lane ポート かつ SPC3 (4xxx系) で 400G 以外 / SPC4/5 (5xxx系) で 800G 以外
+- `default_dynamic_th` が `m_defaultThreshold` と異なる値に設定されている
+
+例: `pg_lossless_100000_40m_8lane_th3_profile`
+
+`DEFAULT_LOSSLESS_BUFFER_PARAMETER.default_dynamic_th` を変更すると、Mellanox SPC3/4/5 で 8-lane ポートの lossless プロファイル名が変わり、既存 APPL_DB エントリとの乖離が生じる可能性がある (Phase A 参照)。
+
+### multi-asic / VOQ chassis 構成
+
+`buffermgrdyn` はスイッチごとに 1 インスタンス起動し、各 ASIC namespace の CONFIG_DB を購読する。`DEFAULT_LOSSLESS_BUFFER_PARAMETER` も namespace ごとに独立して管理される。Lua プラグインは各 namespace の STATE_DB に存在する `ASIC_TABLE` を参照するため、ASIC が異なれば `cell_size` / `pipeline_latency` 等の値が異なり、ヘッドルーム計算結果も namespace ごとに独立する。
+
+詳細根拠は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-platform.md` を参照。
+<!-- /platform -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
