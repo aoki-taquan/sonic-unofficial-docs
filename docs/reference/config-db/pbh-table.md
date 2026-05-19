@@ -251,6 +251,36 @@ CLI プラグイン (`config/plugins/pbh.py`) で定義される CONFIG_DB テ�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書き込み (Phase F)
+
+> 証跡: `meta/_intermediate/cdb-flow/pbh-table-side-effects.md`
+
+`PBH_TABLE` の SET/DEL 処理は **STATE_DB / APPL_DB への直接書き込みを行わない**。副次的な状態変更は以下に限られる。
+
+### SAI ACL テーブルオブジェクト (ASIC 副作用)
+
+| 操作 | SAI 呼び出し | 呼び出し元 | タイミング |
+|------|------------|-----------|-----------|
+| SET（新規） | `sai_acl_api->create_acl_table` | `aclOrch->addAclTable(pbhTable)` (`pbhorch.cpp:286`) | `createPbhTable()` 内、内部キャッシュ登録前 |
+| SET（更新） | `sai_acl_api->set_acl_table_attribute` | `aclOrch->updateAclTable(table.name, pbhTable)` (`pbhorch.cpp:359`) | `updatePbhTable()` 内 |
+| DEL | `sai_acl_api->remove_acl_table` | `aclOrch->removeAclTable(table.name)` (`pbhorch.cpp:388`) | `removePbhTable()` 内、内部キャッシュ削除前 |
+
+SAI の変更は CONFIG_DB / APPL_DB / STATE_DB には反映されない。ステータスを確認する専用 DB テーブルは実装されていない。
+
+### AclOrch 内 pendingPortSet (インメモリ)
+
+`validateAddPorts()` (`aclorch.cpp:2698`) が `interface_list` のポートを PortsOrch に問い合わせ、未登録ポートは `AclTable::pendingPortSet` に蓄積する。これは orchagent プロセス内メモリのみで DB 書き込みは発生しない。`SUBJECT_TYPE_PORT_CHANGE` 通知を受けると `pendingPortSet` のポートが自動的に再バインドされる (`aclorch.cpp:2884-2889`)。
+
+### pbhHlpr 内部 refCount (インメモリ)
+
+`PBH_RULE` の作成時に `pbhHlpr.incRefCount(rule)` が `tableMap[rule.table].refCount` を +1 し、`PBH_RULE` の削除時に `decRefCount(rule)` が -1 する (`pbhmgr.cpp:114-135`, `163-183`)。この refCount は DB に書き出されず orchagent 内メモリにのみ存在する。`PBH_TABLE` の DEL は `hasDependencies()` が `refCount > 0` の間ブロックされる。
+
+!!! note "STATE_DB ステータステーブルなし"
+    `PbhOrch` は `PBH_TABLE` の処理結果を STATE_DB / APPL_DB に書き出さない。失敗・成功の確認は `/var/log/syslog` の `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` のみ。
+
+<!-- /side-effects -->
+
 ## key 構造
 
 ```text
