@@ -332,6 +332,49 @@ APPL_DB NEIGH_TABLE ─(NeighOrch)─→ IntfsOrch [INTERFACE RIF]
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/neigh-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/neigh-pubsub.md -->
+
+### CONFIG_DB NEIGH の購読方式
+
+`nbrmgrd` が **ConsumerStateTable** を通じて CONFIG_DB `NEIGH` テーブルをリアルタイム購読する。SET/DEL イベントが発生すると即座に `doSetNeighTask()` / `doDeleteNeighTask()` が呼ばれる。
+
+| 購読者 | 購読方式 | チャンネル / テーブル | トリガー処理 | evidence |
+|--------|---------|----------------------|------------|----------|
+| `nbrmgrd` | `ConsumerStateTable` (CONFIG_DB) | `CFG_NEIGH_TABLE_NAME` (`"NEIGH"`) | SET → `doSetNeighTask()` → Netlink `RTM_NEWNEIGH` | `nbrmgrd.cpp:32-34`, `nbrmgr.cpp:390` |
+| `nbrmgrd` | `ConsumerStateTable` (APPL_DB) | `APP_NEIGH_RESOLVE_TABLE_NAME` (`"NEIGH_RESOLVE_TABLE"`) | SET → 隣接解決トリガー | `nbrmgr.cpp:64-67` |
+| `nbrmgrd` (VoQ のみ) | `SubscriberStateTable` (STATE_DB) | `STATE_SYSTEM_NEIGH_TABLE_NAME` | VoQ リモート neighbor → カーネル静的 neighbor 挿入 | `nbrmgr.cpp:78-83` |
+
+### nbrmgrd の Select ループ
+
+`nbrmgrd` は `swss::Select` を使い、`SELECT_TIMEOUT = 1000` ms のタイムアウトで待機する。タイムアウト時は `nbrmgr.doTask()` を呼び出してキューに残留したエントリを再処理する（`nbrmgrd.cpp:83-86`）。
+
+```
+CONFIG_DB NEIGH|<port>|<ip> SET
+  ↓ ConsumerStateTable が keyspace notification を受信
+  ↓ Select::select() が返る
+  ↓ nbrmgr::doSetNeighTask()
+     → isIntfStateOk() で STATE_DB INTERFACE_TABLE を確認
+     → OK: setNeighbor() → Netlink RTM_NEWNEIGH をカーネルへ
+     → NG: it++ でキュー留め（次の SELECT_TIMEOUT 後に再試行）
+```
+
+### VoQ 環境の追加購読
+
+`DEVICE_METADATA.switch_type == "voq"` の場合のみ、`NbrMgr` コンストラクタが `STATE_DB:STATE_SYSTEM_NEIGH_TABLE_NAME` を `SubscriberStateTable` で追加登録する（`nbrmgr.cpp:78-83`）。これにより `doStateSystemNeighTask()` がリモートシステムポートの neighbor をカーネルに挿入する経路が有効になる。VoQ 以外の環境では購読されない。
+
+### APPL_DB NEIGH_RESOLVE_TABLE
+
+外部コントローラ（gNMI、SDN コントローラ等）が `APPL_DB:NEIGH_RESOLVE_TABLE` へ書き込むことで ARP/NDP 解決をトリガーできる。nbrmgrd はこのテーブルを起動時から購読し (`nbrmgr.cpp:64-67`)、warm-reboot 後は `reconcileNeighResolveTable()` で保留エントリを再読み込みする (`nbrmgr.cpp:70`)。
+
+### CONFIG_DB → kernel の直接パス（SAI 非経由）
+
+本テーブル (`CONFIG_DB NEIGH`) の変更は SAI / orchagent 経由を通らない。`nbrmgrd` が Netlink で直接カーネル ARP テーブルを操作し、その後 `neighsyncd` / `orchagent` の別パスで ASIC へのプログラミングが行われる。
+
+<!-- /pubsub -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
