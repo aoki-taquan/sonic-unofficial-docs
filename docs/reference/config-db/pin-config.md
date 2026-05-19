@@ -378,4 +378,36 @@ P4RT テーブルには専用 YANG モデルが存在しないため leafref は
 
 <!-- /failure -->
 
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-constants.md -->
+<!-- source: sonic-net/sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd) -->
+<!-- source: sonic-net/sonic-buildimage/dockers/docker-sonic-p4rt/p4rt_vars.j2 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd) -->
+
+`p4rt.sh` および `p4rt_vars.j2` に含まれるハードコード定数。いずれも CONFIG_DB / YANG では設定不可。
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|----|---------|------|
+| `EXIT_P4RT_VARS_FILE_NOT_FOUND` | `1` | `p4rt.sh:L3` | テンプレートファイル不在時の exit code。supervisord / 配備スクリプトが起動失敗を検知するために参照する |
+| `P4RT_VARS_FILE` | `/usr/share/sonic/templates/p4rt_vars.j2` | `p4rt.sh:L4` | CONFIG_DB → 起動引数変換テンプレートのハードコードパス。変更不可（スクリプト内 `readonly`） |
+| `--use_insecure_server_credentials` | ― (引数文字列リテラル) | `p4rt.sh:L25,L42,L56` | 証明書設定が不完全または全くない場合のデフォルトフォールバック引数。3 経路すべてで同じ文字列が使用される |
+| `"certs"` | ― (サブキー識別子) | `p4rt_vars.j2:L2` | `P4RT` テーブルの証明書サブキー名。YANG モデル外のリテラル |
+| `"p4rt_app"` | ― (サブキー識別子) | `p4rt_vars.j2:L3` | `P4RT` テーブルのアプリ設定サブキー名。YANG モデル外のリテラル |
+| `"x509"` | ― (サブキー識別子) | `p4rt_vars.j2:L4` | `DEVICE_METADATA` テーブルのフォールバック証明書サブキー名。YANG モデル外のリテラル |
+
+### 定数の影響詳細
+
+**`P4RT_VARS_FILE` のハードコード**: `p4rt.sh` L4 で `readonly` 宣言されており、実行時の変更は不可。パスを変更するにはイメージの再ビルドが必要。テンプレートファイルが `/usr/share/sonic/templates/p4rt_vars.j2` に存在しない場合、`exit ${EXIT_P4RT_VARS_FILE_NOT_FOUND}` (= `exit 1`) で即終了し、gRPC サーバは起動しない。
+
+**フォールバック文字列リテラル (`--use_insecure_server_credentials`)**: `p4rt.sh` に 3 箇所（L25, L42, L56）同じ文字列リテラルが記述されている。`server_crt` / `server_key` のいずれかが空の場合（L25）、`X509` フォールバックでも同じ条件（L42）、または `P4RT|certs` も `DEVICE_METADATA|localhost|x509` も存在しない場合（L56）に付与される。いずれの場合もエラーなしで平文 gRPC 起動となる。
+
+**サブキー識別子のリテラル固定**: `p4rt_vars.j2` の `"certs"`、`"p4rt_app"`、`"x509"` はすべて文字列リテラルとして固定されており、YANG モデルに対応する `key` 定義は存在しない。CONFIG_DB のキー名がこれらのリテラルと一致しない場合、`jq -r '.field // empty'` が空文字列を返してサイレントに無視される（CLI の事前バリデーションもなし）。
+
+### YANG 定義との乖離
+
+専用 YANG モデルが存在しないため、上記の定数・キー名・フォールバック動作はすべてスクリプトレベルのみで実装される。gRPC デフォルトポート `9559` は `p4rt` バイナリ内部のデフォルトであり、`p4rt.sh` には記述されない（CONFIG_DB に `port` フィールドがなければ `--p4rt_grpc_port` 引数自体を渡さない）。
+
+<!-- /hardcoded-constants -->
+
 <!-- glossary-links-injected -->
