@@ -1,6 +1,6 @@
 ---
 title: APPL_STATE_DB ROUTE_TABLE (route offload cache)
-description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数を含む Phase A+B+C+D+E 分析。"
+description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖を含む Phase A+B+C+D+E+F 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -550,6 +550,95 @@ fieldValues.emplace_back("err_str", "SWSS_RC_SUCCESS");
 | `APP_ROUTE_TABLE_NAME` | `"ROUTE_TABLE"` | `schema.h:47` | `#define` マクロ |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副作用・連鎖変更 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-side-effects.md -->
+
+APPL_STATE_DB `ROUTE_TABLE` への書き込みは、orchagent の内部処理で終結せず、`fpmsyncd` を経由して FRR zebra への外向き副作用を持つ。また `route_check.py` による recovery パスも存在する。
+
+### 連鎖変更マップ
+
+```
+orchagent (RouteOrch::publishRouteState)
+  └─▶ APPL_STATE_DB:ROUTE_TABLE  (ResponsePublisher, SET/DEL)
+        └─▶ APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL  (Redis Pub/Sub 通知)
+              └─▶ fpmsyncd (RouteSync::onRouteResponse)
+                    └─▶ FPM (RTM_NEWROUTE + RTM_F_OFFLOAD) ──▶ FRR zebra
+
+route_check.py
+  ├─ 読み取り APPL_STATE_DB:ROUTE_TABLE
+  └─▶ APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL  (recovery 注入)
+        └─▶ fpmsyncd (RouteSync::onRouteResponse)
+              └─▶ FPM (RTM_NEWROUTE + RTM_F_OFFLOAD) ──▶ FRR zebra
+
+Warm Restart (fpmsyncd::onWarmStartEnd)
+  ├─ 読み取り APPL_STATE_DB:ROUTE_TABLE（全エントリ）
+  └─▶ FPM (RTM_NEWROUTE + RTM_F_OFFLOAD) ──▶ FRR zebra（一括送出）
+```
+
+### 1. fpmsyncd → FRR zebra（通常フロー）
+
+`RouteOrch::publishRouteState()` が RESPONSE_CHANNEL に通知を送出すると、suppression 有効時に `fpmsyncd` の `onRouteResponse()` が受信し、`sendOffloadReply()` で FRR zebra に RTM_NEWROUTE + `RTM_F_OFFLOAD` フラグを付加したメッセージを送出する[^fpmsyncd]。
+
+- **条件**: `CONFIG_DB DEVICE_METADATA|localhost.suppress-fib-pending = "enabled"` が設定済みであること
+- **効果**: FRR zebra が当該経路を「HW にオフロード済み」として認識し、経路の offload フラグが立つ
+- **suppression 無効時**: `onRouteResponse()` が冒頭で即 `return`し、offload 通知は行われない（`routesync.cpp:3174-3177`）
+
+```cpp
+// routesync.cpp:3174-3177
+void RouteSync::onRouteResponse(...)
+{
+    if (!isSuppressionEnabled())
+        return;
+    ...
+}
+```
+
+### 2. Warm Restart: 一括 offload 通知
+
+Warm restart 完了時（`onWarmStartEnd()`）、`markRoutesOffloaded()` が APPL_STATE_DB `ROUTE_TABLE` の全エントリを走査して FRR zebra に RTM_NEWROUTE を一括送信する[^fpmsyncd]。
+
+```cpp
+// routesync.cpp:3291-3295
+void RouteSync::onWarmStartEnd(swss::DBConnector& applStateDb)
+{
+    if (isSuppressionEnabled())
+        markRoutesOffloaded(applStateDb);
+    ...
+}
+```
+
+- **タイミング**: orchagent warm restart 完了後に 1 回のみ自動実行
+- **効果**: orchagent 再起動後も FRR が保持している全経路の offload フラグが復元される
+- **注入値**: `err_str = "SWSS_RC_SUCCESS"` リテラル固定（`routesync.cpp:3285`）
+
+### 3. route_check.py による recovery 注入
+
+`route_check.py` は APPL_STATE_DB `ROUTE_TABLE` を読み出して FRR・ASIC_DB の経路整合を検証し、offload フラグ未設定経路を検出した場合に `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` へ `SWSS_RC_SUCCESS` を注入する。
+
+```python
+# route_check.py:767-771
+producer = swss.NotificationProducer(db, APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL)
+for prefix in routes:
+    fvs = swss.FieldValuePairs([("err_str", "SWSS_RC_SUCCESS"), ("protocol", "")])
+    producer.send(SET_COMMAND, prefix, fvs)
+```
+
+- **条件**: FRR に存在するが offload フラグが立っていない経路が検出された場合
+- **効果**: fpmsyncd が `onRouteResponse()` を再実行し、FRR zebra への offload 通知を再送（recovery）
+- **注意**: APPL_STATE_DB エントリを直接書き換えるのではなく、RESPONSE_CHANNEL 経由でフローを再起動する
+
+### 副作用サマリ
+
+| 副作用先 | トリガ | 書き手 | 条件 |
+|---------|-------|--------|------|
+| FPM → FRR zebra（RTM_F_OFFLOAD） | RESPONSE_CHANNEL 受信 | fpmsyncd RouteSync::sendOffloadReply() | suppress-fib-pending=enabled 時のみ |
+| FPM → FRR zebra（RTM_F_OFFLOAD）一括 | Warm Restart 完了 | fpmsyncd RouteSync::markRoutesOffloaded() | suppress-fib-pending=enabled かつ warm restart 時 |
+| `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 注入 | route_check.py 実行 | route_check.py NotificationProducer | FRR offload フラグ未設定経路検出時 |
+
+<!-- /side-effects -->
 
 ## 確認コマンド
 
