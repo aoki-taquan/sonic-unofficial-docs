@@ -127,6 +127,34 @@ community sonic-swss/orchagent は `HARDWARE` テーブルを**購読しない**
 詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-ordering.md`
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照・共依存コンポーネント (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/hardware-cross-refs.md`
+
+`HARDWARE|ACCESS_LIST` は CONFIG_DB に書き込まれるが、community SONiC コードパスでは**いずれのコンポーネントも参照しない**（dead consumer）。YANG モジュールが存在しないため leafref による参照整合性保証も一切ない。
+
+| 参照元 / 参照先 | DB / リソース | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `HARDWARE\|ACCESS_LIST` → AclOrch | CONFIG_DB → orchagent | 書込み側のみ | なし | **community では無関係** | `sonic-swss/orchagent/aclorch.cpp` に COUNTER_MODE / LOOKUP_MODE / TCAM_SHARING の参照 0 件 |
+| `HARDWARE\|ACCESS_LIST` → sonic-gnmi | CONFIG_DB → gnmi | testdata のみ参照 | なし | テストデータのみ | `sonic-gnmi/testdata/db_dump.json` に出現; 本番 gNMI コードには参照なし |
+| `HARDWARE\|ACCESS_LIST` → sonic-mgmt-common | CONFIG_DB → translib | テスト初期化のみ | なし | テストデータのみ | `sonic-mgmt-common/tools/test/dbinit.py:88-90` |
+| `ACL_TABLE` / `ACL_RULE` | CONFIG_DB | 設計上の関連テーブル | なし | **実装上は無関係** | `aclorch.cpp` は HARDWARE テーブルを参照せず独立して動作する |
+
+### community では参照なし
+
+`sonic-swss` (`orchagent/` `cfgmgr/` `fpmsyncd/`)、`sonic-utilities`、`sonic-gnmi`（本番コード）のいずれも
+`COUNTER_MODE` / `LOOKUP_MODE` / `TCAM_SHARING` を参照しない。
+YANG leafref が存在しないため CVL (Config Validation Layer) も無効である。
+
+### ベンダー実装での参照（対象外）
+
+Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` transformer 層の vendored 拡張）では
+`HARDWARE|ACCESS_LIST` を READ/WRITE する可能性が高い。ただし当該コードは community リポジトリ外のため、
+本ページの調査対象外とする。
+
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
