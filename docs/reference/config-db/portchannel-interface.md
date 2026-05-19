@@ -457,7 +457,7 @@ SAI 操作の失敗のうち、`create_router_interface`・`remove_router_interf
 
 <!-- /failure -->
 
-<!-- platform-diff -->
+<!-- platform -->
 ## プラットフォーム差 (Phase H)
 
 > **調査対象**: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
@@ -481,7 +481,7 @@ SAI 操作の失敗のうち、`create_router_interface`・`remove_router_interf
 
 `intfmgr.cpp` および `intfsorch.cpp` に SmartSwitch / DPU に関する `PORTCHANNEL_INTERFACE` 固有の分岐コードは存在しない（2026-05-16 時点の master 調査結果）。SmartSwitch における Portchannel L3 IF の扱いは通常の `IntfMgr` フローと同一であり、midplane / DPU 側への追加同期処理はなし。
 
-<!-- /platform-diff -->
+<!-- /platform -->
 
 <!-- constants -->
 ## ハードコード定数 (Phase E)
