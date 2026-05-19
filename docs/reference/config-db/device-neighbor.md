@@ -243,4 +243,60 @@ minigraph.py が生成するエントリは常に `{'name': <隣接ホスト名>
 > **Evidence**: `sonic-buildimage` `src/sonic-config-engine/minigraph.py:649,2631-2641`; `dockers/docker-lldp/lldpmgrd:12-14`; `sonic-utilities` `pfcwd/main.py:413-416`; `show/interfaces/__init__.py:316-360`; `scripts/ecnconfig:282-287`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:219-224`; `sonic-mgmt-common` `cvl/testdata/schema/sonic-device-neighbor.yang`
 <!-- /defaults -->
 
+<!-- ordering -->
+## 処理順序・依存関係・warm-reboot 挙動 (Phase B)
+
+`DEVICE_NEIGHBOR` は `sonic-cfggen -m <minigraph.xml>` により静的に投入される topology テーブルであり、デーモンが継続的に subscribe するテーブルではない。以下に各 consumer の依存順序を示す。
+
+<!-- evidence: meta/_intermediate/cdb-flow/device-neighbor-ordering.md -->
+
+### 1. 書き込み前提条件 — port_config.ini との整合
+
+`minigraph.py:2631-2636` は `port_config.ini` に存在しないインターフェイス名を key とするエントリを、`Warning: ignore interface '%s' in DEVICE_NEIGHBOR...` を stderr へ出力したうえで削除する。
+
+```
+port_config.ini に存在するポート名のみ → DEVICE_NEIGHBOR に書き込まれる
+```
+
+`DEVICE_NEIGHBOR` と `DEVICE_NEIGHBOR_METADATA` は同一の `sonic-cfggen -m` 呼び出しで同時生成される (`minigraph.py:2637-2641`)。
+
+---
+
+### 2. bgpcfgd — DEVICE_NEIGHBOR_METADATA を先行要件として登録
+
+`bgpcfgd/managers_bgp.py:140` では `deps` に `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を登録しており、DEVICE_NEIGHBOR_METADATA が揃うまで BGP ネイバー追加を defer する。DEVICE_NEIGHBOR は直接 subscribe されないが、`name` フィールドが DEVICE_NEIGHBOR_METADATA のキーと一致しないと BGP セッション追加が `return False` で中断される (`managers_bgp.py:220-223`)。
+
+推奨書き込み順序:
+
+```
+1. DEVICE_NEIGHBOR_METADATA  ← bgpcfgd deps として先行必須
+2. DEVICE_NEIGHBOR            ← name が DEVICE_NEIGHBOR_METADATA に存在することを確認後
+```
+
+---
+
+### 3. pfcwd start_default — 起動時一括読み取り
+
+`pfcwd/main.py:413` は `start_default` 実行時に `DEVICE_NEIGHBOR.keys()` を外部ポート一覧として一括取得する。PORT テーブルとの明示的な順序制約はないが、**`pfcwd start_default` 実行前に DEVICE_NEIGHBOR が投入されている必要がある**。テーブルが空の場合、外部ポートが 0 件と判定されバックプレーンポートのみを対象にする。
+
+---
+
+### 4. ecnconfig — 空テーブルで例外送出
+
+`scripts/ecnconfig:282-287` は実行時に `DEVICE_NEIGHBOR` 全件を一括読み取り、テーブルが空の場合に `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise する。`ecnconfig` 実行前に DEVICE_NEIGHBOR が投入されていなければならない。
+
+---
+
+### 5. lldpmgrd — dead consumer
+
+`lldpmgrd` のソース先頭 (`lldpmgrd:12-14`) に `TODO: Also listen for changes in DEVICE_NEIGHBOR and PORT tables in Config DB` と記されており、現行実装では DEVICE_NEIGHBOR を subscribe しない。`lldpmgrd` の購読対象は `DEVICE_METADATA`・`MGMT_INTERFACE`・`APP_PORT_TABLE` のみであり、DEVICE_NEIGHBOR の書き込みタイミングは `lldpmgrd` の動作に影響しない。
+
+---
+
+### 6. warm-reboot 挙動
+
+DEVICE_NEIGHBOR は静的 topology 情報であり、専用の warm-reboot reconciliation ロジックは存在しない。warm-reboot 後の再適用は `config reload` または `sonic-cfggen -m` 再実行による全件上書きが前提。`pfcwd`・`ecnconfig` は再起動時に `get_table` で全件再読み取りするため、incremental な差分適用は考慮されていない。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 2c4f81fa98e5 -->
