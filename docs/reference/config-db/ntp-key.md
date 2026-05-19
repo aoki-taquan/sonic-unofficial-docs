@@ -359,7 +359,7 @@ YANG default `md5` により、CONFIG_DB に正規化された値は常に non-e
 詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-ordering.md`。
 <!-- /ordering -->
 
-<!-- failure-behavior -->
+<!-- failure -->
 ## 失敗挙動 (Phase D)
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
@@ -391,7 +391,7 @@ CLI / gNMI 経由の CONFIG_DB 書き込み時に YANG スキーマが検証さ�
 `chrony.keys.j2` は `NTP_KEY[keyid].type` または `NTP_KEY[keyid].value` が falsy の場合、その鍵エントリを keyfile から**無警告で除外**する。エラーは発生せず、次回 DB 変更で再生成されるまで chrony は当該鍵 ID を未登録として扱う。
 
 詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-failure.md`。
-<!-- /failure-behavior -->
+<!-- /failure -->
 
 <!-- constants -->
 ## ハードコード定数 (Phase E)
