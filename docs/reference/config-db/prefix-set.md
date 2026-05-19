@@ -538,4 +538,45 @@ CONFIG_DB PREFIX_SET / PREFIX
 > **スキャン証跡**: `frrcfgd.py` L2298-2299 (table_handler_list 登録), L2359-2361 (subscribe_all), L1536-1552 (listen_thread/psubscribe), L2894-2910 (PREFIX_SET ハンドラ), L2911-2936 (PREFIX ハンドラ)。`bgpd.conf.db.pref_list.j2` L1-42 (Jinja2 テンプレート)。詳細は `meta/_intermediate/cdb-flow/prefix-set-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`, `templates/bgpd/bgpd.conf.db.pref_list.j2`, `sonic-device_metadata.yang`
+> 調査日: 2026-05-19
+
+**プラットフォーム固有差異なし**: PREFIX_SET は FRR (`bgpd` / `zebra`) 制御プレーン上の prefix-list であり SAI 非経由。ASIC 種別（Broadcom / Mellanox / Marvell / Innovium / VPP）・VOQ chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 | 影響なし | SAI 非経由 (FRR 内部 prefix-list)。orchagent / syncd 経由なし |
+| multi-asic (`asicN` namespace) | 各 namespace 独立・同一ロジック | `frrcfgd` は per-namespace 起動。PREFIX_SET / PREFIX ハンドラ (`frrcfgd.py:2894-2995`) に namespace 分岐なし |
+| `switch_type` (voq / chassis-packet) | 影響なし | `frrcfgd.py` の PREFIX ハンドラ部を `platform\|asic\|switch_type\|chassis\|sub_role\|namespace` で grep して 0 ヒット |
+| `sub_role` (FrontEnd / BackEnd) | 影響なし | 同上で参照 0 |
+| Jinja2 テンプレート (`bgpd.conf.db.pref_list.j2`) | プラットフォーム条件なし | L1-42 に `{% if platform/asic/chassis/switch_type %}` 0 件 |
+
+### 重要: frrcfgd 起動 gate (DEVICE_METADATA 設定)
+
+`DEVICE_METADATA|localhost|frr_mgmt_framework_config = true` が設定されていない環境では sonic-frr-mgmt-framework パッケージが有効化されず frrcfgd が起動しない。この場合 PREFIX_SET を購読するプロセスが存在せず、CONFIG_DB への書き込みは FRR に反映されない。
+
+```yaml
+# DEVICE_METADATA の既定値
+frr_mgmt_framework_config: false  # ← true に変更しないと frrcfgd 非起動
+```
+
+根拠: `sonic-device_metadata.yang:132-138`（`default "false"`）
+
+### アドレスファミリ別の適用デーモン (論理分岐・プラットフォーム差ではない)
+
+PREFIX テーブルのエントリ処理では `PREFIX_SET.mode` の AF に応じて vtysh 適用先デーモンが変わる:
+
+| AF | daemons 引数 | vtysh コマンド |
+|----|------------|---------------|
+| `IPv4` (AF_INET) | `None`（テーブルデフォルト: zebra・bgpd・ospfd・pimd） | `ip prefix-list ...` |
+| `IPv6` (AF_INET6) | `['bgpd', 'zebra']`（ospfd・pimd は除外） | `ipv6 prefix-list ...` |
+
+根拠: `frrcfgd.py:2931-2936`
+
+> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-platform.md` を参照
+<!-- /platform -->
+
 <!-- glossary-links-injected: 88e792f23f63 -->
