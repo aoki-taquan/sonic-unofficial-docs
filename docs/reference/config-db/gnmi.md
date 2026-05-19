@@ -311,5 +311,74 @@ GNMI_CLIENT_CERT|<cname>
 -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh`、`sonic-gnmi/telemetry/telemetry.go`、`sonic-gnmi/gnmi_server/clientCertAuth.go`
+
+### gnmi-native.sh レベル (コンテナ起動時)
+
+`gnmi-native.sh` は起動スクリプトとして実行される。失敗時は非ゼロ終了コードでコンテナが落ちる（`exit 1` / `exit 2`）か、安全な fallback 値で継続する。
+
+| 失敗条件 | 検出箇所 | 結果 | exit code |
+|---|---|---|---|
+| `TELEMETRY_VARS_FILE` テンプレートが存在しない | `gnmi-native.sh:12-15` | stderr 出力 + 即時終了 | 1 (`EXIT_TELEMETRY_VARS_FILE_NOT_FOUND`) |
+| `port` フィールドが正整数でない (DB エントリ存在時) | `gnmi-native.sh:68-71` | stderr 出力 + 即時終了 | 2 (`INCORRECT_TELEMETRY_VALUE`) |
+| `threshold` フィールドが正整数でない かつ `GNMI` エントリが存在する | `gnmi-native.sh:107-110` | stderr 出力 + 即時終了 | 2 |
+| `idle_conn_duration` フィールドが正整数でない かつ `GNMI` エントリが存在する | `gnmi-native.sh:120-123` | stderr 出力 + 即時終了 | 2 |
+| `GNMI` エントリが存在しない (`-z "$GNMI"` が真) | `gnmi-native.sh:64-65` | `PORT=8080` フォールバック、処理継続 | なし |
+| `threshold` / `idle_conn_duration` が `null` | `gnmi-native.sh:105,118` | デフォルト値 (`100` / `5`) を使用、処理継続 | なし |
+
+### telemetry.go レベル (Go フラグパース)
+
+Go バイナリの `setupFlags()` が引数を検証し、不正な組み合わせを検出する。エラーは `main()` の `log.Errorf` で記録されてプロセスが終了する。
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| `--port <= 0` かつ `--unix_socket` も空 | `telemetry.go:232-234` | `fmt.Errorf` → `log.Errorf` → 終了 |
+| `--threshold < 0` | `telemetry.go:237-239` | `fmt.Errorf` → 終了 |
+| `--idle_conn_duration < 0` | `telemetry.go:241-243` | `fmt.Errorf` → 終了 |
+| `--log_level < 0` | `telemetry.go:246-250` | `log.Infof` 警告のみ、デフォルト値 `2` に自動置換して**処理継続** |
+| TLS モード (`--noTLS` / `--insecure` 両方とも false) で `--server_crt` が空 | `telemetry.go:252-256` | `fmt.Errorf` → 終了 |
+| TLS モードで `--server_key` が空 | `telemetry.go:256-258` | `fmt.Errorf` → 終了 |
+| `client_auth=cert` 指定かつ `--ca_crt` が空 | `telemetry.go:318-321` | cert モードを**静かに無効化** (`UserAuth.Unset("cert")`) + `log.V(2)` 警告のみ、処理継続 |
+
+!!! warning "`client_auth=cert` + `ca_crt` 欠如の無音無効化"
+    `user_auth = cert` を設定しかつ `GNMI|certs.ca_crt` を省略した場合、`gnmi-native.sh` は `--client_auth cert` を渡すが `--ca_crt` を渡さない。Go バイナリはこの組み合わせを検出して cert 認証モードを**警告のみで自動無効化**する (`telemetry.go:318-321`)。ログレベル 2 (INFO) 以上でのみ記録されるため、ログを監視していない場合は認証なし状態になっていることに気づきにくい。
+
+### clientCertAuth.go レベル (クライアント接続時)
+
+`user_auth = cert` モード時、各クライアント接続の認証・認可は `ClientCertAuthenAndAuthor()` が処理する。すべての失敗は gRPC `codes.Unauthenticated` を返し、接続を即時拒否する。
+
+| 失敗条件 | 検出箇所 | gRPC エラーメッセージ |
+|---|---|---|
+| `peer.FromContext` 失敗 (peer 情報なし) | `clientCertAuth.go:118-120` | `"no peer found"` |
+| TLS `AuthInfo` 取得失敗 | `clientCertAuth.go:121-123` | `"unexpected peer transport credentials"` |
+| クライアント証明書検証チェーンが空 | `clientCertAuth.go:125-127` | `"could not verify peer certificate"` |
+| 証明書の CN が空文字列 | `clientCertAuth.go:133-135` | `"invalid username in certificate common name."` |
+| `serviceConfigTableName` が空文字列 | `clientCertAuth.go:255-257` | `"Service config table name should not be empty"` |
+| `GNMI_CLIENT_CERT\|<CN>` エントリ不在または `role` / `role@` フィールド欠如 | `clientCertAuth.go:263-284` | `"Invalid cert cname:'%s', not a trusted cert common name."` |
+| CRL ダウンロード失敗 (全 URL 試行後) | `clientCertAuth.go:230-236` | `"Can't download CRL and verify cert"` |
+| 証明書が CRL で失効 (`CheckChainRevocation` 失敗) | `clientCertAuth.go:244-248` | `"Peer certificate revoked"` |
+
+### 補足
+
+- **`GNMI_CLIENT_CERT` エントリ不在の glog レベル**: `glog.Warningf` で記録される (`clientCertAuth.go:274`)。Warning は glog `-v=0` 以上で常に出力されるが、gRPC エラーは `codes.Unauthenticated` となるため接続は拒否される。
+- **CRL の部分到達**: 複数の CRL 配布点 URL を持つ証明書の場合、1 つでも到達・ダウンロード成功した URL があれば `crlAvailable = true` となり、失効チェックが実施される (`clientCertAuth.go:189-204`)。全 URL が到達不能な場合のみ Unauthenticated を返す。
+- **コンテナ再起動が唯一の回復手段**: gnmi-native.sh はコンテナ起動時の 1 回実行のみであるため、CONFIG_DB の誤設定を修正しても `systemctl restart gnmi` が必要。誤設定による exit 2 はコンテナ起動失敗として記録される。
+
+<!-- evidence:
+  gnmi-native.sh:12-15 — TELEMETRY_VARS_FILE 存在チェック・exit 1
+  gnmi-native.sh:64-71 — GNMI エントリ空フォールバック + port 正整数チェック・exit 2
+  gnmi-native.sh:101-124 — threshold / idle_conn_duration null フォールバック + 正整数チェック・exit 2
+  telemetry.go:84-88 — main() の runTelemetry エラーハンドリング
+  telemetry.go:232-258 — setupFlags() port / threshold / idle_conn_duration / log_level / TLS 検証
+  telemetry.go:318-321 — client_auth=cert + ca_crt 欠如時の cert モード自動無効化
+  clientCertAuth.go:115-157 — ClientCertAuthenAndAuthor 全体フロー
+  clientCertAuth.go:254-284 — PopulateAuthStructByCommonName 失敗経路
+  clientCertAuth.go:221-251 — VerifyCertCrl CRL ダウンロード失敗・失効証明書処理
+-->
+<!-- /failure -->
+
 [^1]: `sonic-buildimage` `dockers/docker-sonic-gnmi/gnmi-native.sh` — ConfigDB → telemetry 引数変換ロジック全体
 [^2]: `sonic-gnmi` `gnmi_server/clientCertAuth.go:254-284` — `PopulateAuthStructByCommonName()` による GNMI_CLIENT_CERT 参照
