@@ -448,6 +448,65 @@ syncd はこの COUNTER_ID_LIST を受け取り、ポーリング周期ごとに
 [^f3]: `sonic-swss/orchagent/portsorch.cpp:8780-8816` — ポート削除時の COUNTERS_DB マッピング削除および FLEX_COUNTER_DB clearCounterIdList。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L8780>
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/queue-counter-pubsub.md`
+
+### Producer/Consumer ペア
+
+COUNTERS_DB QUEUE カウンタは CONFIG_DB → FlexCounterOrch → portsorch → syncd FlexCounter という
+多段中継経路をとる。各区間の通信方式は以下の通り。
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|--------------------|
+| CONFIG_DB `FLEX_COUNTER_TABLE\|QUEUE` → FlexCounterOrch | `SubscriberStateTable` keyspace PSUBSCRIBE | `__keyspace@{cfg_db}__:FLEX_COUNTER_TABLE\|QUEUE` |
+| FlexCounterOrch → portsorch | 直接関数呼び出し (`gPortsOrch->generateQueueMap()` 等) | — (同プロセス内) |
+| portsorch → COUNTERS_DB マッピングテーブル | `swss::Table::set()` (plain HSET) | **なし（PUBLISH 非発行）** |
+| portsorch → FLEX_COUNTER_DB (traditional) | `ProducerTable` PUBLISH | `FLEX_COUNTER_TABLE_CHANNEL` |
+| syncd FlexCounter → `COUNTERS:<oid>` | `swss::Table::set()` (plain HSET) | **なし（PUBLISH 非発行）** |
+
+### CONFIG_DB → FlexCounterOrch の SubscriberStateTable
+
+`FlexCounterOrch` は `Orch(db, tableNames)` 基底クラスを通じて CONFIG_DB の `FLEX_COUNTER_TABLE` に対する
+`SubscriberStateTable` を生成する (`orchdaemon.cpp:620-626`)。
+`FLEX_COUNTER_TABLE|QUEUE = enable` の keyspace 通知を受けて `FlexCounterOrch::doTask()` が起動する
+(`flexcounterorch.cpp:247-252`)。
+
+### portsorch → COUNTERS_DB への書き込み (plain HSET)
+
+`generateQueueMapPerPort()` (`portsorch.cpp:8446-8531`) は `swss::Table::set()` で
+`COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_QUEUE_PORT_MAP` / `COUNTERS_QUEUE_INDEX_MAP` / `COUNTERS_QUEUE_TYPE_MAP`
+を直接書き込む。`ProducerStateTable` を経由しないため、書き込みに伴う PUBLISH チャンネル通知は発行されない。
+
+### syncd FlexCounter → `COUNTERS:<oid>` への書き込み (plain HSET)
+
+syncd の FlexCounter ポーリングスレッドは SAI bulk counter API でカウンタを収集し、
+`swss::Table::set()` (pipeline 付き HSET) で `COUNTERS_DB:COUNTERS:<queue_oid>` を更新する
+(`FlexCounter.cpp:3123`)。この書き込みも PUBLISH チャンネル通知を発行しない。
+
+### 消費側の読み出し方式
+
+COUNTERS_DB の QUEUE カウンタを読む consumer はすべて **on-demand polling** または **タイマー起動 polling**
+であり、keyspace 通知購読は行わない:
+
+| consumer | 読み出し方式 |
+|----------|------------|
+| `queuestat` (CLI) | 起動時に `HGETALL COUNTERS_QUEUE_NAME_MAP` + `HGETALL COUNTERS:<oid>` を on-demand 実行 |
+| `watermarkorch` | タイマー満了時に `HGET COUNTERS:<oid>` (`SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES`) を実行し PERIODIC / PERSISTENT / USER の 3 テーブルへ転写 |
+| `countercheckorch` (PFC WD) | PFC 嵐検出ループ内で `HGET COUNTERS_QUEUE_TYPE_MAP` + `HGETALL COUNTERS:<oid>` を polling |
+| `HFTelOrch` (高頻度テレメトリ) | `COUNTERS_QUEUE_NAME_MAP` を参照して SAI TAM API 経由でストリーミング |
+| PFC detect/restore Lua | `EVAL` 内で `HGET COUNTERS_QUEUE_INDEX_MAP` / `COUNTERS_QUEUE_PORT_MAP` を直接参照 |
+| gNMI telemetry | COUNTERS_DB を gNMI STREAM サブスクリプションで定期取得（上位レイヤー） |
+
+### select() ループとポーリング周期
+
+orchdaemon の `Select::select()` はタイムアウト 1000 ms で実行され、FlexCounterOrch の doTask は
+keyspace 通知着信時のみ起動する。COUNTERS_DB への実際のカウンタ書き込みは syncd FlexCounter スレッドが
+担当し、ポーリング周期はグループ定数（通常 10 秒 / ウォーターマーク 60 秒）に従う。
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
