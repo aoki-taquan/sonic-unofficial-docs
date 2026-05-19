@@ -262,6 +262,72 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-constants.md -->
+<!-- source: sonic-swss/orchagent/pbh/pbhschema.h, pbhmgr.cpp, pbhrule.cpp, pbhcap.cpp -->
+
+`PBH_RULE` 処理に関係するハードコード定数の一覧。いずれも CONFIG_DB / YANG では設定変更不可か、実装側のみで定義される値である。
+
+### match フィールドの暗黙 mask 値
+
+`parsePbhRule()` (`pbhmgr.cpp`) は `ether_type` / `ip_protocol` / `ipv6_next_header` / `l4_dst_port` / `inner_ether_type` の mask を YANG 定義なしにコードでハードコードする。`gre_key` のみユーザーが `0x<value>/0x<mask>` 形式で明示指定する。
+
+| フィールド | ハードコード mask | ソース |
+|-----------|----------------|--------|
+| `ether_type` | `0xFFFF`（16 bit 完全一致） | `pbhmgr.cpp:558` |
+| `ip_protocol` | `0xFF`（8 bit 完全一致） | `pbhmgr.cpp:583` |
+| `ipv6_next_header` | `0xFF`（8 bit 完全一致） | `pbhmgr.cpp:608` |
+| `l4_dst_port` | `0xFFFF`（16 bit 完全一致） | `pbhmgr.cpp:633` |
+| `inner_ether_type` | `0xFFFF`（16 bit 完全一致） | `pbhmgr.cpp:658` |
+
+!!! note "discrepancy: YANG に mask 仕様なし"
+    YANG (`sonic-pbh.yang`) はこれら match フィールドの型を hex 文字列として定義するが、mask の値域については記述しない。实際に適用される完全一致 mask はコードのみで決定され、YANG 経由で変更できない。
+
+### 固定文字列定数 (pbhschema.h)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `PBH_RULE_PACKET_ACTION_SET_ECMP_HASH` | `"SET_ECMP_HASH"` | `packet_action` の ECMP ハッシュ適用値 |
+| `PBH_RULE_PACKET_ACTION_SET_LAG_HASH` | `"SET_LAG_HASH"` | `packet_action` の LAG ハッシュ適用値 |
+| `PBH_RULE_FLOW_COUNTER_ENABLED` | `"ENABLED"` | `flow_counter` 有効化値 |
+| `PBH_RULE_FLOW_COUNTER_DISABLED` | `"DISABLED"` | `flow_counter` 無効化値（デフォルト） |
+
+### デフォルト値の注入 (pbhmgr.cpp:validatePbhRule)
+
+`packet_action` / `flow_counter` が CONFIG_DB エントリに存在しない場合、`validatePbhRule()` が以下の値を注入する。YANG の `default` 文と一致するため discrepancy はない。
+
+| フィールド | 注入デフォルト | ソース |
+|-----------|-------------|--------|
+| `packet_action` | `"SET_ECMP_HASH"` | `pbhmgr.cpp:997-1009` |
+| `flow_counter` | `"DISABLED"` | `pbhmgr.cpp:1012-1023` |
+
+### ACL ステージ固定: INGRESS
+
+`createPbhAclTable()` (`pbhorch.cpp:260`) は PBH が使用する SAI ACL テーブルを常に `ACL_STAGE_INGRESS` で作成する。EGRESS ステージへの適用は非サポートであり、CONFIG_DB での変更も不可。
+
+### バリデーション制約（YANG 非記述）
+
+`AclRulePbh::validate()` (`pbhrule.cpp:84-90`) が以下の制約をコード側のみで適用する:
+
+| 制約 | 内容 | YANG |
+|------|------|------|
+| match 件数 >= 1 | match フィールドが 1 つもないルールは reject | 記述なし（YANG は全 match を optional と定義） |
+| action 件数 == 1 | action が 0 または 2 以上のルールは reject | 記述なし |
+
+### ASIC_VENDOR 環境変数と capability フォールバック (pbhcap.cpp)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `PBH_PLATFORM_ENV_VAR` | `"ASIC_VENDOR"` | capability 判定に使用する環境変数名 |
+| `PBH_PLATFORM_GENERIC` | `"generic"` | 未知 vendor へのフォールバック platform |
+| `PBH_PLATFORM_MELLANOX` | `"mellanox"` | Mellanox 専用 capability 経路 |
+
+`ASIC_VENDOR` が未定義または未知値の場合は WARN ログを出力して `generic` へフォールバックする (`pbhcap.cpp:297-298`)。エラーにはならない。Mellanox 以外はすべて generic 扱いとなり、UPDATE 時の `disableAction()` ステップが不要になる。
+
+<!-- /constants -->
+
 ## key 構造
 
 ```text
