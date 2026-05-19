@@ -1,6 +1,6 @@
 ---
 title: APPL_STATE_DB ROUTE_TABLE (route offload cache)
-description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖を含む Phase A+B+C+D+E+F 分析。"
+description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズムを含む Phase A+B+C+D+E+F+G 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -639,6 +639,73 @@ for prefix in routes:
 | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 注入 | route_check.py 実行 | route_check.py NotificationProducer | FRR offload フラグ未設定経路検出時 |
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-pubsub.md -->
+
+### 書き込み側: ResponsePublisher の通知チャネル
+
+`RouteOrch::publishRouteState()` は `ResponsePublisher::publish()` を呼び出し、2 段階でデータを Redis に送出する（`orchagent/response_publisher.cpp:L96-133`）[^respub]:
+
+1. **通知チャネルへの PUBLISH**: `NotificationProducer` を用いて `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` チャネルへ `PUBLISH` コマンドを発行する。`err_str`・`protocol` 等のフィールドを含むメッセージが subscriber（fpmsyncd）へ即座にプッシュされる。
+2. **APPL_STATE_DB への書き込み**: SAI 成功 + SET 操作の場合に限り `writeToDB()` で `APPL_STATE_DB ROUTE_TABLE` ハッシュを更新する。
+
+`ResponsePublisher` はバッファリングモード（`m_buffered = true`）で動作し、`routeorch.cpp:57` で `setBuffered(true)` が設定される。`NotificationProducer` も同一の `m_ntf_pipe` パイプラインを共有するため、通知は `m_publisher.flush()`（`routeorch.cpp:1231`）が呼ばれるまで Redis パイプラインにバッファされる。1 回の `doTask()` サイクルで処理された複数経路の通知はすべて **同一 flush** でまとめて送出される:
+
+```cpp
+// response_publisher.cpp:117-120
+swss::NotificationProducer notificationProducer{
+    m_ntf_pipe.get(), response_channel, m_buffered};
+notificationProducer.send(status.codeStr(), key, intent_attrs_copy);
+```
+
+### 購読側: fpmsyncd の NotificationConsumer
+
+`fpmsyncd` は起動時に `suppress-fib-pending = enabled` が設定されている場合のみ、`APPL_STATE_DB` に対して `NotificationConsumer` を生成し `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` チャネルを購読する（`fpmsyncd.cpp:L113-118`）[^fpmsyncd]:
+
+```cpp
+// fpmsyncd.cpp:113-118
+if (suppressionEnabledStr == "enabled")
+{
+    routeResponseChannel = std::make_unique<NotificationConsumer>(&applStateDb, routeResponseChannelName);
+    sync.setSuppressionEnabled(true);
+}
+```
+
+`suppress-fib-pending` は CONFIG_DB の `DEVICE_METADATA|localhost` フィールドを `SubscriberStateTable` で監視しており、実行中に動的変更が可能:
+
+- `disabled → enabled`: 新規 `NotificationConsumer` を作成し `s.addSelectable()` でイベントループに追加（`fpmsyncd.cpp:287-289`）
+- `enabled → disabled`: `markRoutesOffloaded()` で既存経路を一括 offload 通知後、`NotificationConsumer` を破棄（`fpmsyncd.cpp:298-302`）
+
+### 主ループ: select タイムアウトとフラッシュ戦略
+
+fpmsyncd の主ループは `gSelectTimeout`（デフォルト `INFINITE = -1`）で `s.select()` をブロックする（`fpmsyncd.cpp:186-193`）。通知チャネルから `routeResponseChannel` イベントが届くと `pops()` で一括取得し `onRouteResponse()` に渡す（`fpmsyncd.cpp:307-318`）:
+
+```cpp
+// fpmsyncd.cpp:307-318
+else if (routeResponseChannel && (temps == routeResponseChannel.get()))
+{
+    std::deque<KeyOpFieldsValuesTuple> notifications;
+    routeResponseChannel->pops(notifications);
+    for (const auto& notification: notifications)
+        sync.onRouteResponse(kfvKey(notification), kfvFieldsValues(notification));
+}
+```
+
+APPL_DB への書き込みパイプライン（`pipeline` = `RedisPipeline`、サイズ上限 `ROUTE_SYNC_PPL_SIZE = 50000` エントリ）は `flushPipeline()` で制御される。`SMALL_TRAFFIC = 500` エントリ未満または `FLUSH_TIMEOUT = 500 ms` 経過時にフラッシュし、`gSelectTimeout` を残余時間に調整する（`fpmsyncd.cpp:350-363`）。`onRouteResponse()` 自体は APPL_DB に書き込まず FRR zebra への netlink 送信のみを行うため、このパイプラインには関与しない。
+
+### 通知メカニズムまとめ
+
+| 要素 | 方式 | タイムアウト / バッファ |
+|------|------|----------------------|
+| orchagent → Redis | `NotificationProducer`（バッファあり） | `m_publisher.flush()` で 1 doTask() サイクル末にまとめて送出 |
+| Redis → fpmsyncd | `NotificationConsumer`（SUBSCRIBE） | `s.select(gSelectTimeout=INFINITE)` で即座にブロック解除 |
+| fpmsyncd → FRR zebra | netlink `RTM_NEWROUTE`（offload フラグ） | `onRouteResponse()` 内で同期的に送信、遅延なし |
+| fpmsyncd APPL_DB書き込み | `RedisPipeline`（サイズ 50000） | `FLUSH_TIMEOUT = 500 ms` または `SMALL_TRAFFIC = 500` エントリ閾値 |
+
+<!-- /pubsub -->
 
 ## 確認コマンド
 
