@@ -415,6 +415,54 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 [^f5]: `sonic-swss/cfgmgr/buffermgrdyn.cpp` — `handlePortStateTable()`, `refreshPgsForPort()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/buffermgrdyn.cpp>
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+STATE_DB `PORT_TABLE` は `portsyncd/linksync` と `PortsOrch` が `Table` 型（直接 HSET / DEL）で書き込む。書き込みごとに Redis keyspace notification が発行され、購読側デーモンのイベントループに到達する。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/ports-status-pubsub.md`
+
+### 書き込み側の通信方式
+
+| 書き込み主体 | DB クラス | 書き込み方式 |
+|------------|---------|------------|
+| `portsyncd/linksync` | `Table m_statePortTable` | Redis HSET / DEL を直接呼ぶ。ProducerStateTable ではない |
+| `PortsOrch` | `Table m_portStateTable` | 同上 |
+
+`Table` 型の書き込みは `__keyspace@6__:PORT_TABLE|<name>` チャネルへの Redis keyspace notification を生成する。`SubscriberStateTable` を使う購読側はこの通知を PSUBSCRIBE で受信する。
+
+### 購読デーモンと SELECT_TIMEOUT
+
+| 購読デーモン | 購読方式 | 購読登録箇所 | SELECT_TIMEOUT |
+|------------|---------|------------|---------------|
+| `portmgrd` | `Table`（ポーリング） | `portmgr.cpp:19` — `m_statePortTable(stateDb, STATE_PORT_TABLE_NAME)`。`isPortStateOk()` がイベント処理時にポーリング取得 | 1000 ms (`portmgrd.cpp:16`) |
+| `teammgrd` | `TableConnector` | `teammgrd.cpp:57` — `TableConnector state_port_table(&state_db, STATE_PORT_TABLE_NAME)` → `Orch` に `addSelectables()` | 1000 ms (`teammgrd.cpp:13`) |
+| `intfmgrd` | `SubscriberStateTable` | `intfmgr.cpp:45-48` — `SubscriberStateTable(stateDb, STATE_PORT_TABLE_NAME, DEFAULT_POP_BATCH_SIZE, 100)` → `Consumer` → `Orch::addExecutor()` | 1000 ms (`intfmgrd.cpp:17`) |
+| `sflowmgrd` | `TableConnector` | `sflowmgrd.cpp:32` — `TableConnector state_port_table(&stateDb, STATE_PORT_TABLE_NAME)` | 1000 ms (`sflowmgrd.cpp:16`) |
+| `buffermgrd` | `TableConnector` | `buffermgrd.cpp:185` — `TableConnector(&stateDb, STATE_PORT_TABLE_NAME)` + `buffermgrdyn.cpp:451` ハンドラ登録 | 1000 ms (`buffermgrd.cpp:22`) |
+
+全購読デーモンで `SELECT_TIMEOUT = 1000` ms が一致する（コードで `#define SELECT_TIMEOUT 1000` として定義）。タイムアウト時はそれぞれ `doTask()` を呼んで積残しタスクを処理する。
+
+### intfmgrd の特殊な購読方式
+
+`intfmgrd` のみ `SubscriberStateTable` を使い Redis keyspace notification を直接受信する（`intfmgr.cpp:45-48`）。他の 4 デーモンは `TableConnector` 経由で Consumer として登録するが、内部的には同様の keyspace notification を利用する。
+
+```cpp
+// intfmgr.cpp:45-48
+auto subscriberStateTable = new swss::SubscriberStateTable(stateDb,
+        STATE_PORT_TABLE_NAME, TableConsumable::DEFAULT_POP_BATCH_SIZE, 100);
+auto stateConsumer = new Consumer(subscriberStateTable, this, STATE_PORT_TABLE_NAME);
+Orch::addExecutor(stateConsumer);
+```
+
+priority = 100 を指定しているため、他の Consumer (priority = 0) より**後に処理**される（優先度低 = 番号大）。
+
+### sflowmgrd 起動時の特殊処理
+
+`sflowmgrd` は起動時に `readPortConfig()` を**手動で呼び出す** (`sflowmgrd.cpp:46`)。CONFIG_DB と STATE_DB の通知順序が保証されないため、起動直後の state_port_table 通知を取りこぼした場合でも初期設定が適用されるように設計されている。
+
+<!-- /pubsub -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
