@@ -216,6 +216,41 @@ gNMI / NETCONF 経由で YANG 検証が有効な場合、leafref 整合性エラ
 <!-- evidence: frrcfgd.py table_handler_list L2293-2338 (ROUTE_MAP_SET 出現なし); bgpcfgd/ grep (出現なし); orchagent/ grep (出現なし) -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+> **調査根拠**: `frrcfgd.py` 全文 grep (`ROUTE_MAP_SET` 出現なし); `bgpcfgd/` 全文 grep (出現なし); `orchagent/` 全文 grep (出現なし) (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-pubsub.md`
+
+`ROUTE_MAP_SET` テーブルを **購読するデーモンは存在しない**。
+
+| 購読候補 | 購読有無 | 根拠 |
+|---------|---------|------|
+| `frrcfgd` (`ExtConfigDBConnector`) | **なし** | `table_handler_list` (L2293-2338) に `ROUTE_MAP_SET` 出現なし。`ROUTE_MAP` のみ登録 |
+| `bgpcfgd` (`RouteMapMgr` 等) | **なし** | `bgpcfgd/` 全文 grep で `ROUTE_MAP_SET` 出現なし |
+| `orchagent` (各 Orch クラス) | **なし** | `orchagent/` 全文 grep で `ROUTE_MAP_SET` 出現なし |
+| `syncd` | **なし** | SAI 経路を経由しない。route-map は FRR 側で完結 |
+
+### 購読なしの設計理由
+
+`ROUTE_MAP_SET` は YANG leafref 整合性検証のための**名前レジストリ**として設計されており、FRR や SAI への直接的な設定投入は意図されていない。実際の route-map 設定投入は `ROUTE_MAP|<name>|<seq>` テーブルへの書き込みによって `frrcfgd` が処理する。
+
+### Redis keyspace イベントの扱い
+
+CONFIG_DB への `ROUTE_MAP_SET` SET/DEL 操作は Redis keyspace 通知
+(`__keyspace@4__:ROUTE_MAP_SET|*`) を発行するが、**どのデーモンも購読していない**ためイベントは消費されない。
+
+```text
+CONFIG_DB hset 'ROUTE_MAP_SET|ALLOW' ''
+  ↓ Redis keyspace PUBLISH "__keyspace@4__:ROUTE_MAP_SET|ALLOW" "hset"
+  ↓ (購読者なし → イベント消費されず)
+```
+
+`frrcfgd` が使用する `ExtConfigDBConnector` は `psubscribe __keyspace@4__:*` で全イベントを受信するが、`sub_msg_handler` がキー名を `table_handler_list` に照合し、登録のない `ROUTE_MAP_SET` はスキップされる (`frrcfgd.py:1527`）。
+
+<!-- evidence: frrcfgd.py:2293-2338 table_handler_list (ROUTE_MAP_SET 出現なし); frrcfgd.py:1527 sub_msg_handler キーマッチング -->
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
