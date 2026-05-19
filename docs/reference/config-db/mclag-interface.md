@@ -217,3 +217,42 @@ MCLAG_INTERFACE の SET/DEL を受けた mclagsyncd → iccpd → mclagsyncd IPC
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-52,136-155,193-234 / sonic-swss/mclagsyncd/mclaglink.cpp L918-960,989-1085 -->
+
+`MCLAG_INTERFACE` の SET/DEL を処理する 2 つの Consumer（`MlagOrch` と `mclagsyncd`）それぞれの失敗経路を整理する。
+
+### MlagOrch (orchagent) の失敗経路
+
+| # | 失敗条件 | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | `allPortsReady()` 未完了 | `mlagorch.cpp:49-52` | 即 `return`。エントリはキューに保留 | あり（PortsOrch 起動完了後に自動処理） |
+| 2 | 不明 operation type（SET / DEL 以外） | `mlagorch.cpp:148-151` | `SWSS_LOG_ERROR` + エントリ erase（ドロップ） | なし |
+| 3 | 重複 SET（既登録 if_name を再 SET） | `mlagorch.cpp:198-203` | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface")` のみ。`m_mlagIntfs` 変更・Observer 通知なし。エントリは erase される | なし |
+| 4 | 未知 if_name の DEL（未登録 if_name を DEL） | `mlagorch.cpp:220-225` | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface")` のみ。エントリは erase される | なし |
+
+`addMlagInterface()` / `delMlagInterface()` はどちらも常に `true` を返す設計であるため、orchagent 側は **retry ループに入らない**。エラーが発生してもエントリは即座に erase され、再試行されない。
+
+### mclagsyncd の失敗経路
+
+| # | 失敗条件 | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 5 | MCLAG_DOMAIN が未 SET の状態で MCLAG_INTERFACE を書く | `mclaglink.cpp:918`（購読テーブル未生成） | `mclagsyncd` は MCLAG_INTERFACE を購読していないため**完全に無視**（エラーログなし） | なし（ICCP セッション再確立後に iccpd が再 fetch） |
+| 6 | key の `if_name` 部分が空 | `mclaglink.cpp:1022-1025` | `SWSS_LOG_ERROR("Invalid Key ... No mclag iface specified")` → `continue` で当該エントリをスキップ | なし |
+| 7 | iccpd 向け IPC `write()` 失敗（バッファフル / ソケット切断） | `mclaglink.cpp:1055-1059, 1080-1083` | `SWSS_LOG_ERROR` のみ。デーモン継続。iccpd への MCLAG_INTERFACE 通知が欠落 | なし（ICCP セッション再確立時に iccpd → mclagsyncd が再 fetch） |
+
+### 失敗後の復旧パス
+
+- **ケース #1 (allPortsReady 未完了)**: エントリは orchagent の Consumer キューに残り、PortsOrch 起動完了後の次回 `doTask()` 呼び出しで自動処理される。
+- **ケース #2〜#4 (MlagOrch 側エラー)**: エントリは erase されて失われる。再設定には CLI または sonic-db-cli での再 SET が必要。
+- **ケース #5 (mclagsyncd 購読未開始)**: MCLAG_DOMAIN を SET してから MCLAG_INTERFACE を再 SET することで解消。
+- **ケース #6〜#7 (mclagsyncd IPC 失敗)**: ICCP セッションが再確立されると `mclagsyncdFetchMclagInterfaceConfigFromConfigdb()` が CONFIG_DB を全量再 fetch して iccpd に送信する。
+
+!!! warning "silent drop に注意"
+    ケース #5（MCLAG_DOMAIN 未設定時の MCLAG_INTERFACE 書込）はエラーログが一切出力されず、mclagsyncd 側で完全に無視される。`show mclag interface` で期待したエントリが出ない場合は MCLAG_DOMAIN の存在確認と mclagsyncd ログの確認を行うこと。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-failure.md`
+<!-- /failure -->
