@@ -516,4 +516,72 @@ multi-ASIC 環境では直接隣接していないデバイスのメタデータ
 bgpcfgd では `constants.bgp.use_neighbors_meta` が True の場合のみ DEVICE_NEIGHBOR_METADATA を依存関係として登録する。テーブルが directory に未到達の場合 `log_info("DEVICE_NEIGHBOR_METADATA is not ready...")` を出力し `return False`（到達後に自動再処理）。フラグが False の場合、テーブルは依存関係として登録されず参照もされない。
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム / トポロジ差異 (Phase H)
+
+<!-- evidence:
+     sonic-buildimage/src/sonic-config-engine/minigraph.py:2638-2641 (single-ASIC vs multi-ASIC 収録ロジック),
+     sonic-buildimage/files/build_templates/buffers_config.j2:36-38,81-82,209-210 (voq_chassis / DualToR 分岐),
+     sonic-buildimage/files/build_templates/qos_config.j2:13,28-31,107-108,150-151 (voq_chassis / uplink-downlink 分類),
+     sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:128-140 (use_neighbors_meta 条件分岐) -->
+
+`DEVICE_NEIGHBOR_METADATA` の生成内容・consumer の動作はプラットフォーム／トポロジ種別によって以下のとおり異なる。YANG スキーマ上はプラットフォーム分岐を定義していないため、すべてコードレベルのみの制約である。
+
+### single-ASIC vs multi-ASIC — 収録エントリ範囲の差異
+
+`sonic-cfggen` の minigraph パーサは `is_multi_asic()` と `asic_name` の組み合わせで収録対象を切り替える（`minigraph.py:2638-2641`）。
+
+| 環境 | 収録ロジック | 影響 |
+|------|------------|------|
+| single-ASIC（`is_multi_asic() == False`）または `asic_name` 未指定 | 自ホスト以外の全デバイス（`key.lower() != hostname.lower()`） | 直接隣接していないデバイスのメタも全件収録される |
+| multi-ASIC（`is_multi_asic() == True` かつ `asic_name` あり） | `DEVICE_NEIGHBOR` に出現するデバイスのみ（`key in {device['name'] for device in neighbors.values()}`） | **直接隣接しないデバイスのメタデータが欠落**。inter-ASIC トポロジが複雑な場合、bgpcfgd / pfcwd がキー欠落で失敗するリスクがある |
+
+### VoQ シャーシ — バッファ・QoS テンプレートの参照スキップ
+
+`DEVICE_METADATA['localhost']['switch_type'] == 'voq'` の場合、`buffers_config.j2`（L36-38）と `qos_config.j2`（L28-31）は `voq_chassis = true` を設定し、DEVICE_NEIGHBOR_METADATA を基にしたケーブル長・ポートロール計算ブロックをスキップして VoQ 固有の SYSTEM_PORT ベースのパスに移行する。
+
+| 環境 | buffers_config.j2 の挙動 |
+|------|------------------------|
+| 非 VoQ（`voq_chassis = false`） | `DEVICE_NEIGHBOR_METADATA[neighbor].type` を参照してケーブル長ルックアップテーブル `ports2cable` から長さを決定 |
+| VoQ シャーシ（`voq_chassis = true`） | DEVICE_NEIGHBOR_METADATA 参照なし。SYSTEM_PORT テーブルを基にバッファを計算（`buffers_config.j2:145-278`） |
+
+`qos_config.j2` も同様に VoQ 環境では SYSTEM_PORT を基にポートリストを構築し、DEVICE_NEIGHBOR_METADATA への依存はない（`qos_config.j2:31-99`）。
+
+### DualToR — extra queues ポートリスト判定での特別ロール
+
+`DEVICE_METADATA['localhost']['subtype'] == 'DualToR'` の場合、`buffers_config.j2:210` に下記の追加条件が加わる。
+
+```jinja
+('subtype' in DEVICE_METADATA['localhost'] and DEVICE_METADATA['localhost']['subtype'] == 'DualToR'
+ and DEVICE_NEIGHBOR_METADATA is defined
+ and DEVICE_NEIGHBOR[port].name in DEVICE_NEIGHBOR_METADATA
+ and DEVICE_NEIGHBOR_METADATA[DEVICE_NEIGHBOR[port].name].type == 'LeafRouter')
+```
+
+DualToR では自ノードの `type` が `LeafRouter` でなくても、隣接デバイスが `LeafRouter` 型であれば extra queues ポートリストに追加される。通常の ToRRouter では `type == 'LeafRouter'` の隣接は uplink 扱いだが、DualToR は同じ隣接を extra queues 対象にする設計上の違いがある。
+
+### bgpcfgd — `use_neighbors_meta` フラグによる依存条件分岐
+
+bgpcfgd の `BGPPeerMgrBase` は `constants.bgp.use_neighbors_meta == True` の場合にのみ DEVICE_NEIGHBOR_METADATA を依存テーブルとして宣言する（`managers_bgp.py:130-140`）。このフラグは `/etc/sonic/constants.yml` の `constants.bgp.use_neighbors_meta` で制御され、デプロイ設定に依存する。
+
+| `use_neighbors_meta` の値 | bgpcfgd の挙動 |
+|--------------------------|--------------|
+| `True` | DEVICE_NEIGHBOR_METADATA が directory に到着するまで全 BGP ピア `set_handler` をブロック。個別エントリ欠落でも `return False` で再試行 |
+| `False` または未定義 | DEVICE_NEIGHBOR_METADATA を依存として登録しない。テーブル内容を参照せず BGP ピア設定を生成（ネイバーメタなしモード） |
+
+`use_neighbors_meta` は `/etc/sonic/constants.yml`（プラットフォームごとのデプロイ設定）で制御される。**デフォルト値はコードに存在せず**、`constants` dict に `bgp.use_neighbors_meta` キーが存在しない場合は `False` 扱いとなる（`managers_bgp.py:130-131` の `and` 条件が短絡評価）。
+
+### プラットフォーム差異サマリ
+
+| 条件 | 差異 |
+|------|------|
+| single-ASIC | 全デバイスメタを収録。bgpcfgd / pfcwd / j2 テンプレートが完全に参照可能 |
+| multi-ASIC（`asic_name` あり） | 直接隣接デバイスのメタのみ収録。間接隣接デバイスのメタは欠落 |
+| VoQ シャーシ（`switch_type=voq`） | buffers_config.j2 / qos_config.j2 が DEVICE_NEIGHBOR_METADATA を参照しない。VoQ 専用パスへ移行 |
+| DualToR（`subtype=DualToR`） | LeafRouter 型の隣接を extra queues 対象に追加する特別条件が有効 |
+| `use_neighbors_meta=True` デプロイ | bgpcfgd が DEVICE_NEIGHBOR_METADATA を必須依存とし、欠落時にブロック |
+| `use_neighbors_meta=False` / 未定義 | bgpcfgd は DEVICE_NEIGHBOR_METADATA を参照せずに BGP ピア設定を生成 |
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 6a290c48f0ce -->
