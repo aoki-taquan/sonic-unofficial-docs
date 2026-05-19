@@ -353,6 +353,33 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-side-effects.md -->
+
+`PbhCapabilities` は `STATE_DB.PBH_CAPABILITIES` への 4 キー書き込みのみを行う。
+その他の DB への副次書き込みは発生しない。
+
+### 副次書込サマリ
+
+| 副次書込先 DB | テーブル / キー | 書き込み内容 | 主なトリガ |
+|---|---|---|---|
+| STATE_DB | `PBH_CAPABILITIES\|table` / `\|rule` / `\|hash` / `\|hash-field` | フィールド操作能力文字列 (`ADD`, `UPDATE`, `REMOVE` のカンマ区切り、または空文字列) | orchagent (`PbhOrch`) 起動時、`PbhCapabilities` コンストラクタの 1 回のみ |
+
+### スコープ外（書き込まない DB）
+
+- **CONFIG_DB**: `PbhCapabilities` は設定変更を行わない。設定の正本は CONFIG_DB `PBH_TABLE` / `PBH_RULE` 等であり、capability テーブルはそれらを読まない。
+- **APPL_DB**: PBH エントリの APPL_DB 書き込みは `PbhOrch` が管理する別経路。`PbhCapabilities` は APPL_DB に触れない。
+- **COUNTERS_DB / FLEX_COUNTER_DB**: flow_counter 関連書込は `PbhOrch → AclOrch` 経路 (`pbhcap.cpp:499` — `createCounter=false` がデフォルト)。`PbhCapabilities` は counter 管理に関与しない。
+- **ASIC_DB**: SAI API 呼び出しなし。syncd 経由の間接書込も発生しない (`pbhcap.cpp:371–451` 全域)。
+
+!!! note "読み取り副作用"
+    `sonic-utilities` の `config pbh` コマンドが STATE_DB `PBH_CAPABILITIES` を `hgetall` で読み取るが、
+    これは読み取りのみであり追加の DB 書き込みは発生しない (`pbh.py:670–679, 781, 1090, 1351`)。
+
+<!-- /side-effects -->
+
 ## 関連 CONFIG_DB / CLI
 
 - 設定元: [`PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD`](pbh.md) (CONFIG_DB)
