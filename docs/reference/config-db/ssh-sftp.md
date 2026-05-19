@@ -204,6 +204,65 @@ hostcfgd 起動
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`SSH_SFTP` テーブルは存在しないため、SFTP サブシステムに固有のハードコード定数は `hostcfgd` 内に存在しない。ただし `SshServer.set_policies()` が操作する sshd_config は SFTP 行を保持したまま書き換えられるため、以下のファイルパス定数・バリデーション閾値定数が間接的に関係する。
+
+### ファイルパス定数（hostcfgd L32-33）
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `SSH_CONFG` | `/etc/ssh/sshd_config` | コピー元（`Subsystem sftp` 行を含む） |
+| `SSH_CONFG_TMP` | `/etc/ssh/sshd_config.tmp` | 書き換え作業用一時ファイル |
+
+`set_policies()` は `copy2(SSH_CONFG, SSH_CONFG_TMP)` でコピー後に `SSH_CONFIG_NAMES` キーのみ書き換えるため、`Subsystem sftp` 行はそのまま引き継がれる（`SSH_CONFIG_NAMES` に `Subsystem` キーが存在しないことが根拠）。
+
+### SFTP 非制御を裏付けるフィールドマッピング（hostcfgd L67-75）
+
+`SSH_CONFIG_NAMES` に `Subsystem` キーが含まれないことが、SFTP の CONFIG_DB 非管理の根拠となる定数である。
+
+```python
+SSH_CONFIG_NAMES = {
+    "authentication_retries":  "MaxAuthTries",
+    "login_timeout":           "LoginGraceTime",
+    "ports":                   "Port",
+    "inactivity_timeout":      "ClientAliveInterval",
+    "permit_root_login":       "PermitRootLogin",
+    "password_authentication": "PasswordAuthentication",
+    "ciphers":                 "Ciphers",
+    "kex_algorithms":          "KexAlgorithms",
+    "macs":                    "MACs",
+    # ← "Subsystem" キーなし → SFTP は書き換え対象外
+}
+```
+
+### バリデーション閾値定数（hostcfgd L61-65）
+
+SSH_SERVER フィールドを検証する際に参照する閾値。SFTP サブシステム自体は対象外だが、sshd_config の共有によって SFTP セッションに適用される暗号スイートや接続ポートの範囲を間接的に規定する。
+
+| 定数 | 対象フィールド | 最小値 | 最大値 |
+|------|-------------|--------|--------|
+| `SSH_MIN/MAX_VALUES["authentication_retries"]` | MaxAuthTries | 3 | 100 |
+| `SSH_MIN/MAX_VALUES["login_timeout"]` | LoginGraceTime | 1 | 600 |
+| `SSH_MIN/MAX_VALUES["ports"]` | Port | 1 | 65535 |
+| `SSH_MIN/MAX_VALUES["inactivity_timeout"]` | ClientAliveInterval | 0 | 35000 |
+| `SSH_MIN/MAX_VALUES["max_sessions"]` | (PAM limits 経由) | 0 | 100 |
+
+### SFTP バイナリパス（OS パッケージ由来、CONFIG_DB 外）
+
+| 項目 | 値 | 出典 |
+|------|----|------|
+| SFTP サーババイナリ | `/usr/lib/openssh/sftp-server` | `sshd_config` テンプレート `Subsystem sftp` 行（OS パッケージ固定） |
+
+このパスは `hostcfgd` のコードにも YANG にも記録されない。`openssh-server` パッケージの再インストールでのみ復元できる。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L32-33 (SSH_CONFG / SSH_CONFG_TMP) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L61-65 (SSH_MIN_VALUES / SSH_MAX_VALUES) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES — Subsystem キーなし) -->
+<!-- evidence: sonic-host-services/tests/hostcfgd/sample_output/SSH_SERVER_default_values/sshd_config L112 (Subsystem sftp バイナリパス) -->
+<!-- /constants -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
