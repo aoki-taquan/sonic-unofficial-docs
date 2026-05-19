@@ -195,7 +195,7 @@ Built by: johnar@jenkins-worker-8
 
 <!-- /cross-refs -->
 
-<!-- failure-behavior -->
+<!-- failure -->
 ## 失敗挙動 (Phase D)
 
 <!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:511-525, sonic-utilities/show/main.py:1718-1733, sonic-gnmi/sonic_data_client/non_db_client.go:302-336, sonic-utilities/generic_config_updater/field_operation_validators.py:33 -->
@@ -244,7 +244,7 @@ asic_type = device_info.get_sonic_version_info()['asic_type']
 
 いずれも `/etc/sonic/sonic_version.yml` を書き換えた場合、**当該プロセスを再起動するまで旧バージョン情報が使われ続ける**。
 
-<!-- /failure-behavior -->
+<!-- /failure -->
 
 <!-- constants -->
 ## ハードコード定数 (Phase E)
