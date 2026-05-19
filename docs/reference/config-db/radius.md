@@ -333,6 +333,69 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`RADIUS` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:RADIUS|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`AaaCfg` 経由) | `ConfigDBConnector.subscribe()` | `RADIUS` | `radius_global_handler` → `radius_global_update` |
+| `hostcfgd` (`AaaCfg` 経由) | `ConfigDBConnector.subscribe()` | `RADIUS_SERVER` | `radius_server_handler` → `radius_server_update` |
+| `hostcfgd` | `ConfigDBConnector.subscribe()` | `MGMT_INTERFACE` | `mgmt_intf_handler` → `handle_radius_source_intf_ip_chg` + `handle_radius_nas_ip_chg` |
+| `hostcfgd` | `ConfigDBConnector.subscribe()` | `INTERFACE` | `phy_intf_handler` → `handle_radius_source_intf_ip_chg` |
+| `hostcfgd` | `ConfigDBConnector.subscribe()` | `VLAN_INTERFACE` | `vlan_intf_handler` → `handle_radius_source_intf_ip_chg` |
+| `hostcfgd` | `ConfigDBConnector.subscribe()` | `PORTCHANNEL_INTERFACE` | `portchannel_intf_handler` → `handle_radius_source_intf_ip_chg` |
+| `hostcfgd` | `ConfigDBConnector.subscribe()` | `DEVICE_METADATA` | `device_metadata_handler` → `hostname_update` |
+
+`hostcfgd` 以外で `RADIUS` テーブルを購読するプロセスは存在しない。`pam_radius_auth.so` は PAM 認証呼び出し時に `/etc/pam_radius_auth.conf` を直接読むのみで Redis を購読しない。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config radius passkey <secret>
+  ↓ HSET "RADIUS|global" passkey "<secret>"
+Redis keyspace PUBLISH "__keyspace@4__:RADIUS|global" "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ HGETALL "RADIUS|global"  ← 通知後に値を再取得
+radius_global_handler(key="global", op=SET, data={passkey: "..."})
+  ↓ AaaCfg.radius_global_update() → modify_conf_file()
+  ↓ /etc/pam_radius_auth.conf 再生成 (Jinja2 テンプレート)
+  ↓ /etc/radius_nss.conf 再生成
+  ↓ /etc/pam_radius_auth.d/<ip>_<port>.conf 再生成 (各サーバ)
+  ↓ aaastatsd start/stop (statistics フラグに応じて)
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `HGETALL` で取得する。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `AaaCfg.load()` が `RADIUS` / `RADIUS_SERVER` / `AAA` / `TACPLUS*` / `LDAP*` を一括スナップショットで適用し、初回 `modify_conf_file()` を呼ぶ。
+
+### 間接トリガー (`src_intf` / `nas_ip` 再計算)
+
+`RADIUS` テーブル自体の変更以外に、以下のテーブル変更でも `RADIUS` 設定ファイルが再生成される。
+
+| テーブル | ハンドラ | RADIUS への影響 | evidence |
+|---|---|---|---|
+| `MGMT_INTERFACE` | `handle_radius_source_intf_ip_chg()` + `handle_radius_nas_ip_chg()` | eth0 IP 変化時に `src_ip` / `nas_ip` を再計算して PAM 再生成 | hostcfgd:2348-2349, 2485 |
+| `INTERFACE` | `handle_radius_source_intf_ip_chg()` | 物理ポート IP 変化時に `src_ip` を更新 | hostcfgd:2365, 2489 |
+| `VLAN_INTERFACE` | `handle_radius_source_intf_ip_chg()` | VLAN IP 変化時に `src_ip` を更新 | hostcfgd:2369, 2486 |
+| `PORTCHANNEL_INTERFACE` | `handle_radius_source_intf_ip_chg()` | PortChannel IP 変化時に `src_ip` を更新 | hostcfgd:2377, 2488 |
+| `DEVICE_METADATA` | `hostname_update()` | hostname 変化時に `nas_id` を再生成 | hostcfgd:2280, 2492 |
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | evidence |
+|------|------|---------|
+| `RADIUS.statistics = True` かつ `AAA.authentication.login` に `radius` あり | `service aaastatsd start` | hostcfgd:840-851 |
+| 上記以外のすべての場合 | `service aaastatsd stop` | hostcfgd:840-851 |
+| PAM 設定ファイル書き換え | デーモン restart **なし** (PAM は次回ログイン時にファイルを読む) | hostcfgd:716-731 |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2473-2474` (RADIUS/RADIUS_SERVER subscribe)、`hostcfgd:2528` (listen/init_data_handler)、`hostcfgd:2324-2329` (`radius_global_handler`)、`hostcfgd:2317-2322` (`radius_server_handler`)、`hostcfgd:527-545` (`radius_global_update`/`radius_server_update`)、`hostcfgd:641-851` (`modify_conf_file`)
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・Fallback
 
