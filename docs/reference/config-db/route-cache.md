@@ -1,6 +1,6 @@
 ---
 title: APPL_STATE_DB ROUTE_TABLE (route offload cache)
-description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズムを含む Phase A+B+C+D+E+F+G 分析。"
+description: "APPL_STATE_DB ROUTE_TABLE — RouteOrch が SAI 経路プログラミング成功後に書き込む経路オフロードキャッシュ。SAI 失敗時の書き込みスキップ・DEL 失敗時の残留・fpmsyncd の offload 通知制御・ハードコード定数・fpmsyncd/route_check.py への副作用連鎖・ResponsePublisher/NotificationConsumer 通信メカニズム・Mellanox ECMP グループ数補正・VOQ ECMP メンバー数制限を含む Phase A+B+C+D+E+F+G+H 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -706,6 +706,68 @@ APPL_DB への書き込みパイプライン（`pipeline` = `RedisPipeline`、�
 | fpmsyncd APPL_DB書き込み | `RedisPipeline`（サイズ 50000） | `FLUSH_TIMEOUT = 500 ms` または `SMALL_TRAFFIC = 500` エントリ閾値 |
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-cache-platform.md -->
+
+調査ソース: `orchagent/routeorch.cpp`、`orchagent/orch.h`、`fpmsyncd/fpmsyncd.cpp`、`fpmsyncd/routesync.cpp`、`orchagent/response_publisher.cpp`。
+
+### fpmsyncd / ResponsePublisher — プラットフォーム差なし
+
+`fpmsyncd.cpp` / `routesync.cpp` に `getenv("platform")` および `gMySwitchType` 等のプラットフォーム条件分岐は存在しない。RESPONSE_CHANNEL の購読・`onRouteResponse()` の処理・`markRoutesOffloaded()` による Warm Restart offload 通知はすべてプラットフォーム非依存。`ResponsePublisher` / `response_publisher.cpp` にもプラットフォーム分岐なし。
+
+### orchagent (RouteOrch) — Mellanox・VOQ で動作差あり
+
+APPL_STATE_DB への書き込み自体（`publishRouteState` 経由の `ResponsePublisher`）はプラットフォーム非依存だが、**書き込みを生む SAI 経路プログラミングの上限値**がプラットフォームによって異なる。
+
+#### Mellanox: ECMP グループ数上限の補正
+
+`RouteOrch` コンストラクタが `platform` 環境変数を参照し、`"mellanox"` が含まれる場合は SAI から取得した `m_maxNextHopGroupCount` を `DEFAULT_MAX_ECMP_GROUP_SIZE`（=32）で除算する（`routeorch.cpp:L83-87`）。
+
+```cpp
+// routeorch.cpp:83-87
+char *platform = getenv("platform");
+if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))
+{
+    m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;
+}
+```
+
+- `MLNX_PLATFORM_SUBSTRING = "mellanox"` (`orch.h:L42`)
+- `DEFAULT_MAX_ECMP_GROUP_SIZE = 32` (`routeorch.cpp:L38`)
+- Mellanox ASIC は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を「ECMP サイズ=1 前提の最大グループ数」として返すため、SONiC は /32 して実効 ECMP グループ数を算出する
+- 結果: 有効 ECMP グループ上限が他プラットフォームより 1/32 になり、ECMP 経路が上限に達すると SAI プログラミングが失敗し APPL_STATE_DB へのエントリ書き込みが発生しない
+
+#### VOQ chassis: ECMP メンバー数を 128 に制限
+
+`gMySwitchType == "voq"` かつ SAI から取得した最大 ECMP メンバー数が 128 以上の場合、RouteOrch が `SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` を 128 に強制設定する（`routeorch.cpp:L109-123`）。
+
+```cpp
+// routeorch.cpp:109-123
+if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
+{
+    maxEcmpGroupSize = 128;
+    attr.id = SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT;
+    attr.value.s32 = maxEcmpGroupSize;
+    sai_switch_api->set_switch_attribute(gSwitchId, &attr);
+}
+```
+
+VOQ chassis 環境では 1 つの ECMP グループで 128 を超えるメンバーを持つ経路は SAI 制限に抵触する可能性があり、当該経路の APPL_STATE_DB ROUTE_TABLE エントリが生成されない場合がある。
+
+### プラットフォーム差サマリ
+
+| プラットフォーム | fpmsyncd (offload 通知) | orchagent (APPL_STATE_DB 書き込みトリガ) |
+|-----------------|------------------------|----------------------------------------|
+| 標準 T0/T1/T2   | 変更なし                | 変更なし                               |
+| Mellanox        | 変更なし                | ECMP グループ上限を /32 補正（初期化時のみ） |
+| VOQ chassis     | 変更なし                | ECMP メンバー数を 128 に制限（SAI 設定） |
+| SmartSwitch     | 変更なし                | 変更なし                               |
+| multi-asic      | 変更なし                | 各 ASIC namespace 独立、処理自体は同一  |
+
+<!-- /platform -->
 
 ## 確認コマンド
 
