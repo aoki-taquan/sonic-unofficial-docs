@@ -571,3 +571,37 @@ orchagent: CoppOrch::doTask()
 > **スキャン証跡**: `coppmgrd.cpp` 全行読了。`coppmgr.cpp` L298-310, L510-530 読了。`copporch.cpp` L191-215, L880-935 読了。`orchdaemon.cpp` L341 確認。`show/copp.py` `dump/plugins/copp.py` で genetlink 読み出し consumer 不在を確認。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+### SAI genetlink HostIf サポート
+
+`createGenetlinkHostIf()` は `sai_hostif_api->create_hostif()` に `SAI_HOSTIF_ATTR_TYPE = SAI_HOSTIF_TYPE_GENETLINK` を渡す。`SAI_HOSTIF_TYPE_GENETLINK` をサポートしないベンダー SAI では `SAI_STATUS_SUCCESS` 以外が返り、`handleSaiCreateStatus()` でエラー処理 → `task_failed` となる。<!-- evidence: copporch.cpp L657-679 -->
+
+**genetlink フィールド自体に `platform` 環境変数チェックは存在しない。** 非対応 SAI ではエラーログが出力され、処理は `task_failed` で終了する。
+
+### psample カーネルモジュール依存
+
+`genetlink_name = "psample"` は Linux カーネルの psample モジュール（`CONFIG_PSAMPLE`）が必要。SONiC の標準カーネルパッケージには psample が含まれるが、カスタムカーネルや一部ハードウェアアプライアンスではモジュールが存在しない場合がある。この場合 SAI が `create_hostif()` で GENETLINK HostIf を作成しようとしても、カーネル側の netlink ソケット生成が失敗し SAI エラーが返る。
+
+### trap_priority の Mellanox / Marvell 除外（間接的影響）
+
+genetlink フィールド自体の処理は `platform` 環境変数でゲートされないが、同じ `queue2_group1` グループに `trap_priority` が設定されている場合、Mellanox (`"mellanox"`) および Marvell Prestera (`"marvell-prestera"`) では `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` の SET が **サイレントスキップ** される（`orch.h:42` の `MLNX_PLATFORM_SUBSTRING` / `MRVL_PRST_PLATFORM_SUBSTRING` 定義に基づく）。genetlink HostIf 自体の作成は行われるが、trap の優先度設定は無効化される。<!-- evidence: copporch.cpp L1184-1194, orch.h L41-42 -->
+
+### VOQ / Chassis 差
+
+`copporch.cpp` に VOQ chassis 固有のコードパスは存在しない。genetlink port-binding は CPU 宛トラフィック処理のためのホストインタフェース機能であり、VOQ ファブリックの転送パスとは独立している。
+
+### プラットフォーム差サマリー
+
+| プラットフォーム条件 | 影響 | 挙動 |
+|---|---|---|
+| SAI が `SAI_HOSTIF_TYPE_GENETLINK` 非対応 | `genetlink_name` / `genetlink_mcgrp_name` | `create_hostif()` 失敗 → task_failed |
+| psample カーネルモジュール不在 | `genetlink_name = "psample"` | SAI / カーネル netlink 生成失敗 |
+| `platform` 環境変数に `"mellanox"` 含む | `trap_priority` のみ（genetlink 自体は影響なし） | trap_priority SET をサイレントスキップ |
+| `platform` 環境変数に `"marvell-prestera"` 含む | 同上 | 同上 |
+| VOQ / Chassis 構成 | なし | genetlink 処理に変化なし |
+
+> **スキャン証跡**: `copporch.cpp` L657-679 (`createGenetlinkHostIf`)、L1265-1286 (`getAttribsFromTrapGroup` genetlink 処理 — platform チェックなし確認)、L1184-1194 (trap_priority platform チェック)、L347-359 (`initDefaultTrapIds` platform チェック) 読了。`orch.h` L41-42 定義確認。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-platform.md`
+<!-- /platform -->
+
