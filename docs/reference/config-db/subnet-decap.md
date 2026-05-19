@@ -367,6 +367,54 @@ routeorch / vnetorch が **ランタイムで動的生成** する。
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`SUBNET_DECAP` の処理は `doSubnetDecapTask()` 内の `valid` フラグで制御される。失敗時は CONFIG_DB エントリを書き戻さず、orchagent はリトライを行わない（即時破棄）。`STATE_DB` への failure ステータス書き込みはなく、エラーはすべて `SWSS_LOG_ERROR` でサイログに記録される。
+
+### SET 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| `src_ip` と `src_ip_v6` 両方未設定 | `doSubnetDecapTask()` L636-640 | `valid=false` → 即時破棄 | なし |
+| `src_ip` に IPv6 アドレスを指定 (`isV4()` 失敗) | `doSubnetDecapTask()` L597-601 | `valid=false` + `break` → 即時破棄 | なし |
+| `src_ip` 形式不正 (`std::invalid_argument`) | `doSubnetDecapTask()` L591-595 | `valid=false` + `break` → 即時破棄 | なし |
+| `src_ip_v6` に IPv4 アドレスを指定 (`isV4()` 真) | `doSubnetDecapTask()` L617-621 | `valid=false` + `break` → 即時破棄 | なし |
+| `src_ip_v6` 形式不正 (`std::invalid_argument`) | `doSubnetDecapTask()` L609-613 | `valid=false` + `break` → 即時破棄 | なし |
+| 未知フィールド (`src_ip`/`src_ip_v6`/`status` 以外) | `doSubnetDecapTask()` L628-633 | `valid=false` + `break` → 即時破棄 | なし |
+
+### DEL 時の挙動
+
+`DEL_COMMAND` 受信時は `subnetDecapConfig.enable = false` に設定するのみで失敗パスはない。既存の tunnel term エントリは自動削除されない（GC なし）。
+
+### tunnel term 側の失敗パターン
+
+`SUBNET_DECAP` が enable の状態で `TUNNEL_DECAP_TERM_TABLE` 側の処理 (`doDecapTunnelTermTask()`) が失敗する場合:
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| MP2MP 以外の term を subnet decap トンネルに紐付け | `doDecapTunnelTermTask()` L446-449 | `valid=false` → 即時破棄 | なし |
+| `subnet_decap` disabled 状態で subnet term を投入 | `doDecapTunnelTermTask()` L504-508 | `erase(it)` → 即時破棄 | なし |
+| `src_ip` が未設定の状態で subnet term を投入 | `doDecapTunnelTermTask()` L482-486 | `erase(it)` → 即時破棄 | なし |
+| `src_ip_v6` が未設定の状態で subnet term を投入 | `doDecapTunnelTermTask()` L495-499 | `erase(it)` → 即時破棄 | なし |
+| SAI `addDecapTunnelTermEntry()` 失敗 | `doDecapTunnelTermTask()` L513-516 | `SWSS_LOG_ERROR` のみ、erase で破棄 | なし |
+| tunnel オブジェクト未存在 (IPINIP_SUBNET 未生成) | `doDecapTunnelTermTask()` L511 | `unhandledDecapTerms` キューに積む | トンネル追加後に自動再処理 |
+
+### エラーログ確認
+
+```bash
+# orchagent のエラーログを確認
+sudo journalctl -u swss -n 100 | grep -E "subnet decap|Invalid source IP|Invalid source IPv6"
+# または
+sudo grep "subnet decap\|Invalid source" /var/log/syslog | tail -20
+```
+
+`ERROR_TABLE` への書き込みなし。`STATE_DB` への失敗ステータス書き込みもなし（成功時のみ `STATE_TUNNEL_DECAP_TABLE` が更新される）。
+
+> **コード証跡**: `tunneldecaporch.cpp:566-699` (`doSubnetDecapTask()`), L368-549 (`doDecapTunnelTermTask()`), L280-334 (`doDecapTunnelTask()`)
+
+<!-- /failure -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
