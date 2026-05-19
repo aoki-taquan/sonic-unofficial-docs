@@ -34853,8 +34853,8 @@
 
 
 <h1 id="low-impact">low-impact 残課題スナップショット<a class="headerlink" href="#low-impact" title="Permanent link">&para;</a></h1>
-<p>本プロジェクトは v1.0 GA（2026-05-11）到達済みで、以下に挙げる残課題はいずれも <strong>品質ゲートを通過する範囲の low-impact 項目</strong> である。本ページは現時点の数値スナップショットを記録し、次回 iteration（v1.1 サイクル）で取捨選択するための入力として使う。</p>
-<p>更新は <strong>手動運用</strong> とする（自動更新フックは v1.1 以降で検討）。再生成時は本ページの「数値の取得元コマンド」セクションのコマンドを順に実行すれば良い。</p>
+<p>以下に挙げる残課題はいずれも <strong>品質ゲートを通過する範囲の low-impact 項目</strong> である。本ページは現時点の数値スナップショットを記録し、次回 iteration で取捨選択するための入力として使う。</p>
+<p>更新は <strong>手動運用</strong> とする（自動更新フックは将来的に検討）。再生成時は本ページの「数値の取得元コマンド」セクションのコマンドを順に実行すれば良い。</p>
 <p><strong>最終更新</strong>: 2026-05-12（round 48 stratified 5.00 飽和達成・lint 9 種運用・wave-2 30 件補完バッチ後）。</p>
 <h2 id="1-backlog-metabacklogarea">1. backlog 残数（<code>meta/backlog/&lt;area&gt;/</code>）<a class="headerlink" href="#1-backlog-metabacklogarea" title="Permanent link">&para;</a></h2>
 <table>
@@ -34883,7 +34883,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>2026-05-12 round 48 update</strong>: backlog 残数は round 38 から <strong>完全 KEEP</strong>（system 7 / platform 2 / architecture 1 = 計 10 件）。round 48 までの 10 round で新規 backlog 流入 0 件。<code>_archived</code> は <strong>349 件</strong> に増加（v1.0 GA 後の整理で +27 件、indexer v2 の除外フィルタ強化で stub 自動 archive）。</p>
+<p><strong>2026-05-12 round 48 update</strong>: backlog 残数は round 38 から <strong>完全 KEEP</strong>（system 7 / platform 2 / architecture 1 = 計 10 件）。round 48 までの 10 round で新規 backlog 流入 0 件。<code>_archived</code> は <strong>349 件</strong> に増加（整理で +27 件、indexer v2 の除外フィルタ強化で stub 自動 archive）。</p>
 <table>
 <thead>
 <tr>
@@ -34894,7 +34894,7 @@
 </thead>
 <tbody>
 <tr>
-<td>low-priority（v1.1 検討）</td>
+<td>low-priority（将来検討）</td>
 <td>10</td>
 <td>大型 HLD 4 件 + telemetry / openconfig 3 件 + <a href="../../glossary/#term-pins">PINS</a> / chassis 2 件 + 第三者拡張 1 件</td>
 </tr>
@@ -34905,7 +34905,7 @@
 </tr>
 </tbody>
 </table>
-<p>詳細は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md"><code>meta/backlog/README.md</code></a> を参照。<code>meta/_gen_backlog.py</code> への Indexer 除外フィルタ組込みは v1.1 サイクル開始時に対応する。</p>
+<p>詳細は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md"><code>meta/backlog/README.md</code></a> を参照。<code>meta/_gen_backlog.py</code> への Indexer 除外フィルタ組込みは次回 iteration 開始時に対応する。</p>
 <h2 id="2-discrepancy-found-monitor">2. discrepancy-found ページの monitor 別分布<a class="headerlink" href="#2-discrepancy-found-monitor" title="Permanent link">&para;</a></h2>
 <p><code>verification: discrepancy-found</code> のページは合計 <strong>74 件</strong>（round 38 比 +12 件、round 46 比 +12 件、partial subtype 派生 split-child を主因に増加）。monitor 別内訳:</p>
 <table>
@@ -35044,9 +35044,9 @@
 </tr>
 </tbody>
 </table>
-<p><strong>注目 1 — <code>check_broken_links.py</code> 20 件</strong>: 全件 <code>#term-syslog</code> anchor 不在の runbook 群。<code>docs/reference/glossary.md</code> に <code>syslog</code> 用語の anchor を追加すれば一括解消（v1.1 quick win 候補）。</p>
+<p><strong>注目 1 — <code>check_broken_links.py</code> 20 件</strong>: 全件 <code>#term-syslog</code> anchor 不在の runbook 群。<code>docs/reference/glossary.md</code> に <code>syslog</code> 用語の anchor を追加すれば一括解消（quick win 候補）。</p>
 <p><strong>注目 2 — <code>check_troubleshoot_section.py</code> 190 件 → wave-2 補完で減</strong>: round 46 で約 220 件、round 48 で 190 件に縮小。wave-2 30 件補完バッチが直接効果。残 190 件のうち深刻なものは limitations と重複する 34 件。</p>
-<p><strong>注目 3 — <code>check_verification_self_consistency.py</code> 114 件のみが残課題的ボリューム</strong>: 個別に精査して discrepancy-found へ降格すべきものを洗い出すのは v1.1 タスク。round 49 改善 3 で triage スクリプト <code>triage_self_consistency.py</code> 試作予定。</p>
+<p><strong>注目 3 — <code>check_verification_self_consistency.py</code> 114 件のみが残課題的ボリューム</strong>: 個別に精査して discrepancy-found へ降格すべきものを洗い出すのは次回 iteration タスク。round 49 改善 3 で triage スクリプト <code>triage_self_consistency.py</code> 試作予定。</p>
 <p><strong>注目 4 — <code>check_ni_workaround_depth.py</code> 0 件</strong>: round 46 改善 1 で warning 階段運用開始、round 48 stratified で <code>not_implemented</code> 11 件全件 workaround 経路 ≥2 充足を確認。round 49 で blocking 化最終確定予定（<code>--thin</code> lint と同じ 2 iteration ルール）。</p>
 <h2 id="4-topics">4. Topics サブページ未完成残数<a class="headerlink" href="#4-topics" title="Permanent link">&para;</a></h2>
 <p><code>meta/scripts/gen_chapter_progress.py --check</code> の結果（2026-05-12）:</p>
@@ -35118,7 +35118,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>round 48 update</strong>: round 38 時点の Top 5 (<code>fec-flr-support-in-sonic</code> 371 / <code>vxlan-sonic</code> 371) は <strong>wave-2 補完で章追加</strong> により 410 行付近まで増加して新 Top 5 圏内に再エントリ可能。本気で章単位分割するのは roadmap-v2 v1.2 多言語化前（2026-Q4）に再判定。</p>
+<p><strong>round 48 update</strong>: round 38 時点の Top 5 (<code>fec-flr-support-in-sonic</code> 371 / <code>vxlan-sonic</code> 371) は <strong>wave-2 補完で章追加</strong> により 410 行付近まで増加して新 Top 5 圏内に再エントリ可能。本気で章単位分割するのは多言語化前（2026-Q4）に再判定。</p>
 <h2 id="_1">数値の取得元コマンド<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>本ページの数値は以下の手順で再生成できる（worktree 内 / <code>.venv</code> 有効化済み前提）。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 1. backlog</span>
