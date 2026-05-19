@@ -356,3 +356,55 @@ docker logs swss 2>&1 | grep -E "TAM|HFTel|Path Tracing"
 ```
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-constants.md`
+
+TAM テーブル群に関わる定数は YANG スキーマ由来のバリデーション定数と、orchagent が SAI オブジェクト生成時に使用するランタイム定数の 2 層に存在する。
+
+### YANG スキーマ由来のバリデーション定数
+
+| 定数 | 値 | 宣言箇所 |
+|------|----|---------|
+| `TAM_DEVICE_TABLE.name` 許容値 | `device`（enum 固定） | `sonic-tam.yang:28-31` |
+| `TAM_DEVICE_TABLE.deviceid` YANG デフォルト | `0` | `sonic-tam.yang:36` |
+| `TAM_INT_IFA_FEATURE_TABLE.name` 許容値 | `feature`（enum 固定） | `sonic-ifa.yang:28-31` |
+| `TAM_COLLECTOR_TABLE.name` 文字パターン | `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,32})` | `sonic-tam.yang:49` |
+| `TAM_COLLECTOR_TABLE.name` 最大長 | 32 文字 | `sonic-tam.yang:50` |
+| `TAM_INT_IFA_FLOW_TABLE.name` 文字パターン | `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,32})` | `sonic-ifa.yang:46` |
+| `TAM_INT_IFA_FLOW_TABLE.name` 最大長 | 32 文字 | `sonic-ifa.yang:47` |
+| `TAM_INT_IFA_FLOW_TABLE.sampling-rate` 範囲 | 1〜10000 | `sonic-ifa.yang:64` |
+| `TAM_INT_IFA_FLOW_TABLE.sampling-rate` エラータグ | `"Invalid IFA flow sampling rate."` | `sonic-ifa.yang:65` |
+| `TAM_COLLECTOR_TABLE.port` 範囲 | 0〜65535 (`inet:port-number`) | `sonic-tam.yang:57` |
+
+### portsorch Path Tracing TAM のランタイム定数
+
+`portsorch.cpp:createPtTam()` は `TAM_DEVICE_TABLE.deviceid` を CONFIG_DB から**読まず**、SAI TAM INT オブジェクトに以下の固定値を使用する。
+
+| SAI 属性 | 固定値 | 宣言箇所 |
+|---------|--------|---------|
+| `SAI_TAM_INT_ATTR_DEVICE_ID` | `0`（CONFIG_DB の `deviceid` を無視） | `portsorch.cpp:11597-11598` |
+| `SAI_TAM_INT_ATTR_TYPE` | `SAI_TAM_INT_TYPE_PATH_TRACING` | `portsorch.cpp:11593-11594` |
+| `SAI_TAM_INT_ATTR_INT_PRESENCE_TYPE` | `SAI_TAM_INT_PRESENCE_TYPE_UNDEFINED` | `portsorch.cpp:11601-11602` |
+| `SAI_TAM_INT_ATTR_INLINE` | `false` | `portsorch.cpp:11605-11606` |
+| `SAI_TAM_REPORT_ATTR_TYPE` | `SAI_TAM_REPORT_TYPE_VENDOR_EXTN` | `portsorch.cpp:11567-11568` |
+
+!!! warning "TAM_DEVICE_TABLE.deviceid は dead field"
+    `SAI_TAM_INT_ATTR_DEVICE_ID` には常に `0` が設定される。CONFIG_DB の `deviceid` フィールドは現在のコードでは Path Tracing TAM に反映されない（`portsorch.cpp:11597-11598`）。
+
+### HFTelOrch TAM のランタイム定数
+
+`hftelorch.cpp:createTAM()` が作成する SAI TAM オブジェクト群はすべてハードコード値を使用する。`TAM_COLLECTOR_TABLE` の CONFIG_DB 設定は HFTel の SAI TAM オブジェクトに**反映されない**（別機構）。
+
+| SAI 属性 | 固定値 | 宣言箇所 |
+|---------|--------|---------|
+| `SAI_TAM_TRANSPORT_ATTR_TRANSPORT_TYPE` | `SAI_TAM_TRANSPORT_TYPE_NONE` | `hftelorch.cpp:751-752` |
+| `SAI_TAM_COLLECTOR_ATTR_SRC_IP` | `0.0.0.0`（固定） | `hftelorch.cpp:766-768` |
+| `SAI_TAM_COLLECTOR_ATTR_DST_IP` | `0.0.0.0`（固定、localhost 経由） | `hftelorch.cpp:771-773` |
+| `SAI_TAM_COLLECTOR_ATTR_LOCALHOST` | `true` | `hftelorch.cpp:780-781` |
+| `SAI_TAM_COLLECTOR_ATTR_DSCP_VALUE` | `0` | `hftelorch.cpp:788-789` |
+| `SAI_TAM_ATTR_TAM_BIND_POINT_TYPE_LIST` | `SAI_TAM_BIND_POINT_TYPE_SWITCH` | `hftelorch.cpp:802-807` |
+
+<!-- /constants -->
