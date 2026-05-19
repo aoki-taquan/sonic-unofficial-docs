@@ -447,3 +447,72 @@ MUX 状態遷移の開始・終了タイムスタンプが `MUX_METRICS_TABLE` (
 SAI 操作が途中で失敗すると rollback が実行され、`MUX_CABLE_TABLE.state` は rollback 先 state の値で上書きされる。STATE_DB 更新と SAI 操作は同一トランザクション内で原子的には行われないため、rollback 直後は STATE_DB 値とデータプレーンの実態が一時的に乖離する可能性がある (muxorch.cpp:547-611)。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## Pub/Sub・イベント駆動フロー (Phase G)
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) は Redis keyspace notification ではなく `swsscommon.SubscriberStateTable` / `swss::SubscriberStateTable` による **table-level pub/sub** で変更を配送する。本セクションでは各コンポーネントの購読登録・通知受信・処理フローを整理する。
+
+> 証跡: `sonic-linkmgrd/src/DbInterface.cpp`, `sonic-swss/orchagent/muxorch.cpp`, `sonic-utilities/show/muxcable.py`
+
+### 購読者一覧
+
+| 購読者プロセス | 対象テーブル (DB) | 実装クラス / 関数 | 受信後アクション |
+|--------------|-----------------|----------------|----------------|
+| **linkmgrd** | `STATE_DB MUX_CABLE_TABLE` | `SubscriberStateTable stateDbPortTable` → `handleMuxStateNotifiction()` | `processMuxStateNotifiction()` → `mMuxManagerPtr->addOrUpdateMuxPortMuxState(port, state)` で内部ステートマシンを更新 (DbInterface.cpp:1833,1900,1479-1507) |
+| **linkmgrd** | `STATE_DB HW_MUX_CABLE_TABLE_PEER` | `SubscriberStateTable stateDbPeerMuxTable` → `handlePeerMuxStateNotification()` | `processPeerMuxNotification()` でピア ToR の HW forwarding state を内部に取り込む (DbInterface.cpp:1839,1906,1436-1474) |
+| **MuxStateOrch** (orchagent) | `STATE_DB HW_MUX_CABLE_TABLE` (APP_DB 経由) | `Orch2(db, STATE_HW_MUX_CABLE_TABLE_NAME, request_)` | `addOperation()` で hw_state と mux_state を比較し `MUX_CABLE_TABLE.state` を更新 (orchdaemon.cpp:477, muxorch.cpp:2632-2634) |
+| **show muxcable status** (CLI) | `STATE_DB MUX_CABLE_TABLE|*` | `hgetall` (ポーリング) | STATUS / HEALTH カラムを表示。購読ではなくワンショット読み出し (muxcable.py:724) |
+| **show muxcable hwmode** (CLI) | `STATE_DB HW_MUX_CABLE_TABLE|*` | `hgetall` (ポーリング) | HWMODE カラムを表示。購読ではなくワンショット読み出し (muxcable.py:747) |
+
+### linkmgrd の購読セットアップ
+
+```text
+DbInterface::handleSwssNotification() (DbInterface.cpp:1813)
+  swss::Select swssSelect;
+  swssSelect.addSelectable(&stateDbPortTable);      // STATE_DB MUX_CABLE_TABLE
+  swssSelect.addSelectable(&stateDbPeerMuxTable);   // STATE_DB HW_MUX_CABLE_TABLE_PEER
+  swssSelect.addSelectable(&stateDbMuxInfoTable);   // STATE_DB MUX_CABLE_INFO_TABLE
+  ...
+  while (mPollSwssNotifcation) {
+      swssSelect.select(&selectable, DEFAULT_TIMEOUT_MSEC);
+      if selectable == stateDbPortTable → handleMuxStateNotifiction()
+      if selectable == stateDbPeerMuxTable → handlePeerMuxStateNotification()
+  }
+```
+
+`handleMuxStateNotifiction()` は `pops()` でバッチ受信し、`state` フィールドを抽出して `addOrUpdateMuxPortMuxState(port, v)` を呼ぶ。この関数は linkmgrd 内部の `MuxPort` ステートマシンに state 変化を通知し、必要に応じてリンクプローバを再起動する (DbInterface.cpp:1479-1520)。
+
+### MuxStateOrch の購読セットアップ
+
+`MuxStateOrch` は `Orch2` フレームワークで `STATE_DB HW_MUX_CABLE_TABLE` を購読する。`orchdaemon.cpp:477` で `new MuxStateOrch(m_stateDb, STATE_HW_MUX_CABLE_TABLE_NAME)` としてインスタンス化され、SONiC の OrchAgent 主ループがテーブル変更イベントを `addOperation()` に配送する。
+
+`addOperation()` は届いた `hw_state` と `MuxCable` 内部の `mux_state` を比較し:
+
+- 一致 → `MUX_CABLE_TABLE.state` を hw_state で上書き
+- 不一致かつ `isStateChangeFailed()` → `MUX_CABLE_TABLE.state = "error"`
+- 不一致かつ非 failed → `MUX_CABLE_TABLE.state = "unknown"`
+
+### イベントシーケンス（cold boot / ycabled gRPC 確立）
+
+```text
+ycabled
+  └─ put_init_values_for_grpc_states()
+       └─ STATE_DB HW_MUX_CABLE_TABLE|<ifname>.state = "active"|"standby"|"unknown"
+            │
+            ▼  (SubscriberStateTable)
+MuxStateOrch::addOperation()
+  └─ hw_state vs mux_state 比較
+       └─ STATE_DB MUX_CABLE_TABLE|<ifname>.state = 更新値
+            │
+            ▼  (SubscriberStateTable)
+linkmgrd::handleMuxStateNotifiction()
+  └─ addOrUpdateMuxPortMuxState(port, state)
+       └─ MuxPort 内部ステートマシン更新 → リンクプローバ再起動など
+```
+
+### ycabled の書き込みと購読なし
+
+ycabled は `HW_MUX_CABLE_TABLE` の **書き込み側** であり、このテーブルを購読しない。ycabled は `swsscommon.Table` (`put_init_values_for_grpc_states`, `update_table_mux_status_for_statedb_port_tbl`) で直接 STATE_DB に hset し、通知は MuxStateOrch が受信する非対称構造になっている (y_cable_helper.py:597-631)。
+
+<!-- /pubsub -->
