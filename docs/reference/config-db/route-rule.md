@@ -195,6 +195,55 @@ SIP アドレスファミリ（IPv4 / IPv6）に応じて異なる CRM カウン
 Evidence: `dashrouteorch.cpp` 全体スキャン; 詳細スキャンノートは `meta/_intermediate/cdb-flow/route-rule-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-rule-constants.md -->
+
+`DashRouteOrch` が `DASH_ROUTE_RULE_TABLE` 処理時に使用する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `orchagent/dash/dashrouteorch.cpp`・`orchagent/dash/dashorch.h`・`common/schema.h`・`orchagent/crmorch.h`。
+
+### 結果コード定数 (`dashorch.h`)
+
+| 定数名 | 値 | 用途 | evidence |
+|--------|-----|------|---------|
+| `DASH_RESULT_SUCCESS` | `0` | SET / DEL 処理ループの初期値。SAI 成功時にそのまま result テーブルへ書き込まれる | `dashorch.h:35`; `dashrouteorch.cpp:585, 678` |
+| `DASH_RESULT_FAILURE` | `1` | `addInboundRoutingPost()` が SAI バルク create 失敗を検出した場合に上書きされる | `dashorch.h:36`; `dashrouteorch.cpp:702` |
+
+### テーブル名定数 (`schema.h`)
+
+| 定数名 | 値 | 用途 | evidence |
+|--------|-----|------|---------|
+| `APP_DASH_ROUTE_RULE_TABLE_NAME` | `"DASH_ROUTE_RULE_TABLE"` | `dash_route_rule_result_table_` の構築時に使用。APPL_STATE_DB への SAI プログラミング結果書き戻し先テーブル名 | `schema.h:187`; `dashrouteorch.cpp:57` |
+
+### CRM リソースタイプ定数 (`crmorch.h`)
+
+| 定数名 | 分岐条件 | 用途 | evidence |
+|--------|----------|------|---------|
+| `CRM_DASH_IPV4_INBOUND_ROUTING` | `ctxt.sip.isV4() == true` | IPv4 SIP を持つ inbound routing エントリの CRM リソースカウンタ (inc/dec) | `crmorch.h:41`; `dashrouteorch.cpp:507, 546` |
+| `CRM_DASH_IPV6_INBOUND_ROUTING` | `ctxt.sip.isV4() == false` | IPv6 SIP を持つ inbound routing エントリの CRM リソースカウンタ (inc/dec) | `crmorch.h:42`; `dashrouteorch.cpp:507, 546` |
+
+### SAI アクション定数
+
+| 定数名 | 選択条件 | 用途 | evidence |
+|--------|----------|------|---------|
+| `SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_PA_VALIDATE` | `pa_validation == true` | PA アドレス検証付きのトンネルデカプセルを SAI に指示 | `dashrouteorch.cpp:450` |
+| `SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP` | `pa_validation == false` (proto3 デフォルト) | PA 検証なしのトンネルデカプセルを SAI に指示 | `dashrouteorch.cpp:450` |
+
+三項演算子 `ctxt.metadata.pa_validation() ? SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_PA_VALIDATE : SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP` で選択される (`dashrouteorch.cpp:450`)。
+
+### SAI 属性 ID 定数（条件付き push）
+
+| 定数名 | push 条件 | evidence |
+|--------|-----------|---------|
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_ACTION` | 常時 | `dashrouteorch.cpp:448` |
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_SRC_VNET_ID` | `has_vnet()` が true の場合のみ | `dashrouteorch.cpp:453-458` |
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_OR` | `has_metering_class_or()` が true の場合のみ | `dashrouteorch.cpp:460-464` |
+| `SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_AND` | `has_metering_class_and()` が true の場合のみ | `dashrouteorch.cpp:466-470` |
+
+protobuf の `has_*()` で各フィールドの存在を確認してから `inbound_routing_attrs` に push する。フィールド不在時は SAI 属性を送らないため SAI ハードウェアのデフォルト値が適用される。
+
+<!-- /constants -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
