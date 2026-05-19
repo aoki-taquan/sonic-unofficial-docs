@@ -444,3 +444,31 @@ STATE_DB:HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE|<profile_name>|<group_type>
     `TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_*` への書込みは orchagent で直接購読されないため、これらの変更が STATE_DB の `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE` に反映されることは**ない**。STATE_DB 書込は HFTel プロファイル/グループ系テーブルの操作を通じて発生する。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-pubsub.md`
+
+TAM 4 テーブル（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE`）は **コミュニティ版 orchagent によって購読されない**。`orchdaemon.cpp` に対応する `TableConnector` / `addConsumer` 登録が存在しないため、keyspace 通知・`SubscriberStateTable`・`ConsumerStateTable` のいずれも発生しない。
+
+| 項目 | 値 |
+|------|-----|
+| orchagent による購読 | **なし**（TableConnector 登録なし） |
+| 購読クラス | 該当なし |
+| keyspace 通知 | 使用しない（書き手・リスナーともに orchagent 側になし） |
+| `ProducerStateTable` / channel PUBLISH | 使用なし |
+| アクセス方式 | CVL（sonic-mgmt-common / Management Framework）がオンデマンド polling で HGETALL 読み出し（GNMI/REST リクエスト時のみ） |
+| バッチサイズ | 概念なし（polling 読み取りのみ） |
+| TTL | 未設定（CONFIG_DB は永続前提） |
+
+`HFTelOrch` が CONFIG_DB から購読するのは `HIGH_FREQUENCY_TELEMETRY_PROFILE` と `HIGH_FREQUENCY_TELEMETRY_GROUP` の 2 テーブルのみ（`orchdaemon.cpp:860-861`）。これら HFTel 系テーブルは TAM 4 テーブルと異なり、`Orch::addConsumer()` 経由で `SubscriberStateTable`（CONFIG_DB 分岐、`DEFAULT_POP_BATCH_SIZE=128`）として購読される。
+
+!!! note "TAM 4 テーブルは CVL 専用スキーマ"
+    `sonic-db-cli` 等で直接書き込んだ場合は CVL もバイパスされるため、GNMI/REST 経由のバリデーションも発生しない。orchagent は CONFIG_DB の TAM 4 テーブルをポーリングも購読もしないため、書込みは SAI に一切伝播しない。
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:860L (HFTelOrch 購読テーブルは HIGH_FREQUENCY_TELEMETRY_PROFILE / GROUP のみ) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1186L (addConsumer CONFIG_DB → SubscriberStateTable 分岐) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/schema.h:408L (CFG_HIGH_FREQUENCY_TELEMETRY_PROFILE_TABLE_NAME 定義) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164L (DEFAULT_POP_BATCH_SIZE = 128) -->
+<!-- /pubsub -->
