@@ -240,6 +240,65 @@ ROUTE_REDISTRIBUTE の SET/DEL は以下の FRR running-config 変化と、そ�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム（Pub/Sub・イベント経路）(Phase G)
+
+`ROUTE_REDISTRIBUTE` テーブルは `frrcfgd`（`sonic-frr-mgmt-framework`）の `BGPConfigDaemon` が **Redis keyspace 通知**経由で購読する。`swsscommon.SubscriberStateTable` は使用せず、独自の `ExtConfigDBConnector` を介して CONFIG_DB の変更イベントを受け取る[^2]。
+
+### frrcfgd — ExtConfigDBConnector（Redis keyspace 購読）
+
+`frrcfgd.py` の `ExtConfigDBConnector.listen()` は Redis の `__keyspace@<dbid>__:*` チャンネルに `psubscribe` し、バックグラウンドスレッドでイベントを受信する。
+
+```python
+# frrcfgd.py:1539-1541  listen_thread
+sub_key_space = "__keyspace@{}__:*".format(self.get_dbid(self.db_name))
+self.pubsub.psubscribe(sub_key_space)
+while self.__listen_thread_running:
+    msg = self.pubsub.get_message(timeout, True)
+```
+
+イベントメッセージのチャンネル名からテーブル名・キーを分離し（`sub_msg_handler`）、登録済みハンドラ（`subscribe_all` で設定）を呼び出す（evidence: `frrcfgd.py:1521-1530`）[^2]。
+
+### subscribe_all — テーブルごとのハンドラ登録
+
+`BGPConfigDaemon.__init__()` の末尾で `subscribe_all()` を呼び、`table_handler_list` に列挙された全テーブルを購読する。
+
+```python
+# frrcfgd.py:2359-2361  subscribe_all
+def subscribe_all(self):
+    for table, hdlr in self.table_handler_list:
+        self.config_db.subscribe(table, hdlr)
+```
+
+`ROUTE_REDISTRIBUTE` のハンドラとして `bgp_table_handler_common` が登録される（L2316）。その後 `config_db.listen()` を呼び出してバックグラウンドスレッドを起動する（L3956）[^2]。
+
+### bgp_table_handler_common → vtysh 経路
+
+イベント到着時の処理フロー:
+
+1. `bgp_table_handler_common` がキーから `vrf_name` を抽出し `__get_vrf_asn(vrf)` で `BGP_GLOBALS.local_asn` を取得
+2. `key_map`（`route_redist_key_map`）の `run_command()` が `redistribute <src_proto> [metric N] [route-map name]` を生成
+3. 生成コマンドが `g_run_command()` → vtysh ソケット経由で `bgpd` へ送信される
+
+### 通信経路サマリ
+
+```
+CONFIG_DB:ROUTE_REDISTRIBUTE
+  └─ frrcfgd ExtConfigDBConnector
+       │  keyspace: __keyspace@<CONFIG_DB_id>__:ROUTE_REDISTRIBUTE|*
+       └─ subscribe_all → bgp_table_handler_common
+            └─ route_redist_key_map.run_command()
+                 └─ g_run_command() → vtysh socket → FRR bgpd
+                      └─ "redistribute <src_proto> [metric N] [route-map name]"
+```
+
+| 経路 | チャンネル / テーブル | 方向 | ハンドラ |
+|------|----------------------|------|---------|
+| CONFIG_DB → frrcfgd | `__keyspace@*__:ROUTE_REDISTRIBUTE|*`（Redis keyspace） | Pub/Sub | `bgp_table_handler_common` |
+| frrcfgd → FRR bgpd | vtysh UNIX ソケット | 同期コマンド発行 | `g_run_command()` → `bgpd` |
+
+<!-- /pubsub -->
+
 ## key 構造
 
 ```text
