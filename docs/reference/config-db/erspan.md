@@ -361,6 +361,62 @@ MIRROR_SESSION SET
 > **スキャン証跡**: `mirrororch.cpp` L14-45 (define 定数), L57-77 (MirrorEntry コンストラクタ), L100-109 (m_maxNumTC 初期化), L395 (platform getenv), L997-1011 (VLAN PRI/CFI + IP HDR VER), L1003-1007 (ERSPAN カプセル化タイプ) 読了。`mirrororch.h` L36, L99-100 読了。`orch.h` L42 読了。定数 6 種別 16 件を確認。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込み (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/erspan-side-effects.md`  
+> ソース: `sonic-swss/orchagent/mirrororch.cpp` (setSessionState L574-637, removeSessionState L640-645, activateSession L921-1100, deactivateSession L1104-1151)
+
+### STATE_DB — MIRROR_SESSION_TABLE
+
+`MirrorOrch` コンストラクタで `m_mirrorTable` が `STATE_DB` の `"MIRROR_SESSION_TABLE"` に初期化される（`mirrororch.cpp:88`）。`setSessionState()` が `m_mirrorTable.set()` で以下のフィールドを書き込み、`removeSessionState()` が `m_mirrorTable.del()` でエントリ全体を削除する。
+
+| 書込みタイミング | フィールド | 値 | evidence |
+|---|---|---|---|
+| `activateSession()` 成功 | `status` | `"active"` | `mirrororch.cpp:583-586, 1093` |
+| `deactivateSession()` 成功 | `status` | `"inactive"` | `mirrororch.cpp:1138, 583-586` |
+| `activateSession()` 成功 (ERSPAN) | `monitor_port` | nexthop 出口ポート alias。VoQ switch では recirc ポート alias | `mirrororch.cpp:589-605` |
+| `activateSession()` 成功 (ERSPAN) | `dst_mac` | nexthop の解決済み MAC アドレス。VoQ では `gMacAddress`（ルータ MAC）に固定 | `mirrororch.cpp:607-616` |
+| `activateSession()` 成功 (ERSPAN) | `route_prefix` | RouteOrch が解決した `dst_ip` の prefix 文字列（例: `192.168.1.0/24`） | `mirrororch.cpp:619-623` |
+| `activateSession()` 成功 (ERSPAN, VLAN 経由 nexthop) | `vlan_id` | VLAN ID（十進文字列）。非 VLAN 経由時は `"0"` | `mirrororch.cpp:625-629` |
+| `activateSession()` 成功 (ERSPAN) | `next_hop_ip` | RouteOrch が返す nexthop IP アドレス文字列 | `mirrororch.cpp:631-635` |
+| nexthop 変化時（部分更新） | 変化したフィールドのみ | 対応する最新値 | `mirrororch.cpp:1176, 1223, 1285, 1310, 1363` |
+| `removeSessionState()` (セッション DEL) | — | エントリ全体を削除 | `mirrororch.cpp:644` |
+
+!!! note "ウォームリブート時の読み戻し"
+    `MirrorOrch` 起動時（`mirrororch.cpp:118-151`）に STATE_DB の既存エントリを読み込み内部構造体を復元する。`status`・`monitor_port`・`next_hop_ip` の 3 フィールドのみ読み戻し、`dst_mac`・`route_prefix`・`vlan_id` は再計算される。
+
+```bash
+# 確認コマンド
+sonic-db-cli STATE_DB hgetall 'MIRROR_SESSION_TABLE|everflow0'
+```
+
+### ASIC_DB 書込み (SAI 経由)
+
+MirrorOrch は `sai_mirror_api` を直接呼び出す。`syncd` がその SAI 操作を ASIC_DB に記録する。
+
+| タイミング | SAI API | ASIC_DB への反映 | evidence |
+|---|---|---|---|
+| `activateSession()` 成功 | `sai_mirror_api->create_mirror_session()` | `ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION:<oid>` 生成 | `mirrororch.cpp:1066-1067` |
+| src_port ミラー設定 | `sai_port_api->set_port_attribute(SAI_PORT_ATTR_INGRESS/EGRESS_MIRROR_SESSION)` | 対応ポート OID の mirror session 属性更新 | `mirrororch.cpp:813-877` |
+| `deactivateSession()` 成功 | `sai_mirror_api->remove_mirror_session()` | `ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION:<oid>` 削除 | `mirrororch.cpp:1123` |
+| policer 指定時 | `create_mirror_session()` attrs に `SAI_MIRROR_SESSION_ATTR_POLICER` を含む | ASIC_DB mirror session OID に policer OID が関連付けられる | `mirrororch.cpp:1062-1065` |
+
+### Observer 通知 (SUBJECT_TYPE_MIRROR_SESSION_CHANGE)
+
+セッションのアクティブ化・非アクティブ化時に `notify(SUBJECT_TYPE_MIRROR_SESSION_CHANGE, ...)` を呼び出し、`AclOrch` 等の Observer に通知する。これにより ACL ルールのミラーアクション OID が即座に更新される。STATE_DB / ASIC_DB への直接書き込みではなくオブジェクト内 OID の更新のみ。
+
+| タイミング | evidence |
+|---|---|
+| `activateSession()` 成功直後 | `mirrororch.cpp:1096` |
+| `deactivateSession()` 実行直前 | `mirrororch.cpp:1111` |
+
+### COUNTERS_DB / APPL_DB / APPL_STATE_DB
+
+MirrorOrch はこれらへの書き込みを行わない。CRM カウンタ・FlexCounter 連携もない（`mirrororch.cpp` 内に `CrmOrch` / `flex_counter` 呼び出しなし）。
+
+<!-- /side-effects -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス（ERSPAN 固有）
 
