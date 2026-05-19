@@ -236,6 +236,71 @@ community sonic-swss は `HARDWARE` テーブルを読み取らないため、**
 詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+> 調査対象: `sonic-swss/orchagent/`、`sonic-swss/cfgmgr/`、`sonic-swss/fpmsyncd/`、`sonic-gnmi/`（本番コード）、`sonic-mgmt-common/`（本番コード）
+> 調査日: 2026-05-19
+
+`HARDWARE|ACCESS_LIST` は community sonic-swss/orchagent に**購読されない dead consumer**のため、SET/DEL 操作に伴う副次 DB 書き込みは一切発生しない。
+
+### 副次 DB 書込一覧
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `COUNTER_MODE` / `LOOKUP_MODE` / `TCAM_SHARING` を参照する ProducerStateTable / ProducerTable 呼出が `sonic-swss/` 全体で 0 件 |
+| STATE_DB | なし | `HARDWARE|ACCESS_LIST` を処理して STATE_DB に書き込む orchagent / cfgmgr コードが 0 件 |
+| COUNTERS_DB | なし | ACL カウンタ（COUNTERS_DB）への書込は `AclOrch` 経由の SAI イベントが起点であり、`HARDWARE|ACCESS_LIST` は `AclOrch` に到達しない |
+| ASIC_DB | なし | SAI API 呼出が 0 件。HARDWARE テーブルは SAI switch attribute とは別の CONFIG_DB エントリ |
+| FLEX_COUNTER_DB | なし | ACL カウンタ flex-counter 登録は `AclOrch::addAclCounter()` 経由であり、HARDWARE テーブルとは無関係 |
+| その他 (LOGLEVEL_DB / CHASSIS_APP_DB) | なし | 参照 0 件 |
+
+### ファイルシステム・プロセス副作用なし
+
+orchagent / cfgmgr は HARDWARE テーブルを購読しないため、ファイル書換・プロセス再起動・SIGHUP 送信も発生しない。ベンダー向け gNMI/translib スタック（sonic-mgmt-common transformer 層）では別途動作しうるが、community リポジトリ外のため対象外とする。
+
+詳細スキャン証跡: `meta/_intermediate/cdb-flow/hardware-side-effects.md`
+<!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-swss/orchagent/orchdaemon.cpp`、`sonic-swss/orchagent/aclorch.cpp`、`sonic-swss/cfgmgr/` 全体
+> 調査日: 2026-05-19
+
+community SONiC に `HARDWARE|ACCESS_LIST` を購読するコンポーネントは**存在しない**。SubscriberStateTable / ConsumerStateTable / ConfigDBConnector.subscribe() のいずれによる購読登録も確認されていない。
+
+### 購読チャンネル一覧
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| （なし） | — | — | — |
+
+CONFIG_DB `HARDWARE|ACCESS_LIST` に書き込まれたキー変更イベントを受信・処理するコンポーネントは **community SONiC に 0 件**。
+
+!!! note "ベンダー translib での購読（対象外）"
+    Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` transformer 層の vendored 拡張）は
+    `HARDWARE|ACCESS_LIST` を READ/WRITE しうるが、当該コードは community リポジトリ外のため対象外。
+
+詳細根拠: `meta/_intermediate/cdb-flow/hardware-side-effects.md`
+<!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: `HARDWARE|ACCESS_LIST` は dead consumer のため、ASIC 種別・multi-asic / chassis 構成・ベンダーにかかわらず挙動は同一（いかなる操作も SAI には到達しない）。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | orchagent は HARDWARE テーブルを購読しないため、SAI API 呼出が 0 件 |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | HARDWARE テーブルは host namespace CONFIG_DB にのみ存在し、`asicN` namespace の orchagent もテーブルを購読しない |
+| VOQ chassis (supervisor + line cards) | 影響なし | dead consumer のため chassis 全体での動作差異なし |
+| ベンダー固有 SAI / SDK 差分 | なし | SAI 呼出が発生しないため、SAI 実装の差に依存しない |
+| YANG / CVL 差分 | なし | HARDWARE テーブルは YANG モジュール未定義。プラットフォーム別 CVL プロファイルなし |
+
+詳細根拠: `meta/_intermediate/cdb-flow/hardware-side-effects.md`
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: sonic-net/sonic-gnmi `testdata/db_dump.json` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
