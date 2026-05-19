@@ -573,6 +573,54 @@ TunnelDecapOrch::doSubnetDecapTask(consumer)
 > **Evidence**: `sonic-swss/orchagent/tunneldecaporch.cpp:39-48,55-57,69-72` (SubscriberStateTable 生成・先読み・doTask 分岐)、`sonic-swss/orchagent/orchdaemon.cpp:23,959` (SELECT_TIMEOUT / select ループ)、`sonic-swss-common/common/table.h:164` (`DEFAULT_POP_BATCH_SIZE = 128`)、`sonic-swss-common/common/subscriberstatetable.cpp:17,45-165` (PSUBSCRIBE + HGETALL 動作)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-platform.md -->
+<!-- source: sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2 ref:master -->
+<!-- source: sonic-swss/orchagent/tunneldecaporch.cpp ref:master -->
+
+`SUBNET_DECAP` テーブルの消費動作はデバイスタイプ・ASIC ベンダー・トポロジー規模によって大きく変わる。差異の根拠はビルド時テンプレート `ipinip.json.j2` と `TunnelDecapOrch` の SAI 呼び出し経路にある。
+
+### DPU デバイス — 設定が一切生成されない
+
+`DEVICE_METADATA.localhost.switch_type == "dpu"` の場合、`ipinip.json.j2` は空リスト `[]` を出力する (`ipinip.json.j2:1-2`)。SUBNET_DECAP を含む **TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE のエントリはすべて生成されない**。DPU 環境でのサブネットデカプセルは本テンプレートの対象外。
+
+### dscp_mode — Broadcom / 非 Broadcom 分岐
+
+| ASIC / デバイスタイプ | `dscp_mode` | 追加フィールド |
+|----------------------|-------------|--------------|
+| Broadcom T1 (`LeafRouter` を含む `type`) | `"pipe"` | なし |
+| Broadcom 非 T1 | `"uniform"` | なし |
+| 非 Broadcom（`DSCP_TO_TC_MAP.AZURE` が存在） | `"pipe"` | `decap_dscp_to_tc_map: "AZURE"` |
+| 非 Broadcom（AZURE QoS マップなし） | `"pipe"` | なし |
+
+判定は `ASIC_VENDOR` 変数の `"broadcom"` 前方一致と `DEVICE_METADATA.localhost.type` の `LeafRouter` 含有で行われる (`ipinip.json.j2:5-14`)。`ecn_mode: "copy_from_outer"` / `ttl_mode: "pipe"` は全プラットフォームで共通。
+
+### BackEnd デバイスタイプ — トンネルエントリが生成されない
+
+`BackEndToRRouter` / `BackEndLeafRouter` / `BackEndSpineRouter` かつ `DEVICE_METADATA.localhost.storage_device` が未定義の場合、アドレスリストが全クリアされ TUNNEL_DECAP_TERM_TABLE エントリが生成されない (`ipinip.json.j2:59-67`)。`storage_device` メタデータを持つ BackEnd デバイスは通常パスへ進む。
+
+### 大規模トポロジー (>128 routed interfaces) — エントリ範囲の縮小
+
+ルーティングインタフェース総数（IPv4 + IPv6）が 128 超の場合、SAI `TABLE_FULL` 回避のために Loopback / VLAN アドレスのみを使用し、物理・PortChannel プレフィクスは除外される (`ipinip.json.j2:70-73`)。
+
+### sub_role によるループバックアドレス選択
+
+| `sub_role` | 使用するループバック |
+|------------|-------------------|
+| `FrontEnd` / `BackEnd` | `Loopback0`, `Loopback4096` |
+| その他（未設定を含む） | `Loopback0`, `Loopback2`, `Loopback3` |
+
+これはデカプセルトンネルの src_ip レンジに影響する (`ipinip.json.j2:21-26`)。
+
+### SAI MP2MP 未対応 ASIC — サブネットデカプセルエントリ登録失敗
+
+`subnet_type: vlan` / `subnet_type: vip` を持つ TUNNEL_DECAP_TERM_TABLE エントリは `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP` として SAI に登録される (`tunneldecaporch.cpp:934-936`)。ASIC が MP2MP を未実装の場合 `addDecapTunnelTermEntry()` が `false` を返し、エントリは `unhandledTerms` キューに残って後続のポーリングで再試行される。再試行が成功するまで SUBNET_DECAP 機能は有効にならない。
+
+> 詳細根拠: `meta/_intermediate/cdb-flow/subnet-decap-platform.md`
+<!-- /platform -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
