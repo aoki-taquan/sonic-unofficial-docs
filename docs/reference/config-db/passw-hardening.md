@@ -246,6 +246,49 @@ CONFIG_DB `PASSW_HARDENING` テーブルの変更に伴って `hostcfgd` の `Pa
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/passw-hardening-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`PASSW_HARDENING` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:PASSW_HARDENING|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`PasswHardening` 経由) | `ConfigDBConnector.subscribe()` | `PASSW_HARDENING` | `passwh_handler` → `passw_policies_update` |
+
+`hostcfgd` 以外で `PASSW_HARDENING` テーブルを購読するプロセスは存在しない。PAM モジュール (`pam_pwquality.so` / `pam_pwhistory.so` / `pam_cracklib.so`) は `/etc/pam.d/common-password` を認証時に読むのみで Redis を購読しない。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config passw-hardening policies state enabled
+  ↓ HSET "PASSW_HARDENING|POLICIES" state "enabled"
+Redis keyspace PUBLISH "__keyspace@4__:PASSW_HARDENING|POLICIES"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ HGETALL "PASSW_HARDENING|POLICIES"  ← 通知後に値を再取得
+passwh_handler(key="POLICIES", op=SET, data={state:"enabled", ...})
+  ↓ PasswHardening.passw_policies_update() → modify_passw_conf_file()
+  ↓ Jinja2 展開 → /etc/pam.d/common-password atomic 書き換え
+  ↓ set_passw_hardening_policies() → /etc/login.defs sed 書き換え + chage
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `HGETALL` で再取得する。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `PasswHardening.load()` が `init_data['PASSW_HARDENING']` を一括スナップショットで適用する。ただし `load()` は `wait_till_system_init_done()` 完了後に実行される点に注意。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `PASSW_HARDENING` SET/DEL 変更 | PAM ファイル (`/etc/pam.d/common-password`) atomic 再生成 | `set_passw_hardening_policies` — hostcfgd:917-930 |
+| `PASSW_HARDENING` SET/DEL 変更 | `/etc/login.defs` の `PASS_MAX_DAYS` / `PASS_WARN_AGE` を `sed` 更新 + `chage` 全ユーザ適用 | `passwd_aging_expire_modify` — hostcfgd:955-975 |
+| PAM 設定ファイル書き換え | デーモン restart **なし** (PAM は次回ログイン / パスワード変更時にファイルを読む) | `modify_passw_conf_file` — hostcfgd:914-930 |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2477` (`subscribe('PASSW_HARDENING', ...)`)、`hostcfgd:2528` (`config_db.listen(init_data_handler=self.load)`)、`hostcfgd:2293-2296` (`passwh_handler`)、`hostcfgd:881-885` (`PasswHardening.load`)、`hostcfgd:887-912` (`passw_policies_update`)、`hostcfgd:2244` (`init_data['PASSW_HARDENING']`)
+<!-- /pubsub -->
+
 ## 購読者
 
 - `hostcfgd` (`host-services` パッケージ)。`PasswHardening.load()` が `PASSW_HARDENING` テーブルを読み込み、Jinja2 テンプレート (`common-password.j2`) を展開して `/etc/pam.d/common-password` を書き換え、`/etc/login.defs` の `PASS_MAX_DAYS` / `PASS_WARN_AGE` を `sed` で更新する
