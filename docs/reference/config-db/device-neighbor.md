@@ -499,4 +499,36 @@ DEVICE_NEIGHBOR が正しく書き込まれていない場合、`DEVICE_NEIGHBOR
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:62,278-300,413-444`; `scripts/ecnconfig:282-336`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:219-224,284-295`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`DEVICE_NEIGHBOR` テーブルは **Redis Pub/Sub による動的購読者を持たない**。すべてのコンシューマは起動時または CLI 実行時にバルク読み込み (`get_table`) で参照する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/device-neighbor-pubsub.md -->
+
+### テーブル変更の伝搬方式
+
+| コンポーネント | 参照方式 | タイミング | evidence |
+|-------------|---------|----------|----------|
+| `pfcwd start_default` | `config_db.get_table('DEVICE_NEIGHBOR')` | 起動時バルク読み | `pfcwd/main.py:413` |
+| `pfcwd get_server_facing_ports()` | `db.get_table('DEVICE_NEIGHBOR')` | CLI 実行時バルク読み | `pfcwd/main.py:98` |
+| `ecnconfig -s enable/disable` | `db.get_table('DEVICE_NEIGHBOR')` | CLI 実行時バルク読み | `ecnconfig:282` |
+| `lldpmgrd` | 参照なし（TODO コメントあり） | — | `lldpmgrd:12` |
+| `bgpcfgd` | `DEVICE_NEIGHBOR_METADATA` のみ subscribe; `DEVICE_NEIGHBOR` 本体は参照しない | — | `managers_bgp.py:140` |
+| orchagent (sonic-swss) | 参照なし | — | — |
+
+### 動的購読なしの実装上の影響
+
+`DEVICE_NEIGHBOR` に対して `ConsumerStateTable` / `SubscriberStateTable` を登録しているデーモンは存在しない。このため:
+
+- **runtime での SET/DEL が即時反映されない**: `pfcwd start_default` や `ecnconfig` は起動時・CLI 実行時のスナップショットしか参照しないため、`DEVICE_NEIGHBOR` を変更しても実行中デーモンには自動で再読み込みされない。
+- **lldpmgrd の未実装**: ソースコード先頭の TODO コメント（`lldpmgrd:12`）に「`DEVICE_NEIGHBOR` の変更も listen すべき」と明記されているが、現時点では未実装。ポートトポロジー変更を LLDP に反映するには `lldpmgrd` の再起動が必要。
+- **bgpcfgd との分離**: `bgpcfgd` は `DEVICE_NEIGHBOR_METADATA` (隣接デバイスの属性情報) を `BGPDataBaseMgr` 経由で購読しているが、`DEVICE_NEIGHBOR` (ポート–ホスト対応) は購読しない。BGP ピア設定時に `DEVICE_NEIGHBOR.name` → `DEVICE_NEIGHBOR_METADATA` の解決を行うが、この解決はイベント駆動ではなく BGP_NEIGHBOR の SET 処理時に on-demand で実行される（`managers_bgp.py:220-224`）。
+
+### CONFIG_DB KeySpace notification
+
+`DEVICE_NEIGHBOR` の変更は CONFIG_DB の KeySpace notification (`__keyevent@4__:hset` 等) 経由で観測可能だが、現時点でこれを購読するデーモンは確認されていない。テーブル変更の影響を受けるコンポーネント（pfcwd, ecnconfig, lldpmgrd）は手動での再実行またはデーモン再起動が必要となる。
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 2c4f81fa98e5 -->
