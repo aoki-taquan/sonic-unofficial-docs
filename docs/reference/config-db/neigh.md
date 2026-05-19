@@ -4,7 +4,7 @@ description: "NEIGH テーブル — スタティック隣接（Permanent neighb
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-neigh.yang
@@ -20,6 +20,9 @@ sources:
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: orchagent/neighorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/orch.h
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
@@ -374,6 +377,142 @@ CONFIG_DB NEIGH|<port>|<ip> SET
 本テーブル (`CONFIG_DB NEIGH`) の変更は SAI / orchagent 経由を通らない。`nbrmgrd` が Netlink で直接カーネル ARP テーブルを操作し、その後 `neighsyncd` / `orchagent` の別パスで ASIC へのプログラミングが行われる。
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`nbrmgrd` / `neighorch` の動作は `DEVICE_METADATA.switch_type`、`isChassisDbInUse()`、inband インターフェース型 (`port` / `vlan`)、および `ASIC_VENDOR` 環境変数によって分岐する。分岐は主に **VoQ (Virtual Output Queue) シャーシ構成** に集中しており、標準的なシングル ASIC 環境では分岐に入らない。
+
+### プラットフォーム識別方式
+
+| 識別子 | 参照方法 | 用途 |
+|--------|---------|------|
+| `DEVICE_METADATA.switch_type` | CONFIG_DB hget | `"voq"` 判定で NbrMgr の SYSTEM_NEIGH 購読を追加 |
+| `isChassisDbInUse()` (関数) | chassis DB 接続有無 | NeighOrch の CHASSIS_APP_DB 購読 / voqSync 有効化 |
+| `gMySwitchType` (グローバル変数) | orchagent 初期化時設定 | addNeighbor() での addVoqEncapIndex() 呼び出し判定 |
+| `ASIC_VENDOR` 環境変数 | `getenv("ASIC_VENDOR")` | VS platform 判定 (`VS_PLATFORM_SUBSTRING = "vs"`) |
+
+> **Evidence**: `orch.h:45` (`VS_PLATFORM_SUBSTRING`), `nbrmgr.cpp:74-83`, `neighorch.cpp:22-23,28,51-57,1313`
+
+---
+
+### A. VoQ / シャーシ構成における nbrmgrd の追加動作
+
+`DEVICE_METADATA.switch_type == "voq"` のとき、`NbrMgr` コンストラクタが `STATE_DB:STATE_SYSTEM_NEIGH_TABLE_NAME` を `SubscriberStateTable` で追加購読する（`nbrmgr.cpp:74-83`）。VoQ 以外の環境ではこの購読は行われない。
+
+#### リモート neighbor のカーネルプログラミング経路 (`doStateSystemNeighTask`)
+
+VoQ 構成で `STATE_DB:STATE_SYSTEM_NEIGH_TABLE` に変化があると `doStateSystemNeighTask()` が呼ばれ、inband インターフェイス経由でカーネルへ neighbor とスタティックルートを追加する。
+
+| ステップ | 処理 | ガード条件 |
+|---------|------|----------|
+| 1 | `getVoqInbandInterfaceName()` で `CFG_VOQ_INBAND_INTERFACE_TABLE` から inband IF 名と `inband_type` を取得 | 取得失敗 → 即 `return`（次 tick 再試行） |
+| 2 | `inband_type == "port"` かつ `isIntfOperUp(nbr_odev) == false` | skip（次 tick 再試行） |
+| 3 | `addKernelNeigh(inband_if, ip, mac)` でカーネル neighbor 追加 | 失敗 → 既存 neighbor を削除してから `it++` 再試行 |
+| 4 | `addKernelRoute(inband_if, ip)` でスタティックルート追加 | 失敗 → neighbor も削除してから `it++` 再試行 |
+
+**IPv6 ルートの metric 256** — VoQ リモート neighbor の IPv6 スタティックルートには `metric 256` を明示付与する（`nbrmgr.cpp:572`）。これは eBGP / iBGP 経路（metric 256）と同一メトリックにして ECMP グループに混入させるための VoQ 専用挙動。IPv4 はデフォルト metric 0 なので付与なし。
+
+| inband_type | oper UP チェック | Evidence |
+|-------------|----------------|---------|
+| `"port"` | 実施（`isIntfOperUp()`、STATE_DB:PORT_TABLE を参照） | `nbrmgr.cpp:446-451` |
+| `"vlan"` | 実施しない | `nbrmgr.cpp:446` の else 分岐なし |
+
+---
+
+### B. VoQ / シャーシ構成における NeighOrch の追加動作
+
+#### B-1. コンストラクタの CHASSIS_APP_DB 購読
+
+`isChassisDbInUse()` が true のとき (`neighorch.cpp:51-57`):
+- `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` を `SubscriberStateTable` で追加購読
+- `m_tableVoqSystemNeighTable` を `CHASSIS_APP_DB` に向けて初期化
+- `m_stateSystemNeighTable` (STATE_DB) を初期化
+
+非 VoQ / 非シャーシ環境ではこれらのオブジェクトは生成されない。
+
+#### B-2. addVoqEncapIndex — リモート neighbor への ENCAP_INDEX 付与
+
+`gMySwitchType == "voq"` のとき、`addNeighbor()` は `addVoqEncapIndex()` を呼ぶ（`neighorch.cpp:1313-1318`）。
+
+| ポート種別 | 設定される SAI 属性 | 値 | Evidence |
+|-----------|------------------|-----|---------|
+| リモートシステムポート (`isRemoteSystemPortIntf` = true) | `SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX` | CHASSIS_APP_DB から取得した encap_index | `neighorch.cpp:2567-2570` |
+| リモートシステムポート | `SAI_NEIGHBOR_ENTRY_ATTR_IS_LOCAL` | `false` | `neighorch.cpp:2572-2574` |
+| ローカルポート | (設定なし) | — | `addVoqEncapIndex()` 内で remote 判定後 `return true` 早期終了 |
+
+encap_index が CHASSIS_APP_DB に未到着の場合、`addVoqEncapIndex()` は `return false` → `addNeighbor()` も `return false` → Consumer が `it++` で再試行（`neighorch.cpp:2578-2580`）。
+
+#### B-3. voqSyncAddNeigh / voqSyncDelNeigh — CHASSIS_APP_DB への同期
+
+addNeighbor 成功後に `isChassisDbInUse()` が true ならば `voqSyncAddNeigh()` が `CHASSIS_APP_DB:CHASSIS_APP_SYSTEM_NEIGH_TABLE` へ書き込む（`neighorch.cpp:1433-1436`）。書き込み内容:
+- `encap_index`: SAI から `SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX` を get した値
+- `neigh`: MAC アドレス
+
+removeNeighbor 成功後は `voqSyncDelNeigh()` で同テーブルから削除（`neighorch.cpp:1602-1605`）。
+
+#### B-4. doVoqSystemNeighTask の inband port UP ガード
+
+`CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` イベントで `doVoqSystemNeighTask()` が呼ばれた場合:
+
+```
+inband port が Port::VLAN 以外:
+    admin_state_up == false または oper_status != SAI_PORT_OPER_STATUS_UP → return（即 defer）
+    → 条件成立まで全 CHASSIS_APP SYSTEM_NEIGH の処理がブロック
+```
+
+vlan 型 inband ではこのガードはなく、ポート状態に依存せず処理を続行する（`neighorch.cpp:2061-2068`）。
+
+---
+
+### C. VoQ STATE_DB への MAC アドレス書込み — VS platform 例外
+
+`doVoqSystemNeighTask()` での addNeighbor 成功後、STATE_DB に書き込む MAC アドレスが分岐する（`neighorch.cpp:2209-2218`）:
+
+| inband 型 / platform | STATE_DB に書かれる MAC |
+|---------------------|------------------------|
+| `Port::VLAN` 型 inband | 元のリモート neighbor MAC（差し替えなし） |
+| `port` 型 inband (非 VS) | `gMacAddress`（スイッチ自身の MAC）に差し替え |
+| `port` 型 inband + **`ASIC_VENDOR=vs`** | 元のリモート neighbor MAC（差し替えなし） |
+
+> VS platform では inband MAC が固定されていないため、実際の neighbor MAC を維持する必要がある。定数: `VS_PLATFORM_SUBSTRING = "vs"` (`orch.h:45`)。Evidence: `neighorch.cpp:2213-2217`
+
+---
+
+### D. inband port neighbor の SAI プログラミングスキップ
+
+標準 `APPL_DB:NEIGH_TABLE` 処理 (`doTask()`) でも VoQ 分岐がある（`neighorch.cpp:918-929`）:
+
+```
+alias が inband port && inband type が Port::VLAN 以外:
+    → erase(it) で skip（SAI プログラムなし）
+    理由: "port" 型 inband の neighbor = VoQ リモート neighbor のカーネルエントリ。
+         CHASSIS_APP_DB 経由で doVoqSystemNeighTask が別途処理するため重複回避
+```
+
+vlan 型 inband は通常処理に進む。
+
+---
+
+### E. doTask() の CHASSIS_APP 分岐
+
+`neighorch.cpp:887-891`
+
+Consumer が `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` のとき `doVoqSystemNeighTask()` に dispatch され、通常の `NEIGH_TABLE` 処理には入らない。この分岐は `allPortsReady()` ガード後に行われる。
+
+---
+
+### プラットフォーム別挙動サマリ
+
+| 環境 / 条件 | nbrmgrd 追加動作 | NeighOrch 追加動作 | SAI neighbor 属性差 |
+|------------|-----------------|-------------------|-------------------|
+| **標準シングル ASIC** (`switch_type` なし) | なし | なし | ENCAP_INDEX / IS_LOCAL 設定なし |
+| **VoQ シャーシ** (`switch_type="voq"`) | STATE_SYSTEM_NEIGH 購読 + カーネルへ neighbor + route 追加（inband 経由） | CHASSIS_APP_DB 購読 + ENCAP_INDEX / IS_LOCAL 付与（リモートポートのみ） + voqSyncAddNeigh/Del | リモートポート: ENCAP_INDEX あり + IS_LOCAL=false |
+| **VS platform** (`ASIC_VENDOR="vs"`) | (VoQ 部分の) STATE_DB MAC 差し替えをしない（元 MAC 維持） | 同左 | 変化なし |
+| **multi-asic** (namespace 分離) | namespace ごとに独立プロセス（ソース内に explicit 分岐なし） | 同左 | 変化なし |
+
+> **スキャン証跡**: `nbrmgr.cpp:74-83, 406-505, 524-549, 552-580` / `neighorch.cpp:22-23, 28, 51-57, 887-931, 1313-1318, 1433-1437, 1602-1606, 2048-2068, 2209-2219, 2559-2585, 2587-2655, 2657-2688` / `orch.h:40-45`. 中間ファイル: `meta/_intermediate/cdb-flow/neigh-platform.md`
+<!-- /platform -->
 
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
