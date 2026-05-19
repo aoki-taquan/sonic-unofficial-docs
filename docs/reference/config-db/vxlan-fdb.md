@@ -246,6 +246,63 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-fdb-constants.md -->
+
+### テーブル名 (schema.h)
+
+```c
+// sonic-swss-common/common/schema.h:87-88
+#define APP_VXLAN_FDB_TABLE_NAME          "VXLAN_FDB_TABLE"
+#define APP_VXLAN_REMOTE_VNI_TABLE_NAME   "VXLAN_REMOTE_VNI_TABLE"
+```
+
+APP_DB に書き込まれるテーブル名は `#define` で固定されており、設定で変更不可。[^c1]
+
+### warm-restart バッファリングタイマー
+
+```c
+// sonic-swss/fdbsyncd/fdbsync.h:15
+#define DEFAULT_FDBSYNC_WARMSTART_TIMER 120
+```
+
+warm-restart 中に APP_DB への書き込みをバッファリングする時間（秒）。`fdbsyncd` はこの期間中、`AppRestartAssist::insertToMap()` でキャッシュに蓄積し、タイマー完了後に reconcile フェーズで差分を一括反映する。設定で変更不可。[^c2]
+
+### `type` フィールドの有効値
+
+| 値 | 意味 | コード根拠 |
+|----|------|-----------|
+| `"dynamic"` | EVPN 動的学習 MAC（`NUD_NOARP` フラグなし） | `fdbsync.cpp:801` |
+| `"static"` | 静的 MAC（`NUD_NOARP` フラグあり） | `fdbsync.cpp:797` |
+
+この 2 値のみが有効。`fdbsync.cpp:794-802` の `NUD_NOARP` チェックでハードコードされており、第三の値は存在しない。[^c2]
+
+### FDB Origin 列挙値 (fdborch.h)
+
+```c
+// sonic-swss/orchagent/fdborch.h:10-14
+FDB_ORIGIN_INVALID         = 0
+FDB_ORIGIN_LEARN           = 1
+FDB_ORIGIN_PROVISIONED     = 2
+FDB_ORIGIN_VXLAN_ADVERTIZED = 4
+FDB_ORIGIN_MCLAG_ADVERTIZED = 8
+```
+
+`APP_VXLAN_FDB_TABLE_NAME` から来るエントリには常に `FDB_ORIGIN_VXLAN_ADVERTIZED = 4` が付与される（`fdborch.cpp:719-722`）。この値は設定で変更不可。[^c3]
+
+### VXLAN ブリッジインタフェース名プレフィックス
+
+```c
+// sonic-swss/fdbsyncd/fdbsync.cpp:22
+#define VXLAN_BR_IF_NAME_PREFIX    "Brvxlan"
+```
+
+`fdbsyncd` が VXLAN ブリッジインタフェースを識別するためのプレフィックス。`isVxlanIntf` 判定に使用され、このプレフィックスを持たないインタフェースからの netlink イベントは VXLAN_FDB_TABLE に書かれない。[^c1]
+
+<!-- /constants -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
@@ -273,6 +330,9 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 ## 引用元
 
 [^1]: `fdbsyncd/fdbsync.cpp` — `macAddVxlan()` 関数で `APP_VXLAN_FDB_TABLE_NAME` に書き込む. <https://github.com/sonic-net/sonic-swss/blob/master/fdbsyncd/fdbsync.cpp>
+[^c1]: `sonic-swss-common/common/schema.h:87-88` および `fdbsync.cpp:22` — テーブル名とブリッジプレフィックスのハードコード定数. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
+[^c2]: `sonic-swss/fdbsyncd/fdbsync.h:15` および `fdbsync.cpp:794-802` — warm-restart タイマーと `type` 文字列ハードコード. <https://github.com/sonic-net/sonic-swss/blob/master/fdbsyncd/fdbsync.h>
+[^c3]: `sonic-swss/orchagent/fdborch.h:10-14` および `fdborch.cpp:719-722` — FDB Origin 列挙値と VXLAN 固定割り当て. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/fdborch.h>
 
 ## 関連ページ
 
