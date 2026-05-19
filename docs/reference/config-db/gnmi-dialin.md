@@ -280,6 +280,65 @@ rsyslogd 起動 (priority=1)
 > **注意**: `save_on_set` は `gnmi-native.sh` から自動読み取りされない。Go フラグ `--with-save-on-set` で手動指定が必要。
 <!-- /value-behavior -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/gnmi-dialin-constants.md`
+
+### gnmi-native.sh — シェルスクリプト定数
+
+`docker-sonic-gnmi` コンテナ内の起動スクリプトに直接埋め込まれており、CONFIG_DB / YANG では管理されない。
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `EXIT_TELEMETRY_VARS_FILE_NOT_FOUND` | `1` | `telemetry_vars.j2` テンプレートが存在しない場合の exit code | `gnmi-native.sh:3` |
+| `INCORRECT_TELEMETRY_VALUE` | `2` | `port` / `threshold` / `idle_conn_duration` に不正値が設定された場合の exit code | `gnmi-native.sh:4` |
+| `TELEMETRY_VARS_FILE` | `/usr/share/sonic/templates/telemetry_vars.j2` | CONFIG_DB 読み取り用 Jinja2 テンプレートパス | `gnmi-native.sh:5` |
+| `CVL_SCHEMA_PATH` | `/usr/sbin/schema` | CVL (Config Validation Library) スキーマパス。環境変数として `export` | `gnmi-native.sh:30` |
+| telemetry バイナリパス | `/usr/sbin/telemetry` | `exec` で起動する Go バイナリのフルパス | `gnmi-native.sh:150` |
+| SmartSwitch ZMQ ポート | `8100` | `DEVICE_METADATA.subtype=SmartSwitch` 時に `-zmq_port=8100` として付与 | `gnmi-native.sh:91` |
+| デフォルトポート (GNMI テーブル欠如時) | `8080` | `GNMI` テーブルが CONFIG_DB に存在しない場合のフォールバックポート | `gnmi-native.sh:65` |
+| `GRPC_GO_LOG_VERBOSITY_LEVEL` | `99` | gRPC Go ライブラリの詳細ログレベル。全ログを出力する最大値 | `gnmi-native.sh:26` |
+| `GRPC_GO_LOG_SEVERITY_LEVEL` | `info` | gRPC Go ライブラリのログ重要度フィルタ | `gnmi-native.sh:27` |
+
+### telemetry.go — Go フラグデフォルト値（CONFIG_DB 非管理）
+
+`setupFlags()` で定義されるが、`gnmi-native.sh` から明示的に設定されない（CONFIG_DB から読み取られない）定数。コンテナ再ビルドなしには変更不可。
+
+| フラグ名 | デフォルト値 | 用途 | ソース |
+|---------|------------|------|--------|
+| `unix_socket` | `/var/run/gnmi/gnmi.sock` | TLS なしローカル接続用 Unix ソケットパス | `telemetry.go:175` |
+| `jwt_refresh_int` | `900` 秒 | JWT トークンをリフレッシュ可能になるまでの期限前秒数 | `telemetry.go:183` |
+| `jwt_valid_int` | `3600` 秒 | JWT トークンの有効期間 | `telemetry.go:184` |
+| `max_recv_msg_size` | `4194304` (4 MiB) | gRPC 受信メッセージ最大サイズ | `telemetry.go:209` |
+| `max_send_msg_size` | `4194304` (4 MiB) | gRPC 送信メッセージ最大サイズ | `telemetry.go:210` |
+| `img_dir` | `/tmp/host_tmp` | gNOI SetPackage 等で画像転送先として使用するディレクトリ | `telemetry.go:195` |
+| `ca_cert_lnk` | `/keys/ca_cert.lnk` | CA 証明書のシンボリックリンクパス（`ca_crt` 指定時は自動上書き） | `telemetry.go:199,303-305` |
+| `server_cert_lnk` | `/keys/server_cert.lnk` | サーバ証明書のシンボリックリンクパス（`server_crt` 指定時は自動上書き） | `telemetry.go:200,306-308` |
+| `server_key_lnk` | `/keys/server_key.lnk` | サーバ秘密鍵のシンボリックリンクパス（`server_key` 指定時は自動上書き） | `telemetry.go:201,309-311` |
+| `cert_crl_dir` | `/mtls/crl` | CRL ファイルのディレクトリパス。`enable_crl=true` 時のみ参照 | `telemetry.go:203` |
+| `grpc_meta` | `/keys/grpc-version.json` | gRPC 証明書メタデータ JSON ファイルパス (Certz) | `telemetry.go:204,312-314` |
+| `authz_meta` | `/keys/authz-version.json` | 認可ポリシーメタデータ JSON ファイルパス | `telemetry.go:205` |
+| `authorization_policy_file` | `/keys/authorization_policy.json` | 認可ポリシー JSON のフルパス | `telemetry.go:207` |
+
+### telemetry.go — TLS / gRPC ランタイム定数
+
+ソースコードにリテラルとして埋め込まれており、CONFIG_DB / YANG で変更不可。
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| TLS 最小バージョン | `tls.VersionTLS12` (TLS 1.2) | `tls.Config.MinVersion` として設定。TLS 1.0/1.1 を排除 | `telemetry.go:482` |
+| TLS 優先曲線 | P521, P384, P256 | `tls.Config.CurvePreferences` — 最強曲線を優先 | `telemetry.go:484` |
+| TLS セッションチケット無効化 | `true` | `tls.Config.SessionTicketsDisabled` — Forward Secrecy 確保 | `telemetry.go:483` |
+| TLS 優先暗号スイート | ECDHE-ECDSA/RSA + AES-256-GCM / ChaCha20 / AES-128-GCM | `tls.Config.CipherSuites` (6 スイート固定) | `telemetry.go:486-493` |
+| keepalive MinTime | `20` 秒 | `keepalive.EnforcementPolicy.MinTime` — クライアントの ping 間隔下限 | `telemetry.go:547` |
+| keepalive PermitWithoutStream | `true` | アクティブストリームがない場合も keepalive ping を許可 | `telemetry.go:548` |
+
+> **補足**: `/keys/` 以下のシンボリックリンクパスは Docker コンテナ内部の証明書管理機構 (Certz) が使用する。`GNMI|certs` で `server_crt`/`server_key`/`ca_crt` を指定した場合、`setupFlags()` が自動的にリンクパスを `filepath.Dir(certFile)/` 配下に書き換えるため、`/keys/` のデフォルトは実質オーバーライドされる (telemetry.go:303-314)。
+
+<!-- evidence: sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:3-5,26-30,65,91,150 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd); sonic-net/sonic-gnmi:telemetry/telemetry.go:175,183-184,195,199-207,209-210,303-314,482-493,547-548 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22) -->
+<!-- /constants -->
+
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
