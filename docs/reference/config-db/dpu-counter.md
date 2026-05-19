@@ -368,7 +368,7 @@ if (fc_status != prev_enabled)
 > **Evidence**: `sonic-swss/orchagent/flexcounterorch.cpp:156-187,395-398` (warm-reboot タイマー・allPortsReady ガード・無効キー・未サポートフィールド), `sonic-swss/orchagent/dash/dashcounter.h:23-70` (NULL OID ガード・冪等ガード)
 <!-- /failure -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
 
 > **調査根拠**: `dashorch.h:29-33`, `flexcounterorch.cpp:44`, `enable_counters.py:50-63`, `schema.h:293-295`, `flex_counter_manager.cpp:54-55` 全行精読 (2026-05-19)
@@ -446,7 +446,7 @@ else:
 
 `DashCounter<CounterType::ENI>` と `DashCounter<CounterType::DASH_METER>` がそれぞれ `flex_counter_manager.cpp:54-55` の `counter_id_field_lookup` マップを通じてこれらのフィールド名を解決する。
 
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
