@@ -394,6 +394,68 @@ VRFOrch: STATE_DB VRF_OBJECT_TABLE|<name> DEL
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`VRF_TABLE` / `VRF_OBJECT_TABLE` はいずれも書き手・読み手ともに **`swss::Table`（素の HSET / HDEL / DEL）** を使用する。`ProducerStateTable` や `NotificationProducer` は一切用いられず、Redis PUBLISH は発行されない。consumer 側はいずれも keyspace 通知を購読せず、`doTask()` イテレーション内の **オンデマンド polling（`Table::get()`）** で状態を確認する。
+
+### Producer / Consumer ペア
+
+| 区間 | 書込み API | PUBLISH 発行 |
+|------|-----------|-------------|
+| `vrfmgrd` → `VRF_TABLE` | `swss::Table::set()` (`vrfmgr.cpp:289, 308`) | なし |
+| `vrfmgrd` → `VRF_TABLE` (DEL) | `swss::Table::del()` (`vrfmgr.cpp:339, 351`) | なし |
+| `VRFOrch` → `VRF_OBJECT_TABLE` | `swss::Table::hset()` (`vrforch.cpp:120, 150`) | なし |
+| `VRFOrch` → `VRF_OBJECT_TABLE` (DEL) | `swss::Table::del()` (`vrforch.cpp:193`) | なし |
+| `intfmgrd` ← `VRF_TABLE` | `swss::Table::get()` polling (`intfmgr.cpp:671, 680`) | — |
+| `vxlanmgr` ← `VRF_TABLE` | `swss::Table::get()` polling （`isVrfStateOk()` 内, `vxlanmgr.cpp:744`) | — |
+| `vrfmgrd` ← `VRF_OBJECT_TABLE` | `swss::Table::get()` polling （`isVrfObjExist()` 内, `vrfmgr.cpp:208`) | — |
+
+### 書込み API: 素の `swss::Table`（Pub/Sub 非対応）
+
+テーブル宣言:
+
+- `VRF_TABLE`: `Table m_stateVrfTable;` — `vrfmgr.h:43`、初期化 `vrfmgr.cpp:25`
+- `VRF_OBJECT_TABLE`: `Table m_stateVrfObjectTable;` — `vrfmgr.h:43`（`VRFOrch` 側は `vrforch.cpp` 内で直接 `swss::Table` 構築）
+
+いずれも `ProducerStateTable`（`_KEY_SET` チャンネルへの PUBLISH）や `NotificationProducer`（ad-hoc PUBLISH）は使用しない。
+
+### 通知チャンネル
+
+| 経路 | 状態 |
+|------|------|
+| `<TABLE>_CHANNEL` への PUBLISH | **発行されない**（ProducerStateTable 非使用） |
+| `NotificationProducer`（ad-hoc PUBLISH） | **なし** |
+| `__keyspace@<dbId>__:...` keyspace 通知 | Redis `notify-keyspace-events` 設定次第で発火しうるが、正規 consumer はいずれも購読しない |
+
+### 購読側はすべて polling
+
+各 consumer は keyspace 通知を購読せず、`doTask()` イテレーション内で `Table::get()` を呼んで存在確認する:
+
+- `intfmgrd`: `INTERFACE` / `VLAN_INTERFACE` / `LAG_INTERFACE` の SET 処理時に `m_stateVrfTable.get(alias, temp)` で VRF の readiness を確認 (`intfmgr.cpp:671, 680`)。エントリが存在しなければ `m_toSync` に残留し、次の doTask() で再チェック。
+- `vxlanmgr`: `VNET` / `VRF` テーブルの SET 処理時に `isVrfStateOk()` → `m_stateVrfTable.get(vrfName, temp)` を呼んで確認 (`vxlanmgr.cpp:744`)。存在しなければ `m_toSync` に残留。
+- `vrfmgrd` 自身: VRF 削除処理で `isVrfObjExist()` → `m_stateVrfObjectTable.get(vrfName, temp)` を呼んで `VRFOrch` の SAI 削除完了を待機 (`vrfmgr.cpp:208, 331, 342`)。
+
+### データフロー図
+
+```
+書込み主体
+  vrfmgrd     → swss::Table::set/del  → STATE_DB[VRF_TABLE]
+  VRFOrch     → swss::Table::hset/del → STATE_DB[VRF_OBJECT_TABLE]
+    × PUBLISH <TABLE>_CHANNEL なし
+    × NotificationProducer なし
+
+consumer 側（on-demand polling、doTask() イテレーション内）
+  intfmgrd    → Table::get()  ← HGETALL/HGET on VRF_TABLE
+  vxlanmgr    → Table::get()  ← HGETALL/HGET on VRF_TABLE
+  vrfmgrd     → Table::get()  ← HGETALL/HGET on VRF_OBJECT_TABLE
+    （keyspace 通知購読なし）
+```
+
+> **Evidence**: `sonic-swss/cfgmgr/vrfmgr.h` L43（`Table m_stateVrfTable, m_stateVrfObjectTable`）、`vrfmgr.cpp` L25-26（初期化）、L289, 308, 339, 351（書込み呼び出し）、L204-208（`isVrfObjExist()` — `Table::get()` polling）。`sonic-swss/cfgmgr/intfmgr.cpp` L40（`Table m_stateVrfTable`）、L671, 680（`Table::get()` polling）。`sonic-swss/cfgmgr/vxlanmgr.cpp` L192（`Table m_stateVrfTable`）、L744（`isVrfStateOk()` 内 polling）。`sonic-swss/orchagent/vrforch.cpp` L120, 150, 193（`swss::Table::hset/del`）。
+
+<!-- /pubsub -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
