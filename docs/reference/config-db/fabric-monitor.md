@@ -226,6 +226,66 @@ CRC エラー率の判定には SAI から収集された `SAI_PORT_STAT_IF_IN_E
 
 <!-- /cross-refs -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`fabricportsorch.cpp` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。`fabricmgr.cpp` には数値定数なし（値の転送のみ）。
+
+### ポーリングタイマー定数
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| `FABRIC_POLLING_INTERVAL_DEFAULT` | `30` 秒 | `m_timer` (FABRIC_POLL) 周期。ポート状態・統計の定期ポーリング間隔 | fabricportsorch.cpp:21,87 |
+| `FABRIC_DEBUG_POLLING_INTERVAL_DEFAULT` | `12` 秒 | `m_debugTimer` (FABRIC_DEBUG_POLL) 周期。監視有効時の CRC/FEC エラー集計間隔 | fabricportsorch.cpp:29,88 |
+| `FABRIC_PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | COUNTERS_DB ファブリックポート統計 FlexCounter 周期 | fabricportsorch.cpp:26,84 |
+| `FABRIC_QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `100000` ms | COUNTERS_DB ファブリックキュー統計 FlexCounter 周期 | fabricportsorch.cpp:28,86 |
+| `SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS` | `500` ms | VOQ switch 用 switch drop counter FlexCounter 周期 | fabricportsorch.cpp:33,106 |
+| `FABRIC_SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | fabric switch 用 switch drop counter FlexCounter 周期 | fabricportsorch.cpp:34,106 |
+
+> これらのタイマー定数は CONFIG_DB / YANG に管理フィールドが存在せず、変更にはソースコード修正と orchagent 再コンパイルが必要。
+
+### エラー閾値フォールバック定数 (APPL_DB 未設定時)
+
+| 定数名 | 値 | 対応 CONFIG_DB フィールド | ソース |
+|--------|----|--------------------------|--------|
+| `ISOLATION_POLLS_CFG` | `1` | `monPollThreshIsolation` | fabricportsorch.cpp:44,436 |
+| `RECOVERY_POLLS_CFG` | `8` | `monPollThreshRecovery` | fabricportsorch.cpp:45,437 |
+| `ERROR_RATE_CRC_CELLS_CFG` | `1` | `monErrThreshCrcCells` | fabricportsorch.cpp:46,438 |
+| `ERROR_RATE_RX_CELLS_CFG` | `61035156` | `monErrThreshRxCells` | fabricportsorch.cpp:47,439 |
+
+APPL_DB に `FABRIC_MONITOR_DATA` エントリが存在する場合は CONFIG_DB 由来の値が優先される。YANG `default` 値とこれらの定数は一致しているため、通常運用では差異は生じない（`monCapacityThreshWarn` の例外のみ `cdb-exceptions` 参照）。
+
+### FEC エラー専用定数 (CONFIG_DB 非管理)
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| `FEC_ISOLATE_POLLS` | `2` | FEC uncorrectable エラー連続超過でファブリックリンクを isolate するポーリング数。`monPollThreshIsolation` と **独立**して動作 | fabricportsorch.cpp:42,434 |
+| `FEC_UNISOLATE_POLLS` | `8` | FEC 回復連続ポーリング数。`monPollThreshRecovery` と **独立**して動作 | fabricportsorch.cpp:43,435 |
+
+> `FEC_ISOLATE_POLLS` / `FEC_UNISOLATE_POLLS` は CONFIG_DB に対応フィールドが存在しない完全ハードコード値。CRC 経路の `monPollThreshIsolation` / `monPollThreshRecovery` とは別カウンタで動作するため、`monPollThresh*` を調整しても FEC 経路の isolate/unisolate 動作は変わらない。
+
+### リンクアップ直後のスキップカウント
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| `MAX_SKIP_CRCERR_ON_LNKUP_POLLS` | `20` | リンクアップ直後に CRC エラーを無視するポーリング上限（ブート時誤 isolate 防止） | fabricportsorch.cpp:39,766 |
+| `MAX_SKIP_FECERR_ON_LNKUP_POLLS` | `20` | リンクアップ直後に FEC エラーを無視するポーリング上限 | fabricportsorch.cpp:40,817 |
+
+### Permanent Isolation 判定時間窓
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| `CHECK_TIME` | `120` 分 | `addErrorTime()` / `checkDownCnt()` が permanent isolation 判定に使う時間窓。120 分以内に 3 回以上 auto-isolate が発生すると permanent isolation 対象となる | fabricportsorch.cpp:38,1647,1697 |
+
+### キャパシティ計算定数
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| `FABRIC_LINK_RATE` | `44316` | ファブリックリンク 1 本あたりの帯域レート定数（単位: Mbps 相当）。`updateFabricCapacity()` 内で総キャパシティおよびダウンキャパシティの計算に使用 | fabricportsorch.cpp:48,1133,1137 |
+
+> **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:21-48,84-88,106,434-439,766,817,1133,1137,1350,1647,1697`; `cfgmgr/fabricmgr.cpp` — 定数定義なし
+<!-- /constants -->
+
 ## 購読者
 
 - ファブリックモニタ daemon（プラットフォーム / [orchagent](../../reference/glossary.md#term-orchagent) の FabricPortOrch 拡張）
