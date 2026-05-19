@@ -413,7 +413,7 @@ CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
 
 <!-- /pubsub -->
 
-<!-- failure-behavior -->
+<!-- failure -->
 ## 失敗挙動 (Phase D)
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
@@ -445,7 +445,7 @@ CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
 
 **インターフェース未 ready の場合のみ自動リトライあり**。その他の netlink 失敗（カーネルエラー・権限不足等）はエラーログを出してエントリを破棄する。
 
-<!-- /failure-behavior -->
+<!-- /failure -->
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
