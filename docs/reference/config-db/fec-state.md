@@ -490,6 +490,65 @@ if value.strip() not in supported_fecs_list:
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドの書込み有無・値は、
+プラットフォームごとの SAI Capability 実装状況によって大きく異なる。
+`PortsOrch` はコンストラクタで 2 つの SAI capability クエリを実行し、その結果をフラグとして保持する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-platform.md -->
+
+### `oper_fec_sup` / `fec_override_sup` フラグの確定
+
+`PortsOrch` コンストラクタ (portsorch.cpp:987–1010) は `gMySwitchType != "dpu"` のときのみ以下を実行する。
+
+| フラグ | 対応 SAI 属性 | 確定条件 | 影響するフィールド |
+|--------|-------------|---------|-----------------|
+| `oper_fec_sup` | `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` | `get_implemented=true` のとき `true` | `fec` フィールドへの SAI oper 値書込み |
+| `fec_override_sup` | `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` | `set_implemented && create_implemented` 両方 `true` のとき `true` | `supported_fecs` への `"auto"` 末尾追加 / `fec=auto` 設定可否 |
+
+両フラグはコンストラクタ内で 1 回のみ評価され、orchagent 再起動まで変化しない。
+
+### DPU プラットフォームの特別扱い
+
+`gMySwitchType == "dpu"` のとき上記 SAI capability クエリブロック全体がスキップされるため、両フラグはデフォルト値 `false` のままとなる。
+
+| 条件 | `oper_fec_sup` | `fec_override_sup` | `fec` フィールド | `"auto"` 出現 |
+|------|---------------|-------------------|----------------|-------------|
+| `gMySwitchType == "dpu"` | `false`（スキップ） | `false`（スキップ） | 常に `"N/A"` | なし |
+| `gMySwitchType != "dpu"` | SAI クエリ次第 | SAI クエリ次第 | SAI 値 or `"N/A"` | `fec_override_sup=true` 時のみ |
+
+### プラットフォーム別挙動一覧
+
+| プラットフォーム | `oper_fec_sup` | `fec_override_sup` | `fec` 書込み | `supported_fecs` | `"auto"` 含む |
+|----------------|---------------|-------------------|------------|-----------------|-------------|
+| Broadcom (Trident4 / Tomahawk4 以降) | `true` | `true` | SAI oper 値 (`none`/`rs`/`fc`) | SAI 対応モード CSV | ◎ |
+| Broadcom 旧世代 (Trident2 等) | `false`（get 未実装） | プラットフォーム次第 | `"N/A"` 固定 | フィールド不在 (NOT_IMPLEMENTED 多) | ✗ |
+| Mellanox/NVIDIA Spectrum | `true` | `true` | SAI oper 値 | SAI 対応モード CSV | ◎ |
+| DPU | `false`（クエリスキップ） | `false`（クエリスキップ） | `"N/A"` 固定 | SAI 次第（多くは不在） | ✗ |
+| VS (仮想スイッチ) | `false`（SAI stub が unimplemented） | `false` | `"N/A"` 固定 | フィールド不在 | ✗ |
+
+### `fec=auto` 設定とプラットフォーム制約
+
+`fec_override_sup=false` のプラットフォームで CONFIG_DB に `fec=auto` を設定すると、
+`doPortTask` (portsorch.cpp:5317–5321) が `SWSS_LOG_ERROR("Auto FEC mode is not supported")` を出力し
+タスクエントリを永久スキップ (`erase(it)`) する。STATE_DB には何も書き込まれず、systemd 再起動 + CONFIG_DB 再投入が必要となる。
+
+### Mellanox (NVIDIA Spectrum) 固有コードと FEC フィールドの無関係性
+
+`isMlnxPlatform()` 関数 (portsorch.cpp:689) が使われる分岐は FEC フィールド書込みとは無関係:
+
+| `isMlnxPlatform()` 使用箇所 | 用途 |
+|---------------------------|------|
+| portsorch.cpp:858 | Trim 統計プラグイン (`nvdaPortTrimSha`) の追加判定 |
+| portsorch.cpp:6362, 6379 | LAG distribution/collection 順序制御 |
+
+STATE_DB `fec` / `supported_fecs` への書込みはプラットフォーム文字列検査ではなく
+SAI capability クエリ結果（`oper_fec_sup` / `fec_override_sup`）のみで制御される。
+
+<!-- /platform -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`PORT` テーブル](port.md) — FEC の設定フィールド (`fec`)
