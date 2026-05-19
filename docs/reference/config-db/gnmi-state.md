@@ -358,4 +358,55 @@ connection key 末尾に付加される RFC3339 タイムスタンプは `time.N
 -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`TELEMETRY_CONNECTIONS` は STATE_DB に直接書き込まれるランタイム状態テーブルであり、CONFIG_DB 購読メカニズム（`SubscriberStateTable` / `ConsumerStateTable` / `NotificationConsumer`）は**一切使用しない**。
+
+### Producer / Consumer ペア
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|--------------------|
+| `telemetry` デーモン → STATE_DB | `go-redis HSet/HDel` 直接呼び出し | `TELEMETRY_CONNECTIONS`（Redis Hash、TTL なし、keyspace 通知登録なし） |
+| STATE_DB → `show gnmi`（sonic-utilities） | `go-redis HGetAll` 直接呼び出し | `TELEMETRY_CONNECTIONS` の全フィールドを一括取得 |
+| STATE_DB → テストコード | `go-redis HGetAll` 直接呼び出し | `gnmi_server/server_test.go` の単体テスト検証 |
+
+### STATE_DB への書き込みフロー
+
+`telemetry` デーモンは `gnmi_server/connection_manager.go` 内の `ConnectionManager` が STATE_DB への Redis クライアント (`rclient`) を **起動時** に初期化し、以降は RPC ハンドラスレッドから直接 `HSet` / `HDel` を発行する。orchagent・translib・syncd などの中間プロセスは介在しない。
+
+```
+telemetry デーモン
+  └─ Subscribe RPC ハンドラ (server.go:866)
+       └─ ConnectionManager.Add()     → HSet(TELEMETRY_CONNECTIONS, key, "active")
+       └─ ConnectionManager.Remove()  → HDel(TELEMETRY_CONNECTIONS, key)
+       └─ PrepareRedis() (起動時)     → HGetAll → 全 HDel（前回残留エントリのクリア）
+```
+
+`go-redis` ライブラリを TCP で直接使用しており、swsscommon の `DBConnector` / `Table` 抽象は経由しない。keyspace 通知の登録も行わないため、このテーブルへの変更が他プロセスへ Redis PUBLISH されることはない。
+
+### CONFIG_DB との関係（購読なし）
+
+`telemetry` デーモンは CONFIG_DB の `TELEMETRY_CONNECTIONS` を**購読しない**。CONFIG_DB との通信は以下の独立したパスで行われ、いずれも `TELEMETRY_CONNECTIONS` の書き込みとは直接連動しない。
+
+| CONFIG_DB パス | 方式 | タイミング |
+|---------------|------|----------|
+| `GNMI\|certs` / `GNMI\|gnmi` の読み取り | `sonic-cfggen` スナップショット | コンテナ起動時 1 回のみ |
+| `GNMI_CLIENT_CERT\|<cert_cname>` の読み取り | swsscommon ConfigDBConnector one-shot | 接続認証ごと（ランタイム） |
+| `TELEMETRY_CLIENT\|*` の変更追従 | `go-redis PSUBSCRIBE` keyspace 通知 | `dialout_client_cli` プロセス起動時 + ランタイム |
+
+### 設計上の特性
+
+このテーブルは **可視化専用のランタイム状態** であり、変更通知を他プロセスへブロードキャストする設計を持たない。`show gnmi` などの consumer はポーリング型（HGetAll 一括取得）でのみ参照する。
+
+<!-- evidence:
+  connection_manager.go:32-50 — PrepareRedis(): go-redis NewClient() で STATE_DB に TCP 直接接続
+  connection_manager.go:111-118 — storeKeyRedis(): rclient.HSet(ctx, table, key, "active")
+  connection_manager.go:121-131 — deleteKeyRedis(): rclient.HDel(ctx, table, key)
+  server.go:866 — Subscribe RPC ハンドラが ConnectionManager.Add() を呼び出す
+  gnmi-native.sh:19 — sonic-cfggen によるスナップショット読み取り（TELEMETRY_CONNECTIONS とは独立）
+  dialout_client.go:648-746 — TELEMETRY_CLIENT の PSUBSCRIBE（TELEMETRY_CONNECTIONS とは独立）
+-->
+<!-- /pubsub -->
+
 [^1]: `sonic-gnmi` `gnmi_server/connection_manager.go:16` — `const table = "TELEMETRY_CONNECTIONS"`、`PrepareRedis()` / `Add()` / `Remove()` で STATE_DB を読み書き
