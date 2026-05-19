@@ -256,6 +256,40 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/heartbeat-failure.md`
+
+### 失敗パス一覧
+
+| # | 失敗条件 | 挙動 | 重大度 |
+|---|----------|------|--------|
+| 1 | `alert_interval` フィールド欠落 | `supervisor-proc-exit-listener` がデフォルト `ALERTING_INTERVAL_SECS = 60` 秒にフォールバック。クラッシュなし | 低（監視継続） |
+| 2 | `heartbeat_interval` フィールド欠落 | `supervisor-proc-exit-listener` は `heartbeat_interval` を使用しないため影響なし。eventd は CONFIG_DB を直接購読しないため同様に影響なし | 低（影響なし） |
+| 3 | CONFIG_DB 接続失敗 | `load_heartbeat_alert_interval()` が例外終了する可能性がある。`heartbeat_alert_interval_initialized` が `False` のままのため次回呼び出しで再試行 | 中（一時的） |
+| 4 | `event_publish()` 失敗（eventd） | `SWSS_LOG_ERROR("Failed to publish heartbeat rc=%d")` を syslog に記録して継続。eventd クラッシュなし | 低（継続） |
+| 5 | `events_init_publisher()` 初期化失敗（eventd） | `RET_ON_ERR` マクロにより eventd プロセスが終了（fatal） | 高（プロセス終了） |
+| 6 | `events_init_subscriber()` 初期化失敗（eventd） | `RET_ON_ERR` マクロにより eventd プロセスが終了（fatal） | 高（プロセス終了） |
+| 7 | 監視対象プロセスが `alert_interval` 秒以上 heartbeat 無送信（stuck） | `generate_alerting_message(process, "stuck", ..., LOG_WARNING)` で syslog に WARNING を記録。プロセス強制終了・自動再起動は行わない | 中（通知のみ） |
+| 8 | HEARTBEAT テーブルが空（エントリなし） | `heartbeat_alert_interval_initialized = True` にセットされ、全プロセスがデフォルト 60 秒フォールバックを使用 | 低（デフォルト動作） |
+
+### 主要な失敗パス詳細
+
+**`alert_interval` 欠落時のフォールバック (失敗 #1)**
+
+`load_heartbeat_alert_interval()` は `alert_interval` フィールドが存在しない場合（`.get('alert_interval')` が `None`）を条件判定でスキップし、`heartbeat_alert_interval_mapping` に登録しない。`get_heartbeat_alert_interval()` はプロセスが mapping に不在の場合 `ALERTING_INTERVAL_SECS = 60` を返す（`supervisor-proc-exit-listener:142-143`）。
+
+**stuck 検出の通知のみ動作 (失敗 #7)**
+
+監視ループ (`supervisor-proc-exit-listener:243-249`) は `threshold > 0 and elapsed_secs >= threshold` の条件で stuck を検出するが、アクションは syslog への `LOG_WARNING` 記録のみ。プロセスへの SIGTERM 送信や supervisord への終了通知は行わない。不応答プロセスの強制回復はオペレータ手動か `auto-restart` 設定に委ねられる。
+
+**eventd publish 失敗の非致命的ハンドリング (失敗 #4)**
+
+`event_publish(pub_handle, EVENTD_HEARTBEAT_TAG)` が非ゼロを返した場合は `SWSS_LOG_ERROR` のみ（`eventd.cpp:293`）。publish 失敗は heartbeat イベントの欠落を意味するが、eventd プロセス自体は継続して次のサイクルで再試行する。
+
+<!-- /failure -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
