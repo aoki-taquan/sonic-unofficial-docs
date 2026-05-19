@@ -333,6 +333,60 @@ catch(const std::system_error& e) {
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss/orchagent/portsorch.h` L34-42、`sonic-swss/orchagent/portsorch.cpp` L90-93, L734-739、`sonic-swss/orchagent/flexcounterorch.cpp` L44-63 全行精読 (2026-05-19)
+
+### FlexCounter グループ名定数 (portsorch.h)
+
+| 定数マクロ | 値（文字列） | 証拠 | 対応する CONFIG_DB キー |
+|-----------|------------|------|------------------------|
+| `QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"QUEUE_STAT_COUNTER"` | `portsorch.h:34` | `FLEX_COUNTER_TABLE\|QUEUE` |
+| `QUEUE_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"QUEUE_WATERMARK_STAT_COUNTER"` | `portsorch.h:35` | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` |
+| `WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"WRED_ECN_QUEUE_STAT_COUNTER"` | `portsorch.h:42` | `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` |
+
+これらの文字列は FLEX_COUNTER_DB および syncd 内部で FlexCounter グループを識別する。CONFIG_DB から変更不可。
+
+### ポーリング間隔定数 (portsorch.cpp)
+
+| 定数マクロ | 値 | 証拠 | 対応グループ |
+|-----------|-----|------|------------|
+| `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | `portsorch.cpp:90` | `QUEUE_STAT_COUNTER`（通常カウンタ） |
+| `QUEUE_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | `portsorch.cpp:91` | `QUEUE_WATERMARK_STAT_COUNTER`（ウォーターマーク） |
+| `QUEUE_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` | `portsorch.h:38` | 同上（文字列版。setFlexCounterGroupParameter に渡される） |
+
+`WRED_ECN_QUEUE_STAT_COUNTER` グループは `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS`（10000 ms）を共用する（`portsorch.cpp:739`）。
+
+### FlexCounter CONFIG_DB キー名定数 (flexcounterorch.cpp)
+
+`FlexCounterOrch::doTask()` が CONFIG_DB の `FLEX_COUNTER_TABLE` エントリを照合する際に用いる固定文字列:
+
+| 定数マクロ | 値 | 証拠 |
+|-----------|-----|------|
+| `QUEUE_KEY` | `"QUEUE"` | `flexcounterorch.cpp:51` |
+| `QUEUE_WATERMARK` | `"QUEUE_WATERMARK"` | `flexcounterorch.cpp:52` |
+| `WRED_QUEUE_KEY` | `"WRED_ECN_QUEUE"` | `flexcounterorch.cpp:62` |
+
+これらの文字列が `FLEX_COUNTER_TABLE` のキー（`FLEX_COUNTER_TABLE|QUEUE` の `QUEUE` 部分）として一致しない場合、`flexcounterorch.cpp` はそのエントリを無視する。
+
+### warm-reboot 遅延定数 (flexcounterorch.cpp)
+
+| 定数マクロ | 値 | 証拠 | 意味 |
+|-----------|-----|------|------|
+| `FLEX_COUNTER_DELAY_SEC` | `60` 秒 | `flexcounterorch.cpp:44` | warm-reboot 時に FlexCounter 処理を遅延させる秒数。cold boot では即 `m_delayTimerExpired = true` になりこの定数は使用されない |
+
+### 定数の外部変更可否
+
+| 定数 / 設定 | 外部変更可否 | 変更方法 |
+|------------|------------|---------|
+| FlexCounter グループ名（`QUEUE_STAT_COUNTER` 等） | **不可**（コードハードコード） | ソースコード修正 + 再ビルドが必要 |
+| ポーリング間隔デフォルト（10000 / 60000 ms） | **可**（上書き可能） | `counterpoll queue interval <ms>` / `counterpoll queue-watermark interval <ms>` で `FLEX_COUNTER_TABLE` の `POLL_INTERVAL` を書換える。orchagent が反映する |
+| CONFIG_DB キー照合文字列（`"QUEUE"` 等） | **不可**（コードハードコード） | ソースコード修正 + 再ビルドが必要 |
+| warm-reboot 遅延（60 秒） | **不可**（コードハードコード） | ソースコード修正 + 再ビルドが必要 |
+
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
