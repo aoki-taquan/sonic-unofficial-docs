@@ -233,6 +233,89 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`AclOrch` の処理失敗は `STATE_DB` の 3 テーブルに `status` フィールド値として反映される。エラー詳細は `SWSS_LOG_ERROR` / `SWSS_LOG_WARN` のみでサイログ出力される（`ERROR_TABLE` への書き込みはなし）。
+
+### ACL_TABLE_TABLE の失敗パターン
+
+**SET 時**:
+
+| 失敗ケース | 発生箇所 | STATE_DB status | retry |
+|---|---|---|---|
+| 属性不正 / stage 不正 / ports bind 不可 (`bAllAttributesOk=false`) | `doAclTableTask()` L5488-5494 | `"Inactive"` | なし (erase) |
+| `validate()` 失敗 (L3V4V6 非サポート / action 非サポート) | `AclTable::validate()` L2737-2766 | `"Inactive"` | なし (erase) |
+| `addAclTable()` SAI 失敗 (MIRROR capability 欠如 / SAI エラー) | `doAclTableTask()` L5480-5485 | `"Pending creation"` | 無制限 (it++) |
+| `updateAclTable()` 失敗 (ports 更新失敗) | `doAclTableTask()` L5465-5470 | 変化なし | 無制限 (it++) |
+
+**DEL 時**:
+
+| 失敗ケース | 発生箇所 | STATE_DB status | retry |
+|---|---|---|---|
+| `removeAclTable()` 失敗 (配下 rule 残存 / SAI 削除失敗) | `doAclTableTask()` L5505-5510 | `"Pending removal"` | 無制限 (it++) |
+
+### ACL_RULE_TABLE の失敗パターン
+
+**SET 時**:
+
+| 失敗ケース | 発生箇所 | STATE_DB status | retry |
+|---|---|---|---|
+| 属性不正 / マッチ不正 / v4+v6 混在 (`bAllAttributesOk=false` / `validate()` 失敗) | `doAclRuleTask()` L5700-5706 | `"Inactive"` | なし (erase) |
+| `addAclRule()` 失敗 + SAI リソース枯渇 + retry cache 登録成功 | `doAclRuleTask()` L5673-5684 | `"Pending creation"` | 同テーブル内他ルール DEL 成功で `notifyRetry()` |
+| `addAclRule()` 失敗 + SAI リソース枯渇 + retry cache 登録失敗 | `doAclRuleTask()` L5686-5692 | `"Pending creation"` | 無制限 (it++) |
+| `addAclRule()` 失敗 (リソース枯渇以外) | `doAclRuleTask()` L5694-5698 | `"Pending creation"` | 無制限 (it++) |
+
+**DEL 時**:
+
+| 失敗ケース | 発生箇所 | STATE_DB status | retry |
+|---|---|---|---|
+| `removeAclRule()` 失敗 | `doAclRuleTask()` L5723-5728 | `"Pending removal"` | 無制限 (it++) |
+
+!!! note "`Pending creation` のリソース枯渇ケース"
+    SAI リソース枯渇 (`isSaiStatusResourceFull()` が真) でルールが retry cache にパークされた場合、
+    同一テーブル内の**他ルールが削除されて `notifyRetry()` が発火するまで** STATUS は `"Pending creation"` のまま滞留する。
+    操作者から見ると「無関係に見えるルール A の削除がルール B を `Active` に遷移させる」ように見える
+    （evidence: `aclorch.cpp:5673-5692`, `aclorch.cpp:5716-5721`）。
+
+### ACL_STAGE_CAPABILITY_TABLE の失敗パターン
+
+orchagent 起動時 `init()` 内で 1 回のみ書き込まれる。SAI クエリ失敗時は `initDefaultAclActionCapabilities()` のフォールバックパスで `defaultAclActionsSupported` のハードコード値が書き込まれ、テーブルは必ず確定した値を保つ。
+
+| 失敗ケース | 発生箇所 | 結果 |
+|---|---|---|
+| `SAI_SWITCH_ATTR_MAX_ACL_ACTION_COUNT` 取得失敗 | `queryAclActionCapability()` L4017-4022 | 両ステージ共フォールバック値で書込み |
+| `SAI_SWITCH_ATTR_ACL_STAGE_INGRESS/EGRESS` 取得失敗 | `queryAclActionCapability()` L4030-4037 | 当該ステージのみフォールバック値。成功ステージは SAI 値 |
+
+フォールバック定義: `aclorch.cpp:168-196`（`defaultAclActionsSupported`）。
+
+### STATE_DB status 遷移サマリ
+
+```
+ACL_TABLE_TABLE SET:
+  bAllAttributesOk=false / validate()=false  →  "Inactive"         (erase, no retry)
+  addAclTable() 失敗                         →  "Pending creation" (it++, 無制限 retry)
+  updateAclTable() 失敗                      →  変化なし            (it++, 無制限 retry)
+  addAclTable()/updateAclTable() 成功        →  "Active"           (erase)
+
+ACL_TABLE_TABLE DEL:
+  removeAclTable() 失敗                      →  "Pending removal"  (it++, 無制限 retry)
+  removeAclTable() 成功                      →  エントリ削除
+
+ACL_RULE_TABLE SET:
+  bAllAttributesOk=false / validate()=false  →  "Inactive"         (erase, no retry)
+  addAclRule() 失敗 (SAI リソース枯渇)        →  "Pending creation" (retry cache / it++)
+  addAclRule() 失敗 (その他 SAI エラー)       →  "Pending creation" (it++, 無制限 retry)
+  addAclRule() 成功                          →  "Active"           (erase)
+
+ACL_RULE_TABLE DEL:
+  removeAclRule() 失敗                       →  "Pending removal"  (it++, 無制限 retry)
+  removeAclRule() 成功                       →  エントリ削除 + notifyRetry() 発火
+```
+
+> **証跡**: `doAclTableTask()` L5361-5518 精読、`doAclRuleTask()` L5520-5736 精読、`setAclTableStatus()` L6088-6093、`setAclRuleStatus()` L6102-6113、`queryAclActionCapability()` L3975-4054、`initDefaultAclActionCapabilities()` L4104-4118。
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: sonic-net/sonic-swss `orchagent/aclorch.cpp` — `setAclTableStatus()` L6088, `setAclRuleStatus()` L6102, `putAclActionCapabilityInDB()` L4056, `init()` L3475
