@@ -375,6 +375,47 @@ STATE_DB の `notify-keyspace-events` 設定に関わらず、orchagent / consum
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/queue-state-platform.md`
+
+`QUEUE_COUNTER_CAPABILITIES` テーブルのキー構造・フィールド名はすべてのプラットフォームで共通であり、コードレベルのプラットフォーム条件分岐（`gMySwitchType` 等）は `initCounterCapabilities()` 内に存在しない。唯一のプラットフォーム差分は `isSupported` の値であり、これは `sai_query_stats_capability(gSwitchId, SAI_OBJECT_TYPE_QUEUE, ...)` に対する SAI SDK の応答に完全に依存する。
+
+### switchType 別の動作
+
+| switchType | `initCounterCapabilities()` 実行有無 | WRED/ECN カウンタ期待値 |
+|-----------|-----------------------------------|--------------------|
+| 標準 BOX スイッチ（Broadcom ASIC 等） | 常に実行（無条件） | SAI 実装依存。WRED 対応 SKU では対応キーが `"true"` |
+| DPU (`gMySwitchType == "dpu"`) | 常に実行（DPU 用スキップなし） | DPU SAI は WRED 未サポートが多く、全 4 キーが `"false"` となる傾向 |
+| VoQ シャーシ (`gMySwitchType == "voq"`) | 常に実行（VoQ 用スキップなし） | VoQ ハードウェアは WRED/ECN をサポートしないケースが多く、全 4 キーが `"false"` となる傾向 |
+
+`initCounterCapabilities()` の呼び出し元 (`portsorch.cpp:1107`) は DPU / VOQ / 標準スイッチいずれの場合も条件なしで到達する。
+
+### SAI 実装ごとの差異
+
+| SAI 実装ケース | 結果 |
+|--------------|------|
+| SAI が `SAI_STATUS_SUCCESS` を返し WRED/ECN 統計がケイパビリティリストに含まれる | 対応する `isSupported` キーが `"true"` に上書き |
+| SAI が `SAI_STATUS_SUCCESS` を返すが WRED/ECN 統計がリストに含まれない | 全 4 キーが `"false"` のまま確定 |
+| SAI が `SAI_STATUS_BUFFER_OVERFLOW` を返す | リサイズして 1 回リトライ。再クエリ成功なら通常フロー、失敗なら全 4 キー `"false"` 確定 |
+| SAI が `SAI_STATUS_NOT_SUPPORTED` / その他エラーを返す | `SWSS_LOG_NOTICE` 出力後、全 4 キーが `"false"` のまま確定 |
+
+### VoQ シャーシ — FlexCounter 登録先の差異
+
+`isSupported = "true"` となった場合でも、VoQ 環境では WRED キューカウンタの FlexCounter 登録先の OID セットが異なる: `addWredQueueFlexCountersPerPortPerQueueIndex()` (portsorch.cpp:9583-9586) は VoQ ポートに対して `m_port_voq_ids` を使用する。`QUEUE_COUNTER_CAPABILITIES` テーブル自体の内容（`isSupported` 値）には影響しない。
+
+### プラットフォーム共通要素
+
+以下は全プラットフォームで不変:
+
+- 書き込まれる 4 キー名（リテラル文字列、`portsorch.cpp:1872-1875`）
+- `isSupported` フィールド名
+- テーブル名 `QUEUE_COUNTER_CAPABILITIES`（`schema.h:528` の定数由来）
+- 問い合わせ対象の SAI 統計 enum 4 種（`wred_queue_stat_ids` 静的定数、`portsorch.cpp:429-435`）
+
+<!-- /platform -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md) — WRED_ECN_QUEUE グループの enable/disable 設定
