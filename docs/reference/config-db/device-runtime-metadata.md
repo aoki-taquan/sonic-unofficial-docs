@@ -399,4 +399,37 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `sonic-host-services/scripts/featured` L145,195,232,587-590; `sonic-buildimage/files/build_templates/init_cfg.json.j2` L67,75,90,106-107 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-side-effects.md`
+
+`DEVICE_RUNTIME_METADATA` は CONFIG_DB に永続化されない仮想テーブルであり、自身が DB を直接書き込むことはない。ここでは `get_device_runtime_metadata()` の返り値を参照した consumer（`featured` / `sysmonitor.py` / `init_cfg.json.j2`）が、**FEATURE テーブル以外**へ副次的に行う書き込みを示す。
+
+### 副次書込み一覧
+
+| 副次書込み先 | 書き込み元 | 条件 | evidence |
+|---|---|---|---|
+| `CONFIG_DB FEATURE\|<name>` の `state` / `has_global_scope` / `has_per_asic_scope` (初回生成) | `sonic-cfggen` (init_cfg.json.j2) | 起動時 1 回。`ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED` / `CHASSIS_METADATA.module_type` の値で `enabled`/`disabled`/`True`/`False` を決定 | `init_cfg.json.j2:67,75,90,106-107` |
+| `STATE_DB FEATURE\|<name>` の `state` | `featured` | CONFIG_DB `FEATURE` 変化検知時または起動時 `sync_state_field()` 実行時。`_device_running_config` をレンダリングコンテキストに混入し、Jinja テンプレート文字列の `state` を評価して書き込む | `featured:145,195,232,587-590` |
+| `CONFIG_DB FEATURE\|<name>` の `has_global_scope` / `has_per_asic_scope` (書き戻し) | `featured` | `update_feature_state()` 成功後に `sync_feature_scope()` → `_conditional_update_scope()` を実行。`ETHERNET_PORTS_PRESENT` / `module_type` 由来の scope 値が CONFIG_DB の現在値と異なる場合のみ上書き | `featured:213-214,346-355` |
+
+### init_cfg.json.j2 による初回書き込みの分岐
+
+`sonic-cfggen` が `init_cfg.json.j2` をレンダリングして CONFIG_DB に書き込む初回起動時、`DEVICE_RUNTIME_METADATA` の値が以下の FEATURE エントリへ直接反映される:
+
+| FEATURE 名 | 参照フィールド | 倒れる方向 |
+|---|---|---|
+| `bgp` | `ETHERNET_PORTS_PRESENT=False` または `module_type=supervisor` | `state=disabled` |
+| `teamd` | `ETHERNET_PORTS_PRESENT=False` | `state=disabled` |
+| `macsec` | `MACSEC_SUPPORTED=False` | `state=disabled` |
+| 全 feature | `module_type=linecard` | `has_global_scope=False` |
+| 全 feature | `ETHERNET_PORTS_PRESENT=False` または `module_type=supervisor` | `has_per_asic_scope=False` |
+
+### APPL_DB / ASIC_DB / COUNTERS_DB — 書込なし
+
+`featured` / `sysmonitor.py` はいずれも SAI 非経由であり、APPL_DB / ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは一切発生しない。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: e33fec70e206 -->
