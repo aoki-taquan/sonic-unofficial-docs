@@ -508,4 +508,72 @@ orchagent BufferOrch → SAI sai_buffer_api (ASIC_DB 経由)
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/lossless-traffic-pattern-pubsub.md -->
+<!-- source: sonic-swss/cfgmgr/buffermgrd.cpp ref:master -->
+<!-- source: sonic-swss/cfgmgr/buffer_headroom_mellanox.lua ref:master -->
+<!-- source: sonic-swss/cfgmgr/buffer_headroom_barefoot.lua ref:master -->
+
+`LOSSLESS_TRAFFIC_PATTERN` テーブルは **`buffermgrdyn` の `SubscriberStateTable` 購読対象に含まれない**。Redis keyspace notification / PSUBSCRIBE は一切使用せず、Lua ヘッドルーム計算プラグインが実行時に CONFIG_DB を直接読み取る設計になっている。
+
+### buffermgrdyn の Subscribe 対象テーブル
+
+`buffermgrd.cpp:174-186` の `buffer_table_connectors`（dynamic mode）は以下のテーブルのみを `SubscriberStateTable` 経由で購読する。`LOSSLESS_TRAFFIC_PATTERN` は含まれない:
+
+```
+CFG_PORT_TABLE_NAME
+CFG_PORT_CABLE_LEN_TABLE_NAME
+CFG_BUFFER_POOL_TABLE_NAME
+CFG_BUFFER_PROFILE_TABLE_NAME
+CFG_BUFFER_PG_TABLE_NAME
+CFG_BUFFER_QUEUE_TABLE_NAME
+CFG_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME
+CFG_BUFFER_PORT_EGRESS_PROFILE_LIST_NAME
+CFG_DEFAULT_LOSSLESS_BUFFER_PARAMETER
+STATE_BUFFER_MAXIMUM_VALUE_TABLE
+STATE_PORT_TABLE_NAME
+```
+
+`LOSSLESS_TRAFFIC_PATTERN` はこのリストに存在しないため、テーブルが変更されても `buffermgrdyn` の `doTask()` キューにはエントリが入らない。
+
+### Lua スクリプトによる実行時直接読み取り
+
+`mtu` / `small_packet_percentage` は、`calculateHeadroomSize()` の呼び出し内で Lua スクリプト (`EVAL`) が CONFIG_DB から直接取得する:
+
+```lua
+-- buffer_headroom_mellanox.lua:91-96  /  buffer_headroom_barefoot.lua:80-84
+local lossless_traffic_keys = redis.call('KEYS', 'LOSSLESS_TRAFFIC_PATTERN*')
+local lossless_traffic = redis.call('HGETALL', lossless_traffic_keys[1])
+```
+
+これは Redis の `EVAL` コマンド内での直接 `KEYS` + `HGETALL` であり、Subscribe / keyspace 通知とは独立している。
+
+### Producer / Consumer ペア
+
+| 区間 | 方式 | keyspace 通知 |
+|------|------|--------------|
+| CLI / db_migrator → CONFIG_DB `LOSSLESS_TRAFFIC_PATTERN` | `ConfigDBConnector.set_entry()` (HSET 直接) | なし |
+| Lua (`buffer_headroom_*.lua`) → CONFIG_DB | `redis.call('HGETALL', ...)` 直接読み取り | なし |
+| buffermgrdyn → APP_DB `APP_BUFFER_PROFILE_TABLE` | `ProducerStateTable.set()` | あり (`PUBLISH`) |
+| APP_DB → orchagent `BufferOrch` | `ConsumerStateTable` | あり |
+
+### 変更の反映タイミング（重要な注意点）
+
+`LOSSLESS_TRAFFIC_PATTERN` を変更しても、次のいずれかのイベントが発生するまでヘッドルーム計算は再実行されない:
+
+| 再計算トリガー | 対象テーブル |
+|--------------|------------|
+| ポート速度 / ケーブル長変更 | `PORT` / `CABLE_LENGTH` |
+| BUFFER_PG エントリ変更 | `BUFFER_PG` |
+| BUFFER_POOL 変更 | `BUFFER_POOL` |
+| DEFAULT_LOSSLESS_BUFFER_PARAMETER 変更 | `DEFAULT_LOSSLESS_BUFFER_PARAMETER` |
+| `buffermgrd` プロセス再起動 | — |
+
+> **運用上の注意**: `LOSSLESS_TRAFFIC_PATTERN` を変更した後、新しい値をヘッドルーム計算に反映させるには、上記いずれかのテーブルを変更するか `buffermgrd` を再起動する必要がある。`LOSSLESS_TRAFFIC_PATTERN` 単体の変更のみでは即時反映されない。
+
+詳細根拠は `meta/_intermediate/cdb-flow/lossless-traffic-pattern-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
