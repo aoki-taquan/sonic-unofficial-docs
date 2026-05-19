@@ -310,6 +310,62 @@ ERROR_DB は Redis のインメモリ DB として設計されており、warm r
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-swss-common/common/status_code_util.h` (実装済み)、HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.3.2  
+> **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下の定数の多くは HLD 設計上の定義である。  
+> 詳細証跡: `meta/_intermediate/cdb-flow/errordb-constants.md`
+
+### `StatusCode` enum — 実装済み (status_code_util.h)
+
+ERROR_DB の `rc` フィールドに書き込まれる文字列値は `sonic-swss-common/common/status_code_util.h` で定義された `statusCodeMapping` によって厳密に管理される。15 コードが実装済みであり、HLD 設計時の 8 コードから拡張されている。
+
+| 定数名 | 対応 SAI ステータス | 実装状況 |
+|---|---|---|
+| `SWSS_RC_SUCCESS` | `SAI_STATUS_SUCCESS` | 実装済み |
+| `SWSS_RC_INVALID_PARAM` | `SAI_STATUS_INVALID_PARAMETER` | 実装済み |
+| `SWSS_RC_DEADLINE_EXCEEDED` | — (HLD 後追加) | 実装済み |
+| `SWSS_RC_UNAVAIL` | `SAI_STATUS_NOT_SUPPORTED` | 実装済み |
+| `SWSS_RC_NOT_FOUND` | `SAI_STATUS_ITEM_NOT_FOUND` | 実装済み |
+| `SWSS_RC_NO_MEMORY` | `SAI_STATUS_NO_MEMORY` | 実装済み |
+| `SWSS_RC_EXISTS` | `SAI_STATUS_ITEM_ALREADY_EXISTS` | 実装済み |
+| `SWSS_RC_PERMISSION_DENIED` | — (HLD 後追加) | 実装済み |
+| `SWSS_RC_FULL` | `SAI_STATUS_TABLE_FULL` | 実装済み |
+| `SWSS_RC_IN_USE` | `SAI_STATUS_OBJECT_IN_USE` | 実装済み |
+| `SWSS_RC_INTERNAL` | — (HLD 後追加) | 実装済み |
+| `SWSS_RC_UNIMPLEMENTED` | — (HLD 後追加) | 実装済み |
+| `SWSS_RC_NOT_EXECUTED` | — (HLD 後追加) | 実装済み |
+| `SWSS_RC_FAILED_PRECONDITION` | — (HLD 後追加) | 実装済み |
+| `SWSS_RC_UNKNOWN` | — (フォールバック) | 実装済み |
+
+**フォールバック動作**: `strToStatusCode()` は未知文字列を受けると `SWSS_RC_UNKNOWN` を返す (`status_code_util.h:74-80`)。つまり ERROR_DB の `rc` フィールドに上記以外の文字列が書き込まれた場合、読み出し側は `SWSS_RC_UNKNOWN` として扱う。
+
+### ERR_NOTIFY フラグ — HLD 設計定義 (未実装)
+
+HLD Section 3.3.2 の ErrorListener 登録シグネチャで使われる通知フラグ。正式なビット値は HLD に未定義であり、実装ヘッダーも master に存在しない。
+
+| フラグ | 意味 |
+|---|---|
+| `ERR_NOTIFY_FAIL` | SAI 操作失敗時のみ通知を受け取る (デフォルト動作) |
+| `ERR_NOTIFY_POSITIVE_ACK` | SAI 操作成功時にも通知を受け取る (オプション) |
+
+```cpp
+// HLD Section 3.3.2 — アプリ登録例 (コード未マージ)
+ErrorListener fpmErrorListener(APP_ROUTE_TABLE_NAME,
+    (ERR_NOTIFY_FAIL | ERR_NOTIFY_POSITIVE_ACK));
+```
+
+### 実装不在によるハードコード定数の不存在
+
+以下の定数は ERROR_DB の実装が master 未マージのため、orchagent / sonic-swss-common 内に存在しない:
+
+- **ERROR_DB の Redis DB ID**: `database_config.json` 未登録。実装時に新しい DB ID が割り当てられる予定
+- **ErrorReporter / ErrorListener クラス定数**: master には存在しない
+- **ASIC_DB → ERROR_DB 変換テーブル**: `orchagent` 内で SAI 型を `SWSS_RC_*` に変換するマッピングテーブルが実装される予定だが、現行コードは 0 件
+
+<!-- /constants -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
