@@ -348,6 +348,61 @@ CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer`
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L2166-2167, L2478, L2297-2302
+> 詳細証跡: `meta/_intermediate/cdb-flow/ssh-config-base-pubsub.md`
+
+### 購読チャンネル
+
+`HostConfigDaemon` は `ConfigDBConnector()` を使用し (`hostcfgd:2166`)、以下の購読を登録する:
+
+```python
+# hostcfgd L2478
+self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))
+```
+
+`ConfigDBConnector.subscribe()` は Redis keyspace 通知（`__keyspace@4__:SSH_SERVER|*` パターン）を利用する。通知を受けると `ssh_handler` コールバックが呼び出される。
+
+| チャンネル | DB | テーブル | 購読クラス | 発行元 |
+|---|---|---|---|---|
+| `ConfigDBConnector.subscribe()` | CONFIG_DB (dbId=4) | `SSH_SERVER` | Redis keyspace 通知 | `config ssh-server` CLI / `sonic-cfggen` / `config reload` |
+
+### ssh_handler コールバック
+
+```python
+# hostcfgd L2297-2302
+def ssh_handler(self, key, op, data):
+    self.sshscfg.policies_update(key, data)
+    self.pamLimitsCfg.update_config_file()
+    syslog.syslog(syslog.LOG_INFO, 'SSH Update: key: {}, op: {}, data: {}'.format(key, op, data))
+```
+
+`SSH_SERVER` テーブルへの書き込みはすべてこのコールバックを通じて `hostcfgd` に伝達される。`op` が `SET` / `DEL` のいずれでも同じハンドラが呼ばれ、`policies_update()` 内でフィールド値の有無によって動作を切り替える。
+
+### 購読者一覧
+
+| プロセス | `SSH_SERVER` 購読の有無 | 根拠 |
+|---------|----------------------|------|
+| `hostcfgd` | **あり** (`ConfigDBConnector.subscribe`) | `hostcfgd` L2478 |
+| `orchagent` | なし | SSH は SAI 非経由のホスト機能 |
+| `syncd` | なし | 同上 |
+| `sonic-mgmt-common` (translib) | なし | SSH_SERVER は gNMI/REST からの直接テーブルマッピングなし |
+
+### 起動時一括読み取り
+
+`HostConfigDaemon.load()` が `SshServer.load(ssh_server)` を呼び出すことで、`hostcfgd` 起動時に CONFIG_DB の既存 `SSH_SERVER|POLICIES` エントリを一括取得して `set_policies()` を実行する。subscribe ループ開始前に現在の設定が反映されるため、`hostcfgd` 再起動後も設定は保持される。
+
+### APPL_DB / STATE_DB への転送なし
+
+`hostcfgd` の SSH 処理パスは `ConfigDBConnector` のみを使用し、`ProducerStateTable` / `NotificationProducer` / `swsscommon.Table` への書き込みは一切行わない。`SSH_SERVER` テーブルの変更は APPL_DB・STATE_DB・ASIC_DB へ伝播しない。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2166-2167 (ConfigDBConnector 初期化) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2478 (subscribe SSH_SERVER) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2302 (ssh_handler) -->
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
