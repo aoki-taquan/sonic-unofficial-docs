@@ -486,6 +486,70 @@ gNMI サブシステムは CONFIG_DB テーブルのうち GNMI / GNMI_CLIENT_CE
 詳細な定数一覧 (JWT 変数宣言箇所、ビルドタグ _write バリアント等) は `meta/_intermediate/cdb-flow/gnmi-server-constants.md` を参照。
 <!-- /constants -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+gNMI サブシステムは **3 種類の異なる購読モデル**を使い分けている。
+
+### Redis 購読方式一覧
+
+| テーブル | 方向 | API / 方式 | 購読者 | タイミング |
+|---------|------|-----------|--------|----------|
+| `GNMI\|certs` / `GNMI\|gnmi` | CONFIG_DB → デーモン (読み取り) | `sonic-cfggen` 一括スナップショット | `gnmi-native.sh` | コンテナ起動時 1 回のみ |
+| `DEVICE_METADATA\|localhost` / `MGMT_VRF_CONFIG\|vrf_global` | CONFIG_DB → デーモン (読み取り) | `sonic-db-cli hget` 直接呼び出し | `gnmi-native.sh` | コンテナ起動時 1 回のみ |
+| `GNMI_CLIENT_CERT\|<cert_cname>` | CONFIG_DB → デーモン (読み取り) | swsscommon `ConfigDBConnector.Get_entry()` one-shot | `telemetry` 認証インターセプター | 接続認証ごと (ランタイム) |
+| `TELEMETRY_CLIENT\|*` | CONFIG_DB → デーモン (読み取り) | `go-redis PSUBSCRIBE` keyspace 通知 | `dialout_client_cli` | 起動時スキャン + ランタイム追従 |
+| `STATE_DB:TELEMETRY_CONNECTIONS` | デーモン → STATE_DB (書き込み) | `go-redis HSet/HDel` 直接書き込み | `telemetry` (connection_manager) | Subscribe RPC 接続/切断ごと |
+
+### (1) GNMI|certs / GNMI|gnmi — 起動時スナップショット (購読なし)
+
+`gnmi-native.sh` は起動時に `sonic-cfggen -d -t telemetry_vars.j2` で CONFIG_DB を**一度だけ**スナップショット読み取りする。読み取り後に `exec /usr/sbin/telemetry ${TELEMETRY_ARGS}` でプロセスを置き換える (`gnmi-native.sh:19,150`)。`telemetry` プロセス起動後は CONFIG_DB の変更を一切監視しない。`GNMI|certs` / `GNMI|gnmi` フィールドの変更を反映させるにはコンテナ再起動 (`docker restart docker-sonic-gnmi`) が必要。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` は**使用しない**。
+
+### (2) GNMI_CLIENT_CERT — 認証ごとの one-shot ルックアップ (購読なし)
+
+`telemetry` gRPC 認証インターセプターが毎接続 `PopulateAuthStructByCommonName()` を呼び出す。内部で `swsscommon.NewConfigDBConnector()` を生成し `Connect(false)` → `Get_entry(serviceConfigTableName, certCommonName)` で `GNMI_CLIENT_CERT|<cert_cname>` を読む。取得後にコネクタを即破棄 (`DeleteConfigDBConnector_Native`)。Redis Subscribe / PSubscribe は**使用しない**。`GNMI_CLIENT_CERT` エントリの変更は次回接続認証から即時有効になる（コンテナ再起動不要）（evidence: `clientCertAuth.go:259-284`）。
+
+### (3) TELEMETRY_CLIENT — go-redis PSUBSCRIBE keyspace 通知
+
+`dialout_client_cli` の `watchConfig()` (`dialout_client.go:648-746`) が CONFIG_DB に対して以下のパターンで Redis keyspace 通知を購読する。
+
+```
+PSUBSCRIBE "__keyspace@<dbId>__:TELEMETRY_CLIENT|*"
+```
+
+swsscommon の `SubscriberStateTable` / `ConsumerStateTable` は**使用しない**。`go-redis` v9 を直接使用。
+
+起動時に `KEYS "TELEMETRY_CLIENT|*"` で既存エントリをスキャンして初期適用する。ランタイムは `ReceiveTimeout(ctx, 1000ms)` ポーリングで通知を受信し、payload が `hset` → SET ハンドラ、`del`/`hdel` → DEL ハンドラへ振り分ける。CONFIG_DB は永続前提のため TTL は設定されない（evidence: `dialout_client.go:682-746`）。
+
+```
+keyspace 通知フロー:
+  config telemetry destination-group <name> ...
+    ↓ HSET "TELEMETRY_CLIENT|DestinationGroup_<name>" ...
+  Redis PUBLISH "__keyspace@<dbId>__:TELEMETRY_CLIENT|DestinationGroup_<name>"  "hset"
+    ↓ dialout_client watchConfig() ReceiveTimeout
+  processTelemetryClientConfig(ctx, redisDb, "DestinationGroup_<name>", "hset")
+    ↓ setupDestGroupClients() — 送信先コレクターへ接続
+```
+
+### (4) STATE_DB:TELEMETRY_CONNECTIONS — デーモン側の副次書込
+
+`gnmi_server/connection_manager.go` は Subscribe RPC 接続確立時に STATE_DB ハッシュ `TELEMETRY_CONNECTIONS` へ接続キーを書き込み、切断時に削除する。
+
+```go
+// connection_manager.go:16,116,127
+const table = "TELEMETRY_CONNECTIONS"
+rclient.HSet(ctx, table, key, "active")  // 接続時
+rclient.HDel(ctx, table, key)             // 切断時
+```
+
+- 接続先: STATE_DB (`GetDbTcpAddr("STATE_DB", ns)` で TCP 接続。`connection_manager.go:34,39`)
+- swsscommon 非経由。`go-redis` 直接使用
+- TTL なし。サーバ起動時に全エントリを一括削除 (`HGETALL` → `HDel` ループ) して初期化する (`connection_manager.go:52-59`)
+- `TELEMETRY_CONNECTIONS` は monitoring ツール（外部監視）向け。CONFIG_DB の `GNMI` / `TELEMETRY_CLIENT` テーブルを変更しても `TELEMETRY_CONNECTIONS` は影響を受けない
+
+詳細根拠は `meta/_intermediate/cdb-flow/gnmi-server-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
