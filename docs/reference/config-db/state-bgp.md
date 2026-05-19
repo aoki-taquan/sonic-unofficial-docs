@@ -416,3 +416,28 @@ CONFIG_DB / YANG で管理されず、コード中に直書きされた定数の
 
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-constants.md`
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+本ページで扱う BGP 関連ステートテーブルは原則として**観測専用（読み取り専用）**であり、他テーブルからの読み出しトリガーに応答して副次的な DB 書込が発生するケースは限定的。
+
+### BGP_STATE_TABLE → APPL_DB ROUTE_TABLE（Warm Restart 時のみ）
+
+`fpmsyncd` が `BGP_STATE_TABLE|{IPv4,IPv6}|eoiu` の `state` を読み取り `"reached"` を確認すると、EOIU hold timer（デフォルト 3 秒）の満了後に `RouteSync::onWarmStartEnd()` を呼び出す。この中で `m_warmStartHelper.reconcile()` が実行され、待機中の BGP ルートが APPL_DB に書き込まれる。Warm Restart が無効の場合は本フローは発生しない。
+
+| トリガ | 副次書込先 | 操作 | evidence |
+|--------|----------|------|---------|
+| `BGP_STATE_TABLE\|IPv4\|eoiu` / `\|IPv6\|eoiu` の `state="reached"` かつ EOIU hold timer 満了 | `APPL_DB ROUTE_TABLE` / `APP_LABEL_ROUTE_TABLE` | ProducerStateTable SET（reconciliation による待機ルート反映） | `fpmsyncd/fpmsyncd.cpp` L201, L212; `routesync.cpp` L3298–3312 |
+| warm-restart タイマー（120 秒）先行満了時 | 同上 | 同上 | `fpmsyncd.cpp` L196–213 |
+
+### BGP_PEER_CONFIGURED_TABLE — 副次書込なし
+
+`bgpcfgd` の `update_state_db()`（managers_bgp.py:271–295）は `BGP_PEER_CONFIGURED_TABLE` への SET / DEL のみ行い、他 DB への書込は発生しない。`config bgp remove neighbor` 実行時に sonic-utilities が `delete_all_by_pattern(STATE_DB, "BGP_PEER_CONFIGURED_TABLE|*")` でテーブル内をクリアするが（config/main.py:1613）、これは STATE_DB 内のクリアであり他 DB への副次書込ではない。
+
+### BMP_STATE_DB テーブル — 副次書込なし
+
+`BGP_NEIGHBOR_TABLE` / `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` はすべて **BMP_STATE_DB 内の観測専用テーブル**であり、他 DB へ副次書込をトリガーする経路はない。`bmpcfgd` が CONFIG_DB `BMP` テーブルの変更時に `delete_all_by_pattern` でリセットする（bmpcfgd.py:61–65）が、操作は BMP_STATE_DB 内に閉じており外部 DB への書込は発生しない。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-side.md`
+<!-- /side-effects -->
