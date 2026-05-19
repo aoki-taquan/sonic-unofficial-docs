@@ -629,6 +629,34 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+`stpmgrd` は `StpMgr`（`Orch` 基底クラス継承）を起動し、`Orch::addConsumer()` 経由で CONFIG_DB の 3 テーブルを購読する。CONFIG_DB (dbId=4) のため `Orch::addConsumer()` 内部分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace notification** (`__keyspace@<dbId>__:<TABLE>:*` の PSUBSCRIBE) を使用する。`PUBLISH` チャネルは使用しない。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB 分岐) |
+| keyspace パターン (STP_MST) | `__keyspace@4__:STP_MST\|*` |
+| keyspace パターン (STP_MST_INST) | `__keyspace@4__:STP_MST_INST\|*` |
+| keyspace パターン (STP_MST_PORT) | `__keyspace@4__:STP_MST_PORT\|*` |
+| POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
+| 優先度 (`pri`) | 0 (`TableConnector` デフォルト) |
+| select タイムアウト | **1000 ms** (`SELECT_TIMEOUT` マクロ, `stpmgrd.cpp:17`) |
+| 起動時スナップショット | `SubscriberStateTable` が既存エントリを SET イベントとして再配信 |
+| ディスパッチ | `Consumer::execute()` → `StpMgr::doTask(Consumer&)` → `getTableName()` 分岐 |
+
+`doTask()` 内の分岐:
+- `"STP_MST"` → `doStpMstGlobalTask(consumer)`
+- `"STP_MST_INST"` → `doStpMstInstTask(consumer)`
+- `"STP_MST_PORT"` → `doStpMstInstPortTask(consumer)`
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-pubsub.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/orchagent/orch.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- /pubsub -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | 対象 | 内容 |
