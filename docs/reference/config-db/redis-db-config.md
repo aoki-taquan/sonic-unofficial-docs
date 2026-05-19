@@ -379,6 +379,61 @@ supervisord が Redis インスタンスを再起動
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/redis-db-config-platform.md`
+
+`SonicDBConfig` クラス自体はプラットフォーム識別文字列 (`broadcom` / `mellanox` 等) を一切参照しない。プラットフォーム差はすべて `docker-database-init.sh` が生成する `database_config.json` の **内容** の差として現れ、`SonicDBConfig` はそのファイルを単純に読み込む。
+
+### `DATABASE_TYPE` 環境変数による構成分岐
+
+`docker-database-init.sh` は `DATABASE_TYPE` 環境変数に応じて生成するテンプレートと起動経路を分岐させる。
+
+| `DATABASE_TYPE` | 起動文脈 | 生成内容 | 特殊処理 |
+|-----------------|---------|---------|---------|
+| `""` (未設定) | 通常ノード / multi-ASIC host namespace | `database_config.json.j2` | 標準構成 |
+| `dpudb` | SmartSwitch NPU から見た DPU 用 DB | `database_config.json.j2` (DPU エントリ付き) | `host_ip=169.254.200.254`、`redis_port=6381+DPU_ID` |
+| `bmcdb` | BMC 搭載ノード | `database_config.json.j2` | BMP DB エントリ除外 |
+| `chassisdb` | VoQ Chassis Supervisor 専用 DB コンテナ | supervisord config のみ生成して `exit 0` | `update_chassisdb_config -k` で chassis 専用設定を保持 |
+
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L22-46 (DATABASE_TYPE 分岐) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L84-100 (chassisdb 分岐) -->
+
+### `NAMESPACE_ID` による multi-ASIC 対応
+
+`NAMESPACE_ID` が空の場合は host namespace として `lo` (loopback) を使用し REDIS_DIR は `/var/run/redis/sonic-db/`。非空 (`asic0` 等) の場合は ASIC namespace 専用コンテナとして `eth0` を使用し REDIS_DIR は `/var/run/redisasic0/sonic-db/` 等になる。
+
+`database_global.json` の生成は `NAMESPACE_ID == "" && DATABASE_TYPE == "" && (NAMESPACE_COUNT > 1 || NUM_DPU > 1)` の条件を満たす場合のみ行われる。
+
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L5-9 (INTFC 分岐) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L104-110 (database_global.json 生成条件) -->
+
+### VoQ Chassis: `chassisdb.conf` によるエントリ制御
+
+プラットフォームが VoQ Chassis の場合、`/usr/share/sonic/platform/chassisdb.conf` が `start_chassis_db` / `chassis_db_address` / `chassis_db_port` を定義する。
+
+- `start_chassis_db=1`: `CHASSIS_APP_DB` / `CHASSIS_STATE_DB` エントリを最終 `database_config.json` に含める
+- `start_chassis_db=0` (デフォルト / 非 VoQ): `update_chassisdb_config -d` で chassis エントリを削除
+
+VoQ ラインカードでは Redis の **protected mode が無効化** される。ラインカード外部の midplane ネットワーク越しに supervisor の `redis_chassis` への接続を許可するためである。
+
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L74-78 (chassisdb.conf 読み込み) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L117-120 (linecard protected mode 無効化) -->
+
+### 構成別まとめ
+
+| 構成 | `database_config.json` の差異 | `database_global.json` 生成 |
+|------|------------------------------|---------------------------|
+| single-ASIC (T0/T1) | 標準テンプレート | なし |
+| multi-ASIC (複数 NPU) | host namespace: 標準 + global。asicN namespace: 標準のみ | host namespace のみ生成 |
+| VoQ Chassis (line card) | chassis エントリ除外 / protected mode 無効 | なし (line card は NAMESPACE_COUNT 非対象) |
+| VoQ Chassis (supervisor) | `chassisdb` 専用経路 (`exit 0`) | なし |
+| SmartSwitch (DPU) | `dpudb` エントリ付き / ポート `6381+DPU_ID` | `NUM_DPU > 1` 時に host 側で生成 |
+| BMC 搭載ノード | BMP DB エントリ除外 | なし |
+
+<!-- /platform -->
+
 ## separator の役割
 
 `separator` はキー文字列でテーブル名と行キーを区切る文字:
