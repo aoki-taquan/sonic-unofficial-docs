@@ -597,40 +597,73 @@ Neighbor が解決されると `NeighOrch` からの Observer 通知 (`DashEniFw
 <!-- pubsub -->
 ## Redis 通知メカニズム (Phase G)
 
-> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-eni-pubsub.md`
+> 調査証跡: `meta/_intermediate/cdb-flow/dpu-eni-pubsub.md`
 
-### 書き込み側 — HaMgrd → APPL_DB:DASH_ENI_FORWARD_TABLE
+### 書き込み側 — HaMgrd から APPL_DB への ProducerStateTable
 
-`DashEniFwdOrch` は APPL_DB の `DASH_ENI_FORWARD_TABLE` を**読み取る** consumer であり、このテーブルへの書き込みは `HaMgrd` が担当する (evidence: `eni-based-forwarding.md:108`)。SmartSwitch HA 構成では HaMgrd が ProducerStateTable / ZMQ 経由で ENI-to-VDPU マッピングを書き込む。
-
-### 読み取り側 — ConsumerStateTable (Orch2)
-
-`DashEniFwdOrch` は `Orch2` を継承する (`dashenifwdorch.h:92`)。`Orch2` コンストラクタが `Orch::addConsumer()` を呼び、`ConsumerStateTable(applDb, "DASH_ENI_FORWARD_TABLE", gBatchSize, pri)` を生成する (`orch.cpp:1186-1194`)。
-
-`APP_DASH_ENI_FORWARD_TABLE = "DASH_ENI_FORWARD_TABLE"` (`sonic-swss-common/common/schema.h:196`)。
+`DASH_ENI_FORWARD_TABLE` は APPL_DB (DB ID=0) のテーブルであり、**HaMgrd** が `ProducerStateTable` で書き込む。`ProducerStateTable` は swss-common の Redis List ベース producer/consumer パターンを使用する (`sonic-swss-common/common/schema.h:196` で `APP_DASH_ENI_FORWARD_TABLE` として定義)。
 
 ```
 HaMgrd
-  ↓ ProducerStateTable → APPL_DB:DASH_ENI_FORWARD_TABLE
-Redis keyspace notification (__keyspace@0__:DASH_ENI_FORWARD_TABLE|*)
-  ↓ ConsumerStateTable.pops()
-Orch2::doTask(Consumer&) → addOperation() / delOperation()
-  ↓
-DashEniFwdOrch::addOperation() — lazyInit → DpuRegistry::populate() → ENI ACL 生成
-DashEniFwdOrch::delOperation() — ENI ACL 削除
+  → ProducerStateTable(applDb, "DASH_ENI_FORWARD_TABLE")
+    → Redis List: APPL_DB:DASH_ENI_FORWARD_TABLE_KEY_SET
+    → Redis Hash:  APPL_DB:DASH_ENI_FORWARD_TABLE|<vnet>:<mac>
 ```
 
-### NeighOrch Observer — Neighbor 変化通知
+### 読み取り側 — ConsumerStateTable (Orch2 継承)
 
-`DashEniFwdOrch` は `Observer` を実装し、コンストラクタで `neighorch_->attach(this)` を呼ぶ (`dashenifwdorch.cpp:15-19`)。`NeighOrch` が Neighbor 解決 / 削除イベントを発行すると `DashEniFwdOrch::update(SUBJECT_TYPE_NEIGH_CHANGE, cntx)` が呼ばれ、`handleNeighUpdate()` → 影響 ENI の `fireAllRules()` が実行される。
+`DashEniFwdOrch` は `Orch2(applDb, APP_DASH_ENI_FORWARD_TABLE, request_)` で初期化される (`orchdaemon.cpp:615`, `dashenifwdorch.cpp:11-12`)。`Orch2` 基底クラスが `Orch::addConsumer(db, tableName)` (`orch.cpp:1186-1196`) を呼び出し、DB ID に応じて購読方式を決定する。
 
-| 通知経路 | 方向 | 用途 |
-|---------|------|------|
-| `neighorch_->attach(this)` | `NeighOrch` → `DashEniFwdOrch` | Neighbor 解決イベント受信 |
-| `DashEniFwdOrch::update(SUBJECT_TYPE_NEIGH_CHANGE)` | Observer コールバック | LOCAL DPU の ENI ACL ルール再発火 |
-| `neighorch_->detach(this)` (デストラクタ) | 購読解除 | ライフサイクル管理 |
+```cpp
+// orch.cpp:1188-1194
+if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+    addExecutor(new Consumer(new SubscriberStateTable(...))); // keyspace notification
+else
+    addExecutor(new Consumer(new ConsumerStateTable(...)));   // Redis List ポーリング
+```
 
-### SmartSwitch 限定登録
+APPL_DB の DB ID は `0` であり上記の `if` に該当しないため、**ConsumerStateTable** (Redis List ポーリング) が使用される。`SubscriberStateTable` (keyspace notification) ではない点に注意。
 
-`DashEniFwdOrch` は `orchdaemon.cpp:613-617` の `gMySwitchSubType == "SmartSwitch"` 分岐内でのみインスタンス化される。通常の SONiC スイッチでは `DASH_ENI_FORWARD_TABLE` の ConsumerStateTable 購読は発生しない。
+| 要素 | 値 |
+|------|-----|
+| pop 元 Redis キー | `DASH_ENI_FORWARD_TABLE_KEY_SET` (Redis List) |
+| pop バッチサイズ | `gBatchSize` (orchagent デフォルト 128) |
+| イベントトリガ | HaMgrd からの `LPUSH` (ProducerStateTable の set/del) |
+| 処理メソッド | `Orch2::doTask()` → `addOperation()` / `delOperation()` |
+
+### 出力側 — ACL テーブルへの ProducerStateTable 書き込み
+
+`EniFwdCtxBase` はコンストラクタで 3 本の `ProducerStateTable` を生成し (`dashenifwdorch.cpp:403-405`)、後段の `AclOrch` が同じ ConsumerStateTable パターンで受け取って SAI へ反映する。
+
+| 出力テーブル | ProducerStateTable 変数 | 後段購読者 |
+|------------|------------------------|-----------|
+| `APPL_DB:ACL_TABLE_TYPE_TABLE` | `acl_table_type_` | `AclOrch` |
+| `APPL_DB:ACL_TABLE_TABLE` | `acl_table_` | `AclOrch` |
+| `APPL_DB:ACL_RULE_TABLE` | `rule_table_` | `AclOrch` |
+
+### NeighOrch Observer 通知 (C++ オブジェクトコールバック)
+
+`DashEniFwdOrch` は `NeighOrch` に Observer として登録される (`dashenifwdorch.cpp:18-20`)。Neighbor 解決イベントは Redis pub/sub ではなく **C++ オブジェクトレベルのコールバック** として受け取る。
+
+```
+ARP/NDP 解決
+  → NeighOrch::notify(SUBJECT_TYPE_NEIGH_CHANGE, ...)
+    → DashEniFwdOrch::update()          // dashenifwdorch.cpp:31-44
+      → handleNeighUpdate()
+        → EniAclRule::fireAllRules()
+          → rule_table_->set(...)        // ACL_RULE_TABLE への ProducerStateTable SET
+```
+
+### CONFIG_DB テーブルの読み取り方式 (サブスクリプションなし)
+
+`DPU` / `REMOTE_DPU` / `VDPU` は `DpuRegistry::populate()` が `Table::getKeys()` / `Table::get()` によるスナップショット読み取りで一括取得する (`dashenifwdorch.cpp:212-221`)。これらのテーブルに対する `SubscriberStateTable` / `ConsumerStateTable` サブスクリプションは存在せず、起動時 `lazyInit()` → `populateDpuRegistry()` で一度だけ読み込まれる。
+
+### 通知経路まとめ
+
+| 通知経路 | 方式 | DB | テーブル |
+|----------|------|----|---------|
+| HaMgrd → DashEniFwdOrch | ProducerStateTable → ConsumerStateTable (Redis List) | APPL_DB (0) | `DASH_ENI_FORWARD_TABLE` |
+| DashEniFwdOrch → AclOrch | ProducerStateTable → ConsumerStateTable (Redis List) | APPL_DB (0) | `ACL_RULE_TABLE`, `ACL_TABLE_TABLE`, `ACL_TABLE_TYPE_TABLE` |
+| NeighOrch → DashEniFwdOrch | Observer コールバック (C++ オブジェクト) | なし | — |
+| DPU/VDPU 読み取り | Table::getKeys() スナップショット (一回限り) | CONFIG_DB | `DPU`, `REMOTE_DPU`, `VDPU` |
 <!-- /pubsub -->

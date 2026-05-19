@@ -634,3 +634,41 @@ storm 復帰時 (pfcwdorch.cpp:1043-1059):
 | COUNTERS_DB `COUNTERS:<queue_oid>` | `hdel` (PFC_WD 設定フィールド群を削除) | `pfcwdorch.cpp:668` |
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-pubsub.md -->
+
+`PfcWdSwOrch` は CONFIG_DB の `PFC_WD` テーブル購読に加え、APPL_DB / COUNTERS_DB からも非同期イベントを受け取る多チャネル構成をとる。
+
+### 購読チャネル一覧
+
+| チャネル | DB | テーブル / チャネル名 | 方向 | 購読方式 | バインド箇所 |
+|---------|----|--------------------|------|---------|------------|
+| CONFIG_DB `PFC_WD` | CONFIG_DB | `CFG_PFC_WD_TABLE_NAME` (`"PFC_WD"`) | 受信（SET/DEL） | `SubscriberStateTable`（Orch ベース） | `orchdaemon.cpp:631-633`; `pfcwdorch.cpp:64` |
+| APPL_DB `PFC_WD_TABLE` | APPL_DB | `APP_PFC_WD_TABLE_NAME` (`"PFC_WD_TABLE"`) | 受信（ウォームリブート storm 状態引き継ぎ） | `SubscriberStateTable` | `pfcwdorch.cpp:736-739` |
+| COUNTERS_DB `PFC_WD_ACTION` | COUNTERS_DB | `"PFC_WD_ACTION"` (Pub/Sub チャネル) | 受信（storm 検出通知） | `NotificationConsumer` + `Notifier` | `pfcwdorch.cpp:724-728` |
+| カウンタポーリングタイマー | — | — | タイマー（1 秒周期） | `SelectableTimer` / `ExecutableTimer` | `pfcwdorch.cpp:730-734` |
+
+### CONFIG_DB 購読 (`SubscriberStateTable`)
+
+`Orch` ベースクラスが `CFG_PFC_WD_TABLE_NAME` を `SubscriberStateTable` で購読し、`doTask(Consumer&)` (`pfcwdorch.cpp:64-122`) で SET / DEL を処理する。SET → `createEntry()`、DEL → `deleteEntry()`。
+
+### APPL_DB 購読 (`SubscriberStateTable`)
+
+ウォームリブート対応のため、`PfcWdSwOrch` コンストラクタ (`pfcwdorch.cpp:736-739`) で APPL_DB の `PFC_WD_TABLE` を追加購読する。storm 進行中にウォームリブートが発生した際、再起動後に APPL_DB の残留エントリを読み込んで storm 状態を復元する。
+
+### COUNTERS_DB storm 通知 (`NotificationConsumer`)
+
+Lua スクリプト (`pfc_detect_<platform>.lua`) が FLEX_COUNTER 経由でカウンタを評価し、PFC pause storm を検出すると COUNTERS_DB の `"PFC_WD_ACTION"` チャネルへ `PUBLISH <queue_oid> <event>` を発行する。`NotificationConsumer` がこれを受信し `doTask(swss::NotificationConsumer&)` (`pfcwdorch.cpp:890-917`) で `startWdActionOnQueue()` を呼び出してドロップ / フォワード / アラートのハンドラを起動する。
+
+### SelectableTimer (カウンタ flush)
+
+`COUNTER_CHECK_POLL_TIMEOUT_SEC = 1` 秒間隔のタイマー (`pfcwdorch.cpp:730-734`) が発火すると `doTask(SelectableTimer&)` (`pfcwdorch.cpp:920-932`) が全エントリの `handler->commitCounters(true)` を呼び、COUNTERS_DB にカウンタを書き込む。
+
+### orchagent 主ループの多重化
+
+`orchdaemon.cpp:959` — `m_select->select(&s, SELECT_TIMEOUT)` (SELECT_TIMEOUT = 1000 ms)。CONFIG_DB・APPL_DB・COUNTERS_DB のすべての Selectable がこの主ループで多重化され、イベント発生またはタイムアウトで `doTask()` が呼ばれる。明示的な retry interval / sleep は存在せず、イベント駆動で逐次処理される。
+
+<!-- /pubsub -->

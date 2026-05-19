@@ -278,6 +278,50 @@ YANG バリデーションで強制される値域はコードではなく YANG 
 > **Evidence**: `qosorch.h:13,18`; `qosorch.cpp:63,67,406,913`; `sonic-dot1p-tc-map.yang:41-67`; `sonic-types.yang.j2:338-345`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込み (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-pg-map-side-effects.md`
+
+`DOT1P_TO_PG_MAP` テーブルは存在しないため、副次 DB 書込みは 2 段マッピングパイプライン (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP`) および `PORT_QOS_MAP` の処理に由来する。
+
+### SET 時 — SAI 呼び出し (ASIC_DB)
+
+| テーブル | SAI API | SAI 属性 |
+|---------|--------|---------|
+| `DOT1P_TO_TC_MAP` SET | `sai_qos_map_api->create_qos_map()` | `SAI_QOS_MAP_ATTR_TYPE = SAI_QOS_MAP_TYPE_DOT1P_TO_TC` + `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` |
+| `TC_TO_PRIORITY_GROUP_MAP` SET | `sai_qos_map_api->create_qos_map()` | `SAI_QOS_MAP_ATTR_TYPE = SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` + `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` |
+| `PORT_QOS_MAP` SET (`dot1p_to_tc_map` フィールド) | `sai_port_api->set_port_attribute()` | `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` |
+| `PORT_QOS_MAP` SET (`tc_to_pg_map` フィールド) | `sai_port_api->set_port_attribute()` | `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` |
+
+### DEL 時 — PFC ビットマスク クリア
+
+`PORT_QOS_MAP` DEL 時に `gPortsOrch->setPortPfc(port.m_port_id, 0)` が呼ばれ、ポートの PFC ビットマスクが 0 にリセットされる (`qosorch.cpp:2100`)。これは QoS マップ削除に連動した暗黙的な副次効果である。
+
+### TUNNEL_DECAP_TABLE への波及
+
+`TC_TO_PRIORITY_GROUP_MAP` は `APP_TUNNEL_DECAP_TABLE` の `decap_tc_to_pg_map` フィールドからも参照される (`qosorch.cpp:114`)。`PORT_QOS_MAP` 経路と同じ OID が `resolveTunnelQosMap()` で解決され、トンネルデカップ処理に適用される。
+
+### STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB
+
+`QosOrch` は `DOT1P_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` の SET/DEL において STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB への直接書き込みを行わない。
+
+<!-- evidence:
+source: sonic-swss/orchagent/qosorch.cpp#L399-L420 (sha: master)
+excerpt: |
+  sai_status_t sai_status = sai_qos_map_api->create_qos_map(&object_id, gSwitchId, (uint32_t)attrs.size(), attrs.data());
+reasoning: Dot1pToTcMapHandler::addQosItem が SAI create_qos_map を呼び出す。ASIC_DB に SAI OID が書き込まれる。
+-->
+<!-- evidence:
+source: sonic-swss/orchagent/qosorch.cpp#L2086-L2106 (sha: master)
+excerpt: |
+  sai_status_t status = sai_port_api->set_port_attribute(port.m_port_id, &attr);
+  ...
+  if (!gPortsOrch->setPortPfc(port.m_port_id, 0))
+reasoning: PORT_QOS_MAP DEL 時に set_port_attribute で各 SAI 属性を NULL OID にセットし、さらに setPortPfc(0) でPFCビットを無効化する。
+-->
+<!-- /side-effects -->
+
 ## 制約
 
 - `DOT1P_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
