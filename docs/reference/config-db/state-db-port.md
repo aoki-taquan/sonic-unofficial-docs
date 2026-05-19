@@ -373,6 +373,61 @@ YANG/スキーマ定義外の fallback。`linksync.cpp` および `portsorch.cpp
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-swss/portsyncd/linksync.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/cfgmgr/buffermgrd.cpp`
+> 調査日: 2026-05-19
+
+### 書き込み側（Producer）
+
+`STATE_DB PORT_TABLE` は `swss::Table`（直接ハッシュ操作）で書き込まれる。ProducerStateTable を経由しないため、書き込みは Redis の `HSET` / `DEL` コマンドとして即時確定する。
+
+| 書き込みプロセス | メソッド | 主要呼び出し箇所 |
+|----------------|---------|----------------|
+| `portsyncd` (`linksync`) | `m_statePortTable.set()` / `.del()` | `linksync.cpp:205`, `linksync.cpp:184` |
+| `orchagent` (`PortsOrch`) | `m_portStateTable.set()` / `.hset()` / `.hdel()` | `portsorch.cpp:3172`, `3320`, `9857`, `9870` |
+
+### 読み取り側（Consumer）の購読方式
+
+#### intfmgrd — SubscriberStateTable（keyspace pub/sub）
+
+`intfmgrd` は `swss::SubscriberStateTable` を用いて `STATE_PORT_TABLE_NAME` を購読する (`intfmgr.cpp:45-47`)。Redis keyspace 通知が発行された際に `pops()` 経由でイベントを受信し、`doPortTableTask()` を呼び出す。
+
+```text
+portsyncd / PortsOrch
+  └─ STATE_DB HSET PORT_TABLE|EthernetN <fields>
+       └─ Redis keyspace notification: PUBLISH __keyevent@6__:hset PORT_TABLE|EthernetN
+
+intfmgrd (swss::Select, SELECT_TIMEOUT=1000 ms)
+  └─ SubscriberStateTable::pops()  → doPortTableTask()
+       ├─ admin_status / mtu 変化 → updateSubIntfAdminStatus() / updateSubIntfMtu()
+       └─ state=ok → doIntfAddrTask() (pending IP インタフェース処理を再実行)
+```
+
+#### teammgrd — TableConnector（keyspace pub/sub）
+
+`teammgrd` は `TableConnector(&state_db, STATE_PORT_TABLE_NAME)` で `STATE_PORT_TABLE` を購読リストに登録し (`teammgrd.cpp:57`)、`Orch::doTask()` ディスパッチで `doPortUpdateTask()` を呼ぶ。
+
+#### buffermgrd — TableConnector（keyspace pub/sub）
+
+`buffermgrd` は `TableConnector(&stateDb, STATE_PORT_TABLE_NAME)` を購読テーブルとして登録し (`buffermgrd.cpp:185`)、`handlePortStateTable()` を `m_bufferTableHandlerMap` 経由でディスパッチする。
+
+### チャンネル / キー名
+
+| 項目 | 値 |
+|------|----|
+| DB インデックス | STATE_DB = 6 |
+| テーブル名定数 | `STATE_PORT_TABLE_NAME` = `"PORT_TABLE"` (schema.h) |
+| keyspace 通知チャンネル | `__keyevent@6__:hset` / `__keyevent@6__:del` |
+| intfmgrd select タイムアウト | `SELECT_TIMEOUT` = 1000 ms (`intfmgrd.cpp:17`) |
+
+### 非 pub/sub 読み取り（ポーリング）
+
+`teammgr` は `m_statePortTable.get()` で直接 `Table::get()` ポーリングを行う場合もある（`state` フィールド確認）。`macsecmgr` / `natmgr` も同様に `Table::get()` で状態を読み取る。
+
+<!-- /pubsub -->
+
 ## 購読者（consumer）
 
 | プロセス | 参照フィールド | 用途 |
