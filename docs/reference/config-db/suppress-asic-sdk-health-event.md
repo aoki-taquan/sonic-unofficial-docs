@@ -418,55 +418,6 @@ Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/s
 詳細根拠は `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-constants.md` を参照。
 <!-- /constants -->
 
-<!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
-
-> **調査根拠**: `switchorch.cpp:208-280`; `orchdaemon.cpp:212`; `swss/ProducerStateTable` / `SubscriberStateTable` 実装精読 (2026-05-19)
-
-### Consumer/Producer 構成
-
-`SUPPRESS_ASIC_SDK_HEALTH_EVENT` テーブルは **CONFIG_DB → SwitchOrch の直接経路**をとる。APPL_DB 中継は存在しない。
-
-```
-CONFIG_DB (DB=4)
-  SUPPRESS_ASIC_SDK_HEALTH_EVENT|*  ──PSUBSCRIBE──▶  SwitchOrch (SubscriberStateTable)
-                                                            │
-                                                            ▼
-                                                  SAI set_switch_attribute
-                                              (SAI_SWITCH_ATTR_REG_*_CATEGORY)
-```
-
-### SwitchOrch — CONFIG_DB 購読 (SubscriberStateTable)
-
-`orchdaemon.cpp:212` にて `SwitchOrch` が初期化される際、`Orch::Orch(DBConnector*, vector<string>)` 経由で `SubscriberStateTable` として登録される。orchagent 主ループの SELECT_TIMEOUT は `1000` ms (`orchdaemon.cpp:23`)。
-
-| 購読元 | DB | Redis DB 番号 | テーブル定数 | 実テーブル名 | PSUBSCRIBE パターン |
-|--------|----|--------------|------------|------------|-------------------|
-| CONFIG_DB | CONFIG_DB | 4 | `CFG_SUPPRESS_ASIC_SDK_HEALTH_EVENT_NAME` | `SUPPRESS_ASIC_SDK_HEALTH_EVENT` | `__keyspace@4__:SUPPRESS_ASIC_SDK_HEALTH_EVENT\|*` |
-
-イベント受信時は `SwitchOrch::doTask(Consumer&)` が `doCfgSuppressAsicSdkHealthEventTableTask()` を呼び出し、severity キーを SAI 属性へマッピングして `set_switch_attribute` を呼ぶ。
-
-### 起動時スナップショット読み取り (Consumer 非経由)
-
-`initAsicSdkHealthEventNotification()` (`switchorch.cpp:208-280`) は orchagent 起動時にコンストラクタから直接呼ばれ、Consumer キューを経由せず `cfgSuppressASHETable.hget(severity, "categories")` で CONFIG_DB を直接読む。
-
-この経路は `SubscriberStateTable` の購読ではなく、直接 `hget` による起動時スナップショット取得のため、**orchagent 起動前に CONFIG_DB に書き込まれた値**が反映される唯一の経路である（`switchorch.cpp:240-274`）。
-
-### APPL_DB 書き込みなし
-
-`SUPPRESS_ASIC_SDK_HEALTH_EVENT` は CONFIG_DB → SAI の直接パスのみ。APPL_DB への ProducerStateTable 書き込みは発生しない。SAI コールバック (`onSwitchAsicSdkHealthEvent()`) が STATE_DB `ASIC_SDK_HEALTH_EVENT_TABLE` に書き込むが、これは SUPPRESS 設定変更の直接結果ではなく SAI 起因のイベント通知経路である。
-
-### 消費経路サマリ
-
-| 経路 | 購読方式 | SELECT タイムアウト | 実テーブル名 | 処理関数 |
-|------|---------|------------------|------------|---------|
-| CONFIG_DB → SwitchOrch | `SubscriberStateTable` (PSUBSCRIBE) | 1000 ms | `SUPPRESS_ASIC_SDK_HEALTH_EVENT` | `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` |
-| 起動時 (コンストラクタ) | `hget` 直接読み取り | N/A (同期) | `SUPPRESS_ASIC_SDK_HEALTH_EVENT` | `SwitchOrch::initAsicSdkHealthEventNotification()` |
-
-> **Evidence**: `sonic-swss` `orchagent/switchorch.cpp:208-280,1410-1491`、`orchagent/orchdaemon.cpp:212,23`、`sonic-swss-common/common/schema.h:394`
-
-<!-- /pubsub -->
-
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -513,6 +464,64 @@ SAI コールバックごとにパブリッシュされる。SUPPRESS 設定で 
 SUPPRESS_ASIC_SDK_HEALTH_EVENT は CONFIG_DB → SAI の直接経路。APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`SUPPRESS_ASIC_SDK_HEALTH_EVENT` は `CONFIG_DB` への直接書き込み (HSET) を唯一の入口とし、`orchagent` 内の `SwitchOrch` が **`SubscriberStateTable`** 経由で Redis keyspace 通知を購読する。APPL_DB への中継 (`ProducerStateTable`) はなく、CONFIG_DB → SAI の直結経路を採る。
+
+<!-- evidence: sonic-swss/orchagent/switchorch.cpp:1410-1491 (doCfgSuppressAsicSdkHealthEventTableTask), orchdaemon.cpp (addConsumer/SwitchOrch 登録), orch.cpp (addConsumer DB 分岐), sonic-swss-common/common/schema.h:394 (CFG_SUPPRESS_ASIC_SDK_HEALTH_EVENT_NAME) -->
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / API |
+|------|------|----------------|
+| `config suppress-asic-sdk-health-event add/del` → `CONFIG_DB` | `swss::Table::set()` / `del()` → `HSET` / `DEL` | なし（PUBLISH 非発行） |
+| `CONFIG_DB SUPPRESS_ASIC_SDK_HEALTH_EVENT` → `SwitchOrch` | `SubscriberStateTable` (Redis keyspace 通知) | `__keyspace@4__:SUPPRESS_ASIC_SDK_HEALTH_EVENT:*` |
+| `SwitchOrch` → SAI | `sai_acl_api->set_switch_attribute()` (`SAI_SWITCH_ATTR_REG_*_SWITCH_ASIC_SDK_HEALTH_CATEGORY`) | SAI API 直呼び出し |
+
+### SubscriberStateTable — CONFIG_DB keyspace 購読
+
+`SwitchOrch` は `Orch` 基底クラスを介して `SUPPRESS_ASIC_SDK_HEALTH_EVENT` テーブルを購読する。`Orch::addConsumer()` は DB が CONFIG_DB (dbId=4) の場合に `SubscriberStateTable` を選択する:
+
+```cpp
+// sonic-swss/orchagent/orch.cpp
+if (db->getDbId() == CONFIG_DB || ...)
+    addExecutor(new Consumer(new SubscriberStateTable(db, tableName,
+        TableConsumable::DEFAULT_POP_BATCH_SIZE, pri), this, tableName));
+```
+
+購読チャンネル: `__keyspace@4__:SUPPRESS_ASIC_SDK_HEALTH_EVENT:*`（key 区切りは `|`）。`ProducerStateTable` / `ConsumerStateTable` 方式（APPL_DB で使われる `_KEY_SET` + `PUBLISH` 系通知）は使わない。
+
+### ディスパッチ経路
+
+```
+config suppress-asic-sdk-health-event add <severity> ...
+  → sonic-utilities/config/main.py → set_entry()
+  → HSET CONFIG_DB SUPPRESS_ASIC_SDK_HEALTH_EVENT|<severity> <fields>
+  → Redis keyspace 通知 (__keyspace@4__:SUPPRESS_ASIC_SDK_HEALTH_EVENT:*)
+  → SubscriberStateTable.pops()
+  → Consumer::execute() → SwitchOrch::doTask()
+  → doCfgSuppressAsicSdkHealthEventTableTask()
+  → registerAsicSdkHealthEventCategories()
+  → sai_switch_api->set_switch_attribute(SAI_SWITCH_ATTR_REG_*_CATEGORY)
+```
+
+APPL_DB への書き込みはない。
+
+### 起動時スナップショット再配信
+
+`SubscriberStateTable` は購読開始時に CONFIG_DB に既存するすべての `SUPPRESS_ASIC_SDK_HEALTH_EVENT` エントリを `m_buffer` へ流し込み、SET イベントとして再配信する。ただし `SwitchOrch::initAsicSdkHealthEventNotification()` が orchagent 起動時に CONFIG_DB を**直接 `hget` で読み取る**経路も存在する（Consumer 経由とは独立した起動時スナップショット読み取り）。これにより起動時と実行中の両方で設定が反映される（Phase B 参照）。
+
+### 通知チャンネルサマリ
+
+| チャンネル | 状態 |
+|-----------|------|
+| `SUPPRESS_ASIC_SDK_HEALTH_EVENT_CHANNEL` への `PUBLISH` | **発行されない**（`ProducerStateTable` を保有しない） |
+| APPL_DB への中継 | **なし**（CONFIG_DB → SAI 直結） |
+| STATE_DB `SWITCH_CAPABILITY` への書き込み | 起動時 1 回のみ（Consumer 経由ではなく `initAsicSdkHealthEventNotification()` から直接書き込み、Phase F 参照） |
+
+<!-- /pubsub -->
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
