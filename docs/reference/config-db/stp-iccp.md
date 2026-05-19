@@ -622,7 +622,7 @@ ICCP セッション生存確認は TCP keepalive ではなく iccpd 独自タ�
 証跡: `scheduler.c:462-488`, `iccp_netlink.c:2182`, `scheduler.h:44`, `mlacp_link_handler.c:654-660`, `mclagsyncd.cpp:41`, `mclaglink.cpp:912-921`, `mclaglink.cpp:1357-1420`
 <!-- /pubsub -->
 
-<!-- platform-diff -->
+<!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-platform.md -->
@@ -686,7 +686,7 @@ static const unordered_set<string> supported {
 
 証跡: `mclaglink.cpp:190-282`, `mclaglink.h:54-59`
 
-<!-- /platform-diff -->
+<!-- /platform -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
