@@ -411,3 +411,50 @@ TAM テーブル群に関わる定数は YANG スキーマ由来のバリデー�
 | `SAI_TAM_ATTR_TAM_BIND_POINT_TYPE_LIST` | `SAI_TAM_BIND_POINT_TYPE_SWITCH` | `hftelorch.cpp:802-807` |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副作用・他 DB への波及 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/high_frequency_telemetry/hftelorch.cpp (L66, L308, L432, L557),
+     sonic-swss/orchagent/portsorch.cpp (L1397-1416, L5555-5570, L11401-11471, L11524-11552),
+     sonic-swss-common/common/schema.h (L408-409, L509),
+     sonic-swss/orchagent/orchdaemon.cpp (L857-865) -->
+
+TAM テーブル群（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE`）はコミュニティ版 orchagent に直接の Consumer ハンドラを持たない。そのため CONFIG_DB への書き込みが他の DB に波及する経路は限定的である。
+
+### TAM_DEVICE_TABLE — portsorch Path Tracing TAM（SAI のみ）
+
+`portsorch.cpp` の Path Tracing 機能は `TAM_DEVICE_TABLE.deviceid` を CONFIG_DB から読み取らず、SAI TAM オブジェクトを固定値で生成する（Phase E 参照）。ポートへの TAM 割り当て/解除はすべて SAI API (`SAI_PORT_ATTR_TAM_OBJECT`) 経由のみで、STATE_DB / APPL_DB への書き込みは発生しない[^7]。
+
+| トリガ | 副作用 DB | キー形式 | 内容 |
+|--------|----------|---------|------|
+| ポートに Path Tracing IFD 設定 | SAI のみ | `SAI_PORT_ATTR_TAM_OBJECT` | SAI TAM オブジェクト OID を各ポートに割り当て |
+| ポートから Path Tracing IFD 解除 | SAI のみ | `SAI_PORT_ATTR_TAM_OBJECT` | `SAI_NULL_OBJECT_ID` をセット。すべてのポートから解除後に SAI TAM オブジェクトも削除 |
+
+### TAM_COLLECTOR_TABLE / TAM_INT_IFA_* — orchagent 非購読（副作用なし）
+
+`TAM_COLLECTOR_TABLE`、`TAM_INT_IFA_FEATURE_TABLE`、`TAM_INT_IFA_FLOW_TABLE` は orchagent が購読していない。これらへの書き込みは CONFIG_DB に格納されるだけで、orchagent 経由の DB 副作用は発生しない。IFA 機能そのものは orchagent 非実装のため SAI への反映もない[^8]。
+
+### HIGH_FREQUENCY_TELEMETRY_PROFILE / GROUP → STATE_DB 書き込み
+
+`TAM_COLLECTOR_TABLE` とは名称上独立した `HIGH_FREQUENCY_TELEMETRY_PROFILE` / `HIGH_FREQUENCY_TELEMETRY_GROUP`（`schema.h:408-409`）テーブルを購読する `HFTelOrch` は、処理結果を `STATE_DB / HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE` に書き込む。TAM テーブルとの直接的なデータ依存はないが、同一の TAM サブシステムを使用する[^9]。
+
+| トリガ | DB | キー形式 | フィールド | 内容 |
+|--------|----|---------|----------|------|
+| `profileTableSet()` — 既存セッションエントリが存在する場合 | STATE_DB | `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE\|<profile>\|<group>` | `stream_status` | `"enabled"` または `"disabled"` |
+| SAI `TAM_TEL_TYPE_CONFIG_CHANGE` 通知受信 | STATE_DB | `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE\|<profile>\|<group>` | `stream_status`, `object_names`, `object_ids`, `session_type`, `session_config` | ストリーム起動後の完全なセッション情報 |
+| `groupTableDel()` | STATE_DB | `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE\|<profile>\|<group>` | — | エントリ削除 |
+
+!!! note "TAM_COLLECTOR_TABLE は HFTelOrch に反映されない"
+    `HFTelOrch` が内部で作成する SAI TAM コレクタオブジェクトは固定値（`localhost=true`, `dst_ip=0.0.0.0`）を使用し、CONFIG_DB の `TAM_COLLECTOR_TABLE` を参照しない（Phase E 参照）。`TAM_COLLECTOR_TABLE` を変更しても `HFTelOrch` の動作・STATE_DB の内容は変化しない。
+
+### 副作用なし経路
+
+- **APPL_DB**: TAM テーブル群に対応する APPL_DB への書き込みはない
+- **COUNTERS_DB**: TAM テーブル群への書き込みで COUNTERS_DB は変化しない
+- **FLEX_COUNTER_DB**: TAM テーブル群への書き込みで FLEX_COUNTER_DB は変化しない
+
+[^7]: portsorch Path Tracing TAM 割り当て: `sonic-swss/orchagent/portsorch.cpp:1397-1416,11401-11471`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/portsorch.cpp#L11401>
+[^8]: TAM テーブル群 orchagent 非購読: `sonic-swss/orchagent/orchdaemon.cpp:857-865` に TAM_DEVICE_TABLE 等の Consumer 登録なし。
+[^9]: HFTelOrch STATE_DB 書き込み: `sonic-swss/orchagent/high_frequency_telemetry/hftelorch.cpp:308,432,557`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/high_frequency_telemetry/hftelorch.cpp#L557>
+<!-- /side-effects -->
