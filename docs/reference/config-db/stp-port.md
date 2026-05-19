@@ -336,6 +336,38 @@ STP_PORT テーブル処理
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-port-failure.md -->
+
+ソース: `sonic-net/sonic-swss/cfgmgr/stpmgr.cpp`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `calloc` 失敗（`STP_PORT_CONFIG_MSG` 確保不能） | `processStpPortAttr()` `stpmgr.cpp:537` | 即 `return`（IPC メッセージ未送信）・consumer エントリは呼び出し側で消去 | `SWSS_LOG_ERROR("calloc failed for interface ...")` | `stpmgr.cpp:537-540` |
+| `path_cost` / `priority` フィールドが数値でない文字列 | `processStpPortAttr()` `stpmgr.cpp:590-597`（`stoi()` 使用） | `std::invalid_argument` / `std::out_of_range` 例外が未捕捉 → **stpmgrd プロセスクラッシュ** | なし（例外伝播） | `stpmgr.cpp:590-597` |
+| `link_type` フィールドが設定された MST 環境 | `processStpPortAttr()` `stpmgr.cpp:611-613`（`stoi(field)` バグ） | `stoi("link_type")` → `std::invalid_argument` → **stpmgrd プロセスクラッシュ** | なし（例外伝播） | `stpmgr.cpp:611-613` |
+| `sendMsgStpd()` 内で `tx_msg` calloc 失敗 | `sendMsgStpd()` `stpmgr.cpp:1231` | IPC 送信中断・`return -1`（呼び出し元は戻り値無視）・consumer エントリは消去済み | `SWSS_LOG_ERROR("tx_msg mem alloc error")` | `stpmgr.cpp:1231-1232` |
+| `sendto()` 失敗（stpd socket 送信エラー） | `sendMsgStpd()` `stpmgr.cpp:1246` | IPC 送信失敗・エラーログのみ・consumer エントリは消去済み（**再送なし**） | `SWSS_LOG_ERROR("tx_msg send error")` | `stpmgr.cpp:1246-1248` |
+| PortChannel にメンバーが存在しない（`isLagEmpty()` == true） | `doStpPortTask()` `stpmgr.cpp:648-653` | エントリを即消去（silent drop）。LAG メンバー追加時に `doLagMemUpdateTask()` が再プッシュ | なし | `stpmgr.cpp:648-653`, `doLagMemUpdateTask()` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `l2ProtoEnabled == L2_NONE` の状態で DEL 受信 | `doStpPortTask()` `stpmgr.cpp:663-669` | エントリを即消去（**defer ではなく permanent discard**）。SET と異なり次ループで復旧しない | なし | `stpmgr.cpp:663-669` |
+
+### 補足
+
+- **calloc 失敗は非復旧**: `processStpPortAttr()` の calloc 失敗後、consumer エントリは `doStpPortTask()` の `erase()` で消去される。次回 SELECT ループでの自動再試行はない。
+- **link_type バグの実害**: `stoi(field.c_str())` は文字列 `"link_type"` を整数変換しようとするため、MST 環境で `STP_PORT` に `link_type` フィールドが含まれる SET が来ると stpmgrd がクラッシュする。`stpd` は IPC メッセージを受け取れないが stpmgrd 再起動後は再処理が可能。
+- **IPC 送信失敗は永久消失**: `sendto()` 失敗時の consumer エントリはすでに消去済みであり、CONFIG_DB の次回変更がない限り再送は行われない。
+
+<!-- /failure -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | フィールド | 内容 |
