@@ -496,6 +496,103 @@ orchdaemon の warm restart 時、`ConsumerStateTable` が保持するペンデ�
 
 ---
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE` の上限・capability はプラットフォームによって異なる。上限管理は `RouteOrch` が保持する `m_maxNextHopGroupCount` で一元管理され、`NhgOrch` / `CbfNhgOrch` の `doTask()` がこれを参照して temporary NHG 作成・`success=false` フォールバックを判断する。
+
+### プラットフォーム識別文字列 (orch.h:40-49)
+
+| 定数 | 値 | プラットフォーム例 |
+|------|----|--------------------|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | Mellanox Spectrum |
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` | Broadcom XGS |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | Virtual Switch (テスト用) |
+| `XS_PLATFORM_SUBSTRING` | `"xsight"` | xsight |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` | Marvell Prestera |
+
+### 1. Mellanox: ECMP グループ数の補正 (`/= 32`)
+
+`RouteOrch` コンストラクタ (`routeorch.cpp:61-88`) は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を SAI から取得後、`getenv("platform")` が `"mellanox"` を含む場合のみ戻り値を `DEFAULT_MAX_ECMP_GROUP_SIZE (=32)` で割って `m_maxNextHopGroupCount` を補正する:
+
+```cpp
+// routeorch.cpp:83-87
+char *platform = getenv("platform");
+if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))
+{
+    m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE; // 32
+}
+```
+
+Mellanox SAI は「1 グループ = 1 メンバ」前提で総 NHG 数を返すため、実際の最大 ECMP グループ数を得るには 32 除算が必要である。SAI 取得失敗時のフォールバック値は `DEFAULT_NUMBER_OF_ECMP_GROUPS (=128)` (`routeorch.cpp:37-38`)。補正後の値が `NhgOrch::doTask()` L252 / L320 および `CbfNhgOrch::doTask()` L100 の上限チェックに使われるため、**Mellanox 環境では他プラットフォームより early に temporary NHG 作成が発動する**。
+
+### 2. VOQ chassis: ECMP メンバ数を 128 に強制
+
+`routeorch.cpp:95-124` で `SAI_SWITCH_ATTR_MAX_ECMP_MEMBER_COUNT` を取得し、`gMySwitchType == "voq"` かつ取得値 >= 128 のとき `SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` を 128 に **書き戻す**:
+
+```cpp
+// routeorch.cpp:109-114
+if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
+{
+    maxEcmpGroupSize = 128;
+    attr.id = SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT;
+    attr.value.s32 = maxEcmpGroupSize;
+    ...
+}
+```
+
+`gMySwitchType` は `CONFIG_DB:DEVICE_METADATA|localhost:switch_type` 由来。T0/T1 fixed (`switch_type=switch`) では発動しない。VOQ chassis では 128 メンバを超える `NEXTHOP_GROUP_TABLE` エントリを SAI が切り詰める可能性があるが、`NhgOrch` 側に追加ガードは存在せず SAI のエラー応答に委ねられる。
+
+### 3. CBF NHG マップ: SAI capability 依存
+
+`NhgMapOrch` コンストラクタ (`nhgmaporch.cpp:24-33`) が SAI に NHG マップオブジェクト (`SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP`) の最大数を問い合わせる。SAI がサポートしない場合:
+
+```cpp
+// nhgmaporch.cpp:30-33
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_WARN("Switch does not support NHG maps");
+    m_max_nhg_map_count = 0;
+}
+```
+
+`m_max_nhg_map_count = 0` のとき `nhgmaporch.cpp:105` の上限チェック (`m_syncdMaps.size() >= m_max_nhg_map_count`) が常に true → `FC_TO_NHG_INDEX_MAP_TABLE` の SET が全件 reject される。`CLASS_BASED_NEXT_HOP_GROUP_TABLE` は `selection_map` でこのマップを参照するため、**CBF NHG 機能全体が使用不可**となる。この判断はプラットフォーム文字列による静的分岐ではなく実行時 SAI 問い合わせによる動的判断である。
+
+### 4. SRv6 NHG: temp NHG 非対応 + ASIC capability 依存
+
+NHG 上限到達時、通常の NHG は temporary NHG に降格できるが、SRv6 NHG はこのフォールバックをスキップする (`nhgorch.cpp:257-261`):
+
+```cpp
+// nhgorch.cpp:257-261
+if (nhg_key.is_srv6_nexthop()) {
+    ++it;
+    continue;
+}
+```
+
+このため SRv6 NHG は上限到達時に pending のままとなり、SAI リソースが解放されるまで `NEXTHOP_GROUP_TABLE` に反映されない。SRv6 を使わないプラットフォームでは影響なし。また、SAI が `SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` をサポートしない場合は create_next_hop が `SAI_STATUS_NOT_SUPPORTED` を返す。
+
+### プラットフォーム別影響サマリ
+
+| プラットフォーム / 条件 | ECMP グループ上限補正 | ECMP メンバ上限 | CBF NHG マップ | SRv6 NHG |
+|------------------------|----------------------|-----------------|---------------|----------|
+| Mellanox | **SAI生値 / 32** (補正あり) | SAI 既定値 | SAI capability 次第 | SAI SAI capability 次第 |
+| Broadcom (XGS / DNX) | SAI 生値をそのまま採用 | SAI 既定値 | SAI capability 次第 | 一部 SKU 対応 |
+| VOQ chassis (`switch_type=voq`) | SAI 生値をそのまま採用 | **128 に強制** | SAI capability 次第 | SAI capability 次第 |
+| VS (virtual) | SAI 生値をそのまま採用 | SAI 既定値 | SAI が 0 以外を返せば有効 | スタブ動作 |
+| SAI が NHG map 未対応 | — | — | **全件 reject** (CBF 無効) | — |
+
+!!! warning "Mellanox での ECMP グループ上限"
+    Mellanox 環境では `m_maxNextHopGroupCount` が SAI 生値の 1/32 に補正される。SAI が例えば 4096 を返した場合、実際の上限は 128 グループとなる。大規模 ECMP 構成では temporary NHG が頻繁に発動し、FIB 収束が遅延する可能性がある。
+
+!!! warning "CBF NHG は ASIC capability 必須"
+    `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を使用する場合、SAI が `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP` をサポートしなければならない。サポートされていない ASIC では `FC_TO_NHG_INDEX_MAP_TABLE` の SET が全件失敗し、`selection_map` を持つ CBF NHG も全件 pending になる (`nhgmaporch.cpp:105`)。
+
+> **スキャン証跡**: `routeorch.cpp:37-38,61-124` (定数定義・RouteOrch コンストラクタ全読)、`nhgorch.cpp:252,257-261,320` (上限チェック・SRv6 スキップ)、`cbfnhgorch.cpp:100-104` (CbfNhgOrch 上限チェック)、`nhgmaporch.cpp:24-33,105` (NHG マップ上限取得)、`orch.h:41-49` (プラットフォーム識別文字列定数)。中間ファイル: `meta/_intermediate/cdb-flow/nhg-table-platform.md`。
+<!-- /platform -->
+
+---
+
 ## 購読者
 
 | テーブル | 購読者 | SAI API |
