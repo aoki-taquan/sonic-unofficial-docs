@@ -1,22 +1,19 @@
-# TC_TO_DSCP_MAP — Phase H プラットフォーム差異 調査証跡
+# TC_TO_DSCP_MAP — プラットフォーム差分調査 (Phase H)
 
-## 調査対象
+調査日: 2026-05-19
+対象ファイル:
+- sonic-buildimage/files/build_templates/qos_config.j2
+- sonic-buildimage/device/common/profiles/th2/7260/BALANCED/qos.json.j2
+- sonic-buildimage/device/common/profiles/th2/7260/RDMA-CENTRIC/qos.json.j2
+- sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/*/BALANCED/qos.json.j2
+- sonic-buildimage/device/arista/x86_64-arista_7060x6_64pe_b/*/qos.json.j2
+- sonic-buildimage/device/mellanox/x86_64-mlnx_msn4600c-r0/*/qos.json.j2
+- sonic-buildimage/device/mellanox/x86_64-nvidia_sn5600-r0/*/qos.json.j2
+- sonic-swss/orchagent/qosorch.cpp
 
-`TC_TO_DSCP_MAP` テーブルのプラットフォーム差異。
-`QosOrch` 側（qosorch.cpp）にプラットフォーム分岐はないが、ビルド時の qos_config.j2 展開時にプラットフォームごとのマクロ定義有無と値の差が CONFIG_DB の初期内容に直接現れる。
+## ビルド時注入分岐
 
-## 調査結果
-
-### A. qosorch.cpp のプラットフォーム分岐
-
-`qosorch.cpp` 内の `TcToDscpMapHandler` / `handleTcToDscpTable` に platform 文字列比較はない。
-`SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP` は全プラットフォーム共通のハードコード定数（qosorch.cpp:1271）。
-SAI capability 照会（`sai_query_attribute_capability`）も行っていないため、プラットフォームに関わらず
-CONFIG_DB にエントリが存在すれば SAI QoS map 作成を試みる。
-
-### B. qos_config.j2 のビルド時分岐
-
-`files/build_templates/qos_config.j2:334-337` の条件分岐:
+`qos_config.j2:334-337` に以下の分岐がある:
 
 ```jinja
 {% if (generate_tc_to_dscp_map is defined) and tunnel_qos_remap_enable %}
@@ -25,48 +22,72 @@ CONFIG_DB にエントリが存在すれば SAI QoS map 作成を試みる。
     {{ generate_tc_to_dscp_map_per_sku() }}
 ```
 
-- `generate_tc_to_dscp_map` マクロを定義するプラットフォーム: arista, common (th2/7260), mellanox (SN4600C)
-- `generate_tc_to_dscp_map_per_sku` マクロを定義するプラットフォーム: arista (7060X6), mellanox (SN5600)
-- マクロ非定義プラットフォーム: `TC_TO_DSCP_MAP` テーブル自体が CONFIG_DB に生成されない
+`tunnel_qos_remap_enable` は `SYSTEM_DEFAULTS.tunnel_qos_remap.status == 'enabled'` のとき `true` になる
+(qos_config.j2:142-145)。
 
-### C. `tunnel_qos_remap_enable` フラグ
+## プラットフォーム別マップ内容
 
-`SYSTEM_DEFAULTS.tunnel_qos_remap.status == 'enabled'` のときのみ `tunnel_qos_remap_enable = true`。
-`generate_tc_to_dscp_map` マクロがあっても `tunnel_qos_remap_enable` が false なら
-`generate_tc_to_dscp_map_per_sku` ルートにフォールバックし、それも未定義なら TABLE 非生成。
+### Broadcom TH2 系 (common/profiles/th2/7260/BALANCED および RDMA-CENTRIC)
 
-### D. AZURE_TUNNEL マップの値差異（プラットフォーム別）
+`generate_tc_to_dscp_map()` を定義。tunnel_qos_remap_enable が true の場合のみ注入。
 
-| プラットフォーム | マクロ | TC:DSCP マッピング（主要差分） |
-|---|---|---|
-| th2/7260 BALANCED | generate_tc_to_dscp_map | `0:8, 1:0, 2:0, 3:2, 4:6, 5:46, 6:0, 7:48, 8:33` |
-| Arista 7050CX3 BALANCED | generate_tc_to_dscp_map | `0:8, 1:0, 2:0, 3:2, 4:6, 5:46, 6:0, 7:48, 8:33` (同上) |
-| Mellanox SN4600C | generate_tc_to_dscp_map | `0:8, 1:0, 2:2, 3:2, 4:6, 5:46, 6:6, 7:48, 8:33` (TC2/6 差分あり) |
+```json
+"TC_TO_DSCP_MAP": {
+    "AZURE_TUNNEL": {
+        "0": "8", "1": "0", "2": "0", "3": "2",
+        "4": "6", "5": "46", "6": "0", "7": "48", "8": "33"
+    }
+}
+```
 
-Arista 7060X6 (`generate_tc_to_dscp_map_per_sku`) は `AZURE_DOWNLINK_BT1` 等の別マップ名かつ
-`DEVICE_METADATA.type` (ToRRouter / LeafRouter) に応じてマップ名を使い分ける。
-NVIDIA SN5600 (`generate_tc_to_dscp_map_per_sku`) は `traffic_config.traffic_classification_enable` が
-追加ゲートとして存在する。
+TC 8 (DSCP 33) を含む — YANG 上 0..15 は valid だが、この TC 8 は ASIC 依存。
 
-### E. TC 8..15 の ASIC 実態差
+### Arista 7050CX3-32S 系
 
-YANG 定義は 0..15 を許可するが、ASIC 対応は 0..7 が標準。TC 8 を定義するプラットフォームは
-th2 系（th2/7260、Arista 7050CX3、Mellanox SN4600C など）で、それ以外は TC 0..7 のみ。
-TC 8 以上を SAI に投入した場合の動作は ASIC/SAI 実装に依存（task_failed の原因となる）。
+`generate_tc_to_dscp_map()` を定義。マップ内容は TH2 系と同一 (AZURE_TUNNEL、TC 0-8)。
 
-### F. multi-asic / VOQ chassis
+### Arista 7060X6-64PE-B 系
 
-`QosOrch` は他 orch と同様、namespace ごとに独立インスタンスとして起動する。
-`TC_TO_DSCP_MAP` の CONFIG_DB 書き込みは namespace ごとの CONFIG_DB に対して独立に行われる。
-qos_config.j2 は namespace 単位で展開されるため、全 asic に同一マップ定義が投入される。
-CHASSIS_APP_DB に QoS map 系テーブルは存在しない（chassis-wide 同期なし）。
+`generate_tc_to_dscp_map_per_sku()` を定義。こちらは `tunnel_qos_remap_enable` 条件なし、常に注入。
 
-## Evidence
+```json
+"TC_TO_DSCP_MAP": {
+    "AZURE_DOWNLINK_BT1": { "8": "11" }
+}
+```
 
-- `sonic-swss/orchagent/qosorch.cpp:1262-1285` (TcToDscpMapHandler::addQosItem)
-- `sonic-buildimage/files/build_templates/qos_config.j2:142-144,334-337`
-- `sonic-buildimage/device/common/profiles/th2/7260/BALANCED/qos.json.j2:421-434`
-- `sonic-buildimage/device/mellanox/x86_64-mlnx_msn4600c-r0/Mellanox-SN4600C-C64/qos.json.j2:260-272`
-- `sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S-D48C8/BALANCED/qos.json.j2:269-282`
-- `sonic-buildimage/device/mellanox/x86_64-nvidia_sn5600-r0/Mellanox-SN5600-C256S1/qos.json.j2:398-416`
-- `sonic-buildimage/device/arista/x86_64-arista_7060x6_64pe_b/Arista-7060X6-64PE-B-C448O16/qos.json.j2:176-196`
+TC 8 のみ定義。PORT_QOS_MAP でポートごとに方向（downlink/uplink）に応じたマップを割り当て。
+
+### Mellanox SN4600C-C64
+
+`generate_tc_to_dscp_map()` を定義。AZURE_TUNNEL マップを生成するが値が TH2 系と異なる:
+
+```json
+"TC_TO_DSCP_MAP": {
+    "AZURE_TUNNEL": {
+        "0": "8", "1": "0", "2": "2", "3": "2",
+        "4": "6", "5": "46", "6": "6", "7": "48", "8": "33"
+    }
+}
+```
+
+TC 1→0、TC 2→2、TC 6→6 が Broadcom 系と相違（TC 2: 0 vs 2、TC 6: 0 vs 6）。
+
+### Mellanox SN5600 (NVIDIA)
+
+`generate_tc_to_dscp_map_per_sku()` を定義。`traffic_config.traffic_classification_enable` かつ `DEVICE_METADATA.localhost.type` による分岐あり:
+
+- ToRRouter: `AZURE_DOWNLINK_BT0` (TC 8 → DSCP 21) と `AZURE_UPLINK_BT0` (TC 8 → DSCP 11)
+- LeafRouter: `AZURE_DOWNLINK_BT1` (TC 8 → DSCP 11)
+
+ロール（ToRRouter / LeafRouter）によってマップ名と DSCP 値が変化する。
+
+### デフォルト未定義プラットフォーム
+
+両マクロが未定義の場合、`TC_TO_DSCP_MAP` は CONFIG_DB に生成されない。これは正常動作（TC→DSCP リマーキングが不要なプラットフォーム）。フォールバック else 節なし。
+
+## multi-ASIC / VOQ chassis 差分
+
+- `qosorch.cpp` の TC_TO_DSCP_MAP ハンドラ (`handleTcToDscpTable()`) に multi-ASIC 判定なし。`orchdaemon.cpp` の `qos_tables` に `CFG_TC_TO_DSCP_MAP_TABLE_NAME` を含むが、namespace 分岐なし。
+- VOQ chassis: `qosorch.cpp:1637,1715,1772` に `gMySwitchType == "voq"` 分岐があるが、これは SCHEDULER / QUEUE 系のみで TC_TO_DSCP_MAP は対象外。
+- 結論: multi-ASIC 環境でも各 ASIC の orchagent が独立して自 ASIC の CONFIG_DB を購読し TC_TO_DSCP_MAP を処理する。クロス namespace 伝播はない。

@@ -446,37 +446,29 @@ STATE_DB:HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE|<profile_name>|<group_type>
 <!-- /side-effects -->
 
 <!-- pubsub -->
-## Redis 通知メカニズム (Phase G)
+## 通信メカニズム (Phase G)
 
-<!-- evidence: sonic-swss/orchagent/high_frequency_telemetry/hftelorch.cpp; meta/_intermediate/cdb-flow/tam-ordering.md; sonic-mgmt-common CVL -->
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-pubsub.md`
 
-### orchagent による購読なし（コミュニティ版）
+TAM 4 テーブル（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE`）は **コミュニティ版 orchagent によって購読されない**。`orchdaemon.cpp` に対応する `TableConnector` / `addConsumer` 登録が存在しないため、keyspace 通知・`SubscriberStateTable`・`ConsumerStateTable` のいずれも発生しない。
 
-`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE` は、コミュニティ版 orchagent の `SubscriberStateTable` 購読対象に含まれない。sonic-swss/orchagent ディレクトリ内でこれらのテーブル名を `SubscriberStateTable` に登録するコードは存在しない。
+| 項目 | 値 |
+|------|-----|
+| orchagent による購読 | **なし**（TableConnector 登録なし） |
+| 購読クラス | 該当なし |
+| keyspace 通知 | 使用しない（書き手・リスナーともに orchagent 側になし） |
+| `ProducerStateTable` / channel PUBLISH | 使用なし |
+| アクセス方式 | CVL（sonic-mgmt-common / Management Framework）がオンデマンド polling で HGETALL 読み出し（GNMI/REST リクエスト時のみ） |
+| バッチサイズ | 概念なし（polling 読み取りのみ） |
+| TTL | 未設定（CONFIG_DB は永続前提） |
 
-### 管理フレームワーク経由の書き込みパス
+`HFTelOrch` が CONFIG_DB から購読するのは `HIGH_FREQUENCY_TELEMETRY_PROFILE` と `HIGH_FREQUENCY_TELEMETRY_GROUP` の 2 テーブルのみ（`orchdaemon.cpp:860-861`）。これら HFTel 系テーブルは TAM 4 テーブルと異なり、`Orch::addConsumer()` 経由で `SubscriberStateTable`（CONFIG_DB 分岐、`DEFAULT_POP_BATCH_SIZE=128`）として購読される。
 
-TAM テーブルへの書き込みは `sonic-mgmt-framework` の Transformer（REST/gNMI）経由で行われる。書き込み後に Redis keyspace notification が自動発行されるが、それを受信する下流 Consumer は存在しない。
+!!! note "TAM 4 テーブルは CVL 専用スキーマ"
+    `sonic-db-cli` 等で直接書き込んだ場合は CVL もバイパスされるため、GNMI/REST 経由のバリデーションも発生しない。orchagent は CONFIG_DB の TAM 4 テーブルをポーリングも購読もしないため、書込みは SAI に一切伝播しない。
 
-```
-REST/gNMI 操作
-  → sonic-mgmt-framework (Transformer + CVL バリデーション)
-    → CONFIG_DB SET: TAM_*_TABLE|<key>
-      → Redis keyspace notification (__keyspace@4__:TAM_*|*)
-        → orchagent: 購読なし（コミュニティ版）
-```
-
-| 購読者 | 購読方式 | 条件 |
-|--------|---------|------|
-| orchagent (コミュニティ) | **なし** | TAM テーブル購読なし |
-| ベンダー実装 (例: IFA デーモン) | SubscriberStateTable 等 | ベンダー拡張次第 |
-
-### HFTelOrch と TAM テーブルの分離
-
-`hftelorch.cpp` は SAI TAM オブジェクトを内部的に生成するが、これは CONFIG_DB の TAM テーブルを読まない独立した機構である。HFTelOrch が処理するのは HFTel 系プロファイル / グループテーブルであり、`TAM_*_TABLE` とは別系統。
-
-HFTelOrch の `doTask(NotificationConsumer&)` は keyspace notification ではなく SAI ハードウェア通知コールバックを処理する。通知元は SAI スイッチオブジェクトであり、CONFIG_DB の変化イベントではない。
-
-詳細調査ノートは `meta/_intermediate/cdb-flow/tam-pubsub.md` 参照。
-
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:860L (HFTelOrch 購読テーブルは HIGH_FREQUENCY_TELEMETRY_PROFILE / GROUP のみ) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1186L (addConsumer CONFIG_DB → SubscriberStateTable 分岐) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/schema.h:408L (CFG_HIGH_FREQUENCY_TELEMETRY_PROFILE_TABLE_NAME 定義) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164L (DEFAULT_POP_BATCH_SIZE = 128) -->
 <!-- /pubsub -->

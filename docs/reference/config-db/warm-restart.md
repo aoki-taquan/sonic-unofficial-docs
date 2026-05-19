@@ -546,4 +546,47 @@ Redis チャネルへの明示的 `PUBLISH` を発行しない。
 <!-- evidence: sonic-swss-common/common/warm_restart.cpp L227,247 (hset — STATE_DB 書き込み) -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+**`WARM_RESTART` テーブルの読み書きロジック自体はプラットフォーム非依存**。`warm_restart.cpp` には ASIC 種別・multi-asic・VOQ chassis に関する条件分岐が存在しない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco 等) | 影響なし | `WarmStart::initialize()` / `getWarmStartTimer()` / `setWarmStartState()` は SAI を呼ばず CONFIG_DB / STATE_DB への `hget()` / `hset()` のみ。`warm_restart.cpp` に `platform` / ASIC 型チェックなし |
+| multi-asic (`NUM_ASIC > 1`) | 各 asic-namespace で独立動作 | `WarmStart::initialize()` が `DBConnector("CONFIG_DB", ...)` を namespace 指定なしで接続 (`warm_restart.cpp:51`)。各 `swss@asicN` コンテナ内で実行されるため、そのコンテナの namespace CONFIG_DB を参照する。`WARM_RESTART` テーブルは asic-namespace ごとに独立し chassis-wide 同期なし |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `WARM_RESTART` は host / container scope。chassis 集中管理機構なし（`CHASSIS_APP_DB` に `WARM_RESTART` 系テーブルなし） |
+| VS / VPP プラットフォーム | テーブル読み書きは正常 | `hget()` / `hset()` は VS でも動作する。ただしデータプレーンが存在しないため warm restart による「再収束」に実動作上の意味はない |
+
+### finalize-warmboot.sh の ASIC 別差異
+
+`finalize-warmboot.sh` は multi-asic デバイスで **asic namespace ごとに並列 subshell** を起動し、各 namespace DB での warm boot フラグ処理を独立実行する (`finalize-warmboot.sh:270-291`)。
+
+```bash
+# finalize-warmboot.sh:270-291 (抜粋)
+for dev in `seq 0 $((NUM_ASIC - 1))`; do
+    (
+        if [[ $NUM_ASIC -gt 1 ]]; then
+            export DEV=$dev
+            export NETNS=asic$dev
+        fi
+        wait_for_components_to_reconcile "${ASIC_SERVICE_LIST}"
+        if [[ -n $NETNS ]]; then
+            finalize_boot
+        fi
+    ) &
+done
+```
+
+また `finalize_global()` は `asic_type == mellanox` の場合のみ CPU frequency governor を warm restart 前の値に復元する (`finalize-warmboot.sh:198-202`)。これは `WARM_RESTART` テーブルの設定値を参照する処理ではなく、Mellanox プラットフォーム固有の warm restart インフラ後処理である。
+
+これらはいずれも `WARM_RESTART` テーブルのスキーマ・値の意味・読み書き方式には影響しない。
+
+詳細根拠は `meta/_intermediate/cdb-flow/warm-restart-platform.md` を参照。
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L35-62 (initialize — DBConnector 名前指定、namespace 引数なし) -->
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L149-172 (getWarmStartTimer — platform 分岐なし) -->
+<!-- evidence: sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh L270-291 (multi-asic parallel subshell) -->
+<!-- evidence: sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh L194-202 (finalize_global — mellanox CPU governor) -->
+<!-- /platform -->
+
 <!-- glossary-links-injected: ddc022697593 -->
