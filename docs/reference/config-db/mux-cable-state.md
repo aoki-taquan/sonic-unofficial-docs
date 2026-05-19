@@ -275,3 +275,48 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
     `STATE_DB.MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` はいずれも YANG スキーマ外のオペレーショナルテーブルであり、leafref による参照整合性検証は存在しない。上記の参照依存はすべて実装コードレベルの暗黙依存である。
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+`MUX_CABLE_TABLE` (STATE_DB) への書き込みは `MuxStateOrch::updateMuxState()` → `mux_state_table_.hset()` を経由する。`HW_MUX_CABLE_TABLE` は ycabled が直接 `swsscommon` Table API で書き込む。どちらも `swss::Table` の set 系 API は戻り値なし (void) で、Redis I/O エラーは例外として伝播する。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-failure.md`
+
+### 状態遷移失敗 → rollback → STATE_DB 反映
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB 反映 |
+|---|---|---|---|
+| `stateActive()` / `stateStandby()` ハンドラが false を返す | `MuxCable::setState()` `muxorch.cpp:547-553` | `state_` を `prev_state_` に戻し `st_chg_failed_ = true` セット、`std::runtime_error` スロー → catch 後 `rollbackStateChange()` 呼び出し | rollback 先 state が STATE_DB に書込まれる (`updateMuxState(prev_state)`) |
+| `stateActive()` 失敗（`getPort()` 未解決 / ACL drop rule 削除失敗 / `nbrHandler` 失敗） | `muxorch.cpp:463-486` | false 返却 → rollback フロー | STATE_DB は rollback 先 state に書き換え |
+| `stateStandby()` 失敗（`getPort()` 未解決 / nbrHandler 失敗 / ACL drop rule 追加失敗） | `muxorch.cpp:488-511` | false 返却 → rollback フロー | 同上 |
+| rollback 先が `FAILED` または `PENDING` | `rollbackStateChange()` `muxorch.cpp:568-572` | `SWSS_LOG_ERROR` → rollback スキップ | STATE_DB 更新なし、`st_chg_failed_` true のまま |
+| rollback 自体も失敗 | `muxorch.cpp:607-611` | `st_chg_failed_ = true`、`SWSS_LOG_ERROR("[%s] Rollback to %s failed")` | rollback 試行後の state を STATE_DB に書込 |
+
+!!! note "MuxCableOrch は失敗を消費完了扱いで再キューしない"
+    `MuxCableOrch::addOperation()` の catch ブロック (`std::runtime_error` / `std::logic_error` / `std::exception`) はすべて `rollbackStateChange()` を呼んで `return true` を返す。`Orch2` フレームワークでは `true` は「消費完了」を意味するため、失敗しても再キューされない。次に別の HW 状態更新イベントが届くまで STATE_DB は rollback 値で固定される (`muxorch.cpp:2593-2611`)。
+
+### MuxStateOrch::addOperation の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB 反映 |
+|---|---|---|---|
+| `isMuxExists()` false — MuxCable 未生成 | `muxorch.cpp:2651-2653` | `SWSS_LOG_WARN` → `return false` (再キュー) | STATE_DB 更新なし。`MuxCable` 生成まで再試行 |
+| `mux_obj->getState()` が `std::runtime_error` | `muxorch.cpp:2664-2667` | `SWSS_LOG_ERROR` → `return false` (再キュー) | STATE_DB 更新なし |
+| `isStateChangeInProgress()` true | `muxorch.cpp:2671-2673` | `SWSS_LOG_INFO` → `return false` (再キュー) | STATE_DB 更新なし。遷移完了後に再処理 |
+| HW state と mux state が不一致 かつ `isStateChangeFailed()` true | `muxorch.cpp:2678-2680` | `MUX_HW_STATE_ERROR = "error"` を書込 | `MUX_CABLE_TABLE.state = "error"` |
+| HW state と mux state が不一致 かつ `isStateChangeFailed()` false | `muxorch.cpp:2681-2683` | `MUX_HW_STATE_UNKNOWN = "unknown"` を書込 | `MUX_CABLE_TABLE.state = "unknown"` |
+
+### ycabled / HW_MUX_CABLE_TABLE 書き込み失敗
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB 反映 |
+|---|---|---|---|
+| gRPC stub が None — gRPC チャネル未確立 | `y_cable_helper.py:603-612` | `log_notice` → `"unknown"` を書込んで return | `HW_MUX_CABLE_TABLE.state = "unknown"` |
+| gRPC response が None | `y_cable_helper.py:621-622` | `log_warning` → `parse_grpc_response_forwarding_state(False, ...)` → `"unknown"` | `HW_MUX_CABLE_TABLE.state = "unknown"` |
+| gRPC `RpcError` | `y_cable_helper.py:799-810` | エラーコードをログ出力 → `"unknown"` | `HW_MUX_CABLE_TABLE.state = "unknown"` |
+| Loopback3 IPv4 未設定 → `read_side` 確定不能 | `y_cable_helper.py:633-651` | `None` を返す → 呼び出し元が書き込みスキップ | `HW_MUX_CABLE_TABLE` に `read_side` が書き込まれない |
+
+### STATE_DB 書き込み API 自体の失敗
+
+`swss::Table::hset()` は Redis 接続断や AUTH エラーを例外として送出する。`MuxStateOrch` 内に catch ブロックはないため、例外はスタックを伝播して orchagent プロセスを abort させ、systemd により再起動される。再起動後に orchagent は CONFIG_DB を再読み込みし STATE_DB を再構築するため、書き込み失敗が永続的な不整合を残すことはない（自己回復系）。
+
+<!-- /failure -->

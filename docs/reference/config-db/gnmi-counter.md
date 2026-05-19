@@ -374,69 +374,38 @@ reasoning: iota 番兵として COUNTER_SIZE = 32 が確定。配列サイズと
 <!-- /constants -->
 
 <!-- side-effects -->
-## 副作用 (Phase F)
+## 副次 DB 書込 (Phase F)
 
-<!-- evidence:
-source: sonic-gnmi/gnmi_server/connection_manager.go ref:master
-excerpt: |
-  func (cm *ConnectionManager) Add(addr net.Addr, query string) (string, bool) {
-      ...
-      storeKeyRedis(key)   // STATE_DB TELEMETRY_CONNECTIONS へ HSet
-  }
-  func (cm *ConnectionManager) Remove(key string) bool {
-      ...
-      deleteKeyRedis(key)  // STATE_DB TELEMETRY_CONNECTIONS から HDel
-  }
-source: sonic-gnmi/gnmi_server/server.go ref:master
-excerpt: |
-  err = dc.Set(req.GetDelete(), req.GetReplace(), req.GetUpdate())
-  if err != nil {
-      common_utils.IncCounter(common_utils.GNMI_SET_FAIL)
-  } else {
-      s.SaveStartupConfig()  // save_on_set 有効時: DBUS 経由で /etc/sonic/config_db.json 保存
-  }
-reasoning: gRPC RPC 受信→IncCounter のほか、接続管理とコンフィグ保存という二つの外部副作用が発生する。
--->
+<!-- evidence: meta/_intermediate/cdb-flow/gnmi-counter-side-effects.md -->
+<!-- source: sonic-gnmi/gnmi_server/connection_manager.go ref:master -->
+<!-- source: sonic-gnmi/gnmi_server/client_subscribe.go ref:master -->
 
-gNMI 内部カウンタの増分（SysV 共有メモリへの書き込み）そのものは他システムへの副作用を持たないが、カウンタを増分する RPC 処理の中で **STATE_DB への接続情報書き込み** と **設定ファイルへのスタートアップコンフィグ保存** という二つの外部副作用が発生する。
+gNMI カウンタ本体は SysV 共有メモリに格納されるため、カウンタ増分ロジック自体が CONFIG_DB / STATE_DB を書き変えることはない。ただし `telemetryd` は gRPC **Subscribe** セッション管理の一環として **STATE_DB の `TELEMETRY_CONNECTIONS`** テーブルを副次的に読み書きする。
 
-### 1. STATE_DB `TELEMETRY_CONNECTIONS` への書き込み（gRPC 接続確立・切断時）
+### STATE_DB — `TELEMETRY_CONNECTIONS`
 
-gRPC クライアントが接続を確立すると `ConnectionManager.Add()` が呼ばれ、`storeKeyRedis()` が STATE_DB の `TELEMETRY_CONNECTIONS` テーブルに接続キー（`<IP>|<query>|<timestamp>` 形式）を `HSet` で書き込む。接続切断時は `ConnectionManager.Remove()` が `deleteKeyRedis()` を呼び `HDel` で削除する。
+| 操作 | Redis コマンド | タイミング | 書込元 | 根拠 |
+|------|--------------|-----------|--------|------|
+| 起動時クリア | `HGetAll` → 全フィールド `HDel` | `setConnectionManager()` → `PrepareRedis()` 実行時（最初の Subscribe RPC 受信で 1 回のみ） | `connection_manager.go:52-60` | 旧セッション残置エントリを起動直後に掃除する |
+| 接続確立 | `HSet(table, key, "active")` | Subscribe セッション受け入れ時 (`connectionManager.Add()`) | `connection_manager.go:116`, `client_subscribe.go:179` | セッション追跡用エントリ登録 |
+| 接続切断 | `HDel(table, key)` | Subscribe セッション終了時 (`connectionManager.Remove()`、defer で保証) | `connection_manager.go:127`, `client_subscribe.go:183` | セッション終了に合わせてエントリ削除 |
 
-| タイミング | 操作 | STATE_DB テーブル | 値 |
-|-----------|------|-----------------|-----|
-| gRPC 接続確立（`Add()` 成功） | `HSet` | `TELEMETRY_CONNECTIONS` | キー: `<addr>\|<query>\|<timestamp>`、値: `"active"` |
-| gRPC 接続切断（`Remove()` 呼び出し） | `HDel` | `TELEMETRY_CONNECTIONS` | 当該キーを削除 |
-| `telemetryd` 起動時（`PrepareRedis()`） | 全キーを `HDel` | `TELEMETRY_CONNECTIONS` | 起動前の残留エントリをすべてクリア |
+キー形式は `<client-ip:port>|<target-name>|...|<RFC3339-timestamp>` となり、`createKey()` がクエリ文字列の `target:` / `element:` フィールドを正規表現で抽出して構成する（`connection_manager.go:94-109`）。
 
-> この STATE_DB 書き込みは `GNMI_GET`・`GNMI_SET` カウンタの増分とは**独立したパス**で行われる。カウンタは `IncCounter` → `SetMemCounters`（SysV SHM）であり、`TELEMETRY_CONNECTIONS` は Redis (STATE_DB) への別経路。
+> **注意**: `rclient == nil`（`PrepareRedis` 失敗時）の場合、`storeKeyRedis` / `deleteKeyRedis` はログ出力のみでリターンする。副次書込の失敗は Subscribe セッション自体には影響しない。
 
-### 2. スタートアップコンフィグ保存（`GNMI|gnmi.save_on_set = true` 時のみ）
+### 副次書込のないテーブル（スコープ外）
 
-`Set()` RPC が成功した場合（`dc.Set()` エラーなし）、`s.SaveStartupConfig()` が呼ばれる。`GNMI|gnmi.save_on_set = true` が設定されている環境では `SaveStartupConfig` が `SaveOnSetEnabled` に差し替えられており、`hostcfgd` の `GnmiCfg` ハンドラ経由で DBus `ConfigSave` を発行し `/etc/sonic/config_db.json` を上書き保存する。この操作は `DBUS_CONFIG_SAVE` カウンタを増分する。
+| テーブル / DB | 理由 |
+|-------------|------|
+| CONFIG_DB（全テーブル） | カウンタはメモリのみ。Set RPC の書込先は配下の DB だがカウンタロジック経路での副次書込はなし |
+| COUNTERS_DB | telemetryd はデータの**読み取り元**として使用するが、`IncCounter` 経路での書込なし |
+| FLEX_COUNTER_DB | telemetryd は書込まない（orchagent 管轄） |
+| APPL_DB | 書込なし |
 
-| 条件 | 副作用 |
-|------|--------|
-| `save_on_set = false`（デフォルト） | `saveOnSetDisabled()` が呼ばれるのみ（no-op）。副作用なし |
-| `save_on_set = true` | DBus `ConfigSave` → `/etc/sonic/config_db.json` 上書き + `DBUS_CONFIG_SAVE` カウンタ増分 |
+> **Get / Set RPC は `TELEMETRY_CONNECTIONS` を更新しない**。`ConnectionManager` は Subscribe セッション専用。
 
-> デフォルト（`server.go:551`）では `SaveStartupConfig: saveOnSetDisabled` が設定されているため、この副作用は通常発生しない。
-
-### 3. SysV 共有メモリへの書き込み（すべての RPC）
-
-`IncCounter` が呼ばれるたびに `SetMemCounters` が全 32 カウンタ値を SysV 共有メモリ（key=`7749`）に書き直す。これは `gnmi_dump` が次回実行時に更新済みの値を読み取ることを可能にする唯一の「可視副作用」である。CONFIG_DB / STATE_DB / APPL_DB への書き込みは発生しない。
-
-### 副作用サマリ
-
-| 操作 | 直接副作用 | 間接副作用 |
-|------|-----------|-----------|
-| gRPC 接続確立（`Add()` 成功） | STATE_DB `TELEMETRY_CONNECTIONS` に `HSet` | `GNMI_GET` または `GNMI_SET` カウンタが以降の RPC で増分 |
-| gRPC 接続切断（`Remove()` 呼び出し） | STATE_DB `TELEMETRY_CONNECTIONS` から `HDel` | なし |
-| `telemetryd` 起動（`PrepareRedis()`） | STATE_DB `TELEMETRY_CONNECTIONS` 全エントリ削除 | なし |
-| `Set()` RPC 成功（`save_on_set = true`） | DBus `ConfigSave` → `/etc/sonic/config_db.json` 上書き | `DBUS_CONFIG_SAVE` カウンタ増分（SysV SHM） |
-| `IncCounter()` 呼び出し（すべての RPC） | SysV SHM（key=7749）に全カウンタ書き込み | `gnmi_dump` が更新後の値を表示 |
-
+詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- ops-hint -->

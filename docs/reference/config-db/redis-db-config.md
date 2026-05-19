@@ -241,6 +241,78 @@ docker-database コンテナ起動
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+実装コードに直接埋め込まれている文字列キー・数値定数・マクロ名を一覧化する。
+
+### JSON 構造キー定数
+
+`parseDatabaseConfig()` が `database_config.json` を解析する際に参照するキー名はすべてハードコードされている (`dbconnector.cpp:45-64`)。
+
+| JSON キー | 用途 | 参照箇所 |
+|----------|------|---------|
+| `"INSTANCES"` | Redis インスタンス定義ブロック | `dbconnector.cpp:45` |
+| `"DATABASES"` | DB ID マッピングブロック | `dbconnector.cpp:59` |
+| `"hostname"` | インスタンスの接続先ホスト名 | `dbconnector.cpp:54` |
+| `"port"` | インスタンスの TCP ポート番号 | `dbconnector.cpp:55` |
+| `"unix_socket_path"` | UNIX ドメインソケットパス (省略可) | `dbconnector.cpp:49-53` |
+| `"instance"` | DB エントリが属するインスタンス名 | `dbconnector.cpp:62` |
+| `"id"` | Redis DB 番号 (0-20) | `dbconnector.cpp:63` |
+| `"separator"` | テーブル名とキーを区切る文字 | `dbconnector.cpp:64` |
+
+`unix_socket_path` は `it.value().find()` で探索されるため省略可能。それ以外の必須フィールドは `at()` で取得されるため、欠落時は `domain_error` が発生する。
+
+### DB ID マクロ定数 (`schema.h`)
+
+`sonic-swss-common/common/schema.h` で定義される DB ID マクロと `database_config.json` の `id` フィールド値の対応。
+
+| マクロ名 | id 値 | `schema.h` 行 |
+|---------|-------|--------------|
+| `APPL_DB` | `0` | `schema.h:12` |
+| `ASIC_DB` | `1` | `schema.h:13` |
+| `COUNTERS_DB` | `2` | `schema.h:14` |
+| `LOGLEVEL_DB` | `3` | `schema.h:15` |
+| `CONFIG_DB` | `4` | `schema.h:16` |
+| `PFC_WD_DB` | `5` | `schema.h:17` |
+| `FLEX_COUNTER_DB` | `5` | `schema.h:18` (PFC_WD_DB と同 id) |
+| `STATE_DB` | `6` | `schema.h:19` |
+| `SNMP_OVERLAY_DB` | `7` | `schema.h:20` |
+| `RESTAPI_DB` | `8` | `schema.h:21` |
+| `GB_ASIC_DB` | `9` | `schema.h:22` |
+| `GB_COUNTERS_DB` | `10` | `schema.h:23` |
+| `GB_FLEX_COUNTER_DB` | `11` | `schema.h:24` |
+| `CHASSIS_APP_DB` | `12` | `schema.h:25` |
+| `CHASSIS_STATE_DB` | `13` | `schema.h:26` |
+| `APPL_STATE_DB` | `14` | `schema.h:27` |
+| `DPU_APPL_DB` | `15` | `schema.h:28` |
+| `DPU_APPL_STATE_DB` | `16` | `schema.h:29` |
+| `DPU_STATE_DB` | `17` | `schema.h:30` |
+| `DPU_COUNTERS_DB` | `18` | `schema.h:31` |
+| `EVENT_DB` | `19` | `schema.h:32` |
+| `BMP_STATE_DB` | `20` | `schema.h:33` |
+
+### パス・ポート定数 (`dbconnector.h` / `docker-database-init.sh`)
+
+| 定数名 / 変数名 | ハードコード値 | 出典 |
+|--------------|-------------|------|
+| `SonicDBConfig::DEFAULT_SONIC_DB_CONFIG_FILE` | `/var/run/redis/sonic-db/database_config.json` | `dbconnector.h:90` |
+| `SonicDBConfig::DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE` | `/var/run/redis/sonic-db/database_global.json` | `dbconnector.h:91` |
+| `RedisContext::DEFAULT_UNIXSOCKET` | `/var/run/redis/redis.sock` | `dbconnector.h:169,206` |
+| `redis_port` (デフォルト) | `6379` | `docker-database-init.sh:20` |
+| `redis_port` (DPU インスタンス) | `6381 + DPU_ID` | `docker-database-init.sh:28` |
+| `REMOTE_DB_PORT` (DPU リモート) | `6380 + d` | `docker-database-init.sh:40` |
+| `BMP_DB_PORT` | `6400` | `docker-database-init.sh:49` |
+| `REDIS_DIR` | `/var/run/redis${NAMESPACE_ID}` | `docker-database-init.sh:51` |
+| `KEY_DEL_CHUNK_SIZE` | `128` | `dbconnector.cpp:23` (Redis キー一括削除サイズ) |
+
+<!-- evidence: sonic-net/sonic-swss-common/common/schema.h L12-33 (DB ID マクロ定義) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.h L90-91,169,206 (パス・ソケット定数) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L45-64 (parseDatabaseConfig JSON キー) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L20,28,40,49,51 (ポート・パス定数) -->
+
+<!-- /constants -->
+
 ## separator の役割
 
 `separator` はキー文字列でテーブル名と行キーを区切る文字:
