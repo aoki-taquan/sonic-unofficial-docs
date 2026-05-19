@@ -264,6 +264,54 @@ DEVICE_NEIGHBOR_METADATA にサーバー向けポートが 0 件の場合、`get
 詳細な定数一覧は `meta/_intermediate/cdb-flow/device-neighbor-metadata-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DEVICE_NEIGHBOR_METADATA` はオーケストレータを経由しない（SAI 非到達）ため、本テーブルの **直接的な** 副次書き込みはない。ただし consumer として本テーブルを参照するプロセスが他の DB テーブルへ波及書き込みを行う。
+
+### bgpcfgd → STATE_DB BGP_PEER_CONFIGURED_TABLE 書き込み
+
+`BGPPeerMgrBase.add_peer()` (`managers_bgp.py:172-243`) は DEVICE_NEIGHBOR_METADATA の内容を `kwargs['CONFIG_DB__DEVICE_NEIGHBOR_METADATA']` として Jinja2 テンプレートに渡して BGP ピア設定を FRR に適用する。テンプレート展開成功後に `update_state_db(vrf, nbr, data, "SET")` (`managers_bgp.py:239`) を呼び出す。
+
+| 副次 DB | テーブル / キー | フィールド | 書込内容 | 根拠 |
+|---------|---------------|---------|---------|------|
+| STATE_DB | `BGP_PEER_CONFIGURED_TABLE\|<nbr>` （デフォルト VRF）または `BGP_PEER_CONFIGURED_TABLE\|<vrf>\|<nbr>` | BGP_NEIGHBOR データ全フィールド | BGP ピア設定内容（sorted items）| `managers_bgp.py:287-290` |
+
+**条件**: `constants.bgp.use_neighbors_meta == True` かつ DEVICE_NEIGHBOR_METADATA に対応エントリが存在し、テンプレート展開が成功した場合のみ。`use_neighbors_meta == False` の環境ではこの副次書き込みは発生しない。
+
+**DEL 時**: `update_state_db(vrf, nbr, data, "DEL")` で同エントリを削除する（`managers_bgp.py:292-294`）。
+
+### db_migrator → CONFIG_DB CABLE_LENGTH テーブル更新
+
+`update_edgezone_aggregator_config()` (`db_migrator.py:757-799`) は DB マイグレーション時に DEVICE_NEIGHBOR_METADATA の `type == "EdgeZoneAggregator"` エントリを検索し、対応ポートの `CABLE_LENGTH|AZURE` を強制的に `"40m"` に更新する。
+
+| 副次 DB | テーブル / キー | フィールド | 書込内容 | 根拠 |
+|---------|---------------|---------|---------|------|
+| CONFIG_DB | `CABLE_LENGTH\|AZURE` | EdgeZoneAggregator 接続ポート名 | `"40m"` 固定 | `db_migrator.py:799` |
+
+**発生条件**: `type == "EdgeZoneAggregator"` エントリが存在し、かつ CABLE_LENGTH テーブルに不均一な値がある場合のみ。全エントリが同一値の場合は early return で変更なし（冪等）。
+
+### sonic-cfggen テンプレートによる波及（minigraph 再生成時）
+
+`buffers_config.j2` / `qos_config.j2` は `sonic-cfggen` 実行時に DEVICE_NEIGHBOR_METADATA の `type` フィールドを参照して ポートロール（uplink/downlink）とケーブル長を決定し、CONFIG_DB の CABLE_LENGTH / QoS テーブルへ出力する。これは `sonic-cfggen -m <minigraph.xml>` 実行時にのみ発生する（実行時の Consumer 書き込みではない）。
+
+| 副次 DB | テーブル / キー | 書込内容 | 根拠 |
+|---------|---------------|---------|------|
+| CONFIG_DB | `CABLE_LENGTH\|AZURE` | `type` ベースのケーブル長（`switch_role + '_' + neighbor_role` ルックアップ） | `buffers_config.j2:81-103` |
+| CONFIG_DB | QoS テーブル（QUEUE / SCHEDULER 等）| PORT_UPLINK / PORT_DOWNLINK リストに基づいた QoS 設定 | `qos_config.j2:107-125` |
+
+### 副次書き込みが発生しないケース
+
+| ケース | 理由 |
+|--------|------|
+| `use_neighbors_meta == False` | bgpcfgd が DEVICE_NEIGHBOR_METADATA を依存として登録しない → STATE_DB BGP_PEER_CONFIGURED_TABLE への書き込みなし |
+| EdgeZoneAggregator エントリなし | `update_edgezone_aggregator_config()` が早期 return → CABLE_LENGTH 変更なし |
+| CABLE_LENGTH テーブルに不均一値なし | db_migrator が冪等判定で終了 → CABLE_LENGTH 変更なし |
+| APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB | 本テーブルは orchagent に到達しないため SAI レイヤの副次書き込みなし |
+
+> **スキャン証跡**: `managers_bgp.py` L128-243, L271-300 読了。`db_migrator.py` L757-799 読了。`buffers_config.j2` L76-130 読了。`qos_config.j2` L103-154 読了。副次書き込み先は STATE_DB (`BGP_PEER_CONFIGURED_TABLE`) と CONFIG_DB (`CABLE_LENGTH|AZURE`) の 2 テーブル。詳細は `meta/_intermediate/cdb-flow/device-neighbor-metadata-side-effects.md` 参照。
+<!-- /side-effects -->
+
 ## 購読者
 
 - minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): minigraph から生成
