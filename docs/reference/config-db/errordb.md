@@ -366,6 +366,72 @@ ErrorListener fpmErrorListener(APP_ROUTE_TABLE_NAME,
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: HLD `doc/error-handling/error_handling_design_spec.md` Rev 0.1 Section 3.1・3.3.1・3.3.2・5、`doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md` Section 3.1・3.3・3.4.1  
+> **注意**: ERROR_DB / ErrorReporter / ErrorListener は 2026-05 時点で master 未マージのため、以下は HLD 設計に基づく記述である。
+
+ERROR_DB への `HSET` / `DEL` + `publish` は OrchAgent が行う。その後、**ERROR_DB 自体への書込が起点となって以下の副次処理が連鎖する**。
+
+### ERROR_DB pub/sub 通知 → ErrorListener コールバック
+
+OrchAgent は `HSET`（失敗エントリ書込）または `DEL`（成功・clear）の直後に ERROR_DB チャネルへ `publish` を送る（HLD Section 3.3.1）。登録済みの ErrorListener はこの pub/sub 通知を受け取り、アプリ指定のコールバックを起動する。
+
+| 操作 | publish タイミング | コールバック引数 |
+|------|-----------------|----------------|
+| SAI CREATE/SET 失敗 | `HSET` 完了直後 | opcode, rc, prefix/intf/neigh など |
+| SAI DELETE 失敗 | `DEL` 完了直後 | opcode, rc |
+| SAI CREATE/SET 成功（positive ack 登録時のみ） | `DEL` 完了直後 | opcode, SUCCESS |
+| `sonic-clear error-database` | なし（publish しない） | — |
+
+複数アプリが同一テーブルを購読している場合、それぞれのコールバックが個別に起動される（HLD 1.1.1: "More than one application can register for notifications on a given table"）。
+
+### fpmsyncd → Zebra → BGP の連鎖（ERROR_ROUTE_TABLE 専用）
+
+`BGP_GLOBALS|default` の `bgp_error_handling` が有効な場合のみ、fpmsyncd は `ERROR_ROUTE_TABLE` を ErrorListener 経由で購読する。エントリ更新を受け取った fpmsyncd は以下を実行する（BGP HLD Section 3.4.1）:
+
+1. `ERROR_ROUTE_TABLE` エントリを Zebra common header フォーマットに変換
+2. FPM ソケット（TCP、`FPM_DEFAULT_PORT`）経由で Zebra にメッセージ送信
+3. Zebra が当該ルートを kernel FIB から withdraw し、`"Not installed in hardware"` フラグを設定
+4. Zebra から BGP に通知 → BGP が当該プレフィックスを RIB-OUT から除外し、ピアへの広告を停止
+
+```text
+ERROR_ROUTE_TABLE 更新
+  └→ fpmsyncd ErrorListener コールバック
+       └→ FPM ソケット → Zebra
+            └→ kernel route 削除（netlink）
+                 └→ BGP RIB-IN "FIB-install pending" フラグ設定
+                      └→ BGP RIB-OUT から除外（ピア広告停止）
+```
+
+この連鎖は **BGP docker (bgpd/zebra/fpmsyncd) が稼働中かつ `bgp_error_handling` が有効なときのみ** 発生する。`bgp_error_handling` が無効（デフォルト）の場合、fpmsyncd は ERROR_ROUTE_TABLE を購読しないため連鎖は起きない（BGP HLD Section 3.7.1）。
+
+### swssloglevel ログ出力
+
+ERROR_DB フレームワークは以下のタイミングで `SWSS_LOG_*` を出力する（HLD Section 5）:
+
+| タイミング | ログ操作 |
+|-----------|---------|
+| アプリが ERROR_DB テーブルの購読登録 / 解除 | `SWSS_LOG_INFO` 相当 |
+| フレームワークが Syncd から通知受信 | `SWSS_LOG_INFO` / `SWSS_LOG_ERROR` |
+| フレームワークが ERROR_DB にエントリ追加 | `SWSS_LOG_INFO` |
+| フレームワークが ERROR_DB からエントリ削除 | `SWSS_LOG_INFO` |
+| アプリへのエラー通知発行 | `SWSS_LOG_INFO` |
+| `clear` コマンド受信 | `SWSS_LOG_INFO` |
+
+ログレベルは `swssloglevel` ユーティリティで動的に変更可能。
+
+### STATE_DB・APPL_DB・COUNTERS_DB への書込なし
+
+HLD は STATE_DB / APPL_DB / COUNTERS_DB への直接書込を規定していない。CRM (Critical Resource Monitor) は SAI リソース使用量を独立して管理しており、ERROR_DB への書込によって CRM カウンタが変動することもない。フレームワークが記録する唯一の永続状態は ERROR_DB エントリ自体である（warm reboot 非永続）。
+
+### プラットフォーム依存なし
+
+ERROR_DB フレームワークは SAI 抽象化層の上で動作し、特定の HW プラットフォームに依存しない。SAI 操作結果（`SAI_STATUS_*`）を `SWSS_RC_*` に変換する処理は `sonic-swss-common/common/status_code_util.h` で定義されており、プラットフォーム非依存である。
+
+<!-- /side-effects -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
