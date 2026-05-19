@@ -204,6 +204,43 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 
 ---
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 証跡: `meta/_intermediate/cdb-flow/pg-watermark-failure.md`
+
+`FlexCounterOrch::doTask(Consumer&)`（`sonic-swss/orchagent/flexcounterorch.cpp`）および `portsorch` の PG watermark 登録関数を調査した。
+
+### SET 操作の失敗パターン
+
+| 失敗条件 | 発生箇所 | 挙動 | retry |
+|---------|---------|------|-------|
+| 遅延タイマー (`m_delayTimerExpired`) 未満了 | `flexcounterorch.cpp:156-159` | return — m_toSync に残留。タイマー満了後に自動再処理 | 自動（タイマー満了時） |
+| `gPortsOrch->allPortsReady()` が false | `flexcounterorch.cpp:164-167` | return — m_toSync に残留。全ポート初期化完了後に自動再処理 | 自動（ポート初期化完了時） |
+| 不正なグループキー（`flexCounterGroupMap` に未登録） | `flexcounterorch.cpp:183-188` | `SWSS_LOG_NOTICE("Invalid flex counter group input, %s")` + **即時廃棄** | なし（`PG_WATERMARK` キーは正常登録済みのため通常発生しない） |
+| 未知フィールド（`POLL_INTERVAL_FIELD` 等以外） | `flexcounterorch.cpp:395-398` | `SWSS_LOG_NOTICE("Unsupported field %s")` — **フィールドをスキップ**。エントリは廃棄されない | なし（フィールド単位でスキップ） |
+| `FLEX_COUNTER_STATUS` が `"enable"` / `"disable"` 以外の値 | `flexcounterorch.cpp:225-394` | enable / disable 分岐に入らず `setFlexCounterGroupOperation()` のみ実行。syncd 側バリデーション依存 | なし |
+| `BUFFER_PG` テーブルが空（PG 設定なし） | `portsorch.cpp:8998-9052` | OID 登録をスキップ（エラーなし・サイレント）。後から BUFFER_PG を追加すると自動登録 | 自動（BUFFER_PG SET イベント時） |
+
+### DEL 操作の挙動
+
+`FLEX_COUNTER_TABLE|PG_WATERMARK` エントリを DEL すると flexcounterorch の doTask() でエントリが消費されるが、`clearCounterIdList()` は呼ばれない。PG watermark カウンタを無効化するには `FLEX_COUNTER_STATUS = "disable"` を SET する必要がある（DEL ではカウンタポーリングは停止しない）。
+
+| ケース | 挙動 |
+|--------|------|
+| `FLEX_COUNTER_STATUS = "disable"` SET | `setFlexCounterGroupOperation(group, "disable")` — syncd FlexCounter グループを非活性化 |
+| `FLEX_COUNTER_TABLE|PG_WATERMARK` の DEL | エントリ消費のみ。カウンタ登録（`PG_WATERMARK_STAT_COUNTER:<oid>`）は削除されない |
+
+### ログ・ERROR_TABLE
+
+- 失敗は `SWSS_LOG_NOTICE` または `SWSS_LOG_ERROR` で `/var/log/swss/orchagent.log` に出力される。
+- STATE_DB の `ERROR_TABLE` や `COUNTERS_DB` への失敗通知は**一切書き込まれない**。
+- FlexCounter 登録失敗はサイレントなため、`counterpoll show` で `ENABLE` と表示されていても `COUNTERS_DB` に PG watermark 値が現れない場合は BUFFER_PG 設定や allPortsReady 状態を確認する。
+
+<!-- /failure -->
+
+---
+
 ## 設定例
 
 ```json
