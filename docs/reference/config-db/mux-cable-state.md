@@ -447,3 +447,92 @@ MUX 状態遷移の開始・終了タイムスタンプが `MUX_METRICS_TABLE` (
 SAI 操作が途中で失敗すると rollback が実行され、`MUX_CABLE_TABLE.state` は rollback 先 state の値で上書きされる。STATE_DB 更新と SAI 操作は同一トランザクション内で原子的には行われないため、rollback 直後は STATE_DB 値とデータプレーンの実態が一時的に乖離する可能性がある (muxorch.cpp:547-611)。
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通知メカニズム (Phase G)
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) への書き込みは、ProducerStateTable チャネルではなく `swss::Table::hset()` 経由のため、Redis が発行する **keyspace 通知** (`__keyspace@6__:<TABLE>|<key>`) を介して購読側に届く。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-pubsub.md`
+
+### 書き込み API と通知方式
+
+| テーブル | 書き込み API | PUBLISH チャネル |
+|---------|------------|----------------|
+| `MUX_CABLE_TABLE` (STATE_DB) | `swss::Table::hset()` — `mux_state_table_.hset(portName, "state", muxState)` (muxorch.cpp:2640) | Redis keyspace 通知 `__keyspace@6__:MUX_CABLE_TABLE\|<ifname>` |
+| `HW_MUX_CABLE_TABLE` (STATE_DB) | `swsscommon.Table` 直接 hset (y_cable_helper.py:621-626) | Redis keyspace 通知 `__keyspace@6__:HW_MUX_CABLE_TABLE\|<ifname>` |
+
+ProducerStateTable (`_CHANNEL@<dbId>` PUBLISH / `_<TABLE>` 中間ハッシュ) は使用しない。
+
+### 購読者と dispatch フロー
+
+#### 1. linkmgrd — `STATE_DB MUX_CABLE_TABLE` を SubscriberStateTable で購読
+
+```cpp
+// DbInterface.cpp:1833
+swss::SubscriberStateTable stateDbPortTable(stateDbPtr.get(), STATE_MUX_CABLE_TABLE_NAME);
+swssSelect.addSelectable(&stateDbPortTable);  // DbInterface.cpp:1866
+```
+
+`SubscriberStateTable` が内部で `__keyspace@6__:MUX_CABLE_TABLE|*` を PSUBSCRIBE する。
+
+**dispatch 経路** (DbInterface.cpp:1873-1900):
+
+```
+STATE_DB MUX_CABLE_TABLE 変化 (orchagent が hset)
+  ↓ Redis keyspace notification: __keyspace@6__:MUX_CABLE_TABLE|<port>
+swssSelect.select(&selectable, 1000 ms)        [DEFAULT_TIMEOUT_MSEC]
+  ↓ stateDbPortTable に dispatch
+handleMuxStateNotifiction(stateDbPortTable)    (DbInterface.cpp:1513)
+  ↓ stateDbPortTable.pops(entries)
+processMuxStateNotifiction(entries)            (DbInterface.cpp:1481)
+  ↓ kfvKey() で port 抽出、state フィールド取得
+mMuxManagerPtr->addOrUpdateMuxPortMuxState(port, state)  (MuxManager.cpp:347)
+  ↓
+muxPortPtr->handleMuxState(muxState)           → linkmgrd 内部ステートマシン更新
+```
+
+select タイムアウト: `DEFAULT_TIMEOUT_MSEC = 1000` ms (DbInterface.cpp:48)。タイムアウト時はループ継続（`continue`）でリトライなし。
+
+#### 2. orchagent `MuxStateOrch` — `STATE_DB HW_MUX_CABLE_TABLE` を SubscriberStateTable で購読
+
+```cpp
+// orchdaemon.cpp:477
+MuxStateOrch *mux_st_orch = new MuxStateOrch(m_stateDb, STATE_HW_MUX_CABLE_TABLE_NAME);
+```
+
+`MuxStateOrch` は `Orch2` を継承し `addConsumer()` 経由でテーブルを登録する。`orch.cpp:1188-1190` で STATE_DB (dbId=6) は `SubscriberStateTable` 経路が選択される（CONFIG_DB / STATE_DB / CHASSIS_APP_DB は `SubscriberStateTable`、それ以外は `ConsumerStateTable`）。
+
+**dispatch 経路**:
+
+```
+STATE_DB HW_MUX_CABLE_TABLE 変化 (ycabled が hset)
+  ↓ Redis keyspace notification: __keyspace@6__:HW_MUX_CABLE_TABLE|<port>
+orchdaemon: m_select->select(&s, 1000 ms)     [SELECT_TIMEOUT, orchdaemon.cpp:23,959]
+  ↓ Consumer::execute() → SubscriberStateTable::pops()
+MuxStateOrch::addOperation(request)           (muxorch.cpp:2643)
+  ↓ isMuxExists() チェック、isStateChangeInProgress() チェック
+MuxCableOrch::updateMuxState(port, mux_state)  → STATE_DB MUX_CABLE_TABLE.state 上書き
+```
+
+#### 3. `show mux status` CLI — poll 読み取り (非購読)
+
+`show/muxcable.py:724,747` は `STATE_DB MUX_CABLE_TABLE|*` / `HW_MUX_CABLE_TABLE|*` に対して `hgetall` の一回読みを実行する。keyspace 購読は行わず、コマンド実行時点のスナップショットを表示する。
+
+### 購読テーブルまとめ
+
+| 購読者 | 購読 DB | テーブル | 購読 API | select timeout |
+|--------|--------|---------|---------|---------------|
+| `linkmgrd` | STATE_DB (6) | `MUX_CABLE_TABLE` | `SubscriberStateTable` | 1000 ms (DbInterface.cpp:48) |
+| `orchagent` (`MuxStateOrch`) | STATE_DB (6) | `HW_MUX_CABLE_TABLE` | `SubscriberStateTable` (Orch2 経由) | 1000 ms (orchdaemon.cpp:23) |
+
+### keyspace notification の前提
+
+`SubscriberStateTable` が機能するには Redis で keyspace notification が有効 (`notify-keyspace-events K` + `g`/`s`/`h` 等) である必要がある。SONiC は `sonic-db-config` を通じてデフォルト有効に設定している。
+
+### retry / 再処理セマンティクス
+
+- **linkmgrd**: select タイムアウト時は `continue` でループ、次の keyspace 通知で再処理。`processMuxStateNotifiction` は受信したすべてのエントリをその場で処理し、エラー時のリキューは行わない。
+- **orchagent `MuxStateOrch`**: `addOperation()` が `return false` を返した場合 (`isMuxExists()` 未解決 / `isStateChangeInProgress()` true)、Orch2 フレームワークがエントリを Consumer キューに残置し次の select サイクルで再評価する。`return true` (消費完了) の場合は再処理なし。
+
+<!-- /pubsub -->
