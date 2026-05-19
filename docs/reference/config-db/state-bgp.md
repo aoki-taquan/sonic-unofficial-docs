@@ -501,3 +501,41 @@ DEL イベントでは `state_peer_table.delete(key)` (managers_bgp.py:294) を�
 
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/state-bgp-pubsub.md`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py`, `managers_chassis_app_db.py`, `sonic-swss/fpmsyncd/bgp_eoiu_marker.py`, `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py`
+> 中間調査: `meta/_intermediate/cdb-flow/state-bgp-platform.md`
+
+### BGP_STATE_TABLE — Warm Restart 機能ゲート
+
+`BGP_STATE_TABLE` は **Warm Restart が有効なデプロイでのみ** 書き込まれる。`bgp_eoiu_marker.py` は起動直後に `WarmStart::checkWarmStart("bgp", "bgp", False)` を呼び出し、`isWarmStart()` が `false` の場合はサービス全体を即終了する (bgp_eoiu_marker.py L191–197)。
+
+Warm Restart の有効化は CONFIG_DB `WARM_RESTART` テーブルで制御されるため、プラットフォームハードウェア種別ではなく運用設定に依存する。ただしビルドイメージの `FEATURE` 構成で Warm Restart が無効化されている場合も同様に書き込みは発生しない。
+
+| デプロイ条件 | BGP_STATE_TABLE 書き込み |
+|-----------|------------------------|
+| Warm Restart 有効 | あり（全ネイバー EOR 受信後に `"reached"` を書く） |
+| Warm Restart 無効（デフォルト cold boot） | **なし**（bgp_eoiu_marker サービスがスキップ） |
+
+### BGP_PEER_CONFIGURED_TABLE — VOQ Chassis 分岐
+
+`bgpcfgd` は起動時に `device_info.is_chassis()` を評価し、VOQ Chassis 環境の場合のみ `ChassisAppDbMgr` を追加登録する (main.py L112–114)。`ChassisAppDbMgr` は Supervisor の TSA（Traffic Shift Away）状態を `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL.tsa_enabled` から購読し、変化時に `DeviceGlobalCfgMgr.isolate_unisolate_device()` を呼び出して全 BGP ピアの isolate/unisolate を FRR へ投入する。
+
+また VOQ Chassis 向けの `BGP_VOQ_CHASSIS_NEIGHBOR` テーブルも常時 `BGPPeerMgrBase` に登録されており (main.py L91)、そのエントリは非 VOQ 環境と同じ `update_state_db()` 経由で `BGP_PEER_CONFIGURED_TABLE` に書き込まれる。非 VOQ 環境ではこのテーブルにエントリが存在しないため実質的に無効。
+
+`BGPPeerMgrBase.update_state_db()` 自体には `switch_type` / `sub_role` / `is_chassis()` による条件分岐が**一切存在しない**。書き込み内容・キー形式・フィールドはすべてのプラットフォームで共通。
+
+### software_bfd フィーチャーゲート
+
+`SYSTEM_DEFAULTS.software_bfd.status == "enabled"` の場合のみ `BfdMgr` が起動し、`STATE_DB.BFD_SOFTWARE_SESSION_TABLE` を購読して BGP ピアの admin_status を連動制御する (main.py L117–120)。この機能が有効な場合、BFD セッション切断に伴う `neighbor <peer> shutdown` が FRR へ投入され、その後 `BGP_PEER_CONFIGURED_TABLE` の admin_status フィールドが更新される。software_bfd 無効時は BGP ピアの BFD 状態連動シャットダウンは FRR の内部 BFD 実装に委ねられ、`BGP_PEER_CONFIGURED_TABLE` への副次書き込みは発生しない。
+
+### BMP テーブル — プラットフォーム差分なし
+
+`bmpcfgd` には `is_chassis()` / `is_multi_asic()` / `switch_type` の参照が存在しない。`BGP_NEIGHBOR_TABLE` / `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` の書き込み・削除動作は全プラットフォームで共通。
+
+### マルチ ASIC 環境
+
+`bgpcfgd` 本体に multi-ASIC 対応コードは存在しない。multi-ASIC 環境では各 ASIC namespace ごとに独立した bgpcfgd インスタンスが起動するため、`BGP_PEER_CONFIGURED_TABLE` は各 namespace の STATE_DB に個別に書き込まれる。`fpmsyncd` および `bgp_eoiu_marker` も namespace ごとに独立して動作する。SNMP サブエージェント（sonic-snmpagent）は全 namespace の STATE_DB を横断収集するが、これは consumer 側の動作であり書き込み挙動には影響しない。
+<!-- /platform -->
