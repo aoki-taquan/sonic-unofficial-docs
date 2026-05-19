@@ -448,6 +448,102 @@ syncd はこの COUNTER_ID_LIST を受け取り、ポーリング周期ごとに
 [^f3]: `sonic-swss/orchagent/portsorch.cpp:8780-8816` — ポート削除時の COUNTERS_DB マッピング削除および FLEX_COUNTER_DB clearCounterIdList。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L8780>
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-swss/orchagent/flexcounterorch.cpp`、`sonic-swss/orchagent/orchdaemon.cpp`、`sonic-swss/orchagent/portsorch.cpp`、`sonic-utilities/scripts/queuestat` 精読 (2026-05-19)
+
+### Producer/Consumer ペア全体
+
+COUNTERS_DB QUEUE カウンタの書き込み経路は「CONFIG_DB 操作 → FlexCounterOrch → portsorch → syncd → COUNTERS_DB」の直列パイプラインで構成される。各区間の通信方式を以下に示す。
+
+| 区間 | 方式 | チャンネル / キー |
+|------|------|------------------|
+| CONFIG_DB → FlexCounterOrch | `SubscriberStateTable` (keyspace notification) | `__keyspace@4__:FLEX_COUNTER_TABLE\|QUEUE` 他 |
+| FlexCounterOrch → portsorch | **プロセス内直接関数呼び出し** | `gPortsOrch->generateQueueMap()` / `addQueueFlexCounters()` |
+| portsorch → FLEX_COUNTER_DB | `FlexCounterManager::setCounterIdList()` → `Table::set()` | `FLEX_COUNTER_TABLE\|QUEUE_STAT_COUNTER:<queue_oid>` |
+| syncd → COUNTERS_DB | `Table::set()` (内部ポーリングスレッド) | `COUNTERS:<queue_oid>` ハッシュ |
+| queuestat → COUNTERS_DB | 直接 `hget` / `hgetall` (読み取りのみ) | `COUNTERS_QUEUE_NAME_MAP`、`COUNTERS:<oid>` |
+| portsorch → STATE_DB | `Table::set()` 直接書き込み | `QUEUE_COUNTER_CAPABILITIES\|<cap_name>` |
+
+### FlexCounterOrch の購読構造
+
+`FlexCounterOrch` は `orchdaemon.cpp:620-625` で生成され、CONFIG_DB の以下のテーブルを `SubscriberStateTable` として同時に購読する:
+
+```cpp
+vector<string> flex_counter_tables = {
+    CFG_FLEX_COUNTER_TABLE_NAME,     // "FLEX_COUNTER_TABLE"
+    CFG_DEVICE_METADATA_TABLE_NAME   // "DEVICE_METADATA"
+};
+auto* flexCounterOrch = new FlexCounterOrch(m_configDb, flex_counter_tables);
+```
+
+`Orch` 基底クラスが各テーブルに対して `SubscriberStateTable` を生成し、CONFIG_DB（DB ID = 4）の keyspace notification (`PSUBSCRIBE __keyspace@4__:<table>|*`) でエントリ変化を検出する。`doTask(Consumer &consumer)` が呼ばれると、`consumer.getTableName()` で分岐し以下を処理する:
+
+- `DEVICE_METADATA` → `handleDeviceMetadataTable()` で `create_only_config_db_buffers` を更新
+- `FLEX_COUNTER_TABLE` → `key` (`QUEUE` / `QUEUE_WATERMARK` / `WRED_ECN_QUEUE` 等) と `value` (`enable` / `disable`) で `gPortsOrch` の対応メソッドを直接呼び出す（`flexcounterorch.cpp:235-285`）
+
+### orchdaemon メインループ
+
+`orchdaemon` の主ループは `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:23`) で `Select::select()` を呼び出し、各 `Orch` オブジェクトの `doTask()` をイベント駆動で実行する。`FlexCounterOrch::doTask()` は以下の 2 条件をチェックして早期 return する:
+
+1. `!m_delayTimerExpired`（warm-reboot 時の 60 秒遅延タイマー未満了）
+2. `!gPortsOrch->allPortsReady()`（全ポート初期化未完了）
+
+いずれかが真の間、`FLEX_COUNTER_TABLE|QUEUE = enable` イベントは `m_toSync` バッファに蓄積され、条件が解除された次のイベントループ実行まで保留される。
+
+### FLEX_COUNTER_DB への COUNTER_ID_LIST 書き込み
+
+`addQueueFlexCountersPerPortPerQueueIndex()` が `queue_stat_manager.setCounterIdList()` を呼ぶと、swss `FlexCounterManager` は FLEX_COUNTER_DB へ以下を書き込む（`Table::set()` 経由）:
+
+```
+FLEX_COUNTER_DB / FLEX_COUNTER_TABLE|QUEUE_STAT_COUNTER:<queue_oid>
+  COUNTER_ID_LIST = "SAI_QUEUE_STAT_PACKETS,SAI_QUEUE_STAT_BYTES,...(7 フィールド)"
+```
+
+syncd は FLEX_COUNTER_DB のこのエントリを監視し、ポーリング間隔（デフォルト 10000 ms）ごとに `sai_queue_api->get_queue_stats()` を呼んで `COUNTERS_DB / COUNTERS:<queue_oid>` を更新する。**syncd の書き込みはポーリングスレッド内の `Table::set()` であり、Redis の keyspace notification が有効であれば外部から購読可能**だが、`queuestat` は notification を使わず直接 `hget` で最新値を読む。
+
+### queuestat の読み取り方式
+
+`queuestat` スクリプト（`sonic-utilities/scripts/queuestat`）は COUNTERS_DB を直接 GET する方式（非 Subscribe）で動作する:
+
+```
+COUNTERS_DB.connect()
+HGETALL COUNTERS_QUEUE_NAME_MAP        # port_alias:queue_index → queue_oid
+HGET    COUNTERS_QUEUE_TYPE_MAP        # queue_oid → SAI_QUEUE_TYPE_*
+HGET    COUNTERS_QUEUE_INDEX_MAP       # queue_oid → queue_index
+HGET    COUNTERS:<queue_oid>  <stat>   # 各カウンタ値
+```
+
+`-s` / `--save` フラグを使うと `COUNTERS_DB / RATES:PORT_QUEUE_TABLE:<port>` に前回値を保存してレート計算を行うが、`PUBLISH` / `SUBSCRIBE` は使わない。
+
+### データフロー全体図
+
+```
+counterpoll queue enable
+  ↓ ConfigDBConnector.mod_entry('FLEX_COUNTER_TABLE', 'QUEUE', {'FLEX_COUNTER_STATUS': 'enable'})
+  ↓
+CONFIG_DB[FLEX_COUNTER_TABLE|QUEUE]
+  ↓ SubscriberStateTable (keyspace notification @ DB4)
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ FlexCounterOrch::doTask(Consumer&)
+  ↓   gPortsOrch->generateQueueMap(getQueueConfigurations())  [OID マップ生成]
+  ↓   gPortsOrch->addQueueFlexCounters(getQueueConfigurations())
+  ↓     addQueueFlexCountersPerPortPerQueueIndex()
+  ↓       queue_stat_manager.setCounterIdList(queue_oid, ...)
+  ↓         Table::set() → FLEX_COUNTER_DB[FLEX_COUNTER_TABLE|QUEUE_STAT_COUNTER:<oid>]
+  ↓
+syncd (ポーリングスレッド, デフォルト 10000 ms)
+  ↓ sai_queue_api->get_queue_stats()
+  ↓ Table::set()
+  ↓
+COUNTERS_DB[COUNTERS:<queue_oid>]
+  ↓ hgetall (direct GET, no subscription)
+queuestat
+```
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
