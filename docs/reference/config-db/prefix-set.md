@@ -538,4 +538,71 @@ CONFIG_DB PREFIX_SET / PREFIX
 > **スキャン証跡**: `frrcfgd.py` L2298-2299 (table_handler_list 登録), L2359-2361 (subscribe_all), L1536-1552 (listen_thread/psubscribe), L2894-2910 (PREFIX_SET ハンドラ), L2911-2936 (PREFIX ハンドラ)。`bgpd.conf.db.pref_list.j2` L1-42 (Jinja2 テンプレート)。詳細は `meta/_intermediate/cdb-flow/prefix-set-pubsub.md` を参照。
 <!-- /pubsub -->
 
+<!-- platform-diff -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/prefix-set-platform.md -->
+
+`PREFIX_SET` / `PREFIX` テーブルの処理は FRR 内部のソフトウェアルーティングポリシーで完結し、SAI / ASIC に一切関与しない。プラットフォーム差異は「frrcfgd が起動するか否か」に集約される。
+
+### A. frr_mgmt_framework_config フラグ（最重要な分岐）
+
+`docker-fpm-frr` コンテナの supervisord は `DEVICE_METADATA.localhost.frr_mgmt_framework_config` の値によって起動デーモンを切り替える（`supervisord.conf.j2:163-168`）:
+
+```jinja2
+{% if DEVICE_METADATA.localhost.frr_mgmt_framework_config is defined
+      and DEVICE_METADATA.localhost.frr_mgmt_framework_config == "true" %}
+[program:frrcfgd]
+command=/usr/local/bin/frrcfgd
+{% else %}
+[program:bgpcfgd]
+command=/usr/local/bin/bgpcfgd
+{% endif %}
+```
+
+| `frr_mgmt_framework_config` | 起動デーモン | PREFIX_SET 処理 |
+|-----------------------------|------------|----------------|
+| `"true"` | `frrcfgd` | リアルタイム消費。runtime で PREFIX_SET/PREFIX を FRR に反映 |
+| 未設定 / それ以外 | `bgpcfgd` | PREFIX_SET/PREFIX を消費するハンドラなし。CONFIG_DB に書いても FRR に非反映 |
+
+この切り替えはプラットフォーム（ASIC ベンダー）ではなく、デプロイ時の設定値で決まる。
+
+### B. ospfd / pimd の起動条件
+
+`frr_mgmt_framework_config = "true"` のとき ospfd / pimd も起動し、PREFIX メンバ変更時の vtysh コマンドが全 4 デーモン（bgpd / zebra / ospfd / pimd）に発行される（frrcfgd.py:87）。非 frr-mgmt-framework 環境では frrcfgd 自体が動かないため、この差異は実害なし。
+
+### C. 起動時 FRR 設定生成（gen_bgpd.conf.j2）
+
+`gen_bgpd.conf.j2:1` / `gen_frr.conf.j2:1` も同フラグで分岐する:
+
+- `frr_mgmt_framework_config = "true"`: `bgpd.conf.db.j2` → `bgpd.conf.db.pref_list.j2` により PREFIX_SET/PREFIX を FRR 起動時設定に展開
+- それ以外: 旧来の `bgpd.conf.j2` テンプレートを使用。PREFIX_SET は展開されない
+
+### D. ASIC ベンダー差異なし
+
+PREFIX_SET/PREFIX の処理は全て FRR 内部の BGP / OSPF / PIM ポリシー処理で完結する。SAI 呼び出しは一切なく、ASIC ベンダー固有の条件分岐はコード中に存在しない。
+
+### E. SmartSwitch DPU
+
+DPU 側には `docker-fpm-frr` がデプロイされず frrcfgd も動作しない。PREFIX_SET は NPU 側のルーティングポリシーとしてのみ機能する。
+
+### F. VS（仮想スイッチ）
+
+VS 環境は物理 ASIC と同一動作。FRR は純ソフトウェアのため ASIC 照会なし。`frr_mgmt_framework_config = "true"` を設定すれば物理環境と等価に PREFIX_SET を処理できる。
+
+### プラットフォーム差異要約
+
+| 観点 | frr_mgmt_framework_config=true | frr_mgmt_framework_config 未設定 | SmartSwitch DPU |
+|------|-------------------------------|--------------------------------|-----------------|
+| PREFIX_SET 消費デーモン | frrcfgd | bgpcfgd（ハンドラなし） | 非起動 |
+| PREFIX_SET runtime 反映 | 即時 | 非反映 | N/A |
+| ospfd/pimd への PREFIX 通知 | あり | N/A | N/A |
+| 起動時 FRR 設定展開 | bgpd.conf.db.pref_list.j2 | なし | なし |
+| ASIC 差異 | なし | なし | なし |
+
+<!-- evidence: supervisord.conf.j2:163-168; gen_frr.conf.j2:1; gen_bgpd.conf.j2:1; frrcfgd.py:83,87 -->
+
+> 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-platform.md` を参照
+<!-- /platform-diff -->
+
 <!-- glossary-links-injected: 88e792f23f63 -->
