@@ -408,6 +408,78 @@ gNMI カウンタ本体は SysV 共有メモリに格納されるため、カウ
 詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/gnmi-counter-pubsub.md -->
+<!-- source: sonic-gnmi/common_utils/shareMem.go ref:master -->
+<!-- source: sonic-gnmi/common_utils/context.go ref:master -->
+<!-- source: sonic-gnmi/gnmi_dump/gnmi_dump.go ref:master -->
+<!-- source: sonic-gnmi/common_utils/notification_producer.go ref:master -->
+<!-- source: sonic-gnmi/gnmi_server/gnoi_system.go ref:master -->
+
+共有メモリカウンタ本体は Redis pub/sub を**一切使わない**。カウンタ増分・初期化・読み取りはすべて SysV 共有メモリ（key=`7749`）への直接 syscall で完結する。ただし `telemetryd` が担う gNOI Reboot 処理のみ STATE_DB の Redis `PUBLISH` / `SUBSCRIBE` を使う。
+
+### カウンタ本体 — SysV 共有メモリ直接操作
+
+| 操作 | 関数 | 方式 |
+|------|------|------|
+| カウンタ増分 | `IncCounter()` → `atomic.AddUint64` → `SetMemCounters()` | `syscall.SYS_SHMGET` + `SYS_SHMAT` 直書き |
+| カウンタ初期化 | `InitCounters()` → `SetMemCounters()` | 同上 |
+| カウンタ読み取り | `gnmi_dump` の `GetMemCounters()` | SysV SHM 直読み（1 回 snapshot、継続購読なし） |
+
+`SetMemCounters` / `GetMemCounters`（`shareMem.go`）は Go の `syscall` パッケージを直接呼ぶ実装であり、`redis.Publish` / `redis.Subscribe` は含まれない。`gnmi_dump` はスナップショット 1 回読み出して終了するため、keyspace 通知のリスンも行わない。
+
+### gNOI Reboot — Redis Pub/Sub (STATE_DB)
+
+`telemetryd` が gNOI Reboot RPC（`Reboot` / `RebootStatus` / `CancelReboot`）を処理する際、`sendRebootReqOnNotifCh()` (`gnoi_system.go:116`) が Redis `PUBLISH` / `SUBSCRIBE` を使う。
+
+```
+gNOI クライアント ──gRPC Reboot RPC──▶ telemetryd
+                                            │
+                         NewNotificationProducer("Reboot_Request_Channel")
+                                            │ PUBLISH Reboot_Request_Channel [JSON]
+                                            ▼
+                               STATE_DB (Redis DB 6)
+                                            │
+                                            ▼
+                               sonic-host-services
+                                            │ PUBLISH Reboot_Response_Channel
+                                            ▼
+                   telemetryd Subscribe("Reboot_Response_Channel", 10s timeout)
+                                            │
+                                            ▼
+                              gRPC レスポンスをクライアントに返す
+```
+
+| 定数 (`gnoi_system.go:27-31`) | 値 | 用途 |
+|-------------------------------|-----|------|
+| `rebootReqCh` | `"Reboot_Request_Channel"` | `NotificationProducer.Send()` で PUBLISH するチャンネル名 |
+| `rebootRespCh` | `"Reboot_Response_Channel"` | `redis.Subscribe` で待機するレスポンスチャンネル名 |
+| `notificationTimeout` | `10 * time.Second` | レスポンス待機タイムアウト |
+
+> **カウンタとの関係**: `GNOI_REBOOT` カウンタ（index 5）は **dead counter** であり、Reboot RPC が正常に処理されても `IncCounter(GNOI_REBOOT)` が呼ばれないため常に 0 のまま。Reboot の pub/sub 成否はいかなるカウンタにも影響しない。
+
+### TELEMETRY_CONNECTIONS — 直接 HSET/HDel (pub/sub なし)
+
+Subscribe セッション管理で使う STATE_DB `TELEMETRY_CONNECTIONS` は直接 `HSet` / `HDel` で書き込む（`connection_manager.go:116,127`）。`PUBLISH` / keyspace notification は使わない。詳細は副次 DB 書込（Phase F）を参照。
+
+### サマリ
+
+| 観点 | 内容 |
+|------|------|
+| カウンタ書込方式 | SysV 共有メモリ直書き（Redis pub/sub 非使用） |
+| カウンタ読取方式 | `gnmi_dump` による SHM 直読み（1 回 polling、継続購読なし） |
+| Redis PUBLISH | gNOI Reboot のみ: `Reboot_Request_Channel` へ JSON メッセージを送信 |
+| Redis SUBSCRIBE | gNOI Reboot のみ: `Reboot_Response_Channel` を 10 秒タイムアウトで待機 |
+| keyspace 通知 | 未使用 |
+| ProducerStateTable / ConsumerStateTable | 未使用 |
+| SubscriberStateTable | 未使用 |
+| TELEMETRY_CONNECTIONS 書込 | 直接 HSET/HDel（pub/sub なし） |
+
+詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
