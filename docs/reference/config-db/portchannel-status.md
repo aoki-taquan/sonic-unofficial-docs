@@ -396,6 +396,44 @@ teamsyncd::addLag() → Table::set (通常 HSET)
 > **Evidence**: `teamsync.h:74-75` (ProducerStateTable 型宣言)、`teamsync.cpp:157,175,203,241,255` (set/del 呼び出し)、`teammgrd.cpp:55-63,80-90` (SubscriberStateTable セットアップ・selectループ)、`teammgr.h:33` (m_appLagTable)、`orchdaemon.cpp:215-224` (ports_tables 優先度定義)、`portsorch.cpp:6464-6489` (doTask 処理順)、`portsorch.cpp:8017,8093` (SUBJECT_TYPE_PORT_CHANGE notify)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差・SAI capability 分岐 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-status-platform.md`
+
+### Mellanox — LAG_MEMBER の collection/distribution 操作順が固定
+
+LAG メンバーの enabled/disabled 状態を切り替えるとき、orchagent は `SAI_LAG_MEMBER_ATTR_INGRESS_DISABLE` (collection) と `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE` (distribution) の 2 属性を順に SET する。Mellanox SAI は collection=false かつ distribution=true の "distribution-only" 中間状態をサポートしないため、操作順がプラットフォーム依存になっている (`portsorch.cpp:6361-6382`)。
+
+| 状態遷移 | 操作順 | 理由 |
+|---------|--------|------|
+| disabled → enabled | collection を先に `true` → distribution を `true` | distribution-only 中間状態を回避 |
+| enabled → disabled | distribution を先に `false` → collection を `false` | distribution-only 中間状態を回避 |
+
+コードコメントに「distribution-only mode is not supported on Mellanox platform」と明記されている。APPL_DB `LAG_TABLE` 本体への影響はないが、LAG_MEMBER の SET が SAI エラーで失敗した場合は `it++` で再試行される。
+
+### VoQ スイッチ — `create_lag()` に `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` 追加
+
+通常スイッチでは `sai_lag_api->create_lag()` を 0 属性で呼び出すが、VoQ スイッチ (`gMySwitchType == "voq"`) では `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` 属性を追加する (`portsorch.cpp:7962-7991`)。Multi-ASIC VoQ 構成では `LagIdAllocator` でシャーシ全体でユニークな LAG ID を払い出し、LAG 名も `<hostname>|<asic>|PortChannelXXXX` 形式に変換する。さらに `voqSyncAddLag()` が CHASSIS_APP_DB `CHASSIS_APP_LAG_TABLE_NAME` にも書き込む (`portsorch.cpp:8039`)。
+
+### `SAI_LAG_ATTR_TPID` — ASIC 対応依存
+
+`setLagTpid()` (`portsorch.cpp:8267-8291`) は SAI capability チェックなしに `SAI_LAG_ATTR_TPID` を直接 SET する。`SAI_LAG_ATTR_TPID` に非対応の ASIC では `SAI_STATUS_NOT_SUPPORTED` が返り `SWSS_LOG_ERROR` が出力される。VS (Virtual Switch) SAI は `SAI_LAG_ATTR_TPID` の SET をサポートしないため、VS 環境での TPID 設定は常にエラーになる。APPL_DB の `tpid` フィールドへの書き込み (teammgrd 側) はプラットフォームに依らず行われる。
+
+### プラットフォーム識別定数
+
+| 定数 (orch.h) | 値 | LAG 関連の影響 |
+|---|---|---|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | distribution-only モード非対応。操作順を固定して中間状態を回避 |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | `SAI_LAG_ATTR_TPID` SET が常にエラー |
+
+### プラットフォーム無依存部分
+
+- **teamsyncd**: カーネル RTM_NEWLINK 駆動のため、すべての環境で `admin_status` / `oper_status` / `mtu` の書き込みが同一
+- **teammgrd**: CONFIG_DB → APPL_DB の転写ロジックにプラットフォーム分岐なし
+- **STATE_DB `LAG_TABLE`**: `state: ok` 書き込みはプラットフォーム差なし
+<!-- /platform -->
+
 ## APPL_DB LAG_TABLE と STATE_DB LAG_TABLE の区別
 
 | 側面 | APPL_DB LAG_TABLE | STATE_DB LAG_TABLE |
