@@ -379,6 +379,44 @@ NotificationConsumer: なし
 > **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:365-384`; `sonic-swss/orchagent/qosorch.cpp:1313,2231-2253`; `sonic-swss/orchagent/qosorch.cpp:1331` (`handleDot1pToTcTable` 登録)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/dot1p-to-pg-map-platform.md`
+
+`DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路
+(`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を処理する
+`QosOrch` のコードパスにプラットフォーム依存分岐が存在するかを調査した結果を示す。
+
+### orchagent 実行時コードパス — プラットフォーム差異なし
+
+`Dot1pToTcMapHandler::addQosItem()` / `convertFieldValuesToAttributes()` (`qosorch.cpp:360-427`) および
+`TcToPgHandler::addQosItem()` (`qosorch.cpp:905-930`) のいずれにも `gMySwitchType` 参照が存在しない。
+`handlePortQosMapTable()` (`qosorch.cpp:2046-2156`) も同様に platform 分岐なし。
+
+`gMySwitchType == "voq"` 分岐は `handleQueueTable`・`applySchedulerToQueueSchedulerGroup`・
+`applyWredProfileToQueue` にのみ存在し、dot1p 関連ハンドラには適用されない。
+
+全 switch_type（standard / voq / dpu）で同一 SAI 経路（`sai_qos_map_api->create_qos_map()` /
+`sai_port_api->set_port_attribute()`）が実行される。
+
+### 初期設定注入のプラットフォーム差異（qos_config.j2）
+
+`sonic-buildimage/files/build_templates/qos_config.j2` はストレージバックエンドプラットフォーム
+（`DEVICE_METADATA['localhost']['type'] in backend_device_types` かつ
+`storage_device == 'true'`）でのみ `DOT1P_TO_TC_MAP|AZURE` エントリと
+`PORT_QOS_MAP.<port>.dot1p_to_tc_map=AZURE` を自動注入する。
+
+| プラットフォーム条件 | 自動注入内容 |
+|---------------------|-------------|
+| ストレージバックエンド (`storage_device=true`) | `DOT1P_TO_TC_MAP|AZURE` (dot1p 0↔1 スワップ) + `PORT_QOS_MAP.<port>.dot1p_to_tc_map=AZURE` |
+| 上記以外の全 platform | 注入なし（手動設定が必要） |
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:360-427,905-930,2046-2156`（platform 分岐なし）;
+> `sonic-swss/orchagent/qosorch.cpp:1637,1715,1772`（voq 分岐は Queue/Wred 系のみ）;
+> `sonic-buildimage/files/build_templates/qos_config.j2:240-252,435`（ストレージバックエンドのみ注入）
+<!-- /platform -->
+
 ## 制約
 
 - `DOT1P_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する

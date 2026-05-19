@@ -422,6 +422,37 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 > **Evidence**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:20-411, 442-485`; `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:44-128`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`sonic-dhcpv4-relay` (`DHCPMgr`) は `DEVICE_METADATA.subtype` を購読し、プラットフォーム種別に応じて中継動作を自動変更する。ASIC 種別・multi-ASIC・VOQ chassis の差は SAI 非経由のため発生しない。
+
+| プラットフォーム | 差異 | 根拠 |
+|-----------------|------|------|
+| **DualToR** (`subtype = "DualToR"`) | `source_interface` を `"Loopback0"` に強制上書き（`DHCPV4_RELAY` フィールド値を無視）; `link_selection` を設定値に関わらず自動 enable | `dhcp4relay.cpp:263-267` (source_interface 強制), `dhcp4relay.cpp:521` (`is_dualTor \|\| link_selection_opt == "enable"`) |
+| **SmartSwitch** (`subtype = "SmartSwitch"`) | OPTION82 SUBOPT_REMOTE_ID にホスト MAC ではなく midplane bridge (`MID_PLANE_BRIDGE\|GLOBAL.bridge`) の MAC を使用; DPU インタフェース (`dpu*`) からのパケットを midplane bridge VLAN にマッピング | `dhcp4relay.cpp:509-517` (Remote-ID MAC 切替), `dhcp4relay.cpp:1001-1003` (DPU→midplane bridge マッピング) |
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | SAI 非経由 — Linux カーネルの UDP 中継のみ |
+| multi-ASIC / namespace | 影響なし | CPU-side relay; namespace ループなし |
+| VOQ chassis | 影響なし | `DHCPMgr` は host CONFIG_DB のみ購読 |
+
+### DualToR: source_interface 強制上書きの詳細
+
+`dhcp4relay_mgr.cpp:231-232` が `DEVICE_METADATA|localhost.subtype == "DualToR"` を検出すると `m_config.is_dualTor = true` をセット。
+以後 `update_vlan_config()` が `interface_config.source_interface = "Loopback0"` を強制設定し（`dhcp4relay.cpp:263-267`）、
+リレーパケットの giaddr / link-selection サブネットが Loopback0 のアドレスに固定される。
+**`DHCPV4_RELAY.source_interface` に別の IF を設定しても DualToR 環境では無効**。
+
+### SmartSwitch: OPTION82 Remote-ID MAC 切替の詳細
+
+`dhcp4relay_mgr.cpp:241-249` が `subtype == "SmartSwitch"` を検出すると
+`MID_PLANE_BRIDGE|GLOBAL.bridge` からミッドプレーンブリッジ名を取得し `m_config.midplane_bridge` に格納。
+パケット中継時に `dhcp4relay.cpp:509-517` で `!bm_mac.empty()` 判定が真の場合、
+`OPTION82_SUBOPT_REMOTE_ID` に `host_mac_addr` の代わりに `bm_mac`（midplane bridge MAC）を使用する。
+これにより DHCP サーバ側で DPU とホストを MAC で区別することが可能になる。
+
+詳細根拠は `meta/_intermediate/cdb-flow/dhcpv4-relay-platform.md` を参照。
+<!-- /platform -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
