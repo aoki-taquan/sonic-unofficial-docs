@@ -26375,7 +26375,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -26397,7 +26436,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連制約
@@ -26419,7 +26458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -26430,7 +26469,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -26441,7 +26480,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34860,7 +34899,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34882,7 +34960,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連制約
@@ -34904,7 +34982,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34915,7 +34993,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34926,7 +35004,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35064,7 +35142,54 @@
 <p><strong>重複設定の no-op</strong>: <code>set_ipv6_link_local_only_on_interface()</code> は <code>curr_mode == mode</code> の場合 early return する。未設定に <code>"disable"</code> を設定した場合も no-op になる。</p>
 <!-- /defaults -->
 
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>intfmgrd</code> は CONFIG_DB の <code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>VLAN_INTERFACE</code> テーブルを購読し、<code>ipv6_use_link_local_only</code> フィールドを APP_DB に転送する。この転送はインターフェースの STATE_DB 状態に依存するため、いくつかの順序依存が存在する。</p>
+<h3 id="_4">検出された順序依存<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>STATE_DB インターフェース state OK → APP_DB 転送</td>
+<td><strong>強制先行</strong>（未 OK 時は skip）</td>
+<td><code>intfmgrd</code> が自動再キューし、インターフェース UP 後に自然反映</td>
+</tr>
+<tr>
+<td>2</td>
+<td>VRF STATE_DB エントリ存在 → VRF バインド済みインターフェースへの設定</td>
+<td>条件付き先行（VRF 未 ready 時は skip）</td>
+<td>VRF 作成後に設定するか、自動再キューを利用</td>
+</tr>
+<tr>
+<td>3</td>
+<td>CONFIG_DB 書込み → <code>neighsyncd</code> の neigh フィルタリング</td>
+<td>CONFIG_DB が正 source（APP_DB 転送完了を待たない）</td>
+<td>APP_DB 転送前でも <code>neighsyncd</code> は CONFIG_DB を直接参照する</td>
+</tr>
+<tr>
+<td>4</td>
+<td>CONFIG_DB への <code>"disable"</code> 書込み → NEIGH_TABLE 即時削除</td>
+<td>同期的（同一イベント処理内）</td>
+<td><code>"disable"</code> 後の link-local neigh は即時消えることを考慮</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">主要な制約詳細<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><strong>インターフェース state 先行必須 (依存 #1)</strong>: <code>intfmgr.cpp:L833-837</code> で <code>isIntfStateOk()</code> が <code>false</code> を返す間、<code>intfmgrd</code> はイベント処理を <code>return false</code> で再キューし続ける。<code>isIntfStateOk()</code> のチェック先は インターフェース種別で異なり: <code>Ethernet*</code> → <code>STATE_PORT_TABLE</code>（<code>state</code> フィールドあり）、<code>PortChannel*</code> → <code>STATE_LAG_TABLE</code>、<code>Vlan*</code> → <code>STATE_VLAN_TABLE</code>。起動直後やインターフェース初期化中は CONFIG_DB への書込みが先行しても APP_DB への転送は自動的に遅延される（evidence: <code>intfmgr.cpp:831-837</code>, <code>intfmgr.cpp:649-708</code>）。</p>
+<p><strong>VRF バインド時の追加チェック (依存 #2)</strong>: インターフェースが VRF に所属する場合、<code>intfmgr.cpp:L839-843</code> で VRF の <code>STATE_VRF_TABLE</code> エントリも確認する。VRF が未作成の状態で <code>ipv6_use_link_local_only</code> を設定しても APP_DB 転送がスキップされる。実運用では VRF 作成（<code>VRF|&lt;name&gt;</code> → <code>vrfmgrd</code> → STATE_VRF_TABLE）後にインターフェース属性を設定することが推奨される（evidence: <code>intfmgr.cpp:839-843</code>）。</p>
+<p><strong>neighsyncd の CONFIG_DB 直接参照 (依存 #3)</strong>: <code>neighsync.cpp</code> の <code>isLinkLocalEnabled()</code> は APP_DB ではなく CONFIG_DB を直接参照する（<code>m_cfgInterfaceTable.get()</code> / <code>m_cfgVlanInterfaceTable.get()</code> / <code>m_cfgLagInterfaceTable.get()</code>）。このため <code>intfmgrd</code> による APP_DB 転送が完了していなくても、CONFIG_DB に <code>"enable"</code> が書かれた時点から link-local neigh の NEIGH_TABLE への書込みが始まる。CONFIG_DB が削除されると即座にフィルタアウトされる（evidence: <code>neighsync.cpp:193-239</code>）。</p>
+<p><strong>disable 時の即時 neigh 削除 (依存 #4)</strong>: <code>intfmgrd</code> が <code>"disable"</code> イベントを受け取ると、<code>m_ipv6LinkLocalModeList.erase(alias)</code> と <code>delIpv6LinkLocalNeigh(alias)</code> を同一処理内で同期的に実行する。この削除は CONFIG_DB イベント受信時に即時トリガーされる。<code>"disable"</code> 書込みと APP_DB NEIGH_TABLE 削除は実質的に同時であるため、運用変更時には接続中の BGP unnumbered セッションへの影響を考慮すること（evidence: <code>intfmgr.cpp:920-923</code>）。</p>
+<!-- /ordering -->
+
+<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35105,7 +35230,7 @@
 </span></code></pre></div>
 <p><code>config ipv6 enable link-local</code> は VLAN member ポートおよび PortChannel member ポートを自動スキップする。Loopback (<code>lo</code>) と OOB (<code>eth0</code>) は対象外。</p>
 <p><code>show ipv6 link-local-mode</code> は PORT / PORTCHANNEL / VLAN テーブルを基準に表示するため、Loopback は表示されない。INTERFACE エントリが存在しないポートは <code>Disabled</code> 表示。</p>
-<h2 id="_5">関連制約<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連制約<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VLAN member として登録されたポートへの <code>enable</code> は CLI で拒否される (明示エラー)</li>
 <li>PortChannel member として登録されたポートへの <code>enable</code> は CLI で拒否される (明示エラー)</li>
@@ -35119,15 +35244,15 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-interface/"><code>sonic-interface</code></a></li>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../interface/">INTERFACE テーブル</a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 <li><a href="../interface/">INTERFACE テーブル</a></li>

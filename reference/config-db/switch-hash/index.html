@@ -29339,6 +29339,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗時の挙動サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29467,7 +29517,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -29478,7 +29528,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -35658,6 +35708,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗時の挙動サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35786,7 +35886,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -35797,7 +35897,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -36147,6 +36247,95 @@
 <p><code>doCfgSwitchHashTableTask()</code> は Consumer からフィールドを読み取り、<code>parseSwHash()</code> → <code>setSwitchHash()</code> を呼ぶだけで、<code>PORT</code> / <code>PORTCHANNEL</code> / <code>VRF</code> / <code>INTERFACE</code> / <code>FG_NHG</code> など他 CONFIG_DB テーブルを参照しない。Fine-Grained ECMP (<code>FG_NHG</code>) は <code>FgNhgOrch</code> が独立して管理し、<code>SwitchOrch</code> とは別経路で SAI に設定される。</p>
 <!-- /cross-refs -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/switch-hash-failure.md</code></p>
+</blockquote>
+<p><code>SWITCH_HASH</code> の処理失敗は <code>doCfgSwitchHashTableTask()</code> / <code>setSwitchHash()</code> / <code>setSwitchHashFieldListSai()</code> 内で検出される。STATE_DB へのステータス書き込みはなく、エラー記録は syslog (<code>SWSS_LOG_ERROR</code> / <code>SWSS_LOG_WARN</code>) のみ。</p>
+<h3 id="set">SET 時の失敗パターン<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>キーが空文字列</td>
+<td><code>doCfgSwitchHashTableTask()</code> 冒頭</td>
+<td><code>LOG_ERROR("Failed to parse switch hash key: empty string")</code> → erase</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>ASIC capability 機構自体が未サポート (<code>isSwitchEcmpHashSupported()</code> = false)</td>
+<td><code>setSwitchHash()</code> capability チェック</td>
+<td><code>LOG_WARN("Switch ECMP hash configuration is not supported: skipping ...")</code> → erase、<strong>サイレント握りつぶし</strong></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>SAI capability セットに含まれない hash-field / hash-algorithm</td>
+<td><code>validateSwitchHashFieldCap()</code> / <code>validateSwitchHashAlgorithmCap()</code></td>
+<td><code>LOG_ERROR("Failed to validate switch ECMP/LAG hash: capability is not supported")</code> → <code>"Failed to set switch hash: ASIC and CONFIG DB are diverged"</code> → erase</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>SAI <code>set_hash_attribute()</code> 失敗</td>
+<td><code>setSwitchHashFieldListSai()</code> L750-769</td>
+<td><code>LOG_ERROR("Failed to set switch ECMP/LAG hash in SAI")</code> → キャッシュ未更新 → erase</td>
+<td>なし（CLI 再書き込みが唯一の回復手段）</td>
+</tr>
+<tr>
+<td>起動時 OID キャッシュ未取得での SET</td>
+<td><code>querySwitchHashDefaults()</code> 失敗後の SAI SET</td>
+<td>SAI SET 失敗（→ 上記 SAI 失敗パターンに帰着）; OID 取得失敗自体は <code>LOG_WARN</code> のみ</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 時の失敗パターン<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<p><code>ecmp_hash</code> / <code>lag_hash</code> / <code>ecmp_hash_algorithm</code> / <code>lag_hash_algorithm</code> はすべて DEL 非サポート。</p>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DEL 操作（通常）</td>
+<td><code>LOG_ERROR("Failed to remove switch ECMP/LAG hash configuration: operation is not supported")</code> → erase</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>DEL 操作（ASIC/CONFIG_DB 乖離時）</td>
+<td><code>LOG_ERROR("Failed to remove switch hash: operation is not supported: ASIC and CONFIG DB are diverged")</code> → erase</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">失敗時の挙動サマリ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>SET 受信
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ├─ 空キー                                  → LOG_ERROR → erase（スキップ）
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  ├─ capability 機構未サポート               → LOG_WARN  → erase（サイレント握りつぶし）
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  ├─ capability セット外フィールド/アルゴリズム → LOG_ERROR → erase（CONFIG_DB 乖離ログ）
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  └─ SAI SET 失敗 or OID 未取得             → LOG_ERROR → erase（CLI 再書き込みで回復）
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>DEL 受信
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  └─ 全ケース                               → LOG_ERROR → erase（DEL 非サポート）
+</span></code></pre></div>
+<p><strong>自動再試行なし</strong>: Consumer が <code>map.erase(it)</code> でエントリを消費するため、失敗後は CLI / <code>sonic-db-cli</code> による再書き込みが唯一の回復手段。<code>ERROR_TABLE</code> への書き込みもなし。CONFIG_DB のエントリは失敗後も残る（orchagent は書き戻さない）。</p>
+<p>確認コマンド:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;switch.*hash&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;ERROR|WARN&quot;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_HASH|GLOBAL&#39;</span>
+</span></code></pre></div></p>
+<!-- /failure -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
@@ -36183,9 +36372,9 @@
 <p>db_migrator.py での SWITCH_HASH マイグレーションなし</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_17">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_18">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_18">死活・デッドコード<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_19">死活・デッドコード<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
 

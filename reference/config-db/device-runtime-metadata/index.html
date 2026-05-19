@@ -26024,19 +26024,19 @@
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差異 (Phase H)
+        プラットフォーム差 (Phase H)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_25" class="md-nav__link">
+  <a href="#chassis_metadata-chassis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム別サブキー生成マトリクス
+        CHASSIS_METADATA — chassis 種別による有無とフィールド値
       
     </span>
   </a>
@@ -26044,10 +26044,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#multi-npu" class="md-nav__link">
+  <a href="#ethernet_ports_present-hwsku" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multi-NPU プラットフォーム
+        ETHERNET_PORTS_PRESENT — hwsku 種別による差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#macsec_supported-platform_envconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MACSEC_SUPPORTED — platform_env.conf 依存
       
     </span>
   </a>
@@ -26058,18 +26069,7 @@
   <a href="#smartswitch-dpu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SmartSwitch / DPU プラットフォーム
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_26" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラットフォーム差サマリー
+        SmartSwitch / DPU — 影響なし
       
     </span>
   </a>
@@ -36099,19 +36099,19 @@
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差異 (Phase H)
+        プラットフォーム差 (Phase H)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="プラットフォーム差異 (Phase H)">
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_25" class="md-nav__link">
+  <a href="#chassis_metadata-chassis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム別サブキー生成マトリクス
+        CHASSIS_METADATA — chassis 種別による有無とフィールド値
       
     </span>
   </a>
@@ -36119,10 +36119,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#multi-npu" class="md-nav__link">
+  <a href="#ethernet_ports_present-hwsku" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multi-NPU プラットフォーム
+        ETHERNET_PORTS_PRESENT — hwsku 種別による差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#macsec_supported-platform_envconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MACSEC_SUPPORTED — platform_env.conf 依存
       
     </span>
   </a>
@@ -36133,18 +36144,7 @@
   <a href="#smartswitch-dpu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SmartSwitch / DPU プラットフォーム
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_26" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラットフォーム差サマリー
+        SmartSwitch / DPU — 影響なし
       
     </span>
   </a>
@@ -36972,13 +36972,18 @@
 <!-- /pubsub -->
 
 <!-- platform -->
-<h2 id="phase-h">プラットフォーム差異 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>調査根拠</strong>: <code>sonic_py_common/device_info.py</code> L617-668 (<code>is_chassis</code>, <code>is_voq_chassis</code>, <code>is_packet_chassis</code>, <code>is_virtual_chassis</code>, <code>is_disaggregated_chassis</code>, <code>is_multi_npu</code>) 精読 (2026-05-19)
-詳細証跡: <code>meta/_intermediate/cdb-flow/device-runtime-metadata-ordering.md</code></p>
+<p><strong>調査根拠</strong>: <code>sonic_py_common/device_info.py</code> L511-747 全行精読 (2026-05-19)
+詳細証跡: <code>meta/_intermediate/cdb-flow/device-runtime-metadata-platform.md</code></p>
 </blockquote>
-<p><code>get_device_runtime_metadata()</code> の返すサブキー構成はプラットフォーム種別によって大きく異なる。<code>ETHERNET_PORTS_PRESENT</code> / <code>MACSEC_SUPPORTED</code> は全プラットフォームで必ず存在するが、<code>CHASSIS_METADATA</code> はシャーシ環境でのみ生成される。</p>
-<h3 id="_25">プラットフォーム別サブキー生成マトリクス<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<p><code>DEVICE_RUNTIME_METADATA</code> のフィールド構造・値はすべてランタイム時の<strong>ハードウェアプラットフォーム検出結果</strong>に依存する。ASIC ベンダや YANG スキーマには依存せず、以下の 3 要素の組み合わせで決定する。</p>
+<ol>
+<li><code>switch_type</code> / <code>chassisdb.conf</code> 存否 → <code>CHASSIS_METADATA</code> キーの有無と <code>chassis_type</code></li>
+<li><code>platform_env.conf</code> の内容 → <code>module_type</code> および <code>MACSEC_SUPPORTED</code></li>
+<li>hwsku ディレクトリの <code>port_config.ini</code> 存否 → <code>ETHERNET_PORTS_PRESENT</code></li>
+</ol>
+<h3 id="chassis_metadata-chassis"><code>CHASSIS_METADATA</code> — chassis 種別による有無とフィールド値<a class="headerlink" href="#chassis_metadata-chassis" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36998,87 +37003,117 @@
 <td>—</td>
 </tr>
 <tr>
-<td>VOQ シャーシ supervisor</td>
-<td><code>switch_type=voq</code> + <code>chassisdb.conf</code> 存在 + <code>supervisor=1</code> in <code>platform_env.conf</code></td>
-<td>あり</td>
-<td><code>'voq'</code></td>
-<td><code>'supervisor'</code></td>
-</tr>
-<tr>
-<td>VOQ シャーシ linecard</td>
+<td>VOQ chassis (linecard)</td>
 <td><code>switch_type=voq</code> + <code>chassisdb.conf</code> 存在 + <code>supervisor=1</code> なし</td>
 <td>あり</td>
 <td><code>'voq'</code></td>
 <td><code>'linecard'</code></td>
 </tr>
 <tr>
-<td>パケットシャーシ</td>
+<td>VOQ chassis (supervisor)</td>
+<td><code>switch_type=voq</code> + <code>chassisdb.conf</code> 存在 + <code>platform_env.conf</code> に <code>supervisor=1</code></td>
+<td>あり</td>
+<td><code>'voq'</code></td>
+<td><code>'supervisor'</code></td>
+</tr>
+<tr>
+<td>Packet chassis</td>
 <td><code>switch_type=chassis-packet</code></td>
 <td>あり</td>
 <td><code>'packet'</code></td>
 <td><code>supervisor=1</code> 有無で決定</td>
 </tr>
 <tr>
-<td>仮想シャーシ (VS)</td>
-<td><code>asic_type=vs</code> + <code>switch_type</code> in <code>[dummy-sup, voq, chassis-packet]</code></td>
+<td>Virtual chassis (VS)</td>
+<td><code>asic_type=vs</code> (<code>sonic_version.yml</code>) + <code>switch_type</code> が <code>dummy-sup</code>/<code>voq</code>/<code>chassis-packet</code> のいずれか</td>
 <td>あり</td>
 <td><code>'voq'</code> or <code>'packet'</code></td>
 <td>VS 内 <code>supervisor=1</code> 有無</td>
 </tr>
 <tr>
-<td>Disaggregated シャーシ</td>
-<td><code>switch_type=voq</code> + <code>disaggregated_chassis=1</code></td>
-<td><strong>生成されない</strong> (<code>is_voq_chassis()</code> が False になる)</td>
+<td>Disaggregated chassis</td>
+<td><code>switch_type=voq</code> + <code>disaggregated_chassis=1</code> in <code>platform_env.conf</code></td>
+<td><strong>生成されない</strong></td>
 <td>—</td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
 <p>(evidence: <code>device_info.py:630-668</code>, <code>device_info.py:737-739</code>)</p>
-<h3 id="multi-npu">Multi-NPU プラットフォーム<a class="headerlink" href="#multi-npu" title="Permanent link">&para;</a></h3>
-<p>Multi-NPU 環境（NPU 数 &gt; 1）では <code>ETHERNET_PORTS_PRESENT</code> の判定に ASIC <code>"0"</code> のポート設定ファイルを使用する。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">get_path_to_port_config_file</span><span class="p">(</span><span class="n">hwsku</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asic</span><span class="o">=</span><span class="s2">&quot;0&quot;</span> <span class="k">if</span> <span class="n">is_multi_npu</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
-</span></code></pre></div>
-<p>ASIC 0 の <code>port_config.ini</code> が存在すれば <code>True</code>、なければ <code>False</code>。ASIC 1 以降は確認しない (<code>device_info.py:741</code>)。</p>
-<h3 id="smartswitch-dpu">SmartSwitch / DPU プラットフォーム<a class="headerlink" href="#smartswitch-dpu" title="Permanent link">&para;</a></h3>
-<p><code>is_smartswitch()</code> および <code>is_dpu()</code> の判定は <code>platform.json</code> の <code>DPUS</code> / <code>DPU</code> キーを参照するが、<code>get_device_runtime_metadata()</code> の中では <strong>これらの関数を呼び出さない</strong>。SmartSwitch NPU 側も DPU カード側も、非シャーシ構成であれば <code>CHASSIS_METADATA</code> は生成されず <code>ETHERNET_PORTS_PRESENT</code> / <code>MACSEC_SUPPORTED</code> のみが返される (<code>device_info.py:735-747</code>)。</p>
-<h3 id="_26">プラットフォーム差サマリー<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><code>is_virtual_chassis()</code> は <code>get_platform_info().get('asic_type')</code> が <code>"vs"</code> であることを条件に含む。<code>asic_type</code> は <code>sonic_version.yml</code> から読み込まれる (<code>device_info.py:550-551, 660</code>)。</p>
+</blockquote>
+<h3 id="ethernet_ports_present-hwsku"><code>ETHERNET_PORTS_PRESENT</code> — hwsku 種別による差<a class="headerlink" href="#ethernet_ports_present-hwsku" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>観点</th>
-<th>結果</th>
-<th>根拠</th>
+<th>プラットフォーム種別</th>
+<th>値</th>
+<th>理由</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>非シャーシ (ToR / leaf / SmartSwitch NPU / DPU)</td>
-<td><code>CHASSIS_METADATA</code> キーなし。<code>ETHERNET_PORTS_PRESENT</code> / <code>MACSEC_SUPPORTED</code> のみ</td>
-<td><code>device_info.py:737</code> — <code>if is_chassis():</code> が False</td>
+<td>通常 ToR / Leaf / Spine</td>
+<td><code>True</code></td>
+<td>hwsku ディレクトリ配下に <code>port_config.ini</code> が存在する</td>
 </tr>
 <tr>
-<td>VOQ シャーシ</td>
-<td><code>CHASSIS_METADATA.chassis_type='voq'</code>。supervisor/linecard で <code>bgp</code> / <code>has_per_asic_scope</code> が分岐</td>
-<td><code>device_info.py:739</code>, <code>is_voq_chassis():630-634</code></td>
+<td>Supervisor カード (chassis)</td>
+<td><code>False</code></td>
+<td>supervisor の hwsku には <code>port_config.ini</code> が存在しない</td>
 </tr>
 <tr>
-<td>Disaggregated シャーシ (<code>disaggregated_chassis=1</code>)</td>
-<td><code>is_voq_chassis()=False</code> → <code>CHASSIS_METADATA</code> 生成なし</td>
-<td><code>device_info.py:642-668</code></td>
+<td>Fabric カード (VOQ chassis)</td>
+<td><code>False</code></td>
+<td>fabric カードはデータプレーンポートを持たず <code>port_config.ini</code> 不在</td>
 </tr>
 <tr>
-<td>Multi-NPU</td>
-<td>ASIC 0 で <code>ETHERNET_PORTS_PRESENT</code> 確定。他 ASIC は不問</td>
-<td><code>device_info.py:741</code></td>
+<td>Multi-ASIC プラットフォーム</td>
+<td>ASIC #0 の <code>port_config.ini</code> 存否に依存</td>
+<td><code>asic="0"</code> をハードコードして検索 (<code>device_info.py:741</code>)</td>
 </tr>
 <tr>
-<td><code>platform_env.conf</code> 不在プラットフォーム</td>
-<td><code>MACSEC_SUPPORTED=False</code> 固定 / <code>module_type</code> は <code>linecard</code> デフォルト</td>
-<td><code>device_info.py:720-721</code>, <code>700-702</code></td>
+<td>VS (Virtual Switch) テスト</td>
+<td><code>True</code> (通常)</td>
+<td>VS プラットフォームのテスト hwsku に <code>port_config.ini</code> が付属する</td>
 </tr>
 </tbody>
 </table>
+<p>Multi-NPU 環境では常に ASIC <code>"0"</code> のポート設定ファイルを確認する。ASIC 1 以降は確認しない (<code>device_info.py:741</code>)。</p>
+<h3 id="macsec_supported-platform_envconf"><code>MACSEC_SUPPORTED</code> — <code>platform_env.conf</code> 依存<a class="headerlink" href="#macsec_supported-platform_envconf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム種別</th>
+<th>値</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MACsec 非対応ハードウェア (大多数)</td>
+<td><code>False</code></td>
+<td><code>platform_env.conf</code> 不在、または <code>macsec_enabled=0</code></td>
+</tr>
+<tr>
+<td>MACsec 対応ハードウェア (一部 Broadcom 等)</td>
+<td><code>True</code></td>
+<td><code>platform_env.conf</code> に <code>macsec_enabled=1</code> が記述されている</td>
+</tr>
+<tr>
+<td>VS / コンテナ / テスト環境</td>
+<td><code>False</code></td>
+<td><code>platform_env.conf</code> 不在のため <code>is_macsec_supported()=0</code></td>
+</tr>
+</tbody>
+</table>
+<p>MACsec 対応の宣言は <code>platform_env.conf</code> の <code>macsec_enabled=1</code> 行のみで制御される。ASIC ベンダ別のハードコードや YANG スキーマ上の制約は存在しない (<code>device_info.py:720-721</code>, <code>700-702</code>)。</p>
+<h3 id="smartswitch-dpu">SmartSwitch / DPU — 影響なし<a class="headerlink" href="#smartswitch-dpu" title="Permanent link">&para;</a></h3>
+<p><code>is_smartswitch()</code> / <code>is_dpu()</code> は <code>platform.json</code> の <code>DPUS</code> / <code>DPU</code> キーを参照するが (<code>device_info.py:679-694</code>)、<code>get_device_runtime_metadata()</code> はこれらの関数を呼び出さない。SmartSwitch NPU 側も DPU カード側も、非シャーシ構成であれば <code>CHASSIS_METADATA</code> は生成されず <code>ETHERNET_PORTS_PRESENT</code> / <code>MACSEC_SUPPORTED</code> のみが返される (<code>device_info.py:735-747</code>)。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>device_info.py:630-668</code> (<code>is_voq_chassis</code> / <code>is_packet_chassis</code> / <code>is_virtual_chassis</code> / <code>is_chassis</code>)、<code>device_info.py:699-732</code> (<code>is_supervisor</code> / <code>is_macsec_supported</code>)、<code>device_info.py:735-747</code> (<code>get_device_runtime_metadata</code>)</p>
+</blockquote>
 <!-- /platform -->
 
 <!-- glossary-links-injected: e33fec70e206 -->

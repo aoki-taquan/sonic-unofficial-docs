@@ -26290,6 +26290,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer（読み取り側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターン一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な設計上の特性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35010,6 +35077,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer（読み取り側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターン一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な設計上の特性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35275,6 +35409,163 @@
   client_subscribe.go:73-85 — setConnectionManager(): 閾値変更時の再初期化ロジック
 -->
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>TELEMETRY_CONNECTIONS</code> は <code>telemetry</code> デーモン (<code>sonic-gnmi</code>) が <strong>唯一の書き手</strong> であり、外部 Orch やパイプラインを経由しない。以下はこのテーブルのエントリ生成・制御に間接的に影響する入力リソースと暗黙参照先の一覧である。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>database_config.json</code> (<code>/var/run/redis/sonic-db/database_config.json</code>)</td>
+<td>STATE_DB アドレス・DB 番号の解決</td>
+<td><code>PrepareRedis()</code> 呼び出し時に常時参照。このファイルが欠損または STATE_DB エントリが未定義の場合 <code>rclient</code> は nil となり以降の HSet / HDel はすべて silent no-op</td>
+<td><code>sonic_db_config/db_config.go:14</code> — <code>SONIC_DB_CONFIG_FILE</code> 定数; <code>connection_manager.go:33-43</code> — <code>GetDbTcpAddr("STATE_DB", ns)</code> / <code>GetDbId("STATE_DB", ns)</code></td>
+</tr>
+<tr>
+<td><code>GNMI\|gnmi</code> (CONFIG_DB) — <code>threshold</code> フィールド</td>
+<td>接続上限の間接制御 (エントリ数の上限)</td>
+<td><code>telemetry.go</code> フラグ <code>--threshold</code> (デフォルト 100) またはシステム起動時に CONFIG_DB から読み込んだ値が <code>Server.config.Threshold</code> にセットされ、<code>Subscribe()</code> RPC ごとに <code>setConnectionManager(s.config.Threshold)</code> へ渡される。閾値到達後は <code>Add()</code> が <code>false</code> を返し STATE_DB への書き込みが発生しない</td>
+<td><code>server.go:866</code> — <code>c.setConnectionManager(s.config.Threshold)</code>; <code>connection_manager.go:65</code> — <code>len(cm.connections) &gt;= cm.threshold &amp;&amp; cm.threshold != 0</code> チェック; <code>telemetry.go:187</code> — <code>fs.Int("threshold", 100, ...)</code></td>
+</tr>
+<tr>
+<td><code>Server.clients</code> (in-memory, <code>server.go</code>)</td>
+<td>STATE_DB エントリの概念的ミラー</td>
+<td><code>Subscribe()</code> RPC ハンドラが <code>s.clients[clientKey] = c</code> でメモリ登録した後に <code>ConnectionManager.Add()</code> → <code>storeKeyRedis()</code> で STATE_DB に反映。同一 peer が重複して Subscribe した場合は <code>oc.Close()</code> + <code>delete(s.clients, clientKey)</code> でメモリから削除後、<code>Remove()</code> → <code>deleteKeyRedis()</code> で STATE_DB からも削除される（Phase B 依存 #1 と連動）</td>
+<td><code>server.go:872-877</code> — 重複クライアント削除フロー; <code>client_subscribe.go:73-85</code> — <code>setConnectionManager()</code> 再初期化ロジック</td>
+</tr>
+</tbody>
+</table>
+<h3 id="consumer">consumer（読み取り側）<a class="headerlink" href="#consumer" title="Permanent link">&para;</a></h3>
+<p><code>TELEMETRY_CONNECTIONS</code> テーブルは書き込み専用のランタイム状態であり、標準的な orchagent / translib パイプラインからは参照されない。既知の読み取りパスは以下のみ:</p>
+<table>
+<thead>
+<tr>
+<th>読み取り元</th>
+<th>参照方法</th>
+<th>目的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show gnmi</code> (sonic-utilities 側の実装)</td>
+<td><code>HGetAll(TELEMETRY_CONNECTIONS)</code></td>
+<td>アクティブな Subscribe RPC 接続一覧の表示</td>
+</tr>
+<tr>
+<td><code>gnmi_server/server_test.go</code> (テストコード)</td>
+<td><code>HGetAll(TELEMETRY_CONNECTIONS)</code></td>
+<td>接続登録・削除の単体テスト検証</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">CONFIG_DB への書き戻しは発生しない</p>
+<p><code>TELEMETRY_CONNECTIONS</code> の値は CONFIG_DB に一切書き戻されない。このテーブルはオペレーション状態の可視化専用であり、設定変更のトリガにはならない。</p>
+</div>
+<!-- evidence:
+  connection_manager.go:10,33-43 — sdcfg.GetDbTcpAddr("STATE_DB", ns) / GetDbId("STATE_DB", ns) で database_config.json を間接参照して rclient を初期化
+  connection_manager.go:63-78 — Add(): threshold チェック → cm.connections 更新 → storeKeyRedis()
+  server.go:866 — Subscribe() が setConnectionManager(s.config.Threshold) を呼び閾値を渡す
+  server.go:872-877 — 重複クライアント Close → delete(s.clients) → 既存エントリ削除フロー
+  telemetry.go:187 — threshold フラグのデフォルト 100
+  server_test.go:5176,5182 — HGetAll("TELEMETRY_CONNECTIONS") による読み取り確認
+-->
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>TELEMETRY_CONNECTIONS</code> テーブルへの書き込み・削除は <code>storeKeyRedis()</code> / <code>deleteKeyRedis()</code> で行われる。これらの関数は <strong>best-effort</strong> 設計であり、Redis 操作が失敗してもデーモン本体の動作を止めない。</p>
+<h3 id="_10">失敗パターン一覧<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+<th>STATE_DB への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GetDbTcpAddr()</code> または <code>GetDbId()</code> エラー (<code>database_config.json</code> 不正 / STATE_DB 未定義)</td>
+<td><code>PrepareRedis()</code> L34-42</td>
+<td><code>log.Errorf</code> を出力して早期 return。<code>rclient</code> は nil のまま</td>
+<td>なし</td>
+<td>以降の HSet / HDel すべて silent no-op</td>
+</tr>
+<tr>
+<td><code>redis.NewClient()</code> 後の STATE_DB 接続失敗</td>
+<td><code>storeKeyRedis()</code> / <code>deleteKeyRedis()</code> — <code>rclient != nil</code> だが Redis 疎通なし</td>
+<td><code>HSet</code> / <code>HDel</code> が <code>err != nil</code> を返す → <code>log.V(1).Infof</code> のみ</td>
+<td>なし</td>
+<td>エントリ未登録 / 未削除のまま残留</td>
+</tr>
+<tr>
+<td><code>rclient == nil</code>（PrepareRedis 失敗後に Add / Remove が呼ばれた場合）</td>
+<td><code>storeKeyRedis()</code> L112-114 / <code>deleteKeyRedis()</code> L122-124</td>
+<td><code>log.V(1).Infof</code> を出力して return。エラーコードは返さない</td>
+<td>なし</td>
+<td>HSet / HDel 実行されず。メモリ上の <code>cm.connections</code> はすでに更新済みのため、STATE_DB とメモリ状態が乖離する</td>
+</tr>
+<tr>
+<td><code>HSet</code> エラー（Redis 高負荷 / ネットワーク切断等）</td>
+<td><code>storeKeyRedis()</code> L116-118</td>
+<td><code>log.V(1).Infof</code> のみ。gNMI RPC 自体は成功する</td>
+<td>なし</td>
+<td>TELEMETRY_CONNECTIONS にエントリが追加されない。<code>show gnmi</code> での接続数が実際より少なく見える</td>
+</tr>
+<tr>
+<td><code>HDel</code> が <code>ret == 0</code>（対象 key が存在しない）</td>
+<td><code>deleteKeyRedis()</code> L127-130</td>
+<td><code>log.V(1).Infof</code> のみ</td>
+<td>なし</td>
+<td>冪等。二重削除は無害</td>
+</tr>
+<tr>
+<td>閾値超過 (<code>len(cm.connections) &gt;= cm.threshold &amp;&amp; cm.threshold != 0</code>)</td>
+<td><code>Add()</code> L65-69</td>
+<td><code>cm.mu.RUnlock()</code> して <code>("", false)</code> を返す。<code>storeKeyRedis()</code> は呼ばれない</td>
+<td>なし</td>
+<td>STATE_DB への書き込みなし。Subscribe RPC はサーバ側で拒否される</td>
+</tr>
+<tr>
+<td><code>PrepareRedis()</code> の <code>HGetAll</code> が nil を返す（TELEMETRY_CONNECTIONS が存在しない場合）</td>
+<td><code>PrepareRedis()</code> L52-56</td>
+<td><code>res == nil</code> → early return。前回エントリの削除をスキップ</td>
+<td>なし</td>
+<td>残留エントリなし（テーブルが空の場合は無害）</td>
+</tr>
+<tr>
+<td>デーモン異常終了による STATE_DB 残留エントリ</td>
+<td>プロセスクラッシュ時</td>
+<td><code>PrepareRedis()</code> が呼ばれないため古いエントリが残存</td>
+<td>デーモン再起動後に <code>PrepareRedis()</code> が全削除</td>
+<td>再起動まで古い接続情報が <code>show gnmi</code> に表示される</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">重要な設計上の特性<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p><strong>エラーはデーモン動作に影響しない</strong>: <code>storeKeyRedis()</code> / <code>deleteKeyRedis()</code> の失敗は gNMI RPC の成否に一切影響しない。Subscribe が正常に受け付けられたとしても STATE_DB への記録が失敗する可能性がある。これは意図された設計であり、STATE_DB は可視化目的であって制御パスには含まれない。</p>
+<p><strong>STATE_DB とメモリの乖離</strong>: <code>Add()</code> はメモリ (<code>cm.connections</code>) への追加を <strong><code>storeKeyRedis()</code> より先に実行</strong>し (<code>connection_manager.go:73-76</code>)、<code>Remove()</code> もメモリからの削除を <code>deleteKeyRedis()</code> より先に実行する (<code>connection_manager.go:87-90</code>)。Redis 操作が失敗した場合、メモリ状態は正しいが STATE_DB は古い状態になる。<code>ConnectionManager</code> にはこの乖離を検出・修復する仕組みはない。</p>
+<p><strong>障害後の自動回復</strong>: <code>setConnectionManager()</code> が再呼び出しされると（閾値変更時）、<code>PrepareRedis()</code> が STATE_DB の全エントリを削除した上でメモリも新しい <code>ConnectionManager</code> で初期化されるため、乖離状態は次回 Subscribe RPC 到着時に解消される (<code>client_subscribe.go:73-85</code>)。ただし進行中の接続メタデータも失われる。</p>
+<!-- evidence:
+  connection_manager.go:32-61 — PrepareRedis(): GetDbTcpAddr/GetDbId エラーで rclient = nil のまま early return
+  connection_manager.go:63-78 — Add(): threshold 超過で early return → storeKeyRedis 未呼び出し
+  connection_manager.go:80-92 — Remove(): deleteKeyRedis は ret==0 でも no-op
+  connection_manager.go:111-118 — storeKeyRedis: rclient == nil ガード + HSet エラーのみ log
+  connection_manager.go:121-131 — deleteKeyRedis: rclient == nil ガード + ret==0 で log のみ
+  client_subscribe.go:73-85 — setConnectionManager(): 閾値変更時の全リセット
+-->
+<!-- /failure -->
 
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>

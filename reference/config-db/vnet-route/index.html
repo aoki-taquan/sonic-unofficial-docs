@@ -29764,6 +29764,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vnet_routeunderlay-vnetrouteorchhandleroutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET_ROUTE（underlay 経路）— VNetRouteOrch::handleRoutes()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet_route_tunnelvxlan-vnetrouteorchhandletunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET_ROUTE_TUNNEL（VXLAN トンネル経路）— VNetRouteOrch::handleTunnel()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35458,6 +35497,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vnet_routeunderlay-vnetrouteorchhandleroutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET_ROUTE（underlay 経路）— VNetRouteOrch::handleRoutes()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet_route_tunnelvxlan-vnetrouteorchhandletunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET_ROUTE_TUNNEL（VXLAN トンネル経路）— VNetRouteOrch::handleTunnel()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35825,6 +35903,130 @@
 <p><strong>CFG→APPL passthrough の順序独立性 (依存 #4)</strong>: <code>VNetCfgRouteOrch</code> は依存チェックを一切行わず、CONFIG_DB に書かれた瞬間に APPL_DB へ転送する。このため CONFIG_DB 上は <code>VNET_ROUTE</code> を先に書いても問題ないが、APPL_DB 購読側（<code>VNetRouteOrch</code>）が SAI に反映するまでの間は経路が「APPL_DB 存在・SAI 未反映」の中間状態になる。</p>
 <!-- /ordering -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> の CONFIG_DB エントリは <code>VNetCfgRouteOrch</code> が依存チェックなしで APPL_DB に passthrough する。暗黙参照が発生するのは APPL_DB 購読側の <code>VNetRouteOrch</code> が SAI に反映する段階。以下は <code>vnetorch.cpp</code> コード精読による依存先整理<sup id="fnref2:vnetorch"><a class="footnote-ref" href="#fn:vnetorch">3</a></sup>。</p>
+<h3 id="vnet_routeunderlay-vnetrouteorchhandleroutes">VNET_ROUTE（underlay 経路）— <code>VNetRouteOrch::handleRoutes()</code><a class="headerlink" href="#vnet_routeunderlay-vnetrouteorchhandleroutes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VNET</code> (CONFIG_DB) / <code>VNetOrch</code></td>
+<td><code>isVnetExists(vnet)</code> で存在確認。<code>false</code> なら <code>return false</code>（APPL_DB エントリ保留・retry）</td>
+<td>常時</td>
+<td><code>vnetorch.cpp:1158-1163, 1492-1497</code></td>
+</tr>
+<tr>
+<td>peer <code>VNET</code> エントリ群</td>
+<td><code>getPeerList()</code> で peer 一覧取得後、全 peer について <code>isVnetExists(peer)</code> を確認。1 件でも未存在なら <code>return false</code></td>
+<td><code>VNET.peer_list</code> が設定されているとき</td>
+<td><code>vnetorch.cpp:1166-1183</code></td>
+</tr>
+<tr>
+<td><code>NeighOrch</code> (<code>gNeighOrch</code>)</td>
+<td><code>hasNextHop()</code> + <code>getNextHopId()</code> で nexthop OID 取得。存在しなければ SAI 投入をスキップ</td>
+<td><code>isLocalEp = true</code>（ローカル endpoint）のとき</td>
+<td><code>vnetorch.cpp:790, 795, 950, 958-960</code></td>
+</tr>
+<tr>
+<td>SAI <code>sai_route_api</code></td>
+<td><code>create_route_entry()</code> / <code>remove_route_entry()</code> / <code>set_route_entry_attribute()</code> で経路を ASIC に反映</td>
+<td>常時</td>
+<td><code>vnetorch.cpp:651, 689, 722</code></td>
+</tr>
+<tr>
+<td><code>CrmOrch</code> (<code>gCrmOrch</code>)</td>
+<td><code>inc/decCrmResUsedCounter(CRM_IPV4_ROUTE / CRM_IPV6_ROUTE)</code> で残量カウンタ更新</td>
+<td>IPv4 / IPv6 経路の create / remove ごと</td>
+<td><code>vnetorch.cpp:665, 669, 698, 702</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vnet_route_tunnelvxlan-vnetrouteorchhandletunnel">VNET_ROUTE_TUNNEL（VXLAN トンネル経路）— <code>VNetRouteOrch::handleTunnel()</code><a class="headerlink" href="#vnet_route_tunnelvxlan-vnetrouteorchhandletunnel" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VNET</code> (CONFIG_DB) / <code>VNetOrch</code></td>
+<td><code>isVnetExists(vnet)</code> で存在確認</td>
+<td>常時</td>
+<td><code>vnetorch.cpp:1682-1687, 1735</code></td>
+</tr>
+<tr>
+<td>peer <code>VNET</code> エントリ群</td>
+<td>peer 全件 <code>isVnetExists</code> 確認</td>
+<td><code>VNET.peer_list</code> が設定されているとき</td>
+<td><code>vnetorch.cpp:1735</code></td>
+</tr>
+<tr>
+<td><code>VxlanTunnelOrch</code></td>
+<td><code>createNextHopTunnel(tun_name, ip, mac, vni)</code> で tunnel nexthop OID を生成・取得。<code>removeNextHopTunnel()</code> で解放</td>
+<td>常時（remote endpoint ごと）</td>
+<td><code>vnetorch.cpp:313-335</code></td>
+</tr>
+<tr>
+<td><code>BfdOrch</code> (<code>gBfdOrch</code>)</td>
+<td><code>createBfdSession()</code> で BFD セッションを生成。<code>gBfdOrch-&gt;attach(this)</code> で状態変化通知を受信</td>
+<td><code>endpoint_monitor</code> フィールド指定時</td>
+<td><code>vnetorch.cpp:46, 751, 2046, 2300</code></td>
+</tr>
+<tr>
+<td>SAI <code>sai_next_hop_group_api</code></td>
+<td>nexthop group / nexthop group member の create / remove</td>
+<td>ECMP endpoint（複数）のとき</td>
+<td><code>vnetorch.cpp:808, 821, 849, 901, 921</code></td>
+</tr>
+<tr>
+<td>SAI <code>sai_route_api</code></td>
+<td><code>create_route_entry()</code> / <code>remove_route_entry()</code></td>
+<td>常時</td>
+<td><code>vnetorch.cpp:651, 689</code></td>
+</tr>
+<tr>
+<td><code>CrmOrch</code> (<code>gCrmOrch</code>)</td>
+<td><code>inc/decCrmResUsedCounter(CRM_NEXTHOP_GROUP / CRM_NEXTHOP_GROUP_MEMBER)</code></td>
+<td>nexthop group / member の create / remove ごと</td>
+<td><code>vnetorch.cpp:821, 861, 917, 929, 2801, 2885</code></td>
+</tr>
+<tr>
+<td>STATE_DB <code>VNET_RT_TUNNEL_TABLE</code></td>
+<td>tunnel 経路の active / inactive 状態を書き込む（読み手は監視ツール等）</td>
+<td>tunnel 経路の状態変化時</td>
+<td><code>vnetorch.cpp:745, 2572, 2614</code></td>
+</tr>
+<tr>
+<td>STATE_DB <code>ADVERTISE_NETWORK_TABLE</code></td>
+<td><code>advertise_prefix = true</code> の VNET で prefix 広告を通知（BGP へ）</td>
+<td><code>VNET.advertise_prefix</code> 設定時</td>
+<td><code>vnetorch.cpp:746, 2645, 2651</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">CONFIG_DB passthrough は依存チェックなし</p>
+<p><code>VNetCfgRouteOrch</code> は CONFIG_DB への書き込みを即座に APPL_DB に転送するため、上記の暗黙参照はすべて APPL_DB 消費側 (<code>VNetRouteOrch</code>) で発生する。CONFIG_DB に <code>VNET_ROUTE_TUNNEL</code> を先に書いても passthrough は成功するが、VNET や VXLAN トンネルが未作成の間は <code>VNetRouteOrch</code> 側で SAI 投入が保留される。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">peer VNET が多い構成は SAI 反映遅延に注意</p>
+<p><code>peer_list</code> に未作成の peer が 1 件でも存在すると <code>VNetRouteOrch</code> は <code>return false</code> で再キューする。peer 全件が揃うまで経路は SAI に反映されない。大規模 VNET mesh 構成では <code>VNET_ROUTE</code> の SAI 到達まで複数 orchagent サイクルを要する場合がある。</p>
+</div>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/vnet-route-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -35835,7 +36037,7 @@
 <p>テーブル名定数: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:vnetorch">
-<p>実装: <code>vnetorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:vnetorch" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>実装: <code>vnetorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:vnetorch" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:vnetorch" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:1">
 <p>YANG 定義: <code>sonic-vnet.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 4 in the text">&#8617;</a></p>

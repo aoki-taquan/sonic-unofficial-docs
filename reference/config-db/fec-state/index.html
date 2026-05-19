@@ -26295,7 +26295,312 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fec-set-doporttask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FEC モード SET 時の失敗パターン (doPortTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getportoperfec-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getPortOperFec — SAI クエリ失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isfecmodesupported-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        isFecModeSupported の特殊ケース（空集合 vs 非対応の逆転）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m_fec_cfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗後の m_fec_cfg フラグと再試行
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fec-portschemah3841" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FEC モード文字列定数 (portschema.h:38–41)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-porthlprcpp7798" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ↔ 文字列変換マップ (porthlpr.cpp:77–98)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フォールバック文字列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        拡張性の制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-up-fec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トリガー A: ポート UP 通知（fec フィールドと同時に発生する副次書込）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-postportinit-supported_fecs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トリガー B: postPortInit() 呼出し（supported_fecs と同時に発生する副次書込）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-addport-supported_fecs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トリガー C: addPort() でのポート登録（supported_fecs より先に発生）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api-swsstable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み API: 素の swss::Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generic_config_updater-supported_fecs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generic_config_updater による supported_fecs 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_port_table-fec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_PORT_TABLE を購読するプロセスと FEC フィールドの非参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#oper_fec_sup-fec_override_sup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        oper_fec_sup / fec_override_sup フラグの確定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU プラットフォームの特別扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム別挙動一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fecauto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fec=auto 設定とプラットフォーム制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-nvidia-spectrum-fec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox (NVIDIA Spectrum) 固有コードと FEC フィールドの無関係性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35250,7 +35555,312 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fec-set-doporttask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FEC モード SET 時の失敗パターン (doPortTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getportoperfec-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getPortOperFec — SAI クエリ失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isfecmodesupported-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        isFecModeSupported の特殊ケース（空集合 vs 非対応の逆転）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#m_fec_cfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗後の m_fec_cfg フラグと再試行
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fec-portschemah3841" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FEC モード文字列定数 (portschema.h:38–41)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-porthlprcpp7798" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ↔ 文字列変換マップ (porthlpr.cpp:77–98)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フォールバック文字列
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        拡張性の制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-up-fec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トリガー A: ポート UP 通知（fec フィールドと同時に発生する副次書込）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-postportinit-supported_fecs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トリガー B: postPortInit() 呼出し（supported_fecs と同時に発生する副次書込）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-addport-supported_fecs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トリガー C: addPort() でのポート登録（supported_fecs より先に発生）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api-swsstable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み API: 素の swss::Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generic_config_updater-supported_fecs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generic_config_updater による supported_fecs 参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_port_table-fec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_PORT_TABLE を購読するプロセスと FEC フィールドの非参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#oper_fec_sup-fec_override_sup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        oper_fec_sup / fec_override_sup フラグの確定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU プラットフォームの特別扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム別挙動一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fecauto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fec=auto 設定とプラットフォーム制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-nvidia-spectrum-fec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox (NVIDIA Spectrum) 固有コードと FEC フィールドの無関係性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35774,7 +36384,665 @@ STATE_DB の <code>fec</code> (oper) と APPL_DB の <code>fec</code> (admin) �
 </ul>
 <!-- /cdb-exceptions -->
 
-<h2 id="_15">関連リファレンス<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>PortsOrch</code> による FEC モード適用 (<code>doPortTask</code> → <code>setPortFec</code>) と FEC oper 値取得 (<code>getPortOperFec</code>) の失敗経路を整理する。STATE_DB <code>PORT_TABLE</code> の <code>fec</code> / <code>supported_fecs</code> フィールドへの書込みは <code>swss::Table::set()</code> (void 返却) を使うため、<strong>Redis 書込み自体の失敗はアプリ層では検出不可</strong>。Redis 例外は orchagent プロセス abort → systemd 再起動という経路で回収される。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-failure.md -->
+
+<h3 id="fec-set-doporttask">FEC モード SET 時の失敗パターン (<code>doPortTask</code>)<a class="headerlink" href="#fec-set-doporttask" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+<th>STATE_DB への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>fec_override_sup=false</code> かつ <code>fec=auto</code>（auto FEC 非対応プラットフォーム）</td>
+<td>portsorch.cpp:5317-5321</td>
+<td>SWSS_LOG_ERROR → <code>erase(it)</code>（恒久スキップ）</td>
+<td>なし</td>
+<td>書込なし</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>isFecModeSupported()</code> が false（プラットフォーム未サポート FEC モード）</td>
+<td>portsorch.cpp:5323-5331</td>
+<td>SWSS_LOG_ERROR → <code>erase(it)</code>（恒久スキップ）</td>
+<td>なし</td>
+<td>書込なし</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>setPortAdminStatus(false)</code> 失敗（FEC 適用前の port DOWN に失敗）</td>
+<td>portsorch.cpp:5342-5350</td>
+<td>SWSS_LOG_ERROR → <code>it++</code>（無制限 retry）</td>
+<td>無制限</td>
+<td>書込なし</td>
+</tr>
+<tr>
+<td>4</td>
+<td>SAI <code>set_port_attribute(SAI_PORT_ATTR_FEC_MODE)</code> 失敗</td>
+<td>portsorch.cpp:2394-2401</td>
+<td>SWSS_LOG_ERROR → <code>handleSaiSetStatus</code> 判定 → 上位呼出元へ false 返却</td>
+<td>条件次第</td>
+<td>書込なし</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SAI <code>set_port_attribute(AUTO_NEG_FEC_MODE_OVERRIDE)</code> 失敗</td>
+<td>portsorch.cpp:2405-2408</td>
+<td>SWSS_LOG_ERROR → <code>handleSaiSetStatus</code> 判定 → false 返却</td>
+<td>条件次第</td>
+<td>書込なし</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>setPortFec()</code> が false を返した（SAI 失敗の上位検出）</td>
+<td>portsorch.cpp:5356-5363</td>
+<td>SWSS_LOG_ERROR → <code>it++</code>（無制限 retry）</td>
+<td>無制限</td>
+<td>書込なし</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">恒久スキップ（#1, #2）での APPL_DB 消費</p>
+<p><code>erase(it)</code> パターンでは APPL_DB のタスクエントリが消費される。orchagent は再試行しないため、CONFIG_DB 側に FEC 設定が残っていても STATE_DB への適用は永久に行われない。systemd 再起動 + CONFIG_DB 再投入が回復手段となる。</p>
+</div>
+<h3 id="getportoperfec-sai"><code>getPortOperFec</code> — SAI クエリ失敗<a class="headerlink" href="#getportoperfec-sai" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>発生箇所</th>
+<th>結果</th>
+<th>STATE_DB の <code>fec</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>port.m_type != Port::PHY</code>（LAG / VLAN ポート等）</td>
+<td>portsorch.cpp:9998-10000</td>
+<td><code>return false</code> → <code>fec_str = "N/A"</code></td>
+<td><code>"N/A"</code> 書込み</td>
+</tr>
+<tr>
+<td>SAI <code>get_port_attribute(OPER_PORT_FEC_MODE)</code> 失敗</td>
+<td>portsorch.cpp:10007-10010</td>
+<td>SWSS_LOG_NOTICE → <code>return false</code> → <code>fec_str = "N/A"</code></td>
+<td><code>"N/A"</code> 書込み</td>
+</tr>
+<tr>
+<td><code>fecToStr()</code> 変換失敗（未知 SAI fec_mode）</td>
+<td>portsorch.cpp:9684-9688</td>
+<td>SWSS_LOG_ERROR → <code>fec_str = "N/A"</code></td>
+<td><code>"N/A"</code> 書込み</td>
+</tr>
+</tbody>
+</table>
+<p>いずれの失敗経路でも <code>updateDbPortOperFec(port, "N/A")</code> が呼ばれ STATE_DB に <code>"N/A"</code> が書き込まれる。エラー停止はしない。</p>
+<h3 id="isfecmodesupported-vs"><code>isFecModeSupported</code> の特殊ケース（空集合 vs 非対応の逆転）<a class="headerlink" href="#isfecmodesupported-vs" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>SAI クエリ結果</th>
+<th><code>obj.supported</code></th>
+<th><code>obj.data</code></th>
+<th><code>isFecModeSupported()</code> 戻り値</th>
+<th>設定への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NOT_SUPPORTED</code> / <code>NOT_IMPLEMENTED</code></td>
+<td><code>false</code></td>
+<td>空</td>
+<td><strong><code>true</code>（バリデーションスキップ）</strong></td>
+<td>FEC 設定を通す</td>
+</tr>
+<tr>
+<td>成功、対応モード空集合</td>
+<td><code>true</code></td>
+<td>空</td>
+<td><strong><code>false</code>（全モード拒否）</strong></td>
+<td>#2 失敗で erase</td>
+</tr>
+<tr>
+<td>成功、対応モードあり、指定モード含まず</td>
+<td><code>true</code></td>
+<td>非空</td>
+<td><code>false</code></td>
+<td>#2 失敗で erase</td>
+</tr>
+<tr>
+<td>成功、対応モードあり、指定モード含む</td>
+<td><code>true</code></td>
+<td>非空</td>
+<td><code>true</code></td>
+<td>正常適用</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: portsorch.cpp:3205-3222（<code>isFecModeSupported</code>）、3244-3251（<code>getPortSupportedFecModes</code> NOT_IMPLEMENTED 分岐）。</p>
+<h3 id="m_fec_cfg">失敗後の <code>m_fec_cfg</code> フラグと再試行<a class="headerlink" href="#m_fec_cfg" title="Permanent link">&para;</a></h3>
+<p>FEC SET 成功時のみ <code>p.m_fec_cfg = true</code> をセットして <code>m_portList</code> を更新する (portsorch.cpp:5366-5369)。失敗時は <code>m_fec_cfg=false</code> のまま。次サイクルで <code>m_fec_cfg</code> または <code>m_fec_mode != pCfg.fec.value</code> の変化検出条件が再評価され、retry ループが動く（<code>it++</code> パターンのみ。<code>erase(it)</code> パターンは再試行されない）。</p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>PortsOrch</code> と <code>PortHelper</code> が FEC フィールドの書込み・検証に使うハードコード文字列定数・マップを整理する。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-constants.md -->
+
+<h3 id="fec-portschemah3841">FEC モード文字列定数 (portschema.h:38–41)<a class="headerlink" href="#fec-portschemah3841" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT_FEC_NONE</code></td>
+<td><code>"none"</code></td>
+<td>CONFIG_DB 設定値 / STATE_DB <code>supported_fecs</code> リスト要素</td>
+</tr>
+<tr>
+<td><code>PORT_FEC_RS</code></td>
+<td><code>"rs"</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>PORT_FEC_FC</code></td>
+<td><code>"fc"</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>PORT_FEC_AUTO</code></td>
+<td><code>"auto"</code></td>
+<td>CONFIG_DB 設定値 / <code>supported_fecs</code> 末尾追加値（oper fec には出現しない）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-porthlprcpp7798">SAI ↔ 文字列変換マップ (porthlpr.cpp:77–98)<a class="headerlink" href="#sai-porthlprcpp7798" title="Permanent link">&para;</a></h3>
+<p><strong><code>portFecMap</code></strong>（文字列 → SAI fec mode、CONFIG_DB 設定時の変換に使用）:</p>
+<table>
+<thead>
+<tr>
+<th>キー</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"none"</code></td>
+<td><code>SAI_PORT_FEC_MODE_NONE</code></td>
+</tr>
+<tr>
+<td><code>"rs"</code></td>
+<td><code>SAI_PORT_FEC_MODE_RS</code></td>
+</tr>
+<tr>
+<td><code>"fc"</code></td>
+<td><code>SAI_PORT_FEC_MODE_FC</code></td>
+</tr>
+<tr>
+<td><code>"auto"</code></td>
+<td><code>SAI_PORT_FEC_MODE_NONE</code>（auto は NONE にマップ）</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>portFecRevMap</code></strong>（SAI fec mode → 文字列、STATE_DB <code>fec</code> フィールド書込みに使用）:</p>
+<table>
+<thead>
+<tr>
+<th>キー</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_PORT_FEC_MODE_NONE</code></td>
+<td><code>"none"</code></td>
+</tr>
+<tr>
+<td><code>SAI_PORT_FEC_MODE_RS</code></td>
+<td><code>"rs"</code></td>
+</tr>
+<tr>
+<td><code>SAI_PORT_FEC_MODE_FC</code></td>
+<td><code>"fc"</code></td>
+</tr>
+<tr>
+<td>（それ以外）</td>
+<td>マップ不在 → <code>fecToStr()</code> が <code>false</code> を返し <code>"N/A"</code> フォールバック</td>
+</tr>
+</tbody>
+</table>
+<p><code>portFecRevMap</code> に <code>"auto"</code> エントリが<strong>存在しない</strong>ため、STATE_DB <code>fec</code> フィールドに <code>"auto"</code> という値が現れることはない。<code>fec=auto</code> で設定されたポートが UP しても、SAI は実際の FEC モード（<code>NONE</code>/<code>RS</code>/<code>FC</code>）を返すのでそれが書き込まれる。</p>
+<p><strong><code>portFecOverrideMap</code></strong>（FEC モード → <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> が必要か、porthlpr.cpp:92–98）:</p>
+<table>
+<thead>
+<tr>
+<th>FEC モード</th>
+<th>override 必要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"none"</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>"rs"</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>"fc"</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>"auto"</code></td>
+<td><code>false</code>（SAI の auto-neg に委ねるため override 不要）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_15">フォールバック文字列<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"N/A"</code></td>
+<td>portsorch.cpp 各所（リテラル）</td>
+<td><code>fec</code> フィールドのフォールバック。YANG 定義外の値だが orchagent が書き込む</td>
+</tr>
+<tr>
+<td><code>"N/A"</code></td>
+<td>portsorch.cpp:3292（<code>supported_fec_modes.empty()</code> 時）</td>
+<td><code>supported_fecs</code> 空集合時のフォールバック</td>
+</tr>
+</tbody>
+</table>
+<p><code>"N/A"</code> は YANG スキーマに含まれない orchagent 独自のセンチネル値。YANG が想定する有効値セット（<code>none</code>/<code>rs</code>/<code>fc</code>/<code>auto</code>）とは別系統の値として扱う必要がある。</p>
+<h3 id="_16">拡張性の制約<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<p><code>portFecMap</code> / <code>portFecRevMap</code> はコンパイル時に固定されたスタティック <code>unordered_map</code>。新しい SAI FEC モード（例: <code>SAI_PORT_FEC_MODE_RS_KP4</code> 等）が追加されても、これらのマップを手動更新しない限り変換に失敗して <code>"N/A"</code> となる。orchagent の再コンパイルが必要であり、設定ファイルや YANG の変更だけでは対応不可。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>STATE_DB <code>PORT_TABLE</code> の <code>fec</code> / <code>supported_fecs</code> フィールドへの書込みは <code>PortsOrch</code> が行う主作用だが、同一トリガーで他 DB・他フィールドへの副次的な書込みが発生する。consumer がこれらの副次書込みを前提に状態を読む場合、書込み順序と原子性の欠如を考慮する必要がある。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-side-effects.md -->
+
+<h3 id="a-up-fec">トリガー A: ポート UP 通知（<code>fec</code> フィールドと同時に発生する副次書込）<a class="headerlink" href="#a-up-fec" title="Permanent link">&para;</a></h3>
+<p>ポート oper-status UP 通知受信 → <code>status == SAI_PORT_OPER_STATUS_UP</code> ブロック内で以下が順次実行される:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>副次書込</th>
+<th>DB</th>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>updateDbPortOperStatus()</code></td>
+<td>APPL_DB</td>
+<td><code>PORT_TABLE:&lt;port&gt;</code></td>
+<td><code>oper_status</code> = <code>"up"</code></td>
+<td><code>portsorch.cpp:9667, 9787, 3928-3930</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>updateDbPortOperSpeed()</code></td>
+<td>STATE_DB</td>
+<td><code>PORT_TABLE\|&lt;port&gt;</code></td>
+<td><code>speed</code> = oper speed (Mbps) / <code>"N/A"</code></td>
+<td><code>portsorch.cpp:9671-9678, 9850-9857</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong><code>updateDbPortOperFec()</code></strong></td>
+<td>STATE_DB</td>
+<td><code>PORT_TABLE\|&lt;port&gt;</code></td>
+<td><strong><code>fec</code></strong>（本ページの主作用）</td>
+<td><code>portsorch.cpp:9690, 9694, 9864-9870</code></td>
+</tr>
+</tbody>
+</table>
+<p>3 回の書込みは Redis <code>set</code> コマンドとして独立して発行される。APPL_DB と STATE_DB は別接続のため、<code>oper_status</code> が APPL_DB に書かれた時点で <code>fec</code> がまだ STATE_DB に届いていない中間状態が生じうる。</p>
+<h3 id="b-postportinit-supported_fecs">トリガー B: <code>postPortInit()</code> 呼出し（<code>supported_fecs</code> と同時に発生する副次書込）<a class="headerlink" href="#b-postportinit-supported_fecs" title="Permanent link">&para;</a></h3>
+<p><code>postPortInit()</code> (portsorch.cpp:6445) 内で以下が順次実行される:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>副次書込</th>
+<th>DB</th>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>initPortSupportedSpeeds()</code></td>
+<td>STATE_DB</td>
+<td><code>PORT_TABLE\|&lt;port&gt;</code></td>
+<td><code>supported_speeds</code> = サポート速度 CSV</td>
+<td><code>portsorch.cpp:6460, 3159-3172</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong><code>initPortSupportedFecModes()</code></strong></td>
+<td>STATE_DB</td>
+<td><code>PORT_TABLE\|&lt;port&gt;</code></td>
+<td><strong><code>supported_fecs</code></strong>（本ページの主作用）</td>
+<td><code>portsorch.cpp:6461, 3265-3320</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>supported_speeds</code> が先に書かれた後、<code>supported_fecs</code> が書かれる。両フィールドとも lazy init で 1 回限り。</p>
+<h3 id="c-addport-supported_fecs">トリガー C: <code>addPort()</code> でのポート登録（<code>supported_fecs</code> より先に発生）<a class="headerlink" href="#c-addport-supported_fecs" title="Permanent link">&para;</a></h3>
+<p><code>addPort()</code> (portsorch.cpp:4118) は <code>m_counterNameMapUpdater-&gt;setCounterNameMap()</code> を呼び COUNTERS_DB を更新する。この時点では <code>initPortSupportedFecModes()</code> はまだ呼ばれていない（<code>postPortInit()</code> が後で呼ばれる）。</p>
+<table>
+<thead>
+<tr>
+<th>副次書込</th>
+<th>DB</th>
+<th>テーブル / キー</th>
+<th>書込内容</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setCounterNameMap()</code></td>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_PORT_NAME_MAP</code></td>
+<td><code>&lt;port_alias&gt;</code> → SAI port OID 文字列</td>
+<td><code>portsorch.cpp:4114-4118</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">FEC 設定変更では COUNTERS_PORT_NAME_MAP は更新されない</p>
+<p><code>COUNTERS_PORT_NAME_MAP</code> は <code>addPort()</code> 時の 1 回限りの書込みで確定する。ポート削除時は <code>delCounterNameMap()</code> (portsorch.cpp:4312) で削除される。FEC モード変更 (<code>doPortTask</code> → <code>setPortFec</code>) では <code>COUNTERS_PORT_NAME_MAP</code> は再書込みされない。</p>
+</div>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p><code>STATE_DB PORT_TABLE</code> の <code>fec</code> / <code>supported_fecs</code> フィールドは <code>PortsOrch</code> を唯一の書き手とする<strong>読み取り専用のステータスレジスタ</strong>であり、<code>ProducerStateTable</code> / <code>NotificationProducer</code> を介した PUBLISH 通知は発行されない。consumer 側 (<code>intfutil</code> / <code>generic_config_updater</code>) は keyspace 通知を購読せず、必要時にのみオンデマンドで読み出す。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-pubsub.md -->
+
+<h3 id="api-swsstable">書込み API: 素の <code>swss::Table</code><a class="headerlink" href="#api-swsstable" title="Permanent link">&para;</a></h3>
+<p><code>PortsOrch</code> は STATE_DB PORT_TABLE を <code>swss::Table</code> メンバとして保有する (<code>portsorch.h:320</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// portsorch.h:320</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">Table</span><span class="w"> </span><span class="n">m_portStateTable</span><span class="p">;</span><span class="w">   </span><span class="c1">// = Table(stateDb, STATE_PORT_TABLE_NAME)</span>
+</span></code></pre></div>
+<p>初期化は <code>portsorch.cpp:725</code> で <code>stateDb</code> を直結する。<code>ProducerStateTable</code> のような <code>_KEY_SET</code> + <code>PUBLISH &lt;TABLE&gt;_CHANNEL</code> 系の通知は一切発行しない。書込みは純粋な <code>HSET</code> のみ。</p>
+<p>主な書込ポイント:</p>
+<ul>
+<li><code>updateDbPortOperFec()</code> (portsorch.cpp:9864–9871): <code>m_portStateTable.set(alias, [("fec", fec_str)])</code> — ポート UP 時</li>
+<li><code>initPortSupportedFecModes()</code> (portsorch.cpp:3316–3320): <code>m_portStateTable.set(alias, [("supported_fecs", ...)])</code> — postPortInit 時 1 回</li>
+</ul>
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>方式</th>
+<th>チャンネル / API</th>
+<th>タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PortsOrch</code> → STATE_DB <code>PORT_TABLE\|&lt;port&gt;.fec</code></td>
+<td><code>swss::Table::set()</code> (HSET)</td>
+<td>なし（PUBLISH 非発行）</td>
+<td>ポート UP イベント / warm boot <code>refreshPortStatus()</code></td>
+</tr>
+<tr>
+<td><code>PortsOrch</code> → STATE_DB <code>PORT_TABLE\|&lt;port&gt;.supported_fecs</code></td>
+<td><code>swss::Table::set()</code> (HSET)</td>
+<td>なし（PUBLISH 非発行）</td>
+<td><code>postPortInit()</code> 時 1 回（lazy init）</td>
+</tr>
+<tr>
+<td><code>intfutil</code> ← STATE_DB <code>PORT_TABLE\|&lt;port&gt;.fec</code></td>
+<td><code>db.get()</code> (HGET, on-demand)</td>
+<td>—</td>
+<td><code>show interfaces fec status</code> 実行毎 1 回</td>
+</tr>
+<tr>
+<td><code>generic_config_updater</code> ← STATE_DB <code>PORT_TABLE\|&lt;port&gt;.supported_fecs</code></td>
+<td><code>read_statedb_entry()</code> (HGET)</td>
+<td>—</td>
+<td>CONFIG_DB PATCH 適用前バリデーション時</td>
+</tr>
+</tbody>
+</table>
+<h3 id="generic_config_updater-supported_fecs"><code>generic_config_updater</code> による <code>supported_fecs</code> 参照<a class="headerlink" href="#generic_config_updater-supported_fecs" title="Permanent link">&para;</a></h3>
+<p><code>generic_config_updater/field_operation_validators.py:216</code> は CONFIG_DB <code>PORT.fec</code> を変更する PATCH の事前検証で <code>supported_fecs</code> を参照する:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">supported_fecs_str</span> <span class="o">=</span> <span class="n">read_statedb_entry</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="s2">&quot;PORT_TABLE&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="s2">&quot;supported_fecs&quot;</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">if</span> <span class="n">supported_fecs_str</span><span class="p">:</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="k">if</span> <span class="n">supported_fecs_str</span> <span class="o">!=</span> <span class="s1">&#39;N/A&#39;</span><span class="p">:</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        <span class="n">supported_fecs_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">supported_fecs_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>        <span class="n">supported_fecs_list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">supported_fecs_list</span> <span class="o">=</span> <span class="n">DEFAULT_SUPPORTED_FECS_LIST</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_fecs_list</span><span class="p">:</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="k">return</span> <span class="kc">False</span>
+</span></code></pre></div>
+<p><code>supported_fecs</code> フィールドが不在（SAI 未実装プラットフォーム）の場合は <code>DEFAULT_SUPPORTED_FECS_LIST</code> にフォールバックし、バリデーションは通る。</p>
+<h3 id="state_port_table-fec">STATE_PORT_TABLE を購読するプロセスと FEC フィールドの非参照<a class="headerlink" href="#state_port_table-fec" title="Permanent link">&para;</a></h3>
+<p>以下のプロセスは <code>STATE_PORT_TABLE</code>（<code>SubscriberStateTable</code> または <code>Table</code>）を購読・参照するが、<code>fec</code> / <code>supported_fecs</code> フィールドを参照するコードは存在しない:</p>
+<table>
+<thead>
+<tr>
+<th>プロセス</th>
+<th>参照する STATE_PORT_TABLE フィールド</th>
+<th>FEC 参照</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>intfmgr</code> (SubscriberStateTable)</td>
+<td><code>netdev_oper_status</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>portmgrd</code> (Table 読み取り)</td>
+<td>ポート存在確認</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>nbrmgr</code></td>
+<td><code>netdev_oper_status</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>teammgrd</code></td>
+<td>ポート存在確認</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>buffermgrdyn</code></td>
+<td>ポート speed / oper_status 系</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<p>STATE_DB <code>PORT_TABLE</code> の <code>fec</code> / <code>supported_fecs</code> フィールドの書込み有無・値は、
+プラットフォームごとの SAI Capability 実装状況によって大きく異なる。
+<code>PortsOrch</code> はコンストラクタで 2 つの SAI capability クエリを実行し、その結果をフラグとして保持する。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-platform.md -->
+
+<h3 id="oper_fec_sup-fec_override_sup"><code>oper_fec_sup</code> / <code>fec_override_sup</code> フラグの確定<a class="headerlink" href="#oper_fec_sup-fec_override_sup" title="Permanent link">&para;</a></h3>
+<p><code>PortsOrch</code> コンストラクタ (portsorch.cpp:987–1010) は <code>gMySwitchType != "dpu"</code> のときのみ以下を実行する。</p>
+<table>
+<thead>
+<tr>
+<th>フラグ</th>
+<th>対応 SAI 属性</th>
+<th>確定条件</th>
+<th>影響するフィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>oper_fec_sup</code></td>
+<td><code>SAI_PORT_ATTR_OPER_PORT_FEC_MODE</code></td>
+<td><code>get_implemented=true</code> のとき <code>true</code></td>
+<td><code>fec</code> フィールドへの SAI oper 値書込み</td>
+</tr>
+<tr>
+<td><code>fec_override_sup</code></td>
+<td><code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code></td>
+<td><code>set_implemented &amp;&amp; create_implemented</code> 両方 <code>true</code> のとき <code>true</code></td>
+<td><code>supported_fecs</code> への <code>"auto"</code> 末尾追加 / <code>fec=auto</code> 設定可否</td>
+</tr>
+</tbody>
+</table>
+<p>両フラグはコンストラクタ内で 1 回のみ評価され、orchagent 再起動まで変化しない。</p>
+<h3 id="dpu">DPU プラットフォームの特別扱い<a class="headerlink" href="#dpu" title="Permanent link">&para;</a></h3>
+<p><code>gMySwitchType == "dpu"</code> のとき上記 SAI capability クエリブロック全体がスキップされるため、両フラグはデフォルト値 <code>false</code> のままとなる。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th><code>oper_fec_sup</code></th>
+<th><code>fec_override_sup</code></th>
+<th><code>fec</code> フィールド</th>
+<th><code>"auto"</code> 出現</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gMySwitchType == "dpu"</code></td>
+<td><code>false</code>（スキップ）</td>
+<td><code>false</code>（スキップ）</td>
+<td>常に <code>"N/A"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>gMySwitchType != "dpu"</code></td>
+<td>SAI クエリ次第</td>
+<td>SAI クエリ次第</td>
+<td>SAI 値 or <code>"N/A"</code></td>
+<td><code>fec_override_sup=true</code> 時のみ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">プラットフォーム別挙動一覧<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th><code>oper_fec_sup</code></th>
+<th><code>fec_override_sup</code></th>
+<th><code>fec</code> 書込み</th>
+<th><code>supported_fecs</code></th>
+<th><code>"auto"</code> 含む</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Broadcom (Trident4 / Tomahawk4 以降)</td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+<td>SAI oper 値 (<code>none</code>/<code>rs</code>/<code>fc</code>)</td>
+<td>SAI 対応モード CSV</td>
+<td>◎</td>
+</tr>
+<tr>
+<td>Broadcom 旧世代 (Trident2 等)</td>
+<td><code>false</code>（get 未実装）</td>
+<td>プラットフォーム次第</td>
+<td><code>"N/A"</code> 固定</td>
+<td>フィールド不在 (NOT_IMPLEMENTED 多)</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>Mellanox/NVIDIA Spectrum</td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+<td>SAI oper 値</td>
+<td>SAI 対応モード CSV</td>
+<td>◎</td>
+</tr>
+<tr>
+<td>DPU</td>
+<td><code>false</code>（クエリスキップ）</td>
+<td><code>false</code>（クエリスキップ）</td>
+<td><code>"N/A"</code> 固定</td>
+<td>SAI 次第（多くは不在）</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>VS (仮想スイッチ)</td>
+<td><code>false</code>（SAI stub が unimplemented）</td>
+<td><code>false</code></td>
+<td><code>"N/A"</code> 固定</td>
+<td>フィールド不在</td>
+<td>✗</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fecauto"><code>fec=auto</code> 設定とプラットフォーム制約<a class="headerlink" href="#fecauto" title="Permanent link">&para;</a></h3>
+<p><code>fec_override_sup=false</code> のプラットフォームで CONFIG_DB に <code>fec=auto</code> を設定すると、
+<code>doPortTask</code> (portsorch.cpp:5317–5321) が <code>SWSS_LOG_ERROR("Auto FEC mode is not supported")</code> を出力し
+タスクエントリを永久スキップ (<code>erase(it)</code>) する。STATE_DB には何も書き込まれず、systemd 再起動 + CONFIG_DB 再投入が必要となる。</p>
+<h3 id="mellanox-nvidia-spectrum-fec">Mellanox (NVIDIA Spectrum) 固有コードと FEC フィールドの無関係性<a class="headerlink" href="#mellanox-nvidia-spectrum-fec" title="Permanent link">&para;</a></h3>
+<p><code>isMlnxPlatform()</code> 関数 (portsorch.cpp:689) が使われる分岐は FEC フィールド書込みとは無関係:</p>
+<table>
+<thead>
+<tr>
+<th><code>isMlnxPlatform()</code> 使用箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>portsorch.cpp:858</td>
+<td>Trim 統計プラグイン (<code>nvdaPortTrimSha</code>) の追加判定</td>
+</tr>
+<tr>
+<td>portsorch.cpp:6362, 6379</td>
+<td>LAG distribution/collection 順序制御</td>
+</tr>
+</tbody>
+</table>
+<p>STATE_DB <code>fec</code> / <code>supported_fecs</code> への書込みはプラットフォーム文字列検査ではなく
+SAI capability クエリ結果（<code>oper_fec_sup</code> / <code>fec_override_sup</code>）のみで制御される。</p>
+<!-- /platform -->
+
+<h2 id="_18">関連リファレンス<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../port/"><code>PORT</code> テーブル</a> — FEC の設定フィールド (<code>fec</code>)</li>
 <li>アーキテクチャ: <a href="../../../architecture/sonic-port-auto-fec-design/"><code>Port Auto FEC 設計</code></a> — <code>fec=auto</code> モードと <code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> の詳細</li>

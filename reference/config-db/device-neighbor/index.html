@@ -24298,6 +24298,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-asicpizza-box" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        非 multi-ASIC（pizza box）— 通常パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-pizza-boxasic_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-ASIC pizza box（asic_name 指定時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-chassis_type-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ chassis ラインカード（chassis_type == "VoQ"）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dualtoractivestandby-activeactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DualToR（ActiveStandby / ActiveActive 冗長構成）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36398,6 +36470,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-asicpizza-box" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        非 multi-ASIC（pizza box）— 通常パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-pizza-boxasic_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-ASIC pizza box（asic_name 指定時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-chassis_type-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ chassis ラインカード（chassis_type == "VoQ"）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dualtoractivestandby-activeactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DualToR（ActiveStandby / ActiveActive 冗長構成）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37273,6 +37417,79 @@
 <p><strong>Evidence</strong>: <code>sonic-buildimage</code> <code>dockers/docker-lldp/lldpmgrd:12-14,300-326</code>; <code>sonic-utilities</code> <code>pfcwd/main.py:413</code>; <code>scripts/ecnconfig:282-287</code>; <code>sonic-buildimage</code> <code>src/sonic-bgpcfgd/bgpcfgd/main.py:75-76</code></p>
 </blockquote>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>詳細証跡: <code>meta/_intermediate/cdb-flow/device-neighbor-platform.md</code>
+スキャン範囲: <code>sonic-buildimage/src/sonic-config-engine/minigraph.py</code> 全行（重点: 599-839, 1719-1782, 2064-2120, 2186-2193, 2631-2641）</p>
+</blockquote>
+<p><code>DEVICE_NEIGHBOR</code> は orchagent / SAI を経由しないため <code>getenv("platform")</code> による ASIC 種別分岐は存在しない。プラットフォーム差が生じるのは <strong>minigraph.py によるテーブル生成時</strong> のトポロジ種別（multi-ASIC pizza box / VoQ chassis / DualToR）に起因する差異のみである。</p>
+<h3 id="multi-asicpizza-box">非 multi-ASIC（pizza box）— 通常パス<a class="headerlink" href="#multi-asicpizza-box" title="Permanent link">&para;</a></h3>
+<p><code>parse_png()</code>（<code>minigraph.py:590</code>）が <code>&lt;PngDec&gt;</code> セクションを解析して <code>neighbors</code> を生成する。<code>DeviceInterfaceLink</code> と <code>UnderlayInterfaceLink</code> のみが DEVICE_NEIGHBOR に取り込まれ、<code>DeviceMgmtLink</code> / <code>DeviceSerialLink</code> は除外される（<code>minigraph.py:631-651</code>）。</p>
+<p><strong>DEVICE_NEIGHBOR_METADATA スコープ</strong>: 自ホスト以外の<strong>全デバイス</strong>が登録される（<code>minigraph.py:2638-2639</code>）。DEVICE_NEIGHBOR に登場しないデバイスも含む広いスコープ。</p>
+<h3 id="multi-asic-pizza-boxasic_name">multi-ASIC pizza box（asic_name 指定時）<a class="headerlink" href="#multi-asic-pizza-boxasic_name" title="Permanent link">&para;</a></h3>
+<p><code>parse_asic_png()</code>（<code>minigraph.py:779</code>）が使用される。リンクの <code>&lt;ChassisInternal&gt;</code> 要素によって外部リンク（<code>parse_asic_external_link()</code>）と内部リンク（<code>parse_asic_internal_link()</code>）に分類する。</p>
+<ul>
+<li><strong>外部リンク</strong>（<code>ChassisInternal == "false"</code>）: ポート名を <code>port_alias_asic_map</code> → <code>port_alias_map</code> の二段変換でエイリアス解決して DEVICE_NEIGHBOR に登録する。</li>
+<li><strong>内部リンク</strong>（<code>ChassisInternal == "true"</code>）: ASIC 間インターコネクト（BackEnd ポート）も DEVICE_NEIGHBOR に登録される。BackEnd ASIC では内部リンクのみが登録されるため、<code>pfcwd start_default</code> がポート一覧を DEVICE_NEIGHBOR から取得すると BackEnd ポートを外部ポートとして誤認する可能性がある。</li>
+</ul>
+<p><strong>DEVICE_NEIGHBOR_METADATA スコープ</strong>: DEVICE_NEIGHBOR の <code>name</code> フィールドに登場するデバイス<strong>のみ</strong>が登録される（<code>minigraph.py:2640-2641</code>）。非 multi-ASIC より狭いスコープ。BGP セッション確立時に <code>bgpcfgd</code> が DEVICE_NEIGHBOR_METADATA を参照するため、スコープが狭いと BGP 確立に影響する。</p>
+<h3 id="voq-chassis-chassis_type-voq">VoQ chassis ラインカード（chassis_type == "VoQ"）<a class="headerlink" href="#voq-chassis-chassis_type-voq" title="Permanent link">&para;</a></h3>
+<p><code>asic_hostname</code> が設定されるため multi-ASIC と同じ <code>parse_asic_png()</code> 分岐が適用される。VoQ 固有の差異:</p>
+<ol>
+<li><strong>内部 VoQ インターフェイス除外</strong>: <code>voq_internal_intfs = ['cpu', 'recirc', 'inband']</code>（<code>minigraph.py:88</code>）で定義される内部インターフェイスは DEVICE_NEIGHBOR に登録されない。</li>
+<li><strong><code>BGP_VOQ_CHASSIS_NEIGHBOR</code> テーブル</strong>: VoQ chassis 専用の内部 BGP セッション用テーブルが別途生成される（<code>minigraph.py:2277</code>）。DEVICE_NEIGHBOR は外部 BGP neighbor 向けのまま。</li>
+<li><strong>Spine chassis frontend ロール</strong>: <code>parse_spine_chassis_fe()</code>（<code>minigraph.py:1719</code>）が DEVICE_NEIGHBOR の <code>name</code> フィールドを参照し、隣接デバイスのタイプが <code>ChassisBackendRouter</code> でない場合にインターフェイスを <code>VnetFE</code> に enslaved させる（<code>minigraph.py:1749-1753</code>）。DEVICE_NEIGHBOR の <code>name</code> が vnet 割り当ての判定キーとして使われる。</li>
+</ol>
+<h3 id="dualtoractivestandby-activeactive">DualToR（ActiveStandby / ActiveActive 冗長構成）<a class="headerlink" href="#dualtoractivestandby-activeactive" title="Permanent link">&para;</a></h3>
+<p><code>parse_png()</code> の通常パスで DEVICE_NEIGHBOR が生成される（変更なし）。DualToR 固有の差異:</p>
+<ul>
+<li><code>PEER_SWITCH</code> テーブルが生成され <code>DEVICE_METADATA.localhost.subtype = 'DualToR'</code> が設定される（<code>minigraph.py:2188-2189</code>）が、DEVICE_NEIGHBOR の内容は変わらない。</li>
+<li>MUX ケーブル接続（<code>LogicalLink</code> タイプ）は <code>mux_cable_ports</code> dict を経由して <code>MUX_CABLE</code> テーブルへ書き込まれる（<code>minigraph.py:2617</code>）。DEVICE_NEIGHBOR には影響しない。</li>
+<li>DEVICE_NEIGHBOR_METADATA は非 multi-ASIC の全デバイス登録パスが適用され、peer switch（対向 ToR）も含まれる。</li>
+</ul>
+<h3 id="_23">プラットフォーム差サマリ<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th>生成関数</th>
+<th>DEVICE_NEIGHBOR の内容</th>
+<th>DEVICE_NEIGHBOR_METADATA スコープ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>非 multi-ASIC (pizza box)</td>
+<td><code>parse_png()</code></td>
+<td>外部隣接のみ（DeviceInterfaceLink / UnderlayInterfaceLink）</td>
+<td>全デバイス（自ホスト除く）</td>
+</tr>
+<tr>
+<td>multi-ASIC pizza box</td>
+<td><code>parse_asic_png()</code></td>
+<td>外部隣接 + 内部リンク（ChassisInternal で分類）</td>
+<td>DEVICE_NEIGHBOR に登場するデバイスのみ</td>
+</tr>
+<tr>
+<td>VoQ chassis ラインカード</td>
+<td><code>parse_asic_png()</code></td>
+<td>外部隣接 + 内部リンク（voq_internal_intfs を除く）</td>
+<td>DEVICE_NEIGHBOR に登場するデバイスのみ</td>
+</tr>
+<tr>
+<td>DualToR</td>
+<td><code>parse_png()</code></td>
+<td>外部隣接のみ（T0 トポロジ通常）</td>
+<td>全デバイス（peer switch 含む）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-buildimage</code> <code>src/sonic-config-engine/minigraph.py:85-88,178-179,599-724,727-778,779-839,1719-1782,2064-2120,2186-2193,2277,2616-2622,2631-2641</code></p>
+</blockquote>
+<!-- /platform -->
 
 <!-- glossary-links-injected: 2c4f81fa98e5 -->
 

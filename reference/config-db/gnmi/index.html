@@ -26466,6 +26466,333 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-nativesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gnmi-native.sh レベル (コンテナ起動時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telemetrygo-go" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        telemetry.go レベル (Go フラグパース)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clientcertauthgo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clientCertAuth.go レベル (クライアント接続時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-state_db-telemetry_connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STATE_DB — TELEMETRY_CONNECTIONS テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. COUNTERS_DB — 書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. その他の DB — 書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-gnmi_client_cert_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GNMI / GNMI_CLIENT_CERT テーブルの読み取り方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telemetry_client-redis-keyspace-dialout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TELEMETRY_CLIENT テーブル — Redis keyspace 購読 (dialout モード)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB ジャーナル — 全テーブル keyspace 購読 (オプション)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-subscribe-rpc-db-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNMI Subscribe RPC — DB データの keyspace 購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-smartswitch-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 1: SmartSwitch — ZMQ ポート自動付与
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-smartswitch-multi-asic-npu-gnmi-namespacecontainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 2: SmartSwitch + multi-ASIC NPU — gNMI パスの namespace/container 二段解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-multi-asic-db-target-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 3: multi-ASIC 構成 — DB target の namespace サフィックス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-vrf-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 4: 管理 VRF 構成 — VRF バインド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-unix-telemetrygo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Unix ソケットパス (telemetry.go)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-jwt-telemetrygo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. JWT 認証インターバル (telemetry.go)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-telemetrygo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 証明書シンボリックリンクパス (telemetry.go)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-grpc-telemetrygo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. gRPC メッセージサイズ制限 (telemetry.go)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-gnmi-nativesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. gnmi-native.sh 固定環境変数・パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-go" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. その他 Go バイナリ固定定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35246,6 +35573,333 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-nativesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gnmi-native.sh レベル (コンテナ起動時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telemetrygo-go" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        telemetry.go レベル (Go フラグパース)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clientcertauthgo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clientCertAuth.go レベル (クライアント接続時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-state_db-telemetry_connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. STATE_DB — TELEMETRY_CONNECTIONS テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. COUNTERS_DB — 書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. その他の DB — 書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-gnmi_client_cert_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GNMI / GNMI_CLIENT_CERT テーブルの読み取り方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#telemetry_client-redis-keyspace-dialout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TELEMETRY_CLIENT テーブル — Redis keyspace 購読 (dialout モード)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB ジャーナル — 全テーブル keyspace 購読 (オプション)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-subscribe-rpc-db-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNMI Subscribe RPC — DB データの keyspace 購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-smartswitch-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 1: SmartSwitch — ZMQ ポート自動付与
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-smartswitch-multi-asic-npu-gnmi-namespacecontainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 2: SmartSwitch + multi-ASIC NPU — gNMI パスの namespace/container 二段解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-multi-asic-db-target-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 3: multi-ASIC 構成 — DB target の namespace サフィックス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-vrf-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 4: 管理 VRF 構成 — VRF バインド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-unix-telemetrygo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Unix ソケットパス (telemetry.go)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-jwt-telemetrygo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. JWT 認証インターバル (telemetry.go)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-telemetrygo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 証明書シンボリックリンクパス (telemetry.go)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-grpc-telemetrygo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. gRPC メッセージサイズ制限 (telemetry.go)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-gnmi-nativesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. gnmi-native.sh 固定環境変数・パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-go" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. その他 Go バイナリ固定定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35845,6 +36499,799 @@
   clientCertAuth.go:254-284 — PopulateAuthStructByCommonName による GNMI_CLIENT_CERT 参照
 -->
 <!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh</code>、<code>sonic-gnmi/telemetry/telemetry.go</code>、<code>sonic-gnmi/gnmi_server/clientCertAuth.go</code></p>
+<h3 id="gnmi-nativesh">gnmi-native.sh レベル (コンテナ起動時)<a class="headerlink" href="#gnmi-nativesh" title="Permanent link">&para;</a></h3>
+<p><code>gnmi-native.sh</code> は起動スクリプトとして実行される。失敗時は非ゼロ終了コードでコンテナが落ちる（<code>exit 1</code> / <code>exit 2</code>）か、安全な fallback 値で継続する。</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>exit code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TELEMETRY_VARS_FILE</code> テンプレートが存在しない</td>
+<td><code>gnmi-native.sh:12-15</code></td>
+<td>stderr 出力 + 即時終了</td>
+<td>1 (<code>EXIT_TELEMETRY_VARS_FILE_NOT_FOUND</code>)</td>
+</tr>
+<tr>
+<td><code>port</code> フィールドが正整数でない (DB エントリ存在時)</td>
+<td><code>gnmi-native.sh:68-71</code></td>
+<td>stderr 出力 + 即時終了</td>
+<td>2 (<code>INCORRECT_TELEMETRY_VALUE</code>)</td>
+</tr>
+<tr>
+<td><code>threshold</code> フィールドが正整数でない かつ <code>GNMI</code> エントリが存在する</td>
+<td><code>gnmi-native.sh:107-110</code></td>
+<td>stderr 出力 + 即時終了</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>idle_conn_duration</code> フィールドが正整数でない かつ <code>GNMI</code> エントリが存在する</td>
+<td><code>gnmi-native.sh:120-123</code></td>
+<td>stderr 出力 + 即時終了</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>GNMI</code> エントリが存在しない (<code>-z "$GNMI"</code> が真)</td>
+<td><code>gnmi-native.sh:64-65</code></td>
+<td><code>PORT=8080</code> フォールバック、処理継続</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>threshold</code> / <code>idle_conn_duration</code> が <code>null</code></td>
+<td><code>gnmi-native.sh:105,118</code></td>
+<td>デフォルト値 (<code>100</code> / <code>5</code>) を使用、処理継続</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="telemetrygo-go">telemetry.go レベル (Go フラグパース)<a class="headerlink" href="#telemetrygo-go" title="Permanent link">&para;</a></h3>
+<p>Go バイナリの <code>setupFlags()</code> が引数を検証し、不正な組み合わせを検出する。エラーは <code>main()</code> の <code>log.Errorf</code> で記録されてプロセスが終了する。</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--port &lt;= 0</code> かつ <code>--unix_socket</code> も空</td>
+<td><code>telemetry.go:232-234</code></td>
+<td><code>fmt.Errorf</code> → <code>log.Errorf</code> → 終了</td>
+</tr>
+<tr>
+<td><code>--threshold &lt; 0</code></td>
+<td><code>telemetry.go:237-239</code></td>
+<td><code>fmt.Errorf</code> → 終了</td>
+</tr>
+<tr>
+<td><code>--idle_conn_duration &lt; 0</code></td>
+<td><code>telemetry.go:241-243</code></td>
+<td><code>fmt.Errorf</code> → 終了</td>
+</tr>
+<tr>
+<td><code>--log_level &lt; 0</code></td>
+<td><code>telemetry.go:246-250</code></td>
+<td><code>log.Infof</code> 警告のみ、デフォルト値 <code>2</code> に自動置換して<strong>処理継続</strong></td>
+</tr>
+<tr>
+<td>TLS モード (<code>--noTLS</code> / <code>--insecure</code> 両方とも false) で <code>--server_crt</code> が空</td>
+<td><code>telemetry.go:252-256</code></td>
+<td><code>fmt.Errorf</code> → 終了</td>
+</tr>
+<tr>
+<td>TLS モードで <code>--server_key</code> が空</td>
+<td><code>telemetry.go:256-258</code></td>
+<td><code>fmt.Errorf</code> → 終了</td>
+</tr>
+<tr>
+<td><code>client_auth=cert</code> 指定かつ <code>--ca_crt</code> が空</td>
+<td><code>telemetry.go:318-321</code></td>
+<td>cert モードを<strong>静かに無効化</strong> (<code>UserAuth.Unset("cert")</code>) + <code>log.V(2)</code> 警告のみ、処理継続</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title"><code>client_auth=cert</code> + <code>ca_crt</code> 欠如の無音無効化</p>
+<p><code>user_auth = cert</code> を設定しかつ <code>GNMI|certs.ca_crt</code> を省略した場合、<code>gnmi-native.sh</code> は <code>--client_auth cert</code> を渡すが <code>--ca_crt</code> を渡さない。Go バイナリはこの組み合わせを検出して cert 認証モードを<strong>警告のみで自動無効化</strong>する (<code>telemetry.go:318-321</code>)。ログレベル 2 (INFO) 以上でのみ記録されるため、ログを監視していない場合は認証なし状態になっていることに気づきにくい。</p>
+</div>
+<h3 id="clientcertauthgo">clientCertAuth.go レベル (クライアント接続時)<a class="headerlink" href="#clientcertauthgo" title="Permanent link">&para;</a></h3>
+<p><code>user_auth = cert</code> モード時、各クライアント接続の認証・認可は <code>ClientCertAuthenAndAuthor()</code> が処理する。すべての失敗は gRPC <code>codes.Unauthenticated</code> を返し、接続を即時拒否する。</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>gRPC エラーメッセージ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>peer.FromContext</code> 失敗 (peer 情報なし)</td>
+<td><code>clientCertAuth.go:118-120</code></td>
+<td><code>"no peer found"</code></td>
+</tr>
+<tr>
+<td>TLS <code>AuthInfo</code> 取得失敗</td>
+<td><code>clientCertAuth.go:121-123</code></td>
+<td><code>"unexpected peer transport credentials"</code></td>
+</tr>
+<tr>
+<td>クライアント証明書検証チェーンが空</td>
+<td><code>clientCertAuth.go:125-127</code></td>
+<td><code>"could not verify peer certificate"</code></td>
+</tr>
+<tr>
+<td>証明書の CN が空文字列</td>
+<td><code>clientCertAuth.go:133-135</code></td>
+<td><code>"invalid username in certificate common name."</code></td>
+</tr>
+<tr>
+<td><code>serviceConfigTableName</code> が空文字列</td>
+<td><code>clientCertAuth.go:255-257</code></td>
+<td><code>"Service config table name should not be empty"</code></td>
+</tr>
+<tr>
+<td><code>GNMI_CLIENT_CERT\|&lt;CN&gt;</code> エントリ不在または <code>role</code> / <code>role@</code> フィールド欠如</td>
+<td><code>clientCertAuth.go:263-284</code></td>
+<td><code>"Invalid cert cname:'%s', not a trusted cert common name."</code></td>
+</tr>
+<tr>
+<td>CRL ダウンロード失敗 (全 URL 試行後)</td>
+<td><code>clientCertAuth.go:230-236</code></td>
+<td><code>"Can't download CRL and verify cert"</code></td>
+</tr>
+<tr>
+<td>証明書が CRL で失効 (<code>CheckChainRevocation</code> 失敗)</td>
+<td><code>clientCertAuth.go:244-248</code></td>
+<td><code>"Peer certificate revoked"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>GNMI_CLIENT_CERT</code> エントリ不在の glog レベル</strong>: <code>glog.Warningf</code> で記録される (<code>clientCertAuth.go:274</code>)。Warning は glog <code>-v=0</code> 以上で常に出力されるが、gRPC エラーは <code>codes.Unauthenticated</code> となるため接続は拒否される。</li>
+<li><strong>CRL の部分到達</strong>: 複数の CRL 配布点 URL を持つ証明書の場合、1 つでも到達・ダウンロード成功した URL があれば <code>crlAvailable = true</code> となり、失効チェックが実施される (<code>clientCertAuth.go:189-204</code>)。全 URL が到達不能な場合のみ Unauthenticated を返す。</li>
+<li><strong>コンテナ再起動が唯一の回復手段</strong>: gnmi-native.sh はコンテナ起動時の 1 回実行のみであるため、CONFIG_DB の誤設定を修正しても <code>systemctl restart gnmi</code> が必要。誤設定による exit 2 はコンテナ起動失敗として記録される。</li>
+</ul>
+<!-- evidence:
+  gnmi-native.sh:12-15 — TELEMETRY_VARS_FILE 存在チェック・exit 1
+  gnmi-native.sh:64-71 — GNMI エントリ空フォールバック + port 正整数チェック・exit 2
+  gnmi-native.sh:101-124 — threshold / idle_conn_duration null フォールバック + 正整数チェック・exit 2
+  telemetry.go:84-88 — main() の runTelemetry エラーハンドリング
+  telemetry.go:232-258 — setupFlags() port / threshold / idle_conn_duration / log_level / TLS 検証
+  telemetry.go:318-321 — client_auth=cert + ca_crt 欠如時の cert モード自動無効化
+  clientCertAuth.go:115-157 — ClientCertAuthenAndAuthor 全体フロー
+  clientCertAuth.go:254-284 — PopulateAuthStructByCommonName 失敗経路
+  clientCertAuth.go:221-251 — VerifyCertCrl CRL ダウンロード失敗・失効証明書処理
+-->
+<!-- /failure -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>telemetry</code> バイナリ (gNMI サーバ) は CONFIG_DB の <code>GNMI</code> / <code>GNMI_CLIENT_CERT</code> テーブルを<strong>読み取るだけ</strong>で、コアデータパス (orchagent / SAI) へは一切書き込まない。ただし、実行中に STATE_DB へ副次的な書き込みを行い、カウンタ統計は共有メモリ (SysV IPC) に書き込む。</p>
+<h3 id="1-state_db-telemetry_connections">1. STATE_DB — <code>TELEMETRY_CONNECTIONS</code> テーブル<a class="headerlink" href="#1-state_db-telemetry_connections" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込タイミング</th>
+<th>操作</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>TELEMETRY_CONNECTIONS</code> (Hash)</td>
+<td>デーモン起動 (<code>PrepareRedis()</code>)</td>
+<td>全既存エントリを <code>HDel</code> で削除 (起動時クリア)</td>
+<td><code>connection_manager.go:52-60</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>TELEMETRY_CONNECTIONS</code> (Hash)</td>
+<td>gNMI Subscribe RPC 開始 (<code>Add()</code>)</td>
+<td><code>HSet(table, key, "active")</code></td>
+<td><code>connection_manager.go:116</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>TELEMETRY_CONNECTIONS</code> (Hash)</td>
+<td>gNMI Subscribe RPC 終了 (<code>Remove()</code>)</td>
+<td><code>HDel(table, key)</code></td>
+<td><code>connection_manager.go:127</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Hash フィールド (connection key) の生成規則</strong>: <code>createKey()</code> が <code>&lt;peer_ip:port&gt;|&lt;target_1&gt;|&lt;target_2&gt;|...|&lt;RFC3339_timestamp&gt;</code> 形式で生成する (<code>connection_manager.go:94-108</code>)。値は常にハードコード <code>"active"</code> 固定。</p>
+<p><strong>threshold との関係</strong>: <code>GNMI|gnmi.threshold</code> (デフォルト 100、0 = 無制限) を超えると新規接続の <code>Add()</code> が <code>false</code> を返して接続拒否となる。接続拒否時は STATE_DB への書き込みは行われない (<code>connection_manager.go:65</code>)。</p>
+<p><strong>フォールトトレラント</strong>: STATE_DB クライアントが <code>nil</code> の場合 (<code>connection_manager.go:111-115</code>) は書き込みをスキップし、<code>telemetry</code> サーバ自体は継続動作する。</p>
+<h3 id="2-counters_db">2. COUNTERS_DB — 書込なし<a class="headerlink" href="#2-counters_db" title="Permanent link">&para;</a></h3>
+<p><code>telemetry</code> デーモンはカウンタ統計を <strong>COUNTERS_DB (Redis) ではなく SysV 共有メモリ</strong> に書き込む。</p>
+<table>
+<thead>
+<tr>
+<th>カウンタストア</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SysV 共有メモリ (<code>memKey=7749</code>, 1024 バイト)</td>
+<td>GNMI_GET / GNMI_SET / GNMI_SET_BYPASS / GNOI_<em> / GNSI_</em> / DBUS_* カウンタ群 (計 32 種) を uint64 で保持</td>
+<td><code>common_utils/shareMem.go</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><strong>書込なし</strong></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>カウンタ操作:
+- <strong>初期化</strong>: <code>NewServer()</code> 起動時に <code>InitCounters()</code> が全 32 カウンタを <code>uint64(0)</code> にリセットして共有メモリへ書き込む (<code>gnmi_server/server.go:528</code>)
+- <strong>増分</strong>: <code>IncCounter(cnt)</code> が <code>atomic.AddUint64</code> でアトミックにインクリメント後、<code>SetMemCounters</code> で共有メモリ全体を同期 (<code>common_utils/context.go</code>)
+- <strong>読み取り</strong>: <code>gnmi_dump</code> ツール (<code>gnmi_dump/gnmi_dump.go</code>) が <code>GetMemCounters</code> で読み出して標準出力に表示する。Redis には公開されない
+- <strong>永続化</strong>: なし。プロセス再起動 / システム再起動で全カウンタが 0 にリセット</p>
+<div class="admonition note">
+<p class="admonition-title"><code>gnmi_dump</code> コマンドで カウンタを表示</p>
+<p><code>docker exec gnmi gnmi_dump</code> を実行すると現在の全カウンタが <code>&lt;CounterType.String()&gt;: &lt;uint64_value&gt;</code> 形式で表示される。
+COUNTERS_DB / STATE_DB からは取得できないため、通常の Redis 監視ツール (<code>redis-cli</code>) では見えない点に注意。</p>
+</div>
+<h3 id="3-db">3. その他の DB — 書込なし<a class="headerlink" href="#3-db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>telemetry</code> バイナリに Producer / Notification 書込なし (<code>gnmi_server/server.go</code> 全体を <code>ProducerStateTable</code>/<code>NotificationProducer</code> で grep してヒット 0 件)</td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td>なし</td>
+<td>SAI 非経由。gNMI 経由の Write は swss/orchagent に転送されるが <code>telemetry</code> 自身は ASIC_DB を保持しない</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td>なし</td>
+<td><code>telemetry</code> に FLEX_COUNTER_DB 参照なし</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence:
+  gnmi_server/connection_manager.go:52-60 — PrepareRedis: 起動時に TELEMETRY_CONNECTIONS 全エントリ削除
+  gnmi_server/connection_manager.go:65 — threshold による接続拒否 (0 = 無制限)
+  gnmi_server/connection_manager.go:94-108 — createKey: connection key 生成ロジック
+  gnmi_server/connection_manager.go:111-116 — storeKeyRedis: nil ガード + HSet "active"
+  gnmi_server/connection_manager.go:127 — HDel による接続終了時エントリ削除
+  common_utils/context.go — CounterType iota 定義 (GNMI_GET=0 ... COUNTER_SIZE=32), IncCounter, InitCounters
+  common_utils/shareMem.go — memKey=7749, memSize=1024, GetMemCounters/SetMemCounters
+  gnmi_server/server.go:528 — NewServer で InitCounters 呼び出し
+  gnmi_dump/gnmi_dump.go — GetMemCounters で共有メモリ読み取り・表示
+-->
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="gnmi-gnmi_client_cert_1">GNMI / GNMI_CLIENT_CERT テーブルの読み取り方式<a class="headerlink" href="#gnmi-gnmi_client_cert_1" title="Permanent link">&para;</a></h3>
+<p><code>GNMI</code> / <code>GNMI_CLIENT_CERT</code> の各 CONFIG_DB テーブルは <strong><code>swsscommon.ConfigDBConnector</code> によるポイントインタイム読み取り</strong>のみで消費される。<code>ConsumerStateTable</code> / <code>SubscriberStateTable</code> (チャネルベース Pub/Sub) は使用しない。CONFIG_DB は永続前提のため TTL は設定されない。</p>
+<table>
+<thead>
+<tr>
+<th>消費者</th>
+<th>API 種別</th>
+<th>対象テーブル</th>
+<th>タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gnmi-native.sh</code></td>
+<td><code>sonic-cfggen -d -t telemetry_vars.j2</code> (一括スナップショット)</td>
+<td><code>GNMI\|gnmi</code>・<code>GNMI\|certs</code>・<code>DEVICE_METADATA\|localhost.x509</code></td>
+<td>コンテナ起動時 1 回のみ</td>
+</tr>
+<tr>
+<td><code>clientCertAuth.go</code> — <code>PopulateAuthStructByCommonName()</code></td>
+<td><code>ConfigDBConnector.Connect(false)</code> + <code>Get_entry()</code> (接続ごとポイントインタイム読み取り)</td>
+<td><code>GNMI_CLIENT_CERT\|&lt;CN&gt;</code></td>
+<td>gNMI クライアント接続ごと</td>
+</tr>
+</tbody>
+</table>
+<p><code>gnmi-native.sh</code> は <code>sonic-cfggen</code> の結果を Shell 変数に保持したまま <code>exec telemetry</code> する。コンテナ稼働中に CONFIG_DB の <code>GNMI</code> エントリが変更されても <code>telemetry</code> プロセスへの通知は <strong>一切発生しない</strong>。<code>systemctl restart gnmi</code> が唯一の反映手段となる。</p>
+<h3 id="telemetry_client-redis-keyspace-dialout">TELEMETRY_CLIENT テーブル — Redis keyspace 購読 (dialout モード)<a class="headerlink" href="#telemetry_client-redis-keyspace-dialout" title="Permanent link">&para;</a></h3>
+<p><code>dialout_client.go</code> の <code>DialOutRun()</code> は CONFIG_DB の <code>TELEMETRY_CLIENT</code> テーブルを <strong>Redis <code>PSUBSCRIBE</code></strong> でリアルタイム監視する。<code>GNMI|gnmi</code> / <code>GNMI_CLIENT_CERT</code> テーブルは対象外。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>PSUBSCRIBE &quot;__keyspace@&lt;configdb_id&gt;__:TELEMETRY_CLIENT|*&quot;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ↓ hset / hdel 通知を受信
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>processTelemetryClientConfig(ctx, redisDb, key, op)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  ↓ HGetAll で最新値を取得
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  ↓ Global → clientCfg 更新 → 全 destGroup クライアント再起動
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>     DestinationGroup_* → gRPC 接続先を再構成
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>     Subscription_* → push サブスクリプション再構成
+</span></code></pre></div>
+<p><code>DialOutRun()</code> は起動時に <code>TELEMETRY_CLIENT|*</code> の全既存 key を <code>KEYS</code> コマンドで一括取得してから PSUBSCRIBE ループに入る (<code>dialout_client.go:706-715</code>)。つまり初回スナップショット + 差分通知の 2 段構成。</p>
+<h3 id="config_db-keyspace">CONFIG_DB ジャーナル — 全テーブル keyspace 購読 (オプション)<a class="headerlink" href="#config_db-keyspace" title="Permanent link">&para;</a></h3>
+<p><code>telemetry</code> バイナリの起動引数に <code>--enable_config_db_journal=true</code> を指定した場合、<code>NewDbJournal("CONFIG_DB")</code> が CONFIG_DB の <strong>全テーブル</strong> に対して keyspace 通知を購読し、変更履歴をホスト側ファイル (<code>/host/var/log/config_db.txt</code>) に記録する。通常運用では <code>gnmi-native.sh</code> からこのフラグは付与されないため、ジャーナルは無効 (<code>false</code> デフォルト)。</p>
+<div class="language-go highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// gnmi_server/db_journal.go:67-69</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nx">keyspace</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;__keyspace@%d__:*&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">dbNum</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nx">keyevent</span><span class="w">  </span><span class="o">:=</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;__keyevent@%d__:*&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">dbNum</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nx">journal</span><span class="p">.</span><span class="nx">ps</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">journal</span><span class="p">.</span><span class="nx">rc</span><span class="p">.</span><span class="nx">PSubscribe</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">keyspace</span><span class="p">,</span><span class="w"> </span><span class="nx">keyevent</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="gnmi-subscribe-rpc-db-keyspace">gNMI Subscribe RPC — DB データの keyspace 購読<a class="headerlink" href="#gnmi-subscribe-rpc-db-keyspace" title="Permanent link">&para;</a></h3>
+<p><code>telemetry</code> は外部 gNMI クライアントからの <strong>Subscribe RPC</strong> を受けると、要求されたパス (例: <code>STATE_DB/PORT_TABLE/Ethernet0</code>) に対応する Redis DB へ <code>PSubscribe __keyspace@&lt;N&gt;__:&lt;table&gt;|&lt;key&gt;*</code> を張る。この購読は <strong>CONFIG_DB の GNMI テーブル自体</strong> ではなく、gNMI クライアントが監視したい任意の SONiC DB テーブルを対象とする (<code>sonic_data_client/db_client.go:1419-1447</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>Subscribe モード</th>
+<th>実装</th>
+<th>キャッシュ更新トリガー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ON_CHANGE</code></td>
+<td><code>dbTableKeySubscribe()</code> が <code>PSubscribe</code> を張り、keyspace 通知で差分をキュー送信</td>
+<td>Redis keyspace event</td>
+</tr>
+<tr>
+<td><code>SAMPLE</code></td>
+<td><code>streamSampleSubscription()</code> がポーリング間隔で <code>subscribeTableData2TypedValue()</code> を呼ぶ</td>
+<td>タイマ (<code>time.Ticker</code>)</td>
+</tr>
+<tr>
+<td><code>POLL</code></td>
+<td><code>PollRun()</code> がクライアントの Poll メッセージ受信時に全パスを読み取り</td>
+<td>クライアント要求</td>
+</tr>
+<tr>
+<td><code>ONCE</code></td>
+<td><code>OnceRun()</code> が全パスを 1 回読み取って完了通知を送信</td>
+<td>即時 1 回</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">GNMI|gnmi テーブルへの subscribe は存在しない</p>
+<p><code>GNMI|gnmi</code> / <code>GNMI_CLIENT_CERT</code> テーブルを watch して設定変更を動的反映する仕組みは、<code>sonic-gnmi</code> リポジトリ内に存在しない。変更の反映はコンテナ再起動のみ。</p>
+</div>
+<!-- evidence:
+  gnmi-native.sh:19-22 — sonic-cfggen -d -t telemetry_vars.j2 による 1 回読み取り
+  gnmi_server/clientCertAuth.go:259-261 — ConfigDBConnector.Connect(false).Get_entry() (接続ごとポイントインタイム)
+  dialout/dialout_client/dialout_client.go:646-745 — DialOutRun: TELEMETRY_CLIENT PSUBSCRIBE + 初回スナップショット
+  dialout/dialout_client/dialout_client.go:686 — pattern "__keyspace@<N>__:TELEMETRY_CLIENT|*"
+  dialout/dialout_client/dialout_client.go:462-643 — processTelemetryClientConfig: hset/hdel ハンドラ
+  gnmi_server/db_journal.go:67-69 — CONFIG_DB 全テーブル keyspace + keyevent 購読 (--enable_config_db_journal 時)
+  gnmi_server/server.go:60,646-651 — enable_config_db_journal フラグ (デフォルト false)
+  sonic_data_client/db_client.go:1419-1447 — dbTableKeySubscribe: gNMI Subscribe RPC 用 PSubscribe
+  sonic_data_client/db_client.go:224-317 — StreamRun: ON_CHANGE / SAMPLE 分岐
+-->
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差分 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh</code>、<code>sonic-gnmi/telemetry/telemetry.go</code>、<code>sonic-gnmi/sonic_data_client/mixed_db_client.go</code>、<code>sonic-gnmi/sonic_data_client/db_client.go</code>、<code>sonic-gnmi/sonic_db_config/db_config.go</code> 全行精読 (2026-05-19)
+詳細証跡: <code>meta/_intermediate/cdb-flow/gnmi-ordering.md</code></p>
+</blockquote>
+<h3 id="1-smartswitch-zmq">差異 1: SmartSwitch — ZMQ ポート自動付与<a class="headerlink" href="#1-smartswitch-zmq" title="Permanent link">&para;</a></h3>
+<p><code>gnmi-native.sh:89-91</code></p>
+<table>
+<thead>
+<tr>
+<th><code>DEVICE_METADATA.localhost.subtype</code></th>
+<th>telemetry 起動オプション</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SmartSwitch</code></td>
+<td><code>-zmq_port=8100</code> を自動付与</td>
+<td><code>orchagent</code> との通信を Redis ベースから ZMQ ベースに切り替え。CONFIG_DB フィールドではなく gnmi-native.sh が固定ポート <code>8100</code> を挿入する</td>
+</tr>
+<tr>
+<td>その他 (<code>npu</code> / <code>dpu</code> 等)、または <code>DEVICE_METADATA|localhost</code> 不在</td>
+<td>ZMQ 無効 (フラグ付与なし)</td>
+<td><code>telemetry</code> は Redis ベースの通信チャネルを使用</td>
+</tr>
+</tbody>
+</table>
+<p><code>subtype</code> の参照は <code>sonic-cfggen</code> テンプレートではなく <code>sonic-db-cli CONFIG_DB hget "DEVICE_METADATA|localhost" "subtype"</code> で直接取得するため、<code>GNMI</code> テーブルとは独立して解決される。</p>
+<h3 id="2-smartswitch-multi-asic-npu-gnmi-namespacecontainer">差異 2: SmartSwitch + multi-ASIC NPU — gNMI パスの namespace/container 二段解決<a class="headerlink" href="#2-smartswitch-multi-asic-npu-gnmi-namespacecontainer" title="Permanent link">&para;</a></h3>
+<p><code>sonic_data_client/mixed_db_client.go:437-463</code></p>
+<p>SmartSwitch 構成では <strong>namespace 数 (<code>namespace_cnt</code>)</strong> と <strong>container 数 (<code>container_cnt</code>)</strong> の両方が 1 より大きくなる。この場合、gNMI パスの第 2 要素は namespace (ASIC) と container (DPU) の両方の候補として試行される。</p>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th><code>namespace_cnt</code></th>
+<th><code>container_cnt</code></th>
+<th>パス第 2 要素の解釈</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>single-ASIC / single-container</td>
+<td>1</td>
+<td>1</td>
+<td>第 2 要素はテーブル名 (namespace/container 無視)</td>
+</tr>
+<tr>
+<td>multi-ASIC only (pure multi-asic NPU)</td>
+<td>&gt; 1</td>
+<td>1</td>
+<td>第 2 要素を namespace (例: <code>asic0</code>, <code>asic1</code>) として解釈</td>
+</tr>
+<tr>
+<td>multi-container only (SmartSwitch DPU)</td>
+<td>1</td>
+<td>&gt; 1</td>
+<td>第 2 要素を container (例: <code>dpu0</code>, <code>dpu1</code>) として解釈</td>
+</tr>
+<tr>
+<td>multi-ASIC + multi-container (SmartSwitch with multi-ASIC)</td>
+<td>&gt; 1</td>
+<td>&gt; 1</td>
+<td>第 2 要素を namespace で試行し、失敗した場合に container として再試行。<code>localhost</code> は常にデフォルト namespace にマップ</td>
+</tr>
+</tbody>
+</table>
+<p><strong>gNMI パス例 (SmartSwitch DPU)</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>/DPU_APPL_DB/dpu0/DASH_QOS   → DPU_APPL_DB target、container=dpu0
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>/DPU_APPL_DB/localhost/...   → DPU_APPL_DB target、container=デフォルト
+</span></code></pre></div>
+<p>DPU container 向け Write 操作は <code>getZmqAddress(dpuId, zmqPort)</code> で DPU の IP アドレス (DHCP_SERVER_IPV4_PORT 経由) を解決し、TCP ZMQ 経由で送信される。localhost (デフォルト container) の場合は <code>127.0.0.1:&lt;zmqPort&gt;</code> に直接接続する (<code>mixed_db_client.go:198-200</code>)。</p>
+<h3 id="3-multi-asic-db-target-namespace">差異 3: multi-ASIC 構成 — DB target の namespace サフィックス<a class="headerlink" href="#3-multi-asic-db-target-namespace" title="Permanent link">&para;</a></h3>
+<p><code>sonic_data_client/db_client.go:513-535</code></p>
+<p><code>IsTargetDb()</code> 関数は gNMI Subscribe/Get リクエストの target 文字列を <code>"DB名/namespace"</code> 形式でパースする。</p>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th>target 形式</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>single-ASIC</td>
+<td><code>CONFIG_DB</code> / <code>STATE_DB</code> 等</td>
+<td>namespace = デフォルト (グローバル)</td>
+</tr>
+<tr>
+<td>multi-ASIC</td>
+<td><code>CONFIG_DB/asic0</code>、<code>STATE_DB/asic1</code> 等</td>
+<td>namespace サフィックスを抽出し、対応する Redis インスタンスに接続</td>
+</tr>
+</tbody>
+</table>
+<p>multi-ASIC 環境では各 ASIC ごとに独立した Redis インスタンスが <code>/var/run/redis/sonic-db/database_global.json</code> で定義される。<code>CheckDbMultiNamespace()</code> がインスタンス数 &gt; 1 を検出した場合のみ namespace サフィックスが有効になる。</p>
+<h3 id="4-vrf-vrf">差異 4: 管理 VRF 構成 — VRF バインド<a class="headerlink" href="#4-vrf-vrf" title="Permanent link">&para;</a></h3>
+<p><code>gnmi-native.sh:95-98</code></p>
+<table>
+<thead>
+<tr>
+<th><code>MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled</code></th>
+<th>telemetry 起動オプション</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code></td>
+<td><code>--vrf mgmt</code> を自動付与</td>
+<td>gNMI サーバが管理 VRF (<code>mgmt</code>) の netns にバインド。管理ポート (eth0) 経由でのみ到達可能</td>
+</tr>
+<tr>
+<td><code>false</code> / 未設定</td>
+<td>VRF オプションなし</td>
+<td>デフォルト VRF でリッスン。全インターフェースから到達可能</td>
+</tr>
+</tbody>
+</table>
+<p><code>MGMT_VRF_CONFIG</code> は <code>sonic-db-cli CONFIG_DB hget</code> で直接参照されるため、<code>GNMI</code> テーブルとは独立して起動時に解決される。<code>--vrf mgmt</code> が付与されると <code>telemetry</code> の Go バイナリが <code>vrf_config.go</code> 内で管理 VRF netns に切り替えてから listen を開始する。</p>
+<h3 id="_10">要約<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th><code>GNMI</code> テーブルへの影響</th>
+<th>追加される起動オプション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>standard NPU (single-ASIC)</td>
+<td>変化なし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>multi-ASIC NPU</td>
+<td>DB target に <code>/asicN</code> サフィックス対応</td>
+<td>なし (テーブルへの影響なし)</td>
+</tr>
+<tr>
+<td>SmartSwitch (DPU 有り)</td>
+<td>なし (GNMI テーブル自体は共通)</td>
+<td><code>-zmq_port=8100</code> (固定)</td>
+</tr>
+<tr>
+<td>SmartSwitch + multi-ASIC NPU</td>
+<td>上記 2 つの組み合わせ</td>
+<td><code>-zmq_port=8100</code> (固定)</td>
+</tr>
+<tr>
+<td>管理 VRF 有効</td>
+<td>なし</td>
+<td><code>--vrf mgmt</code></td>
+</tr>
+</tbody>
+</table>
+<!-- evidence:
+  gnmi-native.sh:89-91 — SmartSwitch subtype 判定 → zmq_port=8100 固定付与
+  gnmi-native.sh:95-98 — mgmtVrfEnabled 判定 → --vrf mgmt 付与
+  sonic_data_client/mixed_db_client.go:437-463 — ParseDatabase: namespace_cnt/container_cnt による二段解決
+  sonic_data_client/mixed_db_client.go:55 — HOSTNAME = "localhost"
+  sonic_data_client/mixed_db_client.go:118-165 — getDpuAddress/getZmqAddress: DPU IP 解決
+  sonic_data_client/mixed_db_client.go:192-208 — getZmqClient: local/remote ZMQ 分岐
+  sonic_data_client/db_client.go:513-535 — IsTargetDb: multi-namespace target/asicN パース
+  sonic_db_config/db_config.go:32-46 — CheckDbMultiNamespace: namespace > 1 判定
+-->
+<!-- /platform -->
+
+<!-- hardcoded-constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>telemetry</code> バイナリ (<code>telemetry.go</code>) および <code>gnmi-native.sh</code> 起動スクリプトに埋め込まれた固定値を整理する。これらは CONFIG_DB フィールドとは独立して動作し、設定変更なしに挙動に影響する。</p>
+<h3 id="1-unix-telemetrygo">1. Unix ソケットパス (telemetry.go)<a class="headerlink" href="#1-unix-telemetrygo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unix_socket</code> デフォルト</td>
+<td><code>/var/run/gnmi/gnmi.sock</code></td>
+<td>TLS なしのローカル接続用 Unix ドメインソケットパス。空文字列を渡すと無効化される</td>
+<td><code>telemetry.go:175</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>unix_socket</code> は CONFIG_DB に対応フィールドがなく、<code>gnmi-native.sh</code> からも付与されない。つまり常にデフォルト <code>/var/run/gnmi/gnmi.sock</code> が使用される。同一コンテナ内の他プロセスはこのソケット経由で TLS なしに gNMI へ接続できる。</p>
+<hr />
+<h3 id="2-jwt-telemetrygo">2. JWT 認証インターバル (telemetry.go)<a class="headerlink" href="#2-jwt-telemetrygo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jwt_refresh_int</code> デフォルト</td>
+<td><code>900</code> 秒 (15 分)</td>
+<td>JWT 有効期限切れ前にトークンをリフレッシュできる残り時間の閾値</td>
+<td><code>telemetry.go:183</code></td>
+</tr>
+<tr>
+<td><code>jwt_valid_int</code> デフォルト</td>
+<td><code>3600</code> 秒 (1 時間)</td>
+<td>JWT アクセストークンの有効期間</td>
+<td><code>telemetry.go:184</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>JwtRefreshInt</code> / <code>JwtValidInt</code> は <code>gnmi_server/jwtAuth.go:17-18</code> で宣言されるパッケージグローバル変数に <code>telemetry.go:262-263</code> で代入される。CONFIG_DB には対応フィールドがなく、<code>gnmi-native.sh</code> からも設定されないため、常にデフォルト値が適用される。</p>
+<hr />
+<h3 id="3-telemetrygo">3. 証明書シンボリックリンクパス (telemetry.go)<a class="headerlink" href="#3-telemetrygo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ca_cert_lnk</code> デフォルト</td>
+<td><code>/keys/ca_cert.lnk</code></td>
+<td>CA 証明書シンボリックリンクパス (mTLS ローテーション用)</td>
+<td><code>telemetry.go:199</code></td>
+</tr>
+<tr>
+<td><code>server_cert_lnk</code> デフォルト</td>
+<td><code>/keys/server_cert.lnk</code></td>
+<td>サーバ証明書シンボリックリンクパス</td>
+<td><code>telemetry.go:200</code></td>
+</tr>
+<tr>
+<td><code>server_key_lnk</code> デフォルト</td>
+<td><code>/keys/server_key.lnk</code></td>
+<td>サーバ秘密鍵シンボリックリンクパス</td>
+<td><code>telemetry.go:201</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>自動上書きロジック</strong>: <code>GNMI|certs.server_crt</code> が設定されている場合、<code>telemetry.go:306-310</code> でシンボリックリンクパスを <code>GNMI|certs.server_crt</code> と同一ディレクトリに自動変更する (<code>filepath.Dir(cfg.SrvCertFile)</code>)。デフォルト <code>/keys/</code> は証明書が <code>DEVICE_METADATA</code> 由来でディレクトリが <code>/keys/</code> である場合のみ有効。</p>
+<hr />
+<h3 id="4-grpc-telemetrygo">4. gRPC メッセージサイズ制限 (telemetry.go)<a class="headerlink" href="#4-grpc-telemetrygo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_recv_msg_size</code> デフォルト</td>
+<td><code>4 * 1024 * 1024</code> = 4 MiB</td>
+<td>gRPC サーバが受信できる最大メッセージサイズ</td>
+<td><code>telemetry.go:209</code></td>
+</tr>
+<tr>
+<td><code>max_send_msg_size</code> デフォルト</td>
+<td><code>4 * 1024 * 1024</code> = 4 MiB</td>
+<td>gRPC サーバが送信できる最大メッセージサイズ</td>
+<td><code>telemetry.go:210</code></td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB に対応フィールドはなく、<code>gnmi-native.sh</code> からも設定されない。大量の Subscribe レスポンス (例: 全 BGP テーブル) を取得する場合、4 MiB を超えるメッセージはサイズ制限エラーになることがある。</p>
+<hr />
+<h3 id="5-gnmi-nativesh">5. gnmi-native.sh 固定環境変数・パス<a class="headerlink" href="#5-gnmi-nativesh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GRPC_GO_LOG_VERBOSITY_LEVEL</code></td>
+<td><code>99</code></td>
+<td>gRPC-Go 内部ログ冗長度。99 = 最大詳細。<code>-logtostderr</code> と組み合わせでコンテナログに全 gRPC イベントを出力する</td>
+<td><code>gnmi-native.sh:26</code></td>
+</tr>
+<tr>
+<td><code>GRPC_GO_LOG_SEVERITY_LEVEL</code></td>
+<td><code>info</code></td>
+<td>gRPC-Go ログ重要度フィルタ。<code>info</code> = INFO 以上を全出力</td>
+<td><code>gnmi-native.sh:27</code></td>
+</tr>
+<tr>
+<td><code>CVL_SCHEMA_PATH</code></td>
+<td><code>/usr/sbin/schema</code></td>
+<td>CVL (Config Validation Library) スキーマ読み込みパス。固定パスが設定されないと gNMI native write が CVL 検証失敗になる</td>
+<td><code>gnmi-native.sh:30</code></td>
+</tr>
+<tr>
+<td><code>TELEMETRY_VARS_FILE</code></td>
+<td><code>/usr/share/sonic/templates/telemetry_vars.j2</code></td>
+<td>CONFIG_DB 読み込み用 Jinja2 テンプレートの固定パス。不在時は exit 1 で起動失敗</td>
+<td><code>gnmi-native.sh:5</code></td>
+</tr>
+<tr>
+<td>SmartSwitch ZMQ ポート</td>
+<td><code>8100</code></td>
+<td><code>DEVICE_METADATA|localhost.subtype == "SmartSwitch"</code> のとき <code>--zmq_port=8100</code> を強制付与。固定値で上書き不可</td>
+<td><code>gnmi-native.sh:91</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="6-go">6. その他 Go バイナリ固定定数<a class="headerlink" href="#6-go" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>img_dir</code> デフォルト</td>
+<td><code>/tmp/host_tmp</code></td>
+<td>gNOI OS ダウンロード一時ディレクトリパス (OS アップグレード用)</td>
+<td><code>telemetry.go:195</code></td>
+</tr>
+<tr>
+<td><code>cert_crl_dir</code> デフォルト</td>
+<td><code>/mtls/crl</code></td>
+<td>CRL ファイル格納ディレクトリ (<code>--enable_crl</code> 有効時)</td>
+<td><code>telemetry.go:203</code></td>
+</tr>
+<tr>
+<td><code>grpc_meta</code> デフォルト</td>
+<td><code>/keys/grpc-version.json</code></td>
+<td>gRPC 証明書メタデータ JSON ファイルパス (certz 機能用)</td>
+<td><code>telemetry.go:204</code></td>
+</tr>
+<tr>
+<td><code>authz_meta</code> デフォルト</td>
+<td><code>/keys/authz-version.json</code></td>
+<td>認可ポリシーメタデータ JSON ファイルパス</td>
+<td><code>telemetry.go:205</code></td>
+</tr>
+<tr>
+<td><code>authorization_policy_file</code> デフォルト</td>
+<td><code>/keys/authorization_policy.json</code></td>
+<td>認可ポリシー JSON ファイルパス (<code>--authz_policy_enabled</code> 有効時)</td>
+<td><code>telemetry.go:207</code></td>
+</tr>
+<tr>
+<td><code>ENABLE_NATIVE_WRITE</code></td>
+<td><code>false</code> (ビルドタグ <code>gnmi_native_write</code> 未指定時)</td>
+<td>gNMI ネイティブ書込み機能の有効/無効。ビルド時に決定</td>
+<td><code>gnmi_server/constants_native.go:5</code></td>
+</tr>
+<tr>
+<td><code>ENABLE_TRANSLIB_WRITE</code></td>
+<td><code>false</code> (ビルドタグ <code>gnmi_translib_write</code> 未指定時)</td>
+<td>gNMI translib 書込み機能の有効/無効。ビルド時に決定</td>
+<td><code>gnmi_server/constants_translib.go:5</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">ビルドタグによる書込み機能の有効化</p>
+<p><code>ENABLE_NATIVE_WRITE</code> / <code>ENABLE_TRANSLIB_WRITE</code> はビルド時の Go ビルドタグ (<code>-tags gnmi_native_write</code>, <code>-tags gnmi_translib_write</code>) で制御される。SONiC コミュニティ master の標準ビルドではいずれも <code>false</code>。管理フレームワーク統合ビルドでは <code>gnmi_translib_write</code> タグが付与され、<code>ENABLE_TRANSLIB_WRITE = true</code> / デフォルト認証モード <code>password+jwt</code> が有効になる (<code>telemetry.go:219</code>)。</p>
+</div>
+<!-- evidence:
+  telemetry.go:175 — unix_socket "/var/run/gnmi/gnmi.sock" デフォルト
+  telemetry.go:183-184 — jwt_refresh_int=900, jwt_valid_int=3600 デフォルト
+  telemetry.go:195 — img_dir "/tmp/host_tmp" デフォルト
+  telemetry.go:199-201 — /keys/ シンボリックリンクパスデフォルト
+  telemetry.go:203-207 — cert_crl_dir, grpc_meta, authz_meta, authorization_policy_file デフォルト
+  telemetry.go:209-210 — max_recv_msg_size, max_send_msg_size 4*1024*1024
+  telemetry.go:262-263 — JwtRefreshInt, JwtValidInt 代入
+  telemetry.go:303-313 — /keys/ シンボリックリンク自動上書きロジック
+  gnmi-native.sh:5 — TELEMETRY_VARS_FILE 固定パス
+  gnmi-native.sh:26-27 — GRPC_GO_LOG_VERBOSITY_LEVEL=99, GRPC_GO_LOG_SEVERITY_LEVEL=info
+  gnmi-native.sh:30 — CVL_SCHEMA_PATH=/usr/sbin/schema
+  gnmi-native.sh:91 — SmartSwitch zmq_port=8100 固定値
+  gnmi_server/constants_native.go:5 — ENABLE_NATIVE_WRITE=false
+  gnmi_server/constants_translib.go:5 — ENABLE_TRANSLIB_WRITE=false
+  gnmi_server/jwtAuth.go:17-18 — JwtRefreshInt, JwtValidInt パッケージグローバル宣言
+-->
+<!-- /hardcoded-constants -->
 
 <div class="footnote">
 <hr />

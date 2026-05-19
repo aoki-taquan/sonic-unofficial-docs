@@ -29204,6 +29204,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35714,6 +35725,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36666,6 +36688,65 @@ CONFIG_DB に蓄積され再起動後に一括再処理される。</p>
 </table>
 <p>CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への書き込みは発生しない。</p>
 <!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<p><code>stpmgrd</code> は <code>StpMgr</code>（<code>Orch</code> 基底クラス継承）を起動し、<code>Orch::addConsumer()</code> 経由で CONFIG_DB の 3 テーブルを購読する。CONFIG_DB (dbId=4) のため <code>Orch::addConsumer()</code> 内部分岐で <strong><code>SubscriberStateTable</code></strong> が選ばれ、Redis の <strong>keyspace notification</strong> (<code>__keyspace@&lt;dbId&gt;__:&lt;TABLE&gt;:*</code> の PSUBSCRIBE) を使用する。<code>PUBLISH</code> チャネルは使用しない。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>購読クラス</td>
+<td><code>SubscriberStateTable</code> (CONFIG_DB 分岐)</td>
+</tr>
+<tr>
+<td>keyspace パターン (STP_MST)</td>
+<td><code>__keyspace@4__:STP_MST\|*</code></td>
+</tr>
+<tr>
+<td>keyspace パターン (STP_MST_INST)</td>
+<td><code>__keyspace@4__:STP_MST_INST\|*</code></td>
+</tr>
+<tr>
+<td>keyspace パターン (STP_MST_PORT)</td>
+<td><code>__keyspace@4__:STP_MST_PORT\|*</code></td>
+</tr>
+<tr>
+<td>POP_BATCH_SIZE</td>
+<td><code>TableConsumable::DEFAULT_POP_BATCH_SIZE</code> = <strong>128</strong> (<code>sonic-swss-common/common/table.h:164</code>)</td>
+</tr>
+<tr>
+<td>優先度 (<code>pri</code>)</td>
+<td>0 (<code>TableConnector</code> デフォルト)</td>
+</tr>
+<tr>
+<td>select タイムアウト</td>
+<td><strong>1000 ms</strong> (<code>SELECT_TIMEOUT</code> マクロ, <code>stpmgrd.cpp:17</code>)</td>
+</tr>
+<tr>
+<td>起動時スナップショット</td>
+<td><code>SubscriberStateTable</code> が既存エントリを SET イベントとして再配信</td>
+</tr>
+<tr>
+<td>ディスパッチ</td>
+<td><code>Consumer::execute()</code> → <code>StpMgr::doTask(Consumer&amp;)</code> → <code>getTableName()</code> 分岐</td>
+</tr>
+</tbody>
+</table>
+<p><code>doTask()</code> 内の分岐:
+- <code>"STP_MST"</code> → <code>doStpMstGlobalTask(consumer)</code>
+- <code>"STP_MST_INST"</code> → <code>doStpMstInstTask(consumer)</code>
+- <code>"STP_MST_PORT"</code> → <code>doStpMstInstPortTask(consumer)</code></p>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-mst-pubsub.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- source: sonic-swss/orchagent/orch.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
+<!-- /pubsub -->
 
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>

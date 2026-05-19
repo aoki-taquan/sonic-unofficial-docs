@@ -26705,6 +26705,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-peer_switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: PEER_SWITCH 先行必須（必須先行・自動回復あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tunnel-muxtunnel0-peer_switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: TUNNEL MuxTunnel0 → PEER_SWITCH チェーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-server_ipv4-server_ipv6-set_command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: server_ipv4 / server_ipv6 同一 SET_COMMAND 必須（自動回復なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-linkmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 4: linkmgrd 起動時の初期読み込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-neighbor_mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 5: neighbor_mode 変更の禁止（運用注意）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-yang-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34854,6 +34926,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-peer_switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: PEER_SWITCH 先行必須（必須先行・自動回復あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tunnel-muxtunnel0-peer_switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: TUNNEL MuxTunnel0 → PEER_SWITCH チェーン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-server_ipv4-server_ipv6-set_command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: server_ipv4 / server_ipv6 同一 SET_COMMAND 必須（自動回復なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-linkmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 4: linkmgrd 起動時の初期読み込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-neighbor_mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 5: neighbor_mode 変更の禁止（運用注意）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-yang-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35118,6 +35262,42 @@
 </ul>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp handleMuxCfg:2202 / handlePeerSwitch:2336 / addOperation:2394; sonic-linkmgrd/src/DbInterface.cpp:1843-1849 -->
+
+<p><code>MUX_CABLE|&lt;port&gt;</code> エントリの SAI 反映は <code>PEER_SWITCH</code> の設定完了と <code>MuxTunnel0</code> トンネルの存在に依存する。orchagent は <code>Orch2</code> フレームワーク経由で <code>MuxOrch::handleMuxCfg()</code> を呼び出す（<code>orch.cpp:1226</code> の <code>Orch2::doTask()</code> 経由）。</p>
+<h3 id="1-peer_switch">依存 1: PEER_SWITCH 先行必須（必須先行・自動回復あり）<a class="headerlink" href="#1-peer_switch" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>PEER_SWITCH|&lt;name&gt;  SET (address_ipv4 確定)  先行
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ↓
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>MUX_CABLE|&lt;port&gt;  SET
+</span></code></pre></div>
+<p><code>handleMuxCfg()</code> (<code>muxorch.cpp:2271</code>) は <code>mux_peer_switch_.isZero()</code> を確認する。<code>PEER_SWITCH</code> エントリが未設定の間は <code>SWSS_LOG_INFO("Mux Peer switch addr not yet configured")</code> → <code>return false</code> で <code>m_toSync</code> に保留し次のイベントループで再試行する。</p>
+<p><strong>違反時</strong>: <code>PEER_SWITCH</code> SET 完了後の次イベントループで自動的に処理される（自動回復あり）。</p>
+<h3 id="2-tunnel-muxtunnel0-peer_switch">依存 2: TUNNEL MuxTunnel0 → PEER_SWITCH チェーン<a class="headerlink" href="#2-tunnel-muxtunnel0-peer_switch" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>APP_DB TUNNEL_DECAP_TABLE:MuxTunnel0  存在  先行
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>PEER_SWITCH|&lt;name&gt;  SET
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  ↓
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>MUX_CABLE|&lt;port&gt;  SET
+</span></code></pre></div>
+<p><code>handlePeerSwitch()</code> (<code>muxorch.cpp:2348-2354</code>) は <code>decap_orch_-&gt;getDstIpAddresses(MUX_TUNNEL)</code> が空の場合 <code>return false</code> でリトライに戻す。<code>MuxTunnel0</code> トンネルが APP_DB に存在しなければ PEER_SWITCH 自体も処理できず、MUX_CABLE の処理も間接的にブロックされる。</p>
+<p><strong>違反時</strong>: <code>MuxTunnel0</code> 追加後の次イベントループで自動回復。</p>
+<h3 id="3-server_ipv4-server_ipv6-set_command">依存 3: server_ipv4 / server_ipv6 同一 SET_COMMAND 必須（自動回復なし）<a class="headerlink" href="#3-server_ipv4-server_ipv6-set_command" title="Permanent link">&para;</a></h3>
+<p><code>handleMuxCfg()</code> (<code>muxorch.cpp:2206-2207</code>) はフィールドリスト走査前に <code>getAttrIpPrefix("server_ipv4")</code> と <code>getAttrIpPrefix("server_ipv6")</code> を <strong>無条件</strong> で呼び出す。これらが欠落すると <code>std::out_of_range</code> 例外が発生し <code>addOperation()</code> の catch ブロック (<code>muxorch.cpp:2409</code>) で捕捉されエントリが erase される。</p>
+<p><strong>違反時</strong>: エントリ破棄（自動回復なし）。<code>server_ipv4</code> / <code>server_ipv6</code> は必ず同一 SET_COMMAND に含める。</p>
+<h3 id="4-linkmgrd">依存 4: linkmgrd 起動時の初期読み込み順序<a class="headerlink" href="#4-linkmgrd" title="Permanent link">&para;</a></h3>
+<p>linkmgrd は起動時に以下の順序で <code>MUX_CABLE</code> テーブルを読み込む（<code>DbInterface.cpp:1846-1849</code>）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>getPortCableType()   # cable_type を全ポート読み込み
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>getProberType()      # prober_type を全ポート読み込み
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>getServerIpAddress() # server_ipv4 / server_ipv6 を全ポート読み込み
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
+</span></code></pre></div>
+<p>この順序は固定。初期読み込み中の MUX_CABLE 変更は Subscribe ループで後から処理される。</p>
+<h3 id="5-neighbor_mode">依存 5: neighbor_mode 変更の禁止（運用注意）<a class="headerlink" href="#5-neighbor_mode" title="Permanent link">&para;</a></h3>
+<p>既存 mux ポートに対する <code>neighbor_mode</code> の変更は orchagent によって拒否される (<code>muxorch.cpp:2258-2266</code>)。<code>SWSS_LOG_ERROR("Neighbor mode change is not allowed")</code> が出力され <code>return false</code> でリトライに保留されるが、元の <code>neighbor_mode</code> が存在する限り永続的に失敗する。変更する場合はポートを <code>DEL</code> してから再 <code>SET</code> する必要がある。</p>
+<!-- /ordering -->
+
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>上位ページ: <a href="../mux-cable/"><code>MUX_CABLE</code></a> — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析</li>
@@ -35150,9 +35330,9 @@
 <li><code>server_ipv4</code> / <code>server_ipv6</code> を省略すると orchagent が例外で落ちる可能性がある。minigraph 使用時は自動補完されるが、<code>sonic-db-cli CONFIG_DB hset 'MUX_CABLE|&lt;port&gt;' ...</code> で手動設定する際は両フィールドを必ず指定する。</li>
 </ul>
 <h3 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MUX_CABLE|Ethernet0&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>mux<span class="w"> </span>status
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>mux<span class="w"> </span>config
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MUX_CABLE|Ethernet0&#39;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>mux<span class="w"> </span>status
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>mux<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
 

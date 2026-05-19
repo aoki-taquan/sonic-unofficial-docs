@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブルを詳解。Phase A+B+C 分析。">
+        <meta name="description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数を詳解。Phase A+B+C+D+E 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブルを詳解。Phase A+B+C 分析。" />
+<meta property="og:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数を詳解。Phase A+B+C+D+E 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-orch.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-orch/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブルを詳解。Phase A+B+C 分析。" />
+<meta property="twitter:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数を詳解。Phase A+B+C+D+E 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-orch.png" />
 </head>
   
@@ -28987,6 +28987,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stporchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        マクロ定数 (stporch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_state-enum-stporchh1119" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stp_state enum (stporch.h:11–19)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-stporchcpp245" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 初期値ハードコード (stporch.cpp:245)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#off-by-one-stporchcpp605" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        off-by-one 定数 (stporch.cpp:605)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35224,6 +35285,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stporchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        マクロ定数 (stporch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stp_state-enum-stporchh1119" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stp_state enum (stporch.h:11–19)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-stporchcpp245" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 初期値ハードコード (stporch.cpp:245)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#off-by-one-stporchcpp605" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        off-by-one 定数 (stporch.cpp:605)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35914,6 +36036,95 @@ DISABLED・LISTENING はいずれも <code>SAI_STP_PORT_STATE_BLOCKING</code> �
 </tbody>
 </table>
 <!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-constants.md -->
+
+<p>実装コードに直接定義されている文字列定数・enum 値・マジックナンバーを一覧化する。</p>
+<h3 id="stporchh">マクロ定数 (<code>stporch.h</code>)<a class="headerlink" href="#stporchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_INVALID_INSTANCE</code></td>
+<td><code>0xFFFF</code></td>
+<td><code>stp_instance</code> フィールド欠落時の番兵値。<code>doStpTask()</code> が SET 処理をスキップする判定に使用</td>
+</tr>
+<tr>
+<td><code>APP_STP_INST_PORT_FLUSH_TABLE_NAME</code></td>
+<td><code>"STP_INST_PORT_FLUSH_TABLE"</code></td>
+<td>APPL_DB テーブル名文字列定数</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stp_state-enum-stporchh1119">stp_state enum (<code>stporch.h:11–19</code>)<a class="headerlink" href="#stp_state-enum-stporchh1119" title="Permanent link">&para;</a></h3>
+<p>STP プロトコル状態を数値で表す内部 enum。APPL_DB <code>STP_PORT_STATE_TABLE.state</code> フィールドに書き込まれる値と対応する。</p>
+<table>
+<thead>
+<tr>
+<th>enum 値</th>
+<th>数値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_STATE_DISABLED</code></td>
+<td><code>0</code></td>
+<td>ポート無効</td>
+</tr>
+<tr>
+<td><code>STP_STATE_BLOCKING</code></td>
+<td><code>1</code></td>
+<td>ブロッキング</td>
+</tr>
+<tr>
+<td><code>STP_STATE_LISTENING</code></td>
+<td><code>2</code></td>
+<td>リスニング</td>
+</tr>
+<tr>
+<td><code>STP_STATE_LEARNING</code></td>
+<td><code>3</code></td>
+<td>ラーニング</td>
+</tr>
+<tr>
+<td><code>STP_STATE_FORWARDING</code></td>
+<td><code>4</code></td>
+<td>フォワーディング</td>
+</tr>
+<tr>
+<td><code>STP_STATE_INVALID</code></td>
+<td><code>5</code></td>
+<td>番兵値: <code>state</code> フィールド欠落または不正値</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">SAI は 3 状態のみ (<code>getStpSaiState()</code>)</p>
+<p><code>STP_STATE_DISABLED(0)</code> と <code>STP_STATE_LISTENING(2)</code> は <code>SAI_STP_PORT_STATE_BLOCKING</code> にマップされる。
+SAI 側の定数は <code>SAI_STP_PORT_STATE_BLOCKING</code> / <code>SAI_STP_PORT_STATE_LEARNING</code> / <code>SAI_STP_PORT_STATE_FORWARDING</code> の 3 値のみ。</p>
+</div>
+<h3 id="sai-stporchcpp245">SAI 初期値ハードコード (<code>stporch.cpp:245</code>)<a class="headerlink" href="#sai-stporchcpp245" title="Permanent link">&para;</a></h3>
+<p>STP ポート (<code>create_stp_port</code>) 作成直後の初期状態として <code>SAI_STP_PORT_STATE_BLOCKING</code> がハードコードされている:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">attr</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_STP_PORT_ATTR_STATE</span><span class="p">;</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">attr</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="n">value</span><span class="p">.</span><span class="n">s32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_STP_PORT_STATE_BLOCKING</span><span class="p">;</span><span class="w">  </span><span class="c1">// ハードコード初期値</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">sai_stp_api</span><span class="o">-&gt;</span><span class="n">create_stp_port</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stp_port_id</span><span class="p">,</span><span class="w"> </span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">attr</span><span class="p">);</span>
+</span></code></pre></div>
+<p>作成後に <code>set_stp_port_attribute()</code> で実際の状態に更新される。</p>
+<h3 id="off-by-one-stporchcpp605">off-by-one 定数 (<code>stporch.cpp:605</code>)<a class="headerlink" href="#off-by-one-stporchcpp605" title="Permanent link">&para;</a></h3>
+<p><code>updateMaxStpInstance()</code> では SAI から取得した <code>MAX_STP_INSTANCE</code> 値から 1 を引いて保存・公開する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">m_maxStpInstance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">sai_uint16_t</span><span class="p">)</span><span class="n">max_stp_instances</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span></code></pre></div>
+<p>STATE_DB に書き込まれる <code>max_stp_inst</code> はインデックス最大値 (<code>max_stp_instances - 1</code>) であり、SAI の返す「インスタンス数」とは 1 差異がある (意図的 off-by-one)。</p>
+<!-- /constants -->
 
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>

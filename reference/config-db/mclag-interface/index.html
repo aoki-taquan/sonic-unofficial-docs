@@ -26781,6 +26781,372 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd 内定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-configmclagpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 側定数（config/mclag.py）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照マップ (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclag_interface_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCLAG_INTERFACE → 参照先テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclag_interface_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCLAG_INTERFACE ← 参照元（他テーブル / モジュールから参照される）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-appl_db-mclag_interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / APPL_DB への副次書込み（MCLAG_INTERFACE 起因）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mlagorch-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MlagOrch (orchagent) の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPC 接続断・再接続時の自動リカバリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗後の復旧パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE への記録
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mlagorch-orchagent_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MlagOrch (orchagent) の副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd の副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd — SubscriberStateTable の遅延登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd — SELECT ループでのディスパッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd-fetch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd — 起動時全量 fetch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlagorch-orchagent-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MlagOrch (orchagent) — Consumer 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信経路サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイムアウト / リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差・SAI capability 分岐 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差・SAI capability 分岐 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-isolation-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Port Isolation の 2 系統
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isolation_group_table-broadcom-barefoot-centec-clounix-marvell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ISOLATION_GROUP_TABLE パス（Broadcom / Barefoot / Centec / Clounix / Marvell）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL ベース隔離パス（Mellanox / その他・未設定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlagorch-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MlagOrch は SAI 非依存・プラットフォーム差なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-ASIC / VoQ chassis 非対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35036,6 +35402,372 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd 内定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-configmclagpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 側定数（config/mclag.py）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照マップ (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclag_interface_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCLAG_INTERFACE → 参照先テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclag_interface_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCLAG_INTERFACE ← 参照元（他テーブル / モジュールから参照される）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-appl_db-mclag_interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / APPL_DB への副次書込み（MCLAG_INTERFACE 起因）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mlagorch-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MlagOrch (orchagent) の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPC 接続断・再接続時の自動リカバリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗後の復旧パス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE への記録
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mlagorch-orchagent_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MlagOrch (orchagent) の副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd の副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd — SubscriberStateTable の遅延登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd — SELECT ループでのディスパッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd-fetch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mclagsyncd — 起動時全量 fetch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlagorch-orchagent-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MlagOrch (orchagent) — Consumer 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信経路サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイムアウト / リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差・SAI capability 分岐 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差・SAI capability 分岐 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-isolation-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Port Isolation の 2 系統
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isolation_group_table-broadcom-barefoot-centec-clounix-marvell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ISOLATION_GROUP_TABLE パス（Broadcom / Barefoot / Centec / Clounix / Marvell）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL ベース隔離パス（Mellanox / その他・未設定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlagorch-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MlagOrch は SAI 非依存・プラットフォーム差なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-ASIC / VoQ chassis 非対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35271,6 +36003,648 @@
 <p>中間調査ノート: <code>meta/_intermediate/cdb-flow/mclag-interface-ordering.md</code></p>
 </blockquote>
 <!-- /ordering -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.h / sonic-swss/mclagsyncd/mclag.h / sonic-utilities/config/mclag.py -->
+
+<h3 id="mclagsyncd">mclagsyncd 内定数<a class="headerlink" href="#mclagsyncd" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd</code> が MCLAG_INTERFACE エントリを iccpd へ転送する際、以下の定数が適用される。</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAX_L_PORT_NAME</code></td>
+<td><code>20</code> (バイト)</td>
+<td><code>mclag_iface_cfg_info.mclag_iface[]</code> 配列長。PortChannel 名の転送上限</td>
+<td><code>mclaglink.h:52</code></td>
+</tr>
+<tr>
+<td><code>MCLAG_MAX_SEND_MSG_LEN</code></td>
+<td><code>4096</code> バイト</td>
+<td>mclagsyncd → iccpd 間 IPC 送信バッファ上限。1 メッセージに格納できるインターフェース設定数はこの上限に依存</td>
+<td><code>mclag.h:62</code></td>
+</tr>
+<tr>
+<td><code>MCLAG_PROTO_VERSION</code></td>
+<td><code>1</code></td>
+<td>IPC プロトコルバージョン（固定値。変更不可）</td>
+<td><code>mclag.h:81</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>実運用上の注意</strong>: <code>MAX_L_PORT_NAME = 20</code> は null 終端を含む配列長のため、実効上限は <strong>19 バイト</strong>。<code>PortChannel</code> (11 文字) + 数字部分 4 桁 = 最大 15 文字 (<code>CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX = 15</code>) のため通常の PortChannel 名は範囲内。しかし <code>strncpy</code> による無言切り捨てを防ぐため、カスタム名で長い場合は注意が必要。</p>
+</blockquote>
+<h3 id="cli-configmclagpy">CLI 側定数（config/mclag.py）<a class="headerlink" href="#cli-configmclagpy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CFG_PORTCHANNEL_PREFIX</code></td>
+<td><code>"PortChannel"</code></td>
+<td><code>if_name</code> として許可する名前プレフィックス。これ以外のプレフィックスは CLI が拒否</td>
+<td><code>config/mclag.py:10</code></td>
+</tr>
+<tr>
+<td><code>CFG_PORTCHANNEL_PREFIX_LEN</code></td>
+<td><code>11</code></td>
+<td>プレフィックス文字数（<code>"PortChannel"</code> の長さ）</td>
+<td><code>config/mclag.py:11</code></td>
+</tr>
+<tr>
+<td><code>CFG_PORTCHANNEL_MAX_VAL</code></td>
+<td><code>9999</code></td>
+<td>PortChannel 番号の最大値（<code>PortChannel0</code>〜<code>PortChannel9999</code>）</td>
+<td><code>config/mclag.py:12</code></td>
+</tr>
+<tr>
+<td><code>CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX</code></td>
+<td><code>15</code></td>
+<td>PortChannel 名の最大文字数（<code>PortChannel9999</code> = 15 文字）</td>
+<td><code>config/mclag.py:13</code></td>
+</tr>
+<tr>
+<td><code>if_type</code> 固定値</td>
+<td><code>"PortChannel"</code></td>
+<td><code>config mclag member add</code> が MCLAG_INTERFACE エントリに書き込む <code>if_type</code> の値。<code>MlagOrch</code> はこの値を参照しないが、CLI は常に固定で書き込む</td>
+<td><code>config/mclag.py:293</code></td>
+</tr>
+</tbody>
+</table>
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.h#L52 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  #define MAX_L_PORT_NAME 20
+  struct mclag_iface_cfg_info {
+      int op_type;
+      int domain_id;
+      char mclag_iface[MAX_L_PORT_NAME];
+  };
+reasoning: mclag_iface[] の配列長が MAX_L_PORT_NAME=20 で固定されているため、MCLAG_INTERFACE の if_name (PortChannel 名) は 19 バイトを超えると iccpd 転送時に無言切り捨てされる。通常の命名規則 (CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX=15) では問題ないが、カスタムポート名を使う場合は要注意。
+-->
+
+<!-- evidence:
+source: sonic-utilities/config/mclag.py#L10-L14 (sha: a3e5b4c9fb7a95e213d08f8761e6c94f02a18b41)
+excerpt: |
+  CFG_PORTCHANNEL_PREFIX = "PortChannel"
+  CFG_PORTCHANNEL_PREFIX_LEN = 11
+  CFG_PORTCHANNEL_MAX_VAL = 9999
+  CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX = 15
+  CFG_PORTCHANNEL_NO="<0-9999>"
+reasoning: CLI レベルで MCLAG_INTERFACE の if_name に設定できる PortChannel 名を上記定数で厳格に制限している。YANG leafref は名前の形式を検証しないが、CLI はこれらの定数で事前フィルタする。
+-->
+
+<!-- /constants -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照マップ (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang L108-116 / sonic-swss/orchagent/mlagorch.cpp L49-52,193-231 / sonic-swss/orchagent/fdborch.cpp L1209-1212,1665-1670 / sonic-swss/mclagsyncd/mclaglink.cpp L918,938-941,1512-1633,1811 / sonic-swss-common/common/schema.h L379,441-442 -->
+
+<h3 id="mclag_interface_1">MCLAG_INTERFACE → 参照先テーブル<a class="headerlink" href="#mclag_interface_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / DB</th>
+<th>参照箇所</th>
+<th>参照種別</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORTCHANNEL</code> (CONFIG_DB)</td>
+<td><code>sonic-mclag.yang:115-116</code></td>
+<td>YANG leafref 必須。<code>if_name</code> が <code>/sonic-portchannel/PORTCHANNEL/PORTCHANNEL_LIST/name</code> を参照。PortChannel 未存在時は YANG バリデーション拒否</td>
+</tr>
+<tr>
+<td><code>MCLAG_DOMAIN</code> (CONFIG_DB)</td>
+<td><code>sonic-mclag.yang:108-109</code></td>
+<td>YANG leafref 必須。<code>domain_id</code> が <code>MCLAG_DOMAIN_LIST/domain_id</code> を参照。MCLAG_DOMAIN 未存在時は YANG バリデーション拒否</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>PortsOrch</code> の <code>allPortsReady()</code> も暗黙的な先行条件だが、これは MlagOrch 処理キューの待機メカニズムであり YANG 制約ではない（<code>mlagorch.cpp:49-52</code>）。</p>
+</blockquote>
+<h3 id="mclag_interface_2">MCLAG_INTERFACE ← 参照元（他テーブル / モジュールから参照される）<a class="headerlink" href="#mclag_interface_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照元</th>
+<th>参照方法</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FdbOrch</code> (orchagent)</td>
+<td><code>gMlagOrch-&gt;isMlagInterface(port.m_alias)</code> 直接呼び出し</td>
+<td>MCLAG メンバーポートの oper-down 時に FDB フラッシュをスキップ</td>
+<td><code>fdborch.cpp:1209-1212</code></td>
+</tr>
+<tr>
+<td><code>FdbOrch</code> (orchagent)</td>
+<td><code>gMlagOrch-&gt;isMlagInterface(port.m_alias)</code> 直接呼び出し</td>
+<td>MCLAG 広告 FDB 削除 + ポート down 時に MAC 削除 origin を <code>FDB_ORIGIN_LEARN</code> に書き換え</td>
+<td><code>fdborch.cpp:1665-1670</code></td>
+</tr>
+<tr>
+<td><code>mclagsyncd</code></td>
+<td><code>SubscriberStateTable</code> (<code>CFG_MCLAG_INTF_TABLE_NAME</code>)</td>
+<td>MCLAG_DOMAIN 初回 SET 後に購読開始し、iccpd へメンバー名を IPC 転送</td>
+<td><code>mclaglink.cpp:918,938-941</code></td>
+</tr>
+<tr>
+<td><code>config mclag member add/del</code> (CLI)</td>
+<td><code>config/mclag.py:283-293</code></td>
+<td>SET 前に MCLAG_DOMAIN 存在をアドホックチェック。<code>if_type="PortChannel"</code> を固定書込み</td>
+<td><code>mclag.py:283-293</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-appl_db-mclag_interface">STATE_DB / APPL_DB への副次書込み（MCLAG_INTERFACE 起因）<a class="headerlink" href="#state_db-appl_db-mclag_interface" title="Permanent link">&para;</a></h3>
+<p>MCLAG_INTERFACE の SET/DEL を受けた mclagsyncd → iccpd → mclagsyncd IPC 経由で以下のテーブルが書き換わる。</p>
+<table>
+<thead>
+<tr>
+<th>書込み先テーブル</th>
+<th>DB</th>
+<th>キー形式</th>
+<th>書込みタイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MCLAG_LOCAL_INTF_TABLE</code></td>
+<td>STATE_DB</td>
+<td><code>&lt;if_name&gt;</code></td>
+<td>iccpd からポート分離設定受信時。<code>port_isolate_peer_link</code> を true/false で更新 (<code>mclaglink.cpp:1512-1533</code>)</td>
+</tr>
+<tr>
+<td><code>MCLAG_REMOTE_INTF_TABLE</code></td>
+<td>STATE_DB</td>
+<td><code>&lt;domain_id&gt;\|&lt;if_name&gt;</code></td>
+<td>iccpd からリモートインターフェース状態受信時。<code>oper_status</code> 等を更新 (<code>mclaglink.cpp:1538-1633</code>)</td>
+</tr>
+<tr>
+<td><code>ISOLATION_GROUP_TABLE</code></td>
+<td>APPL_DB</td>
+<td><code>MCLAG_ISO_GRP</code></td>
+<td>iccpd からポート分離グループ指示受信時。<code>TYPE</code>, <code>PORTS</code>, <code>MEMBERS</code> を更新 (<code>mclaglink.cpp:1811</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">副次書込みのタイミング</p>
+<p><code>MCLAG_LOCAL_INTF_TABLE</code> / <code>MCLAG_REMOTE_INTF_TABLE</code> / <code>ISOLATION_GROUP_TABLE</code> への書込みは MCLAG_INTERFACE SET 直後ではなく、ICCP セッション確立後の iccpd ネゴシエーション完了を待って行われる。CONFIG_DB 書込み後すぐに STATE_DB を確認しても空の場合がある。</p>
+</div>
+<blockquote>
+<p>中間調査ノート: <code>meta/_intermediate/cdb-flow/mclag-interface-cross-refs.md</code></p>
+</blockquote>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-52,136-155,193-234 / sonic-swss/mclagsyncd/mclaglink.cpp L918-960,989-1085 / sonic-swss/mclagsyncd/mclagsyncd.cpp L44-124 -->
+
+<p><code>MCLAG_INTERFACE</code> の SET/DEL を処理する 2 つの Consumer（<code>MlagOrch</code> と <code>mclagsyncd</code>）それぞれの失敗経路を整理する。</p>
+<h3 id="mlagorch-orchagent">MlagOrch (orchagent) の失敗経路<a class="headerlink" href="#mlagorch-orchagent" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗条件</th>
+<th>発生箇所</th>
+<th>結果</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>allPortsReady()</code> 未完了</td>
+<td><code>mlagorch.cpp:49-52</code></td>
+<td>即 <code>return</code>。エントリはキューに保留</td>
+<td>あり（PortsOrch 起動完了後に自動処理）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>不明 operation type（SET / DEL 以外）</td>
+<td><code>mlagorch.cpp:148-151</code></td>
+<td><code>SWSS_LOG_ERROR</code> + エントリ erase（ドロップ）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>3</td>
+<td>重複 SET（既登録 if_name を再 SET）</td>
+<td><code>mlagorch.cpp:196-213</code></td>
+<td><code>SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface")</code> のみ。<code>m_mlagIntfs</code> 変更・Observer 通知なし。エントリは erase される</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>4</td>
+<td>未知 if_name の DEL（未登録 if_name を DEL）</td>
+<td><code>mlagorch.cpp:219-233</code></td>
+<td><code>SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface")</code> のみ。エントリは erase される</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<p><code>addMlagInterface()</code> / <code>delMlagInterface()</code> はどちらも常に <code>return true</code> を返す設計であるため、orchagent 側は <strong>retry ループに入らない</strong>。エラーが発生してもエントリは即座に erase され、再試行されない。</p>
+<h3 id="mclagsyncd_1">mclagsyncd の失敗経路<a class="headerlink" href="#mclagsyncd_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗条件</th>
+<th>発生箇所</th>
+<th>結果</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>MCLAG_DOMAIN が未 SET の状態で MCLAG_INTERFACE を書く</td>
+<td><code>mclaglink.cpp:918</code>（購読テーブル未生成）</td>
+<td><code>mclagsyncd</code> は MCLAG_INTERFACE を購読していないため<strong>完全に無視</strong>（エラーログなし）</td>
+<td>なし（ICCP セッション再確立後に iccpd が再 fetch）</td>
+</tr>
+<tr>
+<td>6</td>
+<td>key の <code>&lt;if_name&gt;</code> 部分が空</td>
+<td><code>mclaglink.cpp:1022-1027</code></td>
+<td><code>SWSS_LOG_ERROR("Invalid Key ... No mclag iface specified")</code> → <code>continue</code> で当該エントリをスキップ</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>7</td>
+<td>iccpd 向け IPC <code>write()</code> 失敗（バッファ中間送信）</td>
+<td><code>mclaglink.cpp:1055-1060</code></td>
+<td><code>SWSS_LOG_ERROR</code> のみ。デーモン継続</td>
+<td>なし（残バッファは継続処理）</td>
+</tr>
+<tr>
+<td>8</td>
+<td>iccpd 向け IPC <code>write()</code> 失敗（最終送信）</td>
+<td><code>mclaglink.cpp:1078-1084</code></td>
+<td><code>SWSS_LOG_ERROR</code> のみ。iccpd への MCLAG_INTERFACE 通知が欠落</td>
+<td>なし（ICCP セッション再確立時に再 fetch）</td>
+</tr>
+<tr>
+<td>9</td>
+<td>iccpd からの malformed メッセージ受信</td>
+<td><code>mclaglink.cpp:1901-1902</code></td>
+<td><code>system_error</code> throw → mclagsyncd プロセス終了 (<code>return 0</code>)</td>
+<td>systemd による restart</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ipc">IPC 接続断・再接続時の自動リカバリ<a class="headerlink" href="#ipc" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd.cpp</code> の外側 <code>while(1)</code> ループは iccpd との接続断 (<code>MclagConnectionClosedException</code>) を捕捉して再接続する。再接続後は <code>mclagsyncdFetchMclagInterfaceConfigFromConfigdb()</code> を呼び、CONFIG_DB の全 MCLAG_INTERFACE エントリを再読み込みして iccpd へ再送信する（evidence: <code>mclagsyncd.cpp:57-58,112-115</code>）。</p>
+<p>ケース #7〜#8（IPC 送信失敗）は iccpd 再起動 / 接続断で自動回復する。ケース #9（malformed メッセージ）は <code>MclagConnectionClosedException</code> と異なり while(1) で再接続せず、systemd が mclagsyncd を restart する。</p>
+<h3 id="_15">失敗後の復旧パス<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ケース #1 (allPortsReady 未完了)</strong>: エントリは orchagent の Consumer キューに残り、PortsOrch 起動完了後の次回 <code>doTask()</code> 呼び出しで自動処理される。</li>
+<li><strong>ケース #2〜#4 (MlagOrch 側エラー)</strong>: エントリは erase されて失われる。再設定には CLI または sonic-db-cli での再 SET が必要。</li>
+<li><strong>ケース #5 (mclagsyncd 購読未開始)</strong>: MCLAG_DOMAIN を SET してから MCLAG_INTERFACE を再 SET することで解消。</li>
+<li><strong>ケース #6〜#8 (mclagsyncd IPC 失敗)</strong>: ICCP セッションが再確立されると CONFIG_DB を全量再 fetch して iccpd に送信する。</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">silent drop に注意</p>
+<p>ケース #5（MCLAG_DOMAIN 未設定時の MCLAG_INTERFACE 書込）はエラーログが一切出力されず、mclagsyncd 側で完全に無視される。<code>show mclag interface</code> で期待したエントリが出ない場合は MCLAG_DOMAIN の存在確認と mclagsyncd ログの確認を行うこと。</p>
+</div>
+<h3 id="state_db-error_table">STATE_DB / ERROR_TABLE への記録<a class="headerlink" href="#state_db-error_table" title="Permanent link">&para;</a></h3>
+<p><code>MlagOrch</code> は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (<code>SWSS_LOG_ERROR</code>) のみ。<code>mclagsyncd</code> も MCLAG_INTERFACE 処理失敗時は STATE_DB を更新しない（STATE_DB への書き込みは iccpd からの応答受信後に行われるため、iccpd への送信に失敗した場合は STATE_DB も更新されない）。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># orchagent ログで MCLAG_INTERFACE 失敗確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;MLAG&quot;</span><span class="w"> </span>/var/log/swss/orchagent.log
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># mclagsyncd ログ確認</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>iccpd<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;mclag iface&quot;</span><span class="w"> </span>/var/log/swss/mclagsyncd.log
+</span></code></pre></div>
+<blockquote>
+<p>中間調査ノート: <code>meta/_intermediate/cdb-flow/mclag-interface-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L66,L423,L429,L1509-1533,L1538-1633 / sonic-swss/orchagent/mlagorch.cpp L193-234 / sonic-swss-common/common/schema.h L440-443 -->
+
+<p>CONFIG_DB <code>MCLAG_INTERFACE</code> の SET/DEL を受けた <code>MlagOrch</code> および <code>mclagsyncd</code> が副次的に書き込む DB エントリの一覧。</p>
+<h3 id="mlagorch-orchagent_1">MlagOrch (orchagent) の副次書込<a class="headerlink" href="#mlagorch-orchagent_1" title="Permanent link">&para;</a></h3>
+<p><code>MlagOrch::addMlagInterface()</code> / <code>delMlagInterface()</code> は内部マップ (<code>m_mlagIntfs</code>) の更新と <code>SUBJECT_TYPE_MLAG_INTF_CHANGE</code> Observer 通知のみを行う。STATE_DB / APPL_DB / COUNTERS_DB への直接書込は <strong>0 件</strong>（<code>mlagorch.cpp</code> に <code>state_db</code> / <code>appl_db</code> / <code>counters_db</code> への書込呼出なし）。</p>
+<h3 id="mclagsyncd_2">mclagsyncd の副次書込<a class="headerlink" href="#mclagsyncd_2" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd</code> は MCLAG_INTERFACE の SET/DEL を受けて iccpd へ IPC 通知を送信し、iccpd との ICCP ネゴシエーション完了後に以下の STATE_DB テーブルを更新する。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル</th>
+<th>キー形式</th>
+<th>書込フィールド</th>
+<th>書込タイミング</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>MCLAG_LOCAL_INTF_TABLE</code></td>
+<td><code>&lt;if_name&gt;</code></td>
+<td><code>port_isolate_peer_link = true\|false</code></td>
+<td>iccpd からポート分離設定受信時 (<code>setLocalIfPortIsolate()</code>)</td>
+<td><code>mclaglink.cpp:L1520</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>MCLAG_LOCAL_INTF_TABLE</code></td>
+<td><code>&lt;if_name&gt;</code></td>
+<td>— (del)</td>
+<td>iccpd からローカル IF 削除通知受信時 (<code>deleteLocalIfPortIsolate()</code>)</td>
+<td><code>mclaglink.cpp:L1533</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>MCLAG_REMOTE_INTF_TABLE</code></td>
+<td><code>&lt;mlag_id&gt;\|&lt;if_name&gt;</code></td>
+<td><code>oper_status = up\|down</code></td>
+<td>iccpd からリモート IF 状態通知受信時 (<code>mclagsyncdSetRemoteIfState()</code>)</td>
+<td><code>mclaglink.cpp:L1584</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>MCLAG_REMOTE_INTF_TABLE</code></td>
+<td><code>&lt;mlag_id&gt;\|&lt;if_name&gt;</code></td>
+<td>— (del)</td>
+<td>iccpd からリモート IF 削除通知受信時 (<code>mclagsyncdDelRemoteIfInfo()</code>)</td>
+<td><code>mclaglink.cpp:L1633</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td><code>FLUSHFDBREQUEST</code> (通知チャネル)</td>
+<td>—</td>
+<td><code>ALL</code></td>
+<td>ICCP セッション確立直後の FDB フラッシュ要求</td>
+<td><code>mclaglink.cpp:L423,L429</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">副次書込なし<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>p_counters_db-&gt;hgetall("COUNTERS_PORT_NAME_MAP")</code> (<code>mclaglink.cpp:L66</code>) は <strong>読取専用</strong>。書込呼出なし</td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td><code>MlagOrch</code> から SAI 直接呼出なし。FDB 削除などは <code>FdbOrch</code> Observer 経由（間接）</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td>MCLAG_INTERFACE には FlexCounter 登録なし</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">副次書込のタイミング</p>
+<p>STATE_DB (<code>MCLAG_LOCAL_INTF_TABLE</code> / <code>MCLAG_REMOTE_INTF_TABLE</code>) への書込は CONFIG_DB <code>MCLAG_INTERFACE</code> SET 直後ではなく、ICCP セッション確立後の iccpd ネゴシエーション完了を待って行われる。<code>sonic-db-cli CONFIG_DB hset 'MCLAG_INTERFACE|...'</code> 実行直後に <code>sonic-db-cli STATE_DB hgetall 'MCLAG_LOCAL_INTF_TABLE|...'</code> を確認しても空の場合がある。<code>show mclag interface</code> コマンドで ICCP ネゴシエーション完了後の状態を確認すること。</p>
+</div>
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.cpp#L1509-1533 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  /* Set local interface portisolate field enable/disable in the
+   * STATE_MCLAG_LOCAL_INTF_TABLE. */
+  void MclagLink::setLocalIfPortIsolate(std::string mclag_if, bool is_enable) {
+      ...
+      fvVector.push_back(make_pair("port_isolate_peer_link", is_enable ? "true" : "false"));
+      p_mclag_local_intf_tbl->set(key, fvVector);
+  }
+  void MclagLink::deleteLocalIfPortIsolate(std::string mclag_if) {
+      p_mclag_local_intf_tbl->del(mclag_if);
+  }
+reasoning: MCLAG_INTERFACE の SET/DEL に応じて iccpd が port-isolation 設定を mclagsyncd に返送し、STATE_DB MCLAG_LOCAL_INTF_TABLE を更新する。
+-->
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.cpp#L1538-1633 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  /* Set remote interface state field oper_status in the STATE_MCLAG_REMOTE_INTF_TABLE.
+   * Key = "Mclag<id>|interface" */
+  void MclagLink::mclagsyncdSetRemoteIfState(char *msg, size_t msg_len) {
+      ...
+      key = to_string(mlag_id) + "|" + lag_name;
+      p_mclag_remote_intf_tbl->set(key, fvVector);
+  }
+reasoning: ICCP ピアからのリモートインターフェース oper 状態変化が iccpd 経由で mclagsyncd に届き、STATE_DB MCLAG_REMOTE_INTF_TABLE が更新される。
+-->
+
+<!-- evidence:
+source: sonic-swss/mclagsyncd/mclaglink.cpp#L423,429 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+excerpt: |
+  swss::NotificationProducer flushFdb(p_appl_db.get(), "FLUSHFDBREQUEST");
+  ...
+  flushFdb.send("ALL", "ALL", values);
+reasoning: ICCP セッション確立直後に APPL_DB の FLUSHFDBREQUEST チャネルへ通知を送信して全 FDB フラッシュを要求する。MCLAG_INTERFACE の直接 SET への応答ではなく ICCP セッション状態変化に連動。
+-->
+
+<blockquote>
+<p>中間調査ノート: <code>meta/_intermediate/cdb-flow/mclag-interface-side.md</code></p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/mclagsyncd/mclagsyncd.cpp L41,57-58,66-110 / sonic-swss/mclagsyncd/mclaglink.cpp L813-818,903-941,989-1085,164-188 / sonic-swss/orchagent/mlagorch.cpp L45-52,193-234 / sonic-swss/orchagent/orchdaemon.cpp L536-540 -->
+
+<p><code>MCLAG_INTERFACE</code> テーブルの変化は <strong>MlagOrch</strong>（orchagent 内）と <strong>mclagsyncd</strong>（独立デーモン）の 2 つの Consumer が受け取る。</p>
+<h3 id="mclagsyncd-subscriberstatetable">mclagsyncd — SubscriberStateTable の遅延登録<a class="headerlink" href="#mclagsyncd-subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd</code> は起動時に <code>MCLAG_DOMAIN</code>（<code>CFG_MCLAG_TABLE_NAME</code>）のみを購読する。<code>MCLAG_INTERFACE</code>（<code>CFG_MCLAG_INTF_TABLE_NAME</code>）の <code>SubscriberStateTable</code> は、MCLAG_DOMAIN の<strong>初回 SET（新規作成）が成功した後</strong>に <code>addDomainCfgDependentSelectables()</code> で動的に生成・登録される（<code>mclaglink.cpp:813-818,910-941</code>）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>processMclagDomainCfg():
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─ op==&quot;SET&quot; &amp;&amp; !entryExists  →  add_cfg_dependent_selectables = 1
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       └─ addDomainCfgDependentSelectables()
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>            ├─ new SubscriberStateTable(config_db, CFG_MCLAG_INTF_TABLE_NAME)
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>            └─ m_select-&gt;addSelectable(p_mclag_intf_cfg_tbl)
+</span></code></pre></div>
+<p><code>MCLAG_DOMAIN</code> が削除されると <code>delDomainCfgDependentSelectables()</code> で購読が解除され、<code>p_mclag_intf_cfg_tbl</code> が delete される（<code>mclaglink.cpp:845-847,954-959</code>）。</p>
+<h3 id="mclagsyncd-select">mclagsyncd — SELECT ループでのディスパッチ<a class="headerlink" href="#mclagsyncd-select" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// mclagsyncd.cpp:86-92</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">temps</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="n">Selectable</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">mclag</span><span class="p">.</span><span class="n">getMclagIntfCfgTable</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">deque</span><span class="o">&lt;</span><span class="n">KeyOpFieldsValuesTuple</span><span class="o">&gt;</span><span class="w"> </span><span class="n">entries</span><span class="p">;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="n">mclag</span><span class="p">.</span><span class="n">getMclagIntfCfgTable</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">pops</span><span class="p">(</span><span class="n">entries</span><span class="p">);</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="n">mclag</span><span class="p">.</span><span class="n">mclagsyncdSendMclagIfaceCfg</span><span class="p">(</span><span class="n">entries</span><span class="p">);</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>pops()</code> で取り出したエントリを <code>mclagsyncdSendMclagIfaceCfg()</code> に渡し、<code>MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_IFACE</code> メッセージとして TCP ソケット（<code>127.0.6.1:2626</code>）経由で <code>iccpd</code> に送信する。Select タイムアウトは指定なし（無限待機）。</p>
+<h3 id="mclagsyncd-fetch">mclagsyncd — 起動時全量 fetch<a class="headerlink" href="#mclagsyncd-fetch" title="Permanent link">&para;</a></h3>
+<p>接続確立直後に <code>mclagsyncdFetchMclagInterfaceConfigFromConfigdb()</code>（<code>mclagsyncd.cpp:58</code>）が呼ばれ、<code>Table::dump()</code> で CONFIG_DB の全 MCLAG_INTERFACE エントリを取得して iccpd に一括送信する。iccpd 再起動・接続断後の再接続時も全設定が自動復元される。</p>
+<h3 id="mlagorch-orchagent-consumer">MlagOrch (orchagent) — Consumer 登録<a class="headerlink" href="#mlagorch-orchagent-consumer" title="Permanent link">&para;</a></h3>
+<p><code>MlagOrch</code> は <code>Orch</code> 継承により orchagent 起動時から CONFIG_DB の <code>MCLAG_INTERFACE</code> を Consumer として購読する（<code>orchdaemon.cpp:536-540</code>）。イベントは <code>doTask()</code> → <code>doMlagInterfaceTask()</code> → <code>addMlagInterface()</code> / <code>delMlagInterface()</code> でディスパッチされる。SAI 直接呼出はなく、<code>SUBJECT_TYPE_MLAG_INTF_CHANGE</code> Observer 通知で <code>FdbOrch</code> に伝達する。</p>
+<h3 id="_17">通信経路サマリ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>Consumer</th>
+<th>プロトコル</th>
+<th>行き先</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB → MlagOrch</td>
+<td>orchagent Consumer (keyspace)</td>
+<td>Redis keyspace notification</td>
+<td>FdbOrch (Observer 通知)</td>
+</tr>
+<tr>
+<td>CONFIG_DB → mclagsyncd</td>
+<td>SubscriberStateTable (動的登録)</td>
+<td>Redis keyspace notification</td>
+<td>iccpd (TCP IPC 127.0.6.1:2626)</td>
+</tr>
+<tr>
+<td>iccpd → mclagsyncd → STATE_DB</td>
+<td>—</td>
+<td>TCP IPC → swss Table::set</td>
+<td><code>MCLAG_LOCAL_INTF_TABLE</code> / <code>MCLAG_REMOTE_INTF_TABLE</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_18">タイムアウト / リトライ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>デーモン</th>
+<th>select タイムアウト</th>
+<th>再試行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mclagsyncd</td>
+<td>無限（指定なし）</td>
+<td>接続断で即時 <code>accept()</code> 再試行 + 全量再 fetch</td>
+</tr>
+<tr>
+<td>orchagent (MlagOrch)</td>
+<td>1000 ms (<code>orchdaemon.cpp:23</code>)</td>
+<td>キュー保留（allPortsReady 完了まで）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>中間調査ノート: <code>meta/_intermediate/cdb-flow/mclag-interface-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム差・SAI capability 分岐 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L190-380 / sonic-swss/mclagsyncd/mclaglink.h L54-59 / sonic-swss/orchagent/mlagorch.cpp L193-234 -->
+
+<h3 id="port-isolation-2">Port Isolation の 2 系統<a class="headerlink" href="#port-isolation-2" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd</code> が iccpd から受け取ったポート隔離指示を APPL_DB に変換する <code>MclagLink::setPortIsolate()</code>（<code>mclaglink.cpp:190</code>）は、<code>getenv("platform")</code> でプラットフォーム文字列を取得し、ホワイトリストと照合して 2 つのパスに分岐する（<code>mclaglink.cpp:192-202</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム（<code>getenv("platform")</code> の値）</th>
+<th>代表 ASIC / ベンダー</th>
+<th>隔離メカニズム</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"broadcom"</code></td>
+<td>Broadcom XGS / DNX</td>
+<td>APPL_DB <code>ISOLATION_GROUP_TABLE</code></td>
+</tr>
+<tr>
+<td><code>"barefoot"</code></td>
+<td>Intel Tofino / Tofino2</td>
+<td>APPL_DB <code>ISOLATION_GROUP_TABLE</code></td>
+</tr>
+<tr>
+<td><code>"centec"</code></td>
+<td>Centec (CTC7132 等)</td>
+<td>APPL_DB <code>ISOLATION_GROUP_TABLE</code></td>
+</tr>
+<tr>
+<td><code>"clounix"</code></td>
+<td>Clounix</td>
+<td>APPL_DB <code>ISOLATION_GROUP_TABLE</code></td>
+</tr>
+<tr>
+<td><code>"marvell-prestera"</code></td>
+<td>Marvell Prestera (98DX 等)</td>
+<td>APPL_DB <code>ISOLATION_GROUP_TABLE</code></td>
+</tr>
+<tr>
+<td><code>"marvell-teralynx"</code></td>
+<td>Marvell Teralynx</td>
+<td>APPL_DB <code>ISOLATION_GROUP_TABLE</code></td>
+</tr>
+<tr>
+<td>それ以外（<code>"mellanox"</code> / <code>nullptr</code> 等）</td>
+<td>Mellanox/NVIDIA, VS 等</td>
+<td>APPL_DB ACL (<code>mclag</code> テーブル)</td>
+</tr>
+</tbody>
+</table>
+<p>プラットフォーム文字列定数は <code>mclaglink.h:54-59</code> に直接定義される（<code>orchagent/orch.h</code> のコピー）。</p>
+<h3 id="isolation_group_table-broadcom-barefoot-centec-clounix-marvell">ISOLATION_GROUP_TABLE パス（Broadcom / Barefoot / Centec / Clounix / Marvell）<a class="headerlink" href="#isolation_group_table-broadcom-barefoot-centec-clounix-marvell" title="Permanent link">&para;</a></h3>
+<p>ホワイトリスト対応プラットフォームでは <code>APPL_DB:ISOLATION_GROUP_TABLE:MCLAG_ISO_GRP</code> を書き込む（<code>mclaglink.cpp:236-244</code>）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>APPL_DB:ISOLATION_GROUP_TABLE:MCLAG_ISO_GRP
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  DESCRIPTION = &quot;Isolation group for MCLAG&quot;
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  TYPE        = &quot;bridge-port&quot;
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  PORTS       = &lt;peer-link PortChannel&gt;
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  MEMBERS     = &lt;リモート MCLAG PortChannel のカンマ区切りリスト&gt;
+</span></code></pre></div>
+<p>リモートインターフェース全断または ICCP セッション断（<code>op_hdr-&gt;op_len == 0</code>）のとき:
+- ICCP セッション稼働中 (<code>is_iccp_up == true</code>): <code>MEMBERS</code> を空にして <code>MCLAG_ISO_GRP</code> を更新（グループは保持）
+- ICCP セッション断 (<code>is_iccp_up == false</code>): <code>MCLAG_ISO_GRP</code> を DEL</p>
+<h3 id="acl-mellanox">ACL ベース隔離パス（Mellanox / その他・未設定）<a class="headerlink" href="#acl-mellanox" title="Permanent link">&para;</a></h3>
+<p>ホワイトリスト非対応（Mellanox/NVIDIA、VS、VPP、<code>platform</code> 未設定等）では <code>APPL_DB:ACL_TABLE_TABLE:mclag</code> と <code>APPL_DB:ACL_RULE_TABLE:mclag:mclag</code> を書き込む（<code>mclaglink.cpp:288-375</code>）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>APPL_DB:ACL_TABLE_TABLE:mclag
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  policy_desc = &quot;Mclag egress port isolate acl&quot;
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  type        = &quot;L3&quot;
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  ports       = &lt;peer-link PortChannel&gt;
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>APPL_DB:ACL_RULE_TABLE:mclag:mclag
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>  IP_TYPE       = &quot;ANY&quot;
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>  OUT_PORTS     = &lt;リモート MCLAG PortChannel（Ethernet* は除外）&gt;
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>  PACKET_ACTION = &quot;DROP&quot;
+</span></code></pre></div>
+<p><code>Ethernet</code> プレフィックスのポートは <code>OUT_PORTS</code> から除外される（<code>mclaglink.cpp:354-362</code>）。<code>op_hdr-&gt;op_len == 0</code> の場合は <code>ACL_TABLE_TABLE:mclag</code> を DEL する。<code>platform</code> が <code>nullptr</code>（未設定）の場合も ACL パスに落ちる。</p>
+<h3 id="mlagorch-sai">MlagOrch は SAI 非依存・プラットフォーム差なし<a class="headerlink" href="#mlagorch-sai" title="Permanent link">&para;</a></h3>
+<p><code>orchagent/mlagorch.cpp</code> は SAI API を一切呼び出さない。<code>addMlagInterface()</code> / <code>delMlagInterface()</code> は内部 set (<code>m_mlagIntfs</code>) の更新と <code>SUBJECT_TYPE_MLAG_INTF_CHANGE</code> Observer 通知のみであり、プラットフォーム文字列参照も存在しない（<code>mlagorch.cpp:193-234</code>）。<code>FdbOrch</code> 側の MCLAG_INTERFACE 処理にもプラットフォーム分岐はない。</p>
+<h3 id="multi-asic-voq-chassis">multi-ASIC / VoQ chassis 非対応<a class="headerlink" href="#multi-asic-voq-chassis" title="Permanent link">&para;</a></h3>
+<p><code>mlagorch.cpp</code> に <code>gMySwitchType == "voq"</code> 等の分岐はなく、<code>mclaglink.cpp</code> / <code>mclagsyncd.cpp</code> に <code>CHASSIS_APP_DB</code> 参照もない。MCLAG 機能は single-ASIC single-box 構成を前提とし、multi-ASIC / VoQ chassis 環境では動作保証なし。<code>docker-iccpd</code> は名前空間引数を取らず、単一の CONFIG_DB / STATE_DB / APPL_DB のみを参照する。</p>
+<blockquote>
+<p>中間調査ノート: <code>meta/_intermediate/cdb-flow/mclag-interface-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
 
 <div class="footnote">
 <hr />

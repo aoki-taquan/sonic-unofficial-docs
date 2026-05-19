@@ -29010,6 +29010,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29021,7 +29071,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29032,7 +29082,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35214,6 +35264,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35225,7 +35325,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35236,7 +35336,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35762,6 +35862,96 @@ DEL イベントは <code>L2_NONE</code> であっても即座に消費される
 </span></code></pre></div>
 <!-- /cross-refs -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-port-failure.md -->
+
+<p>ソース: <code>sonic-net/sonic-swss/cfgmgr/stpmgr.cpp</code></p>
+<h3 id="set">SET 処理における失敗経路<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>calloc</code> 失敗（<code>STP_PORT_CONFIG_MSG</code> 確保不能）</td>
+<td><code>processStpPortAttr()</code> <code>stpmgr.cpp:537</code></td>
+<td>即 <code>return</code>（IPC メッセージ未送信）・consumer エントリは呼び出し側で消去</td>
+<td><code>SWSS_LOG_ERROR("calloc failed for interface ...")</code></td>
+<td><code>stpmgr.cpp:537-540</code></td>
+</tr>
+<tr>
+<td><code>path_cost</code> / <code>priority</code> フィールドが数値でない文字列</td>
+<td><code>processStpPortAttr()</code> <code>stpmgr.cpp:590-597</code>（<code>stoi()</code> 使用）</td>
+<td><code>std::invalid_argument</code> / <code>std::out_of_range</code> 例外が未捕捉 → <strong>stpmgrd プロセスクラッシュ</strong></td>
+<td>なし（例外伝播）</td>
+<td><code>stpmgr.cpp:590-597</code></td>
+</tr>
+<tr>
+<td><code>link_type</code> フィールドが設定された MST 環境</td>
+<td><code>processStpPortAttr()</code> <code>stpmgr.cpp:611-613</code>（<code>stoi(field)</code> バグ）</td>
+<td><code>stoi("link_type")</code> → <code>std::invalid_argument</code> → <strong>stpmgrd プロセスクラッシュ</strong></td>
+<td>なし（例外伝播）</td>
+<td><code>stpmgr.cpp:611-613</code></td>
+</tr>
+<tr>
+<td><code>sendMsgStpd()</code> 内で <code>tx_msg</code> calloc 失敗</td>
+<td><code>sendMsgStpd()</code> <code>stpmgr.cpp:1231</code></td>
+<td>IPC 送信中断・<code>return -1</code>（呼び出し元は戻り値無視）・consumer エントリは消去済み</td>
+<td><code>SWSS_LOG_ERROR("tx_msg mem alloc error")</code></td>
+<td><code>stpmgr.cpp:1231-1232</code></td>
+</tr>
+<tr>
+<td><code>sendto()</code> 失敗（stpd socket 送信エラー）</td>
+<td><code>sendMsgStpd()</code> <code>stpmgr.cpp:1246</code></td>
+<td>IPC 送信失敗・エラーログのみ・consumer エントリは消去済み（<strong>再送なし</strong>）</td>
+<td><code>SWSS_LOG_ERROR("tx_msg send error")</code></td>
+<td><code>stpmgr.cpp:1246-1248</code></td>
+</tr>
+<tr>
+<td>PortChannel にメンバーが存在しない（<code>isLagEmpty()</code> == true）</td>
+<td><code>doStpPortTask()</code> <code>stpmgr.cpp:648-653</code></td>
+<td>エントリを即消去（silent drop）。LAG メンバー追加時に <code>doLagMemUpdateTask()</code> が再プッシュ</td>
+<td>なし</td>
+<td><code>stpmgr.cpp:648-653</code>, <code>doLagMemUpdateTask()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 処理における失敗経路<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>l2ProtoEnabled == L2_NONE</code> の状態で DEL 受信</td>
+<td><code>doStpPortTask()</code> <code>stpmgr.cpp:663-669</code></td>
+<td>エントリを即消去（<strong>defer ではなく permanent discard</strong>）。SET と異なり次ループで復旧しない</td>
+<td>なし</td>
+<td><code>stpmgr.cpp:663-669</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">補足<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>calloc 失敗は非復旧</strong>: <code>processStpPortAttr()</code> の calloc 失敗後、consumer エントリは <code>doStpPortTask()</code> の <code>erase()</code> で消去される。次回 SELECT ループでの自動再試行はない。</li>
+<li><strong>link_type バグの実害</strong>: <code>stoi(field.c_str())</code> は文字列 <code>"link_type"</code> を整数変換しようとするため、MST 環境で <code>STP_PORT</code> に <code>link_type</code> フィールドが含まれる SET が来ると stpmgrd がクラッシュする。<code>stpd</code> は IPC メッセージを受け取れないが stpmgrd 再起動後は再処理が可能。</li>
+<li><strong>IPC 送信失敗は永久消失</strong>: <code>sendto()</code> 失敗時の consumer エントリはすでに消去済みであり、CONFIG_DB の次回変更がない限り再送は行われない。</li>
+</ul>
+<!-- /failure -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35817,12 +36007,12 @@ DEL イベントは <code>L2_NONE</code> であっても即座に消費される
 </tr>
 </tbody>
 </table>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>STP CLI 実装: <code>config/stp.py</code> — <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py</a></li>
 <li>STP Manager 実装: <code>stpmgr.cpp</code> — <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp</a></li>
 </ul>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>STP / STP_VLAN / STP_PORT テーブル（全体）: <code>stp.md</code></li>
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>

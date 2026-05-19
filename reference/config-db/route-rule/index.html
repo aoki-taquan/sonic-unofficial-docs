@@ -28403,6 +28403,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU ノード専用テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashrouteorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dashrouteorch.cpp 内のプラットフォーム分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35704,6 +35754,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU ノード専用テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashrouteorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dashrouteorch.cpp 内のプラットフォーム分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36557,6 +36657,61 @@
 <p>中間調査詳細: <code>meta/_intermediate/cdb-flow/route-rule-pubsub.md</code></p>
 </blockquote>
 <!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p>調査ソース: <code>orchagent/dash/dashrouteorch.cpp</code>、<code>orchagent/orchdaemon.cpp</code>、<code>orchagent/main.cpp</code>。</p>
+<h3 id="dpu">DPU ノード専用テーブル<a class="headerlink" href="#dpu" title="Permanent link">&para;</a></h3>
+<p><code>DASH_ROUTE_RULE_TABLE</code> は <strong><code>gMySwitchType == "dpu"</code> のノードでのみ有効</strong> である。<code>DashRouteOrch</code> は <code>DpuOrchDaemon::init()</code> 内でのみインスタンス化されるため、通常の T0/T1/T2 スイッチや VOQ chassis では Consumer が存在せず、テーブルへの書き込みは無視される (<code>orchagent/main.cpp:990-994</code>; <code>orchagent/orchdaemon.cpp:1322-1370</code>)。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>// main.cpp:990-994
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>if (gMySwitchType == &quot;dpu&quot;)
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>{
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    orchDaemon = make_shared&lt;DpuOrchDaemon&gt;(...);
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>}
+</span></code></pre></div>
+<h3 id="dashrouteorchcpp">dashrouteorch.cpp 内のプラットフォーム分岐<a class="headerlink" href="#dashrouteorchcpp" title="Permanent link">&para;</a></h3>
+<p><code>dashrouteorch.cpp</code> 内に <code>getenv("platform")</code>、<code>gMySwitchType</code>、ベンダー固有の条件分岐は存在しない。SAI 呼び出し (<code>sai_dash_inbound_routing_api-&gt;create_inbound_routing_entry()</code>) はすべてのプラットフォームで同一コードパスを通る。プラットフォーム差はすべて SAI 実装層 (ASIC ドライバ) が吸収する。</p>
+<h3 id="_13">プラットフォーム差サマリ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th><code>DashRouteOrch</code> の有無</th>
+<th>処理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DPU ノード (<code>switch_type=dpu</code>)</td>
+<td>あり</td>
+<td><code>sai_dash_inbound_routing_api</code> 経由で SAI に反映</td>
+</tr>
+<tr>
+<td>標準 T0/T1/T2 (<code>switch_type=switch</code>)</td>
+<td>なし</td>
+<td>テーブルを購読しない (Consumer 未生成)</td>
+</tr>
+<tr>
+<td>VOQ chassis (<code>switch_type=voq</code>)</td>
+<td>なし</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>SmartSwitch NPU 側</td>
+<td>なし (DPU 側のみ)</td>
+<td>NPU 側 orchagent は <code>DpuOrchDaemon</code> を使わない</td>
+</tr>
+<tr>
+<td>multi-asic</td>
+<td>各 DPU namespace</td>
+<td>DPU namespace ごとに独立した <code>DpuOrchDaemon</code> が動作</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-net/sonic-swss/orchagent/main.cpp:990-994 (gMySwitchType == "dpu" → DpuOrchDaemon) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:1322-1370 (DpuOrchDaemon::init() で DashRouteOrch をインスタンス化) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/dash/dashrouteorch.cpp:421-477 (プラットフォーム分岐なし) -->
+<!-- /platform -->
 
 <div class="footnote">
 <hr />

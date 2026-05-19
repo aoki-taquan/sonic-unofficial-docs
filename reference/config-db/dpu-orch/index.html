@@ -25747,7 +25747,461 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#dpuorchdaemon-db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — DpuOrchDaemon が読み出す関連 DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — DpuOrchDaemon が読み出す関連 DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpu_appl_db-dpuorchdaemoninit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU_APPL_DB 購読テーブル (DpuOrchDaemon::init() 実行時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU_APPL_STATE_DB 書込み (実行時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbbfd_session-dashhaorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB|BFD_SESSION の間接参照 (DashHaOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-dash-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB を直接読まない DASH Orch 群
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外（誤解されやすい隣接テーブル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-get_feature_status-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. get_feature_status() — CONFIG_DB 接続失敗時のフォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-dpu_appl_db-dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. DPU_APPL_DB / DPU_APPL_STATE_DB 接続失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-dpuorchdaemoninit-exitexit_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. DpuOrchDaemon::init() 失敗 → exit(EXIT_FAILURE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-dash-orch-sai-retry-erase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. DASH Orch の SAI 操作失敗 → retry / erase
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-switch_type-dpuorchdaemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. switch_type 不正値 — DpuOrchDaemon 非選択フォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagentsh-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent.sh — DPU 起動引数固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orch_zmq_config-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orch_zmq_config — ZMQ アドレス・ポート固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orch_zmq_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orch_zmq_config — フィーチャーフラグキー名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchdaemonh-p4orch-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchdaemon.h — P4Orch ZMQ エンドポイント固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpu_appl_state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU_APPL_STATE_DB への書込テーブル一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashportmaporch-removeresultfromdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DashPortMapOrch のみ removeResultFromDB を使用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashaclorch-dashmeterorch-dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DashAclOrch / DashMeterOrch — DPU_APPL_STATE_DB 書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashhafloworch-dpu_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DashHaFlowOrch — DPU_STATE_DB への例外的書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zmq-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 購読方式 (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ZMQ 購読方式 (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmqorchaddconsumer-dpu_appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZmqOrch::addConsumer() — DPU_APPL_DB 判別
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmqconsumerstatetable-zmqserver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZmqConsumerStateTable — ZmqServer へのハンドラ登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lazy-bind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        遅延バインド (lazy bind) — メッセージロスト防止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq-gbatchsize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ サーバアドレスと gBatchSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select ループでの受信フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu_appl_state_db_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU_APPL_STATE_DB への書込み — 通知なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#platform-mac-orchagentsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        platform 分岐: MAC アドレス取得元 (orchagent.sh)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtype-zmq-orchagentsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        subtype 分岐: ZMQ アドレス (orchagent.sh)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtype-smartswitch-dashenifwdorch-orchdaemoninit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        subtype = "SmartSwitch" 分岐: DashEniFwdOrch 追加 (OrchDaemon::init)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu-switchjsonj2-switch_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type = "dpu" 分岐: switch.json.j2 — SWITCH_TABLE 初期設定スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu-ipinipjsonj2-ip-in-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type = "dpu" 分岐: ipinip.json.j2 — IP-in-IP デカプ設定スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu-enable_counterspy-eni-dash_meter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type = "dpu" 分岐: enable_counters.py — ENI / DASH_METER カウンタ有効化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ: switch_type = "dpu" が影響するプラットフォーム差分
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34994,7 +35448,461 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#dpuorchdaemon-db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — DpuOrchDaemon が読み出す関連 DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — DpuOrchDaemon が読み出す関連 DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpu_appl_db-dpuorchdaemoninit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU_APPL_DB 購読テーブル (DpuOrchDaemon::init() 実行時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU_APPL_STATE_DB 書込み (実行時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbbfd_session-dashhaorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB|BFD_SESSION の間接参照 (DashHaOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-dash-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB を直接読まない DASH Orch 群
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外（誤解されやすい隣接テーブル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-get_feature_status-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. get_feature_status() — CONFIG_DB 接続失敗時のフォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-dpu_appl_db-dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. DPU_APPL_DB / DPU_APPL_STATE_DB 接続失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-dpuorchdaemoninit-exitexit_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. DpuOrchDaemon::init() 失敗 → exit(EXIT_FAILURE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-dash-orch-sai-retry-erase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. DASH Orch の SAI 操作失敗 → retry / erase
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-switch_type-dpuorchdaemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. switch_type 不正値 — DpuOrchDaemon 非選択フォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagentsh-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent.sh — DPU 起動引数固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orch_zmq_config-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orch_zmq_config — ZMQ アドレス・ポート固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orch_zmq_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orch_zmq_config — フィーチャーフラグキー名
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchdaemonh-p4orch-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchdaemon.h — P4Orch ZMQ エンドポイント固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dpu_appl_state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU_APPL_STATE_DB への書込テーブル一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashportmaporch-removeresultfromdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DashPortMapOrch のみ removeResultFromDB を使用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashaclorch-dashmeterorch-dpu_appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DashAclOrch / DashMeterOrch — DPU_APPL_STATE_DB 書込なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashhafloworch-dpu_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DashHaFlowOrch — DPU_STATE_DB への例外的書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zmq-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ 購読方式 (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ZMQ 購読方式 (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmqorchaddconsumer-dpu_appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZmqOrch::addConsumer() — DPU_APPL_DB 判別
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmqconsumerstatetable-zmqserver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZmqConsumerStateTable — ZmqServer へのハンドラ登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lazy-bind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        遅延バインド (lazy bind) — メッセージロスト防止
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq-gbatchsize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ サーバアドレスと gBatchSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select ループでの受信フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpu_appl_state_db_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPU_APPL_STATE_DB への書込み — 通知なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差分 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#platform-mac-orchagentsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        platform 分岐: MAC アドレス取得元 (orchagent.sh)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtype-zmq-orchagentsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        subtype 分岐: ZMQ アドレス (orchagent.sh)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtype-smartswitch-dashenifwdorch-orchdaemoninit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        subtype = "SmartSwitch" 分岐: DashEniFwdOrch 追加 (OrchDaemon::init)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu-switchjsonj2-switch_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type = "dpu" 分岐: switch.json.j2 — SWITCH_TABLE 初期設定スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu-ipinipjsonj2-ip-in-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type = "dpu" 分岐: ipinip.json.j2 — IP-in-IP デカプ設定スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu-enable_counterspy-eni-dash_meter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type = "dpu" 分岐: enable_counters.py — ENI / DASH_METER カウンタ有効化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ: switch_type = "dpu" が影響するプラットフォーム差分
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35314,12 +36222,761 @@
 <p><strong><code>orchagent.sh</code> による引数付与と CONFIG_DB 読み取り (依存 #5)</strong>: <code>orchagent.sh</code> は <code>sonic-db-cli</code> で <code>switch_type</code> を読み取り (<code>-b 65536 -z zmq_sync -k 65536</code>) を orchagent プロセス起動引数として付与する。この読み取りはシェルスクリプト側で起動前に一回のみ実行されるため、orchagent プロセス起動後に CONFIG_DB の <code>switch_type</code> を変更しても引数は変わらない。</p>
 <!-- /ordering -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- cross-refs -->
+<h2 id="dpuorchdaemon-db-phase-c">暗黙参照 — <code>DpuOrchDaemon</code> が読み出す関連 DB テーブル (Phase C)<a class="headerlink" href="#dpuorchdaemon-db-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>DpuOrchDaemon</code> は CONFIG_DB <code>DEVICE_METADATA|localhost</code> の 2 フィールド（Phase A/B 記述済み）以外にも、配下の DASH Orch 群を通じて以下の DB テーブルを暗黙的に参照する。</p>
+<h3 id="dpu_appl_db-dpuorchdaemoninit">DPU_APPL_DB 購読テーブル (DpuOrchDaemon::init() 実行時)<a class="headerlink" href="#dpu_appl_db-dpuorchdaemoninit" title="Permanent link">&para;</a></h3>
+<p>DASH Orch 群はすべて <code>DPU_APPL_DB</code>（SmartSwitch 上の DPU 側 APPL DB）から ProducerStateTable / ZMQ 経由でイベントを受信する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>DASH Orch</th>
+<th>購読テーブル</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DashVnetOrch</code></td>
+<td><code>DASH_VNET_TABLE</code>, <code>DASH_VNET_MAPPING_TABLE</code></td>
+<td>orchdaemon.cpp:1336-1339</td>
+</tr>
+<tr>
+<td><code>DashOrch</code></td>
+<td><code>DASH_APPLIANCE_TABLE</code>, <code>DASH_ROUTING_TYPE_TABLE</code>, <code>DASH_ENI_TABLE</code>, <code>DASH_ENI_ROUTE_TABLE</code>, <code>DASH_QOS_TABLE</code></td>
+<td>orchdaemon.cpp:1343-1350</td>
+</tr>
+<tr>
+<td><code>DashHaOrch</code></td>
+<td><code>DASH_HA_SET_TABLE</code>, <code>DASH_HA_SCOPE_TABLE</code>, <code>BFD_SESSION_TABLE</code></td>
+<td>orchdaemon.cpp:1354-1359</td>
+</tr>
+<tr>
+<td><code>DashRouteOrch</code></td>
+<td><code>DASH_ROUTE_TABLE</code>, <code>DASH_ROUTE_RULE_TABLE</code>, <code>DASH_ROUTE_GROUP_TABLE</code></td>
+<td>orchdaemon.cpp:1363-1368</td>
+</tr>
+<tr>
+<td><code>DashAclOrch</code></td>
+<td><code>DASH_PREFIX_TAG_TABLE</code>, <code>DASH_ACL_IN_TABLE</code>, <code>DASH_ACL_OUT_TABLE</code>, <code>DASH_ACL_GROUP_TABLE</code>, <code>DASH_ACL_RULE_TABLE</code></td>
+<td>orchdaemon.cpp:1372-1378</td>
+</tr>
+<tr>
+<td><code>DashTunnelOrch</code></td>
+<td><code>DASH_TUNNEL_TABLE</code></td>
+<td>orchdaemon.cpp:1382-1384</td>
+</tr>
+<tr>
+<td><code>DashMeterOrch</code></td>
+<td><code>DASH_METER_POLICY_TABLE</code>, <code>DASH_METER_RULE_TABLE</code></td>
+<td>orchdaemon.cpp:1388-1392</td>
+</tr>
+<tr>
+<td><code>DashPortMapOrch</code></td>
+<td><code>DASH_OUTBOUND_PORT_MAP_TABLE</code>, <code>DASH_OUTBOUND_PORT_MAP_RANGE_TABLE</code></td>
+<td>orchdaemon.cpp:1396-1399</td>
+</tr>
+<tr>
+<td><code>DashHaFlowOrch</code></td>
+<td><code>DASH_FLOW_SYNC_SESSION_TABLE</code>, <code>DASH_FLOW_DUMP_FILTER_TABLE</code></td>
+<td>orchdaemon.cpp:1403-1406</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>DPU_APPL_DB</code> は通常の <code>APPL_DB</code> とは独立した Redis DB インスタンスであり、SmartSwitch NPU 側からは <code>DPU_APPL_DB</code> という名前で接続する。DPU 側デーモン（<code>dashd</code> など）が書き込み側となり、<code>DpuOrchDaemon</code> が読み取り側となる。</p>
+</blockquote>
+<h3 id="dpu_appl_state_db">DPU_APPL_STATE_DB 書込み (実行時)<a class="headerlink" href="#dpu_appl_state_db" title="Permanent link">&para;</a></h3>
+<p>全 DASH Orch コンストラクタに <code>m_dpu_appstateDb</code> が渡される。各 DASH Orch は SAI API 呼出し完了後に <code>DPU_APPL_STATE_DB</code> へ結果ステータスを書き込む。<code>DPU_APPL_STATE_DB</code> への書込みは DASH Orch 群の責務であり、DpuOrchDaemon 自体は直接書き込まない。</p>
+<h3 id="appl_dbbfd_session-dashhaorch">APPL_DB|BFD_SESSION の間接参照 (DashHaOrch)<a class="headerlink" href="#appl_dbbfd_session-dashhaorch" title="Permanent link">&para;</a></h3>
+<p><code>DashHaOrch</code> は <code>APP_BFD_SESSION_TABLE_NAME</code> を購読テーブルに含めるとともに、<code>OrchDaemon::init()</code> が生成した <code>gBfdOrch</code>（<code>BfdOrch</code> のグローバルインスタンス）へのポインタを受け取る<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<!-- evidence:
+source: sonic-net/sonic-swss/orchagent/orchdaemon.cpp#L1354-L1359
+excerpt: |
+  vector<string> dash_ha_tables = {
+      APP_DASH_HA_SET_TABLE_NAME,
+      APP_DASH_HA_SCOPE_TABLE_NAME,
+      APP_BFD_SESSION_TABLE_NAME
+  };
+  DashHaOrch *dash_ha_orch = new DashHaOrch(m_dpu_appDb, dash_ha_tables, dash_orch, gBfdOrch, m_dpu_appstateDb, dash_zmq_server);
+reasoning: DashHaOrch が gBfdOrch を受け取ることで、BFD セッション状態を HA スコープ制御に利用する。gBfdOrch は OrchDaemon::init() (orchdaemon.cpp:243) で生成される BfdOrch の参照であり、APPL_DB BFD_SESSION テーブルを間接的に読み取る。
+-->
+
+<p><code>gBfdOrch</code> は <code>OrchDaemon::init()</code>（基底クラス初期化）内で生成されるため (<code>orchdaemon.cpp:243</code>)、<code>DpuOrchDaemon::init()</code> が先頭で <code>OrchDaemon::init()</code> を呼ぶ依存順序（Phase B 依存 #3）と連動している。</p>
+<h3 id="config_db-dash-orch">CONFIG_DB を直接読まない DASH Orch 群<a class="headerlink" href="#config_db-dash-orch" title="Permanent link">&para;</a></h3>
+<p><code>dashorch.cpp</code> / <code>dashhaorch.cpp</code> / <code>dashvnetorch.cpp</code> / <code>dashaclorch.cpp</code> 等の DASH Orch 実装は、CONFIG_DB を直接 <code>hget</code> / <code>hgetall</code> しない。CONFIG_DB 参照はすべて上位層（<code>main.cpp</code> の <code>getCfgSwitchType()</code> と <code>DpuOrchDaemon::init()</code> の <code>get_feature_status()</code>）で完結している。</p>
+<h3 id="_9">範囲外（誤解されやすい隣接テーブル）<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>DEVICE_METADATA|localhost.synchronous_mode</code>: orchagent プロセスの同期モードを制御するが、<code>switch_type = "dpu"</code> のとき <code>orchagent.sh</code> が <code>-z zmq_sync</code> を無条件付与するため、このフィールドの値は DPU モードでは無視される。</li>
+<li><code>DPU</code> / <code>REMOTE_DPU</code> / <code>VDPU</code> / <code>ENI</code> テーブル: SmartSwitch 制御プレーン（<code>sonic-platform-daemons</code> 系）が読み取る。<code>DpuOrchDaemon</code> は直接参照しない。</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/dpu-orch-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>DpuOrchDaemon</code> の起動・動作時に発生しうる失敗を 5 系統に分類する。</p>
+<h3 id="a-get_feature_status-config_db">A. <code>get_feature_status()</code> — CONFIG_DB 接続失敗時のフォールバック<a class="headerlink" href="#a-get_feature_status-config_db" title="Permanent link">&para;</a></h3>
+<p><code>DpuOrchDaemon::init()</code> 冒頭の <code>get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true)</code> は CONFIG_DB への hget をラップしており、<code>runtime_error</code> 例外をキャッチしてデフォルト値を返す:</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB 接続失敗 (<code>runtime_error</code>)</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>default_value</code> 返却。<code>init()</code> は中断しない</td>
+<td><code>orch_zmq_config.cpp:90-93</code></td>
+</tr>
+<tr>
+<td>フィールド欠如 (<code>hget</code> null)</td>
+<td><code>SWSS_LOG_NOTICE</code> + <code>default_value</code> 返却</td>
+<td><code>orch_zmq_config.cpp:97-99</code></td>
+</tr>
+<tr>
+<td>値が <code>"true"</code> 以外 (<code>"false"</code> 等)</td>
+<td><code>false</code> 返却 → <code>dash_zmq_server = nullptr</code></td>
+<td><code>orch_zmq_config.cpp:103</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>orch_northbond_dash_zmq_enabled</code> の default_value は <code>true</code> のため、CONFIG_DB が参照不能でも ZMQ が有効化される方向でフォールバックする。<code>orch_northbond_route_zmq_enabled</code> の default_value は <code>false</code>。</p>
+<h3 id="b-dpu_appl_db-dpu_appl_state_db">B. <code>DPU_APPL_DB</code> / <code>DPU_APPL_STATE_DB</code> 接続失敗<a class="headerlink" href="#b-dpu_appl_db-dpu_appl_state_db" title="Permanent link">&para;</a></h3>
+<p><code>switch_type = "dpu"</code> のとき <code>main.cpp:992-993</code> で <code>DBConnector("DPU_APPL_DB", ...)</code> / <code>DBConnector("DPU_APPL_STATE_DB", ...)</code> を生成する。<code>DBConnector</code> コンストラクタは Redis 接続失敗時に例外を送出するため、<code>main()</code> がキャッチせずに orchagent が abort し、systemd により再起動される。</p>
+<h3 id="c-dpuorchdaemoninit-exitexit_failure">C. <code>DpuOrchDaemon::init()</code> 失敗 → <code>exit(EXIT_FAILURE)</code><a class="headerlink" href="#c-dpuorchdaemoninit-exitexit_failure" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:1322-1419</code> の <code>DpuOrchDaemon::init()</code> は DASH Orch 生成中に例外が発生すると <code>main.cpp:1017-1020</code> の次のガードで捕捉される:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// main.cpp:1017-1020</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">orchDaemon</span><span class="o">-&gt;</span><span class="n">init</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to initialize orchestration daemon&quot;</span><span class="p">);</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>DpuOrchDaemon::init()</code> のコード上の <code>return false</code> パスは現存しない（<code>return true</code> のみ）。ただし <code>OrchDaemon::init()</code> 内で例外送出・false 返却がある場合も同様に <code>exit(EXIT_FAILURE)</code> → systemd 再起動となる。</p>
+<h3 id="d-dash-orch-sai-retry-erase">D. DASH Orch の SAI 操作失敗 → retry / erase<a class="headerlink" href="#d-dash-orch-sai-retry-erase" title="Permanent link">&para;</a></h3>
+<p>各 DASH Orch の <code>doTask*()</code> メソッドは以下の共通パターンで失敗を処理する:</p>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th><code>doTask()</code> 挙動</th>
+<th><code>DPU_APPL_STATE_DB</code> 書込み</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>addXxx()</code> 失敗 (SAI API 戻り <code>!SAI_STATUS_SUCCESS</code>)</td>
+<td><code>result = DASH_RESULT_FAILURE</code> → <code>writeResultToDB()</code> → <code>it++</code>（次サイクル retry）</td>
+<td><code>result=1</code> (FAILURE)</td>
+<td><code>dashorch.cpp:416-419</code></td>
+</tr>
+<tr>
+<td><code>removeXxx()</code> 失敗</td>
+<td><code>it++</code>（retry）。<code>removeResultFromDB()</code> を呼ばない</td>
+<td>（前値保持）</td>
+<td><code>dashorch.cpp:428-430</code></td>
+</tr>
+<tr>
+<td>protobuf parse 失敗 (<code>parsePbMessage</code> false)</td>
+<td><code>SWSS_LOG_WARN</code> → <code>erase(it)</code>（恒久スキップ）</td>
+<td>（書込みなし）</td>
+<td><code>dashorch.cpp:404-408</code></td>
+</tr>
+<tr>
+<td>未知 op (<code>SET</code>/<code>DEL</code> 以外)</td>
+<td><code>SWSS_LOG_ERROR</code> → <code>erase(it)</code></td>
+<td>（書込みなし）</td>
+<td><code>dashorch.cpp:433-436</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>writeResultToDB()</code> は <code>DPU_APPL_STATE_DB</code> の対応テーブル（例: <code>DashOrch</code> → <code>APP_DASH_APPLIANCE_TABLE_NAME</code>）に <code>result</code> フィールドとして <code>0</code>（成功）/ <code>1</code>（失敗）を書き込む（<code>orchdaemon.cpp</code> の <code>DashOrch</code> コンストラクタで <code>app_state_db</code> が渡される）。</p>
+<div class="admonition note">
+<p class="admonition-title">retry の上限なし</p>
+<p><code>it++</code> による retry に上限は設定されていない。SAI API が常に失敗を返す場合（例: ASIC ファームウェア異常）、該当エントリは <code>DPU_APPL_STATE_DB</code> に <code>result=1</code> を書き続けたまま永続的に retry ループに入る。<code>orchagent restart</code> か DASH Orch 側の CONFIG/APPL 再投入が必要。</p>
+</div>
+<h3 id="e-switch_type-dpuorchdaemon">E. <code>switch_type</code> 不正値 — DpuOrchDaemon 非選択フォールバック<a class="headerlink" href="#e-switch_type-dpuorchdaemon" title="Permanent link">&para;</a></h3>
+<p><code>getCfgSwitchType()</code> (<code>main.cpp:260-264</code>) は <code>switch_type</code> の値が既知の enum 外の場合 <code>"switch"</code> にフォールバックし <code>SWSS_LOG_ERROR</code> を出力する:</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switch_type</code> が <code>"voq"</code> / <code>"fabric"</code> / <code>"chassis-packet"</code> / <code>"switch"</code> / <code>"dpu"</code> 以外</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>switch_type = "switch"</code> フォールバック → <code>DpuOrchDaemon</code> 非選択、通常 NPU orchagent として起動</td>
+</tr>
+<tr>
+<td><code>switch_type</code> DB 読み取り失敗（hget 例外）</td>
+<td>同上: <code>"switch"</code> フォールバック</td>
+</tr>
+</tbody>
+</table>
+<p>SmartSwitch DPU として動作させるためには <code>switch_type = "dpu"</code> が正確に設定されていなければならず、typo や欠落は orchagent 起動後にサイレントに NPU モードで動作するため注意が必要。</p>
+<blockquote>
+<p><strong>証跡</strong>: <code>getCfgSwitchType()</code> <code>main.cpp:242-265</code>、<code>get_feature_status()</code> <code>orch_zmq_config.cpp:81-103</code>、<code>DpuOrchDaemon::init()</code> <code>orchdaemon.cpp:1322-1419</code>、<code>doTaskApplianceTable()</code> <code>dashorch.cpp:386-438</code>。詳細グレップ証跡は <code>meta/_intermediate/cdb-flow/dpu-orch-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>DpuOrchDaemon</code> および関連コンポーネントに存在する、CONFIG_DB / YANG で管理されない固定値の一覧。</p>
+<h3 id="orchagentsh-dpu">orchagent.sh — DPU 起動引数固定値<a class="headerlink" href="#orchagentsh-dpu" title="Permanent link">&para;</a></h3>
+<p><code>switch_type = "dpu"</code> のとき <code>orchagent.sh</code> が orchagent プロセスに渡す引数はすべてスクリプト内ハードコードであり、CONFIG_DB フィールドで上書きできない。</p>
+<table>
+<thead>
+<tr>
+<th>引数</th>
+<th>固定値</th>
+<th>意味</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-b</code> (pop batch size)</td>
+<td><code>65536</code></td>
+<td>SelectableTable から 1 回のループで取り出すエントリ数上限。通常 NPU の <code>1024</code>・chassis-packet の <code>128</code> より大幅に増加し、DPU の高ボリューム処理に対応する</td>
+<td><code>orchagent.sh:29</code></td>
+</tr>
+<tr>
+<td><code>-z</code> (redis/zmq mode)</td>
+<td><code>zmq_sync</code></td>
+<td>orchagent の通信モードを ZMQ 同期モードに固定。<code>synchronous_mode</code> フィールド (<code>DEVICE_METADATA</code>) の値に関係なく適用される</td>
+<td><code>orchagent.sh:39</code></td>
+</tr>
+<tr>
+<td><code>-k</code> (max bulk size)</td>
+<td><code>65536</code></td>
+<td>ZMQ バルク送信上限。通常 NPU のデフォルト <code>1000</code> の約 65 倍</td>
+<td><code>orchagent.sh:39</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="orch_zmq_config-zmq">orch_zmq_config — ZMQ アドレス・ポート固定値<a class="headerlink" href="#orch_zmq_config-zmq" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>定義場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ZMQ_LOCAL_ADDRESS</code></td>
+<td><code>"tcp://localhost"</code></td>
+<td><code>orch_zmq_config.h:16</code></td>
+<td><code>create_local_zmq_client()</code> が ZMQ クライアントを生成するときに使うベースアドレス</td>
+</tr>
+<tr>
+<td><code>ORCH_ZMQ_PORT</code> (基底ポート)</td>
+<td><code>8100</code></td>
+<td><code>sonic-swss-common/common/zmqserver.h:16</code></td>
+<td><code>get_zmq_port()</code> が計算の起点とするポート番号。<code>NAMESPACE_ID</code> が空の場合 <code>8100</code> がそのまま使われる。マルチ ASIC 環境では <code>8100 + namespace_id + 1</code> に加算される</td>
+</tr>
+<tr>
+<td><code>ZMQ_TABLE_CONFIGFILE</code></td>
+<td><code>"/etc/swss/orch_zmq_tables.conf"</code></td>
+<td><code>orch_zmq_config.cpp:10</code></td>
+<td><code>load_zmq_tables()</code> が読み込む ZMQ テーブルリストファイルのパス。内容は <code>orch_zmq_tables.conf.j2</code> テンプレートから生成される</td>
+</tr>
+</tbody>
+</table>
+<h3 id="orch_zmq_config">orch_zmq_config — フィーチャーフラグキー名<a class="headerlink" href="#orch_zmq_config" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>定義場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ORCH_NORTHBOND_DASH_ZMQ_ENABLED</code></td>
+<td><code>"orch_northbond_dash_zmq_enabled"</code></td>
+<td><code>orch_zmq_config.h:21</code></td>
+<td><code>get_feature_status()</code> が CONFIG_DB <code>DEVICE_METADATA|localhost</code> から読み出すフィールドキー名</td>
+</tr>
+<tr>
+<td><code>ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</code></td>
+<td><code>"orch_northbond_route_zmq_enabled"</code></td>
+<td><code>orch_zmq_config.h:26</code></td>
+<td>同上、ROUTE ZMQ フィーチャーフラグ用キー名</td>
+</tr>
+</tbody>
+</table>
+<h3 id="orchdaemonh-p4orch-zmq">orchdaemon.h — P4Orch ZMQ エンドポイント固定値<a class="headerlink" href="#orchdaemonh-p4orch-zmq" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>定義場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>m_p4OrchZmqServerEp</code></td>
+<td><code>"ipc:///zmq_swss/p4orch_zmq_swss_ep"</code></td>
+<td><code>orchdaemon.h:121</code></td>
+<td><code>OrchDaemon</code> が P4Orch 向けに生成する ZMQ サーバの IPC エンドポイント。DPU モードでは P4Orch を使用しないため、<code>DpuOrchDaemon::init()</code> では事実上参照されない</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">上書き不可の定数</p>
+<p><code>-b 65536</code>・<code>-z zmq_sync</code>・<code>-k 65536</code> の 3 引数は <code>orchagent.sh</code> が <code>switch_type = "dpu"</code> のとき無条件に付与し、CONFIG_DB / YANG フィールドで変更する手段は存在しない。これらの値を変更するにはシェルスクリプトの修正と orchagent の再起動が必要。</p>
+</div>
+<p>詳細なソーススキャン証跡は <code>meta/_intermediate/cdb-flow/dpu-orch-constants.md</code> を参照。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>DpuOrchDaemon</code> が起動する DASH Orch 群は、CONFIG_DB <code>DEVICE_METADATA</code> を直接の書込先とはしない。各 DASH Orch は <code>DPU_APPL_DB</code> から受信した DASH エントリを SAI API で処理した後、<strong><code>DPU_APPL_STATE_DB</code></strong> へ操作結果 (<code>result</code> フィールド) を書き込む。これが DpuOrchDaemon 系の主要な副次 DB 書込である。</p>
+<h3 id="dpu_appl_state_db_1">DPU_APPL_STATE_DB への書込テーブル一覧<a class="headerlink" href="#dpu_appl_state_db_1" title="Permanent link">&para;</a></h3>
+<p><code>writeResultToDB()</code> (<code>saihelper.cpp:1125-1155</code>) は SAI 操作結果 (<code>uint32_t res</code>) を <code>result</code> フィールドとして <code>table-&gt;set(key, fvs)</code> で書き込む。<code>res=0</code> が成功、<code>res!=0</code> が SAI ステータスコード（失敗）を示す。<code>DashRouteOrch</code> の <code>DASH_ROUTE_GROUP_TABLE</code> のみ、追加で <code>version</code> フィールドを付与する。</p>
+<table>
+<thead>
+<tr>
+<th>DASH Orch</th>
+<th>DPU_APPL_STATE_DB テーブル</th>
+<th>フィールド</th>
+<th>書込トリガ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DashVnetOrch</code></td>
+<td><code>DASH_VNET_TABLE</code></td>
+<td><code>result</code></td>
+<td><code>addVnet()</code> / <code>removeVnet()</code> 後</td>
+<td><code>dashvnetorch.cpp:217,283</code></td>
+</tr>
+<tr>
+<td><code>DashVnetOrch</code></td>
+<td><code>DASH_VNET_MAPPING_TABLE</code></td>
+<td><code>result</code></td>
+<td><code>addVnetMapping()</code> / <code>removeVnetMapping()</code> 後</td>
+<td><code>dashvnetorch.cpp:788,851</code></td>
+</tr>
+<tr>
+<td><code>DashOrch</code></td>
+<td><code>DASH_APPLIANCE_TABLE</code></td>
+<td><code>result</code></td>
+<td><code>addAppliance()</code> / <code>removeAppliance()</code> 後</td>
+<td><code>dashorch.cpp:419</code></td>
+</tr>
+<tr>
+<td><code>DashOrch</code></td>
+<td><code>DASH_ROUTING_TYPE_TABLE</code></td>
+<td><code>result</code></td>
+<td>routing type SET/DEL 後</td>
+<td><code>dashorch.cpp:517</code></td>
+</tr>
+<tr>
+<td><code>DashOrch</code></td>
+<td><code>DASH_ENI_TABLE</code></td>
+<td><code>result</code></td>
+<td><code>addEni()</code> / <code>removeEni()</code> 後</td>
+<td><code>dashorch.cpp:1077</code></td>
+</tr>
+<tr>
+<td><code>DashOrch</code></td>
+<td><code>DASH_QOS_TABLE</code></td>
+<td><code>result</code></td>
+<td>QoS SET/DEL 後</td>
+<td><code>dashorch.cpp:1159</code></td>
+</tr>
+<tr>
+<td><code>DashOrch</code></td>
+<td><code>DASH_ENI_ROUTE_TABLE</code></td>
+<td><code>result</code></td>
+<td>ENI route SET/DEL 後</td>
+<td><code>dashorch.cpp:1312</code></td>
+</tr>
+<tr>
+<td><code>DashHaOrch</code></td>
+<td><code>DASH_HA_SET_TABLE</code></td>
+<td><code>result</code></td>
+<td>HA set SET/DEL 後</td>
+<td><code>dashhaorch.cpp:447</code></td>
+</tr>
+<tr>
+<td><code>DashHaOrch</code></td>
+<td><code>DASH_HA_SCOPE_TABLE</code></td>
+<td><code>result</code></td>
+<td>HA scope SET/DEL 後</td>
+<td><code>dashhaorch.cpp:985</code></td>
+</tr>
+<tr>
+<td><code>DashRouteOrch</code></td>
+<td><code>DASH_ROUTE_TABLE</code></td>
+<td><code>result</code></td>
+<td>route SET/DEL 後</td>
+<td><code>dashrouteorch.cpp:342,403</code></td>
+</tr>
+<tr>
+<td><code>DashRouteOrch</code></td>
+<td><code>DASH_ROUTE_RULE_TABLE</code></td>
+<td><code>result</code></td>
+<td>route rule SET/DEL 後</td>
+<td><code>dashrouteorch.cpp:644,705</code></td>
+</tr>
+<tr>
+<td><code>DashRouteOrch</code></td>
+<td><code>DASH_ROUTE_GROUP_TABLE</code></td>
+<td><code>result</code>, <code>version</code></td>
+<td>route group SET/DEL 後</td>
+<td><code>dashrouteorch.cpp:874</code></td>
+</tr>
+<tr>
+<td><code>DashTunnelOrch</code></td>
+<td><code>DASH_TUNNEL_TABLE</code></td>
+<td><code>result</code></td>
+<td>tunnel SET/DEL 後</td>
+<td><code>dashtunnelorch.cpp:142,197,251</code></td>
+</tr>
+<tr>
+<td><code>DashPortMapOrch</code></td>
+<td><code>DASH_OUTBOUND_PORT_MAP_TABLE</code></td>
+<td><code>result</code></td>
+<td>port map SET/DEL 後</td>
+<td><code>dashportmaporch.cpp:89,149</code></td>
+</tr>
+<tr>
+<td><code>DashPortMapOrch</code></td>
+<td><code>DASH_OUTBOUND_PORT_MAP_RANGE_TABLE</code></td>
+<td><code>result</code></td>
+<td>port map range SET/DEL 後</td>
+<td><code>dashportmaporch.cpp:329,387</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>テーブル名は <code>sonic-swss-common/common/schema.h:172-200</code> で定義。<code>DPU_APPL_STATE_DB</code> は <code>main.cpp:993</code> で <code>DBConnector("DPU_APPL_STATE_DB", ...)</code> として生成され、<code>DpuOrchDaemon</code> コンストラクタ経由で全 DASH Orch に渡される。</p>
+</blockquote>
+<h3 id="dashportmaporch-removeresultfromdb">DashPortMapOrch のみ removeResultFromDB を使用<a class="headerlink" href="#dashportmaporch-removeresultfromdb" title="Permanent link">&para;</a></h3>
+<p><code>DashPortMapOrch</code> は DEL 操作成功時に <code>writeResultToDB</code> ではなく <code>removeResultFromDB</code> (<code>saihelper.cpp:1157-1177</code>) を呼び、<code>DPU_APPL_STATE_DB</code> の対応エントリを <code>del(key)</code> で削除する。他の DASH Orch は DEL 操作後も <code>result=0</code>（成功）を書いてエントリを残す方式を取る。</p>
+<h3 id="dashaclorch-dashmeterorch-dpu_appl_state_db">DashAclOrch / DashMeterOrch — DPU_APPL_STATE_DB 書込なし<a class="headerlink" href="#dashaclorch-dashmeterorch-dpu_appl_state_db" title="Permanent link">&para;</a></h3>
+<p><code>DashAclOrch</code> (<code>dashaclorch.cpp:77-85</code>) と <code>DashMeterOrch</code> (<code>dashmeterorch.cpp:27-32</code>) はコンストラクタで <code>app_state_db</code> を受け取るが result table メンバを持たず、<code>writeResultToDB</code> を呼ばない。</p>
+<h3 id="dashhafloworch-dpu_state_db">DashHaFlowOrch — DPU_STATE_DB への例外的書込<a class="headerlink" href="#dashhafloworch-dpu_state_db" title="Permanent link">&para;</a></h3>
+<p><code>DashHaFlowOrch</code> は <code>app_state_db</code>（<code>DPU_APPL_STATE_DB</code>）を受け取るが使用しない。代わりに自コンストラクタ内で独立して <code>DBConnector("DPU_STATE_DB", ...)</code> を生成し (<code>dashhafloworch.cpp:766</code>)、フロー同期セッション状態を <code>DPU_STATE_DB</code> の <code>DASH_FLOW_SYNC_SESSION_STATE_TABLE</code> へ書き込む (<code>dashhafloworch.cpp:247,307</code>)。これは <code>DPU_APPL_STATE_DB</code> とは別個の Redis インスタンスへの書込みである。</p>
+<table>
+<thead>
+<tr>
+<th>DASH Orch</th>
+<th>書込 DB</th>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>書込トリガ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DashHaFlowOrch</code></td>
+<td><code>DPU_STATE_DB</code></td>
+<td><code>DASH_FLOW_SYNC_SESSION_STATE_TABLE</code></td>
+<td><code>state</code>, <code>creation_time_in_ms</code>, <code>last_state_start_time_in_ms</code></td>
+<td>フロー同期セッション状態遷移時 (<code>FlowApiHandler::updateState()</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>詳細スキャン証跡は <code>meta/_intermediate/cdb-flow/dpu-orch-side-effects.md</code> を参照。</p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="zmq-phase-g">ZMQ 購読方式 (Phase G)<a class="headerlink" href="#zmq-phase-g" title="Permanent link">&para;</a></h2>
+<p><code>DpuOrchDaemon</code> が <code>DPU_APPL_DB</code> の DASH テーブル群を受信するための通信メカニズムを示す。ZMQ 有効時と無効時の 2 経路が存在し、<code>orch_northbond_dash_zmq_enabled</code> フィールドにより切り替わる。</p>
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>ZMQ 有効 (<code>orch_northbond_dash_zmq_enabled = true</code>)</th>
+<th>ZMQ 無効 (<code>false</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gNMI サービス → <code>DPU_APPL_DB</code> DASH テーブル</td>
+<td><code>ZmqProducerStateTable</code> → ZMQ wire → <code>ZmqServer</code></td>
+<td><code>ProducerStateTable</code> → Redis PUBLISH</td>
+</tr>
+<tr>
+<td><code>DPU_APPL_DB</code> → DASH Orch</td>
+<td><code>ZmqConsumerStateTable</code> (SelectableEvent 駆動)</td>
+<td><code>ConsumerStateTable</code> (Redis SUBSCRIBE 駆動)</td>
+</tr>
+<tr>
+<td>DASH Orch → <code>DPU_APPL_STATE_DB</code></td>
+<td><code>swss::Table::set()</code> / <code>del()</code> (HSET/HDEL, PUBLISH 非発行)</td>
+<td>同左</td>
+</tr>
+</tbody>
+</table>
+<h3 id="zmqorchaddconsumer-dpu_appl_db">ZmqOrch::addConsumer() — DPU_APPL_DB 判別<a class="headerlink" href="#zmqorchaddconsumer-dpu_appl_db" title="Permanent link">&para;</a></h3>
+<p>全 DASH Orch は <code>ZmqOrch</code> を継承する。<code>ZmqOrch::addConsumer()</code> は <code>DPU_APPL_DB</code> に対して <code>ZmqConsumerStateTable</code> / <code>ConsumerStateTable</code> を切り替える<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// zmqorch.cpp:59-80</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">APPL_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">DPU_APPL_DB</span><span class="p">)</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zmqServer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ZmqConsumer</span><span class="p">(</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">ZmqConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">,</span><span class="w"> </span><span class="n">dbPersistence</span><span class="p">),</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">            </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">orderedQueue</span><span class="p">));</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">            </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>zmqServer</code> は <code>DpuOrchDaemon::init()</code> の <code>dash_zmq_server</code> ポインタから各 DASH Orch コンストラクタへ渡される。<code>orch_northbond_dash_zmq_enabled = false</code> のとき <code>nullptr</code> となり <code>ConsumerStateTable</code> にフォールバックする。</p>
+<h3 id="zmqconsumerstatetable-zmqserver">ZmqConsumerStateTable — ZmqServer へのハンドラ登録<a class="headerlink" href="#zmqconsumerstatetable-zmqserver" title="Permanent link">&para;</a></h3>
+<p><code>ZmqConsumerStateTable</code> コンストラクタ（<code>zmqconsumerstatetable.cpp:47</code>）:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">m_zmqServer</span><span class="p">.</span><span class="n">registerMessageHandler</span><span class="p">(</span><span class="n">m_db</span><span class="o">-&gt;</span><span class="n">getDbName</span><span class="p">(),</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>DPU_APPL_DB</code> では <code>getDbName()</code> が <code>"DPU_APPL_DB"</code> を返し、テーブル名（<code>APP_DASH_ENI_TABLE_NAME</code> 等）を鍵として <code>ZmqServer</code> に登録する。ZMQ wire 上のメッセージが到着すると <code>ZmqServer</code> が対応ハンドラの <code>handleReceivedData()</code> を呼び出し、<code>SelectableEvent</code> 経由で orchdaemon の select ループを起動する。</p>
+<h3 id="lazy-bind">遅延バインド (lazy bind) — メッセージロスト防止<a class="headerlink" href="#lazy-bind" title="Permanent link">&para;</a></h3>
+<p><code>ZmqServer</code> はコンストラクタで <code>lazy=true</code> を指定し、全ハンドラ登録完了後に <code>main()</code> が <code>zmq_server-&gt;bind()</code> を呼ぶ (<code>main.cpp:1032-1037</code>)。これにより、クライアント側 <code>ZmqProducerStateTable</code> の接続確立前に bind が完了し、DpuOrchDaemon::init() 中の <code>ZmqConsumerStateTable</code> 生成（= ハンドラ登録）との間のメッセージロストを防止する。</p>
+<h3 id="zmq-gbatchsize">ZMQ サーバアドレスと gBatchSize<a class="headerlink" href="#zmq-gbatchsize" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>DPU での値</th>
+<th>決定経路</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZMQ サーバアドレス</td>
+<td><code>tcp://127.0.0.1:8100</code>（通常）または <code>tcp://eth0-midplane:8100</code></td>
+<td><code>orchagent.sh:105-117</code> — <code>LOCALHOST_SUBTYPE</code> が <code>SmartSwitch</code> かつ midplane UP のとき <code>eth0-midplane</code>、それ以外 <code>127.0.0.1</code>。ポート <code>8100</code> は <code>get_zmq_port()</code>（NAMESPACE_ID 空のとき <code>ORCH_ZMQ_PORT=8100</code>）</td>
+</tr>
+<tr>
+<td><code>gBatchSize</code> (<code>ZmqConsumerStateTable</code> の popBatchSize)</td>
+<td><code>65536</code></td>
+<td><code>orchagent.sh:29</code> の <code>-b 65536</code> 引数 → <code>main.cpp</code> の <code>gBatchSize</code>。通常 NPU の <code>1024</code> の 64 倍</td>
+</tr>
+<tr>
+<td><code>dbPersistence</code></td>
+<td><code>false</code></td>
+<td><code>ZmqOrch</code> が <code>addConsumer()</code> に渡すデフォルト値。<code>AsyncDBUpdater</code> は未生成</td>
+</tr>
+</tbody>
+</table>
+<h3 id="select">select ループでの受信フロー<a class="headerlink" href="#select" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ZmqServer (ZMQ wire 受信スレッド)
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  ↓ handleReceivedData() → m_receivedOperationQueue.push()
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>  ↓ m_selectableEvent.notify()
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>orchdaemon select ループ (ZmqConsumerStateTable の fd を epoll)
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>  ↓ ZmqConsumer::execute()
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>  ↓   table-&gt;pops() → addToSync() → drain()
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>  ↓ ZmqOrch::doTask(ZmqConsumer&amp;)
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>  ↓ 各 DASH Orch の doTask()（SAI API 呼出し → DPU_APPL_STATE_DB 書込み）
+</span></code></pre></div>
+<p><code>ZmqConsumer::execute()</code> は <code>m_ordered_queue = false</code>（DASH Orch は ordered queue 非使用）のため、<code>pops()</code> で一括取り出しして <code>addToSync()</code> に渡す（<code>zmqorch.cpp:14-18</code>）。</p>
+<h3 id="dpu_appl_state_db_2">DPU_APPL_STATE_DB への書込み — 通知なし<a class="headerlink" href="#dpu_appl_state_db_2" title="Permanent link">&para;</a></h3>
+<p>DASH Orch が SAI 完了後に <code>DPU_APPL_STATE_DB</code> の結果テーブルへ書き込む際は <code>swss::Table::set()</code> / <code>del()</code> を使用する（<code>dashorch.cpp:69-73</code>）。<code>ProducerStateTable</code> ではないため Redis <code>PUBLISH</code> は発行されない。結果読み取り側（<code>dashd</code> 等）は keyspace 通知を待たずオンデマンド <code>HGETALL</code> で参照する。</p>
+<p>詳細調査証跡は <code>meta/_intermediate/cdb-flow/dpu-orch-pubsub.md</code> を参照。</p>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差分 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>DpuOrchDaemon</code> の動作は <code>DEVICE_METADATA|localhost</code> の <code>switch_type = "dpu"</code> で固定されるが、ASIC プラットフォーム (<code>platform</code> 環境変数 = <code>asic_type</code>) および <code>subtype</code> フィールドによってさらに細かい分岐が存在する。</p>
+<h3 id="platform-mac-orchagentsh"><code>platform</code> 分岐: MAC アドレス取得元 (orchagent.sh)<a class="headerlink" href="#platform-mac-orchagentsh" title="Permanent link">&para;</a></h3>
+<p><code>orchagent.sh</code> は <code>swss_vars.j2</code> 経由で <code>asic_type</code> を <code>export platform=&lt;value&gt;</code> として取得し、orchagent に渡す MAC アドレスの取得インターフェースを分岐する。DPU 向け主要プラットフォームは以下:</p>
+<table>
+<thead>
+<tr>
+<th><code>platform</code> 値</th>
+<th>MAC 取得元</th>
+<th>対象 DPU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nvidia-bluefield</code></td>
+<td><code>eth0</code>（swss_vars.j2 経由）</td>
+<td>NVIDIA BlueField シリーズ</td>
+</tr>
+<tr>
+<td><code>pensando</code></td>
+<td><code>int_mnic0</code> → <code>eth0-midplane</code> フォールバック</td>
+<td>AMD/Pensando Elba</td>
+</tr>
+<tr>
+<td>それ以外</td>
+<td><code>eth0</code>（汎用フォールバック）</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># orchagent.sh:86-92</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">elif</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$platform</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;nvidia-bluefield&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="nv">ORCHAGENT_ARGS</span><span class="o">+=</span><span class="s2">&quot;-m </span><span class="nv">$MAC_ADDRESS</span><span class="s2">&quot;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="k">elif</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$platform</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;pensando&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="nv">MAC_ADDRESS</span><span class="o">=</span><span class="k">$(</span>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span>int_mnic0<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ether<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MAC_ADDRESS</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">        </span><span class="nv">MAC_ADDRESS</span><span class="o">=</span><span class="k">$(</span>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span>eth0-midplane<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ether<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="k">fi</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span><span class="nv">ORCHAGENT_ARGS</span><span class="o">+=</span><span class="s2">&quot;-m </span><span class="nv">$MAC_ADDRESS</span><span class="s2">&quot;</span>
+</span></code></pre></div>
+<p><code>switch_type = "dpu"</code> のときの <code>-b 65536 -z zmq_sync -k 65536</code> 付与（Phase A / Phase B 記述済み）とは独立して、この MAC 分岐も適用される。</p>
+<h3 id="subtype-zmq-orchagentsh"><code>subtype</code> 分岐: ZMQ アドレス (orchagent.sh)<a class="headerlink" href="#subtype-zmq-orchagentsh" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># orchagent.sh:107-116</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nv">LOCALHOST_SUBTYPE</span><span class="o">=</span><span class="sb">`</span>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span><span class="s2">&quot;subtype&quot;</span><span class="sb">`</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span>x<span class="s2">&quot;</span><span class="si">${</span><span class="nv">LOCALHOST_SUBTYPE</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span>x<span class="s2">&quot;SmartSwitch&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="nv">midplane_mgmt_state</span><span class="o">=</span><span class="k">$(</span><span class="w"> </span>ip<span class="w"> </span>-json<span class="w"> </span>-4<span class="w"> </span>addr<span class="w"> </span>show<span class="w"> </span>eth0-midplane<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;.[0].operstate&quot;</span><span class="w"> </span><span class="k">)</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="nv">$midplane_mgmt_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;UP&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">        </span><span class="nv">ORCHAGENT_ARGS</span><span class="o">+=</span><span class="s2">&quot; -q tcp://eth0-midplane&quot;</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">        </span><span class="nv">ORCHAGENT_ARGS</span><span class="o">+=</span><span class="s2">&quot; -q tcp://127.0.0.1&quot;</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">    </span><span class="k">fi</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="k">else</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">    </span><span class="nv">ORCHAGENT_ARGS</span><span class="o">+=</span><span class="s2">&quot; -q tcp://127.0.0.1&quot;</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="k">fi</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>動作環境</th>
+<th><code>subtype</code></th>
+<th>ZMQ <code>-q</code> アドレス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SmartSwitch NPU 側 (<code>subtype=SmartSwitch</code>)</td>
+<td><code>SmartSwitch</code></td>
+<td><code>tcp://eth0-midplane</code>（midplane UP 時）/ <code>tcp://127.0.0.1</code>（DOWN 時）</td>
+</tr>
+<tr>
+<td>DPU 上 orchagent (<code>switch_type=dpu</code>)</td>
+<td>通常未設定</td>
+<td><code>tcp://127.0.0.1</code></td>
+</tr>
+</tbody>
+</table>
+<p>DPU 上の orchagent は <code>subtype</code> を通常持たないため、ZMQ アドレスは常に <code>tcp://127.0.0.1</code> (loopback) になる。SmartSwitch NPU 側は <code>subtype = "SmartSwitch"</code> を使い midplane 経由で DPU 側と通信する。</p>
+<h3 id="subtype-smartswitch-dashenifwdorch-orchdaemoninit"><code>subtype = "SmartSwitch"</code> 分岐: DashEniFwdOrch 追加 (OrchDaemon::init)<a class="headerlink" href="#subtype-smartswitch-dashenifwdorch-orchdaemoninit" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// orchdaemon.cpp:613-618</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gMySwitchSubType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;SmartSwitch&quot;</span><span class="p">)</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="p">{</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="n">DashEniFwdOrch</span><span class="w"> </span><span class="o">*</span><span class="n">dash_eni_fwd_orch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DashEniFwdOrch</span><span class="p">(</span><span class="n">m_configDb</span><span class="p">,</span><span class="w"> </span><span class="n">m_applDb</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">        </span><span class="n">APP_DASH_ENI_FORWARD_TABLE</span><span class="p">,</span><span class="w"> </span><span class="n">gNeighOrch</span><span class="p">);</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span><span class="n">gDirectory</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">dash_eni_fwd_orch</span><span class="p">);</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">    </span><span class="n">m_orchList</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">dash_eni_fwd_orch</span><span class="p">);</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>NPU 側の <code>OrchDaemon::init()</code> 内で <code>subtype = "SmartSwitch"</code> のとき <code>DashEniFwdOrch</code> が追加される。<code>DpuOrchDaemon::init()</code> は冒頭で <code>OrchDaemon::init()</code> を呼ぶ（Phase B 依存 #3）ため、DPU 上でも NPU 上でも <code>subtype</code> による分岐が実行される。</p>
+<h3 id="switch_type-dpu-switchjsonj2-switch_table"><code>switch_type = "dpu"</code> 分岐: switch.json.j2 — SWITCH_TABLE 初期設定スキップ<a class="headerlink" href="#switch_type-dpu-switchjsonj2-switch_table" title="Permanent link">&para;</a></h3>
+<div class="language-jinja highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c">{# switch.json.j2:35 #}</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="cp">{%</span> <span class="k">if</span> <span class="k">not</span> <span class="nv">DEVICE_METADATA.localhost.switch_type</span> <span class="k">or</span> <span class="nv">DEVICE_METADATA.localhost.switch_type</span> <span class="o">!=</span> <span class="s2">&quot;dpu&quot;</span> <span class="cp">%}</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="x">    &quot;ecmp_hash_seed&quot;: &quot;...&quot;,</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="x">    &quot;lag_hash_seed&quot;: &quot;...&quot;,</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="x">    &quot;fdb_aging_time&quot;: &quot;600&quot;,</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="x">    &quot;ecmp_hash_offset&quot;: &quot;...&quot;,</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="x">    &quot;lag_hash_offset&quot;: &quot;...&quot;,</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="x">    &quot;ordered_ecmp&quot;: &quot;...&quot;</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+</span></code></pre></div>
+<p><code>switch_type = "dpu"</code> のとき <code>SWITCH_TABLE:switch</code> への ECMP hash seed・LAG hash seed・FDB aging time・ordered_ecmp の設定が生成されない。DPU の SAI は標準 NPU の ECMP / FDB エージング機能を持たないためである。</p>
+<h3 id="switch_type-dpu-ipinipjsonj2-ip-in-ip"><code>switch_type = "dpu"</code> 分岐: ipinip.json.j2 — IP-in-IP デカプ設定スキップ<a class="headerlink" href="#switch_type-dpu-ipinipjsonj2-ip-in-ip" title="Permanent link">&para;</a></h3>
+<div class="language-jinja highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c">{# ipinip.json.j2:1-3 #}</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="cp">{%</span> <span class="k">if</span> <span class="nv">DEVICE_METADATA</span><span class="o">[</span><span class="s1">&#39;localhost&#39;</span><span class="o">][</span><span class="s1">&#39;switch_type&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;dpu&quot;</span> <span class="cp">%}</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="x">[]</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="x">...（通常 NPU 用 TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE 生成）...</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+</span></code></pre></div>
+<p><code>switch_type = "dpu"</code> のとき <code>ipinip.json.j2</code> は空配列 <code>[]</code> を出力し、<code>TUNNEL_DECAP_TABLE</code> / <code>TUNNEL_DECAP_TERM_TABLE</code> が一切生成されない。DPU は IP-in-IP デカプセルを DASH パイプラインで処理するため orchagent 側の汎用トンネルデカプ設定は不要である。</p>
+<h3 id="switch_type-dpu-enable_counterspy-eni-dash_meter"><code>switch_type = "dpu"</code> 分岐: enable_counters.py — ENI / DASH_METER カウンタ有効化<a class="headerlink" href="#switch_type-dpu-enable_counterspy-eni-dash_meter" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># enable_counters.py:42-45</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">dpu_counters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ENI&quot;</span><span class="p">,</span> <span class="s2">&quot;DASH_METER&quot;</span><span class="p">]</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="k">if</span> <span class="n">platform_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;switch_type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;dpu&#39;</span><span class="p">:</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dpu_counters</span><span class="p">:</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>        <span class="n">enable_counter_group</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></code></pre></div>
+<p><code>switch_type = "dpu"</code> のとき <code>FLEX_COUNTER_TABLE</code> の <code>ENI</code> および <code>DASH_METER</code> エントリが <code>FLEX_COUNTER_STATUS = enable</code> で書き込まれる。通常 NPU では有効化されない DPU 固有カウンタグループである。</p>
+<h3 id="switch_type-dpu">まとめ: <code>switch_type = "dpu"</code> が影響するプラットフォーム差分<a class="headerlink" href="#switch_type-dpu" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>分岐軸</th>
+<th>条件</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>platform</code></td>
+<td><code>nvidia-bluefield</code></td>
+<td>MAC 取得: <code>eth0</code></td>
+<td><code>orchagent.sh:86</code></td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>pensando</code></td>
+<td>MAC 取得: <code>int_mnic0</code> → <code>eth0-midplane</code></td>
+<td><code>orchagent.sh:88-91</code></td>
+</tr>
+<tr>
+<td><code>subtype</code></td>
+<td><code>SmartSwitch</code></td>
+<td>ZMQ <code>-q tcp://eth0-midplane</code>（midplane UP 時）</td>
+<td><code>orchagent.sh:107-113</code></td>
+</tr>
+<tr>
+<td><code>subtype</code></td>
+<td><code>SmartSwitch</code></td>
+<td><code>DashEniFwdOrch</code> を NPU 側 <code>OrchDaemon</code> に追加</td>
+<td><code>orchdaemon.cpp:613-618</code></td>
+</tr>
+<tr>
+<td><code>switch_type</code></td>
+<td><code>dpu</code></td>
+<td>ECMP/FDB 設定スキップ (<code>switch.json.j2</code>)</td>
+<td><code>switch.json.j2:35</code></td>
+</tr>
+<tr>
+<td><code>switch_type</code></td>
+<td><code>dpu</code></td>
+<td>IP-in-IP デカプ設定スキップ (<code>ipinip.json.j2</code>)</td>
+<td><code>ipinip.json.j2:1</code></td>
+</tr>
+<tr>
+<td><code>switch_type</code></td>
+<td><code>dpu</code></td>
+<td>ENI / DASH_METER FLEX カウンタ有効化</td>
+<td><code>enable_counters.py:43</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>参照</strong>: 詳細スキャン証跡は <code>meta/_intermediate/cdb-flow/dpu-orch-platform.md</code> を参照。</p>
+</blockquote>
+<!-- /platform -->
+
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>DpuOrchDaemon クラス定義と起動条件: <code>sonic-swss/orchagent/orchdaemon.h:150-158</code>, <code>sonic-swss/orchagent/orchdaemon.cpp:1313-1419</code>, <code>sonic-swss/orchagent/main.cpp:981-994</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>DpuOrchDaemon クラス定義と起動条件: <code>sonic-swss/orchagent/orchdaemon.h:150-158</code>, <code>sonic-swss/orchagent/orchdaemon.cpp:1313-1419</code>, <code>sonic-swss/orchagent/main.cpp:981-994</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>ZMQ 機能フラグ実装: <code>sonic-swss/lib/orch_zmq_config.h:21</code>, <code>sonic-swss/lib/orch_zmq_config.cpp:81-103</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/lib/orch_zmq_config.cpp">https://github.com/sonic-net/sonic-swss/blob/master/lib/orch_zmq_config.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
@@ -35329,6 +36986,9 @@
 </li>
 <li id="fn:4">
 <p>orchagent.sh DPU 固有引数: <code>sonic-buildimage/dockers/docker-orchagent/orchagent.sh:22-42</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/orchagent.sh">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/orchagent.sh</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>ZmqOrch / ZmqConsumerStateTable 実装: <code>sonic-swss/orchagent/zmqorch.cpp:59-80</code>, <code>sonic-swss-common/common/zmqconsumerstatetable.cpp:20-47</code>, <code>sonic-swss/lib/orch_zmq_config.cpp:35-80</code>, <code>sonic-swss/orchagent/main.cpp:646-654, 1032-1037</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/zmqorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/zmqorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

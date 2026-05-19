@@ -26154,6 +26154,106 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1a-sai_switch_attr_number_of_fabric_ports-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1a. SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS 取得失敗（SAI capability 欠如）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1b-1c-fabric_port_list-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1b / 1c. FABRIC_PORT_LIST / レーン番号取得失敗（orchagent 異常終了）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-isolatefabriclink-sai-isolation-state_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. isolateFabricLink() — SAI isolation 失敗（STATE_DB / SAI 乖離）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. データ不完全による silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-updatefabricportstate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. updateFabricPortState() — ポート状態取得失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -26166,7 +26266,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         解決タイミング
@@ -26182,7 +26282,140 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fabricportsorchcpp21-48" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポーリング間隔（fabricportsorch.cpp:21-48）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter-fabricportsorchcpp24-37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter 登録間隔（fabricportsorch.cpp:24-37）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リンク監視閾値 — CONFIG_DB 上書き不可定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_dbfabric_monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リンク監視閾値 — CONFIG_DB（FABRIC_MONITOR）で上書き可能なデフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-fabricportsorchh62-68" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB リセットデフォルト値（fabricportsorch.h:62-68）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-force-unisolate-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET / force unisolate 時 — STATE_DB 書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマーポーリング時 — STATE_DB 書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマーポーリング時 — STATE_DB デバッグカウンタ書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期化時 — COUNTERS_DB 書込み（FlexCounter 名前マップ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -26193,7 +26426,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -26204,7 +26437,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -26215,7 +26448,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -26227,7 +26460,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -26238,7 +26471,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -26249,7 +26482,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -26265,7 +26498,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -26276,7 +26509,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -26404,7 +26637,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -26415,7 +26648,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_24" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -35458,6 +35691,106 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1a-sai_switch_attr_number_of_fabric_ports-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1a. SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS 取得失敗（SAI capability 欠如）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1b-1c-fabric_port_list-orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1b / 1c. FABRIC_PORT_LIST / レーン番号取得失敗（orchagent 異常終了）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-isolatefabriclink-sai-isolation-state_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. isolateFabricLink() — SAI isolation 失敗（STATE_DB / SAI 乖離）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. データ不完全による silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-updatefabricportstate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. updateFabricPortState() — ポート状態取得失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35470,7 +35803,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         解決タイミング
@@ -35486,7 +35819,140 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fabricportsorchcpp21-48" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ポーリング間隔（fabricportsorch.cpp:21-48）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcounter-fabricportsorchcpp24-37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounter 登録間隔（fabricportsorch.cpp:24-37）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リンク監視閾値 — CONFIG_DB 上書き不可定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_dbfabric_monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リンク監視閾値 — CONFIG_DB（FABRIC_MONITOR）で上書き可能なデフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-fabricportsorchh62-68" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB リセットデフォルト値（fabricportsorch.h:62-68）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-force-unisolate-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET / force unisolate 時 — STATE_DB 書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマーポーリング時 — STATE_DB 書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマーポーリング時 — STATE_DB デバッグカウンタ書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-flexcounter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期化時 — COUNTERS_DB 書込み（FlexCounter 名前マップ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35497,7 +35963,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35508,7 +35974,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35519,7 +35985,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35531,7 +35997,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -35542,7 +36008,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -35553,7 +36019,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35569,7 +36035,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35580,7 +36046,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -35708,7 +36174,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -35719,7 +36185,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_24" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -36026,6 +36492,104 @@
 <p><strong>3 フィールド完全性チェック (依存 #4)</strong>: partial update（一部フィールドのみの UPDATE）を受け取った場合、欠落フィールドは <code>m_applTable-&gt;hget()</code> で APPL_DB から補完される。APPL_DB にもそのフィールドが存在しない場合は <code>SWSS_LOG_INFO("hget failed")</code> を出してから <code>m_toSync.erase(it)</code> で消去される。このため、<code>alias</code> / <code>lanes</code> / <code>isolateStatus</code> のうち 1 つでも APPL_DB 未登録の状態で CONFIG_DB を SET しても、<strong>一切の SAI 操作が実行されず、かつエラーログも INFO レベルにとどまる</strong>（evidence: <code>fabricportsorch.cpp:1436-1484</code>）。</p>
 <!-- /ordering -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/fabric-port-failure.md -->
+<!-- source: sonic-swss/orchagent/fabricportsorch.cpp -->
+
+<h3 id="_11">失敗パス一覧<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗トリガー</th>
+<th>挙動</th>
+<th>再試行</th>
+<th>SAI 影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1a</td>
+<td><code>SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS</code> 取得失敗</td>
+<td><code>FABRIC_PORT_ERROR (0)</code> を返す、<code>m_getFabricPortListDone=false</code> のまま</td>
+<td>30秒ポーリングで自動再試行</td>
+<td>STATE_DB 書き込みなし・全ポーリングスキップ</td>
+</tr>
+<tr>
+<td>1b</td>
+<td><code>SAI_SWITCH_ATTR_FABRIC_PORT_LIST</code> 取得失敗</td>
+<td><code>throw runtime_error("FabricPortsOrch get port list failure")</code> → orchagent 異常終了</td>
+<td>なし（プロセス再起動）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>1c</td>
+<td>ポートレーン番号 (<code>SAI_PORT_ATTR_HW_LANE_LIST</code>) 取得失敗</td>
+<td><code>throw runtime_error("FabricPortsOrch get port lane failure")</code> → orchagent 異常終了</td>
+<td>なし（プロセス再起動）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>SAI_PORT_ATTR_FABRIC_ISOLATE</code> の <code>set_port_attribute</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR</code> のみ出力、エラー吸収</td>
+<td>なし</td>
+<td>SAI isolate 状態変更されず、STATE_DB は更新済みのまま乖離</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>alias</code> / <code>lanes</code> / <code>isolateStatus</code> 欠如 (APPL_DB 補完も失敗)</td>
+<td><code>m_toSync.erase(it)</code> で silent drop</td>
+<td>なし</td>
+<td>SAI 変更なし</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>SAI_PORT_ATTR_FABRIC_ATTACHED</code> 取得失敗</td>
+<td><code>updateFabricPortState()</code> が中断 (残ポートもスキップ)</td>
+<td>次ポーリング周期 (30秒)</td>
+<td>STATE_DB 更新なし（古い状態が残存）</td>
+</tr>
+<tr>
+<td>5</td>
+<td>接続先スイッチ / ポートインデックス取得失敗</td>
+<td><code>throw runtime_error(...)</code> → orchagent 異常終了</td>
+<td>なし（プロセス再起動）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>6</td>
+<td>キュー数 / キューリスト取得失敗</td>
+<td><code>throw runtime_error(...)</code> → orchagent 異常終了</td>
+<td>なし（プロセス再起動）</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_12">詳細<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h4 id="1a-sai_switch_attr_number_of_fabric_ports-sai-capability">1a. <code>SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS</code> 取得失敗（SAI capability 欠如）<a class="headerlink" href="#1a-sai_switch_attr_number_of_fabric_ports-sai-capability" title="Permanent link">&para;</a></h4>
+<p><code>getFabricPortList()</code> はコンストラクタ起動時と、<code>FABRIC_POLL</code> タイマー発火時に <code>m_getFabricPortListDone=false</code> の場合に呼ばれる（<code>fabricportsorch.cpp:1568-1570</code>）。</p>
+<p><code>sai_switch_api-&gt;get_switch_attribute(SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS)</code> が失敗した場合、<code>handleSaiGetStatus()</code> を呼び出す。<code>task_success</code> 以外が返れば <code>FABRIC_PORT_ERROR (0)</code> を返して関数を終了し、<code>m_getFabricPortListDone</code> は <code>false</code> のまま維持される（<code>fabricportsorch.cpp:172-180</code>）。</p>
+<p>この状態では <code>updateFabricPortState()</code> / <code>updateFabricDebugCounters()</code> が冒頭の <code>if (!m_getFabricPortListDone) return;</code> でスキップされ続けるため、STATE_DB へのファブリックポート状態書き込みと FlexCounter 登録が一切行われない。30 秒ポーリング (<code>FABRIC_POLL</code>) のたびに再試行されるが、SAI が capability を返せる状態になるまでこの状態が継続する。</p>
+<h4 id="1b-1c-fabric_port_list-orchagent">1b / 1c. <code>FABRIC_PORT_LIST</code> / レーン番号取得失敗（orchagent 異常終了）<a class="headerlink" href="#1b-1c-fabric_port_list-orchagent" title="Permanent link">&para;</a></h4>
+<p>ポート数取得後のリスト取得（<code>SAI_SWITCH_ATTR_FABRIC_PORT_LIST</code>）またはレーン番号取得（<code>SAI_PORT_ATTR_HW_LANE_LIST</code>）が失敗した場合は <code>throw runtime_error(...)</code> を送出し、orchagent プロセスが異常終了する（<code>fabricportsorch.cpp:196, 212</code>）。自動リトライ機能はなく、プロセスマネージャ（supervisord）による再起動に依存する。</p>
+<h4 id="2-isolatefabriclink-sai-isolation-state_db-sai">2. <code>isolateFabricLink()</code> — SAI isolation 失敗（STATE_DB / SAI 乖離）<a class="headerlink" href="#2-isolatefabriclink-sai-isolation-state_db-sai" title="Permanent link">&para;</a></h4>
+<p><code>isolateFabricLink()</code> は <code>SAI_PORT_ATTR_FABRIC_ISOLATE</code> 属性を <code>set_port_attribute</code> で設定する。SAI が失敗した場合は <code>SWSS_LOG_ERROR("Failed to set admin status")</code> のみを出力して続行し、<code>task_need_retry</code> を返さない（<code>fabricportsorch.cpp:997-1000</code>）。</p>
+<p>一方、呼び出し元の <code>doFabricPortTask()</code> は isolate / unisolate 処理の前後で STATE_DB の <code>ISOLATED</code> / <code>CONFIG_ISOLATED</code> 等を更新する（<code>fabricportsorch.cpp:1528-1536</code>）。SAI 呼び出しが失敗しても STATE_DB 更新は実行されるため、<strong>STATE_DB では unisolate 状態を示しているにも関わらず、SAI 側ではポートが isolate されたままとなる乖離</strong>が発生する。この乖離は次回ポーリング (<code>FABRIC_DEBUG_POLL</code>) で上書きされるまで解消されない。</p>
+<div class="admonition warning">
+<p class="admonition-title">SAI / STATE_DB 乖離</p>
+<p><code>SAI_PORT_ATTR_FABRIC_ISOLATE</code> の設定失敗はエラーログのみで吸収され、リトライも例外送出もない。STATE_DB は期待値に更新されたまま SAI 側の実際の isolate 状態と乖離する。トラフィック影響が生じても上位レイヤへの通知手段がないため、<code>show fabric counters port</code> での定期確認が必要。</p>
+</div>
+<h4 id="3-silent-drop">3. データ不完全による silent drop<a class="headerlink" href="#3-silent-drop" title="Permanent link">&para;</a></h4>
+<p><code>doFabricPortTask()</code> の SET 処理において、CONFIG_DB からのフィールドが不完全で APPL_DB からの <code>hget</code> 補完も失敗した場合、<code>m_toSync.erase(it)</code> でエントリを消去し次のエントリに移る（<code>fabricportsorch.cpp:1480-1484</code>）。このとき出力されるログは <code>SWSS_LOG_INFO</code> レベルのみであり、デフォルトのログ設定では表示されない。SAI への反映が行われなかったことを知る手段がない。</p>
+<h4 id="4-updatefabricportstate">4. <code>updateFabricPortState()</code> — ポート状態取得失敗<a class="headerlink" href="#4-updatefabricportstate" title="Permanent link">&para;</a></h4>
+<p><code>SAI_PORT_ATTR_FABRIC_ATTACHED</code> の取得失敗時、<code>handleSaiGetStatus()</code> が <code>task_success</code> 以外を返す場合は <code>updateFabricPortState()</code> 全体から即座に <code>return</code> する（<code>fabricportsorch.cpp:360-364</code>）。これにより失敗したポート以降のポートも含めて STATE_DB 更新が行われず、古い状態（前回ポーリング時の値）が残存する。次の <code>FABRIC_POLL</code> タイマー（30 秒）で再試行される。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss</code> <code>orchagent/fabricportsorch.cpp:159-228,277-297,354-414,984-1003,1394-1547</code></p>
+</blockquote>
+<!-- /failure -->
+
 <!-- cross-refs -->
 <h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
 <p><code>FABRIC_PORT</code> テーブルの処理において <code>FabricPortsOrch</code> が暗黙的に参照する他テーブル・外部情報源を示す。YANG 定義に leafref は存在しないが、実装レベルで以下の依存がある。</p>
@@ -36084,7 +36648,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_11">解決タイミング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_13">解決タイミング<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>monState</code> は <code>doFabricPortTask()</code> 呼び出しのたびに毎回評価される（キャッシュなし）。<code>FABRIC_MONITOR.monState</code> を <code>disable</code> → <code>enable</code> に変更しても、その間に届いた <code>FABRIC_PORT</code> の CONFIG_DB 変更は <code>m_toSync</code> から erase 済みのため<strong>自動再適用されない</strong>。</li>
 <li><code>FORCE_UN_ISOLATE</code> は STATE_DB エントリが存在しない場合、デフォルト 0 として比較される。<code>forceUnisolateStatus=0</code> の SET は差分なし（0==0）となり force unisolate が実行されない。</li>
@@ -36095,39 +36659,454 @@
 </blockquote>
 <!-- /cross-refs -->
 
+<!-- hardcoded-constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>FabricPortsOrch</code> はポーリング間隔・FlexCounter 周期・リンク監視閾値のほぼ全てをソース上の <code>#define</code> またはクラスメンバ初期化子に固定している。これらは CONFIG_DB・DEVICE_METADATA・FABRIC_MONITOR のいずれからも変更できない。一部は FABRIC_MONITOR テーブルのフィールド（<code>monPollThreshIsolation</code> 等）で実行時に上書きされるが、上書き不可の定数が多数残る。</p>
+<h3 id="fabricportsorchcpp21-48">ポーリング間隔（<code>fabricportsorch.cpp:21-48</code>）<a class="headerlink" href="#fabricportsorchcpp21-48" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FABRIC_POLLING_INTERVAL_DEFAULT</code></td>
+<td>30 秒</td>
+<td>ポート接続状態・リンク up/down のポーリング周期（<code>m_timer</code>）</td>
+</tr>
+<tr>
+<td><code>FABRIC_DEBUG_POLLING_INTERVAL_DEFAULT</code></td>
+<td>12 秒</td>
+<td>CRC/FEC エラーカウンタ収集・レート計算周期（<code>m_debugTimer</code>）</td>
+</tr>
+<tr>
+<td><code>CHECK_TIME</code></td>
+<td>120 秒</td>
+<td><code>dnLkQueues</code> リンクダウン履歴の保持ウィンドウ幅</td>
+</tr>
+</tbody>
+</table>
+<p>これら 3 値はコンストラクタの <code>SelectableTimer</code> 初期化子（<code>fabricportsorch.cpp:87-88</code>）とポーリング内比較（<code>fabricportsorch.cpp:1350</code>）で直接使われ、外部からの変更手段が存在しない。</p>
+<h3 id="flexcounter-fabricportsorchcpp24-37">FlexCounter 登録間隔（<code>fabricportsorch.cpp:24-37</code>）<a class="headerlink" href="#flexcounter-fabricportsorchcpp24-37" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FABRIC_PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td>10,000 ms (10 秒)</td>
+<td>ポートレベル SAI 統計カウンタ FlexCounter グループの収集間隔</td>
+</tr>
+<tr>
+<td><code>FABRIC_QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td>100,000 ms (100 秒)</td>
+<td>キューレベル SAI 統計カウンタ FlexCounter グループの収集間隔</td>
+</tr>
+<tr>
+<td><code>SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td>500 ms</td>
+<td>通常スイッチドロップカウンタ FlexCounter 間隔</td>
+</tr>
+<tr>
+<td><code>FABRIC_SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td>60,000 ms (60 秒)</td>
+<td>fabric スイッチ専用ドロップカウンタ FlexCounter 間隔</td>
+</tr>
+</tbody>
+</table>
+<p>FlexCounter グループ名（<code>FABRIC_PORT_STAT_COUNTER</code> / <code>FABRIC_QUEUE_STAT_COUNTER</code> / <code>SWITCH_DEBUG_COUNTER</code>）もハードコードされており、<code>FLEX_COUNTER_DB</code> のキー空間を固定する（<code>fabricportsorch.cpp:24-37</code>）。</p>
+<h3 id="config_db">リンク監視閾値 — CONFIG_DB 上書き不可定数<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ</th>
+<th>値</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAX_SKIP_CRCERR_ON_LNKUP_POLLS</code></td>
+<td>20</td>
+<td>リンクアップ直後の CRC エラースキップポーリング回数</td>
+</tr>
+<tr>
+<td><code>MAX_SKIP_FECERR_ON_LNKUP_POLLS</code></td>
+<td>20</td>
+<td>リンクアップ直後の FEC エラースキップポーリング回数</td>
+</tr>
+<tr>
+<td><code>FABRIC_LINK_RATE</code></td>
+<td>44,316</td>
+<td>capacity 計算の単位値（capacity += FABRIC_LINK_RATE per non-isolated port）</td>
+</tr>
+</tbody>
+</table>
+<p><code>MAX_SKIP_*</code> は <code>updateFabricDebugCounters()</code> 内で <code>maxSkipCrcCnt</code> / <code>maxSkipFecCnt</code> に代入されるが（<code>fabricportsorch.cpp:766,817</code>）、FABRIC_MONITOR テーブルのいかなるフィールドでも上書きできず、プラットフォーム差異にも対応しない。</p>
+<h3 id="config_dbfabric_monitor">リンク監視閾値 — CONFIG_DB（FABRIC_MONITOR）で上書き可能なデフォルト<a class="headerlink" href="#config_dbfabric_monitor" title="Permanent link">&para;</a></h3>
+<p>以下は <code>fabricportsorch.cpp:21-48</code> に <code>#define</code> で存在するが、<code>updateFabricDebugCounters()</code> 内で FABRIC_MONITOR フィールドが存在する場合はそちらで上書きされる（<code>fabricportsorch.cpp:444-483</code>）。FABRIC_MONITOR フィールドが欠落している場合のフォールバック値として機能する。</p>
+<table>
+<thead>
+<tr>
+<th>マクロ</th>
+<th>値</th>
+<th>対応 FABRIC_MONITOR フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FEC_ISOLATE_POLLS</code></td>
+<td>2</td>
+<td><code>monPollThreshIsolation</code></td>
+</tr>
+<tr>
+<td><code>FEC_UNISOLATE_POLLS</code></td>
+<td>8</td>
+<td><code>monPollThreshRecovery</code></td>
+</tr>
+<tr>
+<td><code>ISOLATION_POLLS_CFG</code></td>
+<td>1</td>
+<td><code>monPollThreshIsolation</code>（CRC 系）</td>
+</tr>
+<tr>
+<td><code>RECOVERY_POLLS_CFG</code></td>
+<td>8</td>
+<td><code>monPollThreshRecovery</code>（CRC 系）</td>
+</tr>
+<tr>
+<td><code>ERROR_RATE_CRC_CELLS_CFG</code></td>
+<td>1</td>
+<td><code>monErrThreshCrcCells</code></td>
+</tr>
+<tr>
+<td><code>ERROR_RATE_RX_CELLS_CFG</code></td>
+<td>61,035,156</td>
+<td><code>monErrThreshRxCells</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-fabricportsorchh62-68">STATE_DB リセットデフォルト値（<code>fabricportsorch.h:62-68</code>）<a class="headerlink" href="#state_db-fabricportsorchh62-68" title="Permanent link">&para;</a></h3>
+<p><code>forceUnisolateStatus</code> を適用した際に STATE_DB に書き込まれる初期値。クラスメンバ初期化子で固定されており、FABRIC_MONITOR の <code>monPollThreshRecovery</code> とは連動しない。</p>
+<table>
+<thead>
+<tr>
+<th>メンバ</th>
+<th>値</th>
+<th>STATE_DB フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>m_defaultPollWithErrors</code></td>
+<td>0</td>
+<td><code>POLL_WITH_ERRORS</code></td>
+</tr>
+<tr>
+<td><code>m_defaultPollWithNoErrors</code></td>
+<td>8</td>
+<td><code>POLL_WITH_NO_ERRORS</code></td>
+</tr>
+<tr>
+<td><code>m_defaultPollWithFecErrors</code></td>
+<td>0</td>
+<td><code>POLL_WITH_FEC_ERRORS</code></td>
+</tr>
+<tr>
+<td><code>m_defaultPollWithNoFecErrors</code></td>
+<td>8</td>
+<td><code>POLL_WITH_NOFEC_ERRORS</code></td>
+</tr>
+<tr>
+<td><code>m_defaultConfigIsolated</code></td>
+<td>0</td>
+<td><code>CONFIG_ISOLATED</code></td>
+</tr>
+<tr>
+<td><code>m_defaultIsolated</code></td>
+<td>0</td>
+<td><code>ISOLATED</code></td>
+</tr>
+<tr>
+<td><code>m_defaultAutoIsolated</code></td>
+<td>0</td>
+<td><code>AUTO_ISOLATED</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">FABRIC_MONITOR との乖離</p>
+<p><code>monPollThreshRecovery</code> は <code>updateFabricDebugCounters()</code> の自動 unisolate 判定に使われるが、<code>doFabricPortTask()</code> の force unisolate 時の STATE_DB リセット（<code>m_defaultPollWithNoErrors=8</code> / <code>m_defaultPollWithNoFecErrors=8</code>）はこの値と独立している。<code>monPollThreshRecovery</code> を FABRIC_MONITOR で変更しても、force unisolate 後のリセット値には影響しない（<code>fabricportsorch.cpp:1529-1532</code>）。</p>
+</div>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss</code> <code>orchagent/fabricportsorch.cpp:21-48,87-88,766,817,1350,1529-1532</code>、<code>orchagent/fabricportsorch.h:62-68</code></p>
+</blockquote>
+<!-- /hardcoded-constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>詳細証跡: <code>meta/_intermediate/cdb-flow/fabric-port-ordering.md</code></p>
+</blockquote>
+<p><code>FABRIC_PORT</code> テーブルへの変更に起因して <code>FabricPortsOrch</code> が CONFIG_DB 以外の DB へ書き込む副次的書込みと SAI 呼び出しを示す。</p>
+<h3 id="set-force-unisolate-state_db">SET / force unisolate 時 — STATE_DB 書込み<a class="headerlink" href="#set-force-unisolate-state_db" title="Permanent link">&para;</a></h3>
+<p><code>doFabricPortTask()</code> が <code>isolateStatus=False</code> かつ <code>forceUnisolateStatus</code> の差分を検出した場合、<code>STATE_DB FABRIC_PORT_TABLE|&lt;PORT&lt;lane&gt;&gt;</code> に以下を一括書き込む。</p>
+<table>
+<thead>
+<tr>
+<th>STATE_DB テーブル / フィールド</th>
+<th>書込内容</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FABRIC_PORT_TABLE|PORT&lt;lane&gt;.FORCE_UN_ISOLATE</code></td>
+<td>新 <code>forceUnisolateStatus</code> 値</td>
+<td><code>forceUnisolateStatus</code> が STATE_DB 値と異なる場合</td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE|PORT&lt;lane&gt;.POLL_WITH_ERRORS</code></td>
+<td><code>0</code>（ハードコード）</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE|PORT&lt;lane&gt;.POLL_WITH_NO_ERRORS</code></td>
+<td><code>8</code>（ハードコード）</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE|PORT&lt;lane&gt;.POLL_WITH_FEC_ERRORS</code></td>
+<td><code>0</code>（ハードコード）</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE|PORT&lt;lane&gt;.POLL_WITH_NOFEC_ERRORS</code></td>
+<td><code>8</code>（ハードコード）</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE|PORT&lt;lane&gt;.CONFIG_ISOLATED</code></td>
+<td><code>0</code>（ハードコード）</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE|PORT&lt;lane&gt;.ISOLATED</code></td>
+<td><code>0</code>（ハードコード）</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE|PORT&lt;lane&gt;.AUTO_ISOLATED</code></td>
+<td><code>0</code>（ハードコード）</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>FABRIC_PORT_TABLE|PORT&lt;lane&gt;.PRM_ISOLATED</code></td>
+<td><code>0</code>（ハードコード）</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p>書込み後、SAI <code>set_port_attribute(SAI_PORT_ATTR_FABRIC_ISOLATE, false)</code> を呼び出してファブリックポートの isolate 状態を解除する（<code>fabricportsorch.cpp:1537-1542</code>）。</p>
+<h3 id="state_db">タイマーポーリング時 — STATE_DB 書込み<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p><code>FABRIC_POLL</code> タイマー（30 秒周期）が発火するたびに <code>updateFabricPortState()</code> が全ファブリックポートの接続状態を SAI から取得し、<code>STATE_DB FABRIC_PORT_TABLE|PORT&lt;lane&gt;</code> を更新する。</p>
+<table>
+<thead>
+<tr>
+<th>STATE_DB フィールド</th>
+<th>書込内容</th>
+<th>書込条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATUS</code></td>
+<td><code>"up"</code> / <code>"down"</code></td>
+<td>常に上書き</td>
+</tr>
+<tr>
+<td><code>REMOTE_MOD</code></td>
+<td>リモートモジュール番号</td>
+<td>STATUS=up 時のみ</td>
+</tr>
+<tr>
+<td><code>REMOTE_PORT</code></td>
+<td>リモートポート番号</td>
+<td>STATUS=up 時のみ</td>
+</tr>
+<tr>
+<td><code>PORT_DOWN_COUNT</code></td>
+<td>リンクダウン累積回数</td>
+<td>&gt; 0 の場合のみ</td>
+</tr>
+<tr>
+<td><code>PORT_DOWN_SEEN_LAST_TIME</code></td>
+<td>最終リンクダウン時刻</td>
+<td>&gt; 0 の場合のみ</td>
+</tr>
+</tbody>
+</table>
+<p><code>FABRIC_CAPACITY_TABLE|FABRIC_CAPACITY_DATA</code> には <code>updateFabricCapacity()</code> が fabric 容量に関わる集計値を書き込む（<code>fabric_capacity</code>, <code>missing_capacity</code>, <code>operating_links</code>, <code>number_of_links</code>, <code>warning_threshold</code>, <code>last_event</code>, <code>last_event_time</code>）（<code>fabricportsorch.cpp:1225-1231</code>）。</p>
+<h3 id="state_db_1">タイマーポーリング時 — STATE_DB デバッグカウンタ書込み<a class="headerlink" href="#state_db_1" title="Permanent link">&para;</a></h3>
+<p><code>FABRIC_DEBUG_POLL</code> タイマー（12 秒周期、<code>monState=enable</code> 時のみ動作）が発火すると <code>updateFabricDebugCounters()</code> が各ポートの CRC/FEC エラー率を計算し STATE_DB を更新する。</p>
+<table>
+<thead>
+<tr>
+<th>STATE_DB フィールド</th>
+<th>書込内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POLL_WITH_ERRORS</code></td>
+<td>連続エラー検出ポーリング数</td>
+</tr>
+<tr>
+<td><code>POLL_WITH_NO_ERRORS</code></td>
+<td>連続エラーなしポーリング数</td>
+</tr>
+<tr>
+<td><code>POLL_WITH_FEC_ERRORS</code></td>
+<td>連続 FEC エラー検出ポーリング数</td>
+</tr>
+<tr>
+<td><code>POLL_WITH_NOFEC_ERRORS</code></td>
+<td>連続 FEC エラーなしポーリング数</td>
+</tr>
+<tr>
+<td><code>CONFIG_ISOLATED</code></td>
+<td>CONFIG_DB <code>isolateStatus</code> 由来の isolate フラグ</td>
+</tr>
+<tr>
+<td><code>ISOLATED</code></td>
+<td>実効 isolate 状態（cfgIsolated OR autoIsolated OR permIsolated）</td>
+</tr>
+<tr>
+<td><code>AUTO_ISOLATED</code></td>
+<td>FABRIC_MONITOR 自動 isolate フラグ</td>
+</tr>
+<tr>
+<td><code>PRM_ISOLATED</code></td>
+<td>永続 isolate フラグ</td>
+</tr>
+<tr>
+<td><code>RX_CELLS</code></td>
+<td>直近ポーリング期間の受信セル数</td>
+</tr>
+<tr>
+<td><code>CRC_ERRORS</code></td>
+<td>直近ポーリング期間の CRC エラー数</td>
+</tr>
+<tr>
+<td><code>CODE_ERRORS</code></td>
+<td>直近ポーリング期間のコードエラー数</td>
+</tr>
+<tr>
+<td><code>OLD_RX_RATE_AVG</code></td>
+<td>移動平均 RX レート（<code>updateFabricRate()</code> が書込み）</td>
+</tr>
+<tr>
+<td><code>OLD_RX_DATA</code></td>
+<td>前回 RX データ量スナップショット</td>
+</tr>
+<tr>
+<td><code>OLD_TX_RATE_AVG</code></td>
+<td>移動平均 TX レート</td>
+</tr>
+<tr>
+<td><code>OLD_TX_DATA</code></td>
+<td>前回 TX データ量スナップショット</td>
+</tr>
+<tr>
+<td><code>LAST_TIME</code></td>
+<td>最終レート計算タイムスタンプ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="counters_db-flexcounter">初期化時 — COUNTERS_DB 書込み（FlexCounter 名前マップ）<a class="headerlink" href="#counters_db-flexcounter" title="Permanent link">&para;</a></h3>
+<p><code>getFabricPortList()</code> 完了後、<code>generatePortStats()</code> / <code>generateQueueStats()</code> が以下を COUNTERS_DB に書き込む。これらは 1 回のみ書き込まれ、以降は更新されない。</p>
+<table>
+<thead>
+<tr>
+<th>COUNTERS_DB テーブル / キー</th>
+<th>書込内容</th>
+<th>トリガー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_FABRIC_PORT_NAME_MAP|""</code></td>
+<td><code>Fabric&lt;lane&gt;</code> → SAI port OID マッピング</td>
+<td><code>generatePortStats()</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_FABRIC_QUEUE_NAME_MAP|""</code></td>
+<td><code>Fabric&lt;lane&gt;:0</code> → SAI queue OID マッピング</td>
+<td><code>generateQueueStats()</code>（<code>m_fabricQueueStatEnabled</code> が真の場合のみ）</td>
+</tr>
+<tr>
+<td><code>COUNTERS_TABLE|&lt;port_oid&gt;</code></td>
+<td>FlexCounter グループ <code>FABRIC_PORT_STAT_COUNTER</code> 登録</td>
+<td><code>generatePortStats()</code>（<code>m_fabricPortStatEnabled</code> が真の場合）</td>
+</tr>
+<tr>
+<td><code>COUNTERS_TABLE|&lt;queue_oid&gt;</code></td>
+<td>FlexCounter グループ <code>FABRIC_QUEUE_STAT_COUNTER</code> 登録</td>
+<td><code>generateQueueStats()</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP|""</code></td>
+<td><code>SWITCH_STANDARD_DROP_COUNTERS</code> → SAI switch OID</td>
+<td><code>createSwitchDropCounters()</code>（<code>gMySwitchType == "voq"</code> または <code>"fabric"</code> 時）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss</code> <code>orchagent/fabricportsorch.cpp:94-101,231-256,258-323,1225-1231,1374-1386,1528-1542,1620-1628</code>、<code>orchagent/fabricportsorch.h:14-15</code></p>
+</blockquote>
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_14">関連リファレンス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-fabric-port/"><code>sonic-fabric-port</code></a></li>
 <li>CLI: <code>config fabric</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
-<h2 id="_14">関連ページ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_15">引用元<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_16">関連ページ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a> ページ: <code>FABRIC_MONITOR</code>（本バッチで追加）</li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_15">運用ヒント<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
-<h3 id="_16">典型値<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h2 id="_17">運用ヒント<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h3 id="_18">典型値<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>FABRIC_PORT|&lt;Fabric&gt;</code>。</li>
 <li><code>admin_status</code>: <code>up</code>、<code>isolate_status</code>: <code>False</code>、<code>lanes</code>: プラットフォーム既定値。</li>
 </ul>
-<h3 id="_17">よくある誤設定<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_19">よくある誤設定<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <ul>
 <li>isolate_status=True のままにすると <a href="../../glossary/#term-voq">VOQ</a> chassis 内で fabric リンクが trunk から外れたまま戻らない。</li>
 </ul>
-<h3 id="_18">確認コマンド<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_20">確認コマンド<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FABRIC_PORT|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>fabric<span class="w"> </span>counters<span class="w"> </span>port
 </span></code></pre></div>
 <!-- /ops-hint -->
 
 <!-- cdb-exceptions -->
-<h2 id="_19">例外条件・特殊挙動<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
+<h2 id="_21">例外条件・特殊挙動<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -36175,7 +37154,7 @@
 <!-- /cdb-exceptions -->
 
 <!-- runtime-trace -->
-<h2 id="_20">実コンテナ動作トレース<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
+<h2 id="_22">実コンテナ動作トレース<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <p><code>fabricmgrd</code> → <code>FabricPortsOrch</code> (APPL_DB 経由) が CONFIG_DB の <code>FABRIC_PORT</code> テーブルを購読する。</p>
 <p><code>FABRIC_PORT</code> は Chassis の fabric ASIC ポートを管理。通常の ToR では使用しない。</p>
@@ -36212,11 +37191,11 @@
 <ul>
 <li>プラットフォーム <code>platform.json</code> から fabric ポート一覧が <code>sonic-cfggen</code> 経由で生成</li>
 </ul>
-<h3 id="_21">ハードコードデフォルト<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<h3 id="_23">ハードコードデフォルト<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_22">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<h3 id="_24">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>

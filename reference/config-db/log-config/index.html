@@ -26509,7 +26509,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-vs-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動前 SET vs 起動後 SET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL は稼動中デーモンに反映されない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-silently-ignored" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        未登録コンポーネント名への SET は silently ignored
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -26520,7 +26592,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -26542,7 +26614,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -26553,7 +26625,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34882,7 +34954,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他テーブル先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-vs-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動前 SET vs 起動後 SET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL は稼動中デーモンに反映されない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-silently-ignored" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        未登録コンポーネント名への SET は silently ignored
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約
@@ -34893,7 +35037,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34915,7 +35059,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34926,7 +35070,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35042,13 +35186,65 @@
 </ul>
 <!-- /defaults -->
 
-<h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>Logger::linkToDbWithOutput()</code> / <code>settingThread()</code> (<code>sonic-swss-common/common/logger.cpp</code>) を全行精読した結果、以下の順序依存・タイミング依存を検出した。中間ノート: <code>meta/_intermediate/cdb-flow/log-config-ordering.md</code>。</p>
+<h3 id="_4">他テーブル先行必須<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>LOGGER テーブルは <code>VLAN</code>・<code>PORT</code>・<code>DEVICE_METADATA</code> 等の他テーブルを参照しない。<strong>他テーブルに対する先行条件は存在しない</strong>。</p>
+<h3 id="set-vs-set">起動前 SET vs 起動後 SET<a class="headerlink" href="#set-vs-set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>挙動</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>デーモン起動前</strong> に CONFIG_DB に <code>LOGLEVEL</code> を SET</td>
+<td><code>linkToDbWithOutput()</code> が <code>table.hget()</code> で既存値を読み出し、デフォルト上書きをスキップして即座に適用</td>
+<td><code>logger.cpp:132-148</code></td>
+</tr>
+<tr>
+<td><strong>デーモン起動後</strong> に <code>LOGLEVEL</code> を SET</td>
+<td><code>settingThread</code> が <code>SubscriberStateTable</code> でリアルタイム変更を受け取り反映。SELECT タイムアウトにより最大 <strong>1000 ms</strong> の適用遅延あり</td>
+<td><code>logger.cpp:192-263</code></td>
+</tr>
+</tbody>
+</table>
+<p>どちらのタイミングでも機能するが、起動前設定の方がデフォルト上書きコストがなく確実。</p>
+<h3 id="del">DEL は稼動中デーモンに反映されない<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>settingThread</code> (L237-238) は <code>op != SET_COMMAND</code> の場合 <code>continue</code> して無視する。</li>
+<li>LOGGER エントリを DEL しても稼動中デーモンの loglevel は変化しない。</li>
+<li>デーモン再起動時に <code>linkToDbWithOutput()</code> がデフォルト値でエントリを再書き込みする。</li>
+</ul>
+<p>evidence: <code>logger.cpp:237-238</code></p>
+<h3 id="set-silently-ignored">未登録コンポーネント名への SET は silently ignored<a class="headerlink" href="#set-silently-ignored" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>settingThread</code> (L238) は <code>!m_settingChangeObservers.contains(key)</code> の場合スキップ。</li>
+<li>存在しないコンポーネント名への SET はエラーなく無視される。コンポーネント名は <code>swssloglevel -p</code> で確認すること。</li>
+</ul>
+<h3 id="_5">推奨書込み順序<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a># LOGGER テーブルは他テーブルに対する先行条件がないため任意タイミングで SET 可能。
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a># (推奨) デーモン起動前に事前設定:
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>SET CONFIG_DB LOGGER|orchagent  LOGLEVEL=DEBUG  LOGOUTPUT=SYSLOG
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>SET CONFIG_DB LOGGER|syncd      LOGLEVEL=INFO   LOGOUTPUT=SYSLOG
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a># デーモン起動後でも SET_COMMAND はリアルタイム反映される (最大 1000 ms 遅延):
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>SET CONFIG_DB LOGGER|orchagent  LOGLEVEL=NOTICE
+</span></code></pre></div>
+<!-- /ordering -->
+
+<h2 id="_6">制約<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>LOGLEVEL</code> は <code>mandatory true</code>（YANG）。エントリ作成時に必須</li>
 <li>swss コンポーネントと SAI コンポーネントで loglevel の enum 型が異なる（<code>swss_loglevel</code> vs <code>sai_loglevel</code>）</li>
 <li><code>swssloglevel</code> ツール（<code>-s</code> フラグ）で SAI コンポーネントを区別して操作可能</li>
 </ul>
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>各デーモン</strong> (<code>orchagent</code>、<code>syncd</code> 等): <code>Logger::settingThread()</code> が <code>CFG_LOGGER_TABLE_NAME</code> を <code>SubscriberStateTable</code> で購読し、<code>LOGLEVEL</code>/<code>LOGOUTPUT</code> 変更をリアルタイム反映</li>
 <li><strong><code>swssloglevel</code> コマンド</strong>: <code>sonic-swss-common/common/loglevel.cpp</code> — CLI から <code>LOGGER</code> テーブルを直接書き込む</li>
@@ -35060,13 +35256,13 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../yang/sonic-logger.md">YANG: sonic-logger</a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: placeholder -->
 
 <div class="footnote">

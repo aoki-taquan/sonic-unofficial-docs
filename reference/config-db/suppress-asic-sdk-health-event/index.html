@@ -29222,6 +29222,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initasicsdkhealtheventnotification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時 (initAsicSdkHealthEventNotification) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI エラーのサイレント消費に関する注意
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35530,6 +35602,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initasicsdkhealtheventnotification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時 (initAsicSdkHealthEventNotification) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI エラーのサイレント消費に関する注意
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36143,6 +36287,161 @@ orchagent 起動時の <code>initAsicSdkHealthEventNotification()</code> 内で�
 CONFIG_DB エントリが存在しない severity は全カテゴリを購読（= 抑制なし）。</p>
 </div>
 <!-- /cross-refs -->
+
+<hr />
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-failure.md</code></p>
+</blockquote>
+<p>Consumer: <code>SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()</code> (<code>orchagent/switchorch.cpp:1410-1491</code>)</p>
+<h3 id="set">SET 時の失敗パターン<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>key が空文字列</td>
+<td><code>doTask()</code> L1425-1430</td>
+<td><code>SWSS_LOG_ERROR("Failed to parse switch hash key: empty string")</code> → <code>erase(it)</code> でエントリ破棄</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>severity が未知の値 (<code>fatal</code>/<code>warning</code>/<code>notice</code> 以外)</td>
+<td><code>doTask()</code> L1432-1442</td>
+<td><code>SWSS_LOG_ERROR("Unknown severity %s in SUPPRESS_ASIC_SDK_HEALTH_EVENT table")</code> → <code>erase(it)</code> でエントリ破棄</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>プラットフォームが該当 severity をサポートしない</td>
+<td><code>doTask()</code> L1455-1461</td>
+<td><code>SWSS_LOG_NOTICE("Unsupport to register categories on severity %d")</code> → <code>erase(it)</code> でエントリ破棄</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>categories</code> フィールドに未知の category 文字列</td>
+<td><code>registerAsicSdkHealthEventCategories()</code> L1378-1386</td>
+<td><code>SWSS_LOG_ERROR("Unknown ASIC/SDK health category %s to suppress")</code> → その値のみスキップ、残りの categories で処理継続</td>
+<td>なし（不正値を除いて継続）</td>
+</tr>
+<tr>
+<td>SAI <code>set_switch_attribute</code> 失敗</td>
+<td><code>registerAsicSdkHealthEventCategories()</code> L1404-1407</td>
+<td><code>SWSS_LOG_ERROR("Failed to register ASIC/SDK health event categories for severity %s, status: %s")</code> → エントリは正常消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>不明な op コマンド</td>
+<td><code>doTask()</code> L1484-1487</td>
+<td><code>SWSS_LOG_ERROR("Unknown operation(%s)")</code> → <code>erase(it)</code> でエントリ破棄</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 時の失敗パターン<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>key が空文字列</td>
+<td><code>doTask()</code> L1425-1430</td>
+<td>SET 時と同様。<code>SWSS_LOG_ERROR</code> → <code>erase(it)</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>severity が未知の値</td>
+<td><code>doTask()</code> L1432-1442</td>
+<td>SET 時と同様。<code>SWSS_LOG_ERROR</code> → <code>erase(it)</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>SAI <code>set_switch_attribute</code> 失敗（抑制解除失敗）</td>
+<td><code>registerAsicSdkHealthEventCategories()</code> L1404-1407</td>
+<td><code>SWSS_LOG_ERROR</code> → エントリは正常消費。SAI の抑制解除が反映されない状態が継続</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="initasicsdkhealtheventnotification">起動時 (<code>initAsicSdkHealthEventNotification</code>) の失敗パターン<a class="headerlink" href="#initasicsdkhealtheventnotification" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI が health event 通知をサポートしない</td>
+<td><code>switchorch.cpp:218-253</code></td>
+<td><code>SWSS_LOG_NOTICE("ASIC/SDK health event is not supported")</code> → <code>STATE_DB SWITCH_CAPABILITY</code> に <code>false</code> 書き込み → 全 severity の初期登録をスキップして return</td>
+</tr>
+<tr>
+<td>SAI コールバック登録失敗</td>
+<td><code>switchorch.cpp:224-228</code></td>
+<td><code>SWSS_LOG_ERROR("Failed to register ASIC/SDK health event handler: %s")</code> → <code>supported=false</code> → 全 severity の初期登録をスキップ</td>
+</tr>
+<tr>
+<td>Lua スクリプト (<code>eliminate_events.lua</code>) ロード失敗</td>
+<td><code>switchorch.cpp:280-297</code></td>
+<td><code>SWSS_LOG_ERROR("Unable to load the Lua script to eliminate events")</code> → <code>max_events</code> によるイベント削除タイマーが機能しない。SUPPRESS 設定の処理は継続</td>
+</tr>
+</tbody>
+</table>
+<h3 id="retry">retry 挙動まとめ<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>シナリオ</th>
+<th>retry 上限</th>
+<th>解消トリガー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>key 空文字 / severity 不明</td>
+<td><strong>0 回</strong>（即 erase）</td>
+<td>CONFIG 修正 + 再投入が必要</td>
+</tr>
+<tr>
+<td>プラットフォーム非対応 severity</td>
+<td><strong>0 回</strong>（即 erase）</td>
+<td>プラットフォーム変更以外に解消手段なし</td>
+</tr>
+<tr>
+<td><code>categories</code> 内の不明な値</td>
+<td>なし（値をスキップして継続）</td>
+<td>影響: 不正値が参照するカテゴリは抑制されず全購読になる</td>
+</tr>
+<tr>
+<td>SAI <code>set_switch_attribute</code> 失敗</td>
+<td><strong>0 回</strong>（ログのみ、正常消費）</td>
+<td>なし。orchagent はエラーログのみで処理継続</td>
+</tr>
+<tr>
+<td>SAI 非対応（起動時）</td>
+<td><strong>0 回</strong>（全件スキップ）</td>
+<td>ASIC が当該 SAI 属性に対応するまで機能しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai">SAI エラーのサイレント消費に関する注意<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<p><code>registerAsicSdkHealthEventCategories()</code> は <code>void</code> 関数であり、SAI 失敗時に呼び出し元へ <code>false</code> を返さない。このため <code>doCfgSuppressAsicSdkHealthEventTableTask()</code> は SAI 設定成否に関わらずエントリを <code>erase(it)</code> で消費し、次のエントリへ進む（<code>switchorch.cpp:1489</code>）。SAI 登録失敗が発生しても orchagent 内の <code>m_supportedAsicSdkHealthEventAttributes</code> は変化せず、<strong>その severity の health event フィルタが意図通り設定されない状態が永続する</strong>。復旧には当該エントリを再投入（DEL → SET）するか orchagent を再起動する必要がある。</p>
+<!-- /failure -->
 
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>

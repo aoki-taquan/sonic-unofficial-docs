@@ -26846,6 +26846,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#task-f-phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込順依存 (Task F Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込順依存 (Task F Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buffer_pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_POOL 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default_lossless_buffer_parameter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEFAULT_LOSSLESS_BUFFER_PARAMETER 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lossless_traffic_pattern_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LOSSLESS_TRAFFIC_PATTERN 自身の存在必須制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_dbasic_table-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB.ASIC_TABLE 先行必須 (Mellanox のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35446,6 +35507,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#task-f-phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込順依存 (Task F Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込順依存 (Task F Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buffer_pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_POOL 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default_lossless_buffer_parameter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEFAULT_LOSSLESS_BUFFER_PARAMETER 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lossless_traffic_pattern_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LOSSLESS_TRAFFIC_PATTERN 自身の存在必須制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_dbasic_table-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB.ASIC_TABLE 先行必須 (Mellanox のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35795,6 +35917,109 @@
 <p><strong>スキャン証跡</strong>: <code>buffers_config.j2</code> L342-347 全行読了、<code>db_migrator.py</code> L414 確認、<code>buffer_headroom_mellanox.lua</code> L91-102, 146-147 全行読了、<code>buffer_headroom_barefoot.lua</code> L80-90, 114 全行読了、<code>sonic-lossless-traffic-pattern.yang</code> 全行読了。</p>
 </blockquote>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="task-f-phase-b">書込順依存 (Task F Phase B)<a class="headerlink" href="#task-f-phase-b" title="Permanent link">&para;</a></h2>
+<p><code>LOSSLESS_TRAFFIC_PATTERN</code> はベンダー別 Lua プラグイン (<code>buffer_headroom_&lt;vendor&gt;.lua</code>) が
+<code>buffermgrdyn</code> から呼び出された際に CONFIG_DB から直接参照される。
+そのため、ヘッドルーム計算が走るより前にこのテーブルが CONFIG_DB に存在していなければならない。</p>
+<h3 id="buffer_pool">BUFFER_POOL 先行必須<a class="headerlink" href="#buffer_pool" title="Permanent link">&para;</a></h3>
+<p><code>buffermgrdyn</code> はヘッドルーム計算全体を <code>m_bufferPoolReady</code> フラグで制御する。
+<code>m_bufferPoolReady == false</code> の間は Lua プラグイン自体が呼び出されないため、
+<code>LOSSLESS_TRAFFIC_PATTERN</code> が CONFIG_DB に存在していても headroom 計算は実行されない。</p>
+<table>
+<thead>
+<tr>
+<th>依存テーブル</th>
+<th>理由</th>
+<th>違反時の挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_POOL</code></td>
+<td><code>m_bufferPoolReady == false</code> のままでは Lua プラグインが呼ばれない</td>
+<td>BUFFER_PROFILE の APPL_DB 書き込みがデファー。pool 登録後に <code>handlePendingBufferObjects()</code> が一括適用</td>
+<td><code>buffermgrdyn.cpp:892-896</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="default_lossless_buffer_parameter">DEFAULT_LOSSLESS_BUFFER_PARAMETER 先行必須<a class="headerlink" href="#default_lossless_buffer_parameter" title="Permanent link">&para;</a></h3>
+<p><code>buffermgrdyn</code> は <code>m_defaultThreshold</code> が空の場合もヘッドルーム計算をデファーする。
+<code>m_defaultThreshold</code> は <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> の <code>default_dynamic_th</code> フィールドから取得する。
+また Lua プラグイン自身も <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> テーブルを直接参照する。</p>
+<table>
+<thead>
+<tr>
+<th>依存テーブル</th>
+<th>理由</th>
+<th>違反時の挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code></td>
+<td><code>m_defaultThreshold.empty()</code> でデファー。Lua 内でも <code>KEYS DEFAULT_LOSSLESS_BUFFER_PARAMETER*</code> + <code>HGET over_subscribe_ratio</code> を直接読む</td>
+<td>BUFFER_PROFILE の APPL_DB 書き込みがデファー</td>
+<td><code>buffermgrdyn.cpp:1460</code> / <code>buffer_headroom_mellanox.lua:105-106</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="lossless_traffic_pattern_1">LOSSLESS_TRAFFIC_PATTERN 自身の存在必須制約<a class="headerlink" href="#lossless_traffic_pattern_1" title="Permanent link">&para;</a></h3>
+<p><code>buffer_headroom_&lt;vendor&gt;.lua</code> は <code>KEYS 'LOSSLESS_TRAFFIC_PATTERN*'</code> でキー一覧を取得し、
+<code>lossless_traffic_keys[1]</code> に対して <code>HGETALL</code> を実行する。
+エントリが 0 件の場合 <code>lossless_traffic_keys[1]</code> は <code>nil</code> となり、
+<code>HGETALL nil</code> が Lua エラーとなってヘッドルーム計算全体が失敗する。
+その結果、動的バッファモデルにおける全ロスレスポートの BUFFER_PROFILE が
+APPL_DB に転送されず、PFC ヘッドルームが設定されない状態になる。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LOSSLESS_TRAFFIC_PATTERN</code> エントリが 0 件</td>
+<td><code>lossless_traffic_keys[1]</code> が nil → <code>HGETALL nil</code> → Lua エラー → headroom 計算失敗</td>
+<td><code>buffer_headroom_mellanox.lua:91-94</code></td>
+</tr>
+<tr>
+<td><code>LOSSLESS_TRAFFIC_PATTERN</code> エントリが 0 件 (Barefoot)</td>
+<td>同様: <code>lossless_traffic_keys[1]</code> が nil → <code>HGETALL nil</code> → エラー</td>
+<td><code>buffer_headroom_barefoot.lua:80-83</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_dbasic_table-mellanox">STATE_DB.ASIC_TABLE 先行必須 (Mellanox のみ)<a class="headerlink" href="#state_dbasic_table-mellanox" title="Permanent link">&para;</a></h3>
+<p>Mellanox 向け Lua プラグインは STATE_DB の <code>ASIC_TABLE</code> から <code>cell_size</code>、<code>pipeline_latency</code>、
+<code>mac_phy_delay</code>、<code>peer_response_time</code> を読み込む。
+これらは LOSSLESS_TRAFFIC_PATTERN の値 (<code>mtu</code>、<code>small_packet_percentage</code>) とともに
+ヘッドルーム計算式に入力される。</p>
+<table>
+<thead>
+<tr>
+<th>依存テーブル</th>
+<th>理由</th>
+<th>違反時の挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_DB.ASIC_TABLE</code> (Mellanox)</td>
+<td><code>cell_size</code> 等の ASIC パラメータが取得できなければ計算式が <code>nil</code> 演算でエラー</td>
+<td>headroom 計算失敗 → BUFFER_PROFILE が APPL_DB に転送されない</td>
+<td><code>buffer_headroom_mellanox.lua:61-80</code></td>
+</tr>
+</tbody>
+</table>
+<p>詳細スキャンノートは <code>meta/_intermediate/cdb-flow/lossless-traffic-pattern-ordering.md</code> を参照。</p>
+<!-- /ordering -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">

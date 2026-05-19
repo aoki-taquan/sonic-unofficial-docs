@@ -29707,6 +29707,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#device_metadatalocalhost-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34955,6 +34966,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#device_metadatalocalhost-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35265,6 +35287,76 @@ APPL_DB テーブルへの書き込みを直接受け取るための ZeroMQ ベ�
 <p><strong>lazy bind による「ハンドラ登録 → bind」順序保証 (依存 #2)</strong>: <code>create_zmq_server()</code> (<code>orch_zmq_config.cpp:64-79</code>) は lazy bind モード (<code>lazy=true</code>) で <code>ZmqServer</code> を生成し、<code>main.cpp:1036</code> で全ハンドラ登録完了後に初めて <code>bind()</code> を呼ぶ。これにより「ハンドラ未登録状態で ZMQ メッセージを受信してドロップする」競合を防ぐ。起動シーケンスは固定: <code>create_zmq_server()</code> → <code>orchDaemon-&gt;init()</code> (全ハンドラ登録) → <code>zmq_server-&gt;bind()</code> → <code>orchDaemon-&gt;start()</code> の順（evidence: <code>main.cpp:646-654</code>, <code>main.cpp:1032-1040</code>）。</p>
 <p><strong>ZmqConsumer の ordered キューと順序保証 (依存 #5)</strong>: <code>ZmqOrch::addConsumer()</code> (<code>zmqorch.cpp:59-78</code>) は <code>orderedQueue=true</code> のとき <code>ZmqConsumerStateTable</code> を ordered モードで生成する。ordered モードでは <code>execute()</code> がエントリを <code>m_queue</code> に蓄積し、<code>drain()</code> で <code>doTask()</code> を呼ぶことで同一テーブル内の SET/DEL 順序が保たれる。非 ordered モードは従来の <code>m_toSync</code> を使う（evidence: <code>zmqorch.cpp:8-33</code>）。</p>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照マップ (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp; sonic-swss/orchagent/orchdaemon.cpp; sonic-swss/fpmsyncd/routesync.cpp; sonic-buildimage/dockers/docker-orchagent/orch_zmq_tables.conf.j2 -->
+
+<p>ZMQ 関連フィールドは独立テーブルを持たず <code>DEVICE_METADATA|localhost</code> / <code>DPU|&lt;name&gt;</code> に分散している。それぞれが参照先・参照元となる外部テーブルとの関係を示す。</p>
+<table>
+<thead>
+<tr>
+<th>参照方向</th>
+<th>このフィールド</th>
+<th>相手テーブル / ページ</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>→ DEVICE_METADATA 読み取り</td>
+<td><code>orch_northbond_dash_zmq_enabled</code></td>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a></td>
+<td><code>get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true)</code> が起動時に CONFIG_DB <code>DEVICE_METADATA\|localhost</code> を直接 <code>hget</code>。存在しない場合は <code>true</code> (DASH ZMQ 有効) (<code>orch_zmq_config.cpp:88</code>)</td>
+</tr>
+<tr>
+<td>→ DEVICE_METADATA 読み取り</td>
+<td><code>orch_northbond_route_zmq_enabled</code></td>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a></td>
+<td><code>create_local_zmq_client(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false)</code> が同様に <code>hget</code>。存在しない場合は <code>false</code> (ROUTE ZMQ 無効) (<code>routesync.cpp:155</code>)</td>
+</tr>
+<tr>
+<td>→ DPU 読み取り</td>
+<td><code>orchagent_zmq_port</code></td>
+<td><a href="../dpu/"><code>dpu</code></a></td>
+<td><code>gnmi-native.sh</code> / <code>orchagent.sh</code> が <code>DPU\|&lt;name&gt;</code> の <code>orchagent_zmq_port</code> を読み取り ZMQ 接続ポートを決定。YANG 定義: <code>sonic-smart-switch.yang:176-179</code></td>
+</tr>
+<tr>
+<td>DEVICE_METADATA →</td>
+<td><code>subtype == "SmartSwitch"</code></td>
+<td><a href="../smart-switch/"><code>smart-switch</code></a></td>
+<td><code>orchagent.sh</code> が <code>subtype</code> を参照して ZMQ アドレスを <code>tcp://eth0-midplane</code> または <code>tcp://127.0.0.1</code> に切り替える (<code>orchagent.sh:105-118</code>)</td>
+</tr>
+<tr>
+<td>DEVICE_METADATA →</td>
+<td><code>switch_type == "dpu"</code></td>
+<td><a href="../smart-switch/"><code>smart-switch</code></a></td>
+<td><code>orchagent.sh:38-39</code> が <code>switch_type</code> を参照して <code>-z zmq_sync -k 65536</code> を orchagent 起動引数に付与。ZMQ 同期モードが強制される</td>
+</tr>
+<tr>
+<td>フラグ有効 → APPL_DB 書き込み先</td>
+<td><code>orch_northbond_dash_zmq_enabled=true</code></td>
+<td>APPL_DB <code>DASH_*</code> テーブル群 (22 種)</td>
+<td><code>orch_zmq_tables.conf.j2</code> で conf に追記された DASH テーブル群が ZMQ 経由でオーケストレータに直接届く。無効時は gNMI が Redis ProducerStateTable を使用</td>
+</tr>
+<tr>
+<td>フラグ有効 → APPL_DB 書き込み先</td>
+<td><code>orch_northbond_route_zmq_enabled=true</code></td>
+<td>APPL_DB <code>ROUTE_TABLE</code> / <code>LABEL_ROUTE_TABLE</code></td>
+<td><code>fpmsyncd</code> が <code>ZmqProducerStateTable</code> 経由で直接 orchagent に送信。無効時は Redis 経由 (<code>orch_zmq_config.cpp:117-140</code>)</td>
+</tr>
+<tr>
+<td>設定ファイル生成</td>
+<td><code>orch_northbond_dash_zmq_enabled</code> / <code>orch_northbond_route_zmq_enabled</code></td>
+<td><code>/etc/swss/orch_zmq_tables.conf</code></td>
+<td><code>orch_zmq_tables.conf.j2</code> の Jinja2 テンプレートが CONFIG_DB のフラグを参照して実行時設定ファイルを生成。orchagent の <code>load_zmq_tables()</code> がこのファイルを読む (<code>orch_zmq_config.cpp:18-33</code>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>ポイント</strong>: <code>orch_northbond_*_zmq_enabled</code> フラグは orchagent <strong>起動時</strong> のみ評価され、その後 <code>DEVICE_METADATA</code> の変更をサブスクライブしない。フラグを変更した場合は orchagent の再起動が必要。<code>orchagent.sh</code> は起動シェルスクリプトであるため、フラグ変更後のコンテナ再起動で新しい設定ファイルが生成され、新しい orchagent プロセスが新設定で起動する。</p>
+</blockquote>
+<!-- /cross-refs -->
 
 <hr />
 <h2 id="device_metadatalocalhost-zmq">DEVICE_METADATA|localhost の ZMQ フィールド<a class="headerlink" href="#device_metadatalocalhost-zmq" title="Permanent link">&para;</a></h2>

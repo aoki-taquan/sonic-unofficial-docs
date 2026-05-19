@@ -26424,7 +26424,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-fixed-replication_ip_multicast_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: FIXED テーブル → REPLICATION_IP_MULTICAST_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-replication-multicast_router_interface_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: REPLICATION テーブル → MULTICAST_ROUTER_INTERFACE_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-fixed-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: FIXED テーブル → VRF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -26435,7 +26507,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約事項
@@ -26446,7 +26518,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34970,7 +35042,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-fixed-replication_ip_multicast_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: FIXED テーブル → REPLICATION_IP_MULTICAST_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-replication-multicast_router_interface_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: REPLICATION テーブル → MULTICAST_ROUTER_INTERFACE_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-fixed-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: FIXED テーブル → VRF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34981,7 +35125,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約事項
@@ -34992,7 +35136,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35338,7 +35482,82 @@
 <p>RPF group は最初の IPMC エントリ追加時に自動作成され (<code>createDefaultRpfGroup()</code>)、全エントリ削除時に自動削除される<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <!-- /defaults -->
 
-<h2 id="_3">購読者<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>ip_multicast_manager.cpp</code> <code>validateSetIpMulticastEntry()</code> L493-533、<code>validateIpMulticastEntry()</code> L471-491、<code>l3_multicast_manager.cpp</code> <code>validateReplicas()</code> L978-1057 全行精読。
+evidence: <code>meta/_intermediate/cdb-flow/ip-mcast-route-ordering.md</code></p>
+</blockquote>
+<p>P4RT フレームワークは依存オブジェクトが未存在の場合に即座に <code>SWSS_RC_NOT_FOUND</code> を返す。<strong>pending キューや自動 retry は存在しない</strong>。コントローラ (<code>p4rt-app</code>) が依存関係を守った順序で書き込む必要がある。</p>
+<h3 id="_3">検出された順序依存<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>書き込みテーブル</th>
+<th>必須先行</th>
+<th>不成立時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code></td>
+<td><code>REPLICATION_IP_MULTICAST_TABLE</code> (同一 <code>multicast_group_id</code>)</td>
+<td>即時 <code>SWSS_RC_NOT_FOUND</code>・エントリ破棄</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>REPLICATION_IP_MULTICAST_TABLE</code></td>
+<td><code>MULTICAST_ROUTER_INTERFACE_TABLE</code> (全 replica の <code>(port, instance)</code>)</td>
+<td>即時 <code>SWSS_RC_NOT_FOUND</code>・エントリ破棄</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code></td>
+<td>VRF (VrfOrch) — 非空 <code>vrf_id</code> のみ</td>
+<td>即時 <code>SWSS_RC_NOT_FOUND</code>・エントリ破棄</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-fixed-replication_ip_multicast_table">依存 1: FIXED テーブル → REPLICATION_IP_MULTICAST_TABLE<a class="headerlink" href="#1-fixed-replication_ip_multicast_table" title="Permanent link">&para;</a></h3>
+<p><code>validateSetIpMulticastEntry()</code> (<code>ip_multicast_manager.cpp:L509-514</code>) が <code>param/multicast_group_id</code> を
+P4OidMapper で検索し、<code>SAI_OBJECT_TYPE_IPMC_GROUP</code> の OID が未登録の場合は即座にエラーを返す:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">m_p4OidMapper</span><span class="o">-&gt;</span><span class="n">existsOID</span><span class="p">(</span><span class="n">SAI_OBJECT_TYPE_IPMC_GROUP</span><span class="p">,</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">                              </span><span class="n">ip_multicast_entry</span><span class="p">.</span><span class="n">multicast_group_id</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">ReturnCode</span><span class="p">(</span><span class="n">StatusCode</span><span class="o">::</span><span class="n">SWSS_RC_NOT_FOUND</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">         </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;No multicast group ID found for &quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">         </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">QuotedVar</span><span class="p">(</span><span class="n">ip_multicast_entry</span><span class="p">.</span><span class="n">multicast_group_id</span><span class="p">);</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>L3MulticastManager</code> が <code>REPLICATION_IP_MULTICAST_TABLE</code> を消化して SAI <code>IPMC_GROUP</code> を作成し
+P4OidMapper に OID を登録してから <code>FIXED_*_MULTICAST_TABLE</code> を書き込む必要がある。</p>
+<h3 id="2-replication-multicast_router_interface_table">依存 2: REPLICATION テーブル → MULTICAST_ROUTER_INTERFACE_TABLE<a class="headerlink" href="#2-replication-multicast_router_interface_table" title="Permanent link">&para;</a></h3>
+<p><code>validateReplicas()</code> (<code>l3_multicast_manager.cpp:L1002-1008</code>) が各レプリカの <code>(port, instance)</code> を
+<code>L3MulticastManager</code> の内部テーブルで検索し、対応する <code>MULTICAST_ROUTER_INTERFACE_TABLE</code>
+エントリが未登録の場合は即座にエラーを返す:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">router_interface_entry_ptr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">ReturnCode</span><span class="p">(</span><span class="n">StatusCode</span><span class="o">::</span><span class="n">SWSS_RC_NOT_FOUND</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">         </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;No corresponding &quot;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">         </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">APP_P4RT_MULTICAST_ROUTER_INTERFACE_TABLE_NAME</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">         </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; entry found for multicast group &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">...;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="3-fixed-vrf">依存 3: FIXED テーブル → VRF<a class="headerlink" href="#3-fixed-vrf" title="Permanent link">&para;</a></h3>
+<p><code>validateIpMulticastEntry()</code> (<code>ip_multicast_manager.cpp:L477-481</code>) が非空の <code>vrf_id</code> を VrfOrch で確認し、
+未登録の場合は即座にエラーを返す。デフォルト VRF (<code>vrf_id</code> 空文字列) はチェックをスキップする。</p>
+<h3 id="_4">推奨書込み順序<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>1. VRF を CONFIG_DB に投入 (非デフォルト VRF 使用時のみ)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>2. MULTICAST_ROUTER_INTERFACE_TABLE を APP_DB に投入
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>3. REPLICATION_IP_MULTICAST_TABLE を APP_DB に投入
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>4. FIXED_IPV4/IPV6_MULTICAST_TABLE を APP_DB に投入
+</span></code></pre></div>
+<p>DEL 時は逆順: <code>FIXED_*</code> → <code>REPLICATION_*</code> → <code>MULTICAST_ROUTER_INTERFACE_TABLE</code> の順で削除する。
+<code>REPLICATION_IP_MULTICAST_TABLE</code> に対する参照カウント (<code>increaseRefCount</code>/<code>decreaseRefCount</code>) が
+IpMulticastManager 内で管理されており、参照が残っているグループを先に削除しようとすると SAI 削除が失敗する。</p>
+<!-- /ordering -->
+
+<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35360,7 +35579,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_4">制約事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_6">制約事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>replicas</code> が空の場合はグループ作成が拒否される。</li>
 <li><code>backups</code> を指定する場合、primary replicas と配列長が一致しなければならない。</li>
@@ -35368,7 +35587,7 @@
 <li><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code> エントリを作成する前に、参照先の <code>REPLICATION_IP_MULTICAST_TABLE</code> エントリが存在しなければならない。</li>
 <li>全 IPMC エントリを削除すると、内部 RPF group も自動削除される。RPF group 削除に失敗した場合、削除済みエントリが自動復元される。</li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
