@@ -216,4 +216,63 @@ db_migrator.py での SWITCH_TRIMMING マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/switch-trimming-constants.md -->
+<!-- source: sonic-swss/orchagent/switch/trimming/schema.h, helper.cpp L25-26, capabilities.cpp L32-41 -->
+
+`SWITCH_TRIMMING` 処理に関わるハードコード定数の一覧。CONFIG_DB / YANG では管理されず、C++ ソース内でのみ定義される。
+
+### フィールドキー定数 (`schema.h`)
+
+CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の特殊値文字列を `schema.h` が一元管理する。
+
+| マクロ名 | 値 | 用途 |
+|---|---|---|
+| `SWITCH_TRIMMING_SIZE` | `"size"` | パケットトリミング後サイズフィールド名 |
+| `SWITCH_TRIMMING_DSCP_VALUE` | `"dscp_value"` | DSCP 値フィールド名 |
+| `SWITCH_TRIMMING_TC_VALUE` | `"tc_value"` | Traffic Class フィールド名 |
+| `SWITCH_TRIMMING_QUEUE_INDEX` | `"queue_index"` | 送信キューインデックスフィールド名 |
+| `SWITCH_TRIMMING_DSCP_VALUE_FROM_TC` | `"from-tc"` | `dscp_value` の特殊値。TC から DSCP を逆引きする (`SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_FROM_TC`) |
+| `SWITCH_TRIMMING_QUEUE_INDEX_DYNAMIC` | `"dynamic"` | `queue_index` の特殊値。`dscp_value` からキューを動的に導出する (`SAI_PACKET_TRIM_QUEUE_RESOLUTION_MODE_DYNAMIC`) |
+
+### モード文字列定数 (STATE_DB capability 書き込み用)
+
+`writeCapabilitiesToDb()` が `STATE_DB:SWITCH_CAPABILITY|switch` に書き込む capability 値の文字列定数。
+
+| マクロ名 | 値 | SAI enum |
+|---|---|---|
+| `SWITCH_TRIMMING_DSCP_MODE_DSCP_VALUE` | `"DSCP_VALUE"` | `SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_DSCP_VALUE` |
+| `SWITCH_TRIMMING_DSCP_MODE_FROM_TC` | `"FROM_TC"` | `SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_FROM_TC` |
+| `SWITCH_TRIMMING_QUEUE_MODE_STATIC` | `"STATIC"` | `SAI_PACKET_TRIM_QUEUE_RESOLUTION_MODE_STATIC` |
+| `SWITCH_TRIMMING_QUEUE_MODE_DYNAMIC` | `"DYNAMIC"` | `SAI_PACKET_TRIM_QUEUE_RESOLUTION_MODE_DYNAMIC` |
+
+### 数値範囲定数 (`helper.cpp`)
+
+| 定数名 | 値 | 用途 |
+|---|---|---|
+| `minDscp` | `0` | `dscp_value` に許容する最小 DSCP 値 (helper.cpp L25) |
+| `maxDscp` | `63` | `dscp_value` に許容する最大 DSCP 値 (helper.cpp L26) |
+
+範囲外の `dscp_value`（数値が 63 超）は `helper.cpp` のバリデーション失敗 → `LOG_ERROR` + エントリ破棄。
+
+### STATE_DB キー・フィールド名定数 (`capabilities.cpp`)
+
+| マクロ名 | 値 |
+|---|---|
+| `CAPABILITY_KEY` | `"switch"` (STATE_DB の行キー固定値) |
+| `CAPABILITY_SWITCH_TRIMMING_CAPABLE_FIELD` | `"SWITCH_TRIMMING_CAPABLE"` |
+| `CAPABILITY_SWITCH_DSCP_RESOLUTION_MODE_FIELD` | `"SWITCH\|PACKET_TRIMMING_DSCP_RESOLUTION_MODE"` |
+| `CAPABILITY_SWITCH_QUEUE_RESOLUTION_MODE_FIELD` | `"SWITCH\|PACKET_TRIMMING_QUEUE_RESOLUTION_MODE"` |
+| `CAPABILITY_SWITCH_NUMBER_OF_TRAFFIC_CLASSES_FIELD` | `"SWITCH\|NUMBER_OF_TRAFFIC_CLASSES"` |
+| `CAPABILITY_SWITCH_NUMBER_OF_UNICAST_QUEUES_FIELD` | `"SWITCH\|NUMBER_OF_UNICAST_QUEUES"` |
+| `SWITCH_STATE_DB_NAME` | `"STATE_DB"` |
+| `SWITCH_STATE_DB_TIMEOUT` | `0` (ブロッキングなし) |
+
+!!! note "大文字小文字の正規化"
+    `dscp_value` の `"from-tc"` は `boost::algorithm::to_lower_copy` で正規化されるため `"FROM-TC"` / `"From-Tc"` も受理される（`helper.cpp`）。`queue_index` の `"dynamic"` も同様に大文字小文字を問わない。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->
