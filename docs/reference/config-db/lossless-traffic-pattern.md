@@ -284,4 +284,60 @@ Mellanox 向け Lua プラグインは STATE_DB の `ASIC_TABLE` から `cell_si
 
 詳細スキャンノートは `meta/_intermediate/cdb-flow/lossless-traffic-pattern-ordering.md` を参照。
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`LOSSLESS_TRAFFIC_PATTERN` の YANG モデルは他テーブルへの leafref を一切持たないが、
+`buffermgrdyn` から呼び出されるベンダー別 Lua プラグイン (`buffer_headroom_<vendor>.lua`) が
+実行時に 3 つのテーブルを暗黙参照する。
+
+### 1. STATE_DB.ASIC_TABLE
+
+- **参照先テーブル**: `ASIC_TABLE*`（STATE_DB）
+- **参照フィールド**: `cell_size`、`pipeline_latency`、`mac_phy_delay`、`peer_response_time`
+- **参照方向**: `KEYS ASIC_TABLE*` → `HGETALL asic_keys[1]`（読み取り）
+- **対象 Lua スクリプト**:
+  - `buffer_headroom_mellanox.lua:62-80`
+  - `buffer_headroom_barefoot.lua:57-76`
+- **意味**:
+  - これらの ASIC パラメータは `mtu`・`small_packet_percentage` とともにヘッドルーム計算式に入力される。
+  - `asic_keys[1]` が nil（STATE_DB 未投入）の場合、`HGETALL nil` で Lua エラーとなり headroom 計算全体が失敗する。
+  - ASIC_TABLE は `syncd` が ASIC 初期化時に STATE_DB へ書き込む。SONiC 起動シーケンス上 `buffermgrdyn` より先に完了するため、通常は問題にならない。
+
+### 2. CONFIG_DB.DEFAULT_LOSSLESS_BUFFER_PARAMETER
+
+- **参照先テーブル**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER*`（CONFIG_DB）
+- **参照フィールド**: `over_subscribe_ratio`
+- **参照方向**: `KEYS DEFAULT_LOSSLESS_BUFFER_PARAMETER*` → `HGET ... over_subscribe_ratio`（読み取り）
+- **対象 Lua スクリプト**: `buffer_headroom_mellanox.lua:105-106`
+- **意味**:
+  - `over_subscribe_ratio` は Shared Headroom Pool サイズの分母として使われる。
+  - Lua スクリプトが直接 CONFIG_DB を参照するため、`buffermgrdyn` 本体の `m_defaultThreshold` キャッシュとは独立して読み取られる。
+  - `DEFAULT_LOSSLESS_BUFFER_PARAMETER` エントリが存在しない場合、`default_lossless_param_keys[1]` が nil となり Lua エラー。
+
+### 3. CONFIG_DB.BUFFER_POOL (ingress_lossless_pool)
+
+- **参照先テーブル**: `BUFFER_POOL|ingress_lossless_pool`（CONFIG_DB）
+- **参照フィールド**: `xoff`（Shared Headroom Pool サイズ）
+- **参照方向**: `HGET BUFFER_POOL|ingress_lossless_pool xoff`（読み取り）
+- **対象 Lua スクリプト**:
+  - `buffer_headroom_mellanox.lua:109`
+  - `buffer_headroom_barefoot.lua:94`
+- **意味**:
+  - `xoff` 値が Shared Headroom Pool (SHP) のサイズとして headroom 計算に組み込まれる。
+  - フィールドが存在しない（SHP 未設定）場合、`tonumber(nil)` → `shp_size = nil` となる。Lua の算術では nil は計算エラーになるが、実際の計算式では `shp_size` が 0 扱いになるパスが多い。
+
+### 参照関係サマリ
+
+```
+LOSSLESS_TRAFFIC_PATTERN (CONFIG_DB)  ←── 読み取られる側（leafref なし）
+  Lua プラグイン (buffer_headroom_<vendor>.lua) が実行時に以下を暗黙参照
+  ├─ [必須] STATE_DB.ASIC_TABLE               (cell_size / pipeline_latency 等)
+  ├─ [必須] CONFIG_DB.DEFAULT_LOSSLESS_BUFFER_PARAMETER  (over_subscribe_ratio)
+  └─ [条件] CONFIG_DB.BUFFER_POOL|ingress_lossless_pool  (xoff / SHP サイズ)
+```
+
+> **スキャン証跡**: `buffer_headroom_mellanox.lua` L55-110 全行読了、`buffer_headroom_barefoot.lua` L55-94 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了（leafref なし確認済み）。3 件暗黙参照抽出。
+<!-- /cross-refs -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
