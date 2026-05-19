@@ -222,6 +222,48 @@ VRRP_TRACK への書き込みは直接 APPL_DB / ASIC_DB には流れない。FR
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`VRRP_TRACK` / `VRRP6_TRACK` に関連する、CONFIG_DB スキーマ外でソースコードに固定されたリテラル値の一覧。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-constants.md)。
+
+### スケール上限（CLI ハードコード整数）
+
+| 定数 | 値 | 用途 | evidence |
+|------|----|------|----------|
+| 最大追跡インタフェース数 | `8` | 1 VRRP/VRRP6 インスタンスあたりの上限。`count >= 8` 時に `ctx.fail()` で即時拒絶。YANG `max-elements` 未定義でここのみで管理 | `config/main.py:7037-7038, 7465` |
+
+### `priority_increment` パラメータ定数
+
+CLI と YANG で許容範囲が意図的に乖離している。
+
+| 定数種別 | 値 | 定義箇所 |
+|----------|-----|---------|
+| CLI 下限 (`click.IntRange` min) | `10` | `config/main.py:6990, 7423` |
+| CLI 上限 (`click.IntRange` max) | `50` | `config/main.py:6990, 7423` |
+| CLI デフォルト | `20` | `config/main.py:6991, 7424` |
+| YANG `uint8` 下限 | `1` | `sonic-vrrp.yang:174-175, 292-294` |
+| YANG `uint8` 上限 | `255` | `sonic-vrrp.yang:175, 294` |
+
+!!! note "CLI と YANG の乖離"
+    CLI は運用上の安全域として `10–50` に絞っている。YANG バリデーション（gNMI / `sonic-yang-mgmt` 経路）は `1–255` を通過させるため、直接 DB 書き込みでは YANG 制約範囲内ならば CLI 拒絶値でも投入可能。
+
+### `vrid` (vrrp_id) パラメータ定数
+
+| 定数種別 | 値 | 定義箇所 |
+|----------|-----|---------|
+| CLI / YANG 下限 | `1` | `config/main.py:6988, 7421`; `sonic-vrrp.yang:80-81` |
+| CLI / YANG 上限 | `255` | `config/main.py:6988, 7421`; `sonic-vrrp.yang:80-81` |
+
+### DB フィールド名文字列リテラル
+
+| 文字列 | 用途 | evidence |
+|--------|------|----------|
+| `"VRRP_TRACK"` | CONFIG_DB テーブル名（定数化なし、文字列リテラルのみ） | `config/main.py:7021, 7028, 7040, 7074, 7077` |
+| `"priority_increment"` | VRRP_TRACK エントリの唯一のフィールド名 | `config/main.py:7023, 7026, 7469` |
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: `sonic-utilities/config/main.py` (`add_track_interface()` L6993-7040, `remove_track_interface()` L7045-7077); `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` (CONFIG_DB changes L308-315, Uplink interface tracking L481-492); `SONiC/doc/vrrp/sonic-vrrp.yang` (VRRP_TRACK container L136-177). <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
