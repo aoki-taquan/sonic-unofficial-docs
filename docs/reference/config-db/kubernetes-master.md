@@ -223,6 +223,47 @@ SELECT_TIMEOUT = 1000  # ms
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:23,30-45,56-57,59-62,74,103-118,181 -->
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`ctrmgrd` は `KUBERNETES_MASTER|SERVER` 設定変化を受けて join / reset を実行し、その結果を STATE_DB に書き戻す。さらに join 成功時はノードラベルを STATE_DB に登録し、`FEATURE.set_owner` 変化時は feature ラベルと restart フラグを書き込む。
+
+| 副次 DB | テーブル / キー | 書込フィールド | 書込元 | トリガー | evidence |
+|---|---|---|---|---|---|
+| STATE_DB | `KUBERNETES_MASTER\|SERVER` | `connected` (`"true"` / `"false"`), `update_time`, `ip`, `port` | `RemoteServerHandler.do_join()` / `do_reset()` → `set_db_entry()` | `KUBERNETES_MASTER` 設定変化 (join 成功・失敗・reset いずれの場合も) | `ctrmgrd.py:413-414, 423, 435-437` |
+| STATE_DB | `KUBE_LABELS\|SET` | `sonic_version`, `hwsku`, `deployment_type`, `worker.sonic/platform` | `set_node_labels()` → `mod_db_entry()` | `do_join()` 成功直後 (`kube_join_master` 戻り値 0) | `ctrmgrd.py:306-307, 440` |
+| STATE_DB | `KUBE_LABELS\|SET` | `<feat>_enabled` (`"true"` / `"false"`) | `FeatureTransitionHandler.handle_update()` → `mod_db_entry()` | `CONFIG_DB:FEATURE.<feat>.set_owner` 変化時 | `ctrmgrd.py:505-506` |
+| STATE_DB | `FEATURE\|<feat>` | `restart` (`"true"`) | `restart_systemd_service()` → `mod_db_entry()` | サービス再起動が必要と判断された場合 (`set_owner` 変化 + 条件成立) | `ctrmgrd.py:157-158` |
+| APPL_DB | — | なし | — | — | `ctrmgrd` は APPL_DB への `ProducerStateTable` 等を保有しない |
+| ASIC_DB / FLEX_COUNTER_DB | — | なし | — | — | SAI 非経由。Kubernetes 制御は SAI を通らない |
+| COUNTERS_DB | — | なし | — | — | `ctrmgrd` に COUNTERS_DB 参照は存在しない |
+
+### STATE_DB:KUBERNETES_MASTER|SERVER への書込詳細
+
+`RemoteServerHandler` は join / reset の完了後に `st_server` dict を更新し、前回状態と異なる場合のみ `set_db_entry()` で STATE_DB に全フィールドを一括書き込む（`ctrmgrd.py:411-414`）。フィールド一覧:
+
+| フィールド | 書込タイミング | 値 |
+|-----------|-------------|-----|
+| `connected` | join 成功時 | `"true"` |
+| `connected` | join 失敗 / reset 時 | `"false"` |
+| `ip` | join 成功時 | CONFIG_DB の `ip` 値 |
+| `port` | join 成功時 | CONFIG_DB の `port` 値 |
+| `update_time` | 状態変化時 (join / reset) | `ts_now()` タイムスタンプ文字列 |
+
+### STATE_DB:KUBE_LABELS|SET へのラベル書込詳細
+
+`set_node_labels()` (`ctrmgrd.py:292-307`) は join 成功直後に呼ばれ、ノード識別用ラベルを `mod_db_entry()` で STATE_DB に書き込む。`LabelsPendingHandler` がこれを検知し `kube_commands.kube_write_labels()` で Kubernetes API Server へ反映する（`ctrmgrd.py:659-681`）。
+
+| ラベルキー | 値ソース | evidence |
+|------------|---------|---------|
+| `sonic_version` | `device_info.get_sonic_version_info()["build_version"]` | `ctrmgrd.py:301` |
+| `hwsku` | `device_info.get_hwsku()` | `ctrmgrd.py:302` |
+| `deployment_type` | `CONFIG_DB:DEVICE_METADATA\|localhost.type` | `ctrmgrd.py:297-299, 303` |
+| `worker.sonic/platform` | `device_info.get_platform()` | `ctrmgrd.py:304-305` |
+
+> **Evidence**: `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158, 292-307, 306-307, 411-414, 423, 435-437, 440, 505-506, 659-681`; 詳細スキャン結果は `meta/_intermediate/cdb-flow/kubernetes-master-side-effects.md` 参照。
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## フィールドデフォルト
 
