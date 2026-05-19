@@ -413,6 +413,73 @@ FdbOrch はローカル MAC 学習・エージングイベントを ASIC_DB の 
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-platform.md`
+
+`VXLAN_FDB_TABLE` エントリ処理は ASIC が SAI `SAI_TUNNEL_PEER_MODE_P2P` をサポートするかどうかで 2 パスに分岐する。この判定は `VxlanTunnelOrch` コンストラクタ (`vxlanorch.cpp:1256-1274`) が起動時に一度だけ SAI 動的ケーパビリティクエリを行い、`isDipTunnelsSupported()` として保持する。
+
+### ASIC ケーパビリティ判定
+
+```cpp
+// sonic-swss/orchagent/vxlanorch.cpp:1256-1274
+status = sai_query_attribute_enum_values_capability(gSwitchId, SAI_OBJECT_TYPE_TUNNEL,
+                                                    SAI_TUNNEL_ATTR_PEER_MODE, &values);
+if (status != SAI_STATUS_SUCCESS)
+{
+    is_dip_tunnel_supported = true;  // P2P に fallback
+}
+else
+{
+    is_dip_tunnel_supported = false;
+    for (...) {
+        if (values.list[idx] == SAI_TUNNEL_PEER_MODE_P2P)
+            is_dip_tunnel_supported = true;
+    }
+}
+```
+
+- SAI クエリが失敗（ドライバ未対応等）した場合: `is_dip_tunnel_supported = true`（P2P モード）に自動 fallback。
+- `SAI_TUNNEL_PEER_MODE_P2P` が列挙値に含まれれば DIP トンネルサポートあり（P2P モード）。
+- P2MP のみ返された場合: `is_dip_tunnel_supported = false`（P2MP モード）。
+
+### VXLAN_FDB_TABLE 処理への影響 (fdborch.cpp:836-854)
+
+```cpp
+// sonic-swss/orchagent/fdborch.cpp:836-854
+if (tunnel_orch->isDipTunnelsSupported())
+{
+    // P2P (DIP) モード: remote_vtep ごとの専用 DIP トンネルポートを解決
+    if (!remote_ip.length()) { erase(it); continue; }  // remote_vtep 空 → 即破棄
+    port = tunnel_orch->getTunnelPortName(remote_ip);
+}
+else
+{
+    // P2MP モード: EVPN NVO の source VTEP 共有トンネルポートを解決
+    VxlanTunnel* sip_tunnel = evpn_nvo_orch->getEVPNVtep();
+    if (sip_tunnel == NULL) { erase(it); continue; }  // NVO 未設定 → 即破棄
+    port = tunnel_orch->getTunnelPortName(sip_tunnel->getSrcIP().to_string(), true);
+}
+```
+
+| 比較項目 | P2P モード (DIP サポートあり) | P2MP モード (DIP サポートなし) |
+|---------|---------------------------|-----------------------------|
+| トンネルポート | `remote_vtep` ごとの動的 DIP トンネルポート | source VTEP の共有 P2MP ポート |
+| 先行依存テーブル | `VXLAN_TUNNEL` + VxlanTunnelOrch のポート作成 | `VXLAN_EVPN_NVO` + EvpnNvoOrch の source VTEP 登録 |
+| 即破棄条件 | `remote_vtep` が空文字列 | EVPN NVO source VTEP = NULL |
+| VLAN メンバー確認引数 | ポート名のみ (`end_point_ip` = 空) | ポート名 + `remote_ip` (`fdborch.cpp:1308-1313`) |
+
+!!! note "P2MP モードでの `end_point_ip`"
+    P2MP モード (`isDipTunnelsSupported() == false`) では、単一の P2MP ブリッジポートに複数リモート VTEP が収容されるため、`isVlanMember()` に `end_point_ip = fdbData.remote_ip` を渡してポート + IP の組み合わせで VLAN メンバーシップを識別する (`fdborch.cpp:1308-1313`)。P2P モードでは `end_point_ip` は空。
+
+!!! warning "DIP モード決定は実行時 ASIC クエリのみ"
+    `isDipTunnelsSupported()` の結果は `platform` 環境変数やコンフィグ設定では制御できない。純粋に SAI クエリの返値に依存するため、同一ベンダーの機種でも ASIC 世代・ドライババージョンによって挙動が異なる場合がある。
+
+<!-- evidence: sonic-swss/orchagent/fdborch.cpp:836-854,1308-1313; sonic-swss/orchagent/vxlanorch.cpp:1256-1274,368-370,1701-1704 -->
+
+<!-- /platform -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
